@@ -1,0 +1,73 @@
+
+.page{
+clear: both;
+float: center;
+vertical-align: middle;
+height:100%;
+}
+
+.page_top{
+clear: both;
+border-bottom:1px solid #333; 
+}
+
+.page_middle{
+clear: both;
+}
+
+.page_bottom{
+clear: both;
+border-top:1px solid #333; 
+}
+
+.header_left{
+	float: left;
+	clear: left;
+}
+.header_logo{
+	border: 0; 
+	viertical-align: middle;
+	width=30px; 
+	height=30px;
+}
+.header_middle {
+	text-align: left;
+	margin-top: 10px;
+	margin-bottom: 10px;
+}
+
+.footer {
+	width: 100%;
+	text-align: center;
+	clear: left;
+	float: left;
+	font-variant: small-caps;
+	font-weight: bold;
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-size: 10pt;
+}
+
+.menu_left {
+	float:left;
+	text-align: left;
+	valign: top;
+	background-color: #eeeeee;
+	width:150px;
+
+	font-family: Verdana, Arial, Helvetica, sans-serif; 
+	font-size: 12pt;
+}
+
+.content {
+	text-align: left;
+	border: 0;
+	width=100%;
+	margin: 10px;
+	margin-left:20px;
+	}
+
+.menuseparator{	
+	border-bottom:1px dotted #333;
+	}
+	
+	
