@@ -50,7 +50,7 @@ border-top:1px solid #333;
 .menu_left {
 	float:left;
 	text-align: left;
-	valign: top;
+	vertical-align: top;
 	background-color: #eeeeee;
 	width:150px;
 
@@ -69,5 +69,35 @@ border-top:1px solid #333;
 .menuseparator{	
 	border-bottom:1px dotted #333;
 	}
-	
-	
+
+.center{
+text-align: center; 
+vertical-align: middle;
+}
+
+.button {
+cursor:pointer;
+font-family: Verdana, Arial, Helvetica, sans-serif; 
+font-size: 10px; 
+}
+
+.input {
+font-family: Verdana, Arial, Helvetica, sans-serif; 
+font-size: 10px; 
+}
+
+.fakeinput {
+font-family: Verdana, Arial, Helvetica, sans-serif; 
+font-size: 10px;
+color: #000000;
+background-color: #ffffff;
+border: 0;
+}
+
+.smallbutton {
+cursor:pointer;
+background-color: #eeeeee;
+border: 1px solid #006;
+font-family: Verdana, Arial, Helvetica, sans-serif; 
+font-size: 10px; 
+}

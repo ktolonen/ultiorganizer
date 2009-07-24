@@ -13,6 +13,50 @@ function GameResult($gameId)
 	return mysql_fetch_assoc($result);
 	}
 
+function GamePlayers($gameId, $teamId)
+	{
+	$query = sprintf("
+		SELECT p.pelaaja_id, pel.Numero 
+		FROM pelik_pelaaja AS p 
+		INNER JOIN (SELECT pelannut_pelaaja_id, Numero FROM pelik_pelattu  WHERE pelattu_peli_id='%s')
+			AS pel ON (p.pelaaja_id=pel.pelannut_pelaaja_id) 
+		WHERE p.joukkue='%s'",
+		mysql_real_escape_string($gameId),
+		mysql_real_escape_string($teamId));
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
+
+function GamePlayerFromNumber($gameId, $teamId, $number)
+	{
+	$query = sprintf("
+		SELECT p.pelaaja_id
+		FROM pelik_pelaaja AS p 
+		INNER JOIN (SELECT pelannut_pelaaja_id, Numero FROM pelik_pelattu WHERE pelattu_peli_id='%s')
+			AS pel ON (p.pelaaja_id=pel.pelannut_pelaaja_id) 
+		WHERE p.joukkue='%s' AND pel.Numero='%s'",
+		mysql_real_escape_string($gameId),
+		mysql_real_escape_string($teamId),
+		mysql_real_escape_string($number));
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	if(!mysql_num_rows($result))
+		return -1;
+		
+	$row = mysql_fetch_row($result);
+	
+	if($row && $row[0])
+		return intval($row[0]);
+	else
+		return -1;
+	}
+
+	
 function GameTeamScoreBorad($gameId, $teamId)
 	{
 	$query = sprintf("

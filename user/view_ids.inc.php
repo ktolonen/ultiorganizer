@@ -1,0 +1,9 @@
+<?php
+define("HOME",200);
+define("USERINFO",201);
+define("TEAMPLAYERS",202);
+define("RESPONSEGAMES",203);
+define("ADDRESULT",204);
+define("ADDPLAYERLISTS",205);
+define("ADDSCORESHEET",206);
+?>

@@ -79,11 +79,46 @@ function DefHourFormat($timestamp)
 	return $hours;
 	}	
 
+function DefBirthdayFormat($timestamp)
+	{
+	$datetime = date_create($timestamp);
+	$hours = date_format($datetime, 'd.m.Y');
+
+	return $hours;
+	}	
+	
 function TimeToIcal($timestamp)
 	{
 	$datetime = date_create($timestamp);
 	$time = date_format($datetime, 'Ymd\THi00');
 
 	return $time;
+	}
+
+function DefTimestamp()
+	{
+	return date( 'H:i:s', time());
+	}
+	
+function TimeToSec($timestamp)
+	{
+	$format = substr_count($timestamp, ".");
+	$secs = 0;
+	//mm.ss
+	if($format==1)
+		{
+		$tmp1 = strtok($timestamp, ".");
+		$tmp2 = strtok(".");
+		$secs = intval($tmp1)*60+intval($tmp2);
+		}
+	//hh.mm.ss
+	elseif($format==2)
+		{
+		$tmp1 = strtok($timestamp, ".");
+		$tmp2 = strtok(".");
+		$tmp3 = strtok(".");
+		$secs = intval($tmp1)*3600+intval($tmp2)*60+intval($tmp3);
+		}
+	return $secs;
 	}	
 ?>

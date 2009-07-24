@@ -83,6 +83,7 @@ function TeamComingGames($teamId, $placeId)
 	
 	return $result;
 	}
+	
 function TeamTournamentGames($teamId, $placeId)
 	{
 	$query = sprintf("
@@ -288,5 +289,26 @@ function TeamScoreBoard($teamId, $serieId, $sorting, $limit)
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
 	return $result;
-	}	
+	}
+
+function TeamResponsibleGames($teamId, $placeId)
+	{
+	$query = sprintf("
+		SELECT Kj.Nimi As KNimi, Vj.Nimi As VNimi, p.Aika, p.Peli_ID, p.Kotipisteet, p.Vieraspisteet, COALESCE(m.maaleja,0) As Maaleja 
+		FROM pelik_peli AS p 
+		INNER JOIN pelik_paikka AS pk ON (p.Paikka=pk.Paikka_ID) 
+		LEFT JOIN (SELECT COUNT(*) As maaleja, Maali_Peli 
+			FROM pelik_maali GROUP BY Maali_Peli) AS m ON (p.Peli_ID=m.Maali_Peli), pelik_joukkue As Kj, pelik_joukkue As Vj  
+			WHERE p.Vierasjoukkue=Vj.Joukkue_ID AND p.Kotijoukkue=Kj.Joukkue_ID 
+			AND (p.Paikka='%s' AND ((p.RespTeam IS NULL AND pk.RespTeam='%s') OR p.RespTeam='%s'))
+		GROUP BY Kj.Nimi, Vj.Nimi, p.Aika, p.Peli_ID, p.Kotipisteet, p.Vieraspisteet",
+		mysql_real_escape_string($placeId),
+		mysql_real_escape_string($teamId),
+		mysql_real_escape_string($teamId));
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
 ?>

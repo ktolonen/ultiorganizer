@@ -1,11 +1,11 @@
 <?php
-include 'view_ids.inc.php';
-include 'lib/database.php';
-include 'lib/common.functions.php';
-include 'lib/season.functions.php';
-include 'lib/serie.functions.php';
-include 'lib/team.functions.php';
-include 'builder.php';
+include_once 'view_ids.inc.php';
+include_once 'lib/database.php';
+include_once 'lib/common.functions.php';
+include_once 'lib/season.functions.php';
+include_once 'lib/serie.functions.php';
+include_once 'lib/team.functions.php';
+include_once 'builder.php';
 
 $seriesId = intval($_GET["Series"]);
 $teamId = intval($_GET["Team"]);

@@ -1,9 +1,9 @@
 <?php
-include 'view_ids.inc.php';
-include 'lib/database.php';
-include 'lib/season.functions.php';
-include 'lib/serie.functions.php';
-include 'builder.php';
+include_once 'view_ids.inc.php';
+include_once 'lib/database.php';
+include_once 'lib/season.functions.php';
+include_once 'lib/serie.functions.php';
+include_once 'builder.php';
 $homedir = dirname(__FILE__);
 $LAYOUT_ID = SEASONLIST;
 

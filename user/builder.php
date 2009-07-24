@@ -3,25 +3,24 @@ include_once 'lib/database.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/serie.functions.php';
 
-include_once 'user/usermenubuilder.php';
+include_once 'usermenubuilder.php';
 
 function pageTop($printable)
 	{
 	pageTopHeadOpen();
 	pageTopHeadClose($printable);
 	}
-
 function pageTopHeadOpen()
 	{
-		
+	include 'validate_user.php'; //just to make sure that check is made in each page	
 	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
 		<head>
 		<meta http-equiv=\"Content-Type\" content=\"text/html; charset=UTF-8\" />
 		<title>Liitokiekkoliiton Pelikone</title>
-		<link rel=\"stylesheet\" href=\"styles/layout.css\" type=\"text/css\" />
-		<link rel=\"stylesheet\" href=\"styles/font.css\" type=\"text/css\" />
-		<link rel=\"stylesheet\" href=\"styles/default.css\" type=\"text/css\" />\n";
+		<link rel=\"stylesheet\" href=\"../styles/layout.css\" type=\"text/css\" />
+		<link rel=\"stylesheet\" href=\"../styles/font.css\" type=\"text/css\" />
+		<link rel=\"stylesheet\" href=\"../styles/default.css\" type=\"text/css\" />\n";
 	}
 
 function pageTopHeadClose($printable)
@@ -33,7 +32,24 @@ function pageTopHeadClose($printable)
 		
 	if(!$printable)
 		{
-		include_once('header.php');
+		echo "
+		<table>
+		<tr>
+		<td>
+		<div class='header_left'>
+			<a href='index.php'>
+			<img class='header_logo' src='../images/slkllogo.gif' alt='SLKL'/>
+			</a>
+		</div>
+		</td>
+		<td>
+		<div class='header_middle'>
+			<a href='http://www.liitokiekkoliitto.fi/' class='header_text'>Suomen Liitokiekkoliitto</a><br/>
+			<a href='http://www.liitokiekkoliitto.fi/english' class='header_text_small'>Finnish Flying Disc Association</a>
+		</div>
+		</td>
+		</tr>
+		</table>\n";
 		}
 	
 	echo "</div><div class='page_middle'>\n";
@@ -51,14 +67,15 @@ function leftMenu($id, $printable)
 		echo "<table><tr>";
 		return;
 		}
+		
 	echo "<table><tr>
 		  <td class='menu_left'>
-		  <form method='post' action='user/authenticate.php'>
+		  <form method='post' action='authenticate.php'>
 		  <table cellspacing='5' cellpadding='2'>\n";
 	
-	echo "<tr><td><a class=\"nav\" href=\"timetables.php\">Peliaikataulut</a></td></tr>\n";
-	echo "<tr><td><a class=\"nav\" href=\"played.php\">Pelatut pelit</a></td></tr>\n";
-	echo "<tr><td><a class=\"nav\" href=\"teams.php\">Joukkueet</a></td></tr>\n";	
+	echo "<tr><td><a class=\"nav\" href=\"../timetables.php\">Peliaikataulut</a></td></tr>\n";
+	echo "<tr><td><a class=\"nav\" href=\"../played.php\">Pelatut pelit</a></td></tr>\n";
+	echo "<tr><td><a class=\"nav\" href=\"../teams.php\">Joukkueet</a></td></tr>\n";	
 	
 	OpenConnection();
 	$curseason = CurrenSeason();
@@ -68,18 +85,18 @@ function leftMenu($id, $printable)
 	<tr><td style='padding-left:5px'>\n";	
 	while($row = mysql_fetch_assoc($series))
 		{
-		echo "<a href='seriestatus.php?Serie=".$row['sarja_id']."'>&raquo; ".$row['nimi']."</a><br/>\n";
+		echo "<a href='../seriestatus.php?Serie=".$row['sarja_id']."'>&raquo; ".$row['nimi']."</a><br/>\n";
 		}
 		
 	echo "</td></tr><tr><td class='menuseparator'></td></tr>";
-	
-	//build user menus if user has logged in
+
+	//build user menu
 	userMenu($id);
-	
+
 	echo "<tr><td class='menuseparator'></td></tr>\n";
 	
 	echo "<tr><td>".CurrenSeasonName()."</td></tr>\n";
-	echo "<tr><td><a href=\"seasonlist.php\">&raquo; Vanhat kaudet</a></td></tr>\n";	
+	echo "<tr><td><a href=\"../seasonlist.php\">&raquo; Vanhat kaudet</a></td></tr>\n";	
 
 	echo "<tr><td style='height:100px'></td></tr>\n";
 	echo "<tr><td>";

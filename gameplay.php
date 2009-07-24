@@ -1,11 +1,11 @@
 <?php
-include 'view_ids.inc.php';
-include 'lib/database.php';
-include 'lib/season.functions.php';
-include 'lib/serie.functions.php';
-include 'lib/game.functions.php';
-include 'lib/common.functions.php';
-include 'builder.php';
+include_once 'view_ids.inc.php';
+include_once 'lib/database.php';
+include_once 'lib/season.functions.php';
+include_once 'lib/serie.functions.php';
+include_once 'lib/game.functions.php';
+include_once 'lib/common.functions.php';
+include_once 'builder.php';
 
 $LAYOUT_ID = GAMEPLAY;
 
@@ -163,9 +163,9 @@ for ($i=0; $i < 50 && $points[$i][0] != ""; $i++)
 
 	}
 echo "</tr></table>\n";
-	
+echo "<p>Kirjanpit&auml;j&auml;(t): ". htmlentities($game_result['toim']) ."</p>";
 echo "<h2>Pelin Maalit</h2>\n";
-echo "<table border='1' cellspacing='0' width='97%'>\n";
+echo "<table border='1' cellpadding='2px' width='97%'>\n";
 echo "<tr><th>#</th><th>Aika</th><th>Sy&ouml;tt&auml;j&auml;</th><th>Tekij&auml;</th><th>Tilanne</th><th>&nbsp;</th></tr>\n";
 
 
@@ -379,7 +379,7 @@ $dblHAvg=0.0;
 $dblVAvg=0.0;
 
 //Build HTML-table	
-echo "<table border='1' cellspacing='0'><tr><th></th><th>". htmlentities($game_result['KNimi']).
+echo "<table border='1' cellpadding='2px' cellspacing='0'><tr><th></th><th>". htmlentities($game_result['KNimi']).
 	 "</th><th>". htmlentities($game_result['VNimi']) ."</th></tr>";
 
 echo "<tr><td>Maalit:</td> <td class='home'>$nHGoals</td> <td class='guest'>$nVGoals</td></tr>\n";
