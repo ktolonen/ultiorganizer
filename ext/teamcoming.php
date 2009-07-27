@@ -27,18 +27,18 @@ OpenConnection();
 if($teamId)
 	{
 	$season = TeamSeason($teamId);
-	$tournaments = PlayedTournaments($season);
+	$tournaments = ComingTournaments($season);
+	$prevTournament = "";
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei pelaatuja pelej&auml;.</p>\n";
+		echo "\n<p>Ei tulevia pelej&auml;.</p>\n";
 		}
 	else
 		{
-		$prevTournament = "";
 		echo "<table>";
 		while($tournament = mysql_fetch_assoc($tournaments))
 			{
-			$games = TeamTournamentGames($teamId, $tournament['Paikka_ID']);
+			$games = TeamComingGames($teamId, $tournament['Paikka_ID']);
 					
 			if(mysql_num_rows($games))
 				{

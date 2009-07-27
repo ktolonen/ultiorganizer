@@ -105,16 +105,14 @@ function Timetable($tournamentId, $seasonId)
 	return $result;
 	}
 
-function TournamentNames($seasonId, $tournamentId)
+function TournamentNames($seasonId)
 	{
 	$query = sprintf("
-		SELECT Turnaus, Min(AikaAlku) AS Eka 
+		SELECT DISTINCT Turnaus
 		FROM pelik_paikka 
-		WHERE AikaAlku <= Now() AND Kausi = '%s' AND Turnaus='%s' 
-		GROUP BY Turnaus 
-		ORDER BY Min(AikaAlku) desc",
-		mysql_real_escape_string($seasonId),
-		mysql_real_escape_string($tournamentId));
+		WHERE Kausi = '%s' 
+		ORDER BY Turnaus ASC",
+		mysql_real_escape_string($seasonId));
 	
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }

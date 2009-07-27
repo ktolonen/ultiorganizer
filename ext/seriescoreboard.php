@@ -20,27 +20,25 @@ include_once '../lib/serie.functions.php';
 include_once '../lib/team.functions.php';
 
 OpenConnection();
-$seriesId = intval($_GET["Series"]);
-$teamId = intval($_GET["Team"]);
+$seriesId = intval($_GET["Serie"]);
 $sort="total";
 
 echo "<table class='pk_table'>";
 
 echo "<tr><th class='pk_scoreboard_th'>Pelaaja</th>";
+echo "<th class='pk_scoreboard_th'>Joukkue</th>";
 echo "<th class='pk_scoreboard_th'>Pelej&auml;</th>";
 echo "<th class='pk_scoreboard_th'>Sy&ouml;t&ouml;t</th>";
 echo "<th class='pk_scoreboard_th'>Maalit</th>";
 echo "<th class='pk_scoreboard_th'>Yht.</th>";
 echo "</tr>";
 
-if($teamId)
-	$scores = TeamScoreBoard($teamId, $seriesId, $sort, 0);
-else		
-	$scores = SerieScoreBoard($seriesId, $sort, 0);
+$scores = SerieScoreBoard($seriesId, $sort, 10);
 
 while($row = mysql_fetch_assoc($scores))
 	{
 	echo "<tr><td class='pk_scoreboard_td1'>". htmlentities($row['enimi']." ".$row['snimi'])."</td>";
+	echo "<td class='pk_scoreboard_td1'>".htmlentities($row['jnimi'])."</td>";
 	echo "<td  class='pk_scoreboard_td2'>".intval($row['peleja'])."</td>";
 	echo "<td  class='pk_scoreboard_td2'>".intval($row['syotetty'])."</td>";
 	echo "<td  class='pk_scoreboard_td2'>".intval($row['tehty'])."</td>";

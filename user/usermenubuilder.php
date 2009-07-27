@@ -13,6 +13,11 @@ function userMenu($id)
 		{
 		$linklevel = "";
 		}
+	elseif($id >= 400 && $id<500)
+		{
+		$linklevel = "../user/";
+		}
+
 		
 	session_start();
 

@@ -50,7 +50,7 @@ function PlayerNumber($playerId, $gameId)
 		
 	$row = mysql_fetch_row($result);
 	
-	if($row && $row[0])
+	if(is_numeric($row[0]))
 		return intval($row[0]);
 	else
 		return -1;

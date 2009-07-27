@@ -2,7 +2,13 @@
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-<link rel="stylesheet" href="pelikone.css" type="text/css" />
+<?php
+$style = urldecode($_GET["Style"]);
+if(empty($style))
+	$style='pelikone.css';
+	
+echo "<link rel='stylesheet' href='$style' type='text/css' />";
+?>
 <title>Liitokiekkoliiton Pelikone</title>
 </head>
 <body>

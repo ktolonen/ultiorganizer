@@ -120,5 +120,12 @@ function TimeToSec($timestamp)
 		$secs = intval($tmp1)*3600+intval($tmp2)*60+intval($tmp3);
 		}
 	return $secs;
+	}
+
+function GetURLBase()
+	{
+	$url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	$cutpos = strrpos($url, "/");
+	return substr($url,0,$cutpos);
 	}	
 ?>

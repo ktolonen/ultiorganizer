@@ -25,30 +25,30 @@ padding: 1px;
 .pk_ser_th{
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt; 
 text-align: center; 
-text-decoration: none; 
-background-color: #ffe56c;
-border-width: 1px 1px 1px 1px;
-border-style: solid; 
+text-decoration: none;
+font-weight: bold; 
+background-color: #ffffff;
+border-width: 0px 0px 1px 0px;
+border-style: solid;
+padding: 1px; 
 }
 .pk_ser_td1{  
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt; 
 text-align: left; 
 text-decoration: none; 
-border-width: 1px 1px 1px 1px;
-border-style: solid;
+padding: 1px;
 }
 .pk_ser_td2{  
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt; 
 text-align: center; 
 text-decoration: none;
-border-width: 1px 1px 1px 1px;
-border-style: solid; 
+padding: 1px;
 }
 
 .pk_h1{
@@ -63,74 +63,74 @@ text-transform:uppercase;
 .pk_teamplayed_th{
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt; 
 text-align: left; 
 text-decoration: none; 
-background-color: #ffe56c;
-border-width: 1px 1px 1px 1px;
-border-style: solid;
+background-color: #ffffff;
+padding: 1px;
 }
 .pk_teamplayed_td{  
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt;
 text-align: left; 
-text-decoration: none; 
+text-decoration: none;
+padding: 1px;
 }
 
 .pk_tournament_th{
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt;
 text-align: left; 
 text-decoration: none; 
-background-color: #ffe56c;
-border-width: 1px 1px 1px 1px;
-border-style: solid;
+background-color: #ffffff;
+padding: 1px;
 }
 .pk_tournament_td1{  
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt;
 text-align: left; 
 text-decoration: none; 
 font-weight: bold; 
+padding: 1px;
 }
 
 .pk_tournament_td2{  
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt;
 text-align: left; 
 text-decoration: none; 
+padding: 1px;
 }
 
 .pk_scoreboard_th{
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt;
 text-align: left; 
 text-decoration: none; 
-background-color: #ffe56c;
-border-width: 1px 1px 1px 1px;
+background-color: #ffffff;
+border-width: 0px 0px 1px 0px;
 border-style: solid;
+padding: 1px;
 }
 .pk_scoreboard_td1{  
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt;
 text-align: left; 
 text-decoration: none; 
-border-width: 1px 1px 1px 1px;
-border-style: solid; 
+padding: 1px;
 }
 
 .pk_scoreboard_td2{  
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 color: #000000; 
-font-size: 10px; 
+font-size: 8pt;
 text-align: center; 
 text-decoration: none;
-border-width: 1px 1px 1px 1px;
-border-style: solid; 
+padding: 1px; 
 }

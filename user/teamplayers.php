@@ -44,7 +44,7 @@ if(isset($remove))
 			{
 			$memberinfo = MembershipInfo($delId);
 			echo "<div style='width:500px'>
-				<p><i>". htmlentities($memberinfo['enimi'] ." ". $memberinfo['snimi']) ."</i> ei voida poistaa pelaajalistalta. 
+				<p class='warning'><i>". htmlentities($memberinfo['enimi'] ." ". $memberinfo['snimi']) ."</i> ei voida poistaa pelaajalistalta. 
 				Pelannut joukkueessa $games peli&auml;.</p></div>";
 			}
 		else

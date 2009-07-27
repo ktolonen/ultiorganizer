@@ -90,7 +90,7 @@ if(isset($save))
 					{
 					$playerinfo1 = PlayerInfo($playerId);
 					$playerinfo2 = PlayerInfo($player['pelaaja_id']);
-					echo "<p><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
+					echo "<p  class='warning'><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
 					<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> same numero '$number'.</p>";
 					$found = true;
 					break;
@@ -103,7 +103,7 @@ if(isset($save))
 		else
 			{
 			$playerinfo = PlayerInfo($playerId);
-			echo "<p><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
+			echo "<p  class='warning'><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
 			}
 		}
 		

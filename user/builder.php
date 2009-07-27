@@ -97,7 +97,9 @@ function leftMenu($id, $printable)
 	
 	echo "<tr><td>".CurrenSeasonName()."</td></tr>\n";
 	echo "<tr><td><a href=\"../seasonlist.php\">&raquo; Vanhat kaudet</a></td></tr>\n";	
-
+	echo "<tr><td class='menuseparator'></td></tr>\n";
+	
+	echo "<tr><td><a href=\"../ext/index.php\">&raquo; Pelikone linkit</a></td></tr>\n";	
 	echo "<tr><td style='height:100px'></td></tr>\n";
 	echo "<tr><td>";
 	echo "<a href='http://www.liitokiekkoliitto.fi/'>Suomen Liitokiekkoliitto</a><br/>\n";

@@ -57,8 +57,31 @@ function updateScores(index)
 		var input = document.getElementById("sit"+i);
 		input.value = h+" - "+a;
 		}
+	}
+function eraseLast() 
+	{
+	var i=(<?php echo $maxscores;?>-1);
 	
-	
+	for (i;i>=0;i=i-1)
+		{
+		var hradio = document.getElementById("hteam"+i);
+		var aradio = document.getElementById("ateam"+i);
+		
+		if(aradio.checked || hradio.checked)
+			{
+			var input = document.getElementById("sit"+i);
+			input.value = "";
+			var input = document.getElementById("pass"+i);
+			input.value = "";
+			var input = document.getElementById("goal"+i);
+			input.value = "";
+			var input = document.getElementById("time"+i);
+			input.value = "";
+			aradio.checked=false;
+			hradio.checked=false;
+			break;
+			}
+		}
 	}
 //-->
 </script>
@@ -82,9 +105,10 @@ if(isset($save))
 	GameSetScoreSheetKeeper($gameId, $_POST['secretary']);
 	
 	//set halftime
-	$time = $_POST['halftime'];
-	$time = str_replace($time_delim,".",$time);
-	GameSetHalftime($gameId, TimeToSec($time));
+	$htime = $_POST['halftime'];
+	$htime = str_replace($time_delim,".",$htime);
+	$htime = TimeToSec($htime);
+	GameSetHalftime($gameId, $htime);
 	
 	//remove all old timeouts (if any)
 	GameRemoveAllTimeouts($gameId);
@@ -123,6 +147,7 @@ if(isset($save))
 	//insert scores
 	$h=0;
 	$a=0;
+	$prevtime=0;
 	for($i=0;$i<$maxscores; $i++)
 		{
 		$team = $_POST['team'.$i];
@@ -131,18 +156,28 @@ if(isset($save))
 		$time = $_POST['time'.$i];
 		$time = str_replace($time_delim,".",$time);
 		$time = TimeToSec($time);
+		if(!empty($team) && $time == $htime)
+			echo "<p class='warning'>Piste ",$i+1,": aika ei voi olla sama kuin puoliajan p&auml;&auml;ttymisell&auml;!</p>";
+			
+		if(!empty($team) && $time <= $prevtime)
+			echo "<p class='warning'>Piste ",$i+1,": aika ei voi olla sama tai aikaisempi kuin edellisess&auml; pisteess&auml;!</p>";
 		
+		$prevtime = $time;
+			
 		if(!empty($team) && $team=='H')
 			{
 			$h++;
 			$pass = GamePlayerFromNumber($gameId, $game_result['kotijoukkue'], $pass);
 			if($pass==-1)
-				echo "<p>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
+				echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
 				
 			$goal = GamePlayerFromNumber($gameId, $game_result['kotijoukkue'], $goal);
 			if($goal==-1)
-				echo "<p>Piste ",$i+1,": maalintekij&auml;n numeroa '".$_POST['goal'.$i]."' ei pelaajalistalla!</p>";
-
+				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;n numeroa '".$_POST['goal'.$i]."' ei pelaajalistalla!</p>";
+			
+			if($pass==$goal)
+				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;ll&auml; ja sy&ouml;tt&auml;j&auml;ll&auml; sama numero '".$_POST['goal'.$i]."'!</p>";
+				
 			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,1);
 			}
 		elseif(!empty($team) && $team=='A')
@@ -150,11 +185,11 @@ if(isset($save))
 			$a++;
 			$pass = GamePlayerFromNumber($gameId, $game_result['vierasjoukkue'], $pass);
 			if($pass==-1)
-				echo "<p>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
+				echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
 
 			$goal = GamePlayerFromNumber($gameId, $game_result['vierasjoukkue'], $goal);
 			if($goal==-1)
-				echo "<p>Piste ",$i+1,": maalintekij&auml;n numeroa '".$_POST['goal'.$i]."' ei pelaajalistalla!</p>";
+				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;n numeroa '".$_POST['goal'.$i]."' ei pelaajalistalla!</p>";
 
 			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,0);
 			}
@@ -259,7 +294,8 @@ echo "</table>\n";
 		
 //buttons
 echo "<table cellspacing='0' cellpadding='10px' width='100%'>\n";
-echo "<tr><td></td><td></td></tr>";
+echo "<tr><td colspan='2'>
+		<a href='javascript://' onclick=\"eraseLast()\">Poista viimeinen maali</a></td></tr>";
 echo "<tr>";
 echo "<td><input class='button' type='submit' value='Tallenna' name='save'/></td>";
 echo "<td><input class='button' type='reset' value='Peruuta' name='reset'/></td>";
