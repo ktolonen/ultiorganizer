@@ -1,0 +1,187 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: Pelikone-3.0\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2009-08-16 23:13+0200\n"
+"PO-Revision-Date: \n"
+"Last-Translator: Pasi Niemi <pasi.niemi@iki.fi>\n"
+"Language-Team: Ultiorganizer\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Language: English\n"
+"X-Poedit-Country: UNITED KINGDOM\n"
+"X-Poedit-SourceCharset: iso-8859-15\n"
+"X-Poedit-Basepath: /home/cpt2ptu/src/ultiorganizer/trunk/pelikone3\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ext\n"
+"X-Poedit-SearchPath-2: lib\n"
+"X-Poedit-SearchPath-3: user\n"
+
+#: index.php:13
+msgid "Tervetuloa liitokiekkoliiton pelikoneeseen"
+msgstr "Welcome to the Ultiorganizer"
+
+#: index.php:15
+msgid "Mik&auml;li olet joukkueen yhteyshenkil&ouml;, niin anna viereisess&auml; oleviin kenttiin k&auml;ytt&auml;j&auml;tunnuksesi ja salasanasi, jotta tied&auml;mme mink&auml; joukkueen edustaja olet."
+msgstr "You can browse the series or you can login to manage your team information."
+
+#: playerlist.php:28
+msgid "Pelaajalista"
+msgstr "List of players"
+
+#: playerlist.php:32
+msgid "Nimi"
+msgstr "Name"
+
+#: playerlist.php:32
+msgid "Kaudet"
+msgstr "Seasons"
+
+#: playerlist.php:32
+#: gamecard.php:230
+#: gamecard.php:236
+msgid "Pelej&auml;"
+msgstr "Games"
+
+#: playerlist.php:32
+#: gamecard.php:241
+#: gamecard.php:247
+msgid "Sy&ouml;t&ouml;t"
+msgstr "Assists"
+
+#: playerlist.php:32
+#: gamecard.php:252
+#: gamecard.php:258
+msgid "Maalit"
+msgstr "Goals"
+
+#: playerlist.php:32
+#: gamecard.php:268
+msgid "Yht."
+msgstr "Tot."
+
+#: playerlist.php:71
+#: gamecard.php:317
+msgid "Palaa"
+msgstr "Return"
+
+#: builder.php:21
+msgid "Liitokiekkoliiton Pelikone"
+msgstr "Ultiorganizer"
+
+#: builder.php:59
+msgid "Peliaikataulut"
+msgstr "Game timetables"
+
+#: builder.php:60
+msgid "Pelatut pelit"
+msgstr "Played games"
+
+#: builder.php:61
+msgid "Joukkueet"
+msgstr "Teams"
+
+#: builder.php:67
+msgid "Sarjatilanteet"
+msgstr "Pool standings"
+
+#: builder.php:82
+msgid "Vanhat kaudet"
+msgstr "Old seasons"
+
+#: builder.php:85
+msgid "Pelikone linkit"
+msgstr "Ultiorganizer links"
+
+#: builder.php:88
+msgid "http://www.liitokiekkoliitto.fi/"
+msgstr "http://www.example.com"
+
+#: builder.php:88
+msgid "Suomen Liitokiekkoliitto"
+msgstr "Example Series Organizer"
+
+#: builder.php:89
+msgid "pelikone@liitokiekkoliitto.fi"
+msgstr "info@example.com"
+
+#: builder.php:89
+msgid "Yll&auml;pito"
+msgstr "Administration"
+
+#: gamecard.php:99
+#: gamecard.php:225
+msgid "Joukkue"
+msgstr "Team"
+
+#: gamecard.php:99
+msgid "Pelit"
+msgstr "Games"
+
+#: gamecard.php:99
+msgid "Voitot"
+msgstr "Wins"
+
+#: gamecard.php:99
+msgid "Tappiot"
+msgstr "Losses"
+
+#: gamecard.php:99
+msgid "Voitto-%"
+msgstr "Win-%"
+
+#: gamecard.php:99
+#: gamecard.php:100
+msgid "Tehdyt"
+msgstr "Scored"
+
+#: gamecard.php:100
+msgid "P&auml;&auml;stetyt"
+msgstr "Let scores"
+
+#: gamecard.php:100
+msgid "peli"
+msgstr "game"
+
+#: gamecard.php:100
+msgid "Maaliero"
+msgstr "Goal difference"
+
+#: gamecard.php:129
+msgid "Pelatut"
+msgstr "Played"
+
+#: gamecard.php:129
+msgid "pelit"
+msgstr "games"
+
+#: gamecard.php:134
+msgid "Ottelu"
+msgstr "Game"
+
+#: gamecard.php:135
+msgid "Tulos"
+msgstr "Outcome"
+
+#: gamecard.php:136
+msgid "Sarja"
+msgstr "Series"
+
+#: gamecard.php:161
+msgid "Kes&auml;"
+msgstr "Summer"
+
+#: gamecard.php:163
+msgid "Talvi"
+msgstr "Winter"
+
+#: gamecard.php:201
+msgid "Pistep&ouml;rssi"
+msgstr "Scoreboard"
+
+#: gamecard.php:208
+#: gamecard.php:214
+msgid "Pelaaja"
+msgstr "Player"
+

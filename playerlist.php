@@ -25,11 +25,11 @@ $serie = strtok($teaminfo['snimi'], " ");
 
 $players = TeamPlayerList($teamId );
 
-echo "<h1>Pelaajalista</h1>\n";
+echo "<h1>"._("Pelaajalista")."</h1>\n";
 echo "<h2>".$teaminfo['nimi']." (".$serie.")</h2>\n";
 
 echo "<table border='0' cellpadding='2'>\n";
-echo "<tr><th>Nimi</th><th>Kaudet</th><th>Pelej&auml;</th><th>Sy&ouml;t&ouml;t</th><th>Maalit</th><th>Yht.</th></tr>\n";
+echo "<tr><th>"._("Nimi")."</th><th>"._("Kaudet")."</th><th>"._("Pelej&auml;")."</th><th>"._("Sy&ouml;t&ouml;t")."</th><th>"._("Maalit")."</th><th>"._("Yht.")."</th></tr>\n";
 
 while($player = mysql_fetch_assoc($players))
 	{
@@ -68,7 +68,7 @@ echo "</table>\n";
 CloseConnection();
 	
 ?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
+<p><a href="javascript:history.go(-1);"><?php _("Palaa");?></a></p>
 
 <?php
 contentEnd();

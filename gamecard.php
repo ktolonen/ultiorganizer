@@ -96,8 +96,8 @@ while($game = mysql_fetch_assoc($games))
 echo "<h2>". htmlentities($team1['nimi']) ." vs. ". htmlentities($team2['nimi']) ."</h2>\n";	
 
 echo "<table border='1' width='100%'><tr>\n
-	<th>Joukkue</th><th>Pelit</th><th>Voitot</th><th>Tappiot</th><th>Voitto-%</th><th>Tehdyt</th>
-	<th>Tehdyt/peli</th><th>P&auml;&auml;stetyt</th><th>P&auml;&auml;stetyt/peli</th><th>Maaliero</th>
+	<th>"._("Joukkue")."</th><th>"._("Pelit")."</th><th>"._("Voitot")."</th><th>"._("Tappiot")."</th><th>"._("Voitto-%")."</th><th>"._("Tehdyt")."</th>
+	<th>"._("Tehdyt")."/"_.("peli")."</th><th>"._("P&auml;&auml;stetyt")."</th><th>"._("P&auml;&auml;stetyt")."/"._("peli")."</th><th>"._("Maaliero")."</th>
 	</tr>\n";
 	
 echo "<tr>
@@ -126,14 +126,14 @@ echo "<tr>
 
 echo "</table>\n";
 
-echo "<h2>Pelatut pelit</h2>\n";
+echo "<h2>"._("Pelatut")." "._("pelit")."</h2>\n";
 echo "<table border='1' cellspacing='2' width='100%'><tr>\n";
 
 $sBaseUrl="gamecard.php?Team1=$teamId1&amp;Team2=$teamId2&amp;";
 	
-echo "<th><a href='".$sBaseUrl."Sort=team'>Ottelu</a></th>";
-echo "<th><a href='".$sBaseUrl."Sort=result'>Tulos</a></th>";
-echo "<th><a href='".$sBaseUrl."Sort=serie'>Sarja</a></th></tr>";
+echo "<th><a href='".$sBaseUrl."Sort=team'>"._("Ottelu")."</a></th>";
+echo "<th><a href='".$sBaseUrl."Sort=result'>"._("Tulos")."</a></th>";
+echo "<th><a href='".$sBaseUrl."Sort=serie'>"._("Sarja")."</a></th></tr>";
 
 $points[200][8];
 mysql_data_seek($games,0);
@@ -158,9 +158,9 @@ while($game = mysql_fetch_assoc($games))
 		echo "<td><a href='gameplay.php?Game=".$game['peli_id']."'>".$game['kotipisteet']." - ".$game['vieraspisteet']."</a></td>";
 
 		if($arraySeason == "1")
-			echo "<td>Kes&auml; $arrayYear: <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
+			echo "<td>"._("Kes&auml;")." $arrayYear: <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
 		elseif($arraySeason == "2")
-			echo "<td>Talvi $arrayYear: <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
+			echo "<td>"._("Talvi")." $arrayYear: <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
 		else
 			echo "<td>".htmlentities($game['kausi']).": <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
 		
@@ -198,20 +198,20 @@ while($game = mysql_fetch_assoc($games))
 	}
 echo "</table>\n";
 
-echo "<h2>Pistep&ouml;rssi</h2>\n";
+echo "<h2>"._("Pistep&ouml;rssi")."</h2>\n";
 echo "<table border='1' width='75%'><tr><th>#</th>";
 
 $sorted = false;
 
 if($sorting == "pname")
 	{
-	echo "<th><b>Pelaaja</b></th>";
+	echo "<th><b>"._("Pelaaja")."</b></th>";
 	usort($points, create_function('$b,$a','return strcmp($b[1],$a[1]);')); 
 	$sorted = true;
 	}
 else
 	{
-	echo "<th><a href='".$sBaseUrl."Sort=pname'>Pelaaja</a></th>";
+	echo "<th><a href='".$sBaseUrl."Sort=pname'>"._("Pelaaja")."</a></th>";
 	}
 
 if($sorting == "pteam")
@@ -222,40 +222,40 @@ if($sorting == "pteam")
 	}
 else
 	{
-	echo "<th><a href='".$sBaseUrl."Sort=pteam'>Joukkue</a></th>";
+	echo "<th><a href='".$sBaseUrl."Sort=pteam'>"._("Joukkue")."</a></th>";
 	}
 
 if($sorting == "pgames")
 	{
-	echo "<th><b>Pelej&auml;</b></th>";
+	echo "<th><b>"._("Pelej&auml;")."</b></th>";
 	usort($points, create_function('$a,$b','return $a[3]==$b[3]?0:($a[3]>$b[3]?-1:1);'));
 	$sorted = true;
 	}
 else
 	{
-	echo "<th><a href='".$sBaseUrl."Sort=pgames'>Pelej&auml;</a></th>";
+	echo "<th><a href='".$sBaseUrl."Sort=pgames'>"._("Pelej&auml;")."</a></th>";
 	}
 
 if($sorting == "ppasses")
 	{
-	echo "<th><b>Sy&ouml;t&ouml;t</b></th>";
+	echo "<th><b>"._("Sy&ouml;t&ouml;t")."</b></th>";
 	usort($points, create_function('$a,$b','return $a[4]==$b[4]?0:($a[4]>$b[4]?-1:1);'));
 	$sorted = true;
 	}
 else
 	{
-	echo "<th><a href='".$sBaseUrl."Sort=ppasses'>Sy&ouml;t&ouml;t</a></th>";
+	echo "<th><a href='".$sBaseUrl."Sort=ppasses'>"._("Sy&ouml;t&ouml;t")."</a></th>";
 	}
 
 if($sorting == "pgoals")
 	{
-	echo "<th><b>Maalit</b></th>";
+	echo "<th><b>"._("Maalit")."</b></th>";
 	usort($points, create_function('$a,$b','return $a[5]==$b[5]?0:($a[5]>$b[5]?-1:1);'));
 	$sorted = true;
 	}
 else
 	{
-	echo "<th><a href='".$sBaseUrl."Sort=pgoals'>Maalit</a></th>";
+	echo "<th><a href='".$sBaseUrl."Sort=pgoals'>"._("Maalit")."</a></th>";
 	}
 		
 if(($sorting == "ptotal")||(!$sorted))
@@ -265,7 +265,7 @@ if(($sorting == "ptotal")||(!$sorted))
 	}
 else
 	{
-	echo "<th><a href='".$sBaseUrl."Sort=ptotal'>Yht.</a></th></tr>\n";
+	echo "<th><a href='".$sBaseUrl."Sort=ptotal'>"._("Yht.")."</a></th></tr>\n";
 	}
 		
 
@@ -314,10 +314,8 @@ echo "</table>\n";
 		 
 CloseConnection();
 	
-?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
+echo "<p><a href=\"javascript:history.go(-1);\">"._("Palaa")."</a></p>";
 
-<?php
 contentEnd();
 pageEnd();
 ?>

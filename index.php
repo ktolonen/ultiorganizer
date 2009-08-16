@@ -10,10 +10,9 @@ contentStart();
 
 //content
 ?>
-<h1>Tervetuloa liitokiekkoliiton pelikoneeseen</h1>
+<h1><?php _("Tervetuloa liitokiekkoliiton pelikoneeseen");?></h1>
 <p>
-Mik&auml;li olet joukkueen yhteyshenkil&ouml;, niin anna viereisess&auml; oleviin kenttiin k&auml;ytt&auml;j&auml;tunnuksesi
-ja salasanasi, jotta tied&auml;mme mink&auml; joukkueen edustaja olet.
+<?php _("Mik&auml;li olet joukkueen yhteyshenkil&ouml;, niin anna viereisess&auml; oleviin kenttiin k&auml;ytt&auml;j&auml;tunnuksesi ja salasanasi, jotta tied&auml;mme mink&auml; joukkueen edustaja olet."); ?>
 </p>
 <?php
 contentEnd();
