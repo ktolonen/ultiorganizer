@@ -2,7 +2,7 @@
 define("HOME",100);
 define("SEASONTIMETABLES",101);
 define("TEAMTIMETABLES",102);
-define("SASONPLAYED",103);
+define("SEASONPLAYED",103);
 define("SERIEPLAYED",104);
 define("TEAMPLAYED",105);
 define("TEAMS",106);

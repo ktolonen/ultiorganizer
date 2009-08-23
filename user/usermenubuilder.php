@@ -1,25 +1,35 @@
 <?php 
 
-include_once '../lib/database.php';
-include_once '../lib/season.functions.php';
-include_once '../lib/serie.functions.php';
-
 function userMenu($id)
 	{
-	$linklevel = "user/";
+	
 	
 	//if user owned view
 	if($id >= 200 && $id<300)
 		{
 		$linklevel = "";
+		include_once '../admin/adminmenubuilder.php';		
+		}
+	elseif($id >= 300 && $id<400)
+		{
+		$linklevel = "../user/";
+		include_once 'adminmenubuilder.php';
 		}
 	elseif($id >= 400 && $id<500)
 		{
 		$linklevel = "../user/";
+		include_once '../admin/adminmenubuilder.php';
+		}
+	else
+		{
+		$linklevel = "user/";	
+		include_once 'admin/adminmenubuilder.php';
 		}
 
-		
-	session_start();
+	if(!isset($_SESSION))
+		{ 
+		session_start();
+		}
 
 	//if not valid user session
 	if(!isset($_SESSION['uid']))
@@ -47,7 +57,13 @@ function userMenu($id)
 		echo "<a href='".$linklevel."teamplayers.php'>&raquo; Pelaajalista</a><br/>\n";
 		echo "<a href='".$linklevel."respgames.php'>&raquo; Vastuupelit</a><br/>\n";
 		echo "</td></tr>\n";
-		echo "<tr><td style='height:20px'></td></tr>";
+		
+		//build admin menus if admin has logged in
+		if(isset($_SESSION['admin']))
+			{
+			adminMenu($id);
+			}
+		echo "<tr><td style='height:5px'></td></tr>";
 		echo "<tr><td>
 				<input class='button' type='submit' name='logout' value='Kirjaudu ulos'/>
 			</td></tr>\n";

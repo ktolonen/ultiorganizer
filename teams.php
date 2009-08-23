@@ -5,7 +5,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/serie.functions.php';
 include_once 'builder.php';
 
-$LAYOUT_ID = $TEAMS;
+$LAYOUT_ID = TEAMS;
 
 //common page
 pageTop();
@@ -15,8 +15,11 @@ contentStart();
 <h1>Joukkueet</h1>
 <?php
 OpenConnection();
-$season = mysql_real_escape_string($_GET["Season"]);
+$season="";
 
+if(!empty($_GET["Season"]))
+	$season = mysql_real_escape_string($_GET["Season"]);
+	
 if(is_null($season) || $season=="")
 	{
 	$season=CurrenSeason();
@@ -25,7 +28,7 @@ if(is_null($season) || $season=="")
 $series = Series($season);
 while($serie = mysql_fetch_assoc($series))
 	{
-	echo "<h2>".$serie['nimi']."</h2>";
+	echo "<h2>".htmlentities($serie['nimi'])."</h2>";
 	
 	echo "
 	<table border='0' cellspacing='0' cellpadding='2' width='100%'>
@@ -38,8 +41,8 @@ while($serie = mysql_fetch_assoc($series))
 		{
 		echo "
 		<tr>
-		<td><a href='teamcard.php?Team=".$row['Joukkue_ID']."'>".$row['Nimi']."</a></td>
-		<td>".$row['Seura']."</td>";
+		<td><a href='teamcard.php?Team=".$row['Joukkue_ID']."'>".htmlentities($row['Nimi'])."</a></td>
+		<td>".htmlentities($row['Seura'])."</td>";
 		echo "<td><a href='playerlist.php?Team=".$row['Joukkue_ID']."'>Pelaajalista</a></td>";
 		echo "<td><a href='timetables.php?Team=".$row['Joukkue_ID']."'>Tulevat&nbsp;pelit</a></td>";
 		echo "<td><a href='played.php?Team=".$row['Joukkue_ID']."'>Pelatut&nbsp;pelit</a></td>";

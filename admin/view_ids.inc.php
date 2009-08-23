@@ -1,0 +1,13 @@
+<?php
+define("HOME",300);
+define("SEASONS",301);
+define("SERIEFORMATS",302);
+define("ADDSERIEFORMATS",303);
+define("PLACES",304);
+define("ADDPLACES",305);
+define("SEASONSERIES",306);
+define("ADDSEASONSERIES",307);
+define("SEASONTEAMS",308);
+define("ADDSEASONTEAMS",309);
+define("SERIETEAMS",310);
+?>

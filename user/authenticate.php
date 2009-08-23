@@ -32,9 +32,13 @@ if (empty($logout))
 		
 		$_SESSION['user'] = $userinfo['nimi'];
 		$_SESSION['id'] = $userinfo['id'];
+		$_SESSION['admin'] = $userinfo['admin'];
 		
 		//redirection in case of authentication success
-		header("location:index.php");
+		if(intval($userinfo['admin']))
+			header("location:../admin/index.php");
+		else
+			header("location:index.php");
 		}
 	else 
 		{

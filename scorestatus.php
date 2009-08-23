@@ -6,7 +6,7 @@ include_once 'lib/serie.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'builder.php';
 
-$LAYOUT_ID = $SCOREBOARD;
+$LAYOUT_ID = SCOREBOARD;
 
 //common page
 pageTop();
@@ -16,15 +16,21 @@ contentStart();
 <h1>Pistep&ouml;rssi</h1>
 <?php
 
+$seriesId=0;
+$teamId = 0;
+$sort="total";
+
 OpenConnection();
-$seriesId = intval($_GET["Series"]);
-$teamId = intval($_GET["Team"]);
+if(!empty($_GET["Series"]))
+	$seriesId = intval($_GET["Series"]);
+
+if(!empty($_GET["Team"]))
+	$teamId = intval($_GET["Team"]);
+
+if(!empty($_GET["Sort"]))
+	$sort = $_GET["Sort"];
 
 echo "<table cellspacing='1px' cellpadding='1px' border='1'>";
-
-$sort = $_GET["Sort"];
-if(is_null($sort))
-	$sort="total";
 
 $baseUrl="scorestatus.php?";
 $baseUrl.= "Team=$teamId&amp;";

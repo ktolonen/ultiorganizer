@@ -21,6 +21,7 @@ include_once '../lib/team.functions.php';
 
 OpenConnection();
 $serieId = intval($_GET["Serie"]);
+$season = $_GET["Season"];
 
 echo "<table class='pk_table'>
 	  <tr>

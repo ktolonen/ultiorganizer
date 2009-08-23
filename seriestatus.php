@@ -6,7 +6,8 @@ include_once 'lib/serie.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'builder.php';
 
-$LAYOUT_ID = $SERIESTATUS;
+include_once 'user/lib/serie.functions.php';
+$LAYOUT_ID = SERIESTATUS;
 
 //common page
 pageTop();
@@ -17,11 +18,11 @@ OpenConnection();
 $serieId = intval($_GET["Serie"]);
 $serieName = SerieName($serieId);
 
-echo "<h2>$serieName</h2>";
+echo "<h2>".htmlentities($serieName)."</h2>";
 
 echo "<table border='1' width='500'>
 	  <tr><th>Joukkue</th><th>Maaliero</th><th>+/-</th><th>Voitot</th><th>Tappiot</th><th>Pelit</th><th>Pisteet</th></tr>";
-
+SerieResolveStandings($serieId);
 $standings = SerieStandings($serieId);
 
 while($row = mysql_fetch_assoc($standings))

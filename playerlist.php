@@ -9,7 +9,7 @@ include_once 'lib/player.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'builder.php';
 
-$LAYOUT_ID = $PLAYERLIST;
+$LAYOUT_ID = PLAYERLIST;
 
 //common page
 pageTop();

@@ -5,7 +5,7 @@ include_once 'lib/place.functions.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/serie.functions.php';
 include_once 'builder.php';
-$LAYOUT_ID = $PLACEINFO;
+$LAYOUT_ID = PLACEINFO;
 
 //common page
 pageTop();

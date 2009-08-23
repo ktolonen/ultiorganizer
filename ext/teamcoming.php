@@ -21,6 +21,7 @@ include_once '../lib/serie.functions.php';
 include_once '../lib/team.functions.php';
 
 $teamId = intval($_GET["Team"]);
+$season = $_GET["Season"];
 
 OpenConnection();
 

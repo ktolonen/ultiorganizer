@@ -13,6 +13,20 @@ function GameResult($gameId)
 	return mysql_fetch_assoc($result);
 	}
 
+function GameSerie($gameId)
+	{
+	$query = sprintf("
+		SELECT sarja 
+		FROM pelik_peli  
+		WHERE Peli_ID='%s'",
+		mysql_real_escape_string($gameId));
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	$row = mysql_fetch_row($result);
+	
+	return $row[0];
+	}
 function GamePlayers($gameId, $teamId)
 	{
 	$query = sprintf("

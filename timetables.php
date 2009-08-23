@@ -7,9 +7,18 @@ include_once 'lib/serie.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'builder.php';
 
-$seriesId = intval($_GET["Series"]);
-$teamId = intval($_GET["Team"]);
-$print = intval($_GET["Print"]);
+$seriesId=0;
+$teamId=0;
+$print=0;
+
+if(!empty($_GET["Series"]))
+	$seriesId = intval($_GET["Series"]);
+
+if(!empty($_GET["Team"]))
+	$teamId = intval($_GET["Team"]);
+
+if(!empty($_GET["Print"]))	
+	$print = intval($_GET["Print"]);
 
 if($teamId)
 	$LAYOUT_ID = SEASONTIMETABLES;

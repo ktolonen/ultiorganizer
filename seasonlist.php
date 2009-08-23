@@ -46,7 +46,7 @@ while($season = mysql_fetch_assoc($seasons))
 	while($serie = mysql_fetch_assoc($series))
 		{
 		echo "<tr><td><a href='seriestatus.php?Serie=".$serie['sarja_id']."
-			'>".$serie['nimi']."</a></td></tr>";
+			'>".htmlentities($serie['nimi'])."</a></td></tr>";
 		}
 		echo "</table>";
 	

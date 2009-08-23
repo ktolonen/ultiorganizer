@@ -21,7 +21,7 @@ include_once '../lib/season.functions.php';
 include_once '../lib/serie.functions.php';
 include_once '../lib/team.functions.php';
 
-$season = intval($_GET["Season"]);
+$season = $_GET["Season"];
 $tournament = $_GET["Tournament"];
 $seriesId = 0;
 
@@ -32,7 +32,7 @@ if(!$season)
 	
 	$tournaments = Timetable($tournament, $season);
 	$prevTournament = "";
-	echo "<table>";
+	echo "<table width='95%'>";
 	
 	while($tournament = mysql_fetch_assoc($tournaments))
 		{
@@ -49,7 +49,7 @@ if(!$season)
 		
 		while($place = mysql_fetch_assoc($places))
 			{
-			echo "<tr><td><table width='100%' class='pk_table'><tr><td class='pk_tournament_td1'>";
+			echo "<tr><td style='width:100%'><table width='100%' class='pk_table'><tr><td class='pk_tournament_td1'>";
 			echo DefWeekDateFormat($tournament['AikaAlku']) ." ". htmlentities($tournament['Paikka']) ."</td></tr></table></td></tr>\n";
 				
 			$games = PlayedGames($season, $seriesId, $place['paikka_id']);
@@ -64,9 +64,18 @@ if(!$season)
 					
 					while($result = mysql_fetch_assoc($results))
 						{
-						echo "<tr><td class='pk_tournament_td2'>", DefHourFormat($result['Aika']) ,"</td>";
-						echo "<td class='pk_tournament_td2'>". htmlentities($result['KNimi']) ."</td><td class='pk_tournament_td2'>-</td><td class='pk_tournament_td2'>". htmlentities($result['VNimi']) ."</td>";
-						echo "<td class='pk_tournament_td2'>". intval($result['Kotipisteet']) ."</td><td class='pk_tournament_td2'>-</td><td class='pk_tournament_td2'>". intval($result['Vieraspisteet']) ."</td>";
+						echo "<tr><td style='width:15%' class='pk_tournament_td2'>", DefHourFormat($result['Aika']) ,"</td>";
+						echo "<td style='width:36%' class='pk_tournament_td2'>". htmlentities($result['KNimi']) ."</td>
+						<td style='width:3%' class='pk_tournament_td2'>-</td>
+						<td style='width:36%' class='pk_tournament_td2'>". htmlentities($result['VNimi']) ."</td>";
+						if((intval($result['Kotipisteet'])+intval($result['Vieraspisteet']))==0)
+							echo "<td style='text-align: center;width:4%' class='pk_tournament_td2'>?</td>
+								<td style='text-align: center;width:2%' class='pk_tournament_td2'>-</td>
+								<td style='text-align: center;width:4%' class='pk_tournament_td2'>?</td>";
+						else
+							echo "<td style='text-align: center;width:4%' class='pk_tournament_td2'>". intval($result['Kotipisteet']) ."</td>
+								<td style='text-align: center;width:2%' class='pk_tournament_td2'>-</td>
+								<td style='text-align: center;width:4%' class='pk_tournament_td2'>". intval($result['Vieraspisteet']) ."</td>";
 						echo "</tr>\n";
 						}
 					}

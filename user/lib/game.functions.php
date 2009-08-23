@@ -72,9 +72,27 @@ function GameRemoveAllScores($gameId)
 	return $result;
 	}
 
-function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home)
+function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home, $callahan)
 	{
 	$query = sprintf("
+		INSERT INTO pelik_maali 
+		(maali_peli, maali_nro, syottaja, tekija, aika, ktilanne, vtilanne, kotimaali, callahan) 
+		VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+		mysql_real_escape_string($gameId),
+		mysql_real_escape_string($number),
+		mysql_real_escape_string($pass),
+		mysql_real_escape_string($goal),
+		mysql_real_escape_string($time),
+		mysql_real_escape_string($hscores),
+		mysql_real_escape_string($ascores),
+		mysql_real_escape_string($home),
+		mysql_real_escape_string($callahan));
+		
+	$result = mysql_query($query);
+	//support for old database
+	if (!$result) 
+		{ 
+		$query = sprintf("
 		INSERT INTO pelik_maali 
 		(maali_peli, maali_nro, syottaja, tekija, aika, ktilanne, vtilanne, kotimaali) 
 		VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
@@ -87,7 +105,9 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
 		mysql_real_escape_string($ascores),
 		mysql_real_escape_string($home));
 		
-	$result = mysql_query($query);
+		$result = mysql_query($query);
+		}
+	
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
 	return $result;

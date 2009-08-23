@@ -10,6 +10,16 @@ function Series($seasonId)
 	return $result;
 	}
 
+function SeasonSeriesInfo($seasonId)
+	{
+	$query = sprintf("SELECT sarja_id, nimi, showteams, jatkosarja FROM pelik_sarja WHERE kausi = '%s' ORDER BY Luokat ASC, Sarja_ID ASC",
+		mysql_real_escape_string($seasonId));
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
+	
 function CurrenSeason()
 	{
 	$query = sprintf("SELECT arvo FROM pelik_asetukset WHERE nimi = 'CurrentSeason'");
@@ -95,7 +105,7 @@ function Timetable($tournamentId, $seasonId)
 		SELECT Turnaus, Paikka, AikaAlku, Paikka_ID 
 		FROM pelik_paikka 
 		WHERE UPPER(Turnaus) = '%s' AND kausi='%s' 
-		ORDER BY AikaAlku DESC, Paikka ASC",
+		ORDER BY AikaAlku ASC, Paikka ASC",
 		mysql_real_escape_string($tournamentId),
 		mysql_real_escape_string($seasonId));
 	
@@ -190,4 +200,16 @@ function GetAllPlayedGames($team1, $team2, $serie, $sorting)
 	return $result;
 	}	
 
+function SeasonTeams()
+	{
+	$query = sprintf("
+		SELECT pelik_joukkue.Joukkue_ID, pelik_joukkue.Nimi, pelik_joukkue.Seura
+		FROM pelik_joukkue 
+		WHERE pelik_joukkue.Sarja IS NULL 
+		ORDER BY Nimi ASC");
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
 ?>

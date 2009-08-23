@@ -4,7 +4,7 @@ include_once 'builder.php';
 $LAYOUT_ID = HOME;
 
 //common page
-pageTop();
+pageTop(false);
 leftMenu($LAYOUT_ID);
 contentStart();
 

@@ -7,13 +7,19 @@ include_once 'lib/serie.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'builder.php';
 
-$seriesId = intval($_GET["Series"]);
-$teamId = intval($_GET["Team"]);
+$seriesId=0;
+$teamId=0;
+$season=0;
+
+if(!empty($_GET["Series"]))
+	$seriesId = intval($_GET["Series"]);
+if(!empty($_GET["Team"]))
+	$teamId = intval($_GET["Team"]);
 
 if($teamId)
 	$LAYOUT_ID = SEASONPLAYED;
 elseif($seriesId)
-	$LAYOUT_ID = SERIELAYED;
+	$LAYOUT_ID = SERIEPLAYED;
 else
 	$LAYOUT_ID = TEAMPLAYED;
 
@@ -60,7 +66,10 @@ if($teamId)
 				{
 				echo "<tr><td style='width:6%'>", DefHourFormat($game['Aika']) ,"</td>";
 				echo "<td style='width:20%'>". htmlentities($game['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:20%'>". htmlentities($game['VNimi']) ."</td>";
-				echo "<td style='width:5%'>". intval($game['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($game['Vieraspisteet']) ."</td>";
+				if((intval($game['Kotipisteet'])+intval($game['Vieraspisteet']))==0)
+					echo "<td style='width:5%'>?</td><td style='width:2%'>-</td><td style='width:5%'>?</td>";
+				else
+					echo "<td style='width:5%'>". intval($game['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($game['Vieraspisteet']) ."</td>";
 				if (intval($game['Maaleja'])>0)
 					echo "<td style='width:15%'><a href='gameplay.php?Game=". $game['Peli_ID'] ."'>pelin kulku</a></td>";
 				else
@@ -118,7 +127,10 @@ elseif($seriesId)
 						{
 						echo "<tr><td style='width:10%'>", DefHourFormat($result['Aika']) ,"</td>";
 						echo "<td style='width:25%'>". htmlentities($result['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($result['VNimi']) ."</td>";
-						echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
+						if((intval($result['Kotipisteet'])+intval($result['Vieraspisteet']))==0)
+							echo "<td style='width:5%'>?</td><td style='width:2%'>-</td><td style='width:10%'>?</td>";
+						else
+							echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
 						if (intval($result['Maaleja'])>0)
 							echo "<td style='width:15%'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>pelin kulku</a></td>";
 						else
@@ -178,7 +190,11 @@ else
 						{
 						echo "<tr><td style='width:10%'>", DefHourFormat($result['Aika']) ,"</td>";
 						echo "<td style='width:25%'>". htmlentities($result['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($result['VNimi']) ."</td>";
-						echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
+						if((intval($result['Kotipisteet'])+intval($result['Vieraspisteet']))==0)
+							echo "<td style='width:5%'>?</td><td style='width:2%'>-</td><td style='width:10%'>?</td>";
+						else
+							echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
+							
 						if (intval($result['Maaleja'])>0)
 							echo "<td style='width:15%' align='right'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>pelin kulku</a></td>";
 						else

@@ -6,6 +6,7 @@ include_once '../lib/common.functions.php';
 include_once '../lib/game.functions.php';
 
 include_once 'lib/game.functions.php';
+include_once 'lib/serie.functions.php';
 $LAYOUT_ID = ADDRESULT;
 
 //common page
@@ -19,21 +20,23 @@ OpenConnection();
 $gameId = intval($_GET["Game"]);
 
 //process itself if remove button was pressed
-$save = $_POST['save'];
-if(isset($save))
+if(!empty($_POST['save']))
 	{
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
 	$ok=GameSetResult($gameId, $home, $away);
 	if($ok)
+		{
 		echo "<p>Tulos tallennettu.</p>";
+		SerieResolveStandings(GameSerie($gameId));
+		}
 	}
 	
 $result = GameResult($gameId );
 
 echo "<form  method='post' action='addresult.php?Game=".$gameId."'>
 <table cellpadding='2'>
-<tr><td><b>". $result['KNimi'] ."</b></td><td><b> - </b></td><td><b>". $result['VNimi'] ."</b></td></tr>
+<tr><td><b>". htmlentities($result['KNimi']) ."</b></td><td><b> - </b></td><td><b>". htmlentities($result['VNimi']) ."</b></td></tr>
 <tr>
 <td><input class='input' name='home' value='". $result['kotipisteet'] ."' maxlength='2' size='5'/></td>
 <td> - </td>

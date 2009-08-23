@@ -20,8 +20,16 @@ include_once '../lib/serie.functions.php';
 include_once '../lib/team.functions.php';
 
 OpenConnection();
-$seriesId = intval($_GET["Series"]);
-$teamId = intval($_GET["Team"]);
+$seriesId=0;
+$teamId=0;
+$season=0;
+
+if(!empty($_GET["Season"]))
+	$season = $_GET["Season"];
+if(!empty($_GET["Series"]))
+	$seriesId = intval($_GET["Series"]);
+if(!empty($_GET["Team"]))
+	$teamId = intval($_GET["Team"]);
 $sort="total";
 
 echo "<table class='pk_table'>";

@@ -18,9 +18,7 @@ contentStart();
 OpenConnection();
 
 //process itself if submit was pressed
-$save = $_POST['save'];
-
-if(isset($save))
+if(!empty($_POST['save']))
 	{
 	$newUsername=$_POST['UserName'];
 	$newPassword=$_POST['Password'];

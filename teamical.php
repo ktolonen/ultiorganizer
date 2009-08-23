@@ -7,9 +7,9 @@ include_once 'lib/serie.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'builder.php';
 
-$seriesId = intval($_GET["Series"]);
+header("Content-Type: text/Calendar; charset=utf-8");
+
 $teamId = intval($_GET["Team"]);
-$print = intval($_GET["Print"]);
 
 OpenConnection();
 $season = TeamSeason($teamId);
@@ -29,9 +29,9 @@ while($tournament = mysql_fetch_assoc($tournaments))
 	while($game = mysql_fetch_assoc($games))
 		{
 		echo "\nBEGIN:VEVENT";
-		echo "\nSUMMARY:". $game['KNimi'] ."-". $game['VNimi'];
-		echo "\nDESCRIPTION:". $tournament['Turnaus'];
-		echo "\nLOCATION: ". $tournament['Paikka'];
+		echo "\nSUMMARY:". utf8_encode($game['KNimi'] ."-". $game['VNimi']);
+		echo "\nDESCRIPTION:". utf8_encode($tournament['Turnaus']);
+		echo "\nLOCATION: ". utf8_encode($tournament['Paikka']);
 		echo "\nDTSTART;TZID=Europe/Helsinki:". TimeToIcal($game['Aika']);
 		if($arraySeason == "2")
 			echo "\nDURATION: P1H";

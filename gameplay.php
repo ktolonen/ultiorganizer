@@ -10,7 +10,7 @@ include_once 'builder.php';
 $LAYOUT_ID = GAMEPLAY;
 
 //common page
-pageTop();
+pageTop(false);
 leftMenu($LAYOUT_ID);
 contentStart();
 //content
@@ -83,7 +83,8 @@ while($row = mysql_fetch_assoc($guest_team_score_board))
 echo "</table></td></tr></table>\n";
 
 //timeline
-$points[50][7];
+//$points[50][7];
+$points=array(array());
 $i=0;
 $lprev=0;
 $htAt = intval($rules['PeliPist']);
@@ -128,8 +129,10 @@ while($goal = mysql_fetch_assoc($goals))
 echo "<table border='1' style='height: 15px; color: white; border-width: 1; border-color: white; width: 97%;'><tr>\n";
 
 $maxlength = 600;
+$latestHomeGoalTime = 0;
+$latestGuestGoalTime = 0;
 $offset = $maxlength/$total;
-for ($i=0; $i < 50 && $points[$i][0] != ""; $i++) 
+for ($i=0; $i < 50 && !empty($points[$i][0]); $i++) 
 	{
 	if($points[$i][1]==1)
 		{
@@ -187,7 +190,10 @@ while($goal = mysql_fetch_assoc($goals))
 	echo "$i</td>";
 	$i++;
 	echo "<td>". SecToMin($goal['aika']) ."</td>";
-	echo "<td>". htmlentities($goal['senimi']) ." ". htmlentities($goal['ssnimi']) ."&nbsp;</td>";
+	if(intval($goal['callahan']))
+		echo "<td class='callahan'>Callahan-maali&nbsp;</td>";
+	else
+		echo "<td>". htmlentities($goal['senimi']) ." ". htmlentities($goal['ssnimi']) ."&nbsp;</td>";
 	echo "<td>". htmlentities($goal['tenimi']) ." ". htmlentities($goal['tsnimi']) ."&nbsp;</td>";
 	echo "<td>". $goal['ktilanne'] ." - ". $goal['vtilanne'] ."</td>";
 	echo "<td>";
@@ -314,7 +320,9 @@ while($goal = mysql_fetch_assoc($allgoals))
 		$nVOffencePoint++;
 	
 	//If turnovers before goal
-	mysql_data_seek($turnovers, 0);
+	if(mysql_num_rows($turnovers))
+		mysql_data_seek($turnovers, 0);
+		
 	while($turnover = mysql_fetch_assoc($turnovers))
 		{
 		if((intval($turnover['aika']) > $nClockTime) &&

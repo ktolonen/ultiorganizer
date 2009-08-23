@@ -19,22 +19,26 @@ leftMenu($LAYOUT_ID);
 contentStart();
 //content
 OpenConnection();
+$teamId=0;
+$gameId=0;
 
-$teamId = intval($_GET["Team"]);
+if(!empty($_GET["Team"]))
+	$teamId = intval($_GET["Team"]);
 
 //set when called from addplayerlist view
-$gameId = intval($_GET["Game"]);
+if(!empty($_GET["Game"]))
+	$gameId = intval($_GET["Game"]);
 
 if(empty($teamId))
 	{
 	$userinfo = UserInfo($_SESSION['id']);
 	$teamId = $userinfo['team'];
 	}
+	
 $teaminfo = TeamInfo($teamId);
 
 //process itself if remove button was pressed
-$remove = $_POST['remove'];
-if(isset($remove))
+if(!empty($_POST['remove']))
 	{
 	
 	foreach($_POST["delcheck"] as $delId) 
@@ -55,8 +59,7 @@ if(isset($remove))
 	}
 
 //process itself if add button was pressed
-$add = $_POST['add'];
-if(isset($add))
+if(!empty($_POST['add']))
 	{
 	
 	foreach($_POST["addcheck"] as $addId) 
@@ -83,7 +86,7 @@ if(isset($add))
 		}
 	}
 
-echo "<h2>Pelaajalista: ". $teaminfo['nimi'] ."</h2>\n";
+echo "<h2>Pelaajalista: ". htmlentities($teaminfo['nimi']) ."</h2>\n";
 
 echo "<form method='post' action='teamplayers.php?Team=$teamId&amp;Game=$gameId'>\n";
 echo "<table border='0' cellpadding='2' width='500px'>\n";
@@ -117,8 +120,7 @@ if(!empty($gameId))
 echo "<hr/>\n";
 
 //if NOT search pressed
-$search = $_POST['search'];
-if(empty($search))
+if(empty($_POST['search']))
 	{
 
 	echo "
@@ -210,16 +212,19 @@ pageEnd();
 //prints players from given array
 function PrintPlayers($players)
 	{
-	while($player = mysql_fetch_assoc($players))
+	if($players)
 		{
-		echo "<tr>
-			<td style='text-align: center;'><input type='checkbox' name='addcheck[]' value='".$player['Jasennumero']."'/></td>
-			<td>". $player['Jasennumero'] ."</td> 
-			<td>". DefBirthdayFormat($player['SyntAika']) ."</td>
-			<td>". htmlentities($player['Etunimi'] ." ". $player['Sukunimi']) ."</td>
-			<td>". $player['Jasenmaksu'] ."</td>
-			<td>". $player['Lisenssi'] ."</td>
-			</tr>\n";
+		while($player = mysql_fetch_assoc($players))
+			{
+			echo "<tr>
+				<td style='text-align: center;'><input type='checkbox' name='addcheck[]' value='".$player['Jasennumero']."'/></td>
+				<td>". $player['Jasennumero'] ."</td> 
+				<td>". DefBirthdayFormat($player['SyntAika']) ."</td>
+				<td>". htmlentities($player['Etunimi'] ." ". $player['Sukunimi']) ."</td>
+				<td>". $player['Jasenmaksu'] ."</td>
+				<td>". $player['Lisenssi'] ."</td>
+				</tr>\n";
+			}
 		}
 	}
 ?>

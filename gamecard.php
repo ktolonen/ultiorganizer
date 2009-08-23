@@ -9,24 +9,27 @@ include_once 'lib/player.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'builder.php';
 
-$LAYOUT_ID = $GAMECARD;
+$LAYOUT_ID = GAMECARD;
 
 //common page
-pageTop();
+pageTop(false);
 leftMenu($LAYOUT_ID);
 contentStart();
 
 //content
+$teamId1=0;
+$teamId2=0;
+$sorting="serie";
 
 OpenConnection();
-$teamId1 = intval($_GET["Team1"]);
-$teamId2 = intval($_GET["Team2"]);
-$sorting = $_GET["Sort"];
+if(!empty($_GET["Team1"]))
+	$teamId1 = intval($_GET["Team1"]);
 
-if(is_null($sorting))
-	{
-	$sorting="serie";
-	}
+if(!empty($_GET["Team2"]))
+	$teamId2 = intval($_GET["Team2"]);
+
+if(!empty($_GET["Sort"]))
+	$sorting = $_GET["Sort"];
 
 $team1 = TeamInfo($teamId1);
 $team2 = TeamInfo($teamId2);
@@ -135,7 +138,7 @@ echo "<th><a href='".$sBaseUrl."Sort=team'>"._("Ottelu")."</a></th>";
 echo "<th><a href='".$sBaseUrl."Sort=result'>"._("Tulos")."</a></th>";
 echo "<th><a href='".$sBaseUrl."Sort=serie'>"._("Sarja")."</a></th></tr>";
 
-$points[200][8];
+$points=array(array());
 mysql_data_seek($games,0);
 
 while($game = mysql_fetch_assoc($games))
@@ -170,7 +173,7 @@ while($game = mysql_fetch_assoc($games))
 		while($row = mysql_fetch_assoc($scores))
 			{
 			$bFound=false;	
-			for ($i=0; ($i < 200) && ($points[$i][0] != ""); $i++) 
+			for ($i=0; ($i < 200) && !empty($points[$i][0]); $i++) 
 				{
 				if (($points[$i][0] == $row['jnro']) && ($points[$i][2] == $row['jnimi']))
 					{
@@ -269,7 +272,7 @@ else
 	}
 		
 
-for ($i=0; $i < 200 && $points[$i][0] != ""; $i++) 
+for ($i=0; $i < 200 && !empty($points[$i][0]); $i++) 
 	{
 	echo "<tr> <td>",$i+1,"</td>";
 		

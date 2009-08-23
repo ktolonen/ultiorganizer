@@ -24,9 +24,10 @@ function SecToMin($sec)
 	
 function WeekdayString($timestamp, $cap)
 	{
-	$datetime = date_create($timestamp);
-	$weekday = date_format($datetime, 'w');
-	
+	//$datetime = date_create($timestamp);
+	//$weekday = date_format($datetime, 'w');
+	$datetime = strtotime($timestamp);
+	$weekday = date('w',$datetime);	
 	switch($weekday)
 		{
 		case 0:
@@ -60,9 +61,10 @@ function WeekdayString($timestamp, $cap)
 	
 function ShortDate($timestamp)
 	{
-	$datetime = date_create($timestamp);
-	$shortdate = date_format($datetime, 'j.n.Y');
-
+	//$datetime = date_create($timestamp);
+	//$shortdate = date_format($datetime, 'j.n.Y');
+	$datetime = strtotime($timestamp);
+	$shortdate = date('j.n.Y',$datetime);
 	return $shortdate;
 	}
 
@@ -73,25 +75,29 @@ function DefWeekDateFormat($timestamp)
 	
 function DefHourFormat($timestamp)
 	{
-	$datetime = date_create($timestamp);
-	$hours = date_format($datetime, 'H:i');
+	//$datetime = date_create($timestamp);
+	//$hours = date_format($datetime, 'H:i');
+	$datetime = strtotime($timestamp);
+	$hours = date('H:i',$datetime);
 
 	return $hours;
 	}	
 
 function DefBirthdayFormat($timestamp)
 	{
-	$datetime = date_create($timestamp);
-	$hours = date_format($datetime, 'd.m.Y');
-
+	//$datetime = date_create($timestamp);
+	//$hours = date_format($datetime, 'd.m.Y');
+	$datetime = strtotime($timestamp);
+	$hours = date('d.m.Y',$datetime);
 	return $hours;
 	}	
 	
 function TimeToIcal($timestamp)
 	{
-	$datetime = date_create($timestamp);
-	$time = date_format($datetime, 'Ymd\THi00');
-
+	//$datetime = date_create($timestamp);
+	//$time = date_format($datetime, 'Ymd\THi00');
+	$datetime = strtotime($timestamp);
+	$time = date('Ymd\THi00',$datetime);
 	return $time;
 	}
 
@@ -124,7 +130,8 @@ function TimeToSec($timestamp)
 
 function GetURLBase()
 	{
-	$url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	//$url = "http://".$_SERVER['HTTP_HOST'].$_SERVER['REQUEST_URI'];
+	$url = "http://".$_SERVER['SERVER_NAME'].$_SERVER['SCRIPT_NAME'];
 	$cutpos = strrpos($url, "/");
 	return substr($url,0,$cutpos);
 	}	

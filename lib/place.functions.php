@@ -10,4 +10,15 @@ function PlaceInfo($placeId)
 	
 	return  mysql_fetch_assoc($result);
 	}
+	
+function PlaceTemplates()
+	{
+	$query = sprintf("SELECT * FROM pelik_paikka WHERE kausi IS NULL");
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return  $result;
+	}
+	
 ?>

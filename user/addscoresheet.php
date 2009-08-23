@@ -30,6 +30,11 @@ function validNumber(field)
 	field.value=field.value.replace(/[^0-9]/g, '')
 	}
 
+function validNumberX(field) 
+	{
+	field.value=field.value.replace(/[^0-9|^xX]/g, '')
+	}
+	
 function updateScores(index) 
 	{
 	var i=0;
@@ -93,12 +98,10 @@ contentStart();
 OpenConnection();
 $gameId = intval($_GET["Game"]);
 
-
 $game_result = GameResult($gameId);
 
 //process itself if submit was pressed
-$save = $_POST['save'];
-if(isset($save))
+if(!empty($_POST['save']))
 	{
 	$time_delim = array(",", ";", ":");
 	//set score sheet keeper
@@ -150,10 +153,20 @@ if(isset($save))
 	$prevtime=0;
 	for($i=0;$i<$maxscores; $i++)
 		{
-		$team = $_POST['team'.$i];
-		$pass = $_POST['pass'.$i];
-		$goal = $_POST['goal'.$i];
-		$time = $_POST['time'.$i];
+		$callahan = 0;
+		$team="";
+		$pass="";
+		$goal="";
+		$time="";
+		if(!empty($_POST['team'.$i]))
+			$team = $_POST['team'.$i];
+		if(!empty($_POST['pass'.$i]))
+			$pass = $_POST['pass'.$i];
+		if(!empty($_POST['goal'.$i]))
+			$goal = $_POST['goal'.$i];
+		if(!empty($_POST['time'.$i]))
+			$time = $_POST['time'.$i];
+			
 		$time = str_replace($time_delim,".",$time);
 		$time = TimeToSec($time);
 		if(!empty($team) && $time == $htime)
@@ -162,14 +175,22 @@ if(isset($save))
 		if(!empty($team) && $time <= $prevtime)
 			echo "<p class='warning'>Piste ",$i+1,": aika ei voi olla sama tai aikaisempi kuin edellisess&auml; pisteess&auml;!</p>";
 		
+		if(strcasecmp($pass,'xx')==0 || strcasecmp($pass,'x')==0)
+			$callahan = 1;
+			
 		$prevtime = $time;
 			
 		if(!empty($team) && $team=='H')
 			{
 			$h++;
-			$pass = GamePlayerFromNumber($gameId, $game_result['kotijoukkue'], $pass);
-			if($pass==-1)
-				echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
+			if(!$callahan)
+				{
+				$pass = GamePlayerFromNumber($gameId, $game_result['kotijoukkue'], $pass);
+				if($pass==-1)
+					echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
+				}
+			else
+				$pass=-1;
 				
 			$goal = GamePlayerFromNumber($gameId, $game_result['kotijoukkue'], $goal);
 			if($goal==-1)
@@ -178,28 +199,31 @@ if(isset($save))
 			if($pass==$goal)
 				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;ll&auml; ja sy&ouml;tt&auml;j&auml;ll&auml; sama numero '".$_POST['goal'.$i]."'!</p>";
 				
-			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,1);
+			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,1,$callahan);
 			}
 		elseif(!empty($team) && $team=='A')
 			{
 			$a++;
-			$pass = GamePlayerFromNumber($gameId, $game_result['vierasjoukkue'], $pass);
-			if($pass==-1)
-				echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
-
+			if(!$callahan)
+				{
+				$pass = GamePlayerFromNumber($gameId, $game_result['vierasjoukkue'], $pass);
+				if($pass==-1)
+					echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
+				}
+			else
+				$pass=-1;
+				
 			$goal = GamePlayerFromNumber($gameId, $game_result['vierasjoukkue'], $goal);
 			if($goal==-1)
 				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;n numeroa '".$_POST['goal'.$i]."' ei pelaajalistalla!</p>";
 
-			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,0);
+			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,0,$callahan);
 			}
 		}
 	echo "<p>P&ouml;yt&auml;kirja tallennettu (klo. ".DefTimestamp().")!</p>";
 	echo "<a href='../gameplay.php?Game=$gameId'>pelin kulku</a>";
 	}
 $game_result = GameResult($gameId);
-$home_playerlist = GamePlayers($game_result['kotijoukkue']);
-$away_playerlist = GamePlayers($game_result['vierasjoukkue']);
 $place = PlaceInfo($game_result['paikka']);
 
 
@@ -300,6 +324,11 @@ echo "<tr>";
 echo "<td><input class='button' type='submit' value='Tallenna' name='save'/></td>";
 echo "<td><input class='button' type='reset' value='Peruuta' name='reset'/></td>";
 echo "</tr>";
+echo "<tr><td colspan='2'>
+<p>Sy&ouml;t&auml; pelin p&ouml;yt&auml;kirja:<br/>
+- Ajan erottimena voit k&auml;ytt&auml;&auml; .,:; -merkkej&auml;.<br/>
+- Merkitse Callahan-maaliin sy&ouml;tt&auml;j&auml;ksi XX.<br/>
+- P&ouml;yt&auml;kirjan voi tallentaa v&auml;lill&auml;.</p></td></tr>";
 echo "<tr><td colspan='2'><p><a href='respgames.php'>Takaisin vastuupeleihin</a></p></td></tr>";
 echo "</table>\n";
 
@@ -327,12 +356,20 @@ while($row = mysql_fetch_assoc($scores))
 		echo "<td style='WIDTH: 40px' class='center'><input onclick=\"updateScores($i);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
 		echo "<td style='WIDTH: 40px' class='center'><input onclick=\"updateScores($i);\" id='ateam$i' name='team$i' type='radio' checked='checked' value='A' /></td>";			
 		}
-	$n = PlayerNumber($row['syottaja'],$gameId);
-	if($n < 0)
-		$n="";
-		
-	echo "<td class='center' style='WIDTH: 50px'><input class='input' onkeyup=\"validNumber(this);\" id='pass$i' name='pass$i' maxlength='2' size='3' value='$n'/></td>";
 	
+	if (intval($row['callahan']))
+		{
+		echo "<td class='center' style='WIDTH: 50px'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' maxlength='2' size='3' value='XX'/></td>";
+		}
+	else
+		{
+		$n = PlayerNumber($row['syottaja'],$gameId);
+		if($n < 0)
+			$n="";
+			
+		echo "<td class='center' style='WIDTH: 50px'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' maxlength='2' size='3' value='$n'/></td>";
+		}
+		
 	$n = PlayerNumber($row['tekija'],$gameId);
 	if($n < 0)
 		$n="";
@@ -352,7 +389,7 @@ for($i;$i<$maxscores; $i++)
 	echo "<td class='center' style='WIDTH: 25px'>",$i+1,"</td>\n";
 	echo "<td class='center' style='WIDTH: 40px'><input onclick=\"updateScores($i);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
 	echo "<td class='center' style='WIDTH: 40px'><input onclick=\"updateScores($i);\" id='ateam$i' name='team$i' type='radio' value='A' /></td>";			
-	echo "<td class='center' style='WIDTH: 50px'><input class='input' onkeyup=\"validNumber(this);\" id='pass$i' name='pass$i' size='3' maxlength='2'/></td>";
+	echo "<td class='center' style='WIDTH: 50px'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' size='3' maxlength='2'/></td>";
 	echo "<td  class='center' style='WIDTH: 50px'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' size='3' maxlength='2'/></td>";
 	echo "<td style='WIDTH: 60px'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8'/></td>";
 	echo "<td class='center' style='WIDTH: 60px'><input class='fakeinput center' id='sit$i' name='sit$i' size='7' disabled='disabled'/></td>";

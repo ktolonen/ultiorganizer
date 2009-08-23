@@ -7,7 +7,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/serie.functions.php';
 include_once 'builder.php';
 
-$LAYOUT_ID = $TEAMCARD;
+$LAYOUT_ID = TEAMCARD;
 
 //common page
 pageTop();
@@ -22,8 +22,8 @@ $teaminfo = TeamInfo($teamId);
 
 $serie = strtok($teaminfo['snimi'], " ");
 
-echo "<h1>".$teaminfo['nimi']." (".$serie.")</h1>";
-echo "<h2>".$teaminfo['seura']."</h2>";
+echo "<h1>".htmlentities($teaminfo['nimi'])." (".$serie.")</h1>";
+echo "<h2>".htmlentities($teaminfo['seura'])."</h2>";
 
 $seasons = TeamPlayedSeasons($teaminfo['nimi'], $serie);
 
@@ -94,7 +94,7 @@ while($season = mysql_fetch_assoc($seasons))
 			echo "<tr><td>".$season['kausi']."</td>";
 			}
 		
-		echo "<td>".$game['nimi']."</td>";
+		echo "<td>".htmlentities($game['nimi'])."</td>";
 		echo "<td>".$game['activerank']."</td>";
 		
 		$nCurSer = $game['sarja'];
@@ -236,7 +236,7 @@ if($nOutdoorGames+$nIndoorGames+$nOtherGames)
 echo "<tr class='highlight'><td>Yht.</td>
 <td>",$nOutdoorGames+$nIndoorGames+$nOtherGames,"</td>
 <td>",$nOutdoorWins+$nIndoorWins+$nOtherWins,"</td>
-<td>",$nOutdoorLoses+$nIndoorLoses+$nLoses,"</td>
+<td>",$nOutdoorLoses+$nIndoorLoses+$nOtherLoses,"</td>
 <td>",number_format(SafeDivide($nOutdoorWins+$nIndoorWins+$nOtherWins,$nOutdoorGames+$nIndoorGames+$nOtherGames)*100,1)," %</td>
 <td>",$nOutdoorGoalsMade+$nIndoorGoalsMade+$nOtherGoalsMade,"</td>
 <td>",number_format(SafeDivide($nOutdoorGoalsMade+$nIndoorGoalsMade+$nOtherGoalsMade,$nOutdoorGames+$nIndoorGames+$nOtherGames),1),"</td>
@@ -252,10 +252,11 @@ echo "</table>";
 
 echo "<h2>Pelatut pelit</h2>";
 echo "<table border='1' cellspacing='2' width='100%'><tr>";
-$sort = $_GET["Sort"];
 
-if(is_null($sort))
-	$sort="serie";
+$sort="serie";
+
+if(!empty($_GET["Sort"]))
+	$sort = $_GET["Sort"];
 
 $played = TeamPlayedGames($teaminfo['nimi'], $serie, $sort);
 
@@ -273,30 +274,30 @@ $arrayYear = strtok($row['kausi'], ".");
 $arraySeason = strtok(".");
 	
 	if($row['kotipisteet'] > $row['vieraspisteet'])
-		echo "<tr><td><b>".$row['knimi']."</b>";
+		echo "<tr><td><b>".htmlentities($row['knimi'])."</b>";
 	else
-		echo "<tr><td>".$row['knimi'];
+		echo "<tr><td>".htmlentities($row['knimi']);
 	
 	
 	if($row['kotipisteet'] < $row['vieraspisteet'])
-		echo " - <b>".$row['vnimi']."</b></td>";
+		echo " - <b>".htmlentities($row['vnimi'])."</b></td>";
 	else
-		echo " - ".$row['vnimi']."</td>";
+		echo " - ".htmlentities($row['vnimi'])."</td>";
 	
 	
 	echo "<td><a href=\"gameplay.php?Game=" .$row['peli_id']."\">".$row['kotipisteet']." - " .$row['vieraspisteet']. "</a></td>";
 
 	if( $arraySeason == "1")
 		{
-		echo "<td>Kes&auml; $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".$row['nimi']."</a></td></tr>";
+		echo "<td>Kes&auml; $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".htmlentities($row['nimi'])."</a></td></tr>";
 		}
 	elseif($arraySeason == "2")
 		{
-		echo "<td>Talvi $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".$row['nimi']."</a></td></tr>";
+		echo "<td>Talvi $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".htmlentities($row['nimi'])."</a></td></tr>";
 		}
 	else
 		{
-		echo "<td>".$row['kausi'].": <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".$row['nimi']."</a></td></tr>";
+		echo "<td>".$row['kausi'].": <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".htmlentities($row['nimi'])."</a></td></tr>";
 		}
 }	
 }

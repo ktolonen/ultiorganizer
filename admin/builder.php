@@ -12,7 +12,7 @@ function pageTop($printable=false)
 	}
 function pageTopHeadOpen()
 	{
-
+	include 'validate_admin.php'; //just to make sure that check is made in each page	
 	echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">
 		<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
 		<head>
@@ -92,9 +92,8 @@ function leftMenu($id, $printable=false)
 
 	//build user menu
 	userMenu($id);
-
 	echo "<tr><td class='menuseparator'></td></tr>\n";
-	
+		
 	echo "<tr><td>".CurrenSeasonName()."</td></tr>\n";
 	echo "<tr><td><a href=\"../seasonlist.php\">&raquo; Vanhat kaudet</a></td></tr>\n";	
 	echo "<tr><td class='menuseparator'></td></tr>\n";

@@ -36,8 +36,7 @@ $home_playerlist = TeamPlayerList($game_result['kotijoukkue']);
 $away_playerlist = TeamPlayerList($game_result['vierasjoukkue']);
 
 //process itself if submit was pressed
-$save = $_POST['save'];
-if(isset($save))
+if(!empty($_POST['save']))
 	{
 	//HOME PLAYERS
 	$played_players = GamePlayers($gameId, $game_result['kotijoukkue']);
@@ -46,12 +45,15 @@ if(isset($save))
 	while($player = mysql_fetch_assoc($played_players))
 		{
 		$found=false;
-		foreach($_POST["homecheck"] as $playerId) 
+		if(!empty($_POST["homecheck"]))
 			{
-			if($player['pelaaja_id']==$playerId)
+			foreach($_POST["homecheck"] as $playerId) 
 				{
-				$found=true;
-				break;
+				if($player['pelaaja_id']==$playerId)
+					{
+					$found=true;
+					break;
+					}
 				}
 			}
 		if(!$found)
@@ -59,54 +61,56 @@ if(isset($save))
 		}
 	
 	//handle checked players
-	foreach($_POST["homecheck"] as $playerId) 
+	if(!empty($_POST["homecheck"]))
 		{
-		$number = $_POST["p$playerId"];
-		//if number
-		if(is_numeric($number))
+		foreach($_POST["homecheck"] as $playerId) 
 			{
-			//check if already in list with correct number
-			$played_players = GamePlayers($gameId, $game_result['kotijoukkue']);
-			$found = false;
-			while($player = mysql_fetch_assoc($played_players))
+			$number = $_POST["p$playerId"];
+			//if number
+			if(is_numeric($number))
 				{
-				//echo "<p>".$player['pelaaja_id']."==".$playerId ."&&". $player['Numero']."==".$number."</p>";
+				//check if already in list with correct number
+				$played_players = GamePlayers($gameId, $game_result['kotijoukkue']);
+				$found = false;
+				while($player = mysql_fetch_assoc($played_players))
+					{
+					//echo "<p>".$player['pelaaja_id']."==".$playerId ."&&". $player['Numero']."==".$number."</p>";
 
-				//if exist
-				if($player['pelaaja_id']==$playerId && $player['Numero']==$number)
-					{
-					$found = true;
-					break;
+					//if exist
+					if($player['pelaaja_id']==$playerId && $player['Numero']==$number)
+						{
+						$found = true;
+						break;
+						}
+					//if found, but with different number
+					if($player['pelaaja_id']==$playerId && $player['Numero']!=$number)
+						{
+						GameSetPlayerNumber($gameId, $playerId, $number);
+						$found = true;
+						break;
+						}
+					//if two players with same number
+					if($player['pelaaja_id']!=$playerId && $player['Numero']==$number)
+						{
+						$playerinfo1 = PlayerInfo($playerId);
+						$playerinfo2 = PlayerInfo($player['pelaaja_id']);
+						echo "<p  class='warning'><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
+						<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> same numero '$number'.</p>";
+						$found = true;
+						break;
+						}
 					}
-				//if found, but with different number
-				if($player['pelaaja_id']==$playerId && $player['Numero']!=$number)
-					{
-					GameSetPlayerNumber($gameId, $playerId, $number);
-					$found = true;
-					break;
-					}
-				//if two players with same number
-				if($player['pelaaja_id']!=$playerId && $player['Numero']==$number)
-					{
-					$playerinfo1 = PlayerInfo($playerId);
-					$playerinfo2 = PlayerInfo($player['pelaaja_id']);
-					echo "<p  class='warning'><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
-					<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> same numero '$number'.</p>";
-					$found = true;
-					break;
-					}
+					
+				if(!$found)
+					GameAddPlayer($gameId, $playerId, $number);
 				}
-				
-			if(!$found)
-				GameAddPlayer($gameId, $playerId, $number);
-			}
-		else
-			{
-			$playerinfo = PlayerInfo($playerId);
-			echo "<p  class='warning'><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
+			else
+				{
+				$playerinfo = PlayerInfo($playerId);
+				echo "<p  class='warning'><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
+				}
 			}
 		}
-		
 	//AWAY PLAYERS
 	$played_players = GamePlayers($gameId, $game_result['vierasjoukkue']);
 	
@@ -114,64 +118,70 @@ if(isset($save))
 	while($player = mysql_fetch_assoc($played_players))
 		{
 		$found=false;
-		foreach($_POST["awaycheck"] as $playerId) 
+		if(!empty($_POST["awaycheck"]))
 			{
-			if($player['pelaaja_id']==$playerId)
+			foreach($_POST["awaycheck"] as $playerId) 
 				{
-				$found=true;
-				break;
+				if($player['pelaaja_id']==$playerId)
+					{
+					$found=true;
+					break;
+					}
 				}
 			}
 		if(!$found)
 			GameRemovePlayer($gameId, $player['pelaaja_id']);
 		}
 	
-	//handle checked players	
-	foreach($_POST["awaycheck"] as $playerId) 
+	if(!empty($_POST["awaycheck"]))
 		{
-		$number = $_POST["p$playerId"];
-		//if number
-		if(is_numeric($number))
+		//handle checked players	
+		foreach($_POST["awaycheck"] as $playerId) 
 			{
-			//check if already in list with correct number
-			$played_players = GamePlayers($gameId, $game_result['vierasjoukkue']);
-			$found = false;
-			while($player = mysql_fetch_assoc($played_players))
+			$number = $_POST["p$playerId"];
+			//if number
+			if(is_numeric($number))
 				{
-				//echo "<p>".$player['pelaaja_id']."==".$playerId ."&&". $player['Numero']."==".$number."</p>";
+				//check if already in list with correct number
+				$played_players = GamePlayers($gameId, $game_result['vierasjoukkue']);
+				$found = false;
+				while($player = mysql_fetch_assoc($played_players))
+					{
+					//echo "<p>".$player['pelaaja_id']."==".$playerId ."&&". $player['Numero']."==".$number."</p>";
 
-				//if exist
-				if($player['pelaaja_id']==$playerId && $player['Numero']==$number)
-					{
-					$found = true;
-					break;
+					//if exist
+					if($player['pelaaja_id']==$playerId && $player['Numero']==$number)
+						{
+						$found = true;
+						break;
+						}
+					//if found, but with different number
+					if($player['pelaaja_id']==$playerId && $player['Numero']!=$number)
+						{
+						GameSetPlayerNumber($gameId, $playerId, $number);
+						$found = true;
+						break;
+						}
+					//if two players with same number
+					if($player['pelaaja_id']!=$playerId && $player['Numero']==$number)
+						{
+						$playerinfo1 = PlayerInfo($playerId);
+						$playerinfo2 = PlayerInfo($player['pelaaja_id']);
+						echo "<p><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
+						<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> same numero '$number'.</p>";
+						$found = true;
+						break;
+						}
 					}
-				//if found, but with different number
-				if($player['pelaaja_id']==$playerId && $player['Numero']!=$number)
-					{
-					GameSetPlayerNumber($gameId, $playerId, $number);
-					$found = true;
-					break;
-					}
-				//if two players with same number
-				if($player['pelaaja_id']!=$playerId && $player['Numero']==$number)
-					{
-					$playerinfo1 = PlayerInfo($playerId);
-					$playerinfo2 = PlayerInfo($player['pelaaja_id']);
-					echo "<p><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
-					<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> same numero '$number'.</p>";
-					$found = true;
-					break;
-					}
+					
+				if(!$found)
+					GameAddPlayer($gameId, $playerId, $number);
 				}
-				
-			if(!$found)
-				GameAddPlayer($gameId, $playerId, $number);
-			}
-		else
-			{
-			$playerinfo = PlayerInfo($playerId);
-			echo "<p><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
+			else
+				{
+				$playerinfo = PlayerInfo($playerId);
+				echo "<p><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
+				}
 			}
 		}
 	}

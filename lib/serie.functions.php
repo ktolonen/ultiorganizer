@@ -15,6 +15,20 @@ function Teams($serieId)
 	return $result;
 	}
 
+function TeamsByName($serieId)
+	{
+	$query = sprintf("
+		SELECT pelik_joukkue.Joukkue_ID, pelik_joukkue.Nimi, pelik_joukkue.Seura
+		FROM pelik_joukkue 
+		WHERE pelik_joukkue.Sarja = '%s' 
+		ORDER BY Nimi ASC",
+		mysql_real_escape_string($serieId));
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
+	
 function SerieName($serieId)
 	{
 	$query = sprintf("
@@ -126,6 +140,24 @@ function SeriesPlayed($fieldId, $seasonId)
 	return $result;
 	}
 
+function SerieTotalPlayedGames($serieId)
+	{
+	$query = sprintf("
+		SELECT p.Peli_ID IN (SELECT DISTINCT Maali_Peli FROM pelik_maali) As Maaleja,
+			Kj.Joukkue_ID AS kId, Vj.Joukkue_ID AS vId
+		FROM ((pelik_peli p INNER JOIN pelik_joukkue AS Kj ON (p.Kotijoukkue=Kj.Joukkue_ID)) 
+		INNER JOIN pelik_joukkue AS Vj ON (p.Vierasjoukkue=Vj.Joukkue_ID)) 
+		LEFT JOIN pelik_peli_sarja ps ON (p.Peli_ID=ps.Peli) 
+		WHERE ps.Sarja = '%s' 
+		ORDER BY Aika ASC",
+		mysql_real_escape_string($serieId));
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
+	
 function SeriesPlayedTournaments($serieId)
 	{
 	$query = sprintf("
@@ -203,5 +235,24 @@ function SerieRules($serieId)
 	
 	return mysql_fetch_assoc($result);
 	}
+
+function SerieTemplates()
+	{
+	$query = sprintf("SELECT * FROM pelik_sarja WHERE kausi IS NULL ORDER BY nimi ASC");
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
+	return $result;
+	}
+
+function SerieInfo($serieId)
+	{
+	$query = sprintf("SELECT * FROM pelik_sarja WHERE sarja_id='%s'",
+		mysql_real_escape_string($serieId));
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return mysql_fetch_assoc($result);
+	}	
 ?>

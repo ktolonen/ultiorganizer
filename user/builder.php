@@ -1,11 +1,11 @@
 <?php 
-include_once 'lib/database.php';
-include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
+include_once '../lib/database.php';
+include_once '../lib/season.functions.php';
+include_once '../lib/serie.functions.php';
 
 include_once 'usermenubuilder.php';
 
-function pageTop($printable)
+function pageTop($printable=false)
 	{
 	pageTopHeadOpen();
 	pageTopHeadClose($printable);
@@ -23,7 +23,7 @@ function pageTopHeadOpen()
 		<link rel=\"stylesheet\" href=\"../styles/default.css\" type=\"text/css\" />\n";
 	}
 
-function pageTopHeadClose($printable)
+function pageTopHeadClose($printable=false)
 	{
 		
 	echo "</head>
@@ -60,7 +60,7 @@ function pageEnd()
 	echo "</body></html>";
 	}	
 	
-function leftMenu($id, $printable)
+function leftMenu($id, $printable=false)
 	{
 	if($printable)
 		{
@@ -85,7 +85,7 @@ function leftMenu($id, $printable)
 	<tr><td style='padding-left:5px'>\n";	
 	while($row = mysql_fetch_assoc($series))
 		{
-		echo "<a href='../seriestatus.php?Serie=".$row['sarja_id']."'>&raquo; ".$row['nimi']."</a><br/>\n";
+		echo "<a href='../seriestatus.php?Serie=".$row['sarja_id']."'>&raquo; ".htmlentities($row['nimi'])."</a><br/>\n";
 		}
 		
 	echo "</td></tr><tr><td class='menuseparator'></td></tr>";
