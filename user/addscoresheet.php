@@ -170,10 +170,10 @@ if(!empty($_POST['save']))
 		$time = str_replace($time_delim,".",$time);
 		$time = TimeToSec($time);
 		if(!empty($team) && $time == $htime)
-			echo "<p class='warning'>Piste ",$i+1,": aika ei voi olla sama kuin puoliajan p&auml;&auml;ttymisell&auml;!</p>";
+			echo "<p class='warning'>"._("Piste")." ",$i+1,": "._("aika ei voi olla sama kuin puoliajan p&auml;&auml;ttymisell&auml;")."!</p>";
 			
 		if(!empty($team) && $time <= $prevtime)
-			echo "<p class='warning'>Piste ",$i+1,": aika ei voi olla sama tai aikaisempi kuin edellisess&auml; pisteess&auml;!</p>";
+			echo "<p class='warning'>"._("Piste")." ",$i+1,": "._("aika ei voi olla sama tai aikaisempi kuin edellisess&auml; pisteess&auml;")."!</p>";
 		
 		if(strcasecmp($pass,'xx')==0 || strcasecmp($pass,'x')==0)
 			$callahan = 1;
@@ -187,17 +187,17 @@ if(!empty($_POST['save']))
 				{
 				$pass = GamePlayerFromNumber($gameId, $game_result['kotijoukkue'], $pass);
 				if($pass==-1)
-					echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
+					echo "<p class='warning'>"._("Piste")." ",$i+1,": "._("sy&ouml;tt&auml;j&auml;n numeroa")." '".$_POST['pass'.$i]."' "._("ei pelaajalistalla")"!</p>";
 				}
 			else
 				$pass=-1;
 				
 			$goal = GamePlayerFromNumber($gameId, $game_result['kotijoukkue'], $goal);
 			if($goal==-1)
-				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;n numeroa '".$_POST['goal'.$i]."' ei pelaajalistalla!</p>";
+				echo "<p class='warning'>"._("Piste")." ",$i+1,": "._("maalintekij&auml;n numeroa")." '".$_POST['goal'.$i]."' "._("ei pelaajalistalla")."!</p>";
 			
 			if($pass==$goal)
-				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;ll&auml; ja sy&ouml;tt&auml;j&auml;ll&auml; sama numero '".$_POST['goal'.$i]."'!</p>";
+				echo "<p class='warning'>"._("Piste")." ",$i+1,": "._("maalintekij&auml;ll&auml; ja sy&ouml;tt&auml;j&auml;ll&auml; sama numero")." '".$_POST['goal'.$i]."'!</p>";
 				
 			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,1,$callahan);
 			}
@@ -208,20 +208,20 @@ if(!empty($_POST['save']))
 				{
 				$pass = GamePlayerFromNumber($gameId, $game_result['vierasjoukkue'], $pass);
 				if($pass==-1)
-					echo "<p class='warning'>Piste ",$i+1,": sy&ouml;tt&auml;j&auml;n numeroa '".$_POST['pass'.$i]."' ei pelaajalistalla!</p>";
+					echo "<p class='warning'>"._("Piste")." ",$i+1,": "._("sy&ouml;tt&auml;j&auml;n numeroa")." '".$_POST['pass'.$i]."' "._("ei pelaajalistalla")."!</p>";
 				}
 			else
 				$pass=-1;
 				
 			$goal = GamePlayerFromNumber($gameId, $game_result['vierasjoukkue'], $goal);
 			if($goal==-1)
-				echo "<p class='warning'>Piste ",$i+1,": maalintekij&auml;n numeroa '".$_POST['goal'.$i]."' ei pelaajalistalla!</p>";
+				echo "<p class='warning'>"._("Piste")." ",$i+1,": "._("maalintekij&auml;n numeroa")." '".$_POST['goal'.$i]."' "._("ei pelaajalistalla")."!</p>";
 
 			GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,0,$callahan);
 			}
 		}
 	echo "<p>P&ouml;yt&auml;kirja tallennettu (klo. ".DefTimestamp().")!</p>";
-	echo "<a href='../gameplay.php?Game=$gameId'>pelin kulku</a>";
+	echo "<a href='../gameplay.php?Game=$gameId'>"._("Pelin kulku")."</a>";
 	}
 $game_result = GameResult($gameId);
 $place = PlaceInfo($game_result['paikka']);
@@ -230,28 +230,28 @@ $place = PlaceInfo($game_result['paikka']);
 echo "<form action='addscoresheet.php?Game=$gameId' method='post'>";
 echo "<table cellspacing='5' cellpadding='5'>";
 
-echo "<tr><td colspan='2'><h1>Suomen Liitokiekkoliitto - Ottelup&ouml;yt&auml;kirja</h1></td></tr>";
+echo "<tr><td colspan='2'><h1>"._("Suomen Liitokiekkoliitto")." - "._("Ottelup&ouml;yt&auml;kirja")."</h1></td></tr>";
 echo "<tr><td valign='top'>\n";
 
 //team, place, time info and scoresheet keeper's name
 echo "<table cellspacing='0' width='100%' border='1'>";
-echo "<tr><th>Kotijoukkue</th></tr>";
+echo "<tr><th>"._("Kotijoukkue")."</th></tr>";
 echo "<tr><td>". htmlentities($game_result['KNimi']) ."</td></tr>";
-echo "<tr><th>Vierasjoukkue</th></tr>";
+echo "<tr><th>"._("Vierasjoukkue")."</th></tr>";
 echo "<tr><td>". htmlentities($game_result['VNimi']) ."</td></tr>";
-echo "<tr><th>Paikka</th></tr>";
+echo "<tr><th>"._("Paikka")."</th></tr>";
 echo "<tr><td>". htmlentities($place['paikka']) ."</td></tr>";
-echo "<tr><th>Aika</th></tr>";
+echo "<tr><th>"._("Aika")."</th></tr>";
 echo "<tr><td>". ShortDate($game_result['aika']) ." ". DefHourFormat($game_result['aika']) ."</td></tr>";
-echo "<tr><th>Toimitsija</th></tr>";
+echo "<tr><th>"._("Toimitsija")."</th></tr>";
 echo "<tr><td><input class='input' style='WIDTH: 90%' type='text' name='secretary' id='secretary' value='". $game_result['toim'] ."'/></td></tr>";
 echo "</table>\n";
 
 //timeouts
 echo "<table cellspacing='0' width='100%' border='1'>";
-echo "<tr><th colspan='",$maxtimeouts+1,"'>Aikalis&auml;t</th></tr>\n";
+echo "<tr><th colspan='",$maxtimeouts+1,"'>"._("Aikalis&auml;t")."</th></tr>\n";
 
-echo "<tr><th>Koti</th>\n";
+echo "<tr><th>"._("Koti")."</th>\n";
 
 //home team used timeouts
 $i=0;
@@ -276,7 +276,7 @@ for($i;$i<$maxtimeouts; $i++)
 	}
 echo "</tr>\n";
 
-echo "<tr><th>Vieras</th>\n";
+echo "<tr><th>"._("Vieras")."</th>\n";
 
 //away team used timeouts
 $i=0;
@@ -305,37 +305,39 @@ echo "</table>";
 
 //halftime
 echo "<table cellspacing='0' width='100%' border='1'>\n";
-echo "<tr><th>Puoliaika p&auml;&auml;ttyi</th></tr>";
+echo "<tr><th>"._("Puoliaika p&auml;&auml;ttyi")."</th></tr>";
 echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 	maxlength='8' type='text' name='halftime' id='halftime' value='". SecToMin($game_result['puoliaika']) ."'/></td></tr>";
 echo "</table>\n";
 
 //result		
 echo "<table cellspacing='0' width='100%' border='1'>\n";
-echo "<tr><th>Lopputulos</th></tr>";
+echo "<tr><th>"._("Lopputulos")."</th></tr>";
 echo "<tr><td>". $game_result['kotipisteet'] ." - ". $game_result['vieraspisteet'] ."</td></tr>";
 echo "</table>\n";
 		
 //buttons
 echo "<table cellspacing='0' cellpadding='10px' width='100%'>\n";
 echo "<tr><td colspan='2'>
-		<a href='javascript://' onclick=\"eraseLast()\">Poista viimeinen maali</a></td></tr>";
+		<a href='javascript://' onclick=\"eraseLast()\">"._("Poista viimeinen maali")."</a></td></tr>";
 echo "<tr>";
-echo "<td><input class='button' type='submit' value='Tallenna' name='save'/></td>";
-echo "<td><input class='button' type='reset' value='Peruuta' name='reset'/></td>";
+echo "<td><input class='button' type='submit' value='"._("Tallenna")."' name='save'/></td>";
+echo "<td><input class='button' type='reset' value='"._("Peruuta")."' name='reset'/></td>";
 echo "</tr>";
 echo "<tr><td colspan='2'>
-<p>Sy&ouml;t&auml; pelin p&ouml;yt&auml;kirja:<br/>
-- Ajan erottimena voit k&auml;ytt&auml;&auml; .,:; -merkkej&auml;.<br/>
-- Merkitse Callahan-maaliin sy&ouml;tt&auml;j&auml;ksi XX.<br/>
-- P&ouml;yt&auml;kirjan voi tallentaa v&auml;lill&auml;.</p></td></tr>";
-echo "<tr><td colspan='2'><p><a href='respgames.php'>Takaisin vastuupeleihin</a></p></td></tr>";
+<p>"._("Sy&ouml;t&auml; pelin p&ouml;yt&auml;kirja").":
+<ul>
+<li>"._("Ajan erottimena voit k&auml;ytt&auml;&auml;")." .,:; "._("-merkkej&auml;").".</li>
+<li>"._("Merkitse Callahan-maaliin sy&ouml;tt&auml;j&auml;ksi XX").".</li>
+<li>"._("P&ouml;yt&auml;kirjan voi tallentaa v&auml;lill&auml;")."<li></ul></p></td></tr>";
+echo "<tr><td colspan='2'><p><a href='respgames.php'>"._("Takaisin vastuupeleihin")."</a></p></td></tr>";
 echo "</table>\n";
 
 //scores		
 echo "</td><td>";
 echo "<table cellspacing='0' border='1'>\n";
-echo "<tr><th>#</th><th>Koti</th><th>Vieras</th><th>Sy&ouml;tt&auml;j&auml;</th><th>Tekij&auml;</th><th>Aika</th><th>Tilanne</th></tr>\n";
+echo "<tr><th>#</th><th>"._("Koti")</th><th>"._("Vieras")."</th><th>"._("Sy&ouml;tt&auml;j&auml;")."</th><th>"._("Tekij&auml;")."</th><th>"._("Aika")."</th>";
+echo "<th>"._("Tilanne")."</th></tr>\n";
 
 $scores = GameGoals($gameId);
 

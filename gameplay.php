@@ -29,12 +29,12 @@ $gameevents = GameEvents($gameId);
 
 if(mysql_num_rows($goals) <= 0)
 	{
-	echo "<h2>Pelin p&ouml;yt&auml;kirjaa ei ole viel&auml; sy&ouml;tetty pelikoneeseen.</h2>
-		  <p>Tarkista tilanne sivulta my&ouml;hemmin uudelleen.</p>";
+	echo "<h2>"._("Pelin p&ouml;yt&auml;kirjaa ei ole viel&auml; sy&ouml;tetty pelikoneeseen.")."</h2>
+		  <p>"._("Tarkista tilanne sivulta my&ouml;hemmin uudelleen.")."</p>";
 	}
 
 //score board
-echo "<h2>Pelin pistep&ouml;rssi</h2>\n";
+echo "<h2>"._("Pelin pistep&ouml;rssi")."</h2>\n";
 	
 echo "<table><tr><td valign='top' style='width:45%'>\n";
 
@@ -42,7 +42,8 @@ echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>\n";
 echo "<tr style='height=20'><td align='center'><b>";
 echo htmlentities($game_result['KNimi']), "</b></td></tr>\n";
 echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-echo "<tr><th class='home'>#</th><th class='home'>Nimi</th><th class='home'>Sy&ouml;t.</th><th class='home'>Maal.</th><th class='home'>Yht.</th></tr>\n";
+echo "<tr><th class='home'>#</th><th class='home'>"._("Nimi")."</th><th class='home'>"._("Sy&ouml;t.")."</th><th class='home'>"._("Maal.").</th>
+     <th class='home'>"._("Yht.")."</th></tr>\n";
 
 while($row = mysql_fetch_assoc($home_team_score_board))
 	{
@@ -64,7 +65,8 @@ echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
 echo "<tr><td><b>";
 echo htmlentities($game_result['VNimi']), "</b></td></tr>\n";
 echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-echo "<tr><th class='guest'>#</th><th class='guest'>Nimi</th><th class='guest'>Sy&ouml;t.</th><th class='guest'>Maal.</th><th class='guest'>Yht.</th></tr>\n";
+echo "<tr><th class='guest'>#</th><th class='guest'>"_.("Nimi")."</th><th class='guest'>"._("Sy&ouml;t.")."</th><th class='guest'>"._("Maal.")."</th>
+     <th class='guest'>"._("Yht.")."</th></tr>\n";
 
 	
 while($row = mysql_fetch_assoc($guest_team_score_board))
@@ -166,10 +168,10 @@ for ($i=0; $i < 50 && !empty($points[$i][0]); $i++)
 
 	}
 echo "</tr></table>\n";
-echo "<p>Kirjanpit&auml;j&auml;(t): ". htmlentities($game_result['toim']) ."</p>";
-echo "<h2>Pelin Maalit</h2>\n";
+echo "<p>"._("Kirjanpit&auml;j&auml;t").": ". htmlentities($game_result['toim']) ."</p>";
+echo "<h2>"._("Pelin maalit")."</h2>\n";
 echo "<table border='1' cellpadding='2px' width='97%'>\n";
-echo "<tr><th>#</th><th>Aika</th><th>Sy&ouml;tt&auml;j&auml;</th><th>Tekij&auml;</th><th>Tilanne</th><th>&nbsp;</th></tr>\n";
+echo "<tr><th>#</th><th>"._("Aika")."</th><th>"._("Sy&ouml;tt&auml;j&auml;")."</th><th>"._("Tekij&auml;")."</th><th>"._("Tilanne")."</th><th>&nbsp;</th></tr>\n";
 
 
 
@@ -180,7 +182,7 @@ $prevgoal = 0;
 
 mysql_data_seek($goals, 0);
 while($goal = mysql_fetch_assoc($goals))
-	{	
+	{
 	echo "<tr><td";
 	if(intval($goal['kotimaali'])==1)
 		echo " class='home'>";
@@ -191,7 +193,7 @@ while($goal = mysql_fetch_assoc($goals))
 	$i++;
 	echo "<td>". SecToMin($goal['aika']) ."</td>";
 	if(intval($goal['callahan']))
-		echo "<td class='callahan'>Callahan-maali&nbsp;</td>";
+		echo "<td class='callahan'>"._("Callahan-maali")."&nbsp;</td>";
 	else
 		echo "<td>". htmlentities($goal['senimi']) ." ". htmlentities($goal['ssnimi']) ."&nbsp;</td>";
 	echo "<td>". htmlentities($goal['tenimi']) ." ". htmlentities($goal['tsnimi']) ."&nbsp;</td>";
@@ -206,9 +208,9 @@ while($goal = mysql_fetch_assoc($goals))
 			(intval($event['aika']) < intval($goal['aika'])))
 			{
 			if ($event['tyyppi'] == "timeout")
-				$gameevent = "Aikalis&auml;";
+				$gameevent = _("Aikalis&auml;");
 			else
-				$gameevent = "Kiekonmenetys";
+				$gameevent = _("Kiekonmenetys");
 
 			if(intval($event['koti'])>0)
 				echo "<div class='home'>".$gameevent."&nbsp;".SecToMin($event['aika'])."</div>";
@@ -225,7 +227,7 @@ while($goal = mysql_fetch_assoc($goals))
 		{
 		if ((intval($goal['ktilanne'])==$htAt) || (intval($goal['vtilanne'])==$htAt))
 			{
-			echo "<tr><td colspan='6' class='halftime'>Puoliaika</td></tr>";
+			echo "<tr><td colspan='6' class='halftime'>_("Puoliaika")."</td></tr>";
 			$bHt = 1;
 			}
 		}
@@ -235,7 +237,7 @@ while($goal = mysql_fetch_assoc($goals))
 echo "</table>\n";
 
 //statistics
-echo "<h2>Pelin Tilastot</h2>\n";
+echo "<h2>"._("Pelin tilastot")."</h2>\n";
 
 $allgoals = GameAllGoals($gameId);
 
@@ -390,60 +392,60 @@ $dblVAvg=0.0;
 echo "<table border='1' cellpadding='2px' cellspacing='0'><tr><th></th><th>". htmlentities($game_result['KNimi']).
 	 "</th><th>". htmlentities($game_result['VNimi']) ."</th></tr>";
 
-echo "<tr><td>Maalit:</td> <td class='home'>$nHGoals</td> <td class='guest'>$nVGoals</td></tr>\n";
+echo "<tr><td>"._("Maalit").":</td> <td class='home'>$nHGoals</td> <td class='guest'>$nVGoals</td></tr>\n";
 
 $dblHAvg = SafeDivide($nHTotalTime, ($nHTotalTime+$nVTotalTime)) * 100;
 $dblVAvg = SafeDivide($nVTotalTime, ($nHTotalTime+$nVTotalTime)) * 100;
 
-echo "<tr><td>Hy&ouml;kk&auml;ysaika:</td> 
+echo "<tr><td>"._("Hy&ouml;kk&auml;ysaika").":</td> 
 	<td class='home'>". SecToMin($nHTotalTime) ." min (".number_format($dblHAvg,1)." %)</td>
 	<td class='guest'>". SecToMin($nVTotalTime) ." min (".number_format($dblVAvg,1)." %)</td></tr>\n";
 
-echo "<tr><td>Puolustusaika:</td> 
+echo "<tr><td>"._("Puolustusaika").":</td> 
 	<td class='home'>". SecToMin($nVTotalTime) ." min (".number_format($dblVAvg,1)." %)</td>
 	<td class='guest'>". SecToMin($nHTotalTime) ." min (".number_format($dblHAvg,1)." %)</td></tr>\n";
 
-echo "<tr><td>Hy&ouml;kk&auml;ysaika/maali:</td> 
+echo "<tr><td>"._("Hy&ouml;kk&auml;ysaika")."/"._("maali").":</td> 
 	<td class='home'>". SecToMin(SafeDivide($nHTotalTime,$nHGoals)) ." min</td>
 	<td class='guest'>". SecToMin(SafeDivide($nVTotalTime,$nVGoals)) ." min</td></tr>\n";
 
-echo "<tr><td>Puolustusaika/maali:</td> 
+echo "<tr><td>"._("Puolustusaika")."/"._("maali").":</td> 
 	<td class='home'>". SecToMin(SafeDivide($nVTotalTime,$nVGoals)) ." min</td>
 	<td class='guest'>". SecToMin(SafeDivide($nHTotalTime,$nHGoals)) ." min</td></tr>\n";
 
 $dblHAvg = SafeDivide(abs($nHGoals-$nHBreaks), $nHOffencePoint) * 100;
 $dblVAvg = SafeDivide(abs($nVGoals-$nVBreaks), $nVOffencePoint) * 100;
 
-echo "<tr><td>Hy&ouml;kk&auml;ysvuorosta maali:</td> 
+echo "<tr><td>"._("Hy&ouml;kk&auml;ysvuorosta maali").":</td> 
 	<td class='home'>". abs($nHGoals-$nHBreaks) ."/". $nHOffencePoint ." (". number_format($dblHAvg,1) ." %)</td>
 	<td class='guest'>". abs($nVGoals-$nVBreaks) ."/". $nVOffencePoint ." (". number_format($dblVAvg,1) ." %)</td></tr>";
 
 $dblHAvg = SafeDivide($nHBreaks, $nVOffencePoint) * 100;
 $dblVAvg = SafeDivide($nVBreaks, $nHOffencePoint) * 100;
 
-echo "<tr><td>Puolustusvuorosta maali:</td>
+echo "<tr><td>"._("Puolustusvuorosta maali").":</td>
 	<td class='home'>". $nHBreaks ."/". $nVOffencePoint ." (". number_format($dblHAvg,1) ." %)</td>
 	<td class='guest'>". $nVBreaks ."/". $nHOffencePoint ." (". number_format($dblVAvg,1) ." %)</td></tr>";
 
 if ($nHLosesDisc+$nVLosesDisc > 0)
 	{
-	echo "<tr><td>Kiekonmenetykset:</td>
+	echo "<tr><td>"._("Kiekonmenetykset").":</td>
 		<td class='home'>". $nHLosesDisc ."</td>
 		<td class='guest'>". $nVLosesDisc ."</td></tr>";
 	}
 else
 	{
-	echo "<tr><td>Kiekonmenetykset:</td> 
+	echo "<tr><td>"._("Kiekonmenetykset").":</td> 
 		<td class='home'>-</td>
 		<td class='guest'>-</td></tr>";
 	}
 
 
-echo "<tr><td>Katkomaalit:</td>
+echo "<tr><td>"._("Katkomaalit").":</td>
 	<td class='home'>". $nHBreaks ."</td>
 	<td class='guest'>". $nVBreaks ."</td></tr>";
 
-echo "<tr><td>Aikalis&auml;t:</td> 
+echo "<tr><td>"._("Aikalis&auml;t").":</td> 
 	<td class='home'>". $nHTO ."</td>
 	<td class='guest'>". $nVTO ."</td></tr>";
 
@@ -451,7 +453,7 @@ echo "</table>";
 
 CloseConnection();
 ?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
+<p><a href="javascript:history.go(-1);">"._("Palaa")."</a></p>
 <?php
 contentEnd();
 pageEnd();

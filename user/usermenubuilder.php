@@ -28,7 +28,7 @@ function userMenu($id)
 
 	if(!isset($_SESSION))
 		{ 
-		session_start();
+		//session_start();
 		}
 
 	//if not valid user session
@@ -43,7 +43,7 @@ function userMenu($id)
 				<input class='input' type='password' id='mypassword' name='mypassword' size='15' style='WIDTH:120px'/>
 			</td></tr>
 			<tr><td>
-				<input class='button' type='submit' name='login' value='Kirjaudu'/>
+				<input class='button' type='submit' name='login' value='"._("Kirjaudu")."'/>
 			</td></tr>\n";
 
 		echo "<tr><td style='height:20px'></td></tr>\n";
@@ -53,9 +53,9 @@ function userMenu($id)
 		//echo "<tr><td style='height:0px'></td></tr>";
 		echo "<tr><td> ".$_SESSION['user'].":</td></tr>";
 		echo "<tr><td style='padding-left:5px'>\n";
-		echo "<a href='".$linklevel."userinfo.php'>&raquo; Omat tiedot</a><br/>\n";
-		echo "<a href='".$linklevel."teamplayers.php'>&raquo; Pelaajalista</a><br/>\n";
-		echo "<a href='".$linklevel."respgames.php'>&raquo; Vastuupelit</a><br/>\n";
+		echo "<a href='".$linklevel."userinfo.php'>&raquo; "._("Omat tiedot")."</a><br/>\n";
+		echo "<a href='".$linklevel."teamplayers.php'>&raquo; "._("Pelaajalista")."</a><br/>\n";
+		echo "<a href='".$linklevel."respgames.php'>&raquo; "._("Vastuupelit")."</a><br/>\n";
 		echo "</td></tr>\n";
 		
 		//build admin menus if admin has logged in
@@ -65,7 +65,7 @@ function userMenu($id)
 			}
 		echo "<tr><td style='height:5px'></td></tr>";
 		echo "<tr><td>
-				<input class='button' type='submit' name='logout' value='Kirjaudu ulos'/>
+				<input class='button' type='submit' name='logout' value='"._("Kirjaudu ulos")."'/>
 			</td></tr>\n";
 		//echo "<tr><td style='height:20px'></td></tr>";
 		}

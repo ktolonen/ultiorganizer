@@ -12,12 +12,11 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 //content
-?>
-<h2>Kirjautuminen ep&auml;onnistui</h2>
-<p>
-Tarkista k&auml;ytt&auml;j&auml;tunnus ja salasana. Ota tarvittaessa yhteytt&auml; liitokiekkoliiton <a href='mailto:sarjavastaava@liitokiekkoliitto.fi'>sarjavastaavaan</a>.
-</p>
-<?php
+echo "<h2>"._("Kirjautuminen ep&auml;onnistui")."</h2>
+     <p>"._("Tarkista k&auml;ytt&auml;j&auml;tunnus ja salasana.")." "._("Ota tarvittaessa yhteytt&auml; liitokiekkoliiton")."
+     <a href='mailto:"._("sarjavastaava@liitokiekkoliitto.fi")."'>"._("sarjavastaavaan")."</a>.
+     </p>";
+
 contentEnd();
 pageEnd();
 ?>

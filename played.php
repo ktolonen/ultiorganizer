@@ -39,7 +39,7 @@ if($teamId)
 	
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei pelattuja pelej&auml;.</p>\n";	
+		echo "\n<p>"._("Ei pelattuja pelej&auml;").".</p>\n";	
 		}
 		
 	while($tournament = mysql_fetch_assoc($tournaments))
@@ -71,11 +71,12 @@ if($teamId)
 				else
 					echo "<td style='width:5%'>". intval($game['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($game['Vieraspisteet']) ."</td>";
 				if (intval($game['Maaleja'])>0)
-					echo "<td style='width:15%'><a href='gameplay.php?Game=". $game['Peli_ID'] ."'>pelin kulku</a></td>";
+					echo "<td style='width:15%'><a href='gameplay.php?Game=". $game['Peli_ID'] ."'>"._("Pelin kulku")."</a></td>";
 				else
-					echo "<td style='width:15%'>es</td>";
+					echo "<td style='width:15%'>"._("es")."</td>";
 
-				echo"<td style='width:15%'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>otteluhistoria </a></td>";					
+				echo"<td style='width:15%'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>";
+				echo _("Otteluhistoria")."</a></td>";					
 				echo "</tr>";
 				}
 			echo "</table>";
@@ -89,7 +90,7 @@ elseif($seriesId)
 	
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei pelattuja pelej&auml;.</p>\n";	
+		echo "\n<p>"._("Ei pelattuja pelej&auml;").".</p>\n";	
 		}
 		
 	while($tournament = mysql_fetch_assoc($tournaments))
@@ -132,9 +133,9 @@ elseif($seriesId)
 						else
 							echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
 						if (intval($result['Maaleja'])>0)
-							echo "<td style='width:15%'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>pelin kulku</a></td>";
+							echo "<td style='width:15%'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>"._("Pelin kulku")."</a></td>";
 						else
-							echo "<td style='width:15%'>es</td>";
+							echo "<td style='width:15%'>"._("es")."</td>";
 
 						echo "</tr>";
 						}
@@ -153,7 +154,7 @@ else
 	
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei pelattuja pelej&auml;.</p>\n";	
+		echo "\n<p>"._("Ei pelattuja pelej&auml;").".</p>\n";	
 		}
 		
 	while($tournament = mysql_fetch_assoc($tournaments))
@@ -196,11 +197,11 @@ else
 							echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
 							
 						if (intval($result['Maaleja'])>0)
-							echo "<td style='width:15%' align='right'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>pelin kulku</a></td>";
+							echo "<td style='width:15%' align='right'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>"._("Pelin kulku")."</a></td>";
 						else
-							echo "<td style='width:15%' align='right'>es</td>";
+							echo "<td style='width:15%' align='right'>"._("es")."</td>";
 
-						//echo"<td style='width:15%'><a href='gamecard.php?Team1=". htmlentities($result['kId']) ."&amp;Team2=". htmlentities($result['vId']) . "'>otteluhistoria </a></td>";					
+						//echo"<td style='width:15%'><a href='gamecard.php?Team1=". htmlentities($result['kId']) ."&amp;Team2=". htmlentities($result['vId']) . "'>"._("Otteluhistoria")."</a></td>";					
 						echo "</tr>";
 						}
 					}
@@ -211,9 +212,7 @@ else
 		}	
 	}
 CloseConnection();
-?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
-<?php
+echo "<p><a href='javascript:history.go(-1);'">"._("Palaa")."</a></p>";
 contentEnd();
 pageEnd();
 ?>

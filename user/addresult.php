@@ -27,7 +27,7 @@ if(!empty($_POST['save']))
 	$ok=GameSetResult($gameId, $home, $away);
 	if($ok)
 		{
-		echo "<p>Tulos tallennettu.</p>";
+		echo "<p>"._("Tulos tallennettu").".</p>";
 		SerieResolveStandings(GameSerie($gameId));
 		}
 	}
@@ -46,8 +46,8 @@ echo "<p>
 		<input class='button' type='submit' name='save' value='Tallenna'/>
 	</p></form>";
 
-echo "<p><a href='addplayerlists.php?Game=$gameId'>Sy&ouml;t&auml; pelin pelaajat</a></p>";
-echo "<p><a href='respgames.php'>Takaisin vastuupeleihin</a></p>";
+echo "<p><a href='addplayerlists.php?Game=$gameId'>"._("Sy&ouml;t&auml; pelin pelaajat")."</a></p>";
+echo "<p><a href='respgames.php'>"._("Takaisin vastuupeleihin")."</a></p>";
 
 CloseConnection();
 //common end

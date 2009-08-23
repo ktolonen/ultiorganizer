@@ -42,7 +42,7 @@ if($teamId)
 	
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei tulevia pelej&auml;.</p>\n";	
+		echo "\n<p>"._("Ei tulevia pelej&auml;").".</p>\n";	
 		}
 		
 	while($tournament = mysql_fetch_assoc($tournaments))
@@ -71,7 +71,8 @@ if($teamId)
 				echo "<tr><td style='width:10%'>". DefHourFormat($game['Aika']) ."</td>";
 				echo "<td style='width:25%'>". htmlentities($game['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($game['VNimi']) ."</td>";
 				if(!$print)
-					echo"<td style='width:15%' align='right'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>otteluhistoria </a></td>";
+					echo "<td style='width:15%' align='right'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>";
+					echo _("otteluhistoria")." </a></td>";
 				echo "</tr>\n";
 				}
 			echo "</table>\n";
@@ -88,7 +89,7 @@ else
 	
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei tulevia pelej&auml;.</p>\n";	
+		echo "\n<p>"._("Ei tulevia pelej&auml;").".</p>\n";	
 		}
 	while($tournament = mysql_fetch_assoc($tournaments))
 		{
@@ -121,7 +122,8 @@ else
 					echo "<tr><td style='width:10%'>". DefHourFormat($game['Aika']) ."</td>";
 					echo "<td style='width:25%'>". htmlentities($game['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($game['VNimi']) ."</td>";
 					if(!$print)
-						echo"<td style='width:15%' align='right'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>otteluhistoria </a></td>";
+						echo "<td style='width:15%' align='right'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>";
+						echo _("otteluhistoria")."</a></td>";
 					echo "</tr>\n";
 					}
 				}
@@ -132,22 +134,21 @@ else
 		}
 	}
 if($print)
-	echo "<hr/><div style='text-align:right'><a href='timetables.php?Team=$teamId&amp;Series=$seriesId'>Takaisin</a></div>";
+	echo "<hr/><div style='text-align:right'><a href='timetables.php?Team=$teamId&amp;Series=$seriesId'>"._("Palaa")."</a></div>";
 elseif($teamId && mysql_num_rows($tournaments))
 	{
-	echo "<hr/><div style='text-align:left;float: left;clear: left'><a href='teamical.php?Team=$teamId'>iCalendar -muodossa </a></div>";
-	echo "<div style='text-align:right'><a href='timetables.php?Team=$teamId&amp;Series=$seriesId&amp;Print=1'>Tulostettava versio</a></div>";
+	echo "<hr/><div style='text-align:left;float: left;clear: left'><a href='teamical.php?Team=$teamId'>"._("iCalendar -muodossa")."</a></div>";
+	echo "<div style='text-align:right'><a href='timetables.php?Team=$teamId&amp;Series=$seriesId&amp;Print=1'>"._("Tulostettava versio")."</a></div>";
 	}
 else
 	{
 	if(mysql_num_rows($tournaments))
-		echo "<hr/><div style='text-align:right'><a href='timetables.php?Team=$teamId&amp;Series=$seriesId&amp;Print=1'>Tulostettava versio</a></div>";
+		echo "<hr/><div style='text-align:right'><a href='timetables.php?Team=$teamId&amp;Series=$seriesId&amp;Print=1'>"._("Tulostettava versio")."</a></div>";
 	}
 	
 CloseConnection();
-?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
-<?php
+
+echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>";
 contentEnd();
 pageEnd();
 ?>

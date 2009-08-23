@@ -18,7 +18,7 @@ $arraySeason = strtok(".");
 
 echo "BEGIN:VCALENDAR\n";
 echo "VERSION:2.0\n";
-echo "PRODID: Suomen Liitokiekkoliitto - Pelikone\n\n";
+echo "PRODID: "._("Suomen Liitokiekkoliitto")." - "._("Pelikone")."\n\n";
 
 $tournaments = ComingTournaments($season);
 	

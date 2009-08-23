@@ -9,8 +9,9 @@
 </td>
 <td>
 <div class="header_middle">
-	<a href="http://www.liitokiekkoliitto.fi/" class="header_text">Suomen Liitokiekkoliitto</a><br/>
-	<a href="http://www.liitokiekkoliitto.fi/english" class="header_text_small">Finnish Flying Disc Association</a>
+<?php
+	echo "<a href='"._("http://www.liitokiekkoliitto.fi/")."' class='header_text'>"._("Suomen Liitokiekkoliitto")."</a><br/>";
+?>
 </div>
 </td>
 </tr>

@@ -28,21 +28,21 @@ $prevTournament = "";
 
 if(!mysql_num_rows($tournaments))
 	{
-	echo "\n<p>Ei vastuupelej&auml;.</p>\n";	
+	echo "\n<p>"._("Ei vastuupelej&auml;").".</p>\n";	
 	}
 else
 	{
 	echo "\n
 	<div style='width:600px'>
-	<p>Sy&ouml;t&auml; vastuullasi oleviin peleihin:</p>
+	<p>"._("Sy&ouml;t&auml; vastuullasi oleviin peleihin").":</p>
 	<ol>
-		<li> Tulos (jos ei l&auml;hetetty tekstiviestill&auml;) </li>
-		<li> Ottelussa pelanneet pelaajat </li>
-		<li> Ottelun p&ouml;yt&auml;kirja </li>
+		<li> "._("Tulos")." "._("(jos ei l&auml;hetetty tekstiviestill&auml;)")." </li>
+		<li> "._("Ottelussa pelanneet pelaajat")." </li>
+		<li> "._("Ottelun p&ouml;yt&auml;kirja")." </li>
 	</ol>
-	<p>Tarkista t&auml;m&auml;n j&auml;lkeen sy&ouml;tt&auml;m&auml;si p&ouml;yt&auml;kirjan oikeellisuus 'pelin kulku' linkist&auml;.</p>
+	<p>"._("Tarkista t&auml;m&auml;n j&auml;lkeen sy&ouml;tt&auml;m&auml;si p&ouml;yt&auml;kirjan oikeellisuus 'pelin kulku' linkist&auml;").".</p>
 	<noscript> 
-	<p><b>P&ouml;yt&auml;kirjoja sy&ouml;tt&auml;ess&auml; tarvitaan JavaScript-komentoja. Aktivoi selaimen JavaScript tuki jatkaaksesi!</b></p>
+	<p><b>"._("P&ouml;yt&auml;kirjoja sy&ouml;tt&auml;ess&auml; tarvitaan JavaScript-komentoja. Aktivoi selaimen JavaScript tuki jatkaaksesi!")."</b></p>
 	</noscript> 
 	</div><hr/>";	
 	}

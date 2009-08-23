@@ -28,17 +28,17 @@ if(!empty($_POST['save']))
 	
 	if(empty($newUsername)|| strlen($newUsername) < 3 || strlen($newUsername) > 20)
 		{
-		echo "<p>K&auml;ytt&auml;j&auml;tunnus liian lyhyt (min. 3 merkki&auml;).</p>";
+		echo "<p>"._("K&auml;ytt&auml;j&auml;tunnus liian lyhyt (min. 3 merkki&auml;)").".</p>";
 		$error = 1;
 		}
 	if(empty($newPassword) || strlen($newPassword) <8 || strlen($newPassword) > 20)
 		{
-		echo "<p>Salasana liian lyhyt (min. 8 merkki&auml;).</p>";
+		echo "<p>"._("Salasana liian lyhyt (min. 8 merkki&auml;).").".</p>";
 		$error = 1;
 		}
 	if(empty($newName))
 		{
-		echo "<p>Nimi ei voi olla tyhj&auml;.</p>";
+		echo "<p>"._("Nimi ei voi olla tyhj&auml;").".</p>";
 		$error = 1;
 		}
 	
@@ -46,7 +46,7 @@ if(!empty($_POST['save']))
 	
 	if($uidcheck != $newUsername)
 		{
-		echo "<p>Laittomia merkkej&auml; k&auml;ytt&auml;j&auml;tunnuksessa.</p>";
+		echo "<p>"._("Ei sallittuja merkkej&auml; k&auml;ytt&auml;j&auml;tunnuksessa").".</p>";
 		$error = 1;
 		}
 		
@@ -54,7 +54,7 @@ if(!empty($_POST['save']))
 	
 	if($pswcheck != $newPassword)
 		{
-		echo "<p>Laittomia merkkej&auml; salasanassa.</p>";
+		echo "<p>"._("Ei sallittuja merkkej&auml; salasanassa").".</p>";
 		$error = 1;
 		}
 	
@@ -71,11 +71,11 @@ if(!empty($_POST['save']))
 	
 	if(!$error)
 		{
-		echo "<p>Tiedot tallennettu!</p><hr/>";
+		echo "<p>"._("Tiedot tallennettu!")."</p><hr/>";
 		}
 	else
 		{
-		echo "<p>Tietoja EI tallennettu!</p><hr/>";
+		echo "<p>"._("Tietoja EI tallennettu!")."</p><hr/>";
 		}
 	}
 
@@ -89,31 +89,31 @@ if($userinfo['userid'] != $_SESSION['uid'] || $userinfo['password'] != $_SESSION
 echo "<form method='post' action='userinfo.php'>";
 	
 echo "<table cellpadding='8px'>
-	<tr><td class='infocell'>Nimi:</td>
+	<tr><td class='infocell'>"._("Nimi").":</td>
 		<td><input class='input' maxlength='256' id='Name' name='Name' value='".$userinfo['nimi']."'/></td></tr>
-	<tr><td class='infocell'>K&auml;ytt&auml;j&auml;tunnus:</td>
+	<tr><td class='infocell'>"._("K&auml;ytt&auml;j&auml;tunnus").":</td>
 		<td><input class='input' maxlength='20' id='UserName' name='UserName' value='".$userinfo['userid']."'/></td></tr>
-	<tr><td class='infocell'>Salasana:</td>
+	<tr><td class='infocell'>"._("Salasana").":</td>
 		<td><input class='input' maxlength='20' id='Password' name='Password' value='".$userinfo['password']."'/></td></tr>
-	<tr><td class='infocell'>S&auml;hk&ouml;posti:</td>
+	<tr><td class='infocell'>"._("S&auml;hk&ouml;posti").":</td>
 		<td><input class='input' maxlength='512' id='Email' name='Email' size='40' value='".$userinfo['email']."'/></td></tr>
-	<tr><td class='infocell'>Joukkue:</td>
+	<tr><td class='infocell'>"._("Joukkue").":</td>
 		<td>".htmlentities(TeamName($userinfo['team']))."</td></tr>		
 	<tr><td class='infocell'>Yll&auml;pit&auml;j&auml;:</td><td>";
 if(intval($userinfo['admin']))
 	{
-	echo "kyll&auml;</td></tr>
-		<tr><td class='infocell'>Kausi</td>
+	echo _("kyll&auml;")."</td></tr>
+		<tr><td class='infocell'>"._("Kausi")."</td>
 		<td>".$userinfo['kausi']."</td></tr>";
 	}
 else
 	{	
-		echo "ei</td></tr>";
+		echo _("ei")."</td></tr>";
 	}
 
 echo "<tr><td colspan = '2' align='right'><br/>
-      <input class='button' type='submit' name='save' value='Tallenna' />
-      <input class='button' type='submit' name='cancel' value='Peruuta' />
+      <input class='button' type='submit' name='save' value='"._("Tallenna")."' />
+      <input class='button' type='submit' name='cancel' value='"._("Peruuta")."' />
       </td></tr>\n";
 
 			

@@ -36,32 +36,32 @@ $baseUrl="scorestatus.php?";
 $baseUrl.= "Team=$teamId&amp;";
 $baseUrl.= "Series=$seriesId&amp;";
 	
-echo "<tr><th>Pelaaja</th>";
+echo "<tr><th>"._("Pelaaja")."</th>";
 
 if($sort == "team") 
-	echo "<th><b>Joukkue</b></th>";
+	echo "<th><b>"._("Joukkue")."</b></th>";
 else
-	echo "<th><a href='".$baseUrl."Sort=team'>Joukkue</a></th>";
+	echo "<th><a href='".$baseUrl."Sort=team'>"._("Joukkue")."</a></th>";
 	
 if($sort == "games") 
-	echo "<th><b>Pelej&auml;</b></th>";
+	echo "<th><b>"._("Pelej&auml;")."</b></th>";
 else
-	echo "<th><a href='".$baseUrl."Sort=games'>Pelej&auml;</a></th>";
+	echo "<th><a href='".$baseUrl."Sort=games'>"._("Pelej&auml;")."</a></th>";
 				
 if($sort == "pass") 
-	echo "<th><b>Sy&ouml;t&ouml;t</b></th>";
+	echo "<th><b>"._("Sy&ouml;t&ouml;t")."</b></th>";
 else
-	echo "<th><a href='".$baseUrl."Sort=pass'>Sy&ouml;t&ouml;t</a></th>";
+	echo "<th><a href='".$baseUrl."Sort=pass'>"._("Sy&ouml;t&ouml;t")."</a></th>";
 		
 if($sort == "goal") 
-	echo "<th><b>Maalit</b></th>";
+	echo "<th><b>"._("Maalit")."</b></th>";
 else
-	echo "<th><a href='".$baseUrl."Sort=goal'>Maalit</a></th>";
+	echo "<th><a href='".$baseUrl."Sort=goal'>"._("Maalit")."</a></th>";
 		
 if($sort == "total") 
-	echo "<th><b>Yht.</b></th>";
+	echo "<th><b>"._("Yht.")."</b></th>";
 else
-	echo "<th><a href='".$baseUrl."Sort=total'>Yht.</a></th>";
+	echo "<th><a href='".$baseUrl."Sort=total'>"._("Yht.")."</a></th>";
 	
 echo "</tr>";
 
@@ -105,7 +105,7 @@ echo "</table>";
 
 CloseConnection();
 ?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
+<p><a href="javascript:history.go(-1);">"._("Palaa")."</a></p>
 <?php
 contentEnd();
 pageEnd();

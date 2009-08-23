@@ -48,8 +48,8 @@ if(!empty($_POST['remove']))
 			{
 			$memberinfo = MembershipInfo($delId);
 			echo "<div style='width:500px'>
-				<p class='warning'><i>". htmlentities($memberinfo['enimi'] ." ". $memberinfo['snimi']) ."</i> ei voida poistaa pelaajalistalta. 
-				Pelannut joukkueessa $games peli&auml;.</p></div>";
+				<p class='warning'><i>". htmlentities($memberinfo['enimi'] ." ". $memberinfo['snimi']) ."</i> "._("ei voida poistaa pelaajalistalta").". 
+				"._("Pelannut joukkueessa")." $games "._("peli&auml;").</p></div>";
 			}
 		else
 			{
@@ -74,7 +74,7 @@ if(!empty($_POST['add']))
 			if($memberinfo['jnro'] == $addId)
 				{
 				echo "<div style='width:500px'>
-				<p><i>". htmlentities($memberinfo['enimi'] ." ". $memberinfo['snimi']) ."</i> oli jo pelaajalistalla.</p></div>";
+				<p><i>". htmlentities($memberinfo['enimi'] ." ". $memberinfo['snimi']) ."</i> "._("oli jo pelaajalistalla").".</p></div>";
 				$found=true;
 				}
 			}
@@ -86,13 +86,13 @@ if(!empty($_POST['add']))
 		}
 	}
 
-echo "<h2>Pelaajalista: ". htmlentities($teaminfo['nimi']) ."</h2>\n";
+echo "<h2>"._("Pelaajalista").": ". htmlentities($teaminfo['nimi']) ."</h2>\n";
 
 echo "<form method='post' action='teamplayers.php?Team=$teamId&amp;Game=$gameId'>\n";
 echo "<table border='0' cellpadding='2' width='500px'>\n";
 
-echo "<tr><th>Jnro</th><th>Syntym&auml;aika</th><th>Nimi</th><th>J&auml;senmaksu</th><th>Lisenssi</th><th>
-<input class='button' name='remove' type='submit' value='Poista'/></th></tr>\n";
+echo "<tr><th>"._("Jnro")."</th><th>"._("Syntym&auml;aika")."</th><th>"._("Nimi")."</th><th>._("J&auml;senmaksu")."</th><th>"._("Lisenssi")."</th><th>
+<input class='button' name='remove' type='submit' value='"._("Poista")."'/></th></tr>\n";
 
 $team_players = TeamPlayerList($teamId);
 
@@ -114,7 +114,7 @@ echo "</table></form>\n";
 
 if(!empty($gameId))
 		{
-		echo "<p><a href='addplayerlists.php?Game=$gameId'>Takaisin sy&ouml;tt&auml;m&auml;&auml;n pelinumeroita</a></p>";
+		echo "<p><a href='addplayerlists.php?Game=$gameId'>"._("Takaisin sy&ouml;tt&auml;m&auml;&auml;n pelinumeroita)."</a></p>";
 		}
 		
 echo "<hr/>\n";
@@ -126,18 +126,18 @@ if(empty($_POST['search']))
 	echo "
 	<h2>Lis&auml;&auml; pelaajia</h2>
 	<div style='width:500px'>
-	<p>Voit lis&auml;t&auml; pelaajia joko j&auml;sennumeron, syntym&auml;ajan (pp.kk.vvvv) tai nimen perusteella.
-	 Voit lis&auml;t&auml; useamman kuin yhden pelaajaa kerrallaan.</p>
+	<p>"._("Voit lis&auml;t&auml; pelaajia joko j&auml;sennumeron, syntym&auml;ajan (pp.kk.vvvv) tai nimen perusteella");
+	 echo _("Voit lis&auml;t&auml; useamman kuin yhden pelaajaa kerrallaan").".</p>
 	</div>
 
 	<form method='post' action='teamplayers.php?Team=$teamId&amp;Game=$gameId'>
 
 	<table border='0' cellpadding='2px' cellspacing='0' width='100%'>
 	  <tr>
-		<th>Jnro</th>
-		<th>Syntym&auml;aika</th>
-		<th>Etunimi</th>
-		<th>Sukunimi</th>
+		<th>"._("Jnro")."</th>
+		<th>"._("Syntym&auml;aika")."</th>
+		<th>"._("Etunimi")."</th>
+		<th>"._("Sukunimi")."</th>
 	  </tr>
 	  <tr>
 		<td><input class='input' name='member1' style='WIDTH: 50px' size='5'/></td>
@@ -171,8 +171,8 @@ if(empty($_POST['search']))
 	  </tr>  
 	 </table>
 	<p>    
-		<input class='button' type='submit' name='search' value='Hae pelaajat'/>
-		<input class='button' type='submit' name='clear' value='Tyhjenn&auml;'/>
+		<input class='button' type='submit' name='search' value='"._("Hae pelaajat")."'/>
+		<input class='button' type='submit' name='clear' value='"._("Tyhjenn&auml;")."'/>
 	</p>
 	</form>";
 		
@@ -180,12 +180,13 @@ if(empty($_POST['search']))
 else
 	{
 	echo 
-	"<h2>Valitse lis&auml;tt&auml;v&auml;t pelaajat</h2>
+	"<h2>"._("Valitse lis&auml;tt&auml;v&auml;t pelaajat")."</h2>
 
 	<form method='post' action='teamplayers.php?Team=$teamId&amp;Game=$gameId'>
 
 	<table border='0' cellpadding='2px' cellspacing='0' width='100%'>	
-	<tr><th>Lis&auml;&auml;</th><th>Jnro</th><th>Syntym&auml;aika</th><th>Nimi</th><th>J&auml;senmaksu</th><th>Lisenssi</th></tr>\n";
+	<tr><th>"._("Lis&auml;&auml;")."</th><th>"._("Jnro")."</th><th>"._("Syntym&auml;aika")."</th><th>"._("Nimi")."</th><th>"._("J&auml;senmaksu")."</th>
+	<th>"._("Lisenssi")."</th></tr>\n";
 	
 	//get given values, search from database and prints
 	$players = PlayerSearch($_POST['member1'],$_POST['birth1'],$_POST['fname1'],$_POST['lname1']);
@@ -200,8 +201,8 @@ else
 	PrintPlayers($players);
 	echo "</table>";
 	echo "<p>    
-		<input class='button' type='submit' name='add' value='Lis&auml;&auml;'/>
-		<input class='button' type='submit' name='clear' value='Peruuta'/>
+		<input class='button' type='submit' name='add' value='"._("Lis&auml;&auml;")."'/>
+		<input class='button' type='submit' name='clear' value='"._("Peruuta")."'/>
 	</p></form>";
 	}	
 CloseConnection();

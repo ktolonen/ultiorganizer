@@ -13,7 +13,7 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 //content
-echo "\n<h1>Vanhat kaudet</h1>\n";
+echo "\n<h1>"._("Vanhat kaudet")."</h1>\n";
 
 OpenConnection();
 
@@ -27,17 +27,17 @@ while($season = mysql_fetch_assoc($seasons))
 	
 	if ($arraySeason == "1")
 		{
-		echo "<h3>Kes&auml; $arrayYear</h3>";
+		echo "<h3>"._("Kes&auml;")." $arrayYear</h3>";
 		}
 	elseif ($arraySeason == "2")
 		{
-		echo "<h3>Talvi $arrayYear</h3>";
+		echo "<h3>"._("Talvi")." $arrayYear</h3>";
 		}
 	else
 		{
 		echo "<h3>".$season['kausi']."</h3>";
 		}
-	echo "<p><a href='Teams.php?Season=".$season['kausi']."'>Joukkueet</a></p>";
+	echo "<p><a href='Teams.php?Season=".$season['kausi']."'>"._("Joukkueet")."</a></p>";
 	
 	$series = Series($season['kausi']);
 	
@@ -53,7 +53,7 @@ while($season = mysql_fetch_assoc($seasons))
 	}
 CloseConnection();
 ?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
+<p><a href="javascript:history.go(-1);">"._("Palaa")."</a></p>
 <?php
 contentEnd();
 pageEnd();

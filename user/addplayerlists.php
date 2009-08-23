@@ -168,7 +168,7 @@ if(!empty($_POST['save']))
 						$playerinfo1 = PlayerInfo($playerId);
 						$playerinfo2 = PlayerInfo($player['pelaaja_id']);
 						echo "<p><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
-						<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> same numero '$number'.</p>";
+						<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> "._("sama numero")." '$number'.</p>";
 						$found = true;
 						break;
 						}
@@ -180,7 +180,7 @@ if(!empty($_POST['save']))
 			else
 				{
 				$playerinfo = PlayerInfo($playerId);
-				echo "<p><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
+				echo "<p><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> "._("virheellinen numero")." '$number'.</p>";
 				}
 			}
 		}
@@ -194,7 +194,7 @@ echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>\n";
 echo "<tr style='height=20'><td align='center'><b>";
 echo htmlentities($game_result['KNimi']), "</b></td></tr>\n";
 echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-echo "<tr><th class='home'>#</th><th class='home'>Nimi</th><th class='home'>Paikalla</th><th class='home'>Numero</th></tr>\n";
+echo "<tr><th class='home'>#</th><th class='home'>"._("Nimi")."</th><th class='home'>"._("Paikalla")."</th><th class='home'>"._("Numero")."</th></tr>\n";
 
 $i=0;
 while($player = mysql_fetch_assoc($home_playerlist))
@@ -219,7 +219,7 @@ while($player = mysql_fetch_assoc($home_playerlist))
 		}
 	echo "</tr>\n";		
 	}
-echo "<tr><td colspan='4'><a href='teamplayers.php?Team=".$game_result['kotijoukkue']."&amp;Game=$gameId'>Lis&auml;&auml; pelaaja</a></td></tr>";
+echo "<tr><td colspan='4'><a href='teamplayers.php?Team=".$game_result['kotijoukkue']."&amp;Game=$gameId'>"._("Lis&auml;&auml; pelaaja")."</a></td></tr>";
 	
 echo "</table></td>\n<td style='width:10%'>&nbsp;</td><td valign='top' style='width:45%'>";
 
@@ -227,7 +227,7 @@ echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
 echo "<tr><td><b>";
 echo htmlentities($game_result['VNimi']), "</b></td></tr>\n";
 echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-echo "<tr><th class='guest'>#</th><th class='guest'>Nimi</th><th class='guest'>Paikalla</th><th class='guest'>Numero</th></tr>\n";
+echo "<tr><th class='guest'>#</th><th class='guest'>"._("Nimi")."</th><th class='guest'>"._("Paikalla")."</th><th class='guest'>"._("Numero")."</th></tr>\n";
 
 $i=0;	
 while($player = mysql_fetch_assoc($away_playerlist))
@@ -252,15 +252,15 @@ while($player = mysql_fetch_assoc($away_playerlist))
 		}
 	echo "</tr>\n";	
 	}
-echo "<tr><td colspan='4'><a href='teamplayers.php?Team=".$game_result['vierasjoukkue']."&amp;Game=$gameId'>Lis&auml;&auml; pelaaja</a></td></tr>";
+echo "<tr><td colspan='4'><a href='teamplayers.php?Team=".$game_result['vierasjoukkue']."&amp;Game=$gameId'>"._("Lis&auml;&auml; pelaaja")."</a></td></tr>";
 	
 echo "</table></td></tr></table>\n";
 echo "<p>    
-		<input class='button' type='submit' name='save' value='Tallenna'/>
+		<input class='button' type='submit' name='save' value='"._("Tallenna")."'/>
 	</p></form>";
 	
-echo "<p></p><p><a href='addscoresheet.php?Game=$gameId'>Sy&ouml;t&auml; p&ouml;yt&auml;kirja</a></p>";
-echo "<p><a href='respgames.php'>Takaisin vastuupeleihin</a></p>";
+echo "<p></p><p><a href='addscoresheet.php?Game=$gameId'>"._("Sy&ouml;t&auml; p&ouml;yt&auml;kirja")."</a></p>";
+echo "<p><a href='respgames.php'>"._("Takaisin vastuupeleihin")."</a></p>";
 
 CloseConnection();
 //common end

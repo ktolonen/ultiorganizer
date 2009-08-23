@@ -28,18 +28,18 @@ echo "<h2>".htmlentities($teaminfo['seura'])."</h2>";
 $seasons = TeamPlayedSeasons($teaminfo['nimi'], $serie);
 
 echo "<table border='1' cellspacing='0' width='100%'><tr>
-	<th>Kausi</th>
-	<th>Sarja</th>
-	<th>Sij.</th>
-	<th>Pel.</th>
-	<th>Voi.</th>
-	<th>Tap.</th>
-	<th>Voi.-%</th>
-	<th>Teh.</th>
-	<th>Teh./peli</th>
-	<th>P&auml;&auml;s.</th>
-	<th>P&auml;&auml;s./peli</th>
-	<th>Maaliero</th>
+	<th>"._("Kausi")."</th>
+	<th>"._("Sarja")."</th>
+	<th>"._("Sij.")."</th>
+	<th>"._("Pel.")."</th>
+	<th>"._("Voi.")."</th>
+	<th>"._("Tap.")."</th>
+	<th>"._("Voi.-%")."</th>
+	<th>"._("Teh.")."</th>
+	<th>"._("Teh./peli")."</th>
+	<th>"._("P&auml;&auml;s.")."</th>
+	<th>"._("P&auml;&auml;s./peli")."</th>
+	<th>"._("Maaliero")."</th>
 	</tr>";
 
 $nOtherGames=0;
@@ -83,11 +83,11 @@ while($season = mysql_fetch_assoc($seasons))
 		{
 		if($arraySeason=="1")
 			{
-			echo "<tr class='highlight'><td>Kes&auml; $arrayYear </td>";
+			echo "<tr class='highlight'><td>"._("Kes&auml;")." $arrayYear </td>";
 			}
 		elseif($arraySeason=="2")
 			{
-			echo "<tr><td>Talvi $arrayYear</td>";
+			echo "<tr><td>"._("Talvi")." $arrayYear</td>";
 			}
 		else
 			{
@@ -176,16 +176,16 @@ while($season = mysql_fetch_assoc($seasons))
 echo "</table><p></p>";
 
 echo "<table border='1' width='100%'><tr>
-<th>Kausi</th>
-<th>Pelit</th>
-<th>Voitot</th>
-<th>Tappiot</th>
-<th>Voitto-%</th>
-<th>Tehdyt</th>
-<th>Tehdyt/peli</th>
-<th>P&auml;&auml;stetyt</th>
-<th>P&auml;&auml;stetyt/peli</th>
-<th>Maaliero</th>
+<th>"._("Kausi")."</th>
+<th>"._("Pelit")."</th>
+<th>"._("Voitot")."</th>
+<th>"._("Tappiot")."</th>
+<th>"._("Voitto-%")."</th>
+<th>"._("Tehdyt")."</th>
+<th>"._("Tehdyt/peli")."</th>
+<th>"._("P&auml;&auml;stetyt")."</th>
+<th>"._("P&auml;&auml;stetyt/peli")."</th>
+<th>"._("Maaliero")."</th>
 </tr>";
 
 if($nOutdoorGames)
@@ -250,7 +250,7 @@ echo "</table>";
 
 //ottelutilastot
 
-echo "<h2>Pelatut pelit</h2>";
+echo "<h2>"._("Pelatut")." "._("pelit")."</h2>";
 echo "<table border='1' cellspacing='2' width='100%'><tr>";
 
 $sort="serie";
@@ -289,11 +289,11 @@ $arraySeason = strtok(".");
 
 	if( $arraySeason == "1")
 		{
-		echo "<td>Kes&auml; $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".htmlentities($row['nimi'])."</a></td></tr>";
+		echo "<td>"._("Kes&auml;")." $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".htmlentities($row['nimi'])."</a></td></tr>";
 		}
 	elseif($arraySeason == "2")
 		{
-		echo "<td>Talvi $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".htmlentities($row['nimi'])."</a></td></tr>";
+		echo "<td>"._("Talvi")." $arrayYear: <a href=\"seriestatus.php?Serie=" .$row['sarja_id']. "\">".htmlentities($row['nimi'])."</a></td></tr>";
 		}
 	else
 		{
@@ -307,7 +307,7 @@ echo "</table>";
 CloseConnection();
 	
 ?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
+<p><a href="javascript:history.go(-1);">"._("Palaa")."</a></p>
 
 <?php
 contentEnd();

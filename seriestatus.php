@@ -21,7 +21,7 @@ $serieName = SerieName($serieId);
 echo "<h2>".htmlentities($serieName)."</h2>";
 
 echo "<table border='1' width='500'>
-	  <tr><th>Joukkue</th><th>Maaliero</th><th>+/-</th><th>Voitot</th><th>Tappiot</th><th>Pelit</th><th>Pisteet</th></tr>";
+	  <tr><th>"._("Joukkue")."</th><th>"._("Maaliero")."</th><th>+/-</th><th>"._("Voitot")."</th><th>"._("Tappiot")."</th><th>"._("Pelit")."</th><th>"._("Pisteet")."</th></tr>";
 SerieResolveStandings($serieId);
 $standings = SerieStandings($serieId);
 
@@ -40,11 +40,11 @@ while($row = mysql_fetch_assoc($standings))
 	}
 echo "</table>";
 
-echo "<p><a href='played.php?Series=$serieId'>Pelatut ottelut</a><br/></p>";
+echo "<p><a href='played.php?Series=$serieId'>"._("Pelatut ottelut")."</a><br/></p>";
 
-echo "<h2>Pistep&ouml;rssin k&auml;rkisijat</h2>";
+echo "<h2>"._("Pistep&ouml;rssin k&auml;rkisijat")."</h2>";
 echo "<table cellspacing='0' border='0' width='500px'>";
-echo "<tr><th>Pelaaja</th><th>Joukkue</th><th>Pelej&auml;</th><th>Sy&ouml;t&ouml;t</th><th>Maalit</th><th>Yht</th></tr>";
+echo "<tr><th>"._("Pelaaja")."</th><th>"._("Joukkue")."</th><th>"._("Pelej&auml;")."</th><th>"._("Sy&ouml;t&ouml;t")."</th><th>"._("Maalit")."</th><th>"._("Yht.")."</th></tr>";
 
 $scores = SerieScoreBoard($serieId,"total", 5);
 while($row = mysql_fetch_assoc($scores))
@@ -58,14 +58,12 @@ while($row = mysql_fetch_assoc($scores))
 	}
 
 echo "</table>";
-echo "<a href='scorestatus.php?Series=$serieId'>Pistep&ouml;rssi</a>";
+echo "<a href='scorestatus.php?Series=$serieId'>"._("Pistep&ouml;rssi")."</a>";
 
 CloseConnection();
-?>
 
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
-
-<?php
+echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>";
+     
 contentEnd();
 pageEnd();
 ?>

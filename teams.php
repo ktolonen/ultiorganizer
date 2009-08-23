@@ -12,8 +12,10 @@ pageTop();
 leftMenu($LAYOUT_ID);
 contentStart();
 ?>
-<h1>Joukkueet</h1>
 <?php
+
+echo "<h1>"._("Joukkueet")."</h1>\n";
+
 OpenConnection();
 $season="";
 
@@ -33,7 +35,7 @@ while($serie = mysql_fetch_assoc($series))
 	echo "
 	<table border='0' cellspacing='0' cellpadding='2' width='100%'>
 	<tr>
-	<th>Nimi</th><th>Seura</th><th></th><th></th><th></th><th colspan='2'>Pistep&ouml;rssi</th>
+	<th>"._("Nimi")."</th><th>"._("Seura")."</th><th></th><th></th><th></th><th colspan='2'>"._("Pistep&ouml;rssi")."</th>
 	</tr>";
 	$teams = Teams($serie['sarja_id']);
 
@@ -55,10 +57,9 @@ while($serie = mysql_fetch_assoc($series))
 	
 	}
 CloseConnection();
-?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
 
-<?php
+echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>";
+
 contentEnd();
 pageEnd();
 ?>

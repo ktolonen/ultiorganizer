@@ -32,8 +32,8 @@ else
 echo "<h3>". htmlentities($player['jnimi']) ."</h3>";
 
 echo "<table border='1' cellspacing='0' width='100%'>\n
-	<tr><th>Kausi</th><th>Sarja</th><th>Joukkue</th><th>Pelej&auml;</th><th>Sy&ouml;t&ouml;t</th><th>Maalit</th><th>Yht.</th>
-	<th>Sy&ouml;tt&ouml; ka.</th><th>Maali ka.</th><th>Piste ka.</th></tr>\n";
+	<tr><th>"._("Kausi")."</th><th>"._("Sarja")."</th><th>"._("Joukkue")."</th><th>"._("Pelej&auml;")."</th><th>"._("Sy&ouml;t&ouml;t")."</th><th>"._("Maalit")."</th>
+	<th>"._("Yht.")."</th><th>".("Sy&ouml;tt&ouml; ka.")."</th><th>"._("Maali ka.")."</th><th>"._("Piste ka.")."</th></tr>\n";
 
 $nOutdoorGoals=0;
 $nOutdoorPasses=0;
@@ -79,7 +79,7 @@ while($season = mysql_fetch_assoc($playedSeasons))
 			$nOutdoorPasses = $nOutdoorPasses + $passes;
 			$nOutdoorPlayed = $nOutdoorPlayed + $games;
 
-			echo "<tr class='highlight'><td>Kes&auml; $arrayYear</td>
+			echo "<tr class='highlight'><td>"._("Kes&auml;")." $arrayYear</td>
 				<td>". htmlentities($serie['nimi']) ."</td>
 				<td>". htmlentities($season['nimi']) ."</td>
 				<td>". $games ."</td>
@@ -97,7 +97,7 @@ while($season = mysql_fetch_assoc($playedSeasons))
 			$nIndoorPasses += $passes;
 			$nIndoorPlayed += $games;
 
-			echo "<tr><td>Talvi $arrayYear</td>
+			echo "<tr><td>"._("Talvi")." $arrayYear</td>
 				<td>". htmlentities($serie['nimi']) ."</td>
 				<td>". htmlentities($season['nimi']) ."</td>
 				<td>". $games ."</td>
@@ -131,8 +131,8 @@ echo "</table>\n";
 
 //seasons total
 echo "<table border='1' width='100%'><tr>
-	<th>Kausi</th><th>Pelej&auml;</th><th>Sy&ouml;t&ouml;t</th><th>Maalit</th><th>Yht.</th><th>Sy&ouml;tt&ouml; ka.</th>
-	<th>Maali ka.</th><th>Piste ka.</th></tr>\n";
+	<th>"._("Kausi")."</th><th>"._("Pelej&auml;")."</th><th>"._("Sy&ouml;t&ouml;t")."</th><th>"._("Maalit")."</th><th>"._("Yht.")."</th><th>"._("Sy&ouml;tt&ouml; ka.")."</th>
+	<th>"._("Maali ka.")."</th><th>"._("Piste ka.")."</th></tr>\n";
 
 if ($nOutdoorPlayed)
 	{
@@ -141,7 +141,7 @@ if ($nOutdoorPlayed)
 	$dblGoalAvg = $nOutdoorGoals / $nOutdoorPlayed;
 	$dblScoreAvg = $total / $nOutdoorPlayed;
 	echo "<tr>
-		<td>Kes&auml;</td>
+		<td>"._("Kes&auml;")."</td>
 		<td>".$nOutdoorPlayed."</td>
 		<td>".$nOutdoorPasses."</td>
 		<td>".$nOutdoorGoals."</td>
@@ -158,7 +158,7 @@ if ($nIndoorPlayed)
 	$dblGoalAvg = $nIndoorGoals / $nIndoorPlayed;
 	$dblScoreAvg = $total / $nIndoorPlayed;
 	echo "<tr>
-		<td>Talvi</td>
+		<td>"._("Talvi")."</td>
 		<td>".$nIndoorPlayed."</td>
 		<td>".$nIndoorPasses."</td>
 		<td>".$nIndoorGoals."</td>
@@ -175,7 +175,7 @@ if ($nOtherPlayed)
 	$dblGoalAvg = $nOtherGoals / $nOtherPlayed;
 	$dblScoreAvg = $total / $nOtherPlayed;
 	echo "<tr>
-		<td>Muut</td>
+		<td>"._("Muut")."</td>
 		<td>".$nOtherPlayed."</td>
 		<td>".$nOtherPasses."</td>
 		<td>".$nOtherGoals."</td>
@@ -201,7 +201,7 @@ else
 	}
 
 echo "<tr class='highlight'>
-	<td>Yht.</td>
+	<td>"._("Yht.")."</td>
 	<td>",$nOutdoorPlayed+$nIndoorPlayed+$nOtherPlayed,"</td>
 	<td>",$nOutdoorPasses+$nIndoorPasses+$nOtherPasses,"</td>
 	<td>",$nOutdoorGoals+$nIndoorGoals+$nOtherGoals,"</td>
@@ -219,7 +219,7 @@ $games = PlayerSeasonGames($playerId, CurrenSeason());
 
 if(mysql_num_rows($games))
 	{
-	echo "<h2>Kauden pelitapahtumat:</h2>\n";
+	echo "<h2>"._("Kauden pelitapahtumat").":</h2>\n";
 
 	while($game = mysql_fetch_assoc($games))
 		{
@@ -270,10 +270,8 @@ if(mysql_num_rows($games))
 	}
 CloseConnection();
 	
-?>
-<p><a href="javascript:history.go(-1);">Palaa</a></p>
+echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>";
 
-<?php
 contentEnd();
 pageEnd();
 ?>
