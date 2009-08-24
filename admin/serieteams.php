@@ -93,15 +93,15 @@ if(!empty($_POST['save']))
 echo "<form method='post' action='serieteams.php?Serie=$serieId&amp;Season=$season'>";
 
 echo "<h1>".htmlentities(SerieName($serieId))."</h1>\n";
-echo "<h2>Valitse joukkueet:</h2>\n";
+echo "<h2>"._("Valitse joukkueet").":</h2>\n";
 
 
 echo "<table border='0' cellpadding='4px'>\n";
 
-echo "<tr><th>Pelaa</th>
-	<th>Rank</th>
-	<th>Nimi</th>
-	<th>Seura</th></tr>\n";
+echo "<tr><th>"._("Pelaa")."</th>
+	<th>"._("Rank")."</th>
+	<th>"._("Nimi")."</th>
+	<th>"._("Seura")."</th></tr>\n";
 
 
 $teams = Teams($serieId);
@@ -136,14 +136,14 @@ while($team = mysql_fetch_assoc($teams))
 if(mysql_num_rows($teams))	
 	echo "<tr><td colspan='5' class='menuseparator'></td></tr>\n";
 
-echo "<tr><td colspan='5' class='menuseparator'><input class='button' name='add' type='button' value='Lis&auml;&auml; uusi' onclick=\"window.location.href='addseasonteams.php?Serie=$serieId&amp;Season=$season'\"/></td></tr>";
+echo "<tr><td colspan='5' class='menuseparator'><input class='button' name='add' type='button' value='"._("Lis&auml;&auml;")."' onclick=\"window.location.href='addseasonteams.php?Serie=$serieId&amp;Season=$season'\"/></td></tr>";
 	
 echo "</table>";
 
 
 
-echo "<p><input class='button' name='save' type='submit' value='Tallenna'/>";
-echo "<input class='button' type='button' name='takaisin'  value='Takaisin' onclick=\"window.location.href='addseasonseries.php?Serie=$serieId&amp;Season=$season'\"/></p>";
+echo "<p><input class='button' name='save' type='submit' value='"._("Tallenna")."'/>";
+echo "<input class='button' type='button' name='takaisin'  value='"._("Palaa")."' onclick=\"window.location.href='addseasonseries.php?Serie=$serieId&amp;Season=$season'\"/></p>";
 
 echo "</form>\n";
 

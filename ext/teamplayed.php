@@ -31,7 +31,7 @@ if($teamId)
 	$tournaments = PlayedTournaments($season);
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei pelaatuja pelej&auml;.</p>\n";
+		echo "\n<p>"._("Ei pelattuja pelej&auml;").".</p>\n";
 		}
 	else
 		{

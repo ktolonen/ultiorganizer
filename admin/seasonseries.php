@@ -40,13 +40,13 @@ if(!empty($_POST['remove']))
 	$teams = Teams($id);
 	if(mysql_num_rows($teams))
 		{
-		echo "<p class='warning'>Sarjassa pelaa ".mysql_num_rows($teams)." joukkuetta. Joukkueet pit&auml;&auml; poistaa ennen sarjan poistamista.</p>";
+		echo "<p class='warning'>"._("Sarjassa pelaa")." ".mysql_num_rows($teams)." "._("joukkuetta").". "._("Joukkueet pit&auml;&auml; poistaa ennen sarjan poistamista").".</p>";
 		$ok = false;
 		}
 	$games = SerieTotalPlayedGames($id);
 	if(mysql_num_rows($games))
 		{
-		echo "<p class='warning'>Sarjaa on jo pelattu. Et voi poistaa t&auml;t&auml; sarjaa poistamatta pelej&auml;.</p>";
+		echo "<p class='warning'>"._("Sarjaa on jo pelattu").". "._("Et voi poistaa t&auml;t&auml; sarjaa poistamatta pelej&auml;").".</p>";
 		$ok = false;
 		}
 		
@@ -67,32 +67,32 @@ if(!empty($_POST['save']))
 	
 echo "<form method='post' action='seasonseries.php?Season=$season'>";
 
-echo "<h2>Sarjat</h2>\n";
+echo "<h2>"._("Sarjat")."</h2>\n";
 
 echo "<table border='0' cellpadding='4px'>\n";
 
-echo "<tr><th>Nimi</th>
-	<th>Jatkosarja</th>
-	<th>N&auml;yt&auml; joukkueet</th>
+echo "<tr><th>"._("Nimi")."</th>
+	<th>"._("Jatkosarja")."</th>
+	<th>"._("N&auml;yt&auml; joukkueet")."</th>
 	<th></th><th></th></tr>\n";
 
 $series = SeasonSeriesInfo($season);
 
 while($row = mysql_fetch_assoc($series))
 	{
-	$continuationSerie = intval($row['jatkosarja'])?"kyll&auml;":"ei";
-	$showteams = intval($row['showteams'])?"kyll&auml;":"ei";
+	$continuationSerie = intval($row['jatkosarja'])?_("kyll&auml;"):_("ei");
+	$showteams = intval($row['showteams'])?_("kyll&auml;"):_("ei");
 	
 	echo "<tr>";
 	echo "<td>".$row['nimi']."</td>";
 	echo "<td class='center'>$continuationSerie</td>";
 	echo "<td class='center'>$showteams</td>";
-	echo "<td class='center'><input class='button' type='button' name='edit'  value='muokkaa' onclick=\"window.location.href='addseasonseries.php?Season=$season&amp;Serie=".$row['sarja_id']."'\"/></td>";
-	echo "<td class='center'><input class='button' type='submit' name='remove' value='poista' onclick=\"setId(".$row['sarja_id'].");\"/></td>";
+	echo "<td class='center'><input class='button' type='button' name='edit'  value='"._("Muokkaa")."' onclick=\"window.location.href='addseasonseries.php?Season=$season&amp;Serie=".$row['sarja_id']."'\"/></td>";
+	echo "<td class='center'><input class='button' type='submit' name='remove' value='"._("Poista")."' onclick=\"setId(".$row['sarja_id'].");\"/></td>";
 	echo "</tr>\n";	
 	}
 
-echo "</table><p><input class='button' name='add' type='button' value='Lis&auml;&auml; uusi' onclick=\"window.location.href='addseasonseries.php?Season=$season'\"/></p>";
+echo "</table><p><input class='button' name='add' type='button' value='"._("Lis&auml;&auml;")."' onclick=\"window.location.href='addseasonseries.php?Season=$season'\"/></p>";
 
 //stores id to delete
 echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";

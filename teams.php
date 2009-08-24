@@ -45,11 +45,11 @@ while($serie = mysql_fetch_assoc($series))
 		<tr>
 		<td><a href='teamcard.php?Team=".$row['Joukkue_ID']."'>".htmlentities($row['Nimi'])."</a></td>
 		<td>".htmlentities($row['Seura'])."</td>";
-		echo "<td><a href='playerlist.php?Team=".$row['Joukkue_ID']."'>Pelaajalista</a></td>";
-		echo "<td><a href='timetables.php?Team=".$row['Joukkue_ID']."'>Tulevat&nbsp;pelit</a></td>";
-		echo "<td><a href='played.php?Team=".$row['Joukkue_ID']."'>Pelatut&nbsp;pelit</a></td>";
-		echo "<td><a href='scorestatus.php?Team=".$row['Joukkue_ID']."&amp;Series=". $serie['sarja_id'] ."'>Sarja</a></td>";
-		echo "<td><a href='scorestatus.php?Team=".$row['Joukkue_ID']."'>Kausi</a></td>";
+		echo "<td><a href='playerlist.php?Team=".$row['Joukkue_ID']."'>"._("Pelaajalista")."</a></td>";
+		echo "<td><a href='timetables.php?Team=".$row['Joukkue_ID']."'>"._("Tulevat&nbsp;pelit")."</a></td>";
+		echo "<td><a href='played.php?Team=".$row['Joukkue_ID']."'>"._("Pelatut&nbsp;pelit")."</a></td>";
+		echo "<td><a href='scorestatus.php?Team=".$row['Joukkue_ID']."&amp;Series=". $serie['sarja_id'] ."'>"._("Sarja")."</a></td>";
+		echo "<td><a href='scorestatus.php?Team=".$row['Joukkue_ID']."'>"._("Kausi")."</a></td>";
 		echo "</tr>\n";
 		}
 	echo "</table>\n";

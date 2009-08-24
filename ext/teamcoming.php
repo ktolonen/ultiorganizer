@@ -8,12 +8,10 @@ if(empty($style))
 	$style='pelikone.css';
 	
 echo "<link rel='stylesheet' href='$style' type='text/css' />";
-?>
-<title>Liitokiekkoliiton Pelikone</title>
-</head>
-<body>
+echo "<title>"._("Liitokiekkoliiton Pelikone")."</title>
+	</head>
+	<body>\n";
 
-<?php
 include_once '../lib/database.php';
 include_once '../lib/common.functions.php';
 include_once '../lib/season.functions.php';
@@ -32,7 +30,7 @@ if($teamId)
 	$prevTournament = "";
 	if(!mysql_num_rows($tournaments))
 		{
-		echo "\n<p>Ei tulevia pelej&auml;.</p>\n";
+		echo "\n<p>"._("Ei tulevia pelej&auml;").".</p>\n";
 		}
 	else
 		{

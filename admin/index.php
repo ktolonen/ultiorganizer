@@ -9,13 +9,12 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 //content
-?>
-<h2>Sis&auml;&auml;nkirjautuminen onnistui!</h2>
-<p>Valitse haluttu toiminto:</p>
-<a href='../user/userinfo.php'>&raquo; Omat tiedot</a><br/>
-<a href='../user/teamplayers.php'>&raquo; Pelaajalista</a><br/>
-<a href='../user/respgames.php'>&raquo; Vastuupelit</a><br/>
-<?php
+echo "<h2>"._("Sis&auml;&auml;nkirjautuminen onnistui").".</h2>
+	<p>"._("Valitse haluttu toiminto").":</p>
+	<a href='../user/userinfo.php'>&raquo; "._("Omat tiedot")."</a><br/>
+	<a href='../user/teamplayers.php'>&raquo; "._("Pelaajalista")."</a><br/>
+	<a href='../user/respgames.php'>&raquo; "._("Vastuupelit")."</a><br/>\n";
+
 contentEnd();
 pageEnd();
 ?>

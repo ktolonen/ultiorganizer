@@ -40,7 +40,7 @@ while($row = mysql_fetch_assoc($standings))
 	}
 echo "</table>";
 
-echo "<p><a href='played.php?Series=$serieId'>"._("Pelatut ottelut")."</a><br/></p>";
+echo "<p><a href='played.php?Series=$serieId'>"._("Pelatut pelit")."</a><br/></p>";
 
 echo "<h2>"._("Pistep&ouml;rssin k&auml;rkisijat")."</h2>";
 echo "<table cellspacing='0' border='0' width='500px'>";

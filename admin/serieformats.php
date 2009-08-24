@@ -35,15 +35,15 @@ if(!empty($_POST['remove']))
 	
 echo "<form method='post' action='serieformats.php'>";
 
-echo "<h2>Sarjaformaatit</h2>\n";
+echo "<h2>"._("Sarjaformaatit")."</h2>\n";
 
 echo "<table border='0' cellpadding='4px'>\n";
 
-echo "<tr><th>Nimi</th>
-	<th>Voittopiste</th>
-	<th>Pistekatto</th>
-	<th>Aikakatto</th>
-	<th>Aikalisi&auml;</th>
+echo "<tr><th>"._("Nimi")."</th>
+	<th>"._("Voittopiste")."</th>
+	<th>"._("Pistekatto")."</th>
+	<th>"._("Aikakatto")."</th>
+	<th>"._("Aikalisi&auml;")."</th>
 	<th></th><th></th></tr>\n";
 
 $serietemplates = SerieTemplates();
@@ -59,12 +59,12 @@ while($row = mysql_fetch_assoc($serietemplates))
 		echo "<td class='center'>".$row['aikalisia']."</td>";
 	else
 		echo "<td class='center'>-</td>";
-	echo "<td class='center'><input class='button' type='button' name='edit'  value='muokkaa' onclick=\"window.location.href='addserieformats.php?Id=".$row['sarja_id']."'\"/></td>";
-	echo "<td class='center'><input class='button' type='submit' name='remove' value='poista' onclick=\"setId(".$row['sarja_id'].");\"/></td>";
+	echo "<td class='center'><input class='button' type='button' name='edit'  value='"._("Muokkaa")."' onclick=\"window.location.href='addserieformats.php?Id=".$row['sarja_id']."'\"/></td>";
+	echo "<td class='center'><input class='button' type='submit' name='remove' value='"._("Poista")."' onclick=\"setId(".$row['sarja_id'].");\"/></td>";
 	echo "</tr>\n";	
 	}
 
-echo "</table><p><input class='button' name='add' type='button' value='Lis&auml;&auml; uusi' onclick=\"window.location.href='addserieformats.php'\"/></p>";
+echo "</table><p><input class='button' name='add' type='button' value='"._("Lis&auml;&auml;")."' onclick=\"window.location.href='addserieformats.php'\"/></p>";
 
 //stores id to delete
 echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";

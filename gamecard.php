@@ -134,7 +134,7 @@ echo "<table border='1' cellspacing='2' width='100%'><tr>\n";
 
 $sBaseUrl="gamecard.php?Team1=$teamId1&amp;Team2=$teamId2&amp;";
 	
-echo "<th><a href='".$sBaseUrl."Sort=team'>"._("Ottelu")."</a></th>";
+echo "<th><a href='".$sBaseUrl."Sort=team'>"._("Peli")."</a></th>";
 echo "<th><a href='".$sBaseUrl."Sort=result'>"._("Tulos")."</a></th>";
 echo "<th><a href='".$sBaseUrl."Sort=serie'>"._("Sarja")."</a></th></tr>";
 

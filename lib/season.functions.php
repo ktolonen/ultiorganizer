@@ -45,11 +45,11 @@ function CurrenSeasonName()
 	
 	if($season=="1")
 		{
-		$name= "Kes&auml; $year";
+		$name= _("Kes&auml;")." $year";
 		}
 	elseif($season=="2")
 		{
-		$name = "Talvi $year";
+		$name = _("Talvi")." $year";
 		}
 	else
 		{

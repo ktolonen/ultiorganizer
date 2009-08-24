@@ -43,7 +43,7 @@ if($placeId)
 	$name=$info['paikka'];
 	$info=$info['info'];
 
-	echo "<h2>Muokkaa pelipaikkaa</h2>\n";	
+	echo "<h2>"._("Muokkaa pelipaikkaa")."</h2>\n";	
 	echo "<form method='post' action='addplaces.php?Id=$placeId'>";
 	}
 else
@@ -53,14 +53,14 @@ else
 	}
 
 echo "<table cellpadding='2px'>
-	<tr><td class='infocell'>Nimi:</td>
+	<tr><td class='infocell'>"._("Nimi").":</td>
 		<td><input class='input' id='name' name='name' value='$name'/></td><td></td></tr>
 
-	<tr><td class='infocell'>Lis&auml;tietoa:</td>
+	<tr><td class='infocell'>"._("Lis&auml;tietoa").":</td>
 		<td><input class='input' id='info' name='info' value='$info'/></td>
 		<td></td></tr>
 
-	<tr><td class='infocell'>Karttalinkki:</td>
+	<tr><td class='infocell'>"._("Karttalinkki").":</td>
 		<td><input class='input' id='maplink' name='maplink' value='$maplink'/></td>
 		<td></td></tr>		
 	";
@@ -69,11 +69,11 @@ echo "<table cellpadding='2px'>
 echo "</table>";
 
 if($placeId)	
-	echo "<p><input class='button' name='save' type='submit' value='Tallenna'/>";
+	echo "<p><input class='button' name='save' type='submit' value='"._("Tallenna")."'/>";
 else
-	echo "<p><input class='button' name='add' type='submit' value='Lis&auml;&auml;'/>";
+	echo "<p><input class='button' name='add' type='submit' value='"._("Lis&auml;&auml;")."'/>";
 
-echo "<input class='button' type='button' name='takaisin'  value='Takaisin' onclick=\"window.location.href='places.php'\"/></p>";
+echo "<input class='button' type='button' name='takaisin'  value='"._("Palaa")."' onclick=\"window.location.href='places.php'\"/></p>";
 echo "</form>\n";
 
 CloseConnection();

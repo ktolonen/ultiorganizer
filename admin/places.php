@@ -35,11 +35,11 @@ if(!empty($_POST['remove']))
 
 echo "<form method='post' action='places.php'>";
 
-echo "<h2>Pelipaikat</h2>\n";
+echo "<h2>"._("Pelipaikat")."</h2>\n";
 
 echo "<table border='0' cellpadding='4px'>\n";
 
-echo "<tr><th>Nimi</th>
+echo "<tr><th>"._("Nimi")."</th>
 	<th></th><th></th></tr>\n";
 
 $placetemplates = PlaceTemplates();
@@ -48,12 +48,12 @@ while($row = mysql_fetch_assoc($placetemplates))
 	{
 	echo "<tr>";
 	echo "<td>".$row['paikka']."</td>";
-	echo "<td class='center'><input class='button' type='button' name='edit'  value='muokkaa' onclick=\"window.location.href='addplaces.php?Id=".$row['paikka_id']."'\"/></td>";
-	echo "<td class='center'><input class='button' type='submit' name='remove' value='poista' onclick=\"setId(".$row['paikka_id'].");\"/></td>";
+	echo "<td class='center'><input class='button' type='button' name='edit'  value='"._("Muokkaa")."' onclick=\"window.location.href='addplaces.php?Id=".$row['paikka_id']."'\"/></td>";
+	echo "<td class='center'><input class='button' type='submit' name='remove' value='"._("Poista")."' onclick=\"setId(".$row['paikka_id'].");\"/></td>";
 	echo "</tr>\n";	
 	}
 
-echo "</table><p><input class='button' name='add' type='button' value='Lis&auml;&auml; uusi' onclick=\"window.location.href='addplaces.php'\"/></p>";
+echo "</table><p><input class='button' name='add' type='button' value='"._("Lis&auml;&auml;")."' onclick=\"window.location.href='addplaces.php'\"/></p>";
 
 //stores id to delete
 echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";

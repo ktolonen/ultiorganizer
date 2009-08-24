@@ -190,7 +190,7 @@ echo "<table border='1' width='100%'><tr>
 
 if($nOutdoorGames)
 {
-echo "<tr><td>Kes&auml;</td>
+echo "<tr><td>"._("Kes&auml;")."</td>
 <td>$nOutdoorGames</td>
 <td>$nOutdoorWins</td>
 <td>$nOutdoorLoses</td>
@@ -204,7 +204,7 @@ echo "<tr><td>Kes&auml;</td>
 
 if($nIndoorGames)
 {
-echo "<tr><td>Talvi</td>
+echo "<tr><td>"._("Talvi")."</td>
 <td>$nIndoorGames</td>
 <td>$nIndoorWins</td>
 <td>$nIndoorLoses</td>

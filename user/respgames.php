@@ -37,8 +37,8 @@ else
 	<p>"._("Sy&ouml;t&auml; vastuullasi oleviin peleihin").":</p>
 	<ol>
 		<li> "._("Tulos")." "._("(jos ei l&auml;hetetty tekstiviestill&auml;)")." </li>
-		<li> "._("Ottelussa pelanneet pelaajat")." </li>
-		<li> "._("Ottelun p&ouml;yt&auml;kirja")." </li>
+		<li> "._("Peliss&auml; pelanneet pelaajat")." </li>
+		<li> "._("Pelin p&ouml;yt&auml;kirja")." </li>
 	</ol>
 	<p>"._("Tarkista t&auml;m&auml;n j&auml;lkeen sy&ouml;tt&auml;m&auml;si p&ouml;yt&auml;kirjan oikeellisuus 'pelin kulku' linkist&auml;").".</p>
 	<noscript> 

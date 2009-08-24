@@ -76,7 +76,7 @@ if($teamId)
 					echo "<td style='width:15%'>"._("es")."</td>";
 
 				echo"<td style='width:15%'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>";
-				echo _("Otteluhistoria")."</a></td>";					
+				echo _("Pelihistoria")."</a></td>";					
 				echo "</tr>";
 				}
 			echo "</table>";
@@ -212,7 +212,7 @@ else
 		}	
 	}
 CloseConnection();
-echo "<p><a href='javascript:history.go(-1);'">"._("Palaa")."</a></p>";
+echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>";
 contentEnd();
 pageEnd();
 ?>

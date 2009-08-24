@@ -91,7 +91,6 @@ function leftMenu($id, $printable=false)
 	echo "</td></tr>\n";
 	
 	echo "<tr><td class='menuseparator'></td></tr>\n";
-	echo "<tr><td>&copy; SLKL 2009</td></tr>\n";
 		
 	echo "</table></form></td>\n";
 

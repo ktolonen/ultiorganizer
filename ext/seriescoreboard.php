@@ -8,12 +8,10 @@ if(empty($style))
 	$style='pelikone.css';
 	
 echo "<link rel='stylesheet' href='$style' type='text/css' />";
-?>
-<title>Liitokiekkoliiton Pelikone</title>
-</head>
-<body>
+echo "<title>"._("Liitokiekkoliiton Pelikone")."</title>
+	</head>
+	<body>\n";
 
-<?php
 include_once '../lib/database.php';
 include_once '../lib/season.functions.php';
 include_once '../lib/serie.functions.php';
@@ -26,12 +24,12 @@ $sort="total";
 
 echo "<table class='pk_table'>";
 
-echo "<tr><th class='pk_scoreboard_th'>Pelaaja</th>";
-echo "<th class='pk_scoreboard_th'>Joukkue</th>";
-echo "<th class='pk_scoreboard_th'>Pelej&auml;</th>";
-echo "<th class='pk_scoreboard_th'>Sy&ouml;t&ouml;t</th>";
-echo "<th class='pk_scoreboard_th'>Maalit</th>";
-echo "<th class='pk_scoreboard_th'>Yht.</th>";
+echo "<tr><th class='pk_scoreboard_th'>"._("Pelaaja")."</th>";
+echo "<th class='pk_scoreboard_th'>"._("Joukkue")."</th>";
+echo "<th class='pk_scoreboard_th'>"._("Pelej&auml;")."</th>";
+echo "<th class='pk_scoreboard_th'>"._("Sy&ouml;t&ouml;t")."</th>";
+echo "<th class='pk_scoreboard_th'>"._("Maalit")."</th>";
+echo "<th class='pk_scoreboard_th'>"._("Yht.")."</th>";
 echo "</tr>";
 
 $scores = SerieScoreBoard($seriesId, $sort, 10);

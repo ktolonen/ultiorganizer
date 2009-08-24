@@ -230,7 +230,7 @@ $place = PlaceInfo($game_result['paikka']);
 echo "<form action='addscoresheet.php?Game=$gameId' method='post'>";
 echo "<table cellspacing='5' cellpadding='5'>";
 
-echo "<tr><td colspan='2'><h1>"._("Suomen Liitokiekkoliitto")." - "._("Ottelup&ouml;yt&auml;kirja")."</h1></td></tr>";
+echo "<tr><td colspan='2'><h1>"._("Suomen Liitokiekkoliitto")." - "._("Pelin p&ouml;yt&auml;kirja")."</h1></td></tr>";
 echo "<tr><td valign='top'>\n";
 
 //team, place, time info and scoresheet keeper's name

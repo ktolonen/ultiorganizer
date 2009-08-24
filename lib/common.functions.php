@@ -31,25 +31,25 @@ function WeekdayString($timestamp, $cap)
 	switch($weekday)
 		{
 		case 0:
-			$weekday = $cap ? 'Su' : 'su';
+			$weekday = $cap ? _("Su") : _("su");
 			break;
 		case 1:
-			$weekday = $cap ? 'Ma' : 'ma';
+			$weekday = $cap ? _("Ma") : _("ma");
 			break;
 		case 2:
-			$weekday = $cap ? 'Ti' : 'ti';
+			$weekday = $cap ? _("Ti") : _("ti");
 			break;
 		case 3:
-			$weekday = $cap ? 'Ke' : 'ke';
+			$weekday = $cap ? _("Ke") : _("ke");
 			break;
 		case 4:
-			$weekday = $cap ? 'To' : 'to';
+			$weekday = $cap ? _("To") : _("to");
 			break;
 		case 5:
-			$weekday = $cap ? 'Pe' : 'pe';
+			$weekday = $cap ? _("Pe") : _("pe");
 			break;
 		case 6:
-			$weekday = $cap ? 'La' : 'la';
+			$weekday = $cap ? _("La") : _("la");
 			break;
 		default:
 			$weekday = '';

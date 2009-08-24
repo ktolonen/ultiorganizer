@@ -8,12 +8,10 @@ if(empty($style))
 	$style='pelikone.css';
 	
 echo "<link rel='stylesheet' href='$style' type='text/css' />";
-?>
-<title>Liitokiekkoliiton Pelikone</title>
-</head>
-<body>
+echo "<title>"._("Liitokiekkoliiton Pelikone")."</title>
+	</head>
+	<body>\n";
 
-<?php
 include_once '../lib/database.php';
 include_once '../lib/season.functions.php';
 include_once '../lib/serie.functions.php';
@@ -25,13 +23,13 @@ $season = $_GET["Season"];
 
 echo "<table class='pk_table'>
 	  <tr>
-	  <th class='pk_ser_th'>Joukkue</th>
-	  <th class='pk_ser_th'>Maaliero</th>
+	  <th class='pk_ser_th'>"._("Joukkue")."</th>
+	  <th class='pk_ser_th'>"._("Maaliero")."</th>
 	  <th class='pk_ser_th'>+/-</th>
-	  <th class='pk_ser_th'>Voitot</th>
-	  <th class='pk_ser_th'>Tappiot</th>
-	  <th class='pk_ser_th'>Pelit</th>
-	  <th class='pk_ser_th'>Pisteet</th>
+	  <th class='pk_ser_th'>"._("Voitot")."</th>
+	  <th class='pk_ser_th'>"._("Tappiot")."</th>
+	  <th class='pk_ser_th'>"._("Pelit")."</th>
+	  <th class='pk_ser_th'>"._("Pisteet")."</th>
 	  </tr>";
 
 $standings = SerieStandings($serieId);

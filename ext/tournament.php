@@ -8,13 +8,10 @@ if(empty($style))
 	$style='pelikone.css';
 	
 echo "<link rel='stylesheet' href='$style' type='text/css' />";
-?>
+echo "<title>"._("Liitokiekkoliiton Pelikone")."</title>
+	</head>
+	<body>\n";
 
-<title>Liitokiekkoliiton Pelikone</title>
-</head>
-<body>
-
-<?php
 include_once '../lib/database.php';
 include_once '../lib/common.functions.php';
 include_once '../lib/season.functions.php';

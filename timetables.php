@@ -72,7 +72,7 @@ if($teamId)
 				echo "<td style='width:25%'>". htmlentities($game['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($game['VNimi']) ."</td>";
 				if(!$print)
 					echo "<td style='width:15%' align='right'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>";
-					echo _("otteluhistoria")." </a></td>";
+					echo _("Pelihistoria")." </a></td>";
 				echo "</tr>\n";
 				}
 			echo "</table>\n";
@@ -123,7 +123,7 @@ else
 					echo "<td style='width:25%'>". htmlentities($game['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($game['VNimi']) ."</td>";
 					if(!$print)
 						echo "<td style='width:15%' align='right'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>";
-						echo _("otteluhistoria")."</a></td>";
+						echo _("Pelihistoria")."</a></td>";
 					echo "</tr>\n";
 					}
 				}

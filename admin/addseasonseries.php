@@ -57,7 +57,7 @@ if(!empty($_POST['add']))
 		}
 	else
 		{
-		echo "<p>Sarjan nimi on pakollinen tieto!</p>";
+		echo "<p>"._("Sarjan nimi on pakollinen tieto!")."</p>";
 		}
 	}
 if(!empty($_POST['save']))
@@ -101,13 +101,13 @@ OpenConnection();
 //if serieid is empty, then add new serie	
 if(!$serieId)
 	{
-	echo "<h2>Lis&auml;&auml; sarja</h2>\n";	
+	echo "<h2>"._("Lis&auml;&auml; sarja")."</h2>\n";	
 	echo "<form method='post' action='addseasonseries.php?Season=$season'>";
 	echo "<table cellpadding='2px'>
 			<tr><td class='infocell'>Nimi:</td>
 			<td><input class='input' id='name' name='name' value=''/></td><td></td></tr>
 			";
-	echo "<tr><td class='infocell'>Pohja:</td>
+	echo "<tr><td class='infocell'>"._("Pohja").":</td>
 		<td><select class='dropdown' name='template'>";
 
 	$templates = SerieTemplates();
@@ -135,8 +135,8 @@ if(!$serieId)
 
 	
 	echo "</table>
-		  <p><input class='button' name='add' type='submit' value='Lis&auml;&auml;'/>
-		  <input class='button' type='button' name='takaisin'  value='Takaisin' onclick=\"window.location.href='seasonseries.php?Season=$season'\"/></p>
+		  <p><input class='button' name='add' type='submit' value='"._("Lis&auml;&auml;")."'/>
+		  <input class='button' type='button' name='takaisin'  value='"._("Palaa")."' onclick=\"window.location.href='seasonseries.php?Season=$season'\"/></p>
 		  </form>";
 	}
 else
@@ -161,33 +161,33 @@ else
 	$sp['showteams']=$info['showteams'];
 	$sp['alkusarjat']=$info['alkusarjat'];
 	
-	echo "<h2>Muokkaa sarjaa:</h2>\n";	
+	echo "<h2>"._("Muokkaa sarjaa").":</h2>\n";	
 	echo "<form method='post' action='addseasonseries.php?Serie=$serieId&amp;Season=$season'>";
 	
 
 	echo "<table cellpadding='2px'>
-		<tr><td class='infocell'>Nimi:</td>
+		<tr><td class='infocell'>"._("Nimi").":</td>
 			<td><input class='input' id='name' name='name' value='".$sp['nimi']."'/></td><td></td></tr>";
 
-	echo "<tr><td class='infocell'>Kausi:</td>
+	echo "<tr><td class='infocell'>"._("Kausi").":</td>
 			<td><input class='input' id='newseason' name='newseason' value='".$sp['kausi']."'/></td>
 			<td></td></tr>";
 
-	echo "<tr><td class='infocell'>N&auml;yt&auml; joukkueet:</td>";
+	echo "<tr><td class='infocell'>"._("N&auml;yt&auml; joukkueet").":</td>";
 	if(intval($sp['showteams']))
 		echo "<td><input class='input' type='checkbox' id='showteams' name='showteams' checked='checked'/></td>";
 	else
 		echo "<td><input class='input' type='checkbox' id='showteams' name='showteams' /></td>";
 	echo "<td></td></tr>";
 
-	echo "<tr><td class='infocell'>N&auml;yt&auml; sijoitukset:</td>";
+	echo "<tr><td class='infocell'>"._("N&auml;yt&auml; sijoitukset").":</td>";
 	if(intval($sp['showserstat']))
 		echo "<td><input class='input' type='checkbox' id='showserstat' name='showserstat' checked='checked'/></td>";
 	else
 		echo "<td><input class='input' type='checkbox' id='showserstat' name='showserstat' /></td>";
 	echo "<td></td></tr>";
 	
-	echo "<tr><td class='infocell'>Alkusarjat:</td>
+	echo "<tr><td class='infocell'>"._("Alkusarjat").":</td>
 			<td><input class='input' id='baseseries' name='baseseries' value='".$sp['alkusarjat']."'/></td>
 			<td></td></tr>";
 			
@@ -201,13 +201,13 @@ else
 	
 	echo "</table>";
 
-	echo "<h2>Joukkueet:</h2>";	
+	echo "<h2>"._("Joukkueet").":</h2>";	
 	
 		
 	$teams = Teams($serieId);
 	if(mysql_num_rows($teams))
 		{
-		echo "<table width='75%' cellpadding='4px'><tr><th>Nimi</th><th>Seura</th></tr>\n";
+		echo "<table width='75%' cellpadding='4px'><tr><th>"._("Nimi")."</th><th>"._("Seura")."</th></tr>\n";
 			
 		while($team = mysql_fetch_assoc($teams))
 			{
@@ -218,73 +218,72 @@ else
 			}
 		echo "</table>";
 		}
-	echo "<p><input class='button' name='add' type='button' value='Valitse...' onclick=\"window.location.href='serieteams.php?Serie=$serieId&amp;Season=$season'\"/></p>";	
-	echo "<h2>Sarjaformaatti (valitusta pohjasta):</h2>";
+	echo "<p><input class='button' name='add' type='button' value='"._("Valitse...")."' onclick=\"window.location.href='serieteams.php?Serie=$serieId&amp;Season=$season'\"/></p>";	
+	echo "<h2>"._("Sarjaformaatti")." "._("(valitusta pohjasta)").":</h2>";
 	
 	echo "<table cellpadding='2px'>			
-		<tr><td class='infocell'>Ottelut pisteeseen:</td>
+		<tr><td class='infocell'>"._("Pelit pisteeseen").":</td>
 			<td><input class='input' id='gameto' name='gameto' value='".$sp['pelipist']."'/></td>
 			<td></td></tr>
 
-		<tr><td class='infocell'>Puoliaika:</td>
+		<tr><td class='infocell'>"._("Puoliaika").":</td>
 			<td><input class='input' id='halftimelength' name='halftimelength' value='".$sp['puoliaika']."'/></td>
-			<td>minuuttia</td></tr>		
+			<td>"._("minuuttia")."</td></tr>		
 
-		<tr><td class='infocell'>Puoliaika pisteess&auml;:</td>
+		<tr><td class='infocell'>"._("Puoliaika pisteess&auml;").":</td>
 			<td><input class='input' id='halftimepoint' name='halftimepoint' value='".$sp['puoliaikapist']."'/></td>
 			<td></td></tr>		
 
 			
-		<tr><td class='infocell'>Aikakatto:</td>
+		<tr><td class='infocell'>"._("Aikakatto").":</td>
 			<td><input class='input' id='timecap' name='timecap' value='".$sp['aikakatto']."'/></td>
-			<td>minuuttia</td></tr>		
+			<td>"._("minuuttia")."</td></tr>		
 			
-		<tr><td class='infocell'>Pistekatto:</td>
+		<tr><td class='infocell'>"._("Pistekatto").":</td>
 			<td><input class='input' id='pointcap' name='pointcap' value='".$sp['pistekatto']."'/></td>
-			<td>pistett&auml;</td></tr>
+			<td>"._("pistett&auml;")."</td></tr>
 
-		<tr><td class='infocell'>Lis&auml;pisteet aikarajan t&auml;ytytty&auml;:</td>
+		<tr><td class='infocell'>"._("Lis&auml;pisteet aikarajan t&auml;ytytty&auml;").":</td>
 			<td><input class='input' id='extrapoint' name='extrapoint' value='".$sp['lisapist']."'/></td>
-			<td>pistett&auml;</td></tr>
+			<td>"._("pistett&auml;")."</td></tr>
 
 			
 		<tr><td class='infocell'>Pisteiden v&auml;linenaika:</td>
 			<td><input class='input' id='timebetweenPoints' name='timebetweenPoints' value='".$sp['pisteidenvali']."'/></td>
 			<td>sekuntia</td></tr>
 			
-		<tr><td class='infocell'>Aikalisi&auml;:</td>
+		<tr><td class='infocell'>"._("Aikalisi&auml;").":</td>
 			<td><input class='input' id='timeouts' name='timeouts' value='".$sp['aikailisia']."'/></td>
 			<td>
 			<select class='dropdown' name='timeoutsfor'>";
 			if($sp['aikalisiaper']=="game" || $sp['aikalisiaper']=="")
-				echo "<option class='dropdown' selected='selected' value='game'>per ottelu</option>";
+				echo "<option class='dropdown' selected='selected' value='game'>"._("per peli")."</option>";
 			else
-				echo "<option class='dropdown' value='game'>per ottelu</option>";
+				echo "<option class='dropdown' value='game'>"._("per peli")."</option>";
 			
 			if($sp['aikalisiaper']=="half")	
-				echo "<option class='dropdown' selected='selected' value='half'>per puoliaika</option>";
+				echo "<option class='dropdown' selected='selected' value='half'>"._("per puoliaika")."</option>";
 			else 
-				echo "<option class='dropdown' value='half'>per puoliaika</option>";
+				echo "<option class='dropdown' value='half'>"._("per puoliaika")."</option>";
 				
 	echo "	</select>
 			</td></tr>
 
-		<tr><td class='infocell'>Aikalis&auml;n kesto:</td>
+		<tr><td class='infocell'>"._("Aikalis&auml;n kesto").":</td>
 			<td><input class='input' id='timeoutlength' name='timeoutlength' value='".$sp['aikalisa']."'/></td>
-			<td>sekuntia</td></tr>
+			<td>"._("sekuntia")."</td></tr>
 
-		<tr><td class='infocell'>Aikalisi&auml; lis&auml;ajalla:</td>
+		<tr><td class='infocell'>"._("Aikalisi&auml; lis&auml;ajalla").":</td>
 			<td><input class='input' id='timeoutsOnOvertime' name='timeoutsOnOvertime' value='".$sp['aikalisiayliajalla']."'/></td>
-			<td>kappaletta per joukkue</td></tr>
-
+			<td>"._("per joukkue")."</td></tr>
 
 		";
 
 		
 	echo "</table>";
 
-	echo "<p><input class='button' name='save' type='submit' value='Tallenna'/>";
-	echo "<input class='button' type='button' name='takaisin'  value='Takaisin' onclick=\"window.location.href='seasonseries.php?Season=$season'\"/></p>";
+	echo "<p><input class='button' name='save' type='submit' value='"._("Tallenna")."'/>";
+	echo "<input class='button' type='button' name='takaisin'  value='"._("Palaa")."' onclick=\"window.location.href='seasonseries.php?Season=$season'\"/></p>";
 	echo "</form>\n";
 	}
 CloseConnection();
