@@ -1,4 +1,5 @@
 <?php
+
 include_once 'view_ids.inc.php';
 include_once 'builder.php';
 include_once '../lib/database.php';
@@ -23,9 +24,8 @@ $season;
 $baseurl = GetURLBase();
 
 $styles = array(urlencode("$baseurl/pelikone.css"),urlencode("$baseurl/black.css"),urlencode("$baseurl/noborder.css"));
-$stylenames = array("oletus","mustavalkoinen","rajaton");
-
-
+$stylenames = array(_("oletus"),_("mustavalkoinen"),_("rajaton"));
+
 if(!empty($_POST['update']))
 	{
 	$selstyle = $_POST['ownstyle'];
@@ -60,19 +60,19 @@ for($i=0;$i<count($styles);$i++)
 		echo "<option class='dropdown' value='$styles[$i]'>$stylenames[$i]</option>";
 	}	
 echo "</select>
-	<br/>"._("tai linkki omaan tyylim&auml;&auml;rittelyyn").":\n";"
+	<br/>"._("tai linkki omaan tyylim&auml;&auml;rittelyyn").":\n";
 $lastown='http://';
 if(!empty($_POST['ownstyle']))
 	$lastown = $_POST['ownstyle'];
 echo "<input class='input' size='50' name='ownstyle' value='$lastown'/>";
-?>
-<br/>
-<input class='button' type='submit' name='update' value='"._("P&auml;ivit&auml;")."' />
-</p>
 
-<h2>"._("Kausi")."</h2>
-<p>"._("Valitse kausi").":
-<select class='dropdown' name='season'>\n";
+echo "<br/>
+	<input class='button' type='submit' name='update' value='"._("P&auml;ivit&auml;")."' />
+	</p>
+
+	<h2>"._("Kausi")."</h2>
+	<p>"._("Valitse kausi").":
+	<select class='dropdown' name='season'>\n";
 
 if(empty($season))
 	$season = CurrenSeason();

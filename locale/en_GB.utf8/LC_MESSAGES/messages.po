@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Pelikone-3.0\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2009-08-24 15:05+0200\n"
+"POT-Creation-Date: 2009-08-24 15:49+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: Pasi Niemi <pasi.niemi@iki.fi>\n"
 "Language-Team: Ultiorganizer\n"
@@ -229,6 +229,7 @@ msgstr "Scoreboard"
 #: playerlist.php:71
 #: timetables.php:137
 #: timetables.php:151
+#: played.php:215
 #: gameplay.php:456
 #: placeinfo.php:32
 #: gamecard.php:320
@@ -720,6 +721,18 @@ msgstr "Add pool format"
 msgid "Pisteiden v&auml;linenaika"
 msgstr "Time between points"
 
+#: ext/index.php:27
+msgid "oletus"
+msgstr "default"
+
+#: ext/index.php:27
+msgid "mustavalkoinen"
+msgstr "black and white"
+
+#: ext/index.php:27
+msgid "rajaton"
+msgstr "no borders"
+
 #: ext/index.php:45
 msgid "Pelikoneen linkitys muille sivuille"
 msgstr "Embedding Ultiorganizer into other pages"
@@ -776,7 +789,7 @@ msgstr "Teams played and upcoming games and scoreaboard"
 msgid "Valitse joukkue"
 msgstr "Select team"
 
-#: ext/builder.php:41
+#: ext/builder.php:42
 msgid "SLKL"
 msgstr "EXAMPLE"
 

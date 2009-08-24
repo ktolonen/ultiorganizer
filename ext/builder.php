@@ -1,4 +1,5 @@
 <?php 
+include_once '../localization.php';
 include_once '../lib/database.php';
 include_once '../lib/season.functions.php';
 include_once '../lib/serie.functions.php';
