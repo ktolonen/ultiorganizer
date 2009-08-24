@@ -12,9 +12,8 @@ $LAYOUT_ID = SCOREBOARD;
 pageTop();
 leftMenu($LAYOUT_ID);
 contentStart();
-?>
-<h1>Pistep&ouml;rssi</h1>
-<?php
+
+echo "<h1>"._("Pistep&ouml;rssi")."</h1>\n";
 
 $seriesId=0;
 $teamId = 0;
@@ -104,9 +103,9 @@ while($row = mysql_fetch_assoc($scores))
 echo "</table>";
 
 CloseConnection();
-?>
-<p><a href="javascript:history.go(-1);">"._("Palaa")."</a></p>
-<?php
+
+echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>\n";
+
 contentEnd();
 pageEnd();
 ?>
