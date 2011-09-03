@@ -1,0 +1,4 @@
+Tämä viesti sisältää uuden salasanan sivustolle $url.
+
+Käyttäjätunnus: $username
+Salasana: $password

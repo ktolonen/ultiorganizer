@@ -1,27 +1,17 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once 'lib/database.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
+include_once 'lib/series.functions.php';
 include_once 'lib/player.functions.php';
 include_once 'lib/game.functions.php';
-include_once 'builder.php';
 
 $LAYOUT_ID = GAMECARD;
-
-//common page
-pageTop(false);
-leftMenu($LAYOUT_ID);
-contentStart();
-
 //content
 $teamId1=0;
 $teamId2=0;
-$sorting="serie";
+$sorting="series";
 
-OpenConnection();
 if(!empty($_GET["Team1"]))
 	$teamId1 = intval($_GET["Team1"]);
 
@@ -34,9 +24,14 @@ if(!empty($_GET["Sort"]))
 $team1 = TeamInfo($teamId1);
 $team2 = TeamInfo($teamId2);
 
-$serie = strtok($team1['snimi'], " ");
+$title = _("Game card").": ".utf8entities($team1['name']) ." vs. ". utf8entities($team2['name']);
 
-//$seasons = TeamPlayedSeasons($team1['nimi'], $serie);
+//common page
+pageTop($title, false);
+leftMenu($LAYOUT_ID);
+contentStart();
+
+//$seasons = TeamPlayedSeasons($team1['name'], $serie);
 
 $nGames=0;
 $nT1GoalsMade=0;
@@ -48,15 +43,23 @@ $nT2GoalsAgainst=0;
 $nT2Wins=0;
 $nT2Loses=0;
 
-$games = GetAllPlayedGames($team1['nimi'],$team2['nimi'], $serie, $sorting);
+//ignore spaces from team name
+$t1 = preg_replace('/\s*/m','',$team1['name']);
+$t2 = preg_replace('/\s*/m','',$team2['name']);
+		
+$games = GetAllPlayedGames($t1,$t2, $team1['type'], $sorting);
 
 while($game = mysql_fetch_assoc($games))
 	{	
-	if(intval($game['kotipisteet']) || intval($game['vieraspisteet']))
+	if(intval($game['homescore']) || intval($game['visitorscore']))
 		{
-		if($game['knimi'] == $team1['nimi'])
+		//ignore spaces from team name
+		$t1 = preg_replace('/\s*/m','',$team1['name']);
+		$t2 = preg_replace('/\s*/m','',$game['hometeamname']);
+		
+		if(strcasecmp($t1, $t2)==0)
 			{
-			if (intval($game['kotipisteet']) > intval($game['vieraspisteet']))
+			if (intval($game['homescore']) > intval($game['visitorscore']))
 				{
 				$nT1Wins++;
 				$nT2Loses++;
@@ -66,15 +69,15 @@ while($game = mysql_fetch_assoc($games))
 				$nT2Wins++;
 				$nT1Loses++;
 				}
-			$nT1GoalsMade += intval($game['kotipisteet']);
-			$nT2GoalsAgainst += intval($game['kotipisteet']);
+			$nT1GoalsMade += intval($game['homescore']);
+			$nT2GoalsAgainst += intval($game['homescore']);
 			
-			$nT2GoalsMade += intval($game['vieraspisteet']);
-			$nT1GoalsAgainst += intval($game['vieraspisteet']);
+			$nT2GoalsMade += intval($game['visitorscore']);
+			$nT1GoalsAgainst += intval($game['visitorscore']);
 			}
 		else
 			{
-			if (intval($game['kotipisteet']) < intval($game['vieraspisteet']))
+			if (intval($game['homescore']) < intval($game['visitorscore']))
 				{
 				$nT1Wins++;
 				$nT2Loses++;
@@ -85,26 +88,26 @@ while($game = mysql_fetch_assoc($games))
 				$nT1Loses++;
 				}
 			
-			$nT1GoalsMade += intval($game['vieraspisteet']);
-			$nT2GoalsAgainst += intval($game['vieraspisteet']);
+			$nT1GoalsMade += intval($game['visitorscore']);
+			$nT2GoalsAgainst += intval($game['visitorscore']);
 			
-			$nT2GoalsMade += intval($game['kotipisteet']);
-			$nT1GoalsAgainst += intval($game['kotipisteet']);
+			$nT2GoalsMade += intval($game['homescore']);
+			$nT1GoalsAgainst += intval($game['homescore']);
 			}
 						
 		$nGames++;
 		}
 	}
 
-echo "<h2>". htmlentities($team1['nimi']) ." vs. ". htmlentities($team2['nimi']) ."</h2>\n";	
+echo "<h2>". utf8entities($team1['name']) ." vs. ". utf8entities($team2['name']) ."</h2>\n";	
 
 echo "<table border='1' width='100%'><tr>\n
-	<th>"._("Joukkue")."</th><th>"._("Pelit")."</th><th>"._("Voitot")."</th><th>"._("Tappiot")."</th><th>"._("Voitto-%")."</th><th>"._("Tehdyt")."</th>
-	<th>"._("Tehdyt")."/"_.("peli")."</th><th>"._("P&auml;&auml;stetyt")."</th><th>"._("P&auml;&auml;stetyt")."/"._("peli")."</th><th>"._("Maaliero")."</th>
+	<th>"._("Team")."</th><th>"._("Games")."</th><th>"._("Wins")."</th><th>"._("Losses")."</th><th>"._("Win-%")."</th><th>"._("Scored")."</th>
+	<th>"._("Scored")."/"._("game")."</th><th>"._("Let scores")."</th><th>"._("Let scores")."/"._("game")."</th><th>"._("Goal difference")."</th>
 	</tr>\n";
 	
 echo "<tr>
-	 <td><a href='teamcard.php?Team=$teamId1'>". htmlentities($team1['nimi']) ."</a></td>
+	 <td><a href='?view=teamcard&amp;Team=$teamId1'>". utf8entities($team1['name']) ."</a></td>
 	 <td>$nGames</td>
 	 <td>$nT1Wins</td>
 	 <td>$nT1Loses</td>
@@ -116,208 +119,203 @@ echo "<tr>
 	 <td>",$nT1GoalsMade-$nT1GoalsAgainst,"</td></tr>\n";
 
 echo "<tr>
-	 <td><a href='teamcard.php?Team=$teamId2'>". htmlentities($team2['nimi']) ."</a></td>
+	 <td><a href='?view=teamcard&amp;Team=$teamId2'>". utf8entities($team2['name']) ."</a></td>
 	 <td>$nGames</td>
 	 <td>$nT2Wins</td>
 	 <td>$nT2Loses</td>
 	 <td>", number_format((SafeDivide($nT2Wins,$nGames)*100),1) ," %</td>
-	 <td>$nT1GoalsMade</td>
+	 <td>$nT2GoalsMade</td>
 	 <td>", number_format(SafeDivide($nT2GoalsMade,$nGames),1) ,"</td>
-	 <td>$nT1GoalsAgainst</td>
+	 <td>$nT2GoalsAgainst</td>
 	 <td>", number_format(SafeDivide($nT2GoalsAgainst,$nGames),1) ,"</td>
 	 <td>",$nT2GoalsMade-$nT2GoalsAgainst,"</td></tr>\n";
 
 echo "</table>\n";
 
-echo "<h2>"._("Pelatut")." "._("pelit")."</h2>\n";
-echo "<table border='1' cellspacing='2' width='100%'><tr>\n";
+if($nGames){
+	echo "<h2>"._("Played")." "._("games")."</h2>\n";
+	echo "<table border='1' cellspacing='2' width='80%'><tr>\n";
 
-$sBaseUrl="gamecard.php?Team1=$teamId1&amp;Team2=$teamId2&amp;";
-	
-echo "<th><a href='".$sBaseUrl."Sort=team'>"._("Peli")."</a></th>";
-echo "<th><a href='".$sBaseUrl."Sort=result'>"._("Tulos")."</a></th>";
-echo "<th><a href='".$sBaseUrl."Sort=serie'>"._("Sarja")."</a></th></tr>";
+	$viewUrl="?view=gamecard&amp;Team1=$teamId1&amp;Team2=$teamId2&amp;";
+		
+	echo "<th><a class='thsort' href='".$viewUrl."Sort=team'>"._("Game")."</a></th>";
+	echo "<th><a class='thsort' href='".$viewUrl."Sort=result'>"._("Result")."</a></th>";
+	echo "<th><a class='thsort' href='".$viewUrl."Sort=series'>"._("Division")."</a></th></tr>";
 
-$points=array(array());
-mysql_data_seek($games,0);
+	$points=array(array());
+	mysql_data_seek($games,0);
 
-while($game = mysql_fetch_assoc($games))
-	{	
-	if(intval($game['kotipisteet']) || intval($game['vieraspisteet']))
-		{
-		$arrayYear = strtok($game['kausi'], "."); 
-		$arraySeason = strtok(".");
-		
-		if(intval($game['kotipisteet']) > intval($game['vieraspisteet']))
-			echo "<tr><td><b>".htmlentities($game['knimi'])."</b>";
-		else
-			echo "<tr><td>".htmlentities($game['knimi']);
-		
-		if(intval($game['kotipisteet']) < intval($game['vieraspisteet']))
-			echo " - <b>".htmlentities($game['vnimi'])."</b></td>";
-		else
-			echo " - ".htmlentities($game['vnimi'])."</td>";
-		
-		echo "<td><a href='gameplay.php?Game=".$game['peli_id']."'>".$game['kotipisteet']." - ".$game['vieraspisteet']."</a></td>";
-
-		if($arraySeason == "1")
-			echo "<td>"._("Kes&auml;")." $arrayYear: <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
-		elseif($arraySeason == "2")
-			echo "<td>"._("Talvi")." $arrayYear: <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
-		else
-			echo "<td>".htmlentities($game['kausi']).": <a href='seriestatus.php?Serie=".$game['sarja_id']."'>".htmlentities($game['nimi'])."</a></td></tr>";
-		
-		$scores = GameScoreBorad($game['peli_id']);
-		$i=0;
-		
-		while($row = mysql_fetch_assoc($scores))
+	while($game = mysql_fetch_assoc($games))
+		{	
+		if(intval($game['homescore']) || intval($game['visitorscore']))
 			{
-			$bFound=false;	
-			for ($i=0; ($i < 200) && !empty($points[$i][0]); $i++) 
+			$arrayYear = strtok($game['season_id'], "."); 
+			$arraySeason = strtok(".");
+			
+			if(intval($game['homescore']) > intval($game['visitorscore']))
+				echo "<tr><td><b>".utf8entities($game['hometeamname'])."</b>";
+			else
+				echo "<tr><td>".utf8entities($game['hometeamname']);
+			
+			if(intval($game['homescore']) < intval($game['visitorscore']))
+				echo " - <b>".utf8entities($game['visitorteamname'])."</b></td>";
+			else
+				echo " - ".utf8entities($game['visitorteamname'])."</td>";
+			
+			echo "<td><a href='?view=gameplay&amp;Game=".$game['game_id']."'>".$game['homescore']." - ".$game['visitorscore']."</a></td>";
+
+			echo "<td>".utf8entities(U_($game['seasonname'])).": <a href='?view=poolstatus&amp;Pool=".$game['pool_id']."'>".utf8entities($game['name'])."</a></td></tr>";
+			
+			$scores = GameScoreBoard($game['game_id']);
+			$i=0;
+			
+			while($row = mysql_fetch_assoc($scores))
 				{
-				if (($points[$i][0] == $row['jnro']) && ($points[$i][2] == $row['jnimi']))
+				$bFound=false;	
+				for ($i=0; ($i < 200) && !empty($points[$i][0]); $i++) 
 					{
-					$points[$i][3]++;
-					$points[$i][4]+= intval($row['tehty']);
-					$points[$i][5]+= intval($row['syotetty']);
-					$points[$i][6] = $points[$i][4]+$points[$i][5];
-					$bFound=true;
+					//ignore spaces from team name
+					$t1 = preg_replace('/\s*/m','',$row['teamname']);
+					$t2 = preg_replace('/\s*/m','',$points[$i][2]);
+					if (($points[$i][0] == $row['profile_id']) && (strcasecmp($t1, $t2)==0))
+						{
+						$points[$i][3]++;
+						$points[$i][4]+= intval($row['fedin']);
+						$points[$i][5]+= intval($row['done']);
+						$points[$i][6] = $points[$i][4]+$points[$i][5];
+						$bFound=true;
+						}
 					}
-				}
-				
-			if(!$bFound && $i<200)
-				{
-				$points[$i][0] = $row['jnro'];
-				$points[$i][1] = $row['enimi'] ." ". $row['snimi'];
-				$points[$i][2] = $row['jnimi'];
-				$points[$i][3] = 1;
-				$points[$i][4] = intval($row['tehty']);
-				$points[$i][5] = intval($row['syotetty']);
-				$points[$i][6] = $points[$i][4]+$points[$i][5];
-				$points[$i][7] = $row['pelaaja_id'];
+					
+				if(!$bFound && $i<200)
+					{
+					$points[$i][0] = $row['profile_id'];
+					$points[$i][1] = $row['firstname'] ." ". $row['lastname'];
+					$points[$i][2] = $row['teamname'];
+					$points[$i][3] = 1;
+					$points[$i][4] = intval($row['fedin']);
+					$points[$i][5] = intval($row['done']);					
+					$points[$i][6] = $points[$i][4]+$points[$i][5];
+					$points[$i][7] = $row['player_id'];
+					}
 				}
 			}
 		}
-	}
-echo "</table>\n";
+	echo "</table>\n";
 
-echo "<h2>"._("Pistep&ouml;rssi")."</h2>\n";
-echo "<table border='1' width='75%'><tr><th>#</th>";
+	echo "<h2>"._("Scoreboard")."</h2>\n";
+	echo "<table border='1' width='80%'><tr><th>#</th>";
 
-$sorted = false;
+	$sorted = false;
 
-if($sorting == "pname")
-	{
-	echo "<th><b>"._("Pelaaja")."</b></th>";
-	usort($points, create_function('$b,$a','return strcmp($b[1],$a[1]);')); 
-	$sorted = true;
-	}
-else
-	{
-	echo "<th><a href='".$sBaseUrl."Sort=pname'>"._("Pelaaja")."</a></th>";
-	}
-
-if($sorting == "pteam")
-	{
-	echo "<th><b>Joukkue</b></th>";
-	usort($points, create_function('$b,$a','return strcmp($b[2],$a[2]);')); 
-	$sorted = true;
-	}
-else
-	{
-	echo "<th><a href='".$sBaseUrl."Sort=pteam'>"._("Joukkue")."</a></th>";
-	}
-
-if($sorting == "pgames")
-	{
-	echo "<th><b>"._("Pelej&auml;")."</b></th>";
-	usort($points, create_function('$a,$b','return $a[3]==$b[3]?0:($a[3]>$b[3]?-1:1);'));
-	$sorted = true;
-	}
-else
-	{
-	echo "<th><a href='".$sBaseUrl."Sort=pgames'>"._("Pelej&auml;")."</a></th>";
-	}
-
-if($sorting == "ppasses")
-	{
-	echo "<th><b>"._("Sy&ouml;t&ouml;t")."</b></th>";
-	usort($points, create_function('$a,$b','return $a[4]==$b[4]?0:($a[4]>$b[4]?-1:1);'));
-	$sorted = true;
-	}
-else
-	{
-	echo "<th><a href='".$sBaseUrl."Sort=ppasses'>"._("Sy&ouml;t&ouml;t")."</a></th>";
-	}
-
-if($sorting == "pgoals")
-	{
-	echo "<th><b>"._("Maalit")."</b></th>";
-	usort($points, create_function('$a,$b','return $a[5]==$b[5]?0:($a[5]>$b[5]?-1:1);'));
-	$sorted = true;
-	}
-else
-	{
-	echo "<th><a href='".$sBaseUrl."Sort=pgoals'>"._("Maalit")."</a></th>";
-	}
-		
-if(($sorting == "ptotal")||(!$sorted))
-	{
-	echo "<th><b>Yht.</b></th></tr>\n";
-	usort($points, create_function('$a,$b','return $a[6]==$b[6]?0:($a[6]>$b[6]?-1:1);'));
-	}
-else
-	{
-	echo "<th><a href='".$sBaseUrl."Sort=ptotal'>"._("Yht.")."</a></th></tr>\n";
-	}
-		
-
-for ($i=0; $i < 200 && !empty($points[$i][0]); $i++) 
-	{
-	echo "<tr> <td>",$i+1,"</td>";
-		
 	if($sorting == "pname")
-		echo "<td class='highlight'><a href='playercard.php?Player=".$points[$i][7]."'>".htmlentities($points[$i][1]) ."</a></td>";
+		{
+		echo "<th><b>"._("Player")."</b></th>";
+		usort($points, create_function('$b,$a','return strcmp($b[1],$a[1]);')); 
+		$sorted = true;
+		}
 	else
-		echo "<td><a href='playercard.php?Player=".$points[$i][7]."'>".htmlentities($points[$i][1]) ."</a></td>";
-		
+		{
+		echo "<th><a class='thsort' href='".$viewUrl."Sort=pname'>"._("Player")."</a></th>";
+		}
 
 	if($sorting == "pteam")
-		echo "<td class='highlight'>".htmlentities($points[$i][2]) ."</td>";
+		{
+		echo "<th><b>"._("Team")."</b></th>";
+		usort($points, create_function('$b,$a','return strcmp($b[2],$a[2]);')); 
+		$sorted = true;
+		}
 	else
-		echo "<td>".htmlentities($points[$i][2]) ."</td>";
-		
+		{
+		echo "<th><a class='thsort' href='".$viewUrl."Sort=pteam'>"._("Team")."</a></th>";
+		}
+
 	if($sorting == "pgames")
-		echo "<td class='highlight cntr'>".$points[$i][3]."</td>";
+		{
+		echo "<th><b>"._("Games")."</b></th>";
+		usort($points, create_function('$a,$b','return $a[3]==$b[3]?0:($a[3]>$b[3]?-1:1);'));
+		$sorted = true;
+		}
 	else
-		echo "<td class='cntr'>".$points[$i][3]."</td>";
+		{
+		echo "<th><a class='thsort' href='".$viewUrl."Sort=pgames'>"._("Games")."</a></th>";
+		}
 
 	if($sorting == "ppasses")
-		echo "<td class='highlight cntr'>".$points[$i][4]."</td>";
+		{
+		echo "<th><b>"._("Assists")."</b></th>";
+		usort($points, create_function('$a,$b','return $a[4]==$b[4]?0:($a[4]>$b[4]?-1:1);'));
+		$sorted = true;
+		}
 	else
-		echo "<td class='cntr'>".$points[$i][4]."</td>";
+		{
+		echo "<th><a class='thsort' href='".$viewUrl."Sort=ppasses'>"._("Assists")."</a></th>";
+		}
 
 	if($sorting == "pgoals")
-		echo "<td class='highlight cntr'>".$points[$i][5]."</td>";
+		{
+		echo "<th><b>"._("Goals")."</b></th>";
+		usort($points, create_function('$a,$b','return $a[5]==$b[5]?0:($a[5]>$b[5]?-1:1);'));
+		$sorted = true;
+		}
 	else
-		echo "<td class='cntr'>".$points[$i][5]."</td>";
-		
+		{
+		echo "<th><a class='thsort' href='".$viewUrl."Sort=pgoals'>"._("Goals")."</a></th>";
+		}
+			
 	if(($sorting == "ptotal")||(!$sorted))
 		{
-		echo "<td class='highlight cntr'>".$points[$i][6]."</td>";
+		echo "<th><b>Yht.</b></th></tr>\n";
+		usort($points, create_function('$a,$b','return $a[6]==$b[6]?0:($a[6]>$b[6]?-1:1);'));
 		}
 	else
 		{
-		echo "<td class='cntr'>".$points[$i][6]."</td>";
+		echo "<th><a class='thsort' href='".$viewUrl."Sort=ptotal'>"._("Tot.")."</a></th></tr>\n";
 		}
-	echo "</tr>";
-	}
-echo "</table>\n";
-		 
-		 
-CloseConnection();
-	
-echo "<p><a href=\"javascript:history.go(-1);\">"._("Palaa")."</a></p>";
+			
+
+	for ($i=0; $i < 200 && !empty($points[$i][0]); $i++) 
+		{
+		echo "<tr> <td>",$i+1,"</td>";
+			
+		if($sorting == "pname")
+			echo "<td class='highlight'><a href='?view=playercard&amp;Player=".$points[$i][7]."'>".utf8entities($points[$i][1]) ."</a></td>";
+		else
+			echo "<td><a href='?view=playercard&amp;Player=".$points[$i][7]."'>".utf8entities($points[$i][1]) ."</a></td>";
+			
+
+		if($sorting == "pteam")
+			echo "<td class='highlight'>".utf8entities($points[$i][2]) ."</td>";
+		else
+			echo "<td>".utf8entities($points[$i][2]) ."</td>";
+			
+		if($sorting == "pgames")
+			echo "<td class='highlight cntr'>".$points[$i][3]."</td>";
+		else
+			echo "<td class='cntr'>".$points[$i][3]."</td>";
+
+		if($sorting == "ppasses")
+			echo "<td class='highlight cntr'>".$points[$i][4]."</td>";
+		else
+			echo "<td class='cntr'>".$points[$i][4]."</td>";
+
+		if($sorting == "pgoals")
+			echo "<td class='highlight cntr'>".$points[$i][5]."</td>";
+		else
+			echo "<td class='cntr'>".$points[$i][5]."</td>";
+			
+		if(($sorting == "ptotal")||(!$sorted))
+			{
+			echo "<td class='highlight cntr'>".$points[$i][6]."</td>";
+			}
+		else
+			{
+			echo "<td class='cntr'>".$points[$i][6]."</td>";
+			}
+		echo "</tr>";
+		}
+	echo "</table>\n";
+}		 		 
 
 contentEnd();
 pageEnd();

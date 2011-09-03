@@ -1,21 +1,41 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once 'lib/database.php';
-include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
-include_once 'builder.php';
-$LAYOUT_ID = HOME;
+if(IsRegistered($_SESSION['uid'])){
+  header("location:?view=frontpage");  
+}
 
+$LAYOUT_ID = HOME;
+$title = _("Home");
+$userId = urldecode($_GET['user']);
+$html = "";
+if(isset($_POST['resetpassword'])) {
+	$ret=UserResetPassword(urldecode($userId));
+	if($ret){
+		$html .= "<p>"._("New password sent.")."</p>";
+	}else{
+		$html .= "<p>"._("Resetting password for '$userId' failed. Email address may be invalid. Password was not sent.")."</p>";
+	}
+}
+	
 //common page
-pageTop();
+
+pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
 //content
-echo "<h2>"._("Kirjautuminen ep&auml;onnistui")."</h2>
-     <p>"._("Tarkista k&auml;ytt&auml;j&auml;tunnus ja salasana.")." "._("Ota tarvittaessa yhteytt&auml; liitokiekkoliiton")."
-     <a href='mailto:"._("sarjavastaava@liitokiekkoliitto.fi")."'>"._("sarjavastaavaan")."</a>.
-     </p>";
+if(empty($html)){
+	$validuser = IsRegistered($userId);
+	if($validuser){
+		$html .= "<form method='post' action='?view=login_failed&amp;user=".urlencode($userId)."'>\n";
+		$html .= "<p>"._("Check the username and password.")." \n";
+		$html .= _("If you have forgot the password, click button belowe and new password is sent to e-mail address given on registration.")."</p>";
+		$html .= "<p><input class='button' type='submit' name='resetpassword' value='"._("Reset password")."'/></p>\n"; 
+		$html .= "</form>\n";
+	}else{
+		$html .= "<p>"._("Invalid username.")."</p>\n";
+	}
+}
+echo $html;
 
 contentEnd();
 pageEnd();

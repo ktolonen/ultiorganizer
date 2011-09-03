@@ -1,15 +1,14 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once '../lib/database.php';
-include_once '../lib/serie.functions.php';
-include_once 'lib/serie.functions.php';
-include_once 'builder.php';
+include_once 'lib/database.php';
+include_once 'lib/series.functions.php';
+include_once 'lib/pool.functions.php';
+
 $LAYOUT_ID = SERIEFORMATS;
 
-
+$title = _("Pool formats");
 
 //common page
-pageTopHeadOpen();
+pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
 <!--
@@ -21,56 +20,55 @@ function setId(id)
 //-->
 </script>
 <?php
-pageTopHeadClose();
+pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-OpenConnection();
 
 //process itself on submit
-if(!empty($_POST['remove']))
+if(!empty($_POST['remove_x']))
 	{
 	$id = $_POST['hiddenDeleteId'];
-	DeleteSerie($id);
+	DeletePoolTemplate($id);
 	}
 	
-echo "<form method='post' action='serieformats.php'>";
+echo "<form method='post' action='?view=admin/serieformats'>";
 
-echo "<h2>"._("Sarjaformaatit")."</h2>\n";
+echo "<h2>"._("Pool formats")."</h2>\n";
 
 echo "<table border='0' cellpadding='4px'>\n";
 
-echo "<tr><th>"._("Nimi")."</th>
-	<th>"._("Voittopiste")."</th>
-	<th>"._("Pistekatto")."</th>
-	<th>"._("Aikakatto")."</th>
-	<th>"._("Aikalisi&auml;")."</th>
-	<th></th><th></th></tr>\n";
+echo "<tr>
+	<th>"._("Name")."</th>
+	<th>"._("Winning points")."</th>
+	<th>"._("Point cap")."</th>
+	<th>"._("Time cap")."</th>
+	<th>"._("Time-outs")."</th>
+	<th>"._("Delete")."</th>
+	</tr>\n";
 
-$serietemplates = SerieTemplates();
+$templates = PoolTemplates();
 
-while($row = mysql_fetch_assoc($serietemplates))
-	{
+foreach($templates as $row) {
 	echo "<tr>";
-	echo "<td>".$row['nimi']."</td>";
-	echo "<td class='center'>".$row['pelipist']."</td>";
-	echo "<td class='center'>".$row['pistekatto']."</td>";
-	echo "<td class='center'>".$row['aikakatto']."</td>";
-	if(!empty($row['aikalisia']))
-		echo "<td class='center'>".$row['aikalisia']."</td>";
+
+	echo "<td><a href='?view=admin/addserieformats&amp;Id=".$row['template_id']."'>".utf8entities(U_($row['name']))."</a></td>";
+	echo "<td class='center'>".$row['winningscore']."</td>";
+	echo "<td class='center'>".$row['scorecap']."</td>";
+	echo "<td class='center'>".$row['timecap']."</td>";
+	if(!empty($row['timeouts']))
+		echo "<td class='center'>".$row['timeouts']."</td>";
 	else
 		echo "<td class='center'>-</td>";
-	echo "<td class='center'><input class='button' type='button' name='edit'  value='"._("Muokkaa")."' onclick=\"window.location.href='addserieformats.php?Id=".$row['sarja_id']."'\"/></td>";
-	echo "<td class='center'><input class='button' type='submit' name='remove' value='"._("Poista")."' onclick=\"setId(".$row['sarja_id'].");\"/></td>";
+
+	echo "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['template_id'].");\"/></td>";	
 	echo "</tr>\n";	
 	}
 
-echo "</table><p><input class='button' name='add' type='button' value='"._("Lis&auml;&auml;")."' onclick=\"window.location.href='addserieformats.php'\"/></p>";
+echo "</table><p><input class='button' name='add' type='button' value='"._("Add")."' onclick=\"window.location.href='?view=admin/addserieformats'\"/></p>";
 
 //stores id to delete
 echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 echo "</form>\n";
-
-CloseConnection();
 
 contentEnd();
 pageEnd();

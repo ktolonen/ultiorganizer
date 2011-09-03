@@ -1,114 +1,136 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once '../lib/database.php';
-include_once '../lib/season.functions.php';
-include_once '../lib/serie.functions.php';
-include_once '../lib/team.functions.php';
 include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
-include_once 'builder.php';
+include_once 'lib/series.functions.php';
+include_once 'lib/pool.functions.php';
+include_once 'lib/team.functions.php';
+include_once 'lib/club.functions.php';
+include_once 'lib/country.functions.php';
+
 $LAYOUT_ID = SEASONTEAMS;
-
-
+$html = "";
+$season = $_GET["Season"];
+$title = utf8entities(SeasonName($season)).": "._("Teams");
+$seasonInfo = SeasonInfo($season);
 
 //common page
-pageTopHeadOpen();
+pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
 <!--
-function setId(id) 
-	{
+function setId(id){
 	var input = document.getElementById("hiddenDeleteId");
 	input.value = id;
-	}
+}
 //-->
 </script>
 <?php
-pageTopHeadClose();
+pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-OpenConnection();
-
-$season = $_GET["Season"];
 	
 //process itself on submit
-if(!empty($_POST['remove']))
-	{
+if(!empty($_POST['remove_x'])){
 	$id = $_POST['hiddenDeleteId'];
 	$ok = true;
 		
 	//run some test to for safe deletion
 	$games = TeamGames($id);
-	if(mysql_num_rows($games))
-		{
-		echo "<p class='warning'>"._("Joukkueella on")." ".mysql_num_rows($games)." "._("peliä").". ".("Pelit pit&auml;&auml; poistaa ennen joukkueen poistamista").".</p>";
+	if(mysql_num_rows($games)){
+		$html .= "<p class='warning'>"._("Team has")." ".mysql_num_rows($games)." "._("game").". ".("Pelit pit&auml;&auml; poistaa ennen joukkueen poistamista").".</p>";
 		$ok = false;
-		}
+	}
 		
 	$players = TeamPlayerList($id);
-	if(mysql_num_rows($players))
-		{
-		echo "<p class='warning'>"._("Joukkueessa on")." ".mysql_num_rows($players)." "._("pelaajaa").". "._("Pelaajat pit&auml;&auml; poistaa ennen joukkueen poistamista").".</p>";
+	if(mysql_num_rows($players)){
+		$html .= "<p class='warning'>"._("Team has")." ".mysql_num_rows($players)." "._("players").". "._("Players must be removed before removing the team").".</p>";
 		$ok = false;
-		}
+	}
 		
 	if($ok)
 		DeleteTeam($id);
-	}
+}
 
-echo "<form method='post' action='seasonteams.php?Season=$season'>";
+$html .= "<form method='post' action='?view=admin/seasonteams&amp;Season=$season'>";
 
-echo "<h2>"._("Joukkueet")."</h2>\n";
+$series = SeasonSeries($season);
 
-echo "<table border='0' cellpadding='4px'>\n";
-
-echo "<tr><th>"._("Nimi")."</th>
-	<th>"._("Sarja")."</th>
-	<th>"._("Yhteyshenkilö")."</th>
-	<th></th><th></th></tr>\n";
-
-$series = Series($season);
-
-while($row = mysql_fetch_assoc($series))
-	{
+foreach($series as $row){
+	$html .= "<h2>".utf8entities($row['name'])."</h2>\n";
 	
-	$teams = TeamsByName($row['sarja_id']);
+	$html .= "<table border='0' cellpadding='2px'>\n";
 
-	while($team = mysql_fetch_assoc($teams))
-		{
-		echo "<tr>";
-		echo "<td>".$team['Nimi']."</td>";
-		echo "<td>".$row['nimi']."</td>";
-		echo "<td>".$team['Seura']."</td>";
-		echo "<td class='center'><input class='button' type='button' name='edit'  value='"._("Muokkaa")."' onclick=\"window.location.href='addseasonteams.php?Season=$season&amp;Team=".$team['Joukkue_ID']."'\"/></td>";
-		echo "<td class='center'><input class='button' type='submit' name='remove' value='"._("Poista")."' onclick=\"setId(".$team['Joukkue_ID'].");\"/></td>";
-		echo "</tr>\n";	
+	$html .= "<tr><th>#</th>";
+	$html .= "<th style='width:20%'>"._("Name")."</th>";
+	$html .= "<th  style='width:20%'>"._("Pool")."</th>";
+	if(!intval($seasonInfo['isnationalteams'])){
+		$html .= "<th  style='width:20%'>"._("Club")."</th>";
+	}
+	if(intval($seasonInfo['isinternational'])){
+		$html .= "<th style='width:10%'>"._("Country")."</th>";
+	}
+	
+	$html .= "<th style='width:10%;white-space: nowrap;'>"._("Roster")."</th><th>"._("Contact person")."</th><th></th></tr>\n";
+
+	$teams = SeriesTeams($row['series_id'],true);
+	
+	foreach($teams as $team){
+		$teaminfo = TeamFullInfo($team['team_id']);
+		$poolname = U_($team['poolname']);
+		if(!empty($team['name'])){
+			if (intval($seasonInfo['isnationalteams'])) {
+				$teamname = utf8entities(U_($team['name']));
+			} else {
+				$teamname = utf8entities($team['name']);
+			}
+		}else{
+			$teamname = _("No name");
 		}
-	if(mysql_num_rows($teams))
-		echo "<tr><td colspan='5' class='menuseparator'></td></tr>\n";
-
-	}
-
-$teams = SeasonTeams();
-while($team = mysql_fetch_assoc($teams))
-	{
-	echo "<tr>";
-	echo "<td>".$team['Nimi']."</td>";
-	echo "<td>-</td>";
-	echo "<td>".$team['Seura']."</td>";
-	echo "<td class='center'><input class='button' type='button' name='edit'  value='"._("Muokkaa")."' onclick=\"window.location.href='addseasonteams.php?Season=$season&amp;Team=".$team['Joukkue_ID']."'\"/></td>";
-	echo "<td class='center'><input class='button' type='submit' name='remove' value='"._("Poista")."' onclick=\"setId(".$team['Joukkue_ID'].");\"/></td>";
-	echo "</tr>\n";	
-	}	
+		$html .= "<tr>";
+		$html .= "<td>".$team['rank']."</td>";
+		$html .= "<td><a href='?view=admin/addseasonteams&amp;Season=$season&amp;Team=".$team['team_id']."&amp;Series=".$row['series_id']."'>".$teamname."</a></td>";
+		$html .= "<td>".utf8entities($poolname)."</td>";
+				
+		if(!intval($seasonInfo['isnationalteams'])){
+			$html .= "<td>".utf8entities($team['clubname'])."</td>";
+		}
+		if(intval($seasonInfo['isinternational'])){
+		    if($team['countryname']){
+			  $html .= "<td>".utf8entities(_($team['countryname']))."</td>";
+		    }else{
+		      $html .= "<td>-</td>";
+		    }
+		}
 	
-echo "</table><p><input class='button' name='add' type='button' value='"._("Lis&auml;&auml;")."' onclick=\"window.location.href='addseasonteams.php?Season=$season'\"/></p>";
+		$html .= "<td class='center'><a href='?view=user/teamplayers&amp;Team=".$team['team_id']."'>"._("Roster")."</a></td>";			
+		$admins = getTeamAdmins($team['team_id']);
+		if(mysql_num_rows($admins)){
+			$html .= "<td>";
+			while($row1 = mysql_fetch_assoc($admins)){
+				$html .= "<a href='?view=user/userinfo&amp;user=".$row1['userid']."'>".utf8entities($row1['name'])."</a>";
+		
+				if($row1['email'])
+					$html .= "&nbsp;<a href='mailto:".$row1['email']."'>@</a>";
+				$html .= "<br/>";
+			}
+			$html .= "</td>";
+		}else{
+			$html .= "<td>-</td>";
+		}
 
+		if(CanDeleteTeam($team['team_id'])){
+			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$team['team_id'].");\"/></td>";
+		}
+		$html .= "</tr>\n";	
+	}
+	$html .= "</table><p><input class='button' name='add' type='button' value='"._("Add")."' onclick=\"window.location.href='?view=admin/addseasonteams&amp;Season=$season&amp;Series=".$row['series_id']."'\"/></p>";
+	$html .= "<p><a href='?view=user/pdfscoresheet&amp;series=".$row['series_id']."'>"._("Print team rosters")."</a></p>";	
+}
 //stores id to delete
-echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
-echo "</form>\n";
+$html .= "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 
-CloseConnection();
+$html .= "</form>\n";
 
+echo $html;
 contentEnd();
 pageEnd();
 ?>

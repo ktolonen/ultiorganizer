@@ -1,218 +1,177 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once 'lib/database.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
+include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
-include_once 'builder.php';
+include_once 'lib/pool.functions.php';
+include_once 'lib/timetable.functions.php';
 
-$seriesId=0;
-$teamId=0;
-$season=0;
+if (is_file('cust/'.CUSTOMIZATIONS.'/pdfprinter.php')) {
+	include_once 'cust/'.CUSTOMIZATIONS.'/pdfprinter.php';
+} else {
+	include_once 'cust/default/pdfprinter.php';
+}
 
-if(!empty($_GET["Series"]))
-	$seriesId = intval($_GET["Series"]);
-if(!empty($_GET["Team"]))
-	$teamId = intval($_GET["Team"]);
+$LAYOUT_ID = PLAYED;
 
-if($teamId)
-	$LAYOUT_ID = SEASONPLAYED;
-elseif($seriesId)
-	$LAYOUT_ID = SERIEPLAYED;
-else
-	$LAYOUT_ID = TEAMPLAYED;
+$filter = 'series';
+$baseurl = "?view=played";
+$id=0;
+$gamefilter="season";
+$format = "html";
+$group = "";
+$groupheader=true;
 
-//common page
-pageTop();
-leftMenu($LAYOUT_ID);
-contentStart();
+if(!empty($_GET["Series"])) {
+	$id = intval($_GET["Series"]);
+	$baseurl .= "&Series=$id";
+	$gamefilter="series";
+	$title = _("Played games")." ".utf8entities(U_(SeriesName($id)));
+} elseif(!empty($_GET["Pool"])) {
+	$id = intval($_GET["Pool"]);
+	$baseurl .= "&Pool=$id";
+	$gamefilter="pool";
+	$title = _("Played games")." ".utf8entities(U_(PoolSeriesName($id)).", ".U_(PoolName($id)));
+} elseif(!empty($_GET["Team"])) {
+	$id = intval($_GET["Team"]);
+	$baseurl .= "&Team=$id";
+	$gamefilter="team";
+	$title = _("Played games")." ".utf8entities(TeamName($id));
+} elseif(!empty($_GET["Season"])) {
+	$id = $_GET["Season"];
+	$baseurl .= "&Season=$id";
+	$gamefilter="season";
+	$title = _("Played games")." ".utf8entities(U_(SeasonName($id)));
+} else {
+	$id = CurrentSeason();
+	$gamefilter="season";
+	$title = _("Played games");
+}
 
-//content
-OpenConnection();
+if(!empty($_GET["filter"])) {
+	$filter  = $_GET["filter"];
+}
 
-if($teamId)
-	{
-	$season = TeamSeason($teamId);
-	$tournaments = PlayedTournaments($season);
-	$prevTournament = "";
+if(!empty($_GET["group"])) {
+	$group  = $_GET["group"];
+}
+
+$timefilter="past";
+$order="series";
+
+switch($filter){
+	case "today":
+		$timefilter="today";
+		$order="series";
+		$games = TimetableGames($id, $gamefilter, $timefilter, $order);
+		break;
 	
-	if(!mysql_num_rows($tournaments))
-		{
-		echo "\n<p>"._("Ei pelattuja pelej&auml;").".</p>\n";	
-		}
+	case "yesterday":
+		$timefilter="yesterday";
+		$order="series";
+		break;
+
+	case "prev":
+		$order="tournaments";
+		$games = PrevGameDay($id, $gamefilter, $order);
+		break;
+
+	case "tournaments":
+		$timefilter="past";
+		$order="tournamentsdesc";
+		break;
+	
+	case "series":
+		$timefilter="past";
+		$order="series";
+		break;
+	
+	case "places":
+		$timefilter="past";
+		$order="placesdesc";
+		break;
 		
-	while($tournament = mysql_fetch_assoc($tournaments))
-		{
-		$games = TeamTournamentGames($teamId, $tournament['Paikka_ID']);
-				
-		if(mysql_num_rows($games))
-			{
-			if($tournament['Turnaus'] != $prevTournament)
-				{
-				if($prevTournament != "")
-					echo "<hr/>\n";
-				echo "<h1>". htmlentities($tournament['Turnaus']) ."</h1>\n";				
-				$prevTournament = $tournament['Turnaus'];
-				}
+	case "season":
+		$timefilter="past";
+		$order="placesdesc";
+		$format = "pdf";
+		break;
+}	
 
-			echo "<table cellpadding='2' border='0' cellspacing='0' style='width:450px'>";
-			echo "<tr><th align='left' colspan='9'>";
-			echo DefWeekDateFormat($tournament['AikaAlku']) ." ";
-			echo "<a href='placeinfo.php?Place=".$tournament['Paikka_ID']."'>". htmlentities($tournament['Paikka']) ."</a>";
-			echo "</th></tr>\n";
-			
-			while($game = mysql_fetch_assoc($games))
-				{
-				echo "<tr><td style='width:6%'>", DefHourFormat($game['Aika']) ,"</td>";
-				echo "<td style='width:20%'>". htmlentities($game['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:20%'>". htmlentities($game['VNimi']) ."</td>";
-				if((intval($game['Kotipisteet'])+intval($game['Vieraspisteet']))==0)
-					echo "<td style='width:5%'>?</td><td style='width:2%'>-</td><td style='width:5%'>?</td>";
-				else
-					echo "<td style='width:5%'>". intval($game['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($game['Vieraspisteet']) ."</td>";
-				if (intval($game['Maaleja'])>0)
-					echo "<td style='width:15%'><a href='gameplay.php?Game=". $game['Peli_ID'] ."'>"._("Pelin kulku")."</a></td>";
-				else
-					echo "<td style='width:15%'>"._("es")."</td>";
+$groups = TimetableGrouping($id, $gamefilter, $timefilter);
+if(!empty($group)){
+	$games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
+}elseif(count($groups)>1){
+	$group = $groups[count($groups)-1]['reservationgroup'];
+	$games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
+}else{
+	$games = TimetableGames($id, $gamefilter, $timefilter, $order);
+}
 
-				echo"<td style='width:15%'><a href='gamecard.php?Team1=". htmlentities($game['kId']) ."&amp;Team2=". htmlentities($game['vId']) . "'>";
-				echo _("Pelihistoria")."</a></td>";					
-				echo "</tr>";
-				}
-			echo "</table>";
+if($format=="pdf"){
+	$pdf = new PDF();
+	$pdf->PrintSchedule($gamefilter, $id, $games);
+	$pdf->Output();
+}else{		
+	//common page
+	pageTop($title);
+	leftMenu($LAYOUT_ID);
+	contentStart();
+	if(count($groups)>1){
+		echo "<div><p>\n";	
+		foreach($groups as $grouptmp){
+			if($group==$grouptmp['reservationgroup']){
+				echo "<a class='groupinglink' href='".utf8entities($baseurl)."&amp;group=".urlencode($grouptmp['reservationgroup'])."'><span class='selgroupinglink'>".U_($grouptmp['reservationgroup'])."</span></a>";
+			}else{
+				echo "<a class='groupinglink' href='".utf8entities($baseurl)."&amp;group=".urlencode($grouptmp['reservationgroup'])."'>".U_($grouptmp['reservationgroup'])."</a>";
 			}
+			echo "&nbsp;&nbsp;&nbsp; ";
+		}
+		if($group=="all"){
+			echo "<a class='groupinglink' href='".utf8entities($baseurl)."&amp;group=all'><span class='selgroupinglink'>"._("All")."</span></a>";
+		}else{
+			echo "<a class='groupinglink' href='".utf8entities($baseurl)."&amp;group=all'>"._("All")."</a>";
+		}
+		echo "</p></div>\n";	
+	}
+	echo "<div>\n";	
+	//echo _("Played games").": ";
+	//if(IsGamesScheduled($id, $gamefilter, "past")){
+	//	echo "<a href='".utf8entities($baseurl)."&amp;filter=prev'>"._("Previous")."</a>";
+	//	echo "&nbsp;|&nbsp;";	
+	//}
+	echo "<a href='".utf8entities($baseurl)."&amp;group=".urlencode($group)."&amp;filter=tournaments'>"._("By grouping")."</a>";
+	echo "&nbsp;|&nbsp;";	
+	echo "<a href='".utf8entities($baseurl)."&amp;group=".urlencode($group)."&amp;filter=series'>"._("By division")."</a>";
+	echo "&nbsp;|&nbsp;";	
+	echo "<a href='".utf8entities($baseurl)."&amp;group=".urlencode($group)."&amp;filter=places'>"._("By location")."</a>";
+	echo "&nbsp;|&nbsp;";	
+	echo "<a href='".utf8entities($baseurl)."&amp;group=".urlencode($group)."&amp;filter=season'>"._("PDF")."</a>";
+
+	echo "</div>\n";	
+
+	if(!empty($group) && $group!="all"){
+		$groupheader=false;
+	}
+	
+	if(!mysql_num_rows($games)){
+		echo "\n<p>"._("No games").".</p>\n";	
+	}else{
+		if($filter == 'tournaments'){
+			echo TournamentView($games,$groupheader);
+		}elseif($filter == 'series'){
+			echo SeriesView($games);
+		}elseif($filter == 'today'){
+			echo SeriesView($games, false);
+		}elseif($filter == 'yesterday'){
+			echo SeriesView($games, false);
+		}elseif($filter == 'prev'){
+			echo TournamentView($games,$groupheader);
+		}elseif($filter == 'places'){
+			echo PlaceView($games,$groupheader);
 		}
 	}
-elseif($seriesId)
-	{
-	$tournaments = SeriesPlayedTournaments($seriesId);
-	$prevTournament = "";
-	
-	if(!mysql_num_rows($tournaments))
-		{
-		echo "\n<p>"._("Ei pelattuja pelej&auml;").".</p>\n";	
-		}
-		
-	while($tournament = mysql_fetch_assoc($tournaments))
-		{
-		
-		if($tournament['Turnaus'] != $prevTournament)
-			{
-			if($prevTournament != "")
-				echo "<hr/>\n";
-			echo "<h1>". htmlentities($tournament['Turnaus']) ."</h1>";
-			$prevTournament = $tournament['Turnaus'];
-			}
-			
-		$places = TournamentPlaces($season, $seriesId, $tournament['Paikka_ID']);
-		
-		while($place = mysql_fetch_assoc($places))
-			{
-			echo "<table cellpadding='2' border='0' cellspacing='0' style='width:450px'>";
-			echo "<tr><th align='left' colspan='9'>";
-			echo DefWeekDateFormat($tournament['AikaAlku']) ." ";
-			echo "<a href='placeinfo.php?Place=".$tournament['Paikka_ID']."'>". htmlentities($tournament['Paikka']) ."</a>";
-			echo "</th></tr>\n";
-				
-			$games = PlayedGames($season, $seriesId, $place['paikka_id']);
-			if(mysql_num_rows($games))
-				{
-				//echo "<table cellpadding='2' border='0' cellspacing='0' style='width:500px'>\n";
-				
-				while($game = mysql_fetch_assoc($games))
-					{
-					//echo "<tr><th colspan='8' align='left'><b>". htmlentities($game['Nimi']) ."</b></th></tr>";
-					$results = SeriesGames($game['Sarja_ID'],$place['paikka_id']);
-					
-					while($result = mysql_fetch_assoc($results))
-						{
-						echo "<tr><td style='width:10%'>", DefHourFormat($result['Aika']) ,"</td>";
-						echo "<td style='width:25%'>". htmlentities($result['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($result['VNimi']) ."</td>";
-						if((intval($result['Kotipisteet'])+intval($result['Vieraspisteet']))==0)
-							echo "<td style='width:5%'>?</td><td style='width:2%'>-</td><td style='width:10%'>?</td>";
-						else
-							echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
-						if (intval($result['Maaleja'])>0)
-							echo "<td style='width:15%'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>"._("Pelin kulku")."</a></td>";
-						else
-							echo "<td style='width:15%'>"._("es")."</td>";
-
-						echo "</tr>";
-						}
-					}
-				}
-			echo "</table>";
-			}
-		echo "<p></p>\n";
-		}
-	}
-else
-	{
-	$season = CurrenSeason();
-	$tournaments = PlayedTournaments($season);
-	$prevTournament = "";
-	
-	if(!mysql_num_rows($tournaments))
-		{
-		echo "\n<p>"._("Ei pelattuja pelej&auml;").".</p>\n";	
-		}
-		
-	while($tournament = mysql_fetch_assoc($tournaments))
-		{
-		
-		if($tournament['Turnaus'] != $prevTournament)
-			{
-			if($prevTournament != "")
-				echo "<hr/>\n";
-			echo "<h1>". htmlentities($tournament['Turnaus']) ."</h1>";
-			$prevTournament = $tournament['Turnaus'];
-			}
-			
-		$places = TournamentPlaces($season, $seriesId, $tournament['Paikka_ID']);
-		
-		while($place = mysql_fetch_assoc($places))
-			{
-			echo "<table border='0'><tr><td class='placeheader'>";
-			echo DefWeekDateFormat($tournament['AikaAlku']) ." ";
-			echo "<a href='placeinfo.php?Place=".$tournament['Paikka_ID']."'>". htmlentities($tournament['Paikka']) ."</a>";
-			echo "</td></tr></table>\n";
-				
-			$games = PlayedGames($season, $seriesId, $place['paikka_id']);
-			if(mysql_num_rows($games))
-				{
-				echo "<table cellpadding='2' border='0' cellspacing='0' style='width:500px'>\n";
-				
-				while($game = mysql_fetch_assoc($games))
-					{
-					echo "<tr><th colspan='8' align='left'><b>". htmlentities($game['Nimi']) ."</b></th></tr>";
-					$results = SeriesGames($game['Sarja_ID'],$place['paikka_id']);
-					
-					while($result = mysql_fetch_assoc($results))
-						{
-						echo "<tr><td style='width:10%'>", DefHourFormat($result['Aika']) ,"</td>";
-						echo "<td style='width:25%'>". htmlentities($result['KNimi']) ."</td><td style='width:2%'>-</td><td style='width:25%'>". htmlentities($result['VNimi']) ."</td>";
-						if((intval($result['Kotipisteet'])+intval($result['Vieraspisteet']))==0)
-							echo "<td style='width:5%'>?</td><td style='width:2%'>-</td><td style='width:10%'>?</td>";
-						else
-							echo "<td style='width:5%'>". intval($result['Kotipisteet']) ."</td><td style='width:2%'>-</td><td style='width:10%'>". intval($result['Vieraspisteet']) ."</td>";
-							
-						if (intval($result['Maaleja'])>0)
-							echo "<td style='width:15%' align='right'><a href='gameplay.php?Game=". $result['Peli_ID'] ."'>"._("Pelin kulku")."</a></td>";
-						else
-							echo "<td style='width:15%' align='right'>"._("es")."</td>";
-
-						//echo"<td style='width:15%'><a href='gamecard.php?Team1=". htmlentities($result['kId']) ."&amp;Team2=". htmlentities($result['vId']) . "'>"._("Otteluhistoria")."</a></td>";					
-						echo "</tr>";
-						}
-					}
-				echo "</table>";
-				}
-			}
-		echo "<p></p>\n";
-		}	
-	}
-CloseConnection();
-echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>";
+}
 contentEnd();
 pageEnd();
 ?>

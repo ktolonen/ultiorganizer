@@ -1,61 +1,162 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once '../lib/database.php';
-include_once '../lib/season.functions.php';
-include_once '../lib/serie.functions.php';
 include_once 'lib/season.functions.php';
-include_once 'builder.php';
+include_once 'lib/statistical.functions.php';
+include_once 'lib/series.functions.php';
+include_once 'lib/common.functions.php';
+include_once 'lib/configuration.functions.php';
+
 $LAYOUT_ID = SEASONS;
 
+$title = _("Events");
+$html = "";
 
-//content
-OpenConnection();
+//season parameters
+$sp = array(
+	"season_id"=>"",
+	"name"=>"",
+	"type"=>"",
+	"starttime"=>"",
+	"endtime"=>"",
+	"iscurrent"=>0
+	);
+	
+if(!empty($_GET["Season"]))
+	{
+	$info = SeasonInfo($_GET["Season"]);
+	$sp['season_id'] = $info['season_id'];
+	$sp['name'] = $info['name'];
+	$sp['type'] = $info['type'];
+	$sp['starttime'] = $info['starttime'];
+	$sp['endtime'] = $info['endtime'];
+	$sp['iscurrent'] = $info['iscurrent'];
+	}
 
 //process itself on submit
-if(!empty($_POST['remove']))
+if(!empty($_POST['remove_x']) && !empty($_POST['hiddenDeleteId']))
 	{
+	$id = $_POST['hiddenDeleteId'];
+	$ok = true;
+	//run some test to for safe deletion
+	$series = SeasonSeries($id);
+	if(count($series)){
+		$html .= "<p class='warning'>"._("Event has")." ".mysql_num_rows($series)." "._("Division").". "._("Division must be removed before removing the event").".</p>";
+		$ok = false;
 	}
+	$cur = CurrentSeason();
 
-if(!empty($_POST['add']))
-	{
+	if($cur == $id)
+		{
+		$html .= "<p class='warning'>"._("You can not remove a current event").".</p>";
+		$ok = false;
+		}
+	if($ok)
+		{
+		DeleteSeason($id);
+		//remove rights from deleted season
+		$propId = getPropId($_SESSION['uid'], 'editseason', $id);
+		RemoveEditSeason($_SESSION['uid'],$propId);
+		$propId = getPropId($_SESSION['uid'], 'userrole', 'seasonadmin:'.$id);
+		RemoveUserRole($_SESSION['uid'], $propId);
+		}
 	}
-
-if(!empty($_POST['save']))
-	{
-	
-	$selseason = $_POST['curseason'];
-	if(!empty($selseason))
-		SeasonSetCurrent($selseason);
-	}
-
 //common page
-pageTop();
+pageTopHeadOpen($title);
+?>
+<script type="text/javascript">
+<!--
+function setId(id) {
+	var input = document.getElementById("hiddenDeleteId");
+	
+	var answer = confirm('<?php echo _("Are you sure you want to delete the event?");?>');
+	if (answer){
+		input.value = id;	
+	}else{
+		input.value = "";
+	}
+}
+//-->
+</script>
+<?php
+pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-OpenConnection();
-echo "<form method='post' action='seasons.php'>";
 
-$season = CurrenSeason();
+$html .=  "<form method='post' action='?view=admin/seasons'>";
 
-echo "<h2>"._("Nykyinen kausi")." ($season)</h2>\n";
-echo "<p>"._("Valitse nykyinen kausi").". "._("Huom. vaikuttaa koko pelikoneen toimintaan!")."</p>\n";
-echo "<p><select class='dropdown' name='curseason'>";
+$html .=  "<h2>"._("Seasons/Tournaments")."</h2>\n";
+
+$html .=  "<table style='white-space: nowrap;' border='0' cellpadding='4px'>\n";
+
+$html .=  "<tr>
+	<th>"._("Name")."</th>
+	<th>"._("Type")."</th>
+	<th>"._("Starts")."</th>
+	<th>"._("Ends")."</th>
+	<th>"._("Enrollment")."</th>
+	<th>"._("Visible")."</th>
+	<th>"._("Operations")."</th>
+	<th></th>
+	</tr>\n";
 
 $seasons = Seasons();
 
 while($row = mysql_fetch_assoc($seasons))
 	{
-	if($row['kausi']==$season)
-		echo "<option class='dropdown' selected='selected' value='". $row['kausi'] ."'>". $row['kausi'] ."</option>";
-	else
-		echo "<option class='dropdown' value='". $row['kausi'] ."'>". $row['kausi'] ."</option>";
-	}
+	$info = SeasonInfo($row['season_id']);
 	
-echo "</select></p>";
-echo "<p><input class='button' type='submit' name='save' value='"._("Tallenna")."' /></p>";
-echo "</form>\n";
+	$html .=  "<tr>";
+	$html .=  "<td><a href='?view=admin/addseasons&amp;Season=".$info['season_id']."'>".utf8entities(U_($info['name']))."</a></td>";
 
-CloseConnection();
+	if(!empty($info['type']))
+		$html .=  "<td>".U_($info['type'])."</td>";
+	else
+		$html .=  "<td>?</td>";
+
+	if(!empty($info['starttime']))
+		$html .=  "<td>".ShortDate($info['starttime'])."</td>";
+	else
+		$html .=  "<td>-</td>";
+	
+	if(!empty($info['endtime']))
+		$html .=  "<td>".ShortDate($info['endtime'])."</td>";
+	else
+		$html .=  "<td>-</td>";
+
+	$enrollment = intval($info['enrollopen'])?_("open"):_("closed");
+	$html .=  "<td>".$enrollment."</td>";
+	
+	$visible = intval($info['iscurrent'])?_("yes"):_("no");
+	$html .=  "<td>".$visible."</td>";
+	
+	$html .=  "<td>";
+	if(IsTwitterEnabled()){
+		$html .=  "<a href='?view=admin/twitterconf&amp;Season=".$info['season_id']."'>"._("Conf. Twitter")."</a> | ";
+	}
+	if(!CanDeleteSeason($row['season_id'])){
+		if(IsSeasonStatsCalculated($row['season_id'])){
+			$html .=  "<a href='?view=admin/stats&amp;Season=".$info['season_id']."'>"._("Re-calc. stats")."</a>";
+		}else{
+			$html .=  "<a href='?view=admin/stats&amp;Season=".$info['season_id']."'><b>"._("Calc. stats")."</b></a>";
+		}
+	}
+	$html .= " | <a href='?view=admin/eventdataexport&amp;Season=".$info['season_id']."'>"._("Export")."</a>";
+	$html .=  "</td>";
+	
+	if(CanDeleteSeason($row['season_id'])){
+		$html .=  "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId('".$row['season_id']."');\"/></td>";
+	}
+	$html .=  "</tr>\n";
+	}
+
+$html .=  "</table>";
+$html .=  "<div>";
+$html .= "<a href='?view=admin/eventdataimport'>"._("Import event")."</a> | ";
+$html .= "<a href='?view=admin/seasonstats'>"._("All event statistics")."</a></div>";
+$html .=  "<p><input class='button' name='add' type='button' value='"._("Add")."' onclick=\"window.location.href='?view=admin/addseasons'\"/></p>";
+$html .=  "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
+$html .=  "</form>\n";
+
+echo $html;
 
 contentEnd();
 pageEnd();

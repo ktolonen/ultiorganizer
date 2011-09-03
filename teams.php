@@ -1,65 +1,178 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once 'lib/database.php';
-include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
-include_once 'builder.php';
+include_once $include_prefix.'lib/season.functions.php';
+include_once $include_prefix.'lib/series.functions.php';
+include_once $include_prefix.'lib/pool.functions.php';
+include_once $include_prefix.'lib/statistical.functions.php';
 
 $LAYOUT_ID = TEAMS;
+$title = _("Teams");
+$html = "";
+$list = "allteams";
+
+if(!empty($_GET["list"])) {
+$list = $_GET["list"];
+}
+
+if(!empty($_GET["Season"])){
+	$season = mysql_real_escape_string($_GET["Season"]);
+}else{	
+	$season = CurrentSeason();
+}
+$seasonInfo = SeasonInfo($season);
+$series = SeasonSeries($season, true);
 
 //common page
-pageTop();
+pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-?>
-<?php
+$html .= "[<a href='?view=teams&amp;Season=$season&amp;list=allteams'>"._("By division")."</a>]";
+$html .= "&nbsp;&nbsp;";	
+$html .= "[<a href='?view=teams&amp;Season=$season&amp;list=bypool'>"._("By pool")."</a>]";
+$html .= "&nbsp;&nbsp;";
+$html .= "[<a href='?view=teams&amp;Season=$season&amp;list=byseeding'>"._("By seeding")."</a>]";
+$html .= "&nbsp;&nbsp;";
+$html .= "[<a href='?view=eventstatus&amp;Season=$season'>"._("Final standings")."</a>]";
+$html .= "&nbsp;&nbsp;";
 
-echo "<h1>"._("Joukkueet")."</h1>\n";
+if(!empty($season)){
+	$html .= "<h1>$title</h1>\n";
+}else{
+	$html .= "<p>"._("No teams")."</p>\n";
+}
 
-OpenConnection();
-$season="";
+$cols = 2;
+if (!intval($seasonInfo['isnationalteams'])){
+	$cols++;
+}
+if(intval($seasonInfo['isinternational'])){
+	$cols++;
+}
+if($list=="byseeding"){
+	$cols++;
+}
+$isstatdata = IsStatsDataAvailable();
 
-if(!empty($_GET["Season"]))
-	$season = mysql_real_escape_string($_GET["Season"]);
+if($list=="allteams" || $list=="byseeding"){
+
+	foreach($series as $row){
 	
-if(is_null($season) || $season=="")
-	{
-	$season=CurrenSeason();
-	}
-
-$series = Series($season);
-while($serie = mysql_fetch_assoc($series))
-	{
-	echo "<h2>".htmlentities($serie['nimi'])."</h2>";
-	
-	echo "
-	<table border='0' cellspacing='0' cellpadding='2' width='100%'>
-	<tr>
-	<th>"._("Nimi")."</th><th>"._("Seura")."</th><th></th><th></th><th></th><th colspan='2'>"._("Pistep&ouml;rssi")."</th>
-	</tr>";
-	$teams = Teams($serie['sarja_id']);
-
-	while($row = mysql_fetch_assoc($teams))
-		{
-		echo "
-		<tr>
-		<td><a href='teamcard.php?Team=".$row['Joukkue_ID']."'>".htmlentities($row['Nimi'])."</a></td>
-		<td>".htmlentities($row['Seura'])."</td>";
-		echo "<td><a href='playerlist.php?Team=".$row['Joukkue_ID']."'>"._("Pelaajalista")."</a></td>";
-		echo "<td><a href='timetables.php?Team=".$row['Joukkue_ID']."'>"._("Tulevat&nbsp;pelit")."</a></td>";
-		echo "<td><a href='played.php?Team=".$row['Joukkue_ID']."'>"._("Pelatut&nbsp;pelit")."</a></td>";
-		echo "<td><a href='scorestatus.php?Team=".$row['Joukkue_ID']."&amp;Series=". $serie['sarja_id'] ."'>"._("Sarja")."</a></td>";
-		echo "<td><a href='scorestatus.php?Team=".$row['Joukkue_ID']."'>"._("Kausi")."</a></td>";
-		echo "</tr>\n";
+		$html .= "<table border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
+		$html .= "<tr>";
+		$html .= "<th colspan='$cols'>";
+		$html .=utf8entities(U_($row['name']))."</th>\n";
+		$html .= "</tr>\n";
+		if($list=="byseeding"){
+			$teams = SeriesTeams($row['series_id'], true);
+		}else{
+			$teams = SeriesTeams($row['series_id']);
 		}
-	echo "</table>\n";
-	echo "<hr/>";
-	
+		$i=0;	
+		foreach ($teams as $team) {
+			$i++;
+			$html .= "<tr>";
+			if($list=="byseeding"){
+			  if(!empty($team['rank'])){
+				$html .= "<td style='width:2px'>".$team['rank'].".</td>";
+			  }else{
+			    $html .= "<td style='width:2px'>-</td>";
+			  }
+			}
+			if(intval($seasonInfo['isnationalteams'])){
+				$html .= "<td style='width:200px'><a href='?view=teamcard&amp;Team=".$team['team_id']."'>".utf8entities(U_($team['name']))."</a></td>";
+			} else {
+				$html .= "<td style='width:150px'><a href='?view=teamcard&amp;Team=".$team['team_id']."'>".utf8entities($team['name'])."</a></td>";
+				$html .= "<td style='width:150px'><a href='?view=clubcard&amp;Club=". $team['club']."'>".utf8entities($team['clubname'])."</a></td>";
+			}
+			if(intval($seasonInfo['isinternational'])){
+				$html .= "<td style='width:150px'>";
+
+				if(!empty($team['flagfile'])){
+				  $html .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/>&nbsp;";
+				}
+				if(!empty($team['countryname'])){ 
+				  $html .= "<a href='?view=countrycard&amp;Country=". $team['country']."'>".utf8entities(_($team['countryname']))."</a>";
+				}
+				$html .= "</td>";
+			}
+			
+			$html .= "<td class='right' style='white-space: nowrap;width:15%'>\n";
+			if($isstatdata){
+				$html .= "<a href='?view=playerlist&amp;Team=".$team['team_id']."'>"._("Roster")."</a>";
+				$html .= "&nbsp;&nbsp;";
+			}
+			$html .= "<a href='?view=scorestatus&amp;Team=".$team['team_id']."'>"._("Scoreboard")."</a>";
+			
+			$html .= "&nbsp;&nbsp;";
+			$html .= "<a href='?view=games&amp;Team=".$team['team_id']."'>"._("Games")."</a>";
+			$html .= "</td>";
+			$html .= "</tr>\n";
+		}
+		$html .= "</table>\n";
 	}
-CloseConnection();
+} elseif ($list=="bypool") {
 
-echo "<p><a href='javascript:history.go(-1);'>"._("Palaa")."</a></p>";
+	foreach($series as $row){
+		$html .= "<h2>".utf8entities(U_($row['name']))."</h2>\n";
+		
+		$pools = SeriesPools($row['series_id'], true);
+		if(!count($pools)){
+			$html .= "<p>"._("Pools not yet created")."</p>";
+			continue;
+		}
+		foreach ($pools as $pool) {
+			$html .= "<table border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
+			$html .= "<tr>";
+			$html .= "<th colspan='".($cols-1)."'>".utf8entities(U_(PoolSeriesName($pool['pool_id'])).", ". U_($pool['name']))."</th><th class='right'>"._("Scoreboard")."</th>\n";
+			$html .= "</tr>\n";
+			if($pool['type']==2){
+				//find out sub pools
+				$pools = array();
+				$pools[] = $pool['pool_id'];
+				$followers = PoolFollowersArray($pool['pool_id']);
+				$pools = array_merge($pools,$followers);
+				$playoffpools = implode(",",$pools);
+			}
+			$teams = PoolTeams($pool['pool_id']);
 
+			foreach($teams as $team){
+				$html .= "<tr>";
+				if(intval($seasonInfo['isnationalteams'])){
+					$html .= "<td style='width:150px'><a href='?view=teamcard&amp;Team=".$team['team_id']."'>".utf8entities(U_($team['name']))."</a></td>";
+				} else {
+					$html .= "<td style='width:150px'><a href='?view=teamcard&amp;Team=".$team['team_id']."'>".utf8entities($team['name'])."</a></td>";
+					$html .= "<td style='width:150px'><a href='?view=clubcard&amp;Club=". $team['club']."'>".utf8entities($team['clubname'])."</a></td>";
+				}
+				if(intval($seasonInfo['isinternational'])){
+					$html .= "<td style='width:150px'>";
+					if(!empty($team['flagfile'])){
+					  $html .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/>&nbsp;";
+					}
+					if(!empty($team['countryname'])){ 
+					  $html .= "<a href='?view=countrycard&amp;Country=". $team['country']."'>".utf8entities(_($team['countryname']))."</a>";
+					}
+					$html .= "</td>";
+				}
+				
+				$html .= "<td class='right' style='white-space: nowrap;width:15%'>\n";
+				$html .= "<a href='?view=games&amp;Team=".$team['team_id']."'>"._("Games")."</a>";
+				$html .= "&nbsp;&nbsp;";
+		
+				if($pool['type']==2){
+					$html .= "<a href='?view=scorestatus&amp;Team=".$team['team_id']."&amp;Pools=".$playoffpools."'>"._("Pool")."</a>";
+				}else{
+					$html .= "<a href='?view=scorestatus&amp;Team=".$team['team_id']."&amp;Pool=". $pool['pool_id'] ."'>"._("Pool")."</a>";
+				}
+				$html .= "&nbsp;&nbsp;";	
+				
+				$html .= "<a href='?view=scorestatus&amp;Team=".$team['team_id']."'>"._("Division")."</a></td>";
+				$html .= "</tr>\n";
+			}
+			$html .= "</table>\n";
+		}
+	}
+}
+
+echo $html;
 contentEnd();
 pageEnd();
 ?>

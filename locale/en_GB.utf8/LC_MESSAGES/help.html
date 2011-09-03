@@ -1,0 +1,297 @@
+<h2>Administration menu</h2>
+<ul>
+<li><b>Events:</b> Season and tournament management and new creation of new season/tournament.</li>
+<li><b>Pool formats:</b> Pool rule and playing form templates. All pools created based on templates.</li>
+<li><b>Clubs &amp; Countries:</b> All clubs and countries in system. Depending of season/tournament type team belongs to a club and/or a country.</li>
+<li><b>Field locations:</b> Physical fields. These locations are referred from field reservations.</li>
+<li><b>Field reservations:</b> Field reservations. All season/tournaments share the reservations.</li>
+<li><b>Translations:</b> Administration interface for database string translation, like pool names.</li>
+<li><b>Users:</b> User management interface.</li>
+<li><b>Logs:</b> System event logs.</li>
+<li><b>Database:</b> Database administration interface.</li>
+<li><b>Settings:</b> System settings.</li>
+<li><b>Helps:</b> Help documents.</li>
+<li><b>Personal settings:</b> Personal settings are available by clicking own name on top right corner.</li>
+</ul>
+
+
+<h2>Creating a new Season/Tournament </h2>
+<ol>
+<li>Open Events from administration menu.</li>
+<li>Select Add
+	<ul>
+		<li><b>Event id:</b> Select short indentification string for event (e.g. WUCC2010 or WU23UC).</li>
+		<li><b>Name:</b> Longer name shown in most of views (e.g. WUCC 2010).</li>
+		<li><b>Type:</b> According field type and game format.</li>
+		<li><b>Tournament:</b> If event is a tournament, otherwise it is a season.</li>
+		<li><b>International:</b> If event is international, in international events teams' have country.</li>
+		<li><b>For national teams:</b> If event is for national teams, otherwise it is for club teams.</li>
+		<li><b>Spirit points given:</b> If spirit points are given for teams after each match.</li>
+		<li><b>Organizer:</b> Event organizer e.g. WFDF or FFDA.</li>
+		<li><b>Category:</b> Event category e.g. WUGC, WUCC or WC </li>
+		<li><b>Starts:</b> Day when event starts.</li>
+		<li><b>Ends:</b> Day when event ends.</li>
+		<li><b>Open for enrollment:</b> When selected, all ultiorganizer user can register team to this event.</li>
+		<li><b>Enrolling ends:</b> Informative day shown to users. Does not restrict enrollment even after this day.</li>
+	</ul></li>
+<li>After adding an event, the event menu appears on left navigation bar under administration menu. The event menu:
+	<ul>
+	<li><b>Divisions:</b> Administration of divisions.</li>
+	<li><b>Pools:</b> Administration of pools.</li>
+	<li><b>Teams:</b> Administration of teams.</li>
+	<li><b>Games:</b> Administration of games.</li>
+	<li><b>Standings:</b> Administration of standings.</li>
+	<li><b>Accreditation:</b> Player accreditation.</li>
+	<li><b>Game responsibilities:</b> All responsibility games.</li>
+	<li><b>Contacts:</b> All teams' contact persons.</li>
+	</ul></li>
+<li>If event is open for enrollment, in addition of the event menu there is menu option for Enrollment. But before
+teams can be enrolled divisions must be created first.</li>
+</ol>
+
+<h2>Creating a new division</h2>
+<ol>
+<li>Click divisions from event menu</li>
+	<li>Add new division
+		<ul>
+			<li><b>Name:</b> Name shown in Ultiorganizer, e.g. Open, Masters.</li>
+			<li><b>Order:</b> Division mutual order in menus and views.</li>
+			<li><b>Type:</b> Division type.</li>
+			<li><b>Valid:</b> Division is active and shown in menus.</li>
+		</ul></li>
+	<li>Crete as many divisions as needed. Team enrollment is per division.</li>
+</ol>
+
+<h2>Creation of teams</h2>
+<p>In normal circumstances registered users enroll teams for division:</p>
+<ol>
+<li>Event is open for enrollment.</li>
+<li>User log in to Ultiorganizer and enroll team with name and club/country information.</li>
+<li>Event administrator confirms the enrollment from enrollments menu.</li>
+<li>The person enroll the team is automatically promoted as team responsible during enrollment confirmation.</li>
+<li>The team responsible can add players to the team and update club, team and player cards.</li>
+</ol>
+<p>Manual team registration:</p>
+<ol>
+<li>If enrollment is open add teams from enrollment menu otherwise add teams from teams -event menu.</li>
+<li>Team responsible person can be added from teams event menu, team's setting or from users administration menu.</li>
+</ol>
+
+<h2>Creating a new pool</h2>
+<ol>
+<li>First create pool template from pool formats administration menu, if suitable template doesn't already exist. The Pool Format:
+<ul>
+	<li><b>Name:</b> Template name, e.g. WFDF Open regular</li>
+	<li><b>Type:</b> Series = round robin pool (all teams plays against all teams in pool), 
+	Play-off = first team in pool play against last team and so on.</li>
+	<li><b>Teams:</b> Default number teams in pool.</li>
+	<li><b>Game points:</b> Winning points to reach in a game.</li>
+	<li><b>Half-time:</b> Half-time duration.</li>
+	<li><b>Half-time at point:</b> Half-time after point.</li>
+	<li><b>Time cap:</b> Time limit for a game.</li>
+	<li><b>Time slot:</b> Total time reserved for a game (used when scheduling games)</li>
+	<li><b>Pont cap:</b> Absolute point limit.</li>
+	<li><b>Additional points after time cap:</b> After time limit leading team +n points.</li>
+	<li><b>Time between points:</b> Time limit after score and before pull.</li>
+	<li><b>Time-outs:</b> How many time-outs available on a game per team.</li>
+	<li><b>Time-outs duration:</b> Time-out duration.</li>
+	<li><b>Time-outs on overtime:</b> How many timeouts available after time limit reached?</li>
+	<li><b>Continuing pool:</b> If this is template for continuation pool.</li>
+	<li><b>Games to move:</b> In case of continuation pool, are game results from previous pool included.</li>	
+	</ul></li>
+	
+<li>Click Pools from event menu</li>
+	<li>Add new pool
+		<ul>
+			<li><b>Name:</b> Name shown in Ultiorganizer, e.g. Pool A or Final</li>
+			<li><b>Order:</b> Pools mutual order in menus and views. Mutual order for placement pools.</li>
+			<li><b>Template:</b> Pool rule template.</li>
+	</ul></li>		
+		
+	<li>Pool settings (when clicking pool name):
+		<ul>
+			<li><b>Name:</b> Name shown in Ultiorganizer, e.g. Pool A or Final</li>
+			<li><b>Order:</b> Pools mutual order in menus and views. Mutual order for placement pools.</li>
+			<li><b>Teams:</b> Number of teams in pool.</li>
+			<li><b>Visible:</b> Pool is shown for Ultiorganizer users. E.g. continuation pools are typically not set visible before teams are known.</li>
+			<li><b>Played:</b> All games in pool are played.</li>
+			<li><b>Continuing pool:</b> If pool is continuing pool.</li>
+			<li><b>Placement pool:</b> If final placment of any team playing in this pool is depending of team standing in this pool.</li>
+			<li><b>Color:</b> Pool identity color. All games in this pool are shown with this color in scheduling.</li>
+			
+		</ul></li>
+<li>Team final standings in division are calculated according placement pools. For example teams playing in Final pool (order AA) will
+get standings 1. and 2. in division. Teams playing in Bronze pool (order AB) will get standings 3.-4. Using pool order highest standings
+gets highest order is extremely important. In previous example if Bronze pool had ordering AA instead of AB then standings 1.-2. are solved
+in Bronze pool.
+</li>
+<li>Return back to Pool menu to select teams playing in the pool.</li>
+</ol>
+
+<h2>Team management</h2>
+<p>Adding teams into initial pools. Best practice is to have all initial pools created and teams enrolled on this phase.</p>
+<ol>
+<li>Click select teams from Pools view in even menu.</li>
+<li>In opening view all divisions' initial pools and teams are listed.</li>
+<li>Teams can be moved by dragging from one pool to another.</li>
+<li>Teams initial ranking in pool is same than teams order in pool.</li>
+<li>Finally press save to save changes.</li>
+</ol>
+<p>Adding teams into Continuing pool.</p>
+<ol>
+<li>Create Continuing pool -type of pool</li>
+<li>Click Move Teams link in pool view</li>
+<li>In opening view all moves to this pool are listed.</li>
+<li>Click manage moves.</li>
+<li>Now you can add moving rules: Team from pool X on standing n will be moved to this team on standing n. Name in schedule is used
+when you create and schedule games before teams playing in pool are known.</li>
+<li>Return to previous page.</li>
+<li>If all games are played, team standings are correct in from pool, all moves are created and moving games are listed correctly, 
+you can confirm the moves by clicking the confirm moves button.
+	<ul>
+		<li>If teams mutual standings is not calculated correctly, you can change standings trough standings link in event menu.</li>
+		<li>Games to move are defined in pool settings.</li>
+	</ul></li>
+</ol>
+
+<h2>Creation of games</h2>
+<ol>
+<li>Click game management in Pools view.</li>
+	<li>For initial pools, make sure that all teams wanted are selected in the pool.</li>
+	<li>For continuing pools, if teams are not moved then scheduling names are used instead of team names.</li>
+	<li>Before creating the games, you can check games by clicking show games button.</li>
+	<li>Create games by clicking Generate all games -button.</li>
+	<li>You can create also single game, but normally it is not needed.</li>
+</ol>
+
+<h2>Game scheduling</h2>
+<ol>
+<li>Create physical locations from Field locations option in administration menu.</li>
+	<li>Click Add button.
+		<ul>
+		<li><b>Name: </b>Name of the place.</li>
+		<li><b>Address: </b>Place address. After giving address click fetch coordinates link.</li>
+		<li><b>Info: </b>Additional information about location.</li>
+		<li><b>Fields: </b>Number of fields in location.</li>
+		<li><b>Indoor pitch: </b>If fields are indoor fields.</li>
+		</ul></li>
+<li>Create field reservation for physical field from Field reservations in administration menu.</li>	
+	<li>Click Add reservation link
+		<ul>
+		<li><b>Date: </b>Day of reservation.</li>
+		<li><b>Start time: </b>Reservation starts at.</li>
+		<li><b>End time: </b>Reservation ends at.</li>
+		<li><b>Grouping name: </b>Reservations are grouped by given name, e.g. Day 1.</li>
+		<li><b>Fields: </b>Field number. If want create same reservation for more than one field, enter numbers separated by commas e.g. 1,2,3.</li>
+		<li><b>Location: </b>Physical location of field.</li>
+		</ul></li>
+<li>After adding reservations return to field reservation view.</li>
+<li>Search reservations by date, location, grouping name or field.</li>
+<li>Choose field reservations to schedule.</li>
+<li>From opening view you can see chosen reservations and all unscheduled games. Games are color coded by pool.
+		<ul>
+		<li>Drag and drop games to reservation slots</li>
+		<li>From x on top right corner, you can hide the game. It will not remove game itself.</li>
+		<li>You can add breaks between games.</li>
+		<li>Click save button to save schedule.</li>
+		</ul></li>
+</ol>
+
+<h2>Accreditation of players</h2>
+<p>After team responsible have updated their rooster. Players eligibility must be confirmed by event administrator.</p>
+<ol>
+<li>From Accreditation event menu you can do automatic accreditation against predefined list and confirm players who have played without accreditation (e.g. player is new in rooster and there has been not time to do accreditation before game).</li>
+<li>From Teams event menu you can click rooster link and make manual accreditation for each player in selected team.</li>
+</ol>
+
+<h2>How to print the score sheet paper?</h2>
+<ul>
+	<li>To print score sheet under your responsibility:
+		<ol>
+		<li>Navigate to game responsibilities view.</li>
+		<li>Click Print score sheet link on header of game group you want to print.</li>
+		<li>PDF-version of score sheet is opened. Use two side printing, if you want both point-to-point sheet and playerlist on same sheet.</li>
+		</ol></li>
+	<li>To print score sheet played on certain schedule group:
+		<ol>
+		<li>Navigate to game view.</li>
+		<li>You have option to print all sheets, only for those matches witch are not played or matches not played and having teams.</li>
+		<li>Click Print score sheet link on header of game group you want to print.</li>		
+		<li>PDF-version of score sheet is opened. Use two side printing, if you want both point-to-point sheet and playerlist on same sheet.</li>
+		</ol></li>
+	<li>To print score sheet played on certain field:
+		<ol>
+		<li>Navigate to field reservations view.</li>
+		<li>Choose your search option according wanted scoresheets and click Search-button.</li>
+		<li>Click PDF link on row of reservation wanted to print.</li>		
+		<li>PDF-version of score sheet is opened. Use two side printing, if you want both point-to-point sheet and playerlist on same sheet.</li>
+		</ol></li>
+</ul>
+
+<h2>How to feed in paper version of score sheet?</h2>
+<ol>
+  <li>Navigate to game responsible view. </li>
+  <li>Find the game you are going to edit. </li>
+  <li>Each game has 3 links for actions: 
+  <ul>
+    <li>Result: to set games final scores. </li>
+    <li>Players: to set game roster. </li>
+    <li>Score sheet: to add game details. </li>
+  </ul></li>
+  <li>When feeding in game result, always start by setting Final result if it is not already set (via SMS or via mobile interface). </li>
+  <li>Feed in player list according paper score sheet: 
+  <ul>
+    <li>Correct jersey numbers if needed. </li>
+    <li>Mark players played. </li>
+  </ul></li>
+  <li>Feed in score sheet details. </li>
+  <li>After feeding in all the details. Navigate to Played games view and check the game result and game play view that it seems correct. </li>
+</ol>
+
+<h2>How to move teams to next pools after the pool is played?</h2>
+<ol>
+  <li>After pool is finished, teams need to "move" onto next pool before new results can be fed into system. </li>
+  <li>Navigate to Pool Standings view. </li>
+  <li>Find the pool(s) finished: 
+  <ul>
+    <li>Pool is finished when all games in pool have final result stored in system. </li>
+    <li>Played pools have grey background. </li>
+  </ul></li>
+  <li>Check that team standings are correct 
+  <ul>
+    <li>Standing number is shown front of team. </li>
+    <li>If 2 teams have same standing number, system is not able to figure out the standing. </li>
+    <li>In playoff pools winning teams have odd standing and losing teams have even standing. </li>
+  </ul></li>
+  <li>Update standings if needed by clicking team name. </li>
+  <li>Click move teams link under the pool you are moving the teams. If link is not showing then one of pools to move from is not played. </li>
+  <li>From opening view all moves to pool are shown with the team name to move. Also all games to move with team are shown. Check that this information is correct. </li>
+  <li>Press <b>Confirm moves</b> -button. </li>
+  <li>If pool is not set to visible in menu, navigate to pools view and go to pool setting by clicking it names. Mark visible field and press save. </li>
+</ol>
+<p>Same team moving views are accessible also from Pools view trough link move teams. </p>
+
+<h2>How to re-schedule?</h2>
+<ol>
+  <li>Navigate to Games view. </li>
+  <li>Click edit link on line with the game. </li>
+  <li>From opening view you are able to change field and time of the game. 
+  <ul>
+    <li>You can give a name for the game. F. ex. Game of the Day. </li>
+  </ul></li>
+</ol>
+<p>If you have more than one game to re-schedule, open scheduling view from field reservation link with relevant reservations selected. </p>
+<h2>How to add media links?</h2>
+<ol>
+  <li>Sing in to Ultiorganizer </li>
+  <li>Navigate to any team card, player card or Game play page </li>
+  <li>Scroll down and on bottom of page there is add media link </li>
+  <li>From link you can add media links: 
+  <ul>
+    <li>Media type: image or video. </li>
+    <li>URL to media file. </li>
+    <li>If name is given, it is shown instead of URL. </li>
+    <li>Optional owner for this media file. Typically copyright holder. </li>
+    <li>In media links for games game time can be given. If time given link is shown together with other game events on Game Play page. </li>
+  </ul></li>
+</ol>

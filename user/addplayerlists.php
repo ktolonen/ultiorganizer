@@ -1,45 +1,33 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once 'builder.php';
-include_once '../lib/database.php';
-include_once '../lib/common.functions.php';
-include_once '../lib/game.functions.php';
-include_once '../lib/team.functions.php';
-include_once '../lib/player.functions.php';
+include_once $include_prefix.'lib/common.functions.php';
+include_once $include_prefix.'lib/game.functions.php';
+include_once $include_prefix.'lib/team.functions.php';
+include_once $include_prefix.'lib/player.functions.php';
 
-include_once 'lib/game.functions.php';
 $LAYOUT_ID = ADDPLAYERLISTS;
-
-//common page
-pageTopHeadOpen();
-include_once 'lib/disable_enter.js.inc';
-?>
-<script type="text/javascript">
-<!--
-function toggleField(checkbox, fieldid) 
-	{
-    var input = document.getElementById(fieldid);
-	input.disabled = !checkbox.checked;
-	}
-//-->
-</script>
-<?php
-pageTopHeadClose();
-leftMenu($LAYOUT_ID);
-contentStart();
-//content
-OpenConnection();
+$title = _("Rosters");
 $gameId = intval($_GET["Game"]);
 $game_result = GameResult($gameId);
 
-$home_playerlist = TeamPlayerList($game_result['kotijoukkue']);
-$away_playerlist = TeamPlayerList($game_result['vierasjoukkue']);
+$season = GameSeason($gameId);
+if(isset($_SERVER['HTTP_REFERER'])){
+	$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+}else{
+	$backurl = "?view=user/respgames&Season=$season";
+}
+
+$home_playerlist = TeamPlayerList($game_result['hometeam']);
+$away_playerlist = TeamPlayerList($game_result['visitorteam']);
+
+$html = "";
 
 //process itself if submit was pressed
 if(!empty($_POST['save']))
 	{
+	$backurl = $_POST['backurl'];
+	LogGameUpdate($gameId, "playerlist saved", "addplayerlist");
 	//HOME PLAYERS
-	$played_players = GamePlayers($gameId, $game_result['kotijoukkue']);
+	$played_players = GamePlayers($gameId, $game_result['hometeam']);
 	
 	//delete unchecked players
 	while($player = mysql_fetch_assoc($played_players))
@@ -49,7 +37,7 @@ if(!empty($_POST['save']))
 			{
 			foreach($_POST["homecheck"] as $playerId) 
 				{
-				if($player['pelaaja_id']==$playerId)
+				if($player['player_id']==$playerId)
 					{
 					$found=true;
 					break;
@@ -57,7 +45,7 @@ if(!empty($_POST['save']))
 				}
 			}
 		if(!$found)
-			GameRemovePlayer($gameId, $player['pelaaja_id']);
+			GameRemovePlayer($gameId, $player['player_id']);
 		}
 	
 	//handle checked players
@@ -70,32 +58,32 @@ if(!empty($_POST['save']))
 			if(is_numeric($number))
 				{
 				//check if already in list with correct number
-				$played_players = GamePlayers($gameId, $game_result['kotijoukkue']);
+				$played_players = GamePlayers($gameId, $game_result['hometeam']);
 				$found = false;
 				while($player = mysql_fetch_assoc($played_players))
 					{
-					//echo "<p>".$player['pelaaja_id']."==".$playerId ."&&". $player['Numero']."==".$number."</p>";
+					//echo "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
 
 					//if exist
-					if($player['pelaaja_id']==$playerId && $player['Numero']==$number)
+					if($player['player_id']==$playerId && $player['num']==$number)
 						{
 						$found = true;
 						break;
 						}
 					//if found, but with different number
-					if($player['pelaaja_id']==$playerId && $player['Numero']!=$number)
+					if($player['player_id']==$playerId && $player['num']!=$number)
 						{
 						GameSetPlayerNumber($gameId, $playerId, $number);
 						$found = true;
 						break;
 						}
 					//if two players with same number
-					if($player['pelaaja_id']!=$playerId && $player['Numero']==$number)
+					if($player['player_id']!=$playerId && $player['num']==$number)
 						{
 						$playerinfo1 = PlayerInfo($playerId);
-						$playerinfo2 = PlayerInfo($player['pelaaja_id']);
-						echo "<p  class='warning'><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
-						<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> same numero '$number'.</p>";
+						$playerinfo2 = PlayerInfo($player['player_id']);
+						$html .= "<p  class='warning'><i>". utf8entities($playerinfo1['firstname'] ." ". $playerinfo1['lastname']) ."</i> " . _("and")
+							." <i>". utf8entities($playerinfo2['firstname'] ." ". $playerinfo2['lastname']) ."</i> ". _("same number"). " '$number'.</p>";
 						$found = true;
 						break;
 						}
@@ -107,12 +95,12 @@ if(!empty($_POST['save']))
 			else
 				{
 				$playerinfo = PlayerInfo($playerId);
-				echo "<p  class='warning'><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> virheellinen numero '$number'.</p>";
+				$html .= "<p  class='warning'><i>". utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']) ."</i> ". _("erroneous number"). " '$number'.</p>";
 				}
 			}
 		}
 	//AWAY PLAYERS
-	$played_players = GamePlayers($gameId, $game_result['vierasjoukkue']);
+	$played_players = GamePlayers($gameId, $game_result['visitorteam']);
 	
 	//delete unchecked players
 	while($player = mysql_fetch_assoc($played_players))
@@ -122,7 +110,7 @@ if(!empty($_POST['save']))
 			{
 			foreach($_POST["awaycheck"] as $playerId) 
 				{
-				if($player['pelaaja_id']==$playerId)
+				if($player['player_id']==$playerId)
 					{
 					$found=true;
 					break;
@@ -130,7 +118,7 @@ if(!empty($_POST['save']))
 				}
 			}
 		if(!$found)
-			GameRemovePlayer($gameId, $player['pelaaja_id']);
+			GameRemovePlayer($gameId, $player['player_id']);
 		}
 	
 	if(!empty($_POST["awaycheck"]))
@@ -143,32 +131,32 @@ if(!empty($_POST['save']))
 			if(is_numeric($number))
 				{
 				//check if already in list with correct number
-				$played_players = GamePlayers($gameId, $game_result['vierasjoukkue']);
+				$played_players = GamePlayers($gameId, $game_result['visitorteam']);
 				$found = false;
 				while($player = mysql_fetch_assoc($played_players))
 					{
-					//echo "<p>".$player['pelaaja_id']."==".$playerId ."&&". $player['Numero']."==".$number."</p>";
+					//echo "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
 
 					//if exist
-					if($player['pelaaja_id']==$playerId && $player['Numero']==$number)
+					if($player['player_id']==$playerId && $player['num']==$number)
 						{
 						$found = true;
 						break;
 						}
 					//if found, but with different number
-					if($player['pelaaja_id']==$playerId && $player['Numero']!=$number)
+					if($player['player_id']==$playerId && $player['num']!=$number)
 						{
 						GameSetPlayerNumber($gameId, $playerId, $number);
 						$found = true;
 						break;
 						}
 					//if two players with same number
-					if($player['pelaaja_id']!=$playerId && $player['Numero']==$number)
+					if($player['player_id']!=$playerId && $player['num']==$number)
 						{
 						$playerinfo1 = PlayerInfo($playerId);
-						$playerinfo2 = PlayerInfo($player['pelaaja_id']);
-						echo "<p><i>". htmlentities($playerinfo1['enimi'] ." ". $playerinfo1['snimi']) ."</i> ja 
-						<i>". htmlentities($playerinfo2['enimi'] ." ". $playerinfo2['snimi']) ."</i> "._("sama numero")." '$number'.</p>";
+						$playerinfo2 = PlayerInfo($player['player_id']);
+						$html .= "<p  class='warning'><i>". utf8entities($playerinfo1['firstname'] ." ". $playerinfo1['lastname']) ."</i> " . _("and")
+							." <i>". utf8entities($playerinfo2['firstname'] ." ". $playerinfo2['lastname']) ."</i> ". _("same number"). "'$number'.</p>";
 						$found = true;
 						break;
 						}
@@ -180,89 +168,164 @@ if(!empty($_POST['save']))
 			else
 				{
 				$playerinfo = PlayerInfo($playerId);
-				echo "<p><i>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</i> "._("virheellinen numero")." '$number'.</p>";
+				$html .= "<p  class='warning'><i>". utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']) ."</i> ". _("erroneous number"). " '$number'.</p>";
 				}
 			}
 		}
+	$html .= "<p>"._("Player lists saved!")."</p>";
 	}
 
-echo "<form method='post' action='addplayerlists.php?Game=".$gameId."'>";
+//common page
+pageTopHeadOpen($title);
+include_once 'script/disable_enter.js.inc';
+?>
+<script type="text/javascript">
+<!--
+function toggleField(checkbox, fieldid) {
+    var input = document.getElementById(fieldid);
+	input.disabled = !checkbox.checked;
+}
+	
+function checkAll(field){
+	var div = document.getElementById(field);
+		 
+	var elems = div.getElementsByTagName( "input" );
+	
+	for (var i=1; i < elems.length; i++) {
+		 switch(elems[i].type) {
+			case "checkbox":
+				elems[i].checked = !elems[i].checked;
+				break;
+			case "text":
+				elems[i].disabled = !elems[i].disabled;
+				break;
+			}
+	}
+}
+//-->
+</script>
+<?php
+pageTopHeadClose($title);
+leftMenu($LAYOUT_ID);
+contentStart();
+
+echo $html;
+
+echo "<form method='post' action='?view=user/addplayerlists&amp;Game=".$gameId."'>";
 
 echo "<table width='600px'><tr><td valign='top' style='width:45%'>\n";
 
 echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>\n";
 echo "<tr style='height=20'><td align='center'><b>";
-echo htmlentities($game_result['KNimi']), "</b></td></tr>\n";
-echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-echo "<tr><th class='home'>#</th><th class='home'>"._("Nimi")."</th><th class='home'>"._("Paikalla")."</th><th class='home'>"._("Numero")."</th></tr>\n";
+echo utf8entities($game_result['hometeamname']), "</b></td></tr>\n";
+echo "</table><div id='home'><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
+echo "<tr><th class='home'>"._("Name")."</th><th class='home right' style='white-space: nowrap' >"._("Played")." <input type='checkbox' onclick='checkAll(\"home\");'/></th><th class='home'>"._("Jersey#")."</th></tr>\n";
 
+$players = GamePlayers($gameId, $game_result['hometeam']);
+$played_players = array();
+while ($row = mysql_fetch_assoc($players)) {
+		$played_players[] = $row['player_id'];
+	}
+	
 $i=0;
 while($player = mysql_fetch_assoc($home_playerlist))
 	{
 	$i++;
-	$playerinfo = PlayerInfo($player['pelaaja_id']);
+	$playerinfo = PlayerInfo($player['player_id']);
 	echo "<tr>";
-	echo "<td style='text-align:right'>$i</td>";
-	echo "<td>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</td>";
-	$number = PlayerNumber($player['pelaaja_id'], $gameId);
-	if($number >= 0)
+	echo "<td>". utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']) ."</td>";
+	$number = PlayerNumber($player['player_id'], $gameId);
+	if($number<0){$number="";}
+	
+	$found=false;
+	foreach($played_players as $playerId) 
 		{
-		echo "<td style='text-align: center;'>
-			<input onchange=\"toggleField(this,'p".$player['pelaaja_id']."');\" type='checkbox' name='homecheck[]' value='".$player['pelaaja_id']."' checked='checked'/></td>";
-		echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['pelaaja_id']."' id='p".$player['pelaaja_id']."' style='WIDTH: 20px' maxlength='2' size='2' value='$number'/></td>";
+		if($player['player_id']==$playerId)
+			{
+			$found=true;
+			break;
+			}
+		}
+		
+	if($found)
+		{
+		echo "<td class='center'>
+			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='homecheck[]' value='".$player['player_id']."' checked='checked'/></td>";
+		echo "<td  class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='2' size='2' value='$number'/></td>";
 		}
 	else
 		{
-		echo "<td style='text-align: center;'>
-			<input onchange=\"toggleField(this,'p".$player['pelaaja_id']."');\" type='checkbox' name='homecheck[]' value='".$player['pelaaja_id']."'/></td>";
-		echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['pelaaja_id']."' id='p".$player['pelaaja_id']."' style='WIDTH: 20px' maxlength='2' size='2' disabled='disabled'/></td>";
+		echo "<td class='center'>
+			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='homecheck[]' value='".$player['player_id']."'/></td>";
+		echo "<td class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='2' size='2' value='$number' disabled='disabled'/></td>";
 		}
 	echo "</tr>\n";		
 	}
-echo "<tr><td colspan='4'><a href='teamplayers.php?Team=".$game_result['kotijoukkue']."&amp;Game=$gameId'>"._("Lis&auml;&auml; pelaaja")."</a></td></tr>";
+echo "<tr><td colspan='3'>";
+echo _("Total number of players:")." ". mysql_num_rows($home_playerlist);
+echo "</td></tr>";
 	
-echo "</table></td>\n<td style='width:10%'>&nbsp;</td><td valign='top' style='width:45%'>";
+echo "</table></div></td>\n<td style='width:10%'>&nbsp;</td><td valign='top' style='width:45%'>";
 
 echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
 echo "<tr><td><b>";
-echo htmlentities($game_result['VNimi']), "</b></td></tr>\n";
-echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-echo "<tr><th class='guest'>#</th><th class='guest'>"._("Nimi")."</th><th class='guest'>"._("Paikalla")."</th><th class='guest'>"._("Numero")."</th></tr>\n";
+echo utf8entities($game_result['visitorteamname']), "</b></td></tr>\n";
+echo "</table><div id='away'><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
+echo "<tr><th class='guest'>"._("Name")."</th><th class='guest right' style='white-space: nowrap'>"._("Played")." <input type='checkbox' onclick='checkAll(\"away\");'/></th><th class='guest'>"._("Jersey#")."</th></tr>\n";
 
+$players = GamePlayers($gameId, $game_result['visitorteam']);
+$played_players = array();
+while ($row = mysql_fetch_assoc($players)) {
+		$played_players[] = $row['player_id'];
+	}
+	
 $i=0;	
 while($player = mysql_fetch_assoc($away_playerlist))
 	{
 	$i++;
-	$playerinfo = PlayerInfo($player['pelaaja_id']);
+	$playerinfo = PlayerInfo($player['player_id']);
 	echo "<tr>";
-	echo "<td style='text-align:right'>$i</td>";
-	echo "<td>". htmlentities($playerinfo['enimi'] ." ". $playerinfo['snimi']) ."</td>";
-	$number = PlayerNumber($player['pelaaja_id'], $gameId);
-	if($number >= 0)
+	echo "<td>". utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']) ."</td>";
+	$number = PlayerNumber($player['player_id'], $gameId);
+	if($number<0){$number="";}
+	
+	$found=false;
+	foreach($played_players as $playerId) 
 		{
-		echo "<td style='text-align: center;'>
-			<input onchange=\"toggleField(this,'p".$player['pelaaja_id']."');\" type='checkbox' name='awaycheck[]' value='".$player['pelaaja_id']."' checked='checked'/></td>";
-		echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['pelaaja_id']."' id='p".$player['pelaaja_id']."' style='WIDTH: 20px' maxlength='2' size='2' value='$number'/></td>";
+		if($player['player_id']==$playerId)
+			{
+			$found=true;
+			break;
+			}
+		}
+		
+	if($found)
+		{
+		echo "<td class='center'>
+			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='awaycheck[]' value='".$player['player_id']."' checked='checked'/></td>";
+		echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='2' size='2' value='$number'/></td>";
 		}
 	else
 		{
-		echo "<td style='text-align: center;'>
-			<input onchange=\"toggleField(this,'p".$player['pelaaja_id']."');\" type='checkbox' name='awaycheck[]' value='".$player['pelaaja_id']."'/></td>";
-		echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['pelaaja_id']."' id='p".$player['pelaaja_id']."' style='WIDTH: 20px' maxlength='2' size='2' disabled='disabled'/></td>";
+		echo "<td class='center'>
+			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='awaycheck[]' value='".$player['player_id']."'/></td>";
+		echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='2' size='2' value='$number' disabled='disabled'/></td>";
 		}
 	echo "</tr>\n";	
 	}
-echo "<tr><td colspan='4'><a href='teamplayers.php?Team=".$game_result['vierasjoukkue']."&amp;Game=$gameId'>"._("Lis&auml;&auml; pelaaja")."</a></td></tr>";
-	
-echo "</table></td></tr></table>\n";
+echo "<tr><td colspan='3'>";
+echo _("Total number of players:")." ". mysql_num_rows($away_playerlist);
+echo "</td></tr>";
+
+echo "</table></div></td></tr></table>\n";
+echo "<div><input type='hidden' name='backurl' value='$backurl'/></div>";
 echo "<p>    
-		<input class='button' type='submit' name='save' value='"._("Tallenna")."'/>
+		<input class='button' type='submit' name='save' value='"._("Save")."'/>
+		<input class='button' type='button' name='return'  value='"._("Return")."' onclick=\"window.location.href='$backurl'\"/>
 	</p></form>";
 	
-echo "<p></p><p><a href='addscoresheet.php?Game=$gameId'>"._("Sy&ouml;t&auml; p&ouml;yt&auml;kirja")."</a></p>";
-echo "<p><a href='respgames.php'>"._("Takaisin vastuupeleihin")."</a></p>";
+echo "<p></p><p><a href='?view=user/addscoresheet&amp;Game=$gameId'>"._("Feed in score sheet")."</a></p>";
 
-CloseConnection();
 //common end
 contentEnd();
 pageEnd();

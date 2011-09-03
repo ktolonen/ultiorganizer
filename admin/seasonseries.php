@@ -1,17 +1,16 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once '../lib/database.php';
-include_once '../lib/season.functions.php';
-include_once '../lib/serie.functions.php';
 include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
-include_once 'builder.php';
+include_once 'lib/series.functions.php';
+include_once 'lib/pool.functions.php';
+
 $LAYOUT_ID = SEASONSERIES;
 
+$season = $_GET["Season"];
 
+$title = utf8entities(U_(SeasonName($season))).": "._("Divisions");
 
 //common page
-pageTopHeadOpen();
+pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
 <!--
@@ -23,82 +22,65 @@ function setId(id)
 //-->
 </script>
 <?php
-pageTopHeadClose();
+pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-OpenConnection();
 
-$season = $_GET["Season"];
 	
 //process itself on submit
-if(!empty($_POST['remove']))
-	{
+if(!empty($_POST['remove_x'])){
 	$id = $_POST['hiddenDeleteId'];
-	$ok = true;
-		
-	//run some test to for safe deletion
-	$teams = Teams($id);
-	if(mysql_num_rows($teams))
+	if(CanDeleteSeries($id)){
+		DeleteSeries($id);
+	}
+}
+
+echo "<form method='post' action='?view=admin/seasonseries&amp;Season=$season'>";
+
+echo "<h2>"._("Divisions")."</h2>\n";
+
+$series = SeasonSeries($season);
+
+if(count($series))
+	{
+	echo "<table border='0' cellpadding='4px'>\n";
+
+	echo "<tr><th>"._("Name")."</th>
+		<th>"._("Order")."</th>
+		<th>"._("Type")."</th>		
+		<th>"._("Valid")."</th>
+		<th>"._("Operations")."</th>
+		<th></th></tr>\n";
+
+	foreach($series as $row)
 		{
-		echo "<p class='warning'>"._("Sarjassa pelaa")." ".mysql_num_rows($teams)." "._("joukkuetta").". "._("Joukkueet pit&auml;&auml; poistaa ennen sarjan poistamista").".</p>";
-		$ok = false;
-		}
-	$games = SerieTotalPlayedGames($id);
-	if(mysql_num_rows($games))
-		{
-		echo "<p class='warning'>"._("Sarjaa on jo pelattu").". "._("Et voi poistaa t&auml;t&auml; sarjaa poistamatta pelej&auml;").".</p>";
-		$ok = false;
-		}
+		$valid = intval($row['valid'])?_("yes"):_("no");
 		
-	if($ok)
-		DeleteSerie($id);
+		if(!empty($row['name'])){
+				$name = utf8entities(U_($row['name']));
+			}else{
+				$name = _("No name");
+			}
+			
+		echo "<tr>";
+		echo "<td><a href='?view=admin/addseasonseries&amp;Season=$season&amp;Series=".$row['series_id']."'>".$name."</a></td>";
+		echo "<td class='center'>".$row['ordering']."</td>";
+		echo "<td>".U_($row['type'])."</td>";
+		echo "<td class='center'>$valid</td>";
+		echo "<td><a href='?view=admin/seriesseeding&amp;Series=".$row['series_id']."'>"._("Seeding")."</a></td>";
+		if(CanDeleteSeries($row['series_id'])){
+			echo "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['series_id'].");\"/></td>";		
+		}
+		echo "</tr>\n";	
+		}
+
+	echo "</table>";
 	}
-
-if(!empty($_POST['add']))
-	{
-	}
-
-if(!empty($_POST['save']))
-	{
-	$selseason = $_POST['curseason'];
-	if(!empty($selseason))
-		SeasonSetCurrent($selseason);
-	}
-	
-echo "<form method='post' action='seasonseries.php?Season=$season'>";
-
-echo "<h2>"._("Sarjat")."</h2>\n";
-
-echo "<table border='0' cellpadding='4px'>\n";
-
-echo "<tr><th>"._("Nimi")."</th>
-	<th>"._("Jatkosarja")."</th>
-	<th>"._("N&auml;yt&auml; joukkueet")."</th>
-	<th></th><th></th></tr>\n";
-
-$series = SeasonSeriesInfo($season);
-
-while($row = mysql_fetch_assoc($series))
-	{
-	$continuationSerie = intval($row['jatkosarja'])?_("kyll&auml;"):_("ei");
-	$showteams = intval($row['showteams'])?_("kyll&auml;"):_("ei");
-	
-	echo "<tr>";
-	echo "<td>".$row['nimi']."</td>";
-	echo "<td class='center'>$continuationSerie</td>";
-	echo "<td class='center'>$showteams</td>";
-	echo "<td class='center'><input class='button' type='button' name='edit'  value='"._("Muokkaa")."' onclick=\"window.location.href='addseasonseries.php?Season=$season&amp;Serie=".$row['sarja_id']."'\"/></td>";
-	echo "<td class='center'><input class='button' type='submit' name='remove' value='"._("Poista")."' onclick=\"setId(".$row['sarja_id'].");\"/></td>";
-	echo "</tr>\n";	
-	}
-
-echo "</table><p><input class='button' name='add' type='button' value='"._("Lis&auml;&auml;")."' onclick=\"window.location.href='addseasonseries.php?Season=$season'\"/></p>";
+echo "<p><input class='button' name='add' type='button' value='"._("Add")."' onclick=\"window.location.href='?view=admin/addseasonseries&amp;Season=$season'\"/></p>";
 
 //stores id to delete
 echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 echo "</form>\n";
-
-CloseConnection();
 
 contentEnd();
 pageEnd();

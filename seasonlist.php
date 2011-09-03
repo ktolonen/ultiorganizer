@@ -1,60 +1,61 @@
 <?php
-include_once 'view_ids.inc.php';
-include_once 'lib/database.php';
 include_once 'lib/season.functions.php';
-include_once 'lib/serie.functions.php';
-include_once 'builder.php';
-$homedir = dirname(__FILE__);
+include_once 'lib/series.functions.php';
+
 $LAYOUT_ID = SEASONLIST;
+$title = _("Old events");
+$html = "";
+$counter = 0;
+$maxcols = 3;
 
 //common page
-pageTop();
+pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
 //content
-echo "\n<h1>"._("Vanhat kaudet")."</h1>\n";
-
-OpenConnection();
-
+$html .= "\n<h1>".$title."</h1>\n";
+
 $seasons = Seasons();
 
-
-while($season = mysql_fetch_assoc($seasons))
-	{
-	$arrayYear = strtok($season['kausi'], "."); 
-	$arraySeason = strtok(".");
-	
-	if ($arraySeason == "1")
-		{
-		echo "<h3>"._("Kes&auml;")." $arrayYear</h3>";
-		}
-	elseif ($arraySeason == "2")
-		{
-		echo "<h3>"._("Talvi")." $arrayYear</h3>";
-		}
-	else
-		{
-		echo "<h3>".$season['kausi']."</h3>";
-		}
-	echo "<p><a href='Teams.php?Season=".$season['kausi']."'>"._("Joukkueet")."</a></p>";
-	
-	$series = Series($season['kausi']);
-	
-	echo "<table>";
-	
-	while($serie = mysql_fetch_assoc($series))
-		{
-		echo "<tr><td><a href='seriestatus.php?Serie=".$serie['sarja_id']."
-			'>".htmlentities($serie['nimi'])."</a></td></tr>";
-		}
-		echo "</table>";
-	
+$html .= "<table width='100%' border='0' cellspacing='0' cellpadding='2'>\n";
+while($season = mysql_fetch_assoc($seasons)){
+	if(!IsSeasonStatsCalculated($season['season_id'])){
+		continue;
 	}
-CloseConnection();
-?>
-<p><a href="javascript:history.go(-1);">"._("Palaa")."</a></p>
-<?php
+	if($counter==0){
+		$html .= "<tr>\n";
+	}
+	$seasonName = SeasonName($season['season_id']);
+	
+	$html .= "<td style='vertical-align:text-top;'>";
+	$html .= "<h3>".utf8entities($seasonName)."</h3>";
+
+	$html .= "<div><a href='?view=teams&amp;Season=".$season['season_id']."'>"._("Teams")."</a><br/>";
+	$html .= "<a href='?view=played&amp;Season=".$season['season_id']."'>"._("Played games")."</a><br/>";
+	$html .= "<a href='?view=eventstatus&amp;Season=".$season['season_id']."'>"._("Final standings")."</a></div>";
+	$series = SeasonSeries($season['season_id'], true);
+	
+	if(count($series)){
+		$html .= "<table cellpadding='0'>";
+		foreach($series as $ser){
+		$html .= "<tr><td><a href='?view=seriesstatus&amp;Series=".$ser['series_id']."
+				'>".utf8entities(U_($ser['name']))." "._("division")."</a></td></tr>";
+			}
+			
+		$html .= "</table>";
+	}
+	$html .= "</td>";
+	$counter++;
+	if($counter>=$maxcols){
+		$html .= "</tr>\n";
+		$counter = 0;
+	}
+}
+if($counter>0 && $counter<=$maxcols){$html .= "</tr>\n";};
+$html .= "</table>\n";
+echo $html;
+
 contentEnd();
 pageEnd();
 ?>

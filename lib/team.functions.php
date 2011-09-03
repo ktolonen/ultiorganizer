@@ -1,314 +1,1360 @@
-<?php 
+<?php
+include_once $include_prefix.'lib/pool.functions.php';
+include_once $include_prefix.'lib/player.functions.php';
+include_once $include_prefix.'lib/image.functions.php';
+include_once $include_prefix.'lib/url.functions.php';
+include_once $include_prefix.'lib/common.functions.php';
 
-function TeamPlayerList($teamId)
-	{
-	$query = sprintf("SELECT pelaaja_id FROM pelik_pelaaja WHERE Joukkue = '%s' ORDER BY SNimi ASC, ENimi ASC",
-		mysql_real_escape_string($teamId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
+function TeamPlayerArray($teamId) {
+  $ret = array();
+  if ($result = TeamPlayerList($teamId)) {
+    while ($row = mysql_fetch_assoc($result)) {
+      $ret["".$row['player_id']] = $row['firstname']." ".$row['lastname'];
+    }
+  }
+  return $ret;
+}
+
+function TeamPlayerAccreditationArray($teamId) {
+  $ret = array();
+  if ($result = TeamPlayerList($teamId)) {
+    while ($row = mysql_fetch_assoc($result)) {
+      $ret["".$row['accreditation_id']] = $row['firstname']." ".$row['lastname'];
+    }
+  }
+  return $ret;
+}
+
+function TeamPlayerList($teamId) {
+  $query = sprintf("SELECT player_id, firstname, lastname, num, accredited, accreditation_id, profile_id FROM uo_player WHERE team = %d ORDER BY lastname ASC, firstname ASC",
+  (int)$teamId);
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
 
 function TeamName($teamId)
-	{
-	$query = sprintf("SELECT Nimi FROM pelik_joukkue WHERE Joukkue_ID='%s'",
-		mysql_real_escape_string($teamId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$row = mysql_fetch_assoc($result);
-	$name = $row["Nimi"]; 
-	mysql_free_result($result);
-	
-	return $name;
-	}
+{
+  $query = sprintf("SELECT name FROM uo_team WHERE team_id='%s'",
+  mysql_real_escape_string($teamId));
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+  $row = mysql_fetch_assoc($result);
+  $name = $row["name"];
+  mysql_free_result($result);
+
+  return $name;
+}
+
+function TeamPseudoName($pteamId){
+  $query = sprintf("SELECT name FROM uo_scheduling_name WHERE scheduling_id=%d",
+  (int)$pteamId);
+  return DBQueryToValue($query);
+}
 
 function TeamInfo($teamId)
-	{
-	$query = sprintf("SELECT pj.nimi, pj.seura, pj.sarja, ps.nimi AS snimi 
-		FROM pelik_joukkue pj 
-		LEFT JOIN pelik_sarja ps ON (pj.sarja=ps.sarja_id) 
-		WHERE pj.joukkue_id = '%s'",
-		mysql_real_escape_string($teamId));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return  mysql_fetch_assoc($result);
-	}
+{
+  $query = sprintf("SELECT team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
+		team.series, ser.type, ser.season, s.name AS seasonname, team.abbreviation, team.country, c.name AS countryname, c.flagfile
+		FROM uo_team team 
+		LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
+		LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+		LEFT JOIN uo_season s ON (ser.season=s.season_id)
+		LEFT JOIN uo_club club ON (team.club=club.club_id)
+		LEFT JOIN uo_country c ON (team.country=c.country_id)
+		WHERE team.team_id = '%s'",
+  mysql_real_escape_string($teamId));
 
-function TeamPlayedSeasons($teamName,$teamSerie)
-	{
-	$query = sprintf("SELECT pj.joukkue_id, ps.sarja_id, ps.kausi 
-		FROM pelik_joukkue pj
-		LEFT JOIN pelik_sarja ps ON (pj.sarja=ps.sarja_id) 
-		WHERE pj.nimi='%s' AND ps.nimi RLIKE \"^%s\" 
-		ORDER BY kausi, sarja",
-		mysql_real_escape_string($teamName),
-		mysql_real_escape_string($teamSerie));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return  mysql_fetch_assoc($result);
+}
+
+function Teams($filter=null, $ordering=null) {
+  if (!isset($ordering)) {
+    $ordering = array("season.starttime" => "ASC", "series.ordering" => "ASC", "pool.ordering" => "ASC", "team.rank" => "ASC", "team.name" => "ASC");
+  }
+  $tables = array("uo_team" => "team", "uo_pool" => "pool", "uo_series" => "series", "uo_season" => "season");
+  $orderby = CreateOrdering($tables, $ordering);
+  $where = CreateFilter($tables, $filter);
+  $query = "SELECT team_id, team.name, series.name as seriesname, pool.name as poolname, season.name as seasonname
+		FROM uo_team team LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id)
+		LEFT JOIN uo_series series ON (team.series=series.series_id)
+		LEFT JOIN uo_season season ON (series.season=season.season_id)
+		$where $orderby";
+		return DBQuery(trim($query));
+}
+
+function TeamListAll($grouped=false, $onlyold=false, $namefilter="")
+{
+  if($grouped){
+    $query = sprintf("SELECT MAX(team.team_id) AS team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
+			COUNT(ser.season) AS seasons, team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
+			FROM uo_team team 
+			LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
+			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+			LEFT JOIN uo_club club ON (team.club=club.club_id)
+			LEFT JOIN uo_country c ON (team.country=c.country_id)
+			LEFT JOIN uo_season season ON (ser.season=season.season_id)");
+    if($onlyold){
+      $query .= sprintf("RIGHT JOIN uo_season_stats ss ON(ser.season=ss.season)");
+    }
+    if(!empty($namefilter) && $namefilter!="ALL"){
+      if($namefilter=="#"){
+        $query .= " WHERE UPPER(team.name) REGEXP '^[0-9]'";
+      }else{
+        $query .= " WHERE UPPER(team.name) LIKE '". mysql_real_escape_string($namefilter)."%'";
+      }
+    }
+
+    $query .= sprintf(" GROUP BY team.name, ser.name
+			ORDER BY team.name, ser.name, season.name, club.name");
+  }else{
+    $query = sprintf("SELECT team.team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
+			team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
+			FROM uo_team team 
+			LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
+			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+			LEFT JOIN uo_club club ON (team.club=club.club_id)
+			LEFT JOIN uo_country c ON (team.country=c.country_id)
+			LEFT JOIN uo_season season ON (ser.season=season.season_id)");
+    if($onlyold){
+      $query .= sprintf("RIGHT JOIN uo_season_stats ss ON(ser.season=ss.season)");
+    }
+    if(!empty($namefilter) && $namefilter!="ALL"){
+      if($namefilter=="#"){
+        $query .= " WHERE UPPER(team.name) REGEXP '^[0-9]'";
+      }else{
+        $query .= " WHERE UPPER(team.name) LIKE '". mysql_real_escape_string($namefilter)."%'";
+      }
+    }
+
+    $query .= sprintf(" ORDER BY team.name, ser.name, club.name, pool.name");
+  }
+  return  DBQuery($query);
+}
+
+function TeamProfile($teamId)
+{
+  $query = sprintf("SELECT tp.team_id, tp.captain, tp.coach, tp.story, tp.achievements, tp.profile_image
+		FROM uo_team_profile tp 
+		WHERE tp.team_id = '%s'",
+  mysql_real_escape_string($teamId));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return  mysql_fetch_assoc($result);
+}
+
+function TeamFullInfo($teamId)
+{
+  $query = sprintf("SELECT pj.*, club.name as clubname, ps.name AS lastname, pjs.rank AS poolrank, pjs.activerank
+		FROM uo_team pj 
+		LEFT JOIN uo_pool ps ON (pj.pool=ps.pool_id) 
+		LEFT JOIN uo_team_pool pjs ON (pjs.team=pj.team_id)
+		LEFT JOIN uo_club club ON (pj.club=club.club_id)
+		WHERE pj.team_id = '%s'",
+  mysql_real_escape_string($teamId));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return  mysql_fetch_assoc($result);
+}
+
+function TeamPoolInfo($teamId, $poolId)
+{
+  $query = sprintf("SELECT pj.*, club.name as clubname, ps.name AS lastname, pjs.rank AS poolrank, pjs.activerank
+		FROM uo_team pj 
+		LEFT JOIN uo_team_pool pjs ON (pjs.team=pj.team_id)
+		LEFT JOIN uo_pool ps ON (pjs.pool=ps.pool_id) 		
+		LEFT JOIN uo_club club ON (pj.club=club.club_id)
+		WHERE pj.team_id = '%s' AND ps.pool_id='%s'",
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($poolId));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return  mysql_fetch_assoc($result);
+}
+
+function TeamPlayedSeasons($name, $type)
+{
+  $query = sprintf("SELECT pj.team_id, ps.pool_id, ser.season as season_id
+		FROM uo_team pj
+		LEFT JOIN uo_pool ps ON (pj.pool=ps.pool_id)
+		LEFT JOIN uo_series ser ON (ps.series=ser.series_id) 
+		WHERE pj.name='%s' AND ser.type='%s' 
+		ORDER BY season_id, pool",
+  mysql_real_escape_string($name),
+  mysql_real_escape_string($type));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
 
 function TeamSeason($teamId)
-	{
-	$query = sprintf("SELECT DISTINCT Kausi FROM pelik_sarja WHERE Sarja_ID IN (SELECT Sarja FROM pelik_joukkue_sarja WHERE Joukkue='%s')",
-		mysql_real_escape_string($teamId));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	$row = mysql_fetch_row($result);
-	
-	return $row[0];
-	}
+{
+  $query = sprintf("SELECT ser.season as season FROM uo_team as team
+				left join uo_series as ser on (team.series = ser.series_id) WHERE team_id=%d",
+  (int)$teamId);
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  $row = mysql_fetch_row($result);
+
+  return $row[0];
+}
 
 function TeamComingGames($teamId, $placeId)
-	{
-	$query = sprintf("
-		SELECT Kj.Nimi AS KNimi, Vj.Nimi As VNimi, p.Aika, p.Peli_ID, p.Kotipisteet,p.Vieraspisteet, Kj.Joukkue_ID AS kId, Vj.Joukkue_ID AS vId  
-		FROM ((pelik_peli p INNER JOIN pelik_joukkue AS Kj ON (p.Kotijoukkue=Kj.Joukkue_ID)) 
-		INNER JOIN pelik_joukkue AS Vj ON (p.Vierasjoukkue=Vj.Joukkue_ID)) 
-		WHERE (p.Paikka='%s') AND (p.Kotijoukkue='%s' OR p.Vierasjoukkue='%s') 
-		ORDER BY Aika ASC",
-		mysql_real_escape_string($placeId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
-	
-function TeamTournamentGames($teamId, $placeId)
-	{
-	$query = sprintf("
-		SELECT Kj.Nimi AS KNimi, Vj.Nimi AS VNimi, p.Aika, p.Kotipisteet, p.Vieraspisteet, p.Peli_ID, Kj.Joukkue_ID AS kId, Vj.Joukkue_ID AS vId,
-			p.Peli_ID IN (SELECT DISTINCT Maali_Peli FROM pelik_maali) As Maaleja		
-		FROM pelik_peli AS p, pelik_joukkue AS Kj, pelik_joukkue AS Vj 
-		WHERE p.Kotijoukkue = Kj.Joukkue_ID And p.Vierasjoukkue = Vj.Joukkue_ID AND p.Paikka = '%s' 
-			AND (p.Vierasjoukkue = '%s' OR p.Kotijoukkue = '%s') AND (Aika < Now()) 
-		ORDER BY Aika ASC",
-		mysql_real_escape_string($placeId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
-	
+{
+  $query = sprintf("
+		SELECT Kj.name AS hometeamname, Vj.name As visitorteamname, p.time, p.game_id, p.homescore,p.visitorscore, Kj.team_id AS kId, Vj.team_id AS vId  
+		FROM ((uo_game p INNER JOIN uo_team AS Kj ON (p.hometeam=Kj.team_id)) 
+		INNER JOIN uo_team AS Vj ON (p.visitorteam=Vj.team_id)) 
+		WHERE (p.reservation='%s') AND (p.hometeam='%s' OR p.visitorteam='%s') 
+		ORDER BY time ASC",
+  mysql_real_escape_string($placeId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function TeamTournamentGames($teamId, $reservationId)
+{
+  $query = sprintf("
+		SELECT Kj.name AS hometeamname, Vj.name AS visitorteamname, p.time, p.homescore, p.visitorscore, p.game_id, Kj.team_id AS kId, Vj.team_id AS vId,
+			p.game_id IN (SELECT DISTINCT game FROM uo_goal) As goals		
+		FROM uo_game AS p, uo_team AS Kj, uo_team AS Vj 
+		WHERE p.hometeam = Kj.team_id And p.visitorteam = Vj.team_id AND p.reservation = '%s' 
+			AND (p.visitorteam = '%s' OR p.hometeam = '%s') AND (time < Now()) 
+		ORDER BY time ASC",
+  mysql_real_escape_string($reservationId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
 function TeamGames($teamId)
-	{
-	$query = sprintf("SELECT pp.peli_id, pp.kotijoukkue, pp.vierasjoukkue, pp.kotipisteet, 
-					pp.vieraspisteet, pp.sarja, ps.kausi, ps.nimi, pjs.activerank 
-				FROM pelik_peli pp 
-				LEFT JOIN pelik_sarja ps ON (ps.sarja_id=pp.sarja) 
-				LEFT JOIN pelik_joukkue_sarja pjs ON(pp.sarja=pjs.sarja AND pjs.joukkue='%s') WHERE pp.valid=true 
-					AND (pp.vierasjoukkue='%s' OR pp.kotijoukkue='%s') 
-				ORDER BY pp.sarja",
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
-	
-function TeamPlayedGames($teamName, $serie, $sorting)
-	{
-	$query = sprintf("SELECT pj1.nimi AS knimi, pj2.nimi AS vnimi, pp.kotipisteet, pp.vieraspisteet, 
-	ps.kausi, ps.nimi, pp.peli_id, ps.sarja_id 
-	FROM pelik_peli pp 
-	LEFT JOIN pelik_sarja ps ON (ps.sarja_id=pp.sarja) 
-	LEFT JOIN pelik_joukkue pj1 ON(pp.kotijoukkue=pj1.joukkue_id) 
-	LEFT JOIN pelik_joukkue pj2 ON (pp.vierasjoukkue=pj2.joukkue_id)
-	WHERE (pj1.nimi='%s' OR pj2.nimi='%s') AND ps.nimi 
-	RLIKE \"^%s\" AND pp.valid=true",
-		mysql_real_escape_string($teamName),
-		mysql_real_escape_string($teamName),
-		mysql_real_escape_string($serie));
-		
-	switch($sorting)
-		{
-		
-		case "team":
-			$query .= " ORDER BY knimi ASC, vnimi ASC";
-			break;
-			
-		case "result":
-			$query .= " ORDER BY pp.kotipisteet DESC, pp.vieraspisteet DESC, knimi ASC, vnimi ASC";
-			break;
-			
-		case "serie":
-			$query .= " ORDER BY ps.kausi ASC, ps.nimi ASC, knimi ASC, vnimi ASC";
-			break;
-			
-		default:
-			$query .= " ORDER BY ps.kausi ASC, ps.nimi ASC, knimi ASC, vnimi ASC";
-			break;
-		}	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
+{
+  $query = sprintf("SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore,
+					pp.visitorscore, pp.pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank 
+				FROM uo_game pp 
+				LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool)
+				LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
+				LEFT JOIN uo_team_pool pjs ON(pp.pool=pjs.pool AND pjs.team='%s') WHERE pp.valid=true 
+					AND (pp.visitorteam='%s' OR pp.hometeam='%s') AND (pp.homescore>0 OR pp.visitorscore>0)
+				ORDER BY pp.pool",
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
 
-function TeamStats($serieId,$teamId)
-	{
-	$query = sprintf("
-		SELECT COUNT(*) AS ottelut, COUNT((kotijoukkue='%s' AND (kotipisteet>vieraspisteet)) OR (vierasjoukkue='%s' AND (kotipisteet<vieraspisteet)) OR NULL) AS voitot 
-		FROM pelik_peli 
-		WHERE (kotipisteet != vieraspisteet) AND (kotijoukkue='%s' OR vierasJoukkue='%s') AND peli_id IN (SELECT peli FROM pelik_peli_sarja WHERE sarja='%s')",
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($serieId));
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function SchedulingNameByMoveTo($topool, $torank)	{
+  $query = sprintf("SELECT sn.scheduling_id, sn.name
+			FROM uo_moveteams m 
+			LEFT JOIN uo_scheduling_name sn ON (sn.scheduling_id = m.scheduling_id)
+			WHERE m.topool=%d AND m.torank=%d",
+  (int) $topool,
+  (int) $torank);
+
+  return DBQueryToRow($query);
+}
+
+
+function TeamSerieGames($teamId, $serieId)
+{
+  $query = sprintf("
+			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
+			pp.visitorscore, pp.time
+			FROM uo_game pp 
+			WHERE pp.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
+			ORDER BY pp.time ASC",
+  mysql_real_escape_string($serieId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function TeamPoolCountBYEs($teamId,$poolId)
+{  // counts how many BYEs a team had in its previous games of that pool (possibly taken over from previous pools)
+$query = sprintf("
+			SELECT count(pp.game_id)
+			FROM uo_game pp 
+			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+			LEFT JOIN uo_team hometeam ON (pp.hometeam=hometeam.team_id)
+			LEFT JOIN uo_team visitorteam ON (pp.visitorteam=visitorteam.team_id)
+			WHERE pps.pool='%s' AND ((pp.visitorteam='%s' AND hometeam.valid=2) OR (pp.hometeam='%s' AND visitorteam.valid=2))",
+mysql_real_escape_string($poolId),
+mysql_real_escape_string($teamId),
+mysql_real_escape_string($teamId));
+
+return DBQueryToValue($query);
+}
+
+function TeamPoolGames($teamId, $poolId) {
+  $query = sprintf("
+			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
+			pp.visitorscore, pp.time
+			FROM uo_game pp 
+			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+			WHERE pps.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
+			ORDER BY pp.time ASC",
+  mysql_real_escape_string($poolId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function TeamPoolLastGame($teamId, $poolId) {
+  $query = sprintf("
+		SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
+		pp.visitorscore, pp.time
+		FROM uo_game pp 
+		RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+		WHERE pps.pool='%s' AND pp.valid=true AND pps.timetable=1 AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
+		ORDER BY pp.time DESC LIMIT 1",
+  mysql_real_escape_string($poolId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return mysql_fetch_assoc($result);
+}
+
+function TeamGetNextGames($teamId, $poolId) {
+  $query = sprintf("
+		SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.time, res.fieldname
+		FROM uo_game pp 
+		RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+		LEFT JOIN uo_reservation res ON (pp.reservation=res.id)
+		WHERE pps.pool='%s' AND pp.valid=true AND pps.timetable=1 AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
+		ORDER BY pp.time ASC",
+  mysql_real_escape_string($poolId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return mysql_fetch_assoc($result);
+}
+
+
+function TeamPoolGamesLeft($teamId, $poolId){
+  $query = sprintf("
+			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.time
+			FROM uo_game pp 
+			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+			WHERE pps.pool='%s' AND pp.valid=true 
+				AND ((homescore=0 OR homescore IS NULL OR pp.isongoing=1) AND (visitorscore=0 OR visitorscore IS NULL OR pp.isongoing=1)) AND (hometeam=%d OR visitorteam=%d)					
+			ORDER BY pp.time ASC",
+  mysql_real_escape_string($poolId),
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($teamId));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function TeamStanding($teamId, $poolId){
+  $query = sprintf("SELECT activerank	FROM uo_team_pool
+				WHERE pool=%d AND team=%d", 
+  (int)$poolId, (int)$teamId);
+  return DBQueryToValue($query,true);
+}
+
+function TeamMove($teamId, $frompool, $inplayofftree=false){
+
+  //get position to move
+  $fromplacing = TeamStanding($teamId, $frompool);
+
+  //get move
+  $move = PoolGetMoveToPool($frompool, $fromplacing);
+
+  //if pool is not follower, do not make move
+  $poolinfo = PoolInfo($frompool);
+  if($inplayofftree && $poolinfo['follower']!=$move['topool']){
+    return;
+  }
+
+  if($move['ismoved']){
+
+    $query = sprintf("SELECT team FROM uo_team_pool
+  					WHERE pool=%d AND rank=%d",
+    (int)$move['topool'],
+    (int)$move['torank']);
+
+    $team_exist = count(DBQueryToArray($query));
+     
+    //same team
+    if($team_exist && $team_exist['team'] == $teamId ){
+      return;
+    }
+     
+    //different team in same position
+    if($team_exist && $team_exist['team'] != $teamId ){
+      $query = sprintf("SELECT g.game_id FROM uo_game g
+            			LEFT JOIN uo_game_pool gp ON(g.game_id=game)
+      					WHERE (g.hometeam=%d OR g.hometeam=%d) AND (g.homescore>0 || g.visitorscore>0)  
+      					AND gp.pool=%d",
+      (int)$team_exist['team'],
+      (int)$team_exist['team'],
+      (int)$move['topool']);
+
+      $games = DBQueryRowCount($query);
+      if($games){
+        echo "<p>". _("Move not allowed. Game already played!")."</p>";
+        return;
+      }else{
+        $query = sprintf("DELETE FROM uo_team_pool WHERE team=%d AND rank=%d",
+        (int)$move['topool'],
+        (int)$move['torank']);
+      }
+    }
+  }
+
+  //insert team to next pool
+  $query = sprintf("INSERT IGNORE INTO uo_team_pool
+				(team, pool, rank, activerank) 
+				VALUES	('%s','%s','%s','%s')",
+  (int)$teamId,
+  (int)$move['topool'],
+  (int)$move['torank'],
+  (int)$move['torank']);
+  	
+  $result = DBQuery($query);
+
+  //update team pool
+  $query = sprintf("UPDATE uo_team SET
+			pool=%d WHERE team_id=%d",
+  (int)$move['topool'],
+  (int)$move['torank']);
+  	
+  DBQuery($query);
+
+  //replace pseudo team with real team in games
+  if(isRespTeamHomeTeam()){
+    $query = sprintf("UPDATE uo_game SET
+    		hometeam=%d, respteam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+    (int)$teamId,
+    (int)$teamId,
+    (int)$move['scheduling_id']);
+  }else{
+    $query = sprintf("UPDATE uo_game SET
+    		hometeam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+    (int)$teamId,
+    (int)$move['scheduling_id']);
+  }
+  DBQuery($query);
+
+  $query = sprintf("UPDATE uo_game SET
+		visitorteam=%d WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+  (int)$teamId,
+  (int)$move['scheduling_id']);
+
+  DBQuery($query);
+
+  //set move done
+  $query = sprintf("UPDATE uo_moveteams SET
+		ismoved='1' WHERE frompool='%s' AND fromplacing='%s'",
+  (int)$frompool,
+  (int)$fromplacing);
+  
+  DBQuery($query);
+  
+  //set pool visible
+  if($poolinfo['follower']!=$move['topool']){
+    $query = sprintf("UPDATE uo_pool SET visible='1' WHERE pool_id=%d",(int)$move['topool']);
+          DBQuery($query);
+    DBQuery($query);
+  }
+
+  // check if special ranking rules apply in the destination pool
+  CheckSpecialRanking($move['topool']);
+}
+
+function TeamPoolGamesAgainst($teamId1, $teamId2, $poolId)
+{
+  $query = sprintf("
+			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
+			pp.visitorscore, pp.time
+			FROM uo_game pp 
+			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+			WHERE pps.pool='%s' AND pp.valid=true AND 
+			(pp.visitorteam='%s' AND pp.hometeam='%s')
+			ORDER BY pp.time ASC",
+  mysql_real_escape_string($poolId),
+  mysql_real_escape_string($teamId1),
+  mysql_real_escape_string($teamId2));
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function TeamPlayedGames($name, $seriestype, $sorting, $curSeason=false)
+{
+
+  $query = sprintf("SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore,
+	ser.season as season_id, ps.name, pp.game_id, ps.pool_id
+	FROM uo_game pp 
+	LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool)
+	LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
+	LEFT JOIN uo_team pj1 ON(pp.hometeam=pj1.team_id) 
+	LEFT JOIN uo_team pj2 ON (pp.visitorteam=pj2.team_id)
+	WHERE (pj1.name='%s' OR pj2.name='%s') AND ser.type='%s' 
+	AND pp.valid=true",
+  mysql_real_escape_string($name),
+  mysql_real_escape_string($name),
+  mysql_real_escape_string($seriestype));
+
+  if(!$curSeason){
+    $curentSeason = CurrentSeason();
+    $query .= sprintf(" AND ser.season!='%s'",mysql_real_escape_string($curentSeason));
+  }
+
+  switch($sorting)
+  {
+
+    case "team":
+      $query .= " ORDER BY hometeamname ASC, visitorteamname ASC";
+      break;
+      	
+    case "result":
+      $query .= " ORDER BY pp.homescore DESC, pp.visitorscore DESC, hometeamname ASC, visitorteamname ASC";
+      break;
+      	
+    case "serie":
+      $query .= " ORDER BY ser.season DESC, ps.name ASC, hometeamname ASC, visitorteamname ASC";
+      break;
+      	
+    default:
+      $query .= " ORDER BY ser.season DESC, ps.name ASC, hometeamname ASC, visitorteamname ASC";
+      break;
+  }
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function TeamStatsByPool($poolId,$teamId)
+{
+  $query = sprintf("
+		SELECT COUNT(*) AS games, COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins 
+		FROM uo_game 
+		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
+		WHERE (homescore != visitorscore) AND (hometeam=%d OR visitorteam=%d) AND isongoing=0
+		AND gp.pool=%d",
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId,
+  (int)$poolId);
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return mysql_fetch_assoc($result);
+}
+
+function TeamStats($teamId)
+{
+  $query = sprintf("
+		SELECT COUNT(*) AS games, COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins 
+		FROM uo_game 
+		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
+		WHERE (homescore != visitorscore) AND (hometeam=%d OR visitorteam=%d) AND isongoing=0 AND gp.timetable=1",
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId);
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return mysql_fetch_assoc($result);
+}
+
+function TeamSpiritStats($teamId)
+{
+  $query = sprintf("
+		SELECT COUNT(*) AS games
+		FROM uo_game 
+		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
+		WHERE (homescore != visitorscore) AND ((hometeam=%d AND homesotg IS NOT NULL) OR (visitorteam=%d AND visitorsotg IS NOT NULL)) AND isongoing=0 AND gp.timetable=1",
+  (int)$teamId,
+  (int)$teamId);
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return mysql_fetch_assoc($result);
+}
+
+function TeamVictoryPointsByPool($poolId,$teamId)
+{
+  $query = sprintf("
+SELECT tot.pool,tot.team_id,count(tot.game_id) as games,sum(tot.diff) as margin,
+	   sum(tot.victorypoints) as victorypoints,sum(swiss.victorypoints) as oppvp,
+	   sum(tot.score) as score,sum(tot.spirit) as spirit
+FROM 
+(SELECT gp.pool,hometeam as team_id, visitorteam as opp_id,game.game_id,homescore-visitorscore as diff, vp.victorypoints,homescore as score, homesotg as spirit
+FROM uo_game game
+LEFT JOIN uo_victorypoints vp ON homescore-visitorscore=vp.pointdiff
+LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
+WHERE isongoing=0 AND homescore!=visitorscore
+UNION
+SELECT gp.pool,visitorteam as team_id, hometeam as opp_id,game.game_id,visitorscore-homescore as diff, vp.victorypoints,visitorscore as score, visitorsotg as spirit
+FROM uo_game game
+LEFT JOIN uo_victorypoints vp ON visitorscore-homescore=vp.pointdiff
+LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
+WHERE isongoing=0 AND homescore!=visitorscore) tot
+
+LEFT JOIN
+
+(SELECT un.pool,un.team_id,count(un.game_id) as games,sum(victorypoints) as victorypoints FROM
+(SELECT gp.pool,hometeam as team_id, game.game_id,vp.victorypoints
+FROM uo_game game
+LEFT JOIN uo_victorypoints vp ON homescore-visitorscore=vp.pointdiff
+LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
+WHERE isongoing=0 AND homescore!=visitorscore
+UNION
+SELECT gp.pool,visitorteam as team_id, game.game_id,vp.victorypoints
+FROM uo_game game
+LEFT JOIN uo_victorypoints vp ON visitorscore-homescore=vp.pointdiff
+LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
+WHERE isongoing=0 AND homescore!=visitorscore) un
+GROUP BY pool,team_id) swiss
+
+ON swiss.pool=tot.pool AND tot.opp_id=swiss.team_id		
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return mysql_fetch_assoc($result);
-	}
+WHERE tot.team_id='%d' AND tot.pool='%s'
+GROUP BY tot.pool,tot.team_id",
+  mysql_real_escape_string($teamId),
+  mysql_real_escape_string($poolId));
+  	
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-function TeamPoints($serieId,$teamId)
-	{
-	$query = sprintf("
-		SELECT j.joukkue_id, COALESCE(k.pisteet,0) + COALESCE(v.pisteet,0) AS pisteet, COALESCE(k.vastaan,0) + COALESCE(v.vastaan,0) AS vastaan
-		FROM pelik_joukkue AS j 
-		LEFT JOIN (SELECT kotijoukkue, FORMAT(SUM(kotipisteet),0) AS pisteet, FORMAT(SUM(vieraspisteet),0) AS vastaan
-		FROM pelik_peli 
-		WHERE kotijoukkue='%s' AND peli_id IN (SELECT peli FROM pelik_peli_sarja WHERE sarja='%s') GROUP BY kotijoukkue) AS k 
-		ON (j.joukkue_id=k.kotijoukkue) 
-		LEFT JOIN (SELECT vierasjoukkue, FORMAT(SUM(vieraspisteet),0) AS pisteet, FORMAT(SUM(kotipisteet),0) AS vastaan 
-		FROM pelik_peli WHERE vierasjoukkue='%s' AND peli_id IN (SELECT peli FROM pelik_peli_sarja WHERE sarja='%s') GROUP BY vierasjoukkue) AS v 
-		ON (j.joukkue_id=v.vierasjoukkue) WHERE j.joukkue_id='%s'",
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($serieId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($serieId),
-		mysql_real_escape_string($teamId));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return mysql_fetch_assoc($result);
-	}
+  return mysql_fetch_assoc($result);
+}
 
-function TeamScoreBoard($teamId, $serieId, $sorting, $limit)
-	{
-	if($serieId)
-		{
-		$query = sprintf("
-			SELECT p.pelaaja_id, p.enimi, p.snimi, j.nimi AS jnimi, COALESCE(t.tehty,0) AS tehty, COALESCE(s.syotetty,0) AS syotetty, 
-				(COALESCE(t.tehty,0) + COALESCE(s.syotetty,0)) AS yht, COALESCE(pel.peleja,0) AS peleja 
-			FROM pelik_pelaaja AS p 
-			LEFT JOIN (SELECT m.tekija AS tekija, COUNT(*) AS tehty FROM pelik_maali AS m 
-			LEFT JOIN pelik_peli_sarja AS ps ON (m.maali_peli=ps.peli) WHERE ps.sarja='%s' AND tekija IS NOT NULL GROUP BY tekija) AS t ON (p.Pelaaja_ID=t.tekija) 
-			LEFT JOIN (SELECT m2.syottaja AS syottaja, COUNT(*) AS syotetty FROM pelik_maali AS m2 
-			LEFT JOIN pelik_peli_sarja AS ps2 ON (m2.maali_peli=ps2.peli) WHERE ps2.sarja='%s' GROUP BY syottaja) AS s ON (p.Pelaaja_ID=s.syottaja) 
-			LEFT JOIN pelik_joukkue AS j ON (p.joukkue=j.joukkue_id) 
-			LEFT JOIN (SELECT pelannut_pelaaja_id, COUNT(*) AS peleja FROM pelik_pelattu 
-				WHERE pelattu_peli_id IN (SELECT peli FROM pelik_peli_sarja WHERE sarja='%s') 
-				GROUP BY pelannut_pelaaja_id) AS pel ON (p.pelaaja_id=pel.pelannut_pelaaja_id) WHERE p.Joukkue='%s'",
-			mysql_real_escape_string($serieId),
-			mysql_real_escape_string($serieId),
-			mysql_real_escape_string($serieId),
-			mysql_real_escape_string($teamId));
-		
-		}
-	else
-		{
-		$query = sprintf("
-			SELECT p.pelaaja_id, p.enimi, p.snimi, j.nimi AS jnimi, COALESCE(t.tehty,0) AS tehty, COALESCE(s.syotetty,0) AS syotetty, 
-				(COALESCE(t.tehty,0) + COALESCE(s.syotetty,0)) AS yht, COALESCE(pel.peleja,0) AS peleja 
-			FROM pelik_pelaaja AS p 
-			LEFT JOIN (SELECT m.tekija AS tekija, COUNT(*) AS tehty FROM pelik_maali AS m LEFT JOIN pelik_peli AS peli ON (m.maali_peli=peli.peli_id) 
-				WHERE (peli.kotijoukkue='%s' or peli.vierasjoukkue='%s') AND tekija IS NOT NULL GROUP BY tekija) AS t ON (p.Pelaaja_ID=t.tekija) 
-			LEFT JOIN  (SELECT m2.syottaja AS syottaja, COUNT(*) AS syotetty FROM pelik_maali AS m2 
-			LEFT JOIN pelik_peli AS peli2 ON (m2.maali_peli=peli2.peli_id) 
-				WHERE (peli2.kotijoukkue='%s' or peli2.vierasjoukkue='%s') GROUP BY syottaja) AS s ON (p.Pelaaja_ID=s.syottaja) 
-			LEFT JOIN pelik_joukkue AS j ON (p.joukkue=j.joukkue_id) 
-			LEFT JOIN (SELECT pelannut_pelaaja_id, COUNT(*) AS peleja FROM pelik_pelattu 
-				WHERE pelattu_peli_id IN (SELECT peli_id FROM pelik_peli WHERE kotijoukkue='%s' or vierasjoukkue='%s') GROUP BY pelannut_pelaaja_id) AS pel 
-					ON (p.pelaaja_id=pel.pelannut_pelaaja_id) WHERE p.Joukkue='%s'",
-			mysql_real_escape_string($teamId),
-			mysql_real_escape_string($teamId),
-			mysql_real_escape_string($teamId),
-			mysql_real_escape_string($teamId),
-			mysql_real_escape_string($teamId),
-			mysql_real_escape_string($teamId),
-			mysql_real_escape_string($teamId));
-		}
-		
-	switch($sorting)
-		{
-		case "total":
-			$query .= " ORDER BY yht DESC, tehty DESC, syotetty DESC, snimi ASC";
-			break;
-	
-		case "goal":
-			$query .= " ORDER BY tehty DESC, yht DESC, syotetty DESC, snimi ASC";
-			break;
 
-		case "pass":
-			$query .= " ORDER BY syotetty DESC, yht DESC, tehty DESC, snimi ASC";
-			break;
 
-		case "games":
-			$query .= " ORDER BY peleja DESC, yht DESC, tehty DESC, syotetty DESC, snimi ASC";
-			break;
+function TeamPoints($teamId)
+{
+  $query = sprintf("
+		SELECT j.team_id, COALESCE(k.scores,0) + COALESCE(v.scores,0) AS scores, COALESCE(k.against,0) + COALESCE(v.against,0) AS against,
+			COALESCE(k.spirit,0) + COALESCE(v.spirit,0) AS spirit
+		FROM uo_team AS j 
+		LEFT JOIN (SELECT hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
+			FROM uo_game 
+			LEFT JOIN uo_game_pool gp1 ON(game_id=gp1.game)
+			WHERE hometeam=%d AND isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k 
+		ON (j.team_id=k.hometeam) 
+		LEFT JOIN (SELECT visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against 
+			FROM uo_game 
+			LEFT JOIN uo_game_pool gp2 ON(game_id=gp2.game)
+			WHERE visitorteam=%d AND isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v 
+			ON (j.team_id=v.visitorteam) 
+		WHERE j.team_id=%d",
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId);
 
-		case "team":
-			$query .= " ORDER BY jnimi ASC, yht DESC, tehty DESC, syotetty DESC, snimi ASC";
-			break;
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-		case "name":
-			$query .= " ORDER BY snimi ASC, yht DESC, tehty DESC, syotetty DESC";
-			break;
-			
-		default:
-			$query .= " ORDER BY yht DESC, tehty DESC, syotetty DESC, snimi ASC";
-			break;
-		}
-		
-	if($limit > 0)
-		{
-		$query .= " limit $limit";
-		}
-	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
+  return mysql_fetch_assoc($result);
+}
+
+function TeamPointsByPool($poolId,$teamId){
+  $query = sprintf("
+		SELECT j.team_id, COALESCE(k.scores,0) + COALESCE(v.scores,0) AS scores, COALESCE(k.against,0) + COALESCE(v.against,0) AS against,
+			COALESCE(k.spirit,0) + COALESCE(v.spirit,0) AS spirit
+		FROM uo_team AS j 
+		LEFT JOIN (SELECT hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
+			FROM uo_game 
+			LEFT JOIN uo_game_pool gp1 ON(game_id=gp1.game)
+			WHERE hometeam=%d AND isongoing=0 AND gp1.pool=%d GROUP BY hometeam) AS k 
+		ON (j.team_id=k.hometeam) 
+		LEFT JOIN (SELECT visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against 
+			FROM uo_game 
+			LEFT JOIN uo_game_pool gp2 ON(game_id=gp2.game)
+			WHERE visitorteam=%d AND isongoing=0 AND gp2.pool=%d GROUP BY visitorteam) AS v 
+			ON (j.team_id=v.visitorteam) WHERE j.team_id=%d",
+  (int)$teamId,
+  (int)$poolId,
+  (int)$teamId,
+  (int)$poolId,
+  (int)$teamId);
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return mysql_fetch_assoc($result);
+}
+
+function TeamScoreBoard($teamId, $pools, $sorting, $limit)
+{
+  if($pools)
+  {
+    if(is_array($pools)){
+      $pools = mysql_real_escape_string(implode(",",$pools));
+    }else{
+      $pools = mysql_real_escape_string($pools);
+    }
+
+    $query = sprintf("
+			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
+				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games 
+			FROM uo_player AS p 
+			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
+				LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
+				LEFT JOIN uo_game AS g1 ON (m.game=g1.game_id) 
+				WHERE ps.pool IN($pools) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
+			LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 
+				LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game) 
+				LEFT JOIN uo_game AS g2 ON (m1.game=g2.game_id) 
+				WHERE ps1.pool IN($pools) AND m1.scorer IS NOT NULL AND iscallahan=1 AND g2.isongoing=0 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 			
+			LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
+				LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
+				LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
+				WHERE ps2.pool IN($pools) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
+			LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+			LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+				LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+				WHERE g4.pool IN($pools) AND g4.isongoing=0 
+				GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
+    (int)$teamId);
+
+  }
+  else
+  {
+    $query = sprintf("
+			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
+				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games 
+			FROM uo_player AS p 
+			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m LEFT JOIN uo_game AS game ON (m.game=game.game_id) 
+				WHERE (game.hometeam=%d or game.visitorteam=%d) AND game.isongoing=0 AND scorer IS NOT NULL GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
+			LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 LEFT JOIN uo_game AS game1 ON (m1.game=game1.game_id) 
+				WHERE (game1.hometeam=%d or game1.visitorteam=%d) AND game1.isongoing=0 AND m1.scorer IS NOT NULL AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 				
+			LEFT JOIN  (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
+			LEFT JOIN uo_game AS game2 ON (m2.game=game2.game_id) 
+				WHERE (game2.hometeam=%d or game2.visitorteam=%d) AND game2.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
+			LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+			LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+				LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+				WHERE (g4.hometeam=%d or g4.visitorteam=%d) AND g4.isongoing=0 GROUP BY player) AS pel 
+					ON (p.player_id=pel.player) WHERE p.team=%d",
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId);
+  }
+
+  switch($sorting)
+  {
+    case "total":
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+
+    case "goal":
+      $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
+      break;
+      	
+    case "callahan":
+      $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
+      break;
+
+    case "pass":
+      $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
+      break;
+
+    case "games":
+      $query .= " ORDER BY games DESC, total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+
+    case "team":
+      $query .= " ORDER BY teamname ASC, total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+
+    case "name":
+      $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC";
+      break;
+      	
+    default:
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+  }
+
+  if($limit > 0)
+  {
+    $query .= " limit $limit";
+  }
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+/**
+ * Returns all played games between given teams within same type of series.
+ *
+ * @param string $team1 first team name
+ * @param string $team2 second team name
+ * @param string $seriestype type of series
+ * @param string $sorting return value sorting: team, result, series
+ * @return mysql array of players
+ */
+function GetAllPlayedGames($team1, $team2, $seriestype, $sorting) {
+  $query = sprintf("
+		SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore, ser.season AS season_id, ps.name, 
+			pp.game_id, ps.pool_id, s.name AS seasonname 
+		FROM uo_game pp 
+		LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool) 
+		LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
+		LEFT JOIN uo_season s ON (s.season_id=ser.season)
+		LEFT JOIN uo_team pj1 ON(pp.hometeam=pj1.team_id) 
+		LEFT JOIN uo_team pj2 ON (pp.visitorteam=pj2.team_id)
+		WHERE ((REPLACE(pj1.name,' ','')='%s' AND REPLACE(pj2.name,' ','')='%s') OR (REPLACE(pj1.name,' ','')='%s' AND REPLACE(pj2.name,' ','')='%s'))
+			AND (pp.homescore > 0 || pp.visitorscore > 0)
+		AND ser.type='%s' AND pp.valid=true ",
+  mysql_real_escape_string($team1),
+  mysql_real_escape_string($team2),
+  mysql_real_escape_string($team2),
+  mysql_real_escape_string($team1),
+  mysql_real_escape_string($seriestype));
+
+  switch($sorting)
+  {
+    case "team":
+      $query .= " ORDER BY hometeamname ASC, visitorteamname ASC";
+      break;
+       
+    case "result":
+      $query .= " ORDER BY pp.homescore DESC, pp.visitorscore DESC, hometeamname ASC, visitorteamname ASC";
+      break;
+       
+    case "series":
+      $query .= " ORDER BY s.starttime DESC, ps.name ASC, hometeamname ASC, visitorteamname ASC";
+      break;
+       
+    default:
+      $query .= " ORDER BY s.starttime DESC, ps.name ASC, hometeamname ASC, visitorteamname ASC";
+      break;
+  }
+  return DBQuery($query);
+}
 
 function TeamResponsibleGames($teamId, $placeId)
-	{
-	$query = sprintf("
-		SELECT Kj.Nimi As KNimi, Vj.Nimi As VNimi, p.Aika, p.Peli_ID, p.Kotipisteet, p.Vieraspisteet, COALESCE(m.maaleja,0) As Maaleja 
-		FROM pelik_peli AS p 
-		INNER JOIN pelik_paikka AS pk ON (p.Paikka=pk.Paikka_ID) 
-		LEFT JOIN (SELECT COUNT(*) As maaleja, Maali_Peli 
-			FROM pelik_maali GROUP BY Maali_Peli) AS m ON (p.Peli_ID=m.Maali_Peli), pelik_joukkue As Kj, pelik_joukkue As Vj  
-			WHERE p.Vierasjoukkue=Vj.Joukkue_ID AND p.Kotijoukkue=Kj.Joukkue_ID 
-			AND (p.Paikka='%s' AND ((p.RespTeam IS NULL AND pk.RespTeam='%s') OR p.RespTeam='%s'))
-		GROUP BY Kj.Nimi, Vj.Nimi, p.Aika, p.Peli_ID, p.Kotipisteet, p.Vieraspisteet",
-		mysql_real_escape_string($placeId),
-		mysql_real_escape_string($teamId),
-		mysql_real_escape_string($teamId));
-		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
-	}
+{
+  $query = sprintf("
+		SELECT Kj.name As hometeamname, Vj.name As visitorteamname, p.time, p.game_id, p.homescore, p.visitorscore, COALESCE(m.goals,0) As goals 
+		FROM uo_game AS p 
+		LEFT JOIN (SELECT COUNT(*) AS goals, game 
+			FROM uo_goal GROUP BY game) AS m ON (p.game_id=m.game), uo_team As Kj, uo_team As Vj  
+			WHERE p.visitorteam=Vj.team_id AND p.hometeam=Kj.team_id 
+			AND (p.reservation=%d AND p.RespTeam=%d))
+		GROUP BY Kj.name, Vj.name, p.time, p.game_id, p.homescore, p.visitorscore",
+  (int)$placeId,
+  (int)$teamId);
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
+function TeamGetTeamsByName($teamname){
+  
+    $query = sprintf("SELECT t.team_id FROM uo_team t 
+    	LEFT JOIN uo_team_stats ts ON(ts.team_id=t.team_id)
+		WHERE ts.team_id IS NOT NULL AND t.name LIKE '%s%%' GROUP BY t.team_id ORDER BY t.team_id DESC",
+      mysql_real_escape_string($teamname));
+      
+    $teams = DBQueryToArray($query);
+    
+    return $teams;
+}
+function TeamCopyRoster($copyfrom, $copyto){
+  if (hasEditPlayersRight($copyto)) {
+    $team_players = TeamPlayerList($copyfrom);
+    while($player = mysql_fetch_assoc($team_players)){
+      $query = sprintf("INSERT INTO uo_player(firstname, lastname, profile_id, accreditation_id, team, num)
+      			VALUES ('%s','%s',%d,'%s',%d,%d)",
+          mysql_real_escape_string($player["firstname"]),
+          mysql_real_escape_string($player["lastname"]),
+          (int)$player["profile_id"],
+          mysql_real_escape_string($player["accreditation_id"]),
+          (int)$copyto,
+          (int)$player["num"]);
+       DBQuery($query);
+    }
+   } else { die('Insufficient rights to edit roster'); }
+}
+
+function GetTeamPlayers() {
+  if (isset($_GET['search']) || isset($_GET['query']) || isset($_GET['q'])) {
+    if (isset($_GET['search']))
+    $search = $_GET['search'];
+    elseif (isset($_GET['query']))
+    $search = $_GET['query'];
+    elseif (isset($_GET['q']))
+    $search = $_GET['q'];
+    else $search = "0";
+  }
+  $query = sprintf("SELECT firstname, lastname, num, accreditation_id, profile_id, player_id, accredited
+		FROM uo_player 
+		WHERE team=%d 
+		ORDER BY lastname ASC, firstname ASC, num ASC",
+  (int)$search);
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+  return $result;
+}
+
+function RemovePlayer($playerId) {
+  $playerInfo = PlayerInfo($playerId);
+  if (hasEditPlayersRight($playerInfo['team'])) {
+    Log2("player","delete",PlayerName($playerId));
+
+    $query = sprintf("DELETE FROM uo_player WHERE player_id='%s'",
+    mysql_real_escape_string($playerId));
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+    return $result;
+  } else { die('Insufficient rights to remove player'); }
+}
+
+function AddPlayer($teamId, $firstname, $lastname, $profileId, $num=-1) {
+  if (hasEditPlayersRight($teamId)) {
+     
+    if(!empty($profileId)){
+      $profile = PlayerProfile($profileId);
+      $accreditationId = $profile['accreditation_id'];
+    }else{
+      $query = sprintf("INSERT INTO uo_player_profile (firstname,lastname,num) VALUES
+				('%s','%s',%d)",
+      mysql_real_escape_string($firstname),
+      mysql_real_escape_string($lastname),
+      (int)$num);
+      $profileId = DBQueryInsert($query);
+      $accreditationId = 0;
+    }
+    $query = "INSERT INTO uo_player (firstname, lastname, profile_id, accreditation_id,team";
+
+    if($num>=0){
+      $query .= ",num";
+    }
+
+    $query .= ") ";
+    $query .= sprintf("VALUES ('%s', '%s', %d, '%s', %d",
+    mysql_real_escape_string($firstname),
+    mysql_real_escape_string($lastname),
+    (int)$profileId,
+    $accreditationId,
+    (int)$teamId);
+
+    if($num>=0){
+      $query .= sprintf(",%d",(int)$num);
+    }
+    $query .= sprintf(")");
+    $playerId = DBQueryInsert($query);
+    Log1("player","add",$playerId, $teamId);
+
+    return $playerId;
+  } else { die('Insufficient rights to add player'); }
+}
+
+function CanDeletePlayer($playerId) {
+  $query = sprintf("SELECT count(*) FROM uo_played WHERE player='%s'",
+  mysql_real_escape_string($playerId));
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+  if (!$row = mysql_fetch_row($result)) return false;
+  return ($row[0] == 0);
+}
+
+function SetTeamProfile($profile) {
+
+  if (hasEditPlayersRight($profile['team_id'])) {
+
+    if(!empty($profile['abbreviation'])){
+      $query = sprintf("UPDATE uo_team SET abbreviation='%s' WHERE team_id='%s'",
+      mysql_real_escape_string($profile['abbreviation']),
+      mysql_real_escape_string($profile['team_id']));
+      	
+      DBQuery($query);
+    }
+
+    $query = sprintf("
+			SELECT team_id
+			FROM uo_team_profile 
+			WHERE team_id='%s'",
+    mysql_real_escape_string($profile['team_id']));
+
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+    //add
+    if(mysql_num_rows($result)==0){
+      $query = sprintf("INSERT INTO uo_team_profile (team_id,
+			captain, coach, story, achievements) VALUES 
+			('%s', '%s', '%s', '%s', '%s')",
+      mysql_real_escape_string($profile['team_id']),
+      mysql_real_escape_string($profile['captain']),
+      mysql_real_escape_string($profile['coach']),
+      mysql_real_escape_string($profile['story']),
+      mysql_real_escape_string($profile['achievements']));
+      //update
+    }else{
+      $query = sprintf("UPDATE uo_team_profile SET captain='%s', coach='%s',
+				story='%s', achievements='%s' WHERE team_id='%s'",
+      mysql_real_escape_string($profile['captain']),
+      mysql_real_escape_string($profile['coach']),
+      mysql_real_escape_string($profile['story']),
+      mysql_real_escape_string($profile['achievements']),
+      mysql_real_escape_string($profile['team_id']));
+    }
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+    LogTeamProfileUpdate($profile['team_id']);
+    return $result;
+  } else { die('Insufficient rights to edit team profile'); }
+}
+
+function UploadTeamImage($teamId){
+  if (isSuperAdmin() || hasEditPlayersRight($teamId)) {
+    $max_file_size = 5 * 1024 * 1024; //5 MB
+    	
+    if($_FILES['picture']['size'] > $max_file_size){
+      return "<p class='warning'>"._("File is too large")."</p>";
+    }
+
+    $imgType = $_FILES['picture']['type'];
+    $type = explode("/", $imgType);
+    $type1 = $type[0];
+    $type2 = $type[1];
+    if ($type1 != "image") {
+      return "<p class='warning'>"._("File is not supported image format")."</p>";
+    }
+
+    if(!extension_loaded("gd")){
+      return "<p class='warning'>"._("Missing gd extensinon for image handiling.")."</p>";
+    }
+
+    $file_tmp_name = $_FILES['picture']['tmp_name'];
+    $imgname = time().$teamId.".jpg";
+    $basedir = "".UPLOAD_DIR."teams/$teamId/";
+    if(!is_dir($basedir)){
+      recur_mkdirs($basedir,0775);
+      recur_mkdirs($basedir."thumbs/",0775);
+    }
+
+    ConvertToJpeg($file_tmp_name, $basedir.$imgname);
+    CreateThumb($basedir.$imgname, $basedir."thumbs/".$imgname, 320, 240);
+
+    //currently removes old image, in future there might be a gallery of images
+    RemoveTeamProfileImage($teamId);
+    SetTeamProfileImage($teamId, $imgname);
+
+    return "";
+    	
+  } else { die('Insufficient rights to upload image'); }
+}
+
+
+function SetTeamProfileImage($teamId, $filename) {
+  if (isSuperAdmin() || hasEditPlayersRight($teamId)) {
+
+    $query = sprintf("UPDATE uo_team_profile SET profile_image='%s' WHERE team_id='%s'",
+    mysql_real_escape_string($filename),
+    mysql_real_escape_string($teamId));
+    	
+    DBQuery($query);
+
+  } else { die('Insufficient rights to edit team profile'); }
+}
+
+function RemoveTeamProfileImage($teamId) {
+  if (isSuperAdmin() || hasEditPlayersRight($teamId)) {
+
+    $profile = TeamProfile($teamId);
+
+    if(!empty($profile['profile_image'])){
+      	
+      //thumbnail
+      $file = "".UPLOAD_DIR."teams/$teamId/thumbs/".$profile['profile_image'];
+      if(is_file($file)){
+        unlink($file);//  remove old images if present
+      }
+
+      //image
+      $file = "".UPLOAD_DIR."teams/$teamId/".$profile['profile_image'];
+
+      if(is_file($file)){
+        unlink($file);//  remove old images if present
+      }
+
+      $query = sprintf("UPDATE uo_team_profile SET profile_image=NULL WHERE team_id='%s'",
+      mysql_real_escape_string($teamId));
+      	
+      DBQuery($query);
+    }
+  } else { die('Insufficient rights to edit team profile'); }
+}
+
+function AddTeam($params) {
+  if (hasEditTeamsRight($params['series'])) {
+    $query = sprintf("
+			INSERT INTO uo_team
+			(name, pool, rank, valid, series) 
+			VALUES ('%s', '%s', '%s', '%s', '%s')",
+    mysql_real_escape_string($params['name']),
+    mysql_real_escape_string($params['pool']),
+    mysql_real_escape_string($params['rank']),
+    mysql_real_escape_string($params['valid']),
+    mysql_real_escape_string($params['series']));
+    	
+    $result = DBQuery($query);
+    $teamId = mysql_insert_id();
+
+    if(!empty($params['country'])){
+      DBQuery("UPDATE uo_team SET country=".(int)$params['country']." WHERE team_id=$teamId");
+    }
+    if(!empty($params['club'])){
+      DBQuery("UPDATE uo_team SET club=".(int)$params['club']." WHERE team_id=$teamId");
+    }
+
+    if(!empty($params['abbreviation'])){
+      DBQuery("UPDATE uo_team SET abbreviation='".$params['abbreviation']."' WHERE team_id=$teamId");
+    }
+
+    Log1("team","add",$teamId);
+    return $teamId;
+  } else { die('Insufficient rights to add team'); }
+}
+
+function SetTeam($params) {
+  if (hasEditTeamsRight($params['series'])) {
+    $query = sprintf("
+			UPDATE uo_team SET
+			name='%s', pool='%s', abbreviation='%s',
+			rank='%s', valid='%s', series='%s'
+			WHERE team_id='%s'",
+    mysql_real_escape_string($params['name']),
+    mysql_real_escape_string($params['pool']),
+    mysql_real_escape_string($params['abbreviation']),
+    mysql_real_escape_string($params['rank']),
+    mysql_real_escape_string($params['valid']),
+    mysql_real_escape_string($params['series']),
+    mysql_real_escape_string($params['team_id']));
+    	
+    $result = DBQuery($query);
+
+    if(!empty($params['country'])){
+      DBQuery("UPDATE uo_team SET country=".(int)$params['country']." WHERE team_id=".(int)$params['team_id']);
+    }
+    if(!empty($params['club'])){
+      DBQuery("UPDATE uo_team SET club=".(int)$params['club']." WHERE team_id=".(int)$params['team_id']);
+    }
+
+    return $result;
+  } else { die('Insufficient rights to edit team'); }
+}
+
+function SetTeamName($teamId, $name) {
+  $series = getTeamSeries($teamId);
+  if (hasEditTeamsRight($series)){
+    $query = sprintf("
+			UPDATE uo_team SET name='%s' WHERE team_id='%s'",
+    mysql_real_escape_string($name),
+    mysql_real_escape_string($teamId));
+    	
+    return DBQuery($query);
+  } else { die('Insufficient rights to edit team'); }
+}
+
+function SetTeamOwner($teamId, $clubId) {
+  $series = getTeamSeries($teamId);
+  if (hasEditTeamsRight($series)){
+    $query = sprintf("
+			UPDATE uo_team SET club='%s' WHERE team_id='%s'",
+    mysql_real_escape_string($clubId),
+    mysql_real_escape_string($teamId));
+    	
+    return DBQuery($query);
+  } else { die('Insufficient rights to edit team'); }
+}
+
+function SetTeamSerieRank($teamId, $poolId, $rank, $activerank) {
+  $poolInfo = PoolInfo($poolId);
+  if (hasEditTeamsRight($poolInfo['series'])) {
+    $query = sprintf("
+			UPDATE uo_team_pool SET
+			rank='%s', activerank='%s'
+			WHERE team='%s' AND pool='%s'",
+    mysql_real_escape_string($rank),
+    mysql_real_escape_string($activerank),
+    mysql_real_escape_string($teamId),
+    mysql_real_escape_string($poolId));
+    	
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+    return $result;
+  } else { die('Insufficient rights to edit team rank');	}
+}
+
+function SetTeamSeeding($seriesId, $teamId, $seed) {
+  if (hasEditTeamsRight($seriesId)) {
+    $query = sprintf("
+			UPDATE uo_team SET
+			rank=%d
+			WHERE team_id=%d",
+    (int)$seed,
+    (int)$teamId);
+
+    return DBQuery($query);
+  } else { die('Insufficient rights to edit team rank');	}
+}
+
+function DeleteTeam($teamId) {
+  $series = getTeamSeries($teamId);
+  if (hasEditTeamsRight($series)) {
+    Log2("team","delete",TeamName($teamId));
+    $query = sprintf("DELETE FROM uo_userproperties WHERE value='teamadmin:%d'",
+    (int)$teamId);
+    	
+    $query = sprintf("DELETE FROM uo_team_pool WHERE team='%s'",
+    mysql_real_escape_string($teamId));
+
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+    	
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+    $query = sprintf("DELETE FROM uo_team WHERE team_id=%d",
+    (int)$teamId);
+    	
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+
+    return $result;
+  } else { die('Insufficient rights to delete team'); }
+}
+
+function CanDeleteTeam($teamId) {
+  $query = sprintf("SELECT count(*) FROM uo_game WHERE hometeam=%d OR visitorteam=%d",
+  (int)$teamId,(int)$teamId);
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+  if (!$row = mysql_fetch_row($result)) return false;
+  if ($row[0] == 0) {
+    $query = sprintf("SELECT count(*) FROM uo_player WHERE team=%d",
+    (int)$teamId);
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+    if (!$row = mysql_fetch_row($result)) return false;
+    return $row[0] == 0;
+  } else return false;
+}
+
+function AddTeamProfileUrl($teamId, $type, $url, $name) {
+  if (isSuperAdmin() || hasEditPlayersRight($teamId)) {
+    $url = SafeUrl($url);
+    $query = sprintf("INSERT INTO uo_urls (owner,owner_id,type,name,url)
+				VALUES('team',%d,'%s','%s','%s')",
+    (int)$teamId,
+    mysql_real_escape_string($type),
+    mysql_real_escape_string($name),
+    mysql_real_escape_string($url));
+    return DBQuery($query);
+  } else { die('Insufficient rights to add url'); }
+}
+
+function RemoveTeamProfileUrl($teamId, $urlId) {
+  if (isSuperAdmin() || hasEditPlayersRight($teamId)) {
+    $query = sprintf("DELETE FROM uo_urls WHERE url_id=%d",
+    (int)$urlId);
+    return DBQuery($query);
+  } else { die('Insufficient rights to remove url'); }
+}
+
+function TeamsToCsv($season,$separator){
+
+  $query = sprintf("SELECT j.name AS Team, j.abbreviation AS ShortName, club.name AS Club,
+		c.name AS Country, ser.name AS Division, ps.name AS Pool,	
+		COALESCE(k.games,0) + COALESCE(v.games,0) AS Games,
+		COALESCE(k.wins,0) + COALESCE(v.wins,0) AS Wins,
+		COALESCE(k.scores,0) + COALESCE(v.scores,0) AS GoalsFor,
+		COALESCE(k.against,0) + COALESCE(v.against,0) AS GoalsAgainst,
+		COALESCE(k.spirit,0) + COALESCE(v.spirit,0) AS SpiritPoints
+		FROM uo_team AS j
+		LEFT JOIN (SELECT COUNT(*) AS games, COUNT(homescore>visitorscore OR NULL) as wins, hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
+			FROM uo_game
+			LEFT JOIN uo_game_pool gp1 ON(game_id=gp1.game)
+			WHERE isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k
+		ON (j.team_id=k.hometeam)
+		LEFT JOIN (SELECT COUNT(*) AS games, COUNT(homescore<visitorscore OR NULL) as wins, visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against
+			FROM uo_game
+			LEFT JOIN uo_game_pool gp2 ON(game_id=gp2.game)
+			WHERE isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v
+			ON (j.team_id=v.visitorteam)
+		LEFT JOIN uo_series ser ON(ser.series_id=j.series)
+		LEFT JOIN uo_pool ps ON (j.pool=ps.pool_id) 		
+		LEFT JOIN uo_club club ON (j.club=club.club_id)
+		LEFT JOIN uo_country c ON (j.country=c.country_id)
+		WHERE ser.season='%s'
+		GROUP BY j.team_id
+		ORDER BY ser.ordering, j.name",
+  mysql_real_escape_string($season));
+
+  $result = DBQuery($query);
+  return ResultsetToCsv($result, $separator);
+}
 ?>
