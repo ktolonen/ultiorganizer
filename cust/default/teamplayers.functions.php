@@ -109,8 +109,16 @@ YAHOO.util.Event.addListener(window, "load", function() {
 
 		];
 	
-	
-		memberDataSource = new YAHOO.util.DataSource("cust/default/players.php?");
+		<?php 
+		if (is_file('cust/'.CUSTOMIZATIONS.'/players.php')) {
+			$datasource = 'cust/'.CUSTOMIZATIONS.'/players.php?';
+		}else{
+		    $datasource = "cust/default/players.php?";
+		}
+		?>
+		memberDataSource = new YAHOO.util.DataSource("<?php echo $datasource;?>");
+		 
+		
 		memberDataSource.connMethodPost = false;
 		memberDataSource.responseType = YAHOO.util.DataSource.TYPE_XML;
 		memberDataSource.responseSchema = {

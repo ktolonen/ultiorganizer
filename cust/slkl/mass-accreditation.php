@@ -316,9 +316,10 @@ function slklUpdateLicensesFromCSV($handle, $season){
     //4013 Jäsenmaksu, juniorit
     //4014 Jäsenmaksu, aikuiset
     //4015 Ultimaten kilpailulisenssi, aikuiset
+    //4016 Ultimaten kilpailulisenssi, juniorit
     $valid_membership=array(653,654,655,656,4001,4002,4003,4004,4008,4009,4010,4013,4014);
-    $valid_license=array(653,654,655,656,4001,4002,4008,4009,4010,4015);
-    $valid_juniors=array(654,656,4002,4004,4009,4010,4013);
+    $valid_license=array(653,654,655,656,4001,4002,4008,4009,4010,4015,4016);
+    $valid_juniors=array(654,656,4002,4004,4009,4010,4013,4016);
     $ignore = array(4011);
     
     if(in_array($license_id,$ignore)){
