@@ -6,8 +6,13 @@ $html = "";
 if (isset($_POST['restore']) && isSuperAdmin()){
 	if(is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
 		
+	    if("gz"==end(explode('.', $_FILES['restorefile']['name']))){
+	      $lines = gzfile($_FILES['restorefile']['tmp_name']);
+	    }elseif("sql"==end(explode('.', $_FILES['restorefile']['name']))){
+	      $lines = file($_FILES['restorefile']['tmp_name']);
+	    }
+				
 		$templine = '';
-		$lines = file($_FILES['restorefile']['tmp_name']);
 		set_time_limit(300);
 		
 		foreach ($lines as $line){

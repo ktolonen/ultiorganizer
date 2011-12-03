@@ -63,17 +63,18 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()){
 	//fclose($handle);
 	
 	//give result to user
-	$len = strlen($return);
+	//$len = strlen($return);
 	header("Pragma: public");
 	header("Expires: 0");
 	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 	header("Cache-Control: public"); 
 	header("Content-Description: File Transfer");
-	header("Content-Type: application/sql");
-	header("Content-Disposition: attachment; filename=$filename;");
+	header("Content-Type: application/x-gzip");
+	header("Content-Disposition: attachment; filename=$filename.gz;");
 	header("Content-Transfer-Encoding: binary");
-	header("Content-Length: ".$len);
-	echo $return;
+
+	echo gzencode($return);
+
 }
 
 //common page
