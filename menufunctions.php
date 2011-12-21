@@ -218,7 +218,9 @@ function onPageHelpAvailable($html) {
  */
 function mobilePageTop($title) {
   pageTopHeadOpen($title);
-  echo "</head><body>\n";
+  
+  echo "</head><body style='overflow-y:scroll;'>\n";
+  echo "<div class='mobile_page'>\n";
 }
 
 /**
@@ -508,7 +510,7 @@ function leftMenu($id, $printable=false) {
   //event history
   if(IsStatsDataAvailable()){
     echo "<table class='leftmenulinks'>\n";
-    echo "<tr><td class='menuseasonlevel'>"._("Past events")."</td></tr>\n";
+    echo "<tr><td class='menuseasonlevel'>"._("Statistics")."</td></tr>\n";
     echo "<tr><td>";
     echo "<a class='subnav' href=\"?view=seasonlist\">&raquo; "._("Events")."</a>\n";
     echo "<a class='subnav' href=\"?view=allplayers\">&raquo; "._("Players")."</a>\n";
@@ -518,7 +520,7 @@ function leftMenu($id, $printable=false) {
     if(count($countries)){
       echo "<a class='subnav' href=\"?view=allcountries\">&raquo; "._("Countries")."</a>\n";
     }
-    echo "<a class='subnav' href=\"?view=statistics\">&raquo; "._("Statistics")."</a></td></tr>\n";
+    echo "<a class='subnav' href=\"?view=statistics\">&raquo; "._("All time")."</a></td></tr>\n";
     echo "</table>";
   }
 

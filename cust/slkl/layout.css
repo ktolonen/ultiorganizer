@@ -11,6 +11,20 @@
 	background-color: #ffffff;
 }
 
+.mobile_page{
+	width: 300px;
+	border:1px solid #333;
+	margin-left: auto;
+	margin-right: auto;
+	overflow: visible;
+	padding-right: 25px;
+	padding-left: 25px;
+	padding-top: 0px;
+	padding-bottom: 25px;
+	background-color: #FFFFFF;
+
+}
+
 .page_top{
 	width: 100%;
 	padding:0px;
