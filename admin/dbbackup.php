@@ -57,23 +57,20 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()){
 	
 	}	
 	
-	//save file if needed
-	//$handle = fopen($filename,'w+');
-	//fwrite($handle,$return);
-	//fclose($handle);
-	
-	//give result to user
-	//$len = strlen($return);
+   
+	$gzipoutput = gzencode($return);
+    
 	header("Pragma: public");
 	header("Expires: 0");
 	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
 	header("Cache-Control: public"); 
 	header("Content-Description: File Transfer");
-	header("Content-Type: application/x-gzip");
+	header('Content-Type: application/x-download');
+    header('Content-Encoding: binary'); 
+    header('Content-Length: '.strlen($gzipoutput)); 
 	header("Content-Disposition: attachment; filename=$filename.gz;");
-	header("Content-Transfer-Encoding: binary");
 
-	echo gzencode($return);
+	echo $gzipoutput;
 
 }
 
