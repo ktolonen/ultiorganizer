@@ -173,7 +173,7 @@ YAHOO.example.DDApp = {
 	Dom.setStyle(responseDiv,"width", "20px");
 	Dom.setStyle(responseDiv,"class", "inprogress");
 	responseDiv.innerHTML = '&nbsp;';
-	var transaction = YAHOO.util.Connect.asyncRequest('POST', '?view=admin/saveteamstandings', callback, request);         
+  	var transaction = YAHOO.util.Connect.asyncRequest('POST', 'index.php?view=admin/saveteamstandings', callback, request);         
     },
 };
 
