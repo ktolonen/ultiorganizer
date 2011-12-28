@@ -221,7 +221,7 @@ if(CUSTOMIZATIONS=="slkl"){
   if(!empty($playerInfo['accreditation_id'])){
       echo "<td class='center' style='white-space: nowrap'>".$playerInfo['accreditation_id']."</td>";
     }else{
-      echo "<td class='center attention'><a id='showAccrId". $player['player_id'] ."' onclick=\"ChgPlayer(".$player['player_id'].");\" href='javascript:checkProfileId(\"". $player['player_id'] ."\");'>". _("N/A")."</a></td>\n";
+      echo "<td class='center attention'><a id='showAccrId". $player['player_id'] ."' onclick=\"ChgPlayer(".$player['player_id'].");\" href='javascript:checkProfileId(\"". $player['player_id'] ."\");'>". _("Search")."</a></td>\n";
     }
 
     $query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d",(int)$playerInfo['accreditation_id']);
