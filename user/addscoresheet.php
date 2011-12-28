@@ -354,9 +354,19 @@ $game_result = GameResult($gameId);
 $place = ReservationInfo($game_result['reservation']);
 $homecaptain = GameCaptain($gameId, $game_result['hometeam']);
 $awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
+$home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
+$away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
-echo "<form name='scoresheet' id='scoresheet' action='?view=user/addscoresheet&amp;Game=$gameId' method='post'>";
-echo "<table cellspacing='5' cellpadding='5' width='600px'>";
+if(mysql_num_rows($home_playerlist)==0){
+  echo "<p class='warning'>".utf8entities($game_result['hometeamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;Game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+}
+if(mysql_num_rows($away_playerlist)==0){
+  echo "<p class='warning'>".utf8entities($game_result['visitorteamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;Game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+}
+
+
+echo "<form id='scoresheet' action='?view=user/addscoresheet&amp;Game=$gameId' method='post'>";
+echo "<table cellspacing='5' cellpadding='5'>";
 
 echo "<tr><td colspan='2'><h1>"._("Game score sheet")." #$gameId</h1></td></tr>";
 echo "<tr><td valign='top'>\n";
@@ -482,8 +492,7 @@ echo "<tr><th colspan='2'>"._("Captains")."</th></tr>";
 echo "<tr><td>". utf8entities($game_result['hometeamname']) ."</td>";
 echo "<td><select style='width:100%' class='dropdown' name='homecaptain'>\n";
 echo "<option class='dropdown' value=''></option>\n";
-$team_players = GamePlayers($gameId, $game_result['hometeam']);
-while($player = mysql_fetch_assoc($team_players)){
+while($player = mysql_fetch_assoc($home_playerlist)){
 	$playerInfo = PlayerInfo($player['player_id']);
 	if($homecaptain==$player['player_id'])
 		echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
@@ -495,8 +504,7 @@ echo "</tr><tr>";
 echo "<td>". utf8entities($game_result['visitorteamname']) ."</td>";
 echo "<td><select style='width:100%' class='dropdown' name='awaycaptain'>\n";
 echo "<option class='dropdown' value=''></option>\n";
-$team_players = GamePlayers($gameId, $game_result['visitorteam']);
-while($player = mysql_fetch_assoc($team_players)){
+while($player = mysql_fetch_assoc($away_playerlist)){
 	$playerInfo = PlayerInfo($player['player_id']);
 	if($awaycaptain==$player['player_id'])
 		echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
@@ -508,7 +516,7 @@ echo "</tr>";
 echo "</table>\n";
 		
 //buttons
-echo "<table cellspacing='0' cellpadding='10px' width='100%'>\n";
+echo "<table cellspacing='0' cellpadding='10' width='100%'>\n";
 echo "<tr><td><input class='input' type='checkbox' name='isongoing' ";
 if ($game_result['isongoing']) {
 	echo "checked='checked'";
@@ -548,7 +556,7 @@ $style_right .= "border-bottom-style:solid;border-bottom-width:1px;border-bottom
 $style_right .= "border-left-style:dashed;border-left-width:1px;border-left-color:#E0E0E0;";
 
 echo "</td><td>";
-echo "<table style='border-collapse:collapse' cellspacing='0' cellpadding='2px' border='0'>\n";
+echo "<table style='border-collapse:collapse' cellspacing='0' cellpadding='2' border='0'>\n";
 echo "<tr><th style='background-color:#FFFFFF;border-style:none;border-width:0;border-color:#FFFFFF'></th>";
 echo "<th style='$style_left'>"._("Home")."</th><th style='$style_mid'>"._("Away")."</th>";
 echo "<th style='$style_mid'>"._("Assist")."</th><th style='$style_mid'>"._("Goal")."</th><th style='$style_mid'>"._("Time")."</th>";
