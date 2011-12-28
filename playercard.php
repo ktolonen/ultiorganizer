@@ -213,6 +213,7 @@ if(!empty($player['profile_id'])){
 				"games"=>0,
 				"goals"=>0,
 				"passes"=>0,
+				"callahans"=>0,
 				"wins"=>0
 			);
 			$pp['season_type'] = $season['seasontype'];
@@ -286,6 +287,7 @@ if(count($stats)){
 			$goals += $stats[$i]['goals'];
 			$passes += $stats[$i]['passes'];
 			$wins += $stats[$i]['wins'];
+			$cal += $stats[$i]['callahans'];
 		}
 		$total_games += $games;
 		$total_passes += $passes;
