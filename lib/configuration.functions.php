@@ -1,5 +1,7 @@
 <?php
 $serverConf = GetSimpleServerConf();
+$locales = getAvailableLocalizations();
+
 $twitterConfKeys = array("TwitterConsumerKey", "TwitterConsumerSecret", "TwitterOAuthCallback");
 $facebookConfKeys = array("FacebookEnabled", "FacebookAppId", "FacebookAppSecret", "FacebookAppKey", "FacebookGameMessage", "FacebookUpdatePage", "FacebookUpdateId", "FacebookUpdateToken");
 
@@ -84,6 +86,17 @@ function GetPageTitle() {
 	return utf8entities($serverConf['PageTitle']);
 }
 
+function GetDefaultLocale() {
+	global $serverConf;
+	return $serverConf['DefaultLocale'];
+}
+
+function GetDefTimeZone() {
+	global $serverConf;
+	return $serverConf['DefaultTimezone'];
+}
+
+
 function GetFacebookConf() {
 	global $serverConf;
 	global $facebookConfKeys;
@@ -160,5 +173,39 @@ function isRespTeamHomeTeam() {
 	} else {
 		return $row[0] == 'yes';
 	} 
+}
+
+/**
+ * Scans directory /cust/* and returns list of customizations avialable.
+ * 
+ */
+function getAvailableCustomizations(){
+    $customizations=array();
+    $temp = scandir("cust/");
+
+    foreach($temp as $fh){
+      if(is_dir("cust/$fh") && $fh!='.' && $fh!='..'){
+        $customizations[]=$fh;
+      }
+    }
+    
+    return $customizations;
+}
+
+/**
+ * Scans directory /locale/* and returns list of localizations avialable.
+ * 
+ */
+function getAvailableLocalizations(){
+    $localizations=array();
+    $temp = scandir("locale/");
+
+    foreach($temp as $fh){
+      if(is_dir("locale/$fh") && $fh!='.' && $fh!='..'){
+         $localizations[$fh]=$fh;
+      }
+    }
+    
+    return $localizations;
 }
 ?>

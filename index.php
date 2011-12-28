@@ -1,5 +1,8 @@
 <?php
-
+if(is_file('install.php')){
+ die("Delete install.php file from server!");
+}
+ 
 include_once 'lib/database.php';
 OpenConnection();
 global $include_prefix;

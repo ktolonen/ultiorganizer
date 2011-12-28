@@ -15,7 +15,7 @@ function getSessionLocale() {
 	} elseif (isset($_SESSION['userproperties']['locale'])) {
 		return $_SESSION['userproperties']['locale'];
 	} else {
-		return DEFAULT_LOCALE;
+		return GetDefaultLocale();
 	}
 }
 
@@ -130,12 +130,6 @@ function DefWeekDateFormat($timestamp)
 	return WeekdayString($timestamp,true) ." ". ShortDate($timestamp);
 	}
 
-function GetDefTimeZone()
-	{
-	//in future timezone can be added to user properties
-	return DEFAULT_TIMEZONE;
-	}
-	
 function DefHourFormat($timestamp)
 	{
 	//$datetime = date_create($timestamp);
@@ -307,7 +301,7 @@ function GetURLBase()
 }
 
 function GetLocale() {
-	$locale = DEFAULT_LOCALE;
+	$locale = GetDefaultLocale();
 	if (isset($_GET['locale'])) {
 		$locale = $_GET['locale'];
 	} else if(isset($_SESSION['userproperties']['locale'])){

@@ -124,7 +124,7 @@ function PreferredLocale() {
 		}
 	}
 	*/
-	return DEFAULT_LOCALE;
+	return GetDefaultLocale();
 }
 
 ?>

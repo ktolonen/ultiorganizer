@@ -108,6 +108,16 @@ if(!empty($_POST['save'])){
 	$setting['name']="EmailSource";
 	$setting['value']= $_POST['EmailSource'];
 	$settings[] = $setting;
+
+	$setting = array();
+	$setting['name']="DefaultTimezone";
+	$setting['value']= $_POST['DefaultTimezone'];
+	$settings[] = $setting;
+
+	$setting = array();
+	$setting['name']="DefaultLocale";
+	$setting['value']= $_POST['DefaultLocale'];
+	$settings[] = $setting;
 	
 	SetServerConf($settings);
 	
@@ -273,12 +283,44 @@ foreach($settings as $setting){
 		}
 		$htmltmp2 .= "</tr>\n";
 	}
+	
+	if($setting['name']=="DefaultTimezone"){
+	  $htmltmp2 .= "<tr>";
+      $htmltmp2 .= "<td class='infocell'>"._("Default Timezone").": </td><td>";
+      $dateTimeZone = GetTimeZoneArray();
+      $htmltmp2 .= "<select class='dropdown' id='DefaultTimezone' name='DefaultTimezone'>\n";
+      foreach($dateTimeZone as $tz){
+    	if($setting['value']==$tz){
+    		$htmltmp2 .= "<option selected='selected' value='$tz'>".utf8entities($tz)."</option>\n";
+    	}else{
+    		$htmltmp2 .= "<option value='$tz'>".utf8entities($tz)."</option>\n";
+    	}
+      }
+    $htmltmp2 .= "</select>\n";
+    $htmltmp2 .= "</td></tr>\n";
+	}
+	
+	if($setting['name']=="DefaultLocale"){
+	  $htmltmp2 .= "<tr>";
+      $htmltmp2 .= "<td class='infocell'>"._("Default Locale").": </td><td>";
+      $alllocales = getAvailableLocalizations();
+      $htmltmp2 .= "<select class='dropdown' id='DefaultLocale' name='DefaultLocale'>\n";
+      foreach($alllocales as $loc){
+    	if($setting['value']==$loc){
+    		$htmltmp2 .= "<option selected='selected' value='$loc'>".utf8entities($loc)."</option>\n";
+    	}else{
+    		$htmltmp2 .= "<option value='$loc'>".utf8entities($loc)."</option>\n";
+    	}
+      }
+    $htmltmp2 .= "</select>\n";
+    $htmltmp2 .= "</td></tr>\n";
+	}
 }			
 
 $html .= "<form method='post' action='?view=admin/serverconf' id='Form'>";
 
 $html .= "<h1>". _("UI settings") ."</h1>";
-$html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
+$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= "<tr><th>"._("Type")."</th><th>"._("Order")."</th><th>"._("Name")."</th><th>"._("Url")."</th><th></th></tr>\n";
 $urls = GetUrlListByTypeArray(array("menulink","menumail","admin"),0);
 $i=0;
@@ -306,11 +348,11 @@ $html .= "</table>\n";
 
 
 $html .= "<h1>". _("3rd party API settings") ."</h1>";
-$html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
+$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= $htmltmp1;
 $html .= "</table>\n";
 if (IsFacebookEnabled()) {
-	$html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
+	$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 	if (!isset($serverConf['FacebookUpdateToken']) || (strlen($serverConf['FacebookUpdateToken']) == 0)) {
 		$html .= "<tr><td><a href='javascript:authorize()'>"._("Authorize facebook updates")."</a>\n";
 		$html .= "<input type='hidden' id='FacebookUpdateId' name='FacebookUpdateId' value=''/></td></tr>\n";
@@ -324,7 +366,7 @@ if (IsFacebookEnabled()) {
 
 $html .= "<hr/>";
 $html .= "<h1>". _("Internal settings") ."</h1>";
-$html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
+$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= $htmltmp2;
 $html .= "</table>\n";
 $html .= "<p><input class='button' name='save' type='submit' value='"._("Save")."'/>";

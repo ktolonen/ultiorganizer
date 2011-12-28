@@ -1,244 +1,555 @@
-<?php
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='en' lang='en'>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta http-equiv="Content-Style-Type" content="text/css" />
+<meta http-equiv="Content-Script-Type" content="text/javascript" />
+<meta http-equiv="Pragma" content="no-cache" />
+<meta http-equiv="Expires" content="-1" />
+<title>Ultiorganizer - Installation</title>
+<link rel="stylesheet" href="cust/default/layout.css" type="text/css" />
+<link rel="stylesheet" href="cust/default/font.css" type="text/css" />
+<link rel="stylesheet" href="cust/default/default.css" type="text/css" />
+</head>
 
-$sql_file = 'sql/ultiorganizer.sql';
-$db_error = 0;
-$db_creation_error = 0;
-// Check prerequisites
-$create_conf_path=0;
-$path = 'conf';
-$filename = '$path/config.inc.php';
-if (is_writable($filename)) {
-  $file_ok=1;
-} else {
-  if (file_exists($filename)) {
-    $file_error .= "$filename is not writable.";
-  } else {
-    if (is_writable($path)) {
-      $file_ok=1;
-    } else {
-      if (file_exists($path)) {
-        $file_error .= "$path is not writable.";
-      } else {
-        if (is_writable('.')) {
-          $file_ok=1;
-	  $create_conf_path=1;
-        } else {
-          $file_error .= "Pelikone root -directory is not writable.";
+<body style='overflow-y: scroll;'>
+  <div class='page' style='padding: 20px'>
+
+  <?php
+  if(is_file('conf/config.inc.php')){
+    include_once 'conf/config.inc.php';
+  }
+
+  // page 1: pre-requisites
+  // page 2: database setup
+  // page 3: ultiorganizer configurations
+  // page 4: administration account
+  // page 5: postconditions
+  $page = intval(isset($_GET["page"])?$_GET["page"]:0);
+  $html = "";
+  if(!empty($_POST['continue'])) {
+    $page++;
+  }
+
+  $html = "<h1>Welcome to installing Ultiorganizer</h1>";
+  $html .= "<form method='post' action='install.php?page=".$page."'>";
+
+  switch ($page){
+    case 0:
+      $html .= "<h2>Step 1: Prerequisites check</h2>";
+      $html .= prerequisites();
+      break;
+    case 1:
+      $html .= "<h2>Step 2: Database connection</h2>";
+      $html .= database();
+      break;
+    case 2:
+      $html .= "<h2>Step 3: Server defaults</h2>";
+      $html .= configurations();
+      break;
+    case 3:
+      $html .= "<h2>Step 4: Administration account</h2>";
+      $html .= administration();
+      break;
+    case 4:
+      $html .= "<h2>Step 5: Clean up</h2>";
+      $html .= postconditions();
+      break;
+    default:
+      header( 'Location: '. BASEURL ) ;
+      break;
+  }
+
+  $html .= "</form>";
+  echo $html;
+
+  ?>
+  </div>
+</body>
+</html>
+
+  <?php
+  function prerequisites(){
+    $passed = true;
+    $html="";
+    $html .= "<table style='width:100%'>";
+
+    //PHP version
+    $html .= "<tr>";
+    $html .= "<td>PHP version</td>";
+    $html .= "<td>".phpversion()." installed</td>";
+    if(version_compare(PHP_VERSION, '4.4.0') >= 0) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+
+    //PHP extensions
+    $html .= "<tr>";
+    $html .= "<td>PHP Extension: mysql</td>";
+    $html .= "<td>required</td>";
+    if(extension_loaded("mysql")) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+
+    $html .= "<tr>";
+    $html .= "<td>PHP Extension: mbstring</td>";
+    $html .= "<td>required</td>";
+    if(extension_loaded("mbstring")) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+
+    $html .= "<tr>";
+    $html .= "<td>PHP Extension: gettext</td>";
+    $html .= "<td>recommended</td>";
+    if(extension_loaded("gettext")) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+    }
+    $html .= "</tr>";
+
+    $html .= "<tr>";
+    $html .= "<td>PHP Extension: curl</td>";
+    $html .= "<td>recommended</td>";
+    if(extension_loaded("curl")) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+    }
+    $html .= "</tr>";
+
+    $html .= "<tr>";
+    $html .= "<td>PHP Extension: gd</td>";
+    $html .= "<td>recommended</td>";
+    if(extension_loaded("gd")) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+    }
+    $html .= "</tr>";
+
+    //Database configuration file
+    $file = "conf/config.inc.php";
+    $html .= "<tr>";
+    $html .= "<td>Database configuration file</td>";
+    $html .= "<td>$file</td>";
+    if(!is_readable($file)) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td><span style='color:red'>failed</span> (file already exists)</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+
+    //Write acceess
+    $directory = "conf/";
+    $html .= "<tr>";
+    $html .= "<td>Write access to folder</td>";
+    $html .= "<td>$directory</td>";
+    if(is_writable($directory)) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+
+    //read acceess
+    $file = "sql/ultiorganizer.sql";
+    $html .= "<tr>";
+    $html .= "<td>Database initalization file</td>";
+    $html .= "<td>$file</td>";
+    if(is_readable($file)) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+    $html .= "</table>";
+
+    $html .= "<p>";
+    if($passed){
+      $html .= "<input class='button' name='continue' id='continue' type='submit' value='Continue'/>";
+    }else{
+      $html .= "<input disabled='disabled' class='button' name='continue' id='continue' type='submit' value='Continue'/>";
+    }
+    $html .= " <input class='button' name='refresh' id='refresh' type='submit' value='Refresh'/> ";
+
+    $html .= "</p>";
+
+    return $html;
+  }
+  
+  function database(){
+
+    $db_hostname=isset($_POST['hostname']) ? mysql_escape_string($_POST['hostname']) : "localhost";
+    $db_username=isset($_POST['username']) ? mysql_escape_string($_POST['username']) : "ultiorganizer";
+    $db_password=isset($_POST['password']) ? mysql_escape_string($_POST['password']) : "ultiorganizer";
+    $db_database=isset($_POST['database']) ? mysql_escape_string($_POST['database']) : "ultiorganizer";
+
+    $html="";
+    $html .= "<table style='width:80%'>";
+    $html .= "<tr><td>Hostaddress (database.example.com):</td><td><input class='input' type='text' name='hostname' size='50' value='$db_hostname'/></td></tr>";
+    $html .= "<tr><td>Username:</td><td><input class='input' type='text' name='username' value='$db_username'/></td></tr>";
+    $html .= "<tr><td>Password:</td><td><input class='input' type='text' name='password' value='$db_password'/></td></tr>";
+    $html .= "<tr><td>Database name:</td><td><input class='input' type='text' name='database' value='$db_database'/></td></tr>";
+    $html .= "</table>";
+
+    $db_pass = false;
+
+    if(!empty($_POST['testdb'])){
+      $db_pass = true;
+
+      $html .= "<p>Connecting to database: ";
+      $mysqlconnectionref = mysql_connect($db_hostname, $db_username, $db_password);
+
+      if(!$mysqlconnectionref) {
+        $html .= "<span style='color:red'>Failed to connect to server: " . mysql_error()."</span></p>";
+        $db_pass = false;
+      }else{
+        $html .= "<span style='color:green'>ok</span></p>";
+      }
+
+      $html .=  "<p>Selecting database: ";
+      //select schema
+      $db = mysql_select_db($db_database);
+      if(!$db) {
+        $html .= "<span style='color:red'>Failed. Unable to select database.</span></p>";
+        $db_pass = false;
+      }else{
+        $html .= "<span style='color:green'>ok</span></p>";
+      }
+
+
+      $html .= "<p>Reading Ultiorganizer tables from given database: ";
+      $tables = array();
+      $ret = mysql_query("SHOW TABLES FROM $db_database");
+      while ($row = mysql_fetch_row($ret)) {
+        $tables[] = $row[0];
+        //echo "\"",$row[0]."\",";
+      }
+      $required = array("uo_accreditationlog","uo_club","uo_country","uo_database","uo_dbtranslations",
+    	"uo_enrolledteam","uo_event_log","uo_extraemail","uo_extraemailrequest","uo_game","uo_game_pool",
+    	"uo_gameevent","uo_goal","uo_image","uo_keys","uo_license","uo_location","uo_moveteams","uo_pageload_counter",
+    	"uo_played","uo_player","uo_player_profile","uo_player_stats","uo_pool","uo_pooltemplate","uo_registerrequest",
+    	"uo_reservation","uo_scheduling_name","uo_season","uo_season_stats","uo_series","uo_series_stats","uo_setting",
+    	"uo_sms","uo_specialranking","uo_team","uo_team_pool","uo_team_profile","uo_team_stats","uo_timeout",
+    	"uo_urls","uo_userproperties","uo_users","uo_victorypoints","uo_visitor_counter");
+      $delta = array_diff($required,$tables);
+      if(!empty($delta)){
+        $html .= "<br>Missing tables: ".implode($delta,', ')."</p>";
+
+        $html .= "<p>Creating Ultiorganizer tables: ";
+        $ret = createtables();
+        if(empty($ret)){
+          $html .= "<span style='color:green'>ok</span></p>";
+        }else{
+          $html .= "<span style='color:red'>failed</span>";
+          $html .= $ret;
+          $html .= "</p>";
+          $db_pass = false;
+        }
+      }else{
+        $html .= "<span style='color:green'>ok</span></p>";
+      }
+      mysql_close($mysqlconnectionref);
+
+      //write configuration file
+      if($db_pass){
+        if (!$fh = fopen('conf/config.inc.php', 'w')) {
+          $html .= "<p style='color:red'>Cannot open file: conf/config.inc.php</p>";
+        }else{
+          fwrite($fh, "<?php\n");
+          fwrite($fh, "/**\n");
+          fwrite($fh, "MySQL Settings - you can get this information from your web hosting company.\n");
+          fwrite($fh, "*/\n");
+          fwrite($fh, "define('DB_HOST', '$db_hostname');\n");
+          fwrite($fh, "define('DB_USER', '$db_username');\n");
+          fwrite($fh, "define('DB_PASSWORD', '$db_password');\n");
+          fwrite($fh, "define('DB_DATABASE', '$db_database');\n");
+          fwrite($fh, "?>");
+          fclose($fh);
         }
       }
     }
-  }
-}
 
-if ($create_conf_path) {
-  mkdir($path);
-}
-
-if (version_compare(PHP_VERSION, '4.4.0') >= 0) {
-   $php_version_ok = 1;
-}
-
-if ($file_ok && $php_version_ok) {
-  $prereqs_ok=1;
-}
-
-// Default values
-$hostname=isset($_POST['hostname']) ? mysql_escape_string($_POST['hostname']) : "localhost";
-$username=isset($_POST['username']) ? mysql_escape_string($_POST['username']) : "pelikone";
-$password=isset($_POST['password']) ? mysql_escape_string($_POST['password']) : "pelikone";
-$database=isset($_POST['database']) ? mysql_escape_string($_POST['database']) : "pelikone";
-$locales=isset($_POST['locales']) ? mysql_escape_string($_POST['locales']) : "en_GB.utf8:English,fi_FI.utf8:Suomi";
-$default_timezone=isset($_POST['default_timezone']) ? mysql_escape_string($_POST['default_timezone']) : "Europe/Helsinki";
-$upload_path=isset($_POST['upload_path']) ? mysql_escape_string($_POST['upload_path']) : "images/uploads";
-$date_format=isset($_POST['date_format']) ? mysql_escape_string($_POST['date_format']) : "%d.%m.%Y %H:%M";
-
-// Check input
-if ($_POST) {
-  // check contents (all field filled etc)
-  $link = @mysql_connect($hostname, $username, $password);
-  if (!$link) {
-    $db_error = "Cannot connect to DB server ($hostname) with user ($username).";
-  } else {
-    $db_selected = mysql_select_db($database, $link);
-    if (!$db_selected) {
-      $db_error = "DB login ok but cannot select database ($database).";
+    $html .= "<p>";
+    if($db_pass){
+      $html .= "<input class='button' name='continue' id='continue' type='submit' value='Continue'/>";
+    }else{
+      $html .= "<input disabled='disabled' class='button' name='continue' id='continue' type='submit' value='Continue'/>";
     }
-    // Here additional DB tests (permissions etc)
+    $html .= " <input class='button' name='testdb' id='testdb' type='submit' value='Test Connection'/> ";
+
+    $html .= "</p>";
+
+    return $html;
   }
+  function createtables(){
+    $html = "";
 
-  if (!is_writable($_POST['upload_path'])) {
-    if (file_exists($upload_path)) {
-      $upload_path_error = "Given upload path not writable.";
-    } else {
-      mkdir($upload_path);
-    }
-  }
-  // Here additional checks for input
-}
+    //Create tables if required
+    if (!($sql_file_contents = file_get_contents("sql/ultiorganizer.sql"))) {
+      $html .= "<p style='color:red'>Cannot open file: conf/config.inc.php</p>";
+    }else{
+      $sql = trim($sql_file_contents);
 
-if ($_POST && $file_ok) {
-    if (!$fh = fopen('conf/config.inc.php', 'w')) {
-         echo "Cannot open file ($filename)";
-         exit;
-    }
-  fwrite($fh, "<?php\n");
-  fwrite($fh, "define('DB_HOST', '$hostname');\n");
-  fwrite($fh, "define('DB_USER', '$username');\n");
-  fwrite($fh, "define('DB_PASSWORD', '$password');\n");
-  fwrite($fh, "define('DB_DATABASE', '$database');\n");
+      for ($i = 0; $i < strlen($sql) - 1; $i++) {
+        if ($sql[$i] == ";") {
+          $lines[] = substr($sql, 0, $i);
+          $sql = substr($sql, $i +1);
+          $i = 0;
+        }
+      }
 
-  fwrite($fh, "global \$locales;\n");
-  fwrite($fh, "\$locales = array(");
-  $splitted_locales = preg_split('/,/', $locales);
-  foreach ($splitted_locales as $locale) {
-      $pair = preg_split('/:/', $locale);
-      fwrite($fh, "\"$pair[0]\" => \"$pair[1]\",");
-  }
-  fwrite($fh, ");\n");
-  fwrite($fh, "define('DEFAULT_TIMEZONE', '$default_timezone');\n");
-  fwrite($fh, "define('UPLOAD_DIR', '$upload_path');\n");
-  fwrite($fh, "define('DATE_FORMAT', '$date_format');\n");
-  fwrite($fh, "define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');\n");
-  fwrite($fh, "define('CUSTOMIZATIONS', 'wfdf');\n");
-  $default_locale = preg_split('/:/', $splitted_locales[0]);
-  fwrite($fh, "define('DEFAULT_LOCALE', '$default_locale[0]');\n");
+      if (!empty($sql)) {
+        $lines[] = $sql;
+      }
 
-  fwrite($fh, "?>");
-  fclose($fh);
-}
-if( function_exists('date_default_timezone_set') ){
-	date_default_timezone_set('UTC');
-}
+      foreach ($lines as $line) {
+        $line = trim($line);
 
-if ($_POST && !$db_error) {
-  _dropTables($database);
-  // Create database
-  if (!($sql_file_contents = file_get_contents($sql_file))) {
-    // Error handling
-  }
-
-  $sql = trim($sql_file_contents);
-
-  for ($i = 0; $i < strlen($sql) - 1; $i++) {
-    if ($sql[$i] == ";") {
-      $lines[] = substr($sql, 0, $i);
-      $sql = substr($sql, $i +1);
-      $i = 0;
-    }
-  }
-
-  if (!empty($sql)) {
-    $lines[] = $sql;
-  }
-
-  foreach ($lines as $line) {
-    $line = trim($line);
-
-    if (!empty($line)) {
-      if (!mysql_query($line)) {
-        echo "Problem with DB creation: " . mysql_error() . "<br>\n";
-	$db_creation_error = 1;
+        if (!empty($line)) {
+          if (!mysql_query($line)) {
+            $html .=  "<p style='color:red'>Problem with DB creation: " . mysql_error() . "</p>\n";
+          }
+        }
       }
     }
+    return $html;
   }
-}
-// If all ok then redirect to next page.
 
-@mysql_close($link);
 
-function _dropTables($database) {
+  function configurations(){
 
-  $sql = "SHOW TABLES FROM $database";
-  if ($result = mysql_query($sql)) {
-    while ($row = mysql_fetch_row($result)) {
-      $found_tables[] = $row[0];
-    }
+    $passed = false;
 
-    foreach ($found_tables as $table_name) {
-      $sql = "DROP TABLE $database.$table_name";
-      if ($result = mysql_query($sql)) {
+    $upload_dir=isset($_POST['upload_dir']) ? mysql_escape_string($_POST['upload_dir']) : "images/uploads/";
+    $timezone=isset($_POST['timezone']) ? mysql_escape_string($_POST['timezone']) : "Europe/Helsinki";
+    $locale=isset($_POST['locale']) ? mysql_escape_string($_POST['locale']) : "en_GB.utf8";
+    $customization=isset($_POST['customization']) ? mysql_escape_string($_POST['customization']) : "default";
+    $title=isset($_POST['title']) ? mysql_escape_string($_POST['title']) : "Ultiorganizer - ";
+    $maps=isset($_POST['maps']) ? mysql_escape_string($_POST['maps']) : "";
+    $admin=isset($_POST['admin']) ? mysql_escape_string($_POST['admin']) : "ultiorganizer_admin@example.com";
+    $mail=isset($_POST['mail']) ? mysql_escape_string($_POST['mail']) : "ultiorganizer@example.com";
+    $baseurl=isset($_POST['baseurl']) ? mysql_escape_string($_POST['baseurl']) : GetURLBase();
+
+
+    $html="";
+
+    $customizations=array();
+    $temp = scandir("cust/");
+
+    foreach($temp as $fh){
+      if(is_dir("cust/$fh") && $fh!='.' && $fh!='..'){
+        $customizations[]=$fh;
       }
     }
-  } else {
-    echo "Problems listing tables for delete ($sql): " .mysql_error();
-  } 
-}
-?>
 
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
-<head>
-  <meta http-equiv="Pragma" content="no-cache"/>
-  <meta http-equiv="Expires" content="-1"/>
-  <link rel='icon' type='image/png' href='cust/default/favicon.png' />
-  <title>Pelikoneen asennus</title>
-  <link rel="stylesheet" href="cust/default/layout.css" type="text/css" />
-  <link rel="stylesheet" href="cust/default/font.css" type="text/css" />
-  <link rel="stylesheet" href="cust/default/default.css" type="text/css" />
-</head><body<?php echo ($_POST && !$db_error && !$db_creation_error) ? " onLoad='window.location = \"index.php?view=admin/serverconf\"'" : "" ?>>
-<div class='page_top'>
-<table width='760px'>
-<tr>
-<td class='left'></td>
-<td class='left'>
-<a href='http://ultiorganizer.sourceforge.net' class='header_text'><img class='header_logo' src='cust/default/logo.jpg' alt='Ultiorganizer'/></a>
-</td>
-<td class='right' style='width:40%'></td>
-</tr>
-<tr><td colspan='3'>
-<table width='100%'>
-<tr>
-<td style='width:70%' align='left'></td></tr>
-</table>
-</td>
-</tr>
-</table></div>
-<div class='page_middle'>
-<table><tr>
-      <td class='menu_left'>
+    $html .= "<p>Server defaults written into file <i>conf/config.inc.php</i>. If you want to change these settings later, please edit the file directly.</p>";
+    $html .= "<table style='width:100%'>";
+    $html .= "<tr><td>Primary URL:</td><td><input class='input' type='text' size='50' name='baseurl' value='$baseurl'/></td></tr>";
+    $html .= "<tr><td>Upload directory:</td><td><input class='input' type='text' size='50' name='upload_dir' value='$upload_dir'/></td></tr>";
+    $html .= "<tr><td>Customization:</td><td><select class='dropdown' name='customization'>";
+    foreach($customizations as $cust){
+      if($customization == $cust){
+        $html .= "<option class='dropdown' selected='selected' value='". $cust . "'>". $cust ."</option>";
+      }else{
+        $html .= "<option class='dropdown' value='". $cust . "'>". $cust ."</option>";
+      }
+    }
 
-	  <table cellspacing='5' cellpadding='2'>
-<tr><td>Installation</td></tr>
-<tr><td class="menuseparator"></td></tr><tr><td></td></tr>
-<tr><td>After giving this preliminary info the database
-tables will be created and you will be taken to UI configuration</td></tr>
-<tr><td>After saving those settings you are ready to use the system</td></tr>
-<tr><td class="menuseparator"></td></tr><tr><td></td></tr>
-</table></td>
+    $html .= "</select></td></tr>";
+    $html .= "</table>";
 
-<td align='left' valign='top'><div class='content'>
-<h1>Welcome to installing Ultimate organizer</h1>
-<h3>Prerequisites</h3>
-<table>
-<tr><td>File permissions:</td><td class='<?php echo ($file_ok) ? "OK" : "warning" ?>'><?php echo ($file_ok) ? "OK" : $file_error ?></td></tr>
-<tr><td>PHP version (&gt;= 4.4.0):</td><td class='<?php echo ($php_version_ok) ? "OK" : "warning" ?>'><?php echo ($php_version_ok) ? "OK" : "FAIL" ?></td></tr>
-</table>
-<?php echo ($prereqs_ok) ? "" : "<p class='warning'>Fix issues and reload this page.</p>" ?>
-<p>
-Give necessary information to set up this installation.
-</p>
+    //write configuration file
+    if(!empty($_POST['saveconf'])){
+      $passed = true;
+      if(!is_writable($upload_dir)){
+        $html .= "<p style='color:red'>Upload directory $upload_dir is not writeable.</p>";
+        $passed = false;
+      }
+      if (!$fh = fopen('conf/config.inc.php', 'w')) {
+        $html .= "<p style='color:red'>Cannot open file: conf/config.inc.php</p>";
+        $passed = false;
+      }else{
+        //re-write database configurations since those are located in same file.
+        fwrite($fh, "<?php\n");
+        fwrite($fh, "/**\n");
+        fwrite($fh, "MySQL Settings - you can get this information from your web hosting company.\n");
+        fwrite($fh, "*/\n");
+        fwrite($fh, "define('DB_HOST', '".DB_HOST."');\n");
+        fwrite($fh, "define('DB_USER', '".DB_USER."');\n");
+        fwrite($fh, "define('DB_PASSWORD', '".DB_PASSWORD."');\n");
+        fwrite($fh, "define('DB_DATABASE', '".DB_DATABASE."');\n");
 
-<form method="post" action="install.php">
+        fwrite($fh, "\n/**\n");
+        fwrite($fh, "Server Defaults.\n");
+        fwrite($fh, "*/\n");
+        fwrite($fh, "define('BASEURL', '$baseurl');\n");
+        fwrite($fh, "define('UPLOAD_DIR', '$upload_dir');\n");
+        fwrite($fh, "define('CUSTOMIZATIONS', '$customization');\n");
+        fwrite($fh, "define('DATE_FORMAT', _(\"%d.%m.%Y %H:%M\"));\n");
+        fwrite($fh, "define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');\n");
 
-<table style='white-space: nowrap' cellpadding='2'>
- <tr><td>Hostname</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="hostname" value="<?php echo $hostname ?>" /></td></tr>
- <tr><td>Username</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="username" value="<?php echo $username ?>" /></td></tr>
- <tr><td>Password</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="password" value="<?php echo $password ?>" /></td></tr>
- <tr><td>Database</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="database" value="<?php echo $database ?>" /></td></tr>
-</table>
-<?php echo !empty($db_error) ? "<p class='warning'>$db_error</p>" : "" ?>
-<table style='white-space: nowrap' cellpadding='2'>
- <tr><td>Locales (separated by semicolons and commas)</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="locales" value="<?php echo $locales ?>" /></td></tr>
- <tr><td>Default timezone</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="default_timezone" value="<?php echo $default_timezone ?>" /></td></tr>
- <tr><td>Upload directory</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="upload_path" value="<?php echo $upload_path ?>" /></td></tr>
- <tr><td>Date format</td><td><input type="text" <?php echo ($prereqs_ok) ? "" : "disabled='1' " ?>name="date_format" value="<?php echo $date_format ?>" /></td></tr>
-</table>
-<?php echo !empty($db_error) ? "<p class='warning'>$upload_path_error</p>" : "" ?>
+        fwrite($fh, "?>");
+        fclose($fh);
+        $html .= "<p>Configuration saved.</p>";
+      }
+    }
 
-<div style="text-align: center">
- <input type='submit' value='<--' disabled='disabled'/>
- <input type='submit' value='-->' <?php echo ($prereqs_ok) ? "" : "disabled='disabled' " ?>/>
-</div>
-</form>
-</div></td></tr></table></div>
-</body></html>
+    $html .= "<p>";
+    if($passed){
+      $html .= "<input class='button' name='continue' id='continue' type='submit' value='Continue'/>";
+    }else{
+      $html .= "<input disabled='disabled' class='button' name='continue' id='continue' type='submit' value='Continue'/>";
+    }
+    $html .= " <input class='button' name='saveconf' id='saveconf' type='submit' value='Write'/> ";
+
+    $html .= "</p>";
+
+    return $html;
+  }
+
+  function administration(){
+    $passed = false;
+
+    $passwd1=isset($_POST['passwd1']) ? mysql_escape_string($_POST['passwd1']) : "";
+    $passwd2=isset($_POST['passwd2']) ? mysql_escape_string($_POST['passwd2']) : "";
+
+    $html = "";
+
+    $html .= "<p>Change password for Ultiorganizer addministration account.</p>";
+    $html .= "<table style='width:100%'>";
+    $html .= "<tr><td>Username:</td><td><input type='text' disabled='disabled' name='admin' value='admin'/></td></tr>";
+    $html .= "<tr><td>Password:</td><td><input type='password' name='passwd1' value='$passwd1'/></td></tr>";
+    $html .= "<tr><td>Password (again):</td><td><input type='password' name='passwd2' value='$passwd2'/></td></tr>";
+    $html .= "</table>";
+
+    if(!empty($_POST['saveconf'])){
+      $passed = true;
+    
+      if(empty($passwd1) || (strlen($passwd1) <5 || strlen($passwd1) > 20)){
+        $html .= "<p style='color:red'>"._("Invalid password (min. 5 letters).")."</p>";
+        $passed = false;
+      }
+      
+      if($passwd1!=$passwd2){
+        $html .= "<p style='color:red'>Password doesn't match.</p>";
+        $passed = false;
+      }
+      
+      if($passed){
+        $mysqlconnectionref = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
+        $db = mysql_select_db(DB_DATABASE);
+        mysql_set_charset('utf8');
+        $query = sprintf("UPDATE uo_users SET password=MD5('%s') WHERE userid='admin'",mysql_real_escape_string($passwd1));
+        $result = mysql_query($query);
+        mysql_close($mysqlconnectionref);
+        $html .= "<p>Password changed.</p>";
+      }
+    }
+
+    $html .= "<p>";
+    if($passed){
+      $html .= "<input class='button' name='continue' id='continue' type='submit' value='Continue'/>";
+    }else{
+      $html .= "<input disabled='disabled' class='button' name='continue' id='continue' type='submit' value='Continue'/>";
+    }
+    $html .= " <input class='button' name='saveconf' id='createadmin' type='submit' value='Change password'/> ";
+
+    $html .= "</p>";
+
+    return $html;
+
+  }
+
+  function postconditions(){
+    $passed = true;
+    $html="";
+    $html .= "<table style='width:100%'>";
+
+     
+    //Database configuration file
+    $file = "conf/config.inc.php";
+    $html .= "<tr>";
+    $html .= "<td>Remove write access</td>";
+    $html .= "<td>$file</td>";
+    if(!is_writeable($file)) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed (file writeable)</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+
+    //Write acceess
+    $directory = "conf/";
+    $html .= "<tr>";
+    $html .= "<td>Remove write access</td>";
+    $html .= "<td>$directory</td>";
+    if(!is_writable($directory)) {
+      $html .= "<td style='color:green'>ok</td>";
+    }else{
+      $html .= "<td style='color:red'>failed (directory writeable)</td>";
+      $passed = false;
+    }
+    $html .= "</tr>";
+
+    $html .= "</table>";
+
+
+    $html .= "<p>";
+    if($passed){
+      $html .= "<p>To finalize installation remove intall.php (this file) from server.</p>";
+      $html .= "<input class='button' name='continue' id='continue' type='submit' value='Finish'/>";
+    }else{
+      $html .= "<input disabled='disabled' class='button' name='continue' id='continue' type='submit' value='Finish'/>";
+    }
+    $html .= " <input class='button' name='refresh' id='refresh' type='submit' value='Refresh'/> ";
+    $html .= "</p>";
+
+    return $html;
+  }
+
+  function GetURLBase(){
+    $url = "http://";
+    if(isset($_SERVER['SERVER_NAME'])) {
+      $url .= $_SERVER['SERVER_NAME'];
+    }elseif(isset($_SERVER['HTTP_HOST'])) {
+      $url .= $_SERVER['HTTP_HOST'];
+    }
+    if(isset($_SERVER['SCRIPT_NAME'])) {
+      $url .= $_SERVER['SCRIPT_NAME'];
+    }elseif(isset($_SERVER['PHP_SELF'])) {
+      $url .= $_SERVER['PHP_SELF'];
+    }elseif(isset($_SERVER['PATH_INFO '])) {
+      $url .= $_SERVER['PATH_INFO '];
+    }
+
+    $cutpos = strrpos($url, "/");
+    $url = substr($url,0,$cutpos);
+    global $include_prefix;
+    if (strlen($include_prefix) > 0) {
+      $updirs = explode($include_prefix, "/");
+      foreach ($updirs as $dotdot) {
+        $cutpos = strrpos($url, "/");
+        $url = substr($url,0,$cutpos);
+      }
+    }
+    return $url;
+  }
+
+  ?>

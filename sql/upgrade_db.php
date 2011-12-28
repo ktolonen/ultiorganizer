@@ -316,7 +316,18 @@ function upgrade63() {
 }
 
 function upgrade64() {
+   if(!hasRow("uo_setting","name","PageTitle")){
 	runQuery('INSERT INTO uo_setting (name, value) VALUES ("PageTitle", "Ultiorganizer - ")');
+   }
+}
+
+function upgrade65() {
+  if(!hasRow("uo_setting","name","DefaultTimezone")){
+	runQuery('INSERT INTO uo_setting (name, value) VALUES ("DefaultTimezone", "Europe/Helsinki")');
+  }
+  if(!hasRow("uo_setting","name","DefaultLocale")){
+	runQuery('INSERT INTO uo_setting (name, value) VALUES ("DefaultLocale", "en_GB.utf8")');
+  }
 }
 
 function runQuery($query) {
@@ -336,6 +347,12 @@ function hasColumn($table, $column) {
 	$query = "SELECT max(".$column.") FROM ".$table;
 	$result = mysql_query($query);
 	if (!$result) { return false; } else return true;
+}
+
+function hasRow($table, $column, $value) {
+	$query = "SELECT * FROM $table WHERE $column='".$value."'";
+	$result = mysql_query($query);
+	return mysql_num_rows($result);
 }
 
 function hasTable($table) { 

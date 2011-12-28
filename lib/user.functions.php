@@ -44,9 +44,20 @@ function UserAuthenticate($user, $passwd, $failcallback) {
 	if($count==1) {
 		LogUserAuthentication($user,"success");
 		SetUserSessionData($user);
+		$row = mysql_fetch_assoc($result);
 		mysql_query("UPDATE uo_users SET last_login=NOW() WHERE userid='".mysql_real_escape_string($user)."'");
-		//header("location:?view=frontpage");
-		//exit();
+		
+		//first logging
+		if(empty($row['last_login']) && $user=="admin"){
+    		header("location:?view=admin/serverconf");
+    		exit();
+		}
+		
+		if(empty($row['last_login'])){
+    		header("location:?view=user/userinfo");
+    		exit();
+		}
+				
 	} else {
 		LogUserAuthentication($user,"failed");
 		$failcallback($user);		
@@ -220,7 +231,7 @@ function getUserLocale($userid) {
 		$tmparr = array_keys($localearr);
 		return $tmparr[0];
 	} else {
-		return DEFAULT_LOCALE;
+		return GetDefaultLocale();
 	}
 }
 

@@ -249,6 +249,11 @@ CREATE TABLE `uo_database` (
 
 INSERT INTO uo_database VALUES(61,"2011-06-07 23:39:13");
 
+INSERT INTO uo_database VALUES(62,"2011-12-06 20:21:14");
+INSERT INTO uo_database VALUES(63,"2011-12-06 20:21:14");
+INSERT INTO uo_database VALUES(64,"2011-12-06 20:21:14");
+INSERT INTO uo_database VALUES(65,"2011-12-06 20:21:14");
+
 CREATE TABLE `uo_dbtranslations` (
   `translation_key` varchar(50) NOT NULL,
   `fi_FI_utf8` varchar(50) DEFAULT NULL,
@@ -414,6 +419,13 @@ CREATE TABLE `uo_moveteams` (
   PRIMARY KEY (`frompool`,`fromplacing`),
   INDEX `idx_scheduling_id` (`scheduling_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+CREATE TABLE `uo_pageload_counter` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `page` varchar(100) NOT NULL,
+  `loads` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
 
 CREATE TABLE `uo_played` (
   `player` int(10) NOT NULL,
@@ -457,7 +469,7 @@ CREATE TABLE `uo_player_profile` (
   `story` text,
   `achievements` text,
   `image` int(10) DEFAULT NULL,
-  `profile_image` varchar(20) DEFAULT NULL,
+  `profile_image` varchar(30) DEFAULT NULL,
   `weight` varchar(10) DEFAULT NULL,
   `position` varchar(50) DEFAULT NULL,
   `gender` CHAR(1) DEFAULT NULL,
@@ -465,7 +477,7 @@ CREATE TABLE `uo_player_profile` (
   `national_id` VARCHAR(100) DEFAULT NULL,
   `accreditation_id` varchar(50) DEFAULT NULL,  
   `public` VARCHAR(200) DEFAULT 'nickname|birthplace|nationality|throwing_hand|height|weight|position|story|achievements|profile_image',
-
+  `ffindr_id` int(10) DEFAULT NULL,
 
 
   PRIMARY KEY (`profile_id`)
@@ -664,6 +676,7 @@ INSERT INTO uo_setting VALUES ("FacebookAppSecret", NULL, "11");
 INSERT INTO uo_setting VALUES ("FacebookGameMessage", "Game finished in pool $pool", "12");
 INSERT INTO uo_setting VALUES ("FacebookUpdatePage", "", "13");
 INSERT INTO uo_setting VALUES ("GameRSSEnabled", "false", "14");
+INSERT INTO uo_setting VALUES("PageTitle","Ultiorganizer - ",15);
 
 
 CREATE TABLE `uo_sms` (
@@ -728,6 +741,7 @@ CREATE TABLE `uo_team_profile` (
   `image` int(10) DEFAULT NULL,
   `profile_image` varchar(20) DEFAULT NULL,
   `captain` varchar(100) DEFAULT '',
+  `ffindr_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`team_id`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
@@ -820,3 +834,10 @@ CREATE TABLE IF NOT EXISTS `uo_victorypoints` (
 
 INSERT INTO `uo_victorypoints` (`pointdiff`, `victorypoints`) VALUES (-15, 0), (-14, 1), (-13, 2), (-12, 3), (-11, 4), (-10, 5), (-9, 6), (-8, 7), (-7, 8), (-6, 9), (-5, 10), (-4, 11), (-3, 12), (-2, 13), (-1, 14), (0, 15), (1, 16), (2, 17), (3, 18), (4, 19), (5, 20), (6, 21), (7, 22), (8, 23), (9, 24), (10, 25), (11, 25), (12, 25), (13, 25), (14, 25), (15, 25);
 
+
+CREATE TABLE `uo_visitor_counter` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `ip` varchar(15) NOT NULL DEFAULT '',
+  `visits` int(11) DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;

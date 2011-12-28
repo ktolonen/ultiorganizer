@@ -55,7 +55,7 @@ if(!empty($_POST['cancel'])) {
 }
 mobilePageTop(_("Add result"));
 
-$html .= "<div style='width:100%;font-size: 14px;'>";
+$html .= "<div style='font-size:14px;'>";
 
 $html .= "<form action='?".utf8entities($_SERVER['QUERY_STRING'])."' method='post'>\n";
 if(!empty($_POST['save']) && !$errors) {
