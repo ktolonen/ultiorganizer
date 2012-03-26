@@ -330,6 +330,46 @@ function upgrade65() {
   }
 }
 
+//is touched should be removed
+// 	`istouched` tinyint(1) NOT NULL,
+//iscatched changed to iscaught
+//ishomegoal was changed to ishomedefense and it needs to be updated in the example database
+function upgrade66(){
+if(!hasTable("uo_defense")){
+	runQuery("CREATE TABLE `uo_defense` (
+	`game` int(10) NOT NULL,
+	`num` smallint(5) NOT NULL,
+	`author` int(10) DEFAULT NULL,
+	`time` smallint(5) DEFAULT NULL,
+	`iscallahan` tinyint(1) NOT NULL,
+	`iscaught` tinyint(1) NOT NULL,
+	`ishomedefense` tinyint(1) NOT NULL,
+	PRIMARY KEY (`game`,`num`),
+	INDEX `idx_game` (`game`),
+	INDEX `idx_player` (`author`)
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+}
+	if(!hasColumn('uo_player_stats', 'defenses')){
+		addColumn('uo_player_stats', 'defenses', "int(5) DEFAULT 0");
+	}
+	if(!hasColumn('uo_season_stats', 'defenses_total')){
+		addColumn('uo_season_stats', 'defenses_total', "int(5) DEFAULT 0");
+	}
+	if(!hasColumn('uo_series_stats', 'defenses_total')){
+		addColumn('uo_series_stats', 'defenses_total', "int(5) DEFAULT 0");
+	}
+	if(!hasColumn('uo_team_stats', 'defenses_total')){
+		addColumn('uo_team_stats', 'defenses_total', "int(5) DEFAULT 0");
+	}
+	if(!hasColumn('uo_game', 'homedefenses')){
+		addColumn('uo_game', 'homedefenses', "smallint(5) DEFAULT 0");
+	}
+	if(!hasColumn('uo_game', 'defenses_total')){
+		addColumn('uo_game', 'visitordefenses', "smallint(5) DEFAULT 0");
+	}
+	
+}
+
 function runQuery($query) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
