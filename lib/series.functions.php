@@ -249,6 +249,69 @@ function SeriesScoreBoard($seriesId, $sorting, $limit) {
 }
 
 /**
+ * Get division defense board.
+ * @param int $seriesId uo_series.series_id
+ * @param string $sorting one of: "total", "games", "team", "name", "callahan"  
+ * @param int $limit Numbers of rows returned, 0 if unlimited
+ * @return mysql array of players.
+ */
+function SeriesDefenseBoard($seriesId, $sorting, $limit) {
+  $query = sprintf("
+		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS deftotal, 
+		pel.games 
+		FROM uo_player AS p 
+		LEFT JOIN (SELECT m.author AS author, COUNT(*) AS done FROM uo_defense AS m 
+			LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
+			LEFT JOIN uo_pool pool ON(ps.pool=pool.pool_id)
+			LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
+			WHERE pool.series=%d AND ps.timetable=1 AND g1.isongoing=0 GROUP BY author) AS t ON (p.player_id=t.author) 
+		LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+		LEFT JOIN (SELECT up.player, COUNT(*) AS games 
+			FROM uo_played up
+			LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+			LEFT JOIN uo_pool pool ON(g4.pool=pool.pool_id)
+			WHERE pool.series=%d AND g4.isongoing=0 
+			GROUP BY player) AS pel ON (p.player_id=pel.player) 
+		WHERE pel.games > 0 AND j.series=%d",
+  (int)$seriesId,
+  (int)$seriesId,
+  (int)$seriesId);
+
+  switch($sorting) {
+    case "deftotal":
+      $query .= " ORDER BY deftotal DESC, lastname ASC";
+      break;
+
+    case "games":
+      $query .= " ORDER BY games DESC, deftotal DESC, lastname ASC";
+      break;
+
+    case "team":
+      $query .= " ORDER BY teamname ASC, deftotal DESC, lastname ASC";
+      break;
+
+    case "name":
+      $query .= " ORDER BY firstname,lastname ASC, deftotal DESC";
+      break;
+
+    case "callahan":
+      $query .= " ORDER BY callahan DESC, deftotal DESC, lastname ASC";
+      break;
+      	
+    default:
+      $query .= " ORDER BY deftotal DESC, lastname ASC";
+      break;
+  }
+
+  if($limit > 0){
+    $query .= " limit $limit";
+  }
+
+  return DBQuery($query);
+}
+
+
+/**
  * Get all games in given division.
  * @param int $seriesId uo_series.series_id
  * @return PHP array of games.

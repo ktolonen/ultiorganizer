@@ -252,9 +252,14 @@ function TeamTournamentGames($teamId, $reservationId)
 
 function TeamGames($teamId)
 {
+$defense_str=" ";
+if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+	{
+	$defense_str=",pp.homedefenses,pp.visitordefenses ";
+	}
   $query = sprintf("SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore,
-					pp.visitorscore, pp.pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank 
-				FROM uo_game pp 
+					pp.visitorscore, pp.pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank".$defense_str. 
+				"FROM uo_game pp 
 				LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool)
 				LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
 				LEFT JOIN uo_team_pool pjs ON(pp.pool=pjs.pool AND pjs.team='%s') WHERE pp.valid=true 
@@ -835,6 +840,129 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 
   return $result;
 }
+
+
+function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
+{
+  if($pools)
+  {
+    if(is_array($pools)){
+      $pools = mysql_real_escape_string(implode(",",$pools));
+    }else{
+      $pools = mysql_real_escape_string($pools);
+    }
+// This part needs to be tested......but should work
+    $query = sprintf("
+			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
+				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, COALESCE(d.deftotal) AS deftotal   
+			FROM uo_player AS p 
+			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
+				LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
+				LEFT JOIN uo_game AS g1 ON (m.game=g1.game_id) 
+				WHERE ps.pool IN($pools) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
+			LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 
+				LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game) 
+				LEFT JOIN uo_game AS g2 ON (m1.game=g2.game_id) 
+				WHERE ps1.pool IN($pools) AND m1.scorer IS NOT NULL AND iscallahan=1 AND g2.isongoing=0 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 			
+			LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
+				LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
+				LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
+				WHERE ps2.pool IN($pools) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
+			LEFT JOIN (SELECT m3.author AS author, COUNT(*) AS deftotal FROM uo_defense AS m3 
+				LEFT JOIN uo_game_pool AS ps2 ON (m3.game=ps2.game) 
+				LEFT JOIN uo_game AS g3 ON (m3.game=g3.game_id) 
+				WHERE ps2.pool IN($pools) AND g3.isongoing=0 GROUP BY author) AS d ON (p.player_id=d.author)
+			LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+			LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+				LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+				WHERE g4.pool IN($pools) AND g4.isongoing=0 
+				GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
+    (int)$teamId);
+
+  }
+  else
+  {
+    $query = sprintf("
+			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
+				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, COALESCE(t2.deftotal,0) AS deftotal
+			FROM uo_player AS p 
+			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m LEFT JOIN uo_game AS game ON (m.game=game.game_id) 
+				WHERE (game.hometeam=%d or game.visitorteam=%d) AND game.isongoing=0 AND scorer IS NOT NULL GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
+			LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 LEFT JOIN uo_game AS game1 ON (m1.game=game1.game_id) 
+				WHERE (game1.hometeam=%d or game1.visitorteam=%d) AND game1.isongoing=0 AND m1.scorer IS NOT NULL AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 				
+			LEFT JOIN  (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
+			LEFT JOIN uo_game AS game2 ON (m2.game=game2.game_id) 
+				WHERE (game2.hometeam=%d or game2.visitorteam=%d) AND game2.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
+			LEFT JOIN (SELECT m3.author AS author, COUNT(*) AS deftotal FROM uo_defense AS m3 LEFT JOIN uo_game AS game ON (m3.game=game.game_id) 
+				WHERE (game.hometeam=%d or game.visitorteam=%d) AND game.isongoing=0 AND author IS NOT NULL GROUP BY author) AS t2 ON (p.player_id=t2.author)
+			LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+			LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+				LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+				WHERE (g4.hometeam=%d or g4.visitorteam=%d) AND g4.isongoing=0 GROUP BY player) AS pel 
+					ON (p.player_id=pel.player) WHERE p.team=%d",
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId);
+  }
+
+  switch($sorting)
+  {
+    case "deftotal":
+      $query .= " ORDER BY deftotal DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+      
+    case "total":
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+
+    case "goal":
+      $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
+      break;
+      	
+    case "callahan":
+      $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
+      break;
+
+    case "pass":
+      $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
+      break;
+
+    case "games":
+      $query .= " ORDER BY games DESC, total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+
+    case "team":
+      $query .= " ORDER BY teamname ASC, total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+
+    case "name":
+      $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC";
+      break;
+      	
+    default:
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+  }
+
+  if($limit > 0)
+  {
+    $query .= " limit $limit";
+  }
+
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+  return $result;
+}
+
 
 /**
  * Returns all played games between given teams within same type of series.

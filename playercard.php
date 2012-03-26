@@ -155,35 +155,237 @@ if($games){
 	$passes = PlayerSeasonPasses($playerId, $curseason);
 	$callahans = PlayerSeasonCallahanGoals($playerId, $curseason);
 	$wins = PlayerSeasonWins($playerId, $player['team'],$curseason);
+	if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		$defenses = PlayerSeasonDefenses($playerId, $curseason);
+		}
 	
 	$html .= "<h2>".U_(CurrentSeasonName()).":</h2>\n";
 	$html .= "<table border='1' width='100%'><tr>";
-	$html .= "<th>"._("Games")."</th><th>"._("Passes")."</th><th>"._("Goals")."</th><th>"._("Tot.")."</th><th>"._("Pass avg.")."</th>";
-	$html .= "<th>"._("Goals avg.")."</th><th>"._("Point avg.")."</th><th>"._("Wins")."</th><th>"._("Win-%")."</th></tr>\n";
+	$html .= "<th>"._("Games")."</th><th>"._("Passes")."</th><th>"._("Goals")."</th><th>"._("Tot.")."</th>";
+	if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		$html .= "<th>"._("Defenses")."</th>";
+		}
+	$html .= "<th>"._("Pass avg.")."</th>";
+	$html .= "<th>"._("Goals avg.")."</th><th>"._("Point avg.")."</th>";
+	if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		$html .= "<th>"._("Defenses avg.")."</th>";
+		}
+	$html .= "<th>"._("Wins")."</th><th>"._("Win-%")."</th></tr>\n";
 	
 	$total = $passes+$goals;
 	$dblPassAvg = SafeDivide($passes, $games);
 	$dblGoalAvg = SafeDivide($goals, $games);
 	$dblScoreAvg = SafeDivide($total, $games);
 	$dblWinsAvg = SafeDivide($wins, $games);
-	
+	if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		$dblDefenAvg = SafeDivide($defenses, $games);
+		}
 	$html .= "<tr>
 	<td>".$games."</td>
 	<td>".$passes."</td>
 	<td>".$goals."</td>
-	<td>".$total."</td>
-	<td>".number_format($dblPassAvg,2)."</td>
+	<td>".$total."</td>";
+	if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		$html .= "<td>".$defenses."</td>";
+		}
+	$html.= "<td>".number_format($dblPassAvg,2)."</td>
 	<td>".number_format($dblGoalAvg,2)."</td>
-	<td>".number_format($dblScoreAvg,2)."</td>
-	<td>".$wins."</td>
+	<td>".number_format($dblScoreAvg,2)."</td>";
+	if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		$html .= "<td>".number_format($dblDefenAvg,2)."</td>";
+		}
+	$html .= "<td>".$wins."</td>
 	<td>".number_format($dblWinsAvg*100,1)."%</td></tr>\n";
 	$html .= "</table>\n";
 }
 
 $html_tmp = "";
 $stats = array();
+if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+{
+if(!empty($player['profile_id'])){	
+	
+	$prevseason="";
+	$seasoncounter=0;
+	
+	$playedSeasons = PlayerStatistics($player['profile_id']);
+		
+	if(count($playedSeasons)){
+		$html .= "<h2>"._("History").":</h2>\n";
 
+		
+		$html_tmp .= "<table style='white-space: nowrap;' border='1' cellspacing='0' width='100%'>\n
+			<tr><th>"._("Event")."</th><th>"._("Division")."</th><th>"._("Team")."</th><th>"._("Games")."</th><th>"._("Passes")."</th><th>"._("Goals")."</th><th>"._("Cal.")."</th><th>"._("Tot.")."</th>";
+			$html_tmp .= "<th>"._("Defenses.")."</th>";
+			$html_tmp .= "<th>"._("Pass avg.")."</th><th>"._("Goal avg.")."</th><th>"._("Point avg.")."</th>";
+			$html_tmp .= "<th>"._("Def. avg.")."</th>";
+			$html_tmp .= "<th>"._("Wins")."</th><th>"._("Win-%")."</th></tr>\n";
 
+		
+		foreach ($playedSeasons as $season) {
+			
+			if($season['season'] != $prevseason){
+				$seasoncounter++;
+				$prevseason = $season['season'];
+			}
+			//played series
+			$pp = array(
+				"season_type"=>"",
+				"series_type"=>"",
+				"games"=>0,
+				"goals"=>0,
+				"passes"=>0,
+				"callahans"=>0,
+				"defenses"=>0,
+				"wins"=>0
+			);
+			$pp['season_type'] = $season['seasontype'];
+			$pp['series_type'] = $season['seriestype'];
+			$pp['games'] = $season['games'];
+			$pp['passes'] = $season['passes'];
+			$pp['goals'] = $season['goals'];
+			$pp['callahans'] = $season['callahans'];
+			$pp['defenses'] = $season['defenses'];
+			$pp['wins'] = $season['wins'];
+				
+			$stats[] = $pp;
+				
+				$total = $pp['goals'] + $pp['passes'];
+
+				$dblPassAvg = SafeDivide($pp['passes'], $pp['games']);
+				$dblGoalAvg = SafeDivide($pp['goals'], $pp['games']);
+				$dblScoreAvg = SafeDivide($total, $pp['games']);
+				$dblWinAvg = SafeDivide($pp['wins'], $pp['games']);
+				$dblDefAvg = SafeDivide($pp['defenses'], $pp['games']);
+
+				if($seasoncounter%2){
+					$html_tmp .= "<tr class='highlight'>";
+				}else{
+					$html_tmp .= "<tr>";
+				}
+				$html_tmp .= "<td>". utf8entities(U_($season['seasonname'])) ."</td>
+						<td>". utf8entities(U_($season['seriesname'])) ."</td>
+						<td>". utf8entities(U_($season['teamname'])) ."</td>
+						<td>". $pp['games'] ."</td>
+						<td>". $pp['passes'] ."</td>
+						<td>". $pp['goals'] ."</td>
+						<td>". $pp['callahans'] ."</td>
+						<td>". $total ."</td>";
+						$html_tmp .= "<td>". $pp['defenses'] ."</td>";
+						$html_tmp .= "<td>". number_format($dblPassAvg,2) ."</td>
+						<td>". number_format($dblGoalAvg,2) ."</td>
+						<td>". number_format($dblScoreAvg,2) ."</td>";
+						$html_tmp .= "<td>". number_format($dblDefAvg,2) ."</td>";
+						$html_tmp .= "<td>". $pp['wins'] ."</td>
+						<td>". number_format($dblWinAvg*100,1) ."%</td></tr>\n";
+			}
+		$html_tmp .= "</table>\n";
+	}
+}
+// sort results according season and pool type
+if(count($stats)){
+	foreach ($stats as $key => $row) {
+		$s[$key]  = $row['season_type'];
+		$p[$key] = $row['series_type'];
+	}
+	array_multisort($s, SORT_DESC, $p, SORT_DESC, $stats);
+
+	//seasons total
+	$html .= "<table border='1' width='100%'><tr>
+		<th>"._("Event type")."</th><th>"._("Division")."</th><th>"._("Games")."</th><th>"._("Passes")."</th><th>"._("Goals")."</th><th>"._("Cal.")."</th><th>"._("Tot.")."</th>";
+		$html .= "<th>"._("Defenses.")."</th><th>"._("Pass avg.")."</th>
+		<th>"._("Goal avg.")."</th><th>"._("Point avg.")."</th>";
+		$html .= "<th>"._("Def. avg.")."</th><th>"._("Wins")."</th><th>"._("Win-%")."</th></tr>\n";
+
+	$total_games=0;
+	$total_goals=0;
+	$total_cal=0;
+	$total_passes=0;
+	$total_wins=0;
+	$total_defenses=0;
+
+	for($i=0;$i<count($stats);){
+		$season_type = $stats[$i]['season_type'];
+		$series_type= $stats[$i]['series_type'];
+		$games = $stats[$i]['games'];
+		$goals = $stats[$i]['goals'];
+		$cal = $stats[$i]['callahans'];
+		$passes = $stats[$i]['passes'];
+		$wins = $stats[$i]['wins'];
+		$defenses = $stats[$i]['defenses'];
+		for($i=$i+1;$i<count($stats)&& $season_type==$stats[$i]['season_type'] && $series_type==$stats[$i]['series_type'];$i++){
+			$games += $stats[$i]['games'];
+			$goals += $stats[$i]['goals'];
+			$passes += $stats[$i]['passes'];
+			$wins += $stats[$i]['wins'];
+			$cal += $stats[$i]['callahans'];
+			$defenses += $stats[$i]['defenses'];
+		}
+		$total_games += $games;
+		$total_passes += $passes;
+		$total_goals += $goals;
+		$total_cal += $cal;
+		$total_wins += $wins;
+		$total_defenses += $defenses;
+		
+		$total = $passes+$goals;
+		$dblPassAvg = SafeDivide($passes, $games);
+		$dblGoalAvg = SafeDivide($goals, $games);
+		$dblScoreAvg = SafeDivide($total, $games);
+		$dblWinsAvg = SafeDivide($wins, $games);
+		$dblDefsAvg = SafeDivide($defenses, $games);
+		
+		$html .= "<tr>
+		<td>".U_($season_type)."</td>	
+		<td>".U_($series_type)."</td>	
+		<td>".$games."</td>
+		<td>".$passes."</td>
+		<td>".$goals."</td>
+		<td>".$cal."</td>
+		<td>".$total."</td>
+		<td>".$defenses."</td>
+		<td>".number_format($dblPassAvg,2)."</td>
+		<td>".number_format($dblGoalAvg,2)."</td>
+		<td>".number_format($dblScoreAvg,2)."</td>
+		<td>".number_format($dblDefsAvg,2)."</td>
+		<td>".$wins."</td>
+		<td>".number_format($dblWinsAvg*100,1)."%</td></tr>\n";
+	}
+
+		$total = $total_passes+$total_goals;
+		$dblPassAvg = SafeDivide($total_passes, $total_games);
+		$dblGoalAvg = SafeDivide($total_goals, $total_games);
+		$dblScoreAvg = SafeDivide($total, $total_games);
+		$dblWinsAvg = SafeDivide($total_wins, $total_games);
+		$dblDefsAvg = SafeDivide($total_defenses, $total_games);
+		
+		$html .= "<tr class='highlight'>
+		<td colspan='2'>"._("Total")."</td>
+		<td>".$total_games."</td>
+		<td>".$total_passes."</td>
+		<td>".$total_goals."</td>
+		<td>".$total_cal."</td>
+		<td>".$total."</td>
+		<td>".$total_defenses."</td>
+		<td>".number_format($dblPassAvg,2)."</td>
+		<td>".number_format($dblGoalAvg,2)."</td>
+		<td>".number_format($dblScoreAvg,2)."</td>
+		<td>".number_format($dblDefsAvg,2)."</td>
+		<td>".$total_wins."</td>
+		<td>".number_format($dblWinsAvg*100,1)."%</td></tr>\n";
+
+		
+	$html .= "</table>\n";
+}
+}
+else
+{
 if(!empty($player['profile_id'])){	
 	
 	$prevseason="";
@@ -337,6 +539,7 @@ if(count($stats)){
 
 		
 	$html .= "</table>\n";
+}
 }
 $html .= $html_tmp;
 

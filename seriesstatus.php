@@ -239,6 +239,24 @@ while($row = mysql_fetch_assoc($scores))
 echo "</table>";
 echo "<a href='?view=scorestatus&amp;Series=".$seriesinfo['series_id']."'>"._("Scoreboard")."</a>";
 
+
+echo "<h2>"._("Defenseboard leaders")."</h2>\n";
+echo "<table cellspacing='0' border='0' width='100%'>\n";
+echo "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
+<th class='center'>"._("Total defenses")."</th></tr>\n";
+
+$defenses = SeriesDefenseBoard($seriesinfo['series_id'],"deftotal", 10);
+while($row = mysql_fetch_assoc($defenses))
+	{
+	echo "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
+	echo "<td>".utf8entities($row['teamname'])."</td>";
+	echo "<td class='center'>".intval($row['games'])."</td>";
+	echo "<td class='center'>".intval($row['deftotal'])."</td></tr>\n";
+	}
+
+echo "</table>";
+echo "<a href='?view=defensestatus&amp;Series=".$seriesinfo['series_id']."'>"._("Defenseboard")."</a>";
+
 contentEnd();
 pageEnd();
 ?>

@@ -104,6 +104,12 @@ if($list=="allteams" || $list=="byseeding"){
 			
 			$html .= "&nbsp;&nbsp;";
 			$html .= "<a href='?view=games&amp;Team=".$team['team_id']."'>"._("Games")."</a>";
+			if (mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+			{
+			  $html .= "&nbsp;&nbsp;";
+			  $html .= "<a href='?view=defensestatus&amp;Team=".$team['team_id']."'>"._("Defenseboard")."</a>";
+			}
+			
 			$html .= "</td>";
 			$html .= "</tr>\n";
 		}

@@ -284,6 +284,8 @@ if($game_result['homescore'] > 0 || $game_result['visitorscore'] > 0){
 	}
 	echo "</table>\n";
 	
+	
+
 	if(!empty($game_result['official'])){
 		echo "<p>"._("Game official").": ". utf8entities($game_result['official']) ."</p>";
 	}
@@ -543,10 +545,108 @@ if($game_result['homescore'] > 0 || $game_result['visitorscore'] > 0){
 		echo "<p><a href='?view=gamecard&amp;Team1=". utf8entities($game_result['hometeam']) ."&amp;Team2=". utf8entities($game_result['visitorteam']) . "'>";
 		echo  _("Game history")."</a></p>\n";
 		if ($_SESSION['uid'] != 'anonymous') {
-			echo "<div style='float:left;'><hr/><a href='?view=user/addmedialink&amp;game=$gameId'>"._("Add media")."</a></div>";
+			echo "<div style='float:left;'><hr /><a href='?view=user/addmedialink&amp;game=$gameId'>"._("Add media")."</a></div>";
 		}	
 	
+	//}
+	//defense board
+	if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+{
+	echo "<br><br>";
+	echo "<h3 align="._("left").">"._("Defensive plays")."</h3>\n";
+	$home_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['hometeam']);
+	$guest_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['visitorteam']);
+	$defenses = GameDefenses($gameId);
+	echo "<table style='width:100%'><tr><td valign='top' style='width:45%'>\n";
+
+	echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>\n";
+	echo "<tr style='height=20'><td align='center'><b>";
+	echo utf8entities($game_result['hometeamname']), "</b></td></tr>\n";
+	echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
+	echo "<tr><th class='home'>#</th><th class='home'>"._("Name")."</th><th class='home center'>"._("Defenses")."</th></tr>\n";
+
+	while($row = mysql_fetch_assoc($home_team_defense_board))
+		{
+			echo "<tr>";
+			echo "<td style='text-align:right'>". $row['num'] ."</td>";
+			echo "<td><a href='?view=playercard&amp;Series=0&amp;Player=". $row['player_id'];
+			echo "'>". utf8entities($row['firstname']) ."&nbsp;";
+			echo utf8entities($row['lastname']) ."</a>";
+			if($row['player_id']==$homecaptain){
+			echo "&nbsp;"._("(C)");
+			}
+			echo "</td>";
+			//echo "<td class='center'>". $row['fedin'] ."</td>";
+			echo "<td class='center'>". $row['done'] ."</td>";
+			//echo"<td class='center'>". $row['total'] ."</td>";
+			echo "</tr>";		
+		}
+	
+	echo "</table></td>\n<td style='width:10%'>&nbsp;</td><td valign='top' style='width:45%'>";
+
+	echo "<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
+	echo "<tr><td><b>";
+	echo utf8entities($game_result['visitorteamname']), "</b></td></tr>\n";
+	echo "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
+	echo "<tr><th class='guest'>#</th><th class='guest'>"._("Name")."</th><th class='guest center'>";
+	echo _("Defenses")."</th></tr>\n";
+		
+	while($row = mysql_fetch_assoc($guest_team_defense_board))
+		{
+			echo "<tr>";
+			echo "<td style='text-align:right'>". $row['num'] ."</td>";
+			echo "<td><a href='?view=playercard&amp;Series=0&amp;Player=". $row['player_id'];
+			echo "'>". utf8entities($row['firstname']) ."&nbsp;";
+			echo utf8entities($row['lastname']) ."</a>";
+			if($row['player_id']==$awaycaptain){
+			echo "&nbsp;"._("(C)");
+			}
+			echo "</td>";
+			//echo "<td class='center'>". $row['fedin'] ."</td>";
+			echo "<td class='center'>". $row['done'] ."</td>";
+			//echo"<td class='center'>". $row['total'] ."</td>";
+			echo "</tr>";		
+		}
+
+	echo "</table></td></tr></table>\n";
+
+	echo "<table border='1' cellpadding='2' width='100%'>\n";
+	echo "<tr><th>"._("Time defense play")."</th><th>"._("Player")."</th><th>"._("Callahan defense")."</th>";
+	echo "</tr>\n";
+	
+	//$bHt=false;
+		
+	$prevdefense = 0;	
+	mysql_data_seek($defenses, 0);
+	while($defense = mysql_fetch_assoc($defenses))
+ 		{
+// 		if (!$bHt && $game_result['halftime']>0 && $goal['time'] > $game_result['halftime']){
+// 			echo "<tr><td colspan='6' class='halftime'>"._("Half-time")."</td></tr>";
+// 			$bHt = 1;
+// 			$prevgoal = intval($game_result['halftime']);
+// 		}
+			
+		echo "<tr><td style='width:120px;white-space: nowrap'";
+		if(intval($defense['ishomedefense'])==1)
+			echo " class='home'>";
+		else
+			echo " class='guest'>";
+		echo SecToMin($defense['time']) ."</td>";
+		//echo $goal['homescore'] ." - ". $goal['visitorscore'] ."</td>";
+		echo "<td>". utf8entities($defense['defenderfirstname']) ." ". utf8entities($defense['defenderlastname']) ."&nbsp;</td>";
+		
+		if(intval($defense['iscallahan']))
+			echo "<td style='width:100px' class='callahan'>&nbsp;</td>";
+		else
+			echo "<td style='width:100px'>&nbsp;</td>";
+		//echo "<td>". SecToMin($defense['time']) ."</td>";
+		
+		echo "</tr>";
+		}
+	echo "</table>\n";
 	}
+}
+
 }else{
 	$gameinfo = GameInfo($gameId);
 	

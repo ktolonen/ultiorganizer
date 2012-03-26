@@ -308,6 +308,30 @@ function PlayerSeasonGoals($playerId, $seasonId) {
 }
 
 /**
+ * Total number of defenses on given season by given player.
+ * 
+ * @param int $playerId
+ * @param string $seasonId
+ */
+function PlayerSeasonDefenses($playerId, $seasonId) {
+  $query = sprintf("SELECT COUNT(*) AS defenses
+		FROM uo_defense
+		WHERE game IN (SELECT gp.game FROM uo_game_pool gp
+			LEFT JOIN uo_played AS pp ON (pp.game=gp.game)
+			LEFT JOIN uo_game AS ug ON (pp.game=ug.game_id) 
+			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
+			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)			
+			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1 AND ug.isongoing=0) 
+		AND author='%s'",
+  mysql_real_escape_string($seasonId),
+  mysql_real_escape_string($playerId),
+  mysql_real_escape_string($playerId));
+
+  return DBQueryToValue($query);
+}
+
+
+/**
  * Total number of callahan goals on given season by given player.
  * 
  * @param int $playerId

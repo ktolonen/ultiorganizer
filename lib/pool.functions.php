@@ -341,6 +341,96 @@ function PoolScoreBoard($poolId, $sorting, $limit){
 }
 
 /**
+ * Get pool score board with defenses
+ * 
+ * @param int $poolId uo_pool.pool_id
+ * @param string $sorting one of: "deftotal", "total", "goal", "pass", "games", "team", "name", "callahan"  
+ * @param int $limit Numbers of rows returned, 0 if unlimited
+ * @return mysql array of players.
+ */
+function PoolScoreBoardWithDefenses($poolId, $sorting, $limit){
+  $query = sprintf("
+		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, 
+		COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(t3.deftotal,0) AS deftotal, pel.games 
+		FROM uo_player AS p 
+		LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
+			LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
+			LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
+			WHERE ps.pool=%d AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer)
+		LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 
+			LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game)
+			LEFT JOIN uo_game AS g2 ON (ps1.game=g2.game_id)
+			WHERE ps1.pool=%d AND m1.scorer IS NOT NULL AND g2.isongoing=0  AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1)
+		LEFT JOIN  (SELECT m2.assist AS assist, COUNT(*) AS fedin 
+			FROM uo_goal AS m2 
+			LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
+			LEFT JOIN uo_game AS g3 ON (ps2.game=g3.game_id)
+			WHERE ps2.pool=%d AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
+		LEFT JOIN (SELECT m3.author AS author, COUNT(*) AS deftotal FROM uo_defense AS m3 LEFT JOIN uo_game_pool AS ps3 ON (m3.game=ps3.game) 
+			LEFT JOIN uo_game AS g5 ON (ps3.game=g5.game_id)
+			WHERE ps3.pool=%d AND g5.isongoing=0 GROUP BY author) AS t3 ON (p.player_id=t3.author)
+		LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+		LEFT JOIN (SELECT up.player, COUNT(*) AS games 
+			FROM uo_played up
+			LEFT JOIN uo_game_pool AS ps4 ON (up.game=ps4.game) 
+			LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+			WHERE ps4.pool=%d AND g4.isongoing=0	GROUP BY player) 
+			AS pel ON (p.player_id=pel.player) 
+		WHERE pel.games > 0",
+  (int)$poolId,
+  (int)$poolId,
+  (int)$poolId,
+  (int)$poolId,
+  (int)$poolId,
+  (int)$poolId);
+
+  switch($sorting){
+    case "deftotal":
+      $query .= " ORDER BY deftotal DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+    
+    case "total":
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+      
+    case "goal":
+      $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "pass":
+      $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC, p.player_id";
+      break;
+
+    case "games":
+      $query .= " ORDER BY games DESC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "team":
+      $query .= " ORDER BY teamname ASC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "name":
+      $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC, p.player_id";
+      break;
+
+    case "callahan":
+      $query .= " ORDER BY callahan DESC, total DESC, lastname ASC, p.player_id";
+      break;
+      	
+    default:
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+  }
+
+  if($limit > 0){
+    $query .= " limit $limit";
+  }
+
+  return DBQuery($query);
+}
+
+
+/**
  * Get score board for list of pools.
  * 
  * @param string $pools comma separated list of pools 

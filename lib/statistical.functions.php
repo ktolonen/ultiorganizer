@@ -206,6 +206,7 @@ function CalcSeasonStats($season) {
 		$allgames = SeasonAllGames($season);
 		$games_total = count($allgames);
 		$goals_total = 0;
+		$defenses_total =0;
 		$home_wins = 0;
 	
 		$players = SeasonAllPlayers($season);
@@ -222,19 +223,28 @@ function CalcSeasonStats($season) {
 			if($game_info['homescore'] > $game_info['visitorscore']){
 				$home_wins++;
 			}
+			if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				{
+				$defenses_total += $game_info['homedefenses']+$game_info['visitordefenses'];
+				}
 		}
 		//save season stats
 		$query = sprintf("INSERT IGNORE INTO uo_season_stats (season) VALUES ('%s')",
 				mysql_real_escape_string($season));
 		
 		DBQuery($query);
+		$defense_str=" ";
+		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+			{
+			$defense_str=",defenses_total=$defenses_total ";
+			}
 		$query = "UPDATE uo_season_stats SET
 				teams=$teams_total, 
 				games=$games_total, 
 				goals_total=$goals_total, 
 				home_wins=$home_wins, 
-				players=$played_players
-				WHERE season='".$season_info['season_id']."'";
+				players=$played_players".$defense_str.
+				"WHERE season='".$season_info['season_id']."'";
 		DBQuery($query);
 	} else { die('Insufficient rights to archive season'); }
 }
@@ -252,6 +262,7 @@ function CalcSeriesStats($season) {
 			$games_total = count($allgames);
 			$goals_total = 0;
 			$home_wins = 0;
+			$defenses_total =0;
 			
 			$players = SeriesAllPlayers($series['series_id']);
 			$played_players = 0;
@@ -268,20 +279,29 @@ function CalcSeriesStats($season) {
 				if($game_info['homescore'] > $game_info['visitorscore']){
 					$home_wins++;
 				}
+				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				{
+				$defenses_total += $game_info['homedefenses']+$game_info['visitordefenses'];
+				}
 			}
 			//save season stats
 			$query = sprintf("INSERT IGNORE INTO uo_series_stats (series_id) VALUES ('%s')",
 					mysql_real_escape_string($series['series_id']));
 			
 			DBQuery($query);
+			$defense_str=" ";
+			if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				{
+				$defense_str=",defenses_total=$defenses_total ";
+				}
 			$query = "UPDATE uo_series_stats SET
 					season='".$season_info['season_id']."',
 					teams=$teams_total, 
 					games=$games_total, 
 					goals_total=$goals_total, 
 					home_wins=$home_wins, 
-					players=$played_players
-					WHERE series_id=".$series['series_id'];
+					players=$played_players".$defense_str.
+					"WHERE series_id=".$series['series_id'];
 			DBQuery($query);
 		}
 	} else { die('Insufficient rights to archive season'); }
@@ -301,6 +321,10 @@ function CalcPlayerStats($season) {
 				$goals = PlayerSeasonGoals($player['player_id'], $season_info['season_id']);
 				$passes = PlayerSeasonPasses($player['player_id'], $season_info['season_id']);
 				$wins = PlayerSeasonWins($player['player_id'], $player_info['team'], $season_info['season_id']);
+				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				{
+				$defenses = PlayerSeasonDefenses($player['player_id'], $season_info['season_id']);
+				}
 				$callahans = PlayerSeasonCallahanGoals($player['player_id'], $season_info['season_id']);
 				$breaks = 0;
 				$offence_turns = 0;
@@ -312,6 +336,11 @@ function CalcPlayerStats($season) {
 				$query = "INSERT IGNORE INTO uo_player_stats (player_id) VALUES (".$player['player_id'].")";
 				
 				DBQuery($query);
+				$defense_str=" ";
+				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+					{
+					$defense_str=",defenses=$defenses ";
+					}
 				$query = "UPDATE uo_player_stats SET
 						profile_id=".intval($player_info['profile_id']).", 
 						team=".$player_info['team'].", 
@@ -326,8 +355,8 @@ function CalcPlayerStats($season) {
 						offence_turns=$offence_turns,
 						defence_turns=$defence_turns,
 						offence_time=$offence_time,
-						defence_time=$defence_time
-						WHERE player_id=".$player['player_id'];
+						defence_time=$defence_time".$defense_str.
+						"WHERE player_id=".$player['player_id'];
 				DBQuery($query);
 			}
 		}
@@ -348,6 +377,7 @@ function CalcTeamStats($season) {
 				$goals_against = 0;
 				$wins = 0;
 				$loses = 0;
+				$defenses_total=0;
 				$standing = TeamSeriesStanding($team['team_id']);
 				$allgames = TeamGames($team['team_id']);
 				
@@ -363,6 +393,10 @@ function CalcTeamStats($season) {
 							}else{
 								$loses++;
 							}
+							if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+							{
+								$defenses_total += $game['homedefenses'];
+							}
 						}else {
 							$goals_made += intval($game['visitorscore']);
 							$goals_against += intval($game['homescore']);
@@ -370,6 +404,10 @@ function CalcTeamStats($season) {
 								$wins++;
 							}else{
 								$loses++;
+							}
+							if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+							{
+								$defenses_total += $game['visitordefenses'];
 							}
 						}
 					}
@@ -379,6 +417,11 @@ function CalcTeamStats($season) {
 				$query = "INSERT IGNORE INTO uo_team_stats (team_id) VALUES (".$team['team_id'].")";
 				
 				DBQuery($query);
+				$defense_str=" ";
+				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+					{
+					$defense_str=",defenses_total=$defenses_total ";
+					}
 				$query = "UPDATE uo_team_stats SET
 						season='".$season_info['season_id']."', 
 						series=".$team_info['series'].", 
@@ -386,8 +429,8 @@ function CalcTeamStats($season) {
 						goals_against=$goals_against, 
 						standing=$standing, 
 						wins=$wins, 
-						loses=$loses
-						WHERE team_id=".$team['team_id'];
+						loses=$loses".$defense_str.
+						"WHERE team_id=".$team['team_id'];
 				DBQuery($query);
 			}
 		}

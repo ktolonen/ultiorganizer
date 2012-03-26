@@ -156,6 +156,11 @@ echo "<table>";
 echo "<tr><td><a href='?view=user/addresult&amp;Game=".$gameId."'>"._("Change game result")."</a></td></tr>";
 echo "<tr><td><a href='?view=user/addplayerlists&amp;Game=".$gameId."'>"._("Change game roster")."</a></td></tr>";
 echo "<tr><td><a href='?view=user/addscoresheet&amp;Game=".$gameId."'>"._("Change game score sheet")." </a></td></tr>";
+if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+{
+echo "<tr><td><a href='?view=user/adddefensesheet&amp;Game=".$gameId."'>"._("Change game defense sheet")." </a></td></tr>";
+}
+
 echo "<tr><td><a href='?view=user/pdfscoresheet&amp;Game=".$gameId."'>"._("Print score sheet")." </a></td></tr>";
 echo "<tr><td><a href='?view=user/addmedialink&amp;game=$gameId'>"._("Add media")."</a></td></tr>";
 echo "</table>\n";

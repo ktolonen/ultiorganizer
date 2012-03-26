@@ -144,6 +144,15 @@ function LogGameResult($gameId, $result, $source=""){
 	return LogEvent($event);
 	}	
 
+function LogDefenseResult($gameId, $result, $source=""){
+	$event['category'] = "defense";
+	$event['type'] = "change";
+	$event['source'] = $source;
+	$event['id1'] = $gameId;
+	$event['description'] = $result;
+	return LogEvent($event);
+	}	
+
 function LogGameUpdate($gameId, $details, $source=""){
 	$event['category'] = "game";
 	$event['type'] = "change";
@@ -152,7 +161,16 @@ function LogGameUpdate($gameId, $details, $source=""){
 	$event['description'] = $details;
 	return LogEvent($event);
 	}
-	
+
+function LogDefenseUpdate($gameId, $details, $source=""){
+	$event['category'] = "defense";
+	$event['type'] = "change";
+	$event['source'] = $source;
+	$event['id1'] = $gameId;
+	$event['description'] = $details;
+	return LogEvent($event);
+	}
+
 function GetLastGameUpdateEntry($gameId, $source) {
 	$query = sprintf("SELECT * FROM uo_event_log WHERE id1=%d AND source='%s' ORDER BY TIME DESC",
 		(int)$gameId, mysql_real_escape_string($source));	

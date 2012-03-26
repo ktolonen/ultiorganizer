@@ -113,7 +113,12 @@ foreach ($respGameArray as $tournament => $resArray) {
 			if($game['hometeam'] && $game['visitorteam']){
 				echo "<td style='white-space: nowrap' class='right'><a href='?view=user/addresult&amp;Game=".$gameId."'>"._("Result")."</a> | ";
 				echo "<a href='?view=user/addplayerlists&amp;Game=".$gameId."'>"._("Players")."</a> | ";
-				echo "<a href='?view=user/addscoresheet&amp;Game=$gameId'>"._("Score sheet")."</a></td>";
+				echo "<a href='?view=user/addscoresheet&amp;Game=$gameId'>"._("Score sheet")."</a>";
+				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				{
+				echo " | <a href='?view=user/adddefensesheet&amp;Game=$gameId'>"._("Defense sheet")."</a>";
+				}
+				echo "</td>";
 			}
 			echo "</tr>";
 		}
