@@ -330,10 +330,6 @@ function upgrade65() {
   }
 }
 
-//is touched should be removed
-// 	`istouched` tinyint(1) NOT NULL,
-//iscatched changed to iscaught
-//ishomegoal was changed to ishomedefense and it needs to be updated in the example database
 function upgrade66(){
 if(!hasTable("uo_defense")){
 	runQuery("CREATE TABLE `uo_defense` (
