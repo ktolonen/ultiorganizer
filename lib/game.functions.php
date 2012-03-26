@@ -320,6 +320,25 @@ function GameTeamScoreBorad($gameId, $teamId)
 	return $result;
 	}
 
+function GameTeamDefenseBoard($gameId, $teamId)
+	{
+	$query = sprintf("
+		SELECT p.player_id, p.firstname, p.lastname, p.profile_id, COALESCE(t.done,0) AS done, pel.num AS num FROM uo_player AS p 
+		LEFT JOIN (SELECT m.author AS author, COUNT(*) AS done 
+			FROM uo_defense AS m WHERE m.game='%s' AND m.author IS NOT NULL GROUP BY author) AS t ON (p.player_id=t.author) 
+		RIGHT JOIN (SELECT player, num FROM uo_played WHERE game='%s') as pel ON (p.player_id=pel.player) 
+			WHERE p.team='%s' 
+		ORDER BY done DESC, lastname ASC, firstname ASC",
+		mysql_real_escape_string($gameId),
+		mysql_real_escape_string($gameId),
+		mysql_real_escape_string($teamId));
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
+
 function GameScoreBoard($gameId)
 	{
 	$query = sprintf("
@@ -360,6 +379,22 @@ function GameGoals($gameId)
 	
 	return $result;
 	}
+
+function GameDefenses($gameId)
+	{
+	$query = sprintf("
+		SELECT m.*, s.firstname AS defenderfirstname, s.lastname AS defenderlastname 
+		FROM (uo_defense AS m LEFT JOIN uo_player AS s ON (m.author = s.player_id))
+		WHERE m.game='%s' 
+		ORDER BY m.num",
+		mysql_real_escape_string($gameId));
+		
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	return $result;
+	}
+
 
 function GameLastGoal($gameId){
 	$query = sprintf("
@@ -526,6 +561,22 @@ function GameSetResult($gameId, $home, $away) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
+function GameSetDefenses($gameId, $home, $away) {
+	if (hasEditGameEventsRight($gameId)) {
+		$query = sprintf("UPDATE uo_game SET homedefenses='%s', visitordefenses='%s' WHERE game_id='%s'",
+			mysql_real_escape_string($home),
+			mysql_real_escape_string($away),
+			mysql_real_escape_string($gameId));
+		$result = mysql_query($query);
+		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		if (IsFacebookEnabled()) {
+			TriggerFacebookEvent($gameId, "game", 0);
+		}
+		return $result;
+	} else { die('Insufficient rights to edit game'); }
+}
+
+
 function GameAddPlayer($gameId, $playerId, $number) {
 	if (hasEditGamePlayersRight($gameId)) {
 		$query = sprintf("INSERT INTO uo_played 
@@ -613,6 +664,21 @@ function GameRemoveAllScores($gameId) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
+function GameRemoveAllDefenses($gameId) {
+	if (hasEditGameEventsRight($gameId)) {
+		$query = sprintf("
+			DELETE FROM uo_defense 
+			WHERE game='%s'",
+			mysql_real_escape_string($gameId));
+			
+		$result = mysql_query($query);
+		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		
+		return $result;
+	} else { die('Insufficient rights to edit game'); }
+}
+
+
 function GameRemoveScore($gameId, $num) {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf("
@@ -658,6 +724,36 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
 		if (IsFacebookEnabled()) {
 			TriggerFacebookEvent($gameId, "goal", $number);
 		}
+		return $result;
+	} else { die('Insufficient rights to edit game'); }
+}
+
+function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $number) {
+	if (hasEditGameEventsRight($gameId)) {
+		$query = sprintf("
+			INSERT INTO uo_defense 
+			(game, num, author, time, iscallahan, iscaught, ishomedefense) 
+			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s') 
+			ON DUPLICATE KEY UPDATE 
+			author='%s', time='%s', iscallahan='%s', iscaught='%s', ishomedefense='%s'",
+			mysql_real_escape_string($gameId),
+			mysql_real_escape_string($number),
+			mysql_real_escape_string($player),
+			mysql_real_escape_string($time),
+			mysql_real_escape_string($iscallahan),
+			mysql_real_escape_string($caught),
+			mysql_real_escape_string($home),
+			mysql_real_escape_string($player),
+			mysql_real_escape_string($time),
+			mysql_real_escape_string($iscallahan),
+			mysql_real_escape_string($caught),
+			mysql_real_escape_string($home));
+			
+		$result = mysql_query($query);
+		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		/*if (IsFacebookEnabled()) {
+			TriggerFacebookEvent($gameId, "goal", $number);
+		}*/
 		return $result;
 	} else { die('Insufficient rights to edit game'); }
 }
