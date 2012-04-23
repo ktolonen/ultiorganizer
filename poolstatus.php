@@ -58,9 +58,14 @@ foreach ($pools as $pool) {
 
 	if($prevseries && $prevseries != $poolinfo['series']){
 		scoreboard($prevseries, true);
+		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		defenseboard($prevseries, true);
+		}
 	}
 	$prevseries = $poolinfo['series'];
-	$seriesName = U_($poolinfo['seriesname']).", ". U_($poolinfo['name']);
+	$seriesName = U_($poolinfo['seriesname']).", ". U_($poolinfo['name']);
+
 	echo "<h2>".utf8entities($seriesName)."</h2>";
 
 	if($poolinfo['type']==1){
@@ -79,6 +84,10 @@ foreach ($pools as $pool) {
 
 	if(!$seriesScoreboard && !$print){
 		scoreboard($pool['pool_id'], false);
+		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		{
+		defenseboard($prevseries, false);
+		}
 	}
 }
 if($seriesScoreboard && !$print){
@@ -152,6 +161,62 @@ function scoreboard($id, $seriesScoreboard){
 		}
 	}
 }
+
+
+function defenseboard($id, $seriesDefenseboard){
+	if($seriesDefenseboard){
+		echo "<h2>"._("Defenseboard leaders")."</h2>\n";
+		echo "<table cellspacing='0' border='0' width='100%'>\n";
+		echo "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
+		<th class='center'>"._("Total defenses")."</th></tr>\n";
+
+		$defenses = SeriesDefenseBoard($seriesinfo['series_id'],"deftotal", 10);
+		while($row = mysql_fetch_assoc($defenses))
+			{
+			echo "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
+			echo "<td>".utf8entities($row['teamname'])."</td>";
+			echo "<td class='center'>".intval($row['games'])."</td>";
+			echo "<td class='center'>".intval($row['deftotal'])."</td></tr>\n";
+			}
+
+		echo "</table>";
+		echo "<a href='?view=defensestatus&amp;Series=".$seriesinfo['series_id']."'>"._("Defenseboard")."</a>";
+
+	}else{	
+		echo "<h2>"._("Defenseboard leaders")."</h2>\n";
+		echo "<table cellspacing='0' border='0' width='100%'>\n";
+		echo "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
+		<th class='center'>"._("Total defenses")."</th></tr>\n";
+
+		$poolinfo = PoolInfo($id);
+		$pools = array();
+		if($poolinfo['type']==2){
+			//find out sub pools
+			$pools[] = $id;
+			$followers = PoolFollowersArray($poolinfo['pool_id']);
+			$pools = array_merge($pools,$followers);
+			$scores = PoolsScoreBoardWithDefenses($pools,"total", 5);
+		}else{
+			$scores = PoolScoreBoardWithDefenses($id,"total", 5);
+		}
+		
+		while($row = mysql_fetch_assoc($scores))
+			{
+			echo "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
+			echo "<td>".utf8entities($row['teamname'])."</td>";
+			echo "<td class='center'>".intval($row['games'])."</td>";
+			echo "<td class='center'>".intval($row['deftotal'])."</td></tr>\n";
+			}
+
+		echo "</table>";
+		if($poolinfo['type']==2){
+			echo "<a href='?view=defensestatus&amp;Pools=".implode(",",$pools)."'>"._("Defenseboard")."</a>";
+		}else{
+			echo "<a href='?view=defensestatus&amp;Pool=".$id."'>"._("Defenseboard")."</a>";
+		}
+	}
+}
+
 
 function printSwissdraw($seasoninfo, $poolinfo){
 // prints Swiss draw standing
