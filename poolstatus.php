@@ -195,9 +195,9 @@ function defenseboard($id, $seriesDefenseboard){
 			$pools[] = $id;
 			$followers = PoolFollowersArray($poolinfo['pool_id']);
 			$pools = array_merge($pools,$followers);
-			$scores = PoolsScoreBoardWithDefenses($pools,"total", 5);
+			$scores = PoolsScoreBoardWithDefenses($pools,"deftotal", 5);
 		}else{
-			$scores = PoolScoreBoardWithDefenses($id,"total", 5);
+			$scores = PoolScoreBoardWithDefenses($id,"deftotal", 5);
 		}
 		
 		while($row = mysql_fetch_assoc($scores))
