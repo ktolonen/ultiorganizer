@@ -86,7 +86,7 @@ foreach ($pools as $pool) {
 		scoreboard($pool['pool_id'], false);
 		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
 		{
-		defenseboard($prevseries, false);
+		defenseboard($pool['pool_id'], false);
 		}
 	}
 }
