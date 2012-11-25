@@ -3,7 +3,7 @@ include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 $html = "";
 
-$gameId = intval($_GET["Game"]);
+$gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
 $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
@@ -20,10 +20,10 @@ $html .= "</td></tr><tr><td>\n";
 if(mysql_num_rows($goals) <= 0){
 	$html .= _("Not fed in");
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=mobile/addplayerlists&amp;Game=".$gameId."&amp;Team=".$game_result['hometeam']."'>"._("Feed in score sheet")."</a>";
+	$html .=  "<a href='?view=mobile/addplayerlists&amp;Game=".$gameId."&amp;team=".$game_result['hometeam']."'>"._("Feed in score sheet")."</a>";
 }else{		
-	$html .= "<a href='?view=mobile/scoreboard&amp;Game=$gameId&amp;Team=".$game_result['hometeam']."'>"._("home team")."</a> | ";
-	$html .= "<a href='?view=mobile/scoreboard&amp;Game=$gameId&amp;Team=".$game_result['visitorteam']."'>"._("guest team")."</a>";
+	$html .= "<a href='?view=mobile/scoreboard&amp;Game=$gameId&amp;team=".$game_result['hometeam']."'>"._("home team")."</a> | ";
+	$html .= "<a href='?view=mobile/scoreboard&amp;Game=$gameId&amp;team=".$game_result['visitorteam']."'>"._("guest team")."</a>";
 	
 	$prevgoal = 0;
 	while($goal = mysql_fetch_assoc($goals)){

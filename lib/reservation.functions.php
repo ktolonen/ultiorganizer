@@ -10,9 +10,11 @@ function ReservationInfo($id) {
 	$locale = str_replace(".", "_", getSessionLocale());
 	$query = sprintf("SELECT res.id, res.location, res.fieldname, res.reservationgroup, 
 		res.date, res.starttime, res.endtime, res.timeslots, loc.name, 
-		loc.info_".$locale." as info, loc.address, res.season 
+		loc.info_".$locale." as info, loc.address, res.season, count(game_id) as games  
 		FROM uo_reservation as res left join uo_location as loc 
-		on (res.location=loc.id) WHERE res.id=%d", (int)$id);
+		on (res.location=loc.id) 
+		left join uo_game as game on (res.id = game.reservation)
+		WHERE res.id=%d", (int)$id);
 	return DBQueryToRow($query);
 }
 	
@@ -184,6 +186,7 @@ function SetReservation($reservationId, $data) {
  * @param array $data: Field data for uo_reservation
  */
 function AddReservation($data) {
+
   if (hasEditSeasonSeriesRight($data['season'])) {
 		$query = sprintf("INSERT INTO uo_reservation (location, fieldname, reservationgroup, date, 
 			starttime, endtime, timeslots, season) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s', '%s')",

@@ -1,6 +1,6 @@
 <?php 
-include_once 'lib/fpdf/fpdf.php';
-include_once 'lib/HSVClass.php';
+include_once $include_prefix.'lib/fpdf/fpdf.php';
+include_once $include_prefix.'lib/HSVClass.php';
 
 class PDF extends FPDF
 	{
@@ -18,6 +18,7 @@ class PDF extends FPDF
 			"time"=>"",
 			"placename"=>""
 			);
+	
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
 		$this->game['seasonname'] = utf8_decode($seasonname);
@@ -38,7 +39,7 @@ class PDF extends FPDF
 		
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
+		$this->SetFillColor(0);
 		$this->Cell(0,9,$data,1,1,'C',true);
 		
 		$this->SetY(21);
@@ -49,7 +50,7 @@ class PDF extends FPDF
 		$this->OneCellTable(utf8_decode(_("Division").", "._("Pool")), $this->game['poolname']);
 		$this->OneCellTable(utf8_decode(_("Field")), $this->game['placename']);
 		$this->OneCellTable(utf8_decode(_("Scheduled start date and time")), $this->game['time']);
-		$this->OneCellTable(utf8_decode(_("Game official")), "");
+		$this->DoubleCellTable(utf8_decode(_("Game official")), "");
 		$this->SetFont('Arial','',10);
 		$this->Ln();
 
@@ -61,7 +62,7 @@ class PDF extends FPDF
 
 		$this->OneCellTable(utf8_decode(_("Half time ends")), "");
 		$this->Ln();
-		$this->SpiritPoints();
+		
 		$this->Ln();
 		$this->FinalScoreTable();
 		$this->Ln();
@@ -135,21 +136,21 @@ class PDF extends FPDF
 		$this->SetTextColor(255);
 		$this->SetFillColor(0);
 
-		$this->Cell(84,8,$this->game['hometeamname'],'LRTB',0,'C',true);
+		$this->Cell(94,8,$this->game['hometeamname'],'LRTB',0,'C',true);
 		
 		$this->SetFillColor(255);
 		$this->Cell(2,8,"",'LR',0,'C',true); //separator
 		
 		$this->SetFillColor(0);
-		$this->Cell(84,8,$this->game['visitorteamname'],'LRTB',0,'C',true);
+		$this->Cell(94,8,$this->game['visitorteamname'],'LRTB',0,'C',true);
 		
 		$this->Ln();
 		$this->SetFont('Arial','',10);
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
 		$this->Cell(56,6,utf8_decode(_("Name")),'LRTB',0,'C',true);
-		$this->Cell(20,6,utf8_decode(_("Number")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("License ok")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("Play")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("License ok")),'LRTB',0,'C',true);
 		
 		$this->SetFillColor(255);
 		$this->Cell(2,6,"",'LR',0,'C',true); //separator
@@ -157,9 +158,9 @@ class PDF extends FPDF
 		$this->SetFillColor(0);
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
 		$this->Cell(56,6,utf8_decode(_("Name")),'LRTB',0,'C',true);
-		$this->Cell(20,6,utf8_decode(_("Number")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("License ok")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("Play")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("License ok")),'LRTB',0,'C',true);
 
 		$this->Ln();
 		$this->SetTextColor(0);
@@ -184,9 +185,9 @@ class PDF extends FPDF
 			$this->Cell(56,6,$hplayer,'LRTB',0,'L',true);
 			
 			$this->SetFont('Arial','',10);
-			$this->Cell(20,6,"",'LRTB',0,'C',true);
-			//$this->Cell(10,6,"",'LRTB',0,'C',true);
-			//$this->Cell(10,6,"",'LRTB',0,'C',true);
+			$this->Cell(10,6,"",'LRTB',0,'C',true);
+			$this->Cell(10,6,"",'LRTB',0,'C',true);
+			$this->Cell(10,6,"",'LRTB',0,'C',true);
 
 			$this->Cell(2,6,"",'LR',0,'C',true); //separator
 			
@@ -198,9 +199,9 @@ class PDF extends FPDF
 			$this->Cell(56,6,$vplayer,'LRTB',0,'L',true);
 			
 			$this->SetFont('Arial','',10);
-			$this->Cell(20,6,"",'LRTB',0,'C',true);
-			//$this->Cell(10,6,"",'LRTB',0,'C',true);
-			//$this->Cell(10,6,"",'LRTB',0,'C',true);
+			$this->Cell(10,6,"",'LRTB',0,'C',true);
+			$this->Cell(10,6,"",'LRTB',0,'C',true);
+			$this->Cell(10,6,"",'LRTB',0,'C',true);
 			$this->Ln();			
 			}
 			
@@ -212,7 +213,8 @@ class PDF extends FPDF
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		//$this->WriteHTML($data);
+		$this->WriteHTML($data);
+		
 		}		
 
   function PrintRoster($teamname, $seriesname, $poolname, $players) {

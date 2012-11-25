@@ -1,14 +1,14 @@
 
 .page{
-	width: 860px;
-	border:1px solid #333;
+	width: 880px;
 	margin-left: auto;
 	margin-right: auto;
 	overflow: visible;
-	padding-right: 25px;
 	padding-top: 0px;
 	padding-bottom: 25px;
-	background-color: #FFFFFF;
+	padding-right: 0px;
+	border:1px solid #333;
+	background-color: #ffffff;
 }
 
 .mobile_page{
@@ -29,7 +29,7 @@
 	width: 100%;
 	padding:0px;
 	padding-right: 0px;
-	height:60px;
+	height:50px;
 	border-bottom: 1px dashed #333;
 	/*background-color: #afafaf;*/
 }
@@ -52,7 +52,7 @@
 	width: 95%;
 	height: 16px;
 	margin-top: 0px;
-	margin-left: 5px;
+	margin-left: 10px;
 	margin-right: 0px;
 	padding-top: 0px;
 	padding-bottom: 0px;
@@ -273,6 +273,10 @@ yuicalendar.table {
 } 
 
 .playedpool {
+	background-color: #E0E0E0;
+}
+
+.tablelowlight {
 	background-color: #E0E0E0;
 }
 

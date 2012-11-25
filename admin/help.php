@@ -2,8 +2,8 @@
 
 $html = "";
 $print=0;
-if(!empty($_GET["Print"])) {
-	$print = intval($_GET["Print"]);
+if(!empty($_GET["print"])) {
+	$print = intval($_GET["print"]);
 }
 //common page
 $title = _("Helps");
@@ -19,7 +19,7 @@ $querystring = preg_replace("/&Print=[0-1]/","",$querystring);
 if($print){
 	$html .= "<hr/><div style='text-align:right'><a href='?".utf8entities($querystring)."'>"._("Return")."</a></div>";
 }else{
-	$html .= "<hr/><div style='text-align:right'><a href='?".utf8entities($querystring)."&amp;Print=1'>"._("Printable version")."</a></div>";
+	$html .= "<hr/><div style='text-align:right'><a href='?".utf8entities($querystring)."&amp;print=1'>"._("Printable version")."</a></div>";
 }
 	
 echo $html;

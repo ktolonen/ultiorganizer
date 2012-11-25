@@ -7,14 +7,14 @@ $LAYOUT_ID = POOLMOVES;
 
 $backurl = utf8entities($_SERVER['HTTP_REFERER']);
 $seriesId = 0;
-if(!empty($_GET["Pool"]))
-$poolId = intval($_GET["Pool"]);
+if(!empty($_GET["pool"]))
+$poolId = intval($_GET["pool"]);
 
-if(!empty($_GET["Series"]))
-$seriesId = intval($_GET["Series"]);
+if(!empty($_GET["series"]))
+$seriesId = intval($_GET["series"]);
 
-if(!empty($_GET["Season"]))
-$season = $_GET["Season"];
+if(!empty($_GET["season"]))
+$season = $_GET["season"];
 
 $title = _("Continuing pool");
 
@@ -165,7 +165,7 @@ if(!empty($_POST['add']))
     }
   }
 }
-echo "<form method='post' action='?view=admin/poolmoves&amp;Series=$seriesId&amp;Pool=$poolId&amp;Season=$season'>";
+echo "<form method='post' action='?view=admin/poolmoves&amp;series=$seriesId&amp;pool=$poolId&amp;season=$season'>";
 
 echo $err;
 

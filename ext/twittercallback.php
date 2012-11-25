@@ -22,7 +22,7 @@ if (isset($_REQUEST['oauth_token']) && $_SESSION['oauth_token'] !== $_REQUEST['o
 	$_SESSION['oauth_status'] = 'oldtoken';
   	$_SESSION['title'] = _("Twitter configuration failed") .":";
 	$_SESSION["var0"] = _("The oauth_token is old");
-	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;Season=$season";
+	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;season=$season";
 	header("location:../?view=admin/failed");
 }
 
@@ -48,12 +48,12 @@ unset($_SESSION['id']);
 // If HTTP response is 200 account is correctly set
 if (200 == $connection->http_code) {
 	$_SESSION['title'] = _("Twitter configuration done") ."!";
-	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;Season=$season";
+	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;season=$season";
 	header("location:../?view=admin/success");
 } else {
 	//Show error page
 	$_SESSION['title'] = _("Twitter configuration failed") .":";
 	$_SESSION["var0"] = _("HTTP Error") ." ". $connection->http_code;
-	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;Season=$season";
+	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;season=$season";
 	header("location:../?view=admin/failed");
 }

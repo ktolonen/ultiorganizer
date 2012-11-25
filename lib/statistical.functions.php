@@ -223,7 +223,7 @@ function CalcSeasonStats($season) {
 			if($game_info['homescore'] > $game_info['visitorscore']){
 				$home_wins++;
 			}
-			if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+			if(ShowDefenseStats())
 				{
 				$defenses_total += $game_info['homedefenses']+$game_info['visitordefenses'];
 				}
@@ -234,7 +234,7 @@ function CalcSeasonStats($season) {
 		
 		DBQuery($query);
 		$defense_str=" ";
-		if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+		if(ShowDefenseStats())
 			{
 			$defense_str=",defenses_total=$defenses_total ";
 			}
@@ -279,7 +279,7 @@ function CalcSeriesStats($season) {
 				if($game_info['homescore'] > $game_info['visitorscore']){
 					$home_wins++;
 				}
-				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				if(ShowDefenseStats())
 				{
 				$defenses_total += $game_info['homedefenses']+$game_info['visitordefenses'];
 				}
@@ -290,7 +290,7 @@ function CalcSeriesStats($season) {
 			
 			DBQuery($query);
 			$defense_str=" ";
-			if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+			if(ShowDefenseStats())
 				{
 				$defense_str=",defenses_total=$defenses_total ";
 				}
@@ -321,7 +321,7 @@ function CalcPlayerStats($season) {
 				$goals = PlayerSeasonGoals($player['player_id'], $season_info['season_id']);
 				$passes = PlayerSeasonPasses($player['player_id'], $season_info['season_id']);
 				$wins = PlayerSeasonWins($player['player_id'], $player_info['team'], $season_info['season_id']);
-				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				if(ShowDefenseStats())
 				{
 				$defenses = PlayerSeasonDefenses($player['player_id'], $season_info['season_id']);
 				}
@@ -337,7 +337,7 @@ function CalcPlayerStats($season) {
 				
 				DBQuery($query);
 				$defense_str=" ";
-				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				if(ShowDefenseStats())
 					{
 					$defense_str=",defenses=$defenses ";
 					}
@@ -393,7 +393,7 @@ function CalcTeamStats($season) {
 							}else{
 								$loses++;
 							}
-							if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+							if(ShowDefenseStats())
 							{
 								$defenses_total += $game['homedefenses'];
 							}
@@ -405,7 +405,7 @@ function CalcTeamStats($season) {
 							}else{
 								$loses++;
 							}
-							if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+							if(ShowDefenseStats())
 							{
 								$defenses_total += $game['visitordefenses'];
 							}
@@ -418,7 +418,7 @@ function CalcTeamStats($season) {
 				
 				DBQuery($query);
 				$defense_str=" ";
-				if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+				if(ShowDefenseStats())
 					{
 					$defense_str=",defenses_total=$defenses_total ";
 					}

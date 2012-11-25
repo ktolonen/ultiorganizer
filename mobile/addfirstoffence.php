@@ -5,7 +5,7 @@ include_once 'lib/team.functions.php';
 include_once 'lib/player.functions.php';
 $html = "";
 
-$gameId = intval($_GET["Game"]);
+$gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
 	
 if(isset($_POST['save'])) {

@@ -7,17 +7,16 @@ include_once $include_prefix.'lib/pool.functions.php';
 include_once $include_prefix.'lib/reservation.functions.php';
 include_once $include_prefix.'lib/url.functions.php';
 
-$LAYOUT_ID = TEAMPROFILE;
 $max_file_size = 5 * 1024 * 1024; //5 MB
 $max_new_links = 3;
 $html = "";
 
-$teamId = intval($_GET["Team"]);
+$teamId = intval(iget("team"));
 
 if(isset($_SERVER['HTTP_REFERER']))
 	$backurl = utf8entities($_SERVER['HTTP_REFERER']);
 else
-	$backurl = "?view=user/teamplayers&Team=$teamId";
+	$backurl = "?view=user/teamplayers&team=$teamId";
 
 $team = TeamInfo($teamId);
 
@@ -70,7 +69,7 @@ if(isset($_POST['save'])){
 		$html .= UploadTeamImage($teamId);
 	}
 
-}elseif(isset($_POST['remove_x'])){
+}elseif(isset($_POST['remove'])){
 	RemoveTeamProfileImage($teamId);
 }elseif(isset($_POST['removeurl_x'])){
 	$id = $_POST['hiddenDeleteId'];
@@ -86,19 +85,18 @@ if($profile){
 	$tp['achievements'] = $profile['achievements'];
 	$tp['profile_image'] = $profile['profile_image'];
 }
-	
-//common page
-pageTopHeadOpen($title);
-include_once 'script/disable_enter.js.inc';
-include_once 'script/common.js.inc';
-pageTopHeadClose($title);
-leftMenu($LAYOUT_ID);
-contentStart();
+
+$html .= file_get_contents('script/disable_enter.js.inc');
+
+$menutabs[_("Roster")]= "?view=user/teamplayers&team=$teamId";
+$menutabs[_("Team Profile")]= "?view=user/teamprofile&team=$teamId";
+$menutabs[_("Club Profile")]= "?view=user/clubprofile&team=$teamId";
+$html .= pageMenu($menutabs,"",false);
 
 //content
 $html .= "<h1>". utf8entities($team['name'])."</h1>";
 
-$html .= "<form method='post' enctype='multipart/form-data' action='?view=user/teamprofile&amp;Team=$teamId'>\n";
+$html .= "<form method='post' enctype='multipart/form-data' action='?view=user/teamprofile&amp;team=$teamId'>\n";
 	
 $html .= "<table>";
 $html .= "<tr><td class='infocell'>"._("Abbreviation").":</td>";
@@ -190,11 +188,7 @@ $html .=  "<tr><td colspan = '2' align='right'><br/>
 $html .= "</table>\n";
 $html .= "<div><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></div>";
 $html .= "</form>";
-$html .= "<p><a href='?view=teamcard&amp;Team=". $teamId."'>"._("Check Team card")."</a></p>";	
+$html .= "<p><a href='?view=teamcard&amp;team=". $teamId."'>"._("Check Team card")."</a></p>";	
 
-echo $html;
-
-//common end
-contentEnd();
-pageEnd();
+showPage($title, $html);
 ?>

@@ -75,6 +75,25 @@ function PoolPlayoffFollowersArray($poolId) {
 }
 
 /**
+ * Get playoff 1st round pool for given pool based on follower id (uo_pool.follower).
+ * @param int $poolId uo_pool.pool_id
+ * @return root pool id.
+ */
+function PoolPlayoffRoot($poolId) {
+  $ids = array();
+
+  $query = sprintf("SELECT pool_id FROM uo_pool WHERE follower=%d",
+  (int)$poolId);
+  $root = DBQueryToValue($query);
+  
+  if($root > 0){
+    $poolId = PoolPlayoffRoot($root);
+  }
+  
+  return $poolId;
+}
+
+/**
  * Information of given pool template.
  *
  * @param int $poolId uo_pooltemplate.template_id
@@ -154,6 +173,17 @@ function PoolListAll() {
   return DBQuery($query);
 }
 
+/**
+ * Get list of pool types.
+ * @return Hardcoded PHP array of pool types.
+ */
+function PoolTypes() {
+  return array(
+  	"roundrobin"=>1,
+  	"playoff"=>2,
+  	"swissdraw"=>3,
+  	"crossmatch"=>4);
+}
 
 /**
  * Get all teams in given pool.
@@ -339,8 +369,6 @@ function PoolScoreBoard($poolId, $sorting, $limit){
 
   return DBQuery($query);
 }
-
-
 
 /**
  * Get score board for list of pools.
@@ -1271,7 +1299,20 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower=fal
 }
 
 /**
- * Update pool parameters.
+ * Update all pool parameters.
+ * 
+ * @param int $poolId
+ * @param uo_pool $params
+ */
+function SetPoolDetails($poolId, $params) {
+  $poolinfo = PoolInfo($poolId);
+  if(hasEditSeasonSeriesRight($poolinfo['season'])) {
+    DBSetRow("uo_pool",$params,"pool_id=$poolId");
+  } else { die('Insufficient rights to edit pool'); }
+}
+
+/**
+ * Update pool key parameters.
  * 
  * @param int $poolId
  * @param uo_pool $params
@@ -1279,45 +1320,20 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower=fal
 function SetPool($poolId, $params) {
   $poolinfo = PoolInfo($poolId);
   if(hasEditSeasonSeriesRight($poolinfo['season'])) {
-    $query = sprintf("UPDATE uo_pool SET
-			name='%s', timeoutlen='%s', halftime='%s', winningscore='%s', timecap='%s', scorecap='%s', 
-			addscore='%s', halftimescore='%s', timeouts='%s',	timeoutsper='%s', timeoutsovertime='%s', 
-			timeoutstimecap='%s', betweenpointslen='%s', continuingpool='%s', placementpool='%s', played='%s', 
-			visible='%s', type='%s', mvgames='%s', ordering='%s', teams='%s', timeslot='%s', color='%s',
-			forfeitscore='%s', forfeitagainst='%s' 
-			WHERE pool_id='%s'",
+    $query = sprintf("UPDATE uo_pool SET name='%s', continuingpool='%s', placementpool='%s',   
+			visible='%s', type='%s', ordering='%s' WHERE pool_id='%s'",
     mysql_real_escape_string($params['name']),
-    mysql_real_escape_string($params['timeoutlen']),
-    mysql_real_escape_string($params['halftime']),
-    mysql_real_escape_string($params['winningscore']),
-    mysql_real_escape_string($params['timecap']),
-    mysql_real_escape_string($params['scorecap']),
-    mysql_real_escape_string($params['addscore']),
-    mysql_real_escape_string($params['halftimescore']),
-    mysql_real_escape_string($params['timeouts']),
-    mysql_real_escape_string($params['timeoutsper']),
-    mysql_real_escape_string($params['timeoutsovertime']),
-    mysql_real_escape_string($params['timeoutstimecap']),
-    mysql_real_escape_string($params['betweenpointslen']),
     mysql_real_escape_string($params['continuingpool']),
     mysql_real_escape_string($params['placementpool']),
-    mysql_real_escape_string($params['played']),
     mysql_real_escape_string($params['visible']),
     mysql_real_escape_string($params['type']),
-    mysql_real_escape_string($params['mvgames']),
     mysql_real_escape_string($params['ordering']),
-    mysql_real_escape_string($params['teams']),
-    mysql_real_escape_string($params['timeslot']),
-    mysql_real_escape_string($params['color']),
-    mysql_real_escape_string($params['forfeitscore']),
-    mysql_real_escape_string($params['forfeitagainst']),
     mysql_real_escape_string($poolId));
     	
   DBQuery($query);
   
   } else { die('Insufficient rights to edit pool'); }
 }
-
 /**
  * Sets pool visibility (= shown for public or not)
  * 
@@ -1427,6 +1443,7 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool) {
  */
 function PoolAddTeam($poolId, $teamId, $rank, $updaterank=false) {
   $poolInfo = PoolInfo($poolId);
+  
   if (hasEditTeamsRight($poolInfo['series'])) {
     
     if($updaterank){
@@ -1448,11 +1465,12 @@ function PoolAddTeam($poolId, $teamId, $rank, $updaterank=false) {
     DBQuery($query);
 
     //update team pool
+    /*
     $query = sprintf("UPDATE uo_team SET
 			pool=%d WHERE team_id=%d",
     (int)$poolId,
     (int)$teamId);
-    	
+    */	
     DBQuery($query);
 
   } else { die('Insufficient rights to edit pool teams'); }

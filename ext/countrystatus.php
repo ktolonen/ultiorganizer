@@ -9,7 +9,7 @@ include_once 'localization.php';
 <meta http-equiv="Expires" content="-1"/>
 <?php
 
-$style = urldecode($_GET["Style"]);
+$style = iget("style");
 if(empty($style))
 	$style='pelikone.css';
 	
@@ -26,10 +26,10 @@ include_once '../lib/game.functions.php';
 include_once '../lib/timetable.functions.php';
 
 
-$season = $_GET["Season"];
+$season =iget("season");
 $seasoninfo = SeasonInfo($season);
 
-$countryId = $_GET["Country"];
+$countryId = iget("country");
 
 $prevdivision = "";
 $allpools = CountryPools($season, $countryId);

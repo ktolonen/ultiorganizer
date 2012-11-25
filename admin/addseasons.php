@@ -28,8 +28,8 @@ $sp = array(
 	"timezone"=>GetDefTimeZone()	
 	);
 	
-if(!empty($_GET["Season"]))
-	$seasonId = $_GET["Season"];
+if(!empty($_GET["season"]))
+	$seasonId = $_GET["season"];
 	
 //process itself on submit
 if(!empty($_POST['add'])){
@@ -46,7 +46,7 @@ if(!empty($_POST['add'])){
 	$sp['starttime'] = ToInternalTimeFormat($_POST['seasonstarttime']);
 	$sp['endtime'] = ToInternalTimeFormat($_POST['seasonendtime']);
 	$sp['enrollopen'] = !empty($_POST['enrollopen']);
-	$sp['enroll_deadline'] = ToInternalTimeFormat($_POST['enrollendtime']);
+	$sp['enroll_deadline'] = isset($_POST['enrollendtime']) ? ToInternalTimeFormat($_POST['enrollendtime']) : ToInternalTimeFormat($_POST['seasonstarttime']);
 	$sp['iscurrent'] = !empty($_POST['iscurrent']);
 	$sp['spiritpoints'] = !empty($_POST['spiritpoints']);
 	$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
@@ -78,7 +78,7 @@ if(!empty($_POST['add'])){
 		$_SESSION["var4"] = _("Enrollment open").": ".(intval($sp['enrollopen'])?_("yes"):_("no"));
 		$_SESSION['backurl'] = "?view=admin/seasons";
 		session_write_close();
-		header("location:?view=admin/success");
+		header("location:?view=admin/seasonadmin&season=$seasonId");
 	}
 }else if(!empty($_POST['save'])){
     $backurl = utf8entities($_POST['backurl']);
@@ -258,7 +258,7 @@ if(empty($seasonId)){
 	$disabled="";
 }else{
 	$html .= "<h2>"._("Edit season/tournament")."</h2>\n";
-	$html .= "<form method='post' action='?view=admin/addseasons&amp;Season=$seasonId'>";
+	$html .= "<form method='post' action='?view=admin/addseasons&amp;season=$seasonId'>";
 	$disabled="disabled='disabled'";
 }
 

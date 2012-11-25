@@ -125,7 +125,7 @@ function gamerow($gameId, $game){
 		$ret .= "</td></tr><tr><td>\n";
 		$ret .= "&nbsp;&nbsp;&nbsp;&nbsp;";
 		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addresult&amp;Game=".$gameId."'>"._("set result")."</a> | ";
-		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addplayerlists&amp;Game=".$gameId."&amp;Team=".$game['hometeam']."'>"._("set rosters")."</a> | ";
+		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addplayerlists&amp;Game=".$gameId."&amp;team=".$game['hometeam']."'>"._("set rosters")."</a> | ";
 		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addscoresheet&amp;Game=$gameId'>"._("record scores")."</a>";
 		$ret .= "</td></tr><tr><td>\n";
 	}else{

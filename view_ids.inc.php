@@ -1,4 +1,6 @@
 <?php
+
+/*DEPRECATED, will be removed from future versions.*/
 define("HOME",100);
 define("SEASONTIMETABLES",101);
 define("TIMETABLES",102);
@@ -28,6 +30,7 @@ define("STATISTICS", 125);
 define("GAMES", 126);
 define("PRIVACY", 127);
 define("ALLCOUNTRIES", 128);
+define("DEFENSEBOARD", 129);
 
 define("USERHOME",200);
 define("USERINFO",201);
@@ -45,6 +48,8 @@ define("ORGANIZATIONPROFILE", 212);
 define("ADDMEDIALINK", 213);
 define("RESPONSETEAMS", 214);
 define("FBPUBLISH", 215);
+define("ADDDEFENSESHEET", 216);
+
 
 define("ADMINHOME",300);
 define("SEASONS",301);

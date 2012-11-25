@@ -5,9 +5,10 @@ include_once 'lib/team.functions.php';
 include_once 'lib/player.functions.php';
 $html = "";
 
-$gameId = intval($_GET["Game"]);
-if(isset($_GET["Team"])){
-	$teamId = intval($_GET["Team"]);
+$gameId = intval(iget("game"));
+
+if(iget("team")){
+	$teamId = intval(iget("team"));
 }else{
 	$game_result = GameResult($gameId);
 	$teamId = $game_result['hometeam'];
@@ -77,9 +78,9 @@ if(isset($_POST['save'])) {
 	if(empty($html)){
 		$game_result = GameResult($gameId);
 		if($teamId==$game_result['hometeam']){
-			header("location:?view=mobile/addplayerlists&Game=".$gameId."&Team=".$game_result['visitorteam']);
+			header("location:?view=mobile/addplayerlists&game=".$gameId."&team=".$game_result['visitorteam']);
 		}elseif($teamId==$game_result['visitorteam']){
-			header("location:?view=mobile/addscoresheet&Game=".$gameId);
+			header("location:?view=mobile/addscoresheet&game=".$gameId);
 		}
 	}
 }

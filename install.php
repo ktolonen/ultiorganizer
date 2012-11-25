@@ -191,7 +191,7 @@
 
     return $html;
   }
-  
+
   function database(){
 
     $db_hostname=isset($_POST['hostname']) ? mysql_escape_string($_POST['hostname']) : "localhost";
@@ -440,17 +440,17 @@
 
     if(!empty($_POST['saveconf'])){
       $passed = true;
-    
+
       if(empty($passwd1) || (strlen($passwd1) <5 || strlen($passwd1) > 20)){
         $html .= "<p style='color:red'>"._("Invalid password (min. 5 letters).")."</p>";
         $passed = false;
       }
-      
+
       if($passwd1!=$passwd2){
         $html .= "<p style='color:red'>Password doesn't match.</p>";
         $passed = false;
       }
-      
+
       if($passed){
         $mysqlconnectionref = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
         $db = mysql_select_db(DB_DATABASE);

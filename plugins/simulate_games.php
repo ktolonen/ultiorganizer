@@ -28,7 +28,7 @@ $seasonId = "";
 if(!empty($_POST['season'])){
 	$seasonId = $_POST['season'];
 }
-
+	
 if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
 	$pools = $_POST["pools"];

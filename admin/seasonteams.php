@@ -8,9 +8,79 @@ include_once 'lib/country.functions.php';
 
 $LAYOUT_ID = SEASONTEAMS;
 $html = "";
-$season = $_GET["Season"];
+$season = $_GET["season"];
+$series = SeasonSeries($season);
+$series_id = CurrentSeries($season);
+
+//team parameters
+$tp=array(
+	"team_id"=>"",
+	"name"=>"",
+	"club"=>"",
+	"country"=>"",
+	"abbreviation"=>"",
+	"series"=>$series_id,
+	"pool"=>"",
+	"rank"=>"",
+	"valid"=>"1",
+	"bye"=>"");
+
 $title = utf8entities(SeasonName($season)).": "._("Teams");
 $seasonInfo = SeasonInfo($season);
+
+//remove
+if(!empty($_POST['remove_x'])){
+  $id = $_POST['hiddenDeleteId'];
+  if(CanDeleteTeam($id)){
+    DeleteTeam($id);
+  }
+}
+
+//add
+if(!empty($_POST['add'])) {
+  $tp['name']=!empty($_POST['name0']) ? $_POST['name0'] : "no name";
+  $tp['club']=!empty($_POST['club0']) ? $_POST['club0'] : "";
+  $tp['rank']=!empty($_POST["seed0"]) ? $_POST["seed0"] : "0";
+  if(!empty($tp['club'])){
+    $clubId = ClubId($tp['club']);
+    if($clubId==-1){
+      $clubId = AddClub($series_id,$tp['club']);
+    }
+    $tp['club'] = $clubId;
+  }
+  $tp['country']=!empty($_POST['country0']) ? $_POST['country0'] : "";
+  $tp['abbreviation']=!empty($_POST['abbrev0']) ? $_POST['abbrev0'] : "";
+  AddTeam($tp);
+}
+
+//set
+if(!empty($_POST['save'])) {
+  $teams = SeriesTeams($series_id, true);
+  foreach($teams as $team){
+    $team_id=$team['team_id'];
+    $tp['team_id']=$team_id;
+    $tp['name']=!empty($_POST["name$team_id"]) ? $_POST["name$team_id"] : "no name";
+    $tp['club']=!empty($_POST["club$team_id"]) ? $_POST["club$team_id"] : "";
+    $tp['rank']=!empty($_POST["seed$team_id"]) ? $_POST["seed$team_id"] : "0";
+    if(!empty($tp['club'])){
+      $clubId = ClubId($tp['club']);
+      if($clubId==-1){
+        $clubId = AddClub($series_id,$tp['club']);
+      }
+      $tp['club'] = $clubId;
+    }
+    $tp['country']=!empty($_POST["country$team_id"]) ? $_POST["country$team_id"] : "";
+    $tp['abbreviation']=!empty($_POST["abbrev$team_id"]) ? $_POST["abbrev$team_id"] : "";
+    SetTeam($tp);
+  }
+}
+
+if(!empty($_POST['copy'])) {
+  SeriesCopyTeams($series_id, $_POST["copyteams"]);
+}
+
+$series_info = SeriesInfo($series_id);
+$teams = SeriesTeams($series_id, true);
 
 //common page
 pageTopHeadOpen($title);
@@ -24,107 +94,146 @@ function setId(id){
 //-->
 </script>
 <?php
-pageTopHeadClose($title);
+$setFocus = "onload=\"document.getElementById('name0').focus();\"";
+pageTopHeadClose($title, false, $setFocus);
 leftMenu($LAYOUT_ID);
 contentStart();
-	
-//process itself on submit
-if(!empty($_POST['remove_x'])){
-	$id = $_POST['hiddenDeleteId'];
-	$ok = true;
-		
-	//run some test to for safe deletion
-	$games = TeamGames($id);
-	if(mysql_num_rows($games)){
-		$html .= "<p class='warning'>"._("Team has")." ".mysql_num_rows($games)." "._("game").". ".("Pelit pit&auml;&auml; poistaa ennen joukkueen poistamista").".</p>";
-		$ok = false;
-	}
-		
-	$players = TeamPlayerList($id);
-	if(mysql_num_rows($players)){
-		$html .= "<p class='warning'>"._("Team has")." ".mysql_num_rows($players)." "._("players").". "._("Players must be removed before removing the team").".</p>";
-		$ok = false;
-	}
-		
-	if($ok)
-		DeleteTeam($id);
-}
-
-$html .= "<form method='post' action='?view=admin/seasonteams&amp;Season=$season'>";
-
-$series = SeasonSeries($season);
 
 foreach($series as $row){
-	$html .= "<h2>".utf8entities($row['name'])."</h2>\n";
-	
-	$html .= "<table border='0' cellpadding='2px'>\n";
-
-	$html .= "<tr><th>#</th>";
-	$html .= "<th style='width:20%'>"._("Name")."</th>";
-	$html .= "<th  style='width:20%'>"._("Pool")."</th>";
-	if(!intval($seasonInfo['isnationalteams'])){
-		$html .= "<th  style='width:20%'>"._("Club")."</th>";
-	}
-	if(intval($seasonInfo['isinternational'])){
-		$html .= "<th style='width:10%'>"._("Country")."</th>";
-	}
-	
-	$html .= "<th style='width:10%;white-space: nowrap;'>"._("Roster")."</th><th>"._("Contact person")."</th><th></th></tr>\n";
-
-	$teams = SeriesTeams($row['series_id'],true);
-	
-	foreach($teams as $team){
-		$teaminfo = TeamFullInfo($team['team_id']);
-		$poolname = U_($team['poolname']);
-		if(!empty($team['name'])){
-			if (intval($seasonInfo['isnationalteams'])) {
-				$teamname = utf8entities(U_($team['name']));
-			} else {
-				$teamname = utf8entities($team['name']);
-			}
-		}else{
-			$teamname = _("No name");
-		}
-		$html .= "<tr>";
-		$html .= "<td>".$team['rank']."</td>";
-		$html .= "<td><a href='?view=admin/addseasonteams&amp;Season=$season&amp;Team=".$team['team_id']."&amp;Series=".$row['series_id']."'>".$teamname."</a></td>";
-		$html .= "<td>".utf8entities($poolname)."</td>";
-				
-		if(!intval($seasonInfo['isnationalteams'])){
-			$html .= "<td>".utf8entities($team['clubname'])."</td>";
-		}
-		if(intval($seasonInfo['isinternational'])){
-		    if($team['countryname']){
-			  $html .= "<td>".utf8entities(_($team['countryname']))."</td>";
-		    }else{
-		      $html .= "<td>-</td>";
-		    }
-		}
-	
-		$html .= "<td class='center'><a href='?view=user/teamplayers&amp;Team=".$team['team_id']."'>"._("Roster")."</a></td>";			
-		$admins = getTeamAdmins($team['team_id']);
-		if(mysql_num_rows($admins)){
-			$html .= "<td>";
-			while($row1 = mysql_fetch_assoc($admins)){
-				$html .= "<a href='?view=user/userinfo&amp;user=".$row1['userid']."'>".utf8entities($row1['name'])."</a>";
-		
-				if($row1['email'])
-					$html .= "&nbsp;<a href='mailto:".$row1['email']."'>@</a>";
-				$html .= "<br/>";
-			}
-			$html .= "</td>";
-		}else{
-			$html .= "<td>-</td>";
-		}
-
-		if(CanDeleteTeam($team['team_id'])){
-			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$team['team_id'].");\"/></td>";
-		}
-		$html .= "</tr>\n";	
-	}
-	$html .= "</table><p><input class='button' name='add' type='button' value='"._("Add")."' onclick=\"window.location.href='?view=admin/addseasonteams&amp;Season=$season&amp;Series=".$row['series_id']."'\"/></p>";
-	$html .= "<p><a href='?view=user/pdfscoresheet&amp;series=".$row['series_id']."'>"._("Print team rosters")."</a></p>";	
+  $menutabs[U_($row['name'])]="?view=admin/seasonteams&season=".$season."&series=".$row['series_id'];
 }
+$menutabs[_("...")]="?view=admin/seasonseries&season=".$season;
+pageMenu($menutabs,"?view=admin/seasonteams&season=".$season."&series=".$series_id);
+
+$html .= "<form method='post' action='?view=admin/seasonteams&amp;season=$season&amp;series=".$series_id."'>";
+
+$row = SeriesInfo($series_id);
+
+$html .= "<table class='admintable'>\n";
+
+$html .= "<tr><th class='center' title='"._("Seed")."'>#</th>";
+$html .= "<th>"._("Name")."</th>";
+$html .= "<th>"._("Abbrev")."</th>";
+
+if(!intval($seasonInfo['isnationalteams'])){
+  $html .= "<th>"._("Club")."</th>";
+}
+if(intval($seasonInfo['isinternational'])){
+  $html .= "<th>"._("Country")."</th>";
+}
+$html .= "<th>"._("Contact person")."</th>";
+$html .= "<th>"._("Roster")."</th>";
+$html .= "<th></th></tr>\n";
+
+$total=0;
+
+foreach($teams as $team){
+  $team_id=$team['team_id'];
+  $total++;
+
+  $teaminfo = TeamFullInfo($team['team_id']);
+  $poolname = U_($team['poolname']);
+  if(!empty($team['name'])){
+    if (intval($seasonInfo['isnationalteams'])) {
+      $teamname = utf8entities(U_($team['name']));
+    } else {
+      $teamname = utf8entities($team['name']);
+    }
+  }else{
+    $teamname = _("No name");
+  }
+  $html .= "<tr class='admintablerow'>";
+  $html .= "<td><input class='input' size='2' maxlength='5' name='seed$team_id' value='".$team['rank']."'/></td>";
+  $html .= "<td><input class='input' size='20' maxlength='50' name='name$team_id' value='".$team['name']."'/></td>";
+  $html .= "<td><input class='input' size='4' maxlength='15' name='abbrev$team_id' value='".$team['abbreviation']."'/></td>";
+
+  if(!intval($seasonInfo['isnationalteams'])){
+    $html .= "<td><input class='input' size='25' maxlength='50' name='club$team_id' value='".$team['clubname']."'/></td>";
+  }
+
+  if(intval($seasonInfo['isinternational'])){
+    if(!intval($seasonInfo['isnationalteams'])){
+      $html .= "<td>".CountryDropListWithValues("country$team_id","country$team_id",$teaminfo['country'], "80px")."</td>";
+    }else{
+      $html .= "<td>".CountryDropListWithValues("country$team_id","country$team_id",$teaminfo['country'], "")."</td>";
+    }
+  }
+  $html .= "<td>";
+
+  $admins = getTeamAdmins($team['team_id']);
+
+  for($i=0;$i<count($admins);$i++){
+    $user = $admins[$i];
+    $html .= "<a href='?view=user/userinfo&amp;user=".$user['userid']."'>".utf8entities($user['name'])."</a>";
+    if($i+1<count($admins))
+    $html .= "<br/>";
+  }
+
+  $html .= "&nbsp;<a href='?view=admin/addteamadmins&amp;series=".$row['series_id']."'>"._("...")."</a>";
+  $html .= "</td>";
+
+  $html .= "<td class='center'><a href='?view=user/teamplayers&amp;team=".$team['team_id']."'>"._("Roster")."</a></td>";
+
+  $html .= "<td>";
+  $html .= "<a href='?view=admin/addseasonteams&amp;team=$team_id'><img class='deletebutton' src='images/settings.png' alt='D' title='"._("edit details")."'/></a>";
+  if(CanDeleteTeam($team['team_id'])){
+    $html .= "<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$team['team_id'].");\"/>";
+  }
+  $html .= "</td>";
+  $html .= "</tr>\n";
+}
+
+$total++;
+$html .=  "<tr>";
+$html .= "<td style='padding-top:15px'><input class='input' size='2' maxlength='5' name='seed0' value='$total'/></td>";
+$html .= "<td style='padding-top:15px'><input class='input' size='20' maxlength='50' name='name0' id='name0' value=''/></td>";
+$html .= "<td style='padding-top:15px'><input class='input' size='4' maxlength='15' name='abbrev0' value=''/></td>";
+if(!intval($seasonInfo['isnationalteams'])){
+  $html .= "<td style='padding-top:15px'><input class='input' size='25' maxlength='50' name='club0' value=''/></td>";
+}
+if(intval($seasonInfo['isinternational'])){
+  if(!intval($seasonInfo['isnationalteams'])){
+    $html .= "<td style='padding-top:15px'>".CountryDropListWithValues("country0","country0","", "80px")."</td>";
+  }else{
+    $html .= "<td style='padding-top:15px'>".CountryDropListWithValues("country0","country0","", "")."</td>";
+  }
+}
+
+
+$html .=  "<td style='padding-top:15px'><input style='margin-left:15px' id='add' class='button' name='add' type='submit' value='"._("Add")."'/></td>";
+$html .=  "</tr>\n";
+
+$html .= "</table>\n";
+$html .=  "<p>";
+$html .=  "<input id='save' class='button' name='save' type='submit' value='"._("Save")."'/> ";
+$html .=  "<input id='cancel' class='button' name='cancel' type='submit' value='"._("Cancel")."'/>";
+$html .=  "</p>";
+
+$seasons = SeasonsArray();
+
+if(count($seasons)){
+  $html .= "<p>". _("Add teams from:")." ";
+  $html .= "<select class='dropdown' name='copyteams'>\n";
+  foreach($seasons as $season){
+    $divisions = SeasonSeries($season['season_id']);
+    foreach($divisions as $division){
+      if($division['type'] != $series_info['type']){
+        continue;
+      }
+
+      $html .= "<option class='dropdown' value='". $division['series_id'] . "'>". utf8entities($season['name'] ." ". $division['name']) ."</option>";
+    }
+  }
+  $html .= "</select>\n";
+  $html .= "<input id='copy' class='button' name='copy' type='submit' value='"._("Copy")."'/>";
+  $html .= "</p>\n";
+}
+
+$html .= "<hr/>\n";
+$html .= "<p>";
+$html .= "<a href='?view=admin/addteamadmins&amp;series=".$row['series_id']."'>"._("Add Team Admins")."</a> | ";
+$html .= "<a href='?view=user/pdfscoresheet&amp;series=".$row['series_id']."'>"._("Print team rosters")."</a></p>";
+
 //stores id to delete
 $html .= "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 

@@ -6,7 +6,7 @@ require_once('lib/twitteroauth/twitteroauth.php');
 $LAYOUT_ID = TWITTERCONFIGURATION;
 $title = _("Twitter configuration");
 $html = "";
-$season = $_GET["Season"];
+$season = $_GET["season"];
 if(!isset($_SESSION['TwitterConsumerKey'])){
 	$twitterconf = GetTwitterConf();
 	$_SESSION['TwitterConsumerKey'] = $twitterconf['TwitterConsumerKey'];
@@ -47,7 +47,7 @@ contentStart();
 
 $html .= "<h2>". _("Twitter accounts to publish game results") ."</h2>";
 $html .= "<p>". _("Note if you are signed in Twitter with same browser then this account is automatically used for following twitter requests. If you want assign division to different account, please sign out from Twitter after establishing one twitter.") ."</p>";
-$html .= "<form method='post' action='?view=admin/twitterconf&amp;Season=$season'>";
+$html .= "<form method='post' action='?view=admin/twitterconf&amp;season=$season'>";
 $html .= "<table border='0' cellpadding='4px'>\n";
 $html .= "<tr>";
 $html .= "<th>"._("Source")."</th>";

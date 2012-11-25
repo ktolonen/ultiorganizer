@@ -6,7 +6,7 @@ include_once $include_prefix.'lib/url.functions.php';
 $LAYOUT_ID = ADDSEASONUSERS;
 $title = _("Event users");
 $html = "";
-$seasonId = $_GET["Season"];
+$seasonId = $_GET["season"];
 
 if(!isSeasonAdmin($seasonId)){
    die('Insufficient rights');  
@@ -41,7 +41,7 @@ if(!empty($_POST['add'])){
   }else{
     $html .= "<p class='warning'>"._("Invalid user")."</p>";
   }
-}elseif(!empty($_POST['remove'])){
+}elseif(!empty($_POST['remove_x'])){
   if($_GET["access"]=="eventadmin"){
     RemoveSeasonUserRole($_POST['delId'], "seasonadmin:".$seasonId, $seasonId);
   }elseif($_GET["access"]=="teamadmin"){
@@ -61,7 +61,7 @@ contentStart();
 
 $html .= "<h3>"._("Event admins").":</h3>";
 $admins = SeasonAdmins($seasonId);
-$html .= "<form method='post' action='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=eventadmin' name='eventadmin'>";
+$html .= "<form method='post' action='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=eventadmin' name='eventadmin'>";
 $html .= "<table>";
 foreach($admins as $user){
   $html .= "<tr>";
@@ -77,14 +77,14 @@ if(!empty($_GET["access"]) && $_GET["access"]=="eventadmin"){
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=eventadmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=eventadmin'>"._("Add more...")."</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "</form>";
 
 $html .= "<h3>"._("Team admins").":</h3>";
 $admins = SeasonTeamAdmins($seasonId);
-$html .= "<form method='post' action='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=teamadmin' name='teamadmin'>";
+$html .= "<form method='post' action='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=teamadmin' name='teamadmin'>";
 $html .= "<table style='white-space: nowrap;'>";
 foreach($admins as $user){
   $html .= "<tr>";
@@ -110,7 +110,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="teamadmin"){
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=teamadmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=teamadmin'>"._("Add more...")."</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "<div><input type='hidden' name='teamId'/></div>";
@@ -119,7 +119,7 @@ $html .= "</form>";
 
 $html .= "<h3>"._("Scorekeepers").":</h3>";
 $seasongames = SeasonAllGames($seasonId);
-$html .= "<form method='post' action='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=gameadmin' name='gameadmin'>";
+$html .= "<form method='post' action='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=gameadmin' name='gameadmin'>";
 $html .= "<table style='white-space: nowrap;'>";
 //all event admins have score keeping rights
 $admins = SeasonAdmins($seasonId);
@@ -174,12 +174,12 @@ if(!empty($_GET["access"]) && $_GET["access"]=="gameadmin"){
   $html .= "</table>";  
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=gameadmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=gameadmin'>"._("Add more...")."</a></p>";
 }
 $html .= "</form>";
 
 $html .= "<h3>"._("Roster accreditation rights").":</h3>";
-$html .= "<form method='post' action='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=accradmin' name='accradmin'>";
+$html .= "<form method='post' action='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=accradmin' name='accradmin'>";
 $html .= "<table  style='white-space: nowrap;'>";
 //all event admins have score keeping rights
 $admins = SeasonAdmins($seasonId);
@@ -217,7 +217,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="accradmin"){
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;Season=".$seasonId."&amp;access=accradmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=accradmin'>"._("Add more...")."</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "<div><input type='hidden' name='teamId'/></div>";

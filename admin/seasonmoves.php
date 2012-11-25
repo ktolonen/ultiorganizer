@@ -10,18 +10,18 @@ $season = 0;
 $order="to";
 $title = _("Moved teams");
 
-if(!empty($_GET["Season"]))
-	$season = $_GET["Season"];
+if(!empty($_GET["season"]))
+	$season = $_GET["season"];
 
-if(!empty($_GET["Series"])){
-	$seriesId = $_GET["Series"];
+if(!empty($_GET["series"])){
+	$seriesId = $_GET["series"];
 	if(empty($season)){
 		$season = SeriesSeasonId($seriesId);
 	}
 }
 
-if(!empty($_GET["Order"]))
-	$order = $_GET["Order"];
+if(!empty($_GET["order"]))
+	$order = $_GET["order"];
 
 //common page
 pageTopHeadOpen($title);
@@ -87,13 +87,13 @@ if(!empty($_POST['remove_x'])) {
 	}
 }
 
-echo "[<a href='?view=admin/seasonmoves&amp;Season=$season&amp;Series=$seriesId&amp;Order=to'>"._("Move to")."</a>]";
+echo "[<a href='?view=admin/seasonmoves&amp;season=$season&amp;series=$seriesId&amp;order=to'>"._("Move to")."</a>]";
 echo "&nbsp;&nbsp;";	
-echo "[<a href='?view=admin/seasonmoves&amp;Season=$season&amp;Series=$seriesId&amp;Order=from'>"._("Move from")."</a>]";
+echo "[<a href='?view=admin/seasonmoves&amp;season=$season&amp;series=$seriesId&amp;order=from'>"._("Move from")."</a>]";
 
 
 
-echo "<form method='post' id='moves' action='?view=admin/seasonmoves&amp;Season=$season&amp;Series=$seriesId&amp;Order=$order'>";
+echo "<form method='post' id='moves' action='?view=admin/seasonmoves&amp;season=$season&amp;series=$seriesId&amp;order=$order'>";
 
 $serieslist=array();
 //all series from season
@@ -120,7 +120,7 @@ foreach($serieslist as $series){
 			}
 
 			if(count($moves)){
-				echo "<table border='0' width='600'><tr>
+				echo "<table class='admintable'><tr>
 					<th style='width:25%'>"._("From pool")."</th>
 					<th style='width:5%'>"._("From position")."</th>
 					<th style='width:25%'>"._("To pool")."</th>
@@ -177,7 +177,7 @@ foreach($serieslist as $series){
 //stores id to delete
 echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>";
 echo "<input disabled='disabled' id='save' class='button' name='save' type='submit' value='"._("Save")."'/>";
-echo "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonpools&amp;Season=$season'\"/></p>";
+echo "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonpools&amp;season=$season'\"/></p>";
 echo "</form>\n";
 
 contentEnd();

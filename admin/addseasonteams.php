@@ -12,15 +12,13 @@ $teamId=0;
 $season=0;
 $seriesId=0;
 
-if(!empty($_GET["Team"]))
-	$teamId = intval($_GET["Team"]);
+if(!empty($_GET["team"]))
+	$teamId = intval($_GET["team"]);
 
-if(!empty($_GET["Season"]))
-	$season = $_GET["Season"];
-
-if(!empty($_GET["Series"]))
-	$seriesId = $_GET["Series"];
-
+$team_info = TeamInfo($teamId);
+$seriesId = $team_info['series'];
+$season = $team_info['season'];
+	
 $tp=array(
 	"team_id"=>"",
 	"name"=>"",
@@ -31,7 +29,7 @@ $tp=array(
 	"pool"=>"",//pool
 	"rank"=>"",
 	"valid"=>"1",
-	"bye"=>"");
+	"bye"=>"0");
 	
 //process itself on submit
 if(!empty($_POST['save']) || !empty($_POST['add'])){
@@ -42,7 +40,7 @@ if(!empty($_POST['save']) || !empty($_POST['add'])){
 		$tp['name']=trim($_POST['name']);
 		$tp['abbreviation']=trim($_POST['abbreviation']);
 		
-		$tp['pool']=$_POST['pool'];
+		$tp['pool']= $team_info['pool'];
 		$tp['rank']=intval($_POST['rank']);
 		$tp['series']=$seriesId;
 		
@@ -65,11 +63,11 @@ if(!empty($_POST['save']) || !empty($_POST['add'])){
 		}else{
 			$tp['valid']=0;
 		}
-		
+		/*
 		if(!empty($_POST['teambye'])){
 			$tp['valid']=2;
 		}		
-		
+		*/
 		if($teamId) {
 			SetTeam($tp);
 			if(intval($tp['pool']))
@@ -86,7 +84,7 @@ if(!empty($_POST['save']) || !empty($_POST['add'])){
 			$tp['club']="";
 		}
 		session_write_close();
-		header("location:?view=admin/seasonteams&Season=$season");
+		header("location:?view=admin/seasonteams&season=$season&series=$seriesId");
 	}
 }
 
@@ -137,10 +135,10 @@ if($teamId){
 	$tp['series']=$info['series'];
 
 	$html .= "<h2>"._("Edit team")."</h2>\n";	
-	$html .= "<form method='post' action='?view=admin/addseasonteams&amp;Season=$season&amp;Series=$seriesId&amp;Team=$teamId'>";
+	$html .= "<form method='post' action='?view=admin/addseasonteams&amp;season=$season&amp;series=$seriesId&amp;team=$teamId'>";
 }else{
 	$html .= "<h2>"._("Add team")."</h2>\n";	
-	$html .= "<form method='post' action='?view=admin/addseasonteams&amp;Season=$season&amp;Series=$seriesId'>";
+	$html .= "<form method='post' action='?view=admin/addseasonteams&amp;season=$season&amp;series=$seriesId'>";
 }
 
 $html .= "<table cellpadding='2px' class='yui-skin-sam'><tr><td class='infocell'>"._("Name").":</td><td>";
@@ -167,6 +165,9 @@ $html .= "<tr><td class='infocell'>"._("Division").":</td>
 		<td><input class='input' id='series' name='series' disabled='disabled' size='50' value='".utf8entities($seriesname)."'/></td></tr>";		
 
 $html .= "<tr><td class='infocell'>"._("Starting pool").":</td>";
+//$html .= "<td><input class='input' id='pool' name='pool' disabled='disabled' size='50' value='".utf8entities($team_info['poolname'])."'/></td></tr>";
+
+
 $html .= "<td><select class='dropdown' name='pool'>";
 
 $pools = SeriesPools($seriesId,false,true,true);
@@ -195,9 +196,11 @@ if(intval($tp['valid']) || !$teamId)
 	else
 		$html .= "<td><input class='input' type='checkbox' id='teamvalid' name='teamvalid' /></td>";
 
+/* BYE functionality TBD
 $html .= "<tr><td class='infocell'>"._("BYE").":</td>";		
 $html .= "<td><input class='input' type='checkbox' id='teambye' name='teambye'/></td>";
 $html .= "</tr>";
+*/
 $html .= "</table>";
 
 $html .= "<p><a href='?view=admin/users'>"._("Select contact person")."</a></p>\n";
@@ -209,7 +212,7 @@ else
 
 
 	
-$html .= "<input class='button' type='button' name='takaisin'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonteams&amp;Season=$season'\"/></p>";
+$html .= "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonteams&amp;season=$season'\"/></p>";
 $html .= "</form>\n";
 
 echo $html;

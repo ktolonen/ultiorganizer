@@ -44,7 +44,7 @@ class PDF extends FPDF
 		
 		$this->SetY(21);
 		
-		$this->OneCellTable(utf8_decode(_("Game #")), $this->game['game_id']);
+		$this->OneCellTable(utf8_decode(_("Game #")), ""/*$this->game['game_id']*/);
 		$this->OneCellTable(utf8_decode(_("Home team")), $this->game['hometeamname']);
 		$this->OneCellTable(utf8_decode(_("Away team")), $this->game['visitorteamname']);
 		$this->OneCellTable(utf8_decode(_("Division").", "._("Pool")), $this->game['poolname']);
@@ -59,7 +59,7 @@ class PDF extends FPDF
 		$this->Timeouts();
 		$this->Ln();
 
-		$this->OneCellTable(utf8_decode(_("Half time ends")), "");
+		$this->OneCellTable(utf8_decode(_("Half time ends (time)")), "");
 		$this->Ln();
 		
 		$this->Ln();
@@ -82,18 +82,20 @@ class PDF extends FPDF
 		$this->SetXY(95,21);
 		$this->ScoreGrid();
 		
-		$this->SetY(-23);
-		$data = _("After the match has ended, send SMS")." \"P ";
-		$data .= $this->game['game_id'];
-		$data .= " ["._("home score")."] ["._("guest score")."]\" ("._("without the quotes").") "._("to number +358415819744").".";
-		$data .= " "._("e.g.").": \"P ";
-		$data .= $this->game['game_id'];
-		$data .= " 16 21\""; 
+		$this->SetY(-22);
+		//$data = _("After the match has ended, send SMS")." \"P ";
+		//$data .= $this->game['game_id'];
+		//$data .= " ["._("home score")."] ["._("guest score")."]\" ("._("without the quotes").") "._("to number +358415819744").".";
+		//$data .= " "._("e.g.").": \"P ";
+		//$data .= $this->game['game_id'];
+		//$data .= " 16 21\""; 
+		
+		$data = _("After the match has ended, update result to:")." ".BASEURL."?view=result";
 		$data = utf8_decode($data);
-		$this->SetFont('Arial','',8);
+		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->MultiCell(0,2,$data);
+		$this->MultiCell(0,1,$data);
 		}
 
 	//Playerlist array("name"=>name, "accredited"=>accredited, "num"=>number)
@@ -104,7 +106,7 @@ class PDF extends FPDF
 		$data = _("Finnish Flying Disc Association");
 		$data .= " - ";
 		$data .= _("Roster"); 
-		$data .= " " . $this->game['game_id'];
+		//$data .= " " . $this->game['game_id'];
 		$data = utf8_decode($data);
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(0);
@@ -195,9 +197,9 @@ class PDF extends FPDF
 		$data .= _("2. Mark players playing with X on Play -column.")."<BR>";
 		$data .= _("3. Add jersey numbers for players on # -column.")."<BR>";
 		$data .= "<BR><BR>";
-		$data .= "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
-		$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
-		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
+		//$data .= "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
 		$data = utf8_decode($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
@@ -276,9 +278,10 @@ class PDF extends FPDF
 		$this->Ln();
 		
 		//instructions
-		$data = "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
-		$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
-		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
+		$data="";
+		//$data = "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
 		$data = utf8_decode($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
@@ -796,7 +799,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(80,6,utf8_decode(_("Timeouts")),'LRTB',0,'C',true);
+		$this->Cell(80,6,utf8_decode(_("Timeouts (time)")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		$this->SetFont('Arial','',12);
@@ -806,9 +809,9 @@ class PDF extends FPDF
 		$this->SetFillColor(255);
 		$this->Cell(20,6,utf8_decode(_("Home")),'LRTB',0,'L',true);
 		
-		for($i=0;$i<6;$i++)
+		for($i=0;$i<4;$i++)
 			{
-			$this->Cell(10,6,"",'LRTB',0,'L',true);
+			$this->Cell(15,6,"",'LRTB',0,'L',true);
 			}
 		
 		$this->Ln();
@@ -818,9 +821,9 @@ class PDF extends FPDF
 		$this->SetFillColor(255);
 		$this->Cell(20,6,utf8_decode(_("Away")),'LRTB',0,'L',true);
 		
-		for($i=0;$i<6;$i++)
+		for($i=0;$i<4;$i++)
 			{
-			$this->Cell(10,6,"",'LRTB',0,'L',true);
+			$this->Cell(15,6,"",'LRTB',0,'L',true);
 			}
 		$this->Ln();	
 		}

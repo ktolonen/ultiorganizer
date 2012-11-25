@@ -9,11 +9,11 @@ $allfields = "";
 $reservationId = 0;
 $season="";
 
-if (isset($_GET['Reservation'])) {
-  $reservationId = $_GET['Reservation'];
+if (isset($_GET['reservation'])) {
+  $reservationId = $_GET['reservation'];
 }
-if(!empty($_GET["Season"])) {
-  $season = $_GET["Season"];
+if(!empty($_GET['season'])) {
+  $season = $_GET['season'];
 }
 
 //reservation parameters
@@ -39,7 +39,7 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
   $res['endtime'] = isset($_POST['endtime']) ? ToInternalTimeFormat($res['date']." ".$_POST['endtime']) : ToInternalTimeFormat("1.1.1971 00:00");
   $res['date'] = ToInternalTimeFormat($res['date']);
   $res['timeslots'] = isset($_POST['timeslots']) ? $_POST['timeslots'] : "";
-  $res['season'] = isset($_POST['resseason']) ? $_POST['resseason'] : "";
+  $res['season'] = isset($_POST['resseason']) ? $_POST['resseason'] : $season;
   
   if($res['id']>0){
     SetReservation($res['id'], $res);
@@ -166,7 +166,7 @@ if ($reservationId > 0) {
 
 echo $html;
 
-$html = "<form method='post' action='?view=admin/addreservation&amp;Season=".$season."&amp;Reservation=".$res['id']."'>\n";
+$html = "<form method='post' action='?view=admin/addreservation&amp;season=".$season."&amp;reservation=".$res['id']."'>\n";
 $html .= "<table>\n";
 
 $html .= "<tr><td>"._("Date")." ("._("dd.mm.yyyy")."):</td><td>";
@@ -183,9 +183,11 @@ $html .= "<tr><td>"._("End time")." ("._("hh:mm")."):</td><td>";
 $html .= "<input type='text' class='input' name='endtime' value='".$res['endtime']."'/>\n";
 $html .= "</td></tr>\n";
 
+/* Not yet supported
 $html .= "<tr><td>"._("Timeslots")." ("._("hh:mm,hh:mm")."):</td><td>";
 $html .= "<input type='text' class='input' size='32' maxlenght='100' name='timeslots' value='".$res['timeslots']."'/>\n";
 $html .= "</td></tr>\n";
+*/
 
 $html .= "<tr><td>"._("Grouping name").":</td>";
 $html .= "<td>".TranslatedField("reservationgroup", $res['reservationgroup'])."</td></tr>\n";
@@ -236,7 +238,7 @@ if (!$addmore) {
 } else {
   $html .= "<input type='submit' class='button' name='add' value='"._("Add")."'/>";
 }
-$html .= "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/reservations&amp;Season=".$season."'\"/>";
+$html .= "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/reservations&amp;season=".$season."'\"/>";
 $html .= "</td><td>&nbsp;</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>";

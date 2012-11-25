@@ -20,9 +20,9 @@ $sp = array(
 	"iscurrent"=>0
 	);
 	
-if(!empty($_GET["Season"]))
+if(!empty($_GET["season"]))
 	{
-	$info = SeasonInfo($_GET["Season"]);
+	$info = SeasonInfo($_GET["season"]);
 	$sp['season_id'] = $info['season_id'];
 	$sp['name'] = $info['name'];
 	$sp['type'] = $info['type'];
@@ -85,7 +85,7 @@ $html .=  "<form method='post' action='?view=admin/seasons'>";
 
 $html .=  "<h2>"._("Seasons/Tournaments")."</h2>\n";
 
-$html .=  "<table style='white-space: nowrap;' border='0' cellpadding='4px'>\n";
+$html .=  "<table style='white-space: nowrap;width:90%' border='0' cellpadding='4px'>\n";
 
 $html .=  "<tr>
 	<th>"._("Name")."</th>
@@ -105,7 +105,7 @@ while($row = mysql_fetch_assoc($seasons))
 	$info = SeasonInfo($row['season_id']);
 	
 	$html .=  "<tr>";
-	$html .=  "<td><a href='?view=admin/addseasons&amp;Season=".$info['season_id']."'>".utf8entities(U_($info['name']))."</a></td>";
+	$html .=  "<td><a href='?view=admin/addseasons&amp;season=".$info['season_id']."'>".utf8entities(U_($info['name']))."</a></td>";
 
 	if(!empty($info['type']))
 		$html .=  "<td>".U_($info['type'])."</td>";
@@ -130,16 +130,16 @@ while($row = mysql_fetch_assoc($seasons))
 	
 	$html .=  "<td>";
 	if(IsTwitterEnabled()){
-		$html .=  "<a href='?view=admin/twitterconf&amp;Season=".$info['season_id']."'>"._("Conf. Twitter")."</a> | ";
+		$html .=  "<a href='?view=admin/twitterconf&amp;season=".$info['season_id']."'>"._("Conf. Twitter")."</a> | ";
 	}
 	if(!CanDeleteSeason($row['season_id'])){
 		if(IsSeasonStatsCalculated($row['season_id'])){
-			$html .=  "<a href='?view=admin/stats&amp;Season=".$info['season_id']."'>"._("Re-calc. stats")."</a>";
+			$html .=  "<a href='?view=admin/stats&amp;season=".$info['season_id']."'>"._("Re-calc. stats")."</a>";
 		}else{
-			$html .=  "<a href='?view=admin/stats&amp;Season=".$info['season_id']."'><b>"._("Calc. stats")."</b></a>";
+			$html .=  "<a href='?view=admin/stats&amp;season=".$info['season_id']."'><b>"._("Calc. stats")."</b></a>";
 		}
 	}
-	$html .= " | <a href='?view=admin/eventdataexport&amp;Season=".$info['season_id']."'>"._("Export")."</a>";
+	$html .= " | <a href='?view=admin/eventdataexport&amp;season=".$info['season_id']."'>"._("Export")."</a>";
 	$html .=  "</td>";
 	
 	if(CanDeleteSeason($row['season_id'])){

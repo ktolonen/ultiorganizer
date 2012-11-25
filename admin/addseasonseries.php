@@ -7,11 +7,11 @@ $html = "";
 $seriesId=0;
 $season=0;
 
-if(!empty($_GET["Series"]))
-	$seriesId = intval($_GET["Series"]);
+if(!empty($_GET["series"]))
+	$seriesId = intval($_GET["series"]);
 
-if(!empty($_GET["Season"]))
-	$season = $_GET["Season"];
+if(!empty($_GET["season"]))
+	$season = $_GET["season"];
 
 $title = _("Edit");
 //series parameters
@@ -100,7 +100,7 @@ if($seriesId)
 else
 	echo "<h2>"._("Add division")."</h2>\n";	
 	
-	echo "<form method='post' action='?view=admin/addseasonseries&amp;Series=$seriesId&amp;Season=$season'>";
+	echo "<form method='post' action='?view=admin/addseasonseries&amp;series=$seriesId&amp;season=$season'>";
 	echo "<table cellpadding='2px'>
 			<tr>
 			<td class='infocell'>"._("Name").":</td>
@@ -136,7 +136,7 @@ if($seriesId)
 else
 	echo "<input class='button' name='add' type='submit' value='"._("Add")."'/>";
 	
-	echo "<input class='button' type='button' name='takaisin'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonseries&amp;Season=$season'\"/>
+	echo "<input class='button' type='button' name='takaisin'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonseries&amp;season=$season'\"/>
 		  </p></form>";
 
 echo TranslationScript("name");

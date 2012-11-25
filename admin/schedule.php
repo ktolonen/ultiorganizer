@@ -9,8 +9,8 @@ include_once 'lib/series.functions.php';
 $LAYOUT_ID = SCHEDULE;
 $title = _("Scheduling");
 
-if (isset($_GET['Reservations'])) {
-  $reservations = explode(",", $_GET['Reservations']);
+if (isset($_GET['reservations'])) {
+  $reservations = explode(",", $_GET['reservations']);
 } else {
   $reservations = array_flip($_SESSION['userproperties']['userrole']['resadmin']);
 }
@@ -23,16 +23,16 @@ $seriesId = 0;
 $poolId = 0;
 $seasonId = "";
 
-if(!empty($_GET["Series"])) {
-  $seriesId = intval($_GET["Series"]);
+if(!empty($_GET["series"])) {
+  $seriesId = intval($_GET["series"]);
 }
 
-if(!empty($_GET["Pool"])) {
-  $poolId = intval($_GET["Pool"]);
+if(!empty($_GET["pool"])) {
+  $poolId = intval($_GET["pool"]);
 }
 
-if(!empty($_GET["Season"])) {
-  $seasonId = $_GET["Season"];
+if(!empty($_GET["season"])) {
+  $seasonId = $_GET["season"];
 }
 
 $seasonfilter = array();
@@ -443,7 +443,7 @@ function OnEventSelect(dropdown)
 	
 	var url = location.href;
 	
-	var param = "Season";
+	var param = "season";
 	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
     if (url.match(re)){
         url=url.replace(re,'$1' + param + "=" + SelValue + '$2');
@@ -451,13 +451,13 @@ function OnEventSelect(dropdown)
 		url = url + '&' + param + "=" + SelValue;
 	}
 	
-	var param = "Series";
+	var param = "series";
 	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
     if (url.match(re)){
         url=url.replace(re,'$1' + param + "=" + 0 + '$2');
     }
 		
-	var param = "Pool";
+	var param = "pool";
 	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
     if (url.match(re)){
         url=url.replace(re,'$1' + param + "=" + 0 + '$2');
@@ -472,7 +472,7 @@ function OnSeriesSelect(dropdown)
     var SelValue = dropdown.options[myindex].value;
 	var url = location.href;
 
-	var param = "Series";
+	var param = "series";
 	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
     if (url.match(re)){
         url=url.replace(re,'$1' + param + "=" + SelValue + '$2');
@@ -480,7 +480,7 @@ function OnSeriesSelect(dropdown)
 		url = url + '&' + param + "=" + SelValue;
 	}
 		
-	var param = "Pool";
+	var param = "pool";
 	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
     if (url.match(re)){
         url=url.replace(re,'$1' + param + "=" + 0 + '$2');
@@ -496,7 +496,7 @@ function OnPoolSelect(dropdown)
     var SelValue = dropdown.options[myindex].value;
 	var url = location.href;
 	
-	var param = "Pool";
+	var param = "pool";
 	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
     if (url.match(re)){
         url=url.replace(re,'$1' + param + "=" + SelValue + '$2');

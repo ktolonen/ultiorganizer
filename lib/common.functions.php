@@ -1,7 +1,6 @@
 <?php
 include_once $include_prefix.'lib/HSVClass.php';
 
-
 function StripFromQueryString($query_string, $needle) {
    $query_string = preg_replace("/(\&|\?)*$needle=[a-zA-Z0-9].*?(\&;|$)/", '$2',   $query_string);
    return preg_replace("/(&)+/","&",$query_string);
@@ -298,6 +297,17 @@ function GetURLBase()
 		}
 	}
 	return $url;
+}
+function GetPageURL() {
+ $pageURL = 'http';
+ if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {$pageURL .= "s";}
+ $pageURL .= "://";
+ if (isset($_SERVER["SERVER_PORT"]) && $_SERVER["SERVER_PORT"] != "80") {
+  $pageURL .= $_SERVER["SERVER_NAME"].":".$_SERVER["SERVER_PORT"].$_SERVER["REQUEST_URI"];
+ } else {
+  $pageURL .= $_SERVER["SERVER_NAME"].$_SERVER["REQUEST_URI"];
+ }
+ return $pageURL;
 }
 
 function GetLocale() {
@@ -1217,4 +1227,37 @@ function str_getcsv($input, $delimiter=',', $enclosure='"', $escape=null, $eol=n
 function strEndsWith($whole, $end){
     return (strpos($whole, $end, strlen($whole) - strlen($end)) !== false);
 }
+
+/**
+ * 
+ * Returns string from $_GET by ignoring case. 
+ * @param text $string
+ */
+function iget($string){
+
+  if(!empty($_GET[$string])) {
+    return urldecode($_GET[$string]);
+  }
+  
+  $string = strtolower($string);
+  
+  if(!empty($_GET[$string])) {
+    return urldecode($_GET[$string]);
+  }
+
+  $string = ucfirst($string);
+
+  if(!empty($_GET[$string])) {
+    return urldecode($_GET[$string]);
+  }
+
+  $string = strtoupper($string);
+
+  if(!empty($_GET[$string])) {
+    return urldecode($_GET[$string]);
+  }
+  
+  return "";
+}
+
 ?>

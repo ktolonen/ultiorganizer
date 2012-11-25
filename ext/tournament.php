@@ -14,7 +14,7 @@ include_once '../lib/series.functions.php';
 include_once '../lib/team.functions.php';
 include_once '../lib/timetable.functions.php';
 
-$style = urldecode($_GET["Style"]);
+$style = iget("style");
 if(empty($style))
 	$style='pelikone.css';
 	
@@ -25,15 +25,15 @@ echo "<title>"._("Ultiorganizer")."</title>";
 <body>
 <?php 
 
-$season = $_GET["Season"];
-$group = $_GET["Tournament"];
+$season = iget("season");
+$group = iget("tournament");
 
 if(!$season) {
 	$season = CurrentSeason();
 }
 $games = TimetableGames($season, "season", "all","places",$group);
 
-ExtTournamentView($games);
+echo ExtTournamentView($games);
 CloseConnection();
 ?>
 </body>

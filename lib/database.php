@@ -37,7 +37,7 @@ include_once $include_prefix.'sql/upgrade_db.php';
 //Also whenb you change the database, please add a database definition into
 // 'lib/table-definition-cache' with the database version in the file name.
 // You can get it by getting ext/restful/show_tables.php
-define('DB_VERSION', 65); //Database version matching to upgrade functions.
+define('DB_VERSION', 67); //Database version matching to upgrade functions.
 
 $mysqlconnectionref = 0;
 
@@ -209,6 +209,27 @@ function DBQueryToRow($query, $docasting=false) {
   return $ret;
 }
 
+  /**
+   * Set data into database by updating existing row.
+   * @param string $name Name of the table to update
+   * @param array $row Data to insert: key=>field, value=>data
+   */
+ function DBSetRow($name, $data, $cond){
+
+    $values = array_values($data);
+    $fields = array_keys($data);
+
+    $query = "UPDATE ".mysql_real_escape_string($name)." SET ";
+
+    for($i=0;$i<count($fields);$i++){
+      $query .= mysql_real_escape_string($fields[$i]) ."='".$values[$i]."', ";
+    }
+    $query = rtrim($query,', ');
+    $query .= " WHERE ";
+    $query .= $cond;
+    return DBQuery($query);
+  }
+  
 /**
  * Copy mysql_associative array row to regular php array.
  *

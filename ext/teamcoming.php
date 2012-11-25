@@ -9,7 +9,7 @@ include_once 'localization.php';
 <meta http-equiv="Expires" content="-1"/>
 <?php
 
-$style = urldecode($_GET["Style"]);
+$style = iget("style");
 if(empty($style))
 	$style='pelikone.css';
 	
@@ -24,15 +24,15 @@ include_once '../lib/team.functions.php';
 include_once '../lib/common.functions.php';
 include_once '../lib/timetable.functions.php';
 
-$teamId = intval($_GET["Team"]);
-$season = $_GET["Season"];
+$teamId = intval(iget("team"));
+$season = iget("season");
 
 if($teamId){
 	$games = TimetableGames($teamId,"team", "coming", "tournaments");
 	if(!mysql_num_rows($games)){
 		echo "\n<p>"._("No games").".</p>\n";	
 	}else{
-		ExtGameView($games);
+		echo ExtGameView($games);
 	}
 }
 CloseConnection();

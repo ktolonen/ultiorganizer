@@ -9,7 +9,7 @@ include_once 'localization.php';
 <meta http-equiv="Expires" content="-1"/>
 <?php
 
-$style = urldecode($_GET["Style"]);
+$style = iget("style");
 if(empty($style))
 	$style='pelikone.css';
 	
@@ -28,12 +28,12 @@ $seriesId=0;
 $teamId=0;
 $season=0;
 
-if(!empty($_GET["Season"]))
-	$season = $_GET["Season"];
-if(!empty($_GET["Series"]))
-	$seriesId = intval($_GET["Series"]);
-if(!empty($_GET["Team"]))
-	$teamId = intval($_GET["Team"]);
+if(iget("season"))
+	$season = iget("season");
+if(iget("series"))
+	$seriesId = intval(iget("series"));
+if(iget("team"))
+	$teamId = intval(iget("team"));
 $sort="total";
 
 echo "<table class='pk_table'>";

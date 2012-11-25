@@ -5,8 +5,8 @@ include_once 'lib/team.functions.php';
 include_once 'lib/game.functions.php';
 $html = "";
 
-$gameId = intval($_GET["Game"]);
-$teamId = intval($_GET["Team"]);
+$gameId = intval(iget("game"));
+$teamId = intval(iget("team"));
 $game_result = GameResult($gameId);
 $team_score_board = GameTeamScoreBorad($gameId, $teamId);
 

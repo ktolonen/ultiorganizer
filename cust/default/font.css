@@ -2,6 +2,7 @@
 	color: #006699;
 	font-size: 18pt;
 	/*padding-left:10px;*/
+	margin-left:8px;
 	font-weight: normal;
 	text-decoration: none;
 	text-transform: uppercase;
@@ -16,7 +17,6 @@
 }
 
 .seasonnav:link, .seasonnav:visited {
-	font-size: 10pt;
 	font-weight: bold;
 	text-align:center;
 	color: #ffffff;
@@ -102,6 +102,64 @@
 	font-size: 10px;
 	/*padding-left:10px*/;
 }
+
+.pagemenu_container{
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+	height:15px;
+}
+
+ul#pagemenu{
+	list-style-type:none;
+	position:relative;
+	width:100%;
+	font-weight:bold;
+	font-size: 10px;
+	margin:0px;
+	padding:0px;
+}
+
+ul#pagemenu li{
+	display:block;
+	float:left;
+	margin:0 0 0 4px;
+}
+
+ul#pagemenu li.left{
+	margin:0;
+}
+
+ul#pagemenu li a{
+	display:block;
+	float:left;
+	color: #2d2d2d;
+	background:#acd1e9;
+	text-decoration:none;
+	padding:3px 17px 0 18px;
+	}
+	
+ul#pagemenu li a.right{
+	padding-right:19px;
+	}
+	
+ul#pagemenu li a:hover{
+	text-decoration: underline;
+	background-color: #d3d3d3;
+	border-left:1px solid #333;
+	border-right:1px solid #333;
+	border-top:1px solid #333;
+	}
+	
+ul#pagemenu li a.current{
+	color: #2d2d2d;
+	text-decoration:  underline;
+	background:#fff;
+	border-left:1px solid #333;
+	border-right:1px solid #333;
+	border-top:1px solid #333;
+	}
+
 
 .thsort, .thsort:link, .thsort:visited {
 	font-size: 10px;
@@ -234,12 +292,15 @@ color: #ef7a7a;
 
 .groupinglink:link, .groupinglink:visited{
 	color: #2d2d2d;
-	font-size: 10pt; 
 	text-align: left; 
 	text-decoration: underline; 
 	font-weight: bold;
 	vertical-align: bottom;
 	font-variant: small-caps;
+	display:block;
+	padding:0px 5px 0 5px;
+	float:left;
+	
 }
 
 .groupinglink:hover, .groupinglink:focus {
@@ -250,11 +311,9 @@ color: #ef7a7a;
 
 .selgroupinglink{
 	color: #986598;
-	font-size: 10pt; 
-	text-align: left; 
+
 	text-decoration: none; 
 	font-weight: bold;
-	vertical-align: bottom;
 	font-variant: small-caps;
 }
 

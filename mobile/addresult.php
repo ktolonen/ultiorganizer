@@ -11,7 +11,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 
 $html = "";
 
-$gameId = intval($_GET["Game"]);
+$gameId = intval(iget("game"));
 
 if(isset($_POST['save'])) {
 	$home = intval($_POST['home']);
@@ -25,7 +25,7 @@ if(isset($_POST['save'])) {
 		if(IsTwitterEnabled()){
 			TweetGameResult($gameId);
 		}
-		header("location:?view=mobile/addplayerlists&Game=".$gameId."&Team=".$game_result['hometeam']);
+		header("location:?view=mobile/addplayerlists&game=".$gameId."&team=".$game_result['hometeam']);
 	}
 }elseif(isset($_POST['update'])) {
 	$home = intval($_POST['home']);

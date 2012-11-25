@@ -507,7 +507,8 @@ function GameInfo($gameId) {
 			time, homescore, visitorscore, pool.timecap, pool.scorecap, pool.winningscore, pool.timeslot AS timeslot, 
 			pp.timeslot AS gametimeslot, pool.series, pool.color, ser.season, ser.name AS seriesname,
 			pool.name AS poolname, phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pp.scheduling_name_home,
-			pp.scheduling_name_visitor, isongoing, pl.name AS placename, res.fieldname, sname.name AS gamename
+			pp.scheduling_name_visitor, isongoing, pl.name AS placename, res.fieldname, sname.name AS gamename,
+			kj.valid as homevalid, vj.valid as visitorvalid
 		FROM uo_game pp 
 			left join uo_reservation res on (pp.reservation=res.id) 
 			LEFT JOIN uo_location pl ON (res.location=pl.id)
@@ -819,12 +820,23 @@ function GameAddTimeout($gameId, $number, $time, $home) {
 function GameSetSpiritPoints($gameId, $homepoints, $awaypoints) {
 	if (hasEditGameEventsRight($gameId)) {
 
-		$query = sprintf("
-				UPDATE uo_game SET homesotg=%d, visitorsotg=%d
-				WHERE game_id=%d",
-				(int)$homepoints,
-				(int)$awaypoints,
-				(int)$gameId);
+		$query = sprintf("UPDATE uo_game SET ");
+
+		if(strcasecmp($homepoints,'xx')==0 || strcasecmp($homepoints,'x')==0){
+		  $query .= sprintf("homesotg=NULL, ");
+		}else{
+		  $query .= sprintf("homesotg=%d, ",
+				(int)$homepoints);
+		}
+
+		if(strcasecmp($awaypoints,'xx')==0 || strcasecmp($awaypoints,'x')==0){
+		  $query .= sprintf("visitorsotg=NULL ");
+		}else{
+		  $query .= sprintf("visitorsotg=%d ",
+				(int)$awaypoints);
+		}
+		
+	    $query .= sprintf("WHERE game_id=%d",(int)$gameId);
 		
 		return DBQuery($query);
 	} else { die('Insufficient rights to edit game'); }

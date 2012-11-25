@@ -253,7 +253,7 @@ function TeamTournamentGames($teamId, $reservationId)
 function TeamGames($teamId)
 {
 $defense_str=" ";
-if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+if(ShowDefenseStats())
 	{
 	$defense_str=",pp.homedefenses,pp.visitordefenses ";
 	}

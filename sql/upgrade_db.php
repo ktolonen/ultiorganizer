@@ -330,6 +330,7 @@ function upgrade65() {
   }
 }
 
+
 function upgrade66(){
 if(!hasTable("uo_defense")){
 	runQuery("CREATE TABLE `uo_defense` (
@@ -365,6 +366,20 @@ if(!hasTable("uo_defense")){
 	}
 	
 }
+
+function upgrade67() {
+  if(!hasColumn("uo_series","color")){
+	addColumn('uo_series', 'color', "varchar(6) DEFAULT NULL");
+  }
+  if(!hasColumn("uo_series","pool_template")){
+	addColumn('uo_series', 'pool_template', "int(10) DEFAULT NULL");
+  }  
+  
+ if(!hasRow("uo_setting","name","ShowDefenseStats")){
+	runQuery('INSERT INTO uo_setting (name, value) VALUES ("ShowDefenseStats", "false")');
+   }
+}
+
 
 function runQuery($query) {
 	$result = mysql_query($query);

@@ -6,7 +6,7 @@ $title = _("Event statistics");
 $LAYOUT_ID = CALCSEASONSTATISTICS;
 $html = "";
 
-$season = $_GET["Season"];
+$season = $_GET["season"];
 $seasons = array();
 $series = array();
 $teams = array();
@@ -32,7 +32,7 @@ div.workarea {
 
 ol.draglist { 
     position: relative;
-    width: 120px; 
+    width: 100px; 
     height: 600px;
     background: #f7f7f7;
     border: 1px solid gray;
@@ -61,7 +61,7 @@ echo yuiLoad(array("animation","dragdrop", "connection"));
 pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-$html .= "<form method='post' action='?view=admin/stats&amp;Season=$season'>\n";
+$html .= "<form method='post' action='?view=admin/stats&amp;season=$season'>\n";
 $html .= "<p>"._("Calculation of statistics takes some time, please wait without closing browser.")."</p>\n";
 
 if(!IsSeasonStatsCalculated($season)){

@@ -10,8 +10,8 @@ include_once 'lib/reservation.functions.php';
 
 $LAYOUT_ID = POOLGAMES;
 
-$poolId = $_GET["Pool"];
-$season = $_GET["Season"];
+$poolId = $_GET["pool"];
+$season = $_GET["season"];
 $rounds = 1;
 $title = utf8entities(U_(PoolSeriesName($poolId)).", ". U_(PoolName($poolId))).": "._("Games");
 $info = PoolInfo($poolId);
@@ -162,7 +162,7 @@ if(!empty($_POST['remove_x']))
 	PoolAddGame($poolId,$home,$away,$usepseudoteams, $homeresp);
 }
 	
-$html .= "<form method='post' action='?view=admin/poolgames&amp;Season=$season&amp;Pool=$poolId'>";
+$html .= "<form method='post' action='?view=admin/poolgames&amp;season=$season&amp;pool=$poolId'>";
 
 if(CanGenerateGames($poolId)){
 	$html .= "<h2>"._("Creation of pool games")."</h2>\n";
@@ -217,7 +217,7 @@ if($info['type']=="1"){
 $html .= "<p><input type='submit' name='fakegenerate' value='"._("Show games")."'/>";
 $html .= "<input type='submit' name='generate' value='"._("Generate all games")."'/></p>";
 }else{
-$html .= "<p><a href='?view=admin/reservations&amp;Season=$season'>"._("Scheduling and Reservation management")."</a></p>";
+$html .= "<p><a href='?view=admin/reservations&amp;season=$season'>"._("Scheduling and Reservation management")."</a></p>";
 }
 if(!empty($fakegames)){
 	$html .= "<h2>"._("Games to generate")."</h2>\n";
@@ -259,7 +259,7 @@ foreach($reservations as $res){
 		$html .= "<tr><th colspan='4'>".utf8entities($location['name'])." ";
 		$html .= " ". DefWeekDateFormat($res['starttime']) ." ". DefHourFormat($res['starttime'])."-";
 		$html .= DefHourFormat($res['endtime']) ."</th>";
-		$html .= "<th colspan='5' class='right'><a href='?view=admin/schedule&amp;Reservations=".$res['id']."'>"._("Add games")."</a></th>";	
+		$html .= "<th colspan='5' class='right'><a class='thlink' href='?view=admin/schedule&amp;reservations=".$res['id']."'>"._("Add games")."</a></th>";	
 		$html .= "</tr>";
 		
 		foreach($games as $row)	{
@@ -279,7 +279,7 @@ foreach($reservations as $res){
 				$html .= "<td>-</td>";
 				$html .= "<td style='width:30%'>". utf8entities($row['visitorteamname']) ."</td>";
 			}
-			$html .= "<td class='center'><a href='?view=admin/editgame&amp;Season=$season&amp;Game=".$row['game_id']."'>"._("edit")."</a></td>";
+			$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;Game=".$row['game_id']."'>"._("edit")."</a></td>";
 			$html .= "<td style='width:5%'>". intval($row['homescore']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($row['visitorscore']) ."</td>";
 			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/swap.png' alt='<->' name='swap' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";
 			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";		
@@ -314,7 +314,7 @@ if(count($games)){
 		}else{
 			$html .= "<td style='width:30%'>". utf8entities(U_($row['pvisitorteamname'])) ."</td>";
 		}
-		$html .= "<td class='center'><a href='?view=admin/editgame&amp;Season=$season&amp;Game=".$row['game_id']."'>"._("edit")."</a></td>";
+		$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$row['game_id']."'>"._("edit")."</a></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/swap.png' alt='<->' name='swap' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";		
 		$html .= "</tr>\n";	
@@ -332,7 +332,7 @@ if(count($games)){
 		$html .= "<td>-</td>";
 		$html .= "<td style='width:30%'>". utf8entities($row['visitorteamname']) ."</td>";
 		$html .= "<td style='width:5%'>". intval($row['homescore']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($row['visitorscore']) ."</td>";
-		$html .= "<td class='center'><a href='?view=admin/editgame&amp;Season=$season&amp;Game=".$row['game_id']."'>"._("edit")."</a></td>";
+		$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$row['game_id']."'>"._("edit")."</a></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/swap.png' alt='<->' name='swap' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='removemoved' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";		
 		$html .= "</tr>\n";	

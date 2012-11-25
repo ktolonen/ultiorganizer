@@ -52,7 +52,7 @@ leftMenu($LAYOUT_ID);
 contentStart();
 //content
 //echo "First line"
-$gameId = intval($_GET["Game"]);
+$gameId = intval($_GET["game"]);
 $season = GameSeason($gameId);
 $seasoninfo = SeasonInfo($season);
 

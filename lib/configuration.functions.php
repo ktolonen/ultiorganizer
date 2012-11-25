@@ -117,6 +117,11 @@ function IsGameRSSEnabled() {
 	return ($serverConf['GameRSSEnabled'] == "true");
 }
 
+function ShowDefenseStats() {
+	global $serverConf;
+	return ($serverConf['ShowDefenseStats'] == "true");
+}
+
 function GetServerConf() {
 	$query = "SELECT * FROM uo_setting ORDER BY setting_id";
 	return DBQueryToArray($query);
@@ -180,11 +185,12 @@ function isRespTeamHomeTeam() {
  * 
  */
 function getAvailableCustomizations(){
-    $customizations=array();
-    $temp = scandir("cust/");
+  global $include_prefix;  
+  $customizations=array();
+    $temp = scandir($include_prefix."cust/");
 
     foreach($temp as $fh){
-      if(is_dir("cust/$fh") && $fh!='.' && $fh!='..'){
+      if(is_dir($include_prefix."cust/$fh") && $fh!='.' && $fh!='..'){
         $customizations[]=$fh;
       }
     }
@@ -197,11 +203,12 @@ function getAvailableCustomizations(){
  * 
  */
 function getAvailableLocalizations(){
+    global $include_prefix;
     $localizations=array();
-    $temp = scandir("locale/");
+    $temp = scandir($include_prefix."locale/");
 
     foreach($temp as $fh){
-      if(is_dir("locale/$fh") && $fh!='.' && $fh!='..'){
+      if(is_dir($include_prefix."locale/$fh") && $fh!='.' && $fh!='..'){
          $localizations[$fh]=$fh;
       }
     }

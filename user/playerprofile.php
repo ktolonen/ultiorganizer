@@ -11,10 +11,10 @@ $max_new_links = 3;
 $html = "";
 $playerId = 0;
 
-if(isset($_GET["Player"])){
-  $playerId = intval($_GET["Player"]);  
+if(isset($_GET["player"])){
+  $playerId = intval($_GET["player"]);
 }elseif(isset($_GET["profile"])){
-  $playerId = PlayerLatestId(intval($_GET["profile"]));  
+  $playerId = PlayerLatestId(intval($_GET["profile"]));
 }
 
 $player = PlayerInfo($playerId);
@@ -23,7 +23,7 @@ if(empty($player['profile_id'])){
   CreatePlayerProfile($playerId);
   $player = PlayerInfo($playerId);
 }
-	
+
 //$accId = 0;
 if (!hasEditPlayerProfileRight($playerId)) {
   die('Insufficient rights to edit palyer profile');
@@ -33,7 +33,7 @@ if (!hasEditPlayerProfileRight($playerId)) {
 if(isset($_SERVER['HTTP_REFERER']))
 $backurl = utf8entities($_SERVER['HTTP_REFERER']);
 else
-$backurl = "?view=user/teamplayers&Team=".$player['team'];
+$backurl = "?view=user/teamplayers&team=".$player['team'];
 
 $title = _("Player information").": ". utf8entities($player['firstname'] ." ". $player['lastname']);
 
@@ -66,7 +66,7 @@ $pp = array(
 	  $backurl = utf8entities($_POST['backurl']);
 
 	  if(isset($_POST['accreditationId'])){
-        $pp['accreditation_id'] = $_POST['accreditationId'];
+	    $pp['accreditation_id'] = $_POST['accreditationId'];
 	  }else{
 	    $pp['accreditation_id'] = "";
 	  }
@@ -115,14 +115,14 @@ $pp = array(
 	    $html .= UploadPlayerImage($playerId);
 	  }
 
-	}elseif(isset($_POST['remove_x'])){
+	}elseif(isset($_POST['remove'])){
 	  RemovePlayerProfileImage($playerId);
 	}elseif(isset($_POST['removeurl_x'])){
 	  $id = $_POST['hiddenDeleteId'];
 	  RemovePlayerProfileUrl($playerId, $id);
 	}
 
-    $player = PlayerInfo($playerId);
+	$player = PlayerInfo($playerId);
 	$profile = PlayerProfile($player['profile_id']);
 
 	if($profile){
@@ -163,21 +163,21 @@ $pp = array(
 	contentStart();
 
 	//content
-	$html .= "<form method='post' enctype='multipart/form-data' action='?view=user/playerprofile&amp;Player=$playerId'>\n";
+	$html .= "<form method='post' enctype='multipart/form-data' action='?view=user/playerprofile&amp;player=$playerId'>\n";
 
 	$html .= "<table>";
 	$html .= "<tr><td colspan='2'>"._("Player details")."</td><td class='center'>"._("Show in public profile")."</td></tr>";
 
 	if(CUSTOMIZATIONS=="slkl"){
 	  $query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d",(int)$pp['accreditation_id']);
-	  $row = DBQueryToRow($query);	  
+	  $row = DBQueryToRow($query);
 	  $html .= "<tr><td class='infocell'>"._("License Id").":</td>";
 
 	  if(isSuperAdmin()){
 	    $html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='".$pp['accreditation_id']."'/></td>";
-      }else{
-   	    $html .= "<td>".$pp['accreditation_id']."";
-   	    $html .= "<input class='input' hidden='hidden' maxlength='10' size='10' name='accreditationId' value='".$pp['accreditation_id']."'/></td>";
+	  }else{
+	    $html .= "<td>".$pp['accreditation_id']."";
+	    $html .= "<input class='input' hidden='hidden' maxlength='10' size='10' name='accreditationId' value='".$pp['accreditation_id']."'/></td>";
 	  }
 	  $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
 
@@ -371,7 +371,7 @@ $pp = array(
 	$html .= "</table>\n";
 	$html .= "<div><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></div>";
 	$html .= "</form>";
-	$html .= "<p><a href='?view=playercard&amp;Series=0&amp;Player=". $playerId."'>"._("Check public player card")."</a></p>";
+	$html .= "<p><a href='?view=playercard&amp;series=0&amp;player=". $playerId."'>"._("Check public player card")."</a></p>";
 	echo $html;
 
 	//common end

@@ -8,12 +8,9 @@ $html = "";
 $title = ("Event data export");
 $seasonId = "";
 
-if(!empty($_POST['season'])||!empty($_GET["Season"])){
-	if(!empty($_POST['season'])){
-		$seasonId = $_POST['season'];
-	}else{
-		$seasonId = $_GET["Season"];
-	}
+if(!empty($_POST['season'])){
+	$seasonId = $_POST['season'];
+
 	$filename = $seasonId.".xml";
 	header("Pragma: public");
 	header("Expires: -1");

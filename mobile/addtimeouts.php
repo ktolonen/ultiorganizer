@@ -6,7 +6,7 @@ include_once 'lib/player.functions.php';
 $html = "";
 $maxtimeouts = 6;
 
-$gameId = intval($_GET["Game"]);
+$gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
 	
 if(isset($_POST['save'])) {

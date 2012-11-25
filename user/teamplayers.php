@@ -9,8 +9,8 @@ $teamId=0;
 $gameId=0;
 $title = _("Roster");
 
-if(!empty($_GET["Team"]))
-$teamId = intval($_GET["Team"]);
+
+$teamId = iget("team");
 $teaminfo = TeamInfo($teamId);
 
 if(!empty($_POST['remove_x'])){
@@ -45,7 +45,7 @@ if(!empty($_POST['remove_x'])){
     }
     $playerid = AddPlayer($teamId, trim($_POST["firstname0"]), trim($_POST["lastname0"]), 0,$num);
   }
-  header("location:?view=user/teamplayers&Team=$teamId");
+  header("location:?view=user/teamplayers&team=$teamId");
 }elseif(!empty($_POST['save'])) {
   for ($i=0; $i<count($_POST['playerEdited']); $i++) {
     if ($_POST['playerEdited'][$i] == "yes") {
@@ -87,10 +87,10 @@ if(!empty($_POST['remove_x'])){
       }
     }
   }
-  header("location:?view=user/teamplayers&Team=$teamId");
+  header("location:?view=user/teamplayers&team=$teamId");
 }elseif(!empty($_POST['copy'])) {
   TeamCopyRoster($_POST["copyroster"], $teamId);
-  header("location:?view=user/teamplayers&Team=$teamId");
+  header("location:?view=user/teamplayers&team=$teamId");
 }
 
 //common page
@@ -128,6 +128,11 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
+$menutabs[_("Roster")]= "?view=user/teamplayers&team=$teamId";
+$menutabs[_("Team Profile")]= "?view=user/teamprofile&team=$teamId";
+$menutabs[_("Club Profile")]= "?view=user/clubprofile&team=$teamId";
+pageMenu($menutabs);
+
 //help
 $help = "<p>"._("Add players into team's roster:")."</p>
 	<ul>
@@ -140,10 +145,7 @@ onPageHelpAvailable($help);
 //content
 echo "<h2>". utf8entities($teaminfo['name']) ." (". utf8entities($teaminfo['seriesname']) .")</h2>\n";
 
-echo "<p><a href='?view=user/teamprofile&amp;Team=". $teamId."'>"._("Edit Team profile")."</a> | ";
-echo "<a href='?view=user/clubprofile&amp;Team=". $teamId."'>"._("Edit Club profile")."</a></p>";
-
-echo "<form method='post' action='?view=user/teamplayers&amp;Team=".$teamId;
+echo "<form method='post' action='?view=user/teamplayers&amp;team=".$teamId;
 if (!empty($gameId)) echo "&amp;Game=".$gameId;
 echo "'>\n";
 
@@ -198,8 +200,8 @@ while($player = mysql_fetch_assoc($team_players)){
   echo "<td style='white-space: nowrap'>";
   echo "<input type='hidden' id='profileId".$player['player_id']."' name='profileId".$player['player_id']."' value='". $playerInfo['profile_id'] ."'/>\n";
   echo "<input type='hidden' id='accrId".$player['player_id']."' name='accrId".$player['player_id']."' value='".$player['accreditation_id']."'/>\n";
-  echo "<a href='?view=user/playerprofile&amp;Player=".$player['player_id']."'>"._("edit")."</a> | ";
-  echo "<a href='?view=playercard&amp;Player=".$player['player_id']."'>"._("view")."</a>";
+  echo "<a href='?view=user/playerprofile&amp;player=".$player['player_id']."'>"._("edit")."</a> | ";
+  echo "<a href='?view=playercard&amp;player=".$player['player_id']."'>"._("view")."</a>";
   echo "</td>\n";
 
   if (!$playerInfo['accredited']){

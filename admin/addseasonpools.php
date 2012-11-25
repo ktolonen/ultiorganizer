@@ -4,24 +4,15 @@ include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
 $LAYOUT_ID = ADDSEASONPOOLS;
 $html = "";
-
-$seriesId=0;
-$poolId=0;
-$season=0;
 $template=0;
 $addmore=false;
 
-
-if(!empty($_GET["Series"]))
-	$seriesId = intval($_GET["Series"]);
-
-if(!empty($_GET["Pool"]))
-	$poolId = intval($_GET["Pool"]);
+$poolId = intval($_GET["pool"]);
+$info = PoolInfo($poolId);
+$season = $info['season'];
+$seriesId = $info['series']; 	
 	
-if(!empty($_GET["Season"]))
-	$season = $_GET["Season"];
-
-//serie parameters
+//pool parameters
 $pp = array(
 	"name"=>"",
 	"ordering"=>"A",
@@ -112,13 +103,14 @@ if(!empty($_POST['save'])) {
 		$pp['placementpool']=0;
 		
 	if($ok){
-		SetPool($poolId,$pp);
+		SetPoolDetails($poolId,$pp);
 		session_write_close();
-		header("location:?view=admin/seasonpools&Season=$season");
+		header("location:?view=admin/seasonpools&season=$season");
 	}
 }
 if ($poolId) {
 	$info = PoolInfo($poolId);
+	
 	$pp['name']=$info['name'];
 	$pp['teams']=$info['teams'];
 	$pp['timeoutlen']=$info['timeoutlen'];
@@ -205,7 +197,7 @@ echo yuiLoad(array("utilities", "slider", "colorpicker", "datasource", "autocomp
 </script>
 
 <?php 
-$setFocus = "OnLoad=\"document.getElementById('name').focus();\"";
+$setFocus = "onload=\"document.getElementById('name').focus();\"";
 pageTopHeadClose($title, false, $setFocus);
 
 leftMenu($LAYOUT_ID);
@@ -216,7 +208,7 @@ echo $html;
 //if poolId is empty, then add new pool	
 if(!$poolId || $addmore) {
 	echo "<h2>"._("Add pool")."</h2>\n";	
-	echo "<form method='post' action='?view=admin/addseasonpools&amp;Season=$season&amp;Series=$seriesId'>";
+	echo "<form method='post' action='?view=admin/addseasonpools&amp;season=$season&amp;series=$seriesId'>";
 	echo "<table cellpadding='2'>
 			<tr>
 			<td class='infocell'>"._("Name").":</td>
@@ -244,11 +236,11 @@ if(!$poolId || $addmore) {
 	
 	echo "</table>
 		  <p><input class='button' name='add' type='submit' value='"._("Add")."'/>
-		  <input class='button' type='button' name='takaisin'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonpools&amp;Season=$season'\"/></p>
+		  <input class='button' type='button' name='takaisin'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonpools&amp;season=$season'\"/></p>
 		  </form>";
 } else {	
 	echo "<h2>"._("Edit pool").":</h2>\n";	
-	echo "<form method='post' action='?view=admin/addseasonpools&amp;Pool=$poolId&amp;Season=$season'>";
+	echo "<form method='post' action='?view=admin/addseasonpools&amp;pool=$poolId&amp;season=$season'>";
 	
 	echo "<table cellpadding='2'>
 		<tr>
@@ -263,11 +255,56 @@ if(!$poolId || $addmore) {
 	
 	echo "<tr><td class='infocell'>"._("Order")." (A,B,C,D...):</td>
 		<td><input class='input' id='ordering' name='ordering' value='".$pp['ordering']."'/></td></tr>";
-		
+/*		
 	echo "<tr><td class='infocell'>"._("Teams").":</td>
 			<td><input class='input' id='teams' name='teams' size='5' value='".$pp['teams']."'/></td>
 			<td></td></tr>";
+*/			
+
+	echo "<tr><td class='infocell'>"._("Type").":</td><td>";
+	
+	echo "<select class='dropdown' name='type'>";
+	if($pp['type']=="1")
+		echo "<option class='dropdown' selected='selected' value='1'>"._("Round Robin")."</option>";
+	else
+		echo "<option class='dropdown' value='1'>"._("Division")."</option>";
 			
+	if($pp['type']=="2")
+		echo "<option class='dropdown' selected='selected' value='2'>"._("Play-off")."</option>";
+	else
+		echo "<option class='dropdown' value='2'>"._("Play-off")."</option>";
+				
+	if($pp['type']=="3")
+		echo "<option class='dropdown' selected='selected' value='3'>"._("Swissdraw")."</option>";
+	else
+		echo "<option class='dropdown' value='3'>"._("Swissdraw")."</option>";
+
+	if($pp['type']=="4")
+		echo "<option class='dropdown' selected='selected' value='4'>"._("Crossmatch")."</option>";
+	else
+		echo "<option class='dropdown' value='4'>"._("Crossmatch")."</option>";
+		
+	echo "</select></td></tr>";
+		echo "<tr><td class='infocell'>"._("Move games").":</td><td>";
+	
+	echo "<select class='dropdown' name='mvgames'>";
+	if($pp['mvgames']=="0")
+		echo "<option class='dropdown' selected='selected' value='0'>"._("All")."</option>";
+	else
+		echo "<option class='dropdown' value='0'>"._("All")."</option>";
+
+	if($pp['mvgames']=="1")
+		echo "<option class='dropdown' selected='selected' value='1'>"._("Nothing")."</option>";
+	else
+		echo "<option class='dropdown' value='1'>"._("Nothing")."</option>";
+		
+	if($pp['mvgames']=="2")
+		echo "<option class='dropdown' selected='selected' value='2'>"._("Mutual")."</option>";
+	else
+		echo "<option class='dropdown' value='2'>"._("Mutual")."</option>";
+		
+	echo "</select></td></tr>";
+	
 	echo "<tr><td class='infocell'>"._("Visible").":</td>";
 	
 	$frompool = PoolGetMoveFrom($info['pool_id'],1);
@@ -312,7 +349,7 @@ if(!$poolId || $addmore) {
 	
 	if(intval($pp['continuingpool'])) {
 		echo "<tr><td class='infocell'>"._("Initial pools").":</td>
-			<td><a href='?view=admin/poolmoves&amp;Season=$season&amp;Series=".$pp['series']."&amp;Pool=".$poolId."'>"._("select")."</a></td>
+			<td><a href='?view=admin/poolmoves&amp;season=$season&amp;series=".$pp['series']."&amp;pool=".$poolId."'>"._("select")."</a></td>
 			<td></td></tr>";
 	}
 	echo "<tr><td class='infocell'>"._("Color").":</td>";
@@ -322,7 +359,6 @@ if(!$poolId || $addmore) {
 	
 	echo "</table>";
 	echo "<div class='yui-skin-sam' id='colorcontainer' style='display:none'></div>";
-	
 	
 	echo "<h2>"._("Teams").":</h2>";	
 	
@@ -341,37 +377,11 @@ if(!$poolId || $addmore) {
 	} else {
 		echo "<p>"._("No teams")."</p>";
 	}
-	//echo "<p><input class='button' name='add' type='button' value='"._("Valitse...")."' onclick=\"window.location.href='?view=admin/serieteams&amp;Serie=$seriesId&amp;Season=$season'\"/></p>";	
+	//echo "<p><input class='button' name='add' type='button' value='"._("Valitse...")."' onclick=\"window.location.href='?view=admin/serieteams&amp;Serie=$seriesId&amp;season=$season'\"/></p>";	
 	
-	echo "<h2>"._("Pool format")." "._("(from the selected template)").":</h2>";
+	echo "<h2>"._("Rules")." "._("(from the selected template)").":</h2>";
 	
-	echo "<table cellpadding='2'>			
-		<tr><td class='infocell'>"._("Type").":</td><td>";
-	
-	echo "<select class='dropdown' name='type'>";
-	if($pp['type']=="1")
-		echo "<option class='dropdown' selected='selected' value='1'>"._("Division")."</option>";
-	else
-		echo "<option class='dropdown' value='1'>"._("Division")."</option>";
-			
-	if($pp['type']=="2")
-		echo "<option class='dropdown' selected='selected' value='2'>"._("Play-off")."</option>";
-	else
-		echo "<option class='dropdown' value='2'>"._("Play-off")."</option>";
-				
-	if($pp['type']=="3")
-		echo "<option class='dropdown' selected='selected' value='3'>"._("Swissdraw")."</option>";
-	else
-		echo "<option class='dropdown' value='3'>"._("Swissdraw")."</option>";
-
-	if($pp['type']=="4")
-		echo "<option class='dropdown' selected='selected' value='4'>"._("Crossmatch")."</option>";
-	else
-		echo "<option class='dropdown' value='4'>"._("Crossmatch")."</option>";
-		
-	echo "</select></td></tr>";
-	
-	
+	echo "<table cellpadding='2'>";
 		
 	echo "<tr><td class='infocell'>"._("Game points").":</td>
 			<td><input class='input' id='gameto' name='gameto' value='".$pp['winningscore']."'/></td>
@@ -384,7 +394,6 @@ if(!$poolId || $addmore) {
 		<tr><td class='infocell'>"._("Half-time at point").":</td>
 			<td><input class='input' id='halftimepoint' name='halftimepoint' value='".$pp['halftimescore']."'/></td>
 			<td></td></tr>		
-
 			
 		<tr><td class='infocell'>"._("Time cap").":</td>
 			<td><input class='input' id='timecap' name='timecap' value='".$pp['timecap']."'/></td>
@@ -433,25 +442,7 @@ if(!$poolId || $addmore) {
 			<td>"._("per team")."</td></tr>		";
 
 	
-	echo "<tr><td class='infocell'>"._("Move").":</td><td>";
-	
-	echo "<select class='dropdown' name='mvgames'>";
-	if($pp['mvgames']=="0")
-		echo "<option class='dropdown' selected='selected' value='0'>"._("All")."</option>";
-	else
-		echo "<option class='dropdown' value='0'>"._("All")."</option>";
 
-	if($pp['mvgames']=="1")
-		echo "<option class='dropdown' selected='selected' value='1'>"._("Nothing")."</option>";
-	else
-		echo "<option class='dropdown' value='1'>"._("Nothing")."</option>";
-		
-	if($pp['mvgames']=="2")
-		echo "<option class='dropdown' selected='selected' value='2'>"._("Mutual")."</option>";
-	else
-		echo "<option class='dropdown' value='2'>"._("Mutual")."</option>";
-		
-	echo "</select></td></tr>";
 
 	echo "
 		<tr><td class='infocell'>"._("Forfeit/BYE against").":</td>
@@ -468,7 +459,7 @@ if(!$poolId || $addmore) {
 	echo "</table>";
 
 	echo "<p><input class='button' name='save' type='submit' value='"._("Save")."'/>";
-	echo "<input class='button' type='button' name='takaisin'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonpools&amp;Season=$season'\"/></p>";
+	echo "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonpools&amp;season=$season'\"/></p>";
 	echo "</form>\n";
 	}
 echo TranslationScript("name");

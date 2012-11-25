@@ -49,9 +49,9 @@ function AllTranslations($search, $autocomplete=false) {
 	$results = array();
 	global $locales;
 	foreach ($locales as $key => $value) {
-		$translation_arrays[$value] = array();
-		$results[$value] = "";
-		$query .= ", ".str_replace(".", "_", $key)." as ".$value;
+		$translation_arrays[str_replace(".", "_", $key)] = array();
+		$results[str_replace(".", "_", $key)] = "";
+		$query .= ", ".str_replace(".", "_", $key);
 	}
 	$query .= " FROM uo_dbtranslations WHERE ";
 	$first = true;
@@ -63,8 +63,8 @@ function AllTranslations($search, $autocomplete=false) {
 		}
 		$query .=" translation_key like '".mysql_real_escape_string($nextkey)."%'";
 	}
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	
+	$result = DBQuery($query);
 
 	while ($row = mysql_fetch_assoc($result)) {
 		foreach ($translation_arrays as $lang => $translation_array) {

@@ -6,7 +6,7 @@ include_once 'lib/player.functions.php';
 include_once 'lib/twitter.functions.php';
 $html = "";
 
-$gameId = intval($_GET["Game"]);
+$gameId = intval(iget("game"));
 	
 if(isset($_POST['tweettext'])) {
 	

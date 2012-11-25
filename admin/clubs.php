@@ -4,7 +4,7 @@ include_once 'lib/club.functions.php';
 include_once 'lib/country.functions.php';
 
 $html = "";
-if (isset($_POST['removeclub']) && isset($_POST['hiddenDeleteId'])) {
+if (isset($_POST['removeclub_x']) && isset($_POST['hiddenDeleteId'])) {
 	$id = $_POST['hiddenDeleteId'];
 	RemoveClub($id);
 }elseif (isset($_POST['addclub']) && !empty($_POST['name'])){
@@ -19,7 +19,7 @@ if (isset($_POST['removeclub']) && isset($_POST['hiddenDeleteId'])) {
 	foreach($_POST["valid"] as $clubId){
 		SetClubValidity($clubId, true);
 	}
-}elseif (isset($_POST['removecountry']) && isset($_POST['hiddenDeleteId'])) {
+}elseif (isset($_POST['removecountry_x']) && isset($_POST['hiddenDeleteId'])) {
 	$id = $_POST['hiddenDeleteId'];
 	RemoveCountry($id);
 }elseif (isset($_POST['addcountry']) && !empty($_POST['name']) && !empty($_POST['abbreviation']) && !empty($_POST['flag'])){
@@ -60,7 +60,7 @@ while($row = mysql_fetch_assoc($clubs)){
 
 	$html .= "<tr>";
 	$html .= "<td>".$row['club_id']."&#160;</td>";
-	$html .=  "<td><a href='?view=user/clubprofile&amp;Club=".$row['club_id']."'>".utf8entities($row['name'])."</a></td>";
+	$html .=  "<td><a href='?view=user/clubprofile&amp;club=".$row['club_id']."'>".utf8entities($row['name'])."</a></td>";
 
 	$html .= "<td class='center'>".ClubNumOfTeams($row['club_id'])."</td>";
 	if(intval($row['valid'])){

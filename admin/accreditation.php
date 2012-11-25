@@ -6,8 +6,8 @@ $LAYOUT_ID = ACCREDITATION;
 $title = _("Accreditation");
 $html = "";
 
-if (isset($_GET['Season'])) {
-  $season = $_GET['Season'];
+if (isset($_GET['season'])) {
+  $season = $_GET['season'];
 } else {
   $season = CurrentSeason();
 }
@@ -17,7 +17,7 @@ if (isset($_GET['list'])) {
 } else {
   $view = "acc";
 }
-$url= "?view=admin/accreditation&amp;Season=".$season."&amp;list=".$view;
+$url= "?view=admin/accreditation&amp;season=".$season."&amp;list=".$view;
 
 if (isset($_POST['acknowledge'])) {
   foreach ($_POST['acknowledged'] as $playerGame) {
@@ -56,15 +56,15 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
-$html .= "[<a href='?view=admin/accreditation&amp;Season=".$season."&amp;list=acc'>"._("Accreditation")."</a>]";
+$html .= "[<a href='?view=admin/accreditation&amp;season=".$season."&amp;list=acc'>"._("Accreditation")."</a>]";
 $html .= "&nbsp;&nbsp;";	
-$html .= "[<a href='?view=admin/accreditation&amp;Season=".$season."&amp;list=autoacc'>"._("Automatic Accreditation")."</a>]";
+$html .= "[<a href='?view=admin/accreditation&amp;season=".$season."&amp;list=autoacc'>"._("Automatic Accreditation")."</a>]";
 $html .= "&nbsp;&nbsp;";
-$html .= "[<a href='?view=admin/accreditation&amp;Season=".$season."&amp;list=acclog'>"._("Accreditation log")."</a>]";
+$html .= "[<a href='?view=admin/accreditation&amp;season=".$season."&amp;list=acclog'>"._("Accreditation log")."</a>]";
 $html .= "&nbsp;&nbsp;";
-$html .= "[<a href='?view=admin/accreditation&amp;Season=".$season."&amp;list=accevents'>"._("Accreditation events")."</a>]";
+$html .= "[<a href='?view=admin/accreditation&amp;season=".$season."&amp;list=accevents'>"._("Accreditation events")."</a>]";
 $html .= "&nbsp;&nbsp;";
-$html .= "[<a href='?view=admin/accreditation&amp;Season=".$season."&amp;list=accId'>"._("Missing IDs")."</a>]";
+$html .= "[<a href='?view=admin/accreditation&amp;season=".$season."&amp;list=accId'>"._("Missing IDs")."</a>]";
 $html .= "&nbsp;&nbsp;";
 
 echo $html;

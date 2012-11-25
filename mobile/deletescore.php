@@ -3,7 +3,7 @@ include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 
 $html="";
-$gameId = intval($_GET["Game"]);
+$gameId = intval(iget("game"));
 $result = GameGoals($gameId);
 $scores = array();
 while ($row = mysql_fetch_assoc($result)) {

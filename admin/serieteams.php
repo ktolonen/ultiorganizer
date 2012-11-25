@@ -10,14 +10,14 @@ $LAYOUT_ID = SERIETEAMS;
 $backurl = utf8entities($_SERVER['HTTP_REFERER']);
 
 $seriesId = 0;
-if(!empty($_GET["Pool"]))
-$poolId = intval($_GET["Pool"]);
+if(!empty($_GET["pool"]))
+$poolId = intval($_GET["pool"]);
 
-if(!empty($_GET["Series"]))
-$seriesId = intval($_GET["Series"]);
+if(!empty($_GET["series"]))
+$seriesId = intval($_GET["series"]);
 
-if(!empty($_GET["Season"]))
-$season = $_GET["Season"];
+if(!empty($_GET["season"]))
+$season = $_GET["season"];
 
 $title = _("Teams");
 
@@ -110,7 +110,7 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
-echo "<form method='post' action='?view=admin/serieteams&amp;Series=$seriesId&amp;Pool=$poolId&amp;Season=$season'>";
+echo "<form method='post' action='?view=admin/serieteams&amp;series=$seriesId&amp;pool=$poolId&amp;season=$season'>";
 
 echo "<h1>".utf8entities(PoolName($poolId))."</h1>\n";
 
@@ -239,7 +239,7 @@ if ($continuation && $SwissOK==-1) {
   if ($poolinfo['type']==2 && $PlayoffOK==-1) {
     echo "<p><b>Warning:</b> You are about to move an odd number of teams which might result in one of the teams having another BYE.</p>";
   }
-  echo "<p><a href='?view=admin/poolmoves&amp;Season=$season&amp;Series=".$seriesId."&amp;Pool=".$poolId."'>"._("Manage moves")."</a></p>";
+  echo "<p><a href='?view=admin/poolmoves&amp;season=$season&amp;series=".$seriesId."&amp;pool=".$poolId."'>"._("Manage moves")."</a></p>";
 
   echo "<p>"._("Games to move").":</p>";
   $mvgames = intval($poolinfo['mvgames']);

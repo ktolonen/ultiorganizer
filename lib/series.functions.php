@@ -2,6 +2,38 @@
 include_once $include_prefix.'lib/club.functions.php';
 include_once $include_prefix.'lib/country.functions.php';
 
+
+/**
+ * Returns selected division based on url or session variable.
+ * 
+ * @return uo_series.series_id
+ */
+function CurrentSeries($season){
+  
+  if(!empty($_GET["series"])){
+    $_SESSION['division'] = $_GET["series"];
+    return $_GET["series"];
+  }
+  
+  $series = SeasonSeries($season);
+  
+  if( !empty($_SESSION['division'])){
+    foreach($series as $ser){
+      if( $ser['series_id'] == $_SESSION['division']){
+        return $_SESSION['division'];
+      }
+    }
+  }
+
+  
+  if(count($series)){
+    $_SESSION['division'] = $series[0]['series_id'];
+    return $series[0]['series_id'];
+  }
+  
+  return -1;
+}
+
 /**
  * Get all pools in given division.
  *
@@ -48,9 +80,22 @@ function SeriesPlacementPoolIds($seriesId) {
  * @return Hardcoded PHP array of division types.
  */
 function SeriesTypes() {
-  return array("open","women","mixed","master open","master women","master mixed", "grand master",
-				"U19 open","U19 women","U19 mixed","U23 open","U23 women","U23 mixed",
-				"junior open","junior women");
+  return array(
+  	"open",
+  	"women",
+  	"mixed",
+  	"master open",
+  	"master women",
+  	"master mixed", 
+  	"grand master",
+	"U19 open",
+	"U19 women",
+	"U19 mixed",
+	"U23 open",
+	"U23 women",
+	"U23 mixed",
+	"junior open",
+	"junior women");
 }
 
 /**
@@ -89,11 +134,11 @@ function SeriesTeams($seriesId, $orderbyseeding=false){
  * @return PHP array of teams.
  */
 function SeriesTeamsWithoutPool($seriesId){
-  $query = sprintf("SELECT DISTINCT pj.team_id, pj.name, pj.club, club.name as clubname, pj.rank 
+  $query = sprintf("SELECT pj.team_id, pj.name, pj.club, club.name as clubname, pj.rank 
 		FROM uo_team pj
 		LEFT JOIN uo_team_pool pjs ON (pj.team_id=pjs.team)
 		LEFT JOIN uo_club club ON (pj.club=club.club_id)	
-		WHERE pj.series = %d AND (pj.pool IS NULL OR pj.pool=0)
+		WHERE pj.series = %d AND pjs.pool IS NULL
 		ORDER BY pj.rank ASC",
     (int)$seriesId);
   return DBQueryToArray($query);
@@ -388,13 +433,14 @@ function DeleteSeries($seriesId) {
 function AddSeries($params) {
   if (hasEditSeasonSeriesRight($params['season'])) {
     $query = sprintf("INSERT INTO uo_series
-				(name,type,ordering,season,valid)
-				VALUES ('%s','%s','%s','%s','%s')",
+				(name,type,ordering,season,valid,pool_template)
+				VALUES ('%s','%s','%s','%s',%d,%d)",
     mysql_real_escape_string($params['name']),
     mysql_real_escape_string($params['type']),
     mysql_real_escape_string($params['ordering']),
     mysql_real_escape_string($params['season']),
-    mysql_real_escape_string($params['valid']));
+    (int)$params['valid'],
+    (int)$params['pool_template']);
     	
     $id= DBQueryInsert($query);
     Log1("series","add",$id);
@@ -414,13 +460,15 @@ function SetSeries($params) {
   if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
     $query = sprintf("
 			UPDATE uo_series SET
-			name='%s', type='%s', ordering='%s', valid='%s'
-			WHERE series_id='%s'",
+			name='%s', type='%s', ordering='%s', valid=%d,
+			pool_template=%d
+			WHERE series_id=%d",
     mysql_real_escape_string($params['name']),
     mysql_real_escape_string($params['type']),
     mysql_real_escape_string($params['ordering']),
-    mysql_real_escape_string($params['valid']),
-    mysql_real_escape_string($params['series_id']));
+    (int)$params['valid'],
+    (int)$params['pool_template'],
+    (int)$params['series_id']);
     	
     return DBQuery($query);
   }
@@ -665,4 +713,29 @@ function SeriesTeamResponsibles($seriesId) {
   } else { die('Insufficient rights'); }
 }
 
+/**
+ * Copy teams from one division to another.
+ * 
+ * Access level: Season admin
+ * 
+ * @param int $to uo_series.series_id
+ * @param int $from uo_series.series_id
+ * 
+ */
+function SeriesCopyTeams($to, $from) {
+  if (isSeasonAdmin(SeriesSeasonId($to))) {
+    $teams = SeriesTeams($from);
+    foreach($teams as $team){
+      $query = sprintf("INSERT INTO uo_team(name, club, country, rank, abbreviation, valid, series )
+      			VALUES ('%s',%d,%d,%d,'%s',1,%d)",
+          $team['name'],
+          $team['club'],
+          $team['country'],
+          $team['rank'],
+          $team['abbreviation'],
+          $to);
+       DBQuery($query);
+    }
+  } else { die('Insufficient rights'); }
+}
 ?>

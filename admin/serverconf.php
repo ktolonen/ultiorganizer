@@ -96,6 +96,15 @@ if(!empty($_POST['save'])){
 	}
 
 	$setting = array();
+	$setting['name']="ShowDefenseStats";
+	if(!empty($_POST['ShowDefenseStats'])){
+		$setting['value']="true";
+	}else{
+		$setting['value']="false";
+	}
+	$settings[] = $setting;
+	
+	$setting = array();
 	$setting['name']="HomeTeamResponsible";
 	if(!empty($_POST['HomeTeamResponsible'])){
 		$setting['value']="yes";
@@ -271,6 +280,17 @@ foreach($settings as $setting){
 		$htmltmp1 .= "<td class='infocell'>"._("System email sender address").":</td>";
 		$htmltmp1 .= "<td><input class='input' size='70' name='EmailSource' value='".$setting['value']."'/></td>";
 		$htmltmp1 .= "</tr>\n";
+	}
+
+	if($setting['name']=="ShowDefenseStats"){
+		$htmltmp2 .= "<tr>";
+		$htmltmp2 .= "<td class='infocell'>"._("Show Defense statistics").":</td>";
+		if($setting['value']=="true"){
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowDefenseStats' checked='checked'/></td>";
+		}else{
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowDefenseStats'/></td>";
+		}
+		$htmltmp2 .= "</tr>\n";
 	}
 	
 	if($setting['name']=="HomeTeamResponsible"){

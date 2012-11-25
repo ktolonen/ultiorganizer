@@ -597,8 +597,7 @@ function SolveStandingsSharedMatchesWins($samerank, $poolId){
 		if($samerank[$i]['wins'] != $diff){
 			$sharedstand+=$offset;
 			$samerank[$i]['arank'] = $sharedstand;
-			$sharedstand++;
-			$offset=0;
+			$offset=1;
 			$diff=$samerank[$i]['wins'];
 		}else{
 			$samerank[$i]['arank'] = $sharedstand;
@@ -683,8 +682,7 @@ function SolveStandingsSharedMatchesGoalsDiff($samerank, $poolId){
 		if($samerank[$i]['goalsdiff'] != $diff){
 			$sharedstand+=$offset;
 			$samerank[$i]['arank'] = $sharedstand;
-			$sharedstand++;
-			$offset=0;
+			$offset=1;
 			$diff=$samerank[$i]['goalsdiff'];
 		}else{
 			$samerank[$i]['arank'] = $sharedstand;
@@ -757,8 +755,7 @@ function SolveStandingsAllMatchesGoalsDiff($samerank, $poolId){
 		if($samerank[$i]['goalsdiff'] != $diff){
 			$sharedstand+=$offset;
 			$samerank[$i]['arank'] = $sharedstand;
-			$sharedstand++;
-			$offset=0;
+			$offset=1;
 			$diff=$samerank[$i]['goalsdiff'];
 		}else{
 			$samerank[$i]['arank'] = $sharedstand;
@@ -840,8 +837,7 @@ function SolveStandingsSharedMatchesGoalsMade($samerank, $poolId){
 		if($samerank[$i]['goalsmade'] != $diff){
 			$sharedstand+=$offset;
 			$samerank[$i]['arank'] = $sharedstand;
-			$sharedstand++;
-			$offset=0;
+			$offset=1;
 			$diff=$samerank[$i]['goalsmade'];
 		}else{
 			$samerank[$i]['arank'] = $sharedstand;
@@ -908,8 +904,7 @@ function SolveStandingsAllMatchesGoalsMade($samerank, $poolId){
 		if($samerank[$i]['goalsmade'] != $diff){
 			$sharedstand+=$offset;
 			$samerank[$i]['arank'] = $sharedstand;
-			$sharedstand++;
-			$offset=0;
+			$offset=1;
 			$diff=$samerank[$i]['goalsmade'];
 		}else{
 			$samerank[$i]['arank'] = $sharedstand;

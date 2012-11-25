@@ -13,7 +13,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 
 $html = "";
 $errors = false;
-$gameId = intval($_GET["Game"]);
+$gameId = intval(iget("game"));
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $game_result = GameResult($gameId);
 $result = GameGoals($gameId);

@@ -10,12 +10,21 @@ include_once 'lib/reservation.functions.php';
 
 $LAYOUT_ID = POOLGAMES;
 
-$seriesId = $_GET["Series"];
+if(!empty($_GET["season"]))
+	$season = $_GET["season"];
+
+if(!empty($_GET["series"])){
+	$seriesId = $_GET["series"];
+	if(empty($season)){
+		$season = SeriesSeasonId($seriesId);
+	}
+}
+
 $seriesinfo = SeriesInfo($seriesId);
-$season = $_GET["Season"];
 $rounds = 1;
 $nomutual=0;
 $matches = 1;
+$homeresp = isset($_POST["homeresp"]);
 
 $title = utf8entities(U_($seriesinfo['name'])).": "._("Games");
 $html = "";
@@ -36,9 +45,9 @@ if(!empty($_POST['generate'])){
 		if($info['type']==1){
 			
 			if($info['mvgames']==2){
-				GenerateGames($pool['pool_id'],$rounds,true,$nomutual);
+				GenerateGames($pool['pool_id'],$rounds,true,$nomutual,$homeresp);
 			}else{
-				GenerateGames($pool['pool_id'],$rounds,true);
+				GenerateGames($pool['pool_id'],$rounds,true, false, $homeresp);
 			}
 		}elseif($info['type']==2){
 			GenerateGames($pool['pool_id'],$matches,true);
@@ -52,7 +61,7 @@ if(!empty($_POST['generate'])){
 		}
 	}
 	session_write_close();
-	header("location:?view=admin/seasonpools&Season=$season");
+	header("location:?view=admin/seasonpools&season=$season");
 }
 
 //common page
@@ -61,7 +70,7 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
-$html .= "<form method='post' action='?view=admin/seriesgames&amp;Season=$season&amp;Series=$seriesId'>";
+$html .= "<form method='post' action='?view=admin/seriesgames&amp;season=$season&amp;series=$seriesId'>";
 
 $html .= "<h2>"._("Creation of games")."</h2>\n";
 $html .= "<p><b>"._("Round Robin -type of pool")."</b></p>\n";
@@ -73,6 +82,11 @@ $html .= "<p><input class='input' type='checkbox' name='nomutual'";
 $html .="/> "._("Do not generate mutual games for teams moved from same pool, if pool format includes mutual games").".</p>";
 $html .= "<p><b>"._("Play off -type of pool")."</b></p>\n";
 $html .= "<p>"._("best")." <input class='input' size='2' name='matches' value='$matches'/> "._("matches")."</p>\n";
+$html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
+	if (isRespTeamHomeTeam()) {
+		$html .= "checked='checked'";
+	}
+	$html .="/></p>";	
 $html .= "<p><input type='submit' name='generate' value='"._("Generate all games")."'/></p>";
 $html .= "</form>\n";
 

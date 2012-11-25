@@ -35,6 +35,6 @@ switch ($connection->http_code) {
 	$_SESSION['title'] = _("Twitter configuration failed") .":";
 	$_SESSION["var0"] = _("Could not connect to Twitter. Refresh the page or try again later.");
 	$_SESSION["var1"] = _("HTTP Error") ." ". $connection->http_code;
-	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;Season=$season";
+	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;season=$season";
 	header("location:?view=admin/failed");	
 }

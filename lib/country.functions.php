@@ -62,11 +62,15 @@ function CountryDropList($id,$name){
 	return $html;
 }
 
-function CountryDropListWithValues($id, $name, $selectedId){
+function CountryDropListWithValues($id, $name, $selectedId, $width=""){
 	$html = "";
+	$style = "";
+	if(!empty($width)){
+	  $style = "style='width:$width'";
+	}
 	$query = sprintf("SELECT country_id, name FROM uo_country WHERE valid=1 ORDER BY name");
 	$result =  DBQuery($query);
-	$html .= "<select class='dropdown' id='$id' name='$name'>\n";
+	$html .= "<select class='dropdown' $style id='$id' name='$name'>\n";
 	$html .= "<option value='-1'></option>\n";
 	
 	while($row = mysql_fetch_assoc($result)){

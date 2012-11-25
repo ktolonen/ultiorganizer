@@ -238,7 +238,7 @@ function SearchPlayer($resultTarget, $hiddenProperties, $submitbuttons) {
 function SearchReservation($resultTarget, $hiddenProperties, $submitbuttons) {
 	$querystring = $_SERVER['QUERY_STRING'];
 	$ret = "<form method='post' action='?".utf8entities($querystring)."'>\n";
-	$ret .= "<table>";
+	$ret .= "<table style='width:100%'>";
 	$ret .= "<tr><td>"._("Start time")." ("._("dd.mm.yyyy")."):</td><td>";
 	$ret .= "<input type='text' id='searchstart' name='searchstart' value='";
 
@@ -288,7 +288,7 @@ function SearchReservation($resultTarget, $hiddenProperties, $submitbuttons) {
 		$ret .= "<input type='hidden' name='".urlencode($name)."' value='".urlencode($value)."'/>\n";
 	}
 	$ret .= "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>\n";
-	if (!empty($_POST['searchreservation']) || !empty($_GET['Season'])) {
+	if (!empty($_POST['searchreservation']) || !empty($_GET['season'])) {
 		foreach ($submitbuttons as $name => $value) {
 			$ret .= "<input type='submit' name='".$name."' value='".utf8entities($value)."'/>\n";
 		}
@@ -670,7 +670,7 @@ function PlayerResults() {
 			$ret .= "<tr><td>";
 			$ret .= "<input type='checkbox' name='players[]' value='".urlencode($row['accreditation_id'])."'/>";
 			$ret .= "</td>";
-			$ret .= "<td><a href='?view=playercard&amp;Player=".urlencode($row['player_id'])."'>".utf8entities($row['user_name'])."</a></td>";
+			$ret .= "<td><a href='?view=playercard&amp;player=".urlencode($row['player_id'])."'>".utf8entities($row['user_name'])."</a></td>";
 			$ret .= "<td>".utf8entities($row['teamname'])."</td>";
 			$ret .= "<td>".utf8entities($row['email'])."</td>";
 			$ret .= "</tr>\n";
@@ -681,7 +681,7 @@ function PlayerResults() {
 }
 
 function ReservationResults() {
-	if (empty($_POST['searchreservation']) && empty($_GET['Season'])) {
+	if (empty($_POST['searchreservation']) && empty($_GET['season'])) {
 		return "";
 	} else {
 		$query = "SELECT res.id as reservation_id, res.season, res.location, res.fieldname, res.reservationgroup, res.starttime, res.endtime, loc.name, loc.fields, loc.indoor, loc.address, count(game_id) as games ";
@@ -716,27 +716,27 @@ function ReservationResults() {
 			$query .= "loc.address like '%".mysql_real_escape_string($_POST['searchlocation'])."%') ";
 		}
 		
-		if (isset($_GET['Season']) && strlen($_GET['Season']) > 0) {
-			$query .= "AND res.season='".mysql_real_escape_string($_GET['Season'])."' ";
+		if (isset($_GET['season']) && strlen($_GET['season']) > 0) {
+			$query .= "AND res.season='".mysql_real_escape_string($_GET['season'])."' ";
 		}
 		$query .= "GROUP BY res.starttime, res.id, res.location, res.fieldname, res.reservationgroup, res.endtime, loc.name, loc.fields, loc.indoor, loc.address";
 
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		
-		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"reservations\");'/></th>";
-		$ret .= "<th>"._("Tournament")."</th><th>"._("Location")."</th><th>"._("Date")."</th>";
-		$ret .= "<th>"._("Start time")."</th><th>"._("End time")."</th><th>"._("Games")."</th>";
+		$ret = "<table class='admintable'><tr><th><input type='checkbox' onclick='checkAll(\"reservations\");'/></th>";
+		$ret .= "<th>"._("Group")."</th><th>"._("Location")."</th><th>"._("Date")."</th>";
+		$ret .= "<th>"._("Starts")."</th><th>"._("Ends")."</th><th>"._("Games")."</th>";
 		$ret .= "<th>"._("Scoresheets")."</th><th></th></tr>\n";
 		while ($row = mysql_fetch_assoc($result)) {
-			$ret .= "<tr><td><input type='checkbox' name='reservations[]' value='".$row['reservation_id']."'/></td>";
+			$ret .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='".$row['reservation_id']."'/></td>";
 			$ret .= "<td>".utf8entities(U_($row['reservationgroup']))."</td>";
-			$ret .= "<td><a href='?view=admin/addreservation&amp;Reservation=".$row['reservation_id']."&amp;Season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
+			$ret .= "<td><a href='?view=admin/addreservation&amp;Reservation=".$row['reservation_id']."&amp;season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
 			$ret .= "<td>".DefWeekDateFormat($row['starttime'])."</td>";
 			$ret .= "<td>".DefHourFormat($row['starttime'])."</td>";
 			$ret .= "<td>".DefHourFormat($row['endtime'])."</td>";
 			$ret .= "<td class='center'>".$row['games']."</td>";
-			$ret .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;Reservation=".$row['reservation_id']."'>"._("PDF")."</a></td>";
+			$ret .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;reservation=".$row['reservation_id']."'>"._("PDF")."</a></td>";
 			if(intval($row['games'])==0){
 				$ret .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' name='remove' alt='"._("X")."' onclick=\"setId(".$row['reservation_id'].");\"/></td>";
 			}

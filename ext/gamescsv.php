@@ -2,16 +2,17 @@
 include_once 'localization.php';
 include_once '../lib/timetable.functions.php';
 
-$season = $_GET['Season'];
+$season = iget("season");
 $encoding = 'UTF-8';
 $separator = ',';
 
-if(!empty($_GET['Enc'])){
-	$encoding = $_GET['Enc'];
+if(iget('enc')){
+	$encoding = iget('enc');
 }
-if(!empty($_GET['Sep'])){
-	$separator = $_GET['Sep'];
+if(iget('sep')){
+	$separator = iget('sep');
 }
+
 $data = TimetableToCsv($season,$separator);
 $data = mb_convert_encoding($data, $encoding, 'UTF-8'); 
 CloseConnection();

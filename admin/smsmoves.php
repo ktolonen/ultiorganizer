@@ -8,11 +8,11 @@ $seriesId = 0;
 $season = 0;
 $title = _("Create SMS");
 
-if(!empty($_GET["Season"]))
-	$season = $_GET["Season"];
+if(!empty($_GET["season"]))
+	$season = $_GET["season"];
 
-if(!empty($_GET["Series"])){
-	$seriesId = $_GET["Series"];
+if(!empty($_GET["series"])){
+	$seriesId = $_GET["series"];
 	if(empty($season)){
 		$season = SeriesSeasonId($seriesId);
 	}
@@ -214,7 +214,7 @@ if (!empty($poolId)){
 		echo "<p><input type='hidden' name='sms_$smscount' value='".htmlspecialchars($single_value,ENT_QUOTES)."'>";
 	}
 	echo "<p><input class='button' type='submit' name='sendsms' value='".("Send these SMS")."'/>";
-	echo "<input class='button' type='button' name='back'  value='"._("Return without sending")."' onclick=\"window.location.href='?view=admin/smsmoves&amp;Season=$season&amp;Series=$seriesId'\"/></p>";
+	echo "<input class='button' type='button' name='back'  value='"._("Return without sending")."' onclick=\"window.location.href='?view=admin/smsmoves&amp;season=$season&amp;series=$seriesId'\"/></p>";
 	
 	echo "</form>";
 	
@@ -246,7 +246,7 @@ if (!empty($poolId)){
 		}
 	}
 	
-	echo "<form method='post' action='?view=admin/smsmoves&amp;Season=$season&amp;Series=$seriesId'>";
+	echo "<form method='post' action='?view=admin/smsmoves&amp;season=$season&amp;series=$seriesId'>";
 	
 	echo "<p>".("Select source pool").": <select class='dropdown' name='pool'>\n";
 	

@@ -5,83 +5,170 @@ include_once 'lib/pool.functions.php';
 
 $LAYOUT_ID = SEASONSERIES;
 
-$season = $_GET["Season"];
+$season = $_GET["season"];
+$html = "";
 
 $title = utf8entities(U_(SeasonName($season))).": "._("Divisions");
 
+//process itself on submit
+if(!empty($_POST['remove_x'])){
+  $id = $_POST['hiddenDeleteId'];
+  if(CanDeleteSeries($id)){
+    DeleteSeries($id);
+  }
+}elseif(!empty($_POST['add'])){
+  $sp['name'] = !empty($_POST['name0']) ? $_POST['name0'] : "no name";
+  $sp['type'] = $_POST['type0'];
+  $sp['ordering'] = !empty($_POST['ordering0']) ? $_POST['ordering0'] : "A";
+  $sp['season'] = $season;
+  $sp['valid']=isset($_POST['valid0']) ? 1 : 0;
+  $sp['pool_template'] = $_POST['template0'];
+  AddSeries($sp);
+
+}else if(!empty($_POST['save'])){
+
+  //Save all
+  $series = SeasonSeries($season);
+  foreach($series as $row){
+    $id = $row['series_id'];
+    $sp['series_id'] = $id;
+    $sp['name'] = !empty($_POST["name$id"]) ? $_POST["name$id"] : "no name";
+    $sp['type'] = $_POST["type$id"];
+    $sp['ordering'] = $_POST["ordering$id"];
+    $sp['season'] = $season;
+    $sp['valid']=isset($_POST["valid$id"]) ? 1 : 0;
+    $sp['pool_template'] = $_POST["template$id"];
+    SetSeries($sp);
+  }
+}
+
 //common page
 pageTopHeadOpen($title);
-?>
-<script type="text/javascript">
-<!--
-function setId(id) 
-	{
-	var input = document.getElementById("hiddenDeleteId");
-	input.value = id;
-	}
-//-->
-</script>
-<?php
-pageTopHeadClose($title);
+$setFocus = "onload=\"document.getElementById('name0').focus();\"";
+pageTopHeadClose($title, false, $setFocus);
 leftMenu($LAYOUT_ID);
 contentStart();
 
-	
-//process itself on submit
-if(!empty($_POST['remove_x'])){
-	$id = $_POST['hiddenDeleteId'];
-	if(CanDeleteSeries($id)){
-		DeleteSeries($id);
-	}
-}
-
-echo "<form method='post' action='?view=admin/seasonseries&amp;Season=$season'>";
-
-echo "<h2>"._("Divisions")."</h2>\n";
+$html .= "<form method='post' action='?view=admin/seasonseries&amp;season=$season'>";
+$html .= "<h2>"._("Divisions")."</h2>\n";
 
 $series = SeasonSeries($season);
+$types = SeriesTypes();
 
-if(count($series))
-	{
-	echo "<table border='0' cellpadding='4px'>\n";
+$html .= "<table class='admintable'>\n";
+$html .= "<tr><th>"._("Name")."</th><th>"._("Type")."</th><th>"._("Rules")."</th><th>"._("Ordering")."</th><th class='center' title='"._("Visible")."'>"._("V")."</th>";
+$html .= "<th>"._("Operations")."</th><th></th></tr>\n";
 
-	echo "<tr><th>"._("Name")."</th>
-		<th>"._("Order")."</th>
-		<th>"._("Type")."</th>		
-		<th>"._("Valid")."</th>
-		<th>"._("Operations")."</th>
-		<th></th></tr>\n";
+$last_ordering = 0;
+$last_rule_template = 0;
 
-	foreach($series as $row)
-		{
-		$valid = intval($row['valid'])?_("yes"):_("no");
-		
-		if(!empty($row['name'])){
-				$name = utf8entities(U_($row['name']));
-			}else{
-				$name = _("No name");
-			}
-			
-		echo "<tr>";
-		echo "<td><a href='?view=admin/addseasonseries&amp;Season=$season&amp;Series=".$row['series_id']."'>".$name."</a></td>";
-		echo "<td class='center'>".$row['ordering']."</td>";
-		echo "<td>".U_($row['type'])."</td>";
-		echo "<td class='center'>$valid</td>";
-		echo "<td><a href='?view=admin/seriesseeding&amp;Series=".$row['series_id']."'>"._("Seeding")."</a></td>";
-		if(CanDeleteSeries($row['series_id'])){
-			echo "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['series_id'].");\"/></td>";		
-		}
-		echo "</tr>\n";	
-		}
+foreach($series as $row){
+  $id = $row['series_id'];
+  $html .= "<tr  class='admintablerow'>";
+  $html .= "<td><input class='input' size='15' maxlength='50' name='name$id' value='".$row['name']."'/></td>";
+  $html .= "<td><select class='dropdown' name='type$id'>\n";
 
-	echo "</table>";
-	}
-echo "<p><input class='button' name='add' type='button' value='"._("Add")."' onclick=\"window.location.href='?view=admin/addseasonseries&amp;Season=$season'\"/></p>";
+  foreach($types as $type){
+    if($row['type']==$type){
+      $html .= "<option class='dropdown' selected='selected' value='$type'>".U_($type)."</option>\n";
+    }else{
+      $html .= "<option class='dropdown' value='$type'>".U_($type)."</option>\n";
+    }
+  }
+
+  $html .= "</select></td>";
+
+  $html .=  "<td><select class='dropdown' name='template$id'>\n";
+
+$templates = PoolTemplates();
+
+foreach($templates as $template) {
+  
+  if($row['pool_template']==$template['template_id']){
+    $html .=   "<option class='dropdown' selected='selected' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+    $last_rule_template = $template['template_id'];
+  }else{
+    $html .=   "<option class='dropdown' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+  }
+}
+
+$html .=  "</select></td>";
+
+  $html .= "<td><input class='input' size='3' maxlength='1' name='ordering$id' value='".$row['ordering']."'/></td>";
+  
+  if(intval($row['valid'])){
+    $html .= "<td class='center'><input class='input' type='checkbox' name='valid$id' checked='checked'/></td>";
+  }else{
+    $html .= "<td class='center'><input class='input' type='checkbox' name='valid$id'/></td>";
+  }
+
+  $html .= "<td style='white-space: nowrap;'>\n";
+  $html .= "<a href='?view=admin/seasonteams&amp;season=".$season."&amp;series=".$id."'>"._("Teams")."</a> | ";
+  $html .= "<a href='?view=admin/seasonpools&amp;season=".$season."&amp;series=".$id."'>"._("Pools")."</a> | ";
+  $html .= "<a href='?view=admin/seasongames&amp;season=".$season."&amp;series=".$id."'>"._("Games")."</a>";
+  
+  $html .= "</td>";
+
+  $html .= "<td class='center'>";
+  if(CanDeleteSeries($id)){
+    $html .= "<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$id.");\"/>";
+  }
+  $html .= "</td>";
+  $html .= "</tr>\n";
+  $last_ordering = $row['ordering'];
+}
+if(!$last_ordering){
+  $last_ordering='A';
+}else{
+  $last_ordering++;
+}
+$html .= "<tr>";
+$html .= "<td style='padding-top:15px'><input class='input' size='15' maxlength='50' id='name0' name='name0'/></td>";
+$html .= "<td style='padding-top:15px'><select class='dropdown' name='type0'>\n";
+
+foreach($types as $type){
+  $html .= "<option class='dropdown' value='$type'>".U_($type)."</option>\n";
+}
+
+$html .= "</select></td>";
+$html .=  "<td style='padding-top:15px'><select class='dropdown' name='template0'>\n";
+
+$templates = PoolTemplates();
+
+foreach($templates as $template) {
+  if($last_rule_template==$template['template_id']){
+      $html .=   "<option class='dropdown' selected='selected' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+  }else{ 
+     $html .=   "<option class='dropdown' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+  }
+}
+
+$html .=  "</select></td>";
+
+$html .= "<td style='padding-top:15px'><input class='input' size='3' maxlength='1' name='ordering0' value='$last_ordering'/></td>";
+$html .= "<td style='padding-top:15px'><input class='input' type='checkbox' name='valid0' checked='checked'/></td>";
+
+$html .= "<td style='padding-top:15px'><input id='add' class='button' name='add' type='submit' value='"._("Add")."'/></td>";
+$html .= "<td style='padding-top:15px'></td>";
+$html .= "</tr>\n";
+
+$html .= "</table>";
+
+$html .= "<p>";
+$html .= "<input id='save' class='button' name='save' type='submit' value='"._("Save")."'/> ";
+$html .= "<input id='cancel' class='button' name='cancel' type='submit' value='"._("Cancel")."'/>";
+$html .= "</p>";
 
 //stores id to delete
-echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
-echo "</form>\n";
+$html .= "<div><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></div>";
+$html .= "</form>\n";
+$html .= "<hr/>\n";
+$html .= "<p>";
+$html .= "<a href='?view=admin/serieformats'>"._("Edit rule templates")."</a> ";
+$html .= "</p>";
+echo $html;
 
 contentEnd();
 pageEnd();
+
 ?>

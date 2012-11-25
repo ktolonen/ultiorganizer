@@ -20,12 +20,11 @@ echo "<title>"._("Ultiorganizer Score Counter")."</title>";
 <body>
 <?php 
 
-if(!empty($_GET["Season"])){
-	$season = $_GET["Season"];
-}
+$season = iget("season");
+
 $lenght = 6;
-if(!empty($_GET["Numbers"])){
-	$lenght = intval($_GET["Numbers"]);
+if(iget("numbers")){
+	$lenght = intval(iget("numbers"));
 }
 echo "<table><tr>";
 $query = "SELECT (SUM(game.homescore) + SUM(game.visitorscore)) AS scores FROM

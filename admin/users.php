@@ -46,6 +46,7 @@ contentStart();
 
 $target = "view=admin/users";
 //content
+echo "<p><a href='?view=admin/adduser'>"._("Add new user")."</a></p>";
 echo "<h2>".$title."</h2>";
 if (hasEditUsersRight()) {
 	echo SearchUser($target, array(), array('resetpassword' => _("Reset password"),'deleteuser' => _("Delete")));

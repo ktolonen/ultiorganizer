@@ -3,8 +3,8 @@ include_once 'menufunctions.php';
 include_once 'lib/location.functions.php';
 include_once 'lib/configuration.functions.php';
 
-if(!empty($_GET["Season"])) {
-	$season = $_GET["Season"];
+if(!empty($_GET["season"])) {
+	$season = $_GET["season"];
 }
 
 if (isset($_POST['save']) && isset($_POST['id'])) {
@@ -48,7 +48,7 @@ if (isset($_POST['add'])) {
 	if (isset($_POST['lat'])) $lat = $_POST['lat']; 
 	if (isset($_POST['lng'])) $lng = $_POST['lng'];
 	$newId = AddLocation($name, $address, $info, $fields, $indoor, $lat, $lng, $season);
-	header('location: ?view=admin/locations&Location='.$newId."&amp;Season=".$season);
+	header('location: ?view=admin/locations&Location='.$newId."&amp;season=".$season);
 	exit();
 }
 
@@ -83,11 +83,11 @@ echo yuiLoad(array("utilities", "datasource", "autocomplete"));
       }
 <?php
       
-if (isset($_POST['id']) || isset($_GET['Location'])) {
+if (isset($_POST['id']) || isset($_GET['location'])) {
 	if (isset($_POST['id'])) {
 		$id = $_POST['id'];
 	} else {
-		$id = $_GET['Location'];
+		$id = $_GET['location'];
 	}
 	echo "		var searchUrl = 'ext/locationxml.php?id=".$id."';\n";
 	echo "		searchLocations(searchUrl);\n";
@@ -345,7 +345,7 @@ sans-serif; font-size:11px; border:1px solid black">
   </table>
 </div> 
 <div id='editPlace' style='visibility: hidden'>
-  <form method='post' action='?view=admin/locations&Season=<?php echo $season ?>'>
+  <form method='post' action='?view=admin/locations&season=<?php echo $season ?>'>
   <div>
   <input type='hidden' name='id' id='place_id'/>
   <input type='hidden' name='lat' id='lat'/>

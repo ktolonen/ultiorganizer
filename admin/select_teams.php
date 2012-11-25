@@ -14,8 +14,8 @@ define("MIN_HEIGHT", 0.5);
 define("TEAM_HEIGHT", 15);
 
 $seriesId = 0;
-if (isset($_GET['Series'])) {
-	$seriesId = intval($_GET['Series']);
+if (isset($_GET['series'])) {
+	$seriesId = intval($_GET['series']);
 }
 
 $pools = SeriesPools($seriesId, false, true, true);
@@ -30,14 +30,6 @@ $teamsNotInPool = SeriesTeamsWithoutPool($seriesId);
 
 //common page
 pageTopHeadOpen($title);
-
-function gameHeight($gameInfo) {
-	return max(intval($gameInfo['timeslot'] * MIN_HEIGHT), intval(15 * MIN_HEIGHT)) -2;
-}
-function pauseHeight($gameStart, $nextStart) {
-	echo "<!--".EpocToMysql($gameStart)." ".EpocToMysql($nextStart)."-->\n";
-	return ((($gameStart - $nextStart) / 60) * MIN_HEIGHT) - 2;
-}
 
 include_once 'lib/yui.functions.php';
 echo yuiLoad(array("utilities", "dragdrop"));
@@ -131,9 +123,6 @@ foreach ($pools as $poolId) {
 	echo "<td>\n";
 	$poolinfo=PoolInfo($poolId);
 	$total_teams = 10;
-	if($poolinfo['teams']>0)
-		$total_teams = $poolinfo['teams']+1;
-		
 	echo "<table><tr>\n";
 	echo "<td style='vertical-align:top;padding:5px'>\n";
 	echo "<div style='vertical-align:bottom;height:100%'><h3>".$poolinfo['name']."</h3></div>\n";
@@ -206,15 +195,20 @@ foreach ($teamsNotInPool as $team) {
         var parseList = function(ul, id) {
             var items = ul.getElementsByTagName("li");
             var out = id;
+            if(items.length){
+            out += "/";
+            }
 			var offset = 0;
             for (i=0;i<items.length;i=i+1) {
-                var height = Dom.getStyle(items[i], "height");
-                height = parseInt(height.substring(0, height.length -2)) + 2;
 				var nextId = items[i].id.substring(4);
+          
 				if (!isNaN(nextId)) {
-                	out += ":" + nextId + "/" + offset;
+                	out += nextId;
 				}
-                offset += (height/minHeight);
+				if((i+1)<items.length){
+				   out += "/";
+				}
+                
             }
             return out;
         };
@@ -237,6 +231,7 @@ foreach ($teamsNotInPool as $team) {
 	Dom.setStyle(responseDiv,"width", "20px");
 	Dom.setStyle(responseDiv,"class", "inprogress");
 	responseDiv.innerHTML = '&nbsp;';
+    
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', 'index.php?view=admin/saveteampools', callback, request);         
     },
 };

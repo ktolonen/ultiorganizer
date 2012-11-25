@@ -89,7 +89,7 @@ if($view=="acc"){
 }
 
 if($view=="autoacc"){
-  $seasonInfo = SeasonInfo($_GET['Season']);
+  $seasonInfo = SeasonInfo($_GET['season']);
   echo "<p>"._("Accredit players against license database with selected conditions.")."</p>";
   echo "<form method='post' action='$url'>\n";
   //echo "<h4>"._("Series")."</h4>\n";
@@ -317,9 +317,20 @@ function slklUpdateLicensesFromCSV($handle, $season){
     //4014 Jäsenmaksu, aikuiset
     //4015 Ultimaten kilpailulisenssi, aikuiset
     //4016 Ultimaten kilpailulisenssi, juniorit
-    $valid_membership=array(653,654,655,656,4001,4002,4003,4004,4008,4009,4010,4013,4014);
-    $valid_license=array(653,654,655,656,4001,4002,4008,4009,4010,4015,4016);
-    $valid_juniors=array(654,656,4002,4004,4009,4010,4013,4016);
+   
+    //2012-2013
+    //4644 A-lisenssi (sis jäsenmaksun ja lisenssin)
+	//4645 B-lisenssi (sis jäsenmaksun ja lisenssin)
+	//4653 C-lisenssi (sis jäsenmaksun ja lisenssin)
+	//4649 Jäsenmaksu 2012 ja lisenssi (ei vakuutusta)
+	//4650 Jäsenmaksu 2012 ja lisenssi alle 18-vuotiaat (ei vakuutusta)
+	//4651 Jäsenmaksu, aikuiset 2012
+	//4652 Jäsenmaksu, juniorit 2012
+
+    
+    $valid_membership=array(653,654,655,656,4001,4002,4003,4004,4008,4009,4010,4013,4014,4644,4645,4653,4649,4650,4651,4652);
+    $valid_license=array(653,654,655,656,4001,4002,4008,4009,4010,4015,4016,4644,4645,4653,4649,4650);
+    $valid_juniors=array(654,656,4002,4004,4009,4010,4013,4016,4652,4650,4645);
     $ignore = array(4011);
     
     if(in_array($license_id,$ignore)){
@@ -376,9 +387,9 @@ function slklUpdateLicensesFromCSV($handle, $season){
       $check4 = "birthdate='".mysql_real_escape_string($birthdate)."' AND birthdate!='1971-01-01 00:00:00'";
 
       //$count1 = DBQueryRowCount("SELECT accreditation_id FROM uo_license WHERE ".$check1);
-      $count1 = DBQueryRowCount("SELECT accreditation_id FROM uo_license WHERE ".$check1." AND ".$check2);
-      $count2 = DBQueryRowCount("SELECT accreditation_id FROM uo_license WHERE ".$check1." AND ".$check3);
-      $count3 = DBQueryRowCount("SELECT accreditation_id FROM uo_license WHERE ".$check1." AND ".$check4);
+      $count1 = DBQueryRowCount("SELECT accreditation_id FROM uo_license WHERE ".$check1." AND ".$check2." AND external_id IS NULL");
+      $count2 = DBQueryRowCount("SELECT accreditation_id FROM uo_license WHERE ".$check1." AND ".$check3." AND external_id IS NULL");
+      $count3 = DBQueryRowCount("SELECT accreditation_id FROM uo_license WHERE ".$check1." AND ".$check4." AND external_id IS NULL");
 
       $query = "UPDATE uo_license SET junior=$junior ";
       //$query = "UPDATE uo_license SET external_id=accreditation_id ";

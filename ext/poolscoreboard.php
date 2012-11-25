@@ -8,7 +8,7 @@ include_once 'localization.php';
 <meta http-equiv="Pragma" content="no-cache"/>
 <meta http-equiv="Expires" content="-1"/>
 <?php
-$style = urldecode($_GET["Style"]);
+$style = iget("style");
 if(empty($style))
 	$style='pelikone.css';
 	
@@ -23,8 +23,8 @@ include_once '../lib/season.functions.php';
 include_once '../lib/series.functions.php';
 include_once '../lib/team.functions.php';
 
-$poolId = intval($_GET["Pool"]);
-$season = $_GET["Season"];
+$poolId = intval(iget("pool"));
+$season = iget("season");
 $sort="total";
 
 echo "<table class='pk_table'>";

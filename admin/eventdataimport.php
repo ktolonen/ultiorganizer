@@ -10,8 +10,8 @@ $seasonId = "";
 $imported = false;
 
 //check access rights before user can upload data into server
-if(!empty($_GET['Season'])){
-  $seasonId = $_GET["Season"];
+if(!empty($_GET['season'])){
+  $seasonId = $_GET["season"];
   if(!isSeasonAdmin($seasonId)){die('Insufficient rights to import data');}
 }else{
 if(!isSuperAdmin()){die('Insufficient rights to import data');}
@@ -50,11 +50,11 @@ if($imported){
   unset($_POST['replace']);
 }
 
-$html .= "<form method='post' enctype='multipart/form-data' action='?view=admin/eventdataimport&amp;Season=".$seasonId."'>\n";
+$html .= "<form method='post' enctype='multipart/form-data' action='?view=admin/eventdataimport&amp;season=".$seasonId."'>\n";
 
 $html .= "<p><span class='profileheader'>"._("Select file to import").": </span></p>\n";
 
-$html .= "<p><input class='input' type='file' size='100' name='restorefile'/>";
+$html .= "<p><input class='input' type='file' size='80' name='restorefile'/>";
 $html .= "<input type='hidden' name='MAX_FILE_SIZE' value='100000000'/></p>";
 
 if(empty($seasonId)){

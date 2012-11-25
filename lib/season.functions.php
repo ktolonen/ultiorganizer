@@ -154,6 +154,16 @@ function Seasons($filter=null, $ordering=null){
 }
 
 /**
+ * Returns all seasons.
+ * 
+ * @return array of seasons
+ */
+function SeasonsArray(){
+  $query = sprintf("SELECT season_id, name FROM uo_season season ORDER BY starttime DESC");
+  return DBQueryToArray($query);
+}
+
+/**
  * Returns all seasons for given type.
  * @see SeasonTypes()
  * 
@@ -227,14 +237,18 @@ function SeasonTeams($season, $onlyvalid=true) {
  * @param string $seasonId uo_season.season_id
  * @return php array of reservations
  */
-function SeasonReservations($seasonId){
-  $query = sprintf("SELECT  pr.*, pl.name 
-		FROM uo_reservation pr 
+function SeasonReservations($seasonId, $group="all"){
+  $query = sprintf("SELECT  pr.*, pl.name FROM uo_reservation pr 
 		LEFT JOIN uo_location pl ON (pr.location=pl.id)
-		WHERE pr.season='%s'
-		ORDER BY pr.starttime, pr.reservationgroup ASC, pl.name, pr.fieldname+0",
-  mysql_real_escape_string($seasonId));
-
+		WHERE pr.season='%s'",
+        mysql_real_escape_string($seasonId));
+  
+  if($group != "all"){
+    $query .= sprintf(" AND pr.reservationgroup = '%s'",  mysql_real_escape_string($group));
+  }
+  
+  $query .= " ORDER BY pr.starttime, pr.reservationgroup ASC, pl.name, pr.fieldname+0";
+  
   return DBQueryToArray($query);
 }
 

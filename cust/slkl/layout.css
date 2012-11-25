@@ -1,9 +1,10 @@
 
 .page{
-	width: 880px;
+	width: 860px;
 	margin-left: auto;
 	margin-right: auto;
 	overflow: visible;
+	clear: both;
 	padding-top: 0px;
 	padding-bottom: 25px;
 	padding-right: 0px;
@@ -117,10 +118,13 @@
 
 .tdcontent {
 	/*border-left: solid #598788 4px;*/ 
+	width: 100%;
+	
 }
 
 .content {
-	width: 635px;
+	/*width: 635px;*/
+	width: 95%;
 	height:100%;
 	margin: 0px;
 	margin-left:5px;
@@ -180,13 +184,15 @@
 
 .deletebutton {
 	cursor:pointer;
-	padding: 0;
-	margin: 0;
-	border: 1px solid #ffffff;
+	padding: 0px;
+	padding-left: 3px;
+	padding-right: 3px;
+	border: 0;
+	
 }
 
 .deletebutton:hover {
-	border: 1px solid #006;
+	background-color: #0bc5e0;
 }
 
 .dropdown {
@@ -275,6 +281,34 @@ yuicalendar.table {
 .playedpool {
 	background-color: #E0E0E0;
 }
+
+.tablelowlight {
+	background-color: #E0E0E0;
+}
+
+.admintable {
+	white-space: nowrap;
+	width: 100%;
+	
+	/*border-collapse:separate;*/ 
+	/*border-spacing:1em;*/
+}
+
+tr.admintablerow:nth-of-type(odd) { background-color: #E0FFFF; }
+tr.admintablerow:nth-of-type(even) { background-color: #F5DEB3; }
+	
+.admintablerow {
+	/*border-bottom: 1px solid #006;*/
+	/*background-color: #E0E0E0;*/
+}
+
+tr.admintablerow > td
+{
+  padding-bottom: 0.5em;
+  padding-top: 0.5em;
+  padding-right: 0.5em;
+}
+
 
 .flag{
 	border-collapse:collapse;

@@ -1,6 +1,7 @@
 <?php
 
 include_once $include_prefix.'lib/season.functions.php';
+include_once $include_prefix.'lib/series.functions.php';
 include_once $include_prefix.'lib/team.functions.php';
 include_once $include_prefix.'lib/reservation.functions.php';
 include_once $include_prefix.'lib/logging.functions.php';
@@ -484,14 +485,14 @@ function hasEditPlacesRight($season) {
 }
 
 function hasEditTeamsRight($series) {
-	$season = getSeriesSeason($series);
+	$season = SeriesSeasonId($series);
 	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 	isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 	isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
 }
 
 function  hasEditGamesRight($series) {
-	$season = getSeriesSeason($series);
+	$season = SeriesSeasonId($series);
 	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 	isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 	isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
@@ -501,7 +502,7 @@ function hasEditPlayerProfileRight($playerId) {
 	$playerInfo = PlayerInfo($playerId);
 	$team = $playerInfo['team'];
 	$series = getTeamSeries($team);
-	$season = getSeriesSeason($series);
+	$season = SeriesSeasonId($series);
 	return isPlayerAdmin($playerInfo['profile_id']) || 
 	isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 	isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
@@ -511,7 +512,7 @@ function hasEditPlayerProfileRight($playerId) {
 
 function hasEditPlayersRight($team) {
 	$series = getTeamSeries($team);
-	$season = getSeriesSeason($series);
+	$season = SeriesSeasonId($series);
 	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 	isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 	isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
@@ -521,7 +522,7 @@ function hasEditPlayersRight($team) {
 function hasEditGamePlayersRight($game) {
 	$team = GameRespTeam($game);
 	$series = GameSeries($game);
-	$season = getSeriesSeason($series);
+	$season = SeriesSeasonId($series);
 	$reservation = GameReservation($game);
 	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 	isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
@@ -534,7 +535,7 @@ function hasEditGamePlayersRight($game) {
 function hasEditGameEventsRight($game) {
 	$team = GameRespTeam($game);
 	$series = GameSeries($game);
-	$season = getSeriesSeason($series);
+	$season = SeriesSeasonId($series);
 	$reservation = GameReservation($game);
 	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 	isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
@@ -556,9 +557,9 @@ function hasTranslationRight() {
 function hasAddMediaRight() {
 	return isset($_SESSION['uid']) && ($_SESSION['uid'] != 'anonymous');
 }
-
+/*
 function getSeriesSeason($series) {
-	$query = sprintf("SELECT ser.season FROM uo_pool pool 
+	$query = sprintf("SELECT ser.season FROM uo_series ser 
 	LEFT JOIN uo_series ser ON (pool.series=ser.series_id) WHERE ser.series_id=%d", (int)$series);
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
@@ -566,7 +567,7 @@ function getSeriesSeason($series) {
 		return $row[0];
 	} else return "";
 }
-
+*/
 function UserListRightsHtml($userId) {
 	$query = sprintf("SELECT value FROM uo_userproperties WHERE userid='%s'", mysql_real_escape_string($userId));
 	$result = DBQuery($query);
@@ -793,14 +794,13 @@ function RemoveSeasonUserRole($userid, $role, $seasonId) {
 function GetTeamAdmins($teamId) {
 	$seasonrights = getEditSeasons($_SESSION['uid']);
 	$season = TeamSeason($teamId);
+
 	if (isset($seasonrights[$season])) {
 		$query = sprintf("SELECT pu.userid, pu.name, pu.email FROM uo_userproperties pup
 				LEFT JOIN uo_users pu ON(pup.userid=pu.userid)
 				WHERE pup.value='%s' ORDER BY pu.name ASC",
 				mysql_real_escape_string('teamadmin:'.$teamId));
-			$result = mysql_query($query);
-			if (!$result) { die('Invalid query: ' . mysql_error()); }
-			return $result;
+		return DBQueryToArray($query);
 	} else { die('Insufficient rights to access user info'); } 
 }
 
@@ -954,6 +954,34 @@ function ConfirmRegister($token) {
 		Log1("user","add",$row['userid'],"","confirm register request");
 		return true;
 	} else return false;
+}
+
+
+function ConfirmRegisterUID($userid) {
+    if(isSuperAdmin()){
+    	$query = sprintf("SELECT userid, password, name, email FROM uo_registerrequest WHERE userid='%s'",
+    		mysql_real_escape_string($userid));
+    	$result = mysql_query($query);
+    	if (!$result) { die('Invalid query: ' . mysql_error()); }
+    	if ($row = mysql_fetch_assoc($result)) {
+    		$query = sprintf("INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
+    			mysql_real_escape_string($row['name']),
+    			mysql_real_escape_string($row['userid']),
+    			mysql_real_escape_string($row['password']),
+    			mysql_real_escape_string($row['email']));
+    		$result = mysql_query($query);
+    		if (!$result) { die('Invalid query: ' . mysql_error()); }
+    		$query = sprintf("DELETE FROM uo_registerrequest WHERE userid='%s'",
+    			mysql_real_escape_string($userid));
+    		$result = mysql_query($query);
+    		if (!$result) { die('Invalid query: ' . mysql_error()); }
+    		FinalizeNewUser($row['userid'], $row['email']);
+    		Log1("user","add",$row['userid'],"","added by administrator");
+    		return true;
+    	} else return false;
+    }else{
+    die("Insufficient user rights."); 
+    }
 }
 
 function FinalizeNewUser($userid, $email) {
@@ -1256,6 +1284,21 @@ function CreateNewUsername($firstname, $lastname, $email) {
 		if (!isRegistered($emailStart.$extra)) return $emailStart.$extra;
 		if (!isRegistered($firstname.".".$lastname.$extra)) return $firstname.".".$lastname.$extra;
 	}
+}
+
+function UserCreateRandomPassword() {
+
+    $chars = "abcdefghijkmnopqrstuvwxyz023456789";
+    srand((double)microtime()*1000000);
+    $i = 0;
+    $pass = '' ;
+    while ($i <= 7) {
+        $num = rand() % 33;
+        $tmp = substr($chars, $num, 1);
+        $pass = $pass . $tmp;
+        $i++;
+    }
+    return $pass;
 }
 
 ?>

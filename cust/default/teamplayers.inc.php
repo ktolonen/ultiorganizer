@@ -2,7 +2,7 @@
 <div id="selectaccreditation_id" class="yui-pre-content">
 	<div class="hd"><?php echo _("Choose best match"); ?></div>
 	<div class="bd">
-		<form method='post' action='?view=user/teamplayers&amp;Team=<?php echo $_GET['Team']; ?>'>
+		<form method='post' action='?view=user/teamplayers&amp;team=<?php echo $_GET['team']; ?>'>
 			<div>
 			<input type='hidden' name='playerId' id='dialogPlayerId' value=''/>
 			<input type='hidden' name='firstname' id='dialogFirstName' value=''/>

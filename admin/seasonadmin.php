@@ -25,7 +25,7 @@ $club = intval($info['isnationalteams'])?_("National Teams"):_("Club Teams");
 $inter = intval($info['isinternational'])?"":_("National");
 $tour = intval($info['istournament'])?_("Tournament"):_("Season");
 
-$html .=  "<tr><td><b>"._("Type")."</b></td><td>".U_($info['type'])."/".$tour."/". $inter."/".$club ."</td></tr>\n";
+$html .=  "<tr><td  style='width:40%;'><b>"._("Type")."</b></td><td>".U_($info['type'])."/".$tour."/". $inter."/".$club ."</td></tr>\n";
 $html .=  "<tr><td><b>"._("Organizer")."</b></td><td>".U_($info['organizer'])."/".U_($info['category'])."</td></tr>\n";
 
 $spirit = intval($info['spiritpoints'])?_("given"):_("not given");
@@ -55,55 +55,56 @@ $html .=  "</td><td style='width:300px; vertical-align:text-top;'>";
 
 $html .=  "<table style='white-space: nowrap;' border='0'>\n";
 $series = SeasonSeries($info['season_id']);
-$html .=  "<tr><td><a href='?view=admin/seasonseries&amp;Season=".$info['season_id']."'>"._("Divisions")."</a></td>";
+$html .=  "<tr><td style='width:80%;'><a href='?view=admin/seasonseries&amp;season=".$info['season_id']."'>"._("Divisions")."</a></td>";
 $html .=  "<td class='right'>".count($series)."</td>";
 $html .=  "</tr>\n";
 
 $pools = SeasonPools($info['season_id']);
-$html .=  "<tr><td><a href='?view=admin/seasonpools&amp;Season=".$info['season_id']."'>"._("Pools")."</a></td>";
+$html .=  "<tr><td><a href='?view=admin/seasonpools&amp;season=".$info['season_id']."'>"._("Pools")."</a></td>";
 $html .=  "<td class='right'>".count($pools)."</td>";
 $html .=  "</tr>\n";
 
 $teams = SeasonTeams($info['season_id']);
-$html .=  "<tr><td><a href='?view=admin/seasonteams&amp;Season=".$info['season_id']."'>"._("Teams")."</a></td>";
+$html .=  "<tr><td><a href='?view=admin/seasonteams&amp;season=".$info['season_id']."'>"._("Teams")."</a></td>";
 $html .=  "<td class='right'>".count($teams)."</td>";
 $html .=  "</tr>\n";
 
 $players = SeasonAllPlayers($info['season_id']);
-$html .=  "<tr><td><a href='?view=admin/accreditation&amp;Season=".$info['season_id']."'>"._("Players")."</a></td>";
+$html .=  "<tr><td><a href='?view=admin/accreditation&amp;season=".$info['season_id']."'>"._("Players")."</a></td>";
 $html .=  "<td class='right'>".count($players)."</td>";
 $html .=  "</tr>\n";
 
 $reservations = SeasonReservations($info['season_id']);
-$html .=  "<tr><td><a href='?view=admin/reservations&amp;Season=".$info['season_id']."'>"._("Reservations")."</a></td>";
+$html .=  "<tr><td><a href='?view=admin/reservations&amp;season=".$info['season_id']."'>"._("Reservations")."</a></td>";
 $html .=  "<td class='right'>".count($reservations)."</td>";
 $html .=  "</tr>\n";
 
 $games = SeasonAllGames($info['season_id']);
-$html .=  "<tr><td><a href='?view=admin/seasongames&amp;Season=".$info['season_id']."'>"._("Games")."</a></td>";
+$html .=  "<tr><td><a href='?view=admin/seasongames&amp;season=".$info['season_id']."'>"._("Games")."</a></td>";
 $html .=  "<td class='right'>".count($games)."</td>";
 $html .=  "</tr>\n";
 
 $html .=  "</table>";
-$html .=  "</td></tr></table>";
-$html .=  "<p><a href='?view=admin/addseasons&amp;Season=".$info['season_id']."'>"._("Change event properties")."</a></p>";
-
-$html .=  "<p><b>"._("Operations")."</b><br/>";
-$html .=  "<a href='?view=admin/addseasonusers&amp;Season=".$info['season_id']."'>&raquo; "._("User access rights")."</a><br/>";
-$html .=  "<a href='?view=admin/addseasonlinks&amp;Season=".$info['season_id']."'>&raquo; "._("Add side menu links")."</a><br/>";
-
+$html .=  "</td></tr></table>\n\n";
+$html .=  "<p>";
+$html .=  "<a href='?view=admin/addseasons&amp;season=".$info['season_id']."'>&raquo; "._("Change event properties")."</a><br/>";
+$html .=  "<a href='?view=admin/addseasonusers&amp;season=".$info['season_id']."'>&raquo; "._("Edit User access rights")."</a><br/>";
+$html .=  "<a href='?view=admin/addseasonlinks&amp;season=".$info['season_id']."'>&raquo; "._("Edit side menu links")."</a><br/>";
 if(IsTwitterEnabled()){
-	$html .=  "<a href='?view=admin/twitterconf&amp;Season=".$info['season_id']."'>&raquo; "._("Configure Twitter")."</a><br/>";
+	$html .=  "<a href='?view=admin/twitterconf&amp;season=".$info['season_id']."'>&raquo; "._("Configure Twitter")."</a><br/>";
 }
 
 if(IsSeasonStatsCalculated($info['season_id'])){
-	$html .=  "<a href='?view=admin/stats&amp;Season=".$info['season_id']."'>&raquo; "._("Re-archive statistics")."</a><br/>";
+	$html .=  "<a href='?view=admin/stats&amp;season=".$info['season_id']."'>&raquo; "._("Re-archive statistics")."</a><br/>";
 }else{
-	$html .=  "<a href='?view=admin/stats&amp;Season=".$info['season_id']."'>&raquo; "._("Archive statistics")."</a><br/>";
+	$html .=  "<a href='?view=admin/stats&amp;season=".$info['season_id']."'>&raquo; "._("Archive statistics")."</a><br/>";
 }
+$html .= "</p>\n";
 
-$html .= "<a href='?view=admin/eventdataexport&amp;Season=".$info['season_id']."'>&raquo; "._("Export event data")."</a><br/>";
-$html .= "<a href='?view=admin/eventdataimport&amp;Season=".$info['season_id']."'>&raquo; "._("Import event data")."</a><br/>";
+$html .= "<hr/>\n";
+$html .=  "<p>";
+$html .= "<a href='?view=admin/eventdataexport&amp;season=".$info['season_id']."'>"._("Export event data")."</a> | ";
+$html .= "<a href='?view=admin/eventdataimport&amp;season=".$info['season_id']."'>"._("Import event data")."</a>";
 $html .=  "</p>";
 
 echo $html;

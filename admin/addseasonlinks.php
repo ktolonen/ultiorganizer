@@ -6,7 +6,7 @@ include_once $include_prefix.'lib/url.functions.php';
 $LAYOUT_ID = ADDSEASONLINKS;
 $title = _("Event links");
 $html = "";
-$seasonId = $_GET["Season"];
+$seasonId = $_GET["season"];
 
 if(!empty($_POST['save'])){
 
@@ -83,7 +83,7 @@ foreach($settings as $setting){
 	
 }			
 
-$html .= "<form method='post' action='?view=admin/addseasonlinks&amp;Season=".$seasonId."' id='Form'>";
+$html .= "<form method='post' action='?view=admin/addseasonlinks&amp;season=".$seasonId."' id='Form'>";
 
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= "<tr><th>"._("Type")."</th><th>"._("Order")."</th><th>"._("Name")."</th><th>"._("Url")."</th><th></th></tr>\n";

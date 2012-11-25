@@ -8,9 +8,9 @@ include_once 'lib/series.functions.php';
 
 $LAYOUT_ID = EDITSTANDING;
 
-$season = $_GET["Season"];
-$poolId = $_GET["Pool"];
-$teamId = $_GET["Team"];
+$season = $_GET["season"];
+$poolId = $_GET["pool"];
+$teamId = $_GET["team"];
 
 $title = _("Edit");
 
@@ -37,7 +37,7 @@ if(!empty($_POST['save']))
 	SetTeamSerieRank($teamId,$poolId,$rank,$activerank);
 	}
 
-echo "<form method='post' action='?view=admin/editstanding&amp;Season=$season&amp;Pool=$poolId&amp;Team=$teamId'>";
+echo "<form method='post' action='?view=admin/editstanding&amp;season=$season&amp;pool=$poolId&amp;team=$teamId'>";
 $info = TeamPoolInfo($teamId, $poolId);
 
 echo "<h2>"._("Standing")."</h2>\n";
@@ -69,7 +69,7 @@ if(mysql_num_rows($games))
 		echo "<td>-</td>";
 		echo "<td>". utf8entities(TeamName($row['visitorteam'])) ."</td>";
 		echo "<td>". intval($row['homescore']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($row['visitorscore']) ."</td>";
-		echo "<td class='center'><a href='?view=admin/editgame&amp;Season=$season&amp;Game=".$row['game_id']."'>"._("edit")."</a></td>";
+		echo "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$row['game_id']."'>"._("edit")."</a></td>";
 		echo "</tr>\n";	
 		}
 	echo "</table>";

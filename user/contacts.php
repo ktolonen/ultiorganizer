@@ -1,72 +1,66 @@
 <?php
 include_once $include_prefix.'lib/season.functions.php';
 
-$LAYOUT_ID = CONTACTS;
-if (empty($_GET['Season'])) {
-	die(_("Event mandatory"));
-}
-$season = $_GET['Season'];
-$links = getEditSeasonLinks();
-if (!isset($links[$season]['?view=user/contacts&amp;Season='.$season])) {
-	die(_("Inadequate user rights"));
-}
-
 $title = _("Contacts");
-//common page
-pageTop($title);
-leftMenu($LAYOUT_ID);
-contentStart();
+$html = "";
 
-echo "<h2>"._("Contacts")."</h2>";
+if (empty($_GET['season'])) {
+  die(_("Event mandatory"));
+}
+$season = $_GET['season'];
+$links = getEditSeasonLinks();
+if (!isset($links[$season]['?view=user/contacts&amp;season='.$season])) {
+  die(_("Inadequate user rights"));
+}
 
-echo "<div><a href='mailto:";
+$html .=  "<h2>"._("Contacts")."</h2>";
+
+$html .=  "<div><a href='mailto:";
 $resp = SeasonTeamAdmins($season,true);
 foreach($resp as $user){
-	echo utf8entities($user['email']).";";
+  $html .=  utf8entities($user['email']).";";
 }
-echo "'>"._("Mail to everyone registered for the event")."</a></div>";
+$html .=  "'>"._("Mail to everyone registered for the event")."</a></div>";
 
-echo "<h3>"._("Contact to Event organizer")."</h3>";
+$html .=  "<h3>"._("Contact to Event organizer")."</h3>";
 $admins = SeasonAdmins($season);
-echo "<ul>";
+$html .=  "<ul>";
 foreach($admins as $user){
-	if(!empty($user['email'])){
-		echo "<li> <a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>";
-		echo " (".utf8entities($user['name']).")</li>\n";;
-	}
+  if(!empty($user['email'])){
+    $html .=  "<li> <a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>";
+    $html .=  " (".utf8entities($user['name']).")</li>\n";;
+  }
 }
-echo "</ul>\n";
+$html .=  "</ul>\n";
 
-echo "<h3>"._("Contact to Teams")."</h3>";
+$html .=  "<h3>"._("Contact to Teams")."</h3>";
 
 $series = SeasonSeries($season);
 foreach($series as $row){
-		
-	echo "<p><b>".utf8entities(U_($row['name']))."</b></p>";
-	$resp = SeriesTeamResponsibles($row['series_id']);
-	echo "<div><a href='mailto:";
-	foreach($resp as $user){
-		echo utf8entities($user['email']).";";
-	}
-	echo "'>"._("Mail to teams in")." ".U_($row['name'])." "._("division")."</a></div>";
-	
-	$teams = SeriesTeams($row['series_id']);
-	echo "<ul>";
-	foreach($teams as $team){
-		echo "<li>".utf8entities($team['name']).":";
-		$admins = GetTeamAdmins($team['team_id']);
-		while($user = mysql_fetch_assoc($admins)){
-			if(!empty($user['email'])){
-				echo " <a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>";
-				echo " (".utf8entities($user['name']).")";
-			}
-		}
-		echo "</li>\n";
-	}
-	echo "</ul>\n";
+
+  $html .=  "<p><b>".utf8entities(U_($row['name']))."</b></p>";
+  $resp = SeriesTeamResponsibles($row['series_id']);
+  $html .=  "<div><a href='mailto:";
+  foreach($resp as $user){
+    $html .=  utf8entities($user['email']).";";
+  }
+  $html .=  "'>"._("Mail to teams in")." ".U_($row['name'])." "._("division")."</a></div>";
+
+  $teams = SeriesTeams($row['series_id']);
+  $html .=  "<ul>";
+  foreach($teams as $team){
+    $html .=  "<li>".utf8entities($team['name']).":";
+    $admins = GetTeamAdmins($team['team_id']);
+    foreach($admins as $user){
+      if(!empty($user['email'])){
+        $html .=  " <a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>";
+        $html .=  " (".utf8entities($user['name']).")";
+      }
+    }
+    $html .=  "</li>\n";
+  }
+  $html .=  "</ul>\n";
 }
 
-
-contentEnd();
-pageEnd();
+showPage($title, $html);
 ?>

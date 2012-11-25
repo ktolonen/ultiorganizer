@@ -5,10 +5,10 @@ include_once $include_prefix.'lib/club.functions.php';
 include_once $include_prefix.'lib/country.functions.php';
 
 $LAYOUT_ID = ENROLLTEAM;
-if (empty($_GET['Season'])) {
+if (empty($_GET['season'])) {
 	die(_("Season mandatory"));
 }
-$season = $_GET['Season'];
+$season = $_GET['season'];
 $seasonInfo = SeasonInfo($season);
 $title = _("Enrolled teams").": ".utf8entities($seasonInfo['name']);
 

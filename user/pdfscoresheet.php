@@ -18,18 +18,23 @@ $gameId = 0;
 $teamId = 0;
 $seriesId=0;
 
-if(!empty($_GET["Game"])) {
-	$games = TimetableGames($_GET["Game"],"game","all","place");
+if(!empty($_GET["game"])) {
+	$games = TimetableGames($_GET["game"],"game","all","place");
 }
 
-if(!empty($_GET["Season"])) {
-	$season = $_GET["Season"];
+if(!empty($_GET["season"])) {
+	$season = $_GET["season"];
 }else{
 	$season = CurrentSeason();
 }
 
 if(!empty($_GET["series"])) {
 	$seriesId = $_GET["series"];
+}
+
+if(!empty($_GET["pool"])) {
+	$poolId = $_GET["pool"];
+	$games = TimetableGames($poolId, "pool", "all","time","");
 }
 
 if(!empty($_GET["filter1"])) {
@@ -40,9 +45,9 @@ if(!empty($_GET["filter2"])) {
 	$filter2  = $_GET["filter2"];
 }
 
-if(!empty($_GET["Reservation"])) {
+if(!empty($_GET["reservation"])) {
 	$gameResponsibilities = GameResponsibilities($season);
-	$games = ResponsibleReservationGames($_GET["Reservation"], $gameResponsibilities);
+	$games = ResponsibleReservationGames($_GET["reservation"], $gameResponsibilities);
 }
 if(!empty($_GET["group"])) {
 	if($filter1=="coming"){

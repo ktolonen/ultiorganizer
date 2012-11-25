@@ -1,7 +1,7 @@
 <?php
 include_once 'lib/series.functions.php';
 
-$seriesId = intval($_GET["Series"]);
+$seriesId = intval($_GET["series"]);
 $seasonInfo = SeasonInfo(SeriesSeasonId($seriesId));
 $teams = SeriesTeams($seriesId,true); 
 $backurl = utf8entities($_SERVER['HTTP_REFERER']);
@@ -27,7 +27,15 @@ include 'script/common.js.inc';
 pageTopHeadClose($title, false);
 leftMenu($LAYOUT_ID);
 contentStart();
-$html .= "<form method='post' action='?view=admin/seriesseeding&amp;Series=$seriesId'>";
+
+$series = SeasonSeries($seasonInfo['season_id']);
+foreach($series as $row){
+  $menutabs[U_($row['name'])]="?view=admin/seriesseeding&season=".$seasonInfo['season_id']."&series=".$row['series_id'];
+}
+$menutabs[_("...")]="?view=admin/seasonseries&season=".$seasonInfo['season_id'];
+pageMenu($menutabs);
+
+$html .= "<form method='post' action='?view=admin/seriesseeding&amp;series=$seriesId'>";
 $html .= "<h1>".utf8entities(U_(SeriesName($seriesId)))."</h1>";
 $html .=  "<table border='0' cellpadding='4px'>\n";
 

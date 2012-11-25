@@ -7,12 +7,8 @@ include_once 'lib/team.functions.php';
 include_once 'lib/country.functions.php';
 include_once 'lib/configuration.functions.php';
 
-$LAYOUT_ID = EXTINDEX;
 $title = _("Ultiorganizer links");
-//common page
-pageTop($title, false);
-leftMenu($LAYOUT_ID);
-contentStart();
+$html = "";
 
 $seltournament="";
 $selpool="";
@@ -31,8 +27,7 @@ $defaultcss=CUSTOMIZATIONS;
 $styles = array(urlencode("$baseurl/ext/$defaultcss.css"),urlencode("$baseurl/ext/black.css"),urlencode("$baseurl/ext/noborder.css"));
 $stylenames = array(_("default"),_("black and white"),_("no borders"));
 
-if(!empty($_POST['update']))
-	{
+if(!empty($_POST['update'])){
 	$selstyle = $_POST['ownstyle'];
 	if(empty($selstyle) || strlen($selstyle)<8)
 		$selstyle = $_POST['style'];
@@ -58,12 +53,12 @@ if(!empty($_POST['update']))
 if(empty($season))
 	$season = CurrentSeason();
 
-echo "<h1>"._("Embedding Ultiorganizer into other pages")."</h1>";
+$html .= "<h1>"._("Embedding Ultiorganizer into other pages")."</h1>";
 
-echo "<p>"._("You can embed the following statistics from ultiorganizer directly into your own pages").".</p>\n";
-echo "<form method='post' action='?view=ext/index'>\n";
+$html .= "<p>"._("You can embed the following statistics from ultiorganizer directly into your own pages").".</p>\n";
+$html .= "<form method='post' action='?view=ext/index'>\n";
 
-echo "<h2>"._("Select")."</h2>";
+$html .= "<h2>"._("Select")."</h2>";
 
 //season selection
 $selector = "<p>"._("Select event").":	<select class='dropdown' name='season'>\n";
@@ -175,122 +170,122 @@ $selector .= "<input class='input' size='50' name='ownstyle' value='$lastown'/><
 
 	
 $selector .= "<p><input class='button' type='submit' name='update' value='"._("Select and Update")."' /></p>\n";
-echo $selector;
+$html .= $selector;
 
-echo "<h2>"._("RSS")."</h2>\n";
-echo "<ul class='feed-list'>";
-echo "<li><a href='$baseurl/ext/rss.php?feed=all'>"
+$html .= "<h2>"._("RSS")."</h2>\n";
+$html .= "<ul class='feed-list'>";
+$html .= "<li><a href='$baseurl/ext/rss.php?feed=all'>"
 		._("Ultimate results")."</a></li>";
 if(count($series)){
-	echo "<li><a href='$baseurl/ext/rss.php?feed=gameresults&amp;id1=$season'>"
+	$html .= "<li><a href='$baseurl/ext/rss.php?feed=gameresults&amp;id1=$season'>"
 		._("Ultimate results").": ".utf8entities(SeasonName($season)) ."</a></li>";
 		foreach($series as $ser){
-			echo "<li><a href='$baseurl/ext/rss.php?feed=gameresults&amp;id1=$season&amp;id2=".$ser['series_id']."'>"
+			$html .= "<li><a href='$baseurl/ext/rss.php?feed=gameresults&amp;id1=$season&amp;id2=".$ser['series_id']."'>"
 				._("Ultimate results").": ".utf8entities(SeasonName($season)) ." ".utf8entities(U_($ser['name']))."</a></li>";
 		}
 }
-echo "</ul>\n";
+$html .= "</ul>\n";
 
 if(IsTwitterEnabled()){
-	echo "<h2>"._("Twitter")."</h2>\n";
+	$html .= "<h2>"._("Twitter")."</h2>\n";
 	if(count($series)){
-		echo "<ul class='twitter-list'>";
+		$html .= "<ul class='twitter-list'>";
 		$savedurl = GetUrl("season",$season,"result_twitter");
 		if($savedurl){
-			echo "<li><a href='".$savedurl['url']."'>"
+			$html .= "<li><a href='".$savedurl['url']."'>"
 				._("Ultimate results").": ". utf8entities(SeasonName($season)) ."</a></li>";
 		}
 	
 		foreach($series as $ser){
 			$savedurl = GetUrl("series",$ser['series_id'],"result_twitter");
 			if($savedurl){
-				echo "<li><a href='".$ser['series_id']."'>"
+				$html .= "<li><a href='".$ser['series_id']."'>"
 					._("Ultimate results").": ".utf8entities(SeasonName($season)) ." ".utf8entities(U_($ser['name']))."</a></li>";
 			}
 		}
-		echo "</ul>\n";
+		$html .= "</ul>\n";
 	}
 }
 if(!empty($season)){
-	echo "<h2>"._("Score counter")."</h2>\n";
-		echo "<p class='highlight' ><code>
+	$html .= "<h2>"._("Score counter")."</h2>\n";
+		$html .= "<p class='highlight' ><code>
 			&lt;object data='$baseurl/ext/scorecounter.php?Season=$season&amp;Numbers=6' <br/>
 			type='text/html' width='100px' height='60px'&gt;&lt;/object&gt;
 			</code></p>\n";
 			
-		echo "<p><object data='$baseurl/ext/scorecounter.php?Season=$season&amp;Numbers=6' type='text/html' width='100px' height='60px'></object></p>\n";
+		$html .= "<p><object data='$baseurl/ext/scorecounter.php?Season=$season&amp;Numbers=6' type='text/html' width='100px' height='60px'></object></p>\n";
 	
-	echo "<h2>"._("All pools")."</h2>\n";
-		echo "<p class='highlight' ><code>
+	$html .= "<h2>"._("All pools")."</h2>\n";
+		$html .= "<p class='highlight' ><code>
 			&lt;object data='$baseurl/ext/eventpools.php?Season=$season&amp;Style=$selstyle' <br/>
 			type='text/html' width='600px' height='400px'&gt;&lt;/object&gt;
 			</code></p>\n";
 			
-	echo "<p><object data='$baseurl/ext/eventpools.php?Season=$season&amp;Style=$selstyle' type='text/html' width='600px' height='400px'></object></p>\n";
+	$html .= "<p><object data='$baseurl/ext/eventpools.php?Season=$season&amp;Style=$selstyle' type='text/html' width='600px' height='400px'></object></p>\n";
 }
 	
 if(!empty($seltournament)){
-	echo "<h2>"._("All games in selected grouping")."</h2>\n";
+	$html .= "<h2>"._("All games in selected grouping")."</h2>\n";
 
-	echo "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/tournament.php?Tournament=$seltournament&amp;Season=$season&amp;Style=$selstyle' <br/>
+	$html .= "<p class='highlight' ><code>
+		&lt;object data='$baseurl/ext/tournament.php?Tournament=$seltournament&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='600px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 		
-	echo "<p><object data='$baseurl/ext/tournament.php?Tournament=$seltournament&amp;Season=$season&amp;Style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
+	$html .= "<p><object data='$baseurl/ext/tournament.php?Tournament=$seltournament&amp;season=$season&amp;Style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
 }
 
 if(!empty($selpool)){
-	echo "<h2>"._("Selected pool standings and scoreboard")."</h2>";
+	$html .= "<h2>"._("Selected pool standings and scoreboard")."</h2>";
 
-	echo "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/poolstatus.php?Pool=$selpool&amp;Season=$season&amp;Style=$selstyle' <br/>
+	$html .= "<p class='highlight' ><code>
+		&lt;object data='$baseurl/ext/poolstatus.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='500px' height='200px'&gt;&lt;/object&gt;
 		</code></p>\n";
 		
-	echo "<p><object data='$baseurl/ext/poolstatus.php?Pool=$selpool&amp;Season=$season&amp;Style=$selstyle' type='text/html' width='500px' height='200px'></object></p>\n";
+	$html .= "<p><object data='$baseurl/ext/poolstatus.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' type='text/html' width='500px' height='200px'></object></p>\n";
 
-	echo "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/poolscoreboard.php?Pool=$selpool&amp;Season=$season&amp;Style=$selstyle' <br/>
+	$html .= "<p class='highlight' ><code>
+		&lt;object data='$baseurl/ext/poolscoreboard.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='300px' height='200px'&gt;&lt;/object&gt;
 		</code></p>\n";
 		
-	echo "<p><object data='$baseurl/ext/poolscoreboard.php?Pool=$selpool&amp;Season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='200px'></object></p>\n";
+	$html .= "<p><object data='$baseurl/ext/poolscoreboard.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='200px'></object></p>\n";
 }
 if(!empty($selcountry)){
-echo "<h2>"._("Selected country's teams pool standings and game result")."</h2>\n";
-	echo "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/countrystatus.php?Country=$selcountry&amp;Season=$season&amp;Style=$selstyle' <br/>
+$html .= "<h2>"._("Selected country's teams pool standings and game result")."</h2>\n";
+	$html .= "<p class='highlight' ><code>
+		&lt;object data='$baseurl/ext/countrystatus.php?Country=$selcountry&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='500px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
-echo "<p><object data='$baseurl/ext/countrystatus.php?Country=$selcountry&amp;Season=$season&amp;Style=$selstyle' type='text/html' width='500px' height='300px'></object></p>\n";
+$html .= "<p><object data='$baseurl/ext/countrystatus.php?Country=$selcountry&amp;season=$season&amp;Style=$selstyle' type='text/html' width='500px' height='300px'></object></p>\n";
 }
 
 if(!empty($selteam)){
-	echo "<h2>"._("Selected team's games and scoreaboard")."</h2>\n";
+	$html .= "<h2>"._("Selected team's games and scoreaboard")."</h2>\n";
 
-	echo "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;Season=$season&amp;Style=$selstyle' <br/>
+	$html .= "<p class='highlight' ><code>
+		&lt;object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='400px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 		
-	echo "<p><object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;Season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
+	$html .= "<p><object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
 
-	echo "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/teampcoming.php?Team=$selteam&amp;Season=$season&amp;Style=$selstyle' <br/>
+	$html .= "<p class='highlight' ><code>
+		&lt;object data='$baseurl/ext/teampcoming.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='400px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 		
-	echo "<p><object data='$baseurl/ext/teamcoming.php?Team=$selteam&amp;Season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
+	$html .= "<p><object data='$baseurl/ext/teamcoming.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
 
-	echo "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;Season=$season&amp;Style=$selstyle' <br/>
+	$html .= "<p class='highlight' ><code>
+		&lt;object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='300px' height='200px'&gt;&lt;/object&gt;
 		</code></p>\n";
 		
-	echo "<p><object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;Season=$season&amp;Style=$selstyle' type='text/html' width='300px' height='200px'></object></p>\n";}
-echo "</form>\n";
+	$html .= "<p><object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='300px' height='200px'></object></p>\n";}
+$html .= "</form>\n";
 
-contentEnd();
-pageEnd();
+showPage($title, $html);
+
 ?>

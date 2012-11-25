@@ -1,13 +1,13 @@
 <?php
-$LAYOUT_ID = LOGOUT;
 $title = _("Logout");
+$html = "";
+
 ClearUserSessionData();
 
-//common page
-pageTopHeadOpen($title);
-global $serverConf;
+$html .= "<h1>"._("You have logged out")."</h1>";
+
 if (IsFacebookEnabled()) {
-	echo "<script type=\"text/javascript\">
+  $html .= "<script type=\"text/javascript\">
 <!--
 window.onload = function() {
 	FB.getLoginStatus(function(response) {
@@ -19,13 +19,7 @@ window.onload = function() {
 //-->
 </script>";
 }
-pageTopHeadClose($title, false);
-leftMenu($LAYOUT_ID);
-contentStart();
 
-//content
-echo "<h1>"._("You have logged out")."</h1>";
+showPage($title, $html);
 
-contentEnd();
-pageEnd();
 ?>

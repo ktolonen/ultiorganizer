@@ -6,13 +6,78 @@ include_once 'lib/common.functions.php';
 
 $LAYOUT_ID = EDITGAME;
 $backurl = utf8entities($_SERVER['HTTP_REFERER']);
-$gameId = $_GET["Game"];
+$gameId = $_GET["game"];
 $info = GameResult($gameId);
 
-if(!empty($_GET["Season"]))
-	$season = $_GET["Season"];
+if(!empty($_GET["season"]))
+	$season = $_GET["season"];
 
 $title = _("Game") . " $gameId";
+
+
+//game parameters
+$gp = array(
+	"hometeam"=>"",
+	"visitorteam"=>"",
+	"scheduling_name_home"=>"",
+	"scheduling_name_visitor"=>"",
+	"reservation"=>"",
+	"time"=>"",
+	"pool"=>$info['pool'],
+	"valid"=>1,
+	"respteam"=>0,
+	"name"=>""
+	);
+	
+//process itself on submit
+if(!empty($_POST['save']))
+	{
+	$backurl = $_POST['backurl'];
+	$ok = true;
+	if (empty($_POST['pseudo'])) {
+		$gp['hometeam'] = $_POST['home'];
+		$gp['visitorteam'] = $_POST['away'];
+	} else {
+		$gp['scheduling_name_home'] = $_POST['home'];
+		$gp['scheduling_name_visitor'] = $_POST['away'];
+	}
+	$gp['reservation'] = $_POST['place'];
+	
+	$res = ReservationInfo($gp['reservation']);
+	if(!empty($_POST['time'])){
+		$gp['time'] = ToInternalTimeFormat((ShortDate($res['starttime']) . " " .$_POST['time']));
+	}else{
+// Chris: I don't see why we want to do that		
+//		$gp['time'] = ToInternalTimeFormat($res['starttime']);
+	}
+	
+	
+	$gp['pool'] = $_POST['pool'];
+	
+	if(!empty($_POST['valid']))
+		$gp['valid'] = 1;
+	else
+		$gp['valid'] = 0;
+	
+	if(!empty($_POST['respteam']))
+		$gp['respteam'] = $_POST['respteam'];
+	
+	if(!empty($_POST['name']))
+		$gp['name'] = $_POST['name'];
+
+	
+	SetGame($gameId, $gp);
+	
+	$userid = $_POST['userid'];
+    if(empty($userid)){
+      $userid = UserIdForMail($_POST['email']);
+    }
+    if(IsRegistered($userid)){
+      AddSeasonUserRole($userid, 'gameadmin:'.$gameId,$season);
+    }
+    session_write_close();
+	header("location:$backurl");
+	}
 
 //common page
 pageTopHeadOpen($title);
@@ -77,72 +142,11 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
-//game parameters
-$gp = array(
-	"hometeam"=>"",
-	"visitorteam"=>"",
-	"scheduling_name_home"=>"",
-	"scheduling_name_visitor"=>"",
-	"reservation"=>"",
-	"time"=>"",
-	"pool"=>$info['pool'],
-	"valid"=>1,
-	"respteam"=>0,
-	"name"=>""
-	);
-	
-//process itself on submit
-if(!empty($_POST['save']))
-	{
-	$backurl = utf8entities($_POST['backurl']);
-	$ok = true;
-	if (empty($_POST['pseudo'])) {
-		$gp['hometeam'] = $_POST['home'];
-		$gp['visitorteam'] = $_POST['away'];
-	} else {
-		$gp['scheduling_name_home'] = $_POST['home'];
-		$gp['scheduling_name_visitor'] = $_POST['away'];
-	}
-	$gp['reservation'] = $_POST['place'];
-	
-	$res = ReservationInfo($gp['reservation']);
-	if(!empty($_POST['time'])){
-		$gp['time'] = ToInternalTimeFormat((ShortDate($res['starttime']) . " " .$_POST['time']));
-	}else{
-// Chris: I don't see why we want to do that		
-//		$gp['time'] = ToInternalTimeFormat($res['starttime']);
-	}
-	
-	
-	//$gp['pool'] = $_POST['pool'];
-	
-	if(!empty($_POST['valid']))
-		$gp['valid'] = 1;
-	else
-		$gp['valid'] = 0;
-	
-	if(!empty($_POST['respteam']))
-		$gp['respteam'] = $_POST['respteam'];
-	
-	if(!empty($_POST['name']))
-		$gp['name'] = $_POST['name'];
-
-	
-	SetGame($gameId, $gp);
-	
-	$userid = $_POST['userid'];
-    if(empty($userid)){
-      $userid = UserIdForMail($_POST['email']);
-    }
-    if(IsRegistered($userid)){
-      AddSeasonUserRole($userid, 'gameadmin:'.$gameId,$season);
-    }
-	}
 
 //echo "<form method='post' action='" . $_SERVER[ 'PHP_SELF' ]. "'>";
 
 echo "<h2>"._("Edit game")."</h2>\n";	
-echo "<form method='post' action='?view=admin/editgame&amp;Season=$season&amp;Game=$gameId'>";
+echo "<form method='post' action='?view=admin/editgame&amp;season=$season&amp;game=$gameId'>";
 $info = GameResult($gameId);
 $pool_info = PoolInfo($info['pool']);
 $seriesId = $pool_info['series'];
@@ -156,12 +160,12 @@ echo "<table>";
 echo "<tr><td><a href='?view=user/addresult&amp;Game=".$gameId."'>"._("Change game result")."</a></td></tr>";
 echo "<tr><td><a href='?view=user/addplayerlists&amp;Game=".$gameId."'>"._("Change game roster")."</a></td></tr>";
 echo "<tr><td><a href='?view=user/addscoresheet&amp;Game=".$gameId."'>"._("Change game score sheet")." </a></td></tr>";
-if( mysql_num_rows( mysql_query("SHOW TABLES LIKE 'uo_defense'")))
+if(ShowDefenseStats())
 {
 echo "<tr><td><a href='?view=user/adddefensesheet&amp;Game=".$gameId."'>"._("Change game defense sheet")." </a></td></tr>";
 }
 
-echo "<tr><td><a href='?view=user/pdfscoresheet&amp;Game=".$gameId."'>"._("Print score sheet")." </a></td></tr>";
+echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=".$gameId."'>"._("Print score sheet")." </a></td></tr>";
 echo "<tr><td><a href='?view=user/addmedialink&amp;game=$gameId'>"._("Add media")."</a></td></tr>";
 echo "</table>\n";
 
@@ -204,7 +208,7 @@ echo "<tr><td class='infocell'>"._("Starting time")." (hh:mm):</td>
 <td><input class='input' id='time' name='time' value='".DefHourFormat($info['time'])."'/></td></tr>\n";
 
 
-echo "<tr><td class='infocell'>"._("Division").":</td><td><select class='dropdown' disabled='disabled' name='pool'>\n";
+echo "<tr><td class='infocell'>"._("Division").":</td><td><select class='dropdown' name='pool'>\n";
 echo "<option class='dropdown' value='0'></option>";
 
 $pools = SeasonPools($season);

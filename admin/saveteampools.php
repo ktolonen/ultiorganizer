@@ -11,15 +11,19 @@ $body = @file_get_contents('php://input');
 $poolIds = array();
 $tmppools = explode("|", $body);
 foreach ($tmppools as $PoolStr) {
-	$pool = explode(":", $PoolStr);
-	$poolIds[] = $pool[0];
+	$pool = explode("/", $PoolStr);
+	if($pool[0]!=0){
+	  $poolIds[] = $pool[0];
+	}
 }
+
 $pools = explode("|", $body);
 foreach ($pools as $PoolStr) {
-	$pools = explode(":", $PoolStr);
+	$pools = explode("/", $PoolStr);
 	
 	if ($pools[0] != "0") {
 		for ($i=1; $i < count($pools); $i++) {
+		    
 			$teamArr = explode("/", $pools[$i]);
 			foreach ($poolIds as $PoolId) {
 				PoolDeleteTeam($PoolId,$teamArr[0]);
