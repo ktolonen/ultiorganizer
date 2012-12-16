@@ -13,11 +13,11 @@ if(isset($_POST['tweettext'])) {
 	if(!empty($_POST['textbox'])){
 		TweetText($gameId, $_POST['textbox']);
 	}
-	header("location:?view=mobile/addscoresheet&Game=".$gameId);
+	header("location:?view=mobile/addscoresheet&game=".$gameId);
 	}
 elseif(isset($_POST['tweetresult'])) {
 	TweetGameScores($gameId);
-	header("location:?view=mobile/addscoresheet&Game=".$gameId);
+	header("location:?view=mobile/addscoresheet&game=".$gameId);
 }
 mobilePageTop(_("Score&nbsp;sheet"));
 ?>
@@ -48,7 +48,7 @@ $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='tweettext' value='"._("Tweet text")."'/>";
 
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/addscoresheet&amp;Game=".$gameId."'>"._("Back to score sheet")."</a>";
+$html .= "<a href='?view=mobile/addscoresheet&amp;game=".$gameId."'>"._("Back to score sheet")."</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>"; 

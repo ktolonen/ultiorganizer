@@ -2,9 +2,9 @@
 
 // Dump the contents of a variable into HTML comments for debugging:
 function debugVar ($var) {
-  global $CFG;
+  global $DEBUG;
   
-  if ($CFG->debug) {
+  if ($DEBUG) {
     echo "\n<!--\nDEBUG INFO: \n";
     if (is_array ($var))
       print_r ($var);
@@ -16,9 +16,9 @@ function debugVar ($var) {
 
 // Dump function parameters into HTML comments for debugging:
 function debugFunc () {
-  global $CFG;
+  global $DEBUG;
 
-  if ($CFG->debug) {
+  if ($DEBUG) {
     $argv = func_get_args ();
     echo "\n<!--\nDEBUG INFO: \n";
     print_r ($argv);
@@ -28,9 +28,9 @@ function debugFunc () {
 
 // Dump a debugging message into HTML comments for debugging:
 function debugMsg ($msg) {
-  global $CFG;
+  global $DEBUG;
 
-  if ($CFG->debug) {
+  if ($DEBUG) {
     echo "\n<!--\nDEBUG INFO: \n";
     echo $msg;
     echo "\n-->\n";

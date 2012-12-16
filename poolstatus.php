@@ -31,7 +31,7 @@ if (iget("season")) {
   //if pool has only one game, show game's schoresheet if exist
   if(count($games)==1 && $poolinfo['type']==1){
     $game = $games[0];
-    header("location:?view=gameplay&Game=".$game['game_id']);
+    header("location:?view=gameplay&game=".$game['game_id']);
     exit();
   }
   $pools[] = array(
@@ -561,7 +561,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
           $results = GameHomeTeamResults($team['team_id'], $pool['pool_id']);
           foreach($results as $res){
             if($res['scoresheet'] && !$res['isongoing']){
-              $game .= "<a href='?view=gameplay&amp;Game=". $res['game_id'] ."'>";
+              $game .= "<a href='?view=gameplay&amp;game=". $res['game_id'] ."'>";
               $game .= $res['homescore']."-".$res['visitorscore']."</a> ";
             }elseif($res['homescore'] + $res['visitorscore']>0 && !$res['isongoing']){
               $game .= $res['homescore']."-".$res['visitorscore'];
@@ -709,14 +709,14 @@ function printCrossmatchPool($seasoninfo, $poolinfo){
      
     if(!intval($game['isongoing'])){
       if(intval($game['scoresheet'])){
-        $ret .= "<td class='right'>&nbsp;<a href='?view=gameplay&amp;Game=". $game['game_id'] ."'>";
+        $ret .= "<td class='right'>&nbsp;<a href='?view=gameplay&amp;game=". $game['game_id'] ."'>";
         $ret .= _("Game play") ."</a></td>\n";
       }else{
         $ret .= "<td class='left'></td>\n";
       }
     }else{
       if(intval($game['scoresheet'])){
-        $ret .= "<td class='right'>&nbsp;&nbsp;<a href='?view=gameplay&amp;Game=". $game['game_id'] ."'>";
+        $ret .= "<td class='right'>&nbsp;&nbsp;<a href='?view=gameplay&amp;game=". $game['game_id'] ."'>";
         $ret .= _("Ongoing") ."</a></td>\n";
       }else{
         $ret .= "<td class='right'>&nbsp;&nbsp;"._("Ongoing")."</td>\n";

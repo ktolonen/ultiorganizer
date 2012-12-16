@@ -185,11 +185,11 @@ foreach($pools as $pool){
   		
   		//$html .= "<td class='left' style='white-space: nowrap'>".utf8entities(U_($game['seriesname'])).", ". utf8entities(U_($game['poolname']))."</td>";
   		
-  		//$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;Game=".$game['game_id']."'>"._("edit")."</a></td>";
+  		//$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
   		
   		if ((intval($game['homescore'])+intval($game['visitorscore']))>0) {
   			$html .= "<td style='width:25px'>". intval($game['homescore']) ."</td><td style='width:5px'>-</td><td style='width:25px'>". intval($game['visitorscore']) ."</td>";
-  			//$html .= "<td style='width:15%'><a href='?view=gameplay&amp;Game=". $game['game_id'] ."'>".intval($game['homescore']) ." - ". intval($game['visitorscore'])."</a></td>";
+  			//$html .= "<td style='width:15%'><a href='?view=gameplay&amp;game=". $game['game_id'] ."'>".intval($game['homescore']) ." - ". intval($game['visitorscore'])."</a></td>";
   		}else{
   			//$html .= "<td colspan='3'></td>";
   			//$html .= "<td style='width:15%'>? - ?</td>";
@@ -287,7 +287,7 @@ while($game = mysql_fetch_assoc($games)){
 		
 		$html .= "<td class='left' style='white-space: nowrap'>".utf8entities(U_($game['seriesname'])).", ". utf8entities(U_($game['poolname']))."</td>";
 		
-		$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;Game=".$game['game_id']."'>"._("edit")."</a></td>";
+		$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
 		
 		if($game['hometeam'] && $game['visitorteam']){
 			$html .= "<td style='width:5%'>". intval($game['homescore']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($game['visitorscore']) ."</td>";
@@ -333,7 +333,7 @@ if($group=="unscheduled"){
 				$html .= "<td class='lowlight' style='width:30%'>".utf8entities(U_($row['pvisitorteamname']))."</td>";
 			}
 			$html .= "<td class='left' style='white-space: nowrap'>".utf8entities(U_($row['seriesname'])).", ". utf8entities(U_($row['poolname']))."</td>";
-			$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;Game=".$row['game_id']."'>"._("edit")."</a></td>";
+			$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$row['game_id']."'>"._("edit")."</a></td>";
 			if(CanDeleteGame($row['game_id'])){
 				$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";		
 			}

@@ -556,9 +556,10 @@ function leftMenu($id=0, $printable=false) {
   echo "<table class='leftmenulinks'>\n";
   echo "<tr><td class='menuseasonlevel'>"._("Client access")."</td></tr>\n";
   echo "<tr><td>";
-  echo "<a class='subnav' href=\"?view=ext/index\">&raquo; "._("Ultiorganizer links")."</a>\n";
-  echo "<a class='subnav' href=\"?view=ext/export\">&raquo; "._("Data export")."</a>\n";
-  echo "<a class='subnav' href=\"?view=mobile/index\">&raquo; "._("Mobile Administration")."</a>\n";
+  echo "<a class='subnav' href='?view=ext/index'>&raquo; "._("Ultiorganizer links")."</a>\n";
+  echo "<a class='subnav' href='?view=ext/export'>&raquo; "._("Data export")."</a>\n";
+  echo "<a class='subnav' href='?view=mobile/index'>&raquo; "._("Mobile Administration")."</a>\n";
+  echo "<a class='subnav' href='./scorekeeper/'>&raquo; "._("Scorekeeper")."</a>\n";
   echo "</td></tr>\n";
   echo "</table>";
 

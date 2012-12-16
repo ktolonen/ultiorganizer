@@ -20,10 +20,10 @@ $html .= "</td></tr><tr><td>\n";
 if(mysql_num_rows($goals) <= 0){
 	$html .= _("Not fed in");
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=mobile/addplayerlists&amp;Game=".$gameId."&amp;team=".$game_result['hometeam']."'>"._("Feed in score sheet")."</a>";
+	$html .=  "<a href='?view=mobile/addplayerlists&amp;game=".$gameId."&amp;team=".$game_result['hometeam']."'>"._("Feed in score sheet")."</a>";
 }else{		
-	$html .= "<a href='?view=mobile/scoreboard&amp;Game=$gameId&amp;team=".$game_result['hometeam']."'>"._("home team")."</a> | ";
-	$html .= "<a href='?view=mobile/scoreboard&amp;Game=$gameId&amp;team=".$game_result['visitorteam']."'>"._("guest team")."</a>";
+	$html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=".$game_result['hometeam']."'>"._("home team")."</a> | ";
+	$html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=".$game_result['visitorteam']."'>"._("guest team")."</a>";
 	
 	$prevgoal = 0;
 	while($goal = mysql_fetch_assoc($goals)){
@@ -83,7 +83,7 @@ if(mysql_num_rows($goals) <= 0){
 $html .= "</td></tr><tr><td>\n";
 $html .= "<a href='?view=mobile/respgames'>"._("Back to game responsibilities")."</a>";
 $html .= "</td></tr><tr><td>\n";
-$html .=  "<a href='?view=gameplay&amp;Game=".$gameId."'>"._("Desktop score sheet")."</a>";
+$html .=  "<a href='?view=gameplay&amp;game=".$gameId."'>"._("Desktop score sheet")."</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 

@@ -76,7 +76,7 @@ if(empty($seasonId)){
 
 $html .= "</form>";
 
-showPage(0, $title, $html);
+showPage($title, $html);
 
 class XMLHandler{
   var $eventId; //event id under processing

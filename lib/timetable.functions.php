@@ -38,7 +38,7 @@ function TournamentView($games, $grouping=true){
       $ret .= "<h3>";
       $ret .= DefWeekDateFormat($game['starttime']);
       $ret .= " ";
-      $ret .= "<a href='?view=reservationinfo&amp;Reservation=".$game['reservation_id']."'>";
+      $ret .= "<a href='?view=reservationinfo&amp;reservation=".$game['reservation_id']."'>";
       $ret .= utf8entities(U_($game['placename']));
       $ret .= "</a>";
       $ret .= "</h3>\n";
@@ -385,7 +385,7 @@ function ExtGameView($games){
 function PlaceHeaders($info, $field=false){
   $ret = "<tr>\n";
   $ret .= "<th align='left' colspan='13'>";
-  $ret .= "<a class='thlink' href='?view=reservationinfo&amp;Reservation=".$info['reservation_id']."'>";
+  $ret .= "<a class='thlink' href='?view=reservationinfo&amp;reservation=".$info['reservation_id']."'>";
   $ret .= utf8entities($info['placename']);
   $ret .= "</a>";
   if($field){
@@ -520,14 +520,14 @@ function GameRow($game, $date=false, $time=true, $field=true, $series=false,$poo
     }else{
       if(!intval($game['isongoing'])){
         if(intval($game['scoresheet'])){
-          $ret .= "<td class='right' style='$infow'><span>&nbsp;<a href='?view=gameplay&amp;Game=". $game['game_id'] ."'>";
+          $ret .= "<td class='right' style='$infow'><span>&nbsp;<a href='?view=gameplay&amp;game=". $game['game_id'] ."'>";
           $ret .= _("Game play") ."</a></span></td>\n";
         }else{
           $ret .= "<td class='left' style='$infow'></td>\n";
         }
       }else{
         if(intval($game['scoresheet'])){
-          $ret .= "<td class='right' style='$infow'><span>&nbsp;&nbsp;<a href='?view=gameplay&amp;Game=". $game['game_id'] ."'>";
+          $ret .= "<td class='right' style='$infow'><span>&nbsp;&nbsp;<a href='?view=gameplay&amp;game=". $game['game_id'] ."'>";
           $ret .= _("Ongoing") ."</a></span></td>\n";
         }else{
           $ret .= "<td class='right' style='$infow'>&nbsp;&nbsp;"._("Ongoing")."</td>\n";

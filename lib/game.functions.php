@@ -217,17 +217,14 @@ function GameSeason($gameId) {
 }
 	
 function GamePlayers($gameId, $teamId){
-	$query = sprintf("SELECT p.player_id, pg.num 
+	$query = sprintf("SELECT p.player_id, pg.num, p.firstname, p.lastname 
 		FROM uo_played AS pg 
 		LEFT JOIN uo_player AS p ON(pg.player=p.player_id)
 		WHERE pg.game=%d AND p.team=%d",
 		(int)$gameId,
 		(int)$teamId);
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
+	return DBQueryToArray($query);
 	}
 
 function GameCaptain($gameId, $teamId){

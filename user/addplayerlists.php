@@ -30,7 +30,7 @@ if(!empty($_POST['save']))	{
   $played_players = GamePlayers($gameId, $game_result['hometeam']);
 
   //delete unchecked players
-  while($player = mysql_fetch_assoc($played_players))	 {
+  foreach($played_players as $player){
     $found=false;
     if(!empty($_POST["homecheck"]))	 {
       foreach($_POST["homecheck"] as $playerId) {
@@ -54,7 +54,7 @@ if(!empty($_POST['save']))	{
         //check if already in list with correct number
         $played_players = GamePlayers($gameId, $game_result['hometeam']);
         $found = false;
-        while($player = mysql_fetch_assoc($played_players)) {
+        foreach($played_players as $player){
           //$html .= "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
 
           //if exist
@@ -92,7 +92,7 @@ if(!empty($_POST['save']))	{
   $played_players = GamePlayers($gameId, $game_result['visitorteam']);
 
   //delete unchecked players
-  while($player = mysql_fetch_assoc($played_players)) {
+  foreach($played_players as $player){
     $found=false;
     if(!empty($_POST["awaycheck"])) {
       foreach($_POST["awaycheck"] as $playerId) {
@@ -116,7 +116,7 @@ if(!empty($_POST['save']))	{
         //check if already in list with correct number
         $played_players = GamePlayers($gameId, $game_result['visitorteam']);
         $found = false;
-        while($player = mysql_fetch_assoc($played_players))  {
+        foreach($played_players as $player){
           //$html .= "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
 
           //if exist
@@ -204,11 +204,7 @@ $html .= utf8entities($game_result['hometeamname']). "</b></td></tr>\n";
 $html .= "</table><div id='home'><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
 $html .= "<tr><th class='home'>"._("Name")."</th><th class='home right' style='white-space: nowrap' >"._("Played")." <input type='checkbox' onclick='checkAll(\"home\");'/></th><th class='home'>"._("Jersey#")."</th></tr>\n";
 
-$players = GamePlayers($gameId, $game_result['hometeam']);
-$played_players = array();
-while ($row = mysql_fetch_assoc($players)) {
-  $played_players[] = $row['player_id'];
-}
+$played_players = GamePlayers($gameId, $game_result['hometeam']);
 
 $i=0;
 while($player = mysql_fetch_assoc($home_playerlist)){
@@ -221,7 +217,7 @@ while($player = mysql_fetch_assoc($home_playerlist)){
 
   $found=false;
   foreach($played_players as $playerId) {
-    if($player['player_id']==$playerId) {
+    if($player['player_id']==$playerId['player_id']) {
       $found=true;
       break;
     }
@@ -250,11 +246,7 @@ $html .= utf8entities($game_result['visitorteamname']). "</b></td></tr>\n";
 $html .= "</table><div id='away'><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
 $html .= "<tr><th class='guest'>"._("Name")."</th><th class='guest right' style='white-space: nowrap'>"._("Played")." <input type='checkbox' onclick='checkAll(\"away\");'/></th><th class='guest'>"._("Jersey#")."</th></tr>\n";
 
-$players = GamePlayers($gameId, $game_result['visitorteam']);
-$played_players = array();
-while ($row = mysql_fetch_assoc($players)) {
-  $played_players[] = $row['player_id'];
-}
+$played_players = GamePlayers($gameId, $game_result['visitorteam']);
 
 $i=0;
 while($player = mysql_fetch_assoc($away_playerlist)){
@@ -267,7 +259,7 @@ while($player = mysql_fetch_assoc($away_playerlist)){
 
   $found=false;
   foreach($played_players as $playerId){
-    if($player['player_id']==$playerId){
+    if($player['player_id']==$playerId['player_id']){
       $found=true;
       break;
     }

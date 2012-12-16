@@ -61,7 +61,11 @@ function UserAuthenticate($user, $passwd, $failcallback) {
 				
 	} else {
 		LogUserAuthentication($user,"failed");
-		$failcallback($user);		
+		if(!empty($failcallback)){
+		  $failcallback($user);
+		}else{
+		  return false;
+		}		
 	}
 }
 	
@@ -1186,7 +1190,8 @@ function GameResponsibilityArray($season) {
 			pool.timecap, pool.timeslot, pool.series, res.reservationgroup,
 			ser.name, pool.name as poolname, res.id as res_id, res.starttime,
 			loc.name AS locationname, res.fieldname AS fieldname, res.location,
-			COALESCE(m.goals,0) AS goals, phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
+			COALESCE(m.goals,0) AS goals, phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
+	        pp.isongoing
 		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
 			left join uo_pool pool on (pp.pool=pool.pool_id)
 			left join uo_series ser on (pool.series=ser.series_id)

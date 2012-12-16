@@ -129,7 +129,7 @@ if(isset($_POST['add']) || isset($_POST['forceadd'])) {
 			LogGameUpdate($gameId,"result: $home - $away", "Mobile");
 			GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
 		}
-		header("location:?view=mobile/addscoresheet&Game=".$gameId);
+		header("location:?view=mobile/addscoresheet&game=".$gameId);
 	}else{
 		$errors=true;
 	}
@@ -149,7 +149,7 @@ if(isset($_POST['add']) || isset($_POST['forceadd'])) {
 	if(IsTwitterEnabled()){	
 		TweetGameResult($gameId);
 	}
-	header("location:?view=mobile/gameplay&Game=".$gameId);	
+	header("location:?view=mobile/gameplay&game=".$gameId);	
 }
 
 mobilePageTop(_("Score&nbsp;sheet"));
@@ -199,19 +199,19 @@ $html .= "</td></tr><tr><td>\n";
 if(!$errors){
 	$html .= "<input class='button' type='submit' name='add' value='"._("Save goal")."'/>";
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=mobile/addtimeouts&amp;Game=".$gameId."'>"._("Time outs")."</a> | ";
-	$html .=  "<a href='?view=mobile/addhalftime&amp;Game=".$gameId."'>"._("Half time")."</a>";
+	$html .=  "<a href='?view=mobile/addtimeouts&amp;game=".$gameId."'>"._("Time outs")."</a> | ";
+	$html .=  "<a href='?view=mobile/addhalftime&amp;game=".$gameId."'>"._("Half time")."</a>";
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=mobile/addfirstoffence&amp;Game=".$gameId."'>"._("First offence")."</a> | ";
-	$html .=  "<a href='?view=mobile/addofficial&amp;Game=".$gameId."'>"._("Game official")."</a>";
+	$html .=  "<a href='?view=mobile/addfirstoffence&amp;game=".$gameId."'>"._("First offence")."</a> | ";
+	$html .=  "<a href='?view=mobile/addofficial&amp;game=".$gameId."'>"._("Game official")."</a>";
 	$html .= "</td></tr><tr><td>\n";
 	if(IsTwitterEnabled()){
-		$html .=  "<a href='?view=mobile/tweet&amp;Game=".$gameId."'>"._("Tweet")."</a> | ";
+		$html .=  "<a href='?view=mobile/tweet&amp;game=".$gameId."'>"._("Tweet")."</a> | ";
 	}
 	if(intval($seasoninfo['spiritpoints'])){
-		$html .=  "<a href='?view=mobile/addspiritpoints&amp;Game=".$gameId."'>"._("Spirit points")."</a> | ";
+		$html .=  "<a href='?view=mobile/addspiritpoints&amp;game=".$gameId."'>"._("Spirit points")."</a> | ";
 	}
-	$html .=  "<a href='?view=mobile/deletescore&amp;Game=".$gameId."'>"._("Delete the last goal")."</a>";
+	$html .=  "<a href='?view=mobile/deletescore&amp;game=".$gameId."'>"._("Delete the last goal")."</a>";
 	$html .= "</td></tr><tr><td>\n";
 	$html .= "<input class='button' type='submit' name='save' value='"._("Save as result")."'/>";
 }else{

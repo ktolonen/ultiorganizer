@@ -70,5 +70,5 @@ $html .= "<p><input class='button' type='submit' name='create' value='".("Create
 
 $html .= "</form>";
 
-showPage(0, $title, $html);
+showPage($title, $html);
 ?>

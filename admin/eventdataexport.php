@@ -44,6 +44,6 @@ $html .= "<p><input class='button' type='submit' name='select' value='".("Select
 $html .= "</form>";
 
 if(empty($seasonId))
-showPage(0, $title, $html);
+showPage($title, $html);
 
 ?>

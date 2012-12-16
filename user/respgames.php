@@ -80,7 +80,7 @@ foreach ($respGameArray as $tournament => $resArray) {
     $html .= "<tr><th class='left' colspan='8'>";
     $html .= DefWeekDateFormat($gameArray['starttime']) ." ";
     if($resId)
-    $html .= "<a class='thlink' href='?view=reservationinfo&amp;Reservation=".$resId."'>". $gameArray['locationname'] ."</a>";
+    $html .= "<a class='thlink' href='?view=reservationinfo&amp;reservation=".$resId."'>". $gameArray['locationname'] ."</a>";
     else
     $html .= _("No location");
     $html .= "</th>\n<th class='right' colspan='2'>";
@@ -100,7 +100,7 @@ foreach ($respGameArray as $tournament => $resArray) {
       }
       $html .= "<td style='width:5%'>". intval($game['homescore']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($game['visitorscore']) ."</td>";
       if (intval($game['goals'])>0) {
-        $html .= "<td style='width:15%'><a href='?view=gameplay&amp;Game=". $game['game_id'] ."'>"._("Game play")."</a></td>";
+        $html .= "<td style='width:15%'><a href='?view=gameplay&amp;game=". $game['game_id'] ."'>"._("Game play")."</a></td>";
       } else {
         $html .= "<td style='width:15%'>es</td>";
       }
@@ -110,7 +110,7 @@ foreach ($respGameArray as $tournament => $resArray) {
         $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>"._("Score sheet")."</a>";
         if(ShowDefenseStats())
         {
-          $html .= " | <a href='?view=user/adddefensesheet&amp;Game=$gameId'>"._("Defense sheet")."</a>";
+          $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>"._("Defense sheet")."</a>";
         }
         $html .= "</td>";
       }

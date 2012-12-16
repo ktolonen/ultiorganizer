@@ -85,5 +85,5 @@ if($accId>0){
 }
 $html .= "<div><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></div>";
 $html .= "</form>";	  
-showPage(0, $title, $html);
+showPage($title, $html);
 ?>

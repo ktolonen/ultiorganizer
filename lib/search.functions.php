@@ -731,7 +731,7 @@ function ReservationResults() {
 		while ($row = mysql_fetch_assoc($result)) {
 			$ret .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='".$row['reservation_id']."'/></td>";
 			$ret .= "<td>".utf8entities(U_($row['reservationgroup']))."</td>";
-			$ret .= "<td><a href='?view=admin/addreservation&amp;Reservation=".$row['reservation_id']."&amp;season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
+			$ret .= "<td><a href='?view=admin/addreservation&amp;reservation=".$row['reservation_id']."&amp;season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
 			$ret .= "<td>".DefWeekDateFormat($row['starttime'])."</td>";
 			$ret .= "<td>".DefHourFormat($row['starttime'])."</td>";
 			$ret .= "<td>".DefHourFormat($row['endtime'])."</td>";

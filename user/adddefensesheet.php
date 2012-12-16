@@ -162,7 +162,7 @@ if(!empty($_POST['save']))
 		GameSetDefenses($gameId, $h, $a);
 	echo "<p>"._("Defense sheet saved")." (". _("at")." ".DefTimestamp().")!</p>";
 	// The defenseplay.php needs to be created
-	//echo "<a href='?view=gameplay&amp;Game=$gameId'>"._("Game play")."</a>";
+	//echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Game play")."</a>";
 	}
 $game_result = GameResult($gameId);
 $place = ReservationInfo($game_result['reservation']);
@@ -171,15 +171,15 @@ $awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
 $home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
 $away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
-if(mysql_num_rows($home_playerlist)==0){
-  echo "<p class='warning'>".utf8entities($game_result['hometeamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;Game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+if(count($home_playerlist)==0){
+  echo "<p class='warning'>".utf8entities($game_result['hometeamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
 }
-if(mysql_num_rows($away_playerlist)==0){
-  echo "<p class='warning'>".utf8entities($game_result['visitorteamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;Game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+if(count($away_playerlist)==0){
+  echo "<p class='warning'>".utf8entities($game_result['visitorteamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
 }
 
 
-echo "<form id='defensesheet' action='?view=user/adddefensesheet&amp;Game=$gameId' method='post'>";
+echo "<form id='defensesheet' action='?view=user/adddefensesheet&amp;game=$gameId' method='post'>";
 echo "<table cellspacing='5' cellpadding='5'>";
 
 echo "<tr><td colspan='2'><h1>"._("Defense score sheet")." #$gameId</h1></td></tr>";
@@ -306,7 +306,7 @@ echo "<tr><th colspan='2'>"._("Captains")."</th></tr>";
 echo "<tr><td>". utf8entities($game_result['hometeamname']) ."</td>";
 echo "<td><select style='width:100%' class='dropdown' name='homecaptain'>\n";
 echo "<option class='dropdown' value=''></option>\n";
-while($player = mysql_fetch_assoc($home_playerlist)){
+foreach($home_playerlist as $player){
 	$playerInfo = PlayerInfo($player['player_id']);
 	if($homecaptain==$player['player_id'])
 		echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
@@ -318,7 +318,7 @@ echo "</tr><tr>";
 echo "<td>". utf8entities($game_result['visitorteamname']) ."</td>";
 echo "<td><select style='width:100%' class='dropdown' name='awaycaptain'>\n";
 echo "<option class='dropdown' value=''></option>\n";
-while($player = mysql_fetch_assoc($away_playerlist)){
+foreach($away_playerlist as $player){
 	$playerInfo = PlayerInfo($player['player_id']);
 	if($awaycaptain==$player['player_id'])
 		echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";

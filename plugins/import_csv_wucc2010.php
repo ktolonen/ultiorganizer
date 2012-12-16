@@ -183,5 +183,5 @@ $html .= "<input type='hidden' name='MAX_FILE_SIZE' value='50000000' />\n";
 $html .= "</div>\n";
 $html .= "</form>";
 
-showPage(0, $title, $html);
+showPage($title, $html);
 ?>

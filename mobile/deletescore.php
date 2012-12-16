@@ -14,7 +14,7 @@ if(isset($_POST['delete'])) {
 	if(count($scores)>0){
 		$lastscore = $scores[count($scores)-1];
 		GameRemoveScore($gameId,$lastscore['num']);
-		header("location:?view=mobile/addscoresheet&Game=".$gameId);
+		header("location:?view=mobile/addscoresheet&game=".$gameId);
 	}
 }
 mobilePageTop(_("Delete score"));	
@@ -43,7 +43,7 @@ $html .= _("Score").": 0 - 0";
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='delete' value='"._("Delete")."'/>";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/addscoresheet&amp;Game=".$gameId."'>"._("Back to score sheet")."</a>";
+$html .= "<a href='?view=mobile/addscoresheet&amp;game=".$gameId."'>"._("Back to score sheet")."</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>"; 

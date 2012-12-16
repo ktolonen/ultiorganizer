@@ -10,7 +10,7 @@ $game_result = GameResult($gameId);
 	
 if(isset($_POST['save'])) {
 	GameSetScoreSheetKeeper($gameId, $_POST['official']);
-	header("location:?view=mobile/addscoresheet&Game=".$gameId);
+	header("location:?view=mobile/addscoresheet&game=".$gameId);
 	}
 
 mobilePageTop(_("Score&nbsp;sheet"));
@@ -24,7 +24,7 @@ $html .= "<input class='input' style='width: 90%' type='text' name='official' id
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='save' value='"._("Save")."'/>";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/addscoresheet&amp;Game=".$gameId."'>"._("Back to score sheet")."</a>";
+$html .= "<a href='?view=mobile/addscoresheet&amp;game=".$gameId."'>"._("Back to score sheet")."</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>"; 

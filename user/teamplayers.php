@@ -146,7 +146,7 @@ onPageHelpAvailable($help);
 echo "<h2>". utf8entities($teaminfo['name']) ." (". utf8entities($teaminfo['seriesname']) .")</h2>\n";
 
 echo "<form method='post' action='?view=user/teamplayers&amp;team=".$teamId;
-if (!empty($gameId)) echo "&amp;Game=".$gameId;
+if (!empty($gameId)) echo "&amp;game=".$gameId;
 echo "'>\n";
 
 echo "<table border='0' cellpadding='2' width='100%'>\n";
@@ -278,7 +278,7 @@ echo "</p></form>\n";
 
 
 if(!empty($gameId)) {
-  echo "<p><a href='?view=user/addplayerlists&amp;Game=$gameId'>"._("Back to feeding in player numbers")."</a></p>";
+  echo "<p><a href='?view=user/addplayerlists&amp;game=$gameId'>"._("Back to feeding in player numbers")."</a></p>";
 }
 
 //echo "<hr/>\n";

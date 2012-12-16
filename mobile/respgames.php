@@ -118,15 +118,15 @@ function gamerow($gameId, $game){
 	if($game['hometeam'] && $game['visitorteam']){
 		$ret .= utf8entities($game['hometeamname']) ." - ". utf8entities($game['visitorteamname']) ." ";
 		if((intval($game['homescore'])+intval($game['visitorscore']))>0){
-			$ret .=  "<a style='white-space: nowrap' href='?view=mobile/gameplay&amp;Game=".$gameId."'>".intval($game['homescore']) ." - ". intval($game['visitorscore'])."</a>";
+			$ret .=  "<a style='white-space: nowrap' href='?view=mobile/gameplay&amp;game=".$gameId."'>".intval($game['homescore']) ." - ". intval($game['visitorscore'])."</a>";
 		}else{
 			$ret .= intval($game['homescore']) ." - ". intval($game['visitorscore']);
 		}
 		$ret .= "</td></tr><tr><td>\n";
 		$ret .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addresult&amp;Game=".$gameId."'>"._("set result")."</a> | ";
-		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addplayerlists&amp;Game=".$gameId."&amp;team=".$game['hometeam']."'>"._("set rosters")."</a> | ";
-		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addscoresheet&amp;Game=$gameId'>"._("record scores")."</a>";
+		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addresult&amp;game=".$gameId."'>"._("set result")."</a> | ";
+		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addplayerlists&amp;game=".$gameId."&amp;team=".$game['hometeam']."'>"._("set rosters")."</a> | ";
+		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addscoresheet&amp;game=$gameId'>"._("record scores")."</a>";
 		$ret .= "</td></tr><tr><td>\n";
 	}else{
 		$ret .= utf8entities($game['phometeamname']) ." - ". utf8entities($game['pvisitorteamname']) ." ";

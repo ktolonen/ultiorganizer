@@ -97,5 +97,5 @@ $html .= "<p><input class='button' type='submit' name='import' value='".("Import
 $html .= "<div><input type='hidden' name='MAX_FILE_SIZE' value='50000000' /></div>\n";
 $html .= "</form>";
 
-showPage(0, $title, $html);
+showPage($title, $html);
 ?>

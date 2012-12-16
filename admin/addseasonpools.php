@@ -35,7 +35,7 @@ $pp = array(
 	"timeoutsovertime"=>"0",
 	"timeoutstimecap"=>"0",
 	"betweenpointslen"=>"0",
-	"series"=>"0",
+	"series"=>$seriesId,
 	"type"=>"0",
 	"color"=>"ffffff",
     "forfeitscore"=>"0",
@@ -61,6 +61,7 @@ if(!empty($_POST['add'])) {
 if(!empty($_POST['save'])) {
 	$ok=true;
 	$pp['name']=$_POST['name'];
+	$pp['series']=$seriesId;
 	$pp['teams']=intval($_POST['teams']);
 	$pp['timeoutlen']=intval($_POST['timeoutlength']);
 	$pp['halftime']=intval($_POST['halftimelength']);

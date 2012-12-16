@@ -19,7 +19,7 @@ if(isset($_POST['save'])) {
 	$played_players = GamePlayers($gameId, $teamId);
 	
 	//delete unchecked players
-	while($player = mysql_fetch_assoc($played_players))	{
+	foreach($played_players as $player){
 		$found=false;
 		if(!empty($_POST["check"]))	{
 			foreach($_POST["check"] as $playerId) {
@@ -42,7 +42,7 @@ if(isset($_POST['save'])) {
 				//check if already in list with correct number
 				$played_players = GamePlayers($gameId, $teamId);
 				$found = false;
-				while($player = mysql_fetch_assoc($played_players)) {
+				foreach($played_players as $player){
 
 					//if exist
 					if($player['player_id']==$playerId && $player['num']==$number) {
@@ -94,11 +94,7 @@ $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
 $html .= "<b>".utf8entities(TeamName($teamId)) ."</b> "._("roster");
 
-$players = GamePlayers($gameId, $teamId);
-$played_players = array();
-while ($row = mysql_fetch_assoc($players)) {
-		$played_players[] = $row['player_id'];
-	}
+$played_players = GamePlayers($gameId, $teamId);
 	
 $i=0;
 while($player = mysql_fetch_assoc($playerlist))	{
@@ -109,7 +105,7 @@ while($player = mysql_fetch_assoc($playerlist))	{
 	
 	$found=false;
 	foreach($played_players as $playerId) {
-		if($player['player_id']==$playerId)	{
+		if($player['player_id']==$playerId['player_id'])	{
 			$found=true;
 			break;
 		}

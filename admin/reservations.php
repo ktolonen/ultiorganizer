@@ -95,7 +95,7 @@ if(empty($season)){
     $row = ReservationInfo($reservation['id']);
     $html  .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='".$row['id']."'/></td>";
     $html  .= "<td>".utf8entities(U_($row['reservationgroup']))."</td>";
-    $html  .= "<td><a href='?view=admin/addreservation&amp;Reservation=".$row['id']."&amp;season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
+    $html  .= "<td><a href='?view=admin/addreservation&amp;reservation=".$row['id']."&amp;season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
     $html  .= "<td>".DefWeekDateFormat($row['starttime'])."</td>";
     $html  .= "<td>".DefHourFormat($row['starttime'])."</td>";
     $html  .= "<td>".DefHourFormat($row['endtime'])."</td>";

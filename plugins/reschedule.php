@@ -94,5 +94,5 @@ $html .= "<p><input class='button' type='submit' name='update' value='".("Update
 
 $html .= "</form>";
 
-showPage(0, $title, $html);
+showPage($title, $html);
 ?>

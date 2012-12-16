@@ -254,5 +254,5 @@ else{
 	$html .= "</form>";
 }
 
-showPage(0, $title, $html);
+showPage($title, $html);
 ?>

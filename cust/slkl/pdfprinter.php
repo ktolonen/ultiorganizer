@@ -44,7 +44,7 @@ class PDF extends FPDF
 		
 		$this->SetY(21);
 		
-		$this->OneCellTable(utf8_decode(_("Game #")), ""/*$this->game['game_id']*/);
+		$this->OneCellTable(utf8_decode(_("Game #")), $this->game['game_id']);
 		$this->OneCellTable(utf8_decode(_("Home team")), $this->game['hometeamname']);
 		$this->OneCellTable(utf8_decode(_("Away team")), $this->game['visitorteamname']);
 		$this->OneCellTable(utf8_decode(_("Division").", "._("Pool")), $this->game['poolname']);
@@ -106,7 +106,7 @@ class PDF extends FPDF
 		$data = _("Finnish Flying Disc Association");
 		$data .= " - ";
 		$data .= _("Roster"); 
-		//$data .= " " . $this->game['game_id'];
+		$data .= " " . $this->game['game_id'];
 		$data = utf8_decode($data);
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(0);

@@ -562,7 +562,7 @@ if(mysql_num_rows($played)){
       $html .= " - ".utf8entities($row['visitorteamname'])."</td>";
       	
       	
-      $html .= "<td><a href=\"?view=gameplay&amp;Game=" .$row['game_id']."\">".$row['homescore']." - " .$row['visitorscore']. "</a></td>";
+      $html .= "<td><a href=\"?view=gameplay&amp;game=" .$row['game_id']."\">".$row['homescore']." - " .$row['visitorscore']. "</a></td>";
 
       $html .= "<td>".utf8entities(U_($seasonName)).": <a href=\"?view=poolstatus&amp;pool=" .$row['pool_id']. "\">".utf8entities(U_($row['name']))."</a></td></tr>";
     }

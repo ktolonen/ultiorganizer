@@ -145,7 +145,7 @@ if($nGames){
       }else{
         $html .= " - ".utf8entities($game['visitorteamname'])."</td>";
       }
-      $html .= "<td><a href='?view=gameplay&amp;Game=".$game['game_id']."'>".$game['homescore']." - ".$game['visitorscore']."</a></td>";
+      $html .= "<td><a href='?view=gameplay&amp;game=".$game['game_id']."'>".$game['homescore']." - ".$game['visitorscore']."</a></td>";
 
       $html .= "<td>".utf8entities(U_($game['seasonname'])).": <a href='?view=poolstatus&amp;pool=".$game['pool_id']."'>".utf8entities($game['name'])."</a></td></tr>";
        

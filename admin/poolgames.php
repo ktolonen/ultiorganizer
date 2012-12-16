@@ -279,7 +279,7 @@ foreach($reservations as $res){
 				$html .= "<td>-</td>";
 				$html .= "<td style='width:30%'>". utf8entities($row['visitorteamname']) ."</td>";
 			}
-			$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;Game=".$row['game_id']."'>"._("edit")."</a></td>";
+			$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$row['game_id']."'>"._("edit")."</a></td>";
 			$html .= "<td style='width:5%'>". intval($row['homescore']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($row['visitorscore']) ."</td>";
 			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/swap.png' alt='<->' name='swap' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";
 			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";		
