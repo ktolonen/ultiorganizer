@@ -2,6 +2,7 @@
 $html = "";
 $errors = "";
 $saved = isset($_GET['saved']) ? 1 : 0;
+$game = isset($_GET['g']) ? $_GET['g'] : "";
 
 if(!empty($_POST['save'])) {
   $game = intval($_POST['game']);
@@ -100,7 +101,7 @@ if(!empty($_POST['save']) && empty($errors)) {
 
 }else{
   $html .= "<label for='game'>"._("Game number from Scoresheet").":</label>";
-  $html .= "<input type='number' id='game' name='game' size='6' maxlength='5' onkeyup='validNumber(this);'/> ";
+  $html .= "<input type='number' id='game' name='game' size='6' maxlength='5' value='$game' onkeyup='validNumber(this);'/> ";
 
   $html .= "<label for='home'>"._("Home team goals").":</label>";
   $html .= "<input type='number' id='home' name='home' size='3' maxlength='2' onkeyup='validNumber(this);'/> ";
@@ -109,7 +110,7 @@ if(!empty($_POST['save']) && empty($errors)) {
   $html .= "<input type='number' id='away' name='away' size='3' maxlength='2' onkeyup='validNumber(this);'/> ";
   
   $html .= "<input type='submit' name='save' data-ajax='false' value='"._("Save")."'/>";
-  $html .= "<a href='?view=login' data-role='button' data-ajax='false'>"._("Back")."</a>";
+  $html .= "<a href='?view=login' data-role='button' data-ajax='false'>"._("Responsible Games")."</a>";
 }
 
 

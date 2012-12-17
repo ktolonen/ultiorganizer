@@ -1,6 +1,7 @@
 <?php 
 include_once 'lib/fpdf/fpdf.php';
 include_once 'lib/HSVClass.php';
+include_once 'lib/phpqrcode/qrlib.php';
 
 class PDF extends FPDF
 	{
@@ -81,16 +82,17 @@ class PDF extends FPDF
 		
 		$this->SetXY(95,21);
 		$this->ScoreGrid();
+
+		//print QR-code for result URL
+		$filename = UPLOAD_DIR.$this->game['game_id'] .".png";
+		$url = BASEURL."/scorekeeper/?view=result&g=".$this->game['game_id'];
+		QRcode::png($url, $filename, 'h', 1, 2);
+		$this->Image($filename,10,252);
+		unlink($filename);
 		
 		$this->SetY(-22);
-		//$data = _("After the match has ended, send SMS")." \"P ";
-		//$data .= $this->game['game_id'];
-		//$data .= " ["._("home score")."] ["._("guest score")."]\" ("._("without the quotes").") "._("to number +358415819744").".";
-		//$data .= " "._("e.g.").": \"P ";
-		//$data .= $this->game['game_id'];
-		//$data .= " 16 21\""; 
 		
-		$data = _("After the match has ended, update result to:")." ".BASEURL."?view=result";
+		$data = _("After the match has ended, update result:") . " ". BASEURL."/scorekeeper/?view=result";
 		$data = utf8_decode($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
