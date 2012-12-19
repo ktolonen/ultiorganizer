@@ -70,7 +70,7 @@ switch($feedtype){
         $title .= intval($game['visitorscore']);
         	
         $newItem->setTitle($title);
-        $newItem->setLink($baseurl ."/?view=gameplay&Game=". $game['game_id']);
+        $newItem->setLink($baseurl ."/?view=gameplay&game=". $game['game_id']);
 
         $desc = U_($game['seriesname']);
         $desc .= " ";
@@ -94,7 +94,7 @@ switch($feedtype){
     $mediaevents = GameMediaEvents($id1);
 
     $feed->setTitle(_("Ultimate game").": ". $game['hometeamname'] ." - ".$game['visitorteamname']);
-    $feed->setLink($baseurl ."/?view=gameplay&Game=$id1");
+    $feed->setLink($baseurl ."/?view=gameplay&game=$id1");
     $feed->setDescription($game['seriesname'] .", ".$game['poolname']);
 
     $prevgoal = 0;
@@ -147,7 +147,7 @@ switch($feedtype){
       }
       	
       $newItem->setTitle($title);
-      $newItem->setLink($baseurl ."/?view=gameplay&Game=$id1");
+      $newItem->setLink($baseurl ."/?view=gameplay&game=$id1");
       $newItem->setDescription($desc);
 
       $items[] = $newItem;
@@ -181,7 +181,7 @@ switch($feedtype){
     if(!empty($desc)){
       $newItem = $feed->createNewItem();
       $newItem->setTitle(_("Latest events"));
-      $newItem->setLink($baseurl ."/?view=gameplay&Game=$id1");
+      $newItem->setLink($baseurl ."/?view=gameplay&game=$id1");
       $newItem->setDescription($desc);
       $items[] = $newItem;
     }
@@ -216,7 +216,7 @@ switch($feedtype){
         $title .= intval($game['visitorscore']);
         	
         $newItem->setTitle($title);
-        $newItem->setLink($baseurl ."/?view=gameplay&Game=". $game['game_id']);
+        $newItem->setLink($baseurl ."/?view=gameplay&game=". $game['game_id']);
 
         $desc = U_($game['seasonname']);
         $desc .= ": ";

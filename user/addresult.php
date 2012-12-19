@@ -37,11 +37,13 @@ if(!empty($_POST['save'])) {
         }
         $html2 .= "</p>";
 	}
+	$gameinfo = GameInfo($gameId);
 }elseif(isset($_POST['update'])) {
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
 	$ok=GameUpdateResult($gameId, $home, $away);
 	$html2 .= "<p>"._("Game ongoing. Current score: $home - $away").".</p>";
+	$gameinfo = GameInfo($gameId);
 }
 
 //common page

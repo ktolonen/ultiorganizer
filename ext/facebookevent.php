@@ -51,7 +51,7 @@ if (IsFacebookEnabled() && !empty($_GET['game']) && !empty($_GET['event'])) {
 					$message = str_replace(array('$teamscore', '$team', '$opponentscore', '$opponent'), 
 										   array($wonTeamScore, $wonTeamName, $lostTeamScore, $lostTeamName),
 										   $conf['wonmessage']);
-					$params = array("link" => GetUrlBase()."?view=gameplay&Game=".$gameInfo['game_id'],
+					$params = array("link" => GetUrlBase()."?view=gameplay&game=".$gameInfo['game_id'],
 						"message" => $message,
 						"name" => $title); 
 					FacebookFeedPost($fb_props, $params);
@@ -67,7 +67,7 @@ if (IsFacebookEnabled() && !empty($_GET['game']) && !empty($_GET['event'])) {
 					$message = str_replace(array('$teamscore', '$team', '$opponentscore', '$opponent'),
 										   array($lostTeamScore, $lostTeamName, $wonTeamScore, $wonTeamName),
 										   $conf['lostmessage']);
-					$params = array("link" => GetUrlBase()."?view=gameplay&Game=".$gameInfo['game_id'],
+					$params = array("link" => GetUrlBase()."?view=gameplay&game=".$gameInfo['game_id'],
 						"message" => $message,
 						"name" => $title); 
 					FacebookFeedPost($fb_props, $params);
@@ -81,7 +81,7 @@ if (IsFacebookEnabled() && !empty($_GET['game']) && !empty($_GET['event'])) {
 							   $serverConf['FacebookGameMessage']);
 		if (isset($serverConf['FacebookUpdatePage']) && (strlen($serverConf['FacebookUpdatePage']) > 0)
 			&& isset($serverConf['FacebookUpdateToken']) && (strlen($serverConf['FacebookUpdateToken']))) { 
-			$params = array("link" => GetUrlBase()."?view=gameplay&Game=".$gameInfo['game_id'],
+			$params = array("link" => GetUrlBase()."?view=gameplay&game=".$gameInfo['game_id'],
 							"message" => $message,
 							"name" => $title);
 			$app_fb = array("facebooktoken" => $serverConf['FacebookUpdateToken'], "facebookuid" => $serverConf['FacebookUpdatePage']);
@@ -111,7 +111,7 @@ if (IsFacebookEnabled() && !empty($_GET['game']) && !empty($_GET['event'])) {
 			$fb_props = getFacebookUserProperties($users[$passer]);
 			$message = str_replace(array('$teamscore', '$team', '$opponentscore', '$opponent', '$passername', '$scorername'),
 			 							array($teamscore, $team, $opponentscore, $opponent, $passerName, $scorerName), $fb_props['facebookplayer'][$passer]['passedmessage']);
-			$params = array("link" => GetUrlBase()."?view=gameplay&Game=".$gameInfo['game_id'],
+			$params = array("link" => GetUrlBase()."?view=gameplay&game=".$gameInfo['game_id'],
 				"message" => $message,
 				"name" => $title); 
 			FacebookFeedPost($fb_props, $params);
@@ -120,7 +120,7 @@ if (IsFacebookEnabled() && !empty($_GET['game']) && !empty($_GET['event'])) {
 			$fb_props = getFacebookUserProperties($users[$scorer]);
 			$message = str_replace(array('$teamscore', '$team', '$opponentscore', '$opponent', '$passername', '$scorername'),
 			 							array($teamscore, $team, $opponentscore, $opponent, $passerName, $scorerName), $fb_props['facebookplayer'][$scorer]['scoredmessage']);
-			$params = array("link" => GetUrlBase()."?view=gameplay&Game=".$gameInfo['game_id'],
+			$params = array("link" => GetUrlBase()."?view=gameplay&game=".$gameInfo['game_id'],
 				"message" => $message,
 				"name" => $title); 
 			FacebookFeedPost($fb_props, $params);
