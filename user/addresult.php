@@ -12,6 +12,7 @@ $html = "";
 $html2 = "";
 $gameId = intval($_GET["game"]);
 $gameinfo = GameInfo($gameId);
+$seasoninfo = SeasonInfo($gameinfo['season']);
 
 $LAYOUT_ID = ADDRESULT;
 $title = _("Result");
@@ -56,6 +57,10 @@ contentStart();
 $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
+if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
+  $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
+}
+
 pageMenu($menutabs);
 
 $html .= "<form  method='post' action='?view=user/addresult&amp;game=".$gameId."'>

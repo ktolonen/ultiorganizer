@@ -161,6 +161,8 @@ document.onkeypress = keyfilter;
 //-->
 </script>
 <?php
+$season = GameSeason($gameId);
+$seasoninfo = SeasonInfo($season);
 $scrolling = "onkeypress='chgFocus(event);'";
 pageTopHeadClose($title,false, $scrolling);
 leftMenu($LAYOUT_ID);
@@ -169,11 +171,13 @@ contentStart();
 $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
+if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
+  $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
+}
 pageMenu($menutabs);
 
 
-$season = GameSeason($gameId);
-$seasoninfo = SeasonInfo($season);
+
 
 $game_result = GameResult($gameId);
 $homecaptain = -1;
@@ -189,9 +193,9 @@ if(!empty($_POST['save']))
   GameSetScoreSheetKeeper($gameId, $_POST['secretary']);
 
   //set spirit points
-  if($seasoninfo['spiritpoints'] && (isset($_POST['homespirit']) || isset($_POST['awayspirit']))) {
-    GameSetSpiritPoints($gameId, $_POST['homespirit'], $_POST['awayspirit']);
-  }
+  //if($seasoninfo['spiritpoints'] && (isset($_POST['homespirit']) || isset($_POST['awayspirit']))) {
+  //  GameSetSpiritPoints($gameId, $_POST['homespirit'], $_POST['awayspirit']);
+  //}
 
   //set captains
   if(intval($_POST['homecaptain'])){
@@ -475,6 +479,7 @@ echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 echo "</table>\n";
 
 //spirit points
+/*
 if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
 
   $game_result['homesotg'] = isset($game_result['homesotg']) ? $game_result['homesotg'] : "xx";
@@ -486,7 +491,7 @@ if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
   echo "<td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validNumberX(this);\" name='awayspirit' id='awayspirit' value='".$game_result['visitorsotg']."'/></td></tr>";
   echo "</table>\n";
 }
-
+*/
 //result
 echo "<table cellspacing='0' width='100%' border='1'>\n";
 if ($game_result['isongoing']) {

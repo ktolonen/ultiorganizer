@@ -89,9 +89,15 @@ switch($filter){
     $timefilter="tomorrow";
     $order="series";
     break;
+    
+  case "yesterday":
+    $timefilter="yesterday";
+    $order="series";
+    break;    
 
   case "next":
     $order="tournaments";
+    $order="series";
     break;
 
   case "tournaments":
@@ -152,6 +158,7 @@ if(!$print && !$singleview){
   $menutabs[_("By location")]= ($baseurl)."&filter=places&group=$group";
   $menutabs[_("Today")]= ($baseurl)."&filter=today&group=$group";
   $menutabs[_("Tomorrow")]= ($baseurl)."&filter=tomorrow&group=$group";
+  $menutabs[_("Yesterday")]= ($baseurl)."&filter=yesterday&group=$group";
 
   $html .= pageMenu($menutabs,"",false);
 

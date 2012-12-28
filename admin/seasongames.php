@@ -15,7 +15,7 @@ $html="";
 $season = $_GET["season"];
 $series = SeasonSeries($season);
 $series_id = CurrentSeries($season);
-
+$seasoninfo = SeasonInfo($season);
 
 $title = utf8entities(SeasonName($season)).": "._("Games");
 $group = "all";
@@ -198,7 +198,11 @@ foreach($pools as $pool){
         if($game['hometeam'] && $game['visitorteam']){
 				$html .=  "<td style='width:300px' class='right'><a href='?view=user/addresult&amp;game=".$game['game_id']."'>"._("Result")."</a> | ";
 				$html .=  "<a href='?view=user/addplayerlists&amp;game=".$game['game_id']."'>"._("Players")."</a> | ";
-				$html .=  "<a href='?view=user/addscoresheet&amp;game=".$game['game_id']."'>"._("Scoresheet")."</a></td>";
+				$html .=  "<a href='?view=user/addscoresheet&amp;game=".$game['game_id']."'>"._("Scoresheet")."</a>";
+				if($seasoninfo['spiritpoints']){
+				  $html .=  " | <a href='?view=user/addspirit&amp;game=".$game['game_id']."'>"._("Spirit")."</a>";
+				}
+				$html .=  "</td>";
         }else{
           $html .= "<td style='width:300px'></td>";
         }

@@ -124,9 +124,9 @@ function gamerow($gameId, $game){
 		}
 		$ret .= "</td></tr><tr><td>\n";
 		$ret .= "&nbsp;&nbsp;&nbsp;&nbsp;";
-		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addresult&amp;game=".$gameId."'>"._("set result")."</a> | ";
-		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addplayerlists&amp;game=".$gameId."&amp;team=".$game['hometeam']."'>"._("set rosters")."</a> | ";
-		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addscoresheet&amp;game=$gameId'>"._("record scores")."</a>";
+		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addresult&amp;game=".$gameId."'>"._("Result")."</a> | ";
+		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addplayerlists&amp;game=".$gameId."&amp;team=".$game['hometeam']."'>"._("Players")."</a> | ";
+		$ret .=  "<a style='white-space: nowrap' href='?view=mobile/addscoresheet&amp;game=$gameId'>"._("Scoresheet")."</a>";
 		$ret .= "</td></tr><tr><td>\n";
 	}else{
 		$ret .= utf8entities($game['phometeamname']) ." - ". utf8entities($game['pvisitorteamname']) ." ";

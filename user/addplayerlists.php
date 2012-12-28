@@ -15,7 +15,7 @@ if(isset($_SERVER['HTTP_REFERER'])){
 }else{
   $backurl = "?view=user/respgames&season=$season";
 }
-
+$seasoninfo = SeasonInfo($season);
 $home_playerlist = TeamPlayerList($game_result['hometeam']);
 $away_playerlist = TeamPlayerList($game_result['visitorteam']);
 
@@ -190,6 +190,10 @@ contentStart();
 $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
+if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
+  $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
+}
+
 pageMenu($menutabs);
 
 

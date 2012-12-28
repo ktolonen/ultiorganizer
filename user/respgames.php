@@ -32,6 +32,7 @@ if (isset($_GET['season'])) {
   $season = CurrentSeason();
 }
 
+$seasoninfo = SeasonInfo($season);
 $groups = TimetableGrouping($season, "season", "all");
 if(count($groups>1)){
   $html .= "<p>\n";
@@ -107,7 +108,11 @@ foreach ($respGameArray as $tournament => $resArray) {
       if($game['hometeam'] && $game['visitorteam']){
         $html .= "<td style='white-space: nowrap' class='right'><a href='?view=user/addresult&amp;game=".$gameId."'>"._("Result")."</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Players")."</a> | ";
-        $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>"._("Score sheet")."</a>";
+        $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>"._("Scoresheet")."</a>";
+        if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
+          $html .= " | <a href='?view=user/addspirit&amp;game=$gameId'>"._("Spirit")."</a>";
+        }
+        
         if(ShowDefenseStats())
         {
           $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>"._("Defense sheet")."</a>";

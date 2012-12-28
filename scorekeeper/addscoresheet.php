@@ -275,8 +275,9 @@ if(empty($errors)){
     $home = $lastscore['homescore'];
     $away = $lastscore['visitorscore'];
     $html .= "<input type='submit' name='save' data-ajax='false' value='"._("Save as result")." $home - $away'/>";
-    if(intval($seasoninfo['spiritpoints'])){
-  	  $html .= "<a href='?view=addspiritpoints&amp;game=".$gameId."' data-role='button' data-ajax='false'>"._("Spirit points")."</a>";
+    $html .= "<a href='?view=addplayerlists&amp;game=".$gameId."&amp;team=".$game['hometeam']."' data-role='button' data-ajax='false'>"._("set rosters")."</a>";
+    if(intval($seasoninfo['spiritpoints'])&& isSeasonAdmin($seasoninfo['season_id'])){
+  	  $html .= "<a href='?view=addspiritpoints&amp;game=".$gameId."&amp;team=".$game_result['hometeam']."' data-role='button' data-ajax='false'>"._("Spirit points")."</a>";
     }
   }
 }else{

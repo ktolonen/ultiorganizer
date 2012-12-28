@@ -814,25 +814,53 @@ function GameAddTimeout($gameId, $number, $time, $home) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
-function GameSetSpiritPoints($gameId, $homepoints, $awaypoints) {
+function GameGetSpiritPoints($gameId, $teamId) {
+  $query = sprintf("SELECT * FROM uo_spirit WHERE game_id=%d AND team_id=%d",
+  		(int)$gameId,
+  		(int)$teamId);
+  return DBQueryToRow($query);
+}
+
+function GameSetSpiritPoints($gameId, $teamId, $home, $points ) {
 	if (hasEditGameEventsRight($gameId)) {
+	  
+	  $query = sprintf("SELECT * FROM uo_spirit WHERE game_id=%d AND team_id=%d",
+	  		(int)$gameId,
+	        (int)$teamId);
 
-		$query = sprintf("UPDATE uo_game SET ");
-
-		if(strcasecmp($homepoints,'xx')==0 || strcasecmp($homepoints,'x')==0){
-		  $query .= sprintf("homesotg=NULL, ");
-		}else{
-		  $query .= sprintf("homesotg=%d, ",
-				(int)$homepoints);
-		}
-
-		if(strcasecmp($awaypoints,'xx')==0 || strcasecmp($awaypoints,'x')==0){
-		  $query .= sprintf("visitorsotg=NULL ");
-		}else{
-		  $query .= sprintf("visitorsotg=%d ",
-				(int)$awaypoints);
-		}
-		
+	  $update = DBQueryRowCount($query);
+	  
+	  if($update){
+	    $query = sprintf("UPDATE uo_spirit SET cat1=%d,cat2=%d,cat3=%d,cat4=%d,cat5=%d  
+        	        WHERE game_id=%d AND team_id=%d",
+	            (int)$points[0],
+	            (int)$points[1],
+	            (int)$points[2],
+	            (int)$points[3],
+  	            (int)$points[4],
+	    		(int)$gameId,
+	    		(int)$teamId);
+	  }else{
+	    $query = sprintf("INSERT INTO uo_spirit (game_id,team_id,cat1,cat2,cat3,cat4,cat5) VALUES (%d,%d,%d,%d,%d,%d,%d)",
+	            (int)$gameId,
+	            (int)$teamId,
+	            (int)$points[0],
+	    		(int)$points[1],
+	    		(int)$points[2],
+	    		(int)$points[3],
+	    		(int)$points[4]);
+	  }
+	  DBQuery($query);
+	  $total =  array_sum($points);
+	  $query = sprintf("UPDATE uo_game SET ");
+	  
+	  if($home){
+	    $query .= sprintf("homesotg=%d ",
+	    		(int)$total);
+	  }else{
+	    $query .= sprintf("visitorsotg=%d ",
+	    		(int)$total);
+	  }		
 	    $query .= sprintf("WHERE game_id=%d",(int)$gameId);
 		
 		return DBQuery($query);

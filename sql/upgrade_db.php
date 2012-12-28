@@ -380,6 +380,26 @@ function upgrade67() {
    }
 }
 
+function upgrade68() {
+	if(!hasTable("uo_spirit")){
+		runQuery("CREATE TABLE `uo_spirit` (
+		`game_id` INT(10) NOT NULL,
+		`team_id` INT(10) NOT NULL,
+		`cat1` TINYINT(2) NOT NULL DEFAULT 0,
+		`cat2` TINYINT(2) NOT NULL DEFAULT 0,
+		`cat3` TINYINT(2) NOT NULL DEFAULT 0,
+		`cat4` TINYINT(2) NOT NULL DEFAULT 0,
+		`cat5` TINYINT(2) NOT NULL DEFAULT 0,
+		PRIMARY KEY (game_id,team_id)
+		)
+		COLLATE='latin1_swedish_ci'
+		ENGINE=MyISAM
+		ROW_FORMAT=DEFAULT
+		");
+	}
+}
+
+
 
 function runQuery($query) {
 	$result = mysql_query($query);

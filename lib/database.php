@@ -37,7 +37,7 @@ include_once $include_prefix.'sql/upgrade_db.php';
 //Also whenb you change the database, please add a database definition into
 // 'lib/table-definition-cache' with the database version in the file name.
 // You can get it by getting ext/restful/show_tables.php
-define('DB_VERSION', 67); //Database version matching to upgrade functions.
+define('DB_VERSION', 68); //Database version matching to upgrade functions.
 
 $mysqlconnectionref = 0;
 
