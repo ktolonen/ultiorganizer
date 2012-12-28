@@ -1,6 +1,7 @@
 <?php
 $html = "";
 $season = CurrentSeason();
+$seasoninfo = SeasonInfo($season);
 $reservationgroup = "";
 $location = "";
 $showall = false;

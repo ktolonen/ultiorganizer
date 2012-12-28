@@ -94,7 +94,7 @@ echo "<div data-role='page'>\n";
 include $view.".php";
 
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
-echo "<a href='".BASEURL."' data-role='button' data-icon='home'>"._("Ultiorganizer")."</a>";
+echo "<a href='".BASEURL."/' data-role='button' rel='external' data-icon='home'>"._("Ultiorganizer")."</a>";
 if($_SESSION['uid'] != "anonymous"){
 	echo "<a href='?view=logout' data-role='button' data-icon='delete'>"._("Logout")."</a>";
 }

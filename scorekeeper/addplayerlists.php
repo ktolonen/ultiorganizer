@@ -146,6 +146,7 @@ if($teamId==$game_result['visitorteam']){
 }else{
   $html .= "<a href='?view=addplayerlists&game=".$gameId."&team=".$game_result['visitorteam']."' data-role='button' data-ajax='false'>".utf8entities($game_result['visitorteamname'])." "._("playerlist")."</a>";
 }
+$html .= "<a href='?view=addscoresheet&amp;game=".$gameId."' data-role='button' data-ajax='false'>"._("Back to score sheet")."</a>";
 $html .= "<a href='?view=respgames' data-role='button' data-ajax='false'>"._("Back to game responsibilities")."</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
