@@ -202,6 +202,9 @@ foreach($pools as $pool){
 				if($seasoninfo['spiritpoints']){
 				  $html .=  " | <a href='?view=user/addspirit&amp;game=".$game['game_id']."'>"._("Spirit")."</a>";
 				}
+				if(ShowDefenseStats()){
+				  $html .=  " | <a href='?view=user/adddefensesheet&amp;game=".$game['game_id']."'>"._("Defensesheet")."</a>";
+				}
 				$html .=  "</td>";
         }else{
           $html .= "<td style='width:300px'></td>";
