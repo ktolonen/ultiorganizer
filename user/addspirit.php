@@ -36,6 +36,10 @@ $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
 $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
+if(ShowDefenseStats())
+{
+  $menutabs[_("Defense sheet")]= "?view=user/adddefensesheet&game=$gameId";
+}
 $html .= pageMenu($menutabs,"",false);
 
 $html .= "<form  method='post' action='?view=user/addspirit&amp;game=".$gameId."'>";

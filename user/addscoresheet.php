@@ -174,6 +174,11 @@ $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
 if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
   $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
 }
+if(ShowDefenseStats())
+{
+  $menutabs[_("Defense sheet")]= "?view=user/adddefensesheet&game=$gameId";
+}
+
 pageMenu($menutabs);
 
 

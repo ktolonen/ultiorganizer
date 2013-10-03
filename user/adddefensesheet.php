@@ -50,11 +50,26 @@ $scrolling = "onkeypress='chgFocus(event);'";
 pageTopHeadClose($title,false, $scrolling);
 leftMenu($LAYOUT_ID);
 contentStart();
-//content
+
 //echo "First line"
 $gameId = intval($_GET["game"]);
 $season = GameSeason($gameId);
 $seasoninfo = SeasonInfo($season);
+
+//content
+$menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
+$menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
+$menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
+if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
+  $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
+}
+if(ShowDefenseStats())
+{
+  $menutabs[_("Defense sheet")]= "?view=user/adddefensesheet&game=$gameId";
+}
+pageMenu($menutabs);
+
+
 
 $game_result = GameResult($gameId);
 $homecaptain = -1;
