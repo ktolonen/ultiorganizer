@@ -254,12 +254,16 @@ if(ShowDefenseStats()) {
   $html .= "<a href='?view=defensestatus&amp;series=".$seriesinfo['series_id']."'>"._("Defenseboard")."</a>";
 
 if ($seasoninfo['showspiritpoints']){
+ $spiritAvg = SeriesSpiritBoard($seriesinfo['series_id'], 0);
+ $row = mysql_fetch_assoc($spiritAvg);
+   if (intval($row['cat1']) != 0 && intval($row['cat2']) != 0 && intval($row['cat3']) != 0 && intval($row['cat4']) != 0 && intval($row['cat5']) != 0)
+  {
   $html .= "<h2>"._("Spirit points average per category")."</h2>\n";
   $html .= "<table cellspacing='0' border='0' width='100%'>\n";
   $html .= "<tr><th style='width:200px'>"._("Team")."</th><th style='width:80px'>"._("Rules knowlege")."</th><th class='center'>"._("Fouls and contact")."</th>
 	<th class='center'>"._("Fair mindedness")."</th><th class='center'>"._("Positive attitude")."</th><th class='center'>"._("Their spirit vs ours")."</th></tr>\n";
-
- $spiritAvg = SeriesSpiritBoard($seriesinfo['series_id'], 0);
+ 
+  mysql_data_seek ( $spiritAvg , 0 );
  while($row = mysql_fetch_assoc($spiritAvg)) {
     $html .= "<td>".utf8entities($row['teamname'])."</td>";
     $cat1Res = number_format(SafeDivide(intval($row['cat1']), intval($row['games'])),2);
@@ -273,6 +277,7 @@ if ($seasoninfo['showspiritpoints']){
     $html .= "<td class='center'>".$cat4Res."</td>";
     $html .= "<td class='center'>".$cat5Res."</td></tr>\n";
   }
+ }
 }
   $html .= "</table>";
 }
