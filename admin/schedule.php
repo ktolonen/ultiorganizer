@@ -16,7 +16,7 @@ if (isset($_GET['reservations'])) {
 }
 $reservationData = ReservationInfoArray($reservations);
 $numOfreservations = count($reservations);
-define("MIN_HEIGHT", 0.5);
+define("MIN_HEIGHT", 1.0);
 
 $maxtimeslot = 30;
 $seriesId = 0;
@@ -220,7 +220,7 @@ if($poolId){
 
 function gameEntry($color, $height, $gameId, $gamename, $poolname, $editable=true) {
   $textColor = textColor($color);
-  echo "<li class='list1' style='color:#".$textColor.";background-color:#".$color.";height:".$height."px' id='game".$gameId."'>";
+  echo "<li class='list1' style='color:#".$textColor.";background-color:#".$color.";min-height:".$height."px' id='game".$gameId."'>";
   echo $poolname;
   if ($editable) {
     echo "<span style='align:right;float:right;'><a href='javascript:hide(\"game".$gameId."\");'>x</a></span>";
@@ -272,7 +272,7 @@ foreach($poolfilter as $pool){
 echo "</select></p>\n";
 echo "</form>";
 echo "<div class='workarea' >\n";
-echo "<ul id='unscheduled' class='draglist' style='height:600px'>\n";
+echo "<ul id='unscheduled' class='draglist' style='min-height:600px'>\n";
 foreach ($gameData as $gameId => $gameInfo) {
   if (hasEditGamesRight($gameInfo['series'])) {
     $height = gameHeight($gameInfo);
@@ -316,16 +316,16 @@ if(count($reservationData)>1){
       $endTime =  strtotime($reservationArray['endtime']);
       $duration = ($endTime - $startTime) / 60;
 
-      echo "<div style='vertical-align:bottom;height:".intval($offset * MIN_HEIGHT)."px'>";
+      echo "<div style='vertical-align:bottom;min-height:".intval($offset * MIN_HEIGHT)."px'>";
       echo "<h3>".$reservationArray['name']." "._("Field ")." ".$reservationArray['fieldname']." ".date("H:i", $startTime)." -&gt;</h3></div>\n";
       echo "<div class='workarea' >\n";
-      echo "<ul id='res".$reservationId."' class='draglist' style='height:".($duration * MIN_HEIGHT)."px'>\n";
+      echo "<ul id='res".$reservationId."' class='draglist' style='min-height:".($duration * MIN_HEIGHT)."px'>\n";
       $nextStart = $startTime;
       foreach ($reservationArray['games'] as $gameId => $gameInfo) {
         $gameStart = strtotime($gameInfo['time']);
         if ($gameStart > $nextStart) {
           $height = pauseHeight($gameStart, $nextStart);
-          echo "<li class='list1' id='pause".$gameId."' style='height:".$height."px'>"._("Pause")."<span style='align:right;float:right'><a href='javascript:hide(\"pause".$gameId."\");'>x</a></span></li>\n";
+          echo "<li class='list1' id='pause".$gameId."' style='min-height:".$height."px'>"._("Pause")."<span style='align:right;float:right'><a href='javascript:hide(\"pause".$gameId."\");'>x</a></span></li>\n";
           $reservedPauses[] = "pause".$gameId;
         }
         if(!empty($gameInfo['gametimeslot'])){
@@ -372,16 +372,16 @@ if(count($reservationData)>1){
       $endTime =  strtotime($reservationArray['endtime']);
       $duration = ($endTime - $startTime) / 60;
 
-      echo "<div style='vertical-align:bottom;height:".intval($offset * MIN_HEIGHT)."px'>";
+      echo "<div style='vertical-align:bottom;min-height:".intval($offset * MIN_HEIGHT)."px'>";
       echo "<h3>".$reservationArray['name']." "._("Field ")." ".$reservationArray['fieldname']." ".date("H:i", $startTime)." -&gt;</h3></div>\n";
       echo "<div class='workarea' >\n";
-      echo "<ul id='res".$reservationId."' class='draglist' style='height:".($duration * MIN_HEIGHT)."px'>\n";
+      echo "<ul id='res".$reservationId."' class='draglist' style='min-height:".($duration * MIN_HEIGHT)."px'>\n";
       $nextStart = $startTime;
       foreach ($reservationArray['games'] as $gameId => $gameInfo) {
         $gameStart = strtotime($gameInfo['time']);
         if ($gameStart > $nextStart) {
           $height = pauseHeight($gameStart, $nextStart);
-          echo "<li class='list1' id='pause".$gameId."' style='height:".$height."px'>"._("Pause")."<span style='align:right;float:right'><a href='javascript:hide(\"pause".$gameId."\");'>x</a></span></li>\n";
+          echo "<li class='list1' id='pause".$gameId."' style='min-height:".$height."px'>"._("Pause")."<span style='align:right;float:right'><a href='javascript:hide(\"pause".$gameId."\");'>x</a></span></li>\n";
           $reservedPauses[] = "pause".$gameId;
         }
         if(!empty($gameInfo['gametimeslot'])){
@@ -559,13 +559,13 @@ foreach ($reservedPauses as $pauseId) {
 	addPause: function() {
     	var unscheduled = Dom.get("unscheduled");
     	var pauseElem = document.createElement("li");
-    	pauseElem.innerHTML = "<?php echo _("Pause"); ?><span style=\"align:right;float:right\"><a href='javascript:hide(\"pause" + pauseIndex+ "\");'>x</a></span>";
-    	pauseElem.setAttribute("class", "list1");
-    	pauseElem.setAttribute("id", "pause" + pauseIndex);
-    	Dom.setStyle(pauseElem, "height", ((Dom.get("pauseLen").value * minHeight)-2) + "px");
-    	unscheduled.appendChild(pauseElem);
-    	new YAHOO.example.DDList("pause" + pauseIndex);
-    	pauseIndex++;
+	pauseElem.innerHTML = "<?php echo _("Pause"); ?><span style=\"align:right;float:right\"><a href='javascript:hide(\"pause" + pauseIndex+ "\");'>x</a></span>";
+	pauseElem.setAttribute("class", "list1");
+	pauseElem.setAttribute("id", "pause" + pauseIndex);
+	Dom.setStyle(pauseElem, "min-height", ((Dom.get("pauseLen").value * minHeight)-2) + "px");
+	unscheduled.appendChild(pauseElem);
+	new YAHOO.example.DDList("pause" + pauseIndex);
+	pauseIndex++;
     },	
     
     requestString: function() {
@@ -574,7 +574,8 @@ foreach ($reservedPauses as $pauseId) {
             var out = id;
 			var offset = 0;
             for (i=0;i<items.length;i=i+1) {
-                var height = Dom.getStyle(items[i], "height");
+
+                var height =  Dom.getStyle(items[i], "min-height"); // items[i].firstChild.data; //
                 height = parseInt(height.substring(0, height.length -2)) + 2;
 				var nextId = items[i].id.substring(4);
 				if (!isNaN(nextId)) {
