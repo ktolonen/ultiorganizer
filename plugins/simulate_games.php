@@ -63,8 +63,10 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 				$h=0;
 				$a=0;
 				$time = 0;
-				for($i=0;$h<$poolinfo['winningscore'] && $a<$poolinfo['winningscore'];$i++){
-					
+				$maxscore = $poolinfo['winningscore'];
+				if ($maxscore<=0) $maxscore=rand(2,15);
+				for($i=0;$h<$maxscore && $a<$maxscore;$i++){
+
 					$home = rand(0,1);
 					$pass = 0;
 					$goal = 0;
@@ -135,6 +137,35 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
 	}
+}elseif (isset($_POST['reset']) && !empty($_POST['pools'])) {
+
+	$pools = $_POST["pools"];
+
+	foreach($pools as $poolId){
+
+		$poolinfo = PoolInfo($poolId);
+		$games = PoolGames($poolId);
+		set_time_limit(300); //game simulation takes time because so much inserts
+
+			foreach($games as $game){
+
+				GameRemoveAllPlayers($game['game_id']);
+
+				GameSetStartingTeam($game['game_id'], NULL);
+
+				GameRemoveAllScores($game['game_id']);
+				GameSetHalftime($game['game_id'], NULL);
+
+				GameRemoveAllTimeouts($game['game_id']);
+
+				GameSetScoreSheetKeeper($game['game_id'], NULL);
+
+				GameClearResult($game['game_id']);
+			}
+			ResolvePoolStandings($poolId);
+			PoolResolvePlayed($poolId);
+			// TODO undo moves
+	}
 }
 
 //season selection
@@ -183,7 +214,7 @@ if(empty($seasonId)){
 		}
 	}
 	$html .= "</table>\n";
-	$html .= "<p><input class='button' type='submit' name='simulate' value='".("Simulate")."'/></p>";
+	$html .= "<p><input class='button' type='submit' name='simulate' value='".("Simulate")."'/> <input class='button' type='submit' name='reset' value='".("Reset played games")."'/></p>";
 	$html .= "<div>";
 	$html .= "<input type='hidden' name='season' value='$seasonId' />\n";
 	$html .= "</div>\n";

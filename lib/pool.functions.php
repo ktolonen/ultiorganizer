@@ -837,8 +837,8 @@ function PoolIsMoved($frompool, $fromplacing){
 }
 
 /**
- * Test if all pools to move from are palyed or not.
- * 
+ * Test if all pools to move from are played or not.
+ *
  * @param int $topool
  * @return true if played, false otherwise
  */
@@ -1063,6 +1063,8 @@ function PoolResolvePlayed($poolId){
 			WHERE p.pool_id=$poolId AND (game.homescore>0 OR game.visitorscore>0) AND game.isongoing=0");
   if(mysql_num_rows($games) == mysql_num_rows($played)){
     DBQuery("UPDATE uo_pool SET played=1 WHERE pool_id=$poolId");
+  } else {
+    DBQuery("UPDATE uo_pool SET played=0 WHERE pool_id=$poolId");
   }
 }
 

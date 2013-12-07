@@ -574,6 +574,19 @@ function GameSetDefenses($gameId, $home, $away) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
+function GameClearResult($gameId) {
+	if (hasEditGameEventsRight($gameId)) {
+		$query = sprintf("UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0' WHERE game_id='%s'",
+			mysql_real_escape_string($gameId));
+		$result = mysql_query($query);
+		if (!$result) { die('Invalid query: ' . mysql_error()); }
+//		if (IsFacebookEnabled()) {
+//			TriggerFacebookEvent($gameId, "game", 0);
+//		}
+		return $result;
+	} else { die('Insufficient rights to edit game'); }
+}
+
 
 function GameAddPlayer($gameId, $playerId, $number) {
 	if (hasEditGamePlayersRight($gameId)) {
@@ -629,7 +642,21 @@ function GameRemovePlayer($gameId, $playerId) {
 		return $result;
 	} else { die('Insufficient rights to edit game'); }
 }
-	
+
+function GameRemoveAllPlayers($gameId, $playerId) {
+	if (hasEditGamePlayersRight($gameId)) {
+		$query = sprintf("
+			DELETE FROM uo_played
+			WHERE game='%s'",
+			mysql_real_escape_string($gameId));
+
+		$result = mysql_query($query);
+		if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+		return $result;
+	} else { die('Insufficient rights to edit game'); }
+}
+
 function GameSetPlayerNumber($gameId, $playerId, $number) {
 	if (hasEditGamePlayersRight($gameId)) {
 		$query = sprintf("
@@ -929,6 +956,15 @@ function GameSetCaptain($gameId, $teamId, $playerId) {
 
 function GameSetStartingTeam($gameId, $home) {
 	if (hasEditGameEventsRight($gameId)) {
+	     if ($home == NULL) {
+		$query = sprintf("DELETE FROM uo_gameevent WHERE game=%d AND type='offence'",
+			(int)$gameId);
+
+		$result = mysql_query($query);
+		if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+		return $result;
+	   } else {
 		$query = sprintf("INSERT INTO uo_gameevent (game, num, time, type, ishome) VALUES (%d, 0, 0, 'offence', %d)
 			ON DUPLICATE KEY UPDATE ishome='%d'",
 			(int)$gameId,
@@ -937,8 +973,9 @@ function GameSetStartingTeam($gameId, $home) {
 			
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
+
 		return $result;
+	   }
 	} else { die('Insufficient rights to edit game'); }
 }
 
