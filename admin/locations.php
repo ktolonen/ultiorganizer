@@ -96,6 +96,28 @@ if (isset($_POST['id']) || isset($_GET['location'])) {
 ?>
     }
 
+    function getLat(point) {
+      if (typeof point.y === 'undefined') {
+        if (typeof point.lat === 'undefined')
+	  return 'undefined';
+	else
+	  return point.lat();
+      } else {
+        return point.y;
+      }
+    }
+
+    function getLng(point) {
+      if (typeof point.x === 'undefined') {
+        if (typeof point.lng === 'undefined')
+	  return 'undefined';
+	else
+	  return point.lng();
+      } else {
+        return point.x;
+      }
+    }
+
     function searchLatLng() {
         var address = document.getElementById('address').value;
         geocoder.getLatLng(address, function(point) {
@@ -135,10 +157,10 @@ foreach ($locales as $locale => $locname) {
             ?>, fields, indoor);
             sidebar.appendChild(sidebarEntry);
             GEvent.trigger(marker, 'click');
-        	document.getElementById('lat').value = point.y;
-            document.getElementById('lng').value = point.x;
-        	document.getElementById('lat_disabled').value = point.y;
-            document.getElementById('lng_disabled').value = point.x;
+            document.getElementById('lat').value = getLat(point);
+            document.getElementById('lng').value = getLng(point);
+            document.getElementById('lat_disabled').value = getLat(point);
+            document.getElementById('lng_disabled').value = getLng(point);
           }
         });
       }
@@ -219,12 +241,12 @@ foreach ($locales as $locale => $locname) {
       });
       GEvent.addListener(marker, "dragend", function() {
           var point = marker.getLatLng();
-          document.getElementById('lat').value = point.y;
-          document.getElementById('lng').value = point.x;
-	      document.getElementById('lat_disabled').value = point.y;
-          document.getElementById('lng_disabled').value = point.x;
+          document.getElementById('lat').value = getLat(point);
+          document.getElementById('lng').value = getLng(point);
+	      document.getElementById('lat_disabled').value = getLat(point);
+          document.getElementById('lng_disabled').value = getLng(point);
       });
-    	      
+
       return marker;
     }
 
@@ -265,10 +287,10 @@ foreach ($locales as $locale => $locname) {
 			document.getElementById('indoor').checked = true;
 		}
         var point = marker.getLatLng();
-        document.getElementById('lat').value = point.y;
-        document.getElementById('lng').value = point.x;
-    	document.getElementById('lat_disabled').value = point.y;
-        document.getElementById('lng_disabled').value = point.x;
+        document.getElementById('lat').value = getLat(point);
+        document.getElementById('lng').value = getLng(point);
+	document.getElementById('lat_disabled').value = getLat(point);
+        document.getElementById('lng_disabled').value = getLng(point);
 
         document.getElementById('save').name = 'save';
         document.getElementById('save').value = '<?php echo _("Save"); ?>';
