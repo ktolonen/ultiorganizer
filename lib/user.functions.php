@@ -319,12 +319,15 @@ function setSelectedSeason() {
 function getViewPools($selSeasonId) {
 	$numselectors = 0;
 	$query = "SELECT seas.season_id as season, seas.name as season_name, ser.series_id as series, ser.name as series_name, pool.pool_id as pool, pool.name as pool_name ";
-	$query .= "FROM uo_pool pool 
-		left outer join uo_series ser on (pool.series = ser.series_id) 
+	$query .= "FROM uo_pool pool
+		left outer join uo_series ser on (pool.series = ser.series_id)
 		left outer join uo_season seas on (ser.season = seas.season_id) ";
-	$query .= "WHERE pool.visible=1 AND (";
+	$query .= "WHERE pool.visible=1";
 	if (isset($_SESSION['userproperties']['poolselector'])) {
 		foreach ($_SESSION['userproperties']['poolselector'] as $selector => $param) {
+			if ($numselectors == 0) {
+			    $query .= " AND (";
+			}
 			if ($numselectors > 0) {
 				$query .= "OR ";
 			}
@@ -344,15 +347,14 @@ function getViewPools($selSeasonId) {
 		}
 	}
 
+
 	if ($numselectors > 0) {
 		$query .= ") ORDER BY ser.season ASC, ser.ordering ASC, pool.ordering ASC";
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
-		return $result;
 	}
-	
-	return false;
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+	return $result;
 }
 
 
