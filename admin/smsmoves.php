@@ -92,11 +92,11 @@ if (!empty($poolId)){
 			echo "</table>\n";
 		}
 		
-		
+
 	}else{ // create SMS from moves
 		$moves = PoolMovingsFromPoolWithTeams($poolId);
-	
-		if(mysql_num_rows($moves)){
+
+		if(count($moves)){
 			echo "<table border='0' width='500'><tr>
 				<th>"._("From pool")."</th>
 				<th>"._("From position")."</th>
@@ -110,11 +110,12 @@ if (!empty($poolId)){
 				<th>"._("Field")."</th>
 				<th>"._("SMS")."</th></tr>";
 		}
-			
+
 		$smscount=0;
-		while($row = mysql_fetch_assoc($moves))	{
+//		while($row = mysql_fetch_assoc($moves))	{
+		foreach($moves as $row)	{
 	//		$poolinfo = PoolInfo($row['topool']);
-			
+
 			$sms="";
 			
 			echo "<tr>";
@@ -151,14 +152,15 @@ if (!empty($poolId)){
 			if($nextgame['hometeam']==$row['team_id']) {
 				$nextgame['opp_id']=$nextgame['visitorteam'];			
 			}elseif($nextgame['visitorteam']==$row['team_id']){
-				$nextgame['opp_id']=$nextgame['hometeam'];						
+				$nextgame['opp_id']=$nextgame['hometeam'];
 			}
-			
+
+
 			// opponent's rank in CURRENT pool
-			$oppinfo=TeamPoolInfo($nextgame['opp_id'], $poolId);		
+			$oppinfo=TeamPoolInfo($nextgame['opp_id'], $row['topool']);//$poolId);
 			echo "<td>".utf8entities($oppinfo['name'])."</td>";
 			echo "<td>".utf8entities($oppinfo['activerank'])."</td>";
-			
+
 			// get next timeslot and field number
 			echo "<td>".utf8entities($nextgame['time'])."</td>";
 			echo "<td>".utf8entities($nextgame['fieldname'])."</td>";
@@ -175,18 +177,26 @@ if (!empty($poolId)){
 			// create SMS
 			if (!empty($oppinfo) && !empty($lastgame)) {
 				$sms = "After a ".$lastgame['outcome']." in ".PoolShortName($row['frompool']).",you're ranked ".ordinal(intval($row['fromplacing'])).".";
-				$sms .= "In".PoolShortName($row['topool']).",you'll play ".$oppinfo['name']."(ranked ".ordinal(intval($oppinfo['activerank'])).") ";
-				$sms .= "on Field ".$nextgame['fieldname'].$timestring;
+				$sms .= "In".PoolShortName($row['topool']).",you'll play ".$oppinfo['name']." (ranked ".ordinal(intval($oppinfo['activerank'])).")";
+				if (!empty($nextgame['fieldname'])){
+				  $sms .= " on Field ".$nextgame['fieldname'].$timestring.".";
+                                }else{
+				  $sms .= ", field yet unknown.";
+				}
 			}elseif(!empty($lastgame)) { // team will have a BYE in playoffs
 				$sms = "After a ".$lastgame['outcome']." in ".PoolShortName($row['frompool']).",you're ranked ".ordinal(intval($row['fromplacing'])).".";
-				$sms .= "In".PoolShortName($row['topool']).",you'll have a BYE. Go see another game!";			
+				$sms .= "In".PoolShortName($row['topool']).",you'll have a BYE. Go see another game!";
 			}elseif(!empty($oppinfo)) { // team just had a BYE in playoffs
 				$sms = "After a BYE in ".PoolShortName($row['frompool']).",you're ranked ".ordinal(intval($row['fromplacing'])).".";
-				$sms .= "In".PoolShortName($row['topool']).",you'll play ".$oppinfo['name']."(ranked ".ordinal(intval($oppinfo['activerank'])).") ";
-				$sms .= "on Field ".$nextgame['fieldname'].$timestring;
-			}else{ 
-				die("something's wrong in smsmoves.php, we should have never arrived here..."); 
-			}		
+				$sms .= "In".PoolShortName($row['topool']).",you'll play ".$oppinfo['name']."(ranked ".ordinal(intval($oppinfo['activerank'])).")";
+				if (!empty($nextgame['fieldname'])){
+				  $sms .= " on Field ".$nextgame['fieldname'].$timestring.".";
+                                }else{
+				  $sms .= ", field yet unknown.";
+				}
+			}else{
+				die("something's wrong in smsmoves.php, we should have never arrived here...");
+			}
 			
 			echo "<td>".utf8entities($sms)."</td>";
 			echo "</tr>\n";			
@@ -199,14 +209,14 @@ if (!empty($poolId)){
 			$smsarray[$smscount]['to2']="9876543210";												
 			$smsarray[$smscount]['to3']="";												
 			$smsarray[$smscount]['to4']="";												
-			$smsarray[$smscount]['to5']="";												
-						
+			$smsarray[$smscount]['to5']="";
+
 		}
-		if(mysql_num_rows($moves)){
+		if(count($moves)){
 			echo "</table>\n";
 		}
 	}
-	echo "<form method='post' action='?view=admin/sms>";	
+	echo "<form method='post' action='?view=admin/sms'>";
 	$smscount=0;
 	foreach($smsarray as $sms) {
 		$smscount++;
