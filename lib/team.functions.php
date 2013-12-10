@@ -585,7 +585,7 @@ function TeamStatsByPool($poolId,$teamId)
   		COUNT((hometeam=%d AND (homescore<visitorscore)) OR (visitorteam=%d AND (homescore>visitorscore)) OR NULL) AS losses 
 		FROM uo_game 
 		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
-		WHERE (hometeam=%d OR visitorteam=%d) AND isongoing=0
+		WHERE (hometeam=%d OR visitorteam=%d) AND isongoing=0 AND hasstarted>0
 		AND gp.pool=%d",
   (int)$teamId,
   (int)$teamId,
@@ -703,12 +703,12 @@ function TeamPoints($teamId)
 		LEFT JOIN (SELECT hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
 			FROM uo_game 
 			LEFT JOIN uo_game_pool gp1 ON(game_id=gp1.game)
-			WHERE hometeam=%d AND isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k 
+			WHERE hometeam=%d AND hasstarted>0 AND isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k 
 		ON (j.team_id=k.hometeam) 
 		LEFT JOIN (SELECT visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against 
 			FROM uo_game 
 			LEFT JOIN uo_game_pool gp2 ON(game_id=gp2.game)
-			WHERE visitorteam=%d AND isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v 
+			WHERE visitorteam=%d AND hasstarted>0 AND isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v 
 			ON (j.team_id=v.visitorteam) 
 		WHERE j.team_id=%d",
   (int)$teamId,
@@ -729,12 +729,12 @@ function TeamPointsByPool($poolId,$teamId){
 		LEFT JOIN (SELECT hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
 			FROM uo_game 
 			LEFT JOIN uo_game_pool gp1 ON(game_id=gp1.game)
-			WHERE hometeam=%d AND isongoing=0 AND gp1.pool=%d GROUP BY hometeam) AS k 
+			WHERE hometeam=%d AND hasstarted>0 AND isongoing=0 AND gp1.pool=%d GROUP BY hometeam) AS k 
 		ON (j.team_id=k.hometeam) 
 		LEFT JOIN (SELECT visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against 
 			FROM uo_game 
 			LEFT JOIN uo_game_pool gp2 ON(game_id=gp2.game)
-			WHERE visitorteam=%d AND isongoing=0 AND gp2.pool=%d GROUP BY visitorteam) AS v 
+			WHERE visitorteam=%d AND hasstarted>0 AND isongoing=0 AND gp2.pool=%d GROUP BY visitorteam) AS v 
 			ON (j.team_id=v.visitorteam) WHERE j.team_id=%d",
   (int)$teamId,
   (int)$poolId,

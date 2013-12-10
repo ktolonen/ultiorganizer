@@ -48,6 +48,15 @@ if(!empty($_POST['save'])) {
 	$ok=GameUpdateResult($gameId, $home, $away);
 	$html2 .= "<p>"._("Game ongoing. Current score: $home - $away").".</p>";
 	$gameinfo = GameInfo($gameId);
+}elseif(isset($_POST['clear'])) {
+  LogGameUpdate($gameId,"result cleared", "addresult");
+  $ok=GameClearResult($gameId);
+  if($ok)	{
+    $html2 .= "<p>"._("Game reset").".</p>";
+    ResolvePoolStandings(GamePool($gameId));
+    PoolResolvePlayed(GamePool($gameId));
+  }
+  $gameinfo = GameInfo($gameId);
 }
 
 //common page
@@ -98,6 +107,9 @@ if($gameinfo['homevalid']==2) {
 
 $html .= "<p>"._("If game ongoing, update as current result: ")."    
 	<input class='button' type='submit' name='update' value='"._("update")."'/></p>";
+
+$html .= "<p>"._("If this is all wrong, clear the result: ")."    
+	<input class='button' type='submit' name='clear' value='"._("Clear")."'/></p>";
 
 $html .= $html2;
 
