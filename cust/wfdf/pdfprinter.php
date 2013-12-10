@@ -674,9 +674,7 @@ class PDF extends FPDF
 		}
 
 		if($result){
-			$goals = intval($game['homescore'])+intval($game['visitorscore']);
-	
-			if($goals && !intval($game['isongoing'])){
+			if(GameHasStarted($game) &&  !intval($game['isongoing'])){
 				$txt = intval($game['homescore']);
 				$this->Cell(5,5,$txt,'TB',0,'L',true);
 				$txt = " - ";

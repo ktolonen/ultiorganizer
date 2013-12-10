@@ -381,7 +381,7 @@ function SeriesSpiritBoard($seriesId, $sorting) {
 			LEFT JOIN uo_pool pool ON(up.pool=pool.pool_id)
 			LEFT JOIN uo_game_pool g_pool ON(pool.pool_id=g_pool.pool)
 			LEFT JOIN uo_game AS g4 ON (g_pool.game=g4.game_id)
-			WHERE pool.series=%d AND g4.isongoing=0 AND ((g4.hometeam=up.team AND g4.homesotg IS NOT NULL) OR (g4.visitorteam=up.team AND g4.visitorsotg IS NOT NULL)) AND (g4.homescore != g4.visitorscore)
+			WHERE pool.series=%d AND g4.isongoing=0 AND ((g4.hometeam=up.team AND g4.homesotg IS NOT NULL) OR (g4.visitorteam=up.team AND g4.visitorsotg IS NOT NULL)) AND (g4.hasstarted>0)
 			GROUP BY team_id) AS peli ON (te.team_id=peli.team_id)
 		WHERE peli.games > 0 AND j.series=%d",
   (int)$seriesId,

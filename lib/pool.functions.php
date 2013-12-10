@@ -1003,7 +1003,7 @@ function PoolMovedGames($poolId){
 			pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
 			ps.series_id, ps.name AS seriesname, ps.season, ps.type, pr.fieldname, pr.reservationgroup,
 			pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, COALESCE(pm.goals,0) AS scoresheet,
-			pl.name AS placename, pl.address, pp.isongoing, home.name AS hometeamname, visitor.name AS visitorteamname,
+			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, home.name AS hometeamname, visitor.name AS visitorteamname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid, 
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry
@@ -1039,7 +1039,7 @@ function PoolTotalPlayedGames($poolId) {
 			FROM uo_game pp 
 			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
 			WHERE pps.pool=%d AND pp.valid=true 
-				AND (homescore!=visitorscore)	AND isongoing=0 
+				AND hasstarted>0 AND isongoing=0 
 			ORDER BY pp.time ASC",
   (int)$poolId);
 
@@ -1060,7 +1060,7 @@ function PoolResolvePlayed($poolId){
   $played = DBQuery("SELECT game_id
 			FROM uo_game game
 			LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
-			WHERE p.pool_id=$poolId AND (game.homescore>0 OR game.visitorscore>0) AND game.isongoing=0");
+			WHERE p.pool_id=$poolId AND game.hasstarted AND game.isongoing=0");
   if(mysql_num_rows($games) == mysql_num_rows($played)){
     DBQuery("UPDATE uo_pool SET played=1 WHERE pool_id=$poolId");
   } else {
@@ -1079,7 +1079,7 @@ function IsPoolStarted($poolId){
   $query = sprintf("SELECT game_id
 			FROM uo_pool pool
 			LEFT JOIN uo_game pp ON (pool.pool_id=pp.pool)
-			WHERE pool.pool_id=$poolId AND (pp.homescore>0 OR visitorscore>0)",
+			WHERE pool.pool_id=$poolId AND (pp.hasstarted>0)",
         (int)$poolId);
   return DBQueryRowCount($query)?true:false;
 }
@@ -1092,15 +1092,16 @@ function IsPoolStarted($poolId){
 function AddPoolTemplate($params) {
   if (hasCurrentSeasonsEditRight()) {
     $query = sprintf("INSERT INTO uo_pooltemplate
-			(name, timeoutlen, halftime, winningscore, timecap, scorecap, addscore, halftimescore, timeouts, 
+			(name, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts, 
 			timeoutsper, timeoutsovertime, timeoutstimecap, betweenpointslen, continuingpool, mvgames, type, 
 			ordering, teams, timeslot, forfeitagainst, forfeitscore) 
-			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', 
+			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', 
 			'%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
     mysql_real_escape_string($params['name']),
     mysql_real_escape_string($params['timeoutlen']),
     mysql_real_escape_string($params['halftime']),
     mysql_real_escape_string($params['winningscore']),
+    mysql_real_escape_string($params['drawsallowed']),
     mysql_real_escape_string($params['timecap']),
     mysql_real_escape_string($params['scorecap']),
     mysql_real_escape_string($params['addscore']),
@@ -1132,7 +1133,7 @@ function AddPoolTemplate($params) {
 function SetPoolTemplate($poolId, $params)	{
   if (hasCurrentSeasonsEditRight()) {
     $query = sprintf("UPDATE uo_pooltemplate SET
-			name='%s', timeoutlen='%s', halftime='%s', winningscore='%s', timecap='%s', scorecap='%s', 
+			name='%s', timeoutlen='%s', halftime='%s', winningscore='%s', drawsallowed='%s', timecap='%s', scorecap='%s', 
 			addscore='%s', halftimescore='%s', timeouts='%s',	timeoutsper='%s', timeoutsovertime='%s', 
 			timeoutstimecap='%s', betweenpointslen='%s', continuingpool='%s', mvgames='%s', type='%s', ordering='%s',
 			teams='%s', timeslot='%s', forfeitagainst='%s', forfeitscore='%s'
@@ -1141,6 +1142,7 @@ function SetPoolTemplate($poolId, $params)	{
     mysql_real_escape_string($params['timeoutlen']),
     mysql_real_escape_string($params['halftime']),
     mysql_real_escape_string($params['winningscore']),
+    mysql_real_escape_string($params['drawsallowed']),
     mysql_real_escape_string($params['timecap']),
     mysql_real_escape_string($params['scorecap']),
     mysql_real_escape_string($params['addscore']),
@@ -1225,10 +1227,10 @@ function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId) {
 			"2E8B57","FFF5EE","A0522D","C0C0C0","87CEEB","6A5ACD","708090","FFFAFA","00FF7F","4682B4","D2B48C","D8BFD8",
 			"FF6347","40E0D0","EE82EE","F5DEB3","F5F5F5","9ACD32");
     $query = sprintf("INSERT INTO uo_pool
-			(type, timeoutlen, halftime, winningscore, timecap, scorecap, addscore, halftimescore, timeouts, 
+			(type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts, 
 			timeoutsper, timeoutsovertime, timeoutstimecap,betweenpointslen, continuingpool, forfeitagainst, forfeitscore, visible, played,
 			mvgames, ordering, teams, timeslot, name, series)
-			SELECT type, timeoutlen, halftime, winningscore, timecap, scorecap, addscore, halftimescore, timeouts, 
+			SELECT type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts, 
 			timeoutsper, timeoutsovertime, timeoutstimecap,betweenpointslen, continuingpool, forfeitagainst, forfeitscore, 0, 0,
 			mvgames, '%s', teams, timeslot, '%s', %d
 			FROM uo_pooltemplate WHERE template_id=%d",
@@ -1272,10 +1274,10 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower=fal
 			"2E8B57","FFF5EE","A0522D","C0C0C0","87CEEB","6A5ACD","708090","FFFAFA","00FF7F","4682B4","D2B48C","D8BFD8",
 			"FF6347","40E0D0","EE82EE","F5DEB3","F5F5F5","9ACD32");
     $query = sprintf("INSERT INTO uo_pool
-			(type, timeoutlen, halftime, winningscore, timecap, scorecap, addscore, halftimescore, timeouts, 
+			(type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts, 
 			timeoutsper, timeoutsovertime, timeoutstimecap,betweenpointslen, continuingpool, forfeitagainst, forfeitscore, visible, played,
 			mvgames, ordering, teams, timeslot, name, series)
-			SELECT type, timeoutlen, halftime, winningscore, timecap, scorecap, addscore, halftimescore, timeouts, 
+			SELECT type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts, 
 			timeoutsper, timeoutsovertime, timeoutstimecap,betweenpointslen, continuingpool, forfeitagainst, forfeitscore, 0, 0,
 			mvgames, '%s', teams, timeslot, '%s', %d
 			FROM uo_pool WHERE pool_id=%d",
@@ -1842,7 +1844,7 @@ function CanDeletePool($poolId) {
  * @param int $teamId
  */
 function CanDeleteTeamFromPool($poolId, $teamId)  {
-  $query = sprintf("SELECT count(*) FROM uo_game WHERE pool=%d AND ((hometeam='%s' OR visitorteam='%s') AND (homescore>0 OR visitorscore>0))",
+  $query = sprintf("SELECT count(*) FROM uo_game WHERE pool=%d AND ((hometeam='%s' OR visitorteam='%s') AND (homescore>0 OR visitorscore>0 OR hasstarted>0))",
   (int)$poolId,
   (int)$teamId,
   (int)$teamId);
@@ -1853,7 +1855,7 @@ function CanDeleteTeamFromPool($poolId, $teamId)  {
     $query = sprintf("SELECT count(*) FROM uo_game_pool
 						  LEFT JOIN uo_game ON (uo_game_pool.game=uo_game.game_id) 
 						  WHERE uo_game_pool.pool=%d AND ((hometeam='%s' OR visitorteam='%s') 
-							AND (homescore>0 OR visitorscore>0)) AND uo_game_pool.timetable=1",
+							AND (homescore>0 OR visitorscore>0 OR hasstarted>0)) AND uo_game_pool.timetable=1",
     (int)$poolId,
     (int)$teamId,
     (int)$teamId);

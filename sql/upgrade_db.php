@@ -399,6 +399,19 @@ function upgrade68() {
 	}
 }
 
+function upgrade69() {
+	if (!hasColumn("uo_pool", "drawsallowed")) {
+		addColumn("uo_pool", "drawsallowed", "smallint(5) DEFAULT 0");
+	}
+	if (!hasColumn("uo_pooltemplate", "drawsallowed")) {
+		addColumn("uo_pooltemplate", "drawsallowed", "smallint(5) DEFAULT 0");
+	}
+	if (!hasColumn("uo_game", "hasstarted")) {
+		addColumn("uo_game", "hasstarted", "tinyint(1) DEFAULT 0");
+		runQuery("UPDATE uo_game SET hasstarted='1' WHERE isongoing>0 OR homescore>0 OR visitorscore>0");
+	}
+}
+
 
 
 function runQuery($query) {

@@ -460,7 +460,7 @@ function CheckBYE($poolId){
 //		echo "actually doing it";
 		// if the visitor-team is the BYE-team assign the appropriate scores to home and visitor
 		$query = sprintf("
-				UPDATE uo_game,uo_team SET uo_game.visitorscore='%s', uo_game.homescore='%s' 
+				UPDATE uo_game,uo_team SET uo_game.visitorscore='%s', uo_game.homescore='%s', uo_game.hasstarted='2'
 				WHERE (uo_game.pool='%s' AND uo_game.visitorteam=uo_team.team_id AND uo_team.valid=2)",
 				mysql_real_escape_string($poolInfo['forfeitagainst']),
 				mysql_real_escape_string($poolInfo['forfeitscore']),
@@ -471,7 +471,7 @@ function CheckBYE($poolId){
 		
 		// if the home-team is the BYE-team assign the appropriate scores to home and visitor
 		$query = sprintf("
-				UPDATE uo_game,uo_team SET uo_game.homescore='%s', uo_game.visitorscore='%s' 
+				UPDATE uo_game,uo_team SET uo_game.homescore='%s', uo_game.visitorscore='%s', uo_game.hasstarted='2'
 				WHERE (uo_game.pool='%s' AND uo_game.hometeam=uo_team.team_id AND uo_team.valid=2)",
 				mysql_real_escape_string($poolInfo['forfeitagainst']),
 				mysql_real_escape_string($poolInfo['forfeitscore']),

@@ -120,17 +120,17 @@ foreach ($respGameArray as $tournament => $resArray) {
             $html .= utf8entities($game['hometeamname']) ." - ". utf8entities($game['visitorteamname']);
             $html .= "</td>";
             $html .= "<td style='padding-left:10px'>";
-            if((intval($game['homescore'])+intval($game['visitorscore']))>0){
+            if(GameHasStarted($game)){
               $html .= intval($game['homescore']) ." - ". intval($game['visitorscore']);
             }else{  
               $html .= "? - ?";
             }
             $html .= "</td>";
             $html .= "<td style='padding-left:10px'>";
-            if($game['goals']){
+            if(GameHasStarted($game)){
               if($game['isongoing']){
                 $html .=  "<a href='?view=gameplay&amp;game=".$gameId."'>". _("Ongoing") ."</a>";
-              }elseif((intval($game['homescore'])+intval($game['visitorscore']))>0){
+              }elseif(GameHasStarted($game)){
                 $html .=  "<a href='?view=gameplay&amp;game=".$gameId."'>". _("Game play") ."</a>";
               }
             }

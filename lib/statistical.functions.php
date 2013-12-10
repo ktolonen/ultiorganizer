@@ -208,7 +208,9 @@ function CalcSeasonStats($season) {
 		$goals_total = 0;
 		$defenses_total =0;
 		$home_wins = 0;
-	
+		$home_draws = 0;
+		$home_losses = 0;
+		
 		$players = SeasonAllPlayers($season);
 		$played_players = 0;
 		foreach($players as $player){
@@ -222,7 +224,12 @@ function CalcSeasonStats($season) {
 			$goals_total += $game_info['homescore']+$game_info['visitorscore'];
 			if($game_info['homescore'] > $game_info['visitorscore']){
 				$home_wins++;
+			}elseif($game_info['homescore'] == $game_info['visitorscore']){
+				$home_draws++;
+			}elseif($game_info['homescore'] < $game_info['visitorscore']){
+				$home_losses++;
 			}
+
 			if(ShowDefenseStats())
 				{
 				$defenses_total += $game_info['homedefenses']+$game_info['visitordefenses'];
@@ -238,6 +245,7 @@ function CalcSeasonStats($season) {
 			{
 			$defense_str=",defenses_total=$defenses_total ";
 			}
+		// FIXME update draws, losses
 		$query = "UPDATE uo_season_stats SET
 				teams=$teams_total, 
 				games=$games_total, 
@@ -376,7 +384,7 @@ function CalcTeamStats($season) {
 				$goals_made = 0;
 				$goals_against = 0;
 				$wins = 0;
-				$loses = 0;
+				$losses = 0;
 				$defenses_total=0;
 				$standing = TeamSeriesStanding($team['team_id']);
 				$allgames = TeamGames($team['team_id']);
@@ -391,7 +399,7 @@ function CalcTeamStats($season) {
 							if (intval($game['homescore']) > intval($game['visitorscore'])){
 								$wins++;
 							}else{
-								$loses++;
+								$losses++;
 							}
 							if(ShowDefenseStats())
 							{
@@ -402,8 +410,8 @@ function CalcTeamStats($season) {
 							$goals_against += intval($game['homescore']);
 							if (intval($game['homescore']) < intval($game['visitorscore'])){
 								$wins++;
-							}else{
-								$loses++;
+							}elseif (intval($game['homescore']) > intval($game['visitorscore'])){
+								$losses++;
 							}
 							if(ShowDefenseStats())
 							{
@@ -429,7 +437,7 @@ function CalcTeamStats($season) {
 						goals_against=$goals_against, 
 						standing=$standing, 
 						wins=$wins, 
-						loses=$loses".$defense_str.
+						losses=$losses".$defense_str.
 						"WHERE team_id=".$team['team_id'];
 				DBQuery($query);
 			}

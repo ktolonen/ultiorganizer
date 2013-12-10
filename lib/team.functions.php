@@ -216,7 +216,8 @@ function TeamSeason($teamId)
 function TeamComingGames($teamId, $placeId)
 {
   $query = sprintf("
-		SELECT Kj.name AS hometeamname, Vj.name As visitorteamname, p.time, p.game_id, p.homescore,p.visitorscore, Kj.team_id AS kId, Vj.team_id AS vId  
+		SELECT Kj.name AS hometeamname, Vj.name As visitorteamname, p.time, p.game_id, p.homescore, 
+  		p.visitorscore, p.hasstarted, Kj.team_id AS kId, Vj.team_id AS vId  
 		FROM ((uo_game p INNER JOIN uo_team AS Kj ON (p.hometeam=Kj.team_id)) 
 		INNER JOIN uo_team AS Vj ON (p.visitorteam=Vj.team_id)) 
 		WHERE (p.reservation='%s') AND (p.hometeam='%s' OR p.visitorteam='%s') 
@@ -234,7 +235,8 @@ function TeamComingGames($teamId, $placeId)
 function TeamTournamentGames($teamId, $reservationId)
 {
   $query = sprintf("
-		SELECT Kj.name AS hometeamname, Vj.name AS visitorteamname, p.time, p.homescore, p.visitorscore, p.game_id, Kj.team_id AS kId, Vj.team_id AS vId,
+		SELECT Kj.name AS hometeamname, Vj.name AS visitorteamname, p.time, p.homescore, p.visitorscore, 
+  			p.hasstarted, p.game_id, Kj.team_id AS kId, Vj.team_id AS vId,
 			p.game_id IN (SELECT DISTINCT game FROM uo_goal) As goals		
 		FROM uo_game AS p, uo_team AS Kj, uo_team AS Vj 
 		WHERE p.hometeam = Kj.team_id And p.visitorteam = Vj.team_id AND p.reservation = '%s' 
@@ -257,13 +259,13 @@ if(ShowDefenseStats())
 	{
 	$defense_str=",pp.homedefenses,pp.visitordefenses ";
 	}
-  $query = sprintf("SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore,
-					pp.visitorscore, pp.pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank".$defense_str. 
+  $query = sprintf("SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, pp.visitorscore, 
+  				pp.hasstarted, pp.pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank".$defense_str. 
 				"FROM uo_game pp 
 				LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool)
 				LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
 				LEFT JOIN uo_team_pool pjs ON(pp.pool=pjs.pool AND pjs.team='%s') WHERE pp.valid=true 
-					AND (pp.visitorteam='%s' OR pp.hometeam='%s') AND (pp.homescore>0 OR pp.visitorscore>0)
+					AND (pp.visitorteam='%s' OR pp.hometeam='%s') AND (pp.hasstarted>0)
 				ORDER BY pp.pool",
   mysql_real_escape_string($teamId),
   mysql_real_escape_string($teamId),
@@ -291,7 +293,7 @@ function TeamSerieGames($teamId, $serieId)
 {
   $query = sprintf("
 			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
-			pp.visitorscore, pp.time
+			pp.visitorscore, pp.hasstarted, pp.time
 			FROM uo_game pp 
 			WHERE pp.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
 			ORDER BY pp.time ASC",
@@ -324,7 +326,7 @@ return DBQueryToValue($query);
 function TeamPoolGames($teamId, $poolId) {
   $query = sprintf("
 			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
-			pp.visitorscore, pp.time
+			pp.visitorscore, pp.hasstarted, pp.time
 			FROM uo_game pp 
 			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
 			WHERE pps.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
@@ -341,7 +343,7 @@ function TeamPoolGames($teamId, $poolId) {
 function TeamPoolLastGame($teamId, $poolId) {
   $query = sprintf("
 		SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
-		pp.visitorscore, pp.time
+		pp.visitorscore, pp.hasstarted, pp.time
 		FROM uo_game pp 
 		RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
 		WHERE pps.pool='%s' AND pp.valid=true AND pps.timetable=1 AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
@@ -379,7 +381,7 @@ function TeamPoolGamesLeft($teamId, $poolId){
 			FROM uo_game pp 
 			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
 			WHERE pps.pool='%s' AND pp.valid=true 
-				AND ((homescore=0 OR homescore IS NULL OR pp.isongoing=1) AND (visitorscore=0 OR visitorscore IS NULL OR pp.isongoing=1)) AND (hometeam=%d OR visitorteam=%d)					
+				AND (pp.hasstarted=0 OR pp.isongoing=1) AND (hometeam=%d OR visitorteam=%d)					
 			ORDER BY pp.time ASC",
   mysql_real_escape_string($poolId),
   mysql_real_escape_string($teamId),
@@ -430,7 +432,7 @@ function TeamMove($teamId, $frompool, $inplayofftree=false){
     if($team_exist && $team_exist['team'] != $teamId ){
       $query = sprintf("SELECT g.game_id FROM uo_game g
             			LEFT JOIN uo_game_pool gp ON(g.game_id=game)
-      					WHERE (g.hometeam=%d OR g.hometeam=%d) AND (g.homescore>0 || g.visitorscore>0)  
+      					WHERE (g.hometeam=%d OR g.hometeam=%d) AND (g.hasstarted>0)  
       					AND gp.pool=%d",
       (int)$team_exist['team'],
       (int)$team_exist['team'],
@@ -512,7 +514,7 @@ function TeamPoolGamesAgainst($teamId1, $teamId2, $poolId)
 {
   $query = sprintf("
 			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
-			pp.visitorscore, pp.time
+			pp.visitorscore, pp.hasstarted, pp.time
 			FROM uo_game pp 
 			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
 			WHERE pps.pool='%s' AND pp.valid=true AND 
@@ -531,7 +533,7 @@ function TeamPoolGamesAgainst($teamId1, $teamId2, $poolId)
 function TeamPlayedGames($name, $seriestype, $sorting, $curSeason=false)
 {
 
-  $query = sprintf("SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore,
+  $query = sprintf("SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore, pp.hasstarted,
 	ser.season as season_id, ps.name, pp.game_id, ps.pool_id
 	FROM uo_game pp 
 	LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool)
@@ -577,11 +579,18 @@ function TeamPlayedGames($name, $seriestype, $sorting, $curSeason=false)
 function TeamStatsByPool($poolId,$teamId)
 {
   $query = sprintf("
-		SELECT COUNT(*) AS games, COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins 
+		SELECT COUNT(*) AS games,
+  		COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins, 
+  		COUNT((hometeam=%d AND (homescore=visitorscore)) OR (visitorteam=%d AND (homescore=visitorscore)) OR NULL) AS draws, 
+  		COUNT((hometeam=%d AND (homescore<visitorscore)) OR (visitorteam=%d AND (homescore>visitorscore)) OR NULL) AS losses 
 		FROM uo_game 
 		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
-		WHERE (homescore != visitorscore) AND (hometeam=%d OR visitorteam=%d) AND isongoing=0
+		WHERE (hometeam=%d OR visitorteam=%d) AND isongoing=0
 		AND gp.pool=%d",
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId,
   (int)$teamId,
   (int)$teamId,
   (int)$teamId,
@@ -597,10 +606,17 @@ function TeamStatsByPool($poolId,$teamId)
 function TeamStats($teamId)
 {
   $query = sprintf("
-		SELECT COUNT(*) AS games, COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins 
-		FROM uo_game 
+		SELECT COUNT(*) AS games, 
+  		COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins, 
+  		COUNT((hometeam=%d AND (homescore=visitorscore)) OR (visitorteam=%d AND (homescore=visitorscore)) OR NULL) AS draws,
+  		COUNT((hometeam=%d AND (homescore<visitorscore)) OR (visitorteam=%d AND (homescore>visitorscore)) OR NULL) AS losses 
+  		FROM uo_game 
 		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
-		WHERE (homescore != visitorscore) AND (hometeam=%d OR visitorteam=%d) AND isongoing=0 AND gp.timetable=1",
+		WHERE (hasstarted>0) AND (hometeam=%d OR visitorteam=%d) AND isongoing=0 AND gp.timetable=1",
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId,
+  (int)$teamId,
   (int)$teamId,
   (int)$teamId,
   (int)$teamId,
@@ -618,7 +634,7 @@ function TeamSpiritStats($teamId)
 		SELECT COUNT(*) AS games
 		FROM uo_game 
 		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
-		WHERE (homescore != visitorscore) AND ((hometeam=%d AND homesotg IS NOT NULL) OR (visitorteam=%d AND visitorsotg IS NOT NULL)) AND isongoing=0 AND gp.timetable=1",
+		WHERE (hasstarted>0) AND ((hometeam=%d AND homesotg IS NOT NULL) OR (visitorteam=%d AND visitorsotg IS NOT NULL)) AND isongoing=0 AND gp.timetable=1",
   (int)$teamId,
   (int)$teamId);
 
@@ -639,13 +655,13 @@ FROM
 FROM uo_game game
 LEFT JOIN uo_victorypoints vp ON homescore-visitorscore=vp.pointdiff
 LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
-WHERE isongoing=0 AND homescore!=visitorscore
+WHERE isongoing=0 AND hasstarted>0
 UNION
 SELECT gp.pool,visitorteam as team_id, hometeam as opp_id,game.game_id,visitorscore-homescore as diff, vp.victorypoints,visitorscore as score, visitorsotg as spirit
 FROM uo_game game
 LEFT JOIN uo_victorypoints vp ON visitorscore-homescore=vp.pointdiff
 LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
-WHERE isongoing=0 AND homescore!=visitorscore) tot
+WHERE isongoing=0 AND hasstarted>0) tot
 
 LEFT JOIN
 
@@ -654,13 +670,13 @@ LEFT JOIN
 FROM uo_game game
 LEFT JOIN uo_victorypoints vp ON homescore-visitorscore=vp.pointdiff
 LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
-WHERE isongoing=0 AND homescore!=visitorscore
+WHERE isongoing=0 AND hasstarted>0
 UNION
 SELECT gp.pool,visitorteam as team_id, game.game_id,vp.victorypoints
 FROM uo_game game
 LEFT JOIN uo_victorypoints vp ON visitorscore-homescore=vp.pointdiff
 LEFT JOIN uo_game_pool gp ON (game_id=gp.game)
-WHERE isongoing=0 AND homescore!=visitorscore) un
+WHERE isongoing=0 AND hasstarted>0) un
 GROUP BY pool,team_id) swiss
 
 ON swiss.pool=tot.pool AND tot.opp_id=swiss.team_id		
@@ -975,7 +991,8 @@ function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
  */
 function GetAllPlayedGames($team1, $team2, $seriestype, $sorting) {
   $query = sprintf("
-		SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore, ser.season AS season_id, ps.name, 
+		SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore,
+  			pp.hasstarted, ser.season AS season_id, ps.name, 
 			pp.game_id, ps.pool_id, s.name AS seasonname 
 		FROM uo_game pp 
 		LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool) 
@@ -984,7 +1001,7 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting) {
 		LEFT JOIN uo_team pj1 ON(pp.hometeam=pj1.team_id) 
 		LEFT JOIN uo_team pj2 ON (pp.visitorteam=pj2.team_id)
 		WHERE ((REPLACE(pj1.name,' ','')='%s' AND REPLACE(pj2.name,' ','')='%s') OR (REPLACE(pj1.name,' ','')='%s' AND REPLACE(pj2.name,' ','')='%s'))
-			AND (pp.homescore > 0 || pp.visitorscore > 0)
+			AND (pp.hasstarted > 0)
 		AND ser.type='%s' AND pp.valid=true ",
   mysql_real_escape_string($team1),
   mysql_real_escape_string($team2),
@@ -1016,13 +1033,14 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting) {
 function TeamResponsibleGames($teamId, $placeId)
 {
   $query = sprintf("
-		SELECT Kj.name As hometeamname, Vj.name As visitorteamname, p.time, p.game_id, p.homescore, p.visitorscore, COALESCE(m.goals,0) As goals 
+		SELECT Kj.name As hometeamname, Vj.name As visitorteamname, p.time, p.game_id, p.homescore,
+  			p.visitorscore, pp.hasstarted, COALESCE(m.goals,0) As goals 
 		FROM uo_game AS p 
 		LEFT JOIN (SELECT COUNT(*) AS goals, game 
 			FROM uo_goal GROUP BY game) AS m ON (p.game_id=m.game), uo_team As Kj, uo_team As Vj  
 			WHERE p.visitorteam=Vj.team_id AND p.hometeam=Kj.team_id 
 			AND (p.reservation=%d AND p.RespTeam=%d))
-		GROUP BY Kj.name, Vj.name, p.time, p.game_id, p.homescore, p.visitorscore",
+		GROUP BY Kj.name, Vj.name, p.time, p.game_id, p.homescore, p.visitorscore, pp.hasstarted",
   (int)$placeId,
   (int)$teamId);
 
@@ -1463,12 +1481,20 @@ function TeamsToCsv($season,$separator){
 		COALESCE(k.against,0) + COALESCE(v.against,0) AS GoalsAgainst,
 		COALESCE(k.spirit,0) + COALESCE(v.spirit,0) AS SpiritPoints
 		FROM uo_team AS j
-		LEFT JOIN (SELECT COUNT(*) AS games, COUNT(homescore>visitorscore OR NULL) as wins, hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
+		LEFT JOIN (SELECT COUNT(*) AS games, 
+  			COUNT(homescore>visitorscore OR NULL) as wins, 
+  			COUNT(homescore=visitorscore OR NULL) as draws, 
+  		  	COUNT(homescore<visitorscore OR NULL) as losses, 
+  			hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
 			FROM uo_game
 			LEFT JOIN uo_game_pool gp1 ON(game_id=gp1.game)
 			WHERE isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k
 		ON (j.team_id=k.hometeam)
-		LEFT JOIN (SELECT COUNT(*) AS games, COUNT(homescore<visitorscore OR NULL) as wins, visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against
+		LEFT JOIN (SELECT COUNT(*) AS games, 
+  			COUNT(homescore<visitorscore OR NULL) as wins, 
+  			COUNT(homescore=visitorscore OR NULL) as draws, 
+  		  	COUNT(homescore>visitorscore OR NULL) as losses, 
+  			visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against
 			FROM uo_game
 			LEFT JOIN uo_game_pool gp2 ON(game_id=gp2.game)
 			WHERE isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v

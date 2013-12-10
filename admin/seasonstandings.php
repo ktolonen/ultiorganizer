@@ -156,6 +156,8 @@ foreach($pools as $spool){
 				<th>"._("Team")."</th>";
       $html .= "<th class='center'>"._("Games")."</th>";
       $html .= "<th class='center'>"._("Wins")."</th>";
+      if ($poolinfo['drawsallowed'])
+      	$html .= "<th class='center'>"._("Draws")."</th>";
       $html .= "<th class='center'>"._("Losses")."</th>";
       $html .= "<th class='center'>"._("Goals for")."</th>";
       $html .= "<th class='center'>"._("Goals against")."</th>";
@@ -175,7 +177,9 @@ foreach($pools as $spool){
 
         $html .= "<td class='center'>".intval($stats['games'])."</td>";
         $html .="<td class='center'>".intval($stats['wins'])."</td>";
-        $html .= "<td class='center'>".(intval($stats['games'])-intval($stats['wins']))."</td>";
+      	if ($poolinfo['drawsallowed'])
+        	$html .="<td class='center'>".intval($stats['draws'])."</td>";
+        $html .="<td class='center'>".intval($stats['losses'])."</td>";
         $html .= "<td class='center'>".intval($points['scores'])."</td>";
         $html .= "<td class='center'>".intval($points['against'])."</td>";
         $html .= "<td class='center'>".((intval($points['scores'])-intval($points['against'])))."</td>";

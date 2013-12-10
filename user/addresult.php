@@ -30,11 +30,14 @@ if(!empty($_POST['save'])) {
 		if(IsTwitterEnabled()){
 			TweetGameResult($gameId);
 		}
-	    $html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
         if($home>$away){
-          $html2 .= utf8entities($gameinfo['hometeamname']);
+	    	$html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
+        	$html2 .= utf8entities($gameinfo['hometeamname']);
+        }elseif ($away>$home){
+	    	$html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
+        	$html2 .= utf8entities($gameinfo['visitorteamname']);
         }else{
-          $html2 .= utf8entities($gameinfo['visitorteamname']);
+        	$html2 .= _("No winner"). " <span style='font-weight:bold'>";
         }
         $html2 .= "</p>";
 	}
@@ -70,8 +73,16 @@ pageMenu($menutabs);
 
 $html .= "<form  method='post' action='?view=user/addresult&amp;game=".$gameId."'>
 <table cellpadding='2'>
-<tr><td><b>". utf8entities($gameinfo['hometeamname']) ."</b></td><td><b> - </b></td><td><b>". utf8entities($gameinfo['visitorteamname']) ."</b></td></tr>
-<tr>
+<tr><td><b>". utf8entities($gameinfo['hometeamname']) ."</b></td><td><b> - </b></td><td><b>". utf8entities($gameinfo['visitorteamname']) ."</b></td></tr>";
+
+$html .= "<tr><td>";
+if ($gameinfo['isongoing'])
+	$html .= _("Game is running.");	
+else if ($gameinfo['hasstarted'])
+	$html .= _("Game is finished.");	
+$html .= "<tr><td>";
+
+$html .= "<tr>
 <td><input class='input' name='home' value='". $gameinfo['homescore'] ."' maxlength='2' size='5'/></td>
 <td> - </td>
 <td><input class='input' name='away' value='". $gameinfo['visitorscore'] ."' maxlength='2' size='5'/></td></tr>

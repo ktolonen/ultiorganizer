@@ -269,12 +269,12 @@ function ExtTournamentView($games){
 			<td style='width:5px' class='pk_tournament_td2'>-</td>
 			<td style='width:100px' class='pk_tournament_td2'>". utf8entities($game['visitorteamname']) ."</td>";
       	
-      if((intval($game['homescore'])+intval($game['visitorscore']))==0)
-      $ret .= "<td style='text-align: center;width:8px' class='pk_tournament_td2'>?</td>
+      if(GameHasStarted($game))
+        $ret .= "<td style='text-align: center;width:8px' class='pk_tournament_td2'>?</td>
 					<td style='text-align: center;width:5px' class='pk_tournament_td2'>-</td>
 					<td style='text-align: center;width:8px' class='pk_tournament_td2'>?</td>";
       else
-      $ret .= "<td style='text-align: center;width:8px' class='pk_tournament_td2'>". intval($game['homescore']) ."</td>
+       $ret .= "<td style='text-align: center;width:8px' class='pk_tournament_td2'>". intval($game['homescore']) ."</td>
 					<td style='text-align: center;width:5px' class='pk_tournament_td2'>-</td>
 					<td style='text-align: center;width:8px' class='pk_tournament_td2'>". intval($game['visitorscore']) ."</td>";
     }else{
@@ -348,12 +348,12 @@ function ExtGameView($games){
       $ret .= "<td style='width:36%' class='pk_teamgames_td'>". utf8entities($game['hometeamname']) ."</td>
 			<td style='width:3%' class='pk_teamgames_td'>-</td>
 			<td style='width:36%' class='pk_teamgames_td'>". utf8entities($game['visitorteamname']) ."</td>";
-      if((intval($game['homescore'])+intval($game['visitorscore']))==0){
-      $ret .= "<td style='text-align: center;width:4%' class='pk_teamgames_td'>?</td>
+      if(GameHasStarted($game)){
+        $ret .= "<td style='text-align: center;width:4%' class='pk_teamgames_td'>?</td>
 					<td style='text-align: center;width:2%' class='pk_teamgames_td'>-</td>
 					<td style='text-align: center;width:4%' class='pk_teamgames_td'>?</td>";
       }else{
-      $ret .= "<td style='text-align: center;width:4%' class='pk_teamgames_td'>". intval($game['homescore']) ."</td>
+        $ret .= "<td style='text-align: center;width:4%' class='pk_teamgames_td'>". intval($game['homescore']) ."</td>
 					<td style='text-align: center;width:2%' class='pk_teamgames_td'>-</td>
 					<td style='text-align: center;width:4%' class='pk_teamgames_td'>". intval($game['visitorscore']) ."</td>";
       }
@@ -467,16 +467,20 @@ function GameRow($game, $date=false, $time=true, $field=true, $series=false,$poo
     $ret .= "<td style='$poolw'><span>". utf8entities(U_($game['poolname'])) ."</span></td>\n";
   }
 
-  $goals = intval($game['homescore'])+intval($game['visitorscore']);
-
-  if(!$goals)	{
+  if(!GameHasStarted($game))	{
     $ret .= "<td style='$scoresw'><span>?</span></td>\n";
     $ret .= "<td style='$againstmarkw'><span>-</span></td>\n";
     $ret .= "<td style='$scoresw'><span>?</span></td>\n";
   }else{
-    $ret .= "<td style='$scoresw'><span>".intval($game['homescore'])."</span></td>\n";
-    $ret .= "<td style='$againstmarkw'><span>-</span></td>\n";
-    $ret .= "<td style='$scoresw'><span>".intval($game['visitorscore'])."</span></td>\n";
+    if ($game ['isongoing']) {
+      $ret .= "<td style='$scoresw'><span><em>" . intval ( $game ['homescore'] ) . "</em></span></td>\n";
+      $ret .= "<td style='$againstmarkw'><span>-</span></td>\n";
+      $ret .= "<td style='$scoresw'><span><em>" . intval ( $game ['visitorscore'] ) . "</em></span></td>\n";
+    } else {
+      $ret .= "<td style='$scoresw'><span>" . intval ( $game ['homescore'] ) . "</span></td>\n";
+      $ret .= "<td style='$againstmarkw'><span>-</span></td>\n";
+      $ret .= "<td style='$scoresw'><span>" . intval ( $game ['visitorscore'] ) . "</span></td>\n";
+    }
   }
 
   if($game['gamename']){
@@ -488,7 +492,7 @@ function GameRow($game, $date=false, $time=true, $field=true, $series=false,$poo
   if($media){
     $urls = GetMediaUrlList("game", $game['game_id'], "live");
     $ret .= "<td style='$mediaw;white-space: nowrap;'>";
-    if(count($urls) && (intval($game['isongoing']) || !$goals)){
+    if(count($urls) && (intval($game['isongoing']) || !GameHasStarted($game))){
       foreach($urls as $url){
         $title=$url['name'];
         if(empty($title)){
@@ -501,7 +505,7 @@ function GameRow($game, $date=false, $time=true, $field=true, $series=false,$poo
   }
 
   if($info){
-    if(!$goals){
+    if(!GameHasStarted($game)){
       if($game['hometeam'] && $game['visitorteam']){
         $t1 = preg_replace('/\s*/m','',$game['hometeamname']);
         $t2 = preg_replace('/\s*/m','',$game['visitorteamname']);
@@ -577,7 +581,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter=""){
 			pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
 			ps.series_id, ps.name AS seriesname, ps.season, ps.type, pr.fieldname, pr.reservationgroup,
 			pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, COALESCE(pm.goals,0) AS scoresheet,
-			pl.name AS placename, pl.address, pp.isongoing, home.name AS hometeamname, visitor.name AS visitorteamname,
+			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, home.name AS hometeamname, visitor.name AS visitorteamname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid, 
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry, 
@@ -631,15 +635,15 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter=""){
   switch($timefilter)
   {
     case "coming":
-      $query .= " AND pp.time IS NOT NULL AND ((pp.homescore IS NULL AND pp.visitorscore IS NULL) OR (pp.homescore = 0 AND pp.visitorscore = 0) OR pp.isongoing=1)";
+      $query .= " AND pp.time IS NOT NULL AND ((pp.homescore IS NULL AND pp.visitorscore IS NULL) OR (pp.hasstarted=0) OR pp.isongoing=1)";
       break;
 
     case "past":
-      $query .= " AND ((pp.homescore > 0 OR pp.visitorscore >0) )";
+      $query .= " AND ((pp.hasstarted > 0) )";
       break;
       	
     case "played":
-      $query .= " AND ((pp.homescore > 0 OR pp.visitorscore >0) )";
+      $query .= " AND ((pp.hasstarted > 0) )";
       break;
       	
     case "ongoing":
@@ -768,15 +772,15 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
   switch($timefilter)
   {
     case "coming":
-      $query .= " AND pp.time IS NOT NULL AND ((pp.homescore IS NULL AND pp.visitorscore IS NULL) OR (pp.homescore = 0 AND pp.visitorscore = 0) OR pp.isongoing=1)";
+      $query .= " AND pp.time IS NOT NULL AND ((pp.homescore IS NULL AND pp.visitorscore IS NULL) OR (pp.hasstarted = 0) OR pp.isongoing=1)";
       break;
 
     case "past":
-      $query .= " AND ((pp.homescore > 0 OR pp.visitorscore >0))";
+      $query .= " AND ((pp.hasstarted >0))";
       break;
       	
     case "played":
-      $query .= " AND ((pp.homescore > 0 OR pp.visitorscore >0))";
+      $query .= " AND ((pp.hasstarted >0))";
       break;
       	
     case "ongoing":

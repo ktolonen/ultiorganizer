@@ -318,6 +318,8 @@ function printRoundRobinPool($seasoninfo, $poolinfo){
   $ret .= "<tr><th>#</th><th style='width:200px'>"._("Team")."</th>";
   $ret .= "<th class='center'>"._("Games")."</th>";
   $ret .= "<th class='center'>"._("Wins")."</th>";
+  if ($poolinfo['drawsallowed'])
+  	$ret .= "<th class='center'>"._("Draws")."</th>";
   $ret .= "<th class='center'>"._("Losses")."</th>";
   $ret .= "<th class='center'>"._("Goals for")."</th>";
   $ret .= "<th class='center'>"._("Goals against")."</th>";
@@ -356,7 +358,10 @@ function printRoundRobinPool($seasoninfo, $poolinfo){
       $ret .= "<td><div>&nbsp;$flag<a href='?view=teamcard&amp;team=".$row['team_id']."'>".utf8entities($row['name'])."</a></div></td>";
       $ret .= "<td class='center'><div>".intval($stats['games'])."</div></td>";
       $ret .="<td class='center'><div>".intval($stats['wins'])."</div></td>";
-      $ret .= "<td class='center'><div>".(intval($stats['games'])-intval($stats['wins']))."</div></td>";
+	  if ($poolinfo['drawsallowed'])
+      	$ret .="<td class='center'><div>".intval($stats['draws'])."</div></td>";
+      $ret .="<td class='center'><div>".intval($stats['losses'])."</div></td>";
+      // $ret .= "<td class='center'><div>".(intval($stats['games'])-intval($stats['wins']))."</div></td>";
       $ret .= "<td class='center'><div>".intval($points['scores'])."</div></td>";
       $ret .= "<td class='center'><div>".intval($points['against'])."</div></td>";
       $ret .= "<td class='center'><div>".(intval($points['scores'])-intval($points['against']))."</div></td>";
@@ -563,7 +568,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
             if($res['scoresheet'] && !$res['isongoing']){
               $game .= "<a href='?view=gameplay&amp;game=". $res['game_id'] ."'>";
               $game .= $res['homescore']."-".$res['visitorscore']."</a> ";
-            }elseif($res['homescore'] + $res['visitorscore']>0 && !$res['isongoing']){
+            }elseif(GameHasStarted($res) >0 && !$res['isongoing']){
               $game .= $res['homescore']."-".$res['visitorscore'];
             }elseif(!empty($res['gamename'])){
               $game .= "<span class='lowlight'>".utf8entities(U_($res['gamename']))."</span>";
@@ -671,18 +676,22 @@ function printCrossmatchPool($seasoninfo, $poolinfo){
     $ret .= "<td style='width:10%'>"._("Game")." $i "."</td>";
     $ret .= "<td></td>";
 
-    $goals = intval($game['homescore'])+intval($game['visitorscore']);
+    // $goals = intval($game['homescore'])+intval($game['visitorscore']);
      
-    if($goals && !intval($game['isongoing']) && $game['hometeam'] && $game['visitorteam']){
+    if(GameHasStarted($game) && !intval($game['isongoing']) && $game['hometeam'] && $game['visitorteam']){
       if(intval($game['homescore'])>intval($game['visitorscore'])){
         $ret .= "<td style='".$winnerpoolstyle."'><a href='?view=teamcard&amp;team=".$game['hometeam']."'>". utf8entities($game['hometeamname']) ."</a></td>\n";
         $ret .= "<td class='center'>-</td>\n";
         $ret .= "<td style='".$loserpoolstyle."'><a href='?view=teamcard&amp;team=".$game['visitorteam']."'>". utf8entities($game['visitorteamname']) ."</a></td>\n";
-      }else{
+      }elseif(intval($game['homescore'])<intval($game['visitorscore'])){
         $ret .= "<td style='".$loserpoolstyle."'><a href='?view=teamcard&amp;team=".$game['hometeam']."'>". utf8entities($game['hometeamname']) ."</a></td>\n";
         $ret .= "<td class='center'>-</td>\n";
         $ret .= "<td style='".$winnerpoolstyle."'><a href='?view=teamcard&amp;team=".$game['visitorteam']."'>". utf8entities($game['visitorteamname']) ."</a></td>\n";
-      }
+      }else{
+        $ret .= "<td style='".$loserpoolstyle."'><a href='?view=teamcard&amp;team=".$game['hometeam']."'>". utf8entities($game['hometeamname']) ."</a></td>\n";
+        $ret .= "<td class='center'>-</td>\n";
+        $ret .= "<td style='".$loserpoolstyle."'><a href='?view=teamcard&amp;team=".$game['visitorteam']."'>". utf8entities($game['visitorteamname']) ."</a></td>\n";
+       }
     }else{
       if($game['hometeam']){
         $ret .= "<td><a href='?view=teamcard&amp;team=".$game['hometeam']."'>". utf8entities($game['hometeamname']) ."</a></td>\n";
@@ -697,14 +706,15 @@ function printCrossmatchPool($seasoninfo, $poolinfo){
       }
     }
      
-    if(!$goals){
+    if(!GameHasStarted($game)){
       $ret .= "<td>?</td>\n";
       $ret .= "<td>-</td>\n";
       $ret .= "<td>?</td>\n";
     }else{
-      $ret .= "<td>".intval($game['homescore'])."</td>\n";
-      $ret .= "<td>-</td>\n";
-      $ret .= "<td>".intval($game['visitorscore'])."</td>\n";
+      if ($game['isongoing'])
+        $ret .= "<td><em>".intval($game['homescore'])."</em></td><td>-</td><td><em>".intval($game['visitorscore'])."</em></td>\n";
+      else
+       $ret .= "<td>".intval($game['homescore'])."</td><td>-</td><td>".intval($game['visitorscore'])."</td>\n";
     }
      
     if(!intval($game['isongoing'])){

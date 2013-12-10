@@ -35,7 +35,8 @@ $pp = array(
 	"timeoutstimecap"=>"0",
 	"betweenpointslen"=>"0",
 	"forfeitscore"=>"0",
-	"forfeitagainst"=>"0");
+	"forfeitagainst"=>"0",
+	"drawsallowed"=>"0");
 
 
 $poolId = intval($_GET["template"]);
@@ -56,7 +57,12 @@ if(!empty($_POST['save']) || !empty($_POST['add'])){
   $pp['timeoutsovertime']=intval($_POST['timeoutsOnOvertime']);
   $pp['timeoutstimecap']=intval($_POST['timeoutsOnOvertime']);
   $pp['betweenpointslen']=intval($_POST['timebetweenPoints']);
-
+  
+  if(!empty($_POST['drawsallowed']))
+  	$pp['drawsallowed']=1;
+  else
+  	$pp['drawsallowed']=0;
+  
   if(!empty($_POST['add'])){
     $poolId = AddPoolTemplate($pp);
   }else{
@@ -95,7 +101,8 @@ if($poolId){
   $pp['mvgames']=$info['mvgames'];
   $pp['forfeitagainst']=$info['forfeitagainst'];
   $pp['forfeitscore']=$info['forfeitscore'];
-
+  $pp['drawsallowed']=$info['drawsallowed'];
+  
   $html .= "<h2>"._("Edit rule template")."</h2>\n";
   $html .= "<form method='post' action='?view=admin/addserieformats&amp;template=$poolId'>";
 }else{
@@ -166,6 +173,14 @@ $html .= "	</select>
 	<tr><td class='infocell'>"._("Time-outs on overtime").":</td>
 		<td><input class='input' id='timeoutsOnOvertime' name='timeoutsOnOvertime' value='".$pp['timeoutsovertime']."'/></td>
 		<td>"._("per team")."</td></tr>";
+
+$html .= "<tr><td class='infocell'>"._("Draws allowed").":</td>";
+if(intval($pp['drawsallowed']))
+	$html .= "<td><input class='input' type='checkbox' id='drawsallowed' name='drawsallowed' checked='checked'/></td>";
+else
+	$html .= "<td><input class='input' type='checkbox' id='drawsallowed' name='drawsallowed' /></td>";
+$html .= "<td></td></tr>";
+
 $html .= "</table>";
 
 if($poolId){

@@ -23,7 +23,7 @@ $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 $mediaevents = GameMediaEvents($gameId);
 
-if($game_result['homescore'] > 0 || $game_result['visitorscore'] > 0){
+if(GameHasStarted($game_result) > 0){
   $html .= "<h1>". utf8entities($game_result['hometeamname']);
   $html .= " - ";
   $html .= utf8entities($game_result['visitorteamname']);

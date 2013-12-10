@@ -134,6 +134,7 @@ if(count($groups>1)){
 $pools = SeriesPools($series_id);
 
 $html .= "<table class='admintable'>\n";
+
 foreach($pools as $pool){
   
   $poolinfo=PoolInfo($pool['pool_id']);
@@ -146,16 +147,17 @@ foreach($pools as $pool){
   $html .= "<tr><th colspan='7'>".utf8entities(U_($pool['name']))."</th>";
   $html .= "<th class='right'><a class='thlink' href='?view=user/pdfscoresheet&amp;season=$season&amp;pool=".$pool['pool_id']."'>"._("Print scoresheets")."</a></th>";
   $html .= "<th></th></tr>";
+  
   while($game = mysql_fetch_assoc($games)){
         $i=$game['game_id'];
   		
-        if ((intval($game['homescore'])+intval($game['visitorscore']))>0) {
+        if (GameHasStarted($game)) {
           if($_SESSION['hide_played_games']){
           continue;
           }
          // $html .= "<tr class='tablelowlight'>";
         }
-
+        
         $html .= "<tr class='admintablerow'>";
 
         
@@ -187,8 +189,11 @@ foreach($pools as $pool){
   		
   		//$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
   		
-  		if ((intval($game['homescore'])+intval($game['visitorscore']))>0) {
-  			$html .= "<td style='width:25px'>". intval($game['homescore']) ."</td><td style='width:5px'>-</td><td style='width:25px'>". intval($game['visitorscore']) ."</td>";
+  		if (GameHasStarted($game)) {
+  			if ($game['isongoing'])
+  				$html .= "<td style='width:25px'><em>". intval($game['homescore']) ."</em></td><td style='width:5px'>-</td><td style='width:25px'><em>". intval($game['visitorscore']) ."</em></td>";
+  			else	
+  				$html .= "<td style='width:25px'>". intval($game['homescore']) ."</td><td style='width:5px'>-</td><td style='width:25px'>". intval($game['visitorscore']) ."</td>";
   			//$html .= "<td style='width:15%'><a href='?view=gameplay&amp;game=". $game['game_id'] ."'>".intval($game['homescore']) ." - ". intval($game['visitorscore'])."</a></td>";
   		}else{
   			//$html .= "<td colspan='3'></td>";
@@ -219,10 +224,11 @@ foreach($pools as $pool){
   		$html .= "</td>\n"; 
   		
   		$html .= "</tr>\n";	  
-    
+  		
   }
-
+  
 }
+
   $html .= "</table>";
 /*
 while($game = mysql_fetch_assoc($games)){

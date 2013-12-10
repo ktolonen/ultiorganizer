@@ -306,36 +306,20 @@ function ResolveSeriesPoolStandings($poolId){
   }
 
   while($row = mysql_fetch_assoc($standings))	{
-
-    $query = sprintf("
-		SELECT COUNT(*) AS games, COUNT((hometeam='%s' AND (homescore>visitorscore)) OR (visitorteam='%s' AND (homescore<visitorscore)) OR NULL) AS wins 
-		FROM uo_game 
-		WHERE (homescore != visitorscore) AND (hometeam='%s' OR visitorteam='%s') AND isongoing=0
-			AND game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
-    mysql_real_escape_string($row['team_id']),
-    mysql_real_escape_string($row['team_id']),
-    mysql_real_escape_string($row['team_id']),
-    mysql_real_escape_string($row['team_id']),
-    mysql_real_escape_string($poolId));
-    	
-    $result = mysql_query($query);
-    	
-    $stats1 = mysql_fetch_assoc($result);
     $points[$i]['team'] = $row['team_id'];
-    $points[$i]['games'] = $stats1['games'];
-    $points[$i]['wins'] = $stats1['wins'];
+    $points[$i]['arank'] = 1;
     $i++;
   }
   //initial sort according games
   usort($points, create_function('$a,$b','return $a[\'games\']==$b[\'games\']?0:($a[\'games\']>$b[\'games\']?-1:1);'));
 
-  //sort according wins
-  $points = SolveStandingsAccordingPoints($points);
+  //sort according to score (wins*winscore+draws*drawscore)
+  $points = SolveStandings(getMatchesWins($points, $poolId), 'cmp_score');
   $offset = 1;
 
   //if team sharing same standing
   $samerank = FindSameRank($points, $offset);
-
+  
   //check in order
   //1st condition: check matches played against teams sharing same standing
   //2nd condition: check goal difference from matches played against teams sharing same standing
@@ -344,18 +328,19 @@ function ResolveSeriesPoolStandings($poolId){
   //5th condition: made goals in all matches
   //whenever one of these condtions solve one or more team standings start checking on begin for teams still sharing same standings
   while(count($samerank)) {
-    $solved=false;
+  	$solved=false;
     $offset = $samerank[0]['arank'];
 
     //PrintStandings($samerank);
     //1st condition: check matches played against teams sharing same standing
-    $samerank = SolveStandingsSharedMatchesWins($samerank, $poolId);
-
+    $samerank = SolveStandings(getMatchesWins($samerank, $poolId, true), 'cmp_score');
+    
     //PrintStandings($samerank);
     //continue to 2nd condition if all teams are still sharing the same standing
     if(IsSameRank($samerank)){
-      //2nd condition: check goal difference from matches played against teams sharing same standing
-      $samerank = SolveStandingsSharedMatchesGoalsDiff($samerank, $poolId);
+    	//2nd condition: check goal difference from matches played against teams sharing same standing
+//       $samerank = SolveStandingsSharedMatchesGoalsDiff($samerank, $poolId);
+      $samerank = SolveStandings(getMatchesGoals($samerank, $poolId, true), 'cmp_goalsdiff');
     }else{
       $solved=true;
     }
@@ -364,16 +349,18 @@ function ResolveSeriesPoolStandings($poolId){
     //continue to 3rd condition if standings not solved
     if(!$solved && IsSameRank($samerank)){
       //3rd condition: all matches goal difference
-      $samerank = SolveStandingsAllMatchesGoalsDiff($samerank, $poolId);
+//       $samerank = SolveStandingsAllMatchesGoalsDiff($samerank, $poolId);
+      $samerank = SolveStandings(getMatchesGoals($samerank, $poolId, false), 'cmp_goalsdiff');
     }else{
       $solved=true;
     }
-
+    
     //PrintStandings($samerank);
     //continue to 4th condition if standings not solved
     if(!$solved && IsSameRank($samerank)){
-      //4th condition: made  goals in matches played against teams sharing same standing
-      $samerank = SolveStandingsSharedMatchesGoalsMade($samerank, $poolId);
+    	//4th condition: made  goals in matches played against teams sharing same standing
+//       $samerank = SolveStandingsSharedMatchesGoalsMade($samerank, $poolId);
+       $samerank = SolveStandings(getMatchesGoals($samerank, $poolId, true), 'cmp_goalsmade');
     }else{
       $solved=true;
     }
@@ -381,15 +368,20 @@ function ResolveSeriesPoolStandings($poolId){
     //PrintStandings($samerank);
     //continue to 5th condition if standings not solved
     if(!$solved && IsSameRank($samerank)){
-      //5th condition: made goals in all matches
-      $samerank = SolveStandingsAllMatchesGoalsMade($samerank, $poolId);
+    	//5th condition: made goals in all matches
+//       $samerank = SolveStandingsAllMatchesGoalsMade($samerank, $poolId);
+       $samerank = SolveStandings(getMatchesGoals($samerank, $poolId, false), 'cmp_goalsmade');
     }else{
       $solved=true;
     }
 
+    if (!$solved && !IsSameRank($samerank)) {
+      $solved = true;
+    }
+    
     //PrintStandings($samerank);
     if($solved){
-      //update standings and check remaining standings in same pool
+    	//update standings and check remaining standings in same pool
       $points = UpdateStandings($points, $samerank);
     }else{
       //cannot solve standings with current conditions. Leave teams to shared stands and check remaining standings in same pool
@@ -420,7 +412,7 @@ function ResolveSeriesPoolStandings($poolId){
   $played = DBQueryRowCount("SELECT game_id
 		FROM uo_game game
 		LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
-		WHERE p.pool_id=$poolId AND (game.homescore>0 OR game.visitorscore>0) AND game.isongoing=0");
+		WHERE p.pool_id=$poolId AND (game.hasstarted>0) AND game.isongoing=0");
   if($games == $played){
     
     //test that standings are not shared
@@ -449,30 +441,43 @@ function ResolveSeriesPoolStandings($poolId){
   }
 }
 
-function SolveStandingsAccordingPoints($points){
+function Score($point) {
+	return $point['wins']*2 + ($point['games']-$point['wins']-$point['losses'])*1;
+}
+
+function cmp_score($pointa, $pointb) {
+	return (Score($pointa)>Score($pointb))?-1:((Score($pointa)<Score($pointb))?1:0);
+}
+
+function cmp_goalsdiff($pointa, $pointb) {
+	return ($pointa['goalsdiff']>$pointb['goalsdiff'])?-1:(($pointa['goalsdiff']<$pointb['goalsdiff'])?1:0);
+}
+
+function cmp_goalsmade($pointa, $pointb) {
+	return ($pointa['goalsmade']>$pointb['goalsmade'])?-1:(($pointa['goalsmade']<$pointb['goalsmade'])?1:0);
+}
+
+function SolveStandings($points, $cmpf){
+	if (count($points)==0)
+		return $points;
 	//sort according wins
-	usort($points, create_function('$a,$b','return $a[\'wins\']==$b[\'wins\']?0:($a[\'wins\']>$b[\'wins\']?-1:1);'));
+	usort($points, $cmpf); 
 	
 	//update active rank
-	$offset=0;
-	$stand=1;
-	$diff=$points[0]['wins'];
+	$offset=1;
 	
-	for($i=0; $i < count($points); $i++){
-		
-		if($points[$i]['wins'] != $diff){
-			$stand+=$offset;
-			$points[$i]['arank'] = $stand;
+	for($i=1; $i < count($points); $i++){
+		if ($cmpf($points[$i], $points[$i-1])!=0) {
+			$points[$i]['arank'] = $points[$i-1]['arank']+$offset;
 			$offset=1;
-			$diff=$points[$i]['wins'];
 		}else{
-			$points[$i]['arank'] = $stand;
+			$points[$i]['arank'] = $points[$i-1]['arank'];
 			$offset++;
 		}
 	}	
 	
 	return $points;
-	}
+}
 	
 function FindSameRank($points, $offset)
 	{
@@ -545,381 +550,81 @@ function UpdateStandings($to, $from)
 	//	}
 		
 	return $to;
-	}
-	
-function SolveStandingsSharedMatchesWins($samerank, $poolId){
+}
 
-	//check out mutual matches
-	for($i=0;$i<count($samerank);$i++) 
-		{
-		for($j=0;$j<count($samerank);$j++)
-			{
-			//echo "<p>test".$samerank[$i]['team']."vs".$samerank[$j]['team']."</p>";
-			if($samerank[$i]['team']!=$samerank[$j]['team'])
-				{
-				$query = sprintf("
-					SELECT hometeam,visitorteam,homescore,visitorscore 
-					FROM uo_game 
-					WHERE (homescore != visitorscore) AND (hometeam='%s' AND visitorteam='%s') AND 
-					isongoing=0 AND game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
-					mysql_real_escape_string($samerank[$i]['team']),
-					mysql_real_escape_string($samerank[$j]['team']),						
-					mysql_real_escape_string($poolId));
-			
-				$result = mysql_query($query);
-				while($stats = mysql_fetch_assoc($result))
-					{
-					if($stats['hometeam']==$samerank[$i]['team'] && $stats['homescore']>$stats['visitorscore'])
-						{
-						$samerank[$i]['wins']++;
-						//echo "<p>win t".$samerank[$i]['team']." a".$samerank[$j]['team']."v".$samerank[$i]['wins']."</p>";
-						}
-					elseif($stats['visitorteam']==$samerank[$j]['team'] && $stats['homescore']<$stats['visitorscore'])
-						{
-						$samerank[$j]['wins']++;
-						//echo "<p>win t".$samerank[$i]['team']." a".$samerank[$j]['team']."v".$samerank[$i]['wins']."</p>";
-						}
-					}
-				}
-			}
-		}
-		
-	//sort according wins
-	usort($samerank, create_function('$a,$b','return $a[\'wins\']==$b[\'wins\']?0:($a[\'wins\']>$b[\'wins\']?-1:1);'));
-	
-	//update active rank
-	$offset=0;
-	$sharedstand=$samerank[0]['arank'];
-	$diff=$samerank[0]['wins'];
-	
-	for($i=0; $i < count($samerank); $i++){
-		
-		if($samerank[$i]['wins'] != $diff){
-			$sharedstand+=$offset;
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset=1;
-			$diff=$samerank[$i]['wins'];
-		}else{
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset++;
-		}
-	}	
-	
-	//for ($i=0; $i < count($samerank); $i++) 
-	//	{	
-	//	echo "<p>cond1: t".$samerank[$i]['team']." v".$samerank[$i]['wins']." s".$samerank[$i]['arank']."</p>";
-	//	}
-		
-	return $samerank;
+function getMatchesWins($points, $poolId, $shared=false) {
+	$sameteams = mysql_real_escape_string($points[0]['team']);
+	for ($i=1; $i<count($points); $i++) {
+		$sameteams .= ",".mysql_real_escape_string($points[$i]['team']);
 	}
+	for ($i=0; $i<count($points); $i++) {
+		$team = mysql_real_escape_string($points[$i]['team']);
+		$query = sprintf("
+		SELECT COUNT(*) AS games,
+    		COUNT((hometeam='%s' AND (homescore>visitorscore)) OR (visitorteam='%s' AND (homescore<visitorscore)) OR NULL) AS wins,
+    		COUNT((hometeam='%s' AND (homescore<visitorscore)) OR (visitorteam='%s' AND (homescore>visitorscore)) OR NULL) AS losses
+		FROM uo_game
+		WHERE (hasStarted) AND (hometeam='%s' OR visitorteam='%s') AND isongoing=0
+			AND game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
+				$team, $team, $team, $team, $team, $team,
+				mysql_real_escape_string($poolId));
+		if ($shared)
+			$query .= sprintf(" AND hometeam IN (%s) AND visitorteam IN (%s)", $sameteams, $sameteams);
 
-function SolveStandingsSharedMatchesGoalsDiff($samerank, $poolId){
-	
+		$result = mysql_query($query);
+		$stats1 = mysql_fetch_assoc($result);
+
+		$points[$i]['games'] = $stats1['games'];
+		$points[$i]['wins'] = $stats1['wins'];
+		$points[$i]['losses'] = $stats1['losses'];
+	}
+	return $points;
+}
+
+function getMatchesGoals($points, $poolId, $shared=false) {
+	$sameteams = mysql_real_escape_string($points[0]['team']);
+	for ($i=1; $i<count($points); $i++) {
+		$sameteams .= ",".mysql_real_escape_string($points[$i]['team']);
+	}
 	//reset counters
-	for ($i=0; $i < count($samerank); $i++) 
-		{
-		$samerank[$i]['goalsmade'] = 0;
-		$samerank[$i]['goalsagainst'] = 0;
-		$samerank[$i]['goalsdiff'] = 0;
-		}
-		
-	//check out mutual matches
-	for($i=0;$i<count($samerank);$i++) 
-		{
-		for($j=0;$j<count($samerank);$j++)
-			{
-			#echo "<p>test".$team1['team']."vs".$team2['team']."</p>";
-			if($samerank[$i]['team']!=$samerank[$j]['team'])
-				{
-				//COALESCE(s.fedin,0) AS fedin
-				$query = sprintf("
-					SELECT hometeam,visitorteam,homescore,visitorscore
-					FROM uo_game 
-					WHERE (hometeam='%s' AND visitorteam='%s') AND isongoing=0 AND 
-					game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
-					mysql_real_escape_string($samerank[$i]['team']),
-					mysql_real_escape_string($samerank[$j]['team']),						
-					mysql_real_escape_string($poolId));
-			
-				$result = mysql_query($query);
-				while($stats = mysql_fetch_assoc($result))
-					{
-					if($stats['hometeam']==$samerank[$i]['team'])
-						{
-						$samerank[$i]['goalsmade']+=$stats['homescore'];
-						$samerank[$i]['goalsagainst']+=$stats['visitorscore'];
-						$samerank[$j]['goalsmade']+=$stats['visitorscore'];
-						$samerank[$j]['goalsagainst']+=$stats['homescore'];
-						}
-					elseif($stats['visitorteam']==$samerank[$i]['team'])
-						{
-						$samerank[$i]['goalsmade']+=$stats['visitorscore'];
-						$samerank[$i]['goalsagainst']+=$stats['homescore'];
-						$samerank[$j]['goalsmade']+=$stats['homescore'];
-						$samerank[$j]['goalsagainst']+=$stats['visitorscore'];
-						}
-					}
-				}
-			}
-		}
-
-	//count goal diff
-	for ($i=0; $i < count($samerank); $i++) 
-		{
-		$samerank[$i]['goalsdiff'] = $samerank[$i]['goalsmade'] - $samerank[$i]['goalsagainst'];
-		}
-		
-	//sort according wins
-	usort($samerank, create_function('$a,$b','return $a[\'goalsdiff\']==$b[\'goalsdiff\']?0:($a[\'goalsdiff\']>$b[\'goalsdiff\']?-1:1);'));
-	
-	//update active rank
-	$offset=0;
-	$sharedstand=$samerank[0]['arank'];
-	$diff=$samerank[0]['goalsdiff'];
-	
-	for($i=0; $i < count($samerank); $i++){
-		
-		if($samerank[$i]['goalsdiff'] != $diff){
-			$sharedstand+=$offset;
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset=1;
-			$diff=$samerank[$i]['goalsdiff'];
-		}else{
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset++;
-		}
-	}	
-	
-	//for ($i=0; $i < count($samerank); $i++) 
-	//	{	
-	//	echo "<p>cond2: t".$samerank[$i]['team']." d".$samerank[$i]['goalsdiff']." s".$samerank[$i]['arank']."</p>";
-	//	}
-		
-	return $samerank;
+	for ($i=0; $i < count($points); $i++)
+	{
+		$points[$i]['goalsmade'] = 0;
+		$points[$i]['goalsagainst'] = 0;
+		$points[$i]['goalsdiff'] = 0;
 	}
 
-function SolveStandingsAllMatchesGoalsDiff($samerank, $poolId){
-	
-	//reset counters
-	for ($i=0; $i < count($samerank); $i++) 
-		{
-		$samerank[$i]['goalsmade'] = 0;
-		$samerank[$i]['goalsagainst'] = 0;
-		$samerank[$i]['goalsdiff'] = 0;
-		}
-		
-	//check out all matches in pool
-	for($i=0;$i<count($samerank);$i++) 
-		{
-		//COALESCE(s.fedin,0) AS fedin
+	// 	foreach ($points as $point) {
+	for ($i=0; $i<count($points); $i++) {
+		$team = mysql_real_escape_string($points[$i]['team']);
+
 		$query = sprintf("
 			SELECT hometeam,visitorteam,homescore,visitorscore
-			FROM uo_game 
-			WHERE (hometeam='%s' OR visitorteam='%s') AND isongoing=0 AND 
-			game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
-			mysql_real_escape_string($samerank[$i]['team']),
-			mysql_real_escape_string($samerank[$i]['team']),						
-			mysql_real_escape_string($poolId));
-	
+			  FROM uo_game
+			  WHERE (hometeam='%s' OR visitorteam='%s') AND hasstarted AND isongoing=0
+			  AND game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
+				$team, $team, mysql_real_escape_string($poolId));
+		if ($shared)
+			$query .= sprintf(" AND hometeam IN (%s) AND visitorteam IN (%s)", $sameteams, $sameteams);
+
 		$result = mysql_query($query);
 		while($stats = mysql_fetch_assoc($result))
+		{
+			if($stats['hometeam']==$points[$i]['team'])
 			{
-			if($stats['hometeam']==$samerank[$i]['team'])
-				{
-				$samerank[$i]['goalsmade']+=$stats['homescore'];
-				$samerank[$i]['goalsagainst']+=$stats['visitorscore'];
-				}
-			elseif($stats['visitorteam']==$samerank[$i]['team'])
-				{
-				$samerank[$i]['goalsmade']+=$stats['visitorscore'];
-				$samerank[$i]['goalsagainst']+=$stats['homescore'];
-				}
+				$points[$i]['goalsmade']+=$stats['homescore'];
+				$points[$i]['goalsagainst']+=$stats['visitorscore'];
+			}
+			elseif($stats['visitorteam']==$points[$i]['team'])
+			{
+				$points[$i]['goalsmade']+=$stats['visitorscore'];
+				$points[$i]['goalsagainst']+=$stats['homescore'];
 			}
 		}
-	//count goal diff
-	for ($i=0; $i < count($samerank); $i++) 
-		{
-		$samerank[$i]['goalsdiff'] = $samerank[$i]['goalsmade'] - $samerank[$i]['goalsagainst'];
-		}
-		
-	//sort according wins
-	usort($samerank, create_function('$a,$b','return $a[\'goalsdiff\']==$b[\'goalsdiff\']?0:($a[\'goalsdiff\']>$b[\'goalsdiff\']?-1:1);'));
-	
-	//update active rank
-	$offset=0;
-	$sharedstand=$samerank[0]['arank'];
-	$diff=$samerank[0]['goalsdiff'];
-	
-	for($i=0; $i < count($samerank); $i++){
-		
-		if($samerank[$i]['goalsdiff'] != $diff){
-			$sharedstand+=$offset;
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset=1;
-			$diff=$samerank[$i]['goalsdiff'];
-		}else{
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset++;
-		}
-	}	
-	
-	//for ($i=0; $i < count($samerank); $i++) 
-	//	{	
-	//	echo "<p>cond3: t".$samerank[$i]['team']." d".$samerank[$i]['goalsdiff']." s".$samerank[$i]['arank']."</p>";
-	//	}
-		
-	return $samerank;
+		$points[$i]['goalsdiff'] = $points[$i]['goalsmade'] - $points[$i]['goalsagainst'];
 	}
-
-function SolveStandingsSharedMatchesGoalsMade($samerank, $poolId){
-	
-	//reset counters
-	for ($i=0; $i < count($samerank); $i++) 
-		{
-		$samerank[$i]['goalsmade'] = 0;
-		$samerank[$i]['goalsagainst'] = 0;
-		$samerank[$i]['goalsdiff'] = 0;
-		}
-				
-	//check out mutual matches
-	for($i=0;$i<count($samerank);$i++) 
-		{
-		for($j=0;$j<count($samerank);$j++)
-			{
-			#echo "<p>test".$team1['team']."vs".$team2['team']."</p>";
-			if($samerank[$i]['team']!=$samerank[$j]['team'])
-				{
-				//COALESCE(s.fedin,0) AS fedin
-				$query = sprintf("
-					SELECT hometeam,visitorteam,homescore,visitorscore
-					FROM uo_game 
-					WHERE (hometeam='%s' AND visitorteam='%s') AND isongoing=0 AND 
-					game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
-					mysql_real_escape_string($samerank[$i]['team']),
-					mysql_real_escape_string($samerank[$j]['team']),						
-					mysql_real_escape_string($poolId));
-			
-				$result = mysql_query($query);
-				while($stats = mysql_fetch_assoc($result))
-					{
-					if($stats['hometeam']==$samerank[$i]['team'])
-						{
-						$samerank[$i]['goalsmade']+=$stats['homescore'];
-						$samerank[$i]['goalsagainst']+=$stats['visitorscore'];
-						$samerank[$j]['goalsmade']+=$stats['visitorscore'];
-						$samerank[$j]['goalsagainst']+=$stats['homescore'];
-						}
-					elseif($stats['visitorteam']==$samerank[$i]['team'])
-						{
-						$samerank[$i]['goalsmade']+=$stats['visitorscore'];
-						$samerank[$i]['goalsagainst']+=$stats['homescore'];
-						$samerank[$j]['goalsmade']+=$stats['homescore'];
-						$samerank[$j]['goalsagainst']+=$stats['visitorscore'];
-						}
-					}
-				}
-			}
-		}
-
-	//count goal diff
-	for ($i=0; $i < count($samerank); $i++) 
-		{
-		$samerank[$i]['goalsdiff'] = $samerank[$i]['goalsmade'] - $samerank[$i]['goalsagainst'];
-		}
-		
-	//update active rank
-	$offset=0;
-	$sharedstand=$samerank[0]['arank'];
-	$diff=$samerank[0]['goalsmade'];
-	
-	for($i=0; $i < count($samerank); $i++){
-		
-		if($samerank[$i]['goalsmade'] != $diff){
-			$sharedstand+=$offset;
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset=1;
-			$diff=$samerank[$i]['goalsmade'];
-		}else{
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset++;
-		}
-	}	
-	
-	//for ($i=0; $i < count($samerank); $i++) 
-	//	{	
-	//	echo "<p>cond4: t".$samerank[$i]['team']." d".$samerank[$i]['goalsmade']." s".$samerank[$i]['arank']."</p>";
-	//	}
-		
-	return $samerank;
-	}
-
-function SolveStandingsAllMatchesGoalsMade($samerank, $poolId){
-	
-	//reset counters
-	for ($i=0; $i < count($samerank); $i++) 
-		{
-		$samerank[$i]['goalsmade'] = 0;
-		$samerank[$i]['goalsagainst'] = 0;
-		$samerank[$i]['goalsdiff'] = 0;
-		}
-		
-	//check out all matches in pool
-	for($i=0;$i<count($samerank);$i++) 
-		{
-		$query = sprintf("
-			SELECT hometeam,visitorteam,homescore,visitorscore
-			FROM uo_game 
-			WHERE (hometeam='%s' OR visitorteam='%s') AND isongoing=0 AND 
-			game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
-			mysql_real_escape_string($samerank[$i]['team']),
-			mysql_real_escape_string($samerank[$i]['team']),						
-			mysql_real_escape_string($poolId));
-	
-		$result = mysql_query($query);
-		while($stats = mysql_fetch_assoc($result))
-			{
-			if($stats['hometeam']==$samerank[$i]['team'])
-				{
-				$samerank[$i]['goalsmade']+=$stats['homescore'];
-				$samerank[$i]['goalsagainst']+=$stats['visitorscore'];
-				}
-			elseif($stats['visitorteam']==$samerank[$i]['team'])
-				{
-				$samerank[$i]['goalsmade']+=$stats['visitorscore'];
-				$samerank[$i]['goalsagainst']+=$stats['homescore'];
-				}
-			}
-		}
-		
-	//sort according wins
-	usort($samerank, create_function('$a,$b','return $a[\'goalsmade\']==$b[\'goalsmade\']?0:($a[\'goalsmade\']>$b[\'goalsmade\']?-1:1);'));
-	
-	//update active rank
-	$offset=0;
-	$sharedstand=$samerank[0]['arank'];
-	$diff=$samerank[0]['goalsmade'];
-	
-	for($i=0; $i < count($samerank); $i++){
-		
-		if($samerank[$i]['goalsmade'] != $diff){
-			$sharedstand+=$offset;
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset=1;
-			$diff=$samerank[$i]['goalsmade'];
-		}else{
-			$samerank[$i]['arank'] = $sharedstand;
-			$offset++;
-		}
-	}	
-
-	
-	//for ($i=0; $i < count($samerank); $i++) 
-	//	{	
-	//	echo "<p>cond5: t".$samerank[$i]['team']." d".$samerank[$i]['goalsmade']." s".$samerank[$i]['arank']."</p>";
-	//	}
-		
-	return $samerank;
-	}
+	return $points;
+}
 
 function TeamPoolStanding($teamId, $poolId){
 	$query = sprintf("SELECT u.activerank FROM uo_team_pool u WHERE pool='%d' AND team='%d'",

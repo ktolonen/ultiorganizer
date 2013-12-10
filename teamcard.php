@@ -245,7 +245,7 @@ if(ShowDefenseStats())
 			"season_type"=>"",
 			"games"=>0,
 			"wins"=>0,
-			"loses"=>0,
+			"losses"=>0,
 			"goals_made"=>0,
 			"goals_against"=>0,
 			"defenses"=>0
@@ -268,13 +268,13 @@ if(ShowDefenseStats())
       $pg['goals_made'] = $season['goals_made'];
       $pg['goals_against'] = $season['goals_against'];
       $pg['wins'] = $season['wins'];
-      $pg['loses'] = $season['loses'];
-      $pg['games'] = $season['wins']+$season['loses'];
+      $pg['losses'] = $season['losses'];
+      $pg['games'] = $season['wins']+$season['losses'];
       $pg['defenses'] = $season['defenses_total'];
 
       $tmphtml .= "<td>".$pg['games']."</td>";
       $tmphtml .= "<td>".$pg['wins']."</td>";
-      $tmphtml .= "<td>".$pg['loses']."</td>";
+      $tmphtml .= "<td>".$pg['losses']."</td>";
       $tmphtml .= "<td>". number_format((SafeDivide($pg['wins'],$pg['games'])*100),1) ."%</td>";
       $tmphtml .= "<td>".$pg['goals_made']."</td>";
       $tmphtml .= "<td>". number_format(SafeDivide($pg['goals_made'],$pg['games']),1) ."</td>";
@@ -306,7 +306,7 @@ if(ShowDefenseStats())
 
     $total_games=0;
     $total_wins=0;
-    $total_loses=0;
+    $total_losses=0;
     $total_goals_made=0;
     $total_goals_against=0;
     $total_defenses=0;
@@ -315,7 +315,7 @@ if(ShowDefenseStats())
       $season_type = $stats[$i]['season_type'];
       $games = $stats[$i]['games'];
       $wins = $stats[$i]['wins'];
-      $loses = $stats[$i]['loses'];
+      $losses = $stats[$i]['losses'];
       $goals_made = $stats[$i]['goals_made'];
       $goals_against = $stats[$i]['goals_against'];
       $defenses = $stats[$i]['defenses'];
@@ -323,14 +323,14 @@ if(ShowDefenseStats())
       for($i=$i+1;$i<count($stats)&& $season_type==$stats[$i]['season_type'];$i++){
         $games += $stats[$i]['games'];
         $wins += $stats[$i]['wins'];
-        $loses += $stats[$i]['loses'];
+        $losses += $stats[$i]['losses'];
         $goals_made += $stats[$i]['goals_made'];
         $goals_against += $stats[$i]['goals_against'];
         $defenses += $stats[$i]['defenses'];
       }
       $total_games += $games;
       $total_wins += $wins;
-      $total_loses += $loses;
+      $total_losses += $losses;
       $total_goals_made += $goals_made;
       $total_goals_against += $goals_against;
       $total_defenses += $defenses;
@@ -339,7 +339,7 @@ if(ShowDefenseStats())
       $html .= "<td>".U_($season_type)."</td>";
       $html .= "<td>$games</td>";
       $html .= "<td>$wins</td>";
-      $html .= "<td>$loses</td>";
+      $html .= "<td>$losses</td>";
       $html .= "<td>".(number_format((SafeDivide($wins,$games)*100),1))." %</td>";
       $html .= "<td>$goals_made</td>";
       $html .= "<td>".(number_format(SafeDivide($goals_made,$games),1))."</td>";
@@ -354,7 +354,7 @@ if(ShowDefenseStats())
     $html .= "<td>"._("Total")."</td>";
     $html .= "<td>$total_games</td>";
     $html .= "<td>$total_wins</td>";
-    $html .= "<td>$total_loses</td>";
+    $html .= "<td>$total_losses</td>";
     $html .= "<td>".(number_format((SafeDivide($total_wins,$total_games)*100),1))." %</td>";
     $html .= "<td>$total_goals_made</td>";
     $html .= "<td>".(number_format(SafeDivide($total_goals_made,$total_games),1))."</td>";
@@ -407,7 +407,7 @@ else
 			"season_type"=>"",
 			"games"=>0,
 			"wins"=>0,
-			"loses"=>0,
+			"losses"=>0,
 			"goals_made"=>0,
 			"goals_against"=>0
       );
@@ -429,12 +429,12 @@ else
       $pg['goals_made'] = $season['goals_made'];
       $pg['goals_against'] = $season['goals_against'];
       $pg['wins'] = $season['wins'];
-      $pg['loses'] = $season['loses'];
-      $pg['games'] = $season['wins']+$season['loses'];
+      $pg['losses'] = $season['losses'];
+      $pg['games'] = $season['wins']+$season['losses'];
 
       $tmphtml .= "<td>".$pg['games']."</td>";
       $tmphtml .= "<td>".$pg['wins']."</td>";
-      $tmphtml .= "<td>".$pg['loses']."</td>";
+      $tmphtml .= "<td>".$pg['losses']."</td>";
       $tmphtml .= "<td>". number_format((SafeDivide($pg['wins'],$pg['games'])*100),1) ."%</td>";
       $tmphtml .= "<td>".$pg['goals_made']."</td>";
       $tmphtml .= "<td>". number_format(SafeDivide($pg['goals_made'],$pg['games']),1) ."</td>";
@@ -464,7 +464,7 @@ else
 
     $total_games=0;
     $total_wins=0;
-    $total_loses=0;
+    $total_losses=0;
     $total_goals_made=0;
     $total_goals_against=0;
 
@@ -472,20 +472,20 @@ else
       $season_type = $stats[$i]['season_type'];
       $games = $stats[$i]['games'];
       $wins = $stats[$i]['wins'];
-      $loses = $stats[$i]['loses'];
+      $losses = $stats[$i]['losses'];
       $goals_made = $stats[$i]['goals_made'];
       $goals_against = $stats[$i]['goals_against'];
 
       for($i=$i+1;$i<count($stats)&& $season_type==$stats[$i]['season_type'];$i++){
         $games += $stats[$i]['games'];
         $wins += $stats[$i]['wins'];
-        $loses += $stats[$i]['loses'];
+        $losses += $stats[$i]['losses'];
         $goals_made += $stats[$i]['goals_made'];
         $goals_against += $stats[$i]['goals_against'];
       }
       $total_games += $games;
       $total_wins += $wins;
-      $total_loses += $loses;
+      $total_losses += $losses;
       $total_goals_made += $goals_made;
       $total_goals_against += $goals_against;
 
@@ -493,7 +493,7 @@ else
       $html .= "<td>".U_($season_type)."</td>";
       $html .= "<td>$games</td>";
       $html .= "<td>$wins</td>";
-      $html .= "<td>$loses</td>";
+      $html .= "<td>$losses</td>";
       $html .= "<td>".(number_format((SafeDivide($wins,$games)*100),1))." %</td>";
       $html .= "<td>$goals_made</td>";
       $html .= "<td>".(number_format(SafeDivide($goals_made,$games),1))."</td>";
@@ -507,7 +507,7 @@ else
     $html .= "<td>"._("Total")."</td>";
     $html .= "<td>$total_games</td>";
     $html .= "<td>$total_wins</td>";
-    $html .= "<td>$total_loses</td>";
+    $html .= "<td>$total_losses</td>";
     $html .= "<td>".(number_format((SafeDivide($total_wins,$total_games)*100),1))." %</td>";
     $html .= "<td>$total_goals_made</td>";
     $html .= "<td>".(number_format(SafeDivide($total_goals_made,$total_games),1))."</td>";
@@ -546,7 +546,7 @@ if(mysql_num_rows($played)){
   while($row = mysql_fetch_assoc($played))
   {
     if($row['season_id'] == $curSeason){ continue;}
-    if (!is_null($row['homescore']) && !is_null($row['visitorscore']))
+    if (GameHasStarted($row))
     {
       $seasonName = SeasonName($row['season_id']);
 

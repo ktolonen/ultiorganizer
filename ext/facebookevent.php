@@ -24,10 +24,9 @@ include_once $include_prefix.'lib/configuration.functions.php';
 
 if (IsFacebookEnabled() && !empty($_GET['game']) && !empty($_GET['event'])) {
 	$gameInfo = GameInfo($_GET['game']);
-	if ($_GET['event'] == "game" && (($gameInfo['homescore'] > 0) 
-		|| ($gameInfo['visitorscore'] > 0))
+	if ($_GET['event'] == "game" && (GameHasStarted($gameInfo))
 		&& ($gameInfo['isongoing'] == 0)) {
-		if ($gameInfo['homescore'] > $gameInfo['visitorscore']) {
+		if ($gameInfo['homescore'] >= $gameInfo['visitorscore']) { // FIXME handle draws
 			$wonTeamId = $gameInfo['hometeam'];
 			$wonTeamName = $gameInfo['hometeamname'];
 			$wonTeamScore = $gameInfo['homescore'];

@@ -107,8 +107,7 @@ while($pool = mysql_fetch_assoc($allpools)){
 				echo "<td style='width:5%;border:none' class='pk_ser_td1'>-</td>\n";
 				echo "<td style='width:35%;border:none' class='pk_ser_td1'>". utf8entities($game['visitorteamname']) ."</td>\n";
 				
-				$goals = intval($game['homescore'])+intval($game['visitorscore']);
-				if(!$goals)	{
+				if(!GameHasStarted($game))	{
 					echo "<td style='width:10%;border:none' class='pk_ser_td1'>?</td>\n";		
 					echo "<td style='width:5%;border:none' class='pk_ser_td1'>-</td>\n";		
 					echo "<td style='width:10%;border:none' class='pk_ser_td1'>?</td>\n";

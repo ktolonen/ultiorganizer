@@ -117,7 +117,7 @@ function gamerow($gameId, $game){
 	$ret .= DefTimeFormat($game['time']) ." ";
 	if($game['hometeam'] && $game['visitorteam']){
 		$ret .= utf8entities($game['hometeamname']) ." - ". utf8entities($game['visitorteamname']) ." ";
-		if((intval($game['homescore'])+intval($game['visitorscore']))>0){
+		if(GameHasStarted($game)){
 			$ret .=  "<a style='white-space: nowrap' href='?view=mobile/gameplay&amp;game=".$gameId."'>".intval($game['homescore']) ." - ". intval($game['visitorscore'])."</a>";
 		}else{
 			$ret .= intval($game['homescore']) ." - ". intval($game['visitorscore']);

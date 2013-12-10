@@ -253,7 +253,7 @@ function PlayerSeasonPlayedGames($playerId, $seasonId){
 			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)
 			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1 AND ug.isongoing=0) 
-		AND player='%s'",
+		AND player='%s'", // FIXME ug.hasstarted>0??
   mysql_real_escape_string($seasonId),
   mysql_real_escape_string($playerId),
   mysql_real_escape_string($playerId));
@@ -276,7 +276,7 @@ function PlayerSeasonPasses($playerId, $seasonId) {
 			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)
 			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1 AND ug.isongoing=0) 
-		AND assist='%s'",
+		AND assist='%s'", // FIXME ug.hasstarted>0??
   mysql_real_escape_string($seasonId),
   mysql_real_escape_string($playerId),
   mysql_real_escape_string($playerId));
@@ -299,7 +299,7 @@ function PlayerSeasonGoals($playerId, $seasonId) {
 			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)			
 			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1 AND ug.isongoing=0) 
-		AND scorer='%s'",
+		AND scorer='%s'", // FIXME ug.hasstarted>0??
   mysql_real_escape_string($seasonId),
   mysql_real_escape_string($playerId),
   mysql_real_escape_string($playerId));
@@ -322,7 +322,7 @@ function PlayerSeasonDefenses($playerId, $seasonId) {
 			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)			
 			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1 AND ug.isongoing=0) 
-		AND author='%s'",
+		AND author='%s'", // FIXME ug.hasstarted>0??
   mysql_real_escape_string($seasonId),
   mysql_real_escape_string($playerId),
   mysql_real_escape_string($playerId));
@@ -346,7 +346,7 @@ function PlayerSeasonCallahanGoals($playerId, $seasonId) {
 			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)			
 			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1 AND ug.isongoing=0) 
-		AND scorer='%s' AND iscallahan=1",
+		AND scorer='%s' AND iscallahan=1",  
   mysql_real_escape_string($seasonId),
   mysql_real_escape_string($playerId),
   mysql_real_escape_string($playerId));
@@ -678,7 +678,7 @@ function PlayersToCsv($season, $separator){
 			WHERE ser.season='%s' AND g4.isongoing=0 
 			GROUP BY player) AS pel ON (p.player_id=pel.player)
 		WHERE divi.season='%s'
-		ORDER BY j.name, p.lastname, p.firstname",
+		ORDER BY j.name, p.lastname, p.firstname", // FIXME g4.hasstarted>0??
   mysql_real_escape_string($season),
   mysql_real_escape_string($season),
   mysql_real_escape_string($season),

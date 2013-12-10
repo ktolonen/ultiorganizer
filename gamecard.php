@@ -45,7 +45,7 @@ $t2 = preg_replace('/\s*/m','',$team2['name']);
 $games = GetAllPlayedGames($t1,$t2, $team1['type'], $sorting);
 
 while($game = mysql_fetch_assoc($games)){
-  if(intval($game['homescore']) || intval($game['visitorscore']))  {
+  if(GameHasStarted($game))  {
     //ignore spaces from team name
     $t1 = preg_replace('/\s*/m','',$team1['name']);
     $t2 = preg_replace('/\s*/m','',$game['hometeamname']);
@@ -54,7 +54,7 @@ while($game = mysql_fetch_assoc($games)){
       if (intval($game['homescore']) > intval($game['visitorscore']))      {
         $nT1Wins++;
         $nT2Loses++;
-      }else{
+      }elseif (intval($game['homescore']) < intval($game['visitorscore'])) {
         $nT2Wins++;
         $nT1Loses++;
       }
@@ -67,7 +67,7 @@ while($game = mysql_fetch_assoc($games)){
       if (intval($game['homescore']) < intval($game['visitorscore'])){
         $nT1Wins++;
         $nT2Loses++;
-      }else{
+      }elseif (intval($game['homescore']) > intval($game['visitorscore'])){
         $nT2Wins++;
         $nT1Loses++;
       }
@@ -130,7 +130,7 @@ if($nGames){
   mysql_data_seek($games,0);
 
   while($game = mysql_fetch_assoc($games)){
-    if(intval($game['homescore']) || intval($game['visitorscore'])){
+    if(GameHasStarted($game)){
       $arrayYear = strtok($game['season_id'], ".");
       $arraySeason = strtok(".");
        

@@ -65,9 +65,17 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 				$time = 0;
 				$maxscore = $poolinfo['winningscore'];
 				if ($maxscore<=0) $maxscore=rand(2,15);
-				for($i=0;$h<$maxscore && $a<$maxscore;$i++){
+				if ($poolinfo['drawsallowed'] && rand(0,10)==1)
+					$draw = 1;
+				for($i=0;($draw == 0 && $h<$maxscore && $a<$maxscore) || ($draw == 1 && ($h<$maxscore || $a<$maxscore));$i++){
 
-					$home = rand(0,1);
+					if ($h==$maxscore)
+						$home=0;
+					elseif ($a==$maxscore)
+						$home=1;
+					else
+					    $home = rand(0,1);
+					
 					$pass = 0;
 					$goal = 0;
 					$iscallahan = 0;

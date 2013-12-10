@@ -64,8 +64,8 @@ function GoalInfo($gameId, $num) {
 
 function GameHomeTeamResults($teamId, $poolId) {
 	$query = sprintf("
-		SELECT g.game_id, g.homescore, g.visitorscore, g.visitorteam, COALESCE(pm.goals,0) AS scoresheet,
-			sn.name AS gamename, g.isongoing
+		SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.visitorteam, COALESCE(pm.goals,0) AS scoresheet,
+			sn.name AS gamename, g.isongoing, g.hasstarted
 			FROM uo_game g 
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
 			LEFT JOIN uo_scheduling_name sn ON(g.name=sn.scheduling_id)
@@ -77,8 +77,8 @@ function GameHomeTeamResults($teamId, $poolId) {
 }
 
 function GameHomePseudoTeamResults($schedulingId, $poolId) {
-	$query = sprintf("SELECT g.game_id, g.homescore, g.visitorscore, g.visitorteam, 
-			sn.name AS gamename, g.isongoing
+	$query = sprintf("SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.visitorteam, 
+			sn.name AS gamename, g.isongoing, g.hasstarted
 			FROM uo_game g 
 			LEFT JOIN uo_scheduling_name sn ON(g.name=sn.scheduling_id)
 			WHERE g.scheduling_name_home=%d AND g.pool=%d
@@ -90,10 +90,10 @@ function GameHomePseudoTeamResults($schedulingId, $poolId) {
 
 function GameVisitorTeamResults($teamId, $poolId) {
 	$query = sprintf("
-		SELECT g.game_id, g.homescore, g.visitorscore, g.hometeam, COALESCE(pm.goals,0) AS scoresheet
+		SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.hometeam, COALESCE(pm.goals,0) AS scoresheet
 			FROM uo_game g 
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
-			WHERE g.visitorteam=%d AND g.pool=%d AND g.homescore != g.visitorscore AND g.valid=1 AND isongoing=0
+			WHERE g.visitorteam=%d AND g.pool=%d AND g.hasstarted>0 AND g.valid=1 AND isongoing=0
 			GROUP BY g.game_id",
 			(int) $teamId,
 			(int) $poolId);
@@ -245,7 +245,7 @@ function GameAll($limit=50){
 			pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
 			ps.series_id, ps.name AS seriesname, ps.season, s.name AS seasonname, ps.type, pr.fieldname, pr.reservationgroup,
 			pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, 
-			pl.name AS placename, pl.address, pp.isongoing, home.name AS hometeamname, visitor.name AS visitorteamname,
+			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, home.name AS hometeamname, visitor.name AS visitorteamname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid, 
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry, s.timezone
@@ -262,7 +262,7 @@ function GameAll($limit=50){
 			LEFT JOIN uo_scheduling_name AS pgame ON (pp.name=pgame.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
-			WHERE pp.valid=true AND ((pp.homescore > 0 OR pp.visitorscore >0) ) AND pp.isongoing=0  ORDER BY pp.time DESC, ps.ordering, pool.ordering, pp.game_id
+			WHERE pp.valid=true AND pp.hasstarted>0 AND pp.isongoing=0  ORDER BY pp.time DESC, ps.ordering, pool.ordering, pp.game_id
 			LIMIT $limit";
 	return DBQuery($query);
 }
@@ -501,10 +501,10 @@ function GameTurnovers($gameId)
 	
 function GameInfo($gameId) {
 	$query = sprintf("SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
-			time, homescore, visitorscore, pool.timecap, pool.scorecap, pool.winningscore, pool.timeslot AS timeslot, 
+			time, homescore, visitorscore, pool.timecap, pool.scorecap, pool.winningscore, pool.drawsallowed, pool.timeslot AS timeslot, 
 			pp.timeslot AS gametimeslot, pool.series, pool.color, ser.season, ser.name AS seriesname,
 			pool.name AS poolname, phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pp.scheduling_name_home,
-			pp.scheduling_name_visitor, isongoing, pl.name AS placename, res.fieldname, sname.name AS gamename,
+			pp.scheduling_name_visitor, isongoing, hasstarted, pl.name AS placename, res.fieldname, sname.name AS gamename,
 			kj.valid as homevalid, vj.valid as visitorvalid
 		FROM uo_game pp 
 			left join uo_reservation res on (pp.reservation=res.id) 
@@ -523,6 +523,10 @@ function GameInfo($gameId) {
 	return mysql_fetch_assoc($result);
 }
 
+function GameHasStarted($gameInfo) {
+   return $gameInfo['hasstarted']>0;
+}
+
 function GameName($gameInfo) {
 	if($gameInfo['hometeam'] && $gameInfo['visitorteam']){
 		return ShortDate($gameInfo['time'])." ".DefHourFormat($gameInfo['time'])." ".$gameInfo['hometeamname']."-".$gameInfo['visitorteamname'];
@@ -533,7 +537,7 @@ function GameName($gameInfo) {
 
 function GameUpdateResult($gameId, $home, $away) {
 	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1' WHERE game_id='%s'",
+		$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1', hasstarted='1' WHERE game_id='%s'",
 			mysql_real_escape_string($home),
 			mysql_real_escape_string($away),
 			mysql_real_escape_string($gameId));
@@ -546,7 +550,7 @@ function GameUpdateResult($gameId, $home, $away) {
 
 function GameSetResult($gameId, $home, $away) {
 	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0' WHERE game_id='%s'",
+		$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2' WHERE game_id='%s'",
 			mysql_real_escape_string($home),
 			mysql_real_escape_string($away),
 			mysql_real_escape_string($gameId));
@@ -576,7 +580,7 @@ function GameSetDefenses($gameId, $home, $away) {
 
 function GameClearResult($gameId) {
 	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0' WHERE game_id='%s'",
+		$query = sprintf("UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0' WHERE game_id='%s'",
 			mysql_real_escape_string($gameId));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
@@ -719,6 +723,10 @@ function GameRemoveScore($gameId, $num) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
+/**
+ * Add goal to game. Does not update game result!
+ * 
+ */
 function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home, $iscallahan) {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf("
@@ -1061,6 +1069,10 @@ function SetGame($gameId, $params)	{
 		return $result;
 	} else { die('Insufficient rights to edit game'); }
 }
+
+/**
+ * Swap home and visitor teams and results.
+ */
 function GameChangeHome($gameId) {
 	$series = GameSeries($gameId);
 	if (hasEditGamesRight($series)) {
@@ -1091,6 +1103,7 @@ function GameChangeHome($gameId) {
 		}
 	} else { die('Insufficient rights to delete game'); }
 }
+
 function GameChangeName($gameId, $name){
   $gameinfo = GameInfo($gameId);
   if (hasEditGamesRight($gameinfo['series'])) {
@@ -1275,7 +1288,7 @@ function CanDeleteGame($gameId) {
 				if (!$result) { die('Invalid query: ' . mysql_error()); }
 				if (!$row = mysql_fetch_row($result)) return false;
 				return (intval($row[0])+intval($row[1]))==0;
-			} else return false;
+			} else return false; // FIXME test hasstarted?
 		} else return false;
 	} else return false;
 }
@@ -1292,7 +1305,7 @@ function ResultsToCsv($season,$separator){
 			left join uo_team vj on (pp.visitorteam=vj.team_id)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
-		WHERE ser.season='%s' AND (homescore>0 || visitorscore>0)
+		WHERE ser.season='%s' AND (hasstarted>0)
 		ORDER BY ser.ordering, pool.ordering, pp.time ASC, pp.game_id ASC",
 		mysql_real_escape_string($season));
 		

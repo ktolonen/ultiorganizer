@@ -152,7 +152,7 @@ $pool_info = PoolInfo($info['pool']);
 $seriesId = $pool_info['series'];
 $poolId=$info['pool'];
 
-if(intval($info['homescore'])+intval($info['visitorscore']))
+if(GameHasStarted($info))
 	{
 	echo "<p>"._("Game played").". "._("Final scores").": ".$info['homescore'] ." - ". $info['visitorscore']."</p>";
 	}

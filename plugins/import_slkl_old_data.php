@@ -161,7 +161,7 @@ if (isset($_POST['import'])) {
         			mysql_real_escape_string($time),
         			mysql_real_escape_string($division),
         			1,
-        			mysql_real_escape_string($respteam));
+        			mysql_real_escape_string($respteam)); //FIXME update hasstarted?
         		//$html .= "<p>$query</p>";
         		DBQuery($query); 
 

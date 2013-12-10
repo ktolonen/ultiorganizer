@@ -39,7 +39,8 @@ $pp = array(
 	"type"=>"0",
 	"color"=>"ffffff",
     "forfeitscore"=>"0",
-	"forfeitagainst"=>"0");
+	"forfeitagainst"=>"0",
+	"drawsallowed"=>"0");
 
 //process itself on submit
 if(!empty($_POST['add'])) {
@@ -103,6 +104,11 @@ if(!empty($_POST['save'])) {
 	else
 		$pp['placementpool']=0;
 		
+	if(!empty($_POST['drawsallowed']))
+		$pp['drawsallowed']=1;
+	else
+		$pp['drawsallowed']=0;
+		
 	if($ok){
 		SetPoolDetails($poolId,$pp);
 		session_write_close();
@@ -138,6 +144,7 @@ if ($poolId) {
 	$pp['color']=$info['color'];
 	$pp['forfeitagainst']=$info['forfeitagainst'];
 	$pp['forfeitscore']=$info['forfeitscore'];
+	$pp['drawsallowed']=$info['drawsallowed'];
 }
 $title = _("Edit");
 	
@@ -455,6 +462,14 @@ if(!$poolId || $addmore) {
 			<td>"._("points for their remaining opponent")."</td></tr>
 
 		";
+	
+	echo "<tr><td class='infocell'>"._("Draws allowed").":</td>";
+	if(intval($pp['drawsallowed']))
+		echo "<td><input class='input' type='checkbox' id='drawsallowed' name='drawsallowed' checked='checked'/></td>";
+	else
+		echo "<td><input class='input' type='checkbox' id='drawsallowed' name='drawsallowed' /></td>";
+	echo "<td></td></tr>";
+	
 	
 	
 	echo "</table>";

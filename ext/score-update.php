@@ -62,12 +62,8 @@ if (!$result) {
 } else {
 	if ($action == "P" || $action == "G" || $action == "R") { 
 		LogGameUpdate($gameId,"result:".$result['homescore']."-".$result['visitorscore'].">".$home."-".$away, "SMS".$sender);
-		$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
-			mysql_real_escape_string($home),
-			mysql_real_escape_string($away),
-			(int)$gameId);
-		$updresult = mysql_query($query);
-		if (!$updresult) { die('Invalid query: ' . mysql_error()); }
+		$updresult = GameSetResult($gameId, $home, $away);
+		
 		ResolvePoolStandings(GamePool($gameId));
 		PoolResolvePlayed(GamePool($gameId));
 		if(IsTwitterEnabled()){
@@ -92,12 +88,13 @@ if (!$result) {
 				$oldresult = $oldResultSplit[1];
 				$oldResultSplit = explode("-", $oldresult);
 				LogGameUpdate($gameId,"result:".$result['homescore']."-".$result['visitorscore'].">".$oldResultSplit[0]."-".$oldResultSplit[1], "SMS".$sender);
-				$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
-					mysql_real_escape_string($oldResultSplit[0]),
-					mysql_real_escape_string($oldResultSplit[1]),
-					(int)$gameId);
-				$updresult = mysql_query($query);
-				if (!$updresult) { die('Invalid query: ' . mysql_error()); }
+				GameSetResult($gameId, $oldResultSplit[0], $oldResultSplit[1]);
+// 				$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
+// 					mysql_real_escape_string($oldResultSplit[0]),
+// 					mysql_real_escape_string($oldResultSplit[1]),
+// 					(int)$gameId);
+// 				$updresult = mysql_query($query);
+// 				if (!$updresult) { die('Invalid query: ' . mysql_error()); }
 				ResolvePoolStandings(GamePool($gameId));
 				PoolResolvePlayed(GamePool($gameId));
 				if(IsTwitterEnabled()){

@@ -41,5 +41,5 @@ $tables['uo_timeout'] = array( 'timeout_id' => 'int', 'game' => 'int', 'num' => 
 $tables['uo_urls'] = array( 'url_id' => 'int', 'owner' => 'string', 'owner_id' => 'string', 'type' => 'string', 'name' => 'string', 'url' => 'string', 'ismedialink' => 'int', 'mediaowner' => 'string', 'publisher_id' => 'int', 'ordering' => 'string' );
 $tables['uo_userproperties'] = array( 'prop_id' => 'int', 'userid' => 'string', 'name' => 'string', 'value' => 'string' );
 $tables['uo_users'] = array( 'id' => 'int', 'userid' => 'string', 'password' => 'string', 'name' => 'string', 'email' => 'string', 'last_login' => 'datetime' );
-
+//stm
 ?>

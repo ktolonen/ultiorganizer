@@ -58,7 +58,7 @@ switch($feedtype){
 
     while(($game = mysql_fetch_assoc($games)) && $i<$max_items){
       	
-      if(intval($game['homescore'])+intval($game['visitorscore']) >0){
+      if(GameHasStarted($game)){
         $newItem = $feed->createNewItem();
         $newItem->setGuid($game['game_id']);
         $title = TeamName($game['hometeam']);
@@ -204,7 +204,7 @@ switch($feedtype){
 
     while(($game = mysql_fetch_assoc($games))){
       	
-      if(intval($game['homescore'])+intval($game['visitorscore']) >0){
+      if(GameHasStarted($game)){
         $newItem = $feed->createNewItem();
         $newItem->setGuid($game['game_id']);
         $title = TeamName($game['hometeam']);

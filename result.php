@@ -33,12 +33,7 @@ if(!empty($_POST['confirm'])) {
   $home = intval($_POST['home']);
   $away = intval($_POST['away']);
   LogGameUpdate($game,"result: $home - $away", "addresult");
-  $query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
-			$home,
-			$away,
-			$game);
-			
-  $ok = DBQuery($query);
+  $ok = GameSetResult($game, $home, $away);
   
   if($ok){
     ResolvePoolStandings(GamePool($game));
@@ -78,7 +73,7 @@ if(!empty($_POST['save']) && !$errors) {
   $html .= utf8entities($gameinfo['visitorteamname']);
   $html .=  " ";
 
-  if(intval($gameinfo['homescore'])+intval($gameinfo['visitorscore'])>0){
+  if(GameHasStarted($gameInfo)){
     $html .=  "<br/>";
     $html .= _("Game is already played. Result:"). " ". intval($gameinfo['homescore'])." - ".$gameinfo['visitorscore'].".";
     $html .=  "<br/><br/>";
