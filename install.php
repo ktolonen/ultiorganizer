@@ -442,7 +442,7 @@
       $passed = true;
 
       if(empty($passwd1) || (strlen($passwd1) <5 || strlen($passwd1) > 20)){
-        $html .= "<p style='color:red'>"._("Invalid password (min. 5 letters).")."</p>";
+        $html .= "<p style='color:red'>"._("Invalid password (min. 5, max. 20 letters).")."</p>";
         $passed = false;
       }
 
