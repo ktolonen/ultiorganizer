@@ -605,7 +605,7 @@ foreach ($reservedPauses as $pauseId) {
 	Dom.setStyle(responseDiv,"background-repeat","no-repeat");
 	Dom.setStyle(responseDiv,"background-position", "top right");
 	Dom.setStyle(responseDiv,"height", "20px");
-	Dom.setStyle(responseDiv,"width", "20px");
+	Dom.setStyle(responseDiv,"width", "200px");
 	Dom.setStyle(responseDiv,"class", "inprogress");
 	responseDiv.innerHTML = '&nbsp;';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', 'index.php?view=admin/saveschedule', callback, request);         
