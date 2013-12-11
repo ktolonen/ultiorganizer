@@ -44,8 +44,8 @@ if(!empty($_POST['add'])) {
   $pp['visible']=isset($_POST["visible0"]) ? 1 : 0;
   $pp['continuingpool']=isset($_POST["continuation0"]) ? 1 : 0;
   $pp['placementpool']=isset($_POST["placement0"]) ? 1 : 0;
-  
-  $poolId = PoolFromPoolTemplate($series_id, $pp['name'], $pp['ordering'], $seriesinfo["pool_template"]);
+
+  $poolId = PoolFromPoolTemplate($series_id, $pp['name'], $pp['ordering'], $_POST['new_pool_template']);
   SetPoolDetails($poolId,$pp);
 }
 
@@ -272,18 +272,19 @@ foreach($types as $type=>$value) {
 }
 
 $html .=  "</select></td>";
-/*
-$html .= "<td colspan='2' style='padding-top:15px'><select class='dropdown' name='template0'>\n";
+
+$html .= "<td colspan='2' style='padding-top:15px'><select class='dropdown' name='new_pool_template'>\n";
 $templates = PoolTemplates();
 foreach($templates as $template) {
-  $html .=   "<option class='dropdown' value='". $template['template_id'] . "'>". utf8entities(U_($template['name'])) ."</option>";
+  if ($template['template_id'] == $seriesinfo['pool_template'])
+    $html .= "<option class='dropdown' selected='selected' value='" . $template['template_id'] . "'>" . utf8entities(U_($template['name'])) . "</option>";
+  else
+    $html .= "<option class='dropdown' value='" . $template['template_id'] . "'>" . utf8entities(U_($template['name'])) . "</option>";
 }
-
 $html .=  "</select>";
-*/
-$html .= "<td colspan='2' style='padding-top:15px'>\n";
-$html .=  " <input  style='margin-left:15px' id='add' class='button' name='add' type='submit' value='"._("Add")."'/></td>";
-$html .=  "</tr>\n";
+
+$html .=  " <input  style='margin-left:15px' id='add' class='button' name='add' type='submit' value='"._("Add")."'/>";
+$html .=  "</td></tr>\n";
 $html .= "</table>\n";
 $html .=  "<p>";
 $html .=  "<input id='save' class='button' name='save' type='submit' value='"._("Save")."'/> ";
