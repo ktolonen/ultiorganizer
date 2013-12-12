@@ -845,6 +845,96 @@ function TimetableTimeslots($reservationgroup, $season){
   return DBQueryToArray($query);
 }
 
+function TimetableIntraPoolConflicts($season) {
+  $query = "SELECT g1.game_id as game1, g2.game_id as game2, g1.pool as pool1, g2.pool as pool2,  
+      g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2, 
+      g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1, 
+      g2.scheduling_name_home as scheduling_home2, g2.scheduling_name_visitor as scheduling_visitor2, 
+      g1.reservation as reservation1, g2.reservation as reservation2, g1.time as time1, g2.time as time2, 
+      p1.timeslot as slot1, p2.timeslot as slot2, 
+      res1.location location1, res1.fieldname as field1, res2.location as location2, res2.fieldname as field2  
+      FROM uo_game as g1
+      LEFT JOIN uo_game as g2 ON ((g1.hometeam=g2.hometeam OR g1.visitorteam = g2.visitorteam OR g1.hometeam=g2.visitorteam OR g1.visitorteam = g2.hometeam) AND g1.game_id != g2.game_id )
+      LEFT JOIN uo_pool as p1 ON (p1.pool_id = g1.pool)
+      LEFT JOIN uo_pool as p2 ON (p2.pool_id = g2.pool)
+      LEFT JOIN uo_reservation as res1 ON (res1.id = g1.reservation)
+      LEFT JOIN uo_reservation as res2 ON (res2.id = g2.reservation)
+      LEFT JOIN uo_series as ser1 ON (ser1.series_id = p1.series)
+      LEFT JOIN uo_series as ser2 ON (ser2.series_id = p2.series)
+      WHERE g1.reservation IS NOT NULL AND g2.reservation IS NOT NULL AND ser1.season = '".$season ."' AND ser2.season = '".$season."' AND g1.time <= g2.time
+      ORDER BY time2 ASC, time1 ASC";
+  return DBQueryToArray($query);
+}
+
+function TimetableInterPoolConflicts($season) {
+  $query = "SELECT  g1.game_id as game1, g2.game_id as game2, g1.pool as pool1, g2.pool as pool2,  
+      g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2, 
+      g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1, 
+      g2.scheduling_name_home as scheduling_home2, g2.scheduling_name_visitor as scheduling_visitor2, 
+      g1.reservation as reservation1, g2.reservation as reservation2, g1.time as time1, g2.time as time2, 
+      p1.timeslot as slot1, p2.timeslot as slot2, 
+      res1.location location1, res1.fieldname as field1, res2.location as location2, res2.fieldname as field2
+      FROM uo_moveteams as mv
+      LEFT JOIN uo_game as g1 ON (g1.pool = mv.frompool)
+      LEFT JOIN uo_game as g2 ON (g2.pool = mv.topool AND g1.game_id != g2.game_id )
+      LEFT JOIN uo_pool as p1 ON (p1.pool_id = g1.pool)
+      LEFT JOIN uo_pool as p2 ON (p2.pool_id = g2.pool)
+      LEFT JOIN uo_reservation as res1 ON (res1.id = g1.reservation)
+      LEFT JOIN uo_reservation as res2 ON (res2.id = g2.reservation)
+      LEFT JOIN uo_series as ser1 ON (ser1.series_id = p1.series)
+      LEFT JOIN uo_series as ser2 ON (ser2.series_id = p2.series)
+      WHERE ser1.season = '".$season."' AND ser2.season = '". $season."'
+        AND (g1.hometeam IS NULL OR g1.visitorteam IS NULL OR g2.hometeam IS NULL OR g2.visitorteam IS NULL OR
+          (g1.hometeam=g2.hometeam OR g1.visitorteam = g2.visitorteam OR g1.hometeam=g2.visitorteam OR g1.visitorteam = g2.hometeam))
+      ORDER BY time2 ASC, time1 ASC";
+  return DBQueryToArray($query);
+}
+
+function TimeTableMoveTimes($season) {
+  $query = sprintf("SELECT * FROM uo_movingtime
+            WHERE season = '%s'
+            ORDER BY fromlocation, fromfield+0, tolocation, tofield+0", $season);
+  
+	$result = mysql_query($query);
+	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$ret = array();
+	while ($row = mysql_fetch_assoc($result)){
+		$ret[$row['fromlocation']][$row['fromfield']][$row['tolocation']][$row['tofield']] = $row['time'];
+	}
+	return $ret;
+  }
+
+function TimeTableMoveTime($movetimes, $location1, $field1, $location2, $field2) {
+  $time = $movetimes[$location1][$field1][$location2][$field2];
+  if (empty($time))
+    return 0;
+  else
+    return $time * 60;
+}
+
+function TimeTableSetMoveTimes($season, $times) {
+  if (isSuperAdmin() || isSeasonAdmin($season)) {
+    for ($from = 0; $from < count($times); $from++) {
+      for ($to = 0; $to < count($times); $to++) {
+        $query = sprintf(" 
+          INSERT INTO uo_movingtime
+          (season, fromlocation, fromfield, tolocation, tofield, time) 
+          VALUES ('%s', '%d', '%d', '%d', '%d', '%d') ON DUPLICATE KEY UPDATE time='%d'", 
+            mysql_real_escape_string($season), 
+            (int) $times[$from]['location'], 
+            (int) $times[$from]['field'],
+            (int) $times[$to]['location'], 
+            (int) $times[$to]['field'],
+            (int) $times[$from][$to],
+            (int) $times[$from][$to]) ;
+    DBQuery($query);
+      }
+    }
+  }else {
+    die('Insufficient rights to edit moving times');
+  }
+}
+
 function IsGamesScheduled($id, $gamefilter, $timefilter)
 {
   $result = TimetableGames($id, $gamefilter, $timefilter, "");

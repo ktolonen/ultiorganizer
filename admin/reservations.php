@@ -34,6 +34,22 @@ if (isset($_POST['schedule']) && isset($_POST['reservations'])) {
   header($url);
   exit();
 }
+if (!empty($_POST['change_times'])) {
+  $times = array ();
+  foreach ($_POST['loc'] as $i => $loc) {
+    $times[$i]['location'] = $loc;
+  }
+  foreach ($_POST['field'] as $i => $field) {
+    $times[$i]['field'] = $field;
+  }
+  foreach ($_POST['move'] as $from => $row) {
+    foreach ($row as $to => $time) {
+      $times[$from][$to] = $time;
+    }
+  }
+  
+  TimeTableSetMoveTimes($season, $times);
+}
 
 //common page
 $title = _("Fields");
@@ -113,6 +129,50 @@ if(empty($season)){
   $html .= "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>\n";
   $html .= "<input type='submit' name='schedule' value='".utf8entities(_("Schedule selected"))."'/>\n";
   $html .= "</p>";
+  
+  $locations = SeasonReservationLocations($season,$group);
+  $movetimes = TimetableMoveTimes($season);
+  
+  $html .= "<h2>"._("Moving times")."</h2>\n";
+  $html .= "<p>"._("Minimum times (in minutes) to move between fields")."</p>\n";
+  $i=0; 
+  foreach ($locations as $location) {
+    $html .= "<input type='hidden' id='loc$i' name='loc[]' value='".$location['location']."'/>";
+    $html .= "<input type='hidden' id='field$i' name='field[]' value='".$location['fieldname']."'/>";
+    $html .= "<p>".$i.": ".$location['name']." "._("Field")." ".$location['fieldname']."</p>\n";
+    $i++;
+  }
+  
+  $html .= "<table class='admintable'><tr><th>"._("from\\to")."</th>";
+  $i=0;
+  foreach ($locations as $location) {
+    $html .=  "<th>".$i++."</th>"; 
+  }
+  $html .= "</tr>\n<tr>";
+  $i = 0;
+  foreach ($locations as $location1) {
+    $html .= "<td>" . $i . "</td>";
+    $j = 0;
+    foreach ($locations as $location2) {
+      
+      $html .= "<td><input type='text' size='4' maxlength='5' value='" 
+          . (TimeTableMoveTime($movetimes, $location1['location'], $location1['fieldname'], $location2['location'], $location2['fieldname'])/60) 
+          . "' id='move$i_$j' name='move[$i][$j]' onkeypress='ChgTime(" . $i .",".$j . ")'/></td>";
+      $j++;
+    }
+    $html .= "</tr>\n";
+    
+    $i++;
+  }
+  /*
+  $html .= "<input type='text' size='4' maxlength='5' value='0' id='setallvalue' name='setallvalue' />";
+  $html .= "<input type='submit' name='setallbutton' value='" . utf8entities(_("Set all to this value")) . "'onkeypress='setTimes()'/>";
+  */
+  
+  $html .= "</table>";
+
+  $html .= "<input type='submit' name='change_times' value='".utf8entities(_("Save times"))."'/>\n";
+  
   $html .= "</form>";
 }
 	

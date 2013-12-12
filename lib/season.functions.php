@@ -270,6 +270,25 @@ function SeasonReservationgroups($seasonId) {
 }
 
 /**
+ * Returns all locations of reservations for given season.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return php array of reservations
+ */
+function SeasonReservationLocations($seasonId) {
+  $query = sprintf("
+		SELECT DISTINCT pr.location, pl.name, pr.fieldname
+		FROM uo_reservation pr
+        LEFT JOIN uo_location pl ON (pr.location=pl.id)
+		WHERE pr.season='%s'
+		ORDER BY pr.location, pr.fieldname+0",
+      mysql_real_escape_string($seasonId));
+
+  return DBQueryToArray($query);
+}
+
+
+/**
  * Returns all games played on given season without scheduled starting time.
  *
  * @param string $seasonId uo_season.season_id

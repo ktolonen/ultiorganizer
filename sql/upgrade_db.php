@@ -412,6 +412,21 @@ function upgrade69() {
 	}
 }
 
+function upgrade70() {
+  if(!hasTable("uo_movingtime")){
+    runQuery("CREATE TABLE `uo_movingtime` (
+	`season` varchar(10) NOT NULL,
+    `fromlocation` int(10) NOT NULL,
+    `fromfield` varchar(50) NOT NULL,
+	`tolocation` int(10) NOT NULL,
+    `tofield` varchar(50) NOT NULL,
+    `time` int(10) DEFAULT 0,
+	PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`),
+	INDEX `idx_season` (`season`)
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+  }
+}
+
 
 
 function runQuery($query) {
