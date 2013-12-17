@@ -389,8 +389,8 @@ class PDF extends FPDF
 	function PrintOnePageSchedule($scope, $id, $games, $colors=false){
 		$left_margin = 10;
 		$top_margin = 10;
-		$xarea = 400;
-		$yarea = 270;
+		$xarea = 800;
+		$yarea = 500;
 		$yfieldtitle = 8;
 		$xtimetitle = 12;
 		$ypagetitle = 5;
@@ -417,7 +417,7 @@ class PDF extends FPDF
 		$time_offset = $top_margin+$yfieldtitle;
 		$field_offset = 0;
 		$gridx = 12;
-		$gridy = 5;
+		$gridy = $yarea/60;
 		$fieldlimit = 15;
 			
 		$this->SetTextColor(255);
@@ -507,7 +507,7 @@ class PDF extends FPDF
 			}
 			
 			$starttime = floor(strtotime($times[0]['time'])/60/30)*30*60;
-			$startoffset =  (strtotime($game['time']) - $starttime)/60/30*5;
+			$startoffset =  (strtotime($game['time']) - $starttime)/60/30*$gridy;
 			// $slot = date("H:i",floor(strtotime($game['time'])/30/60)*30*60);
 				
 			$this->SetXY($field_offset,$time_offset+$startoffset);
@@ -516,7 +516,7 @@ class PDF extends FPDF
 			$this->SetFillColor(230);
 			$this->SetDrawColor(0);
 			
-			$height=($game['timeslot']/30)*5;
+			$height=($game['timeslot']/30)*$gridy;
 			$this->Cell($gridx,$height,"",'LRBT',0,'C',true);
 			
 			$this->SetXY($field_offset,$time_offset+$startoffset);
