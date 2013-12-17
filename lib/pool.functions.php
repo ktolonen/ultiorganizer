@@ -1733,7 +1733,7 @@ function PoolUndoMove($frompool, $fromplacing, $topool) {
     //replace real team with pseudo team in games
     $query = sprintf("UPDATE uo_game SET
 			hometeam=NULL WHERE scheduling_name_home=%d",
-    (int)$result['scheduling_id']);
+    (int)$result['scheduling_id']); // FIXME set respteam to scheduling_team
 
     DBQuery($query);
 

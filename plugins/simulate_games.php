@@ -65,6 +65,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 				$time = 0;
 				$maxscore = $poolinfo['winningscore'];
 				if ($maxscore<=0) $maxscore=rand(2,15);
+				$draw = 0;
 				if ($poolinfo['drawsallowed'] && rand(0,10)==1)
 					$draw = 1;
 				for($i=0;($draw == 0 && $h<$maxscore && $a<$maxscore) || ($draw == 1 && ($h<$maxscore || $a<$maxscore));$i++){
@@ -172,7 +173,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 			}
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
-			// TODO undo moves
+			// TODO undo moves, uo_team_pool.activerank
 	}
 }
 

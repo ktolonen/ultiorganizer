@@ -904,13 +904,17 @@ function GameSetSpiritPoints($gameId, $teamId, $home, $points ) {
 
 function GameSetScoreSheetKeeper($gameId, $name) {
 	if (hasEditGameEventsRight($gameId)) {
-	$query = sprintf("
+		if (isset($name)) {
+			$query = sprintf("
 		UPDATE uo_game 
 		SET official='%s' 
-		WHERE game_id='%s'",
-		mysql_real_escape_string($name),
-		mysql_real_escape_string($gameId));
-		
+		WHERE game_id='%s'", mysql_real_escape_string($name), mysql_real_escape_string($gameId));
+		}else {
+			$query = sprintf("
+		UPDATE uo_game
+		SET official=NULL
+		WHERE game_id='%s'", mysql_real_escape_string($gameId));
+		}		
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
@@ -921,13 +925,17 @@ function GameSetScoreSheetKeeper($gameId, $name) {
 
 function GameSetHalftime($gameId, $time) {
 	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("
+		if (isset($time)) {
+			$query = sprintf("
 			UPDATE uo_game 
 			SET halftime='%s' 
-			WHERE game_id='%s'",
-			mysql_real_escape_string($time),
-			mysql_real_escape_string($gameId));
-			
+			WHERE game_id='%s'", mysql_real_escape_string($time), mysql_real_escape_string($gameId));
+		}else {
+			$query = sprintf("
+			UPDATE uo_game 
+			SET halftime=NULL 
+			WHERE game_id='%s'", mysql_real_escape_string($gameId));
+		}	    			
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		
