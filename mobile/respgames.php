@@ -155,17 +155,12 @@ if($showall){
 }else{
 	$html .= "<a href='?view=mobile/respgames&amp;all=1'>"._("Show all")."</a>";
 }
-$html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=frontpage'>"._("Back to the Ultiorganizer")."</a>";
-$html .= "</td></tr><tr><td>&nbsp;<hr /></td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/logout'>"._("Logout")."</a>";
-$html .= "</td></tr>\n";
-$html .= "</table>\n";
+$html .= "</td></tr></table>\n";
 $html .= "</form>";
 
 echo $html;
 		
-pageEnd();
+mobilePageEnd();
 
 function gamerow($gameId, $game, $mass){
 	$ret = "&nbsp;&nbsp;&nbsp;&nbsp;";

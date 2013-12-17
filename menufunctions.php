@@ -15,13 +15,19 @@ if (is_file('cust/'.CUSTOMIZATIONS.'/head.php')) {
  * @param string $title page's title
  * @param string $html page's content
  */
-function showPage($title, $html) {
-  pageTop($title);
-  leftMenu();
-  contentStart();
-  echo $html;
-  contentEnd();
-  pageEnd();
+function showPage($title, $html, $mobile = false) {
+  if ($mobile) {
+    mobilePageTop($title);
+    echo $html;
+    mobilePageEnd();
+  }else {
+    pageTop($title);
+    leftMenu();
+    contentStart();
+    echo $html;
+    contentEnd();
+    pageEnd();
+  }
 }
 
 /**
@@ -235,6 +241,62 @@ function mobilePageTop($title) {
 
   echo "</head><body style='overflow-y:scroll;'>\n";
   echo "<div class='mobile_page'>\n";
+}
+
+function mobilePageEnd($query="") {
+  if ($query=="")
+    $query=$_SERVER['QUERY_STRING'];
+  if (!isset($_SESSION['uid']) || $_SESSION['uid'] == "anonymous") {
+    
+    $html .= "<form action='?" . utf8entities($query) . "' method='post'>\n";
+    $html .= "<table cellpadding='2'>\n";
+    $html .= "<tr><td>\n";
+    $html .= _("Username") . ":";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<input class='input' type='text' id='myusername' name='myusername' size='15'/> ";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= _("Password") . ":";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<input class='input' type='password' id='mypassword' name='mypassword' size='15'/> ";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<input class='button' type='submit' name='login' value='" . _("Login") . "'/>";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<hr/>\n";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<a href='?view=frontpage'>" . _("Back to the Ultiorganizer") . "</a>";
+    $html .= "</td></tr>\n";
+    $html .= "</table>\n";
+    $html .= "</form>";
+  }else {
+    if ($query != "") {
+      header($query);
+    }
+    // $user = $_SESSION['uid'];
+    // $userinfo = UserInfo($user);
+    $html .= "<table cellpadding='2'>\n";
+    $html .= "<tr><td></td></tr>\n";
+    $html .= "<tr><td><hr /></td></tr><tr><td>\n";
+    $html .= "<a href='?view=frontpage'>" . _("Back to the Ultiorganizer") . "</a>";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<a href='?view=mobile/logout'>" . _("Logout") . "</a></td></tr></table>";
+  }
+  
+  global $serverConf;
+  if (IsFacebookEnabled()) {
+    $html .= "<script src='http://connect.facebook.net/en_US/all.js'></script>
+    <script>
+      FB.init({appId: '";
+    $html .= $serverConf['FacebookAppId'];
+    $html .= "', status: true,
+               cookie: true, xfbml: true});
+      FB.Event.subscribe('auth.login', function(response) {
+        window.location.reload();
+      });
+    </script>";
+  }
+  $html .= "<div class='page_bottom'></div>";
+  $html .= "</div></body></html>";
+  echo $html;
 }
 
 /**

@@ -14,6 +14,12 @@ function FailRedirect($user) {
 	exit();
 }
 
+function FailRedirectMobile($user) {
+	SetUserSessionData('anonymous');
+	header("location:?view=mobile/login_failed&user=".urlencode($user));
+	exit();
+}
+
 function FailUnauthorized($user) {
 	header('WWW-Authenticate: Basic realm="ultiorganizer"');
    	if (strpos("Microsoft", $_SERVER["SERVER_SOFTWARE"])) {

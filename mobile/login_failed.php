@@ -1,6 +1,6 @@
 <?php
 if(IsRegistered($_SESSION['uid'])){
-  header("location:?view=frontpage");
+  header("location:?view=mobile/respgames");
 }
 
 $title = _("Home");
@@ -19,7 +19,7 @@ if(isset($_POST['resetpassword'])) {
 if(empty($html)){
   $validuser = IsRegistered($userId);
   if($validuser){
-    $html .= "<form method='post' action='?view=login_failed&amp;user=".urlencode($userId)."'>\n";
+    $html .= "<form method='post' action='?view=mobile/login_failed&amp;user=".urlencode($userId)."'>\n";
     $html .= "<p>"._("Check the username and password.")." \n";
     $html .= _("If you have forgot the password, click button below and new password is sent to e-mail address given on registration.")."</p>";
     $html .= "<p><input class='button' type='submit' name='resetpassword' value='"._("Reset password")."'/></p>\n";
@@ -28,5 +28,5 @@ if(empty($html)){
     $html .= "<p>"._("Invalid username $userId.")."</p>\n";
   }
 }
-showPage($title, $html);
+showPage($title, $html, true);
 ?>

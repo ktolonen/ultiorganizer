@@ -32,7 +32,11 @@ include_once 'localization.php';
 setSessionLocale();
 
 if (isset($_POST['myusername'])) {
-  UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirect");
+  $view = iget("view");
+  if (strpos($view, "mobile") === false)
+    UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirect");
+  else
+    UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirectMobile");
 }
 
 if (!iget('view')) {
