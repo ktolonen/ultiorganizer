@@ -229,6 +229,15 @@ function gameEntry($color, $height, $gameId, $gamename, $poolname, $editable=tru
   echo "</li>\n";
 }
 
+function getGameName($gameInfo) {
+  if($gameInfo['hometeam'] && $gameInfo['visitorteam']){
+    $gametitle = substr($gameInfo['hometeamname'], 0, 12)." - ".substr($gameInfo['visitorteamname'], 0, 12);
+  }else{
+    $gametitle = $gameInfo['phometeamname']." - ".$gameInfo['pvisitorteamname'];
+  }
+  return $gametitle;
+}
+
 echo "<table><tr><td>\n";
 echo "<h3>"._("Unscheduled")."</h3>\n";
 echo "<form action='' method='get' name='filtersel'>";
@@ -282,11 +291,7 @@ foreach ($gameData as $gameId => $gameInfo) {
     }else{
       $maxtimeslot = max($maxtimeslot, $gameInfo['timeslot']);
     }
-    if($gameInfo['hometeam'] && $gameInfo['visitorteam']){
-      gameEntry($gameInfo['color'], $height, $gameId, $gameInfo['hometeamname']." - ".$gameInfo['visitorteamname'],$poolname);
-    }else{
-      gameEntry($gameInfo['color'], $height, $gameId, U_($gameInfo['phometeamname'])." - ".U_($gameInfo['pvisitorteamname']),$poolname);
-    }
+    gameEntry($gameInfo['color'], $height, $gameId, getGameName($gameInfo), $poolname);
   }
 }
 if(count($gameData)==0){
@@ -323,22 +328,18 @@ if(count($reservationData)>1){
       $nextStart = $startTime;
       foreach ($reservationArray['games'] as $gameId => $gameInfo) {
         $gameStart = strtotime($gameInfo['time']);
-        if ($gameStart > $nextStart) {
-          $height = pauseHeight($gameStart, $nextStart);
+        $height = pauseHeight($gameStart, $nextStart);
+        if ($nextStart<$gameStart) {
           echo "<li class='list1' id='pause".$gameId."' style='min-height:".$height."px'>"._("Pause")."<span style='align:right;float:right'><a href='javascript:hide(\"pause".$gameId."\");'>x</a></span></li>\n";
           $reservedPauses[] = "pause".$gameId;
         }
         if(!empty($gameInfo['gametimeslot'])){
-          $nextStart = $gameStart + (max($gameInfo['gametimeslot'], 60) * 60);
+          $nextStart = $gameStart + ($gameInfo['gametimeslot'] * 60);
         }else{
-          $nextStart = $gameStart + (max($gameInfo['timeslot'], 60) * 60);
+          $nextStart = $gameStart + ($gameInfo['timeslot'] * 60);
         }
         $height = gameHeight($gameInfo);
-        if($gameInfo['hometeam'] && $gameInfo['visitorteam']){
-          $gametitle = $gameInfo['hometeamname']." - ".$gameInfo['visitorteamname'];
-        }else{
-          $gametitle = $gameInfo['phometeamname']." - ".$gameInfo['pvisitorteamname'];
-        }
+        $gametitle = getGameName($gameInfo);
         $pooltitle = U_($gameInfo['seriesname']).", ". U_($gameInfo['poolname']);
         if (hasEditGamesRight($gameInfo['series'])) {
           gameEntry($gameInfo['color'],$height,$gameId,$gametitle,$pooltitle);
@@ -390,11 +391,7 @@ if(count($reservationData)>1){
           $nextStart = $gameStart + (max($gameInfo['timeslot'], 60) * 60);
         }
         $height = gameHeight($gameInfo);
-        if($gameInfo['hometeam'] && $gameInfo['visitorteam']){
-          $gametitle = $gameInfo['hometeamname']." - ".$gameInfo['visitorteamname'];
-        }else{
-          $gametitle = $gameInfo['phometeamname']." - ".$gameInfo['pvisitorteamname'];
-        }
+        $gametitle = getName($gameInfo);
         $pooltitle = U_($gameInfo['seriesname']).", ". U_($gameInfo['poolname']);
         if (hasEditGamesRight($gameInfo['series'])) {
           gameEntry($gameInfo['color'],$height,$gameId,$gametitle,$pooltitle);

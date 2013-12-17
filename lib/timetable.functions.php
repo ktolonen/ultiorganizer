@@ -705,9 +705,9 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter=""){
       break;
       	
     case "onepage":
-      $query .= " ORDER BY pr.reservationgroup, pr.starttime, pr.fieldname +0, pl.id, pp.time ASC, pp.game_id ASC";
+      $query .= " ORDER BY pr.reservationgroup, pr.starttime, pl.id, pr.fieldname +0, pp.time ASC, pp.game_id ASC";
       break;
-      	
+
     case "time":
       $query .= " ORDER BY pp.time ASC, pr.fieldname +0, game_id ASC";
       break;
