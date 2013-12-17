@@ -3,6 +3,9 @@ include_once 'menufunctions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/reservation.functions.php';
 $html = "";
+if (ENABLE_ADMIN_DB_ACCESS != "enabled") {
+	$html = "<p>"._("Direct database access is disabled. To enable it, define(ENABLE_ADMIN_DB_ACCESS,'enabled') in the config.inc.php file")."</p>";
+} else {
 if (isset($_POST['restore']) && isSuperAdmin()){
 	if(is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
 		
@@ -46,14 +49,6 @@ if (isset($_POST['restore']) && isSuperAdmin()){
 	SetServerConf($settings);
 }
 
-//common page
-$title = _("Database backup");
-$LAYOUT_ID = DBRESTORE;
-pageTopHeadOpen($title);
-include 'script/common.js.inc';
-pageTopHeadClose($title, false);
-leftMenu($LAYOUT_ID);
-contentStart();
 if(isSuperAdmin()){
 	ini_set("post_max_size", "30M");
 	ini_set("upload_max_filesize", "30M");
@@ -72,6 +67,15 @@ if(isSuperAdmin()){
 }else{
 	$html .= "<p>"._("User credentials does not match")."</p>\n";
 }
+}
+//common page
+$title = _("Database backup");
+$LAYOUT_ID = DBRESTORE;
+pageTopHeadOpen($title);
+include 'script/common.js.inc';
+pageTopHeadClose($title, false);
+leftMenu($LAYOUT_ID);
+contentStart();
 echo $html;
 
 contentEnd();

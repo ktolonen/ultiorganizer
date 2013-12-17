@@ -15,5 +15,8 @@ define('UPLOAD_DIR', 'images/uploads/');
 define('CUSTOMIZATIONS', 'slkl');
 define('DATE_FORMAT', _("%d.%m.%Y %H:%M"));
 define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');
+
+define('ENABLE_ADMIN_DB_ACCESS', 'disabled');
+
 ?>
 
