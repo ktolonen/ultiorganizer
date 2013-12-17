@@ -34,6 +34,11 @@ function setId(id1,id2,id3){
 	input.value = id1 + ":" + id2 + ":" + id3;
 }
 	
+function setPool(poolid,from){
+	var input = document.getElementById("hiddenPoolId");
+	input.value = poolid + ":" + from;
+}
+	
 function ChgName(index) {
 	YAHOO.util.Dom.get('schedulingnameEdited' + index).value = 'yes';
 	YAHOO.util.Dom.get("save").disabled = false;
@@ -66,6 +71,37 @@ if(!empty($_POST['remove_x'])) {
 	
 	PoolUndoMove($move[0],$move[1],$move[2]);
 		
+}elseif (!empty($_POST['removeAll_x'])) {
+	$params = preg_split('/:/', $_POST['hiddenPoolId']);
+	
+	if ($order == "from") { // FIXME or parms[1]?
+		$moves = PoolMovingsFromPool($params[0]);
+	}else {
+		$moves = PoolMovingsToPool($params[0]);
+	}
+	
+	foreach ($moves as $row) {
+		if (!$row['ismoved']) {
+			PoolDeleteMove($row['frompool'], $row['fromplacing']);
+		}
+	}
+}elseif(!empty($_POST['undoPool'])) {
+	$params = preg_split('/:/', $_POST['hiddenPoolId']);
+	
+	if ($order == "from") { // FIXME or parms[1]?
+		$moves = PoolMovingsFromPool($params[0]);
+	}else {
+		$moves = PoolMovingsToPool($params[0]);
+	}
+	
+	foreach ($moves as $row) {
+		if ($row['ismoved']) {
+			$team = PoolTeamFromStandings($row['frompool'], $row['fromplacing']);
+			if (CanDeleteTeamFromPool($row['topool'], $team['team_id'])) {
+				PoolUndoMove($row['frompool'], $row['fromplacing'], $row['topool']);
+			}
+		}
+	}
 }elseif(!empty($_POST['save'])) {
 	for ($i=0; $i<count($_POST['schedulingnameEdited']); $i++) {
 		if ($_POST['schedulingnameEdited'][$i] == "yes") {
@@ -122,12 +158,13 @@ foreach($serieslist as $series){
 			if(count($moves)){
 				echo "<table class='admintable'><tr>
 					<th style='width:25%'>"._("From pool")."</th>
-					<th style='width:5%'>"._("From position")."</th>
+					<th style='width:4%'>"._("From position")."</th>
 					<th style='width:25%'>"._("To pool")."</th>
-					<th style='width:5%'>"._("To position")."</th>
-					<th style='width:20%'>"._("Scheduling name")."</th>
+					<th style='width:4%'>"._("To position")."</th>
+					<th style='width:18%'>"._("Scheduling name")."</th>
 					<th style='width:10%'>"._("Move games")."</th>
-					<th style='width:10%'></th></tr>";
+					<th style='width:14%'><input class='button' type='submit' name='undoPool' value='"._("Undo")."' onclick=\"setPool(".$pool['pool_id'].",".($order=="from"?"true":"false").");\"/>
+						<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='removeAll' value='"._("X")."' onclick=\"setPool(".$pool['pool_id'].",".($order=="from"?"true":"false").");\"/></th></tr>";
 			}
 				
 			foreach($moves as $row)	{
@@ -147,7 +184,7 @@ foreach($serieslist as $series){
 				echo "<td class='left'>";
 				echo "<input type='hidden' id='schedulingnameEdited".$i."' name='schedulingnameEdited[]' value='no'/>\n";
 				echo "<input type='hidden' name='schedulingnameId[]' value='".$row['scheduling_id']."'/>\n";
-				echo "<input type='text' size='25' maxlength='50' value='".$row['sname']."' name='sn$i' onkeypress='ChgName(".$i.")'/>";
+				echo "<input type='text' size='22' maxlength='50' value='".$row['sname']."' name='sn$i' onkeypress='ChgName(".$i.")'/>";
 				echo "</td>";
 				if(intval($poolinfo['mvgames'])==0)
 					echo "<td>"._("all")."</td>";
@@ -163,7 +200,7 @@ foreach($serieslist as $series){
 					    echo "<td class='right'></td>";
 					}
 				}else{
-					echo "<td class='right'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['frompool'].",".$row['fromplacing'].");\"/></td>";		
+					echo "<td class='right'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='X' onclick=\"setId(".$row['frompool'].",".$row['fromplacing'].");\"/></td>";		
 				}
 				echo "</tr>\n";
 				$i++;
@@ -175,7 +212,7 @@ foreach($serieslist as $series){
 	}
 }
 //stores id to delete
-echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>";
+echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/><input type='hidden' id='hiddenPoolId' name='hiddenPoolId'/>";
 echo "<input disabled='disabled' id='save' class='button' name='save' type='submit' value='"._("Save")."'/>";
 echo "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonpools&amp;season=$season'\"/></p>";
 echo "</form>\n";
