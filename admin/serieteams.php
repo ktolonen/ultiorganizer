@@ -47,7 +47,7 @@ if(!empty($_POST['save'])) {
       $found=false;
       $rank = 0;
       if(!empty($_POST["rank$selId"]))
-      $rank = $_POST["rank$selId"];
+      	$rank = $_POST["rank$selId"];
       $teams = PoolTeams($poolId);
       foreach($teams as $team){
         if($team['team_id']==$selId) {
