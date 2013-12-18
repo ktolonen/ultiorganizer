@@ -56,34 +56,14 @@ if(!empty($_POST['remove_x'])){
   if($ok){
   	DeleteGame($id);
   }
-}elseif (!empty($_POST['save'])) {
+} elseif (!empty($_POST['save'])) {
   // for ($i=0; $i<count($_POST['gamenameEdited']); $i++) {
   // if ($_POST['gamenameEdited'][$i] == "yes") {
   // $id = $_POST['gameId'][$i];
   // GameChangeName($id, $_POST["gn$i"]);
   // }
   // }
-  $scores = array ();
-  foreach ($_POST['scoreId'] as $key => $value) {
-    $scores[$key]['gameid'] = $value;
-  }
-  foreach ($_POST['homescore'] as $key => $value) {
-    $scores[$key]['home'] = $value;
-  }
-  foreach ($_POST['visitorscore'] as $key => $value) {
-    $scores[$key]['visitor'] = $value;
-  }
-  foreach ($scores as $score) {
-    $gameId = $score['gameid'];
-    $game = GameInfo($gameId);
-    if (empty($score['home'])) {
-      if (empty($score['visitor']))
-        if ($game['hasstarted'])
-          GameClearResult($gameId);
-    }elseif ((!empty($score['visitor']) || !empty($score['home'])) && (!$game['hasstarted'] || $game['isongoing'] || $game['homescore'] != $score['home'] || $game['visitorscore'] != $score['visitor'])) {
-      GameSetResult($gameId, $score['home'], $score['visitor']);
-    }
-  }
+  GameProcessMassInput($_POST);
 }
 
 //common page

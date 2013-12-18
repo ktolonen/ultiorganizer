@@ -1136,6 +1136,32 @@ function GameChangeName($gameId, $name){
   } else { die('Insufficient rights to edit game'); }
 }
 
+function GameProcessMassInput($post) {
+	$scores = array ();
+	foreach ($post['scoreId'] as $key => $value) {
+		$scores[$key]['gameid'] = $value;
+	}
+	foreach ($post['homescore'] as $key => $value) {
+		$scores[$key]['home'] = $value;
+	}
+	foreach ($post['visitorscore'] as $key => $value) {
+		$scores[$key]['visitor'] = $value;
+	}
+	foreach ($scores as $score) {
+		$gameId = $score['gameid'];
+		$game = GameInfo($gameId);
+		if ($game['homescore'] !== $score['home'] || $game['visitorscore'] !== $score['visitor']) {
+			if ($score['home'] === "" && $score['visitor'] === "" && (!is_null($game['homescore']) || !is_null($game['visitorscore']))) {
+				GameClearResult($gameId);
+				// echo "clear $gameId";
+			} else if ($score['home'] !== "" && $score['visitor'] !== "") {
+				GameSetResult($gameId, $score['home'], $score['visitor']);
+				// echo "set $gameId " . $score['home'] . "-" . $score['visitor'];
+			}
+		}
+	}
+}
+
 function DeleteGame($gameId) {
 	$series = GameSeries($gameId);
 	if (hasEditGamesRight($series)) {

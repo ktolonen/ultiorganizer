@@ -20,7 +20,7 @@ function showPage($title, $html, $mobile = false) {
     mobilePageTop($title);
     echo $html;
     mobilePageEnd();
-  }else {
+  } else {
     pageTop($title);
     leftMenu();
     contentStart();
@@ -85,6 +85,9 @@ function pageTopHeadOpen($title) {
 		<title>". GetPageTitle(). "" .$title."</title>\n";
   echo styles();
   include $include_prefix.'script/common.js.inc';
+  global $include_prefix;
+  include_once $include_prefix.'script/help.js.inc';
+  
 }
 
 
@@ -223,8 +226,6 @@ function pageEnd() {
  * @param string $html - html-text shown when help button pressed.
  */
 function onPageHelpAvailable($html) {
-  global $include_prefix;
-  include_once $include_prefix.'script/help.js.inc';
   return "<div style='float:right;'>
 	<input type='image' class='helpbutton' id='helpbutton' src='images/help-icon.png'/></div>\n
 	<div style='display:none' id='helptext' class='yui-pe-content'>$html<hr/></div>";

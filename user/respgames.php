@@ -41,27 +41,7 @@ if (!empty($_GET["massinput"])) {
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-	$scores = array ();
-	foreach ($_POST['scoreId'] as $key => $value) {
-		$scores[$key]['gameid'] = $value;
-	}
-	foreach ($_POST['homescore'] as $key => $value) {
-		$scores[$key]['home'] = $value;
-	}
-	foreach ($_POST['visitorscore'] as $key => $value) {
-		$scores[$key]['visitor'] = $value;
-	}
-	foreach ($scores as $score) {
-		$gameId = $score['gameid'];
-		$game = GameInfo($gameId);
-		if (empty($score['home'])) {
-			if (empty($score['visitor']))
-				if ($game['hasstarted'])
-					GameClearResult($gameId);
-		}elseif ((!empty($score['visitor']) || !empty($score['home'])) && (!$game['hasstarted'] || $game['isongoing'] || $game['homescore'] != $score['home'] || $game['visitorscore'] != $score['visitor'])) {
-			GameSetResult($gameId, $score['home'], $score['visitor']);
-		}
-	}
+	GameProcessMassInput($_POST);
 }
 
 
@@ -147,8 +127,8 @@ foreach ($respGameArray as $tournament => $resArray) {
       if ($_SESSION['massinput']) {
       	$html .= "<td colspan='3'  style='width:18%'>
       		<input type='hidden' id='scoreId" . $gameId . "' name='scoreId[]' value='$gameId'/>
-      		<input type='text' size='3' maxlength='5' value='" . intval($game['homescore']) . "' id='homescore$gameId' name='homescore[]' onkeypress='ChgResult(" . $gameId . ")'/> - 
-      		<input type='text' size='3' maxlength='5' value='" . intval($game['visitorscore']) . "' id='visitorscore$gameId' name='visitorscore[]' onkeypress='ChgResult(" . $gameId . ")'/></td>";
+      		<input type='text' size='3' maxlength='5' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' onkeypress='ChgResult(" . $gameId . ")'/> - 
+      		<input type='text' size='3' maxlength='5' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' onkeypress='ChgResult(" . $gameId . ")'/></td>";
       } else {
       	$html .= "<td style='width:8%'>". intval($game['homescore']) ."</td><td style='width:2%'>-</td><td style='width:8%'>". intval($game['visitorscore']) ."</td>";
       }
