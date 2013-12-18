@@ -828,7 +828,7 @@ function TimetableFields($reservationgroup, $season){
 			LEFT JOIN uo_reservation pr ON (pp.reservation=pr.id)";
 
   $query .= " WHERE pp.valid=true AND ps.season='".mysql_real_escape_string($season)."' AND pr.reservationgroup='".mysql_real_escape_string($reservationgroup)."'";
-  $query .= " GROUP BY pr.fieldname";
+  $query .= " GROUP BY pr.location, pr.fieldname";
   $result = DBQuery($query);
   return mysql_num_rows($result);
 }
