@@ -22,7 +22,7 @@ class PDF extends FPDF
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
 		$this->game['seasonname'] = utf8_decode($seasonname);
-		$this->game['game_id'] = $gameId."".getChkNum($gameId);
+		$this->game['game_id'] = $gameId."-".getChkNum($gameId);
 		$this->game['hometeamname'] = utf8_decode($hometeamname);
 		$this->game['visitorteamname'] = utf8_decode($visitorteamname);
 		$this->game['poolname'] = utf8_decode($poolname);
@@ -41,6 +41,7 @@ class PDF extends FPDF
 		$this->Cell(0,9,$data,1,1,'C',true);
 		
 		$this->SetY(21);
+
 		
 		$this->OneCellTable(utf8_decode(_("Game #")), $this->game['game_id']);
 		$this->OneCellTable(utf8_decode(_("Home team")), $this->game['hometeamname']);
@@ -51,7 +52,7 @@ class PDF extends FPDF
 		$this->OneCellTable(utf8_decode(_("Game official")), "");
 		$this->SetFont('Arial','',10);
 		$this->Ln();
-
+		
 		$this->FirstOffence();
 		$this->Ln();
 
@@ -389,8 +390,8 @@ class PDF extends FPDF
 	function PrintOnePageSchedule($scope, $id, $games, $colors=false){
 		$left_margin = 10;
 		$top_margin = 10;
-		$xarea = 800;
-		$yarea = 500;
+		$xarea = 400;
+		$yarea = 270;
 		$yfieldtitle = 8;
 		$xtimetitle = 12;
 		$ypagetitle = 5;
@@ -418,7 +419,10 @@ class PDF extends FPDF
 		$field_offset = 0;
 		$gridx = 12;
 		$gridy = $yarea/60;
+		$min_gridy = 5;
+		$min_gridx = 40;
 		$fieldlimit = 15;
+		$num_rows = 1;
 			
 		$this->SetTextColor(255);
 		$this->SetFillColor(0);
@@ -429,7 +433,6 @@ class PDF extends FPDF
 		$g = 0;
 		foreach($gameArray as $game){
 			$g++;
-//		while($game = mysql_fetch_assoc($games)){
 			
 			//one reservation group per page
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament || $prevDate != JustDate($game['starttime'])) {
@@ -440,39 +443,68 @@ class PDF extends FPDF
 				$title .= " (".utf8_decode(ShortDate($game['starttime'])).")";
 				$this->SetFont('Arial','BU',12);
 				$this->SetTextColor(0);
-				$this->Cell(0,0,$title,0,2,'C',false);
 				
 				$times = TimetableTimeslots($game['reservationgroup'],$id);
 				$timeslots = array();
 				
-				$slot=floor(strtotime($times[0]['time'])/60/30)*30*60;
+				$startslot = floor(strtotime($times[0]['time']) / 60 / 30) * 30 * 60;
+				$endslot = ceil(strtotime($times[count($times) - 1]['time']) / 60 / 30) * 30 * 60;
+				$numslots = ($endslot - $startslot) / 60 / 30 + 2;
+
+				$fieldstotal = TimetableFields($game['reservationgroup'], $id);
 				
-				$i=0;
+				if ($numslots * 2 * $min_gridy > $yarea - ($top_margin + $yfieldtitle * 2 + $ypagetitle + 5) || $fieldstotal * $min_gridx * 1.5 < ($xarea - $xtimetitle)) {
+					$num_rows = 1;
+				} else {
+					$num_rows = 2;
+				}
 				
- 				for($i=0;$i<25;$i++){
- 				  $timeslots[date("H:i", $slot)] = $i*$gridy;
- 				  $slot = $slot + 60*30;
- 				}
+				$gridy = ($yarea - $top_margin - $yfieldtitle * 2 - $ypagetitle - 10) / $numslots / $num_rows;
+				
+				$num_pages = floor($fieldstotal / $num_rows / ($xarea - $xtimetitle) * $min_gridx)+1;  
+				$fieldlimit = max(3, floor($fieldstotal / $num_rows / $num_pages) +1);
+				
+				$time_offset = ($yarea / $num_rows) * 0 + $top_margin + $yfieldtitle + $ypagetitle;
+
+				$i = 0;
+				
+				for ($i = 0, $slot = $startslot; $i < max(3, $numslots); $i++) {
+					$timeslots[date("H:i", $slot)] = $i * $gridy;
+					$slot = $slot + 60 * 30;
+				}
 				//foreach($times as $time){
 				//	$timeslots[DefHourFormat($time['time'])] = $i*20;
 				//	$i++;
 				//}
 				
-				$fieldstotal = TimetableFields($game['reservationgroup'],$id);
-				$fieldlimit = max($fieldstotal/2+1,10);
-				$gridx = $xarea/$fieldlimit;
+				
+				$gridx = ($xarea-$xtimetitle)/$fieldlimit;
 				$field = 0;
 				$prevField = "";
-				$time_offset = $top_margin+$yfieldtitle+$ypagetitle+(($yarea/2-count($timeslots)*$gridy)/2);
+				$row = 1;
+				
+// 				$this->SetXY($left_margin, $top_margin);
+// 				$this->SetFont('Arial','B',10);
+// 				$this->SetTextColor(0,200,0);
+// 				$this->SetFillColor(0,0,200);
+// 				$this->Cell($xarea,$yarea,"*****","LRTB",2,'C',true);
+				
+				$this->Cell(0,0,$title.".".$fieldstotal.".".$fieldlimit,0,2,'C',false);
 			}
 			
 			//next field
 			if(!empty($game['place_id']) && $game['place_id'] != $prevPlace || $game['fieldname'] != $prevField){
 				$field++;
 
-				if($field >= $fieldlimit){
+				if($field > $fieldlimit){
+					$row++;
+					if ($row > $num_rows) {
+						$row = 1;
+						$this->AddPage("L","A3");
+					}
+						
 					$field=1;
-					$time_offset = $yarea/2+$top_margin+2*$yfieldtitle+$ypagetitle;
+					$time_offset = ($yarea / $num_rows) * ($row - 1) + $top_margin + $yfieldtitle + $ypagetitle;
 				}
 				//write times
 				if($field==1){
@@ -630,7 +662,7 @@ class PDF extends FPDF
 			$this->SetFont('Arial','',--$fs2);
 		}
 		
-		$fs4 = min($height, $fontsize);
+		$fs4 = min(ceil($height), $fontsize);
 		$this->SetFont('Arial','',$fs4);
 		$txt = utf8_decode($pretext) . " ";
 		if (!empty($abbrev1))
@@ -1075,17 +1107,18 @@ class PDF extends FPDF
 		
 		//data
 		$this->PreFilledColors(3);
-
-		while($this->GetStringWidth($this->game['hometeamname'])>36){
-			$this->PreFilledColors(4);
+		$fontsize = 4;
+		while ($this->GetStringWidth($this->game['hometeamname']) > 36 && $fontsize > -5) {
+			$this->PreFilledColors($fontsize--);
 		}
 		
-		$this->Cell(38,6,$this->game['hometeamname'],'LT',0,'C',true);
-		$this->Cell(4,6,"-",'T',0,'C',true);
+		$this->Cell(38, 6, $this->game['hometeamname'], 'LT', 0, 'C', true);
+		$this->Cell(4, 6, "-", 'T', 0, 'C', true);
 		
 		$this->PreFilledColors(3);
-		while($this->GetStringWidth($this->game['visitorteamname'])>36){
-			$this->PreFilledColors(4);
+		$fontsize = 4;
+		while ($this->GetStringWidth($this->game['visitorteamname']) > 36 && $fontsize > -5) {
+			$this->PreFilledColors($fontsize--);
 		}
 		$this->Cell(38,6,$this->game['visitorteamname'],'RT',0,'C',true);
 
@@ -1134,12 +1167,15 @@ class PDF extends FPDF
 			$family = 'Arial';
 		if ($style == NULL)
 			$style = 'B';
+		
 		if ($size == 1) 
 		  $this->SetFont($family,$style,14);
 		elseif ($size == 2) 
 		  $this->SetFont($family,$style,12);
 		elseif ($size == 3) 
 		  $this->SetFont($family,$style,10);
+		elseif ($size < 1) 
+		  $this->SetFont($family,$style,8+$size);
 		else 
 		  $this->SetFont($family,$style,8);
 		$this->SetTextColor(0);
