@@ -1137,7 +1137,14 @@ function GameChangeName($gameId, $name){
 }
 
 function GameProcessMassInput($post) {
+	$html = "";
 	$scores = array ();
+	$changed = array ();
+	$ok_clear = 0;
+	$ok_set = 0;
+	$error_set = 0;
+	$error_clear = 0;
+	
 	foreach ($post['scoreId'] as $key => $value) {
 		$scores[$key]['gameid'] = $value;
 	}
@@ -1152,14 +1159,45 @@ function GameProcessMassInput($post) {
 		$game = GameInfo($gameId);
 		if ($game['homescore'] !== $score['home'] || $game['visitorscore'] !== $score['visitor']) {
 			if ($score['home'] === "" && $score['visitor'] === "" && (!is_null($game['homescore']) || !is_null($game['visitorscore']))) {
-				GameClearResult($gameId);
+				$ok = GameClearResult($gameId);
+				if ($ok) {
+					$ok_clear++;
+					$changed[GamePool($gameId)] = 1;
+				} else {
+					$error_clear++;
+				}
 				// echo "clear $gameId";
 			} else if ($score['home'] !== "" && $score['visitor'] !== "") {
-				GameSetResult($gameId, $score['home'], $score['visitor']);
+				$ok = GameSetResult($gameId, $score['home'], $score['visitor']);
 				// echo "set $gameId " . $score['home'] . "-" . $score['visitor'];
+				if ($ok) {
+					$ok_set++;
+					$changed[GamePool($gameId)] = 1;
+				} else {
+					$error_set++;
+				}
+				if (IsTwitterEnabled()) {
+					TweetGameResult($gameId);
+				}
 			}
 		}
 	}
+	
+	if ($ok_clear > 0)
+		$html .= "<p>" . _("Results cleared: $ok_clear") . ".</p>";
+	if ($ok_set > 0)
+		$html .= "<p>" . _("Results changed: $ok_set") . ".</p>";
+	if ($error_clear + $error_set > 0)
+		$html .= "<p>" . _("Errors: ") . ($error_clear + $error_set) . ".</p>";
+	
+	foreach ($changed as $poolId => $ok) {
+		if ($ok > 0) {
+			ResolvePoolStandings($poolId);
+			PoolResolvePlayed($poolId);
+		}
+	}
+	
+	return $html;
 }
 
 function DeleteGame($gameId) {

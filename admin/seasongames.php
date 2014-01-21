@@ -42,6 +42,7 @@ if (!empty($_GET["massinput"])) {
   $_SESSION['massinput'] = false;
 }
 
+$feedback = "<p>...</p>";
 //process itself on submit
 if(!empty($_POST['remove_x'])){
   $id = $_POST['hiddenDeleteId'];
@@ -63,7 +64,7 @@ if(!empty($_POST['remove_x'])){
   // GameChangeName($id, $_POST["gn$i"]);
   // }
   // }
-  GameProcessMassInput($_POST);
+  $feedback = GameProcessMassInput($_POST);
 }
 
 //common page
@@ -200,7 +201,7 @@ foreach ($pools as $pool) {
     
     // $html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
     if ($_SESSION['massinput']) {
-      $html .= "<td colspan='2'  style='width:220px'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/><input type='text' size='3' maxlength='5' value='" . intval($game['homescore']) . "' id='homescore$i' name='homescore[]' onkeypress='ChgResult(" . $i . ")'/> - <input type='text' size='3' maxlength='5' value='" . intval($game['visitorscore']) . "' id='visitorscore$i' name='visitorscore[]' onkeypress='ChgResult(" . $i . ")'/></td>";
+      $html .= "<td colspan='2'  style='width:220px'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/><input type='text' size='3' maxlength='5' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' onkeypress='ChgResult(" . $i . ")'/> - <input type='text' size='3' maxlength='5' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' onkeypress='ChgResult(" . $i . ")'/></td>";
     }else {
       if (GameHasStarted($game)) {
         if ($game['isongoing'])
@@ -239,9 +240,10 @@ foreach ($pools as $pool) {
 $html .= "</table>";
 
 if ($_SESSION['massinput']) {
-  $html .= "<p><input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
+  $html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
 }
-  
+$html .= $feedback;
+
 /*
 while($game = mysql_fetch_assoc($games)){
 

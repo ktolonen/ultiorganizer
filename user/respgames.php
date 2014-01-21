@@ -40,8 +40,9 @@ if (!empty($_GET["massinput"])) {
 }
 
 //process itself on submit
+$feedback = "";
 if (!empty($_POST['save'])) {
-	GameProcessMassInput($_POST);
+	$feedback = GameProcessMassInput($_POST);
 }
 
 
@@ -159,8 +160,9 @@ foreach ($respGameArray as $tournament => $resArray) {
 }
 
 if ($_SESSION['massinput']) {
-	$html .= "<p><input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
+	$html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
 }
+$html .= $feedback;
 
 
 showPage($title, $html);
