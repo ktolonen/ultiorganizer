@@ -16,7 +16,9 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 	$parnode = $dom->appendChild($node);
 
 	// Iterate through the rows, adding XML nodes for each
+	$savedID = null;
 	while ($row = @mysql_fetch_assoc($result)){
+	  if ($row['id'] !== $savedID) {
 	  $node = $dom->createElement("marker");
 	  $newnode = $parnode->appendChild($node);
 	  $newnode->setAttribute("id", $row['id']);
@@ -25,12 +27,11 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 	  $newnode->setAttribute("lat", $row['lat']);
 	  $newnode->setAttribute("lng", $row['lng']);
 	  $newnode->setAttribute("info", $row['info']);
-	  foreach ($locales as $locale => $locname) {
-	  	$locale = str_replace(".", "_", $locale);
-	  	$newnode->setAttribute("info_".$locale, $row['info_'.$locale]);
-	  }
 	  $newnode->setAttribute("indoor", $row['indoor']);
 	  $newnode->setAttribute("fields", $row['fields']);
+	  }
+      $newnode->setAttribute("info_" . $row['locale'], $row['locale_info']);
+      $savedID = $row['id'];
 	}
 
 	echo $dom->saveXML();

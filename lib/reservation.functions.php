@@ -10,11 +10,12 @@ function ReservationInfo($id) {
 	$locale = str_replace(".", "_", getSessionLocale());
 	$query = sprintf("SELECT res.id, res.location, res.fieldname, res.reservationgroup, 
 		res.date, res.starttime, res.endtime, res.timeslots, loc.name, 
-		loc.info_".$locale." as info, loc.address, res.season, count(game_id) as games  
-		FROM uo_reservation as res left join uo_location as loc 
-		on (res.location=loc.id) 
+		inf.info as info, loc.address, res.season, count(game_id) as games  
+		FROM uo_reservation as res 
+	    left join uo_location as loc on (res.location=loc.id)
+	    LEFT JOIN uo_location_info inf on (loc.id = inf.location_id AND inf.locale='%s' ) 
 		left join uo_game as game on (res.id = game.reservation)
-		WHERE res.id=%d", (int)$id);
+		WHERE res.id=%d", mysql_real_escape_string($locale), (int)$id);
 	return DBQueryToRow($query);
 }
 	

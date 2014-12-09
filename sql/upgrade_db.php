@@ -427,6 +427,33 @@ function upgrade70() {
   }
 }
 
+function upgrade71() {
+  if (!hasTable("uo_location_info")) {
+    runQuery(
+        "CREATE TABLE `uo_location_info` (
+	`location_id` INT(10) NOT NULL,
+    `locale` varchar(20) NOT NULL,
+    `info` varchar(255) DEFAULT NULL,
+	PRIMARY KEY (`location_id`,`locale`)
+	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+  }
+  
+  $results = runQuery("SELECT * FROM uo_location");
+  while ($row = mysql_fetch_assoc($results)) {
+    foreach ($row as $key => $value) {
+      if (substr($key, 0, 5) === "info_") {
+        if (!empty($value)) {
+          $locale = substr($key, 5);
+          runQuery(
+              sprintf(
+                  'INSERT INTO `uo_location_info` (`location_id`, `locale`, `info`)
+            VALUES ("%d", "%s", "%s")', 
+                  $row['id'], mysql_real_escape_string($locale), mysql_real_escape_string($value)));
+        }
+      }
+    }
+  }
+}
 
 
 function runQuery($query) {
