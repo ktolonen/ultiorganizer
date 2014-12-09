@@ -391,7 +391,7 @@ if(count($reservationData)>1){
           $nextStart = $gameStart + (max($gameInfo['timeslot'], 60) * 60);
         }
         $height = gameHeight($gameInfo);
-        $gametitle = getName($gameInfo);
+        $gametitle = getGameName($gameInfo);
         $pooltitle = U_($gameInfo['seriesname']).", ". U_($gameInfo['poolname']);
         if (hasEditGamesRight($gameInfo['series'])) {
           gameEntry($gameInfo['color'],$height,$gameId,$gametitle,$pooltitle);
