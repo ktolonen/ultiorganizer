@@ -15,6 +15,7 @@ include_once $include_prefix.'lib/logging.functions.php';
 include_once $include_prefix.'lib/debug.functions.php';
 
 
+session_name("UO_SESSID");
 session_start();
 if (!isset($_SESSION['VISIT_COUNTER'])) {
   LogVisitor($_SERVER['REMOTE_ADDR']);

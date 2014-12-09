@@ -28,6 +28,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 
 
 //Session data
+session_name("UO_SESSID");
 session_start();
 
 

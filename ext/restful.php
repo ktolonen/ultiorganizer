@@ -9,6 +9,7 @@ include_once $include_prefix.'lib/user.functions.php';
 include_once $include_prefix.'lib/restful.functions.php';
 include_once $include_prefix.'ext/restful/classes.php';
 
+session_name("UO_SESSID");
 session_start();
 
 if (!isset($_SESSION['uid'])) {

@@ -6,6 +6,7 @@
  */
 
 //Start session and load libs
+session_name("UO_SESSID");
 session_start();
 require_once '../lib/database.php';
 //open database connection

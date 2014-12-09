@@ -1,6 +1,8 @@
 <?php
 
 //Start session and load library. 
+
+session_name("UO_SESSID");
 session_start();
 require_once('lib/twitteroauth/twitteroauth.php');
 require_once('lib/configuration.functions.php');
