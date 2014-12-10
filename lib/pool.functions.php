@@ -1718,6 +1718,12 @@ function PoolDeleteMove($frompool, $fromplacing) {
 function PoolUndoMove($frompool, $fromplacing, $topool) {
   $poolInfo = PoolInfo($frompool);
   if (hasEditTeamsRight($poolInfo['series'])) {
+    
+    // delete moved games
+    $query = sprintf("DELETE FROM uo_game_pool WHERE pool=%d AND timetable=0",
+          (int)$topool);
+    DBQuery($query);
+    
     $query = sprintf("UPDATE uo_moveteams SET ismoved=0 WHERE frompool=%d AND fromplacing=%d",
     (int)$frompool,
     (int)$fromplacing);
@@ -1729,14 +1735,16 @@ function PoolUndoMove($frompool, $fromplacing, $topool) {
     (int)$fromplacing);
     	
     $result = DBQueryToRow($query);
-
+    $homesched = $result['scheduling_id'];
+    
     //replace real team with pseudo team in games
     $query = sprintf("UPDATE uo_game SET
 			hometeam=NULL WHERE scheduling_name_home=%d",
     (int)$result['scheduling_id']); // FIXME set respteam to scheduling_team
 
     DBQuery($query);
-
+    $vissched = $result['scheduling_id'];
+    
     $query = sprintf("UPDATE uo_game SET
 			visitorteam=NULL WHERE scheduling_name_visitor=%d",
     (int)$result['scheduling_id']);
@@ -1745,19 +1753,22 @@ function PoolUndoMove($frompool, $fromplacing, $topool) {
 
     $team = PoolTeamFromStandings($frompool,$fromplacing,$poolInfo['type']!=2); // do not count BYE team if we are moving to a playoff pool
 
-    $query = sprintf("DELETE FROM uo_team_pool WHERE
-				team=%d AND pool=%d",
-    (int)$team['team_id'],
-    (int)$topool);
-    DBQuery($query);
+    PoolDeleteTeam($topool, $team['team_id']);
+    
+    
+//     $query = sprintf("DELETE FROM uo_team_pool WHERE
+// 				team=%d AND pool=%d",
+//     (int)$team['team_id'],
+//     (int)$topool);
+//     DBQuery($query);
 
-    //update team pool
-    $query = sprintf("UPDATE uo_team SET
-			pool=%d WHERE team_id=%d",
-    (int)$frompool,
-    (int)$team['team_id']);
+//     //update team pool
+//     $query = sprintf("UPDATE uo_team SET
+// 			pool=%d WHERE team_id=%d",
+//     (int)$frompool,
+//     (int)$team['team_id']);
     	
-    DBQuery($query);
+//     DBQuery($query);
 
   } else { die('Insufficient rights to move teams'); }
 }

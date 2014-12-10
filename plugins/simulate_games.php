@@ -21,6 +21,22 @@ include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/standings.functions.php';
 
+function undoPoolMoves($poolId) {
+  $frompools = PoolMovingsToPool($poolId);
+  	
+  foreach($frompools as $pool){
+    $poolinfo = PoolInfo($pool['topool']);
+    
+//     if($poolinfo['mvgames']==1){
+      $_SESSION['userproperties']['userrole']['seriesadmin'][$poolinfo['series']]=1;
+      PoolUndoMove($pool['frompool'],$pool['fromplacing'], $poolId);
+      unset($_SESSION['userproperties']['userrole']['seriesadmin'][$poolinfo['series']]);
+//     }
+    	
+  }
+} 
+
+
 $html = "";
 $title = ("Game simulator");
 $seasonId = "";
@@ -171,6 +187,10 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
 				GameClearResult($game['game_id']);
 			}
+			
+			undoPoolMoves($poolId); 
+			
+			
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
 			// TODO undo moves, uo_team_pool.activerank
