@@ -310,11 +310,13 @@ function ResolveSeriesPoolStandings($poolId){
     $points[$i]['arank'] = 1;
     $i++;
   }
+  $points = getMatchesWins($points, $poolId);
+  
   //initial sort according games
   usort($points, create_function('$a,$b','return $a[\'games\']==$b[\'games\']?0:($a[\'games\']>$b[\'games\']?-1:1);'));
 
   //sort according to score (wins*winscore+draws*drawscore)
-  $points = SolveStandings(getMatchesWins($points, $poolId), 'cmp_score');
+  $points = SolveStandings($points, 'cmp_score');
   $offset = 1;
 
   //if team sharing same standing

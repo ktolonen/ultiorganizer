@@ -198,12 +198,12 @@ foreach($pools as $spool){
       $html .= "</table>";
     }
   }
-if(count(PoolTeams($spool['pool_id']))){
-   $html .= "<p><input class='button' type='submit' name='recalculate' value='"._("Re-calculate standings")."' onclick='setDeleteId(".$spool['pool_id'].");'/></p>";
-}
-  if(!$poolinfo['played'] && PoolIsMoveFromPoolsPlayed($spool['pool_id']) && !PoolIsAllMoved($spool['pool_id'])){
-    $html .= "<div class='highlight'><b><a href='?view=admin/serieteams&amp;season=$season&amp;series=".$spool['series_id']."&amp;pool=".$spool['pool_id']."'>"._("Move teams")."</a></b></div>";
+  if(count(PoolTeams($spool['pool_id']))){
+     $html .= "<p><input class='button' type='submit' name='recalculate' value='"._("Re-calculate standings")."' onclick='setDeleteId(".$spool['pool_id'].");'/></p>";
   }
+  if(!$poolinfo['played'] && PoolIsMoveFromPoolsPlayed($spool['pool_id']) && !PoolIsAllMoved($spool['pool_id'])){
+    $html .= "<div class='highlight'><b><a href='?view=admin/serieteams&amp;season=$season&amp;series=".$series_id."&amp;pool=".$spool['pool_id']."'>"._("Move teams")."</a></b></div>";
+  } 
 }
 
 $html .= "<p>";

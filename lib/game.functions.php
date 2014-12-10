@@ -647,7 +647,7 @@ function GameRemovePlayer($gameId, $playerId) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
-function GameRemoveAllPlayers($gameId, $playerId) {
+function GameRemoveAllPlayers($gameId) {
 	if (hasEditGamePlayersRight($gameId)) {
 		$query = sprintf("
 			DELETE FROM uo_played
