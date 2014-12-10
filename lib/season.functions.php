@@ -137,6 +137,28 @@ function SeasonInfo($seasonId){
 }
 
 /**
+ * Returns true if season exists.
+ * @param string $seasonId uo_season.season_id 
+ * @return true if season with given id exists
+ */
+function SeasonExists($seasonId) {
+  $query = sprintf("SELECT season_id FROM uo_season WHERE season_id='%s'", mysql_real_escape_string($seasonId));
+  return DBQueryRowCount($query) > 0;
+}
+
+/**
+ * Returns true if season exists.
+ * @param string $seasonId uo_season.name 
+ * @return true if season with given name exists
+ */
+function SeasonNameExists($seasonName) {
+  $query = sprintf("SELECT season_id FROM uo_season WHERE name='%s'", mysql_real_escape_string($seasonName));
+  return DBQueryRowCount($query) > 0;
+}
+
+
+
+/**
  * Returns all seasons.
  * 
  * @param array $filter sql conditions

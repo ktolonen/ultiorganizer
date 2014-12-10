@@ -14,10 +14,12 @@ class EventDataXMLHandler{
   var $uo_season=array(); //event id mapping array
   var $uo_series=array(); //series id mapping array
   var $uo_team=array(); //team id mapping array
+  var $uo_scheduling_name=array(); //scheduling id mapping array
   var $uo_pool=array(); //pool id mapping array
   var $uo_player=array(); //player id mapping array
   var $uo_game=array(); //game id mapping array
   var $uo_reservation=array(); //reservation id mapping array
+  var $followers = array(); // pools with unresolved followers
   var $mode; //import mode: 'add' or 'replace'
 
   /**
@@ -25,16 +27,19 @@ class EventDataXMLHandler{
    */
   function EventDataXMLHandler(){}
 
+  // FIXME include defense, gameevent, played (?)
   /**
    * Converts element data into xml-format.
    *
    * xml-structure
    * <uo_season>
    *  <uo_reservation></uo_reservation>
+   *  <uo_movingtime></uo_movingtime>
    *  <uo_series>
    *    <uo_team>
    *      <uo_player></uo_player>
    *    </uo_team>
+   *    <uo_scheduling_name></uo_scheduling_name>
    *    <uo_pool>
    *	    <uo_team_pool></uo_team_pool>
    *      <uo_game>
@@ -43,8 +48,8 @@ class EventDataXMLHandler{
    *        <uo_played></uo_played>
    *      </uo_game>
    *    </uo_pool>
-   *  <uo_game_pool></uo_game_pool>
-   *  <uo_moveteams></uo_moveteams>
+   *    <uo_game_pool></uo_game_pool>
+   *    <uo_moveteams></uo_moveteams>
    *  </uo_series>
    *</uo_season>
    *
@@ -68,13 +73,20 @@ class EventDataXMLHandler{
         $ret .= $this->RowToXML("uo_reservation", $reservation);
       }
 
+      //uo_movingtime
+      $times = DBQuery("SELECT * FROM uo_movingtime WHERE season='".mysql_real_escape_string($eventId)."'");
+      while($time = mysql_fetch_assoc($times)){
+        $ret .= $this->RowToXML("uo_movingtime", $time);
+      }
+      
       //uo_series
       $series = DBQuery("SELECT * FROM uo_series WHERE season='".mysql_real_escape_string($eventId)."'");
       while($ser = mysql_fetch_assoc($series)){
         $ret .= $this->RowToXML("uo_series", $ser, false);
          
+        $seriesId = (int)$ser['series_id'];
         //uo_team
-        $teams = DBQuery("SELECT * FROM uo_team WHERE series='".mysql_real_escape_string($ser['series_id'])."'");
+        $teams = DBQuery("SELECT * FROM uo_team WHERE series='$seriesId'");
         while($team = mysql_fetch_assoc($teams)){
           $ret .= $this->RowToXML("uo_team", $team, false);
           //uo_player
@@ -84,9 +96,21 @@ class EventDataXMLHandler{
           }
           $ret .= "</uo_team>\n";
         }
-         
+        
+        //uo_scheduling_name, referenced by either games or moves 
+        $schedulings = DBQuery("SELECT sched.* FROM uo_scheduling_name sched 
+            LEFT JOIN uo_game game ON (sched.scheduling_id = game.scheduling_name_home OR sched.scheduling_id = game.scheduling_name_visitor)
+            LEFT JOIN uo_pool pool ON (game.pool = pool.pool_id)
+            LEFT JOIN uo_moveteams mv ON (sched.scheduling_id = mv.scheduling_id)
+            LEFT JOIN uo_pool pool2 ON (mv.frompool = pool2.pool_id OR mv.topool = pool2.pool_id)
+            WHERE pool2.series = $seriesId  OR pool.series = $seriesId 
+            GROUP BY scheduling_id");
+        while ($row = mysql_fetch_assoc($schedulings)) {
+          $ret .= $this->RowToXML("uo_scheduling_name", $row);
+        }
+        
         //uo_pool
-        $pools = DBQuery("SELECT * FROM uo_pool WHERE series='".mysql_real_escape_string($ser['series_id'])."'");
+        $pools = DBQuery("SELECT * FROM uo_pool WHERE series='$seriesId'");
         while($row = mysql_fetch_assoc($pools)){
           $ret .= $this->RowToXML("uo_pool", $row, false);
 
@@ -124,7 +148,7 @@ class EventDataXMLHandler{
         //uo_moveteams
         $moveteams = DBQuery("SELECT m.* FROM uo_moveteams m
 				LEFT JOIN uo_pool p ON(m.frompool=p.pool_id) 
-				WHERE p.series='".mysql_real_escape_string($ser['series_id'])."'");
+				WHERE p.series='$seriesId'");
         while($moveteam = mysql_fetch_assoc($moveteams)){
           $ret .= $this->RowToXML("uo_moveteams", $moveteam);
         }
@@ -132,7 +156,7 @@ class EventDataXMLHandler{
         //uo_game_pool
         $gamepools = DBQuery("SELECT g.* FROM uo_game_pool g
 				LEFT JOIN uo_pool p ON(g.pool=p.pool_id)
-				WHERE p.series='".mysql_real_escape_string($ser['series_id'])."'");
+				WHERE p.series='$seriesId'");
         while($gamepool = mysql_fetch_assoc($gamepools)){
           $ret .= $this->RowToXML("uo_game_pool", $gamepool);
         }
@@ -203,6 +227,11 @@ class EventDataXMLHandler{
           die($reason);
         }
       }
+
+      foreach ($this->followers as $pool => $follow) {
+        $query = "UPDATE uo_pool SET follower=" . ((int) $this->uo_pool[$follow]) . " WHERE pool_id=$pool";
+        DBQuery($query);
+      }
        
       xml_parser_free($xmlparser);
     } else { die('Insufficient rights to import data'); }
@@ -212,7 +241,7 @@ class EventDataXMLHandler{
    * Callback function for element start.
    * @param xmlparser $parser a reference to the XML parser calling the handler.
    * @param string $name a element name
-   * @param array $attribs element's attriibutes
+   * @param array $attribs element's attributes
    */
   function start_tag($parser, $name, $attribs) {
     if (is_array($attribs)) {
@@ -220,10 +249,8 @@ class EventDataXMLHandler{
       while(list($key,$val) = each($attribs)) {
         if($val=="NULL"){
           $row[$key]="NULL";
-        }elseif(is_int($val) || $val==-1){
-          $row[$key]=(int)($val);
-        }else{
-          $row[$key]="'".mysql_real_escape_string($val)."'";
+        } else {
+          $row[$key]=$val;
         }
       }
       switch($this->mode){
@@ -237,6 +264,7 @@ class EventDataXMLHandler{
       }
     }
   }
+  
   /**
    * Callback function for element end.
    * @param xmlparser $parser a reference to the XML parser calling the handler.
@@ -256,27 +284,28 @@ class EventDataXMLHandler{
     switch($name){
       case "uo_season":
 
-        $key = str_replace("'",'',$row["SEASON_ID"]);
-
-        $season = SeasonInfo($key);
-        //if season exist
-        if(count($season)){
-          $newId = mysql_real_escape_string(substr($key,0,7)). rand(1,100);
-          $row["NAME"] = "'".str_replace("'",'',$row["NAME"])." (1)'";
-        }else{
-          $newId = mysql_real_escape_string($key);
+        $seasonId = $row["SEASON_ID"];
+        $newId = $seasonId;
+        $newName = $row["NAME"];
+        
+        $max = 1;
+        while (SeasonExists($newId) || SeasonNameExists($newName)) {
+          $modifier = rand(1,++$max);
+          $newId = substr($seasonId,0,7) ."_$modifier";
+          $newName = $row["NAME"]." ($modifier)";
         }
-        $this->uo_season[$row["SEASON_ID"]]="'".$newId."'";
+        $row["NAME"] = $newName; 
+        $this->uo_season[$row["SEASON_ID"]]=$newId;
         unset($row["SEASON_ID"]);
 
-        $values = implode(",",array_values($row));
+        $values = "'".implode("','",array_values($row))."'";
         $fields = implode(",",array_keys($row));
 
         $query = "INSERT INTO ".mysql_real_escape_string($name)." (";
         $query .= "SEASON_ID,";
         $query .= mysql_real_escape_string($fields);
         $query .= ") VALUES (";
-        $query .= "'".$newId."',";
+        $query .= "'".mysql_real_escape_string($newId)."',";
         $query .= $values;
         $query .= ")";
         DBQueryInsert($query);
@@ -294,6 +323,14 @@ class EventDataXMLHandler{
         $this->uo_series[$key]=$newId;
         break;
 
+      case "uo_scheduling_name":
+        $key = $row["SCHEDULING_ID"];
+        unset($row["SCHEDULING_ID"]);
+        
+        $newId = $this->InsertRow($name, $row);
+        $this->uo_scheduling_name[$key]=$newId;
+        break;
+        
       case "uo_team":
         $key = $row["TEAM_ID"];
         unset($row["TEAM_ID"]);
@@ -316,9 +353,14 @@ class EventDataXMLHandler{
         $key = $row["POOL_ID"];
         unset($row["POOL_ID"]);
         $row["SERIES"] = $this->uo_series[$row["SERIES"]];
-         
+        
         $newId = $this->InsertRow($name, $row);
         $this->uo_pool[$key]=$newId;
+
+        if(!empty($row["FOLLOWER"]) && $row["FOLLOWER"]!="NULL"){
+          $this->followers[$newId] = (int)$row["FOLLOWER"];
+        }
+        
         break;
          
       case "uo_reservation":
@@ -329,18 +371,33 @@ class EventDataXMLHandler{
         $newId = $this->InsertRow($name, $row);
         $this->uo_reservation[$key]=$newId;
         break;
-         
+        
+      case "uo_movingtime":
+        $row["SEASON"] = $this->uo_season[$row["SEASON"]];
+        
+        $newId = $this->InsertRow($name, $row);
+        break;
+        
       case "uo_game":
         $key = $row["GAME_ID"];
         unset($row["GAME_ID"]);
+        
         if(!empty($row["HOMETEAM"]) && $row["HOMETEAM"]!="NULL" && $row["HOMETEAM"]>0){
           $row["HOMETEAM"] = $this->uo_team[$row["HOMETEAM"]];
         }
         if(!empty($row["VISITORTEAM"]) && $row["VISITORTEAM"]!="NULL" && $row["VISITORTEAM"]>0){
           $row["VISITORTEAM"] = $this->uo_team[$row["VISITORTEAM"]];
         }
-        if(!empty($row["RESPTEAM"]) && $row["RESPTEAM"]!="NULL" && $row["RESPTEAM"]>0){
-          $row["RESPTEAM"] = $this->uo_team[$row["RESPTEAM"]];
+        if (!empty($row["RESPTEAM"]) && $row["RESPTEAM"] != "NULL" && $row["RESPTEAM"] > 0) {
+          $oldresp = $row["RESPTEAM"];
+          if ($row["HOMETEAM"] == "NULL") {
+            $row["RESPTEAM"] = $this->uo_scheduling_name[$row["RESPTEAM"]];
+          } else {
+            $row["RESPTEAM"] = $this->uo_team[$row["RESPTEAM"]];
+          }
+          if (is_null($row["RESPTEAM"])) {
+            $row["RESPTEAM"] = "NULL";
+          }
         }
         if(!empty($row["RESERVATION"]) && isset($this->uo_reservation[$row["RESERVATION"]])){
           $row["RESERVATION"] = $this->uo_reservation[$row["RESERVATION"]];
@@ -348,8 +405,15 @@ class EventDataXMLHandler{
         if(!empty($row["POOL"])){
           $row["POOL"] = $this->uo_pool[$row["POOL"]];
         }
-         
+        if(!empty($row["SCHEDULING_NAME_HOME"]) && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]])){
+          $row["SCHEDULING_NAME_HOME"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]];
+        } 
+        if(!empty($row["SCHEDULING_NAME_VISITOR"] && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]]))){
+          $row["SCHEDULING_NAME_VISITOR"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]];
+        }
+        
         $newId = $this->InsertRow($name, $row);
+        
         $this->uo_game[$key]=$newId;
         break;
 
@@ -390,6 +454,7 @@ class EventDataXMLHandler{
       case "uo_moveteams":
         $row["TOPOOL"] = $this->uo_pool[$row["TOPOOL"]];
         $row["FROMPOOL"] = $this->uo_pool[$row["FROMPOOL"]];
+        $row["SCHEDULING_ID"] = $this->uo_scheduling_name[$row["SCHEDULING_ID"]];
         $this->InsertRow($name, $row);
         break;
     }
@@ -401,9 +466,25 @@ class EventDataXMLHandler{
    * @param array $row Data to insert: key=>field, value=>data
    */
   function InsertRow($name, $row){
-     
-    $values = implode(",",array_values($row));
+    $columns = GetTableColumns($name);
     $fields = implode(",",array_keys($row));
+    
+    
+    $values = "";
+    foreach ($row as $key => $value) {
+      if ($columns[strtolower($key)]==='int') {
+        if ($value==="NULL"){
+          $values .= "NULL,";
+        }elseif (is_numeric($value))
+          $values .= "'".mysql_real_escape_string($value)."',";
+        else
+          die("Invalid column value '$value' for column $key of table $name. (".json_encode($row).").");
+      }else {
+        $values .= "'".mysql_real_escape_string($value)."',";
+      }
+    }
+    
+    $values = substr($values, 0, -1);
 
     $query = "INSERT INTO ".mysql_real_escape_string($name)." (";
     $query .= mysql_real_escape_string($fields);
@@ -460,6 +541,23 @@ class EventDataXMLHandler{
         }
         break;
 
+      case "uo_scheduling_name":
+        $key = $row["SCHEDULING_ID"];
+        unset($row["SCHEDULING_ID"]);
+      
+        $cond = "scheduling_id='$key'";
+        $query = "SELECT * FROM ".$name." WHERE ".$cond;
+        $exist = DBQueryRowCount($query);
+         
+        if($exist){
+          $this->SetRow($name, $row, $cond);
+        }else{
+          $newId = $this->InsertRow($name, $row);
+          $this->uo_scheduling_name[$key]=$newId;
+        }
+        break;
+        
+        
       case "uo_team":
         $key = $row["TEAM_ID"];
         unset($row["TEAM_ID"]);
@@ -532,11 +630,35 @@ class EventDataXMLHandler{
         }
         break;
          
+      case "uo_movingtime":
+        $row["SEASON"] = $this->uo_season[$row["SEASON"]];
+
+        $season=$row["SEASON"];
+        $from=$row["FROMLOCATION"];
+        $fromfield=$row["FROMFIELD"];
+        $to=$row["TOLOCATION"];
+        $tofield=$row["TOFIELD"];
+        $cond = "season='$season' AND fromlocation='$from' AND fromfield='$fromfield' AND tolocation='$to' AND tofield='$tofield'";
+        $query = "SELECT * FROM ".$name." WHERE ".$cond;
+        $exist = DBQueryRowCount($query);
+        
+        if($exist) {
+          $this->SetRow($name, $row, $cond);
+        } else {
+          $newId = $this->InsertRow($name, $row);
+        }
+        break;
+        
       case "uo_game":
         $key = $row["GAME_ID"];
         unset($row["GAME_ID"]);
-        $row["HOMETEAM"] = $this->uo_team[$row["HOMETEAM"]];
-        $row["VISITORTEAM"] = $this->uo_team[$row["VISITORTEAM"]];
+        
+        if(!empty($row["HOMETEAM"]) && $row["HOMETEAM"]!="NULL" && $row["HOMETEAM"]>0){
+          $row["HOMETEAM"] = $this->uo_team[$row["HOMETEAM"]];
+        }
+        if(!empty($row["VISITORTEAM"]) && $row["VISITORTEAM"]!="NULL" && $row["VISITORTEAM"]>0){
+          $row["VISITORTEAM"] = $this->uo_team[$row["VISITORTEAM"]];
+        }
         if(!empty($row["RESPTEAM"]) && $row["RESPTEAM"]!="NULL" && $row["RESPTEAM"]>0){
           $row["RESPTEAM"] = $this->uo_team[$row["RESPTEAM"]];
         }
@@ -546,7 +668,17 @@ class EventDataXMLHandler{
         if(!empty($row["POOL"])){
           $row["POOL"] = $this->uo_pool[$row["POOL"]];
         }
-         
+        if(!empty($row["SCHEDULING_NAME_HOME"]) && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]])){
+          $row["SCHEDULING_NAME_HOME"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]];
+        }
+        if(!empty($row["SCHEDULING_NAME_VISITOR"] && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]]))){
+          $row["SCHEDULING_NAME_VISITOR"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]];
+        }
+        
+        $newId = $this->InsertRow($name, $row);
+        
+        $this->uo_game[$key]=$newId;
+        
         $cond = "game_id=".$key;
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
@@ -671,7 +803,7 @@ class EventDataXMLHandler{
     $query = "UPDATE ".mysql_real_escape_string($name)." SET ";
 
     for($i=0;$i<count($fields);$i++){
-      $query .= mysql_real_escape_string($fields[$i]) ."=".$values[$i].", ";
+      $query .= mysql_real_escape_string($fields[$i]) ."='". mysql_real_escape_string($values[$i])."', ";
     }
     $query = rtrim($query,', ');
     $query .= " WHERE ";
