@@ -357,7 +357,8 @@ function getViewPools($selSeasonId) {
 	if ($numselectors > 0) {
 		$query .= ")";
 	}
-	$query .= " ORDER BY ser.season ASC, ser.ordering ASC, pool.ordering ASC";
+	$query .= " ORDER BY seas.starttime DESC, ser.season ASC, ser.ordering ASC, pool.ordering ASC";
+	
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 
