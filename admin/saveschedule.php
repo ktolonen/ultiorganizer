@@ -56,7 +56,7 @@ if ($season) {
       if (strtotime($conflict['time1']) + $conflict['slot1'] * 60 + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']) > strtotime($conflict['time2'])) {
         $game1 = GameInfo($conflict['game1']);
       $game2 = GameInfo($conflict['game2']);
-      die('Warning: Game ' . GameName($game2) . ' has a scheduling conflict with ' . GameName($game1));
+      die('Warning: Game ' . GameName($game2) . ' ('.$game2['game_id'].', pool '. $game2['pool'] . ') has a scheduling conflict with ' . GameName($game1).' ('.$game1['game_id'].', '.$game1['pool'].')');
       }
     }
   }
