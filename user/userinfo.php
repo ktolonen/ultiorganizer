@@ -84,7 +84,7 @@ if ($userid != "anonymous") {
     if(!$error){
       $message .= "<p>"._("Changes were saved")."</p><hr/>";
     }else{
-      $message .= "<p class='warning'><b>"._("Chages were NOT saved")."</b></p><hr/>";
+      $message .= "<p class='warning'><b>"._("Changes were NOT saved")."</b></p><hr/>";
     }
     
 
@@ -132,7 +132,7 @@ if ($userid != "anonymous") {
     if(!$error){
       $message .= "<p>"._("Changes were saved")."</p><hr/>";
     }else{
-      $message .= "<p class='warning'><b>"._("Chages were NOT saved")."</b></p><hr/>";
+      $message .= "<p class='warning'><b>"._("Changes were NOT saved")."</b></p><hr/>";
     }
     
     if(!$error){

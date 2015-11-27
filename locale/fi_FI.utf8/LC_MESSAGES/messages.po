@@ -1785,7 +1785,7 @@ msgstr "Tiedot tallennettu"
 
 #: user/userinfo.php:87
 #: user/userinfo.php:135
-msgid "Chages were NOT saved"
+msgid "Changes were NOT saved"
 msgstr "Tietoja EI tallennettu!"
 
 #: user/userinfo.php:119
