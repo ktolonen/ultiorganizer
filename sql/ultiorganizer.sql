@@ -258,6 +258,7 @@ CREATE TABLE `uo_dbtranslations` (
   `translation_key` varchar(50) NOT NULL,
   `fi_FI_utf8` varchar(50) DEFAULT NULL,
   `en_GB_utf8` varchar(50) DEFAULT NULL,
+  `de_DE_utf8` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`translation_key`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
