@@ -546,7 +546,10 @@ function leftMenu($id=0, $printable=false) {
 
       if ($lastseries != $series) {
         $lastseries = $series;
-        echo "<tr><td class='menuserieslevel'><a class='subnav' href='?view=seriesstatus&amp;series=".$series."'>".utf8entities(U_($row['series_name']))."</a></td></tr>\n";
+        echo "<tr><td class='menuserieslevel'>";
+        echo "<a class='subnav' href='?view=seriesstatus&amp;series=".$series."'>". utf8entities(U_($row['series_name'])) ."</a></td></tr>\n";
+        echo "<tr><td class='navpoollink'>\n";
+        echo "<a class='subnav' href='?view=poolstatus&amp;series=".$series."'>&raquo; ". _("Show all pools") ."</a></td></tr>\n";
       }
       echo "<tr><td class='menupoollevel'>\n";
       echo "<a class='navpoollink' href='?view=poolstatus&amp;pool=".$row['pool']."'>&raquo; ".utf8entities(U_($row['pool_name']))."</a>\n";
