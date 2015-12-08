@@ -99,3 +99,8 @@ button {
 	cursor:pointer;
 	font-size: 10px; 
 }
+
+a.current { 
+	font-weight: bold;
+	background-color: #d00000;
+}
