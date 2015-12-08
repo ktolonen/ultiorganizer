@@ -71,12 +71,17 @@ $html .= "<form method='post' action='?view=admin/executesql'>";
 		  // extracolumninfo is set if checkbox is checked
 		  if (!empty($_POST['extracolumninfo']))
 				{
-				$html .= strtoupper($arraycolumnstable[$i]) .".";
+				$html .= strtoupper($arraycolumnstable[$i]) ."."; 
 				}
 		  $html .= strtoupper($columnname);
+		  $html .= "</th>\n";
+		}
+	  $html .= "</tr><tr>\n";
+	  foreach ($arraycolumnsname as $i => $columnname)
+		{
 		  if (!empty($_POST['extracolumninfo']))
 		    {
-			$html .= "<table>";
+			$html .= "<td><table>";
 			$html .= "<tr><td>type</td><td>" . $arraycolumnstype[$i] . "</td></tr>";
 			$html .= "<tr><td>default</td><td>" . $arraycolumnsdefault[$i] . "</td></tr>";
 			$html .= "<tr><td>maxlen</td><td>" . $arraycolumnsmaxlength[$i] . "</td></tr>";
@@ -88,11 +93,10 @@ $html .= "<form method='post' action='?view=admin/executesql'>";
 			$html .= "<tr><td>blob</td><td>" . $arraycolumnsblob[$i] . "</td></tr>";
 			$html .= "<tr><td>unsig</td><td>" . $arraycolumnsunsigned[$i] . "</td></tr>";
 			$html .= "<tr><td>zerofill</td><td>" . $arraycolumnszerofill[$i] . "</td></tr>";
-			$html .= "</table>";
+			$html .= "</table></td>\n";
 			}
-		  $html .= "</th>";
 		  }
-	  $html .= "</tr>";
+	  $html .= "</tr>\n";
 	  // Print contents of the query
 	  if ($isSelect || $isShow){
 		  while ($row = mysql_fetch_assoc($result))
