@@ -455,6 +455,9 @@ function upgrade71() {
   }
 }
 
+function upgrade72() {
+  renameField('uo_team_stats', 'loses', 'losses');
+}
 
 function runQuery($query) {
 	$result = mysql_query($query);
