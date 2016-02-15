@@ -167,39 +167,24 @@ if($list=="allteams" || $list=="byseeding"){
 
   $series = SeasonSeries($seasonInfo['season_id'], true);
   foreach($series as $ser){
-    $ppools = SeriesPlacementPoolIds($ser['series_id']);
     $htmlteams = array();
-    foreach ($ppools as $ppool){
-      $teams = PoolTeams($ppool['pool_id']);
-      $steams = PoolSchedulingTeams($ppool['pool_id']);
-      if(count($teams) < count($steams)){
-        $totalteams = count($steams);
-      }else{
-        $totalteams = count($teams);
-      }
-
-      for($i=1;$i<=$totalteams;$i++){
-        $moved = PoolMoveExist($ppool['pool_id'], $i);
-        if(!$moved){
-          $team = PoolTeamFromStandings($ppool['pool_id'], $i);
-          $gamesleft = TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']);
-          if($ppool['played'] || ($ppool['type']==2 && mysql_num_rows($gamesleft)==0)){
-            $team = PoolTeamFromStandings($ppool['pool_id'], $i);
-            $htmltmp = "";
-            if(intval($seasonInfo['isinternational'])){
-              $htmltmp .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";
-            }
-            $htmltmp .= "<a href='?view=teamcard&amp;team=".$team['team_id']."'>".utf8entities($team['name'])."</a>";
-            $htmlteams[] = $htmltmp;
-          }else{
-            $htmlteams[]= "&nbsp;";
-          }
+    $teams  = SeriesRanking($ser['series_id']);
+    foreach ($teams as $team){
+      if ($team) {
+        $htmltmp = "";
+        if(intval($seasonInfo['isinternational'])){
+          $htmltmp .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";
         }
+        $htmltmp .= "<a href='?view=teamcard&amp;team=".$team['team_id']."'>".utf8entities($team['name'])."</a>";
+        $htmlteams[] = $htmltmp;
+        
+      }else{
+        $htmlteams[]= "&nbsp;";
       }
     }
     $htmlseries[] = $htmlteams;
   }
-
+  
   $html .= "<table cellpadding='2' style='width:100%;'>\n";
   $html .= "<tr>";
   $html .= "<th style='width:20%;'>". _("Placement"). "</th>";

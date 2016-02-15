@@ -2339,4 +2339,33 @@ function PoolsToCsv($season,$separator){
 
   return ArrayToCsv($result, $separator);
 }
+
+function SeriesRanking($series_id) {
+  $ranking = array();
+  $ppools = SeriesPlacementPoolIds($series_id);
+  foreach ($ppools as $ppool){
+    $teams = PoolTeams($ppool['pool_id']);
+    $steams = PoolSchedulingTeams($ppool['pool_id']);
+    if(count($teams) < count($steams)){
+      $totalteams = count($steams);
+    }else{
+      $totalteams = count($teams);
+    }
+
+    for($i=1;$i<=$totalteams;$i++){
+      $moved = PoolMoveExist($ppool['pool_id'], $i);
+      if(!$moved){
+        $team = PoolTeamFromStandings($ppool['pool_id'], $i);
+        $gamesleft = TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']);
+        if($ppool['played'] || ($ppool['type']==2 && mysql_num_rows($gamesleft)==0)){
+          $ranking[] = $team;
+        } else {
+          $ranking[] = null;
+        }
+      }
+    }
+  }
+  return $ranking;
+}
+
 ?>

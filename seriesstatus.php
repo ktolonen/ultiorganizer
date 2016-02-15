@@ -36,18 +36,35 @@ foreach ($teams as $team) {
   $teamstats['seed']=$team['rank'];
   $teamstats['flagfile']=$team['flagfile'];
   $teamstats['pool']=$team['poolname'];
+
   $teamstats['wins']=$stats['wins'];
   $teamstats['games']=$stats['games'];
+
   $teamstats['for']=$points['scores'];
   $teamstats['against']=$points['against'];
+
   $teamstats['losses']=$teamstats['games']-$teamstats['wins'];
   $teamstats['diff']=$teamstats['for']-$teamstats['against'];
+
   $teamstats['spirit']=$points['spirit'];
+
   $teamstats['spiritavg']=number_format(SafeDivide(intval($points['spirit']), intval($spiritstats['games'])),1);
   $teamstats['winavg']=number_format(SafeDivide(intval($stats['wins']), intval($stats['games']))*100,1);
 
   $allteams[] = $teamstats;
 }
+
+$rankedteams  = SeriesRanking($seriesinfo['series_id']);
+$rank = 0;
+foreach($rankedteams as $rteam) {
+  $rank++;
+  foreach ($allteams as &$ateam) {
+    if ($ateam['team_id'] == $rteam['team_id'])
+      $ateam['ranking'] = $rank;
+  }
+}
+
+
 
 $html .= "<h2>"._("Division statistics:")." ".utf8entities($seriesinfo['name'])."</h2>";
 $style = "";
@@ -55,7 +72,11 @@ $style = "";
 $html .= "<table border='1' style='width:100%'>\n";
 $html .= "<tr>";
 
-if($sort == "name" || $sort == "pool" || $sort == "against" || $sort == "seed") {
+if($sort == "ranking") {
+  usort($allteams, create_function('$a,$b','$va=$a[\''.$sort.'\']; $vb=$b[\''.$sort.'\'];
+    return $va==$vb?0:($va==null?1:($vb=null?-1:($a[\''.$sort.'\']<$b[\''.$sort.'\']?-1:1)));'));
+  
+} else if($sort == "name" || $sort == "pool" || $sort == "against" || $sort == "seed") {
   usort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']<$b[\''.$sort.'\']?-1:1);'));
 }else{
   usort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']>$b[\''.$sort.'\']?-1:1);'));
@@ -79,6 +100,12 @@ if($sort == "seed") {
   $html .= "<th class='center'>"._("Seeding")."</th>";
 }else{
   $html .= "<th class='center'><a class='thsort' href='".$viewUrl."&amp;Sort=seed'>"._("Seeding")."</a></th>";
+}
+
+if($sort == "ranking") {
+  $html .= "<th class='center'>"._("Ranking")."</th>";
+}else{
+  $html .= "<th class='center'><a class='thsort' href='".$viewUrl."&amp;Sort=ranking'>"._("Ranking")."</a></th>";
 }
 
 if($sort == "games") {
@@ -160,6 +187,19 @@ foreach($allteams as $stats){
     $html .= "<td class='center highlight'>".intval($stats['seed']).".</td>";
   }else{
     $html .= "<td class='center'>".intval($stats['seed']).".</td>";
+  }
+
+  {
+    $rank = $stats['ranking'];
+    if ($rank == null)
+      $rank = "-";
+    else
+      $rank = intval($rank);
+    if($sort == "ranking") {
+      $html .= "<td class='center highlight'>".$rank."</td>";
+    }else{
+      $html .= "<td class='center'>".$rank."</td>";
+    }
   }
 
   if($sort == "games") {
