@@ -229,7 +229,7 @@ class EventDataXMLHandler{
       }
 
       foreach ($this->followers as $pool => $follow) {
-        $query = "UPDATE uo_pool SET follower=" . ((int) $this->uo_pool[$follow]) . " WHERE pool_id=$pool";
+        $query = "UPDATE uo_pool SET follower='" . ((int) $this->uo_pool[$follow]) . "' WHERE pool_id='$pool'";
         DBQuery($query);
       }
        
@@ -508,7 +508,7 @@ class EventDataXMLHandler{
 
     switch($name){
       case "uo_season":
-        $cond = "season_id=".$row["SEASON_ID"];
+        $cond = "season_id='".$row["SEASON_ID"]."'";
         $query = "SELECT season_id FROM uo_season WHERE ". $cond;
         $exist = DBQueryRowCount($query);
         if($exist){
@@ -527,7 +527,7 @@ class EventDataXMLHandler{
         $key = $row["SERIES_ID"];
         unset($row["SERIES_ID"]);
 
-        $cond = "series_id=".$key;
+        $cond = "series_id='".$key."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -562,7 +562,7 @@ class EventDataXMLHandler{
         $key = $row["TEAM_ID"];
         unset($row["TEAM_ID"]);
 
-        $cond = "team_id=".$key;
+        $cond = "team_id='".$key."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -581,7 +581,7 @@ class EventDataXMLHandler{
         unset($row["PLAYER_ID"]);
         $row["TEAM"] = $this->uo_team[$row["TEAM"]];
 
-        $cond = "player_id=".$key;
+        $cond = "player_id='".$key."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -599,7 +599,7 @@ class EventDataXMLHandler{
         unset($row["POOL_ID"]);
         $row["SERIES"] = $this->uo_series[$row["SERIES"]];
 
-        $cond = "pool_id=".$key;
+        $cond = "pool_id='".$key."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -617,7 +617,7 @@ class EventDataXMLHandler{
         unset($row["ID"]);
         $row["SEASON"] = $this->uo_season[$row["SEASON"]];
          
-        $cond = "id=".$key;
+        $cond = "id='".$key."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -679,7 +679,7 @@ class EventDataXMLHandler{
         
         $this->uo_game[$key]=$newId;
         
-        $cond = "game_id=".$key;
+        $cond = "game_id='".$key."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -701,7 +701,7 @@ class EventDataXMLHandler{
           $row["SCORER"] = $this->uo_player[$row["SCORER"]];
         }
 
-        $cond = "game=".$row["GAME"]." AND num=".$row["NUM"];
+        $cond = "game='".$row["GAME"]."' AND num='".$row["NUM"]."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -715,7 +715,7 @@ class EventDataXMLHandler{
       case "uo_gameevent":
         $row["GAME"] = $this->uo_game[$row["GAME"]];
 
-        $cond = "game=".$row["GAME"]." AND num=".$row["NUM"];
+        $cond = "game='".$row["GAME"]."' AND num='".$row["NUM"]."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -731,7 +731,7 @@ class EventDataXMLHandler{
         $row["GAME"] = $this->uo_game[$row["GAME"]];
         $row["PLAYER"] = $this->uo_player[$row["PLAYER"]];
 
-        $cond = "game=".$row["GAME"]." AND player=".$row["PLAYER"];
+        $cond = "game='".$row["GAME"]."' AND player='".$row["PLAYER"]."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -746,7 +746,7 @@ class EventDataXMLHandler{
         $row["TEAM"] = $this->uo_team[$row["TEAM"]];
         $row["POOL"] = $this->uo_pool[$row["POOL"]];
 
-        $cond = "team=".$row["TEAM"]." AND pool=".$row["POOL"];
+        $cond = "team='".$row["TEAM"]."' AND pool='".$row["POOL"]."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -761,7 +761,7 @@ class EventDataXMLHandler{
         $row["GAME"] = $this->uo_game[$row["GAME"]];
         $row["POOL"] = $this->uo_pool[$row["POOL"]];
 
-        $cond = "game=".$row["GAME"]." AND pool=".$row["POOL"];
+        $cond = "game='".$row["GAME"]."' AND pool='".$row["POOL"]."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
@@ -777,7 +777,7 @@ class EventDataXMLHandler{
         $row["TOPOOL"] = $this->uo_pool[$row["TOPOOL"]];
         $row["FROMPOOL"] = $this->uo_pool[$row["FROMPOOL"]];
 
-        $cond = "topool=".$row["TOPOOL"]." AND fromplacing=".$row["FROMPLACING"];
+        $cond = "topool='".$row["TOPOOL"]."' AND fromplacing='".$row["FROMPLACING"]."'";
         $query = "SELECT * FROM ".$name." WHERE ".$cond;
         $exist = DBQueryRowCount($query);
 
