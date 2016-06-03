@@ -87,15 +87,9 @@ if($poolinfo['type']==1){
   }
   $totalteams = count($teams);
 
-  global $include_prefix;
-
-  //read layout templates
-  if (is_file($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$totalteams."_teams_".$rounds."_rounds.html")) {
-    $html = file_get_contents($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$totalteams."_teams_".$rounds."_rounds.html");
-  }elseif (is_file($include_prefix."cust/default/layouts/".$totalteams."_teams_".$rounds."_rounds.html")) {
-    $html = file_get_contents($include_prefix."cust/default/layouts/".$totalteams."_teams_".$rounds."_rounds.html");
-  }else{
-    $html = "<p>"._("No playoff tree template found.")."</p>";
+  $html = PlayoffTemplate($totalteams, $rounds, $poolinfo['playoff_template']);
+  if (empty($html)) {
+    $html = "<p>"._("No playoff tree template found.")."</p>\n";
   }
 
   $round=0;

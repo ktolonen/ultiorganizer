@@ -37,6 +37,7 @@ $pp = array(
 	"betweenpointslen"=>"0",
 	"series"=>$seriesId,
 	"type"=>"0",
+    "playoff_template"=>"",
 	"color"=>"ffffff",
     "forfeitscore"=>"0",
 	"forfeitagainst"=>"0",
@@ -78,6 +79,10 @@ if(!empty($_POST['save'])) {
 	$pp['timeoutstimecap']=intval($_POST['timeoutsOnOvertime']);
 	$pp['betweenpointslen']=intval($_POST['timebetweenPoints']);
 	$pp['type']=intval($_POST['type']);
+	if (empty($_POST['playoff_template']))
+		$pp['playoff_template'] = NULL;
+	else
+		$pp['playoff_template']=$_POST['playoff_template'];
 	$pp['ordering']=$_POST['ordering'];
 	$pp['mvgames']=intval($_POST['mvgames']);
 	$pp['color']=$_POST['color'];
@@ -139,6 +144,7 @@ if ($poolId) {
 	$pp['visible']=$info['visible'];
 	$pp['series']=$info['series'];
 	$pp['type']=$info['type'];
+	$pp['playoff_template']=$info['playoff_template'];
 	$pp['ordering']=$info['ordering'];
 	$pp['mvgames']=$info['mvgames'];
 	$pp['color']=$info['color'];
@@ -291,6 +297,9 @@ if(!$poolId || $addmore) {
 		echo "<option class='dropdown' selected='selected' value='4'>"._("Crossmatch")."</option>";
 	else
 		echo "<option class='dropdown' value='4'>"._("Crossmatch")."</option>";
+	
+	echo "<tr><td class='infocell'>"._("Special playoff template").":</td>
+		<td><input class='input' id='playoff_template' name='playoff_template' value='".$pp['playoff_template']."'/></td></tr>";
 		
 	echo "</select></td></tr>";
 		echo "<tr><td class='infocell'>"._("Move games").":</td><td>";

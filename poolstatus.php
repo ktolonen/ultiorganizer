@@ -468,17 +468,13 @@ function printPlayoffTree($seasoninfo, $poolinfo){
     $totalteams = count($teams);
   }
 
-
   global $include_prefix;
-
-  //read layout templates
-  if (is_file($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$totalteams."_teams_".$rounds."_rounds.html")) {
-    $ret2 = file_get_contents($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$totalteams."_teams_".$rounds."_rounds.html");
-  }elseif (is_file($include_prefix."cust/default/layouts/".$totalteams."_teams_".$rounds."_rounds.html")) {
-    $ret2 = file_get_contents($include_prefix."cust/default/layouts/".$totalteams."_teams_".$rounds."_rounds.html");
-  }else{
-    $ret2 = "<p>"._("No playoff tree template found.")."</p>";
+  
+  $template = PlayoffTemplate($totalteams, $rounds, $poolinfo['playoff_template']);
+  if (empty($template)) {
+    $ret .= "<p>"._("No playoff tree template found.")."</p>\n";
   }
+  $notemplate = "";
 
   $round=0;
   foreach($pools as $poolId){
@@ -499,7 +495,23 @@ function printPlayoffTree($seasoninfo, $poolinfo){
         $roundname = U_("Round") ." ". ($round+1);
         break;
     }
-    $ret2=str_replace("[round ".($round+1)."]",$roundname,$ret2);
+    
+    if (empty($template)) {
+      $notemplate .= "<h4>" . _("Round") . " " . ($round + 1) . "</h4>\n";
+
+      if(empty($pool)) {
+        $notemplate .= "<p>???</p>";
+      } else {
+        $notemplate .= "<table width='100%'>\n";
+        $games = TimetableGames($pool['pool_id'], "pool", "all", "series");
+        while ($game = mysql_fetch_assoc($games)) {
+          $notemplate .= GameRow($game, false, false, false, false, false, true);
+        }
+        $notemplate .= "</table>\n";
+      }
+    } else {
+      $template=str_replace("[round ".($round+1)."]",$roundname,$template);
+    }
 
     $winners=0;
     $losers=0;
@@ -542,22 +554,23 @@ function printPlayoffTree($seasoninfo, $poolinfo){
         }
       }
       //update team name to template
+      $theName = $name;
       if($round==0){
-        $ret2=str_replace("[team $i]",$name,$ret2);
+        $template=str_replace("[team $i]",$name,$template);
       }else{
         if($movefrom['fromplacing']==$totalteams && $totalteams%2==1){ // Assuming the BYE team is always last in a pool
           $winners=ceil($movefrom['fromplacing']/2);
            
-          $ret2=str_replace("[winner $round/$winners]",$previousRoundByeName,$ret2);
+          $template=str_replace("[winner $round/$winners]",$previousRoundByeName,$template);
+          $theName = $previousRoundByeName;
         } elseif($movefrom['fromplacing']%2==1){
           $winners=ceil($movefrom['fromplacing']/2);
-          $ret2=str_replace("[winner $round/$winners]",$name,$ret2);
+          $template=str_replace("[winner $round/$winners]",$name,$template);
         }else{
           $losers=ceil($movefrom['fromplacing']/2);
-          $ret2=str_replace("[loser $round/$losers]",$name,$ret2);
+          $template=str_replace("[loser $round/$losers]",$name,$template);
         }
       }
-       
       //update game results
       if($i%2==1){
         $games++;
@@ -588,7 +601,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
           //$game = "&nbsp;";
           $game .= "<span class='lowlight'>"._("Game")." ".$games."</span>";
         }
-        $ret2=str_replace("[game ".($round+1)."/$games]",$game,$ret2);
+        $template=str_replace("[game ".($round+1)."/$games]",$game,$template);
       }
        
        
@@ -600,43 +613,59 @@ function printPlayoffTree($seasoninfo, $poolinfo){
   }
 
   //placements
-  $ret2=str_replace("[placement]",_("Placement"),$ret2);
+  $notemplate .= "<h4>"._("Placement")."</h4>\n";
+  $notemplate .= "<table $style width='100%'>\n";
+  
+  $template = str_replace("[placement]", _("Placement"), $template);
   for($i=1;$i<=$totalteams;$i++){
-
     $placementname = "";
-    $team = PoolTeamFromStandings($pool['pool_id'],$i);
-    $gamesleft = TeamPoolGamesLeft($team['team_id'], $pool['pool_id']);
-
+    if(empty($pool))
+      $gamesleft = -1;
+    else {
+      $team = PoolTeamFromStandings($pool['pool_id'], $i);
+      $gamesleft = mysql_num_rows(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
+    }
+    $teampart = "";
+    $unknown = "";
+    
     if(!PoolMoveExist($pool['pool_id'],$i)){
       $placement = PoolPlacementString($pool['pool_id'],$i);
       $placementname = "<b>".U_($placement) ."</b> ";
-      if(mysql_num_rows($gamesleft)==0){
+      if($gamesleft==0){
         if(intval($seasoninfo['isinternational']) && !empty($team['flagfile'])){
-          $placementname .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";
+          $teampart .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";
         }
-        $placementname .= utf8entities($team['name'])."";
+        $teampart .= utf8entities($team['name']);
+      } else {
+        $unknown = "<i>"._("???")."</i>";
       }
     }else{
       $movetopool = PoolGetMoveToPool($pool['pool_id'],$i);
       $placementname .= "<a href='?view=poolstatus&amp;pool=".$movetopool['topool']."'>&raquo; ".utf8entities(U_($movetopool['name']))."</a>&nbsp; ";
        
-      $gamesleft = TeamPoolGamesLeft($team['team_id'], $pool['pool_id']);
-       
-      if(mysql_num_rows($gamesleft)==0){
+      if($gamesleft==0){
         if(intval($seasoninfo['isinternational']) && !empty($team['flagfile'])){
-          $placementname .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";
+          $teampart .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";
         }
          
-        $placementname .= utf8entities($team['name']);
+        $teampart .= utf8entities($team['name']);
+      } else {
+        $unknown = "<i>"._("???")."</i>";
       }
     }
      
-    $ret2=str_replace("[placement $i]",$placementname,$ret2);
-
-
+    if (empty($template)) {
+      $notemplate .= "<tr><td>".$placementname."</td><td>".$teampart.$unknown."</td></tr>\n";
+    } else {
+      $template=str_replace("[placement $i]",$placementname.$teampart,$template);
+    }
   }
-
-  $ret .= $ret2;
+  if (empty($template)) {
+    $notemplate .= "</table>\n";
+    $ret .= $notemplate;
+  } else {
+    $ret .= $template;
+  }
   $ret .= "<p><a href='?view=games&amp;pools=".implode(",",$pools)."&amp;singleview=1'>"._("Schedule")."</a><br/></p>";
   return $ret;
 

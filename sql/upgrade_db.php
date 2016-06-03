@@ -459,6 +459,10 @@ function upgrade72() {
   renameField('uo_team_stats', 'loses', 'losses');
 }
 
+function upgrade73() {
+  addColumn("uo_pool", "playoff_template", "varchar(30) default NULL");
+}
+
 function runQuery($query) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }

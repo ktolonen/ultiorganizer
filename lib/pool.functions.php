@@ -1963,19 +1963,7 @@ function GeneratePlayoffPools($poolId, $generate=true){
     }
 
     //read layout templates
-    global $include_prefix;
-
-    // if there is a customized layout with one round more, use one round more (applies e.g. to a Playout pool with 6 teams)
-    //if (is_file($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$teams."_teams_".($rounds+1)."_rounds.html")) { $rounds++; }
-
-
-    if (is_file($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$teams."_teams_".$rounds."_rounds.html")) {
-      $html = file_get_contents($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$teams."_teams_".$rounds."_rounds.html");
-    }elseif (is_file($include_prefix."cust/default/layouts/".$teams."_teams_".$rounds."_rounds.html")) {
-      $html = file_get_contents($include_prefix."cust/default/layouts/".$teams."_teams_".$rounds."_rounds.html");
-    }else{
-      $html="";
-    }
+    $html = PlayoffTemplate($teams, $rounds, $poolInfo['playoff_template']);
 
     // try to parse moves
     $specialmoves=false;
@@ -2368,4 +2356,20 @@ function SeriesRanking($series_id) {
   return $ranking;
 }
 
+function PlayoffTemplate($teams, $rounds, $id="") {
+  global $include_prefix;  
+  
+  //read layout templates
+  if (empty($id)) {
+    $id = $teams."_teams_".$rounds."_rounds";
+  }
+  if (is_file($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$id.".html")) {
+    $ret2 = file_get_contents($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$id.".html");
+  }elseif (is_file($include_prefix."cust/default/layouts/".$id.".html")) {
+    $ret2 = file_get_contents($include_prefix."cust/default/layouts/".$id.".html");
+  }else{
+    $ret2 = "";
+  }
+  return $ret2;  
+}
 ?>

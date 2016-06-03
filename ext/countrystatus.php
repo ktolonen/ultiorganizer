@@ -137,16 +137,13 @@ while($pool = mysql_fetch_assoc($allpools)){
 	}
 	$totalteams = count($teams);
 	
-	global $include_prefix;
 	$html = "<div style='width:95%'>";
-	//read layout templates
-	if (is_file($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$totalteams."_teams_".$rounds."_rounds.html")) {
-		$html .= file_get_contents($include_prefix."cust/".CUSTOMIZATIONS."/layouts/".$totalteams."_teams_".$rounds."_rounds.html");
-	}elseif (is_file($include_prefix."cust/default/layouts/".$totalteams."_teams_".$rounds."_rounds.html")) {
-		$html .= file_get_contents($include_prefix."cust/default/layouts/".$totalteams."_teams_".$rounds."_rounds.html");
-	}else{
-		$html .= "<p>"._("No playoff tree template found.")."</p>";
+	
+	$template = PlayoffTemplate($totalteams, $rounds, $poolinfo['playoff_template']);
+	if (empty($template)) {
+	  $template .= "<p>"._("No playoff tree template found.")."</p>\n";
 	}
+	$html .= $template;
 	
 	$round=0;
 	foreach($pools as $poolId){
