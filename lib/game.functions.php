@@ -2,6 +2,7 @@
 include_once $include_prefix.'lib/accreditation.functions.php';
 include_once $include_prefix.'lib/facebook.functions.php';
 include_once $include_prefix.'lib/configuration.functions.php';
+include_once $include_prefix.'lib/twitter.functions.php';
 
 function GameSetPools($games) {
 	$query = "SELECT DISTINCT pool_id, p.name from uo_game g left join uo_pool p on (g.pool=p.pool_id) WHERE g.game_id in (";
