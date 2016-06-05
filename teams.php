@@ -41,6 +41,8 @@ $isstatdata = IsStatsDataAvailable();
 
 $html .= "<h1>"._("Teams")."</h1>";
 
+$html .= CommentHTML(1, $season);
+
 if($list=="allteams" || $list=="byseeding"){
 
   foreach($series as $row){

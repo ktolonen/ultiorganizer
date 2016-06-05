@@ -50,6 +50,7 @@ if(!empty($_POST['add'])){
 	$sp['iscurrent'] = !empty($_POST['iscurrent']);
 	$sp['spiritpoints'] = !empty($_POST['spiritpoints']);
 	$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
+	$comment=$_POST['comment'];
 	
 	if(empty($_POST['season_id'])){
 		$html .= "<p class='warning'>"._("Event id can not be empty").".</p>";
@@ -60,7 +61,7 @@ if(!empty($_POST['add'])){
 	}else if(empty($_POST['type'])){
 		$html .= "<p class='warning'>"._("Type can not be empty").".</p>";
 	}else{
-		AddSeason($sp['season_id'], $sp);
+		AddSeason($sp['season_id'], $sp, $comment);
 		$seasonId = $sp['season_id'];
 		//add rights for season creator
 		AddEditSeason($_SESSION['uid'],$sp['season_id']);
@@ -101,7 +102,8 @@ if(!empty($_POST['add'])){
 		$sp['spiritpoints'] = !empty($_POST['spiritpoints']);
 		$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
 		$sp['timezone'] = $_POST['timezone'];
-		SetSeason($sp['season_id'], $sp);
+		$comment=$_POST['comment'];
+		SetSeason($sp['season_id'], $sp, $comment);
 	}
 }
 	
@@ -128,8 +130,11 @@ if($seasonId){
 	$sp['spiritpoints'] = $info['spiritpoints'];
 	$sp['showspiritpoints'] = $info['showspiritpoints'];
 	$sp['timezone'] = $info['timezone'];
-	}
-	
+	$comment = CommentRaw(1, $info['season_id']);
+} else {
+	$comment = "";
+}
+
 //common page
 pageTopHeadOpen($title);
 include_once 'lib/yui.functions.php';
@@ -263,11 +268,11 @@ if(empty($seasonId)){
 }
 
 $html .= "<table border='0'>";
-$html .= "<tr><td>"._("Event id").": </td><td><input class='input' name='season_id' $disabled value='".$sp['season_id']."'/></td></tr>";
-$html .= "<tr rowspan='2'><td>"._("Name").": </td>
+$html .= "<tr><td class='infocell'>"._("Event id").": </td><td><input class='input' name='season_id' $disabled value='".$sp['season_id']."'/></td></tr>";
+$html .= "<tr rowspan='2'><td class='infocell'>"._("Name").": </td>
 			<td>".TranslatedField("seasonname", $sp['name'])."</td>
 		</tr>\n";
-$html .= "<tr><td>"._("Type").": </td><td><select class='dropdown' name='type'>\n";
+$html .= "<tr><td class='infocell'>"._("Type").": </td><td><select class='dropdown' name='type'>\n";
 
 $types = SeasonTypes();
 
@@ -280,40 +285,43 @@ foreach($types as $type){
 
 $html .= "</select></td></tr>\n";
 
-$html .= "<tr><td>"._("Tournament").": </td><td><input class='input' type='checkbox' name='istournament' ";
+$html .= "<tr><td class='infocell'>"._("Tournament").": </td><td><input class='input' type='checkbox' name='istournament' ";
 if ($sp['istournament']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
 
-$html .= "<tr><td>"._("International").": </td><td><input class='input' type='checkbox' name='isinternational' ";
+$html .= "<tr><td class='infocell'>"._("International").": </td><td><input class='input' type='checkbox' name='isinternational' ";
 if ($sp['isinternational']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
 
-$html .= "<tr><td>"._("For national teams").": </td><td><input class='input' type='checkbox' name='isnationalteams' ";
+$html .= "<tr><td class='infocell'>"._("For national teams").": </td><td><input class='input' type='checkbox' name='isnationalteams' ";
 if ($sp['isnationalteams']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
 
-$html .= "<tr><td>"._("Spirit points given").": </td><td><input class='input' type='checkbox' name='spiritpoints' ";
+$html .= "<tr><td class='infocell'>"._("Spirit points given").": </td><td><input class='input' type='checkbox' name='spiritpoints' ";
 if ($sp['spiritpoints']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
 
-$html .= "<tr><td>"._("Spirit points visible").": </td><td><input class='input' type='checkbox' name='showspiritpoints' ";
+$html .= "<tr><td class='infocell'>"._("Spirit points visible").": </td><td><input class='input' type='checkbox' name='showspiritpoints' ";
 if ($sp['showspiritpoints']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
 
-$html .= "<tr><td>"._("Organizer").": </td><td><input class='input' size='50' maxlength='50' name='organizer' value='".utf8entities($sp['organizer'])."'/></td></tr>";
-$html .= "<tr><td>"._("Category").": </td><td><input class='input' size='50' maxlength='50' name='category' value='".utf8entities($sp['category'])."'/></td></tr>";
+$html .= "<tr><td class='infocell'>"._("Organizer").": </td><td><input class='input' size='50' maxlength='50' name='organizer' value='".utf8entities($sp['organizer'])."'/></td></tr>";
+$html .= "<tr><td class='infocell'>"._("Category").": </td><td><input class='input' size='50' maxlength='50' name='category' value='".utf8entities($sp['category'])."'/></td></tr>";
 
-$html .= "<tr><td>"._("Timezone").": </td><td>";
+$html .= "<tr><td class='infocell' style='vertical-align:top'>".htmlentities(_("Comment (you can use <p>, </i>, and <br> tags)")).":</td>
+		<td><textarea class='input' rows='10' cols='70' name='comment'>".htmlentities($comment)."</textarea></td></tr>";
+
+$html .= "<tr><td class='infocell'>"._("Timezone").": </td><td>";
 $dateTimeZone = GetTimeZoneArray();
 $html .= "<select class='dropdown' id='timezone' name='timezone'>\n";
 $html .= "<option value=''></option>\n";
@@ -329,23 +337,23 @@ $html .= "</select>\n";
 //$html .= DefTimeFormat($dateTime->format("Y-m-d H:i:s"));
 $html .= "</td></tr>";
 
-$html .= "<tr><td>"._("Starts")." ("._("dd.mm.yyyy")."): </td><td><input class='input' size='12' maxlength='10' id='seasonstarttime' name='seasonstarttime' value='".ShortDate($sp['starttime'])."'/>&nbsp;&nbsp;";
+$html .= "<tr><td class='infocell'>"._("Starts")." ("._("dd.mm.yyyy")."): </td><td><input class='input' size='12' maxlength='10' id='seasonstarttime' name='seasonstarttime' value='".ShortDate($sp['starttime'])."'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal1'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
 $html .= "<tr><td></td><td><div id='calContainer1'></div></td></tr>";
-$html .= "<tr><td>"._("Ends")." ("._("dd.mm.yyyy")."): </td><td><input class='input' size='12' maxlength='10' id='seasonendtime' name='seasonendtime' value='".ShortDate($sp['endtime'])."'/>&nbsp;&nbsp;";
+$html .= "<tr><td class='infocell'>"._("Ends")." ("._("dd.mm.yyyy")."): </td><td><input class='input' size='12' maxlength='10' id='seasonendtime' name='seasonendtime' value='".ShortDate($sp['endtime'])."'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal2'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
 $html .= "<tr><td></td><td><div id='calContainer2'></div></td></tr>";
-$html .= "<tr><td>"._("Open for enrollment").": </td><td><input class='input' type='checkbox' name='enrollopen' ";
+$html .= "<tr><td class='infocell'>"._("Open for enrollment").": </td><td><input class='input' type='checkbox' name='enrollopen' ";
 if ($sp['enrollopen']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td>"._("Enrolling ends")."<br/>("._("only informational")."): </td>";
+$html .= "<tr><td class='infocell'>"._("Enrolling ends")."<br/>("._("only informational")."): </td>";
 $html .= "<td><input class='input' size='12' maxlength='10' id='enrollendtime' name='enrollendtime'  value='".ShortDate($sp['enroll_deadline'])."'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal3'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
 $html .= "<tr><td></td><td><div id='calContainer3'></div></td></tr>";
 
-$html .= "<tr><td>"._("Shown in main menu").": </td><td><input class='input' type='checkbox' name='iscurrent' ";
+$html .= "<tr><td class='infocell'>"._("Shown in main menu").": </td><td><input class='input' type='checkbox' name='iscurrent' ";
 if ($sp['iscurrent']) {
 	$html .= "checked='checked'";
 }

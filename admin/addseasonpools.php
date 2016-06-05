@@ -64,7 +64,7 @@ if(!empty($_POST['save'])) {
 	$ok=true;
 	$pp['name']=$_POST['name'];
 	$pp['series']=$seriesId;
-	$pp['teams']=intval($_POST['teams']);
+	/*$pp['teams']=intval($_POST['teams']);*/
 	$pp['timeoutlen']=intval($_POST['timeoutlength']);
 	$pp['halftime']=intval($_POST['halftimelength']);
 	$pp['winningscore']=intval($_POST['gameto']);
@@ -375,9 +375,9 @@ if(!$poolId || $addmore) {
 	echo "<button type='button' id='showcolor' class='button' style='background-color:#".$pp['color']."'>"._("Select")."</button></td>";
 	echo "<td></td></tr>";
 	
-	$comment = PoolComment($poolId);
-	echo "<tr><td class='infocell' style='vertical-align:top'>"._("Comment").":</td>
-		<td><textarea class='input' rows='10' cols='70' name='comment'>".htmlentities($comment)."</textarea></td></tr>";
+	$comment = CommentRaw(3, $poolId);
+	echo "<tr><td class='infocell' style='vertical-align:top'>".htmlentities(_("Comment (you can use <p>, </i>, and <br> tags)")).":</td>
+		<td><textarea class='input' rows='10' cols='70' id='comment' name='comment'>".htmlentities($comment)."</textarea></td></tr>";
 	
 	
 	echo "</table>";

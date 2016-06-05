@@ -14,12 +14,14 @@ if (iget("season")) {
   $seasoninfo = SeasonInfo(iget("season"));
   $pools = SeasonPools($seasoninfo['season_id'], true,true);
   $title.= U_($seasoninfo['name']);
+  $comment = CommentHTML(1, $seasoninfo['season_id']);
   $seriesScoreboard = true;
 
 } else if (iget("series")) {
   $seriesinfo = SeriesInfo(iget("series"));
   $pools = SeriesPools($seriesinfo['series_id'], true);
   $title.= U_($seriesinfo['name']);
+  $comment = CommentHTML(2, $seriesinfo['series_id']);
   $seriesScoreboard = true;
   $seasoninfo = SeasonInfo($seriesinfo['season']);
 } else if (iget("pool")) {
@@ -48,6 +50,8 @@ if(iget("print")) {
   $format = "paper";
 }
 
+$html .= $comment;
+
 $prevseries = 0;
 foreach ($pools as $pool) {
 
@@ -64,8 +68,8 @@ foreach ($pools as $pool) {
   $seriesName = U_($poolinfo['seriesname']).", ". U_($poolinfo['name']);
   $html .= "<h2>".utf8entities($seriesName)."</h2>";
   
-  $html .= someHTML(PoolComment($pool['pool_id']));
-
+  $html .= CommentHTML(3, $pool['pool_id']);
+  
   if($poolinfo['type']==1){
     // round robin
     $html .= printRoundRobinPool($seasoninfo, $poolinfo);
@@ -616,7 +620,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
 
   //placements
   $notemplate .= "<h4>"._("Placement")."</h4>\n";
-  $notemplate .= "<table $style width='100%'>\n";
+  $notemplate .= "<table width='100%'>\n";
   
   $template = str_replace("[placement]", _("Placement"), $template);
   for($i=1;$i<=$totalteams;$i++){

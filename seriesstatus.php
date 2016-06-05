@@ -65,6 +65,7 @@ foreach($rankedteams as $rteam) {
 }
 
 
+$html .= CommentHTML(2, $seriesinfo['series_id']);
 
 $html .= "<h2>"._("Division statistics:")." ".utf8entities($seriesinfo['name'])."</h2>";
 $style = "";

@@ -468,7 +468,7 @@ function upgrade74() {
     runQuery(
         "CREATE TABLE `uo_comment` (
     `type` tinyint(3) NOT NULL,
-    `id` INT(10) NOT NULL,
+    `id` varchar(10) NOT NULL,
     `comment` text NOT NULL,
 	PRIMARY KEY (`type`,`id`),
     INDEX `idx_id` (`id`)

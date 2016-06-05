@@ -48,6 +48,7 @@ if(iget("series")) {
   $baseurl .= "&season=$id";
   $gamefilter="season";
   $title = _("Schedule")." ".utf8entities(U_(SeasonName($id)));
+  $comment = CommentHTML(1, $id);
 } else {
   $id = CurrentSeason();
   $baseurl .= "&season=$id";

@@ -1260,6 +1260,9 @@ function iget($string){
   return "";
 }
 
+/**
+ *  HTML escapes a string but leaves some tags intact 
+ */
 function someHTML($string) {
   $string = utf8entities($string);
   $string = str_replace("&lt;b&gt;", "<b>", $string);
@@ -1274,4 +1277,62 @@ function someHTML($string) {
   return $string;
 }
 
+/**
+ * Returns the raw form of a comment field.
+ * 
+ * @param int $type The type of entity. 1: season, 2: series, 3: pool.
+ * @param string $id The id of the season, series, or pool.
+ * @return string the comment or an empty string if no comment exists.
+ */
+function CommentRaw($type, $id) {
+  $query = sprintf("SELECT comment FROM uo_comment
+		WHERE type='%d' AND id='%s'",
+      (int) $type, mysql_real_escape_string($id));
+  $comment = DBQueryToValue($query);
+  if ($comment != -1)
+    return $comment;
+  else
+    return "";
+}
+
+/**
+ * Returns a comment field, with most of the html-tags and entities encoded.
+ * 
+ * @param int $type The type of entity. 1: season, 2: series, 3: pool.
+ * @param string $id The id of the season, series, or pool.
+ * @return string the comment or an empty string if no comment exists.
+ */
+function CommentHTML($type, $id) {
+  $comment = CommentRaw($type, $id);
+  if ($comment != -1)
+    return "<div class='comment'>".$comment."</div>\n";
+  else
+    return "";
+}
+
+/**
+ * Sets or deletes a comment.
+ *
+ * @param int $type The type of entity. 1: season, 2: series, 3: pool.
+ * @param string $id The id of the season, series, or pool.
+ * @param string $comment the new value or an empty string or null if the comment should be deleted.
+ * @return true if the query was successfull, false otherwise 
+ */
+function SetComment($type, $id, $comment) {
+  if (empty($comment))
+    $query = sprintf("DELETE FROM uo_comment WHERE type='%d' AND id='%s'", 
+        (int) $type, 
+        mysql_real_escape_string($id));
+  else {
+    $query = sprintf(
+        "INSERT INTO uo_comment
+  				(type, id, comment) 
+  				VALUES	(%d,'%s','%s') ON DUPLICATE KEY UPDATE comment='%s'", 
+        (int) $type, 
+        mysql_real_escape_string($id), 
+        mysql_real_escape_string($comment), 
+        mysql_real_escape_string($comment));
+  }
+  return DBQuery($query);
+}
 ?>

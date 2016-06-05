@@ -487,9 +487,10 @@ function DeleteSeason($seasonId) {
  *
  * @param string $seasonId uo_season.season_id
  * @param string $params uo_season fields
+ * @param string $comment uo_comment for the season
  * @return boolean TRUE on success or FALSE on error. 
  */
-function AddSeason($seasonId, $params) {
+function AddSeason($seasonId, $params, $comment=null) {
   if (isSuperAdmin()) {
     $query = sprintf("
 			INSERT INTO uo_season 
@@ -515,7 +516,12 @@ function AddSeason($seasonId, $params) {
     	
     Log1("season","add",$seasonId);
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    
+    if ($result && isset($comment)) {
+      SetComment(1, $seasonId, $comment);
+    }
+    return $result;
   } else { die('Insufficient rights to add season'); }
 }
 
@@ -526,9 +532,10 @@ function AddSeason($seasonId, $params) {
  *
  * @param string $seasonId uo_season.season_id
  * @param string $params uo_season fields
+ * @param string $comment uo_comment for the season
  * @return boolean TRUE on success or FALSE on error. 
  */
-function SetSeason($seasonId, $params) {
+function SetSeason($seasonId, $params, $comment=null) {
   if (isSeasonAdmin($seasonId)) {
     $query = sprintf("
 			UPDATE uo_season SET
@@ -554,7 +561,10 @@ function SetSeason($seasonId, $params) {
     mysql_real_escape_string($params['timezone']),
     mysql_real_escape_string($seasonId));
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    if (isset($comment) && $result)
+      SetComment(1, $seasonId, $comment);
+    return $result;
   } else { die('Insufficient rights to edit season'); }
 
 }
