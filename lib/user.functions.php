@@ -1033,7 +1033,7 @@ function ConfirmEmail($token) {
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		
-		$query = sprintf("SELECT DISTINCT profile_id FROM uo_player WHERE LOWER(email)='%s'",
+		$query = sprintf("SELECT DISTINCT profile_id FROM uo_player_profile WHERE LOWER(email)='%s'",
 			mysql_real_escape_string(strtolower($row['email'])));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
