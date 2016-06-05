@@ -593,7 +593,7 @@ function RemovePlayerProfileImage($playerId) {
       	
       DBQuery($query);
     }
-  } else { die('Insufficient rights to edit palyer profile'); }
+  } else { die('Insufficient rights to edit player profile'); }
 }
 
 /**

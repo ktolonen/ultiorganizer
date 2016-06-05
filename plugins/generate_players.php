@@ -69,7 +69,7 @@ if(empty($seasonId)){
 	$html .= "<p>".("Number of players to generate for a team").": <input class='input' maxlength='2' size='2' name='amount' value='20'/></p>\n";
 
 	$html .= "<p>";
-	$html .= "<input class='input' type='checkbox' name='accreditate' /> ".("Accreditate palyers")."</p>";
+	$html .= "<input class='input' type='checkbox' name='accreditate' /> ".("Accreditate players")."</p>";
 	$html .= "<p><input class='button' type='submit' name='generate' value='".("Generate")."'/></p>";
 	$html .= "<div>";
 	$html .= "<input type='hidden' name='season' value='$seasonId' />\n";
