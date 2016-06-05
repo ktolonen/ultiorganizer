@@ -63,6 +63,8 @@ foreach ($pools as $pool) {
   $prevseries = $poolinfo['series'];
   $seriesName = U_($poolinfo['seriesname']).", ". U_($poolinfo['name']);
   $html .= "<h2>".utf8entities($seriesName)."</h2>";
+  
+  $html .= someHTML(PoolComment($pool['pool_id']));
 
   if($poolinfo['type']==1){
     // round robin

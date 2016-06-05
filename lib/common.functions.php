@@ -1260,4 +1260,18 @@ function iget($string){
   return "";
 }
 
+function someHTML($string) {
+  $string = utf8entities($string);
+  $string = str_replace("&lt;b&gt;", "<b>", $string);
+  $string = str_replace("&lt;/b&gt;", "</b>", $string);
+  $string = str_replace("&lt;i&gt;", "<i>", $string);
+  $string = str_replace("&lt;/i&gt;", "</i>", $string);
+  $string = str_replace("&lt;em&gt;", "<em>", $string);
+  $string = str_replace("&lt;/em&gt;", "</em>", $string);
+  $string = str_replace("&lt;br&gt;", "<br />", $string);
+  $string = str_replace("&lt;br /&gt;", "<br />", $string);
+  $string = str_replace("&lt;br/&gt;", "<br />", $string);
+  return $string;
+}
+
 ?>

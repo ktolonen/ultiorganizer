@@ -1308,10 +1308,14 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower=fal
  * @param int $poolId
  * @param uo_pool $params
  */
-function SetPoolDetails($poolId, $params) {
+function SetPoolDetails($poolId, $params, $comment=null) {
   $poolinfo = PoolInfo($poolId);
   if(hasEditSeasonSeriesRight($poolinfo['season'])) {
     DBSetRow("uo_pool",$params,"pool_id=$poolId");
+    if (isset($comment)) {
+      $pcomment = array ('comment' => $comment);
+      DBSetRow("uo_comment", $pcomment, "id = $poolId AND type=3");
+    }
   } else { die('Insufficient rights to edit pool'); }
 }
 
@@ -2371,5 +2375,16 @@ function PlayoffTemplate($teams, $rounds, $id="") {
     $ret2 = "";
   }
   return $ret2;  
+}
+
+function PoolComment($poolid) {
+  $query = sprintf("SELECT comment FROM uo_comment
+		WHERE type='3' AND id=%d",
+      (int)$poolid);
+  $res = DBQueryToValue($query);
+  if ($res != -1)
+    return $res;
+  else 
+    return "";
 }
 ?>

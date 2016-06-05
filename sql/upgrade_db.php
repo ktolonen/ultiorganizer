@@ -463,6 +463,19 @@ function upgrade73() {
   addColumn("uo_pool", "playoff_template", "varchar(30) default NULL");
 }
 
+function upgrade74() {
+  if (!hasTable("uo_comment")) {
+    runQuery(
+        "CREATE TABLE `uo_comment` (
+    `type` tinyint(3) NOT NULL,
+    `id` INT(10) NOT NULL,
+    `comment` text NOT NULL,
+	PRIMARY KEY (`type`,`id`),
+    INDEX `idx_id` (`id`)
+    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+  }
+}
+
 function runQuery($query) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }

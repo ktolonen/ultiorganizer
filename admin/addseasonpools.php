@@ -83,6 +83,7 @@ if(!empty($_POST['save'])) {
 		$pp['playoff_template'] = NULL;
 	else
 		$pp['playoff_template']=$_POST['playoff_template'];
+	$comment=$_POST['comment'];
 	$pp['ordering']=$_POST['ordering'];
 	$pp['mvgames']=intval($_POST['mvgames']);
 	$pp['color']=$_POST['color'];
@@ -115,7 +116,7 @@ if(!empty($_POST['save'])) {
 		$pp['drawsallowed']=0;
 		
 	if($ok){
-		SetPoolDetails($poolId,$pp);
+		SetPoolDetails($poolId,$pp, $comment);
 		session_write_close();
 		header("location:?view=admin/seasonpools&season=$season");
 	}
@@ -373,6 +374,11 @@ if(!$poolId || $addmore) {
 	echo "<td><input class='input' type='hidden' id='color' name='color' value='".$pp['color']."'/>\n";
 	echo "<button type='button' id='showcolor' class='button' style='background-color:#".$pp['color']."'>"._("Select")."</button></td>";
 	echo "<td></td></tr>";
+	
+	$comment = PoolComment($poolId);
+	echo "<tr><td class='infocell' style='vertical-align:top'>"._("Comment").":</td>
+		<td><textarea class='input' rows='10' cols='70' name='comment'>".htmlentities($comment)."</textarea></td></tr>";
+	
 	
 	echo "</table>";
 	echo "<div class='yui-skin-sam' id='colorcontainer' style='display:none'></div>";
