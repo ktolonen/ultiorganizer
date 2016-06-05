@@ -316,7 +316,8 @@ CREATE TABLE `uo_game` (
   INDEX `idx_visitorteam` (`visitorteam`),
   INDEX `idx_reservation` (`reservation`),
   INDEX `idx_game_id` (`game_id`),
-  INDEX `idx_name` (`name`)
+  INDEX `idx_name` (`name`),
+  INDEX `idx_pool` (`pool`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
 CREATE TABLE `uo_game_pool` (
@@ -418,8 +419,10 @@ CREATE TABLE `uo_moveteams` (
   `ismoved` tinyint(4) NOT NULL DEFAULT '0',
   `scheduling_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`frompool`,`fromplacing`),
-  INDEX `idx_scheduling_id` (`scheduling_id`)
+  INDEX `idx_scheduling_id` (`scheduling_id`),
+  INDEX `idx_topool` (`topool`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+
 CREATE TABLE `uo_pageload_counter` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `page` varchar(100) NOT NULL,
