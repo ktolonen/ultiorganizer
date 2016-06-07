@@ -430,9 +430,7 @@ function ResolveSeriesPoolStandings($poolId){
       foreach($topools as $pool){
         $poolinfo = PoolInfo($pool['topool']);
         if($poolinfo['mvgames']==1){
-          $_SESSION['userproperties']['userrole']['seriesadmin'][$poolinfo['series']]=1;
-          PoolMakeMove($pool['frompool'],$pool['fromplacing']);
-          unset($_SESSION['userproperties']['userrole']['seriesadmin'][$poolinfo['series']]);
+          PoolMakeMove($pool['frompool'],$pool['fromplacing'], false);
           //set pool visible
           $query = sprintf("UPDATE uo_pool SET visible='1' WHERE pool_id=%d",(int)$pool['topool']);
           DBQuery($query);            

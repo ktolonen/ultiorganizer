@@ -1643,10 +1643,11 @@ function PoolMakeMoves($poolId) {
  * 
  * @param int $frompool - pool from move.
  * @param int $fromplacing - position from move.
+ * @param boolean $checkrights check edit teams privilege, defaults to true
  */
-function PoolMakeMove($frompool, $fromplacing) {
+function PoolMakeMove($frompool, $fromplacing, $checkrights=true) {
   $poolInfo = PoolInfo($frompool);
-  if (hasEditTeamsRight($poolInfo['series'])) {
+  if (!checkrights || hasEditTeamsRight($poolInfo['series'])) {
     //move teams
     $query = sprintf("SELECT pmt.*, ps.name, sn.name AS sname 
 		FROM uo_moveteams pmt

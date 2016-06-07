@@ -166,8 +166,8 @@ function SeriesAllPlayers($seriesId) {
   $query = sprintf("SELECT p.player_id, p.accreditation_id, p.profile_id FROM uo_player p
 			LEFT JOIN uo_team t ON (p.team=t.team_id)
 			LEFT JOIN uo_series ser ON (t.series=ser.series_id)
-			WHERE ser.series_id='%s'",
-  mysql_real_escape_string($seriesId));
+			WHERE ser.series_id='%d'",
+  (int) $seriesId);
   return DBQueryToArray($query);
 }
 
@@ -433,9 +433,9 @@ function SeriesAllGames($seriesId){
 		FROM uo_game_pool gp 
 		LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool) 
 		LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-		WHERE ser.series_id='%s' AND gp.timetable=1
+		WHERE ser.series_id='%d' AND gp.timetable=1
 		ORDER BY gp.game",
-  mysql_real_escape_string($seriesId));
+  (int) $seriesId);
 
   return DBQueryToArray($query);
 }
@@ -481,7 +481,7 @@ function DeleteSeries($seriesId) {
   $seriesInfo = SeriesInfo($seriesId);
   if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
     Log2("series","delete",SeriesName($seriesId));
-    $query = sprintf("DELETE FROM uo_series WHERE series_id='%s'",
+    $query = sprintf("DELETE FROM uo_series WHERE series_id='%d'",
       (int)$seriesId);
     	
     return DBQuery($query);
@@ -794,12 +794,12 @@ function SeriesCopyTeams($to, $from) {
     foreach($teams as $team){
       $query = sprintf("INSERT INTO uo_team(name, club, country, rank, abbreviation, valid, series )
       			VALUES ('%s',%d,%d,%d,'%s',1,%d)",
-          $team['name'],
-          $team['club'],
-          $team['country'],
-          $team['rank'],
-          $team['abbreviation'],
-          $to);
+          mysql_real_escape_string($team['name']),
+          (int) $team['club'],
+          (int) $team['country'],
+          (int) $team['rank'],
+          mysql_real_escape_string($team['abbreviation']),
+          (int) $to);
        DBQuery($query);
     }
   } else { die('Insufficient rights'); }
