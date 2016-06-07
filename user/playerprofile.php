@@ -203,7 +203,7 @@ $pp = array(
 	}
 
 	$html .= "<tr><td class='infocell'>"._("Jersey number").":</td>";
-	$html .= "<td><input class='input' maxlength='2' size='3' name='num' value='".$pp['num']."'/></td>";
+	$html .= "<td><input class='input' maxlength='3' size='3' name='num' value='".$pp['num']."'/></td>";
 	$html .= "<td class='center'><input type='checkbox' name='public[]' checked='checked' disabled='disabled' value=''/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("First name").":</td>";

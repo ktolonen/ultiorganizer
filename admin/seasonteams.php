@@ -143,7 +143,7 @@ foreach($teams as $team){
     $teamname = _("No name");
   }
   $html .= "<tr class='admintablerow'>";
-  $html .= "<td><input class='input' size='2' maxlength='5' name='seed$team_id' value='".$team['rank']."'/></td>";
+  $html .= "<td><input class='input' size='3' maxlength='4' name='seed$team_id' value='".$team['rank']."'/></td>";
   $html .= "<td><input class='input' size='20' maxlength='50' name='name$team_id' value='".$team['name']."'/></td>";
   $html .= "<td><input class='input' size='4' maxlength='15' name='abbrev$team_id' value='".$team['abbreviation']."'/></td>";
 
@@ -185,7 +185,7 @@ foreach($teams as $team){
 
 $total++;
 $html .=  "<tr>";
-$html .= "<td style='padding-top:15px'><input class='input' size='2' maxlength='5' name='seed0' value='$total'/></td>";
+$html .= "<td style='padding-top:15px'><input class='input' size='2' maxlength='4' name='seed0' value='$total'/></td>";
 $html .= "<td style='padding-top:15px'><input class='input' size='20' maxlength='50' name='name0' id='name0' value=''/></td>";
 $html .= "<td style='padding-top:15px'><input class='input' size='4' maxlength='15' name='abbrev0' value=''/></td>";
 if(!intval($seasonInfo['isnationalteams'])){

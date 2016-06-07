@@ -92,9 +92,9 @@ else if ($gameinfo['hasstarted'])
 $html .= "<tr><td>";
 
 $html .= "<tr>
-<td><input class='input' name='home' value='". $gameinfo['homescore'] ."' maxlength='2' size='5'/></td>
+<td><input class='input' name='home' value='". $gameinfo['homescore'] ."' maxlength='4' size='5'/></td>
 <td> - </td>
-<td><input class='input' name='away' value='". $gameinfo['visitorscore'] ."' maxlength='2' size='5'/></td></tr>
+<td><input class='input' name='away' value='". $gameinfo['visitorscore'] ."' maxlength='4' size='5'/></td></tr>
 </table>";
 
 if($gameinfo['homevalid']==2) {

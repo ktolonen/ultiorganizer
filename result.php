@@ -103,11 +103,11 @@ if(!empty($_POST['save']) && !$errors) {
   $html .= "</td></tr><tr><td class='infocell'>\n";
   $html .= _("Home Goals").":";
   $html .= "</td><td>\n";
-  $html .= "<input class='input' type='text' id='home' name='home' size='3' maxlength='2' onkeyup='validNumber(this);'/> ";
+  $html .= "<input class='input' type='text' id='home' name='home' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
   $html .= "</td></tr><tr><td class='infocell'>\n";
   $html .= _("Away Goals").":";
   $html .= "</td><td>\n";
-  $html .= "<input class='input' type='text' id='away' name='away' size='3' maxlength='2' onkeyup='validNumber(this);'/> ";
+  $html .= "<input class='input' type='text' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
   $html .= "</td></tr><tr><td style='padding-top:15px' colspan='2'>\n";
   $html .= "<input style='width:100%;' class='button' type='submit' name='save' value='"._("Save")."'/>";
   $html .= "</td></tr>\n";

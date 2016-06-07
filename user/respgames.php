@@ -118,28 +118,28 @@ foreach ($respGameArray as $tournament => $resArray) {
       if (!is_numeric($gameId)) {
         continue;
       }
-      $html .= "<tr><td style='width:6%'>". DefHourFormat($game['time']) ."</td>";
+      $html .= "<tr><td >". DefHourFormat($game['time']) ."</td>";
       if($game['hometeam'] && $game['visitorteam']){
-        $html .= "<td style='width:20%'>". utf8entities($game['hometeamname']) ."</td><td style='width:2%'>-</td><td style='width:20%'>". utf8entities($game['visitorteamname']) ."</td>";
+        $html .= "<td style='width:20%' >". utf8entities($game['hometeamname']) ."</td><td >-</td><td style='width:20%'>". utf8entities($game['visitorteamname']) ."</td>";
       }else{
-        $html .= "<td style='width:20%'>". utf8entities($game['phometeamname']) ."</td><td style='width:2%'>-</td><td style='width:20%'>". utf8entities($game['pvisitorteamname']) ."</td>";
+        $html .= "<td style='width:20%'>". utf8entities($game['phometeamname']) ."</td><td >-</td><td style='width:20%'>". utf8entities($game['pvisitorteamname']) ."</td>";
       }
       
       if ($_SESSION['massinput']) {
-      	$html .= "<td colspan='3'  style='width:18%'>
+      	$html .= "<td colspan='3' style='white-space: nowrap'>
       		<input type='hidden' id='scoreId" . $gameId . "' name='scoreId[]' value='$gameId'/>
-      		<input type='text' size='3' maxlength='5' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' onkeypress='ChgResult(" . $gameId . ")'/> - 
-      		<input type='text' size='3' maxlength='5' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' onkeypress='ChgResult(" . $gameId . ")'/></td>";
+      		<input type='text' style='width:5ex' size='2' maxlength='3' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' onkeypress='ChgResult(" . $gameId . ")'/> 
+      		<input type='text' style='width:5ex' size='2' maxlength='3' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' onkeypress='ChgResult(" . $gameId . ")'/></td>";
       } else {
-      	$html .= "<td style='width:8%'>". intval($game['homescore']) ."</td><td style='width:2%'>-</td><td style='width:8%'>". intval($game['visitorscore']) ."</td>";
+      	$html .= "<td >". intval($game['homescore']) ."</td><td >-</td><td >". intval($game['visitorscore']) ."</td>";
       }
       if (intval($game['hasstarted'])>0) {
-        $html .= "<td style='width:9%'><a href='?view=gameplay&amp;game=". $game['game_id'] ."'>"._("Game play")."</a></td>";
+        $html .= "<td ><a href='?view=gameplay&amp;game=". $game['game_id'] ."'>"._("Game play")."</a></td>";
       } else {
-        $html .= "<td style='width:9%'></td>";
+        $html .= "<td ></td>";
       }
       if($game['hometeam'] && $game['visitorteam']){
-        $html .= "<td style='white-space: nowrap' class='right'><a href='?view=user/addresult&amp;game=".$gameId."'>"._("Result")."</a> | ";
+        $html .= "<td class='right'><a href='?view=user/addresult&amp;game=".$gameId."'>"._("Result")."</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Players")."</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>"._("Scoresheet")."</a>";
         if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){

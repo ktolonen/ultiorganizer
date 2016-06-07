@@ -41,7 +41,7 @@ $html .= "<label for='home'>".utf8entities($result['hometeamname']).":</label>";
 
 $html .= "<div class='ui-grid-b'>";
 $html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' id='home' name='home' value='". intval($result['homescore']) ."' maxlength='2' size='5'/>";
+$html .= "<input type='number' id='home' name='home' value='". intval($result['homescore']) ."' maxlength='4' size='5'/>";
 $html .= "</div>";
 $html .= "<div class='ui-block-b'>\n";
 $html .= "<a href='#' data-role='button' id='homeplus' data-icon='plus'>+1</a>";
@@ -54,7 +54,7 @@ $html .= "</div>";
 $html .= "<label for='away'>".utf8entities($result['visitorteamname']).":</label>";
 $html .= "<div class='ui-grid-b'>";
 $html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' id='away' name='away' value='". intval($result['visitorscore']) ."' maxlength='2' size='5'/>";
+$html .= "<input type='number' id='away' name='away' value='". intval($result['visitorscore']) ."' maxlength='4' size='5'/>";
 $html .= "</div>";
 $html .= "<div class='ui-block-b'>\n";
 $html .= "<a href='#' data-role='button' id='awayplus' data-icon='plus'>+1</a>";

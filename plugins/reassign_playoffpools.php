@@ -82,7 +82,7 @@ if (!empty($_POST['series'])) {
 			}
 			
 			if ($PlayoffOK==-1) {
-				$html .= "<p><b>Warning:</b> You are about to move an odd number of teams which might result in one of the teams having another BYE.</p>\n";
+				$html .= "<p><b>Warning:</b> You are about to move an odd number of teams, which might result in one of the teams having another BYE.</p>\n";
 			}
 					
 			$html .= "<p>"._("Games to move").":</p>\n";

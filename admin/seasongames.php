@@ -201,7 +201,7 @@ foreach ($pools as $pool) {
     
     // $html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
     if ($_SESSION['massinput']) {
-      $html .= "<td colspan='2'  style='width:220px'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/><input type='text' size='3' maxlength='5' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' onkeypress='ChgResult(" . $i . ")'/> - <input type='text' size='3' maxlength='5' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' onkeypress='ChgResult(" . $i . ")'/></td>";
+      $html .= "<td colspan='2'  style='width:220px'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/><input type='text' size='3' maxlength='4' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' onkeypress='ChgResult(" . $i . ")'/> - <input type='text' size='3' maxlength='5' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' onkeypress='ChgResult(" . $i . ")'/></td>";
     }else {
       if (GameHasStarted($game)) {
         if ($game['isongoing'])

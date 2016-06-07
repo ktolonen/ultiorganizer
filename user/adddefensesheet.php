@@ -301,8 +301,8 @@ if($seasoninfo['spiritpoints']){
 	echo "<table cellspacing='0' width='100%' border='1'>\n";
 	echo "<tr><th colspan='2'>"._("Spirit points")."</th></tr>";
 	echo "<tr><td class='center' style='width:50%;'>". utf8entities($game_result['hometeamname']) ."</td><td class='center' style='width:50%;'>". utf8entities($game_result['visitorteamname']) ."</td></tr>";
-	echo "<tr><td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validTime(this);\" name='homespirit' id='homespirit' value='".intval($game_result['homesotg'])."'/></td>";
-	echo "<td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validTime(this);\" name='awayspirit' id='awayspirit' value='".intval($game_result['visitorsotg'])."'/></td></tr>";
+	echo "<tr><td class='center'><input class='input' maxlength='3' size='8' type='text' onkeyup=\"validTime(this);\" name='homespirit' id='homespirit' value='".intval($game_result['homesotg'])."'/></td>";
+	echo "<td class='center'><input class='input' maxlength='3' size='8' type='text' onkeyup=\"validTime(this);\" name='awayspirit' id='awayspirit' value='".intval($game_result['visitorsotg'])."'/></td></tr>";
 	echo "</table>\n";
 }
 
@@ -417,7 +417,7 @@ while($row = mysql_fetch_assoc($scores))
 	if($n < 0)
 		$n="";
 		
-	echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' maxlength='2' size='3' value='$n'/></td>";
+	echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' maxlength='3' size='3' value='$n'/></td>";
 	if (intval($row['iscaught']))
 		{
 		echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' checked='checked' value='C' /></td>";
@@ -453,7 +453,7 @@ for($i;$i<$maxdefenses; $i++)
 	echo "<td class='center' style='width:25px;color:#B0B0B0;'>",$i+1,"</td>\n";
 	echo "<td class='center' style='width:40px;$style_left'><input id='hteam$i' name='team$i' type='radio' value='H' /></td>";
 	echo "<td class='center' style='width:40px;$style_mid'><input id='ateam$i' name='team$i' type='radio' value='A' /></td>";			
-	echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' size='3' maxlength='2'/></td>";
+	echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' size='3' maxlength='3'/></td>";
 	echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' value='C' /></td>";
 	echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' value='T' /></td>";
 	echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio'  value='L' /></td>";

@@ -195,13 +195,13 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
     echo "<td class='center'>".intval($row['fromplacing'])."</td>";
     echo "<td>".utf8entities(PoolName($poolId))."</td>";
     echo "<td class='center'>".intval($row['torank'])."</td>";
-    if(intval($poolinfo['mvgames'])==0)
-    echo "<td>"._("all")."</td>";
-    else if(intval($poolinfo['mvgames'])==1)
-    echo "<td>"._("nothing")."</td>";
-    else if(intval($poolinfo['mvgames'])==2)
-    echo "<td>"._("mutual")."</td>";
-    echo "<td>".utf8entities(U_($row['sname']))."</td>";
+    if (intval($poolinfo['mvgames']) == 0)
+      echo "<td>" . _("all") . "</td>";
+    else if (intval($poolinfo['mvgames']) == 1)
+      echo "<td>" . _("nothing") . "</td>";
+    else if (intval($poolinfo['mvgames']) == 2)
+      echo "<td>" . _("mutual") . "</td>";
+    echo "<td>" . utf8entities(U_($row['sname'])) . "</td>";
     echo "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['frompool'].",".$row['fromplacing'].");\"/></td>";
     echo "</tr>\n";
   }
@@ -230,8 +230,8 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
       }
     }
     echo "</select></td>\n";
-    echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='2' size='3' value='' onkeyup=\"checkMove('frompool$i','movefrom$i','moveto$i','pteamname$i');\"/></td>\n";
-    echo "<td><input class='input' id='moveto$i' name='moveto$i' disabled='disabled' maxlength='2' size='3' value='".($i+1)."'/></td>\n";
+    echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='3' size='3' value='' onkeyup=\"checkMove('frompool$i','movefrom$i','moveto$i','pteamname$i');\"/></td>\n";
+    echo "<td><input class='input' id='moveto$i' name='moveto$i' disabled='disabled' maxlength='3' size='3' value='".($i+1)."'/></td>\n";
     //echo "<td><input class='input' id='pteamname$i' name='pteamname$i' size='50' maxlength='100' value=''/>\n";
     echo "<td>".TranslatedField("pteamname$i","");
 
@@ -314,7 +314,7 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
       }
     }
     echo "</select></td>\n";
-    echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='2' size='2' value='' onkeyup=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\"/></td>\n";
+    echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='3' size='3' value='' onkeyup=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\"/></td>\n";
     echo "<td>".TranslatedField("pteamname$i","");
     echo TranslationScript("pteamname$i");
     echo "</td>";
@@ -334,7 +334,7 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
       }
     }
     echo "</select></td>\n";
-    echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='2' size='2' value='' onkeyup=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\"/></td>\n";
+    echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='3' size='3' value='' onkeyup=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\"/></td>\n";
     echo "<td>".TranslatedField("pteamname$i","");
     echo TranslationScript("pteamname$i");
     echo "</td>";
