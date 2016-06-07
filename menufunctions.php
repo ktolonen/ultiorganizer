@@ -465,14 +465,14 @@ function leftMenu($id=0, $printable=false) {
 
   if (hasScheduleRights() || isSuperAdmin() || hasTranslationRight()) {
     echo "</td></tr>\n";
-    echo "</tablet>\n";
+    echo "</table>\n";
   }
 
   //Event administration menu
   $editlinks = getEditSeasonLinks();
   if (count($editlinks)) {
-    echo "<table class='leftmenulinks'>\n";
     foreach ($editlinks as $season => $links) {
+      echo "<table class='leftmenulinks'>\n";
       echo "<tr><td class='menuseasonlevel'>".utf8entities(SeasonName($season))." "._("Administration")."</td>";
       echo "<td class='menuseasonlevel'><a style='text-decoration: none;' href='?view=frontpage&amp;hideseason=$season'>x</a></td>";
       echo "</tr><tr><td>\n";
@@ -480,7 +480,7 @@ function leftMenu($id=0, $printable=false) {
         echo "<a class='subnav' href='".$href."'>&raquo; ".$name."</a>\n";
       }
       echo "</td></tr>\n";
-      echo "</tablet>\n";
+      echo "</table>\n";
     }
   }
 
@@ -492,7 +492,7 @@ function leftMenu($id=0, $printable=false) {
     echo "<tr><td>\n";
     echo "<a class='subnav' href='?view=admin/addseasons'>&raquo; "._("Create new event")."</a>\n";
     echo "</td></tr>\n";
-    echo "</tablet>\n";
+    echo "</table>\n";
   }
 
   //Team registration
@@ -519,7 +519,7 @@ function leftMenu($id=0, $printable=false) {
       echo "<a class='subnav' href='?view=user/playerprofile&amp;profile=".$playerInfo['profile_id']."'>&raquo; ".$playerInfo['firstname']." ".$playerInfo['lastname']."</a>\n";
     }
     echo "</td></tr>";
-    echo "</tablet>\n";
+    echo "</table>\n";
   }
 
   //event public part: schedule, played games, teams, divisions, pools...
