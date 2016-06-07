@@ -193,7 +193,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 			
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
-			// TODO undo moves, uo_team_pool.activerank
+			// TODO undo moves, uo_team_pool.activerank, special ranks, ...
 	}
 }
 
@@ -215,7 +215,8 @@ if(empty($seasonId)){
 	
 	$html .= "<p>".("Select pools to play").":</p>\n";
 	$html .= "<table>";
-	$html .= "<tr><th><input type='checkbox' onclick='checkAll(\"tables\");'/></th>";
+	$html .= "<tr><th class='left'><input type='checkbox' onclick='checkAll(\"tables\");'/>";
+	$html .= "<input type='image' src='images/remove.png' name='clearall' alt='"._("X")."' onclick='clearAll(\"tables\"); return false;'/></th>";
 	$html .= "<th>".("Pool")."</th>";
 	$html .= "<th>".("Series")."</th>";
 	$html .= "<th>".("Teams")."</th>";
@@ -230,9 +231,9 @@ if(empty($seasonId)){
 			$html .= "<tr>";
 			if(PoolTotalPlayedGames($pool['pool_id']) < count(PoolGames($pool['pool_id']))
 				&& PoolIsMoveFromPoolsPlayed($pool['pool_id'])){
-				$html .= "<td class='center'><input type='checkbox' checked='checked' name='pools[]' value='".$pool['pool_id']."' /></td>";				
+				$html .= "<td class='left'><input type='checkbox' checked='checked' name='pools[]' value='".$pool['pool_id']."' /></td>";				
 			}else{
-				$html .= "<td class='center'><input type='checkbox' name='pools[]' value='".$pool['pool_id']."' /></td>";
+				$html .= "<td class='left'><input type='checkbox' name='pools[]' value='".$pool['pool_id']."' /></td>";
 			}
 			$html .= "<td>". $pool['name'] ."</td>";
 			$html .= "<td>". $row['name'] ."</td>";

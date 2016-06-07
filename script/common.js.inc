@@ -10,6 +10,16 @@ function checkAll(field)
 		}
 	}
 
+function clearAll(field)
+{
+	var form = document.getElementById(field);
+	 
+	for (var i=1; i < form.elements.length; i++) 
+	{
+	 form.elements[i].checked = false;
+	}
+}
+
 function setId(id) 
 	{
 	var input = document.getElementById("hiddenDeleteId");
