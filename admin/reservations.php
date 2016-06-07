@@ -109,7 +109,7 @@ if(empty($season)){
   $html .= "<th>"._("Scoresheets")."</th><th></th></tr>\n";
   foreach($reservations as $reservation) {
     $row = ReservationInfo($reservation['id']);
-    $html  .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='".$row['id']."'/></td>";
+    $html  .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='".utf8entities($row['id'])."'/></td>";
     $html  .= "<td>".utf8entities(U_($row['reservationgroup']))."</td>";
     $html  .= "<td><a href='?view=admin/addreservation&amp;reservation=".$row['id']."&amp;season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
     $html  .= "<td>".DefWeekDateFormat($row['starttime'])."</td>";
@@ -137,8 +137,8 @@ if(empty($season)){
   $html .= "<p>"._("Minimum times (in minutes) to move between fields")."</p>\n";
   $i=0; 
   foreach ($locations as $location) {
-    $html .= "<input type='hidden' id='loc$i' name='loc[]' value='".$location['location']."'/>";
-    $html .= "<input type='hidden' id='field$i' name='field[]' value='".$location['fieldname']."'/>";
+    $html .= "<input type='hidden' id='loc$i' name='loc[]' value='".utf8entities($location['location'])."'/>";
+    $html .= "<input type='hidden' id='field$i' name='field[]' value='".utf8entities($location['fieldname'])."'/>";
     $html .= "<p>".$i.": ".$location['name']." "._("Field")." ".$location['fieldname']."</p>\n";
     $i++;
   }

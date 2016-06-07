@@ -181,7 +181,7 @@ foreach ($pools as $pool) {
     
     // $html .= "<td class='left' style='width:10%'>";
     // $html .= "<input type='hidden' id='gamenameEdited".$i."' name='gamenameEdited[]' value='no'/>\n";
-    // $html .= "<input type='hidden' name='gameId[]' value='".$game['game_id']."'/>\n";
+    // $html .= "<input type='hidden' name='gameId[]' value='".utf8_entities($game['game_id'])."'/>\n";
     // $html .= "<input type='text' size='10' maxlength='50' value='".utf8entities(U_($game['gamename']))."' name='gn$i' onkeypress='ChgName(".$i.")'/>";
     // $html .= "</td>";
     
@@ -296,7 +296,7 @@ while($game = mysql_fetch_assoc($games)){
 		
 		$html .= "<td class='left'>";
 		$html .= "<input type='hidden' id='gamenameEdited".$i."' name='gamenameEdited[]' value='no'/>\n";
-		$html .= "<input type='hidden' name='gameId[]' value='".$game['game_id']."'/>\n";
+		$html .= "<input type='hidden' name='gameId[]' value='".utf8entities($game['game_id'])."'/>\n";
 		$html .= "<input type='text' size='15' maxlength='50' value='".utf8entities(U_($game['gamename']))."' name='gn$i' onkeypress='ChgName(".$i.")'/>";
 		$html .= "</td>";
 				
@@ -344,7 +344,7 @@ if($group=="unscheduled"){
 			$html .= "<tr>";
     		$html .= "<td class='left'>";
     		$html .= "<input type='hidden' id='gamenameEdited".$i."' name='gamenameEdited[]' value='no'/>\n";
-    		$html .= "<input type='hidden' name='gameId[]' value='".$game['game_id']."'/>\n";
+    		$html .= "<input type='hidden' name='gameId[]' value='".utf8entities($game['game_id'])."'/>\n";
     		$html .= "<input type='text' size='15' maxlength='50' value='".utf8entities(U_($game['gamename']))."' name='gn$i' onkeypress='ChgName(".$i.")'/>";
     		$html .= "</td>";
 		

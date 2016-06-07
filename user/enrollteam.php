@@ -126,7 +126,7 @@ foreach($result as $row) {
 		echo "</tr>\n";
 	}
 	echo "<tr><td>";
-	echo "<input type='hidden' name='index' value='".$hiddenIndex."'/>"; 
+	echo "<input type='hidden' name='index' value='".utf8entities($hiddenIndex)."'/>"; 
 	if(!intval($seasonInfo['isnationalteams'])){
 		echo "<input class='input' size='15' type='text' name='name".$hiddenIndex."'/></td>\n";
 		echo "<td><div id='orgAutocomplete".$hiddenIndex."' style='width:10em;padding-bottom:2em; margin-right:0.5em'><input class='input' size='15' type='text' id='club".$hiddenIndex."' name='clubname'/><div id='orgContainer".$hiddenIndex."'></div></div></td>";
@@ -143,7 +143,7 @@ foreach($result as $row) {
 	echo "<td>"._("Unconfirmed")."</td>";
 	echo "<td><input type='submit' name='add' value='"._("Add")."'/></td></tr>\n";
 	echo "</table>\n";
-	echo "<p><input type='hidden' name='series' value='".$row['series_id']."'/>";
+	echo "<p><input type='hidden' name='series' value='".utf8entities($row['series_id'])."'/>";
 	echo "<input type='hidden' id='deleteEnrollId".$hiddenIndex."' name='deleteEnrollId' value='0'/>";
 	echo "<input type='hidden' id='confirmEnrollId".$hiddenIndex."' name='confirmEnrollId' value='0'/></p>";
 	echo "</form>\n";

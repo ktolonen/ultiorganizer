@@ -37,9 +37,9 @@ $seasons = Seasons();
 		
 while($row = mysql_fetch_assoc($seasons)){
   if($row['season_id'] == $season)
-  	$html .= "<option class='dropdown' selected='selected' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+  	$html .= "<option class='dropdown' selected='selected' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
   else
-  	$html .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+  	$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
  }
 
 $html .= "</select></p>\n";

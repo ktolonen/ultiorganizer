@@ -56,7 +56,7 @@ function CountryDropList($id,$name){
 	$result =  DBQuery($query);
 	$html .= "<select class='dropdown' id='$id' name='$name'>\n";
 	while($row = mysql_fetch_assoc($result)){
-		$html .= "<option value='".$row['name']."'>".utf8entities(_($row['name']))."</option>\n";
+		$html .= "<option value='".utf8entities($row['name'])."'>".utf8entities(_($row['name']))."</option>\n";
 	}
 	$html .= "</select>\n";
 	return $html;
@@ -75,9 +75,9 @@ function CountryDropListWithValues($id, $name, $selectedId, $width=""){
 	
 	while($row = mysql_fetch_assoc($result)){
 		if($row['country_id']==$selectedId){
-			$html .= "<option selected='selected' value='". $row['country_id'] ."'>".utf8entities(_($row['name']))."</option>\n";
+			$html .= "<option selected='selected' value='".utf8entities($row['country_id'])."'>".utf8entities(_($row['name']))."</option>\n";
 		}else{
-		$html .= "<option value='". $row['country_id'] ."'>".utf8entities(_($row['name']))."</option>\n";
+		$html .= "<option value='".utf8entities($row['country_id'])."'>".utf8entities(_($row['name']))."</option>\n";
 		}
 	}
 	$html .= "</select>\n";

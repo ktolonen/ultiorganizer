@@ -49,9 +49,9 @@ foreach($categories as $category){
 	if($i>0 && ($i%4)==0)
 		$html .= "</tr>\n<tr>";
 	if(in_array($category,$categoryfilter))
-		$html .= "<td class='center'><input type='checkbox' checked='checked' name='category[]' value='".$category."' /></td>";
+		$html .= "<td class='center'><input type='checkbox' checked='checked' name='category[]' value='".utf8entities($category)."' /></td>";
 	else
-		$html .= "<td class='center'><input type='checkbox' name='category[]' value='".$category."' /></td>";
+		$html .= "<td class='center'><input type='checkbox' name='category[]' value='".utf8entities($category)."' /></td>";
 	$html .= "<td>".$category."</td>";
 	$i++;
 }

@@ -56,8 +56,8 @@ $i=0;
 foreach($teams as $team){
 
 	$html .= "<tr>";
-	$html .= "<td><input class='input' maxlength='3' size='2' name='seed$i' value='".$team['rank']."'/></td>";
-	$html .= "<td><input type='hidden' name='team$i' value='".$team['team_id']."'/>".utf8entities($team['name'])."</td>";
+	$html .= "<td><input class='input' maxlength='3' size='2' name='seed$i' value='".utf8entities($team['rank'])."'/></td>";
+	$html .= "<td><input type='hidden' name='team$i' value='".utf8entities($team['team_id'])."'/>".utf8entities($team['name'])."</td>";
 	if(!intval($seasonInfo['isnationalteams'])){		
 		$html .= "<td>".utf8entities($team['clubname'])."</td>";
 	}

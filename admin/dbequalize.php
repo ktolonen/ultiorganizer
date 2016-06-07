@@ -113,7 +113,7 @@ if($filter == 'clubs'){
 	$html .=  "<select class='dropdown' name='newname'>";
 	$clubs = ClubList();
 	while($row = mysql_fetch_assoc($clubs)){
-	$html .= "<option class='dropdown' value='". $row['club_id'] . "'>". $row['name'] ."</option>";
+	$html .= "<option class='dropdown' value='".utf8entities($row['club_id'])."'>". utf8entities($row['name']) ."</option>";
 	}
 	$html .=  "</select></p>";
 	$html .= "<p><input class='button' type='submit' name='rename' value='"._("Join selected")."'/>";	
@@ -146,7 +146,7 @@ if($filter == 'teams'){
 			$html .= "<tr>";
 		}
 		
-		$html .= "<td><input type='checkbox' name='ids[]' value='".$team['team_id']."'/></td>";
+		$html .= "<td><input type='checkbox' name='ids[]' value='".utf8entities($team['team_id'])."'/></td>";
 		$html .= "<td><b>".utf8entities($team['name'])."</b></td>";
 		$html .= "<td>".utf8entities($team['seriesname'])."</td>";
 		$html .= "<td>".utf8entities($team['clubname'])."</td>";		
@@ -168,7 +168,7 @@ if($filter == 'teams'){
 			$html .= "<tr>";
 		}
 		
-		$html .= "<td><input type='checkbox' name='ids[]' value='".$club['club_id']."'/></td>";
+		$html .= "<td><input type='checkbox' name='ids[]' value='".utf8entities($club['club_id'])."'/></td>";
 		$html .= "<td><b>".utf8entities($club['name'])."</b></td>";
 		$html .= "<td class='center'>".ClubNumOfTeams($club['club_id'])."</td>";
 		$html .= "</tr>\n";
@@ -187,7 +187,7 @@ if($filter == 'teams'){
 			$html .= "<tr>";
 		}
 		
-		$html .= "<td><input type='checkbox' name='ids[]' value='".$pool['pool_id']."'/></td>";
+		$html .= "<td><input type='checkbox' name='ids[]' value='".utf8entities($pool['pool_id'])."'/></td>";
 		$html .= "<td><b>".utf8entities($pool['name'])."</b></td>";
 		$html .= "<td>".utf8entities($pool['seriesname'])."</td>";
 		$html .= "<td>".utf8entities($pool['seasonname'])."</td>";
@@ -207,7 +207,7 @@ if($filter == 'teams'){
 			$html .= "<tr>";
 		}
 		
-		$html .= "<td><input type='checkbox' name='ids[]' value='".$row['series_id']."'/></td>";
+		$html .= "<td><input type='checkbox' name='ids[]' value='".utf8entities($row['series_id'])."'/></td>";
 		$html .= "<td><b>".utf8entities($row['name'])."</b></td>";
 		$html .= "<td>".utf8entities($row['seasonname'])."</td>";
 		$html .= "</tr>\n";

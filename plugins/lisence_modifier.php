@@ -58,7 +58,7 @@ if($accId>0){
   for ($i=0; $i < $total; $i++) {
       $html .= "<tr>";
       $html .="<td>".utf8entities($columns[$i])."</td>";
-      $html .="<td><input class='input' name='".$columns[$i]."' value='".$values[$i]."'/></td>";
+      $html .="<td><input class='input' name='".$columns[$i]."' value='".utf8entities($values[$i])."'/></td>";
       $html .= "</tr>";
   }
   $html .= "</table>";

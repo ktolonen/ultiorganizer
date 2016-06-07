@@ -410,7 +410,7 @@ function seasonSelection(){
       if (isset($_SESSION['userproperties']['selseason']) && $_SESSION['userproperties']['selseason']==$row['season_id']) {
         $selected = "selected='selected'";
       }
-      echo  "<option class='dropdown' $selected value='". $row['season_id'] ."'>". SeasonName($row['season_id']) ."</option>";
+      echo  "<option class='dropdown' $selected value='".utf8entities($row['season_id'])."'>". SeasonName($row['season_id']) ."</option>";
     }
     echo "</select>";
     echo "<noscript><div><input type='submit' value='"._("Go")."' name='selectseason'/></div></noscript>";

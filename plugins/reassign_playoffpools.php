@@ -103,14 +103,14 @@ if (!empty($_POST['series'])) {
 	$html .= "<p>".("Select first pool to swap").": <select class='dropdown' name='swap1'>\n";	
 	foreach($moveablepools as $pool){
 		debugvar($pool);
-		$html .= "<option class='dropdown' value='". $pool['pool_id'] . "'>". utf8entities($pool['name']) . "</option>\n";
+		$html .= "<option class='dropdown' value='".utf8entities($pool['pool_id'])."'>". utf8entities($pool['name']) . "</option>\n";
 	}			
 	$html .= "</select>\n";
 	
 	$html .= "<p>".("Select neighboring pool to swap with").": <select class='dropdown' name='swap2'>\n";	
 	foreach($moveablepools as $pool){
 		debugvar($pool);
-		$html .= "<option class='dropdown' value='". $pool['pool_id'] . "'>". utf8entities($pool['name']) . "</option>\n";
+		$html .= "<option class='dropdown' value='".utf8entities($pool['pool_id'])."'>". utf8entities($pool['name']) . "</option>\n";
 	}			
 	$html .= "</select></p>\n";
 	
@@ -245,7 +245,7 @@ else{
 	$series = Series();
 			
 	while($row = mysql_fetch_assoc($series)){
-		$html .= "<option class='dropdown' value='". $row['series_id'] . "'>". utf8entities($row['seasonname']) . " " . utf8entities($row['name']) ."</option>";
+		$html .= "<option class='dropdown' value='".utf8entities($row['series_id'])."'>". utf8entities($row['seasonname']) . " " . utf8entities($row['name']) ."</option>";
 	}
 	
 	$html .= "</select></p>\n";

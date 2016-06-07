@@ -99,7 +99,7 @@ if($view=="acclog"){
         echo "<td>".utf8entities($row['teamname'])."</td>";
         echo "<td>".utf8entities(GameName($row))."</td>";
         echo "<td style='text-align:center'><input type='checkbox' name='acknowledged[]' ";
-        echo "value='".$row['player_id']."_".$row['game_id']."'/></td></tr>\n";
+        echo "value='".utf8entities($row['player_id'])."_".$row['game_id']."'/></td></tr>\n";
       } else {
         $acknowledged[] = $row;
       }

@@ -69,9 +69,9 @@ while($row = mysql_fetch_assoc($seasons))
 	{
 	
 	if($row['season_id'] == $season)
-		$selector .= "<option class='dropdown' selected='selected' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+		$selector .= "<option class='dropdown' selected='selected' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 	else
-		$selector .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+		$selector .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 	}
 
 $selector .= "</select></p>\n";
@@ -87,9 +87,9 @@ foreach($tours as $row)
 		$seltournament=$row['reservationgroup'];
 		
 	if($row['reservationgroup'] == $seltournament)
-		$selector .= "<option class='dropdown' selected='selected' value='". $row['reservationgroup'] . "'>". $row['reservationgroup'] ."</option>";
+		$selector .= "<option class='dropdown' selected='selected' value='".utf8entities($row['reservationgroup'])."'>". utf8entities($row['reservationgroup']) ."</option>";
 	else
-		$selector .= "<option class='dropdown' value='". $row['reservationgroup'] . "'>". $row['reservationgroup'] ."</option>";
+		$selector .= "<option class='dropdown' value='".utf8entities($row['reservationgroup'])."'>". utf8entities($row['reservationgroup']) ."</option>";
 	}
 	
 $selector .="</select></p>\n";
@@ -106,9 +106,9 @@ if(!empty($season)){
 			$selseries=$row['series_id'];
 			
 		if($row['series_id'] == $selseries)
-			$selector .= "<option class='dropdown' selected='selected' value='". $row['series_id'] . "'>". utf8entities($row['name']) ."</option>";
+			$selector .= "<option class='dropdown' selected='selected' value='".utf8entities($row['series_id'])."'>". utf8entities($row['name']) ."</option>";
 		else
-			$selector .= "<option class='dropdown' value='". $row['series_id'] . "'>". utf8entities($row['name']) ."</option>";
+			$selector .= "<option class='dropdown' value='".utf8entities($row['series_id'])."'>". utf8entities($row['name']) ."</option>";
 		}
 	$selector .= "</select></p>\n";
 	
@@ -127,9 +127,9 @@ if(!empty($selseries)){
 			$selpool=$row['pool_id'];
 			
 		if($row['pool_id'] == $selpool)
-			$selector .= "<option class='dropdown' selected='selected' value='". $row['pool_id'] . "'>". utf8entities($row['name']) ."</option>";
+			$selector .= "<option class='dropdown' selected='selected' value='".utf8entities($row['pool_id'])."'>". utf8entities($row['name']) ."</option>";
 		else
-			$selector .= "<option class='dropdown' value='". $row['pool_id'] . "'>". utf8entities($row['name']) ."</option>";
+			$selector .= "<option class='dropdown' value='".utf8entities($row['pool_id'])."'>". utf8entities($row['name']) ."</option>";
 		}
 
 	$selector .= "</select></p>\n";
@@ -145,9 +145,9 @@ if(!empty($selseries)){
 			$selteam=$row['team_id'];
 		
 		if($row['team_id'] == $selteam)
-			$selector .= "<option class='dropdown' selected='selected' value='". $row['team_id'] . "'>". utf8entities($row['name']) ."</option>";
+			$selector .= "<option class='dropdown' selected='selected' value='".utf8entities($row['team_id'])."'>". utf8entities($row['name']) ."</option>";
 		else
-			$selector .= "<option class='dropdown' value='". $row['team_id'] . "'>". utf8entities($row['name']) ."</option>";
+			$selector .= "<option class='dropdown' value='".utf8entities($row['team_id'])."'>". utf8entities($row['name']) ."</option>";
 		}
 	$selector .= "</select></p>\n";
 }

@@ -66,7 +66,7 @@ foreach($admins as $user){
   $html .= "<tr>";
   $html .= "<td style='width:175px'>".utf8entities(U_($teaminfo['seriesname'])).", ".utf8entities(U_($teaminfo['name']))."</td>\n";
   $html .= "<td style='width:75px'>".$user['userid']."</td><td>". utf8entities($user['name'])." (<a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>)</td>";
-  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.teamadmin.delId.value='".$user['userid']."';document.teamadmin.teamId.value='".$user['team_id']."';\"/></td>";
+  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.teamadmin.delId.value='".utf8entities($user['userid'])."';document.teamadmin.teamId.value='".utf8entities($user['team_id'])."';\"/></td>";
   $html .= "</tr>\n";
 }
 $html .= "</table>";
@@ -86,7 +86,7 @@ $html .= "</table>";
 $html .= "<p><a href='?view=admin/adduser&amp;season=".$seriesinfo['season']."'>"._("Add new user")."</a></p>";
 $html .= "<p>";
 $html .= "<input class='button' name='add' type='submit' value='"._("Grant rights")."'/>";
-$html .= "<input class='button' type='button' value='"._("Return")."' onclick=\"window.location.href='$backurl'\"></p>";
+$html .= "<input class='button' type='button' value='"._("Return")."' onclick=\"window.location.href='$backurl'\" /></p>";
 $html .= "</p>";  
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "<div><input type='hidden' name='teamId'/></div>";

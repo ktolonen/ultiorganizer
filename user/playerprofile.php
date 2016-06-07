@@ -174,10 +174,10 @@ $pp = array(
 	  $html .= "<tr><td class='infocell'>"._("License Id").":</td>";
 
 	  if(isSuperAdmin()){
-	    $html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='".$pp['accreditation_id']."'/></td>";
+	    $html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='".utf8entities($pp['accreditation_id'])."'/></td>";
 	  }else{
 	    $html .= "<td>".$pp['accreditation_id']."";
-	    $html .= "<input class='input' hidden='hidden' maxlength='10' size='10' name='accreditationId' value='".$pp['accreditation_id']."'/></td>";
+	    $html .= "<input class='input' hidden='hidden' maxlength='10' size='10' name='accreditationId' value='".utf8entities($pp['accreditation_id'])."'/></td>";
 	  }
 	  $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
 
@@ -203,31 +203,31 @@ $pp = array(
 	}
 
 	$html .= "<tr><td class='infocell'>"._("Jersey number").":</td>";
-	$html .= "<td><input class='input' maxlength='3' size='3' name='num' value='".$pp['num']."'/></td>";
+	$html .= "<td><input class='input' maxlength='3' size='3' name='num' value='".utf8entities($pp['num'])."'/></td>";
 	$html .= "<td class='center'><input type='checkbox' name='public[]' checked='checked' disabled='disabled' value=''/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("First name").":</td>";
-	$html .= "<td><input class='input' maxlength='40' size='40' name='firstname' value='".$pp['firstname']."'/></td>";
+	$html .= "<td><input class='input' maxlength='40' size='40' name='firstname' value='".utf8entities($pp['firstname'])."'/></td>";
 	$html .= "<td class='center'><input type='checkbox' name='public[]' checked='checked' disabled='disabled' value=''/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("Last name").":</td>";
-	$html .= "<td><input class='input' maxlength='40' size='40' name='lastname' value='".$pp['lastname']."'/></td>";
+	$html .= "<td><input class='input' maxlength='40' size='40' name='lastname' value='".utf8entities($pp['lastname'])."'/></td>";
 	$html .= "<td class='center'><input type='checkbox' name='public[]' checked='checked' disabled='disabled' value=''/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("Nickname").":</td>";
-	$html .= "<td><input class='input' maxlength='20' name='nickname' value='".$pp['nickname']."'/></td>";
+	$html .= "<td><input class='input' maxlength='20' name='nickname' value='".utf8entities($pp['nickname'])."'/></td>";
 	$html .= privacyselection("nickname",$publicfields);
 
 	$html .= "<tr><td class='infocell'>"._("E-mail").":</td>";
-	$html .= "<td><input class='input' size='50' maxlength='100' name='email' value='".$pp['email']."'/></td>";
+	$html .= "<td><input class='input' size='50' maxlength='100' name='email' value='".utf8entities($pp['email'])."'/></td>";
 	$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='email'/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Additional information").":</td>";
-	$html .= "<td><textarea class='input' rows='2' cols='70' name='info'>".$pp['info']."</textarea></td>";
+	$html .= "<td><textarea class='input' rows='2' cols='70' name='info'>".utf8entities($pp['info'])."</textarea></td>";
 	$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='info'/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("National membership number").":</td>";
-	$html .= "<td><input class='input' size='12' maxlength='10' name='national_id' id='national_id' value='".$pp['national_id']."'/></td>";
+	$html .= "<td><input class='input' size='12' maxlength='10' name='national_id' id='national_id' value='".utf8entities($pp['national_id'])."'/></td>";
 	$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("Gender").":</td>";
@@ -256,11 +256,11 @@ $pp = array(
 	$html .= privacyselection("birthdate",$publicfields);
 
 	$html .= "<tr><td class='infocell'>"._("Place of birth").":</td>";
-	$html .= "<td><input class='input' maxlength='20' name='birthplace' value='".$pp['birthplace']."'/></td>";
+	$html .= "<td><input class='input' maxlength='20' name='birthplace' value='".utf8entities($pp['birthplace'])."'/></td>";
 	$html .= privacyselection("birthplace",$publicfields);
 
 	$html .= "<tr><td class='infocell'>"._("Nationality").":</td>";
-	$html .= "<td><input class='input' maxlength='20' name='nationality' value='".$pp['nationality']."'/></td>";
+	$html .= "<td><input class='input' maxlength='20' name='nationality' value='".utf8entities($pp['nationality'])."'/></td>";
 	$html .= privacyselection("nationality",$publicfields);
 
 	$html .= "<tr><td class='infocell'>"._("Hand").":</td>";
@@ -278,23 +278,23 @@ $pp = array(
 	$html .= privacyselection("throwing_hand",$publicfields);
 
 	$html .= "<tr><td class='infocell'>"._("Height").":</td>";
-	$html .= "<td><input class='input' size='3' maxlength='10' name='height' value='".$pp['height']."'/> "._("cm")."</td>";
+	$html .= "<td><input class='input' size='3' maxlength='10' name='height' value='".utf8entities($pp['height'])."'/> "._("cm")."</td>";
 	$html .= privacyselection("height",$publicfields);
 
 	$html .= "<tr><td class='infocell'>"._("Weight").":</td>";
-	$html .= "<td><input class='input' size='3' maxlength='10' name='weight' value='".$pp['weight']."'/> "._("kg")."</td>";
+	$html .= "<td><input class='input' size='3' maxlength='10' name='weight' value='".utf8entities($pp['weight'])."'/> "._("kg")."</td>";
 	$html .= privacyselection("weight",$publicfields);
 
 	$html .= "<tr><td class='infocell'>"._("Field position/role").":</td>";
-	$html .= "<td><input class='input' size='50' maxlength='50' name='position' value='".$pp['position']."'/></td>";
+	$html .= "<td><input class='input' size='50' maxlength='50' name='position' value='".utf8entities($pp['position'])."'/></td>";
 	$html .= privacyselection("position",$publicfields);
 
 	$html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Description").":</td>";
-	$html .= "<td><textarea class='input' rows='10' cols='70' name='story'>".$pp['story']."</textarea> </td>";
+	$html .= "<td><textarea class='input' rows='10' cols='70' name='story'>".utf8entities($pp['story'])."</textarea> </td>";
 	$html .= privacyselection("story",$publicfields);
 
 	$html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Achievements").":</td>";
-	$html .= "<td><textarea class='input' rows='10' cols='70' name='achievements'>".$pp['achievements']."</textarea> </td>";
+	$html .= "<td><textarea class='input' rows='10' cols='70' name='achievements'>".utf8entities($pp['achievements'])."</textarea> </td>";
 	$html .= privacyselection("achievements",$publicfields);
 
 	$html .= "<tr><td class='infocell' colspan='2'>"._("Web pages (homepage, blogs, images, videos)").":</td>";
@@ -336,7 +336,7 @@ $pp = array(
 	  $html .= "<tr>";
 	  $html .= "<td><select class='dropdown' name='urltype$i'>\n";
 	  foreach($urltypes as $type){
-	    $html .= "<option value='".$type['type']."'>". $type['name'] ."</option>\n";
+	    $html .= "<option value='".utf8entities($type['type'])."'>". utf8entities($type['name']) ."</option>\n";
 	  }
 	  $html .= "</select></td>";
 	  $html .= "<td><input class='input' maxlength='500' size='40' name='url$i' value=''/></td>";
@@ -350,8 +350,8 @@ $pp = array(
 
 	$html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Current image").":</td>";
 	if(!empty($pp['profile_image'])){
-	  $html .= "<td><a href='".UPLOAD_DIR."players/".$player['profile_id']."/".$pp['profile_image']."'>";
-	  $html .= "<img src='".UPLOAD_DIR."players/".$player['profile_id']."/thumbs/".$pp['profile_image']."' alt='"._("Profile image")."'/></a></td>";
+	  $html .= "<td><a href='".UPLOAD_DIR."players/".$player['profile_id']."/".utf8entities($pp['profile_image'])."'>";
+	  $html .= "<img src='".UPLOAD_DIR."players/".$player['profile_id']."/thumbs/".utf8entities($pp['profile_image'])."' alt='"._("Profile image")."'/></a></td>";
 	  $html .= privacyselection("profile_image",$publicfields);
 
 	  $html .= "<tr><td></td><td class='infocell'></td>";

@@ -245,9 +245,9 @@ echo "<p><select class='dropdown' style='width:100%' name='eventfilter' onchange
 echo "<option class='dropdown' value=''>"._("Select event")."</option>";
 foreach($seasonfilter as $season){
   if($seasonId==$season['id']){
-    echo "<option class='dropdown' selected='selected' value='". $season['id'] . "'>". utf8entities($season['name']) ."</option>";
+    echo "<option class='dropdown' selected='selected' value='".utf8entities($season['id'])."'>". utf8entities($season['name']) ."</option>";
   }else{
-    echo "<option class='dropdown' value='". $season['id'] . "'>". utf8entities($season['name']) ."</option>";
+    echo "<option class='dropdown' value='".utf8entities($season['id'])."'>". utf8entities($season['name']) ."</option>";
   }
 }
 echo "</select><br/>\n";
@@ -259,9 +259,9 @@ echo "<select class='dropdown' $disabled style='width:100%' name='seriesfilter' 
 echo "<option class='dropdown' value='0'>"._("All divisions")."</option>";
 foreach($seriesfilter as $series){
   if($seriesId==$series['id']){
-    echo "<option class='dropdown' selected='selected' value='". $series['id'] . "'>". utf8entities($series['name']) ."</option>";
+    echo "<option class='dropdown' selected='selected' value='".utf8entities($series['id'])."'>". utf8entities($series['name']) ."</option>";
   }else{
-    echo "<option class='dropdown' value='". $series['id'] . "'>". utf8entities($series['name']) ."</option>";
+    echo "<option class='dropdown' value='".utf8entities($series['id'])."'>". utf8entities($series['name']) ."</option>";
   }
 }
 echo "</select><br/>\n";
@@ -273,9 +273,9 @@ echo "<select class='dropdown' $disabled style='width:100%' name='poolfilter' on
 echo "<option class='dropdown' value='0'>"._("All pools")."</option>";
 foreach($poolfilter as $pool){
   if($poolId==$pool['id']){
-    echo "<option class='dropdown' selected='selected' value='". $pool['id'] . "'>". utf8entities($pool['name']) ."</option>";
+    echo "<option class='dropdown' selected='selected' value='".utf8entities($pool['id'])."'>". utf8entities($pool['name']) ."</option>";
   }else{
-    echo "<option class='dropdown' value='". $pool['id'] . "'>". utf8entities($pool['name']) ."</option>";
+    echo "<option class='dropdown' value='".utf8entities($pool['id'])."'>". utf8entities($pool['name']) ."</option>";
   }
 }
 echo "</select></p>\n";

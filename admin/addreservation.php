@@ -170,22 +170,22 @@ $html = "<form method='post' action='?view=admin/addreservation&amp;season=".$se
 $html .= "<table>\n";
 
 $html .= "<tr><td>"._("Date")." ("._("dd.mm.yyyy")."):</td><td>";
-$html .= "<input type='text' class='input' name='date' id='date' value='".$res['date']."'/>&nbsp;\n";
+$html .= "<input type='text' class='input' name='date' id='date' value='".utf8entities($res['date'])."'/>&nbsp;\n";
 $html .= "<button type='button' class='button' id='showcal1'>
 		<img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>\n";
 $html .= "<tr><td></td><td><div id='calContainer1'></div></td></tr>\n";
 
 $html .= "<tr><td>"._("Start time")." ("._("hh:mm")."):</td><td>";
-$html .= "<input type='text' class='input' name='starttime' value='".$res['starttime']."'/>\n";
+$html .= "<input type='text' class='input' name='starttime' value='".utf8entities($res['starttime'])."'/>\n";
 $html .= "</td></tr>\n";
 
 $html .= "<tr><td>"._("End time")." ("._("hh:mm")."):</td><td>";
-$html .= "<input type='text' class='input' name='endtime' value='".$res['endtime']."'/>\n";
+$html .= "<input type='text' class='input' name='endtime' value='".utf8entities($res['endtime'])."'/>\n";
 $html .= "</td></tr>\n";
 
 /* Not yet supported
 $html .= "<tr><td>"._("Timeslots")." ("._("hh:mm,hh:mm")."):</td><td>";
-$html .= "<input type='text' class='input' size='32' maxlenght='100' name='timeslots' value='".$res['timeslots']."'/>\n";
+$html .= "<input type='text' class='input' size='32' maxlenght='100' name='timeslots' value='".utf8entities($res['timeslots'])."'/>\n";
 $html .= "</td></tr>\n";
 */
 
@@ -219,9 +219,9 @@ if(isSuperAdmin()){
 
   while($row = mysql_fetch_assoc($seasons)){
     if($res['season'] == $row['season_id'] || $season == $row['season_id']){
-      $html .= "<option class='dropdown' selected='selected' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+      $html .= "<option class='dropdown' selected='selected' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
     }else{
-      $html .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+      $html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
     }
   }
   $html .= "</select></p>\n";
@@ -230,10 +230,10 @@ if(isSuperAdmin()){
 
 $html .= "<tr><td>";
 
-$html .= "<input type='hidden'  name='location' id='location' value='".$res['location']."'/>";
+$html .= "<input type='hidden'  name='location' id='location' value='".utf8entities($res['location'])."'/>";
 
 if (!$addmore) {
-  $html .= "<input type='hidden' name='id' value='".$res['id']."'/>";
+  $html .= "<input type='hidden' name='id' value='".utf8entities($res['id'])."'/>";
   $html .= "<input type='submit' class='button' name='save' value='"._("Save")."'/>";
 } else {
   $html .= "<input type='submit' class='button' name='add' value='"._("Add")."'/>";

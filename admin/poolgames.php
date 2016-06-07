@@ -360,9 +360,9 @@ if(!$info['played']){
 	$teamlist = "";
 	foreach($teams as $row){
 		if($pseudoteams){
-			$teamlist .= "<option class='dropdown' value='". $row['scheduling_id'] . "'>". $row['name'] ."</option>";
+			$teamlist .= "<option class='dropdown' value='".utf8entities($row['scheduling_id'])."'>". utf8entities($row['name']) ."</option>";
 		}else{
-			$teamlist .= "<option class='dropdown' value='". $row['team_id'] . "'>". $row['name'] ."</option>";
+			$teamlist .= "<option class='dropdown' value='".utf8entities($row['team_id'])."'>". utf8entities($row['name']) ."</option>";
 		}
 		}
 	$html .= $teamlist;

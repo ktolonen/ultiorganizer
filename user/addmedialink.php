@@ -201,7 +201,7 @@ for($i=0;$i<$max_new_links;$i++){
 	}
 	$html .= "<td><select class='dropdown' name='urltype$i'>\n";
 	foreach($urltypes as $type){
-		$html .= "<option value='".$type['type']."'>". $type['name'] ."</option>\n";
+		$html .= "<option value='".utf8entities($type['type'])."'>". utf8entities($type['name']) ."</option>\n";
 	}
 	$html .= "</select></td>";
 	$html .= "<td><input class='input' maxlength='500' size='30' name='url$i' value=''/></td>";

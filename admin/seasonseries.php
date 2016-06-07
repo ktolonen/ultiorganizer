@@ -65,7 +65,7 @@ $last_rule_template = 0;
 foreach($series as $row){
   $id = $row['series_id'];
   $html .= "<tr  class='admintablerow'>";
-  $html .= "<td><input class='input' size='15' maxlength='50' name='name$id' value='".$row['name']."'/></td>";
+  $html .= "<td><input class='input' size='15' maxlength='50' name='name$id' value='".utf8entities($row['name'])."'/></td>";
   $html .= "<td><select class='dropdown' name='type$id'>\n";
 
   foreach($types as $type){
@@ -85,16 +85,16 @@ $templates = PoolTemplates();
 foreach($templates as $template) {
   
   if($row['pool_template']==$template['template_id']){
-    $html .=   "<option class='dropdown' selected='selected' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+    $html .=   "<option class='dropdown' selected='selected' value='".utf8entities($template['template_id'])."'>". utf8entities($template['name']) ."</option>";
     $last_rule_template = $template['template_id'];
   }else{
-    $html .=   "<option class='dropdown' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+    $html .=   "<option class='dropdown' value='".utf8entities($template['template_id'])."'>". utf8entities($template['name']) ."</option>";
   }
 }
 
 $html .=  "</select></td>";
 
-  $html .= "<td><input class='input' size='3' maxlength='1' name='ordering$id' value='".$row['ordering']."'/></td>";
+  $html .= "<td><input class='input' size='3' maxlength='1' name='ordering$id' value='".utf8entities($row['ordering'])."'/></td>";
   
   if(intval($row['valid'])){
     $html .= "<td class='center'><input class='input' type='checkbox' name='valid$id' checked='checked'/></td>";
@@ -137,9 +137,9 @@ $templates = PoolTemplates();
 
 foreach($templates as $template) {
   if($last_rule_template==$template['template_id']){
-      $html .=   "<option class='dropdown' selected='selected' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+      $html .=   "<option class='dropdown' selected='selected' value='".utf8entities($template['template_id'])."'>". utf8entities($template['name']) ."</option>";
   }else{ 
-     $html .=   "<option class='dropdown' value='". $template['template_id'] . "'>". utf8entities($template['name']) ."</option>";
+     $html .=   "<option class='dropdown' value='".utf8entities($template['template_id'])."'>". utf8entities($template['name']) ."</option>";
   }
 }
 

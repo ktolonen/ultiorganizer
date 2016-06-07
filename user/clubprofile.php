@@ -123,7 +123,7 @@ $op = array(
 	  $html .= "<p><input class='input' type='checkbox' id='valid' name='valid'/>";
 	  $html .= " "._("Show on club list")."</p>\n";
 	}elseif(intval($club['valid'])){
-	  $html .= "<div><input type='hidden' id='valid' name='valid' value='".$club['valid']."'/></div>";
+	  $html .= "<div><input type='hidden' id='valid' name='valid' value='".utf8entities($club['valid'])."'/></div>";
 	}
 	$html .= "<h1>". utf8entities($club['name'])."</h1>";
 
@@ -131,29 +131,29 @@ $op = array(
 
 	$html .= "<tr><td class='infocell'>"._("Name").":</td>";
 	if(isSuperAdmin() || hasEditTeamsRight($teaminfo['series'])){
-	  $html .= "<td><input class='input' maxlength='50' size='40' name='name' value='".$op['name']."'/></td></tr>\n";
+	  $html .= "<td><input class='input' maxlength='50' size='40' name='name' value='".utf8entities($op['name'])."'/></td></tr>\n";
 	}else{
-	  $html .= "<td><input class='input' maxlength='50' size='40' disabled='disabled' name='name' value='".$op['name']."'/></td></tr>\n";
+	  $html .= "<td><input class='input' maxlength='50' size='40' disabled='disabled' name='name' value='".utf8entities($op['name'])."'/></td></tr>\n";
 	}
 
 	$html .= "<tr><td class='infocell'>"._("Country").":</td>";
 	$html .= "<td>".CountryDropListWithValues("country","country",$op['country'])."</td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("City").":</td>";
-	$html .= "<td><input class='input' maxlength='100' size='40' name='city' value='".$op['city']."'/></td></tr>\n";
+	$html .= "<td><input class='input' maxlength='100' size='40' name='city' value='".utf8entities($op['city'])."'/></td></tr>\n";
 
 	$html .= "<tr><td class='infocell'>"._("Founded on year").":</td>";
-	$html .= "<td><input class='input' maxlength='4' size='5' name='founded' value='".$op['founded']."'/></td></tr>\n";
+	$html .= "<td><input class='input' maxlength='4' size='5' name='founded' value='".utf8entities($op['founded'])."'/></td></tr>\n";
 
 
 	$html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Contacts").":</td>";
-	$html .= "<td><textarea class='input' rows='10' cols='50' name='contacts'>".$op['contacts']."</textarea> </td></tr>\n";
+	$html .= "<td><textarea class='input' rows='10' cols='50' name='contacts'>".utf8entities($op['contacts'])."</textarea> </td></tr>\n";
 
 	$html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Description").":</td>";
-	$html .= "<td><textarea class='input' rows='10' cols='80' name='story'>".$op['story']."</textarea> </td></tr>\n";
+	$html .= "<td><textarea class='input' rows='10' cols='80' name='story'>".utf8entities($op['story'])."</textarea> </td></tr>\n";
 
 	$html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Achievements").":</td>";
-	$html .= "<td><textarea class='input' rows='10' cols='80' name='achievements'>".$op['achievements']."</textarea> </td></tr>\n";
+	$html .= "<td><textarea class='input' rows='10' cols='80' name='achievements'>".utf8entities($op['achievements'])."</textarea> </td></tr>\n";
 
 	$html .= "<tr><td class='infocell' colspan='2'>"._("Web pages (homepage, blogs, images, videos)").":</td></tr>";
 	$html .= "<tr><td colspan='2'>";
@@ -192,7 +192,7 @@ $op = array(
 	  $html .= "<tr>";
 	  $html .= "<td><select class='dropdown' name='urltype$i'>\n";
 	  foreach($urltypes as $type){
-	    $html .= "<option value='".$type['type']."'>". $type['name'] ."</option>\n";
+	    $html .= "<option value='".utf8entities($type['type'])."'>". utf8entities($type['name']) ."</option>\n";
 	  }
 	  $html .= "</select></td>";
 	  $html .= "<td><input class='input' maxlength='500' size='40' name='url$i' value=''/></td>";

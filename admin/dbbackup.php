@@ -102,7 +102,7 @@ if(isSuperAdmin()){
 	while($row = mysql_fetch_assoc($result)){
 	    if (substr($row['Name'],0,3) == 'uo_'){
     		$html .= "<tr>";
-    		$html .= "<td class='center'><input type='checkbox' name='tables[]' value='".$row['Name']."' /></td>";
+    		$html .= "<td class='center'><input type='checkbox' name='tables[]' value='".utf8entities($row['Name'])."' /></td>";
     		$html .= "<td>". $row['Name'] ."</td>";
     		$html .= "<td>". $row['Data_length'] ."</td>";
     		$html .= "<td>". $row['Index_length'] ."</td>";

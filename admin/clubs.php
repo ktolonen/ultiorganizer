@@ -64,9 +64,9 @@ while($row = mysql_fetch_assoc($clubs)){
 
 	$html .= "<td class='center'>".ClubNumOfTeams($row['club_id'])."</td>";
 	if(intval($row['valid'])){
-		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".$row['club_id']."' checked='checked'/></td>";
+		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".utf8entities($row['club_id'])."' checked='checked'/></td>";
 	}else{
-		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".$row['club_id']."'/></td>";
+		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".utf8entities($row['club_id'])."'/></td>";
 	}
 		
 	if(CanDeleteClub($row['club_id'])){
@@ -100,9 +100,9 @@ foreach($countries as $row){
 
 	$html .= "<td class='center'>".CountryNumOfTeams($row['country_id'])."</td>";
 	if(intval($row['valid'])){
-		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".$row['country_id']."' checked='checked'/></td>";
+		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".utf8entities($row['country_id'])."' checked='checked'/></td>";
 	}else{
-		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".$row['country_id']."'/></td>";
+		$html .= "<td class='center'><input class='input' type='checkbox' name='valid[]' value='".utf8entities($row['country_id'])."'/></td>";
 	}
 
 	if(CanDeleteCountry($row['country_id'])){

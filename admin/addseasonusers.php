@@ -66,7 +66,7 @@ $html .= "<table>";
 foreach($admins as $user){
   $html .= "<tr>";
   $html .= "<td style='width:75px'>".$user['userid']."</td><td>". utf8entities($user['name'])." (<a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>)</td>";
-  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.eventadmin.delId.value='".$user['userid']."';\"/></td>";
+  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.eventadmin.delId.value='".utf8entities($user['userid'])."';\"/></td>";
   $html .= "</tr>\n";
 }
 $html .= "</table>";
@@ -91,7 +91,7 @@ foreach($admins as $user){
   $teaminfo = TeamInfo($user['team_id']);
   $html .= "<td style='width:175px'>".utf8entities(U_($teaminfo['seriesname'])).", ".utf8entities(U_($teaminfo['name']))."</td>\n";
   $html .= "<td style='width:75px'>".$user['userid']."</td><td>". utf8entities($user['name'])." (<a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>)</td>";
-  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.teamadmin.delId.value='".$user['userid']."';document.teamadmin.teamId.value='".$user['team_id']."';\"/></td>";
+  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.teamadmin.delId.value='".utf8entities($user['userid'])."';document.teamadmin.teamId.value='".utf8entities($user['team_id'])."';\"/></td>";
   $html .= "</tr>\n";;
 }
 $html .= "</table>";
@@ -101,7 +101,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="teamadmin"){
   $teams = SeasonTeams($seasonId);
   $html .= "<select class='dropdown' name='team'>";
   foreach($teams as $team){
-    $html .= "<option class='dropdown' value='". $team['team_id'] ."'>". utf8entities(U_($team['seriesname'])).", ".utf8entities(U_($team['name'])) ."</option>";
+    $html .= "<option class='dropdown' value='".utf8entities($team['team_id'])."'>". utf8entities(U_($team['seriesname'])).", ".utf8entities(U_($team['name'])) ."</option>";
   }
   $html .= "</select>";
   
@@ -166,7 +166,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="gameadmin"){
   $reservations = SeasonReservations($seasonId);
   $html .= "<tr><td colspan='5'><select multiple='multiple' size='".count($reservations)."' name='reservations[]'>";
   foreach($reservations as $row){
-    $html .= "<option value='". $row['id'] . "'>";
+    $html .= "<option value='".utf8entities($row['id'])."'>";
     $html .= utf8entities($row['reservationgroup']) ." ". utf8entities($row['name']) .", "._("Field")." ".utf8entities($row['fieldname'])." (".JustDate($row['starttime']) .")";
     $html .= "</option>";
   }
@@ -197,7 +197,7 @@ foreach($admins as $user){
   $teaminfo = TeamInfo($user['team_id']);
   $html .= "<td style='width:175px'>".utf8entities(U_($teaminfo['seriesname'])).", ".utf8entities(U_($teaminfo['name']))."</td>\n";
   $html .= "<td style='width:75px'>".$user['userid']."</td><td>". utf8entities($user['name'])." (<a href='mailto:".utf8entities($user['email'])."'>".utf8entities($user['email'])."</a>)</td>";
-  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.accradmin.delId.value='".$user['userid']."';document.accradmin.teamId.value='".$user['team_id']."';\"/></td>";
+  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"document.accradmin.delId.value='".utf8entities($user['userid'])."';document.accradmin.teamId.value='".utf8entities($user['team_id'])."';\"/></td>";
   $html .= "</tr>\n";;
 }
 $html .= "</table>";
@@ -209,7 +209,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="accradmin"){
   $teams = SeasonTeams($seasonId);
   $html .= "<tr><td colspan='5'><select multiple='multiple' size='".count($teams)."' name='teams[]'>";
   foreach($teams as $team){
-    $html .= "<option value='". $team['team_id'] . "'>";
+    $html .= "<option value='".utf8entities($team['team_id'])."'>";
     $html .= utf8entities(U_($team['seriesname'])).", ".utf8entities(U_($team['name']));
     $html .= "</option>";
   }

@@ -62,7 +62,7 @@ $html .= "<p>".("Create field specific user accounts on select event").": <selec
 $seasons = Seasons();
 		
 while($row = mysql_fetch_assoc($seasons)){
-	$html .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+	$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 }
 
 $html .= "</select></p>\n";

@@ -116,9 +116,9 @@ $html .= "<option class='dropdown' selected='selected' value='0'></option>";
 
 foreach($teams as $team){
   if(isset($_POST['team']) && $team['team_id']==$_POST['team'])
-  $html .= "<option class='dropdown' selected='selected' value='". $team['team_id'] ."'>". utf8entities(U_($team['seriesname']))." ". utf8entities($team['name']) ."</option>";
+  $html .= "<option class='dropdown' selected='selected' value='".utf8entities($team['team_id'])."'>". utf8entities(U_($team['seriesname']))." ". utf8entities($team['name']) ."</option>";
   else
-  $html .= "<option class='dropdown' value='". $team['team_id'] ."'>". utf8entities(U_($team['seriesname']))." ". utf8entities($team['name']) ."</option>";
+  $html .= "<option class='dropdown' value='".utf8entities($team['team_id'])."'>". utf8entities(U_($team['seriesname']))." ". utf8entities($team['name']) ."</option>";
 }
 
 $html .= "</select></td></tr>";

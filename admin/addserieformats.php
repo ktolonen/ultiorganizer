@@ -115,40 +115,40 @@ $html .= "<table cellpadding='2'>
 			<td>".TranslatedField("name", $pp['name'], "150", "30")."</td><td></td></tr>\n";
 
 $html .= "<tr><td class='infocell'>"._("Game points").":</td>
-		<td><input class='input' id='gameto' name='gameto' value='".$pp['winningscore']."'/></td>
+		<td><input class='input' id='gameto' name='gameto' value='".utf8entities($pp['winningscore'])."'/></td>
 		<td></td></tr>
 		
 	<tr><td class='infocell'>"._("Half-time").":</td>
-		<td><input class='input' id='halftimelength' name='halftimelength' value='".$pp['halftime']."'/></td>
+		<td><input class='input' id='halftimelength' name='halftimelength' value='".utf8entities($pp['halftime'])."'/></td>
 		<td>"._("minutes")."</td></tr>		
 
 	<tr><td class='infocell'>"._("Half-time at point").":</td>
-		<td><input class='input' id='halftimepoint' name='halftimepoint' value='".$pp['halftimescore']."'/></td>
+		<td><input class='input' id='halftimepoint' name='halftimepoint' value='".utf8entities($pp['halftimescore'])."'/></td>
 		<td></td></tr>		
 		
 	<tr><td class='infocell'>"._("Time cap").":</td>
-		<td><input class='input' id='timecap' name='timecap' value='".$pp['timecap']."'/></td>
+		<td><input class='input' id='timecap' name='timecap' value='".utf8entities($pp['timecap'])."'/></td>
 		<td>"._("minutes")."</td></tr>		
 	
 	<tr><td class='infocell'>"._("Time slot").":</td>
-		<td><input class='input' id='timeslot' name='timeslot' value='".$pp['timeslot']."'/></td>
+		<td><input class='input' id='timeslot' name='timeslot' value='".utf8entities($pp['timeslot'])."'/></td>
 		<td>"._("minutes")."</td></tr>		
 		
 	<tr><td class='infocell'>"._("Point cap").":</td>
-		<td><input class='input' id='pointcap' name='pointcap' value='".$pp['scorecap']."'/></td>
+		<td><input class='input' id='pointcap' name='pointcap' value='".utf8entities($pp['scorecap'])."'/></td>
 		<td>"._("points")."</td></tr>
 
 	<tr><td class='infocell'>"._("Additional points after time cap").":</td>
-		<td><input class='input' id='extrapoint' name='extrapoint' value='".$pp['addscore']."'/></td>
+		<td><input class='input' id='extrapoint' name='extrapoint' value='".utf8entities($pp['addscore'])."'/></td>
 		<td>"._("points")."</td></tr>
 
 		
 	<tr><td class='infocell'>"._("Time between points").":</td>
-		<td><input class='input' id='timebetweenPoints' name='timebetweenPoints' value='".$pp['betweenpointslen']."'/></td>
+		<td><input class='input' id='timebetweenPoints' name='timebetweenPoints' value='".utf8entities($pp['betweenpointslen'])."'/></td>
 		<td>"._("seconds")."</td></tr>
 		
 	<tr><td class='infocell'>"._("Time-outs").":</td>
-		<td><input class='input' id='timeouts' name='timeouts' value='".$pp['timeouts']."'/></td>
+		<td><input class='input' id='timeouts' name='timeouts' value='".utf8entities($pp['timeouts'])."'/></td>
 		<td>
 		<select class='dropdown' name='timeoutsfor'>";
 
@@ -167,11 +167,11 @@ if($pp['timeoutsper']=="half"){
 $html .= "	</select>
 		</td></tr>
 	<tr><td class='infocell'>"._("Time-out duration").":</td>
-		<td><input class='input' id='timeoutlength' name='timeoutlength' value='".$pp['timeoutlen']."'/></td>
+		<td><input class='input' id='timeoutlength' name='timeoutlength' value='".utf8entities($pp['timeoutlen'])."'/></td>
 		<td>"._("seconds")."</td></tr>
 
 	<tr><td class='infocell'>"._("Time-outs on overtime").":</td>
-		<td><input class='input' id='timeoutsOnOvertime' name='timeoutsOnOvertime' value='".$pp['timeoutsovertime']."'/></td>
+		<td><input class='input' id='timeoutsOnOvertime' name='timeoutsOnOvertime' value='".utf8entities($pp['timeoutsovertime'])."'/></td>
 		<td>"._("per team")."</td></tr>";
 
 $html .= "<tr><td class='infocell'>"._("Draws allowed").":</td>";

@@ -192,7 +192,7 @@ foreach($settings as $setting){
   if($setting['name']=="PageTitle"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Page title").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='PageTitle' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='PageTitle' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	
@@ -200,7 +200,7 @@ foreach($settings as $setting){
 	if($setting['name']=="GoogleMapsAPIKey"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Google Maps key").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='GoogleMapsAPIKey' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='GoogleMapsAPIKey' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 		
@@ -218,19 +218,19 @@ foreach($settings as $setting){
 	if($setting['name']=="TwitterConsumerKey"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Twitter Consumer Key").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerKey' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerKey' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	if($setting['name']=="TwitterConsumerSecret"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Twitter Consumer Secret").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerSecret' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerSecret' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	if($setting['name']=="TwitterOAuthCallback"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Twitter OAuth Callback").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterOAuthCallback' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterOAuthCallback' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	//Facebook
@@ -247,38 +247,38 @@ foreach($settings as $setting){
 	if($setting['name']=="FacebookAppId"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Facebook Application Id").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppId' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppId' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	if($setting['name']=="FacebookAppKey"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Facebook Application Key").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppKey' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppKey' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	if($setting['name']=="FacebookAppSecret"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Facebook Application Secret").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppSecret' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppSecret' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	if($setting['name']=="FacebookGameMessage"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Facebook Game Message").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookGameMessage' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookGameMessage' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	if($setting['name']=="FacebookUpdatePage"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Facebook Update Page").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookUpdatePage' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookUpdatePage' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 		
 	if($setting['name']=="EmailSource"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("System email sender address").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='EmailSource' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='EmailSource' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 
@@ -346,12 +346,12 @@ $urls = GetUrlListByTypeArray(array("menulink","menumail","admin"),0);
 $i=0;
 foreach($urls as $url){
 	$html .= "<tr>";
-	$html .= "<td>".$url['type']."<input type='hidden' name='urltype".$i."' value='".$url['type']."'/></td>";
-	$html .= "<td><input class='input' size='3' maxlength='2' name='urlorder".$i."' value='".$url['ordering']."'/></td>";
-	$html .= "<td><input class='input' size='30' maxlength='150' name='urlname".$i."' value='".$url['name']."'/></td>";
-	$html .= "<td><input class='input' size='40' maxlength='500' name='url".$i."' value='".$url['url']."'/></td>";
+	$html .= "<td>".$url['type']."<input type='hidden' name='urltype".$i."' value='".utf8entities($url['type'])."'/></td>";
+	$html .= "<td><input class='input' size='3' maxlength='2' name='urlorder".$i."' value='".utf8entities($url['ordering'])."'/></td>";
+	$html .= "<td><input class='input' size='30' maxlength='150' name='urlname".$i."' value='".utf8entities($url['name'])."'/></td>";
+	$html .= "<td><input class='input' size='40' maxlength='500' name='url".$i."' value='".utf8entities($url['url'])."'/></td>";
 	$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$url['url_id'].");\"/></td>";
-	$html .= "<td><input type='hidden' name='urlid".$i."' value='".$url['url_id']."'/></td>";
+	$html .= "<td><input type='hidden' name='urlid".$i."' value='".utf8entities($url['url_id'])."'/></td>";
 	$html .= "</tr>\n";
 	$i++;
 }

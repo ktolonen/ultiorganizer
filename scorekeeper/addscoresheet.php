@@ -207,7 +207,7 @@ foreach($played_players as $player){
     $selected="selected='selected'";
   }
   
-	$html .= "<option value='".$player['player_id']."' $selected>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
+	$html .= "<option value='".utf8entities($player['player_id'])."' $selected>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
 }
 
 $html .= "<option value='xx'>XX "._("Callahan Goal")."</option>";
@@ -222,7 +222,7 @@ foreach($played_players as $player){
   	$selected="selected='selected'";
   }
   
-	$html .= "<option value='".$player['player_id']."' $selected>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
+	$html .= "<option value='".utf8entities($player['player_id'])."' $selected>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
 }
 $html .= "</select>";
 
@@ -299,7 +299,7 @@ var homelist = <?php
     echo "<option value='0'>-</option>";
 	$played_players = GamePlayers($gameId, $game_result['hometeam']);
 	foreach($played_players as $player){
-      echo "<option value='".$player['player_id']."'>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
+      echo "<option value='".utf8entities($player['player_id'])."'>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
     }
     echo "<option value='xx'>XX "._("Callahan Goal")."</option>";
     echo "\"";
@@ -310,7 +310,7 @@ var awaylist = <?php
 	$played_players = GamePlayers($gameId, $game_result['visitorteam']);
 	echo "<option value='0'>-</option>";
 	foreach($played_players as $player){
-      echo "<option value='".$player['player_id']."'>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
+      echo "<option value='".utf8entities($player['player_id'])."'>#".$player['num']." ".utf8entities($player['firstname'] ." ". $player['lastname'])."</option>";
     }
     echo "<option value='xx'>XX "._("Callahan Goal")."</option>";
     echo "\"";

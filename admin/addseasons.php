@@ -268,7 +268,7 @@ if(empty($seasonId)){
 }
 
 $html .= "<table border='0'>";
-$html .= "<tr><td class='infocell'>"._("Event id").": </td><td><input class='input' name='season_id' $disabled value='".$sp['season_id']."'/></td></tr>";
+$html .= "<tr><td class='infocell'>"._("Event id").": </td><td><input class='input' name='season_id' $disabled value='".utf8entities($sp['season_id'])."'/></td></tr>";
 $html .= "<tr rowspan='2'><td class='infocell'>"._("Name").": </td>
 			<td>".TranslatedField("seasonname", $sp['name'])."</td>
 		</tr>\n";
@@ -366,7 +366,7 @@ if(empty($seasonId)){
 	$html .= "<p><input class='button' type='submit' name='save' value='"._("Save")."' />";	
 }
 $html .= "<input type='hidden' name='backurl' value='$backurl'/>";
-$html .= "<input class='button' type='button' value='"._("Return")."' onclick=\"window.location.href='$backurl'\"></p>";
+$html .= "<input class='button' type='button' value='"._("Return")."' onclick=\"window.location.href='$backurl'\" /></p>";
 $html .= "</form>\n";
 
 echo $html;

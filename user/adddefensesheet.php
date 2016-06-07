@@ -211,7 +211,7 @@ echo "<tr><td>". utf8entities($place['name']) ." ". _("field")." ".utf8entities(
 echo "<tr><th>"._("Scheduled start date and time")."</th></tr>";
 echo "<tr><td>". ShortDate($game_result['time']) ." ". DefHourFormat($game_result['time']) ."</td></tr>";
 echo "<tr><th>"._("Game official(s)")."</th></tr>";
-echo "<tr><td><input class='input' style='WIDTH: 90%' type='text' name='secretary' id='secretary' value='". $game_result['official'] ."'/></td></tr>";
+echo "<tr><td><input class='input' style='WIDTH: 90%' type='text' name='secretary' id='secretary' value='".utf8entities($game_result['official'])."'/></td></tr>";
 echo "</table>\n";
 
 //starting team
@@ -324,9 +324,9 @@ echo "<option class='dropdown' value=''></option>\n";
 foreach($home_playerlist as $player){
 	$playerInfo = PlayerInfo($player['player_id']);
 	if($homecaptain==$player['player_id'])
-		echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+		echo "<option class='dropdown' selected='selected' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
 	else
-		echo "<option class='dropdown' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+		echo "<option class='dropdown' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
 }
 echo  "</select></td>\n";
 echo "</tr><tr>";
@@ -336,9 +336,9 @@ echo "<option class='dropdown' value=''></option>\n";
 foreach($away_playerlist as $player){
 	$playerInfo = PlayerInfo($player['player_id']);
 	if($awaycaptain==$player['player_id'])
-		echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+		echo "<option class='dropdown' selected='selected' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
 	else
-		echo "<option class='dropdown' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+		echo "<option class='dropdown' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
 }
 echo "</select></td>\n";
 echo "</tr>";

@@ -261,7 +261,7 @@ if (!empty($poolId)){
 	echo "<p>".("Select source pool").": <select class='dropdown' name='pool'>\n";
 	
 	foreach($selectablepools as $pool){
-		echo "<option class='dropdown' value='". $pool['pool_id'] . "'>". utf8entities($pool['name']). " (" . utf8entities($pool['moves'])." moves)</option>";
+		echo "<option class='dropdown' value='".utf8entities($pool['pool_id'])."'>". utf8entities($pool['name']). " (" . utf8entities($pool['moves'])." moves)</option>";
 	}
 	
 	echo "</select></p>\n";

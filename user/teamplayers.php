@@ -181,7 +181,7 @@ if (mysql_num_rows($team_players)==0 && (hasAccredidationRight($teamId) || hasEd
     foreach($teams as $team){
       $oldteaminfo = TeamInfo($team['team_id']);
       if($oldteaminfo['type']==$teaminfo['type'] && $oldteaminfo['season']!=$teaminfo['season']){
-  	      echo "<option class='dropdown' value='". $team['team_id'] . "'>". utf8entities($oldteaminfo['seasonname'] ." ". $oldteaminfo['name']) ."</option>";
+  	      echo "<option class='dropdown' value='".utf8entities($team['team_id'])."'>". utf8entities($oldteaminfo['seasonname'] ." ". $oldteaminfo['name']) ."</option>";
       }
     }
     echo "</select>\n";
@@ -194,12 +194,12 @@ while($player = mysql_fetch_assoc($team_players)){
   $playerInfo = PlayerInfo($player['player_id']);
 
   echo "<tr>";
-  echo "<td class='center'><input class='input' size='3' maxlength='3' onkeypress=\"ChgPlayer(".$player['player_id'].");\" onkeyup=\"validNumber(this);\" name='number". $player['player_id'] ."' id='number". $player['player_id'] ."' value='". $playerInfo['num'] ."'/></td>";
+  echo "<td class='center'><input class='input' size='3' maxlength='3' onkeypress=\"ChgPlayer(".$player['player_id'].");\" onkeyup=\"validNumber(this);\" name='number". $player['player_id'] ."' id='number". $player['player_id'] ."' value='".utf8entities($playerInfo['num'])."'/></td>";
   echo "<td><input class='input' size='20' maxlength='20' onkeypress=\"ChgPlayer(".$player['player_id'].");\" name='firstname". $player['player_id'] ."' id='firstname". $player['player_id'] ."' value='". utf8entities($playerInfo['firstname']) ."'/></td>";
   echo "<td><input class='input' size='20' maxlength='30' onkeypress=\"ChgPlayer(".$player['player_id'].");\" name='lastname". $player['player_id'] ."' id='lastname". $player['player_id'] ."' value='". utf8entities($playerInfo['lastname']) ."'/></td>";
   echo "<td style='white-space: nowrap'>";
-  echo "<input type='hidden' id='profileId".$player['player_id']."' name='profileId".$player['player_id']."' value='". $playerInfo['profile_id'] ."'/>\n";
-  echo "<input type='hidden' id='accrId".$player['player_id']."' name='accrId".$player['player_id']."' value='".$player['accreditation_id']."'/>\n";
+  echo "<input type='hidden' id='profileId".$player['player_id']."' name='profileId".$player['player_id']."' value='".utf8entities($playerInfo['profile_id'])."'/>\n";
+  echo "<input type='hidden' id='accrId".$player['player_id']."' name='accrId".$player['player_id']."' value='".utf8entities($player['accreditation_id'])."'/>\n";
   echo "<a href='?view=user/playerprofile&amp;player=".$player['player_id']."'>"._("edit")."</a> | ";
   echo "<a href='?view=playercard&amp;player=".$player['player_id']."'>"._("view")."</a>";
   echo "</td>\n";
@@ -210,7 +210,7 @@ while($player = mysql_fetch_assoc($team_players)){
     echo "<td  class='center'>";
   }
   if (hasAccredidationRight($teamId)) {
-    echo "<input type='checkbox' name='accredits". $player['player_id'] ."' onclick=\"ChgPlayer(".$player['player_id'].");\" value='".$player['player_id']."'";
+    echo "<input type='checkbox' name='accredits". $player['player_id'] ."' onclick=\"ChgPlayer(".$player['player_id'].");\" value='".utf8entities($player['player_id'])."'";
     if ($playerInfo['accredited']) echo " checked='checked'";
     echo "/>\n";
   } else {
@@ -271,7 +271,7 @@ if (hasAccredidationRight($teamId) || hasEditPlayersRight($teamId)) {
   $playerArray = TeamPlayerArray($teamId);
   foreach ($playerArray as $playerId => $name) {
     echo "<input type='hidden' id='playerEdited".$playerId."' name='playerEdited[]' value='no'/>\n";
-    echo "<input type='hidden' name='playerId[]' value='".$playerId."'/>\n";
+    echo "<input type='hidden' name='playerId[]' value='".utf8entities($playerId)."'/>\n";
   }
 }
 echo "</p></form>\n";

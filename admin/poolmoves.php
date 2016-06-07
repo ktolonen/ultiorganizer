@@ -226,7 +226,7 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
     echo "<td><select class='dropdown' id='frompool$i' name='frompool$i' onchange=\"checkMove('frompool$i','movefrom$i','moveto$i','pteamname$i');\">";
     foreach($pools as $pool){
       if($pool['pool_id']!=$poolId){
-        echo "<option class='dropdown' value='". $pool['pool_id'] ."'>". utf8entities(U_($pool['name'])) ."</option>";
+        echo "<option class='dropdown' value='".utf8entities($pool['pool_id'])."'>". utf8entities(U_($pool['name'])) ."</option>";
       }
     }
     echo "</select></td>\n";
@@ -310,7 +310,7 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
         if ($pool['name']=='Round 5 Swissdraw') {
         	echo " selected='selected' ";
         }
-        echo "value='". $pool['pool_id'] ."'>". utf8entities(U_($pool['name'])) ."</option>";
+        echo "value='".utf8entities($pool['pool_id'])."'>". utf8entities(U_($pool['name'])) ."</option>";
       }
     }
     echo "</select></td>\n";
@@ -330,7 +330,7 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
         if ($pool['name']=='Round 5 Swissdraw') {
         	echo " selected='selected' ";
         }
-        echo "value='". $pool['pool_id'] ."'>". utf8entities(U_($pool['name'])) ."</option>";
+        echo "value='".utf8entities($pool['pool_id'])."'>". utf8entities(U_($pool['name'])) ."</option>";
       }
     }
     echo "</select></td>\n";

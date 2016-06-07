@@ -163,9 +163,9 @@ if ($continuation && $SwissOK==-1) {
   foreach($allteams as $team){
     echo "<tr>";
     echo "<td style='text-align: center;'>
-		<input onchange=\"toggleField(this,'rank".$team['team_id']."');\"  type='checkbox' name='selcheck[]' checked='checked' value='".$team['team_id']."'/></td>";
+		<input onchange=\"toggleField(this,'rank".$team['team_id']."');\"  type='checkbox' name='selcheck[]' checked='checked' value='".utf8entities($team['team_id'])."'/></td>";
     echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input'
-			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='WIDTH: 20px' maxlength='3' size='2' value='".$team['Rank']."'/></td>";
+			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='WIDTH: 20px' maxlength='3' size='2' value='".utf8entities($team['Rank'])."'/></td>";
     echo "<td>".utf8entities($team['name'])."</td>";
     echo "<td>".utf8entities($team['clubname'])."</td>";
     echo "</tr>\n";
@@ -177,9 +177,9 @@ if ($continuation && $SwissOK==-1) {
   foreach($serieteams as $team){
     echo "<tr>";
     echo "<td style='text-align: center;'>
-		<input onchange=\"toggleField(this,'rank".$team['team_id']."');\"  type='checkbox' name='selcheck[]' value='".$team['team_id']."'/></td>";
+		<input onchange=\"toggleField(this,'rank".$team['team_id']."');\"  type='checkbox' name='selcheck[]' value='".utf8entities($team['team_id'])."'/></td>";
     echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input'
-			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='WIDTH: 20px' maxlength='3' size='2' value='".$team['rank']."'/></td>";
+			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='WIDTH: 20px' maxlength='3' size='2' value='".utf8entities($team['rank'])."'/></td>";
     echo "<td>".utf8entities($team['name'])."</td>";
     echo "<td>".utf8entities($team['clubname'])."</td>";
     echo "</tr>\n";

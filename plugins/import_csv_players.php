@@ -72,7 +72,7 @@ if(empty($seasonId)){
 	$seasons = Seasons();
 			
 	while($row = mysql_fetch_assoc($seasons)){
-		$html .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+		$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 	}
 
 	$html .= "</select></p>\n";
@@ -82,7 +82,7 @@ if(empty($seasonId)){
 	$html .= "<p>".("Select division").":	<select class='dropdown' name='seriesid'>\n";
 	$series = SeasonSeries($seasonId);
 	foreach($series as $row){
-		$html .= "<option class='dropdown' value='". $row['series_id'] . "'>". utf8entities($row['name']) ."</option>";
+		$html .= "<option class='dropdown' value='".utf8entities($row['series_id'])."'>". utf8entities($row['name']) ."</option>";
 	}
 	$html .= "</select></p>\n";
 

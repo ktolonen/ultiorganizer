@@ -60,7 +60,7 @@ if(empty($seasonId)){
 	$seasons = Seasons();
 			
 	while($row = mysql_fetch_assoc($seasons)){
-		$html .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+		$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 	}
 
 	$html .= "</select></p>\n";
@@ -81,7 +81,7 @@ if(empty($seasonId)){
 		foreach($pools as $pool){
 			$poolinfo = PoolInfo($pool['pool_id']);
 			$html .= "<tr style='background-color:#".$poolinfo['color']."'>";
-			$html .= "<td class='center'><input type='checkbox' name='pools[]' value='".$pool['pool_id']."' /></td>";
+			$html .= "<td class='center'><input type='checkbox' name='pools[]' value='".utf8entities($pool['pool_id'])."' /></td>";
 			$html .= "<td>". $pool['name'] ."</td>";
 			$html .= "<td>". $row['name'] ."</td>";
 			$html .= "</tr>\n";

@@ -18,7 +18,7 @@ $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 $html .= "<form action='?view=addofficial' method='post' data-ajax='false'>\n";
 $html .= "<label for='official'>"._("Game official").":</label>";
-$html .= "<input type='text' name='official' id='official' value='". $game_result['official'] ."'/>";
+$html .= "<input type='text' name='official' id='official' value='".utf8entities($game_result['official'])."'/>";
 $html .= "<input type='submit' name='save' data-ajax='false' value='"._("Save")."'/>";
 $html .= "<a href='?view=addscoresheet&amp;game=".$gameId."' data-role='button' data-ajax='false'>"._("Back to score sheet")."</a>";
 $html .= "</form>";

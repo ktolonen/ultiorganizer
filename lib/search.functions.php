@@ -417,10 +417,10 @@ function SeriesResults() {
 		
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"series\");'></th>";
+		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"series\");' /></th>";
 		$ret .= "<th>"._("Event")."</th><th>"._("Division")."</th></tr>\n";
 		while ($row = mysql_fetch_assoc($result)) {
-			$ret .= "<tr><td><input type='checkbox' name='series[]' value='".$row['series']."'></td>";
+			$ret .= "<tr><td><input type='checkbox' name='series[]' value='".utf8entities($row['series'])."' /></td>";
 			$ret .= "<td>".utf8entities($row['season_name'])."</td><td>";
 			$ret .= utf8entities($row['series_name'])."</td></tr>\n";
 		}
@@ -457,10 +457,10 @@ function PoolResults() {
 
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$ret .= "<table><tr><th><input type='checkbox' onclick='checkAll(\"pools\");'></th>";
+		$ret .= "<table><tr><th><input type='checkbox' onclick='checkAll(\"pools\");' /></th>";
 		$ret .= "<th>"._("Event")."</th><th>"._("Division")."</th><th>"._("Division")."</th></tr>\n";
 		while ($row = mysql_fetch_assoc($result)) {
-			$ret .= "<tr><td><input type='checkbox' name='pools[]' value='".$row['pool']."'></td>";
+			$ret .= "<tr><td><input type='checkbox' name='pools[]' value='".utf8entities($row['pool'])."' /></td>";
 			$ret .= "<td>".utf8entities($row['season_name'])."</td>";
 			$ret .= "<td>".utf8entities($row['series_name'])."</td>";
 			$ret .= "<td>".utf8entities($row['pool_name'])."</td>";
@@ -499,10 +499,10 @@ function TeamResults() {
 
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"teams\")'></th>";
+		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"teams\")' /></th>";
 		$ret .= "<th>"._("Event")."</th><th>"._("Division")."</th><th>"._("Team")."</th></tr>\n";
 		while ($row = mysql_fetch_assoc($result)) {
-			$ret .= "<tr><td><input type='checkbox' name='teams[]' value='".$row['team']."'></td>";
+			$ret .= "<tr><td><input type='checkbox' name='teams[]' value='".utf8entities($row['team'])."' /></td>";
 			$ret .= "<td>".utf8entities($row['season_name'])."</td>";
 			$ret .= "<td>".utf8entities($row['series_name'])."</td>";
 			$ret .= "<td>".utf8entities($row['team_name'])."</td>";
@@ -729,7 +729,7 @@ function ReservationResults() {
 		$ret .= "<th>"._("Starts")."</th><th>"._("Ends")."</th><th>"._("Games")."</th>";
 		$ret .= "<th>"._("Scoresheets")."</th><th></th></tr>\n";
 		while ($row = mysql_fetch_assoc($result)) {
-			$ret .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='".$row['reservation_id']."'/></td>";
+			$ret .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='".utf8entities($row['reservation_id'])."'/></td>";
 			$ret .= "<td>".utf8entities(U_($row['reservationgroup']))."</td>";
 			$ret .= "<td><a href='?view=admin/addreservation&amp;reservation=".$row['reservation_id']."&amp;season=".$row['season']."'>".utf8entities(U_($row['name']))." "._("Field")." ".utf8entities(U_($row['fieldname']))."</a></td>";
 			$ret .= "<td>".DefWeekDateFormat($row['starttime'])."</td>";
@@ -804,7 +804,7 @@ function GameResults() {
 		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"games\");'/></th>";
 		$ret .= "<th>"._("Tournament")."</th><th>"._("Location")."</th><th>"._("Game")."</th></tr>\n";
 		while ($row = mysql_fetch_assoc($result)) {
-			$ret .= "<tr><td><input type='checkbox' name='games[]' value='".$row['game_id']."'/></td>";
+			$ret .= "<tr><td><input type='checkbox' name='games[]' value='".utf8entities($row['game_id'])."'/></td>";
 			$ret .= "<td>".utf8entities($row['reservationgroup'])."</td>";
 			$ret .= "<td>".utf8entities($row['locationname'])."</td>";
 			$ret .= "<td>".utf8entities(GameName($row))."</td>";

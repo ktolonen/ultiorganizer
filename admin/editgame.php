@@ -193,11 +193,11 @@ $places = SeasonReservations($season);
 
 foreach($places as $row){
 	if($row['id'] == $info['reservation']){
-		echo "<option class='dropdown' selected='selected' value='". $row['id'] . "'>";
+		echo "<option class='dropdown' selected='selected' value='".utf8entities($row['id'])."'>";
 		echo utf8entities($row['reservationgroup']) ." ". utf8entities($row['name']) .", "._("Field")." ".utf8entities($row['fieldname'])." (".JustDate($row['starttime']) .")";
 		echo "</option>";
 	}else{
-		echo "<option class='dropdown' value='". $row['id'] . "'>";
+		echo "<option class='dropdown' value='".utf8entities($row['id'])."'>";
 		echo utf8entities($row['reservationgroup']) ." ". utf8entities($row['name']) .", "._("Field")." ".utf8entities($row['fieldname'])." (".JustDate($row['starttime']) .")";
 		echo "</option>";
 	}
@@ -214,9 +214,9 @@ echo "<option class='dropdown' value='0'></option>";
 $pools = SeasonPools($season);
 foreach($pools as $row){
 	if($row['pool_id'] == $info['pool'])
-		echo "<option class='dropdown' selected='selected' value='". $row['pool_id'] . "'>". utf8entities(U_($row['seriesname'])).", ". utf8entities(U_($row['poolname'])) ."</option>";
+		echo "<option class='dropdown' selected='selected' value='".utf8entities($row['pool_id'])."'>". utf8entities(U_($row['seriesname'])).", ". utf8entities(U_($row['poolname'])) ."</option>";
 	else
-		echo "<option class='dropdown' value='". $row['pool_id'] . "'>". utf8entities(U_($row['seriesname'])).", ". utf8entities(U_($row['poolname'])) ."</option>";
+		echo "<option class='dropdown' value='".utf8entities($row['pool_id'])."'>". utf8entities(U_($row['seriesname'])).", ". utf8entities(U_($row['poolname'])) ."</option>";
 }
 echo "</select></td></tr>\n";	
 
@@ -241,12 +241,12 @@ echo "</td></tr>\n";
 if(intval($info['valid']))
 	{
 	echo "<tr><td class='infocell'>"._("Valid").":</td>
-		<td><input class='input' type='checkbox' id='valid' name='valid' checked='checked' value='".$info['valid']."'/></td></tr>";
+		<td><input class='input' type='checkbox' id='valid' name='valid' checked='checked' value='".utf8entities($info['valid'])."'/></td></tr>";
 	}
 else
 	{
 	echo "<tr><td class='infocell'>"._("Valid").":</td>
-		<td><input class='input' type='checkbox' id='valid' name='valid' value='".$info['valid']."'/></td></tr>";
+		<td><input class='input' type='checkbox' id='valid' name='valid' value='".utf8entities($info['valid'])."'/></td></tr>";
 	
 	}
 		
@@ -276,15 +276,15 @@ function TeamSelectionListNew($name, $selected, $schedule_selected, $poolId)
 	foreach($teams as $row){
 		if($pseudoteams){
 			if($row['scheduling_id'] == $schedule_selected){
-				$teamlist .= "<option class='dropdown' selected='selected' value='". $row['scheduling_id'] . "'>". utf8entities($row['name']) ."</option>\n";
+				$teamlist .= "<option class='dropdown' selected='selected' value='".utf8entities($row['scheduling_id'])."'>". utf8entities($row['name']) ."</option>\n";
 			}else{			
-				$teamlist .= "<option class='dropdown' value='". $row['scheduling_id'] . "'>". $row['name'] ."</option>\n";
+				$teamlist .= "<option class='dropdown' value='".utf8entities($row['scheduling_id'])."'>". utf8entities($row['name']) ."</option>\n";
 			}
 		}else{
 			if($row['team_id'] == $selected){
-				$teamlist .= "<option class='dropdown' selected='selected' value='". $row['team_id'] . "'>". utf8entities($row['name']) ."</option>\n";
+				$teamlist .= "<option class='dropdown' selected='selected' value='".utf8entities($row['team_id'])."'>". utf8entities($row['name']) ."</option>\n";
 			}else{						
-				$teamlist .= "<option class='dropdown' value='". $row['team_id'] . "'>". $row['name'] ."</option>\n";
+				$teamlist .= "<option class='dropdown' value='".utf8entities($row['team_id'])."'>". utf8entities($row['name']) ."</option>\n";
 			}
 		}
 		}
@@ -292,7 +292,7 @@ function TeamSelectionListNew($name, $selected, $schedule_selected, $poolId)
 	echo "</select>";
 	
 	if ($pseudoteams) {
-		echo "<div><input type='hidden' name='pseudo' value='1'></div>";
+		echo "<div><input type='hidden' name='pseudo' value='1' /></div>";
 	}
 	
 }
@@ -307,9 +307,9 @@ function TeamSelectionList($name, $selected, $seriesId)
 	$teams = SeriesTeams($seriesId);
 	foreach($teams as $team){
 		if($team['team_id'] == $selected){
-			echo "<option class='dropdown' selected='selected' value='". $team['team_id'] . "'>". utf8entities($team['name']) ."</option>";
+			echo "<option class='dropdown' selected='selected' value='".utf8entities($team['team_id'])."'>". utf8entities($team['name']) ."</option>";
 		}else{
-			echo "<option class='dropdown' value='". $team['team_id'] . "'>". utf8entities($team['name']) ."</option>";
+			echo "<option class='dropdown' value='".utf8entities($team['team_id'])."'>". utf8entities($team['name']) ."</option>";
 		}
 	}
 	echo "</select>";

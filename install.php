@@ -365,9 +365,9 @@
     $html .= "<tr><td>Customization:</td><td><select class='dropdown' name='customization'>";
     foreach($customizations as $cust){
       if($customization == $cust){
-        $html .= "<option class='dropdown' selected='selected' value='". $cust . "'>". $cust ."</option>";
+        $html .= "<option class='dropdown' selected='selected' value='".utf8entities($cust )."'>". $cust ."</option>";
       }else{
-        $html .= "<option class='dropdown' value='". $cust . "'>". $cust ."</option>";
+        $html .= "<option class='dropdown' value='".utf8entities($cust )."'>". $cust ."</option>";
       }
     }
 

@@ -167,7 +167,7 @@ $html .= "<p>".("Select event").": <select class='dropdown' name='season'>\n";
 $seasons = Seasons();
 		
 while($row = mysql_fetch_assoc($seasons)){
-	$html .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+	$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 }
 
 $html .= "</select></p>\n";

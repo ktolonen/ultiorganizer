@@ -261,9 +261,9 @@ if ($_SESSION['uid'] != "anonymous") {
   $html .= "'>\n";
   $html .= "<table cellpadding='8'>
 		<tr><td class='infocell'>"._("Name").":</td>
-			<td><input class='input' maxlength='256' id='Name' name='Name' value='".$userinfo['name']."'/></td></tr>
+			<td><input class='input' maxlength='256' id='Name' name='Name' value='".utf8entities($userinfo['name'])."'/></td></tr>
 		<tr><td class='infocell'>"._("Username").":</td>
-			<td><input class='input' maxlength='20' id='UserName' name='UserName' value='".$userinfo['userid']."'/></td></tr>
+			<td><input class='input' maxlength='20' id='UserName' name='UserName' value='".utf8entities($userinfo['userid'])."'/></td></tr>
 		<tr><td class='infocell'>"._("Primary email").":</td>
 			<td><a href='mailto:".$userinfo['email']."'/>".$userinfo['email']."</a>&nbsp;
 			<a href='?view=user/addextraemail&amp;user=".utf8entities($userid)."'>"._("Add extra address")."</a></td></tr>\n";
@@ -320,7 +320,7 @@ if ($_SESSION['uid'] != "anonymous") {
 
 
   foreach ($locales as $localestr => $localename) {
-    $html .= "<option value='".$localestr."'";
+    $html .= "<option value='".utf8entities($localestr)."'";
     if ($localestr == $userlocale) {
       $html .= " selected='selected'";
     }
@@ -352,7 +352,7 @@ if ($_SESSION['uid'] != "anonymous") {
   $editseasons = getEditSeasons($userid);
   $html .= "<table><tr><td><select multiple='multiple' name='remeditseasonslist[]' id='remeditseasonslist' style='height:200px;width:250px'>\n";
   foreach ($editseasons as $season => $id) {
-    $html .= "<option value='".$id."'>".utf8entities(SeasonName($season))."</option>";
+    $html .= "<option value='".utf8entities($id)."'>".utf8entities(SeasonName($season))."</option>";
   }
   $html .= "</select></td><td>\n";
   $html .= "<input class='button' type='submit' name='remeditseasons' style='width:50px' value='"._("Hide")." &raquo;' /><br />

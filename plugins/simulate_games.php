@@ -206,7 +206,7 @@ if(empty($seasonId)){
 	$seasons = Seasons();
 			
 	while($row = mysql_fetch_assoc($seasons)){
-		$html .= "<option class='dropdown' value='". $row['season_id'] . "'>". utf8entities($row['name']) ."</option>";
+		$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 	}
 
 	$html .= "</select></p>\n";
@@ -231,9 +231,9 @@ if(empty($seasonId)){
 			$html .= "<tr>";
 			if(PoolTotalPlayedGames($pool['pool_id']) < count(PoolGames($pool['pool_id']))
 				&& PoolIsMoveFromPoolsPlayed($pool['pool_id'])){
-				$html .= "<td class='left'><input type='checkbox' checked='checked' name='pools[]' value='".$pool['pool_id']."' /></td>";				
+				$html .= "<td class='left'><input type='checkbox' checked='checked' name='pools[]' value='".utf8entities($pool['pool_id'])."' /></td>";				
 			}else{
-				$html .= "<td class='left'><input type='checkbox' name='pools[]' value='".$pool['pool_id']."' /></td>";
+				$html .= "<td class='left'><input type='checkbox' name='pools[]' value='".utf8entities($pool['pool_id'])."' /></td>";
 			}
 			$html .= "<td>". $pool['name'] ."</td>";
 			$html .= "<td>". $row['name'] ."</td>";

@@ -99,7 +99,7 @@ if($view=="autoacc"){
   $series = SeasonSeries($season);
   foreach($series as $row) {
     echo "<tr><td>\n";
-    echo "<input type='checkbox' name='series[]' value='".$row['series_id']."' /> ";
+    echo "<input type='checkbox' name='series[]' value='".utf8entities($row['series_id'])."' /> ";
     echo U_($row['name'])."</td></tr>\n";
   }
   echo "</table>\n";
@@ -109,14 +109,14 @@ if($view=="autoacc"){
   $validity = ExternalLicenseValidityList();
   foreach($validity as $row) {
     echo "<tr><td>\n";
-    echo "<input type='checkbox' name='validity[]' value='".$row['external_validity']."' /> ";
+    echo "<input type='checkbox' name='validity[]' value='".utf8entities($row['external_validity'])."' /> ";
     echo U_($row['external_validity'])."</td></tr>\n";
   }
   $year = date('Y', strtotime($seasonInfo['starttime']));
   echo "<tr><td>\n";
   echo "<input type='checkbox' name='isValidityYear'/>";
   echo _("License for year:");
-  echo "<input class='input' size='5' maxlength='4' name='validityYear' value='".$year."'/> ";
+  echo "<input class='input' size='5' maxlength='4' name='validityYear' value='".utf8entities($year)."'/> ";
   echo "</td></tr>\n";
   echo "</table>\n";
 
@@ -125,7 +125,7 @@ if($view=="autoacc"){
   $types = ExternalLicenseTypes();
   foreach($types as $row) {
     echo "<tr><td>\n";
-    echo "<input type='checkbox' name='type[]' value='".$row['external_type']."' /> ";
+    echo "<input type='checkbox' name='type[]' value='".utf8entities($row['external_type'])."' /> ";
     echo U_($row['external_type'])."</td></tr>\n";
   }
   echo "<tr><td>\n";

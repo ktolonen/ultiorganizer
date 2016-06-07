@@ -180,15 +180,15 @@ else
 		
 foreach($pools as $row){
 	if($row['pool_id']==$tp['pool'])
-		$html .= "<option class='dropdown' selected='selected' value='". $row['pool_id'] ."'>". utf8entities(U_($row['name'])) ."</option>";
+		$html .= "<option class='dropdown' selected='selected' value='".utf8entities($row['pool_id'])."'>". utf8entities(U_($row['name'])) ."</option>";
 	else
-		$html .= "<option class='dropdown' value='". $row['pool_id'] ."'>". utf8entities(U_($row['name'])) ."</option>";
+		$html .= "<option class='dropdown' value='".utf8entities($row['pool_id'])."'>". utf8entities(U_($row['name'])) ."</option>";
 }
 
 $html .= "</select></td></tr>";
 	
 $html .= "<tr><td class='infocell'>"._("Seed").":</td>
-		<td><input class='input' id='rank' size='4' name='rank' value='".$tp['rank']."'/></td></tr>";		
+		<td><input class='input' id='rank' size='4' name='rank' value='".utf8entities($tp['rank'])."'/></td></tr>";		
 
 $html .= "<tr><td class='infocell'>"._("Valid").":</td>";		
 if(intval($tp['valid']) || !$teamId)

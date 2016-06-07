@@ -43,7 +43,7 @@ if(count($seasons)){
     if ($_SESSION['userproperties']['selseason']==$row['season_id']) {
       $selected = "selected='selected'";
     }
-    $html .=   "<option class='dropdown' $selected value='". $row['season_id'] ."'>". SeasonName($row['season_id']) ."</option>";
+    $html .=   "<option class='dropdown' $selected value='".utf8entities($row['season_id'])."'>". SeasonName($row['season_id']) ."</option>";
   }
   $html .=  "</select>";
 }

@@ -100,19 +100,19 @@ $html .= "<form method='post' enctype='multipart/form-data' action='?view=user/t
 	
 $html .= "<table>";
 $html .= "<tr><td class='infocell'>"._("Abbreviation").":</td>";
-$html .= "<td><input class='input' maxlength='15' size='10' name='abbreviation' value='".$tp['abbreviation']."'/></td></tr>\n";
+$html .= "<td><input class='input' maxlength='15' size='10' name='abbreviation' value='".utf8entities($tp['abbreviation'])."'/></td></tr>\n";
 
 $html .= "<tr><td class='infocell'>"._("Coach").":</td>";
-$html .= "<td><input class='input' maxlength='100' size='50' name='coach' value='".$tp['coach']."'/></td></tr>\n";
+$html .= "<td><input class='input' maxlength='100' size='50' name='coach' value='".utf8entities($tp['coach'])."'/></td></tr>\n";
 
 $html .= "<tr><td class='infocell'>"._("Captain").":</td>";
-$html .= "<td><input class='input' maxlength='100' size='50' name='captain' value='".$tp['captain']."'/></td></tr>\n";
+$html .= "<td><input class='input' maxlength='100' size='50' name='captain' value='".utf8entities($tp['captain'])."'/></td></tr>\n";
 	
 $html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Description").":</td>";
-$html .= "<td><textarea class='input' rows='10' cols='80' name='story'>".$tp['story']."</textarea> </td></tr>\n";
+$html .= "<td><textarea class='input' rows='10' cols='80' name='story'>".utf8entities($tp['story'])."</textarea> </td></tr>\n";
 
 $html .= "<tr><td class='infocell' style='vertical-align:top'>"._("Achievements").":</td>";
-$html .= "<td><textarea class='input' rows='10' cols='80' name='achievements'>".$tp['achievements']."</textarea> </td></tr>\n";
+$html .= "<td><textarea class='input' rows='10' cols='80' name='achievements'>".utf8entities($tp['achievements'])."</textarea> </td></tr>\n";
 
 $html .= "<tr><td class='infocell' colspan='2'>"._("Web pages (homepage, blogs, images, videos)").":</td></tr>";
 $html .= "<tr><td colspan='2'>";
@@ -152,7 +152,7 @@ for($i=0;$i<$max_new_links;$i++){
 	$html .= "<tr>";
 	$html .= "<td><select class='dropdown' name='urltype$i'>\n";
 	foreach($urltypes as $type){
-		$html .= "<option value='".$type['type']."'>". $type['name'] ."</option>\n";
+		$html .= "<option value='".utf8entities($type['type'])."'>". utf8entities($type['name']) ."</option>\n";
 	}
 	$html .= "</select></td>";
 	$html .= "<td><input class='input' maxlength='500' size='40' name='url$i' value=''/></td>";

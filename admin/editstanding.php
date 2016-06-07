@@ -44,10 +44,10 @@ echo "<h2>"._("Standing")."</h2>\n";
 
 echo "<table cellpadding='2px'>
 	<tr><td class='infocell'>"._("Standing").":</td>
-		<td><input class='input' size='5' id='activerank' name='activerank' value='".$info['activerank']."'/></td><td></td></tr>
+		<td><input class='input' size='5' id='activerank' name='activerank' value='".utf8entities($info['activerank'])."'/></td><td></td></tr>
 
 	<tr><td class='infocell'>"._("Seed").":</td>
-		<td><input class='input' size='5' id='rank' name='rank' value='".$info['poolrank']."'/></td>
+		<td><input class='input' size='5' id='rank' name='rank' value='".utf8entities($info['poolrank'])."'/></td>
 		<td></td></tr>";
 
 	

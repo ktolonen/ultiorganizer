@@ -177,14 +177,14 @@ foreach($serieslist as $series){
 				echo "<td>".utf8entities(PoolName($row['frompool']))."</td>";
 				echo "<td class='center'>";
 				echo "<input type='hidden' id='moveEdited".$i."' name='moveEdited[]' value='no'/>\n";
-				echo "<input type='hidden' name='moveId[]' value='".$row['frompool'].":".$row['fromplacing']."'/>\n";
-				echo "<input type='text' size='3' maxlength='3' name='fromplacing$i' value='".$row['fromplacing']."' onkeypress='ChgValue(".$i.")'/></td>";
+				echo "<input type='hidden' name='moveId[]' value='".utf8entities($row['frompool']).":".$row['fromplacing']."'/>\n";
+				echo "<input type='text' size='3' maxlength='3' name='fromplacing$i' value='".utf8entities($row['fromplacing'])."' onkeypress='ChgValue(".$i.")'/></td>";
 				echo "<td>".utf8entities(PoolName($row['topool']))."</td>";
-				echo "<td class='center'><input type='text' size='3' maxlength='3' name='torank$i' value='".$row['torank']."' onkeypress='ChgValue(".$i.")'/></td>";
+				echo "<td class='center'><input type='text' size='3' maxlength='3' name='torank$i' value='".utf8entities($row['torank'])."' onkeypress='ChgValue(".$i.")'/></td>";
 				echo "<td class='left'>";
 				echo "<input type='hidden' id='schedulingnameEdited".$i."' name='schedulingnameEdited[]' value='no'/>\n";
-				echo "<input type='hidden' name='schedulingnameId[]' value='".$row['scheduling_id']."'/>\n";
-				echo "<input type='text' size='22' maxlength='50' value='".$row['sname']."' name='sn$i' onkeypress='ChgName(".$i.")'/>";
+				echo "<input type='hidden' name='schedulingnameId[]' value='".utf8entities($row['scheduling_id'])."'/>\n";
+				echo "<input type='text' size='22' maxlength='50' value='".utf8entities($row['sname'])."' name='sn$i' onkeypress='ChgName(".$i.")'/>";
 				echo "</td>";
 				if(intval($poolinfo['mvgames'])==0)
 					echo "<td>"._("all")."</td>";

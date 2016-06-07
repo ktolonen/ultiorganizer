@@ -115,9 +115,9 @@ while($player = mysql_fetch_assoc($playerlist))	{
 	$html .= "<input class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' maxlength='3' size='2' value='$number'/> ";
 	
 	if($found || count($played_players)==0){
-		$html .= "<input class='center' type='checkbox' name='check[]' value='".$player['player_id']."' checked='checked'/>";
+		$html .= "<input class='center' type='checkbox' name='check[]' value='".utf8entities($player['player_id'])."' checked='checked'/>";
 	}else{
-		$html .= "<input class='center' type='checkbox' name='check[]' value='".$player['player_id']."'/>";
+		$html .= "<input class='center' type='checkbox' name='check[]' value='".utf8entities($player['player_id'])."'/>";
 	}
 	$html .= utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']);
 }

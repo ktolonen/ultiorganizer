@@ -77,7 +77,7 @@ foreach($settings as $setting){
 	if($setting['name']=="FacebookUpdatePage"){
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>"._("Facebook Update Page").":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookUpdatePage' value='".$setting['value']."'/></td>";
+		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookUpdatePage' value='".utf8entities($setting['value'])."'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 	
@@ -91,12 +91,12 @@ $urls = GetUrlListByTypeArray(array("menulink","menumail"),$seasonId);
 $i=0;
 foreach($urls as $url){
 	$html .= "<tr>";
-	$html .= "<td>".$url['type']."<input type='hidden' name='urltype".$i."' value='".$url['type']."'/></td>";
-	$html .= "<td><input class='input' size='3' maxlength='2' name='urlorder".$i."' value='".$url['ordering']."'/></td>";
-	$html .= "<td><input class='input' size='30' maxlength='150' name='urlname".$i."' value='".$url['name']."'/></td>";
-	$html .= "<td><input class='input' size='40' maxlength='500' name='url".$i."' value='".$url['url']."'/></td>";
+	$html .= "<td>".$url['type']."<input type='hidden' name='urltype".$i."' value='".utf8entities($url['type'])."'/></td>";
+	$html .= "<td><input class='input' size='3' maxlength='2' name='urlorder".$i."' value='".utf8entities($url['ordering'])."'/></td>";
+	$html .= "<td><input class='input' size='30' maxlength='150' name='urlname".$i."' value='".utf8entities($url['name'])."'/></td>";
+	$html .= "<td><input class='input' size='40' maxlength='500' name='url".$i."' value='".utf8entities($url['url'])."'/></td>";
 	$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' name='remove' alt='"._("X")."' onclick=\"setId(".$url['url_id'].");\"/></td>";
-	$html .= "<td><input type='hidden' name='urlid".$i."' value='".$url['url_id']."'/></td>";
+	$html .= "<td><input type='hidden' name='urlid".$i."' value='".utf8entities($url['url_id'])."'/></td>";
 	$html .= "</tr>\n";
 	$i++;
 }

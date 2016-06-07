@@ -20,7 +20,7 @@ $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
 $html .= _("Game official").":";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' style='width: 90%' type='text' name='official' id='official' value='". $game_result['official'] ."'/>";
+$html .= "<input class='input' style='width: 90%' type='text' name='official' id='official' value='".utf8entities($game_result['official'])."'/>";
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='save' value='"._("Save")."'/>";
 $html .= "</td></tr><tr><td>\n";

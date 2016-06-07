@@ -21,11 +21,11 @@ $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
 $html .= "<b>".utf8entities($game_result['hometeamname'])."</b> "._("spirit points").":";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' maxlength='3' size='5' type='text' name='homespirit' id='homespirit' value='". $game_result['homesotg'] ."'/>";
+$html .= "<input class='input' maxlength='3' size='5' type='text' name='homespirit' id='homespirit' value='".utf8entities($game_result['homesotg'])."'/>";
 $html .= "</td></tr><tr><td>\n";
 $html .= "<b>".utf8entities($game_result['visitorteamname'])."</b> "._("spirit points").":";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' maxlength='3' size='5' type='text' name='awayspirit' id='awayspirit' value='". $game_result['visitorsotg'] ."'/>";
+$html .= "<input class='input' maxlength='3' size='5' type='text' name='awayspirit' id='awayspirit' value='".utf8entities($game_result['visitorsotg'])."'/>";
 $html .= "</td></tr><tr><td>\n";
 
 $html .= "<input class='button' type='submit' name='save' value='"._("Save")."'/>";

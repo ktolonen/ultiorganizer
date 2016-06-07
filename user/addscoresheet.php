@@ -398,7 +398,7 @@ echo "<tr><td>". utf8entities($place['name']) ." ". _("field")." ".utf8entities(
 echo "<tr><th>"._("Scheduled start date and time")."</th></tr>";
 echo "<tr><td>". ShortDate($game_result['time']) ." ". DefHourFormat($game_result['time']) ."</td></tr>";
 echo "<tr><th>"._("Game official(s)")."</th></tr>";
-echo "<tr><td><input class='input' style='WIDTH: 90%' type='text' name='secretary' id='secretary' value='". $game_result['official'] ."'/></td></tr>";
+echo "<tr><td><input class='input' style='WIDTH: 90%' type='text' name='secretary' id='secretary' value='".utf8entities($game_result['official'])."'/></td></tr>";
 echo "</table>\n";
 
 //starting team
@@ -492,8 +492,8 @@ if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
   echo "<table cellspacing='0' width='100%' border='1'>\n";
   echo "<tr><th colspan='2'>"._("Spirit points")."</th></tr>";
   echo "<tr><td class='center' style='width:50%;'>". utf8entities($game_result['hometeamname']) ."</td><td class='center' style='width:50%;'>". utf8entities($game_result['visitorteamname']) ."</td></tr>";
-  echo "<tr><td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validNumberX(this);\" name='homespirit' id='homespirit' value='".$game_result['homesotg']."'/></td>";
-  echo "<td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validNumberX(this);\" name='awayspirit' id='awayspirit' value='".$game_result['visitorsotg']."'/></td></tr>";
+  echo "<tr><td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validNumberX(this);\" name='homespirit' id='homespirit' value='".utf8entities($game_result['homesotg'])."'/></td>";
+  echo "<td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validNumberX(this);\" name='awayspirit' id='awayspirit' value='".utf8entities($game_result['visitorsotg'])."'/></td></tr>";
   echo "</table>\n";
 }
 */
@@ -515,9 +515,9 @@ echo "<option class='dropdown' value=''></option>\n";
 foreach($home_playerlist as $player){
   $playerInfo = PlayerInfo($player['player_id']);
   if($homecaptain==$player['player_id'])
-  echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+  echo "<option class='dropdown' selected='selected' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
   else
-  echo "<option class='dropdown' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+  echo "<option class='dropdown' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
 }
 echo  "</select></td>\n";
 echo "</tr><tr>";
@@ -527,9 +527,9 @@ echo "<option class='dropdown' value=''></option>\n";
 foreach($away_playerlist as $player){
   $playerInfo = PlayerInfo($player['player_id']);
   if($awaycaptain==$player['player_id'])
-  echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+  echo "<option class='dropdown' selected='selected' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
   else
-  echo "<option class='dropdown' value='".$player['player_id']."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
+  echo "<option class='dropdown' value='".utf8entities($player['player_id'])."'>".utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname'])."</option>\n";
 }
 echo "</select></td>\n";
 echo "</tr>";
@@ -622,7 +622,7 @@ while($row = mysql_fetch_assoc($scores))
   echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' maxlength='3' size='4' value='$n'/></td>";
   echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8' value='". SecToMin($row['time']) ."'/></td>";
   echo "<td class='center' style='width:60px;$style_right'><input class='fakeinput center' id='sit$i' name='sit$i' size='7' disabled='disabled'
-	value='". $row['homescore'] ." - ". $row['visitorscore'] ."'/></td>";
+	value='".utf8entities($row['homescore'])." - ". $row['visitorscore'] ."'/></td>";
 
   echo "</tr>\n";
   $i++;
