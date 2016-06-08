@@ -442,7 +442,10 @@ function GameRow($game, $date=false, $time=true, $field=true, $series=false,$poo
   }
 
   if($field){
-    $ret .= "<td style='$fieldw'><span>". _("Field")." ".utf8entities($game['fieldname']) ."</span></td>\n";
+    if (!empty($game['fieldname']))
+      $ret .= "<td style='$fieldw'><span>" . _("Field") . " " . utf8entities($game['fieldname']) . "</span></td>\n";
+    else
+      $ret .= "<td style='$fieldw'></td>\n";
   }
 
   if($game['hometeam']){

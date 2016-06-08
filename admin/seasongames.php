@@ -89,6 +89,7 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
+$tab = 0;
 foreach($series as $row){
   $menutabs[U_($row['name'])]="?view=admin/seasongames&season=".$season."&series=".$row['series_id'];
 }
@@ -100,22 +101,23 @@ $mass = ($_SESSION ['massinput']?"&amp;massinput=1":"");
 $hide = "";
 if($_SESSION['hide_played_pools']){
   $hide = "&amp;v=pool"; 
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass'>"._("Show played pools")."</a> ";
+  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass' tabindex='".++$tab."'>"._("Show played pools")."</a> ";
 }else{
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass'>"._("Hide played pools")."</a> ";
+  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass' tabindex='".++$tab."'>"._("Hide played pools")."</a> ";
 }
 if($_SESSION['hide_played_games']){
   $hide = "&amp;v=game";
-  $html .= "| <a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=game$mass'>"._("Show played games")."</a> ";
+  $html .= "| <a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=game$mass' tabindex='".++$tab."'>"._("Show played games")."</a> ";
 }else{
-  $html .= "| <a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=game$mass'>"._("Hide played games")."</a> ";
+  $html .= "| <a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=game$mass' tabindex='".++$tab."'>"._("Hide played games")."</a> ";
 }
 $html .= "</td><td style='text-align:right;'>";
 if ($_SESSION ['massinput']) {
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group$hide'>" . _ ( "Just display values" ) . "</a></td></tr></table>";
+  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group$hide' tabindex='".++$tab."'>" . _ ( "Just display values" ) . "</a></td></tr></table>";
 } else {
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group$hide&amp;massinput=1'>" . _ ( "Mass input" ) . "</a></td></tr></table>";
+  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group$hide&amp;massinput=1' tabindex='".++$tab."'>" . _ ( "Mass input" ) . "</a></td></tr></table>";
 }
+
 $html .= "<form method='post' action='?view=admin/seasongames&amp;season=$season&amp;group=$group'>";
 /*
 $groups = TimetableGrouping($season, "season", "all");
@@ -174,45 +176,47 @@ foreach ($pools as $pool) {
     
     $html .= "<tr class='admintablerow'>";
     
-    $html .= "<td style='width:170px'>" . ShortDate($game['starttime']) . " " . DefHourFormat($game['time']) . "<br/>";
+    $html .= "<td style='width:15%'>" . ShortDate($game['starttime']) . " " . DefHourFormat($game['time']) . "<br/>";
     $html .= utf8entities($game['placename']) . " " . utf8entities($game['fieldname']) . "</td>";
     // $html .= " (". DefWeekDateFormat($game['starttime']) ." ". DefHourFormat($game['starttime'])."-";
     // $html .= DefHourFormat($game['endtime']) .")</th>";
     
     // $html .= "<td class='left' style='width:10%'>";
     // $html .= "<input type='hidden' id='gamenameEdited".$i."' name='gamenameEdited[]' value='no'/>\n";
-    // $html .= "<input type='hidden' name='gameId[]' value='".utf8_entities($game['game_id'])."'/>\n";
+    // $html .= "<input type='hidden' name='gameId[]' value='".utf8entities($game['game_id'])."'/>\n";
     // $html .= "<input type='text' size='10' maxlength='50' value='".utf8entities(U_($game['gamename']))."' name='gn$i' onkeypress='ChgName(".$i.")'/>";
     // $html .= "</td>";
     
     if ($game['hometeam']) {
-      $html .= "<td  style='width:150px'>" . utf8entities(TeamName($game['hometeam'])) . "</td>";
+      $html .= "<td  style='width:20%'>" . utf8entities(TeamName($game['hometeam'])) . "</td>";
     }else {
-      $html .= "<td class='lowlight'  style='width:150px'>" . utf8entities(U_($game['phometeamname'])) . "</td>";
+      $html .= "<td class='lowlight'  style='width:20%'>" . utf8entities(U_($game['phometeamname'])) . "</td>";
     }
-    $html .= "<td style='width:15px'>-</td>";
+    $html .= "<td style='width:1%'>-</td>";
     if ($game['visitorteam']) {
-      $html .= "<td  style='width:150px'>" . utf8entities(TeamName($game['visitorteam'])) . "</td>";
+      $html .= "<td  style='width:20%'>" . utf8entities(TeamName($game['visitorteam'])) . "</td>";
     }else {
-      $html .= "<td class='lowlight'  style='width:150px'>" . utf8entities(U_($game['pvisitorteamname'])) . "</td>";
+      $html .= "<td class='lowlight'  style='width:20%'>" . utf8entities(U_($game['pvisitorteamname'])) . "</td>";
     }
     
     // $html .= "<td class='left' style='white-space: nowrap'>".utf8entities(U_($game['seriesname'])).", ". utf8entities(U_($game['poolname']))."</td>";
     
     // $html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
     if ($_SESSION['massinput']) {
-      $html .= "<td colspan='2'  style='width:220px'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/><input type='text' size='3' maxlength='4' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' onkeypress='ChgResult(" . $i . ")'/> - <input type='text' size='3' maxlength='5' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' onkeypress='ChgResult(" . $i . ")'/></td>";
+      $html .= "<td colspan='2'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/>
+          <input type='text' size='3' maxlength='4' style='width:5ex' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' onkeypress='ChgResult(" . $i . ")' tabindex='".++$tab."'/>
+          - <input type='text' size='3' maxlength='5' style='width:5ex'value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' onkeypress='ChgResult(" . $i . ")' tabindex='".++$tab."'/></td>";
     }else {
       if (GameHasStarted($game)) {
         if ($game['isongoing'])
-          $html .= "<td  style='width:40px'><em>" . intval($game['homescore']) . "</em> - <em>" . intval($game['visitorscore']) . "</em></td>";
+          $html .= "<td><em>" . intval($game['homescore']) . "</em> - <em>" . intval($game['visitorscore']) . "</em></td>";
         else
-          $html .= "<td  style='width:40px'>" . intval($game['homescore']) . " - " . intval($game['visitorscore']) . "</td>";
+          $html .= "<td>" . intval($game['homescore']) . " - " . intval($game['visitorscore']) . "</td>";
       }else {
-        $html .= "<td  style='width:40px'>? - ?</td>";
+        $html .= "<td>? - ?</td>";
       }
       if ($game['hometeam'] && $game['visitorteam']) {
-        $html .= "<td class='right'  style='width:180px'><a href='?view=user/addresult&amp;game=" . $game['game_id'] . "'>" . _("Result") . "</a> | ";
+        $html .= "<td class='right'><a href='?view=user/addresult&amp;game=" . $game['game_id'] . "'>" . _("Result") . "</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=" . $game['game_id'] . "'>" . _("Players") . "</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=" . $game['game_id'] . "'>" . _("Scoresheet") . "</a>";
         if ($seasoninfo['spiritpoints']) {
@@ -226,7 +230,7 @@ foreach ($pools as $pool) {
         $html .= "<td ></td>";
       }
     }
-    $html .= "<td style='width:50px'>";
+    $html .= "<td>";
     $html .= "<a href='?view=admin/editgame&amp;season=$season&amp;game=" . $game['game_id'] . "'><img class='deletebutton' src='images/settings.png' alt='D' title='" . _("edit details") . "'/></a>";
     
     if (CanDeleteGame($game['game_id'])) {
@@ -240,7 +244,7 @@ foreach ($pools as $pool) {
 $html .= "</table>";
 
 if ($_SESSION['massinput']) {
-  $html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
+  $html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "' tabindex='".++$tab."'/>";
 }
 $html .= $feedback;
 
