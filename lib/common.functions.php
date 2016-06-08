@@ -1305,7 +1305,7 @@ function CommentRaw($type, $id) {
 function CommentHTML($type, $id) {
   $comment = CommentRaw($type, $id);
   if ($comment != -1)
-    return "<div class='comment'>".$comment."</div>\n";
+    return "<div class='comment'>".someHTML($comment)."</div>\n";
   else
     return "";
 }

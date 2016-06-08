@@ -87,16 +87,14 @@ if($profile){
   $html .= "</td></tr>";
 
   if(!empty($profile['story']) && in_array("story",$publicfields)){
-    $story = utf8entities($profile['story']);
-    $story = str_replace("\n",'<br/>',$story);
+    $story = someHTML($profile['story']);
     $html .= "<tr><td colspan='2'>".$story."</td></tr>\n";
   }
   if(!empty($profile['achievements']) && in_array("achievements",$publicfields)){
     $html .= "<tr><td colspan='2'>&nbsp;</td></tr>\n";
     $html .= "<tr><td colspan='2'  class='profileheader'>"._("Achievements").":</td></tr>\n";
     $html .= "<tr><td colspan='2'></td></tr>\n";
-    $achievements = utf8entities($profile['achievements']);
-    $achievements = str_replace("\n",'<br/>',$achievements);
+    $achievements = someHTML($profile['achievements']);
     $html .= "<tr><td colspan='2'>".$achievements."</td></tr>\n";
   }
   $html .= "</table>";
