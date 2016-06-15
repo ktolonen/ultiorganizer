@@ -20,7 +20,7 @@ function ResolvePlayoffPoolStandings($poolId){
 		SELECT j.team_id, js.activerank 
 		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team) 
 		WHERE js.pool=%d 
-		ORDER BY js.activerank ASC, js.rank ASC",
+		ORDER BY js.rank ASC",
 		(int)$poolId);
 	
 	$teams = DBQueryToArray($query);

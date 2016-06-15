@@ -161,8 +161,8 @@ msgid "Margin"
 msgstr ""
 
 #: poolstatus.php:244 admin/seasonstandings.php:113
-msgid "Goals scored"
-msgstr "Erzielte Punkte"
+msgid "Goals"
+msgstr "Punkte"
 
 #: poolstatus.php:304 poolstatus.php:442 poolstatus.php:640 poolstatus.php:765
 #: games.php:29 games.php:34 games.php:39 games.php:45 games.php:50
@@ -200,14 +200,14 @@ msgstr "Punkte"
 #: teamcard.php:460 seriesstatus.php:109 seriesstatus.php:111
 #: admin/seasonstandings.php:163 ext/poolstatus.php:40
 #: ext/countrystatus.php:51 ext/eventpools.php:48
-msgid "Goals against"
-msgstr "Gegenpunkte"
+msgid "against"
+msgstr "Gegenp."
 
 #: poolstatus.php:326 teamcard.php:229 teamcard.php:303 teamcard.php:392
 #: teamcard.php:462 admin/seasonstandings.php:164 ext/poolstatus.php:41
 #: ext/countrystatus.php:52 ext/eventpools.php:49
-msgid "Goal diff"
-msgstr "Punktedifferenz"
+msgid "Diff."
+msgstr "Diff."
 
 #: poolstatus.php:480 ext/poolstatus.php:98 ext/countrystatus.php:148
 #: ext/eventpools.php:106
@@ -1320,10 +1320,6 @@ msgstr "Divisionsstatistik"
 #: seriesstatus.php:79 seriesstatus.php:81
 msgid "Seeding"
 msgstr "Setzliste"
-
-#: seriesstatus.php:115 seriesstatus.php:117
-msgid "Goals diff"
-msgstr "Punktedifferenz"
 
 #: seriesstatus.php:133 seriesstatus.php:135
 msgid "Spirit / Game"

@@ -224,9 +224,9 @@ if(ShowDefenseStats())
 		<th>"._("Win-%")."</th>
 		<th>"._("Goals for")."</th>
 		<th>"._("GF/game")."</th>
-		<th>"._("Goals against")."</th>
+		<th>"._("against")."</th>
 		<th>"._("GA/game")."</th>
-		<th>"._("Goal diff")."</th>
+		<th>"._("diff.")."</th>
 		<th>"._("Defenses")."</th>
 		</tr>";
 
@@ -298,9 +298,9 @@ if(ShowDefenseStats())
 	<th>"._("Win-%")."</th>
 	<th>"._("Goals for")."</th>
 	<th>"._("GF/game")."</th>
-	<th>"._("Goals against")."</th>
+	<th>"._("against")."</th>
 	<th>"._("GA/game")."</th>
-	<th>"._("Goal diff")."</th>
+	<th>"._("diff.")."</th>
 	<th>"._("Defenses")."</th>
 	</tr>";
 
@@ -387,9 +387,9 @@ else
 		<th>"._("Win-%")."</th>
 		<th>"._("Goals for")."</th>
 		<th>"._("GF/game")."</th>
-		<th>"._("Goals against")."</th>
+		<th>"._("against")."</th>
 		<th>"._("GA/game")."</th>
-		<th>"._("Goal diff")."</th>
+		<th>"._("diff.")."</th>
 		</tr>";
 
 
@@ -457,9 +457,9 @@ else
 	<th>"._("Win-%")."</th>
 	<th>"._("Goals for")."</th>
 	<th>"._("GF/game")."</th>
-	<th>"._("Goals against")."</th>
+	<th>"._("against")."</th>
 	<th>"._("GA/game")."</th>
-	<th>"._("Goal diff")."</th>
+	<th>"._("diff.")."</th>
 	</tr>";
 
     $total_games=0;

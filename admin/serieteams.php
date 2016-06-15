@@ -11,13 +11,13 @@ $backurl = utf8entities($_SERVER['HTTP_REFERER']);
 
 $seriesId = 0;
 if(!empty($_GET["pool"]))
-$poolId = intval($_GET["pool"]);
+  $poolId = intval($_GET["pool"]);
 
 if(!empty($_GET["series"]))
-$seriesId = intval($_GET["series"]);
+  $seriesId = intval($_GET["series"]);
 
 if(!empty($_GET["season"]))
-$season = $_GET["season"];
+  $season = $_GET["season"];
 
 $title = _("Teams");
 
@@ -64,23 +64,9 @@ if(!empty($_POST['save'])) {
   }
   ResolvePoolStandings($poolId);
 } else if(!empty($_POST['move'])) {
+  PoolConfirmMoves($poolId, $_POST['visible'] == "on");
+  
   $backurl = $_POST['backurl'];
-  PoolMakeMoves($poolId);
-  //Check if a BYE team has been scheduled. If so, fill in standard result
-  $changes=CheckBYE($poolId);
-  if ($changes>0) {
-  	// check if the game with the BYE team is scheduled. If so, exchange it with the game that is not scheduled.
-  	CheckBYESchedule($poolId);
-  }
-
-  ResolvePoolStandings($poolId);
-  if ($_POST['visible']=="on") {
-  	$visible = 1;
-  } else{
-  	$visible =0 ;
-  }
-//  echo "changing visibility of poolid ".$poolId."to value ".$visible." _POST['visible'] was: ".$_POST['visible'] ;
-  SetPoolVisibility($poolId,$visible);
   session_write_close();
   header("location:$backurl");
 }else if(!empty($_POST['ties'])){
@@ -165,7 +151,7 @@ if ($continuation && $SwissOK==-1) {
     echo "<td style='text-align: center;'>
 		<input onchange=\"toggleField(this,'rank".$team['team_id']."');\"  type='checkbox' name='selcheck[]' checked='checked' value='".utf8entities($team['team_id'])."'/></td>";
     echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input'
-			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='WIDTH: 20px' maxlength='3' size='2' value='".utf8entities($team['Rank'])."'/></td>";
+			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='width: 20px' maxlength='3' size='2' value='".utf8entities($team['Rank'])."'/></td>";
     echo "<td>".utf8entities($team['name'])."</td>";
     echo "<td>".utf8entities($team['clubname'])."</td>";
     echo "</tr>\n";
@@ -179,7 +165,7 @@ if ($continuation && $SwissOK==-1) {
     echo "<td style='text-align: center;'>
 		<input onchange=\"toggleField(this,'rank".$team['team_id']."');\"  type='checkbox' name='selcheck[]' value='".utf8entities($team['team_id'])."'/></td>";
     echo "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input'
-			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='WIDTH: 20px' maxlength='3' size='2' value='".utf8entities($team['rank'])."'/></td>";
+			name='rank".$team['team_id']."' id='rank".$team['team_id']."' style='width: 20px' maxlength='3' size='2' value='".utf8entities($team['rank'])."'/></td>";
     echo "<td>".utf8entities($team['name'])."</td>";
     echo "<td>".utf8entities($team['clubname'])."</td>";
     echo "</tr>\n";

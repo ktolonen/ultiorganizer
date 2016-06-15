@@ -247,7 +247,7 @@ function printSwissdraw($seasoninfo, $poolinfo){
   $ret .= "<th class='center'>"._("Victory Points")."</th>";
   $ret .= "<th class='center'>"._("Opponent VPs")."</th>";
   $ret .= "<th class='center'>"._("Margin")."</th>";
-  $ret .= "<th class='center'>"._("Goals scored")."</th>";
+  $ret .= "<th class='center'>"._("Goals")."</th>";
   //if($seasoninfo['spiritpoints'] && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))){
   //	$ret .= "<th class='center'>"._("Spirit points")."</th>";
   //}
@@ -328,8 +328,8 @@ function printRoundRobinPool($seasoninfo, $poolinfo){
   	$ret .= "<th class='center'>"._("Draws")."</th>";
   $ret .= "<th class='center'>"._("Losses")."</th>";
   $ret .= "<th class='center'>"._("Goals for")."</th>";
-  $ret .= "<th class='center'>"._("Goals against")."</th>";
-  $ret .= "<th class='center'>"._("Goal diff")."</th>";
+  $ret .= "<th class='center'>"._("against")."</th>";
+  $ret .= "<th class='center'>"._("diff.")."</th>";
   $ret .= "</tr>\n";
 
   $standings = PoolTeams($poolinfo['pool_id'], "rank");
@@ -523,10 +523,10 @@ function printPlayoffTree($seasoninfo, $poolinfo){
     $losers=0;
     $games=0;
     for($i=1;$i<=$totalteams;$i++){
-
+      
       $team = PoolTeamFromInitialRank($pool['pool_id'],$i);
       $movefrom = PoolGetMoveFrom($pool['pool_id'],$i);
-       
+      
       $name = "";
       $byeName = "";
       //find out team name
@@ -583,8 +583,18 @@ function printPlayoffTree($seasoninfo, $poolinfo){
         $game = "";
         if($team['team_id']){
           $results = GameHomeTeamResults($team['team_id'], $pool['pool_id']);
+          $reverse = false;
+          if (!$results) {
+            $results = GameVisitorTeamResults($team['team_id'], $pool['pool_id']);
+            $reverse = true;
+          }
           foreach($results as $res){
-            if($res['scoresheet'] && !$res['isongoing']){
+            if ($reverse) {
+              $dummy = $res['homescore'];
+              $res['homescore'] = $res['visitorscore'];
+              $res['visitorscore'] = $dummy;
+            }
+            if ($res['scoresheet'] && !$res['isongoing']) {
               $game .= "<a href='?view=gameplay&amp;game=". $res['game_id'] ."'>";
               $game .= $res['homescore']."-".$res['visitorscore']."</a> ";
             }elseif(GameHasStarted($res) >0 && !$res['isongoing']){

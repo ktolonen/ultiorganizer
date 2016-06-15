@@ -1382,11 +1382,47 @@ function SetTeamSerieRank($teamId, $poolId, $rank, $activerank) {
 			UPDATE uo_team_pool SET
 			rank='%s', activerank='%s'
 			WHERE team='%s' AND pool='%s'",
-    mysql_real_escape_string($rank),
-    mysql_real_escape_string($activerank),
-    mysql_real_escape_string($teamId),
-    mysql_real_escape_string($poolId));
+    (int) $rank,
+    (int) $activerank,
+    (int) $teamId,
+    (int) $poolId);
     	
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+    return $result;
+  } else { die('Insufficient rights to edit team rank');	}
+}
+
+function SetTeamPoolRank($teamId, $poolId, $rank) {
+  $poolInfo = PoolInfo($poolId);
+  if (hasEditTeamsRight($poolInfo['series'])) {
+    $query = sprintf("
+			UPDATE uo_team_pool SET
+			rank='%s'
+			WHERE team='%s' AND pool='%s'",
+        (int) $rank,
+        (int) $teamId,
+        (int) $poolId);
+     
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+
+    return $result;
+  } else { die('Insufficient rights to edit team rank');	}
+}
+
+function SetTeamRank($teamId, $poolId, $activerank) {
+  $poolInfo = PoolInfo($poolId);
+  if (hasEditTeamsRight($poolInfo['series'])) {
+    $query = sprintf("
+			UPDATE uo_team_pool SET
+			activerank='%s'
+			WHERE team='%s' AND pool='%s'",
+        (int) $activerank,
+        (int) $teamId,
+        (int) $poolId);
+     
     $result = mysql_query($query);
     if (!$result) { die('Invalid query: ' . mysql_error()); }
 

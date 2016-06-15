@@ -234,11 +234,11 @@ while($player = mysql_fetch_assoc($home_playerlist)){
   if($found){
     $html .= "<td class='center'>
 			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='homecheck[]' value='".utf8entities($player['player_id'])."' checked='checked'/></td>";
-    $html .= "<td  class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='3' size='3' value='$number'/></td>";
+    $html .= "<td  class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='width: 20px' maxlength='3' size='3' value='$number'/></td>";
   }else{
     $html .= "<td class='center'>
 			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='homecheck[]' value='".utf8entities($player['player_id'])."'/></td>";
-    $html .= "<td class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='3' size='3' value='$number' disabled='disabled'/></td>";
+    $html .= "<td class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='width: 20px' maxlength='3' size='3' value='$number' disabled='disabled'/></td>";
   }
   $html .= "</tr>\n";
 }
@@ -276,11 +276,11 @@ while($player = mysql_fetch_assoc($away_playerlist)){
   if($found){
     $html .= "<td class='center'>
 			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='awaycheck[]' value='".utf8entities($player['player_id'])."' checked='checked'/></td>";
-    $html .= "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='3' size='3' value='$number'/></td>";
+    $html .= "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='width: 20px' maxlength='3' size='3' value='$number'/></td>";
   }else{
     $html .= "<td class='center'>
 			<input onchange=\"toggleField(this,'p".$player['player_id']."');\" type='checkbox' name='awaycheck[]' value='".utf8entities($player['player_id'])."'/></td>";
-    $html .= "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='WIDTH: 20px' maxlength='3' size='3' value='$number' disabled='disabled'/></td>";
+    $html .= "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p".$player['player_id']."' id='p".$player['player_id']."' style='width: 20px' maxlength='3' size='3' value='$number' disabled='disabled'/></td>";
   }
   $html .= "</tr>\n";
 }

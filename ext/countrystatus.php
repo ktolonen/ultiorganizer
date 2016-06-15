@@ -48,8 +48,8 @@ while($pool = mysql_fetch_assoc($allpools)){
 	echo "<th style='width:8%' class='pk_ser_th'>"._("Wins")."</th>";
 	echo "<th style='width:8%' class='pk_ser_th'>"._("Losses")."</th>";
 	echo "<th style='width:8%' class='pk_ser_th'>"._("Goals for")."</th>";
-	echo "<th style='width:8%' class='pk_ser_th'>"._("Goals against")."</th>";
-	echo "<th style='width:8%' class='pk_ser_th'>"._("Goal diff")."</th>";
+	echo "<th style='width:8%' class='pk_ser_th'>"._("against")."</th>";
+	echo "<th style='width:8%' class='pk_ser_th'>"._("diff.")."</th>";
 	/*
 	if($seasoninfo['spiritpoints']){
 		echo "<th style='width:8%' class='pk_ser_th'>"._("Spirit points")."</th>";

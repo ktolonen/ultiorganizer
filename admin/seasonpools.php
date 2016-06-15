@@ -262,9 +262,9 @@ if(!$last_ordering){
 $html .=  "<tr>";
 $html .=  "<td style='padding-top:15px'><input class='input' size='20' maxlength='50' id='name0' name='name0'/></td>";
 $html .= "<td style='padding-top:15px'><input class='input' size='3' maxlength='20' name='ordering0' value='$last_ordering'/></td>";
-$html .= "<td class='center' style='padding-top:15px'><input class='input' type='checkbox' name='visible0' $is_visible/></td>";
-$html .= "<td class='center' style='padding-top:15px'><input class='input' type='checkbox' name='continuation0' $is_continuation/></td>";
-$html .= "<td class='center' style='padding-top:15px'><input class='input' type='checkbox' name='placement0' $is_placement/></td>";
+$html .= "<td class='center' style='padding-top:15px'><input class='input' type='checkbox' name='visible0'/></td>";
+$html .= "<td class='center' style='padding-top:15px'><input class='input' type='checkbox' name='continuation0'/></td>";
+$html .= "<td class='center' style='padding-top:15px'><input class='input' type='checkbox' name='placement0'/></td>";
 $html .= "<td style='padding-top:15px'><select class='dropdown' name='type0'>\n";
 
 foreach($types as $type=>$value) {

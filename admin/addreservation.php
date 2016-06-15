@@ -185,7 +185,7 @@ $html .= "</td></tr>\n";
 
 /* Not yet supported
 $html .= "<tr><td>"._("Timeslots")." ("._("hh:mm,hh:mm")."):</td><td>";
-$html .= "<input type='text' class='input' size='32' maxlenght='100' name='timeslots' value='".utf8entities($res['timeslots'])."'/>\n";
+$html .= "<input type='text' class='input' size='32' maxlength='100' name='timeslots' value='".utf8entities($res['timeslots'])."'/>\n";
 $html .= "</td></tr>\n";
 */
 
