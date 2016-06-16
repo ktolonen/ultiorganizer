@@ -1412,9 +1412,9 @@ function SetPoolName($poolId, $name) {
  * @param int $poolId
  * @param int $teamId - team to remove
  */
-function PoolDeleteTeam($poolId, $teamId) {
+function PoolDeleteTeam($poolId, $teamId, $checkrights=true) {
   $poolInfo = PoolInfo($poolId);
-  if (hasEditTeamsRight($poolInfo['series'])) {
+  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
 
     $query = sprintf("DELETE FROM uo_team_pool WHERE pool=%d AND team=%d",
       (int)$poolId,
@@ -1428,7 +1428,7 @@ function PoolDeleteTeam($poolId, $teamId) {
         (int)$teamId);
       DBQuery($query);
     }
-  } else { die('Insufficient rights to edit pool teams'); }
+  } else { die('PDT: Insufficient rights to edit pool teams'); }
 }
 
 /**
@@ -1443,12 +1443,12 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool) {
   if($newpool>0){
     $poolInfo = PoolInfo($newpool);
     if (!hasEditTeamsRight($poolInfo['series']))
-      die('Insufficient rights to edit pool teams');
+      die('PST: Insufficient rights to edit pool teams');
   }
   if ($curpool>0){
     $poolInfo = PoolInfo($curpool);
     if (!hasEditTeamsRight($poolInfo['series']))
-      die('Insufficient rights to edit pool teams');
+      die('PST: Insufficient rights to edit pool teams');
   }
 
 
@@ -1480,10 +1480,10 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool) {
  * @param int $rank - team rank in pool
  * @param int $updaterank - if activerank is updated
  */
-function PoolAddTeam($poolId, $teamId, $rank, $updaterank=false) {
+function PoolAddTeam($poolId, $teamId, $rank, $updaterank=false, $checkrights=true) {
   $poolInfo = PoolInfo($poolId);
 
-  if (hasEditTeamsRight($poolInfo['series'])) {
+  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
 
     if($updaterank){
       $query = sprintf("INSERT IGNORE INTO uo_team_pool
@@ -1512,7 +1512,7 @@ function PoolAddTeam($poolId, $teamId, $rank, $updaterank=false) {
     */
     DBQuery($query);
 
-  } else { die('Insufficient rights to edit pool teams'); }
+  } else { die('PAT: Insufficient rights to edit pool teams'); }
 }
 
 /**
@@ -1697,10 +1697,10 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights=true) {
     // delete previously moved team
     $previous = PoolTeamFromInitialRank($row['topool'], $row['torank']);
     if (!empty($previous) && CanDeleteTeamFromPool($row['topool'], $previous['team_id'])) {
-      PoolDeleteTeam($row['topool'], $previous['team_id']);
+      PoolDeleteTeam($row['topool'], $previous['team_id'], $checkrights);
     }
     
-    PoolAddTeam($row['topool'], $team['team_id'], $row['torank'], true);
+    PoolAddTeam($row['topool'], $team['team_id'], $row['torank'], true, $checkrights);
 
     // replace pseudo team with real team in games
     if (isRespTeamHomeTeam()) {
