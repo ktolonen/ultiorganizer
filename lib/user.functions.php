@@ -1190,12 +1190,12 @@ function GameResponsibilities($season) {
 	}
 }
 
-function GameResponsibilityArray($season) {
+function GameResponsibilityArray($season, $series=null) {
 	$gameResponsibilities = GameResponsibilities($season);
 	if(!$gameResponsibilities) {
 		return array();
 	}
-	$query = "SELECT game_id, hometeam, kj.name as hometeamname, visitorteam,
+	$query = sprintf("SELECT game_id, hometeam, kj.name as hometeamname, visitorteam,
 			vj.name as visitorteamname, pp.pool as pool, time, homescore, visitorscore,
 			pool.timecap, pool.timeslot, pool.series, res.reservationgroup,
 			ser.name, pool.name as poolname, res.id as res_id, res.starttime,
@@ -1211,8 +1211,11 @@ function GameResponsibilityArray($season) {
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
 			left join (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS m ON (pp.game_id=m.game)
-		WHERE game_id IN (".implode(",",$gameResponsibilities).")
-		ORDER BY res.starttime ASC, res.reservationgroup ASC, res.fieldname+0,pp.time ASC";
+		WHERE game_id IN (".implode(",",$gameResponsibilities).")" 
+		    . ($series?" AND pool.series=%d":"") . "
+		ORDER BY res.starttime ASC, res.reservationgroup ASC, res.fieldname+0,pp.time ASC",
+	    $series?(int)$series:0);
+	
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	$ret = array();
