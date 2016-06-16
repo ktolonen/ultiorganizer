@@ -6,9 +6,13 @@ include_once $include_prefix.'lib/series.functions.php';
 include_once $include_prefix.'lib/timetable.functions.php';
 
 $title = _("Game responsibilities");
-$html = "";
 $group = "all";
 $tab = 0;
+
+pageTop($title);
+leftMenu();
+contentStart();
+$html = "";
 
 if(!empty($_GET["group"])) {
   $group  = $_GET["group"];
@@ -163,8 +167,8 @@ foreach ($respGameArray as $tournament => $resArray) {
       if ($_SESSION['massinput']) {
       	$html .= "<td colspan='3' style='white-space: nowrap'>
       		<input type='hidden' id='scoreId" . $gameId . "' name='scoreId[]' value='$gameId'/>
-      		<input type='text' style='width:5ex' size='2' maxlength='3' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' onkeypress='ChgResult(" . $gameId . ")' tabindex='".++$tab."'/> 
-      		<input type='text' style='width:5ex' size='2' maxlength='3' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' onkeypress='ChgResult(" . $gameId . ")' tabindex='".++$tab."'/></td>";
+      		<input type='text' style='width:5ex' size='2' maxlength='3' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' oninput='confirmLeave(this, true, null);' tabindex='".++$tab."'/> 
+      		<input type='text' style='width:5ex' size='2' maxlength='3' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' oninput='confirmLeave(this, true, null);' tabindex='".++$tab."'/></td>";
       } else {
       	$html .= "<td>". intval($game['homescore']) ."</td><td>-</td><td>". intval($game['visitorscore']) ."</td>";
       }
@@ -195,10 +199,12 @@ foreach ($respGameArray as $tournament => $resArray) {
 }
 
 if ($_SESSION['massinput']) {
-	$html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "' tabindex='".++$tab."'/>";
+	$html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "' onclick='confirmLeave(null, false, null);' tabindex='".++$tab."'/>";
 }
 $html .= $feedback;
 
 
-showPage($title, $html);
+echo $html;
+contentEnd();
+pageEnd();
 ?>

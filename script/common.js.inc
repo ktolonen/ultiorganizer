@@ -45,6 +45,19 @@ function changeseason(id){
 	location.href=url;
 }
 
+function confirmLeave(element, confirm, text) {
+  if (element) {
+    if (!element.className.contains("highlight"))
+		element.className += "highlight";
+  }
+  if (confirm)
+    window.onbeforeunload = function() {
+        return text==null?"":text;
+    }
+  else
+    window.onbeforeunload = null;
+};
+
 
 //-->
 </script>

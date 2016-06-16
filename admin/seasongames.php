@@ -21,20 +21,20 @@ $title = utf8entities(SeasonName($season)).": "._("Games");
 $group = "all";
 
 if(!empty($_GET["group"])) {
-	$group  = $_GET["group"];
+  $group  = $_GET["group"];
 }
 
 $_SESSION['hide_played_pools'] = !empty($_SESSION['hide_played_pools']) ? $_SESSION['hide_played_pools'] : 0;
 $_SESSION['hide_played_games'] = !empty($_SESSION['hide_played_games']) ? $_SESSION['hide_played_games'] : 0;
- 
+
 if(!empty($_GET["v"])) {
-	$visibility = $_GET["v"];
-	
-	if($visibility=="pool"){
+  $visibility = $_GET["v"];
+
+  if($visibility=="pool"){
       $_SESSION['hide_played_pools'] = $_SESSION['hide_played_pools'] ? 0 : 1;
-	}elseif($visibility=="game"){
+  }elseif($visibility=="game"){
       $_SESSION['hide_played_games'] = $_SESSION['hide_played_games'] ? 0 : 1;
-	}
+  }
 }
 if (!empty($_GET["massinput"])) {
   $_SESSION['massinput'] = true;
@@ -47,23 +47,17 @@ $feedback = "<p>...</p>";
 if(!empty($_POST['remove_x'])){
   $id = $_POST['hiddenDeleteId'];
   $ok = true;
-  	
+
   //run some test to for safe deletion
   $goals = GameAllGoals($id);
   if(mysql_num_rows($goals)){
-  	$html .= "<p class='warning'>"._("Game has")." ".mysql_num_rows($goals)." "._("goals").". "._("Goals must be removed before removing the team").".</p>";
-  	$ok = false;
-  }	
+    $html .= "<p class='warning'>"._("Game has")." ".mysql_num_rows($goals)." "._("goals").". "._("Goals must be removed before removing the team").".</p>";
+    $ok = false;
+  }
   if($ok){
-  	DeleteGame($id);
+    DeleteGame($id);
   }
 } elseif (!empty($_POST['save'])) {
-  // for ($i=0; $i<count($_POST['gamenameEdited']); $i++) {
-  // if ($_POST['gamenameEdited'][$i] == "yes") {
-  // $id = $_POST['gameId'][$i];
-  // GameChangeName($id, $_POST["gn$i"]);
-  // }
-  // }
   $feedback = GameProcessMassInput($_POST);
 }
 
@@ -73,14 +67,14 @@ $html .= yuiLoad(array("utilities"));
 ?>
 <script type="text/javascript">
 <!--
-function setId(id) 
-	{
-	var input = document.getElementById("hiddenDeleteId");
-	input.value = id;
-	}
+function setId(id)
+  {
+  var input = document.getElementById("hiddenDeleteId");
+  input.value = id;
+  }
 function ChgName(index) {
-	YAHOO.util.Dom.get('gamenameEdited' + index).value = 'yes';
-	YAHOO.util.Dom.get("save").disabled = false;
+  YAHOO.util.Dom.get('gamenameEdited' + index).value = 'yes';
+  YAHOO.util.Dom.get("save").disabled = false;
 }
 //-->
 </script>
@@ -100,7 +94,7 @@ $html .= "<table width='100%'><tr><td>";
 $mass = ($_SESSION ['massinput']?"&amp;massinput=1":"");
 $hide = "";
 if($_SESSION['hide_played_pools']){
-  $hide = "&amp;v=pool"; 
+  $hide = "&amp;v=pool";
   $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass' tabindex='".++$tab."'>"._("Show played pools")."</a> ";
 }else{
   $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass' tabindex='".++$tab."'>"._("Hide played pools")."</a> ";
@@ -119,74 +113,39 @@ if ($_SESSION ['massinput']) {
 }
 
 $html .= "<form method='post' action='?view=admin/seasongames&amp;season=$season&amp;group=$group'>";
-/*
-$groups = TimetableGrouping($season, "season", "all");
-if(count($groups>1)){
-	$html .= "<p>\n";	
-	foreach($groups as $grouptmp){
-		if($group==$grouptmp['reservationgroup']){
-			$html .= "<a class='groupinglink' href='?view=admin/seasongames&amp;season=$season&amp;group=".urlencode($grouptmp['reservationgroup'])."'><span class='selgroupinglink'>".U_($grouptmp['reservationgroup'])."</span></a>";
-		}else{
-			$html .= "<a class='groupinglink' href='?view=admin/seasongames&amp;season=$season&amp;group=".urlencode($grouptmp['reservationgroup'])."'>".U_($grouptmp['reservationgroup'])."</a>";
-		}
-		$html .= "&nbsp;&nbsp;&nbsp; ";
-	}
-	if($group=="all"){
-		$html .= "<a class='groupinglink' href='?view=admin/seasongames&amp;season=$season&amp;group=all'><span class='selgroupinglink'>"._("All")."</span></a>";
-	}else{
-		$html .= "<a class='groupinglink' href='?view=admin/seasongames&amp;season=$season&amp;group=all'>"._("All")."</a>";
-	}
-	$html .= "&nbsp;&nbsp;&nbsp; ";
-	
-	if($group=="unscheduled"){
-		$html .= "<a class='groupinglink' href='?view=admin/seasongames&amp;season=$season&amp;group=unscheduled'><span class='selgroupinglink'>"._("Unscheduled")."</span></a>";
-	}else{
-		$html .= "<a class='groupinglink' href='?view=admin/seasongames&amp;season=$season&amp;group=unscheduled'>"._("Unscheduled")."</a>";
-	}
-	$html .= "</p>\n";	
-}
-*/
 
 $pools = SeriesPools($series_id);
 
 $html .= "<table class='admintable'>\n";
 
 foreach ($pools as $pool) {
-  
+
   $poolinfo = PoolInfo($pool['pool_id']);
   if ($_SESSION['hide_played_pools'] && $poolinfo['played']) {
     continue;
   }
-  
+
   $games = TimetableGames($pool['pool_id'], "pool", "all", "time", $group);
-  
+
   $html .= "<tr><th colspan='4'>" . utf8entities(U_($pool['name'])) . "</th>";
   $html .= "<th class='right' colspan='3' ><a class='thlink' href='?view=user/pdfscoresheet&amp;season=$season&amp;pool=" . $pool['pool_id'] . "'>" . _("Print scoresheets") . "</a></th>";
   $html .= "</tr>";
-  
+
   while ($game = mysql_fetch_assoc($games)) {
     $i = $game['game_id'];
-    
+
     if (GameHasStarted($game)) {
       if ($_SESSION['hide_played_games']) {
         continue;
       }
       // $html .= "<tr class='tablelowlight'>";
     }
-    
+
     $html .= "<tr class='admintablerow'>";
-    
+
     $html .= "<td style='width:15%'>" . ShortDate($game['starttime']) . " " . DefHourFormat($game['time']) . "<br/>";
     $html .= utf8entities($game['placename']) . " " . utf8entities($game['fieldname']) . "</td>";
-    // $html .= " (". DefWeekDateFormat($game['starttime']) ." ". DefHourFormat($game['starttime'])."-";
-    // $html .= DefHourFormat($game['endtime']) .")</th>";
-    
-    // $html .= "<td class='left' style='width:10%'>";
-    // $html .= "<input type='hidden' id='gamenameEdited".$i."' name='gamenameEdited[]' value='no'/>\n";
-    // $html .= "<input type='hidden' name='gameId[]' value='".utf8entities($game['game_id'])."'/>\n";
-    // $html .= "<input type='text' size='10' maxlength='50' value='".utf8entities(U_($game['gamename']))."' name='gn$i' onkeypress='ChgName(".$i.")'/>";
-    // $html .= "</td>";
-    
+
     if ($game['hometeam']) {
       $html .= "<td  style='width:20%'>" . utf8entities(TeamName($game['hometeam'])) . "</td>";
     }else {
@@ -198,14 +157,14 @@ foreach ($pools as $pool) {
     }else {
       $html .= "<td class='lowlight'  style='width:20%'>" . utf8entities(U_($game['pvisitorteamname'])) . "</td>";
     }
-    
+
     // $html .= "<td class='left' style='white-space: nowrap'>".utf8entities(U_($game['seriesname'])).", ". utf8entities(U_($game['poolname']))."</td>";
-    
+
     // $html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
     if ($_SESSION['massinput']) {
       $html .= "<td colspan='2'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/>
-          <input type='text' size='3' maxlength='4' style='width:5ex' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' onkeypress='ChgResult(" . $i . ")' tabindex='".++$tab."'/>
-          - <input type='text' size='3' maxlength='5' style='width:5ex'value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' onkeypress='ChgResult(" . $i . ")' tabindex='".++$tab."'/></td>";
+          <input type='text' size='3' maxlength='4' style='width:5ex' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' oninput='confirmLeave(this, true, null);' tabindex='".++$tab."'/>
+          - <input type='text' size='3' maxlength='5' style='width:5ex'value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' oninput='confirmLeave(this, true, null);' tabindex='".++$tab."'/></td>";
     }else {
       if (GameHasStarted($game)) {
         if ($game['isongoing'])
@@ -232,148 +191,23 @@ foreach ($pools as $pool) {
     }
     $html .= "<td>";
     $html .= "<a href='?view=admin/editgame&amp;season=$season&amp;game=" . $game['game_id'] . "'><img class='deletebutton' src='images/settings.png' alt='D' title='" . _("edit details") . "'/></a>";
-    
+
     if (CanDeleteGame($game['game_id'])) {
       $html .= "<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"setId(" . $game['game_id'] . ");\"/>";
     }
     $html .= "</td>\n";
-    
+
     $html .= "</tr>\n";
   }
 }
 $html .= "</table>";
 
 if ($_SESSION['massinput']) {
-  $html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "' tabindex='".++$tab."'/>";
+  $html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "' tabindex='".++$tab."' onclick='confirmLeave(null, false, null);'/>";
 }
 $html .= $feedback;
 
-/*
-while($game = mysql_fetch_assoc($games)){
 
-    //show also games without field reservation
-	//if(empty($game['place_id'])){
-	//	$game['place_id']=-1;
-	//	$game['fieldname']="-";
-	//	$game['reservationgroup'] = _("Unscheduled");		
-	//}
-	
-	//if($prevreservationgroup != $game['reservationgroup']){
-		if($tableopen){
-			$html .= "</table>";
-			$tableopen = false;
-		}
-		//if($group=="all"){
-		//	$html .= "<h2>".utf8entities($game['reservationgroup'])."</h2>";
-		//}
-		//$html .= "<p>"._("Print scoresheets from games").": ";
-		//$html .= "<a href='?view=user/pdfscoresheet&amp;season=".$season."&amp;group=".urlencode($game['reservationgroup'])."'>"._("All listed")."</a>";
-		//$html .= "&nbsp;|&nbsp;";
-		//$html .= "<a href='?view=user/pdfscoresheet&amp;season=".$season."&amp;group=".urlencode($game['reservationgroup'])."&amp;filter1=coming'>"._("Not played")."</a>";
-		//$html .= "&nbsp;|&nbsp;";
-		//$html .= "<a href='?view=user/pdfscoresheet&amp;season=".$season."&amp;group=".urlencode($game['reservationgroup'])."&amp;filter1=coming&amp;filter2=teams'>"._("Not played with Teams")."</a>";
-		//$html .= "</p>";
-		//$prevreservationgroup = $game['reservationgroup'];
-		//$prevlocation=0;
-		//$prevfield= "";
-	//}
-	//if($game['place_id']!=$prevlocation || $game['fieldname']!=$prevfield){
-		//if($tableopen){
-		//	$html .= "</table>";
-		//	$tableopen = false;
-		//}
-		$html .= "<table border='0' cellpadding='4px' style='width:100%'>\n";
-		$html .= "<tr><th colspan='5'>".utf8entities($game['placename'])." "._("Field")." ".utf8entities($game['fieldname']);
-		$html .= " (". DefWeekDateFormat($game['starttime']) ." ". DefHourFormat($game['starttime'])."-";
-		$html .= DefHourFormat($game['endtime']) .")</th>";
-
-		$html .= "<th colspan='6' class='right'><a href='?view=admin/schedule&amp;Reservations=".$game['reservation_id']."'>"._("Add games")."</a></th>";	
-		$html .= "</tr>";
-		$prevlocation=$game['place_id'];
-		$prevfield = $game['fieldname'];
-		$tableopen=true;
-	}
-
-		$html .= "<tr>";
-
-		$html .= "<td style='width:10%'>".DefHourFormat($game['time']) ."</td>";
-		
-		$html .= "<td class='left'>";
-		$html .= "<input type='hidden' id='gamenameEdited".$i."' name='gamenameEdited[]' value='no'/>\n";
-		$html .= "<input type='hidden' name='gameId[]' value='".utf8entities($game['game_id'])."'/>\n";
-		$html .= "<input type='text' size='15' maxlength='50' value='".utf8entities(U_($game['gamename']))."' name='gn$i' onkeypress='ChgName(".$i.")'/>";
-		$html .= "</td>";
-				
-		if($game['hometeam']){
-			$html .= "<td style='width:30%'>".utf8entities(TeamName($game['hometeam']))."</td>";
-		}else{
-			$html .= "<td class='lowlight' style='width:30%'>".utf8entities(U_($game['phometeamname']))."</td>";
-		}
-		$html .= "<td>-</td>";
-		if($game['visitorteam']){
-			$html .= "<td style='width:30%'>". utf8entities(TeamName($game['visitorteam'])) ."</td>";
-		}else{
-			$html .= "<td class='lowlight' style='width:30%'>".utf8entities(U_($game['pvisitorteamname']))."</td>";
-		}
-		
-		$html .= "<td class='left' style='white-space: nowrap'>".utf8entities(U_($game['seriesname'])).", ". utf8entities(U_($game['poolname']))."</td>";
-		
-		$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$game['game_id']."'>"._("edit")."</a></td>";
-		
-		if($game['hometeam'] && $game['visitorteam']){
-			$html .= "<td style='width:5%'>". intval($game['homescore']) ."</td><td style='width:2%'>-</td><td style='width:5%'>". intval($game['visitorscore']) ."</td>";
-		}else{
-			$html .= "<td colspan='3'></td>";
-		}
-		if(CanDeleteGame($game['game_id'])){
-			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$game['game_id'].");\"/></td>";		
-		}
-		$html .= "</tr>\n";	
-$i++;
-}
-*/
-/*
-if($tableopen){
-	$html .= "</table>";
-	$tableopen = false;
-}
-	
-if($group=="unscheduled"){		
-	$games = SeasonGamesNotScheduled($season);
-	if(count($games))
-		{
-		$html .= "<table border='0' cellpadding='4px' width='100%'>\n";
-		foreach($games as $row)
-			{
-			$html .= "<tr>";
-    		$html .= "<td class='left'>";
-    		$html .= "<input type='hidden' id='gamenameEdited".$i."' name='gamenameEdited[]' value='no'/>\n";
-    		$html .= "<input type='hidden' name='gameId[]' value='".utf8entities($game['game_id'])."'/>\n";
-    		$html .= "<input type='text' size='15' maxlength='50' value='".utf8entities(U_($game['gamename']))."' name='gn$i' onkeypress='ChgName(".$i.")'/>";
-    		$html .= "</td>";
-		
-			if($row['hometeam']){
-				$html .= "<td style='width:30%'>".utf8entities(TeamName($row['hometeam']))."</td>";
-			}else{
-				$html .= "<td class='lowlight' style='width:30%'>".utf8entities(U_($row['phometeamname']))."</td>";
-			}
-			$html .= "<td>-</td>";
-			if($row['visitorteam']){
-				$html .= "<td style='width:30%'>". utf8entities(TeamName($row['visitorteam'])) ."</td>";
-			}else{
-				$html .= "<td class='lowlight' style='width:30%'>".utf8entities(U_($row['pvisitorteamname']))."</td>";
-			}
-			$html .= "<td class='left' style='white-space: nowrap'>".utf8entities(U_($row['seriesname'])).", ". utf8entities(U_($row['poolname']))."</td>";
-			$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=".$row['game_id']."'>"._("edit")."</a></td>";
-			if(CanDeleteGame($row['game_id'])){
-				$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setId(".$row['game_id'].");\"/></td>";		
-			}
-			$html .= "</tr>\n";	
-			}
-		$html .= "</table>";
-		}
-}	
-*/
 //stores id to delete
 //if($i>0){
   $html .= "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>";

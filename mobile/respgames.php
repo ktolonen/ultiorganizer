@@ -5,6 +5,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 $html = "";
 mobilePageTop(_("Game responsibilities"));
+
 $season = CurrentSeason();
 $reservationgroup = "";
 $location = "";
@@ -47,8 +48,9 @@ if (!empty($_GET["massinput"])) {
 }
 
 //process itself on submit
+$feedback = "";
 if (!empty($_POST['save'])) {
-	GameProcessMassInput($_POST);
+	$feedback = GameProcessMassInput($_POST);
 }
 
 
@@ -124,12 +126,14 @@ if(count($respGameArray) == 0) {
 		}
 	}
 }
-$html .= "</td></tr><tr><td>\n";
+$html .= "</td></tr>\n";
 if ($_SESSION['massinput']) {
-	$html .= "<input class='button' name='save' type='submit' value='" . _("Save") . "'/></td></tr><tr><td>\n";
+	$html .= "<tr><td><input class='button' name='save' type='submit' value='" . _("Save") . "' onclick='confirmLeave(null, false, null);'/></td></tr>\n";
 }
+if ($feedback)
+  $html .="<tr><td>".$feedback."</td></tr>";
 
-$html .= "<hr/>\n";
+$html .= "<tr><td><hr/>\n";
 if($showall){
 	$html .= "<a href='?view=mobile/respgames'>"._("Group games")."</a>";
 }else{
@@ -140,7 +144,7 @@ $html .= "</form>";
 
 echo $html;
 		
-mobilePageEnd();
+pageEnd();
 
 function gamerow($gameId, $game, $mass){
 	$ret = "&nbsp;&nbsp;&nbsp;&nbsp;";
@@ -150,8 +154,8 @@ function gamerow($gameId, $game, $mass){
 
 		if ($mass=="1") {
 			$ret .= "<input type='hidden' id='scoreId" . $gameId . "' name='scoreId[]' value='$gameId'/>
-			<input type='text' size='3' maxlength='3' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' /> -
-			<input type='text' size='3' maxlength='3' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' />";
+			<input type='text' size='3' maxlength='3' style='width:4ex' value='" . (is_null($game['homescore'])?"":intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' oninput='confirmLeave(this, true, null);' /> -
+			<input type='text' size='3' maxlength='3' style='width:4ex' value='" . (is_null($game['visitorscore'])?"":intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' oninput='confirmLeave(this, true, null);' />";
 			// $ret .= "<input class='button' name='saveOne' type='submit' value='" . _("Save") . "' onPress='setSaved(".$gameID.")'/></td></tr><tr><td>\n";
 		}elseif(GameHasStarted($game)){
 			$ret .=  "<a style='white-space: nowrap' href='?view=mobile/gameplay&amp;game=".$gameId."'>".intval($game['homescore']) ." - ". intval($game['visitorscore'])."</a>";

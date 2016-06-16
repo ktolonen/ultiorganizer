@@ -249,7 +249,7 @@ function mobilePageEnd($query="") {
     $query=$_SERVER['QUERY_STRING'];
   if (!isset($_SESSION['uid']) || $_SESSION['uid'] == "anonymous") {
     
-    $html .= "<form action='?" . utf8entities($query) . "' method='post'>\n";
+    $html = "<form action='?" . utf8entities($query) . "' method='post'>\n";
     $html .= "<table cellpadding='2'>\n";
     $html .= "<tr><td>\n";
     $html .= _("Username") . ":";
@@ -274,7 +274,7 @@ function mobilePageEnd($query="") {
     }
     // $user = $_SESSION['uid'];
     // $userinfo = UserInfo($user);
-    $html .= "<table cellpadding='2'>\n";
+    $html = "<table cellpadding='2'>\n";
     $html .= "<tr><td></td></tr>\n";
     $html .= "<tr><td><hr /></td></tr><tr><td>\n";
     $html .= "<a href='?view=frontpage'>" . _("Back to the Ultiorganizer") . "</a>";
