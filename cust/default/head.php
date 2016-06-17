@@ -1,4 +1,4 @@
-<?php 
+<?php
 function logo() {
 	global $styles_prefix;
 	global $include_prefix;

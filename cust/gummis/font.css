@@ -104,6 +104,72 @@
 	/*padding-left:10px*/;
 }
 
+.pagemenu_container{
+	width: 100%;
+	margin: 0px;
+	padding: 0px;
+/*	height:15px;*/
+}
+
+ul#pagemenu{
+	list-style-type:none;
+	position:relative;
+	width:100%;
+	font-weight:bold;
+	font-size: 10px;
+	margin:0px;
+	padding:0px;
+}
+
+table#pagemenu{
+	font-size: 10px;
+	margin:0px;
+}
+
+ul#pagemenu li{
+	display:block;
+	float:left;
+	margin:0 0 0 4px;
+}
+
+ul#pagemenu li.left{
+	margin:0;
+}
+
+table#pagemenu th {
+	background:#ffffff;
+}
+
+ul#pagemenu li a, table#pagemenu a {
+	display:block;
+	float:left;
+	color: #000000;;
+	background-color: #f0f0f0;
+	text-decoration: none;
+	padding:3px 17px 0 18px;
+}
+	
+ul#pagemenu li a.right{
+	padding-right:19px;
+}
+	
+ul#pagemenu li a:hover, table#pagemenu a:hover {
+	text-decoration: underline;
+	background-color: #d3d3d3;
+	border-left:1px solid #333;
+	border-right:1px solid #333;
+	border-top:1px solid #333;
+}
+	
+ul#pagemenu li a.current, table#pagemenu a.current {
+	color: #000000;;
+	background-color: #d3d3d3;
+	text-decoration: underline;
+	border-left:1px solid #333;
+	border-right:1px solid #333;
+	border-top:1px solid #333;
+}
+
 .thsort, .thsort:link, .thsort:visited {
 	font-size: 10px;
 	color: #ffffff;

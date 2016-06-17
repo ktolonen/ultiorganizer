@@ -107,7 +107,7 @@
 	width: 100%;
 	margin: 0px;
 	padding: 0px;
-	height:15px;
+/*	height:15px;*/
 }
 
 ul#pagemenu{
@@ -130,7 +130,11 @@ ul#pagemenu li.left{
 	margin:0;
 }
 
-ul#pagemenu li a{
+table#pagemenu th {
+	background:#ffffff;
+}
+
+ul#pagemenu li a, table#pagemenu a {
 	display:block;
 	float:left;
 	color: #2d2d2d;
@@ -143,7 +147,7 @@ ul#pagemenu li a.right{
 	padding-right:19px;
 	}
 	
-ul#pagemenu li a:hover{
+ul#pagemenu li a:hover, table#pagemenu a:hover {
 	color: #0bc5e0;
 	text-decoration: underline;
 	background-color: #d3d3d3;
@@ -152,7 +156,7 @@ ul#pagemenu li a:hover{
 	border-top:1px solid #333;
 	}
 	
-ul#pagemenu li a.current{
+ul#pagemenu li a.current, table#pagemenu a.current {
 	color: #2d2d2d;
 	text-decoration:  underline;
 	background:#0bc5e0;

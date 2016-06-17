@@ -794,7 +794,7 @@ function pageMenu($menuitems, $current="", $echoed=true) {
     $line .= utf8entities($name);
     $line .= " - ";
   }
-  if (strlen($line) < 120) {
+  if (strlen($line) < 100) {
     $html .= "<table id='pagemenu'><tr>\n";
     $first = true;
     foreach ($menuitems as $name => $url) {
