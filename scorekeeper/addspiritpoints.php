@@ -94,8 +94,8 @@ if($ishome){
 }else{
     $html .= "<a href='?view=addspiritpoints&game=".$gameId."&team=".$game_result['hometeam']."' data-role='button' data-ajax='false'>"._("Spirit points for")." ".utf8entities($game_result['hometeamname'])."</a>";	
 }
-$html .= "<a href='?view=addscoresheet&amp;game=".$gameId."' data-role='button' data-ajax='false'>"._("Back to score sheet")."</a>";
-$html .= "<a href='?view=respgames' data-role='button' data-ajax='false'>"._("Back to game responsibilities")."</a>";
+$html .= " <a href='?view=addscoresheet&amp;game=".$gameId."' data-role='button' data-ajax='false'>"._("Back to score sheet")."</a>";
+$html .= " <a href='?view=respgames' data-role='button' data-ajax='false'>"._("Back to game responsibilities")."</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 

@@ -110,7 +110,7 @@ foreach ($respGameArray as $tournament => $resArray) {
 
           if($game['hometeam'] && $game['visitorteam']){
             $html .= "<div>";
-            $html .= "<table style='white-space: nowrap'>";
+            $html .= "<table>";
             $html .= "<tbody>";
             $html .= "<tr>";
             $html .= "<td style='padding-left:10px'>";
@@ -119,7 +119,7 @@ foreach ($respGameArray as $tournament => $resArray) {
             $html .= "<td style='padding-left:10px'>";
             $html .= utf8entities($game['hometeamname']) ." - ". utf8entities($game['visitorteamname']);
             $html .= "</td>";
-            $html .= "<td style='padding-left:10px'>";
+            $html .= "<td style='padding-left:10px; white-space:nowrap;'>";
             if(GameHasStarted($game)){
               $html .= intval($game['homescore']) ." - ". intval($game['visitorscore']);
             }else{  
