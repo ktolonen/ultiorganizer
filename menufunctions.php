@@ -228,7 +228,7 @@ function pageEnd() {
 function onPageHelpAvailable($html) {
   return "<div style='float:right;'>
 	<input type='image' class='helpbutton' id='helpbutton' src='images/help-icon.png'/></div>\n
-	<div style='display:none' id='helptext' class='yui-pe-content'>$html<hr/></div>";
+	<div id='helptext' class='yui-pe-content'>$html<hr/></div>";
 }
 
 
@@ -780,6 +780,9 @@ function getEditSeasonLinks() {
  * Creates on page menu. Typically top of the page.
  *
  * @param array $menuitems - key is link name, value is url.
+ * @param string $current - links to this url obtain the class 'current'
+ * @param boolean $echoed if true (the default), the menu is echoed 
+ * @return the menu
  *
  */
 function pageMenu($menuitems, $current="", $echoed=true) {

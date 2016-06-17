@@ -66,9 +66,9 @@ if(count($respGameArray) == 0) {
 	$prevrg = "";
 	$prevloc = "";
 	if ($_SESSION['massinput']) {
-		$html .= "<p><a href='?view=mobile/respgames$allPar$rgPar$locationPar$dayPar&amp;massinput=0'>" . _("Just display values") . "</a></p>";
+		$html .= "<p><a class='button' href='?view=mobile/respgames$allPar$rgPar$locationPar$dayPar&amp;massinput=0'>" . _("Just display values") . "</a></p>";
 	}else {
-		$html .= "<p><a href='?view=mobile/respgames$allPar$rgPar$locationPar$dayPar&amp;massinput=1'>" . _("Mass input") . "</a></p>";
+		$html .= "<p><a class='button' href='?view=mobile/respgames$allPar$rgPar$locationPar$dayPar&amp;massinput=1'>" . _("Mass input") . "</a></p>";
 	}
 	
 	foreach ($respGameArray as $tournament => $resArray) {

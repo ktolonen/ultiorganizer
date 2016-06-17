@@ -37,8 +37,10 @@ if(!empty($_GET["v"])) {
   }
 }
 if (!empty($_GET["massinput"])) {
+  $mass = true;
   $_SESSION['massinput'] = true;
 } else {
+  $mass = false;
   $_SESSION['massinput'] = false;
 }
 
@@ -83,33 +85,46 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
+$visible="";
+
 $tab = 0;
 foreach($series as $row){
-  $menutabs[U_($row['name'])]="?view=admin/seasongames&season=".$season."&series=".$row['series_id'];
+  $menutabs[U_($row['name'])]=seasongameslink($season, $row['series_id'], $group, null, $mass);
 }
 $menutabs[_("...")]="?view=admin/seasonseries&season=".$season;
-pageMenu($menutabs,"?view=admin/seasongames&season=".$season."&series=".$series_id);
+pageMenu($menutabs, seasongameslink($season, $series_id, $group, null, $mass));
+
+function seasongameslink($season, $series, $group, $switchvisible, $mass) {
+  $ret = "?view=admin/seasongames&season=$season" 
+    . ($series?"&series=$series":"")
+    . "&group=" . utf8entities($group)
+    . ($switchvisible?"&v=$switchvisible":"") 
+    . ($mass?"&massinput=true":"");
+  return $ret;
+}
 
 $html .= "<table width='100%'><tr><td>";
-$mass = ($_SESSION ['massinput']?"&amp;massinput=1":"");
-$hide = "";
-if($_SESSION['hide_played_pools']){
-  $hide = "&amp;v=pool";
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass' tabindex='".++$tab."'>"._("Show played pools")."</a> ";
-}else{
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=pool$mass' tabindex='".++$tab."'>"._("Hide played pools")."</a> ";
+if ($_SESSION['hide_played_pools']) {
+  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "pool", $mass) . "' tabindex='" . ++$tab . "'>" .
+       _("Show played pools") . "</a> ";
+} else {
+  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "pool", $mass) . "' tabindex='" . ++$tab . "'>" .
+       _("Hide played pools") . "</a> ";
 }
-if($_SESSION['hide_played_games']){
-  $hide = "&amp;v=game";
-  $html .= "| <a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=game$mass' tabindex='".++$tab."'>"._("Show played games")."</a> ";
-}else{
-  $html .= "| <a href='?view=admin/seasongames&amp;season=$season&amp;group=$group&amp;v=game$mass' tabindex='".++$tab."'>"._("Hide played games")."</a> ";
+if ($_SESSION['hide_played_games']) {
+  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "game", $mass) . "' tabindex='" . ++$tab . "'>" .
+       _("Show played games") . "</a> ";
+} else {
+  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "game", $mass) . "' tabindex='" . ++$tab . "'>" .
+       _("Hide played games") . "</a> ";
 }
 $html .= "</td><td style='text-align:right;'>";
-if ($_SESSION ['massinput']) {
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group$hide' tabindex='".++$tab."'>" . _ ( "Just display values" ) . "</a></td></tr></table>";
+if ($mass) {
+  $html .= "<a class='button' href='" . seasongameslink($season, $series_id, $group, null, false) . "' tabindex='" .
+       ++$tab . "'>" . _("Just display values") . "</a></td></tr></table>";
 } else {
-  $html .= "<a href='?view=admin/seasongames&amp;season=$season&amp;group=$group$hide&amp;massinput=1' tabindex='".++$tab."'>" . _ ( "Mass input" ) . "</a></td></tr></table>";
+  $html .= "<a class='button' href='" . seasongameslink($season, $series_id, $group, null, true) . "' tabindex='" .
+       ++$tab . "'>" . _("Mass input") . "</a></td></tr></table>";
 }
 
 $html .= "<form method='post' action='?view=admin/seasongames&amp;season=$season&amp;group=$group'>";

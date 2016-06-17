@@ -9,9 +9,6 @@ $title = _("Game responsibilities");
 $group = "all";
 $tab = 0;
 
-pageTop($title);
-leftMenu();
-contentStart();
 $html = "";
 
 if(!empty($_GET["group"])) {
@@ -26,6 +23,7 @@ $help = "<p>"._("Feed in the data for your game responsibilities").":</p>
 		<li> "._("Players in the game")." </li>
 		<li> "._("Game score sheet")." </li>
 	</ol>
+	<p>"._("Click on Mass input to input multiple results at once, then Save").".</p>
 	<p>"._("Check the game play after feeding in the score sheet").".</p>";
 
 $html .= onPageHelpAvailable($help);
@@ -36,8 +34,13 @@ if (isset($_GET['season'])) {
 } else {
   $season = CurrentSeason();
 }
-$series_id = CurrentSeries($season);
+if (isset($_GET['series'])) {
+  $series_id = $_GET['series'];
+} else {
+  $series_id = null;
+}
 $series = SeasonSeries($season);
+
 
 $hidestarted = -1;
 $hide="none";
@@ -60,24 +63,25 @@ if (!empty($_POST['save'])) {
 	$feedback = GameProcessMassInput($_POST);
 }
 
-
 foreach($series as $row){
   $menutabs[U_($row['name'])]="?view=user/respgames&season=".$season."&series=".$row['series_id'];
 }
 $menutabs[_("...")]="?view=user/respgames&season=".$season;
-pageMenu($menutabs, respgameslink($season, $series_id, $group, $hide, $mass));
+$html .= pageMenu($menutabs, respgameslink($season, $series_id, $group, $hide, $mass, false), false);
 
 
 $seasoninfo = SeasonInfo($season);
 $groups = TimetableGrouping($season, "season", "all");
 $html .= "<table width='100%'><tr><td>\n";
 
-function respgameslink($season, $series_id, $group, $hide, $mass) {
+function respgameslink($season, $series_id, $group, $hide, $mass, $htmlentities=true) {
   if($hide=="none")
     $hide = "";
   else
     $hide = "&amp;hidden=".$hide;
-  return "?view=user/respgames&amp;season=$season". ($series_id?"&amp;series=$series_id":"") . "&amp;group=$group$hide&amp;massinput=$mass"; 
+  $ret = "?view=user/respgames&amp;season=$season" . ($series_id ? "&amp;series=$series_id" : "") .
+       "&amp;group=$group$hide&amp;massinput=$mass";
+  return $ret;
 }
 
 if(count($groups)>0){
@@ -113,9 +117,9 @@ $html .= "</td>\n";
 
 $html .= "</td><td style='text-align:right;' tabindex='".++$tab."'>";
 if ($_SESSION ['massinput']) {
-	$html .= "<a href='".respgameslink($season, $series_id, $group, $hide, "0")."'>" . _ ( "Just display values" ) . "</a>";
+	$html .= "<a class='button' href='".respgameslink($season, $series_id, $group, $hide, "0")."'>" . _ ( "Just display values" ) . "</a>";
 } else {
-	$html .= "<a href='".respgameslink($season, $series_id, $group, $hide, "1")."'>" . _ ( "Mass input" ) . "</a>";
+	$html .= "<a class='button' href='".respgameslink($season, $series_id, $group, $hide, "1")."'>" . _ ( "Mass input" ) . "</a>";
 }
 $html .= "</td></tr></table>\n";
 
@@ -215,7 +219,5 @@ if ($_SESSION['massinput']) {
 $html .= $feedback;
 
 
-echo $html;
-contentEnd();
-pageEnd();
+showPage($title, $html);
 ?>

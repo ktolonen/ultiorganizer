@@ -336,3 +336,14 @@ color: #ff7f02;
 	text-align: center; 
 	vertical-align: middle;
 }
+
+a.button {
+    -webkit-appearance: button;
+    -moz-appearance: button;
+    appearance: button;
+
+    text-decoration: none;
+    color: initial;
+    white-space: nowrap;
+}
+
