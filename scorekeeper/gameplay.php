@@ -85,8 +85,8 @@ if(mysql_num_rows($goals) <= 0){
 }
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=".$game_result['hometeam']."' data-role='button' data-ajax='false'>".utf8entities($game_result['hometeamname'])." "._("scoresboard")."</a>";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=".$game_result['visitorteam']."' data-role='button' data-ajax='false'>".utf8entities($game_result['visitorteamname'])." "._("scoresboard")."</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=".$game_result['hometeam']."' data-role='button' data-ajax='false'>".utf8entities($game_result['hometeamname'])." "._("scoreboard")."</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=".$game_result['visitorteam']."' data-role='button' data-ajax='false'>".utf8entities($game_result['visitorteamname'])." "._("scoreboard")."</a>";
 $html .= "<a href='?view=respgames' data-role='button' data-ajax='false'>"._("Back to game responsibilities")."</a>";
 $html .= "</div><!-- /content -->\n\n";
 

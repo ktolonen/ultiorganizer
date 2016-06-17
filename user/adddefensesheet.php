@@ -361,10 +361,10 @@ echo "</tr>";
 echo "<tr><td colspan='2'>
 <p>"._("Feed in the scoresheet").":</p>
 <ul>
-<li>"._("In addition of tab-key you can use + key to swap between fields and enter key to select radio button.")."</li>
-<li>"._("As a separator in the time field you can use ")." .,:; "._("characters").".</li>
-<li>"._("Give XX as the assist in Callahan goals").".</li>
-<li>"._("You can save the score sheet any time while feeding it in")."</li></ul></td></tr>";
+<li>"._("In addition to the tab-key you can use the + key to change fields and the enter key to select a radio button.")."</li>
+<li>"._("As separator in the time field you can use any of the '.', ',', ':', or ';' characters").".</li>
+<li>"._("Input XX as the assist in Callahan goals").".</li>
+<li>"._("You can save the score sheet at any time while feeding it in")."</li></ul></td></tr>";
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>"._("Back to game responsibilities")."</a></p></td></tr>";
 echo "</table>\n";
 
