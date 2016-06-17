@@ -21,6 +21,7 @@ if($list=="teamstandings"){
   $html .= "<h1>"._("Team Standings")."</h1>\n";
   $seasontypes = SeasonTypes();
   $serietypes = SeriesTypes();
+  $countall = 0;
 
   foreach($seasontypes as $seasontype){
     $seasons = SeasonsByType($seasontype);
@@ -41,8 +42,10 @@ if($list=="teamstandings"){
       foreach($seasons as $season){
         $standings = TeamStandings($season['season_id'],$seriestype);
         if(!count($standings)){continue;}
+        ++$countall;
         $html .= "<tr>";
-        $html .= "<td style='width:16%'><a href='?view=eventstatus&amp;season=".$season['season_id']."'>".utf8entities(U_($season['name']))."</a></td>";
+        $html .= "<td style='width:16%'><a href='?view=teams&season=" . urlencode($season['season_id']) .
+             "&amp;list=bystandings'>" . utf8entities(U_($season['name'])) . "</a></td>";
 
         for($i=0;$i<count($standings)&&$i<3;$i++){
           $html .= "<td style='width:28%'>";
@@ -55,6 +58,9 @@ if($list=="teamstandings"){
       }
       $html .= "</table>\n";
     }
+  }
+  if ($countall == 0) {
+    $html .= "<p>"._("No season statistics available. Statistics must be computed by an administrator")."</p>";
   }
 }elseif($list=="playerscoreboard"){
   $html .= "<h1>"._("Scoreboard TOP 3")."</h1>\n";

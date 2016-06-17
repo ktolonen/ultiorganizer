@@ -161,9 +161,7 @@ if($list=="allteams" || $list=="byseeding"){
       $html .= "</table>\n";
     }
   }
-}elseif ($list=="bystandings") {
-
-
+} elseif ($list=="bystandings") {
   $htmlseries = array();
   $maxplacements=0;
 
@@ -191,7 +189,8 @@ if($list=="allteams" || $list=="byseeding"){
   $html .= "<tr>";
   $html .= "<th style='width:20%;'>". _("Placement"). "</th>";
   foreach($series as $ser){
-    $html .= "<th style='width:".(80/count($series))."%;'>". utf8entities(U_($ser['name'])) ."</th>";
+    $html .= "<th style='width:" . (80 / count($series)) . "%;'><a href='?view=seriesstatus&series=" .
+         $ser['series_id'] . "'>" . utf8entities(U_($ser['name'])) . "</a></th>";
     $maxplacements = max(count(SeriesTeams($ser['series_id'])), $maxplacements);
   }
   $html .= "</tr>\n";
