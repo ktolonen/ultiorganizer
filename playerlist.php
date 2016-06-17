@@ -51,7 +51,7 @@ while($player = mysql_fetch_assoc($players)) {
   }
   $i++;
 }
-usort($stats, create_function('$b,$a','return strcmp($b[\'name\'],$a[\'name\']);'));
+mergesort($stats, create_function('$b,$a','return strcmp($b[\'name\'],$a[\'name\']);'));
 $teamseasons = 0;
 $teamplayed = 0;
 $teampasses = 0;

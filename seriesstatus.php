@@ -8,7 +8,7 @@ $LAYOUT_ID = SERIESTATUS;
 
 $title = _("Statistics")." ";
 $viewUrl="?view=seriesstatus";
-$sort="winavg";
+$sort="ranking";
 $html = "";
 
 if(iget("series")){
@@ -74,13 +74,13 @@ $html .= "<table border='1' style='width:100%'>\n";
 $html .= "<tr>";
 
 if($sort == "ranking") {
-  usort($allteams, create_function('$a,$b','$va=$a[\''.$sort.'\']; $vb=$b[\''.$sort.'\'];
+  mergesort($allteams, create_function('$a,$b','$va=$a[\''.$sort.'\']; $vb=$b[\''.$sort.'\'];
     return $va==$vb?0:($va==null?1:($vb=null?-1:($a[\''.$sort.'\']<$b[\''.$sort.'\']?-1:1)));'));
   
 } else if($sort == "name" || $sort == "pool" || $sort == "against" || $sort == "seed") {
-  usort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']<$b[\''.$sort.'\']?-1:1);'));
+  mergesort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']<$b[\''.$sort.'\']?-1:1);'));
 }else{
-  usort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']>$b[\''.$sort.'\']?-1:1);'));
+  mergesort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']>$b[\''.$sort.'\']?-1:1);'));
 }
 
 if($sort == "name") {

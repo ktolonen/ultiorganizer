@@ -288,7 +288,7 @@ if(ShowDefenseStats())
     }
     $tmphtml .= "</table><p></p>";
 
-    usort($stats, create_function('$b,$a','return strcmp($b[\'season_type\'],$a[\'season_type\']);'));
+    mergesort($stats, create_function('$b,$a','return strcmp($b[\'season_type\'],$a[\'season_type\']);'));
 
     $html .= "<table border='1' width='100%'><tr>
 	<th>"._("Event type")."</th>
@@ -447,7 +447,7 @@ else
     }
     $tmphtml .= "</table><p></p>";
 
-    usort($stats, create_function('$b,$a','return strcmp($b[\'season_type\'],$a[\'season_type\']);'));
+    mergesort($stats, create_function('$b,$a','return strcmp($b[\'season_type\'],$a[\'season_type\']);'));
 
     $html .= "<table border='1' width='100%'><tr>
 	<th>"._("Event type")."</th>
