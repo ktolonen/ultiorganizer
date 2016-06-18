@@ -248,9 +248,6 @@ function printSwissdraw($seasoninfo, $poolinfo){
   $ret .= "<th class='center'>"._("Opponent VPs")."</th>";
   $ret .= "<th class='center'>"._("Margin")."</th>";
   $ret .= "<th class='center'>"._("Goals")."</th>";
-  //if($seasoninfo['spiritpoints'] && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))){
-  //	$ret .= "<th class='center'>"._("Spirit points")."</th>";
-  //}
   $ret .= "</tr>\n";
 
   $standings = PoolTeams($poolinfo['pool_id'], "rank");
@@ -271,10 +268,6 @@ function printSwissdraw($seasoninfo, $poolinfo){
       $ret .= "<td class='center'>".intval($vp['oppvp'])."</td>";
       $ret .= "<td class='center'>".intval($vp['margin'])."</td>";
       $ret .= "<td class='center'>".intval($vp['score'])."</td>";
-      // might give too details idea which team has given and how many points
-      //if($seasoninfo['spiritpoints'] && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))){
-      //	$ret .= "<td class='center'>",intval($points['spirit']),"</td>";
-      //}
       $ret .= "</tr>\n";
     }
   }else{

@@ -850,57 +850,49 @@ function GameAddTimeout($gameId, $number, $time, $home) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
-function GameGetSpiritPoints($gameId, $teamId) {
-  $query = sprintf("SELECT * FROM uo_spirit WHERE game_id=%d AND team_id=%d",
+function GameGetSpiritPoints($gameId, $teamId) { /* TODO */
+  $query = sprintf("SELECT * FROM uo_spirit_score WHERE game_id=%d AND team_id=%d",
   		(int)$gameId,
   		(int)$teamId);
-  return DBQueryToRow($query);
+  $scores = DBQueryToArray($query);
+  $points = array();
+  foreach ($scores as $score) {
+    $points[$score['category_id']] = $score['value'];
+  }
+  return $points;
 }
 
-function GameSetSpiritPoints($gameId, $teamId, $home, $points ) {
-	if (hasEditGameEventsRight($gameId)) {
-	  
-	  $query = sprintf("SELECT * FROM uo_spirit WHERE game_id=%d AND team_id=%d",
-	  		(int)$gameId,
-	        (int)$teamId);
+function GameSetSpiritPoints($gameId, $teamId, $home, $points, $categories) {
+  if (hasEditGameEventsRight($gameId)) {
+    $query = sprintf("DELETE FROM uo_spirit_score 
+        WHERE game_id=%d AND team_id=%d", 
+        (int) $gameId, (int) $teamId);
+    DBQuery($query);
+    
+    foreach ($points as $cat => $value) {
+      if (!is_null($value)) {
+        $query = sprintf("INSERT INTO uo_spirit_score (`game_id`, `team_id`, `category_id`, `value`)
+            VALUES (%d, %d, %d, %d)",
+            (int) $gameId, (int) $teamId, (int) $cat, (int) $value);
+        DBQuery($query);
 
-	  $update = DBQueryRowCount($query);
-	  
-	  if($update){
-	    $query = sprintf("UPDATE uo_spirit SET cat1=%d,cat2=%d,cat3=%d,cat4=%d,cat5=%d  
-        	        WHERE game_id=%d AND team_id=%d",
-	            (int)$points[0],
-	            (int)$points[1],
-	            (int)$points[2],
-	            (int)$points[3],
-  	            (int)$points[4],
-	    		(int)$gameId,
-	    		(int)$teamId);
-	  }else{
-	    $query = sprintf("INSERT INTO uo_spirit (game_id,team_id,cat1,cat2,cat3,cat4,cat5) VALUES (%d,%d,%d,%d,%d,%d,%d)",
-	            (int)$gameId,
-	            (int)$teamId,
-	            (int)$points[0],
-	    		(int)$points[1],
-	    		(int)$points[2],
-	    		(int)$points[3],
-	    		(int)$points[4]);
-	  }
-	  DBQuery($query);
-	  $total =  array_sum($points);
-	  $query = sprintf("UPDATE uo_game SET ");
-	  
-	  if($home){
-	    $query .= sprintf("homesotg=%d ",
-	    		(int)$total);
-	  }else{
-	    $query .= sprintf("visitorsotg=%d ",
-	    		(int)$total);
-	  }		
-	    $query .= sprintf("WHERE game_id=%d",(int)$gameId);
-		
-		return DBQuery($query);
-	} else { die('Insufficient rights to edit game'); }
+        $total += $categories[$cat]['factor'] * $value;
+      }
+    }
+    
+    $query = sprintf("UPDATE uo_game SET ");
+    
+    if ($home) {
+      $query .= sprintf("homesotg=%d ", (int) $total);
+    } else {
+      $query .= sprintf("visitorsotg=%d ", (int) $total);
+    }
+    $query .= sprintf("WHERE game_id=%d", (int) $gameId);
+    
+    return DBQuery($query);
+  } else {
+    die('Insufficient rights to edit game');
+  }
 }
 
 function GameSetScoreSheetKeeper($gameId, $name) {

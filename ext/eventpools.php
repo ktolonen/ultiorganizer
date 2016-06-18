@@ -47,11 +47,6 @@ foreach ($allpools as $pool) {
 		echo "<th style='width:8%' class='pk_ser_th'>"._("Goals for")."</th>";
 		echo "<th style='width:8%' class='pk_ser_th'>"._("Goals against")."</th>";
 		echo "<th style='width:8%' class='pk_ser_th'>"._("Goal diff")."</th>";
-		/*
-		if($seasoninfo['spiritpoints']){
-			echo "<th style='width:8%' class='pk_ser_th'>"._("Spirit points")."</th>";
-		}
-		*/
 		echo "</tr>\n";
 
 		$standings = PoolTeams($poolinfo['pool_id'], "rank");
@@ -71,11 +66,6 @@ foreach ($allpools as $pool) {
 			echo "<td class='pk_ser_td2'>".intval($points['scores'])."</td>";
 			echo "<td class='pk_ser_td2'>".intval($points['against'])."</td>";
 			echo "<td class='pk_ser_td2'>",(intval($points['scores'])-intval($points['against'])),"</td>";
-			/*
-			if($seasoninfo['spiritpoints']){
-				echo "<td class='pk_ser_td2'>",number_format(SafeDivide(intval($points['spirit']), intval($stats['games'])),1),"</td>";
-			}
-			*/
 			echo "</tr>\n";
 		}
 		echo "</table>\n";

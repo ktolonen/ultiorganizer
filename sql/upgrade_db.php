@@ -1,6 +1,7 @@
 <?php
 include_once $include_prefix.'lib/common.functions.php';
 include_once $include_prefix.'lib/image.functions.php';
+include_once $include_prefix.'lib/logging.functions.php';
 
 function upgrade46() {
 	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookEnabled", "false")');
@@ -473,6 +474,81 @@ function upgrade74() {
 	PRIMARY KEY (`type`,`id`),
     INDEX `idx_id` (`id`)
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+  }
+}
+
+function upgrade75() {
+  if (!hasTable("uo_spirit_category")) {
+    runQuery("CREATE TABLE `uo_spirit_category` (
+        `category_id` INT(10) NOT NULL AUTO_INCREMENT,
+        `mode` INT(10) NOT NULL,
+        `group` INT(5) NOT NULL DEFAULT 1,
+        `index` INT(5) NOT NULL,
+        `min` INT(5) NOT NULL DEFAULT 0,
+        `max` INT(5) NOT NULL DEFAULT 4,
+        `factor` INT(5) NOT NULL DEFAULT 1,
+        `text` text NOT NULL,
+        PRIMARY KEY (`category_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
+    
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1001", 0, "One simple score")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1001", 1, "Spirit score")');
+    
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 0, "WFDF (four categories plus comparison)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 1, "Rules Knowledge and Use")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 2, "Fouls and Body Contact")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 3, "Fair-Mindedness")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 4, "Positive Attitude and Self-Control")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 5, "Our Spirit compared to theirs")');
+
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1003", 0, "WFDF (five categories)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1003", 1, "Rules Knowledge and Use")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1003", 2, "Fouls and Body Contact")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1003", 3, "Fair-Mindedness")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1003", 4, "Positive Attitude and Self-Control")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1003", 5, "Communication")');
+
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1004", 0, "WFDF (five categories, theirs and ours)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1004", 1, "Rules Knowledge and Use (theirs)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `group`, `index`, `factor`, `text`) VALUES ("1004", 1, 2, 0, "Rules Knowledge and Use (ours)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1004", 3, "Fouls and Body Contact (theirs)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `group`, `index`, `factor`, `text`) VALUES ("1004", 1, 4, 0, "Fouls and Body Contact (ours)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1004", 5, "Fair-Mindedness (theirs)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `group`, `index`, `factor`, `text`) VALUES ("1004", 1, 6, 0, "Fair-Mindedness (ours)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1004", 7, "Positive Attitude and Self-Control (theirs)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `group`, `index`, `factor`, `text`) VALUES ("1004", 1, 8, 0, "Positive Attitude and Self-Control (ours)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1004", 9, "Communication (theirs)")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `group`, `index`, `factor`, `text`) VALUES ("1004", 1, 10, 0, "Communication (ours)")');
+    
+    runQuery("CREATE TABLE `uo_spirit_score` (
+        `game_id` INT(10) NOT NULL,
+        `team_id` INT(10) NOT NULL,
+		`category_id` INT(10) NOT NULL,
+        `value` INT (3) DEFAULT NULL,
+        PRIMARY KEY (`game_id`, `team_id`, `category_id`)
+        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
+
+    $categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1001");
+    $categories = array();
+    while ($cat = mysql_fetch_assoc($categoriesResult)) {
+      $categories[$cat['index']] = $cat['category_id'];
+    }
+    $results = runQuery("SELECT * FROM uo_spirit");
+    while ($row = mysql_fetch_assoc($results)) {
+      for ($i=1; $i<=5; ++$i) {
+        runQuery(
+            sprintf("INSERT INTO `uo_spirit_score` (`game_id`, `team_id`, `category_id`, `value`)
+                VALUES (%d, %d, %d, %d)", 
+                $row['game_id'], $row['team_id'], $categories[$i], $row['cat'.$i])
+            );
+      }
+    }
+    // TODO runQuery('DROP TABLE uo_spirit');
+    
+    // "UPDATE uo_season"
+    addColumn('uo_season', 'spiritmode', 'INT(10) DEFAULT NULL');
+    runQuery("UPDATE uo_season SET `spiritmode` = 1002 WHERE `spiritpoints`=1");
+    
   }
 }
 

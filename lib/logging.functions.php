@@ -188,11 +188,21 @@ function LogPoolUpdate($poolId, $details, $source=""){
 	return LogEvent($event);
 	}
 
-	/**
-	 * Log page load into database for usage statistics.
-	 * 
-	 * @param string $page - loaded page
-	 */
+function LogDbUpgrade($version, $end = false, $source = "") {
+  $event['category'] = "database";
+  $event['type'] = "change";
+  $event['source'] = $source;
+  $event['id1'] = $version;
+  $event['description'] = $end ? "finished" : "started";
+  return LogEvent($event);
+}
+
+/**
+ * Log page load into database for usage statistics.
+ *
+ * @param string $page
+ *          - loaded page
+ */
 function LogPageLoad($page){
 
   $query=sprintf("SELECT loads FROM uo_pageload_counter WHERE page='%s'",
@@ -252,5 +262,4 @@ function LogGetPageLoads(){
   $query=sprintf("SELECT page, loads FROM uo_pageload_counter ORDER BY loads DESC");
   return DBQueryToArray($query);
 }
-
 ?>

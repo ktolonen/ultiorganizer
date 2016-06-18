@@ -39,11 +39,6 @@ if($poolinfo['type']==1){
   echo "<th class='pk_ser_th'>"._("Goals for")."</th>";
   echo "<th class='pk_ser_th'>"._("Goals against")."</th>";
   echo "<th class='pk_ser_th'>"._("Goal diff")."</th>";
-  /*
-   if($seasoninfo['spiritpoints'] && $seasoninfo['showspiritpoints']){
-   echo "<th class='pk_ser_th'>"._("Spirit points")."</th>";
-   }
-   */
   echo "</tr>\n";
 
   $standings = PoolTeams($poolinfo['pool_id'], "rank");
@@ -63,11 +58,6 @@ if($poolinfo['type']==1){
     echo "<td class='pk_ser_td2'>".intval($points['scores'])."</td>";
     echo "<td class='pk_ser_td2'>".intval($points['against'])."</td>";
     echo "<td class='pk_ser_td2'>",(intval($points['scores'])-intval($points['against'])),"</td>";
-    /*
-     if($seasoninfo['spiritpoints'] && $seasoninfo['showspiritpoints']){
-     echo "<td class='pk_ser_td2'>",number_format(SafeDivide(intval($points['spirit']), intval($stats['games'])),1),"</td>";
-     }
-     */
     echo "</tr>\n";
   }
   echo "</table>\n";

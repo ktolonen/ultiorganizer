@@ -28,10 +28,10 @@ $tour = intval($info['istournament'])?_("Tournament"):_("Season");
 $html .=  "<tr><td  style='width:40%;'><b>"._("Type")."</b></td><td>".U_($info['type'])."/".$tour."/". $inter."/".$club ."</td></tr>\n";
 $html .=  "<tr><td><b>"._("Organizer")."</b></td><td>".U_($info['organizer'])."/".U_($info['category'])."</td></tr>\n";
 
-$spirit = intval($info['spiritpoints'])?_("given"):_("not given");
-if($info['spiritpoints']){
-  $spirit .= "/";
-  $spirit .= intval($info['showspiritpoints'])?_("visible"):_("not visible");
+$spirit = _("not given");
+if($info['spiritmode'] > 0) {
+  $spiritmode = SpiritMode($info['spiritmode']);
+  $spirit = utf8entities(_($spiritmode['name'])) . " / <em>" . (intval($info['showspiritpoints'])?_("visible"):_("not visible")) . "</em>";
 }
 $html .=  "<tr><td><b>"._("Spirit points")."</b></td><td>".$spirit."</td></tr>\n";
 

@@ -12,7 +12,7 @@ if(isset($_POST['save'])) {
 	GameSetSpiritPoints($gameId, intval($_POST['homespirit']), intval($_POST['awayspirit']));
 	
 	header("location:?view=mobile/addscoresheet&game=".$gameId);
-	}
+}
 
 mobilePageTop(_("Score&nbsp;sheet"));
 

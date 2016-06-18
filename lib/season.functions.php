@@ -495,7 +495,7 @@ function AddSeason($seasonId, $params, $comment=null) {
     $query = sprintf("
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
-			starttime, endtime, iscurrent, enrollopen, enroll_deadline,spiritpoints,showspiritpoints,
+			starttime, endtime, iscurrent, enrollopen, enroll_deadline,spiritmode,showspiritpoints,
 			timezone) 
 			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, '%s')",
     mysql_real_escape_string($seasonId),
@@ -510,7 +510,7 @@ function AddSeason($seasonId, $params, $comment=null) {
     mysql_real_escape_string($params['endtime']),
     (int)$params['iscurrent'], (int)$params['enrollopen'],
     mysql_real_escape_string($params['enroll_deadline']),
-    (int)$params['spiritpoints'],
+    (int)$params['spiritmode'],
     (int)$params['showspiritpoints'],
     mysql_real_escape_string($params['timezone']));
     	
@@ -542,7 +542,7 @@ function SetSeason($seasonId, $params, $comment=null) {
 			season_id='%s', name='%s', type='%s', istournament='%d', isinternational='%d', 
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
-			spiritpoints=%d, showspiritpoints=%d, timezone='%s'
+			spiritmode=%d, showspiritpoints=%d, timezone='%s'
 			WHERE season_id='%s'",
     mysql_real_escape_string($seasonId),
     mysql_real_escape_string($params['name']),
@@ -556,7 +556,7 @@ function SetSeason($seasonId, $params, $comment=null) {
     mysql_real_escape_string($params['endtime']),
     (int)$params['iscurrent'], (int)$params['enrollopen'],
     mysql_real_escape_string($params['enroll_deadline']),
-    (int)$params['spiritpoints'],
+    (int)$params['spiritmode'],
     (int)$params['showspiritpoints'],
     mysql_real_escape_string($params['timezone']),
     mysql_real_escape_string($seasonId));
@@ -589,5 +589,30 @@ function CanDeleteSeason($seasonId) {
     if (!$row = mysql_fetch_row($result)) return true;
     return !($row[0] == $seasonId);
   } else return false;
+}
+
+function SpiritMode($mode_id) {
+  $query = sprintf("SELECT mode, text AS name FROM `uo_spirit_category`
+          WHERE `mode` = \"%d\" AND `index` = \"0\"", (int) $mode_id);
+  return DBQueryToRow($query);
+}
+
+function SpiritModes() {
+  $query = sprintf("SELECT mode, text AS name FROM `uo_spirit_category`
+          WHERE `index` = 0");
+  return DBQueryToArray($query);
+}
+
+function SpiritCategories($mode_id) {
+  $query = sprintf("SELECT * FROM `uo_spirit_category` 
+      WHERE `mode`=%d
+      ORDER BY `group` ASC, `index` ASC",
+      (int) $mode_id);
+  $cats = DBQueryToArray($query);
+  $categories = array();
+  foreach ($cats as $cat) {
+    $categories[$cat['category_id']] = $cat;
+  }
+  return $categories;
 }
 ?>

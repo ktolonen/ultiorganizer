@@ -193,7 +193,7 @@ foreach ($pools as $pool) {
         $html .= "<td class='right'><a href='?view=user/addresult&amp;game=" . $game['game_id'] . "'>" . _("Result") . "</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=" . $game['game_id'] . "'>" . _("Players") . "</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=" . $game['game_id'] . "'>" . _("Scoresheet") . "</a>";
-        if ($seasoninfo['spiritpoints']) {
+        if ($seasoninfo['spiritmode'] > 0) {
           $html .= " | <a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Spirit") . "</a>";
         }
         if (ShowDefenseStats()) {

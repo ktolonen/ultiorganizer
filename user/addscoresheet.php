@@ -171,7 +171,7 @@ contentStart();
 $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
-if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
+if($seasoninfo['spiritmode']>0 && isSeasonAdmin($seasoninfo['season_id'])){
   $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
 }
 if(ShowDefenseStats())
@@ -196,11 +196,6 @@ if(!empty($_POST['save']))
   $time_delim = array(",", ";", ":");
   //set score sheet keeper
   GameSetScoreSheetKeeper($gameId, $_POST['secretary']);
-
-  //set spirit points
-  //if($seasoninfo['spiritpoints'] && (isset($_POST['homespirit']) || isset($_POST['awayspirit']))) {
-  //  GameSetSpiritPoints($gameId, $_POST['homespirit'], $_POST['awayspirit']);
-  //}
 
   //set captains
   if(intval($_POST['homecaptain'])){
@@ -483,20 +478,6 @@ echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 	maxlength='8' type='text' name='halftime' id='halftime' value='". SecToMin($game_result['halftime']) ."'/></td></tr>";
 echo "</table>\n";
 
-//spirit points
-/*
-if($seasoninfo['spiritpoints'] && isSeasonAdmin($seasoninfo['season_id'])){
-
-  $game_result['homesotg'] = isset($game_result['homesotg']) ? $game_result['homesotg'] : "xx";
-  $game_result['visitorsotg'] = isset($game_result['visitorsotg']) ? $game_result['visitorsotg'] : "xx";
-  echo "<table cellspacing='0' width='100%' border='1'>\n";
-  echo "<tr><th colspan='2'>"._("Spirit points")."</th></tr>";
-  echo "<tr><td class='center' style='width:50%;'>". utf8entities($game_result['hometeamname']) ."</td><td class='center' style='width:50%;'>". utf8entities($game_result['visitorteamname']) ."</td></tr>";
-  echo "<tr><td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validNumberX(this);\" name='homespirit' id='homespirit' value='".utf8entities($game_result['homesotg'])."'/></td>";
-  echo "<td class='center'><input class='input' maxlength='4' size='8' type='text' onkeyup=\"validNumberX(this);\" name='awayspirit' id='awayspirit' value='".utf8entities($game_result['visitorsotg'])."'/></td></tr>";
-  echo "</table>\n";
-}
-*/
 //result
 echo "<table cellspacing='0' width='100%' border='1'>\n";
 if ($game_result['isongoing']) {
