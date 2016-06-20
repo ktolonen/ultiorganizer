@@ -296,16 +296,6 @@ echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 	maxlength='8' type='text' name='halftime' id='halftime' value='". SecToMin($game_result['halftime']) ."'/></td></tr>";
 echo "</table>\n";
 
-//spirit points
-if($seasoninfo['spiritpoints']){
-	echo "<table cellspacing='0' width='100%' border='1'>\n";
-	echo "<tr><th colspan='2'>"._("Spirit points")."</th></tr>";
-	echo "<tr><td class='center' style='width:50%;'>". utf8entities($game_result['hometeamname']) ."</td><td class='center' style='width:50%;'>". utf8entities($game_result['visitorteamname']) ."</td></tr>";
-	echo "<tr><td class='center'><input class='input' maxlength='3' size='8' type='text' onkeyup=\"validTime(this);\" name='homespirit' id='homespirit' value='".intval($game_result['homesotg'])."'/></td>";
-	echo "<td class='center'><input class='input' maxlength='3' size='8' type='text' onkeyup=\"validTime(this);\" name='awayspirit' id='awayspirit' value='".intval($game_result['visitorsotg'])."'/></td></tr>";
-	echo "</table>\n";
-}
-
 //result		
 echo "<table cellspacing='0' width='100%' border='1'>\n";
 if ($game_result['isongoing']) {

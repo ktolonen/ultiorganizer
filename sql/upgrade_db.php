@@ -492,7 +492,7 @@ function upgrade75() {
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
     
     runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1001", 0, "One simple score")');
-    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1001", 1, "Spirit score")');
+    runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `min`, `max`, `text`) VALUES ("1001", 1, 0, 20, "Spirit score")');
     
     runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 0, "WFDF (four categories plus comparison)")');
     runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1002", 1, "Rules Knowledge and Use")');
@@ -528,27 +528,81 @@ function upgrade75() {
         PRIMARY KEY (`game_id`, `team_id`, `category_id`)
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
 
+    addColumn('uo_season', 'spiritmode', 'INT(10) DEFAULT NULL');
+    // set all to 1001
+    runQuery("UPDATE uo_season SET `spiritmode` = 1001 WHERE `spiritpoints`=1");
+    
+    // update WFDF scores
+    $categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1002");
+    $categories = array();
+    while ($cat = mysql_fetch_assoc($categoriesResult)) {
+      $categories[$cat['index']] = $cat['category_id'];
+    }
+    
+    $lastSeason = null;
+    
+    $query = 
+    "SELECT st.*, sn.season_id
+       FROM uo_spirit st
+       LEFT JOIN uo_game g on (g.game_id = st.game_id)
+       LEFT JOIN uo_pool p on (g.pool = p.pool_id)
+       LEFT JOIN uo_series ss on (p.series = ss.series_id)
+       LEFT JOIN uo_season sn on (ss.season = sn.season_id)";
+    $results = runQuery($query);
+    
+    while ($row = mysql_fetch_assoc($results)) {
+      for ($i=1; $i<=5; ++$i) {
+        runQuery(sprintf(
+            "INSERT INTO `uo_spirit_score` (`game_id`, `team_id`, `category_id`, `value`)
+               VALUES (%d, %d, %d, %d)", 
+               $row['game_id'], $row['team_id'], $categories[$i], $row['cat'.$i])
+            );
+      }
+      if ($lastSeason != $row['season_id']) {
+        $lastSeason = $row['season_id'];
+        runQuery(sprintf(
+            "UPDATE uo_season SET `spiritmode` = 1002 WHERE `spiritpoints`=1 AND season_id=%d",
+            (int)$lastSeason));
+      }
+    }
+
+    // update remaining, simple scores
     $categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1001");
     $categories = array();
     while ($cat = mysql_fetch_assoc($categoriesResult)) {
       $categories[$cat['index']] = $cat['category_id'];
     }
-    $results = runQuery("SELECT * FROM uo_spirit");
+    
+    $query = 
+    "SELECT g.game_id, g.hometeam, g.visitorteam, g.homesotg, g.visitorsotg
+    FROM uo_game g
+    LEFT JOIN uo_pool p on (g.pool = p.pool_id)
+    LEFT JOIN uo_series ss on (p.series = ss.series_id)
+    LEFT JOIN uo_season sn on (ss.season = sn.season_id)
+    WHERE
+    (g.homesotg IS NOT NULL OR g.visitorsotg IS NOT NULL)
+    AND sn.spiritmode = 1001";
+    $results = runQuery($query);
     while ($row = mysql_fetch_assoc($results)) {
-      for ($i=1; $i<=5; ++$i) {
-        runQuery(
-            sprintf("INSERT INTO `uo_spirit_score` (`game_id`, `team_id`, `category_id`, `value`)
-                VALUES (%d, %d, %d, %d)", 
-                $row['game_id'], $row['team_id'], $categories[$i], $row['cat'.$i])
-            );
-      }
+      runQuery(sprintf(
+          "INSERT INTO `uo_spirit_score` (game_id, team_id, category_id, value)
+             VALUES (%d, %d, %d, %d)",
+             $row['game_id'], $row['hometeam'], $categories[1], $row['homesotg']));
     }
-    // TODO runQuery('DROP TABLE uo_spirit');
     
-    // "UPDATE uo_season"
-    addColumn('uo_season', 'spiritmode', 'INT(10) DEFAULT NULL');
-    runQuery("UPDATE uo_season SET `spiritmode` = 1002 WHERE `spiritpoints`=1");
+    /* 
+     // undo:
+     DROP TABLE uo_spirit_category;
+     DROP TABLE uo_spirit_score;
+     ALTER TABLE uo_season DROP spiritmode;
+     DELETE FROM uo_database WHERE version=76;
+    */
     
+    // clean up
+    runQuery('DROP TABLE uo_spirit');
+    dropField("uo_game", "homesotg");
+    dropField("uo_game", "visitorsotg");
+    dropField("uo_season", "spiritpoints");
   }
 }
 

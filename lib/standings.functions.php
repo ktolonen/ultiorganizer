@@ -146,62 +146,52 @@ function ResolveCrossMatchPoolStandings($poolId){
 	}
 }
 
-function CompareTeamsSwissdraw($a, $b)
-{//distinguish between first round and the rest
-
-	if ($a['games']==1 && $b['games']==1){		
-	//sort according to 
-	// 1. victory points
-	// 2. margin
-	// 3. total points scored
-	// 4. spirit score		
-		if ($a['vp'] != $b['vp']) {
-			return ($a['vp'] > $b['vp']) ? -1 : 1;
-		} else {
-			if ($a['margin'] != $b['margin']) {
-				return ($a['margin'] > $b['margin']) ? -1 : 1;
-			} else {
-				if ($a['score'] != $b['score']) {
-					return ($a['score'] > $b['score']) ? -1 : 1;
-				} else {
-					if ($a['spirit'] != $b['spirit']) {
-						return ($a['spirit'] > $b['spirit']) ? -1 : 1;
-					} else {
-						return 0;
-					}
-				}
-			}
-		}		
-	}else{
-		//sort according to
-		// 0. number of games 
-		// 1. victory points
-		// 2. opponent's victory points
-		// 3. total points scored
-		// 4. spirit score
-		
-		if ($a['games'] != $b['games']) {
-			return ($a['games'] > $b['games']) ? -1 : 1;
-		}else{
-			if($a['vp'] != $b['vp']) {
-				return ($a['vp'] > $b['vp']) ? -1 : 1;
-			} else {
-			if ($a['oppvp'] != $b['oppvp']) {
-				return ($a['oppvp'] > $b['oppvp']) ? -1 : 1;
-			} else {
-				if ($a['score'] != $b['score']) {
-					return ($a['score'] > $b['score']) ? -1 : 1;
-				} else {
-					if ($a['spirit'] != $b['spirit']) {
-						return ($a['spirit'] > $b['spirit']) ? -1 : 1;
-					} else {
-						return 0;
-					}
-					}
-				}	
-			}
-		}
-	}
+function CompareTeamsSwissdraw($a, $b) { // distinguish between first round and the rest
+  if ($a['games'] == 1 && $b['games'] == 1) {
+    // sort according to
+    // 1. victory points
+    // 2. margin
+    // 3. total points scored
+    // 4. spirit score <-- REMOVED!
+    if ($a['vp'] != $b['vp']) {
+      return ($a['vp'] > $b['vp']) ? -1 : 1;
+    } else {
+      if ($a['margin'] != $b['margin']) {
+        return ($a['margin'] > $b['margin']) ? -1 : 1;
+      } else {
+        if ($a['score'] != $b['score']) {
+          return ($a['score'] > $b['score']) ? -1 : 1;
+        } else {
+          return 0;
+        }
+      }
+    }
+  } else {
+    // sort according to
+    // 0. number of games
+    // 1. victory points
+    // 2. opponent's victory points
+    // 3. total points scored
+    // 4. spirit score
+    
+    if ($a['games'] != $b['games']) {
+      return ($a['games'] > $b['games']) ? -1 : 1;
+    } else {
+      if ($a['vp'] != $b['vp']) {
+        return ($a['vp'] > $b['vp']) ? -1 : 1;
+      } else {
+        if ($a['oppvp'] != $b['oppvp']) {
+          return ($a['oppvp'] > $b['oppvp']) ? -1 : 1;
+        } else {
+          if ($a['score'] != $b['score']) {
+            return ($a['score'] > $b['score']) ? -1 : 1;
+          } else {
+            return 0;
+          }
+        }
+      }
+    }
+  }
 }
 
 function SolveStandingsAccordingSwissdraw($points){
@@ -242,7 +232,7 @@ function ResolveSwissdrawPoolStandings($poolId)
 	}
 	
 	while($row = mysql_fetch_assoc($standings))	{
-		// retrieve nr of games, victory points, average opponent's victory points, spirit
+		// retrieve nr of games, victory points, average opponent's victory points
 		$stats1=TeamVictoryPointsByPool($poolId,$row['team_id']);
 		
 		$points[$i]['team'] = $row['team_id'];
@@ -251,7 +241,6 @@ function ResolveSwissdrawPoolStandings($poolId)
 		$points[$i]['oppvp'] = $stats1['oppvp'];	
 		$points[$i]['margin'] = $stats1['margin'];	
 		$points[$i]['score'] = $stats1['score'];
-		$points[$i]['spirit'] = $stats1['spirit'];			
 		$i++;
 	}
 	

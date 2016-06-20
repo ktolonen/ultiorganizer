@@ -358,69 +358,61 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit) {
 /**
  * Get division spirit score per category.
  * @param int $seriesId uo_series.series_id
-
- * @param string $sorting one of: "cat1", "cat2", "cat3", "cat4", "cat5"  
  * @return mysql array of spirit scores per team.
 
  */
-
-function SeriesSpiritBoard($seriesId, $sorting) {
-  $query = sprintf("
-		SELECT te.name AS teamname, c1 as cat1, c2 as cat2, c3 as cat3, c4 as cat4, c5 as cat5, games
-		FROM uo_team AS te
-		LEFT JOIN (SELECT m.team_id, sum(m.cat1) as c1,sum(m.cat2) as c2,sum(m.cat3) as c3 ,sum(m.cat4) as c4 ,sum(m.cat5) as c5  FROM uo_spirit AS m 
-
-			LEFT JOIN uo_game_pool AS ps ON (m.game_id=ps.game)
-			LEFT JOIN uo_pool pool ON(ps.pool=pool.pool_id)
-			LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
-
-			WHERE pool.series=%d AND ps.timetable=1 AND g1.isongoing=0 GROUP BY m.team_id) AS pel ON (te.team_id=pel.team_id)
-			LEFT JOIN uo_team AS j ON (te.team_id=j.team_id)
-			LEFT JOIN (SELECT up.team AS team_id, COUNT(*) AS games
-			FROM uo_team_pool up
-			LEFT JOIN uo_pool pool ON(up.pool=pool.pool_id)
-			LEFT JOIN uo_game_pool g_pool ON(pool.pool_id=g_pool.pool)
-			LEFT JOIN uo_game AS g4 ON (g_pool.game=g4.game_id)
-			WHERE pool.series=%d AND g4.isongoing=0 AND ((g4.hometeam=up.team AND g4.homesotg IS NOT NULL) OR (g4.visitorteam=up.team AND g4.visitorsotg IS NOT NULL)) AND (g4.hasstarted>0)
-			GROUP BY team_id) AS peli ON (te.team_id=peli.team_id)
-		WHERE peli.games > 0 AND j.series=%d",
-  (int)$seriesId,
-  (int)$seriesId,
-  (int)$seriesId);
-
-  switch($sorting) {
-    case "cat1":
-      $query .= " ORDER BY cat1 DESC";
-      break;
-
-    case "cat2":
-      $query .= " ORDER BY cat2 DESC";
-      break;
-    
-   case "cat3":
-      $query .= " ORDER BY cat3 DESC";
-      break;
-
-   case "cat4":
-      $query .= " ORDER BY cat4 DESC";
-      break;
-
-   case "cat5":
-      $query .= " ORDER BY cat5 DESC";
-      break;
-
-    default:
-      //$query .= " ORDER BY deftotal DESC, lastname ASC";
-      break;
+function SeriesSpiritBoard($seriesId) {
+  $query = sprintf("SELECT st.team_id, te.name, st.category_id, st.value, pool.series
+      FROM uo_team AS te
+      LEFT JOIN uo_spirit_score AS st ON (te.team_id=st.team_id)
+      LEFT JOIN uo_game_pool AS gp ON (st.game_id=gp.game)
+      LEFT JOIN uo_pool pool ON(gp.pool=pool.pool_id)
+      LEFT JOIN uo_game AS g1 ON (gp.game=g1.game_id)
+      WHERE pool.series=%d AND gp.timetable=1 AND g1.isongoing=0 AND g1.hasstarted>0
+      ORDER BY st.team_id, st.category_id",
+      $seriesId);
+  
+  $scores = DBQuery($query);
+  $last_team=null;
+  $last_category=null;
+  $averages = array();
+  $total = 0;
+  while($row = mysql_fetch_assoc($scores)) {
+    if ($last_team != $row['team_id'] || $last_category != $row['category_id']) {
+      if (!is_null($last_category)) {
+        if (!isset($factor[$last_category])){
+          $factor[$last_category] = DBQueryToArray(sprintf("SELECT * FROM uo_spirit_category WHERE category_id=%d", (int) $last_category))[0]['factor'];
+        }
+        $teamline[$last_category] = SafeDivide($sum, $games);
+        $total += SafeDivide($factor[$last_category] * $sum, $games);
+      }
+      if ($last_team != $row['team_id']) {
+        if (!is_null($last_team)) {
+          $teamline['total'] = $total; 
+          $teamline['games'] = $games;
+          $averages[$last_team] = $teamline;
+          $total = 0;
+        }
+        $teamline = array( 'teamname' => $row['name']);
+      }
+      $sum = 0;
+      $games = 0;
+      $last_team = $row['team_id'];
+      $last_category = $row['category_id'];
+    }
+    $sum += $row['value'];
+    ++$games; 
   }
-
-  if($limit > 0){
-    $query .= " limit $limit";
+  if (!is_null($last_team)){
+    $factor[$last_category] = DBQueryToArray(sprintf("SELECT * FROM uo_spirit_category WHERE category_id=%d", (int) $last_category))[0]['factor'];
+    $teamline[$last_category] = SafeDivide($sum, $games);
+    $total += SafeDivide($factor[$last_category] * $sum, $games);
+    $teamline['total'] = $total; 
+    $teamline['games'] = $games;
+    $averages[$last_team] = $teamline;
   }
-
-  return DBQuery($query);
+  return $averages;
 }
-
 
 /**
  * Get all games in given division.

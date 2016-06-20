@@ -609,24 +609,24 @@ if(GameHasStarted($game_result) > 0){
     }
   }
 }else{
-  $gameinfo = GameInfo($gameId);
+  $game_result = GameInfo($gameId);
 
-  if($gameinfo['hometeam'] && $gameinfo['visitorteam']){
+  if($game_result['hometeam'] && $game_result['visitorteam']){
     $html .= "<h1>";
-    $html .= utf8entities($gameinfo['hometeamname']);
+    $html .= utf8entities($game_result['hometeamname']);
     $html .= " - ";
-    $html .= utf8entities($gameinfo['visitorteamname']);
+    $html .= utf8entities($game_result['visitorteamname']);
     $html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
     $html .= "? - ?";
     $html .= "</h1>\n";
   }else{
     $html .= "<h1>";
-    $html .= utf8entities(U_($gameinfo['gamename']));
+    $html .= utf8entities(U_($game_result['gamename']));
     $html .= "</h1>\n";
     $html .= "<h2>";
-    $html .= utf8entities(U_($gameinfo['phometeamname']));
+    $html .= utf8entities(U_($game_result['phometeamname']));
     $html .= " - ";
-    $html .= utf8entities(U_($gameinfo['pvisitorteamname']));
+    $html .= utf8entities(U_($game_result['pvisitorteamname']));
     $html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
     $html .= "? - ?";
     $html .= "</h2>\n";
@@ -634,9 +634,9 @@ if(GameHasStarted($game_result) > 0){
   }
 
   $html .= "<p>";
-  $html .= ShortDate($gameinfo['time']) ." ". DefHourFormat($gameinfo['time']). " ";
-  if(!empty($gameinfo['fieldname'])){
-    $html .= _("on field")." ".utf8entities($gameinfo['fieldname']);
+  $html .= ShortDate($game_result['time']) ." ". DefHourFormat($game_result['time']). " ";
+  if(!empty($game_result['fieldname'])){
+    $html .= _("on field")." ".utf8entities($game_result['fieldname']);
   }
   $html .= "</p>";
 

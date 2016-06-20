@@ -32,18 +32,30 @@ function PoolGameSetResults($pool, $games) {
 }
 
 function GameResult($gameId) {
-	$query = sprintf("
-		SELECT time, k.name As hometeamname, v.name As visitorteamname, k.valid as homevalid, v.valid as visitorvalid, p.*,s.name AS gamename
-		FROM uo_game AS p 
-		LEFT JOIN uo_team As k ON (p.hometeam=k.team_id) 
-		LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
-		LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
-		WHERE p.game_id='%s'",
-		mysql_real_escape_string($gameId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return mysql_fetch_assoc($result);
+  $query = sprintf("
+    SELECT time, k.name As hometeamname, v.name As visitorteamname, 
+        k.valid as homevalid, v.valid as visitorvalid, 
+        p.*, hspirit.mode AS spiritmode, hspirit.sotg AS homesotg, vspirit.sotg AS visitorsotg, s.name AS gamename
+    FROM uo_game AS p 
+    LEFT JOIN (SELECT ssc.game_id, ssc.team_id, ssc.category_id, sct.mode, SUM(value*factor) AS sotg 
+               FROM uo_spirit_score ssc 
+               LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id) 
+               GROUP BY game_id, team_id) AS hspirit
+       ON (p.game_id = hspirit.game_id AND hspirit.team_id = p.hometeam)
+    LEFT JOIN (SELECT ssc.game_id, ssc.team_id, ssc.category_id, sct.mode, SUM(value*factor) AS sotg 
+               FROM uo_spirit_score ssc 
+               LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id) 
+               GROUP BY game_id, team_id ) AS vspirit
+       ON (p.game_id = hspirit.game_id AND vspirit.team_id = p.visitorteam)
+    LEFT JOIN uo_team As k ON (p.hometeam=k.team_id) 
+    LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
+    LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
+    WHERE p.game_id='%s'",
+    mysql_real_escape_string($gameId));
+  $result = mysql_query($query);
+  if (!$result) { die('Invalid query: ' . mysql_error()); }
+  
+  return mysql_fetch_assoc($result);
 }
 
 function GoalInfo($gameId, $num) {
@@ -850,7 +862,7 @@ function GameAddTimeout($gameId, $number, $time, $home) {
 	} else { die('Insufficient rights to edit game'); }
 }
 
-function GameGetSpiritPoints($gameId, $teamId) { /* TODO */
+function GameGetSpiritPoints($gameId, $teamId) {
   $query = sprintf("SELECT * FROM uo_spirit_score WHERE game_id=%d AND team_id=%d",
   		(int)$gameId,
   		(int)$teamId);
@@ -875,21 +887,9 @@ function GameSetSpiritPoints($gameId, $teamId, $home, $points, $categories) {
             VALUES (%d, %d, %d, %d)",
             (int) $gameId, (int) $teamId, (int) $cat, (int) $value);
         DBQuery($query);
-
-        $total += $categories[$cat]['factor'] * $value;
       }
     }
     
-    $query = sprintf("UPDATE uo_game SET ");
-    
-    if ($home) {
-      $query .= sprintf("homesotg=%d ", (int) $total);
-    } else {
-      $query .= sprintf("visitorsotg=%d ", (int) $total);
-    }
-    $query .= sprintf("WHERE game_id=%d", (int) $gameId);
-    
-    return DBQuery($query);
   } else {
     die('Insufficient rights to edit game');
   }
@@ -1078,19 +1078,17 @@ function GameChangeHome($gameId) {
 	$series = GameSeries($gameId);
 	if (hasEditGamesRight($series)) {
 
-	  $query = sprintf("SELECT hometeam,visitorteam,respteam, homescore,visitorscore, homesotg, visitorsotg, scheduling_name_home, scheduling_name_visitor FROM uo_game
+	  $query = sprintf("SELECT hometeam,visitorteam,respteam, homescore,visitorscore, scheduling_name_home, scheduling_name_visitor FROM uo_game
 					WHERE game_id=%d",
 					(int)$gameId);
 	  $game = DBQueryToRow($query);
 					
-      $query = sprintf("UPDATE uo_game SET hometeam=%d,visitorteam=%d,homescore=%d,visitorscore=%d, homesotg=%d, visitorsotg=%d, scheduling_name_home=%d, scheduling_name_visitor=%d
+      $query = sprintf("UPDATE uo_game SET hometeam=%d,visitorteam=%d,homescore=%d,visitorscore=%d, scheduling_name_home=%d, scheduling_name_visitor=%d
 					WHERE game_id=%d",
                     (int) $game['visitorteam'],
                     (int) $game['hometeam'],
                     (int) $game['visitorscore'],
                     (int) $game['homescore'],
-                    (int) $game['visitorsotg'],
-                    (int) $game['homesotg'],
                     (int) $game['scheduling_name_visitor'],
                     (int) $game['scheduling_name_home'],
 					(int)$gameId);
@@ -1377,4 +1375,89 @@ function ResultsToCsv($season,$separator){
     $result = DBQuery($query);
 	return ResultsetToCsv($result, $separator);
 }
+
+function SpiritTable($gameinfo, $points, $categories, $home, $wide=true) {
+  $home = $home?"home":"vis";
+  $html = "<table>\n";
+  $html .= "<tr>";
+  if ($wide)
+    $html .= "<th style='width:70%;text-align: right;'></th>";
+  $vmin = 99999;
+  $vmax = -99999;
+  foreach ($categories as $cat) {
+    if ($vmin > $cat['min'])
+      $vmin = $cat['min'];
+      if ($vmax < $cat['max'])
+        $vmax = $cat['max'];
+  }
+
+  if ($vmax - $vmin < 12) {
+    $colspan=($wide?3:2);
+    $html .= "<th></th></tr>\n";
+
+    foreach ($categories as $cat) {
+      if ($cat['index']== 0)
+        continue;
+        $id = $cat['category_id'];
+        $html .= "<tr>";
+        if ($wide)
+          $html .= "<td style='width:70%'>";
+        else
+          $html .= "<td colspan='$colspan'>";
+        $html .= _($cat['text']);
+        $html .= "<input type='hidden' id='".$home."valueId$id' name='".$home."valueId[]' value='$id'/>";
+        if($wide)
+          $html .= "</td>";
+        else
+          $html .= "</td></tr>\n<tr>";
+
+        $html .= "<td><fieldset id='".$home."cat'".$id."_0' data-role='controlgroup' data-type='horizontal' >";
+        for($i=$vmin; $i<= $vmax; ++$i){
+          if ($i < $cat['min']) {
+            // $html .= "<td></td>";
+          } else {
+            $id=$cat['category_id'];
+            $checked = (isset($points[$id]) && !is_null($points[$id]) && $points[$id]==$i) ? "checked='checked'" : "";
+            $html .= "<label for='".$home."cat".$id."_".$i."'>$i</label>";
+            $html .= "<input type='radio' id='".$home."cat".$id."_".$i."' name='".$home."cat". $id . "' value='$i' $checked/>";
+            
+            // $html .= "<td class='center'>
+          // <input type='radio' id='".$home."cat".$id."_".$i."' name='".$home."cat". $id . "' value='$i'  $checked/></td>";
+          }
+        }
+        $html .= "</fieldset></td>";
+        $html .= "</tr>\n";
+    }
+  } else {
+    $colspan=2;
+    $html .= "<th colspan='2'></th></tr>\n";
+
+    foreach ($categories as $cat) {
+      if ($cat['index']== 0)
+        continue;
+        $id = $cat['category_id'];
+        $html .= "<tr>";
+        $html .= "<td style='width:70%'>"._($cat['text']);
+        $html .= "<input type='hidden' id='".$home."valueId$id' name='".$home."valueId[]' value='$id'/></td>";
+        $html .= "<td class='center'>
+      <input type='text' id='".$home."cat".$id."_0' name='".$home."cat$id' value='".$points[$id]."'/></td>";
+        $html .= "</tr>\n";
+    }
+  }
+
+
+  $html .= "<tr>";
+  $html .= "<td class='highlight' colspan='$colspan'>"._("Total points");
+  $total = SpiritTotal($points, $categories);
+  if (!isset($total))
+    $total = ": -";
+  else
+    $html .= ": $total";
+  $html .= "</tr>";
+
+  $html .= "</table>\n";
+
+  return $html;
+}
+
 ?>

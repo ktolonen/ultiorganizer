@@ -6,34 +6,61 @@ include_once 'lib/player.functions.php';
 $html = "";
 
 $gameId = intval(iget("game"));
-$game_result = GameResult($gameId);
-	
-if(isset($_POST['save'])) {
-	GameSetSpiritPoints($gameId, intval($_POST['homespirit']), intval($_POST['awayspirit']));
-	
-	header("location:?view=mobile/addscoresheet&game=".$gameId);
-}
 
 mobilePageTop(_("Score&nbsp;sheet"));
 
-$html .= "<form action='?".utf8entities($_SERVER['QUERY_STRING'])."' method='post'>\n"; 
-$html .= "<table cellpadding='2'>\n";
-$html .= "<tr><td>\n";
-$html .= "<b>".utf8entities($game_result['hometeamname'])."</b> "._("spirit points").":";
-$html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' maxlength='3' size='5' type='text' name='homespirit' id='homespirit' value='".utf8entities($game_result['homesotg'])."'/>";
-$html .= "</td></tr><tr><td>\n";
-$html .= "<b>".utf8entities($game_result['visitorteamname'])."</b> "._("spirit points").":";
-$html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' maxlength='3' size='5' type='text' name='awayspirit' id='awayspirit' value='".utf8entities($game_result['visitorsotg'])."'/>";
-$html .= "</td></tr><tr><td>\n";
+$season = SeasonInfo(GameSeason($gameId));
+if ($season['spiritmode']>0) {
+  $game_result = GameResult($gameId);
+  $mode = SpiritMode($season['spiritmode']);
+  $categories = SpiritCategories($mode['mode']);
+  
+//process itself if save button was pressed
+if(!empty($_POST['save'])) {
+  $points = array();
+  foreach ($_POST['homevalueId'] as $cat) {
+    if (isset($_POST['homecat'.$cat]))
+      $points[$cat] = $_POST['homecat'.$cat];
+    else
+      $missing = _("Missing score for ") . $game_result['hometeamname'];
+  }
+  GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
+  
+  $points = array();
+  foreach ($_POST['visvalueId'] as $cat) {
+    if (isset($_POST['viscat'.$cat]))
+      $points[$cat] = $_POST['viscat'.$cat];
+    else
+      $missing = _("Missing score for ") . $game_result['visitorteamname'];
+  }
+  GameSetSpiritPoints($gameId,$game_result['visitorteam'],0,$points, $categories);
+  
+  $game_result = GameResult($gameId);
+}
 
+$html .= "<form  method='post' action='?view=user/addspirit&amp;game=".$gameId."'>";
+
+$html .= "<h3>"._("Spirit points given for").": ". utf8entities($game_result['hometeamname'])."</h3>\n";
+
+$points = GameGetSpiritPoints($gameId, $game_result['hometeam']);
+$html .= SpiritTable($game_result, $points, $categories, true, false);
+
+$html .= "<h3>"._("Spirit points given for").": ". utf8entities($game_result['visitorteamname'])."</h3>\n";
+
+$points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
+$html .= SpiritTable($game_result, $points, $categories, false, false);
+
+$html .= "<p>";
 $html .= "<input class='button' type='submit' name='save' value='"._("Save")."'/>";
-$html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/addscoresheet&amp;game=".$gameId."'>"._("Back to score sheet")."</a>";
-$html .= "</td></tr>\n";
-$html .= "</table>\n";
-$html .= "</form>"; 
+if (isset($missing))
+  $html .= " $missing";
+$html .= "</p>";
+$html .= "<p><a href='?view=mobile/addscoresheet&amp;game=".$gameId."'>"._("Back to score sheet")."</a></p>";
+$html .= "</form>\n";
+
+} else {
+  $html .= "<p>"._("Spiritpoints not given for") . utf8entities($season['name']) . "</p>";
+}
 
 echo $html;
 		

@@ -25,10 +25,9 @@ if(iget("sort")){
 $teamstats = array();
 $allteams = array();
 $teams = SeriesTeams($seriesinfo['series_id']);
-
+$spiritAvg = SeriesSpiritBoard($seriesinfo['series_id']);
 foreach ($teams as $team) {
   $stats = TeamStats($team['team_id']);
-  $spiritstats = TeamSpiritStats($team['team_id']);
   $points = TeamPoints($team['team_id']);
 
   $teamstats['name']=$team['name'];
@@ -46,11 +45,11 @@ foreach ($teams as $team) {
   $teamstats['losses']=$teamstats['games']-$teamstats['wins'];
   $teamstats['diff']=$teamstats['for']-$teamstats['against'];
 
-  $teamstats['spirit']=$points['spirit'];
+  $teamstats['spirit']= isset($spiritAvg[$team['team_id']])?$spiritAvg[$team['team_id']]['total']:null;
 
-  $teamstats['spiritavg']=number_format(SafeDivide(intval($points['spirit']), intval($spiritstats['games'])),1);
   $teamstats['winavg']=number_format(SafeDivide(intval($stats['wins']), intval($stats['games']))*100,1);
 
+  $teamstats['ranking'] = 0;
   $allteams[] = $teamstats;
 }
 
@@ -156,12 +155,6 @@ if($seasoninfo['spiritmode']>0 && ($seasoninfo['showspiritpoints'] || isSeasonAd
   }else{
     $html .= "<th class='center'><a class='thsort' href='".$viewUrl."&amp;Sort=spirit'>"._("Spirit points")."</a></th>";
   }
-
-  if($sort == "spiritavg") {
-    $html .= "<th class='center'>"._("Spirit / Game")."</th>";
-  }else{
-    $html .= "<th class='center'><a class='thsort' href='".$viewUrl."&amp;Sort=spiritavg'>"._("Spirit / Game")."</a></th>";
-  }
 }
 
 $html .= "</tr>\n";
@@ -242,14 +235,9 @@ foreach($allteams as $stats){
 
   if($seasoninfo['spiritmode']>0 && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))){
     if($sort == "spirit") {
-      $html .= "<td class='center highlight'>".$stats['spirit']."</td>";
+      $html .= "<td class='center highlight'>".($stats['spirit']?$stats['spirit']:"-")."</td>";
     }else{
-      $html .= "<td class='center'>".$stats['spirit']."</td>";
-    }
-    if($sort == "spiritavg") {
-      $html .= "<td class='center highlight'>".$stats['spiritavg']."</td>";
-    }else{
-      $html .= "<td class='center'>".$stats['spiritavg']."</td>";
+      $html .= "<td class='center'>".($stats['spirit']?$stats['spirit']:"-")."</td>";
     }
   }
 
@@ -287,41 +275,54 @@ if(ShowDefenseStats()) {
   while($row = mysql_fetch_assoc($defenses)) {
     $html .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
     $html .= "<td>".utf8entities($row['teamname'])."</td>";
+    $html .= "<td>". _("Games") . "</td>";
     $html .= "<td class='center'>".intval($row['games'])."</td>";
     $html .= "<td class='center'>".intval($row['deftotal'])."</td></tr>\n";
   }
 
   $html .= "</table>";
   $html .= "<a href='?view=defensestatus&amp;series=".$seriesinfo['series_id']."'>"._("Defenseboard")."</a>";
+}
 
-if ($seasoninfo['showspiritpoints']){
- $spiritAvg = SeriesSpiritBoard($seriesinfo['series_id'], 0);
- $row = mysql_fetch_assoc($spiritAvg);
-   if (intval($row['cat1']) != 0 && intval($row['cat2']) != 0 && intval($row['cat3']) != 0 && intval($row['cat4']) != 0 && intval($row['cat5']) != 0)
-  {
+if ($seasoninfo['showspiritpoints']){ // TODO total
+  $categories = SpiritCategories($seasoninfo['spiritmode']);
   $html .= "<h2>"._("Spirit points average per category")."</h2>\n";
+
   $html .= "<table cellspacing='0' border='0' width='100%'>\n";
-  $html .= "<tr><th style='width:200px'>"._("Team")."</th><th style='width:80px'>"._("Rules knowlege")."</th><th class='center'>"._("Fouls and contact")."</th>
-	<th class='center'>"._("Fair mindedness")."</th><th class='center'>"._("Positive attitude")."</th><th class='center'>"._("Their spirit vs ours")."</th></tr>\n";
- 
-  mysql_data_seek ( $spiritAvg , 0 );
- while($row = mysql_fetch_assoc($spiritAvg)) {
-    $html .= "<td>".utf8entities($row['teamname'])."</td>";
-    $cat1Res = number_format(SafeDivide(intval($row['cat1']), intval($row['games'])),2);
-    $cat2Res = number_format(SafeDivide(intval($row['cat2']), intval($row['games'])),2);
-    $cat3Res = number_format(SafeDivide(intval($row['cat3']), intval($row['games'])),2);
-    $cat4Res = number_format(SafeDivide(intval($row['cat4']), intval($row['games'])),2);
-    $cat5Res = number_format(SafeDivide(intval($row['cat5']), intval($row['games'])),2);
-    $html .= "<td class='center'>".$cat1Res."</td>";
-    $html .= "<td class='center'>".$cat2Res."</td>";
-    $html .= "<td class='center'>".$cat3Res."</td>";
-    $html .= "<td class='center'>".$cat4Res."</td>";
-    $html .= "<td class='center'>".$cat5Res."</td></tr>\n";
+  $html .= "<tr><th style='width:150px'>"._("Team")."</th>";
+  $html .= "<th>" . _("Games") . "</th>";
+  foreach ($categories as $cat) {
+    if ($cat['index'] > 0)
+      $html .= "<th class='center'>" . _($cat['index']) . "</th>";
   }
- }
-}
+  $html .= "<th class='center'>" . _("Tot.") . "</th>";
+  $html .= "</tr>\n";
+ 
+  foreach ($spiritAvg as $teamAvg) {  
+    $html .= "<td>".utf8entities($teamAvg['teamname'])."</td>";
+    $html .= "<td>" . $teamAvg['games'] . "</td>";
+    foreach ($categories as $cat) {
+      if ($cat['index'] > 0) {
+        if ($cat['factor'] != 0)
+          $html .= "<td class='center'><b>" . number_format($teamAvg[$cat['category_id']], 2) . "</b></td>";
+        else
+          $html .= "<td class='center'>" . number_format($teamAvg[$cat['category_id']], 2) . "</td>";
+      }
+    }
+    $html .= "<td class='center'><b>" . number_format($teamAvg['total'], 2) . "</b></td>";
+    $html .= "</tr>\n";
+  }
   $html .= "</table>";
+
+  $html .= "<ul>";
+  foreach ($categories as $cat) {
+    if ($cat['index'] > 0)
+      $html .= "<li>".$cat['index']." ".$cat['text']."</li>";
+  }
+  $html .= "</ul>\n";
+  
 }
+
 
 showPage($title, $html);
 

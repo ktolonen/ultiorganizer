@@ -166,9 +166,9 @@ if(!count($pools)){
   $html .= "<p>"._("Add pools first")."</p>\n";
 }
 
-$html .= "<h2><a name='TODO'>" . _("Tasks") . "</a></h2>";
+$html .= "<h2><a name='Tasks' id='TasksHeading'>" . _("Tasks") . "</a></h2>";
 
-$firstTodo = false;
+$firstTask = false;
 $missingresults = "";
 foreach ($pools as $spool) {
   $poolId = $spool['pool_id'];
@@ -182,9 +182,9 @@ foreach ($pools as $spool) {
   }
   
   if (PoolIsMoveFromPoolsPlayed($poolId) && !PoolIsAllMoved($poolId)) {
-    if (!$firstTodo) {
+    if (!$firstTask) {
       $html .= "<ul>";
-      $firstTodo = true;
+      $firstTask = true;
     }
     
     $html .= "<li>". _("Check standings of");
@@ -201,7 +201,7 @@ foreach ($pools as $spool) {
     $html .= $deplist . _(", then ") . poolLink($poolId, _("Confirm moves to pool ") . PoolName($poolId)) . "</a></li>\n";
   }
 }
-if ($firstTodo) {
+if ($firstTask) {
   $html .= "</ul>\n";
 } else if ($missingresults) {
   $html .= "<p>" . _("Games results missing for") . $missingresults . "</p>";  
@@ -222,7 +222,7 @@ foreach ($pools as $spool) {
   
   $standings = PoolTeams($poolId, "rank");
   
-  $html .= "<div class='right pagemenu_container'><a href='#TODO'>" . _("Go to top") . "</a></div>\n";
+  $html .= "<div class='right pagemenu_container'><a href='#Tasks'>" . _("Go to top") . "</a></div>\n";
   $html .= "<h2><a name='P" . $poolId . "'>" . utf8entities(U_($poolinfo['name'])) . "</a>
     <a href='?view=admin/addseasonpools&amp;pool=$poolId'><img class='button' src='images/settings.png' alt='E' title='"._("edit pool")."'/></a></h2>";
   

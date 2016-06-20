@@ -139,8 +139,8 @@ if (isset($_POST['import'])) {
 				  continue;
 				}
 				
-				$gameinfo = GameInfo($gameId);
-				if($gameinfo){
+				$game_result = GameInfo($gameId);
+				if($game_result){
 				  //$html .= "<p>Already exist $team</p>";
 				  continue;
 				}

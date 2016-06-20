@@ -58,24 +58,24 @@ if(!empty($_POST['save']) && !$errors) {
   $html .= "<input class='input' type='hidden' id='game' name='game' value='$gameId'/> ";
   $html .= "<input class='input' type='hidden' id='home' name='home' value='$home'/> ";
   $html .= "<input class='input' type='hidden' id='away' name='away' value='$away'/> ";
-  $gameinfo = GameInfo($gameId);
+  $game_result = GameInfo($gameId);
   $html .= "<p>";
-  $html .= ShortDate($gameinfo['time']) ." ". DefHourFormat($gameinfo['time']). " ";
-  if(!empty($gameinfo['fieldname'])){
-    $html .=  _("on field")." ".utf8entities($gameinfo['fieldname']);
+  $html .= ShortDate($game_result['time']) ." ". DefHourFormat($game_result['time']). " ";
+  if(!empty($game_result['fieldname'])){
+    $html .=  _("on field")." ".utf8entities($game_result['fieldname']);
   }
   $html .=  "<br/>";
-  $html .=  U_($gameinfo['seriesname']).", ".U_($gameinfo['poolname']);
+  $html .=  U_($game_result['seriesname']).", ".U_($game_result['poolname']);
   $html .=  "</p>";
   $html .= "<p>";
-  $html .= utf8entities($gameinfo['hometeamname']);
+  $html .= utf8entities($game_result['hometeamname']);
   $html .= " - ";
-  $html .= utf8entities($gameinfo['visitorteamname']);
+  $html .= utf8entities($game_result['visitorteamname']);
   $html .=  " ";
 
   if(GameHasStarted($gameInfo)){
     $html .=  "<br/>";
-    $html .= _("Game is already played. Result:"). " ". intval($gameinfo['homescore'])." - ".$gameinfo['visitorscore'].".";
+    $html .= _("Game is already played. Result:"). " ". intval($game_result['homescore'])." - ".$game_result['visitorscore'].".";
     $html .=  "<br/><br/>";
     $html .=  "<span style='font-weight:bold'>". _("Change result to"). " $home - $away?" ."</span>";
   }else{
@@ -85,9 +85,9 @@ if(!empty($_POST['save']) && !$errors) {
   $html .=  "<br/><br/>";
   $html .=  _("Winner is"). " <span style='font-weight:bold'>";
   if($home>$away){
-    $html .= utf8entities($gameinfo['hometeamname']);
+    $html .= utf8entities($game_result['hometeamname']);
   }else{
-    $html .= utf8entities($gameinfo['visitorteamname']);
+    $html .= utf8entities($game_result['visitorteamname']);
   }
   $html .=  "?</span> ";
   $html .= "<br/><br/><input class='button' type='submit' name='confirm' value='"._("Confirm")."'/> ";

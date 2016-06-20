@@ -615,4 +615,21 @@ function SpiritCategories($mode_id) {
   }
   return $categories;
 }
+
+function SpiritTotal($points, $categories) {
+  $allset = true;
+  $total = 0;
+  foreach ($categories as $cat) {
+    if ($cat['index'] > 0)
+      if (isset($points[$cat['category_id']])) {
+        $total += $points[$cat['category_id']] * $cat['factor'];
+      } else {
+        $allset = false;
+      }
+  }
+  if ($allset)
+    return $total;
+  else
+    return null;
+}
 ?>

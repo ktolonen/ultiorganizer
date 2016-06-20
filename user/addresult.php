@@ -11,8 +11,8 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 $html = "";
 $html2 = "";
 $gameId = intval($_GET["game"]);
-$gameinfo = GameInfo($gameId);
-$seasoninfo = SeasonInfo($gameinfo['season']);
+$game_result = GameInfo($gameId);
+$seasoninfo = SeasonInfo($game_result['season']);
 
 $LAYOUT_ID = ADDRESULT;
 $title = _("Result");
@@ -32,22 +32,22 @@ if(!empty($_POST['save'])) {
 		}
         if($home>$away){
 	    	$html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
-        	$html2 .= utf8entities($gameinfo['hometeamname']);
+        	$html2 .= utf8entities($game_result['hometeamname']);
         }elseif ($away>$home){
 	    	$html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
-        	$html2 .= utf8entities($gameinfo['visitorteamname']);
+        	$html2 .= utf8entities($game_result['visitorteamname']);
         }else{
         	$html2 .= _("No winner"). " <span style='font-weight:bold'>";
         }
         $html2 .= "</p>";
 	}
-	$gameinfo = GameInfo($gameId);
+	$game_result = GameInfo($gameId);
 }elseif(isset($_POST['update'])) {
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
 	$ok=GameUpdateResult($gameId, $home, $away);
 	$html2 .= "<p>"._("Game ongoing. Current score: $home - $away").".</p>";
-	$gameinfo = GameInfo($gameId);
+	$game_result = GameInfo($gameId);
 }elseif(isset($_POST['clear'])) {
   LogGameUpdate($gameId,"result cleared", "addresult");
   $ok=GameClearResult($gameId);
@@ -56,7 +56,7 @@ if(!empty($_POST['save'])) {
     ResolvePoolStandings(GamePool($gameId));
     PoolResolvePlayed(GamePool($gameId));
   }
-  $gameinfo = GameInfo($gameId);
+  $game_result = GameInfo($gameId);
 }
 
 //common page
@@ -82,26 +82,26 @@ pageMenu($menutabs);
 
 $html .= "<form  method='post' action='?view=user/addresult&amp;game=".$gameId."'>
 <table cellpadding='2'>
-<tr><td><b>". utf8entities($gameinfo['hometeamname']) ."</b></td><td><b> - </b></td><td><b>". utf8entities($gameinfo['visitorteamname']) ."</b></td></tr>";
+<tr><td><b>". utf8entities($game_result['hometeamname']) ."</b></td><td><b> - </b></td><td><b>". utf8entities($game_result['visitorteamname']) ."</b></td></tr>";
 
 $html .= "<tr><td>";
-if ($gameinfo['isongoing'])
+if ($game_result['isongoing'])
 	$html .= _("Game is running.");	
-else if ($gameinfo['hasstarted'])
+else if ($game_result['hasstarted'])
 	$html .= _("Game is finished.");	
 $html .= "<tr><td>";
 
 $html .= "<tr>
-<td><input class='input' name='home' value='".utf8entities($gameinfo['homescore'])."' maxlength='4' size='5'/></td>
+<td><input class='input' name='home' value='".utf8entities($game_result['homescore'])."' maxlength='4' size='5'/></td>
 <td> - </td>
-<td><input class='input' name='away' value='".utf8entities($gameinfo['visitorscore'])."' maxlength='4' size='5'/></td></tr>
+<td><input class='input' name='away' value='".utf8entities($game_result['visitorscore'])."' maxlength='4' size='5'/></td></tr>
 </table>";
 
-if($gameinfo['homevalid']==2) {
-	$poolInfo=PoolInfo($gameinfo['pool']);
+if($game_result['homevalid']==2) {
+	$poolInfo=PoolInfo($game_result['pool']);
 	$html .= "<p>"."The home team is the BYE team. You should use the suggested result: ".$poolInfo['forfeitagainst']." - ".$poolInfo['forfeitscore']."</p>";	
-} elseif($gameinfo['visitorvalid']==2){
-	$poolInfo=PoolInfo($gameinfo['pool']);
+} elseif($game_result['visitorvalid']==2){
+	$poolInfo=PoolInfo($game_result['pool']);
 	$html .= "<p>"."The visitor team is the BYE team. You should use the suggested result: ".$poolInfo['forfeitscore']." - ".$poolInfo['forfeitagainst']."</p>";	
 }
 

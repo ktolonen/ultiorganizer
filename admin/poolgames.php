@@ -230,13 +230,13 @@ $mutualgames=array();
 if($info['mvgames']==2){
 	$allgames = PoolGames($info['pool_id']);
 	foreach($allgames as $game){
-		$gameinfo = GameInfo($game['game_id']);
-		if(!empty($gameinfo['hometeam']) && !empty($gameinfo['visitorteam'])){
-				$homepool = PoolGetFromPoolByTeamId($info['pool_id'],$gameinfo['hometeam']);
-				$awaypool = PoolGetFromPoolByTeamId($info['pool_id'],$gameinfo['visitorteam']);
+		$game_result = GameInfo($game['game_id']);
+		if(!empty($game_result['hometeam']) && !empty($game_result['visitorteam'])){
+				$homepool = PoolGetFromPoolByTeamId($info['pool_id'],$game_result['hometeam']);
+				$awaypool = PoolGetFromPoolByTeamId($info['pool_id'],$game_result['visitorteam']);
 		}else{
-			$homepool = PoolGetFromPoolBySchedulingId($gameinfo['scheduling_name_home']);
-			$awaypool = PoolGetFromPoolBySchedulingId($gameinfo['scheduling_name_visitor']);
+			$homepool = PoolGetFromPoolBySchedulingId($game_result['scheduling_name_home']);
+			$awaypool = PoolGetFromPoolBySchedulingId($game_result['scheduling_name_visitor']);
 		}
 		if($homepool==$awaypool){
 			$mutualgames[] = $game['game_id'];

@@ -2374,7 +2374,6 @@ function PoolsToCsv($season,$separator){
             "GoalsFor"=>$points['scores'],
             "GoalsAgainst"=>$points['against'],
             "GoalsDiff"=>intval($points['scores'])-intval($points['against'])
-      //"Spirit"=>number_format(SafeDivide(intval($points['spirit']), intval($stats['games'])),1)
       );
 
       $result[] = $poolrow;

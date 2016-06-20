@@ -8,12 +8,12 @@ include_once $include_prefix.'lib/configuration.functions.php';
 $html = "";
 
 $gameId = intval($_GET["game"]);
-$gameinfo = GameResult($gameId);
 
 $title = _("Spirit");
 
 $season = SeasonInfo(GameSeason($gameId));
 if ($season['spiritmode']>0) {
+  $game_result = GameResult($gameId);
   $mode = SpiritMode($season['spiritmode']);
   $categories = SpiritCategories($mode['mode']);
   
@@ -21,18 +21,23 @@ if ($season['spiritmode']>0) {
 if(!empty($_POST['save'])) {
   $points = array();
   foreach ($_POST['homevalueId'] as $cat) {
-    $points[$cat] = $_POST['homecat'.$cat]; 
+    if (isset($_POST['homecat'.$cat]))
+      $points[$cat] = $_POST['homecat'.$cat];
+    else
+      $missing = _("Missing score for ") . $game_result['hometeamname'];
   }
-  var_dump($points);
-  GameSetSpiritPoints($gameId,$gameinfo['hometeam'],1,$points, $categories);
+  GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
   
   $points = array();
   foreach ($_POST['visvalueId'] as $cat) {
-    $points[$cat] = $_POST['viscat'.$cat];
+    if (isset($_POST['viscat'.$cat]))
+      $points[$cat] = $_POST['viscat'.$cat];
+    else
+      $missing = _("Missing score for ") . $game_result['visitorteamname'];
   }
-  GameSetSpiritPoints($gameId,$gameinfo['visitorteam'],0,$points, $categories);
+  GameSetSpiritPoints($gameId,$game_result['visitorteam'],0,$points, $categories);
   
-  $gameinfo = GameResult($gameId);
+  $game_result = GameResult($gameId);
 }
 
 
@@ -48,18 +53,20 @@ $html .= pageMenu($menutabs,"",false);
 
 $html .= "<form  method='post' action='?view=user/addspirit&amp;game=".$gameId."'>";
 
-$html .= "<h3>"._("Spirit points given for").": ". utf8entities($gameinfo['hometeamname'])."</h3>\n";
+$html .= "<h3>"._("Spirit points given for").": ". utf8entities($game_result['hometeamname'])."</h3>\n";
 
-$points = GameGetSpiritPoints($gameId, $gameinfo['hometeam']);
-$html .= spiritTable($gameinfo, $points, $categories, true);
+$points = GameGetSpiritPoints($gameId, $game_result['hometeam']);
+$html .= SpiritTable($game_result, $points, $categories, true);
 
-$html .= "<h3>"._("Spirit points given for").": ". utf8entities($gameinfo['visitorteamname'])."</h3>\n";
+$html .= "<h3>"._("Spirit points given for").": ". utf8entities($game_result['visitorteamname'])."</h3>\n";
 
-$points = GameGetSpiritPoints($gameId, $gameinfo['visitorteam']);
-$html .= spiritTable($gameinfo, $points, $categories, false);
+$points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
+$html .= SpiritTable($game_result, $points, $categories, false);
 
 $html .= "<p>";
 $html .= "<input class='button' type='submit' name='save' value='"._("Save")."'/>";
+if (isset($missing))
+  $html .= " $missing";
 $html .= "</p>";
 $html .= "</form>\n";
 
@@ -68,64 +75,4 @@ $html .= "</form>\n";
 }
 showPage($title, $html);
 
-function spiritTable($gameinfo, $points, $categories, $home) {
-  $home = $home?"home":"vis";
-  $html = "<table>\n";
-  $html .= "<tr>";
-  $html .= "<th style='width:70%;text-align: right;'></th>";
-  $vmin = 99999;
-  $vmax = -99999;
-  foreach ($categories as $cat) {
-    if ($vmin > $cat['min']) $vmin = $cat['min'];
-    if ($vmax < $cat['max']) $vmax = $cat['max'];
-  }
-  
-  if ($vmax - $vmin < 12) {
-    for($i=$vmin; $i<=$vmax; ++$i) {
-      $html .= "<th class='center'>$i</th>";
-    }
-    $html .= "</tr>\n";
-  
-    foreach ($categories as $cat) {
-      if ($cat['index']== 0)
-        continue;
-      $id = $cat['category_id'];
-      $html .= "<tr>";
-      $html .= "<td style='width:70%'>"._($cat['text']);
-      $html .= "<input type='hidden' id='".$home."valueId$id' name='".$home."valueId[]' value='$id'/></td>";
-      
-      for($i=$vmin; $i<= $vmax; ++$i){
-        if ($i < $cat['min']) {
-          $html .= "<td></td>";
-        } else {
-          $id=$cat['category_id'];
-          $checked = (isset($points[$id]) && !is_null($points[$id]) && $points[$id]==$i) ? "checked='checked'" : "";
-          $html .= "<td class='center'>
-          <input type='radio' id='".$home."cat$id' name='".$home."cat". $id . "' value='$i'  $checked/></td>";
-        }
-      }
-      $html .= "</tr>\n";
-    }
-  } else {
-    $html .= "<th></th></tr>\n";
-  
-    foreach ($categories as $cat) {
-      $html .= "<tr>";
-      $html .= "<td style='width:70%'>"._($cat['text']);
-      $html .= "<input type='hidden' id='valueId$id' name='valueId[]' value='$id'/></td>";
-      $html .= "<td class='center'>
-      <input type='text' id='".$home."cat". $id . "0' name='".$home."cat[]' value='".$points[$id]."'/></td>";
-      $html .= "</tr>\n";
-    }
-  }
-  
-  $html .= "<tr>";
-  $html .= "<td class='highlight' style='width:70%'>"._("Total points")."</td>";
-  $html .= "<td class='highlight right' colspan='5'>".$gameinfo['homesotg']."</td>";
-  $html .= "</tr>";
-  
-  $html .= "</table>\n";
-
-  return $html;
-}
 ?>
