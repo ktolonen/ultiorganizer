@@ -154,14 +154,15 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
   foreach($resArray as $resId => $gameArray) {
     $html .= "<table cellpadding='2' border='0' style='width:100%'>";
     $html .= "<tr><th class='left' colspan='8'>";
-    $html .= DefWeekDateFormat($gameArray['starttime']) ." ";
-    if($resId)
-    $html .= "<a class='thlink' href='?view=reservationinfo&amp;reservation=".$resId."'>". $gameArray['locationname'] ."</a>";
+    $html .= DefWeekDateFormat($gameArray['starttime']) . " ";
+    if ($resId)
+      $html .= "<a class='thlink' href='?view=reservationinfo&amp;reservation=" . $resId . "'>" .
+           $gameArray['locationname'] . "</a>";
     else
-    $html .= _("No location");
+      $html .= _("No location");
     $html .= "</th>\n<th class='right' colspan='2'>";
-    if($resId)
-    $html .= "<a class='thlink' href='?view=user/pdfscoresheet&amp;reservation=".$resId."&amp;season=".$season."'>"._("Print scoresheets")."</a>";
+    $html .= "<a class='thlink' href='?view=user/pdfscoresheet&amp;reservation=" . ($resId?$resId:"none") . "&amp;season=" . $season .
+         "'>" . _("Print scoresheets") . "</a>";
     $html .= "</th></tr>\n";
 
     foreach ($gameArray as $gameId => $game) {

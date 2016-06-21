@@ -116,7 +116,7 @@ function ReservationFields($seasonId) {
 }
 
 function ResponsibleReservationGames($placeId, $gameResponsibilities) {
-	$query = sprintf("SELECT game_id, hometeam, kj.name as hometeamname, visitorteam,
+  $query = "SELECT game_id, hometeam, kj.name as hometeamname, visitorteam,
 			vj.name as visitorteamname, pp.pool as pool, time, homescore, visitorscore,
 			pool.timecap, pool.timeslot, pool.series, 
 			ser.name as seriesname, pool.name as poolname,
@@ -130,14 +130,20 @@ function ResponsibleReservationGames($placeId, $gameResponsibilities) {
 			left join uo_team vj on (pp.visitorteam=vj.team_id)
 			LEFT JOIN uo_scheduling_name AS pgame ON (pp.name=pgame.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
-			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
-		WHERE res.id=%d AND game_id IN (".implode(",",$gameResponsibilities).")
-		ORDER BY pp.time ASC",
-		(int)$placeId);
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return  $result;
+			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)";
+  if ($placeId)
+    $query .= sprintf("WHERE res.id=%d", (int) $placeId);
+  else
+    $query .= "WHERE res.id IS NULL";
+  $query .= " AND game_id IN (" . implode(",", $gameResponsibilities) . ")
+		ORDER BY pp.time ASC";
+  
+  $result = mysql_query($query);
+  if (!$result) {
+    die('Invalid query: ' . mysql_error());
+  }
+  
+  return $result;
 }
 
 function ReservationSeasons($reservationId) {
