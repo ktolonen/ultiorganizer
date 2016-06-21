@@ -68,10 +68,11 @@ if(!empty($_POST['add'])){
 		AddUserRole($_SESSION['uid'], 'seasonadmin:'.$sp['season_id']);
 		
 		if($sp['istournament']){
-			$_SESSION['title'] = _("New tournament addded") .":";
+			$_SESSION['title'] = _("New tournament added") .":";
 		}else{
 			$_SESSION['title'] = _("New season added") .":";
 		}
+		/* FIXME Does anybody need this? I don't get it ... */
 		$_SESSION["var0"] = _("Name").": ".utf8entities($sp['name']);
 		$_SESSION["var1"] = _("Type").": ".utf8entities($sp['type']);
 		$_SESSION["var2"] = _("Starts").": ".ShortDate($sp['starttime']);

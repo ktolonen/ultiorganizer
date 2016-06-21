@@ -61,7 +61,7 @@ if(empty($seasonId)){
   $html .= "<p><input class='button' type='submit' name='add' value='"._("Import")."'/>";
   $html .= "<input class='button' type='button' name='return'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasons'\"/></p>";
 }else{
-  $html .= "<p>"._("This operation updates and adds event data in database with one from file. It will not delete any data or change user rights.")."</p>";
+  $html .= "<p>"._("This operation updates and adds event data in the database with the content of the file. It will not delete any data or change user rights.")."</p>";
   $html .= "<p><input class='button' type='submit' name='replace' value='"._("Update")."'/>";
   $html .= "<input class='button' type='button' name='return'  value='"._("Return")."' onclick=\"window.location.href='?view=admin/seasonadmin&amp;season=".$seasonId."'\"/></p>";
 }	

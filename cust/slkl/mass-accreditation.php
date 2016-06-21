@@ -23,7 +23,7 @@ if (isset($_POST['upload'])) {
 } else if (isset($_POST['check'])) {
 
   if(empty($_POST['series'])){
-    echo "<p class='warning'>"._("No divisions seleceted!")."</p>";
+    echo "<p class='warning'>"._("No divisions selected!")."</p>";
   }else{
     $req_validity=empty($_POST['validity'])?array():$_POST['validity'];
     $req_type=empty($_POST['type'])?array():$_POST['type'];

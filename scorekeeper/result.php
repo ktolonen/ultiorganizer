@@ -110,7 +110,7 @@ if(!empty($_POST['save']) && empty($errors)) {
   $html .= "<input type='number' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
   
   $html .= "<input type='submit' name='save' data-ajax='false' value='"._("Save")."'/>";
-  $html .= "<a href='?view=login' data-role='button' data-ajax='false'>"._("Responsible Games")."</a>";
+  $html .= "<a href='?view=login' data-role='button' data-ajax='false'>"._("Games list")."</a>";
 }
 
 

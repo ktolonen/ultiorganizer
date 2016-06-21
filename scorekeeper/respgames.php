@@ -24,7 +24,7 @@ if(isset($_GET['all'])){
 }
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>"._("Responsible Games")."</h1>\n";
+$html .= "<h1>"._("Games you are responsible for")."</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";

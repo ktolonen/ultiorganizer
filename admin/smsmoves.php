@@ -104,8 +104,8 @@ if (!empty($poolId)){
 				<th>"._("To position")."</th>
 				<th>"._("Team")."</th>
 				<th>"._("Outcome")."</th>
-				<th>"._("Next Opp")."</th>
-				<th>"._("Next Opp Rank")."</th>
+				<th>"._("Next Opp.")."</th>
+				<th>"._("Next Opp. Rank")."</th>
 				<th>"._("Time")."</th>
 				<th>"._("Field")."</th>
 				<th>"._("SMS")."</th></tr>";

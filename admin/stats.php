@@ -62,7 +62,7 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 $html .= "<form method='post' action='?view=admin/stats&amp;season=$season'>\n";
-$html .= "<p>"._("Calculation of statistics takes some time, please wait without closing browser.")."</p>\n";
+$html .= "<p>"._("Calculation of statistics takes some time; please wait without closing browser.")."</p>\n";
 
 if(!IsSeasonStatsCalculated($season)){
 	$html .= "<p><input class='button' name='calc' type='submit' value='"._("Calculate")."'/></p>\n";

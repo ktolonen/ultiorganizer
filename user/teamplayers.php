@@ -20,7 +20,7 @@ if(!empty($_POST['remove_x'])){
     $playerInfo = PlayerInfo($id );
     echo "<div style='width:100%'>
 			<p class='warning'><i>". utf8entities($playerInfo['firstname'] ." ". $playerInfo['lastname']) ."</i> "._("can not be removed from the roster").".
-			"._("Played in the team in")." $games "._("game")."</p></div>";
+			"._("Games played in the team:")." ". $games ."</p></div>";
   }else{
     RemovePlayer($id);
   }
@@ -134,9 +134,9 @@ $menutabs[_("Club Profile")]= "?view=user/clubprofile&team=$teamId";
 pageMenu($menutabs);
 
 //help
-$help = "<p>"._("Add players into team's roster:")."</p>
+$help = "<p>"._("Add players to team's roster:")."</p>
 	<ul>
-		<li> "._("Player's already having profile in ultiorganizer: Enter full or part of the player name and press search-button. Select correct player from opening dialog and press confirm-button.")."</li>
+		<li> "._("Players already having a profile in Ultiorganizer: Enter full or part of the player name and press the search-button. Select correct player from the dialog and press the confirm-button.")."</li>
 		<li> "._("New players: Enter jersey number, first and last name. Press add-button.")."</li>
 	</ul>";
 
@@ -158,7 +158,7 @@ echo "<th>"._("Last name")."</th>";
 echo "<th>"._("Profile")."</th>";
 echo "<th class='center'>". _("Accredited") ."</th>";
 if(CUSTOMIZATIONS=="slkl"){
-  echo "<th>"._("MemberId")."</th>";
+  echo "<th>"._("Member ID")."</th>";
   echo "<th>"._("Membership")."</th>";
   echo "<th>"._("License")."</th>";
   echo "<th></th>";

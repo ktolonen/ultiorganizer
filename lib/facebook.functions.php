@@ -6,10 +6,10 @@ include_once $include_prefix.'lib/reservation.functions.php';
 include_once $include_prefix.'lib/logging.functions.php';
 include_once $include_prefix.'lib/common.functions.php';
 
-$events = array("won" => _('and his team $team just won $opponent by $teamscore to $opponentscore. Huzzah!'),
-				"lost" => _('and his team $team just lost to $opponent by $opponentscore to $teamscore. Bummer :('),
-				"passed" => _('just passed point $teamscore for his team $team against $opponent. The game is now $teamscore to $opponentscore. The goal was caught by: $scorername.'),
-				"scored" => _('just scored point $teamscore for his team $team against $opponent. The game is now $teamscore to $opponentscore. The goal was passed by: $passername.'));
+$events = array("won" => _('and their team $team just won against $opponent by $teamscore to $opponentscore. Huzzah!'),
+				"lost" => _('and their team $team just lost to $opponent by $opponentscore to $teamscore. Bummer :('),
+				"passed" => _('just passed point $teamscore for their team $team against $opponent. The game is now $teamscore to $opponentscore. The goal was caught by: $scorername.'),
+				"scored" => _('just scored point $teamscore for their team $team against $opponent. The game is now $teamscore to $opponentscore. The goal was passed by: $passername.'));
 
 $eventTranslations = array("won" => _('game won'),
 				"lost" => _('game lost'),

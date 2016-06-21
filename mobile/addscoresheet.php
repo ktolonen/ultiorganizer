@@ -115,7 +115,7 @@ if(isset($_POST['add']) || isset($_POST['forceadd'])) {
 			}
 	}
 	if(($uo_goal['assist']!=-1 || $uo_goal['scorer']!=-1) && $uo_goal['assist']==$uo_goal['scorer']){
-		$html .= "<p class='warning'>"._("Scorer and assist have the same number")." '".$_POST['goal']."'!</p>\n";
+		$html .= "<p class='warning'>"._("Scorer and assist are the same player!")." '".$_POST['goal']."'!</p>\n";
 	}
 	if(empty($team)){
 		$html .=  "<p class='warning'>"._("select team scored")."!</p>\n";

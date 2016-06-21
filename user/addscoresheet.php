@@ -313,7 +313,7 @@ if(!empty($_POST['save']))
       }
       	
       if($pass==$goal){
-        echo "<p class='warning'>"._("Point")." ",$i+1,": "._("Scorer and assist have the same number")." '".$_POST['goal'.$i]."'!</p>";
+        echo "<p class='warning'>"._("Point")." ",$i+1,": "._("Scorer and assist are the same player!")." '".$_POST['goal'.$i]."'!</p>";
         $errIds[]="pass$i";
         $errIds[]="goal$i";
       }

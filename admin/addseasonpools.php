@@ -52,7 +52,7 @@ if(!empty($_POST['add'])) {
 		}
 		$template = $_POST['template'];
 		$poolId = PoolFromPoolTemplate($seriesId, $_POST['name'], $ordering, $template);
-		$html .= "<p>". _("Pool"). " " .utf8entities(U_($_POST['name'])). " ". _("added").".</p>";
+		$html .= "<p>". _("Pool added"). ": " .utf8entities(U_($_POST['name'])). "</p>";
 		$html .= "<hr/>";
 		$addmore = true;
 	} else {

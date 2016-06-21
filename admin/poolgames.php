@@ -168,7 +168,7 @@ if(CanGenerateGames($poolId)){
 	$html .= "<h2>"._("Creation of pool games")."</h2>\n";
 
 if($info['type']=="1"){
-	$html .= "<p>"._("Round Robin -type of pool")."</p>\n";
+	$html .= "<p>"._("Round Robin pool")."</p>\n";
 	$html .= "<p>"._("Game rounds").": <input class='input' size='2' name='rounds' value='$rounds'/></p>\n";
 	$html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
@@ -185,7 +185,7 @@ if($info['type']=="1"){
 	}
 	
 }elseif($info['type']=="2"){
-	$html .= "<p>"._("Playoff -type of pool")."</p>\n";
+	$html .= "<p>"._("Playoff pool")."</p>\n";
 	$html .= "<p>"._("best")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("matches")."</p>\n";
 	$html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
@@ -194,8 +194,7 @@ if($info['type']=="1"){
 	$html .="/></p>";
 	
 }elseif($info['type']=="3"){
-	$html .= "<p>"._("Swissdraw pool")."</p>\n";
-	$html .= "<p>"._("with")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("rounds")."</p>\n";
+	$html .= "<p>"._("Swissdraw pool: ")."<input class='input' size='2' name='rounds' value='$rounds'/> "._("rounds")."</p>\n";
 	$html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
 		$html .= "checked='checked'";
@@ -203,7 +202,7 @@ if($info['type']=="1"){
 	$html .="/></p>";	
 	
 }elseif($info['type']=="4"){
-	$html .= "<p>"._("Crossmatch -type of pool")."</p>\n";
+	$html .= "<p>"._("Crossmatch pool")."</p>\n";
 	$html .= "<p>"._("best")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("matches")."</p>\n";
 	$html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {

@@ -21,7 +21,7 @@ if(empty($html)){
   if($validuser){
     $html .= "<form method='post' action='?view=mobile/login_failed&amp;user=".urlencode($userId)."'>\n";
     $html .= "<p>"._("Check the username and password.")." \n";
-    $html .= _("If you have forgot the password, click button below and new password is sent to e-mail address given on registration.")."</p>";
+    $html .= _("If you have forgotten your password, click the button below and a new password will be sent to your e-mail address given at registration.")."</p>";
     $html .= "<p><input class='button' type='submit' name='resetpassword' value='"._("Reset password")."'/></p>\n";
     $html .= "</form>\n";
   }else{

@@ -73,15 +73,15 @@ contentStart();
 $html .= "<form method='post' action='?view=admin/seriesgames&amp;season=$season&amp;series=$seriesId'>";
 
 $html .= "<h2>"._("Creation of games")."</h2>\n";
-$html .= "<p><b>"._("Round Robin -type of pool")."</b></p>\n";
+$html .= "<p><b>"._("Round Robin pool")."</b></p>\n";
 $html .= "<p>"._("Game rounds").": <input class='input' size='2' name='rounds' value='$rounds'/></p>\n";
 $html .= "<p><input class='input' type='checkbox' name='nomutual'";
 	if ($nomutual) {
 		$html .= "checked='checked'";
 	}
 $html .="/> "._("Do not generate mutual games for teams moved from same pool, if pool format includes mutual games").".</p>";
-$html .= "<p><b>"._("Play off -type of pool")."</b></p>\n";
-$html .= "<p>"._("best")." <input class='input' size='2' name='matches' value='$matches'/> "._("matches")."</p>\n";
+$html .= "<p><b>"._("Play off pool")."</b></p>\n";
+$html .= "<p>"._("best of")." <input class='input' size='2' name='matches' value='$matches'/></p>\n";
 $html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
 		$html .= "checked='checked'";

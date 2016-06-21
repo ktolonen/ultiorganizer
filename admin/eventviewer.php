@@ -61,7 +61,7 @@ if($resolve)
 else
 	$html .= "<tr><td class='center'><input type='checkbox' name='resolve' value='1'/></td>";
 	
-$html .= "<td colspan='3'>"._("Resolve ids")."</td></tr>";
+$html .= "<td colspan='3'>"._("Resolve IDs")."</td></tr>";
 $html .= "</table>\n";
 $html .= "<p>"._("Only user").": ";
 $html .= "<input class='input' maxlength='50' size='40' name='userid' value='$userfilter'/></p>\n";

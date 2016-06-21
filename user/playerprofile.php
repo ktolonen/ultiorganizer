@@ -234,19 +234,23 @@ $pp = array(
 	$html .= "<td><select class='dropdown' name='gender'>";
 
 
-	if($pp['gender']=="F"){
-	  $html .= "<option class='dropdown' value=''></option>";
-	  $html .= "<option class='dropdown' value='M'>"._("Male")."</option>";
-	  $html .= "<option class='dropdown' selected='selected' value='F'>"._("Female")."</option>";
-	}elseif($pp['gender']=="M"){
-	  $html .= "<option class='dropdown' value=''></option>";
+    $html .= "<option class='dropdown' value=''></option>";
+    if($pp['gender']!="F"){
+      $html .= "<option class='dropdown' selected='selected' value='F'>"._("Female")."</option>";
+    } else {
+      $html .= "<option class='dropdown' value='F'>"._("Female")."</option>";
+    }
+	if($pp['gender']=="M"){
 	  $html .= "<option class='dropdown' selected='selected' value='M'>"._("Male")."</option>";
-	  $html .= "<option class='dropdown' value='F'>"._("Female")."</option>";
-	}else{
-	  $html .= "<option class='dropdown'  selected='selected' value=''></option>";
-	  $html .= "<option class='dropdown' value='M'>"._("Male")."</option>";
-	  $html .= "<option class='dropdown' value='F'>"._("Female")."</option>";
+	} else {
+      $html .= "<option class='dropdown' value='M'>"._("Male")."</option>";
 	}
+	if($pp['gender']=="O"){
+	  $html .= "<option class='dropdown' selected='selected' value='O'>"._("Other")."</option>";
+	} else {
+	  $html .= "<option class='dropdown' value='o'>"._("Other")."</option>";
+	}
+	
 
 	$html .= "</select></td>";
 	$html .= privacyselection("gender",$publicfields);
@@ -266,6 +270,9 @@ $pp = array(
 	$html .= "<tr><td class='infocell'>"._("Hand").":</td>";
 	$html .= "<td><select class='dropdown' name='throwing_hand'>\n";
 	$types = array("","right","left","both");
+	
+	/* for gettext */
+	_("left"); _("right"); _("both");
 
 	foreach($types as $type){
 	  if($pp['throwing_hand']==$type)

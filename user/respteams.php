@@ -4,7 +4,7 @@ include_once $include_prefix.'lib/common.functions.php';
 include_once $include_prefix.'lib/season.functions.php';
 include_once $include_prefix.'lib/series.functions.php';
 
-$title = _("team responsibilities");
+$title = _("Team responsibilities");
 $html = "";
 
 if (isset($_GET['season'])) {

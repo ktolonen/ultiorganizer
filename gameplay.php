@@ -516,7 +516,7 @@ if(GameHasStarted($game_result) > 0){
     //defense board
     if(ShowDefenseStats()){
       $html .= "<br><br>";
-      $html .= "<h3 align="._("left").">"._("Defensive plays")."</h3>\n";
+      $html .= "<h3>"._("Defensive plays")."</h3>\n";
       $home_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['hometeam']);
       $guest_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['visitorteam']);
       $defenses = GameDefenses($gameId);

@@ -130,7 +130,7 @@ if(count($respGameArray) == 0) {
   $html .= "\n<p>"._("No game responsibilities").".</p>\n";
 }else{
   $html .= "<noscript>
-	<p><b>"._("Feeding in the score sheet requires JavaScript. Please enable JavaScript to continue!")."</b></p>
+	<p><b>"._("Feeding in the score sheet requires JavaScript. Please enable JavaScript in your browser to continue!")."</b></p>
 	</noscript>";	
 }
 

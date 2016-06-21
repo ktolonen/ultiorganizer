@@ -243,7 +243,7 @@ foreach($pools as $pool){
   $html .= "<td>";
   $html .= "<a href='?view=admin/addseasonpools&amp;pool=$id'><img class='deletebutton' src='images/settings.png' alt='D' title='"._("edit details")."'/></a>";
   
-  $html .= "<input class='deletebutton' type='image' src='images/clone.png' alt='D' name='clone' title='"._("clone")."' value='"._("D")."' onclick=\"setId(".$info['pool_id'].");\"/>";
+  $html .= "<input class='deletebutton' type='image' src='images/clone.png' alt='C' name='clone' title='"._("clone")."' value='"._("C")."' onclick=\"setId(".$info['pool_id'].");\"/>";
   if (CanDeletePool($info['pool_id'])) {
     $html .= "<input class='deletebutton' type='image' src='images/remove.png' alt='X' title='"._("remove")."' name='remove' value='"._("X")."' onclick=\"setId(".$info['pool_id'].");\"/>";
   }

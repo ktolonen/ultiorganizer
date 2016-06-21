@@ -28,7 +28,7 @@ $html .= _("Game end result is sent automatically to Twitter.");
 
 $html .= "<input type='submit' name='tweetresult' data-ajax='false' value='"._("Tweet last score")."'/>";
 
-$html .= "<label for='textbox'>"._("Tweet Text").":</label>";
+$html .= "<label for='textbox'>"._("Tweet text").":</label>";
 $html .= "<textarea name='textbox' id='textbox' maxlength='140'></textarea>";
 $html .= "<input disabled='disabled' name='counter' id='counter' value='0/140' size='5'/>";
 
