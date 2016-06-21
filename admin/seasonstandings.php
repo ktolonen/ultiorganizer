@@ -275,8 +275,8 @@ foreach ($pools as $spool) {
   } else {
     $html .= "<p>" . _("Pool games not completed:");
   }
-  $html .=" <a href='?view=admin/poolgames&season=". $season . "&pool=". $poolId . "'>". _("Games") ."</a></p>\n";
-  
+  $html .=" <a href='?view=admin/seasongames&season=".$season."&series=".$series_id."&pool=". $poolId . "'>". _("Games") ."</a></p>\n";
+
   $fromMoves = PoolMovingsFromPool($poolId);
   $toMoves = PoolMovingsToPool($poolId);
   

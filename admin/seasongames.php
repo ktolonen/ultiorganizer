@@ -27,6 +27,11 @@ if(!empty($_GET["group"])) {
 $_SESSION['hide_played_pools'] = !empty($_SESSION['hide_played_pools']) ? $_SESSION['hide_played_pools'] : 0;
 $_SESSION['hide_played_games'] = !empty($_SESSION['hide_played_games']) ? $_SESSION['hide_played_games'] : 0;
 
+$showpool = null;
+if (!empty($_GET['pool'])) {
+  $showpool = $_GET['pool'];
+}
+
 if(!empty($_GET["v"])) {
   $visibility = $_GET["v"];
 
@@ -36,6 +41,7 @@ if(!empty($_GET["v"])) {
       $_SESSION['hide_played_games'] = $_SESSION['hide_played_games'] ? 0 : 1;
   }
 }
+
 if (!empty($_GET["massinput"])) {
   $mass = true;
   $_SESSION['massinput'] = true;
@@ -85,45 +91,46 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
-$visible="";
-
-$tab = 0;
-foreach($series as $row){
-  $menutabs[U_($row['name'])]=seasongameslink($season, $row['series_id'], $group, null, $mass);
-}
-$menutabs[_("...")]="?view=admin/seasonseries&season=".$season;
-pageMenu($menutabs, seasongameslink($season, $series_id, $group, null, $mass));
-
-function seasongameslink($season, $series, $group, $switchvisible, $mass) {
+function seasongameslink($season, $series, $group, $switchvisible, $mass, $showpool=null) {
   $ret = "?view=admin/seasongames&season=$season" 
     . ($series?"&series=$series":"")
     . "&group=" . utf8entities($group)
     . ($switchvisible?"&v=$switchvisible":"") 
-    . ($mass?"&massinput=true":"");
+    . ($mass?"&massinput=true":"")
+    . ($showpool?"&pool=$showpool":"");
   return $ret;
 }
 
+$tab = 0;
+foreach($series as $row){
+  $menutabs[U_($row['name'])]=seasongameslink($season, $row['series_id'], $group, null, $mass, null);
+}
+$menutabs[_("...")]="?view=admin/seasonseries&season=".$season;
+pageMenu($menutabs, seasongameslink($season, $series_id, $group, null, $mass, $showpool));
+
 $html .= "<table width='100%'><tr><td>";
-if ($_SESSION['hide_played_pools']) {
-  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "pool", $mass) . "' tabindex='" . ++$tab . "'>" .
-       _("Show played pools") . "</a> ";
-} else {
-  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "pool", $mass) . "' tabindex='" . ++$tab . "'>" .
-       _("Hide played pools") . "</a> ";
+if (!$showpool) {
+  if ($_SESSION['hide_played_pools']) {
+    $html .= "<a href='" . seasongameslink($season, $series_id, $group, "pool", $mass, $showpool) . "' tabindex='" .
+         ++$tab . "'>" . _("Show played pools") . "</a> ";
+  } else {
+    $html .= "<a href='" . seasongameslink($season, $series_id, $group, "pool", $mass, $showpool) . "' tabindex='" .
+         ++$tab . "'>" . _("Hide played pools") . "</a> ";
+  }
 }
 if ($_SESSION['hide_played_games']) {
-  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "game", $mass) . "' tabindex='" . ++$tab . "'>" .
+  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "game", $mass, $showpool) . "' tabindex='" . ++$tab . "'>" .
        _("Show played games") . "</a> ";
 } else {
-  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "game", $mass) . "' tabindex='" . ++$tab . "'>" .
+  $html .= "<a href='" . seasongameslink($season, $series_id, $group, "game", $mass, $showpool) . "' tabindex='" . ++$tab . "'>" .
        _("Hide played games") . "</a> ";
 }
 $html .= "</td><td style='text-align:right;'>";
 if ($mass) {
-  $html .= "<a class='button' href='" . seasongameslink($season, $series_id, $group, null, false) . "' tabindex='" .
+  $html .= "<a class='button' href='" . seasongameslink($season, $series_id, $group, null, false, $showpool) . "' tabindex='" .
        ++$tab . "'>" . _("Just display values") . "</a></td></tr></table>";
 } else {
-  $html .= "<a class='button' href='" . seasongameslink($season, $series_id, $group, null, true) . "' tabindex='" .
+  $html .= "<a class='button' href='" . seasongameslink($season, $series_id, $group, null, true, $showpool) . "' tabindex='" .
        ++$tab . "'>" . _("Mass input") . "</a></td></tr></table>";
 }
 
@@ -134,9 +141,11 @@ $pools = SeriesPools($series_id);
 $html .= "<table class='admintable'>\n";
 
 foreach ($pools as $pool) {
-
+  if ($showpool && $showpool != $pool['pool_id'])
+    continue;
+  
   $poolinfo = PoolInfo($pool['pool_id']);
-  if ($_SESSION['hide_played_pools'] && $poolinfo['played']) {
+  if (!$showpool && $_SESSION['hide_played_pools'] && $poolinfo['played']) {
     continue;
   }
 
