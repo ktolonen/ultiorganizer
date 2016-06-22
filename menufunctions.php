@@ -460,14 +460,21 @@ function leftMenu($id=0, $printable=false) {
     //echo "<a class='subnav' href='?view=admin/sms'>&raquo; "._("SMS")."</a>\n";
     echo "<a class='subnav' href='?view=admin/dbadmin'>&raquo; "._("Database")."</a>\n";
     echo "<a class='subnav' href='?view=admin/serverconf'>&raquo; "._("Settings")."</a>\n";
-    echo "<a class='subnav' href='?view=admin/help'>&raquo; "._("Helps")."</a>\n";
   }
 
   if (hasScheduleRights() || isSuperAdmin() || hasTranslationRight()) {
     echo "</td></tr>\n";
     echo "</table>\n";
   }
-
+  
+  echo "<table class='leftmenulinks'>\n";
+  // echo "<tr><td class='menuseasonlevel'>"._("New Event")."</td></tr>";
+  // echo "</td></tr>\n";
+  echo "<tr><td>\n";
+  echo "<a class='subnav' href='?view=admin/help'>&raquo; " . _("Helps") . "</a>\n";
+  echo "</td></tr>\n";
+  echo "</table>\n";
+  
   //Event administration menu
   $editlinks = getEditSeasonLinks();
   if (count($editlinks)) {
@@ -673,9 +680,9 @@ function getEditSeasonLinks() {
         $links['?view=admin/seasonseries&amp;season='.$season] = _("Divisions");
         $links['?view=admin/seasonteams&amp;season='.$season] = _("Teams");
         $links['?view=admin/seasonpools&amp;season='.$season] = _("Pools");
+        $links['?view=admin/reservations&amp;season='.$season] = _("Field reservations");
         $links['?view=admin/seasongames&amp;season='.$season] = _("Games");
         $links['?view=admin/seasonstandings&amp;season='.$season] = _("Standings");
-        $links['?view=admin/reservations&amp;season='.$season] = _("Field reservations");
         $links['?view=admin/accreditation&amp;season='.$season] = _("Accreditation");
         $respgamesset[$season] = "set";
       }
