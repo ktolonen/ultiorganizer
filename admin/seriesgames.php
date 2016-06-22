@@ -80,7 +80,7 @@ $html .= "<p><input class='input' type='checkbox' name='nomutual'";
 		$html .= "checked='checked'";
 	}
 $html .="/> "._("Do not generate mutual games for teams moved from same pool, if pool format includes mutual games").".</p>";
-$html .= "<p><b>"._("Play off pool")."</b></p>\n";
+$html .= "<p><b>"._("Play-off pool")."</b></p>\n";
 $html .= "<p>"._("best of")." <input class='input' size='2' name='matches' value='$matches'/></p>\n";
 $html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {

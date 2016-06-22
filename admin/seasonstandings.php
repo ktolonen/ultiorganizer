@@ -283,13 +283,13 @@ foreach ($pools as $spool) {
   $html .= "<table style='width:100%'><tr><td style='width:50%; vertical-align:top;'>\n";
   
   if (count($toMoves)) {
-    $html .= moveTable($toMoves, "To", $poolId, $poolinfo, $season, $series_id);
+    $html .= moveTable($toMoves, "to", $poolId, $poolinfo, $season, $series_id);
   }
   
   $html .= "</td><td style='width:50%; vertical-align:top;'>\n";
   
   if (count($fromMoves)) {
-    $html .= moveTable($fromMoves, "From", $poolId, $poolinfo, $season, $series_id);
+    $html .= moveTable($fromMoves, "from", $poolId, $poolinfo, $season, $series_id);
   }
   
   $html .= "</td></tr></table>\n";
@@ -405,7 +405,7 @@ function regularRow($poolId, $poolinfo, $row, $teamNum) {
 
 function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
   $html = "<table class='admintable' style='width:100%; margin-left:0pt'>";
-  if ($type == "To") {
+  if ($type == "to") {
     $html .= "<tr><th colspan='5'>" . _("Moves to") ." ". $poolinfo['name'] . "</th></tr>\n";
     $html .= "<tr><th>" . _("From pool") . "</th><th>". _("Pos") ."</th><th>" . _("To") . "</th>";
   } else {
@@ -423,7 +423,7 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
     } else {
       $html .= "<tr>";
     }
-    if ($type == "To") {
+    if ($type == "to") {
       $html .= "<td>" . poolLink($row['frompool'], PoolName($row['frompool'])) . "</a></td>";
       $html .= "<td>" . utf8entities($row['fromplacing']) . "</td>";
       $html .= "<td>" . $row['torank'] . "</td>";
@@ -446,7 +446,7 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
   }
   
   $html .= "<tr><th colspan='4'>";
-  if ($type == "To") {
+  if ($type == "to") {
     if (PoolIsMoveFromPoolsPlayed($poolId) && !PoolIsAllMoved($poolId)) {
       $html .= "<input class='button' type='submit' name='confirmMoves' value='" . _("Confirm moves") .
            "' onclick='setConfirm(" . $poolId . ")'/>&nbsp;";
@@ -455,7 +455,7 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
   }
   $html .= "</th>";
   if ($undo)
-    $html .= undoPoolButton("Undo", $poolId, $type == "From");
+    $html .= undoPoolButton("Undo", $poolId, $type == "from");
   else
     $html .= "<th></th>";
   $html .= "</tr></table>\n";

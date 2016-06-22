@@ -46,7 +46,7 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 $html .= "<h2>". _("Twitter accounts to publish game results") ."</h2>";
-$html .= "<p>". _("Note if you are signed in Twitter with same browser then this account is automatically used for following twitter requests. If you want assign division to different account, please sign out from Twitter after establishing one twitter.") ."</p>";
+$html .= "<p>". _("Note that if you are signed in to Twitter with same browser then this account is automatically used for following twitter requests. If you want assign the division to a different account, please sign out from Twitter after establishing one twitter.") ."</p>";
 $html .= "<form method='post' action='?view=admin/twitterconf&amp;season=$season'>";
 $html .= "<table border='0' cellpadding='4px'>\n";
 $html .= "<tr>";

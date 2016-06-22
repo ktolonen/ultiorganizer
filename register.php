@@ -88,7 +88,7 @@ if (!empty($_GET['token'])) {
 }
 
 //help
-$help = "<p>"._("Registration is only needed for event organizers, team contact persons and players whom need to create or change data in system.")." ";
+$help = "<p>"._("Registration is only needed for event organizers, team contact persons and players needing to create or change data in system.")." ";
 $help .= _("Registration process:")."</p>
 	<ol>
 		<li> "._("Fill registration information in fields below.")."</li>

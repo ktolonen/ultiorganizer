@@ -118,7 +118,7 @@ if(isset($_POST['add']) || isset($_POST['forceadd'])) {
 		$html .= "<p class='warning'>"._("Scorer and assist are the same player!")." '".$_POST['goal']."'!</p>\n";
 	}
 	if(empty($team)){
-		$html .=  "<p class='warning'>"._("select team scored")."!</p>\n";
+		$html .=  "<p class='warning'>"._("Select scoring team!")."</p>\n";
 	}
  	
 	if(empty($html) || isset($_POST['forceadd'])){

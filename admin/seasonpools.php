@@ -226,9 +226,9 @@ foreach($pools as $pool){
   //playoff pool
   if($info['type']==2){
     if (CanGenerateGames($info['pool_id'])) {
-      $html .= "<b><a href='?view=admin/poolgames&amp;season=".$info['season']."&amp;series=".$info['series']."&amp;pool=".$info['pool_id']."'>"._("Playoff games")."</a></b>";
+      $html .= "<b><a href='?view=admin/poolgames&amp;season=".$info['season']."&amp;series=".$info['series']."&amp;pool=".$info['pool_id']."'>"._("Play-off games")."</a></b>";
     }else{
-      $html .= "<a href='?view=admin/poolgames&amp;season=".$info['season']."&amp;series=".$info['series']."&amp;pool=".$info['pool_id']."'>"._("Playoff games")."</a>";
+      $html .= "<a href='?view=admin/poolgames&amp;season=".$info['season']."&amp;series=".$info['series']."&amp;pool=".$info['pool_id']."'>"._("Play-off games")."</a>";
       $cangenerateallgames = false;
     }
   }else{

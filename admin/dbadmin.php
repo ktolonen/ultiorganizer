@@ -62,7 +62,7 @@ if(isSuperAdmin()){
 	  }
 	}
 	$sql = urlencode("SHOW TABLE STATUS");
-	$html .= "<tr><td colspan='5'>"._("Execute").": <a href='?view=admin/executesql&amp;sql=$sql'>"._("SHOW TABLE STATUS")."</a></td></tr>";
+	$html .= "<tr><td colspan='5'>"._("Execute").": <a href='?view=admin/executesql&amp;sql=$sql'>"."SHOW TABLE STATUS"."</a></td></tr>";
 
 	$html .= "</table>";
 	$html .= "<p>"._("Database size").": ".$total_size." "._("bytes")."</p>\n";
@@ -76,7 +76,7 @@ if(isSuperAdmin()){
 		$html .= "&nbsp;". $info1.": ".$info2."<br/>\n";
 	}
 	$sql = urlencode("SHOW GLOBAL STATUS");
-	$html .= "&nbsp;"._("Execute").": <a href='?view=admin/executesql&amp;sql=$sql'>"._("SHOW GLOBAL STATUS")."</a>";
+	$html .= "&nbsp;"._("Execute").": <a href='?view=admin/executesql&amp;sql=$sql'>"."SHOW GLOBAL STATUS"."</a>";
 	$html .= "</p>\n";	
 	
 	$html .= "<p><span class='profileheader'>"._("Client Library version").": </span>".mysql_get_client_info()."<br/>\n";

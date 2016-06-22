@@ -358,7 +358,7 @@ if(!empty($_POST['save']))
       }
     }
   }
-  echo "<p>"._("Score sheet saved")." (". _("at")." ".DefTimestamp().")!</p>";
+  echo "<p>"._("Score sheet saved")." (". _("Time").": ".DefTimestamp().")!</p>";
   echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Game play")."</a>";
 }
 $game_result = GameResult($gameId);

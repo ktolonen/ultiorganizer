@@ -10,8 +10,8 @@ security=superadmin
 customization=all
 
 [DESCRIPTION]
-title = "Reassign playoff pools"
-description = "Due to BYEs in Swissdraw, it might be necessary to assign the playoff pools differently. This tool helps doing that while keeping scheduled games alive."
+title = "Reassign play-off pools"
+description = "Due to BYEs in Swissdraw, it might be necessary to assign the play-off pools differently. This tool helps doing that while keeping scheduled games alive."
 -->
 <?php
 ob_end_clean();
@@ -22,7 +22,7 @@ include_once 'lib/series.functions.php';
 include_once 'lib/standings.functions.php';
 
 $html = "";
-$title = ("Reassign playoff pools");
+$title = ("Reassign pla-yoff pools");
 $seriesId = "";
 
 	
@@ -114,7 +114,7 @@ if (!empty($_POST['series'])) {
 	}			
 	$html .= "</select></p>\n";
 	
-	$html .= "<p><input class='button' type='submit' name='swap' value='".("Swap Assignment of Playoff Pools")."'/>\n";
+	$html .= "<p><input class='button' type='submit' name='swap' value='".("Swap Assignment of Play-off Pools")."'/>\n";
 	$html .= "<input class='button' type='button' name='back'  value='"._("Return")."' onclick=\"window.location.href='?view=plugins/reassign_playoffpools'\"/></p>";
 	
 	$html .= "</form>";					
@@ -249,7 +249,7 @@ else{
 	}
 	
 	$html .= "</select></p>\n";
-	$html .= "<p><input class='button' type='submit' name='show' value='".("Show Playoff Pools")."'/></p>";
+	$html .= "<p><input class='button' type='submit' name='show' value='".("Show play-off pools")."'/></p>";
 	
 	$html .= "</form>";
 }

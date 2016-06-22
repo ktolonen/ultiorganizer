@@ -5,7 +5,7 @@ function logo() {
 	if (!isset($styles_prefix)) {
 		$styles_prefix = $include_prefix;
 	}
-	return "<img class='header_logo' src='".$styles_prefix."cust/default/logo.gif' alt='"._("EXAMPLE")."'/>";
+	return "<img class='header_logo' src='".$styles_prefix."cust/default/logo.gif' alt='"._("LOGO EXAMPLE")."'/>";
 }
 
 function pageHeader() {

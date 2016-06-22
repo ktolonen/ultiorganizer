@@ -175,7 +175,7 @@ if(!empty($_POST['save']))
 			}
 		}
 		GameSetDefenses($gameId, $h, $a);
-	echo "<p>"._("Defense sheet saved")." (". _("Zeit").": ".DefTimestamp().")!</p>";
+	echo "<p>"._("Defense sheet saved")." (". _("Time").": ".DefTimestamp().")!</p>";
 	// The defenseplay.php needs to be created
 	//echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Game play")."</a>";
 	}

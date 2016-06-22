@@ -1210,7 +1210,7 @@ function UploadTeamImage($teamId){
     }
 
     if(!extension_loaded("gd")){
-      return "<p class='warning'>"._("Missing gd extensinon for image handiling.")."</p>";
+      return "<p class='warning'>"._("Missing gd extension for image handling.")."</p>";
     }
 
     $file_tmp_name = $_FILES['picture']['tmp_name'];
