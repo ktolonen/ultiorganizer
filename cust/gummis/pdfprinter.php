@@ -79,6 +79,7 @@ class PDF extends FPDF
 		$this->Image("cust/gummis/gummi_footer.png",10,255, 80);
 		
 		}
+		
 	function PrintDefenseSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
 		$this->game['seasonname'] = utf8_decode($seasonname);
@@ -938,7 +939,7 @@ class PDF extends FPDF
 		{
 		//header
 		$this->HeaderColors(2);
-		$this->Cell(80,6,utf8_decode(_("Timeouts")),'LRTB',0,'C',true);
+		$this->Cell(80,6,utf8_decode(_("Time-outs")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids

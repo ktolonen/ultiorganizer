@@ -199,7 +199,7 @@ $html .= "</td></tr><tr><td>\n";
 if(!$errors){
 	$html .= "<input class='button' type='submit' name='add' value='"._("Save goal")."'/>";
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=mobile/addtimeouts&amp;game=".$gameId."'>"._("Time outs")."</a> | ";
+	$html .=  "<a href='?view=mobile/addtimeouts&amp;game=".$gameId."'>"._("Time-outs")."</a> | ";
 	$html .=  "<a href='?view=mobile/addhalftime&amp;game=".$gameId."'>"._("Half time")."</a>";
 	$html .= "</td></tr><tr><td>\n";
 	$html .=  "<a href='?view=mobile/addfirstoffence&amp;game=".$gameId."'>"._("First offence")."</a> | ";

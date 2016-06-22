@@ -39,7 +39,7 @@ if(!empty($_POST['remove_x']) && !empty($_POST['hiddenDeleteId']))
 	//run some test to for safe deletion
 	$series = SeasonSeries($id);
 	if(count($series)){
-		$html .= "<p class='warning'>"._("Event has")." ".mysql_num_rows($series)." "._("Division").". "._("Division must be removed before removing the event").".</p>";
+		$html .= "<p class='warning'>"._("Event has")." ".mysql_num_rows($series)." "._("Division(s)").". "._("Divisions must be removed before removing the event").".</p>";
 		$ok = false;
 	}
 	$cur = CurrentSeason();

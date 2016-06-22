@@ -54,7 +54,7 @@ if ($userid != "anonymous") {
 
     $message = "";
     if(empty($newUsername)|| strlen($newUsername) < 3 || strlen($newUsername) > 20){
-      $message .= "<p class='warning'>"._("Username is too short (min. 3 letters).")."</p>";
+      $message .= "<p class='warning'>"._("Username is too short (min. 3 letters)").".</p>";
       $error = 1;
     }
     

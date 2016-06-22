@@ -195,7 +195,7 @@ if (!empty($poolId)){
 				  $sms .= ", field yet unknown.";
 				}
 			}else{
-				die("something's wrong in smsmoves.php, we should have never arrived here...");
+				die("something's wrong in smsmoves.php, we should have never arrived here ...");
 			}
 			
 			echo "<td>".utf8entities($sms)."</td>";

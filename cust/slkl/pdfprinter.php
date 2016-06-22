@@ -799,7 +799,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(80,6,utf8_decode(_("Timeouts (time)")),'LRTB',0,'C',true);
+		$this->Cell(80,6,utf8_decode(_("Time-outs (time)")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		$this->SetFont('Arial','',12);

@@ -22,7 +22,7 @@ msgstr ""
 
 #: poolstatus.php:8 menufunctions.php:685
 msgid "Standings"
-msgstr "Ergebnisse"
+msgstr "Spielstände"
 
 #: poolstatus.php:102 privacy.php:22 privacy.php:24 user_guide.php:18
 #: games.php:212 plugins/reassign_playoffpools.php:118
@@ -208,7 +208,7 @@ msgstr "Diff."
 #: poolstatus.php:474 ext/poolstatus.php:82 ext/countrystatus.php:134
 #: ext/eventpools.php:91
 msgid "No playoff tree template found."
-msgstr "Kein Playoff-Baum Template gefunden."
+msgstr "Keine Playoff-Baum-Vorlage gefunden."
 
 #: poolstatus.php:499
 msgid "Round"
@@ -346,7 +346,7 @@ msgstr "ALLES"
 #: cust/bula/pdfprinter.php:51 cust/gummis/pdfprinter.php:49
 #: cust/default/pdfprinter.php:50
 msgid "Division"
-msgstr "Liga"
+msgstr "Klasse"
 
 #: countrycard.php:26 countrycard.php:51 teams.php:91 playerlist.php:12
 #: playerlist.php:17 clubcard.php:133 clubcard.php:157 user/teamplayers.php:10
@@ -390,7 +390,7 @@ msgstr "Verlauf"
 #: lib/search.functions.php:421 lib/search.functions.php:461
 #: lib/search.functions.php:503
 msgid "Event"
-msgstr "Veranstaltung"
+msgstr "Turnier"
 
 #: countrycard.php:77
 msgid "Club teams"
@@ -528,7 +528,7 @@ msgstr "Dur."
 
 #: gameplay.php:179
 msgid "Game events "
-msgstr "Game events"
+msgstr "Spielereignisse"
 
 #: gameplay.php:189 admin/addserieformats.php:121 admin/addseasonpools.php:413
 #: mobile/gameplay.php:34 scorekeeper/gameplay.php:33
@@ -542,7 +542,7 @@ msgstr "Callahan-Punkt"
 
 #: gameplay.php:220
 msgid "Timeout"
-msgstr "Timeout"
+msgstr "Auszeit"
 
 #: gameplay.php:222 ext/rss.php:136 ext/rss.php:168
 msgid "Turnover"
@@ -660,11 +660,11 @@ msgstr "Registrieren"
 
 #: register.php:19 admin/adduser.php:19
 msgid "Username is too short (min. 3 letters)"
-msgstr "Username ist zu kurz (min. 3 Buchstaben)"
+msgstr "Benutzername ist zu kurz (min. 3 Buchstaben)"
 
 #: register.php:24 admin/adduser.php:24
 msgid "The username is already in use"
-msgstr "Der Username ist schon vergeben."
+msgstr "Der Benutzername ist schon vergeben."
 
 #: register.php:29 user/userinfo.php:124 admin/adduser.php:29
 msgid "Password is too short (min. 5 letters)."
@@ -685,7 +685,7 @@ msgstr "Ungültige Email-Adresse"
 
 #: register.php:52 admin/adduser.php:52
 msgid "User id may not have spaces or special characters"
-msgstr "Der Username darf keine Leerzeichen oder Sonderzeichen enthalten"
+msgstr "Der Benutzername darf keine Leerzeichen oder Sonderzeichen enthalten"
 
 #: register.php:60 admin/adduser.php:60
 msgid "Illegal characters in the password"
@@ -749,7 +749,7 @@ msgstr "Folge dem Link in der Email, um die Registrierung zu bestätigen."
 #: admin/adduser.php:70 admin/adduser.php:95 scorekeeper/login.php:19
 #: lib/search.functions.php:580
 msgid "Username"
-msgstr "Username"
+msgstr "Benutzername"
 
 #: register.php:122 menufunctions.php:259 admin/adduser.php:71
 #: admin/adduser.php:99 scorekeeper/login.php:21
@@ -826,7 +826,7 @@ msgstr "GA/Spiel"
 
 #: teamcard.php:294 teamcard.php:453 playercard.php:286 playercard.php:453
 msgid "Event type"
-msgstr "Veranstaltungstyp"
+msgstr "Turniertyp"
 
 #: teamcard.php:354 teamcard.php:507 playercard.php:354 playercard.php:511
 #: statistics.php:115 statistics.php:155 cust/slkl/mass-accreditation.php:67
@@ -846,7 +846,7 @@ msgstr "Teams"
 
 #: teams.php:24 games.php:158
 msgid "By division"
-msgstr "Nach Division"
+msgstr "Nach Klasse/Liga"
 
 #: teams.php:25
 msgid "By pool"
@@ -901,7 +901,7 @@ msgstr "Benutzer"
 
 #: menufunctions.php:168
 msgid "New user?"
-msgstr "Neuer Benutzer"
+msgstr "Neuer Benutzer?"
 
 #: menufunctions.php:170 menufunctions.php:282 logout.php:2
 #: scorekeeper/index.php:100
@@ -940,7 +940,7 @@ msgstr "Administration"
 #: menufunctions.php:444 menufunctions.php:616 playerlist.php:22
 #: admin/seasonstats.php:17 admin/seasons.php:10
 msgid "Events"
-msgstr "Veranstaltungen"
+msgstr "Turniere"
 
 #: menufunctions.php:445 admin/serieformats.php:24
 msgid "Rule templates"
@@ -968,7 +968,7 @@ msgstr "Übersetzungen"
 
 #: menufunctions.php:458 admin/users.php:6
 msgid "Users"
-msgstr "Users"
+msgstr "Benutzer"
 
 #: menufunctions.php:459
 msgid "Logs"
@@ -988,7 +988,7 @@ msgstr "Hilfe"
 
 #: menufunctions.php:500
 msgid "Create new event"
-msgstr "Neues Turnier"
+msgstr "Neue(s) Turnier/Saison"
 
 #: menufunctions.php:510
 msgid "Team registration"
@@ -1004,7 +1004,7 @@ msgstr "Zeige alle Gruppen"
 
 #: menufunctions.php:586
 msgid "Event Links"
-msgstr "Veranstaltungslinks"
+msgstr "Turnierlinks"
 
 #: menufunctions.php:599
 msgid "Result Feed"
@@ -1054,7 +1054,7 @@ msgstr "Links"
 #: menufunctions.php:680 admin/seasonadmin.php:58 admin/seasonseries.php:11
 #: admin/seasonseries.php:53
 msgid "Divisions"
-msgstr "Ligen"
+msgstr "Klassen"
 
 #: menufunctions.php:682 admin/dbequalize.php:103 admin/seasonadmin.php:63
 #: admin/seasonpools.php:13 admin/seasonseries.php:107
@@ -1169,7 +1169,7 @@ msgstr "Def. Mittel"
 
 #: playercard.php:536
 msgid "game events"
-msgstr "Spiele"
+msgstr "Spielereignisse"
 
 #: games.php:156
 msgid "By grouping"
@@ -1272,7 +1272,7 @@ msgstr "Neues Passwort zugesendet."
 #: login_failed.php:23 mobile/index.php:7 mobile/login_failed.php:23
 #: scorekeeper/login.php:6
 msgid "Check the username and password."
-msgstr "Überprüfe Username und Passwort."
+msgstr "Überprüfe Benutzername und Passwort."
 
 #: login_failed.php:24 mobile/login_failed.php:24
 msgid ""
@@ -1314,7 +1314,7 @@ msgstr "Vereinsseiten"
 
 #: seriesstatus.php:69
 msgid "Division statistics:"
-msgstr "Divisionsstatistik"
+msgstr "Klassenstatistik"
 
 #: seriesstatus.php:100 seriesstatus.php:102
 msgid "Seeding"
@@ -1339,7 +1339,7 @@ msgstr "Spiritpunkte (Durschnitt) pro Kategorie"
 
 #: seasonlist.php:5
 msgid "Old events"
-msgstr "Alte Veranstaltungen"
+msgstr "Alte Turniere"
 
 #: seasonlist.php:28 result.php:117
 msgid "Played games"
@@ -1351,7 +1351,7 @@ msgstr "Endergebnis"
 
 #: seasonlist.php:36 user/contacts.php:47
 msgid "division"
-msgstr "Division"
+msgstr "Klasse"
 
 #: result.php:19 scorekeeper/result.php:13
 msgid "Erroneous scoresheet number."
@@ -1359,7 +1359,7 @@ msgstr "Falsche Spielberichtsnummer"
 
 #: result.php:23 scorekeeper/result.php:16
 msgid "Event played."
-msgstr "Veranstaltung beendet."
+msgstr "Turnier/Saison beendet."
 
 #: result.php:27 scorekeeper/result.php:20
 msgid "No goals."
@@ -1549,8 +1549,8 @@ msgid ""
 "This operation updates and adds event data in database with one from file. "
 "It will not delete any data or change user rights."
 msgstr ""
-"Diese Operation aktualisiert die Daten in der Datenbank mit denen aus der "
-"Datei oder fügt sie hinzu. Es wird nichts gelöscht oder Benutzerrechte "
+"Diese Operation aktualisiert die Turnierdaten in der Datenbank mit denen aus "
+"der Datei oder fügt sie hinzu. Es wird nichts gelöscht oder Benutzerrechte "
 "verändert."
 
 #: plugins/import_xml_ffindr.php:74 admin/eventdataimport.php:65
@@ -1564,7 +1564,7 @@ msgstr "Wählen Sie anzuzeigende Gruppen"
 #: user/select_poolselector.php:16 user/userinfo.php:383 user/userinfo.php:412
 #: restful/seasons/index.php:18
 msgid "Current event"
-msgstr "Aktuelle Veranstaltung"
+msgstr "Aktuelles Turnier"
 
 #: user/select_poolselector.php:19 user/select_poolselector.php:23
 #: user/select_poolselector.php:26 user/select_poolselector.php:29
@@ -1580,7 +1580,7 @@ msgstr "Wähle"
 
 #: user/select_poolselector.php:22 user/userinfo.php:385 user/userinfo.php:413
 msgid "Team pools"
-msgstr ""
+msgstr "Gruppen für Team"
 
 #: user/addmedialink.php:14
 msgid "Add links"
@@ -1672,11 +1672,11 @@ msgstr "Turnier/Saison erforderlich"
 
 #: user/contacts.php:13
 msgid "Inadequate user rights"
-msgstr "Keine Rechte"
+msgstr "Benutzerrechte reichen nicht aus"
 
 #: user/contacts.php:23
 msgid "Mail to everyone registered for the event"
-msgstr "Mail an alle, die für diese Veranstaltung registriert sind."
+msgstr "Mail an alle, die für dieses Turnier registriert sind."
 
 #: user/contacts.php:25
 msgid "Contact to Event organizer"
@@ -1696,7 +1696,7 @@ msgstr "kann nicht vom Roster entfernt werden"
 
 #: user/teamplayers.php:23
 msgid "Played in the team in"
-msgstr ""
+msgstr "Im Team gespielt"
 
 #: user/teamplayers.php:132 user/clubprofile.php:113 user/teamprofile.php:92
 msgid "Team Profile"
@@ -2050,11 +2050,11 @@ msgstr "Vereinsstatistiken"
 
 #: user/userinfo.php:57
 msgid "Username is too short (min. 3 letters)."
-msgstr "Username ist zu kurz (min. 3 Buchstaben)"
+msgstr "Benutzername ist zu kurz (min. 3 Buchstaben)."
 
 #: user/userinfo.php:62
 msgid "The username is already in use."
-msgstr "Der Username ist schon vergeben."
+msgstr "Der Benutzername ist schon vergeben."
 
 #: user/userinfo.php:67
 msgid "Name can not be empty."
@@ -2062,7 +2062,7 @@ msgstr "Name darf nicht leer sein."
 
 #: user/userinfo.php:74
 msgid "Illegal characters in the username."
-msgstr "Username enthält ungültige Zeichen."
+msgstr "Benutzername enthält ungültige Zeichen."
 
 #: user/userinfo.php:80
 msgid "Unsupported language:"
@@ -2086,7 +2086,7 @@ msgstr "Passwörter stimmen nicht überein"
 
 #: user/userinfo.php:240
 msgid "User information"
-msgstr "Userdaten"
+msgstr "Benutzerdaten"
 
 #: user/userinfo.php:267
 msgid "Primary email"
@@ -2452,7 +2452,7 @@ msgstr "Captains"
 
 #: user/adddefensesheet.php:345
 msgid "Save defenses"
-msgstr ""
+msgstr "Defenses speichern"
 
 #: user/adddefensesheet.php:352 user/addscoresheet.php:534
 msgid "Feed in the scoresheet"
@@ -2571,7 +2571,7 @@ msgstr "Eingetragene Teams"
 
 #: user/enrollteam.php:73
 msgid "No divisions"
-msgstr "Keine Ligen"
+msgstr "Keine Klassen/Ligen"
 
 #: user/enrollteam.php:77 admin/addseasons.php:356
 msgid "Enrolling ends"
@@ -2649,7 +2649,7 @@ msgstr "Optionen zur Facebookveröffentlichung"
 
 #: user/facebookpublishing.php:72
 msgid "Publish event"
-msgstr "Veranstaltung veröffentlichen"
+msgstr "Turnier/Saison veröffentlichen"
 
 #: user/facebookpublishing.php:79 user/facebookpublishing.php:85
 msgid "Message"
@@ -2914,15 +2914,15 @@ msgstr ""
 
 #: admin/executesql.php:130 admin/executesql.php:132
 msgid "Column information"
-msgstr ""
+msgstr "Spalteninfo"
 
 #: admin/executesql.php:130 admin/executesql.php:132
 msgid "Run"
-msgstr ""
+msgstr "Ausführen"
 
 #: admin/addseasonlinks.php:7
 msgid "Event links"
-msgstr "Veranstaltungslinks"
+msgstr "Turnierlinks"
 
 #: admin/addseasons.php:56
 msgid "Event id can not be empty"
@@ -2930,7 +2930,7 @@ msgstr "Turnier-ID darf nicht leer sein"
 
 #: admin/addseasons.php:58
 msgid "Event id may not have spaces or special characters"
-msgstr "Die Event ID darf keine Leer- oder Sonderzeichen enthalten"
+msgstr "Die Turnier-ID darf keine Leer- oder Sonderzeichen enthalten"
 
 #: admin/addseasons.php:62
 msgid "Type can not be empty"
@@ -2968,7 +2968,7 @@ msgstr "nein"
 
 #: admin/addseasons.php:110
 msgid "Edit event"
-msgstr "Veranstaltung ändern"
+msgstr "Turnier/Saison ändern"
 
 #: admin/addseasons.php:261
 msgid "Add new season/tournament"
@@ -2980,7 +2980,7 @@ msgstr "Turnier verändern"
 
 #: admin/addseasons.php:271
 msgid "Event id"
-msgstr "Veranstaltungs-ID"
+msgstr "Turnier-ID"
 
 #: admin/addseasons.php:288 admin/seasonadmin.php:26
 #: lib/search.functions.php:329 lib/search.functions.php:805
@@ -3151,7 +3151,7 @@ msgstr "Erzeugen"
 
 #: admin/seasonadmin.php:11
 msgid "Event: "
-msgstr "Veranstaltung:"
+msgstr "Turnier:"
 
 #: admin/seasonadmin.php:24
 msgid "National Teams"
@@ -3311,14 +3311,12 @@ msgid "Automatic Accreditation"
 msgstr "Automatische Akkreditierung"
 
 #: admin/accreditation.php:63
-#, fuzzy
 msgid "Accreditation log"
-msgstr "Akkreditierung"
+msgstr "Zulassungslog"
 
 #: admin/accreditation.php:65 admin/accreditation.php:130
-#, fuzzy
 msgid "Accreditation events"
-msgstr "Akkreditierung"
+msgstr "Zulassungsereignisse"
 
 #: admin/accreditation.php:67
 msgid "Missing IDs"
@@ -3363,37 +3361,32 @@ msgid "Players without membership Id"
 msgstr "Spieler ohne Mitglieds-ID"
 
 #: admin/accreditation.php:190
-#, fuzzy
 msgid "Players not accredited"
-msgstr "Pools noch nicht erzeugt"
+msgstr "Spieler nicht gemeldet"
 
 #: admin/seriesseeding.php:23
-#, fuzzy
 msgid "Division seeding"
-msgstr "Ligen"
+msgstr "Setzliste Klasse/Liga"
 
 #: admin/seasonstandings.php:156 admin/seasongames.php:115
-#, fuzzy
 msgid "Show played pools"
-msgstr "Zeige alle Gruppen"
+msgstr "Zeige gespielte Gruppen"
 
 #: admin/seasonstandings.php:158 admin/seasongames.php:118
 msgid "Hide played pools"
 msgstr "Verstecke gespielte Gruppen"
 
 #: admin/seasonstandings.php:166
-#, fuzzy
 msgid "Add pools first"
-msgstr "Poolformat hinzufügen"
+msgstr "Zuerst Gruppen anlegen"
 
 #: admin/seasonstandings.php:169
 msgid "Tasks"
 msgstr "Aufgaben"
 
 #: admin/seasonstandings.php:190
-#, fuzzy
 msgid "Check standings of"
-msgstr "Tabellenstände"
+msgstr "Tabellenstände prüfen von"
 
 #: admin/seasonstandings.php:201
 msgid ", then "
@@ -3404,50 +3397,44 @@ msgid "Confirm moves to pool "
 msgstr "Bewegungen zum Pool bestätigen"
 
 #: admin/seasonstandings.php:207
-#, fuzzy
 msgid "Games results missing for"
-msgstr "Spielergebnis"
+msgstr "Ergebnisse fehlen für"
 
 #: admin/seasonstandings.php:209
 msgid "Division completed."
-msgstr "Liga abgeschlossen."
+msgstr "Klasse/Liga abgeschlossen."
 
 #: admin/seasonstandings.php:225
 msgid "Go to top"
 msgstr "Nach oben"
 
 #: admin/seasonstandings.php:227
-#, fuzzy
 msgid "edit pool"
-msgstr "Pool hinzufügen"
+msgstr "Gruppe ändern"
 
 #: admin/seasonstandings.php:255
-#, fuzzy
 msgid "Reset"
-msgstr "Reservierung"
+msgstr "Zurücksetzen"
 
 #: admin/seasonstandings.php:274
 msgid "Pool is completed:"
 msgstr "Pool ist komplett:"
 
 #: admin/seasonstandings.php:276
-#, fuzzy
 msgid "Pool games not completed:"
-msgstr "Pools noch nicht erzeugt"
+msgstr "Poolspiele nicht beendet:"
 
 #: admin/seasonstandings.php:409
 msgid "Moves to"
 msgstr "Bew. nach"
 
 #: admin/seasonstandings.php:410 admin/seasonstandings.php:413
-#, fuzzy
 msgid "Pos"
 msgstr "Pos."
 
 #: admin/seasonstandings.php:410
-#, fuzzy
 msgid "To"
-msgstr "Tot."
+msgstr ""
 
 #: admin/seasonstandings.php:412
 msgid "Moves from"
@@ -3458,24 +3445,21 @@ msgid "From"
 msgstr "Von"
 
 #: admin/seasonstandings.php:506
-#, fuzzy
 msgid " all"
-msgstr "Alle anzeigen"
+msgstr ""
 
 #: admin/serieformats.php:8
 msgid "Rule Templates"
 msgstr "Regel-Vorlagen"
 
 #: admin/serieformats.php:27
-#, fuzzy
 msgid "Winning points"
-msgstr "Spiritpunkte"
+msgstr "Gewinnpunkte"
 
 #: admin/serieformats.php:27 admin/addserieformats.php:137
 #: admin/addseasonpools.php:429
-#, fuzzy
 msgid "Point cap"
-msgstr "Scorer-Punkte durchschnittl."
+msgstr "Punkteobergrenze"
 
 #: admin/serieformats.php:27 admin/addserieformats.php:177
 #: admin/addseasonpools.php:481
@@ -3484,14 +3468,12 @@ msgstr "Unentschieden zugelassen"
 
 #: admin/serieformats.php:27 admin/addserieformats.php:129
 #: admin/addseasonpools.php:421
-#, fuzzy
 msgid "Time cap"
-msgstr "Zeit"
+msgstr "Zeitobergrenze"
 
 #: admin/locations.php:12 admin/locations.php:33
-#, fuzzy
 msgid "Not named"
-msgstr "Noch nicht eingegeben"
+msgstr "Unbenannt"
 
 #: admin/locations.php:63
 msgid "Game locations"
@@ -3502,9 +3484,8 @@ msgid "not found"
 msgstr "nicht gefunden"
 
 #: admin/locations.php:347
-#, fuzzy
 msgid "Name or address"
-msgstr "Extra Adresse hinzufügen"
+msgstr "Name oder Adresse"
 
 #: admin/locations.php:381
 msgid "Address"
@@ -3539,19 +3520,16 @@ msgid "Latitude"
 msgstr "Breite"
 
 #: admin/clubs.php:40
-#, fuzzy
 msgid "Clubs and Countries"
-msgstr "Länder"
+msgstr "CLubs und Länder"
 
 #: admin/clubs.php:49
-#, fuzzy
 msgid "All Clubs"
 msgstr "Alle Vereine"
 
 #: admin/clubs.php:50 admin/clubs.php:83
-#, fuzzy
 msgid "Add new"
-msgstr "Team hinzufügen"
+msgstr "Hinzufügen"
 
 #: admin/clubs.php:55 admin/clubs.php:90
 msgid "Id"
@@ -3563,18 +3541,16 @@ msgid "Valid"
 msgstr "Gültig"
 
 #: admin/clubs.php:82
-#, fuzzy
 msgid "All Countries"
-msgstr "Länder"
+msgstr "Alle Länder"
 
 #: admin/clubs.php:86
 msgid "Flag filename"
 msgstr "Flaggendatei"
 
 #: admin/translations.php:83
-#, fuzzy
 msgid "Modify translations"
-msgstr "Übersetzungen"
+msgstr "Übersetzungen ändern"
 
 #: admin/translations.php:85
 msgid "The translations are used to localize all user inputted text fields"
@@ -3596,9 +3572,8 @@ msgid "Key"
 msgstr "Schlüssel"
 
 #: admin/seasonpools.php:85
-#, fuzzy
 msgid "No divisions."
-msgstr "Division"
+msgstr "Keine Klassen/Ligen."
 
 #: admin/seasonpools.php:98 admin/seasonseries.php:59
 msgid "V"
@@ -3613,24 +3588,20 @@ msgid "C"
 msgstr ""
 
 #: admin/seasonpools.php:102 admin/seasons.php:97 admin/seasonseries.php:60
-#, fuzzy
 msgid "Operations"
-msgstr "Reservierung"
+msgstr "Operationen"
 
 #: admin/seasonpools.php:217 admin/seasonpools.php:219
-#, fuzzy
 msgid "Move teams"
-msgstr "Keine Teams"
+msgstr "Teams transferieren"
 
 #: admin/seasonpools.php:229 admin/seasonpools.php:231
-#, fuzzy
 msgid "Playoff games"
-msgstr "Ergebnisse"
+msgstr "K.O.-Spiele"
 
 #: admin/seasonpools.php:236 admin/seasonpools.php:238
-#, fuzzy
 msgid "Game management"
-msgstr "Game events"
+msgstr "Spiele verwlaten"
 
 #: admin/seasonpools.php:246
 msgid "clone"
@@ -3649,9 +3620,8 @@ msgid "Show all moves"
 msgstr "Alle Moves anzeigen"
 
 #: admin/visitors.php:6
-#, fuzzy
 msgid "Visitor statistics"
-msgstr "Divisionsstatistik"
+msgstr "Besucherstatistik"
 
 #: admin/visitors.php:20
 msgid "Summary"
@@ -3675,41 +3645,36 @@ msgstr "Seitenaufrufe pro Seite"
 
 #: admin/visitors.php:43 admin/dbbackup.php:124 admin/dbrestore.php:68
 #: admin/dbadmin.php:101
-#, fuzzy
 msgid "User credentials does not match"
-msgstr "Passwörter stimmen nicht überein"
+msgstr "Zugangsdaten stimmen nicht überein"
 
 #: admin/addseasonseries.php:47 admin/addseasonseries.php:70
 msgid "Division name is mandatory!"
-msgstr "Liganame erforderlich"
+msgstr "Klassenname erforderlich!"
 
 #: admin/addseasonseries.php:99
-#, fuzzy
 msgid "Edit division"
-msgstr "Liga hinzufügen"
+msgstr "Klasse verändern"
 
 #: admin/addseasonseries.php:101
 msgid "Add division"
-msgstr "Liga hinzufügen"
+msgstr "Klasse hinzufügen"
 
 #: admin/saveschedule.php:79
 msgid "Schedule saved and checked."
 msgstr "Spielplan gespeichert und geprüft."
 
 #: admin/eventviewer.php:10
-#, fuzzy
 msgid "Event log"
-msgstr "Veranstaltung"
+msgstr "Turnierlog"
 
 #: admin/eventviewer.php:39
-#, fuzzy
 msgid "Visitor count"
-msgstr "Ergebnis-Zähler"
+msgstr "Besucherzahl"
 
 #: admin/eventviewer.php:44
-#, fuzzy
 msgid "Select type of event"
-msgstr "Veranstaltung"
+msgstr "Turnier-/Saisontyp wählen"
 
 #: admin/eventviewer.php:64
 msgid "Resolve ids"
@@ -3717,7 +3682,7 @@ msgstr "IDs auflösen"
 
 #: admin/eventviewer.php:66
 msgid "Only user"
-msgstr "Nur User"
+msgstr "Nur Benutzer"
 
 #: admin/eventviewer.php:68
 msgid "Refresh"
@@ -3737,7 +3702,7 @@ msgstr "ID2"
 
 #: admin/eventviewer.php:146
 msgid "Delete events"
-msgstr "Veranstaltungen löschen"
+msgstr "Turniere löschen"
 
 #: admin/addserieformats.php:106
 msgid "Edit rule template"
@@ -3748,9 +3713,8 @@ msgid "Add rule template"
 msgstr "Neue Regelschablone"
 
 #: admin/addserieformats.php:117 admin/addseasonpools.php:409
-#, fuzzy
 msgid "Game points"
-msgstr "Spielorte"
+msgstr "Punkte"
 
 #: admin/addserieformats.php:123 admin/addserieformats.php:131
 #: admin/addserieformats.php:135 admin/schedule.php:305
@@ -3764,15 +3728,13 @@ msgid "Half-time at point"
 msgstr "Halbzeit bei Punkt"
 
 #: admin/addserieformats.php:133 admin/addseasonpools.php:425
-#, fuzzy
 msgid "Time slot"
-msgstr "Timeouts"
+msgstr "Zeitslot"
 
 #: admin/addserieformats.php:139 admin/addserieformats.php:143
 #: admin/addseasonpools.php:431 admin/addseasonpools.php:435
-#, fuzzy
 msgid "points"
-msgstr "Spiritpunkte"
+msgstr "Punkte"
 
 #: admin/addserieformats.php:141 admin/addseasonpools.php:433
 msgid "Additional points after time cap"
@@ -3789,25 +3751,21 @@ msgstr "Sekunden"
 
 #: admin/addserieformats.php:156 admin/addserieformats.php:158
 #: admin/addseasonpools.php:447 admin/addseasonpools.php:449
-#, fuzzy
 msgid "per game"
-msgstr "für Spiel"
+msgstr "pro Spiel"
 
 #: admin/addserieformats.php:162 admin/addserieformats.php:164
 #: admin/addseasonpools.php:452 admin/addseasonpools.php:454
-#, fuzzy
 msgid "per half"
-msgstr "je Team"
+msgstr "pro Halbzeit"
 
 #: admin/addserieformats.php:169 admin/addseasonpools.php:459
-#, fuzzy
 msgid "Time-out duration"
-msgstr "Time-outs"
+msgstr "Auszeitdauer"
 
 #: admin/addserieformats.php:173
-#, fuzzy
 msgid "Time-outs on overtime"
-msgstr "Offense-Zeit"
+msgstr "Auszeiten nach Ablauf der Zeit"
 
 #: admin/addserieformats.php:175 admin/addseasonpools.php:465
 msgid "per team"
@@ -3820,18 +3778,16 @@ msgid "Back"
 msgstr "Zurück"
 
 #: admin/dbbackup.php:78 admin/dbrestore.php:72
-#, fuzzy
 msgid "Database backup"
-msgstr "Datenbank"
+msgstr "Datenbank-Backup"
 
 #: admin/dbbackup.php:89
 msgid "Select tables to backup"
 msgstr "Tabellen für Backup wählen"
 
 #: admin/dbbackup.php:93 admin/dbadmin.php:44
-#, fuzzy
 msgid "Data"
-msgstr "Datenbank"
+msgstr "Daten"
 
 #: admin/dbbackup.php:94 admin/dbadmin.php:45
 msgid "Index"
@@ -3850,14 +3806,12 @@ msgid "Auto Increment"
 msgstr "Auto-Inkrement"
 
 #: admin/dbbackup.php:98 admin/dbadmin.php:47
-#, fuzzy
 msgid "Updated"
-msgstr "update"
+msgstr "Aktualisiert"
 
 #: admin/dbbackup.php:118 admin/dbadmin.php:68
-#, fuzzy
 msgid "Database size"
-msgstr "Datenbank"
+msgstr "Datenbankgröße"
 
 #: admin/dbbackup.php:118 admin/dbadmin.php:68
 msgid "bytes"
@@ -3869,30 +3823,26 @@ msgstr "Backup"
 
 #: admin/addteamadmins.php:7 admin/addteamadmins.php:55
 #: admin/addseasonusers.php:85
-#, fuzzy
 msgid "Team admins"
-msgstr "Spielstand"
+msgstr "Teamadministratoren"
 
 #: admin/addteamadmins.php:31 admin/addteamadmins.php:40
-#, fuzzy
 msgid "Invalid user:"
-msgstr "Ungültiger User"
+msgstr "Ungültiger Benutzer:"
 
 #: admin/addteamadmins.php:38
-#, fuzzy
 msgid "User rights added for:"
-msgstr "User Rechte hinzugefügt für:"
+msgstr "Benutzerrechte hinzugefügt für:"
 
 #: admin/addteamadmins.php:74
-#, fuzzy
 msgid "Add more"
-msgstr "Medien hinzufügen"
+msgstr "Mehr hinzufügen"
 
 #: admin/addteamadmins.php:81 admin/addseasonusers.php:75
 #: admin/addseasonusers.php:108 admin/addseasonusers.php:163
 #: admin/addseasonusers.php:206 admin/editgame.php:232
 msgid "User Id"
-msgstr "User Id"
+msgstr "Benutzer-ID"
 
 #: admin/addteamadmins.php:81 admin/addseasonusers.php:75
 #: admin/addseasonusers.php:108 admin/addseasonusers.php:163
@@ -3913,28 +3863,25 @@ msgid "Grant rights"
 msgstr "Rechte vergeben"
 
 #: admin/seasonstats.php:11 admin/stats.php:5
-#, fuzzy
 msgid "Event statistics"
-msgstr "Spielstatistik"
+msgstr "Turnierstatistik"
 
 #: admin/seasons.php:42
-#, fuzzy
 msgid "Event has"
-msgstr "Veranstaltungen"
+msgstr "Turnier hat"
 
 #: admin/seasons.php:42
 msgid "Division must be removed before removing the event"
 msgstr ""
-"Die Division muss erst gelöscht werden, bevor die Veranstaltung gelöscht "
-"werden kann"
+"Die Klasse muss erst gelöscht werden, bevor das Turnier gelöscht werden kann"
 
 #: admin/seasons.php:49
 msgid "You can not remove a current event"
-msgstr "Man kann eine aktuelle Veranstaltung nicht löschen"
+msgstr "Man kann ein aktuelles Turnier nicht löschen"
 
 #: admin/seasons.php:70
 msgid "Are you sure you want to delete the event?"
-msgstr "Bist du sicher, dass du die Veranstaltung löschen willst?"
+msgstr "Bist du sicher, dass du das Turnier löschen willst?"
 
 #: admin/seasons.php:86
 msgid "Seasons/Tournaments"
@@ -3957,55 +3904,49 @@ msgid "Export"
 msgstr "Export"
 
 #: admin/seasons.php:153
-#, fuzzy
 msgid "Import event"
-msgstr "Aktuelle Veranstaltung"
+msgstr "Turnier importieren"
 
 #: admin/seasons.php:154
-#, fuzzy
 msgid "All event statistics"
-msgstr "Spieler-Statistiken"
+msgstr "Alle Turnierstatistiken"
 
 #: admin/addseasonusers.php:7
 msgid "Event users"
-msgstr "Veranstaltungs User"
+msgstr "Turnierbenutzer"
 
 #: admin/addseasonusers.php:40
 msgid "User rights added for: "
-msgstr "User Rechte hinzugefügt für:"
+msgstr "Benutzerrechte hinzugefügt für:"
 
 #: admin/addseasonusers.php:42
 msgid "Invalid user"
-msgstr "Ungültiger User"
+msgstr "Ungültiger Benutzer"
 
 #: admin/addseasonusers.php:62
-#, fuzzy
 msgid "Event admins"
-msgstr "Veranstaltungslinks"
+msgstr "Turnieradministratoren"
 
 #: admin/addseasonusers.php:80 admin/addseasonusers.php:113
 #: admin/addseasonusers.php:177 admin/addseasonusers.php:220
-#, fuzzy
 msgid "Add more..."
-msgstr "Medien hinzufügen"
+msgstr "Mehr hinzufügen ..."
 
 #: admin/addseasonusers.php:120
 msgid "Scorekeepers"
 msgstr ""
 
 #: admin/addseasonusers.php:129 admin/addseasonusers.php:140
-#, fuzzy
 msgid "All games"
-msgstr "Spiele hinzufügen"
+msgstr "Alle Spiele"
 
 #: admin/addseasonusers.php:130 admin/addseasonusers.php:190
 msgid "In role of event admin"
 msgstr "als Turnieradministrator"
 
 #: admin/addseasonusers.php:142
-#, fuzzy
 msgid "Some games"
-msgstr "Keine Spiele"
+msgstr "Einige Spiele"
 
 #: admin/addseasonusers.php:156
 msgid "All team admins have scorekeeping rights for teams' games."
@@ -4028,20 +3969,17 @@ msgid "Transfer already exists"
 msgstr "Transfer existiert schon"
 
 #: admin/poolmoves.php:151 admin/poolmoves.php:161
-#, fuzzy
 msgid "Team has already moved."
-msgstr "Der Username ist schon vergeben."
+msgstr "Der Benutzername ist schon vergeben."
 
 #: admin/poolmoves.php:186 admin/seasonmoves.php:165
 #: admin/addseasonpools.php:306
-#, fuzzy
 msgid "Move games"
-msgstr "Keine Spiele"
+msgstr "Spiele transferieren"
 
 #: admin/poolmoves.php:199 admin/seasonmoves.php:190
-#, fuzzy
 msgid "all"
-msgstr "Alles"
+msgstr "alles"
 
 #: admin/poolmoves.php:201 admin/seasonmoves.php:192
 msgid "nothing"
@@ -4064,23 +4002,20 @@ msgid "Pair"
 msgstr "Paar"
 
 #: admin/seasongames.php:123
-#, fuzzy
 msgid "Show played games"
-msgstr "Ergebnisse"
+msgstr "Beendete Spiele anzeigen"
 
 #: admin/seasongames.php:209
 msgid "Defensesheet"
 msgstr "Defensebericht"
 
 #: admin/seasongames.php:241
-#, fuzzy
 msgid "Reservation management"
-msgstr "Reservierung"
+msgstr "Reservierungsverwaltung"
 
 #: admin/sms.php:9
-#, fuzzy
 msgid "SMS handling"
-msgstr "Zeitplan"
+msgstr "SMS-Verwaltung"
 
 #: admin/sms.php:63
 msgid "Msg"
@@ -4119,42 +4054,36 @@ msgid "Name is mandatory!"
 msgstr ""
 
 #: admin/addseasonteams.php:75
-#, fuzzy
 msgid "Changes saved"
-msgstr "Passwort ändern"
+msgstr "Änderungen gespeichert"
 
 #: admin/addseasonteams.php:81 admin/addseasonpools.php:55
 msgid "added"
 msgstr ""
 
 #: admin/addseasonteams.php:137
-#, fuzzy
 msgid "Edit team"
-msgstr "Team hinzufügen"
+msgstr "Team ändern"
 
 #: admin/addseasonteams.php:140
 msgid "Add team"
 msgstr "Team hinzufügen"
 
 #: admin/addseasonteams.php:167
-#, fuzzy
 msgid "Starting pool"
-msgstr "Erste Offense"
+msgstr "Startgruppe"
 
 #: admin/addseasonteams.php:206
-#, fuzzy
 msgid "Select contact person"
-msgstr "Land"
+msgstr "Kontaktperson wählen"
 
 #: admin/editgame.php:148
-#, fuzzy
 msgid "Edit game"
-msgstr "Spiele hinzufügen"
+msgstr "Spiel ändern"
 
 #: admin/editgame.php:157
-#, fuzzy
 msgid "Game played"
-msgstr "Spielverlauf"
+msgstr "Spiel beendet"
 
 #: admin/editgame.php:157
 msgid "Final scores"
@@ -4181,45 +4110,39 @@ msgid "Print score sheet"
 msgstr "Spielbericht drucken"
 
 #: admin/editgame.php:180
-#, fuzzy
 msgid "Guest team"
-msgstr "Team"
+msgstr "Gast-Team"
 
 #: admin/editgame.php:186 admin/addreservation.php:211
 #: admin/reservations.php:107 lib/search.functions.php:273
 #: lib/search.functions.php:339 lib/search.functions.php:728
 #: lib/search.functions.php:805
-#, fuzzy
 msgid "Location"
-msgstr "Nach Ort"
+msgstr "Ort"
 
 #: admin/editgame.php:207
-#, fuzzy
 msgid "Starting time"
-msgstr "Scorendes Team"
+msgstr "Startzeit"
 
 #: admin/editgame.php:227
 msgid "Responsible person"
 msgstr "Verantwortl. Person"
 
 #: admin/seasonmoves.php:11
-#, fuzzy
 msgid "Moved teams"
-msgstr "Keine Teams"
+msgstr "Transferierte Teams"
 
 #: admin/seasonmoves.php:126
 msgid "Move to"
 msgstr "Transfer nach"
 
 #: admin/seasonmoves.php:128
-#, fuzzy
 msgid "Move from"
-msgstr "von"
+msgstr "Transfer von"
 
 #: admin/seasonmoves.php:164
-#, fuzzy
 msgid "Scheduling name"
-msgstr "Zeitplan"
+msgstr "Name im Zeitplan"
 
 #: admin/seasonmoves.php:166 admin/seasonmoves.php:198
 msgid "Undo"
@@ -4250,7 +4173,6 @@ msgid "Re-Calculate"
 msgstr "Neu berechnen"
 
 #: admin/stats.php:85
-#, fuzzy
 msgid "Final Standings"
 msgstr "Endergebnis"
 
@@ -4263,9 +4185,8 @@ msgstr ""
 "auf die richtige Position und Speichern Sie."
 
 #: admin/stats.php:87
-#, fuzzy
 msgid "Save standings"
-msgstr "Ergebnisse"
+msgstr "Ergebnisse speichern"
 
 #: admin/twitterconf.php:7
 msgid "Twitter configuration"
@@ -4282,10 +4203,6 @@ msgid ""
 "division to different account, please sign out from Twitter after "
 "establishing one twitter."
 msgstr ""
-"Note if you are signed in Twitter with same browser then this account is "
-"automatically used for following twitter requests. If you want assign "
-"division to different account, please sign out from Twitter after "
-"establishing one twitter."
 
 #: admin/twitterconf.php:54
 msgid "Purpose"
@@ -4300,9 +4217,8 @@ msgid "Calls remain"
 msgstr ""
 
 #: admin/twitterconf.php:57
-#, fuzzy
 msgid "Account"
-msgstr "Ergebnis-Zähler"
+msgstr "Konto"
 
 #: admin/twitterconf.php:63 ext/export.php:27
 msgid "All results"
@@ -4313,24 +4229,21 @@ msgid "Unregister"
 msgstr "Account löschen"
 
 #: admin/twitterconf.php:108
-#, fuzzy
 msgid "Division results"
-msgstr "Ligen"
+msgstr "Klassen-Ergebnisse"
 
 #: admin/schedule.php:242
-#, fuzzy
 msgid "Unscheduled"
-msgstr "Spielplan"
+msgstr "Nicht im Zeitplan"
 
 #: admin/schedule.php:245 ext/export.php:34 ext/index.php:64
 #: scorekeeper/respgames.php:39
 msgid "Select event"
-msgstr "Veranstaltung"
+msgstr "Turnier wählen"
 
 #: admin/schedule.php:259
-#, fuzzy
 msgid "All divisions"
-msgstr "Liga hinzufügen"
+msgstr "Alle Klassen"
 
 #: admin/schedule.php:273 ext/index.php:218
 msgid "All pools"
@@ -4349,19 +4262,16 @@ msgid "Pause"
 msgstr "Pause"
 
 #: admin/schedule.php:509
-#, fuzzy
 msgid "Save changes?"
-msgstr "Ergebnis speichern"
+msgstr "Änderungen speichern?"
 
 #: admin/dbadmin.php:9 admin/dbadmin.php:17
-#, fuzzy
 msgid "Database administration"
-msgstr "Mobile Administration"
+msgstr "Datenbank-Administration"
 
 #: admin/dbadmin.php:21
-#, fuzzy
 msgid "Equalization"
-msgstr "Organisation"
+msgstr "Vereinheitlichung"
 
 #: admin/dbadmin.php:29
 msgid "Plugins"
@@ -4384,32 +4294,28 @@ msgid "SHOW GLOBAL STATUS"
 msgstr ""
 
 #: admin/dbadmin.php:82
-#, fuzzy
 msgid "Client Library version"
-msgstr "Druckversion"
+msgstr ""
 
 #: admin/dbadmin.php:83
 msgid "Type of connection in use"
 msgstr "Verbindungsart"
 
 #: admin/dbadmin.php:84
-#, fuzzy
 msgid "Protocol version"
-msgstr "Druckversion"
+msgstr ""
 
 #: admin/dbadmin.php:85
-#, fuzzy
 msgid "Server version"
-msgstr "Druckversion"
+msgstr ""
 
 #: admin/dbadmin.php:87
 msgid "Character set and collation"
 msgstr "Zeichensatz und Collation"
 
 #: admin/addreservation.php:64
-#, fuzzy
 msgid "Reservations added"
-msgstr "Reservierung"
+msgstr "Reservierung hinzugefügt"
 
 #: admin/addreservation.php:85
 msgid "Add field reservation"
@@ -4422,9 +4328,8 @@ msgstr "Datum"
 
 #: admin/addreservation.php:178 lib/search.functions.php:242
 #: lib/search.functions.php:307
-#, fuzzy
 msgid "Start time"
-msgstr "Halbzeit"
+msgstr "Startzeit"
 
 #: admin/addreservation.php:178 admin/addreservation.php:182
 msgid "hh:mm"
@@ -4436,9 +4341,8 @@ msgid "End time"
 msgstr "Ende"
 
 #: admin/addreservation.php:192 lib/search.functions.php:263
-#, fuzzy
 msgid "Grouping name"
-msgstr "Spiele gruppieren"
+msgstr "Gruppierungsname"
 
 #: admin/addreservation.php:199
 msgid "Enter separate field numbers (1,2,3) or multiple fields (1-30)"
@@ -4446,10 +4350,9 @@ msgstr "Geben Sie Feldnummern an, z. B. 1,2,3 oder 1-30"
 
 #: admin/select_userrole.php:5
 msgid "Select user roles"
-msgstr "Userrollen auswählen"
+msgstr "Benutzerrollen auswählen"
 
 #: admin/select_userrole.php:37 admin/select_userrole.php:46
-#, fuzzy
 msgid "cancel"
 msgstr "Abbrechen"
 
@@ -4466,18 +4369,16 @@ msgid "Template"
 msgstr "Vorlage"
 
 #: admin/addseasonpools.php:257
-#, fuzzy
 msgid "Edit pool"
-msgstr "Pool hinzufügen"
+msgstr "Gruppe ändern"
 
 #: admin/addseasonpools.php:283
 msgid "Round Robin"
 msgstr "Jeder gegen Jeden"
 
 #: admin/addseasonpools.php:288 admin/addseasonpools.php:290
-#, fuzzy
 msgid "Play-off"
-msgstr "Plays"
+msgstr "K.O.-Runde"
 
 #: admin/addseasonpools.php:293 admin/addseasonpools.php:295
 msgid "Swissdraw"
@@ -4488,9 +4389,8 @@ msgid "Crossmatch"
 msgstr "Überkreuz"
 
 #: admin/addseasonpools.php:302
-#, fuzzy
 msgid "Special playoff template"
-msgstr "Kein Playoff-Baum Template gefunden."
+msgstr "Spezielle Playout-Baum-Vorlage"
 
 #: admin/addseasonpools.php:315 admin/addseasonpools.php:317
 msgid "Nothing"
@@ -4501,19 +4401,16 @@ msgid "Mutual"
 msgstr "Gegenseitig"
 
 #: admin/addseasonpools.php:361
-#, fuzzy
 msgid "Placement pool"
-msgstr "Platzierung"
+msgstr "Platzierungsgruppe"
 
 #: admin/addseasonpools.php:369
-#, fuzzy
 msgid "Initial pools"
-msgstr "Alle Pools"
+msgstr "Anfängliche Gruppen"
 
 #: admin/addseasonpools.php:370
-#, fuzzy
 msgid "select"
-msgstr "Wähle"
+msgstr "Wählen"
 
 #: admin/addseasonpools.php:373
 msgid "Color"
@@ -4532,9 +4429,8 @@ msgid "(from the selected template)"
 msgstr "(aus der gewählten Vorlage)"
 
 #: admin/addseasonpools.php:463
-#, fuzzy
 msgid "Time-outs in overtime"
-msgstr "Time-outs"
+msgstr "Auszeiten nach Ablauf der Zeit"
 
 #: admin/addseasonpools.php:471
 msgid "Forfeit/BYE against"
@@ -4545,9 +4441,8 @@ msgid "points for the team giving up / BYE"
 msgstr "Punkte für das aufgebende / Freilosteam"
 
 #: admin/addseasonpools.php:475
-#, fuzzy
 msgid "Forfeit/BYE score"
-msgstr "Aktueller Spielstand"
+msgstr "Kampflos/Freilos-Punkte"
 
 #: admin/addseasonpools.php:477
 msgid "points for their remaining opponent"
@@ -4562,19 +4457,16 @@ msgid "Edit rule templates"
 msgstr "Regelvorlagen bearbeiten"
 
 #: admin/saveteamstandings.php:23
-#, fuzzy
 msgid "Standings saved"
-msgstr "Ergebnisse"
+msgstr "Rangfolge gespeichert"
 
 #: admin/reservations.php:83 admin/reservations.php:130
-#, fuzzy
 msgid "Schedule selected"
-msgstr "Ausgewähltes löschen"
+msgstr "Mit Auswahl planen"
 
 #: admin/reservations.php:107 lib/search.functions.php:728
-#, fuzzy
 msgid "Group"
-msgstr "Spiele gruppieren"
+msgstr "Gruppe"
 
 #: admin/reservations.php:109 lib/search.functions.php:730
 msgid "Scoresheets"
@@ -4593,9 +4485,8 @@ msgid "Minimum times (in minutes) to move between fields"
 msgstr "Minimalzeit (in Minuten) zwischen den Feldern"
 
 #: admin/reservations.php:146
-#, fuzzy
 msgid "Transfer times"
-msgstr "Übersetzungen"
+msgstr "Transferzeiten"
 
 #: admin/reservations.php:148
 msgid "from\\to"
@@ -4618,9 +4509,8 @@ msgid "Goal diff"
 msgstr "Punktedifferenz"
 
 #: ext/scorecounter.php:17
-#, fuzzy
 msgid "Ultiorganizer Score Counter"
-msgstr "Ultiorganizer links"
+msgstr ""
 
 #: ext/export.php:22
 msgid "CSV-files"
@@ -4676,27 +4566,27 @@ msgstr "Gruppe"
 
 #: ext/index.php:99
 msgid "Select division"
-msgstr "Liga"
+msgstr "Klasse/Liga wählen"
 
 #: ext/index.php:116
 msgid "Select country"
-msgstr "Land"
+msgstr "Land wählen"
 
 #: ext/index.php:121
 msgid "Select pool"
-msgstr "Pool"
+msgstr "Gruppe wählen"
 
 #: ext/index.php:138
 msgid "Select team"
-msgstr "Team"
+msgstr "Team wählen"
 
 #: ext/index.php:155
 msgid "Select style"
-msgstr "Style"
+msgstr "Stil wählen"
 
 #: ext/index.php:168
 msgid "or a link to a style definition of your own"
-msgstr "oder einen Link zu einer eigenen Style-Datei (CSS)"
+msgstr "oder einen Link zu einer eigenen Stil-Datei (CSS)"
 
 #: ext/index.php:172
 msgid "Select and Update"
@@ -4713,27 +4603,24 @@ msgid "Ultimate results"
 msgstr "Endergebnisse"
 
 #: ext/index.php:190 lib/url.functions.php:67
-#, fuzzy
 msgid "Twitter"
-msgstr "Ergebnis Twitter"
+msgstr "Twitter"
 
 #: ext/index.php:210
 msgid "Score counter"
 msgstr "Ergebnis-Zähler"
 
 #: ext/index.php:228
-#, fuzzy
 msgid "All games in selected grouping"
-msgstr "Gruppe"
+msgstr "Alle Spiele in gewählter Gruppierung"
 
 #: ext/index.php:239
 msgid "Selected pool standings and scoreboard"
 msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
 
 #: ext/index.php:256
-#, fuzzy
 msgid "Selected country's teams pool standings and game result"
-msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
+msgstr ""
 
 #: ext/index.php:265
 msgid "Selected team's games and scoreaboard"
@@ -4748,19 +4635,16 @@ msgid "Twitter configuration done"
 msgstr "Twitterkonfiguration abgeschlossen"
 
 #: ext/rss.php:96
-#, fuzzy
 msgid "Ultimate game"
-msgstr "Endergebnisse"
+msgstr ""
 
 #: ext/rss.php:134 ext/rss.php:166
-#, fuzzy
 msgid "Time-out"
-msgstr "Time-outs"
+msgstr "Auszeit"
 
 #: ext/rss.php:183
-#, fuzzy
 msgid "Latest events"
-msgstr "Vergangene Veranstaltungen"
+msgstr "Letzte Turniere"
 
 #: ext/score-update.php:43
 msgid "Game number missing"
@@ -4783,9 +4667,8 @@ msgid "Unknown game number"
 msgstr "Unbekannte Spielnummer"
 
 #: ext/score-update.php:76
-#, fuzzy
 msgid "result saved"
-msgstr "Ergebnis-Feed"
+msgstr "Ergebnis gespeichert"
 
 #: ext/score-update.php:77
 msgid "You can restore the old result by sending a message:"
@@ -4794,36 +4677,32 @@ msgstr ""
 "wiederherstellen:"
 
 #: ext/score-update.php:77
-#, fuzzy
 msgid "to the same number"
-msgstr "Trikotnummer"
+msgstr ""
 
 #: ext/score-update.php:84
 msgid "Invalid game update entry found. Can not undo"
 msgstr "Ungültiger Spieleintrag gefunden. Kann nicht rückgängig machen"
 
 #: ext/score-update.php:106
-#, fuzzy
 msgid "result restored"
-msgstr "Ergebnis-Feed"
+msgstr ""
 
 #: ext/score-update.php:107
 msgid "Could not find a previous game update entry"
 msgstr "Konnte keinen vorherigen Spieleintrag finden"
 
 #: ext/score-update.php:108
-#, fuzzy
 msgid "Missing sender information"
-msgstr "Userdaten"
+msgstr "Fehlende Absenderdaten"
 
 #: restful/seasons/index.php:12
 msgid "Seasons"
 msgstr "Turniere"
 
 #: restful/seasons/series.php:9
-#, fuzzy
 msgid "Valid divisions"
-msgstr "Liga hinzufügen"
+msgstr "Gültige Klassen"
 
 #: mobile/addhalftime.php:25 mobile/tweet.php:22 mobile/addtimeouts.php:46
 #: mobile/addspiritpoints.php:10 mobile/addscoresheet.php:155
@@ -4851,36 +4730,30 @@ msgid "Game end result is sent automatically to Twitter."
 msgstr "Endergebnis wird automatisch via Twitter verschickt"
 
 #: mobile/tweet.php:41 scorekeeper/tweet.php:29
-#, fuzzy
 msgid "Tweet last score"
-msgstr "Score löschen"
+msgstr "Letzten Spielstand tweeten"
 
 #: mobile/tweet.php:48 scorekeeper/tweet.php:36
 msgid "Tweet text"
 msgstr "Tweet-Text"
 
 #: mobile/gameplay.php:25
-#, fuzzy
 msgid "home team"
 msgstr "Heimteam"
 
 #: mobile/gameplay.php:26
-#, fuzzy
 msgid "guest team"
-msgstr "Team"
+msgstr "Gastteam"
 
 #: mobile/gameplay.php:49 scorekeeper/gameplay.php:41
-#, fuzzy
 msgid "time-out"
-msgstr "Time-outs"
+msgstr "Auszeit"
 
 #: mobile/gameplay.php:51 scorekeeper/gameplay.php:43
-#, fuzzy
 msgid "turnover"
 msgstr "Turnover"
 
 #: mobile/gameplay.php:53 scorekeeper/gameplay.php:45
-#, fuzzy
 msgid "offence"
 msgstr "Offense"
 
@@ -4907,7 +4780,7 @@ msgstr "Wenn das Spiel beendet ist:"
 #: mobile/addtimeouts.php:51 mobile/addtimeouts.php:72
 #: scorekeeper/addtimeouts.php:56 scorekeeper/addtimeouts.php:131
 msgid "time outs"
-msgstr "Timeouts"
+msgstr "Auszeiten"
 
 #: mobile/respgames.php:138
 msgid "Group games"
@@ -4922,9 +4795,8 @@ msgid "Delete score"
 msgstr "Score löschen"
 
 #: mobile/addscoresheet.php:121
-#, fuzzy
 msgid "select team scored"
-msgstr "Score löschen"
+msgstr ""
 
 #: mobile/addscoresheet.php:197 scorekeeper/addhalftime.php:36
 #: scorekeeper/addscoresheet.php:235
@@ -4943,7 +4815,7 @@ msgstr "Punkt speichern"
 
 #: mobile/addscoresheet.php:202 scorekeeper/addscoresheet.php:265
 msgid "Time outs"
-msgstr "Timeouts"
+msgstr "Auszeiten"
 
 #: mobile/addscoresheet.php:205 scorekeeper/addscoresheet.php:267
 msgid "First offence"
@@ -4959,16 +4831,14 @@ msgid "Save as result"
 msgstr "Ergebnis speichern"
 
 #: mobile/addscoresheet.php:218 scorekeeper/addscoresheet.php:285
-#, fuzzy
 msgid "Correct the errors or save goal with errors"
-msgstr "Korrigiere die Fehler und versuch es nochmal..."
+msgstr "Fehler korrigieren oder Punkt mit Fehlern speichern"
 
 #: mobile/addfirstoffence.php:38
 msgid "starting on offence"
 msgstr "Erste Offense"
 
 #: mobile/scoreboard.php:13 scorekeeper/scoreboard.php:10
-#, fuzzy
 msgid "Players of the game"
 msgstr "Aktive Spieler"
 
@@ -4977,12 +4847,10 @@ msgid "Back to game sheet"
 msgstr "Zurück zum Spielbericht"
 
 #: scorekeeper/addhalftime.php:29
-#, fuzzy
 msgid "Halftime ends"
 msgstr "Halbzeit endet"
 
 #: scorekeeper/addhalftime.php:36
-#, fuzzy
 msgid "Halftime ends at"
 msgstr "Halbzeit endet bei"
 
@@ -4991,7 +4859,6 @@ msgid "Tweet Text"
 msgstr ""
 
 #: scorekeeper/gameplay.php:88 scorekeeper/gameplay.php:89
-#, fuzzy
 msgid "scoreboard"
 msgstr "Scorerliste"
 
@@ -5000,152 +4867,129 @@ msgid "Jersey"
 msgstr "Trikot"
 
 #: scorekeeper/addplayerlists.php:145 scorekeeper/addplayerlists.php:147
-#, fuzzy
 msgid "playerlist"
 msgstr "Spieler"
 
 #: scorekeeper/addresult.php:70
-#, fuzzy
 msgid "Save again"
-msgstr "Punkt speichern"
+msgstr "Erneut speichern"
 
 #: scorekeeper/addresult.php:71
-#, fuzzy
 msgid "Fill Playerlists"
-msgstr "Alle Spieler"
+msgstr "Spielerlisten ausfüllen"
 
 #: scorekeeper/addresult.php:73
-#, fuzzy
 msgid "Game ongoing, update scores"
-msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren:"
+msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren"
 
 #: scorekeeper/addtimeouts.php:47 cust/wfdf/pdfprinter.php:854
 #: cust/windmill/pdfprinter.php:831 cust/bula/pdfprinter.php:872
 #: cust/gummis/pdfprinter.php:941 cust/fpudd/pdfprinter.php:811
 #: cust/default/pdfprinter.php:788
 msgid "Timeouts"
-msgstr "Timeouts"
+msgstr "Auszeiten"
 
 #: scorekeeper/respgames.php:27 scorekeeper/result.php:113
 msgid "Responsible Games"
 msgstr ""
 
 #: scorekeeper/respgames.php:53
-#, fuzzy
 msgid "Games in selected event"
-msgstr "Veranstaltung"
+msgstr "Spiele in gewähltem Turnier"
 
 #: scorekeeper/deletescore.php:24
-#, fuzzy
 msgid "Delete last goal"
 msgstr "Letzten Punkt löschen"
 
 #: scorekeeper/deletescore.php:35
-#, fuzzy
 msgid "Delete goal number"
-msgstr "Bild löschen"
+msgstr "Punkt löschen, #"
 
 #: scorekeeper/addspiritpoints.php:64 scorekeeper/addspiritpoints.php:68
-#, fuzzy
 msgid "Spirit points for"
-msgstr "Spiritpunkte"
+msgstr "Spiritpunkte für"
 
 #: scorekeeper/addscoresheet.php:67
-#, fuzzy
 msgid "Time can not be the same or earlier than the previous point"
 msgstr ""
 "Zeit kann nicht die gleiche oder früher als die Zeit beim letzten Punkt sein"
 
 #: scorekeeper/addscoresheet.php:78 scorekeeper/addscoresheet.php:90
-#, fuzzy
 msgid "Assisting player not on the roster"
-msgstr "Füge Spieler zum Teamroster hinzu:"
+msgstr "Füge Spieler zum Teamroster hinzu"
 
 #: scorekeeper/addscoresheet.php:82 scorekeeper/addscoresheet.php:94
-#, fuzzy
 msgid "Scorer's player not on the roster"
-msgstr "Füge Spieler zum Teamroster hinzu:"
+msgstr "Füge Spieler zum Teamroster hinzu"
 
 #: scorekeeper/addscoresheet.php:99
 msgid "Scorer and assist are same player!"
 msgstr "Scorer und Assist sind identisch!"
 
 #: scorekeeper/addscoresheet.php:102
-#, fuzzy
 msgid "Select team scored"
-msgstr "Team"
+msgstr "Punktendes Team wählen"
 
 #: scorekeeper/addscoresheet.php:164
-#, fuzzy
 msgid "Delete the goal"
-msgstr "Letzten Punkt löschen"
+msgstr "Punkt löschen"
 
 #: scorekeeper/addscoresheet.php:181
-#, fuzzy
 msgid "New goal"
-msgstr "Punkt speichern"
+msgstr "Neuer Punkt"
 
 #: scorekeeper/addscoresheet.php:213 scorekeeper/addscoresheet.php:304
 #: scorekeeper/addscoresheet.php:315
-#, fuzzy
 msgid "Callahan Goal"
 msgstr "Callahan-Punkt"
 
 #: scorekeeper/addscoresheet.php:216
-#, fuzzy
 msgid "Scorer"
-msgstr "Spielstand"
+msgstr "Punktfänger"
 
 #: scorekeeper/addscoresheet.php:235
-#, fuzzy
 msgid "In time"
-msgstr "Halbzeit"
+msgstr "Zeit"
 
 #: scorekeeper/addscoresheet.php:264
 msgid "Additional game data"
 msgstr "Zusätzliche Spieldaten"
 
 #: scorekeeper/addscoresheet.php:273
-#, fuzzy
 msgid "Game has ended"
-msgstr "Spielplan"
+msgstr "Spiel beendet"
 
 #: scorekeeper/addscoresheet.php:286
-#, fuzzy
 msgid "Save goal with errors"
-msgstr "Punkt speichern"
+msgstr "Punkt mit Fehlern speichern"
 
 #: scorekeeper/addofficial.php:15
-#, fuzzy
 msgid "Officials"
-msgstr "Spiel-Offizielle(r)"
+msgstr "Offizielle"
 
 #: scorekeeper/login.php:14
 msgid "Log in"
 msgstr "Einloggen"
 
 #: scorekeeper/login.php:24
-#, fuzzy
 msgid "Quick add result"
-msgstr "Ergebnis speichern"
+msgstr "Ergebnis schnell hinzufügen"
 
 #: scorekeeper/result.php:48
 msgid "Add result with game id"
 msgstr "Ergebnis mit Spiel-ID eingeben"
 
 #: scorekeeper/result.php:58
-#, fuzzy
 msgid "Result saved!"
-msgstr "Ergebnis-Feed"
+msgstr "Ergebnis gespeichert!"
 
 #: scorekeeper/result.php:103
 msgid "Game number from Scoresheet"
 msgstr "Spielnummer vom Spielbericht"
 
 #: scorekeeper/result.php:106
-#, fuzzy
 msgid "Home team goals"
-msgstr "Heimteam"
+msgstr "Punkte Heimteam"
 
 #: scorekeeper/result.php:109
 msgid "Visitor team goals"
@@ -5248,9 +5092,8 @@ msgid "Missing gd extensinon for image handiling."
 msgstr ""
 
 #: lib/twitter.functions.php:80
-#, fuzzy
 msgid "Last score"
-msgstr "Let scores"
+msgstr "Letzter Spielstand"
 
 #: lib/facebook.functions.php:9
 msgid ""
@@ -5287,24 +5130,20 @@ msgstr ""
 "$scorername."
 
 #: lib/facebook.functions.php:14
-#, fuzzy
 msgid "game won"
-msgstr "Spiel"
+msgstr "Spiel gewonnen"
 
 #: lib/facebook.functions.php:15
-#, fuzzy
 msgid "game lost"
-msgstr "Spiele"
+msgstr "Spiel verloren"
 
 #: lib/facebook.functions.php:16
-#, fuzzy
 msgid "game passes"
-msgstr "Spiele"
+msgstr "Pässe"
 
 #: lib/facebook.functions.php:17
-#, fuzzy
 msgid "game scores"
-msgstr "Ergebnis speichern"
+msgstr "Punkte"
 
 #: lib/user.functions.php:876
 msgid "Confirm your account to ultiorganizer"
@@ -5323,9 +5162,8 @@ msgid "Errors: "
 msgstr "Fehler:"
 
 #: lib/game.functions.php:1450
-#, fuzzy
 msgid "Total points"
-msgstr "Spiritpunkte"
+msgstr "Gesamtpunkte"
 
 #: lib/search.functions.php:344
 msgid "separate with a comma"
@@ -5336,9 +5174,8 @@ msgid "Rights"
 msgstr "Rechte"
 
 #: lib/search.functions.php:580
-#, fuzzy
 msgid "Last login"
-msgstr "Login"
+msgstr "Letztes Login"
 
 #: lib/pool.functions.php:233 lib/pool.functions.php:260
 msgid "Unknown"
@@ -5384,14 +5221,12 @@ msgid "After the match has ended, send SMS"
 msgstr "Sende eine SMS nach Abschluss des Spiels"
 
 #: cust/wfdf/pdfprinter.php:87 cust/windmill/pdfprinter.php:87
-#, fuzzy
 msgid "home score"
-msgstr "Let scores"
+msgstr "Punkte (Heim)"
 
 #: cust/wfdf/pdfprinter.php:87 cust/windmill/pdfprinter.php:87
-#, fuzzy
 msgid "guest score"
-msgstr "Let scores"
+msgstr "Punkte (Gast)"
 
 #: cust/wfdf/pdfprinter.php:87 cust/windmill/pdfprinter.php:87
 msgid "without the quotes"
@@ -5459,7 +5294,8 @@ msgstr ""
 msgid ""
 "When a team takes a time-out, mark the time in the \"Time-outs\" section."
 msgstr ""
-"When ein Team ein Timeout nimmt, notieren Sie die Zeit im Abschnitt Timeouts."
+"When ein Team eine Auszeit nimmt, notieren Sie die Zeit im Abschnitt "
+"Auszeiten."
 
 #: cust/wfdf/pdfprinter.php:212 cust/windmill/pdfprinter.php:212
 #: cust/bula/pdfprinter.php:213 cust/gummis/pdfprinter.php:227
@@ -5478,7 +5314,6 @@ msgstr "Geben Sie den ausgefüllten Spielbericht bei der Turnierleitung ab."
 #: cust/gummis/pdfprinter.php:258 cust/fpudd/pdfprinter.php:273
 #: cust/default/pdfprinter.php:151 cust/default/pdfprinter.php:161
 #: cust/default/pdfprinter.php:250
-#, fuzzy
 msgid "Play"
 msgstr "Plays"
 
@@ -5567,9 +5402,8 @@ msgid "Summer"
 msgstr "Summer"
 
 #: cust/slkl/translations.inc.php:8
-#, fuzzy
 msgid "Final"
-msgstr "Endergebnis"
+msgstr "Finale"
 
 #: cust/slkl/translations.inc.php:10
 msgid "SM-Final"
@@ -5588,23 +5422,20 @@ msgid "SM-regular round"
 msgstr ""
 
 #: cust/slkl/translations.inc.php:14
-#, fuzzy
 msgid "I-division"
-msgstr "Division"
+msgstr ""
 
 #: cust/slkl/translations.inc.php:15
 msgid "I-division continuation pool"
 msgstr ""
 
 #: cust/slkl/translations.inc.php:16
-#, fuzzy
 msgid "Southwest division"
-msgstr "Liga"
+msgstr ""
 
 #: cust/slkl/translations.inc.php:17
-#, fuzzy
 msgid "Northeast division"
-msgstr "Liga"
+msgstr ""
 
 #: cust/slkl/translations.inc.php:18
 msgid "Continuation pool"
@@ -5633,9 +5464,8 @@ msgid "Ultimate.fi"
 msgstr ""
 
 #: cust/slkl/head.php:16
-#, fuzzy
 msgid "Ultimate Pelikone"
-msgstr "Endergebnisse"
+msgstr ""
 
 #: cust/slkl/head.php:17 cust/slkl/pdfprinter.php:35
 #: cust/slkl/pdfprinter.php:108
@@ -5643,9 +5473,8 @@ msgid "Finnish Flying Disc Association"
 msgstr ""
 
 #: cust/slkl/pdfprinter.php:63
-#, fuzzy
 msgid "Half time ends (time)"
-msgstr "Halbzeit endet"
+msgstr "Halbzeit endet (Zeit)"
 
 #: cust/slkl/pdfprinter.php:95
 msgid "After the match has ended, update result:"
@@ -5668,9 +5497,8 @@ msgid "3. Add jersey numbers for players on # -column."
 msgstr "3. Füge für die Spieler in der #-Spalte Trikot-Nummern hinzu."
 
 #: cust/slkl/pdfprinter.php:802
-#, fuzzy
 msgid "Timeouts (time)"
-msgstr "Timeouts"
+msgstr "Auszeiten"
 
 #: cust/slkl/teamplayers.inc.php:3 cust/fpudd/teamplayers.inc.php:3
 #: cust/default/teamplayers.inc.php:3
@@ -5684,12 +5512,11 @@ msgstr "Schließen"
 
 #: cust/slkl/mass-accreditation.php:26
 msgid "No divisions seleceted!"
-msgstr "Keine Liga ausgewählt!"
+msgstr "Keine Klasse/Liga ausgewählt!"
 
 #: cust/slkl/mass-accreditation.php:66
-#, fuzzy
 msgid "new accreditations."
-msgstr "Akkreditierung"
+msgstr "neue Zulassungen"
 
 #: cust/slkl/mass-accreditation.php:67
 msgid "players accredited."
@@ -5720,18 +5547,16 @@ msgid "Accredit players against license database with selected conditions."
 msgstr ""
 
 #: cust/slkl/mass-accreditation.php:98
-#, fuzzy
 msgid "Select divisions to check:"
-msgstr "Liga"
+msgstr ""
 
 #: cust/slkl/mass-accreditation.php:108
 msgid "Select licenses validity required:"
 msgstr ""
 
 #: cust/slkl/mass-accreditation.php:118
-#, fuzzy
 msgid "License for year:"
-msgstr "Lizenz ok"
+msgstr "Lizenz für Jahr:"
 
 #: cust/slkl/mass-accreditation.php:124
 msgid "Select license type(s) accepted:"
@@ -5747,9 +5572,8 @@ msgstr ""
 
 #: cust/slkl/mass-accreditation.php:135 cust/fpudd/mass-accreditation.php:11
 #: cust/default/mass-accreditation.php:11
-#, fuzzy
 msgid "Accredit"
-msgstr "Akkreditierung"
+msgstr "Zulassen"
 
 #: cust/slkl/mass-accreditation.php:235
 msgid "License database update ok"
@@ -5777,9 +5601,8 @@ msgid "Organization"
 msgstr "Organisation"
 
 #: cust/gummis/pdfprinter.php:96 cust/default/pdfprinter.php:96
-#, fuzzy
 msgid "Defenses record"
-msgstr "Defenseliste"
+msgstr "Defense-Statistik"
 
 #: cust/fpudd/teamplayers.functions.php:107
 #: cust/default/teamplayers.functions.php:107
@@ -5789,7 +5612,7 @@ msgstr "Vorheriges Team"
 #: cust/fpudd/teamplayers.functions.php:108
 #: cust/default/teamplayers.functions.php:108
 msgid "Prev. Event"
-msgstr "Vorherige Veranstaltung"
+msgstr "Vorheriges Turnier"
 
 #: cust/fpudd/pdfprinter.php:37
 msgid "APUDD"
@@ -5929,14 +5752,12 @@ msgid "Marcador final"
 msgstr ""
 
 #: cust/fpudd/mass-accreditation.php:2 cust/default/mass-accreditation.php:2
-#, fuzzy
 msgid "Mass accreditation"
-msgstr "Akkreditierung"
+msgstr "Massenzulassung"
 
 #: cust/default/head.php:8
-#, fuzzy
 msgid "LOGO EXAMPLE"
-msgstr "DFV"
+msgstr ""
 
 #: cust/default/pdfprinter.php:153 cust/default/pdfprinter.php:163
 msgid "License ok"
@@ -6119,9 +5940,8 @@ msgid "Colombia"
 msgstr ""
 
 #: cust/default/countries.php:47
-#, fuzzy
 msgid "Comoros"
-msgstr "Morgen"
+msgstr ""
 
 #: cust/default/countries.php:48
 msgid "Cook Islands"
@@ -6208,9 +6028,8 @@ msgid "Finland"
 msgstr ""
 
 #: cust/default/countries.php:69
-#, fuzzy
 msgid "France"
-msgstr "Abbrechen"
+msgstr ""
 
 #: cust/default/countries.php:70
 msgid "French Polynesia"
@@ -6405,9 +6224,8 @@ msgid "Malawi"
 msgstr ""
 
 #: cust/default/countries.php:118
-#, fuzzy
 msgid "Malaysia"
-msgstr "Plays"
+msgstr ""
 
 #: cust/default/countries.php:119
 msgid "Maldives"
@@ -6454,9 +6272,8 @@ msgid "Monaco"
 msgstr ""
 
 #: cust/default/countries.php:130
-#, fuzzy
 msgid "Mongolia"
-msgstr "läuft"
+msgstr ""
 
 #: cust/default/countries.php:131
 msgid "Montserrat"
@@ -6583,9 +6400,8 @@ msgid "Romania"
 msgstr ""
 
 #: cust/default/countries.php:162
-#, fuzzy
 msgid "Russian Federation"
-msgstr "Reservierung"
+msgstr ""
 
 #: cust/default/countries.php:163
 msgid "Russia"
@@ -6680,9 +6496,8 @@ msgid "Sudan"
 msgstr ""
 
 #: cust/default/countries.php:186
-#, fuzzy
 msgid "Suriname"
-msgstr "Username"
+msgstr ""
 
 #: cust/default/countries.php:187
 msgid "Swaziland"

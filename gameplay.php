@@ -217,7 +217,7 @@ if(GameHasStarted($game_result) > 0){
           if((intval($event['time']) >= $prevgoal) &&
           (intval($event['time']) < intval($goal['time']))) {
             if($event['type'] == "timeout"){
-              $gameevent = _("Timeout");
+              $gameevent = _("Time-out");
             }elseif($event['type'] == "turnover"){
               $gameevent = _("Turnover");
             }elseif($event['type'] == "offence"){

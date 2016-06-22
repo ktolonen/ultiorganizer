@@ -39,7 +39,7 @@ function handleSubmit(oRecord) {
 	var firstname = oRecord.getData("Firstname");
 	var lastname = oRecord.getData("Lastname");
 	
-	if (accrId == "") accrId = "<?php echo _("Search"); ?>...";
+	if (accrId == "") accrId = "<?php echo _("Search"); ?> ...";
 	//YAHOO.util.Dom.get('showAccrId' + playerId).innerHTML = accrId;
 	YAHOO.util.Dom.get('accrId' + playerId).value = accrId;
 	YAHOO.util.Dom.get('firstname' + playerId).value = firstname;

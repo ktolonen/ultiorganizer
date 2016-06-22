@@ -77,7 +77,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="eventadmin"){
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=eventadmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=eventadmin'>"._("Add more ...")."</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "</form>";
@@ -110,7 +110,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="teamadmin"){
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=teamadmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=teamadmin'>"._("Add more ...")."</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "<div><input type='hidden' name='teamId'/></div>";
@@ -174,7 +174,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="gameadmin"){
   $html .= "</table>";  
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=gameadmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=gameadmin'>"._("Add more ...")."</a></p>";
 }
 $html .= "</form>";
 
@@ -217,7 +217,7 @@ if(!empty($_GET["access"]) && $_GET["access"]=="accradmin"){
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='"._("Grant rights")."'/></p>";  
 }else{
-  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=accradmin'>"._("Add more...")."</a></p>";
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=".$seasonId."&amp;access=accradmin'>"._("Add more ...")."</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "<div><input type='hidden' name='teamId'/></div>";

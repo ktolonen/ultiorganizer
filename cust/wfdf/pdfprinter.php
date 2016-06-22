@@ -851,7 +851,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,utf8_decode(_("Timeouts")),'LRTB',0,'C',true);
+		$this->Cell(80,6,utf8_decode(_("Time-outs")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids

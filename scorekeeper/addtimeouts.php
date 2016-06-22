@@ -44,7 +44,7 @@ if(isset($_POST['save'])) {
 }
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>"._("Timeouts").": ".utf8entities($game_result['hometeamname'])." - ".utf8entities($game_result['visitorteamname'])."</h1>\n";
+$html .= "<h1>"._("Time-outs").": ".utf8entities($game_result['hometeamname'])." - ".utf8entities($game_result['visitorteamname'])."</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";

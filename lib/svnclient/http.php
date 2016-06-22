@@ -377,7 +377,7 @@ class http_class
 				return($error);
 		}
 		if($this->debug)
-			$this->OutputDebug('Connecting to '.$server_type.' server IP '.$ip.' port '.$port.'...');
+			$this->OutputDebug('Connecting to '.$server_type.' server IP '.$ip.' port '.$port.' ...');
 		if($ssl)
 			$ip="ssl://".$ip;
 		if(($this->connection=($this->timeout ? @fsockopen($ip, $port, $errno, $error, $this->timeout) : @fsockopen($ip, $port, $errno)))==0)
@@ -452,7 +452,7 @@ class http_class
 							else
 							{
 								if($this->debug)
-									$this->OutputDebug('Connecting to '.$host_server_type.' server IP '.$host_ip.' port '.$host_port.'...');
+									$this->OutputDebug('Connecting to '.$host_server_type.' server IP '.$host_ip.' port '.$host_port.' ...');
 								$command = 1;
 								$address_type = 1;
 								if(!fputs($this->connection, chr($version).chr($command)."\x00".chr($address_type).pack('Nn', ip2long($host_ip), $host_port)))

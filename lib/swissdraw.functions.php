@@ -102,7 +102,7 @@ function CheckSwissdrawMoves($poolId){
 	//upgrade the moves-data with the actual teams
 	for ($i=0;$i<count($moves);$i++){
 		$team=PoolTeamFromStandings($moves[$i]['frompool'],$moves[$i]['fromplacing']);
-		if (empty($team)) die("This should have been detected earlier...");
+		if (empty($team)) die("This should have been detected earlier ...");
 		$moves[$i]['team_id']=$team['team_id'];
 	}
 	

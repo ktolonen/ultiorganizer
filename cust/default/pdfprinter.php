@@ -79,6 +79,7 @@ class PDF extends FPDF
 		$this->SetFillColor(255);
 		$this->MultiCell(0,2,$data);
 		}
+		
 	function PrintDefenseSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
 		$this->game['seasonname'] = utf8_decode($seasonname);
@@ -785,7 +786,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,0,0);
-		$this->Cell(80,6,utf8_decode(_("Timeouts")),'LRTB',0,'C',true);
+		$this->Cell(80,6,utf8_decode(_("Time-outs")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids

@@ -175,7 +175,7 @@ if(!empty($_POST['save']))
 			}
 		}
 		GameSetDefenses($gameId, $h, $a);
-	echo "<p>"._("Defense sheet saved")." (". _("at")." ".DefTimestamp().")!</p>";
+	echo "<p>"._("Defense sheet saved")." (". _("Zeit").": ".DefTimestamp().")!</p>";
 	// The defenseplay.php needs to be created
 	//echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Game play")."</a>";
 	}
@@ -187,7 +187,7 @@ $home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
 $away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
 if(count($home_playerlist)==0){
-  echo "<p class='warning'>".utf8entities($game_result['hometeamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+  echo "<p class='warning'>"._("No players given for game")." ".utf8entities($game_result['hometeamname']).". <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
 }
 if(count($away_playerlist)==0){
   echo "<p class='warning'>".utf8entities($game_result['visitorteamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";

@@ -230,7 +230,7 @@ if(!$poolId || $addmore) {
 			<td>".TranslatedField("name", $pp['name'])."</td>
 			</tr>\n";
 	echo "<tr>
-			<td class='infocell'>"._("Order")." (A,B,C,D...):</td>
+			<td class='infocell'>"._("Order")." (A,B,C,D ...):</td>
 			<td><input class='input' id='ordering' name='ordering' value='".utf8entities($pp['ordering'])."'/></td>
 		</tr>\n";
 	echo "<tr>
@@ -268,7 +268,7 @@ if(!$poolId || $addmore) {
 			<td><input class='input' id='series' name='series' disabled='disabled' value='".utf8entities($seriesname)."'/></td>
 			<td></td></tr>";
 	
-	echo "<tr><td class='infocell'>"._("Order")." (A,B,C,D...):</td>
+	echo "<tr><td class='infocell'>"._("Order")." (A,B,C,D ...):</td>
 		<td><input class='input' id='ordering' name='ordering' value='".utf8entities($pp['ordering'])."'/></td></tr>";
 /*		
 	echo "<tr><td class='infocell'>"._("Teams").":</td>
@@ -400,7 +400,7 @@ if(!$poolId || $addmore) {
 	} else {
 		echo "<p>"._("No teams")."</p>";
 	}
-	//echo "<p><input class='button' name='add' type='button' value='"._("Valitse...")."' onclick=\"window.location.href='?view=admin/serieteams&amp;Serie=$seriesId&amp;season=$season'\"/></p>";	
+	//echo "<p><input class='button' name='add' type='button' value='"._("Valitse ...")."' onclick=\"window.location.href='?view=admin/serieteams&amp;Serie=$seriesId&amp;season=$season'\"/></p>";	
 	
 	echo "<h2>"._("Rules")." "._("(from the selected template)").":</h2>";
 	
