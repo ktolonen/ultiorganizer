@@ -1,297 +1,439 @@
-<h2>Administrationsmenü</h2>
+<h2>Inhalt</h2>
 <ul>
-<li><b>Veranstaltungen:</b> Spielzeit- und Turnierverwaltung/-erstellung.</li>
-<li><b>Gruppenvorlagen:</b> Regeln für Gruppen und Spielformen. Alle Gruppen werden aufgrund einer dieser Vorlagen erstellt.</li>
-<li><b>Vereine &amp; Länder:</b> Alle Vereine und Länder im System. Mannschaften können Vereinen und/oder Ländern angehören.</li>
-<li><b>Orte:</b> Physische Hallen und Felder, die von Reservierungen verwendet werden.</li>
-<li><b>Reservierungen:</b> Reservierungen für Felder und Hallen. Wird gemeinsam von allen Spielzeiten und Turnieren benutzt.</li>
-<li><b>Übersetzungen:</b> Administrationsschnitstelle für Übersetzungen von Texten aus der Datenbank, wie zum Beispiel Gruppennamen.</li>
-<li><b>Benutzer:</b> Benutzerverwaltung.</li>
-<li><b>Logbücher:</b> Logbuch für Systemereignisse.</li>
-<li><b>Datenbank:</b> Datenbankadministration und Plugins.</li>
-<li><b>Einstellungen:</b> Systemeinstellungen.</li>
-<li><b>Hilfe:</b> Hilfedokumente.</li>
-<li><b>Profil:</b> Persönliche Einstellungen sind durch Klicken auf den Benutzernamen (rechts oben in der Ecke) erreichbar.</li>
+ <li><a href="#helpall">Hilfe für alle Benutzer</a>
+ <li><a href="#helpscorer">Hilfe für Ergebniseingabe</a>
+ <li><a href="#helpdivision">Hilfe für Klassen-/Ligaverwalter</a>
+ <li><a href="#helpseason">Hilfe für Saison-/Turnierverantwortliche</a>
+ <li><a href="#helpadmin">Hilfe für Administratoren</a>
 </ul>
 
+<h2 id="helpall">Hilfe für alle Benutzer</h2>
 
-<h2>Creating a new Season/Tournament </h2>
-<ol>
-<li>Open Events from administration menu.</li>
-<li>Select Add
-	<ul>
-		<li><b>Event id:</b> Select short indentification string for event (e.g. WUCC2010 or WU23UC).</li>
-		<li><b>Name:</b> Longer name shown in most of views (e.g. WUCC 2010).</li>
-		<li><b>Type:</b> According field type and game format.</li>
-		<li><b>Tournament:</b> If event is a tournament, otherwise it is a season.</li>
-		<li><b>International:</b> If event is international, in international events teams' have country.</li>
-		<li><b>For national teams:</b> If event is for national teams, otherwise it is for club teams.</li>
-		<li><b>Spirit points given:</b> If spirit points are given for teams after each match.</li>
-		<li><b>Organizer:</b> Event organizer e.g. WFDF or FFDA.</li>
-		<li><b>Category:</b> Event category e.g. WUGC, WUCC or WC </li>
-		<li><b>Starts:</b> Day when event starts.</li>
-		<li><b>Ends:</b> Day when event ends.</li>
-		<li><b>Open for enrollment:</b> When selected, all ultiorganizer user can register team to this event.</li>
-		<li><b>Enrolling ends:</b> Informative day shown to users. Does not restrict enrollment even after this day.</li>
-	</ul></li>
-<li>After adding an event, the event menu appears on left navigation bar under administration menu. The event menu:
-	<ul>
-	<li><b>Divisions:</b> Administration of divisions.</li>
-	<li><b>Pools:</b> Administration of pools.</li>
-	<li><b>Teams:</b> Administration of teams.</li>
-	<li><b>Games:</b> Administration of games.</li>
-	<li><b>Standings:</b> Administration of standings.</li>
-	<li><b>Accreditation:</b> Player accreditation.</li>
-	<li><b>Game responsibilities:</b> All responsibility games.</li>
-	<li><b>Contacts:</b> All teams' contact persons.</li>
-	</ul></li>
-<li>If event is open for enrollment, in addition of the event menu there is menu option for Enrollment. But before
-teams can be enrolled divisions must be created first.</li>
-</ol>
-
-<h2>Creating a new division</h2>
-<ol>
-<li>Click divisions from event menu</li>
-	<li>Add new division
-		<ul>
-			<li><b>Name:</b> Name shown in Ultiorganizer, e.g. Open, Masters.</li>
-			<li><b>Order:</b> Division mutual order in menus and views.</li>
-			<li><b>Type:</b> Division type.</li>
-			<li><b>Valid:</b> Division is active and shown in menus.</li>
-		</ul></li>
-	<li>Create as many divisions as needed. Team enrollment is per division.</li>
-</ol>
-
-<h2>Creation of teams</h2>
-<p>In normal circumstances registered users enroll teams for division:</p>
-<ol>
-<li>Event is open for enrollment.</li>
-<li>User log in to Ultiorganizer and enroll team with name and club/country information.</li>
-<li>Event administrator confirms the enrollment from enrollments menu.</li>
-<li>The person enroll the team is automatically promoted as team responsible during enrollment confirmation.</li>
-<li>The team responsible can add players to the team and update club, team and player cards.</li>
-</ol>
-<p>Manual team registration:</p>
-<ol>
-<li>If enrollment is open add teams from enrollment menu otherwise add teams from teams -event menu.</li>
-<li>Team responsible person can be added from teams event menu, team's setting or from users administration menu.</li>
-</ol>
-
-<h2>Creating a new pool</h2>
-<ol>
-<li>First create pool template from pool formats administration menu, if suitable template doesn't already exist. The Pool Format:
 <ul>
-	<li><b>Name:</b> Template name, e.g. WFDF Open regular</li>
-	<li><b>Type:</b> Series = round robin pool (all teams plays against all teams in pool), 
-	Play-off = first team in pool play against last team and so on.</li>
-	<li><b>Teams:</b> Default number teams in pool.</li>
-	<li><b>Game points:</b> Winning points to reach in a game.</li>
-	<li><b>Half-time:</b> Half-time duration.</li>
-	<li><b>Half-time at point:</b> Half-time after point.</li>
-	<li><b>Time cap:</b> Time limit for a game.</li>
-	<li><b>Time slot:</b> Total time reserved for a game (used when scheduling games)</li>
-	<li><b>Pont cap:</b> Absolute point limit.</li>
-	<li><b>Additional points after time cap:</b> After time limit leading team +n points.</li>
-	<li><b>Time between points:</b> Time limit after score and before pull.</li>
-	<li><b>Time-outs:</b> How many time-outs available on a game per team.</li>
-	<li><b>Time-outs duration:</b> Time-out duration.</li>
-	<li><b>Time-outs on overtime:</b> How many timeouts available after time limit reached?</li>
-	<li><b>Continuing pool:</b> If this is template for continuation pool.</li>
-	<li><b>Games to move:</b> In case of continuation pool, are game results from previous pool included.</li>	
-	</ul></li>
-	
-<li>Click Pools from event menu</li>
-	<li>Add new pool
-		<ul>
-			<li><b>Name:</b> Name shown in Ultiorganizer, e.g. Pool A or Final</li>
-			<li><b>Order:</b> Pools mutual order in menus and views. Mutual order for placement pools.</li>
-			<li><b>Template:</b> Pool rule template.</li>
-	</ul></li>		
-		
-	<li>Pool settings (when clicking pool name):
-		<ul>
-			<li><b>Name:</b> Name shown in Ultiorganizer, e.g. Pool A or Final</li>
-			<li><b>Order:</b> Pools mutual order in menus and views. Mutual order for placement pools.</li>
-			<li><b>Teams:</b> Number of teams in pool.</li>
-			<li><b>Visible:</b> Pool is shown for Ultiorganizer users. E.g. continuation pools are typically not set visible before teams are known.</li>
-			<li><b>Played:</b> All games in pool are played.</li>
-			<li><b>Continuing pool:</b> If pool is continuing pool.</li>
-			<li><b>Placement pool:</b> If final placment of any team playing in this pool is depending of team standing in this pool.</li>
-			<li><b>Color:</b> Pool identity color. All games in this pool are shown with this color in scheduling.</li>
-			
-		</ul></li>
-<li>Team final standings in division are calculated according placement pools. For example teams playing in Final pool (order AA) will
-get standings 1. and 2. in division. Teams playing in Bronze pool (order AB) will get standings 3.-4. Using pool order highest standings
-gets highest order is extremely important. In previous example if Bronze pool had ordering AA instead of AB then standings 1.-2. are solved
-in Bronze pool.
-</li>
-<li>Return back to Pool menu to select teams playing in the pool.</li>
-</ol>
-
-<h2>Team management</h2>
-<p>Adding teams into initial pools. Best practice is to have all initial pools created and teams enrolled on this phase.</p>
-<ol>
-<li>Click select teams from Pools view in even menu.</li>
-<li>In opening view all divisions' initial pools and teams are listed.</li>
-<li>Teams can be moved by dragging from one pool to another.</li>
-<li>Teams initial ranking in pool is same than teams order in pool.</li>
-<li>Finally press save to save changes.</li>
-</ol>
-<p>Adding teams into Continuing pool.</p>
-<ol>
-<li>Create Continuing pool -type of pool</li>
-<li>Click Move Teams link in pool view</li>
-<li>In opening view all moves to this pool are listed.</li>
-<li>Click manage moves.</li>
-<li>Now you can add moving rules: Team from pool X on standing n will be moved to this team on standing n. Name in schedule is used
-when you create and schedule games before teams playing in pool are known.</li>
-<li>Return to previous page.</li>
-<li>If all games are played, team standings are correct in from pool, all moves are created and moving games are listed correctly, 
-you can confirm the moves by clicking the confirm moves button.
-	<ul>
-		<li>If teams mutual standings is not calculated correctly, you can change standings trough standings link in event menu.</li>
-		<li>Games to move are defined in pool settings.</li>
-	</ul></li>
-</ol>
-
-<h2>Creation of games</h2>
-<ol>
-<li>Click game management in Pools view.</li>
-	<li>For initial pools, make sure that all teams wanted are selected in the pool.</li>
-	<li>For continuing pools, if teams are not moved then scheduling names are used instead of team names.</li>
-	<li>Before creating the games, you can check games by clicking show games button.</li>
-	<li>Create games by clicking Generate all games -button.</li>
-	<li>You can create also single game, but normally it is not needed.</li>
-</ol>
-
-<h2>Game scheduling</h2>
-<ol>
-<li>Create physical locations from Field locations option in administration menu.</li>
-	<li>Click Add button.
-		<ul>
-		<li><b>Name: </b>Name of the place.</li>
-		<li><b>Address: </b>Place address. After giving address click fetch coordinates link.</li>
-		<li><b>Info: </b>Additional information about location.</li>
-		<li><b>Fields: </b>Number of fields in location.</li>
-		<li><b>Indoor pitch: </b>If fields are indoor fields.</li>
-		</ul></li>
-<li>Create field reservation for physical field from Field reservations in administration menu.</li>	
-	<li>Click Add reservation link
-		<ul>
-		<li><b>Date: </b>Day of reservation.</li>
-		<li><b>Start time: </b>Reservation starts at.</li>
-		<li><b>End time: </b>Reservation ends at.</li>
-		<li><b>Grouping name: </b>Reservations are grouped by given name, e.g. Day 1.</li>
-		<li><b>Fields: </b>Field number. If want create same reservation for more than one field, enter numbers separated by commas e.g. 1,2,3.</li>
-		<li><b>Location: </b>Physical location of field.</li>
-		</ul></li>
-<li>After adding reservations return to field reservation view.</li>
-<li>Search reservations by date, location, grouping name or field.</li>
-<li>Choose field reservations to schedule.</li>
-<li>From opening view you can see chosen reservations and all unscheduled games. Games are color coded by pool.
-		<ul>
-		<li>Drag and drop games to reservation slots</li>
-		<li>From x on top right corner, you can hide the game. It will not remove game itself.</li>
-		<li>You can add breaks between games.</li>
-		<li>Click save button to save schedule.</li>
-		</ul></li>
-</ol>
-
-<h2>Accreditation of players</h2>
-<p>After team responsible have updated their rooster. Players eligibility must be confirmed by event administrator.</p>
-<ol>
-<li>From Accreditation event menu you can do automatic accreditation against predefined list and confirm players who have played without accreditation (e.g. player is new in rooster and there has been not time to do accreditation before game).</li>
-<li>From Teams event menu you can click rooster link and make manual accreditation for each player in selected team.</li>
-</ol>
-
-<h2>How to print the score sheet paper?</h2>
-<ul>
-	<li>To print score sheet under your responsibility:
-		<ol>
-		<li>Navigate to game responsibilities view.</li>
-		<li>Click Print score sheet link on header of game group you want to print.</li>
-		<li>PDF-version of score sheet is opened. Use two side printing, if you want both point-to-point sheet and playerlist on same sheet.</li>
-		</ol></li>
-	<li>To print score sheet played on certain schedule group:
-		<ol>
-		<li>Navigate to game view.</li>
-		<li>You have option to print all sheets, only for those matches witch are not played or matches not played and having teams.</li>
-		<li>Click Print score sheet link on header of game group you want to print.</li>		
-		<li>PDF-version of score sheet is opened. Use two side printing, if you want both point-to-point sheet and playerlist on same sheet.</li>
-		</ol></li>
-	<li>To print score sheet played on certain field:
-		<ol>
-		<li>Navigate to field reservations view.</li>
-		<li>Choose your search option according wanted scoresheets and click Search-button.</li>
-		<li>Click PDF link on row of reservation wanted to print.</li>		
-		<li>PDF-version of score sheet is opened. Use two side printing, if you want both point-to-point sheet and playerlist on same sheet.</li>
-		</ol></li>
+ <li>Anmeldung ist nur erforderlich für Turnierorganisatoren, Team-Kontaktpersonen und Spieler
+  oder Daten im System anlegen oder ändern möchten.</li>
+ <li><b>Mit Ultiorganizer vertraut machen?</b> Probieren Sie die Links in der linken
+  Navigationsleiste aus. Sie müssen sich nicht registrieren, um Ergbnisse sehen zu können.</li>
+ <li><b>Divisionsstatus einsehen?</b> Klicken Sie auf den Namen der Division oder des Pools,
+  der Sie interessiert.</li>
+ <li><b>Ihr Lieblingsteam verfolgen?</b> Sie finden alle Teams unter dem Menüpunkt "Teams".</li>
+ <li><b>Spielerstatistiken sehen?</b> Sie finden alle Spielerstatistiken durch Anklicken des
+  Teamnamens.</li>
+ <li><b>Teamdaten verwalten?</b> Melden Sie sich mit Ihrem Team-Account an.</li>
+ <li><b>Ihr Team zu einem Wettbewerb anmelden oder Mediendateien hochladen?</b> Registrieren
+  Sie sich im Ultiorganizer über den Menüpunkt <em>Neuer Benutzer?</em> oben rechts.</li>
 </ul>
 
-<h2>How to feed in paper version of score sheet?</h2>
+<h2 id="helpscorer">Hilfe für Ergebniseingabe</h2>
+
+<ul>
+ <li>Spielergebnisse können auch ohne Login nur mit der Nummer auf dem Spielbericht eingegeben werden. Dazu auf <em>Scorekeeper</em> im linken Menü und dann auf <em>Einzelergebnis eingeben</em> klicken.</li> 
+ <li>Unter dem Menüpunkt Ergebniseingabe finden Sie alle Spiele, für die Sie verantwortlich
+  sind.</li>
+ <li>Es gibt zur Zeit zwei verschieden Ansichten, die für mobile Geräte besser geeignet sind: <em>Mobile
+   Administration</em> und <em>Scorekeeper</em>.
+ </li>
+ <li>Auf der Spielergebnisseite, können Sie auf <em>Masseneingabe</em> klicken, um mehrere
+  Ergebnisse auf einmal einzugeben. Vergessen Sie nicht, nach der Eingabe auf <em>Speichern</em> zu
+  klicken.
+ </li>
+ <li>Wenn Sie die Punkteliste eingeben wollen, geben Sie zunächst das Endergebnis ein.</li>
+ <li>Danach wählen Sie im Reiter Spieler die Spieler für das Spiel aus.</li>
+ <li>Anschließend können Sie im Reiter Spielbericht die Details eingeben.</li>
+ <li>Überprüfen Sie anschließend, ob alle Ergebnisse korrekt eingegeben sind.</li>
+</ul>
+
+<h2 id="helpdivision">Hilfe für Klassen-/Ligaverwalter</h2>
+
+<ul>
+ <li>Sie können <em>Ergebniseingabe</em> benutzen wie normale Benutzer.
+ </li>
+ <li>Nachdem alle Spiele einer Gruppe abgeschlossen wurden, müssen die Teams in die folgenden
+  Gruppen transferiert werden.</li>
+ <li>Wählen Sie <em>Tabellenstände</em> im linken Menü um Gruppentransfers zu bestätigen,
+  nachdem Gruppenergebnisse vollständig sind (nicht immer nötig).
+ </li>
+ <li>Bevor Sie das tun, gehen Sie sicher, dass alle Ergebnisse vorausgehender Gruppen korrekt
+  sind! Transfers später rückgängig zu machen, kann kompliziert sein.</li>
+ <li>Wenn alle Ergebnisse eingegeben sind, gehen Sie zur Folgegruppe und klicken Sie auf <em>Transfers
+   bestätigen</em>.
+ <li>Um Transfers rückgängig zu machen
+  <ul>
+   <li>Probieren Sie zunächst auf <em>Rückgängig</em> oder <em>Alles rückgängig</em> zu
+    klicken.
+   </li>
+   <li>Wenn das nicht funktioniert, können Sie Teams mit dem roten Kreuz aus Gruppen entfernen.</li>
+   <li>Wenn das auch nicht genügt, müssen Sie vielleicht zunächst Spielergebnisse des
+    Folgepools löschen. Klicken Sie dafür auf <em>Spiele</em> unter dem betreffenden Pool.
+   </li>
+  </ul>
+ </li>
+ <li>Alternativ können Sie auch über den Link <em>Transfers verwalten</em> Transfers
+  bestätigen.
+ </li>
+</ul>
+
+<h3>Spielplan ändern?</h3>
+
 <ol>
-  <li>Navigate to game responsible view. </li>
-  <li>Find the game you are going to edit. </li>
-  <li>Each game has 3 links for actions: 
+ <li>Gehen Sie zur Ansicht <em>Spiele</em>.
+ </li>
+ <li>Klicken Sie auf das Werkzeug-Icon in der Zeile mit dem Spiel.</li>
+ <li>In der folgenden Ansicht, können Sie Feld und Zeit des Spiels ändern. Sie können dem Spiel
+  auch einen Namen geben, z.&thinsp;B. "Spiel des Tages".</li>
+</ol>
+<p>
+ Wenn Sie mehr als ein Spiel verändern möchten, können Sie das über den Menüpunkt <em>Spielplan</em>
+ oder <em>Platzreservierung</em> tun, falls Sie die nötige Berechtigung als
+ Spielplanverantwortlicher haben.
+</p>
+
+<h2 id="helpseason">Hilfe für Saison-/Turnierverantwortliche</h2>
+
+<ul>
+ <li>Nur Administratoren können neue Ligen und Turniere anlegen.</li>
+ <li>Nachdem das Turnier hinzugefügt wurde, erscheint im linken Menü ein Administrationsmenü.
+  Die Menüpunkte sind:
   <ul>
-    <li>Result: to set games final scores. </li>
-    <li>Players: to set game roster. </li>
-    <li>Score sheet: to add game details. </li>
-  </ul></li>
-  <li>When feeding in game result, always start by setting Final result if it is not already set (via SMS or via mobile interface). </li>
-  <li>Feed in player list according paper score sheet: 
+   <li><b>Klassen:</b> Administration der Klassen.</li>
+   <li><b>Gruppen:</b> Administration der Gruppen.</li>
+   <li><b>Teams:</b> Administration der Teams.</li>
+   <li><b>Spiele:</b> Administration der Spiele.</li>
+   <li><b>Tabellenstände:</b> Administration der Tabellenstände und Bestätigung von
+    Gruppentransfers.</li>
+   <li><b>Akkreditierung:</b> Spieler zulassen.</li>
+   <li><b>Ergebniseingabe:</b> Alle Spiele, deren Ergebnisse Sie eingeben dürfen.</li>
+   <li><b>Kontakte:</b> Alle Kontaktpersonen von Teams.</li>
+  </ul>
+ </li>
+ <li>Wenn die Anmeldung zur Saison offen ist, gibt es einen Menüpunkt zur Team-Anmeldung.
+  Vorher müssen aber Klassen definiert werden.</li>
+</ul>
+
+<h3>Klassen/Ligen erzeugen</h3>
+
+<ol>
+ <li>Klicken Sie auf den Menüpunkt <em>Klassen</em>.
+ </li>
+ <li>Fügen Sie eine neue Klasse hinzu (zum Beispiel "Open Masters" oder "Junioren")
   <ul>
-    <li>Correct jersey numbers if needed. </li>
-    <li>Mark players played. </li>
-  </ul></li>
-  <li>Feed in score sheet details. </li>
-  <li>After feeding in all the details. Navigate to Played games view and check the game result and game play view that it seems correct. </li>
+   <li><b>Name:</b> Name, zum Beispiel U17</li>
+   <li><b>Typ:</b> Divisionstype (open, mixed, usw.)</li>
+   <li><b>Regeln:</b> Legt eine Regelvorlage fest, die standardmäßig für neue Pools benutzt
+    wird.</li>
+   <li><b>Reihenfolge:</b> Legt die Reihenfolge der Klassen in Menüs fest.</li>
+   <li><b>Gültig:</b> Die Klasse ist aktiv und wird in Menüs angezeigt.</li>
+  </ul>
+ </li>
+ <li>Erzeugen Sie so viele Klassen, wie Sie brauchen. Teamanmeldung ist pro Klasse.</li>
 </ol>
 
-<h2>How to move teams to next pools after the pool is played?</h2>
-<ol>
-  <li>After pool is finished, teams need to "move" onto next pool before new results can be fed into system. </li>
-  <li>Navigate to Pool Standings view. </li>
-  <li>Find the pool(s) finished: 
-  <ul>
-    <li>Pool is finished when all games in pool have final result stored in system. </li>
-    <li>Played pools have grey background. </li>
-  </ul></li>
-  <li>Check that team standings are correct 
-  <ul>
-    <li>Standing number is shown front of team. </li>
-    <li>If 2 teams have same standing number, system is not able to figure out the standing. </li>
-    <li>In playoff pools winning teams have odd standing and losing teams have even standing. </li>
-  </ul></li>
-  <li>Update standings if needed by clicking team name. </li>
-  <li>Click move teams link under the pool you are moving the teams. If link is not showing then one of pools to move from is not played. </li>
-  <li>From opening view all moves to pool are shown with the team name to move. Also all games to move with team are shown. Check that this information is correct. </li>
-  <li>Press <b>Confirm moves</b> -button. </li>
-  <li>If pool is not set to visible in menu, navigate to pools view and go to pool setting by clicking it names. Mark visible field and press save. </li>
-</ol>
-<p>Same team moving views are accessible also from Pools view trough link move teams. </p>
+<h3>Teams erzeugen</h3>
 
-<h2>How to re-schedule?</h2>
+<p>Normalerweise können angemeldete Benutzer Teams für Klassen anmelden:</p>
 <ol>
-  <li>Navigate to Games view. </li>
-  <li>Click edit link on line with the game. </li>
-  <li>From opening view you are able to change field and time of the game. 
-  <ul>
-    <li>You can give a name for the game. F. ex. Game of the Day. </li>
-  </ul></li>
+ <li>Das Turnier muss zur Anmeldung freigeschaltet sein.</li>
+ <li>Der Saisonverwalter bestätigt die Anmeldungen im Menü <em>Anmeldungen</em>.
+ </li>
+ <li>Der Benutzer, der das Team angemeldet hat, wird automatisch zum Teamverwalter.</li>
+ <li>Der Teamverwalter kann Spieler hinzufügen und die Details des Teams ändern.</li>
 </ol>
-<p>If you have more than one game to re-schedule, open scheduling view from field reservation link with relevant reservations selected. </p>
-<h2>How to add media links?</h2>
+<p>Manuelle Registrierung von Teams:</p>
 <ol>
-  <li>Sing in to Ultiorganizer </li>
-  <li>Navigate to any team card, player card or Game play page </li>
-  <li>Scroll down and on bottom of page there is add media link </li>
-  <li>From link you can add media links: 
-  <ul>
-    <li>Media type: image or video. </li>
-    <li>URL to media file. </li>
-    <li>If name is given, it is shown instead of URL. </li>
-    <li>Optional owner for this media file. Typically copyright holder. </li>
-    <li>In media links for games game time can be given. If time given link is shown together with other game events on Game Play page. </li>
-  </ul></li>
+ <li>Wenn die Anmeldung offen ist, fügen Sie Teams über das Menü <em>Team-Anmeldung</em> hinzu;
+  ansonsten benutzen Sie das Menü <em>Teams</em> des Turniers.
+ </li>
+ <li>Teamverantwortliche können über das Menü <em>Teams</em> oder über das Administratormenü
+  festgelegt werden.
+ </li>
 </ol>
+
+<h3>Gruppen erzeugen</h3>
+
+<ol>
+ <li>Wählen Sie <em>Gruppen</em> aus dem Turniermenü.
+ </li>
+ <li>Fügen Sie eine neue Gruppe hinzu:
+  <ul>
+   <li><b>Name:</b> Zum Beispiel Pool A or Finale</li>
+   <li><b>Reihenfolge:</b> Die Reihenfolge der Pools in Menüs. Legt auch die Reihenfolge von
+    Platzierungen für Platzierungsgruppen fest.</li>
+   <li><b>Sichtbar:</b> Nur sichtbare Pools werden öffentlich angezeigt. Fortsetzungsgruppen
+    werden typischerweise nicht angezeigt, bevor die Teams bekannt sind.</li>
+   <li><b>Fortsetzungsgruppe:</b> Eine Gruppe, in die Teams aus vorhergehenden Gruppen
+    transferiert werden. Die anderen Gruppen werden aus der Liste der angemeldeten Teams besetzt.</li>
+   <li><b>Platzierungsgruppe:</b> Ein Pool, der für den Endstand der Teams relevant ist.
+   <li><b>Vorlage:</b> Die Regelvorlage, mit der die Pooleigenschaften initialisiert werden.
+    Sie können alle Pooleigenschaften nachträglich ändern (unabhängig von der Vorlage).</li>
+   <li>Nur Administratoren können neue Vorlagen erschaffen.</li>
+  </ul>
+ </li>
+ <li>Weitere Gruppeneigenschaften (durch Klick auf das Einstellungssymbol):
+  <ul>
+   <li><b>Typ:</b> Jeder-gegen-Jeden, K.O. (erster spielt gegen letzten usw.) oder Schweizer
+    System.</li>
+   <li><b>Spezielle Playout-Baum-Vorlage:</b> Wenn Sie einen besonderen K.O.-Runden-Baum
+    verwenden, können Sie hier den Namen der HTML-Datei angeben, die für die Anzeige benutzt werden
+    soll. Ein Administrator muss die Vorlagedatei hochladen.</li>
+   <li><b>Spiele mitnehmen:</b> Für Folgepools, werden entweder keine, gegenseitige oder alle
+    Spiele mitgenommen und für die Berechnung der Reihenfolge mit betrachtet.</li>
+   <li><b>Gespielt:</b> Die Gruppenspiele sind abgeschlossen.</li>
+   <li><b>Kommentar:</b> Sie können hier einen Kommentar eingeben, der öffentlich angezeigt
+    wird. Eine begrenzte Auswahl von HTML-Tags sind erlaubt, derzeit &lt;b&gt; für fett, &lt;em&gt;
+    oder &lt;i&gt; für kursiv und &lt;br /&gt; für Zeilenumbrüche.</li>
+   <li><b>Spielpunkte:</b> Punkte, die zum Gewinn nötig sind.</li>
+   <li><b>Halbzeit:</b> Dauer einer Halbzeit</li>
+   <li><b>Halbzeit bei Punkt:</b> Halbzeit ist nach diesem Punkt</li>
+   <li><b>Zeitobergrenze:</b> Ende der regulären Spielzeit</li>
+   <li><b>Zeitslot:</b> Dieser Wert wird Spiele im Spielplan reserviert.</li>
+   <li><b>Punkteobergrenze:</b> Höchstmögliche Punktzahl</li>
+   <li><b>Zusätzl. Punkte nach Ablauf der Zeit:</b> Nachdem die Zeit abgelaufen ist, wird auf
+    den Punktestand des führenden Teams +n gespielt.</li>
+   <li><b>Zeit zwischen Punkten:</b> Zeitobergrenze zwischen Fangen des Punkts und Anwurf des
+    nächsten Punktes.</li>
+   <li><b>Auszeiten:</b> Anzahl der Auszeiten pro Team und Spiel.</li>
+   <li><b>Auszeitdauer:</b> Länge einer Auszeit.</li>
+   <li><b>Auszeiten nach Ablauf der Zeit:</b> Wie viele Timeouts sind verfügbar nachdem die
+    Zeit abgelaufen ist?</li>
+  </ul>
+ </li>
+ <li>Der Endstand der Klasse wird aus den Platzierungsgruppen berechnet. Die Teams, die in
+  Finalgruppe spielen (Reihenfolge AA), belegen die Plätze&nbsp;1 und&nbsp;2. Die Teams in der
+  Bronzegruppe (Reihenfolge AB) belegen die Plätze&nbsp;3 bis&nbsp;4. Es ist extrem wichtig, die
+  richtige Reihenfolge festzulegen. Falls im vorigen Beispiel der Bronzepool die Reihenfolge AA
+  statt AB hätte, würde Platz&nbsp;1 und&nbsp;2 diesem Pool zugeordnet.</li>
+ <li>Kehren Sie zum Gruppen-Menü zurück, um die Teams für die Pools festzulegen.</li>
+</ol>
+
+<h3>Team-Verwaltung</h3>
+
+<p>Teams den Anfangsgruppen zuteilen. Zu diesem Zeitpunkt sollten die Teams bereits angemeldet
+ sein.</p>
+<ol>
+ <li>Klicken Sie auf <em>Teams auswählen</em> in der Gruppenansicht.
+ </li>
+ <li>In der folgenden Ansicht werden alle Anfangsgruppen und Teams aufgelistet.</li>
+ <li>Ziehen Sie die Teams zu den entsprechenden Gruppen.</li>
+ <li>Die Reihenfolge der Teams entspricht der Anfangsreihenfolge in den Gruppen.</li>
+ <li>Klicken Sie <em>Speichern</em>.
+ </li>
+</ol>
+<p>Teams den Folgegruppen zuteilen.</p>
+<ol>
+ <li>Erzeugen Sie den Folgepool.</li>
+ <li>Klicken Sie auf <em>Transfers verwalten</em> in der Gruppenansicht.
+ </li>
+ <li>In der folgenden Ansicht werden alle Transfers zu diesem Pool gelistet.</li>
+ <li>Klicken Sie ggbf. erneut auf <em>Transfers verwalten</em>.
+ </li>
+ <li>Nun können Sie Transferregeln hinzufügen: Das Team aus Gruppe&nbsp;X, Rang&nbsp;n wird in
+  diesen Pool auf Platz&nbsp;m bewegt. Der Name im Spielplan wird benutzt, solange die echten Teams
+  im Pool noch nicht feststehen.</li>
+ <li>Kehren Sie zur vorherigen Seite zurück.</li>
+ <li>Wenn in den vorhergehenden Gruppen alle Spiele gespielt wurden, die Reihenfolge stimmt und
+  die Transfers richtig angezeigt werden, können Sie die Transfers bestätigen indem Sie auf <em>Teams
+   transferieren</em> in der Poolansicht und dann auf <em>Transfers bestätigen</em> klicken.
+ </li>
+ <li>Wenn die angezeigten Daten nicht korrekt sind, können Sie sie über den Menüpunkt <em>Tabellenstände</em>
+  im linken Menü korrigieren.
+ </li>
+</ol>
+
+<h3>Spiele erzeugen</h3>
+
+<ol>
+ <li>Klicken Sie in der Gruppenansicht auf <em>Spiele verwalten</em>.
+ </li>
+ <li>Für Anfangsgruppen stellen Sie sicher, dass alle gewünschten Teams im Pool sind.</li>
+ <li>Für Folgegruppen werden Platzhalter benutzt, solange die echten Teams noch nicht
+  transferiert sind.</li>
+ <li>Bevor Sie Spiele erzeugen, klicken Sie auf <em>Spiele anzeigen</em>.
+ </li>
+ <li>Wenn die angezeigten Spiele korrekt sind, klicken Sie auf <em>Alle Spiele erzeugen</em>.
+ </li>
+ <li>Wenn schon Spiele in der Gruppe erzeugt wurden, erscheint der Link <em>Spiele
+   verwalten</em> nicht mehr oder ist nicht mehr fettgedruckt. Sie müssen alle schon erzeugten Spiele
+  durch Klick auf das rote Kreuz löschen, bevor Sie neue Spiele hinzufügen können.
+ </li>
+</ol>
+
+<h3>Spielplan erstellen</h3>
+
+<ol>
+ <li>Wählen Sie <em>Platzreservierungen</em> im linken Menü.
+ </li>
+ <li>Legen Sie Spielfelder über den Punkt <em>Ort hinzufügen</em> unten auf der Seite an (oder
+  über den Punkt <em>Spielfelder</em> im Administratormenü).
+ </li>
+ <li>Benutzen Sie die Suchfunktion um festzustellen, ob der Ort bereits in der Datenbank ist.
+  Falls nicht:
+ <li>Klicken Sie auf <em>Hinzufügen</em>.
+  <ul>
+   <li><b>Name: </b>Name des Ortes.</li>
+   <li><b>Adresse: </b>Geben Sie die Adresse ein und klicken Sie <em>Suche Koordinaten</em>.
+    Der Ort sollte auf der Karte angezeigt werden.</li>
+   <li><b>Info: </b>Weitere Informationen zum Ort.</li>
+   <li><b>Felder: </b>Anzahl der vorhandenen Felder.</li>
+   <li><b>Hallenfeld: </b>Wenn es sich um eine Halle handelt.</li>
+   <li>Speichern Sie den Ort durch Klicken auf <em>Hinzufügen</em>.
+   </li>
+  </ul>
+ </li>
+ <li>Reservieren Sie Felder, indem Sie auf <em>Reservierung hinzufügen</em> unten auf der
+  Platzreservierungsseite klicken (oder über den Menüpunkt <em>Platzreservierungen</em> im
+  Administratormenü).
+  <ul>
+   <li><b>Datum: </b>Tag der Reservierung.</li>
+   <li><b>Startzeit:</b> Zeitpunkt, zu dem die Reservierung beginnt.</li>
+   <li><b>Ende: </b>Zeitpunkt, zu dem die Reservierung endet.</li>
+   <li><b>Gruppierungsname: </b>Reservierungen werden unter einem Namen gruppiert. Kann leer
+    gelassen werden, aber Spiele in der Ergebniseingabe können danach gruppiert werden.</li>
+   <li><b>Felder: </b>Feld-Nummern. Wenn Sie mehrere Felder einer Reservierung nutzen wollen,
+    geben Sie deren Nummern durch Kommas getrennt ein, zum Beispiel&nbsp;1,&nbsp;2,&nbsp;3.</li>
+   <li><b>Ort: </b>Physischer Ort. Sollte einer der oben angelegten Orte sein.</li>
+  </ul>
+ </li>
+ <li>Nachdem die Reservierungen angelegt wurden, kehren Sie zur Platzreservierungsansicht
+  zurück.</li>
+ <li>Sie können die Auswahl einschränken, indem Sie die Suchfunktion oben auf der Seite nutzen.</li>
+ <li>Wählen Sie die Felder aus, für die Sie reservieren möchten.</li>
+ <li>Sie können in der Transfermatrix Zeiten eingeben, die zwischen Spielen verfügbar sein
+  soll. Wenn Sie zum Beispiel sicherstellen möchten, dass ein Team, das auf Feld&nbsp;2 spielt,
+  immer mindest&nbsp;60 Minuten Zeit hat, bevor das nächste Spiel auf Feld&nbsp;4 beginnt, tragen
+  Sie in der vierten Spalte der zweiten Zeile der Matrix&nbsp;60 ein. Diese Zeiten werden überprüft,
+  bevor der Spielplan gespeichert wird.</li>
+ <li>Klicken Sie auf <em>Mit Auswahl planen</em>.
+ <li>In der folgenden Ansicht können Sie die gewählten Zeiten, Plätze und alle nicht verplanten
+  Spiele sehen. Die Spiele sind anhand ihrer Gruppen eingefärbt.
+  <ul>
+   <li>Ziehen Sie Spiele zum gewünschten Ort.</li>
+   <li>Das X in der rechten oberen Ecke von Spielen verbirgt das Spiel. Dies löscht nicht das
+    Spiel an sich.</li>
+   <li>Sie können Pausen zwischen Spielen einfügen.</li>
+   <li>Klicken Sie auf Speichern, um Ihre Änderungen zu übernehmen. Dabei wird auch geprüft, ob
+    Transferzeiten eingehalten werden oder Teams auf zwei Plätzen gleichzeitig spielen.</li>
+  </ul>
+ </li>
+</ol>
+
+<h3>Akkreditierung von Spielern</h3>
+
+<p>Diese Funktionen könnten außerhalb der SLKL-Liga nicht gut funktionieren ...</p>
+<p>Nachdem die Teamverantwortlichen ihre Spielerlisten auf den neuesten Stand gebracht haben,
+ müssen die Spieler von einem Administrator bestätigt werden.</p>
+<ol>
+ <li>Im Akkreditierungsmenü können Sie automatisch Spieler mit eine gegebene Liste abgleichen
+  oder Sie können Spieler nachträglich akkreditieren, falls davor vor einem Spiel keine Zeit war.</li>
+ <li>Sie können auch im <em>Teams</em>-Menü nach Klick auf <em>Spielerliste</em> Spieler
+  manuell akkreditieren.
+ </li>
+</ol>
+
+<h3>Spielberichtsbögen drucken</h3>
+
+<ul>
+ <li>Um die (leeren) Spielberichte, für die Sie verantwortlich sind, zu drucken:
+  <ol>
+   <li>Gehen Sie auf die Seite <em>Spielergebnisse</em>.
+   </li>
+   <li>Klicken Sie auf <em>Spielberichte drucken</em> in der Überschrift der Gruppe, die Sie
+    drucken wollen.
+   </li>
+   <li>Eine PDF-Version des Spielberichts wird geöffnet. Drucken Sie sie zweiseitig, wenn Sie
+    Punkteliste und Spielerliste auf einem Blatt haben möchten.</li>
+  </ol>
+ </li>
+ <li>Um die Spielberichte einer bestimmten Gruppierung des Zeitplans zu drucken:
+  <ol>
+   <li>Navigieren Sie zur Ansicht <em>Spiele</em>.
+   </li>
+   <li>Sie können alle Spiele oder nur die noch nicht gespielten drucken.</li>
+   <li>Klicken Sie auf <em>Spielberichte drucken</em> in der Überschrift der Gruppe, die Sie
+    drucken wollen.
+   </li>
+  </ol>
+ </li>
+ <li>Um die Spielberichte eines bestimmten Feldes zu drucken:
+  <ol>
+   <li>Navigieren Sie zur Ansicht <em>Platzreservierung</em>.
+   </li>
+   <li>Stellen Sie die Suchoptionen so ein, dass die gewünschten Spiele angezeigt werden.</li>
+   <li>Klicken Sie auf den PDF-Link der Reservierung, die Sie drucken wollen.</li>
+  </ol>
+ </li>
+</ul>
+
+<h2 id="helpadmin">Hilfe für Administratoren</h2>
+
+<h3>Das Administratormenü</h3>
+
+<ul>
+ <li><b>Veranstaltungen:</b> Spielzeit- und Turnierverwaltung/-erstellung.</li>
+ <li><b>Gruppenvorlagen:</b> Regeln für Gruppen und Spielformen. Alle Gruppen werden aufgrund
+  einer dieser Vorlagen erstellt.</li>
+ <li><b>Vereine &amp; Länder:</b> Alle Vereine und Länder im System. Mannschaften können
+  Vereinen und/oder Ländern angehören.</li>
+ <li><b>Orte:</b> Physische Hallen und Felder, die von Reservierungen verwendet werden.</li>
+ <li><b>Reservierungen:</b> Reservierungen für Felder und Hallen. Wird gemeinsam von allen
+  Spielzeiten und Turnieren benutzt.</li>
+ <li><b>Übersetzungen:</b> Administrationsschnitstelle für Übersetzungen von Texten aus der
+  Datenbank, wie zum Beispiel Gruppennamen.</li>
+ <li><b>Benutzer:</b> Benutzerverwaltung.</li>
+ <li><b>Logbücher:</b> Logbuch für Systemereignisse.</li>
+ <li><b>Datenbank:</b> Datenbankadministration und Plugins.</li>
+ <li><b>Einstellungen:</b> Systemeinstellungen.</li>
+ <li><b>Hilfe:</b> Hilfedokumente.</li>
+ <li><b>Profil:</b> Persönliche Einstellungen sind durch Klicken auf den Benutzernamen (rechts
+  oben in der Ecke) erreichbar.</li>
+</ul>
+
+<h3>Neues Turnier/Saison erstellen</h3>
+
+<ol>
+ <li>Öffnen Sie die Seite <em>Turniere</em> im Administrationsmenü.
+ </li>
+ <li>Klicken Sie auf <em>Hinzufügen</em>.
+  <ul>
+   <li><b>Turnier-ID:</b> Geben Sie einen Kurznamen zur Identifikation ein, z.&thinsp;B.
+    WUCC2010.</li>
+   <li><b>Name:</b> Ein längerer Name, der in den meisten Menüs angezeigt wird, z.&thinsp;B.
+    WUCC&nbsp;2010</li>
+   <li><b>Turnier:</b> Wenn ausgewählt, wird das Turnier als Turnier bezeichnet, andernfalls
+    als Saison.</li>
+   <li><b>International:</b> In internationalen Turnieren haben Teams ein Land.</li>
+   <li><b>Für Nationalteams:</b> Andernfalls ist es ein Turnier für Clubteams.</li>
+   <li><b>Spiritmodus:</b> Die Art der Spiritwertung</li>
+   <li><b>Kommentar:</b> Sie können hier einen Kommentar eingeben, der öffentlich angezeigt
+    wird. Eine begrenzte Auswahl von HTML-Tags sind erlaubt, derzeit &lt;b&gt; für fett, &lt;em&gt;
+    oder &lt;i&gt; für kursiv und &lt;br /&gt; für Zeilenumbrüche.</li>
+   <li><b>Beginn:</b> Erster Tag des Turniers</li>
+   <li><b>Ende:</b> Letzter Tag des Turniers</li>
+   <li><b>Anmeldung offen:</b> Wenn ausgewählt kann jeder Benutzer Teams zu dem Turnier
+    anmelden.</li>
+   <li><b>Anmeldung endet:</b> Dieses Datum dient nur der Information. Auch danach sind noch
+    Anmeldungen möglich.</li>
+  </ul>
+ </li>
+</ol>
+
+<h3>Benutzer verwalten</h3>
+
+<ul>
+ <li>Auf der Seite <em>Benutzer</em> können Sie Benutzer nach verschiedenen Kriterien suchen,
+  neue Benutzer von Hand anlegen, Benutzerpasswörter zurücksetzen oder Benutzer löschen.
+ </li>
+ <li>Durch Klick auf einen Benutzernamen können Sie deren Einstellungen verändern.</li>
+ <li>Hier können Sie auch Benutzerrechte definieren. Es gibt folgende Rollen:
+ <ul>
+ <li><b>Administratoren</b> dürfen alle Einstellungen bearbeiten, benutzer verwalten und deren Rechte verändern.</li>
+ <li><b>Übersetzungsadministratoren</b> dürfen Übersetzungen hinzufügen.</li>
+ <li><b>Benutzeradministratoren</b> haben derzeit keine besondere Rolle.</li>
+ <li><b>Team-Kontaktpersonen</b> dürfen für bestimmte Teams Spielerlisten anlegen, sowie Team- und Clubprofile verändern.</li>
+ <li><b>Turnier-/Saisonverantwortliche</b> dürfen Turniereigenschaften bestimmter Turniere verändern, sowie Teams, Klassen, Gruppen, Spiele und Platzreservierungen anlegen und bearbeiten.</li>
+ <li><b>Liga-/Klassenverantwortliche</b> dürfen Teams für ihre Division festlegen, Spiele verändern, Spielergebnisse eingeben, Platzierungen bearbeiten und Transfers von Teams in Gruppen bestätigen.</li>
+ <li><b>Akkreditierungsverantwortliche</b> dürfen Spieler akkreditieren</li>
+ <li><b>Spielplan-Verantwortliche</b> dürfen für ihre Reservierungen die Spielplan-Ansicht öffnen und Spielzeiten  verändern.</li>
+ <li><b>Spieleingabe für eine Reservierung:</b> Diese Nutzer dürfen für alle Spieler einer Reservierung Ergebnisse eingeben.</li>
+ <li><b>Spieleingabe-Recht</b> kann auch für ein einzelnes Spiel vergeben werden.</li>
+ </ul>
+</ul>

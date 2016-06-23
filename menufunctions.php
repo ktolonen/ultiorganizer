@@ -466,14 +466,13 @@ function leftMenu($id=0, $printable=false) {
     echo "</td></tr>\n";
     echo "</table>\n";
   }
-  
-  echo "<table class='leftmenulinks'>\n";
-  // echo "<tr><td class='menuseasonlevel'>"._("New Event")."</td></tr>";
-  // echo "</td></tr>\n";
-  echo "<tr><td>\n";
-  echo "<a class='subnav' href='?view=admin/help'>&raquo; " . _("Helps") . "</a>\n";
-  echo "</td></tr>\n";
-  echo "</table>\n";
+  if ($_SESSION['uid'] != 'anonymous') {
+    echo "<table class='leftmenulinks'>\n";
+    echo "<tr><td>\n";
+    echo "<a class='subnav' href='?view=admin/help'>&raquo; " . _("Helps") . "</a>\n";
+    echo "</td></tr>\n";
+    echo "</table>\n";
+  }
   
   //Event administration menu
   $editlinks = getEditSeasonLinks();
@@ -656,6 +655,7 @@ function leftMenu($id=0, $printable=false) {
   echo "<table style='width:90%'>\n";
   echo "<tr><td class='guides'>";
   echo "<a href='?view=user_guide'>"._("User Guide")."</a> | \n";
+  echo "<a href='?view=admin/help'>"._("Admin Help")."</a> | \n";
   echo "<a href='?view=privacy'>"._("Privacy Policy")."</a>\n";
   echo "</td></tr>";
   echo "</table>";
