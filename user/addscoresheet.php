@@ -351,11 +351,6 @@ if(!empty($_POST['save']))
     $ok=GameSetResult($gameId, $h, $a);
     if($ok)	{
       echo "<p>"._("Final result saved: $h - $a").".</p>";
-      ResolvePoolStandings(GamePool($gameId));
-      PoolResolvePlayed(GamePool($gameId));
-      if(IsTwitterEnabled()){
-        TweetGameResult($gameId);
-      }
     }
   }
   echo "<p>"._("Score sheet saved")." (". _("Time").": ".DefTimestamp().")!</p>";

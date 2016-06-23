@@ -8,54 +8,39 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
   include_once 'lib/twitter.functions.php';
 }
 $html = "";
-$errors = false;
 
+$errors = "";
 if(!empty($_POST['save'])) {
   $game = intval($_POST['game']);
   $home = intval($_POST['home']);
   $away = intval($_POST['away']);
-  $gameId = substr($game, 0, -1);
-  if ($game==0 || !checkChkNum($game)) {
-    $html .= "<p class='warning'>". _("Erroneous scoresheet number.")."</p>";
-    $errors = true;
-  }
-  if(IsSeasonStatsCalculated(GameSeason($gameId))){
-    $html .= "<p class='warning'>". _("Event played.")."</p>";
-    $errors = true;
-  }
-  if(!($home+$away)){
-    $html .= "<p class='warning'>". _("No goals.")."</p>";
-    $errors = true;
-  }
+  $errors = CheckGameResult($game, $home, $away);
+  $gameId = (int) substr($game, 0, -1);
 }
 if(!empty($_POST['confirm'])) {
   $game = intval($_POST['game']);
   $home = intval($_POST['home']);
   $away = intval($_POST['away']);
-  LogGameUpdate($game,"result: $home - $away", "addresult");
-  $ok = GameSetResult($game, $home, $away);
-  
-  if($ok){
-    ResolvePoolStandings(GamePool($game));
-    PoolResolvePlayed(GamePool($game));
-    if(IsTwitterEnabled()){
-      TweetGameResult($game);
-    }
+  $errors = CheckGameResult($game, $home, $away);
+  if (empty($errors)) {
+    $gameId = (int) substr($game, 0, -1);
+    GameSetResult($gameId, $home, $away, true, false);
+    header("location:?" . $_SERVER['QUERY_STRING']);
   }
-   header("location:?".$_SERVER['QUERY_STRING']);
-  
 }
 if(!empty($_POST['cancel'])) {
   $html .= "<p class='warning'>". _("Result not saved!")."</p>";
 }
-mobilePageTop(_("Add result"));
+PageTop(_("Add result"));
+
+$html .= $errors;
 
 $html .= "<div style='font-size:14px;'>";
 
 $html .= "<form action='?".utf8entities($_SERVER['QUERY_STRING'])."' method='post'>\n";
-if(!empty($_POST['save']) && !$errors) {
+if(!empty($_POST['save']) && empty($errors)) {
   $html .= "<p>";
-  $html .= "<input class='input' type='hidden' id='game' name='game' value='$gameId'/> ";
+  $html .= "<input class='input' type='hidden' id='game' name='game' value='$game'/> ";
   $html .= "<input class='input' type='hidden' id='home' name='home' value='$home'/> ";
   $html .= "<input class='input' type='hidden' id='away' name='away' value='$away'/> ";
   $game_result = GameInfo($gameId);
@@ -73,7 +58,7 @@ if(!empty($_POST['save']) && !$errors) {
   $html .= utf8entities($game_result['visitorteamname']);
   $html .=  " ";
 
-  if(GameHasStarted($gameInfo)){
+  if(GameHasStarted($game_result)){
     $html .=  "<br/>";
     $html .= _("Game is already played. Result:"). " ". intval($game_result['homescore'])." - ".$game_result['visitorscore'].".";
     $html .=  "<br/><br/>";

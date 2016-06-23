@@ -536,9 +536,6 @@ function GameInfo($gameId) {
 	return mysql_fetch_assoc($result);
 }
 
-function GameHasStarted($gameInfo) {
-   return $gameInfo['hasstarted']>0;
-}
 
 function GameName($gameInfo) {
 	if($gameInfo['hometeam'] && $gameInfo['visitorteam']){
@@ -548,62 +545,121 @@ function GameName($gameInfo) {
 	}
 }
 
-function GameUpdateResult($gameId, $home, $away) {
-	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1', hasstarted='1' WHERE game_id='%s'",
-			mysql_real_escape_string($home),
-			mysql_real_escape_string($away),
-			mysql_real_escape_string($gameId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
-		return $result;
-	} else { die('Insufficient rights to edit game'); }
+function GameHasStarted($gameInfo) {
+   return $gameInfo['hasstarted']>0;
 }
 
-function GameSetResult($gameId, $home, $away) {
-	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2' WHERE game_id='%s'",
-			mysql_real_escape_string($home),
-			mysql_real_escape_string($away),
-			mysql_real_escape_string($gameId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
-		return $result;
-	} else { die('Insufficient rights to edit game'); }
+function CheckGameResult($game, $home, $away) {
+  $gameId = (int) substr($game, 0, -1);
+  $errors = "";
+  if ($gameId == 0 || !checkChkNum($game)) {
+    $errors .= "<p class='warning'>" . _("Erroneous scoresheet number:") . " " . $game . "</p>";
+  } else {
+    $pool = GamePool($gameId);
+    if (!$pool) {
+      $errors .= "<p class='warning'>" . _("Game has no pool.") . "</p>";
+    } else {
+      if (IsPoolLocked($pool)) {
+        $errors .= "<p class='warning'>" . _("Pool is locked.") . "</p>";
+      }
+    }
+  }
+  if (IsSeasonStatsCalculated(GameSeason($gameId))) {
+    $errors .= "<p class='warning'>" . _("Event played.") . "</p>";
+  }
+  if (!($home + $away)) {
+    $errors .= "<p class='warning'>" . _("No goals.") . "</p>";
+  }
+  return $errors;
+}
+
+function GameUpdateResult($gameId, $home, $away) {
+  if (hasEditGameEventsRight($gameId)) {
+    $query = sprintf(
+        "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1', hasstarted='1' WHERE game_id='%s'", 
+        mysql_real_escape_string($home), mysql_real_escape_string($away), mysql_real_escape_string($gameId));
+    $result = mysql_query($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    
+    return $result;
+  } else {
+    die('Insufficient rights to edit game');
+  }
+}
+
+function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights = true) {
+  if (!$checkRights || hasEditGameEventsRight($gameId)) {
+    LogGameUpdate($gameId, "result: $home - $away");
+    $query = sprintf(
+        "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2' WHERE game_id='%s'", 
+        mysql_real_escape_string($home), mysql_real_escape_string($away), mysql_real_escape_string($gameId));
+    $result = mysql_query($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    
+    if ($updatePools) {
+      $poolId = GamePool($gameId);
+      ResolvePoolStandings($poolId);
+      PoolResolvePlayed($poolId);
+    }
+    if (IsTwitterEnabled()) {
+      TweetGameResult($gameId);
+    }
+    if (IsFacebookEnabled()) {
+      TriggerFacebookEvent($gameId, "game", 0);
+    }
+    return $result;
+  } else {
+    die('Insufficient rights to edit game');
+  }
+}
+
+function GameClearResult($gameId, $updatepools = true) {
+  if (hasEditGameEventsRight($gameId)) {
+    LogGameUpdate($gameId, "result cleared");
+    $query = sprintf(
+        "UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0' WHERE game_id='%s'", 
+        mysql_real_escape_string($gameId));
+    $result = mysql_query($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    
+    if ($updatepools) {
+      $poolId = GamePool($gameId);
+      ResolvePoolStandings($poolId);
+      PoolResolvePlayed($poolId);
+    }
+    if (IsTwitterEnabled()) {
+      TweetGameResult($gameId);
+    }
+    if (IsFacebookEnabled()) {
+      TriggerFacebookEvent($gameId, "game", 0);
+    }
+    
+    return $result;
+  } else {
+    die('Insufficient rights to edit game');
+  }
 }
 
 function GameSetDefenses($gameId, $home, $away) {
-	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("UPDATE uo_game SET homedefenses='%s', visitordefenses='%s' WHERE game_id='%s'",
-			mysql_real_escape_string($home),
-			mysql_real_escape_string($away),
-			mysql_real_escape_string($gameId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
-		return $result;
-	} else { die('Insufficient rights to edit game'); }
+  if (hasEditGameEventsRight($gameId)) {
+    $query = sprintf("UPDATE uo_game SET homedefenses='%s', visitordefenses='%s' WHERE game_id='%s'",
+        mysql_real_escape_string($home),
+        mysql_real_escape_string($away),
+        mysql_real_escape_string($gameId));
+    $result = mysql_query($query);
+    if (!$result) { die('Invalid query: ' . mysql_error()); }
+    if (IsFacebookEnabled()) {
+      TriggerFacebookEvent($gameId, "game", 0);
+    }
+    return $result;
+  } else { die('Insufficient rights to edit game'); }
 }
-
-function GameClearResult($gameId) {
-	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf("UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0' WHERE game_id='%s'",
-			mysql_real_escape_string($gameId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-//		if (IsFacebookEnabled()) {
-//			TriggerFacebookEvent($gameId, "game", 0);
-//		}
-		return $result;
-	} else { die('Insufficient rights to edit game'); }
-}
-
 
 function GameAddPlayer($gameId, $playerId, $number) {
 	if (hasEditGamePlayersRight($gameId)) {
@@ -1150,7 +1206,7 @@ function GameProcessMassInput($post) {
 		$game = GameInfo($gameId);
 		if ($game['homescore'] !== $score['home'] || $game['visitorscore'] !== $score['visitor']) {
 			if ($score['home'] === "" && $score['visitor'] === "" && (!is_null($game['homescore']) || !is_null($game['visitorscore']))) {
-				$ok = GameClearResult($gameId);
+				$ok = GameClearResult($gameId, false);
 				if ($ok) {
 					$ok_clear++;
 					$changed[GamePool($gameId)] = 1;
@@ -1159,16 +1215,12 @@ function GameProcessMassInput($post) {
 				}
 				// echo "clear $gameId";
 			} else if ($score['home'] !== "" && $score['visitor'] !== "") {
-				$ok = GameSetResult($gameId, $score['home'], $score['visitor']);
-				// echo "set $gameId " . $score['home'] . "-" . $score['visitor'];
+				$ok = GameSetResult($gameId, $score['home'], $score['visitor'], false);
 				if ($ok) {
 					$ok_set++;
 					$changed[GamePool($gameId)] = 1;
 				} else {
 					$error_set++;
-				}
-				if (IsTwitterEnabled()) {
-					TweetGameResult($gameId);
 				}
 			}
 		}

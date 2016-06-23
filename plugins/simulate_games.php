@@ -157,7 +157,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 				//game official
 				GameSetScoreSheetKeeper($game['game_id'],"Game Simulator");
 				
-				GameSetResult($game['game_id'], $h, $a);
+				GameSetResult($game['game_id'], $h, $a, false);
 			}
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
@@ -185,7 +185,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
 				GameSetScoreSheetKeeper($game['game_id'], NULL);
 
-				GameClearResult($game['game_id']);
+				GameClearResult($game['game_id'], false);
 			}
 			
 			undoPoolMoves($poolId); 

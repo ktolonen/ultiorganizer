@@ -21,15 +21,9 @@ $title = _("Result");
 if(!empty($_POST['save'])) {
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
-	LogGameUpdate($gameId,"result: $home - $away", "addresult");
 	$ok=GameSetResult($gameId, $home, $away);
 	if($ok)	{
 		$html2 .= "<p>"._("Final result saved: $home - $away").". ";
-		ResolvePoolStandings(GamePool($gameId));
-		PoolResolvePlayed(GamePool($gameId));
-		if(IsTwitterEnabled()){
-			TweetGameResult($gameId);
-		}
         if($home>$away){
 	    	$html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
         	$html2 .= utf8entities($game_result['hometeamname']);
@@ -49,12 +43,9 @@ if(!empty($_POST['save'])) {
 	$html2 .= "<p>"._("Game ongoing. Current score: $home - $away").".</p>";
 	$game_result = GameInfo($gameId);
 }elseif(isset($_POST['clear'])) {
-  LogGameUpdate($gameId,"result cleared", "addresult");
   $ok=GameClearResult($gameId);
   if($ok)	{
     $html2 .= "<p>"._("Game reset").".</p>";
-    ResolvePoolStandings(GamePool($gameId));
-    PoolResolvePlayed(GamePool($gameId));
   }
   $game_result = GameInfo($gameId);
 }

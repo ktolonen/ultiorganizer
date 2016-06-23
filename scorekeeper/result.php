@@ -8,39 +8,22 @@ if(!empty($_POST['save'])) {
   $game = intval($_POST['game']);
   $home = intval($_POST['home']);
   $away = intval($_POST['away']);
-  $gameId = substr($game, 0, -1);
-  if ($game==0 || !checkChkNum($game)) {
-    $errors .= "<p class='warning'>". _("Erroneous scoresheet number.")."</p>";
-  }
-  if(IsSeasonStatsCalculated(GameSeason($gameId))){
-    $errors .= "<p class='warning'>". _("Event played.")."</p>";
-
-  }
-  if(!($home+$away)){
-    $errors .= "<p class='warning'>". _("No goals.")."</p>";
-  }
+  $errors = CheckGameResult($game, $home, $away);
+  $gameId = (int) substr($game, 0, -1);
 }
 if(!empty($_POST['confirm'])) {
   $game = intval($_POST['game']);
   $home = intval($_POST['home']);
   $away = intval($_POST['away']);
-  LogGameUpdate($game,"result: $home - $away", "addresult");
-  $query = sprintf("UPDATE uo_game SET homescore='%s', visitorscore='%s', hasstarted='2' WHERE game_id=%d",
-			$home,
-			$away,
-			$game);
-			
-  $ok = DBQuery($query);
-  
-  if($ok){
-    ResolvePoolStandings(GamePool($game));
-    PoolResolvePlayed(GamePool($game));
-    if(IsTwitterEnabled()){
-      TweetGameResult($game);
-    }
+  $errors = CheckGameResult($game, $home, $away);
+  if (empty($errors)) {
+    $gameId = (int) substr($game, 0, -1);
+    $ok = GameSetResult($gameId, $home, $away, true, false);
+    if ($ok)
+      header("location:?view=result&saved=1");
+    else 
+      $errors .= "<p>" . _("Error: Could not save result.") . "</p>\n";
   }
-   header("location:?view=result&saved=1");
-  
 }
 
 
@@ -49,8 +32,9 @@ $html .= "<h1>"._("Add result with game id")."</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 
-$html .= "<form action='?view=result' method='post' data-ajax='false'>\n";
 $html .= $errors;
+
+$html .= "<form action='?view=result' method='post' data-ajax='false'>\n";
 if(!empty($_POST['cancel'])) {
 	$html .= "<p class='warning'>". _("Result not saved!")."</p>";
 }
@@ -60,7 +44,7 @@ if($saved){
 
 if(!empty($_POST['save']) && empty($errors)) {
   $html .= "<p>";
-  $html .= "<input class='input' type='hidden' id='game' name='game' value='$gameId'/> ";
+  $html .= "<input class='input' type='hidden' id='game' name='game' value='$game'/> ";
   $html .= "<input class='input' type='hidden' id='home' name='home' value='$home'/> ";
   $html .= "<input class='input' type='hidden' id='away' name='away' value='$away'/> ";
   $game_result = GameInfo($gameId);

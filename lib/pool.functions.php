@@ -1112,6 +1112,11 @@ function IsPoolStarted($poolId){
   return DBQueryRowCount($query)?true:false;
 }
 
+function IsPoolLocked($poolId) {
+  $poolinfo = PoolInfo($poolId);
+  return $poolinfo['played'];
+}
+
 /**
  * Adds pool template.
  *

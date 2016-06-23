@@ -6,25 +6,19 @@ $info = "";
 $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
 $_SESSION['game'] = $gameId;
 
-if(isset($_POST['save'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	LogGameUpdate($gameId,"result: $home - $away", "Mobile");
-	$ok=GameSetResult($gameId, $home, $away);
-	if($ok)	{
-		ResolvePoolStandings(GamePool($gameId));
-		PoolResolvePlayed(GamePool($gameId));
-		$game_result = GameResult($gameId);
-		if(IsTwitterEnabled()){
-			TweetGameResult($gameId);
-		}
-	$info = "<p>"._("Game result $home - $away saved!")."</p>";
-	}
-}elseif(isset($_POST['update'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	$ok=GameUpdateResult($gameId, $home, $away);
-	$info = "<p>"._("Game result $home - $away updated!")."</p>";
+if (isset($_POST['save'])) {
+  $home = intval($_POST['home']);
+  $away = intval($_POST['away']);
+  $ok = GameSetResult($gameId, $home, $away);
+  if ($ok) {
+    $game_result = GameResult($gameId);
+    $info = "<p>" . _("Game result $home - $away saved!") . "</p>";
+  }
+} elseif (isset($_POST['update'])) {
+  $home = intval($_POST['home']);
+  $away = intval($_POST['away']);
+  $ok = GameUpdateResult($gameId, $home, $away);
+  $info = "<p>" . _("Game result $home - $away updated!") . "</p>";
 }
 
 $html .= "<div data-role='header'>\n";

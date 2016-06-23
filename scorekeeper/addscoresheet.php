@@ -107,7 +107,6 @@ if(isset($_POST['add']) || isset($_POST['forceadd'])) {
     $result = GameResult($gameId );
     //save as result, if result is not already set
     if(($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore']+$result['visitorscore'])){
-      LogGameUpdate($gameId,"result: $home - $away", "Mobile");
       GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
     }
     header("location:?view=addscoresheet&game=".$gameId);
@@ -121,13 +120,7 @@ if(isset($_POST['add']) || isset($_POST['forceadd'])) {
     $home = $lastscore['homescore'];
     $away = $lastscore['visitorscore'];
   }
-  LogGameUpdate($gameId,"result: $home - $away", "Mobile");
   GameSetResult($gameId, $home, $away);
-  ResolvePoolStandings(GamePool($gameId));
-  PoolResolvePlayed(GamePool($gameId));
-  if(IsTwitterEnabled()){
-    TweetGameResult($gameId);
-  }
   header("location:?view=gameplay&game=".$gameId);
 }
 
