@@ -22,7 +22,7 @@ msgstr ""
 
 #: poolstatus.php:8 menufunctions.php:685
 msgid "Standings"
-msgstr "Spielstände"
+msgstr "Tabellenstände"
 
 #: poolstatus.php:102 privacy.php:22 privacy.php:24 user_guide.php:18
 #: games.php:212 plugins/reassign_playoffpools.php:118
@@ -111,7 +111,7 @@ msgstr "Spiele"
 #: gameplay.php:52 gameplay.php:79 seriesstatus.php:251 scorestatus.php:62
 #: scorestatus.php:64 ext/poolscoreboard.php:35 ext/teamscoreboard.php:43
 msgid "Assists"
-msgstr "Vorlagen"
+msgstr "Assists"
 
 #: poolstatus.php:122 poolstatus.php:141 poolstatus.php:250 gamecard.php:223
 #: gamecard.php:227 gameplay.php:52 gameplay.php:79 gameplay.php:453
@@ -365,7 +365,7 @@ msgstr "Klasse"
 #: cust/default/pdfprinter.php:126 cust/default/pdfprinter.php:226
 #: cust/dfv/pdfprinter.php:125 cust/dfv/pdfprinter.php:225
 msgid "Roster"
-msgstr "Roster"
+msgstr "Spielerliste"
 
 #: countrycard.php:29 countrycard.php:54 menufunctions.php:617
 #: clubcard.php:136 clubcard.php:160 user/addspirit.php:45
@@ -381,7 +381,7 @@ msgstr "Spieler"
 #: countrycard.php:69 teamcard.php:213 teamcard.php:376 playercard.php:205
 #: playercard.php:380 clubcard.php:146
 msgid "History"
-msgstr "Verlauf"
+msgstr "Historie"
 
 #: countrycard.php:71 countrycard.php:79 teamcard.php:218 teamcard.php:381
 #: menufunctions.php:679 playercard.php:209 playercard.php:384
@@ -560,7 +560,7 @@ msgstr "Turnover"
 
 #: gameplay.php:224 ext/rss.php:138 ext/rss.php:170
 msgid "Offence"
-msgstr "Offense"
+msgstr "Offence"
 
 #: gameplay.php:269 mobile/gameplay.php:81 mobile/addscoresheet.php:206
 #: mobile/addofficial.php:21 scorekeeper/gameplay.php:84
@@ -586,7 +586,7 @@ msgstr "Spielstatistik"
 
 #: gameplay.php:458 gameplay.php:466
 msgid "Time on offence"
-msgstr "Offense-Zeit"
+msgstr "Offence-Zeit"
 
 #: gameplay.php:462 gameplay.php:470
 msgid "Time on defence"
@@ -598,7 +598,7 @@ msgstr "Punkt"
 
 #: gameplay.php:477
 msgid "Goals from starting on offence"
-msgstr "Punkte bei Offense"
+msgstr "Punkte bei Offence"
 
 #: gameplay.php:484
 msgid "Goals from starting on defence"
@@ -815,7 +815,7 @@ msgstr "Teamseiten"
 
 #: teamcard.php:110 teamcard.php:156 mobile/addplayerlists.php:95
 msgid "roster"
-msgstr "Roster"
+msgstr "Spielerliste"
 
 #: teamcard.php:115 teamcard.php:161 playercard.php:156 playercard.php:209
 #: playercard.php:286 playercard.php:384 playercard.php:453 playerlist.php:24
@@ -878,7 +878,7 @@ msgstr "Nach Ergebnis"
 
 #: teams.php:110 menufunctions.php:578
 msgid "Pools not yet created"
-msgstr "Pools noch nicht erzeugt"
+msgstr "Gruppen noch nicht erzeugt"
 
 #: teams.php:152 teams.php:154 admin/smsmoves.php:40
 #: cust/wfdf/pdfprinter.php:51 cust/slkl/pdfprinter.php:51
@@ -978,7 +978,7 @@ msgstr "Platzreservierungen"
 
 #: menufunctions.php:451 admin/schedule.php:10
 msgid "Scheduling"
-msgstr "Zeitplan"
+msgstr "Spielplan"
 
 #: menufunctions.php:455 admin/translations.php:6 admin/translations.php:93
 msgid "Translations"
@@ -1010,7 +1010,7 @@ msgstr "Neue(s) Turnier/Saison"
 
 #: menufunctions.php:510
 msgid "Team registration"
-msgstr "Team Registrierung"
+msgstr "Team-Anmeldung"
 
 #: menufunctions.php:522
 msgid "Player profiles"
@@ -1078,7 +1078,7 @@ msgstr "Klassen"
 #: admin/seasonpools.php:13 admin/seasonseries.php:107
 #: restful/seasons/series.php:29
 msgid "Pools"
-msgstr "Pools"
+msgstr "Gruppen"
 
 #: menufunctions.php:686 menufunctions.php:701 menufunctions.php:740
 #: menufunctions.php:749 admin/accreditation.php:6 admin/accreditation.php:59
@@ -1093,11 +1093,11 @@ msgstr "Tabellenstände"
 #: menufunctions.php:724 menufunctions.php:748 user/respteams.php:7
 #: user/respteams.php:17
 msgid "Team responsibilities"
-msgstr "Teamverantwortliche"
+msgstr "Teamverwaltung"
 
 #: menufunctions.php:772 user/respgames.php:8 mobile/respgames.php:7
 msgid "Game responsibilities"
-msgstr "Spielergebnisse"
+msgstr "Ergebniseingabe"
 
 #: menufunctions.php:773 clubcard.php:56 user/contacts.php:4
 #: user/contacts.php:16 user/clubprofile.php:149
@@ -1155,7 +1155,7 @@ msgstr "Spielerseiten"
 #: playercard.php:160 playercard.php:211 playercard.php:287 playercard.php:385
 #: playercard.php:453
 msgid "Pass avg."
-msgstr "Assists durchscnittl."
+msgstr "Vorlagen durchschn."
 
 #: playercard.php:161
 msgid "Goals avg."
@@ -1243,7 +1243,7 @@ msgstr "Ungültiges Passwort (min. 5, max. 20 Buchstaben)."
 
 #: statistics.php:15
 msgid "Events' Standings"
-msgstr "Spielstände"
+msgstr "Tabellenstände"
 
 #: statistics.php:16
 msgid "Events' Scoreboards"
@@ -1255,7 +1255,7 @@ msgstr "Allzeit-Scorerliste"
 
 #: statistics.php:21
 msgid "Team Standings"
-msgstr "Spielstand"
+msgstr "Tabellenstand"
 
 #: statistics.php:63
 msgid "Season statistics have not yet been computed"
@@ -1529,7 +1529,7 @@ msgstr "Mitzunehmende Spiele"
 
 #: plugins/reassign_playoffpools.php:93 admin/serieteams.php:248
 msgid "No games to move"
-msgstr "Keine Spiel-Transfers"
+msgstr "Keine Spiele zum Mitnehmen"
 
 #: plugins/simulate_games.php:219 admin/serverconf.php:353
 #: admin/addseasonlinks.php:98 admin/poolgames.php:283 admin/poolgames.php:284
@@ -1713,7 +1713,7 @@ msgstr "Mail an die Teams in"
 
 #: user/teamplayers.php:22
 msgid "can not be removed from the roster"
-msgstr "kann nicht vom Roster entfernt werden"
+msgstr "kann aus der Spielerliste entfernt werden"
 
 #: user/teamplayers.php:23
 msgid "Games played in the team:"
@@ -1729,7 +1729,7 @@ msgstr "Club-Profil"
 
 #: user/teamplayers.php:137
 msgid "Add players to team's roster:"
-msgstr "Füge Spieler zur Spielerlist hinzu:"
+msgstr "Füge Spieler zur Spielerliste hinzu:"
 
 #: user/teamplayers.php:139
 msgid ""
@@ -1777,7 +1777,7 @@ msgstr "Profil"
 
 #: user/teamplayers.php:159
 msgid "Accredited"
-msgstr "zugelassen"
+msgstr "Akkreditiert"
 
 #: user/teamplayers.php:161
 msgid "Member ID"
@@ -1808,7 +1808,7 @@ msgstr "Löschen"
 
 #: user/teamplayers.php:179
 msgid "Copy team roster from:"
-msgstr "Team Roster kopieren"
+msgstr "Spielerliste kopieren von:"
 
 #: user/teamplayers.php:188 admin/seasonteams.php:228
 msgid "Copy"
@@ -1840,7 +1840,7 @@ msgstr "Zurück zur Spielernummerneingabe"
 
 #: user/teamplayers.php:291
 msgid "Print roster"
-msgstr "Roster drucken"
+msgstr "Spielerliste drucken"
 
 #: user/addspirit.php:12 user/respgames.php:201 admin/seasongames.php:206
 #: scorekeeper/respgames.php:147
@@ -1983,7 +1983,7 @@ msgstr "Öffentliche Spielerstatistik einsehen"
 
 #: user/addplayerlists.php:8 mobile/addplayerlists.php:88
 msgid "Rosters"
-msgstr "Rosters"
+msgstr "Spielerlisten"
 
 #: user/addplayerlists.php:75 user/addplayerlists.php:137
 #: mobile/addplayerlists.php:62 scorekeeper/addplayerlists.php:58
@@ -2155,7 +2155,7 @@ msgstr "Anzeigen"
 
 #: user/userinfo.php:372
 msgid "Show pools"
-msgstr "Zeige Pools"
+msgstr "Zeige Gruppen"
 
 #: user/userinfo.php:430
 msgid "User roles"
@@ -2188,11 +2188,11 @@ msgstr "Liga-/Klassenverantwortlicher"
 
 #: user/userinfo.php:475 user/userinfo.php:548 admin/select_userrole.php:53
 msgid "Accreditation official"
-msgstr "Zulassungsverantwortlicher"
+msgstr "Akkreditierungsverantwortlicher"
 
 #: user/userinfo.php:482 user/userinfo.php:549 admin/select_userrole.php:62
 msgid "Scheduling right"
-msgstr "Spielzeiten-Verantwortlicher"
+msgstr "Spielplan-Verantwortlicher"
 
 #: user/userinfo.php:491 user/userinfo.php:550 admin/select_userrole.php:65
 #: admin/select_userrole.php:68
@@ -2375,7 +2375,7 @@ msgstr "Spielernummer"
 #: mobile/addscoresheet.php:89 mobile/addscoresheet.php:96
 #: mobile/addscoresheet.php:106 mobile/addscoresheet.php:114
 msgid "Not on the roster"
-msgstr "nicht auf dem Roster"
+msgstr "nicht auf dem Spielerliste"
 
 #: user/adddefensesheet.php:178
 msgid "Defense sheet saved"
@@ -2436,7 +2436,7 @@ msgstr "Spiel-Offizielle(r)"
 #: cust/wfdf/pdfprinter.php:887 cust/windmill/pdfprinter.php:864
 #: cust/bula/pdfprinter.php:905 cust/gummis/pdfprinter.php:971
 msgid "Starting offensive team"
-msgstr "Team mit erster Offense"
+msgstr "Team mit erster Offence"
 
 #: user/adddefensesheet.php:265 user/adddefensesheet.php:381
 #: user/addscoresheet.php:447 user/addscoresheet.php:562
@@ -2499,7 +2499,7 @@ msgstr "Als Trennzeichen für die Zeit-Eingabe benutze '.', ',', ':', oder ';'"
 
 #: user/adddefensesheet.php:356 user/addscoresheet.php:538
 msgid "Input XX as the assist in Callahan goals"
-msgstr "Für einen Callahan Punkt als Assist XX eintragen"
+msgstr "Für einen Callahan-Punkt als Assist XX eintragen"
 
 #: user/adddefensesheet.php:357 user/addscoresheet.php:539
 msgid "You can save the score sheet at any time while feeding it in"
@@ -2512,7 +2512,7 @@ msgstr "Du kannst den Spielbericht jederzeit während der Eingabe speichern"
 #: scorekeeper/addresult.php:76 scorekeeper/addspiritpoints.php:76
 #: scorekeeper/addscoresheet.php:289
 msgid "Back to game responsibilities"
-msgstr "Zurück zur Spielübersicht"
+msgstr "Zurück zur Ergebniseingabe"
 
 #: user/adddefensesheet.php:382 cust/gummis/pdfprinter.php:1081
 #: cust/default/pdfprinter.php:949 cust/dfv/pdfprinter.php:948
@@ -2553,7 +2553,7 @@ msgstr "Punkt"
 #: user/addscoresheet.php:302 user/addscoresheet.php:330
 #: mobile/addscoresheet.php:89 mobile/addscoresheet.php:106
 msgid "assisting player's number"
-msgstr "Nummer des Assist-Gebers"
+msgstr "Nummer des Vorlagengebers"
 
 #: user/addscoresheet.php:311 user/addscoresheet.php:339
 #: mobile/addscoresheet.php:96 mobile/addscoresheet.php:114
@@ -3113,7 +3113,7 @@ msgstr "Gewinner der vorherigen Runde gegeneinander; Verlierer gegeneinander"
 
 #: admin/poolgames.php:168
 msgid "Creation of pool games"
-msgstr "Poolspiele erzeugen"
+msgstr "Gruppenspiele erzeugen"
 
 #: admin/poolgames.php:180
 msgid "Do not generate mutual games for teams moved from same pool"
@@ -3158,7 +3158,7 @@ msgstr "Spiele hinzufügen"
 
 #: admin/poolgames.php:295
 msgid "No schedule"
-msgstr "Keine Spiele angesetzt"
+msgstr "Nicht im Spielplan"
 
 #: admin/poolgames.php:326
 msgid "Moved games"
@@ -3282,7 +3282,7 @@ msgstr "Kein Team ohne Gruppe"
 #: admin/serieteams.php:228 admin/seasonstandings.php:454
 #: admin/seasonpools.php:222
 msgid "Manage moves"
-msgstr "Bewegungen verwalten"
+msgstr "Transfers verwalten"
 
 #: admin/serieteams.php:252
 msgid "Make this pool visible on menu"
@@ -3290,7 +3290,7 @@ msgstr "Diesen Pool im Menü sichtbar machen"
 
 #: admin/serieteams.php:253 admin/seasonstandings.php:451
 msgid "Confirm moves"
-msgstr "Bewegungen bestätigen"
+msgstr "Transfers bestätigen"
 
 #: admin/select_teams.php:12
 msgid "Team selection"
@@ -3327,7 +3327,7 @@ msgstr "Teamadministratoren hinzufügen"
 
 #: admin/seasonteams.php:235
 msgid "Print team rosters"
-msgstr "Team Rosters drucken"
+msgstr "Spielerlisten drucken"
 
 #: admin/accreditation.php:61
 msgid "Automatic Accreditation"
@@ -3335,11 +3335,11 @@ msgstr "Automatische Akkreditierung"
 
 #: admin/accreditation.php:63
 msgid "Accreditation log"
-msgstr "Zulassungslog"
+msgstr "Akkreditierungslog"
 
 #: admin/accreditation.php:65 admin/accreditation.php:130
 msgid "Accreditation events"
-msgstr "Zulassungsereignisse"
+msgstr "Akkreditierungsereignisse"
 
 #: admin/accreditation.php:67
 msgid "Missing IDs"
@@ -3385,7 +3385,7 @@ msgstr "Spieler ohne Mitglieds-ID"
 
 #: admin/accreditation.php:190
 msgid "Players not accredited"
-msgstr "Spieler nicht gemeldet"
+msgstr "Spieler nicht akkreditiert"
 
 #: admin/seriesseeding.php:23
 msgid "Division seeding"
@@ -3413,11 +3413,11 @@ msgstr "Tabellenstände prüfen von"
 
 #: admin/seasonstandings.php:201
 msgid ", then "
-msgstr ", dann"
+msgstr ", dann "
 
 #: admin/seasonstandings.php:201
 msgid "Confirm moves to pool "
-msgstr "Bewegungen zum Pool bestätigen"
+msgstr "Transfers zum Pool bestätigen "
 
 #: admin/seasonstandings.php:207
 msgid "Games results missing for"
@@ -3449,7 +3449,7 @@ msgstr "Poolspiele nicht beendet:"
 
 #: admin/seasonstandings.php:409
 msgid "Moves to"
-msgstr "Bew. nach"
+msgstr "Transf. nach"
 
 #: admin/seasonstandings.php:410 admin/seasonstandings.php:413
 msgid "Pos"
@@ -3461,7 +3461,7 @@ msgstr "Nach"
 
 #: admin/seasonstandings.php:412
 msgid "Moves from"
-msgstr "Bew. von"
+msgstr "Transf. von"
 
 #: admin/seasonstandings.php:413
 msgid "From"
@@ -3625,7 +3625,7 @@ msgstr "K.O.-Spiele"
 
 #: admin/seasonpools.php:236 admin/seasonpools.php:238
 msgid "Game management"
-msgstr "Spiele verwlaten"
+msgstr "Spiele verwalten"
 
 #: admin/seasonpools.php:246
 msgid "clone"
@@ -3637,7 +3637,7 @@ msgstr "entfernen"
 
 #: admin/seasonpools.php:295
 msgid "Show all moves"
-msgstr "Alle Moves anzeigen"
+msgstr "Alle Transfers anzeigen"
 
 #: admin/visitors.php:6
 msgid "Visitor statistics"
@@ -3758,7 +3758,7 @@ msgstr "Punkte"
 
 #: admin/addserieformats.php:141 admin/addseasonpools.php:433
 msgid "Additional points after time cap"
-msgstr "Zusätzl. Punkte nach Ende der Zeit"
+msgstr "Zusätzl. Punkte nach Ablauf der Zeit"
 
 #: admin/addserieformats.php:146 admin/addseasonpools.php:438
 msgid "Time between points"
@@ -3978,7 +3978,7 @@ msgstr "All team admins have scorekeeping rights for teams' games."
 
 #: admin/addseasonusers.php:181
 msgid "Roster accreditation rights"
-msgstr "Roster accreditation rights"
+msgstr "Rechte zur Akkreditierung"
 
 #: admin/poolmoves.php:19 admin/addseasonpools.php:349
 msgid "Continuing pool"
@@ -3994,12 +3994,12 @@ msgstr "Transfer existiert schon"
 
 #: admin/poolmoves.php:151 admin/poolmoves.php:161
 msgid "Team has already moved."
-msgstr "Der Benutzername ist schon vergeben."
+msgstr "Team wurde schon transferiert"
 
 #: admin/poolmoves.php:186 admin/seasonmoves.php:165
 #: admin/addseasonpools.php:306
 msgid "Move games"
-msgstr "Spiele transferieren"
+msgstr "Spiele mitnehmen"
 
 #: admin/poolmoves.php:199 admin/seasonmoves.php:190
 msgid "all"
@@ -4119,7 +4119,7 @@ msgstr "Spielergebnis ändern"
 
 #: admin/editgame.php:161
 msgid "Change game roster"
-msgstr "Spiel Roster ändern"
+msgstr "Spielerliste des Spiels ändern"
 
 #: admin/editgame.php:162
 msgid "Change game score sheet"
@@ -4166,7 +4166,7 @@ msgstr "Transfer von"
 
 #: admin/seasonmoves.php:164
 msgid "Scheduling name"
-msgstr "Name im Zeitplan"
+msgstr "Name im Spielplan"
 
 #: admin/seasonmoves.php:166 admin/seasonmoves.php:198
 msgid "Undo"
@@ -4262,7 +4262,7 @@ msgstr "Klassen-Ergebnisse"
 
 #: admin/schedule.php:242
 msgid "Unscheduled"
-msgstr "Nicht im Zeitplan"
+msgstr "Nicht im Spielplan"
 
 #: admin/schedule.php:245 ext/export.php:34 ext/index.php:64
 #: scorekeeper/respgames.php:39
@@ -4275,7 +4275,7 @@ msgstr "Alle Klassen"
 
 #: admin/schedule.php:273 ext/index.php:218
 msgid "All pools"
-msgstr "Alle Pools"
+msgstr "Alle Gruppen"
 
 #: admin/schedule.php:304
 msgid "Add pause"
@@ -4784,7 +4784,7 @@ msgstr "Turnover"
 
 #: mobile/gameplay.php:53 scorekeeper/gameplay.php:45
 msgid "offence"
-msgstr "Offense"
+msgstr "Offence"
 
 #: mobile/gameplay.php:86
 msgid "Desktop score sheet"
@@ -4821,7 +4821,7 @@ msgstr "Alle anzeigen"
 
 #: mobile/deletescore.php:20
 msgid "Delete score"
-msgstr "Score löschen"
+msgstr "Punkt löschen"
 
 #: mobile/addscoresheet.php:121
 msgid "Select scoring team!"
@@ -4844,7 +4844,7 @@ msgstr "Punkt speichern"
 
 #: mobile/addscoresheet.php:205 scorekeeper/addscoresheet.php:267
 msgid "First offence"
-msgstr "Erste Offense"
+msgstr "Erste Offence"
 
 #: mobile/addscoresheet.php:209 scorekeeper/tweet.php:21
 #: scorekeeper/addscoresheet.php:270
@@ -4861,7 +4861,7 @@ msgstr "Fehler korrigieren oder Punkt mit Fehlern speichern"
 
 #: mobile/addfirstoffence.php:38
 msgid "starting on offence"
-msgstr "Erste Offense"
+msgstr "Erste Offence"
 
 #: mobile/scoreboard.php:13 scorekeeper/scoreboard.php:10
 msgid "Players of the game"
@@ -4905,11 +4905,11 @@ msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren"
 
 #: scorekeeper/respgames.php:27
 msgid "Games you are responsible for"
-msgstr "Spiele für die Sie verantwortlich sind"
+msgstr "Spiele, für die Sie verantwortlich sind"
 
 #: scorekeeper/respgames.php:53
 msgid "Games in selected event"
-msgstr "Spiele in gewähltem Turnier"
+msgstr "Spiele im gewählten Turnier"
 
 #: scorekeeper/deletescore.php:24
 msgid "Delete last goal"
@@ -4930,11 +4930,11 @@ msgstr ""
 
 #: scorekeeper/addscoresheet.php:78 scorekeeper/addscoresheet.php:90
 msgid "Assisting player not on the roster"
-msgstr "Füge Spieler zum Teamroster hinzu"
+msgstr "Vorlagengeber nicht auf der Spielerliste"
 
 #: scorekeeper/addscoresheet.php:82 scorekeeper/addscoresheet.php:94
 msgid "Scorer's player not on the roster"
-msgstr "Füge Spieler zum Teamroster hinzu"
+msgstr "Punktefänger nicht auf der Spielerliste"
 
 #: scorekeeper/addscoresheet.php:102
 msgid "Select team scored"
@@ -4983,7 +4983,7 @@ msgstr "Einloggen"
 
 #: scorekeeper/login.php:24
 msgid "Quick add result"
-msgstr "Ergebnis schnell hinzufügen"
+msgstr "Einzelergebnis eingeben"
 
 #: scorekeeper/result.php:48
 msgid "Add result with game id"
@@ -5012,7 +5012,7 @@ msgstr "Frühere Spiele"
 #: scorekeeper/addfirstoffence.php:32 cust/slkl/pdfprinter.php:837
 #: cust/default/pdfprinter.php:822 cust/dfv/pdfprinter.php:821
 msgid "First Offence"
-msgstr "Erste Offense"
+msgstr "Erste Offence"
 
 #: lib/url.functions.php:67
 msgid "Forum"
@@ -5044,7 +5044,7 @@ msgstr "Video"
 
 #: lib/url.functions.php:79
 msgid "Live video"
-msgstr "Live video"
+msgstr "Live-Video"
 
 #: lib/timetable.functions.php:502
 msgid "Live Broadcasting"
@@ -5366,7 +5366,7 @@ msgid ""
 "For new players added, accreditation id or date of birth must be written "
 "down."
 msgstr ""
-"Falls neue Spieler hinzugefügt werden, muss die Zulassungs-ID oder das "
+"Falls neue Spieler hinzugefügt werden, muss die Akkreditierungs-ID oder das "
 "Geburtsdatum aufgeschrieben werden"
 
 #: cust/wfdf/pdfprinter.php:293 cust/windmill/pdfprinter.php:293
@@ -5546,11 +5546,11 @@ msgstr "Keine Klasse/Liga ausgewählt!"
 
 #: cust/slkl/mass-accreditation.php:66
 msgid "new accreditations."
-msgstr "neue Zulassungen"
+msgstr "neue Akkreditierungen."
 
 #: cust/slkl/mass-accreditation.php:67
 msgid "players accredited."
-msgstr ""
+msgstr "Spieler akkreditiert."
 
 #: cust/slkl/mass-accreditation.php:73
 msgid "Update ultiorganizer license database"
@@ -5558,7 +5558,7 @@ msgstr "Aktualisiere die Ultiorganizer Lizenz-Datenbank"
 
 #: cust/slkl/mass-accreditation.php:77
 msgid "Membership database (a file with .mdb/.csv suffix)"
-msgstr "Mitglieder Datenbank  (eine Datei mit .mdb/cvs -Endung)"
+msgstr "Mitglieder-Datenbank  (eine Datei mit .mdb/cvs -Endung)"
 
 #: cust/slkl/mass-accreditation.php:78
 msgid "Upload"
@@ -5603,7 +5603,7 @@ msgstr ""
 #: cust/slkl/mass-accreditation.php:135 cust/fpudd/mass-accreditation.php:11
 #: cust/default/mass-accreditation.php:11 cust/dfv/mass-accreditation.php:11
 msgid "Accredit"
-msgstr "Zulassen"
+msgstr "Akkreditieren"
 
 #: cust/slkl/mass-accreditation.php:235
 msgid "License database update ok"
@@ -5789,7 +5789,7 @@ msgstr ""
 #: cust/fpudd/mass-accreditation.php:2 cust/default/mass-accreditation.php:2
 #: cust/dfv/mass-accreditation.php:2
 msgid "Mass accreditation"
-msgstr "Massenzulassung"
+msgstr "Massen-Akkreditierung"
 
 #: cust/default/head.php:8
 msgid "LOGO EXAMPLE"

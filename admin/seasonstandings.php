@@ -455,7 +455,7 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
   }
   $html .= "</th>";
   if ($undo)
-    $html .= undoPoolButton("Undo", $poolId, $type == "from");
+    $html .= undoPoolButton($poolId, $type == "from");
   else
     $html .= "<th></th>";
   $html .= "</tr></table>\n";
@@ -502,7 +502,7 @@ function undoButton($type, $frompool, $fromplacing, $topool) {
          "' onclick='set".$type."Move(".$frompool.", ".$fromplacing.", ".$topool. ")' /></td>";
 }
 
-function undoPoolButton($type, $pool, $from){
-  return "<th class='right'><input class='button' type='submit' name='pool".$type."' value='" . _($type." all") . "' onclick='setUndoPool(" . $pool . ", ".($from?"\"from\"":"\"to\"").");'/></th>";
+function undoPoolButton($pool, $from){
+  return "<th class='right'><input class='button' type='submit' name='poolUndo' value='" . _("Undo all") . "' onclick='setUndoPool(" . $pool . ", ".($from?"\"from\"":"\"to\"").");'/></th>";
 }
 ?>

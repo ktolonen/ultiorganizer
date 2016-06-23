@@ -376,7 +376,7 @@ if(!$poolId || $addmore) {
 	echo "<td></td></tr>";
 	
 	$comment = CommentRaw(3, $poolId);
-	echo "<tr><td class='infocell' style='vertical-align:top'>".htmlentities(_("Comment (you can use <p>, </i>, and <br> tags)")).":</td>
+	echo "<tr><td class='infocell' style='vertical-align:top'>".htmlentities(_("Comment (you can use <b>, <em>, and <br /> tags)")).":</td>
 		<td><textarea class='input' rows='10' cols='70' id='comment' name='comment'>".htmlentities($comment)."</textarea></td></tr>";
 	
 	

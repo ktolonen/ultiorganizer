@@ -304,7 +304,7 @@ if ($sp['isnationalteams']) {
 }
 $html .= "/></td></tr>";
 
-$html .= "<tr><td class='infocell'>"._("Spirit points given").": </td><td>";
+$html .= "<tr><td class='infocell'>"._("Spirit mode").": </td><td>";
 $spiritmodes = SpiritModes();
 $html .= "<select class='dropdown' id='spiritmode' name='spiritmode'>\n";
 $html .= "<option value='0'></option>\n";
