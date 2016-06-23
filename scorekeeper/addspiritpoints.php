@@ -23,7 +23,7 @@ if ($season['spiritmode'] > 0) {
         if (isset($_POST['homecat' . $cat]))
           $points[$cat] = $_POST['homecat' . $cat];
         else
-          $missing = _("Missing score for ") . $game_result['hometeamname'];
+          $missing = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
       }
       GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
     } else {
@@ -32,7 +32,7 @@ if ($season['spiritmode'] > 0) {
         if (isset($_POST['viscat' . $cat]))
           $points[$cat] = $_POST['viscat' . $cat];
         else
-          $missing = _("Missing score for ") . $game_result['visitorteamname'];
+          $missing = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
       }
       GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories);
       
@@ -69,7 +69,7 @@ if ($season['spiritmode'] > 0) {
          utf8entities($game_result['hometeamname']) . "</a>";
   }
 } else {
-  $html .= "<p>" . _("Spiritpoints not given for") . utf8entities($season['name']) . "</p>";
+  $html .= "<p>".sprintf(_("Spirit points not given for %s."), utf8entities($season['name'])) . "</p>";
 }
 
 $html .= " <a href='?view=addscoresheet&amp;game=".$gameId."' data-role='button' data-ajax='false'>"._("Back to score sheet")."</a>";

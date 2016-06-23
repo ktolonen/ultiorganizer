@@ -8,7 +8,7 @@ include_once 'lib/configuration.functions.php';
 $LAYOUT_ID = SEASONADMIN;
 $info = SeasonInfo($_GET["season"]);
 
-$title = _("Event".": ".utf8entities(U_($info['name'])));
+$title = _("Event").": ".utf8entities(U_($info['name']));
 $html = "";
 
 //common page

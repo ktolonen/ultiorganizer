@@ -345,12 +345,12 @@ if(!empty($_POST['save']))
   }
   $isongoing = isset($_POST['isongoing'])?1:0;
   if($isongoing){
-    echo "<p>"._("Game ongoing. Current scores: $h - $a").".</p>";
+    echo "<p>".sprintf(_("Game ongoing. Current score: %s - %s."), $h, $a).".</p>";
     $ok=GameUpdateResult($gameId, $h, $a);
   }elseif($game_result['isongoing']){
     $ok=GameSetResult($gameId, $h, $a);
     if($ok)	{
-      echo "<p>"._("Final result saved: $h - $a").".</p>";
+      echo "<p>".sprintf(_("Final result saved: %s - %s."), $h, $a).".</p>";
     }
   }
   echo "<p>"._("Score sheet saved")." (". _("Time").": ".DefTimestamp().")!</p>";

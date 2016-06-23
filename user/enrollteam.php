@@ -111,7 +111,7 @@ foreach($result as $row) {
 		echo "<td>".ShortTimeFormat($row2['enroll_time'])."</td>";
 		if ($row2['status'] == 0) {
 			if (hasEditTeamsRight($row['series_id'])) {
-				echo "<td><input type='submit' name='confirm' value='"._('Confirm')."' onclick='setId(".$row2['id'].", \"confirmEnrollId".$hiddenIndex."\");'/></td>";
+				echo "<td><input type='submit' name='confirm' value='"._("Confirm")."' onclick='setId(".$row2['id'].", \"confirmEnrollId".$hiddenIndex."\");'/></td>";
 			}	
 			else {
 				echo "<td>"._("Unconfirmed")."</td>";

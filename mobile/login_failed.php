@@ -12,7 +12,7 @@ if(isset($_POST['resetpassword'])) {
   if($ret){
     $html .= "<p>"._("New password sent.")."</p>";
   }else{
-    $html .= "<p>"._("Resetting password for '$userId' failed. Email address may be invalid. Password was not sent.")."</p>";
+    $html .= "<p>". sprintf(_("Resetting password for '%s' failed. Email address may be invalid. Password was not sent."), $userId)."</p>";
   }
 }
 
@@ -25,7 +25,7 @@ if(empty($html)){
     $html .= "<p><input class='button' type='submit' name='resetpassword' value='"._("Reset password")."'/></p>\n";
     $html .= "</form>\n";
   }else{
-    $html .= "<p>"._("Invalid username $userId.")."</p>\n";
+    $html .= "<p>".sprintf(_("Invalid username %s."), $userId)."</p>\n";
   }
 }
 showPage($title, $html, true);

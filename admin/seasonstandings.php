@@ -204,7 +204,6 @@ foreach ($pools as $spool) {
       $firstTask = true;
     }
     
-    $html .= "<li>". _("Check standings of");
     $deplist = "";
     $dependees = PoolDependsOn($poolId);
     foreach ($dependees as $dep) {
@@ -215,7 +214,10 @@ foreach ($pools as $spool) {
       }
       $deplist .=  poolLink($dep['frompool'], $dep['name']);
     }
-    $html .= $deplist . _(", then ") . poolLink($poolId, _("Confirm moves to pool ") . PoolName($poolId)) . "</a></li>\n";
+    
+    $confirmtext = poolLink($poolId, sprintf(_("Confirm moves to pool %s."), PoolName($poolId)));
+    
+    $html .= "<li>" . sprintf(_("Check standings of %s. Then: %s"), $deplist, $confirmtext) . "</li>\n"; 
   }
 }
 if ($firstTask) {
@@ -239,7 +241,8 @@ foreach ($pools as $spool) {
   
   $standings = PoolTeams($poolId, "rank");
   
-  $html .= "<div class='right pagemenu_container'><a href='#Tasks'>" . _("Go to top") . "</a></div>\n";
+  if ($poolNum>0)
+    $html .= "<div class='right pagemenu_container'><a href='#Tasks'>" . _("Go to top") . "</a></div>\n";
   $html .= "<h2><a name='P" . $poolId . "'>" . utf8entities(U_($poolinfo['name'])) . "</a>
     <a href='?view=admin/addseasonpools&amp;pool=$poolId'><img class='button' src='images/settings.png' alt='E' title='"._("edit pool")."'/></a></h2>";
   
@@ -452,7 +455,7 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
 
     if ($row['ismoved']) {
       $undo = true;
-      $html .= undoButton("Undo", $row['frompool'], $row['fromplacing'], $row['topool']);
+      $html .= undoButton($row['frompool'], $row['fromplacing'], $row['topool']);
     } else {
       $allMoved = false;
       $html .= "<td></td>";
@@ -527,7 +530,7 @@ function editPoolStandings($type, $pool, $startIds, $editStarts, $editEnds, $see
 }
 
 function undoButton($type, $frompool, $fromplacing, $topool) {
-  return "<td class='right'><input class='button' type='submit' name='move".$type."' value='" . _($type) .
+  return "<td class='right'><input class='button' type='submit' name='move".$type."' value='" . _("Undo") .
          "' onclick='set".$type."Move(".$frompool.", ".$fromplacing.", ".$topool. ")' /></td>";
 }
 

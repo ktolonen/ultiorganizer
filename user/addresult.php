@@ -23,15 +23,11 @@ if(!empty($_POST['save'])) {
 	$away = intval($_POST['away']);
 	$ok=GameSetResult($gameId, $home, $away);
 	if($ok)	{
-		$html2 .= "<p>"._("Final result saved: $home - $away").". ";
+		$html2 .= "<p>". sprintf(_("Final result saved: %s - %s."), $home, $away) ." ";
         if($home>$away){
-	    	$html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
-        	$html2 .= utf8entities($game_result['hometeamname']);
+	    	$html2 .=  sprintf(_("Winner is <span style='font-weight:bold'>%s</span>."), utf8entities($game_result['hometeamname']));
         }elseif ($away>$home){
-	    	$html2 .=  _("Winner is"). " <span style='font-weight:bold'>";
-        	$html2 .= utf8entities($game_result['visitorteamname']);
-        }else{
-        	$html2 .= _("No winner"). " <span style='font-weight:bold'>";
+	    	$html2 .=  sprintf(_("Winner is <span style='font-weight:bold'>%s</span>."), utf8entities($game_result['visitorteamname']));
         }
         $html2 .= "</p>";
 	}
@@ -40,7 +36,7 @@ if(!empty($_POST['save'])) {
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
 	$ok=GameUpdateResult($gameId, $home, $away);
-	$html2 .= "<p>"._("Game ongoing. Current score: $home - $away").".</p>";
+	$html2 .= "<p>".sprintf(_("Game ongoing. Current score: %s - %s."), $home, $away)."</p>";
 	$game_result = GameInfo($gameId);
 }elseif(isset($_POST['clear'])) {
   $ok=GameClearResult($gameId);

@@ -22,7 +22,7 @@ if(!empty($_POST['save'])) {
     if (isset($_POST['homecat'.$cat]))
       $points[$cat] = $_POST['homecat'.$cat];
     else
-      $missing = _("Missing score for ") . $game_result['hometeamname'];
+      $missing = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
   }
   GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
   
@@ -31,7 +31,7 @@ if(!empty($_POST['save'])) {
     if (isset($_POST['viscat'.$cat]))
       $points[$cat] = $_POST['viscat'.$cat];
     else
-      $missing = _("Missing score for ") . $game_result['visitorteamname'];
+      $missing = sprintf(_("Missing score for %s. ") . $game_result['visitorteamname']);
   }
   GameSetSpiritPoints($gameId,$game_result['visitorteam'],0,$points, $categories);
   
@@ -40,12 +40,12 @@ if(!empty($_POST['save'])) {
 
 $html .= "<form  method='post' action='?view=user/addspirit&amp;game=".$gameId."'>";
 
-$html .= "<h3>"._("Spirit points given for").": ". utf8entities($game_result['hometeamname'])."</h3>\n";
+$html .= "<h3>".sprintf(_("Spirit points given for %s"), utf8entities($game_result['hometeamname']))."</h3>\n";
 
 $points = GameGetSpiritPoints($gameId, $game_result['hometeam']);
 $html .= SpiritTable($game_result, $points, $categories, true, false);
 
-$html .= "<h3>"._("Spirit points given for").": ". utf8entities($game_result['visitorteamname'])."</h3>\n";
+$html .= "<h3>".sprintf(_("Spirit points given for %s"), utf8entities($game_result['visitorteamname']))."</h3>\n";
 
 $points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
 $html .= SpiritTable($game_result, $points, $categories, false, false);
@@ -59,7 +59,7 @@ $html .= "<p><a href='?view=mobile/addscoresheet&amp;game=".$gameId."'>"._("Back
 $html .= "</form>\n";
 
 } else {
-  $html .= "<p>"._("Spiritpoints not given for") . utf8entities($season['name']) . "</p>";
+  $html .= "<p>".sprintf(_("Spirit points not given for %s."), utf8entities($season['name'])) . "</p>";
 }
 
 echo $html;

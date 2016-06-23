@@ -37,7 +37,7 @@ if(!empty($_POST['add'])){
         AddSeasonUserRole($userid, 'accradmin:'.$teamId,$seasonId);
       }
     }    
-    $html .= "<p>"._("User rights added for: ").$userid."</p>";
+    $html .= "<p>".sprintf(_("User rights added for %s."), utf8entities($userid))."</p>";
   }else{
     $html .= "<p class='warning'>"._("Invalid user")."</p>";
   }

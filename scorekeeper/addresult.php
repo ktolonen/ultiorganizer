@@ -12,13 +12,13 @@ if (isset($_POST['save'])) {
   $ok = GameSetResult($gameId, $home, $away);
   if ($ok) {
     $game_result = GameResult($gameId);
-    $info = "<p>" . _("Game result $home - $away saved!") . "</p>";
+    $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away). "</p>";
   }
 } elseif (isset($_POST['update'])) {
   $home = intval($_POST['home']);
   $away = intval($_POST['away']);
   $ok = GameUpdateResult($gameId, $home, $away);
-  $info = "<p>" . _("Game result $home - $away updated!") . "</p>";
+  $info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";
 }
 
 $html .= "<div data-role='header'>\n";

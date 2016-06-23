@@ -1227,11 +1227,11 @@ function GameProcessMassInput($post) {
 	}
 	
 	if ($ok_clear > 0)
-		$html .= "<p>" . _("Results cleared: $ok_clear") . ".</p>";
+		$html .= "<p>" . sprintf(_("Results cleared: %s."), $ok_clear) . "</p>";
 	if ($ok_set > 0)
-		$html .= "<p>" . _("Results changed: $ok_set") . ".</p>";
+		$html .= "<p>" . sprintf(_("Results changed: %s."), $ok_set) . "</p>";
 	if ($error_clear + $error_set > 0)
-		$html .= "<p>" . _("Errors: ") . ($error_clear + $error_set) . ".</p>";
+		$html .= "<p>" . sprintf(_("Errors: %s."), ($error_clear + $error_set)) . "</p>";
 	
 	foreach ($changed as $poolId => $ok) {
 		if ($ok > 0) {
