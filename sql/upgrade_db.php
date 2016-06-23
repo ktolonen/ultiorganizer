@@ -606,6 +606,28 @@ function upgrade75() {
   }
 }
 
+function upgrade76() {
+  global $locales;
+  if (!hasTable("uo_translation")) {
+    runQuery("CREATE TABLE `uo_translation` (
+      `translation_key` varchar(50) NOT NULL,
+      `locale` varchar(15) NOT NULL,
+      `translation` varchar(100) NOT NULL,
+      PRIMARY KEY (`translation_key`, `locale`)
+      ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+    
+    foreach ($locales as $localestr => $localename) {
+      $loc = mysql_real_escape_string(str_replace(".", "_", $localestr));
+      runQuery(sprintf("INSERT INTO uo_translation 
+          (SELECT translation_key, '%s' AS locale, `%s` AS translation 
+           FROM uo_dbtranslations
+           WHERE `%s` IS NOT NULL)",
+          $loc, $loc, $loc));
+    }
+    runQuery("DROP TABLE uo_dbtranslations");
+  }
+}
+
 function runQuery($query) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }

@@ -6,7 +6,7 @@ function U_($name){
 }
 
 function loadDBTranslations($locale) {
-	$query = sprintf("select translation_key, %s as value from uo_dbtranslations",
+	$query = sprintf("select translation_key, translation as value from uo_translation WHERE `locale`='%s'",
 	mysql_real_escape_string(str_replace(".", "_", $locale)));
 	$result = mysql_query($query);
 	if (!$result) { die("Failed to load translations for locale ".$locale."\n". mysql_error()); }
@@ -42,58 +42,58 @@ function GetAutocompleteTranslations() {
 	return AllTranslations($search, true);
 }
 
-function AllTranslations($search, $autocomplete=false) {
-	$splitted = preg_split(WORD_DELIMITER, $search, -1, PREG_SPLIT_NO_EMPTY);
-	$query = "SELECT translation_key";
-	$translation_arrays = array();
-	$results = array();
-	global $locales;
-	foreach ($locales as $key => $value) {
-		$translation_arrays[str_replace(".", "_", $key)] = array();
-		$results[str_replace(".", "_", $key)] = "";
-		$query .= ", ".str_replace(".", "_", $key);
-	}
-	$query .= " FROM uo_dbtranslations WHERE ";
-	$first = true;
-	foreach ($splitted as $nextkey) {
-		if ($first) {
-			$first = false;
-		} else {
-			$query .= " OR ";
-		}
-		$query .=" translation_key like '".mysql_real_escape_string($nextkey)."%'";
-	}
-	
-	$result = DBQuery($query);
-
-	while ($row = mysql_fetch_assoc($result)) {
-		foreach ($translation_arrays as $lang => $translation_array) {
-			$translation_arrays[$lang][strtolower($row['translation_key'])] = $row[$lang];
-		}
-	}
-	foreach ($translation_arrays as $lang => $translation_array) {
-		if ($autocomplete) {
-			$results[$lang] = autocompleteTranslate($search, $translation_array);
-		} else {
-			$results[$lang] = translate($search, $translation_array);
-		}
-	}
-	$found = false;
-	foreach ($results as $lang => $translations) {
-		$flipped = array_flip($translations);
-		if (isset($flipped[$search])) {
-			$found = true;
-		}
-	}
-	if (!$found) {
-		$results[_("None")] = array($search => $search);
-	}
-	return $results;
+function AllTranslations($search, $autocomplete = false) {
+  global $locales;
+  $splitted = preg_split(WORD_DELIMITER, $search, -1, PREG_SPLIT_NO_EMPTY);
+  $translation_arrays = array ();
+  $results = array ();
+  foreach ($locales as $loc => $name) {
+    $loc = str_replace(".", "_", $loc);
+    $results[$loc] = "";
+    $query = sprintf("SELECT translation_key, translation FROM uo_translation
+          WHERE locale='%s' AND (", mysql_real_escape_string($loc));
+    
+    $first = true;
+    foreach ($splitted as $nextkey) {
+      if ($first) {
+        $first = false;
+      } else {
+        $query .= " OR ";
+      }
+      $query .= " translation_key like '" . mysql_real_escape_string($nextkey) . "%'";
+    }
+    $query .=")";
+    $answer = mysql_query($query);
+    $translations = array ();
+    while ($row = mysql_fetch_assoc($answer)) {
+      $translations[$row['translation_key']] = $row['translation'];
+    }
+    $translation_arrays[$loc] = $translations;
+  }
+  
+  foreach ($translation_arrays as $lang => $translation_array) {
+    if ($autocomplete) {
+      $results[$lang] = autocompleteTranslate($search, $translation_array);
+    } else {
+      $results[$lang] = translate($search, $translation_array);
+    }
+  }
+  $found = false;
+  foreach ($results as $lang => $translations) {
+    $flipped = array_flip($translations);
+    if (isset($flipped[$search])) {
+      $found = true;
+    }
+  }
+  if (!$found) {
+    $results[_("None")] = array ($search => $search);
+  }
+  return $results;
 }
 
 function Translations() {
 	if(hasTranslationRight()) {
-		$query = "SELECT * FROM uo_dbtranslations ORDER BY translation_key ASC";
+		$query = "SELECT * FROM uo_translation ORDER BY translation_key ASC";
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		return $result;
@@ -101,41 +101,57 @@ function Translations() {
 }
 
 function SetTranslation($key, $translations) {
-	if (hasTranslationRight()) {
-		$query = "UPDATE uo_dbtranslations SET ";
-		$first = true;
-		foreach ($translations as $locale => $value) {
-			if ($first) {
-				$first = false;
-			} else {
-				$query .= ", ";
-			}
-			$query .= mysql_real_escape_string(str_replace(".","_",$locale))."='".mysql_real_escape_string($value)."'";
-		}
-		$query .= sprintf(" WHERE translation_key='%s'",
-		mysql_real_escape_string($key));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-	} else { die('Insufficient rights to change translation'); }
+  if (hasTranslationRight()) {
+    foreach ($translations as $locale => $value) {
+      $locale = str_replace(".", "_", $locale);
+      if (empty($value)) {
+        $query = sprintf("DELETE FROM uo_translation 
+            WHERE translation_key = '%s' AND locale='%s'", mysql_real_escape_string($key), 
+            mysql_real_escape_string($locale));
+        DBQuery($query);
+      } else {
+        $query = sprintf("UPDATE uo_translation SET translation='%s' WHERE locale='%s' AND translation_key='%s'", 
+            mysql_real_escape_string($value), mysql_real_escape_string($locale), mysql_real_escape_string($key));
+        $result = mysql_query($query);
+        if (!$result) {
+          die('Invalid query: ' . mysql_error());
+        }
+      }
+    }
+  } else {
+    die('Insufficient rights to change translation');
+  }
 }
 
 function AddTranslation($key, $translations) {
-	if (hasTranslationRight()) {
-		$query = "INSERT INTO uo_dbtranslations (translation_key";
-		$values = ") VALUES ('".mysql_real_escape_string($key)."'";
-		foreach ($translations as $locale => $value) {
-			$query .= ", ".mysql_real_escape_string(str_replace(".","_",$locale));
-			$values .= ", '".mysql_real_escape_string($value)."'";
-		}
-		$query .= $values.")";
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-	} else { die('Insufficient rights to add translation'); }
+  if (hasTranslationRight()) {
+    foreach ($translations as $locale => $value) {
+      $locale = str_replace(".", "_", $locale);
+      if (empty($value)) {
+        $query = sprintf("DELETE FROM uo_translation 
+            WHERE translation_key = '%s' AND locale='%s'",
+            mysql_real_escape_string($key), 
+            mysql_real_escape_string($locale));
+        DBQuery($query);
+      } else {
+        $query = sprintf(
+            "INSERT INTO uo_translation (translation_key, locale, translation)
+	      VALUES ('%s', '%s', '%s')", mysql_real_escape_string($key), 
+            mysql_real_escape_string($locale), mysql_real_escape_string($value));
+        $result = mysql_query($query);
+        if (!$result) {
+          die('Invalid query: ' . mysql_error());
+        }
+      }
+    }
+  } else {
+    die('Insufficient rights to add translation');
+  }
 }
 
 function RemoveTranslation($key) {
 	if (hasTranslationRight()) {
-		$query = sprintf("DELETE FROM uo_dbtranslations WHERE translation_key='%s'",
+		$query = sprintf("DELETE FROM uo_translation WHERE translation_key='%s'",
 		mysql_real_escape_string($key));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }

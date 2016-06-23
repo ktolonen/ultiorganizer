@@ -5,8 +5,6 @@ $LAYOUT_ID = TRANSLATIONS;
 
 $title = _("Translations");	
 
-$translations = Translations();
-
 //process itself if remove button was pressed
 if(!empty($_POST['remove_x'])) {
 	$key = $_POST['hiddenDeleteKey'];
@@ -105,23 +103,32 @@ if (hasTranslationRight()) {
 
 	$translations = Translations();
 	$i = 0;
-	while($translation = mysql_fetch_assoc($translations)) {
-		echo "<tr>\n<td>".utf8entities($translation['translation_key']);
+	$translation = mysql_fetch_assoc($translations);
+	while($translation) {
+	  $tkey = $translation['translation_key'];
+	  $values = array();
+	  while($translations && $translation['translation_key'] == $tkey) {
+	    $values[$translation['locale']]=$translation['translation'];
+	    $translation = mysql_fetch_assoc($translations);
+	  }
+		echo "<tr>\n<td>".utf8entities($tkey);
 		echo "<input type='hidden' id='translationEdited".$i."' name='translationEdited[]' value='no'/>\n";
-		echo "<input type='hidden' name='translationKey[]' value='".utf8entities($translation['translation_key'])."'/>\n";
+		echo "<input type='hidden' name='translationKey[]' value='".utf8entities($tkey)."'/>\n";
 		echo "</td>\n";
 		foreach ($locales as $locale => $name) {
-			echo "<td><input type='text' size='25' maxlength='50' onkeypress=\"ChgTranslation(".$i.")\" value='".utf8entities($translation[str_replace('.', "_", $locale)])."' name='".str_replace(".", "_", $locale).$i."'/></td>";
+		  $locale = str_replace('.', "_", $locale);
+		  $value = isset($values[$locale])?$values[$locale]:"";
+	      echo "<td><input type='text' size='25' maxlength='50' onkeypress=\"ChgTranslation(".$i.")\" value='".utf8entities($value)."' name='".$locale.$i."'/></td>";
 		}
-		echo "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setKey('".$translation['translation_key']."');\"/></td></tr>";
+		echo "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='"._("X")."' onclick=\"setKey('".$tkey."');\"/></td></tr>";
 		$i++;
 	}
 	echo "<tr>\n<td>";
-	echo "<input type='text' name='addkey' value='".utf8entities($translation['translation_key'])."'/>\n";
+	echo "<input type='text' name='addkey' value=''/>\n";
 	echo "</td>\n";
 	foreach ($locales as $locale => $name) {
 		$locale = str_replace(".", "_", $locale); 
-		echo "<td><input type='text' size='25' maxlength='50' value='".utf8entities($translation[$locale])."' name='add".$locale."'/></td>";
+		echo "<td><input type='text' size='25' maxlength='50' value='' name='add".$locale."'/></td>";
 	}
 	echo "<td class='center'><input class='button' type='submit' name='add' value='"._("Add")."'/></td></tr>";
 	
