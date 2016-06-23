@@ -6,18 +6,6 @@ function StripFromQueryString($query_string, $needle) {
    return preg_replace("/(&)+/","&",$query_string);
 }
 
-
-function getSessionLocale() {
-	if(isset($_SESSION['userproperties']['locale']) && is_array($_SESSION['userproperties']['locale'])){
-		$tmparr = array_keys($_SESSION['userproperties']['locale']);
-		return $tmparr[0];
-	} elseif (isset($_SESSION['userproperties']['locale'])) {
-		return $_SESSION['userproperties']['locale'];
-	} else {
-		return GetDefaultLocale();
-	}
-}
-
 function SafeDivide($dividend,$divisor)
 	{
 	if (!isset($divisor) || is_null($divisor) || $divisor==0)
@@ -310,19 +298,19 @@ function GetPageURL() {
  return $pageURL;
 }
 
-function GetLocale() {
-	$locale = GetDefaultLocale();
-	if (isset($_GET['locale'])) {
-		$locale = $_GET['locale'];
-	} else if(isset($_SESSION['userproperties']['locale'])){
-		$tmparr = array_keys($_SESSION['userproperties']['locale']);
-		$locale = $tmparr[0];
-	}
-	return $locale;
+function getSessionLocale() {
+  if(isset($_SESSION['userproperties']['locale']) && is_array($_SESSION['userproperties']['locale'])){
+    $tmparr = array_keys($_SESSION['userproperties']['locale']);
+    return $tmparr[0];
+  } elseif (isset($_SESSION['userproperties']['locale'])) {
+    return $_SESSION['userproperties']['locale'];
+  } else {
+    return GetDefaultLocale();
+  }
 }
-	
+
 function GetW3CLocale() {
-	$locale = GetLocale();
+	$locale = GetSessionLocale();
 	$locale=str_replace("_",'-',$locale);
 	return $locale;
 }	
@@ -1159,54 +1147,45 @@ function array_copy ($aSource) {
 	return $aRetAr;
 }
 
+function startsWith($haystack, $needle) {
+  // search backwards starting from haystack length characters from the end
+  return $needle === "" || strrpos($haystack, $needle, -strlen($haystack)) !== false;
+}
+
+
 /**
  * returns the English ordinal of an integer
  *
  * @param  integer   a number
- * @return string    the ordinal number in English 
+ * @return string    the ordinal number in the current locale
  */
 
 function ordinal($number) {
-	  //check if we can handle the size of the number
-	  If ($number < 1 || $number > 99){
-	      die("The number ".$number." is out of range for this sub-function to convert to an ordinal");
-	  }
-	  $ordinal=$number;
-	  switch($number) {
-	  	case 1:
-	  	case 21:
-	  	case 31:
-	  	case 41:
-	  	case 51: 
-	  	case 61:
-	  	case 71: 
-	  	case 81: 
-	  	case 91:
-	    	$ordinal .= "st"; break;
-	  	case 2:
-	  	case 22:
-	  	case 32: 
-	  	case 42: 
-	  	case 52:
-	  	case 62: 
-	  	case 72: 
-	  	case 82: 
-	  	case 92:
-	    	$ordinal .= "nd"; break;
-	  	case 3:
-	  	case 23: 
-	  	case 33: 
-	  	case 43: 
-	  	case 53: 
-	  	case 63: 
-	  	case 73: 
-	  	case 83: 
-	  	case 93:
-	     	$ordinal .= "rd"; break;
-	  	default:
-	     	$ordinal .= "th"; break;
-	  }
-	  return $ordinal;
+  if (class_exists("NumberFormatter")) {
+    $nf = new NumberFormatter(GetSessionLocale(), NumberFormatter::ORDINAL);
+    return $nf->format($number);
+  }
+  if (startsWith(GetSessionLocale(), 'en')) {
+    // check if we can handle the size of the number
+    $ordinal = $number;
+    switch ($number % 10) {
+      case 1 :
+        $ordinal .= "st";
+        break;
+      case 2 :
+        $ordinal .= "nd";
+        break;
+      case 3 :
+        $ordinal .= "rd";
+        break;
+      default :
+        $ordinal .= "th";
+        break;
+    }
+    return $ordinal;
+  } else {
+    return $number . ".";
+  }
 }
 
 

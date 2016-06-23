@@ -1377,14 +1377,10 @@ function SetPool($poolId, $params) {
  */
 function SetPoolVisibility($poolId, $visible) {
   $poolinfo = PoolInfo($poolId);
-  if(hasEditSeasonSeriesRight($poolinfo['season'])) {
-    $query = sprintf("UPDATE uo_pool SET visible=%d
-            WHERE pool_id=%d",
-    (int)$visible,
-    (int)$poolId);
-
-    return DBQuery($query);
-  }
+  $query = sprintf("UPDATE uo_pool SET visible=%d
+            WHERE pool_id=%d", (int) $visible, (int) $poolId);
+  
+  return DBQuery($query);
 }
 
 /**

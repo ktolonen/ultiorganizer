@@ -82,7 +82,7 @@ if(!empty($urlparams)){
 if(empty($season)){
   $html .=  SearchReservation($url, $hidden, array('schedule' => _("Schedule selected")));
 }else{
-  
+  $html .= "<p><a href='?view=admin/reservations'>". _("Search"). "</a></p>";
   $groups = SeasonReservationgroups($season);
   if(count($groups)>1){
   	$html .= "<p>\n";	
@@ -139,19 +139,22 @@ if(empty($season)){
   foreach ($locations as $location) {
     $html .= "<input type='hidden' id='loc$i' name='loc[]' value='".utf8entities($location['location'])."'/>";
     $html .= "<input type='hidden' id='field$i' name='field[]' value='".utf8entities($location['fieldname'])."'/>";
-    $html .= "<p>".$i.": ".$location['name']." "._("Field")." ".$location['fieldname']."</p>\n";
+    $html .= "<p>".($i+1).": ".$location['name']." "._("Field")." ".$location['fieldname']."</p>\n";
     $i++;
   }
+  
+  $html .="<h2>". _("Transfer times") . "</h2>";
   
   $html .= "<table class='admintable'><tr><th>"._("from\\to")."</th>";
   $i=0;
   foreach ($locations as $location) {
-    $html .=  "<th>".$i++."</th>"; 
+    $html .=  "<th>".($i+1)."</th>";
+    ++$i;
   }
   $html .= "</tr>\n<tr>";
   $i = 0;
   foreach ($locations as $location1) {
-    $html .= "<td>" . $i . "</td>";
+    $html .= "<td>" . ($i+1) . "</td>";
     $j = 0;
     foreach ($locations as $location2) {
       

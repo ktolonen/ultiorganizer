@@ -11,6 +11,14 @@ $LAYOUT_ID = SEASONSTANDINGS;
 
 $season = $_GET["season"];
 $series_id = CurrentSeries($season);
+
+$title = utf8entities(SeasonName($season)).": "._("Pool standings");
+
+if ($series_id<=0) {
+  showPage($title, "<p>"._("No divisions defined. Define at least one division first.")."</p>");
+  die;
+}
+
 $series = SeasonSeries($season);
 $html = "";
 
@@ -72,10 +80,14 @@ if (!empty($_POST['undoFromPlacing'])) {
 }
 
 if (!empty($_POST['confirmMoves'])) {
-  PoolConfirmMoves($_POST['PoolId'], $_POST['confirmVisible']);
+  PoolConfirmMoves($_POST['PoolId']);
 }
 
-$title = utf8entities(SeasonName($season)).": "._("Pool standings");
+if (!empty($_POST['setVisible'])) {
+  SetPoolVisibility($_POST['PoolId'], true);
+} else if (!empty($_POST['setInvisible'])) {
+  SetPoolVisibility($_POST['PoolId'], false);
+} 
 
 //common page
 pageTopHeadOpen($title);
@@ -134,6 +146,11 @@ function setUndoPool(pool, from) {
 }
 
 function setConfirm(pool) {
+  document.getElementById("PoolId").value = pool;
+  setAnchor(pool);
+}
+
+function setCVisible(pool) {
   document.getElementById("PoolId").value = pool;
   setAnchor(pool);
 }
@@ -305,8 +322,6 @@ $html .= "<input type='hidden' id='editType' name='editType'/>\n";
 $html .= "<input type='hidden' id='undoFromPlacing' name='undoFromPlacing'/>\n";
 $html .= "<input type='hidden' id='undoToPool' name='undoToPool'/>\n";
 
-$html .= "<input type='hidden' id='confirmVisible' name='confirmVisible'/>\n";
-
 $html .= "</p>";
 $html .= "</form>\n";
 
@@ -348,7 +363,7 @@ function swissRow($poolId, $poolinfo, $row, $teamNum) {
   $html .= "<td class='center'>" . intval($vp['score']) . "</td>";
   if (CanDeleteTeamFromPool($poolId, $row['team_id'])) {
     $html .= "<td class='center' style='width:20px;'>
-              <input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' 
+              <input class='deletebutton' type='image' src='images/remove.png' alt='X' title='"._("delete team from pool") ."' name='remove' 
                value='" . _("X") . "' onclick=\"setDeleteId(" . $poolId . "," . $row['team_id'] . ");\"/></td>";
   } else {
     $html .= "<td></td>";
@@ -394,7 +409,7 @@ function regularRow($poolId, $poolinfo, $row, $teamNum) {
   $html .= "<td class='center'>" . ((intval($points['scores']) - intval($points['against']))) . "</td>";
   if (CanDeleteTeamFromPool($poolId, $row['team_id'])) {
     $html .= "<td class='center' style='width:20px;'>
-              <input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove'
+              <input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' title='"._("delete team from pool") ."'
                value='"._("X")."' onclick=\"setDeleteId(".$poolId .",". $row['team_id'].");\"/></td>";
   } else {
     $html .= "<td></td>";
@@ -447,9 +462,18 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
   
   $html .= "<tr><th colspan='4'>";
   if ($type == "to") {
-    if (PoolIsMoveFromPoolsPlayed($poolId) && !PoolIsAllMoved($poolId)) {
-      $html .= "<input class='button' type='submit' name='confirmMoves' value='" . _("Confirm moves") .
-           "' onclick='setConfirm(" . $poolId . ")'/>&nbsp;";
+    if (PoolIsMoveFromPoolsPlayed($poolId)) {
+      if (!PoolIsAllMoved($poolId)) {
+        $html .= "<input class='button' type='submit' name='confirmMoves' value='" . _("Confirm moves") .
+             "' onclick='setConfirm(" . $poolId . ")'/>&nbsp;";
+      } else {
+        if ($poolinfo['visible'])
+          $html .= "<input class='button' type='submit' name='setInvisible' value='" . _("Hide pool") .
+               "' onclick='setCVisible(" . $poolId . ")'/>&nbsp;";
+        else
+          $html .= "<input class='button' type='submit' name='setVisible' value='" . _("Show pool") .
+               "' onclick='setCVisible(" . $poolId . ")'/>&nbsp;";
+      }
     }
     $html .= "<a href='?view=admin/serieteams&amp;season=$seasonId&amp;series=". $seriesId ."&amp;pool=". $poolId ."'>". _("Manage moves") ."</a>";
   }
@@ -463,8 +487,13 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
 }
 
 function editButton($prefix, $id) {
-  return "<input class='button ".$prefix."_display' type='image' src='images/settings.png' alt='D' name='".$prefix."Display' value='" . _("Edit") . "' onclick='edit(this,\"".$prefix."\", ". $id . "); return false;'/>
-          <input class='button ".$prefix."_edit' style='display:none' type='image' src='images/save.gif' name='".$prefix."Save' value='" . _("Save") . "' onclick='setEditId(\"".$prefix."\", " . $id .");'/>";
+  $title = ($prefix == "seed")?_("change initial pool ranking"):_("change final pool ranking"); 
+  return "<input class='button " . $prefix . "_display' type='image' src='images/settings.png' alt='D' name='" . $prefix .
+       "Display' title='".$title."' value='" . _("Edit") . "' onclick='edit(this,\"" . $prefix . "\", " . $id .
+       "); return false;'/>
+          <input class='button " .
+       $prefix . "_edit' style='display:none' type='image' src='images/save.gif' name='" . $prefix . "Save' title='"._("save ranking")."' value='" .
+       _("Save") . "' onclick='setEditId(\"" . $prefix . "\", " . $id . ");'/>";
 }
 
 function editField($prefix, $teamNum, $id, $value) {

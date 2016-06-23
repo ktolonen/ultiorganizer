@@ -809,7 +809,7 @@ function GetTeamAdmins($teamId) {
 	$seasonrights = getEditSeasons($_SESSION['uid']);
 	$season = TeamSeason($teamId);
 
-	if (isset($seasonrights[$season])) {
+	if (isSuperAdmin() || isset($seasonrights[$season])) {
 		$query = sprintf("SELECT pu.userid, pu.name, pu.email FROM uo_userproperties pup
 				LEFT JOIN uo_users pu ON(pup.userid=pu.userid)
 				WHERE pup.value='%s' ORDER BY pu.name ASC",
@@ -857,7 +857,7 @@ function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $me
 					mysql_real_escape_string($token));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$message = file_get_contents('locale/'.GetLocale().'/LC_MESSAGES/'.$message);
+	$message = file_get_contents('locale/'.GetSessionLocale().'/LC_MESSAGES/'.$message);
 	
 	// for IIS
 	if(!isset($_SERVER['REQUEST_URI'])) {
@@ -910,7 +910,7 @@ function AddExtraEmailRequest($userid, $extraEmail, $message='verify_email.txt')
 					mysql_real_escape_string($token));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$message = file_get_contents('locale/'.GetLocale().'/LC_MESSAGES/'.$message);
+	$message = file_get_contents('locale/'.GetSessionLocale().'/LC_MESSAGES/'.$message);
 	
 	// for IIS
 	if(!isset($_SERVER['REQUEST_URI'])) {

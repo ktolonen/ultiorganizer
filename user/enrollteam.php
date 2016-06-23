@@ -70,7 +70,7 @@ contentStart();
 $result = SeasonSeries($season);
 
 if(!count($result)){
-	echo "<p>"._("No divisions").".</p>";
+	echo "<p>"._("No divisions.")."</p>";
 }
 $hiddenIndex = 1;
 

@@ -18,6 +18,12 @@ $series_id = CurrentSeries($season);
 $seasoninfo = SeasonInfo($season);
 
 $title = utf8entities(SeasonName($season)).": "._("Games");
+
+if ($series_id<=0) {
+  showPage($title, "<p>"._("No divisions defined. Define at least one division first.")."</p>");
+  die;
+}
+
 $group = "all";
 
 if(!empty($_GET["group"])) {

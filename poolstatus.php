@@ -9,6 +9,7 @@ $title = _("Standings")." ";
 $seriesScoreboard = false;
 $print=0;
 $html = "";
+$comment = "";
 
 if (iget("season")) {
   $seasoninfo = SeasonInfo(iget("season"));

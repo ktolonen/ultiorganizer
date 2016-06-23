@@ -324,7 +324,7 @@ $html .= "/></td></tr>";
 $html .= "<tr><td class='infocell'>"._("Organizer").": </td><td><input class='input' size='50' maxlength='50' name='organizer' value='".utf8entities($sp['organizer'])."'/></td></tr>";
 $html .= "<tr><td class='infocell'>"._("Category").": </td><td><input class='input' size='50' maxlength='50' name='category' value='".utf8entities($sp['category'])."'/></td></tr>";
 
-$html .= "<tr><td class='infocell' style='vertical-align:top'>".htmlentities(_("Comment (you can use <p>, </i>, and <br> tags)")).":</td>
+$html .= "<tr><td class='infocell' style='vertical-align:top'>".htmlentities(_("Comment (you can use <b>, <em>, and <br /> tags)")).":</td>
 		<td><textarea class='input' rows='10' cols='70' name='comment'>".htmlentities($comment)."</textarea></td></tr>";
 
 $html .= "<tr><td class='infocell'>"._("Timezone").": </td><td>";

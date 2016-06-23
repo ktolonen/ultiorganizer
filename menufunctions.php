@@ -544,6 +544,7 @@ function leftMenu($id=0, $printable=false) {
         $lastseason = $season;
         echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&season=".urlencode($season)."&amp;list=bystandings'>";
         echo utf8entities(U_($row['season_name']))."</a></td></tr>\n";
+        echo "<tr><td><a class='nav' href='?view=teams&season=".urlencode($season)."&amp;list=bystandings''>"._("Final standings")."</a></td></tr>\n";
         echo "<tr><td><a class='nav' href='?view=games&amp;season=".urlencode($season)."&amp;filter=tournaments&amp;group=all'>"._("Games")."</a></td></tr>\n";
         //echo "<tr><td><a class='nav' href='?view=played&amp;season=".urlencode($season)."'>"._("Played games")."</a></td></tr>\n";
         echo "<tr><td><a class='nav' href='?view=teams&amp;season=".urlencode($season)."&amp;list=allteams'>"._("Teams")."</a></td></tr>\n";

@@ -269,7 +269,7 @@ if ($_SESSION['uid'] != "anonymous") {
 			<a href='?view=user/addextraemail&amp;user=".utf8entities($userid)."'>"._("Add extra address")."</a></td></tr>\n";
   $extraEmails = UserExtraEmails($userid);
   if ($extraEmails) {
-    $html .= "		<tr><td rowspan='".count(extraEmails)."' class='infocell'>"._("Extra emails").":</td>\n";
+    $html .= "		<tr><td rowspan='".count($extraEmails)."' class='infocell'>"._("Extra emails").":</td>\n";
     $first = true;
     foreach ($extraEmails as $extraEmail) {
       if ($first) {
@@ -355,8 +355,8 @@ if ($_SESSION['uid'] != "anonymous") {
     $html .= "<option value='".utf8entities($id)."'>".utf8entities(SeasonName($season))."</option>";
   }
   $html .= "</select></td><td>\n";
-  $html .= "<input class='button' type='submit' name='remeditseasons' style='width:50px' value='"._("Hide")." &raquo;' /><br />
-	      <input class='button' type='submit' name='addeditseasons' style='width:50px' value='&laquo; "._("Show")."' /></td><td>\n";
+  $html .= "<input class='button' type='submit' name='remeditseasons' value='"._("Hide")." &raquo;' /><br />
+	      <input class='button' type='submit' name='addeditseasons' value='&laquo; "._("Show")."' /></td><td>\n";
 
   $html .= "<select multiple='multiple' name='addeditseasonslist[]' id='addeditseasonslist' style='height:200px;width:250px'>\n";
   $seasons = Seasons();
@@ -419,7 +419,7 @@ if ($_SESSION['uid'] != "anonymous") {
   if (!empty($_GET['user'])) {
     $html .= "<input type='hidden' name='user' value='".urlencode($_GET['user'])."'/>\n";
   }
-  $html .= "<input class='button' type='submit' name='addpoolselector' style='width:50px' value='"._("Add")."...' /></p>\n";
+  $html .= "<input class='button' type='submit' name='addpoolselector' value='"._("Add")."...' /></p>\n";
   $html .= "</form>\n";
 
 }
@@ -555,7 +555,7 @@ if (hasEditUsersRight()) {
 	if (!empty($_GET['user'])) {
 		$html .= "<input type='hidden' name='user' value='".urlencode($_GET['user'])."'/>\n";
 	}
-	$html .= "<input class='button' type='submit' name='addpoolselector' style='width:50px' value='"._("Add")."...' />\n";
+	$html .= "<input class='button' type='submit' name='addpoolselector' value='"._("Add")."...' />\n";
 	$html .= "</p>\n";
 	$html .= "</form>\n";
 	

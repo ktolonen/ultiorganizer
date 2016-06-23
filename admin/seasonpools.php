@@ -7,10 +7,16 @@ $LAYOUT_ID = SEASONPOOLS;
 
 $season = $_GET["season"];
 $series_id = CurrentSeries($season);
-$seriesinfo = SeriesInfo($series_id );
 
 $html = "";
 $title = utf8entities(SeasonName($season)).": "._("Pools");
+
+if ($series_id<=0) {
+  showPage($title, "<p>"._("No divisions defined. Define at least one division first.")."</p>");
+  die;
+}
+
+$seriesinfo = SeriesInfo($series_id );
 
 //pool parameters
 $pp = array(
@@ -81,12 +87,6 @@ foreach($series as $row){
 $menutabs[_("...")]="?view=admin/seasonseries&season=".$season;
 pageMenu($menutabs,"?view=admin/seasonpools&season=".$season."&series=".$series_id);
 
-if(!$series_id){
-  echo _("No divisions.");
-  contentEnd();
-  pageEnd();
-  die;
-}
 $html .= "<form method='post' action='?view=admin/seasonpools&amp;season=$season&amp;series=$series_id'>";
 
 $types = PoolTypes();

@@ -9,8 +9,16 @@ include_once 'lib/country.functions.php';
 $LAYOUT_ID = SEASONTEAMS;
 $html = "";
 $season = $_GET["season"];
-$series = SeasonSeries($season);
 $series_id = CurrentSeries($season);
+
+$title = utf8entities(SeasonName($season)).": "._("Teams");
+
+if ($series_id<=0) {
+  showPage($title, "<p>"._("No divisions defined. Define at least one division first.")."</p>");
+  die;
+}
+
+$series = SeasonSeries($season);
 
 //team parameters
 $tp=array(
@@ -25,7 +33,6 @@ $tp=array(
 	"valid"=>"1",
 	"bye"=>"");
 
-$title = utf8entities(SeasonName($season)).": "._("Teams");
 $seasonInfo = SeasonInfo($season);
 
 //remove
