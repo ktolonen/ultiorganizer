@@ -9,7 +9,7 @@ if(!empty($_GET["print"])) {
 $title = _("Helps");
 $LAYOUT_ID = HELP;
 pageTop($title, $print);
-leftMenu($LAYOUT_ID, $print);
+leftMenu($LAYOUT_ID, true, $print);
 contentStart();
 
 $html .= file_get_contents('locale/'.getSessionLocale().'/LC_MESSAGES/help.html');

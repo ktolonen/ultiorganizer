@@ -10,6 +10,7 @@ $body = @file_get_contents('php://input');
 //$body = $HTTP_RAW_POST_DATA; 
 
 $season = "";
+$response = "";
 
 $places = explode("|", $body);
 foreach ($places as $placeGameStr) {
@@ -31,7 +32,7 @@ foreach ($places as $placeGameStr) {
 				$gameEnd = $time + ($gameInfo['timeslot'] * 60);
 			}
 			if ($gameEnd > $resEnd) {
-				die('Game '. GameName($gameInfo) .' exceeds reserved time '. ShortTimeFormat($resInfo['endtime']));
+			  $response .= "<p>" .sprintf(_("Game %s exceeds reserved time %s."), GameName($gameInfo), ShortTimeFormat($resInfo['endtime'])) ."</p>";
 			}
 			ScheduleGame($gameArr[0], $time, $games[0]);
 		} 
@@ -55,27 +56,38 @@ if ($season) {
     if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
       if (strtotime($conflict['time1']) + $conflict['slot1'] * 60 + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']) > strtotime($conflict['time2'])) {
         $game1 = GameInfo($conflict['game1']);
-      $game2 = GameInfo($conflict['game2']);
-      die('Warning: Game ' . GameName($game2) . ' ('.$game2['game_id'].', pool '. $game2['pool'] . ') has a scheduling conflict with ' . GameName($game1).' ('.$game1['game_id'].', '.$game1['pool'].')');
+        $game2 = GameInfo($conflict['game2']);
+        $response .= "<p>" .
+             sprintf(_("Warning: Game %s (%d, pool %d) has a scheduling conflict with %s (%d, pool %d)."), 
+                utf8entities(GameName($game2)), (int) $game2['game_id'], (int) $game2['pool'], 
+                utf8entities(GameName($game1)), (int) $game1['game_id'], (int) $game1['pool']) . "</p>";
+        break;
       }
     }
   }
   
+  if (empty($response)) {
   $conflicts = TimetableInterPoolConflicts($season);
 
   foreach ($conflicts as $conflict) {
     if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
       if (strtotime($conflict['time1']) + $conflict['slot1'] * 60 + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']) > strtotime($conflict['time2'])){
         $game1 = GameInfo($conflict['game1']);
-      $game2 = GameInfo($conflict['game2']);
-      die('Warning: Game ' .GameName($game2) . ' has a scheduling conflict with ' . GameName($game1).'.');
+        $game2 = GameInfo($conflict['game2']);
+        $response .= "<p>" . sprintf(_("Warning: Game %s has a scheduling conflict with %s."), 
+            utf8entities(GameName($game2)), utf8entities(GameName($game1))) . "</p>";
+        break;
       }
     }
   }
-}else {
-  die ("Error, unknown season!");
+  }
+} else {
+  $response .= "<p>" . _("Error, unknown season!") . "</p>";
 }
 
-echo _("Schedule saved and checked.");
+if (!empty($response))
+  echo "<p>"._("Schedule saved with errors:")."</p>\n". $response;
+else
+  echo _("Schedule saved and checked.");
 
 ?>

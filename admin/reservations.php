@@ -133,7 +133,7 @@ if(empty($season)){
   $locations = SeasonReservationLocations($season,$group);
   $movetimes = TimetableMoveTimes($season);
   
-  $html .= "<h2>"._("Moving times")."</h2>\n";
+  $html .="<h2>". _("Transfer times") . "</h2>";
   $html .= "<p>"._("Minimum times (in minutes) to move between fields")."</p>\n";
   $i=0; 
   foreach ($locations as $location) {
@@ -142,9 +142,7 @@ if(empty($season)){
     $html .= "<p>".($i+1).": ".$location['name']." "._("Field")." ".$location['fieldname']."</p>\n";
     $i++;
   }
-  
-  $html .="<h2>". _("Transfer times") . "</h2>";
-  
+    
   $html .= "<table class='admintable'><tr><th>"._("from\\to")."</th>";
   $i=0;
   foreach ($locations as $location) {
@@ -160,7 +158,7 @@ if(empty($season)){
       
       $html .= "<td><input type='text' size='4' maxlength='5' value='" 
           . (TimeTableMoveTime($movetimes, $location1['location'], $location1['fieldname'], $location2['location'], $location2['fieldname'])/60) 
-          . "' id='move$i_$j' name='move[$i][$j]' onkeypress='ChgTime(" . $i .",".$j . ")'/></td>";
+          . "' id='move".$i."_".$j."' name='move[$i][$j]' onkeypress='ChgTime(" . $i .",".$j . ")'/></td>";
       $j++;
     }
     $html .= "</tr>\n";

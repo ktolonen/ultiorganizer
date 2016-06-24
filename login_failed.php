@@ -3,7 +3,7 @@ if(IsRegistered($_SESSION['uid'])){
   header("location:?view=frontpage");
 }
 
-$title = _("Home");
+$title = _("Login failed");
 $userId = urldecode($_GET['user']);
 $html = "";
 

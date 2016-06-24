@@ -1,6 +1,7 @@
 <?php 
 include_once $include_prefix.'lib/fpdf/fpdf.php';
 include_once $include_prefix.'lib/HSVClass.php';
+include_once 'lib/phpqrcode/qrlib.php';
 
 class PDF extends FPDF
 	{
@@ -45,41 +46,45 @@ class PDF extends FPDF
 		$this->SetY(21);
 		
 		$this->OneCellTable(utf8_decode(_("Game #")), $this->game['game_id']);
-		$this->OneCellTable(utf8_decode(_("Home team")), $this->game['hometeamname']);
-		$this->OneCellTable(utf8_decode(_("Away team")), $this->game['visitorteamname']);
+/*		$this->OneCellTable(utf8_decode(_("Home team")), $this->game['hometeamname']);
+		$this->OneCellTable(utf8_decode(_("Away team")), $this->game['visitorteamname']);*/
 		$this->OneCellTable(utf8_decode(_("Division").", "._("Pool")), $this->game['poolname']);
 		$this->OneCellTable(utf8_decode(_("Field")), $this->game['placename']);
+		$this->OneCellTable(utf8_decode(_("Game official")), "");
 		$this->OneCellTable(utf8_decode(_("Scheduled start date and time")), $this->game['time']);
-		$this->DoubleCellTable(utf8_decode(_("Game official")), "");
-		$this->SetFont('Arial','',10);
+		$this->OneCellTable(utf8_decode(_("First Offence")), "");
 		$this->Ln();
-
-		$this->FirstOffence();
-		$this->Ln();
-
+		
 		$this->Timeouts();
 		$this->Ln();
 
 		$this->OneCellTable(utf8_decode(_("Half time ends")), "");
 		$this->Ln();
 		
-		$this->Ln();
 		$this->FinalScoreTable();
-		$this->Ln();
 
 		$this->Signatures();
 		$this->SetXY(95,21);
 		$this->ScoreGrid();
 		
-		$this->SetY(-25);
-		$data = "";
+		//print QR-code for result URL
+		$filename = UPLOAD_DIR.$this->game['game_id'] .".png";
+		$url = BASEURL."scorekeeper/?view=result&g=".$this->game['game_id'];
+		
+		QRcode::png($url, $filename, 'h', 2, 2);
+		$this->Image($filename,10,236);
+		unlink($filename);
+		
+		$this->SetY(-27);
+		$data = _("After the match has ended, update result:\n\n") . BASEURL."/scorekeeper/?view=result";
 		$data = utf8_decode($data);
-		$this->SetFont('Arial','',10);
+		$this->SetFont('Arial','',8);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
+		//$this->Cell(38,6,$this->game['hometeamname'],'LTB',0,'C',true);
+		
 		$this->MultiCell(0,2,$data);
 		}
-		
 	function PrintDefenseSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
 		$this->game['seasonname'] = utf8_decode($seasonname);
@@ -813,30 +818,6 @@ class PDF extends FPDF
 		$this->Ln();	
 		}
 
-	function FirstOffence()
-		{
-		//header
-		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,0,0);
-		$this->Cell(80,6,utf8_decode(_("First Offence")),'LRTB',0,'C',true);
-		$this->Ln();
-		
-		//home grids
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
-		$this->Cell(10,6,"",'LRTB',0,'L',true);
-		$this->Cell(70,6,$this->game['hometeamname'],'LRTB',0,'L',true);
-		$this->Ln();
-		
-		//visitor grids
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
-		$this->Cell(10,6,"",'LRTB',0,'L',true);
-		$this->Cell(70,6,$this->game['visitorteamname'],'LRTB',0,'L',true);
-		$this->Ln();	
-		}
-		
 	function SpiritPoints()
 		{
 		//header
@@ -1000,7 +981,6 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->Ln();
 		$this->Cell(80,6,"-",'LRTB',0,'C',true);
-		$this->Ln();
 		}
 		
 	function OneCellTable($header,$data)

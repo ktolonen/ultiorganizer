@@ -910,6 +910,8 @@ function TimeTableMoveTimes($season) {
   }
 
 function TimeTableMoveTime($movetimes, $location1, $field1, $location2, $field2) {
+  if (!isset($movetimes[$location1][$field1][$location2][$field2]))
+    return 0;
   $time = $movetimes[$location1][$field1][$location2][$field2];
   if (empty($time))
     return 0;

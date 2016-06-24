@@ -102,7 +102,7 @@ $querystring = preg_replace("/&Print=[0-1]/","",$querystring);
 if($print){
   $html .= "<hr/><div style='text-align:right'><a href='?".utf8entities($querystring)."'>"._("Return")."</a></div>";
 }else{
-  $html .= "<hr/><div style='text-align:right'>";
+  $html .= "<hr/>";
   $html .= "<div style='text-align:right'><a href='?".utf8entities($querystring)."&amp;print=1'>"._("Printable version")."</a></div>";
 }
 

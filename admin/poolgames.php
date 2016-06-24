@@ -186,7 +186,7 @@ if($info['type']=="1"){
 	
 }elseif($info['type']=="2"){
 	$html .= "<p>"._("Play-off pool")."</p>\n";
-	$html .= "<p>"._("best of").": <input class='input' size='2' name='rounds' value='$rounds'/></p>\n";
+    $html .= "<p>" . sprintf(utf8entities(_("best of %s games")), ": <input class='input' size='2' name='rounds' value='$rounds'/>") . "</p>\n";
 	$html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
 		$html .= "checked='checked'";
@@ -203,7 +203,7 @@ if($info['type']=="1"){
 	
 }elseif($info['type']=="4"){
 	$html .= "<p>"._("Crossmatch pool")."</p>\n";
-	$html .= "<p>"._("best")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("matches")."</p>\n";
+    $html .= "<p>" . sprintf(utf8entities(_("best of %s games")), ": <input class='input' size='2' name='rounds' value='$rounds'/>") . "</p>\n";
 	$html .= "<p>"._("Home team has rights to edit game score sheet").":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
 		$html .= "checked='checked'";

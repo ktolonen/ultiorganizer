@@ -29,7 +29,7 @@ if(!empty($_POST['register']) && isSuperAdmin()){
 	RemoveUrl($url['url_id']);	
 }
 //common page
-pageTop($title);
+pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
 <!--
@@ -42,6 +42,7 @@ function setId(id1,id2) {
 //-->
 </script>
 <?php
+pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 

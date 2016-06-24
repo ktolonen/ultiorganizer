@@ -16,7 +16,9 @@ if (isset($_GET['reservations'])) {
 }
 $reservationData = ReservationInfoArray($reservations);
 $numOfreservations = count($reservations);
+
 define("MIN_HEIGHT", 1.0);
+$MAX_COLUMNS = 4;
 
 $maxtimeslot = 30;
 $seriesId = 0;
@@ -34,6 +36,15 @@ if(!empty($_GET["pool"])) {
 if(!empty($_GET["season"])) {
   $seasonId = $_GET["season"];
 }
+
+$backurl = "?view=admin/reservations";
+if (!empty($seasonId))
+  $backurl .= "&season=$seasonId";
+if (!empty($seriesId))
+  $backurl .= "&series=$seriesId";
+if (!empty($pool))
+  $backurl .= "&pool=$poolId";
+
 
 $seasonfilter = array();
 $seriesfilter = array();
@@ -57,19 +68,6 @@ foreach($pools as $tmppool){
 //common page
 pageTopHeadOpen($title);
 
-function gameHeight($gameInfo) {
-  if(!empty($gameInfo['gametimeslot'])){
-    return max(intval($gameInfo['gametimeslot'] * MIN_HEIGHT), intval(15 * MIN_HEIGHT)) -2;
-  }else{
-    return max(intval($gameInfo['timeslot'] * MIN_HEIGHT), intval(15 * MIN_HEIGHT)) -2;
-  }
-}
-
-function pauseHeight($gameStart, $nextStart) {
-  echo "<!--".EpocToMysql($gameStart)." ".EpocToMysql($nextStart)."-->\n";
-  return ((($gameStart - $nextStart) / 60) * MIN_HEIGHT) - 2;
-}
-
 include_once 'lib/yui.functions.php';
 echo yuiLoad(array("utilities"));
 
@@ -86,12 +84,19 @@ body {
 <style type="text/css">
 div.workarea {
 	padding: 0px;
-	float: left
+	float: left;
+   min-width:150px;
+   /* min-width:150px; */ 
+}
+
+td.scheduling_column {
+   vertical-align:top;
+   /* padding:5px; */
+   font-size:8px;
 }
 
 ul.draglist {
 	position: relative;
-	width: 200px;
 	background: #f7f7f7;
 	border: 1px solid gray;
 	list-style: none;
@@ -110,7 +115,26 @@ ul.draglist li {
 li.list1 {
 	background-color: #aaaaaa;
 	border: 1px solid #7EA6B2;
+ width:150px;
 }
+
+th.scheduling { width:150px };
+
+td.timecolumn {
+   vertical-align:top;
+}
+
+ul.timelist {
+ position: relative;
+ list-style: none;
+ margin: 0;
+ padding: 0;
+}
+
+ul.timelist li {
+ border: 1px solid #7EA6B2;
+}
+
 
 #user_actions {
 	float: right;
@@ -200,11 +224,28 @@ function KeyUp(event){
 </script>
 
 <?php
+
+function gameDuration($gameInfo) {
+  return empty($gameInfo['gametimeslot'])?$gameInfo['timeslot']:$gameInfo['gametimeslot'];
+}
+
+function gameHeight($duration) {
+  return max(intval($duration * MIN_HEIGHT), intval(15 * MIN_HEIGHT)) -2;
+}
+
+function pauseHeight($duration) {
+  // echo "<!--".EpocToMysql($gameStart)." ".EpocToMysql($nextStart)."-->\n";
+  return ($duration * MIN_HEIGHT) - 2;
+}
+
 $scrolling = "onkeydown='KeyDown(event);' onkeyup='KeyUp(event);'";
 pageTopHeadClose($title,false, $scrolling);
-leftMenu($LAYOUT_ID);
+pageMainStart();
 contentStart();
-echo "<table><tr><td style='width:300px; vertical-align: text-top'>";
+
+echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
+
+echo "<table><tr><td class='scheduling_column'>";
 
 //$teams = UnscheduledTeams();
 //$unscheduledTeams = array_flip(UnscheduledTeams());
@@ -218,29 +259,99 @@ if($poolId){
   $gameData = array();
 }
 
-function gameEntry($color, $height, $gameId, $gamename, $poolname, $editable=true) {
-  $textColor = textColor($color);
-  echo "<li class='list1' style='color:#".$textColor.";background-color:#".$color.";min-height:".$height."px' id='game".$gameId."'>";
-  echo $poolname;
-  if ($editable) {
-    echo "<span style='align:right;float:right;'><a href='javascript:hide(\"game".$gameId."\");'>x</a></span>";
-  }
-  echo "<br/><b>$gamename</b>";
-  echo "</li>\n";
+function jsSecure($string) {
+  return str_replace(array('"', "\n"), array('\"', ''), $string);
 }
 
-function getGameName($gameInfo) {
-  if($gameInfo['hometeam'] && $gameInfo['visitorteam']){
-    $gametitle = substr($gameInfo['hometeamname'], 0, 12)." - ".substr($gameInfo['visitorteamname'], 0, 12);
-  }else{
-    $gametitle = $gameInfo['phometeamname']." - ".$gameInfo['pvisitorteamname'];
+function pauseEntry($height, $duration, $gameId) {
+  $html = "<li class='list1' id='pause" . $gameId . "' style='min-height:" . $height . "px'>";
+  $html .= "<input type='hidden' id='ptime" . $gameId . "' name='ptimes[]' value='" . $duration . "'/>";
+  $html .= sprintf(_("Pause: %s&thinsp;min."), $duration);
+  $html .= "<span style='align:right;float:right'><a href='javascript:hide(\"pause" . $gameId . "\");'>x</a></span></li>\n";
+  return $html;
+}
+
+function gameEntry($gameInfo, $height, $duration, $poolname, $editable = true) {
+  $color = $gameInfo['color'];
+  $textColor = textColor($color);
+  $gameId = $gameInfo['game_id'];
+  $gamename = utf8entities(getGameName($gameInfo, true));
+  $tooltip = utf8entities(getGameName($gameInfo));
+  if ($tooltip == $gamename)
+    $tooltip = "";
+  else
+    $tooltip = " title='" . $tooltip . "'";
+  $html = "<li class='list1' style='color:#" . $textColor . ";background-color:#" . $color . ";min-height:" . $height .
+       "px' id='game" . $gameId . "'" . $tooltip . ">";
+  $html .= "<input type='hidden' id='gtime" . $gameId . "' name='gtimes[]' value='" . $duration . "'/>";
+  $html .= $poolname;
+  if ($editable) {
+    $html .= "<span style='align:right;float:right;'><a href='javascript:hide(\"game" . $gameId . "\");'>x</a></span>";
+  } else {
+    $html .= "<span style='align:right;float:right;'>#</span>";
+  }
+  $html .= "<br/>".(empty($gamename)?"":"<b>$gamename</b> "). sprintf(_("%d&nbsp;min."), $duration);
+  $html .= "</li>\n";
+  return $html;
+}
+
+function getHName($gameInfo) {
+  return empty($gameInfo['hometeamshortname'])?$gameInfo['hometeamname']:$gameInfo['hometeamshortname'];
+}
+
+function getVName($gameInfo) {
+  return empty($gameInfo['visitorteamshortname'])?$gameInfo['visitorteamname']:$gameInfo['visitorteamshortname'];
+}
+
+function getGameName($gameInfo, $short = false) {
+  if ($gameInfo['hometeam'] && $gameInfo['visitorteam']) {
+    if ($short) {
+      $gametitle = substr(getHName($gameInfo), 0, 12) . " - " . substr(getVName($gameInfo), 0, 12);
+    } else {
+      $gametitle = $gameInfo['hometeamname'] . " - " . $gameInfo['visitorteamname'];
+    }
+  } else {
+    $gametitle = $gameInfo['phometeamname'] . " - " . $gameInfo['pvisitorteamname'];
   }
   return $gametitle;
 }
 
-echo "<table><tr><td>\n";
+function gamePoolName($gameInfo) {
+  return U_($gameInfo['seriesname']).", ". U_($gameInfo['poolname']);
+}
+
+function tableStart($dayArray, $skip, $max) {
+  echo "<table><tr>\n";
+  $index = 0;
+  foreach ($dayArray as $reservationId => $reservationArray) {
+    if (++$index <= $skip)
+      continue;
+    if ($index > $skip + $max)
+      break;
+    $startTime = strtotime($reservationArray['starttime']);
+    echo "<th class='scheduling'>" . $reservationArray['name'] . " " . _("Field ") . " " . $reservationArray['fieldname'] .
+         " " . date("H:i", $startTime) . "</th>\n";
+  }
+  echo "<th>" . JustDate($reservationArray['starttime']) . "</th></tr><tr>\n";
+  return $startTime;
+}
+
+function tableEnd($firstStart, $lastEnd) {
+  echo "<td class='timecolumn'>";
+  if (isset($firstStart)) {
+    echo "<ul class='timelist'>\n";
+    for($t=$firstStart;$t<$lastEnd;$t+=60*60) {
+      echo "<li style='min-height:".(min(60, ($lastEnd-$t)/60)*MIN_HEIGHT-2)."px'>".date("H:i", $t)."</li>\n";
+    }
+    echo "</ul>";
+  }
+  echo "</td>\n";
+  echo "</tr>\n</table>\n";
+}
+
+echo "<table><tr><td class='scheduling_column'>\n";
 echo "<h3>"._("Unscheduled")."</h3>\n";
-echo "<form action='' method='get' name='filtersel'>";
+echo "<form action='' method='get'>";
 echo "<p><select class='dropdown' style='width:100%' name='eventfilter' onchange='OnEventSelect(this);'>\n";
 echo "<option class='dropdown' value=''>"._("Select event")."</option>";
 foreach($seasonfilter as $season){
@@ -280,18 +391,24 @@ foreach($poolfilter as $pool){
 }
 echo "</select></p>\n";
 echo "</form>";
+
+$zeroGames = array();
+
 echo "<div class='workarea' >\n";
-echo "<ul id='unscheduled' class='draglist' style='min-height:600px'>\n";
+echo "<ul class='draglist' id='unscheduled'  style='min-height:600px'>\n";
 foreach ($gameData as $gameId => $gameInfo) {
   if (hasEditGamesRight($gameInfo['series'])) {
-    $height = gameHeight($gameInfo);
-    $poolname = U_($gameInfo['seriesname']).", ". U_($gameInfo['poolname']);
-    if(!empty($gameInfo['gametimeslot'])){
-      $maxtimeslot = max($maxtimeslot, $gameInfo['gametimeslot']);
-    }else{
-      $maxtimeslot = max($maxtimeslot, $gameInfo['timeslot']);
+    $duration = gameDuration($gameInfo);
+    if ($duration <= 0) {
+      $zeroGames[] = count($zeroGames) == 0?$gameInfo:$gameId;
     }
-    gameEntry($gameInfo['color'], $height, $gameId, getGameName($gameInfo), $poolname);
+    $height = gameHeight($duration);
+    $poolname = gamePoolName($gameInfo);
+    $maxtimeslot = max($maxtimeslot, $duration);
+    if ($duration > 0)
+      echo gameEntry($gameInfo, $height, $duration, $poolname);
+    else
+      echo gameEntry($gameInfo, $height, $duration, $poolname, false);
   }
 }
 if(count($gameData)==0){
@@ -302,57 +419,72 @@ echo "</div>\n</td>\n";
 echo "</tr>\n</table>\n";
 echo "<p>&nbsp;</p>";
 echo "<input type='button' id='pauseButton' value='"._("Add pause")."'/>";
-echo "<input type='text' id='pauseLen' value='$maxtimeslot' size='3'/>". _("minutes");
-echo "</td><td style='vertical-align:top'>";
+echo "<div style='white-space:nowrap'><input type='text' id='pauseLen' value='$maxtimeslot' size='3'/>&thinsp;". _("minutes")."</div>\n";
+echo "</td><td style='vertical-align:top'>\n";
 $reservedPauses = array();
 
-if(count($reservationData)>1){
-  foreach ($reservationData as $day => $dayArray) {
-    echo "<table><tr>\n";
+$MINTOP = 30;
 
+if(count($reservationData)>0){
+  foreach ($reservationData as $day => $dayArray) {
+    $lastEnd = 0;
+    $columnCount = $lastBreak = 0;
+    tableStart($dayArray, 0, $MAX_COLUMNS);
+    
     foreach ($dayArray as $reservationId => $reservationArray) {
       if (!isset($firstStart)) {
         $firstStart = strtotime($reservationArray['starttime']);
-        echo "<td>".JustDate($reservationArray['starttime'])."</td>\n";
       }
-      echo "<td style='vertical-align:top;padding:5px'>\n";
-      $offset = intval((strtotime($reservationArray['starttime']) - $firstStart) / 60) + 60;
+      echo "<td class='scheduling_column'>\n";
+      $offset = intval((strtotime($reservationArray['starttime']) - $firstStart) / 60) + $MINTOP;
+      $lastEnd = max($lastEnd, strtotime($reservationArray['endtime']));
       $startTime = strtotime($reservationArray['starttime']);
       $endTime =  strtotime($reservationArray['endtime']);
       $duration = ($endTime - $startTime) / 60;
 
-      echo "<div style='vertical-align:bottom;min-height:".intval($offset * MIN_HEIGHT)."px'>";
-      echo "<h3>".$reservationArray['name']." "._("Field ")." ".$reservationArray['fieldname']." ".date("H:i", $startTime)." -&gt;</h3></div>\n";
       echo "<div class='workarea' >\n";
       echo "<ul id='res".$reservationId."' class='draglist' style='min-height:".($duration * MIN_HEIGHT)."px'>\n";
       $nextStart = $startTime;
       foreach ($reservationArray['games'] as $gameId => $gameInfo) {
         $gameStart = strtotime($gameInfo['time']);
-        $height = pauseHeight($gameStart, $nextStart);
+        $duration = ($gameStart - $nextStart) / 60;
+        $height = pauseHeight($duration);
         if ($nextStart<$gameStart) {
-          echo "<li class='list1' id='pause".$gameId."' style='min-height:".$height."px'>"._("Pause")."<span style='align:right;float:right'><a href='javascript:hide(\"pause".$gameId."\");'>x</a></span></li>\n";
+          echo pauseEntry($height, $duration, $gameId);
           $reservedPauses[] = "pause".$gameId;
         }
-        if(!empty($gameInfo['gametimeslot'])){
-          $nextStart = $gameStart + ($gameInfo['gametimeslot'] * 60);
-        }else{
-          $nextStart = $gameStart + ($gameInfo['timeslot'] * 60);
+        $duration = gameDuration($gameInfo);
+        if ($duration <= 0) {
+          $zeroGames[] = count($zeroGames) == 0?$gameInfo:$gameId;
         }
-        $height = gameHeight($gameInfo);
+        $nextStart = $gameStart + ($duration * 60);
+        $height = gameHeight($duration);
         $gametitle = getGameName($gameInfo);
-        $pooltitle = U_($gameInfo['seriesname']).", ". U_($gameInfo['poolname']);
-        if (hasEditGamesRight($gameInfo['series'])) {
-          gameEntry($gameInfo['color'],$height,$gameId,$gametitle,$pooltitle);
+        $pooltitle = gamePoolName($gameInfo); 
+        if ($duration > 0 && hasEditGamesRight($gameInfo['series'])) {
+          echo gameEntry($gameInfo, $height, $duration, $pooltitle);
         } else {
-          gameEntry($gameInfo['color'],$height,"unmanaged".$gameId,$gametitle,$pooltitle, false);
+          echo gameEntry($gameInfo, $height, $duration, $pooltitle, false);
         }
       }
       echo "</ul>\n";
       echo "</div>\n</td>\n";
+      
+      ++$columnCount;
+      if (count($dayArray) > $MAX_COLUMNS && ($columnCount-$lastBreak >= $MAX_COLUMNS)) {
+        tableEnd($firstStart, $lastEnd);
+        unset($firstStart);
+        $lastEnd=0;
+        if ($columnCount < count($dayArray))
+          tableStart($dayArray, $columnCount, $MAX_COLUMNS);
+        $lastBreak = $columnCount;
+      }
     }
-    echo "<td>".JustDate($reservationArray['starttime'])."</td>\n";
-    echo "</tr>\n</table>\n";
+    if (isset($firstStart)) {
+      tableEnd($firstStart, $lastEnd);
+    }    
     unset($firstStart);
+    $lastEnd=0;
   }
 }else{
   foreach ($reservationData as $day => $dayArray) {
@@ -368,35 +500,36 @@ if(count($reservationData)>1){
         $firstStart = strtotime($reservationArray['starttime']);
       }
       echo "<td style='vertical-align:top;padding:5px'>\n";
-      $offset = intval((strtotime($reservationArray['starttime']) - $firstStart) / 60) + 60;
+      $offset = intval((strtotime($reservationArray['starttime']) - $firstStart) / 60) + $MINTOP;
       $startTime = strtotime($reservationArray['starttime']);
       $endTime =  strtotime($reservationArray['endtime']);
       $duration = ($endTime - $startTime) / 60;
 
       echo "<div style='vertical-align:bottom;min-height:".intval($offset * MIN_HEIGHT)."px'>";
-      echo "<h3>".$reservationArray['name']." "._("Field ")." ".$reservationArray['fieldname']." ".date("H:i", $startTime)." -&gt;</h3></div>\n";
+      echo "<h3>".$reservationArray['name']." "._("Field ")." ".$reservationArray['fieldname']." ".date("H:i", $startTime)."</h3></div>\n";
       echo "<div class='workarea' >\n";
       echo "<ul id='res".$reservationId."' class='draglist' style='min-height:".($duration * MIN_HEIGHT)."px'>\n";
       $nextStart = $startTime;
       foreach ($reservationArray['games'] as $gameId => $gameInfo) {
         $gameStart = strtotime($gameInfo['time']);
         if ($gameStart > $nextStart) {
-          $height = pauseHeight($gameStart, $nextStart);
-          echo "<li class='list1' id='pause".$gameId."' style='min-height:".$height."px'>"._("Pause")."<span style='align:right;float:right'><a href='javascript:hide(\"pause".$gameId."\");'>x</a></span></li>\n";
+          $duration = ($gameStart - $nextStart) / 60;
+          $height = pauseHeight($duration);
+          echo pauseEntry($height, $duration, $gameId);
           $reservedPauses[] = "pause".$gameId;
         }
-        if(!empty($gameInfo['gametimeslot'])){
-          $nextStart = $gameStart + (max($gameInfo['gametimeslot'], 60) * 60);
-        }else{
-          $nextStart = $gameStart + (max($gameInfo['timeslot'], 60) * 60);
+        $duration = gameDuration($gameInfo);
+        if ($duration <= 0) {
+          $zeroGames[] = count($zeroGames) == 0?$gameInfo:$gameId;
         }
-        $height = gameHeight($gameInfo);
+        $nextStart = $gameStart + (max($duration, 60) * 60);
+        $height = gameHeight($duration);
         $gametitle = getGameName($gameInfo);
-        $pooltitle = U_($gameInfo['seriesname']).", ". U_($gameInfo['poolname']);
-        if (hasEditGamesRight($gameInfo['series'])) {
-          gameEntry($gameInfo['color'],$height,$gameId,$gametitle,$pooltitle);
+        $pooltitle = gamePoolName($gameInfo);
+        if ($duration > 0 && hasEditGamesRight($gameInfo['series'])) {
+          echo gameEntry($gameInfo, $height, $duration, $pooltitle);
         } else {
-          gameEntry($gameInfo['color'],$height,"unmanaged".$gameId,$gametitle,$pooltitle, false);
+          echo gameEntry($gameInfo, $height, $duration, $pooltitle, false);
         }
       }
       echo "</ul>\n";
@@ -409,16 +542,17 @@ if(count($reservationData)>1){
   }
 
 }
+echo "<table><tr>";
+echo "<td id='user_actions' style='float: left; padding: 20px'>";
+echo "<input type='button' id='showButton' value='" . _("Save") . "' /></td>";
+echo "<td class='center'><div id='responseStatus'></div>";
+if (!empty($zeroGames)) {
+  echo "<p>". sprintf(_("Warning: Games with duration 0 found. They can not be scheduled. Edit the game duration or the time slot length of pool %s ..."),
+      gamePoolName($zeroGames[0])) ."</p>";
+}
+echo "</td></tr></table>\n";
+echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
 ?>
-<table>
-	<tr>
-		<td id="user_actions" style='float: left; padding: 20px'><input
-			type="button" id="showButton" value="<?php echo _("Save"); ?>" /></td>
-		<td class='center'>
-			<div style='width: 100px; height: 100px' id="responseStatus"></div>
-		</td>
-	</tr>
-</table>
 <script type="text/javascript">
 //<![CDATA[
 
@@ -432,89 +566,107 @@ function hide(id) {
 	list.removeChild(elem);
 }
 
+function setModified(newValue) {
+ modified=newValue;
+ if (modified)
+    window.onbeforeunload = function() {
+        return "";
+    }
+ else
+    window.onbeforeunload = null;
+}
+
+function paramExp(param) {
+  return new RegExp("([?|&])" + param + "=([^&]*)?(&|$)","i")
+}
+
+function getParam(url, param) {
+    var found = 0;
+	var re = paramExp(param);
+    if (url.match(re)){
+        found = url.match(re)[2];
+    }
+    return found;
+}
+
+function changeParam(url, param, value) {
+  var re = paramExp(param);
+  if (url.match(re)){
+    url=url.replace(re,'$1' + param + "=" + value + '$3');
+  }else{
+    url = url + '&' + param + "=" + value;
+  }
+  return url;
+}
+
+function getUrl(url, season, series, pool) {
+  if (season!=null) {
+    url = changeParam(url, "season", season);
+  }
+  if (series!=null) {
+    url = changeParam(url, "series", series);
+  }
+  if (pool != null) {
+    url = changeParam(url, "pool", pool);
+  }
+  return url;
+}
+
 //ajax based solution would be better, but at now this feels simpler because also dropdown fields need to be updated according user selection.
 function OnEventSelect(dropdown)
 {
-    var myindex  = dropdown.selectedIndex;
-    var SelValue = dropdown.options[myindex].value;
-	
-	var url = location.href;
-	
-	var param = "season";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + SelValue + '$2');
-    }else{
-		url = url + '&' + param + "=" + SelValue;
-	}
-	
-	var param = "series";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + 0 + '$2');
-    }
-		
-	var param = "pool";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + 0 + '$2');
-    }
-	redirecturl=url;
-	redirectWithConfirm();
-}
+  var myindex  = dropdown.selectedIndex;
+  var SelValue = dropdown.options[myindex].value;
+  var event = getParam(location.href, "season");
 
+  redirecturl=getUrl(location.href, SelValue, 0, 0);
+  if (!redirectWithConfirm()){
+    dropdown.value = series;
+  }
+}
+  
 function OnSeriesSelect(dropdown)
 {
-    var myindex  = dropdown.selectedIndex;
-    var SelValue = dropdown.options[myindex].value;
-	var url = location.href;
+  var myindex  = dropdown.selectedIndex;
+  var SelValue = dropdown.options[myindex].value;
+  var series = getParam(location.href, "series");
 
-	var param = "series";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + SelValue + '$2');
-    }else{
-		url = url + '&' + param + "=" + SelValue;
-	}
-		
-	var param = "pool";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + 0 + '$2');
-    }
-	
-	redirecturl=url;
-	redirectWithConfirm();
+  redirecturl = getUrl(location.href, null, SelValue, 0);
+  if (!redirectWithConfirm()){
+    dropdown.value = series;
+  }
 }
 
 function OnPoolSelect(dropdown)
 {
-    var myindex  = dropdown.selectedIndex;
-    var SelValue = dropdown.options[myindex].value;
-	var url = location.href;
-	
-	var param = "pool";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + SelValue + '$2');
-    }else{
-		url = url + '&' + param + "=" + SelValue;
-	}
-	redirecturl=url;
-	redirectWithConfirm();
+  var myindex  = dropdown.selectedIndex;
+  var SelValue = dropdown.options[myindex].value;
+  var pool = getParam(location.href, "pool");
+
+  redirecturl = getUrl(location.href, null, null, SelValue);
+  if (!redirectWithConfirm()){
+    dropdown.value = pool;
+  }
 }
 
 function redirectWithConfirm(){
-	if(modified){
-		var answer = confirm('<?php echo _("Save changes?");?>');
-		if (answer){
-			YAHOO.example.ScheduleApp.requestString();
-		}else{
-			location.href=redirecturl;
-		}
-	}else{
-		location.href=redirecturl;
-	}
+  if(modified){
+    var answer = confirm('<?php echo _("Save changes?");?>');
+    if (answer){
+      YAHOO.example.ScheduleApp.requestString();
+      setModified(false);
+    }else{
+      answer = confirm('<?php echo _("Do you want to leave anyway? If you select Yes, you will lose all your changes.");?>');
+      if (answer) {
+        setModified(false);
+        location.href=redirecturl;
+      } else
+        return false;
+	  }
+  }else{
+    location.href=redirecturl;
+  }
+  return true;
 }
 
 (function() {
@@ -555,14 +707,19 @@ foreach ($reservedPauses as $pauseId) {
     
 	addPause: function() {
     	var unscheduled = Dom.get("unscheduled");
-    	var pauseElem = document.createElement("li");
-	pauseElem.innerHTML = "<?php echo _("Pause"); ?><span style=\"align:right;float:right\"><a href='javascript:hide(\"pause" + pauseIndex+ "\");'>x</a></span>";
-	pauseElem.setAttribute("class", "list1");
-	pauseElem.setAttribute("id", "pause" + pauseIndex);
-	Dom.setStyle(pauseElem, "min-height", ((Dom.get("pauseLen").value * minHeight)-2) + "px");
-	unscheduled.appendChild(pauseElem);
-	new YAHOO.example.DDList("pause" + pauseIndex);
-	pauseIndex++;
+    	var pauseElement = document.createElement("div");
+        var duration = Dom.get("pauseLen").value;
+        var height = (duration * minHeight)-2;
+        var html = "<?php echo jsSecure(pauseEntry('%h%', '%d%', '%i%')); ?>";
+        html = html.replace(/%h%/g, height);
+        html = html.replace(/%d%/g, duration);
+        html = html.replace(/%i%/g, pauseIndex);
+        pauseElement.innerHTML = html;
+        pauseElement = pauseElement.firstChild;
+        
+	    unscheduled.appendChild(pauseElement);
+	    new YAHOO.example.DDList("pause" + pauseIndex);
+	    pauseIndex++;
     },	
     
     requestString: function() {
@@ -571,14 +728,12 @@ foreach ($reservedPauses as $pauseId) {
             var out = id;
 			var offset = 0;
             for (i=0;i<items.length;i=i+1) {
-
-                var height =  Dom.getStyle(items[i], "min-height"); // items[i].firstChild.data; //
-                height = parseInt(height.substring(0, height.length -2)) + 2;
+                var duration =  parseInt(items[i].firstChild.value);
 				var nextId = items[i].id.substring(4);
 				if (!isNaN(nextId)) {
                 	out += ":" + nextId + "/" + offset;
 				}
-                offset += (height/minHeight);
+                offset += duration;
             }
             return out;
         };
@@ -601,8 +756,6 @@ foreach ($reservedPauses as $pauseId) {
 	Dom.setStyle(responseDiv,"background-image","url('images/indicator.gif')");
 	Dom.setStyle(responseDiv,"background-repeat","no-repeat");
 	Dom.setStyle(responseDiv,"background-position", "top right");
-	Dom.setStyle(responseDiv,"height", "20px");
-	Dom.setStyle(responseDiv,"width", "400px");
 	Dom.setStyle(responseDiv,"class", "inprogress");
 	responseDiv.innerHTML = '&nbsp;';
 	var transaction = YAHOO.util.Connect.asyncRequest('POST', 'index.php?view=admin/saveschedule', callback, request);         
@@ -612,10 +765,11 @@ foreach ($reservedPauses as $pauseId) {
 var callback = {
 	success: function(o) {
 		var responseDiv = Dom.get("responseStatus");
+		YAHOO.util.Dom.removeClass(responseDiv,"attention");
+		YAHOO.util.Dom.addClass(responseDiv,"highlight");
 		Dom.setStyle(responseDiv,"background-image","");
-		Dom.setStyle(responseDiv,"color", "#00aa00");
 		responseDiv.innerHTML = o.responseText;
-		modified=0;
+		setModified(false);
 		if(redirecturl){
 			location.href=redirecturl;
 		}
@@ -623,8 +777,9 @@ var callback = {
 
 	failure: function(o) {
 		var responseDiv = Dom.get("responseStatus");
+		YAHOO.util.Dom.removeClass(responseDiv,"highlight");
+		YAHOO.util.Dom.addClass(responseDiv,"attention");
 		Dom.setStyle(responseDiv,"background-image","");
-		Dom.setStyle(responseDiv,"color", "#aa0000");
 		responseDiv.innerHTML = o.responseText;
 	}
 }
@@ -663,11 +818,13 @@ YAHOO.extend(YAHOO.example.DDList, YAHOO.util.DDProxy, {
         Dom.setStyle(dragEl, "text-align", "center");
     },
 
+    
+
     endDrag: function(e) {
 
         var srcEl = this.getEl();
         var proxy = this.getDragEl();
-		modified=1;
+        setModified(true);
         // Show the proxy element and animate it to the src element's location
         Dom.setStyle(proxy, "visibility", "");
         var a = new YAHOO.util.Motion( 

@@ -3,7 +3,7 @@ if(IsRegistered($_SESSION['uid'])){
   header("location:?view=mobile/respgames");
 }
 
-$title = _("Home");
+$title = _("Login failed");
 $userId = urldecode($_GET['user']);
 $html = "";
 

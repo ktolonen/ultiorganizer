@@ -513,7 +513,7 @@ function GameTurnovers($gameId)
 	}
 	
 function GameInfo($gameId) {
-	$query = sprintf("SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
+	$query = sprintf("SELECT game_id, hometeam, kj.name as hometeamname, kj.abbreviation as hometeamshortname, visitorteam, vj.name as visitorteamname, vj.abbreviation as visitorteamshortname, pp.pool as pool,
 			time, homescore, visitorscore, pool.timecap, pool.scorecap, pool.winningscore, pool.drawsallowed, pool.timeslot AS timeslot, 
 			pp.timeslot AS gametimeslot, pool.series, pool.color, ser.season, ser.name AS seriesname,
 			pool.name AS poolname, phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pp.scheduling_name_home,

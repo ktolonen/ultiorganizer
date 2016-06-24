@@ -22,7 +22,7 @@ class PDF extends FPDF
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
 		$this->game['seasonname'] = utf8_decode($seasonname);
-		$this->game['game_id'] = $gameId."-".getChkNum($gameId);
+		$this->game['game_id'] = $gameId.-".getChkNum($gameId);
 		$this->game['hometeamname'] = utf8_decode($hometeamname);
 		$this->game['visitorteamname'] = utf8_decode($visitorteamname);
 		$this->game['poolname'] = utf8_decode($poolname);
