@@ -262,7 +262,7 @@ $html .= "<p><object data='$baseurl/ext/countrystatus.php?Country=$selcountry&am
 }
 
 if(!empty($selteam)){
-	$html .= "<h2>"._("Selected team's games and scoreaboard")."</h2>\n";
+	$html .= "<h2>"._("Selected team's games and scoreboard")."</h2>\n";
 
 	$html .= "<p class='highlight' ><code>
 		&lt;object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>

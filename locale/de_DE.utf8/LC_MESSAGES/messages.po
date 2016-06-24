@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 01:19+0100\n"
+"POT-Creation-Date: 2016-06-24 13:58+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -228,7 +228,7 @@ msgstr "Spiel"
 
 #: poolstatus.php:626 poolstatus.php:629 teams.php:190
 #: admin/seasonpools.php:100 ext/poolstatus.php:168 ext/countrystatus.php:221
-#: ext/eventpools.php:178
+#: ext/eventpools.php:181
 msgid "Placement"
 msgstr "Platzierung"
 
@@ -239,12 +239,12 @@ msgstr "???"
 #: poolstatus.php:762 gameplay.php:15 user/respgames.php:192
 #: user/addscoresheet.php:357 mobile/gameplay.php:11
 #: scorekeeper/gameplay.php:10 scorekeeper/respgames.php:134
-#: lib/timetable.functions.php:531
+#: lib/timetable.functions.php:533
 msgid "Game play"
 msgstr "Spielverlauf"
 
 #: poolstatus.php:769 poolstatus.php:771 scorekeeper/respgames.php:132
-#: lib/timetable.functions.php:538 lib/timetable.functions.php:540
+#: lib/timetable.functions.php:540 lib/timetable.functions.php:542
 msgid "Ongoing"
 msgstr "Spiel läuft"
 
@@ -281,9 +281,9 @@ msgstr "Reservierung"
 #: admin/reservations.php:142 mobile/respgames.php:110
 #: mobile/respgames.php:113 scorekeeper/respgames.php:101
 #: lib/reservation.functions.php:23 lib/reservation.functions.php:31
-#: lib/reservation.functions.php:74 lib/timetable.functions.php:261
-#: lib/timetable.functions.php:341 lib/timetable.functions.php:392
-#: lib/timetable.functions.php:446 lib/user.functions.php:1231
+#: lib/reservation.functions.php:74 lib/timetable.functions.php:263
+#: lib/timetable.functions.php:343 lib/timetable.functions.php:394
+#: lib/timetable.functions.php:448 lib/user.functions.php:1231
 #: lib/search.functions.php:268 lib/search.functions.php:334
 #: lib/search.functions.php:734 lib/search.functions.php:759
 #: cust/wfdf/pdfprinter.php:52 cust/wfdf/pdfprinter.php:364
@@ -317,7 +317,7 @@ msgstr "indoor"
 msgid "Fields"
 msgstr "Felder"
 
-#: user_guide.php:3 menufunctions.php:658 frontpage.php:23
+#: user_guide.php:3 menufunctions.php:658 frontpage.php:21
 msgid "User Guide"
 msgstr "Anleitung"
 
@@ -634,7 +634,7 @@ msgstr "Time-outs"
 msgid "Spirit points"
 msgstr "Spiritpunkte"
 
-#: gameplay.php:510 teamcard.php:535 lib/timetable.functions.php:520
+#: gameplay.php:510 teamcard.php:535 lib/timetable.functions.php:522
 msgid "Game history"
 msgstr "Frühere Spiele"
 
@@ -1485,11 +1485,7 @@ msgstr "Sie sind ausgeloggt"
 msgid "Frontpage"
 msgstr "Titelseite"
 
-#: frontpage.php:12
-msgid "Welcome to the Ultiorganizer"
-msgstr "Herzlich Willkommen bei Ultiorganizer"
-
-#: frontpage.php:29
+#: frontpage.php:27
 msgid ""
 "In case of feedback, improvement ideas or any other questions, please "
 "contact:"
@@ -3063,7 +3059,7 @@ msgid "Comment (you can use <b>, <em>, and <br /> tags)"
 msgstr "Kommentar (Sie können <b>, </em> und <br />-Tags benutzen)"
 
 #: admin/addseasons.php:330 admin/seasonadmin.php:43
-#: lib/timetable.functions.php:555
+#: lib/timetable.functions.php:557
 msgid "Timezone"
 msgstr "Zeitzone"
 
@@ -3509,6 +3505,11 @@ msgstr "Endstand bearbeiten"
 #: admin/seasonstandings.php:498
 msgid "save ranking"
 msgstr "Rangfolge speichern"
+
+#: admin/seasonstandings.php:533 admin/seasonmoves.php:166
+#: admin/seasonmoves.php:198
+msgid "Undo"
+msgstr "Rückgängig"
 
 #: admin/seasonstandings.php:538
 msgid "Undo all"
@@ -4208,10 +4209,6 @@ msgstr "Transfer von"
 msgid "Scheduling name"
 msgstr "Name im Spielplan"
 
-#: admin/seasonmoves.php:166 admin/seasonmoves.php:198
-msgid "Undo"
-msgstr "Rückgängig"
-
 #: admin/dbrestore.php:34 admin/dbrestore.php:63 admin/dbadmin.php:20
 msgid "Restore"
 msgstr "Wiederherstellen"
@@ -4696,7 +4693,7 @@ msgid "Selected country's teams pool standings and game result"
 msgstr ""
 
 #: ext/index.php:265
-msgid "Selected team's games and scoreaboard"
+msgid "Selected team's games and scoreboard"
 msgstr "Spiele und Scoreboard eines ausgewählten Teams"
 
 #: ext/twittercallback.php:25
@@ -4714,6 +4711,10 @@ msgstr ""
 #: ext/rss.php:183
 msgid "Latest events"
 msgstr "Letzte Turniere"
+
+#: ext/eventpools.php:128
+msgid "Warning: missing team"
+msgstr "Warnung: fehlendes Team"
 
 #: ext/score-update.php:43
 msgid "Game number missing"
@@ -5105,11 +5106,11 @@ msgstr "Video"
 msgid "Live video"
 msgstr "Live-Video"
 
-#: lib/timetable.functions.php:502
+#: lib/timetable.functions.php:504
 msgid "Live Broadcasting"
 msgstr "Live-Übertragung"
 
-#: lib/timetable.functions.php:558
+#: lib/timetable.functions.php:560
 msgid "Local time"
 msgstr "Ortszeit"
 
@@ -6754,89 +6755,92 @@ msgstr "DFV Logo"
 msgid "%d.%m.%Y %H:%M"
 msgstr ""
 
-#: sql/upgrade_db.php:495
+#: sql/upgrade_db.php:496
 msgid "One simple score"
 msgstr "Ein einfacher Wert"
 
-#: sql/upgrade_db.php:498
+#: sql/upgrade_db.php:499
 msgid "Spirit score"
 msgstr "Spiritwertung"
 
-#: sql/upgrade_db.php:502
+#: sql/upgrade_db.php:503
 msgid "WFDF (four categories plus comparison)"
 msgstr "WFDF (vier Kategorien plus Vergleich)"
 
-#: sql/upgrade_db.php:504 sql/upgrade_db.php:519
+#: sql/upgrade_db.php:505 sql/upgrade_db.php:520
 msgid "Rules Knowledge and Use"
 msgstr "Regelkenntnis und -gebrauch"
 
-#: sql/upgrade_db.php:506 sql/upgrade_db.php:521
+#: sql/upgrade_db.php:507 sql/upgrade_db.php:522
 msgid "Fouls and Body Contact"
 msgstr "Fouls und Körperkontakt"
 
-#: sql/upgrade_db.php:508 sql/upgrade_db.php:523
+#: sql/upgrade_db.php:509 sql/upgrade_db.php:524
 msgid "Fair-Mindedness"
 msgstr "Aufrichtigkeit und Fairplay"
 
-#: sql/upgrade_db.php:511 sql/upgrade_db.php:526
+#: sql/upgrade_db.php:512 sql/upgrade_db.php:527
 msgid "Positive Attitude and Self-Control"
 msgstr "Positive Einstellung und Selbstbeherrschung"
 
-#: sql/upgrade_db.php:514
+#: sql/upgrade_db.php:515
 msgid "Our Spirit compared to theirs"
 msgstr "Unser Spirit im Vergleich zu ihrem"
 
-#: sql/upgrade_db.php:517
+#: sql/upgrade_db.php:518
 msgid "WFDF (five categories)"
 msgstr "WFDF (fünf Kategorien)"
 
-#: sql/upgrade_db.php:528
+#: sql/upgrade_db.php:529
 msgid "Communication"
 msgstr "Kommunikation"
 
-#: sql/upgrade_db.php:532
+#: sql/upgrade_db.php:533
 msgid "WFDF (five categories, theirs and ours)"
 msgstr "WFDF (fünf Kategorien, ihre und unsere)"
 
-#: sql/upgrade_db.php:535
+#: sql/upgrade_db.php:536
 msgid "Rules Knowledge and Use (theirs)"
 msgstr "Regelkenntnis und -gebrauch (sie)"
 
-#: sql/upgrade_db.php:538
+#: sql/upgrade_db.php:539
 msgid "Rules Knowledge and Use (ours)"
 msgstr "Regelkenntnis und -gebrauch (wir)"
 
-#: sql/upgrade_db.php:541
+#: sql/upgrade_db.php:542
 msgid "Fouls and Body Contact (theirs)"
 msgstr "Fouls und Körperkontakt (sie)"
 
-#: sql/upgrade_db.php:544
+#: sql/upgrade_db.php:545
 msgid "Fouls and Body Contact (ours)"
 msgstr "Fouls und Körperkontakt (wir)"
 
-#: sql/upgrade_db.php:546
+#: sql/upgrade_db.php:547
 msgid "Fair-Mindedness (theirs)"
 msgstr "Aufrichtigkeit und Fairplay (sie)"
 
-#: sql/upgrade_db.php:549
+#: sql/upgrade_db.php:550
 msgid "Fair-Mindedness (ours)"
 msgstr "Aufrichtigkeit und Fairplay (wir)"
 
-#: sql/upgrade_db.php:552
+#: sql/upgrade_db.php:553
 msgid "Positive Attitude and Self-Control (theirs)"
 msgstr "Positive Einstellung und Selbstbeherrschung (sie)"
 
-#: sql/upgrade_db.php:555
+#: sql/upgrade_db.php:556
 msgid "Positive Attitude and Self-Control (ours)"
 msgstr "Positive Einstellung und Selbstbeherrschung (wir)"
 
-#: sql/upgrade_db.php:557
+#: sql/upgrade_db.php:558
 msgid "Communication (theirs)"
 msgstr "Kommunikation (sie)"
 
-#: sql/upgrade_db.php:560
+#: sql/upgrade_db.php:561
 msgid "Communication (ours)"
 msgstr "Kommunikation (wir)"
+
+#~ msgid "Welcome to the Ultiorganizer"
+#~ msgstr "Herzlich Willkommen bei Ultiorganizer"
 
 #~ msgid ", then "
 #~ msgstr ", dann "

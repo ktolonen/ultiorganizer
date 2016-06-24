@@ -122,7 +122,10 @@ foreach ($allpools as $pool) {
 			$losers=0;
 			$games=0;
 			for($i=1;$i<=$totalteams;$i++){
-				$team = $teams[$i-1];
+			    if (isset($teams[$i-1]))
+				  $team = $teams[$i-1];
+			    else 
+			      $team = array( 'name' => _("Warning: missing team"), 'team_id' => -1);
 				$name = "";
 				if(intval($seasoninfo['isinternational']) && !empty($team['flagfile'])){
 					$name .= "<img height='10' src='../images/flags/tiny/".$team['flagfile']."' alt=''/> ";

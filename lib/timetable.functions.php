@@ -1,5 +1,6 @@
 <?php
-include_once 'configuration.functions.php';
+include_once $include_prefix.'lib/configuration.functions.php';
+include_once $include_prefix.'lib/game.functions.php';
 
 function TournamentView($games, $grouping=true){
 
@@ -238,10 +239,11 @@ function ExtTournamentView($games){
   $prevPool = "";
   $prevTeam = "";
   $prevDate = "";
+  $prevField = "";
   $prevTimezone = "";
   $isTableOpen = false;
   $ret .= "<table width='95%'>";
-
+  
   while($game = mysql_fetch_assoc($games)){
     if($game['reservationgroup'] != $prevTournament
     || (empty($game['reservationgroup']) && !$isTableOpen)) {
