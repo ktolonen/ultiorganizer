@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 09:49+0100\n"
+"POT-Creation-Date: 2016-06-24 17:41+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -230,7 +230,7 @@ msgstr "Peli"
 
 #: poolstatus.php:626 poolstatus.php:629 teams.php:190
 #: admin/seasonpools.php:100 ext/poolstatus.php:168 ext/countrystatus.php:221
-#: ext/eventpools.php:178
+#: ext/eventpools.php:181
 msgid "Placement"
 msgstr "Sijoitus"
 
@@ -241,12 +241,12 @@ msgstr ""
 #: poolstatus.php:762 gameplay.php:15 user/respgames.php:192
 #: user/addscoresheet.php:357 mobile/gameplay.php:11
 #: scorekeeper/gameplay.php:10 scorekeeper/respgames.php:134
-#: lib/timetable.functions.php:531
+#: lib/timetable.functions.php:533
 msgid "Game play"
 msgstr "Pelin kulku"
 
 #: poolstatus.php:769 poolstatus.php:771 scorekeeper/respgames.php:132
-#: lib/timetable.functions.php:538 lib/timetable.functions.php:540
+#: lib/timetable.functions.php:540 lib/timetable.functions.php:542
 msgid "Ongoing"
 msgstr "Kesken"
 
@@ -283,9 +283,9 @@ msgstr "Varaus"
 #: admin/reservations.php:142 mobile/respgames.php:110
 #: mobile/respgames.php:113 scorekeeper/respgames.php:101
 #: lib/reservation.functions.php:23 lib/reservation.functions.php:31
-#: lib/reservation.functions.php:74 lib/timetable.functions.php:261
-#: lib/timetable.functions.php:341 lib/timetable.functions.php:392
-#: lib/timetable.functions.php:446 lib/user.functions.php:1231
+#: lib/reservation.functions.php:74 lib/timetable.functions.php:263
+#: lib/timetable.functions.php:343 lib/timetable.functions.php:394
+#: lib/timetable.functions.php:448 lib/user.functions.php:1231
 #: lib/search.functions.php:268 lib/search.functions.php:334
 #: lib/search.functions.php:734 lib/search.functions.php:759
 #: cust/wfdf/pdfprinter.php:52 cust/wfdf/pdfprinter.php:364
@@ -319,7 +319,7 @@ msgstr "sisällä"
 msgid "Fields"
 msgstr "Kentät"
 
-#: user_guide.php:3 menufunctions.php:658 frontpage.php:23
+#: user_guide.php:3 menufunctions.php:658 frontpage.php:21
 msgid "User Guide"
 msgstr "Käyttöopas"
 
@@ -636,7 +636,7 @@ msgstr "Aikalisät"
 msgid "Spirit points"
 msgstr "Spirit-pisteet"
 
-#: gameplay.php:510 teamcard.php:535 lib/timetable.functions.php:520
+#: gameplay.php:510 teamcard.php:535 lib/timetable.functions.php:522
 msgid "Game history"
 msgstr "Otteluhistoria"
 
@@ -1493,11 +1493,7 @@ msgstr "Olet kirjautunut ulos"
 msgid "Frontpage"
 msgstr "Etusivu"
 
-#: frontpage.php:12
-msgid "Welcome to the Ultiorganizer"
-msgstr "Tervetuloa liitokiekkoliiton pelikoneeseen"
-
-#: frontpage.php:29
+#: frontpage.php:27
 #, fuzzy
 msgid ""
 "In case of feedback, improvement ideas or any other questions, please "
@@ -3089,7 +3085,7 @@ msgid "Comment (you can use <b>, <em>, and <br /> tags)"
 msgstr ""
 
 #: admin/addseasons.php:330 admin/seasonadmin.php:43
-#: lib/timetable.functions.php:555
+#: lib/timetable.functions.php:557
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
@@ -4537,7 +4533,7 @@ msgid "Placement pool"
 msgstr "Sijoituslohko"
 
 #: admin/addseasonpools.php:369
-msgid "Initial pools"
+msgid "Initial moves"
 msgstr "Alkusarjat"
 
 #: admin/addseasonpools.php:370
@@ -4758,7 +4754,7 @@ msgid "Selected country's teams pool standings and game result"
 msgstr "Valitun maan joukkueiden lohkot ja pelitulokset"
 
 #: ext/index.php:265
-msgid "Selected team's games and scoreaboard"
+msgid "Selected team's games and scoreboard"
 msgstr "Valitun joukkueen pelit sekä pistepörssi"
 
 #: ext/twittercallback.php:25
@@ -4776,6 +4772,10 @@ msgstr "Ultimate peli"
 #: ext/rss.php:183
 msgid "Latest events"
 msgstr "Viimeisin tapahtuma"
+
+#: ext/eventpools.php:128
+msgid "Warning: missing team"
+msgstr ""
 
 #: ext/score-update.php:43
 msgid "Game number missing"
@@ -5168,11 +5168,11 @@ msgstr "Video"
 msgid "Live video"
 msgstr "Live video"
 
-#: lib/timetable.functions.php:502
+#: lib/timetable.functions.php:504
 msgid "Live Broadcasting"
 msgstr "Suoralähetys"
 
-#: lib/timetable.functions.php:558
+#: lib/timetable.functions.php:560
 msgid "Local time"
 msgstr "Paikallisaika"
 
@@ -5685,7 +5685,6 @@ msgid "3. Add jersey numbers for players on # -column."
 msgstr "3. Lisää pelaajien pelinumerot # -sarakkeeseen."
 
 #: cust/slkl/pdfprinter.php:802
-#, fuzzy
 msgid "Time-outs (time)"
 msgstr "Aikalisät (aika)"
 
@@ -6918,6 +6917,9 @@ msgstr "Communication (ne)"
 #: sql/upgrade_db.php:561
 msgid "Communication (ours)"
 msgstr "Communication (me)"
+
+#~ msgid "Welcome to the Ultiorganizer"
+#~ msgstr "Tervetuloa liitokiekkoliiton pelikoneeseen"
 
 #~ msgid "Goals scored"
 #~ msgstr "Tehdyt maalit"

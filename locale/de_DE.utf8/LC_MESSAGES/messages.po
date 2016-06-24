@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2016-06-24 13:58+0100\n"
+"POT-Creation-Date: 2016-06-24 17:41+0100\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -4475,8 +4475,8 @@ msgid "Placement pool"
 msgstr "Platzierungsgruppe"
 
 #: admin/addseasonpools.php:369
-msgid "Initial pools"
-msgstr "Anfängliche Gruppen"
+msgid "Initial moves"
+msgstr "Transfers"
 
 #: admin/addseasonpools.php:370
 msgid "select"

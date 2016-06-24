@@ -366,7 +366,7 @@ if(!$poolId || $addmore) {
 	echo "<td></td></tr>";
 	
 	if(intval($pp['continuingpool'])) {
-		echo "<tr><td class='infocell'>"._("Initial pools").":</td>
+		echo "<tr><td class='infocell'>"._("Initial moves").":</td>
 			<td><a href='?view=admin/poolmoves&amp;season=$season&amp;series=".$pp['series']."&amp;pool=".$poolId."'>"._("select")."</a></td>
 			<td></td></tr>";
 	}
