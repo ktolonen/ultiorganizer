@@ -268,7 +268,7 @@ msgstr "Datenschutzerklärung"
 #: lib/user.functions.php:869 lib/user.functions.php:922
 #: cust/default/head.php:12 cust/dfv/head.php:12
 msgid "Ultiorganizer"
-msgstr "Deutscher Frisbeesportverband e.V."
+msgstr "Ultiorganizer"
 
 #: reservationinfo.php:9
 msgid "Reservation"
@@ -1487,7 +1487,7 @@ msgstr "Titelseite"
 
 #: frontpage.php:12
 msgid "Welcome to the Ultiorganizer"
-msgstr "Herzlich Willkommen beim Ergebnisdienst des DFV"
+msgstr "Herzlich Willkommen bei Ultiorganizer"
 
 #: frontpage.php:29
 msgid ""

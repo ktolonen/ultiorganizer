@@ -9,8 +9,6 @@ if(iget("hideseason")) {
   exit;
 }
 
-$html .= "<h1>". _("Welcome to the Ultiorganizer") ."</h1>";
-
 $htmlfile = 'locale/'.getSessionLocale().'/LC_MESSAGES/welcome.html';
 
 if (is_file('cust/'.CUSTOMIZATIONS.'/'.$htmlfile)) {
