@@ -530,8 +530,8 @@ function editPoolStandings($type, $pool, $startIds, $editStarts, $editEnds, $see
 }
 
 function undoButton($frompool, $fromplacing, $topool) {
-  return "<td class='right'><input class='button' type='submit' name='move".$type."' value='" . _("Undo") .
-         "' onclick='set".$type."Move(".$frompool.", ".$fromplacing.", ".$topool. ")' /></td>";
+  return "<td class='right'><input class='button' type='submit' name='moveUndo' value='" . _("Undo") .
+         "' onclick='setUndoMove(".$frompool.", ".$fromplacing.", ".$topool. ")' /></td>";
 }
 
 function undoPoolButton($pool, $from){

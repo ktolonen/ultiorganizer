@@ -5,7 +5,7 @@ include_once 'lib/series.functions.php';
 include_once 'lib/common.functions.php';
 
 $LAYOUT_ID = EDITGAME;
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(empty($_SERVER['HTTP_REFERER'])?"":$_SERVER['HTTP_REFERER']);
 $gameId = $_GET["game"];
 $info = GameResult($gameId);
 
@@ -75,8 +75,10 @@ if(!empty($_POST['save']))
     if(IsRegistered($userid)){
       AddSeasonUserRole($userid, 'gameadmin:'.$gameId,$season);
     }
-    session_write_close();
-	header("location:$backurl");
+    if (!empty($backurl)) {
+      session_write_close();
+        header("location:$backurl");
+      }
 	}
 
 //common page
@@ -253,9 +255,11 @@ else
 echo "</table>";
 
 echo "<div><input type='hidden' name='backurl' value='$backurl'/></div>";
-echo "<p><input class='button' name='save' type='submit' value='"._("Save")."'/>
-	  <input class='button' type='button' name='return'  value='"._("Return")."' onclick=\"window.location.href='$backurl'\"/></p>
-	  </form>";
+echo "<p><input class='button' name='save' type='submit' value='"._("Save")."'/>";
+if (!empty($backurl)) {
+  echo "<input class='button' type='button' name='return'  value='"._("Return")."' onclick=\"window.location.href='$backurl'\"/>";
+}
+echo "</p></form>\n";
 
 contentEnd();
 pageEnd();

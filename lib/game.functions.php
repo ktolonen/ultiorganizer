@@ -1244,40 +1244,83 @@ function GameProcessMassInput($post) {
 }
 
 function DeleteGame($gameId) {
-	$series = GameSeries($gameId);
-	if (hasEditGamesRight($series)) {
-		Log2("game","delete",GameNameFromId($gameId));
-		$query = sprintf("DELETE FROM uo_game WHERE game_id='%s'",
-		mysql_real_escape_string($gameId));
-			
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-		$query = sprintf("DELETE FROM uo_game_pool 
-				WHERE game='%s' AND timetable=1",
-			mysql_real_escape_string($gameId));
-			
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
-		return $result;
-	} else { die('Insufficient rights to delete game'); }
+  $series = GameSeries($gameId);
+  if (hasEditGamesRight($series)) {
+    Log2("game", "delete", GameNameFromId($gameId));
+    $query = sprintf("DELETE FROM uo_game 
+        WHERE game_id='%d'",
+        (int) $gameId);
+    
+    $result = mysql_query($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    
+    $query = sprintf("DELETE FROM uo_game_pool
+        WHERE game='%d' AND timetable=1",
+        (int) $gameId);
+    
+    $result = mysql_query($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    
+    return $result;
+  } else {
+    die('Insufficient rights to delete game');
+  }
 }
 
-function DeleteMovedGame($gameId,$poolId) {
-	$series = GameSeries($gameId);
-	if (hasEditGamesRight($series)) {
-		Log2("game","delete",GameNameFromId($gameId),$poolId,"Delete moved Game");
-		$query = sprintf("DELETE FROM uo_game_pool 
-				WHERE (game='%s' AND pool='%s' AND timetable='0')",
-			mysql_real_escape_string($gameId),
-			mysql_real_escape_string($poolId));
-			
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
-		return $result;
-	} else { die('Insufficient rights to delete game'); }
+function DeleteMovedGame($gameId, $poolId) {
+  $series = GameSeries($gameId);
+  if (hasEditGamesRight($series)) {
+    Log1("game", "delete", $gameId, $poolId, "Delete moved game");
+    $query = sprintf("DELETE FROM uo_game_pool 
+		WHERE (game='%d' AND pool='%d' AND timetable='0')",
+        (int) $gameId, (int) $poolId);
+    
+    $result = mysql_query($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    
+    return $result;
+  } else {
+    die('Insufficient rights to delete game');
+  }
+}
+
+function PoolDeleteAllGames($poolId) {
+  $series = PoolSeries($poolId);
+  if (hasEditGamesRight($series)) {
+    Log1("game", "delete", $poolId, 0, "Delete pool games");
+    $query = sprintf("DELETE FROM uo_game_pool
+        WHERE pool=%d",
+        $poolId);
+    $result = DBQuery($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    
+    $query = sprintf("DELETE FROM uo_game 
+        WHERE pool=%d",
+        $poolId);
+    $result = DBQuery($query);
+    if (!$result) {
+      die('Invalid query: ' . mysql_error());
+    }
+    return $result;
+  } else {
+    die('Insufficient rights to delete game');
+  }
+}
+
+function PoolSeries($poolId) {
+	$query = sprintf("SELECT pool_id
+		FROM uo_pool
+		WHERE series='%d'",
+		(int) $poolId);
+	return DBQueryToValue($query);
 }
 
 function UnscheduledGameInfo($teams=array()) {

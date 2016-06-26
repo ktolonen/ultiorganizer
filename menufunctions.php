@@ -687,7 +687,7 @@ function getEditSeasonLinks() {
         $links['?view=admin/seasonseries&amp;season='.$season] = _("Divisions");
         $links['?view=admin/seasonteams&amp;season='.$season] = _("Teams");
         $links['?view=admin/seasonpools&amp;season='.$season] = _("Pools");
-        $links['?view=admin/reservations&amp;season='.$season] = _("Field reservations");
+        $links['?view=admin/reservations&amp;season='.$season] = _("Scheduling");
         $links['?view=admin/seasongames&amp;season='.$season] = _("Games");
         $links['?view=admin/seasonstandings&amp;season='.$season] = _("Standings");
         $links['?view=admin/accreditation&amp;season='.$season] = _("Accreditation");
