@@ -1,0 +1,100 @@
+body{
+	background-color: #E8E8E8;
+	font-family: Verdana, Arial, Tahoma, Helvetica, sans-serif;
+}
+
+p{  
+	color: #000000; 
+	font-size: 10px; 
+	text-align: left; 
+	text-decoration: none; 
+}
+
+table {
+	border-collapse:collapse;
+	margin: 5px;
+	padding: 1px;
+}
+
+th{
+	color: #ffffff; 
+	font-size: 10px; 
+	text-align: left; 
+	text-decoration: none; 
+	background-color: #006699;
+}
+
+th a:link, th a:visited {
+	color: #ffffff; 
+	font-size: 10px; 
+	text-align: left; 
+	text-decoration: underline;
+}
+
+td{  
+	color: #000000; 
+	font-size: 10px; 
+	text-align: left; 
+	text-decoration: none;
+}
+
+p{  
+	color: #000000; 
+	font-size: 10px; 
+	text-align: left; 
+	text-decoration: none; 
+}
+
+h1{  
+	color: #000000; 
+	font-size: 10pt; 
+	line-height: 12pt; 
+	font-weight: bold; 
+	text-transform:uppercase;
+}
+
+h2{  
+	color: #000000; 
+	font-size: 9pt; 
+	line-height: 12pt; 
+	font-weight: bold;
+	padding-top:5px; 
+}
+
+h3{  
+	color: #000000; 
+	font-size: 8pt; 
+	line-height: 10pt; 
+	font-weight: bold;
+	padding-top:5px; 
+}
+
+h4{
+	color: #000000; 
+	font-size: 8pt; 
+	text-align: left; 
+	text-decoration: none; 
+	font-weight: bold;
+	vertical-align: bottom;
+	font-variant: small-caps;
+}
+
+a:link, a:visited {
+	color: #004466; 
+	font-size: 10px; 
+	text-align: left; 
+	text-decoration: none;
+}
+
+a:hover, a:focus {
+	text-decoration: underline;
+}
+
+input {
+	font-size: 10px; 
+}
+
+button {
+	cursor:pointer;
+	font-size: 10px; 
+}

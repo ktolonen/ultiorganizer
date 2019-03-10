@@ -1,0 +1,5 @@
+This email has been sent to you as a response to a request to add a verified email address at $ultiorganizer.
+
+Please follow the link below or cut-and-paste it to a browser address bar to verify this address.
+
+$url
