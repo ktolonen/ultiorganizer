@@ -88,9 +88,9 @@
 
     //PHP extensions
     $html .= "<tr>";
-    $html .= "<td>PHP Extension: mysql</td>";
+    $html .= "<td>PHP Extension: mysql or mysqli</td>";
     $html .= "<td>required</td>";
-    if(extension_loaded("mysql")) {
+    if(extension_loaded("mysql") || extension_loaded("mysqli")) {
       $html .= "<td style='color:green'>ok</td>";
     }else{
       $html .= "<td style='color:red'>failed</td>";
@@ -194,10 +194,10 @@
 
   function database(){
 
-    $db_hostname=isset($_POST['hostname']) ? mysql_escape_string($_POST['hostname']) : "localhost";
-    $db_username=isset($_POST['username']) ? mysql_escape_string($_POST['username']) : "ultiorganizer";
-    $db_password=isset($_POST['password']) ? mysql_escape_string($_POST['password']) : "ultiorganizer";
-    $db_database=isset($_POST['database']) ? mysql_escape_string($_POST['database']) : "ultiorganizer";
+    $db_hostname=isset($_POST['hostname']) ? trim($_POST['hostname']) : "localhost";
+    $db_username=isset($_POST['username']) ? trim($_POST['username']) : "ultiorganizer";
+    $db_password=isset($_POST['password']) ? trim($_POST['password']) : "ultiorganizer";
+    $db_database=isset($_POST['database']) ? trim($_POST['database']) : "ultiorganizer";
 
     $html="";
     $html .= "<table style='width:80%'>";
@@ -213,10 +213,10 @@
       $db_pass = true;
 
       $html .= "<p>Connecting to database: ";
-      $mysqlconnectionref = mysql_connect($db_hostname, $db_username, $db_password);
+      $mysqlconnectionref = mysqli_connect($db_hostname, $db_username, $db_password, $db_database);
 
-      if(!$mysqlconnectionref) {
-        $html .= "<span style='color:red'>Failed to connect to server: " . mysql_error()."</span></p>";
+      if(mysqli_connect_errno()) {
+        $html .= "<span style='color:red'>Failed to connect to server: " . mysqli_connect_error()."</span></p>";
         $db_pass = false;
       }else{
         $html .= "<span style='color:green'>ok</span></p>";
@@ -224,7 +224,7 @@
 
       $html .=  "<p>Selecting database: ";
       //select schema
-      $db = mysql_select_db($db_database);
+      $db = mysqli_select_db($mysqlconnectionref,$db_database);
       if(!$db) {
         $html .= "<span style='color:red'>Failed. Unable to select database.</span></p>";
         $db_pass = false;
@@ -235,8 +235,8 @@
 
       $html .= "<p>Reading Ultiorganizer tables from given database: ";
       $tables = array();
-      $ret = mysql_query("SHOW TABLES FROM $db_database");
-      while ($row = mysql_fetch_row($ret)) {
+      $ret = mysqli_query($mysqlconnectionref, "SHOW TABLES FROM $db_database");
+      while ($row = mysqli_fetch_row($ret)) {
         $tables[] = $row[0];
         //echo "\"",$row[0]."\",";
       }
@@ -252,7 +252,7 @@
         $html .= "<br>Missing tables: ".implode($delta,', ')."</p>";
 
         $html .= "<p>Creating Ultiorganizer tables: ";
-        $ret = createtables();
+        $ret = createtables($mysqlconnectionref);
         if(empty($ret)){
           $html .= "<span style='color:green'>ok</span></p>";
         }else{
@@ -264,7 +264,7 @@
       }else{
         $html .= "<span style='color:green'>ok</span></p>";
       }
-      mysql_close($mysqlconnectionref);
+      //mysqli_close($mysqlconnectionref);
 
       //write configuration file
       if($db_pass){
@@ -297,7 +297,7 @@
 
     return $html;
   }
-  function createtables(){
+  function createtables($mysqlconnectionref){
     $html = "";
 
     //Create tables if required
@@ -322,8 +322,8 @@
         $line = trim($line);
 
         if (!empty($line)) {
-          if (!mysql_query($line)) {
-            $html .=  "<p style='color:red'>Problem with DB creation: " . mysql_error() . "</p>\n";
+          if (!mysqli_query($mysqlconnectionref, $line)) {
+            $html .=  "<p style='color:red'>Problem with DB creation: " . mysqli_error($mysqlconnectionref) . "</p>\n";
           }
         }
       }
@@ -336,15 +336,15 @@
 
     $passed = false;
 
-    $upload_dir=isset($_POST['upload_dir']) ? mysql_escape_string($_POST['upload_dir']) : "images/uploads/";
-    $timezone=isset($_POST['timezone']) ? mysql_escape_string($_POST['timezone']) : "Europe/Helsinki";
-    $locale=isset($_POST['locale']) ? mysql_escape_string($_POST['locale']) : "en_GB.utf8";
-    $customization=isset($_POST['customization']) ? mysql_escape_string($_POST['customization']) : "default";
-    $title=isset($_POST['title']) ? mysql_escape_string($_POST['title']) : "Ultiorganizer - ";
-    $maps=isset($_POST['maps']) ? mysql_escape_string($_POST['maps']) : "";
-    $admin=isset($_POST['admin']) ? mysql_escape_string($_POST['admin']) : "ultiorganizer_admin@example.com";
-    $mail=isset($_POST['mail']) ? mysql_escape_string($_POST['mail']) : "ultiorganizer@example.com";
-    $baseurl=isset($_POST['baseurl']) ? mysql_escape_string($_POST['baseurl']) : GetURLBase();
+    $upload_dir=isset($_POST['upload_dir']) ? trim($_POST['upload_dir']) : "images/uploads/";
+    $timezone=isset($_POST['timezone']) ? trim($_POST['timezone']) : "Europe/Helsinki";
+    $locale=isset($_POST['locale']) ? trim($_POST['locale']) : "en_GB.utf8";
+    $customization=isset($_POST['customization']) ? trim($_POST['customization']) : "default";
+    $title=isset($_POST['title']) ? trim($_POST['title']) : "Ultiorganizer - ";
+    $maps=isset($_POST['maps']) ? trim($_POST['maps']) : "";
+    $admin=isset($_POST['admin']) ? trim($_POST['admin']) : "ultiorganizer_admin@example.com";
+    $mail=isset($_POST['mail']) ? trim($_POST['mail']) : "ultiorganizer@example.com";
+    $baseurl=isset($_POST['baseurl']) ? trim($_POST['baseurl']) : GetURLBase();
 
 
     $html="";
@@ -365,9 +365,9 @@
     $html .= "<tr><td>Customization:</td><td><select class='dropdown' name='customization'>";
     foreach($customizations as $cust){
       if($customization == $cust){
-        $html .= "<option class='dropdown' selected='selected' value='".utf8entities($cust )."'>". $cust ."</option>";
+        $html .= "<option class='dropdown' selected='selected' value='".htmlentities($cust, ENT_QUOTES, "UTF-8")."'>". $cust ."</option>";
       }else{
-        $html .= "<option class='dropdown' value='".utf8entities($cust )."'>". $cust ."</option>";
+        $html .= "<option class='dropdown' value='".htmlentities($cust, ENT_QUOTES, "UTF-8")."'>". $cust ."</option>";
       }
     }
 
@@ -426,8 +426,8 @@
   function administration(){
     $passed = false;
 
-    $passwd1=isset($_POST['passwd1']) ? mysql_escape_string($_POST['passwd1']) : "";
-    $passwd2=isset($_POST['passwd2']) ? mysql_escape_string($_POST['passwd2']) : "";
+    $passwd1=isset($_POST['passwd1']) ? trim($_POST['passwd1']) : "";
+    $passwd2=isset($_POST['passwd2']) ? trim($_POST['passwd2']) : "";
 
     $html = "";
 
@@ -452,12 +452,12 @@
       }
 
       if($passed){
-        $mysqlconnectionref = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-        $db = mysql_select_db(DB_DATABASE);
-        mysql_set_charset('utf8');
-        $query = sprintf("UPDATE uo_users SET password=MD5('%s') WHERE userid='admin'",mysql_real_escape_string($passwd1));
-        $result = mysql_query($query);
-        mysql_close($mysqlconnectionref);
+        $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
+        $db = mysqli_select_db($mysqlconnectionref,DB_DATABASE);
+        mysqli_set_charset('utf8');
+        $query = sprintf("UPDATE uo_users SET password=MD5('%s') WHERE userid='admin'",mysqli_real_escape_string($mysqlconnectionref,$passwd1));
+        $result = mysqli_query($mysqlconnectionref,$query);
+        //mysqli_close($mysqlconnectionref);
         $html .= "<p>Password changed.</p>";
       }
     }
