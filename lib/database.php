@@ -1,37 +1,39 @@
 <?php
+
 /**
  * @file
  * This file contains general functions to access and query database.
  *
  */
 
-function GetServerName() {
-	if(isset($_SERVER['SERVER_NAME'])) {
-		return $_SERVER['SERVER_NAME'];
-	}elseif(isset($_SERVER['HTTP_HOST'])) {
-		return $_SERVER['HTTP_HOST'];
-	}else{
-		die("Cannot find server address");
-	}
+function GetServerName()
+{
+  if (isset($_SERVER['SERVER_NAME'])) {
+    return $_SERVER['SERVER_NAME'];
+  } elseif (isset($_SERVER['HTTP_HOST'])) {
+    return $_SERVER['HTTP_HOST'];
+  } else {
+    die("Cannot find server address");
+  }
 }
 
 $serverName = GetServerName();
 //include prefix can be used to locate root level of directory tree.
 $include_prefix = "";
-while (!(is_file($include_prefix.'conf/config.inc.php') || is_file($include_prefix.'conf/'.$serverName.".config.inc.php"))) {
+while (!(is_readable($include_prefix . 'conf/config.inc.php') || is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php"))) {
   $include_prefix .= "../";
 }
 
-require_once $include_prefix.'lib/gettext/gettext.inc';
-include_once $include_prefix.'lib/common.functions.php';
+require_once $include_prefix . 'lib/gettext/gettext.inc';
+include_once $include_prefix . 'lib/common.functions.php';
 
-if (is_file($include_prefix.'conf/'.$serverName.".config.inc.php")) {
-	require_once $include_prefix.'conf/'.$serverName.".config.inc.php";
+if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
+  require_once $include_prefix . 'conf/' . $serverName . ".config.inc.php";
 } else {
-	require_once $include_prefix.'conf/config.inc.php';
+  require_once $include_prefix . 'conf/config.inc.php';
 }
 
-include_once $include_prefix.'sql/upgrade_db.php';
+include_once $include_prefix . 'sql/upgrade_db.php';
 
 //When adding new update function into upgrade_db.php change this number
 //Also when you change the database, please add a database definition into
@@ -44,24 +46,25 @@ $mysqlconnectionref = 0;
 /**
  * Open database connection.
  */
-function OpenConnection() {
-  
+function OpenConnection()
+{
+
   global $mysqlconnectionref;
-  
+
   //connect to database
-  $mysqlconnectionref = mysql_connect(DB_HOST, DB_USER, DB_PASSWORD);
-  if(!$mysqlconnectionref) {
-    die('Failed to connect to server: ' . mysql_error());
+  $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
+  if (mysqli_connect_errno()) {
+    die('Failed to connect to server: ' . mysqli_connect_error());
   }
 
   //select schema
-  $db = mysql_select_db(DB_DATABASE);
-  mysql_set_charset('utf8');
+  $db = mysqli_select_db($mysqlconnectionref, DB_DATABASE);
+  mysqli_set_charset($mysqlconnectionref, 'utf8');
 
-  if(!$db) {
+  if (!$db) {
     die("Unable to select database");
   }
-  
+
   //check if database is up-to-date
   if (!isset($_SESSION['dbversion'])) {
     CheckDB();
@@ -72,19 +75,21 @@ function OpenConnection() {
 /**
  * Closes database connection.
  */
-function CloseConnection() {
+function CloseConnection()
+{
   global $mysqlconnectionref;
-  mysql_close($mysqlconnectionref);
+  mysqli_close($mysqlconnectionref);
   $mysqlconnectionref = 0;
 }
 
 /**
  * Checks if there is need to update database and execute upgrade functions.
  */
-function CheckDB() {
+function CheckDB()
+{
   $installedDb = getDBVersion();
   for ($i = $installedDb; $i <= DB_VERSION; $i++) {
-    $upgradeFunc = 'upgrade'.$i;
+    $upgradeFunc = 'upgrade' . $i;
     LogDbUpgrade($i);
     $upgradeFunc();
     $query = sprintf("insert into uo_database (version, updated) values (%d, now())", $i + 1);
@@ -98,15 +103,17 @@ function CheckDB() {
  *
  * @return integer version number
  */
-function getDBVersion() {
+function getDBVersion()
+{
+  global $mysqlconnectionref;
   $query = "SELECT max(version) as version FROM uo_database";
-  $result = mysql_query($query);
+  $result = mysqli_query($mysqlconnectionref,$query);
   if (!$result) {
     $query = "SELECT max(version) as version FROM pelik_database";
-    $result = mysql_query($query);
+    $result = mysqli_query($mysqlconnectionref,$query);
   }
   if (!$result) return 0;
-  if (!$row = mysql_fetch_assoc($result)) {
+  if (!$row = mysqli_fetch_assoc($result)) {
     return 0;
   } else return $row['version'];
 }
@@ -117,9 +124,13 @@ function getDBVersion() {
  * @param srting $query database query
  * @return Array of rows
  */
-function DBQuery($query) {
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
+function DBQuery($query)
+{
+  global $mysqlconnectionref;
+  $result = mysqli_query($mysqlconnectionref,$query);
+  if (!$result) {
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+  }
   return $result;
 }
 
@@ -129,9 +140,12 @@ function DBQuery($query) {
  * @param srting $query database query
  * @return id
  */
-function DBQueryInsert($query) {
+function DBQueryInsert($query)
+{
   $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
+  if (!$result) {
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+  }
   return mysql_insert_id();
 }
 
@@ -141,17 +155,20 @@ function DBQueryInsert($query) {
  * @param srting $query database query
  * @return Value of first cell on first row
  */
-function DBQueryToValue($query, $docasting=false) {
+function DBQueryToValue($query, $docasting = false)
+{
   $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
+  if (!$result) {
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+  }
 
-  if(mysql_num_rows($result)){
+  if (mysql_num_rows($result)) {
     $row = mysql_fetch_row($result);
     if ($docasting) {
       $row = DBCastArray($result, $row);
     }
     return $row[0];
-  }else{
+  } else {
     return -1;
   }
 }
@@ -162,9 +179,12 @@ function DBQueryToValue($query, $docasting=false) {
  * @param srting $query database query
  * @return number of rows
  */
-function DBQueryRowCount($query) {
+function DBQueryRowCount($query)
+{
   $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
+  if (!$result) {
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+  }
 
   return mysql_num_rows($result);
 }
@@ -174,10 +194,13 @@ function DBQueryRowCount($query) {
  * @param srting $query database query
  * @return Array of rows
  */
-function DBQueryToArray($query, $docasting=false) {
+function DBQueryToArray($query, $docasting = false)
+{
   $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
-  return DBResourceToArray($result,$docasting);
+  if (!$result) {
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+  }
+  return DBResourceToArray($result, $docasting);
 }
 
 
@@ -187,10 +210,13 @@ function DBQueryToArray($query, $docasting=false) {
  * @param $result The database resource returned from mysql_query
  * @return array of rows
  */
-function DBResourceToArray($result, $docasting=false) {
+function DBResourceToArray($result, $docasting = false)
+{
   $retarray = array();
   while ($row = mysql_fetch_assoc($result)) {
-    if ($docasting) {$row = DBCastArray($result, $row);}
+    if ($docasting) {
+      $row = DBCastArray($result, $row);
+    }
     $retarray[] = $row;
   }
   return $retarray;
@@ -202,35 +228,41 @@ function DBResourceToArray($result, $docasting=false) {
  * @param srting $query database query
  * @return first row in array
  */
-function DBQueryToRow($query, $docasting=false) {
+function DBQueryToRow($query, $docasting = false)
+{
   $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
+  if (!$result) {
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+  }
   $ret = mysql_fetch_assoc($result);
-  if ($docasting && $ret) {$ret = DBCastArray($result, $ret);}
+  if ($docasting && $ret) {
+    $ret = DBCastArray($result, $ret);
+  }
   return $ret;
 }
 
-  /**
-   * Set data into database by updating existing row.
-   * @param string $name Name of the table to update
-   * @param array $row Data to insert: key=>field, value=>data
-   */
- function DBSetRow($name, $data, $cond){
+/**
+ * Set data into database by updating existing row.
+ * @param string $name Name of the table to update
+ * @param array $row Data to insert: key=>field, value=>data
+ */
+function DBSetRow($name, $data, $cond)
+{
 
-    $values = array_values($data);
-    $fields = array_keys($data);
+  $values = array_values($data);
+  $fields = array_keys($data);
 
-    $query = "UPDATE ".mysql_real_escape_string($name)." SET ";
+  $query = "UPDATE " . mysql_real_escape_string($name) . " SET ";
 
-    for($i=0;$i<count($fields);$i++){
-      $query .= mysql_real_escape_string($fields[$i]) ."='".$values[$i]."', ";
-    }
-    $query = rtrim($query,', ');
-    $query .= " WHERE ";
-    $query .= $cond;
-    return DBQuery($query);
+  for ($i = 0; $i < count($fields); $i++) {
+    $query .= mysql_real_escape_string($fields[$i]) . "='" . $values[$i] . "', ";
   }
-  
+  $query = rtrim($query, ', ');
+  $query .= " WHERE ";
+  $query .= $cond;
+  return DBQuery($query);
+}
+
 /**
  * Copy mysql_associative array row to regular php array.
  *
@@ -238,12 +270,13 @@ function DBQueryToRow($query, $docasting=false) {
  * @param $row mysql_associative array row
  * @return php array of $row
  */
-function DBCastArray($result, $row) {
+function DBCastArray($result, $row)
+{
   $ret = array();
-  $i=0;
+  $i = 0;
   foreach ($row as $key => $value) {
     if (mysql_field_type($result, $i) == "int") {
-      $ret[$key] = (int)$value;
+      $ret[$key] = (int) $value;
     } else {
       $ret[$key] = $value;
     }
@@ -263,12 +296,12 @@ if (function_exists('mysql_set_charset') === false) {
    * @param resource $link_identifier The MySQL connection
    * @return TRUE on success or FALSE on failure
    */
-  function mysql_set_charset($charset, $link_identifier = null){
+  function mysql_set_charset($charset, $link_identifier = null)
+  {
     if ($link_identifier == null) {
-      return mysql_query('SET CHARACTER SET "'.$charset.'"');
+      return mysql_query('SET CHARACTER SET "' . $charset . '"');
     } else {
-      return mysql_query('SET CHARACTER SET "'.$charset.'"', $link_identifier);
+      return mysql_query('SET CHARACTER SET "' . $charset . '"', $link_identifier);
     }
   }
 }
-?>

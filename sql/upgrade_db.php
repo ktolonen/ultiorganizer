@@ -669,7 +669,8 @@ function upgrade76() {
 }
 
 function runQuery($query) {
-	$result = mysql_query($query);
+	global $mysqlconnectionref;
+	$result = mysqli_query($mysqlconnectionref, $query);
 	if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
 	return $result;
 }
