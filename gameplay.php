@@ -36,7 +36,7 @@ if(GameHasStarted($game_result) > 0){
   }
   $html .= "</h1>\n";
 
-  if(mysql_num_rows($goals) <= 0){
+  if(mysqli_num_rows($goals) <= 0){
     $html .= "<h2>"._("Not fed in")."</h2>
 			  <p>"._("Please check the status again later")."</p>";
   }else{
@@ -387,7 +387,7 @@ if(GameHasStarted($game_result) > 0){
         }
         //If turnovers before goal
          
-        if(mysql_num_rows($turnovers)){
+        if(mysqli_num_rows($turnovers)){
           $turnovers = GameTurnovers($gameId);
         }
         while($turnover = mysqli_fetch_assoc($turnovers)){

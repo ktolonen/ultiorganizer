@@ -120,7 +120,7 @@ if(count($urls)){
 $html .= "</table>";
 
 $teams = ClubTeams($clubId, CurrentSeason());
-if(mysql_num_rows($teams)){
+if(mysqli_num_rows($teams)){
   $html .= "<h2>".U_(CurrentSeasonName()).":</h2>\n";
   $html .= "<table style='white-space: nowrap;' border='0' cellspacing='0' cellpadding='2' width='90%'>\n";
   $html .= "<tr><th>"._("Team")."</th><th>"._("Division")."</th><th colspan='3'></th></tr>\n";
@@ -142,7 +142,7 @@ if(mysql_num_rows($teams)){
 }
 
 $teams = ClubTeamsHistory($clubId);
-if(mysql_num_rows($teams)){
+if(mysqli_num_rows($teams)){
   $html .= "<h2>"._("History").":</h2>\n";
   $html .= "<table style='white-space: nowrap;' border='0' cellspacing='0' cellpadding='2' width='90%'>\n";
   $html .= "<tr><th>"._("Event")."</th><th>"._("Team")."</th><th>"._("Division")."</th><th colspan='3'></th></tr>\n";

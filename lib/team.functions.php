@@ -1166,7 +1166,7 @@ function SetTeamProfile($profile) {
     if (!$result) { die('Invalid query: ' . mysql_error()); }
 
     //add
-    if(mysql_num_rows($result)==0){
+    if(mysqli_num_rows($result)==0){
       $query = sprintf("INSERT INTO uo_team_profile (team_id,
 			captain, coach, story, achievements) VALUES 
 			('%s', '%s', '%s', '%s', '%s')",

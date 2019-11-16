@@ -918,7 +918,7 @@ function PoolGetGamesToMove($poolId, $mvgames){
     $team = PoolTeamFromStandings($row['frompool'],$row['fromplacing']);
     if($mvgames==0){
       $teamgames = TeamPoolGames($team['team_id'],$row['frompool']);
-      if(mysql_num_rows($teamgames)){
+      if(mysqli_num_rows($teamgames)){
         while($game = mysqli_fetch_assoc($teamgames)){
           $found = false;
           foreach ($games as $id){
@@ -937,7 +937,7 @@ function PoolGetGamesToMove($poolId, $mvgames){
         $team2 = PoolTeamFromStandings($row2['frompool'],$row2['fromplacing']);
         if($row2['frompool'] == $row2['frompool']){
           $teamgames = TeamPoolGamesAgainst($team['team_id'],$team2['team_id'],$row['frompool']);
-          if(mysql_num_rows($teamgames)){
+          if(mysqli_num_rows($teamgames)){
             while($game = mysqli_fetch_assoc($teamgames)){
               $found = false;
               foreach ($games as $id){
@@ -963,7 +963,7 @@ function PoolCountGames($poolId) {
       FROM uo_game game
       LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
       WHERE p.pool_id=$poolId");
-  return mysql_num_rows($games);
+  return mysqli_num_rows($games);
 }
 
 /**
@@ -1091,7 +1091,7 @@ function PoolResolvePlayed($poolId){
             FROM uo_game game
             LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
             WHERE p.pool_id=$poolId AND game.hasstarted AND game.isongoing=0");
-  if (mysql_num_rows($games) == mysql_num_rows($played)) {
+  if (mysqli_num_rows($games) == mysqli_num_rows($played)) {
     DBQuery("UPDATE uo_pool SET played=1 WHERE pool_id=$poolId");
   } else {
     DBQuery("UPDATE uo_pool SET played=0 WHERE pool_id=$poolId");
@@ -2002,7 +2002,7 @@ function GeneratePlayoffPools($poolId, $generate=true){
     (int)$poolId);
     $result = DBQuery($query);
 
-    if(mysql_num_rows($result)==0){
+    if(mysqli_num_rows($result)==0){
       $pseudoteams = true;
       $query = sprintf("SELECT pt.scheduling_id AS team_id from uo_scheduling_name pt
                     LEFT JOIN uo_moveteams mt ON(pt.scheduling_id = mt.scheduling_id)
@@ -2010,7 +2010,7 @@ function GeneratePlayoffPools($poolId, $generate=true){
       (int)$poolId);
       $result = DBQuery($query);
     }
-    $teams = mysql_num_rows($result);
+    $teams = mysqli_num_rows($result);
 
 
     $rounds = 0;
@@ -2165,7 +2165,7 @@ function GenerateGames($poolId, $rounds=1, $generate=true, $nomutual=false, $hom
       (int)$poolId);
       $result = DBQuery($query);
 
-      if(mysql_num_rows($result)==0){
+      if(mysqli_num_rows($result)==0){
         $pseudoteams = true;
         $query = sprintf("SELECT pt.scheduling_id AS team_id from uo_scheduling_name pt
                     LEFT JOIN uo_moveteams mt ON(pt.scheduling_id = mt.scheduling_id)
@@ -2403,7 +2403,7 @@ function SeriesRanking($series_id) {
       if (!$moved) {
         $team = PoolTeamFromStandings($ppool['pool_id'], $i);
         $gamesleft = TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']);
-        if ($ppool['played'] || ($ppool['type'] == 2 && mysql_num_rows($gamesleft) == 0)) {
+        if ($ppool['played'] || ($ppool['type'] == 2 && mysqli_num_rows($gamesleft) == 0)) {
           $team['placement'] = $i;
           $ranking[] = $team;
         } else {

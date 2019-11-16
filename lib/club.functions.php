@@ -111,7 +111,7 @@ function ClubNumOfTeams($clubId)
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	if(!mysql_num_rows($result))
+	if(!mysqli_num_rows($result))
 		return 0;
 		
 	$row = mysql_fetch_row($result);
@@ -125,7 +125,7 @@ function ClubId($name)
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-	if(!mysql_num_rows($result))
+	if(!mysqli_num_rows($result))
 		return -1;
 		
 	$row = mysql_fetch_row($result);

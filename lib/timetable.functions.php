@@ -516,7 +516,7 @@ function GameRow($game, $date=false, $time=true, $field=true, $series=false,$poo
         $t2 = preg_replace('/\s*/m','',$game['visitorteamname']);
 
         $xgames = GetAllPlayedGames($t1,$t2, $game['type'], "");
-        if(mysql_num_rows($xgames)>0){
+        if(mysqli_num_rows($xgames)>0){
           $ret .= "<td class='right' style='$infow'><span style='white-space: nowrap'>";
           $ret .= "<a href='?view=gamecard&amp;team1=". utf8entities($game['hometeam']) ."&amp;team2=". utf8entities($game['visitorteam']) . "'>";
           $ret .=  _("Game history")."</a></span></td>\n";
@@ -835,7 +835,7 @@ function TimetableFields($reservationgroup, $season){
   $query .= " WHERE pp.valid=true AND ps.season='".DBEscapeString($season)."' AND pr.reservationgroup='".DBEscapeString($reservationgroup)."'";
   $query .= " GROUP BY pr.location, pr.fieldname";
   $result = DBQuery($query);
-  return mysql_num_rows($result);
+  return mysqli_num_rows($result);
 }
 
 function TimetableTimeslots($reservationgroup, $season){
@@ -946,7 +946,7 @@ function IsGamesScheduled($id, $gamefilter, $timefilter)
 {
   $result = TimetableGames($id, $gamefilter, $timefilter, "");
 
-  return (mysql_num_rows($result)>0);
+  return (mysqli_num_rows($result)>0);
 }
 
 function TimetableToCsv($season,$separator){

@@ -64,7 +64,7 @@ function AutoResolveTies($poolId) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	$nbrows=mysql_num_rows($result);
+	$nbrows=mysqli_num_rows($result);
 //	print "Number of rows: ".$nbrows."<br>";
 	
 	for($i=1;$i<=$nbrows;$i++){
@@ -309,7 +309,7 @@ function GenerateSwissdrawPools($poolId, $rounds, $generate=true){
 				(int)$poolId);
 		$result = DBQuery($query);
 		
-		if(mysql_num_rows($result)==0){
+		if(mysqli_num_rows($result)==0){
 				$pseudoteams = true;
 				$query = sprintf("SELECT pt.scheduling_id AS team_id from uo_scheduling_name pt 
 					LEFT JOIN uo_moveteams mt ON(pt.scheduling_id = mt.scheduling_id) 
@@ -317,7 +317,7 @@ function GenerateSwissdrawPools($poolId, $rounds, $generate=true){
 					(int)$poolId);
 				$result = DBQuery($query);
 			}
-		$teams = mysql_num_rows($result);
+		$teams = mysqli_num_rows($result);
 		
 		//echo "<p>rounds to win $rounds</p>";
 		$prevpoolId = $poolId;
@@ -379,10 +379,10 @@ function PoolTeamFromStandingsNoTies($poolId, $activerank){
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	if (mysql_num_rows($result)==0) {
+	if (mysqli_num_rows($result)==0) {
 		// must be due to ties in previous activeranks
 		$searchback=0;
-		while(mysql_num_rows($result)==0) {
+		while(mysqli_num_rows($result)==0) {
 			$searchback++;
 			$query = sprintf("
 				SELECT j.team_id, j.name, js.activerank, c.flagfile
@@ -420,7 +420,7 @@ function CheckBYESchedule($poolId) {
 		
 	$result = DBQuery($query);
 	
-	if (mysql_num_rows($result)==2) { // swap spots
+	if (mysqli_num_rows($result)==2) { // swap spots
 		$row1=mysqli_fetch_assoc($result);
 		$row2=mysqli_fetch_assoc($result);
 

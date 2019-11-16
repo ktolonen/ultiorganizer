@@ -59,7 +59,7 @@ function ResolvePlayoffPoolStandings($poolId){
 		//check if teams can be moved to next round
 		$gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
 		$gamesleft2 = TeamPoolGamesLeft($teamId2, $poolId);
-		if(mysql_num_rows($gamesleft1)+mysql_num_rows($gamesleft2)==0){
+		if(mysqli_num_rows($gamesleft1)+mysqli_num_rows($gamesleft2)==0){
 			TeamMove($teamId1, $poolId, true);
 			TeamMove($teamId2, $poolId, true);
 		}
@@ -139,7 +139,7 @@ function ResolveCrossMatchPoolStandings($poolId){
 		$gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
 		$gamesleft2 = TeamPoolGamesLeft($teamId2, $poolId);
 
-		if(mysql_num_rows($gamesleft1)+mysql_num_rows($gamesleft2)==0){
+		if(mysqli_num_rows($gamesleft1)+mysqli_num_rows($gamesleft2)==0){
 			TeamMove($teamId1, $poolId);
 			TeamMove($teamId2, $poolId);
 		}
@@ -227,7 +227,7 @@ function ResolveSwissdrawPoolStandings($poolId)
 	$points=array();
 	$i=0;
 	
-	if(mysql_num_rows($standings)<=1){
+	if(mysqli_num_rows($standings)<=1){
 		return;
 	}
 	
@@ -259,7 +259,7 @@ function ResolveSwissdrawPoolStandings($poolId)
 
 	
 	//update results
-	for ($i=0; $i < mysql_num_rows($standings) && !empty($points[$i]['team']); $i++) 
+	for ($i=0; $i < mysqli_num_rows($standings) && !empty($points[$i]['team']); $i++) 
 		{	
 		//echo "<p>win t".$points[$i]['team']." v".$points[$i]['wins']." s".$points[$i]['arank']."</p>";
 		$query = sprintf("UPDATE uo_team_pool 
@@ -290,7 +290,7 @@ function ResolveSeriesPoolStandings($poolId){
   $points=array();
   $i=0;
 
-  if(mysql_num_rows($standings)<=1){
+  if(mysqli_num_rows($standings)<=1){
     return;
   }
 
@@ -384,7 +384,7 @@ function ResolveSeriesPoolStandings($poolId){
   }
 
   //update results
-  for ($i=0; $i < mysql_num_rows($standings) && !empty($points[$i]['team']); $i++)  {
+  for ($i=0; $i < mysqli_num_rows($standings) && !empty($points[$i]['team']); $i++)  {
     //echo "<p>win t".$points[$i]['team']." v".$points[$i]['wins']." s".$points[$i]['arank']."</p>";
     $query = sprintf("UPDATE uo_team_pool
 			SET activerank='%s' WHERE pool='%s' AND team='%s'",

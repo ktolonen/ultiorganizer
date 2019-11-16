@@ -197,7 +197,7 @@ function PlayerNumber($playerId, $gameId) {
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  if(!mysql_num_rows($result))
+  if(!mysqli_num_rows($result))
   return -1;
 
   $row = mysqli_fetch_assoc($result);

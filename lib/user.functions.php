@@ -48,7 +48,7 @@ function UserAuthenticate($user, $passwd, $failcallback) {
 		DBEscapeString($passwd));
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$count=mysql_num_rows($result);
+	$count=mysqli_num_rows($result);
 	if($count==1) {
 		LogUserAuthentication($user,"success");
 		SetUserSessionData($user);

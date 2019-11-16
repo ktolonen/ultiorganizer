@@ -256,7 +256,7 @@ function upgrade60() {
     
     $hasprofile = runQuery("SELECT * FROM uo_player_profile WHERE accreditation_id='".$license['accreditation_id']."'");
     
-    if(mysql_num_rows($hasprofile)==0){
+    if(mysqli_num_rows($hasprofile)==0){
         $query = sprintf("INSERT INTO uo_player_profile (profile_id,firstname,lastname,birthdate,accreditation_id) VALUES
 				('%s','%s','%s','%s','%s')",
         DBEscapeString($license['accreditation_id']),
@@ -273,7 +273,7 @@ function upgrade60() {
     
     $hasprofile = runQuery("SELECT * FROM uo_player_profile WHERE profile_id='".$player['profile_id']."'");
    
-    if(mysql_num_rows($hasprofile)==0){
+    if(mysqli_num_rows($hasprofile)==0){
         $query = sprintf("INSERT INTO uo_player_profile (profile_id,firstname,lastname,num) VALUES
 				('%s','%s','%s','%s')",
         DBEscapeString($player['profile_id']),

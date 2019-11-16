@@ -58,7 +58,7 @@ if(!empty($_POST["sms_1"])) {
 
 	$sms = GetAllSMS();
 
-	if(mysql_num_rows($sms)){
+	if(mysqli_num_rows($sms)){
 		echo "<table border='0' width='500'><tr>
 			<th>"._("Msg")."</th>
 			<th>"._("To1")."</th>

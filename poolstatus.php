@@ -535,7 +535,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
         $gamesleft = TeamPoolGamesLeft($realteam['team_id'], $movefrom['frompool']);
         $frompoolinfo = PoolInfo($movefrom['frompool']);
         $isodd = is_odd($totalteams) && $i==$totalteams;
-        if($realteam['team_id'] && $frompoolinfo['played'] && mysql_num_rows($gamesleft)==0 && !$isodd){
+        if($realteam['team_id'] && $frompoolinfo['played'] && mysqli_num_rows($gamesleft)==0 && !$isodd){
           if(intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])){
             $name .= "<img height='10' src='images/flags/tiny/".$realteam['flagfile']."' alt=''/> ";
           }
@@ -549,7 +549,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
        
       if($team['team_id']){
         $gamesinpool =TeamPoolGames($team['team_id'], $pool['pool_id']);
-        if (mysql_num_rows($gamesinpool)==0) { // that's the BYE team
+        if (mysqli_num_rows($gamesinpool)==0) { // that's the BYE team
           $byeName = $name; // save its name
           //$ret .= $round." ".$name." ".$pool['pool_id']." ".$team['team_id']."<br>";
         }
@@ -634,7 +634,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
       $gamesleft = -1;
     else {
       $team = PoolTeamFromStandings($pool['pool_id'], $i);
-      $gamesleft = mysql_num_rows(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
+      $gamesleft = mysqli_num_rows(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
     }
     $teampart = "";
     $unknown = "";
