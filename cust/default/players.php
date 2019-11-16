@@ -40,7 +40,7 @@ if (hasEditPlayersRight($teamId)) {
 			LEFT JOIN uo_player AS p1 ON (p1.profile_id=pp.profile_id)
 			WHERE pp.firstname like '%%%s%%' and pp.lastname like '%%%s%%'
 			GROUP BY pp.profile_id ORDER BY pp.lastname, pp.firstname",
-						mysql_real_escape_string($firstname), mysql_real_escape_string($lastname));
+						DBEscapeString($firstname), DBEscapeString($lastname));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 

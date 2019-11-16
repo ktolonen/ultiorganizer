@@ -68,7 +68,7 @@ if ($userid != "anonymous") {
       $error = 1;
     }
 
-    $uidcheck = mysql_real_escape_string($newUsername);
+    $uidcheck = DBEscapeString($newUsername);
 
     if($uidcheck != $newUsername){
       $message .= "<p class='warning'>"._("Illegal characters in the username.")."</p>";

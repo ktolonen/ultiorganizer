@@ -97,7 +97,7 @@ function CheckDB()
     LogDbUpgrade($i, true);
   }
 }
-function mysql_real_escape_string($escapestr)
+function DBEscapeString($escapestr)
 {
   global $mysqlconnectionref;
   return mysqli_real_escape_string($mysqlconnectionref, $escapestr);
@@ -262,10 +262,10 @@ function DBSetRow($name, $data, $cond)
   $values = array_values($data);
   $fields = array_keys($data);
 
-  $query = "UPDATE " . mysql_real_escape_string($name) . " SET ";
+  $query = "UPDATE " . DBEscapeString($name) . " SET ";
 
   for ($i = 0; $i < count($fields); $i++) {
-    $query .= mysql_real_escape_string($fields[$i]) . "='" . $values[$i] . "', ";
+    $query .= DBEscapeString($fields[$i]) . "='" . $values[$i] . "', ";
   }
   $query = rtrim($query, ', ');
   $query .= " WHERE ";

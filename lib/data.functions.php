@@ -63,24 +63,24 @@ class EventDataXMLHandler{
       $ret = "";
       $ret .= "<?xml version='1.0' encoding='UTF-8'?>\n";
       //uo_season
-      $seasons = DBQuery("SELECT * FROM uo_season WHERE season_id='".mysql_real_escape_string($eventId)."'");
+      $seasons = DBQuery("SELECT * FROM uo_season WHERE season_id='".DBEscapeString($eventId)."'");
       $row = mysqli_fetch_assoc($seasons);
       $ret .= $this->RowToXML("uo_season", $row, false);
 
       //uo_reservation
-      $reservations = DBQuery("SELECT * FROM uo_reservation WHERE season='".mysql_real_escape_string($eventId)."'");
+      $reservations = DBQuery("SELECT * FROM uo_reservation WHERE season='".DBEscapeString($eventId)."'");
       while($reservation = mysqli_fetch_assoc($reservations)){
         $ret .= $this->RowToXML("uo_reservation", $reservation);
       }
 
       //uo_movingtime
-      $times = DBQuery("SELECT * FROM uo_movingtime WHERE season='".mysql_real_escape_string($eventId)."'");
+      $times = DBQuery("SELECT * FROM uo_movingtime WHERE season='".DBEscapeString($eventId)."'");
       while($time = mysqli_fetch_assoc($times)){
         $ret .= $this->RowToXML("uo_movingtime", $time);
       }
       
       //uo_series
-      $series = DBQuery("SELECT * FROM uo_series WHERE season='".mysql_real_escape_string($eventId)."'");
+      $series = DBQuery("SELECT * FROM uo_series WHERE season='".DBEscapeString($eventId)."'");
       while($ser = mysqli_fetch_assoc($series)){
         $ret .= $this->RowToXML("uo_series", $ser, false);
          
@@ -90,7 +90,7 @@ class EventDataXMLHandler{
         while($team = mysqli_fetch_assoc($teams)){
           $ret .= $this->RowToXML("uo_team", $team, false);
           //uo_player
-          $players = DBQuery("SELECT * FROM uo_player WHERE team='".mysql_real_escape_string($team['team_id'])."'");
+          $players = DBQuery("SELECT * FROM uo_player WHERE team='".DBEscapeString($team['team_id'])."'");
           while($player = mysqli_fetch_assoc($players)){
             $ret .= $this->RowToXML("uo_player", $player);
           }
@@ -115,28 +115,28 @@ class EventDataXMLHandler{
           $ret .= $this->RowToXML("uo_pool", $row, false);
 
           //uo_team_pool
-          $teampools = DBQuery("SELECT * FROM uo_team_pool WHERE pool='".mysql_real_escape_string($row['pool_id'])."'");
+          $teampools = DBQuery("SELECT * FROM uo_team_pool WHERE pool='".DBEscapeString($row['pool_id'])."'");
           while($teampool = mysqli_fetch_assoc($teampools)){
             $ret .= $this->RowToXML("uo_team_pool", $teampool);
           }
 
           //uo_game
-          $games = DBQuery("SELECT * FROM uo_game WHERE pool='".mysql_real_escape_string($row['pool_id'])."'");
+          $games = DBQuery("SELECT * FROM uo_game WHERE pool='".DBEscapeString($row['pool_id'])."'");
           while($row = mysqli_fetch_assoc($games)){
             $ret .= $this->RowToXML("uo_game", $row, false);
              
             //uo_goal
-            $goals = DBQuery("SELECT * FROM uo_goal WHERE game='".mysql_real_escape_string($row['game_id'])."'");
+            $goals = DBQuery("SELECT * FROM uo_goal WHERE game='".DBEscapeString($row['game_id'])."'");
             while($goal = mysqli_fetch_assoc($goals)){
               $ret .= $this->RowToXML("uo_goal", $goal);
             }
             //uo_gameevent
-            $gameevents = DBQuery("SELECT * FROM uo_gameevent WHERE game='".mysql_real_escape_string($row['game_id'])."'");
+            $gameevents = DBQuery("SELECT * FROM uo_gameevent WHERE game='".DBEscapeString($row['game_id'])."'");
             while($gameevent = mysqli_fetch_assoc($gameevents)){
               $ret .= $this->RowToXML("uo_gameevent", $gameevent);
             }
             //uo_played
-            $playedplayers = DBQuery("SELECT * FROM uo_played WHERE game='".mysql_real_escape_string($row['game_id'])."'");
+            $playedplayers = DBQuery("SELECT * FROM uo_played WHERE game='".DBEscapeString($row['game_id'])."'");
             while($playedplayer = mysqli_fetch_assoc($playedplayers)){
               $ret .= $this->RowToXML("uo_played", $playedplayer);
             }
@@ -301,11 +301,11 @@ class EventDataXMLHandler{
         $values = "'".implode("','",array_values($row))."'";
         $fields = implode(",",array_keys($row));
 
-        $query = "INSERT INTO ".mysql_real_escape_string($name)." (";
+        $query = "INSERT INTO ".DBEscapeString($name)." (";
         $query .= "SEASON_ID,";
-        $query .= mysql_real_escape_string($fields);
+        $query .= DBEscapeString($fields);
         $query .= ") VALUES (";
-        $query .= "'".mysql_real_escape_string($newId)."',";
+        $query .= "'".DBEscapeString($newId)."',";
         $query .= $values;
         $query .= ")";
         DBQueryInsert($query);
@@ -476,18 +476,18 @@ class EventDataXMLHandler{
         if ($value==="NULL"){
           $values .= "NULL,";
         }elseif (is_numeric($value))
-          $values .= "'".mysql_real_escape_string($value)."',";
+          $values .= "'".DBEscapeString($value)."',";
         else
           die("Invalid column value '$value' for column $key of table $name. (".json_encode($row).").");
       }else {
-        $values .= "'".mysql_real_escape_string($value)."',";
+        $values .= "'".DBEscapeString($value)."',";
       }
     }
     
     $values = substr($values, 0, -1);
 
-    $query = "INSERT INTO ".mysql_real_escape_string($name)." (";
-    $query .= mysql_real_escape_string($fields);
+    $query = "INSERT INTO ".DBEscapeString($name)." (";
+    $query .= DBEscapeString($fields);
     $query .= ") VALUES (";
     $query .= $values;
     $query .= ")";
@@ -800,10 +800,10 @@ class EventDataXMLHandler{
     $values = array_values($row);
     $fields = array_keys($row);
 
-    $query = "UPDATE ".mysql_real_escape_string($name)." SET ";
+    $query = "UPDATE ".DBEscapeString($name)." SET ";
 
     for($i=0;$i<count($fields);$i++){
-      $query .= mysql_real_escape_string($fields[$i]) ."='". mysql_real_escape_string($values[$i])."', ";
+      $query .= DBEscapeString($fields[$i]) ."='". DBEscapeString($values[$i])."', ";
     }
     $query = rtrim($query,', ');
     $query .= " WHERE ";

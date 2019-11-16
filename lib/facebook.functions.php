@@ -42,7 +42,7 @@ function FBCookie($app_id, $application_secret) {
 
 function ExistingFBUserId($fb_uid) {
 	$query = sprintf("SELECT userid FROM uo_userproperties WHERE name='facebookuid' AND value='%s'",
-		mysql_real_escape_string($fb_uid));
+		DBEscapeString($fb_uid));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	if ($row = mysqli_fetch_assoc($result)) {
@@ -63,7 +63,7 @@ function ReMapFBUserId($fb_cookie,$userid) {
 		$existinguid = ExistingFBUserId($fb_cookie['uid']);
 		while ($existinguid) {
 			$query = sprintf("DELETE FROM uo_userproperties WHERE name LIKE 'facebook%%' AND userid='%s'",
-				 	mysql_real_escape_string($existinguid));
+				 	DBEscapeString($existinguid));
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }	 	
 			$existinguid = ExistingFBUserId($fb_cookie['uid']);
@@ -71,8 +71,8 @@ function ReMapFBUserId($fb_cookie,$userid) {
 		
 		$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 			VALUES ('%s', 'facebookuid', '%s')",
-		 	mysql_real_escape_string($userid),
-		 	mysql_real_escape_string($fb_cookie['uid']));
+		 	DBEscapeString($userid),
+		 	DBEscapeString($fb_cookie['uid']));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		UpdateFBAccessToken($userid, $fb_cookie['access_token']);
@@ -82,7 +82,7 @@ function ReMapFBUserId($fb_cookie,$userid) {
 function UnMapFBUserId($userid) {
 	if ($_SESSION['uid'] == $userid) {
 		$query = sprintf("DELETE FROM uo_userproperties WHERE userid='%s' AND name LIKE 'facebook%%'",
-			 	mysql_real_escape_string($userid));
+			 	DBEscapeString($userid));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }	 	
 	} else { die ('User can only link facebook accounts for himself'); }
@@ -100,15 +100,15 @@ function MapFBUserId($fb_cookie) {
     	//print_r($user);
     	$query = sprintf("SELECT userid FROM uo_users WHERE LOWER(email)='%s' UNION ALL
     		SELECT userid FROM uo_extraemail WHERE LOWER(email)='%s'",
-    		mysql_real_escape_string($user->email),
-    		mysql_real_escape_string($user->email));
+    		DBEscapeString($user->email),
+    		DBEscapeString($user->email));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		if ($row = mysqli_fetch_assoc($result)) {
 			$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 				VALUES ('%s', 'facebookuid', '%s')",
-			 	mysql_real_escape_string($row['userid']),
-			 	mysql_real_escape_string($user->id));
+			 	DBEscapeString($row['userid']),
+			 	DBEscapeString($user->id));
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 			UpdateFBAccessToken($row['userid'], $fb_cookie['access_token']);
@@ -118,16 +118,16 @@ function MapFBUserId($fb_cookie) {
 			$userid = CreateNewUsername($user->first_name, $user->last_name, $user->email);
 			$password = CreateRandomPassword();
 			$query = sprintf("INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
-				mysql_real_escape_string($user->name),
-				mysql_real_escape_string($userid),
-				mysql_real_escape_string($password),
-				mysql_real_escape_string($user->email));
+				DBEscapeString($user->name),
+				DBEscapeString($userid),
+				DBEscapeString($password),
+				DBEscapeString($user->email));
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 			$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 				VALUES ('%s', 'facebookuid', '%s')",
-			 	mysql_real_escape_string($userid),
-			 	mysql_real_escape_string($user->id));
+			 	DBEscapeString($userid),
+			 	DBEscapeString($user->id));
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 			FinalizeNewUser($userid, $user->email);
@@ -140,20 +140,20 @@ function MapFBUserId($fb_cookie) {
 
 function UpdateFBAccessToken($userid, $token) {
 	$query = sprintf("SELECT prop_id FROM uo_userproperties WHERE userid='%s' AND name='facebooktoken'",
-		mysql_real_escape_string($userid));
+		DBEscapeString($userid));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	if ($row = mysql_fetch_row($result)) {
 		$query = sprintf("UPDATE uo_userproperties SET value='%s' WHERE prop_id=%d",
-		 	mysql_real_escape_string($token),
+		 	DBEscapeString($token),
 			(int)$row[0]);
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 	} else {
 		$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 			VALUES ('%s', 'facebooktoken', '%s')",
-		 	mysql_real_escape_string($userid),
-		 	mysql_real_escape_string($token));
+		 	DBEscapeString($userid),
+		 	DBEscapeString($token));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 	}
@@ -163,7 +163,7 @@ function LinkFBPlayer($userid, $playerid, $selectedevents) {
 	if ($_SESSION['uid'] == $userid && isPlayerAdmin($playerid)) {
 		$value= $playerid;
 		$query = sprintf("SELECT prop_id FROM uo_userproperties WHERE userid='%s' AND name='facebookplayer' AND value LIKE '%s%%'",
-			mysql_real_escape_string($userid), mysql_real_escape_string($value));
+			DBEscapeString($userid), DBEscapeString($value));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		
@@ -174,15 +174,15 @@ function LinkFBPlayer($userid, $playerid, $selectedevents) {
 		
 		if ($row = mysql_fetch_row($result)) {
 			$query = sprintf("UPDATE uo_userproperties SET value='%s' WHERE prop_id=%d",
-				mysql_real_escape_string($value),(int)$row[0]);
+				DBEscapeString($value),(int)$row[0]);
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 			return;
 		} else {
 			$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 				VALUES ('%s', 'facebookplayer', '%s')",
-			 	mysql_real_escape_string($userid),
-			 	mysql_real_escape_string($value));
+			 	DBEscapeString($userid),
+			 	DBEscapeString($value));
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 		}	
@@ -192,11 +192,11 @@ function LinkFBPlayer($userid, $playerid, $selectedevents) {
 function UnLinkFBPlayer($userid, $playerid) {
 	if ($_SESSION['uid'] == $userid && isPlayerAdmin($playerid)) {
 		$query = sprintf("DELETE FROM uo_userproperties WHERE userid='%s' AND name='facebookplayer' AND value LIKE '%s%%'",
-			mysql_real_escape_string($userid), mysql_real_escape_string($playerid));
+			DBEscapeString($userid), DBEscapeString($playerid));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		$query = sprintf("DELETE FROM uo_userproperties WHERE userid='%s' AND name LIKE 'facebookmessage%%%s'",
-			mysql_real_escape_string($userid), mysql_real_escape_string($playerid));
+			DBEscapeString($userid), DBEscapeString($playerid));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 	} else { die ('User can only link facebook accounts for himself'); }
@@ -206,7 +206,7 @@ function getFacebookUserProperties($userid) {
 	global $events;
 	$ret = array();
 	$query = sprintf("SELECT name, value FROM uo_userproperties WHERE userid='%s' and name LIKE 'facebook%%'",
-		mysql_real_escape_string($userid));
+		DBEscapeString($userid));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	while ($property = mysqli_fetch_assoc($result)) {
@@ -298,22 +298,22 @@ function FacebookFeedPost($fb_params, $params) {
 function SetFacebookPublishing($userid, $playerid, $pubEvents, $pubMessages) {
 	if ($_SESSION['uid'] == $userid && isPlayerAdmin($playerid)) {
 		$query = sprintf("SELECT prop_id FROM uo_userproperties WHERE userid='%s' AND name='facebookplayer' AND VALUE LIKE '%s%%'",
-			mysql_real_escape_string($userid),
-			mysql_real_escape_string($playerid));
+			DBEscapeString($userid),
+			DBEscapeString($playerid));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		$value = $playerid.":".implode($pubEvents, ":");
 		if ($row = mysql_fetch_row($result)) {
 			$query = sprintf("UPDATE uo_userproperties SET value='%s' WHERE prop_id=%d",
-			 	mysql_real_escape_string($value),
+			 	DBEscapeString($value),
 				(int)$row[0]);
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 		} else {
 			$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 				VALUES ('%s', 'facebookplayer', '%s')",
-			 	mysql_real_escape_string($userid),
-			 	mysql_real_escape_string($value));
+			 	DBEscapeString($userid),
+			 	DBEscapeString($value));
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 		}
@@ -329,24 +329,24 @@ function SetFacebookPublishing($userid, $playerid, $pubEvents, $pubMessages) {
 function SetFacebookPublishingMessage($userid, $playerid, $event, $message) {
 	if ($_SESSION['uid'] == $userid && isPlayerAdmin($playerid)) {
 		$query = sprintf("SELECT prop_id FROM uo_userproperties WHERE userid='%s' AND name='facebookmessage%s%s'",
-			mysql_real_escape_string($userid),
-			mysql_real_escape_string($event),
-			mysql_real_escape_string($playerid));
+			DBEscapeString($userid),
+			DBEscapeString($event),
+			DBEscapeString($playerid));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		if ($row = mysql_fetch_row($result)) {
 			$query = sprintf("UPDATE uo_userproperties SET value='%s' WHERE prop_id=%d",
-			 	mysql_real_escape_string($message),
+			 	DBEscapeString($message),
 				(int)$row[0]);
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 		} else {
 			$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 				VALUES ('%s', 'facebookmessage%s%s', '%s')",
-			 	mysql_real_escape_string($userid),
-			 	mysql_real_escape_string($event),
-			 	mysql_real_escape_string($playerid),
-			 	mysql_real_escape_string($message));
+			 	DBEscapeString($userid),
+			 	DBEscapeString($event),
+			 	DBEscapeString($playerid),
+			 	DBEscapeString($message));
 			$result = mysql_query($query);
 			if (!$result) { die('Invalid query: ' . mysql_error()); }
 		}
@@ -356,7 +356,7 @@ function SetFacebookPublishingMessage($userid, $playerid, $event, $message) {
 
 function GetGameFacebookUsers($teamId, $event) {
 	$query = sprintf("SELECT userid FROM uo_userproperties WHERE name='facebookplayer' AND value LIKE '%%:%s%%' AND SUBSTRING_INDEX(value, ':', 1) IN (SELECT profile_id FROM uo_player WHERE team=%d AND accredited=1)",
-		mysql_real_escape_string($event),
+		DBEscapeString($event),
 		(int)$teamId);	
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
@@ -369,8 +369,8 @@ function GetGameFacebookUsers($teamId, $event) {
 
 function GetScoreFacebookUsers($passer, $scorer) {
 	$query = sprintf("SELECT userid, SUBSTRING_INDEX(value, ':', 1) AS profile_id FROM uo_userproperties WHERE name='facebookplayer' AND (value LIKE '%s:%%passed%%' OR value LIKE '%s:%%scored%%')",
-		mysql_real_escape_string($passer),
-		mysql_real_escape_string($scorer));	
+		DBEscapeString($passer),
+		DBEscapeString($scorer));	
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	$ret = array();

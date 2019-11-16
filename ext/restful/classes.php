@@ -68,7 +68,7 @@ class Restful {
 	}
 	
 	function getItemSQL($id) {
-		return sprintf($this->itemsql, mysql_real_escape_string($id));
+		return sprintf($this->itemsql, DBEscapeString($id));
 	}
 	
 	function getDefaultOrdering() {

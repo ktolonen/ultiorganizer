@@ -164,7 +164,7 @@ function upgrade58() {
 		$results = runQuery("SELECT accreditation_id, firstname FROM uo_player WHERE firstname IS NOT NULL");
 	    while($row = mysqli_fetch_assoc($results)){
 	        $query = sprintf("UPDATE uo_player_profile SET firstname='%s' WHERE accreditation_id='%s'",
-			  mysql_real_escape_string(trim($row['firstname'])),
+			  DBEscapeString(trim($row['firstname'])),
 			  $row['accreditation_id']);
             runQuery($query);			  
 	    }
@@ -173,7 +173,7 @@ function upgrade58() {
 		$results = runQuery("SELECT accreditation_id, firstname FROM uo_license WHERE firstname IS NOT NULL");
 	    while($row = mysqli_fetch_assoc($results)){
 	        $query = sprintf("UPDATE uo_player_profile SET firstname='%s' WHERE accreditation_id='%s'",
-			  mysql_real_escape_string(trim($row['firstname'])),
+			  DBEscapeString(trim($row['firstname'])),
 			  $row['accreditation_id']);
             runQuery($query);			  
 	    }
@@ -185,7 +185,7 @@ function upgrade58() {
 		$results = runQuery("SELECT accreditation_id, lastname FROM uo_player WHERE lastname IS NOT NULL");
 	    while($row = mysqli_fetch_assoc($results)){
 	        $query = sprintf("UPDATE uo_player_profile SET lastname='%s' WHERE accreditation_id='%s'",
-			  mysql_real_escape_string(trim($row['lastname'])),
+			  DBEscapeString(trim($row['lastname'])),
 			  $row['accreditation_id']);
             runQuery($query);			  
 	    }
@@ -194,7 +194,7 @@ function upgrade58() {
 		$results = runQuery("SELECT accreditation_id, lastname FROM uo_license WHERE lastname IS NOT NULL");
 	    while($row = mysqli_fetch_assoc($results)){
 	        $query = sprintf("UPDATE uo_player_profile SET lastname='%s' WHERE accreditation_id='%s'",
-			  mysql_real_escape_string(trim($row['lastname'])),
+			  DBEscapeString(trim($row['lastname'])),
 			  $row['accreditation_id']);
             runQuery($query);			  
 	    }
@@ -259,11 +259,11 @@ function upgrade60() {
     if(mysql_num_rows($hasprofile)==0){
         $query = sprintf("INSERT INTO uo_player_profile (profile_id,firstname,lastname,birthdate,accreditation_id) VALUES
 				('%s','%s','%s','%s','%s')",
-        mysql_real_escape_string($license['accreditation_id']),
-        mysql_real_escape_string($license['firstname']),
-        mysql_real_escape_string($license['lastname']),
-        mysql_real_escape_string($license['birthdate']),
-        mysql_real_escape_string($license['accreditation_id']));
+        DBEscapeString($license['accreditation_id']),
+        DBEscapeString($license['firstname']),
+        DBEscapeString($license['lastname']),
+        DBEscapeString($license['birthdate']),
+        DBEscapeString($license['accreditation_id']));
       $profileId = DBQueryInsert($query);
     }
   }
@@ -276,10 +276,10 @@ function upgrade60() {
     if(mysql_num_rows($hasprofile)==0){
         $query = sprintf("INSERT INTO uo_player_profile (profile_id,firstname,lastname,num) VALUES
 				('%s','%s','%s','%s')",
-        mysql_real_escape_string($player['profile_id']),
-        mysql_real_escape_string($player['firstname']),
-        mysql_real_escape_string($player['lastname']),
-        mysql_real_escape_string($player['num']));
+        DBEscapeString($player['profile_id']),
+        DBEscapeString($player['firstname']),
+        DBEscapeString($player['lastname']),
+        DBEscapeString($player['num']));
       $profileId = DBQueryInsert($query);
     }
   }
@@ -449,7 +449,7 @@ function upgrade71() {
               sprintf(
                   'INSERT INTO `uo_location_info` (`location_id`, `locale`, `info`)
             VALUES ("%d", "%s", "%s")', 
-                  $row['id'], mysql_real_escape_string($locale), mysql_real_escape_string($value)));
+                  $row['id'], DBEscapeString($locale), DBEscapeString($value)));
         }
       }
     }
@@ -657,7 +657,7 @@ function upgrade76() {
       ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
     
     foreach ($locales as $localestr => $localename) {
-      $loc = mysql_real_escape_string(str_replace(".", "_", $localestr));
+      $loc = DBEscapeString(str_replace(".", "_", $localestr));
       runQuery(sprintf("INSERT INTO uo_translation 
           (SELECT translation_key, '%s' AS locale, `%s` AS translation 
            FROM uo_dbtranslations
@@ -806,8 +806,8 @@ function copyProfileImages() {
 			ConvertToJpeg($target, $basedir.$imgname);
 			CreateThumb($basedir.$imgname, $basedir."thumbs/".$imgname, 160, 120);
 			$query = sprintf("UPDATE uo_club SET profile_image='%s' WHERE club_id='%s'",
-					mysql_real_escape_string($imgname),
-					mysql_real_escape_string($row['club_id']));
+					DBEscapeString($imgname),
+					DBEscapeString($row['club_id']));
 			runQuery($query);	
 			unlink($target);
 		}
@@ -850,8 +850,8 @@ function copyProfileImages() {
 			ConvertToJpeg($target, $basedir.$imgname);
 			CreateThumb($basedir.$imgname, $basedir."thumbs/".$imgname, 320, 240);
 			$query = sprintf("UPDATE uo_team_profile SET profile_image='%s' WHERE team_id='%s'",
-					mysql_real_escape_string($imgname),
-					mysql_real_escape_string($row['team_id']));
+					DBEscapeString($imgname),
+					DBEscapeString($row['team_id']));
 			runQuery($query);	
 			unlink($target);
 		}
@@ -894,8 +894,8 @@ function copyProfileImages() {
 			ConvertToJpeg($target, $basedir.$imgname);
 			CreateThumb($basedir.$imgname, $basedir."thumbs/".$imgname, 120, 160);
 			$query = sprintf("UPDATE uo_player_profile SET profile_image='%s' WHERE accreditation_id='%s'",
-					mysql_real_escape_string($imgname),
-					mysql_real_escape_string($row['accreditation_id']));
+					DBEscapeString($imgname),
+					DBEscapeString($row['accreditation_id']));
 			runQuery($query);	
 			unlink($target);
 		}

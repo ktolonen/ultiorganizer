@@ -152,16 +152,16 @@ if (isset($_POST['import'])) {
 				$query = sprintf("INSERT INTO uo_game
         			(game_id, hometeam, visitorteam, homescore, visitorscore, reservation, time, pool, valid, respteam) 
         			VALUES ('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-        		    mysql_real_escape_string($gameId),	
-				    mysql_real_escape_string($hometeam),
-        			mysql_real_escape_string($awayteam),
-        			mysql_real_escape_string($homescores),
-        			mysql_real_escape_string($awayscores),
-        			mysql_real_escape_string($place),
-        			mysql_real_escape_string($time),
-        			mysql_real_escape_string($division),
+        		    DBEscapeString($gameId),	
+				    DBEscapeString($hometeam),
+        			DBEscapeString($awayteam),
+        			DBEscapeString($homescores),
+        			DBEscapeString($awayscores),
+        			DBEscapeString($place),
+        			DBEscapeString($time),
+        			DBEscapeString($division),
         			1,
-        			mysql_real_escape_string($respteam)); //FIXME update hasstarted?
+        			DBEscapeString($respteam)); //FIXME update hasstarted?
         		//$html .= "<p>$query</p>";
         		DBQuery($query); 
 
@@ -182,8 +182,8 @@ if (isset($_POST['import'])) {
 				}
 				
 				$query = sprintf(" SELECT *	FROM uo_goal WHERE game='%s' AND num='%s'",
-		            mysql_real_escape_string($gameId),
-		            mysql_real_escape_string($i));
+		            DBEscapeString($gameId),
+		            DBEscapeString($i));
 		            
 			  $exist = DBQueryRowCount($query);
 				if($exist){
@@ -193,14 +193,14 @@ if (isset($_POST['import'])) {
 				$query = sprintf("INSERT INTO uo_goal
         			(game, num, assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan) 
         			VALUES ('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-        		    mysql_real_escape_string($gameId),	
-				    mysql_real_escape_string($i),
-        			mysql_real_escape_string($pass),
-        			mysql_real_escape_string($goal),
-        			mysql_real_escape_string($time),
-        			mysql_real_escape_string($home),
-        			mysql_real_escape_string($away),
-        			mysql_real_escape_string($homegoal),
+        		    DBEscapeString($gameId),	
+				    DBEscapeString($i),
+        			DBEscapeString($pass),
+        			DBEscapeString($goal),
+        			DBEscapeString($time),
+        			DBEscapeString($home),
+        			DBEscapeString($away),
+        			DBEscapeString($homegoal),
         			0);
         		//$html .= "<p>$query</p>";
         		DBQuery($query); 
@@ -232,14 +232,14 @@ if (isset($_POST['import'])) {
 				$query = sprintf("INSERT INTO uo_player
         			(player_id, firstname, lastname, team, num, accreditation_id, accredited, profile_id) 
         			VALUES ('%s','%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-        		    mysql_real_escape_string($playerId),	
-				    mysql_real_escape_string($first),
-        			mysql_real_escape_string($last),
-        			mysql_real_escape_string($team),
-        			mysql_real_escape_string($jersey),
-        			mysql_real_escape_string($accId),
-        			mysql_real_escape_string(1),
-        			mysql_real_escape_string($accId));
+        		    DBEscapeString($playerId),	
+				    DBEscapeString($first),
+        			DBEscapeString($last),
+        			DBEscapeString($team),
+        			DBEscapeString($jersey),
+        			DBEscapeString($accId),
+        			DBEscapeString(1),
+        			DBEscapeString($accId));
         		//$html .= "<p>$query</p>";
         		DBQuery($query); 
 				
@@ -253,8 +253,8 @@ if (isset($_POST['import'])) {
 				}
 				
 				$query = sprintf("SELECT * FROM uo_played WHERE player='%s' AND game='%s'",
-				 mysql_real_escape_string($playerId),
-				 mysql_real_escape_string($gameId));
+				 DBEscapeString($playerId),
+				 DBEscapeString($gameId));
 				 
 				$exist = DBQueryRowCount($query);
 				if($exist){
@@ -264,10 +264,10 @@ if (isset($_POST['import'])) {
 				$query = sprintf("INSERT INTO uo_played
         			(player, game, num, accredited) 
         			VALUES ('%s','%s', '%s', '%s')",
-        		    mysql_real_escape_string($playerId),	
-				    mysql_real_escape_string($gameId),
-        			mysql_real_escape_string($jersey),
-        			mysql_real_escape_string(1));
+        		    DBEscapeString($playerId),	
+				    DBEscapeString($gameId),
+        			DBEscapeString($jersey),
+        			DBEscapeString(1));
         		//$html .= "<p>$query</p>";
         		DBQuery($query); 
 				

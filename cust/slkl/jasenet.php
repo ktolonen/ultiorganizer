@@ -29,7 +29,7 @@ OpenConnection();
 if (hasEditPlayersRight($teamId)) {
 	
 $query = sprintf("SELECT accreditation_id, firstname, lastname, membership, license, birthdate FROM uo_license WHERE firstname like '%%%s%%' and lastname like '%%%s%%'",
-					mysql_real_escape_string($firstname), mysql_real_escape_string($lastname));
+					DBEscapeString($firstname), DBEscapeString($lastname));
 $result = mysql_query($query);
 if (!$result) { die('Invalid query: ' . mysql_error()); }
 

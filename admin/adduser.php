@@ -45,7 +45,7 @@ if(!empty($_POST['save'])) {
     $error = 1;
   }
 
-  $uidcheck = mysql_real_escape_string($newUsername);
+  $uidcheck = DBEscapeString($newUsername);
 
   if($uidcheck != $newUsername || preg_match('/[ ]/', $newUsername) /*|| preg_match('/[^a-z0-9._]/i', $newUsername)*/)
   {
@@ -53,7 +53,7 @@ if(!empty($_POST['save'])) {
     $error = 1;
   }
 
-  $pswcheck = mysql_real_escape_string($newPassword);
+  $pswcheck = DBEscapeString($newPassword);
 
   if($pswcheck != $newPassword)
   {

@@ -7,7 +7,7 @@ function U_($name){
 
 function loadDBTranslations($locale) {
 	$query = sprintf("select translation_key, translation as value from uo_translation WHERE `locale`='%s'",
-	mysql_real_escape_string(str_replace(".", "_", $locale)));
+	DBEscapeString(str_replace(".", "_", $locale)));
 	$result = DBQuery($query);
 	if (!$result) { die("Failed to load translations for locale ".$locale."\n". mysql_error()); }
 
@@ -51,7 +51,7 @@ function AllTranslations($search, $autocomplete = false) {
     $loc = str_replace(".", "_", $loc);
     $results[$loc] = "";
     $query = sprintf("SELECT translation_key, translation FROM uo_translation
-          WHERE locale='%s' AND (", mysql_real_escape_string($loc));
+          WHERE locale='%s' AND (", DBEscapeString($loc));
     
     $first = true;
     foreach ($splitted as $nextkey) {
@@ -60,7 +60,7 @@ function AllTranslations($search, $autocomplete = false) {
       } else {
         $query .= " OR ";
       }
-      $query .= " translation_key like '" . mysql_real_escape_string($nextkey) . "%'";
+      $query .= " translation_key like '" . DBEscapeString($nextkey) . "%'";
     }
     $query .=")";
     $answer = DBQuery($query);
@@ -106,12 +106,12 @@ function SetTranslation($key, $translations) {
       $locale = str_replace(".", "_", $locale);
       if (empty($value)) {
         $query = sprintf("DELETE FROM uo_translation 
-            WHERE translation_key = '%s' AND locale='%s'", mysql_real_escape_string($key), 
-            mysql_real_escape_string($locale));
+            WHERE translation_key = '%s' AND locale='%s'", DBEscapeString($key), 
+            DBEscapeString($locale));
         DBQuery($query);
       } else {
         $query = sprintf("UPDATE uo_translation SET translation='%s' WHERE locale='%s' AND translation_key='%s'", 
-            mysql_real_escape_string($value), mysql_real_escape_string($locale), mysql_real_escape_string($key));
+            DBEscapeString($value), DBEscapeString($locale), DBEscapeString($key));
         $result = DBQuery($query);
         if (!$result) {
           die('Invalid query: ' . mysql_error());
@@ -130,14 +130,14 @@ function AddTranslation($key, $translations) {
       if (empty($value)) {
         $query = sprintf("DELETE FROM uo_translation 
             WHERE translation_key = '%s' AND locale='%s'",
-            mysql_real_escape_string($key), 
-            mysql_real_escape_string($locale));
+            DBEscapeString($key), 
+            DBEscapeString($locale));
         DBQuery($query);
       } else {
         $query = sprintf(
             "INSERT INTO uo_translation (translation_key, locale, translation)
-	      VALUES ('%s', '%s', '%s')", mysql_real_escape_string($key), 
-            mysql_real_escape_string($locale), mysql_real_escape_string($value));
+	      VALUES ('%s', '%s', '%s')", DBEscapeString($key), 
+            DBEscapeString($locale), DBEscapeString($value));
         $result = DBQuery($query);
         if (!$result) {
           die('Invalid query: ' . mysql_error());
@@ -152,7 +152,7 @@ function AddTranslation($key, $translations) {
 function RemoveTranslation($key) {
 	if (hasTranslationRight()) {
 		$query = sprintf("DELETE FROM uo_translation WHERE translation_key='%s'",
-		mysql_real_escape_string($key));
+		DBEscapeString($key));
 		$result = DBQuery($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 	} else { die('Insufficient rights to remove translation'); }

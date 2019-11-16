@@ -493,10 +493,10 @@ function AddSeries($params) {
     $query = sprintf("INSERT INTO uo_series
 				(name,type,ordering,season,valid,pool_template)
 				VALUES ('%s','%s','%s','%s',%d,%d)",
-    mysql_real_escape_string($params['name']),
-    mysql_real_escape_string($params['type']),
-    mysql_real_escape_string($params['ordering']),
-    mysql_real_escape_string($params['season']),
+    DBEscapeString($params['name']),
+    DBEscapeString($params['type']),
+    DBEscapeString($params['ordering']),
+    DBEscapeString($params['season']),
     (int)$params['valid'],
     (int)$params['pool_template']);
     	
@@ -521,9 +521,9 @@ function SetSeries($params) {
 			name='%s', type='%s', ordering='%s', valid=%d,
 			pool_template=%d
 			WHERE series_id=%d",
-    mysql_real_escape_string($params['name']),
-    mysql_real_escape_string($params['type']),
-    mysql_real_escape_string($params['ordering']),
+    DBEscapeString($params['name']),
+    DBEscapeString($params['type']),
+    DBEscapeString($params['ordering']),
     (int)$params['valid'],
     (int)$params['pool_template'],
     (int)$params['series_id']);
@@ -545,8 +545,8 @@ function SetSeriesName($seriesId, $name) {
   if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
     $query = sprintf("
 			UPDATE uo_series SET name='%s' WHERE series_id='%s'",
-    mysql_real_escape_string($name),
-    mysql_real_escape_string($seriesId));
+    DBEscapeString($name),
+    DBEscapeString($seriesId));
     	
     return DBQuery($query);
   }
@@ -585,7 +585,7 @@ function SeriesEnrolledTeamsByUser($seriesId, $userid) {
 				LEFT JOIN uo_users user ON(team.userid=user.userid)
 				WHERE team.series=%d and team.userid='%s' ORDER BY team.enroll_time ASC",
     (int)$seriesId,
-    mysql_real_escape_string($userid));
+    DBEscapeString($userid));
     return DBQuery($query);
   } else die("Insufficient rights to get all enrolled teams for other users");
 }
@@ -608,10 +608,10 @@ function AddSeriesEnrolledTeam($seriesId, $userid, $name, $club, $country) {
     $query = sprintf("INSERT INTO uo_enrolledteam (series, userid, name, clubname, countryname, enroll_time)
 				VALUES (%d, '%s', '%s', '%s', '%s', now())",
     (int)$seriesId,
-    mysql_real_escape_string($userid),
-    mysql_real_escape_string($name),
-    mysql_real_escape_string($club),
-    mysql_real_escape_string($country));
+    DBEscapeString($userid),
+    DBEscapeString($name),
+    DBEscapeString($club),
+    DBEscapeString($country));
     $id = DBQueryInsert($query);
     Log1("enrolment","add",$seriesId,"$name");
     return $id;
@@ -634,7 +634,7 @@ function RemoveSeriesEnrolledTeam($seriesId, $userid, $id) {
       $query = "DELETE FROM uo_enrolledteam WHERE series=%d and userid='%s' and id=%d and status=0";
       $query = sprintf($query,
       (int)$seriesId,
-      mysql_real_escape_string($userid),
+      DBEscapeString($userid),
       (int)$id);
     } else {
       $query = "DELETE FROM uo_enrolledteam WHERE series=%d and id=%d";
@@ -668,7 +668,7 @@ function ConfirmEnrolledTeam($seriesId, $id) {
     }
 
     $query = sprintf("INSERT INTO uo_team (name, series, valid) VALUES ('%s', %d, 1)",
-    mysql_real_escape_string($teaminfo['name']),
+    DBEscapeString($teaminfo['name']),
     (int)$seriesId);
 
     DBQuery($query);
@@ -710,7 +710,7 @@ function ConfirmEnrolledTeam($seriesId, $id) {
           }
         }
       }
-      DBQuery("UPDATE uo_team SET abbreviation=UPPER('".mysql_real_escape_string($abb)."') WHERE team_id=$teamId");
+      DBQuery("UPDATE uo_team SET abbreviation=UPPER('".DBEscapeString($abb)."') WHERE team_id=$teamId");
     }
 
 
@@ -733,13 +733,13 @@ function ConfirmEnrolledTeam($seriesId, $id) {
  */
 function CanDeleteSeries($seriesId) {
   $query = sprintf("SELECT count(*) FROM uo_pool WHERE series='%s'",
-  mysql_real_escape_string($seriesId));
+  DBEscapeString($seriesId));
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
   if (!$row = mysql_fetch_row($result)) return false;
   if ($row[0] == 0) {
     $query = sprintf("SELECT count(*) FROM uo_team WHERE series='%s'",
-    mysql_real_escape_string($seriesId));
+    DBEscapeString($seriesId));
     $result = mysql_query($query);
     if (!$result) { die('Invalid query: ' . mysql_error()); }
     if (!$row = mysql_fetch_row($result)) return false;
@@ -786,11 +786,11 @@ function SeriesCopyTeams($to, $from) {
     foreach($teams as $team){
       $query = sprintf("INSERT INTO uo_team(name, club, country, rank, abbreviation, valid, series )
       			VALUES ('%s',%d,%d,%d,'%s',1,%d)",
-          mysql_real_escape_string($team['name']),
+          DBEscapeString($team['name']),
           (int) $team['club'],
           (int) $team['country'],
           (int) $team['rank'],
-          mysql_real_escape_string($team['abbreviation']),
+          DBEscapeString($team['abbreviation']),
           (int) $to);
        DBQuery($query);
     }

@@ -8,7 +8,7 @@ function CountryName($countryId){
 
 function CountryId($countryname){
 	$query = sprintf("SELECT country_id FROM uo_country WHERE name='%s'",
-		mysql_real_escape_string($countryname));
+		DBEscapeString($countryname));
 	return DBQueryToValue($query);
 }
 
@@ -108,7 +108,7 @@ function CountryTeams($countryId, $season=""){
 			LEFT JOIN uo_series ser ON(team.series = ser.series_id)
 			WHERE team.country=%d AND ser.season='%s' ORDER BY ser.ordering, team.name",
 			(int)$countryId,
-			mysql_real_escape_string($season));
+			DBEscapeString($season));
 	}
 	return DBQueryToArray($query);
 }
@@ -126,9 +126,9 @@ function AddCountry($name, $abbreviation, $flag) {
 	if(isSuperAdmin()) {
 		$query = sprintf("INSERT INTO uo_country (name, abbreviation, flagfile) 
 			VALUES ('%s', '%s', '%s')",
-			mysql_real_escape_string($name),
-			mysql_real_escape_string($abbreviation),
-			mysql_real_escape_string($flag));
+			DBEscapeString($name),
+			DBEscapeString($abbreviation),
+			DBEscapeString($flag));
 			
 		$result = DBQuery($query);
 		$countryId = mysql_insert_id();
@@ -139,7 +139,7 @@ function AddCountry($name, $abbreviation, $flag) {
 
 function CanDeleteCountry($countryId) {
 	$query = sprintf("SELECT count(*) FROM uo_team WHERE country='%s'",
-		mysql_real_escape_string($countryId));
+		DBEscapeString($countryId));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	if (!$row = mysql_fetch_row($result)) return false;
@@ -163,7 +163,7 @@ function CountryPools($seasonId, $countryId){
 		LEFT JOIN uo_team team ON(tp.team=team.team_id)
 		WHERE pool.visible=1 AND ser.season='%s' AND team.country=%d
 		ORDER BY ser.ordering ASC, pool.ordering ASC, pool.pool_id ASC",
-			mysql_real_escape_string($seasonId),
+			DBEscapeString($seasonId),
 			(int)$countryId);
 	
 	$result = mysql_query($query);
