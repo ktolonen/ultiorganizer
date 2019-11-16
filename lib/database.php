@@ -97,6 +97,11 @@ function CheckDB()
     LogDbUpgrade($i, true);
   }
 }
+function mysql_real_escape_string($escapestr)
+{
+  global $mysqlconnectionref;
+  return mysqli_real_escape_string($mysqlconnectionref, $escapestr);
+}
 
 /**
  * Returns ultiorganizer database internal version number.
@@ -107,10 +112,10 @@ function getDBVersion()
 {
   global $mysqlconnectionref;
   $query = "SELECT max(version) as version FROM uo_database";
-  $result = mysqli_query($mysqlconnectionref,$query);
+  $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
     $query = "SELECT max(version) as version FROM pelik_database";
-    $result = mysqli_query($mysqlconnectionref,$query);
+    $result = mysqli_query($mysqlconnectionref, $query);
   }
   if (!$result) return 0;
   if (!$row = mysqli_fetch_assoc($result)) {
@@ -127,9 +132,9 @@ function getDBVersion()
 function DBQuery($query)
 {
   global $mysqlconnectionref;
-  $result = mysqli_query($mysqlconnectionref,$query);
+  $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
   return $result;
 }
@@ -142,11 +147,12 @@ function DBQuery($query)
  */
 function DBQueryInsert($query)
 {
-  $result = mysql_query($query);
+  global $mysqlconnectionref;
+  $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
-  return mysql_insert_id();
+  return mysqli_insert_id($mysqlconnectionref);
 }
 
 /**
@@ -157,13 +163,14 @@ function DBQueryInsert($query)
  */
 function DBQueryToValue($query, $docasting = false)
 {
-  $result = mysql_query($query);
+  global $mysqlconnectionref;
+  $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
     die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
   }
 
-  if (mysql_num_rows($result)) {
-    $row = mysql_fetch_row($result);
+  if (mysqli_num_rows($result)) {
+    $row = mysqli_fetch_row($result);
     if ($docasting) {
       $row = DBCastArray($result, $row);
     }
@@ -181,12 +188,13 @@ function DBQueryToValue($query, $docasting = false)
  */
 function DBQueryRowCount($query)
 {
-  $result = mysql_query($query);
+  global $mysqlconnectionref;
+  $result = mysqli_query($mysqlconnectionref,$query);
   if (!$result) {
     die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
   }
 
-  return mysql_num_rows($result);
+  return mysqli_num_rows($result);
 }
 /**
  * Executes sql query and copy returns to php array.
@@ -196,7 +204,8 @@ function DBQueryRowCount($query)
  */
 function DBQueryToArray($query, $docasting = false)
 {
-  $result = mysql_query($query);
+  global $mysqlconnectionref;
+  $result = mysqli_query($mysqlconnectionref,$query);
   if (!$result) {
     die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
   }
@@ -213,7 +222,7 @@ function DBQueryToArray($query, $docasting = false)
 function DBResourceToArray($result, $docasting = false)
 {
   $retarray = array();
-  while ($row = mysql_fetch_assoc($result)) {
+  while ($row = mysqli_fetch_assoc($result)) {
     if ($docasting) {
       $row = DBCastArray($result, $row);
     }
@@ -230,11 +239,12 @@ function DBResourceToArray($result, $docasting = false)
  */
 function DBQueryToRow($query, $docasting = false)
 {
-  $result = mysql_query($query);
+  global $mysqlconnectionref;
+  $result = mysqli_query($mysqlconnectionref,$query);
   if (!$result) {
     die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
   }
-  $ret = mysql_fetch_assoc($result);
+  $ret = mysqli_fetch_assoc($result);
   if ($docasting && $ret) {
     $ret = DBCastArray($result, $ret);
   }

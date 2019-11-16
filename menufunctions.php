@@ -400,12 +400,12 @@ function navigationBar($title) {
  */
 function seasonSelection(){
   $seasons = CurrentSeasons();
-  if(mysql_num_rows($seasons)>1){
+  if(mysqli_num_rows($seasons)>1){
     echo "<table><tr><td>";
     echo "<form action='?view=index' method='get' id='seasonsels'>";
     echo "<div><select class='seasondropdown' name='selseason'
 			onchange='changeseason(selseason.options[selseason.options.selectedIndex].value);'>";
-    while($row = mysql_fetch_assoc($seasons)){
+    while($row = mysqli_fetch_assoc($seasons)){
       $selected = "";
       if (isset($_SESSION['userproperties']['selseason']) && $_SESSION['userproperties']['selseason']==$row['season_id']) {
         $selected = "selected='selected'";
@@ -540,10 +540,10 @@ function leftMenu($id=0, $pagestart=true, $printable=false) {
 
   echo "<table class='leftmenulinks'>\n";
   $pools = getViewPools($curseason);
-  if ($pools && mysql_num_rows($pools)) {
+  if ($pools && mysqli_num_rows($pools)) {
     $lastseason = "";
     $lastseries = "";
-    while ($row = mysql_fetch_assoc($pools)) {
+    while ($row = mysqli_fetch_assoc($pools)) {
       $season = $row['season'];
       $series = $row['series'];
       if ($lastseason != $season) {
