@@ -117,7 +117,7 @@ if(ShowDefenseStats())
 		<th class='center' style='width:15%'>"._("Tot.")."</th>
 		<th class='center' style='width:15%'>"._("Defenses")."</th></tr>\n";
 
-    while($player = mysql_fetch_assoc($playerswihtdef)) {
+    while($player = mysqli_fetch_assoc($playerswihtdef)) {
       $playerinfo = PlayerInfo($player['player_id']);
       $html .= "<tr><td>";
       if(!empty($playerinfo['profile_id'])){
@@ -162,7 +162,7 @@ else
 		<th class='center' style='width:15%'>"._("Goals")."</th>
 		<th class='center' style='width:15%'>"._("Tot.")."</th></tr>\n";
 
-    while($player = mysql_fetch_assoc($players)) {
+    while($player = mysqli_fetch_assoc($players)) {
       $playerinfo = PlayerInfo($player['player_id']);
       $html .= "<tr><td>";
       if(!empty($playerinfo['profile_id'])){
@@ -198,7 +198,7 @@ if(mysql_num_rows($allgames)){
   $html .= "<h2>".U_(SeasonName($teaminfo['season'])).":</h2>\n";
   $html .=  "<p>"._("Division").": <a href='?view=poolstatus&amp;series=". $teaminfo['series'] ."'>".utf8entities(U_($teaminfo['seriesname']))."</a></p>";
   $html .= "<table style='width:80%'>\n";
-  while($game = mysql_fetch_assoc($allgames)){
+  while($game = mysqli_fetch_assoc($allgames)){
     //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
     $html .= GameRow($game, false, false, false, false, false, true);
   }
@@ -543,7 +543,7 @@ if(mysql_num_rows($played)){
   $html .= "<th><a class='thsort' href=\"".$viewUrl."sort=serie\">"._("Division")."</a></th></tr>";
   $curSeason = Currentseason();
 
-  while($row = mysql_fetch_assoc($played))
+  while($row = mysqli_fetch_assoc($played))
   {
     if($row['season_id'] == $curSeason){ continue;}
     if (GameHasStarted($row))

@@ -103,13 +103,13 @@ if (hasTranslationRight()) {
 
 	$translations = Translations();
 	$i = 0;
-	$translation = mysql_fetch_assoc($translations);
+	$translation = mysqli_fetch_assoc($translations);
 	while($translation) {
 	  $tkey = $translation['translation_key'];
 	  $values = array();
 	  while($translations && $translation['translation_key'] == $tkey) {
 	    $values[$translation['locale']]=$translation['translation'];
-	    $translation = mysql_fetch_assoc($translations);
+	    $translation = mysqli_fetch_assoc($translations);
 	  }
 		echo "<tr>\n<td>".utf8entities($tkey);
 		echo "<input type='hidden' id='translationEdited".$i."' name='translationEdited[]' value='no'/>\n";

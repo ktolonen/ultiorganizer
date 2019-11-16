@@ -51,7 +51,7 @@ $seriesfilter = array();
 $poolfilter = array();
 
 $seasons = Seasons();
-while($season = mysql_fetch_assoc($seasons)){
+while($season = mysqli_fetch_assoc($seasons)){
   $seasonfilter[] = array('id'=>$season['season_id'],'name'=>U_(SeasonName($season['season_id'])));
 }
 

@@ -12,7 +12,7 @@ $html .= "\n<h1>".$title."</h1>\n";
 $seasons = Seasons();
 
 $html .= "<table width='100%' border='0' cellspacing='0' cellpadding='2'>\n";
-while($season = mysql_fetch_assoc($seasons)){
+while($season = mysqli_fetch_assoc($seasons)){
   if(!IsSeasonStatsCalculated($season['season_id'])){
     continue;
   }

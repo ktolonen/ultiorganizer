@@ -45,7 +45,7 @@ function ExistingFBUserId($fb_uid) {
 		mysql_real_escape_string($fb_uid));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		return $row['userid'];
 	} else {
 		return false;
@@ -104,7 +104,7 @@ function MapFBUserId($fb_cookie) {
     		mysql_real_escape_string($user->email));
 		$result = mysql_query($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		if ($row = mysql_fetch_assoc($result)) {
+		if ($row = mysqli_fetch_assoc($result)) {
 			$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) 
 				VALUES ('%s', 'facebookuid', '%s')",
 			 	mysql_real_escape_string($row['userid']),
@@ -209,7 +209,7 @@ function getFacebookUserProperties($userid) {
 		mysql_real_escape_string($userid));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	while ($property = mysql_fetch_assoc($result)) {
+	while ($property = mysqli_fetch_assoc($result)) {
 		if ($property['name'] == 'facebookplayer') {
 			if (!isset($ret['facebookplayer'])) {
 				$ret['facebookplayer'] = array();
@@ -374,7 +374,7 @@ function GetScoreFacebookUsers($passer, $scorer) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	$ret = array();
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = mysqli_fetch_assoc($result)) {
 		$ret[$row['profile_id']] = $row['userid'];
 	}
 	return $ret;

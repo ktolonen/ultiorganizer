@@ -50,7 +50,7 @@ if (hasEditPlayersRight($teamId)) {
 		$node = $dom->createElement("MemberSet");
 		$parnode = $dom->appendChild($node);
 
-		while ($row = mysql_fetch_assoc($result)) {
+		while ($row = mysqli_fetch_assoc($result)) {
 		  $node = $dom->createElement("Member");
 		  $newNode = $parnode->appendChild($node);
 		  
@@ -114,7 +114,7 @@ if (hasEditPlayersRight($teamId)) {
 		echo "<MemberSet>\n";
 
 		// Iterate through the rows, adding XML nodes for each
-		while ($row = mysql_fetch_assoc($result)){
+		while ($row = mysqli_fetch_assoc($result)){
 			echo "<Member>\n";
 			echo "<AccreditationId>". $row['accreditation_id'] ."</AccreditationId>\n";
 			echo "<ProfileId>". $row['profile_id'] ."</ProfileId>\n";

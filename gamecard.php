@@ -44,7 +44,7 @@ $t2 = preg_replace('/\s*/m','',$team2['name']);
 
 $games = GetAllPlayedGames($t1,$t2, $team1['type'], $sorting);
 
-while($game = mysql_fetch_assoc($games)){
+while($game = mysqli_fetch_assoc($games)){
   if(GameHasStarted($game))  {
     //ignore spaces from team name
     $t1 = preg_replace('/\s*/m','',$team1['name']);
@@ -129,7 +129,7 @@ if($nGames){
   $points=array(array());
   mysql_data_seek($games,0);
 
-  while($game = mysql_fetch_assoc($games)){
+  while($game = mysqli_fetch_assoc($games)){
     if(GameHasStarted($game)){
       $arrayYear = strtok($game['season_id'], ".");
       $arraySeason = strtok(".");
@@ -152,7 +152,7 @@ if($nGames){
       $scores = GameScoreBoard($game['game_id']);
       $i=0;
        
-      while($row = mysql_fetch_assoc($scores)){
+      while($row = mysqli_fetch_assoc($scores)){
         $bFound=false;
         for ($i=0; ($i < 200) && !empty($points[$i][0]); $i++){
           //ignore spaces from team name
@@ -272,7 +272,8 @@ if($nGames){
     $html .= "</tr>";
   }
   $html .= "</table>\n";
-}
+}
+
 showPage($title, $html);
 
 ?>

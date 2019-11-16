@@ -100,7 +100,7 @@ $html .=  "<tr>
 
 $seasons = Seasons();
 
-while($row = mysql_fetch_assoc($seasons))
+while($row = mysqli_fetch_assoc($seasons))
 	{
 	$info = SeasonInfo($row['season_id']);
 	

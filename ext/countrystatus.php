@@ -34,7 +34,7 @@ $countryId = iget("country");
 $prevdivision = "";
 $allpools = CountryPools($season, $countryId);
 
-while($pool = mysql_fetch_assoc($allpools)){
+while($pool = mysqli_fetch_assoc($allpools)){
 	$poolinfo = PoolInfo($pool['pool_id']);
 	if($poolinfo['seriesname'] != $prevdivision){
 		echo "<h1 class='pk_h1'>".utf8entities($poolinfo['seriesname'])."</h1>";
@@ -90,7 +90,7 @@ while($pool = mysql_fetch_assoc($allpools)){
 		}
 	}
 	$games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
-		while($game = mysql_fetch_assoc($games)){
+		while($game = mysqli_fetch_assoc($games)){
 			if($game['homecountryid']==$countryId || $game['visitorcountryid']==$countryId){
 				echo "<tr>";
 				echo "<td style='width:35%;border:none' class='pk_ser_td1'>". utf8entities($game['hometeamname']) ."</td>\n";

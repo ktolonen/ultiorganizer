@@ -91,7 +91,7 @@ if($view=="acclog"){
   echo "<table class='infotable'><tr><th>"._("Player")."</th><th>"._("Team")."</th><th>"._("Game")."</th><th>"._("Acknowledged")."</th></tr>\n";
   $acknowledged = array();
   
-  while ($row = mysql_fetch_assoc($unAccredited)) {
+  while ($row = mysqli_fetch_assoc($unAccredited)) {
     if (hasAccredidationRight($row['team'])) {
       if (!$row['acknowledged']) {
         echo "<tr>";
@@ -132,7 +132,7 @@ if($view=="accevents"){
   echo "<th>"._("Team")."</th><th>"._("Game")."</th><th>"._("Value")."</th>";
   echo "<th>"._("User")."</th><th>"._("Source")."</th></tr>\n";
   $logResult = SeasonAccreditationLog($season);
-  while ($row = mysql_fetch_assoc($logResult)) {
+  while ($row = mysqli_fetch_assoc($logResult)) {
     if (hasAccredidationRight($row['team'])) {
       if ($row['value']) {
         echo "<tr class='posvalue'>";

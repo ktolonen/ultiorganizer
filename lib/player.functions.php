@@ -200,7 +200,7 @@ function PlayerNumber($playerId, $gameId) {
   if(!mysql_num_rows($result))
   return -1;
 
-  $row = mysql_fetch_assoc($result);
+  $row = mysqli_fetch_assoc($result);
 
   if(is_numeric($row['game'])) {
     return intval($row['game']);

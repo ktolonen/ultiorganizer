@@ -11,7 +11,7 @@ function DetectTiesInPreviousPool($poolId) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 		
-	while($contrPool = mysql_fetch_assoc($result)){
+	while($contrPool = mysqli_fetch_assoc($result)){
 		$query = sprintf("
 			SELECT count(activerank) AS activeteams,count(activerank)-count(distinct activerank) as ties
 			FROM uo_team_pool
@@ -20,7 +20,7 @@ function DetectTiesInPreviousPool($poolId) {
 						
 		$result2 = mysql_query($query);
 		if (!$result2) { die('Invalid query: ' . mysql_error()); }
-		$row = mysql_fetch_assoc($result2);
+		$row = mysqli_fetch_assoc($result2);
 		
 		if ($row['activeteams']==0) {
 			// no active teams in this pool
@@ -46,7 +46,7 @@ function AutoResolveTiesInSourcePools($poolId) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 		
-	while($contrPool = mysql_fetch_assoc($result)){
+	while($contrPool = mysqli_fetch_assoc($result)){
 		AutoResolveTies($contrPool['frompool']);
 	}
 }
@@ -68,7 +68,7 @@ function AutoResolveTies($poolId) {
 //	print "Number of rows: ".$nbrows."<br>";
 	
 	for($i=1;$i<=$nbrows;$i++){
-		$row=mysql_fetch_assoc($result);
+		$row=mysqli_fetch_assoc($result);
 //		print_r($row);
 		if ($row['activerank']<$i && !empty($row['activerank'])){
 			// set this team's activerank to $i
@@ -399,7 +399,7 @@ function PoolTeamFromStandingsNoTies($poolId, $activerank){
 		mysql_data_seek($result,$searchback);		
 	}
 	
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }
 
 
@@ -421,8 +421,8 @@ function CheckBYESchedule($poolId) {
 	$result = DBQuery($query);
 	
 	if (mysql_num_rows($result)==2) { // swap spots
-		$row1=mysql_fetch_assoc($result);
-		$row2=mysql_fetch_assoc($result);
+		$row1=mysqli_fetch_assoc($result);
+		$row2=mysqli_fetch_assoc($result);
 
 		$query = sprintf("
 				UPDATE uo_game SET reservation='%s', time='%s' 

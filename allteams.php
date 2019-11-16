@@ -30,12 +30,13 @@ if($filter=="ALL"){
 }
 $html .= "</tr></table>\n";
 
-$html .= "<table style='white-space: nowrap;width:100%;'>\n";$teams = TeamListAll(true,true, $filter);
+$html .= "<table style='white-space: nowrap;width:100%;'>\n";
+$teams = TeamListAll(true,true, $filter);
 
 $firstchar = " ";
 $listletter = " ";
 $counter = 0;
-
+mysqli_fetch_assoc
 while($team = mysql_fetch_assoc($teams)){
 
   if($filter == "ALL"){

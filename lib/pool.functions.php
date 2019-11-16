@@ -919,7 +919,7 @@ function PoolGetGamesToMove($poolId, $mvgames){
     if($mvgames==0){
       $teamgames = TeamPoolGames($team['team_id'],$row['frompool']);
       if(mysql_num_rows($teamgames)){
-        while($game = mysql_fetch_assoc($teamgames)){
+        while($game = mysqli_fetch_assoc($teamgames)){
           $found = false;
           foreach ($games as $id){
             if($game['game_id'] == $id){
@@ -938,7 +938,7 @@ function PoolGetGamesToMove($poolId, $mvgames){
         if($row2['frompool'] == $row2['frompool']){
           $teamgames = TeamPoolGamesAgainst($team['team_id'],$team2['team_id'],$row['frompool']);
           if(mysql_num_rows($teamgames)){
-            while($game = mysql_fetch_assoc($teamgames)){
+            while($game = mysqli_fetch_assoc($teamgames)){
               $found = false;
               foreach ($games as $id){
                 if($game['game_id'] == $id){

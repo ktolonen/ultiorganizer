@@ -30,7 +30,7 @@ if (isset($_POST['import'])) {
 	$separator = $_POST['separator'];
 	$series = SeasonSeries($season);
 	$ser = array();
-	while($row = mysql_fetch_assoc($series)){
+	while($row = mysqli_fetch_assoc($series)){
 		$ser[] = array('id'=>$row['series_id'], 'name' =>$row['seriesname']);
 	}
 
@@ -83,7 +83,7 @@ $html .= "<p>".("Select event").": <select class='dropdown' name='season'>\n";
 
 $seasons = Seasons();
 		
-while($row = mysql_fetch_assoc($seasons)){
+while($row = mysqli_fetch_assoc($seasons)){
 	$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 }
 

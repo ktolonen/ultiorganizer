@@ -90,7 +90,7 @@ if (isset($_POST['import'])) {
 
 				if($role=="player" || $role=="captain" || $role=="coach"){
 					$players = TeamPlayerList($teamId);
-					while($player = mysql_fetch_assoc($players)){
+					while($player = mysqli_fetch_assoc($players)){
 						//echo $player['firstname']."==$first && ".$player['lastname']."==$last &&". $player['num']."==$jersey";
 						if($player['firstname']==$first && $player['lastname']==$last && intval($player['num'])==intval($jersey)){
 							$playerId=$player['player_id'];
@@ -166,7 +166,7 @@ $html .= "<p>".("Select event").": <select class='dropdown' name='season'>\n";
 
 $seasons = Seasons();
 		
-while($row = mysql_fetch_assoc($seasons)){
+while($row = mysqli_fetch_assoc($seasons)){
 	$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 }
 

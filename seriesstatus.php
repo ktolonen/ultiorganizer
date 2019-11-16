@@ -251,7 +251,7 @@ $html .= "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px
 <th class='center'>"._("Assists")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Tot.")."</th></tr>\n";
 
 $scores = SeriesScoreBoard($seriesinfo['series_id'],"total", 10);
-while($row = mysql_fetch_assoc($scores)){
+while($row = mysqli_fetch_assoc($scores)){
   $html .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
   $html .= "<td>".utf8entities($row['teamname'])."</td>";
   $html .= "<td class='center'>".intval($row['games'])."</td>";
@@ -272,7 +272,7 @@ if(ShowDefenseStats()) {
 
 
   $defenses = SeriesDefenseBoard($seriesinfo['series_id'],"deftotal", 10);
-  while($row = mysql_fetch_assoc($defenses)) {
+  while($row = mysqli_fetch_assoc($defenses)) {
     $html .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
     $html .= "<td>".utf8entities($row['teamname'])."</td>";
     $html .= "<td>". _("Games") . "</td>";

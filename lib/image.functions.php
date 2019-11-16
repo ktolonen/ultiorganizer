@@ -10,7 +10,7 @@ function GetImage($imageId){
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }	
 
 function GetThumb($imageId){
@@ -23,7 +23,7 @@ function GetThumb($imageId){
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }
 
 function ImageInfo($imageId){
@@ -36,7 +36,7 @@ function ImageInfo($imageId){
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }
 
 function RemoveImage($imageId){

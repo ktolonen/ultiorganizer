@@ -52,7 +52,7 @@ function LocationInfo($id) {
 	    WHERE id=%d", mysql_real_escape_string($locale), (int)$id);
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }
 
 function SetLocation($id, $name, $address, $info, $fields, $indoor, $lat, $lng, $season) {

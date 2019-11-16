@@ -244,7 +244,7 @@ else{
 	
 	$series = Series();
 			
-	while($row = mysql_fetch_assoc($series)){
+	while($row = mysqli_fetch_assoc($series)){
 		$html .= "<option class='dropdown' value='".utf8entities($row['series_id'])."'>". utf8entities($row['seasonname']) . " " . utf8entities($row['name']) ."</option>";
 	}
 	

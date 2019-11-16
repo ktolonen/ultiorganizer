@@ -208,7 +208,7 @@ function EnrollSeasons() {
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
   $ret = array();
-  while ($row = mysql_fetch_assoc($result)) {
+  while ($row = mysqli_fetch_assoc($result)) {
     $ret[$row['season_id']] = $row['name'];
   }
   return $ret;

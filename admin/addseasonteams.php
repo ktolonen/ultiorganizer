@@ -90,7 +90,7 @@ if(!empty($_POST['save']) || !empty($_POST['add'])){
 
 $orgarray = "";
 $result = ClubList(true);
-while($row = @mysql_fetch_assoc($result)){
+while($row = @mysqli_fetch_assoc($result)){
 	$orgarray .= "\"".$row['name']."\",";
 }
 $orgarray=trim($orgarray,',');

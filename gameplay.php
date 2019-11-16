@@ -52,7 +52,7 @@ if(GameHasStarted($game_result) > 0){
     $html .= "<tr><th class='home'>#</th><th class='home'>"._("Name")."</th><th class='home center'>"._("Assists")."</th><th class='home center'>"._("Goals")."</th>
 		 <th class='home center'>"._("Tot.")."</th></tr>\n";
 
-    while($row = mysql_fetch_assoc($home_team_score_board))	{
+    while($row = mysqli_fetch_assoc($home_team_score_board))	{
       $html .= "<tr>";
       $html .= "<td style='text-align:right'>". $row['num'] ."</td>";
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=". $row['player_id'];
@@ -80,7 +80,7 @@ if(GameHasStarted($game_result) > 0){
     $html .= "</th><th class='guest center'>"._("Tot.")."</th></tr>\n";
 
 
-    while($row = mysql_fetch_assoc($guest_team_score_board)){
+    while($row = mysqli_fetch_assoc($guest_team_score_board)){
       $html .= "<tr>";
       $html .= "<td style='text-align:right'>". $row['num'] ."</td>";
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=". $row['player_id'];
@@ -108,7 +108,7 @@ if(GameHasStarted($game_result) > 0){
     $bHt=false;
     $total=0;
 
-    while($goal = mysql_fetch_assoc($goals)){
+    while($goal = mysqli_fetch_assoc($goals)){
 
       if (!$bHt && $goal['time']>$game_result['halftime']){
         $points[$i][0] = (intval($game_result['halftime']) - $lprev);
@@ -184,7 +184,7 @@ if(GameHasStarted($game_result) > 0){
 
     $prevgoal = 0;
     mysql_data_seek($goals, 0);
-    while($goal = mysql_fetch_assoc($goals)){
+    while($goal = mysqli_fetch_assoc($goals)){
       if (!$bHt && $game_result['halftime']>0 && $goal['time'] > $game_result['halftime']){
         $html .= "<tr><td colspan='6' class='halftime'>"._("Half-time")."</td></tr>";
         $bHt = 1;
@@ -321,8 +321,8 @@ if(GameHasStarted($game_result) > 0){
 
       $turnovers = GameTurnovers($gameId);
 
-      $goal = mysql_fetch_assoc($allgoals);
-      $turnover = mysql_fetch_assoc($turnovers);
+      $goal = mysqli_fetch_assoc($allgoals);
+      $turnover = mysqli_fetch_assoc($turnovers);
 
       //who start the game?
       $ishome = GameIsFirstOffenceHome($gameId);
@@ -367,7 +367,7 @@ if(GameHasStarted($game_result) > 0){
       mysql_data_seek($allgoals, 0);
 
       //loop all goals
-      while($goal = mysql_fetch_assoc($allgoals)){
+      while($goal = mysqli_fetch_assoc($allgoals)){
         //halftime passed
         if (($nClockTime <= intval($game_result['halftime'])) && (intval($goal['time']) >= intval($game_result['halftime']))){
           $nClockTime = intval($game_result['halftime']);
@@ -390,7 +390,7 @@ if(GameHasStarted($game_result) > 0){
         if(mysql_num_rows($turnovers)){
           $turnovers = GameTurnovers($gameId);
         }
-        while($turnover = mysql_fetch_assoc($turnovers)){
+        while($turnover = mysqli_fetch_assoc($turnovers)){
           if((intval($turnover['time']) > $nClockTime) &&
           (intval($turnover['time'])<intval($goal['time']))){
             if(intval($turnover['ishome'])){
@@ -436,7 +436,7 @@ if(GameHasStarted($game_result) > 0){
       //timeouts
       $timeouts = GameTimeouts($gameId);
        
-      while($timeout = mysql_fetch_assoc($timeouts)){
+      while($timeout = mysqli_fetch_assoc($timeouts)){
         if (intval($timeout['ishome'])){
           $nHTO++;
         }else{
@@ -528,7 +528,7 @@ if(GameHasStarted($game_result) > 0){
       $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
       $html .= "<tr><th class='home'>#</th><th class='home'>"._("Name")."</th><th class='home center'>"._("Defenses")."</th></tr>\n";
 
-      while($row = mysql_fetch_assoc($home_team_defense_board)){
+      while($row = mysqli_fetch_assoc($home_team_defense_board)){
         $html .= "<tr>";
         $html .= "<td style='text-align:right'>". $row['num'] ."</td>";
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=". $row['player_id'];
@@ -553,7 +553,7 @@ if(GameHasStarted($game_result) > 0){
       $html .= "<tr><th class='guest'>#</th><th class='guest'>"._("Name")."</th><th class='guest center'>";
       $html .= _("Defenses")."</th></tr>\n";
 
-      while($row = mysql_fetch_assoc($guest_team_defense_board)){
+      while($row = mysqli_fetch_assoc($guest_team_defense_board)){
         $html .= "<tr>";
         $html .= "<td style='text-align:right'>". $row['num'] ."</td>";
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=". $row['player_id'];
@@ -579,7 +579,7 @@ if(GameHasStarted($game_result) > 0){
 
       $prevdefense = 0;
       mysql_data_seek($defenses, 0);
-      while($defense = mysql_fetch_assoc($defenses)){
+      while($defense = mysqli_fetch_assoc($defenses)){
         // 		if (!$bHt && $game_result['halftime']>0 && $goal['time'] > $game_result['halftime']){
         // 			$html .= "<tr><td colspan='6' class='halftime'>"._("Half-time")."</td></tr>";
         // 			$bHt = 1;

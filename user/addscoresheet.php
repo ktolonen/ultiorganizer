@@ -419,7 +419,7 @@ echo "<tr><th>"._("Home")."</th>\n";
 //home team used timeouts
 $i=0;
 $timeouts = GameTimeouts($gameId);
-while($timeout = mysql_fetch_assoc($timeouts))
+while($timeout = mysqli_fetch_assoc($timeouts))
 {
   if (intval($timeout['ishome']))
   {
@@ -444,7 +444,7 @@ echo "<tr><th>"._("Away")."</th>\n";
 //away team used timeouts
 $i=0;
 $timeouts = GameTimeouts($gameId);
-while($timeout = mysql_fetch_assoc($timeouts))
+while($timeout = mysqli_fetch_assoc($timeouts))
 {
   if (!intval($timeout['ishome']))
   {
@@ -561,7 +561,7 @@ echo "<th style='$style_right'>"._("Score")."</th></tr>\n";
 $scores = GameGoals($gameId);
 
 $i=0;
-while($row = mysql_fetch_assoc($scores))
+while($row = mysqli_fetch_assoc($scores))
 {
 
   echo "<tr>";

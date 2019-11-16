@@ -360,7 +360,7 @@ if ($_SESSION['uid'] != "anonymous") {
 
   $html .= "<select multiple='multiple' name='addeditseasonslist[]' id='addeditseasonslist' style='height:200px;width:250px'>\n";
   $seasons = Seasons();
-  while($season = mysql_fetch_assoc($seasons)){
+  while($season = mysqli_fetch_assoc($seasons)){
     if (empty($editseasons[$season['season_id']])) {
       $html .= "<option value='".urlencode($season['season_id'])."'>".utf8entities($season['name'])."</option>";
     }

@@ -56,7 +56,7 @@ switch($feedtype){
     }
     $i=0;
 
-    while(($game = mysql_fetch_assoc($games)) && $i<$max_items){
+    while(($game = mysqli_fetch_assoc($games)) && $i<$max_items){
       	
       if(GameHasStarted($game)){
         $newItem = $feed->createNewItem();
@@ -100,7 +100,7 @@ switch($feedtype){
     $prevgoal = 0;
     $items = array();
 
-    while($goal = mysql_fetch_assoc($goals)){
+    while($goal = mysqli_fetch_assoc($goals)){
       $newItem = $feed->createNewItem();
       $newItem->setGuid($goal['time']);
 
@@ -202,7 +202,7 @@ switch($feedtype){
     $feed->setDescription(_("Ultimate results"));
     $games = GameAll(20);
 
-    while(($game = mysql_fetch_assoc($games))){
+    while(($game = mysqli_fetch_assoc($games))){
       	
       if(GameHasStarted($game)){
         $newItem = $feed->createNewItem();

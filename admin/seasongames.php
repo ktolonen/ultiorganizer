@@ -161,7 +161,7 @@ foreach ($pools as $pool) {
   $html .= "<th class='right' colspan='3' ><a class='thlink' href='?view=user/pdfscoresheet&amp;season=$season&amp;pool=" . $pool['pool_id'] . "'>" . _("Print scoresheets") . "</a></th>";
   $html .= "</tr>";
 
-  while ($game = mysql_fetch_assoc($games)) {
+  while ($game = mysqli_fetch_assoc($games)) {
     $i = $game['game_id'];
 
     if (GameHasStarted($game)) {

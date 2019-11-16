@@ -52,7 +52,7 @@ function UserAuthenticate($user, $passwd, $failcallback) {
 	if($count==1) {
 		LogUserAuthentication($user,"success");
 		SetUserSessionData($user);
-		$row = mysql_fetch_assoc($result);
+		$row = mysqli_fetch_assoc($result);
 		DBQuery("UPDATE uo_users SET last_login=NOW() WHERE userid='".mysql_real_escape_string($user)."'");
 		
 		//first logging
@@ -113,14 +113,14 @@ function IsRegistered($user_id) {
 		mysql_real_escape_string($user_id));
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		return true;
 	} else {
 		$query = sprintf("SELECT userid FROM uo_registerrequest WHERE userid='%s'",
 			mysql_real_escape_string($user_id));
 		$result = DBQuery($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		if ($row = mysql_fetch_assoc($result)) {
+		if ($row = mysqli_fetch_assoc($result)) {
 			return true;
 		}
 		return false;
@@ -178,7 +178,7 @@ function SetUserSessionData($user_id) {
 		$_SESSION['userproperties'] = array();
 	}
 	
-	while ($property = mysql_fetch_assoc($result)) {
+	while ($property = mysqli_fetch_assoc($result)) {
 		$propname = $property['name'];
 		$propvalue = explode(":", $property['value']);
 		$propid = $property['prop_id'];
@@ -296,7 +296,7 @@ function getUserpropertyArray($userid, $propertyname) {
 		
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		$ret = array();
-		while ($property = mysql_fetch_assoc($result)) {
+		while ($property = mysqli_fetch_assoc($result)) {
 			$propvalue = explode(":", $property['value']);
 			$propid = $property['prop_id'];
 			if (count($propvalue) == 1) {
@@ -419,7 +419,7 @@ function isSuperAdminByUserid($userid) {
 		$result = DBQuery($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-		if ($row = mysql_fetch_assoc($result)) {
+		if ($row = mysqli_fetch_assoc($result)) {
 			return true;
 		} else {
 			return false;
@@ -434,7 +434,7 @@ function isTranslationAdminByUserid($userid) {
 		$result = DBQuery($query);
 		if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-		if ($row = mysql_fetch_assoc($result)) {
+		if ($row = mysqli_fetch_assoc($result)) {
 			return true;
 		} else {
 			return false;
@@ -615,7 +615,7 @@ function getSeriesName($series) {
 	$query = sprintf("SELECT name FROM uo_series WHERE series_id=%d", (int)$series);
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		return $row['name'];
 	} else return "";
 }
@@ -624,7 +624,7 @@ function getTeamSeries($team) {
 	$query = sprintf("SELECT series FROM uo_team WHERE team_id=%d", (int)$team);
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		return $row['series'];
 	} else return "";
 }
@@ -633,7 +633,7 @@ function getTeamSeason($team) {
 	$query = sprintf("SELECT ser.season as season FROM uo_team as team left join uo_series as ser on (team.series = ser.series_id)  WHERE team_id=%d", (int)$team);
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		return $row['season'];
 	} else return "";
 }
@@ -642,7 +642,7 @@ function getTeamName($team) {
 	$query = sprintf("SELECT name FROM uo_team WHERE team_id=%d", (int)$team);
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		return $row['name'];
 	} else return "";
 }
@@ -943,7 +943,7 @@ function RegisterUIDByToken($token) {
 		mysql_real_escape_string($token));
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		return $row['userid'];
 	} return false; 
 }
@@ -953,7 +953,7 @@ function ConfirmRegister($token) {
 		mysql_real_escape_string($token));
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		$query = sprintf("INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
 			mysql_real_escape_string($row['name']),
 			mysql_real_escape_string($row['userid']),
@@ -978,7 +978,7 @@ function ConfirmRegisterUID($userid) {
     		mysql_real_escape_string($userid));
     	$result = DBQuery($query);
     	if (!$result) { die('Invalid query: ' . mysql_error()); }
-    	if ($row = mysql_fetch_assoc($result)) {
+    	if ($row = mysqli_fetch_assoc($result)) {
     		$query = sprintf("INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
     			mysql_real_escape_string($row['name']),
     			mysql_real_escape_string($row['userid']),
@@ -1023,7 +1023,7 @@ function ConfirmEmail($token) {
 		mysql_real_escape_string($token));
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_assoc($result)) {
+	if ($row = mysqli_fetch_assoc($result)) {
 		$query = sprintf("INSERT INTO uo_extraemail (userid, email) VALUES ('%s', '%s')",
 			mysql_real_escape_string($row['userid']),
 			mysql_real_escape_string($row['email']));
@@ -1220,7 +1220,7 @@ function GameResponsibilityArray($season, $series=null) {
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	$ret = array();
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = mysqli_fetch_assoc($result)) {
 		if (!isset($ret[$row['reservationgroup']])) {
 			$ret[$row['reservationgroup']] = array();
 		}
@@ -1243,7 +1243,7 @@ function UserResetPassword($userId) {
 			mysql_real_escape_string($userId));
 	$result = DBQuery($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	
 	$email = $row['email'];
 	if(!empty($email)){

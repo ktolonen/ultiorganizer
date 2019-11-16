@@ -64,34 +64,34 @@ class EventDataXMLHandler{
       $ret .= "<?xml version='1.0' encoding='UTF-8'?>\n";
       //uo_season
       $seasons = DBQuery("SELECT * FROM uo_season WHERE season_id='".mysql_real_escape_string($eventId)."'");
-      $row = mysql_fetch_assoc($seasons);
+      $row = mysqli_fetch_assoc($seasons);
       $ret .= $this->RowToXML("uo_season", $row, false);
 
       //uo_reservation
       $reservations = DBQuery("SELECT * FROM uo_reservation WHERE season='".mysql_real_escape_string($eventId)."'");
-      while($reservation = mysql_fetch_assoc($reservations)){
+      while($reservation = mysqli_fetch_assoc($reservations)){
         $ret .= $this->RowToXML("uo_reservation", $reservation);
       }
 
       //uo_movingtime
       $times = DBQuery("SELECT * FROM uo_movingtime WHERE season='".mysql_real_escape_string($eventId)."'");
-      while($time = mysql_fetch_assoc($times)){
+      while($time = mysqli_fetch_assoc($times)){
         $ret .= $this->RowToXML("uo_movingtime", $time);
       }
       
       //uo_series
       $series = DBQuery("SELECT * FROM uo_series WHERE season='".mysql_real_escape_string($eventId)."'");
-      while($ser = mysql_fetch_assoc($series)){
+      while($ser = mysqli_fetch_assoc($series)){
         $ret .= $this->RowToXML("uo_series", $ser, false);
          
         $seriesId = (int)$ser['series_id'];
         //uo_team
         $teams = DBQuery("SELECT * FROM uo_team WHERE series='$seriesId'");
-        while($team = mysql_fetch_assoc($teams)){
+        while($team = mysqli_fetch_assoc($teams)){
           $ret .= $this->RowToXML("uo_team", $team, false);
           //uo_player
           $players = DBQuery("SELECT * FROM uo_player WHERE team='".mysql_real_escape_string($team['team_id'])."'");
-          while($player = mysql_fetch_assoc($players)){
+          while($player = mysqli_fetch_assoc($players)){
             $ret .= $this->RowToXML("uo_player", $player);
           }
           $ret .= "</uo_team>\n";
@@ -105,39 +105,39 @@ class EventDataXMLHandler{
             LEFT JOIN uo_pool pool2 ON (mv.frompool = pool2.pool_id OR mv.topool = pool2.pool_id)
             WHERE pool2.series = $seriesId  OR pool.series = $seriesId 
             GROUP BY scheduling_id");
-        while ($row = mysql_fetch_assoc($schedulings)) {
+        while ($row = mysqli_fetch_assoc($schedulings)) {
           $ret .= $this->RowToXML("uo_scheduling_name", $row);
         }
         
         //uo_pool
         $pools = DBQuery("SELECT * FROM uo_pool WHERE series='$seriesId'");
-        while($row = mysql_fetch_assoc($pools)){
+        while($row = mysqli_fetch_assoc($pools)){
           $ret .= $this->RowToXML("uo_pool", $row, false);
 
           //uo_team_pool
           $teampools = DBQuery("SELECT * FROM uo_team_pool WHERE pool='".mysql_real_escape_string($row['pool_id'])."'");
-          while($teampool = mysql_fetch_assoc($teampools)){
+          while($teampool = mysqli_fetch_assoc($teampools)){
             $ret .= $this->RowToXML("uo_team_pool", $teampool);
           }
 
           //uo_game
           $games = DBQuery("SELECT * FROM uo_game WHERE pool='".mysql_real_escape_string($row['pool_id'])."'");
-          while($row = mysql_fetch_assoc($games)){
+          while($row = mysqli_fetch_assoc($games)){
             $ret .= $this->RowToXML("uo_game", $row, false);
              
             //uo_goal
             $goals = DBQuery("SELECT * FROM uo_goal WHERE game='".mysql_real_escape_string($row['game_id'])."'");
-            while($goal = mysql_fetch_assoc($goals)){
+            while($goal = mysqli_fetch_assoc($goals)){
               $ret .= $this->RowToXML("uo_goal", $goal);
             }
             //uo_gameevent
             $gameevents = DBQuery("SELECT * FROM uo_gameevent WHERE game='".mysql_real_escape_string($row['game_id'])."'");
-            while($gameevent = mysql_fetch_assoc($gameevents)){
+            while($gameevent = mysqli_fetch_assoc($gameevents)){
               $ret .= $this->RowToXML("uo_gameevent", $gameevent);
             }
             //uo_played
             $playedplayers = DBQuery("SELECT * FROM uo_played WHERE game='".mysql_real_escape_string($row['game_id'])."'");
-            while($playedplayer = mysql_fetch_assoc($playedplayers)){
+            while($playedplayer = mysqli_fetch_assoc($playedplayers)){
               $ret .= $this->RowToXML("uo_played", $playedplayer);
             }
             $ret .= "</uo_game>\n";
@@ -149,7 +149,7 @@ class EventDataXMLHandler{
         $moveteams = DBQuery("SELECT m.* FROM uo_moveteams m
 				LEFT JOIN uo_pool p ON(m.frompool=p.pool_id) 
 				WHERE p.series='$seriesId'");
-        while($moveteam = mysql_fetch_assoc($moveteams)){
+        while($moveteam = mysqli_fetch_assoc($moveteams)){
           $ret .= $this->RowToXML("uo_moveteams", $moveteam);
         }
          
@@ -157,7 +157,7 @@ class EventDataXMLHandler{
         $gamepools = DBQuery("SELECT g.* FROM uo_game_pool g
 				LEFT JOIN uo_pool p ON(g.pool=p.pool_id)
 				WHERE p.series='$seriesId'");
-        while($gamepool = mysql_fetch_assoc($gamepools)){
+        while($gamepool = mysqli_fetch_assoc($gamepools)){
           $ret .= $this->RowToXML("uo_game_pool", $gamepool);
         }
         $ret .= "</uo_series>\n";

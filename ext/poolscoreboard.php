@@ -39,7 +39,7 @@ echo "</tr>";
 
 $scores = PoolScoreBoard($poolId, $sort, 10);
 
-while($row = mysql_fetch_assoc($scores))
+while($row = mysqli_fetch_assoc($scores))
 	{
 	echo "<tr><td class='pk_scoreboard_td1'>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
 	echo "<td class='pk_scoreboard_td1'>".utf8entities($row['teamname'])."</td>";

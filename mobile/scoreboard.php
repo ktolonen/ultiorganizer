@@ -16,7 +16,7 @@ $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
 $html .= "<b>". utf8entities(TeamName($teamId)) ."</b>";
 $html .= "</td></tr><tr><td>\n";
-while($row = mysql_fetch_assoc($team_score_board))	{
+while($row = mysqli_fetch_assoc($team_score_board))	{
 	$html .= $row['num'] ." ";
 	$html .= utf8entities($row['firstname']) ."&nbsp;". utf8entities($row['lastname']) ." ";
 	$html .= $row['fedin'] ."+". $row['done'] ."=". $row['total'];

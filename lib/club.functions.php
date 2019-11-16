@@ -6,7 +6,7 @@ function ClubName($clubId)
 		mysql_real_escape_string($clubId));
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$row = mysql_fetch_assoc($result);
+	$row = mysqli_fetch_assoc($result);
 	$name = $row["name"]; 
 	mysql_free_result($result);
 	
@@ -26,7 +26,7 @@ function ClubInfo($clubId)
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	return  mysql_fetch_assoc($result);
+	return  mysqli_fetch_assoc($result);
 	}
 
 function ClubList($onlyvalid=false, $namefilter=""){

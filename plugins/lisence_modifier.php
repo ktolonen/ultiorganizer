@@ -51,7 +51,7 @@ if($accId>0){
   $html .= "<form method='post' id='tables' action='?view=plugins/lisence_modifier&amp;accid=".$accId."''>\n";
   $licenses = DBQuery("SELECT * FROM uo_license WHERE accreditation_id='".$accId."'");
   $html .= "<table>";
-  $lis = mysql_fetch_assoc($licenses);
+  $lis = mysqli_fetch_assoc($licenses);
   $columns = array_keys($lis);
   $values = array_values($lis);
   $total = count($lis);
@@ -69,7 +69,7 @@ if($accId>0){
   $html .= "<form method='post' id='tables' action='?view=plugins/lisence_modifier'>\n";
   $licenses = DBQuery("SELECT * FROM uo_license ORDER BY lastname");
   $html .= "<table style='width:100%'>";
-  while($lis = mysql_fetch_assoc($licenses)){
+  while($lis = mysqli_fetch_assoc($licenses)){
     $html .= "<tr>";
     $html .="<td>".utf8entities($lis['accreditation_id'])."</td>";    
     $html .="<td>".utf8entities($lis['lastname'])."</td>";

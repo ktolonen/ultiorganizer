@@ -238,7 +238,7 @@ function ReservationInfoArray($reservations) {
 		$nextInfo = ReservationInfo($row[1]);
 		$nextGames = array();
 		$gameResults = ReservationGames($row[1]);
-		while ($gameRow = mysql_fetch_assoc($gameResults)) {
+		while ($gameRow = mysqli_fetch_assoc($gameResults)) {
 			$nextGames["".$gameRow['game_id']] = $gameRow;
 		}
 		$nextInfo['games'] = $nextGames; 

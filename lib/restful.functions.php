@@ -22,7 +22,7 @@ function PlayerInfod($playerId) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }
 	
 function Playersd($filter=null, $ordering=null) {
@@ -52,9 +52,9 @@ function PlayerprofileInfod($accreditation_id) {
 	$result = mysql_query($query);
 	if (!$result) { die('Invalid query: ' . mysql_error()); }
 	if (hasEditPlayerProfileRight($accreditation_id)) {
-		return mysql_fetch_assoc($result);
+		return mysqli_fetch_assoc($result);
 	} else {
-		$data = mysql_fetch_assoc($result);
+		$data = mysqli_fetch_assoc($result);
 		$publicfields = explode("|", $data['public']);
 		$ret = array();
 		$ret['firstname'] = $data['firstname'];

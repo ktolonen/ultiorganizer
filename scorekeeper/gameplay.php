@@ -25,7 +25,7 @@ if(mysql_num_rows($goals) <= 0){
 	$html .=  "<a href='?view=addplayerlists&amp;game=".$gameId."&amp;team=".$game_result['hometeam']."'>"._("Feed in score sheet")."</a>";
 }else{		
 	$prevgoal = 0;
-	while($goal = mysql_fetch_assoc($goals)){
+	while($goal = mysqli_fetch_assoc($goals)){
 
 		if((intval($game_result['halftime']) >= $prevgoal) &&
 						(intval($game_result['halftime']) < intval($goal['time']))){

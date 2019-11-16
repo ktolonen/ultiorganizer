@@ -91,7 +91,7 @@ class Restful {
 		
 		$retArray = array();
 		$className = $this->getRestClassName();
-		while ($next = mysql_fetch_assoc($items)) {
+		while ($next = mysqli_fetch_assoc($items)) {
 			$toadd = $this->getListData($next);
 			$retArray[] = $toadd;
 		}

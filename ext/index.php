@@ -26,7 +26,8 @@ $defaultcss=CUSTOMIZATIONS;
 
 $styles = array(urlencode("$baseurl/ext/$defaultcss.css"),urlencode("$baseurl/ext/black.css"),urlencode("$baseurl/ext/noborder.css"));
 $stylenames = array(_("default"),_("black and white"),_("no borders"));
-
+
+
 if(!empty($_POST['update'])){
 	$selstyle = $_POST['ownstyle'];
 	if(empty($selstyle) || strlen($selstyle)<8)
@@ -64,7 +65,7 @@ $html .= "<h2>"._("Select")."</h2>";
 $selector = "<p>"._("Select event").":	<select class='dropdown' name='season'>\n";
 
 $seasons = Seasons();
-		
+		mysqli_fetch_assoc
 while($row = mysql_fetch_assoc($seasons))
 	{
 	
@@ -283,7 +284,8 @@ if(!empty($selteam)){
 		type='text/html' width='300px' height='200px'&gt;&lt;/object&gt;
 		</code></p>\n";
 		
-	$html .= "<p><object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='300px' height='200px'></object></p>\n";}
+	$html .= "<p><object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='300px' height='200px'></object></p>\n";
+}
 $html .= "</form>\n";
 
 showPage($title, $html);

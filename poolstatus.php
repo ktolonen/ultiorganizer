@@ -66,7 +66,8 @@ foreach ($pools as $pool) {
     }
   }
   $prevseries = $poolinfo['series'];
-  $seriesName = U_($poolinfo['seriesname']).", ". U_($poolinfo['name']);
+  $seriesName = U_($poolinfo['seriesname']).", ". U_($poolinfo['name']);
+
   $html .= "<h2>".utf8entities($seriesName)."</h2>";
   
   $html .= CommentHTML(3, $pool['pool_id']);
@@ -122,7 +123,7 @@ function scoreboard($id, $seriesScoreboard){
     $ret .= "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
 		<th class='center'>"._("Assists")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Tot.")."</th></tr>\n";
 
-    $scores = SeriesScoreBoard($id,"total", 10);
+    $scores = Sermysqli_fetch_assoc,"total", 10);
     while($row = mysql_fetch_assoc($scores))
     {
       $ret .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
@@ -152,7 +153,7 @@ function scoreboard($id, $seriesScoreboard){
     }else{
       $scores = PoolScoreBoard($id,"total", 5);
     }
-
+mysqli_fetch_assoc
     while($row = mysql_fetch_assoc($scores))
     {
       $ret .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
@@ -184,7 +185,7 @@ function defenseboard($id, $seriesDefenseboard){
     $ret .= "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
 		<th class='center'>"._("Total defenses")."</th></tr>\n";
 
-    $defenses = SeriesDefenseBoard($seriesinfo['series_id'],"deftotal", 10);
+    $defenses = Smysqli_fetch_assoc($seriesinfo['series_id'],"deftotal", 10);
     while($row = mysql_fetch_assoc($defenses))
     {
       $ret .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
@@ -213,7 +214,7 @@ function defenseboard($id, $seriesDefenseboard){
     }else{
       $scores = PoolScoreBoardWithDefenses($id,"deftotal", 5);
     }
-
+mysqli_fetch_assoc
     while($row = mysql_fetch_assoc($scores))
     {
       $ret .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
@@ -294,7 +295,7 @@ function printSwissdraw($seasoninfo, $poolinfo){
       $ret .= GameRow($game, false, false, false, false, false, true);
     }
   }
-  $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
+  $games = Timetmysqli_fetch_assocfo['pool_id'], "pool", "all", "series");
   while($game = mysql_fetch_assoc($games)){
     //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
     $ret .= GameRow($game, false, false, false, false, false, true);
@@ -432,7 +433,7 @@ function printRoundRobinPool($seasoninfo, $poolinfo){
       $ret .= GameRow($game, false, false, false, false, false, true);
     }
   }
-  $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
+  $games = Timetmysqli_fetch_assocfo['pool_id'], "pool", "all", "series");
   while($game = mysql_fetch_assoc($games)){
     //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
     $ret .= GameRow($game, false, false, false, false, false, true);
@@ -503,7 +504,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
         $notemplate .= "<p>???</p>";
       } else {
         $notemplate .= "<table width='100%'>\n";
-        $games = TimetableGames($pool['pool_id'], "pool", "all", "series");
+        $games = Timetamysqli_fetch_assocool_id'], "pool", "all", "series");
         while ($game = mysql_fetch_assoc($games)) {
           $notemplate .= GameRow($game, false, false, false, false, false, true);
         }
@@ -698,7 +699,7 @@ function printCrossmatchPool($seasoninfo, $poolinfo){
   $pos=1;
   $winnerpools = array();
   $loserpools = array();
-
+mysqli_fetch_assoc
   while($game = mysql_fetch_assoc($games)){
     $i++;
     $winnerspool = PoolGetMoveToPool($poolinfo['pool_id'],$pos);

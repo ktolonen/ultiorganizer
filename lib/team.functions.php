@@ -8,7 +8,7 @@ include_once $include_prefix.'lib/common.functions.php';
 function TeamPlayerArray($teamId) {
   $ret = array();
   if ($result = TeamPlayerList($teamId)) {
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = mysqli_fetch_assoc($result)) {
       $ret["".$row['player_id']] = $row['firstname']." ".$row['lastname'];
     }
   }
@@ -18,7 +18,7 @@ function TeamPlayerArray($teamId) {
 function TeamPlayerAccreditationArray($teamId) {
   $ret = array();
   if ($result = TeamPlayerList($teamId)) {
-    while ($row = mysql_fetch_assoc($result)) {
+    while ($row = mysqli_fetch_assoc($result)) {
       $ret["".$row['accreditation_id']] = $row['firstname']." ".$row['lastname'];
     }
   }
@@ -40,7 +40,7 @@ function TeamName($teamId)
   mysql_real_escape_string($teamId));
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
-  $row = mysql_fetch_assoc($result);
+  $row = mysqli_fetch_assoc($result);
   $name = $row["name"];
   mysql_free_result($result);
 
@@ -69,7 +69,7 @@ function TeamInfo($teamId)
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return  mysql_fetch_assoc($result);
+  return  mysqli_fetch_assoc($result);
 }
 
 function Teams($filter=null, $ordering=null) {
@@ -146,7 +146,7 @@ function TeamProfile($teamId)
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return  mysql_fetch_assoc($result);
+  return  mysqli_fetch_assoc($result);
 }
 
 function TeamFullInfo($teamId)
@@ -162,7 +162,7 @@ function TeamFullInfo($teamId)
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return  mysql_fetch_assoc($result);
+  return  mysqli_fetch_assoc($result);
 }
 
 function TeamPoolInfo($teamId, $poolId)
@@ -179,7 +179,7 @@ function TeamPoolInfo($teamId, $poolId)
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return  mysql_fetch_assoc($result);
+  return  mysqli_fetch_assoc($result);
 }
 
 function TeamPlayedSeasons($name, $type)
@@ -354,7 +354,7 @@ function TeamPoolLastGame($teamId, $poolId) {
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return mysql_fetch_assoc($result);
+  return mysqli_fetch_assoc($result);
 }
 
 function TeamGetNextGames($teamId, $poolId) {
@@ -371,7 +371,7 @@ function TeamGetNextGames($teamId, $poolId) {
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return mysql_fetch_assoc($result);
+  return mysqli_fetch_assoc($result);
 }
 
 
@@ -600,7 +600,7 @@ function TeamStatsByPool($poolId,$teamId)
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return mysql_fetch_assoc($result);
+  return mysqli_fetch_assoc($result);
 }
 
 function TeamStats($teamId)
@@ -625,7 +625,7 @@ function TeamStats($teamId)
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return mysql_fetch_assoc($result);
+  return mysqli_fetch_assoc($result);
 }
 
 function TeamVictoryPointsByPool($poolId,$teamId)
@@ -673,7 +673,7 @@ GROUP BY tot.pool,tot.team_id",
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return mysql_fetch_assoc($result);
+  return mysqli_fetch_assoc($result);
 }
 
 
@@ -701,7 +701,7 @@ function TeamPoints($teamId)
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return mysql_fetch_assoc($result);
+  return mysqli_fetch_assoc($result);
 }
 
 function TeamPointsByPool($poolId,$teamId){
@@ -727,7 +727,7 @@ function TeamPointsByPool($poolId,$teamId){
   $result = mysql_query($query);
   if (!$result) { die('Invalid query: ' . mysql_error()); }
 
-  return mysql_fetch_assoc($result);
+  return mysqli_fetch_assoc($result);
 }
 
 function TeamScoreBoard($teamId, $pools, $sorting, $limit)
@@ -1046,7 +1046,7 @@ function TeamGetTeamsByName($teamname){
 function TeamCopyRoster($copyfrom, $copyto){
   if (hasEditPlayersRight($copyto)) {
     $team_players = TeamPlayerList($copyfrom);
-    while($player = mysql_fetch_assoc($team_players)){
+    while($player = mysqli_fetch_assoc($team_players)){
       $query = sprintf("INSERT INTO uo_player(firstname, lastname, profile_id, accreditation_id, team, num)
       			VALUES ('%s','%s',%d,'%s',%d,%d)",
           mysql_real_escape_string($player["firstname"]),

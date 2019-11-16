@@ -215,7 +215,7 @@ $html .= "<tr><th class='home'>"._("Name")."</th><th class='home right' style='w
 $played_players = GamePlayers($gameId, $game_result['hometeam']);
 
 $i=0;
-while($player = mysql_fetch_assoc($home_playerlist)){
+while($player = mysqli_fetch_assoc($home_playerlist)){
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
   $html .= "<tr>";
@@ -257,7 +257,7 @@ $html .= "<tr><th class='guest'>"._("Name")."</th><th class='guest right' style=
 $played_players = GamePlayers($gameId, $game_result['visitorteam']);
 
 $i=0;
-while($player = mysql_fetch_assoc($away_playerlist)){
+while($player = mysqli_fetch_assoc($away_playerlist)){
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
   $html .= "<tr>";

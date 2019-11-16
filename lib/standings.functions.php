@@ -231,7 +231,7 @@ function ResolveSwissdrawPoolStandings($poolId)
 		return;
 	}
 	
-	while($row = mysql_fetch_assoc($standings))	{
+	while($row = mysqli_fetch_assoc($standings))	{
 		// retrieve nr of games, victory points, average opponent's victory points
 		$stats1=TeamVictoryPointsByPool($poolId,$row['team_id']);
 		
@@ -294,7 +294,7 @@ function ResolveSeriesPoolStandings($poolId){
     return;
   }
 
-  while($row = mysql_fetch_assoc($standings))	{
+  while($row = mysqli_fetch_assoc($standings))	{
     $points[$i]['team'] = $row['team_id'];
     $points[$i]['arank'] = 1;
     $i++;
@@ -561,7 +561,7 @@ function getMatchesWins($points, $poolId, $shared=false) {
 			$query .= sprintf(" AND hometeam IN (%s) AND visitorteam IN (%s)", $sameteams, $sameteams);
 
 		$result = mysql_query($query);
-		$stats1 = mysql_fetch_assoc($result);
+		$stats1 = mysqli_fetch_assoc($result);
 
 		$points[$i]['games'] = $stats1['games'];
 		$points[$i]['wins'] = $stats1['wins'];
@@ -597,7 +597,7 @@ function getMatchesGoals($points, $poolId, $shared=false) {
 			$query .= sprintf(" AND hometeam IN (%s) AND visitorteam IN (%s)", $sameteams, $sameteams);
 
 		$result = mysql_query($query);
-		while($stats = mysql_fetch_assoc($result))
+		while($stats = mysqli_fetch_assoc($result))
 		{
 			if($stats['hometeam']==$points[$i]['team'])
 			{

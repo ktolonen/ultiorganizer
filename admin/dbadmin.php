@@ -46,7 +46,7 @@ if(isSuperAdmin()){
 	$html .= "<th>"._("Auto Increment")."</th>";
 	$html .= "<th>"._("Updated")."</th>";
 	$html .= "</tr>\n";
-	while($row = mysql_fetch_assoc($result)){
+	while($row = mysqli_fetch_assoc($result)){
 	  if (substr($row['Name'],0,3) == 'uo_'){
     	    $sql = urlencode("SELECT * FROM ".$row['Name']);
     		$html .= "<tr>";
@@ -86,12 +86,12 @@ if(isSuperAdmin()){
 	
 	$html .= "<p><span class='profileheader'>"._("Character set and collation").": </span><br/>\n";
 	$result = mysql_query("SHOW VARIABLES LIKE 'character_set\_%';");
-	while($row = mysql_fetch_assoc($result)){
+	while($row = mysqli_fetch_assoc($result)){
 		$html .= "&nbsp;". $row['Variable_name'].": ".$row['Value']."<br/>\n";
 	
 	}
 	$result = mysql_query("SHOW VARIABLES LIKE 'collation\_%';");
-	while($row = mysql_fetch_assoc($result)){
+	while($row = mysqli_fetch_assoc($result)){
 		$html .= "&nbsp;". $row['Variable_name'].": ".$row['Value']."<br/>\n";
 	
 	}

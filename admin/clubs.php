@@ -12,7 +12,7 @@ if (isset($_POST['removeclub_x']) && isset($_POST['hiddenDeleteId'])) {
 }elseif (isset($_POST['saveclub']) && !empty($_POST['valid'])){
 	//invalidate all valid clubs
 	$clubs = ClubList(true); 
-	while($row = mysql_fetch_assoc($clubs)){
+	while($row = mysqli_fetch_assoc($clubs)){
 		SetClubValidity($row['club_id'], false);
 	}
 	//revalidate
@@ -56,7 +56,7 @@ $html .= "<tr><th>"._("Id")."</th> <th>"._("Name")."</th><th>"._("Teams")."</th>
 
 $i=0;
 $clubs = ClubList(); 
-while($row = mysql_fetch_assoc($clubs)){
+while($row = mysqli_fetch_assoc($clubs)){
 
 	$html .= "<tr>";
 	$html .= "<td>".$row['club_id']."&#160;</td>";

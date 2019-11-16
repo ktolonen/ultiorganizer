@@ -99,7 +99,7 @@ $html .= "<form method='post' action='?view=admin/executesql'>";
 	  $html .= "</tr>\n";
 	  // Print contents of the query
 	  if ($isSelect || $isShow){
-		  while ($row = mysql_fetch_assoc($result))
+		  while ($row = mysqli_fetch_assoc($result))
 				{
 				$html .= "<tr>";
 				foreach ($arraycolumnsname as $i => $columnname)

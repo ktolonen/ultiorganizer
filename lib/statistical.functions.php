@@ -389,7 +389,7 @@ function CalcTeamStats($season) {
 				$standing = TeamSeriesStanding($team['team_id']);
 				$allgames = TeamGames($team['team_id']);
 				
-				while($game = mysql_fetch_assoc($allgames)){
+				while($game = mysqli_fetch_assoc($allgames)){
 					if (!is_null($game['homescore']) && !is_null($game['visitorscore'])){
 			
 						if ($team['team_id'] == $game['hometeam']) {

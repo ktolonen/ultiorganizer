@@ -71,7 +71,7 @@ if(!empty($_POST["sms_1"])) {
 	}
 		
 	$smscount=0;
-	while($row = mysql_fetch_assoc($sms))	{
+	while($row = mysqli_fetch_assoc($sms))	{
 		
 		echo "<tr>";
 		echo "<td>".utf8entities($row['msg'])."</td>";

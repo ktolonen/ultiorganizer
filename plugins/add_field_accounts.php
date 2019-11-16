@@ -31,7 +31,7 @@ if(!empty($_POST['create'])){
 	$season = $_POST['season'];
 	$maxfields = 0;
 	$fields = ReservationFields($season);
-	while($field = mysql_fetch_assoc($fields)){
+	while($field = mysqli_fetch_assoc($fields)){
 		if(is_numeric($field['fieldname'])){
 			$name = "field".intval($field['fieldname']);
 		}else{
@@ -45,7 +45,7 @@ if(!empty($_POST['create'])){
 		}
 		
 		$games = ReservationGamesByField($field['fieldname'], $season);
-		while($game = mysql_fetch_assoc($games)){
+		while($game = mysqli_fetch_assoc($games)){
 			$exist = DBQueryToValue("SELECT COUNT(*) FROM uo_userproperties WHERE userid='$name' AND value='gameadmin:".$game['game_id']."'");
 			if($user<1){
 				DBQuery("INSERT INTO uo_userproperties(userid, name, value) VALUES ('$name', 'userrole', 'gameadmin:".$game['game_id']."')");
@@ -61,7 +61,7 @@ $html .= "<p>".("Create field specific user accounts on select event").": <selec
 
 $seasons = Seasons();
 		
-while($row = mysql_fetch_assoc($seasons)){
+while($row = mysqli_fetch_assoc($seasons)){
 	$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 }
 

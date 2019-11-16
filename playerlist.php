@@ -27,7 +27,7 @@ $html .= "<tr><th>"._("Name")."</th>
 
 $stats = array(array());
 $i=0;
-while($player = mysql_fetch_assoc($players)) {
+while($player = mysqli_fetch_assoc($players)) {
   $playerinfo = PlayerInfo($player['player_id']);
   $stats[$i]['name'] = $playerinfo['firstname'] ." ". $playerinfo['lastname'];
   $stats[$i]['id'] = $player['player_id'];

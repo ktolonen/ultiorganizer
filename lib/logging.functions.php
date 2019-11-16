@@ -205,7 +205,7 @@ function GetLastGameUpdateEntry($gameId, $source)
 	if (!$result) {
 		die('Invalid query: ' . mysql_error());
 	}
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }
 
 function LogPoolUpdate($poolId, $details, $source = "")

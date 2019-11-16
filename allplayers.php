@@ -36,7 +36,7 @@ $html .= "</tr></table>\n";
 
 $html .= "<table width='90%' style='white-space: nowrap;'>\n";
 
-while($player = mysql_fetch_assoc($players)){
+while($player = mysqli_fetch_assoc($players)){
 
   if($filter == "ALL"){
     $firstchar = strtoupper(substr(utf8_decode($player['lastname']),0,1));
