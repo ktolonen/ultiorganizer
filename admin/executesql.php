@@ -104,7 +104,7 @@ $html .= "<form method='post' action='?view=admin/executesql'>";
 				$html .= "<tr>";
 				foreach ($arraycolumnsname as $i => $columnname)
 					{
-					if(mysql_field_type($result,$i)!='blob'){
+					if(mysqli_fetch_field_direct($result,$i)->type!='blob'){
 						$html .= "<td  class='dbrow'>" . utf8entities($row[$columnname]) . "</td>";
 					}else{
 						$html .= "<td  class='dbrow'>BINARY</td>";

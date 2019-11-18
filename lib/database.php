@@ -285,7 +285,7 @@ function DBCastArray($result, $row)
   $ret = array();
   $i = 0;
   foreach ($row as $key => $value) {
-    if (mysql_field_type($result, $i) == "int") {
+    if (mysqli_fetch_field_direct($result, $i)->type == "int") {
       $ret[$key] = (int) $value;
     } else {
       $ret[$key] = $value;

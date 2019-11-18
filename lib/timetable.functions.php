@@ -726,8 +726,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter=""){
       break;
   }
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
+  $result = DBQuery($query);
 
   return $result;
 }
@@ -900,8 +899,8 @@ function TimeTableMoveTimes($season) {
             WHERE season = '%s'
             ORDER BY fromlocation, fromfield+0, tolocation, tofield+0", $season);
   
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
+
 	$ret = array();
 	while ($row = mysqli_fetch_assoc($result)){
 		$ret[$row['fromlocation']][$row['fromfield']][$row['tolocation']][$row['tofield']] = $row['time'];
@@ -975,4 +974,3 @@ function TimetableToCsv($season,$separator){
   $result = DBQuery($query);
   return ResultsetToCsv($result, $separator);
 }
-?>

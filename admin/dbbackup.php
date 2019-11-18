@@ -26,13 +26,13 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()){
 				$return.= 'INSERT INTO '.$table.' VALUES(';
 				for($j=0; $j<$num_fields; $j++){
 											
-					if(mysql_field_type($result,$j)=='blob' && $table=='uo_image'){
+					if(mysqli_fetch_field_direct($result,$j)->type=='blob' && $table=='uo_image'){
 						if (isset($row[$j]) && ($row[$j] != NULL)){ 
 							$return .= '0x'.bin2hex($row[$j]);
 						}else{ 
 							$return.= 'NULL'; 
 						}
-					}elseif(mysql_field_type($result,$j)=='int'){
+					}elseif(mysqli_fetch_field_direct($result,$j)->type=='int'){
 						if (isset($row[$j]) && ($row[$j] != NULL)){ 
 							$return .= intval($row[$j]);
 						}else{ 

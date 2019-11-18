@@ -65,8 +65,8 @@ $html .= "<h2>"._("Select")."</h2>";
 $selector = "<p>"._("Select event").":	<select class='dropdown' name='season'>\n";
 
 $seasons = Seasons();
-		mysqli_fetch_assoc
-while($row = mysql_fetch_assoc($seasons))
+		
+while($row = mysqli_fetch_assoc($seasons))
 	{
 	
 	if($row['season_id'] == $season)
