@@ -56,10 +56,8 @@ function ClubList($onlyvalid=false, $namefilter=""){
 	}
 		
 	$query .= " ORDER BY club.valid DESC, club.name ASC";	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return  $result;
+
+	return  DBQueryToArray($query);
 	}
 
 

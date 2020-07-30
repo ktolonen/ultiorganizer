@@ -166,7 +166,7 @@ function DBQueryToValue($query, $docasting = false)
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
 
   if (mysqli_num_rows($result)) {
@@ -189,9 +189,9 @@ function DBQueryToValue($query, $docasting = false)
 function DBQueryRowCount($query)
 {
   global $mysqlconnectionref;
-  $result = mysqli_query($mysqlconnectionref,$query);
+  $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
 
   return mysqli_num_rows($result);
@@ -205,9 +205,9 @@ function DBQueryRowCount($query)
 function DBQueryToArray($query, $docasting = false)
 {
   global $mysqlconnectionref;
-  $result = mysqli_query($mysqlconnectionref,$query);
+  $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
   return DBResourceToArray($result, $docasting);
 }
@@ -240,9 +240,9 @@ function DBResourceToArray($result, $docasting = false)
 function DBQueryToRow($query, $docasting = false)
 {
   global $mysqlconnectionref;
-  $result = mysqli_query($mysqlconnectionref,$query);
+  $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysql_error());
+    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
   $ret = mysqli_fetch_assoc($result);
   if ($docasting && $ret) {
@@ -295,6 +295,81 @@ function DBCastArray($result, $row)
   return $ret;
 }
 
+/**
+ * Get current system status.
+ *
+ * @return result string
+ */
+function DBStat()
+{
+  global $mysqlconnectionref;
+  $result = mysqli_stat($mysqlconnectionref);
+  if (!$result) {
+    die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+  }
+  return $result;
+}
+
+/**
+ * Get Client info.
+ *
+ * @return result string
+ */
+function DBClientInfo()
+{
+  global $mysqlconnectionref;
+  $result = mysqli_get_client_info($mysqlconnectionref);
+  if (!$result) {
+    die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+  }
+  return $result;
+}
+
+/**
+ * Get Host info.
+ *
+ * @return result string
+ */
+function DBHostInfo()
+{
+  global $mysqlconnectionref;
+  $result = mysqli_get_host_info($mysqlconnectionref);
+  if (!$result) {
+    die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+  }
+  return $result;
+}
+
+/**
+ * Get Server info.
+ *
+ * @return result string
+ */
+function DBServerInfo()
+{
+  global $mysqlconnectionref;
+  $result = mysqli_get_server_info($mysqlconnectionref);
+  if (!$result) {
+    die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+  }
+  return $result;
+}
+
+/**
+ * Get Protocol info.
+ *
+ * @return result string
+ */
+function DBProtocolInfo()
+{
+  global $mysqlconnectionref;
+  $result = mysqli_get_proto_info($mysqlconnectionref);
+  if (!$result) {
+    die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+  }
+  return $result;
+}
+
 if (function_exists('mysql_set_charset') === false) {
   /**
    * Sets the client character set.
@@ -308,10 +383,11 @@ if (function_exists('mysql_set_charset') === false) {
    */
   function mysql_set_charset($charset, $link_identifier = null)
   {
+    global $mysqlconnectionref;
     if ($link_identifier == null) {
-      return mysql_query('SET CHARACTER SET "' . $charset . '"');
+      return mysqli_query($mysqlconnectionref, 'SET CHARACTER SET "' . $charset . '"');
     } else {
-      return mysql_query('SET CHARACTER SET "' . $charset . '"', $link_identifier);
+      return mysqli_query($mysqlconnectionref, 'SET CHARACTER SET "' . $charset . '"', $link_identifier);
     }
   }
 }

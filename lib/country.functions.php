@@ -140,10 +140,8 @@ function AddCountry($name, $abbreviation, $flag) {
 function CanDeleteCountry($countryId) {
 	$query = sprintf("SELECT count(*) FROM uo_team WHERE country='%s'",
 		DBEscapeString($countryId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if (!$row = mysql_fetch_row($result)) return false;
-	return ($row[0] == 0);
+	$result = DBQueryToValue($query);
+	return ($result == 0);
 }
 
 function SetCountryValidity($countryId, $valid){

@@ -205,13 +205,13 @@ function SeasonsByType($seasontype){
  */
 function EnrollSeasons() {
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE enrollopen=1 ORDER BY starttime DESC");
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  $ret = array();
-  while ($row = mysqli_fetch_assoc($result)) {
-    $ret[$row['season_id']] = $row['name'];
+  $seasons = DBQueryToArray($query);
+  $seasons = array();
+  foreach ($seasons as $season) {
+    $seasons[$season['season_id']] = $season['name'];
   }
-  return $ret;
+
+  return $seasons;
 }
 
 /**
