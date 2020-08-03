@@ -19,8 +19,8 @@ function SeasonUnaccredited($season) {
 	WHERE played.accredited=0 AND ser.season='%s'", 
 	DBEscapeString($season));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
+	
 	return $result;
 }
 
@@ -29,8 +29,8 @@ function AccreditPlayer($playerId, $source) {
 	if (hasAccredidationRight($playerInfo['team'])) {
 		$query = sprintf("UPDATE uo_player SET accredited=1 WHERE player_id=%d",
 			(int)$playerId);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
+		
 		AccreditationLogEntry($playerId, $playerInfo['team'], $source, 1);
 		checkUserAdmin($playerInfo);
 		return $result;

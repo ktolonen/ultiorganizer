@@ -581,16 +581,14 @@ function SetSeason($seasonId, $params, $comment=null) {
 function CanDeleteSeason($seasonId) {
   $query = sprintf("SELECT count(*) FROM uo_series WHERE season='%s'",
   DBEscapeString($seasonId));
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  if (!$row = mysql_fetch_row($result)) return false;
-  if ($row[0] == 0) {
+  $result = DBQueryToValue($query);
+
+  if ($result == 0) {
     $query = sprintf("SELECT season_id FROM uo_season WHERE iscurrent=1 AND season_id='%s'",
     DBEscapeString($seasonId));
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
-    if (!$row = mysql_fetch_row($result)) return true;
-    return !($row[0] == $seasonId);
+    $result = DBQueryToValue($query);
+
+    return !($result== $seasonId);
   } else return false;
 }
 
