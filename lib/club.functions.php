@@ -120,14 +120,7 @@ function ClubId($name)
 	{
 	$query = sprintf("SELECT club_id FROM uo_club WHERE lower(name) LIKE lower('%s')",
 						DBEscapeString($name));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-	if(!mysqli_num_rows($result))
-		return -1;
-		
-	$row = mysql_fetch_row($result);
-	return $row[0];
+	return DBQueryToValue($query);
 	}
 
 function RemoveClub($clubId) {
@@ -146,9 +139,7 @@ function AddClub($seriesId, $name) {
 	if (hasEditTeamsRight($seriesId)) {
 		$query = sprintf("INSERT INTO uo_club (name) VALUES ('%s')",
 			DBEscapeString($name));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$clubId = mysql_insert_id();
+		$clubId = DBQueryInsert($query);
 		Log1("club","add",$clubId);
 		return $clubId;
 	} else { die('Insufficient rights to add club'); }	

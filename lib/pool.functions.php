@@ -1858,10 +1858,7 @@ function PoolSetSchedulingName($scheduling_id, $name, $season) {
 function CanGenerateGames($poolId) {
   $query = sprintf("SELECT count(*) FROM uo_game WHERE pool=%d",
   (int)$poolId);
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  if (!$row = mysql_fetch_row($result)) return false;
-  return $row[0] == 0;
+  return DBQueryToValue($query);
 }
 
 /**
@@ -1887,22 +1884,16 @@ function PseudoTeamsOnly($poolId){
 function CanDeletePool($poolId) {
   $query = sprintf("SELECT count(*) FROM uo_team WHERE pool=%d",
   (int)$poolId);
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  if (!$row = mysql_fetch_row($result)) return false;
-  if ($row[0] == 0) {
+  $count = DBQueryToValue($query);
+  if ($count == 0) {
     $query = sprintf("SELECT count(*) FROM uo_game WHERE pool=%d",
     (int)$poolId);
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
-    if (!$row = mysql_fetch_row($result)) return false;
-    if ($row[0] == 0) {
+    $count = DBQueryToValue($query);
+    if ($count == 0) {
       $query = sprintf("SELECT count(*) FROM uo_game_pool WHERE pool=%d",
       (int)$poolId);
-      $result = mysql_query($query);
-      if (!$result) { die('Invalid query: ' . mysql_error()); }
-      if (!$row = mysql_fetch_row($result)) return false;
-      return $row[0] == 0;
+      $count = DBQueryToValue($query);
+      return $count == 0;
     } else return false;
   } else return false;
 }

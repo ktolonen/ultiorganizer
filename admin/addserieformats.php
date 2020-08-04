@@ -38,9 +38,9 @@ $pp = array(
 	"forfeitagainst"=>"0",
 	"drawsallowed"=>"0");
 
-
-$poolId = intval($_GET["template"]);
-
+if(isset($_GET["template"])){
+  $poolId = intval($_GET["template"]);
+}
 //process itself on submit
 if(!empty($_POST['save']) || !empty($_POST['add'])){
   $pp['name']=empty($_POST['name']) ? "no name" : $_POST['name'];

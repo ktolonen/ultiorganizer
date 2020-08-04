@@ -734,16 +734,12 @@ function ConfirmEnrolledTeam($seriesId, $id) {
 function CanDeleteSeries($seriesId) {
   $query = sprintf("SELECT count(*) FROM uo_pool WHERE series='%s'",
   DBEscapeString($seriesId));
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  if (!$row = mysql_fetch_row($result)) return false;
-  if ($row[0] == 0) {
+  $result = DBQueryToValue($query);
+  if ($result == 0) {
     $query = sprintf("SELECT count(*) FROM uo_team WHERE series='%s'",
     DBEscapeString($seriesId));
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
-    if (!$row = mysql_fetch_row($result)) return false;
-    return $row[0] == 0;
+    $result = DBQueryToValue($query);
+    return $result == 0;
   } else return false;
 }
 
