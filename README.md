@@ -1,49 +1,50 @@
-This is the **Ultimate Organizer**, a web application for online score keeping of Ultimate tournaments. To find out more, visit project homepage: https://sourceforge.net/apps/trac/ultiorganizer/wiki. To read more about Ultimate sport visit www.wfdf.org .
+# ultiorganizer
 
-# What is here?
+This is the **Ultimate Organizer**, a web application for online score keeping of Ultimate tournaments. To find out more, visit project homepage: <https://sourceforge.net/apps/trac/ultiorganizer/wiki>. To read more about Ultimate sport visit <http://www.wfdf.org>.
+
+## What is here
 
 The files are organized as follows:
 
-  * **php files in main directory** Only index.php is called directly. All other pages are called vi http://hostname.org/?view=pageXYZ. The pages in the main directory are accessible to all users.
-  * **user** The pages in this directory are accessible to logged in users. Maintaining user and team info and result reporting.
-  * **admin** The pages in this directory are for administrators (including series and event administrators).
-  * **lib** Contains utilities used by all pages. SQL statements should only go in here!
-  * **script** JavaScript files
-  * **conf** Contains config.inc.php, which contains mysql user information and passwort and other server configuration. It should be writable during installation, but later you should restrict access to it as much as possible!
-  * **cust** Contains skins for customized Ultiorganizer instances.
-  * **locale** Contains translations. To update, simply edit the html files. To update translations in php pages you need the gettext utilities. The simplest way to add translations is by calling `poedit locales/de_DE.utf8/LC_MESSAGES/messages.po`. Then call 'update', add translations and save.
-  * **images** Contains icons, flags, and, by default, the image and media upload directory.
-  * **mobile** Contains pages for small screens on mobile devices.
-  * **scorekeeper** Another take on mobile pages, using jQuery
-  * **ext** Contains pages to be embedded in external pages. See ?view=ext/index
-  * **plugins** Mainly tools for maintenance, export, import. Some are rather experimental!
-  * **sql** database utilities
-  * **restful** ???!!!
+* **PHP files in main directory** Only index.php is called directly. All other pages are called using the view parameter e.g. <http://hostname.org/?view=pageXYZ>. The pages in the main directory are accessible to all users.
+* **user** Pages in this directory are accessible to logged in users. Maintaining user and team info and result reporting.
+* **admin** Pages in this directory are for administrators (including series and event administrators).
+* **lib** Contains utilities used by all pages. SQL statements should only go in here!
+* **script** JavaScript files
+* **conf** Contains config.inc.php, which contains MySQL user information, password and other server configuration. It should be writable during installation, but later you should restrict access to it as much as possible!
+* **cust** Contains skins for customized Ultiorganizer instances.
+* **locale** Contains translations. To update, simply edit the html files. To update translations in PHP pages you need the gettext utilities. The simplest way to add translations is by calling `poedit locales/de_DE.utf8/LC_MESSAGES/messages.po`. Then call 'update', add translations and save.
+* **images** Contains icons, flags, and, by default, the image and media upload directory.
+* **mobile** Contains pages for small screens on mobile devices.
+* **scorekeeper** Another take on mobile pages, using jQuery
+* **ext** Contains pages to be embedded in external pages. See ?view=ext/index
+* **plugins** Mainly tools for maintenance, export, import. Some are rather experimental!
+* **sql** database utilities
+* **restful** ???!!!
 
+## Installation
 
-# Installation
+To run Ultiorganizer you need a web server, PHP 4.4 and a MySQL database.
 
-To run Ultiorganizer you need a web server, php 4.4 and a mysql database.
+To install Ultiorganizer simply copy the files to your web server, call <http://yourpage.com/install.php> and follow the instructions.
 
-To install Ultiorganizer simply copy the files to your web server, call http://yourpage.com/install.php and follow the instructions.
-
-# Development
+## Development
 
 To enable fast start to Ultiorganizer development follow the instructions below to set up a development environment using Docker containers.
 
 In order to install Docker follow the instructions on <https://docs.docker.com/get-docker/>
 
-## Create a network
+### Create a network
 
-Adding a Docker network allows you to refer to the database with the contaniers name instead of using an ip-address in addition to isolating your development environment from your other containers. This step is optiona but recommended.
+Adding a Docker network allows you to refer to the database with the containers name instead of using an IP-address in addition to isolating your development environment from your other containers. This step is optional but recommended.
 
 ```sh
 docker network create ultiorganizer-net
 ```
 
-## Create the DB
+### Create the DB
 
-MySQL 8 changed the default characterset to `utf8mb4` and the currently used MySQL PHP extension doesn't support it. Therefore MySQL 5 is used for development.
+MySQL 8 changed the default character set to `utf8mb4` and the currently used MySQL PHP extension doesn't support it. Therefore MySQL 5 is used for development.
 
 ```sh
 export MYSQL_ROOT_PASSWORD='<root password>'
@@ -59,16 +60,22 @@ docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD"
 
 More details in: <https://dev.mysql.com/doc/refman/5.7/en/group-by-handling.html>
 
-## Create the web server
+#### Create user and grant accesses
 
-The original MySQL PHP driver has been deprecated in PHP 5.5.0 and removed in PHP 7.0. Therefore Ultiorganizer can in it's current state be developed only with PHP 5.
+```sh
+docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="CREATE USER ultiorganizer IDENTIFIED BY 'ultiorganizer'"
 
-The command below should be run ini the folder where you have cloned your Ultiorganizer Git repo. If not then substitute `$PWD` with a path to the code or copy the code to the container.
+docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="GRANT ALL PRIVILEGES ON ultiorganizer.* TO ultiorganizer"
+```
+
+### Create the web server
+
+The original MySQL PHP driver has been deprecated in PHP 5.5.0 and removed in PHP 7.0. Therefore, Ultiorganizer can in its current state be developed only with PHP 5.
+
+The command below should be run in the folder where you have cloned your Ultiorganizer Git repo. If not, then substitute `$PWD` with a path to the code or copy the code to the container.
 
 ```sh
 docker run --network ultiorganizer-net --name=ultiorganizer --publish 8080:80 --volume "$PWD":/var/www/html --detach php:5-apache
-
-docker run --network ultiorganizer-net --name=ultiorganizer --publish 8080:80 -v "$PWD":/var/www/html -d php:5-apache
 ```
 
 The base PHP apache image is missing some libraries and extensions that need to be installed.
@@ -79,4 +86,4 @@ docker exec ultiorganizer sh -c 'apt-get --assume-yes update && apt-get --assume
 docker exec ultiorganizer sh -c 'docker-php-ext-install mysql gettext gd mbstring && apachectl restart'
 ```
 
-Now you should be able to connect to your development Ultiorganizer by poiniting your browser to <http://localhost:8080/>
+Now you should be able to connect to your development Ultiorganizer by opening your browser to <http://localhost:8080/>
