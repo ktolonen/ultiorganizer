@@ -7,12 +7,13 @@ $html = "";
 if (isset($_POST['removeclub_x']) && isset($_POST['hiddenDeleteId'])) {
 	$id = $_POST['hiddenDeleteId'];
 	RemoveClub($id);
-} elseif (isset($_POST['addclub']) && !empty($_POST['name'])) {
-	AddClub(0, $_POST['name']);
+} 
+if (isset($_POST['addclub']) && !empty($_POST['clubname'])) {
+	AddClub(0, $_POST['clubname']);
 } elseif (isset($_POST['saveclub']) && !empty($_POST['valid'])) {
 	//invalidate all valid clubs
 	$clubs = ClubList(true);
-	while ($row = mysqli_fetch_assoc($clubs)) {
+	foreach ($clubs as $row) {
 		SetClubValidity($row['club_id'], false);
 	}
 	//revalidate
@@ -48,7 +49,7 @@ contentStart();
 $html .= "<form method='post' action='?view=admin/clubs'>";
 $html .= "<h1>" . _("All Clubs") . "</h1>";
 $html .= "<p>" . _("Add new") . ": ";
-$html .= "<input class='input' maxlength='50' size='40' name='name'/> ";
+$html .= "<input class='input' maxlength='50' size='40' name='clubname'/> ";
 $html .= "<input class='button' type='submit' name='addclub' value='" . _("Add") . "'/></p>";
 
 $html .= "<table border='0'>\n";

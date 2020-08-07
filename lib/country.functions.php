@@ -53,9 +53,9 @@ function CountryList($onlyvalid=true, $onlyplayed=false){
 function CountryDropList($id,$name){
 	$html = "";
 	$query = sprintf("SELECT country_id, name FROM uo_country WHERE valid=1 ORDER BY name");
-	$result =  DBQuery($query);
+	$result =  DBQueryToArray($query);
 	$html .= "<select class='dropdown' id='$id' name='$name'>\n";
-	while($row = mysqli_fetch_assoc($result)){
+	foreach($result as $row){
 		$html .= "<option value='".utf8entities($row['name'])."'>".utf8entities(_($row['name']))."</option>\n";
 	}
 	$html .= "</select>\n";
@@ -69,11 +69,11 @@ function CountryDropListWithValues($id, $name, $selectedId, $width=""){
 	  $style = "style='width:$width'";
 	}
 	$query = sprintf("SELECT country_id, name FROM uo_country WHERE valid=1 ORDER BY name");
-	$result =  DBQuery($query);
+	$result =  DBQueryToArray($query);
 	$html .= "<select class='dropdown' $style id='$id' name='$name'>\n";
 	$html .= "<option value='-1'></option>\n";
 	
-	while($row = mysqli_fetch_assoc($result)){
+	foreach($result as $row){
 		if($row['country_id']==$selectedId){
 			$html .= "<option selected='selected' value='".utf8entities($row['country_id'])."'>".utf8entities(_($row['name']))."</option>\n";
 		}else{
@@ -130,8 +130,7 @@ function AddCountry($name, $abbreviation, $flag) {
 			DBEscapeString($abbreviation),
 			DBEscapeString($flag));
 			
-		$result = DBQuery($query);
-		$countryId = mysql_insert_id();
+		$countryId = DBQueryInsert($query);
 		Log1("country","add",$countryId);
 		return $countryId;
 	} else { die('Insufficient rights to add country'); }	
@@ -164,10 +163,7 @@ function CountryPools($seasonId, $countryId){
 			DBEscapeString($seasonId),
 			(int)$countryId);
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return $result;
+	return DBQueryToArray($query);
 	}
 	
 function GetTimeZoneArray(){

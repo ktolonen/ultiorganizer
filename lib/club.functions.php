@@ -4,13 +4,7 @@ function ClubName($clubId)
 	{
 	$query = sprintf("SELECT name FROM uo_club WHERE club_id='%s'",
 		DBEscapeString($clubId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$row = mysqli_fetch_assoc($result);
-	$name = $row["name"]; 
-	mysql_free_result($result);
-	
-	return $name;
+	return DBQueryToValue($query);
 	}
 
 function ClubInfo($clubId)
@@ -23,10 +17,7 @@ function ClubInfo($clubId)
 		WHERE club.club_id = '%s'",
 		DBEscapeString($clubId));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return  mysqli_fetch_assoc($result);
+	return  DBQueryToRow($query);
 	}
 
 function ClubList($onlyvalid=false, $namefilter=""){
@@ -81,9 +72,7 @@ function ClubTeams($clubId, $season="")
 		DBEscapeString($clubId),
 		DBEscapeString($season));
 
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	return $result;
+	return DBQueryToArray($query);
 	}
 
 function ClubTeamsHistory($clubId){
@@ -95,9 +84,8 @@ function ClubTeamsHistory($clubId){
 			WHERE team.club='%s' AND ser.season!='%s' ORDER BY ser.type, s.starttime DESC, team.name",
 			DBEscapeString($clubId),
 			DBEscapeString($curseason));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	return $result;
+
+	return DBQueryToArray($query);
 	}
 	
 function ClubNumOfTeams($clubId)
@@ -106,14 +94,7 @@ function ClubNumOfTeams($clubId)
 		LEFT JOIN uo_team team ON(team.club = club.club_id)
 		WHERE club.club_id='%s'",
 		DBEscapeString($clubId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	if(!mysqli_num_rows($result))
-		return 0;
-		
-	$row = mysql_fetch_row($result);
-	return $row[0];
+	return DBQueryToValue($query);
 	}
 	
 function ClubId($name)
@@ -128,10 +109,7 @@ function RemoveClub($clubId) {
 		Log2("club","delete",ClubName($clubId));
 		$query = sprintf("DELETE FROM uo_club WHERE club_id='%s'",
 			DBEscapeString($clubId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
-		return $result;
+		return DBQuery($query);
 	} else { die('Insufficient rights to remove player'); }
 }
 
@@ -148,10 +126,8 @@ function AddClub($seriesId, $name) {
 function CanDeleteClub($clubId) {
 	$query = sprintf("SELECT count(*) FROM uo_team WHERE club='%s'",
 		DBEscapeString($clubId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if (!$row = mysql_fetch_row($result)) return false;
-	return ($row[0] == 0);
+	$count = DBQueryToValue($query);
+	return ($count == 0);
 }
 
 function SetClubProfile($teamId,$profile) {
@@ -170,10 +146,8 @@ function SetClubProfile($teamId,$profile) {
 				DBEscapeString($profile['achievements']),
 				(int)$profile['valid'],
 				DBEscapeString($profile['club_id']));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		
-		return $result;
+		return DBQuery($query);
 	} else { die('Insufficient rights to edit club profile'); }	
 }
 
@@ -266,10 +240,8 @@ function SetClubValidity($clubId, $valid){
 		$query = sprintf("UPDATE uo_club SET valid=%d WHERE club_id='%s'",
 				(int)($valid),
 				DBEscapeString($clubId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-		return  $result;
+
+		return DBQuery($query);
 	} else { die('Insufficient rights to set club validity'); }	
 }
 
