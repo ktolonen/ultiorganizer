@@ -133,10 +133,7 @@ function TeamProfile($teamId)
 		WHERE tp.team_id = '%s'",
   DBEscapeString($teamId));
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return  mysqli_fetch_assoc($result);
+  return  DBQueryToRow($query);
 }
 
 function TeamFullInfo($teamId)
@@ -478,10 +475,7 @@ function TeamPoolGamesAgainst($teamId1, $teamId2, $poolId)
   DBEscapeString($teamId1),
   DBEscapeString($teamId2));
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return $result;
+  return DBQueryToArray($query);
 }
 
 function TeamPlayedGames($name, $seriestype, $sorting, $curSeason=false)
@@ -524,10 +518,7 @@ function TeamPlayedGames($name, $seriestype, $sorting, $curSeason=false)
       $query .= " ORDER BY ser.season DESC, ps.name ASC, hometeamname ASC, visitorteamname ASC";
       break;
   }
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return $result;
+  return DBQueryToArray($query);
 }
 
 function TeamStatsByPool($poolId,$teamId)
@@ -551,12 +542,8 @@ function TeamStatsByPool($poolId,$teamId)
   (int)$teamId,
   (int)$poolId);
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return mysqli_fetch_assoc($result);
+  return DBQueryToRow($query);
 }
-
 function TeamStats($teamId)
 {
   $query = sprintf("
@@ -576,10 +563,7 @@ function TeamStats($teamId)
   (int)$teamId,
   (int)$teamId);
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return mysqli_fetch_assoc($result);
+  return DBQueryToRow($query);
 }
 
 function TeamVictoryPointsByPool($poolId,$teamId)
@@ -624,10 +608,7 @@ GROUP BY tot.pool,tot.team_id",
   DBEscapeString($teamId),
   DBEscapeString($poolId));
   	
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return mysqli_fetch_assoc($result);
+  return DBQueryToRow($query);
 }
 
 
@@ -652,10 +633,7 @@ function TeamPoints($teamId)
   (int)$teamId,
   (int)$teamId);
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return mysqli_fetch_assoc($result);
+  return DBQueryToRow($query);
 }
 
 function TeamPointsByPool($poolId,$teamId){
@@ -678,10 +656,7 @@ function TeamPointsByPool($poolId,$teamId){
   (int)$poolId,
   (int)$teamId);
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return mysqli_fetch_assoc($result);
+  return DBQueryToRow($query);
 }
 
 function TeamScoreBoard($teamId, $pools, $sorting, $limit)
@@ -787,10 +762,7 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     $query .= " limit $limit";
   }
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return $result;
+  return DBQueryToArray($query);
 }
 
 
@@ -909,10 +881,7 @@ function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
     $query .= " limit $limit";
   }
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return $result;
+  return DBQueryToArray($query);
 }
 
 
@@ -980,10 +949,7 @@ function TeamResponsibleGames($teamId, $placeId)
   (int)$placeId,
   (int)$teamId);
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-  return $result;
+  return DBQueryToArray($query);
 }
 
 function TeamGetTeamsByName($teamname){
@@ -1030,9 +996,7 @@ function GetTeamPlayers() {
 		ORDER BY lastname ASC, firstname ASC, num ASC",
   (int)$search);
 
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  return $result;
+  return DBQueryToArray($query);
 }
 
 function RemovePlayer($playerId) {
@@ -1042,10 +1006,7 @@ function RemovePlayer($playerId) {
 
     $query = sprintf("DELETE FROM uo_player WHERE player_id='%s'",
     DBEscapeString($playerId));
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-    return $result;
+    return DBQuery($query);
   } else { die('Insufficient rights to remove player'); }
 }
 
@@ -1092,10 +1053,8 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num=-1) {
 function CanDeletePlayer($playerId) {
   $query = sprintf("SELECT count(*) FROM uo_played WHERE player='%s'",
   DBEscapeString($playerId));
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  if (!$row = mysql_fetch_row($result)) return false;
-  return ($row[0] == 0);
+  $count = DBQueryToValue($query);
+  return ($count == 0);
 }
 
 function SetTeamProfile($profile) {
@@ -1116,11 +1075,10 @@ function SetTeamProfile($profile) {
 			WHERE team_id='%s'",
     DBEscapeString($profile['team_id']));
 
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
+    $result = DBQueryRowCount($query);
 
     //add
-    if(mysqli_num_rows($result)==0){
+    if($result==0){
       $query = sprintf("INSERT INTO uo_team_profile (team_id,
 			captain, coach, story, achievements) VALUES 
 			('%s', '%s', '%s', '%s', '%s')",
@@ -1139,9 +1097,7 @@ function SetTeamProfile($profile) {
       DBEscapeString($profile['achievements']),
       DBEscapeString($profile['team_id']));
     }
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
-
+    $result = DBQuery($query);
     LogTeamProfileUpdate($profile['team_id']);
     return $result;
   } else { die('Insufficient rights to edit team profile'); }
@@ -1322,9 +1278,7 @@ function SetTeamSerieRank($teamId, $poolId, $rank, $activerank) {
     (int) $teamId,
     (int) $poolId);
     	
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
-
+    $result = DBQuery($query);
     return $result;
   } else { die('Insufficient rights to edit team rank');	}
 }
@@ -1340,8 +1294,7 @@ function SetTeamPoolRank($teamId, $poolId, $rank) {
         (int) $teamId,
         (int) $poolId);
      
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
+    $result = DBQuery($query);
 
     return $result;
   } else { die('Insufficient rights to edit team rank');	}
@@ -1358,8 +1311,7 @@ function SetTeamRank($teamId, $poolId, $activerank) {
         (int) $teamId,
         (int) $poolId);
      
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
+    $result = DBQuery($query);
 
     return $result;
   } else { die('Insufficient rights to edit team rank');	}
