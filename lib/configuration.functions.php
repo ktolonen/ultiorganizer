@@ -129,11 +129,10 @@ function GetServerConf() {
 
 function GetSimpleServerConf() {
 	$query = "SELECT * FROM uo_setting ORDER BY setting_id";
-	$result = DBQuery($query);
-	if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
+	$result = DBQueryToArray($query);
 	
 	$retarray = array();
-	while ($row = mysqli_fetch_assoc($result)) {
+	foreach ($result as $row ) {
 		$retarray[$row['name']] = $row['value'];
 	}
 	return $retarray;
@@ -144,20 +143,18 @@ function SetServerConf($settings) {
 		foreach($settings as $setting){
 			$query = sprintf("SELECT setting_id FROM uo_setting WHERE name='%s'",
 				DBEscapeString($setting['name']));
-			$result = DBQuery($query);
-			if (!$result) { die('Invalid query: ' . mysql_error()); }
-			if ($row = mysql_fetch_row($result)) {
+			$result = DBQueryToValue($query);
+			
+			if ($result) {
 				$query = sprintf("UPDATE uo_setting SET value='%s' WHERE setting_id=%d",
 			 		DBEscapeString($setting['value']),
-					(int)$row[0]);
+					(int)$result);
 				$result = DBQuery($query);
-				if (!$result) { die('Invalid query: ' . mysql_error()); }
 			} else {
 				$query = sprintf("INSERT INTO uo_setting (name, value) VALUES ('%s', '%s')",
 					DBEscapeString($setting['name']),
 					DBEscapeString($setting['value']));
 				$result = DBQuery($query);
-				if (!$result) { die('Invalid query: ' . mysql_error()); }
 			}
 		}
 	} else { die('Insufficient rights to configure server'); }
@@ -170,14 +167,10 @@ function GetGoogleMapsAPIKey() {
 
 function isRespTeamHomeTeam() {
 	$query = "SELECT value FROM uo_setting WHERE name = 'HomeTeamResponsible'";
-	$result = DBQuery($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQueryToValue($query);
 	
-	if (!$row = mysql_fetch_row($result)) {
-		return false;
-	} else {
-		return $row[0] == 'yes';
-	} 
+	return $result == 'yes';
+	
 }
 
 /**
