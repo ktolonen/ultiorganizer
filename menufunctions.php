@@ -555,10 +555,10 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
 
   echo "<table class='leftmenulinks'>\n";
   $pools = getViewPools($curseason);
-  if ($pools && mysqli_num_rows($pools)) {
+  if ($pools) {
     $lastseason = "";
     $lastseries = "";
-    while ($row = mysqli_fetch_assoc($pools)) {
+    foreach ($pools as $row) {
       $season = $row['season'];
       $series = $row['series'];
       if ($lastseason != $season) {
