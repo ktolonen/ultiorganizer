@@ -670,9 +670,8 @@ function ConfirmEnrolledTeam($seriesId, $id) {
     $query = sprintf("INSERT INTO uo_team (name, series, valid) VALUES ('%s', %d, 1)",
     DBEscapeString($teaminfo['name']),
     (int)$seriesId);
-
-    DBQuery($query);
-    $teamId = mysql_insert_id();
+    
+    $teamId = DBQueryInsert($query);
 
     //update team/country info if available
     if($countryId){

@@ -1858,7 +1858,7 @@ function PoolSetSchedulingName($scheduling_id, $name, $season) {
 function CanGenerateGames($poolId) {
   $query = sprintf("SELECT count(*) FROM uo_game WHERE pool=%d",
   (int)$poolId);
-  return DBQueryToValue($query);
+  return DBQueryToValue($query) == 0;
 }
 
 /**
@@ -2166,7 +2166,7 @@ function GenerateGames($poolId, $rounds=1, $generate=true, $nomutual=false, $hom
       }
 
       $teams = array();
-      while ($row = mysql_fetch_row($result)) {
+      while ($row = mysqli_fetch_row($result)) {
         $teams[] = $row[0];
       }
 
@@ -2308,9 +2308,9 @@ function GenerateGames($poolId, $rounds=1, $generate=true, $nomutual=false, $hom
               (int)$poolId);
             }
           }
-          DBQuery($query);
+          $gameId = DBQueryInsert($query);
           $query = sprintf("INSERT INTO uo_game_pool (game, pool, timetable) VALUES (%d, %d, 1)",
-          mysql_insert_id(),
+          (int) $gameId,
           (int)$poolId);
           DBQuery($query);
           // check if a game with the BYE team has been added

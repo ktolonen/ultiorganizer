@@ -560,7 +560,7 @@ function getMatchesWins($points, $poolId, $shared=false) {
 		if ($shared)
 			$query .= sprintf(" AND hometeam IN (%s) AND visitorteam IN (%s)", $sameteams, $sameteams);
 
-		$stats1 = DBQueryToArray($$query);
+		$stats1 = DBQueryToRow($query);
 
 		$points[$i]['games'] = $stats1['games'];
 		$points[$i]['wins'] = $stats1['wins'];

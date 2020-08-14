@@ -1222,7 +1222,7 @@ function SetTeam($params) {
 			rank='%s', valid='%s', series='%s'
 			WHERE team_id='%s'",
     DBEscapeString($params['name']),
-    DBEscapeString($params['pool']),
+    (int)$params['pool'],
     DBEscapeString($params['abbreviation']),
     DBEscapeString($params['rank']),
     DBEscapeString($params['valid']),
