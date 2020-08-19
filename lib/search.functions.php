@@ -415,8 +415,8 @@ function SeriesResults() {
 			$query .= " AND ser.name like '%".DBEscapeString(trim($_POST['seriesname']))."%'";
 		} 
 		
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
+	
 		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"series\");' /></th>";
 		$ret .= "<th>"._("Event")."</th><th>"._("Division")."</th></tr>\n";
 		while ($row = mysqli_fetch_assoc($result)) {
@@ -455,9 +455,9 @@ function PoolResults() {
 			$query .= " AND pool.name like '%".DBEscapeString(trim($_POST['poolname']))."%'";
 		} 
 
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$ret .= "<table><tr><th><input type='checkbox' onclick='checkAll(\"pools\");' /></th>";
+		$result = DBQuery($query);
+	
+		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"pools\");' /></th>";
 		$ret .= "<th>"._("Event")."</th><th>"._("Division")."</th><th>"._("Division")."</th></tr>\n";
 		while ($row = mysqli_fetch_assoc($result)) {
 			$ret .= "<tr><td><input type='checkbox' name='pools[]' value='".utf8entities($row['pool'])."' /></td>";
@@ -497,8 +497,7 @@ function TeamResults() {
 			$query .= " AND team.name like '%".DBEscapeString(trim($_POST['teamname']))."%'";
 		} 
 
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"teams\")' /></th>";
 		$ret .= "<th>"._("Event")."</th><th>"._("Division")."</th><th>"._("Team")."</th></tr>\n";
 		while ($row = mysqli_fetch_assoc($result)) {
@@ -573,8 +572,7 @@ function UserResults() {
 		}
 		$query .= " ORDER BY userid, name";
 
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		
 		$ret = "<table style='white-space: nowrap;'><tr><th><input type='checkbox' onclick='checkAll(\"users\");'/></th>";
 		$ret .= "<th>"._("Name")."</th><th>"._("Username")."</th><th>"._("Email")."</th><th>"._("Rights")."</th><th>"._("Last login")."</th></tr>\n";
@@ -661,8 +659,7 @@ function PlayerResults() {
 		}
 		$query .= " GROUP BY CONCAT(firstname, ' ', lastname), accreditation_id";
 		$query .= " ORDER BY lastname, firstname, t.name";
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		
 		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"players[]\");'/></th>";
 		$ret .= "<th>"._("Name")."</th><th>"._("Team")."</th><th>"._("Email")."</th></tr>\n";
@@ -721,8 +718,7 @@ function ReservationResults() {
 		}
 		$query .= "GROUP BY res.starttime, res.id, res.location, res.fieldname, res.reservationgroup, res.endtime, loc.name, loc.fields, loc.indoor, loc.address";
 
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		
 		$ret = "<table class='admintable'><tr><th><input type='checkbox' onclick='checkAll(\"reservations\");'/></th>";
 		$ret .= "<th>"._("Group")."</th><th>"._("Location")."</th><th>"._("Date")."</th>";
@@ -798,8 +794,7 @@ function GameResults() {
 				$query .= "AND (vj.name LIKE '%".DBEscapeString($team)."%' OR kj.name LIKE '%".DBEscapeString($team)."%') ";
 			}
 		}
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		
 		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"games\");'/></th>";
 		$ret .= "<th>"._("Tournament")."</th><th>"._("Location")."</th><th>"._("Game")."</th></tr>\n";
