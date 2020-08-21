@@ -1667,8 +1667,8 @@ function PoolMakeMoves($poolId) {
           (int)$id,
           (int)$topool);
 
-      $result = mysql_query($query);
-      if (!$result) { die('Invalid query: ' . mysql_error()); }
+      $result = DBQuery($query);
+ 
     }
   } else { die('Insufficient rights to move teams'); }
 }
@@ -1909,10 +1909,9 @@ function CanDeleteTeamFromPool($poolId, $teamId) {
   (int)$poolId,
   (int)$teamId,
   (int)$teamId);
-  $result = mysql_query($query);
-  if (!$result) { die('Invalid query: ' . mysql_error()); }
-  if (!$row = mysql_fetch_row($result)) return false;
-  if ($row[0] == 0) {
+  $count = DBQueryToValue($query);
+ 
+  if ($count == 0) {
     $query = sprintf("SELECT count(*) FROM uo_game_pool
                           LEFT JOIN uo_game ON (uo_game_pool.game=uo_game.game_id)
                           WHERE uo_game_pool.pool=%d AND ((hometeam='%s' OR visitorteam='%s')
@@ -1920,10 +1919,8 @@ function CanDeleteTeamFromPool($poolId, $teamId) {
     (int)$poolId,
     (int)$teamId,
     (int)$teamId);
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
-    if (!$row = mysql_fetch_row($result)) return false;
-    if ($row[0] == 0) {
+    $result = DBQueryToValue($query);
+    if ($result == 0) {
       return true;
     }
   }
@@ -1965,9 +1962,9 @@ function PoolAddGame($poolId, $home, $away, $psudoteams=false, $homeresp=false) 
       (int)$away,
       (int)$poolId);
     }
-    DBQuery($query);
+    $id = DBQueryInsert($query);
     $query = sprintf("INSERT INTO uo_game_pool (game, pool, timetable) VALUES (%d, %d, 1)",
-    mysql_insert_id(),
+    (int)$id,
     (int)$poolId);
     DBQuery($query);
     LogPoolUpdate($poolId, "Game added");
