@@ -2,9 +2,8 @@
 
 function GetAllSMS(){
 	$query = sprintf("SELECT * FROM uo_sms");
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
+	$result = DBQuery($query);
+
 	return $result;
 }
 
@@ -37,9 +36,7 @@ function SendSMS($sms) {
 		$query .= DBEscapeString($sms['to5']).")";
 	}
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
+	$result = DBQuery($query);
 		
 }
 	 

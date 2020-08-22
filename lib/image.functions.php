@@ -7,10 +7,8 @@ function GetImage($imageId){
 		WHERE image_id='%s'",
 		DBEscapeString($imageId));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return mysqli_fetch_assoc($result);
+	$result = DBQueryToRow($query);
+	return $result;
 }	
 
 function GetThumb($imageId){
@@ -20,10 +18,8 @@ function GetThumb($imageId){
 		WHERE image_id='%s'",
 		DBEscapeString($imageId));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return mysqli_fetch_assoc($result);
+		$result = DBQueryToRow($query);
+		return $result;
 }
 
 function ImageInfo($imageId){
@@ -33,18 +29,16 @@ function ImageInfo($imageId){
 		WHERE image_id='%s'",
 		DBEscapeString($imageId));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return mysqli_fetch_assoc($result);
+		$result = DBQueryToRow($query);
+		return $result;
 }
 
 function RemoveImage($imageId){
 	if (isSuperAdmin()) {
 		$query = sprintf("DELETE FROM uo_image WHERE image_id='%s'",
-					DBEscapeString($profile['image_id']));
+					DBEscapeString($imageId));
 					
-		$result = mysql_query($query);
+		$result = DBQuery($query);
 		return $result;
 	} else { die('Insufficient rights to remove image'); }	
 }

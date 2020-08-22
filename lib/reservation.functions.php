@@ -45,9 +45,8 @@ function ReservationGames($placeId, $seasonId="") {
 	
 	$query .= " ORDER BY pp.time ASC";
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
+	$result = DBQuery($query);
+
 	return  $result;
 }
 
@@ -88,8 +87,7 @@ function ReservationGamesByField($fieldname, $seasonId="") {
 	
 	$query .= " ORDER BY pp.time ASC";
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 	
 	return  $result;
 }
@@ -109,8 +107,7 @@ function ReservationFields($seasonId) {
 		GROUP BY res.fieldname",
 			DBEscapeString($seasonId));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 	
 	return  $result;
 }
@@ -138,10 +135,7 @@ function ResponsibleReservationGames($placeId, $gameResponsibilities) {
   $query .= " AND game_id IN (" . implode(",", $gameResponsibilities) . ")
 		ORDER BY pp.time ASC";
   
-  $result = mysql_query($query);
-  if (!$result) {
-    die('Invalid query: ' . mysql_error());
-  }
+  $result = DBQuery($query);
   
   return $result;
 }
@@ -151,13 +145,8 @@ function ReservationSeasons($reservationId) {
 		LEFT JOIN uo_pool pool ON (p.pool=pool.pool_id)
 		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
 		WHERE p.reservation=%d", (int)$reservationId);
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$ret = array();
-	while ($row = mysql_fetch_row($result)) {
-		$ret[] = $row[0];
-	}
-	return $ret;
+	$result = DBQueryToArray($query);
+	return $result;
 }
 
 /**
@@ -214,8 +203,7 @@ function AddReservation($data) {
 function RemoveReservation($id, $season) {
 	if (isSuperAdmin() || isSeasonAdmin($season)) {
 		$query = sprintf("DELETE FROM uo_reservation WHERE id=%d", (int)$id);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		DBQuery($query);
 	} else { die('Insufficient rights to remove location'); }	
 }
 
@@ -227,10 +215,9 @@ function ReservationInfoArray($reservations) {
 	$fetchStr = implode(",", $fetch);
 	$query = "SELECT DATE_FORMAT(starttime, '%Y%m%d') as gameday, id FROM uo_reservation WHERE id IN (".$fetchStr.") 
 		ORDER BY starttime ASC, location, fieldname +0, id";
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 	$ret = array();
-	while ($row = mysql_fetch_row($result)) {
+	while ($row = mysqli_fetch_row($result)) {
 		if (!isset($ret[$row[0]])) {
 			$ret[$row[0]] = array();
 		}
@@ -284,22 +271,15 @@ function UnscheduledTeams() {
 		}
 	}
 	echo "<!--".$query."-->\n";
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$ret = array();
-	while ($row = mysql_fetch_row($result)) {
-		$ret[] = $row[0];
-	}
-	return  $ret;
+	$result = DBQueryToArray($query);
+	return  $result;
 }
 
 function CanDeleteReservation($reservationId) {
 	$query = sprintf("SELECT count(*) FROM uo_game WHERE reservation=%d",
-		(int)$poolId);
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if (!$row = mysql_fetch_row($result)) return false;
-	return $row[0] == 0;
+		(int)$reservationId);
+	$result = DBQueryToValue($query);
+	return $result == 0;
 }
 
 	

@@ -377,6 +377,8 @@ function SeriesSpiritBoard($seriesId) {
   $last_category=null;
   $averages = array();
   $total = 0;
+  $sum = 0;
+  $games = 0;
   while($row = mysqli_fetch_assoc($scores)) {
     if ($last_team != $row['team_id'] || $last_category != $row['category_id']) {
       if (!is_null($last_category)) {

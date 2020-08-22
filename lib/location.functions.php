@@ -39,9 +39,8 @@ function GetSearchLocations() {
 	      WHERE 1 ORDER BY name",
 	        DBEscapeString($locale));
 	}
-	$result1 = mysql_query($query1);
-        
-	if (!$result1) { die('Invalid query: ' . mysql_error()); }
+	$result1 = DBQuery($query1);
+
 	return $result1;
 }
 
@@ -50,9 +49,9 @@ function LocationInfo($id) {
 	$query = sprintf("SELECT id, name, fields, indoor, address, inf.info as info, lat, lng 
 	    FROM uo_location loc LEFT JOIN uo_location_info inf ON ( loc.id = inf.location_id and inf.locale='%s' )
 	    WHERE id=%d", DBEscapeString($locale), (int)$id);
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	return mysqli_fetch_assoc($result);
+	$result = DBQueryToRow($query);
+
+	return $result;
 }
 
 function SetLocation($id, $name, $address, $info, $fields, $indoor, $lat, $lng, $season) {
@@ -65,9 +64,8 @@ function SetLocation($id, $name, $address, $info, $fields, $indoor, $lat, $lng, 
 			DBEscapeString($lat),
 			DBEscapeString($lng),
 		    (int)$id);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
+		DBQuery($query);
+
 		updateInfos($id, $info);
 	} else { die('Insufficient rights to change location'); }	
 }
@@ -85,8 +83,7 @@ function updateInfos($id, $info) {
           DBEscapeString($infostr),
           DBEscapeString($infostr));
     }
-    $result = mysql_query($query);
-    if (!$result) { die('Invalid query: ' . mysql_error()); }
+    DBQuery($query);
   }
 }
 
@@ -101,10 +98,7 @@ function AddLocation($name, $address, $info, $fields, $indoor, $lat, $lng, $seas
 	       DBEscapeString($lat),
 	       DBEscapeString($lng));
 	       
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-		$locationId = mysql_insert_id();
+		$locationId = DBQueryInsert($query);
 
 		updateInfos($locationId, $info);
 		
@@ -115,12 +109,10 @@ function AddLocation($name, $address, $info, $fields, $indoor, $lat, $lng, $seas
 function RemoveLocation($id) {
 	if (isSuperAdmin()) {
 		$query = sprintf("DELETE FROM uo_location WHERE id=%d", (int)$id);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		
 		$query = sprintf("DELETE FROM uo_location_info WHERE location_id=%d", (int)$id);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		
 	} else { die('Insufficient rights to remove location'); }	
 }

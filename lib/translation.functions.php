@@ -9,7 +9,6 @@ function loadDBTranslations($locale) {
 	$query = sprintf("select translation_key, translation as value from uo_translation WHERE `locale`='%s'",
 	DBEscapeString(str_replace(".", "_", $locale)));
 	$result = DBQuery($query);
-	if (!$result) { die("Failed to load translations for locale ".$locale."\n". mysql_error()); }
 
 	$_SESSION['dbtranslations'] = array();
 	while ($translation = mysqli_fetch_assoc($result)) {
@@ -95,7 +94,6 @@ function Translations() {
 	if(hasTranslationRight()) {
 		$query = "SELECT * FROM uo_translation ORDER BY translation_key ASC";
 		$result = DBQuery($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
 		return $result;
 	} else { die('Insufficient rights to get translations'); }
 }
@@ -113,9 +111,6 @@ function SetTranslation($key, $translations) {
         $query = sprintf("UPDATE uo_translation SET translation='%s' WHERE locale='%s' AND translation_key='%s'", 
             DBEscapeString($value), DBEscapeString($locale), DBEscapeString($key));
         $result = DBQuery($query);
-        if (!$result) {
-          die('Invalid query: ' . mysql_error());
-        }
       }
     }
   } else {
@@ -139,9 +134,6 @@ function AddTranslation($key, $translations) {
 	      VALUES ('%s', '%s', '%s')", DBEscapeString($key), 
             DBEscapeString($locale), DBEscapeString($value));
         $result = DBQuery($query);
-        if (!$result) {
-          die('Invalid query: ' . mysql_error());
-        }
       }
     }
   } else {
@@ -154,7 +146,6 @@ function RemoveTranslation($key) {
 		$query = sprintf("DELETE FROM uo_translation WHERE translation_key='%s'",
 		DBEscapeString($key));
 		$result = DBQuery($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
 	} else { die('Insufficient rights to remove translation'); }
 }
 

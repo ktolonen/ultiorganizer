@@ -171,8 +171,8 @@ function AddMediaUrl($urlparams) {
 			DBEscapeString($urlparams['mediaowner']),
 			DBEscapeString($urlparams['publisher_id']));
 		Log2("Media","Add",$urlparams['url']);
-		DBQuery($query);
-		return mysql_insert_id();
+		
+		return DBQueryInsert($query);
 	} else { die('Insufficient rights to add media'); }	
 }
 

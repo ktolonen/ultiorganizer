@@ -83,10 +83,8 @@ function EventList($categoryfilter, $userfilter)
 			$query .= sprintf("AND user_id='%s'", DBEscapeString($userfilter));
 		}
 		$query .= " ORDER BY time DESC";
-		$result = mysql_query($query);
-		if (!$result) {
-			die('Invalid query: ' . mysql_error());
-		}
+		$result = DBQuery($query);
+
 		return $result;
 	}
 }
@@ -96,10 +94,8 @@ function ClearEventList($ids)
 	if (isSuperAdmin()) {
 		$query = sprintf("DELETE FROM uo_event_log WHERE event_id IN (%s)", DBEscapeString($ids));
 
-		$result = mysql_query($query);
-		if (!$result) {
-			die('Invalid query: ' . mysql_error());
-		}
+		$result = DBQuery($query);
+
 		return $result;
 	}
 }
@@ -201,11 +197,9 @@ function GetLastGameUpdateEntry($gameId, $source)
 		(int) $gameId,
 		DBEscapeString($source)
 	);
-	$result = mysql_query($query);
-	if (!$result) {
-		die('Invalid query: ' . mysql_error());
-	}
-	return mysqli_fetch_assoc($result);
+	$result = DBQueryToRow($query);
+
+	return $result;
 }
 
 function LogPoolUpdate($poolId, $details, $source = "")

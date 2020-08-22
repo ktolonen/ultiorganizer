@@ -19,8 +19,7 @@ function PlayerInfod($playerId) {
 		WHERE player_id='%s'",
 		DBEscapeString($playerId));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 	
 	return mysqli_fetch_assoc($result);
 }
@@ -49,8 +48,8 @@ function PlayerprofileInfod($accreditation_id) {
 		WHERE pp.accreditation_id='%s'",
 		DBEscapeString($accreditation_id));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
+
 	if (hasEditPlayerProfileRight($accreditation_id)) {
 		return mysqli_fetch_assoc($result);
 	} else {
