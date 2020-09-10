@@ -271,7 +271,7 @@ function FacebookFeedPost($fb_params, $params) {
  	
     $opts = $CURL_OPTS;
     
-    $opts[CURLOPT_POSTFIELDS] = http_build_query($params, null, '&');
+    $opts[CURLOPT_POSTFIELDS] = http_build_query($params, "", '&');
     $opts[CURLOPT_URL] = $url;
 
     // disable the 'Expect: 100-continue' behaviour. This causes CURL to wait
@@ -297,7 +297,7 @@ function SetFacebookPublishing($userid, $playerid, $pubEvents, $pubMessages) {
 			DBEscapeString($playerid));
 		$result = DBQuery($query);
 
-		$value = $playerid.":".implode($pubEvents, ":");
+		$value = $playerid.":".implode(":",$pubEvents);
 		if ($row = mysqli_fetch_row($result)) {
 			$query = sprintf("UPDATE uo_userproperties SET value='%s' WHERE prop_id=%d",
 			 	DBEscapeString($value),
