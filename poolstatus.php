@@ -184,8 +184,8 @@ function defenseboard($id, $seriesDefenseboard){
     $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
     $ret .= "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
 		<th class='center'>"._("Total defenses")."</th></tr>\n";
-
-    $defenses = SeriesDefenseBoard($seriesinfo['series_id'],"deftotal", 10);
+    $poolinfo = PoolInfo($id);
+    $defenses = SeriesDefenseBoard($poolinfo['series_id'],"deftotal", 10);
     while($row = mysqli_fetch_assoc($defenses))
     {
       $ret .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
@@ -195,7 +195,7 @@ function defenseboard($id, $seriesDefenseboard){
     }
 
     $ret .= "</table>";
-    $ret .= "<a href='?view=defensestatus&amp;series=".$seriesinfo['series_id']."'>"._("Defenseboard")."</a>";
+    $ret .= "<a href='?view=defensestatus&amp;series=".$poolinfo['series_id']."'>"._("Defenseboard")."</a>";
 
   }else{
     $ret .= "<h2>"._("Defenseboard leaders")."</h2>\n";
@@ -296,7 +296,7 @@ function printSwissdraw($seasoninfo, $poolinfo){
     }
   }
   $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
-  while($game = mysql_fetch_assoc($games)){
+  while($game = mysqli_fetch_assoc($games)){
     //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
     $ret .= GameRow($game, false, false, false, false, false, true);
   }
@@ -524,6 +524,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
       
       $name = "";
       $byeName = "";
+      $previousRoundByeName = "";
       //find out team name
       if($team['team_id']){
         if(intval($seasoninfo['isinternational']) && !empty($team['flagfile'])){

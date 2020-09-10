@@ -660,17 +660,7 @@ function hasAddMediaRight()
 {
 	return isset($_SESSION['uid']) && ($_SESSION['uid'] != 'anonymous');
 }
-/*
-function getSeriesSeason($series) {
-	$query = sprintf("SELECT ser.season FROM uo_series ser 
-	LEFT JOIN uo_series ser ON (pool.series=ser.series_id) WHERE ser.series_id=%d", (int)$series);
-	$result = DBQuery($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($row = mysql_fetch_row($result)) {
-		return $row[0];
-	} else return "";
-}
-*/
+
 function UserListRightsHtml($userId)
 {
 	$query = sprintf("SELECT value FROM uo_userproperties WHERE userid='%s'", DBEscapeString($userId));

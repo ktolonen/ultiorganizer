@@ -249,7 +249,7 @@
     	"uo_urls","uo_userproperties","uo_users","uo_victorypoints","uo_visitor_counter");
       $delta = array_diff($required,$tables);
       if(!empty($delta)){
-        $html .= "<br>Missing tables: ".implode($delta,', ')."</p>";
+        $html .= "<br>Missing tables: ".implode(', ',$delta)."</p>";
 
         $html .= "<p>Creating Ultiorganizer tables: ";
         $ret = createtables($mysqlconnectionref);
@@ -454,7 +454,7 @@
       if($passed){
         $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
         $db = mysqli_select_db($mysqlconnectionref,DB_DATABASE);
-        mysqli_set_charset('utf8');
+        mysqli_set_charset($mysqlconnectionref,'utf8');
         $query = sprintf("UPDATE uo_users SET password=MD5('%s') WHERE userid='admin'",mysqli_real_escape_string($mysqlconnectionref,$passwd1));
         $result = mysqli_query($mysqlconnectionref,$query);
         //mysqli_close($mysqlconnectionref);
