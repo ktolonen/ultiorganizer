@@ -30,8 +30,7 @@ if (hasEditPlayersRight($teamId)) {
 	
 $query = sprintf("SELECT accreditation_id, firstname, lastname, membership, license, birthdate FROM uo_license WHERE firstname like '%%%s%%' and lastname like '%%%s%%'",
 					DBEscapeString($firstname), DBEscapeString($lastname));
-$result = mysql_query($query);
-if (!$result) { die('Invalid query: ' . mysql_error()); }
+$result = DBQuery($query);
 
 // for php 5 onwards
 if (version_compare(PHP_VERSION, '5.0.0', '>')) {

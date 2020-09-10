@@ -183,7 +183,7 @@ if(GameHasStarted($game_result) > 0){
     $bHt=false;
 
     $prevgoal = 0;
-    mysql_data_seek($goals, 0);
+    mysqli_data_seek($goals, 0);
     while($goal = mysqli_fetch_assoc($goals)){
       if (!$bHt && $game_result['halftime']>0 && $goal['time'] > $game_result['halftime']){
         $html .= "<tr><td colspan='6' class='halftime'>"._("Half-time")."</td></tr>";
@@ -364,7 +364,7 @@ if(GameHasStarted($game_result) > 0){
       $bHOffence = $bHStartTheGame;
 
       //return internal pointers to first row
-      mysql_data_seek($allgoals, 0);
+      mysqli_data_seek($allgoals, 0);
 
       //loop all goals
       while($goal = mysqli_fetch_assoc($allgoals)){
@@ -578,7 +578,7 @@ if(GameHasStarted($game_result) > 0){
       //$bHt=false;
 
       $prevdefense = 0;
-      mysql_data_seek($defenses, 0);
+      mysqli_data_seek($defenses, 0);
       while($defense = mysqli_fetch_assoc($defenses)){
         // 		if (!$bHt && $game_result['halftime']>0 && $goal['time'] > $game_result['halftime']){
         // 			$html .= "<tr><td colspan='6' class='halftime'>"._("Half-time")."</td></tr>";

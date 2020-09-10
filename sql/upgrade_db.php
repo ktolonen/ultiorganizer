@@ -671,7 +671,6 @@ function upgrade76() {
 function runQuery($query) {
 	global $mysqlconnectionref;
 	$result = mysqli_query($mysqlconnectionref, $query);
-	if (!$result) { die('Invalid query: ("'.$query.'")'."<br/>\n" . mysql_error()); }
 	return $result;
 }
 
@@ -721,8 +720,9 @@ function getPositions($pos) {
 }
 
 function renameTable($oldtable, $newtable) {
+	global $mysqlconnectionref;
 	$query = "SHOW COLUMNS FROM $newtable";
-	$result = mysql_query($query);
+	$result = mysqli_query($mysqlconnectionref,$query);
 	if ($result) return true;
 	$query = "RENAME TABLE $oldtable TO $newtable";
 	runQuery($query);

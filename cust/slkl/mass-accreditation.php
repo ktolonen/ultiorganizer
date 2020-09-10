@@ -4,10 +4,7 @@ $updated = false;
 
 if (isset($_POST['upload'])) {
 
-  if($_FILES['uploadedfile']['type'] == "application/octet-stream" || $_FILES['uploadedfile']['type'] == "application/msaccess"){
-    slklUpdateLicensesFromAccess();
-    $updated = true;
-  }elseif($_FILES['uploadedfile']['type']=="text/x-csv" || $_FILES['uploadedfile']['type']=="text/csv"){
+if($_FILES['uploadedfile']['type']=="text/x-csv" || $_FILES['uploadedfile']['type']=="text/csv"){
     if(is_uploaded_file($_FILES['uploadedfile']['tmp_name'])) {
       if (($handle = fopen($_FILES['uploadedfile']['tmp_name'], "r")) !== FALSE) {
         $new_players=slklUpdateLicensesFromCSV($handle,$season);
@@ -136,112 +133,6 @@ if($view=="autoacc"){
   echo "</form>\n";
 
 }
-
-function slklUpdateLicensesFromAccess(){
-
-  $errors=0;
-  $message="";
-  $currentdir=getcwd();
-  $target_path = $currentdir . "/../db/";
-
-  $target_path = realpath($target_path) . "\\pelikone_members.mdb";
-
-  if (!move_uploaded_file($_FILES['uploadedfile']['tmp_name'], $target_path)) {
-    die("<p>There was an error uploading the file, please try again!</p>");
-  }
-  //mysql_query("insert into uo_license ( lastname, firstname, membership, birthdate, accreditation_id, women, junior, license) VALUES ('Aalto', 'Anne', 1997, '', '',1473, '', 0, 1, 0, 0)");
-  $result = mysql_query("set autocommit=0");
-  if (!$result) {
-    die("Can't set autocommit to 0: " . mysql_error() ."<br>\n");
-  }
-  $result = mysql_query("BEGIN");
-  if (!$result) {
-    die("Can't BEGIN: " . mysql_error() ."<br>\n");
-  }
-  $connstr = "DRIVER={Microsoft Access Driver (*.mdb)}; DBQ=$target_path";
-  //~ echo "Connstring: $connstr<br>\n";
-  $connAccessODBC = odbc_connect($connstr, "", "");
-   
-  if (!$connAccessODBC) {
-    die("<p>Couldn't connect to access. " . odbc_error() . "</p>");
-  }
-  $truncresult = mysql_query("truncate table uo_license");
-  if (!$truncresult) {
-    $errors++;
-    $message .= 'Invalid query: ' . mysql_error() . "\n";
-    $message .= "Whole query: truncate table uo_license\n";
-  }
-   
-  $result = odbc_exec($connAccessODBC, "select
-    		sukunimi, 
-    		etunimi, 
-    		".utf8_decode("jäsenmaksu").",	
-    		syntaika, 
-    		".utf8_decode("jäsennumero").", 
-    		joukkue, email, ultimate, nainen, junnu, uusi, ultimate_lisenssi from jasenet");
-   
-  $i=0;
-  while($row = odbc_fetch_row($result)) {
-    $i++;
-    $fSukunimi = utf8_encode(odbc_result($result, "sukunimi"));
-    $fEtunimi = utf8_encode(odbc_result($result, "etunimi"));
-    $fJasenmaksu = utf8_encode(odbc_result($result, utf8_decode("jäsenmaksu")));
-    $fSyntaika = utf8_encode(odbc_result($result, "syntaika"));
-    if(empty($fSyntaika)) {
-      $fSyntaika = "1970-01-01 00:00:00";
-    }
-    $fJasennumero = utf8_encode(odbc_result($result, utf8_decode("jäsennumero")));
-    $fJoukkue = utf8_encode(odbc_result($result, "joukkue"));
-    $fEmail = utf8_encode(odbc_result($result, "email"));
-    $fUltimate = utf8_encode(odbc_result($result, "ultimate"));
-    $fNainen = utf8_encode(odbc_result($result, "nainen"));
-    $fJunnu = utf8_encode(odbc_result($result, "junnu"));
-    $fUusi = utf8_encode(odbc_result($result, "uusi"));
-    $fUltimateLisenssi = utf8_encode(odbc_result($result, "ultimate_lisenssi"));
-     
-    $query = sprintf("
-    		insert into uo_license (
-    			lastname,
-    			firstname,
-    			membership,
-    			birthdate,
-    			accreditation_id,
-    			ultimate,
-    			women,
-    			junior,
-    			license)
-    		VALUES ('%s', '%s', %d, '%s', '%s', %d, %d, %d, %d)",
-    DBEscapeString($fSukunimi),
-    DBEscapeString($fEtunimi),
-    $fJasenmaksu,
-    DBEscapeString($fSyntaika),
-    $fJasennumero,
-    $fUltimate,
-    $fNainen,
-    $fJunnu,
-    $fUltimateLisenssi);
-    //~ echo "<p>$i: $query</p>\n";
-    $insResult = mysql_query($query);
-    if (!$insResult) {
-      $errors++;
-      $message .= 'Invalid query: ' . mysql_error() . "\n";
-      $message .= 'Whole query: ' . $query . "<br>\n";
-    }
-    //checkAccreditation($fJasennumero, $fNainen, $fJunnu, $fUltimateLisenssi, "member_upload");
-
-  }
-  odbc_close($connAccessODBC);
-  if ($errors == 0) {
-    echo "<p>"._("License database update ok").".</p>";
-    mysql_query("COMMIT");
-  } else {
-    echo "<p>"._("License database update failed")."</p>";
-    mysql_query("ROLLBACK");
-    echo $message;
-  }
-  mysql_query("set autocommit=1");
-}
-
 
 function slklUpdateLicensesFromCSV($handle, $season){
   $html = "";

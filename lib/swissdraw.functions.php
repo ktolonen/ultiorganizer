@@ -8,8 +8,7 @@ function DetectTiesInPreviousPool($poolId) {
 		WHERE pmt.topool = '%s'",	
 		DBEscapeString($poolId));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 		
 	while($contrPool = mysqli_fetch_assoc($result)){
 		$query = sprintf("
@@ -18,8 +17,8 @@ function DetectTiesInPreviousPool($poolId) {
 			where pool='%s'",
 			DBEscapeString($contrPool['frompool']));
 						
-		$result2 = mysql_query($query);
-		if (!$result2) { die('Invalid query: ' . mysql_error()); }
+		$result2 = DBQuery($query);
+
 		$row = mysqli_fetch_assoc($result2);
 		
 		if ($row['activeteams']==0) {
@@ -43,8 +42,7 @@ function AutoResolveTiesInSourcePools($poolId) {
 		WHERE pmt.topool = '%s'",	
 		DBEscapeString($poolId));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 		
 	while($contrPool = mysqli_fetch_assoc($result)){
 		AutoResolveTies($contrPool['frompool']);
@@ -61,8 +59,7 @@ function AutoResolveTies($poolId) {
 		ORDER BY activerank,team",
 		DBEscapeString($poolId));
 				
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 	
 	$nbrows=mysqli_num_rows($result);
 //	print "Number of rows: ".$nbrows."<br>";
@@ -80,8 +77,8 @@ function AutoResolveTies($poolId) {
 				DBEscapeString($i),
 				DBEscapeString($poolId),
 				DBEscapeString($row['team']));
-			$result2 = mysql_query($query);
-			if (!$result2) { die('Invalid query: ' . mysql_error()); }
+			$result2 = DBQuery($query);
+
 		}				
 	}
 }
@@ -135,8 +132,7 @@ function CheckSwissdrawMoves($poolId){
 			DBEscapeString($moves[$i]['fromplacing']),
 			DBEscapeString($moves[$i]['frompool']));
 //		print $query."<br>";
-		$result = mysql_query($query);
-		if (!$result) die($query.'Invalid query: ' . mysql_error());
+		$result = DBQuery($query);
 		}
 		
 	// everthing went fine
@@ -376,9 +372,8 @@ function PoolTeamFromStandingsNoTies($poolId, $activerank){
 		DBEscapeString($poolId),
 		DBEscapeString($activerank));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
+	$result = DBQuery($query);
+
 	if (mysqli_num_rows($result)==0) {
 		// must be due to ties in previous activeranks
 		$searchback=0;
@@ -393,10 +388,9 @@ function PoolTeamFromStandingsNoTies($poolId, $activerank){
 				DBEscapeString($poolId),
 				DBEscapeString($activerank-$searchback));
 				
-			$result = mysql_query($query);
-			if (!$result) { die('Invalid query: ' . mysql_error()); }
+			$result = DBQuery($query);
 		}
-		mysql_data_seek($result,$searchback);		
+		mysqli_data_seek($result,$searchback);		
 	}
 	
 	return mysqli_fetch_assoc($result);
@@ -430,8 +424,7 @@ function CheckBYESchedule($poolId) {
 				DBEscapeString($row2['reservation']),
 				DBEscapeString($row2['time']),
 				DBEscapeString($row1['game_id']));
-				$result = mysql_query($query);
-		if (!$result || mysql_affected_rows()!=1) { die('Invalid query: ' . mysql_error()); }
+				$result = DBQuery($query);
 
 		if ($row1['reservation']!="" or $row1['time']!="") { die('something is fishy here'); }
 		
@@ -439,8 +432,7 @@ function CheckBYESchedule($poolId) {
 				UPDATE uo_game SET reservation=NULL, time=NULL 
 				WHERE game_id='%s' ",
 				DBEscapeString($row2['game_id']));
-				$result = mysql_query($query);		
-		if (!$result || mysql_affected_rows()!=1) { die('Invalid query: ' . mysql_error()); }		
+				$result = DBQuery($query);				
 		
 		echo "Spots swapped!!! Pool_id ".$poolId."<br>";
 	}
@@ -465,9 +457,8 @@ function CheckBYE($poolId){
 				DBEscapeString($poolInfo['forfeitagainst']),
 				DBEscapeString($poolInfo['forfeitscore']),
 				DBEscapeString($poolId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$changes=mysql_affected_rows();
+		$result = DBQuery($query);
+
 		
 		// if the home-team is the BYE-team assign the appropriate scores to home and visitor
 		$query = sprintf("
@@ -476,9 +467,7 @@ function CheckBYE($poolId){
 				DBEscapeString($poolInfo['forfeitagainst']),
 				DBEscapeString($poolInfo['forfeitscore']),
 				DBEscapeString($poolId));
-				$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$changes+=mysql_affected_rows();
+				$result = DBQuery($query);
 				
 	}
 	return $changes;

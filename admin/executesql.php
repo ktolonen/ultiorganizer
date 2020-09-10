@@ -27,16 +27,14 @@ if(!empty($_POST['sql']) || !empty($_GET['sql']))
 	$isDelete = (strpos(strtolower($query), "delete") === 0);
 	$arraycolumnsname = array();
 	if(isSuperAdmin()){
-		$result = mysql_query($query);
+		$result = DBQuery($query);
 		}
-
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
 
 	if ($isSelect || $isShow){
 		$i=0;
-		while ($i < mysql_num_fields($result)) 
+		while ($i < mysqli_num_fields($result)) 
 			{
-			$meta = mysql_fetch_field($result, $i);
+			$meta = mysqli_fetch_field($result, $i);
 			$arraycolumnsname[$i] = $meta->name;
 			$arraycolumnstype[$i] = $meta->type;
 

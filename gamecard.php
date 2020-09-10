@@ -127,7 +127,7 @@ if($nGames){
   $html .= "<th><a class='thsort' href='".$viewUrl."sort=series'>"._("Division")."</a></th></tr>";
 
   $points=array(array());
-  mysql_data_seek($games,0);
+  mysqli_data_seek($games,0);
 
   while($game = mysqli_fetch_assoc($games)){
     if(GameHasStarted($game)){

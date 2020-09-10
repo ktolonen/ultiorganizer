@@ -41,8 +41,7 @@ if (hasEditPlayersRight($teamId)) {
 			WHERE pp.firstname like '%%%s%%' and pp.lastname like '%%%s%%'
 			GROUP BY pp.profile_id ORDER BY pp.lastname, pp.firstname",
 						DBEscapeString($firstname), DBEscapeString($lastname));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 
 	// for php 5 onwards
 	if (version_compare(PHP_VERSION, '5.0.0', '>')) {

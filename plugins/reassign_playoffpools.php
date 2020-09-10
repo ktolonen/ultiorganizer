@@ -196,16 +196,16 @@ if (!empty($_POST['series'])) {
 			DBEscapeString($newmove1[$i]['fromplacing'])	 );
 			
 //		echo $query."<br>";
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error() . $query); }
+		$result = DBQuery($query);
+
 				
 		$query=sprintf("UPDATE uo_scheduling_name SET name='%s' 
 						WHERE scheduling_id='%s'",
 			DBEscapeString($newmove1[$i]['pteamname']),
 			DBEscapeString($newmove1[$i]['scheduling_id']));			
 //		echo $query."<br>";
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error() . $query); }				
+		$result = DBQuery($query);
+			
 	}
 	for($i=0;$i<(count($newmove2));$i++) {				
 		$query=sprintf("UPDATE uo_moveteams SET topool='%s', torank='%s', scheduling_id='%s' 
@@ -216,8 +216,7 @@ if (!empty($_POST['series'])) {
 			DBEscapeString($newmove2[$i]['frompool']),
 			DBEscapeString($newmove2[$i]['fromplacing'])	 );
 		//		echo $query."<br>";
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		
 		
 		$query=sprintf("UPDATE uo_scheduling_name SET name='%s' 
@@ -225,8 +224,8 @@ if (!empty($_POST['series'])) {
 			DBEscapeString($newmove2[$i]['pteamname']),
 			DBEscapeString($newmove2[$i]['scheduling_id']));
 //		echo $query."<br>";
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
+
 	}
 	
 	
