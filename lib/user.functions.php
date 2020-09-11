@@ -1445,7 +1445,7 @@ function GameResponsibilityArray($season, $series = null)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
 			left join (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS m ON (pp.game_id=m.game)
-		WHERE game_id IN (" . implode(",", $gameResponsibilities) . ")"
+		WHERE game_id IN (" . implode(",", array_column($gameResponsibilities,'game_id')) . ")"
 			. ($series ? " AND pool.series=%d" : "") . "
 		ORDER BY res.starttime ASC, res.reservationgroup ASC, res.fieldname+0,pp.time ASC",
 		$series ? (int)$series : 0
