@@ -121,7 +121,7 @@ function CheckSwissdrawMoves($poolId){
 	}
 	
 	// update the moves in the database
-	usort($moves, create_function('$a,$b','return $a[\'fromplacing\']==$b[\'fromplacing\']?0:($a[\'fromplacing\']<$b[\'fromplacing\']?-1:1);'));
+	usort($moves, function($a,$b){return $a['fromplacing']==$b['fromplacing']?0:($a['fromplacing']<$b['fromplacing']?-1:1);});
 //	PrintMoves($moves);
 	for($i=0;$i<count($moves);$i++){
 		$query = sprintf("

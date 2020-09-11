@@ -189,7 +189,7 @@ if($nGames){
 
   if($sorting == "pname"){
     $html .= "<th><b>"._("Player")."</b></th>";
-    mergesort($points, create_function('$b,$a','return strcmp($b[1],$a[1]);'));
+    mergesort($points, function($b,$a){return strcmp($b[1],$a[1]);});
     $sorted = true;
   }else{
     $html .= "<th><a class='thsort' href='".$viewUrl."sort=pname'>"._("Player")."</a></th>";
@@ -197,7 +197,7 @@ if($nGames){
 
   if($sorting == "pteam"){
     $html .= "<th><b>"._("Team")."</b></th>";
-    mergesort($points, create_function('$b,$a','return strcmp($b[2],$a[2]);'));
+    mergesort($points, function($b,$a){return strcmp($b[2],$a[2]);});
     $sorted = true;
   }else{
     $html .= "<th><a class='thsort' href='".$viewUrl."sort=pteam'>"._("Team")."</a></th>";
@@ -205,7 +205,7 @@ if($nGames){
 
   if($sorting == "pgames"){
     $html .= "<th><b>"._("Games")."</b></th>";
-    mergesort($points, create_function('$a,$b','return $a[3]==$b[3]?0:($a[3]>$b[3]?-1:1);'));
+    mergesort($points, function($a,$b){return $a[3]==$b[3]?0:($a[3]>$b[3]?-1:1);});
     $sorted = true;
   }else{
     $html .= "<th><a class='thsort' href='".$viewUrl."sort=pgames'>"._("Games")."</a></th>";
@@ -213,7 +213,7 @@ if($nGames){
 
   if($sorting == "ppasses"){
     $html .= "<th><b>"._("Assists")."</b></th>";
-    mergesort($points, create_function('$a,$b','return $a[4]==$b[4]?0:($a[4]>$b[4]?-1:1);'));
+    mergesort($points, function($a,$b){return $a[4]==$b[4]?0:($a[4]>$b[4]?-1:1);});
     $sorted = true;
   }else{
     $html .= "<th><a class='thsort' href='".$viewUrl."sort=ppasses'>"._("Assists")."</a></th>";
@@ -221,7 +221,7 @@ if($nGames){
 
   if($sorting == "pgoals"){
     $html .= "<th><b>"._("Goals")."</b></th>";
-    mergesort($points, create_function('$a,$b','return $a[5]==$b[5]?0:($a[5]>$b[5]?-1:1);'));
+    mergesort($points, function($a,$b){return $a[5]==$b[5]?0:($a[5]>$b[5]?-1:1);});
     $sorted = true;
   }else{
     $html .= "<th><a class='thsort' href='".$viewUrl."sort=pgoals'>"._("Goals")."</a></th>";
@@ -229,7 +229,7 @@ if($nGames){
    
   if(($sorting == "ptotal")||(!$sorted)){
     $html .= "<th><b>Yht.</b></th></tr>\n";
-    mergesort($points, create_function('$a,$b','return $a[6]==$b[6]?0:($a[6]>$b[6]?-1:1);'));
+    mergesort($points, function($a,$b){return $a[6]==$b[6]?0:($a[6]>$b[6]?-1:1);});
   }else{
     $html .= "<th><a class='thsort' href='".$viewUrl."sort=ptotal'>"._("Tot.")."</a></th></tr>\n";
   }
