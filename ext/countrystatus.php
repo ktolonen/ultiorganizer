@@ -34,7 +34,7 @@ $countryId = iget("country");
 $prevdivision = "";
 $allpools = CountryPools($season, $countryId);
 
-while($pool = mysqli_fetch_assoc($allpools)){
+foreach($allpools as $pool){
 	$poolinfo = PoolInfo($pool['pool_id']);
 	if($poolinfo['seriesname'] != $prevdivision){
 		echo "<h1 class='pk_h1'>".utf8entities($poolinfo['seriesname'])."</h1>";

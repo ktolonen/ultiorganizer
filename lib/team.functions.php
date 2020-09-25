@@ -762,7 +762,7 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     $query .= " limit $limit";
   }
 
-  return DBQueryToArray($query);
+  return DBQuery($query);
 }
 
 

@@ -241,5 +241,4 @@ CloseConnection();
 
 //OK. Everything is done. Now genarate the feed.
 $feed->genarateFeed();
-
 ?>

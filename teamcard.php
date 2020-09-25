@@ -162,7 +162,8 @@ else
 		<th class='center' style='width:15%'>"._("Goals")."</th>
 		<th class='center' style='width:15%'>"._("Tot.")."</th></tr>\n";
 
-    foreach($players as $player) {
+    
+  while($player = mysqli_fetch_assoc($players)) {
       $playerinfo = PlayerInfo($player['player_id']);
       $html .= "<tr><td>";
       if(!empty($playerinfo['profile_id'])){

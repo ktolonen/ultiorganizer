@@ -432,3 +432,4 @@ if(!defined('DATE_RSS')){
 	// End # private functions ----------------------------------------------
 	
  } // end of class FeedWriter
+ ?>
