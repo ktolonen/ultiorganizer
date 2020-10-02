@@ -327,7 +327,7 @@ class YAHOO_util_Loader {
     * @param {array} modules A list of custom modules
     * @param {boolean} noYUI Pass true if you do not want the YUI metadata
     */
-    function YAHOO_util_Loader($yuiVersion, $cacheKey=null, $modules=null, $noYUI=false) {
+    function __construct($yuiVersion, $cacheKey=null, $modules=null, $noYUI=false) {
         if (!isset($yuiVersion)) {
             die("Error: The first parameter of YAHOO_util_Loader must specify which version of YUI to use!");
         }

@@ -80,7 +80,7 @@ pageTopHeadOpen($title);
 $html .= yuiLoad(array("utilities"));
 ?>
 <script type="text/javascript">
-<!--
+
 function setId(id)
   {
   var input = document.getElementById("hiddenDeleteId");
@@ -90,7 +90,7 @@ function ChgName(index) {
   YAHOO.util.Dom.get('gamenameEdited' + index).value = 'yes';
   YAHOO.util.Dom.get("save").disabled = false;
 }
-//-->
+
 </script>
 <?php
 pageTopHeadClose($title);

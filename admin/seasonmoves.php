@@ -28,7 +28,6 @@ pageTopHeadOpen($title);
 echo yuiLoad(array("utilities"));
 ?>
 <script type="text/javascript">
-<!--
 function setId(id1,id2,id3){
 	var input = document.getElementById("hiddenDeleteId");
 	input.value = id1 + ":" + id2 + ":" + id3;
@@ -48,7 +47,6 @@ function ChgValue(index) {
 	YAHOO.util.Dom.get('moveEdited' + index).value = 'yes';
 	YAHOO.util.Dom.get("save").disabled = false;
 }
-//-->
 </script>
 <?php
 pageTopHeadClose($title);

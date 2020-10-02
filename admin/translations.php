@@ -51,7 +51,7 @@ if (!empty($_POST['save'])) {
 pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
-<!--
+
 function setKey(id) {
 	var input = document.getElementById("hiddenDeleteKey");
 	input.value = id;
@@ -67,7 +67,7 @@ function validNumber(field)
 	{
 	field.value=field.value.replace(/[^0-9]/g, '')
 	}
-//-->
+
 </script>
 <?php
 if (is_file('cust/'.CUSTOMIZATIONS.'/teamplayers.functions.php')) {

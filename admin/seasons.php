@@ -63,7 +63,7 @@ if(!empty($_POST['remove_x']) && !empty($_POST['hiddenDeleteId']))
 pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
-<!--
+
 function setId(id) {
 	var input = document.getElementById("hiddenDeleteId");
 	
@@ -74,7 +74,7 @@ function setId(id) {
 		input.value = "";
 	}
 }
-//-->
+
 </script>
 <?php
 pageTopHeadClose($title);

@@ -43,13 +43,13 @@ $unAccredited = SeasonUnaccredited($season);
 pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
-<!--
+
 function setId(id, name) 
 	{
 	var input = document.getElementById(name);
 	input.value = id;
 	}
-//-->
+
 </script>
 <?php
 pageTopHeadClose($title);

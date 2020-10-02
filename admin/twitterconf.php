@@ -32,14 +32,14 @@ if(!empty($_POST['register']) && isSuperAdmin()){
 pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
-<!--
+
 function setId(id1,id2) {
 	var input1 = document.getElementById("id");
 	input1.value = id1;	
 	var input2 = document.getElementById("purpose");
 	input2.value = id2;
 }
-//-->
+
 </script>
 <?php
 pageTopHeadClose($title);
