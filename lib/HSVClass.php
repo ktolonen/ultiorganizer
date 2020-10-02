@@ -81,7 +81,7 @@
      * 
      */
      
-     function HSVClass ($arg_hue=0, $arg_saturation=0, $arg_brightness=0) {
+     function __construct($arg_hue=0, $arg_saturation=0, $arg_brightness=0) {
         $this->m_hue=$arg_hue;
         $this->m_saturation=$arg_saturation;
         $this->m_brightness=$arg_brightness;
