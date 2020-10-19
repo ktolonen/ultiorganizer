@@ -34,21 +34,21 @@ if(!empty($_POST['sql']) || !empty($_GET['sql']))
 		$i=0;
 		while ($i < mysqli_num_fields($result)) 
 			{
-			$meta = mysqli_fetch_field($result, $i);
+			$meta = mysqli_fetch_field($result);
 			$arraycolumnsname[$i] = $meta->name;
 			$arraycolumnstype[$i] = $meta->type;
 
 			$arraycolumnstable[$i] = $meta->table;
 			$arraycolumnsdefault[$i] = $meta->def;
 			$arraycolumnsmaxlength[$i] = $meta->max_length;
-			$arraycolumnsnotnull[$i] = $meta->not_null;
-			$arraycolumnsprimarykey[$i] = $meta->primary_key;
-			$arraycolumnsmultiplekey[$i] = $meta->multiple_key;
-			$arraycolumnsuniquekey[$i] = $meta->unique_key;
-			$arraycolumnsnumeric[$i] = $meta->numeric;
-			$arraycolumnsblob[$i] = $meta->blob;
-			$arraycolumnsunsigned[$i] = $meta->unsigned;
-			$arraycolumnszerofill[$i] = $meta->zerofill;
+			$arraycolumnsnotnull[$i] = $meta->flags & 1;
+			$arraycolumnsprimarykey[$i] = $meta->flags & 2;
+			$arraycolumnsmultiplekey[$i] = $meta->flags & 8;
+			$arraycolumnsuniquekey[$i] = $meta->flags & 4;
+			$arraycolumnsnumeric[$i] = $meta->flags & 128;
+			$arraycolumnsblob[$i] = $meta->flags & 16;
+			$arraycolumnsunsigned[$i] = $meta->flags & 32;
+			$arraycolumnszerofill[$i] = $meta->flags & 64;
 
 			$i++;
 			}

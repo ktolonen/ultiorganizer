@@ -57,8 +57,8 @@ $rankedteams  = SeriesRanking($seriesinfo['series_id']);
 $rank = 0;
 foreach($rankedteams as $rteam) {
   $rank++;
-  foreach ($allteams as &$ateam) {
-    if ($ateam['team_id'] == $rteam['team_id'])
+  foreach ($allteams as $ateam) {
+    if (isset($rteam['team_id']) && $ateam['team_id'] == $rteam['team_id'])
       $ateam['ranking'] = $rank;
   }
 }

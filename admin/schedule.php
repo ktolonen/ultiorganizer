@@ -141,7 +141,7 @@ ul.timelist li {
 }
 </style>
 <script type="text/javascript">
-<!--
+
 var with_ctrl_key=false;
 var with_shift_key = false;
 
