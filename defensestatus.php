@@ -86,7 +86,7 @@ if($teamId){
   $defenses = SeriesDefenseBoard($seriesId, $sort, 0);
 }
 $i=1;
-while($row = mysql_fetch_assoc($defenses))
+while($row = mysqli_fetch_assoc($defenses))
 {
   $html .= "<tr>";
   $html .= "<td>".$i++."</td>";

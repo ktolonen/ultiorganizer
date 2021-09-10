@@ -57,8 +57,8 @@ $rankedteams  = SeriesRanking($seriesinfo['series_id']);
 $rank = 0;
 foreach($rankedteams as $rteam) {
   $rank++;
-  foreach ($allteams as &$ateam) {
-    if ($ateam['team_id'] == $rteam['team_id'])
+  foreach ($allteams as $ateam) {
+    if (isset($rteam['team_id']) && $ateam['team_id'] == $rteam['team_id'])
       $ateam['ranking'] = $rank;
   }
 }
@@ -73,13 +73,13 @@ $html .= "<table border='1' style='width:100%'>\n";
 $html .= "<tr>";
 
 if($sort == "ranking") {
-  mergesort($allteams, create_function('$a,$b','$va=$a[\''.$sort.'\']; $vb=$b[\''.$sort.'\'];
-    return $va==$vb?0:($va==null?1:($vb=null?-1:($a[\''.$sort.'\']<$b[\''.$sort.'\']?-1:1)));'));
+  mergesort($allteams, function($a,$b) use ($sort) {$va=$a[$sort]; $vb=$b[$sort];
+    return $va==$vb?0:($va==null?1:($vb=null?-1:($a[$sort]<$b[$sort]?-1:1)));});
   
 } else if($sort == "name" || $sort == "pool" || $sort == "against" || $sort == "seed") {
-  mergesort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']<$b[\''.$sort.'\']?-1:1);'));
+  mergesort($allteams, function($a,$b) use ($sort){return $a[$sort]==$b[$sort]?0:($a[$sort]<$b[$sort]?-1:1);});
 }else{
-  mergesort($allteams, create_function('$a,$b','return $a[\''.$sort.'\']==$b[\''.$sort.'\']?0:($a[\''.$sort.'\']>$b[\''.$sort.'\']?-1:1);'));
+  mergesort($allteams, function($a,$b)use($sort){return $a[$sort]==$b[$sort]?0:($a[$sort]>$b[$sort]?-1:1);});
 }
 
 if($sort == "name") {
@@ -251,7 +251,7 @@ $html .= "<tr><th style='width:200px'>"._("Player")."</th><th style='width:200px
 <th class='center'>"._("Assists")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Tot.")."</th></tr>\n";
 
 $scores = SeriesScoreBoard($seriesinfo['series_id'],"total", 10);
-while($row = mysql_fetch_assoc($scores)){
+while($row = mysqli_fetch_assoc($scores)){
   $html .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
   $html .= "<td>".utf8entities($row['teamname'])."</td>";
   $html .= "<td class='center'>".intval($row['games'])."</td>";
@@ -272,7 +272,7 @@ if(ShowDefenseStats()) {
 
 
   $defenses = SeriesDefenseBoard($seriesinfo['series_id'],"deftotal", 10);
-  while($row = mysql_fetch_assoc($defenses)) {
+  while($row = mysqli_fetch_assoc($defenses)) {
     $html .= "<tr><td>". utf8entities($row['firstname']." ".$row['lastname'])."</td>";
     $html .= "<td>".utf8entities($row['teamname'])."</td>";
     $html .= "<td>". _("Games") . "</td>";

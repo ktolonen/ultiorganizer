@@ -27,30 +27,28 @@ if(!empty($_POST['sql']) || !empty($_GET['sql']))
 	$isDelete = (strpos(strtolower($query), "delete") === 0);
 	$arraycolumnsname = array();
 	if(isSuperAdmin()){
-		$result = mysql_query($query);
+		$result = DBQuery($query);
 		}
-
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
 
 	if ($isSelect || $isShow){
 		$i=0;
-		while ($i < mysql_num_fields($result)) 
+		while ($i < mysqli_num_fields($result)) 
 			{
-			$meta = mysql_fetch_field($result, $i);
+			$meta = mysqli_fetch_field($result);
 			$arraycolumnsname[$i] = $meta->name;
 			$arraycolumnstype[$i] = $meta->type;
 
 			$arraycolumnstable[$i] = $meta->table;
 			$arraycolumnsdefault[$i] = $meta->def;
 			$arraycolumnsmaxlength[$i] = $meta->max_length;
-			$arraycolumnsnotnull[$i] = $meta->not_null;
-			$arraycolumnsprimarykey[$i] = $meta->primary_key;
-			$arraycolumnsmultiplekey[$i] = $meta->multiple_key;
-			$arraycolumnsuniquekey[$i] = $meta->unique_key;
-			$arraycolumnsnumeric[$i] = $meta->numeric;
-			$arraycolumnsblob[$i] = $meta->blob;
-			$arraycolumnsunsigned[$i] = $meta->unsigned;
-			$arraycolumnszerofill[$i] = $meta->zerofill;
+			$arraycolumnsnotnull[$i] = $meta->flags & 1;
+			$arraycolumnsprimarykey[$i] = $meta->flags & 2;
+			$arraycolumnsmultiplekey[$i] = $meta->flags & 8;
+			$arraycolumnsuniquekey[$i] = $meta->flags & 4;
+			$arraycolumnsnumeric[$i] = $meta->flags & 128;
+			$arraycolumnsblob[$i] = $meta->flags & 16;
+			$arraycolumnsunsigned[$i] = $meta->flags & 32;
+			$arraycolumnszerofill[$i] = $meta->flags & 64;
 
 			$i++;
 			}
@@ -99,12 +97,12 @@ $html .= "<form method='post' action='?view=admin/executesql'>";
 	  $html .= "</tr>\n";
 	  // Print contents of the query
 	  if ($isSelect || $isShow){
-		  while ($row = mysql_fetch_assoc($result))
+		  while ($row = mysqli_fetch_assoc($result))
 				{
 				$html .= "<tr>";
 				foreach ($arraycolumnsname as $i => $columnname)
 					{
-					if(mysql_field_type($result,$i)!='blob'){
+					if(mysqli_fetch_field_direct($result,$i)->type!='blob'){
 						$html .= "<td  class='dbrow'>" . utf8entities($row[$columnname]) . "</td>";
 					}else{
 						$html .= "<td  class='dbrow'>BINARY</td>";

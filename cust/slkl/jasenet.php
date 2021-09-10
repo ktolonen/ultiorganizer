@@ -29,9 +29,8 @@ OpenConnection();
 if (hasEditPlayersRight($teamId)) {
 	
 $query = sprintf("SELECT accreditation_id, firstname, lastname, membership, license, birthdate FROM uo_license WHERE firstname like '%%%s%%' and lastname like '%%%s%%'",
-					mysql_real_escape_string($firstname), mysql_real_escape_string($lastname));
-$result = mysql_query($query);
-if (!$result) { die('Invalid query: ' . mysql_error()); }
+					DBEscapeString($firstname), DBEscapeString($lastname));
+$result = DBQuery($query);
 
 // for php 5 onwards
 if (version_compare(PHP_VERSION, '5.0.0', '>')) {
@@ -39,7 +38,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 	$node = $dom->createElement("MemberSet");
 	$parnode = $dom->appendChild($node);
 
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = mysqli_fetch_assoc($result)) {
 	  $node = $dom->createElement("Member");
 	  $newNode = $parnode->appendChild($node);
 	  
@@ -81,7 +80,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 	$node = $dom->create_element("MemberSet");
 	$parnode = $dom->append_child($node);
 
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = mysqli_fetch_assoc($result)) {
 	  $node = $dom->create_element("Member");
 	  $newNode = $parnode->append_child($node);
 	  
@@ -122,7 +121,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 	echo "<MemberSet>\n";
 
 	// Iterate through the rows, adding XML nodes for each
-	while ($row = mysql_fetch_assoc($result)){
+	while ($row = mysqli_fetch_assoc($result)){
 		echo "<Member>\n";
 		echo "<memberId>". $row['accreditation_id'] ."</memberId>\n";
 		echo "<Firstname>". $row['firstname'] ."</Firstname>\n";

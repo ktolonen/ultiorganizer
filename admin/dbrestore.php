@@ -25,7 +25,7 @@ if (isset($_POST['restore']) && isSuperAdmin()){
  
 			$templine .= $line;
 			if (substr(trim($line), -1, 1) == ';'){
-				mysql_query($templine) or $html .= "<p>".$templine.": ". mysql_error() ."</p>";
+				DBQuery($templine);
 				$templine = '';
 			}
 		}

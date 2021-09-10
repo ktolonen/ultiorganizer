@@ -34,7 +34,7 @@ $countryId = iget("country");
 $prevdivision = "";
 $allpools = CountryPools($season, $countryId);
 
-while($pool = mysql_fetch_assoc($allpools)){
+foreach($allpools as $pool){
 	$poolinfo = PoolInfo($pool['pool_id']);
 	if($poolinfo['seriesname'] != $prevdivision){
 		echo "<h1 class='pk_h1'>".utf8entities($poolinfo['seriesname'])."</h1>";
@@ -90,7 +90,7 @@ while($pool = mysql_fetch_assoc($allpools)){
 		}
 	}
 	$games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
-		while($game = mysql_fetch_assoc($games)){
+		while($game = mysqli_fetch_assoc($games)){
 			if($game['homecountryid']==$countryId || $game['visitorcountryid']==$countryId){
 				echo "<tr>";
 				echo "<td style='width:35%;border:none' class='pk_ser_td1'>". utf8entities($game['hometeamname']) ."</td>\n";
@@ -177,7 +177,7 @@ while($pool = mysql_fetch_assoc($allpools)){
 				if($realteam['team_id']){
 					$gamesleft = TeamPoolGamesLeft($realteam['team_id'], $movefrom['frompool']);
 
-					if(mysql_num_rows($gamesleft)==0){
+					if(mysqli_num_rows($gamesleft)==0){
 						$name="";
 						if(intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])){
 							$name .= "<img height='10' src='../images/flags/tiny/".$realteam['flagfile']."' alt=''/> ";
@@ -224,7 +224,7 @@ while($pool = mysql_fetch_assoc($allpools)){
 		$team = PoolTeamFromStandings($pool['pool_id'],$i);
 		$gamesleft = TeamPoolGamesLeft($team['team_id'], $pool['pool_id']);
 
-		if(mysql_num_rows($gamesleft)==0){
+		if(mysqli_num_rows($gamesleft)==0){
 			$placementname = "";
 			if(intval($seasoninfo['isinternational']) && !empty($team['flagfile'])){
 				$placementname .= "<img height='10' src='../images/flags/tiny/".$team['flagfile']."' alt=''/> ";

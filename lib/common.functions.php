@@ -688,13 +688,13 @@ function ResultsetToCsv($result, $separator){
     $csv_enclosed = '"';
     $csv_escaped = "\\";
 	
-    $fields_cnt = mysql_num_fields($result);
+    $fields_cnt = mysqli_num_fields($result);
  
      $schema_insert = '';
  
     for ($i = 0; $i < $fields_cnt; $i++){
         $l = $csv_enclosed . str_replace($csv_enclosed, $csv_escaped . $csv_enclosed,
-            stripslashes(mysql_field_name($result, $i))) . $csv_enclosed;
+            stripslashes(mysqli_fetch_field_direct($result, $i)->name)) . $csv_enclosed;
         $schema_insert .= $l;
         $schema_insert .= $csv_separator;
     } // end for
@@ -703,7 +703,7 @@ function ResultsetToCsv($result, $separator){
     $out .= $csv_terminated;
  
     // Format the data
-    while ($row = mysql_fetch_array($result)){
+    while ($row = mysqli_fetch_array($result)){
         $schema_insert = '';
         for ($j = 0; $j < $fields_cnt; $j++){
             if ($row[$j] == '0' || $row[$j] != ''){
@@ -945,7 +945,7 @@ function _handleLiteral($operator, $type, $value) {
 	}
 	if ($operator == "IN") {
 		if ($type == "int") {
-			return "(".mysql_real_escape_string($value).")";
+			return "(".DBEscapeString($value).")";
 		} else {
 			// split a string at unescaped comma
 			// where backslash is the escape character
@@ -956,7 +956,7 @@ function _handleLiteral($operator, $type, $value) {
 			// $aPieces now contains the exploded string
 			// and unescaping can be safely done on each piece
 			foreach ($aPieces as $idx=>$piece) {
-				$aPieces[$idx] = mysql_real_escape_string(preg_replace("/\\\\(.)/s", "$1", $piece));
+				$aPieces[$idx] = DBEscapeString(preg_replace("/\\\\(.)/s", "$1", $piece));
 			}
 			return "('".implode("', '",$aPieces)."')";
 		}	
@@ -987,7 +987,7 @@ function _handleLiteral($operator, $type, $value) {
 	} else if ($type == "int") {
 		 return intval($value);
 	} else {
-		 return "'".mysql_real_escape_string($value)."'";
+		 return "'".DBEscapeString($value)."'";
 	}
 }
 
@@ -1100,11 +1100,11 @@ function GetTableColumns($table) {
 	}
 	$ret = array();
 	$result = DBQuery(sprintf("SELECT * FROM %s WHERE 1=0", 
-		mysql_real_escape_string($table)));
-	$fields = mysql_num_fields($result);
+		DBEscapeString($table)));
+	$fields = mysqli_num_fields($result);
 	for ($i=0; $i < $fields; $i++) {
-	    $name  = strtolower(mysql_field_name($result, $i));
-		$ret[$name] = mysql_field_type($result, $i);
+	    $name  = strtolower(mysqli_fetch_field_direct($result, $i)->name);
+		$ret[$name] = mysqli_fetch_field_direct($result, $i)->name;
 	}
 	return $ret;
 }
@@ -1266,7 +1266,7 @@ function someHTML($string) {
 function CommentRaw($type, $id) {
   $query = sprintf("SELECT comment FROM uo_comment
 		WHERE type='%d' AND id='%s'",
-      (int) $type, mysql_real_escape_string($id));
+      (int) $type, DBEscapeString($id));
   $comment = DBQueryToValue($query);
   if ($comment != -1)
     return $comment;
@@ -1301,16 +1301,16 @@ function SetComment($type, $id, $comment) {
   if (empty($comment))
     $query = sprintf("DELETE FROM uo_comment WHERE type='%d' AND id='%s'", 
         (int) $type, 
-        mysql_real_escape_string($id));
+        DBEscapeString($id));
   else {
     $query = sprintf(
         "INSERT INTO uo_comment
   				(type, id, comment) 
   				VALUES	(%d,'%s','%s') ON DUPLICATE KEY UPDATE comment='%s'", 
         (int) $type, 
-        mysql_real_escape_string($id), 
-        mysql_real_escape_string($comment), 
-        mysql_real_escape_string($comment));
+        DBEscapeString($id), 
+        DBEscapeString($comment), 
+        DBEscapeString($comment));
   }
   return DBQuery($query);
 }

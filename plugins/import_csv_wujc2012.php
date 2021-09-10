@@ -109,7 +109,7 @@ if (isset($_POST['import'])) {
                 //echo "<p>$country, $last, $first, $series, $gender, $jersey</p>";
 				
 					$players = TeamPlayerList($teamId);
-					while($player = mysql_fetch_assoc($players)){
+					while($player = mysqli_fetch_assoc($players)){
 						//echo $player['firstname']."==$first && ".$player['lastname']."==$last &&". $player['num']."==$jersey";
 						if($player['firstname']==$first && $player['lastname']==$last && intval($player['num'])==intval($jersey)){
 							$playerId=$player['player_id'];
@@ -131,7 +131,7 @@ if (isset($_POST['import'])) {
 								LEFT JOIN uo_player_profile AS pp ON (p1.accreditation_id=pp.accreditation_id)
 								WHERE p1.accreditation_id > 0 AND UPPER(p1.firstname) like '%%%s%%' and UPPER(p1.lastname) like '%%%s%%'
 								GROUP BY p1.accreditation_id",
-								mysql_real_escape_string(strtoupper($first)), mysql_real_escape_string(strtoupper($last)));
+								DBEscapeString(strtoupper($first)), DBEscapeString(strtoupper($last)));
 						$players = DBQueryToArray($query);
 						if(count($players)==0){
 							SetPlayer($playerId, $jersey, $first, $last, $playerId,$playerId);
@@ -190,7 +190,7 @@ $html .= "<p>".("Select event").": <select class='dropdown' name='season'>\n";
 
 $seasons = Seasons();
 		
-while($row = mysql_fetch_assoc($seasons)){
+while($row = mysqli_fetch_assoc($seasons)){
 	$html .= "<option class='dropdown' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
 }
 

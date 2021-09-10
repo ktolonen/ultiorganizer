@@ -10,7 +10,7 @@ $seasoninfo = SeasonInfo(GameSeason($gameId));
 $game_result = GameResult($gameId);
 $result = GameGoals($gameId);
 $scores = array();
-while ($row = mysql_fetch_assoc($result)) {
+while ($row = mysqli_fetch_assoc($result)) {
   $scores[] = $row;
 }
 $uo_goal = array(

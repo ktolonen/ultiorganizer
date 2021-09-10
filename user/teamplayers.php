@@ -173,7 +173,7 @@ echo "</tr>\n";
 
 $team_players = TeamPlayerList($teamId);
 
-if (mysql_num_rows($team_players)==0 && (hasAccredidationRight($teamId) || hasEditPlayersRight($teamId))) {
+if (mysqli_num_rows($team_players)==0 && (hasAccredidationRight($teamId) || hasEditPlayersRight($teamId))) {
   $teams = TeamGetTeamsByName($teaminfo['name']);
   if(count($teams)){
     echo "<p>". _("Copy team roster from:")." ";
@@ -190,7 +190,7 @@ if (mysql_num_rows($team_players)==0 && (hasAccredidationRight($teamId) || hasEd
   }  
 }
 
-while($player = mysql_fetch_assoc($team_players)){
+while($player = mysqli_fetch_assoc($team_players)){
   $playerInfo = PlayerInfo($player['player_id']);
 
   echo "<tr>";

@@ -120,12 +120,12 @@ if(count($urls)){
 $html .= "</table>";
 
 $teams = ClubTeams($clubId, CurrentSeason());
-if(mysql_num_rows($teams)){
+if($teams){
   $html .= "<h2>".U_(CurrentSeasonName()).":</h2>\n";
   $html .= "<table style='white-space: nowrap;' border='0' cellspacing='0' cellpadding='2' width='90%'>\n";
   $html .= "<tr><th>"._("Team")."</th><th>"._("Division")."</th><th colspan='3'></th></tr>\n";
 
-  while($team = mysql_fetch_assoc($teams)){
+  foreach($teams as $team){
     $html .= "<tr>\n";
     $html .= "<td style='width:30%'><a href='?view=teamcard&amp;team=".$team['team_id']."'>".utf8entities($team['name'])."</a></td>";
     $html .=  "<td  style='width:30%'><a href='?view=poolstatus&amp;series=". $team['series_id'] ."'>".utf8entities(U_($team['seriesname']))."</a></td>";
@@ -142,12 +142,12 @@ if(mysql_num_rows($teams)){
 }
 
 $teams = ClubTeamsHistory($clubId);
-if(mysql_num_rows($teams)){
+if($teams){
   $html .= "<h2>"._("History").":</h2>\n";
   $html .= "<table style='white-space: nowrap;' border='0' cellspacing='0' cellpadding='2' width='90%'>\n";
   $html .= "<tr><th>"._("Event")."</th><th>"._("Team")."</th><th>"._("Division")."</th><th colspan='3'></th></tr>\n";
 
-  while($team = mysql_fetch_assoc($teams)){
+  foreach($teams as $team){
     $html .= "<tr>\n";
     $html .= "<td style='width:20%'>".utf8entities(U_(SeasonName($team['season'])))."</td>";
     $html .= "<td style='width:30%'><a href='?view=teamcard&amp;team=".$team['team_id']."'>".utf8entities($team['name'])."</a></td>";

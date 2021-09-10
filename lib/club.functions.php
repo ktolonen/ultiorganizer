@@ -3,14 +3,8 @@
 function ClubName($clubId)
 	{
 	$query = sprintf("SELECT name FROM uo_club WHERE club_id='%s'",
-		mysql_real_escape_string($clubId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	$row = mysql_fetch_assoc($result);
-	$name = $row["name"]; 
-	mysql_free_result($result);
-	
-	return $name;
+		DBEscapeString($clubId));
+	return DBQueryToValue($query);
 	}
 
 function ClubInfo($clubId)
@@ -21,12 +15,9 @@ function ClubInfo($clubId)
 		FROM uo_club club 
 		LEFT JOIN uo_country c ON(club.country=c.country_id)
 		WHERE club.club_id = '%s'",
-		mysql_real_escape_string($clubId));
+		DBEscapeString($clubId));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return  mysql_fetch_assoc($result);
+	return  DBQueryToRow($query);
 	}
 
 function ClubList($onlyvalid=false, $namefilter=""){
@@ -51,15 +42,13 @@ function ClubList($onlyvalid=false, $namefilter=""){
 		if($namefilter=="#"){
 			$query .= "UPPER(club.name) REGEXP '^[0-9]'";
 		}else{
-			$query .= "UPPER(club.name) LIKE '". mysql_real_escape_string($namefilter)."%'";
+			$query .= "UPPER(club.name) LIKE '". DBEscapeString($namefilter)."%'";
 		}
 	}
 		
 	$query .= " ORDER BY club.valid DESC, club.name ASC";	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	return  $result;
+
+	return  DBQueryToArray($query);
 	}
 
 
@@ -67,8 +56,8 @@ function SetClubName($clubId, $name) {
 	if (isSuperAdmin()) {
 		$query = sprintf("
 			UPDATE uo_club SET name='%s' WHERE club_id='%s'",
-			mysql_real_escape_string($name),
-			mysql_real_escape_string($clubId));
+			DBEscapeString($name),
+			DBEscapeString($clubId));
 			
 		return DBQuery($query);
 	} else { die('Insufficient rights to edit team'); }
@@ -80,12 +69,10 @@ function ClubTeams($clubId, $season="")
 		LEFT JOIN uo_team team ON(team.club = club.club_id)
 		LEFT JOIN uo_series ser ON(team.series = ser.series_id)
 		WHERE team.club='%s' AND ser.season='%s' ORDER BY ser.ordering, team.name",
-		mysql_real_escape_string($clubId),
-		mysql_real_escape_string($season));
+		DBEscapeString($clubId),
+		DBEscapeString($season));
 
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	return $result;
+	return DBQueryToArray($query);
 	}
 
 function ClubTeamsHistory($clubId){
@@ -95,11 +82,10 @@ function ClubTeamsHistory($clubId){
 			LEFT JOIN uo_series ser ON(team.series = ser.series_id)
 			LEFT JOIN uo_season s ON(s.season_id = ser.season)
 			WHERE team.club='%s' AND ser.season!='%s' ORDER BY ser.type, s.starttime DESC, team.name",
-			mysql_real_escape_string($clubId),
-			mysql_real_escape_string($curseason));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	return $result;
+			DBEscapeString($clubId),
+			DBEscapeString($curseason));
+
+	return DBQueryToArray($query);
 	}
 	
 function ClubNumOfTeams($clubId)
@@ -107,50 +93,31 @@ function ClubNumOfTeams($clubId)
 	$query = sprintf("SELECT count(team.team_id) FROM uo_club club
 		LEFT JOIN uo_team team ON(team.club = club.club_id)
 		WHERE club.club_id='%s'",
-		mysql_real_escape_string($clubId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-	if(!mysql_num_rows($result))
-		return 0;
-		
-	$row = mysql_fetch_row($result);
-	return $row[0];
+		DBEscapeString($clubId));
+	return DBQueryToValue($query);
 	}
 	
 function ClubId($name)
 	{
 	$query = sprintf("SELECT club_id FROM uo_club WHERE lower(name) LIKE lower('%s')",
-						mysql_real_escape_string($name));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-
-	if(!mysql_num_rows($result))
-		return -1;
-		
-	$row = mysql_fetch_row($result);
-	return $row[0];
+						DBEscapeString($name));
+	return DBQueryToValue($query);
 	}
 
 function RemoveClub($clubId) {
 	if (CanDeleteClub($clubId) && isSuperAdmin()) {
 		Log2("club","delete",ClubName($clubId));
 		$query = sprintf("DELETE FROM uo_club WHERE club_id='%s'",
-			mysql_real_escape_string($clubId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		
-		return $result;
+			DBEscapeString($clubId));
+		return DBQuery($query);
 	} else { die('Insufficient rights to remove player'); }
 }
 
 function AddClub($seriesId, $name) {
 	if (hasEditTeamsRight($seriesId)) {
 		$query = sprintf("INSERT INTO uo_club (name) VALUES ('%s')",
-			mysql_real_escape_string($name));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-		$clubId = mysql_insert_id();
+			DBEscapeString($name));
+		$clubId = DBQueryInsert($query);
 		Log1("club","add",$clubId);
 		return $clubId;
 	} else { die('Insufficient rights to add club'); }	
@@ -158,11 +125,9 @@ function AddClub($seriesId, $name) {
 
 function CanDeleteClub($clubId) {
 	$query = sprintf("SELECT count(*) FROM uo_team WHERE club='%s'",
-		mysql_real_escape_string($clubId));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if (!$row = mysql_fetch_row($result)) return false;
-	return ($row[0] == 0);
+		DBEscapeString($clubId));
+	$count = DBQueryToValue($query);
+	return ($count == 0);
 }
 
 function SetClubProfile($teamId,$profile) {
@@ -172,19 +137,17 @@ function SetClubProfile($teamId,$profile) {
 		$query = sprintf("UPDATE uo_club SET name='%s', contacts='%s', 
 				country='%s', city='%s', founded='%s', story='%s',
 				achievements='%s', valid=%d WHERE club_id='%s'",
-				mysql_real_escape_string($profile['name']),
-				mysql_real_escape_string($profile['contacts']),
-				mysql_real_escape_string($profile['country']),
-				mysql_real_escape_string($profile['city']),
-				mysql_real_escape_string($profile['founded']),
-				mysql_real_escape_string($profile['story']),
-				mysql_real_escape_string($profile['achievements']),
+				DBEscapeString($profile['name']),
+				DBEscapeString($profile['contacts']),
+				DBEscapeString($profile['country']),
+				DBEscapeString($profile['city']),
+				DBEscapeString($profile['founded']),
+				DBEscapeString($profile['story']),
+				DBEscapeString($profile['achievements']),
 				(int)$profile['valid'],
-				mysql_real_escape_string($profile['club_id']));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+				DBEscapeString($profile['club_id']));
 		
-		return $result;
+		return DBQuery($query);
 	} else { die('Insufficient rights to edit club profile'); }	
 }
 
@@ -235,8 +198,8 @@ function SetClubProfileImage($teamId, $clubId, $filename) {
 	if (isSuperAdmin() || (hasEditPlayersRight($teamId) && $teaminfo['club']==$clubId)) {
 		
 		$query = sprintf("UPDATE uo_club SET profile_image='%s' WHERE club_id='%s'",
-					mysql_real_escape_string($filename),
-					mysql_real_escape_string($clubId));
+					DBEscapeString($filename),
+					DBEscapeString($clubId));
 					
 			DBQuery($query);
 		
@@ -265,7 +228,7 @@ function RemoveClubProfileImage($teamId, $clubId) {
 			}
 	
 			$query = sprintf("UPDATE uo_club SET profile_image=NULL WHERE club_id='%s'",
-					mysql_real_escape_string($clubId));
+					DBEscapeString($clubId));
 					
 			DBQuery($query);
 		}
@@ -276,11 +239,9 @@ function SetClubValidity($clubId, $valid){
 	if (isSuperAdmin()){	
 		$query = sprintf("UPDATE uo_club SET valid=%d WHERE club_id='%s'",
 				(int)($valid),
-				mysql_real_escape_string($clubId));
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
-	
-		return  $result;
+				DBEscapeString($clubId));
+
+		return DBQuery($query);
 	} else { die('Insufficient rights to set club validity'); }	
 }
 
@@ -291,9 +252,9 @@ function AddClubProfileUrl($teamId, $clubId, $type, $url, $name) {
 		$query = sprintf("INSERT INTO uo_urls (owner,owner_id,type,name,url)
 				VALUES('club',%d,'%s','%s','%s')",
 			(int)$clubId,
-			mysql_real_escape_string($type),
-			mysql_real_escape_string($name),
-			mysql_real_escape_string($url));
+			DBEscapeString($type),
+			DBEscapeString($name),
+			DBEscapeString($url));
 		return DBQuery($query);
 	} else { die('Insufficient rights to add url'); }	
 }

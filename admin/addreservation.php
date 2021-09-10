@@ -94,7 +94,6 @@ echo yuiLoad(array("utilities", "datasource", "autocomplete", "calendar"));
 	href="script/yui/calendar/calendar.css" />
 
 <script type="text/javascript">
-<!--
 
 YAHOO.namespace("calendar");
 
@@ -140,7 +139,6 @@ YAHOO.calendar.init = function() {
 	YAHOO.calendar.cal1.selectEvent.subscribe(handleSelect1, YAHOO.calendar.cal1, true);
 }
 YAHOO.util.Event.onDOMReady(YAHOO.calendar.init);
-//-->
 </script>
 
 <?php
@@ -217,7 +215,7 @@ if(isSuperAdmin()){
   $html .= "<option class='dropdown' value=''></option>";
   $seasons = Seasons();
 
-  while($row = mysql_fetch_assoc($seasons)){
+  while($row = mysqli_fetch_assoc($seasons)){
     if($res['season'] == $row['season_id'] || $season == $row['season_id']){
       $html .= "<option class='dropdown' selected='selected' value='".utf8entities($row['season_id'])."'>". utf8entities($row['name']) ."</option>";
     }else{

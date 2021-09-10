@@ -24,7 +24,6 @@ include_once 'lib/yui.functions.php';
 echo yuiLoad(array("utilities", "slider", "colorpicker", "datasource", "autocomplete"));
 ?>
 <script type="text/javascript">
-<!--
 function setId(id1,id2) 
 	{
 	var input = document.getElementById("hiddenDeleteId");
@@ -73,7 +72,6 @@ function checkMove2(frompool, infield, pteamname)
 	}
 	pteamname.value = frompool[frompool.selectedIndex].innerHTML + " " + input.value;
 	}	
-//-->
 </script>
 <?php
 pageTopHeadClose($title);
@@ -258,7 +256,7 @@ if($poolinfo['type']==1 || $poolinfo['type']==3){
 		<th>"._("Delete")."</th>
 		</tr>";
 
-  mergesort($moves, create_function('$a,$b','return $a[\'torank\']==$b[\'torank\']?0:($a[\'torank\']<$b[\'torank\']?-1:1);'));
+  mergesort($moves, function($a,$b){return $a['torank']==$b['torank']?0:($a['torank']<$b['torank']?-1:1);});
   for($i=0;$i<count($moves);$i++){
     $move = $moves[$i];
     echo "<tr>";

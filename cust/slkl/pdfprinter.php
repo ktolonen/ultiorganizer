@@ -332,7 +332,7 @@ class PDF extends FPDF
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while($game = mysql_fetch_assoc($games)){
+		while($game = mysqli_fetch_assoc($games)){
 			
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) {
 				$txt = utf8_decode(U_($game['reservationgroup']));
@@ -413,7 +413,7 @@ class PDF extends FPDF
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while($game = mysql_fetch_assoc($games)){
+		while($game = mysqli_fetch_assoc($games)){
 			
 			//one reservation group per page
 			if((!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) 
@@ -597,7 +597,7 @@ class PDF extends FPDF
 		$this->SetFillColor(255);
 		
 		if($field){
-			$txt = utf8_decode(U_($info['fieldname']));
+			$txt = utf8_decode(U_($game['fieldname']));
 			$this->Cell(20,5,$txt,'TB',0,'L',true);
 		}
 		
@@ -688,10 +688,11 @@ class PDF extends FPDF
 	
 	function PrintSeriesPools($id) {
 		
+		$left_margin = 10;
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0);
-		$this->Cell(0,9,$title,1,1,'C',true);
+		$this->Cell(0,9,"",1,1,'C',true);
 		
 		if($this->GetY()+97 > 297){
 			$this->AddPage();

@@ -327,7 +327,7 @@ class YAHOO_util_Loader {
     * @param {array} modules A list of custom modules
     * @param {boolean} noYUI Pass true if you do not want the YUI metadata
     */
-    function YAHOO_util_Loader($yuiVersion, $cacheKey=null, $modules=null, $noYUI=false) {
+    function __construct($yuiVersion, $cacheKey=null, $modules=null, $noYUI=false) {
         if (!isset($yuiVersion)) {
             die("Error: The first parameter of YAHOO_util_Loader must specify which version of YUI to use!");
         }
@@ -1104,7 +1104,7 @@ class YAHOO_util_Loader {
             // see if the replacement threshold has been met.
             $rollups = $this->rollupModules;
 
-            if (count($rollups > 0)) {
+            if (count($rollups) > 0) {
                 foreach ($rollups as $name => $rollup) {
                     if (!isset($reqs[$name]) && $this->checkThreshold($rollup, $reqs) ) {
                         $reqs[$name] = true;
@@ -1150,7 +1150,7 @@ class YAHOO_util_Loader {
         }
 
         // merge new order if we have globals   
-        if (count($top > 0)) {
+        if (count($top) > 0) {
             $notdone = array_merge($top, $notdone);
         }
 

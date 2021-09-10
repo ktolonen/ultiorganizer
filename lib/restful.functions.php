@@ -17,12 +17,11 @@ function PlayerInfod($playerId) {
 		LEFT JOIN uo_series ser ON (ser.series_id=t.series)
 		LEFT JOIN uo_player_profile pp ON (p.accreditation_id=pp.accreditation_id)
 		WHERE player_id='%s'",
-		mysql_real_escape_string($playerId));
+		DBEscapeString($playerId));
 		
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
 	
-	return mysql_fetch_assoc($result);
+	return mysqli_fetch_assoc($result);
 }
 	
 function Playersd($filter=null, $ordering=null) {
@@ -47,14 +46,14 @@ function PlayerprofileInfod($accreditation_id) {
 		FROM uo_player_profile pp 
 		LEFT JOIN uo_player p ON pp.accreditation_id=p.accreditation_id
 		WHERE pp.accreditation_id='%s'",
-		mysql_real_escape_string($accreditation_id));
+		DBEscapeString($accreditation_id));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
+
 	if (hasEditPlayerProfileRight($accreditation_id)) {
-		return mysql_fetch_assoc($result);
+		return mysqli_fetch_assoc($result);
 	} else {
-		$data = mysql_fetch_assoc($result);
+		$data = mysqli_fetch_assoc($result);
 		$publicfields = explode("|", $data['public']);
 		$ret = array();
 		$ret['firstname'] = $data['firstname'];

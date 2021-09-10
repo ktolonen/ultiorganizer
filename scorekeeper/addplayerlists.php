@@ -101,7 +101,7 @@ $html .= "<div class='ui-block-b'>\n";
 $html .= "<h3>"._("Jersey")."</h3>";
 $html .= "</div>";
 $i=0;
-while($player = mysql_fetch_assoc($playerlist))	{
+while($player = mysqli_fetch_assoc($playerlist))	{
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
   $number = PlayerNumber($player['player_id'], $gameId);

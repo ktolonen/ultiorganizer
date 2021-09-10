@@ -63,7 +63,7 @@ $timess=0;
 
 $timeouts = GameTimeouts($gameId);
 
-while($timeout = mysql_fetch_assoc($timeouts)){
+while($timeout = mysqli_fetch_assoc($timeouts)){
   if (intval($timeout['ishome'])){
     $html .= "<div class='ui-block-a'>\n";
 
@@ -136,7 +136,7 @@ $j=0;
 
 $timeouts = GameTimeouts($gameId);
 
-while($timeout = mysql_fetch_assoc($timeouts)){
+while($timeout = mysqli_fetch_assoc($timeouts)){
   if(!intval($timeout['ishome'])){
     $html .= "<div class='ui-block-a'>\n";
 

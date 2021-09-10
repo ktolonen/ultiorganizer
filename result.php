@@ -104,7 +104,7 @@ $html .= "</div>";
 echo $html;
 ?>
 <script type="text/javascript">
-<!--
+
 document.getElementById('game').setAttribute( "autocomplete","off" );
 document.getElementById('home').setAttribute( "autocomplete","off" );
 document.getElementById('away').setAttribute( "autocomplete","off" );
@@ -114,7 +114,7 @@ function validNumber(field)
 	{
 	field.value=field.value.replace(/[^0-9]/g, '');
 	}
-//-->
+
 </script>
 <?php
 pageEnd();

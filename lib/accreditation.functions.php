@@ -17,10 +17,10 @@ function SeasonUnaccredited($season) {
 		LEFT JOIN uo_pool pool ON (pp.pool=pool.pool_id)
 		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
 	WHERE played.accredited=0 AND ser.season='%s'", 
-	mysql_real_escape_string($season));
+	DBEscapeString($season));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
+	
 	return $result;
 }
 
@@ -29,8 +29,8 @@ function AccreditPlayer($playerId, $source) {
 	if (hasAccredidationRight($playerInfo['team'])) {
 		$query = sprintf("UPDATE uo_player SET accredited=1 WHERE player_id=%d",
 			(int)$playerId);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
+		
 		AccreditationLogEntry($playerId, $playerInfo['team'], $source, 1);
 		checkUserAdmin($playerInfo);
 		return $result;
@@ -47,32 +47,28 @@ function ExternalLicenseTypes() {
 
 function LicenseData($accreditation_id) {
 	return DBQueryToRow("SELECT membership, license, external_id, external_type, external_validity, ultimate 
-		FROM uo_license WHERE accreditation_id='".mysql_real_escape_string($accreditation_id)."'");
+		FROM uo_license WHERE accreditation_id='".DBEscapeString($accreditation_id)."'");
 }
 
 function checkUserAdmin($playerInfo) {
 	// Check for existing user for player
 	$query = sprintf("SELECT userid FROM uo_userproperties WHERE name='userrole' AND value='playeradmin:%s'",
-		mysql_real_escape_string($playerInfo['accreditation_id']));
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
-	if ($userid = mysql_fetch_row($result)) {
+		DBEscapeString($playerInfo['accreditation_id']));
+	$result = DBQueryToValue($query);
+	if ($result > 0) {
 		//Player already administered
 		return;
 	} else {
 		//Check for matching emails
 		if (validEmail($playerInfo['email'])) {
 			$query = sprintf("SELECT userid FROM uo_users  WHERE LOWER(email)='%s'",
-				mysql_real_escape_string(strtolower($playerInfo['email'])));
-			$result = mysql_query($query);
-			if (!$result) { die('Invalid query: ' . mysql_error()); }
-			if ($userId = mysql_fetch_row($result)) {
-				$id = $userId[0];
+				DBEscapeString(strtolower($playerInfo['email'])));
+			$id = DBQueryToValue($query);
+			if ($id > 0) {
 				$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', 'playeradmin:%s')", 
-					mysql_real_escape_string($id), 
-					mysql_real_escape_string($playerInfo['profile_id']) );
-				$result = mysql_query($query);
-				if (!$result) { die('Invalid query: ' . mysql_error()); }
+					DBEscapeString($id), 
+					DBEscapeString($playerInfo['profile_id']) );
+				$result = DBQuery($query);
 				return true;				
 			}
 		} else {
@@ -87,8 +83,7 @@ function DeAccreditPlayer($playerId, $source) {
 	if (hasAccredidationRight($playerInfo['team']) || hasEditPlayersRight($playerInfo['team'])) {
 		$query = sprintf("UPDATE uo_player SET accredited=0 WHERE player_id=%d",
 			(int)$playerId);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
 		AccreditationLogEntry($playerId, $playerInfo['team'], $source, 0);	
 		return $result;
 	} else { die('Insufficient rights to accredit player'); }
@@ -103,12 +98,12 @@ function AccreditationLogEntry($player, $team, $source, $value, $game = NULL) {
 	$query = sprintf("INSERT INTO uo_accreditationlog (player, team, userid, source, value, time, game) VALUES (%d, %d, '%s', '%s', %d, now(), %s)",
 		(int)$player, 
 		(int)$team, 
-		mysql_real_escape_string($_SESSION['uid']), 
-		mysql_real_escape_string($source), 
+		DBEscapeString($_SESSION['uid']), 
+		DBEscapeString($source), 
 		(int)$value,
 		$gameVal);
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	DBQuery($query);
+
 }
 
 function isAccredited($playerId) {
@@ -123,8 +118,8 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source) {
 		$query = sprintf("UPDATE uo_played SET acknowledged=1 WHERE player=%d AND game=%d",
 			(int)$playerId,
 			(int)$gameId);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
+
 		AccreditationLogEntry($playerId, $playerInfo['team'], $source, 1, $gameId);	
 		return $result;
 	} else { die('Insufficient rights to accredit player'); }
@@ -136,8 +131,8 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source) {
 		$query = sprintf("UPDATE uo_played SET acknowledged=0 WHERE player=%d AND game=%d",
 			(int)$playerId,
 			(int)$gameId);
-		$result = mysql_query($query);
-		if (!$result) { die('Invalid query: ' . mysql_error()); }
+		$result = DBQuery($query);
+
 		AccreditationLogEntry($playerId, $playerInfo['team'], $source, 0, $gameId);	
 		return $result;
 	} else { die('Insufficient rights to accredit player'); }
@@ -176,10 +171,10 @@ function SeasonAccreditationLog($season) {
 			LEFT JOIN uo_users user ON (log.userid=user.userid)
 		WHERE ser.season='%s'
 		ORDER BY log.time DESC", 
-	mysql_real_escape_string($season));
+	DBEscapeString($season));
 	
-	$result = mysql_query($query);
-	if (!$result) { die('Invalid query: ' . mysql_error()); }
+	$result = DBQuery($query);
+
 	return $result;
 	
 }

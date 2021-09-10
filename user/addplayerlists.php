@@ -215,7 +215,7 @@ $html .= "<tr><th class='home'>"._("Name")."</th><th class='home right' style='w
 $played_players = GamePlayers($gameId, $game_result['hometeam']);
 
 $i=0;
-while($player = mysql_fetch_assoc($home_playerlist)){
+while($player = mysqli_fetch_assoc($home_playerlist)){
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
   $html .= "<tr>";
@@ -243,7 +243,7 @@ while($player = mysql_fetch_assoc($home_playerlist)){
   $html .= "</tr>\n";
 }
 $html .= "<tr><td colspan='3'>";
-$html .= _("Total number of players:")." ". mysql_num_rows($home_playerlist);
+$html .= _("Total number of players:")." ". mysqli_num_rows($home_playerlist);
 $html .= "</td></tr>";
 
 $html .= "</table></div></td>\n<td style='width:10%'>&nbsp;</td><td valign='top' style='width:45%'>";
@@ -257,7 +257,7 @@ $html .= "<tr><th class='guest'>"._("Name")."</th><th class='guest right' style=
 $played_players = GamePlayers($gameId, $game_result['visitorteam']);
 
 $i=0;
-while($player = mysql_fetch_assoc($away_playerlist)){
+while($player = mysqli_fetch_assoc($away_playerlist)){
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
   $html .= "<tr>";
@@ -285,7 +285,7 @@ while($player = mysql_fetch_assoc($away_playerlist)){
   $html .= "</tr>\n";
 }
 $html .= "<tr><td colspan='3'>";
-$html .= _("Total number of players:")." ". mysql_num_rows($away_playerlist);
+$html .= _("Total number of players:")." ". mysqli_num_rows($away_playerlist);
 $html .= "</td></tr>";
 
 $html .= "</table></div></td></tr></table>\n";

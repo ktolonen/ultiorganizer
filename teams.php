@@ -170,7 +170,7 @@ if($list=="allteams" || $list=="byseeding"){
     $htmlteams = array();
     $teams  = SeriesRanking($ser['series_id']);
     foreach ($teams as $team){
-      if ($team) {
+      if (isset($team['team_id'])) {
         $htmltmp = "";
         if(intval($seasonInfo['isinternational'])){
           $htmltmp .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";

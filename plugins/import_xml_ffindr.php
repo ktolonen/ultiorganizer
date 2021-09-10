@@ -142,7 +142,7 @@ class XMLHandler{
         }elseif(is_int($val) || $val==-1){
           $row[$key]=(int)($val);
         }else{
-          $row[$key]=mysql_real_escape_string($val);
+          $row[$key]=DBEscapeString($val);
         }
       }
       switch($this->mode){
@@ -296,7 +296,7 @@ class XMLHandler{
 
       case "DIVISION":
         
-        $cond = "name='".mysql_real_escape_string($row['NAME'])."' AND season='".$this->eventId."'";
+        $cond = "name='".DBEscapeString($row['NAME'])."' AND season='".$this->eventId."'";
         $query = "SELECT * FROM uo_series WHERE ".$cond;
         $exist = DBQueryRowCount($query);
         
@@ -312,7 +312,7 @@ class XMLHandler{
         break;
 
       case "TEAM":
-        $cond = "name='".mysql_real_escape_string($row['NAME'])."' AND series='".$this->divisionId."'";
+        $cond = "name='".DBEscapeString($row['NAME'])."' AND series='".$this->divisionId."'";
         $query = "SELECT * FROM uo_team WHERE ".$cond;
         $exist = DBQueryRowCount($query);
         
@@ -324,20 +324,20 @@ class XMLHandler{
         $email=isset($row['EMAIL'])?$row['EMAIL']:"";
         if(!empty($email)){
           $query = sprintf("SELECT * FROM uo_users WHERE email= '%s'",
-              mysql_real_escape_string($email));
+              DBEscapeString($email));
           $user = DBQueryToRow($query);
           if(!$user){
             $query = sprintf("INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', MD5('%s'), '%s')",
-			  mysql_real_escape_string($email),
-			  mysql_real_escape_string($email),
-			  mysql_real_escape_string(CreateRandomPassword()),
-			  mysql_real_escape_string($email));
+			  DBEscapeString($email),
+			  DBEscapeString($email),
+			  DBEscapeString(CreateRandomPassword()),
+			  DBEscapeString($email));
 			DBQuery($query);
 			
 			$query = sprintf("INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'poolselector', 'currentseason')",
-			  mysql_real_escape_string($email));
+			  DBEscapeString($email));
             DBQuery($query);
-            $userid=mysql_real_escape_string($email);	  
+            $userid=DBEscapeString($email);	  
           }else{
             $userid=$user['userid'];
           }
@@ -378,10 +378,10 @@ class XMLHandler{
         if(isset($row['FIRSTNAME'])){ 
           $row['FIRSTNAME']=stripslashes($row['FIRSTNAME']);
           $row['LASTNAME']=stripslashes($row['LASTNAME']);
-          $cond = "firstname='".mysql_real_escape_string($row['FIRSTNAME'])."' AND lastname='".mysql_real_escape_string($row['LASTNAME'])."' AND team='".$this->teamId."'";
+          $cond = "firstname='".DBEscapeString($row['FIRSTNAME'])."' AND lastname='".DBEscapeString($row['LASTNAME'])."' AND team='".$this->teamId."'";
         }else{
           $row['LASTNAME']=stripslashes($row['LASTNAME']);
-          $cond = "lastname='".mysql_real_escape_string($row['LASTNAME'])."' AND team='".$this->teamId."'";
+          $cond = "lastname='".DBEscapeString($row['LASTNAME'])."' AND team='".$this->teamId."'";
         }
         $query = "SELECT * FROM uo_player WHERE ".$cond;
         $exist1 = DBQueryRowCount($query);
@@ -397,7 +397,7 @@ class XMLHandler{
         }else{
           $query = sprintf("SELECT pp.* FROM uo_player_profile pp
 								WHERE UPPER(CONCAT(pp.firstname,' ',pp.lastname)) like '%%%s%%'",
-								mysql_real_escape_string(strtoupper($row['LASTNAME'])));
+								DBEscapeString(strtoupper($row['LASTNAME'])));
 		  if(DBQueryRowCount($query)==1){
 		    $player=DBQueryToRow($query);
 		    $profileId=$player['profile_id'];
@@ -490,8 +490,8 @@ class XMLHandler{
     $values = "'".implode("','",array_values($data))."'";
     $fields = implode(",",array_keys($data));
 
-    $query = "INSERT INTO ".mysql_real_escape_string($name)." (";
-    $query .= mysql_real_escape_string($fields);
+    $query = "INSERT INTO ".DBEscapeString($name)." (";
+    $query .= DBEscapeString($fields);
     $query .= ") VALUES (";
     $query .= $values;
     $query .= ")";
@@ -509,14 +509,14 @@ class XMLHandler{
     $values = array_values($row);
     $fields = array_keys($row);
 
-    $query = "UPDATE ".mysql_real_escape_string($name)." SET ";
+    $query = "UPDATE ".DBEscapeString($name)." SET ";
 
     for($i=0;$i<count($fields);$i++){
-      $query .= mysql_real_escape_string($fields[$i]) ."='".mysql_real_escape_string($values[$i])."', ";
+      $query .= DBEscapeString($fields[$i]) ."='".DBEscapeString($values[$i])."', ";
     }
     $query = rtrim($query,', ');
     $query .= " WHERE ";
-    $query .= mysql_real_escape_string($cond);
+    $query .= DBEscapeString($cond);
     return DBQueryInsert($query);
   }
 }

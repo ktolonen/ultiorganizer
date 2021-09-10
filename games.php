@@ -185,7 +185,7 @@ if(!empty($group) && $group!="all"){
   $groupheader=false;
 }
 
-if(mysql_num_rows($games)==0){
+if(mysqli_num_rows($games)==0){
   $html .= "\n<p>"._("No games").".</p>\n";
 }elseif($filter == 'tournaments'){
   $html .= TournamentView($games,$groupheader);
@@ -210,7 +210,7 @@ $querystring = $_SERVER['QUERY_STRING'];
 $querystring = preg_replace("/&Print=[0-1]/","",$querystring);
 if($print){
   $html .= "<hr/><div style='text-align:right'><a href='?".utf8entities($querystring)."'>"._("Return")."</a></div>";
-}elseif(mysql_num_rows($games)){
+}elseif(mysqli_num_rows($games)){
   $html .= "<hr/>\n";
   $html .= "<p>";
   $html .= "<a href='?view=ical&amp;$gamefilter=$id&amp;time=$timefilter&amp;order=$order'>"._("iCalendar (.ical)")."</a> | ";

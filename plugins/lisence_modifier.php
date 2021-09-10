@@ -24,18 +24,18 @@ if (isset($_POST['save'])){
   $query = sprintf("UPDATE uo_license SET lastname='%s', firstname='%s', membership='%s',
 			birthdate='%s', accreditation_id='%s', ultimate='%s', women='%s', junior='%s', license='%s', external_id='%s', external_type='%s', 
 			external_validity='%s' WHERE accreditation_id='%s'",
-				mysql_real_escape_string($_POST['lastname']),
-				mysql_real_escape_string($_POST['firstname']),
-				mysql_real_escape_string($_POST['membership']),
-				mysql_real_escape_string($_POST['birthdate']),
-				mysql_real_escape_string($_POST['accreditation_id']),
-				mysql_real_escape_string($_POST['ultimate']),
-				mysql_real_escape_string($_POST['women']),
-				mysql_real_escape_string($_POST['junior']),
-				mysql_real_escape_string($_POST['license']),
-				mysql_real_escape_string($_POST['external_id']),
-				mysql_real_escape_string($_POST['external_type']),
-				mysql_real_escape_string($_POST['external_validity']),
+				DBEscapeString($_POST['lastname']),
+				DBEscapeString($_POST['firstname']),
+				DBEscapeString($_POST['membership']),
+				DBEscapeString($_POST['birthdate']),
+				DBEscapeString($_POST['accreditation_id']),
+				DBEscapeString($_POST['ultimate']),
+				DBEscapeString($_POST['women']),
+				DBEscapeString($_POST['junior']),
+				DBEscapeString($_POST['license']),
+				DBEscapeString($_POST['external_id']),
+				DBEscapeString($_POST['external_type']),
+				DBEscapeString($_POST['external_validity']),
 				$accId);
 	DBQuery($query);
 	$accId = $_POST['accreditation_id'];
@@ -51,7 +51,7 @@ if($accId>0){
   $html .= "<form method='post' id='tables' action='?view=plugins/lisence_modifier&amp;accid=".$accId."''>\n";
   $licenses = DBQuery("SELECT * FROM uo_license WHERE accreditation_id='".$accId."'");
   $html .= "<table>";
-  $lis = mysql_fetch_assoc($licenses);
+  $lis = mysqli_fetch_assoc($licenses);
   $columns = array_keys($lis);
   $values = array_values($lis);
   $total = count($lis);
@@ -69,7 +69,7 @@ if($accId>0){
   $html .= "<form method='post' id='tables' action='?view=plugins/lisence_modifier'>\n";
   $licenses = DBQuery("SELECT * FROM uo_license ORDER BY lastname");
   $html .= "<table style='width:100%'>";
-  while($lis = mysql_fetch_assoc($licenses)){
+  while($lis = mysqli_fetch_assoc($licenses)){
     $html .= "<tr>";
     $html .="<td>".utf8entities($lis['accreditation_id'])."</td>";    
     $html .="<td>".utf8entities($lis['lastname'])."</td>";

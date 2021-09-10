@@ -68,7 +68,7 @@ class Restful {
 	}
 	
 	function getItemSQL($id) {
-		return sprintf($this->itemsql, mysql_real_escape_string($id));
+		return sprintf($this->itemsql, DBEscapeString($id));
 	}
 	
 	function getDefaultOrdering() {
@@ -91,7 +91,7 @@ class Restful {
 		
 		$retArray = array();
 		$className = $this->getRestClassName();
-		while ($next = mysql_fetch_assoc($items)) {
+		while ($next = mysqli_fetch_assoc($items)) {
 			$toadd = $this->getListData($next);
 			$retArray[] = $toadd;
 		}

@@ -93,7 +93,7 @@ if (!empty($_POST['setVisible'])) {
 pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
-<!--
+
 function setAnchor(pool) {
 	var form = document.getElementById("theForm");
 	form.action = "?view=admin/seasonstandings&season=<?php echo $season?>#P"+pool;
@@ -155,7 +155,6 @@ function setCVisible(pool) {
   setAnchor(pool);
 }
 
-//-->
 </script>
 <?php
 pageTopHeadClose($title);

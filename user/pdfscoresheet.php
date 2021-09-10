@@ -68,7 +68,7 @@ if($teamId){
   $teaminfo = TeamInfo($teamId);
   $players = array();
   if ($result = TeamPlayerList($teamId)) {
-	while ($row = mysql_fetch_assoc($result)) {
+	while ($row = mysqli_fetch_assoc($result)) {
 		$players[] = $row;
 	  }
   }
@@ -82,7 +82,7 @@ if($teamId){
       $teaminfo = TeamInfo($team['team_id']);
       $players = array();
       if ($result = TeamPlayerList($team['team_id'])) {
-	    while ($row = mysql_fetch_assoc($result)) {
+	    while ($row = mysqli_fetch_assoc($result)) {
 		  $players[] = $row;
 	    }
       }
@@ -92,7 +92,7 @@ if($teamId){
 }else{
   $seasonname = SeasonName($season);
   
-  while($gameRow = mysql_fetch_assoc($games)) {
+  while($gameRow = mysqli_fetch_assoc($games)) {
   
   	if($filter2=="teams"){
   		if(!$gameRow['hometeam'] || !$gameRow['visitorteam']){
@@ -107,7 +107,7 @@ if($teamId){
   		
   	$playerlist = TeamPlayerList($gameRow["hometeam"]);
   	$i=0;
-  	while ($player = mysql_fetch_assoc($playerlist)) {
+  	while ($player = mysqli_fetch_assoc($playerlist)) {
   		$homeplayers[$i]['name'] = $player['firstname']." ".$player['lastname'];
   		$homeplayers[$i]['accredited'] = $player['accredited'];
   		$homeplayers[$i]['num'] = $player['num'];
@@ -116,7 +116,7 @@ if($teamId){
   	$visitorplayers = array();
   	$playerlist = TeamPlayerList($gameRow["visitorteam"]);
   	$i=0;
-  	while ($player = mysql_fetch_assoc($playerlist)) {
+  	while ($player = mysqli_fetch_assoc($playerlist)) {
   		$visitorplayers[$i]['name'] = $player['firstname']." ".$player['lastname'];
   		$visitorplayers[$i]['accredited'] = $player['accredited'];
   		$visitorplayers[$i]['num'] = $player['num'];

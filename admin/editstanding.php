@@ -58,10 +58,10 @@ echo "<p><input class='button' name='save' type='submit' value='"._("Save")."'/>
 echo "<h2>"._("Games")."</h2>\n";
 
 $games=TeamSerieGames($teamId,$poolId);
-if(mysql_num_rows($games))
+if(mysqli_num_rows($games))
 	{
 	echo "<table border='0' cellpadding='4px' width='400px'>\n";
-	while($row = mysql_fetch_assoc($games))
+	while($row = mysqli_fetch_assoc($games))
 		{
 		echo "<tr>";
 		echo "<td>".DefWeekDateFormat($row['time']) ."</td>";

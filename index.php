@@ -1,6 +1,6 @@
 <?php
 if(is_file('install.php')){
- die("Delete install.php file from server!");
+ //die("Delete install.php file from server!");
 }
 
 include_once 'lib/database.php';
@@ -70,4 +70,3 @@ if(!iget("view")){
 include $view.".php";
 
 CloseConnection();
-?>

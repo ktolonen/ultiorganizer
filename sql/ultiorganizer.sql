@@ -675,12 +675,13 @@ INSERT INTO uo_setting VALUES("TwitterConsumerSecret",NULL,"6");
 INSERT INTO uo_setting VALUES("TwitterOAuthCallback","http://127.0.0.1:80/pelikone3/ext/twittercallback.php","7");
 INSERT INTO uo_setting VALUES ("EmailSource", "ultiorganizer@diibadaaba.net", "8");
 INSERT INTO uo_setting VALUES ("FacebookEnabled", "false", "9");
-INSERT INTO uo_setting VALUES ("FacebookAppKey", NULL, "10");
-INSERT INTO uo_setting VALUES ("FacebookAppSecret", NULL, "11");
-INSERT INTO uo_setting VALUES ("FacebookGameMessage", "Game finished in pool $pool", "12");
-INSERT INTO uo_setting VALUES ("FacebookUpdatePage", "", "13");
-INSERT INTO uo_setting VALUES ("GameRSSEnabled", "false", "14");
-INSERT INTO uo_setting VALUES("PageTitle","Ultiorganizer - ",15);
+INSERT INTO uo_setting VALUES ("FacebookAppId", NULL, "10");
+INSERT INTO uo_setting VALUES ("FacebookAppKey", NULL, "11");
+INSERT INTO uo_setting VALUES ("FacebookAppSecret", NULL, "12");
+INSERT INTO uo_setting VALUES ("FacebookGameMessage", "Game finished in pool $pool", "13");
+INSERT INTO uo_setting VALUES ("FacebookUpdatePage", "", "14");
+INSERT INTO uo_setting VALUES ("GameRSSEnabled", "false", "15");
+INSERT INTO uo_setting VALUES("PageTitle","Ultiorganizer - ",16);
 
 
 CREATE TABLE `uo_sms` (

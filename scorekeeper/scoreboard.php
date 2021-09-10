@@ -13,7 +13,7 @@ $html .= "<div data-role='content'>\n";
 
 $html .= "<table>\n";
 $html .= "<tbody>\n";
-while($row = mysql_fetch_assoc($team_score_board))	{
+while($row = mysqli_fetch_assoc($team_score_board))	{
   $html .= "<tr>\n";
   $html .= "<td style='padding-left:10px'>";
   $html .= "#".$row['num'] ." ";

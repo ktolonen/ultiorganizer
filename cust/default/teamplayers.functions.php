@@ -27,7 +27,7 @@ function checkProfileId(playerId) {
 		alert("<?php echo _("Name must be at least 2 letters long!"); ?>");
 	}else{
 		memberTable.initializeTable();
-		memberDataSource.sendRequest("firstname=" + urlencode(firstname) + "&lastname=" + urlencode(lastname)+ "&team=<?php echo $teamId; ?>", oCallback); 
+		memberDataSource.sendRequest("firstname=" + urlencode(firstname) + "&lastname=" + urlencode(lastname)+ " ?>", oCallback); 
 		dialog.show();
 	}
 }

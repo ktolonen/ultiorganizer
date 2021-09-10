@@ -98,7 +98,7 @@ class gettext_reader {
    * @param object Reader the StreamReader object
    * @param boolean enable_cache Enable or disable caching of strings (default on)
    */
-  function gettext_reader($Reader, $enable_cache = true) {
+  function __construct($Reader, $enable_cache = true) {
     // If there isn't a StreamReader, turn on short circuit mode.
     if (! $Reader || isset($Reader->error) ) {
       $this->short_circuit = true;
@@ -128,8 +128,6 @@ class gettext_reader {
     $this->total = $this->readint();
     $this->originals = $this->readint();
     $this->translations = $this->readint();
-    //speed optimization	
-    $this->load_tables();
   }
 
   /**
@@ -254,6 +252,7 @@ class gettext_reader {
     if ($this->short_circuit)
       return $string;
     $this->load_tables();
+
     if ($this->enable_cache) {
       // Caching enabled, get translated string from cache
       if (array_key_exists($string, $this->cache_translations))
@@ -351,6 +350,10 @@ class gettext_reader {
    * @return int array index of the right plural form
    */
   function select_string($n) {
+    if (!is_int($n)) {
+      throw new InvalidArgumentException(
+        "Select_string only accepts integers: " . $n);
+    }
     $string = $this->get_plural_forms();
     $string = str_replace('nplurals',"\$total",$string);
     $string = str_replace("n",$n,$string);
@@ -410,12 +413,23 @@ class gettext_reader {
 
   function pgettext($context, $msgid) {
     $key = $context . chr(4) . $msgid;
-    return $this->translate($key);
+    $ret = $this->translate($key);
+    if (strpos($ret, "\004") !== FALSE) {
+      return $msgid;
+    } else {
+      return $ret;
+    }
   }
 
   function npgettext($context, $singular, $plural, $number) {
-    $singular = $context . chr(4) . $singular;
-    return $this->ngettext($singular, $plural, $number);
+    $key = $context . chr(4) . $singular;
+    $ret = $this->ngettext($key, $plural, $number);
+    if (strpos($ret, "\004") !== FALSE) {
+      return $singular;
+    } else {
+      return $ret;
+    }
+
   }
 }
 

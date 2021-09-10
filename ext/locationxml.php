@@ -17,7 +17,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 
 	// Iterate through the rows, adding XML nodes for each
 	$savedID = null;
-	while ($row = @mysql_fetch_assoc($result)){
+	while ($row = @mysqli_fetch_assoc($result)){
 	  if ($row['id'] !== $savedID) {
 	  $node = $dom->createElement("marker");
 	  $newnode = $parnode->appendChild($node);
@@ -43,7 +43,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 	$parnode = $dom->append_child($node);
 
 	// Iterate through the rows, adding XML nodes for each
-	while ($row = @mysql_fetch_assoc($result)){
+	while ($row = @mysqli_fetch_assoc($result)){
 	$node = $dom->create_element("marker");
 	$newnode = $parnode->append_child($node);
 	  $newnode->set_attribute("id", $row['id']);
@@ -68,7 +68,7 @@ if (version_compare(PHP_VERSION, '5.0.0', '>')) {
 	echo "<markers>\n";
 
 	// Iterate through the rows, adding XML nodes for each
-	while ($row = @mysql_fetch_assoc($result)){
+	while ($row = @mysqli_fetch_assoc($result)){
 		echo "<marker";
 		echo " id=\"". $row['id']."\"";
 		echo " name=\"". U_($row['name'])."\"";

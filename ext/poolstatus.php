@@ -124,7 +124,7 @@ if($poolinfo['type']==1){
         if($realteam['team_id']){
           $gamesleft = TeamPoolGamesLeft($realteam['team_id'], $movefrom['frompool']);
 
-          if(mysql_num_rows($gamesleft)==0){
+          if(mysqli_num_rows($gamesleft)==0){
             $name="";
             if(intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])){
               $name .= "<img height='10' src='../images/flags/tiny/".$realteam['flagfile']."' alt=''/> ";
@@ -171,7 +171,7 @@ if($poolinfo['type']==1){
     $team = PoolTeamFromStandings($pool['pool_id'],$i);
     $gamesleft = TeamPoolGamesLeft($team['team_id'], $pool['pool_id']);
 
-    if(mysql_num_rows($gamesleft)==0){
+    if(mysqli_num_rows($gamesleft)==0){
       $placementname = "";
       if(intval($seasoninfo['isinternational']) && !empty($team['flagfile'])){
         $placementname .= "<img height='10' src='../images/flags/tiny/".$team['flagfile']."' alt=''/> ";

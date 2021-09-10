@@ -59,7 +59,7 @@ function ResolvePlayoffPoolStandings($poolId){
 		//check if teams can be moved to next round
 		$gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
 		$gamesleft2 = TeamPoolGamesLeft($teamId2, $poolId);
-		if(mysql_num_rows($gamesleft1)+mysql_num_rows($gamesleft2)==0){
+		if(mysqli_num_rows($gamesleft1)+mysqli_num_rows($gamesleft2)==0){
 			TeamMove($teamId1, $poolId, true);
 			TeamMove($teamId2, $poolId, true);
 		}
@@ -139,7 +139,7 @@ function ResolveCrossMatchPoolStandings($poolId){
 		$gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
 		$gamesleft2 = TeamPoolGamesLeft($teamId2, $poolId);
 
-		if(mysql_num_rows($gamesleft1)+mysql_num_rows($gamesleft2)==0){
+		if(mysqli_num_rows($gamesleft1)+mysqli_num_rows($gamesleft2)==0){
 			TeamMove($teamId1, $poolId);
 			TeamMove($teamId2, $poolId);
 		}
@@ -220,18 +220,18 @@ function ResolveSwissdrawPoolStandings($poolId)
 		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team) 
 		WHERE js.pool='%s' 
 		ORDER BY js.activerank ASC, js.rank ASC",
-		mysql_real_escape_string($poolId));
+		DBEscapeString($poolId));
 		
-	$standings = mysql_query($query);
+	$standings = DBQueryToArray($query);
 	
 	$points=array();
 	$i=0;
 	
-	if(mysql_num_rows($standings)<=1){
+	if(count($standings)<=1){
 		return;
 	}
 	
-	while($row = mysql_fetch_assoc($standings))	{
+	foreach($standings as $row ) {
 		// retrieve nr of games, victory points, average opponent's victory points
 		$stats1=TeamVictoryPointsByPool($poolId,$row['team_id']);
 		
@@ -248,7 +248,7 @@ function ResolveSwissdrawPoolStandings($poolId)
 //	PrintStandingsSwissdraw($points);
 
 	//initial sort according games
-	usort($points, create_function('$a,$b','return $a[\'games\']==$b[\'games\']?0:($a[\'games\']>$b[\'games\']?-1:1);'));
+	usort($points, function($a,$b){return $a['games']==$b['games']?0:($a['games']>$b['games']?-1:1);});
 
 //	echo "before sorting acc to points:";
 //	PrintStandingsSwissdraw($points);
@@ -259,16 +259,16 @@ function ResolveSwissdrawPoolStandings($poolId)
 
 	
 	//update results
-	for ($i=0; $i < mysql_num_rows($standings) && !empty($points[$i]['team']); $i++) 
+	for ($i=0; $i < count($standings) && !empty($points[$i]['team']); $i++) 
 		{	
 		//echo "<p>win t".$points[$i]['team']." v".$points[$i]['wins']." s".$points[$i]['arank']."</p>";
 		$query = sprintf("UPDATE uo_team_pool 
 				SET activerank='%s' WHERE pool='%s' AND team='%s'",
-			mysql_real_escape_string($points[$i]['arank']),
-			mysql_real_escape_string($poolId),
-			mysql_real_escape_string($points[$i]['team']));
+			DBEscapeString($points[$i]['arank']),
+			DBEscapeString($poolId),
+			DBEscapeString($points[$i]['team']));
 		
-		mysql_query($query);
+		DBQuery($query);
 		}
 		
 	}
@@ -283,18 +283,18 @@ function ResolveSeriesPoolStandings($poolId){
 	FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team) 
 	WHERE js.pool='%s' 
 	ORDER BY js.activerank ASC, js.rank ASC",
-  mysql_real_escape_string($poolId));
+  DBEscapeString($poolId));
 
-  $standings = mysql_query($query);
+  $standings = DBQueryToArray($query);
 
   $points=array();
   $i=0;
 
-  if(mysql_num_rows($standings)<=1){
+  if(count($standings)<=1){
     return;
   }
 
-  while($row = mysql_fetch_assoc($standings))	{
+  foreach($standings as $row)	{
     $points[$i]['team'] = $row['team_id'];
     $points[$i]['arank'] = 1;
     $i++;
@@ -302,7 +302,7 @@ function ResolveSeriesPoolStandings($poolId){
   $points = getMatchesWins($points, $poolId);
   
   //initial sort according games
-  usort($points, create_function('$a,$b','return $a[\'games\']==$b[\'games\']?0:($a[\'games\']>$b[\'games\']?-1:1);'));
+  usort($points, function($a,$b){return $a['games']==$b['games']?0:($a['games']>$b['games']?-1:1);});
 
   //sort according to score (wins*winscore+draws*drawscore)
   $points = SolveStandings($points, 'cmp_score');
@@ -384,15 +384,15 @@ function ResolveSeriesPoolStandings($poolId){
   }
 
   //update results
-  for ($i=0; $i < mysql_num_rows($standings) && !empty($points[$i]['team']); $i++)  {
+  for ($i=0; $i < count($standings) && !empty($points[$i]['team']); $i++)  {
     //echo "<p>win t".$points[$i]['team']." v".$points[$i]['wins']." s".$points[$i]['arank']."</p>";
     $query = sprintf("UPDATE uo_team_pool
 			SET activerank='%s' WHERE pool='%s' AND team='%s'",
-    mysql_real_escape_string($points[$i]['arank']),
-    mysql_real_escape_string($poolId),
-    mysql_real_escape_string($points[$i]['team']));
+    DBEscapeString($points[$i]['arank']),
+    DBEscapeString($poolId),
+    DBEscapeString($points[$i]['team']));
 
-    mysql_query($query);
+    DBQuery($query);
   }
 
   //test if pool is played
@@ -470,7 +470,7 @@ function SolveStandings($points, $cmpf){
 	
 function FindSameRank($points, $offset)
 	{
-	usort($points, create_function('$a,$b','return $a[\'arank\']==$b[\'arank\']?0:($a[\'arank\']<$b[\'arank\']?-1:1);'));
+	usort($points, function($a,$b){return $a['arank']==$b['arank']?0:($a['arank']<$b['arank']?-1:1);});
 	$samerank=array();
 	$total=0;
 
@@ -542,12 +542,12 @@ function UpdateStandings($to, $from)
 }
 
 function getMatchesWins($points, $poolId, $shared=false) {
-	$sameteams = mysql_real_escape_string($points[0]['team']);
+	$sameteams = DBEscapeString($points[0]['team']);
 	for ($i=1; $i<count($points); $i++) {
-		$sameteams .= ",".mysql_real_escape_string($points[$i]['team']);
+		$sameteams .= ",".DBEscapeString($points[$i]['team']);
 	}
 	for ($i=0; $i<count($points); $i++) {
-		$team = mysql_real_escape_string($points[$i]['team']);
+		$team = DBEscapeString($points[$i]['team']);
 		$query = sprintf("
 		SELECT COUNT(*) AS games,
     		COUNT((hometeam='%s' AND (homescore>visitorscore)) OR (visitorteam='%s' AND (homescore<visitorscore)) OR NULL) AS wins,
@@ -556,12 +556,11 @@ function getMatchesWins($points, $poolId, $shared=false) {
 		WHERE (hasStarted) AND (hometeam='%s' OR visitorteam='%s') AND isongoing=0
 			AND game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
 				$team, $team, $team, $team, $team, $team,
-				mysql_real_escape_string($poolId));
+				DBEscapeString($poolId));
 		if ($shared)
 			$query .= sprintf(" AND hometeam IN (%s) AND visitorteam IN (%s)", $sameteams, $sameteams);
 
-		$result = mysql_query($query);
-		$stats1 = mysql_fetch_assoc($result);
+		$stats1 = DBQueryToRow($query);
 
 		$points[$i]['games'] = $stats1['games'];
 		$points[$i]['wins'] = $stats1['wins'];
@@ -571,9 +570,9 @@ function getMatchesWins($points, $poolId, $shared=false) {
 }
 
 function getMatchesGoals($points, $poolId, $shared=false) {
-	$sameteams = mysql_real_escape_string($points[0]['team']);
+	$sameteams = DBEscapeString($points[0]['team']);
 	for ($i=1; $i<count($points); $i++) {
-		$sameteams .= ",".mysql_real_escape_string($points[$i]['team']);
+		$sameteams .= ",".DBEscapeString($points[$i]['team']);
 	}
 	//reset counters
 	for ($i=0; $i < count($points); $i++)
@@ -585,19 +584,19 @@ function getMatchesGoals($points, $poolId, $shared=false) {
 
 	// 	foreach ($points as $point) {
 	for ($i=0; $i<count($points); $i++) {
-		$team = mysql_real_escape_string($points[$i]['team']);
+		$team = DBEscapeString($points[$i]['team']);
 
 		$query = sprintf("
 			SELECT hometeam,visitorteam,homescore,visitorscore
 			  FROM uo_game
 			  WHERE (hometeam='%s' OR visitorteam='%s') AND hasstarted AND isongoing=0
 			  AND game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",
-				$team, $team, mysql_real_escape_string($poolId));
+				$team, $team, DBEscapeString($poolId));
 		if ($shared)
 			$query .= sprintf(" AND hometeam IN (%s) AND visitorteam IN (%s)", $sameteams, $sameteams);
 
-		$result = mysql_query($query);
-		while($stats = mysql_fetch_assoc($result))
+		$result = DBQueryToArray($query);
+		foreach($result as $stats)
 		{
 			if($stats['hometeam']==$points[$i]['team'])
 			{

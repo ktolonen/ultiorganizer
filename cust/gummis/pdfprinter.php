@@ -22,7 +22,7 @@ class PDF extends FPDF
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
 		$this->game['seasonname'] = utf8_decode($seasonname);
-		$this->game['game_id'] = $gameId.-".getChkNum($gameId);
+		$this->game['game_id'] = $gameId.-"".getChkNum($gameId);
 		$this->game['hometeamname'] = utf8_decode($hometeamname);
 		$this->game['visitorteamname'] = utf8_decode($visitorteamname);
 		$this->game['poolname'] = utf8_decode($poolname);
@@ -343,7 +343,7 @@ class PDF extends FPDF
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while($game = mysql_fetch_assoc($games)){
+		while($game = mysqli_fetch_assoc($games)){
 			
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) {
 				$txt = utf8_decode(U_($game['reservationgroup']));
@@ -429,7 +429,7 @@ class PDF extends FPDF
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while(($gameArray[] = mysql_fetch_assoc($games)) || array_pop($gameArray));
+		while(($gameArray[] = mysqli_fetch_assoc($games)) || array_pop($gameArray));
 		
 		$g = 0;
 		foreach($gameArray as $game){
@@ -659,7 +659,7 @@ class PDF extends FPDF
 		$text3 = utf8_decode($pretext." ".$posttext);
 		$fs3 = min($fontsize, $height/3);
 		$this->SetFont('Arial','',$fs3);
-		while($this->GetStringWidth($text)>$x-2){
+		while($this->GetStringWidth($text3)>$x-2){
 			$this->SetFont('Arial','',--$fs2);
 		}
 		
@@ -678,7 +678,7 @@ class PDF extends FPDF
 		$txt .=  " ("; 
 		$txt .= utf8_decode($posttext); 
 		$txt.=")";
-		if ($this->GetStringWidth($txt)>x-2)
+		if ($this->GetStringWidth($txt)>-2)
 			$this->SetFont('Arial','',--$fs4);
 			
 		if($colors){
@@ -725,7 +725,7 @@ class PDF extends FPDF
 		}
 		
 		if($field){
-			$txt = utf8_decode(U_($info['fieldname']));
+			$txt = utf8_decode(U_($game['fieldname']));
 			$this->Cell(20,5,$txt,'TB',0,'L',true);
 		}
 		
@@ -829,11 +829,11 @@ class PDF extends FPDF
 	}
 	
 	function PrintSeriesPools($id) {
-		
+		$left_margin = 10;
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0);
-		$this->Cell(0,9,$title,1,1,'C',true);
+		$this->Cell(0,9,"",1,1,'C',true);
 		
 		if($this->GetY()+97 > 297){
 			$this->AddPage();

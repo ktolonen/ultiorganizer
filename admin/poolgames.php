@@ -24,13 +24,12 @@ $html = "";
 pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
-<!--
 function setId(id) 
 	{
 	var input = document.getElementById("hiddenDeleteId");
 	input.value = id;
 	}
-//-->
+
 </script>
 <?php
 pageTopHeadClose($title);
@@ -45,8 +44,8 @@ if(!empty($_POST['remove_x'])) {
 		
 	//run some test to for safe deletion
 	$goals = GameAllGoals($id);
-	if(mysql_num_rows($goals)){
-		$html .= "<p class='warning'>"._("Game has")." ".mysql_num_rows($goals)." "._("goals").". "._("Goals must be removed before removing the team").".</p>";
+	if(mysqli_num_rows($goals)){
+		$html .= "<p class='warning'>"._("Game has")." ".mysqli_num_rows($goals)." "._("goals").". "._("Goals must be removed before removing the team").".</p>";
 		$ok = false;
 	}	
 	if($ok)
@@ -54,7 +53,7 @@ if(!empty($_POST['remove_x'])) {
 }elseif(!empty($_POST['swap_x'])) {
 	$id = $_POST['hiddenDeleteId'];
 	$goals = GameAllGoals($id);
-	if(!mysql_num_rows($goals)){
+	if(!mysqli_num_rows($goals)){
 	  GameChangeHome($id);
 	}		
 }elseif(!empty($_POST['removemoved'])){
