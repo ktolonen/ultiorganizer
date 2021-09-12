@@ -56,7 +56,7 @@ contentStart();
 $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
-if($seasoninfo['spiritmode']>0 && isSeasonAdmin($seasoninfo['season_id'])){
+if((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode']>0) && isSeasonAdmin($seasoninfo['season_id'])){
   $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
 }
 if(ShowDefenseStats())

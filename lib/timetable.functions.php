@@ -818,7 +818,7 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
       $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = '".DBEscapeString($timefilter)."'";
       break;
   }
-  $query .= " GROUP BY pr.reservationgroup ORDER BY pp.time ASC, ps.ordering, pr.reservationgroup";
+  $query .= " ORDER BY pp.time ASC, ps.ordering, pr.reservationgroup";
 
   return DBQueryToArray($query);
 }

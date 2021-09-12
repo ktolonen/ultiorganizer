@@ -80,13 +80,10 @@ function Teams($filter=null, $ordering=null) {
 function TeamListAll($grouped=false, $onlyold=false, $namefilter="")
 {
   if($grouped){
-    $query = sprintf("SELECT MAX(team.team_id) AS team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
-			COUNT(ser.season) AS seasons, team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
+    $query = sprintf("SELECT MAX(team.team_id) AS team_id, team.name, ser.name AS seriesname
 			FROM uo_team team 
 			LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
 			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-			LEFT JOIN uo_club club ON (team.club=club.club_id)
-			LEFT JOIN uo_country c ON (team.country=c.country_id)
 			LEFT JOIN uo_season season ON (ser.season=season.season_id)");
     if($onlyold){
       $query .= sprintf("RIGHT JOIN uo_season_stats ss ON(ser.season=ss.season)");
@@ -100,7 +97,7 @@ function TeamListAll($grouped=false, $onlyold=false, $namefilter="")
     }
 
     $query .= sprintf(" GROUP BY team.name, ser.name
-			ORDER BY team.name, ser.name, season.name, club.name");
+			ORDER BY team.name, ser.name");
   }else{
     $query = sprintf("SELECT team.team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
 			team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
@@ -892,7 +889,7 @@ function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
  * @param string $team2 second team name
  * @param string $seriestype type of series
  * @param string $sorting return value sorting: team, result, series
- * @return mysql array of players
+ * @return mysqli_result array of players
  */
 function GetAllPlayedGames($team1, $team2, $seriestype, $sorting) {
   $query = sprintf("

@@ -24,7 +24,7 @@ include_once 'lib/yui.functions.php';
 echo yuiLoad(array("yahoo-dom-event"));
 ?>
 <script type="text/javascript">
-<!--
+
 function validTime(field) 
 	{
 	field.value=field.value.replace(/[^0-9]/g, '.');
@@ -171,7 +171,7 @@ contentStart();
 $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
-if($seasoninfo['spiritmode']>0 && isSeasonAdmin($seasoninfo['season_id'])){
+if((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode']>0) && isSeasonAdmin($seasoninfo['season_id'])){
   $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
 }
 if(ShowDefenseStats())

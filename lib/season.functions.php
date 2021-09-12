@@ -66,7 +66,7 @@ function SeasonTypes() {
 /**
  * Returns current season, which can be user selected if multiple seasons set as current (uo_season.iscurrent=1).
  * User selected season is stored into $_SESSION['userproperties']['selseason']
- * @return uo_season.season_id 
+ * @return String uo_season.season_id 
  */
 function CurrentSeason() {
   if (isset($_SESSION['userproperties']['selseason'])) {
@@ -79,7 +79,7 @@ function CurrentSeason() {
 /**
  * Returns all current seasons (uo_season.iscurrent=1).
  * 
- * @return mysql array 
+ * @return mysqli_result array 
  */
 function CurrentSeasons() {
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
@@ -163,7 +163,7 @@ function SeasonNameExists($seasonName) {
  * 
  * @param array $filter sql conditions
  * @param array $ordering sql ordering  
- * @return mysql array of seasons
+ * @return mysqli_result array of seasons
  */
 function Seasons($filter=null, $ordering=null){
   if (!isset($ordering)) {
@@ -190,7 +190,7 @@ function SeasonsArray(){
  * @see SeasonTypes()
  * 
  * @param string $seasonId uo_season.season_id 
- * @return php array of seasons
+ * @return Array array of seasons
  */
 function SeasonsByType($seasontype){
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE type='%s'
@@ -201,7 +201,7 @@ function SeasonsByType($seasontype){
 /**
  * Returns all seasons having enrollment open.
  * 
- * @return php-array with uo_season.season_id as key and name as value.
+ * @return Array with uo_season.season_id as key and name as value.
  */
 function EnrollSeasons() {
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE enrollopen=1 ORDER BY starttime DESC");
@@ -285,7 +285,7 @@ function SeasonReservationgroups($seasonId) {
 		SELECT DISTINCT pr.reservationgroup
 		FROM uo_reservation pr
 		WHERE pr.season='%s'
-		ORDER BY pr.starttime, pr.reservationgroup ASC, pr.fieldname+0",
+		ORDER BY pr.reservationgroup ASC",
   DBEscapeString($seasonId));
 
   return DBQueryToArray($query);
@@ -374,7 +374,7 @@ function SeasonTeamAdmins($seasonId, $group=false) {
   			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
   			LEFT JOIN uo_team j ON (SUBSTRING_INDEX(up.value, ':', -1)=j.team_id)
   			WHERE j.series IN (SELECT series_id FROM uo_series WHERE season='%s') AND up.value LIKE 'teamadmin:%%'
-  			GROUP BY u.email
+  			GROUP BY u.userid, u.name, u.email, j.team_id, j.name 
   			ORDER BY j.series, j.name",
       DBEscapeString($seasonId));
     }else{
@@ -405,7 +405,7 @@ function SeasonAccreditationAdmins($seasonId, $group=false) {
   			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
   			LEFT JOIN uo_team j ON (SUBSTRING_INDEX(up.value, ':', -1)=j.team_id)
   			WHERE j.series IN (SELECT series_id FROM uo_series WHERE season='%s') AND up.value LIKE 'accradmin:%%'
-  			GROUP BY u.email
+  			GROUP BY  u.userid, u.name, u.email, j.name, j.team_id
   			ORDER BY j.series, j.name",
       DBEscapeString($seasonId));
     }else{
@@ -437,7 +437,7 @@ function SeasonGameAdmins($seasonId) {
 				LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool) 
 				LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
 				WHERE ser.season='%s' AND gp.timetable=1)
-  			GROUP BY u.userid
+  			GROUP BY u.userid, u.name, u.email
 			ORDER BY u.name",
       DBEscapeString($seasonId));
     return DBQueryToArray($query);

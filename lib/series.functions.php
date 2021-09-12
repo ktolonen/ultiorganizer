@@ -41,7 +41,7 @@ function CurrentSeries($season){
  * @param boolean $onlyvisible set TRUE if only visible pools are returned.
  * @param boolean $nocontinuingpools set TRUE if continuation pools are exluded. 
  * @param boolean $noplacementpools set TRUE if placement pools are exluded.
- * @return PHP array of pools
+ * @return Array array of pools
  */
 function SeriesPools($seriesId, $onlyvisible=false, $nocontinuingpools=false, $noplacementpools=false) {
 
@@ -77,7 +77,7 @@ function SeriesPlacementPoolIds($seriesId) {
 
 /**
  * Get list of division types.
- * @return Hardcoded PHP array of division types.
+ * @return Array Hardcoded PHP array of division types.
  */
 function SeriesTypes() {
   return array(
@@ -102,10 +102,10 @@ function SeriesTypes() {
  * Get all teams playing in given division.
  * @param int $seriesId uo_series.series_id
  * @param boolean $orderbyseeding TRUE if order by seeding otherwise order by name.
- * @return PHP array of teams.
+ * @return Array array of teams.
  */
 function SeriesTeams($seriesId, $orderbyseeding=false){
-  $query = sprintf("SELECT t.team_id, t.name, t.abbreviation, t.club, cl.name AS clubname,
+  $query = sprintf("SELECT DISTINCT t.team_id, t.name, t.abbreviation, t.club, cl.name AS clubname,
 			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
 			c.flagfile
 			FROM uo_team t
@@ -116,7 +116,6 @@ function SeriesTeams($seriesId, $orderbyseeding=false){
 			LEFT JOIN uo_club cl ON(cl.club_id=t.club)
 			LEFT JOIN uo_country c ON(c.country_id=t.country)
 			WHERE t.series = '%d'
-			GROUP BY t.team_id
 			",
   (int)($seriesId));
 
@@ -216,7 +215,7 @@ function SeriesSeasonId($serieId){
  * @param int $seriesId uo_series.series_id
  * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"  
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result array of players.
  */
 function SeriesScoreBoard($seriesId, $sorting, $limit) {
   $query = sprintf("
@@ -298,7 +297,7 @@ function SeriesScoreBoard($seriesId, $sorting, $limit) {
  * @param int $seriesId uo_series.series_id
  * @param string $sorting one of: "total", "games", "team", "name", "callahan"  
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result array of players.
  */
 function SeriesDefenseBoard($seriesId, $sorting, $limit) {
   $query = sprintf("
@@ -372,14 +371,14 @@ function SeriesSpiritBoard($seriesId) {
       ORDER BY st.team_id, st.category_id",
       $seriesId);
   
-  $scores = DBQuery($query);
+  $scores = DBQueryToArray($query);
   $last_team=null;
   $last_category=null;
   $averages = array();
   $total = 0;
   $sum = 0;
   $games = 0;
-  while($row = mysqli_fetch_assoc($scores)) {
+  foreach($scores as $row) {
     if ($last_team != $row['team_id'] || $last_category != $row['category_id']) {
       if (!is_null($last_category)) {
         if (!isset($factor[$last_category])){
@@ -761,7 +760,7 @@ function SeriesTeamResponsibles($seriesId) {
 			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
 			LEFT JOIN uo_team j ON (SUBSTRING_INDEX(up.value, ':', -1)=j.team_id)
 			WHERE j.series=%d AND SUBSTRING_INDEX(up.value,':',1)='teamadmin'
-			GROUP BY u.userid, u.name, u.email",
+			GROUP BY u.userid, u.name, u.email, j.name",
     (int)$seriesId);
 
     return DBQueryToArray($query);

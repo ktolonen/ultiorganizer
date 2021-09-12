@@ -158,7 +158,7 @@ pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
 ?>
 <script type="text/javascript">
-<!--
+
 function toggleField(checkbox, fieldid) {
     var input = document.getElementById(fieldid);
 	input.disabled = !checkbox.checked;
@@ -180,7 +180,7 @@ function checkAll(field){
 			}
 	}
 }
-//-->
+
 </script>
 <?php
 pageTopHeadClose($title);
@@ -190,7 +190,7 @@ contentStart();
 $menutabs[_("Result")]= "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")]= "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")]= "?view=user/addscoresheet&game=$gameId";
-if($seasoninfo['spiritmode']>0 && isSeasonAdmin($seasoninfo['season_id'])){
+if((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode']>0)  && isSeasonAdmin($seasoninfo['season_id'])){
   $menutabs[_("Spirit points")]= "?view=user/addspirit&game=$gameId";
 }
 if(ShowDefenseStats())
