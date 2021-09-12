@@ -58,7 +58,7 @@ function PoolFollowersArray($poolId) {
 /**
  * Get followers for given pool based on follower id (uo_pool.follower).
  * @param int $poolId uo_pool.pool_id
- * @return php array of pool followers.
+ * @return Array array of pool followers.
  */
 function PoolPlayoffFollowersArray($poolId) {
   $ids = array();
@@ -135,7 +135,7 @@ function PoolShortName($poolId) {
 /**
  * Get name for given pool.
  * @param int $poolId uo_pool.pool_id
- * @return Pool name.
+ * @return String Pool name.
  */
 function PoolName($poolId){
   $query = sprintf("SELECT pool.name FROM uo_pool pool
@@ -190,7 +190,7 @@ function PoolTypes() {
  *
  * @param int $poolId uo_pool.pool_id
  * @param string $order Order by "seed", "name", "rank". Default is "rank".
- * @return php array of teams
+ * @return Array array of teams
  */
 function PoolTeams($poolId, $order="rank"){
   $query = sprintf("SELECT uo_team.team_id, uo_team.name, uo_team.club, club.name AS clubname,
@@ -276,7 +276,7 @@ function PoolPlacementString($poolId, $pos, $ordinal=true){
  * Get all scheduling teams in given pool. Scheduling teams are real team replacements for scheduling purpose.
  *
  * @param int $poolId uo_pool.pool_id
- * @return php array of scheduling teams
+ * @return Array array of scheduling teams
  */
 function PoolSchedulingTeams($poolId){
   $query = sprintf("SELECT s.name, s.scheduling_id
@@ -295,7 +295,7 @@ function PoolSchedulingTeams($poolId){
  * @param int $poolId uo_pool.pool_id
  * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result array of players.
  */
 function PoolScoreBoard($poolId, $sorting, $limit){
   $query = sprintf("
@@ -373,10 +373,10 @@ function PoolScoreBoard($poolId, $sorting, $limit){
 /**
  * Get score board for list of pools.
  *
- * @param string $pools comma separated list of pools
+ * @param Array $pools comma separated list of pools
  * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result array of players.
  */
 function PoolsScoreBoard($pools, $sorting, $limit){
 
@@ -449,10 +449,10 @@ function PoolsScoreBoard($pools, $sorting, $limit){
 /**
  * Get pool score board with defenses
  *
- * @param string $pools comma separated list of pools
+ * @param Array $pools comma separated list of pools
  * @param string $sorting one of: "deftotal", "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result array of players.
  */
 function PoolsScoreBoardWithDefenses($pools, $sorting, $limit){
   $poolIds = DBEscapeString(implode(",",$pools));
@@ -537,7 +537,7 @@ function PoolsScoreBoardWithDefenses($pools, $sorting, $limit){
  * @param int $poolId uo_pool.pool_id
  * @param string $sorting one of: "deftotal", "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result array of players.
  */
 function PoolScoreBoardWithDefenses($poolId, $sorting, $limit){
 
@@ -636,7 +636,7 @@ function PoolDependsOn($topool) {
  * Get all movings to given pool.
  *
  * @param int $poolId uo_pool.pool_id
- * @return PHP array of moves
+ * @return Array array of moves
  */
 function PoolMovingsToPool($poolId){
   $query = sprintf("SELECT pmt.*, ps.name, sn.name AS sname
@@ -662,7 +662,7 @@ function PoolGetMoveByTeam($toPool, $team) {
  * Get all movings from given pool.
  *
  * @param int $poolId uo_pool.pool_id
- * @return PHP array of moves
+ * @return Array array of moves
  */
 function PoolMovingsFromPool($poolId){
   $query = sprintf("SELECT pmt.*, ps.name, sn.name AS sname
@@ -937,8 +937,8 @@ function PoolGetGamesToMove($poolId, $mvgames){
         $team2 = PoolTeamFromStandings($row2['frompool'],$row2['fromplacing']);
         if($row2['frompool'] == $row2['frompool']){
           $teamgames = TeamPoolGamesAgainst($team['team_id'],$team2['team_id'],$row['frompool']);
-          if(mysqli_num_rows($teamgames)){
-            while($game = mysqli_fetch_assoc($teamgames)){
+          if(count($teamgames)){
+            foreach($teamgames as $game){
               $found = false;
               foreach ($games as $id){
                 if($game['game_id'] == $id){
@@ -971,7 +971,7 @@ function PoolCountGames($poolId) {
  *
  * @param int $poolId
  * @param int $fieldId - limits games to given field
- * @return PHP array of games
+ * @return Array array of games
  */
 function PoolGames($poolId, $fieldId=null) {
 
@@ -2390,7 +2390,11 @@ function SeriesRanking($series_id) {
       $moved = PoolMoveExist($ppool['pool_id'], $i);
       if (!$moved) {
         $team = PoolTeamFromStandings($ppool['pool_id'], $i);
-        $gamesleft = TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']);
+        $gamesleft = 1;
+        if(isset($team['team_id'])){
+          $gamesleft = TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']);
+        }
+        
         if ($ppool['played'] || ($ppool['type'] == 2 && mysqli_num_rows($gamesleft) == 0)) {
           $team['placement'] = $i;
           $ranking[] = $team;

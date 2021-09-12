@@ -37,7 +37,7 @@ $firstchar = " ";
 $listletter = " ";
 $counter = 0;
 
-while($team = mysqli_fetch_assoc($teams)) {
+foreach($teams as $team) {
 
   if($filter == "ALL"){
     $firstchar = strtoupper(substr(utf8_decode($team['name']),0,1));
@@ -52,10 +52,10 @@ while($team = mysqli_fetch_assoc($teams)) {
   if($counter==0){
     $html .= "<tr>\n";
   }
-
+  $teaminfo = TeamInfo($team['team_id']);
   $html .= "<td style='width:33%'>";
-  if(intval($team['country'])){
-    $html .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/>&nbsp;";
+  if(intval($teaminfo['country']) && isset($teaminfo['flagfile'])){
+    $html .= "<img height='10' src='images/flags/tiny/".$teaminfo['flagfile']."' alt=''/>&nbsp;";
   }
   $html .= "<a href='?view=teamcard&amp;team=".$team['team_id']."'>".utf8entities($team['name'])."</a>";
   $html .= " [".utf8entities(U_($team['seriesname']))."]</td>";

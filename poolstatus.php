@@ -519,6 +519,9 @@ function printPlayoffTree($seasoninfo, $poolinfo){
     $games=0;
     for($i=1;$i<=$totalteams;$i++){
       
+      if(!isset($team['pool_id'])){
+        continue;
+      }
       $team = PoolTeamFromInitialRank($pool['pool_id'],$i);
       $movefrom = PoolGetMoveFrom($pool['pool_id'],$i);
       
@@ -526,17 +529,20 @@ function printPlayoffTree($seasoninfo, $poolinfo){
       $byeName = "";
       $previousRoundByeName = "";
       //find out team name
-      if($team['team_id']){
+      if(isset($team['team_id'])){
         if(intval($seasoninfo['isinternational']) && !empty($team['flagfile'])){
           $name .= "<img height='10' src='images/flags/tiny/".$team['flagfile']."' alt=''/> ";
         }
         $name .= "<a href='?view=teamcard&amp;team=".$team['team_id']."'>".utf8entities($team['name'])."</a>";
       }else{
         $realteam = PoolTeamFromStandings($movefrom['frompool'],$movefrom['fromplacing']);
-        $gamesleft = TeamPoolGamesLeft($realteam['team_id'], $movefrom['frompool']);
+        $gamesleft = array();
+        if(isset($realteam['team_id'])){
+          $gamesleft = TeamPoolGamesLeft($realteam['team_id'], $movefrom['frompool']);
+        }
         $frompoolinfo = PoolInfo($movefrom['frompool']);
         $isodd = is_odd($totalteams) && $i==$totalteams;
-        if($realteam['team_id'] && $frompoolinfo['played'] && mysqli_num_rows($gamesleft)==0 && !$isodd){
+        if(isset($realteam['team_id']) && $frompoolinfo['played'] && count($gamesleft)==0 && !$isodd){
           if(intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])){
             $name .= "<img height='10' src='images/flags/tiny/".$realteam['flagfile']."' alt=''/> ";
           }
@@ -547,8 +553,9 @@ function printPlayoffTree($seasoninfo, $poolinfo){
         }
 
       }
+    
        
-      if($team['team_id']){
+      if(isset($team['team_id'])){
         $gamesinpool =TeamPoolGames($team['team_id'], $pool['pool_id']);
         if (mysqli_num_rows($gamesinpool)==0) { // that's the BYE team
           $byeName = $name; // save its name
@@ -577,7 +584,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
       if($i%2==1){
         $games++;
         $game = "";
-        if($team['team_id']){
+        if(isset($team['team_id'])){
           $results = GameHomeTeamResults($team['team_id'], $pool['pool_id']);
           $reverse = false;
           if (!$results) {
@@ -631,6 +638,9 @@ function printPlayoffTree($seasoninfo, $poolinfo){
   $template = str_replace("[placement]", _("Placement"), $template);
   for($i=1;$i<=$totalteams;$i++){
     $placementname = "";
+    if(!isset($team['pool_id'])){
+      continue;
+    }
     if(empty($pool))
       $gamesleft = -1;
     else {

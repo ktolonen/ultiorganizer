@@ -36,7 +36,7 @@ $firstchar = " ";
 $listletter = " ";
 $counter = 0;
 
-while($club = mysqli_fetch_assoc($clubs)){
+foreach($clubs as $club){
 
   if($filter == "ALL"){
     $firstchar = strtoupper(substr(utf8_decode($club['name']),0,1));

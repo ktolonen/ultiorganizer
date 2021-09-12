@@ -8,7 +8,7 @@ $html = "";
 
 // process itself on submit
 // Fetch querydata to be presented later
-if (ENABLE_ADMIN_DB_ACCESS != "enabled") {
+if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != "enabled") {
 	$html = "<h2>"._("Run SQL")."</h2>\n";
 	$html = "<p>"._("Direct database access is disabled. To enable it, define(ENABLE_ADMIN_DB_ACCESS,'enabled') in the config.inc.php file")."</p>";
 } else {

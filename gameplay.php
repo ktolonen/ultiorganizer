@@ -499,7 +499,7 @@ if(GameHasStarted($game_result) > 0){
 			<td class='home'>". $nHTO ."</td>
 			<td class='guest'>". $nVTO ."</td></tr>";
 
-      if($seasoninfo['spiritmode']>0 && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))){
+      if((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))){
         $html .= "<tr><td>"._("Spirit points").":</td>
 				<td class='home'>". $game_result['homesotg'] ."</td>
 				<td class='guest'>". $game_result['visitorsotg'] ."</td></tr>";

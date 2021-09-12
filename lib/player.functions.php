@@ -118,7 +118,7 @@ function PlayerLatestId($profileId){
 }
 
 function PlayerListAll($lastname=""){
-  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname, num, accreditation_id, profile_id, team, uo_team.name AS teamname
+  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname
 		FROM uo_player p 
 		LEFT JOIN uo_team ON p.team=team_id
 		WHERE accredited=1";
@@ -126,7 +126,7 @@ function PlayerListAll($lastname=""){
     $query .= " AND UPPER(lastname) LIKE '". DBEscapeString($lastname)."%'";
   }
 
-  $query .= " GROUP BY profile_id ORDER BY lastname, firstname";
+  $query .= " GROUP BY profile_id, firstname, lastname ORDER BY lastname, firstname";
 
   return DBQuery($query);
 }
@@ -265,6 +265,7 @@ function PlayerSeasonPlayedGames($playerId, $seasonId){
  * 
  * @param int $playerId
  * @param string $seasonId
+ * @return int Total Passes.
  */
 function PlayerSeasonPasses($playerId, $seasonId) {
   $query = sprintf("SELECT COUNT(*) AS passes
@@ -288,6 +289,7 @@ function PlayerSeasonPasses($playerId, $seasonId) {
  * 
  * @param int $playerId
  * @param string $seasonId
+ * @return int Total Goals.
  */
 function PlayerSeasonGoals($playerId, $seasonId) {
   $query = sprintf("SELECT COUNT(*) AS goals

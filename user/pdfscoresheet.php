@@ -47,7 +47,11 @@ if(!empty($_GET["filter2"])) {
 
 if(!empty($_GET["reservation"])) {
 	$gameResponsibilities = GameResponsibilities($season);
-	$games = ResponsibleReservationGames($_GET["reservation"]=="none"?null:$_GET["reservation"], $gameResponsibilities);
+	$responsibilities = array();
+	foreach ($gameResponsibilities as $row) {
+		$responsibilities[] = $row['game_id'];
+	}
+	$games = ResponsibleReservationGames($_GET["reservation"]=="none"?null:$_GET["reservation"], $responsibilities);
 }
 if(!empty($_GET["group"])) {
 	if($filter1=="coming"){

@@ -149,7 +149,7 @@ if($sort == "winavg") {
 }else{
   $html .= "<th class='center'><a class='thsort' href='".$viewUrl."&amp;Sort=winavg'>"._("Win-%")."</a></th>";
 }
-if($seasoninfo['spiritmode']>0 && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))){
+if((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode']>0)&& ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))){
   if($sort == "spirit") {
     $html .= "<th class='center'>"._("Spirit points")."</th>";
   }else{
@@ -233,7 +233,7 @@ foreach($allteams as $stats){
     $html .= "<td class='center'>".$stats['winavg']."%</td>";
   }
 
-  if($seasoninfo['spiritmode']>0 && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))){
+  if((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode']>0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))){
     if($sort == "spirit") {
       $html .= "<td class='center highlight'>".($stats['spirit']?$stats['spirit']:"-")."</td>";
     }else{

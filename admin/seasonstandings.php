@@ -450,7 +450,11 @@ function moveTable($moves, $type, $poolId, $poolinfo, $seasonId, $seriesId) {
       $html .= "<td>" . $row['torank'] . "</td>";
     }
     $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing'], $topoolinfo['type']!=2);  // do not count the BYE team if we are moving to a playoff pool
-    $html .= "<td>" . $team['name'] . "</td>";
+    if(isset($team['name'])){
+    $html .= "<td>" . utf8entities($team['name']) . "</td>";
+    }else{
+      $html .= "<td></td>";
+    }
 
     if ($row['ismoved']) {
       $undo = true;

@@ -326,9 +326,10 @@ if(!$poolId || $addmore) {
 	echo "<tr><td class='infocell'>"._("Visible").":</td>";
 	
 	$frompool = PoolGetMoveFrom($info['pool_id'],1);
-	$frompoolinfo = PoolInfo($frompool['frompool']);
+	$frompoolValue=isset($frompool['frompool']) ? $frompool['frompool'] : 0;
+	$frompoolinfo = PoolInfo($frompoolValue);
 // CS: Sometimes you want to change the visibility setting in Swissdraw
-	if(rtrim($frompoolinfo['ordering'],"0..9")==rtrim($pp['ordering'],"0..9")){ // Playoff or Swissdraw
+	if(isset($frompoolinfo['ordering']) && rtrim($frompoolinfo['ordering'],"0..9")==rtrim($pp['ordering'],"0..9")){ // Playoff or Swissdraw
 	    echo "<td><input class='input' disabled='disabled' type='checkbox' id='visible' name='visible'/></td>";
 	}else{
     	if(intval($pp['visible']))
@@ -347,7 +348,7 @@ if(!$poolId || $addmore) {
 	
 				
 	echo "<tr><td class='infocell'>"._("Continuing pool").":</td>";
-	if(rtrim($frompoolinfo['ordering'],"0..9")==rtrim($pp['ordering'],"0..9")){ // Playoff or Swissdraw
+	if(isset($frompoolinfo['ordering']) && rtrim($frompoolinfo['ordering'],"0..9")==rtrim($pp['ordering'],"0..9")){ // Playoff or Swissdraw
 	   		echo "<td><input class='input' disabled='disabled' type='checkbox' id='continuationserie' name='continuationserie' checked='checked'/></td>";
 	}else{
     	if(intval($pp['continuingpool']))
@@ -462,7 +463,8 @@ if(!$poolId || $addmore) {
 
 		<tr><td class='infocell'>"._("Time-outs in overtime").":</td>
 			<td><input class='input' id='timeoutsOnOvertime' name='timeoutsOnOvertime' value='".utf8entities($pp['timeoutsovertime'])."'/></td>
-			<td>"._("per team")."</td></tr>		";
+			<td>"._("per team")."</td></tr>
+		";
 
 	
 

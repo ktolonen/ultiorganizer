@@ -41,7 +41,7 @@ include_once $include_prefix . 'sql/upgrade_db.php';
 // You can get it by getting ext/restful/show_tables.php
 define('DB_VERSION', 76); //Database version matching to upgrade functions.
 
-$mysqlconnectionref = 0;
+$mysqlconnectionref;
 
 /**
  * Open database connection.
@@ -126,8 +126,8 @@ function getDBVersion()
 /**
  * Executes sql query and  returns result as an mysql array.
  *
- * @param srting $query database query
- * @return Array of rows
+ * @param string $query database query
+ * @return mysqli_result of rows
  */
 function DBQuery($query)
 {
@@ -142,8 +142,8 @@ function DBQuery($query)
 /**
  * Executes sql query and returns the ID generated the query.
  *
- * @param srting $query database query
- * @return id
+ * @param string $query database query
+ * @return int
  */
 function DBQueryInsert($query)
 {
@@ -158,7 +158,7 @@ function DBQueryInsert($query)
 /**
  * Executes sql query and  returns result as an value.
  *
- * @param srting $query database query
+ * @param string $query database query
  * @return Value of first cell on first row
  */
 function DBQueryToValue($query, $docasting = false)
@@ -183,7 +183,7 @@ function DBQueryToValue($query, $docasting = false)
 /**
  * Executes sql query and returns number of rows in resultset
  *
- * @param srting $query database query
+ * @param string $query database query
  * @return number of rows
  */
 function DBQueryRowCount($query)
@@ -199,7 +199,7 @@ function DBQueryRowCount($query)
 /**
  * Executes sql query and copy returns to php array.
  *
- * @param srting $query database query
+ * @param string $query database query
  * @return Array of rows
  */
 function DBQueryToArray($query, $docasting = false)
@@ -234,7 +234,7 @@ function DBResourceToArray($result, $docasting = false)
 /**
  * Executes sql query and copy returns to php array of first row.
  *
- * @param srting $query database query
+ * @param string $query database query
  * @return first row in array
  */
 function DBQueryToRow($query, $docasting = false)
@@ -381,7 +381,7 @@ if (function_exists('mysql_set_charset') === false) {
    * @param resource $link_identifier The MySQL connection
    * @return TRUE on success or FALSE on failure
    */
-  function mysql_set_charset($charset, $link_identifier = null)
+  function mysql_set_charset($charset, $link_identifier = 0)
   {
     global $mysqlconnectionref;
     if ($link_identifier == null) {
