@@ -3,9 +3,9 @@
 // RSS 0.91, 0.92, 0.93 and 0.94  Officially obsoleted by 2.0
 // So, define constants for RSS 1.0, RSS 2.0 and ATOM 	
 
-	define('RSS1', 'RSS 1.0', true);
-	define('RSS2', 'RSS 2.0', true);
-	define('ATOM', 'ATOM', true);
+	define('RSS1', 'RSS 1.0');
+	define('RSS2', 'RSS 2.0');
+	define('ATOM', 'ATOM');
 if(!defined('DATE_RSS')){
 	define('DATE_RSS', 'D, d M Y H:i:s O' );
 }
@@ -33,7 +33,7 @@ if(!defined('DATE_RSS')){
 	* 
 	* @param    constant    the version constant (RSS1/RSS2/ATOM).       
 	*/ 
-	function FeedWriter($version = RSS2)
+	function __construct($version = RSS2)
 	{	
 		$this->version = $version;
 			

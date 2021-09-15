@@ -37,7 +37,7 @@ if($_FILES['uploadedfile']['type']=="text/x-csv" || $_FILES['uploadedfile']['typ
         if(!empty($player['accreditation_id'])){
           $license = LicenseData($player['accreditation_id']);
           $playerInfo = PlayerInfo($player['player_id']);
-          //echo "<p>". $playerInfo['lastname']." ".$playerInfo['firstname']." :".$license['membership']."/".$license['license']." ".$playerInfo['accredited'];
+         // echo "<p>". $playerInfo['lastname']." ".$playerInfo['firstname']." :".$license['membership']."/".$license['license']." ".$playerInfo['accredited'] ."</p>";
           if($playerInfo['accredited']){
             $oldacc++;
           }
@@ -50,12 +50,12 @@ if($_FILES['uploadedfile']['type']=="text/x-csv" || $_FILES['uploadedfile']['typ
           }
 
           //old year based accreditation
-          if(!$playerInfo['accredited'] && isset($_POST['isValidityYear']) && !empty($_POST['validityYear'])
-          && $license['membership']==$_POST['validityYear'] && $license['license']==$_POST['validityYear']){
-            AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
-            $newacc++;
+          //if(!$playerInfo['accredited'] && isset($_POST['isValidityYear']) && !empty($_POST['validityYear'])
+          //&& $license['membership']==$_POST['validityYear'] && $license['license']==$_POST['validityYear']){
+          //  AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
+          //  $newacc++;
             //echo "accredited";
-          }
+          //}
           //echo "</p>";
         }
       }
@@ -153,23 +153,24 @@ function slklUpdateLicensesFromCSV($handle, $season){
     $firstname = trim($utf8 ? $data[2] : utf8_encode($data[2]));
     $birthdate = trim($utf8 ? $data[3] : utf8_encode($data[3]));
     $gender = trim($utf8 ? $data[4] : utf8_encode($data[4]));
-    $email = trim($utf8 ? $data[5] : utf8_encode($data[5]));
+
     //$license_string = trim($utf8 ? $data[6] : utf8_encode($data[6]));
-    $license_id = trim($utf8 ? $data[6] : utf8_encode($data[6]));
+    $license_id = trim($utf8 ? $data[5] : utf8_encode($data[5]));
     //$cond = trim($utf8 ? $data[7] : utf8_encode($data[7]));
-    $year = trim($utf8 ? $data[7] : utf8_encode($data[7]));
-    
-    //if($cond=="avoin"){
+    $year = trim($utf8 ? $data[6] : utf8_encode($data[6]));
+    $email = trim($utf8 ? $data[7] : utf8_encode($data[7]));  
+
+	//if($cond=="avoin"){
     //  continue;
    // }
-        
-    $year = substr($year,0,4);
+    $dates = explode(".", $year);
+    $year = $dates[2];
 
     if($year==""){
       continue;
     }
     
-    if($gender=="nainen"){
+    if(strcasecmp($gender,"nainen")==0){
       $women=1;
     }else{
       $women=0;
@@ -218,10 +219,116 @@ function slklUpdateLicensesFromCSV($handle, $season){
 	//4651 Jäsenmaksu, aikuiset 2012
 	//4652 Jäsenmaksu, juniorit 2012
 
-    
-    $valid_membership=array(653,654,655,656,4001,4002,4003,4004,4008,4009,4010,4013,4014,4644,4645,4653,4649,4650,4651,4652);
-    $valid_license=array(653,654,655,656,4001,4002,4008,4009,4010,4015,4016,4644,4645,4653,4649,4650);
-    $valid_juniors=array(654,656,4002,4004,4009,4010,4013,4016,4652,4650,4645);
+    //2013-2014
+    //5202 A-lisenssi (sis jäsenmaksun ja lisenssin)
+	//5203 B-lisenssi (sis jäsenmaksun ja lisenssin)
+	//5204 C-lisenssi (sis jäsenmaksun ja lisenssin)
+	//5200 Jäsenmaksu 2012 ja lisenssi (ei vakuutusta)
+	//5201 Jäsenmaksu 2012 ja lisenssi alle 18-vuotiaat (ei vakuutusta)
+	//5198 Jäsenmaksu, aikuiset 2012
+	//5199 Jäsenmaksu, juniorit 2012
+	
+	//2014-2015
+//5820 A-lisenssi (sisältää jäsenmaksun 2014 ja vakuutuksen)
+//5800 A-lisenssi, ei jäsenmaksua
+//5801 A-lisenssi, ei vakuutusta, ei jäsenmaksua
+//5821 Aikuisten jäsenmaksu 2014 ja lisenssi (ei vakuutusta)
+//5804 B-ja C-lisenssi (alle 18v), ei vakuutusta, ei jäsenmaksua
+//5822 B-lisenssi (sisältää jäsenmaksun 2014 ja vakuutuksen)
+//5802 B-lisenssi, ei jäsenmaksua
+//5823 C-lisenssi (sisältää jäsenmaksun 2014 ja vakuutuksen)
+//5803 C-lisenssi, ei jäsenmaksua
+//5799 Jäsenmaksu aikuiset
+//5798 Jäsenmaksu nuoret alle 18 v
+//Kertalisenssi, ei vakuutusta, ei jäsenmaksua
+//5824 Nuorten jäsenmaksu 2014 ja lisenssi (ei vakuutusta)
+
+//2015-2016
+//6431 Aikuisten vakuutus
+//6432 Alle 16-vuotiaan vakuutus
+//6421 Jäsenyys
+//6420 Kertalisenssi (sis jäsenyys ja kertalisenssi)
+//6414 Kesälisenssi aikuiset voimassa 1.4.15 – 30.9.15 (sis jäsenyys ja lisenssi)
+//6422 Kesälisenssi aikuiset voimassa 1.4.15 – 30.9.15, (sis jäsenyys, lisenssi ja vakuutus)
+//6425 Kesälisenssi juniorit 16-20v, voimassa 1.4.15 – 30.9.15 (sis jäsenyys, lisenssi ja vakuutus)
+//6428 Kesälisenssi juniorit alle 16v, voimassa 1.4.15 – 30.9.15 (sis jäsenyys, lisenssi ja vakuutus)
+//6417 Kesälisenssi juniorit, voimassa 1.4.15 – 30.9.15 (sis jäsenyys ja lisenssi)
+//6415 Talvilisenssi aikuiset, voimassa 1.10.2015-31.3.2016 (sis jäsenyys ja lisenssi)
+//6423 Talvilisenssi aikuiset, voimassa 1.10.2015-31.3.2016 (sis jäsenyys, lisenssi ja vakuutus)
+//6426 Talvilisenssi juniorit 16-20v, voimassa 1.10.2015-31.3.2016 (sis jäsenyys, lisenssi ja vakuutus )
+//6429 Talvilisenssi juniorit alle16v, voimassa 1.10.2015-31.3.2016 (sis jäsenyys, lisenssi ja vakuutus)
+//6418 Talvilisenssi juniorit, voimassa 1.10.2015-31.3.2016 (sis jäsenyys ja lisenssi)
+//6416 Vuosilisenssi aikuiset (sis jäsenyys ja lisenssi)
+//6424 Vuosilisenssi aikuiset (sis jäsenyys, lisenssi ja vakuutus)
+//6419 Vuosilisenssi juniorit (sis jäsenyys ja lisenssi)
+//6427 Vuosilisenssi juniorit 16-20, (sis jäsenyys, lisenssi ja vakuutus)
+//6430 Vuosilisenssi juniorit alle 16, (sis jäsenyys , lisenssi ja vakuutus)
+
+//2016-2017
+//	16-20 vuotiaiden vakuutus
+//	Aikuisten vakuutus
+//	Alle 12-vuotiaiden vakuutus
+//7151	Jäsenyys
+//7152	Jäsenyys alle 20-vuotiaalle
+//7155	Kertalisenssi
+//7157	Kesälisenssi aikuiset (jäsenyys ja lisenssi)
+//7160	Kesälisenssi juniorit alle 20v (jäsenyys ja lisenssi)
+//7158	Talvilisenssi aikuiset (jäsenyys ja lisenssi)
+//7161	Talvilisenssi juniorit alle 20v (jäsenyys ja lisenssi)
+//7159	Vuosilisenssi aikuiset (jäsenyys ja lisenssi)
+//7162	Vuosilisenssi juniorit alle 20v (jäsenyys ja lisenssi)
+//27	Jäsenyys, aikuiset
+//28	Jäsenyys, alle 20-vuotiaat
+//29	Kesälisenssi, aikuiset
+//31	Vuosilisenssi, aikuiset
+//32	Kesälisenssi, alle 20-vuotiaat
+//34	Vuosilisenssi, alle 20-vuotiaat
+//35	kertalisenssi, sis. jäsenmaksun
+//30	Talvilisenssi, aikuiset
+//33	Talvilisenssi, alle 20-vuotiaat
+//385	Talvilisenssi, kertalisenssin ostaneille
+//36 	kertalisenssi, sis. jäsenmaksu alle 20-vuotiaat
+
+//2018
+//404	Vuosilisenssi aikuiset
+//405	Vuosilisenssi alle 20-vuotiaat (1.4.1999 tai sen jälkeen syntyneet)
+//406	Kesälisenssi aikuiset
+//407	Kesälisenssi alle 20-vuotiaat (1.4.1999 tai sen jälkeen syntyneet)
+//413	Kertalisenssi aikuiset
+//414	Kertalisenssi juniorit
+//432	B-tour pelaajamaksu
+//408	Talvilisenssi aikuiset
+//412	Talvilisenssi alle 20-vuotiaat (1.4.1999 tai sen jälkeen syntyneet)
+
+//2019
+//807	Vuosilisenssi aikuiset
+//810	Vuosilisenssi alle 20-vuotiaat (1.4.1999 tai sen jälkeen syntyneet)
+//806	Kesälisenssi aikuiset
+//812	Kesälisenssi alle 20-vuotiaat (1.4.1999 tai sen jälkeen syntyneet)
+//805	Kertalisenssi aikuiset
+//809 Nuorten jäsenyys
+//	Kertalisenssi juniorit
+//	B-tour pelaajamaksu
+//808	Talvilisenssi aikuiset
+//813	Talvilisenssi alle 20-vuotiaat (1.4.1999 tai sen jälkeen syntyneet)
+
+//2020
+//1294	Kilpailulisenssi kesä 2020 (vaaditaan SM-sarjaan/-turnauksiin)
+//1295	Kilpailulisenssi koko kausi 2020-2021 (vaaditaan SM-sarjaan/-turnauksiin)
+//1296	Junioreiden kilpailulisenssi kesä 2020 (vaaditaan SM-sarjaan/-turnauksiin)
+//1297	Junioreiden kilpailulisenssi koko kausi
+//1759	Kilpailulisenssi aikuiset talvikausi 2020-2021
+
+
+//2021
+//2020	Kilpailulisenssi juniorit koko kausi 2021-2022
+//2021  Kertalisenssi aikuiset kesäkausi 2021(vaaditaan SM-sarjaan/-turnauksiin)
+//2023	Kilpailulisenssi aikuiset koko kausi 2021-2022  (vaaditaan SM-sarjaan ja divareihin)
+//2024	Kilpailulisenssi aikuiset kesäkausi 2021 (vaaditaan SM-sarjaan/-turnauksiin)
+
+    $valid_membership=array(2020,2023,2024);
+    $valid_license=array(2020,2021,2023,2024);
+    $valid_juniors=array(2020);
     $ignore = array(4011);
     
     if(in_array($license_id,$ignore)){
@@ -234,9 +341,11 @@ function slklUpdateLicensesFromCSV($handle, $season){
       $membership=$year;
     }
     $license="";
+	$external_type="";
     //if(stristr($license_string,"ultimaten kilpailulisenssi")){
     if(in_array($license_id,$valid_license)){
       $license=$year;
+      $external_type=$license_id;
     }
     $junior=0;
     //if(stristr($license_string,"juniorit")||strstr($license_string,"junioirit")){
@@ -245,7 +354,9 @@ function slklUpdateLicensesFromCSV($handle, $season){
     }
      
     if(!empty($birthdate)){
-      $birthdate = substr($birthdate,0,4)."-".substr($birthdate,4,2)."-".substr($birthdate,6,2);
+      //$birthdate = substr($birthdate,0,4)."-".substr($birthdate,4,2)."-".substr($birthdate,6,2);
+	  $dates = explode(".", $birthdate);
+      $birthdate = $dates[2]."-".$dates[1]."-".$dates[0];
       $birthdate .= " 00:00:00";
     }else{
       $birthdate = "1971-01-01 00:00:00";
@@ -267,7 +378,11 @@ function slklUpdateLicensesFromCSV($handle, $season){
       if(!empty($birthdate)){
         $query .= ",birthdate='".$birthdate."'";
       }
-      $query .= sprintf(" WHERE external_id='%s'", DBEscapeString($id));
+	  if(!empty($external_type)){
+		$query .= ",external_type='".$external_type."'";
+	  }
+	   
+      $query .= sprintf(" WHERE external_id='%s'", mysql_real_escape_string($id));
       DBQuery($query);
     }else{
       
@@ -292,7 +407,9 @@ function slklUpdateLicensesFromCSV($handle, $season){
       if(!empty($license)){
         $query .= ",license='".$license."'";
       }
-      $query .= ",external_type='".$license_id."'";
+	  if(!empty($external_type)){
+		$query .= ",external_type='".$external_type."'";
+	  }
       $query .= ",birthdate='".$birthdate."'";
       $query .= ",women='".$women."'";
       if($count1==1){
@@ -326,7 +443,7 @@ function slklUpdateLicensesFromCSV($handle, $season){
         DBEscapeString($junior),
         (int) $women,
         DBEscapeString($id),
-        DBEscapeString($license_id),
+        DBEscapeString($external_type),
         DBEscapeString($id),
         1
         );

@@ -3,6 +3,7 @@ include_once $include_prefix.'lib/season.functions.php';
 include_once $include_prefix.'lib/standings.functions.php';
 include_once $include_prefix.'lib/player.functions.php';
 include_once $include_prefix.'lib/series.functions.php';
+include_once $include_prefix.'lib/debug.functions.php';
 
 function IsSeasonStatsCalculated($season) {
 	$query = sprintf("SELECT count(*) FROM uo_season_stats WHERE season='%s'",
@@ -148,15 +149,15 @@ function AlltimeScoreboard($season, $seriestype) {
 	return DBQueryToArray($query);
 }
 
-function ScoreboardAllTime($limit, $seasontype="", $seriestype="") {
+function ScoreboardAllTime($limit, $seasontype="", $seriestype="", $club="", $sorting="") {
 
-	$query = "SELECT ps.*, ser.name AS seriesname, t.name AS teamname,
+	//SELECT SUM(ps.goals) as goalstotal, SUM(passes) as passestotal, SUM(ps.games) as gamestotal, MAX(ser.series_id) as last_series, MAX(t.team_id) as last_team, SUM(COALESCE(ps.goals,0) + COALESCE(ps.passes,0)) AS total FROM uo_player_stats ps LEFT JOIN uo_series ser ON(ser.series_id=ps.series) LEFT JOIN uo_season s ON(s.season_id=ps.season) LEFT JOIN uo_team t ON(t.team_id=ps.team) LEFT JOIN uo_player p ON(p.player_id=ps.player_id) LEFT JOIN uo_player_profile pp ON(pp.profile_id=ps.profile_id) GROUP BY ps.profile_id ORDER BY total DESC, SUM(ps.games) ASC LIMIT 100
+	$query = "SELECT ps.profile_id,
 			SUM(ps.goals) as goalstotal, SUM(passes) as passestotal,
 			SUM(ps.games) as gamestotal, MAX(ser.series_id) as last_series,
 			 MAX(t.team_id) as last_team,
 			SUM(COALESCE(ps.goals,0) + COALESCE(ps.passes,0)) AS total,
-			pp.firstname, pp.lastname,
-			s.name AS seasonname, s.type AS seasontype, ser.type AS seriestype
+			MAX(s.season_id)
 			FROM uo_player_stats ps 
 			LEFT JOIN uo_series ser ON(ser.series_id=ps.series)
 			LEFT JOIN uo_season s ON(s.season_id=ps.season)
@@ -174,12 +175,36 @@ function ScoreboardAllTime($limit, $seasontype="", $seriestype="") {
 	}elseif(!empty($seriestype)){
 		$query .= sprintf("WHERE ser.type='%s' ",
 			DBEscapeString($seriestype));
+	}elseif(!empty($club)){
+		$query .= sprintf("WHERE t.team_id IN %s ",
+			$club);
+			debugMsg($query);
 	}
 	
-	$query .= sprintf("GROUP BY ps.profile_id 
-			ORDER BY total DESC, ps.games ASC, lastname ASC 
-			LIMIT %d",
-			(int)$limit);
+	$query .= sprintf("GROUP BY ps.profile_id ");
+	
+	 switch($sorting){
+		case "total":
+		$query .= "ORDER BY total DESC, gamestotal ASC, ps.profile_id ASC ";
+		break;
+      
+		case "goal":
+		$query .= "ORDER BY goalstotal DESC, gamestotal ASC, ps.profile_id ASC ";
+		break;
+
+		case "pass":
+		$query .= "ORDER BY passestotal DESC, gamestotal ASC, ps.profile_id ASC ";
+		break;
+
+		case "games":
+		$query .= "ORDER BY gamestotal DESC, gamestotal ASC, ps.profile_id ASC ";
+		break;
+	  
+		default:
+		$query .= "ORDER BY total DESC, gamestotal ASC, ps.profile_id ASC ";
+		break;
+	 }	
+	$query .= sprintf(" LIMIT %d",(int)$limit);
 			
 	return DBQueryToArray($query);
 }

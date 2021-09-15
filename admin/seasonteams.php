@@ -139,7 +139,7 @@ foreach($teams as $team){
   $total++;
 
   $teaminfo = TeamFullInfo($team['team_id']);
-  $poolname = U_($team['poolname']);
+  $poolname = U_(PoolName($team['team_id']));
   if(!empty($team['name'])){
     if (intval($seasonInfo['isnationalteams'])) {
       $teamname = utf8entities(U_($team['name']));

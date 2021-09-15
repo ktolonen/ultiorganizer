@@ -408,13 +408,17 @@ function upgrade69() {
 		addColumn("uo_pooltemplate", "drawsallowed", "smallint(5) DEFAULT 0");
 	}
 	if (!hasColumn("uo_game", "hasstarted")) {
+		runQuery("UPDATE uo_game SET time=NULL WHERE time < '0000-01-01 00:00:00';");
 		addColumn("uo_game", "hasstarted", "tinyint(1) DEFAULT 0");
 		runQuery("UPDATE uo_game SET hasstarted='1' WHERE isongoing>0 OR homescore>0 OR visitorscore>0");
 	}
 }
 
 function upgrade70() {
-  if(!hasTable("uo_movingtime")){
+	// redo upgrade69 here since found some inconsitancy between different versions.
+	//upgrade69();
+
+	if(!hasTable("uo_movingtime")){
     runQuery("CREATE TABLE `uo_movingtime` (
 	`season` varchar(10) NOT NULL,
     `fromlocation` int(10) NOT NULL,
@@ -640,6 +644,10 @@ function upgrade75() {
     
     // clean up
     runQuery('DROP TABLE uo_spirit');
+	runQuery("UPDATE uo_game SET time=`1970-01-01 08:00:00` where time=0");
+	runQuery("UPDATE uo_game SET time=`1970-01-01 08:00:00` where time=`0000-00-00 00:00:00`");
+	runQuery("ALTER TABLE uo_game MODIFY time datetime NULL DEFAULT `1970-01-01 08:00:00`");
+	runQuery("SET SQL_MODE='ALLOW_INVALID_DATES'");
     dropField("uo_game", "homesotg");
     dropField("uo_game", "visitorsotg");
     dropField("uo_season", "spiritpoints");

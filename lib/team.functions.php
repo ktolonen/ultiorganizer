@@ -36,7 +36,7 @@ function TeamName($teamId)
   $query = sprintf("SELECT name FROM uo_team WHERE team_id='%s'",
   DBEscapeString($teamId));
   $row = DBQueryToRow($query);
-  $name = $row["name"];
+  $name = isset($row["name"]) ? $row["name"] : "";
   return $name;
 }
 

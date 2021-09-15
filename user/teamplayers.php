@@ -234,7 +234,7 @@ if(CUSTOMIZATIONS=="slkl"){
       echo "<td class='center'>-</td>";
     }
     
-    if(!empty($row['license'])){
+    if(!empty($row['external_type'])){
      echo "<td style='white-space: nowrap'>".$row['license']."</td>";
      }else{
      echo "<td>-</td>";

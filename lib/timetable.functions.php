@@ -734,8 +734,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter=""){
 function TimetableGrouping($id, $gamefilter, $timefilter)
 {
   //common game query
-  $query = "SELECT pool.name AS poolname, ps.name AS seriesname, pr.fieldname, pr.reservationgroup,
-			pl.name AS placename
+  $query = "SELECT pr.reservationgroup, MAX(pp.time)
 			FROM uo_game pp 
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
 			LEFT JOIN uo_pool pool ON (pool.pool_id=pp.pool) 
@@ -818,7 +817,8 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
       $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = '".DBEscapeString($timefilter)."'";
       break;
   }
-  $query .= " ORDER BY pp.time ASC, ps.ordering, pr.reservationgroup";
+
+  $query .= " GROUP BY pr.reservationgroup ORDER BY MAX(pp.time) ASC, pr.reservationgroup";
 
   return DBQueryToArray($query);
 }

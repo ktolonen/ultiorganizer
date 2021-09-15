@@ -106,7 +106,7 @@ function SeriesTypes() {
  */
 function SeriesTeams($seriesId, $orderbyseeding=false){
   $query = sprintf("SELECT DISTINCT t.team_id, t.name, t.abbreviation, t.club, cl.name AS clubname,
-			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
+			t.country, c.name AS countryname, t.rank, c.flagfile,
 			c.flagfile
 			FROM uo_team t
 			LEFT JOIN uo_series ser ON(ser.series_id=t.series)
@@ -418,7 +418,7 @@ function SeriesSpiritBoard($seriesId) {
 /**
  * Get all games in given division.
  * @param int $seriesId uo_series.series_id
- * @return PHP array of games.
+ * @return Array array of games.
  */
 function SeriesAllGames($seriesId){
   $query = sprintf("
