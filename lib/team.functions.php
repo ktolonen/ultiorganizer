@@ -1185,7 +1185,7 @@ function AddTeam($params) {
   if (hasEditTeamsRight($params['series'])) {
     $query = sprintf("
 			INSERT INTO uo_team
-			(name, pool, rank, valid, series) 
+			(name, pool, uo_team.rank, valid, series) 
 			VALUES ('%s', '%s', '%s', '%s', '%s')",
     DBEscapeString($params['name']),
     DBEscapeString($params['pool']),

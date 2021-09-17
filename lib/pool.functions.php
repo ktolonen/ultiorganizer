@@ -626,7 +626,7 @@ function PoolDependsOn($topool) {
         FROM uo_moveteams pmt
         LEFT JOIN uo_pool ps ON(ps.pool_id=pmt.frompool)
         WHERE pmt.topool = %d
-		GROUP BY frompool
+		GROUP BY frompool, pmt.torank
         ORDER BY pmt.torank ASC",
       (int)$topool);
   return DBQueryToArray($query);
@@ -1457,7 +1457,7 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool) {
 
   if ($newpool > 0){
     $query = sprintf("UPDATE uo_team_pool
-                      SET rank=%d, pool=%d WHERE pool=%d AND team=%d",
+                      SET uo_team_pool.rank=%d, pool=%d WHERE pool=%d AND team=%d",
                       (int) $rank, (int) $newpool, (int) $curpool, (int) $teamId);
     DBQuery($query);
   } else {
@@ -1490,7 +1490,7 @@ function PoolAddTeam($poolId, $teamId, $rank, $updaterank=false, $checkrights=tr
 
     if($updaterank){
       $query = sprintf("INSERT IGNORE INTO uo_team_pool
-                  (team, pool, rank, activerank)
+                  (uo_team_pool.team, uo_team_pool.pool, uo_team_pool.rank, uo_team_pool.activerank)
                   VALUES (%d,%d,%d,%d)",
       (int)$teamId,
       (int)$poolId,
@@ -1498,7 +1498,7 @@ function PoolAddTeam($poolId, $teamId, $rank, $updaterank=false, $checkrights=tr
       (int)$rank);
     }else{
       $query = sprintf("INSERT IGNORE INTO uo_team_pool
-                  (team, pool, rank)
+                  (uo_team_pool.team, uo_team_pool.pool, uo_team_pool.rank)
                   VALUES (%d,%d,%d)",
       (int)$teamId,
       (int)$poolId,

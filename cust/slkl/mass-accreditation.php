@@ -43,20 +43,20 @@ if($_FILES['uploadedfile']['type']=="text/x-csv" || $_FILES['uploadedfile']['typ
           }
 
           //new type of accreditation
-          if( !$playerInfo['accredited'] && in_array($license['external_validity'], $req_validity)
-          &&  (in_array($license['external_type'], $req_type) || isset($_POST['allTypes']))){
-            AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
-            $newacc++;
-          }
+          //if( !$playerInfo['accredited'] && in_array($license['external_validity'], $req_validity)
+          //&&  (in_array($license['external_type'], $req_type) || isset($_POST['allTypes']))){
+//            AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
+            //$newacc++;
+          //}
 
           //old year based accreditation
-          //if(!$playerInfo['accredited'] && isset($_POST['isValidityYear']) && !empty($_POST['validityYear'])
-          //&& $license['membership']==$_POST['validityYear'] && $license['license']==$_POST['validityYear']){
-          //  AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
-          //  $newacc++;
+          if(!$playerInfo['accredited'] && isset($_POST['isValidityYear']) && !empty($_POST['validityYear'])
+          && $license['membership']==$_POST['validityYear'] && $license['license']==$_POST['validityYear']){
+            AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
+            $newacc++;
             //echo "accredited";
-          //}
-          //echo "</p>";
+          }
+          echo "</p>";
         }
       }
 
@@ -164,7 +164,7 @@ function slklUpdateLicensesFromCSV($handle, $season){
     //  continue;
    // }
     $dates = explode(".", $year);
-    $year = $dates[2];
+    $year = isset($dates[2]) ? $dates[2] : "";
 
     if($year==""){
       continue;
@@ -382,7 +382,7 @@ function slklUpdateLicensesFromCSV($handle, $season){
 		$query .= ",external_type='".$external_type."'";
 	  }
 	   
-      $query .= sprintf(" WHERE external_id='%s'", mysql_real_escape_string($id));
+      $query .= sprintf(" WHERE external_id='%s'", DBEscapeString($id));
       DBQuery($query);
     }else{
       

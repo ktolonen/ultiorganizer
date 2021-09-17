@@ -42,7 +42,7 @@ function ExternalLicenseValidityList() {
 }
 
 function ExternalLicenseTypes() {
-	return DBQueryToArray("SELECT DISTINCT external_type FROM uo_license WHERE external_type IS NOT NULL AND external_type > 0");
+	return DBQueryToArray("SELECT DISTINCT external_type FROM uo_license WHERE external_type IS NOT NULL AND external_type > 0 ORDER BY external_type ASC");
 }
 
 function LicenseData($accreditation_id) {

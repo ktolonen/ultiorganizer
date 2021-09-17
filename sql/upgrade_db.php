@@ -415,9 +415,6 @@ function upgrade69() {
 }
 
 function upgrade70() {
-	// redo upgrade69 here since found some inconsitancy between different versions.
-	//upgrade69();
-
 	if(!hasTable("uo_movingtime")){
     runQuery("CREATE TABLE `uo_movingtime` (
 	`season` varchar(10) NOT NULL,
@@ -573,11 +570,17 @@ function upgrade75() {
         ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
 
     addColumn('uo_season', 'spiritmode', 'INT(10) DEFAULT NULL');
-    // set all to 1001
-    runQuery("UPDATE uo_season SET `spiritmode` = 1001 WHERE `spiritpoints`=1");
+	if(CUSTOMIZATIONS=="slkl"){
+		runQuery("UPDATE uo_season SET `spiritmode` = 1003 WHERE `spiritpoints`=1");
+		$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1003");
+	}else{
+	    // set all to 1001
+		runQuery("UPDATE uo_season SET `spiritmode` = 1001 WHERE `spiritpoints`=1");
+   
+		// update WFDF scores
+		$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1002");
+	}
     
-    // update WFDF scores
-    $categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1002");
     $categories = array();
     while ($cat = mysqli_fetch_assoc($categoriesResult)) {
       $categories[$cat['index']] = $cat['category_id'];
@@ -644,10 +647,7 @@ function upgrade75() {
     
     // clean up
     runQuery('DROP TABLE uo_spirit');
-	runQuery("UPDATE uo_game SET time=`1970-01-01 08:00:00` where time=0");
-	runQuery("UPDATE uo_game SET time=`1970-01-01 08:00:00` where time=`0000-00-00 00:00:00`");
-	runQuery("ALTER TABLE uo_game MODIFY time datetime NULL DEFAULT `1970-01-01 08:00:00`");
-	runQuery("SET SQL_MODE='ALLOW_INVALID_DATES'");
+	runQuery("UPDATE uo_game SET time=NULL WHERE time < '0000-01-01 00:00:00';");
     dropField("uo_game", "homesotg");
     dropField("uo_game", "visitorsotg");
     dropField("uo_season", "spiritpoints");

@@ -306,8 +306,6 @@ if ($seasoninfo['showspiritpoints']){ // TODO total
           $html .= "<td class='center'><b>" . number_format($teamAvg[$cat['category_id']], 2) . "</b></td>";
         else
           $html .= "<td class='center'>" . number_format($teamAvg[$cat['category_id']], 2) . "</td>";
-      }else{
-        $html .= "<td class='center'>-</td>";
       }
     }
     $html .= "<td class='center'><b>" . number_format($teamAvg['total'], 2) . "</b></td>";
