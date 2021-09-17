@@ -18,5 +18,7 @@ define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');
 
 define('ENABLE_ADMIN_DB_ACCESS', 'disabled');
 
+global $locales;
+$locales = array("en_GB.utf8" => "English", "fi_FI.utf8" => "Suomi");
 ?>
 

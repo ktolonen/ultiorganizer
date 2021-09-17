@@ -163,7 +163,9 @@ function translate($name, $translation_array) {
 			if (preg_match(WORD_DELIMITER, $part)) {
 				$ret .= $part;
 			} else {
-				if(isset($translation_array[strtolower($part)])){
+				if(is_numeric($part)){
+					$ret .= $part;
+				}else if(isset($translation_array[strtolower($part)])){
 					$ret.= $translation_array[strtolower($part)];
 				} else {
 					$ret .= $part;

@@ -98,7 +98,7 @@ pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
 ?>
 <script type="text/javascript">
-<!--
+
 function setId(id) 
 	{
 	var input = document.getElementById("hiddenDeleteId");
@@ -116,7 +116,7 @@ function validNumber(field)
 	{
 	field.value=field.value.replace(/[^0-9]/g, '')
 	}
-//-->
+
 </script>
 <?php
 //if (is_file('cust/'.CUSTOMIZATIONS.'/teamplayers.functions.php')) {
@@ -234,7 +234,7 @@ if(CUSTOMIZATIONS=="slkl"){
       echo "<td class='center'>-</td>";
     }
     
-    if(!empty($row['license'])){
+    if(!empty($row['external_type'])){
      echo "<td style='white-space: nowrap'>".$row['license']."</td>";
      }else{
      echo "<td>-</td>";

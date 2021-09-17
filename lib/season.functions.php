@@ -236,7 +236,7 @@ function SeasonAllPlayers($seasonId) {
  *
  * @param string $seasonId uo_season.season_id
  * @param boolean $onlyvalid true if only uo_team.valid=1 rows selected.
- * @return php array of teams
+ * @return Array array of teams
  */
 function SeasonTeams($season, $onlyvalid=true) {
   $query = sprintf("SELECT team.*, ser.name AS seriesname
@@ -257,7 +257,7 @@ function SeasonTeams($season, $onlyvalid=true) {
  * Returns all field reservations for given season.
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of reservations
+ * @return Array array of reservations
  */
 function SeasonReservations($seasonId, $group="all"){
   $query = sprintf("SELECT  pr.*, pl.name FROM uo_reservation pr 
@@ -278,7 +278,7 @@ function SeasonReservations($seasonId, $group="all"){
  * Returns all reservation groups for given season.
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of reservations
+ * @return Array array of reservations
  */
 function SeasonReservationgroups($seasonId) {
   $query = sprintf("
@@ -295,7 +295,7 @@ function SeasonReservationgroups($seasonId) {
  * Returns all locations of reservations for given season.
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of reservations
+ * @return Array array of reservations
  */
 function SeasonReservationLocations($seasonId, $group="all") {
   $query = sprintf("
@@ -343,7 +343,7 @@ function SeasonGamesNotScheduled($seasonId){
  * Returns all games played on given season.
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of games
+ * @return Array array of games
  */
 function SeasonAllGames($season){
   $query = sprintf("
@@ -364,7 +364,7 @@ function SeasonAllGames($season){
  * Access level: editseason
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of users
+ * @return Array array of users
  */
 function SeasonTeamAdmins($seasonId, $group=false) {
   $seasonrights = getEditSeasons($_SESSION['uid']);
@@ -395,7 +395,7 @@ function SeasonTeamAdmins($seasonId, $group=false) {
  * Access level: editseason
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of users
+ * @return Array array of users
  */
 function SeasonAccreditationAdmins($seasonId, $group=false) {
   $seasonrights = getEditSeasons($_SESSION['uid']);
@@ -425,7 +425,7 @@ function SeasonAccreditationAdmins($seasonId, $group=false) {
  * Access level: editseason
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of users
+ * @return Array array of users
  */
 function SeasonGameAdmins($seasonId) {
   $seasonrights = getEditSeasons($_SESSION['uid']);

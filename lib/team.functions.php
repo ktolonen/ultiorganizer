@@ -36,7 +36,7 @@ function TeamName($teamId)
   $query = sprintf("SELECT name FROM uo_team WHERE team_id='%s'",
   DBEscapeString($teamId));
   $row = DBQueryToRow($query);
-  $name = $row["name"];
+  $name = isset($row["name"]) ? $row["name"] : "";
   return $name;
 }
 
@@ -1185,7 +1185,7 @@ function AddTeam($params) {
   if (hasEditTeamsRight($params['series'])) {
     $query = sprintf("
 			INSERT INTO uo_team
-			(name, pool, rank, valid, series) 
+			(name, pool, uo_team.rank, valid, series) 
 			VALUES ('%s', '%s', '%s', '%s', '%s')",
     DBEscapeString($params['name']),
     DBEscapeString($params['pool']),

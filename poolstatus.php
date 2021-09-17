@@ -519,7 +519,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
     $games=0;
     for($i=1;$i<=$totalteams;$i++){
       
-      if(!isset($team['pool_id'])){
+      if(!isset($pool['pool_id'])){
         continue;
       }
       $team = PoolTeamFromInitialRank($pool['pool_id'],$i);
@@ -638,7 +638,7 @@ function printPlayoffTree($seasoninfo, $poolinfo){
   $template = str_replace("[placement]", _("Placement"), $template);
   for($i=1;$i<=$totalteams;$i++){
     $placementname = "";
-    if(!isset($team['pool_id'])){
+    if(!isset($pool['pool_id'])){
       continue;
     }
     if(empty($pool))

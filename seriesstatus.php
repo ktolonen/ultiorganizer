@@ -34,8 +34,7 @@ foreach ($teams as $team) {
   $teamstats['team_id']=$team['team_id'];
   $teamstats['seed']=$team['rank'];
   $teamstats['flagfile']=$team['flagfile'];
-  $teamstats['pool']=$team['poolname'];
-
+  
   $teamstats['wins']=$stats['wins'];
   $teamstats['games']=$stats['games'];
 
@@ -235,9 +234,9 @@ foreach($allteams as $stats){
 
   if((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode']>0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))){
     if($sort == "spirit") {
-      $html .= "<td class='center highlight'>".($stats['spirit']?$stats['spirit']:"-")."</td>";
+      $html .= "<td class='center highlight'>".($stats['spirit']?number_format($stats['spirit'],2):"-")."</td>";
     }else{
-      $html .= "<td class='center'>".($stats['spirit']?$stats['spirit']:"-")."</td>";
+      $html .= "<td class='center'>".($stats['spirit']?number_format($stats['spirit'],2):"-")."</td>";
     }
   }
 
@@ -302,7 +301,7 @@ if ($seasoninfo['showspiritpoints']){ // TODO total
     $html .= "<td>".utf8entities($teamAvg['teamname'])."</td>";
     $html .= "<td>" . $teamAvg['games'] . "</td>";
     foreach ($categories as $cat) {
-      if ($cat['index'] > 0) {
+      if ($cat['index'] > 0 && isset($teamAvg[$cat['category_id']])) {
         if ($cat['factor'] != 0)
           $html .= "<td class='center'><b>" . number_format($teamAvg[$cat['category_id']], 2) . "</b></td>";
         else

@@ -6,9 +6,13 @@ include_once 'lib/statistical.functions.php';
 $title = _("Statistics");
 $html = "";
 $list = "teamstandings";
+$sort = "";
 
 if(iget("list")) {
   $list = iget("list");
+}
+if(iget("sort")){
+  $sort = iget("sort");
 }
 
 //content
@@ -44,7 +48,7 @@ if($list=="teamstandings"){
         if(!count($standings)){continue;}
         ++$countall;
         $html .= "<tr>";
-        $html .= "<td style='width:16%'><a href='?view=teams&season=" . urlencode($season['season_id']) .
+        $html .= "<td style='width:16%'><a href='?view=eventstatus&amp;season=" . urlencode($season['season_id']) .
              "&amp;list=bystandings'>" . utf8entities(U_($season['name'])) . "</a></td>";
 
         for($i=0;$i<count($standings)&&$i<3;$i++){
@@ -108,23 +112,26 @@ if($list=="teamstandings"){
     }
   }
 }elseif($list=="playerscoresall"){
+  $viewUrl="?view=statistics&list=playerscoresall&amp;";
   $html .= "<h1>"._("All time scoreboard TOP 100")."</h1>\n";
-  $scores = ScoreboardAllTime(100);
+  $scores = ScoreboardAllTime(100,"","","",$sort);
   $html .= "<table border='1' width='100%'><tr>
-				<th>#</th><th>"._("Name")."</th><th>"._("Latest event / team")."</th><th class='center'>"._("Games")."</th>
-				<th class='center'>"._("Passes")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Total")."</th></tr>\n";
+				<th>#</th><th>"._("Name")."</th><th>"._("Latest event / team")."</th><th class='center'><a class='thsort' href='".$viewUrl."sort=games'>"._("Games")."</a></th>
+				<th class='center'><a class='thsort' href='".$viewUrl."sort=pass'>"._("Passes")."</a></th><th class='center'><a class='thsort' href='".$viewUrl."sort=goal'>"._("Goals")."</a>
+				</th><th class='center'><a class='thsort' href='".$viewUrl."sort=total'>"._("Total")."</a></th></tr>\n";
   $i=1;
   foreach($scores as $row){
     $html .= "<tr>\n";
     $html .= "<td>".$i++.".</td>";
     $html .= "<td>";
     $html .= "<a href='?view=playercard&amp;profile=".$row['profile_id']."'>";
-    $html .= utf8entities($row['firstname']." ".$row['lastname'])."</a>";
+    $player = PlayerProfile($row['profile_id']);
+    $html .= utf8entities($player['firstname']." ".$player['lastname'])."</a>";
     $html .= "</td>";
     $html .= "<td>".utf8entities(SeriesSeasonName($row['last_series']))." / ".utf8entities(TeamName($row['last_team']))."</td>";
     $html .= "<td class='center'>".$row['gamestotal']."</td>";
-    $html .= "<td class='center'>".$row['goalstotal']."</td>";
     $html .= "<td class='center'>".$row['passestotal']."</td>";
+    $html .= "<td class='center'>".$row['goalstotal']."</td>";
     $html .= "<td class='center'>".$row['total']."</td>";
     $html .= "</tr>\n";
   }
@@ -149,7 +156,7 @@ if($list=="teamstandings"){
       }
       $html .= "<h3>".U_($seriestype)."</h3>\n";
       	
-      $scores = ScoreboardAllTime(30, $seasontype, $seriestype);
+      $scores = ScoreboardAllTime(30, $seasontype, $seriestype, "", $sort);
       $html .= "<table border='1' width='100%'><tr>
 						<th>#</th><th>"._("Name")."</th><th>"._("Latest event / team")."</th><th class='center'>"._("Games")."</th>
 						<th class='center'>"._("Passes")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Total")."</th></tr>\n";
@@ -158,13 +165,14 @@ if($list=="teamstandings"){
         $html .= "<tr>\n";
         $html .= "<td>".$i++.".</td>";
         $html .= "<td>";
-        $html .= "<a href='?view=playercard&amp;player=".$row['player_id']."'>";
-        $html .= utf8entities($row['firstname']." ".$row['lastname'])."</a>";
+        $html .= "<a href='?view=playercard&amp;profile=".$row['profile_id']."'>";
+        $player = PlayerProfile($row['profile_id']);
+        $html .= utf8entities($player['firstname']." ".$player['lastname'])."</a>";
         $html .= "</td>";
         $html .= "<td>".utf8entities(SeriesSeasonName($row['last_series']))." / ".utf8entities(TeamName($row['last_team']))."</td>";
         $html .= "<td class='center'>".$row['gamestotal']."</td>";
-        $html .= "<td class='center'>".$row['goalstotal']."</td>";
         $html .= "<td class='center'>".$row['passestotal']."</td>";
+        $html .= "<td class='center'>".$row['goalstotal']."</td>";
         $html .= "<td class='center'>".$row['total']."</td>";
         $html .= "</tr>\n";
       }

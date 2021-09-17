@@ -8,6 +8,12 @@ $html = "";
 $clubId = iget("club");
 $profile = ClubInfo($clubId);
 
+$sort = "";
+
+if(iget("sort")){
+  $sort = iget("sort");
+}
+
 $title = _("Club Card").": ".utf8entities($profile['name']);
 
 $html .= "<h1>".utf8entities($profile['name'])."</h1>";
@@ -142,12 +148,15 @@ if($teams){
 }
 
 $teams = ClubTeamsHistory($clubId);
-if($teams){
+$sqlClubTeams = "";
+if(count($teams)){
+  $sqlClubTeams .= "(";
   $html .= "<h2>"._("History").":</h2>\n";
   $html .= "<table style='white-space: nowrap;' border='0' cellspacing='0' cellpadding='2' width='90%'>\n";
   $html .= "<tr><th>"._("Event")."</th><th>"._("Team")."</th><th>"._("Division")."</th><th colspan='3'></th></tr>\n";
 
   foreach($teams as $team){
+    $sqlClubTeams .= $team['team_id'];
     $html .= "<tr>\n";
     $html .= "<td style='width:20%'>".utf8entities(U_(SeasonName($team['season'])))."</td>";
     $html .= "<td style='width:30%'><a href='?view=teamcard&amp;team=".$team['team_id']."'>".utf8entities($team['name'])."</a></td>";
@@ -162,10 +171,41 @@ if($teams){
     $html .=  "<td style='width:10%'><a href='?view=games&amp;team=".$team['team_id']."'>"._("Games")."</a></td>";
 
     $html .= "</tr>\n";
+    $sqlClubTeams .= ",";
   }
+  $sqlClubTeams .= "0) ";
   $html .= "</table>\n";
 }
+if(!empty($sqlClubTeams)){
+$html .= "<h2>"._("All time scoreboard").":</h2>\n";
+$viewUrl="?view=clubcard&club=".$clubId."&amp;";
+// create sql part for IN condition by imploding comma after each id
 
+  $scores = ScoreboardAllTime(1000,"","",$sqlClubTeams,$sort);
+
+  $html .= "<table border='1' width='100%'><tr>
+				<th>#</th><th>"._("Name")."</th><th>"._("Latest event / team")."</th><th class='center'><a class='thsort' href='".$viewUrl."sort=games'>"._("Games")."</a></th>
+				<th class='center'><a class='thsort' href='".$viewUrl."sort=pass'>"._("Passes")."</a></th><th class='center'><a class='thsort' href='".$viewUrl."sort=goal'>"._("Goals")."</a>
+				</th><th class='center'><a class='thsort' href='".$viewUrl."sort=total'>"._("Total")."</a></th></tr>\n";
+  $i=1;
+  foreach($scores as $row){
+    $html .= "<tr>\n";
+    $html .= "<td>".$i++.".</td>";
+    $html .= "<td>";
+    $html .= "<a href='?view=playercard&amp;profile=".$row['profile_id']."'>";
+    $player = PlayerProfile($row['profile_id']);
+    $html .= utf8entities($player['firstname']." ".$player['lastname'])."</a>";
+    $html .= "</td>";
+    $html .= "<td>".utf8entities(SeriesSeasonName($row['last_series']))." / ".utf8entities(TeamName($row['last_team']))."</td>";
+    $html .= "<td class='center'>".$row['gamestotal']."</td>";
+    $html .= "<td class='center'>".$row['passestotal']."</td>";
+    $html .= "<td class='center'>".$row['goalstotal']."</td>";
+    $html .= "<td class='center'>".$row['total']."</td>";
+    $html .= "</tr>\n";
+  }
+
+  $html .= "</table>\n";
+}
 if ($_SESSION['uid'] != 'anonymous') {
   $html .= "<div style='float:left;'><hr/><a href='?view=user/addmedialink&amp;club=$clubId'>"._("Add media")."</a></div>";
 }

@@ -106,7 +106,7 @@ function SeriesTypes() {
  */
 function SeriesTeams($seriesId, $orderbyseeding=false){
   $query = sprintf("SELECT DISTINCT t.team_id, t.name, t.abbreviation, t.club, cl.name AS clubname,
-			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
+			t.country, c.name AS countryname, t.rank, c.flagfile,
 			c.flagfile
 			FROM uo_team t
 			LEFT JOIN uo_series ser ON(ser.series_id=t.series)
@@ -159,7 +159,7 @@ function Series($filter=null, $ordering=null) {
 /**
  * Get all player playing in given division.
  * @param int $seriesId uo_series.series_id
- * @return PHP array of players.
+ * @return Array array of players.
  */
 function SeriesAllPlayers($seriesId) {
   $query = sprintf("SELECT p.player_id, p.accreditation_id, p.profile_id FROM uo_player p
@@ -418,7 +418,7 @@ function SeriesSpiritBoard($seriesId) {
 /**
  * Get all games in given division.
  * @param int $seriesId uo_series.series_id
- * @return PHP array of games.
+ * @return Array array of games.
  */
 function SeriesAllGames($seriesId){
   $query = sprintf("
@@ -780,7 +780,7 @@ function SeriesCopyTeams($to, $from) {
   if (isSeasonAdmin(SeriesSeasonId($to))) {
     $teams = SeriesTeams($from);
     foreach($teams as $team){
-      $query = sprintf("INSERT INTO uo_team(name, club, country, rank, abbreviation, valid, series )
+      $query = sprintf("INSERT INTO uo_team(name, club, country, uo_team.rank, abbreviation, valid, series )
       			VALUES ('%s',%d,%d,%d,'%s',1,%d)",
           DBEscapeString($team['name']),
           (int) $team['club'],
