@@ -6884,18 +6884,16 @@ msgid "%d.%m.%Y %H:%M"
 msgstr ""
 
 #: sql/upgrade_db.php:496
-#, fuzzy
 msgid "One simple score"
-msgstr "Poista piste"
+msgstr "Yksi arvo"
 
 #: sql/upgrade_db.php:499
-#, fuzzy
 msgid "Spirit score"
 msgstr "Spirit-pisteet"
 
 #: sql/upgrade_db.php:503
 msgid "WFDF (four categories plus comparison)"
-msgstr ""
+msgstr "WFDF (neljä kategoriaa ja vertailu)"
 
 #: sql/upgrade_db.php:505 sql/upgrade_db.php:520
 msgid "Rules Knowledge and Use"
@@ -6919,15 +6917,15 @@ msgstr "Oma Spirit verrattuna vastustajaan"
 
 #: sql/upgrade_db.php:518
 msgid "WFDF (five categories)"
-msgstr ""
+msgstr "WFDF (viisi kategoriaa)"
 
 #: sql/upgrade_db.php:529
 msgid "Communication"
-msgstr "Communication"
+msgstr "Kommunikointi"
 
 #: sql/upgrade_db.php:533
 msgid "WFDF (five categories, theirs and ours)"
-msgstr ""
+msgstr "WFDF (viisi kategoriaa, heidän ja meidän)"
 
 #: sql/upgrade_db.php:536
 msgid "Rules Knowledge and Use (theirs)"
@@ -6963,11 +6961,11 @@ msgstr "Positiivinen asenne ja itsehillintä (me)"
 
 #: sql/upgrade_db.php:558
 msgid "Communication (theirs)"
-msgstr "Communication (ne)"
+msgstr "Kommunikointi (ne)"
 
 #: sql/upgrade_db.php:561
 msgid "Communication (ours)"
-msgstr "Communication (me)"
+msgstr "Kommunikointi (me)"
 
 #~ msgid "has no played players for this game."
 #~ msgstr "ei pelanneita pelaajia tässä pelissä."

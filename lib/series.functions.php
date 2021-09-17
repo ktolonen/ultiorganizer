@@ -357,7 +357,7 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit) {
 /**
  * Get division spirit score per category.
  * @param int $seriesId uo_series.series_id
- * @return mysql array of spirit scores per team.
+ * @return Array array of spirit scores per team.
 
  */
 function SeriesSpiritBoard($seriesId) {
