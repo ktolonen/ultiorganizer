@@ -19,7 +19,7 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()){
 		
 		$return.= 'DROP TABLE IF EXISTS '.$table.';';
 		$row2 = DBQueryToRow('SHOW CREATE TABLE '.$table);
-		$return.= "\n\n".$row2[1].";\n\n";
+		$return.= "\n\n".$row2['Create Table'].";\n\n";
 		
 		for ($i = 0; $i < $num_fields; $i++){
 			while($row = mysqli_fetch_row($result)){
@@ -53,6 +53,7 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()){
 				$return.= ");\n";
 			}
 		}
+		
 		$return.="\n\n\n";
 	
 	}	
