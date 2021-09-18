@@ -677,7 +677,10 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   echo "<table style='width:90%'>\n";
   echo "<tr><td class='guides'>";
   echo "<a href='?view=user_guide'>" . utf8entities(_("User Guide")) . "</a> | \n";
-  echo "<a href='?view=admin/help'>" . utf8entities(_("Admin Help")) . "</a> | \n";
+  if (count($editlinks) || isSuperAdmin()) {
+    echo "<a href='?view=admin/help'>" . utf8entities(_("Admin Help")) . "</a> | \n";
+  }
+
   echo "<a href='?view=privacy'>" . utf8entities(_("Privacy Policy")) . "</a>\n";
   echo "</td></tr>";
   echo "</table>";
