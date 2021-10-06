@@ -100,6 +100,7 @@ define("SERIESSEEDING", 345);
 define("SEASONADMIN", 346);
 define("ADDSEASONLINKS", 347);
 define("ADDSEASONUSERS", 348);
+define("ADDLOCATION", 348);
 
 define("EXTINDEX", 400);
 define("EXTEXPORT", 401);
