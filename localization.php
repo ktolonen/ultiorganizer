@@ -1,6 +1,6 @@
 <?php
 include_once $include_prefix.'lib/configuration.functions.php';
-include_once $include_prefix.'lib/gettext/gettext.inc';
+include_once $include_prefix.'lib/gettext/gettext.inc.php';
 include_once $include_prefix.'lib/translation.functions.php';
 
 // Map locales to defined ones that are "close enough"
@@ -128,5 +128,3 @@ function PreferredLocale() {
    */
   return GetDefaultLocale();
 }
-
-?>

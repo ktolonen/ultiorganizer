@@ -368,7 +368,7 @@ function navigationBar($title)
         unset($_SESSION['navigation'][$query_string]);
 
         //if previous view was having same title, remove it. e.g. when navigating back and forth in profiles or in case of sorting pages trough url parameter
-        
+
         $lastvalue = end($_SESSION['navigation']);
         if ($lastvalue) {
           if ($lastvalue == $title) {

@@ -9,14 +9,14 @@ if (hasEditUsersRight()) {
 	if (isset($_POST['deleteuser'])) {
 		if (isset($_POST['users'])) {
 			foreach ($_POST['users'] as $userid) {
-				if(!empty($_POST['registerrequest'])){
+				if (!empty($_POST['registerrequest'])) {
 					DeleteRegisterRequest(urldecode($userid));
-				}else{
+				} else {
 					DeleteUser(urldecode($userid));
 				}
 			}
 		}
-	}elseif (isset($_POST['resetpassword'])) {
+	} elseif (isset($_POST['resetpassword'])) {
 		if (isset($_POST['users'])) {
 			foreach ($_POST['users'] as $userid) {
 				UserResetPassword(urldecode($userid));
@@ -27,16 +27,13 @@ if (hasEditUsersRight()) {
 pageTopHeadOpen($title);
 ?>
 <script type="text/javascript">
-function checkAll(field)
-	{
-	var form = document.getElementById(field);
-		 
-		for (var i=1; i < form.elements.length; i++) 
-		{
-		 form.elements[i].checked = !form.elements[i].checked;
+	function checkAll(field) {
+		var form = document.getElementById(field);
+
+		for (var i = 1; i < form.elements.length; i++) {
+			form.elements[i].checked = !form.elements[i].checked;
 		}
 	}
-
 </script>
 <?php
 pageTopHeadClose($title);
@@ -45,10 +42,10 @@ contentStart();
 
 $target = "view=admin/users";
 //content
-echo "<p><a href='?view=admin/adduser'>"._("Add new user")."</a></p>";
-echo "<h2>".$title."</h2>";
+echo "<p><a href='?view=admin/adduser'>" . _("Add new user") . "</a></p>";
+echo "<h2>" . $title . "</h2>";
 if (hasEditUsersRight()) {
-	echo SearchUser($target, array(), array('resetpassword' => _("Reset password"),'deleteuser' => _("Delete")));
+	echo SearchUser($target, array(), array('resetpassword' => _("Reset password"), 'deleteuser' => _("Delete")));
 }
 
 contentEnd();

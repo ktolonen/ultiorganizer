@@ -255,66 +255,64 @@ echo yuiLoad(array("utilities", "datasource", "autocomplete"));
     return marker;
   }
 
- 
-  function createSidebarEntry(marker, placeid, name, address
-  <?php
-  global $locales;
-  foreach ($locales as $locale => $locname) {
-    echo ", info_" . str_replace(".", "_", $locale);
-  }
-  echo ",";
-  ?>
-   fields, indoor) {
-  
-  var div = document.createElement('div');
-  div.id = 'place' + placeid;
-  var html = '<b>' + name + '</b> ' + address + '<br/>' + <?php
 
-                                                          echo "'" . _("Fields") . " ' + fields + ' (' + indoor + ')'";
+  function createSidebarEntry(marker, placeid, name, address <?php
+                                                              global $locales;
+                                                              foreach ($locales as $locale => $locname) {
+                                                                echo ", info_" . str_replace(".", "_", $locale);
+                                                              }
+                                                              echo ",";
+                                                              ?> fields, indoor) {
 
-                                                          ?>;
-  div.innerHTML = html;
-  div.style.cursor = 'pointer';
-  div.style.marginBottom = '5px';
-  GEvent.addDomListener(div, 'click', function() {
-    GEvent.trigger(marker, 'click');
+    var div = document.createElement('div');
+    div.id = 'place' + placeid;
+    var html = '<b>' + name + '</b> ' + address + '<br/>' + <?php
 
-    document.getElementById('place_id').value = placeid;
-    document.getElementById('name').value = name;
-    document.getElementById('address').value = address;
-    <?php
-    foreach ($locales as $locale => $locname) {
-      $locale = str_replace(".", "_", $locale);
-      echo "\t\tdocument.getElementById('info_" . $locale . "').value = info_" . $locale . ";\n";
-    }
-    ?>
-    document.getElementById('fields').value = fields;
-    if (indoor == '<?php echo _("outdoors"); ?>') {
-      document.getElementById('indoor').checked = false;
-    } else {
-      document.getElementById('indoor').checked = true;
-    }
-    var point = marker.getLatLng();
-    document.getElementById('lat').value = getLat(point);
-    document.getElementById('lng').value = getLng(point);
-    document.getElementById('lat_disabled').value = getLat(point);
-    document.getElementById('lng_disabled').value = getLng(point);
+                                                            echo "'" . _("Fields") . " ' + fields + ' (' + indoor + ')'";
 
-    document.getElementById('save').name = 'save';
-    document.getElementById('save').value = '<?php echo _("Save"); ?>';
-    document.getElementById('delete').name = 'delete';
-    document.getElementById('delete').value = '<?php echo _("Delete"); ?>';
+                                                            ?>;
+    div.innerHTML = html;
+    div.style.cursor = 'pointer';
+    div.style.marginBottom = '5px';
+    GEvent.addDomListener(div, 'click', function() {
+      GEvent.trigger(marker, 'click');
 
-    document.getElementById('editPlace').style.visibility = 'visible';
+      document.getElementById('place_id').value = placeid;
+      document.getElementById('name').value = name;
+      document.getElementById('address').value = address;
+      <?php
+      foreach ($locales as $locale => $locname) {
+        $locale = str_replace(".", "_", $locale);
+        echo "\t\tdocument.getElementById('info_" . $locale . "').value = info_" . $locale . ";\n";
+      }
+      ?>
+      document.getElementById('fields').value = fields;
+      if (indoor == '<?php echo _("outdoors"); ?>') {
+        document.getElementById('indoor').checked = false;
+      } else {
+        document.getElementById('indoor').checked = true;
+      }
+      var point = marker.getLatLng();
+      document.getElementById('lat').value = getLat(point);
+      document.getElementById('lng').value = getLng(point);
+      document.getElementById('lat_disabled').value = getLat(point);
+      document.getElementById('lng_disabled').value = getLng(point);
 
-  });
-  GEvent.addDomListener(div, 'mouseover', function() {
-    div.style.backgroundColor = '#eee';
-  });
-  GEvent.addDomListener(div, 'mouseout', function() {
-    div.style.backgroundColor = '#fff';
-  });
-  return div;
+      document.getElementById('save').name = 'save';
+      document.getElementById('save').value = '<?php echo _("Save"); ?>';
+      document.getElementById('delete').name = 'delete';
+      document.getElementById('delete').value = '<?php echo _("Delete"); ?>';
+
+      document.getElementById('editPlace').style.visibility = 'visible';
+
+    });
+    GEvent.addDomListener(div, 'mouseover', function() {
+      div.style.backgroundColor = '#eee';
+    });
+    GEvent.addDomListener(div, 'mouseout', function() {
+      div.style.backgroundColor = '#fff';
+    });
+    return div;
   }
 
   function addLocation() {

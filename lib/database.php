@@ -24,7 +24,7 @@ while (!(is_readable($include_prefix . 'conf/config.inc.php') || is_readable($in
   $include_prefix .= "../";
 }
 
-require_once $include_prefix . 'lib/gettext/gettext.inc';
+require_once $include_prefix . 'lib/gettext/gettext.inc.php';
 include_once $include_prefix . 'lib/common.functions.php';
 
 if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
@@ -159,7 +159,7 @@ function DBQueryInsert($query)
  * Executes sql query and  returns result as an value.
  *
  * @param string $query database query
- * @return Value of first cell on first row
+ * @return  string of first cell on first row
  */
 function DBQueryToValue($query, $docasting = false)
 {
@@ -298,7 +298,7 @@ function DBCastArray($result, $row)
 /**
  * Get current system status.
  *
- * @return result string
+ * @return string of resuls
  */
 function DBStat()
 {
