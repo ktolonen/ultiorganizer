@@ -12,36 +12,34 @@ $poolIds = array();
 $tmppools = explode("|", $body);
 foreach ($tmppools as $PoolStr) {
 	$pool = explode("/", $PoolStr);
-	if($pool[0]!=0){
-	  $poolIds[] = $pool[0];
+	if ($pool[0] != 0) {
+		$poolIds[] = $pool[0];
 	}
 }
 
 $pools = explode("|", $body);
 foreach ($pools as $PoolStr) {
 	$pools = explode("/", $PoolStr);
-	
+
 	if ($pools[0] != "0") {
-		for ($i=1; $i < count($pools); $i++) {
-		    
+		for ($i = 1; $i < count($pools); $i++) {
+
 			$teamArr = explode("/", $pools[$i]);
 			foreach ($poolIds as $PoolId) {
-				PoolDeleteTeam($PoolId,$teamArr[0]);
+				PoolDeleteTeam($PoolId, $teamArr[0]);
 			}
-			PoolAddTeam($pools[0],$teamArr[0],$i);
+			PoolAddTeam($pools[0], $teamArr[0], $i);
 		}
 	} else {
-		for ($i=1; $i < count($pools); $i++) {
+		for ($i = 1; $i < count($pools); $i++) {
 			$teamArr = explode("/", $pools[$i]);
 			foreach ($poolIds as $PoolId) {
-				PoolDeleteTeam($PoolId,$teamArr[0]);
+				PoolDeleteTeam($PoolId, $teamArr[0]);
 			}
 		}
-	} 
+	}
 }
 foreach ($poolIds as $PoolId) {
 	ResolvePoolStandings($PoolId);
 }
 echo _("Teams saved");
-
-?>

@@ -7,7 +7,7 @@ $html = "";
 if (isset($_POST['removeclub_x']) && isset($_POST['hiddenDeleteId'])) {
 	$id = $_POST['hiddenDeleteId'];
 	RemoveClub($id);
-} 
+}
 if (isset($_POST['addclub']) && !empty($_POST['clubname'])) {
 	AddClub(0, $_POST['clubname']);
 } elseif (isset($_POST['saveclub']) && !empty($_POST['valid'])) {

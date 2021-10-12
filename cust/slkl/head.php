@@ -1,10 +1,12 @@
-<?php 
-function logo() {
-	global $include_prefix;
-	return "<div><a href='http://www.ultimate.fi/'><img class='logo' src='".$include_prefix."cust/slkl/logo.png' alt='"._("Ultimate.fi")."'/></a></div>";
+<?php
+function logo()
+{
+  global $include_prefix;
+  return "<div><a href='http://www.ultimate.fi/'><img class='logo' src='" . $include_prefix . "cust/slkl/logo.png' alt='" . _("Ultimate.fi") . "'/></a></div>";
 }
 
-function pageHeader() {
+function pageHeader()
+{
   global $include_prefix;
 
   //$ret = "<table border='0' cellpadding='0' cellspacing='0'><tr><td class='left'>";
@@ -12,11 +14,9 @@ function pageHeader() {
   //$ret .= "</td><td>&nbsp;</td><td class='left'>";
   //$ret .= "<a href='".GetURLBase()."' class='header_text'>"._("Finnish Flying Disc Association")." - "._("Pelikone")."</a>\n";
   //$ret .= "</td></tr></table>";
- 
-  $ret = "<a href='".GetURLBase()."' class='header_text'>"._("Ultimate Pelikone")."</a>";
-  $ret .= "<span style='color: #0bc5e0;font-size: 14pt;'> "._("Finnish Flying Disc Association")."</span>\n";
-  
+
+  $ret = "<a href='" . GetURLBase() . "' class='header_text'>" . _("Ultimate Pelikone") . "</a>";
+  $ret .= "<span style='color: #0bc5e0;font-size: 14pt;'> " . _("Finnish Flying Disc Association") . "</span>\n";
+
   return $ret;
 }
-
-?>

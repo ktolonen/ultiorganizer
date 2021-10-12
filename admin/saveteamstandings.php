@@ -13,13 +13,11 @@ $series = explode("|", $body);
 foreach ($series as $seriesStr) {
 	$teams = explode(":", $seriesStr);
 	//echo $seriesStr."\n";
-	for ($i=0; $i < count($teams); $i++) {
-		if(!empty($teams[$i])){
-			SetTeamSeasonStanding($teams[$i], $i+1);
+	for ($i = 0; $i < count($teams); $i++) {
+		if (!empty($teams[$i])) {
+			SetTeamSeasonStanding($teams[$i], $i + 1);
 		}
 	}
 }
 
 echo _("Standings saved");
-
-?>

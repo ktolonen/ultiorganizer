@@ -259,8 +259,8 @@ function SortEditSeasons($editSeasons)
 		$ret = array();
 		foreach ($result as $row) {
 			$ret[$row['season_id']] = $editSeasons[$row['season_id']];
-		  }
-		
+		}
+
 		return $ret;
 	}
 }
@@ -435,7 +435,6 @@ function setSuperAdmin($userid, $value)
 			);
 			$result = DBQuery($query);
 			Log1("security", "add", $userid, "", "superadmin acceess granted");
-
 		} else if (!$value) {
 			$query = sprintf(
 				"DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='superadmin'",
@@ -443,7 +442,6 @@ function setSuperAdmin($userid, $value)
 			);
 			$result = DBQuery($query);
 			Log1("security", "add", $userid, "", "superadmin acceess removed");
-
 		}
 	} else {
 		die('Insufficient rights to change superadmin userrole');
@@ -460,7 +458,6 @@ function setTranslationAdmin($userid, $value)
 			);
 			$result = DBQuery($query);
 			Log1("security", "add", $userid, "", "translationadmin acceess granted");
-
 		} else if (!$value) {
 			$query = sprintf(
 				"DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='translationadmin'",
@@ -468,7 +465,6 @@ function setTranslationAdmin($userid, $value)
 			);
 			$result = DBQuery($query);
 			Log1("security", "add", $userid, "", "translationadmin acceess removed");
-
 		}
 	} else {
 		die('Insufficient rights to change superadmin userrole');
@@ -794,7 +790,6 @@ function ToPrimaryEmail($userid, $extraEmail)
 					DBEscapeString($userid)
 				);
 				$result = DBQuery($query);
-
 			}
 		}
 	} else {
@@ -831,7 +826,7 @@ function RemoveEditSeason($userid, $propid)
 			DBEscapeString($userid)
 		);
 		$result = DBQuery($query);
-	
+
 		Log1("security", "delete", $userid, $propid, "editseason");
 		if ($userid == $_SESSION['uid']) {
 			SetUserSessionData($userid);
@@ -1013,7 +1008,6 @@ function DeleteRegisterRequest($userid)
 				DBEscapeString($userid)
 			);
 			$result = DBQuery($query);
-
 		} else {
 			die('Insufficient rights to delete user');
 		}
@@ -1226,7 +1220,6 @@ function FinalizeNewUser($userid, $email)
 			DBEscapeString($accreditation[0])
 		);
 		$result1 = DBQuery($query);
-
 	}
 }
 
@@ -1266,7 +1259,6 @@ function ConfirmEmail($token)
 				DBEscapeString($accreditation[0])
 			);
 			$result1 = DBQuery($query);
-
 		}
 
 
@@ -1445,7 +1437,7 @@ function GameResponsibilityArray($season, $series = null)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
 			left join (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS m ON (pp.game_id=m.game)
-		WHERE game_id IN (" . implode(",", array_column($gameResponsibilities,'game_id')) . ")"
+		WHERE game_id IN (" . implode(",", array_column($gameResponsibilities, 'game_id')) . ")"
 			. ($series ? " AND pool.series=%d" : "") . "
 		ORDER BY res.starttime ASC, res.reservationgroup ASC, res.fieldname+0,pp.time ASC",
 		$series ? (int)$series : 0

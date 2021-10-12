@@ -1,101 +1,117 @@
-<?php 
+<?php
 
-function GetImage($imageId){
-	$query = sprintf("
+function GetImage($imageId)
+{
+	$query = sprintf(
+		"
 		SELECT image, image_type
 		FROM uo_image 
 		WHERE image_id='%s'",
-		DBEscapeString($imageId));
-		
+		DBEscapeString($imageId)
+	);
+
 	$result = DBQueryToRow($query);
 	return $result;
-}	
+}
 
-function GetThumb($imageId){
-	$query = sprintf("
+function GetThumb($imageId)
+{
+	$query = sprintf(
+		"
 		SELECT thumb
 		FROM uo_image 
 		WHERE image_id='%s'",
-		DBEscapeString($imageId));
-		
-		$result = DBQueryToRow($query);
-		return $result;
+		DBEscapeString($imageId)
+	);
+
+	$result = DBQueryToRow($query);
+	return $result;
 }
 
-function ImageInfo($imageId){
-	$query = sprintf("
+function ImageInfo($imageId)
+{
+	$query = sprintf(
+		"
 		SELECT image_type, image_width, image_height, thumb_height, thumb_width, image_size
 		FROM uo_image 
 		WHERE image_id='%s'",
-		DBEscapeString($imageId));
-		
-		$result = DBQueryToRow($query);
-		return $result;
+		DBEscapeString($imageId)
+	);
+
+	$result = DBQueryToRow($query);
+	return $result;
 }
 
-function RemoveImage($imageId){
+function RemoveImage($imageId)
+{
 	if (isSuperAdmin()) {
-		$query = sprintf("DELETE FROM uo_image WHERE image_id='%s'",
-					DBEscapeString($imageId));
-					
+		$query = sprintf(
+			"DELETE FROM uo_image WHERE image_id='%s'",
+			DBEscapeString($imageId)
+		);
+
 		$result = DBQuery($query);
 		return $result;
-	} else { die('Insufficient rights to remove image'); }	
+	} else {
+		die('Insufficient rights to remove image');
+	}
 }
 
-function ConvertToJpeg($file_src, $file_dst){
+function ConvertToJpeg($file_src, $file_dst)
+{
 
-	if(is_file($file_dst)){
-		unlink($file_dst);//  remove old images if present
+	if (is_file($file_dst)) {
+		unlink($file_dst); //  remove old images if present
 	}
 
-   list($w_src, $h_src, $type) = getimagesize($file_src);
-   
-  switch ($type){
-		case 1:   //   gif -> jpg
-		$img_src = imagecreatefromgif($file_src);
-		break;
-		
-		case 2:   //   jpeg -> jpg
-		$img_src = imagecreatefromjpeg($file_src);
-		break;
-		
-		case 3:  //   png -> jpg
-		$img_src = imagecreatefrompng($file_src);
-		break;
-	}
-	
-   imagejpeg($img_src, $file_dst);    //  save new image
-   imagedestroy($img_src);       
-  }
-
-function CreateThumb($file_src, $file_dst, $w_dst, $h_dst) {
-	
-	if(is_file($file_dst)){
-		unlink($file_dst);//  remove old images if present
-	}
-	
 	list($w_src, $h_src, $type) = getimagesize($file_src);
-	
-	// create new dimensions, keeping aspect ratio
-	$ratio = $w_src/$h_src;
-	if ($w_dst/$h_dst > $ratio) {
-		$w_dst = floor($h_dst*$ratio);
-	} else {
-		$h_dst = floor($w_dst/$ratio);
-	}
-	switch ($type){
+
+	switch ($type) {
 		case 1:   //   gif -> jpg
-		$img_src = imagecreatefromgif($file_src);
-		break;
-		
+			$img_src = imagecreatefromgif($file_src);
+			break;
+
 		case 2:   //   jpeg -> jpg
-		$img_src = imagecreatefromjpeg($file_src);
-		break;
-		
+			$img_src = imagecreatefromjpeg($file_src);
+			break;
+
 		case 3:  //   png -> jpg
-		$img_src = imagecreatefrompng($file_src);
-		break;
+			$img_src = imagecreatefrompng($file_src);
+			break;
+	}
+
+	imagejpeg($img_src, $file_dst);    //  save new image
+	imagedestroy($img_src);
+}
+
+function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
+{
+
+	if (is_file($file_dst)) {
+		unlink($file_dst); //  remove old images if present
+	}
+
+	list($w_src, $h_src, $type) = getimagesize($file_src);
+
+	// create new dimensions, keeping aspect ratio
+	$ratio = $w_src / $h_src;
+	if ($w_dst / $h_dst > $ratio) {
+		$w_dst = floor($h_dst * $ratio);
+	} else {
+		$h_dst = floor($w_dst / $ratio);
+	}
+	switch ($type) {
+		case 1:   //   gif -> jpg
+			$img_src = imagecreatefromgif($file_src);
+			break;
+
+		case 2:   //   jpeg -> jpg
+			$img_src = imagecreatefromjpeg($file_src);
+			break;
+
+		case 3:  //   png -> jpg
+			$img_src = imagecreatefrompng($file_src);
+			break;
 	}
 
 	$img_dst = imagecreatetruecolor($w_dst, $h_dst);  //  resample
@@ -103,7 +119,6 @@ function CreateThumb($file_src, $file_dst, $w_dst, $h_dst) {
 	imagecopyresampled($img_dst, $img_src, 0, 0, 0, 0, $w_dst, $h_dst, $w_src, $h_src);
 	imagejpeg($img_dst, $file_dst);    //  save new image
 
-	imagedestroy($img_src);       
+	imagedestroy($img_src);
 	imagedestroy($img_dst);
 }
-?>

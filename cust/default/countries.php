@@ -214,5 +214,3 @@ $wallis_and_futuna = _("Wallis and Futuna");
 $yemen = _("Yemen");
 $zambia = _("Zambia");
 $zimbabwe = _("Zimbabwe");
-
-?>

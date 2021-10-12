@@ -4,10 +4,10 @@ $html = "";
 
 ClearUserSessionData();
 
-$html .= "<h1>"._("You have logged out")."</h1>";
+$html .= "<h1>" . _("You have logged out") . "</h1>";
 
 if (IsFacebookEnabled()) {
-  $html .= "<script type=\"text/javascript\">
+	$html .= "<script type=\"text/javascript\">
 <!--
 window.onload = function() {
 	FB.getLoginStatus(function(response) {
@@ -21,5 +21,3 @@ window.onload = function() {
 }
 
 showPage($title, $html);
-
-?>

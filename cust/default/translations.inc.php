@@ -1,4 +1,2 @@
 <?php
-$custom_translation_array = array (
-);
-?>
+$custom_translation_array = array();
