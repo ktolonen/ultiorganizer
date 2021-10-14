@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @file
  * Take the user when they return from Twitter. Get access tokens.
@@ -21,7 +22,7 @@ $season = $_SESSION['season'];
 /* If the oauth_token is old redirect. */
 if (isset($_REQUEST['oauth_token']) && $_SESSION['oauth_token'] !== $_REQUEST['oauth_token']) {
 	$_SESSION['oauth_status'] = 'oldtoken';
-  	$_SESSION['title'] = _("Twitter configuration failed") .":";
+	$_SESSION['title'] = _("Twitter configuration failed") . ":";
 	$_SESSION["var0"] = _("The oauth_token is old");
 	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;season=$season";
 	header("location:../?view=admin/failed");
@@ -34,7 +35,7 @@ $connection = new TwitterOAuth($_SESSION['TwitterConsumerKey'], $_SESSION['Twitt
 $access_token = $connection->getAccessToken($_REQUEST['oauth_verifier']);
 
 //Save the access tokens.
-SetTwitterKey($access_token, $_SESSION['purpose'],$_SESSION['id']);
+SetTwitterKey($access_token, $_SESSION['purpose'], $_SESSION['id']);
 //$_SESSION['access_token'] = $access_token;
 
 CloseConnection();
@@ -42,19 +43,19 @@ CloseConnection();
 //Remove no longer needed request tokens 
 unset($_SESSION['oauth_token']);
 unset($_SESSION['oauth_token_secret']);
-unset($_SESSION['season']); 
-unset($_SESSION['purpose']); 
+unset($_SESSION['season']);
+unset($_SESSION['purpose']);
 unset($_SESSION['id']);
 
 // If HTTP response is 200 account is correctly set
 if (200 == $connection->http_code) {
-	$_SESSION['title'] = _("Twitter configuration done") ."!";
+	$_SESSION['title'] = _("Twitter configuration done") . "!";
 	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;season=$season";
 	header("location:../?view=admin/success");
 } else {
 	//Show error page
-	$_SESSION['title'] = _("Twitter configuration failed") .":";
-	$_SESSION["var0"] = _("HTTP Error") ." ". $connection->http_code;
+	$_SESSION['title'] = _("Twitter configuration failed") . ":";
+	$_SESSION["var0"] = _("HTTP Error") . " " . $connection->http_code;
 	$_SESSION['backurl'] = "?view=admin/twitterconf&amp;season=$season";
 	header("location:../?view=admin/failed");
 }

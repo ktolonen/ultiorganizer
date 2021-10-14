@@ -8,8 +8,7 @@ header("Expires: -1");
 $result = GetAutocompleteTranslations();
 foreach ($result as $lang => $translations) {
 	foreach ((array)$translations as $key => $translation) {
-		echo $lang."\t".$key."\t".$translation."\n";
+		echo $lang . "\t" . $key . "\t" . $translation . "\n";
 	}
 }
 CloseConnection();
-?>

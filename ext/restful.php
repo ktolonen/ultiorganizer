@@ -1,13 +1,13 @@
-<?php 
+<?php
 include '../lib/database.php';
 
 OpenConnection();
 
-include_once $include_prefix.'localization.php';
-include_once $include_prefix.'lib/common.functions.php';
-include_once $include_prefix.'lib/user.functions.php';
-include_once $include_prefix.'lib/restful.functions.php';
-include_once $include_prefix.'ext/restful/classes.php';
+include_once $include_prefix . 'localization.php';
+include_once $include_prefix . 'lib/common.functions.php';
+include_once $include_prefix . 'lib/user.functions.php';
+include_once $include_prefix . 'lib/restful.functions.php';
+include_once $include_prefix . 'ext/restful/classes.php';
 
 session_name("UO_SESSID");
 session_start();
@@ -22,7 +22,7 @@ setSessionLocale();
 if (isset($_SERVER['PATH_INFO'])) {
 	$path = array_filter(explode("/", $_SERVER['PATH_INFO']));
 	global $isDir;
-	$isDir = true; 
+	$isDir = true;
 	if (substr($_SERVER['PATH_INFO'], -1) != "/") {
 		$isDir = false;
 	}
@@ -40,13 +40,13 @@ if (isset($_GET['authenticate'])) {
 		} else {
 			ClearUserSessionData();
 			header('WWW-Authenticate: Basic realm="ultiorganizer"');
-   			if (strpos("Microsoft", $_SERVER["SERVER_SOFTWARE"])) {
-   				header("Status: 401 Unauthorized");
-   			} else {
-   				header("HTTP/1.0 401 Unauthorized");				
-   			}
-   			echo "Unauthorized";
-   			exit();
+			if (strpos("Microsoft", $_SERVER["SERVER_SOFTWARE"])) {
+				header("Status: 401 Unauthorized");
+			} else {
+				header("HTTP/1.0 401 Unauthorized");
+			}
+			echo "Unauthorized";
+			exit();
 		}
 	}
 	paramHandled('authenticate');
@@ -63,29 +63,33 @@ if (isset($_GET['jsonp'])) {
 
 header("content-type: text/javascript");
 if (isset($jsonp)) {
-	echo $jsonp."(";
+	echo $jsonp . "(";
 }
 
 if (count($path) == 0) {
-	$objects = array("seasons", "series", "pools", "teams", "teamprofiles", "countries", "players", "playerprofiles",
-		"games", "locations");
+	$objects = array(
+		"seasons", "series", "pools", "teams", "teamprofiles", "countries", "players", "playerprofiles",
+		"games", "locations"
+	);
 	if (hasEditUsersRight()) {
 		$objects[] = "users";
 	}
-	if (isset($_SESSION['userproperties']['userrole']['superadmin']) ||
-	isset($_SESSION['userproperties']['userrole']['seasonadmin'])) {
+	if (
+		isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+		isset($_SESSION['userproperties']['userrole']['seasonadmin'])
+	) {
 		$objects[] = "reservations";
 	}
 	$output = array();
 	if (isset($_SESSION) && isset($_SESSION['uid']) && $_SESSION['uid'] != "anonymous") {
 		$output["user"]	= UserInfo($_SESSION['uid']);
 		unset($output['user']['password']);
-		$output["user"]["link"] = urlencode(GetURLBase()."/ext/restful.php/users/".$_SESSION['uid']);
+		$output["user"]["link"] = urlencode(GetURLBase() . "/ext/restful.php/users/" . $_SESSION['uid']);
 	}
 	foreach ($objects as $obj) {
-		$output[$obj] = array ("name" => _(ucwords($obj)), "link" => urlencode(GetURLBase()."/ext/restful.php/".$obj."/"));
+		$output[$obj] = array("name" => _(ucwords($obj)), "link" => urlencode(GetURLBase() . "/ext/restful.php/" . $obj . "/"));
 	}
-	echo "{\n \"objects\": ".json_encode($output)."\n}";
+	echo "{\n \"objects\": " . json_encode($output) . "\n}";
 } else {
 	$object = $path[1];
 	$object = ucwords($object);
@@ -102,7 +106,7 @@ if (count($path) == 0) {
 				$filter = array("join" => "or");
 				$filters = getJSONGetParamater('orfilter');
 			}
-			
+
 			$criteria = array();
 			$unsafe = false;
 			foreach ($filters as $nextfilter) {
@@ -111,24 +115,23 @@ if (count($path) == 0) {
 			}
 			$filter['criteria'] = $criteria;
 		}
-		
+
 		$ordering = null;
 		if (isset($_GET['ordering'])) {
 			$ordering = json_decode($_GET['ordering'], true);
-			switch(json_last_error())
-		    {
-		        case JSON_ERROR_DEPTH:
-		            die('Ordering parsing error: Maximum stack depth exceeded');
-		        break;
-		        case JSON_ERROR_CTRL_CHAR:
-		            die('Ordering parsing error: Unexpected control character found');
-		        break;
-		        case JSON_ERROR_SYNTAX:
-		            die('Ordering parsing error: Malformed JSON');
-		        break;
-		        case JSON_ERROR_NONE:
-		        break;
-		    }
+			switch (json_last_error()) {
+				case JSON_ERROR_DEPTH:
+					die('Ordering parsing error: Maximum stack depth exceeded');
+					break;
+				case JSON_ERROR_CTRL_CHAR:
+					die('Ordering parsing error: Unexpected control character found');
+					break;
+				case JSON_ERROR_SYNTAX:
+					die('Ordering parsing error: Malformed JSON');
+					break;
+				case JSON_ERROR_NONE:
+					break;
+			}
 		}
 		$list = $restful->getList($filter, $ordering);
 		echo json_encode($list);
@@ -144,27 +147,25 @@ if (isset($jsonp)) {
 	echo ")";
 }
 
-function getJSONGetParamater($parameter) {
+function getJSONGetParamater($parameter)
+{
 	if (isset($_GET[$parameter])) {
 		$ret = json_decode($_GET[$parameter], true);
-		switch(json_last_error())
-	    {
-	        case JSON_ERROR_DEPTH:
-	            die('Filter parsing error: Maximum stack depth exceeded');
-	        break;
-	        case JSON_ERROR_CTRL_CHAR:
-	            die('Filter parsing error: Unexpected control character found');
-	        break;
-	        case JSON_ERROR_SYNTAX:
-	            die('Filter parsing error: Malformed JSON');
-	        break;
-	        case JSON_ERROR_NONE:
-	        break;
-	    }
-	    return $ret;
+		switch (json_last_error()) {
+			case JSON_ERROR_DEPTH:
+				die('Filter parsing error: Maximum stack depth exceeded');
+				break;
+			case JSON_ERROR_CTRL_CHAR:
+				die('Filter parsing error: Unexpected control character found');
+				break;
+			case JSON_ERROR_SYNTAX:
+				die('Filter parsing error: Malformed JSON');
+				break;
+			case JSON_ERROR_NONE:
+				break;
+		}
+		return $ret;
 	} else {
 		die("JSON parameter $parameter not set");
 	}
 }
-
-?>
