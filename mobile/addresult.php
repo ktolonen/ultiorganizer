@@ -13,49 +13,48 @@ $html = "";
 
 $gameId = intval(iget("game"));
 
-if(isset($_POST['save'])) {
+if (isset($_POST['save'])) {
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
-	$ok=GameSetResult($gameId, $home, $away);
-	if($ok)	{
+	$ok = GameSetResult($gameId, $home, $away);
+	if ($ok) {
 		$game_result = GameResult($gameId);
-		header("location:?view=mobile/addplayerlists&game=".$gameId."&team=".$game_result['hometeam']);
+		header("location:?view=mobile/addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam']);
 	}
-}elseif(isset($_POST['update'])) {
+} elseif (isset($_POST['update'])) {
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
-	$ok=GameUpdateResult($gameId, $home, $away);
+	$ok = GameUpdateResult($gameId, $home, $away);
 }
 
 mobilePageTop(_("Game result"));
 
-$result = GameResult($gameId );
+$result = GameResult($gameId);
 
-$html .= "<form action='?".utf8entities($_SERVER['QUERY_STRING'])."' method='post'>\n"; 
+$html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method='post'>\n";
 $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
-$html .= utf8entities($result['hometeamname']) ." - ". utf8entities($result['visitorteamname']);
+$html .= utf8entities($result['hometeamname']) . " - " . utf8entities($result['visitorteamname']);
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' name='home' value='". intval($result['homescore']) ."' maxlength='3' size='5'/>";
+$html .= "<input class='input' name='home' value='" . intval($result['homescore']) . "' maxlength='3' size='5'/>";
 $html .= " - ";
-$html .= "<input class='input' name='away' value='". intval($result['visitorscore']) ."' maxlength='3' size='5'/>";
+$html .= "<input class='input' name='away' value='" . intval($result['visitorscore']) . "' maxlength='3' size='5'/>";
 $html .= "</td></tr><tr><td>\n";
 $html .= "</td></tr><tr><td>\n";
 $html .= _("If game ongoing:");
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='button' type='submit' name='update' value='"._("Update as current result")."'/>";
+$html .= "<input class='button' type='submit' name='update' value='" . _("Update as current result") . "'/>";
 $html .= "</td></tr><tr><td>\n";
 $html .= "</td></tr><tr><td>\n";
 $html .= _("If game ended:");
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='button' type='submit' name='save' value='"._("Save as final result")."'/>";
+$html .= "<input class='button' type='submit' name='save' value='" . _("Save as final result") . "'/>";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/respgames'>"._("Back to game responsibilities")."</a>";
+$html .= "<a href='?view=mobile/respgames'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
-$html .= "</form>"; 
+$html .= "</form>";
 
 echo $html;
-		
+
 pageEnd();
-?>

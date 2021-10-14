@@ -5,26 +5,26 @@ $seasoninfo = SeasonInfo($season);
 $reservationgroup = "";
 $location = "";
 $showall = false;
-$day="";
+$day = "";
 
-if(isset($_GET['rg'])){
+if (isset($_GET['rg'])) {
   $reservationgroup = urldecode($_GET['rg']);
 }
 
-if(isset($_GET['loc'])){
+if (isset($_GET['loc'])) {
   $location = urldecode($_GET['loc']);
 }
 
-if(isset($_GET['day'])){
+if (isset($_GET['day'])) {
   $day = urldecode($_GET['day']);
 }
 
-if(isset($_GET['all'])){
+if (isset($_GET['all'])) {
   $showall = intval($_GET['all']);
 }
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>"._("Games you are responsible for")."</h1>\n";
+$html .= "<h1>" . _("Games you are responsible for") . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
@@ -35,80 +35,80 @@ $html .= "<form action='?view=respgames' method='post' data-ajax='false'>\n";
 $html .= "<div class='ui-grid-solo'>";
 $seasons = SeasonsArray();
 
-if(count($seasons)){
-  $html .=  "<label for='selseason' class='select'>"._("Select event").":</label>\n";
+if (count($seasons)) {
+  $html .=  "<label for='selseason' class='select'>" . _("Select event") . ":</label>\n";
   $html .=  "<select name='selseason' id='selseason' onchange='changeseason(selseason.options[selseason.options.selectedIndex].value);'>\n";
-  foreach($seasons as $row){
+  foreach ($seasons as $row) {
     $selected = "";
-    if ($_SESSION['userproperties']['selseason']==$row['season_id']) {
+    if ($_SESSION['userproperties']['selseason'] == $row['season_id']) {
       $selected = "selected='selected'";
     }
-    $html .=   "<option class='dropdown' $selected value='".utf8entities($row['season_id'])."'>". SeasonName($row['season_id']) ."</option>";
+    $html .=   "<option class='dropdown' $selected value='" . utf8entities($row['season_id']) . "'>" . SeasonName($row['season_id']) . "</option>";
   }
   $html .=  "</select>";
 }
 
 $html .= "</div>";
 $html .= "<div class='ui-grid-solo'>";
-$html .= "<p>". _("Games in selected event").":</p>";
+$html .= "<p>" . _("Games in selected event") . ":</p>";
 $html .= "</div>";
 $html .= "<div class='ui-grid-solo'>";
 $html .= "<ul data-role='listview'>\n";
 
 
-$prevdate="";
+$prevdate = "";
 $prevrg = "";
 $prevloc = "";
 
 foreach ($respGameArray as $tournament => $resArray) {
-  foreach($resArray as $resId => $gameArray) {
+  foreach ($resArray as $resId => $gameArray) {
     foreach ($gameArray as $gameId => $game) {
 
       if (!is_numeric($gameId)) {
         continue;
       }
 
-      if($prevrg != $game['reservationgroup']){
-         
-        if(!empty($prevloc)){
-          $html .= "<li><a href='#' data-role='button' data-rel='back'>"._("Back")."</a></li>";
+      if ($prevrg != $game['reservationgroup']) {
+
+        if (!empty($prevloc)) {
+          $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
           $html .= "</ul></li>\n";
           $prevloc = "";
         }
 
-        if(!empty($prevrg)){
-          $html .= "<li><a href='#' data-role='button' data-rel='back'>"._("Back")."</a></li>";
+        if (!empty($prevrg)) {
+          $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
           $html .= "</ul></li>\n";
         }
         $html .= "<li>\n";
-        $html .= "<div>".utf8entities($game['reservationgroup'])."</div>";
+        $html .= "<div>" . utf8entities($game['reservationgroup']) . "</div>";
         $html .= "<ul>\n";
         $prevrg = $game['reservationgroup'];
       }
 
-      if($prevrg == $game['reservationgroup']){
+      if ($prevrg == $game['reservationgroup']) {
 
-        $gameloc = JustDate($game['starttime'])." ".$game['location']."#".$game['fieldname'];
-         
-        if($prevloc != $gameloc){
+        $gameloc = JustDate($game['starttime']) . " " . $game['location'] . "#" . $game['fieldname'];
 
-          if(!empty($prevloc)){
-            $html .= "<li><a href='#' data-role='button' data-rel='back'>"._("Back")."</a></li>";
+        if ($prevloc != $gameloc) {
+
+          if (!empty($prevloc)) {
+            $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
             $html .= "</ul></li>\n";
           }
 
           $html .= "<li>\n";
-          $html .= "<div>". JustDate($game['starttime']) ." ".utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname'])."</div>";
+          $html .= "<div>" . JustDate($game['starttime']) . " " . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</div>";
           $html .= "<ul>\n";
           $prevloc = $gameloc;
         }
 
-         
-        if($prevloc == $gameloc){
+
+        if ($prevloc == $gameloc) {
           $html .= "<li>";
 
 
-          if($game['hometeam'] && $game['visitorteam']){
+          if ($game['hometeam'] && $game['visitorteam']) {
             $html .= "<div>";
             $html .= "<table>";
             $html .= "<tbody>";
@@ -117,54 +117,53 @@ foreach ($respGameArray as $tournament => $resArray) {
             $html .= DefHourFormat($game['time']);
             $html .= "</td>";
             $html .= "<td style='padding-left:10px'>";
-            $html .= utf8entities($game['hometeamname']) ." - ". utf8entities($game['visitorteamname']);
+            $html .= utf8entities($game['hometeamname']) . " - " . utf8entities($game['visitorteamname']);
             $html .= "</td>";
             $html .= "<td style='padding-left:10px; white-space:nowrap;'>";
-            if(GameHasStarted($game)){
-              $html .= intval($game['homescore']) ." - ". intval($game['visitorscore']);
-            }else{  
+            if (GameHasStarted($game)) {
+              $html .= intval($game['homescore']) . " - " . intval($game['visitorscore']);
+            } else {
               $html .= "? - ?";
             }
             $html .= "</td>";
             $html .= "<td style='padding-left:10px'>";
-            if(GameHasStarted($game)){
-              if($game['isongoing']){
-                $html .=  "<a href='?view=gameplay&amp;game=".$gameId."'>". _("Ongoing") ."</a>";
-              }elseif(GameHasStarted($game)){
-                $html .=  "<a href='?view=gameplay&amp;game=".$gameId."'>". _("Game play") ."</a>";
+            if (GameHasStarted($game)) {
+              if ($game['isongoing']) {
+                $html .=  "<a href='?view=gameplay&amp;game=" . $gameId . "'>" . _("Ongoing") . "</a>";
+              } elseif (GameHasStarted($game)) {
+                $html .=  "<a href='?view=gameplay&amp;game=" . $gameId . "'>" . _("Game play") . "</a>";
               }
             }
             $html .= "</td>";
             $html .= "</tr>";
             $html .= "</tbody>";
             $html .= "</table>";
-            
+
             $html .= "<div data-role='controlgroup' data-type='horizontal'>\n";
-            $html .= "<a href='?view=addresult&amp;game=".$gameId."' data-role='button' data-ajax='false'>"._("Result")."</a>";
-            $html .= "<a href='?view=addplayerlists&amp;game=".$gameId."&amp;team=".$game['hometeam']."' data-role='button' data-ajax='false'>"._("Players")."</a>";
-            $html .= "<a href='?view=addscoresheet&amp;game=$gameId' data-role='button' data-ajax='false'>"._("Scoresheet")."</a>";
-            if(intval($seasoninfo['spiritmode']>0)&& isSeasonAdmin($seasoninfo['season_id'])){
-              $html .= "<a href='?view=addspiritpoints&amp;game=$gameId&amp;team=".$game['hometeam']."' data-role='button' data-ajax='false'>"._("Spirit")."</a>";
+            $html .= "<a href='?view=addresult&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Result") . "</a>";
+            $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Players") . "</a>";
+            $html .= "<a href='?view=addscoresheet&amp;game=$gameId' data-role='button' data-ajax='false'>" . _("Scoresheet") . "</a>";
+            if (intval($seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {
+              $html .= "<a href='?view=addspiritpoints&amp;game=$gameId&amp;team=" . $game['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Spirit") . "</a>";
             }
             $html .= "</div>\n";
             $html .= "</div>\n";
-          }else{
-            $html .= utf8entities($game['phometeamname']) ." - ". utf8entities($game['pvisitorteamname']) ." ";
+          } else {
+            $html .= utf8entities($game['phometeamname']) . " - " . utf8entities($game['pvisitorteamname']) . " ";
           }
           $html .= "</li>\n";
         }
       }
-
     }
   }
 }
-if(!empty($prevrg)){
-  $html .= "<li><a href='#' data-role='button' data-rel='back'>"._("Back")."</a></li>";
+if (!empty($prevrg)) {
+  $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
   $html .= "</ul></li>\n";
 }
 
-if(!empty($prevloc)){
-  $html .= "<li><a href='#' data-role='button' data-rel='back'>"._("Back")."</a></li>";
+if (!empty($prevloc)) {
+  $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
   $html .= "</ul></li>\n";
 }
 
@@ -175,4 +174,3 @@ $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;
-?>
