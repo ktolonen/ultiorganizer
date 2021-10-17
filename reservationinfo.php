@@ -33,11 +33,11 @@ echo "<p>&nbsp;</p>";
     });
     const contentString =
       '<div id="content">' +
-    <?php
-    echo "'<h1>" . utf8entities($place['name']) . "</h1>'+";
-    echo "'<p>" . utf8entities($place['address']) . "</p>'";
-    ?>
-    + "</div>";
+      <?php
+      echo "'<h1>" . utf8entities($place['name']) . "</h1>'+";
+      echo "'<p>" . utf8entities($place['address']) . "</p>'";
+      ?> +
+      "</div>";
     const infowindow = new google.maps.InfoWindow({
       content: contentString,
     });

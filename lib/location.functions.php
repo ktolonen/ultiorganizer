@@ -1,7 +1,8 @@
 <?php
 
-function GetLocations() {
-	  $query1 = sprintf("SELECT loc.* 
+function GetLocations()
+{
+	$query1 = sprintf("SELECT loc.* 
 		    FROM uo_location loc 
 	      ORDER BY name");
 	$result1 = DBQueryToArray($query1);
@@ -9,7 +10,8 @@ function GetLocations() {
 	return $result1;
 }
 
-function GetSearchLocations() {
+function GetSearchLocations()
+{
 	$locale = str_replace(".", "_", getSessionLocale());
 	if (isset($_GET['search']) || isset($_GET['query']) || isset($_GET['q'])) {
 		if (isset($_GET['search']))
@@ -71,8 +73,9 @@ function LocationInfo($id)
 	return $result;
 }
 
-function LocationInfoText($id, $locale) {
-	
+function LocationInfoText($id, $locale)
+{
+
 	$query = sprintf("SELECT inf.info as info
 	    FROM uo_location loc LEFT JOIN uo_location_info inf ON ( loc.id = inf.location_id and inf.locale='%s' )
 	    WHERE id=%d", DBEscapeString($locale), (int)$id);
@@ -81,9 +84,11 @@ function LocationInfoText($id, $locale) {
 	return $result;
 }
 
-function SetLocation($id, $name, $address, $info, $fields, $indoor, $lat, $lng, $season) {
-	if (isSuperAdmin()||isSeasonAdmin($season)) {
-		$query = sprintf("UPDATE uo_location SET name='%s', address='%s', fields=%d, indoor=%d, lat='%s', lng='%s'  WHERE id=%d", 
+function SetLocation($id, $name, $address, $info, $fields, $indoor, $lat, $lng, $season)
+{
+	if (isSuperAdmin() || isSeasonAdmin($season)) {
+		$query = sprintf(
+			"UPDATE uo_location SET name='%s', address='%s', fields=%d, indoor=%d, lat='%s', lng='%s'  WHERE id=%d",
 			DBEscapeString($name),
 			DBEscapeString($address),
 			(int)$fields,
@@ -160,12 +165,13 @@ function RemoveLocation($id)
 	}
 }
 
-function CanDeleteLocation($id) {
-	$query = sprintf("SELECT count(*) FROM uo_reservation WHERE location=%d",
-	(int)$id);
+function CanDeleteLocation($id)
+{
+	$query = sprintf(
+		"SELECT count(*) FROM uo_reservation WHERE location=%d",
+		(int)$id
+	);
 	$result = DBQueryToValue($query);
 
-	return $result==0;
+	return $result == 0;
 }
-
-?>
