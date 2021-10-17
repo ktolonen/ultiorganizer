@@ -1,5 +1,15 @@
 <?php
 
+function GetLocations()
+{
+	$query1 = sprintf("SELECT loc.* 
+		    FROM uo_location loc 
+	      ORDER BY name");
+	$result1 = DBQueryToArray($query1);
+
+	return $result1;
+}
+
 function GetSearchLocations()
 {
 	$locale = str_replace(".", "_", getSessionLocale());
@@ -59,6 +69,17 @@ function LocationInfo($id)
 	    FROM uo_location loc LEFT JOIN uo_location_info inf ON ( loc.id = inf.location_id and inf.locale='%s' )
 	    WHERE id=%d", DBEscapeString($locale), (int)$id);
 	$result = DBQueryToRow($query);
+
+	return $result;
+}
+
+function LocationInfoText($id, $locale)
+{
+
+	$query = sprintf("SELECT inf.info as info
+	    FROM uo_location loc LEFT JOIN uo_location_info inf ON ( loc.id = inf.location_id and inf.locale='%s' )
+	    WHERE id=%d", DBEscapeString($locale), (int)$id);
+	$result = DBQueryToValue($query);
 
 	return $result;
 }
@@ -142,4 +163,15 @@ function RemoveLocation($id)
 	} else {
 		die('Insufficient rights to remove location');
 	}
+}
+
+function CanDeleteLocation($id)
+{
+	$query = sprintf(
+		"SELECT count(*) FROM uo_reservation WHERE location=%d",
+		(int)$id
+	);
+	$result = DBQueryToValue($query);
+
+	return $result == 0;
 }
