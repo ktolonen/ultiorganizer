@@ -1365,7 +1365,7 @@ function GameResponsibilities($season)
 			if (strlen($criteria) > 0) {
 				$criteria .= " OR ";
 			}
-			$criteria .= "(respteam IN (" . implode(",", $seasonTeamAdmin) . "))";
+			$criteria .= "(hometeam IN (" . implode(",", $seasonTeamAdmin) . ") OR visitorteam IN (" . implode(",", $seasonTeamAdmin) . "))";
 		}
 		if (isset($_SESSION['userproperties']['userrole']['gameadmin'])) {
 			// GameAdmin
