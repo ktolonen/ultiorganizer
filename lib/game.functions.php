@@ -38,8 +38,7 @@ function PoolGameSetResults($pool, $games)
 function GameResult($gameId)
 {
 	$query = sprintf(
-		"
-    SELECT time, k.name As hometeamname, v.name As visitorteamname, 
+		"SELECT time, k.name As hometeamname, v.name As visitorteamname, 
         k.valid as homevalid, v.valid as visitorvalid, 
         p.*, hspirit.mode AS spiritmode, hspirit.sotg AS homesotg, vspirit.sotg AS visitorsotg, s.name AS gamename
     FROM uo_game AS p 
@@ -88,8 +87,7 @@ function GoalInfo($gameId, $num)
 function GameHomeTeamResults($teamId, $poolId)
 {
 	$query = sprintf(
-		"
-		SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.visitorteam, COALESCE(pm.goals,0) AS scoresheet,
+		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.visitorteam, COALESCE(pm.goals,0) AS scoresheet,
 			sn.name AS gamename, g.isongoing, g.hasstarted
 			FROM uo_game g 
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
@@ -120,8 +118,7 @@ function GameHomePseudoTeamResults($schedulingId, $poolId)
 function GameVisitorTeamResults($teamId, $poolId)
 {
 	$query = sprintf(
-		"
-		SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.hometeam, COALESCE(pm.goals,0) AS scoresheet
+		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.hometeam, COALESCE(pm.goals,0) AS scoresheet
 			FROM uo_game g 
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
 			WHERE g.visitorteam=%d AND g.pool=%d AND g.hasstarted>0 AND g.valid=1 AND isongoing=0
@@ -135,8 +132,7 @@ function GameVisitorTeamResults($teamId, $poolId)
 function GameNameFromId($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT k.name As hometeamname, v.name As visitorteamname 
+		"SELECT k.name As hometeamname, v.name As visitorteamname 
 		FROM (uo_game AS p LEFT JOIN uo_team As k ON (p.hometeam=k.team_id)) LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
 		WHERE game_id=%d",
 		(int)$gameId
@@ -150,8 +146,7 @@ function GameNameFromId($gameId)
 function GameSeries($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT s.series 
+		"SELECT s.series 
 		FROM uo_game p left join uo_pool s on (p.pool=s.pool_id)  
 		WHERE game_id='%s'",
 		DBEscapeString($gameId)
@@ -164,15 +159,22 @@ function GameSeries($gameId)
 function GameRespTeam($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT respteam 
+		"SELECT hometeam, visitorteam 
 		FROM uo_game  
 		WHERE game_id='%s'",
 		(int)$gameId
 	);
-	$result = DBQueryToValue($query);
-
-	return $result;
+	$result = DBQuery($query);
+	if ($result) {
+		$row = mysqli_fetch_assoc($result);
+		if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['hometeam']])) {
+			return $row['hometeam'];
+		}
+		if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['visitorteam']])) {
+			return $row['visitorteam'];
+		}
+	}
+	return -1;
 }
 
 /**
@@ -196,8 +198,7 @@ function GameAdmins($gameId)
 function GamePool($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT pool 
+		"SELECT pool 
 		FROM uo_game  
 		WHERE game_id=%d",
 		(int)$gameId
@@ -210,8 +211,7 @@ function GamePool($gameId)
 function GameIsFirstOffenceHome($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT ishome 
+		"SELECT ishome 
 		FROM uo_gameevent  
 		WHERE game=%d ORDER BY time",
 		(int)$gameId
@@ -224,8 +224,7 @@ function GameIsFirstOffenceHome($gameId)
 function GameReservation($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT reservation 
+		"SELECT reservation 
 		FROM uo_game  
 		WHERE game_id=%d",
 		(int)$gameId
@@ -310,8 +309,7 @@ function GameAll($limit = 50)
 function GamePlayerFromNumber($gameId, $teamId, $number)
 {
 	$query = sprintf(
-		"
-		SELECT p.player_id
+		"SELECT p.player_id
 		FROM uo_player AS p 
 		INNER JOIN (SELECT player, num FROM uo_played WHERE game='%s')
 			AS pel ON (p.player_id=pel.player) 
@@ -329,8 +327,7 @@ function GamePlayerFromNumber($gameId, $teamId, $number)
 function GameTeamScoreBorad($gameId, $teamId)
 {
 	$query = sprintf(
-		"
-		SELECT p.player_id, p.firstname, p.lastname, p.profile_id, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
+		"SELECT p.player_id, p.firstname, p.lastname, p.profile_id, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
 		(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.num AS num FROM uo_player AS p 
 		LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done 
 			FROM uo_goal AS m WHERE m.game='%s' AND m.scorer IS NOT NULL GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
@@ -353,8 +350,7 @@ function GameTeamScoreBorad($gameId, $teamId)
 function GameTeamDefenseBoard($gameId, $teamId)
 {
 	$query = sprintf(
-		"
-		SELECT p.player_id, p.firstname, p.lastname, p.profile_id, COALESCE(t.done,0) AS done, pel.num AS num FROM uo_player AS p 
+		"SELECT p.player_id, p.firstname, p.lastname, p.profile_id, COALESCE(t.done,0) AS done, pel.num AS num FROM uo_player AS p 
 		LEFT JOIN (SELECT m.author AS author, COUNT(*) AS done 
 			FROM uo_defense AS m WHERE m.game='%s' AND m.author IS NOT NULL GROUP BY author) AS t ON (p.player_id=t.author) 
 		RIGHT JOIN (SELECT player, num FROM uo_played WHERE game='%s') as pel ON (p.player_id=pel.player) 
@@ -372,8 +368,7 @@ function GameTeamDefenseBoard($gameId, $teamId)
 function GameScoreBoard($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT p.profile_id, p.player_id, p.firstname, p.lastname, pj.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
+		"SELECT p.profile_id, p.player_id, p.firstname, p.lastname, pj.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
 			(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total 
 		FROM uo_player AS p LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done 
 		FROM uo_goal AS m WHERE m.game='%s' AND m.scorer IS NOT NULL
@@ -397,8 +392,7 @@ function GameScoreBoard($gameId)
 function GameGoals($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT m.*, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
+		"SELECT m.*, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
 		FROM (uo_goal AS m LEFT JOIN uo_player AS s ON (m.assist = s.player_id)) 
 		LEFT JOIN uo_player AS t ON (m.scorer=t.player_id) 
 		WHERE m.game='%s' 
@@ -413,8 +407,7 @@ function GameGoals($gameId)
 function GameDefenses($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT m.*, s.firstname AS defenderfirstname, s.lastname AS defenderlastname 
+		"SELECT m.*, s.firstname AS defenderfirstname, s.lastname AS defenderlastname 
 		FROM (uo_defense AS m LEFT JOIN uo_player AS s ON (m.author = s.player_id))
 		WHERE m.game='%s' 
 		ORDER BY m.num",
@@ -429,8 +422,7 @@ function GameDefenses($gameId)
 function GameLastGoal($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT m.*, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
+		"SELECT m.*, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
 		FROM (uo_goal AS m LEFT JOIN uo_player AS s ON (m.assist = s.player_id)) 
 		LEFT JOIN uo_player AS t ON (m.scorer=t.player_id) 
 		WHERE m.game='%s' 
@@ -444,8 +436,7 @@ function GameLastGoal($gameId)
 function GameAllGoals($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT num,time,ishomegoal 
+		"SELECT num,time,ishomegoal 
 		FROM uo_goal 
 		WHERE game='%s' 
 		ORDER BY time",
@@ -459,8 +450,7 @@ function GameAllGoals($gameId)
 function GameEvents($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT time,ishome,type 
+		"SELECT time,ishome,type 
 		FROM (SELECT time,ishome,'timeout' AS type FROM `uo_timeout` 
 			WHERE game='%s' UNION ALL SELECT time,ishome,type FROM uo_gameevent WHERE game='%s') AS tapahtuma 
 		WHERE type!='media'
@@ -475,8 +465,7 @@ function GameEvents($gameId)
 function GameMediaEvents($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT u.time, u.ishome, u.type as eventtype, u.info, urls.*
+		"SELECT u.time, u.ishome, u.type as eventtype, u.info, urls.*
 		FROM uo_gameevent u
 		LEFT JOIN uo_urls urls ON(u.info=urls.url_id)
 		WHERE u.game=%d AND u.type='media'
@@ -524,8 +513,7 @@ function RemoveGameMediaEvent($gameId, $urlId)
 function GameTimeouts($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT num,time,ishome 
+		"SELECT num,time,ishome 
 		FROM uo_timeout 
 		WHERE game='%s' 
 		ORDER BY time",
@@ -538,8 +526,7 @@ function GameTimeouts($gameId)
 function GameTurnovers($gameId)
 {
 	$query = sprintf(
-		"
-		SELECT time, ishome 
+		"SELECT time, ishome 
 		FROM uo_gameevent 
 		WHERE game='%s' AND type='turnover' 
 		ORDER BY time",
@@ -759,8 +746,7 @@ function GameRemovePlayer($gameId, $playerId)
 {
 	if (hasEditGamePlayersRight($gameId)) {
 		$query = sprintf(
-			"
-			DELETE FROM uo_played 
+			"DELETE FROM uo_played 
 			WHERE game='%s' AND player='%s'",
 			DBEscapeString($gameId),
 			DBEscapeString($playerId)
@@ -778,8 +764,7 @@ function GameRemoveAllPlayers($gameId)
 {
 	if (hasEditGamePlayersRight($gameId)) {
 		$query = sprintf(
-			"
-			DELETE FROM uo_played
+			"DELETE FROM uo_played
 			WHERE game='%s'",
 			DBEscapeString($gameId)
 		);
@@ -796,8 +781,7 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
 {
 	if (hasEditGamePlayersRight($gameId)) {
 		$query = sprintf(
-			"
-			UPDATE uo_played 
+			"UPDATE uo_played 
 			SET num='%s', accredited=%d 
 			WHERE game=%d AND player=%d",
 			DBEscapeString($number),
@@ -818,8 +802,7 @@ function GameRemoveAllScores($gameId)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"
-			DELETE FROM uo_goal 
+			"DELETE FROM uo_goal 
 			WHERE game='%s'",
 			DBEscapeString($gameId)
 		);
@@ -836,8 +819,7 @@ function GameRemoveAllDefenses($gameId)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"
-			DELETE FROM uo_defense 
+			"DELETE FROM uo_defense 
 			WHERE game='%s'",
 			DBEscapeString($gameId)
 		);
@@ -855,8 +837,7 @@ function GameRemoveScore($gameId, $num)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"
-			DELETE FROM uo_goal 
+			"DELETE FROM uo_goal 
 			WHERE game='%s' AND num=%d",
 			DBEscapeString($gameId),
 			(int)$num
@@ -878,8 +859,7 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"
-			INSERT INTO uo_goal 
+			"INSERT INTO uo_goal 
 			(game, num, assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan) 
 			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
 			ON DUPLICATE KEY UPDATE 
@@ -916,8 +896,7 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"
-			INSERT INTO uo_defense 
+			"INSERT INTO uo_defense 
 			(game, num, author, time, iscallahan, iscaught, ishomedefense) 
 			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s') 
 			ON DUPLICATE KEY UPDATE 
@@ -950,8 +929,7 @@ function GameAddScoreEntry($uo_goal)
 {
 	if (hasEditGameEventsRight($uo_goal['game'])) {
 		$query = sprintf(
-			"
-			INSERT INTO uo_goal 
+			"INSERT INTO uo_goal 
 			(game, num, assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan) 
 			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 			DBEscapeString($uo_goal['game']),
@@ -980,8 +958,7 @@ function GameRemoveAllTimeouts($gameId)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"
-			DELETE FROM uo_timeout 
+			"DELETE FROM uo_timeout 
 			WHERE game='%s'",
 			DBEscapeString($gameId)
 		);
@@ -998,8 +975,7 @@ function GameAddTimeout($gameId, $number, $time, $home)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"
-			INSERT INTO uo_timeout 
+			"INSERT INTO uo_timeout 
 			(game, num, time, ishome) 
 			VALUES ('%s', '%s', '%s', '%s')",
 			DBEscapeString($gameId),
@@ -1113,8 +1089,7 @@ function GameSetCaptain($gameId, $teamId, $playerId)
 
 		if ($captain != $playerId) {
 			$query = sprintf(
-				"
-				UPDATE uo_played 
+				"UPDATE uo_played 
 				SET captain=0 
 				WHERE game=%d AND player=%d",
 				(int)$gameId,
@@ -1124,8 +1099,7 @@ function GameSetCaptain($gameId, $teamId, $playerId)
 			DBQuery($query);
 
 			$query = sprintf(
-				"
-				UPDATE uo_played 
+				"UPDATE uo_played 
 				SET captain=1 
 				WHERE game=%d AND player=%d",
 				(int)$gameId,
@@ -1174,8 +1148,7 @@ function AddGame($params)
 	$poolinfo = PoolInfo($params['pool']);
 	if (hasEditGamesRight($poolinfo['series'])) {
 		$query = sprintf(
-			"
-			INSERT INTO uo_game
+			"INSERT INTO uo_game
 			(hometeam, visitorteam, reservation, time, pool, valid, respteam) 
 			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s')",
 			DBEscapeString($params['hometeam']),
@@ -1189,8 +1162,7 @@ function AddGame($params)
 
 		$id = DBQueryInsert($query);
 		$query = sprintf(
-			"
-			INSERT INTO uo_game_pool
+			"INSERT INTO uo_game_pool
 			(game, pool, timetable) 
 			VALUES ('%s', '%s', 1)",
 			DBEscapeString($id),
@@ -1214,8 +1186,7 @@ function SetGame($gameId, $params)
 		foreach ($params as $key => $param) {
 			if (!empty($param)) {
 				$query = sprintf(
-					"
-					UPDATE uo_game SET " . $key . "='%s' 
+					"UPDATE uo_game SET " . $key . "='%s' 
 					WHERE game_id='%s'\n",
 					DBEscapeString($param),
 					DBEscapeString($gameId)

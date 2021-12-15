@@ -31,7 +31,7 @@ echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "containe
 			alert("<?php echo _("Name must be at least 2 letters long!"); ?>");
 		} else {
 			memberTable.initializeTable();
-			memberDataSource.sendRequest("firstname=" + urlencode(firstname) + "&lastname=" + urlencode(lastname) + " ?>", oCallback);
+			memberDataSource.sendRequest("firstname=" + urlencode(firstname) + "&lastname=" + urlencode(lastname) + "&team=<?php echo $teamId; ?>", oCallback);
 			dialog.show();
 		}
 	}
