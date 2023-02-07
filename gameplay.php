@@ -452,8 +452,8 @@ if (GameHasStarted($game_result) > 0) {
       $dblVAvg = 0.0;
 
       //Build HTML-table
-      $html .= "<table style='width:60%' border='1' cellpadding='2' cellspacing='0'><tr><th></th><th>" . utf8entities($game_result['hometeamname']) .
-        "</th><th>" . utf8entities($game_result['visitorteamname']) . "</th></tr>";
+      $html .= "<table style='width:80%' border='1' cellpadding='2' cellspacing='0'><tr><th></th><th style='width:25%'>" . utf8entities($game_result['hometeamname']) .
+        "</th><th style='width:25%'>" . utf8entities($game_result['visitorteamname']) . "</th></tr>";
 
       $html .= "<tr><td>" . _("Goals") . ":</td> <td class='home'>$nHGoals</td> <td class='guest'>$nVGoals</td></tr>\n";
 
@@ -505,9 +505,50 @@ if (GameHasStarted($game_result) > 0) {
 			<td class='guest'>" . $nVTO . "</td></tr>";
 
       if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))) {
-        $html .= "<tr><td>" . _("Spirit points") . ":</td>
-				<td class='home'>" . $game_result['homesotg'] . "</td>
-				<td class='guest'>" . $game_result['visitorsotg'] . "</td></tr>";
+        $html .= "<tr><td>" . _("Spirit points") . ":</td>";
+        if (isset($game_result['homesotg']) && !is_null($game_result['homesotg'])) {
+          $html .= "<td class='home'>" . $game_result['homesotg'] . "</td>";
+        } else {
+          $html .= "<td class='home'>-</td>";
+        }
+        if (isset($game_result['visitorsotg']) && !is_null($game_result['visitorsotg'])) {
+          $html .= "<td class='guest'>" . $game_result['visitorsotg'] . "</td></tr>";
+        } else {
+          $html .= "<td class='guest'>-</td></tr>";
+        }
+      }
+      $html .= "</table>";
+    }
+    // spirit points
+    if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && !intval($game_result['isongoing'])) {
+      $html .= "<h2>" . _("Spirit Points") . "</h2>\n";
+      $categories = SpiritCategories($seasoninfo['spiritmode']);
+      $homepoints = GameGetSpiritPoints($gameId, $game_result['hometeam']);
+      $visitorpoints = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
+      $html .= "<table style='width:80%' border='1' cellpadding='2' cellspacing='0'><tr><th></th><th style='width:25%'>" . utf8entities($game_result['hometeamname']) .
+        "</th><th  style='width:25%'>" . utf8entities($game_result['visitorteamname']) . "</th></tr>";
+      foreach ($categories as $cat) {
+        if ($cat['index'] == 0)
+          continue;
+        $id = $cat['category_id'];
+        $html .= "<tr><td>";
+        $html .= _($cat['text']);
+        $html .= ":</td>";
+        $html .= "<td class='home'>";
+        if (isset($homepoints[$id]) && !is_null($homepoints[$id])) {
+          $html .= intval($homepoints[$id]);
+        } else {
+          $html .= "-";
+        }
+
+        $html .= "</td>";
+        $html .= "<td class='guest'>";
+        if (isset($visitorpoints[$id]) && !is_null($visitorpoints[$id])) {
+          $html .= intval($visitorpoints[$id]);
+        } else {
+          $html .= "-";
+        }
+        $html .= "</td></tr>";
       }
       $html .= "</table>";
     }
