@@ -51,13 +51,14 @@ function GameResult($gameId)
                FROM uo_spirit_score ssc 
                LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id) 
                GROUP BY game_id, team_id, sct.mode ) AS vspirit
-       ON (p.game_id = hspirit.game_id AND vspirit.team_id = p.visitorteam)
+       ON (p.game_id = vspirit.game_id AND vspirit.team_id = p.visitorteam)
     LEFT JOIN uo_team As k ON (p.hometeam=k.team_id) 
     LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
     LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
     WHERE p.game_id='%s'",
 		DBEscapeString($gameId)
 	);
+
 	$result = DBQuery($query);
 
 	return mysqli_fetch_assoc($result);
