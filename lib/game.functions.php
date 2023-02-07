@@ -166,14 +166,16 @@ function GameRespTeam($gameId)
 		(int)$gameId
 	);
 	$result = DBQuery($query);
-	if ($result) {
-		$row = mysqli_fetch_assoc($result);
-		if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['hometeam']])) {
-			return $row['hometeam'];
-		}
-		if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['visitorteam']])) {
-			return $row['visitorteam'];
-		}
+	if (!$result) {
+		die('Invalid query: ' . mysql_error());
+	}
+
+	$row = mysqli_fetch_assoc($result);
+	if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['hometeam']])) {
+		return $row['hometeam'];
+	}
+	if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['visitorteam']])) {
+		return $row['visitorteam'];
 	}
 	return -1;
 }

@@ -232,7 +232,7 @@ while ($player = mysqli_fetch_assoc($team_players)) {
     }
 
     if (!empty($row['external_type'])) {
-      echo "<td style='white-space: nowrap'>" . $row['license'] . "</td>";
+      echo "<td style='white-space: nowrap'>" . U_($row['external_type']) . "</td>";
     } else {
       echo "<td>-</td>";
     }
