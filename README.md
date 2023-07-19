@@ -82,7 +82,11 @@ The command below should be run in the folder where you have cloned your Ultiorg
 docker run --network ultiorganizer-net --name=ultiorganizer --publish 8080:80 --volume "$PWD":/var/www/html --detach php:5-apache
 ```
 
-The base PHP apache image is missing some libraries and extensions that need to be installed.
+The base PHP apache image is missing some libraries and extensions that need to be installed. The official PHP 5 image is based on Debian 9 which is archived. Hence the repository URLs need to be updated to the archives.
+
+```sh
+docker exec ultiorganizer sh -c 'echo "deb http://archive.debian.org/debian stretch main\ndeb http://archive.debian.org/debian-security stretch/updates main" > /etc/apt/sources.list'
+```
 
 ```sh
 docker exec ultiorganizer sh -c 'apt-get --assume-yes update && apt-get --assume-yes install zlib1g-dev libpng-dev'
@@ -92,4 +96,4 @@ docker exec ultiorganizer sh -c 'apt-get --assume-yes update && apt-get --assume
 docker exec ultiorganizer sh -c 'docker-php-ext-install mysql gettext gd mbstring && apachectl restart'
 ```
 
-Now you should be able to connect to your development Ultiorganizer by opening your browser to <http://localhost:8080/>
+Now you should be able to connect to your development Ultiorganizer and start the installation procedure described above by opening your browser to <http://localhost:8080/installation.php>
