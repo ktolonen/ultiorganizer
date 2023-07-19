@@ -24,7 +24,7 @@ The files are organized as follows:
 
 ## Installation
 
-To run Ultiorganizer you need a web server, PHP 4.4 and a MySQL database.
+To run Ultiorganizer you need a web server, PHP 5.7 and a MySQL database.
 
 To install Ultiorganizer simply copy the files to your web server, call <http://yourpage.com/install.php> and follow the instructions.
 
@@ -48,11 +48,13 @@ MySQL 8 changed the default character set to `utf8mb4` and the currently used My
 
 ```sh
 export MYSQL_ROOT_PASSWORD='<root password>'
+```
 
+```sh
 docker run --detach --name=ultiorganizer-db --network ultiorganizer-net --env "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" mysql:5.7
 ```
 
-MySQL 5.7.5 and up implements detection of functional dependence. As there are queries in Ultiorganizer that refer to columns that are not listed in the `GROUP BY` section errors occur. These can be circumvented by disabling the new functionality.
+MySQL 5.7.5 and up implements detection of functional dependence. As there are queries in Ultiorganizer that refer to columns that are not listed in the `GROUP BY` section errors occur. These can be circumvented by disabling the new functionality until all the queries have been fixed.
 
 ```sh
 docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="CREATE DATABASE ultiorganizer;SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
@@ -64,7 +66,9 @@ More details in: <https://dev.mysql.com/doc/refman/5.7/en/group-by-handling.html
 
 ```sh
 docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="CREATE USER ultiorganizer IDENTIFIED BY 'ultiorganizer'"
+```
 
+```sh
 docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="GRANT ALL PRIVILEGES ON ultiorganizer.* TO ultiorganizer"
 ```
 
@@ -82,7 +86,9 @@ The base PHP apache image is missing some libraries and extensions that need to 
 
 ```sh
 docker exec ultiorganizer sh -c 'apt-get --assume-yes update && apt-get --assume-yes install zlib1g-dev libpng-dev'
+```
 
+```sh
 docker exec ultiorganizer sh -c 'docker-php-ext-install mysql gettext gd mbstring && apachectl restart'
 ```
 
