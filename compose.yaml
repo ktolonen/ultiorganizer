@@ -4,8 +4,6 @@ networks:
 services:
   db:
     image: mysql:5.7
-    # volumes:
-    #   - ./mysql:/var/lib/mysql
     environment:
       MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
       MYSQL_DATABASE: $MYSQL_DATABASE
