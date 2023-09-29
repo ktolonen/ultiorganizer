@@ -34,7 +34,21 @@ To enable fast start to Ultiorganizer development follow the instructions below 
 
 In order to install Docker follow the instructions on <https://docs.docker.com/get-docker/>
 
-### Create a network
+### Docker compose
+
+You can use Docker compose to get a clean development environment up and running.
+
+```sh
+docker compose up -d
+```
+
+Now you should be able to connect to your development Ultiorganizer and start the installation procedure described above by opening your browser to <http://localhost:8080/install.php>
+
+Alternatively you can execute the steps manually by following these instructions
+
+### Manual installation
+
+#### Create a network
 
 Adding a Docker network allows you to refer to the database with the containers name instead of using an IP-address in addition to isolating your development environment from your other containers. This step is optional but recommended.
 
@@ -42,7 +56,7 @@ Adding a Docker network allows you to refer to the database with the containers 
 docker network create ultiorganizer-net
 ```
 
-### Create the DB
+#### Create the DB
 
 MySQL 8 changed the default character set to `utf8mb4` and the currently used MySQL PHP extension doesn't support it. Therefore MySQL 5 is used for development.
 
@@ -62,7 +76,7 @@ docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD"
 
 More details in: <https://dev.mysql.com/doc/refman/5.7/en/group-by-handling.html>
 
-#### Create user and grant accesses
+##### Create user and grant accesses
 
 ```sh
 docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="CREATE USER ultiorganizer IDENTIFIED BY 'ultiorganizer'"
@@ -72,7 +86,7 @@ docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD"
 docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="GRANT ALL PRIVILEGES ON ultiorganizer.* TO ultiorganizer"
 ```
 
-### Create the web server
+#### Create the web server
 
 The original MySQL PHP driver has been deprecated in PHP 5.5.0 and removed in PHP 7.0. Therefore, Ultiorganizer can in its current state be developed only with PHP 5.
 
@@ -89,11 +103,11 @@ docker exec ultiorganizer sh -c 'echo "deb http://archive.debian.org/debian stre
 ```
 
 ```sh
-docker exec ultiorganizer sh -c 'apt-get --assume-yes update && apt-get --assume-yes install zlib1g-dev libpng-dev'
+docker exec ultiorganizer sh -c 'apt-get --assume-yes update && apt-get --assume-yes install zlib1g-dev libpng-dev sendmail'
 ```
 
 ```sh
-docker exec ultiorganizer sh -c 'docker-php-ext-install mysql gettext gd mbstring && apachectl restart'
+docker exec ultiorganizer sh -c 'docker-php-ext-install mysqli gettext gd mbstring && apachectl restart'
 ```
 
-Now you should be able to connect to your development Ultiorganizer and start the installation procedure described above by opening your browser to <http://localhost:8080/installation.php>
+Now you should be able to connect to your development Ultiorganizer and start the installation procedure described above by opening your browser to <http://localhost:8080/install.php>

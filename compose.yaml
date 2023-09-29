@@ -1,0 +1,26 @@
+networks:
+  net:
+
+services:
+  db:
+    image: mysql:5.7
+    # volumes:
+    #   - ./mysql:/var/lib/mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+    networks:
+      - net
+
+  web:
+    build: ./docker/app
+    volumes:
+      - .:/var/www/html
+    networks:
+      - net
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
