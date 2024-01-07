@@ -638,7 +638,9 @@ function printPlayoffTree($seasoninfo, $poolinfo)
       $gamesleft = -1;
     else {
       $team = PoolTeamFromStandings($pool['pool_id'], $i);
-      $gamesleft = mysqli_num_rows(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
+      if(!empty($team)){
+        $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
+      }
     }
     $teampart = "";
     $unknown = "";

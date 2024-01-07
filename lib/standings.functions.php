@@ -70,7 +70,7 @@ function ResolvePlayoffPoolStandings($poolId)
 		//check if teams can be moved to next round
 		$gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
 		$gamesleft2 = TeamPoolGamesLeft($teamId2, $poolId);
-		if (mysqli_num_rows($gamesleft1) + mysqli_num_rows($gamesleft2) == 0) {
+		if (count($gamesleft1) + count($gamesleft2) == 0) {
 			TeamMove($teamId1, $poolId, true);
 			TeamMove($teamId2, $poolId, true);
 		}
@@ -162,7 +162,7 @@ function ResolveCrossMatchPoolStandings($poolId)
 		$gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
 		$gamesleft2 = TeamPoolGamesLeft($teamId2, $poolId);
 
-		if (mysqli_num_rows($gamesleft1) + mysqli_num_rows($gamesleft2) == 0) {
+		if (count($gamesleft1) + count($gamesleft2) == 0) {
 			TeamMove($teamId1, $poolId);
 			TeamMove($teamId2, $poolId);
 		}

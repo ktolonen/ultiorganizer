@@ -126,7 +126,7 @@ include_once 'localization.php';
           if ($realteam['team_id']) {
             $gamesleft = TeamPoolGamesLeft($realteam['team_id'], $movefrom['frompool']);
 
-            if (mysqli_num_rows($gamesleft) == 0) {
+            if (count($gamesleft) == 0) {
               $name = "";
               if (intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])) {
                 $name .= "<img height='10' src='../images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
@@ -172,7 +172,7 @@ include_once 'localization.php';
       $team = PoolTeamFromStandings($pool['pool_id'], $i);
       $gamesleft = TeamPoolGamesLeft($team['team_id'], $pool['pool_id']);
 
-      if (mysqli_num_rows($gamesleft) == 0) {
+      if (count($gamesleft) == 0) {
         $placementname = "";
         if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
           $placementname .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
