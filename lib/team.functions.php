@@ -385,7 +385,7 @@ function TeamPoolGamesLeft($teamId, $poolId)
     DBEscapeString($teamId)
   );
 
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 function TeamStanding($teamId, $poolId)

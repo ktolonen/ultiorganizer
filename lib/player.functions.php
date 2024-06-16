@@ -138,7 +138,7 @@ function PlayerLatestId($profileId)
 
 function PlayerListAll($lastname = "")
 {
-  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname
+  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname, profile_id
 		FROM uo_player p 
 		LEFT JOIN uo_team ON p.team=team_id
 		WHERE accredited=1";

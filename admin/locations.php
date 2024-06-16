@@ -63,7 +63,7 @@ foreach ($locations as $place) {
   }
   $html .= "</tr>\n";
 }
-$html .=  "/table";
+$html .=  "</table>";
 $html .= "<p><input type='button' onclick=\"window.location.href='?view=admin/addlocations'\" value='" . _('Add') . "'/></p>";
 $html .=  "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 $html .=  "</form>";

@@ -25,13 +25,13 @@ if (!empty($player['profile_id'])) {
 
 $curseason = CurrentSeason();
 
-if ($player['num']) {
+if (is_numeric($profile['num'])) {
   $title = "#" . $profile['num'] . " " . utf8entities($profile['firstname'] . " " . $profile['lastname']);
 } else {
   $title = utf8entities($profile['firstname'] . " " . $profile['lastname']);
 }
 
-if ($player['num']) {
+if (is_numeric($profile['num'])) {
   $html .= "<h1>#" . $profile['num'] . " " . utf8entities($profile['firstname'] . " " . $profile['lastname']) . "</h1>";
 } else {
   $html .= "<h1>" . utf8entities($profile['firstname'] . " " . $profile['lastname']) . "</h1>";

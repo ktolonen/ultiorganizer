@@ -265,7 +265,7 @@ function PoolTeams($poolId, $order = "rank")
  */
 function PoolPlacementString($poolId, $pos, $ordinal = true)
 {
-  $ret = _("Unknown");
+  $ret = "";
   $info = PoolInfo($poolId);
   if (intval($info['placementpool'])) {
     $ppools = SeriesPlacementPoolIds($info['series']);
@@ -292,7 +292,7 @@ function PoolPlacementString($poolId, $pos, $ordinal = true)
 
     if ($ordinal) {
       if ($placementfrom == 0) {
-        $ret = _("Unknown");
+        $ret = "";
       } elseif ($placementfrom == 1) {
         $ret = _("Gold");
       } elseif ($placementfrom == 2) {
@@ -2704,10 +2704,10 @@ function SeriesRanking($series_id)
         $team = PoolTeamFromStandings($ppool['pool_id'], $i);
         $gamesleft = 1;
         if (isset($team['team_id'])) {
-          $gamesleft = TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']);
+          $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $ppool['pool_id']));
         }
 
-        if ($ppool['played'] || ($ppool['type'] == 2 && mysqli_num_rows($gamesleft) == 0)) {
+        if ($ppool['played'] || ($ppool['type'] == 2 && $gamesleft == 0)) {
           $team['placement'] = $i;
           $ranking[] = $team;
         } else {

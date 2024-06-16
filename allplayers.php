@@ -55,7 +55,7 @@ while ($player = mysqli_fetch_assoc($players)) {
     $html .= "<tr>\n";
   }
 
-  if (!empty($player['player_id'])) {
+  if (!empty($player['profile_id'])) {
     $html .= "<td style='width:" . (100 / $maxcols) . "%'><a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
       utf8entities($player['lastname'] . " " . $player['firstname']) . "</a></td>\n";
   } else {
