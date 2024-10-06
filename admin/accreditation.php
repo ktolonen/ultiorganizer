@@ -176,9 +176,9 @@ if ($view == "accId") {
       echo "<tr><td>";
       echo utf8entities($playerinfo['seriesname']);
       echo "</td><td>";
-      echo utf8entities($playerinfo['teamname']);
+      echo "<a href='?view=user/teamplayers&amp;team=" . $playerinfo['team'] . "'>" . utf8entities($playerinfo['teamname']) . "</a>";
       echo "</td><td>";
-      echo utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
+      echo utf8entities($playerinfo['lastname'] . " " . $playerinfo['firstname']);
       echo "</td></tr>";
     }
   }
@@ -193,10 +193,25 @@ if ($view == "accId") {
       echo "<tr><td>";
       echo utf8entities($playerinfo['seriesname']);
       echo "</td><td>";
-      echo utf8entities($playerinfo['teamname']);
+      echo "<a href='?view=user/teamplayers&amp;team=" . $playerinfo['team'] . "'>" . utf8entities($playerinfo['teamname']) . "</a>";
       echo "</td><td>";
-      echo utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
-      echo "</td></tr>";
+      echo utf8entities($playerinfo['lastname'] . " " . $playerinfo['firstname']);
+      echo "</td>";
+      if (CUSTOMIZATIONS == "slkl") {
+        $query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d", (int)$playerinfo['accreditation_id']);
+        $row = DBQueryToRow($query);
+        if (!empty($row['membership'])) {
+          echo "<td class='center' style='white-space: nowrap'>" . $row['membership'] . "</td>";
+        } else {
+          echo "<td class='center'>-</td>";
+        }
+        if (!empty($row['external_type'])) {
+          echo "<td style='white-space: nowrap'>" . U_($row['external_type']) . "</td>";
+        } else {
+          echo "<td>-</td>";
+        }
+      }
+      echo "</tr>";
     }
   }
   echo "</table>";

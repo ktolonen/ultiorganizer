@@ -34,29 +34,34 @@ if (isset($_POST['upload'])) {
         if (!empty($player['accreditation_id'])) {
           $license = LicenseData($player['accreditation_id']);
           $playerInfo = PlayerInfo($player['player_id']);
-          // echo "<p>". $playerInfo['lastname']." ".$playerInfo['firstname']." :".$license['membership']."/".$license['license']." ".$playerInfo['accredited'] ."</p>";
           if ($playerInfo['accredited']) {
             $oldacc++;
+            continue;
           }
 
-          //new type of accreditation
+          $isValidMembership = false;
+          // check membership
           if (
-            !$playerInfo['accredited'] && in_array($license['external_validity'], $req_validity)
-            &&  (in_array($license['external_type'], $req_type) || isset($_POST['allTypes']))
+            isset($_POST['isValidityYear']) && !empty($_POST['validityYear'])
+            && $license['membership'] == $_POST['validityYear']
           ) {
+            $isValidMembership = true;
+          }
+
+          $isValidLicense = false;
+          // check license
+          if (
+            in_array($license['external_type'], $req_type) || isset($_POST['allTypes'])
+          ) {
+            $isValidLicense = true;
+          }
+
+          // accrediate
+          if($isValidMembership && $isValidLicense) {
             AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
             $newacc++;
           }
 
-          //old year based accreditation
-          //if (
-          //  !$playerInfo['accredited'] && isset($_POST['isValidityYear']) && !empty($_POST['validityYear'])
-          //  && $license['membership'] == $_POST['validityYear'] && $license['license'] == $_POST['validityYear']
-          //) {
-          //  AccreditPlayer($playerInfo['player_id'], "automatic accreditation");
-          //  $newacc++;
-          //echo "accredited";
-          //}
           echo "</p>";
         }
       }
@@ -213,11 +218,12 @@ function slklUpdateLicensesFromCSV($handle, $season)
     //3974	Kilpailulisenssi juniorit kesäkausi 2024
     //3975	Kilpailulisenssi juniorit koko kausi 2024-2025
     //4076	Kertalisenssi aikuiset kesä 2024
-
+	  //4077	Kertalisenssi juniorit kesä 2024
+  	//4078	Harrastelisenssi kesä 2024
 
     $valid_membership = array(3968, 3972);
-    $valid_license = array(3970, 3971, 4076);
-    $valid_juniors = array(3974, 3975);
+    $valid_license = array(3970, 3971, 3974, 3975, 4076, 4077, 4078);
+    $valid_juniors = array(3974, 3975, 4077);
     $ignore = array();
 
 
@@ -321,6 +327,9 @@ function slklUpdateLicensesFromCSV($handle, $season)
         }
         if (empty($license)) {
           $license = 0;
+        }
+        if (empty($external_type)) {
+          $external_type = 0;
         }
 
         $query = sprintf(
