@@ -1119,7 +1119,7 @@ function GameSetCaptain($gameId, $teamId, $playerId)
 function GameSetStartingTeam($gameId, $home)
 {
 	if (hasEditGameEventsRight($gameId)) {
-		if ($home == NULL) {
+		if ($home === NULL) {
 			$query = sprintf(
 				"DELETE FROM uo_gameevent WHERE game=%d AND type='offence'",
 				(int)$gameId
