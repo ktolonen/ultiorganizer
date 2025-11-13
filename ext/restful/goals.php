@@ -1,11 +1,11 @@
 <?php 
 class Goals extends Restful {
-	function Goals() {
+	function __construct() {
 		
 	}
 }
 class Passess extends Restful {
-	function Passes() {
+	function __construct() {
 		
 	}
 }

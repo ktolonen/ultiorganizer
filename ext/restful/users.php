@@ -1,6 +1,6 @@
 <?php 
 class Users extends Restful {
-	function Users() {
+	function __construct() {
 		$this->localizename = false;
 	}		
 }

@@ -1,6 +1,6 @@
 <?php 
 class Countries extends Restful {
-	function Countries() {
+	function __construct() {
 		$this->localizename = false;
 	}		
 }

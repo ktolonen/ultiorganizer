@@ -18,7 +18,7 @@
 	* 
 	* @param    contant     (RSS1/RSS2/ATOM) RSS2 is default. 
 	*/ 
-	function FeedItem($version = RSS2)
+	function __construct($version = RSS2)
 	{    
 		$this->version = $version;
 	}

@@ -1,6 +1,6 @@
 <?php 
 class Pools extends Restful {
-	function Pools() {
+	function __construct() {
 		
 		$this->listsql = "SELECT pool_id, pool.name, pool.type, pool.series
 		FROM uo_pool pool LEFT JOIN uo_series series ON (pool.series=series.series_id)

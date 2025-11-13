@@ -1,6 +1,6 @@
 <?php 
 class Playerprofiles extends Restful {
-	function Playerprofiles() {
+	function __construct() {
 		$this->localizename = false;
 	}
 }

@@ -773,11 +773,12 @@ function addColumn($table, $column, $type)
 function hasColumn($table, $column)
 {
 	global $mysqlconnectionref;
-	$query = "SELECT max(" . $column . ") FROM " . $table;
-	$result = mysqli_query($mysqlconnectionref, $query);
+	$tableQuery = sprintf("SHOW COLUMNS FROM `%s` LIKE '%s'", $table, DBEscapeString($column));
+	$result = mysqli_query($mysqlconnectionref, $tableQuery);
 	if (!$result) {
 		return false;
-	} else return true;
+	}
+	return mysqli_num_rows($result) > 0;
 }
 
 function hasRow($table, $column, $value)

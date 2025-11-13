@@ -95,7 +95,7 @@ class XMLHandler
   /**
    * Default construction
    */
-  function XMLHandler()
+  function __construct()
   {
   }
 
@@ -147,7 +147,7 @@ class XMLHandler
 
     if (is_array($attribs)) {
       $row = array();
-      while (list($key, $val) = each($attribs)) {
+      foreach ($attribs as $key => $val) {
         if ($val == "NULL") {
           $row[$key] = "NULL";
         } elseif (is_int($val) || $val == -1) {

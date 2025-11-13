@@ -1,6 +1,6 @@
 <?php 
 class Series extends Restful {
-	function Series() {
+	function __construct() {
 		$this->listsql = "SELECT series_id, series.name as name, season.name as seasonname, series.season 
 		FROM uo_series series LEFT JOIN uo_season season ON (series.season=season.season_id)";
 		$this->itemsql = "SELECT * FROM uo_series WHERE series_id=%d";
