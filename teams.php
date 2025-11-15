@@ -19,6 +19,15 @@ if (empty($list)) {
 }
 
 $seasonInfo = SeasonInfo($season);
+if (!$seasonInfo) {
+  $seasonInfo = array(
+    'season_id' => $season,
+    'showspiritpoints' => 0,
+    'isnationalteams' => 0,
+    'isinternational' => 0,
+    'spiritmode' => 0,
+  );
+}
 $series = SeasonSeries($season, true);
 
 $menutabs[_("By division")] = "?view=teams&season=$season&list=allteams";

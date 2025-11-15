@@ -69,13 +69,15 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
     foreach ($fields as $field) {
       $res['fieldname'] = $field;
       $reservationId = AddReservation($res);
-      $html .= "<li>" . $res['reservationgroup'] . ": " . DefWeekDateFormat($res['date']) . " ";
+      $displayDate = DefWeekDateFormat($res['starttime'] ?: $res['date']);
+      $html .= "<li>" . $res['reservationgroup'] . ": " . $displayDate . " ";
       if (!empty($res['timeslots'])) {
         $html .= $res['timeslots'] . " ";
       } else {
         $html .=  DefHourFormat($res['starttime']) . "-" . DefHourFormat($res['endtime']) . " ";
       }
-      $html .=  $locinfo['name'] . " " . _("field") . " " . $field;
+      $locationName = isset($locinfo['name']) ? $locinfo['name'] : _("Unknown location");
+      $html .=  $locationName . " " . _("field") . " " . $field;
       $html .= "</li>";
     }
     $html .= "</ul><hr/>";

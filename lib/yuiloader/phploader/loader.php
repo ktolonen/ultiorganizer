@@ -318,6 +318,16 @@ class YAHOO_util_Loader {
     var $jsComboLocation  = null;
 
     /**
+    * Internal flags for environment capabilities.
+    */
+    var $apcttl = 0;
+    var $curlAvail = false;
+    var $apcAvail = false;
+    var $jsonAvail = false;
+    var $customModulesInUse = false;
+    var $comboDefaultVersion = null;
+
+    /**
     * The YAHOO_util_Loader class constructor
     * @constructor
     * @param {string} yuiVersion Defines which version of YUI metadata to load

@@ -317,11 +317,11 @@ function DBStat()
 function DBClientInfo()
 {
   global $mysqlconnectionref;
-  $result = mysqli_get_client_info($mysqlconnectionref);
-  if (!$result) {
+  $info = mysqli_get_client_info();
+  if ($info === false) {
     die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
-  return $result;
+  return $info;
 }
 
 /**

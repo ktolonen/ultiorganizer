@@ -61,7 +61,7 @@ function setSessionLocale() {
 
 
 function utf8entities($string) {
-  return htmlentities($string, ENT_QUOTES, "UTF-8");
+  return htmlentities((string) $string, ENT_QUOTES, "UTF-8");
 }
 
 function styles() {
