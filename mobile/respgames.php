@@ -110,7 +110,7 @@ if (count($respGameArray) == 0) {
 						if ($location == $gameloc && $day == JustDate($game['starttime'])) {
 							$html .= "&nbsp;&nbsp;<b>" . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</b>";
 						} else {
-							$html .= "&nbsp;+<a href='?view=mobile/respgames&amp;rg=" . urlencode($game['reservationgroup']) . "&amp;loc=" . urlencode($gameloc) . "&amp;day=" . urlencode(JustDate($game['starttime'])) . "$massPar'>";
+							$html .= "&nbsp;+<a href='?view=mobile/respgames&amp;rg=" . urlencode($currentGroup) . "&amp;loc=" . urlencode($gameloc) . "&amp;day=" . urlencode(JustDate($game['starttime'])) . "$massPar'>";
 							$html .= utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</a>";
 						}
 

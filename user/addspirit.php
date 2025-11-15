@@ -7,8 +7,8 @@ include_once $include_prefix . 'lib/configuration.functions.php';
 
 $html = "";
 
-$gameId = intval($_GET["game"]);
-$teamId = intval($_GET["team"]);
+$gameId = isset($_GET['game']) ? intval($_GET['game']) : 0;
+$teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
 $title = _("Spirit");
 
 $season = SeasonInfo(GameSeason($gameId));
