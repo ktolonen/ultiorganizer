@@ -24,7 +24,6 @@ while (!(is_readable($include_prefix . 'conf/config.inc.php') || is_readable($in
   $include_prefix .= "../";
 }
 
-require_once $include_prefix . 'lib/gettext/gettext.inc.php';
 include_once $include_prefix . 'lib/common.functions.php';
 
 if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
