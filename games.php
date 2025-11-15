@@ -166,10 +166,12 @@ if (!$print && !$singleview) {
   if (count($groups) > 1) {
     $html .= "<p>\n";
     foreach ($groups as $grouptmp) {
-      if ($group == $grouptmp['reservationgroup']) {
-        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . urlencode($grouptmp['reservationgroup']) . "'><span class='selgroupinglink'>" . U_($grouptmp['reservationgroup']) . "</span></a>";
+      $groupLabel = isset($grouptmp['reservationgroup']) ? (string)$grouptmp['reservationgroup'] : '';
+      $encodedGroup = urlencode($groupLabel);
+      if ($group == $groupLabel) {
+        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
       } else {
-        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . urlencode($grouptmp['reservationgroup']) . "'>" . U_($grouptmp['reservationgroup']) . "</a>";
+        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'>" . U_($groupLabel) . "</a>";
       }
       $html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
     }

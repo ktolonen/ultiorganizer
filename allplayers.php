@@ -21,10 +21,11 @@ $maxcols = 4;
 
 $html .= "<table style='white-space: nowrap;width:100%'><tr>\n";
 foreach ($validletters as $let) {
-  if ($let == $filter) {
-    $html .= "<td class='selgroupinglink'>&nbsp;" . utf8entities($let) . "&nbsp;</td>";
+  $letter = (string)$let;
+  if ($letter == $filter) {
+    $html .= "<td class='selgroupinglink'>&nbsp;" . utf8entities($letter) . "&nbsp;</td>";
   } else {
-    $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allplayers&amp;list=" . urlencode($let) . "'>" . utf8entities($let) . "</a>&nbsp;</td>";
+    $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allplayers&amp;list=" . urlencode($letter) . "'>" . utf8entities($letter) . "</a>&nbsp;</td>";
   }
 }
 if ($filter == "ALL") {

@@ -87,10 +87,12 @@ function respgameslink($season, $series_id, $group, $hide, $mass, $htmlentities 
 
 if (count($groups) > 0) {
   foreach ($groups as $grouptmp) {
-    if ($group == $grouptmp['reservationgroup']) {
-      $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, urlencode($grouptmp['reservationgroup']), $hide, $mass) . "'><span class='selgroupinglink'>" . U_($grouptmp['reservationgroup']) . "</span></a>";
+    $groupLabel = isset($grouptmp['reservationgroup']) ? (string)$grouptmp['reservationgroup'] : '';
+    $encodedGroup = urlencode($groupLabel);
+    if ($group == $groupLabel) {
+      $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $encodedGroup, $hide, $mass) . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
     } else {
-      $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, urlencode($grouptmp['reservationgroup']), $hide, $mass) . "'>" . U_($grouptmp['reservationgroup']) . "</a>";
+      $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $encodedGroup, $hide, $mass) . "'>" . U_($groupLabel) . "</a>";
     }
     $html .= "&nbsp;&nbsp;&nbsp; ";
   }
