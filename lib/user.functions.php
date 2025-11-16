@@ -1,5 +1,6 @@
 <?php
 
+include_once $include_prefix . 'lib/session.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/series.functions.php';
 include_once $include_prefix . 'lib/team.functions.php';
@@ -57,6 +58,7 @@ function UserAuthenticate($user, $passwd, $failcallback)
 
 	if ($count == 1) {
 		LogUserAuthentication($user, "success");
+		regenerateSessionId();
 		SetUserSessionData($user);
 		$row = DBQueryToRow($query);
 		DBQuery("UPDATE uo_users SET last_login=NOW() WHERE userid='" . DBEscapeString($user) . "'");
@@ -417,6 +419,12 @@ function getViewPools($selSeasonId)
 
 function ClearUserSessionData()
 {
+	if (session_status() !== PHP_SESSION_ACTIVE) {
+		startSecureSession();
+	}
+
+	destroySessionCompletely();
+	startSecureSession();
 	SetUserSessionData("anonymous");
 }
 

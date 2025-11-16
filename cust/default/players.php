@@ -22,8 +22,7 @@ if (isset($_GET['team'])) {
 header("Content-type: text/xml; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");
-session_name("UO_SESSID");
-session_start();
+startSecureSession();
 OpenConnection();
 
 if (hasEditPlayersRight($teamId)) {

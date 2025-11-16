@@ -23,8 +23,7 @@ include_once $include_prefix . 'menufunctions.php';
 
 
 //Session data
-session_name("UO_SESSID");
-session_start();
+startSecureSession();
 
 
 
