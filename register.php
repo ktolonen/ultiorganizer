@@ -105,25 +105,25 @@ if (!$confirmed && !$mailsent) {
   $html .= "<form method='post' action='?view=register";
   $html .= "'>\n";
   $html .= "<table cellpadding='8'>
-		<tr><td class='infocell'>" . _("Name") . ":</td>
-			<td><input type='text' class='input' maxlength='256' id='Name' name='Name' value='";
-  if (isset($_POST['Name'])) $html .= $_POST['Name'];
+        <tr><td class='infocell'>" . _("Name") . ":</td>
+            <td><input type='text' class='input' maxlength='256' id='Name' name='Name' value='";
+  if (isset($_POST['Name'])) $html .= utf8entities($_POST['Name']);
   $html .= "'/></td></tr>
-		<tr><td class='infocell'>" . _("Username") . ":</td>
-			<td><input type='text' class='input' maxlength='20' id='UserName' name='UserName' value='";
-  if (isset($_POST['UserName'])) $html .= $_POST['UserName'];
+            <tr><td class='infocell'>" . _("Username") . ":</td>
+                <td><input type='text' class='input' maxlength='20' id='UserName' name='UserName' value='";
+  if (isset($_POST['UserName'])) $html .= utf8entities($_POST['UserName']);
   $html .= "'/></td></tr>
-		<tr><td class='infocell'>" . _("Password") . ":</td>
-			<td><input type='password' class='input' maxlength='20' id='Password' name='Password' value='";
-  if (isset($_POST['Password'])) $html .= $_POST['Password'];
+            <tr><td class='infocell'>" . _("Password") . ":</td>
+                <td><input type='password' class='input' maxlength='20' id='Password' name='Password' value='";
+  if (isset($_POST['Password'])) $html .= utf8entities($_POST['Password']);
   $html .= "'/></td></tr>
-		<tr><td class='infocell'>" . _("Repeat password") . ":</td>
-			<td><input type='password' class='input' maxlength='20' id='Password2' name='Password2' value='";
-  if (isset($_POST['Password'])) $html .= $_POST['Password'];
+            <tr><td class='infocell'>" . _("Repeat password") . ":</td>
+                <td><input type='password' class='input' maxlength='20' id='Password2' name='Password2' value='";
+  if (isset($_POST['Password'])) $html .= utf8entities($_POST['Password']);
   $html .= "'/></td></tr>
-		<tr><td class='infocell'>" . _("Email") . ":</td>
-			<td><input type='text' class='input' maxlength='512' id='Email' name='Email' size='40' value='";
-  if (isset($_POST['Email'])) $html .= $_POST['Email'];
+            <tr><td class='infocell'>" . _("Email") . ":</td>
+                <td><input type='text' class='input' maxlength='512' id='Email' name='Email' size='40' value='";
+  if (isset($_POST['Email'])) $html .= utf8entities($_POST['Email']);
   $html .= "'/></td></tr>";
 
   $html .= "<tr><td colspan = '2' align='right'><br/>

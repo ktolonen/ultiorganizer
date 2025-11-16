@@ -26,7 +26,14 @@ if (!empty($urls)) {
   $html .= "<p>";
   $html .= _("In case of feedback, improvement ideas or any other questions, please contact:");
   foreach ($urls as $url) {
-    $html .= "<br/><a href='mailto:" . $url['url'] . "'>" . U_($url['name']) . "</a>\n";
+    $email = trim($url['url']);
+    if (stripos($email, "mailto:") === 0) {
+      $email = substr($email, 7);
+    }
+    if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+      $mailtoHref = "mailto:" . $email;
+      $html .= "<br/><a href='" . utf8entities($mailtoHref) . "'>" . utf8entities(U_($url['name'])) . "</a>\n";
+    }
   }
   $html .= "</p>";
 }
