@@ -3,7 +3,8 @@ include_once $include_prefix . 'lib/HSVClass.php';
 
 function StripFromQueryString($query_string, $needle)
 {
-	$query_string = preg_replace("/(\&|\?)*$needle=[a-zA-Z0-9].*?(\&;|$)/", '$2',   $query_string);
+	$safeNeedle = preg_quote($needle, '/');
+	$query_string = preg_replace("/(\&|\?)*{$safeNeedle}=[a-zA-Z0-9].*?(\&;|$)/", '$2', $query_string);
 	return preg_replace("/(&)+/", "&", $query_string);
 }
 
@@ -263,7 +264,7 @@ function GetScriptName()
 	if (isset($_SERVER['SCRIPT_NAME'])) {
 		return $_SERVER['SCRIPT_NAME'];
 	} elseif (isset($_SERVER['PHP_SELF'])) {
-		return $_SERVER['PHP_SELF'];
+		return htmlspecialchars($_SERVER['PHP_SELF']);
 	} elseif (isset($_SERVER['PATH_INFO '])) {
 		return $_SERVER['PATH_INFO '];
 	} else {
@@ -1186,10 +1187,6 @@ function ordinal($number)
 	}
 }
 
-
-if (version_compare(PHP_VERSION, '5.0.0', '<')) {
-	eval('function clone($object) {return $object;}');
-}
 
 if (!function_exists('str_getcsv')) {
 	function str_getcsv($input, $delimiter = ',', $enclosure = '"', $escape = null, $eol = null)

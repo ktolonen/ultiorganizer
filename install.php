@@ -544,7 +544,7 @@ function GetURLBase()
   if (isset($_SERVER['SCRIPT_NAME'])) {
     $url .= $_SERVER['SCRIPT_NAME'];
   } elseif (isset($_SERVER['PHP_SELF'])) {
-    $url .= $_SERVER['PHP_SELF'];
+    $url .= htmlspecialchars($_SERVER['PHP_SELF']);
   } elseif (isset($_SERVER['PATH_INFO '])) {
     $url .= $_SERVER['PATH_INFO '];
   }
