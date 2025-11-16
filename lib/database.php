@@ -123,7 +123,7 @@ function getDBVersion()
 }
 
 /**
- * Executes sql query and  returns result as an mysql array.
+ * Executes sql query and returns result as a mysqli array.
  *
  * @param string $query database query
  * @return mysqli_result of rows
@@ -215,7 +215,7 @@ function DBQueryToArray($query, $docasting = false)
 /**
  * Converts a db resource to an array
  *
- * @param $result The database resource returned from mysql_query
+ * @param $result The database resource returned from mysqli_query
  * @return array of rows
  */
 function DBResourceToArray($result, $docasting = false)
@@ -273,10 +273,10 @@ function DBSetRow($name, $data, $cond)
 }
 
 /**
- * Copy mysql_associative array row to regular php array.
+ * Copy mysqli_associative array row to regular php array.
  *
- * @param $result return value of mysql_query
- * @param $row mysql_associative array row
+ * @param $result return value of mysqli_query
+ * @param $row mysqli_associative array row
  * @return php array of $row
  */
 function DBCastArray($result, $row)
@@ -367,26 +367,4 @@ function DBProtocolInfo()
     die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
   return $result;
-}
-
-if (function_exists('mysql_set_charset') === false) {
-  /**
-   * Sets the client character set.
-   *
-   * Note: This function requires MySQL 5.0.7 or later.
-   *
-   * @see http://www.php.net/mysql-set-charset
-   * @param string $charset A valid character set name
-   * @param resource $link_identifier The MySQL connection
-   * @return TRUE on success or FALSE on failure
-   */
-  function mysql_set_charset($charset, $link_identifier = 0)
-  {
-    global $mysqlconnectionref;
-    if ($link_identifier == null) {
-      return mysqli_query($mysqlconnectionref, 'SET CHARACTER SET "' . $charset . '"');
-    } else {
-      return mysqli_query($mysqlconnectionref, 'SET CHARACTER SET "' . $charset . '"', $link_identifier);
-    }
-  }
 }

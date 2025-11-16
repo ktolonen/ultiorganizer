@@ -10,7 +10,8 @@
 //credit: http://code.google.com/p/simple-php-framework/ (modified version of full_url), license: MIT
 function server($includeRequestURI=false)
 {
-    $s = getenv('HTTPS') ? '' : (getenv('HTTPS') ==     'on') ? 's' : '';
+    // Append 's' when HTTPS is explicitly enabled
+    $s = (getenv('HTTPS') === 'on') ? 's' : '';
     $protocol = substr(strtolower(getenv('SERVER_PROTOCOL')), 0, strpos(strtolower(getenv('SERVER_PROTOCOL')), '/')) . $s;
     $port = (getenv('SERVER_PORT') == '80') ? '' : (":".getenv('SERVER_PORT'));
     $server = $protocol . "://" . getenv('HTTP_HOST') . $port;

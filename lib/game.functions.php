@@ -165,7 +165,7 @@ function GameRespTeam($gameId)
 	);
 	$result = DBQuery($query);
 	if (!$result) {
-		die('Invalid query: ' . mysql_error());
+		return -1;
 	}
 
 	$row = mysqli_fetch_assoc($result);

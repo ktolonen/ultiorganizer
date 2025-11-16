@@ -68,8 +68,8 @@ if (isSuperAdmin()) {
 	$html .= "<p>" . _("Database size") . ": " . $total_size . " " . _("bytes") . "</p>\n";
 
 	$html .= "<p><span class='profileheader'>" . _("Statistics") . ": </span><br/>\n";
-	$mysql_stat = DBStat();
-	$tot_count = preg_match_all('/([a-z ]+):\s*([0-9.]+)/i', $mysql_stat, $matches);
+	$db_stat = DBStat();
+	$tot_count = preg_match_all('/([a-z ]+):\s*([0-9.]+)/i', $db_stat, $matches);
 	for ($i = 0; $i < $tot_count; $i++) {
 		$info1 = trim($matches[1][$i]);
 		$info2 = trim($matches[2][$i]);
