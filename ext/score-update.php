@@ -6,9 +6,6 @@ include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/standings.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
-if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-	include_once $include_prefix . 'lib/twitter.functions.php';
-}
 include_once $include_prefix . 'lib/database.php';
 include_once $include_prefix . 'lib/logging.functions.php';
 

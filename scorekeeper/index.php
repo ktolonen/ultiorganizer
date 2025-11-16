@@ -21,10 +21,6 @@ include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'localization.php';
 include_once $include_prefix . 'menufunctions.php';
 
-if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-	include_once $include_prefix . 'lib/twitter.functions.php';
-}
-
 
 //Session data
 session_name("UO_SESSID");

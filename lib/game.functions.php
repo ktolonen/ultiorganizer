@@ -1,7 +1,6 @@
 <?php
 include_once $include_prefix . 'lib/accreditation.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
-include_once $include_prefix . 'lib/twitter.functions.php';
 
 function GameSetPools($games)
 {
@@ -637,9 +636,6 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
 		}
-		if (IsTwitterEnabled()) {
-			TweetGameResult($gameId);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -660,9 +656,6 @@ function GameClearResult($gameId, $updatepools = true)
 			$poolId = GamePool($gameId);
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
-		}
-		if (IsTwitterEnabled()) {
-			TweetGameResult($gameId);
 		}
 		return $result;
 	} else {

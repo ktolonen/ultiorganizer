@@ -4,10 +4,6 @@ include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/standings.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
-
-if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-	include_once 'lib/twitter.functions.php';
-}
 $html = "";
 $html2 = "";
 $gameId = intval($_GET["game"]);
