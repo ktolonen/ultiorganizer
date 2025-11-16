@@ -100,8 +100,7 @@ msgstr "von"
 msgid "Team"
 msgstr "Team"
 
-#: clubcard.php:132 clubcard.php:156 restful/seasons/series.php:5
-#: restful/seasons/series.php:26 restful/seasons/index.php:42 gamecard.php:127
+#: clubcard.php:132 clubcard.php:156 gamecard.php:127
 #: teamcard.php:200 teamcard.php:220 teamcard.php:383 teamcard.php:544
 #: countrycard.php:19 countrycard.php:71 countrycard.php:79
 #: lib/search.functions.php:30 lib/search.functions.php:61
@@ -262,27 +261,26 @@ msgstr "Total"
 msgid "Add media"
 msgstr "Medien hinzufügen"
 
-#: restful/seasons/series.php:5 restful/seasons/index.php:12
-#: restful/index.php:7 ical.php:47 ext/countrystatus.php:17
-#: ext/teamcoming.php:17 ext/teamscoreboard.php:17 ext/poolscoreboard.php:16
-#: ext/tournament.php:22 ext/eventpools.php:18 ext/teamplayed.php:18
-#: ext/poolstatus.php:17 scorekeeper/index.php:98 lib/user.functions.php:1048
+#: ical.php:47 ext/countrystatus.php:17 ext/teamcoming.php:17
+#: ext/teamscoreboard.php:17 ext/poolscoreboard.php:16 ext/tournament.php:22
+#: ext/eventpools.php:18 ext/teamplayed.php:18 ext/poolstatus.php:17
+#: scorekeeper/index.php:98 lib/user.functions.php:1048
 #: lib/user.functions.php:1109 cust/default/head.php:12
 msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
 
-#: restful/seasons/series.php:9
+#:
 msgid "Valid divisions"
 msgstr "Gültige Klassen"
 
-#: restful/seasons/series.php:29 menufunctions.php:705
+#: menufunctions.php:705
 #: admin/seasonseries.php:107 admin/seasonpools.php:12 admin/seasonadmin.php:64
 #: admin/dbequalize.php:103
 msgid "Pools"
 msgstr "Gruppen"
 
-#: restful/seasons/series.php:30 menufunctions.php:571 menufunctions.php:592
-#: menufunctions.php:639 menufunctions.php:704 menufunctions.php:721
+#: menufunctions.php:571 menufunctions.php:592 menufunctions.php:639
+#: menufunctions.php:704 menufunctions.php:721
 #: teams.php:7 teams.php:46 admin/seasonseries.php:106 admin/seasonteams.php:14
 #: admin/serieteams.php:22 admin/seasonpools.php:213
 #: admin/addseasonpools.php:387 admin/clubs.php:56 admin/clubs.php:91
@@ -292,17 +290,15 @@ msgstr "Gruppen"
 msgid "Teams"
 msgstr "Teams"
 
-#: restful/seasons/index.php:12
+#:
 msgid "Seasons"
 msgstr "Turniere"
 
-#: restful/seasons/index.php:18 user/userinfo.php:383 user/userinfo.php:412
-#: user/select_poolselector.php:16
+#: user/userinfo.php:383 user/userinfo.php:412 user/select_poolselector.php:16
 msgid "Current event"
 msgstr "Aktuelles Turnier"
 
-#: restful/seasons/index.php:39 admin/seasonadmin.php:26
-#: admin/addreservation.php:213
+#: admin/seasonadmin.php:26 admin/addreservation.php:213
 msgid "Season"
 msgstr "Saision"
 

@@ -34,10 +34,8 @@ if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
 
 include_once $include_prefix . 'sql/upgrade_db.php';
 
-//When adding new update function into upgrade_db.php change this number
-//Also when you change the database, please add a database definition into
-// 'lib/table-definition-cache' with the database version in the file name.
-// You can get it by getting ext/restful/show_tables.php
+//When adding new update function into upgrade_db.php change this number.
+//When you change the database, export the current schema from the running database.
 define('DB_VERSION', 76); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;

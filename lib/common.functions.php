@@ -1091,13 +1091,6 @@ function _handleVariable($value)
 function GetTableColumns($table)
 {
 	global $include_prefix;
-	if (is_file($include_prefix . "lib/table-definition-cache/tables_" . DB_VERSION . ".php")) {
-		include $include_prefix . "lib/table-definition-cache/tables_" . DB_VERSION . ".php";
-		global $tables;
-		if (isset($tables) && isset($tables[$table])) {
-			return $tables[$table];
-		}
-	}
 	$ret = array();
 	$result = DBQuery(sprintf(
 		"SELECT * FROM %s WHERE 1=0",
