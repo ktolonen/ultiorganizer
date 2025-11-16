@@ -40,14 +40,19 @@ $counter = 0;
 foreach ($clubs as $club) {
 
   if ($filter == "ALL") {
-    $firstchar = strtoupper(substr(utf8_decode($club['name']), 0, 1));
+    $clubName = isset($club['name']) ? (string) $club['name'] : '';
+    if (function_exists('mb_substr')) {
+      $firstchar = mb_strtoupper(mb_substr($clubName, 0, 1, 'UTF-8'), 'UTF-8');
+    } else {
+      $firstchar = strtoupper(substr($clubName, 0, 1));
+    }
     if ($listletter != $firstchar && in_array($firstchar, $validletters)) {
       $listletter = $firstchar;
       if ($counter > 0 && $counter <= $maxcols) {
         $html .= "</tr>\n";
       }
       $html .= "<tr><td></td></tr>\n";
-      $html .= "<tr><td class='list_letter' colspan='$maxcols'>" . utf8_encode("$listletter") . "</td></tr>\n";
+      $html .= "<tr><td class='list_letter' colspan='$maxcols'>" . utf8entities($listletter) . "</td></tr>\n";
       $counter = 0;
     }
   }
@@ -56,8 +61,10 @@ foreach ($clubs as $club) {
   }
 
   $html .= "<td style='width:33%'>";
-  if (intval($club['country'])) {
-    $html .= "<img height='10' src='images/flags/tiny/" . $club['flagfile'] . "' alt=''/>&nbsp;";
+  $countryId = isset($club['country']) ? intval($club['country']) : 0;
+  $flagFile = isset($club['flagfile']) ? $club['flagfile'] : null;
+  if ($countryId && !empty($flagFile)) {
+    $html .= "<img height='10' src='images/flags/tiny/" . $flagFile . "' alt=''/>&nbsp;";
   }
   $html .= "<a href='?view=clubcard&amp;club=" . $club['club_id'] . "'>" . utf8entities($club['name']) . "</a>";
   $html .= "</td>";

@@ -97,7 +97,7 @@ function CheckDB()
 function DBEscapeString($escapestr)
 {
   global $mysqlconnectionref;
-  return mysqli_real_escape_string($mysqlconnectionref, $escapestr);
+  return mysqli_real_escape_string($mysqlconnectionref, (string)$escapestr);
 }
 
 /**
