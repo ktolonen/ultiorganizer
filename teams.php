@@ -253,7 +253,8 @@ if ($list == "allteams" || $list == "byseeding") {
       $spiritAvg = SeriesSpiritBoard($row['series_id']);
 
       usort($spiritAvg, function ($a, $b) {
-        return $a['total'] < $b['total'];
+        // Sort teams by total spirit points in descending order.
+        return $b['total'] <=> $a['total'];
       });
       $html .= "<div class='TableContainer3'>\n";
       $html .= "<table cellspacing='0' border='0' width='100%'>\n";

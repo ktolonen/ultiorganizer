@@ -2,7 +2,17 @@
 
 function U_($name)
 {
-	$translated = translate($name, $_SESSION['dbtranslations']);
+	if (!isset($_SESSION['dbtranslations']) || !is_array($_SESSION['dbtranslations'])) {
+		if (function_exists('getSessionLocale')) {
+			// Populate the translation cache for the current locale on first use to avoid warnings.
+			loadDBTranslations(getSessionLocale());
+		} else {
+			$_SESSION['dbtranslations'] = array();
+		}
+	}
+
+	$translationArray = is_array($_SESSION['dbtranslations']) ? $_SESSION['dbtranslations'] : array();
+	$translated = translate($name, $translationArray);
 	return $translated[$name];
 }
 
