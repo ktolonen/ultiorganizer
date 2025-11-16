@@ -39,11 +39,10 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()) {
 							$return .= 'NULL';
 						}
 					} else {
-						$row[$j] = addslashes($row[$j]);
-						$row[$j] = preg_replace("/\n/", "\\n", $row[$j]);
-
 						if (isset($row[$j]) && ($row[$j] != NULL)) {
-							$return .= '"' . $row[$j] . '"';
+							$value = addslashes((string)$row[$j]);
+							$value = preg_replace("/\n/", "\\n", $value);
+							$return .= '"' . $value . '"';
 						} else {
 							$return .= 'NULL';
 						}
