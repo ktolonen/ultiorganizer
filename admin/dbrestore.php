@@ -34,16 +34,6 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
 			$html .= "<p>" . _("Restore") . "</p>";
 		}
 
-		//disable facebook and twitter updates after restore to avoid false postings 
-		//(f.ex. if restored database is used for testing purpose)
-		$settings = array();
-
-		$setting = array();
-		$setting['name'] = "TwitterEnabled";
-		$setting['value'] = "false";
-		$settings[] = $setting;
-
-		SetServerConf($settings);
 	}
 
 	if (isSuperAdmin()) {

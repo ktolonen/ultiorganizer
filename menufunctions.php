@@ -583,14 +583,6 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   echo "<tr><td>";
   echo "<a class='subnav' style='background: url(./images/linkicons/feed_14x14.png) no-repeat 0 50%; padding: 0 0 0 19px;' href='./ext/rss.php?feed=all'>" . utf8entities(_("Result Feed")) . "</a>\n";
   echo "</td></tr>\n";
-  if (IsTwitterEnabled()) {
-    $savedurl = GetUrl("season", $season, "result_twitter");
-    if (!empty($savedurl['url'])) {
-      echo "<tr><td>";
-      echo "<a class='subnav' style='background: url(./images/linkicons/twitter_14x14.png) no-repeat 0 50%; padding: 0 0 0 19px;' href='" . $savedurl['url'] . "'>" . utf8entities(_("Result Twitter")) . "</a>\n";
-      echo "</td></tr>\n";
-    }
-  }
   echo "</table>\n";
 
   //event history

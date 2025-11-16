@@ -22,30 +22,6 @@ if (!empty($_POST['save'])) {
 
 
 	$setting = array();
-	$setting['name'] = "TwitterEnabled";
-	if (!empty($_POST['TwitterEnabled'])) {
-		$setting['value'] = "true";
-	} else {
-		$setting['value'] = "false";
-	}
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "TwitterConsumerKey";
-	$setting['value'] = $_POST['TwitterConsumerKey'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "TwitterConsumerSecret";
-	$setting['value'] = $_POST['TwitterConsumerSecret'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "TwitterOAuthCallback";
-	$setting['value'] = $_POST['TwitterOAuthCallback'];
-	$settings[] = $setting;
-
-	$setting = array();
 	$setting['name'] = "ShowDefenseStats";
 	if (!empty($_POST['ShowDefenseStats'])) {
 		$setting['value'] = "true";
@@ -153,35 +129,6 @@ foreach ($settings as $setting) {
 		$htmltmp1 .= "</tr>\n";
 	}
 
-	//twitter
-	if ($setting['name'] == "TwitterEnabled") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter enabled") . ":</td>";
-		if ($setting['value'] == "true") {
-			$htmltmp1 .= "<td><input class='input' type='checkbox' name='TwitterEnabled' checked='checked'/></td>";
-		} else {
-			$htmltmp1 .= "<td><input class='input' type='checkbox' name='TwitterEnabled'/></td>";
-		}
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "TwitterConsumerKey") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter Consumer Key") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerKey' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "TwitterConsumerSecret") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter Consumer Secret") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerSecret' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "TwitterOAuthCallback") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter OAuth Callback") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterOAuthCallback' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
 	if ($setting['name'] == "EmailSource") {
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>" . _("System email sender address") . ":</td>";

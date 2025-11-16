@@ -664,18 +664,14 @@ CREATE TABLE `uo_setting` (
   `value` varchar(200) DEFAULT '',
   `setting_id` int(10) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`setting_id`)
-) ENGINE=MyISAM AUTO_INCREMENT=11 DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
+) ENGINE=MyISAM AUTO_INCREMENT=7 DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
 INSERT INTO uo_setting VALUES("CurrentSeason",NULL,"1");
 INSERT INTO uo_setting VALUES("HomeTeamResponsible","yes","2");
 INSERT INTO uo_setting VALUES("GoogleMapsAPIKey",NULL,"3");
-INSERT INTO uo_setting VALUES("TwitterEnabled","false","4");
-INSERT INTO uo_setting VALUES("TwitterConsumerKey",NULL,"5");
-INSERT INTO uo_setting VALUES("TwitterConsumerSecret",NULL,"6");
-INSERT INTO uo_setting VALUES("TwitterOAuthCallback","http://127.0.0.1:80/pelikone3/ext/twittercallback.php","7");
-INSERT INTO uo_setting VALUES ("EmailSource", "ultiorganizer@diibadaaba.net", "8");
-INSERT INTO uo_setting VALUES ("GameRSSEnabled", "false", "9");
-INSERT INTO uo_setting VALUES("PageTitle","Ultiorganizer - ",10);
+INSERT INTO uo_setting VALUES ("EmailSource", "ultiorganizer@diibadaaba.net", "4");
+INSERT INTO uo_setting VALUES ("GameRSSEnabled", "false", "5");
+INSERT INTO uo_setting VALUES("PageTitle","Ultiorganizer - ",6);
 
 
 CREATE TABLE `uo_sms` (
