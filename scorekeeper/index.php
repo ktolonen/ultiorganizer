@@ -50,18 +50,15 @@ setSessionLocale();
 setSelectedSeason();
 $_SESSION['userproperties']['selseason'] = CurrentSeason();
 
-if (!iget('view')) {
+$rawView = iget('view');
+if (!$rawView) {
 	header("location:?view=login");
 	exit();
-} else {
-	LogPageLoad(iget('view'));
 }
 
-if (!iget("view")) {
-	$view = "login";
-} else {
-	$view = iget("view");
-}
+// Resolve view script with format/deny & path checks.
+$viewPath = resolveViewPath($rawView, __DIR__, 'login', array('index'));
+LogPageLoad($rawView);
 
 ob_start();
 echo "<!DOCTYPE html>\n";
@@ -87,7 +84,7 @@ echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
 echo "</head>\n";
 echo "<body>\n";
 echo "<div data-role='page'>\n";
-include $view . ".php";
+include $viewPath;
 
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
 echo "<a href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . _("Ultiorganizer") . "</a>";

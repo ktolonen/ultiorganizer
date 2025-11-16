@@ -1241,6 +1241,42 @@ function iget($string)
 }
 
 /**
+ * Safely resolve a view script name to an includeable path inside a base directory.
+ *
+ * @param string $view Raw view name from request
+ * @param string $baseDir Directory that contains the view files
+ * @param string $default Default view name to fall back to
+ * @param array $deny List of disallowed view names (without .php)
+ * @return string Full path to the resolved view file
+ */
+function resolveViewPath($view, $baseDir, $default = 'frontpage', $deny = array())
+{
+	// Default when empty
+	if (!$view) {
+		$view = $default;
+	}
+
+	// Basic format check (allow subdirectories, block traversal) and deny-list
+	if (strpos($view, '..') !== false || !preg_match('/^[a-z0-9_\\/\\-]+$/i', $view) || in_array($view, $deny, true)) {
+		http_response_code(400);
+		$view = $default;
+	}
+
+	$baseDirReal = rtrim(realpath($baseDir), DIRECTORY_SEPARATOR);
+	$target = $baseDirReal . '/' . $view . '.php';
+
+	// Ensure file exists and is within base dir
+	$targetReal = realpath($target);
+	if ($targetReal === false || strpos($targetReal, $baseDirReal) !== 0 || !is_file($targetReal)) {
+		http_response_code(404);
+		$view = $default;
+		$targetReal = $baseDirReal . '/' . $view . '.php';
+	}
+
+	return $targetReal;
+}
+
+/**
  *  HTML escapes a string but leaves some tags intact 
  */
 function someHTML($string)

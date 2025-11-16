@@ -51,12 +51,8 @@ $user = $_SESSION['uid'];
 
 setSelectedSeason();
 
-if (!iget("view")) {
-  $view = "frontpage";
-} else {
-  $view = iget("view");
-}
+$viewPath = resolveViewPath(iget("view"), __DIR__, 'frontpage', array('index', 'localization', 'install'));
 
-include $view . ".php";
+include $viewPath;
 
 CloseConnection();
