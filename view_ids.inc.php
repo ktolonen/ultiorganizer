@@ -47,7 +47,6 @@ define("TEAMPROFILE", 211);
 define("ORGANIZATIONPROFILE", 212);
 define("ADDMEDIALINK", 213);
 define("RESPONSETEAMS", 214);
-define("FBPUBLISH", 215);
 define("ADDDEFENSESHEET", 216);
 
 

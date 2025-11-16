@@ -9,7 +9,6 @@ global $include_prefix;
 include_once $include_prefix . 'menufunctions.php';
 include_once $include_prefix . 'view_ids.inc.php';
 include_once $include_prefix . 'lib/user.functions.php';
-include_once $include_prefix . 'lib/facebook.functions.php';
 include_once $include_prefix . 'lib/logging.functions.php';
 
 include_once $include_prefix . 'lib/debug.functions.php';
@@ -48,15 +47,6 @@ if (!iget('view')) {
 }
 
 global $serverConf;
-if (IsFacebookEnabled() && !empty($serverConf['FacebookAppId']) && !empty($serverConf['FacebookAppSecret'])) {
-  //include_once 'lib/facebook/facebook.php';
-  $fb_cookie = FBCookie($serverConf['FacebookAppId'], $serverConf['FacebookAppSecret']);
-  if ($_SESSION['uid'] == "anonymous" && $fb_cookie) {
-    $_SESSION['uid'] = MapFBUserId($fb_cookie);
-    SetUserSessionData($_SESSION['uid']);
-  }
-}
-
 $user = $_SESSION['uid'];
 
 setSelectedSeason();

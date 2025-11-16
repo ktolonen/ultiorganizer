@@ -72,12 +72,7 @@ function pageTopHeadOpen($title)
   $icon = $include_prefix . "cust/" . CUSTOMIZATIONS . "/favicon.png";
 
   echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">
-		<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='" . $lang . "' lang='" . $lang . "'";
-  global $serverConf;
-  if (IsFacebookEnabled()) {
-    echo "\n		xmlns:fb=\"http://www.facebook.com/2008/fbml\"";
-  }
-  echo ">\n<head>
+		<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='" . $lang . "' lang='" . $lang . "'>\n<head>
 		<meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/>
 		<meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\"/>";
   //no cache
@@ -151,11 +146,6 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
     echo "<tr>\n";
     echo "<td class='right' style='padding-top:5px'>";
 
-    if (IsFacebookEnabled() && $user == 'anonymous') {
-      echo "<div id='fb-root'></div>\n";
-      echo "<fb:login-button perms='email,publish_stream,offline_access'/>\n";
-    }
-
     if ($user == 'anonymous') {
       echo "<input class='input' type='text' id='myusername' name='myusername' size='10' style='border:1px solid #555555'/>&nbsp;";
       echo "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
@@ -207,19 +197,6 @@ function contentEnd()
  */
 function pageEnd()
 {
-  global $serverConf;
-  if (IsFacebookEnabled()) {
-    echo "<script src='http://connect.facebook.net/en_US/all.js'></script>
-    <script>
-      FB.init({appId: '";
-    echo $serverConf['FacebookAppId'];
-    echo "', status: true,
-               cookie: true, xfbml: true});
-      FB.Event.subscribe('auth.login', function(response) {
-        window.location.reload();
-      });
-    </script>";
-  }
   echo "<div class='page_bottom'></div>";
   echo "</div></body></html>";
 }
@@ -290,19 +267,6 @@ function mobilePageEnd($query = "")
     $html .= "<a href='?view=mobile/logout'>" . utf8entities(_("Logout")) . "</a></td></tr></table>";
   }
 
-  global $serverConf;
-  if (IsFacebookEnabled()) {
-    $html .= "<script src='http://connect.facebook.net/en_US/all.js'></script>
-    <script>
-      FB.init({appId: '";
-    $html .= $serverConf['FacebookAppId'];
-    $html .= "', status: true,
-               cookie: true, xfbml: true});
-      FB.Event.subscribe('auth.login', function(response) {
-        window.location.reload();
-      });
-    </script>";
-  }
   $html .= "<div class='page_bottom'></div>";
   $html .= "</div></body></html>";
   echo $html;

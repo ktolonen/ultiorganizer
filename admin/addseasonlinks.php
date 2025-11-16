@@ -1,6 +1,5 @@
 <?php
 include_once $include_prefix . 'lib/configuration.functions.php';
-include_once $include_prefix . 'lib/facebook.functions.php';
 include_once $include_prefix . 'lib/url.functions.php';
 
 $LAYOUT_ID = ADDSEASONLINKS;
@@ -9,16 +8,6 @@ $html = "";
 $seasonId = $_GET["season"];
 
 if (!empty($_POST['save'])) {
-
-	$settings = array();
-
-	$setting = array();
-	$setting['name'] = "FacebookUpdatePage";
-	$setting['value'] = $_POST['FacebookUpdatePage'];
-	$settings[] = $setting;
-
-	SetServerConf($settings);
-
 	for ($i = 0; !empty($_POST["urlid$i"]); $i++) {
 		$url = array(
 			"url_id" => $_POST["urlid$i"],
@@ -57,30 +46,15 @@ if (!empty($_POST['save'])) {
 			AddUrl($url);
 		}
 	}
-	$serverConf = GetSimpleServerConf();
 } elseif (!empty($_POST['remove_x'])) {
 	$id = $_POST['hiddenDeleteId'];
 	RemoveUrl($id);
 }
 
-$settings = GetServerConf();
 //common page
 pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-$htmltmp1 = "";
-$htmltmp2 = "";
-
-foreach ($settings as $setting) {
-
-	if ($setting['name'] == "FacebookUpdatePage") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Facebook Update Page") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookUpdatePage' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-}
-
 $html .= "<form method='post' action='?view=admin/addseasonlinks&amp;season=" . $seasonId . "' id='Form'>";
 
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";

@@ -39,9 +39,6 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
 		$settings = array();
 
 		$setting = array();
-		$setting['name'] = "FacebookEnabled";
-		$setting['value'] = "false";
-		$settings[] = $setting;
 		$setting['name'] = "TwitterEnabled";
 		$setting['value'] = "false";
 		$settings[] = $setting;

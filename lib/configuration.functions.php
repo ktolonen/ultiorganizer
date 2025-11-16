@@ -3,7 +3,6 @@ $serverConf = GetSimpleServerConf();
 $locales = getAvailableLocalizations();
 
 $twitterConfKeys = array("TwitterConsumerKey", "TwitterConsumerSecret", "TwitterOAuthCallback");
-$facebookConfKeys = array("FacebookEnabled", "FacebookAppId", "FacebookAppSecret", "FacebookAppKey", "FacebookGameMessage", "FacebookUpdatePage", "FacebookUpdateId", "FacebookUpdateToken");
 
 function SetTwitterKey($access_token, $purpose, $id)
 {
@@ -122,23 +121,6 @@ function GetDefTimeZone()
 	return $serverConf['DefaultTimezone'];
 }
 
-
-function GetFacebookConf()
-{
-	global $serverConf;
-	global $facebookConfKeys;
-	$conf = array();
-	foreach ($facebookConfKeys as $key) {
-		$conf[$key] = $conf[$key];
-	}
-	return $conf;
-}
-
-function IsFacebookEnabled()
-{
-	global $serverConf;
-	return ($serverConf['FacebookEnabled'] == "true");
-}
 
 function IsGameRSSEnabled()
 {

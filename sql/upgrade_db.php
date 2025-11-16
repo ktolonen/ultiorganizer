@@ -5,10 +5,6 @@ include_once $include_prefix . 'lib/logging.functions.php';
 
 function upgrade46()
 {
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookEnabled", "false")');
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookAppId", "")');
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookAppKey", "")');
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookAppSecret", "")');
 }
 
 function upgrade47()
@@ -32,7 +28,6 @@ function upgrade47()
 
 function upgrade48()
 {
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookGameMessage", "Game finished in pool $pool")');
 }
 
 function upgrade49()
@@ -42,7 +37,6 @@ function upgrade49()
 
 function upgrade50()
 {
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookUpdatePage", "")');
 }
 
 function upgrade51()

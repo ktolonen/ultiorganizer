@@ -1,6 +1,5 @@
 <?php
 include_once $include_prefix . 'lib/accreditation.functions.php';
-include_once $include_prefix . 'lib/facebook.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'lib/twitter.functions.php';
 
@@ -641,9 +640,6 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
 		if (IsTwitterEnabled()) {
 			TweetGameResult($gameId);
 		}
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -668,10 +664,6 @@ function GameClearResult($gameId, $updatepools = true)
 		if (IsTwitterEnabled()) {
 			TweetGameResult($gameId);
 		}
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
-
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -689,9 +681,6 @@ function GameSetDefenses($gameId, $home, $away)
 		);
 		$result = DBQuery($query);
 
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -886,9 +875,6 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
 		);
 
 		$result = DBQuery($query);
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "goal", $number);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -919,9 +905,6 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
 		);
 
 		$result = DBQuery($query);
-		/*if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "goal", $number);
-		}*/
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -947,10 +930,6 @@ function GameAddScoreEntry($uo_goal)
 		);
 
 		$result = DBQuery($query);
-
-		if (IsFacebookEnabled()) {
-			//TriggerFacebookEvent($gameId, "goal", $number);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
