@@ -33,10 +33,21 @@ if (iget("series")) {
   $gamefilter = "pool";
   $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
 } elseif (iget("pools")) {
-  $id = iget("pools");
-  $baseurl .= "&pools=$id";
-  $gamefilter = "poolgroup";
-  $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
+  $poolIds = array_filter(array_map('intval', explode(',', iget("pools"))), function ($val) {
+    return $val > 0;
+  });
+  if (!empty($poolIds)) {
+    $id = implode(",", $poolIds);
+    $baseurl .= "&pools=$id";
+    $gamefilter = "poolgroup";
+    $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
+  } else {
+    // Fall back to season view if pool ids are invalid/empty
+    $id = CurrentSeason();
+    $baseurl .= "&season=$id";
+    $gamefilter = "season";
+    $title = _("Schedule") . " " . utf8entities(U_(SeasonName($id)));
+  }
 } elseif (iget("team")) {
   $id = iget("team");
   $baseurl .= "&team=$id";

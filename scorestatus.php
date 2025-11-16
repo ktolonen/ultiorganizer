@@ -17,7 +17,9 @@ if (iget("pool")) {
   $title = $title . ": " . utf8entities(U_(PoolName($poolId)));
 }
 if (iget("pools")) {
-  $poolIds = explode(",", iget("pools"));
+  $poolIds = array_filter(array_map('intval', explode(",", iget("pools"))), function ($val) {
+    return $val > 0;
+  });
   $title = $title . ": " . utf8entities(U_(PoolName($poolId)));
 }
 if (iget("series")) {

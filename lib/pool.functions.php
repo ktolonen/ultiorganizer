@@ -44,7 +44,7 @@ function PoolInfo($poolId)
 /**
  * Get followers for given pool based on moves (uo_moveteams.frompool).
  * @param int $poolId uo_pool.pool_id
- * @return php array of pool followers.
+ * @return Array array of pool followers.
  */
 function PoolFollowersArray($poolId)
 {
@@ -424,7 +424,11 @@ function PoolScoreBoard($poolId, $sorting, $limit)
 function PoolsScoreBoard($pools, $sorting, $limit)
 {
 
-  $poolIds = DBEscapeString(implode(",", $pools));
+  $poolIds = array_filter(array_map('intval', (array)$pools), function ($val) {
+    return $val > 0;
+  });
+  $poolIds = empty($poolIds) ? array(0) : $poolIds;
+  $poolList = implode(",", $poolIds);
 
   $query = " SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done,
         COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.games
@@ -432,20 +436,20 @@ function PoolsScoreBoard($pools, $sorting, $limit)
         LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m
             LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
             LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
-            WHERE ps.pool IN($poolIds) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer)
+            WHERE ps.pool IN($poolList) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer)
         LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1
             LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game)
             LEFT JOIN uo_game AS g2 ON (ps1.game=g2.game_id)
-            WHERE ps1.pool IN($poolIds) AND m1.scorer IS NOT NULL AND g2.isongoing=0 AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1)
+            WHERE ps1.pool IN($poolList) AND m1.scorer IS NOT NULL AND g2.isongoing=0 AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1)
         LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin
             FROM uo_goal AS m2 LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game)
             LEFT JOIN uo_game AS g3 ON (ps2.game=g3.game_id)
-            WHERE ps2.pool IN($poolIds) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
+            WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
         LEFT JOIN uo_team AS j ON (p.team=j.team_id)
         LEFT JOIN (SELECT up.player, COUNT(*) AS games
             FROM uo_played up
             LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-            WHERE g4.pool IN($poolIds) AND g4.isongoing=0 GROUP BY player)
+            WHERE g4.pool IN($poolList) AND g4.isongoing=0 GROUP BY player)
             AS pel ON (p.player_id=pel.player)
         WHERE pel.games > 0";
 
@@ -500,7 +504,11 @@ function PoolsScoreBoard($pools, $sorting, $limit)
  */
 function PoolsScoreBoardWithDefenses($pools, $sorting, $limit)
 {
-  $poolIds = DBEscapeString(implode(",", $pools));
+  $poolIds = array_filter(array_map('intval', (array)$pools), function ($val) {
+    return $val > 0;
+  });
+  $poolIds = empty($poolIds) ? array(0) : $poolIds;
+  $poolList = implode(",", $poolIds);
 
   $query = "
         SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done,
@@ -509,25 +517,25 @@ function PoolsScoreBoardWithDefenses($pools, $sorting, $limit)
         LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m
             LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
             LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
-            WHERE ps.pool IN($poolIds) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer)
+            WHERE ps.pool IN($poolList) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer)
         LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1
             LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game)
             LEFT JOIN uo_game AS g2 ON (ps1.game=g2.game_id)
-            WHERE ps1.pool IN($poolIds) AND m1.scorer IS NOT NULL AND g2.isongoing=0 AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1)
+            WHERE ps1.pool IN($poolList) AND m1.scorer IS NOT NULL AND g2.isongoing=0 AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1)
         LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin
             FROM uo_goal AS m2
             LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game)
             LEFT JOIN uo_game AS g3 ON (ps2.game=g3.game_id)
-            WHERE ps2.pool IN($poolIds) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
+            WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
         LEFT JOIN (SELECT m3.author AS author, COUNT(*) AS deftotal FROM uo_defense AS m3 LEFT JOIN uo_game_pool AS ps3 ON (m3.game=ps3.game)
             LEFT JOIN uo_game AS g5 ON (ps3.game=g5.game_id)
-            WHERE ps3.pool IN($poolIds) AND g5.isongoing=0 GROUP BY author) AS t3 ON (p.player_id=t3.author)
+            WHERE ps3.pool IN($poolList) AND g5.isongoing=0 GROUP BY author) AS t3 ON (p.player_id=t3.author)
         LEFT JOIN uo_team AS j ON (p.team=j.team_id)
         LEFT JOIN (SELECT up.player, COUNT(*) AS games
             FROM uo_played up
             LEFT JOIN uo_game_pool AS ps4 ON (up.game=ps4.game)
             LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-            WHERE ps4.pool IN($poolIds) AND g4.isongoing=0 GROUP BY player)
+            WHERE ps4.pool IN($poolList) AND g4.isongoing=0 GROUP BY player)
             AS pel ON (p.player_id=pel.player)
         WHERE pel.games > 0";
 
@@ -1393,17 +1401,132 @@ function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
   $seriesinfo = SeriesInfo($seriesId);
   if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
     $colors = array(
-      "F0F8FF", "FAEBD7", "00FFFF", "7FFFD4", "F0FFFF", "F5F5DC", "FFE4C4", "0000FF", "8A2BE2", "DEB887", "FFFF00", "5F9EA0",
-      "7FFF00", "D2691E", "FF7F50", "6495ED", "FFF8DC", "DC143C", "00FFFF", "00008B", "008B8B", "B8860B", "A9A9A9", "006400",
-      "BDB76B", "8B008B", "FF8C00", "9932CC", "8B0000", "E9967A", "8FBC8F", "00CED1", "9400D3", "FF1493", "00BFFF", "1E90FF",
-      "B22222", "228B22", "FF00FF", "DCDCDC", "F8F8FF", "FFD700", "DAA520", "008000", "ADFF2F", "F0FFF0", "FF69B4", "CD5C5C",
-      "FFFFF0", "F0E68C", "E6E6FA", "FFF0F5", "7CFC00", "FFFACD", "ADD8E6", "F08080", "E0FFFF", "FAFAD2", "D3D3D3", "90EE90",
-      "FFB6C1", "FFA07A", "20B2AA", "87CEFA", "778899", "B0C4DE", "FFFFE0", "00FF00", "32CD32", "FAF0E6", "FF00FF", "800000",
-      "66CDAA", "0000CD", "BA55D3", "9370D8", "3CB371", "7B68EE", "00FA9A", "48D1CC", "C71585", "191970", "F5FFFA", "FFE4E1",
-      "FFE4B5", "FFDEAD", "FDF5E6", "808000", "6B8E23", "FFA500", "FF4500", "DA70D6", "EEE8AA", "98FB98", "AFEEEE", "D87093",
-      "FFEFD5", "FFDAB9", "CD853F", "FFC0CB", "DDA0DD", "B0E0E6", "800080", "FF0000", "BC8F8F", "4169E1", "FA8072", "F4A460",
-      "2E8B57", "FFF5EE", "A0522D", "C0C0C0", "87CEEB", "6A5ACD", "708090", "FFFAFA", "00FF7F", "4682B4", "D2B48C", "D8BFD8",
-      "FF6347", "40E0D0", "EE82EE", "F5DEB3", "F5F5F5", "9ACD32"
+      "F0F8FF",
+      "FAEBD7",
+      "00FFFF",
+      "7FFFD4",
+      "F0FFFF",
+      "F5F5DC",
+      "FFE4C4",
+      "0000FF",
+      "8A2BE2",
+      "DEB887",
+      "FFFF00",
+      "5F9EA0",
+      "7FFF00",
+      "D2691E",
+      "FF7F50",
+      "6495ED",
+      "FFF8DC",
+      "DC143C",
+      "00FFFF",
+      "00008B",
+      "008B8B",
+      "B8860B",
+      "A9A9A9",
+      "006400",
+      "BDB76B",
+      "8B008B",
+      "FF8C00",
+      "9932CC",
+      "8B0000",
+      "E9967A",
+      "8FBC8F",
+      "00CED1",
+      "9400D3",
+      "FF1493",
+      "00BFFF",
+      "1E90FF",
+      "B22222",
+      "228B22",
+      "FF00FF",
+      "DCDCDC",
+      "F8F8FF",
+      "FFD700",
+      "DAA520",
+      "008000",
+      "ADFF2F",
+      "F0FFF0",
+      "FF69B4",
+      "CD5C5C",
+      "FFFFF0",
+      "F0E68C",
+      "E6E6FA",
+      "FFF0F5",
+      "7CFC00",
+      "FFFACD",
+      "ADD8E6",
+      "F08080",
+      "E0FFFF",
+      "FAFAD2",
+      "D3D3D3",
+      "90EE90",
+      "FFB6C1",
+      "FFA07A",
+      "20B2AA",
+      "87CEFA",
+      "778899",
+      "B0C4DE",
+      "FFFFE0",
+      "00FF00",
+      "32CD32",
+      "FAF0E6",
+      "FF00FF",
+      "800000",
+      "66CDAA",
+      "0000CD",
+      "BA55D3",
+      "9370D8",
+      "3CB371",
+      "7B68EE",
+      "00FA9A",
+      "48D1CC",
+      "C71585",
+      "191970",
+      "F5FFFA",
+      "FFE4E1",
+      "FFE4B5",
+      "FFDEAD",
+      "FDF5E6",
+      "808000",
+      "6B8E23",
+      "FFA500",
+      "FF4500",
+      "DA70D6",
+      "EEE8AA",
+      "98FB98",
+      "AFEEEE",
+      "D87093",
+      "FFEFD5",
+      "FFDAB9",
+      "CD853F",
+      "FFC0CB",
+      "DDA0DD",
+      "B0E0E6",
+      "800080",
+      "FF0000",
+      "BC8F8F",
+      "4169E1",
+      "FA8072",
+      "F4A460",
+      "2E8B57",
+      "FFF5EE",
+      "A0522D",
+      "C0C0C0",
+      "87CEEB",
+      "6A5ACD",
+      "708090",
+      "FFFAFA",
+      "00FF7F",
+      "4682B4",
+      "D2B48C",
+      "D8BFD8",
+      "FF6347",
+      "40E0D0",
+      "EE82EE",
+      "F5DEB3",
+      "F5F5F5",
+      "9ACD32"
     );
     $query = sprintf(
       "INSERT INTO uo_pool
@@ -1447,17 +1570,132 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
   $seriesinfo = SeriesInfo($seriesId);
   if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
     $colors = array(
-      "F0F8FF", "FAEBD7", "00FFFF", "7FFFD4", "F0FFFF", "F5F5DC", "FFE4C4", "0000FF", "8A2BE2", "DEB887", "FFFF00", "5F9EA0",
-      "7FFF00", "D2691E", "FF7F50", "6495ED", "FFF8DC", "DC143C", "00FFFF", "00008B", "008B8B", "B8860B", "A9A9A9", "006400",
-      "BDB76B", "8B008B", "FF8C00", "9932CC", "8B0000", "E9967A", "8FBC8F", "00CED1", "9400D3", "FF1493", "00BFFF", "1E90FF",
-      "B22222", "228B22", "FF00FF", "DCDCDC", "F8F8FF", "FFD700", "DAA520", "008000", "ADFF2F", "F0FFF0", "FF69B4", "CD5C5C",
-      "FFFFF0", "F0E68C", "E6E6FA", "FFF0F5", "7CFC00", "FFFACD", "ADD8E6", "F08080", "E0FFFF", "FAFAD2", "D3D3D3", "90EE90",
-      "FFB6C1", "FFA07A", "20B2AA", "87CEFA", "778899", "B0C4DE", "FFFFE0", "00FF00", "32CD32", "FAF0E6", "FF00FF", "800000",
-      "66CDAA", "0000CD", "BA55D3", "9370D8", "3CB371", "7B68EE", "00FA9A", "48D1CC", "C71585", "191970", "F5FFFA", "FFE4E1",
-      "FFE4B5", "FFDEAD", "FDF5E6", "808000", "6B8E23", "FFA500", "FF4500", "DA70D6", "EEE8AA", "98FB98", "AFEEEE", "D87093",
-      "FFEFD5", "FFDAB9", "CD853F", "FFC0CB", "DDA0DD", "B0E0E6", "800080", "FF0000", "BC8F8F", "4169E1", "FA8072", "F4A460",
-      "2E8B57", "FFF5EE", "A0522D", "C0C0C0", "87CEEB", "6A5ACD", "708090", "FFFAFA", "00FF7F", "4682B4", "D2B48C", "D8BFD8",
-      "FF6347", "40E0D0", "EE82EE", "F5DEB3", "F5F5F5", "9ACD32"
+      "F0F8FF",
+      "FAEBD7",
+      "00FFFF",
+      "7FFFD4",
+      "F0FFFF",
+      "F5F5DC",
+      "FFE4C4",
+      "0000FF",
+      "8A2BE2",
+      "DEB887",
+      "FFFF00",
+      "5F9EA0",
+      "7FFF00",
+      "D2691E",
+      "FF7F50",
+      "6495ED",
+      "FFF8DC",
+      "DC143C",
+      "00FFFF",
+      "00008B",
+      "008B8B",
+      "B8860B",
+      "A9A9A9",
+      "006400",
+      "BDB76B",
+      "8B008B",
+      "FF8C00",
+      "9932CC",
+      "8B0000",
+      "E9967A",
+      "8FBC8F",
+      "00CED1",
+      "9400D3",
+      "FF1493",
+      "00BFFF",
+      "1E90FF",
+      "B22222",
+      "228B22",
+      "FF00FF",
+      "DCDCDC",
+      "F8F8FF",
+      "FFD700",
+      "DAA520",
+      "008000",
+      "ADFF2F",
+      "F0FFF0",
+      "FF69B4",
+      "CD5C5C",
+      "FFFFF0",
+      "F0E68C",
+      "E6E6FA",
+      "FFF0F5",
+      "7CFC00",
+      "FFFACD",
+      "ADD8E6",
+      "F08080",
+      "E0FFFF",
+      "FAFAD2",
+      "D3D3D3",
+      "90EE90",
+      "FFB6C1",
+      "FFA07A",
+      "20B2AA",
+      "87CEFA",
+      "778899",
+      "B0C4DE",
+      "FFFFE0",
+      "00FF00",
+      "32CD32",
+      "FAF0E6",
+      "FF00FF",
+      "800000",
+      "66CDAA",
+      "0000CD",
+      "BA55D3",
+      "9370D8",
+      "3CB371",
+      "7B68EE",
+      "00FA9A",
+      "48D1CC",
+      "C71585",
+      "191970",
+      "F5FFFA",
+      "FFE4E1",
+      "FFE4B5",
+      "FFDEAD",
+      "FDF5E6",
+      "808000",
+      "6B8E23",
+      "FFA500",
+      "FF4500",
+      "DA70D6",
+      "EEE8AA",
+      "98FB98",
+      "AFEEEE",
+      "D87093",
+      "FFEFD5",
+      "FFDAB9",
+      "CD853F",
+      "FFC0CB",
+      "DDA0DD",
+      "B0E0E6",
+      "800080",
+      "FF0000",
+      "BC8F8F",
+      "4169E1",
+      "FA8072",
+      "F4A460",
+      "2E8B57",
+      "FFF5EE",
+      "A0522D",
+      "C0C0C0",
+      "87CEEB",
+      "6A5ACD",
+      "708090",
+      "FFFAFA",
+      "00FF7F",
+      "4682B4",
+      "D2B48C",
+      "D8BFD8",
+      "FF6347",
+      "40E0D0",
+      "EE82EE",
+      "F5DEB3",
+      "F5F5F5",
+      "9ACD32"
     );
     $query = sprintf(
       "INSERT INTO uo_pool

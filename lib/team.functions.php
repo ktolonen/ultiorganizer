@@ -743,34 +743,37 @@ function TeamPointsByPool($poolId, $teamId)
 function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 {
   if ($pools) {
-    if (is_array($pools)) {
-      $pools = DBEscapeString(implode(",", $pools));
-    } else {
-      $pools = DBEscapeString($pools);
+    if (!is_array($pools)) {
+      $pools = explode(",", (string)$pools);
     }
+    $pools = array_filter(array_map('intval', $pools), function ($val) {
+      return $val > 0;
+    });
+    $pools = empty($pools) ? array(0) : $pools;
+    $poolList = implode(",", $pools);
 
     $query = sprintf(
       "
 			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
 				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games 
 			FROM uo_player AS p 
-			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
-				LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
-				LEFT JOIN uo_game AS g1 ON (m.game=g1.game_id) 
-				WHERE ps.pool IN($pools) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
-			LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 
-				LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game) 
-				LEFT JOIN uo_game AS g2 ON (m1.game=g2.game_id) 
-				WHERE ps1.pool IN($pools) AND m1.scorer IS NOT NULL AND iscallahan=1 AND g2.isongoing=0 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 			
-			LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
-				LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
-				LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
-				WHERE ps2.pool IN($pools) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
-			LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
-			LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
-				LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-				WHERE g4.pool IN($pools) AND g4.isongoing=0 
-				GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
+				LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
+					LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
+					LEFT JOIN uo_game AS g1 ON (m.game=g1.game_id) 
+						WHERE ps.pool IN($poolList) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
+				LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 
+					LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game) 
+					LEFT JOIN uo_game AS g2 ON (m1.game=g2.game_id) 
+						WHERE ps1.pool IN($poolList) AND m1.scorer IS NOT NULL AND iscallahan=1 AND g2.isongoing=0 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 			
+				LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
+					LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
+					LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
+						WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
+				LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+				LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+					LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+						WHERE g4.pool IN($poolList) AND g4.isongoing=0 
+						GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
       (int)$teamId
     );
   } else {
@@ -848,38 +851,41 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
 {
   if ($pools) {
-    if (is_array($pools)) {
-      $pools = DBEscapeString(implode(",", $pools));
-    } else {
-      $pools = DBEscapeString($pools);
+    if (!is_array($pools)) {
+      $pools = explode(",", (string)$pools);
     }
+    $pools = array_filter(array_map('intval', $pools), function ($val) {
+      return $val > 0;
+    });
+    $pools = empty($pools) ? array(0) : $pools;
+    $poolList = implode(",", $pools);
     // This part needs to be tested......but should work
     $query = sprintf(
       "
 			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
 				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, COALESCE(d.deftotal) AS deftotal   
 			FROM uo_player AS p 
-			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
-				LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
-				LEFT JOIN uo_game AS g1 ON (m.game=g1.game_id) 
-				WHERE ps.pool IN($pools) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
-			LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 
-				LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game) 
-				LEFT JOIN uo_game AS g2 ON (m1.game=g2.game_id) 
-				WHERE ps1.pool IN($pools) AND m1.scorer IS NOT NULL AND iscallahan=1 AND g2.isongoing=0 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 			
-			LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
-				LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
-				LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
-				WHERE ps2.pool IN($pools) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
-			LEFT JOIN (SELECT m3.author AS author, COUNT(*) AS deftotal FROM uo_defense AS m3 
-				LEFT JOIN uo_game_pool AS ps2 ON (m3.game=ps2.game) 
-				LEFT JOIN uo_game AS g3 ON (m3.game=g3.game_id) 
-				WHERE ps2.pool IN($pools) AND g3.isongoing=0 GROUP BY author) AS d ON (p.player_id=d.author)
-			LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
-			LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
-				LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-				WHERE g4.pool IN($pools) AND g4.isongoing=0 
-				GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
+				LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
+					LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
+					LEFT JOIN uo_game AS g1 ON (m.game=g1.game_id) 
+					WHERE ps.pool IN($poolList) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
+				LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1 
+					LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game) 
+					LEFT JOIN uo_game AS g2 ON (m1.game=g2.game_id) 
+					WHERE ps1.pool IN($poolList) AND m1.scorer IS NOT NULL AND iscallahan=1 AND g2.isongoing=0 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1) 			
+				LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
+					LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
+					LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
+					WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
+				LEFT JOIN (SELECT m3.author AS author, COUNT(*) AS deftotal FROM uo_defense AS m3 
+					LEFT JOIN uo_game_pool AS ps2 ON (m3.game=ps2.game) 
+					LEFT JOIN uo_game AS g3 ON (m3.game=g3.game_id) 
+					WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY author) AS d ON (p.player_id=d.author)
+				LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+				LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+					LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+					WHERE g4.pool IN($poolList) AND g4.isongoing=0 
+					GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
       (int)$teamId
     );
   } else {
