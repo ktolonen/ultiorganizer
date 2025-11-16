@@ -64,13 +64,22 @@
     $html .= "</form>";
     echo $html;
 
-    ?>
+?>
   </div>
 </body>
 
 </html>
 
 <?php
+function installHashPassword($password)
+{
+  if (function_exists('password_hash')) {
+    return password_hash($password, PASSWORD_DEFAULT);
+  }
+
+  return md5($password);
+}
+
 function prerequisites()
 {
   $passed = true;
@@ -464,7 +473,8 @@ function administration()
       $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_DATABASE);
       $db = mysqli_select_db($mysqlconnectionref, DB_DATABASE);
       mysqli_set_charset($mysqlconnectionref, 'utf8');
-      $query = sprintf("UPDATE uo_users SET password=MD5('%s') WHERE userid='admin'", mysqli_real_escape_string($mysqlconnectionref, $passwd1));
+      $hash = mysqli_real_escape_string($mysqlconnectionref, installHashPassword($passwd1));
+      $query = sprintf("UPDATE uo_users SET password='%s' WHERE userid='admin'", $hash);
       $result = mysqli_query($mysqlconnectionref, $query);
       //mysqli_close($mysqlconnectionref);
       $html .= "<p>Password changed.</p>";

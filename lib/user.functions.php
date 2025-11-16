@@ -10,6 +10,65 @@ include_once $include_prefix . 'lib/common.functions.php';
 
 //include_once $include_prefix.'lib/configuration.functions.php';
 
+function hashEqualsSafe($known, $user)
+{
+	if (function_exists('hash_equals')) {
+		return hash_equals($known, $user);
+	}
+	return strcmp($known, $user) === 0;
+}
+
+function isLegacyMd5Hash($hash)
+{
+	return strlen($hash) === 32 && ctype_xdigit($hash);
+}
+
+function hashUserPassword($password)
+{
+	if (function_exists('password_hash')) {
+		return password_hash($password, PASSWORD_DEFAULT);
+	}
+	return md5($password);
+}
+
+function updateUserPasswordHash($userId, $password)
+{
+	$query = sprintf(
+		"UPDATE uo_users SET password='%s' WHERE userid='%s'",
+		DBEscapeString(hashUserPassword($password)),
+		DBEscapeString($userId)
+	);
+
+	DBQuery($query);
+}
+
+function verifyUserPassword($password, $storedHash, $userId = null)
+{
+	if ($storedHash === null || $storedHash === '') {
+		return false;
+	}
+
+	$storedHash = (string)$storedHash;
+
+	if (!isLegacyMd5Hash($storedHash) && function_exists('password_verify')) {
+		if (password_verify($password, $storedHash)) {
+			if ($userId && function_exists('password_needs_rehash') && password_needs_rehash($storedHash, PASSWORD_DEFAULT)) {
+				updateUserPasswordHash($userId, $password);
+			}
+			return true;
+		}
+	}
+
+	if (isLegacyMd5Hash($storedHash) && hashEqualsSafe(md5($password), $storedHash)) {
+		if ($userId) {
+			updateUserPasswordHash($userId, $password);
+		}
+		return true;
+	}
+
+	return false;
+}
+
 function FailRedirect($user)
 {
 	SetUserSessionData('anonymous');
@@ -50,17 +109,15 @@ function Forbidden($user)
 function UserAuthenticate($user, $passwd, $failcallback)
 {
 	$query = sprintf(
-		"SELECT * FROM uo_users WHERE UserID='%s' AND Password=MD5('%s')",
-		DBEscapeString($user),
-		DBEscapeString($passwd)
+		"SELECT * FROM uo_users WHERE UserID='%s'",
+		DBEscapeString($user)
 	);
-	$count = DBQueryRowCount($query);
+	$row = DBQueryToRow($query);
 
-	if ($count == 1) {
+	if ($row && verifyUserPassword($passwd, $row['password'], $row['userid'])) {
 		LogUserAuthentication($user, "success");
 		regenerateSessionId();
 		SetUserSessionData($user);
-		$row = DBQueryToRow($query);
 		DBQuery("UPDATE uo_users SET last_login=NOW() WHERE userid='" . DBEscapeString($user) . "'");
 
 		//first logging
@@ -186,13 +243,7 @@ function UserChangePassword($user_id, $passwd)
 {
 
 	if ($user_id == $_SESSION['uid'] || hasEditUsersRight()) {
-		$query = sprintf(
-			"UPDATE uo_users SET password=MD5('%s') WHERE userid='%s'",
-			DBEscapeString($passwd),
-			DBEscapeString($user_id)
-		);
-
-		DBQuery($query);
+		updateUserPasswordHash($user_id, $passwd);
 	} else {
 		die('Insufficient rights to change user info');
 	}
@@ -1024,9 +1075,9 @@ function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $me
 	Log1("user", "add", $newUsername, "", "register request");
 	$token = uuidSecure();
 	$query = sprintf(
-		"INSERT INTO uo_registerrequest (userid, password, name, email, token) VALUES ('%s', MD5('%s'), '%s', '%s', '%s')",
+		"INSERT INTO uo_registerrequest (userid, password, name, email, token) VALUES ('%s', '%s', '%s', '%s', '%s')",
 		DBEscapeString($newUsername),
-		DBEscapeString($newPassword),
+		DBEscapeString(hashUserPassword($newPassword)),
 		DBEscapeString($newName),
 		DBEscapeString($newEmail),
 		DBEscapeString($token)
@@ -1495,12 +1546,7 @@ function UserResetPassword($userId)
 		$headers .= "From: " . $serverConf['EmailSource'] . "\r\n";
 
 		if (mail($email, _("New password to ultiorganizer"), $message, $headers)) {
-			$query = sprintf(
-				"UPDATE uo_users SET password=MD5('%s') WHERE userid='%s'",
-				DBEscapeString($password),
-				DBEscapeString($userId)
-			);
-			$result = DBQuery($query);
+			updateUserPasswordHash($userId, $password);
 
 			return true;
 		} else {

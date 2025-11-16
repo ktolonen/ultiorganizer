@@ -21,6 +21,7 @@ if (!isSuperAdmin()) {
 
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
+include_once 'lib/user.functions.php';
 if (is_file('cust/' . CUSTOMIZATIONS . '/teamplayers.functions.php')) {
   include_once 'cust/' . CUSTOMIZATIONS . '/teamplayers.functions.php';
 }
@@ -344,10 +345,10 @@ class XMLHandler
             $user = DBQueryToRow($query);
             if (!$user) {
               $query = sprintf(
-                "INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', MD5('%s'), '%s')",
+                "INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
                 DBEscapeString($email),
                 DBEscapeString($email),
-                DBEscapeString(CreateRandomPassword()),
+                DBEscapeString(hashUserPassword(CreateRandomPassword())),
                 DBEscapeString($email)
               );
               DBQuery($query);

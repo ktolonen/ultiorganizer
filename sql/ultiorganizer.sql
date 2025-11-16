@@ -573,7 +573,7 @@ CREATE TABLE `uo_pooltemplate` (
 
 CREATE TABLE `uo_registerrequest` (
   `userid` varchar(50) NOT NULL,
-  `password` char(32) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `name` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `token` varchar(100) DEFAULT NULL,
@@ -796,7 +796,7 @@ INSERT INTO uo_userproperties VALUES("2","admin","userrole","superadmin");
 CREATE TABLE `uo_users` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
   `userid` varchar(50) NOT NULL,
-  `password` char(32) DEFAULT NULL,
+  `password` varchar(255) DEFAULT NULL,
   `name` varchar(50) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
   `last_login` datetime DEFAULT NULL,
@@ -805,7 +805,7 @@ CREATE TABLE `uo_users` (
 ) ENGINE=MyISAM AUTO_INCREMENT=1001 DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
 INSERT INTO uo_users VALUES("1","anonymous",NULL,NULL,NULL,NULL);
-INSERT INTO uo_users VALUES("2","admin","21232f297a57a5a743894a0e4a801fc3","Administrator",NULL,"2010-04-01 15:40:46");
+INSERT INTO uo_users VALUES("2","admin","$2y$10$h.NTYV.r7tP4YOroKeWd1.3ruGfSu9yXAB3/o65logZkg3Rdjsar6","Administrator",NULL,"2010-04-01 15:40:46");
 
 create table uo_extraemailrequest (
 		userid varchar(50) not null, 

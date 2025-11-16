@@ -750,6 +750,12 @@ function upgrade76()
 	}
 }
 
+function upgrade77()
+{
+	runQuery("ALTER TABLE uo_users MODIFY password varchar(255) DEFAULT NULL");
+	runQuery("ALTER TABLE uo_registerrequest MODIFY password varchar(255) DEFAULT NULL");
+}
+
 function runQuery($query)
 {
 	global $mysqlconnectionref;
