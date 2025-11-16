@@ -1,4 +1,4 @@
-This e-mail contains new password for $url.
+This email contains your new password for $url.
 
 Username: $username
 New password: $password

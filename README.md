@@ -1,6 +1,6 @@
 # ultiorganizer
 
-This is the **Ultimate Organizer**, a web application for online score keeping of Ultimate tournaments. To find out more, visit project homepage: <https://sourceforge.net/apps/trac/ultiorganizer/wiki>. To read more about Ultimate sport visit <http://www.wfdf.org>.
+This is the **Ultimate Organizer**, a web application for online score keeping of Ultimate tournaments. To find out more, visit project homepage: <https://github.com/ktolonen/ultiorganizer>. To read more about Ultimate sport visit <http://www.wfdf.org>.
 
 ## What is here
 

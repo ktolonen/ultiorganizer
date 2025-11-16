@@ -1,7 +1,7 @@
-This email has been sent to you because a user account enabling administration of
+This email was sent to you because a user account that allows you to manage
 your player information has been created at $ultiorganizer.
 
-Please follow the link below or cut-and-paste it to a browser address bar to confirm
+Please follow the link below or copy and paste it into a browser address bar to confirm
 your user account.
 
 $url

@@ -778,7 +778,7 @@ CREATE TABLE `uo_urls` (
   INDEX `idx_owner_id` (`owner_id`)
 ) ENGINE=MyISAM AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 COLLATE utf8_general_ci;
 
-INSERT INTO uo_urls VALUES(1,"ultiorganizer",0,"menulink","Powered by Ultiorganizer","https://sourceforge.net/apps/trac/ultiorganizer/","XA",0,NULL,NULL);
+INSERT INTO uo_urls VALUES(1,"ultiorganizer",0,"menulink","Powered by Ultiorganizer","https://github.com/ktolonen/ultiorganizer/","XA",0,NULL,NULL);
 INSERT INTO uo_urls VALUES(2,"ultiorganizer",0,"menumail","Administration","admin@example.com","YA",0,NULL,NULL);
 
 CREATE TABLE `uo_userproperties` (

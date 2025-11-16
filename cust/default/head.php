@@ -11,5 +11,5 @@ function logo()
 
 function pageHeader()
 {
-	return "<a href='http://sourceforge.net/apps/trac/ultiorganizer/wiki' class='header_text'>" . _("Ultiorganizer") . "</a><br/>\n";
+	return "<a href='https://github.com/ktolonen/ultiorganizer' class='header_text'>" . _("Ultiorganizer") . "</a><br/>\n";
 }

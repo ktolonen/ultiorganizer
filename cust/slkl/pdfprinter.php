@@ -433,6 +433,10 @@ class PDF extends FPDF
 		$this->SetDrawColor(0);
 		//print all games in order
 		while ($game = mysqli_fetch_assoc($games)) {
+			// skip incomplete rows (no field/time) to avoid writing outside a page
+			if (empty($game['place_id']) || empty($game['time'])) {
+				continue;
+			}
 
 			//one reservation group per page
 			if ((!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament)
@@ -505,6 +509,9 @@ class PDF extends FPDF
 			}
 
 			$slot = $game['time'];
+			if (!isset($timeslots[$slot])) {
+				continue;
+			}
 			$this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
 
 			$this->SetTextColor(0);
