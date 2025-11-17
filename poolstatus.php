@@ -53,45 +53,47 @@ if (iget("print")) {
 $html .= $comment;
 
 $prevseries = 0;
-foreach ($pools as $pool) {
+if (!empty($pools) && is_array($pools)) {
+  foreach ($pools as $pool) {
 
-  $poolinfo = PoolInfo($pool['pool_id']);
+    $poolinfo = PoolInfo($pool['pool_id']);
 
-  if ($prevseries && $prevseries != $poolinfo['series']) {
-    $html .= scoreboard($prevseries, true);
-    if (ShowDefenseStats()) {
-      $html .= defenseboard($prevseries, true);
+    if ($prevseries && $prevseries != $poolinfo['series']) {
+      $html .= scoreboard($prevseries, true);
+      if (ShowDefenseStats()) {
+        $html .= defenseboard($prevseries, true);
+      }
     }
-  }
-  $prevseries = $poolinfo['series'];
-  $seriesName = U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']);
+    $prevseries = $poolinfo['series'];
+    $seriesName = U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']);
 
-  $html .= "<h2>" . utf8entities($seriesName) . "</h2>";
+    $html .= "<h2>" . utf8entities($seriesName) . "</h2>";
 
-  $html .= CommentHTML(3, $pool['pool_id']);
+    $html .= CommentHTML(3, $pool['pool_id']);
 
-  if ($poolinfo['type'] == 1) {
-    // round robin
-    $html .= printRoundRobinPool($seasoninfo, $poolinfo);
-  } elseif ($poolinfo['type'] == 2) {
-    // playoff
-    $html .= printPlayoffTree($seasoninfo, $poolinfo);
-  } elseif ($poolinfo['type'] == 3) {
-    // Swissdraw
-    $html .= printSwissdraw($seasoninfo, $poolinfo);
-  } elseif ($poolinfo['type'] == 4) {
-    // Cross matches
-    $html .= printCrossmatchPool($seasoninfo, $poolinfo);
-  }
+    if ($poolinfo['type'] == 1) {
+      // round robin
+      $html .= printRoundRobinPool($seasoninfo, $poolinfo);
+    } elseif ($poolinfo['type'] == 2) {
+      // playoff
+      $html .= printPlayoffTree($seasoninfo, $poolinfo);
+    } elseif ($poolinfo['type'] == 3) {
+      // Swissdraw
+      $html .= printSwissdraw($seasoninfo, $poolinfo);
+    } elseif ($poolinfo['type'] == 4) {
+      // Cross matches
+      $html .= printCrossmatchPool($seasoninfo, $poolinfo);
+    }
 
-  if (!$seriesScoreboard && !$print) {
-    $html .= scoreboard($pool['pool_id'], false);
-    if (ShowDefenseStats()) {
-      $html .= defenseboard($pool['pool_id'], false);
+    if (!$seriesScoreboard && !$print) {
+      $html .= scoreboard($pool['pool_id'], false);
+      if (ShowDefenseStats()) {
+        $html .= defenseboard($pool['pool_id'], false);
+      }
     }
   }
 }
-if ($seriesScoreboard && !$print) {
+if ($seriesScoreboard && !$print && $prevseries) {
   $html .= scoreboard($prevseries, true);
 }
 

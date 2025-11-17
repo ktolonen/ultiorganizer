@@ -47,7 +47,7 @@ echo "VERSION:2.0\n";
 echo "PRODID: " . _("Ultiorganizer") . "\n\n";
 
 while ($game = mysqli_fetch_assoc($games)) {
-  $location = LocationInfo($game['place_id']);
+  $location = !empty($game['place_id']) ? LocationInfo($game['place_id']) : null;
   echo "\nBEGIN:VEVENT";
   echo "\nSUMMARY:" . TeamName($game['hometeam']) . "-" . TeamName($game['visitorteam']);
   echo "\nDESCRIPTION:" . U_($game['seriesname']) . ": " . U_($game['poolname']);
@@ -58,7 +58,9 @@ while ($game = mysqli_fetch_assoc($games)) {
     echo "\nDTSTART:" . TimeToIcal($game['time']);
   }
   echo "\nDURATION: P" . intval($game['timeslot']) . "M";
-  echo "\nGEO:" . $location['lat'] . ";" . $location['lng'];
+  if (!empty($location) && isset($location['lat']) && isset($location['lng'])) {
+    echo "\nGEO:" . $location['lat'] . ";" . $location['lng'];
+  }
   echo "\nEND:VEVENT\n";
 }
 echo "\nEND:VCALENDAR\n";

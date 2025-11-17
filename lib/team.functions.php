@@ -1597,22 +1597,34 @@ function TeamsToCsv($season, $separator)
 		COALESCE(k.spirit,0) + COALESCE(v.spirit,0) AS SpiritPoints
 		FROM uo_team AS j
 		LEFT JOIN (SELECT COUNT(*) AS games, 
-  			COUNT(homescore>visitorscore OR NULL) as wins, 
-  			COUNT(homescore=visitorscore OR NULL) as draws, 
-  		  	COUNT(homescore<visitorscore OR NULL) as losses, 
-  			hometeam, FORMAT(SUM(homescore),0) AS scores, FORMAT(SUM(homesotg),0) AS spirit, FORMAT(SUM(visitorscore),0) AS against
-			FROM uo_game
-			LEFT JOIN uo_game_pool gp1 ON(game_id=gp1.game)
-			WHERE isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k
+  			COUNT(g.homescore>g.visitorscore OR NULL) as wins, 
+  			COUNT(g.homescore=g.visitorscore OR NULL) as draws, 
+  		  	COUNT(g.homescore<g.visitorscore OR NULL) as losses, 
+  			g.hometeam, FORMAT(SUM(g.homescore),0) AS scores, FORMAT(SUM(COALESCE(hspirit.score,0)),0) AS spirit, FORMAT(SUM(g.visitorscore),0) AS against
+			FROM uo_game g
+			LEFT JOIN uo_game_pool gp1 ON(g.game_id=gp1.game)
+			LEFT JOIN (
+        SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS score
+        FROM uo_spirit_score ssc
+        LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
+        GROUP BY ssc.game_id, ssc.team_id
+      ) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
+			WHERE g.isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k
 		ON (j.team_id=k.hometeam)
 		LEFT JOIN (SELECT COUNT(*) AS games, 
-  			COUNT(homescore<visitorscore OR NULL) as wins, 
-  			COUNT(homescore=visitorscore OR NULL) as draws, 
-  		  	COUNT(homescore>visitorscore OR NULL) as losses, 
-  			visitorteam, FORMAT(SUM(visitorscore),0) AS scores, FORMAT(SUM(visitorsotg),0) AS spirit, FORMAT(SUM(homescore),0) AS against
-			FROM uo_game
-			LEFT JOIN uo_game_pool gp2 ON(game_id=gp2.game)
-			WHERE isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v
+  			COUNT(g.homescore<g.visitorscore OR NULL) as wins, 
+  			COUNT(g.homescore=g.visitorscore OR NULL) as draws, 
+  		  	COUNT(g.homescore>g.visitorscore OR NULL) as losses, 
+  			g.visitorteam, FORMAT(SUM(g.visitorscore),0) AS scores, FORMAT(SUM(COALESCE(vspirit.score,0)),0) AS spirit, FORMAT(SUM(g.homescore),0) AS against
+			FROM uo_game g
+			LEFT JOIN uo_game_pool gp2 ON(g.game_id=gp2.game)
+			LEFT JOIN (
+        SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS score
+        FROM uo_spirit_score ssc
+        LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
+        GROUP BY ssc.game_id, ssc.team_id
+      ) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
+			WHERE g.isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v
 			ON (j.team_id=v.visitorteam)
 		LEFT JOIN uo_series ser ON(ser.series_id=j.series)
 		LEFT JOIN uo_pool ps ON (j.pool=ps.pool_id) 		
