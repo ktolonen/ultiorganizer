@@ -13,12 +13,17 @@ $html = "";
 
 $teamId = intval(iget("team"));
 
+// Short-circuit if team lookup fails to avoid null offsets.
+$team = TeamInfo($teamId);
+if (!$team) {
+	echo "<p class='warning'>" . _("Team not found.") . "</p>";
+	return;
+}
+
 if (isset($_SERVER['HTTP_REFERER']))
 	$backurl = utf8entities($_SERVER['HTTP_REFERER']);
 else
 	$backurl = "?view=user/teamplayers&team=$teamId";
-
-$team = TeamInfo($teamId);
 
 $title = _("Team details") . ": " . utf8entities($team['name']);
 

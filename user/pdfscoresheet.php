@@ -17,6 +17,7 @@ $filter2 = "";
 $gameId = 0;
 $teamId = 0;
 $seriesId = 0;
+$games = null;
 
 if (!empty($_GET["game"])) {
 	$games = TimetableGames($_GET["game"], "game", "all", "place");
@@ -65,6 +66,11 @@ if (!empty($_GET["team"])) {
 	$teamId  = $_GET["team"];
 }
 
+// Default to all games of the season if no specific filter populated $games.
+if ($games === null) {
+	$games = TimetableGames($season, "season", "all", "places");
+}
+
 $pdf = new PDF();
 
 
@@ -91,12 +97,18 @@ if ($teamId) {
 		}
 		$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	}
-} else {
-	$seasonname = SeasonName($season);
+	} else {
+		$seasonname = SeasonName($season);
 
-	while ($gameRow = mysqli_fetch_assoc($games)) {
+		// Bail out gracefully if no games were returned.
+		if (!$games || !is_object($games)) {
+			$pdf->Output();
+			return;
+		}
 
-		if ($filter2 == "teams") {
+		while ($gameRow = mysqli_fetch_assoc($games)) {
+
+			if ($filter2 == "teams") {
 			if (!$gameRow['hometeam'] || !$gameRow['visitorteam']) {
 				continue;
 			}

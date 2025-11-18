@@ -1,5 +1,13 @@
 <?php
 include_once 'lib/yui.functions.php';
+
+// Ensure $teamId is always defined before using it in the JS snippet below.
+if (!isset($teamId)) {
+	$teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
+} else {
+	$teamId = intval($teamId);
+}
+
 echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "container"));
 ?>
 <link rel="stylesheet" type="text/css" href="script/yui/container/assets/container.css" />

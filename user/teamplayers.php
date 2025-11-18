@@ -13,6 +13,12 @@ $title = _("Roster");
 $teamId = iget("team");
 $teaminfo = TeamInfo($teamId);
 
+// Stop early if the team does not exist to avoid undefined array offsets.
+if (!$teaminfo) {
+  echo "<p class='warning'>" . _("Team not found.") . "</p>";
+  return;
+}
+
 if (!empty($_POST['remove_x'])) {
   $id = $_POST['hiddenDeleteId'];
   $games = PlayerSeasonPlayedGames($id, $teaminfo['season']);

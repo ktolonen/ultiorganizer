@@ -14,7 +14,16 @@ if (iget("sort")) {
   $sort = iget("sort");
 }
 
-$title = _("Club Card") . ": " . utf8entities($profile['name']);
+$title = _("Club Card");
+
+// Abort gracefully if club not found.
+if (!$profile) {
+  $html .= "<h1>" . _("Club not found") . "</h1>";
+  echo $html;
+  return;
+}
+
+$title .= ": " . utf8entities($profile['name']);
 
 $html .= "<h1>" . utf8entities($profile['name']) . "</h1>";
 
