@@ -3,22 +3,21 @@ include_once '../../lib/database.php';
 include_once '../../lib/common.functions.php';
 include_once '../../lib/user.functions.php';
 
-if (isset($_GET['firstname'])) {
-	$firstname = utf8_encode(trim(urldecode($_GET['firstname'])));
-} else {
-	$firstname = '';
-}
-if (isset($_GET['lastname'])) {
-	$lastname = utf8_encode(trim(urldecode($_GET['lastname'])));
-} else {
-	$lastname = '';
+function normalizeInput($value)
+{
+	$value = trim(urldecode($value));
+	if (function_exists('mb_convert_encoding')) {
+		return mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
+	}
+	if (function_exists('iconv')) {
+		return iconv('ISO-8859-1', 'UTF-8//TRANSLIT', $value);
+	}
+	return $value;
 }
 
-if (isset($_GET['team'])) {
-	$teamId = utf8_encode(trim(urldecode($_GET['team'])));
-} else {
-	$teamId = '';
-}
+$firstname = isset($_GET['firstname']) ? normalizeInput($_GET['firstname']) : '';
+$lastname = isset($_GET['lastname']) ? normalizeInput($_GET['lastname']) : '';
+$teamId = isset($_GET['team']) ? normalizeInput($_GET['team']) : '';
 header("Content-type: text/xml; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");
@@ -58,47 +57,47 @@ if (hasEditPlayersRight($teamId)) {
 
 			$nextNode = $dom->createElement("AccreditationId");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['accreditation_id']);
+			$nextText = $dom->createTextNode((string)$row['accreditation_id']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("ProfileId");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['profile_id']);
+			$nextText = $dom->createTextNode((string)$row['profile_id']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("Firstname");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['firstname']);
+			$nextText = $dom->createTextNode((string)$row['firstname']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("Lastname");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['lastname']);
+			$nextText = $dom->createTextNode((string)$row['lastname']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("BirthDate");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode(DefBirthdayFormat($row['birthdate']));
+			$nextText = $dom->createTextNode((string)DefBirthdayFormat($row['birthdate']));
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("Team");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['teamname']);
+			$nextText = $dom->createTextNode((string)$row['teamname']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("Event");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['seasoname']);
+			$nextText = $dom->createTextNode((string)$row['seasoname']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("Gender");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['gender']);
+			$nextText = $dom->createTextNode((string)$row['gender']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("Email");
 			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode($row['email']);
+			$nextText = $dom->createTextNode((string)$row['email']);
 			$nextText = $nextNode->appendChild($nextText);
 
 			$nextNode = $dom->createElement("Jersey");
@@ -106,7 +105,7 @@ if (hasEditPlayersRight($teamId)) {
 			if ($row['num'] < 0) {
 				$nextText = $dom->createTextNode("");
 			} else {
-				$nextText = $dom->createTextNode($row['num']);
+				$nextText = $dom->createTextNode((string)$row['num']);
 			}
 			$nextText = $nextNode->appendChild($nextText);
 		}
