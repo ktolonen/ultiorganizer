@@ -91,9 +91,11 @@ if (!empty($_POST['save']) && empty($errors)) {
 
   $html .= "<label for='away'>" . _("Visitor team goals") . ":</label>";
   $html .= "<input type='number' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
-
+  
+  $html .= "<div class='form-actions'>";
   $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
   $html .= "<a href='?view=login' data-role='button' data-ajax='false'>" . _("Games list") . "</a>";
+  $html .= "</div>";
 }
 
 

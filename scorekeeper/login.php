@@ -20,8 +20,10 @@ $html .= "<label for='myusername'>" . _("Username") . ":</label>";
 $html .= "<input type='text' id='myusername' name='myusername' size='15'/> ";
 $html .= "<label for='mypassword'>" . _("Password") . ":</label>";
 $html .= "<input type='password' id='mypassword' name='mypassword' size='15'/> ";
+$html .= "<div class='form-actions'>";
 $html .= "<input type='submit' name='login' value='" . _("Login") . "'/>";
 $html .= "<a href='?view=result' data-role='button' data-ajax='false'>" . _("Quick add result") . "</a>";
+$html .= "</div>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 

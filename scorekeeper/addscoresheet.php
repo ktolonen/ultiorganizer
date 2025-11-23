@@ -13,6 +13,7 @@ $scores = array();
 while ($row = mysqli_fetch_assoc($result)) {
   $scores[] = $row;
 }
+$lastscore = null;
 $uo_goal = array(
   "game" => $gameId,
   "num" => 0,
@@ -135,7 +136,6 @@ $html .= "<form action='?view=addscoresheet' method='post' data-ajax='false'>\n"
 
 
 //last score
-$lastscore;
 //$html .= "<div class='ui-grid-b'>";
 if (count($scores) > 0) {
   $lastscore = $scores[count($scores) - 1];

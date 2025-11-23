@@ -53,8 +53,8 @@ $html .= "<div data-role='content'>\n";
 $html .= "<form action='?view=addtimeouts' method='post' data-ajax='false'>\n";
 
 
-$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("time outs") . ":</label>";
-$html .= "<div class='ui-grid-b'>";
+$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("time outs") . " (" . _("min") . ":" . _("sec") . "):</label>";
+$html .= "<div class='timeout-list'>";
 
 //used timeouts
 $j = 0;
@@ -65,6 +65,7 @@ $timeouts = GameTimeouts($gameId);
 
 while ($timeout = mysqli_fetch_assoc($timeouts)) {
   if (intval($timeout['ishome'])) {
+    $html .= "<div class='timeout-pair'>\n";
     $html .= "<div class='ui-block-a'>\n";
 
     $time = explode(".", SecToMin($timeout['time']));
@@ -82,6 +83,7 @@ while ($timeout = mysqli_fetch_assoc($timeouts)) {
     }
     $html .= "</select>";
     $html .= "</div>";
+    $html .= "<span class='timeout-separator'>:</span>";
     $html .= "<div class='ui-block-b'>\n";
     $html .= "<select id='htoss$j' name='htoss$j' >";
     for ($i = 0; $i <= 60; $i = $i + 5) {
@@ -93,6 +95,7 @@ while ($timeout = mysqli_fetch_assoc($timeouts)) {
     }
     $html .= "</select>";
     $html .= "</div>";
+    $html .= "</div>";
     $j++;
   }
 }
@@ -100,6 +103,7 @@ while ($timeout = mysqli_fetch_assoc($timeouts)) {
 //empty slots
 for ($j; $j < $maxtimeouts; $j++) {
 
+  $html .= "<div class='timeout-pair'>\n";
   $html .= "<div class='ui-block-a'>\n";
   $html .= "<select id='htomm$j' name='htomm$j' >";
   $timemm = 0;
@@ -113,6 +117,7 @@ for ($j; $j < $maxtimeouts; $j++) {
   }
   $html .= "</select>";
   $html .= "</div>";
+  $html .= "<span class='timeout-separator'>:</span>";
   $html .= "<div class='ui-block-b'>\n";
   $html .= "<select id='htoss$j' name='htoss$j' >";
   for ($i = 0; $i <= 60; $i = $i + 5) {
@@ -124,11 +129,12 @@ for ($j; $j < $maxtimeouts; $j++) {
   }
   $html .= "</select>";
   $html .= "</div>";
+  $html .= "</div>";
 }
 $html .= "</div>";
 
-$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("time outs") . ":</label>";
-$html .= "<div class='ui-grid-b'>";
+$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("time outs") . " (" . _("min") . ":" . _("sec") . "):</label>";
+$html .= "<div class='timeout-list'>";
 
 //used timeouts
 $j = 0;
@@ -137,6 +143,7 @@ $timeouts = GameTimeouts($gameId);
 
 while ($timeout = mysqli_fetch_assoc($timeouts)) {
   if (!intval($timeout['ishome'])) {
+    $html .= "<div class='timeout-pair'>\n";
     $html .= "<div class='ui-block-a'>\n";
 
     $time = explode(".", SecToMin($timeout['time']));
@@ -153,6 +160,7 @@ while ($timeout = mysqli_fetch_assoc($timeouts)) {
     }
     $html .= "</select>";
     $html .= "</div>";
+    $html .= "<span class='timeout-separator'>:</span>";
     $html .= "<div class='ui-block-b'>\n";
     $html .= "<select id='atoss$j' name='atoss$j' >";
     for ($i = 0; $i <= 55; $i = $i + 5) {
@@ -164,6 +172,7 @@ while ($timeout = mysqli_fetch_assoc($timeouts)) {
     }
     $html .= "</select>";
     $html .= "</div>";
+    $html .= "</div>";
     $j++;
   }
 }
@@ -171,6 +180,7 @@ while ($timeout = mysqli_fetch_assoc($timeouts)) {
 //empty slots
 for ($j; $j < $maxtimeouts; $j++) {
 
+  $html .= "<div class='timeout-pair'>\n";
   $html .= "<div class='ui-block-a'>\n";
   $html .= "<select id='atomm$j' name='atomm$j' >";
   $timemm = 0;
@@ -184,6 +194,7 @@ for ($j; $j < $maxtimeouts; $j++) {
   }
   $html .= "</select>";
   $html .= "</div>";
+  $html .= "<span class='timeout-separator'>:</span>";
   $html .= "<div class='ui-block-b'>\n";
   $html .= "<select id='atoss$j' name='atoss$j' >";
   for ($i = 0; $i <= 55; $i = $i + 5) {
@@ -194,6 +205,7 @@ for ($j; $j < $maxtimeouts; $j++) {
     }
   }
   $html .= "</select>";
+  $html .= "</div>";
   $html .= "</div>";
 }
 $html .= "</div>";
