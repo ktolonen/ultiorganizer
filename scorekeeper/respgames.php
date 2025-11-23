@@ -71,13 +71,11 @@ foreach ($respGameArray as $tournament => $resArray) {
       if ($prevrg != $game['reservationgroup']) {
 
         if (!empty($prevloc)) {
-          $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
           $html .= "</ul></li>\n";
           $prevloc = "";
         }
 
         if (!empty($prevrg)) {
-          $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
           $html .= "</ul></li>\n";
         }
         $html .= "<li>\n";
@@ -93,7 +91,6 @@ foreach ($respGameArray as $tournament => $resArray) {
         if ($prevloc != $gameloc) {
 
           if (!empty($prevloc)) {
-            $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
             $html .= "</ul></li>\n";
           }
 
@@ -158,12 +155,10 @@ foreach ($respGameArray as $tournament => $resArray) {
   }
 }
 if (!empty($prevrg)) {
-  $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
   $html .= "</ul></li>\n";
 }
 
 if (!empty($prevloc)) {
-  $html .= "<li><a href='#' data-role='button' data-rel='back'>" . _("Back") . "</a></li>";
   $html .= "</ul></li>\n";
 }
 

@@ -306,14 +306,25 @@ echo $html;
                   echo "\"";
                   ?>;
 
-  $("input[name=team]:radio").bind("change", function(event, ui) {
-    if ($(this).val() == "H") {
-      document.getElementById('pass').innerHTML = homelist;
-      document.getElementById('goal').innerHTML = homelist;
-    } else {
-      document.getElementById('pass').innerHTML = awaylist;
-      document.getElementById('goal').innerHTML = awaylist;
+  function swapTeamLists(teamValue) {
+    var passSelect = document.getElementById('pass');
+    var goalSelect = document.getElementById('goal');
+    if (!passSelect || !goalSelect) {
+      return;
     }
+    if (teamValue === "H") {
+      passSelect.innerHTML = homelist;
+      goalSelect.innerHTML = homelist;
+    } else {
+      passSelect.innerHTML = awaylist;
+      goalSelect.innerHTML = awaylist;
+    }
+  }
 
+  var teamRadios = document.querySelectorAll('input[name="team"]');
+  teamRadios.forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      swapTeamLists(this.value);
+    });
   });
 </script>

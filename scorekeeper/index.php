@@ -65,7 +65,7 @@ echo "<html>\n";
 echo "<head>\n";
 echo "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
 echo "<title>Scorekeeper</title>\n";
-echo "<link rel='stylesheet' href='" . BASEURL . "/script/jquery/jquery.mobile-1.2.0.min.css'/>\n";
+echo "<link rel='stylesheet' href='" . BASEURL . "/scorekeeper/scorekeeper.css'/>\n";
 
 if (is_file($include_prefix . 'cust/' . CUSTOMIZATIONS . '/font.css')) {
 	echo "<link rel=\"stylesheet\" href=\"" . $include_prefix . "cust/" . CUSTOMIZATIONS . "/font.css\" type=\"text/css\" />\n";
@@ -73,10 +73,6 @@ if (is_file($include_prefix . 'cust/' . CUSTOMIZATIONS . '/font.css')) {
 	echo "<link rel=\"stylesheet\" href=\"" . $include_prefix . "cust/default/font.css\" type=\"text/css\" />\n";
 }
 
-echo "<script src='" . BASEURL . "/script/jquery/jquery-1.8.3.min.js'></script>\n";
-echo "<script src='" . BASEURL . "/script/jquery/jquery.mobile-1.2.0.min.js'></script>\n";
-//echo "<script src='".BASEURL."/script/jquery/jquery-1.8.3.js'></script>\n";
-//echo "<script src='".BASEURL."/script/jquery/jquery.mobile-1.2.0.js'></script>\n";
 echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
 //include "../script/common.js.inc";
 

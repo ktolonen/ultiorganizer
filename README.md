@@ -15,8 +15,8 @@ The files are organized as follows:
 * **cust** Contains skins for customized Ultiorganizer instances.
 * **locale** Contains translations. To update, simply edit the html files. To update translations in PHP pages you need the gettext utilities. The simplest way to add translations is by calling `poedit locales/de_DE.utf8/LC_MESSAGES/messages.po`. Then call 'update', add translations and save.
 * **images** Contains icons, flags, and, by default, the image and media upload directory.
-* **mobile** Contains pages for small screens on mobile devices.
-* **scorekeeper** Another take on mobile pages, using jQuery
+* **mobile** Contains pages for small screens on mobile devices with keyboard.
+* **scorekeeper** Contains pages for thouchscreen mobile devices.
 * **ext** Contains pages to be embedded in external pages. See ?view=ext/index
 * **plugins** Mainly tools for maintenance, export, import. Some are rather experimental!
 * **sql** database utilities

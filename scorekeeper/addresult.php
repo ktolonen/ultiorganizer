@@ -75,38 +75,32 @@ echo $html;
 
 ?>
 <script type="text/javascript">
-	$("#homeplus").bind("click", function(event, ui) {
-		var goals = parseInt($('input[id=home]').val());
+	function adjustScore(inputId, delta) {
+		var input = document.getElementById(inputId);
+		if (!input) {
+			return;
+		}
+		var goals = parseInt(input.value, 10);
 		if (isNaN(goals)) {
 			goals = 0;
 		}
-		goals = goals + 1;
-		$('input[id=home]').val(goals);
-	});
+		goals = goals + delta;
+		input.value = goals;
+	}
 
-	$("#homeminus").bind("click", function(event, ui) {
-		var goals = parseInt($('input[id=home]').val());
-		if (isNaN(goals)) {
-			goals = 0;
+	function bindScoreButton(buttonId, inputId, delta) {
+		var button = document.getElementById(buttonId);
+		if (!button) {
+			return;
 		}
-		goals = goals - 1;
-		$('input[id=home]').val(goals);
-	});
-	$("#awayplus").bind("click", function(event, ui) {
-		var goals = parseInt($('input[id=away]').val());
-		if (isNaN(goals)) {
-			goals = 0;
-		}
-		goals = goals + 1;
-		$('input[id=away]').val(goals);
-	});
+		button.addEventListener("click", function(event) {
+			event.preventDefault();
+			adjustScore(inputId, delta);
+		});
+	}
 
-	$("#awayminus").bind("click", function(event, ui) {
-		var goals = parseInt($('input[id=away]').val());
-		if (isNaN(goals)) {
-			goals = 0;
-		}
-		goals = goals - 1;
-		$('input[id=away]').val(goals);
-	});
+	bindScoreButton("homeplus", "home", 1);
+	bindScoreButton("homeminus", "home", -1);
+	bindScoreButton("awayplus", "away", 1);
+	bindScoreButton("awayminus", "away", -1);
 </script>
