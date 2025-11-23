@@ -36,7 +36,7 @@ include_once $include_prefix . 'sql/upgrade_db.php';
 
 //When adding new update function into upgrade_db.php change this number.
 //When you change the database, export the current schema from the running database.
-define('DB_VERSION', 77); //Database version matching to upgrade functions.
+define('DB_VERSION', 78); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;
 
@@ -56,7 +56,7 @@ function OpenConnection()
 
   //select schema
   $db = mysqli_select_db($mysqlconnectionref, DB_DATABASE);
-  mysqli_set_charset($mysqlconnectionref, 'utf8');
+  mysqli_set_charset($mysqlconnectionref, 'utf8mb4');
 
   if (!$db) {
     die("Unable to select database");

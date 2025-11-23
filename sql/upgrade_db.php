@@ -756,6 +756,31 @@ function upgrade77()
 	runQuery("ALTER TABLE uo_registerrequest MODIFY password varchar(255) DEFAULT NULL");
 }
 
+function upgrade78()
+{
+	$charset = 'utf8mb4';
+	$collation = 'utf8mb4_unicode_ci';
+
+	runQuery(sprintf(
+		"ALTER DATABASE `%s` CHARACTER SET %s COLLATE %s",
+		DB_DATABASE,
+		$charset,
+		$collation
+	));
+
+	// Convert each table to utf8mb4 to align with the new connection charset.
+	$tables = runQuery(sprintf("SHOW TABLES FROM `%s`", DB_DATABASE));
+	while ($row = mysqli_fetch_row($tables)) {
+		$table = $row[0];
+		runQuery(sprintf(
+			"ALTER TABLE `%s` CONVERT TO CHARACTER SET %s COLLATE %s",
+			$table,
+			$charset,
+			$collation
+		));
+	}
+}
+
 function runQuery($query)
 {
 	global $mysqlconnectionref;
