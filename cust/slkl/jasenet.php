@@ -3,22 +3,9 @@ include_once '../../lib/database.php';
 include_once '../../lib/common.functions.php';
 include_once '../../lib/user.functions.php';
 
-if (isset($_GET['firstname'])) {
-	$firstname = utf8_encode(trim(urldecode($_GET['firstname'])));
-} else {
-	$firstname = '';
-}
-if (isset($_GET['lastname'])) {
-	$lastname = utf8_encode(trim(urldecode($_GET['lastname'])));
-} else {
-	$lastname = '';
-}
-
-if (isset($_GET['team'])) {
-	$teamId = utf8_encode(trim(urldecode($_GET['team'])));
-} else {
-	$teamId = '';
-}
+$firstname = isset($_GET['firstname']) ? normalizeTextInput($_GET['firstname']) : '';
+$lastname = isset($_GET['lastname']) ? normalizeTextInput($_GET['lastname']) : '';
+$teamId = isset($_GET['team']) ? normalizeTextInput($_GET['team']) : '';
 header("Content-type: text/xml; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");

@@ -40,10 +40,10 @@ if (isset($_POST['import'])) {
 		$row = 1;
 		if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
 			while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
-				$team = $utf8 ? $data[0] : utf8_encode($data[0]);
-				$club = $utf8 ? $data[1] : utf8_encode($data[1]);
-				$country = $utf8 ? $data[2] : utf8_encode($data[2]);
-				$series = $utf8 ? $data[3] : utf8_encode($data[3]);
+				$team = $utf8 ? $data[0] : convertToUtf8($data[0]);
+				$club = $utf8 ? $data[1] : convertToUtf8($data[1]);
+				$country = $utf8 ? $data[2] : convertToUtf8($data[2]);
+				$series = $utf8 ? $data[3] : convertToUtf8($data[3]);
 
 				//if series is given as name
 				if (!is_int($series)) {

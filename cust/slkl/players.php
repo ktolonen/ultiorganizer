@@ -3,21 +3,9 @@ include_once '../../lib/database.php';
 include_once '../../lib/common.functions.php';
 include_once '../../lib/user.functions.php';
 
-function normalizeInput($value)
-{
-	$value = trim(urldecode($value));
-	if (function_exists('mb_convert_encoding')) {
-		return mb_convert_encoding($value, 'UTF-8', 'ISO-8859-1');
-	}
-	if (function_exists('iconv')) {
-		return iconv('ISO-8859-1', 'UTF-8//TRANSLIT', $value);
-	}
-	return $value;
-}
-
-$firstname = isset($_GET['firstname']) ? normalizeInput($_GET['firstname']) : '';
-$lastname = isset($_GET['lastname']) ? normalizeInput($_GET['lastname']) : '';
-$teamId = isset($_GET['team']) ? normalizeInput($_GET['team']) : '';
+$firstname = isset($_GET['firstname']) ? normalizeTextInput($_GET['firstname']) : '';
+$lastname = isset($_GET['lastname']) ? normalizeTextInput($_GET['lastname']) : '';
+$teamId = isset($_GET['team']) ? normalizeTextInput($_GET['team']) : '';
 header("Content-type: text/xml; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");

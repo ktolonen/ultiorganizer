@@ -1,6 +1,38 @@
 <?php
 include_once $include_prefix . 'lib/HSVClass.php';
 
+if (!function_exists('convertToUtf8')) {
+	function convertToUtf8($value, $sourceEncoding = 'ISO-8859-1')
+	{
+		if ($value === null) {
+			return '';
+		}
+		if (!is_string($value)) {
+			$value = (string)$value;
+		}
+		if ($sourceEncoding === 'UTF-8') {
+			return $value;
+		}
+		if (function_exists('mb_convert_encoding')) {
+			return mb_convert_encoding($value, 'UTF-8', $sourceEncoding);
+		}
+		if (function_exists('iconv')) {
+			$converted = @iconv($sourceEncoding, 'UTF-8//TRANSLIT', $value);
+			if ($converted !== false) {
+				return $converted;
+			}
+		}
+		return $value;
+	}
+}
+
+if (!function_exists('normalizeTextInput')) {
+	function normalizeTextInput($value, $sourceEncoding = 'ISO-8859-1')
+	{
+		return convertToUtf8(trim(urldecode($value)), $sourceEncoding);
+	}
+}
+
 function StripFromQueryString($query_string, $needle)
 {
 	$safeNeedle = preg_quote($needle, '/');
