@@ -97,7 +97,20 @@ function CheckDB()
 function DBEscapeString($escapestr)
 {
   global $mysqlconnectionref;
-  return mysqli_real_escape_string($mysqlconnectionref, (string)$escapestr);
+  $value = (string)$escapestr;
+
+  // Ensure the value is valid UTF-8 before escaping, otherwise MySQL rejects it.
+  if (function_exists('mb_check_encoding') && !mb_check_encoding($value, 'UTF-8')) {
+    $value = convertToUtf8($value);
+  }
+  if (function_exists('iconv')) {
+    $clean = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
+    if ($clean !== false) {
+      $value = $clean;
+    }
+  }
+
+  return mysqli_real_escape_string($mysqlconnectionref, $value);
 }
 
 /**

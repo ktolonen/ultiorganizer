@@ -2,28 +2,54 @@
 include_once $include_prefix . 'lib/HSVClass.php';
 
 if (!function_exists('convertToUtf8')) {
-	function convertToUtf8($value, $sourceEncoding = 'ISO-8859-1')
-	{
-		if ($value === null) {
-			return '';
-		}
-		if (!is_string($value)) {
-			$value = (string)$value;
-		}
-		if ($sourceEncoding === 'UTF-8') {
-			return $value;
-		}
-		if (function_exists('mb_convert_encoding')) {
-			return mb_convert_encoding($value, 'UTF-8', $sourceEncoding);
-		}
-		if (function_exists('iconv')) {
-			$converted = @iconv($sourceEncoding, 'UTF-8//TRANSLIT', $value);
-			if ($converted !== false) {
-				return $converted;
-			}
-		}
+function convertToUtf8($value, $sourceEncoding = 'ISO-8859-1')
+{
+	if ($value === null) {
+		return '';
+	}
+	if (!is_string($value)) {
+		$value = (string)$value;
+	}
+
+	// If the value already is valid UTF-8 just return it.
+	if (function_exists('mb_check_encoding') && mb_check_encoding($value, 'UTF-8')) {
 		return $value;
 	}
+
+	// Try the declared source encoding first.
+	if (function_exists('mb_convert_encoding')) {
+		$converted = @mb_convert_encoding($value, 'UTF-8', $sourceEncoding);
+		if ($converted !== false && (!function_exists('mb_check_encoding') || mb_check_encoding($converted, 'UTF-8'))) {
+			return $converted;
+		}
+	}
+
+	// Fallback conversions for environments without mbstring.
+	if (function_exists('iconv')) {
+		$converted = @iconv($sourceEncoding, 'UTF-8//TRANSLIT', $value);
+		if ($converted !== false && (!function_exists('mb_check_encoding') || mb_check_encoding($converted, 'UTF-8'))) {
+			return $converted;
+		}
+	}
+
+	// Last resort for ISO-8859-1 input when other extensions are missing.
+	if (function_exists('utf8_encode') && $sourceEncoding === 'ISO-8859-1') {
+		$converted = utf8_encode($value);
+		if (!function_exists('mb_check_encoding') || mb_check_encoding($converted, 'UTF-8')) {
+			return $converted;
+		}
+	}
+
+	// Strip out any invalid bytes to avoid failing DB inserts.
+	if (function_exists('iconv')) {
+		$converted = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
+		if ($converted !== false) {
+			return $converted;
+		}
+	}
+
+	return $value;
+}
 }
 
 if (!function_exists('normalizeTextInput')) {
