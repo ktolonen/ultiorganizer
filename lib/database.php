@@ -36,7 +36,7 @@ include_once $include_prefix . 'sql/upgrade_db.php';
 
 //When adding new update function into upgrade_db.php change this number.
 //When you change the database, export the current schema from the running database.
-define('DB_VERSION', 78); //Database version matching to upgrade functions.
+define('DB_VERSION', 77); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;
 
@@ -84,9 +84,16 @@ function CloseConnection()
  */
 function CheckDB()
 {
-  $installedDb = getDBVersion();
-  for ($i = $installedDb; $i <= DB_VERSION; $i++) {
+  // Ensure we always start from the first available upgrade function (upgrade46).
+  $installedDb = (int)getDBVersion();
+  $startVersion = max($installedDb, 46);
+
+  for ($i = $startVersion; $i <= DB_VERSION; $i++) {
     $upgradeFunc = 'upgrade' . $i;
+    if (!function_exists($upgradeFunc)) {
+      continue;
+    }
+
     LogDbUpgrade($i);
     $upgradeFunc();
     $query = sprintf("insert into uo_database (version, updated) values (%d, now())", $i + 1);
@@ -130,7 +137,10 @@ function getDBVersion()
   if (!$result) return 0;
   if (!$row = mysqli_fetch_assoc($result)) {
     return 0;
-  } else return $row['version'];
+  }
+
+  // max() can return NULL when the table is empty; treat that as version 0.
+  return (int)$row['version'];
 }
 
 /**

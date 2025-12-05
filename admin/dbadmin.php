@@ -13,6 +13,48 @@ pageTopHeadClose($title, false);
 leftMenu($LAYOUT_ID);
 contentStart();
 if (isSuperAdmin()) {
+	$messages = array();
+
+	// Optional manual engine/charset/foreign key migration trigger.
+	if (isset($_POST['convert_innodb']) && $_POST['convert_innodb'] === '1') {
+		include_once 'sql/upgrade_db.php';
+		try {
+			upgradeEngineToInnoDb();
+			$messages[] = _("Conversion to InnoDB/utf8mb4 attempted. Review tables below for remaining MyISAM tables.");
+		} catch (Exception $e) {
+			$html .= "<div class='warning'>";
+			$html .= utf8entities(_("Conversion failed:") . " " . $e->getMessage());
+			$html .= "<br/>" . _("Fix or remove the listed orphaned rows, then retry.");
+			$html .= "</div>";
+		}
+	}
+
+	// Detect MyISAM or other non-InnoDB tables.
+	$nonInno = DBQueryToArray("SHOW TABLE STATUS WHERE Engine IS NOT NULL AND Name LIKE 'uo\\_%' AND Engine <> 'InnoDB'");
+
+	if (count($messages)) {
+		$html .= "<div class='success'>";
+		foreach ($messages as $msg) {
+			$html .= utf8entities($msg) . "<br/>";
+		}
+		$html .= "</div>";
+	}
+
+	if (count($nonInno)) {
+		$html .= "<div class='warning'>";
+		$html .= _("Warning: Some tables are not using InnoDB. Consider converting to InnoDB/utf8mb4 for reliability, performance, and future-proofing.");
+		$html .= "<br/><strong>" . _("Always take a full database backup before running the conversion.") . "</strong>";
+		$html .= "<ul>";
+		foreach ($nonInno as $row) {
+			$html .= "<li>" . utf8entities($row['Name']) . " (" . utf8entities($row['Engine']) . ")</li>";
+		}
+		$html .= "</ul>";
+		$html .= "<form method='post' action='?view=admin/dbadmin'>";
+		$html .= "<input type='hidden' name='convert_innodb' value='1'/>";
+		$html .= "<button type='submit'>" . _("Convert to InnoDB/utf8mb4 now") . "</button>";
+		$html .= "</form>";
+		$html .= "</div>";
+	}
 
 	$html .= "<p><span class='profileheader'>" . _("Database administration") . ": </span><br/>\n";
 	$html .= "<a href='?view=admin/executesql'>&raquo; " . _("Run SQL") . "</a><br/>\n";
