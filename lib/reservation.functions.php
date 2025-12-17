@@ -1,6 +1,21 @@
 <?php
 include_once $include_prefix . 'lib/user.functions.php';
 
+function ReservationLocationValid($locationId)
+{
+	$locationId = (int)$locationId;
+	if ($locationId <= 0) {
+		return false;
+	}
+
+	$query = sprintf(
+		"SELECT COUNT(*) FROM uo_location WHERE id=%d",
+		$locationId
+	);
+
+	return DBQueryToValue($query) > 0;
+}
+
 /**
  * Returns reservation info for given reservation.
  * 
@@ -172,6 +187,10 @@ function ReservationSeasons($reservationId)
 function SetReservation($reservationId, $data)
 {
 	if (hasEditSeasonSeriesRight($data['season'])) {
+		if (!ReservationLocationValid($data['location'])) {
+			die('Invalid reservation location');
+		}
+
 		$query = sprintf(
 			"UPDATE uo_reservation SET location=%d, fieldname='%s', reservationgroup='%s', 
 			date='%s', starttime='%s', endtime='%s', timeslots='%s', season='%s' WHERE id=%d",
@@ -202,6 +221,10 @@ function AddReservation($data)
 {
 
 	if (hasEditSeasonSeriesRight($data['season'])) {
+		if (!ReservationLocationValid($data['location'])) {
+			die('Invalid reservation location');
+		}
+
 		$query = sprintf(
 			"INSERT INTO uo_reservation (location, fieldname, reservationgroup, date, 
 			starttime, endtime, timeslots, season) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s', '%s')",

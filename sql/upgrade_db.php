@@ -773,6 +773,14 @@ function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';
 
+    // Clean nullable references and ensure no orphans before conversion.
+    cleanupNullableOrphans();
+    $errors = findOrphanErrors();
+    if (count($errors)) {
+        $instructions = "Cannot add foreign keys:\n" . implode("\n", $errors) . "\n";
+        throw new Exception($instructions);
+    }
+
     runQuery(sprintf(
         "ALTER DATABASE `%s` CHARACTER SET %s COLLATE %s",
         DB_DATABASE,
@@ -842,12 +850,10 @@ function addForeignKey($table, $constraint, $definition)
 }
 
 /**
- * Define the InnoDB foreign keys used by the schema.
- * This is applied after converting engines/charset to avoid MyISAM errors.
+ * Null out nullable references that point to missing parents.
  */
-function addInnoDbForeignKeys()
+function cleanupNullableOrphans()
 {
-	// First, attempt to clean orphaned nullable references by setting them to NULL.
 	$cleanup = array(
 		"UPDATE uo_club c LEFT JOIN uo_country k ON k.country_id = c.country SET c.country = NULL WHERE c.country IS NOT NULL AND (c.country = 0 OR k.country_id IS NULL)",
 		"UPDATE uo_team t LEFT JOIN uo_club c ON c.club_id = t.club SET t.club = NULL WHERE t.club IS NOT NULL AND (t.club = 0 OR c.club_id IS NULL)",
@@ -869,54 +875,64 @@ function addInnoDbForeignKeys()
 	foreach ($cleanup as $q) {
 		runQuery($q);
 	}
+}
 
-	// Abort early if there are orphaned rows that would block constraint creation.
+/**
+ * Return a list of orphan error strings blocking FK creation.
+ */
+function findOrphanErrors()
+{
 	$errors = array();
 	$orphanChecks = array(
-		"uo_club.country" => "SELECT c.club_id, c.name, c.country FROM uo_club c LEFT JOIN uo_country k ON k.country_id = c.country WHERE c.country IS NOT NULL AND k.country_id IS NULL",
-		"uo_team.club" => "SELECT t.team_id, t.name, t.club FROM uo_team t LEFT JOIN uo_club c ON c.club_id = t.club WHERE t.club IS NOT NULL AND c.club_id IS NULL",
-		"uo_team.country" => "SELECT t.team_id, t.name, t.country FROM uo_team t LEFT JOIN uo_country c ON c.country_id = t.country WHERE t.country IS NOT NULL AND c.country_id IS NULL",
-		"uo_team.pool" => "SELECT t.team_id, t.name, t.pool FROM uo_team t LEFT JOIN uo_pool p ON p.pool_id = t.pool WHERE t.pool IS NOT NULL AND p.pool_id IS NULL",
-		"uo_team.series" => "SELECT t.team_id, t.name, t.series FROM uo_team t LEFT JOIN uo_series s ON s.series_id = t.series WHERE t.series IS NOT NULL AND s.series_id IS NULL",
-		"uo_player.team" => "SELECT p.player_id, p.firstname, p.lastname, p.team FROM uo_player p LEFT JOIN uo_team t ON t.team_id = p.team WHERE p.team IS NOT NULL AND t.team_id IS NULL",
-		"uo_player.profile_id" => "SELECT p.player_id, p.profile_id FROM uo_player p LEFT JOIN uo_player_profile pr ON pr.profile_id = p.profile_id WHERE p.profile_id IS NOT NULL AND pr.profile_id IS NULL",
-		"uo_player_stats.player_id" => "SELECT ps.player_id FROM uo_player_stats ps LEFT JOIN uo_player p ON p.player_id = ps.player_id WHERE p.player_id IS NULL",
-		"uo_player_stats.profile_id" => "SELECT ps.profile_id FROM uo_player_stats ps LEFT JOIN uo_player_profile pr ON pr.profile_id = ps.profile_id WHERE pr.profile_id IS NULL",
-		"uo_player_stats.team" => "SELECT ps.team FROM uo_player_stats ps LEFT JOIN uo_team t ON t.team_id = ps.team WHERE ps.team IS NOT NULL AND t.team_id IS NULL",
-		"uo_player_stats.series" => "SELECT ps.series FROM uo_player_stats ps LEFT JOIN uo_series s ON s.series_id = ps.series WHERE ps.series IS NOT NULL AND s.series_id IS NULL",
-		"uo_player_stats.season" => "SELECT ps.season FROM uo_player_stats ps LEFT JOIN uo_season se ON se.season_id = ps.season WHERE ps.season IS NOT NULL AND se.season_id IS NULL",
-		"uo_game.hometeam/visitorteam" => "SELECT g.game_id FROM uo_game g LEFT JOIN uo_team t1 ON t1.team_id = g.hometeam LEFT JOIN uo_team t2 ON t2.team_id = g.visitorteam WHERE (g.hometeam IS NOT NULL AND t1.team_id IS NULL) OR (g.visitorteam IS NOT NULL AND t2.team_id IS NULL)",
-		"uo_game.pool" => "SELECT g.game_id FROM uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool WHERE g.pool IS NOT NULL AND p.pool_id IS NULL",
-		"uo_game.reservation" => "SELECT g.game_id FROM uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation WHERE g.reservation IS NOT NULL AND r.id IS NULL",
-		"uo_goal.game" => "SELECT go.game FROM uo_goal go LEFT JOIN uo_game g ON g.game_id = go.game WHERE go.game IS NOT NULL AND g.game_id IS NULL",
-		"uo_goal.assist/scorer" => "SELECT go.game, go.num FROM uo_goal go LEFT JOIN uo_player p1 ON p1.player_id = go.assist LEFT JOIN uo_player p2 ON p2.player_id = go.scorer WHERE (go.assist IS NOT NULL AND p1.player_id IS NULL) OR (go.scorer IS NOT NULL AND p2.player_id IS NULL)",
-		"uo_played.player/game" => "SELECT pl.player, pl.game FROM uo_played pl LEFT JOIN uo_player p ON p.player_id = pl.player LEFT JOIN uo_game g ON g.game_id = pl.game WHERE p.player_id IS NULL OR g.game_id IS NULL",
-		"uo_timeout.game" => "SELECT ti.game FROM uo_timeout ti LEFT JOIN uo_game g ON g.game_id = ti.game WHERE ti.game IS NOT NULL AND g.game_id IS NULL",
-		"uo_gameevent.game" => "SELECT ge.game FROM uo_gameevent ge LEFT JOIN uo_game g ON g.game_id = ge.game WHERE ge.game IS NOT NULL AND g.game_id IS NULL",
-		"uo_game_pool.game/pool" => "SELECT gp.game, gp.pool FROM uo_game_pool gp LEFT JOIN uo_game g ON g.game_id = gp.game LEFT JOIN uo_pool p ON p.pool_id = gp.pool WHERE (gp.game IS NOT NULL AND g.game_id IS NULL) OR (gp.pool IS NOT NULL AND p.pool_id IS NULL)",
-		"uo_reservation.location" => "SELECT r.id FROM uo_reservation r LEFT JOIN uo_location l ON l.id = r.location WHERE r.location IS NOT NULL AND l.id IS NULL",
-		"uo_location_info.location_id" => "SELECT li.location_id FROM uo_location_info li LEFT JOIN uo_location l ON l.id = li.location_id WHERE li.location_id IS NOT NULL AND l.id IS NULL",
-		"uo_moveteams.frompool/topool" => "SELECT m.frompool, m.topool FROM uo_moveteams m LEFT JOIN uo_pool p1 ON p1.pool_id = m.frompool LEFT JOIN uo_pool p2 ON p2.pool_id = m.topool WHERE p1.pool_id IS NULL OR p2.pool_id IS NULL",
-		"uo_moveteams.scheduling_id" => "SELECT m.scheduling_id FROM uo_moveteams m LEFT JOIN uo_scheduling_name s ON s.scheduling_id = m.scheduling_id WHERE m.scheduling_id IS NOT NULL AND s.scheduling_id IS NULL",
-		"uo_movingtime.season/fromlocation/tolocation" => "SELECT mt.season, mt.fromlocation, mt.tolocation FROM uo_movingtime mt LEFT JOIN uo_season se ON se.season_id = mt.season LEFT JOIN uo_location l1 ON l1.id = mt.fromlocation LEFT JOIN uo_location l2 ON l2.id = mt.tolocation WHERE se.season_id IS NULL OR l1.id IS NULL OR l2.id IS NULL",
-		"uo_series.pool_template" => "SELECT s.series_id FROM uo_series s LEFT JOIN uo_pooltemplate pt ON pt.template_id = s.pool_template WHERE s.pool_template IS NOT NULL AND pt.template_id IS NULL",
-		"uo_enrolledteam.series/userid" => "SELECT e.id FROM uo_enrolledteam e LEFT JOIN uo_series s ON s.series_id = e.series LEFT JOIN uo_users u ON u.userid = e.userid WHERE s.series_id IS NULL OR u.userid IS NULL",
-		"uo_extraemail.userid" => "SELECT ex.userid FROM uo_extraemail ex LEFT JOIN uo_users u ON u.userid = ex.userid WHERE ex.userid IS NOT NULL AND u.userid IS NULL",
-		"uo_extraemailrequest.userid" => "SELECT ex.userid FROM uo_extraemailrequest ex LEFT JOIN uo_users u ON u.userid = ex.userid WHERE ex.userid IS NOT NULL AND u.userid IS NULL",
-		"uo_spirit_score.game/team/category" => "SELECT ss.game_id, ss.team_id, ss.category_id FROM uo_spirit_score ss LEFT JOIN uo_game g ON g.game_id = ss.game_id LEFT JOIN uo_team t ON t.team_id = ss.team_id LEFT JOIN uo_spirit_category c ON c.category_id = ss.category_id WHERE g.game_id IS NULL OR t.team_id IS NULL OR c.category_id IS NULL",
-		"uo_defense.game/author" => "SELECT d.game, d.author FROM uo_defense d LEFT JOIN uo_game g ON g.game_id = d.game LEFT JOIN uo_player p ON p.player_id = d.author WHERE g.game_id IS NULL OR (d.author IS NOT NULL AND p.player_id IS NULL)",
+		"uo_club.country" => "SELECT 1 FROM uo_club c LEFT JOIN uo_country k ON k.country_id = c.country WHERE c.country IS NOT NULL AND k.country_id IS NULL LIMIT 1",
+		"uo_team.club" => "SELECT 1 FROM uo_team t LEFT JOIN uo_club c ON c.club_id = t.club WHERE t.club IS NOT NULL AND c.club_id IS NULL LIMIT 1",
+		"uo_team.country" => "SELECT 1 FROM uo_team t LEFT JOIN uo_country c ON c.country_id = t.country WHERE t.country IS NOT NULL AND c.country_id IS NULL LIMIT 1",
+		"uo_team.pool" => "SELECT 1 FROM uo_team t LEFT JOIN uo_pool p ON p.pool_id = t.pool WHERE t.pool IS NOT NULL AND p.pool_id IS NULL LIMIT 1",
+		"uo_team.series" => "SELECT 1 FROM uo_team t LEFT JOIN uo_series s ON s.series_id = t.series WHERE t.series IS NOT NULL AND s.series_id IS NULL LIMIT 1",
+		"uo_player.team" => "SELECT 1 FROM uo_player p LEFT JOIN uo_team t ON t.team_id = p.team WHERE p.team IS NOT NULL AND t.team_id IS NULL LIMIT 1",
+		"uo_player.profile_id" => "SELECT 1 FROM uo_player p LEFT JOIN uo_player_profile pr ON pr.profile_id = p.profile_id WHERE p.profile_id IS NOT NULL AND pr.profile_id IS NULL LIMIT 1",
+		"uo_team_profile.team_id" => "SELECT 1 FROM uo_team_profile tp LEFT JOIN uo_team t ON t.team_id = tp.team_id WHERE t.team_id IS NULL LIMIT 1",
+		"uo_player_stats.player_id" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_player p ON p.player_id = ps.player_id WHERE p.player_id IS NULL LIMIT 1",
+		"uo_player_stats.profile_id" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_player_profile pr ON pr.profile_id = ps.profile_id WHERE pr.profile_id IS NULL LIMIT 1",
+		"uo_player_stats.team" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_team t ON t.team_id = ps.team WHERE ps.team IS NOT NULL AND t.team_id IS NULL LIMIT 1",
+		"uo_player_stats.series" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_series s ON s.series_id = ps.series WHERE ps.series IS NOT NULL AND s.series_id IS NULL LIMIT 1",
+		"uo_player_stats.season" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_season se ON se.season_id = ps.season WHERE ps.season IS NOT NULL AND se.season_id IS NULL LIMIT 1",
+		"uo_game.hometeam/visitorteam" => "SELECT 1 FROM uo_game g LEFT JOIN uo_team t1 ON t1.team_id = g.hometeam LEFT JOIN uo_team t2 ON t2.team_id = g.visitorteam WHERE (g.hometeam IS NOT NULL AND t1.team_id IS NULL) OR (g.visitorteam IS NOT NULL AND t2.team_id IS NULL) LIMIT 1",
+		"uo_game.pool" => "SELECT 1 FROM uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool WHERE g.pool IS NOT NULL AND p.pool_id IS NULL LIMIT 1",
+		"uo_game.reservation" => "SELECT 1 FROM uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation WHERE g.reservation IS NOT NULL AND r.id IS NULL LIMIT 1",
+		"uo_goal.game" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_game g ON g.game_id = go.game WHERE go.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_goal.assist/scorer" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_player p1 ON p1.player_id = go.assist LEFT JOIN uo_player p2 ON p2.player_id = go.scorer WHERE (go.assist IS NOT NULL AND p1.player_id IS NULL) OR (go.scorer IS NOT NULL AND p2.player_id IS NULL) LIMIT 1",
+		"uo_played.player/game" => "SELECT 1 FROM uo_played pl LEFT JOIN uo_player p ON p.player_id = pl.player LEFT JOIN uo_game g ON g.game_id = pl.game WHERE p.player_id IS NULL OR g.game_id IS NULL LIMIT 1",
+		"uo_timeout.game" => "SELECT 1 FROM uo_timeout ti LEFT JOIN uo_game g ON g.game_id = ti.game WHERE ti.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_gameevent.game" => "SELECT 1 FROM uo_gameevent ge LEFT JOIN uo_game g ON g.game_id = ge.game WHERE ge.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_game_pool.game/pool" => "SELECT 1 FROM uo_game_pool gp LEFT JOIN uo_game g ON g.game_id = gp.game LEFT JOIN uo_pool p ON p.pool_id = gp.pool WHERE (gp.game IS NOT NULL AND g.game_id IS NULL) OR (gp.pool IS NOT NULL AND p.pool_id IS NULL) LIMIT 1",
+		"uo_reservation.location" => "SELECT 1 FROM uo_reservation r LEFT JOIN uo_location l ON l.id = r.location WHERE r.location IS NOT NULL AND l.id IS NULL LIMIT 1",
+		"uo_location_info.location_id" => "SELECT 1 FROM uo_location_info li LEFT JOIN uo_location l ON l.id = li.location_id WHERE li.location_id IS NOT NULL AND l.id IS NULL LIMIT 1",
+		"uo_moveteams.frompool/topool" => "SELECT 1 FROM uo_moveteams m LEFT JOIN uo_pool p1 ON p1.pool_id = m.frompool LEFT JOIN uo_pool p2 ON p2.pool_id = m.topool WHERE p1.pool_id IS NULL OR p2.pool_id IS NULL LIMIT 1",
+		"uo_moveteams.scheduling_id" => "SELECT 1 FROM uo_moveteams m LEFT JOIN uo_scheduling_name s ON s.scheduling_id = m.scheduling_id WHERE m.scheduling_id IS NOT NULL AND s.scheduling_id IS NULL LIMIT 1",
+		"uo_movingtime.season/fromlocation/tolocation" => "SELECT 1 FROM uo_movingtime mt LEFT JOIN uo_season se ON se.season_id = mt.season LEFT JOIN uo_location l1 ON l1.id = mt.fromlocation LEFT JOIN uo_location l2 ON l2.id = mt.tolocation WHERE se.season_id IS NULL OR l1.id IS NULL OR l2.id IS NULL LIMIT 1",
+		"uo_series.pool_template" => "SELECT 1 FROM uo_series s LEFT JOIN uo_pooltemplate pt ON pt.template_id = s.pool_template WHERE s.pool_template IS NOT NULL AND pt.template_id IS NULL LIMIT 1",
+		"uo_enrolledteam.series/userid" => "SELECT 1 FROM uo_enrolledteam e LEFT JOIN uo_series s ON s.series_id = e.series LEFT JOIN uo_users u ON u.userid = e.userid WHERE s.series_id IS NULL OR u.userid IS NULL LIMIT 1",
+		"uo_extraemail.userid" => "SELECT 1 FROM uo_extraemail ex LEFT JOIN uo_users u ON u.userid = ex.userid WHERE ex.userid IS NOT NULL AND u.userid IS NULL LIMIT 1",
+		"uo_extraemailrequest.userid" => "SELECT 1 FROM uo_extraemailrequest ex LEFT JOIN uo_users u ON u.userid = ex.userid WHERE ex.userid IS NOT NULL AND u.userid IS NULL LIMIT 1",
+		"uo_spirit_score.game/team/category" => "SELECT 1 FROM uo_spirit_score ss LEFT JOIN uo_game g ON g.game_id = ss.game_id LEFT JOIN uo_team t ON t.team_id = ss.team_id LEFT JOIN uo_spirit_category c ON c.category_id = ss.category_id WHERE g.game_id IS NULL OR t.team_id IS NULL OR c.category_id IS NULL LIMIT 1",
+		"uo_defense.game/author" => "SELECT 1 FROM uo_defense d LEFT JOIN uo_game g ON g.game_id = d.game LEFT JOIN uo_player p ON p.player_id = d.author WHERE g.game_id IS NULL OR (d.author IS NOT NULL AND p.player_id IS NULL) LIMIT 1",
 	);
-
 	foreach ($orphanChecks as $label => $query) {
 		$res = runQuery($query);
 		if ($res && mysqli_num_rows($res) > 0) {
-			$errors[] = "Orphaned rows for " . $label . " (" . mysqli_num_rows($res) . " rows). Fix or remove them before adding foreign keys.";
+			$errors[] = "Orphaned rows for " . $label . ".\n";
 		}
 	}
+	return $errors;
+}
 
-	if (count($errors)) {
-		throw new Exception("Cannot add foreign keys:\n" . implode("\n", $errors));
-	}
+/**
+ * Define the InnoDB foreign keys used by the schema.
+ * This is applied after converting engines/charset to avoid MyISAM errors.
+ */
+function addInnoDbForeignKeys()
+{
 	addForeignKey('uo_club', 'fk_club_country', "FOREIGN KEY (`country`) REFERENCES `uo_country` (`country_id`) ON DELETE SET NULL ON UPDATE CASCADE");
 
 	addForeignKey('uo_team', 'fk_team_club', "FOREIGN KEY (`club`) REFERENCES `uo_club` (`club_id`) ON DELETE SET NULL ON UPDATE CASCADE");

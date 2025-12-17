@@ -24,7 +24,10 @@ if (isSuperAdmin()) {
 		} catch (Exception $e) {
 			$html .= "<div class='warning'>";
 			$html .= utf8entities(_("Conversion failed:") . " " . $e->getMessage());
-			$html .= "<br/>" . _("Fix or remove the listed orphaned rows, then retry.");
+			$html .= "<br/>" . _("Fix suggestions:") . "<br/>";
+			$html .= "&bull; " . _("Clean orphans by setting nullable foreign keys to NULL or delete/reassign child rows.") . "<br/>";
+			$html .= "&bull; " . _("Insert missing parent rows for non-nullable references (e.g., required stats/plays/games).") . "<br/>";
+			$html .= "&bull; " . _("Rerun the conversion after cleanup.") . "<br/>";
 			$html .= "</div>";
 		}
 	}
@@ -41,7 +44,7 @@ if (isSuperAdmin()) {
 	}
 
 	if (count($nonInno)) {
-		$html .= "<div class='warning'>";
+		$html .= "<p><div class='warning'>";
 		$html .= _("Warning: Some tables are not using InnoDB. Consider converting to InnoDB/utf8mb4 for reliability, performance, and future-proofing.");
 		$html .= "<br/><strong>" . _("Always take a full database backup before running the conversion.") . "</strong>";
 		$html .= "<ul>";
@@ -53,7 +56,7 @@ if (isSuperAdmin()) {
 		$html .= "<input type='hidden' name='convert_innodb' value='1'/>";
 		$html .= "<button type='submit'>" . _("Convert to InnoDB/utf8mb4 now") . "</button>";
 		$html .= "</form>";
-		$html .= "</div>";
+		$html .= "</div></p>";
 	}
 
 	$html .= "<p><span class='profileheader'>" . _("Database administration") . ": </span><br/>\n";
