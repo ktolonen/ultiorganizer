@@ -163,7 +163,7 @@ if (ShowDefenseStats()) {
 	echo "<tr><td><a href='?view=user/adddefensesheet&amp;game=" . $gameId . "'>" . _("Change game defense sheet") . " </a></td></tr>";
 }
 
-echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=" . $gameId . "'>" . _("Print score sheet") . " </a></td></tr>";
+echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=" . $gameId . "' target='_blank' rel='noopener'>" . _("Print score sheet") . " </a></td></tr>";
 echo "<tr><td><a href='?view=user/addmedialink&amp;game=$gameId'>" . _("Add media") . "</a></td></tr>";
 echo "</table>\n";
 

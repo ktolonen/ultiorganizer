@@ -118,7 +118,7 @@ $html .= "<form method='post' id='reservations' action='?view=admin/reservations
     $html  .= "<td>" . DefHourFormat($row['starttime']) . "</td>";
     $html  .= "<td>" . DefHourFormat($row['endtime']) . "</td>";
     $html  .= "<td class='center'>" . $row['games'] . "</td>";
-    $html  .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['id'] . "'>" . _("PDF") . "</a></td>";
+    $html  .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['id'] . "' target='_blank' rel='noopener'>" . _("PDF") . "</a></td>";
     if (intval($row['games']) == 0) {
       $html  .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' name='remove' alt='" . _("X") . "' onclick=\"setId(" . $row['id'] . ");\"/></td>";
     }

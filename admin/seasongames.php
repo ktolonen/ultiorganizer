@@ -157,7 +157,7 @@ foreach ($pools as $pool) {
   $games = TimetableGames($pool['pool_id'], "pool", "all", "time", $group);
 
   $html .= "<tr><th colspan='4'>" . utf8entities(U_($pool['name'])) . "</th>";
-  $html .= "<th class='right' colspan='3' ><a class='thlink' href='?view=user/pdfscoresheet&amp;season=$season&amp;pool=" . $pool['pool_id'] . "'>" . _("Print scoresheets") . "</a></th>";
+  $html .= "<th class='right' colspan='3' ><a class='thlink' href='?view=user/pdfscoresheet&amp;season=$season&amp;pool=" . $pool['pool_id'] . "' target='_blank' rel='noopener'>" . _("Print scoresheets") . "</a></th>";
   $html .= "</tr>";
 
   while ($game = mysqli_fetch_assoc($games)) {

@@ -290,7 +290,7 @@ if (!empty($gameId)) {
 //} else {
 include_once 'cust/default/teamplayers.inc.php';
 //}
-echo "<div><a href='?view=user/pdfscoresheet&amp;team=" . $teamId . "'>" . _("Print roster") . "</a></div>";
+echo "<div><a href='?view=user/pdfscoresheet&amp;team=" . $teamId . "' target='_blank' rel='noopener'>" . _("Print roster") . "</a></div>";
 //common end
 contentEnd();
 pageEnd();

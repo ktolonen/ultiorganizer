@@ -89,8 +89,8 @@ class PDF extends FPDF
 		$filename = UPLOAD_DIR . $this->game['game_id'] . ".png";
 		$url = BASEURL . "scorekeeper/?view=result&g=" . $this->game['game_id'];
 
-		QRcode::png($url, $filename, 'h', 2, 2);
-		$this->Image($filename, 10, 236);
+		QRcode::png($url, $filename, 'h', 4, 2);
+		$this->Image($filename, 20, 210);
 		unlink($filename);
 
 		$this->SetY(-27);

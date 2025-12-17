@@ -165,7 +165,7 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
       $html .= _("No location");
     $html .= "</th>\n<th class='right' colspan='2'>";
     $html .= "<a class='thlink' href='?view=user/pdfscoresheet&amp;reservation=" . ($resId ? $resId : "none") . "&amp;season=" . $season .
-      "'>" . _("Print scoresheets") . "</a>";
+      "' target='_blank' rel='noopener'>" . _("Print scoresheets") . "</a>";
     $html .= "</th></tr>\n";
 
     foreach ($gameArray as $gameId => $game) {

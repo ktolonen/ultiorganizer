@@ -747,7 +747,7 @@ function ReservationResults()
 			$ret .= "<td>" . DefHourFormat($row['starttime']) . "</td>";
 			$ret .= "<td>" . DefHourFormat($row['endtime']) . "</td>";
 			$ret .= "<td class='center'>" . $row['games'] . "</td>";
-			$ret .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['reservation_id'] . "'>" . _("PDF") . "</a></td>";
+			$ret .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['reservation_id'] . "' target='_blank' rel='noopener'>" . _("PDF") . "</a></td>";
 			if (intval($row['games']) == 0) {
 				$ret .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' name='remove' alt='" . _("X") . "' onclick=\"setId(" . $row['reservation_id'] . ");\"/></td>";
 			}

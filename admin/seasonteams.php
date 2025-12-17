@@ -238,7 +238,7 @@ if (count($seasons)) {
 $html .= "<hr/>\n";
 $html .= "<p>";
 $html .= "<a href='?view=admin/addteamadmins&amp;series=" . $row['series_id'] . "'>" . _("Add Team Admins") . "</a> | ";
-$html .= "<a href='?view=user/pdfscoresheet&amp;series=" . $row['series_id'] . "'>" . _("Print team rosters") . "</a></p>";
+$html .= "<a href='?view=user/pdfscoresheet&amp;series=" . $row['series_id'] . "' target='_blank' rel='noopener'>" . _("Print team rosters") . "</a></p>";
 
 //stores id to delete
 $html .= "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
