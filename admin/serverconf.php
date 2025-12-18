@@ -6,6 +6,10 @@ $LAYOUT_ID = SERVERCONFIGURATION;
 $title = _("Server configuration");
 $html = "";
 
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
+
 if (!empty($_POST['save'])) {
 
 	$settings = array();
@@ -106,7 +110,9 @@ $settings = GetServerConf();
 pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-$html .= "<p><a href='admin/test.php'>" . _("Show phpinfo()") . "</a></p>\n";
+if (isSuperAdmin()) {
+	$html .= "<p><a href='?view=admin/test'>" . _("Show phpinfo()") . "</a></p>\n";
+}
 
 $htmltmp1 = "";
 $htmltmp2 = "";
