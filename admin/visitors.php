@@ -1,6 +1,7 @@
 <?php
 include_once 'menufunctions.php';
 $html = "";
+global $serverConf;
 
 //common page
 $title = _("Visitor statistics");
@@ -9,6 +10,13 @@ pageTopHeadClose($title, false);
 leftMenu(0);
 contentStart();
 if (isSuperAdmin()) {
+	if (isset($_POST['reset_visitors'])) {
+		LogResetVisitorCounter();
+	}
+	if (isset($_POST['reset_pageloads'])) {
+		LogResetPageLoadCounter();
+	}
+
 	$visitors = LogGetVisitorCount();
 	$pageloads = LogGetPageLoads();
 	$loadstotal = 0;
@@ -35,9 +43,21 @@ if (isSuperAdmin()) {
 	foreach ($pageloads as $page) {
 		$html .= "<tr>";
 		$html .= "<td>" . utf8entities($page['page']) . "</td><td>" . $page['loads'] . "</td>";
-		$html .= "</tr>";
+	$html .= "</tr>";
 	}
 	$html .= "</table>";
+
+	$html .= "<h3>" . _("Maintenance") . "</h3>";
+	$visitorReset = !empty($serverConf['VisitorCounterResetAt']) ? $serverConf['VisitorCounterResetAt'] : _("Never");
+	$pageLoadReset = !empty($serverConf['PageLoadCounterResetAt']) ? $serverConf['PageLoadCounterResetAt'] : _("Never");
+	$html .= "<p>" . sprintf(_("Visitor counter last reset: %s"), utf8entities($visitorReset)) . "</p>";
+	$html .= "<p>" . sprintf(_("Page load counter last reset: %s"), utf8entities($pageLoadReset)) . "</p>";
+	$html .= "<form method='post' action='?view=admin/visitors' onsubmit=\"return confirm('" . _("Are you sure you want to reset the visitor counter?") . "');\">";
+	$html .= "<p><input class='button' type='submit' name='reset_visitors' value='" . _("Reset visitor counter") . "' /></p>";
+	$html .= "</form>";
+	$html .= "<form method='post' action='?view=admin/visitors' onsubmit=\"return confirm('" . _("Are you sure you want to reset the page load counter?") . "');\">";
+	$html .= "<p><input class='button' type='submit' name='reset_pageloads' value='" . _("Reset page load counter") . "' /></p>";
+	$html .= "</form>";
 } else {
 	$html .= "<p>" . _("User credentials does not match") . "</p>\n";
 }

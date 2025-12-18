@@ -230,6 +230,10 @@ function LogDbUpgrade($version, $end = false, $source = "")
  */
 function LogPageLoad($page)
 {
+	// Guard against logging raw or clearly invalid input
+	if (empty($page) || !preg_match('/^[a-z0-9_\\/\\-]+$/i', $page)) {
+		return;
+	}
 
 	$query = sprintf(
 		"SELECT loads FROM uo_pageload_counter WHERE page='%s'",
@@ -303,4 +307,40 @@ function LogGetPageLoads()
 {
 	$query = sprintf("SELECT page, loads FROM uo_pageload_counter ORDER BY loads DESC");
 	return DBQueryToArray($query);
+}
+
+/**
+ * Clear visitor counter table.
+ */
+function LogResetVisitorCounter()
+{
+	if (!isSuperAdmin()) {
+		return false;
+	}
+	$result = DBQuery("DELETE FROM uo_visitor_counter");
+	if ($result) {
+		$timestamp = date('Y-m-d H:i:s');
+		SetServerConfValue('VisitorCounterResetAt', $timestamp);
+		global $serverConf;
+		$serverConf['VisitorCounterResetAt'] = $timestamp;
+	}
+	return $result;
+}
+
+/**
+ * Clear page load counter table.
+ */
+function LogResetPageLoadCounter()
+{
+	if (!isSuperAdmin()) {
+		return false;
+	}
+	$result = DBQuery("DELETE FROM uo_pageload_counter");
+	if ($result) {
+		$timestamp = date('Y-m-d H:i:s');
+		SetServerConfValue('PageLoadCounterResetAt', $timestamp);
+		global $serverConf;
+		$serverConf['PageLoadCounterResetAt'] = $timestamp;
+	}
+	return $result;
 }

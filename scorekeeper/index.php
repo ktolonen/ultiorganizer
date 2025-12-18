@@ -57,7 +57,8 @@ if (!$rawView) {
 
 // Resolve view script with format/deny & path checks.
 $viewPath = resolveViewPath($rawView, __DIR__, 'login', array('index'));
-LogPageLoad($rawView);
+$viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
+LogPageLoad($viewToLog);
 
 ob_start();
 echo "<!DOCTYPE html>\n";

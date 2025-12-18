@@ -61,7 +61,7 @@ function SetServerConf($settings)
 			);
 			$result = DBQueryToValue($query);
 
-			if ($result) {
+			if ($result !== -1 && $result !== null && $result !== false) {
 				$query = sprintf(
 					"UPDATE uo_setting SET value='%s' WHERE setting_id=%d",
 					DBEscapeString($setting['value']),
@@ -80,6 +80,17 @@ function SetServerConf($settings)
 	} else {
 		die('Insufficient rights to configure server');
 	}
+}
+
+/**
+ * Convenience wrapper to update a single server setting.
+ *
+ * @param string $name
+ * @param string $value
+ */
+function SetServerConfValue($name, $value)
+{
+	SetServerConf(array(array('name' => $name, 'value' => $value)));
 }
 
 function GetGoogleMapsAPIKey()

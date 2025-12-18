@@ -20,6 +20,8 @@ if (!isset($_SESSION['VISIT_COUNTER'])) {
   $_SESSION['VISIT_COUNTER'] = true;
 }
 
+$rawView = iget('view');
+
 if (!isset($_SESSION['uid'])) {
   $_SESSION['uid'] = "anonymous";
   SetUserSessionData("anonymous");
@@ -31,18 +33,15 @@ include_once 'localization.php';
 setSessionLocale();
 
 if (isset($_POST['myusername'])) {
-  $view = iget("view");
-  if (strpos($view, "mobile") === false)
+  if (strpos($rawView, "mobile") === false)
     UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirect");
   else
     UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirectMobile");
 }
 
-if (!iget('view')) {
+if (!$rawView) {
   header("location:?view=frontpage");
   exit();
-} else {
-  LogPageLoad(iget('view'));
 }
 
 global $serverConf;
@@ -50,7 +49,9 @@ $user = $_SESSION['uid'];
 
 setSelectedSeason();
 
-$viewPath = resolveViewPath(iget("view"), __DIR__, 'frontpage', array('index', 'localization', 'install'));
+$viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', array('index', 'localization', 'install'));
+$viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
+LogPageLoad($viewToLog);
 
 include $viewPath;
 
