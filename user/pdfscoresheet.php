@@ -85,7 +85,12 @@ if ($games === null) {
 }
 
 $pdf = new PDF();
-$seasonSlug = pdf_slug(SeasonName($season));
+if ($teamId) {
+	$seasonSlug = pdf_slug(TeamSeason($teamId));
+} else {
+	$seasonSlug = pdf_slug(SeasonName($season));
+}
+
 if ($filename === null) {
 	$filename = "scoresheets-" . $seasonSlug . ".pdf";
 }
@@ -116,18 +121,18 @@ if ($teamId) {
 		$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	}
 	$filename = "rosters-series-" . pdf_slug($seriesId) . "-" . $seasonSlug . ".pdf";
-	} else {
-		$seasonname = SeasonName($season);
+} else {
+	$seasonname = SeasonName($season);
 
-		// Bail out gracefully if no games were returned.
-		if (!$games || !is_object($games)) {
-			$pdf->Output('I', $filename);
-			return;
-		}
+	// Bail out gracefully if no games were returned.
+	if (!$games || !is_object($games)) {
+		$pdf->Output('I', $filename);
+		return;
+	}
 
-		while ($gameRow = mysqli_fetch_assoc($games)) {
+	while ($gameRow = mysqli_fetch_assoc($games)) {
 
-			if ($filter2 == "teams") {
+		if ($filter2 == "teams") {
 			if (!$gameRow['hometeam'] || !$gameRow['visitorteam']) {
 				continue;
 			}
