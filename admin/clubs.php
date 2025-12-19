@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'menufunctions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/country.functions.php';

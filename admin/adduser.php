@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 
 if ((!empty($_GET["season"]) && !isSeasonAdmin($_GET["season"])) && !isSuperAdmin()) {

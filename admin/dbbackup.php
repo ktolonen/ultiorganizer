@@ -1,8 +1,13 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'menufunctions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/reservation.functions.php';
 $html = "";
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
+
 if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()) {
 	$tables = $_POST["tables"];
 	$return = "SET NAMES 'utf8';\n\n";

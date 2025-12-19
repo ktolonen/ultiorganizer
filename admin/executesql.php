@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 
 // These are needed for the menu structure
 $LAYOUT_ID = EXECUTESQL;

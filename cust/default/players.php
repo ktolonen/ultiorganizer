@@ -1,4 +1,10 @@
 <?php
+if (!isset($include_prefix)) {
+	$include_prefix = __DIR__ . '/../../';
+}
+
+include_once $include_prefix . 'lib/auth.guard.php';
+
 include_once '../../lib/database.php';
 include_once '../../lib/common.functions.php';
 include_once '../../lib/user.functions.php';

@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/club.functions.php';
@@ -10,6 +11,11 @@ $filter = 'teams';
 $baseurl = "?view=admin/dbequalize";
 $html = "";
 $result = "";
+
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
+
 
 if (!empty($_GET["filter"])) {
 	$filter = $_GET["filter"];

@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/database.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';

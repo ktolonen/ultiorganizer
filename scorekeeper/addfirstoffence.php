@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 $html = "";
 
 $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];

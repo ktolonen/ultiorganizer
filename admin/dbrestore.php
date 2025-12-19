@@ -1,8 +1,13 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'menufunctions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/reservation.functions.php';
 $html = "";
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
+
 if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != "enabled") {
 	$html = "<p>" . _("Direct database access is disabled. To enable it, define(ENABLE_ADMIN_DB_ACCESS,'enabled') in the config.inc.php file") . "</p>";
 } else {

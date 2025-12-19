@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 $html = "";
 $errors = "";
 $saved = isset($_GET['saved']) ? 1 : 0;

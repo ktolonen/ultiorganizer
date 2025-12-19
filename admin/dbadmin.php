@@ -1,9 +1,14 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'menufunctions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/plugin.functions.php';
 $html = "";
+
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
 
 //common page
 $title = _("Database administration");

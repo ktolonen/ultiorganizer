@@ -711,6 +711,11 @@ function hasAddMediaRight()
 	return isset($_SESSION['uid']) && ($_SESSION['uid'] != 'anonymous');
 }
 
+function isLoggedIn()
+{
+	return isset($_SESSION['uid']) && $_SESSION['uid'] != 'anonymous';
+}
+
 function UserListRightsHtml($userId)
 {
 	$query = sprintf("SELECT value FROM uo_userproperties WHERE userid='%s'", DBEscapeString($userId));
