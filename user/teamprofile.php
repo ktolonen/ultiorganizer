@@ -126,12 +126,14 @@ $html .= "<table border='0'>";
 $urls = GetUrlList("team", $teamId);
 
 foreach ($urls as $url) {
+	$urlHref = utf8entities($url['url']);
+	$urlName = utf8entities($url['name']);
 	$html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
 	$html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
 	if (!empty($url['name'])) {
-		$html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a> (" . $url['url'] . ")";
+		$html .= "<a href='" . $urlHref . "'>" . $urlName . "</a> (" . $urlHref . ")";
 	} else {
-		$html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+		$html .= "<a href='" . $urlHref . "'>" . $urlHref . "</a>";
 	}
 
 	$html .= "</td>";

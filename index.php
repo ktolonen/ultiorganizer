@@ -1,6 +1,21 @@
 <?php
-if (is_file('install.php')) {
-  //die("Delete install.php file from server!");
+$serverName = $_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? null);
+$configPath = null;
+if ($serverName && is_readable('conf/' . $serverName . '.config.inc.php')) {
+  $configPath = 'conf/' . $serverName . '.config.inc.php';
+} elseif (is_readable('conf/config.inc.php')) {
+  $configPath = 'conf/config.inc.php';
+}
+if ($configPath) {
+  include_once $configPath;
+} else {
+  http_response_code(500);
+  die("Missing configuration. Copy conf/config.inc.php.example to conf/config.inc.php (or conf/<host>.config.inc.php) and update it.");
+}
+
+if (is_file('install.php') && (!defined('ALLOW_INSTALL') || !ALLOW_INSTALL)) {
+  http_response_code(500);
+  die("install.php must be removed or ALLOW_INSTALL=true for local setup.");
 }
 
 include_once 'lib/database.php';

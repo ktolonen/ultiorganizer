@@ -1091,12 +1091,8 @@ function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $me
 
 	$message = file_get_contents('locale/' . GetSessionLocale() . '/LC_MESSAGES/' . $message);
 
-	// for IIS
-	if (!isset($_SERVER['REQUEST_URI'])) {
-		$url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . "?view=register&token=" . $token;
-	} else {
-		$url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . "&token=" . $token;
-	}
+	$baseUrl = defined('BASEURL') ? rtrim(BASEURL, '/') : '';
+	$url = $baseUrl . "/?view=register&token=" . $token;
 
 	$message = str_replace(array('$url', '$ultiorganizer'), array($url, _("Ultiorganizer")), $message);
 	$headers  = "MIME-Version: 1.0" . "\r\n";
@@ -1152,12 +1148,8 @@ function AddExtraEmailRequest($userid, $extraEmail, $message = 'verify_email.txt
 
 	$message = file_get_contents('locale/' . GetSessionLocale() . '/LC_MESSAGES/' . $message);
 
-	// for IIS
-	if (!isset($_SERVER['REQUEST_URI'])) {
-		$url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['SCRIPT_NAME'] . "?view=user/addextraemail&token=" . $token;
-	} else {
-		$url = "http://" . $_SERVER['SERVER_NAME'] . $_SERVER['REQUEST_URI'] . "&token=" . $token;
-	}
+	$baseUrl = defined('BASEURL') ? rtrim(BASEURL, '/') : '';
+	$url = $baseUrl . "/?view=user/addextraemail&token=" . $token;
 
 	$message = str_replace(array('$url', '$ultiorganizer'), array($url, _("Ultiorganizer")), $message);
 	$headers  = "MIME-Version: 1.0" . "\r\n";
