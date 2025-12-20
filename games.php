@@ -5,6 +5,14 @@ include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/timetable.functions.php';
 
+function pdf_slug($value)
+{
+  $slug = strtolower((string)$value);
+  $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug);
+  $slug = trim($slug, '-');
+  return $slug === '' ? 'pdf' : $slug;
+}
+
 if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
   include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
 } else {
@@ -154,13 +162,36 @@ $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
 $groups = TimetableGrouping($id, $gamefilter, $timefilter);
 
 if ($format == "pdf") {
+  $nameLabel = "";
+  switch ($gamefilter) {
+    case "season":
+      $nameLabel = SeasonName($id);
+      break;
+    case "series":
+      $nameLabel = SeriesName($id);
+      break;
+    case "pool":
+      $nameLabel = PoolName($id);
+      break;
+    case "team":
+      $nameLabel = TeamName($id);
+      break;
+    case "poolgroup":
+      $nameLabel = "pools-" . $id;
+      break;
+    default:
+      $nameLabel = $id;
+      break;
+  }
+  $layout = $filter == "onepage" ? "grid" : "list";
+  $filename = "schedule-" . $layout . "-" . pdf_slug($nameLabel) . ".pdf";
   $pdf = new PDF();
   if ($filter == "onepage") {
     $pdf->PrintOnePageSchedule($gamefilter, $id, $games);
   } else {
     $pdf->PrintSchedule($gamefilter, $id, $games);
   }
-  $pdf->Output();
+  $pdf->Output('I', $filename);
 }
 
 if (!$print && !$singleview) {
@@ -227,8 +258,8 @@ if ($print) {
   $html .= "<hr/>\n";
   $html .= "<p>";
   $html .= "<a href='?view=ical&amp;$gamefilter=$id&amp;time=$timefilter&amp;order=$order'>" . _("iCalendar (.ical)") . "</a> | ";
-  $html .= "<a href='" . utf8entities($baseurl) . "&filter=onepage&group=$group'>" . _("Grid (PDF)") . "</a> | ";
-  $html .= "<a href='" . utf8entities($baseurl) . "&filter=season&group=$group'>" . _("List (PDF)") . "</a> | ";
+  $html .= "<a href='" . utf8entities($baseurl) . "&filter=onepage&group=$group' target='_blank' rel='noopener'>" . _("Grid (PDF)") . "</a> | ";
+  $html .= "<a href='" . utf8entities($baseurl) . "&filter=season&group=$group' target='_blank' rel='noopener'>" . _("List (PDF)") . "</a> | ";
   $html .= "<a href='?" . utf8entities($querystring) . "&amp;print=1'>" . _("Printable version") . "</a>";
   $html .= "</p>\n";
 }
