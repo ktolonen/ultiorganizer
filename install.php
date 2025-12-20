@@ -89,8 +89,8 @@ function prerequisites()
   //PHP version
   $html .= "<tr>";
   $html .= "<td>PHP version</td>";
-  $html .= "<td>" . phpversion() . " installed</td>";
-  if (version_compare(PHP_VERSION, '4.4.0') >= 0) {
+  $html .= "<td>" . phpversion() . " installed (requires 8.3+)</td>";
+  if (PHP_VERSION_ID >= 80300) {
     $html .= "<td style='color:green'>ok</td>";
   } else {
     $html .= "<td style='color:red'>failed</td>";

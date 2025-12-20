@@ -23,7 +23,7 @@ The files are organized as follows:
 
 ## Installation
 
-To run Ultiorganizer you need a web server, PHP 8.x and a MySQL/MariaDB database.
+To run Ultiorganizer you need a web server, PHP 8.3+ and a MariaDB 10.11+ database.
 
 Ensure the host has native gettext and locales available so PHP translations work (for Debian/Ubuntu: `sudo apt-get install gettext locales` and generate the locales you need with `sudo locale-gen`).
 
@@ -44,7 +44,7 @@ docker network create ultiorganizer-net
 ```
 
 ### Create the DB
-MariaDB 10.x is used for development to stay compatible with the codebase while avoiding MySQL 8 defaults that conflict with older query patterns (MySQL 5.7 works too if you prefer it).
+MariaDB 10.11+ is used for development to match the current production compatibility.
 
 ```sh
 export MYSQL_ROOT_PASSWORD='<root password>'
@@ -52,14 +52,6 @@ export MYSQL_ROOT_PASSWORD='<root password>'
 docker run --detach --name=ultiorganizer-db --network ultiorganizer-net --env "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" mariadb:10.11
 
 ```
-
-MySQL 5.7.5 and up implements detection of functional dependence. As there are queries in Ultiorganizer that refer to columns that are not listed in the `GROUP BY` section errors occur. These can be circumvented by disabling the new functionality.
-
-```sh
-docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="CREATE DATABASE ultiorganizer;SET GLOBAL sql_mode=(SELECT REPLACE(@@sql_mode,'ONLY_FULL_GROUP_BY',''));"
-```
-
-More details in: <https://dev.mysql.com/doc/refman/5.7/en/group-by-handling.html>
 
 #### Create user and grant accesses
 

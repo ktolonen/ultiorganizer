@@ -39,96 +39,69 @@ if (hasEditPlayersRight($teamId)) {
 	);
 	$result = DBQuery($query);
 
-	// for php 5 onwards
-	if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-		$dom = new DOMDocument("1.0");
-		$node = $dom->createElement("MemberSet");
-		$parnode = $dom->appendChild($node);
+	$dom = new DOMDocument("1.0");
+	$node = $dom->createElement("MemberSet");
+	$parnode = $dom->appendChild($node);
 
-		while ($row = mysqli_fetch_assoc($result)) {
-			$node = $dom->createElement("Member");
-			$newNode = $parnode->appendChild($node);
+	while ($row = mysqli_fetch_assoc($result)) {
+		$node = $dom->createElement("Member");
+		$newNode = $parnode->appendChild($node);
 
-			$nextNode = $dom->createElement("AccreditationId");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['accreditation_id']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("AccreditationId");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['accreditation_id']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("ProfileId");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['profile_id']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("ProfileId");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['profile_id']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("Firstname");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['firstname']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("Firstname");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['firstname']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("Lastname");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['lastname']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("Lastname");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['lastname']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("BirthDate");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)DefBirthdayFormat($row['birthdate']));
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("BirthDate");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)DefBirthdayFormat($row['birthdate']));
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("Team");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['teamname']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("Team");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['teamname']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("Event");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['seasoname']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("Event");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['seasoname']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("Gender");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['gender']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("Gender");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['gender']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("Email");
-			$nextNode = $newNode->appendChild($nextNode);
-			$nextText = $dom->createTextNode((string)$row['email']);
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("Email");
+		$nextNode = $newNode->appendChild($nextNode);
+		$nextText = $dom->createTextNode((string)$row['email']);
+		$nextText = $nextNode->appendChild($nextText);
 
-			$nextNode = $dom->createElement("Jersey");
-			$nextNode = $newNode->appendChild($nextNode);
-			if ($row['num'] < 0) {
-				$nextText = $dom->createTextNode("");
-			} else {
-				$nextText = $dom->createTextNode((string)$row['num']);
-			}
-			$nextText = $nextNode->appendChild($nextText);
+		$nextNode = $dom->createElement("Jersey");
+		$nextNode = $newNode->appendChild($nextNode);
+		if ($row['num'] < 0) {
+			$nextText = $dom->createTextNode("");
+		} else {
+			$nextText = $dom->createTextNode((string)$row['num']);
 		}
-		echo $dom->saveXML();
-	} else {
-		echo "<?xml version=\"1.0\"?>\n";
-		echo "<MemberSet>\n";
-
-		// Iterate through the rows, adding XML nodes for each
-		while ($row = mysqli_fetch_assoc($result)) {
-			echo "<Member>\n";
-			echo "<AccreditationId>" . $row['accreditation_id'] . "</AccreditationId>\n";
-			echo "<ProfileId>" . $row['profile_id'] . "</ProfileId>\n";
-			echo "<Firstname>" . $row['firstname'] . "</Firstname>\n";
-			echo "<Lastname>" . $row['lastname'] . "</Lastname>\n";
-			echo "<BirthDate>" . DefBirthdayFormat($row['birthdate']) . "</BirthDate>\n";
-			echo "<Team>" . $row['teamname'] . "</Team>\n";
-			echo "<Event>" . $row['seasoname'] . "</Event>\n";
-			echo "<Gender>" . $row['gender'] . "</Gender>\n";
-			echo "<Email>" . $row['email'] . "</Email>\n";
-			if ($row['num'] < 0) {
-				echo "<Jersey></Jersey>\n";
-			} else {
-				echo "<Jersey>" . $row['num'] . "</Jersey>\n";
-			}
-			echo "</Member>\n";
-		}
-		echo "</MemberSet>\n";
+		$nextText = $nextNode->appendChild($nextText);
 	}
+	echo $dom->saveXML();
 }
 
 CloseConnection();
