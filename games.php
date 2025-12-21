@@ -116,8 +116,8 @@ switch ($filter) {
     break;
 
   case "next":
+    $timefilter = "all";
     $order = "tournaments";
-    $order = "series";
     break;
 
   case "tournaments":

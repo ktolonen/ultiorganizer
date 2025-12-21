@@ -282,10 +282,32 @@ function DBSetRow($name, $data, $cond)
   $values = array_values($data);
   $fields = array_keys($data);
 
-  $query = "UPDATE " . DBEscapeString($name) . " SET ";
+  $columns = GetTableColumns($name);
+  if (empty($columns)) {
+    die("Invalid table '" . $name . "'");
+  }
+
+  if (strpos($cond, ';') !== false) {
+    die("Invalid condition");
+  }
+
+  $query = "UPDATE " . $name . " SET ";
 
   for ($i = 0; $i < count($fields); $i++) {
-    $query .= DBEscapeString($fields[$i]) . "='" . $values[$i] . "', ";
+    $fieldKey = strtolower($fields[$i]);
+    if (!isset($columns[$fieldKey])) {
+      die("Invalid field '" . $fields[$i] . "' for table '" . $name . "'");
+    }
+
+    if ($columns[$fieldKey] === 'int') {
+      if ($values[$i] === null) {
+        $query .= $fields[$i] . "=NULL, ";
+      } else {
+        $query .= $fields[$i] . "=" . (int)$values[$i] . ", ";
+      }
+    } else {
+      $query .= $fields[$i] . "='" . DBEscapeString($values[$i]) . "', ";
+    }
   }
   $query = rtrim($query, ', ');
   $query .= " WHERE ";

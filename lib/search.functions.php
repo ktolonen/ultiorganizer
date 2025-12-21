@@ -379,8 +379,8 @@ function SeasonControl()
 {
 	if (!empty($_POST['searchseasons'])) {
 		$selected = array_flip($_POST['searchseasons']);
-	} elseif (!empty($GET['Season'])) {
-		$selected = array($GET['Season'] => 'selected');
+	} elseif (!empty($_GET['Season'])) {
+		$selected = array($_GET['Season'] => 'selected');
 	} elseif (!empty($_SESSION['userproperties']['editseason'])) {
 		$selected = $_SESSION['userproperties']['editseason'];
 	} else {
@@ -411,8 +411,8 @@ function SeriesResults()
 		$query .= "WHERE ser.season IN (";
 		if (!empty($_POST['searchseasons'])) {
 			$selected = array_flip($_POST['searchseasons']);
-		} elseif (!empty($GET['Season'])) {
-			$selected = array($GET['Season'] => 'selected');
+		} elseif (!empty($_GET['Season'])) {
+			$selected = array($_GET['Season'] => 'selected');
 		} else {
 			$selected = $_SESSION['userproperties']['editseason'];
 		}
@@ -449,8 +449,8 @@ function PoolResults()
 		$query .= "WHERE ser.season IN (";
 		if (!empty($_POST['searchseasons'])) {
 			$selected = array_flip($_POST['searchseasons']);
-		} elseif (!empty($GET['Season'])) {
-			$selected = array($GET['Season'] => 'selected');
+		} elseif (!empty($_GET['Season'])) {
+			$selected = array($_GET['Season'] => 'selected');
 		} else {
 			$selected = $_SESSION['userproperties']['editseason'];
 		}
@@ -492,8 +492,8 @@ function TeamResults()
 		$query .= "WHERE ser.season IN (";
 		if (!empty($_POST['searchseasons'])) {
 			$selected = array_flip($_POST['searchseasons']);
-		} elseif (!empty($GET['Season'])) {
-			$selected = array($GET['Season'] => 'selected');
+		} elseif (!empty($_GET['Season'])) {
+			$selected = array($_GET['Season'] => 'selected');
 		} else {
 			$selected = $_SESSION['userproperties']['editseason'];
 		}
@@ -537,8 +537,8 @@ function UserResults()
 
 		if (!empty($_POST['searchseasons'])) {
 			$selected = array_flip($_POST['searchseasons']);
-		} elseif (!empty($GET['Season'])) {
-			$selected = array($GET['Season'] => 'selected');
+		} elseif (!empty($_GET['Season'])) {
+			$selected = array($_GET['Season'] => 'selected');
 		} else {
 			$selected = $_SESSION['userproperties']['editseason'];
 		}
@@ -622,8 +622,8 @@ function PlayerResults()
 
 		if (!empty($_POST['searchseasons'])) {
 			$selected = array_flip($_POST['searchseasons']);
-		} elseif (!empty($GET['Season'])) {
-			$selected = array($GET['Season'] => 'selected');
+		} elseif (!empty($_GET['Season'])) {
+			$selected = array($_GET['Season'] => 'selected');
 		} else {
 			$selected = $_SESSION['userproperties']['editseason'];
 		}

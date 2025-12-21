@@ -12,32 +12,39 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
 	$html = "<p>" . _("Direct database access is disabled. To enable it, define(ENABLE_ADMIN_DB_ACCESS,'enabled') in the config.inc.php file") . "</p>";
 } else {
 	if (isset($_POST['restore']) && isSuperAdmin()) {
-		if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
+			if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
+				$filenameParts = explode('.', $_FILES['restorefile']['name']);
+				$extension = strtolower(end($filenameParts));
 
-			if ("gz" == end(explode('.', $_FILES['restorefile']['name']))) {
-				$lines = gzfile($_FILES['restorefile']['tmp_name']);
-			} elseif ("sql" == end(explode('.', $_FILES['restorefile']['name']))) {
-				$lines = file($_FILES['restorefile']['tmp_name']);
-			}
+				if ("gz" == $extension) {
+					$lines = gzfile($_FILES['restorefile']['tmp_name']);
+				} elseif ("sql" == $extension) {
+					$lines = file($_FILES['restorefile']['tmp_name']);
+				} else {
+					$lines = null;
+					$html .= "<p>" . _("Unsupported backup format. Please upload a .gz or .sql file.") . "</p>";
+				}
 
-			$templine = '';
-			set_time_limit(300);
-
-			foreach ($lines as $line) {
-				// Skip it if it's a comment
-				if (substr($line, 0, 2) == '--' || $line == '')
-					continue;
-
-				$templine .= $line;
-				if (substr(trim($line), -1, 1) == ';') {
-					DBQuery($templine);
+				if (is_array($lines)) {
 					$templine = '';
+					set_time_limit(300);
+
+					foreach ($lines as $line) {
+						// Skip it if it's a comment
+						if (substr($line, 0, 2) == '--' || $line == '')
+							continue;
+
+						$templine .= $line;
+						if (substr(trim($line), -1, 1) == ';') {
+							DBQuery($templine);
+							$templine = '';
+						}
+					}
+					unlink($_FILES['restorefile']['tmp_name']);
+					unset($_SESSION['dbversion']);
+					$html .= "<p>" . _("Restore") . "</p>";
 				}
 			}
-			unlink($_FILES['restorefile']['tmp_name']);
-			unset($_SESSION['dbversion']);
-			$html .= "<p>" . _("Restore") . "</p>";
-		}
 
 	}
 

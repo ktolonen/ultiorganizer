@@ -402,6 +402,10 @@ function TeamStanding($teamId, $poolId)
 function TeamMove($teamId, $frompool, $inplayofftree = false)
 {
 
+  // no access right check since called after game result is updated
+  // to automatically move teams to next pool when the all games are played
+  // and order is known.
+
   //get position to move
   $fromplacing = TeamStanding($teamId, $frompool);
 
@@ -423,22 +427,23 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
       (int)$move['torank']
     );
 
-    $team_exist = count(DBQueryToArray($query));
+    $team_row = DBQueryToRow($query);
+    $team_exist = isset($team_row['team']) ? (int)$team_row['team'] : 0;
 
     //same team
-    if ($team_exist && $team_exist['team'] == $teamId) {
+    if ($team_exist && $team_exist == $teamId) {
       return;
     }
 
     //different team in same position
-    if ($team_exist && $team_exist['team'] != $teamId) {
+    if ($team_exist && $team_exist != $teamId) {
       $query = sprintf(
         "SELECT g.game_id FROM uo_game g
             			LEFT JOIN uo_game_pool gp ON(g.game_id=game)
       					WHERE (g.hometeam=%d OR g.hometeam=%d) AND (g.hasstarted>0)  
       					AND gp.pool=%d",
-        (int)$team_exist['team'],
-        (int)$team_exist['team'],
+        (int)$team_exist,
+        (int)$team_exist,
         (int)$move['topool']
       );
 
@@ -448,7 +453,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
         return;
       } else {
         $query = sprintf(
-          "DELETE FROM uo_team_pool WHERE team=%d AND rank=%d",
+          "DELETE FROM uo_team_pool WHERE pool=%d AND rank=%d",
           (int)$move['topool'],
           (int)$move['torank']
         );
@@ -1344,7 +1349,7 @@ function AddTeam($params)
     }
 
     if (!empty($params['abbreviation'])) {
-      DBQuery("UPDATE uo_team SET abbreviation='" . $params['abbreviation'] . "' WHERE team_id=$teamId");
+      DBQuery("UPDATE uo_team SET abbreviation='" . DBEscapeString($params['abbreviation']) . "' WHERE team_id=$teamId");
     }
 
     Log1("team", "add", $teamId);

@@ -4,8 +4,14 @@ include_once $include_prefix . 'lib/configuration.functions.php';
 
 function GameSetPools($games)
 {
+	$gameIds = array_filter(array_map('intval', (array)$games), function ($val) {
+		return $val > 0;
+	});
+	if (empty($gameIds)) {
+		return array();
+	}
 	$query = "SELECT DISTINCT pool_id, p.name from uo_game g left join uo_pool p on (g.pool=p.pool_id) WHERE g.game_id in (";
-	$query .= implode(",", $games);
+	$query .= implode(",", $gameIds);
 	$query .= ") ORDER BY p.ordering ASC";
 	$result = DBQuery($query);
 
@@ -18,6 +24,12 @@ function GameSetPools($games)
 
 function PoolGameSetResults($pool, $games)
 {
+	$gameIds = array_filter(array_map('intval', (array)$games), function ($val) {
+		return $val > 0;
+	});
+	if (empty($gameIds)) {
+		return array();
+	}
 	$query = sprintf(
 		"SELECT time, k.name As hometeamname, v.name As visitorteamname, p.*,s.name AS gamename
 		FROM uo_game AS p 
@@ -25,7 +37,7 @@ function PoolGameSetResults($pool, $games)
 		LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
 		LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
 		WHERE p.game_id IN (%s) AND pool=%d",
-		DBEscapeString(implode(",", $games)),
+		implode(",", $gameIds),
 		(int)$pool
 	);
 	$result = DBQuery($query);
@@ -1157,9 +1169,19 @@ function SetGame($gameId, $params)
 {
 	$poolinfo = PoolInfo($params['pool']);
 	if (hasEditGamesRight($poolinfo['series'])) {
+		$allowedKeys = array_flip(array(
+			"hometeam",
+			"visitorteam",
+			"scheduling_name_home",
+			"scheduling_name_visitor",
+			"reservation",
+			"time",
+			"pool",
+			"valid"
+		));
 
 		foreach ($params as $key => $param) {
-			if (!empty($param)) {
+			if (!empty($param) && isset($allowedKeys[$key])) {
 				$query = sprintf(
 					"UPDATE uo_game SET " . $key . "='%s' 
 					WHERE game_id='%s'\n",
