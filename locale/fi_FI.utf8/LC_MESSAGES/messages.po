@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-21 12:42+0200\n"
+"POT-Creation-Date: 2025-12-21 14:08+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -10,7 +10,16 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
+"X-Poedit-Basepath: ../../..\n"
 "X-Generator: Poedit 3.4.2\n"
+"X-Poedit-SearchPath-0: .\n"
+"X-Poedit-SearchPath-1: ext\n"
+"X-Poedit-SearchPath-2: lib\n"
+"X-Poedit-SearchPath-3: user\n"
+"X-Poedit-SearchPath-4: admin\n"
+"X-Poedit-SearchPath-5: cust\n"
+"X-Poedit-SearchPath-6: scorekeeper\n"
+"X-Poedit-SearchPath-7: mobile\n"
 
 #: admin/accreditation.php:7 admin/accreditation.php:57
 #: admin/accreditation.php:143 menufunctions.php:668 menufunctions.php:683
@@ -432,7 +441,7 @@ msgstr "Muokkaa lohkoa"
 #: admin/addseasonpools.php:274 admin/addseasonpools.php:292
 #: admin/addseasonteams.php:165 admin/dbequalize.php:209
 #: admin/dbequalize.php:248 admin/dbequalize.php:289 admin/editgame.php:210
-#: admin/seasonstats.php:32 admin/stats.php:77 clubcard.php:140
+#: admin/seasonstats.php:32 admin/stats.php:81 clubcard.php:140
 #: clubcard.php:164 countrycard.php:19 countrycard.php:71 countrycard.php:79
 #: cust/bula/pdfprinter.php:69 cust/default/pdfprinter.php:69
 #: cust/gummis/pdfprinter.php:67 cust/slkl/pdfprinter.php:72
@@ -538,7 +547,7 @@ msgstr "Kommentti (voit käyttää <b>, <em> ja <br /> tageja)"
 #: admin/dbequalize.php:203 admin/dbequalize.php:270 admin/seasonadmin.php:70
 #: admin/seasonpools.php:215 admin/seasonseries.php:106
 #: admin/seasonstats.php:20 admin/seasonstats.php:34 admin/seasonteams.php:15
-#: admin/serieteams.php:23 admin/stats.php:74 menufunctions.php:535
+#: admin/serieteams.php:23 admin/stats.php:78 menufunctions.php:535
 #: menufunctions.php:556 menufunctions.php:595 menufunctions.php:663
 #: menufunctions.php:680 seasonlist.php:27 teams.php:7 teams.php:55
 msgid "Teams"
@@ -1219,11 +1228,11 @@ msgstr "Tietokannan yhdenmukaistaminen"
 #: admin/dbequalize.php:41
 #, php-format
 msgid "Deleted %d orphan profiles"
-msgstr ""
+msgstr "Poistettu %d yksinäistä profiilia"
 
 #: admin/dbequalize.php:43
 msgid "No orphan profiles found"
-msgstr ""
+msgstr "Yksinäisiä profiileja ei löytnyt"
 
 #: admin/dbequalize.php:119 admin/dbequalize.php:369 admin/dbequalize.php:372
 #: user/teamplayers.php:162
@@ -1409,7 +1418,7 @@ msgstr "Sijoitus"
 #: admin/seasonadmin.php:85 admin/seasongames.php:21 admin/seasonseries.php:108
 #: admin/seasonstandings.php:296 admin/seasonstandings.php:344
 #: admin/seasonstandings.php:385 admin/seasonstats.php:20
-#: admin/seasonstats.php:34 admin/seriesgames.php:30 admin/stats.php:76
+#: admin/seasonstats.php:34 admin/seriesgames.php:30 admin/stats.php:80
 #: clubcard.php:152 clubcard.php:179 clubcard.php:195 countrycard.php:31
 #: countrycard.php:56 defensestatus.php:67 defensestatus.php:69
 #: ext/countrystatus.php:49 ext/eventpools.php:46 ext/poolscoreboard.php:36
@@ -1923,7 +1932,7 @@ msgid "Divisions"
 msgstr "Sarjat"
 
 #: admin/seasonadmin.php:75 admin/seasongames.php:209 admin/seasonstats.php:20
-#: admin/seasonstats.php:34 admin/stats.php:75 clubcard.php:150
+#: admin/seasonstats.php:34 admin/stats.php:79 clubcard.php:150
 #: clubcard.php:177 countrycard.php:29 countrycard.php:54 menufunctions.php:594
 #: mobile/respgames.php:170 scorekeeper/addscoresheet.php:269
 #: scorekeeper/respgames.php:131 user/adddefensesheet.php:53
@@ -1971,7 +1980,7 @@ msgstr "Tuo tapahtuman tiedot"
 #: admin/seasongames.php:24 admin/seasonpools.php:16
 #: admin/seasonstandings.php:19 admin/seasonteams.php:18
 msgid "No divisions defined. Define at least one division first."
-msgstr ""
+msgstr "Sarjaa ei määritetty. Määritä ainakin yksi sarja ensin."
 
 #: admin/seasongames.php:114 admin/seasonpools.php:89
 #: admin/seasonstandings.php:166 admin/seasonteams.php:112
@@ -2057,7 +2066,7 @@ msgid "Scheduling name"
 msgstr "Aikataulutusnimi"
 
 #: admin/seasonmoves.php:163 admin/seasonmoves.php:195
-#: admin/seasonstandings.php:545
+#: admin/seasonstandings.php:545 admin/stats.php:84
 msgid "Undo"
 msgstr "Kumoa"
 
@@ -2227,7 +2236,7 @@ msgstr "Nollaa"
 
 #: admin/seasonstandings.php:292
 msgid "Pool is completed:"
-msgstr ""
+msgstr "Lohko on pelattu:"
 
 #: admin/seasonstandings.php:294
 msgid "Pool games not completed:"
@@ -2629,7 +2638,7 @@ msgstr "Seuraavan vastustajan rankkaus"
 msgid "Return without sending"
 msgstr "Palaa ilman lähettämistä"
 
-#: admin/stats.php:64
+#: admin/stats.php:68
 msgid ""
 "Calculation of statistics takes some time; please wait without closing "
 "browser."
@@ -2637,19 +2646,19 @@ msgstr ""
 "Tilastojen laskeminen voi kestää jonkin aikaa. Odota kunnes sivu latautuu "
 "sulkematta selainta."
 
-#: admin/stats.php:67
+#: admin/stats.php:71
 msgid "Calculate"
 msgstr "Laske"
 
-#: admin/stats.php:79
+#: admin/stats.php:83
 msgid "Re-Calculate"
 msgstr "Laske uudelleen"
 
-#: admin/stats.php:82
+#: admin/stats.php:87
 msgid "Final Standings"
 msgstr "Lopulliset sijoitukset"
 
-#: admin/stats.php:83
+#: admin/stats.php:88
 msgid ""
 "If standings are not correct, use mouse to drag teams into correct order and "
 "press save standings."
@@ -2657,7 +2666,7 @@ msgstr ""
 "Jos sijoitukset eivät ole oikein, voit hiirellä raahata joukkueet oikeaan "
 "järjestykseen. Paina tallenna nappia tallentaaksesi sijoitukset."
 
-#: admin/stats.php:84
+#: admin/stats.php:89
 msgid "Save standings"
 msgstr "Tallenna sijoitukset"
 
@@ -2719,11 +2728,11 @@ msgstr "Latauksia per sivu"
 
 #: admin/visitors.php:51
 msgid "Maintenance"
-msgstr ""
+msgstr "Ylläpito"
 
 #: admin/visitors.php:52 admin/visitors.php:53
 msgid "Never"
-msgstr ""
+msgstr "Ei koskaan"
 
 #: admin/visitors.php:54
 #, php-format
@@ -2733,7 +2742,7 @@ msgstr "Kävijälaskuri viimeiksi nollattu: %s"
 #: admin/visitors.php:55
 #, php-format
 msgid "Page load counter last reset: %s"
-msgstr ""
+msgstr "Sivun latauslaskurit viimeksi nollattu: %s"
 
 #: admin/visitors.php:56
 msgid "Are you sure you want to reset the visitor counter?"
@@ -3570,8 +3579,8 @@ msgstr "Puolustukset"
 msgid "No playoff tree template found."
 msgstr "Playoff puun mallia ei löytynyt."
 
-#: ext/eventpools.php:50 ext/poolstatus.php:42 seriesstatus.php:141
-#: seriesstatus.php:143
+#: ext/eventpools.php:50 ext/poolstatus.php:42 gamecard.php:90
+#: seriesstatus.php:141 seriesstatus.php:143
 msgid "Goals against"
 msgstr "Päästetyt maalit"
 

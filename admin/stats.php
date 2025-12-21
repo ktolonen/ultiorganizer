@@ -19,6 +19,10 @@ if (!empty($_POST['calc'])) {
     CalcTeamStats($season);
     CalcPlayerStats($season);
 }
+if (!empty($_POST['undo'])) {
+    set_time_limit(120);
+    DeleteSeasonStats($season);
+}
 
 //common page
 pageTopHeadOpen($title);
@@ -77,6 +81,7 @@ if (!IsSeasonStatsCalculated($season)) {
     $html .= "<li>" . _("Division") . ": " . count($series) . "</li>\n";
     $html .= "</ul>";
     $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Re-Calculate") . "'/></p>\n";
+    $html .= "<p><input class='button' name='undo' type='submit' value='" . _("Undo") . "'/></p>\n";
 
     $prevseries = -1;
     $html .= "<h1>" . _("Final Standings") . "</h1>";

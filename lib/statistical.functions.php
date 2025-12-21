@@ -19,6 +19,19 @@ function IsStatsDataAvailable()
 	return DBQueryToValue("SELECT count(*) FROM uo_season_stats");
 }
 
+function DeleteSeasonStats($season)
+{
+	if (isSeasonAdmin($season)) {
+		$season_safe = DBEscapeString($season);
+		DBQuery(sprintf("DELETE FROM uo_season_stats WHERE season='%s'", $season_safe));
+		DBQuery(sprintf("DELETE FROM uo_series_stats WHERE season='%s'", $season_safe));
+		DBQuery(sprintf("DELETE FROM uo_team_stats WHERE season='%s'", $season_safe));
+		DBQuery(sprintf("DELETE FROM uo_player_stats WHERE season='%s'", $season_safe));
+	} else {
+		die('Insufficient rights to archive season');
+	}
+}
+
 function SeriesStatistics($season)
 {
 	$query = sprintf(

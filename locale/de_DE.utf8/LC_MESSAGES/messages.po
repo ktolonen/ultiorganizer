@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2025-12-21 13:55+0200\n"
+"POT-Creation-Date: 2025-12-21 14:07+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -19,6 +19,8 @@ msgstr ""
 "X-Poedit-SearchPath-3: user\n"
 "X-Poedit-SearchPath-4: admin\n"
 "X-Poedit-SearchPath-5: cust\n"
+"X-Poedit-SearchPath-6: scorekeeper\n"
+"X-Poedit-SearchPath-7: mobile\n"
 
 #: admin/accreditation.php:7 admin/accreditation.php:57
 #: admin/accreditation.php:143 menufunctions.php:668 menufunctions.php:683
@@ -444,7 +446,7 @@ msgstr "Gruppe ändern"
 #: admin/addseasonpools.php:274 admin/addseasonpools.php:292
 #: admin/addseasonteams.php:165 admin/dbequalize.php:209
 #: admin/dbequalize.php:248 admin/dbequalize.php:289 admin/editgame.php:210
-#: admin/seasonstats.php:32 admin/stats.php:77 clubcard.php:140
+#: admin/seasonstats.php:32 admin/stats.php:81 clubcard.php:140
 #: clubcard.php:164 countrycard.php:19 countrycard.php:71 countrycard.php:79
 #: cust/bula/pdfprinter.php:69 cust/default/pdfprinter.php:69
 #: cust/gummis/pdfprinter.php:67 cust/slkl/pdfprinter.php:72
@@ -550,7 +552,7 @@ msgstr "Kommentar (Sie können <b>, </em> und <br />-Tags benutzen)"
 #: admin/dbequalize.php:203 admin/dbequalize.php:270 admin/seasonadmin.php:70
 #: admin/seasonpools.php:215 admin/seasonseries.php:106
 #: admin/seasonstats.php:20 admin/seasonstats.php:34 admin/seasonteams.php:15
-#: admin/serieteams.php:23 admin/stats.php:74 menufunctions.php:535
+#: admin/serieteams.php:23 admin/stats.php:78 menufunctions.php:535
 #: menufunctions.php:556 menufunctions.php:595 menufunctions.php:663
 #: menufunctions.php:680 seasonlist.php:27 teams.php:7 teams.php:55
 msgid "Teams"
@@ -1431,7 +1433,7 @@ msgstr "Ergebnisse"
 #: admin/seasonadmin.php:85 admin/seasongames.php:21 admin/seasonseries.php:108
 #: admin/seasonstandings.php:296 admin/seasonstandings.php:344
 #: admin/seasonstandings.php:385 admin/seasonstats.php:20
-#: admin/seasonstats.php:34 admin/seriesgames.php:30 admin/stats.php:76
+#: admin/seasonstats.php:34 admin/seriesgames.php:30 admin/stats.php:80
 #: clubcard.php:152 clubcard.php:179 clubcard.php:195 countrycard.php:31
 #: countrycard.php:56 defensestatus.php:67 defensestatus.php:69
 #: ext/countrystatus.php:49 ext/eventpools.php:46 ext/poolscoreboard.php:36
@@ -1950,7 +1952,7 @@ msgid "Divisions"
 msgstr "Klassen"
 
 #: admin/seasonadmin.php:75 admin/seasongames.php:209 admin/seasonstats.php:20
-#: admin/seasonstats.php:34 admin/stats.php:75 clubcard.php:150
+#: admin/seasonstats.php:34 admin/stats.php:79 clubcard.php:150
 #: clubcard.php:177 countrycard.php:29 countrycard.php:54 menufunctions.php:594
 #: mobile/respgames.php:170 scorekeeper/addscoresheet.php:269
 #: scorekeeper/respgames.php:131 user/adddefensesheet.php:53
@@ -2084,7 +2086,7 @@ msgid "Scheduling name"
 msgstr "Name im Spielplan"
 
 #: admin/seasonmoves.php:163 admin/seasonmoves.php:195
-#: admin/seasonstandings.php:545
+#: admin/seasonstandings.php:545 admin/stats.php:84
 msgid "Undo"
 msgstr "Rückgängig"
 
@@ -2656,7 +2658,7 @@ msgstr "Rang"
 msgid "Return without sending"
 msgstr "Zurück, nicht senden"
 
-#: admin/stats.php:64
+#: admin/stats.php:68
 msgid ""
 "Calculation of statistics takes some time; please wait without closing "
 "browser."
@@ -2664,19 +2666,19 @@ msgstr ""
 "Berechnung der Statistiken kann etwas dauern. Bitte schließen Sie das "
 "Browserfenster nicht."
 
-#: admin/stats.php:67
+#: admin/stats.php:71
 msgid "Calculate"
 msgstr "Bererchnen"
 
-#: admin/stats.php:79
+#: admin/stats.php:83
 msgid "Re-Calculate"
 msgstr "Neu berechnen"
 
-#: admin/stats.php:82
+#: admin/stats.php:87
 msgid "Final Standings"
 msgstr "Endergebnis"
 
-#: admin/stats.php:83
+#: admin/stats.php:88
 msgid ""
 "If standings are not correct, use mouse to drag teams into correct order and "
 "press save standings."
@@ -2684,7 +2686,7 @@ msgstr ""
 "Falls die Ergebnisse nicht korrekt sind, ziehen Sie die Teams mit der Maus "
 "auf die richtige Position und Speichern Sie."
 
-#: admin/stats.php:84
+#: admin/stats.php:89
 msgid "Save standings"
 msgstr "Ergebnisse speichern"
 
