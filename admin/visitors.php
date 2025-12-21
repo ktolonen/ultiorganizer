@@ -39,7 +39,7 @@ if (isSuperAdmin()) {
 	$html .= "</tr>";
 	$html .= "</table>";
 
-	$html .= "<h3>" . _("Pageload per page") . "</h3>";
+	$html .= "<h3>" . _("Page loads per page") . "</h3>";
 	$html .= "<table cellpadding='3'>";
 	foreach ($pageloads as $page) {
 		$html .= "<tr>";
@@ -60,7 +60,7 @@ if (isSuperAdmin()) {
 	$html .= "<p><input class='button' type='submit' name='reset_pageloads' value='" . _("Reset page load counter") . "' /></p>";
 	$html .= "</form>";
 } else {
-	$html .= "<p>" . _("User credentials does not match") . "</p>\n";
+	$html .= "<p>" . _("User credentials do not match") . "</p>\n";
 }
 echo $html;
 

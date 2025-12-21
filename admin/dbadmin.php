@@ -145,7 +145,7 @@ if (isSuperAdmin()) {
 	}
 	$html .= "</p>\n";
 } else {
-	$html .= "<p>" . _("User credentials does not match") . "</p>\n";
+	$html .= "<p>" . _("User credentials do not match") . "</p>\n";
 }
 echo $html;
 

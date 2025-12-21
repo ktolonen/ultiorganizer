@@ -125,7 +125,7 @@ if (isSuperAdmin()) {
 	$html .= "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
 	$html .= "</form>";
 } else {
-	$html .= "<p>" . _("User credentials does not match") . "</p>\n";
+	$html .= "<p>" . _("User credentials do not match") . "</p>\n";
 }
 echo $html;
 

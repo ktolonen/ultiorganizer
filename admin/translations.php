@@ -79,7 +79,7 @@ contentStart();
 $help = "<p>" . _("Modify translations") . ":</p>
 	<ol>
 		<li> " . _("The translations are used to localize all user-provided text fields") . " </li>
-		<li> " . _("The key is substitituted with the text in the user-selected locale") . " </li>
+		<li> " . _("The key is substituted with the text in the user-selected locale") . " </li>
 		<li> " . _("The key is case insensitive") . " </li>
 	</ol>";
 

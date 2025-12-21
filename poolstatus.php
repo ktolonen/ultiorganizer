@@ -787,7 +787,7 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
 
   $ret .= "<table style='white-space: nowrap' cellpadding='2' width='100%'><tr>\n";
 
-  $ret .= "<td>" . _("Winners continues in:") . "</td>";
+  $ret .= "<td>" . _("Winners continue in:") . "</td>";
   foreach ($winnerpools as $winnerId => $color) {
     $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . (50 / count($winnerpools)) . "%'>";
     if ($winnerspool['visible']) {
@@ -798,7 +798,7 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
     $ret .= "</td>";
   }
 
-  $ret .= "<td>" . _("Losers continues in:") . "</td>";
+  $ret .= "<td>" . _("Losers continue in:") . "</td>";
   foreach ($loserspools as $loserId => $color) {
     $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . (50 / count($loserspools)) . "%'>";
     if ($loserspool['visible']) {

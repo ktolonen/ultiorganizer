@@ -18,7 +18,7 @@ if (iget("sort")) {
 //content
 $menutabs[_("Events' Standings")] = "?view=statistics&list=teamstandings";
 $menutabs[_("Events' Scoreboards")] = "?view=statistics&list=playerscoreboard";
-$menutabs[_("Alltime Scoreboards")] = "?view=statistics&list=playerscoresall";
+$menutabs[_("All-time Scoreboards")] = "?view=statistics&list=playerscoresall";
 $html .= pageMenu($menutabs, "", false);
 
 if ($list == "teamstandings") {
