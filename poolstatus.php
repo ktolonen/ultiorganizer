@@ -13,12 +13,24 @@ $comment = "";
 
 if (iget("season")) {
   $seasoninfo = SeasonInfo(iget("season"));
+  if (!$seasoninfo) {
+    $title = _("Standings");
+    $html .= "<h1>" . _("Season not found") . "</h1>";
+    showPage($title, $html);
+    return;
+  }
   $pools = SeasonPools($seasoninfo['season_id'], true, true);
   $title .= U_($seasoninfo['name']);
   $comment = CommentHTML(1, $seasoninfo['season_id']);
   $seriesScoreboard = true;
 } else if (iget("series")) {
   $seriesinfo = SeriesInfo(iget("series"));
+  if (!$seriesinfo) {
+    $title = _("Standings");
+    $html .= "<h1>" . _("Series not found") . "</h1>";
+    showPage($title, $html);
+    return;
+  }
   $pools = SeriesPools($seriesinfo['series_id'], true);
   $title .= U_($seriesinfo['name']);
   $comment = CommentHTML(2, $seriesinfo['series_id']);
@@ -27,6 +39,12 @@ if (iget("season")) {
 } else if (iget("pool")) {
 
   $poolinfo = PoolInfo(iget("pool"));
+  if (!$poolinfo) {
+    $title = _("Standings");
+    $html .= "<h1>" . _("Pool not found") . "</h1>";
+    showPage($title, $html);
+    return;
+  }
   $games = PoolGames($poolinfo['pool_id']);
 
 

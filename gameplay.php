@@ -8,6 +8,12 @@ $html = "";
 $gameId = intval(iget("game"));
 
 $game_result = GameResult($gameId);
+if (!$game_result) {
+  $title = _("Game play");
+  $html .= "<h1>" . _("Game not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $homecaptain = GameCaptain($gameId, $game_result['hometeam']);
 $awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);

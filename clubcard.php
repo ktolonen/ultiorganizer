@@ -40,11 +40,13 @@ $html .= "<td style='vertical-align:top;text-align:left'><table border='0'>";
 $html .= "<tr><td></td></tr>";
 if ($profile['country'] > 0) {
   $country_info = CountryInfo($profile['country']);
-  $html .= "<tr><td class='profileheader'>" . _("Country") . ":</td>";
-  $html .= "<td style='white-space: nowrap;'><div style='float: left; clear: left;'>";
-  $html .= "<a href='?view=countrycard&amp;country=" . $country_info['country_id'] . "'>" . utf8entities($country_info['name']) . "</a>";
-  $html .= "</div><div>&nbsp;<img src='images/flags/tiny/" . $country_info['flagfile'] . "' alt=''/></div>";
-  $html .= "</td></tr>\n";
+  if ($country_info) {
+    $html .= "<tr><td class='profileheader'>" . _("Country") . ":</td>";
+    $html .= "<td style='white-space: nowrap;'><div style='float: left; clear: left;'>";
+    $html .= "<a href='?view=countrycard&amp;country=" . $country_info['country_id'] . "'>" . utf8entities($country_info['name']) . "</a>";
+    $html .= "</div><div>&nbsp;<img src='images/flags/tiny/" . $country_info['flagfile'] . "' alt=''/></div>";
+    $html .= "</td></tr>\n";
+  }
 }
 if (!empty($profile['city'])) {
   $html .= "<tr><td class='profileheader'>" . _("City") . ":</td>";

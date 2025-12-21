@@ -9,8 +9,16 @@ include_once 'lib/statistical.functions.php';
 $teamId = intval(iget("team"));
 $teaminfo = TeamInfo($teamId);
 
-$title = _("Roster") . ": " . utf8entities($teaminfo['name']);
 $html = "";
+
+if (!$teaminfo) {
+  $title = _("Roster");
+  $html .= "<h1>" . _("Team not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
+
+$title = _("Roster") . ": " . utf8entities($teaminfo['name']);
 
 $players = TeamPlayerList($teamId);
 
@@ -29,6 +37,9 @@ $stats = array(array());
 $i = 0;
 while ($player = mysqli_fetch_assoc($players)) {
   $playerinfo = PlayerInfo($player['player_id']);
+  if (!$playerinfo) {
+    continue;
+  }
   $stats[$i]['name'] = $playerinfo['firstname'] . " " . $playerinfo['lastname'];
   $stats[$i]['id'] = $player['player_id'];
   $stats[$i]['goals'] = 0;

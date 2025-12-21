@@ -24,6 +24,13 @@ if (iget("sort")) {
 $team1 = TeamInfo($teamId1);
 $team2 = TeamInfo($teamId2);
 
+if (!$team1 || !$team2) {
+  $title = _("Game card");
+  $html .= "<h1>" . _("Team not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
+
 $title = _("Game card") . ": " . utf8entities($team1['name']) . " vs. " . utf8entities($team2['name']);
 
 //$seasons = TeamPlayedSeasons($team1['name'], $serie);
