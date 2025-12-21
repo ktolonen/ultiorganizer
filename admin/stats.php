@@ -8,6 +8,7 @@ $LAYOUT_ID = CALCSEASONSTATISTICS;
 $html = "";
 
 $season = $_GET["season"];
+$missing_profiles_count = SeasonMissingPlayerProfilesCount($season);
 $seasons = array();
 $series = array();
 $teams = array();
@@ -68,7 +69,15 @@ $html .= "<form method='post' action='?view=admin/stats&amp;season=$season'>\n";
 $html .= "<p>" . _("Calculation of statistics takes some time; please wait without closing browser.") . "</p>\n";
 
 if (!IsSeasonStatsCalculated($season)) {
-    $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Calculate") . "'/></p>\n";
+    if ($missing_profiles_count > 0) {
+        $html .= "<p><strong>" . sprintf(_("There are %d players without a profile id. Player statistics will be skipped for them."), $missing_profiles_count) . "</strong></p>\n";
+    }
+    $confirm_attr = "";
+    if ($missing_profiles_count > 0) {
+        $confirm_msg = sprintf(_("There are %d players without a profile id. Run statistics anyway?"), $missing_profiles_count);
+        $confirm_attr = " onclick='return confirm(\"" . addslashes($confirm_msg) . "\")'";
+    }
+    $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Calculate") . "'" . $confirm_attr . "/></p>\n";
 } else {
     $seasons = SeasonStatistics($season);
     $series = SeriesStatistics($season);
@@ -80,7 +89,15 @@ if (!IsSeasonStatsCalculated($season)) {
     $html .= "<li>" . _("Games") . ": " . $seasons['games'] . "</li>\n";
     $html .= "<li>" . _("Division") . ": " . count($series) . "</li>\n";
     $html .= "</ul>";
-    $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Re-Calculate") . "'/></p>\n";
+    if ($missing_profiles_count > 0) {
+        $html .= "<p><strong>" . sprintf(_("There are %d players without a profile id. Player statistics will be skipped for them."), $missing_profiles_count) . "</strong></p>\n";
+    }
+    $confirm_attr = "";
+    if ($missing_profiles_count > 0) {
+        $confirm_msg = sprintf(_("There are %d players without a profile id. Run statistics anyway?"), $missing_profiles_count);
+        $confirm_attr = " onclick='return confirm(\"" . addslashes($confirm_msg) . "\")'";
+    }
+    $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Re-Calculate") . "'" . $confirm_attr . "/></p>\n";
     $html .= "<p><input class='button' name='undo' type='submit' value='" . _("Undo") . "'/></p>\n";
 
     $prevseries = -1;
