@@ -11,6 +11,7 @@ $poolIds = array();
 $seriesId = 0;
 $teamId = 0;
 $sort = "total";
+$scores = null;
 
 if (iget("pool")) {
   $poolId = intval(iget("pool"));
@@ -106,49 +107,51 @@ if ($teamId) {
   $scores = SeriesScoreBoard($seriesId, $sort, 0);
 }
 $i = 1;
-while ($row = mysqli_fetch_assoc($scores)) {
-  $html .= "<tr>";
-  $html .= "<td>" . $i++ . "</td>";
-  if ($sort == "name") {
-    $html .= "<td class='highlight'><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
-    $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
-    $html .= "</a></td>";
-  } else {
-    $html .= "<td><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
-    $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
-    $html .= "</a></td>";
-  }
-  if ($sort == "team") {
-    $html .= "<td class='highlight'>" . utf8entities($row['teamname']) . "</td>";
-  } else {
-    $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
-  }
-  if ($sort == "games") {
-    $html .= "<td class='center highlight'>" . intval($row['games']) . "</td>";
-  } else {
-    $html .= "<td class='center'>" . intval($row['games']) . "</td>";
-  }
-  if ($sort == "pass") {
-    $html .= "<td class='center highlight'>" . intval($row['fedin']) . "</td>";
-  } else {
-    $html .= "<td class='center'>" . intval($row['fedin']) . "</td>";
-  }
-  if ($sort == "goal") {
-    $html .= "<td class='center highlight'>" . intval($row['done']) . "</td>";
-  } else {
-    $html .= "<td class='center'>" . intval($row['done']) . "</td>";
-  }
+if ($scores) {
+  while ($row = mysqli_fetch_assoc($scores)) {
+    $html .= "<tr>";
+    $html .= "<td>" . $i++ . "</td>";
+    if ($sort == "name") {
+      $html .= "<td class='highlight'><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
+      $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
+      $html .= "</a></td>";
+    } else {
+      $html .= "<td><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
+      $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
+      $html .= "</a></td>";
+    }
+    if ($sort == "team") {
+      $html .= "<td class='highlight'>" . utf8entities($row['teamname']) . "</td>";
+    } else {
+      $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
+    }
+    if ($sort == "games") {
+      $html .= "<td class='center highlight'>" . intval($row['games']) . "</td>";
+    } else {
+      $html .= "<td class='center'>" . intval($row['games']) . "</td>";
+    }
+    if ($sort == "pass") {
+      $html .= "<td class='center highlight'>" . intval($row['fedin']) . "</td>";
+    } else {
+      $html .= "<td class='center'>" . intval($row['fedin']) . "</td>";
+    }
+    if ($sort == "goal") {
+      $html .= "<td class='center highlight'>" . intval($row['done']) . "</td>";
+    } else {
+      $html .= "<td class='center'>" . intval($row['done']) . "</td>";
+    }
 
-  if ($sort == "callahan") {
-    $html .= "<td class='center highlight'>" . intval($row['callahan']) . "</td>";
-  } else {
-    $html .= "<td class='center'>" . intval($row['callahan']) . "</td>";
-  }
+    if ($sort == "callahan") {
+      $html .= "<td class='center highlight'>" . intval($row['callahan']) . "</td>";
+    } else {
+      $html .= "<td class='center'>" . intval($row['callahan']) . "</td>";
+    }
 
-  if ($sort == "total") {
-    $html .= "<td class='center highlight'>" . intval($row['total']) . "</td></tr>";
-  } else {
-    $html .= "<td class='center'>" . intval($row['total']) . "</td></tr>";
+    if ($sort == "total") {
+      $html .= "<td class='center highlight'>" . intval($row['total']) . "</td></tr>";
+    } else {
+      $html .= "<td class='center'>" . intval($row['total']) . "</td></tr>";
+    }
   }
 }
 

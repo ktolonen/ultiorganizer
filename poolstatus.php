@@ -607,15 +607,16 @@ function printPlayoffTree($seasoninfo, $poolinfo)
             $reverse = true;
           }
           foreach ($results as $res) {
+            $resIsOngoing = !empty($res['isongoing']);
             if ($reverse) {
               $dummy = $res['homescore'];
               $res['homescore'] = $res['visitorscore'];
               $res['visitorscore'] = $dummy;
             }
-            if ($res['scoresheet'] && !$res['isongoing']) {
+            if ($res['scoresheet'] && !$resIsOngoing) {
               $game .= "<a href='?view=gameplay&amp;game=" . $res['game_id'] . "'>";
               $game .= $res['homescore'] . "-" . $res['visitorscore'] . "</a> ";
-            } elseif (GameHasStarted($res) > 0 && !$res['isongoing']) {
+            } elseif (GameHasStarted($res) > 0 && !$resIsOngoing) {
               $game .= $res['homescore'] . "-" . $res['visitorscore'];
             } elseif (!empty($res['gamename'])) {
               $game .= "<span class='lowlight'>" . utf8entities(U_($res['gamename'])) . "</span>";
@@ -744,7 +745,9 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
 
     // $goals = intval($game['homescore'])+intval($game['visitorscore']);
 
-    if (GameHasStarted($game) && !intval($game['isongoing']) && $game['hometeam'] && $game['visitorteam']) {
+    $gameIsOngoing = !empty($game['isongoing']);
+    $gameHasStarted = GameHasStarted($game);
+    if ($gameHasStarted && !$gameIsOngoing && $game['hometeam'] && $game['visitorteam']) {
       if (intval($game['homescore']) > intval($game['visitorscore'])) {
         $ret .= "<td style='" . $winnerpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
         $ret .= "<td class='center'>-</td>\n";
@@ -772,18 +775,18 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
       }
     }
 
-    if (!GameHasStarted($game)) {
+    if (!$gameHasStarted) {
       $ret .= "<td>?</td>\n";
       $ret .= "<td>-</td>\n";
       $ret .= "<td>?</td>\n";
     } else {
-      if ($game['isongoing'])
+      if ($gameIsOngoing)
         $ret .= "<td><em>" . intval($game['homescore']) . "</em></td><td>-</td><td><em>" . intval($game['visitorscore']) . "</em></td>\n";
       else
         $ret .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>\n";
     }
 
-    if (!intval($game['isongoing'])) {
+    if (!$gameIsOngoing) {
       if (intval($game['scoresheet'])) {
         $ret .= "<td class='right'>&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
         $ret .= _("Game play") . "</a></td>\n";
