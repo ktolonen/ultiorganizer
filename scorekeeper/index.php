@@ -38,6 +38,9 @@ if (isset($_POST['myusername'])) {
 	UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "");
 }
 
+if (!isset($_SESSION['uid'])) {
+	$_SESSION['uid'] = "anonymous";
+}
 $user = $_SESSION['uid'];
 
 if (!isset($_SESSION['VISIT_COUNTER'])) {
