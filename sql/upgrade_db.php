@@ -769,6 +769,21 @@ function upgrade77()
 	runQuery("ALTER TABLE uo_registerrequest MODIFY password varchar(255) DEFAULT NULL");
 }
 
+function upgrade78()
+{
+	addIndex("uo_game_pool", "idx_pool_timetable_game", "(pool, timetable, game)");
+	addIndex("uo_goal", "idx_goal_game_scorer", "(game, scorer)");
+	addIndex("uo_goal", "idx_goal_game_assist", "(game, assist)");
+	addIndex("uo_goal", "idx_goal_game_callahan_scorer", "(game, iscallahan, scorer)");
+	addIndex("uo_game", "idx_game_valid_time", "(valid, time)");
+	addIndex("uo_game", "idx_game_valid_pool_time", "(valid, pool, time)");
+	addIndex("uo_game", "idx_game_valid_hometeam_time", "(valid, hometeam, time)");
+	addIndex("uo_game", "idx_game_valid_visitorteam_time", "(valid, visitorteam, time)");
+	addIndex("uo_reservation", "idx_reservation_group_time_loc_field", "(reservationgroup, starttime, location, fieldname)");
+	addIndex("uo_pool", "idx_pool_series_ordering", "(series, ordering)");
+	addIndex("uo_series", "idx_series_season_ordering", "(season, ordering)");
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';
@@ -827,6 +842,25 @@ function hasColumn($table, $column)
 		return false;
 	}
 	return mysqli_num_rows($result) > 0;
+}
+
+function hasIndex($table, $index)
+{
+	global $mysqlconnectionref;
+	$indexQuery = sprintf("SHOW INDEX FROM `%s` WHERE Key_name = '%s'", $table, DBEscapeString($index));
+	$result = mysqli_query($mysqlconnectionref, $indexQuery);
+	if (!$result) {
+		return false;
+	}
+	return mysqli_num_rows($result) > 0;
+}
+
+function addIndex($table, $index, $definition)
+{
+	if (hasIndex($table, $index)) {
+		return;
+	}
+	runQuery(sprintf("ALTER TABLE `%s` ADD INDEX `%s` %s", $table, $index, $definition));
 }
 
 /**

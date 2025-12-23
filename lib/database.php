@@ -130,10 +130,6 @@ function getDBVersion()
   global $mysqlconnectionref;
   $query = "SELECT max(version) as version FROM uo_database";
   $result = mysqli_query($mysqlconnectionref, $query);
-  if (!$result) {
-    $query = "SELECT max(version) as version FROM pelik_database";
-    $result = mysqli_query($mysqlconnectionref, $query);
-  }
   if (!$result) return 0;
   if (!$row = mysqli_fetch_assoc($result)) {
     return 0;

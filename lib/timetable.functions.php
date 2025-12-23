@@ -2,6 +2,23 @@
 include_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
 
+function CollectGameIdsFromResult($games)
+{
+  $ids = array();
+  if (!$games) {
+    return $ids;
+  }
+  while ($row = mysqli_fetch_assoc($games)) {
+    if (isset($row['game_id'])) {
+      $ids[] = (int)$row['game_id'];
+    }
+  }
+  if (!empty($ids)) {
+    mysqli_data_seek($games, 0);
+  }
+  return $ids;
+}
+
 function TournamentView($games, $grouping = true)
 {
 
@@ -15,6 +32,7 @@ function TournamentView($games, $grouping = true)
   $prevTimezone = "";
   $isTableOpen = false;
   $rss = IsGameRSSEnabled();
+  $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
   while ($game = mysqli_fetch_assoc($games)) {
     $ret .= "\n<!-- res:" . $game['reservationgroup'] . " pool:" . $game['pool'] . " date:" . JustDate($game['starttime']) . "-->\n";
@@ -60,7 +78,7 @@ function TournamentView($games, $grouping = true)
 
     if ($isTableOpen) {
       //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-      $ret .= GameRow($game, false, true, true, false, false, true, $rss);
+      $ret .= GameRow($game, false, true, true, false, false, true, $rss, true, $mediaUrlsByGame);
     }
 
     $prevTournament = $game['reservationgroup'];
@@ -90,6 +108,7 @@ function SeriesView($games, $date = true, $time = false)
   $prevTimezone = "";
   $isTableOpen = false;
   $rss = IsGameRSSEnabled();
+  $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
   while ($game = mysqli_fetch_assoc($games)) {
     if (
@@ -115,7 +134,7 @@ function SeriesView($games, $date = true, $time = false)
     }
 
     //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-    $ret .= GameRow($game, true, true, true, false, false, true, $rss);
+    $ret .= GameRow($game, true, true, true, false, false, true, $rss, true, $mediaUrlsByGame);
 
     $prevTournament = $game['reservationgroup'];
     $prevPlace = $game['place_id'];
@@ -145,6 +164,7 @@ function PlaceView($games, $grouping = true)
   $prevTimezone = "";
   $isTableOpen = false;
   $rss = IsGameRSSEnabled();
+  $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
   while ($game = mysqli_fetch_assoc($games)) {
     if (
@@ -184,7 +204,7 @@ function PlaceView($games, $grouping = true)
 
     if ($isTableOpen) {
       //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-      $ret .= GameRow($game, false, true, false, true, true, true, $rss);
+      $ret .= GameRow($game, false, true, false, true, true, true, $rss, true, $mediaUrlsByGame);
     }
 
     $prevTournament = $game['reservationgroup'];
@@ -210,6 +230,7 @@ function TimeView($games, $grouping = true)
   $prevTime = "";
   $isTableOpen = false;
   $rss = IsGameRSSEnabled();
+  $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
   while ($game = mysqli_fetch_assoc($games)) {
     if ($game['time'] != $prevTime) {
@@ -225,7 +246,7 @@ function TimeView($games, $grouping = true)
 
     if ($isTableOpen) {
       //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-      $ret .= GameRow($game, false, false, true, true, true, true, $rss);
+      $ret .= GameRow($game, false, false, true, true, true, true, $rss, true, $mediaUrlsByGame);
     }
 
     $prevTime = $game['time'];
@@ -437,7 +458,7 @@ function SeriesAndPoolHeaders($info)
   return $ret;
 }
 
-function GameRow($game, $date = false, $time = true, $field = true, $series = false, $pool = false, $info = true, $rss = false, $media = true)
+function GameRow($game, $date = false, $time = true, $field = true, $series = false, $pool = false, $info = true, $rss = false, $media = true, $mediaUrlsByGame = null)
 {
   $datew = 'width:60px';
   $timew = 'width:40px';
@@ -513,7 +534,12 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
   }
 
   if ($media) {
-    $urls = GetMediaUrlList("game", $game['game_id'], "live");
+    if (is_array($mediaUrlsByGame)) {
+      $gameId = (string)$game['game_id'];
+      $urls = isset($mediaUrlsByGame[$gameId]) ? $mediaUrlsByGame[$gameId] : array();
+    } else {
+      $urls = GetMediaUrlList("game", $game['game_id'], "live");
+    }
     $ret .= "<td style='$mediaw;white-space: nowrap;'>";
     if (count($urls) && (intval($game['isongoing']) || !GameHasStarted($game))) {
       foreach ($urls as $url) {

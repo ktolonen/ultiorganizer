@@ -60,6 +60,20 @@ function CountryList($onlyvalid = true, $onlyplayed = false)
   return  DBQueryToArray($query);
 }
 
+function HasPlayableCountries()
+{
+  $query = "SELECT 1
+    FROM uo_country c
+    WHERE c.valid=1
+      AND EXISTS (
+        SELECT 1
+        FROM uo_team team
+        WHERE team.country = c.country_id
+      )
+    LIMIT 1";
+  return (bool)DBQueryToValue($query);
+}
+
 function CountryDropList($id, $name)
 {
   $html = "";

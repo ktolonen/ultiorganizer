@@ -71,11 +71,46 @@ function GetMediaUrlList($owner, $ownerId, $type = "")
 			DBEscapeString($ownerId)
 		);
 	}
-	if (!empty($filter)) {
-		$query .= sprintf(" AND type='%s'", DBEscapeString($type));
+	if (!empty($type)) {
+		$query .= sprintf(" AND urls.type='%s'", DBEscapeString($type));
 	}
 
 	return DBQueryToArray($query);
+}
+
+function GetMediaUrlListForGames($gameIds, $type = "")
+{
+	$ids = array();
+	foreach ($gameIds as $gameId) {
+		$gameId = (int)$gameId;
+		if ($gameId > 0) {
+			$ids[] = $gameId;
+		}
+	}
+	if (empty($ids)) {
+		return array();
+	}
+
+	$query = "SELECT urls.*, u.name AS publisher, e.time
+		FROM uo_urls urls 
+		LEFT JOIN uo_users u ON (u.id=urls.publisher_id)
+		LEFT JOIN uo_gameevent e ON (e.info=urls.url_id)
+		WHERE urls.owner='game' AND urls.owner_id IN (" . implode(",", $ids) . ") AND urls.ismedialink=1";
+	if (!empty($type)) {
+		$query .= sprintf(" AND urls.type='%s'", DBEscapeString($type));
+	}
+
+	$rows = DBQueryToArray($query);
+	$byGame = array();
+	foreach ($rows as $row) {
+		$ownerId = $row['owner_id'];
+		if (!isset($byGame[$ownerId])) {
+			$byGame[$ownerId] = array();
+		}
+		$byGame[$ownerId][] = $row;
+	}
+
+	return $byGame;
 }
 
 function GetUrlTypes()

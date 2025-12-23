@@ -110,7 +110,7 @@ function CurrentSeasonName()
     );
     return U_(DBQueryToValue($query));
   }
-  $query = sprintf("SELECT name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
+  $query = sprintf("SELECT name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC LIMIT 1");
   return U_(DBQueryToValue($query));
 }
 

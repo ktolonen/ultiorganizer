@@ -8,7 +8,7 @@ include_once $include_prefix . 'lib/debug.functions.php';
 function IsSeasonStatsCalculated($season)
 {
 	$query = sprintf(
-		"SELECT count(*) FROM uo_season_stats WHERE season='%s'",
+		"SELECT 1 FROM uo_season_stats WHERE season='%s' LIMIT 1",
 		DBEscapeString($season)
 	);
 	return DBQueryToValue($query);
@@ -16,7 +16,7 @@ function IsSeasonStatsCalculated($season)
 
 function IsStatsDataAvailable()
 {
-	return DBQueryToValue("SELECT count(*) FROM uo_season_stats");
+	return DBQueryToValue("SELECT 1 FROM uo_season_stats LIMIT 1");
 }
 
 function DeleteSeasonStats($season)

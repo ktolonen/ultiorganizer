@@ -35,7 +35,7 @@ function PoolInfo($poolId)
   $query = sprintf(
     "SELECT pool.*, ser.name AS seriesname, ser.season FROM uo_pool pool
         LEFT JOIN uo_series ser ON(pool.series=ser.series_id)
-        WHERE pool.pool_id=%d",
+        WHERE pool.pool_id=%d LIMIT 1",
     (int)$poolId
   );
   return DBQueryToRow($query, true);
