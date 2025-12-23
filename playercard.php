@@ -67,7 +67,7 @@ if ($profile) {
     $html .= "<tr><td class='profileheader'>" . _("Nickname") . ":</td>";
     $html .= "<td>" . utf8entities($profile['nickname']) . "</td></tr>\n";
   }
-  if (!isEmptyDate($profile['birthdate']) && in_array("birthdate", $publicfields)) {
+  if (isset($profile['birthdate']) && !isEmptyDate($profile['birthdate']) && in_array("birthdate", $publicfields)) {
     $html .= "<tr><td class='profileheader'>" . _("Date of birth") . ":</td>";
     $html .= "<td>" . ShortDate($profile['birthdate']) . "</td></tr>\n";
   }

@@ -420,6 +420,7 @@ class PDF extends FPDF
 		$fieldstotal = 0;
 
 		$isTableOpen = false;
+		$pageAdded = false;
 
 		$field = 0;
 		$time_offset = $top_margin + $yfieldtitle;
@@ -439,10 +440,11 @@ class PDF extends FPDF
 			}
 
 			//one reservation group per page
-			if ((!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament)
+			if (!$pageAdded || (!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament)
 				|| (!empty($prevDate) && JustDate($game['starttime']) != $prevDate)
 			) {
 				$this->AddPage("L", "A3");
+				$pageAdded = true;
 				$times = TimetableTimeslots($game['reservationgroup'], $id);
 				$timeslots = array();
 				$tmptimes = array();

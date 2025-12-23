@@ -450,6 +450,12 @@ function textColor($bgcolor)
 
 function RGBtoRGBa($rgbstring, $alpha)
 {
+	if (is_string($rgbstring) && strlen($rgbstring) > 0 && $rgbstring[0] === '#') {
+		$rgbstring = substr($rgbstring, 1);
+	}
+	if (!is_string($rgbstring) || strlen($rgbstring) < 6) {
+		$rgbstring = "000000";
+	}
 	$r = $rgbstring[0] . $rgbstring[1];
 	$g = $rgbstring[2] . $rgbstring[3];
 	$b = $rgbstring[4] . $rgbstring[5];
