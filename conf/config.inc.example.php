@@ -1,6 +1,6 @@
 <?php
 /**
-MySQL Settings - you can get this information from your web hosting company.
+* MySQL Settings - you can get this information from your web hosting company.
 */
 define('DB_HOST', 'localhost');
 define('DB_USER', 'ultiorganizer');
@@ -8,7 +8,7 @@ define('DB_PASSWORD', 'ultiorganizer');
 define('DB_DATABASE', 'ultiorganizer');
 
 /**
-Server Defaults.
+* Server Defaults.
 */
 define('BASEURL', 'http://localhost/ultiorganizer');
 define('UPLOAD_DIR', 'images/uploads/');

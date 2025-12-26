@@ -10,7 +10,7 @@ if ($configPath) {
   include_once $configPath;
 } else {
   http_response_code(500);
-  die("Missing configuration. Copy conf/config.inc.php.example to conf/config.inc.php (or conf/<host>.config.inc.php) and update it.");
+  die("Missing configuration. Run install.php or setup conf/config.inc.php manually.");
 }
 
 if (is_file('install.php') && (!defined('ALLOW_INSTALL') || !ALLOW_INSTALL)) {
