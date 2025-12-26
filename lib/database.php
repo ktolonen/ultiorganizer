@@ -87,6 +87,13 @@ function CheckDB()
   // Ensure we always start from the first available upgrade function (upgrade46).
   $installedDb = (int)getDBVersion();
   $startVersion = max($installedDb, 46);
+  $installedVersions = array();
+  $versionResult = mysqli_query($GLOBALS['mysqlconnectionref'], "SELECT version FROM uo_database WHERE version IS NOT NULL");
+  if ($versionResult) {
+    while ($row = mysqli_fetch_assoc($versionResult)) {
+      $installedVersions[(int)$row['version']] = true;
+    }
+  }
 
   for ($i = $startVersion; $i <= DB_VERSION; $i++) {
     $upgradeFunc = 'upgrade' . $i;
@@ -94,10 +101,23 @@ function CheckDB()
       continue;
     }
 
+    $nextVersion = $i + 1;
+    if (isset($installedVersions[$nextVersion])) {
+      continue;
+    }
+
     LogDbUpgrade($i);
     $upgradeFunc();
-    $query = sprintf("insert into uo_database (version, updated) values (%d, now())", $i + 1);
+    $query = sprintf(
+      "INSERT INTO uo_database (version, updated)
+       SELECT %d, NOW()
+       FROM DUAL
+       WHERE NOT EXISTS (SELECT 1 FROM uo_database WHERE version=%d)",
+      $nextVersion,
+      $nextVersion
+    );
     runQuery($query);
+    $installedVersions[$nextVersion] = true;
     LogDbUpgrade($i, true);
   }
 }

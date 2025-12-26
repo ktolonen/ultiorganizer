@@ -22,7 +22,8 @@ CREATE TABLE IF NOT EXISTS `uo_club` (
   `valid` tinyint(4) NOT NULL DEFAULT 1,
   `profile_image` varchar(20) DEFAULT NULL,
   `founded` int(4) DEFAULT NULL,
-  PRIMARY KEY (`club_id`)
+  PRIMARY KEY (`club_id`),
+  KEY `fk_club_country` (`country`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -253,7 +254,8 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 
 CREATE TABLE IF NOT EXISTS `uo_database` (
   `version` int(10) DEFAULT NULL,
-  `updated` datetime DEFAULT NULL
+  `updated` datetime DEFAULT NULL,
+  UNIQUE KEY `idx_uo_database_version` (`version`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
@@ -312,7 +314,8 @@ CREATE TABLE IF NOT EXISTS `uo_enrolledteam` (
   `enroll_time` datetime DEFAULT NULL,
   `countryname` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_series` (`series`)
+  KEY `idx_series` (`series`),
+  KEY `fk_enrolledteam_user` (`userid`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_event_log` (
@@ -332,14 +335,16 @@ CREATE TABLE IF NOT EXISTS `uo_event_log` (
 CREATE TABLE IF NOT EXISTS `uo_extraemail` (
   `userid` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
-  PRIMARY KEY (`email`)
+  PRIMARY KEY (`email`),
+  KEY `fk_extraemail_user` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_extraemailrequest` (
   `userid` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `token` varchar(100) DEFAULT NULL,
-  PRIMARY KEY (`email`)
+  PRIMARY KEY (`email`),
+  KEY `fk_extraemailrequest_user` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS `uo_game` (
   `game_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -367,6 +372,7 @@ CREATE TABLE IF NOT EXISTS `uo_game` (
   KEY `idx_hometeam` (`hometeam`),
   KEY `idx_visitorteam` (`visitorteam`),
   KEY `idx_reservation` (`reservation`),
+  KEY `idx_game_id` (`game_id`),
   KEY `idx_name` (`name`),
   KEY `idx_pool` (`pool`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -489,7 +495,9 @@ CREATE TABLE IF NOT EXISTS `uo_movingtime` (
   `tofield` varchar(50) NOT NULL,
   `time` int(10) DEFAULT 0,
   PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`),
-  KEY `idx_season` (`season`)
+  KEY `idx_season` (`season`),
+  KEY `fk_movingtime_fromlocation` (`fromlocation`),
+  KEY `fk_movingtime_tolocation` (`tolocation`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_pageload_counter` (
@@ -715,7 +723,8 @@ CREATE TABLE IF NOT EXISTS `uo_series` (
   `color` varchar(6) DEFAULT NULL,
   `pool_template` int(10) DEFAULT NULL,
   PRIMARY KEY (`series_id`),
-  KEY `idx_season` (`season`)
+  KEY `idx_season` (`season`),
+  KEY `fk_series_pooltemplate` (`pool_template`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -743,13 +752,14 @@ CREATE TABLE IF NOT EXISTS `uo_setting` (
 INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('CurrentSeason', NULL, 1),
 	('HomeTeamResponsible', 'yes', 2),
-	('GoogleMapsAPIKey', NULL, 3),
-	('EmailSource', 'ultiorganizer@diibadaaba.net', 4),
+	('GoogleMapsAPIKey', '', 3),
+	('EmailSource', 'ultiorganizer@example.com', 4),
 	('GameRSSEnabled', 'false', 5),
 	('PageTitle', 'Ultiorganizer - ', 6),
 	('DefaultTimezone', 'Europe/Helsinki', 7),
 	('DefaultLocale', 'en_GB.utf8', 8),
-	('ShowDefenseStats', 'false', 9);
+	('ShowDefenseStats', 'false', 9),
+	('AdminEmail', 'ultiorganizer_admin@example.com', 10);
 
 CREATE TABLE IF NOT EXISTS `uo_sms` (
   `sms_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -821,7 +831,9 @@ CREATE TABLE IF NOT EXISTS `uo_spirit_score` (
   `team_id` int(10) NOT NULL,
   `category_id` int(10) NOT NULL,
   `value` int(3) DEFAULT NULL,
-  PRIMARY KEY (`game_id`,`team_id`,`category_id`)
+  PRIMARY KEY (`game_id`,`team_id`,`category_id`),
+  KEY `fk_spirit_score_team` (`team_id`),
+  KEY `fk_spirit_score_category` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_team` (
@@ -872,9 +884,11 @@ CREATE TABLE IF NOT EXISTS `uo_team_stats` (
   `goals_against` int(5) DEFAULT 0,
   `standing` int(5) DEFAULT 0,
   `wins` int(5) DEFAULT 0,
-  `losses` int(5) DEFAULT 0,
+  `losses` int(5) DEFAULT NULL,
   `defenses_total` int(5) DEFAULT 0,
-  PRIMARY KEY (`team_id`)
+  PRIMARY KEY (`team_id`),
+  KEY `fk_team_stats_series` (`series`),
+  KEY `fk_team_stats_season` (`season`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -910,9 +924,9 @@ CREATE TABLE IF NOT EXISTS `uo_urls` (
   KEY `idx_owner_id` (`owner_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-INSERT IGNORE INTO `uo_urls` (`url_id`, `owner`, `owner_id`, `type`, `name`, `url`, `ismedialink`, `mediaowner`, `publisher_id`, `ordering`) VALUES
-	(1, 'ultiorganizer', '0', 'menulink', 'Powered by Ultiorganizer', 'https://github.com/ktolonen/ultiorganizer/', 0, NULL, NULL, ''),
-	(2, 'ultiorganizer', '0', 'menumail', 'Administration', 'admin@example.com', 0, NULL, NULL, '');
+INSERT IGNORE INTO `uo_urls` (`url_id`, `owner`, `owner_id`, `type`, `name`, `url`, `ordering`, `ismedialink`, `mediaowner`, `publisher_id`) VALUES
+	(1, 'ultiorganizer', '0', 'menulink', 'Powered by Ultiorganizer', 'https://github.com/ktolonen/ultiorganizer/', '', 0, NULL, NULL),
+	(2, 'ultiorganizer', '0', 'menumail', 'Administration', 'admin@example.com', '', 0, NULL, NULL);
 
 CREATE TABLE IF NOT EXISTS `uo_userproperties` (
   `prop_id` int(10) NOT NULL AUTO_INCREMENT,
