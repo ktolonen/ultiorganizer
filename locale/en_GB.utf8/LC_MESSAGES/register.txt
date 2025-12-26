@@ -1,6 +1,6 @@
-This email has been sent to you as a response to a request to register at $ultiorganizer.
+This email has been sent to you in response to a request to register on $ultiorganizer.
 
-Please follow the link below or cut-and-paste it to a browser address bar to confirm your
-registration 
+Please follow the link below, or copy and paste it into your browser's address bar, to confirm your
+registration.
 
 $url

@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/location.functions.php';
 
@@ -20,6 +21,7 @@ if (!empty($_GET['season'])) {
 $res = array(
   "id" => $reservationId,
   "location" => "",
+  "locationName" => "",
   "fieldname" => "",
   "reservationgroup" => "",
   "date" => "",
@@ -33,6 +35,7 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
 
   $res['id'] = isset($_POST['id']) ? $_POST['id'] : 0;
   $res['location'] = isset($_POST['location']) ? $_POST['location'] : 0;
+  $res['locationName'] = isset($_POST['locationName']) ? $_POST['locationName'] : "";
   $res['fieldname'] = isset($_POST['fieldname']) ? $_POST['fieldname'] : "";
   $res['reservationgroup'] = isset($_POST['reservationgroup']) ? $_POST['reservationgroup'] : "";
   $res['date'] = isset($_POST['date']) ? $_POST['date'] : "1.1.19710";
@@ -42,7 +45,10 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
   $res['timeslots'] = isset($_POST['timeslots']) ? $_POST['timeslots'] : "";
   $res['season'] = isset($_POST['resseason']) ? $_POST['resseason'] : $season;
 
-  if ($res['id'] > 0) {
+  $locationInfo = ($res['location'] > 0) ? LocationInfo($res['location']) : null;
+  if (empty($locationInfo)) {
+    $html .= "<p>" . _("Select a valid location from the list or add it first.") . "</p>";
+  } elseif ($res['id'] > 0) {
     SetReservation($res['id'], $res);
   } else {
     //check if adding more than 1 field
@@ -64,18 +70,20 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
     $i = 0;
     $html .= "<p>" . _("Reservations added") . ":</p>";
     $html .= "<ul>";
-    $locinfo = LocationInfo($res['location']);
+    $locinfo = $locationInfo;
     $allfields = $res['fieldname'];
     foreach ($fields as $field) {
       $res['fieldname'] = $field;
       $reservationId = AddReservation($res);
-      $html .= "<li>" . $res['reservationgroup'] . ": " . DefWeekDateFormat($res['date']) . " ";
+      $displayDate = DefWeekDateFormat($res['starttime'] ?: $res['date']);
+      $html .= "<li>" . $res['reservationgroup'] . ": " . $displayDate . " ";
       if (!empty($res['timeslots'])) {
         $html .= $res['timeslots'] . " ";
       } else {
         $html .=  DefHourFormat($res['starttime']) . "-" . DefHourFormat($res['endtime']) . " ";
       }
-      $html .=  $locinfo['name'] . " " . _("field") . " " . $field;
+      $locationName = isset($locinfo['name']) ? $locinfo['name'] : _("Unknown location");
+      $html .=  $locationName . " " . _("field") . " " . $field;
       $html .= "</li>";
     }
     $html .= "</ul><hr/>";
@@ -157,6 +165,7 @@ if ($reservationId > 0) {
   $res['endtime'] = DefHourFormat($reservationInfo['endtime']);
   $res['season'] = $reservationInfo['season'];
   $res['timeslots'] = $reservationInfo['timeslots'];
+  $res['locationName'] = isset($reservationInfo['name']) ? $reservationInfo['name'] : "";
   if (!empty($allfields)) {
     $res['fieldname'] = $allfields;
   }
@@ -200,10 +209,12 @@ $html .= "</td></tr>\n";
 
 $html .= "<tr><td>&nbsp;</td><td><div id='locationAutocomplete' class='yui-skin-sam'>";
 $html .= "<input class='input' id='locationName' size='30' type='text' style='width:200px' name='locationName' value='";
-if ($res['location'] > 0) {
+$locationInputValue = $res['locationName'];
+if (empty($locationInputValue) && $res['location'] > 0) {
   $location_info = LocationInfo($res['location']);
-  $html .= utf8entities($location_info['name']);
+  $locationInputValue = isset($location_info['name']) ? $location_info['name'] : "";
 }
+$html .= utf8entities($locationInputValue);
 $html .= "'/><div style='width:400px' id='locationContainer'></div></div>\n";
 $html .= "</td></tr>\n";
 $html .= "<tr><td>" . _("Location") . ":</td><td>";
@@ -276,6 +287,14 @@ echo $html;
       return (aMarkup.join(""));
     };
     locationAutoComp.itemSelectEvent.subscribe(locationSelectHandler);
+    YAHOO.util.Event.addListener("locationName", "keyup", function(e) {
+      var keyCode = e ? e.keyCode : 0;
+      // Keep the selection when user confirms with enter, tab or arrow keys.
+      if (keyCode === 9 || keyCode === 13 || (keyCode >= 37 && keyCode <= 40)) {
+        return;
+      }
+      document.getElementById("location").value = "";
+    });
     return {
       oDS: locationSource,
       oAC: locationAutoComp

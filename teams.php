@@ -19,6 +19,15 @@ if (empty($list)) {
 }
 
 $seasonInfo = SeasonInfo($season);
+if (!$seasonInfo) {
+  $seasonInfo = array(
+    'season_id' => $season,
+    'showspiritpoints' => 0,
+    'isnationalteams' => 0,
+    'isinternational' => 0,
+    'spiritmode' => 0,
+  );
+}
 $series = SeasonSeries($season, true);
 
 $menutabs[_("By division")] = "?view=teams&season=$season&list=allteams";
@@ -244,7 +253,8 @@ if ($list == "allteams" || $list == "byseeding") {
       $spiritAvg = SeriesSpiritBoard($row['series_id']);
 
       usort($spiritAvg, function ($a, $b) {
-        return $a['total'] < $b['total'];
+        // Sort teams by total spirit points in descending order.
+        return $b['total'] <=> $a['total'];
       });
       $html .= "<div class='TableContainer3'>\n";
       $html .= "<table cellspacing='0' border='0' width='100%'>\n";

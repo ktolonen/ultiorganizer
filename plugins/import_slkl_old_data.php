@@ -39,18 +39,18 @@ if (isset($_POST['import'])) {
 			while (($data = fgetcsv($handle, 0, $separator)) !== FALSE) {
 
 				if ($table_type == "team") {
-					$team = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-					$class = $utf8 ? trim($data[1]) : utf8_encode(trim($data[1]));
-					$name = $utf8 ? trim($data[2]) : utf8_encode(trim($data[2]));
-					$points = $utf8 ? trim($data[3]) : utf8_encode(trim($data[3]));
-					$division = $utf8 ? trim($data[4]) : utf8_encode(trim($data[4]));
-					$contactperson  = $utf8 ? trim($data[5]) : utf8_encode(trim($data[5]));
-					$clubname = $utf8 ? trim($data[6]) : utf8_encode(trim($data[6]));
-					$extra = $utf8 ? trim($data[7]) : utf8_encode(trim($data[7]));
-					$rank = $utf8 ? trim($data[8]) : utf8_encode(trim($data[8]));
-					$it_level = $utf8 ? trim($data[9]) : utf8_encode(trim($data[9]));
-					$activerank = $utf8 ? trim($data[10]) : utf8_encode(trim($data[10]));
-					$valid = $utf8 ? trim($data[11]) : utf8_encode(trim($data[11]));
+					$team = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+					$class = $utf8 ? trim($data[1]) : convertToUtf8(trim($data[1]));
+					$name = $utf8 ? trim($data[2]) : convertToUtf8(trim($data[2]));
+					$points = $utf8 ? trim($data[3]) : convertToUtf8(trim($data[3]));
+					$division = $utf8 ? trim($data[4]) : convertToUtf8(trim($data[4]));
+					$contactperson  = $utf8 ? trim($data[5]) : convertToUtf8(trim($data[5]));
+					$clubname = $utf8 ? trim($data[6]) : convertToUtf8(trim($data[6]));
+					$extra = $utf8 ? trim($data[7]) : convertToUtf8(trim($data[7]));
+					$rank = $utf8 ? trim($data[8]) : convertToUtf8(trim($data[8]));
+					$it_level = $utf8 ? trim($data[9]) : convertToUtf8(trim($data[9]));
+					$activerank = $utf8 ? trim($data[10]) : convertToUtf8(trim($data[10]));
+					$valid = $utf8 ? trim($data[11]) : convertToUtf8(trim($data[11]));
 
 					if (!intval($team)) {
 						//$html .= "<p>Not team $team</p>";
@@ -65,22 +65,22 @@ if (isset($_POST['import'])) {
 					$html .= "<p>New $name</p>";
 				} elseif ($table_type == "division") {
 
-					$divisionId = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-					$name = $utf8 ? trim($data[1]) : utf8_encode(trim($data[1]));
-					$seasonId = $utf8 ? trim($data[2]) : utf8_encode(trim($data[2]));
-					$classes = $utf8 ? trim($data[3]) : utf8_encode(trim($data[3]));
-					$showteams = $utf8 ? trim($data[4]) : utf8_encode(trim($data[4]));
-					$continuation  = $utf8 ? trim($data[5]) : utf8_encode(trim($data[5]));
-					$initial = $utf8 ? trim($data[6]) : utf8_encode(trim($data[6]));
-					$teams = $utf8 ? trim($data[7]) : utf8_encode(trim($data[7]));
-					$mvgames = $utf8 ? trim($data[8]) : utf8_encode(trim($data[8]));
-					$timeouts = $utf8 ? trim($data[9]) : utf8_encode(trim($data[9]));
-					$halftime = $utf8 ? trim($data[10]) : utf8_encode(trim($data[10]));
-					$gameto = $utf8 ? trim($data[11]) : utf8_encode(trim($data[11]));
-					$timecap = $utf8 ? trim($data[12]) : utf8_encode(trim($data[12]));
-					$pointcap = $utf8 ? trim($data[13]) : utf8_encode(trim($data[13]));
-					$showserstat = $utf8 ? trim($data[14]) : utf8_encode(trim($data[14]));
-					$type = $utf8 ? trim($data[15]) : utf8_encode(trim($data[15]));
+					$divisionId = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+					$name = $utf8 ? trim($data[1]) : convertToUtf8(trim($data[1]));
+					$seasonId = $utf8 ? trim($data[2]) : convertToUtf8(trim($data[2]));
+					$classes = $utf8 ? trim($data[3]) : convertToUtf8(trim($data[3]));
+					$showteams = $utf8 ? trim($data[4]) : convertToUtf8(trim($data[4]));
+					$continuation  = $utf8 ? trim($data[5]) : convertToUtf8(trim($data[5]));
+					$initial = $utf8 ? trim($data[6]) : convertToUtf8(trim($data[6]));
+					$teams = $utf8 ? trim($data[7]) : convertToUtf8(trim($data[7]));
+					$mvgames = $utf8 ? trim($data[8]) : convertToUtf8(trim($data[8]));
+					$timeouts = $utf8 ? trim($data[9]) : convertToUtf8(trim($data[9]));
+					$halftime = $utf8 ? trim($data[10]) : convertToUtf8(trim($data[10]));
+					$gameto = $utf8 ? trim($data[11]) : convertToUtf8(trim($data[11]));
+					$timecap = $utf8 ? trim($data[12]) : convertToUtf8(trim($data[12]));
+					$pointcap = $utf8 ? trim($data[13]) : convertToUtf8(trim($data[13]));
+					$showserstat = $utf8 ? trim($data[14]) : convertToUtf8(trim($data[14]));
+					$type = $utf8 ? trim($data[15]) : convertToUtf8(trim($data[15]));
 					if (!intval($divisionId)) {
 						continue;
 					}
@@ -120,19 +120,19 @@ if (isset($_POST['import'])) {
 					$html .= "<p>New $name</p>";
 				} elseif ($table_type == "game") {
 
-					$gameId = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-					$hometeam = $utf8 ? trim($data[1]) : utf8_encode(trim($data[1]));
-					$awayteam = $utf8 ? trim($data[2]) : utf8_encode(trim($data[2]));
-					$homescores = $utf8 ? trim($data[3]) : utf8_encode(trim($data[3]));
-					$awayscores = $utf8 ? trim($data[4]) : utf8_encode(trim($data[4]));
-					$place  = $utf8 ? trim($data[5]) : utf8_encode(trim($data[5]));
-					$time = $utf8 ? trim($data[6]) : utf8_encode(trim($data[6]));
-					$division = $utf8 ? trim($data[7]) : utf8_encode(trim($data[7]));
-					$valid = $utf8 ? trim($data[8]) : utf8_encode(trim($data[8]));
-					$halftime = $utf8 ? trim($data[9]) : utf8_encode(trim($data[9]));
-					$officials = $utf8 ? trim($data[10]) : utf8_encode(trim($data[10]));
-					$respteam = $utf8 ? trim($data[11]) : utf8_encode(trim($data[11]));
-					$resppers = $utf8 ? trim($data[12]) : utf8_encode(trim($data[12]));
+					$gameId = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+					$hometeam = $utf8 ? trim($data[1]) : convertToUtf8(trim($data[1]));
+					$awayteam = $utf8 ? trim($data[2]) : convertToUtf8(trim($data[2]));
+					$homescores = $utf8 ? trim($data[3]) : convertToUtf8(trim($data[3]));
+					$awayscores = $utf8 ? trim($data[4]) : convertToUtf8(trim($data[4]));
+					$place  = $utf8 ? trim($data[5]) : convertToUtf8(trim($data[5]));
+					$time = $utf8 ? trim($data[6]) : convertToUtf8(trim($data[6]));
+					$division = $utf8 ? trim($data[7]) : convertToUtf8(trim($data[7]));
+					$valid = $utf8 ? trim($data[8]) : convertToUtf8(trim($data[8]));
+					$halftime = $utf8 ? trim($data[9]) : convertToUtf8(trim($data[9]));
+					$officials = $utf8 ? trim($data[10]) : convertToUtf8(trim($data[10]));
+					$respteam = $utf8 ? trim($data[11]) : convertToUtf8(trim($data[11]));
+					$resppers = $utf8 ? trim($data[12]) : convertToUtf8(trim($data[12]));
 
 					if (!intval($gameId)) {
 						continue;
@@ -167,14 +167,14 @@ if (isset($_POST['import'])) {
 					DBQuery($query);
 				} elseif ($table_type == "goal") {
 
-					$gameId = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-					$i = $utf8 ? trim($data[1]) : utf8_encode(trim($data[1]));
-					$pass = $utf8 ? trim($data[2]) : utf8_encode(trim($data[2]));
-					$goal = $utf8 ? trim($data[3]) : utf8_encode(trim($data[3]));
-					$time = $utf8 ? trim($data[4]) : utf8_encode(trim($data[4]));
-					$home  = $utf8 ? trim($data[5]) : utf8_encode(trim($data[5]));
-					$away = $utf8 ? trim($data[6]) : utf8_encode(trim($data[6]));
-					$homegoal = $utf8 ? trim($data[7]) : utf8_encode(trim($data[7]));
+					$gameId = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+					$i = $utf8 ? trim($data[1]) : convertToUtf8(trim($data[1]));
+					$pass = $utf8 ? trim($data[2]) : convertToUtf8(trim($data[2]));
+					$goal = $utf8 ? trim($data[3]) : convertToUtf8(trim($data[3]));
+					$time = $utf8 ? trim($data[4]) : convertToUtf8(trim($data[4]));
+					$home  = $utf8 ? trim($data[5]) : convertToUtf8(trim($data[5]));
+					$away = $utf8 ? trim($data[6]) : convertToUtf8(trim($data[6]));
+					$homegoal = $utf8 ? trim($data[7]) : convertToUtf8(trim($data[7]));
 
 					if (!intval($gameId)) {
 						continue;
@@ -209,17 +209,17 @@ if (isset($_POST['import'])) {
 					DBQuery($query);
 				} elseif ($table_type == "player") {
 
-					$playerId = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-					$first = $utf8 ? trim($data[1]) : utf8_encode(trim($data[1]));
-					$last = $utf8 ? trim($data[2]) : utf8_encode(trim($data[2]));
-					$show = $utf8 ? trim($data[3]) : utf8_encode(trim($data[3]));
-					$team = $utf8 ? trim($data[4]) : utf8_encode(trim($data[4]));
-					$jersey  = $utf8 ? trim($data[5]) : utf8_encode(trim($data[5]));
-					$info = $utf8 ? trim($data[6]) : utf8_encode(trim($data[6]));
-					$pass = $utf8 ? trim($data[7]) : utf8_encode(trim($data[7]));
-					$goal = $utf8 ? trim($data[8]) : utf8_encode(trim($data[8]));
-					$accId = $utf8 ? trim($data[9]) : utf8_encode(trim($data[9]));
-					$birth = $utf8 ? trim($data[10]) : utf8_encode(trim($data[10]));
+					$playerId = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+					$first = $utf8 ? trim($data[1]) : convertToUtf8(trim($data[1]));
+					$last = $utf8 ? trim($data[2]) : convertToUtf8(trim($data[2]));
+					$show = $utf8 ? trim($data[3]) : convertToUtf8(trim($data[3]));
+					$team = $utf8 ? trim($data[4]) : convertToUtf8(trim($data[4]));
+					$jersey  = $utf8 ? trim($data[5]) : convertToUtf8(trim($data[5]));
+					$info = $utf8 ? trim($data[6]) : convertToUtf8(trim($data[6]));
+					$pass = $utf8 ? trim($data[7]) : convertToUtf8(trim($data[7]));
+					$goal = $utf8 ? trim($data[8]) : convertToUtf8(trim($data[8]));
+					$accId = $utf8 ? trim($data[9]) : convertToUtf8(trim($data[9]));
+					$birth = $utf8 ? trim($data[10]) : convertToUtf8(trim($data[10]));
 
 					if (!intval($playerId)) {
 						continue;
@@ -246,9 +246,9 @@ if (isset($_POST['import'])) {
 					//$html .= "<p>$query</p>";
 					DBQuery($query);
 				} elseif ($table_type == "played_player") {
-					$playerId = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-					$gameId = $utf8 ? trim($data[1]) : utf8_encode(trim($data[1]));
-					$jersey = $utf8 ? trim($data[2]) : utf8_encode(trim($data[2]));
+					$playerId = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+					$gameId = $utf8 ? trim($data[1]) : convertToUtf8(trim($data[1]));
+					$jersey = $utf8 ? trim($data[2]) : convertToUtf8(trim($data[2]));
 
 					if (!intval($playerId)) {
 						continue;

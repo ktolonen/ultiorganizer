@@ -231,7 +231,7 @@ class EventDataXMLHandler
 
       //remove extra spaces
       while ($data = fread($fp, 4096)) {
-        $data = eregi_replace(">" . "[[:space:]]+" . "< ", ">< ", $data);
+        $data = preg_replace('/>\s+</', '><', $data);
         if (!xml_parse($xmlparser, $data, feof($fp))) {
           $reason = xml_error_string(xml_get_error_code($xmlparser));
           $reason .= xml_get_current_line_number($xmlparser);
@@ -260,7 +260,7 @@ class EventDataXMLHandler
   {
     if (is_array($attribs)) {
       $row = array();
-      while (list($key, $val) = each($attribs)) {
+      foreach ($attribs as $key => $val) {
         if ($val == "NULL") {
           $row[$key] = "NULL";
         } else {

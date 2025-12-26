@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
@@ -26,10 +27,13 @@ if (!intval($seasoninfo['isnationalteams'])) {
 }
 $html .= "</tr>";
 
-if (isset($_SESSION['userproperties']['userrole']['teamadmin'])) {
-	foreach ($_SESSION['userproperties']['userrole']['teamadmin'] as $team => $param) {
-		$teaminfo = TeamInfo($team);
-		if ($teaminfo['season'] == $seasoninfo['season_id']) {
+	if (isset($_SESSION['userproperties']['userrole']['teamadmin'])) {
+		foreach ($_SESSION['userproperties']['userrole']['teamadmin'] as $team => $param) {
+			$teaminfo = TeamInfo($team);
+			if (!$teaminfo || !isset($teaminfo['season'])) {
+				continue;
+			}
+			if ($teaminfo['season'] == $seasoninfo['season_id']) {
 
 			$html .= "<tr>";
 			$html .= "<td>" . utf8entities($teaminfo['name']) . "</td>";

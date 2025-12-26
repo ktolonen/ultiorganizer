@@ -1,4 +1,10 @@
 <?php
+if (!isset($include_prefix)) {
+  $include_prefix = __DIR__ . '/../../';
+}
+
+include_once $include_prefix . 'lib/auth.guard.php';
+
 $new_players = "";
 $updated = false;
 
@@ -149,22 +155,22 @@ function slklUpdateLicensesFromCSV($handle, $season)
 
   while (($data = fgetcsv($handle, $length, $delimiter)) !== FALSE) {
 
-    $id = trim($utf8 ? $data[0] : utf8_encode($data[0]));
+    $id = trim($utf8 ? $data[0] : convertToUtf8($data[0]));
 
     if (!is_numeric($id)) {
       continue;
     }
 
-    $lastname = trim($utf8 ? $data[1] : utf8_encode($data[1]));
-    $firstname = trim($utf8 ? $data[2] : utf8_encode($data[2]));
-    $birthdate = trim($utf8 ? $data[3] : utf8_encode($data[3]));
-    $gender = trim($utf8 ? $data[4] : utf8_encode($data[4]));
+    $lastname = trim($utf8 ? $data[1] : convertToUtf8($data[1]));
+    $firstname = trim($utf8 ? $data[2] : convertToUtf8($data[2]));
+    $birthdate = trim($utf8 ? $data[3] : convertToUtf8($data[3]));
+    $gender = trim($utf8 ? $data[4] : convertToUtf8($data[4]));
 
-    //$license_string = trim($utf8 ? $data[6] : utf8_encode($data[6]));
-    $license_id = trim($utf8 ? $data[5] : utf8_encode($data[5]));
-    //$cond = trim($utf8 ? $data[7] : utf8_encode($data[7]));
-    $year = trim($utf8 ? $data[6] : utf8_encode($data[6]));
-    $email = trim($utf8 ? $data[7] : utf8_encode($data[7]));
+    //$license_string = trim($utf8 ? $data[6] : convertToUtf8($data[6]));
+    $license_id = trim($utf8 ? $data[5] : convertToUtf8($data[5]));
+    //$cond = trim($utf8 ? $data[7] : convertToUtf8($data[7]));
+    $year = trim($utf8 ? $data[6] : convertToUtf8($data[6]));
+    $email = trim($utf8 ? $data[7] : convertToUtf8($data[7]));
 
     //if($cond=="avoin"){
     //  continue;

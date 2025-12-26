@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
@@ -238,7 +239,7 @@ if (count($seasons)) {
 $html .= "<hr/>\n";
 $html .= "<p>";
 $html .= "<a href='?view=admin/addteamadmins&amp;series=" . $row['series_id'] . "'>" . _("Add Team Admins") . "</a> | ";
-$html .= "<a href='?view=user/pdfscoresheet&amp;series=" . $row['series_id'] . "'>" . _("Print team rosters") . "</a></p>";
+$html .= "<a href='?view=user/pdfscoresheet&amp;series=" . $row['series_id'] . "' target='_blank' rel='noopener'>" . _("Print team rosters") . "</a></p>";
 
 //stores id to delete
 $html .= "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";

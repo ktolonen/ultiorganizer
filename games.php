@@ -5,6 +5,14 @@ include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/timetable.functions.php';
 
+function pdf_slug($value)
+{
+  $slug = strtolower((string)$value);
+  $slug = preg_replace('/[^a-z0-9]+/i', '-', $slug);
+  $slug = trim($slug, '-');
+  return $slug === '' ? 'pdf' : $slug;
+}
+
 if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
   include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
 } else {
@@ -33,10 +41,21 @@ if (iget("series")) {
   $gamefilter = "pool";
   $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
 } elseif (iget("pools")) {
-  $id = iget("pools");
-  $baseurl .= "&pools=$id";
-  $gamefilter = "poolgroup";
-  $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
+  $poolIds = array_filter(array_map('intval', explode(',', iget("pools"))), function ($val) {
+    return $val > 0;
+  });
+  if (!empty($poolIds)) {
+    $id = implode(",", $poolIds);
+    $baseurl .= "&pools=$id";
+    $gamefilter = "poolgroup";
+    $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
+  } else {
+    // Fall back to season view if pool ids are invalid/empty
+    $id = CurrentSeason();
+    $baseurl .= "&season=$id";
+    $gamefilter = "season";
+    $title = _("Schedule") . " " . utf8entities(U_(SeasonName($id)));
+  }
 } elseif (iget("team")) {
   $id = iget("team");
   $baseurl .= "&team=$id";
@@ -97,8 +116,8 @@ switch ($filter) {
     break;
 
   case "next":
+    $timefilter = "all";
     $order = "tournaments";
-    $order = "series";
     break;
 
   case "tournaments":
@@ -143,13 +162,36 @@ $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
 $groups = TimetableGrouping($id, $gamefilter, $timefilter);
 
 if ($format == "pdf") {
+  $nameLabel = "";
+  switch ($gamefilter) {
+    case "season":
+      $nameLabel = SeasonName($id);
+      break;
+    case "series":
+      $nameLabel = SeriesName($id);
+      break;
+    case "pool":
+      $nameLabel = PoolName($id);
+      break;
+    case "team":
+      $nameLabel = TeamName($id);
+      break;
+    case "poolgroup":
+      $nameLabel = "pools-" . $id;
+      break;
+    default:
+      $nameLabel = $id;
+      break;
+  }
+  $layout = $filter == "onepage" ? "grid" : "list";
+  $filename = "schedule-" . $layout . "-" . pdf_slug($nameLabel) . ".pdf";
   $pdf = new PDF();
   if ($filter == "onepage") {
     $pdf->PrintOnePageSchedule($gamefilter, $id, $games);
   } else {
     $pdf->PrintSchedule($gamefilter, $id, $games);
   }
-  $pdf->Output();
+  $pdf->Output('I', $filename);
 }
 
 if (!$print && !$singleview) {
@@ -166,10 +208,12 @@ if (!$print && !$singleview) {
   if (count($groups) > 1) {
     $html .= "<p>\n";
     foreach ($groups as $grouptmp) {
-      if ($group == $grouptmp['reservationgroup']) {
-        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . urlencode($grouptmp['reservationgroup']) . "'><span class='selgroupinglink'>" . U_($grouptmp['reservationgroup']) . "</span></a>";
+      $groupLabel = isset($grouptmp['reservationgroup']) ? (string)$grouptmp['reservationgroup'] : '';
+      $encodedGroup = urlencode($groupLabel);
+      if ($group == $groupLabel) {
+        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
       } else {
-        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . urlencode($grouptmp['reservationgroup']) . "'>" . U_($grouptmp['reservationgroup']) . "</a>";
+        $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'>" . U_($groupLabel) . "</a>";
       }
       $html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
     }
@@ -214,8 +258,8 @@ if ($print) {
   $html .= "<hr/>\n";
   $html .= "<p>";
   $html .= "<a href='?view=ical&amp;$gamefilter=$id&amp;time=$timefilter&amp;order=$order'>" . _("iCalendar (.ical)") . "</a> | ";
-  $html .= "<a href='" . utf8entities($baseurl) . "&filter=onepage&group=$group'>" . _("Grid (PDF)") . "</a> | ";
-  $html .= "<a href='" . utf8entities($baseurl) . "&filter=season&group=$group'>" . _("List (PDF)") . "</a> | ";
+  $html .= "<a href='" . utf8entities($baseurl) . "&filter=onepage&group=$group' target='_blank' rel='noopener'>" . _("Grid (PDF)") . "</a> | ";
+  $html .= "<a href='" . utf8entities($baseurl) . "&filter=season&group=$group' target='_blank' rel='noopener'>" . _("List (PDF)") . "</a> | ";
   $html .= "<a href='?" . utf8entities($querystring) . "&amp;print=1'>" . _("Printable version") . "</a>";
   $html .= "</p>\n";
 }

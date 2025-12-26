@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/team.functions.php';
@@ -739,7 +740,14 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
           var out = id;
           var offset = 0;
           for (i = 0; i < items.length; i = i + 1) {
-            var duration = parseInt(items[i].firstChild.value);
+            var inputs = items[i].getElementsByTagName("input");
+            if (!inputs.length) {
+              continue; // Ignore placeholder entries without timing info.
+            }
+            var duration = parseInt(inputs[0].value, 10);
+            if (isNaN(duration)) {
+              duration = 0;
+            }
             var nextId = items[i].id.substring(4);
             if (!isNaN(nextId)) {
               out += ":" + nextId + "/" + offset;

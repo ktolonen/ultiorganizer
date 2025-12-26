@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
@@ -15,12 +16,16 @@ $max_new_links = 3;
 $html = "";
 $teamId = 0;
 $clubId = 0;
+$teaminfo = null;
+$title = _("Club information");
 
 
 if (!empty($_GET["team"])) {
 	$teamId = intval($_GET["team"]);
 	$teaminfo = TeamInfo($teamId);
-	$clubId = $teaminfo['club'];
+	if ($teaminfo) {
+		$clubId = $teaminfo['club'];
+	}
 }
 if (!empty($_GET["club"])) {
 	$clubId = intval($_GET["club"]);;
@@ -31,7 +36,11 @@ if (isset($_SERVER['HTTP_REFERER']))
 else
 	$backurl = "?view=user/teamplayers&team=$teamId";
 
-
+$club = ClubInfo($clubId);
+if (!$teaminfo || !$club) {
+	echo "<p class='warning'>" . _("Club not found.") . "</p>";
+	return;
+}
 
 //club profile
 $op = array(
@@ -89,12 +98,11 @@ if (isset($_POST['save'])) {
 	RemoveClubProfileUrl($teamId, $clubId, $id);
 }
 
-$club = ClubInfo($clubId);
-if ($club) {
-	$op['name'] = $club['name'];
-	$op['profile_image'] = $club['profile_image'];
-	$op['club_id'] = $club['club_id'];
-	$op['founded'] = $club['founded'];
+	if ($club) {
+		$op['name'] = $club['name'];
+		$op['profile_image'] = $club['profile_image'];
+		$op['club_id'] = $club['club_id'];
+		$op['founded'] = $club['founded'];
 	$op['valid'] = $club['valid'];
 	$op['country'] = $club['country'];
 	$op['city'] = $club['city'];

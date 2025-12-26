@@ -1,9 +1,14 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'menufunctions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/plugin.functions.php';
 $html = "";
+
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
 
 //common page
 $title = _("Database administration");
@@ -13,6 +18,51 @@ pageTopHeadClose($title, false);
 leftMenu($LAYOUT_ID);
 contentStart();
 if (isSuperAdmin()) {
+	$messages = array();
+
+	// Optional manual engine/charset/foreign key migration trigger.
+	if (isset($_POST['convert_innodb']) && $_POST['convert_innodb'] === '1') {
+		include_once 'sql/upgrade_db.php';
+		try {
+			upgradeEngineToInnoDb();
+			$messages[] = _("Conversion to InnoDB/utf8mb4 attempted. Review tables below for remaining MyISAM tables.");
+		} catch (Exception $e) {
+			$html .= "<div class='warning'>";
+			$html .= utf8entities(_("Conversion failed:") . " " . $e->getMessage());
+			$html .= "<br/>" . _("Fix suggestions:") . "<br/>";
+			$html .= "&bull; " . _("Clean orphans by setting nullable foreign keys to NULL or delete/reassign child rows.") . "<br/>";
+			$html .= "&bull; " . _("Insert missing parent rows for non-nullable references (e.g., required stats/plays/games).") . "<br/>";
+			$html .= "&bull; " . _("Rerun the conversion after cleanup.") . "<br/>";
+			$html .= "</div>";
+		}
+	}
+
+	// Detect MyISAM or other non-InnoDB tables.
+	$nonInno = DBQueryToArray("SHOW TABLE STATUS WHERE Engine IS NOT NULL AND Name LIKE 'uo\\_%' AND Engine <> 'InnoDB'");
+
+	if (count($messages)) {
+		$html .= "<div class='success'>";
+		foreach ($messages as $msg) {
+			$html .= utf8entities($msg) . "<br/>";
+		}
+		$html .= "</div>";
+	}
+
+	if (count($nonInno)) {
+		$html .= "<p><div class='warning'>";
+		$html .= _("Warning: Some tables are not using InnoDB. Consider converting to InnoDB/utf8mb4 for reliability, performance, and future-proofing.");
+		$html .= "<br/><strong>" . _("Always take a full database backup before running the conversion.") . "</strong>";
+		$html .= "<ul>";
+		foreach ($nonInno as $row) {
+			$html .= "<li>" . utf8entities($row['Name']) . " (" . utf8entities($row['Engine']) . ")</li>";
+		}
+		$html .= "</ul>";
+		$html .= "<form method='post' action='?view=admin/dbadmin'>";
+		$html .= "<input type='hidden' name='convert_innodb' value='1'/>";
+		$html .= "<button type='submit'>" . _("Convert to InnoDB/utf8mb4 now") . "</button>";
+		$html .= "</form>";
+		$html .= "</div></p>";
+	}
 
 	$html .= "<p><span class='profileheader'>" . _("Database administration") . ": </span><br/>\n";
 	$html .= "<a href='?view=admin/executesql'>&raquo; " . _("Run SQL") . "</a><br/>\n";
@@ -68,8 +118,8 @@ if (isSuperAdmin()) {
 	$html .= "<p>" . _("Database size") . ": " . $total_size . " " . _("bytes") . "</p>\n";
 
 	$html .= "<p><span class='profileheader'>" . _("Statistics") . ": </span><br/>\n";
-	$mysql_stat = DBStat();
-	$tot_count = preg_match_all('/([a-z ]+):\s*([0-9.]+)/i', $mysql_stat, $matches);
+	$db_stat = DBStat();
+	$tot_count = preg_match_all('/([a-z ]+):\s*([0-9.]+)/i', $db_stat, $matches);
 	for ($i = 0; $i < $tot_count; $i++) {
 		$info1 = trim($matches[1][$i]);
 		$info2 = trim($matches[2][$i]);
@@ -95,7 +145,7 @@ if (isSuperAdmin()) {
 	}
 	$html .= "</p>\n";
 } else {
-	$html .= "<p>" . _("User credentials does not match") . "</p>\n";
+	$html .= "<p>" . _("User credentials do not match") . "</p>\n";
 }
 echo $html;
 

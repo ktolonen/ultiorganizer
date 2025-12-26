@@ -23,6 +23,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/standings.functions.php';
 include_once 'lib/reservation.functions.php';
+include_once 'lib/user.functions.php';
 
 $html = "";
 $title = ("Field users");
@@ -41,9 +42,22 @@ if (!empty($_POST['create'])) {
 		}
 		$user = DBQueryToValue("SELECT COUNT(*) FROM uo_users WHERE userid='$name'");
 		if ($user < 1) {
-			DBQuery("INSERT INTO uo_users(name, userid, password, email) VALUES ('$name', '$name', MD5('$name'), '')");
-			DBQuery("INSERT INTO uo_userproperties(userid, name, value) VALUES ('$name', 'poolselector', 'currentseason')");
-			DBQuery("INSERT INTO uo_userproperties(userid, name, value) VALUES ('$name', 'editseason', '$season')");
+			$passwordHash = hashUserPassword($name);
+			DBQuery(sprintf(
+				"INSERT INTO uo_users(name, userid, password, email) VALUES ('%s', '%s', '%s', '')",
+				DBEscapeString($name),
+				DBEscapeString($name),
+				DBEscapeString($passwordHash)
+			));
+			DBQuery(sprintf(
+				"INSERT INTO uo_userproperties(userid, name, value) VALUES ('%s', 'poolselector', 'currentseason')",
+				DBEscapeString($name)
+			));
+			DBQuery(sprintf(
+				"INSERT INTO uo_userproperties(userid, name, value) VALUES ('%s', 'editseason', '%s')",
+				DBEscapeString($name),
+				DBEscapeString($season)
+			));
 		}
 
 		$games = ReservationGamesByField($field['fieldname'], $season);

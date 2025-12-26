@@ -11,12 +11,29 @@ $viewUrl = "?view=seriesstatus";
 $sort = "ranking";
 $html = "";
 
-if (iget("series")) {
-  $seriesinfo = SeriesInfo(iget("series"));
-  $viewUrl .= "&amp;series=" . $seriesinfo['series_id'];
-  $seasoninfo = SeasonInfo($seriesinfo['season']);
-  $title .= U_($seriesinfo['name']);
+if (!iget("series")) {
+  $title = _("Statistics");
+  $html .= "<h1>" . _("Series not found") . "</h1>";
+  showPage($title, $html);
+  return;
 }
+
+$seriesinfo = SeriesInfo(iget("series"));
+if (!$seriesinfo) {
+  $title = _("Statistics");
+  $html .= "<h1>" . _("Series not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
+$viewUrl .= "&amp;series=" . $seriesinfo['series_id'];
+$seasoninfo = SeasonInfo($seriesinfo['season']);
+if (!$seasoninfo) {
+  $title = _("Statistics");
+  $html .= "<h1>" . _("Season not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
+$title .= U_($seriesinfo['name']);
 
 if (iget("sort")) {
   $sort = iget("sort");
@@ -25,28 +42,35 @@ if (iget("sort")) {
 $teamstats = array();
 $allteams = array();
 $teams = SeriesTeams($seriesinfo['series_id']);
+$teamStatsPoints = SeriesTeamStatsPoints($seriesinfo['series_id']);
 $spiritAvg = SeriesSpiritBoard($seriesinfo['series_id']);
 foreach ($teams as $team) {
-  $stats = TeamStats($team['team_id']);
-  $points = TeamPoints($team['team_id']);
+  $statsRow = isset($teamStatsPoints[$team['team_id']]) ? $teamStatsPoints[$team['team_id']] : array(
+    "games" => 0,
+    "wins" => 0,
+    "draws" => 0,
+    "losses" => 0,
+    "scores" => 0,
+    "against" => 0
+  );
 
   $teamstats['name'] = $team['name'];
   $teamstats['team_id'] = $team['team_id'];
   $teamstats['seed'] = $team['rank'];
   $teamstats['flagfile'] = $team['flagfile'];
 
-  $teamstats['wins'] = $stats['wins'];
-  $teamstats['games'] = $stats['games'];
+  $teamstats['wins'] = intval($statsRow['wins']);
+  $teamstats['games'] = intval($statsRow['games']);
 
-  $teamstats['for'] = $points['scores'];
-  $teamstats['against'] = $points['against'];
+  $teamstats['for'] = intval($statsRow['scores']);
+  $teamstats['against'] = intval($statsRow['against']);
 
   $teamstats['losses'] = $teamstats['games'] - $teamstats['wins'];
   $teamstats['diff'] = $teamstats['for'] - $teamstats['against'];
 
   $teamstats['spirit'] = isset($spiritAvg[$team['team_id']]) ? $spiritAvg[$team['team_id']]['total'] : null;
 
-  $teamstats['winavg'] = number_format(SafeDivide(intval($stats['wins']), intval($stats['games'])) * 100, 1);
+  $teamstats['winavg'] = number_format(SafeDivide(intval($statsRow['wins']), intval($statsRow['games'])) * 100, 1);
 
   $teamstats['ranking'] = 0;
   $allteams[] = $teamstats;

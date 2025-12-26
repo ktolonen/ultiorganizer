@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/season.functions.php';
@@ -19,17 +20,17 @@ $rgPar = "";
 
 if (isset($_GET['rg'])) {
 	$reservationgroup = urldecode($_GET['rg']);
-	$rgPar = "&amp;rg=" . urlencode($reservationgroup);
+$rgPar = "&amp;rg=" . urlencode((string)$reservationgroup);
 }
 
 if (isset($_GET['loc'])) {
 	$location = urldecode($_GET['loc']);
-	$locationPar = "&amp;loc=" . urlencode($location);
+$locationPar = "&amp;loc=" . urlencode((string)$location);
 }
 
 if (isset($_GET['day'])) {
 	$day = urldecode($_GET['day']);
-	$dayPar = "&amp;day=" . urlencode($day);
+$dayPar = "&amp;day=" . urlencode((string)$day);
 }
 
 if (isset($_GET['all'])) {
@@ -89,18 +90,19 @@ if (count($respGameArray) == 0) {
 					continue;
 				}
 
-				if ($prevrg != $game['reservationgroup']) {
+				$currentGroup = isset($game['reservationgroup']) ? (string)$game['reservationgroup'] : '';
+				if ($prevrg != $currentGroup) {
 					$html .= "</td></tr><tr><td>\n";
-					if ($reservationgroup == $game['reservationgroup']) {
-						$html .= "<b>" . utf8entities($game['reservationgroup']) . "</b>";
+					if ($reservationgroup == $currentGroup) {
+						$html .= "<b>" . utf8entities($currentGroup) . "</b>";
 					} else {
-						$html .= "+ <a href='?view=mobile/respgames&amp;rg=" . urlencode($game['reservationgroup']) . "$massPar'>" . utf8entities($game['reservationgroup']) . "</a>";
+						$html .= "+ <a href='?view=mobile/respgames&amp;rg=" . urlencode($currentGroup) . "$massPar'>" . utf8entities($currentGroup) . "</a>";
 					}
 					$html .= "</td></tr><tr><td>\n";
-					$prevrg = $game['reservationgroup'];
+					$prevrg = $currentGroup;
 				}
 
-				if ($reservationgroup == $game['reservationgroup']) {
+				if ($reservationgroup == $currentGroup) {
 
 					$gameloc = $game['location'] . "#" . $game['fieldname'];
 
@@ -109,7 +111,7 @@ if (count($respGameArray) == 0) {
 						if ($location == $gameloc && $day == JustDate($game['starttime'])) {
 							$html .= "&nbsp;&nbsp;<b>" . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</b>";
 						} else {
-							$html .= "&nbsp;+<a href='?view=mobile/respgames&amp;rg=" . urlencode($game['reservationgroup']) . "&amp;loc=" . urlencode($gameloc) . "&amp;day=" . urlencode(JustDate($game['starttime'])) . "$massPar'>";
+							$html .= "&nbsp;+<a href='?view=mobile/respgames&amp;rg=" . urlencode($currentGroup) . "&amp;loc=" . urlencode($gameloc) . "&amp;day=" . urlencode(JustDate($game['starttime'])) . "$massPar'>";
 							$html .= utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</a>";
 						}
 

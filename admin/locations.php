@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'menufunctions.php';
 include_once 'lib/location.functions.php';
 include_once 'lib/configuration.functions.php';
@@ -182,7 +183,6 @@ contentEnd();
       });
   }
 </script>
-<script type="text/javascript" src="http://code.jquery.com/jquery-latest.min.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&amp;libraries=places&amp;callback=initMap"></script>
 
 <?php

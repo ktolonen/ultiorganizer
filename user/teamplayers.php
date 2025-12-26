@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
@@ -12,6 +13,12 @@ $title = _("Roster");
 
 $teamId = iget("team");
 $teaminfo = TeamInfo($teamId);
+
+// Stop early if the team does not exist to avoid undefined array offsets.
+if (!$teaminfo) {
+  echo "<p class='warning'>" . _("Team not found.") . "</p>";
+  return;
+}
 
 if (!empty($_POST['remove_x'])) {
   $id = $_POST['hiddenDeleteId'];
@@ -284,7 +291,7 @@ if (!empty($gameId)) {
 //} else {
 include_once 'cust/default/teamplayers.inc.php';
 //}
-echo "<div><a href='?view=user/pdfscoresheet&amp;team=" . $teamId . "'>" . _("Print roster") . "</a></div>";
+echo "<div><a href='?view=user/pdfscoresheet&amp;team=" . $teamId . "' target='_blank' rel='noopener'>" . _("Print roster") . "</a></div>";
 //common end
 contentEnd();
 pageEnd();

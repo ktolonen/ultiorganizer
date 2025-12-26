@@ -1,13 +1,10 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/standings.functions.php';
 include_once 'lib/pool.functions.php';
 include_once 'lib/configuration.functions.php';
-
-if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-	include_once 'lib/twitter.functions.php';
-}
 
 $html = "";
 

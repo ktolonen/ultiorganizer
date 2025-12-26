@@ -24,6 +24,13 @@ if (iget("sort")) {
 $team1 = TeamInfo($teamId1);
 $team2 = TeamInfo($teamId2);
 
+if (!$team1 || !$team2) {
+  $title = _("Game card");
+  $html .= "<h1>" . _("Team not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
+
 $title = _("Game card") . ": " . utf8entities($team1['name']) . " vs. " . utf8entities($team2['name']);
 
 //$seasons = TeamPlayedSeasons($team1['name'], $serie);
@@ -87,7 +94,7 @@ $html .= "<h2>" . utf8entities($team1['name']) . " vs. " . utf8entities($team2['
 
 $html .= "<table border='1' width='100%'><tr>\n
 	<th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Wins") . "</th><th>" . _("Losses") . "</th><th>" . _("Win-%") . "</th><th>" . _("Scored") . "</th>
-	<th>" . _("Scored") . "/" . _("game") . "</th><th>" . _("Let scores") . "</th><th>" . _("Let scores") . "/" . _("game") . "</th><th>" . _("Goal difference") . "</th>
+	<th>" . _("Scored") . "/" . _("game") . "</th><th>" . _("Goals against") . "</th><th>" . _("Goals against") . "/" . _("game") . "</th><th>" . _("Goal difference") . "</th>
 	</tr>\n";
 
 $html .= "<tr>

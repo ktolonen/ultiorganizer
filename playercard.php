@@ -17,10 +17,22 @@ if (iget("profile")) {
 $profile = "";
 
 $player = PlayerInfo($playerId);
-if (!empty($player['profile_id'])) {
-  $profile = PlayerProfile($player['profile_id']);
-} else {
-  $profile = PlayerProfile($playerId);
+if (!$player) {
+  $title = _("Player card");
+  $html .= "<h1>" . _("Player not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
+
+$profileId = !empty($player['profile_id']) ? $player['profile_id'] : $playerId;
+$profile = PlayerProfile($profileId);
+if (!$profile) {
+  $profile = array(
+    "firstname" => $player['firstname'],
+    "lastname" => $player['lastname'],
+    "num" => $player['num'],
+    "public" => ""
+  );
 }
 
 $curseason = CurrentSeason();
@@ -55,7 +67,7 @@ if ($profile) {
     $html .= "<tr><td class='profileheader'>" . _("Nickname") . ":</td>";
     $html .= "<td>" . utf8entities($profile['nickname']) . "</td></tr>\n";
   }
-  if (!isEmptyDate($profile['birthdate']) && in_array("birthdate", $publicfields)) {
+  if (isset($profile['birthdate']) && !isEmptyDate($profile['birthdate']) && in_array("birthdate", $publicfields)) {
     $html .= "<tr><td class='profileheader'>" . _("Date of birth") . ":</td>";
     $html .= "<td>" . ShortDate($profile['birthdate']) . "</td></tr>\n";
   }
@@ -100,7 +112,7 @@ if ($profile) {
   $html .= "</table>";
 }
 
-$urls = GetUrlList("player", $player['profile_id']);
+$urls = GetUrlList("player", $profileId);
 if (count($urls)) {
   $html .= "<table style='width:600px'>";
   $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Player pages") . ":</td></tr>";
@@ -119,7 +131,7 @@ if (count($urls)) {
   $html .= "</table>";
 }
 
-$urls = GetMediaUrlList("player", $player['profile_id']);
+$urls = GetMediaUrlList("player", $profileId);
 if (count($urls)) {
   $html .= "<table style='width:100%'>";
   $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Photos and Videos") . ":</td></tr>";
@@ -580,7 +592,7 @@ if (count($games)) {
   }
 }
 if ($_SESSION['uid'] != 'anonymous') {
-  $html .= "<div style='float:left;'><hr/><a href='?view=user/addmedialink&amp;player=" . $player['profile_id'] . "'>" . _("Add media") . "</a></div>";
+  $html .= "<div style='float:left;'><hr/><a href='?view=user/addmedialink&amp;player=" . $profileId . "'>" . _("Add media") . "</a></div>";
 }
 
 showPage($title, $html);

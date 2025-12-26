@@ -110,7 +110,7 @@ function CurrentSeasonName()
     );
     return U_(DBQueryToValue($query));
   }
-  $query = sprintf("SELECT name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
+  $query = sprintf("SELECT name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC LIMIT 1");
   return U_(DBQueryToValue($query));
 }
 
@@ -258,6 +258,24 @@ function SeasonAllPlayers($seasonId)
     DBEscapeString($seasonId)
   );
   return DBQueryToArray($query);
+}
+
+/**
+ * Returns number of players in season missing a profile_id.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return int
+ */
+function SeasonMissingPlayerProfilesCount($seasonId)
+{
+  $query = sprintf(
+    "SELECT COUNT(*) FROM uo_player p
+			LEFT JOIN uo_team t ON (p.team=t.team_id)
+			LEFT JOIN uo_series ser ON (t.series=ser.series_id)
+			WHERE ser.season='%s' AND (p.profile_id IS NULL OR p.profile_id=0)",
+    DBEscapeString($seasonId)
+  );
+  return DBQueryToValue($query);
 }
 
 

@@ -138,6 +138,61 @@ function SeriesTeams($seriesId, $orderbyseeding = false)
 }
 
 /**
+ * Get aggregated team stats and points for a series in one query.
+ * @param int $seriesId uo_series.series_id
+ * @return array keyed by team_id with games/wins/draws/losses/scores/against.
+ */
+function SeriesTeamStatsPoints($seriesId)
+{
+  $query = sprintf(
+    "
+    SELECT team_id,
+      SUM(games) AS games,
+      SUM(wins) AS wins,
+      SUM(draws) AS draws,
+      SUM(losses) AS losses,
+      SUM(scores) AS scores,
+      SUM(against) AS against
+    FROM (
+      SELECT g.hometeam AS team_id,
+        1 AS games,
+        (g.homescore > g.visitorscore) AS wins,
+        (g.homescore = g.visitorscore) AS draws,
+        (g.homescore < g.visitorscore) AS losses,
+        g.homescore AS scores,
+        g.visitorscore AS against
+      FROM uo_game g
+      LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
+      LEFT JOIN uo_pool p ON (gp.pool=p.pool_id)
+      WHERE p.series=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0
+      UNION ALL
+      SELECT g.visitorteam AS team_id,
+        1 AS games,
+        (g.visitorscore > g.homescore) AS wins,
+        (g.visitorscore = g.homescore) AS draws,
+        (g.visitorscore < g.homescore) AS losses,
+        g.visitorscore AS scores,
+        g.homescore AS against
+      FROM uo_game g
+      LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
+      LEFT JOIN uo_pool p ON (gp.pool=p.pool_id)
+      WHERE p.series=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0
+    ) AS totals
+    GROUP BY team_id
+    ",
+    (int)$seriesId,
+    (int)$seriesId
+  );
+
+  $rows = DBQueryToArray($query);
+  $stats = array();
+  foreach ($rows as $row) {
+    $stats[$row['team_id']] = $row;
+  }
+  return $stats;
+}
+
+/**
  * Get all teams in given division without pool.
  * @param int $seriesId uo_series.series_id
  * @return array of teams.
@@ -394,6 +449,12 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit)
  */
 function SeriesSpiritBoard($seriesId)
 {
+  $factorRows = DBQueryToArray("SELECT category_id, factor FROM uo_spirit_category");
+  $factor = array();
+  foreach ($factorRows as $row) {
+    $factor[$row['category_id']] = $row['factor'];
+  }
+
   $query = sprintf(
     "SELECT st.team_id, te.name, st.category_id, st.value, pool.series
       FROM uo_team AS te
@@ -416,11 +477,9 @@ function SeriesSpiritBoard($seriesId)
   foreach ($scores as $row) {
     if ($last_team != $row['team_id'] || $last_category != $row['category_id']) {
       if (!is_null($last_category)) {
-        if (!isset($factor[$last_category])) {
-          $factor[$last_category] = DBQueryToArray(sprintf("SELECT * FROM uo_spirit_category WHERE category_id=%d", (int) $last_category))[0]['factor'];
-        }
         $teamline[$last_category] = SafeDivide($sum, $games);
-        $total += SafeDivide($factor[$last_category] * $sum, $games);
+        $factorValue = isset($factor[$last_category]) ? $factor[$last_category] : 0;
+        $total += SafeDivide($factorValue * $sum, $games);
       }
       if ($last_team != $row['team_id']) {
         if (!is_null($last_team)) {
@@ -440,9 +499,9 @@ function SeriesSpiritBoard($seriesId)
     ++$games;
   }
   if (!is_null($last_team)) {
-    $factor[$last_category] = DBQueryToArray(sprintf("SELECT * FROM uo_spirit_category WHERE category_id=%d", (int) $last_category))[0]['factor'];
     $teamline[$last_category] = SafeDivide($sum, $games);
-    $total += SafeDivide($factor[$last_category] * $sum, $games);
+    $factorValue = isset($factor[$last_category]) ? $factor[$last_category] : 0;
+    $total += SafeDivide($factorValue * $sum, $games);
     $teamline['total'] = $total;
     $teamline['games'] = $games;
     $averages[$last_team] = $teamline;

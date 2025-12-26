@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/series.functions.php';
 include_once $include_prefix . 'lib/club.functions.php';

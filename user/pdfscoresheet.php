@@ -1,10 +1,19 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/reservation.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/user.functions.php';
 include_once $include_prefix . 'lib/timetable.functions.php';
+
+function pdf_slug($value)
+{
+	$slug = strtolower((string)$value);
+	$slug = preg_replace('/[^a-z0-9]+/i', '-', $slug);
+	$slug = trim($slug, '-');
+	return $slug === '' ? 'pdf' : $slug;
+}
 
 if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
 	include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
@@ -17,9 +26,12 @@ $filter2 = "";
 $gameId = 0;
 $teamId = 0;
 $seriesId = 0;
+$games = null;
+$filename = null;
 
 if (!empty($_GET["game"])) {
 	$games = TimetableGames($_GET["game"], "game", "all", "place");
+	$filename = "scoresheet-game-" . pdf_slug($_GET["game"]) . ".pdf";
 }
 
 if (!empty($_GET["season"])) {
@@ -35,6 +47,7 @@ if (!empty($_GET["series"])) {
 if (!empty($_GET["pool"])) {
 	$poolId = $_GET["pool"];
 	$games = TimetableGames($poolId, "pool", "all", "time", "");
+	$filename = "scoresheets-pool-" . pdf_slug($poolId) . ".pdf";
 }
 
 if (!empty($_GET["filter1"])) {
@@ -52,6 +65,8 @@ if (!empty($_GET["reservation"])) {
 		$responsibilities[] = $row['game_id'];
 	}
 	$games = ResponsibleReservationGames($_GET["reservation"] == "none" ? null : $_GET["reservation"], $responsibilities);
+	$resSlug = $_GET["reservation"] == "none" ? "none" : pdf_slug($_GET["reservation"]);
+	$filename = "scoresheets-reservation-" . $resSlug . ".pdf";
 }
 if (!empty($_GET["group"])) {
 	if ($filter1 == "coming") {
@@ -65,7 +80,21 @@ if (!empty($_GET["team"])) {
 	$teamId  = $_GET["team"];
 }
 
+// Default to all games of the season if no specific filter populated $games.
+if ($games === null) {
+	$games = TimetableGames($season, "season", "all", "places");
+}
+
 $pdf = new PDF();
+if ($teamId) {
+	$seasonSlug = pdf_slug(TeamSeason($teamId));
+} else {
+	$seasonSlug = pdf_slug(SeasonName($season));
+}
+
+if ($filename === null) {
+	$filename = "scoresheets-" . $seasonSlug . ".pdf";
+}
 
 
 if ($teamId) {
@@ -77,6 +106,7 @@ if ($teamId) {
 		}
 	}
 	$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
+	$filename = "roster-" . pdf_slug($teaminfo['name']) . "-" . $seasonSlug . ".pdf";
 } elseif ($seriesId) {
 
 	$teams = SeriesTeams($seriesId, true);
@@ -91,8 +121,15 @@ if ($teamId) {
 		}
 		$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	}
+	$filename = "rosters-series-" . pdf_slug($seriesId) . "-" . $seasonSlug . ".pdf";
 } else {
 	$seasonname = SeasonName($season);
+
+	// Bail out gracefully if no games were returned.
+	if (!$games || !is_object($games)) {
+		$pdf->Output('I', $filename);
+		return;
+	}
 
 	while ($gameRow = mysqli_fetch_assoc($games)) {
 
@@ -141,4 +178,4 @@ if ($teamId) {
 	}
 }
 
-$pdf->Output();
+$pdf->Output('I', $filename);

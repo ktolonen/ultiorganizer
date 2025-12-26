@@ -3,10 +3,6 @@ include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/statistical.functions.php';
 include_once 'lib/configuration.functions.php';
-
-if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-  include_once 'lib/twitter.functions.php';
-}
 $html = "";
 
 $errors = "";

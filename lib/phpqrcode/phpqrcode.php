@@ -37,8 +37,8 @@
  
 
 /*
- * Version: 1.1.4
- * Build: 2010100721
+ * Version: 
+ * Build: 
  */
 
 
@@ -952,7 +952,7 @@
     class QRimage {
     
         //----------------------------------------------------------------------
-        public static function png($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4,$saveandprint=FALSE, $back_color, $fore_color) 
+        public static function png($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4, $saveandprint = false, $back_color = 0xFFFFFF, $fore_color = 0x000000) 
         {
             $image = self::image($frame, $pixelPerPoint, $outerFrame, $back_color, $fore_color);
             
@@ -973,7 +973,7 @@
         }
     
         //----------------------------------------------------------------------
-        public static function jpg($frame, $filename = false, $pixelPerPoint = 8, $outerFrame = 4, $q = 85) 
+        public static function jpg($frame, $filename = false, $pixelPerPoint = 8, $outerFrame = 4, $q = 85, $back_color = 0xFFFFFF, $fore_color = 0x000000) 
         {
             $image = self::image($frame, $pixelPerPoint, $outerFrame, $back_color, $fore_color);
             
@@ -1030,6 +1030,7 @@
             return $target_image;
         }
     }
+
 
 
 
@@ -2967,14 +2968,14 @@
 
             if($this->count < $this->dataLength) {
                 $row = $this->count % $this->blocks;
-                $col = $this->count / $this->blocks;
+                $col = intdiv($this->count, $this->blocks);
                 if($col >= $this->rsblocks[0]->dataLength) {
                     $row += $this->b1;
                 }
                 $ret = $this->rsblocks[$row]->data[$col];
             } else if($this->count < $this->dataLength + $this->eccLength) {
                 $row = ($this->count - $this->dataLength) % $this->blocks;
-                $col = ($this->count - $this->dataLength) / $this->blocks;
+                $col = intdiv(($this->count - $this->dataLength), $this->blocks);
                 $ret = $this->rsblocks[$row]->ecc[$col];
             } else {
                 return 0;
@@ -3531,7 +3532,7 @@
         }
         
         //----------------------------------------------------------------------
-        public static function svg($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4,$saveandprint=FALSE, $back_color, $fore_color) 
+        public static function svg($frame, $filename = false, $pixelPerPoint = 4, $outerFrame = 4,$saveandprint=FALSE, $back_color = 0xFFFFFF, $fore_color = 0x000000) 
         {
             $vect = self::vectSVG($frame, $pixelPerPoint, $outerFrame, $back_color, $fore_color);
             
@@ -3606,4 +3607,5 @@
     }
     
     
+
 

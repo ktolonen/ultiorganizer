@@ -41,18 +41,18 @@ if (isset($_POST['import'])) {
 		$row = 1;
 		if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
 			while (($data = fgetcsv($handle, 0, $separator)) !== FALSE) {
-				//$team = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-				//$series = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
+				//$team = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+				//$series = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
 
-				$last = $utf8 ? trim($data[0]) : utf8_encode(trim($data[0]));
-				$first = $utf8 ? trim($data[1]) : utf8_encode(trim($data[1]));
-				$country = $utf8 ? trim($data[2]) : utf8_encode(trim($data[2]));
-				$division1 = $utf8 ? trim($data[3]) : utf8_encode(trim($data[3]));
-				$division2 = $utf8 ? trim($data[4]) : utf8_encode(trim($data[4]));
-				$jersey = $utf8 ? trim($data[5]) : utf8_encode(trim($data[5]));
+				$last = $utf8 ? trim($data[0]) : convertToUtf8(trim($data[0]));
+				$first = $utf8 ? trim($data[1]) : convertToUtf8(trim($data[1]));
+				$country = $utf8 ? trim($data[2]) : convertToUtf8(trim($data[2]));
+				$division1 = $utf8 ? trim($data[3]) : convertToUtf8(trim($data[3]));
+				$division2 = $utf8 ? trim($data[4]) : convertToUtf8(trim($data[4]));
+				$jersey = $utf8 ? trim($data[5]) : convertToUtf8(trim($data[5]));
 
-				//$gender = $utf8 ? trim($data[6]) : utf8_encode(trim($data[6]));
-				//$role = $utf8 ? trim($data[7]) : utf8_encode(trim($data[7]));
+				//$gender = $utf8 ? trim($data[6]) : convertToUtf8(trim($data[6]));
+				//$role = $utf8 ? trim($data[7]) : convertToUtf8(trim($data[7]));
 
 				//if($role=="guest"||$role=="guest2"){
 				//	continue;

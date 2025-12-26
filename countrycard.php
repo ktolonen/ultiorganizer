@@ -6,6 +6,13 @@ $html = "";
 $countryId = intval(iget("country"));
 $profile = CountryInfo($countryId);
 
+if (!$profile) {
+  $title = _("Country Card");
+  $html .= "<h1>" . _("Country not found") . "</h1>";
+  showPage($title, $html);
+  return;
+}
+
 $title = utf8entities(_($profile['name']));
 
 $html .= "<h1>" . utf8entities(_($profile['name'])) . "</h1>";

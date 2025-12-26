@@ -4,7 +4,8 @@ if (IsRegistered($_SESSION['uid'])) {
 }
 
 $title = _("Login failed");
-$userId = urldecode($_GET['user']);
+$userId = isset($_GET['user']) ? urldecode($_GET['user']) : "";
+$safeUserId = utf8entities($userId);
 $html = "";
 
 if (isset($_POST['resetpassword'])) {
@@ -12,7 +13,7 @@ if (isset($_POST['resetpassword'])) {
   if ($ret) {
     $html .= "<p>" . _("New password sent.") . "</p>";
   } else {
-    $html .= "<p>" . sprintf(_("Resetting password for '%s' failed. Email address may be invalid. Password was not sent."), $userId) . "</p>";
+    $html .= "<p>" . sprintf(_("Resetting password for '%s' failed. Email address may be invalid. Password was not sent."), $safeUserId) . "</p>";
   }
 }
 
@@ -25,7 +26,7 @@ if (empty($html)) {
     $html .= "<p><input class='button' type='submit' name='resetpassword' value='" . _("Reset password") . "'/></p>\n";
     $html .= "</form>\n";
   } else {
-    $html .= "<p>" . sprintf(_("Invalid username %s."), $userId) . "</p>\n";
+    $html .= "<p>" . sprintf(_("Invalid username %s."), $safeUserId) . "</p>\n";
   }
 }
 showPage($title, $html);

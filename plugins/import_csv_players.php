@@ -41,10 +41,10 @@ if (isset($_POST['import'])) {
 		$row = 1;
 		if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
 			while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
-				$first = $utf8 ? $data[0] : utf8_encode($data[0]);
-				$last = $utf8 ? $data[1] : utf8_encode($data[1]);
-				$number = $utf8 ? $data[2] : utf8_encode($data[2]);
-				$team = $utf8 ? $data[3] : utf8_encode($data[3]);
+				$first = $utf8 ? $data[0] : convertToUtf8($data[0]);
+				$last = $utf8 ? $data[1] : convertToUtf8($data[1]);
+				$number = $utf8 ? $data[2] : convertToUtf8($data[2]);
+				$team = $utf8 ? $data[3] : convertToUtf8($data[3]);
 				$teamId = -1;
 				foreach ($teams as $t) {
 					if ($t['name'] == $team) {

@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 
 $html = "";
 $errors = "";
@@ -13,6 +14,7 @@ $scores = array();
 while ($row = mysqli_fetch_assoc($result)) {
   $scores[] = $row;
 }
+$lastscore = null;
 $uo_goal = array(
   "game" => $gameId,
   "num" => 0,
@@ -135,7 +137,6 @@ $html .= "<form action='?view=addscoresheet' method='post' data-ajax='false'>\n"
 
 
 //last score
-$lastscore;
 //$html .= "<div class='ui-grid-b'>";
 if (count($scores) > 0) {
   $lastscore = $scores[count($scores) - 1];
@@ -259,9 +260,6 @@ if (empty($errors)) {
   $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Half time") . "</a>";
   $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
   $html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game official") . "</a>";
-  if (IsTwitterEnabled()) {
-    $html .= "<a href='?view=tweet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Tweet") . "</a>";
-  }
 
   $html .= "<h3>" . _("Game has ended") . "</h3>";
   if ($lastscore) {
@@ -309,14 +307,25 @@ echo $html;
                   echo "\"";
                   ?>;
 
-  $("input[name=team]:radio").bind("change", function(event, ui) {
-    if ($(this).val() == "H") {
-      document.getElementById('pass').innerHTML = homelist;
-      document.getElementById('goal').innerHTML = homelist;
-    } else {
-      document.getElementById('pass').innerHTML = awaylist;
-      document.getElementById('goal').innerHTML = awaylist;
+  function swapTeamLists(teamValue) {
+    var passSelect = document.getElementById('pass');
+    var goalSelect = document.getElementById('goal');
+    if (!passSelect || !goalSelect) {
+      return;
     }
+    if (teamValue === "H") {
+      passSelect.innerHTML = homelist;
+      goalSelect.innerHTML = homelist;
+    } else {
+      passSelect.innerHTML = awaylist;
+      goalSelect.innerHTML = awaylist;
+    }
+  }
 
+  var teamRadios = document.querySelectorAll('input[name="team"]');
+  teamRadios.forEach(function(radio) {
+    radio.addEventListener('change', function() {
+      swapTeamLists(this.value);
+    });
   });
 </script>

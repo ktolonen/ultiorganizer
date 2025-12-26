@@ -8,7 +8,7 @@ include_once $include_prefix . 'lib/debug.functions.php';
 function IsSeasonStatsCalculated($season)
 {
 	$query = sprintf(
-		"SELECT count(*) FROM uo_season_stats WHERE season='%s'",
+		"SELECT 1 FROM uo_season_stats WHERE season='%s' LIMIT 1",
 		DBEscapeString($season)
 	);
 	return DBQueryToValue($query);
@@ -16,7 +16,20 @@ function IsSeasonStatsCalculated($season)
 
 function IsStatsDataAvailable()
 {
-	return DBQueryToValue("SELECT count(*) FROM uo_season_stats");
+	return DBQueryToValue("SELECT 1 FROM uo_season_stats LIMIT 1");
+}
+
+function DeleteSeasonStats($season)
+{
+	if (isSeasonAdmin($season)) {
+		$season_safe = DBEscapeString($season);
+		DBQuery(sprintf("DELETE FROM uo_season_stats WHERE season='%s'", $season_safe));
+		DBQuery(sprintf("DELETE FROM uo_series_stats WHERE season='%s'", $season_safe));
+		DBQuery(sprintf("DELETE FROM uo_team_stats WHERE season='%s'", $season_safe));
+		DBQuery(sprintf("DELETE FROM uo_player_stats WHERE season='%s'", $season_safe));
+	} else {
+		die('Insufficient rights to archive season');
+	}
 }
 
 function SeriesStatistics($season)
@@ -405,6 +418,9 @@ function CalcPlayerStats($season)
 			$allgames = PlayerSeasonPlayedGames($player['player_id'], $season_info['season_id']);
 
 			if ($allgames) {
+				if (empty($player_info['profile_id'])) {
+					continue;
+				}
 				$games = $allgames;
 				$goals = PlayerSeasonGoals($player['player_id'], $season_info['season_id']);
 				$passes = PlayerSeasonPasses($player['player_id'], $season_info['season_id']);
@@ -420,7 +436,13 @@ function CalcPlayerStats($season)
 				$defence_time = 0;
 
 				//save player stats
-				$query = "INSERT IGNORE INTO uo_player_stats (player_id) VALUES (" . $player['player_id'] . ")";
+				$query = "INSERT INTO uo_player_stats (player_id, profile_id, team, season, series)
+						VALUES (" . (int)$player['player_id'] . ", " . (int)$player_info['profile_id'] . ", " . (int)$player_info['team'] . ", '" . DBEscapeString($season_info['season_id']) . "', " . (int)$player_info['series'] . ")
+						ON DUPLICATE KEY UPDATE
+							profile_id=VALUES(profile_id),
+							team=VALUES(team),
+							season=VALUES(season),
+							series=VALUES(series)";
 
 				DBQuery($query);
 				$defense_str = " ";

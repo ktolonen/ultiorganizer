@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
@@ -18,31 +19,6 @@ if (!empty($_GET['user'])) {
   }
 } else {
   $userid = $_SESSION['uid'];
-}
-
-if (IsFacebookEnabled() && $_SESSION['uid'] == $userid) {
-  global $serverConf;
-  $fb_cookie = FBCookie($serverConf['FacebookAppId'], $serverConf['FacebookAppSecret']);
-
-  if ($fb_cookie) {
-    if ((!empty($_GET['linkfacebook'])) && ($_GET['linkfacebook'] == "true")) {
-      ReMapFBUserId($fb_cookie, $userid);
-    }
-    if ((!empty($_GET['unlinkfacebook'])) && ($_GET['unlinkfacebook'] == "true")) {
-      UnMapFBUserId($fb_cookie, $userid);
-    }
-  }
-  $fb_props = getFacebookUserProperties($userid);
-  if (FBLoggedIn($fb_cookie, $fb_props)) {
-    if (!empty($_POST['linkfbplayer'])) {
-      LinkFBPlayer($userid, $_POST['fbPlayerId'], array("won"));
-      $fb_props = getFacebookUserProperties($userid);
-    }
-    if (!empty($_POST['unlinkfbplayer'])) {
-      UnLinkFBPlayer($userid, $_POST['fbPlayerId']);
-      $fb_props = getFacebookUserProperties($userid);
-    }
-  }
 }
 
 if ($userid != "anonymous") {
@@ -281,35 +257,6 @@ if ($_SESSION['uid'] != "anonymous") {
 						</td></tr>\n";
     }
   }
-  if (IsFacebookEnabled() && $_SESSION['uid'] == $userid) {
-    global $serverConf;
-    $fb_cookie = FBCookie($serverConf['FacebookAppId'], $serverConf['FacebookAppSecret']);
-    $fb_props = getFacebookUserProperties($userid);
-    if (!$fb_cookie) {
-      // Login button
-      $html .= "<tr><td class='infocell'>" . _("Login via Facebook") . ":</td>
-			<td><fb:login-button perms='email,publish_stream,offline_access'/></td></tr>\n";
-    } elseif ($fb_cookie && !isset($fb_props['facebookuid'])) {
-      if (ExistingFBUserId($fb_cookie['uid'])) {
-        // Offer to change facebook linkage
-        $html .= "<tr><td class='infocell'>" . _("Login via Facebook") . ":</td>
-				<td><a href='?view=user/userinfo&linkfacebook=true'>" . _("Change link from this account to my current Facebook account") . "</a></td></tr>\n";
-      } else {
-        // Offer to link account
-        $html .= "<tr><td class='infocell'>" . _("Login via Facebook") . ":</td>
-				<td><a href='?view=user/userinfo&linkfacebook=true'>" . _("Link this account to my Facebook account") . "</a></td></tr>\n";
-      }
-    } elseif ($fb_cookie['uid'] == $fb_props['facebookuid']) {
-      // Offer to unlink account
-      $html .= "<tr><td class='infocell'>" . _("Login via Facebook") . ":</td>
-			<td><a href='?view=user/userinfo&unlinkfacebook=true'>" . _("Remove link from this account to my Facebook account") . "</a></td></tr>\n";
-    } else {
-      // Offer to change facebook linkage
-      $html .= "<tr><td class='infocell'>" . _("Login via Facebook") . ":</td>
-			<td><a href='?view=user/userinfo&linkfacebook=true'>" . _("Change link from this account to my current Facebook account") . "</a></td></tr>\n";
-    }
-  }
-
   $html .= "		<tr><td class='infocell'>" . _("Language") . ":</td>
 			<td><select class='dropdown' name='userlocale'>";
   global $locales;
@@ -507,24 +454,11 @@ if (hasEditUsersRight() || $_SESSION['uid'] == $userid) {
           $playerInfo = PlayerProfile($akey);
           $html .= " (" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . ")";
           $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-          if (IsFacebookEnabled() && $_SESSION['uid'] == $userid) {
-            if (FBLoggedIn($fb_cookie, $fb_props)) {
-              if (isset($fb_props['facebookplayer'][$akey])) {
-                $html .= "<tr><td>&raquo; " . _("Do not publish the game events of this player on my Facebook feed");
-                $html .= "</td><td><input class='button' type='submit' name='unlinkfbplayer' value='" . _("Unpublish") . "' onclick='setId(" . $akey . ", \"fbPlayerId\");'/><br/>\n";
-                $html .= "<a href='?view=user/facebookpublishing&amp;player=" . $akey . "'>" . _("Options") . "...</a></td></tr>\n";
-              } else {
-                $html .= "<tr><td>&raquo; " . _("Publish the game events of this player on my Facebook feed");
-                $html .= "</td><td><input class='button' type='submit' name='linkfbplayer' value='" . _("Publish") . "' onclick='setId(" . $akey . ", \"fbPlayerId\");'/></td></tr>\n";
-              }
-            }
-          }
         }
       }
     }
     $html .= "</table>\n";
-    $html .= "<div><input type='hidden' id='deleteRoleId' name='deleteRoleId'/>";
-    $html .= "<input type='hidden' id='fbPlayerId' name='fbPlayerId'/></div>";
+    $html .= "<div><input type='hidden' id='deleteRoleId' name='deleteRoleId'/></div>";
     $html .= "</form>\n";
   }
 }

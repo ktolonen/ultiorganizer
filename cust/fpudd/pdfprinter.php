@@ -10,34 +10,52 @@ class PDF extends FPDF
 	var $HREF;
 
 	var $game = array(
-			"seasonname"=>"",
-			"game_id"=>"",
-			"hometeamname"=>"",
-			"visitorteamname"=>"",
-			"poolname"=>"",
-			"time"=>"",
-			"placename"=>""
-			);
-        function PrintBlankPage()
-                {
-                 $this->AddPage();
-                }
+				"seasonname"=>"",
+				"game_id"=>"",
+				"hometeamname"=>"",
+				"visitorteamname"=>"",
+				"poolname"=>"",
+				"time"=>"",
+				"placename"=>""
+				);
+		
+		private function pdfText($text)
+			{
+			$text = (string)$text;
+			if (function_exists('mb_convert_encoding')) {
+				$converted = @mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
+				if ($converted !== false) {
+					return $converted;
+				}
+			}
+			if (function_exists('iconv')) {
+				$converted = @iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $text);
+				if ($converted !== false) {
+					return $converted;
+				}
+			}
+			return $text;
+			}
+	        function PrintBlankPage()
+	                {
+	                 $this->AddPage();
+	                }
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
-		{
-		$this->game['seasonname'] = utf8_decode($seasonname);
-		$this->game['game_id'] = $gameId."".getChkNum($gameId);
-		$this->game['hometeamname'] = utf8_decode($hometeamname);
-		$this->game['visitorteamname'] = utf8_decode($visitorteamname);
-		$this->game['poolname'] = utf8_decode($poolname);
-		$this->game['time'] = $time;
-		$this->game['placename'] = utf8_decode($placename);
+			{
+			$this->game['seasonname'] = $this->pdfText($seasonname);
+			$this->game['game_id'] = $gameId."".getChkNum($gameId);
+			$this->game['hometeamname'] = $this->pdfText($hometeamname);
+			$this->game['visitorteamname'] = $this->pdfText($visitorteamname);
+			$this->game['poolname'] = $this->pdfText($poolname);
+			$this->game['time'] = $time;
+			$this->game['placename'] = $this->pdfText($placename);
 		
 		$this->AddPage();
 		
 		$data = _("APUDD");
 		$data .= " - ";
 		$data .= _("Folha do jogo da"); 
-		$data = utf8_decode($data); //season name already decoded
+		$data = $this->pdfText($data); //season name already decoded
 		$data .= " " . $this->game['seasonname'];
 		
 		$this->SetFont('Arial','B',16);
@@ -47,13 +65,13 @@ class PDF extends FPDF
 		
 		$this->SetY(21);
 		
-		$this->OneCellTable(utf8_decode(_("Jogo #")), $this->game['game_id']);
-		$this->OneCellTable(utf8_decode(_("Equipa da casa")), $this->game['hometeamname']);
-		$this->OneCellTable(utf8_decode(_("Equipa Visitante")), $this->game['visitorteamname']);
-		$this->OneCellTable(utf8_decode(_("Divisão").", "._("Grupo")), $this->game['poolname']);
-		$this->OneCellTable(utf8_decode(_("Campo")), $this->game['placename']);
-		$this->OneCellTable(utf8_decode(_("Hora e data do jogo")), $this->game['time']);
-		$this->OneCellTable(utf8_decode(_("Estatísticas feitas por:")), "");
+		$this->OneCellTable($this->pdfText(_("Jogo #")), $this->game['game_id']);
+		$this->OneCellTable($this->pdfText(_("Equipa da casa")), $this->game['hometeamname']);
+		$this->OneCellTable($this->pdfText(_("Equipa Visitante")), $this->game['visitorteamname']);
+		$this->OneCellTable($this->pdfText(_("Divisão").", "._("Grupo")), $this->game['poolname']);
+		$this->OneCellTable($this->pdfText(_("Campo")), $this->game['placename']);
+		$this->OneCellTable($this->pdfText(_("Hora e data do jogo")), $this->game['time']);
+		$this->OneCellTable($this->pdfText(_("Estatísticas feitas por:")), "");
 		$this->SetFont('Arial','',10);
 		$this->Ln();
 
@@ -63,7 +81,7 @@ class PDF extends FPDF
 		$this->Timeouts();
 		$this->Ln();
 
-		$this->OneCellTable(utf8_decode(_("Fim do intervalo aos")), "");
+		$this->OneCellTable($this->pdfText(_("Fim do intervalo aos")), "");
 		$this->Ln();
 		$this->SpiritPoints();
 		$this->Ln();
@@ -76,7 +94,7 @@ class PDF extends FPDF
 		
 		$this->SetY(-25);
 		$data = "";
-		$data = utf8_decode($data);
+		$data = $this->pdfText($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -87,20 +105,20 @@ class PDF extends FPDF
 		
 	function PrintDefenseSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 		{
-		$this->game['seasonname'] = utf8_decode($seasonname);
+		$this->game['seasonname'] = $this->pdfText($seasonname);
 		$this->game['game_id'] = $gameId."".getChkNum($gameId);
-		$this->game['hometeamname'] = utf8_decode($hometeamname);
-		$this->game['visitorteamname'] = utf8_decode($visitorteamname);
-		$this->game['poolname'] = utf8_decode($poolname);
+		$this->game['hometeamname'] = $this->pdfText($hometeamname);
+		$this->game['visitorteamname'] = $this->pdfText($visitorteamname);
+		$this->game['poolname'] = $this->pdfText($poolname);
 		$this->game['time'] = $time;
-		$this->game['placename'] = utf8_decode($placename);
+		$this->game['placename'] = $this->pdfText($placename);
 		
 		$this->AddPage();
 		
 		$data = _("FPUDD");
 		$data .= " - ";
 		$data .= _("Lista de defesas"); 
-		$data = utf8_decode($data); //season name already decoded
+		$data = $this->pdfText($data); //season name already decoded
 		$data .= " " . $this->game['seasonname'];
 		
 		$this->SetFont('Arial','B',16);
@@ -117,7 +135,7 @@ class PDF extends FPDF
                 //$this->SetXY(85,-10);
 		//$data = "Defesas. É registada uma defesa se houver troca na posse do disco. Se não houver troca de posse, não é registada.";
                 //$data .= " " . "Escolher equipa";
-		$data = utf8_decode($data);
+		$data = $this->pdfText($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -134,7 +152,7 @@ class PDF extends FPDF
 		$data .= " - ";
 		$data .= _("Lista de jogadores"); 
 		$data .= " ". _("para o jogo"). " #" . $this->game['game_id'];
-		$data = utf8_decode($data);
+		$data = $this->pdfText($data);
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0);
@@ -157,20 +175,20 @@ class PDF extends FPDF
 		$this->Ln();
 		$this->SetFont('Arial','',10);
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
-		$this->Cell(56,6,utf8_decode(_("Nome")),'LRTB',0,'C',true);
-		$this->Cell(20,6,utf8_decode(_("Número")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("License ok")),'LRTB',0,'C',true);
+		$this->Cell(56,6,$this->pdfText(_("Nome")),'LRTB',0,'C',true);
+		$this->Cell(20,6,$this->pdfText(_("Número")),'LRTB',0,'C',true);
+		//$this->Cell(10,6,$this->pdfText(_("Game#")),'LRTB',0,'C',true);
+		//$this->Cell(10,6,$this->pdfText(_("License ok")),'LRTB',0,'C',true);
 		
 		$this->SetFillColor(255);
 		$this->Cell(2,6,"",'LR',0,'C',true); //separator
 		
 		$this->SetFillColor(0);
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
-		$this->Cell(56,6,utf8_decode(_("Name")),'LRTB',0,'C',true);
-		$this->Cell(20,6,utf8_decode(_("Number")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,utf8_decode(_("License ok")),'LRTB',0,'C',true);
+		$this->Cell(56,6,$this->pdfText(_("Name")),'LRTB',0,'C',true);
+		$this->Cell(20,6,$this->pdfText(_("Number")),'LRTB',0,'C',true);
+		//$this->Cell(10,6,$this->pdfText(_("Game#")),'LRTB',0,'C',true);
+		//$this->Cell(10,6,$this->pdfText(_("License ok")),'LRTB',0,'C',true);
 
 		$this->Ln();
 		$this->SetTextColor(0);
@@ -182,11 +200,11 @@ class PDF extends FPDF
                         $numHomePlayer = -1;
                         $numVisitorPlayer = -1;
 			if(isset($homeplayers[$i-1]['name'])){
-				$hplayer = utf8_decode($homeplayers[$i-1]['name']);
+				$hplayer = $this->pdfText($homeplayers[$i-1]['name']);
                                 $numHomePlayer = $homeplayers[$i-1]['num'];
 			}
 			if(isset($visitorplayers[$i-1]['name'])){
-				$vplayer = utf8_decode($visitorplayers[$i-1]['name']);
+				$vplayer = $this->pdfText($visitorplayers[$i-1]['name']);
                                 $numVisitorPlayer = $visitorplayers[$i-1]['num'];
 			}
 			$this->SetFont('Arial','',10);
@@ -233,7 +251,7 @@ class PDF extends FPDF
 		///$this->Image("cust/fpudd/APFUDD_gray.png",40,260,30,30);
 		//instructions
 		$data = "";
-		$data = utf8_decode($data);
+		$data = $this->pdfText($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -247,7 +265,7 @@ class PDF extends FPDF
 		$data = $teamname;
 		$data .= " - ";
 		$data .= _("Roster"); 
-		$data = utf8_decode($data);
+		$data = $this->pdfText($data);
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
@@ -258,7 +276,7 @@ class PDF extends FPDF
 		$data .= U_($poolname);
 		$data .= ", ";
 		$data .= _("Game")." #:"; 
-		$data = utf8_decode($data);
+		$data = $this->pdfText($data);
 		$this->SetFont('Arial','',14);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -270,10 +288,10 @@ class PDF extends FPDF
 
 		$this->SetFont('Arial','',10);
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
-		$this->Cell(100,6,utf8_decode(_("Name")),'LRTB',0,'C',true);
-		$this->Cell(10,6,utf8_decode(_("Play")),'LRTB',0,'C',true);
-		$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
-		$this->Cell(62,6,utf8_decode(_("Info")),'LRTB',0,'C',true);
+		$this->Cell(100,6,$this->pdfText(_("Name")),'LRTB',0,'C',true);
+		$this->Cell(10,6,$this->pdfText(_("Play")),'LRTB',0,'C',true);
+		$this->Cell(10,6,$this->pdfText(_("Game#")),'LRTB',0,'C',true);
+		$this->Cell(62,6,$this->pdfText(_("Info")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -281,11 +299,11 @@ class PDF extends FPDF
 			$player = "";
 
 			if(isset($players[$i-1]['firstname'])){
-				$player .= utf8_decode($players[$i-1]['firstname']);
+				$player .= $this->pdfText($players[$i-1]['firstname']);
 			}
 		    $player .= " ";
 			if(isset($players[$i-1]['lastname'])){
-				$player .= utf8_decode($players[$i-1]['lastname']);
+				$player .= $this->pdfText($players[$i-1]['lastname']);
 			}
 			
 			$this->SetFont('Arial','',10);
@@ -314,7 +332,7 @@ class PDF extends FPDF
 		$data = "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
 		$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
 		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
-		$data = utf8_decode($data);
+		$data = $this->pdfText($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -364,7 +382,7 @@ class PDF extends FPDF
 		while($game = mysqli_fetch_assoc($games)){
 			
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) {
-				$txt = utf8_decode(U_($game['reservationgroup']));
+				$txt = $this->pdfText(U_($game['reservationgroup']));
 				$this->SetFont('Arial','B',12);
 				$this->SetTextColor(0);
 				$this->Ln();
@@ -384,7 +402,7 @@ class PDF extends FPDF
 			if(!empty($game['place_id']) && ($game['place_id'] != $prevPlace || $game['fieldname'] != $prevField || JustDate($game['starttime']) != $prevDate)){
 				$txt = U_($game['placename']);
 				$txt .= " "._("Field")." ".U_($game['fieldname']);
-				$txt = utf8_decode($txt);
+				$txt = $this->pdfText($txt);
 				
 				$this->SetFont('Arial','',10);
 				$this->SetTextColor(0);
@@ -480,9 +498,9 @@ class PDF extends FPDF
 					//write times
 					foreach($times as $time){
 						$this->Cell($xtimetitle,$gridy/4,"",0,2,'L',false);
-						$txt = utf8_decode(ShortDate($time['time']));
+						$txt = $this->pdfText(ShortDate($time['time']));
 						$this->Cell($xtimetitle,$gridy/4,$txt,0,2,'L',false);
-						$txt = utf8_decode(DefHourFormat($time['time']));
+						$txt = $this->pdfText(DefHourFormat($time['time']));
 						$this->Cell($xtimetitle,$gridy/4,$txt,0,2,'L',false);
 						$this->Cell($xtimetitle,$gridy/4,"",0,2,'L',false);
 					}
@@ -493,7 +511,7 @@ class PDF extends FPDF
 								
 				$this->SetFont('Arial','B',12);
 				$this->SetTextColor(0);
-				$txt = utf8_decode(_("Field")." ".$game['fieldname']);
+				$txt = $this->pdfText(_("Field")." ".$game['fieldname']);
 				$this->Cell($gridx,$yfieldtitle,$txt,"LR",2,'C',false);
 				//write grids
 				foreach($times as $time){
@@ -511,17 +529,17 @@ class PDF extends FPDF
 			$this->SetTextColor(0);
 			$this->Cell($gridx,1,"",0,2,'L',false);
 			if($game['hometeam'] && $game['visitorteam']){
-				$txt = utf8_decode($game['hometeamname']);
+				$txt = $this->pdfText($game['hometeamname']);
 				$this->DynSetTeamFont($txt,$gridx,8);
 				$this->Cell($gridx,4,$txt,0,2,'L',false);
-				$txt = utf8_decode($game['visitorteamname']);
+				$txt = $this->pdfText($game['visitorteamname']);
 				$this->DynSetTeamFont($txt,$gridx,8);
 				$this->Cell($gridx,4,$txt,0,2,'L',false);
 			}else{
-				$txt = utf8_decode(U_($game['phometeamname']));
+				$txt = $this->pdfText(U_($game['phometeamname']));
 				$this->DynSetTeamFont($txt,$gridx,8);
 				$this->Cell($gridx,4,$txt,0,2,'L',false);
-				$txt = utf8_decode(U_($game['pvisitorteamname']));
+				$txt = $this->pdfText(U_($game['pvisitorteamname']));
 				$this->DynSetTeamFont($txt,$gridx,8);
 				$this->Cell($gridx,4,$txt,0,2,'L',false);
 			}
@@ -541,13 +559,13 @@ class PDF extends FPDF
 			}
 			
 			$this->Cell($gridx,1,"",0,2,'L',$colors);
-			$txt = utf8_decode($game['seriesname']);
+			$txt = $this->pdfText($game['seriesname']);
 			if(strlen($game['poolname'])<15){
 				$txt .= ", \n";
 			}else{
 				$txt .= ", ";
 			}
-			$txt .= utf8_decode($game['poolname']);
+			$txt .= $this->pdfText($game['poolname']);
 			//$this->DynSetFont($txt,$gridx,8);
 			$this->MultiCell($gridx,3,$txt,"LR",2,'L',$colors);
 			
@@ -611,41 +629,41 @@ class PDF extends FPDF
 		}
 		
 		if($field){
-			$txt = utf8_decode(U_($info['fieldname']));
+			$txt = $this->pdfText(U_($info['fieldname']));
 			$this->Cell(20,5,$txt,'TB',0,'L',true);
 		}
 		
 		$o=0;
 		if($game['gamename']){
 			$this->SetFont('Arial','B',8);
-			$txt = utf8_decode(U_($game['gamename']).":");
+			$txt = $this->pdfText(U_($game['gamename']).":");
 			$this->Cell(30,5,$txt,'TB',0,'L',true);
 			$o=15;
 			$this->SetFont('Arial','',8);
 		}
 		
 		if($game['hometeam'] && $game['visitorteam']){
-			$txt = utf8_decode($game['hometeamname']);
+			$txt = $this->pdfText($game['hometeamname']);
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 			$txt = " - ";
 			$this->Cell(5,5,$txt,'TB',0,'L',true);
-			$txt = utf8_decode($game['visitorteamname']);
+			$txt = $this->pdfText($game['visitorteamname']);
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 		}else{
 			$this->SetFont('Arial','I',8);
-			$txt = utf8_decode(U_($game['phometeamname']));
+			$txt = $this->pdfText(U_($game['phometeamname']));
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 			$txt = " - ";
 			$this->Cell(5,5,$txt,'TB',0,'L',true);
-			$txt = utf8_decode(U_($game['pvisitorteamname']));
+			$txt = $this->pdfText(U_($game['pvisitorteamname']));
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 			$this->SetFont('Arial','',8);
 		}
 		if($pool){
-			$txt = utf8_decode(U_($game['seriesname']));
+			$txt = $this->pdfText(U_($game['seriesname']));
 			$this->Cell(20,5,$txt,'TB',0,'L',true);
 			
-			$txt = utf8_decode(U_($game['poolname']));
+			$txt = $this->pdfText(U_($game['poolname']));
 			$this->Cell(40,5,$txt,'TB',0,'L',true);
 		}
 
@@ -669,7 +687,7 @@ class PDF extends FPDF
 	function PrintSeasonPools($id) {
 		$left_margin = 10;
 		$top_margin = 10;
-		$title = utf8_decode(SeasonName($id));
+		$title = $this->pdfText(SeasonName($id));
 		$series = SeasonSeries($id, true);
 		
 		$this->SetFont('Arial','B',16);
@@ -683,7 +701,7 @@ class PDF extends FPDF
 			if($this->GetY()+97 > 297){
 				$this->AddPage();
 			}
-			$name = utf8_decode(U_($row['name']));
+			$name = $this->pdfText(U_($row['name']));
 			$this->SetFont('Arial','B',14);
 			$this->SetTextColor(0);
 			
@@ -706,7 +724,7 @@ class PDF extends FPDF
 		if($this->GetY()+97 > 297){
 			$this->AddPage();
 		}
-		$name = utf8_decode(U_(SeriesName($id)));
+		$name = $this->pdfText(U_(SeriesName($id)));
 		$this->SetFont('Arial','B',14);
 		$this->SetTextColor(0);
 		
@@ -736,7 +754,7 @@ class PDF extends FPDF
 				$teams = PoolSchedulingTeams($pool['pool_id']);
 				$scheduling_teams = true;
 			}
-			$name = utf8_decode(U_($poolinfo['name']));
+			$name = $this->pdfText(U_($poolinfo['name']));
 			
 			if($i%6==0 && $i <= count($pools)){
 				$this->SetXY($left_margin,$max_y);
@@ -769,7 +787,7 @@ class PDF extends FPDF
 			$this->SetTextColor($textcolor['r'],$textcolor['g'],$textcolor['b']);
 			
 			foreach($teams as $team){
-				$txt = utf8_decode(U_($team['name']));
+				$txt = $this->pdfText(U_($team['name']));
 				$fontsize=10;
 				if($scheduling_teams){
 					$this->SetFont('Arial','i',$fontsize);
@@ -809,13 +827,13 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,0,0);
-		$this->Cell(80,6,utf8_decode(_("Time-outs")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Time-outs")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(20,6,utf8_decode(_("Casa")),'LRTB',0,'L',true);
+		$this->Cell(20,6,$this->pdfText(_("Casa")),'LRTB',0,'L',true);
 		
 		for($i=0;$i<6;$i++)
 			{
@@ -827,7 +845,7 @@ class PDF extends FPDF
 		//visitor grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(20,6,utf8_decode(_("Visitante")),'LRTB',0,'L',true);
+		$this->Cell(20,6,$this->pdfText(_("Visitante")),'LRTB',0,'L',true);
 		
 		for($i=0;$i<6;$i++)
 			{
@@ -842,7 +860,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,0,0);
-		$this->Cell(80,6,utf8_decode(_("Primeiro ataque")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Primeiro ataque")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids
@@ -866,7 +884,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,utf8_decode(_("Pontos espírito do jogo")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Pontos espírito do jogo")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -900,13 +918,13 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,0,0);
-		$this->Cell(80,6,utf8_decode(_("Assinaturas dos capitães")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Assinaturas dos capitães")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(20,6,utf8_decode(_("Casa")),'LRTB',0,'L',true);
+		$this->Cell(20,6,$this->pdfText(_("Casa")),'LRTB',0,'L',true);
 		$this->Cell(60,6,"",'LRTB',0,'L',true);
 		
 		$this->Ln();
@@ -914,7 +932,7 @@ class PDF extends FPDF
 		//visitor grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(20,6,utf8_decode(_("Visitante")),'LRTB',0,'L',true);
+		$this->Cell(20,6,$this->pdfText(_("Visitante")),'LRTB',0,'L',true);
 		$this->Cell(60,6,"",'LRTB',0,'L',true);
 		$this->Ln();	
 		}
@@ -925,17 +943,17 @@ class PDF extends FPDF
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
 		$this->SetX(100);
-		$this->Cell(24,4,utf8_decode(_("Equipa")),'LRT',0,'C',true);
-		$this->Cell(30,4,utf8_decode(_("Número T-shirt")),'LRT',0,'C',true);
+		$this->Cell(24,4,$this->pdfText(_("Equipa")),'LRT',0,'C',true);
+		$this->Cell(30,4,$this->pdfText(_("Número T-shirt")),'LRT',0,'C',true);
 		$this->Ln();
 		$this->SetX(100);
 		$this->SetFont('Arial','',10);
-		$this->Cell(12,6,utf8_decode(_("Casa")),'LRB',0,'C',true);
-		$this->Cell(12,6,utf8_decode(_("Visit.")),'LRB',0,'C',true);
-		$this->Cell(15,6,utf8_decode(_("Assist.")),'LRB',0,'C',true);
-		$this->Cell(15,6,utf8_decode(_("Golo")),'LRB',0,'C',true);
-		$this->Cell(25,6,utf8_decode(_("Tempo")),'LRTB',0,'C',true);
-		$this->Cell(21,6,utf8_decode(_("Marcador")),'LRTB',0,'C',true);
+		$this->Cell(12,6,$this->pdfText(_("Casa")),'LRB',0,'C',true);
+		$this->Cell(12,6,$this->pdfText(_("Visit.")),'LRB',0,'C',true);
+		$this->Cell(15,6,$this->pdfText(_("Assist.")),'LRB',0,'C',true);
+		$this->Cell(15,6,$this->pdfText(_("Golo")),'LRB',0,'C',true);
+		$this->Cell(25,6,$this->pdfText(_("Tempo")),'LRTB',0,'C',true);
+		$this->Cell(21,6,$this->pdfText(_("Marcador")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -960,18 +978,18 @@ class PDF extends FPDF
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
 		//$this->SetX(100);
-		//$this->Cell(24,4,utf8_decode(_("Equipa")),'LRT',0,'C',true);
-		//$this->Cell(30,4,utf8_decode(_("Número T-shirt")),'LRT',0,'C',true);
+		//$this->Cell(24,4,$this->pdfText(_("Equipa")),'LRT',0,'C',true);
+		//$this->Cell(30,4,$this->pdfText(_("Número T-shirt")),'LRT',0,'C',true);
 		//$this->Ln();
 		$this->SetX(50);
 		$this->SetFont('Arial','',10);
-		$this->Cell(12,6,utf8_decode(_("Casa")),'LRTB',0,'C',true);
-		$this->Cell(12,6,utf8_decode(_("Visit.")),'LRTB',0,'C',true);
-		$this->Cell(15,6,utf8_decode(_("Jogador")),'LRTB',0,'C',true);
-		$this->Cell(15,6,utf8_decode(_("Apanhado")),'LRTB',0,'C',true);
-		$this->Cell(15,6,utf8_decode(_("Rejeitado")),'LRTB',0,'C',true);
-		$this->Cell(15,6,utf8_decode(_("Callahan")),'LRTB',0,'C',true);
-		$this->Cell(25,6,utf8_decode(_("Tempo")),'LRTB',0,'C',true);
+		$this->Cell(12,6,$this->pdfText(_("Casa")),'LRTB',0,'C',true);
+		$this->Cell(12,6,$this->pdfText(_("Visit.")),'LRTB',0,'C',true);
+		$this->Cell(15,6,$this->pdfText(_("Jogador")),'LRTB',0,'C',true);
+		$this->Cell(15,6,$this->pdfText(_("Apanhado")),'LRTB',0,'C',true);
+		$this->Cell(15,6,$this->pdfText(_("Rejeitado")),'LRTB',0,'C',true);
+		$this->Cell(15,6,$this->pdfText(_("Callahan")),'LRTB',0,'C',true);
+		$this->Cell(25,6,$this->pdfText(_("Tempo")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -997,7 +1015,7 @@ class PDF extends FPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(80,6,utf8_decode(_("Marcador final")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Marcador final")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//data

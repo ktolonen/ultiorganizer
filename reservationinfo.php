@@ -6,6 +6,18 @@ include_once 'lib/configuration.functions.php';
 
 $reservationId = intval(iget("reservation"));
 $place = ReservationInfo($reservationId);
+$title = _("Reservation");
+
+if (!$place) {
+  pageTopHeadOpen($title);
+  pageTopHeadClose($title, false);
+  leftMenu();
+  contentStart();
+  echo "<h1>" . _("Reservation not found") . "</h1>\n";
+  contentEnd();
+  pageEnd();
+  return;
+}
 $title = _("Reservation") . ": " . utf8entities($place['name']) . " " . _("Field") . " " . utf8entities($place['fieldname']);
 
 //common page

@@ -14,7 +14,16 @@ if (iget("sort")) {
   $sort = iget("sort");
 }
 
-$title = _("Club Card") . ": " . utf8entities($profile['name']);
+$title = _("Club Card");
+
+// Abort gracefully if club not found.
+if (!$profile) {
+  $html .= "<h1>" . _("Club not found") . "</h1>";
+  echo $html;
+  return;
+}
+
+$title .= ": " . utf8entities($profile['name']);
 
 $html .= "<h1>" . utf8entities($profile['name']) . "</h1>";
 
@@ -31,11 +40,13 @@ $html .= "<td style='vertical-align:top;text-align:left'><table border='0'>";
 $html .= "<tr><td></td></tr>";
 if ($profile['country'] > 0) {
   $country_info = CountryInfo($profile['country']);
-  $html .= "<tr><td class='profileheader'>" . _("Country") . ":</td>";
-  $html .= "<td style='white-space: nowrap;'><div style='float: left; clear: left;'>";
-  $html .= "<a href='?view=countrycard&amp;country=" . $country_info['country_id'] . "'>" . utf8entities($country_info['name']) . "</a>";
-  $html .= "</div><div>&nbsp;<img src='images/flags/tiny/" . $country_info['flagfile'] . "' alt=''/></div>";
-  $html .= "</td></tr>\n";
+  if ($country_info) {
+    $html .= "<tr><td class='profileheader'>" . _("Country") . ":</td>";
+    $html .= "<td style='white-space: nowrap;'><div style='float: left; clear: left;'>";
+    $html .= "<a href='?view=countrycard&amp;country=" . $country_info['country_id'] . "'>" . utf8entities($country_info['name']) . "</a>";
+    $html .= "</div><div>&nbsp;<img src='images/flags/tiny/" . $country_info['flagfile'] . "' alt=''/></div>";
+    $html .= "</td></tr>\n";
+  }
 }
 if (!empty($profile['city'])) {
   $html .= "<tr><td class='profileheader'>" . _("City") . ":</td>";
@@ -50,9 +61,9 @@ if (!empty($profile['founded'])) {
 if (!empty($profile['homepage'])) {
   $html .= "<tr><td class='profileheader'>" . _("Homepage") . ":</td>";
   if (substr(strtolower($profile['homepage']), 0, 4) == "http") {
-    $html .= "<td><a href='" . $profile['homepage'] . "'>" . utf8entities($profile['homepage']) . "</a></td></tr>\n";
+    $html .= "<td><a href='" . utf8entities($profile['homepage']) . "'>" . utf8entities($profile['homepage']) . "</a></td></tr>\n";
   } else {
-    $html .= "<td><a href='http://" . $profile['homepage'] . "'>" . utf8entities($profile['homepage']) . "</a></td></tr>\n";
+    $html .= "<td><a href='http://" . utf8entities($profile['homepage']) . "'>" . utf8entities($profile['homepage']) . "</a></td></tr>\n";
   }
 }
 if (!empty($profile['contacts'])) {

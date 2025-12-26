@@ -24,7 +24,6 @@ while (!(is_readable($include_prefix . 'conf/config.inc.php') || is_readable($in
   $include_prefix .= "../";
 }
 
-require_once $include_prefix . 'lib/gettext/gettext.inc.php';
 include_once $include_prefix . 'lib/common.functions.php';
 
 if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
@@ -35,11 +34,9 @@ if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
 
 include_once $include_prefix . 'sql/upgrade_db.php';
 
-//When adding new update function into upgrade_db.php change this number
-//Also when you change the database, please add a database definition into
-// 'lib/table-definition-cache' with the database version in the file name.
-// You can get it by getting ext/restful/show_tables.php
-define('DB_VERSION', 76); //Database version matching to upgrade functions.
+//When adding new update function into upgrade_db.php change this number.
+//When you change the database, export the current schema from the running database.
+define('DB_VERSION', 77); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;
 
@@ -59,7 +56,7 @@ function OpenConnection()
 
   //select schema
   $db = mysqli_select_db($mysqlconnectionref, DB_DATABASE);
-  mysqli_set_charset($mysqlconnectionref, 'utf8');
+  mysqli_set_charset($mysqlconnectionref, 'utf8mb4');
 
   if (!$db) {
     die("Unable to select database");
@@ -87,20 +84,60 @@ function CloseConnection()
  */
 function CheckDB()
 {
-  $installedDb = getDBVersion();
-  for ($i = $installedDb; $i <= DB_VERSION; $i++) {
+  // Ensure we always start from the first available upgrade function (upgrade46).
+  $installedDb = (int)getDBVersion();
+  $startVersion = max($installedDb, 46);
+  $installedVersions = array();
+  $versionResult = mysqli_query($GLOBALS['mysqlconnectionref'], "SELECT version FROM uo_database WHERE version IS NOT NULL");
+  if ($versionResult) {
+    while ($row = mysqli_fetch_assoc($versionResult)) {
+      $installedVersions[(int)$row['version']] = true;
+    }
+  }
+
+  for ($i = $startVersion; $i <= DB_VERSION; $i++) {
     $upgradeFunc = 'upgrade' . $i;
+    if (!function_exists($upgradeFunc)) {
+      continue;
+    }
+
+    $nextVersion = $i + 1;
+    if (isset($installedVersions[$nextVersion])) {
+      continue;
+    }
+
     LogDbUpgrade($i);
     $upgradeFunc();
-    $query = sprintf("insert into uo_database (version, updated) values (%d, now())", $i + 1);
+    $query = sprintf(
+      "INSERT INTO uo_database (version, updated)
+       SELECT %d, NOW()
+       FROM DUAL
+       WHERE NOT EXISTS (SELECT 1 FROM uo_database WHERE version=%d)",
+      $nextVersion,
+      $nextVersion
+    );
     runQuery($query);
+    $installedVersions[$nextVersion] = true;
     LogDbUpgrade($i, true);
   }
 }
 function DBEscapeString($escapestr)
 {
   global $mysqlconnectionref;
-  return mysqli_real_escape_string($mysqlconnectionref, $escapestr);
+  $value = (string)$escapestr;
+
+  // Ensure the value is valid UTF-8 before escaping, otherwise MySQL rejects it.
+  if (function_exists('mb_check_encoding') && !mb_check_encoding($value, 'UTF-8')) {
+    $value = convertToUtf8($value);
+  }
+  if (function_exists('iconv')) {
+    $clean = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
+    if ($clean !== false) {
+      $value = $clean;
+    }
+  }
+
+  return mysqli_real_escape_string($mysqlconnectionref, $value);
 }
 
 /**
@@ -113,18 +150,17 @@ function getDBVersion()
   global $mysqlconnectionref;
   $query = "SELECT max(version) as version FROM uo_database";
   $result = mysqli_query($mysqlconnectionref, $query);
-  if (!$result) {
-    $query = "SELECT max(version) as version FROM pelik_database";
-    $result = mysqli_query($mysqlconnectionref, $query);
-  }
   if (!$result) return 0;
   if (!$row = mysqli_fetch_assoc($result)) {
     return 0;
-  } else return $row['version'];
+  }
+
+  // max() can return NULL when the table is empty; treat that as version 0.
+  return (int)$row['version'];
 }
 
 /**
- * Executes sql query and  returns result as an mysql array.
+ * Executes sql query and returns result as a mysqli array.
  *
  * @param string $query database query
  * @return mysqli_result of rows
@@ -216,7 +252,7 @@ function DBQueryToArray($query, $docasting = false)
 /**
  * Converts a db resource to an array
  *
- * @param $result The database resource returned from mysql_query
+ * @param $result The database resource returned from mysqli_query
  * @return array of rows
  */
 function DBResourceToArray($result, $docasting = false)
@@ -262,10 +298,32 @@ function DBSetRow($name, $data, $cond)
   $values = array_values($data);
   $fields = array_keys($data);
 
-  $query = "UPDATE " . DBEscapeString($name) . " SET ";
+  $columns = GetTableColumns($name);
+  if (empty($columns)) {
+    die("Invalid table '" . $name . "'");
+  }
+
+  if (strpos($cond, ';') !== false) {
+    die("Invalid condition");
+  }
+
+  $query = "UPDATE " . $name . " SET ";
 
   for ($i = 0; $i < count($fields); $i++) {
-    $query .= DBEscapeString($fields[$i]) . "='" . $values[$i] . "', ";
+    $fieldKey = strtolower($fields[$i]);
+    if (!isset($columns[$fieldKey])) {
+      die("Invalid field '" . $fields[$i] . "' for table '" . $name . "'");
+    }
+
+    if ($columns[$fieldKey] === 'int') {
+      if ($values[$i] === null) {
+        $query .= $fields[$i] . "=NULL, ";
+      } else {
+        $query .= $fields[$i] . "=" . (int)$values[$i] . ", ";
+      }
+    } else {
+      $query .= $fields[$i] . "='" . DBEscapeString($values[$i]) . "', ";
+    }
   }
   $query = rtrim($query, ', ');
   $query .= " WHERE ";
@@ -274,10 +332,10 @@ function DBSetRow($name, $data, $cond)
 }
 
 /**
- * Copy mysql_associative array row to regular php array.
+ * Copy mysqli_associative array row to regular php array.
  *
- * @param $result return value of mysql_query
- * @param $row mysql_associative array row
+ * @param $result return value of mysqli_query
+ * @param $row mysqli_associative array row
  * @return php array of $row
  */
 function DBCastArray($result, $row)
@@ -318,11 +376,11 @@ function DBStat()
 function DBClientInfo()
 {
   global $mysqlconnectionref;
-  $result = mysqli_get_client_info($mysqlconnectionref);
-  if (!$result) {
+  $info = mysqli_get_client_info();
+  if ($info === false) {
     die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
-  return $result;
+  return $info;
 }
 
 /**
@@ -368,26 +426,4 @@ function DBProtocolInfo()
     die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
   return $result;
-}
-
-if (function_exists('mysql_set_charset') === false) {
-  /**
-   * Sets the client character set.
-   *
-   * Note: This function requires MySQL 5.0.7 or later.
-   *
-   * @see http://www.php.net/mysql-set-charset
-   * @param string $charset A valid character set name
-   * @param resource $link_identifier The MySQL connection
-   * @return TRUE on success or FALSE on failure
-   */
-  function mysql_set_charset($charset, $link_identifier = 0)
-  {
-    global $mysqlconnectionref;
-    if ($link_identifier == null) {
-      return mysqli_query($mysqlconnectionref, 'SET CHARACTER SET "' . $charset . '"');
-    } else {
-      return mysqli_query($mysqlconnectionref, 'SET CHARACTER SET "' . $charset . '"', $link_identifier);
-    }
-  }
 }

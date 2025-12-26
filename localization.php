@@ -1,7 +1,10 @@
 <?php
-include_once $include_prefix.'lib/configuration.functions.php';
-include_once $include_prefix.'lib/gettext/gettext.inc.php';
-include_once $include_prefix.'lib/translation.functions.php';
+include_once $include_prefix . 'lib/configuration.functions.php';
+include_once $include_prefix . 'lib/translation.functions.php';
+
+if (!function_exists('gettext')) {
+  die('The PHP gettext extension must be enabled to run Ultiorganizer.');
+}
 
 // Map locales to defined ones that are "close enough"
 $localeMap = array("en" => "en_GB.utf8",
@@ -40,10 +43,10 @@ function setSessionLocale() {
 
   putenv("LC_MESSAGES=$locale");
   $domain = 'messages';
-  T_textdomain($domain);
-  T_bindtextdomain($domain, $include_prefix."locale");
-  T_bind_textdomain_codeset($domain, $encoding);
-  T_setlocale(LC_MESSAGES, $locale);
+  textdomain($domain);
+  bindtextdomain($domain, $include_prefix . "locale");
+  bind_textdomain_codeset($domain, $encoding);
+  setlocale(LC_MESSAGES, $locale);
 
   if (!headers_sent()) {
     header("Content-type: text/html; charset=$encoding");
@@ -58,7 +61,7 @@ function setSessionLocale() {
 
 
 function utf8entities($string) {
-  return htmlentities($string, ENT_QUOTES, "UTF-8");
+  return htmlentities((string) $string, ENT_QUOTES, "UTF-8");
 }
 
 function styles() {

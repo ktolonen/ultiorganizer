@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/accreditation.functions.php';
 
 $LAYOUT_ID = ACCREDITATION;

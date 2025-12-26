@@ -1,8 +1,13 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'menufunctions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/reservation.functions.php';
 $html = "";
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
+
 if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()) {
 	$tables = $_POST["tables"];
 	$return = "SET NAMES 'utf8';\n\n";
@@ -39,11 +44,10 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()) {
 							$return .= 'NULL';
 						}
 					} else {
-						$row[$j] = addslashes($row[$j]);
-						$row[$j] = preg_replace("/\n/", "\\n", $row[$j]);
-
 						if (isset($row[$j]) && ($row[$j] != NULL)) {
-							$return .= '"' . $row[$j] . '"';
+							$value = addslashes((string)$row[$j]);
+							$value = preg_replace("/\n/", "\\n", $value);
+							$return .= '"' . $value . '"';
 						} else {
 							$return .= 'NULL';
 						}
@@ -121,7 +125,7 @@ if (isSuperAdmin()) {
 	$html .= "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
 	$html .= "</form>";
 } else {
-	$html .= "<p>" . _("User credentials does not match") . "</p>\n";
+	$html .= "<p>" . _("User credentials do not match") . "</p>\n";
 }
 echo $html;
 

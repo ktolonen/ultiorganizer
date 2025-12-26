@@ -72,12 +72,7 @@ function pageTopHeadOpen($title)
   $icon = $include_prefix . "cust/" . CUSTOMIZATIONS . "/favicon.png";
 
   echo "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">
-		<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='" . $lang . "' lang='" . $lang . "'";
-  global $serverConf;
-  if (IsFacebookEnabled()) {
-    echo "\n		xmlns:fb=\"http://www.facebook.com/2008/fbml\"";
-  }
-  echo ">\n<head>
+		<html xmlns='http://www.w3.org/1999/xhtml' xml:lang='" . $lang . "' lang='" . $lang . "'>\n<head>
 		<meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/>
 		<meta http-equiv=\"Content-Script-Type\" content=\"text/javascript\"/>";
   //no cache
@@ -151,11 +146,6 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
     echo "<tr>\n";
     echo "<td class='right' style='padding-top:5px'>";
 
-    if (IsFacebookEnabled() && $user == 'anonymous') {
-      echo "<div id='fb-root'></div>\n";
-      echo "<fb:login-button perms='email,publish_stream,offline_access'/>\n";
-    }
-
     if ($user == 'anonymous') {
       echo "<input class='input' type='text' id='myusername' name='myusername' size='10' style='border:1px solid #555555'/>&nbsp;";
       echo "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
@@ -207,19 +197,6 @@ function contentEnd()
  */
 function pageEnd()
 {
-  global $serverConf;
-  if (IsFacebookEnabled()) {
-    echo "<script src='http://connect.facebook.net/en_US/all.js'></script>
-    <script>
-      FB.init({appId: '";
-    echo $serverConf['FacebookAppId'];
-    echo "', status: true,
-               cookie: true, xfbml: true});
-      FB.Event.subscribe('auth.login', function(response) {
-        window.location.reload();
-      });
-    </script>";
-  }
   echo "<div class='page_bottom'></div>";
   echo "</div></body></html>";
 }
@@ -290,19 +267,6 @@ function mobilePageEnd($query = "")
     $html .= "<a href='?view=mobile/logout'>" . utf8entities(_("Logout")) . "</a></td></tr></table>";
   }
 
-  global $serverConf;
-  if (IsFacebookEnabled()) {
-    $html .= "<script src='http://connect.facebook.net/en_US/all.js'></script>
-    <script>
-      FB.init({appId: '";
-    $html .= $serverConf['FacebookAppId'];
-    $html .= "', status: true,
-               cookie: true, xfbml: true});
-      FB.Event.subscribe('auth.login', function(response) {
-        window.location.reload();
-      });
-    </script>";
-  }
   $html .= "<div class='page_bottom'></div>";
   $html .= "</div></body></html>";
   echo $html;
@@ -619,14 +583,6 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   echo "<tr><td>";
   echo "<a class='subnav' style='background: url(./images/linkicons/feed_14x14.png) no-repeat 0 50%; padding: 0 0 0 19px;' href='./ext/rss.php?feed=all'>" . utf8entities(_("Result Feed")) . "</a>\n";
   echo "</td></tr>\n";
-  if (IsTwitterEnabled()) {
-    $savedurl = GetUrl("season", $season, "result_twitter");
-    if (!empty($savedurl['url'])) {
-      echo "<tr><td>";
-      echo "<a class='subnav' style='background: url(./images/linkicons/twitter_14x14.png) no-repeat 0 50%; padding: 0 0 0 19px;' href='" . $savedurl['url'] . "'>" . utf8entities(_("Result Twitter")) . "</a>\n";
-      echo "</td></tr>\n";
-    }
-  }
   echo "</table>\n";
 
   //event history
@@ -638,8 +594,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     echo "<a class='subnav' href=\"?view=allplayers\">&raquo; " . utf8entities(_("Players")) . "</a>\n";
     echo "<a class='subnav' href=\"?view=allteams\">&raquo; " . utf8entities(_("Teams")) . "</a>\n";
     echo "<a class='subnav' href=\"?view=allclubs\">&raquo; " . utf8entities(_("Clubs")) . "</a>\n";
-    $countries = CountryList(true, true);
-    if (count($countries)) {
+    if (HasPlayableCountries()) {
       echo "<a class='subnav' href=\"?view=allcountries\">&raquo; " . utf8entities(_("Countries")) . "</a>\n";
     }
     echo "<a class='subnav' href=\"?view=statistics&amp;list=teamstandings\">&raquo; " . utf8entities(_("All time")) . "</a></td></tr>\n";

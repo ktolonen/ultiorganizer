@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/team.functions.php';
@@ -6,10 +7,6 @@ include_once 'lib/player.functions.php';
 include_once 'lib/standings.functions.php';
 include_once 'lib/pool.functions.php';
 include_once 'lib/configuration.functions.php';
-
-if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-	include_once 'lib/twitter.functions.php';
-}
 
 $html = "";
 $errors = false;
@@ -200,9 +197,6 @@ if (!$errors) {
 	$html .=  "<a href='?view=mobile/addfirstoffence&amp;game=" . $gameId . "'>" . _("First offence") . "</a> | ";
 	$html .=  "<a href='?view=mobile/addofficial&amp;game=" . $gameId . "'>" . _("Game official") . "</a>";
 	$html .= "</td></tr><tr><td>\n";
-	if (IsTwitterEnabled()) {
-		$html .=  "<a href='?view=mobile/tweet&amp;game=" . $gameId . "'>" . _("Tweet") . "</a> | ";
-	}
 	if (intval($seasoninfo['spiritmode']) > 0) {
 		$html .=  "<a href='?view=mobile/addspiritpoints&amp;game=" . $gameId . "'>" . _("Spirit points") . "</a> | ";
 	}

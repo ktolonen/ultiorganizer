@@ -7,7 +7,6 @@ OpenConnection();
 
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/user.functions.php';
-include_once $include_prefix . 'lib/facebook.functions.php';
 include_once $include_prefix . 'lib/logging.functions.php';
 include_once $include_prefix . 'lib/debug.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
@@ -22,14 +21,9 @@ include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'localization.php';
 include_once $include_prefix . 'menufunctions.php';
 
-if (version_compare(PHP_VERSION, '5.0.0', '>')) {
-	include_once $include_prefix . 'lib/twitter.functions.php';
-}
-
 
 //Session data
-session_name("UO_SESSID");
-session_start();
+startSecureSession();
 
 
 
@@ -44,6 +38,9 @@ if (isset($_POST['myusername'])) {
 	UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "");
 }
 
+if (!isset($_SESSION['uid'])) {
+	$_SESSION['uid'] = "anonymous";
+}
 $user = $_SESSION['uid'];
 
 if (!isset($_SESSION['VISIT_COUNTER'])) {
@@ -55,18 +52,16 @@ setSessionLocale();
 setSelectedSeason();
 $_SESSION['userproperties']['selseason'] = CurrentSeason();
 
-if (!iget('view')) {
+$rawView = iget('view');
+if (!$rawView) {
 	header("location:?view=login");
 	exit();
-} else {
-	LogPageLoad(iget('view'));
 }
 
-if (!iget("view")) {
-	$view = "login";
-} else {
-	$view = iget("view");
-}
+// Resolve view script with format/deny & path checks.
+$viewPath = resolveViewPath($rawView, __DIR__, 'login', array('index'));
+$viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
+LogPageLoad($viewToLog);
 
 ob_start();
 echo "<!DOCTYPE html>\n";
@@ -74,7 +69,7 @@ echo "<html>\n";
 echo "<head>\n";
 echo "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
 echo "<title>Scorekeeper</title>\n";
-echo "<link rel='stylesheet' href='" . BASEURL . "/script/jquery/jquery.mobile-1.2.0.min.css'/>\n";
+echo "<link rel='stylesheet' href='" . BASEURL . "/scorekeeper/scorekeeper.css'/>\n";
 
 if (is_file($include_prefix . 'cust/' . CUSTOMIZATIONS . '/font.css')) {
 	echo "<link rel=\"stylesheet\" href=\"" . $include_prefix . "cust/" . CUSTOMIZATIONS . "/font.css\" type=\"text/css\" />\n";
@@ -82,22 +77,18 @@ if (is_file($include_prefix . 'cust/' . CUSTOMIZATIONS . '/font.css')) {
 	echo "<link rel=\"stylesheet\" href=\"" . $include_prefix . "cust/default/font.css\" type=\"text/css\" />\n";
 }
 
-echo "<script src='" . BASEURL . "/script/jquery/jquery-1.8.3.min.js'></script>\n";
-echo "<script src='" . BASEURL . "/script/jquery/jquery.mobile-1.2.0.min.js'></script>\n";
-//echo "<script src='".BASEURL."/script/jquery/jquery-1.8.3.js'></script>\n";
-//echo "<script src='".BASEURL."/script/jquery/jquery.mobile-1.2.0.js'></script>\n";
 echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
 //include "../script/common.js.inc";
 
 echo "</head>\n";
 echo "<body>\n";
 echo "<div data-role='page'>\n";
-include $view . ".php";
+include $viewPath;
 
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
-echo "<a href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . _("Ultiorganizer") . "</a>";
+echo "<a class='footer-compact' href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . _("Ultiorganizer") . "</a>";
 if ($_SESSION['uid'] != "anonymous") {
-	echo "<a href='?view=logout' data-role='button' data-icon='delete'>" . _("Logout") . "</a>";
+	echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Logout") . "</a>";
 }
 echo "\n</div><!-- /footer -->\n\n";
 echo "</div><!-- /page -->\n";

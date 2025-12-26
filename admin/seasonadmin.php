@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/statistical.functions.php';
 include_once 'lib/series.functions.php';
@@ -94,9 +95,6 @@ $html .=  "<p>";
 $html .=  "<a href='?view=admin/addseasons&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Change event properties") . "</a><br/>";
 $html .=  "<a href='?view=admin/addseasonusers&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit User access rights") . "</a><br/>";
 $html .=  "<a href='?view=admin/addseasonlinks&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit side menu links") . "</a><br/>";
-if (IsTwitterEnabled()) {
-	$html .=  "<a href='?view=admin/twitterconf&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Configure Twitter") . "</a><br/>";
-}
 
 if (IsSeasonStatsCalculated($info['season_id'])) {
 	$html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Re-archive statistics") . "</a><br/>";

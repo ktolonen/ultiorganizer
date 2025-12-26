@@ -2,7 +2,17 @@
 
 function U_($name)
 {
-	$translated = translate($name, $_SESSION['dbtranslations']);
+	if (!isset($_SESSION['dbtranslations']) || !is_array($_SESSION['dbtranslations'])) {
+		if (function_exists('getSessionLocale')) {
+			// Populate the translation cache for the current locale on first use to avoid warnings.
+			loadDBTranslations(getSessionLocale());
+		} else {
+			$_SESSION['dbtranslations'] = array();
+		}
+	}
+
+	$translationArray = is_array($_SESSION['dbtranslations']) ? $_SESSION['dbtranslations'] : array();
+	$translated = translate($name, $translationArray);
 	return $translated[$name];
 }
 
@@ -183,22 +193,27 @@ function translate($name, $translation_array)
 	$retArr = array();
 	$ret = "";
 
-	if (isset($translation_array[strtolower($name)])) {
-		$retArr[$name] = $translation_array[strtolower($name)];
+	$key = strtolower((string)$name);
+	if ($name !== '' && isset($translation_array[$key])) {
+		$retArr[$name] = $translation_array[$key];
 		return $retArr;
 	} else {
 		$ret = "";
-		$splitted = preg_split(WORD_DELIMITER, $name, -1, PREG_SPLIT_NO_EMPTY + PREG_SPLIT_DELIM_CAPTURE);
+		$splitSource = (string)$name;
+		$splitted = preg_split(WORD_DELIMITER, $splitSource, -1, PREG_SPLIT_NO_EMPTY + PREG_SPLIT_DELIM_CAPTURE);
 		foreach ($splitted as $part) {
 			if (preg_match(WORD_DELIMITER, $part)) {
 				$ret .= $part;
 			} else {
 				if (is_numeric($part)) {
 					$ret .= $part;
-				} else if (isset($translation_array[strtolower($part)])) {
-					$ret .= $translation_array[strtolower($part)];
 				} else {
-					$ret .= $part;
+					$partKey = strtolower((string)$part);
+					if ($part !== '' && isset($translation_array[$partKey])) {
+						$ret .= $translation_array[$partKey];
+					} else {
+						$ret .= $part;
+					}
 				}
 			}
 		}

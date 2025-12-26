@@ -12,6 +12,12 @@ $teamId = intval(iget("team"));
 $teaminfo = TeamInfo($teamId);
 $profile = TeamProfile($teamId);
 
+if (!$teaminfo) {
+  $html .= "<h1>" . _("Team not found") . "</h1>";
+  echo $html;
+  return;
+}
+
 $title = utf8entities($teaminfo['name']);
 
 $html .= "<h1>";

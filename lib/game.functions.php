@@ -1,13 +1,17 @@
 <?php
 include_once $include_prefix . 'lib/accreditation.functions.php';
-include_once $include_prefix . 'lib/facebook.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
-include_once $include_prefix . 'lib/twitter.functions.php';
 
 function GameSetPools($games)
 {
+	$gameIds = array_filter(array_map('intval', (array)$games), function ($val) {
+		return $val > 0;
+	});
+	if (empty($gameIds)) {
+		return array();
+	}
 	$query = "SELECT DISTINCT pool_id, p.name from uo_game g left join uo_pool p on (g.pool=p.pool_id) WHERE g.game_id in (";
-	$query .= implode(",", $games);
+	$query .= implode(",", $gameIds);
 	$query .= ") ORDER BY p.ordering ASC";
 	$result = DBQuery($query);
 
@@ -20,6 +24,12 @@ function GameSetPools($games)
 
 function PoolGameSetResults($pool, $games)
 {
+	$gameIds = array_filter(array_map('intval', (array)$games), function ($val) {
+		return $val > 0;
+	});
+	if (empty($gameIds)) {
+		return array();
+	}
 	$query = sprintf(
 		"SELECT time, k.name As hometeamname, v.name As visitorteamname, p.*,s.name AS gamename
 		FROM uo_game AS p 
@@ -27,7 +37,7 @@ function PoolGameSetResults($pool, $games)
 		LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
 		LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
 		WHERE p.game_id IN (%s) AND pool=%d",
-		DBEscapeString(implode(",", $games)),
+		implode(",", $gameIds),
 		(int)$pool
 	);
 	$result = DBQuery($query);
@@ -167,7 +177,7 @@ function GameRespTeam($gameId)
 	);
 	$result = DBQuery($query);
 	if (!$result) {
-		die('Invalid query: ' . mysql_error());
+		return -1;
 	}
 
 	$row = mysqli_fetch_assoc($result);
@@ -638,12 +648,6 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
 		}
-		if (IsTwitterEnabled()) {
-			TweetGameResult($gameId);
-		}
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -665,13 +669,6 @@ function GameClearResult($gameId, $updatepools = true)
 			ResolvePoolStandings($poolId);
 			PoolResolvePlayed($poolId);
 		}
-		if (IsTwitterEnabled()) {
-			TweetGameResult($gameId);
-		}
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
-
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -689,9 +686,6 @@ function GameSetDefenses($gameId, $home, $away)
 		);
 		$result = DBQuery($query);
 
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "game", 0);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -886,9 +880,6 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
 		);
 
 		$result = DBQuery($query);
-		if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "goal", $number);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -919,9 +910,6 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
 		);
 
 		$result = DBQuery($query);
-		/*if (IsFacebookEnabled()) {
-			TriggerFacebookEvent($gameId, "goal", $number);
-		}*/
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -947,10 +935,6 @@ function GameAddScoreEntry($uo_goal)
 		);
 
 		$result = DBQuery($query);
-
-		if (IsFacebookEnabled()) {
-			//TriggerFacebookEvent($gameId, "goal", $number);
-		}
 		return $result;
 	} else {
 		die('Insufficient rights to edit game');
@@ -1185,9 +1169,19 @@ function SetGame($gameId, $params)
 {
 	$poolinfo = PoolInfo($params['pool']);
 	if (hasEditGamesRight($poolinfo['series'])) {
+		$allowedKeys = array_flip(array(
+			"hometeam",
+			"visitorteam",
+			"scheduling_name_home",
+			"scheduling_name_visitor",
+			"reservation",
+			"time",
+			"pool",
+			"valid"
+		));
 
 		foreach ($params as $key => $param) {
-			if (!empty($param)) {
+			if (!empty($param) && isset($allowedKeys[$key])) {
 				$query = sprintf(
 					"UPDATE uo_game SET " . $key . "='%s' 
 					WHERE game_id='%s'\n",
@@ -1700,8 +1694,9 @@ function SpiritTable($gameinfo, $points, $categories, $home, $wide = true)
 			$html .= "<tr>";
 			$html .= "<td style='width:70%'>" . _($cat['text']);
 			$html .= "<input type='hidden' id='" . $home . "valueId$id' name='" . $home . "valueId[]' value='$id'/></td>";
+			$value = isset($points[$id]) ? $points[$id] : '';
 			$html .= "<td class='center'>
-      <input type='text' id='" . $home . "cat" . $id . "_0' name='" . $home . "cat$id' value='" . $points[$id] . "'/></td>";
+      <input type='text' id='" . $home . "cat" . $id . "_0' name='" . $home . "cat$id' value='" . $value . "'/></td>";
 			$html .= "</tr>\n";
 		}
 	}

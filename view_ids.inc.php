@@ -47,7 +47,6 @@ define("TEAMPROFILE", 211);
 define("ORGANIZATIONPROFILE", 212);
 define("ADDMEDIALINK", 213);
 define("RESPONSETEAMS", 214);
-define("FBPUBLISH", 215);
 define("ADDDEFENSESHEET", 216);
 
 
@@ -91,7 +90,6 @@ define("DBEQUALIZER", 336);
 define("HELP", 337);
 define("SEASONSTATISTICS", 338);
 define("CALCSEASONSTATISTICS", 339);
-define("TWITTERCONFIGURATION", 340);
 define("SERVERCONFIGURATION", 341);
 define("FAILED", 342);
 define("SUCCESS", 343);

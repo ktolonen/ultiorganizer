@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
@@ -13,12 +14,17 @@ $html = "";
 
 $teamId = intval(iget("team"));
 
+// Short-circuit if team lookup fails to avoid null offsets.
+$team = TeamInfo($teamId);
+if (!$team) {
+	echo "<p class='warning'>" . _("Team not found.") . "</p>";
+	return;
+}
+
 if (isset($_SERVER['HTTP_REFERER']))
 	$backurl = utf8entities($_SERVER['HTTP_REFERER']);
 else
 	$backurl = "?view=user/teamplayers&team=$teamId";
-
-$team = TeamInfo($teamId);
 
 $title = _("Team details") . ": " . utf8entities($team['name']);
 
@@ -120,12 +126,14 @@ $html .= "<table border='0'>";
 $urls = GetUrlList("team", $teamId);
 
 foreach ($urls as $url) {
+	$urlHref = utf8entities($url['url']);
+	$urlName = utf8entities($url['name']);
 	$html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
 	$html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
 	if (!empty($url['name'])) {
-		$html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a> (" . $url['url'] . ")";
+		$html .= "<a href='" . $urlHref . "'>" . $urlName . "</a> (" . $urlHref . ")";
 	} else {
-		$html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+		$html .= "<a href='" . $urlHref . "'>" . $urlHref . "</a>";
 	}
 
 	$html .= "</td>";

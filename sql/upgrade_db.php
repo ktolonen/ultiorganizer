@@ -5,10 +5,6 @@ include_once $include_prefix . 'lib/logging.functions.php';
 
 function upgrade46()
 {
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookEnabled", "false")');
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookAppId", "")');
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookAppKey", "")');
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookAppSecret", "")');
 }
 
 function upgrade47()
@@ -32,7 +28,6 @@ function upgrade47()
 
 function upgrade48()
 {
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookGameMessage", "Game finished in pool $pool")');
 }
 
 function upgrade49()
@@ -42,7 +37,6 @@ function upgrade49()
 
 function upgrade50()
 {
-	runQuery('INSERT INTO uo_setting (name, value) VALUES ("FacebookUpdatePage", "")');
 }
 
 function upgrade51()
@@ -740,6 +734,19 @@ function upgrade76()
       PRIMARY KEY (`translation_key`, `locale`)
       ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
 
+		// Ensure we have locales even if config did not set them (e.g., during CLI upgrades).
+		if (!is_array($locales) || empty($locales)) {
+			$locales = array();
+			$cols = runQuery("SHOW COLUMNS FROM uo_dbtranslations");
+			while ($col = mysqli_fetch_assoc($cols)) {
+				if ($col['Field'] === 'translation_key') {
+					continue;
+				}
+				// Use column name as both key and label if nothing better is available.
+				$locales[$col['Field']] = $col['Field'];
+			}
+		}
+
 		foreach ($locales as $localestr => $localename) {
 			$loc = DBEscapeString(str_replace(".", "_", $localestr));
 			runQuery(sprintf(
@@ -755,6 +762,62 @@ function upgrade76()
 		runQuery("DROP TABLE uo_dbtranslations");
 	}
 }
+
+function upgrade77()
+{
+	runQuery("ALTER TABLE uo_users MODIFY password varchar(255) DEFAULT NULL");
+	runQuery("ALTER TABLE uo_registerrequest MODIFY password varchar(255) DEFAULT NULL");
+}
+
+function upgrade78()
+{
+	addIndex("uo_game_pool", "idx_pool_timetable_game", "(pool, timetable, game)");
+	addIndex("uo_goal", "idx_goal_game_scorer", "(game, scorer)");
+	addIndex("uo_goal", "idx_goal_game_assist", "(game, assist)");
+	addIndex("uo_goal", "idx_goal_game_callahan_scorer", "(game, iscallahan, scorer)");
+	addIndex("uo_game", "idx_game_valid_time", "(valid, time)");
+	addIndex("uo_game", "idx_game_valid_pool_time", "(valid, pool, time)");
+	addIndex("uo_game", "idx_game_valid_hometeam_time", "(valid, hometeam, time)");
+	addIndex("uo_game", "idx_game_valid_visitorteam_time", "(valid, visitorteam, time)");
+	addIndex("uo_reservation", "idx_reservation_group_time_loc_field", "(reservationgroup, starttime, location, fieldname)");
+	addIndex("uo_pool", "idx_pool_series_ordering", "(series, ordering)");
+	addIndex("uo_series", "idx_series_season_ordering", "(season, ordering)");
+}
+
+function upgradeEngineToInnoDb() {
+    $charset = 'utf8mb4';
+    $collation = 'utf8mb4_unicode_ci';
+
+    // Clean nullable references and ensure no orphans before conversion.
+    cleanupNullableOrphans();
+    $errors = findOrphanErrors();
+    if (count($errors)) {
+        $instructions = "Cannot add foreign keys:\n" . implode("\n", $errors) . "\n";
+        throw new Exception($instructions);
+    }
+
+    runQuery(sprintf(
+        "ALTER DATABASE `%s` CHARACTER SET %s COLLATE %s",
+        DB_DATABASE,
+        $charset,
+        $collation
+    ));
+
+    $tables = runQuery(sprintf("SHOW TABLES FROM `%s`", DB_DATABASE));
+    while ($row = mysqli_fetch_row($tables)) {
+        $table = $row[0];
+        runQuery(sprintf(
+            "ALTER TABLE `%s` CONVERT TO CHARACTER SET %s COLLATE %s, ENGINE=InnoDB",
+            $table,
+            $charset,
+            $collation
+        ));
+    }
+
+	// Add foreign keys now that all tables use InnoDB.
+	addInnoDbForeignKeys();
+}
+
 
 function runQuery($query)
 {
@@ -773,11 +836,202 @@ function addColumn($table, $column, $type)
 function hasColumn($table, $column)
 {
 	global $mysqlconnectionref;
-	$query = "SELECT max(" . $column . ") FROM " . $table;
-	$result = mysqli_query($mysqlconnectionref, $query);
+	$tableQuery = sprintf("SHOW COLUMNS FROM `%s` LIKE '%s'", $table, DBEscapeString($column));
+	$result = mysqli_query($mysqlconnectionref, $tableQuery);
 	if (!$result) {
 		return false;
-	} else return true;
+	}
+	return mysqli_num_rows($result) > 0;
+}
+
+function hasIndex($table, $index)
+{
+	global $mysqlconnectionref;
+	$indexQuery = sprintf("SHOW INDEX FROM `%s` WHERE Key_name = '%s'", $table, DBEscapeString($index));
+	$result = mysqli_query($mysqlconnectionref, $indexQuery);
+	if (!$result) {
+		return false;
+	}
+	return mysqli_num_rows($result) > 0;
+}
+
+function addIndex($table, $index, $definition)
+{
+	if (hasIndex($table, $index)) {
+		return;
+	}
+	runQuery(sprintf("ALTER TABLE `%s` ADD INDEX `%s` %s", $table, $index, $definition));
+}
+
+/**
+ * Add a foreign key if it does not already exist.
+ */
+function addForeignKey($table, $constraint, $definition)
+{
+	$existsQuery = sprintf(
+		"SELECT 1 FROM information_schema.TABLE_CONSTRAINTS
+     WHERE CONSTRAINT_SCHEMA = '%s' AND TABLE_NAME = '%s' AND CONSTRAINT_NAME = '%s' AND CONSTRAINT_TYPE = 'FOREIGN KEY'",
+		DBEscapeString(DB_DATABASE),
+		DBEscapeString($table),
+		DBEscapeString($constraint)
+	);
+	$exists = runQuery($existsQuery);
+	if ($exists && mysqli_num_rows($exists) > 0) {
+		return;
+	}
+
+	runQuery(sprintf("ALTER TABLE `%s` ADD CONSTRAINT `%s` %s", $table, $constraint, $definition));
+}
+
+/**
+ * Null out nullable references that point to missing parents.
+ */
+function cleanupNullableOrphans()
+{
+	$cleanup = array(
+		"UPDATE uo_club c LEFT JOIN uo_country k ON k.country_id = c.country SET c.country = NULL WHERE c.country IS NOT NULL AND (c.country = 0 OR k.country_id IS NULL)",
+		"UPDATE uo_team t LEFT JOIN uo_club c ON c.club_id = t.club SET t.club = NULL WHERE t.club IS NOT NULL AND (t.club = 0 OR c.club_id IS NULL)",
+		"UPDATE uo_team t LEFT JOIN uo_country c ON c.country_id = t.country SET t.country = NULL WHERE t.country IS NOT NULL AND (t.country = 0 OR c.country_id IS NULL)",
+		"UPDATE uo_team t LEFT JOIN uo_pool p ON p.pool_id = t.pool SET t.pool = NULL WHERE t.pool IS NOT NULL AND (t.pool = 0 OR p.pool_id IS NULL)",
+		"UPDATE uo_team t LEFT JOIN uo_series s ON s.series_id = t.series SET t.series = NULL WHERE t.series IS NOT NULL AND (t.series = 0 OR s.series_id IS NULL)",
+		"UPDATE uo_player p LEFT JOIN uo_team t ON t.team_id = p.team SET p.team = NULL WHERE p.team IS NOT NULL AND (p.team = 0 OR t.team_id IS NULL)",
+		"UPDATE uo_player p LEFT JOIN uo_player_profile pr ON pr.profile_id = p.profile_id SET p.profile_id = NULL WHERE p.profile_id IS NOT NULL AND (p.profile_id = 0 OR pr.profile_id IS NULL)",
+		"UPDATE uo_game g LEFT JOIN uo_team t ON t.team_id = g.hometeam SET g.hometeam = NULL WHERE g.hometeam IS NOT NULL AND (g.hometeam = 0 OR t.team_id IS NULL)",
+		"UPDATE uo_game g LEFT JOIN uo_team t ON t.team_id = g.visitorteam SET g.visitorteam = NULL WHERE g.visitorteam IS NOT NULL AND (g.visitorteam = 0 OR t.team_id IS NULL)",
+		"UPDATE uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool SET g.pool = NULL WHERE g.pool IS NOT NULL AND (g.pool = 0 OR p.pool_id IS NULL)",
+		"UPDATE uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation SET g.reservation = NULL WHERE g.reservation IS NOT NULL AND (g.reservation = 0 OR r.id IS NULL)",
+		"UPDATE uo_goal go LEFT JOIN uo_player p ON p.player_id = go.assist SET go.assist = NULL WHERE go.assist IS NOT NULL AND (go.assist = 0 OR p.player_id IS NULL)",
+		"UPDATE uo_goal go LEFT JOIN uo_player p ON p.player_id = go.scorer SET go.scorer = NULL WHERE go.scorer IS NOT NULL AND (go.scorer = 0 OR p.player_id IS NULL)",
+		"UPDATE uo_moveteams m LEFT JOIN uo_scheduling_name s ON s.scheduling_id = m.scheduling_id SET m.scheduling_id = NULL WHERE m.scheduling_id IS NOT NULL AND (m.scheduling_id = 0 OR s.scheduling_id IS NULL)",
+		"UPDATE uo_series s LEFT JOIN uo_pooltemplate pt ON pt.template_id = s.pool_template SET s.pool_template = NULL WHERE s.pool_template IS NOT NULL AND (s.pool_template = 0 OR pt.template_id IS NULL)",
+		"UPDATE uo_defense d LEFT JOIN uo_player p ON p.player_id = d.author SET d.author = NULL WHERE d.author IS NOT NULL AND (d.author = 0 OR p.player_id IS NULL)"
+	);
+	foreach ($cleanup as $q) {
+		runQuery($q);
+	}
+}
+
+/**
+ * Return a list of orphan error strings blocking FK creation.
+ */
+function findOrphanErrors()
+{
+	$errors = array();
+	$orphanChecks = array(
+		"uo_club.country" => "SELECT 1 FROM uo_club c LEFT JOIN uo_country k ON k.country_id = c.country WHERE c.country IS NOT NULL AND k.country_id IS NULL LIMIT 1",
+		"uo_team.club" => "SELECT 1 FROM uo_team t LEFT JOIN uo_club c ON c.club_id = t.club WHERE t.club IS NOT NULL AND c.club_id IS NULL LIMIT 1",
+		"uo_team.country" => "SELECT 1 FROM uo_team t LEFT JOIN uo_country c ON c.country_id = t.country WHERE t.country IS NOT NULL AND c.country_id IS NULL LIMIT 1",
+		"uo_team.pool" => "SELECT 1 FROM uo_team t LEFT JOIN uo_pool p ON p.pool_id = t.pool WHERE t.pool IS NOT NULL AND p.pool_id IS NULL LIMIT 1",
+		"uo_team.series" => "SELECT 1 FROM uo_team t LEFT JOIN uo_series s ON s.series_id = t.series WHERE t.series IS NOT NULL AND s.series_id IS NULL LIMIT 1",
+		"uo_player.team" => "SELECT 1 FROM uo_player p LEFT JOIN uo_team t ON t.team_id = p.team WHERE p.team IS NOT NULL AND t.team_id IS NULL LIMIT 1",
+		"uo_player.profile_id" => "SELECT 1 FROM uo_player p LEFT JOIN uo_player_profile pr ON pr.profile_id = p.profile_id WHERE p.profile_id IS NOT NULL AND pr.profile_id IS NULL LIMIT 1",
+		"uo_team_profile.team_id" => "SELECT 1 FROM uo_team_profile tp LEFT JOIN uo_team t ON t.team_id = tp.team_id WHERE t.team_id IS NULL LIMIT 1",
+		"uo_player_stats.player_id" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_player p ON p.player_id = ps.player_id WHERE p.player_id IS NULL LIMIT 1",
+		"uo_player_stats.profile_id" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_player_profile pr ON pr.profile_id = ps.profile_id WHERE pr.profile_id IS NULL LIMIT 1",
+		"uo_player_stats.team" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_team t ON t.team_id = ps.team WHERE ps.team IS NOT NULL AND t.team_id IS NULL LIMIT 1",
+		"uo_player_stats.series" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_series s ON s.series_id = ps.series WHERE ps.series IS NOT NULL AND s.series_id IS NULL LIMIT 1",
+		"uo_player_stats.season" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_season se ON se.season_id = ps.season WHERE ps.season IS NOT NULL AND se.season_id IS NULL LIMIT 1",
+		"uo_game.hometeam/visitorteam" => "SELECT 1 FROM uo_game g LEFT JOIN uo_team t1 ON t1.team_id = g.hometeam LEFT JOIN uo_team t2 ON t2.team_id = g.visitorteam WHERE (g.hometeam IS NOT NULL AND t1.team_id IS NULL) OR (g.visitorteam IS NOT NULL AND t2.team_id IS NULL) LIMIT 1",
+		"uo_game.pool" => "SELECT 1 FROM uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool WHERE g.pool IS NOT NULL AND p.pool_id IS NULL LIMIT 1",
+		"uo_game.reservation" => "SELECT 1 FROM uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation WHERE g.reservation IS NOT NULL AND r.id IS NULL LIMIT 1",
+		"uo_goal.game" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_game g ON g.game_id = go.game WHERE go.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_goal.assist/scorer" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_player p1 ON p1.player_id = go.assist LEFT JOIN uo_player p2 ON p2.player_id = go.scorer WHERE (go.assist IS NOT NULL AND p1.player_id IS NULL) OR (go.scorer IS NOT NULL AND p2.player_id IS NULL) LIMIT 1",
+		"uo_played.player/game" => "SELECT 1 FROM uo_played pl LEFT JOIN uo_player p ON p.player_id = pl.player LEFT JOIN uo_game g ON g.game_id = pl.game WHERE p.player_id IS NULL OR g.game_id IS NULL LIMIT 1",
+		"uo_timeout.game" => "SELECT 1 FROM uo_timeout ti LEFT JOIN uo_game g ON g.game_id = ti.game WHERE ti.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_gameevent.game" => "SELECT 1 FROM uo_gameevent ge LEFT JOIN uo_game g ON g.game_id = ge.game WHERE ge.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_game_pool.game/pool" => "SELECT 1 FROM uo_game_pool gp LEFT JOIN uo_game g ON g.game_id = gp.game LEFT JOIN uo_pool p ON p.pool_id = gp.pool WHERE (gp.game IS NOT NULL AND g.game_id IS NULL) OR (gp.pool IS NOT NULL AND p.pool_id IS NULL) LIMIT 1",
+		"uo_reservation.location" => "SELECT 1 FROM uo_reservation r LEFT JOIN uo_location l ON l.id = r.location WHERE r.location IS NOT NULL AND l.id IS NULL LIMIT 1",
+		"uo_location_info.location_id" => "SELECT 1 FROM uo_location_info li LEFT JOIN uo_location l ON l.id = li.location_id WHERE li.location_id IS NOT NULL AND l.id IS NULL LIMIT 1",
+		"uo_moveteams.frompool/topool" => "SELECT 1 FROM uo_moveteams m LEFT JOIN uo_pool p1 ON p1.pool_id = m.frompool LEFT JOIN uo_pool p2 ON p2.pool_id = m.topool WHERE p1.pool_id IS NULL OR p2.pool_id IS NULL LIMIT 1",
+		"uo_moveteams.scheduling_id" => "SELECT 1 FROM uo_moveteams m LEFT JOIN uo_scheduling_name s ON s.scheduling_id = m.scheduling_id WHERE m.scheduling_id IS NOT NULL AND s.scheduling_id IS NULL LIMIT 1",
+		"uo_movingtime.season/fromlocation/tolocation" => "SELECT 1 FROM uo_movingtime mt LEFT JOIN uo_season se ON se.season_id = mt.season LEFT JOIN uo_location l1 ON l1.id = mt.fromlocation LEFT JOIN uo_location l2 ON l2.id = mt.tolocation WHERE se.season_id IS NULL OR l1.id IS NULL OR l2.id IS NULL LIMIT 1",
+		"uo_series.pool_template" => "SELECT 1 FROM uo_series s LEFT JOIN uo_pooltemplate pt ON pt.template_id = s.pool_template WHERE s.pool_template IS NOT NULL AND pt.template_id IS NULL LIMIT 1",
+		"uo_enrolledteam.series/userid" => "SELECT 1 FROM uo_enrolledteam e LEFT JOIN uo_series s ON s.series_id = e.series LEFT JOIN uo_users u ON u.userid = e.userid WHERE s.series_id IS NULL OR u.userid IS NULL LIMIT 1",
+		"uo_extraemail.userid" => "SELECT 1 FROM uo_extraemail ex LEFT JOIN uo_users u ON u.userid = ex.userid WHERE ex.userid IS NOT NULL AND u.userid IS NULL LIMIT 1",
+		"uo_extraemailrequest.userid" => "SELECT 1 FROM uo_extraemailrequest ex LEFT JOIN uo_users u ON u.userid = ex.userid WHERE ex.userid IS NOT NULL AND u.userid IS NULL LIMIT 1",
+		"uo_spirit_score.game/team/category" => "SELECT 1 FROM uo_spirit_score ss LEFT JOIN uo_game g ON g.game_id = ss.game_id LEFT JOIN uo_team t ON t.team_id = ss.team_id LEFT JOIN uo_spirit_category c ON c.category_id = ss.category_id WHERE g.game_id IS NULL OR t.team_id IS NULL OR c.category_id IS NULL LIMIT 1",
+		"uo_defense.game/author" => "SELECT 1 FROM uo_defense d LEFT JOIN uo_game g ON g.game_id = d.game LEFT JOIN uo_player p ON p.player_id = d.author WHERE g.game_id IS NULL OR (d.author IS NOT NULL AND p.player_id IS NULL) LIMIT 1",
+	);
+	foreach ($orphanChecks as $label => $query) {
+		$res = runQuery($query);
+		if ($res && mysqli_num_rows($res) > 0) {
+			$errors[] = "Orphaned rows for " . $label . ".\n";
+		}
+	}
+	return $errors;
+}
+
+/**
+ * Define the InnoDB foreign keys used by the schema.
+ * This is applied after converting engines/charset to avoid MyISAM errors.
+ */
+function addInnoDbForeignKeys()
+{
+	addForeignKey('uo_club', 'fk_club_country', "FOREIGN KEY (`country`) REFERENCES `uo_country` (`country_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_team', 'fk_team_club', "FOREIGN KEY (`club`) REFERENCES `uo_club` (`club_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_team', 'fk_team_country', "FOREIGN KEY (`country`) REFERENCES `uo_country` (`country_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_team', 'fk_team_pool', "FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_team', 'fk_team_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_team_profile', 'fk_team_profile_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_team_stats', 'fk_team_stats_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_team_stats', 'fk_team_stats_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_team_stats', 'fk_team_stats_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_player', 'fk_player_team', "FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_player', 'fk_player_profile', "FOREIGN KEY (`profile_id`) REFERENCES `uo_player_profile` (`profile_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_player_stats', 'fk_player_stats_player', "FOREIGN KEY (`player_id`) REFERENCES `uo_player` (`player_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_player_stats', 'fk_player_stats_profile', "FOREIGN KEY (`profile_id`) REFERENCES `uo_player_profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_player_stats', 'fk_player_stats_team', "FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_player_stats', 'fk_player_stats_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_player_stats', 'fk_player_stats_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_game', 'fk_game_hometeam', "FOREIGN KEY (`hometeam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_game', 'fk_game_visitorteam', "FOREIGN KEY (`visitorteam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_game', 'fk_game_reservation', "FOREIGN KEY (`reservation`) REFERENCES `uo_reservation` (`id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_game', 'fk_game_pool', "FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_goal', 'fk_goal_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_goal', 'fk_goal_assist', "FOREIGN KEY (`assist`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_goal', 'fk_goal_scorer', "FOREIGN KEY (`scorer`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_played', 'fk_played_player', "FOREIGN KEY (`player`) REFERENCES `uo_player` (`player_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_played', 'fk_played_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_timeout', 'fk_timeout_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_gameevent', 'fk_gameevent_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_game_pool', 'fk_game_pool_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_game_pool', 'fk_game_pool_pool', "FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_reservation', 'fk_reservation_location', "FOREIGN KEY (`location`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_location_info', 'fk_location_info_location', "FOREIGN KEY (`location_id`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_moveteams', 'fk_moveteams_frompool', "FOREIGN KEY (`frompool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_moveteams', 'fk_moveteams_topool', "FOREIGN KEY (`topool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_moveteams', 'fk_moveteams_scheduling', "FOREIGN KEY (`scheduling_id`) REFERENCES `uo_scheduling_name` (`scheduling_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_movingtime', 'fk_movingtime_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_movingtime', 'fk_movingtime_fromlocation', "FOREIGN KEY (`fromlocation`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_movingtime', 'fk_movingtime_tolocation', "FOREIGN KEY (`tolocation`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_series', 'fk_series_pooltemplate', "FOREIGN KEY (`pool_template`) REFERENCES `uo_pooltemplate` (`template_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_enrolledteam', 'fk_enrolledteam_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_enrolledteam', 'fk_enrolledteam_user', "FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_extraemail', 'fk_extraemail_user', "FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_extraemailrequest', 'fk_extraemailrequest_user', "FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_spirit_score', 'fk_spirit_score_game', "FOREIGN KEY (`game_id`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_spirit_score', 'fk_spirit_score_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_spirit_score', 'fk_spirit_score_category', "FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_defense', 'fk_defense_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_defense', 'fk_defense_author', "FOREIGN KEY (`author`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE");
 }
 
 function hasRow($table, $column, $value)
@@ -791,7 +1045,7 @@ function hasRow($table, $column, $value)
 function hasTable($table)
 {
 	global $mysqlconnectionref;
-	$query = "SHOW TABLES FROM " . DB_DATABASE;
+	$query = sprintf("SHOW TABLES FROM `%s`", DB_DATABASE);
 	$tables = mysqli_query($mysqlconnectionref, $query);
 	while (list($temp) = mysqli_fetch_array($tables)) {
 		if ($temp == $table) {

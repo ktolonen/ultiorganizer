@@ -1,6 +1,6 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
-include_once $include_prefix . 'lib/facebook.functions.php';
 include_once $include_prefix . 'lib/url.functions.php';
 
 $LAYOUT_ID = ADDSEASONUSERS;

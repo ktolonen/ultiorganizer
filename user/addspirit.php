@@ -1,4 +1,5 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/standings.functions.php';
@@ -7,8 +8,8 @@ include_once $include_prefix . 'lib/configuration.functions.php';
 
 $html = "";
 
-$gameId = intval($_GET["game"]);
-$teamId = intval($_GET["team"]);
+$gameId = isset($_GET['game']) ? intval($_GET['game']) : 0;
+$teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
 $title = _("Spirit");
 
 $season = SeasonInfo(GameSeason($gameId));

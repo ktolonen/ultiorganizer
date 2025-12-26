@@ -1,11 +1,15 @@
 <?php
+include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
-include_once $include_prefix . 'lib/facebook.functions.php';
 include_once $include_prefix . 'lib/url.functions.php';
 
 $LAYOUT_ID = SERVERCONFIGURATION;
 $title = _("Server configuration");
 $html = "";
+
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
 
 if (!empty($_POST['save'])) {
 
@@ -21,79 +25,6 @@ if (!empty($_POST['save'])) {
 	$setting['value'] = $_POST['PageTitle'];
 	$settings[] = $setting;
 
-
-	$setting = array();
-	$setting['name'] = "TwitterEnabled";
-	if (!empty($_POST['TwitterEnabled'])) {
-		$setting['value'] = "true";
-	} else {
-		$setting['value'] = "false";
-	}
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "TwitterConsumerKey";
-	$setting['value'] = $_POST['TwitterConsumerKey'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "TwitterConsumerSecret";
-	$setting['value'] = $_POST['TwitterConsumerSecret'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "TwitterOAuthCallback";
-	$setting['value'] = $_POST['TwitterOAuthCallback'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "FacebookEnabled";
-	if (!empty($_POST['FacebookEnabled'])) {
-		$setting['value'] = "true";
-	} else {
-		$setting['value'] = "false";
-	}
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "FacebookAppKey";
-	$setting['value'] = $_POST['FacebookAppKey'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "FacebookAppId";
-	$setting['value'] = $_POST['FacebookAppId'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "FacebookAppSecret";
-	$setting['value'] = $_POST['FacebookAppSecret'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "FacebookGameMessage";
-	$setting['value'] = $_POST['FacebookGameMessage'];
-	$settings[] = $setting;
-
-	$setting = array();
-	$setting['name'] = "FacebookUpdatePage";
-	$setting['value'] = $_POST['FacebookUpdatePage'];
-	$settings[] = $setting;
-
-	if (isset($_POST['FacebookUpdateId']) && (strlen($_POST['FacebookUpdateId']) > 0)) {
-		$setting = array();
-		$setting['name'] = "FacebookUpdateId";
-		$setting['value'] = $_POST['FacebookUpdateId'];
-		$settings[] = $setting;
-		$setting = array();
-		$setting['name'] = "FacebookUpdateToken";
-		$setting['value'] = GetFacebookAppToken($_POST['FacebookUpdatePage']);
-		$settings[] = $setting;
-	}
-
-	if (isset($_POST['FacebookUnauthorize']) && $_POST['FacebookUnauthorize'] == "yes") {
-		FBUnauthorizeApp();
-	}
 
 	$setting = array();
 	$setting['name'] = "ShowDefenseStats";
@@ -180,7 +111,9 @@ $settings = GetServerConf();
 pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-$html .= "<p><a href='admin/test.php'>" . _("Show phpinfo()") . "</a></p>\n";
+if (isSuperAdmin()) {
+	$html .= "<p><a href='?view=admin/test'>" . _("Show phpinfo()") . "</a></p>\n";
+}
 
 $htmltmp1 = "";
 $htmltmp2 = "";
@@ -200,77 +133,6 @@ foreach ($settings as $setting) {
 		$htmltmp1 .= "<tr>";
 		$htmltmp1 .= "<td class='infocell'>" . _("Google Maps key") . ":</td>";
 		$htmltmp1 .= "<td><input class='input' size='70' name='GoogleMapsAPIKey' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-
-	//twitter
-	if ($setting['name'] == "TwitterEnabled") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter enabled") . ":</td>";
-		if ($setting['value'] == "true") {
-			$htmltmp1 .= "<td><input class='input' type='checkbox' name='TwitterEnabled' checked='checked'/></td>";
-		} else {
-			$htmltmp1 .= "<td><input class='input' type='checkbox' name='TwitterEnabled'/></td>";
-		}
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "TwitterConsumerKey") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter Consumer Key") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerKey' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "TwitterConsumerSecret") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter Consumer Secret") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterConsumerSecret' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "TwitterOAuthCallback") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Twitter OAuth Callback") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='TwitterOAuthCallback' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	//Facebook
-	if ($setting['name'] == "FacebookEnabled") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Facebook enabled") . ":</td>";
-		if ($setting['value'] == "true") {
-			$htmltmp1 .= "<td><input class='input' type='checkbox' name='FacebookEnabled' checked='checked'/></td>";
-		} else {
-			$htmltmp1 .= "<td><input class='input' type='checkbox' name='FacebookEnabled'/></td>";
-		}
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "FacebookAppId") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Facebook Application Id") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppId' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "FacebookAppKey") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Facebook Application Key") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppKey' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "FacebookAppSecret") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Facebook Application Secret") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookAppSecret' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "FacebookGameMessage") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Facebook Game Message") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookGameMessage' value='" . utf8entities($setting['value']) . "'/></td>";
-		$htmltmp1 .= "</tr>\n";
-	}
-	if ($setting['name'] == "FacebookUpdatePage") {
-		$htmltmp1 .= "<tr>";
-		$htmltmp1 .= "<td class='infocell'>" . _("Facebook Update Page") . ":</td>";
-		$htmltmp1 .= "<td><input class='input' size='70' name='FacebookUpdatePage' value='" . utf8entities($setting['value']) . "'/></td>";
 		$htmltmp1 .= "</tr>\n";
 	}
 
@@ -370,17 +232,6 @@ $html .= "<h1>" . _("3rd party API settings") . "</h1>";
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= $htmltmp1;
 $html .= "</table>\n";
-if (IsFacebookEnabled()) {
-	$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
-	if (!isset($serverConf['FacebookUpdateToken']) || (strlen($serverConf['FacebookUpdateToken']) == 0)) {
-		$html .= "<tr><td><a href='javascript:authorize()'>" . _("Authorize facebook updates") . "</a>\n";
-		$html .= "<input type='hidden' id='FacebookUpdateId' name='FacebookUpdateId' value=''/></td></tr>\n";
-	} else {
-		$html .= "<tr><td><a href='javascript:unauthorize()'>" . _("Unauthorize facebook updates") . "</a>\n";
-		$html .= "<input type='hidden' id='FacebookUnauthorize' name='FacebookUnauthorize' value='no'/></td></tr>\n";
-	}
-	$html .= "</table>\n";
-}
 
 $html .= "<hr/>";
 $html .= "<h1>" . _("Internal settings") . "</h1>";
@@ -393,31 +244,5 @@ $html .= "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 $html .= "</form>";
 echo $html;
 contentEnd();
-if (IsFacebookEnabled()) {
-	echo "<script src='http://connect.facebook.net/en_US/all.js'></script>
-<script>
-
-FB.init({appId: '";
-	echo $serverConf['FacebookAppId'];
-	echo "', status: true, 
-      	cookie: true, xfbml: true});
-function authorize() {
-	FB.login(function(response) {
-		if (response.session) {
-			if (response.perms && response.perms.indexOf('manage_pages') > -1) {
-				window.document.getElementById('FacebookUpdateId').value = response.session.uid;
-				window.document.getElementById('Form').submit();
-			}
-		}
-	}, {perms:'offline_access,manage_pages'});
-}
-
-function unauthorize() {
-	window.document.getElementById('FacebookUnauthorize').value = 'yes';
-	window.document.getElementById('Form').submit();
-}
-
-</script>";
-}
 
 pageEnd();

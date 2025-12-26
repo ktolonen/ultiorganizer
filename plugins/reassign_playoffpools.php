@@ -186,9 +186,9 @@ if (!empty($_POST['series'])) {
 	debugvar($newmove1);
 	debugvar($newmove2);
 
-	//	// sort them according to primary key of the database: frompool, fromplacing
-	//	usort($newmove1, create_function('$a,$b','return $a[\'fromplacing\']==$b[\'fromplacing\']?0:($a[\'fromplacing\']<$b[\'fromplacing\']?-1:1);'));
-	//	usort($newmove2, create_function('$a,$b','return $a[\'fromplacing\']==$b[\'fromplacing\']?0:($a[\'fromplacing\']<$b[\'fromplacing\']?-1:1);'));
+		//	// sort them according to primary key of the database: frompool, fromplacing
+		//	usort($newmove1, function ($a, $b) { return $a['fromplacing'] <=> $b['fromplacing']; });
+		//	usort($newmove2, function ($a, $b) { return $a['fromplacing'] <=> $b['fromplacing']; });
 	//	debugvar($newmove1);
 	//	debugvar($newmove2);
 	//	die;
