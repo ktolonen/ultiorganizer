@@ -37,7 +37,7 @@ else
 	$backurl = "?view=user/teamplayers&team=$teamId";
 
 $club = ClubInfo($clubId);
-if (!$teaminfo || !$club) {
+if (!$teaminfo && !$club) {
 	echo "<p class='warning'>" . _("Club not found.") . "</p>";
 	return;
 }
