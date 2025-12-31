@@ -198,9 +198,9 @@ while ($player = mysqli_fetch_assoc($team_players)) {
   $playerInfo = PlayerInfo($player['player_id']);
 
   echo "<tr>";
-  echo "<td class='center'><input class='input' size='3' maxlength='3' onkeypress=\"ChgPlayer(" . $player['player_id'] . ");\" onkeyup=\"validNumber(this);\" name='number" . $player['player_id'] . "' id='number" . $player['player_id'] . "' value='" . utf8entities($playerInfo['num']) . "'/></td>";
-  echo "<td><input class='input' size='20' maxlength='20' onkeypress=\"ChgPlayer(" . $player['player_id'] . ");\" name='firstname" . $player['player_id'] . "' id='firstname" . $player['player_id'] . "' value='" . utf8entities($playerInfo['firstname']) . "'/></td>";
-  echo "<td><input class='input' size='20' maxlength='30' onkeypress=\"ChgPlayer(" . $player['player_id'] . ");\" name='lastname" . $player['player_id'] . "' id='lastname" . $player['player_id'] . "' value='" . utf8entities($playerInfo['lastname']) . "'/></td>";
+  echo "<td class='center'><input class='input' size='2' maxlength='3' onkeypress=\"ChgPlayer(" . $player['player_id'] . ");\" onkeyup=\"validNumber(this);\" name='number" . $player['player_id'] . "' id='number" . $player['player_id'] . "' value='" . utf8entities($playerInfo['num']) . "'/></td>";
+  echo "<td><input class='input' size='15' maxlength='20' onkeypress=\"ChgPlayer(" . $player['player_id'] . ");\" name='firstname" . $player['player_id'] . "' id='firstname" . $player['player_id'] . "' value='" . utf8entities($playerInfo['firstname']) . "'/></td>";
+  echo "<td><input class='input' size='15' maxlength='30' onkeypress=\"ChgPlayer(" . $player['player_id'] . ");\" name='lastname" . $player['player_id'] . "' id='lastname" . $player['player_id'] . "' value='" . utf8entities($playerInfo['lastname']) . "'/></td>";
   echo "<td style='white-space: nowrap'>";
   echo "<input type='hidden' id='profileId" . $player['player_id'] . "' name='profileId" . $player['player_id'] . "' value='" . utf8entities($playerInfo['profile_id']) . "'/>\n";
   echo "<input type='hidden' id='accrId" . $player['player_id'] . "' name='accrId" . $player['player_id'] . "' value='" . utf8entities($player['accreditation_id']) . "'/>\n";
@@ -254,9 +254,9 @@ while ($player = mysqli_fetch_assoc($team_players)) {
 
 if (hasAccredidationRight($teamId) || hasEditPlayersRight($teamId)) {
   echo "<tr>";
-  echo "<td class='center'><input class='input' size='3' maxlength='3' name='number0' id='number0'/></td>";
-  echo "<td><input class='input' size='20' maxlength='20' name='firstname0' id='firstname0' value=''/></td>";
-  echo "<td><input class='input' size='20' maxlength='30' name='lastname0' id='lastname0' value=''/></td>";
+  echo "<td class='center'><input class='input' size='2' maxlength='3' name='number0' id='number0'/></td>";
+  echo "<td><input class='input' size='15' maxlength='20' name='firstname0' id='firstname0' value=''/></td>";
+  echo "<td><input class='input' size='15' maxlength='30' name='lastname0' id='lastname0' value=''/></td>";
   echo "<td colspan='5'>";
   echo "<input class='button' name='search' type='button' onclick='checkProfileId(0);' value='" . _("Search") . "'/>";
   echo "<input class='button' name='add' id='add' type='submit' value='" . _("Add") . "'/>";

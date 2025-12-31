@@ -11,6 +11,11 @@ $LAYOUT_ID = SEASONS;
 $title = _("Events");
 $html = "";
 
+
+if (!isSuperAdmin()) {
+	Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
+}
+
 //season parameters
 $sp = array(
 	"season_id" => "",
