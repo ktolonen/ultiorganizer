@@ -166,6 +166,9 @@ function PlayerName($playerId)
   );
 
   $row = DBQueryToRow($query);
+  if (!$row) {
+    return '';
+  }
   return $row['firstname'] . " " . $row['lastname'];
 }
 
@@ -291,6 +294,37 @@ function PlayerSeasonPlayedGames($playerId, $seasonId)
 		AND player='%s'", // FIXME ug.hasstarted>0??
     DBEscapeString($seasonId),
     DBEscapeString($playerId),
+    DBEscapeString($playerId)
+  );
+
+  return DBQueryToValue($query);
+}
+
+/**
+ * Total number of played games on given season by given player on given team.
+ * 
+ * @param int $playerId
+ * @param int $teamId
+ * @param string $seasonId
+ */
+function PlayerSeasonTeamPlayedGames($playerId, $teamId, $seasonId)
+{
+  $query = sprintf(
+    "SELECT COUNT(*) AS games
+		FROM uo_played p
+		WHERE p.game IN (SELECT gp.game FROM uo_game_pool gp 
+			LEFT JOIN uo_played AS pp ON (pp.game=gp.game)
+			LEFT JOIN uo_game AS g ON (g.game_id=gp.game)
+			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
+			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)	
+			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1
+			AND g.isongoing=0
+			AND (g.hometeam='%s' OR g.visitorteam='%s')) 
+		AND p.player='%s'",
+    DBEscapeString($seasonId),
+    DBEscapeString($playerId),
+    DBEscapeString($teamId),
+    DBEscapeString($teamId),
     DBEscapeString($playerId)
   );
 

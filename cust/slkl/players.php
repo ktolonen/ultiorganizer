@@ -21,18 +21,23 @@ OpenConnection();
 if (hasEditPlayersRight($teamId)) {
 
 	$query = sprintf(
-		"SELECT pp.profile_id, pp.accreditation_id, pp.firstname, pp.lastname, pp.birthdate, pp.gender, pp.email,
+		"SELECT pp.profile_id, pp.accreditation_id, pp.firstname, pp.lastname, pp.birthdate, pp.gender, 
 			    pp.num, p2.teamname, p2.seasoname
-			FROM uo_license l 
-			LEFT JOIN uo_player_profile AS pp ON (l.accreditation_id=pp.accreditation_id)
-			LEFT JOIN(SELECT p.profile_id, p.firstname, p.lastname,
-			    p.num, t.name AS teamname, sea.name AS seasoname FROM uo_player p
+			FROM uo_player_profile pp 
+			LEFT JOIN (
+				SELECT p.profile_id, t.name AS teamname, sea.name AS seasoname
+				FROM uo_player p
+				INNER JOIN (
+					SELECT profile_id, MAX(player_id) AS player_id
+					FROM uo_player
+					GROUP BY profile_id
+				) AS latest ON (latest.player_id=p.player_id AND latest.profile_id=p.profile_id)
 			    LEFT JOIN uo_team t ON (p.team=t.team_id)
     			LEFT JOIN uo_series ser ON (ser.series_id=t.series)
 			    LEFT JOIN uo_season sea ON (ser.season=sea.season_id)
-				ORDER BY p.player_id DESC) AS p2 ON (pp.profile_id=p2.profile_id)
+			) AS p2 ON (pp.profile_id=p2.profile_id)
 			LEFT JOIN uo_player AS p1 ON (p1.profile_id=pp.profile_id)
-			WHERE l.firstname like '%%%s%%' and l.lastname like '%%%s%%'
+			WHERE pp.firstname like '%%%s%%' and pp.lastname like '%%%s%%'
 			GROUP BY pp.profile_id ORDER BY pp.lastname, pp.firstname",
 		DBEscapeString($firstname),
 		DBEscapeString($lastname)
@@ -85,11 +90,6 @@ if (hasEditPlayersRight($teamId)) {
 		$nextNode = $dom->createElement("Gender");
 		$nextNode = $newNode->appendChild($nextNode);
 		$nextText = $dom->createTextNode((string)$row['gender']);
-		$nextText = $nextNode->appendChild($nextText);
-
-		$nextNode = $dom->createElement("Email");
-		$nextNode = $newNode->appendChild($nextNode);
-		$nextText = $dom->createTextNode((string)$row['email']);
 		$nextText = $nextNode->appendChild($nextText);
 
 		$nextNode = $dom->createElement("Jersey");

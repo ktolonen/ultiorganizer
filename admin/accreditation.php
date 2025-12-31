@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . '/auth.php';
 include_once 'lib/accreditation.functions.php';
+include_once 'lib/player.functions.php';
 
 $LAYOUT_ID = ACCREDITATION;
 
@@ -168,18 +169,37 @@ if ($view == "accevents") {
 }
 
 if ($view == "accId") {
+  $hideNoGames = !empty($_GET['hide_no_games']);
+  $sort = isset($_GET['sort']) ? $_GET['sort'] : "";
+  $accIdBaseUrl = "?view=admin/accreditation&amp;season=" . $season . "&amp;list=accId";
+  $accIdSortUrl = $accIdBaseUrl;
+  if ($hideNoGames) {
+    $accIdSortUrl .= "&amp;hide_no_games=1";
+  }
+  if ($hideNoGames) {
+    echo "<p><a href='" . $accIdBaseUrl . "'>" . _("Show players without games") . "</a></p>";
+  } else {
+    echo "<p><a href='" . $accIdBaseUrl . "&amp;hide_no_games=1'>" . _("Hide players without games") . "</a></p>";
+  }
+
   echo "<h3>" . _("Players without membership Id") . "</h3>";
   $players = SeasonAllPlayers($season);
-  echo "<table class='infotable'>";
+  echo "<table class='infotable'><tr><th>" . _("Series") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th></tr>";
   foreach ($players as $player) {
     $playerinfo = PlayerInfo($player['player_id']);
     if (empty($playerinfo['accreditation_id'])) {
+      $gamesPlayed = PlayerSeasonTeamPlayedGames($player['player_id'], $playerinfo['team'], $season);
+      if ($hideNoGames && empty($gamesPlayed)) {
+        continue;
+      }
       echo "<tr><td>";
       echo utf8entities($playerinfo['seriesname']);
       echo "</td><td>";
       echo "<a href='?view=user/teamplayers&amp;team=" . $playerinfo['team'] . "'>" . utf8entities($playerinfo['teamname']) . "</a>";
       echo "</td><td>";
       echo utf8entities($playerinfo['lastname'] . " " . $playerinfo['firstname']);
+      echo "</td><td class='center'>";
+      echo $gamesPlayed;
       echo "</td></tr>";
     }
   }
@@ -187,33 +207,80 @@ if ($view == "accId") {
 
   echo "<h3>" . _("Players not accredited") . "</h3>";
   $players = SeasonAllPlayers($season);
-  echo "<table class='infotable'>";
+  $accRows = array();
   foreach ($players as $player) {
     $playerinfo = PlayerInfo($player['player_id']);
     if (empty($playerinfo['accredited'])) {
-      echo "<tr><td>";
-      echo utf8entities($playerinfo['seriesname']);
-      echo "</td><td>";
-      echo "<a href='?view=user/teamplayers&amp;team=" . $playerinfo['team'] . "'>" . utf8entities($playerinfo['teamname']) . "</a>";
-      echo "</td><td>";
-      echo utf8entities($playerinfo['lastname'] . " " . $playerinfo['firstname']);
-      echo "</td>";
+      $gamesPlayed = PlayerSeasonTeamPlayedGames($player['player_id'], $playerinfo['team'], $season);
+      if ($hideNoGames && empty($gamesPlayed)) {
+        continue;
+      }
+      $row = array(
+        'playerinfo' => $playerinfo,
+        'games' => $gamesPlayed,
+        'membership' => '',
+        'external_type' => '',
+      );
       if (CUSTOMIZATIONS == "slkl") {
         $query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d", (int)$playerinfo['accreditation_id']);
-        $row = DBQueryToRow($query);
-        if (!empty($row['membership'])) {
-          echo "<td class='center' style='white-space: nowrap'>" . $row['membership'] . "</td>";
-        } else {
-          echo "<td class='center'>-</td>";
-        }
-        if (!empty($row['external_type'])) {
-          echo "<td style='white-space: nowrap'>" . U_($row['external_type']) . "</td>";
-        } else {
-          echo "<td>-</td>";
-        }
+        $licenseRow = DBQueryToRow($query);
+        $row['membership'] = !empty($licenseRow['membership']) ? $licenseRow['membership'] : '';
+        $row['external_type'] = !empty($licenseRow['external_type']) ? $licenseRow['external_type'] : '';
       }
-      echo "</tr>";
+      $accRows[] = $row;
     }
+  }
+  if ($sort == "external" && CUSTOMIZATIONS == "slkl") {
+    usort($accRows, function ($a, $b) {
+      $aType = strtolower(trim($a['external_type']));
+      $bType = strtolower(trim($b['external_type']));
+      if ($aType === $bType) {
+        $aName = strtolower($a['playerinfo']['lastname'] . " " . $a['playerinfo']['firstname']);
+        $bName = strtolower($b['playerinfo']['lastname'] . " " . $b['playerinfo']['firstname']);
+        return $aName <=> $bName;
+      }
+      if ($aType === '') {
+        return 1;
+      }
+      if ($bType === '') {
+        return -1;
+      }
+      return $aType <=> $bType;
+    });
+  }
+  echo "<table class='infotable'><tr><th>" . _("Series") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th>";
+  if (CUSTOMIZATIONS == "slkl") {
+    if ($sort == "external") {
+      echo "<th>" . _("Membership") . "</th><th>" . _("External accreditation") . "</th>";
+    } else {
+      echo "<th>" . _("Membership") . "</th><th><a href='" . $accIdSortUrl . "&amp;sort=external'>" . _("External accreditation") . "</a></th>";
+    }
+  }
+  echo "</tr>";
+  foreach ($accRows as $row) {
+    $playerinfo = $row['playerinfo'];
+    echo "<tr><td>";
+    echo utf8entities($playerinfo['seriesname']);
+    echo "</td><td>";
+    echo "<a href='?view=user/teamplayers&amp;team=" . $playerinfo['team'] . "'>" . utf8entities($playerinfo['teamname']) . "</a>";
+    echo "</td><td>";
+    echo utf8entities($playerinfo['lastname'] . " " . $playerinfo['firstname']);
+    echo "</td><td class='center'>";
+    echo $row['games'];
+    echo "</td>";
+    if (CUSTOMIZATIONS == "slkl") {
+      if (!empty($row['membership'])) {
+        echo "<td class='center' style='white-space: nowrap'>" . $row['membership'] . "</td>";
+      } else {
+        echo "<td class='center'>-</td>";
+      }
+      if (!empty($row['external_type'])) {
+        echo "<td style='white-space: nowrap'>" . U_($row['external_type']) . "</td>";
+      } else {
+        echo "<td>-</td>";
+      }
+    }
+    echo "</tr>";
   }
   echo "</table>";
 }
