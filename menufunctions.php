@@ -417,6 +417,9 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   if ($pagestart) {
     pageMainStart($printable);
   }
+  if ($printable) {
+    return;
+  }
   echo "<td class='menu_left'>";
 
   // Administration menu

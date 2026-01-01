@@ -80,6 +80,13 @@ if (!IsSeasonStatsCalculated($season)) {
     $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Calculate") . "'" . $confirm_attr . "/></p>\n";
 } else {
     $seasons = SeasonStatistics($season);
+    if (!$seasons) {
+        $seasons = array(
+            'teams' => 0,
+            'players' => 0,
+            'games' => 0
+        );
+    }
     $series = SeriesStatistics($season);
     $teams = SeasonTeamStatistics($season);
 

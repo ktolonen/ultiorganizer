@@ -1105,6 +1105,9 @@ function GetTeamPlayers()
 function RemovePlayer($playerId)
 {
   $playerInfo = PlayerInfo($playerId);
+  if (!$playerInfo) {
+    return false;
+  }
   if (hasEditPlayersRight($playerInfo['team'])) {
     Log2("player", "delete", PlayerName($playerId));
 

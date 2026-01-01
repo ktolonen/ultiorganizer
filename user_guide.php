@@ -13,7 +13,8 @@ if (is_file('cust/' . CUSTOMIZATIONS . '/' . $htmlfile)) {
 }
 
 $querystring = $_SERVER['QUERY_STRING'];
-$querystring = preg_replace("/&Print=[0-1]/", "", $querystring);
+$querystring = preg_replace('/(&|^)print=[^&]*/i', '', $querystring);
+$querystring = ltrim($querystring, '&');
 if ($print) {
   $html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "'>" . _("Return") . "</a></div>";
 } else {
