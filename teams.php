@@ -240,6 +240,7 @@ if ($list == "allteams" || $list == "byseeding") {
   if ($seasonInfo['showspiritpoints'] || isSeasonAdmin($season)) {
 
     $categories = SpiritCategories($seasonInfo['spiritmode']);
+    $missingSpirit = array();
     $html .= "<div class='TableContainer3'>\n";
     $html .= "<ol>";
     foreach ($categories as $cat) {
@@ -283,6 +284,47 @@ if ($list == "allteams" || $list == "byseeding") {
         $html .= "</tr>\n";
       }
       $html .= "</table>";
+      $html .= "</div>\n";
+
+      $missingRows = SeriesMissingSpiritPoints($row['series_id']);
+      foreach ($missingRows as $missing) {
+        $teamId = $missing['giver_team_id'];
+        if (!isset($missingSpirit[$teamId])) {
+          $missingSpirit[$teamId] = array(
+            'teamname' => $missing['giver_teamname'],
+            'seriesname' => $row['name'],
+            'games' => array()
+          );
+        }
+        $gameLabel = utf8entities($missing['home_name']) . " " . _("vs.") . " " . utf8entities($missing['visitor_name']);
+        $missingSpirit[$teamId]['games'][$missing['game_id']] = $gameLabel;
+      }
+    }
+
+    if (!empty($missingSpirit)) {
+      $missingList = array_values($missingSpirit);
+      usort($missingList, function ($a, $b) {
+        $seriesCmp = strcasecmp($a['seriesname'], $b['seriesname']);
+        if ($seriesCmp !== 0) {
+          return $seriesCmp;
+        }
+        return strcasecmp($a['teamname'], $b['teamname']);
+      });
+      $html .= "<div class='TableContainer3'>\n";
+      $html .= "<h3>" . _("Missing spirit submissions") . "</h3>\n";
+      $html .= "<ul>";
+      foreach ($missingList as $entry) {
+        $games = $entry['games'];
+        ksort($games);
+        $html .= "<li>" . utf8entities($entry['teamname']) . " - " . utf8entities(U_($entry['seriesname'])) . "\n";
+        $html .= "<ul>";
+        foreach ($games as $gameLabel) {
+          $html .= "<li>" . $gameLabel . "</li>";
+        }
+        $html .= "</ul>\n";
+        $html .= "</li>\n";
+      }
+      $html .= "</ul>\n";
       $html .= "</div>\n";
     }
   }

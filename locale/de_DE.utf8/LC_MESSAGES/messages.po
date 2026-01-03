@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-03 10:54+0200\n"
+"POT-Creation-Date: 2026-01-03 15:40+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -194,7 +194,7 @@ msgstr ""
 #: seriesstatus.php:310 seriesstatus.php:318 seriesstatus.php:333
 #: statistics.php:121 statistics.php:163 teamcard.php:119 teamcard.php:163
 #: teamcard.php:223 teamcard.php:299 teamcard.php:386 teamcard.php:458
-#: teams.php:110 teams.php:161 teams.php:262
+#: teams.php:110 teams.php:161 teams.php:263
 msgid "Games"
 msgstr "Spiele"
 
@@ -1774,7 +1774,7 @@ msgstr "Neue Transfer-Regel"
 msgid "From pos."
 msgstr "Von Pos."
 
-#: admin/poolmoves.php:264
+#: admin/poolmoves.php:264 teams.php:299
 msgid "vs."
 msgstr "gg."
 
@@ -3805,7 +3805,7 @@ msgstr "Assists"
 #: playercard.php:298 playercard.php:397 playercard.php:465 playerlist.php:34
 #: poolstatus.php:143 poolstatus.php:161 scorestatus.php:90 scorestatus.php:92
 #: seriesstatus.php:291 seriesstatus.php:338 teamcard.php:122 teamcard.php:166
-#: teams.php:267
+#: teams.php:268
 msgid "Tot."
 msgstr "Tot."
 
@@ -5274,6 +5274,10 @@ msgstr "Nach Ergebnis"
 #, fuzzy
 msgid "By spirit"
 msgstr "Spirit"
+
+#: teams.php:314
+msgid "Missing spirit submissions"
+msgstr ""
 
 #: user/adddefensesheet.php:11
 msgid "Feed in defense sheet"

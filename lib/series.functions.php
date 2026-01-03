@@ -510,6 +510,53 @@ function SeriesSpiritBoard($seriesId)
 }
 
 /**
+ * Get games where teams are missing spirit points in given division.
+ * @param int $seriesId uo_series.series_id
+ * @return Array array of missing spirit point rows.
+ */
+function SeriesMissingSpiritPoints($seriesId)
+{
+  $query = sprintf(
+    "SELECT missing.team_id, missing.teamname, missing.giver_team_id, missing.giver_teamname,
+      missing.opponent_name, missing.home_name, missing.visitor_name, missing.game_id, missing.gamename, missing.time
+      FROM (
+        SELECT g.game_id, g.time, g.hometeam AS team_id, ht.name AS teamname,
+          g.visitorteam AS giver_team_id, vt.name AS giver_teamname,
+          vt.name AS opponent_name, ht.name AS home_name, vt.name AS visitor_name, sn.name AS gamename
+        FROM uo_game g
+        LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
+        LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
+        LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
+        LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
+        LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
+        LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
+        LEFT JOIN (SELECT DISTINCT game_id, team_id FROM uo_spirit_score) ssc
+          ON (ssc.game_id=g.game_id AND ssc.team_id=g.hometeam)
+        WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0 AND ssc.game_id IS NULL
+        UNION ALL
+        SELECT g.game_id, g.time, g.visitorteam AS team_id, vt.name AS teamname,
+          g.hometeam AS giver_team_id, ht.name AS giver_teamname,
+          ht.name AS opponent_name, ht.name AS home_name, vt.name AS visitor_name, sn.name AS gamename
+        FROM uo_game g
+        LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
+        LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
+        LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
+        LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
+        LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
+        LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
+        LEFT JOIN (SELECT DISTINCT game_id, team_id FROM uo_spirit_score) ssc
+          ON (ssc.game_id=g.game_id AND ssc.team_id=g.visitorteam)
+        WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0 AND ssc.game_id IS NULL
+      ) AS missing
+      ORDER BY missing.teamname, missing.time, missing.game_id",
+    (int)$seriesId,
+    (int)$seriesId
+  );
+
+  return DBQueryToArray($query);
+}
+
+/**
  * Get all games in given division.
  * @param int $seriesId uo_series.series_id
  * @return Array array of games.
