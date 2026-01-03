@@ -1,5 +1,6 @@
 <?php
 include_once $include_prefix . 'lib/HSVClass.php';
+include_once $include_prefix . 'lib/comment.functions.php';
 
 if (!function_exists('convertToUtf8')) {
 function convertToUtf8($value, $sourceEncoding = 'ISO-8859-1')
@@ -1353,28 +1354,6 @@ function someHTML($string)
 	$string = str_replace("&lt;br /&gt;", "<br />", $string);
 	$string = str_replace("&lt;br/&gt;", "<br />", $string);
 	return $string;
-}
-
-/**
- * Returns the raw form of a comment field.
- * 
- * @param int $type The type of entity. 1: season, 2: series, 3: pool.
- * @param string $id The id of the season, series, or pool.
- * @return string the comment or an empty string if no comment exists.
- */
-function CommentRaw($type, $id)
-{
-	$query = sprintf(
-		"SELECT comment FROM uo_comment
-		WHERE type='%d' AND id='%s'",
-		(int) $type,
-		DBEscapeString($id)
-	);
-	$comment = DBQueryToValue($query);
-	if ($comment != -1)
-		return $comment;
-	else
-		return "";
 }
 
 /**
