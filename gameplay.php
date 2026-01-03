@@ -558,6 +558,24 @@ if (GameHasStarted($game_result) > 0) {
       }
       $html .= "</table>";
     }
+    $game_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_GAME);
+    $home_spirit_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_HOME);
+    $visitor_spirit_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_VISITOR);
+    if (!empty($game_comment_html) || !empty($home_spirit_comment_html) || !empty($visitor_spirit_comment_html)) {
+      $html .= "<h2>" . _("Comments") . "</h2>\n";
+      if (!empty($game_comment_html)) {
+        $html .= "<h3>" . _("Game note") . "</h3>\n";
+        $html .= $game_comment_html;
+      }
+      if (!empty($home_spirit_comment_html)) {
+        $html .= "<h3>" . _("Spirit note for") . " " . utf8entities($game_result['hometeamname']) . "</h3>\n";
+        $html .= $home_spirit_comment_html;
+      }
+      if (!empty($visitor_spirit_comment_html)) {
+        $html .= "<h3>" . _("Spirit note for") . " " . utf8entities($game_result['visitorteamname']) . "</h3>\n";
+        $html .= $visitor_spirit_comment_html;
+      }
+    }
     $html .= "<p><a href='?view=gamecard&amp;team1=" . utf8entities($game_result['hometeam']) . "&amp;team2=" . utf8entities($game_result['visitorteam']) . "'>";
     $html .=  _("Game history") . "</a></p>\n";
     if ($_SESSION['uid'] != 'anonymous') {

@@ -108,3 +108,9 @@ cursor:pointer;
 font-family: Verdana, Arial, Helvetica, sans-serif; 
 font-size: 10px; 
 }
+
+.commentmeta {
+margin-top: 4px;
+font-size: 80%;
+color: #666666;
+}

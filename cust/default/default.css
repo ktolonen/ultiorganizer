@@ -98,3 +98,9 @@ button {
 	cursor:pointer;
 	font-size: 10px; 
 }
+
+.commentmeta {
+	margin-top: 4px;
+	font-size: 80%;
+	color: #666666;
+}

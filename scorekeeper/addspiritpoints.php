@@ -15,6 +15,14 @@ if ($season['spiritmode'] > 0) {
   $ishome = $teamId == $game_result['hometeam'] ? 1 : 0;
   $mode = SpiritMode($season['spiritmode']);
   $categories = SpiritCategories($mode['mode']);
+  $spirit_team_id = $ishome ? $game_result['hometeam'] : $game_result['visitorteam'];
+  $spirit_type = SpiritCommentTypeForTeam($game_result, $spirit_team_id);
+  $comment_feedback = "";
+  $spirit_comment = CommentRaw($spirit_type, $gameId);
+  $spirit_comment_meta_html = CommentMetaHtml(GameCommentMeta($gameId, $spirit_type));
+  $can_create_comment = CanCreateSpiritComment($game_result, $spirit_team_id);
+  $can_manage_comment = CanManageSpiritComment($gameId, $spirit_type);
+  $show_comment_form = ($can_create_comment || $can_manage_comment);
 
   // process itself if save button was pressed
   if (!empty($_POST['save'])) {
@@ -39,6 +47,15 @@ if ($season['spiritmode'] > 0) {
 
       $game_result = GameResult($gameId);
     }
+    $delete_comment = !empty($_POST['delete_spirit_comment']);
+    if (isset($_POST['spiritcomment']) || $delete_comment) {
+      $saved = SetSpiritComment($game_result, $spirit_team_id, $_POST['spiritcomment'], $delete_comment);
+      if (!$saved) {
+        $comment_feedback = "<p class='warning'>" . _("Comment not saved.") . "</p>\n";
+      }
+      $spirit_comment = CommentRaw($spirit_type, $gameId);
+      $spirit_comment_meta_html = CommentMetaHtml(GameCommentMeta($gameId, $spirit_type));
+    }
   }
 
   $html .= "<form action='?view=addspiritpoints' method='post' data-ajax='false'>\n";
@@ -52,6 +69,15 @@ if ($season['spiritmode'] > 0) {
 
     $points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
     $html .= SpiritTable($game_result, $points, $categories, false, false);
+  }
+  if ($show_comment_form) {
+    $html .= "<p><b>" . _("Spirit note") . "</b></p>";
+    $html .= "<p>" . $spirit_comment_meta_html . "</p>";
+    $html .= "<textarea name='spiritcomment' rows='4' cols='40' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - add context for spirit points given (no blame).") . "'>" . htmlentities($spirit_comment) . "</textarea>";
+    if ($can_manage_comment && !empty($spirit_comment)) {
+      $html .= "<label><input type='checkbox' name='delete_spirit_comment' value='1'/> " . _("Delete comment") . "</label>";
+    }
+    $html .= $comment_feedback;
   }
 
   $html .= "<p>";

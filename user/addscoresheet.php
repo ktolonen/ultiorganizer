@@ -176,8 +176,25 @@ $homecaptain = -1;
 $awaycaptain = -1;
 
 $errIds = array();
+$comment_feedback = "";
+$game_comment = CommentRaw(COMMENT_TYPE_GAME, $gameId);
+$game_comment_meta = GameCommentMeta($gameId, COMMENT_TYPE_GAME);
+$game_comment_meta_html = CommentMetaHtml($game_comment_meta);
+$can_create_comment = CanCreateGameComment($gameId);
+$can_manage_comment = CanManageGameComment($gameId, COMMENT_TYPE_GAME);
+$show_comment_form = ($can_create_comment || $can_manage_comment);
 //process itself if submit was pressed
 if (!empty($_POST['save'])) {
+  $delete_comment = !empty($_POST['delete_game_comment']);
+  if (isset($_POST['gamecomment']) || $delete_comment) {
+    $saved = SetGameComment(COMMENT_TYPE_GAME, $gameId, $_POST['gamecomment'], $delete_comment);
+    if (!$saved) {
+      $comment_feedback = "<p class='warning'>" . _("Comment not saved.") . "</p>\n";
+    }
+    $game_comment = CommentRaw(COMMENT_TYPE_GAME, $gameId);
+    $game_comment_meta = GameCommentMeta($gameId, COMMENT_TYPE_GAME);
+    $game_comment_meta_html = CommentMetaHtml($game_comment_meta);
+  }
   LogGameUpdate($gameId, "scoresheet saved", "addscoresheet");
   $time_delim = array(",", ";", ":");
   //set score sheet keeper
@@ -361,8 +378,22 @@ echo "<tr><td>" . utf8entities($place['name']) . " " . _("field") . " " . utf8en
 echo "<tr><th>" . _("Scheduled start date and time") . "</th></tr>";
 echo "<tr><td>" . ShortDate($game_result['time']) . " " . DefHourFormat($game_result['time']) . "</td></tr>";
 echo "<tr><th>" . _("Game official(s)") . "</th></tr>";
-echo "<tr><td><input class='input' style='width: 90%' type='text' name='secretary' id='secretary' value='" . utf8entities($game_result['official']) . "'/></td></tr>";
+echo "<tr><td><input class='input' style='width: 97%' type='text' name='secretary' id='secretary' value='" . utf8entities($game_result['official']) . "'/></td></tr>";
 echo "</table>\n";
+
+if ($show_comment_form) {
+  echo "<table cellspacing='0' width='100%' border='1'>";
+  echo "<tr><th>" . _("Game note") . "</th></tr>";
+  if (!empty($game_comment_meta_html)) {
+    echo "<tr><td>" . $game_comment_meta_html . "</td></tr>";
+  }
+  echo "<tr><td><textarea class='input' style='width: 98%' rows='5' name='gamecomment' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interrupts.") . "'>" . htmlentities($game_comment) . "</textarea></td></tr>";
+  if ($can_manage_comment && !empty($game_comment)) {
+    echo "<tr><td><label><input type='checkbox' name='delete_game_comment' value='1'/> " . _("Delete comment") . "</label></td></tr>";
+  }
+  echo "</table>\n";
+  echo $comment_feedback;
+}
 
 //starting team
 $hoffence = "";
@@ -394,7 +425,7 @@ $i = 0;
 $timeouts = GameTimeouts($gameId);
 while ($timeout = mysqli_fetch_assoc($timeouts)) {
   if (intval($timeout['ishome'])) {
-    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
     $i++;
   }
 }
@@ -405,7 +436,7 @@ for ($i; $i < $maxtimeouts; $i++) {
   if ($i > ($maxtimeouts - 3))
     echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
   else
-    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
+    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
 }
 echo "</tr>\n";
 
@@ -416,7 +447,7 @@ $i = 0;
 $timeouts = GameTimeouts($gameId);
 while ($timeout = mysqli_fetch_assoc($timeouts)) {
   if (!intval($timeout['ishome'])) {
-    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
     $i++;
   }
 }
@@ -427,7 +458,7 @@ for ($i; $i < $maxtimeouts; $i++) {
   if ($i > ($maxtimeouts - 3))
     echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
   else
-    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
+    echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
 }
 
 echo "</tr>";

@@ -146,7 +146,6 @@ $html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method=
 $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
 
-
 //last score
 if (count($scores) > 0) {
 	$lastscore = $scores[count($scores) - 1];
@@ -196,6 +195,7 @@ if (!$errors) {
 	$html .= "</td></tr><tr><td>\n";
 	$html .=  "<a href='?view=mobile/addfirstoffence&amp;game=" . $gameId . "'>" . _("First offence") . "</a> | ";
 	$html .=  "<a href='?view=mobile/addofficial&amp;game=" . $gameId . "'>" . _("Game official") . "</a>";
+	$html .= " | <a href='?view=mobile/addcomment&amp;game=" . $gameId . "'>" . _("Game note") . "</a>";
 	$html .= "</td></tr><tr><td>\n";
 	if (intval($seasoninfo['spiritmode']) > 0) {
 		$html .=  "<a href='?view=mobile/addspiritpoints&amp;game=" . $gameId . "'>" . _("Spirit points") . "</a> | ";
