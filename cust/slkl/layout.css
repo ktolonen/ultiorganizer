@@ -128,17 +128,17 @@
 	/*width: 503px;*/
 }
 .seasondropdown {
-	width:195px;
-	background-color: #2dc1dd;
-	background-image: linear-gradient(#4ad2ea, #23b9d4);
+	width: 175px;
+	background-color: #54cfe6;
+	background-image: linear-gradient(#7cdaee, #3fc6e0);
 	color: #000000; 
-	font-size: 12px; 
-	border-top: solid #EEEEDD 1px; 
-	border-bottom: solid #464646 1px; 
-	border-left: solid #EEEEDD 1px; 
-	border-right: solid #464646 1px;
+	font-size: 11px; 
+	border-top: solid #f0f0ea 1px; 
+	border-bottom: solid #6b6b6b 1px; 
+	border-left: solid #f0f0ea 1px; 
+	border-right: solid #6b6b6b 1px;
 	border-radius: 6px;
-	padding: 2px 6px;
+	padding: 1px 5px;
 }
 
 .tdcontent {
