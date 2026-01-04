@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-04 18:49+0200\n"
+"POT-Creation-Date: 2026-01-04 21:30+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -85,7 +85,7 @@ msgstr "Pelaaja"
 #: poolstatus.php:142 poolstatus.php:160 poolstatus.php:203 poolstatus.php:219
 #: poolstatus.php:263 poolstatus.php:336 scorestatus.php:63 scorestatus.php:65
 #: seriesstatus.php:128 seriesstatus.php:130 seriesstatus.php:290
-#: seriesstatus.php:310 seriesstatus.php:332 teamcard.php:664
+#: seriesstatus.php:310 seriesstatus.php:332 teamcard.php:697
 #: user/enrollteam.php:78 user/respteams.php:21
 msgid "Team"
 msgstr "Joukkue"
@@ -118,7 +118,7 @@ msgstr "Kuittaa"
 #: lib/search.functions.php:431 lib/search.functions.php:472
 #: lib/search.functions.php:514 menufunctions.php:667 playercard.php:221
 #: playercard.php:396 statistics.php:45 statistics.php:91 statistics.php:236
-#: teamcard.php:281 teamcard.php:473 user/select_poolselector.php:26
+#: teamcard.php:304 teamcard.php:501 user/select_poolselector.php:26
 #: user/userinfo.php:334 user/userinfo.php:359
 msgid "Event"
 msgstr "Tapahtuma"
@@ -188,8 +188,8 @@ msgstr ""
 #: seriesstatus.php:154 seriesstatus.php:156 seriesstatus.php:290
 #: seriesstatus.php:310 seriesstatus.php:318 seriesstatus.php:333
 #: statistics.php:122 statistics.php:164 teamcard.php:119 teamcard.php:163
-#: teamcard.php:256 teamcard.php:284 teamcard.php:368 teamcard.php:476
-#: teamcard.php:556 teams.php:110 teams.php:161 teams.php:263
+#: teamcard.php:279 teamcard.php:307 teamcard.php:396 teamcard.php:504
+#: teamcard.php:589 teams.php:110 teams.php:161 teams.php:263
 msgid "Games"
 msgstr "Pelit"
 
@@ -498,8 +498,8 @@ msgstr "Muokkaa lohkoa"
 #: lib/search.functions.php:70 lib/search.functions.php:102
 #: lib/search.functions.php:431 lib/search.functions.php:472
 #: lib/search.functions.php:514 playercard.php:221 playercard.php:298
-#: playercard.php:396 playercard.php:465 teamcard.php:202 teamcard.php:282
-#: teamcard.php:474 teamcard.php:666 teams.php:171 user/respteams.php:22
+#: playercard.php:396 playercard.php:465 teamcard.php:202 teamcard.php:305
+#: teamcard.php:502 teamcard.php:699 teams.php:171 user/respteams.php:22
 #: user/select_poolselector.php:29 user/select_poolselector.php:32
 #: user/userinfo.php:338 user/userinfo.php:342 user/userinfo.php:360
 #: user/userinfo.php:361
@@ -814,7 +814,7 @@ msgstr "Spirit-pisteet näkyvissä"
 msgid "Organizer"
 msgstr "Järjestäjä"
 
-#: admin/addseasons.php:330 admin/eventviewer.php:73 teamcard.php:255
+#: admin/addseasons.php:330 admin/eventviewer.php:73 teamcard.php:278
 msgid "Category"
 msgstr "Kategoria"
 
@@ -1435,7 +1435,7 @@ msgid "Print score sheet"
 msgstr "Tulosta pöytäkirjat"
 
 #: admin/editgame.php:168 clubcard.php:220 gameplay.php:582 playercard.php:595
-#: teamcard.php:697
+#: teamcard.php:730
 msgid "Add media"
 msgstr "Lisää media"
 
@@ -2046,7 +2046,7 @@ msgid "Print scoresheets"
 msgstr "Tulosta pöytäkirjat"
 
 #: admin/seasongames.php:208 gamecard.php:133 mobile/respgames.php:169
-#: scorekeeper/addresult.php:26 scorekeeper/respgames.php:130 teamcard.php:665
+#: scorekeeper/addresult.php:26 scorekeeper/respgames.php:130 teamcard.php:698
 #: user/adddefensesheet.php:52 user/addplayerlists.php:189
 #: user/addresult.php:15 user/addresult.php:53 user/addscoresheet.php:159
 #: user/addspirit.php:124 user/respgames.php:23 user/respgames.php:201
@@ -2271,8 +2271,8 @@ msgstr "Lohko on pelattu:"
 msgid "Pool games not completed:"
 msgstr "Lohkon pelejä ei olla pelattu:"
 
-#: admin/seasonstandings.php:342 admin/seasonstandings.php:383 teamcard.php:283
-#: teamcard.php:475
+#: admin/seasonstandings.php:342 admin/seasonstandings.php:383 teamcard.php:306
+#: teamcard.php:503
 msgid "Pos."
 msgstr "Sij."
 
@@ -2305,8 +2305,8 @@ msgstr "poista joukkue lohkosta"
 #: admin/seasonstandings.php:386 ext/countrystatus.php:50 ext/eventpools.php:47
 #: ext/poolstatus.php:39 gamecard.php:96 playercard.php:177 playercard.php:225
 #: playercard.php:301 playercard.php:397 playercard.php:466 poolstatus.php:338
-#: seriesstatus.php:160 seriesstatus.php:162 teamcard.php:285 teamcard.php:369
-#: teamcard.php:477 teamcard.php:557
+#: seriesstatus.php:160 seriesstatus.php:162 teamcard.php:308 teamcard.php:397
+#: teamcard.php:505 teamcard.php:590
 msgid "Wins"
 msgstr "Voitot"
 
@@ -2316,25 +2316,25 @@ msgstr "Tasapelit"
 
 #: admin/seasonstandings.php:389 ext/countrystatus.php:51 ext/eventpools.php:48
 #: ext/poolstatus.php:40 gamecard.php:96 poolstatus.php:341
-#: seriesstatus.php:166 seriesstatus.php:168 teamcard.php:286 teamcard.php:370
-#: teamcard.php:478 teamcard.php:558
+#: seriesstatus.php:166 seriesstatus.php:168 teamcard.php:309 teamcard.php:398
+#: teamcard.php:506 teamcard.php:591
 msgid "Losses"
 msgstr "Tappiot"
 
 #: admin/seasonstandings.php:390 ext/countrystatus.php:52 ext/eventpools.php:49
 #: ext/poolstatus.php:41 poolstatus.php:342 seriesstatus.php:172
-#: seriesstatus.php:174 teamcard.php:288 teamcard.php:372 teamcard.php:480
-#: teamcard.php:560
+#: seriesstatus.php:174 teamcard.php:311 teamcard.php:400 teamcard.php:508
+#: teamcard.php:593
 msgid "Goals for"
 msgstr "Tehdyt maalit"
 
 #: admin/seasonstandings.php:391 ext/countrystatus.php:53 poolstatus.php:343
-#: teamcard.php:290 teamcard.php:374 teamcard.php:482 teamcard.php:562
+#: teamcard.php:313 teamcard.php:402 teamcard.php:510 teamcard.php:595
 msgid "against"
 msgstr "päästetyt maalit"
 
 #: admin/seasonstandings.php:392 ext/countrystatus.php:54 poolstatus.php:344
-#: teamcard.php:292 teamcard.php:376 teamcard.php:484 teamcard.php:564
+#: teamcard.php:315 teamcard.php:404 teamcard.php:512 teamcard.php:597
 msgid "diff."
 msgstr "erotus"
 
@@ -2878,7 +2878,7 @@ msgid "Scoreboard"
 msgstr "Pistepörssi"
 
 #: clubcard.php:164 countrycard.php:76 playercard.php:217 playercard.php:392
-#: teamcard.php:276 teamcard.php:468
+#: teamcard.php:299 teamcard.php:496
 msgid "History"
 msgstr "Historia"
 
@@ -2897,8 +2897,8 @@ msgid "Passes"
 msgstr "Syötöt"
 
 #: clubcard.php:199 cust/slkl/mass-accreditation.php:76 playercard.php:366
-#: playercard.php:523 statistics.php:124 statistics.php:165 teamcard.php:443
-#: teamcard.php:625
+#: playercard.php:523 statistics.php:124 statistics.php:165 teamcard.php:270
+#: teamcard.php:471 teamcard.php:658
 msgid "Total"
 msgstr "Yhteensä"
 
@@ -3617,7 +3617,7 @@ msgid "Defenseboard"
 msgstr "Puolustustilastot"
 
 #: defensestatus.php:72 defensestatus.php:74 gameplay.php:599 gameplay.php:624
-#: playercard.php:170 teamcard.php:123 teamcard.php:294 teamcard.php:378
+#: playercard.php:170 teamcard.php:123 teamcard.php:317 teamcard.php:406
 msgid "Defenses"
 msgstr "Puolustukset"
 
@@ -3834,8 +3834,8 @@ msgstr "Joukkuetta ei löydy"
 
 #: gamecard.php:96 playercard.php:177 playercard.php:225 playercard.php:301
 #: playercard.php:397 playercard.php:466 seriesstatus.php:190
-#: seriesstatus.php:192 teamcard.php:287 teamcard.php:371 teamcard.php:479
-#: teamcard.php:559
+#: seriesstatus.php:192 teamcard.php:310 teamcard.php:399 teamcard.php:507
+#: teamcard.php:592
 msgid "Win-%"
 msgstr "Voitto-%"
 
@@ -3942,7 +3942,7 @@ msgstr "Peli-kommentti"
 msgid "Spirit note for"
 msgstr "Spirit-kommentti joukkueelle"
 
-#: gameplay.php:580 lib/timetable.functions.php:566 teamcard.php:658
+#: gameplay.php:580 lib/timetable.functions.php:566 teamcard.php:691
 msgid "Game history"
 msgstr "Otteluhistoria"
 
@@ -4721,7 +4721,7 @@ msgstr "Maali ka."
 msgid "Def. avg."
 msgstr "Puol. ka."
 
-#: playercard.php:298 playercard.php:465 teamcard.php:367 teamcard.php:555
+#: playercard.php:298 playercard.php:465 teamcard.php:395 teamcard.php:588
 msgid "Event type"
 msgstr "Tapahtuman tyyppi"
 
@@ -5205,27 +5205,27 @@ msgstr "Joukkueen sivut"
 msgid "Photo"
 msgstr "Kuva"
 
-#: teamcard.php:253
+#: teamcard.php:276
 msgid "Spirit scores"
 msgstr "Spirit-pisteet"
 
-#: teamcard.php:257
+#: teamcard.php:280
 msgid "Average"
-msgstr ""
+msgstr "Keskiarvo"
 
-#: teamcard.php:258
+#: teamcard.php:281
 msgid "Historical avg"
 msgstr "Historiallinen ka."
 
-#: teamcard.php:289 teamcard.php:373 teamcard.php:481 teamcard.php:561
+#: teamcard.php:312 teamcard.php:401 teamcard.php:509 teamcard.php:594
 msgid "GF/game"
 msgstr "TM/peli"
 
-#: teamcard.php:291 teamcard.php:375 teamcard.php:483 teamcard.php:563
+#: teamcard.php:314 teamcard.php:403 teamcard.php:511 teamcard.php:596
 msgid "GA/game"
 msgstr "PM/peli"
 
-#: teamcard.php:293 teamcard.php:377 teamcard.php:485 teamcard.php:565
+#: teamcard.php:316 teamcard.php:405 teamcard.php:513 teamcard.php:598
 msgid "Spirit avg"
 msgstr "Spirit ka."
 
