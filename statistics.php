@@ -51,7 +51,7 @@ if ($list == "teamstandings") {
         }
         ++$countall;
         $html .= "<tr>";
-        $html .= "<td style='width:16%'><a href='?view=eventstatus&amp;season=" . urlencode($season['season_id']) .
+        $html .= "<td style='width:16%'><a href='?view=teams&amp;season=" . urlencode($season['season_id']) .
           "&amp;list=bystandings'>" . utf8entities(U_($season['name'])) . "</a></td>";
 
         for ($i = 0; $i < count($standings) && $i < 3; $i++) {
