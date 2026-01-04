@@ -1891,7 +1891,11 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool)
 
   $teaminfo = TeamInfo($teamId);
   if ($teaminfo['pool'] == $curpool) {
-    $query = sprintf("UPDATE uo_team SET pool=%d WHERE team_id=%d", (int) $newpool, (int) $teamId);
+    if ($newpool > 0) {
+      $query = sprintf("UPDATE uo_team SET pool=%d WHERE team_id=%d", (int) $newpool, (int) $teamId);
+    } else {
+      $query = sprintf("UPDATE uo_team SET pool=NULL WHERE team_id=%d", (int) $teamId);
+    }
 
     DBQuery($query);
   }
@@ -1996,6 +2000,9 @@ function PoolAddMove($frompool, $topool, $fromplacing, $torank, $pteamname)
 {
   $poolInfo = PoolInfo($topool);
   if (hasEditTeamsRight($poolInfo['series'])) {
+    if (PoolMoveExist($frompool, $fromplacing)) {
+      return 0;
+    }
 
     $query = sprintf(
       "INSERT INTO uo_scheduling_name
@@ -2506,6 +2513,20 @@ function GeneratePlayoffPools($poolId, $generate = true)
 {
   $poolInfo = PoolInfo($poolId);
   if (hasEditTeamsRight($poolInfo['series'])) {
+
+    if (!empty($poolInfo['follower'])) {
+      $pools = array();
+      $nextId = (int)$poolInfo['follower'];
+      while ($nextId > 0) {
+        $nextInfo = PoolInfo($nextId);
+        if (empty($nextInfo)) {
+          break;
+        }
+        $pools[] = $nextInfo;
+        $nextId = !empty($nextInfo['follower']) ? (int)$nextInfo['follower'] : 0;
+      }
+      return $pools;
+    }
 
     $pools = array();
 

@@ -204,8 +204,7 @@ foreach ($pools as $pool) {
 
   $html .= "<td>";
 
-
-  if (!intval($info['continuingpool']) && !$started) {
+  if (!intval($info['continuingpool']) && $moves == 0 && !$started) {
     if ($teams) {
       $html .= "<a href='?view=admin/select_teams&amp;series=" . $series_id . "'>" . _("Select teams") . "</a> | ";
     } else {

@@ -37,9 +37,23 @@ else
 	$backurl = "?view=user/teamplayers&team=$teamId";
 
 $club = ClubInfo($clubId);
-if (!$teaminfo && !$club) {
-	echo "<p class='warning'>" . _("Club not found.") . "</p>";
-	return;
+if (!$club) {
+	if (!$teaminfo) {
+		echo "<p class='warning'>" . _("Club not found.") . "</p>";
+		return;
+	}
+	$club = array(
+		"name" => _("Unknown club"),
+		"profile_image" => null,
+		"club_id" => $clubId,
+		"founded" => "",
+		"valid" => 0,
+		"country" => "",
+		"city" => "",
+		"contacts" => "",
+		"story" => "",
+		"achievements" => ""
+	);
 }
 
 //club profile
@@ -120,7 +134,8 @@ $menutabs[_("Club Profile")] = "?view=user/clubprofile&team=$teamId";
 $html .= pageMenu($menutabs, "", false);
 
 $html .= "<form method='post' enctype='multipart/form-data' action='?view=user/clubprofile&amp;team=$teamId&amp;club=$clubId'>\n";
-if (isSuperAdmin() || hasEditTeamsRight($teaminfo['series'])) {
+$teamSeries = $teaminfo ? (int)$teaminfo['series'] : 0;
+if (isSuperAdmin() || ($teamSeries > 0 && hasEditTeamsRight($teamSeries))) {
 
 	if (intval($club['valid']))
 		$html .= "<p><input class='input' type='checkbox' id='valid' name='valid' checked='checked'/>";
@@ -135,7 +150,7 @@ $html .= "<h1>" . utf8entities($club['name']) . "</h1>";
 $html .= "<table>";
 
 $html .= "<tr><td class='infocell'>" . _("Name") . ":</td>";
-if (isSuperAdmin() || hasEditTeamsRight($teaminfo['series'])) {
+if (isSuperAdmin() || ($teamSeries > 0 && hasEditTeamsRight($teamSeries))) {
 	$html .= "<td><input class='input' maxlength='50' size='40' name='name' value='" . utf8entities($op['name']) . "'/></td></tr>\n";
 } else {
 	$html .= "<td><input class='input' maxlength='50' size='40' disabled='disabled' name='name' value='" . utf8entities($op['name']) . "'/></td></tr>\n";

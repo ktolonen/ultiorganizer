@@ -133,25 +133,31 @@ if (!empty($_POST['remove_x'])) {
 	}
 	$homeresp = isset($_POST["homeresp"]);
 	$nomutual = isset($_POST["nomutual"]);
-	$generatedgames = GenerateGames($poolId, $rounds, true, $nomutual, $homeresp);
+	if (CanGenerateGames($poolId)) {
+		$generatedgames = GenerateGames($poolId, $rounds, true, $nomutual, $homeresp);
 
-	//in case of playoff pool create all pools and games for playoffs
-	if ($poolInfo['type'] == 2) {
-		//generate pools needed to solve standings
-		$generatedpools = GeneratePlayoffPools($poolId, true);
+		//in case of playoff pool create all pools and games for playoffs
+		if ($poolInfo['type'] == 2) {
+			//generate pools needed to solve standings
+			$generatedpools = GeneratePlayoffPools($poolId, true);
 
-		//generate games into generated pools
-		foreach ($generatedpools as $gpool) {
-			//echo "<p>Generate games for ".$gpool['pool_id']."</p>";
-			GenerateGames($gpool['pool_id'], $rounds, true);
+			//generate games into generated pools
+			foreach ($generatedpools as $gpool) {
+				//echo "<p>Generate games for ".$gpool['pool_id']."</p>";
+				if (CanGenerateGames($gpool['pool_id'])) {
+					GenerateGames($gpool['pool_id'], $rounds, true);
+				}
+			}
+		} elseif ($poolInfo['type'] == 3) { //in case of Swissdraw, create pools and moves
+			if ($generatedgames[0] == false) {
+				echo "<p>The number of teams in a Swiss-draw pool should be even. Please add or remove a team.</p>";
+			} else {
+				//generate pools (with games) and moves 
+				$generatedpools = GenerateSwissdrawPools($poolId, $rounds, true);
+			}
 		}
-	} elseif ($poolInfo['type'] == 3) { //in case of Swissdraw, create pools and moves
-		if ($generatedgames[0] == false) {
-			echo "<p>The number of teams in a Swiss-draw pool should be even. Please add or remove a team.</p>";
-		} else {
-			//generate pools (with games) and moves 
-			$generatedpools = GenerateSwissdrawPools($poolId, $rounds, true);
-		}
+	} else {
+		$html .= "<p class='warning'>" . _("Games already exist.") . "</p>";
 	}
 } elseif (!empty($_POST['addnew'])) {
 	$home = $_POST['newhome'];

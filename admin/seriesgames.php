@@ -42,6 +42,9 @@ if (!empty($_POST['generate'])) {
 	$pools = SeriesPools($seriesId);
 
 	foreach ($pools as $pool) {
+		if (!CanGenerateGames($pool['pool_id'])) {
+			continue;
+		}
 		$info = PoolInfo($pool['pool_id']);
 		if ($info['type'] == 1) {
 
@@ -57,8 +60,13 @@ if (!empty($_POST['generate'])) {
 
 			//generate games into generated pools
 			foreach ($generatedpools as $gpool) {
-				GenerateGames($gpool['pool_id'], $matches, true);
+				if (CanGenerateGames($gpool['pool_id'])) {
+					GenerateGames($gpool['pool_id'], $matches, true);
+				}
 			}
+		// crossmatch
+		} elseif ($info['type'] == 4) {
+			GenerateGames($pool['pool_id'], $rounds, true, false, $homeresp);
 		}
 	}
 	session_write_close();

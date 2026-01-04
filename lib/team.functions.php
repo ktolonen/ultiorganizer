@@ -1330,13 +1330,14 @@ function RemoveTeamProfileImage($teamId)
 function AddTeam($params)
 {
   if (hasEditTeamsRight($params['series'])) {
+    $poolValue = !empty($params['pool']) ? (int)$params['pool'] : "NULL";
     $query = sprintf(
       "
 			INSERT INTO uo_team
 			(name, pool, uo_team.rank, valid, series) 
-			VALUES ('%s', '%s', '%s', '%s', '%s')",
+			VALUES ('%s', %s, '%s', '%s', '%s')",
       DBEscapeString($params['name']),
-      DBEscapeString($params['pool']),
+      $poolValue,
       DBEscapeString($params['rank']),
       DBEscapeString($params['valid']),
       DBEscapeString($params['series'])
@@ -1365,14 +1366,15 @@ function AddTeam($params)
 function SetTeam($params)
 {
   if (hasEditTeamsRight($params['series'])) {
+    $poolValue = !empty($params['pool']) ? (int)$params['pool'] : "NULL";
     $query = sprintf(
       "
 			UPDATE uo_team SET
-			name='%s', pool='%s', abbreviation='%s',
+			name='%s', pool=%s, abbreviation='%s',
 			rank='%s', valid='%s', series='%s'
 			WHERE team_id='%s'",
       DBEscapeString($params['name']),
-      (int)$params['pool'],
+      $poolValue,
       DBEscapeString($params['abbreviation']),
       DBEscapeString($params['rank']),
       DBEscapeString($params['valid']),

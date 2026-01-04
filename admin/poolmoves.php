@@ -167,6 +167,42 @@ echo "<h1>" . utf8entities(U_(PoolSeriesName($poolId)) . ", " . U_(PoolName($poo
 
 $poolinfo = PoolInfo($poolId);
 $pools = SeriesPools($seriesId);
+$fromPools = array();
+
+function PoolHasMovesFromAllPositions($poolId)
+{
+  $poolinfo = PoolInfo($poolId);
+  if (intval($poolinfo['teams']) > 0) {
+    $total_teams = intval($poolinfo['teams']);
+  } else {
+    $total_teams = count(PoolTeams($poolId));
+    if ($total_teams == 0) {
+      $total_teams = count(PoolSchedulingTeams($poolId));
+    }
+  }
+
+  if ($total_teams == 0) {
+    return false;
+  }
+
+  for ($i = 1; $i <= $total_teams; $i++) {
+    if (!PoolMoveExist($poolId, $i)) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+foreach ($pools as $pool) {
+  if ($pool['pool_id'] == $poolId) {
+    continue;
+  }
+
+  if (!PoolHasMovesFromAllPositions($pool['pool_id'])) {
+    $fromPools[] = $pool;
+  }
+}
 
 //round robin or swissdrawn pool
 if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
@@ -217,10 +253,8 @@ if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
   for ($i = 0; $i < $total_teams; $i++) {
     echo "<tr>\n";
     echo "<td><select class='dropdown' id='frompool$i' name='frompool$i' onchange=\"checkMove('frompool$i','movefrom$i','moveto$i','pteamname$i');\">";
-    foreach ($pools as $pool) {
-      if ($pool['pool_id'] != $poolId) {
-        echo "<option class='dropdown' value='" . utf8entities($pool['pool_id']) . "'>" . utf8entities(U_($pool['name'])) . "</option>";
-      }
+    foreach ($fromPools as $pool) {
+      echo "<option class='dropdown' value='" . utf8entities($pool['pool_id']) . "'>" . utf8entities(U_($pool['name'])) . "</option>";
     }
     echo "</select></td>\n";
     echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='3' size='3' value='' onkeyup=\"checkMove('frompool$i','movefrom$i','moveto$i','pteamname$i');\"/></td>\n";
@@ -295,16 +329,14 @@ if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
     echo "<tr><td><b>" . _("Pair") . " " . ($i / 2 + 1) . "</b></td></tr>\n";
     echo "<tr>\n";
     echo "<td><select class='dropdown' id='frompool$i' name='frompool$i' onchange=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\">";
-    foreach ($pools as $pool) {
-      if ($pool['pool_id'] != $poolId) {
-        echo "<option class='dropdown' ";
-        // added convenience when scheduling
-        // TODO: retrieve name or id of most likely pool where moves come from
-        if ($pool['name'] == 'Round 5 Swissdraw') {
-          echo " selected='selected' ";
-        }
-        echo "value='" . utf8entities($pool['pool_id']) . "'>" . utf8entities(U_($pool['name'])) . "</option>";
+    foreach ($fromPools as $pool) {
+      echo "<option class='dropdown' ";
+      // added convenience when scheduling
+      // TODO: retrieve name or id of most likely pool where moves come from
+      if ($pool['name'] == 'Round 5 Swissdraw') {
+        echo " selected='selected' ";
       }
+      echo "value='" . utf8entities($pool['pool_id']) . "'>" . utf8entities(U_($pool['name'])) . "</option>";
     }
     echo "</select></td>\n";
     echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='3' size='3' value='' onkeyup=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\"/></td>\n";
@@ -315,16 +347,14 @@ if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
     $i++;
     echo "<tr>\n";
     echo "<td><select class='dropdown' id='frompool$i' name='frompool$i' onchange=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\">";
-    foreach ($pools as $pool) {
-      if ($pool['pool_id'] != $poolId) {
-        echo "<option class='dropdown' ";
-        // added convenience when scheduling
-        // TODO: retrieve name or id of most likely pool where moves come from
-        if ($pool['name'] == 'Round 5 Swissdraw') {
-          echo " selected='selected' ";
-        }
-        echo "value='" . utf8entities($pool['pool_id']) . "'>" . utf8entities(U_($pool['name'])) . "</option>";
+    foreach ($fromPools as $pool) {
+      echo "<option class='dropdown' ";
+      // added convenience when scheduling
+      // TODO: retrieve name or id of most likely pool where moves come from
+      if ($pool['name'] == 'Round 5 Swissdraw') {
+        echo " selected='selected' ";
       }
+      echo "value='" . utf8entities($pool['pool_id']) . "'>" . utf8entities(U_($pool['name'])) . "</option>";
     }
     echo "</select></td>\n";
     echo "<td><input class='input' id='movefrom$i' name='movefrom$i' maxlength='3' size='3' value='' onkeyup=\"checkMove2('frompool$i','movefrom$i','pteamname$i');\"/></td>\n";
