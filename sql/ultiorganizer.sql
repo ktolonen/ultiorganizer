@@ -836,6 +836,20 @@ CREATE TABLE IF NOT EXISTS `uo_spirit_score` (
   KEY `fk_spirit_score_category` (`category_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `uo_team_spirit_stats` (
+  `team_id` int(10) NOT NULL,
+  `season` varchar(10) DEFAULT NULL,
+  `series` int(10) DEFAULT NULL,
+  `category_id` int(10) NOT NULL,
+  `games` int(5) DEFAULT 0,
+  `average` decimal(6,2) DEFAULT 0,
+  PRIMARY KEY (`team_id`,`category_id`),
+  KEY `fk_team_spirit_stats_team` (`team_id`),
+  KEY `fk_team_spirit_stats_category` (`category_id`),
+  KEY `fk_team_spirit_stats_series` (`series`),
+  KEY `fk_team_spirit_stats_season` (`season`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `uo_team` (
   `team_id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
@@ -1018,6 +1032,12 @@ ALTER TABLE `uo_team_stats`
   ADD CONSTRAINT `fk_team_stats_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_team_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_team_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+ALTER TABLE `uo_team_spirit_stats`
+  ADD CONSTRAINT `fk_team_spirit_stats_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_spirit_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_spirit_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_team_spirit_stats_category` FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `uo_player`
   ADD CONSTRAINT `fk_player_team` FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE,

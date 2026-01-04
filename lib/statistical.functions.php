@@ -26,6 +26,7 @@ function DeleteSeasonStats($season)
 		DBQuery(sprintf("DELETE FROM uo_season_stats WHERE season='%s'", $season_safe));
 		DBQuery(sprintf("DELETE FROM uo_series_stats WHERE season='%s'", $season_safe));
 		DBQuery(sprintf("DELETE FROM uo_team_stats WHERE season='%s'", $season_safe));
+		DBQuery(sprintf("DELETE FROM uo_team_spirit_stats WHERE season='%s'", $season_safe));
 		DBQuery(sprintf("DELETE FROM uo_player_stats WHERE season='%s'", $season_safe));
 	} else {
 		die('Insufficient rights to archive season');
@@ -153,6 +154,57 @@ function TeamStatisticsByName($teamname, $seriestype)
 		LEFT JOIN uo_team t ON(t.team_id=ts.team_id)
 		WHERE t.name='%s' AND ser.type='%s'
 		ORDER BY s.starttime DESC, ts.series,ts.standing",
+		DBEscapeString($teamname),
+		DBEscapeString($seriestype)
+	);
+	return DBQueryToArray($query);
+}
+
+function TeamSpiritCategoryStats($teamId, $seasonId, $spiritmode)
+{
+	$query = sprintf(
+		"SELECT ts.category_id, ts.average, ts.games
+		FROM uo_team_spirit_stats ts
+		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
+		WHERE ts.team_id=%d AND ts.season='%s' AND sct.mode=%d
+		ORDER BY sct.`index`",
+		(int)$teamId,
+		DBEscapeString($seasonId),
+		(int)$spiritmode
+	);
+	return DBQueryToArray($query);
+}
+
+function TeamSpiritCategoryHistoryAveragesByName($teamname, $seriestype, $spiritmode)
+{
+	$query = sprintf(
+		"SELECT ts.category_id,
+			SUM(ts.average * ts.games) / NULLIF(SUM(ts.games), 0) AS average,
+			SUM(ts.games) AS games
+		FROM uo_team_spirit_stats ts
+		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
+		LEFT JOIN uo_team t ON (t.team_id = ts.team_id)
+		LEFT JOIN uo_series ser ON (ser.series_id = ts.series)
+		WHERE t.name='%s' AND ser.type='%s' AND sct.mode=%d
+		GROUP BY ts.category_id
+		ORDER BY sct.`index`",
+		DBEscapeString($teamname),
+		DBEscapeString($seriestype),
+		(int)$spiritmode
+	);
+	return DBQueryToArray($query);
+}
+
+function TeamSpiritAveragesByName($teamname, $seriestype)
+{
+	$query = sprintf(
+		"SELECT ts.season, ts.series, SUM(ts.average * sct.factor) AS spirit_total
+		FROM uo_team_spirit_stats ts
+		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
+		LEFT JOIN uo_team t ON (t.team_id = ts.team_id)
+		LEFT JOIN uo_series ser ON (ser.series_id = ts.series)
+		WHERE t.name='%s' AND ser.type='%s'
+		GROUP BY ts.season, ts.series",
 		DBEscapeString($teamname),
 		DBEscapeString($seriestype)
 	);
@@ -542,6 +594,49 @@ function CalcTeamStats($season)
 				DBQuery($query);
 			}
 		}
+	} else {
+		die('Insufficient rights to archive season');
+	}
+}
+
+function CalcTeamSpiritStats($season)
+{
+	if (isSeasonAdmin($season)) {
+		$season_info = SeasonInfo($season);
+		if (empty($season_info['spiritmode']) || (int)$season_info['spiritmode'] <= 0) {
+			return;
+		}
+
+		$season_safe = DBEscapeString($season_info['season_id']);
+		DBQuery(sprintf("DELETE FROM uo_team_spirit_stats WHERE season='%s'", $season_safe));
+
+		$query = sprintf(
+			"INSERT INTO uo_team_spirit_stats (team_id, season, series, category_id, games, average)
+			SELECT ssc.team_id, '%s', ser.series_id, ssc.category_id,
+				COUNT(*) AS games, AVG(ssc.value) AS average
+			FROM uo_spirit_score ssc
+			LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
+			LEFT JOIN uo_game g ON (g.game_id = ssc.game_id)
+			LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id)
+			LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
+			LEFT JOIN uo_series ser ON (ser.series_id = p.series)
+			WHERE ser.season='%s'
+				AND sct.mode=%d
+				AND gp.timetable=1
+				AND g.isongoing=0
+				AND g.hasstarted>0
+			GROUP BY ssc.team_id, ssc.category_id, ser.series_id
+			ON DUPLICATE KEY UPDATE
+				season=VALUES(season),
+				series=VALUES(series),
+				games=VALUES(games),
+				average=VALUES(average)",
+			$season_safe,
+			$season_safe,
+			(int)$season_info['spiritmode']
+		);
+
+		DBQuery($query);
 	} else {
 		die('Insufficient rights to archive season');
 	}

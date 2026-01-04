@@ -18,6 +18,7 @@ if (!empty($_POST['calc'])) {
     CalcSeasonStats($season);
     CalcSeriesStats($season);
     CalcTeamStats($season);
+    CalcTeamSpiritStats($season);
     CalcPlayerStats($season);
 }
 if (!empty($_POST['undo'])) {
