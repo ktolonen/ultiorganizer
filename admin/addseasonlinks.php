@@ -56,6 +56,7 @@ if (!empty($_POST['save'])) {
 pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
+$htmltmp1 = "";
 $html .= "<form method='post' action='?view=admin/addseasonlinks&amp;season=" . $seasonId . "' id='Form'>";
 
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";

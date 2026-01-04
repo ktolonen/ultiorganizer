@@ -59,7 +59,7 @@ if (!empty($_POST['save'])) {
       if ($found) {
         PoolSetTeam($poolId, $team['team_id'], $rank, $poolId);
       } else {
-        PoolSetTeam(0, $selId, $rank, $poolId);
+        PoolAddTeam($poolId, $selId, $rank, true);
       }
     }
   }
@@ -199,9 +199,7 @@ if ($continuation && $SwissOK == -1) {
       }
     }
     $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing'], $poolinfo['type'] != 2);  // do not count the BYE team if we are moving to a playoff pool
-    //    if ($team['name']=="") {
-    //   		die('yay! '.$team['team_id']);
-    //    }
+
     echo "<td class='center'>" . intval($row['fromplacing']) . "</td>";
     if (TeamPoolCountBYEs($team['team_id'], $row['frompool']) > 0) {
       echo "<td class='highlight'><b>" . utf8entities($team['name']) . "</b></td>";

@@ -973,12 +973,14 @@ function SeriesCopyTeams($to, $from)
   if (isSeasonAdmin(SeriesSeasonId($to))) {
     $teams = SeriesTeams($from);
     foreach ($teams as $team) {
+      $clubValue = (empty($team['club']) || (int)$team['club'] === 0) ? "NULL" : (int)$team['club'];
+      $countryValue = (empty($team['country']) || (int)$team['country'] === 0) ? "NULL" : (int)$team['country'];
       $query = sprintf(
         "INSERT INTO uo_team(name, club, country, uo_team.rank, abbreviation, valid, series )
-      			VALUES ('%s',%d,%d,%d,'%s',1,%d)",
+      			VALUES ('%s',%s,%s,%d,'%s',1,%d)",
         DBEscapeString($team['name']),
-        (int) $team['club'],
-        (int) $team['country'],
+        $clubValue,
+        $countryValue,
         (int) $team['rank'],
         DBEscapeString($team['abbreviation']),
         (int) $to

@@ -1891,7 +1891,11 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool)
 
   $teaminfo = TeamInfo($teamId);
   if ($teaminfo['pool'] == $curpool) {
-    $query = sprintf("UPDATE uo_team SET pool=%d WHERE team_id=%d", (int) $newpool, (int) $teamId);
+    if ($newpool > 0) {
+      $query = sprintf("UPDATE uo_team SET pool=%d WHERE team_id=%d", (int) $newpool, (int) $teamId);
+    } else {
+      $query = sprintf("UPDATE uo_team SET pool=NULL WHERE team_id=%d", (int) $teamId);
+    }
 
     DBQuery($query);
   }

@@ -64,6 +64,9 @@ if (!empty($_POST['generate'])) {
 					GenerateGames($gpool['pool_id'], $matches, true);
 				}
 			}
+		// crossmatch
+		} elseif ($info['type'] == 4) {
+			GenerateGames($pool['pool_id'], $rounds, true, false, $homeresp);
 		}
 	}
 	session_write_close();

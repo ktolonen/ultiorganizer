@@ -9,6 +9,7 @@ include_once 'lib/country.functions.php';
 
 $LAYOUT_ID = SEASONTEAMS;
 $html = "";
+$addError = "";
 $season = $_GET["season"];
 $series_id = CurrentSeries($season);
 
@@ -59,7 +60,11 @@ if (!empty($_POST['add'])) {
   }
   $tp['country'] = !empty($_POST['country0']) ? $_POST['country0'] : "";
   $tp['abbreviation'] = !empty($_POST['abbrev0']) ? $_POST['abbrev0'] : "";
-  AddTeam($tp);
+  try {
+    AddTeam($tp);
+  } catch (mysqli_sql_exception $e) {
+    $addError = "<p class='warning'>" . _("Unable to add team. Please check the team details and pool setup.") . "</p>";
+  }
 }
 
 //set
@@ -111,6 +116,10 @@ foreach ($series as $row) {
 }
 $menutabs[_("...")] = "?view=admin/seasonseries&season=" . $season;
 pageMenu($menutabs, "?view=admin/seasonteams&season=" . $season . "&series=" . $series_id);
+
+if (!empty($addError)) {
+  $html .= $addError;
+}
 
 $html .= "<form method='post' action='?view=admin/seasonteams&amp;season=$season&amp;series=" . $series_id . "'>";
 
