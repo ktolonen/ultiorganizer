@@ -784,6 +784,66 @@ function upgrade78()
 	addIndex("uo_series", "idx_series_season_ordering", "(season, ordering)");
 }
 
+function upgrade79()
+{
+	$created = false;
+	if (!hasTable("uo_team_spirit_stats")) {
+		runQuery("CREATE TABLE `uo_team_spirit_stats` (
+      `team_id` int(10) NOT NULL,
+      `season` varchar(10) DEFAULT NULL,
+      `series` int(10) DEFAULT NULL,
+      `category_id` int(10) NOT NULL,
+      `games` int(5) DEFAULT 0,
+      `average` decimal(6,2) DEFAULT 0,
+      PRIMARY KEY (`team_id`,`category_id`),
+      KEY `fk_team_spirit_stats_team` (`team_id`),
+      KEY `fk_team_spirit_stats_category` (`category_id`),
+      KEY `fk_team_spirit_stats_series` (`series`),
+      KEY `fk_team_spirit_stats_season` (`season`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+		$created = true;
+	}
+
+	if ($created || hasTable("uo_team_spirit_stats")) {
+		$seasons = runQuery(
+			"SELECT se.season_id, se.spiritmode
+				FROM uo_season se
+				INNER JOIN uo_season_stats ss ON (ss.season = se.season_id)
+				WHERE se.spiritmode IS NOT NULL AND se.spiritmode > 0"
+		);
+		while ($row = mysqli_fetch_assoc($seasons)) {
+			$season_safe = DBEscapeString($row['season_id']);
+			$mode = (int)$row['spiritmode'];
+			$query = sprintf(
+				"INSERT INTO uo_team_spirit_stats (team_id, season, series, category_id, games, average)
+				SELECT ssc.team_id, '%s', ser.series_id, ssc.category_id,
+					COUNT(*) AS games, AVG(ssc.value) AS average
+				FROM uo_spirit_score ssc
+				LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
+				LEFT JOIN uo_game g ON (g.game_id = ssc.game_id)
+				LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id)
+				LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
+				LEFT JOIN uo_series ser ON (ser.series_id = p.series)
+				WHERE ser.season='%s'
+					AND sct.mode=%d
+					AND gp.timetable=1
+					AND g.isongoing=0
+					AND g.hasstarted>0
+				GROUP BY ssc.team_id, ssc.category_id, ser.series_id
+				ON DUPLICATE KEY UPDATE
+					season=VALUES(season),
+					series=VALUES(series),
+					games=VALUES(games),
+					average=VALUES(average)",
+				$season_safe,
+				$season_safe,
+				$mode
+			);
+			runQuery($query);
+		}
+	}
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';
@@ -979,6 +1039,11 @@ function addInnoDbForeignKeys()
 	addForeignKey('uo_team_stats', 'fk_team_stats_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_team_stats', 'fk_team_stats_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE");
 	addForeignKey('uo_team_stats', 'fk_team_stats_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+	addForeignKey('uo_team_spirit_stats', 'fk_team_spirit_stats_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_team_spirit_stats', 'fk_team_spirit_stats_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_team_spirit_stats', 'fk_team_spirit_stats_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+	addForeignKey('uo_team_spirit_stats', 'fk_team_spirit_stats_category', "FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 
 	addForeignKey('uo_player', 'fk_player_team', "FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE");
 	addForeignKey('uo_player', 'fk_player_profile', "FOREIGN KEY (`profile_id`) REFERENCES `uo_player_profile` (`profile_id`) ON DELETE SET NULL ON UPDATE CASCADE");

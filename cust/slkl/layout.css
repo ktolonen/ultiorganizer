@@ -141,6 +141,20 @@
 	padding: 1px 5px;
 }
 
+.history-table {
+	white-space: nowrap;
+	border-collapse: collapse;
+}
+
+.history-table th,
+.history-table td {
+	padding: 1px 2px;
+}
+
+.history-table th {
+	white-space: normal;
+}
+
 .tdcontent {
 	/*border-left: solid #598788 4px;*/ 
 	width: 100%;

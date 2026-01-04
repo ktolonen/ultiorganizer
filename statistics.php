@@ -16,8 +16,9 @@ if (iget("sort")) {
 }
 
 //content
-$menutabs[_("Events' Standings")] = "?view=statistics&list=teamstandings";
-$menutabs[_("Events' Scoreboards")] = "?view=statistics&list=playerscoreboard";
+$menutabs[_("Standings")] = "?view=statistics&list=teamstandings";
+$menutabs[_("Spirit Standings")] = "?view=statistics&list=spiritstandings";
+$menutabs[_("Scoreboards")] = "?view=statistics&list=playerscoreboard";
 $menutabs[_("All-time Scoreboards")] = "?view=statistics&list=playerscoresall";
 $html .= pageMenu($menutabs, "", false);
 
@@ -50,7 +51,7 @@ if ($list == "teamstandings") {
         }
         ++$countall;
         $html .= "<tr>";
-        $html .= "<td style='width:16%'><a href='?view=eventstatus&amp;season=" . urlencode($season['season_id']) .
+        $html .= "<td style='width:16%'><a href='?view=teams&amp;season=" . urlencode($season['season_id']) .
           "&amp;list=bystandings'>" . utf8entities(U_($season['name'])) . "</a></td>";
 
         for ($i = 0; $i < count($standings) && $i < 3; $i++) {
@@ -180,6 +181,82 @@ if ($list == "teamstandings") {
       }
       $html .= "</table>\n";
     }
+  }
+} elseif ($list == "spiritstandings") {
+  $html .= "<h1>" . _("Spirit Standings") . "</h1>\n";
+  $seasontypes = SeasonTypes();
+  $serietypes = SeriesTypes();
+  $countall = 0;
+
+  foreach ($seasontypes as $seasontype) {
+    $seasons = SeasonsByType($seasontype);
+    if (count($seasons) < 1) {
+      continue;
+    }
+    $html .= "<h2>" . U_($seasontype) . "</h2>\n";
+
+    foreach ($serietypes as $seriestype) {
+      $serstats = SeriesStatisticsByType($seriestype, $seasontype);
+      if (count($serstats) < 1) {
+        continue;
+      }
+
+      $rows = array();
+      foreach ($seasons as $season) {
+        $query = sprintf(
+          "SELECT t.team_id, t.name AS teamname, t.country, c.flagfile,
+            SUM(ts.average * sct.factor) AS spirit_total
+            FROM uo_team_spirit_stats ts
+            LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
+            LEFT JOIN uo_team t ON (t.team_id = ts.team_id)
+            LEFT JOIN uo_series ser ON (ser.series_id = ts.series)
+            LEFT JOIN uo_country c ON (t.country = c.country_id)
+            WHERE ts.season='%s' AND ser.type='%s'
+            GROUP BY ts.team_id, ser.series_id
+            ORDER BY spirit_total DESC, t.name ASC
+            LIMIT 3",
+          DBEscapeString($season['season_id']),
+          DBEscapeString($seriestype)
+        );
+        $spirit = DBQueryToArray($query);
+        if (!count($spirit)) {
+          continue;
+        }
+        $rows[] = array(
+          'season' => $season,
+          'teams' => $spirit
+        );
+      }
+
+      if (!count($rows)) {
+        continue;
+      }
+      $html .= "<h3>" . U_($seriestype) . "</h3>\n";
+      $html .= "<table style='width:100%' border='1'><tr>
+				<th>" . _("Event") . "</th><th>" . _("Gold") . "</th><th>" . _("Silver") . "</th><th>" . _("Bronze") . "</th></tr>\n";
+
+      foreach ($rows as $row) {
+        ++$countall;
+        $html .= "<tr>";
+        $html .= "<td style='width:16%'><a href='?view=teams&amp;season=" . urlencode($row['season']['season_id']) .
+          "&amp;list=byspirit'>" . utf8entities(U_($row['season']['name'])) . "</a></td>";
+
+        $teams = $row['teams'];
+        for ($i = 0; $i < count($teams) && $i < 3; $i++) {
+          $html .= "<td style='width:28%'>";
+          if (intval($teams[$i]['country']) > 0) {
+            $html .= "&nbsp;<img height='10' src='images/flags/tiny/" . $teams[$i]['flagfile'] . "' alt=''/>&nbsp;";
+          }
+          $html .= "<a href='?view=teamcard&amp;team=" . $teams[$i]['team_id'] . "'>" . utf8entities($teams[$i]['teamname']) . "</a></td>";
+        }
+        $html .= "</tr>\n";
+      }
+      $html .= "</table>\n";
+    }
+  }
+
+  if ($countall == 0) {
+    $html .= "<p>" . _("Season statistics have not yet been computed") . "</p>";
   }
 }
 
