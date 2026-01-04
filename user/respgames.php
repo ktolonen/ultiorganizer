@@ -198,7 +198,7 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         $html .= "<td></td>";
       }
       if ($game['hometeam'] && $game['visitorteam']) {
-        $html .= "<td class='right'><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Result") . "</a> | ";
+        $html .= "<td class='right nowrap'><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Result") . "</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Players") . "</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>" . _("Scoresheet") . "</a>";
         if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {

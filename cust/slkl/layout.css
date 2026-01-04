@@ -1,6 +1,6 @@
 
 .page{
-	max-width: 860px;
+	max-width: 920px;
 	width: 100%;
   	margin: 0 auto;
 	overflow: visible;
@@ -8,8 +8,10 @@
 	padding-top: 0px;
 	padding-bottom: 25px;
 	padding-right: 0px;
-	border:1px solid #333;
+	border: 1px solid #4a4a4a;
+	border-radius: 6px;
 	background-color: #ffffff;
+	box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
 }
 
 .mobile_page{
@@ -31,7 +33,8 @@
 	padding:0px;
 	padding-right: 0px;
 	height:50px;
-	border-bottom: 1px dashed #333;
+	border-bottom: 1px dashed #444;
+	background: linear-gradient(#f8f8f8, #ececec);
 	/*background-color: #afafaf;*/
 }
 
@@ -68,30 +71,49 @@
 }
 
 .logo{
+	width: 90%;
+	display: block;
+	margin: 5px auto;
 	border: 0; 
-	vertical-align: middle;
 	text-align: center;
-	/*width:100px;*/ 
-	/*height:114px;*/
-	margin:5px;
 }
 
 .menu_left {
 	vertical-align: top;
 	/*background-color: #ebebeb;*/
-	width: 175px;
+	width: 195px;
+}
+
+.menu_left table {
+	margin: 0 0 5px 0;
 }
 
 .leftmenulinks {
 	float:left;
 	text-align: left;
 	vertical-align: top;
-	background-color: #E0E0E0;
-	width: 175px;
-	border-top: solid #464646 1px; 
-	border-bottom: solid #464646 1px; 
-	border-left: solid #464646 1px; 
-	border-right: solid #464646 1px;
+	background-color: #f1f1f1;
+	width: 195px;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border: 1px solid #7a7a7a;
+	border-radius: 4px;
+	border-collapse: separate;
+	border-spacing: 0;
+	overflow: hidden;
+}
+
+.leftmenulinks_plain {
+	float: left;
+	text-align: left;
+	vertical-align: top;
+	background-color: transparent;
+	width: 195px;
+	margin: 0 0 5px 0;
+	padding: 0;
+	border: 0;
+	border-collapse: separate;
+	border-spacing: 0;
 }
 
 .topheader_right{
@@ -106,14 +128,17 @@
 	/*width: 503px;*/
 }
 .seasondropdown {
-	width:175px;
+	width:195px;
 	background-color: #2dc1dd;
+	background-image: linear-gradient(#4ad2ea, #23b9d4);
 	color: #000000; 
 	font-size: 12px; 
 	border-top: solid #EEEEDD 1px; 
 	border-bottom: solid #464646 1px; 
 	border-left: solid #EEEEDD 1px; 
 	border-right: solid #464646 1px;
+	border-radius: 6px;
+	padding: 2px 6px;
 }
 
 .tdcontent {
@@ -148,6 +173,80 @@
 .right{
 	text-align: right; 
 	vertical-align: middle;
+}
+
+.nowrap{
+	white-space: nowrap;
+}
+
+.teams-table{
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	margin: 10px 0;
+	background-color: #ffffff;
+	border: 0;
+	border-radius: 0px;
+	overflow: hidden;
+	padding: 0;
+}
+
+.teams-table th,
+.teams-table td{
+	padding-left: 8px;
+	padding-right: 8px;
+}
+
+.teams-table th{
+	background-color: #2d2d2d;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.teams-table tr:first-child td{
+	border-top: 1px solid #cfcfcf;
+}
+
+.teams-table tr:nth-of-type(even) td{
+	background-color: #f7f7f7;
+}
+
+.teams-table tr:hover td{
+	background-color: #eef7f9;
+}
+
+.games-table{
+	width: 100%;
+	border-collapse: separate;
+	border-spacing: 0;
+	margin: 10px 0;
+	background-color: #ffffff;
+	border: 0;
+	border-radius: 0px;
+	overflow: hidden;
+	padding: 0;
+}
+
+.games-table th,
+.games-table td{
+	padding-left: 4px;
+	padding-right: 4px;
+}
+
+.games-table th{
+	background-color: #2d2d2d;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+.games-table tr:first-child td{
+	border-top: 1px solid #cfcfcf;
+}
+
+.games-table tr:nth-of-type(even) td{
+	background-color: #f7f7f7;
+}
+
+.games-table tr:hover td{
+	background-color: #eef7f9;
 }
 
 .left{

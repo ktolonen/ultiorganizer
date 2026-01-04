@@ -60,7 +60,7 @@ if ($list == "allteams" || $list == "byseeding") {
 
   foreach ($series as $row) {
 
-    $html .= "<table border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
+    $html .= "<table class='teams-table' border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
     $html .= "<tr>";
     $html .= "<th colspan='$cols'>";
     $html .= utf8entities(U_($row['name'])) . "</th>\n";
@@ -124,7 +124,7 @@ if ($list == "allteams" || $list == "byseeding") {
       continue;
     }
     foreach ($pools as $pool) {
-      $html .= "<table border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
+      $html .= "<table class='teams-table' border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
       $html .= "<tr>";
       $html .= "<th colspan='" . ($cols - 1) . "'>" . utf8entities(U_(PoolSeriesName($pool['pool_id'])) . ", " . U_($pool['name'])) . "</th><th class='right'>" . _("Scoreboard") . "</th>\n";
       $html .= "</tr>\n";
@@ -197,7 +197,7 @@ if ($list == "allteams" || $list == "byseeding") {
     $htmlseries[] = $htmlteams;
   }
 
-  $html .= "<table cellpadding='2' style='width:100%;'>\n";
+  $html .= "<table class='teams-table' cellpadding='2' style='width:100%;'>\n";
   $html .= "<tr>";
   $html .= "<th style='width:20%;'>" . _("Placement") . "</th>";
   foreach ($series as $ser) {
@@ -258,7 +258,7 @@ if ($list == "allteams" || $list == "byseeding") {
         return $b['total'] <=> $a['total'];
       });
       $html .= "<div class='TableContainer3'>\n";
-      $html .= "<table cellspacing='0' border='0' width='100%'>\n";
+      $html .= "<table class='teams-table' cellspacing='0' border='0' width='100%'>\n";
       $html .= "<tr><th style='width:150px'>" . utf8entities(U_($row['name'])) . "</th>";
       $html .= "<th>" . _("Games") . "</th>";
       foreach ($categories as $cat) {
