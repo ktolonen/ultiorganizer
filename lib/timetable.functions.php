@@ -71,7 +71,7 @@ function TournamentView($games, $grouping = true)
         $ret .= "</table>\n";
         $isTableOpen = false;
       }
-      $ret .= "<table cellpadding='2' border='0' cellspacing='0'>\n";
+      $ret .= "<table class='games-table' cellpadding='2' border='0' cellspacing='0'>\n";
       $isTableOpen = true;
       $ret .= SeriesAndPoolHeaders($game);
     }
@@ -128,7 +128,7 @@ function SeriesView($games, $date = true, $time = false)
         $ret .= "</table>\n";
         $isTableOpen = false;
       }
-      $ret .= "<table cellpadding='2' border='0' cellspacing='0'>\n";
+      $ret .= "<table class='games-table' cellpadding='2' border='0' cellspacing='0'>\n";
       $isTableOpen = true;
       $ret .= PoolHeaders($game);
     }
@@ -197,7 +197,7 @@ function PlaceView($games, $grouping = true)
         $ret .= "</table>\n";
         $isTableOpen = false;
       }
-      $ret .= "<table cellpadding='2' border='0' cellspacing='0'>\n";
+      $ret .= "<table class='games-table' cellpadding='2' border='0' cellspacing='0'>\n";
       $isTableOpen = true;
       $ret .= PlaceHeaders($game, true);
     }
@@ -240,7 +240,7 @@ function TimeView($games, $grouping = true)
         $isTableOpen = false;
       }
       $ret .= "<h3>" . DefWeekDateFormat($game['time']) . " " . DefHourFormat($game['time']) . "</h3>\n";
-      $ret .= "<table cellpadding='2' border='0' cellspacing='0'>\n";
+      $ret .= "<table class='games-table' cellpadding='2' border='0' cellspacing='0'>\n";
       $isTableOpen = true;
     }
 
@@ -463,7 +463,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
   $datew = 'width:60px';
   $timew = 'width:40px';
   $fieldw = 'width:60px';
-  $teamw = 'width:120px';
+  $teamw = 'width:140px';
   $againstmarkw = 'width:5px';
   $seriesw = 'width:80px';
   $poolw = 'width:130px';
@@ -573,17 +573,17 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
     } else {
       if (!intval($game['isongoing'])) {
         if (intval($game['scoresheet'])) {
-          $ret .= "<td class='right' style='$infow'><span>&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
+          $ret .= "<td class='right nowrap' style='$infow'><span>&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
           $ret .= _("Game play") . "</a></span></td>\n";
         } else {
           $ret .= "<td class='left' style='$infow'></td>\n";
         }
       } else {
         if (intval($game['scoresheet'])) {
-          $ret .= "<td class='right' style='$infow'><span>&nbsp;&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
+          $ret .= "<td class='right nowrap' style='$infow'><span>&nbsp;&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
           $ret .= _("Ongoing") . "</a></span></td>\n";
         } else {
-          $ret .= "<td class='right' style='$infow'>&nbsp;&nbsp;" . _("Ongoing") . "</td>\n";
+          $ret .= "<td class='right nowrap' style='$infow'>&nbsp;&nbsp;" . _("Ongoing") . "</td>\n";
         }
       }
     }

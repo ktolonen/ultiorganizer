@@ -1,6 +1,9 @@
 body{
 	background-color: #afafaf;
 	font-family: Verdana, Arial, Tahoma, Helvetica, sans-serif;
+	font-size: 11px;
+	line-height: 1.4;
+	margin: 0;
 }
 
 p{  
@@ -11,7 +14,7 @@ p{
 }
 
 table {
-	border-collapse:collapse;
+	border-collapse: collapse;
 	margin: 5px;
 	padding: 1px;
 }

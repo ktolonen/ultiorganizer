@@ -106,7 +106,8 @@
 .pagemenu_container{
 	width: 100%;
 	margin: 0px;
-	padding: 0px;
+	padding: 6px 0 0 0;
+	border-bottom: 1px solid #c7c7c7;
 /*	height:15px;*/
 }
 
@@ -115,7 +116,7 @@ ul#pagemenu{
 	position:relative;
 	width:100%;
 	font-weight:bold;
-	font-size: 10px;
+	font-size: 12px;
 	margin:0px;
 	padding:0px;
 }
@@ -123,7 +124,7 @@ ul#pagemenu{
 ul#pagemenu li{
 	display:block;
 	float:left;
-	margin:0 0 0 4px;
+	margin:0 0 0 6px;
 }
 
 ul#pagemenu li.left{
@@ -131,16 +132,23 @@ ul#pagemenu li.left{
 }
 
 table#pagemenu th {
-	background:#ffffff;
+	background: transparent;
 }
 
 ul#pagemenu li a, table#pagemenu a {
 	display:block;
 	float:left;
 	color: #2d2d2d;
-	background:#d3d3d3;
+	background: linear-gradient(#f7f7f7, #e6e6e6);
+	border: 1px solid #b9b9b9;
+	border-bottom: 0;
+	border-top-left-radius: 6px;
+	border-top-right-radius: 6px;
 	text-decoration:none;
-	padding:3px 17px 0 18px;
+	padding:5px 14px 5px 14px;
+	margin-bottom: -5px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+	font-size: 11px;
 	}
 	
 ul#pagemenu li a.right{
@@ -148,21 +156,20 @@ ul#pagemenu li a.right{
 	}
 	
 ul#pagemenu li a:hover, table#pagemenu a:hover {
-	color: #0bc5e0;
-	text-decoration: underline;
-	background-color: #d3d3d3;
-	border-left:1px solid #333;
-	border-right:1px solid #333;
-	border-top:1px solid #333;
+	color: #0a7f93;
+	text-decoration: none;
+	background: linear-gradient(#ffffff, #ededed);
+	border-color: #7aa9b1;
 	}
 	
 ul#pagemenu li a.current, table#pagemenu a.current {
-	color: #2d2d2d;
-	text-decoration:  underline;
-	background:#0bc5e0;
-	border-left:1px solid #333;
-	border-right:1px solid #333;
-	border-top:1px solid #333;
+	color: #00323a;
+	text-decoration: none;
+	background: linear-gradient(#1ed0e8, #0bc5e0);
+	border-color: #0799ad;
+	position: relative;
+	top: 1px;
+	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 	}
 
 
@@ -189,7 +196,7 @@ ul#pagemenu li a.current, table#pagemenu a.current {
 
 .topheadertext{  
 	color: #000000;
-	background-color: #ffffff; 
+	background-color: transparent;
 	padding:1px;
 }
 
@@ -335,6 +342,7 @@ color: #ff7f02;
 }
 
 .guides{  
+	background-color: transparent;
 	font-style:italic;
 	font-size: 8pt;
 	text-align: center; 
@@ -350,4 +358,3 @@ a.button {
     color: initial;
     white-space: nowrap;
 }
-

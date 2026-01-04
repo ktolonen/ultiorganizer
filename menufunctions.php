@@ -455,7 +455,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     echo "</table>\n";
   }
   if ($_SESSION['uid'] != 'anonymous') {
-    echo "<table class='leftmenulinks'>\n";
+    echo "<table class='leftmenulinks_plain'>\n";
     echo "<tr><td>\n";
     echo "<a class='subnav' href='?view=admin/help'>&raquo; " . utf8entities(_("Helps")) . "</a>\n";
     echo "</td></tr>\n";
@@ -630,9 +630,13 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   echo "</table>";
 
   //draw customizable logo if any
+  echo "<table class='leftmenulinks_plain'>\n";
+  echo "<tr><td class='guides'>";
   echo logo();
+  echo "</td></tr>";
+  echo "</table>";
 
-  echo "<table style='width:90%'>\n";
+  echo "<table class='leftmenulinks_plain'>\n";
   echo "<tr><td class='guides'>";
   echo "<a href='?view=user_guide'>" . utf8entities(_("User Guide")) . "</a> | \n";
   if (count($editlinks) || isSuperAdmin()) {
