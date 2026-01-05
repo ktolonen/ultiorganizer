@@ -192,13 +192,21 @@ if ($list == "allteams" || $list == "byseeding") {
     foreach ($rounds as $round) {
       $roundPoints[$round['round_id']] = SeasonPointsRoundPoints($round['round_id']);
     }
-    usort($teams, function ($a, $b) use ($totals) {
+    $lastRoundId = count($rounds) ? $rounds[count($rounds) - 1]['round_id'] : null;
+    usort($teams, function ($a, $b) use ($totals, $roundPoints, $lastRoundId) {
       $left = isset($totals[$a['team_id']]) ? (int)$totals[$a['team_id']] : 0;
       $right = isset($totals[$b['team_id']]) ? (int)$totals[$b['team_id']] : 0;
-      if ($left === $right) {
-        return strcasecmp($a['name'], $b['name']);
+      if ($left !== $right) {
+        return $right <=> $left;
       }
-      return $right <=> $left;
+      if ($lastRoundId) {
+        $leftLast = isset($roundPoints[$lastRoundId][$a['team_id']]) ? (int)$roundPoints[$lastRoundId][$a['team_id']] : 0;
+        $rightLast = isset($roundPoints[$lastRoundId][$b['team_id']]) ? (int)$roundPoints[$lastRoundId][$b['team_id']] : 0;
+        if ($leftLast !== $rightLast) {
+          return $rightLast <=> $leftLast;
+        }
+      }
+      return strcasecmp($a['name'], $b['name']);
     });
 
     $pointsCols = 3;
@@ -225,7 +233,7 @@ if ($list == "allteams" || $list == "byseeding") {
         $roundPointsValue = isset($roundPoints[$roundId][$team['team_id']]) ? (int)$roundPoints[$roundId][$team['team_id']] : 0;
         $roundParts[] = (string)$roundPointsValue;
       }
-      if (count($roundParts)) {
+      if (count($roundParts) > 1) {
         $pointsText = $total . " (" . implode(" + ", $roundParts) . ")";
       } else {
         $pointsText = (string)$total;
