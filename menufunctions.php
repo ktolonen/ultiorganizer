@@ -532,7 +532,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         $lastseason = $season;
         echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=bystandings'>";
         echo utf8entities(U_($row['season_name'])) . "</a></td></tr>\n";
-        echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=bystandings'>" . utf8entities(_("Final standings")) . "</a></td></tr>\n";
+        echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=bystandings'>" . utf8entities(_("Standings")) . "</a></td></tr>\n";
         echo "<tr><td><a class='nav' href='?view=games&amp;season=" . urlencode($season) . "&amp;filter=tournaments&amp;group=all'>" . utf8entities(_("Games")) . "</a></td></tr>\n";
         //echo "<tr><td><a class='nav' href='?view=played&amp;season=".urlencode($season)."'>".utf8entities(_("Played games"))."</a></td></tr>\n";
         echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=allteams'>" . utf8entities(_("Teams")) . "</a></td></tr>\n";
@@ -671,6 +671,10 @@ function getEditSeasonLinks()
         $links['?view=admin/reservations&amp;season=' . $season] = _("Scheduling");
         $links['?view=admin/seasongames&amp;season=' . $season] = _("Games");
         $links['?view=admin/seasonstandings&amp;season=' . $season] = _("Standings");
+        $seasonInfo = SeasonInfo($season);
+        if (!empty($seasonInfo['use_season_points'])) {
+          $links['?view=admin/seasonpoints&amp;season=' . $season] = _("Season points");
+        }
         $links['?view=admin/accreditation&amp;season=' . $season] = _("Accreditation");
         $respgamesset[$season] = "set";
       }

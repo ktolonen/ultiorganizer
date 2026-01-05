@@ -23,6 +23,7 @@ $sp = array(
 	"endtime" => "",
 	"spiritmode" => 0,
 	"showspiritpoints" => 0,
+	"use_season_points" => 0,
 	"iscurrent" => 0,
 	"enrollopen" => 0,
 	"enroll_deadline" => "",
@@ -51,6 +52,7 @@ if (!empty($_POST['add'])) {
 	$sp['iscurrent'] = !empty($_POST['iscurrent']);
 	$sp['spiritmode'] = $_POST['spiritmode'];
 	$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
+	$sp['use_season_points'] = !empty($_POST['use_season_points']);
 	$comment = $_POST['comment'];
 
 	if (empty($_POST['season_id'])) {
@@ -103,6 +105,7 @@ if (!empty($_POST['add'])) {
 		$sp['iscurrent'] = !empty($_POST['iscurrent']);
 		$sp['spiritmode'] = $_POST['spiritmode'];
 		$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
+		$sp['use_season_points'] = !empty($_POST['use_season_points']);
 		$sp['timezone'] = $_POST['timezone'];
 		$comment = $_POST['comment'];
 		SetSeason($sp['season_id'], $sp, $comment);
@@ -131,6 +134,7 @@ if ($seasonId) {
 	$sp['isnationalteams'] = $info['isnationalteams'];
 	$sp['spiritmode'] = isset($info['spiritmode']) ? $info['spiritmode'] : 0;
 	$sp['showspiritpoints'] = $info['showspiritpoints'];
+	$sp['use_season_points'] = isset($info['use_season_points']) ? $info['use_season_points'] : 0;
 	$sp['timezone'] = $info['timezone'];
 	$comment = CommentRaw(1, $info['season_id']);
 } else {
@@ -322,6 +326,12 @@ $html .= "</td></tr>\n";
 
 $html .= "<tr><td class='infocell'>" . _("Spirit points visible") . ": </td><td><input class='input' type='checkbox' name='showspiritpoints' ";
 if ($sp['showspiritpoints']) {
+	$html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Season points") . ": </td><td><input class='input' type='checkbox' name='use_season_points' ";
+if ($sp['use_season_points']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";

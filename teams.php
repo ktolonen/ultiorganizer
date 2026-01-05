@@ -3,6 +3,7 @@ include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/series.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/statistical.functions.php';
+include_once $include_prefix . 'lib/seasonpoints.functions.php';
 
 $title = _("Teams");
 $html = "";
@@ -29,13 +30,21 @@ if (!$seasonInfo) {
   );
 }
 $series = SeasonSeries($season, true);
+$seasonPointsAvailable = (!empty($seasonInfo['use_season_points']) || isSeasonAdmin($season));
 
-$menutabs[_("By division")] = "?view=teams&season=$season&list=allteams";
-$menutabs[_("By pool")] = "?view=teams&season=$season&list=bypool";
-$menutabs[_("By seeding")] = "?view=teams&season=$season&list=byseeding";
-$menutabs[_("By result")] = "?view=teams&season=$season&list=bystandings";
+$menutabs[_("Divisions")] = "?view=teams&season=$season&list=allteams";
+// $menutabs[_("By pool")] = "?view=teams&season=$season&list=bypool";
+$menutabs[_("Seeding")] = "?view=teams&season=$season&list=byseeding";
+if ($seasonPointsAvailable) {
+  $menutabs[_("Points")] = "?view=teams&season=$season&list=seasonpoints";
+}
+$menutabs[_("Standings")] = "?view=teams&season=$season&list=bystandings";
 if (($seasonInfo['showspiritpoints'] || isSeasonAdmin($season))) {
-  $menutabs[_("By spirit")] = "?view=teams&season=$season&list=byspirit";
+  $menutabs[_("Spirit")] = "?view=teams&season=$season&list=byspirit";
+}
+
+if ($list == "seasonpoints" && !$seasonPointsAvailable) {
+  $list = "bystandings";
 }
 
 $html .= pageMenu($menutabs, "", false);
@@ -173,6 +182,76 @@ if ($list == "allteams" || $list == "byseeding") {
       }
       $html .= "</table>\n";
     }
+  }
+} elseif ($list == "seasonpoints") {
+  foreach ($series as $row) {
+    $teams = SeriesTeams($row['series_id']);
+    $totals = SeasonPointsSeriesTotals($season, $row['series_id']);
+    $rounds = SeasonPointsRounds($season, $row['series_id']);
+    $roundPoints = array();
+    foreach ($rounds as $round) {
+      $roundPoints[$round['round_id']] = SeasonPointsRoundPoints($round['round_id']);
+    }
+    usort($teams, function ($a, $b) use ($totals) {
+      $left = isset($totals[$a['team_id']]) ? (int)$totals[$a['team_id']] : 0;
+      $right = isset($totals[$b['team_id']]) ? (int)$totals[$b['team_id']] : 0;
+      if ($left === $right) {
+        return strcasecmp($a['name'], $b['name']);
+      }
+      return $right <=> $left;
+    });
+
+    $pointsCols = 3;
+    if (!intval($seasonInfo['isnationalteams'])) {
+      $pointsCols++;
+    }
+    if (intval($seasonInfo['isinternational'])) {
+      $pointsCols++;
+    }
+
+    $html .= "<table class='teams-table' border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
+    $html .= "<tr>";
+    $html .= "<th colspan='" . ($pointsCols - 1) . "'>" . utf8entities(U_($row['name'])) . "</th>\n";
+    $html .= "<th class='right'>" . _("Points") . "</th>";
+    $html .= "</tr>\n";
+
+    $placement = 0;
+    foreach ($teams as $team) {
+      $placement++;
+      $total = isset($totals[$team['team_id']]) ? (int)$totals[$team['team_id']] : 0;
+      $roundParts = array();
+      foreach ($rounds as $round) {
+        $roundId = $round['round_id'];
+        $roundPointsValue = isset($roundPoints[$roundId][$team['team_id']]) ? (int)$roundPoints[$roundId][$team['team_id']] : 0;
+        $roundParts[] = (string)$roundPointsValue;
+      }
+      if (count($roundParts)) {
+        $pointsText = $total . " (" . implode(" + ", $roundParts) . ")";
+      } else {
+        $pointsText = (string)$total;
+      }
+      $html .= "<tr>";
+      $html .= "<td class='left' style='width:2px'>" . $placement . ".</td>";
+      if (intval($seasonInfo['isnationalteams'])) {
+        $html .= "<td style='width:200px'><a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a></td>";
+      } else {
+        $html .= "<td style='width:150px'><a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a></td>";
+        $html .= "<td style='width:150px'><a href='?view=clubcard&amp;club=" . $team['club'] . "'>" . utf8entities($team['clubname']) . "</a></td>";
+      }
+      if (intval($seasonInfo['isinternational'])) {
+        $html .= "<td style='width:150px'>";
+        if (!empty($team['flagfile'])) {
+          $html .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
+        }
+        if (!empty($team['countryname'])) {
+          $html .= "<a href='?view=countrycard&amp;country=" . $team['country'] . "'>" . utf8entities(_($team['countryname'])) . "</a>";
+        }
+        $html .= "</td>";
+      }
+      $html .= "<td class='right' style='white-space: nowrap;width:15%'>" . $pointsText . "</td>";
+      $html .= "</tr>\n";
+    }
+    $html .= "</table>\n";
   }
 } elseif ($list == "bystandings") {
   $htmlseries = array();

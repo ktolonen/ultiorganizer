@@ -195,10 +195,10 @@ if ($format == "pdf") {
 }
 
 if (!$print && !$singleview) {
-  $menutabs[_("By grouping")] = ($baseurl) . "&filter=tournaments&group=$group";
-  $menutabs[_("By timeslot")] = ($baseurl) . "&filter=timeslot&group=$group";
-  $menutabs[_("By division")] = ($baseurl) . "&filter=series&group=$group";
-  $menutabs[_("By location")] = ($baseurl) . "&filter=places&group=$group";
+  $menutabs[_("Group")] = ($baseurl) . "&filter=tournaments&group=$group";
+  $menutabs[_("Timeslot")] = ($baseurl) . "&filter=timeslot&group=$group";
+  $menutabs[_("Division")] = ($baseurl) . "&filter=series&group=$group";
+  $menutabs[_("Location")] = ($baseurl) . "&filter=places&group=$group";
   $menutabs[_("Today")] = ($baseurl) . "&filter=today&group=$group";
   $menutabs[_("Tomorrow")] = ($baseurl) . "&filter=tomorrow&group=$group";
   $menutabs[_("Yesterday")] = ($baseurl) . "&filter=yesterday&group=$group";
