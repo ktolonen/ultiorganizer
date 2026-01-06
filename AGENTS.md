@@ -50,3 +50,12 @@
 ## AI-specific guidance
 - Avoid large refactors unless explicitly requested.
 - If making UI changes, verify on both desktop and mobile layouts.
+
+## API approach (planned)
+- API lives under `/api`, with versioned paths like `/api/v1/...` and a dedicated entry point in `/api/index.php`.
+- JSON only; no HTML responses. Use consistent `status`, `data`, and `error` payloads with HTTP status codes.
+- Data normalization and filtering live in `/api`, but SQL and data access are centralized in `lib/` as the single source of truth.
+- Initial scope focuses on public data with token authentication; tokens can be installation, season, or user scoped.
+- Rate limiting is required (keyed by token + IP), returning `429` and `Retry-After` when exceeded.
+- First endpoints mirror `teams.php`, `games.php`, and `gameplay.php`, excluding historical data.
+- OpenAPI documentation is required and should live alongside the API (e.g., `/api/openapi.yaml`).

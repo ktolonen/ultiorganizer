@@ -36,7 +36,7 @@ include_once $include_prefix . 'sql/upgrade_db.php';
 
 //When adding new update function into upgrade_db.php change this number.
 //When you change the database, export the current schema from the running database.
-define('DB_VERSION', 80); //Database version matching to upgrade functions.
+define('DB_VERSION', 81); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;
 

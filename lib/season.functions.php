@@ -201,6 +201,19 @@ function Seasons($filter = null, $ordering = null)
 }
 
 /**
+ * Returns all seasons with core metadata for API usage.
+ *
+ * @return array of seasons.
+ */
+function SeasonsAllInfo()
+{
+  $query = "SELECT season_id, name, starttime, endtime, iscurrent, type, istournament, isinternational, isnationalteams
+    FROM uo_season
+    ORDER BY starttime DESC";
+  return DBQueryToArray($query);
+}
+
+/**
  * Returns all seasons.
  * 
  * @return array of seasons

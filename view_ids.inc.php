@@ -99,6 +99,7 @@ define("SEASONADMIN", 346);
 define("ADDSEASONLINKS", 347);
 define("ADDSEASONUSERS", 348);
 define("ADDLOCATION", 348);
+define("APITOKENS", 350);
 
 define("EXTINDEX", 400);
 define("EXTEXPORT", 401);

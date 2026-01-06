@@ -444,6 +444,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   }
   if (isSuperAdmin()) {
     echo "<a class='subnav' href='?view=admin/users'>&raquo; " . utf8entities(_("Users")) . "</a>\n";
+    echo "<a class='subnav' href='?view=admin/apitokens'>&raquo; " . utf8entities(_("API Tokens")) . "</a>\n";
     echo "<a class='subnav' href='?view=admin/eventviewer'>&raquo; " . utf8entities(_("Logs")) . "</a>\n";
     //echo "<a class='subnav' href='?view=admin/sms'>&raquo; ".utf8entities(_("SMS"))."</a>\n";
     echo "<a class='subnav' href='?view=admin/dbadmin'>&raquo; " . utf8entities(_("Database")) . "</a>\n";
