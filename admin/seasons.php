@@ -94,6 +94,7 @@ $html .=  "<tr>
 	<th>" . _("Ends") . "</th>
 	<th>" . _("Enrollment") . "</th>
 	<th>" . _("Visible") . "</th>
+	<th>" . _("API") . "</th>
 	<th>" . _("Operations") . "</th>
 	<th></th>
 	</tr>\n";
@@ -126,6 +127,9 @@ while ($row = mysqli_fetch_assoc($seasons)) {
 
 	$visible = intval($info['iscurrent']) ? _("yes") : _("no");
 	$html .=  "<td>" . $visible . "</td>";
+
+	$apiVisible = !empty($info['api_public']) ? _("yes") : _("no");
+	$html .=  "<td>" . $apiVisible . "</td>";
 
 	$html .=  "<td>";
 	if (!CanDeleteSeason($row['season_id'])) {

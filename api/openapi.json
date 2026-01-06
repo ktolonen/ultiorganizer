@@ -1,0 +1,193 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Ultiorganizer API",
+    "version": "1.0.0",
+    "description": "Public read-only API for teams, games, and gameplay data."
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "ApiTokenAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "API Token",
+        "description": "Send the token as Authorization: Bearer <token>."
+      }
+    }
+  },
+  "paths": {
+    "/api/v1/seasons": {
+      "get": {
+        "summary": "List all seasons available on the server",
+        "security": [
+          {
+            "ApiTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Seasons response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/teams": {
+      "get": {
+        "summary": "List teams for a season",
+        "security": [
+          {
+            "ApiTokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "season",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Season id."
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["name", "seeding"]
+            },
+            "description": "Order teams by name or seeding."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Teams response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/divisions": {
+      "get": {
+        "summary": "List divisions and pools for a season",
+        "security": [
+          {
+            "ApiTokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "season",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Season id."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Divisions response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/games": {
+      "get": {
+        "summary": "List games for the current season",
+        "security": [
+          {
+            "ApiTokenAuth": []
+          }
+        ],
+        "parameters": [
+          { "name": "season", "in": "query", "schema": { "type": "string" } },
+          { "name": "division", "in": "query", "schema": { "type": "integer" } },
+          { "name": "series", "in": "query", "schema": { "type": "integer" } },
+          { "name": "pool", "in": "query", "schema": { "type": "integer" } },
+          { "name": "pools", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated pool ids." },
+          { "name": "team", "in": "query", "schema": { "type": "integer" } },
+          {
+            "name": "filter",
+            "in": "query",
+            "schema": {
+              "type": "string",
+              "enum": ["tournaments", "series", "places", "timeslot", "today", "tomorrow", "yesterday", "next", "all"]
+            }
+          },
+          { "name": "group", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Games response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/gameplay": {
+      "get": {
+        "summary": "Get gameplay details for a game",
+        "security": [
+          {
+            "ApiTokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "game",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Gameplay response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

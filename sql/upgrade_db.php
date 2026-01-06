@@ -879,6 +879,40 @@ function upgrade80()
 	}
 }
 
+function upgrade81()
+{
+	if (!hasTable("uo_api_token")) {
+		runQuery("CREATE TABLE `uo_api_token` (
+			`token_id` int(10) NOT NULL AUTO_INCREMENT,
+			`token_hash` char(64) NOT NULL,
+			`token_value` varchar(100) DEFAULT NULL,
+			`label` varchar(100) DEFAULT NULL,
+			`scope_type` varchar(20) NOT NULL,
+			`scope_id` varchar(50) DEFAULT NULL,
+			`revoked` tinyint(1) NOT NULL DEFAULT 0,
+			`created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+			`last_used` timestamp NULL DEFAULT NULL,
+			PRIMARY KEY (`token_id`),
+			UNIQUE KEY `uq_api_token_hash` (`token_hash`),
+			KEY `idx_api_token_scope` (`scope_type`,`scope_id`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+
+	if (!hasTable("uo_api_rate_limit")) {
+		runQuery("CREATE TABLE `uo_api_rate_limit` (
+			`rate_key` varchar(128) NOT NULL,
+			`window_start` int(10) NOT NULL,
+			`request_count` int(10) NOT NULL,
+			`updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+			PRIMARY KEY (`rate_key`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+
+	if (!hasColumn('uo_season', 'api_public')) {
+		addColumn('uo_season', 'api_public', "tinyint(1) DEFAULT 0");
+	}
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';

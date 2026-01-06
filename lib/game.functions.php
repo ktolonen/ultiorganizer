@@ -360,6 +360,12 @@ function GameTeamScoreBorad($gameId, $teamId)
 	return $result;
 }
 
+function GameTeamScoreBoardArray($gameId, $teamId)
+{
+	$result = GameTeamScoreBorad($gameId, $teamId);
+	return DBResourceToArray($result);
+}
+
 function GameTeamDefenseBoard($gameId, $teamId)
 {
 	$query = sprintf(
@@ -417,6 +423,12 @@ function GameGoals($gameId)
 	return $result;
 }
 
+function GameGoalsArray($gameId)
+{
+	$result = GameGoals($gameId);
+	return DBResourceToArray($result);
+}
+
 function GameDefenses($gameId)
 {
 	$query = sprintf(
@@ -458,6 +470,12 @@ function GameAllGoals($gameId)
 
 	$result = DBQuery($query);
 	return $result;
+}
+
+function GameAllGoalsArray($gameId)
+{
+	$result = GameAllGoals($gameId);
+	return DBResourceToArray($result);
 }
 
 function GameEvents($gameId)
@@ -536,6 +554,12 @@ function GameTimeouts($gameId)
 	return DBQuery($query);
 }
 
+function GameTimeoutsArray($gameId)
+{
+	$result = GameTimeouts($gameId);
+	return DBResourceToArray($result);
+}
+
 function GameTurnovers($gameId)
 {
 	$query = sprintf(
@@ -547,6 +571,12 @@ function GameTurnovers($gameId)
 	);
 
 	return DBQuery($query);
+}
+
+function GameTurnoversArray($gameId)
+{
+	$result = GameTurnovers($gameId);
+	return DBResourceToArray($result);
 }
 
 function GameInfo($gameId)

@@ -11,6 +11,7 @@ The files are organized as follows:
 * **admin** Pages in this directory are for administrators (including series and event administrators).
 * **lib** Contains utilities used by all pages. SQL statements should only go in here!
 * **script** JavaScript files
+* **api** HTTP API endpoints (JSON only).
 * **conf** Contains config.inc.php, which contains MySQL user information, password and other server configuration. It should be writable during installation, but later you should restrict access to it as much as possible!
 * **cust** Contains skins for customized Ultiorganizer instances.
 * **locale** Contains translations. To update, simply edit the html files. To update translations in PHP pages you need the gettext utilities. The simplest way to add translations is by calling `poedit locales/de_DE.utf8/LC_MESSAGES/messages.po`. Then call 'update', add translations and save.
@@ -78,3 +79,20 @@ docker exec ultiorganizer sh -c 'docker-php-ext-install mysqli gettext gd mbstri
 ```
 
 Now you should be able to connect to your development Ultiorganizer by opening your browser to <http://localhost:8080/>
+
+## HTTP API
+
+Ultiorganizer can act as the backend and management UI, while the HTTP API can be used by frontend clients to access season/event data.
+
+API documentation is available at:
+- `https://your-host/api/v1/openapi` (production URL with .htaccess rewrite)
+- `http://localhost:8000/api/index.php/v1/openapi` (When using PHP built-in server)
+
+Tokens are managed via the admin UI at `?view=admin/apitokens`. Example requests:
+
+```sh
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/seasons"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?season=2025"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?season=2025"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
+```
