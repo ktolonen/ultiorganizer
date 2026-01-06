@@ -695,9 +695,30 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `organizer` varchar(50) DEFAULT NULL,
   `category` varchar(50) DEFAULT NULL,
   `showspiritpoints` tinyint(1) DEFAULT 0,
+  `use_season_points` tinyint(1) DEFAULT 0,
   `timezone` varchar(50) DEFAULT NULL,
   `spiritmode` int(10) DEFAULT NULL,
   PRIMARY KEY (`season_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `uo_season_round` (
+  `round_id` int(10) NOT NULL AUTO_INCREMENT,
+  `season` varchar(10) NOT NULL,
+  `series` int(10) NOT NULL,
+  `round_no` int(10) NOT NULL,
+  `name` varchar(100) NOT NULL,
+  PRIMARY KEY (`round_id`),
+  UNIQUE KEY `uq_season_round_season_series_no` (`season`,`series`,`round_no`),
+  KEY `idx_season_round_season` (`season`),
+  KEY `idx_season_round_series` (`series`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `uo_season_points` (
+  `round_id` int(10) NOT NULL,
+  `team_id` int(10) NOT NULL,
+  `points` int(10) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`round_id`,`team_id`),
+  KEY `idx_season_points_team` (`team_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_season_stats` (
@@ -1108,6 +1129,14 @@ ALTER TABLE `uo_spirit_score`
   ADD CONSTRAINT `fk_spirit_score_game` FOREIGN KEY (`game_id`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_spirit_score_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   ADD CONSTRAINT `fk_spirit_score_category` FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `uo_season_round`
+  ADD CONSTRAINT `fk_season_round_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_season_round_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `uo_season_points`
+  ADD CONSTRAINT `fk_season_points_round` FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  ADD CONSTRAINT `fk_season_points_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `uo_defense`
   ADD CONSTRAINT `fk_defense_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,

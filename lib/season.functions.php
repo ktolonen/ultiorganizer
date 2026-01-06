@@ -596,9 +596,9 @@ function AddSeason($seasonId, $params, $comment = null)
       "
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
-			starttime, endtime, iscurrent, enrollopen, enroll_deadline,spiritmode,showspiritpoints,
-			timezone) 
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, '%s')",
+			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints,
+			use_season_points, timezone) 
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, '%s')",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
@@ -614,6 +614,7 @@ function AddSeason($seasonId, $params, $comment = null)
       DBEscapeString($params['enroll_deadline']),
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
+      (int)$params['use_season_points'],
       DBEscapeString($params['timezone'])
     );
 
@@ -649,7 +650,7 @@ function SetSeason($seasonId, $params, $comment = null)
 			season_id='%s', name='%s', type='%s', istournament='%d', isinternational='%d', 
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
-			spiritmode=%d, showspiritpoints=%d, timezone='%s'
+			spiritmode=%d, showspiritpoints=%d, use_season_points=%d, timezone='%s'
 			WHERE season_id='%s'",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
@@ -666,6 +667,7 @@ function SetSeason($seasonId, $params, $comment = null)
       DBEscapeString($params['enroll_deadline']),
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
+      (int)$params['use_season_points'],
       DBEscapeString($params['timezone']),
       DBEscapeString($seasonId)
     );

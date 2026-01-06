@@ -844,6 +844,41 @@ function upgrade79()
 	}
 }
 
+function upgrade80()
+{
+	if (!hasColumn('uo_season', 'use_season_points')) {
+		runQuery("ALTER TABLE uo_season ADD use_season_points tinyint(1) DEFAULT 0");
+	}
+
+	if (!hasTable("uo_season_round")) {
+		runQuery("CREATE TABLE `uo_season_round` (
+			`round_id` int(10) NOT NULL AUTO_INCREMENT,
+			`season` varchar(10) NOT NULL,
+			`series` int(10) NOT NULL,
+			`round_no` int(10) NOT NULL,
+			`name` varchar(100) NOT NULL,
+			PRIMARY KEY (`round_id`),
+			UNIQUE KEY `uq_season_round_season_series_no` (`season`,`series`,`round_no`),
+			KEY `idx_season_round_season` (`season`),
+			KEY `idx_season_round_series` (`series`),
+			CONSTRAINT `fk_season_round_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+			CONSTRAINT `fk_season_round_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+
+	if (!hasTable("uo_season_points")) {
+		runQuery("CREATE TABLE `uo_season_points` (
+			`round_id` int(10) NOT NULL,
+			`team_id` int(10) NOT NULL,
+			`points` int(10) NOT NULL DEFAULT 0,
+			PRIMARY KEY (`round_id`,`team_id`),
+			KEY `idx_season_points_team` (`team_id`),
+			CONSTRAINT `fk_season_points_round` FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+			CONSTRAINT `fk_season_points_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';
