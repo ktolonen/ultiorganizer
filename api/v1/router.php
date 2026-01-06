@@ -206,12 +206,12 @@ function api_require_token()
 }
 
 /**
- * Validate that a season exists and is current.
+ * Validate that a season exists and is exposed to the public API.
  *
  * @param string $seasonId
  * @return array
  */
-function api_require_current_season($seasonId)
+function api_require_public_season($seasonId)
 {
   if (empty($seasonId)) {
     api_error(400, 'season_required', 'Season is required.');
@@ -220,8 +220,8 @@ function api_require_current_season($seasonId)
   if (!$seasonInfo) {
     api_error(404, 'season_not_found', 'Season not found.');
   }
-  if (empty($seasonInfo['iscurrent'])) {
-    api_error(400, 'historical_season', 'Historical seasons are not available.');
+  if (empty($seasonInfo['api_public'])) {
+    api_error(403, 'season_not_public', 'Season is not available on public API.');
   }
   return $seasonInfo;
 }
@@ -269,7 +269,7 @@ function api_resolve_season_id($requestedSeason, $tokenRow)
   if ($seasonId === '') {
     $seasonId = CurrentSeason();
   }
-  api_require_current_season($seasonId);
+  api_require_public_season($seasonId);
   api_enforce_token_scope($tokenRow, $seasonId);
   return $seasonId;
 }
@@ -860,7 +860,7 @@ function api_handle_gameplay($tokenRow)
   }
 
   $seasonId = GameSeason($gameId);
-  $seasonInfo = api_require_current_season($seasonId);
+  $seasonInfo = api_require_public_season($seasonId);
   api_enforce_token_scope($tokenRow, $seasonId);
 
   $gameInfo = GameInfo($gameId);
