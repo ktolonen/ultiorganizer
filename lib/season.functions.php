@@ -207,7 +207,7 @@ function Seasons($filter = null, $ordering = null)
  */
 function SeasonsAllInfo()
 {
-  $query = "SELECT season_id, name, starttime, endtime, iscurrent, type, istournament, isinternational, isnationalteams
+  $query = "SELECT season_id, name, starttime, endtime, iscurrent, api_public, type, istournament, isinternational, isnationalteams
     FROM uo_season
     ORDER BY starttime DESC";
   return DBQueryToArray($query);
@@ -610,8 +610,8 @@ function AddSeason($seasonId, $params, $comment = null)
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
 			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints,
-			use_season_points, timezone) 
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, '%s')",
+			use_season_points, api_public, timezone) 
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, '%s')",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
@@ -628,6 +628,7 @@ function AddSeason($seasonId, $params, $comment = null)
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
       (int)$params['use_season_points'],
+      (int)$params['api_public'],
       DBEscapeString($params['timezone'])
     );
 
@@ -663,7 +664,7 @@ function SetSeason($seasonId, $params, $comment = null)
 			season_id='%s', name='%s', type='%s', istournament='%d', isinternational='%d', 
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
-			spiritmode=%d, showspiritpoints=%d, use_season_points=%d, timezone='%s'
+			spiritmode=%d, showspiritpoints=%d, use_season_points=%d, api_public=%d, timezone='%s'
 			WHERE season_id='%s'",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
@@ -681,6 +682,7 @@ function SetSeason($seasonId, $params, $comment = null)
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
       (int)$params['use_season_points'],
+      (int)$params['api_public'],
       DBEscapeString($params['timezone']),
       DBEscapeString($seasonId)
     );

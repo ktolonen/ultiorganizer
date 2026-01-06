@@ -24,6 +24,7 @@ $sp = array(
 	"spiritmode" => 0,
 	"showspiritpoints" => 0,
 	"use_season_points" => 0,
+	"api_public" => 0,
 	"iscurrent" => 0,
 	"enrollopen" => 0,
 	"enroll_deadline" => "",
@@ -50,6 +51,7 @@ if (!empty($_POST['add'])) {
 	$sp['enrollopen'] = !empty($_POST['enrollopen']);
 	$sp['enroll_deadline'] = isset($_POST['enrollendtime']) ? ToInternalTimeFormat($_POST['enrollendtime']) : ToInternalTimeFormat($_POST['seasonstarttime']);
 	$sp['iscurrent'] = !empty($_POST['iscurrent']);
+	$sp['api_public'] = !empty($_POST['api_public']);
 	$sp['spiritmode'] = $_POST['spiritmode'];
 	$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
 	$sp['use_season_points'] = !empty($_POST['use_season_points']);
@@ -103,6 +105,7 @@ if (!empty($_POST['add'])) {
 		$sp['enrollopen'] = !empty($_POST['enrollopen']);
 		$sp['enroll_deadline'] = ToInternalTimeFormat($_POST['enrollendtime']);
 		$sp['iscurrent'] = !empty($_POST['iscurrent']);
+		$sp['api_public'] = !empty($_POST['api_public']);
 		$sp['spiritmode'] = $_POST['spiritmode'];
 		$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
 		$sp['use_season_points'] = !empty($_POST['use_season_points']);
@@ -125,6 +128,7 @@ if ($seasonId) {
 	$sp['starttime'] = $info['starttime'];
 	$sp['endtime'] = $info['endtime'];
 	$sp['iscurrent'] = $info['iscurrent'];
+	$sp['api_public'] = isset($info['api_public']) ? $info['api_public'] : 0;
 	$sp['enrollopen']  = $info['enrollopen'];
 	$sp['enroll_deadline'] = $info['enroll_deadline'];
 	$sp['istournament'] = $info['istournament'];
@@ -376,6 +380,12 @@ $html .= "<tr><td></td><td><div id='calContainer3'></div></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Shown in main menu") . ": </td><td><input class='input' type='checkbox' name='iscurrent' ";
 if ($sp['iscurrent']) {
+	$html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Visible in public API") . ": </td><td><input class='input' type='checkbox' name='api_public' ";
+if ($sp['api_public']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";

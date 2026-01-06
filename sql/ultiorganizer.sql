@@ -719,6 +719,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `category` varchar(50) DEFAULT NULL,
   `showspiritpoints` tinyint(1) DEFAULT 0,
   `use_season_points` tinyint(1) DEFAULT 0,
+  `api_public` tinyint(1) DEFAULT 0,
   `timezone` varchar(50) DEFAULT NULL,
   `spiritmode` int(10) DEFAULT NULL,
   PRIMARY KEY (`season_id`)

@@ -431,12 +431,15 @@ function api_handle_seasons()
   $rows = SeasonsAllInfo();
   $seasons = array();
   foreach ($rows as $row) {
+    if (empty($row['api_public'])) {
+      continue;
+    }
     $seasons[] = array(
       'season_id' => $row['season_id'],
       'name' => $row['name'],
       'starttime' => $row['starttime'],
       'endtime' => $row['endtime'],
-      'iscurrent' => (int)$row['iscurrent'],
+      'api_public' => (int)$row['api_public'],
       'type' => $row['type'],
       'istournament' => (int)$row['istournament'],
       'isinternational' => (int)$row['isinternational'],

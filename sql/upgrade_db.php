@@ -907,6 +907,10 @@ function upgrade81()
 			PRIMARY KEY (`rate_key`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 	}
+
+	if (!hasColumn('uo_season', 'api_public')) {
+		addColumn('uo_season', 'api_public', "tinyint(1) DEFAULT 0");
+	}
 }
 
 function upgradeEngineToInnoDb() {

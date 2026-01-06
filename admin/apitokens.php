@@ -160,7 +160,6 @@ echo "<h3>" . _("Existing tokens") . "</h3>";
 if (empty($tokens)) {
   echo "<p>" . _("No tokens created.") . "</p>";
 } else {
-  echo "<form method='post' action='?view=admin/apitokens'>";
   echo "<table style='white-space: nowrap;width:100%' border='0' cellpadding='4'>\n";
   echo "<tr>";
   echo "<th>" . _("Id") . "</th>";
@@ -191,15 +190,20 @@ if (empty($tokens)) {
     echo "<td>" . utf8entities($token['last_used']) . "</td>";
     echo "<td>" . $status . "</td>";
     echo "<td>";
+    echo "<form method='post' action='?view=admin/apitokens' style='display:inline;'>";
     echo "<input type='hidden' name='token_id' value='" . (int)$token['token_id'] . "'/>";
     if (!empty($token['revoked'])) {
       echo "<input type='submit' name='restore_token' value='" . _("Restore") . "'/>";
     } else {
       echo "<input type='submit' name='revoke_token' value='" . _("Revoke") . "'/>";
     }
+    echo "</form>";
     echo "</td>";
     echo "<td class='center'>";
+    echo "<form method='post' action='?view=admin/apitokens' style='display:inline;'>";
     echo "<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='delete' value='" . _("X") . "' onclick='return setDeleteId(" . (int)$token['token_id'] . ");'/>";
+    echo "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>";
+    echo "</form>";
     echo "</td>";
     echo "</tr>\n";
     echo "<tr id='token_row_" . $tokenId . "' style='display:none;'>";
@@ -207,8 +211,6 @@ if (empty($tokens)) {
     echo "</tr>\n";
   }
   echo "</table>\n";
-  echo "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/>";
-  echo "</form>";
 }
 
 contentEnd();
