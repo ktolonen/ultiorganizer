@@ -30,16 +30,17 @@ if (!$seasonInfo) {
   );
 }
 $series = SeasonSeries($season, true);
-$seasonPointsAvailable = (!empty($seasonInfo['use_season_points']) || isSeasonAdmin($season));
+$seasonPointsAvailable = !empty($seasonInfo['use_season_points']);
 
 $menutabs[_("Divisions")] = "?view=teams&season=$season&list=allteams";
+// not a useful view
 // $menutabs[_("By pool")] = "?view=teams&season=$season&list=bypool";
 $menutabs[_("Seeding")] = "?view=teams&season=$season&list=byseeding";
 if ($seasonPointsAvailable) {
   $menutabs[_("Points")] = "?view=teams&season=$season&list=seasonpoints";
 }
 $menutabs[_("Standings")] = "?view=teams&season=$season&list=bystandings";
-if (($seasonInfo['showspiritpoints'] || isSeasonAdmin($season))) {
+if ($seasonInfo['showspiritpoints']) {
   $menutabs[_("Spirit")] = "?view=teams&season=$season&list=byspirit";
 }
 
@@ -324,7 +325,7 @@ if ($list == "allteams" || $list == "byseeding") {
   $html .= "</table>\n";
 } elseif ($list == "byspirit") {
 
-  if ($seasonInfo['showspiritpoints'] || isSeasonAdmin($season)) {
+  if ($seasonInfo['showspiritpoints']) {
 
     $categories = SpiritCategories($seasonInfo['spiritmode']);
     $missingSpirit = array();

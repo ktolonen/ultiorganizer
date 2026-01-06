@@ -849,17 +849,6 @@ function upgrade80()
 	if (!hasColumn('uo_season', 'use_season_points')) {
 		runQuery("ALTER TABLE uo_season ADD use_season_points tinyint(1) DEFAULT 0");
 	}
-	if (hasColumn('uo_season', 'use_tournament_points')) {
-		runQuery("UPDATE uo_season SET use_season_points = use_tournament_points");
-		runQuery("ALTER TABLE uo_season DROP COLUMN use_tournament_points");
-	}
-
-	if (hasTable("uo_tournament_round") && !hasTable("uo_season_round")) {
-		runQuery("RENAME TABLE uo_tournament_round TO uo_season_round");
-	}
-	if (hasTable("uo_tournament_points") && !hasTable("uo_season_points")) {
-		runQuery("RENAME TABLE uo_tournament_points TO uo_season_points");
-	}
 
 	if (!hasTable("uo_season_round")) {
 		runQuery("CREATE TABLE `uo_season_round` (
