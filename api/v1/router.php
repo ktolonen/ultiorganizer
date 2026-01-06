@@ -1,7 +1,16 @@
 <?php
-define('API_RATE_LIMIT', 120);
-define('API_RATE_WINDOW', 60);
+if (!defined('API_RATE_LIMIT')) {
+  define('API_RATE_LIMIT', 120);
+}
+if (!defined('API_RATE_WINDOW')) {
+  define('API_RATE_WINDOW', 60);
+}
 
+/**
+ * Parse the request path into segments relative to /api.
+ *
+ * @return array
+ */
 function api_get_path_parts()
 {
   if (!empty($_SERVER['PATH_INFO'])) {
@@ -23,6 +32,12 @@ function api_get_path_parts()
   return explode('/', $requestPath);
 }
 
+/**
+ * Send a JSON response and exit.
+ *
+ * @param int $statusCode
+ * @param array $payload
+ */
 function api_send_json($statusCode, $payload)
 {
   if (!headers_sent()) {
@@ -33,6 +48,14 @@ function api_send_json($statusCode, $payload)
   exit;
 }
 
+/**
+ * Send a standardized error response and exit.
+ *
+ * @param int $statusCode
+ * @param string $code
+ * @param string $message
+ * @param mixed $details
+ */
 function api_error($statusCode, $code, $message, $details = null)
 {
   $payload = array(
@@ -48,11 +71,19 @@ function api_error($statusCode, $code, $message, $details = null)
   api_send_json($statusCode, $payload);
 }
 
+/**
+ * Send a 404 error response.
+ */
 function api_not_found()
 {
   api_error(404, 'not_found', 'Endpoint not found.');
 }
 
+/**
+ * Return request headers as a normalized associative array.
+ *
+ * @return array
+ */
 function api_get_headers()
 {
   $headers = array();
@@ -65,6 +96,11 @@ function api_get_headers()
   return $headers;
 }
 
+/**
+ * Extract the API token from headers or query string.
+ *
+ * @return string
+ */
 function api_get_token()
 {
   $headers = api_get_headers();
@@ -93,6 +129,11 @@ function api_get_token()
   return '';
 }
 
+/**
+ * Resolve the client IP for rate limiting.
+ *
+ * @return string
+ */
 function api_get_client_ip()
 {
   if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
@@ -102,6 +143,11 @@ function api_get_client_ip()
   return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 }
 
+/**
+ * Enforce a single HTTP method.
+ *
+ * @param string $method
+ */
 function api_require_method($method)
 {
   if (strtoupper($_SERVER['REQUEST_METHOD']) !== strtoupper($method)) {
@@ -109,6 +155,11 @@ function api_require_method($method)
   }
 }
 
+/**
+ * Apply rate-limit headers to the response.
+ *
+ * @param array $rate
+ */
 function api_apply_rate_headers($rate)
 {
   if (headers_sent()) {
@@ -119,6 +170,12 @@ function api_apply_rate_headers($rate)
   header('X-RateLimit-Reset: ' . $rate['reset']);
 }
 
+/**
+ * Apply rate limiting based on token hash and client IP.
+ *
+ * @param string $tokenHash
+ * @param string $clientIp
+ */
 function api_enforce_rate_limit($tokenHash, $clientIp)
 {
   $rateKey = $tokenHash . '|' . $clientIp;
@@ -129,6 +186,11 @@ function api_enforce_rate_limit($tokenHash, $clientIp)
   }
 }
 
+/**
+ * Require a valid token and return its row.
+ *
+ * @return array
+ */
 function api_require_token()
 {
   $token = api_get_token();
@@ -143,6 +205,12 @@ function api_require_token()
   return $tokenRow;
 }
 
+/**
+ * Validate that a season exists and is current.
+ *
+ * @param string $seasonId
+ * @return array
+ */
 function api_require_current_season($seasonId)
 {
   if (empty($seasonId)) {
@@ -158,6 +226,12 @@ function api_require_current_season($seasonId)
   return $seasonInfo;
 }
 
+/**
+ * Enforce token scope against a season id.
+ *
+ * @param array $tokenRow
+ * @param string $seasonId
+ */
 function api_enforce_token_scope($tokenRow, $seasonId)
 {
   if (!$tokenRow) {
@@ -179,6 +253,13 @@ function api_enforce_token_scope($tokenRow, $seasonId)
   api_error(403, 'invalid_scope', 'Token scope is not supported.');
 }
 
+/**
+ * Resolve season id from request or token scope.
+ *
+ * @param string $requestedSeason
+ * @param array $tokenRow
+ * @return string
+ */
 function api_resolve_season_id($requestedSeason, $tokenRow)
 {
   $seasonId = $requestedSeason;
@@ -193,18 +274,12 @@ function api_resolve_season_id($requestedSeason, $tokenRow)
   return $seasonId;
 }
 
-function api_fetch_all($result)
-{
-  $rows = array();
-  if (!$result) {
-    return $rows;
-  }
-  while ($row = mysqli_fetch_assoc($result)) {
-    $rows[] = $row;
-  }
-  return $rows;
-}
-
+/**
+ * Normalize a team row for API output.
+ *
+ * @param array $team
+ * @return array
+ */
 function api_normalize_team($team)
 {
   return array(
@@ -224,6 +299,12 @@ function api_normalize_team($team)
   );
 }
 
+/**
+ * Normalize a game row for API output.
+ *
+ * @param array $row
+ * @return array
+ */
 function api_normalize_game($row)
 {
   return array(
@@ -293,6 +374,11 @@ function api_normalize_game($row)
   );
 }
 
+/**
+ * Handle teams endpoint.
+ *
+ * @param array $tokenRow
+ */
 function api_handle_teams($tokenRow)
 {
   api_require_method('GET');
@@ -336,6 +422,9 @@ function api_handle_teams($tokenRow)
   ));
 }
 
+/**
+ * Handle seasons endpoint.
+ */
 function api_handle_seasons()
 {
   api_require_method('GET');
@@ -363,6 +452,11 @@ function api_handle_seasons()
   ));
 }
 
+/**
+ * Handle divisions endpoint.
+ *
+ * @param array $tokenRow
+ */
 function api_handle_divisions($tokenRow)
 {
   api_require_method('GET');
@@ -413,6 +507,12 @@ function api_handle_divisions($tokenRow)
   ));
 }
 
+/**
+ * Parse comma-separated pool ids from query.
+ *
+ * @param string $value
+ * @return array
+ */
 function api_parse_pools_param($value)
 {
   $ids = array_filter(array_map('intval', explode(',', $value)), function ($val) {
@@ -421,6 +521,12 @@ function api_parse_pools_param($value)
   return array_values($ids);
 }
 
+/**
+ * Resolve context parameters for games listing.
+ *
+ * @param array $tokenRow
+ * @return array
+ */
 function api_games_context($tokenRow)
 {
   $seasonId = '';
@@ -480,6 +586,11 @@ function api_games_context($tokenRow)
   return array($id, $gamefilter, $seasonId);
 }
 
+/**
+ * Resolve filter and ordering for games listing.
+ *
+ * @return array
+ */
 function api_games_filter()
 {
   $filter = iget('filter');
@@ -536,6 +647,11 @@ function api_games_filter()
   return array($filter, $timefilter, $order);
 }
 
+/**
+ * Handle games endpoint.
+ *
+ * @param array $tokenRow
+ */
 function api_handle_games($tokenRow)
 {
   api_require_method('GET');
@@ -547,9 +663,9 @@ function api_handle_games($tokenRow)
     $group = 'all';
   }
 
-  $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
+  $games = TimetableGamesArray($id, $gamefilter, $timefilter, $order, $group);
   $rows = array();
-  while ($row = mysqli_fetch_assoc($games)) {
+  foreach ($games as $row) {
     $rows[] = api_normalize_game($row);
   }
 
@@ -577,20 +693,27 @@ function api_handle_games($tokenRow)
   ));
 }
 
+/**
+ * Compute gameplay statistics for a finished game.
+ *
+ * @param int $gameId
+ * @param array $gameResult
+ * @return array|null
+ */
 function api_gameplay_statistics($gameId, $gameResult)
 {
   if (intval($gameResult['isongoing'])) {
     return null;
   }
 
-  $allgoals = GameAllGoals($gameId);
-  if (!$allgoals || mysqli_num_rows($allgoals) === 0) {
+  $allgoals = GameAllGoalsArray($gameId);
+  if (empty($allgoals)) {
     return null;
   }
 
-  $turnovers = GameTurnovers($gameId);
-  $goal = mysqli_fetch_assoc($allgoals);
-  $turnover = mysqli_fetch_assoc($turnovers);
+  $turnovers = GameTurnoversArray($gameId);
+  $goal = $allgoals[0];
+  $turnover = !empty($turnovers) ? $turnovers[0] : null;
 
   $ishome = GameIsFirstOffenceHome($gameId);
   if ($ishome == 1) {
@@ -622,8 +745,7 @@ function api_gameplay_statistics($gameId, $gameResult)
   $homeTurnovers = 0;
   $visitorTurnovers = 0;
 
-  mysqli_data_seek($allgoals, 0);
-  while ($goal = mysqli_fetch_assoc($allgoals)) {
+  foreach ($allgoals as $goal) {
     if (($clockTime <= intval($gameResult['halftime'])) && (intval($goal['time']) >= intval($gameResult['halftime']))) {
       $clockTime = intval($gameResult['halftime']);
       $homeOffence = !$homeStarts;
@@ -635,15 +757,14 @@ function api_gameplay_statistics($gameId, $gameResult)
       $visitorOffencePoints++;
     }
 
-    if (mysqli_num_rows($turnovers)) {
-      $turnovers = GameTurnovers($gameId);
-    }
-    while ($turnover = mysqli_fetch_assoc($turnovers)) {
-      if ((intval($turnover['time']) > $clockTime) && (intval($turnover['time']) < intval($goal['time']))) {
-        if (intval($turnover['ishome'])) {
-          $homeTurnovers++;
-        } else {
-          $visitorTurnovers++;
+    if (!empty($turnovers)) {
+      foreach ($turnovers as $turnover) {
+        if ((intval($turnover['time']) > $clockTime) && (intval($turnover['time']) < intval($goal['time']))) {
+          if (intval($turnover['ishome'])) {
+            $homeTurnovers++;
+          } else {
+            $visitorTurnovers++;
+          }
         }
       }
     }
@@ -672,10 +793,10 @@ function api_gameplay_statistics($gameId, $gameResult)
     }
   }
 
-  $timeouts = GameTimeouts($gameId);
+  $timeouts = GameTimeoutsArray($gameId);
   $homeTimeouts = 0;
   $visitorTimeouts = 0;
-  while ($timeout = mysqli_fetch_assoc($timeouts)) {
+  foreach ($timeouts as $timeout) {
     if (intval($timeout['ishome'])) {
       $homeTimeouts++;
     } else {
@@ -717,6 +838,11 @@ function api_gameplay_statistics($gameId, $gameResult)
   );
 }
 
+/**
+ * Handle gameplay endpoint.
+ *
+ * @param array $tokenRow
+ */
 function api_handle_gameplay($tokenRow)
 {
   api_require_method('GET');
@@ -740,12 +866,12 @@ function api_handle_gameplay($tokenRow)
   $homeCaptain = GameCaptain($gameId, $gameResult['hometeam']);
   $visitorCaptain = GameCaptain($gameId, $gameResult['visitorteam']);
 
-  $homeBoard = api_fetch_all(GameTeamScoreBorad($gameId, $gameResult['hometeam']));
-  $visitorBoard = api_fetch_all(GameTeamScoreBorad($gameId, $gameResult['visitorteam']));
+  $homeBoard = GameTeamScoreBoardArray($gameId, $gameResult['hometeam']);
+  $visitorBoard = GameTeamScoreBoardArray($gameId, $gameResult['visitorteam']);
   $homePlayers = GamePlayers($gameId, $gameResult['hometeam']);
   $visitorPlayers = GamePlayers($gameId, $gameResult['visitorteam']);
 
-  $goals = api_fetch_all(GameGoals($gameId));
+  $goals = GameGoalsArray($gameId);
   $events = GameEvents($gameId);
   $mediaEvents = GameMediaEvents($gameId);
   $media = GetMediaUrlList('game', $gameId);
@@ -920,6 +1046,9 @@ function api_handle_gameplay($tokenRow)
   ));
 }
 
+/**
+ * Serve the OpenAPI spec.
+ */
 function api_send_openapi()
 {
   $specPath = dirname(__DIR__) . '/openapi.json';
@@ -938,6 +1067,11 @@ function api_send_openapi()
   exit;
 }
 
+/**
+ * Route v1 API requests.
+ *
+ * @param array $parts
+ */
 function api_v1_route($parts)
 {
   $resource = isset($parts[0]) ? $parts[0] : '';

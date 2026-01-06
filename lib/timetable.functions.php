@@ -775,6 +775,12 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
   return $result;
 }
 
+function TimetableGamesArray($id, $gamefilter, $timefilter, $order, $groupfilter = "")
+{
+  $result = TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter);
+  return DBResourceToArray($result);
+}
+
 function TimetableGrouping($id, $gamefilter, $timefilter)
 {
   //common game query
