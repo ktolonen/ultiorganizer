@@ -14,6 +14,8 @@ $html = "";
 $userfilter = "";
 $categoryfilter = array(); //EventCategories();
 $resolve = false;
+$page = 1;
+$pageSize = 100;
 
 if (isset($_POST['update'])) {
 	$userfilter = $_POST["userid"];
@@ -23,9 +25,41 @@ if (isset($_POST['update'])) {
 	if (!empty($_POST["resolve"])) {
 		$resolve = true;
 	}
+	$page = 1;
+} elseif (isset($_POST['page_nav'])) {
+	$page = intval($_POST['page_nav']);
+	if ($page < 1) {
+		$page = 1;
+	}
+} elseif (isset($_POST['page_input'])) {
+	$page = intval($_POST['page_input']);
+	if ($page < 1) {
+		$page = 1;
+	}
 } elseif (isset($_POST['delete']) && !empty($_POST["event_ids"])) {
 	$ids = $_POST["event_ids"];
 	ClearEventList($ids);
+}
+if (isset($_POST['userid']) && !isset($_POST['update'])) {
+	$userfilter = $_POST["userid"];
+}
+if (!empty($_POST["category"]) && !isset($_POST['update'])) {
+	$categoryfilter = $_POST["category"];
+}
+if (!empty($_POST["resolve"]) && !isset($_POST['update'])) {
+	$resolve = true;
+}
+if (isset($_POST['page']) && !isset($_POST['page_nav'])) {
+	$page = intval($_POST['page']);
+	if ($page < 1) {
+		$page = 1;
+	}
+}
+if (isset($_GET['page']) && !isset($_POST['page'])) {
+	$page = intval($_GET['page']);
+	if ($page < 1) {
+		$page = 1;
+	}
 }
 
 //common page
@@ -68,6 +102,36 @@ $html .= "<p>" . _("Only user") . ": ";
 $html .= "<input class='input' maxlength='50' size='40' name='userid' value='$userfilter'/></p>\n";
 $html .= "<p><input class='button' type='submit' name='update' value='" . _("Refresh") . "'/></p>";
 
+$totalEvents = 0;
+$totalPages = 1;
+if (count($categoryfilter) > 0) {
+	$totalEvents = EventCount($categoryfilter, $userfilter);
+	$totalPages = max(1, ceil($totalEvents / $pageSize));
+	if ($page > $totalPages) {
+		$page = $totalPages;
+	}
+}
+$offset = ($page - 1) * $pageSize;
+
+$pagination = "";
+if ($totalEvents > 0 && $totalPages > 1) {
+	$pagination .= "<p>";
+	if ($page > 1) {
+		$pagination .= "<button class='button' type='submit' name='page_nav' value='" . ($page - 1) . "'>&laquo; " . _("Previous") . "</button> ";
+	}
+	$pagination .= sprintf("%s %d/%d (%d %s) ", _("Page"), $page, $totalPages, $totalEvents, _("events"));
+	$pagination .= "<label>";
+	$pagination .= _("Go to") . ": ";
+	$pagination .= "<input class='input' type='number' min='1' max='" . $totalPages . "' name='page_input' size='4' value='" . $page . "'/>";
+	$pagination .= "</label> ";
+	$pagination .= "<button class='button' type='submit' name='page_nav' value='$page'>" . _("Go") . "</button>";
+	if ($page < $totalPages) {
+		$pagination .= " <button class='button' type='submit' name='page_nav' value='" . ($page + 1) . "'>" . _("Next") . " &raquo;</button>";
+	}
+	$pagination .= "</p>\n";
+}
+
+$html .= $pagination;
 $html .= "<table border='0'>\n";
 $html .= "<tr><th>" . _("Time") . "</th><th>" . _("User") . "</th>
 	<th>" . _("IP Address") . "</th><th>" . _("Category") . "</th><th>" . _("Type") . "</th>
@@ -77,7 +141,7 @@ $html .= "<tr><th>" . _("Time") . "</th><th>" . _("User") . "</th>
 
 $event_ids = "";
 if (count($categoryfilter) > 0) {
-	$events = EventList($categoryfilter, $userfilter);
+	$events = EventList($categoryfilter, $userfilter, $pageSize, $offset);
 
 	while ($event = mysqli_fetch_assoc($events)) {
 
@@ -140,7 +204,9 @@ if (count($categoryfilter) > 0) {
 }
 $event_ids = trim($event_ids, ',');
 $html .= "</table>";
+$html .= $pagination;
 $html .= "<p><input type='hidden' name='event_ids' value='$event_ids'/>";
+$html .= "<input type='hidden' name='page' value='$page'/>";
 
 if (!empty($event_ids)) {
 	$html .= "<input class='button' type='submit' name='delete' value='" . _("Delete events") . "'/></p>\n";
