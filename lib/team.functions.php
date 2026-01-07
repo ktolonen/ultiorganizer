@@ -136,6 +136,20 @@ function TeamListAll($grouped = false, $onlyold = false, $namefilter = "")
   return DBQuery($query);
 }
 
+function TeamNameListBySeriesType($seriesType)
+{
+  $query = sprintf(
+    "SELECT DISTINCT team.name
+    FROM uo_team team
+    LEFT JOIN uo_series ser ON (team.series=ser.series_id)
+    WHERE ser.type='%s'
+    ORDER BY team.name",
+    DBEscapeString($seriesType)
+  );
+
+  return DBQuery($query);
+}
+
 function TeamProfile($teamId)
 {
   $query = sprintf(

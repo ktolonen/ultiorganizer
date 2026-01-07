@@ -253,7 +253,7 @@ if ($view == "accId") {
     if ($sort == "external") {
       echo "<th>" . _("Membership") . "</th><th>" . _("External accreditation") . "</th>";
     } else {
-      echo "<th>" . _("Membership") . "</th><th><a href='" . $accIdSortUrl . "&amp;sort=external'>" . _("External accreditation") . "</a></th>";
+      echo "<th>" . _("Membership") . "</th><th><a class='thsort' href='" . $accIdSortUrl . "&amp;sort=external'>" . _("External accreditation") . "</a></th>";
     }
   }
   echo "</tr>";
