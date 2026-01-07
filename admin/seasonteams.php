@@ -95,10 +95,48 @@ if (!empty($_POST['copy'])) {
 
 $series_info = SeriesInfo($series_id);
 $teams = SeriesTeams($series_id, true);
+$teamnames = array();
+$teamlistnames = array();
+$teamlist = TeamNameListBySeriesType($series_info['type']);
+if ($teamlist) {
+  while ($row = mysqli_fetch_assoc($teamlist)) {
+    $name = $row['name'];
+    if (!isset($teamnames[$name])) {
+      $teamnames[$name] = true;
+      $teamlistnames[] = $name;
+    }
+  }
+}
+
+$clublistnames = array();
+if (!intval($seasonInfo['isnationalteams'])) {
+  $clublist = ClubList(true);
+  foreach ($clublist as $row) {
+    $clublistnames[] = $row['name'];
+  }
+}
+$colSeed = "20px";
+$colName = "150px";
+$colNameList = ((int)$colName * 1.5) . "px";
+$colAbbrev = "40px";
+$colClub = "160px";
+$colClubList = ((int)$colClub * 1.5) . "px";
+$colCountry = "90px";
+$colContact = "100px";
+$colRoster = "50px";
+$colActions = "50px";
 
 //common page
 pageTopHeadOpen($title);
+include_once 'lib/yui.functions.php';
+echo yuiLoad(array("utilities", "datasource", "autocomplete"));
 ?>
+<script type="text/javascript">
+  var teamNames = <?php echo json_encode($teamlistnames, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+  <?php if (!intval($seasonInfo['isnationalteams'])) { ?>
+  var clubNames = <?php echo json_encode($clublistnames, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+  <?php } ?>
+</script>
 <script type="text/javascript">
   function setId(id) {
     var input = document.getElementById("hiddenDeleteId");
@@ -127,19 +165,19 @@ $row = SeriesInfo($series_id);
 
 $html .= "<table class='admintable'>\n";
 
-$html .= "<tr><th class='center' title='" . _("Seed") . "'>#</th>";
-$html .= "<th>" . _("Name") . "</th>";
-$html .= "<th>" . _("Abbrev") . "</th>";
+$html .= "<tr><th class='center' style='width:$colSeed' title='" . _("Seed") . "'>#</th>";
+$html .= "<th style='width:$colName'>" . _("Name") . "</th>";
+$html .= "<th style='width:$colAbbrev'>" . _("Abbrev") . "</th>";
 
 if (!intval($seasonInfo['isnationalteams'])) {
-  $html .= "<th>" . _("Club") . "</th>";
+  $html .= "<th style='width:$colClub'>" . _("Club") . "</th>";
 }
 if (intval($seasonInfo['isinternational'])) {
-  $html .= "<th>" . _("Country") . "</th>";
+  $html .= "<th style='width:$colCountry'>" . _("Country") . "</th>";
 }
-$html .= "<th>" . _("Contact person") . "</th>";
-$html .= "<th>" . _("Roster") . "</th>";
-$html .= "<th></th></tr>\n";
+$html .= "<th style='width:$colContact'>" . _("Contact person") . "</th>";
+$html .= "<th style='width:$colRoster'>" . _("Roster") . "</th>";
+$html .= "<th style='width:$colActions'></th></tr>\n";
 
 $total = 0;
 
@@ -159,22 +197,22 @@ foreach ($teams as $team) {
     $teamname = _("No name");
   }
   $html .= "<tr class='admintablerow'>";
-  $html .= "<td><input class='input' size='3' maxlength='4' name='seed$team_id' value='" . utf8entities($team['rank']) . "'/></td>";
-  $html .= "<td><input class='input' size='20' maxlength='50' name='name$team_id' value='" . utf8entities($team['name']) . "'/></td>";
-  $html .= "<td><input class='input' size='4' maxlength='15' name='abbrev$team_id' value='" . utf8entities($team['abbreviation']) . "'/></td>";
+  $html .= "<td style='width:$colSeed'><input class='input'  maxlength='4' style='width:$colSeed' name='seed$team_id' value='" . utf8entities($team['rank']) . "'/></td>";
+  $html .= "<td style='width:$colName'><input class='input'  maxlength='50' style='width:$colName' name='name$team_id' value='" . utf8entities($team['name']) . "'/></td>";
+  $html .= "<td style='width:$colAbbrev'><input class='input' maxlength='15' style='width:$colAbbrev' name='abbrev$team_id' value='" . utf8entities($team['abbreviation']) . "'/></td>";
 
   if (!intval($seasonInfo['isnationalteams'])) {
-    $html .= "<td><input class='input' size='25' maxlength='50' name='club$team_id' value='" . utf8entities($team['clubname']) . "'/></td>";
+    $html .= "<td style='width:$colClub'><input class='input' maxlength='50' style='width:$colClub' name='club$team_id' value='" . utf8entities($team['clubname']) . "'/></td>";
   }
 
   if (intval($seasonInfo['isinternational'])) {
     if (!intval($seasonInfo['isnationalteams'])) {
-      $html .= "<td>" . CountryDropListWithValues("country$team_id", "country$team_id", $teaminfo['country'], "80px") . "</td>";
+      $html .= "<td style='width:$colCountry'>" . CountryDropListWithValues("country$team_id", "country$team_id", $teaminfo['country'], "80px") . "</td>";
     } else {
-      $html .= "<td>" . CountryDropListWithValues("country$team_id", "country$team_id", $teaminfo['country'], "") . "</td>";
+      $html .= "<td style='width:$colCountry'>" . CountryDropListWithValues("country$team_id", "country$team_id", $teaminfo['country'], "") . "</td>";
     }
   }
-  $html .= "<td>";
+  $html .= "<td style='width:$colContact'>";
 
   $admins = getTeamAdmins($team['team_id']);
 
@@ -188,9 +226,9 @@ foreach ($teams as $team) {
   $html .= "&nbsp;<a href='?view=admin/addteamadmins&amp;series=" . $row['series_id'] . "'>" . _("...") . "</a>";
   $html .= "</td>";
 
-  $html .= "<td class='center'><a href='?view=user/teamplayers&amp;team=" . $team['team_id'] . "'>" . _("Roster") . "</a></td>";
+  $html .= "<td class='center' style='width:$colRoster'><a href='?view=user/teamplayers&amp;team=" . $team['team_id'] . "'>" . _("Roster") . "</a></td>";
 
-  $html .= "<td>";
+  $html .= "<td style='width:$colActions'>";
   $html .= "<a href='?view=admin/addseasonteams&amp;team=$team_id'><img class='deletebutton' src='images/settings.png' alt='D' title='" . _("edit details") . "'/></a>";
   if (CanDeleteTeam($team['team_id'])) {
     $html .= "<input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"setId(" . $team['team_id'] . ");\"/>";
@@ -201,17 +239,17 @@ foreach ($teams as $team) {
 
 $total++;
 $html .=  "<tr>";
-$html .= "<td style='padding-top:15px'><input class='input' size='2' maxlength='4' name='seed0' value='$total'/></td>";
-$html .= "<td style='padding-top:15px'><input class='input' size='20' maxlength='50' name='name0' id='name0' value=''/></td>";
-$html .= "<td style='padding-top:15px'><input class='input' size='4' maxlength='15' name='abbrev0' value=''/></td>";
+$html .= "<td style='padding-top:15px; width:$colSeed'><input class='input' maxlength='4' style='width:$colSeed' name='seed0' value='$total'/></td>";
+$html .= "<td style='padding-top:0px; width:$colName'><div id='teamAutoComplete' class='yui-skin-sam' style='width:$colName'><input class='input' maxlength='50' style='width:$colName' name='name0' id='name0' value=''/><div id='teamContainer' style='width:$colNameList'></div></div></td>";
+$html .= "<td style='padding-top:15px; width:$colAbbrev'><input class='input' maxlength='15' style='width:$colAbbrev' name='abbrev0' value=''/></td>";
 if (!intval($seasonInfo['isnationalteams'])) {
-  $html .= "<td style='padding-top:15px'><input class='input' size='25' maxlength='50' name='club0' value=''/></td>";
+  $html .= "<td style='padding-top:0px; width:$colClub'><div id='clubAutoComplete' class='yui-skin-sam' style='width:$colClub'><input class='input' maxlength='50' style='width:$colClub' name='club0' id='club0' value=''/><div id='clubContainer' style='width:$colClubList'></div></div></td>";
 }
 if (intval($seasonInfo['isinternational'])) {
   if (!intval($seasonInfo['isnationalteams'])) {
-    $html .= "<td style='padding-top:15px'>" . CountryDropListWithValues("country0", "country0", "", "80px") . "</td>";
+    $html .= "<td style='padding-top:15px; width:$colCountry'>" . CountryDropListWithValues("country0", "country0", "", "80px") . "</td>";
   } else {
-    $html .= "<td style='padding-top:15px'>" . CountryDropListWithValues("country0", "country0", "", "") . "</td>";
+    $html .= "<td style='padding-top:15px; width:$colCountry'>" . CountryDropListWithValues("country0", "country0", "", "") . "</td>";
   }
 }
 
@@ -254,6 +292,21 @@ $html .= "<a href='?view=user/pdfscoresheet&amp;series=" . $row['series_id'] . "
 $html .= "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 
 $html .= "</form>\n";
+$html .= "<script type='text/javascript'>\n";
+$html .= "YAHOO.autocomplete = function() {\n";
+$html .= "  var teamDS = new YAHOO.util.LocalDataSource(teamNames);\n";
+$html .= "  var teamAC = new YAHOO.widget.AutoComplete(\"name0\", \"teamContainer\", teamDS);\n";
+$html .= "  teamAC.prehighlightClassName = \"yui-ac-prehighlight\";\n";
+$html .= "  teamAC.useShadow = true;\n";
+if (!intval($seasonInfo['isnationalteams'])) {
+  $html .= "  var clubDS = new YAHOO.util.LocalDataSource(clubNames);\n";
+  $html .= "  var clubAC = new YAHOO.widget.AutoComplete(\"club0\", \"clubContainer\", clubDS);\n";
+  $html .= "  clubAC.prehighlightClassName = \"yui-ac-prehighlight\";\n";
+  $html .= "  clubAC.useShadow = true;\n";
+}
+$html .= "  return {teamDS: teamDS, teamAC: teamAC};\n";
+$html .= "}();\n";
+$html .= "</script>\n";
 
 echo $html;
 contentEnd();

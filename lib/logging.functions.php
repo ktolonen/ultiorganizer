@@ -55,7 +55,7 @@ function LogEvent($event)
 	return DBQueryInsert($query);
 }
 
-function EventList($categoryfilter, $userfilter)
+function EventList($categoryfilter, $userfilter, $limit = null, $offset = null)
 {
 	if (isSuperAdmin()) {
 		if (count($categoryfilter) == 0) {
@@ -83,10 +83,53 @@ function EventList($categoryfilter, $userfilter)
 			$query .= sprintf("AND user_id='%s'", DBEscapeString($userfilter));
 		}
 		$query .= " ORDER BY time DESC";
+		if ($limit !== null) {
+			$query .= sprintf(" LIMIT %d", intval($limit));
+			if ($offset !== null) {
+				$query .= sprintf(" OFFSET %d", intval($offset));
+			}
+		}
 		$result = DBQuery($query);
 
 		return $result;
 	}
+}
+
+function EventCount($categoryfilter, $userfilter)
+{
+	if (isSuperAdmin()) {
+		if (count($categoryfilter) == 0) {
+			return 0;
+		}
+		$query = "SELECT COUNT(*) AS total FROM uo_event_log WHERE ";
+
+		$i = 0;
+		foreach ($categoryfilter as $cat) {
+			if ($i == 0) {
+				$query .= "(";
+			}
+			if ($i > 0) {
+				$query .= " OR ";
+			}
+
+			$query .= sprintf("category='%s'", DBEscapeString($cat));
+			$i++;
+			if ($i == count($categoryfilter)) {
+				$query .= ")";
+			}
+		}
+
+		if (!empty($userfilter)) {
+			$query .= sprintf("AND user_id='%s'", DBEscapeString($userfilter));
+		}
+		$result = DBQuery($query);
+		if (!$result) {
+			return 0;
+		}
+		$row = mysqli_fetch_assoc($result);
+		return intval($row['total']);
+	}
+	return 0;
 }
 
 function ClearEventList($ids)

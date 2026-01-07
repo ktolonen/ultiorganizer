@@ -149,9 +149,17 @@ function GameNameFromId($gameId)
 		(int)$gameId
 	);
 	$result = DBQuery($query);
+	if (!$result) {
+		return "";
+	}
 
 	$row = mysqli_fetch_assoc($result);
-	return $row['hometeamname'] . " - " . $row['visitorteamname'];
+	if (!$row) {
+		return "";
+	}
+	$homeName = isset($row['hometeamname']) ? $row['hometeamname'] : "";
+	$visitorName = isset($row['visitorteamname']) ? $row['visitorteamname'] : "";
+	return $homeName . " - " . $visitorName;
 }
 
 function GameSeries($gameId)
