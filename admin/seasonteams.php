@@ -95,27 +95,25 @@ if (!empty($_POST['copy'])) {
 
 $series_info = SeriesInfo($series_id);
 $teams = SeriesTeams($series_id, true);
-$teamarray = "";
 $teamnames = array();
+$teamlistnames = array();
 $teamlist = TeamNameListBySeriesType($series_info['type']);
 if ($teamlist) {
   while ($row = mysqli_fetch_assoc($teamlist)) {
     $name = $row['name'];
     if (!isset($teamnames[$name])) {
       $teamnames[$name] = true;
-      $teamarray .= "\"" . addslashes($name) . "\",";
+      $teamlistnames[] = $name;
     }
   }
 }
-$teamarray = trim($teamarray, ',');
 
-$clubarray = "";
+$clublistnames = array();
 if (!intval($seasonInfo['isnationalteams'])) {
   $clublist = ClubList(true);
   foreach ($clublist as $row) {
-    $clubarray .= "\"" . addslashes($row['name']) . "\",";
+    $clublistnames[] = $row['name'];
   }
-  $clubarray = trim($clubarray, ',');
 }
 $colSeed = "20px";
 $colName = "150px";
@@ -134,17 +132,9 @@ include_once 'lib/yui.functions.php';
 echo yuiLoad(array("utilities", "datasource", "autocomplete"));
 ?>
 <script type="text/javascript">
-  var teamNames = new Array(
-    <?php
-    echo $teamarray;
-    ?>
-  );
+  var teamNames = <?php echo json_encode($teamlistnames, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
   <?php if (!intval($seasonInfo['isnationalteams'])) { ?>
-  var clubNames = new Array(
-    <?php
-    echo $clubarray;
-    ?>
-  );
+  var clubNames = <?php echo json_encode($clublistnames, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
   <?php } ?>
 </script>
 <script type="text/javascript">
