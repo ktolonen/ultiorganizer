@@ -8,9 +8,7 @@
   <meta http-equiv="Pragma" content="no-cache" />
   <meta http-equiv="Expires" content="-1" />
   <title>Ultiorganizer - Installation</title>
-  <link rel="stylesheet" href="cust/default/layout.css" type="text/css" />
-  <link rel="stylesheet" href="cust/default/font.css" type="text/css" />
-  <link rel="stylesheet" href="cust/default/default.css" type="text/css" />
+  <link rel="stylesheet" href="cust/default/ultiorganizer.css" type="text/css" />
 </head>
 
 <body style='overflow-y: scroll;'>
