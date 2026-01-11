@@ -18,6 +18,8 @@ define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');
 
 define('ENABLE_ADMIN_DB_ACCESS', 'disabled');
 define('ALLOW_INSTALL', false);
+// Allow saving results from the scorekeeper result view without authentication.
+define('ANONYMOUS_RESULT_INPUT', false);
 
 /**
 * API rate limiting.
