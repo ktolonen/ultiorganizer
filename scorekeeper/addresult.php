@@ -88,6 +88,9 @@ echo $html;
 			goals = 0;
 		}
 		goals = goals + delta;
+		if (goals < 0) {
+			goals = 0;
+		}
 		input.value = goals;
 	}
 
