@@ -103,7 +103,17 @@ foreach ($respGameArray as $tournament => $resArray) {
 
 
         if ($prevloc == $gameloc) {
-          $html .= "<li class='resp-game'>";
+          $gameClass = "resp-game";
+          if (GameHasStarted($game)) {
+            if ($game['isongoing']) {
+              $gameClass .= " resp-game--ongoing";
+            } else {
+              $gameClass .= " resp-game--played";
+            }
+          } else {
+            $gameClass .= " resp-game--pending";
+          }
+          $html .= "<li class='" . $gameClass . "'>";
 
 
           if ($game['hometeam'] && $game['visitorteam']) {

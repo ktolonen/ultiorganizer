@@ -13,7 +13,7 @@ $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
 
-$html .= "<table cellpadding='2'>\n";
+$html .= "<table class='gameplay-table'>\n";
 $html .= "<tr><td>\n";
 $html .= "<b>" . utf8entities($game_result['hometeamname']);
 $html .= " - ";
@@ -31,7 +31,7 @@ if (mysqli_num_rows($goals) <= 0) {
 		if ((intval($game_result['halftime']) >= $prevgoal) &&
 			(intval($game_result['halftime']) < intval($goal['time']))
 		) {
-			$html .= "<tr><td>";
+			$html .= "<tr class='gameplay-row gameplay-row--halftime'><td>";
 			$html .= _("Half-time");
 			$html .= "</td></tr>\n";
 		}
@@ -49,26 +49,27 @@ if (mysqli_num_rows($goals) <= 0) {
 
 					if (intval($event['ishome']) > 0) {
 						$team = utf8entities($game_result['hometeamname']);
-						$style = "class='homefontcolor'";
+						$rowClass = "gameplay-row gameplay-row--event gameplay-row--home";
 					} else {
 						$team = utf8entities($game_result['visitorteamname']);
-						$style = "class='guestfontcolor'";
+						$rowClass = "gameplay-row gameplay-row--event gameplay-row--away";
 					}
 
-					$html .= "<tr><td $style>\n";
+					$html .= "<tr class='" . $rowClass . "'><td>\n";
 					$html .= SecToMin($event['time']) . " " . $team . " " . $gameevent;
 					$html .= "</td></tr>\n";
 				}
 			}
 		}
-		if (intval($goal['ishomegoal']) == 1)
-			$style = "class='homefontcolor'";
-		else
-			$style = "class='guestfontcolor'";
+		if (intval($goal['ishomegoal']) == 1) {
+			$rowClass = "gameplay-row gameplay-row--goal gameplay-row--home";
+		} else {
+			$rowClass = "gameplay-row gameplay-row--goal gameplay-row--away";
+		}
 
 
 
-		$html .= "<tr><td  $style>\n";
+		$html .= "<tr class='" . $rowClass . "'><td>\n";
 		$html .= SecToMin($goal['time']) . " ";
 		$html .= $goal['homescore'] . " - " . $goal['visitorscore'] . " ";
 		if (intval($goal['iscallahan'])) {
@@ -88,9 +89,11 @@ if (mysqli_num_rows($goals) <= 0) {
 }
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
+$html .= "<div class='action-row action-row--half'>\n";
 $html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("scoreboard") . "</a>";
 $html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("scoreboard") . "</a>";
-$html .= "<a href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
+$html .= "</div>\n";
+$html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;

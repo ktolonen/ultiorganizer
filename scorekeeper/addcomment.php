@@ -44,7 +44,7 @@ $html .= "<textarea name='gamecomment' rows='4' cols='40' maxlength='" . COMMENT
 } else {
 	$html .= "<p class='warning'>" . _("Insufficient rights to edit comment.") . "</p>\n";
 }
-$html .= "<a href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
+$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 

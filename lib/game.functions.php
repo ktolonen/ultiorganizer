@@ -1671,7 +1671,7 @@ function ResultsToCsv($season, $separator)
 function SpiritTable($gameinfo, $points, $categories, $home, $wide = true)
 {
 	$home = $home ? "home" : "vis";
-	$html = "<table>\n";
+	$html = "<table class='spirit-table'>\n";
 	$html .= "<tr>";
 	if ($wide)
 		$html .= "<th style='width:70%;text-align: right;'></th>";
@@ -1704,15 +1704,18 @@ function SpiritTable($gameinfo, $points, $categories, $home, $wide = true)
 			else
 				$html .= "</td></tr>\n<tr>";
 
-			$html .= "<td><fieldset id='" . $home . "cat'" . $id . "_0' data-role='controlgroup' data-type='horizontal' >";
+			$cellColspan = $wide ? "" : " colspan='$colspan'";
+			$html .= "<td class='spirit-control-cell'$cellColspan><fieldset class='spirit-controlgroup' id='" . $home . "cat'" . $id . "_0' data-role='controlgroup' data-type='horizontal' >";
 			for ($i = $vmin; $i <= $vmax; ++$i) {
 				if ($i < $cat['min']) {
 					// $html .= "<td></td>";
 				} else {
 					$id = $cat['category_id'];
 					$checked = (isset($points[$id]) && !is_null($points[$id]) && $points[$id] == $i) ? "checked='checked'" : "";
+					$html .= "<span class='spirit-choice'>";
 					$html .= "<label for='" . $home . "cat" . $id . "_" . $i . "'>$i</label>";
 					$html .= "<input type='radio' id='" . $home . "cat" . $id . "_" . $i . "' name='" . $home . "cat" . $id . "' value='$i' $checked/>";
+					$html .= "</span>";
 
 					// $html .= "<td class='center'>
 					// <input type='radio' id='".$home."cat".$id."_".$i."' name='".$home."cat". $id . "' value='$i'  $checked/></td>";
