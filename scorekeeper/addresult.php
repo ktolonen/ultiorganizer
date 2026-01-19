@@ -65,10 +65,12 @@ if (isset($_POST['save'])) {
 	$html .= "<input type='submit' name='save'  data-ajax='false' value='" . _("Save again") . "'/>";
 	$html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Fill Playerlists") . "</a>";
 } else {
+	$html .= "<div class='action-row action-row--stacked action-row--spaced'>\n";
 	$html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
 	$html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
+	$html .= "</div>\n";
 }
-$html .= "<a href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
+$html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 
@@ -86,6 +88,9 @@ echo $html;
 			goals = 0;
 		}
 		goals = goals + delta;
+		if (goals < 0) {
+			goals = 0;
+		}
 		input.value = goals;
 	}
 

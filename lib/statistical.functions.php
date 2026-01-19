@@ -11,7 +11,7 @@ function IsSeasonStatsCalculated($season)
 		"SELECT 1 FROM uo_season_stats WHERE season='%s' LIMIT 1",
 		DBEscapeString($season)
 	);
-	return DBQueryToValue($query);
+	return DBQueryToValue($query) !== -1;
 }
 
 function IsStatsDataAvailable()

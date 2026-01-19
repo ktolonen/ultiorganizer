@@ -1,4 +1,10 @@
 <?php
+$allowAnonResult = defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
+if (!$allowAnonResult) {
+  $include_prefix = __DIR__ . '/';
+  $auth_redirect = 'index.php?view=login';
+  include_once $include_prefix . 'lib/auth.guard.php';
+}
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/statistical.functions.php';

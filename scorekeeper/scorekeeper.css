@@ -12,12 +12,17 @@
   box-sizing: border-box;
 }
 
+html {
+  font-size: 150%;
+}
+
 body {
   margin: 0;
   font-family: "Helvetica Neue", Arial, sans-serif;
   background: var(--bg);
   color: var(--text);
   line-height: 1.5;
+  font-size: 1.125rem;
 }
 
 a {
@@ -42,11 +47,11 @@ input,
 select,
 textarea {
   width: 100%;
-  max-width: 460px;
+  max-width: none;
   padding: 10px 12px;
   border: 1px solid var(--border);
   border-radius: 8px;
-  font-size: 16px;
+  font-size: 1.1rem;
   background: #fff;
 }
 
@@ -61,6 +66,8 @@ input[type="checkbox"] {
   background: var(--bg);
   display: flex;
   flex-direction: column;
+  padding-top: env(safe-area-inset-top);
+  padding-bottom: env(safe-area-inset-bottom);
 }
 
 [data-role="header"] {
@@ -102,7 +109,7 @@ input[type="checkbox"] {
   flex: 0 0 auto;
   padding: 6px 12px;
   min-height: 38px;
-  font-size: 16px;
+  font-size: 1.05rem;
   min-width: 0;
 }
 
@@ -115,7 +122,7 @@ input[type="reset"] {
   align-items: center;
   justify-content: center;
   gap: 6px;
-  padding: 10px 14px;
+  padding: 16px 18px;
   margin: 6px 6px 6px 0;
   border-radius: 10px;
   border: 1px solid var(--accent);
@@ -123,8 +130,26 @@ input[type="reset"] {
   color: #fff;
   text-decoration: none;
   font-weight: 700;
+  font-size: 1.05rem;
+  text-transform: uppercase;
+  letter-spacing: 0.4px;
+  text-align: center;
   cursor: pointer;
   transition: transform 120ms ease, box-shadow 120ms ease, background 120ms ease;
+}
+
+.back-resp-button {
+  margin-top: 24px;
+  width: 50%;
+  margin-left: auto;
+  display: flex;
+  justify-content: center;
+}
+
+.back-score-button {
+  width: 100%;
+  display: flex;
+  justify-content: center;
 }
 
 [data-role="button"]:hover,
@@ -155,6 +180,116 @@ input[type="reset"]:active {
 
 [data-role="controlgroup"][data-type="horizontal"] {
   flex-direction: row;
+}
+
+#teamselection {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+#teamselection .control-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#teamselection .control-option label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0;
+  width: 100%;
+  font-size: 1.2rem;
+}
+
+#teamselection .control-option input[type="radio"] {
+  margin: 0;
+  width: 1.3rem;
+  height: 1.3rem;
+}
+
+.spirit-controlgroup {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(4.5rem, 1fr));
+  gap: 10px;
+  width: 100%;
+}
+
+.spirit-controlgroup .spirit-choice {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+}
+
+.spirit-controlgroup .spirit-choice label {
+  margin: 0;
+  font-weight: 600;
+  font-size: 1.2rem;
+}
+
+.spirit-controlgroup .spirit-choice input[type="radio"] {
+  margin: 0;
+  width: 1.6rem;
+  height: 1.6rem;
+}
+
+.spirit-table {
+  width: 100%;
+  table-layout: fixed;
+}
+
+.spirit-table td,
+.spirit-table th {
+  width: auto;
+}
+
+.spirit-control-cell {
+  width: 100%;
+}
+
+.scoreboard-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.scoreboard-table td {
+  padding: 8px 10px;
+}
+
+.scoreboard-table tr:nth-child(odd) {
+  background: #f5f7fb;
+}
+
+.scoreboard-table tr:nth-child(even) {
+  background: #ffffff;
+}
+
+.gameplay-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.gameplay-table td {
+  padding: 8px 10px;
+}
+
+.gameplay-row--goal.gameplay-row--home {
+  background: #e9f7f0;
+}
+
+.gameplay-row--goal.gameplay-row--away {
+  background: #eef2ff;
+}
+
+.gameplay-row--event {
+  background: #fff7e6;
+}
+
+.gameplay-row--halftime {
+  background: #fdecea;
+  font-weight: 700;
 }
 
 [data-role="listview"] {
@@ -248,12 +383,25 @@ input[type="reset"]:active {
   background: #f9fbff;
 }
 
+.resp-game.resp-game--pending {
+  background: #f1f6ff;
+}
+
+.resp-game.resp-game--ongoing {
+  background: #ffe7e7;
+}
+
+.resp-game.resp-game--played {
+  background: #eef8f2;
+}
+
 .resp-game-meta {
   display: flex;
   gap: 12px;
   flex-wrap: wrap;
   align-items: center;
   margin-bottom: 8px;
+  font-size: 1.35rem;
 }
 
 .resp-time {
@@ -276,17 +424,43 @@ input[type="reset"]:active {
 }
 
 .resp-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.resp-actions [data-role="button"] {
+  width: 100%;
+}
+
+.resp-filter label {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
+}
+
+.resp-filter input[type="checkbox"] {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.resp-filter-row {
   display: flex;
   flex-wrap: wrap;
-  gap: 10px;
+  gap: 16px;
 }
 
 .ui-grid-b {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  grid-template-columns: minmax(0, 1.4fr) repeat(2, minmax(0, 0.8fr));
   gap: 10px;
   align-items: center;
   margin: 8px 0 14px;
+}
+
+.ui-grid-b [data-role="button"] {
+  width: 100%;
 }
 
 .ui-grid-solo {
@@ -297,6 +471,87 @@ input[type="reset"]:active {
 .ui-block-b,
 .ui-block-c {
   min-width: 0;
+}
+
+.player-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.player-row {
+  display: grid;
+  grid-template-columns: auto 1fr 5.5rem;
+  align-items: center;
+  gap: 10px;
+  font-size: 1.25rem;
+  width: 100%;
+  padding: 6px 8px;
+  border-radius: 8px;
+}
+
+.player-row:not(.player-row--header):nth-child(odd) {
+  background: #f5f7fb;
+}
+
+.player-row:not(.player-row--header):nth-child(even) {
+  background: #ffffff;
+}
+
+.player-row--header {
+  font-size: 1rem;
+  background: transparent;
+}
+
+.player-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.player-check input[type="checkbox"] {
+  width: 1.4rem;
+  height: 1.4rem;
+}
+
+.player-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.player-number select {
+  width: 100%;
+}
+
+.action-row {
+  display: grid;
+  gap: 10px;
+  margin: 10px 0;
+}
+
+.action-row--half {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.action-row--even {
+  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+}
+
+.action-row--stacked {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.action-row--spaced {
+  gap: 18px;
+}
+
+.action-row [data-role="button"] {
+  width: 100%;
+}
+
+.action-row input[type="submit"] {
+  width: 100%;
 }
 
 .card {
@@ -345,11 +600,18 @@ fieldset {
   display: flex;
   align-items: center;
   gap: 8px;
-  max-width: 360px;
+  width: 100%;
+  max-width: none;
+}
+
+.timeout-pair .ui-block-a,
+.timeout-pair .ui-block-b {
+  flex: 1 1 0;
+  min-width: 0;
 }
 
 .timeout-pair select {
-  flex: 1;
+  width: 100%;
   min-width: 0;
 }
 

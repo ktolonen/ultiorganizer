@@ -12,7 +12,7 @@ $html .= "<h1>" . utf8entities(TeamName($teamId)) . " " . _("Players of the game
 $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 
-$html .= "<table>\n";
+$html .= "<table class='scoreboard-table'>\n";
 $html .= "<tbody>\n";
 while ($row = mysqli_fetch_assoc($team_score_board)) {
   $html .= "<tr>\n";

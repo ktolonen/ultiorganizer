@@ -50,7 +50,7 @@ if (count($scores) > 0) {
 }
 
 $html .= "<input type='submit' name='delete' data-ajax='false' value='" . _("Delete") . "'/>";
-$html .= "<a href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
+$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 

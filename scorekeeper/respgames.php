@@ -5,7 +5,7 @@ $season = CurrentSeason();
 $seasoninfo = SeasonInfo($season);
 $reservationgroup = "";
 $location = "";
-$showall = false;
+$hideplayed = true;
 $day = "";
 
 if (isset($_GET['rg'])) {
@@ -20,8 +20,15 @@ if (isset($_GET['day'])) {
   $day = urldecode($_GET['day']);
 }
 
-if (isset($_GET['all'])) {
-  $showall = intval($_GET['all']);
+if (isset($_GET['hide'])) {
+  $hideplayed = intval($_GET['hide']) === 1;
+} elseif (isset($_GET['all'])) {
+  $hideplayed = intval($_GET['all']) !== 1;
+}
+
+$showtoday = false;
+if (isset($_GET['today'])) {
+  $showtoday = intval($_GET['today']) === 1;
 }
 
 $html .= "<div data-role='header'>\n";
@@ -53,6 +60,21 @@ $html .= "</div>";
 $html .= "<div class='ui-grid-solo'>";
 $html .= "<p>" . _("Games in selected event") . ":</p>";
 $html .= "</div>";
+$hidePlayedChecked = $hideplayed ? "checked='checked'" : "";
+$showTodayChecked = $showtoday ? "checked='checked'" : "";
+$html .= "<div class='ui-grid-solo resp-filter resp-filter-row'>";
+$html .= "<label><input type='checkbox' id='showToday' name='showToday' value='1' $showTodayChecked onchange=\"toggleRespFilters();\"/>" . _("Show today only") . "</label>";
+$html .= "<label><input type='checkbox' id='hidePlayed' name='hidePlayed' value='1' $hidePlayedChecked onchange=\"toggleRespFilters();\"/>" . _("Hide played games") . "</label>";
+$html .= "</div>";
+$html .= "<script type='text/javascript'>
+  function toggleRespFilters() {
+    var hidePlayed = document.getElementById('hidePlayed');
+    var showToday = document.getElementById('showToday');
+    var hideValue = (hidePlayed && hidePlayed.checked) ? '1' : '0';
+    var todayValue = (showToday && showToday.checked) ? '1' : '0';
+    window.location = '?view=respgames&hide=' + hideValue + '&today=' + todayValue;
+  }
+</script>";
 $html .= "<div class='ui-grid-solo'>";
 $html .= "<ul data-role='listview' class='resp-list'>\n";
 
@@ -67,6 +89,17 @@ foreach ($respGameArray as $tournament => $resArray) {
 
       if (!is_numeric($gameId)) {
         continue;
+      }
+      $isPlayed = GameHasStarted($game) && empty($game['isongoing']);
+      if ($hideplayed && $isPlayed) {
+        continue;
+      }
+      if ($showtoday) {
+        $startTime = $game['starttime'];
+        $isToday = !empty($startTime) && date('Y-m-d') === date('Y-m-d', strtotime($startTime));
+        if (!$isToday) {
+          continue;
+        }
       }
 
       if ($prevrg != $game['reservationgroup']) {
@@ -103,7 +136,17 @@ foreach ($respGameArray as $tournament => $resArray) {
 
 
         if ($prevloc == $gameloc) {
-          $html .= "<li class='resp-game'>";
+          $gameClass = "resp-game";
+          if (GameHasStarted($game)) {
+            if ($game['isongoing']) {
+              $gameClass .= " resp-game--ongoing";
+            } else {
+              $gameClass .= " resp-game--played";
+            }
+          } else {
+            $gameClass .= " resp-game--pending";
+          }
+          $html .= "<li class='" . $gameClass . "'>";
 
 
           if ($game['hometeam'] && $game['visitorteam']) {

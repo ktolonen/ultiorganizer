@@ -94,13 +94,12 @@ $html .= "<form action='?view=addplayerlists' method='post' data-ajax='false'>\n
 
 $played_players = GamePlayers($gameId, $teamId);
 
-$html .= "<div class='ui-grid-a'>";
-$html .= "<div class='ui-block-a'>\n";
-$html .= "<h3>" . _("Player") . "</h3>";
-$html .= "</div>";
-$html .= "<div class='ui-block-b'>\n";
-$html .= "<h3>" . _("Jersey") . "</h3>";
-$html .= "</div>";
+$html .= "<div class='player-list'>\n";
+$html .= "<div class='player-row player-row--header'>\n";
+$html .= "<div class='player-check'></div>\n";
+$html .= "<div class='player-name'><h3>" . _("Player") . "</h3></div>\n";
+$html .= "<div class='player-number'><h3>" . _("Jersey") . "</h3></div>\n";
+$html .= "</div>\n";
 $i = 0;
 while ($player = mysqli_fetch_assoc($playerlist)) {
   $i++;
@@ -118,15 +117,15 @@ while ($player = mysqli_fetch_assoc($playerlist)) {
     }
   }
 
-  $html .= "<div class='ui-block-a'>\n";
+  $checkboxId = "player-check-" . intval($player['player_id']);
+  $html .= "<div class='player-row'>\n";
   if ($found || count($played_players) == 0) {
-    $html .= "<label><input type='checkbox' name='check[]' value='" . utf8entities($player['player_id']) . "' checked='checked'/>";
+    $html .= "<label class='player-check' for='" . $checkboxId . "'><input type='checkbox' id='" . $checkboxId . "' name='check[]' value='" . utf8entities($player['player_id']) . "' checked='checked'/></label>";
   } else {
-    $html .= "<label><input type='checkbox' name='check[]' value='" . utf8entities($player['player_id']) . "' />";
+    $html .= "<label class='player-check' for='" . $checkboxId . "'><input type='checkbox' id='" . $checkboxId . "' name='check[]' value='" . utf8entities($player['player_id']) . "' /></label>";
   }
-  $html .= utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</label>";
-  $html .= "</div>";
-  $html .= "<div class='ui-block-b'>\n";
+  $html .= "<label class='player-name' for='" . $checkboxId . "'>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</label>";
+  $html .= "<div class='player-number'>\n";
   $html .= "<select name='p" . $player['player_id'] . "' id='p" . $player['player_id'] . "'>";
   for ($i = 0; $i <= 99; $i++) {
     if ($i == $number) {
@@ -137,18 +136,21 @@ while ($player = mysqli_fetch_assoc($playerlist)) {
   }
   $html .= "</select>";
 
-  $html .= "</div>";
+  $html .= "</div>\n";
+  $html .= "</div>\n";
 }
 $html .= "</div>";
 
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
+$html .= "<div class='action-row action-row--half'>\n";
 if ($teamId == $game_result['visitorteam']) {
   $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("playerlist") . "</a>";
 } else {
   $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("playerlist") . "</a>";
 }
 $html .= "<a href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
-$html .= "<a href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
+$html .= "</div>\n";
+$html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 echo $html;

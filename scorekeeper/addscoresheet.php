@@ -175,10 +175,14 @@ if ($team == 'H') {
 $html .= "<h3>" . _("New goal") . "</h3>";
 $html .= "<div id='radiot' name='radiot'>";
 $html .= "<fieldset data-role='controlgroup' id='teamselection'>";
+$html .= "<div class='control-option'>";
 $html .= "<input type='radio' name='team' id='hteam' value='H' $hgoal />";
 $html .= "<label for='hteam'>" . utf8entities($game_result['hometeamname']) . "</label>";
+$html .= "</div>";
+$html .= "<div class='control-option'>";
 $html .= "<input type='radio' name='team' id='ateam' value='A' $vgoal  />";
 $html .= "<label for='ateam'>" . utf8entities($game_result['visitorteamname']) . "</label>";
+$html .= "</div>";
 $html .= "</fieldset>";
 $html .= "</div>";
 
@@ -255,12 +259,14 @@ $html .= "</div>";
 
 if (empty($errors)) {
   $html .= "<input type='submit' name='add' data-ajax='false' value='" . _("Save goal") . "'/>";
-  $html .= "<h3>" . _("Additional game data") . "</h3>";
+$html .= "<h3>" . _("Additional game data") . "</h3>";
+  $html .= "<div class='action-row action-row--even'>\n";
   $html .= "<a href='?view=addtimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Time-outs") . "</a>";
   $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Half time") . "</a>";
   $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
   $html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game official") . "</a>";
   $html .= "<a href='?view=addcomment&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game note") . "</a>";
+  $html .= "</div>\n";
 
   $html .= "<h3>" . _("Game has ended") . "</h3>";
   if ($lastscore) {
@@ -278,7 +284,7 @@ if (empty($errors)) {
   $html .= "<input class='button' type='submit' name='forceadd' value='" . _("Save goal with errors") . "'/>";
   $html .= "<input class='button' type='submit' name='cancel' value='" . _("Cancel") . "'/>";
 }
-$html .= "<a href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
+$html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
@@ -287,25 +293,23 @@ echo $html;
 ?>
 <script type="text/javascript">
   var homelist = <?php
-                  echo "\"";
-                  echo "<option value='0'>-</option>";
+                  $homeOptions = "<option value='0'>-</option>";
                   $played_players = GamePlayers($gameId, $game_result['hometeam']);
                   foreach ($played_players as $player) {
-                    echo "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
+                    $homeOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
                   }
-                  echo "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
-                  echo "\"";
+                  $homeOptions .= "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
+                  echo json_encode($homeOptions);
                   ?>;
 
   var awaylist = <?php
-                  echo "\"";
+                  $awayOptions = "<option value='0'>-</option>";
                   $played_players = GamePlayers($gameId, $game_result['visitorteam']);
-                  echo "<option value='0'>-</option>";
                   foreach ($played_players as $player) {
-                    echo "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
+                    $awayOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
                   }
-                  echo "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
-                  echo "\"";
+                  $awayOptions .= "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
+                  echo json_encode($awayOptions);
                   ?>;
 
   function swapTeamLists(teamValue) {
@@ -329,4 +333,9 @@ echo $html;
       swapTeamLists(this.value);
     });
   });
+
+  var checkedTeam = document.querySelector('input[name="team"]:checked');
+  if (checkedTeam) {
+    swapTeamLists(checkedTeam.value);
+  }
 </script>

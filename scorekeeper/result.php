@@ -1,5 +1,8 @@
 <?php
-include_once __DIR__ . '/auth.php';
+$allowAnonResult = defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
+if (!$allowAnonResult) {
+  include_once __DIR__ . '/auth.php';
+}
 $html = "";
 $errors = "";
 $saved = isset($_GET['saved']) ? 1 : 0;

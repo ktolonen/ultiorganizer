@@ -67,17 +67,11 @@ ob_start();
 echo "<!DOCTYPE html>\n";
 echo "<html>\n";
 echo "<head>\n";
-echo "<meta name='viewport' content='width=device-width, initial-scale=1'>\n";
+echo "<meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover'>\n";
 echo "<title>Scorekeeper</title>\n";
-if (is_file($include_prefix . 'cust/' . CUSTOMIZATIONS . '/ultiorganizer.css')) {
-	echo "<link rel=\"stylesheet\" href=\"" . $include_prefix . "cust/" . CUSTOMIZATIONS . "/ultiorganizer.css\" type=\"text/css\" />\n";
-} else {
-	echo "<link rel=\"stylesheet\" href=\"" . $include_prefix . "cust/default/ultiorganizer.css\" type=\"text/css\" />\n";
-}
 echo "<link rel='stylesheet' href='" . BASEURL . "/scorekeeper/scorekeeper.css'/>\n";
 
 echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
-//include "../script/common.js.inc";
 
 echo "</head>\n";
 echo "<body>\n";
