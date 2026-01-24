@@ -890,31 +890,33 @@ function GameRemoveScore($gameId, $num)
  * Add goal to game. Does not update game result!
  * 
  */
-function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home, $iscallahan)
-{
-	if (hasEditGameEventsRight($gameId)) {
-		$query = sprintf(
-			"INSERT INTO uo_goal 
-			(game, num, assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan) 
-			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')
-			ON DUPLICATE KEY UPDATE 
-			assist='%s', scorer='%s', time='%s', homescore='%s', visitorscore='%s', ishomegoal='%s', iscallahan='%s'",
-			DBEscapeString($gameId),
-			DBEscapeString($number),
-			DBEscapeString($pass),
-			DBEscapeString($goal),
-			DBEscapeString($time),
-			DBEscapeString($hscores),
-			DBEscapeString($ascores),
-			DBEscapeString($home),
-			DBEscapeString($iscallahan),
-			DBEscapeString($pass),
-			DBEscapeString($goal),
-			DBEscapeString($time),
-			DBEscapeString($hscores),
-			DBEscapeString($ascores),
-			DBEscapeString($home),
-			DBEscapeString($iscallahan)
+	function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home, $iscallahan)
+	{
+		if (hasEditGameEventsRight($gameId)) {
+			$assistValue = ($pass === -1 || $pass === "" || $pass === null) ? "NULL" : "'" . DBEscapeString($pass) . "'";
+			$scorerValue = ($goal === -1 || $goal === "" || $goal === null) ? "NULL" : "'" . DBEscapeString($goal) . "'";
+			$query = sprintf(
+				"INSERT INTO uo_goal 
+				(game, num, assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan) 
+				VALUES ('%s', '%s', %s, %s, '%s', '%s', '%s', '%s', '%s')
+				ON DUPLICATE KEY UPDATE 
+				assist=%s, scorer=%s, time='%s', homescore='%s', visitorscore='%s', ishomegoal='%s', iscallahan='%s'",
+				DBEscapeString($gameId),
+				DBEscapeString($number),
+				$assistValue,
+				$scorerValue,
+				DBEscapeString($time),
+				DBEscapeString($hscores),
+				DBEscapeString($ascores),
+				DBEscapeString($home),
+				DBEscapeString($iscallahan),
+				$assistValue,
+				$scorerValue,
+				DBEscapeString($time),
+				DBEscapeString($hscores),
+				DBEscapeString($ascores),
+				DBEscapeString($home),
+				DBEscapeString($iscallahan)
 		);
 
 		$result = DBQuery($query);

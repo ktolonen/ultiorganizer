@@ -452,7 +452,15 @@ if (hasEditUsersRight() || $_SESSION['uid'] == $userid) {
           $html .= "<tr><td>";
           $html .= _("Player profile administrator");
           $playerInfo = PlayerProfile($akey);
-          $html .= " (" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . ")";
+          if ($playerInfo) {
+            $first = isset($playerInfo['firstname']) ? trim($playerInfo['firstname']) : "";
+            $last = isset($playerInfo['lastname']) ? trim($playerInfo['lastname']) : "";
+            $displayName = trim($first . " " . $last);
+            if ($displayName === "") {
+              $displayName = _("Unnamed player");
+            }
+            $html .= " (" . utf8entities($displayName) . ")";
+          }
           $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
         }
       }

@@ -43,7 +43,7 @@ if ($season['spiritmode'] > 0) {
       if (isset($_POST['viscat' . $cat]))
         $points[$cat] = $_POST['viscat' . $cat];
       else
-        $missing = sprintf(_("Missing score for %s. ") . $game_result['visitorteamname']);
+        $missing = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
     }
     GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories);
 

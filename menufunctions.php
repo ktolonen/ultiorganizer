@@ -511,7 +511,16 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     echo "<tr><td>\n";
     foreach ($_SESSION['userproperties']['userrole']['playeradmin'] as $profile_id => $propid) {
       $playerInfo = PlayerProfile($profile_id);
-      echo "<a class='subnav' href='?view=user/playerprofile&amp;profile=" . $playerInfo['profile_id'] . "'>&raquo; " . $playerInfo['firstname'] . " " . $playerInfo['lastname'] . "</a>\n";
+      if (!$playerInfo || !isset($playerInfo['profile_id'])) {
+        continue;
+      }
+      $first = isset($playerInfo['firstname']) ? trim($playerInfo['firstname']) : "";
+      $last = isset($playerInfo['lastname']) ? trim($playerInfo['lastname']) : "";
+      $displayName = trim($first . " " . $last);
+      if ($displayName === "") {
+        $displayName = _("Unnamed player");
+      }
+      echo "<a class='subnav' href='?view=user/playerprofile&amp;profile=" . $playerInfo['profile_id'] . "'>&raquo; " . $displayName . "</a>\n";
     }
     echo "</td></tr>";
     echo "</table>\n";
