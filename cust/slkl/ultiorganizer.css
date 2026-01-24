@@ -114,6 +114,49 @@ td {
 	text-decoration: none;
 }
 
+.spirit-table td,
+.spirit-table th {
+	vertical-align: top;
+}
+
+.spirit-control-cell {
+	border-left: 1px solid #c8c8c8;
+	padding-left: 10px;
+}
+
+.spirit-controlgroup {
+	display: flex;
+	flex-wrap: nowrap;
+	gap: 6px 10px;
+	align-items: center;
+}
+
+.spirit-controlgroup .spirit-choice {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	padding: 0 8px;
+	border-left: 1px solid #d3d3d3;
+}
+
+.spirit-controlgroup .spirit-choice:first-child {
+	border-left: 0;
+	padding-left: 0;
+}
+
+.spirit-table tr:nth-child(even) td {
+	background-color: #f5f5f5;
+}
+
+.spirit-table tr:nth-child(odd) td {
+	background-color: #ffffff;
+}
+
+.spirit-table td {
+	padding: 4px 6px;
+	border-bottom: 1px solid #d3d3d3;
+}
+
 .page {
 	max-width: 920px;
 	width: 100%;
