@@ -5,7 +5,7 @@ $season = CurrentSeason();
 $seasoninfo = SeasonInfo($season);
 $reservationgroup = "";
 $location = "";
-$hideplayed = true;
+$hideplayed = false;
 $day = "";
 
 if (isset($_GET['rg'])) {
@@ -105,31 +105,33 @@ foreach ($respGameArray as $tournament => $resArray) {
       if ($prevrg != $game['reservationgroup']) {
 
         if (!empty($prevloc)) {
-          $html .= "</ul></li>\n";
+          $html .= "</ul></details></li>\n";
           $prevloc = "";
         }
 
         if (!empty($prevrg)) {
-          $html .= "</ul></li>\n";
+          $html .= "</ul></details></li>\n";
         }
         $html .= "<li class='resp-group'>\n";
-        $html .= "<div class='resp-group-title'>" . utf8entities($game['reservationgroup']) . "</div>";
-        $html .= "<ul class='resp-date-list'>\n";
+        $html .= "<details class='resp-group-toggle' open>\n";
+        $html .= "<summary class='resp-group-title'>" . utf8entities($game['reservationgroup']) . "</summary>";
+        $html .= "<ul class='resp-location-list'>\n";
         $prevrg = $game['reservationgroup'];
       }
 
       if ($prevrg == $game['reservationgroup']) {
 
-        $gameloc = JustDate($game['starttime']) . " " . $game['location'] . "#" . $game['fieldname'];
+        $gameloc = $game['location'] . "#" . $game['fieldname'];
 
         if ($prevloc != $gameloc) {
 
           if (!empty($prevloc)) {
-            $html .= "</ul></li>\n";
+            $html .= "</ul></details></li>\n";
           }
 
-          $html .= "<li class='resp-day'>\n";
-          $html .= "<div class='resp-day-heading'>" . JustDate($game['starttime']) . " " . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</div>";
+          $html .= "<li class='resp-location'>\n";
+          $html .= "<details class='resp-location-toggle'>\n";
+          $html .= "<summary class='resp-location-title'>" . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</summary>";
           $html .= "<ul class='resp-game-list'>\n";
           $prevloc = $gameloc;
         }
@@ -151,20 +153,21 @@ foreach ($respGameArray as $tournament => $resArray) {
 
           if ($game['hometeam'] && $game['visitorteam']) {
             $html .= "<div class='resp-game-meta'>";
-            $html .= "<span class='resp-time'>" . DefHourFormat($game['time']) . "</span>";
+            $html .= "<span class='resp-time'>" . JustDate($game['starttime']) . " " . DefHourFormat($game['time']) . "</span>";
             $html .= "<span class='resp-teams'>" . utf8entities($game['hometeamname']) . " - " . utf8entities($game['visitorteamname']) . "</span>";
             $html .= "<span class='resp-score'>";
+            $gameplayHref = "?view=gameplay&amp;game=" . $gameId;
+            $html .= "<a href='" . $gameplayHref . "'>";
             if (GameHasStarted($game)) {
               $html .= intval($game['homescore']) . " - " . intval($game['visitorscore']);
             } else {
               $html .= "? - ?";
             }
+            $html .= "</a>";
             $html .= "</span>";
             if (GameHasStarted($game)) {
               if ($game['isongoing']) {
-                $html .=  "<span class='resp-status ongoing'><a href='?view=gameplay&amp;game=" . $gameId . "'>" . _("Ongoing") . "</a></span>";
-              } elseif (GameHasStarted($game)) {
-                $html .=  "<span class='resp-status'><a href='?view=gameplay&amp;game=" . $gameId . "'>" . _("Game play") . "</a></span>";
+                $html .=  "<span class='resp-status ongoing'>" . _("Ongoing") . "</span>";
               }
             }
             $html .= "</div>";
@@ -186,12 +189,12 @@ foreach ($respGameArray as $tournament => $resArray) {
     }
   }
 }
-if (!empty($prevrg)) {
-  $html .= "</ul></li>\n";
+if (!empty($prevloc)) {
+  $html .= "</ul></details></li>\n";
 }
 
-if (!empty($prevloc)) {
-  $html .= "</ul></li>\n";
+if (!empty($prevrg)) {
+  $html .= "</ul></details></li>\n";
 }
 
 $html .= "</ul>\n";
