@@ -237,6 +237,8 @@ if (mysqli_num_rows($games) == 0) {
   $html .= SeriesView($games);
 } elseif ($filter == 'today') {
   $html .= SeriesView($games, false);
+} elseif ($filter == 'yesterday') {
+  $html .= SeriesView($games, false);
 } elseif ($filter == 'next') {
   $html .= TournamentView($games, $groupheader);
 } elseif ($filter == 'tomorrow') {

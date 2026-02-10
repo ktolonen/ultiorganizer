@@ -729,7 +729,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
   }
 
   if (!empty($groupfilter) && $groupfilter != "all") {
-    $query .= "AND pr.reservationgroup='" . DBEscapeString($groupfilter) . "'";
+    $query .= " AND pr.reservationgroup='" . DBEscapeString($groupfilter) . "'";
   }
 
   switch ($order) {
