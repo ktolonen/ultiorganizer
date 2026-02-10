@@ -425,9 +425,15 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
 
   //get move
   $move = PoolGetMoveToPool($frompool, $fromplacing);
+  if (!$move) {
+    return;
+  }
 
   //if pool is not follower, do not make move
   $poolinfo = PoolInfo($frompool);
+  if (!$poolinfo) {
+    return;
+  }
   if ($inplayofftree && $poolinfo['follower'] != $move['topool']) {
     return;
   }
