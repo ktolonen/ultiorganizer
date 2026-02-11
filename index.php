@@ -30,6 +30,10 @@ include_once $include_prefix . 'lib/debug.functions.php';
 
 
 startSecureSession();
+
+// Include Live! by BULA
+include_once __DIR__ . '/live/enable-live.php';
+
 if (!isset($_SESSION['VISIT_COUNTER'])) {
   LogVisitor($_SERVER['REMOTE_ADDR']);
   $_SESSION['VISIT_COUNTER'] = true;

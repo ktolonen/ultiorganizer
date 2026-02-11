@@ -176,6 +176,79 @@ function DBQuery($query)
 }
 
 /**
+ * Prepare a sql query and return mysqli statement.
+ *
+ * @param string $query database query
+ * @return mysqli_stmt|false
+ */
+function DBPrepare($query)
+{
+  global $mysqlconnectionref;
+  return mysqli_prepare($mysqlconnectionref, $query);
+}
+
+/**
+ * Get last database error string.
+ *
+ * @return string
+ */
+function DBError()
+{
+  global $mysqlconnectionref;
+  return mysqli_error($mysqlconnectionref);
+}
+
+/**
+ * Bind parameters for a prepared statement.
+ *
+ * @return bool
+ */
+function DBStmtBindParam($stmt, $types, &...$vars)
+{
+  return mysqli_stmt_bind_param($stmt, $types, ...$vars);
+}
+
+/**
+ * Execute a prepared statement.
+ *
+ * @return bool
+ */
+function DBStmtExecute($stmt)
+{
+  return mysqli_stmt_execute($stmt);
+}
+
+/**
+ * Get result for a prepared statement.
+ *
+ * @return mysqli_result|false
+ */
+function DBStmtGetResult($stmt)
+{
+  return mysqli_stmt_get_result($stmt);
+}
+
+/**
+ * Get error string for a prepared statement.
+ *
+ * @return string
+ */
+function DBStmtError($stmt)
+{
+  return mysqli_stmt_error($stmt);
+}
+
+/**
+ * Close a prepared statement.
+ *
+ * @return bool
+ */
+function DBStmtClose($stmt)
+{
+  return mysqli_stmt_close($stmt);
+}
+
+/**
  * Executes sql query and returns the ID generated the query.
  *
  * @param string $query database query
@@ -265,6 +338,40 @@ function DBResourceToArray($result, $docasting = false)
     $retarray[] = $row;
   }
   return $retarray;
+}
+
+/**
+ * Fetch next row from result set as associative array.
+ *
+ * @param $result The database resource returned from mysqli_query
+ * @return array|null
+ */
+function DBFetchAssoc($result, $docasting = false)
+{
+  $row = mysqli_fetch_assoc($result);
+  if ($docasting && $row) {
+    $row = DBCastArray($result, $row);
+  }
+  return $row;
+}
+
+/**
+ * Fetch all rows from result set as associative arrays.
+ *
+ * @param $result The database resource returned from mysqli_query
+ * @return array
+ */
+function DBFetchAllAssoc($result, $docasting = false)
+{
+  if (!$docasting) {
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+  }
+
+  $rows = array();
+  while ($row = mysqli_fetch_assoc($result)) {
+    $rows[] = DBCastArray($result, $row);
+  }
+  return $rows;
 }
 
 /**
