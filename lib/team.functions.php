@@ -869,7 +869,8 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     $query = sprintf(
       "
 			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games 
+				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games,
+        COALESCE(t.done/pel.games,0) AS doneavg, COALESCE(s.fedin/pel.games,0) AS fedinavg, COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg
 			FROM uo_player AS p 
 				LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
 					LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
@@ -894,7 +895,8 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     $query = sprintf(
       "
 			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games 
+				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, 
+        COALESCE(t.done/pel.games,0) AS doneavg, COALESCE(s.fedin/pel.games,0) AS fedinavg, COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg
 			FROM uo_player AS p 
 			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m LEFT JOIN uo_game AS game ON (m.game=game.game_id) 
 				WHERE (game.hometeam=%d or game.visitorteam=%d) AND game.isongoing=0 AND scorer IS NOT NULL GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
@@ -928,6 +930,10 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     case "goal":
       $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
       break;
+      	
+    case "goalavg":
+      $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC";
+      break;
 
     case "callahan":
       $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
@@ -935,6 +941,10 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 
     case "pass":
       $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
+      break;
+
+    case "passavg":
+      $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC";
       break;
 
     case "games":
@@ -947,6 +957,14 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 
     case "name":
       $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC";
+      break;
+      	
+    case "num":
+      $query .= " ORDER BY num,firstname,lastname ASC, total DESC, done DESC, fedin DESC";
+      break;
+
+    case "totalavg":
+      $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC";
       break;
 
     default:
@@ -1230,8 +1248,7 @@ function RemovePlayer($playerId)
   }
 }
 
-function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
-{
+function AddPlayer($teamId, $firstname, $lastname, $profileId, $num=-1, $regId=NULL) {
   if (hasEditPlayersRight($teamId)) {
 
     if (!empty($profileId)) {
@@ -1265,6 +1282,9 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
       $query .= ",num";
     }
 
+    if ($regId !== null && $regId !== '') {
+      $query .= ", reg_id";
+    }
     $query .= ") ";
     $query .= sprintf(
       "VALUES ('%s', '%s', %d, '%s', %d",
@@ -1277,6 +1297,9 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
 
     if ($num >= 0) {
       $query .= sprintf(",%d", (int)$num);
+    }
+    if ($regId !== null && $regId !== '') {
+      $query .= sprintf(", %d", (int)$regId);
     }
     $query .= sprintf(")");
     $playerId = DBQueryInsert($query);
@@ -1454,16 +1477,20 @@ function AddTeam($params)
 {
   if (hasEditTeamsRight($params['series'])) {
     $poolValue = !empty($params['pool']) ? (int)$params['pool'] : "NULL";
+    $regIdValue = (isset($params['reg_id']) && $params['reg_id'] !== '' && $params['reg_id'] !== null)
+      ? (string)(int)$params['reg_id']
+      : "NULL";
     $query = sprintf(
       "
-			INSERT INTO uo_team
-			(name, pool, uo_team.rank, valid, series) 
-			VALUES ('%s', %s, '%s', '%s', '%s')",
+				INSERT INTO uo_team
+				(name, pool, uo_team.rank, valid, series, sotg_token, reg_id) 
+				VALUES ('%s', %s, %d, %d, %d, MD5(RAND()), %s)",
       DBEscapeString($params['name']),
       $poolValue,
-      DBEscapeString($params['rank']),
-      DBEscapeString($params['valid']),
-      DBEscapeString($params['series'])
+      (int)$params['rank'],
+      (int)$params['valid'],
+      (int)$params['series'],
+      $regIdValue
     );
 
     $teamId = DBQueryInsert($query);

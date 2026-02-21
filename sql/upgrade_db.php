@@ -715,11 +715,12 @@ function upgrade75()
     */
 
 		// clean up
-		runQuery('DROP TABLE uo_spirit');
 		runQuery("UPDATE uo_game SET time=NULL WHERE time < '0000-01-01 00:00:00';");
-		dropField("uo_game", "homesotg");
-		dropField("uo_game", "visitorsotg");
-		dropField("uo_season", "spiritpoints");
+		// TODO: this should not done on bruno-fork
+		//runQuery('DROP TABLE uo_spirit');
+		//dropField("uo_game", "homesotg");
+		//dropField("uo_game", "visitorsotg");
+		//dropField("uo_season", "spiritpoints");
 	}
 }
 

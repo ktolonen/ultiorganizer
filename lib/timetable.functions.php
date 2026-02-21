@@ -46,7 +46,9 @@ function TournamentView($games, $grouping = true)
         $isTableOpen = false;
       }
       if ($grouping) {
-        $ret .= "<h1>" . utf8entities(U_($game['reservationgroup'])) . "</h1>\n";
+        if(!empty($game['reservationgroup'])) {
+          $ret .= "<h1>". utf8entities(U_($game['reservationgroup'])) ."</h1>\n";
+        }
       }
       $prevPlace = "";
     }
@@ -508,7 +510,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
   }
 
   if ($pool) {
-    $ret .= "<td style='$poolw'><span>" . utf8entities(U_($game['poolname'])) . "</span></td>\n";
+    $ret .= "<td style='$poolw'><span><a href='?view=poolstatus&pool=".(int)$game['pool']."'>" . utf8entities(U_($game['poolname'])) . "</span></td>\n";
   }
 
   if (!GameHasStarted($game)) {
@@ -541,13 +543,14 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
       $urls = GetMediaUrlList("game", $game['game_id'], "live");
     }
     $ret .= "<td style='$mediaw;white-space: nowrap;'>";
+    // TODO: Add setting to show URLs always (bruno fork)
     if (count($urls) && (intval($game['isongoing']) || !GameHasStarted($game))) {
       foreach ($urls as $url) {
         $title = $url['name'];
         if (empty($title)) {
           $title = _("Live Broadcasting");
         }
-        $ret .= "<a href='" . $url['url'] . "'>" . "<img border='0' width='16' height='16' title='" . utf8entities($title) . "' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/></a>";
+        $ret .= "<a href='" . $url['url'] . "' target='_blank'>" . "<img border='0' width='16' height='16' title='" . utf8entities($title) . "' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/></a>";
       }
     }
     $ret .= "</td>\n";
@@ -720,6 +723,11 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
       $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)";
       break;
 
+    case "comingTodayAndTomorrow":
+      $query .= " AND pp.time IS NOT NULL AND ((pp.homescore IS NULL AND pp.visitorscore IS NULL) OR (pp.homescore = 0 AND pp.visitorscore = 0) OR pp.isongoing=1)";
+      $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') IN(CURRENT_DATE(),DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY))";
+      break;
+
     case "all":
       break;
 
@@ -734,7 +742,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 
   switch ($order) {
     case "tournaments":
-      $query .= " ORDER BY pr.starttime, pr.reservationgroup, pl.id, ps.ordering, pool.ordering, pp.time ASC, pr.fieldname + 0, pp.game_id ASC";
+      $query .= " ORDER BY ISNULL(pr.starttime), pr.starttime, pr.reservationgroup, pl.id, ps.ordering, pool.ordering, pp.time ASC, pr.fieldname + 0, pp.game_id ASC";
       break;
 
     case "series":
