@@ -29,10 +29,9 @@ function TeamPlayerAccreditationArray($teamId)
 
 function TeamPlayerList($teamId)
 {
-  $query = sprintf(
-    "SELECT player_id, firstname, lastname, num, accredited, accreditation_id, profile_id FROM uo_player WHERE team = %d ORDER BY lastname ASC, firstname ASC",
-    (int)$teamId
-  );
+  $query = sprintf("SELECT player_id, firstname, lastname, num, accredited, accreditation_id, profile_id, reg_id FROM uo_player WHERE team = %d ORDER BY num ASC, lastname ASC, firstname ASC",
+  (int)$teamId);
+
   return DBQuery($query);
 }
 
@@ -60,7 +59,8 @@ function TeamInfo($teamId)
 {
   $query = sprintf(
     "SELECT team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
-		team.series, ser.type, ser.season, s.name AS seasonname, team.abbreviation, team.country, c.name AS countryname, c.flagfile
+		team.series, ser.type, ser.season, s.name AS seasonname, team.abbreviation, team.country, c.name AS countryname, c.flagfile,
+	        team.valid
 		FROM uo_team team 
 		LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
 		LEFT JOIN uo_series ser ON (ser.series_id=team.series)
@@ -92,11 +92,14 @@ function Teams($filter = null, $ordering = null)
 
 function TeamListAll($grouped = false, $onlyold = false, $namefilter = "")
 {
-  if ($grouped) {
-    $query = sprintf("SELECT MAX(team.team_id) AS team_id, team.name, ser.name AS seriesname
+  if($grouped){
+    $query = sprintf("SELECT MAX(team.team_id) AS team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
+			COUNT(ser.season) AS seasons, team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
 			FROM uo_team team 
 			LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
 			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+			LEFT JOIN uo_club club ON (team.club=club.club_id)
+			LEFT JOIN uo_country c ON (team.country=c.country_id)
 			LEFT JOIN uo_season season ON (ser.season=season.season_id)");
     if ($onlyold) {
       $query .= sprintf("RIGHT JOIN uo_season_stats ss ON(ser.season=ss.season)");
@@ -110,8 +113,8 @@ function TeamListAll($grouped = false, $onlyold = false, $namefilter = "")
     }
 
     $query .= sprintf(" GROUP BY team.name, ser.name
-			ORDER BY team.name, ser.name");
-  } else {
+			ORDER BY team.name, ser.name, season.name, club.name");
+  }else{
     $query = sprintf("SELECT team.team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
 			team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
 			FROM uo_team team 
@@ -663,6 +666,92 @@ function TeamStats($teamId)
   );
 
   return DBQueryToRow($query);
+}
+
+// From Bruno's fork -- TODO: Consolidate spirit methods
+function TeamSpiritStats($teamId)
+{
+  $query = sprintf("
+		SELECT COUNT(*) AS games
+		FROM uo_game 
+		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
+		WHERE (homescore != visitorscore) AND ((hometeam=%d AND homesotg IS NOT NULL) OR (visitorteam=%d AND visitorsotg IS NOT NULL)) AND isongoing=0 AND gp.timetable=1",
+  (int)$teamId,
+  (int)$teamId);
+
+  $result = DBQuery($query);
+  if (!$result) { die('Invalid query: ' . DBError()); }
+
+  return DBFetchAssoc($result);
+}
+
+// From Bruno's fork -- TODO: Consolidate spirit methods
+function TeamSpiritStats2($teamId,$includeIncomplete=false)
+{ // alternative function which may or may not count also the games in which a score has not yet been given to the other team
+  // like TeamSpiritStats() it's based on uo_game, but ignores some checks on the other function which don't seem to be necessary
+  if ($includeIncomplete) {
+    $query = sprintf("
+      SELECT COUNT(*) AS games
+      FROM uo_game 
+      WHERE (hometeam=%d AND COALESCE(homesotg,0)>0) OR (visitorteam=%d AND COALESCE(visitorsotg,0)>0)",
+    (int)$teamId,
+    (int)$teamId);
+  } else {
+    $query = sprintf("
+      SELECT COUNT(*) AS games
+      FROM uo_game 
+      WHERE (hometeam=%d OR visitorteam=%d) AND COALESCE(homesotg,0)>0 AND COALESCE(visitorsotg,0)>0",
+    (int)$teamId,
+    (int)$teamId);
+  }
+
+  $result = DBQuery($query);
+  if (!$result) { die('Invalid query: ' . DBError()); }
+
+  return DBFetchAssoc($result);
+}
+
+// From Bruno's fork -- TODO: Consolidate spirit methods
+function CountSpiritStats($teamId)
+{ // alternative to TeamSpiritStats(), based on uo_spirit instead of uo_game
+  $query = sprintf("
+		SELECT COUNT(*) AS games
+		FROM uo_spirit 
+		WHERE team_id=%d and (cat1+cat2+cat3+cat4+cat5)>0",
+  (int)$teamId);
+
+  $result = DBQuery($query);
+  if (!$result) { die('Invalid query: ' . DBError()); }
+
+  return DBFetchAssoc($result);
+}
+
+// From Bruno's fork -- TODO: Consolidate spirit methods
+function TeamSpiritTotal($teamId,$includeIncomplete=false)
+{ // function that returns the total number of spirit points a team received
+  // may or may not include games in which a score has not yet been given for the other team
+  if ($includeIncomplete) {
+    $query = sprintf("
+      SELECT SUM(IF(hometeam=%d,homesotg,visitorsotg)) AS total
+      FROM uo_game 
+      WHERE (hometeam=%d AND COALESCE(homesotg,0)>0) OR (visitorteam=%d AND COALESCE(visitorsotg,0)>0)",
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId);
+  } else {
+    $query = sprintf("
+      SELECT SUM(IF(hometeam=%d,homesotg,visitorsotg)) AS total
+      FROM uo_game 
+      WHERE (hometeam=%d OR visitorteam=%d) AND COALESCE(homesotg,0)>0 AND COALESCE(visitorsotg,0)>0",
+    (int)$teamId,
+    (int)$teamId,
+    (int)$teamId);
+  }
+
+  $result = DBQuery($query);
+  if (!$result) { die('Invalid query: ' . DBError()); }
+
+  return DBFetchAssoc($result);
 }
 
 function TeamVictoryPointsByPool($poolId, $teamId)
@@ -1682,4 +1771,11 @@ function TeamsToCsv($season, $separator)
 
   $result = DBQuery($query);
   return ResultsetToCsv($result, $separator);
+}
+
+function TeamAbbreviation($teamId) {
+  // return team's abbreviation
+
+  $query = sprintf("SELECT abbreviation FROM uo_team WHERE team_id=%d",$teamId);
+  return DBQueryToValue($query);
 }

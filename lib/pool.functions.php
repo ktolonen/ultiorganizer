@@ -889,6 +889,46 @@ function PoolTeamFromStandings($poolId, $activerank, $countbye = true)
 }
 
 /**
+ * Get team from given position from given pool.
+ * returns team ranked $activerank from pool $poolId if $countbye=true
+ * if $countbye=false, $activerank is corrected by one if BYE team is ranked ahead in this pool
+ * 
+ * New function added by Bruno, returns array of teams if there are ties.
+ * Meant to be used in teams.php (bystandings).
+ * (notice the subtle change in the function name from Team to Teams)
+ *
+ * @param int $poolId
+ * @param int $activerank
+ * @param boolean $countbye
+ * @return PHP array row
+ */
+function PoolTeamsFromStandings($poolId, $activerank, $countbye=true) { 
+  if($countbye) {
+    $query = sprintf("SELECT j.team_id, j.name, js.activerank, c.flagfile
+  			FROM uo_team AS j 
+  			LEFT JOIN uo_team_pool AS js ON (j.team_id = js.team)
+  			LEFT JOIN uo_country c ON(c.country_id=j.country)
+  			WHERE js.pool=%d AND js.activerank=%d",
+              (int)$poolId,
+              (int)$activerank);
+  }else{
+    $query = sprintf("SELECT j.team_id, j.name, js.activerank, c.flagfile
+  			FROM uo_team AS j 
+  			LEFT JOIN uo_team_pool AS js ON (j.team_id = js.team)
+  			LEFT JOIN uo_country c ON(c.country_id=j.country)
+  			WHERE js.pool=%d AND js.activerank=%d+
+  				(SELECT count(j.team_id)
+  				 FROM uo_team AS j 
+  				 LEFT JOIN uo_team_pool AS js ON (j.team_id = js.team)
+  				 WHERE js.pool=%d and js.activerank<=%d and j.valid=2)",
+              (int)$poolId,
+              (int)$activerank,
+              (int)$poolId,
+              (int)$activerank);
+  }
+  return DBQueryToArray($query);
+}
+/**
  * Get team from given initial position from given pool.
  * returns team ranked $rank from pool $poolId if $countbye=true
  * if $countbye=false, $rank is corrected by one if BYE team is ranked ahead in this pool

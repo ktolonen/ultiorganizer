@@ -45,5 +45,6 @@ function GetPluginList($category, $type = "", $format = "")
 		}
 		closedir($handle);
 	}
+	sort($plugins); // sort plugins by filename (alphabetically)
 	return $plugins;
 }

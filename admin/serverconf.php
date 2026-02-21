@@ -34,7 +34,25 @@ if (!empty($_POST['save'])) {
 		$setting['value'] = "false";
 	}
 	$settings[] = $setting;
-
+	
+	$setting = array();
+	$setting['name']="ShowSpiritComments";
+	if(!empty($_POST['ShowSpiritComments'])){
+		$setting['value']="true";
+	}else{
+		$setting['value']="false";
+	}
+	$settings[] = $setting;
+	
+	$setting = array();
+	$setting['name']="ReadOnlyServer";
+	if(!empty($_POST['ReadOnlyServer'])){
+		$setting['value']="true";
+	}else{
+		$setting['value']="false";
+	}
+	$settings[] = $setting;
+	
 	$setting = array();
 	$setting['name'] = "HomeTeamResponsible";
 	if (!empty($_POST['HomeTeamResponsible'])) {
@@ -153,8 +171,30 @@ foreach ($settings as $setting) {
 		}
 		$htmltmp2 .= "</tr>\n";
 	}
-
-	if ($setting['name'] == "HomeTeamResponsible") {
+	
+	if($setting['name']=="ShowSpiritComments"){
+		$htmltmp2 .= "<tr>";
+		$htmltmp2 .= "<td class='infocell'>"._("Show Spirit Comments").":</td>";
+		if($setting['value']=="true"){
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowSpiritComments' checked='checked'/></td>";
+		}else{
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowSpiritComments'/></td>";
+		}
+		$htmltmp2 .= "</tr>\n";
+	}
+	
+	if($setting['name']=="ReadOnlyServer"){
+		$htmltmp2 .= "<tr>";
+		$htmltmp2 .= "<td class='infocell'>"._("Read Only Server")."?</td>";
+		if($setting['value']=="true"){
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ReadOnlyServer' checked='checked'/></td>";
+		}else{
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ReadOnlyServer'/></td>";
+		}
+		$htmltmp2 .= "</tr>\n";
+	}
+	
+	if($setting['name']=="HomeTeamResponsible"){
 		$htmltmp2 .= "<tr>";
 		$htmltmp2 .= "<td class='infocell'>" . _("Home team is game responsible") . ":</td>";
 		if ($setting['value'] == "yes") {

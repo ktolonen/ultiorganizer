@@ -192,6 +192,12 @@ function translate($name, $translation_array)
 {
 	$retArr = array();
 	$ret = "";
+	
+	// Handle null or empty name parameter
+	if ($name === null || $name === '') {
+		$retArr[''] = '';
+		return $retArr;
+	}
 
 	$key = strtolower((string)$name);
 	if ($name !== '' && isset($translation_array[$key])) {
@@ -225,6 +231,12 @@ function translate($name, $translation_array)
 function autocompleteTranslate($name, $translation_array)
 {
 	$ret = array();
+
+	// Handle null or empty name parameter
+	if ($name === null || $name === '') {
+		return $ret;
+	}
+
 	foreach ($translation_array as $key => $translation) {
 		if (strpos($key, strtolower($name)) === 0) {
 			if (strlen($key) > strlen($name)) {

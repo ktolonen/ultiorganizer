@@ -45,6 +45,42 @@ function SetPlayer($playerId, $number, $fname, $lname, $accrId, $profileId)
   }
 }
 
+
+/**
+ * Update player's jersey number
+ * 
+ * @param int $playerId
+ * @param int $number
+ * 
+ */
+function SetPlayerNumber($playerId,$number) {
+  
+  $playerInfo = PlayerInfo($playerId);
+  if (!$playerInfo) {
+    die("Invalid player");
+  }
+
+  if (hasEditPlayersRight($playerInfo['team'])) {
+    $normalized = is_string($number) ? trim($number) : $number;
+    $numberSql = "NULL";
+
+    if ($normalized !== "" && $normalized !== null) {
+      $intNumber = filter_var(
+        $normalized,
+        FILTER_VALIDATE_INT,
+        array("options" => array("min_range" => 0, "max_range" => 99))
+      );
+      if ($intNumber !== false) {
+        $numberSql = (string)$intNumber;
+      }
+    }
+
+    $query = sprintf("UPDATE uo_player SET num=%s WHERE player_id=%d", $numberSql, (int) $playerId);
+    return DBQuery($query);
+  } else { die("Insufficient rights to edit player"); }
+}
+
+
 /**
  * Set profile default jersey number if it is currently empty.
  *
@@ -315,7 +351,7 @@ function PlayerLatestId($profileId)
 
 function PlayerListAll($lastname = "")
 {
-  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname, profile_id
+  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname, num, accreditation_id, profile_id, team, uo_team.name AS teamname
 		FROM uo_player p 
 		LEFT JOIN uo_team ON p.team=team_id
 		WHERE accredited=1";
@@ -794,6 +830,41 @@ function SetPlayerProfile($teamId, $playerId, $profile)
   } else {
     die('Insufficient rights to edit player profile');
   }
+}
+
+// Update names and number on player profile
+function UpdatePlayerProfile($profileId, $first, $last, $num) {
+  $profileId = (int)$profileId;
+  $playerId = (int)PlayerLatestId($profileId);
+  if ($profileId <= 0 || $playerId <= 0) {
+    die('Invalid player profile');
+  }
+  if (!hasEditPlayerProfileRight($playerId)) {
+    die('Insufficient rights to edit player profile');
+  }
+
+  $normalized = is_string($num) ? trim($num) : $num;
+  $numSql = "NULL";
+  if ($normalized !== "" && $normalized !== null) {
+    $intNum = filter_var(
+      $normalized,
+      FILTER_VALIDATE_INT,
+      array("options" => array("min_range" => 0, "max_range" => 99))
+    );
+    if ($intNum !== false) {
+      $numSql = (string)$intNum;
+    }
+  }
+
+  $query = sprintf("UPDATE uo_player_profile 
+    SET firstname = '%s', lastname = '%s', num = %s 
+    WHERE profile_id = %d",
+    DBEscapeString($first),
+    DBEscapeString($last),
+    $numSql,
+    $profileId
+  );
+  DBQuery($query);
 }
 
 /**
