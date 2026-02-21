@@ -369,13 +369,22 @@ CREATE TABLE IF NOT EXISTS `uo_game` (
   `homedefenses` smallint(5) DEFAULT 0,
   `visitordefenses` smallint(5) DEFAULT 0,
   `hasstarted` tinyint(1) DEFAULT 0,
+  `islive` tinyint(1) DEFAULT 0,
+  `liveurl` varchar(512) DEFAULT NULL,
+  `timer_start` bigint(20) DEFAULT NULL,
+  `timer_pause_start` bigint(20) DEFAULT NULL,
+  `timer_paused_duration` bigint(20) NOT NULL DEFAULT 0,
   PRIMARY KEY (`game_id`),
   KEY `idx_hometeam` (`hometeam`),
   KEY `idx_visitorteam` (`visitorteam`),
   KEY `idx_reservation` (`reservation`),
   KEY `idx_game_id` (`game_id`),
   KEY `idx_name` (`name`),
-  KEY `idx_pool` (`pool`)
+  KEY `idx_pool` (`pool`),
+  KEY `idx_game_valid_time` (`valid`,`time`),
+  KEY `idx_game_valid_pool_time` (`valid`,`pool`,`time`),
+  KEY `idx_game_valid_hometeam_time` (`valid`,`hometeam`,`time`),
+  KEY `idx_game_valid_visitorteam_time` (`valid`,`visitorteam`,`time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_game_pool` (
@@ -384,7 +393,8 @@ CREATE TABLE IF NOT EXISTS `uo_game_pool` (
   `timetable` tinyint(1) NOT NULL,
   PRIMARY KEY (`game`,`pool`),
   KEY `idx_game` (`game`),
-  KEY `idx_pool` (`pool`)
+  KEY `idx_pool` (`pool`),
+  KEY `idx_pool_timetable_game` (`pool`,`timetable`,`game`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_gameevent` (
@@ -407,10 +417,14 @@ CREATE TABLE IF NOT EXISTS `uo_goal` (
   `visitorscore` tinyint(3) unsigned DEFAULT NULL,
   `ishomegoal` tinyint(1) NOT NULL,
   `iscallahan` tinyint(1) NOT NULL,
+  `timestamp` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`game`,`num`),
   KEY `idx_game` (`game`),
   KEY `idx_assist` (`assist`),
-  KEY `idx_scorer` (`scorer`)
+  KEY `idx_scorer` (`scorer`),
+  KEY `idx_goal_game_scorer` (`game`,`scorer`),
+  KEY `idx_goal_game_assist` (`game`,`assist`),
+  KEY `idx_goal_game_callahan_scorer` (`game`,`iscallahan`,`scorer`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_image` (
@@ -529,6 +543,7 @@ CREATE TABLE IF NOT EXISTS `uo_player` (
   `num` tinyint(3) unsigned DEFAULT NULL,
   `accreditation_id` varchar(150) DEFAULT NULL,
   `accredited` tinyint(1) NOT NULL DEFAULT 0,
+  `reg_id` int(10) unsigned DEFAULT NULL,
   `profile_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`player_id`),
   KEY `idx_accreditation_id` (`profile_id`),
@@ -620,7 +635,8 @@ CREATE TABLE IF NOT EXISTS `uo_pool` (
   `drawsallowed` smallint(5) DEFAULT 0,
   `playoff_template` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`pool_id`),
-  KEY `idx_series` (`series`)
+  KEY `idx_series` (`series`),
+  KEY `idx_pool_series_ordering` (`series`,`ordering`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_pooltemplate` (
@@ -694,7 +710,8 @@ CREATE TABLE IF NOT EXISTS `uo_reservation` (
   `timeslots` varchar(100) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_location` (`location`)
+  KEY `idx_location` (`location`),
+  KEY `idx_reservation_group_time_loc_field` (`reservationgroup`,`starttime`,`location`,`fieldname`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -721,6 +738,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `showspiritpoints` tinyint(1) DEFAULT 0,
   `use_season_points` tinyint(1) DEFAULT 0,
   `api_public` tinyint(1) DEFAULT 0,
+  `reg_id` int(10) unsigned DEFAULT NULL,
   `timezone` varchar(50) DEFAULT NULL,
   `spiritmode` int(10) DEFAULT NULL,
   PRIMARY KEY (`season_id`)
@@ -770,7 +788,8 @@ CREATE TABLE IF NOT EXISTS `uo_series` (
   `pool_template` int(10) DEFAULT NULL,
   PRIMARY KEY (`series_id`),
   KEY `idx_season` (`season`),
-  KEY `fk_series_pooltemplate` (`pool_template`)
+  KEY `fk_series_pooltemplate` (`pool_template`),
+  KEY `idx_series_season_ordering` (`season`,`ordering`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -793,7 +812,7 @@ CREATE TABLE IF NOT EXISTS `uo_setting` (
   `value` varchar(200) DEFAULT '',
   `setting_id` int(10) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`setting_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('CurrentSeason', NULL, 1),
@@ -805,7 +824,9 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('DefaultTimezone', 'Europe/Helsinki', 7),
 	('DefaultLocale', 'en_GB.utf8', 8),
 	('ShowDefenseStats', 'false', 9),
-	('AdminEmail', 'ultiorganizer_admin@example.com', 10);
+	('AdminEmail', 'ultiorganizer_admin@example.com', 10),
+	('ShowSpiritComments', 'false', 11),
+	('ReadOnlyServer', 'false', 12);
 
 CREATE TABLE IF NOT EXISTS `uo_sms` (
   `sms_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -906,6 +927,8 @@ CREATE TABLE IF NOT EXISTS `uo_team` (
   `valid` tinyint(1) NOT NULL,
   `series` int(10) DEFAULT NULL,
   `country` int(10) DEFAULT NULL,
+  `reg_id` int(10) unsigned DEFAULT NULL,
+  `sotg_token` varchar(64) DEFAULT NULL,
   `abbreviation` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`team_id`),
   KEY `idx_club` (`club`),

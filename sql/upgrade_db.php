@@ -935,6 +935,140 @@ function upgrade82()
 			valid = VALUES(valid)");
 }
 
+// Catch up with Bruno's fork
+function upgrade83()
+{
+	if (hasTable("uo_spirit") && !hasColumn("uo_spirit", "comments")) {
+		addColumn("uo_spirit", "comments", "TEXT DEFAULT NULL");
+	}
+
+	if (!hasRow("uo_setting", "name", "ShowSpiritComments")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("ShowSpiritComments", "false")');
+	}
+
+	if (!hasRow("uo_setting", "name", "ReadOnlyServer")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("ReadOnlyServer", "false")');
+	}
+
+	if (!hasColumn("uo_game", "islive")) {
+		addColumn("uo_game", "islive", "TINYINT(1) DEFAULT 0");
+	}
+
+	if (!hasColumn("uo_game", "liveurl")) {
+		addColumn("uo_game", "liveurl", "VARCHAR(512) DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_game", "timer_start")) {
+		addColumn("uo_game", "timer_start", "BIGINT DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_game", "timer_pause_start")) {
+		addColumn("uo_game", "timer_pause_start", "BIGINT DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_game", "timer_paused_duration")) {
+		addColumn("uo_game", "timer_paused_duration", "BIGINT NOT NULL DEFAULT 0");
+	}
+
+	if (!hasColumn("uo_goal", "timestamp")) {
+		addColumn("uo_goal", "timestamp", "DATETIME DEFAULT current_timestamp()");
+	}
+
+	if (!hasColumn("uo_player", "reg_id")) {
+		addColumn("uo_player", "reg_id", "INT UNSIGNED DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_team", "reg_id")) {
+		addColumn("uo_team", "reg_id", "INT UNSIGNED DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_season", "reg_id")) {
+		addColumn("uo_season", "reg_id", "INT UNSIGNED DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_team", "sotg_token")) {
+		addColumn("uo_team", "sotg_token", "VARCHAR(64) DEFAULT NULL");
+	}
+}
+
+function upgrade84()
+{
+	// Canonical upstream changes introduced in old upgrade69-73.
+	// Might be missing from Bruno's fork used by many
+	$missingCanonical =
+		!hasColumn("uo_pool", "drawsallowed") ||
+		!hasColumn("uo_pooltemplate", "drawsallowed") ||
+		!hasTable("uo_movingtime") ||
+		!hasTable("uo_location_info") ||
+		hasColumn("uo_team_stats", "loses") ||
+		!hasColumn("uo_pool", "playoff_template");
+
+	if (!$missingCanonical) {
+		return;
+	}
+
+	if (!hasColumn("uo_pool", "drawsallowed")) {
+		addColumn("uo_pool", "drawsallowed", "smallint(5) DEFAULT 0");
+	}
+	if (!hasColumn("uo_pooltemplate", "drawsallowed")) {
+		addColumn("uo_pooltemplate", "drawsallowed", "smallint(5) DEFAULT 0");
+	}
+	if (!hasColumn("uo_game", "hasstarted")) {
+		runQuery("UPDATE uo_game SET time=NULL WHERE time < '0000-01-01 00:00:00';");
+		addColumn("uo_game", "hasstarted", "tinyint(1) DEFAULT 0");
+		runQuery("UPDATE uo_game SET hasstarted='1' WHERE isongoing>0 OR homescore>0 OR visitorscore>0");
+	}
+
+	if (!hasTable("uo_movingtime")) {
+		runQuery("CREATE TABLE `uo_movingtime` (
+			`season` varchar(10) NOT NULL,
+			`fromlocation` int(10) NOT NULL,
+			`fromfield` varchar(50) NOT NULL,
+			`tolocation` int(10) NOT NULL,
+			`tofield` varchar(50) NOT NULL,
+			`time` int(10) DEFAULT 0,
+			PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+
+	if (!hasTable("uo_location_info")) {
+		runQuery(
+			"CREATE TABLE `uo_location_info` (
+				`location_id` int(10) NOT NULL,
+				`locale` varchar(20) NOT NULL,
+				`info` varchar(255) DEFAULT NULL,
+				PRIMARY KEY (`location_id`,`locale`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+		);
+	}
+
+	$results = runQuery("SELECT * FROM uo_location");
+	while ($row = mysqli_fetch_assoc($results)) {
+		foreach ($row as $key => $value) {
+			if (substr($key, 0, 5) === "info_" && !empty($value)) {
+				$locale = substr($key, 5);
+				runQuery(
+					sprintf(
+						"INSERT IGNORE INTO `uo_location_info` (`location_id`, `locale`, `info`)
+						 VALUES (%d, '%s', '%s')",
+						(int)$row['id'],
+						DBEscapeString($locale),
+						DBEscapeString($value)
+					)
+				);
+			}
+		}
+	}
+
+	if (hasColumn("uo_team_stats", "loses")) {
+		renameField("uo_team_stats", "loses", "losses");
+	}
+
+	if (!hasColumn("uo_pool", "playoff_template")) {
+		addColumn("uo_pool", "playoff_template", "varchar(30) default NULL");
+	}
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';

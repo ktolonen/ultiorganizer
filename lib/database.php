@@ -36,7 +36,7 @@ include_once $include_prefix . 'sql/upgrade_db.php';
 
 //When adding new update function into upgrade_db.php change this number.
 //When you change the database, export the current schema from the running database.
-define('DB_VERSION', 81); //Database version matching to upgrade functions.
+define('DB_VERSION', 84); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;
 
@@ -47,11 +47,18 @@ function OpenConnection()
 {
 
   global $mysqlconnectionref;
+  $connectionErrorMessage = 'Service is temporarily unavailable. Please try again shortly. If the problem persists, please contact the event organizer.';
 
   //connect to database
-  $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
+  try {
+    $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
+  } catch (mysqli_sql_exception $e) {
+    error_log('Database connection failed: ' . $e->getMessage());
+    die($connectionErrorMessage);
+  }
   if (mysqli_connect_errno()) {
-    die('Failed to connect to server: ' . mysqli_connect_error());
+    error_log('Database connection failed: ' . mysqli_connect_error());
+    die($connectionErrorMessage);
   }
 
   //select schema
