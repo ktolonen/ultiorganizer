@@ -913,6 +913,28 @@ function upgrade81()
 	}
 }
 
+function upgrade82()
+{
+	runQuery("INSERT INTO uo_country (country_id, name, abbreviation, flagfile, valid) VALUES
+		(1039, 'People\\'s Republic of China', 'CHN', 'China.png', 1),
+		(1051, 'Czechia', 'CZE', 'Czech_Republic.png', 1),
+		(1082, 'Hong Kong, China', 'HKG', 'Hong_Kong.png', 1),
+		(1102, 'Republic of Korea', 'KOR', 'South_Korea.png', 1),
+		(1111, 'Lebanon', 'LBN', 'Lebanon.png', 1),
+		(1158, 'Russian Federation', 'RUS', 'Russian_Federation.png', 1),
+		(1163, 'Singapore', 'SGP', 'Singapore.png', 1),
+		(1187, 'Chinese Taipei', 'TPE', 'Chinese_Taipei.png', 1),
+		(1190, 'Türkiye', 'TUR', 'Turkey.png', 1),
+		(1192, 'United Arab Emirates', 'UAE', 'UAE.png', 1),
+		(1196, 'United States of America', 'USA', 'United_States_of_America.png', 1),
+		(1205, 'World', 'WRD', 'wfdf.png', 1)
+		ON DUPLICATE KEY UPDATE
+			name = VALUES(name),
+			abbreviation = VALUES(abbreviation),
+			flagfile = VALUES(flagfile),
+			valid = VALUES(valid)");
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';
