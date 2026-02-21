@@ -417,9 +417,9 @@ function GameScoreBoard($gameId)
 }
 
 function GameGoals($gameId)
-{
-	$query = sprintf(
-		"SELECT m.*, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
+	{
+	$query = sprintf("
+		SELECT m.*, s.num AS assistnum, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.num AS scorernum, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
 		FROM (uo_goal AS m LEFT JOIN uo_player AS s ON (m.assist = s.player_id)) 
 		LEFT JOIN uo_player AS t ON (m.scorer=t.player_id) 
 		WHERE m.game='%s' 

@@ -93,7 +93,10 @@ function SeriesTypes()
     "master open",
     "master women",
     "master mixed",
-    "grand master",
+    "grandmaster open",
+    "grandmaster women",
+    "grandmaster mixed",
+    "greatgrandmaster",
     "U19 open",
     "U19 women",
     "U19 mixed",
@@ -114,8 +117,8 @@ function SeriesTypes()
 function SeriesTeams($seriesId, $orderbyseeding = false)
 {
   $query = sprintf(
-    "SELECT DISTINCT t.team_id, t.name, t.abbreviation, t.club, cl.name AS clubname,
-			t.country, c.name AS countryname, t.rank, c.flagfile,
+    "SELECT DISTINCT t.team_id, t.name, t.abbreviation, t.club, t.valid, cl.name AS clubname,
+			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
 			c.flagfile
 			FROM uo_team t
 			LEFT JOIN uo_series ser ON(ser.series_id=t.series)
@@ -302,8 +305,9 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
 {
   $query = sprintf(
     "
-		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, 
-		COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.games 
+		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(t.done/pel.games,0) AS doneavg,
+		COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, COALESCE(s.fedin/pel.games,0) AS fedinavg, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total,
+    COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg, pel.games
 		FROM uo_player AS p 
 		LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
 			LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
@@ -344,8 +348,16 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
       $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
       break;
 
+    case "goalavg":
+      $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC";
+      break;
+
     case "pass":
       $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
+      break;
+
+    case "passavg":
+      $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC";
       break;
 
     case "games":
@@ -362,6 +374,10 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
 
     case "callahan":
       $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
+      break;
+
+    case "totalavg":
+      $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC";
       break;
 
     default:

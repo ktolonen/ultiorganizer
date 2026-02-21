@@ -134,9 +134,9 @@ if ($nGames) {
   $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Division") . "</a></th></tr>";
 
   $points = array(array());
-  mysqli_data_seek($games, 0);
+  DBDataSeek($games,0);
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  while($game = DBFetchAssoc($games)){
     if (GameHasStarted($game)) {
       $arrayYear = strtok($game['season_id'], ".");
       $arraySeason = strtok(".");
@@ -159,7 +159,7 @@ if ($nGames) {
       $scores = GameScoreBoard($game['game_id']);
       $i = 0;
 
-      while ($row = mysqli_fetch_assoc($scores)) {
+      while($row = DBFetchAssoc($scores)){
         $bFound = false;
         for ($i = 0; ($i < 200) && !empty($points[$i][0]); $i++) {
           //ignore spaces from team name
