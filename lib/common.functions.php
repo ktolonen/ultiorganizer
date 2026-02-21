@@ -1269,37 +1269,65 @@ function strEndsWith($whole, $end)
 	return (strpos($whole, $end, strlen($whole) - strlen($end)) !== false);
 }
 
+
 /**
  * 
  * Returns string from $_GET by ignoring case. 
  * @param string $string
  */
-function iget($string)
-{
+function iget($string){
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
+  
+  $string = strtolower($string);
+  
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
 
-	$string = strtolower($string);
+  $string = ucfirst($string);
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
 
-	$string = ucfirst($string);
+  $string = strtoupper($string);
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
+  
+  return "";
+}
 
-	$string = strtoupper($string);
+/**
+ * 
+ * Validates INT from $_GET using filter_input. 
+ * @param string $string
+ */
+function GetInt($string){
+  return filter_input(INPUT_GET,$string,FILTER_VALIDATE_INT);
+}
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
 
-	return "";
+/**
+ * 
+ * Returns a normalized string value from $_GET.
+ * Use context-specific escaping at output/SQL boundaries.
+ * @param string $string
+ */
+function GetString($string){
+
+  $str = filter_input(INPUT_GET, $string, FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE);
+  if ($str === null || $str === false || !is_string($str)) {
+    return "";
+  }
+
+  $str = convertToUtf8(urldecode($str));
+  $str = str_replace("\0", "", $str);
+  return trim($str);
 }
 
 /**

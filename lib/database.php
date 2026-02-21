@@ -541,3 +541,117 @@ function DBProtocolInfo()
   }
   return $result;
 }
+
+// wrapper for number of rows
+function DBNumRows($res) {
+
+  return mysqli_num_rows($res);
+}
+
+// wrapper for fetch row
+function DBFetchRow($res) {
+
+  return mysqli_fetch_row($res);
+}
+
+// wrapper for fetch array
+function DBFetchArray($res) {
+
+  return mysqli_fetch_array($res);
+}
+
+// wrapper for mysql insert id
+function DBInsertId() {
+  global $mysqlconnectionref;
+
+  return mysqli_insert_id($mysqlconnectionref);
+}
+
+// wrapper for mysql data seek
+function DBDataSeek($res,$off) {
+
+  return mysqli_data_seek($res,$off);
+}
+
+// wrapper for mysql affected rows
+function DBAffectedRows() {
+  global $mysqlconnectionref;
+
+  return mysqli_affected_rows($mysqlconnectionref);
+}
+
+
+/**
+ * Get the name of the specified field in a result
+ *
+ * @param $result
+ * @param $field_offset
+ * @return bool
+ */
+function DBFieldName($result, $field_offset = 0)
+{
+  $props = mysqli_fetch_field_direct($result, $field_offset);
+  return is_object($props) ? $props->name : false;
+}
+
+
+/**
+ * Get the type of the specified field in a result
+ * @param mysqli_result $result
+ * @param $field_offset
+ * @return string
+ */
+function DBFieldType(mysqli_result $result, $field_offset = 0)
+{
+  $unknown = 'unknown';
+  $info = mysqli_fetch_field_direct($result, $field_offset);
+  if (!is_object($info) || !isset($info->type)) {
+    return $unknown;
+  }
+  switch ($info->type) {
+    case MYSQLI_TYPE_FLOAT:
+    case MYSQLI_TYPE_DOUBLE:
+    case MYSQLI_TYPE_DECIMAL:
+    case MYSQLI_TYPE_NEWDECIMAL:
+      return 'real';
+    case MYSQLI_TYPE_BIT:
+      return 'bit';
+    case MYSQLI_TYPE_TINY:
+      return 'tinyint';
+    case MYSQLI_TYPE_TIME:
+      return 'time';
+    case MYSQLI_TYPE_DATE:
+      return 'date';
+    case MYSQLI_TYPE_DATETIME:
+      return 'datetime';
+    case MYSQLI_TYPE_TIMESTAMP:
+      return 'timestamp';
+    case MYSQLI_TYPE_YEAR:
+      return 'year';
+    case MYSQLI_TYPE_STRING:
+    case MYSQLI_TYPE_VAR_STRING:
+      return 'string';
+    case MYSQLI_TYPE_SHORT:
+    case MYSQLI_TYPE_LONG:
+    case MYSQLI_TYPE_LONGLONG:
+    case MYSQLI_TYPE_INT24:
+      return 'int';
+    case MYSQLI_TYPE_CHAR:
+      return 'char';
+    case MYSQLI_TYPE_ENUM:
+      return 'enum';
+    case MYSQLI_TYPE_TINY_BLOB:
+    case MYSQLI_TYPE_MEDIUM_BLOB:
+    case MYSQLI_TYPE_LONG_BLOB:
+    case MYSQLI_TYPE_BLOB:
+      return 'blob';
+    case MYSQLI_TYPE_NULL:
+      return 'null';
+    case MYSQLI_TYPE_NEWDATE:
+    case MYSQLI_TYPE_INTERVAL:
+    case MYSQLI_TYPE_SET:
+    case MYSQLI_TYPE_GEOMETRY:
+    default:
+      return $unknown;
+  }
+}

@@ -13,8 +13,11 @@ $gameId = intval(iget("game"));
 if (isset($_POST['save'])) {
 	$home = intval($_POST['home']);
 	$away = intval($_POST['away']);
+	LogGameUpdate($gameId,"result: $home - $away", "Mobile");
 	$ok = GameSetResult($gameId, $home, $away);
 	if ($ok) {
+		ResolvePoolStandings(GamePool($gameId));
+		PoolResolvePlayed(GamePool($gameId));
 		$game_result = GameResult($gameId);
 		header("location:?view=mobile/addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam']);
 	}

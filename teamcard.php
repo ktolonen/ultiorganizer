@@ -21,7 +21,7 @@ if (!$teaminfo) {
 $title = utf8entities($teaminfo['name']);
 
 $html .= "<h1>";
-$html .= utf8entities($teaminfo['name']) . " (" . U_($teaminfo['type']) . ")</h1>";
+$html .= utf8entities($teaminfo['name'])." (".U_($teaminfo['seriesname']).")</h1>";
 
 if (intval($teaminfo['country']) > 0) {
   $html .= "<p>";
