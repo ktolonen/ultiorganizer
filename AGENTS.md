@@ -59,3 +59,74 @@
 - Rate limiting is required (keyed by token + IP), returning `429` and `Retry-After` when exceeded.
 - First endpoints mirror `teams.php`, `games.php`, and `gameplay.php`, excluding historical data.
 - OpenAPI documentation is required and should live alongside the API (e.g., `/api/openapi.yaml`).
+
+## Configuration flags
+
+Use these exact type names when discussing configuration work:
+
+1. `SYSTEM_FLAG`
+2. `INSTALLATION_SETTING`
+3. `EVENT_SETTING`
+
+### 1) `SYSTEM_FLAG`
+- Scope: installation/system-level, defined by deployer/developer, not editable in normal UI.
+- Storage: `conf/config.inc.php` (document default/example in `conf/config.inc.example.php`).
+- Example: `ENABLE_ADMIN_DB_ACCESS`.
+- Use when:
+  - the value is environment/security/infrastructure specific.
+  - changing it should require file/system access or deployment process.
+- Implementation rules:
+  - define a clear constant-like key (UPPER_CASE recommended).
+  - provide safe default/fallback handling in code if missing.
+  - document purpose and allowed values in `conf/config.inc.example.php`.
+  - do not store these in DB unless there is a strong compatibility reason.
+
+### 2) `INSTALLATION_SETTING`
+- Scope: installation-wide, editable by admin users via admin UI.
+- Storage: database-backed server configuration (managed through admin pages like `admin/serverconf.php`).
+- Example: `GoogleMapsAPIKey`.
+- Use when:
+  - all events/users in one installation share one value.
+  - admins should be able to change value without file edits/deploy.
+- Implementation rules:
+  - add read/write support in existing server configuration flow.
+  - validate and sanitize input at write time; escape at output/use time.
+  - define sensible default behavior when setting is unset.
+  - keep SQL/data access in `lib/`.
+
+### 3) `EVENT_SETTING`
+- Scope: per event/season/tournament entity.
+- Storage: event/season related DB tables and forms.
+- Example: `use_season_points` in `admin/addseasons.php`.
+- Use when:
+  - value can differ between events in same installation.
+  - behavior must be controlled by event admins.
+- Implementation rules:
+  - store with the event/season record (or tightly related table).
+  - expose in relevant event admin UI.
+  - include in event create/edit flows and read paths that depend on it.
+  - keep SQL/data access in `lib/`.
+
+### Database change requirements
+- If a new `INSTALLATION_SETTING` or `EVENT_SETTING` needs new schema/columns/tables:
+  - update base schema in `sql/ultiorganizer.sql`.
+  - add a new upgrade step in `sql/upgrade_db.php`.
+  - bump `DB_VERSION` so `CheckDB()` applies upgrade on startup.
+- Prefer backward-compatible migrations:
+  - nullable or defaulted new columns.
+  - safe fallback behavior in PHP until migration has run.
+
+### Choosing configuration type
+- Choose `SYSTEM_FLAG` for deploy-time/environment/security toggles.
+- Choose `INSTALLATION_SETTING` for installation-wide admin-managed values.
+- Choose `EVENT_SETTING` for per-event behavior and event admin control.
+- Do not use a broader scope than needed (prefer narrowest valid scope).
+
+### Changing a flag from one type to another
+- Treat as a data migration task, not only a code rename.
+- Required checklist:
+  - define source and target type explicitly (`SYSTEM_FLAG`/`INSTALLATION_SETTING`/`EVENT_SETTING`).
+  - add migration logic (if DB involved) in `sql/upgrade_db.php` and bump `DB_VERSION`.
+  - provide fallback for old installations during transition.
+  - update admin UI surfaces and docs where the setting is edited.
+  - verify read paths no longer depend on old storage location.
