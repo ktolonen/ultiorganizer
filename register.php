@@ -6,6 +6,11 @@ $message = "";
 $title = _("Register");
 $html .= file_get_contents('script/disable_enter.js.inc');
 
+if (IsSelfRegistrationDisabled() && empty($_GET['token'])) {
+  header("location:?view=frontpage");
+  exit;
+}
+
 $mailsent = false;
 if (!empty($_POST['save'])) {
   $newUsername = $_POST['UserName'];
