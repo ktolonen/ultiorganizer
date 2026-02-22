@@ -15,19 +15,6 @@ function setId(id)
 	}
 
 function changeseason(id){
-	var url = location.href;
-	var param = "selseason";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + id + '$2');
-    }else{
-        
-		if(location.href.search("view=") !=-1){
-			url = url + '&' + param + "=" + id;
-		}else{
-			url = url.substring(0,url.lastIndexOf('/'));
-			url = url + "/index.php?"+ param + "=" + id; 
-		}
-	}
-	location.href=url;
+	var sid = encodeURIComponent(id);
+	window.location.href = "index.php?view=games&season=" + sid + "&selseason=" + sid;
 }
