@@ -96,3 +96,27 @@ curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?seaso
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?season=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
 ```
+
+## Credits
+
+Ultiorganizer was first introduced at the 2002 World Championships in Turku, after already being used by the Finnish Flying Disc Association from 1999. Even though the codebase has since been fully rewritten on a modern technology stack, the original vision has remained the same: a free, open, and reliable live-scoring system for Ultimate. This journey has only been possible because of the many people who use the system in real events and continuously improve it through feedback, testing, and patches.
+
+Special thanks to **Pasi Niemi**, whose early and significant contributions helped launch the rewrite of the scoring system in PHP.
+
+Special thanks to **Bruno Gravato** for years of practical development work on a long-running fork used by major Ultimate organizations, including BULA, WFDF, EUF, and national federations. Bruno’s contributions include substantial maintenance and feature work beyond the 2014 upstream baseline.
+
+Thanks as well to **Justin Palmer** and **Patrick** for the [Live by BULA](https://github.com/layoutd/live-by-bula) collaboration.
+
+Contributors:
+- Asmo Soinio
+- Bruno Gravato
+- Hartti Suomela
+- Juha Jalovaara
+- Kari
+- Artsa
+- Pasi Niemi
+- cschaffner
+- Les
+- Plinio Moreno
+- Jonathan Potts
+- Steffen Mecke
