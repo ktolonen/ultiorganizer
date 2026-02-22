@@ -27,7 +27,9 @@ $gp = array(
 	"pool" => $info['pool'],
 	"valid" => 1,
 	"respteam" => 0,
-	"name" => ""
+	"name"=>"",
+  	"islive"=>0,
+  	"liveurl"=>""
 );
 
 //process itself on submit
@@ -65,6 +67,11 @@ if (!empty($_POST['save'])) {
 	if (!empty($_POST['name']))
 		$gp['name'] = $_POST['name'];
 
+	if(!empty($_POST['islive']))
+		$gp['islive'] = filter_input(INPUT_POST,'islive',FILTER_VALIDATE_INT);
+
+	if(!empty($_POST['liveurl'])) 
+		$gp['liveurl'] = filter_input(INPUT_POST,'liveurl',FILTER_VALIDATE_URL);
 
 	SetGame($gameId, $gp);
 
@@ -244,6 +251,12 @@ if (intval($info['valid'])) {
 	echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
 		<td><input class='input' type='checkbox' id='valid' name='valid' value='" . utf8entities($info['valid']) . "'/></td></tr>";
 }
+
+// live stream
+echo "<tr><td class='infocell'>"._("Live Stream Number").":</td>
+  <td><input class='input' size='2' name='islive' value='".isGameLive($gameId)."' />"._(" (enter '0' if not live)")."</td>";
+echo "<tr><td class='infocell'>"._("Live Stream URL").":</td>
+  <td><input class='input' size='50' name='liveurl' value='".GameLiveURL($gameId)."' /></td>";
 
 echo "</table>";
 

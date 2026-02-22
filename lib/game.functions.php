@@ -1218,32 +1218,37 @@ function SetGame($gameId, $params)
 {
 	$poolinfo = PoolInfo($params['pool']);
 	if (hasEditGamesRight($poolinfo['series'])) {
-		$allowedKeys = array_flip(array(
-			"hometeam",
-			"visitorteam",
-			"scheduling_name_home",
-			"scheduling_name_visitor",
-			"reservation",
-			"time",
-			"pool",
-			"valid"
-		));
+			$allowedKeys = array_flip(array(
+				"hometeam",
+				"visitorteam",
+				"scheduling_name_home",
+				"scheduling_name_visitor",
+				"reservation",
+				"time",
+				"pool",
+				"valid",
+				"islive",
+				"liveurl"
+			));
 
-		foreach ($params as $key => $param) {
-			if (!empty($param) && isset($allowedKeys[$key])) {
-				$query = sprintf(
-					"UPDATE uo_game SET " . $key . "='%s' 
-					WHERE game_id='%s'\n",
-					DBEscapeString($param),
-					DBEscapeString($gameId)
-				);
+			foreach ($params as $key => $param) {
+				$shouldUpdate = isset($allowedKeys[$key]) &&
+					$param !== null &&
+					$param !== false &&
+					($param !== '' || $key === 'liveurl');
+				if ($shouldUpdate) {
+					$query = sprintf(
+						"UPDATE uo_game SET " . $key . "='%s' 
+						WHERE game_id='%s'\n",
+						DBEscapeString($param),
+						DBEscapeString($gameId)
+					);
 
-				$result = DBQuery($query);
+					$result = DBQuery($query);
+				}
 			}
-		}
 
-
-		if (!empty($params['respteam'])) {
+			if (!empty($params['respteam'])) {
 			$query = sprintf(
 				"UPDATE uo_game SET respteam=%d
 					WHERE game_id=%d",
@@ -1766,4 +1771,117 @@ function SpiritTable($gameinfo, $points, $categories, $home, $wide = true)
 	$html .= "</table>\n";
 
 	return $html;
+}
+
+function isGameLive($gameId) {
+
+  $query = sprintf("SELECT islive FROM uo_game WHERE game_id=%d LIMIT 1",(int) $gameId);
+
+  return (int) DBQueryToValue($query);
+}
+
+function GameLiveURL($gameId) {
+
+  $query = sprintf("SELECT liveurl FROM uo_game WHERE game_id=%d LIMIT 1", (int) $gameId);
+
+  $result = DBQueryToValue($query);
+
+  if ($result)
+    return filter_var($result,FILTER_VALIDATE_URL);
+  else
+    return false;
+}
+
+function UpdateGameLiveURL($gameId, $url) {
+  $gameId = (int) $gameId;
+  if (!hasEditGamesRight(GameSeries($gameId))) {
+    die('Insufficient rights to edit game');
+  }
+
+  $query = sprintf("UPDATE uo_game SET liveurl = '%s' WHERE game_id = %d", DBEscapeString($url), $gameId);
+
+  return DBQuery($query);
+}
+
+function isGameOngoing($gameId) {
+
+  $query = sprintf("SELECT isongoing FROM uo_game WHERE game_id=%d LIMIT 1", (int) $gameId);
+
+  return (int) DBQueryToValue($query);
+}
+
+function isGamePaused($gameId) {
+  
+  $query = sprintf("SELECT (isongoing=1 AND timer_pause_start IS NOT NULL) AS ispaused FROM uo_game WHERE game_id=%d LIMIT 1", (int) $gameId);
+  
+  return (int) DBQueryToValue($query);
+}
+
+function GameTimeStart($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+
+  $query = sprintf("UPDATE uo_game SET isongoing = 1, timer_start = %d WHERE game_id = %d", time(), $gameId);
+
+  return DBQuery($query);
+}
+
+function GameTimePause($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+
+  $query = sprintf("UPDATE uo_game SET timer_pause_start = %d 
+    WHERE game_id = %d AND isongoing = 1 AND timer_pause_start IS NULL", time(), $gameId);
+
+  return DBQuery($query);
+}
+
+function GameTimeResume($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+  
+  $query = sprintf("SELECT timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id = %d LIMIT 1", $gameId);
+  $row = DBQueryToRow($query);
+  
+  if ($row && $row['timer_pause_start']) {
+    $pausedTime = time() - (int) $row['timer_pause_start'];
+    $totalPaused = (int) $row['timer_paused_duration'] + $pausedTime;
+    
+    $updateQuery = sprintf("UPDATE uo_game SET timer_paused_duration = %d, timer_pause_start = NULL 
+      WHERE game_id = %d", $totalPaused, $gameId);
+    
+    return DBQuery($updateQuery);
+  }
+
+  return false; // Not paused or invalid
+}
+
+function GameElapsedTime($gameId) {
+  $gameId = (int) $gameId;
+
+  $query = sprintf("SELECT timer_start, timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id=%d LIMIT 1", $gameId);
+  $row = DBQueryToRow($query);
+
+  $elapsed = time() - (int) $row['timer_start'] - (int) $row['timer_paused_duration'];
+
+  if ($row['timer_pause_start']) {
+    $elapsed -= time() - (int) $row['timer_pause_start'];
+  }
+
+  $minutes = floor($elapsed / 60);
+  $seconds = $elapsed % 60;
+  $roundedSeconds = round($seconds / 5) * 5;
+
+  if ($roundedSeconds == 60) {
+    $minutes++;
+    $roundedSeconds = 0;
+  }
+
+  return [ "mm" => $minutes, "ss" => $seconds, "rss" => $roundedSeconds ];
 }
