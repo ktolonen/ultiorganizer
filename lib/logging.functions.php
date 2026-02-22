@@ -273,6 +273,10 @@ function LogDbUpgrade($version, $end = false, $source = "")
  */
 function LogPageLoad($page)
 {
+	if (IsVisitorLoggingDisabled()) {
+		return;
+	}
+
 	// Guard against logging raw or clearly invalid input
 	if (empty($page) || !preg_match('/^[a-z0-9_\\/\\-]+$/i', $page)) {
 		return;
@@ -302,6 +306,17 @@ function LogPageLoad($page)
 	}
 }
 
+function IsVisitorLoggingDisabled()
+{
+	$value = DBQueryToValue("SELECT value FROM uo_setting WHERE name='DisableVisitorLogging'");
+	if ($value === -1 || $value === null || $value === false) {
+		return false;
+	}
+
+	$normalized = strtolower(trim((string)$value));
+	return in_array($normalized, array("1", "true", "yes", "on", "enabled"), true);
+}
+
 /**
  * Log visitors visit into database for usage statistics.
  * 
@@ -309,6 +324,9 @@ function LogPageLoad($page)
  */
 function LogVisitor($ip)
 {
+	if (IsVisitorLoggingDisabled()) {
+		return;
+	}
 
 	$query = sprintf(
 		"SELECT visits FROM uo_visitor_counter WHERE ip='%s'",

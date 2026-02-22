@@ -52,6 +52,15 @@ if (!empty($_POST['save'])) {
 		$setting['value']="false";
 	}
 	$settings[] = $setting;
+
+	$setting = array();
+	$setting['name'] = "DisableVisitorLogging";
+	if (!empty($_POST['DisableVisitorLogging'])) {
+		$setting['value'] = "true";
+	} else {
+		$setting['value'] = "false";
+	}
+	$settings[] = $setting;
 	
 	$setting = array();
 	$setting['name'] = "HomeTeamResponsible";
@@ -190,6 +199,17 @@ foreach ($settings as $setting) {
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ReadOnlyServer' checked='checked'/></td>";
 		}else{
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ReadOnlyServer'/></td>";
+		}
+		$htmltmp2 .= "</tr>\n";
+	}
+
+	if ($setting['name'] == "DisableVisitorLogging") {
+		$htmltmp2 .= "<tr>";
+		$htmltmp2 .= "<td class='infocell'>" . _("Disable visitor logging") . ":</td>";
+		if ($setting['value'] == "true") {
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableVisitorLogging' checked='checked'/></td>";
+		} else {
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableVisitorLogging'/></td>";
 		}
 		$htmltmp2 .= "</tr>\n";
 	}

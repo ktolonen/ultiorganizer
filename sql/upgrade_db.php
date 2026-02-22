@@ -1070,6 +1070,13 @@ function upgrade84()
 	}
 }
 
+function upgrade85()
+{
+	if (!hasRow("uo_setting", "name", "DisableVisitorLogging")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("DisableVisitorLogging", "false")');
+	}
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';

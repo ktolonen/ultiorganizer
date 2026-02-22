@@ -812,7 +812,7 @@ CREATE TABLE IF NOT EXISTS `uo_setting` (
   `value` varchar(200) DEFAULT '',
   `setting_id` int(10) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`setting_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=13 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('CurrentSeason', NULL, 1),
@@ -826,7 +826,8 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('ShowDefenseStats', 'false', 9),
 	('AdminEmail', 'ultiorganizer_admin@example.com', 10),
 	('ShowSpiritComments', 'false', 11),
-	('ReadOnlyServer', 'false', 12);
+	('ReadOnlyServer', 'false', 12),
+	('DisableVisitorLogging', 'false', 13);
 
 CREATE TABLE IF NOT EXISTS `uo_sms` (
   `sms_id` int(10) NOT NULL AUTO_INCREMENT,
