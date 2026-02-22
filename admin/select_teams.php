@@ -19,7 +19,7 @@ if (isset($_GET['series'])) {
     $seriesId = intval($_GET['series']);
 }
 
-$pools = SeriesPools($seriesId, false, true, false);
+$pools = SeriesPools($seriesId, false, true, true);
 $not_started = array();
 foreach ($pools as $pool) {
     if (!IsPoolStarted($pool['pool_id'])) {

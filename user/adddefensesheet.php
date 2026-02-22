@@ -45,6 +45,10 @@ contentStart();
 
 //echo "First line"
 $gameId = intval($_GET["game"]);
+
+if (!hasEditGameEventsRight($gameId))
+  die('Insufficient rights to edit game');
+
 $season = GameSeason($gameId);
 $seasoninfo = SeasonInfo($season);
 

@@ -117,7 +117,7 @@ function SeriesTypes()
 function SeriesTeams($seriesId, $orderbyseeding = false)
 {
   $query = sprintf(
-    "SELECT DISTINCT t.team_id, t.name, t.abbreviation, t.club, t.valid, cl.name AS clubname,
+    "SELECT t.team_id, t.name, t.abbreviation, t.club, t.valid, cl.name AS clubname,
 			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
 			c.flagfile
 			FROM uo_team t
@@ -128,6 +128,7 @@ function SeriesTeams($seriesId, $orderbyseeding = false)
 			LEFT JOIN uo_club cl ON(cl.club_id=t.club)
 			LEFT JOIN uo_country c ON(c.country_id=t.country)
 			WHERE t.series = '%d'
+			GROUP BY t.team_id
 			",
     (int)($seriesId)
   );

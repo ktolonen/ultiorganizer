@@ -8,6 +8,10 @@ include_once $include_prefix . 'lib/player.functions.php';
 $LAYOUT_ID = ADDPLAYERLISTS;
 $title = _("Rosters");
 $gameId = intval($_GET["game"]);
+
+if (!hasEditGameEventsRight($gameId))
+  die('Insufficient rights to edit game');
+
 $game_result = GameResult($gameId);
 
 $season = GameSeason($gameId);

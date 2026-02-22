@@ -50,8 +50,8 @@ include_once 'localization.php';
 			echo "<th style='width:8%' class='pk_ser_th'>" . _("Wins") . "</th>";
 			echo "<th style='width:8%' class='pk_ser_th'>" . _("Losses") . "</th>";
 			echo "<th style='width:8%' class='pk_ser_th'>" . _("Goals for") . "</th>";
-			echo "<th style='width:8%' class='pk_ser_th'>" . _("against") . "</th>";
-			echo "<th style='width:8%' class='pk_ser_th'>" . _("diff.") . "</th>";
+			echo "<th style='width:8%' class='pk_ser_th'>"._("Goals against")."</th>";
+			echo "<th style='width:8%' class='pk_ser_th'>"._("Goal diff")."</th>";
 			echo "</tr>\n";
 
 			$standings = PoolTeams($poolinfo['pool_id'], "rank");

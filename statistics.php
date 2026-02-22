@@ -120,7 +120,7 @@ if ($list == "teamstandings") {
   $scores = ScoreboardAllTime(100, "", "", "", $sort);
   $html .= "<table border='1' width='100%'><tr>
 				<th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=games'>" . _("Games") . "</a></th>
-				<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Passes") . "</a></th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a>
+				<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a>
 				</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Total") . "</a></th></tr>\n";
   $i = 1;
   foreach ($scores as $row) {
@@ -162,7 +162,7 @@ if ($list == "teamstandings") {
       $scores = ScoreboardAllTime(30, $seasontype, $seriestype, "", $sort);
       $html .= "<table border='1' width='100%'><tr>
 						<th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th><th class='center'>" . _("Games") . "</th>
-						<th class='center'>" . _("Passes") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Total") . "</th></tr>\n";
+						<th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Total") . "</th></tr>\n";
       $i = 1;
       foreach ($scores as $row) {
         $html .= "<tr>\n";

@@ -8,6 +8,10 @@ include_once $include_prefix . 'lib/configuration.functions.php';
 $html = "";
 $html2 = "";
 $gameId = intval($_GET["game"]);
+
+if (!hasEditGameEventsRight($gameId))
+  die('Insufficient rights to edit game');
+
 $game_result = GameInfo($gameId);
 $seasoninfo = SeasonInfo($game_result['season']);
 

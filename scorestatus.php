@@ -10,7 +10,7 @@ $poolId = 0;
 $poolIds = array();
 $seriesId = 0;
 $teamId = 0;
-$sort = "total";
+$sort="totalavg";
 $scores = null;
 
 if (iget("pool")) {
@@ -74,10 +74,20 @@ if ($sort == "pass") {
 } else {
   $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th>";
 }
-if ($sort == "goal") {
-  $html .= "<th class='center' style='width:8%'><b>" . _("Goals") . "</b></th>";
-} else {
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a></th>";
+if($sort == "passavg"){
+  $html .= "<th class='center' style='width:8%'><b>"._("Ast/Gm")."</b></th>";
+}else{
+  $html .= "<th class='center' style='width:8%'><a class='thsort' href='".$viewUrl."sort=passavg'>"._("Ast/Gm")."</a></th>";
+}
+if($sort == "goal") {
+  $html .= "<th class='center' style='width:8%'><b>"._("Goals")."</b></th>";
+}else{
+  $html .= "<th class='center' style='width:8%'><a class='thsort' href='".$viewUrl."sort=goal'>"._("Goals")."</a></th>";
+}
+if($sort == "goalavg") {
+  $html .= "<th class='center' style='width:8%'><b>"._("Gls/Gm")."</b></th>";
+}else{
+  $html .= "<th class='center' style='width:8%'><a class='thsort' href='".$viewUrl."sort=goalavg'>"._("Gls/Gm")."</a></th>";
 }
 
 if ($sort == "callahan") {
@@ -90,6 +100,11 @@ if ($sort == "total") {
   $html .= "<th class='center' style='width:8%'><b>" . _("Tot.") . "</b></th>";
 } else {
   $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Tot.") . "</a></th>";
+}
+if($sort == "totalavg") {
+  $html .= "<th class='center' style='width:8%'><b>"._("Tot/Gm")."</b></th>";
+}else{
+  $html .= "<th class='center' style='width:8%'><a class='thsort' href='".$viewUrl."sort=totalavg'>"._("Tot/Gm")."</a></th>";
 }
 $html .= "</tr>";
 
@@ -135,11 +150,21 @@ if ($scores) {
     } else {
       $html .= "<td class='center'>" . intval($row['fedin']) . "</td>";
     }
+  if($sort == "passavg"){
+    $html .= "<td class='center highlight'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
+  }else{
+    $html .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
+  }
     if ($sort == "goal") {
       $html .= "<td class='center highlight'>" . intval($row['done']) . "</td>";
     } else {
       $html .= "<td class='center'>" . intval($row['done']) . "</td>";
     }
+  if($sort == "goalavg"){
+    $html .= "<td class='center highlight'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+  }else{
+    $html .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+  }
 
     if ($sort == "callahan") {
       $html .= "<td class='center highlight'>" . intval($row['callahan']) . "</td>";
@@ -147,12 +172,17 @@ if ($scores) {
       $html .= "<td class='center'>" . intval($row['callahan']) . "</td>";
     }
 
-    if ($sort == "total") {
-      $html .= "<td class='center highlight'>" . intval($row['total']) . "</td></tr>";
-    } else {
-      $html .= "<td class='center'>" . intval($row['total']) . "</td></tr>";
-    }
+  if($sort == "total") {
+    $html .= "<td class='center highlight'>".intval($row['total'])."</td>";
+  }else{
+    $html .= "<td class='center'>".intval($row['total'])."</td>";
   }
+  if($sort == "totalavg") {
+    $html .= "<td class='center highlight'>".sprintf("%.2f",floatval($row['totalavg']))."</td></tr>";
+  }else{
+    $html .= "<td class='center'>".sprintf("%.2f",floatval($row['totalavg']))."</td></tr>";
+  }
+}
 }
 
 $html .= "</table>";

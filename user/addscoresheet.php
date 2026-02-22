@@ -9,6 +9,9 @@ include_once $include_prefix . 'lib/configuration.functions.php';
 
 $gameId = intval($_GET["game"]);
 
+if (!hasEditGameEventsRight($gameId))
+  die('Insufficient rights to edit game');
+
 $LAYOUT_ID = ADDSCORESHEET;
 $title = _("Feed in score sheet");
 $maxtimeouts = 6;
