@@ -171,6 +171,27 @@ function isEventReadonly($seasonId)
 }
 
 /**
+ * Marks event (season) read-only.
+ *
+ * Access level: seasonadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return boolean TRUE on success or FALSE on error.
+ */
+function SetEventReadonly($seasonId)
+{
+  if (isSeasonAdmin($seasonId)) {
+    $query = sprintf(
+      "UPDATE uo_season SET event_readonly=1 WHERE season_id='%s'",
+      DBEscapeString($seasonId)
+    );
+    return DBQuery($query);
+  } else {
+    die('Insufficient rights to edit season');
+  }
+}
+
+/**
  * Returns true if season exists.
  * @param string $seasonId uo_season.season_id 
  * @return true if season with given id exists

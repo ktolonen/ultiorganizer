@@ -20,6 +20,7 @@ if (!empty($_POST['calc'])) {
     CalcTeamStats($season);
     CalcTeamSpiritStats($season);
     CalcPlayerStats($season);
+    SetEventReadonly($season);
 }
 if (!empty($_POST['undo'])) {
     set_time_limit(120);
