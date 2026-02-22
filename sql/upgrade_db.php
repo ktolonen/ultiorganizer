@@ -1075,17 +1075,9 @@ function upgrade85()
 	if (!hasRow("uo_setting", "name", "DisableVisitorLogging")) {
 		runQuery('INSERT INTO uo_setting (name, value) VALUES ("DisableVisitorLogging", "false")');
 	}
-}
-
-function upgrade86()
-{
 	if (!hasColumn("uo_season", "hide_time_on_scoresheet")) {
 		addColumn("uo_season", "hide_time_on_scoresheet", "tinyint(1) DEFAULT 0");
 	}
-}
-
-function upgrade87()
-{
 	if (!hasColumn("uo_season", "event_readonly")) {
 		addColumn("uo_season", "event_readonly", "tinyint(1) DEFAULT 0");
 	}
