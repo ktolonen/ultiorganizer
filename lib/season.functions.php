@@ -159,6 +159,18 @@ function SeasonInfo($seasonId)
 }
 
 /**
+ * Returns true if event (season) is in read-only mode.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return bool
+ */
+function isEventReadonly($seasonId)
+{
+  $seasonInfo = SeasonInfo($seasonId);
+  return !empty($seasonInfo['event_readonly']);
+}
+
+/**
  * Returns true if season exists.
  * @param string $seasonId uo_season.season_id 
  * @return true if season with given id exists

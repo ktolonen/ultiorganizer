@@ -485,8 +485,12 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   $editlinks = getEditSeasonLinks();
   if (count($editlinks)) {
     foreach ($editlinks as $season => $links) {
+      $readonlyLabel = "";
+      if (isEventReadonly($season)) {
+        $readonlyLabel = "<br/>" . utf8entities(_("Read-only"));
+      }
       echo "<table class='leftmenulinks'>\n";
-      echo "<tr><td class='menuseasonlevel'>" . utf8entities(SeasonName($season)) . " " . utf8entities(_("Administration")) . "</td>";
+      echo "<tr><td class='menuseasonlevel'>" . utf8entities(SeasonName($season)) . " " . utf8entities(_("Administration")) . $readonlyLabel . "</td>";
       echo "<td class='menuseasonlevel'><a style='text-decoration: none;' href='?view=frontpage&amp;hideseason=$season'>x</a></td>";
       echo "</tr><tr><td>\n";
       foreach ($links as $href => $name) {

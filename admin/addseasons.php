@@ -347,12 +347,14 @@ if ($sp['use_season_points']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Enables season-level points/ranking features for this event.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Hide time on scoresheet") . ": </td><td><input class='input' type='checkbox' name='hide_time_on_scoresheet' ";
 if ($sp['hide_time_on_scoresheet']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defense time input fields from scorekeeper sheets.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Organizer") . ": </td><td><input class='input' size='50' maxlength='50' name='organizer' value='" . utf8entities($sp['organizer']) . "'/></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Category") . ": </td><td><input class='input' size='50' maxlength='50' name='category' value='" . utf8entities($sp['category']) . "'/></td></tr>";
@@ -387,6 +389,7 @@ if ($sp['enrollopen']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows teams to submit enrollment requests for this event.") . "</span></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Enrolling ends") . "<br/>(" . _("only informational") . "): </td>";
 $html .= "<td><input class='input' size='12' maxlength='10' id='enrollendtime' name='enrollendtime'  value='" . ShortDate($sp['enroll_deadline']) . "'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal3'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
@@ -397,18 +400,21 @@ if ($sp['iscurrent']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls visibility in navigation; does not change edit rights or API visibility.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Read-only event") . ": </td><td><input class='input' type='checkbox' name='event_readonly' ";
 if ($sp['event_readonly']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, only superadmin can edit this event.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Visible in public API") . ": </td><td><input class='input' type='checkbox' name='api_public' ";
 if ($sp['api_public']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Exposes this event in API responses; does not grant write access.") . "</span></td></tr>";
 
 $html .= "</table>\n";
 if (empty($seasonId)) {

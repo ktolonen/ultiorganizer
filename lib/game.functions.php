@@ -671,6 +671,10 @@ function GameUpdateResult($gameId, $home, $away)
 
 function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights = true)
 {
+	$seasonId = GameSeason($gameId);
+	if (!$checkRights && isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
+		die('Insufficient rights to edit game');
+	}
 	if (!$checkRights || hasEditGameEventsRight($gameId)) {
 		LogGameUpdate($gameId, "result: $home - $away");
 		$query = sprintf(

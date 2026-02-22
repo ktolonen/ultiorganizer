@@ -585,6 +585,11 @@ function isSeasonAdmin($season)
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]);
 }
 
+function canBypassEventReadonly($season)
+{
+	return isset($_SESSION['userproperties']['userrole']['superadmin']);
+}
+
 function hasScheduleRights()
 {
 	return isset($_SESSION['userproperties']['userrole']['resadmin']);
@@ -618,30 +623,58 @@ function hasCurrentSeasonsEditRight()
 
 function hasEditSeasonSeriesRight($season)
 {
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditPlacesRight($season)
 {
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditTeamsRight($series)
 {
 	$season = SeriesSeasonId($series);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function  hasEditGamesRight($series)
 {
 	$season = SeriesSeasonId($series);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditPlayerProfileRight($playerId)
@@ -650,21 +683,35 @@ function hasEditPlayerProfileRight($playerId)
 	$team = $playerInfo['team'];
 	$series = getTeamSeries($team);
 	$season = SeriesSeasonId($series);
-	return isPlayerAdmin($playerInfo['profile_id']) ||
+	$hasEditRight = isPlayerAdmin($playerInfo['profile_id']) ||
 		isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditPlayersRight($team)
 {
 	$series = getTeamSeries($team);
 	$season = SeriesSeasonId($series);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditGamePlayersRight($game)
@@ -673,12 +720,19 @@ function hasEditGamePlayersRight($game)
 	$series = GameSeries($game);
 	$season = SeriesSeasonId($series);
 	$reservation = GameReservation($game);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]) ||
 		isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservation]) ||
 		isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditGameEventsRight($game)
@@ -687,16 +741,28 @@ function hasEditGameEventsRight($game)
 	$series = GameSeries($game);
 	$season = SeriesSeasonId($series);
 	$reservation = GameReservation($game);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]) ||
 		isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservation]) ||
 		isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 function hasAccredidationRight($team)
 {
-	return hasEditTeamsRight(getTeamSeries($team)) ||
+	$series = getTeamSeries($team);
+	$season = SeriesSeasonId($series);
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return hasEditTeamsRight($series) ||
 		isset($_SESSION['userproperties']['userrole']['accradmin'][$team]);
 }
 

@@ -1864,7 +1864,9 @@ function SetPoolName($poolId, $name)
 function PoolDeleteTeam($poolId, $teamId, $checkrights = true)
 {
   $poolInfo = PoolInfo($poolId);
-  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
+  $seasonId = SeriesSeasonId($poolInfo['series']);
+  $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));
+  if ($bypassReadonlyAllowed || hasEditTeamsRight($poolInfo['series'])) {
 
     $query = sprintf(
       "DELETE FROM uo_team_pool WHERE pool=%d AND team=%d",
@@ -1952,8 +1954,9 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool)
 function PoolAddTeam($poolId, $teamId, $rank, $updaterank = false, $checkrights = true)
 {
   $poolInfo = PoolInfo($poolId);
-
-  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
+  $seasonId = SeriesSeasonId($poolInfo['series']);
+  $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));
+  if ($bypassReadonlyAllowed || hasEditTeamsRight($poolInfo['series'])) {
 
     if ($updaterank) {
       $query = sprintf(
@@ -2189,7 +2192,9 @@ function PoolMakeMoves($poolId)
 function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
 {
   $poolInfo = PoolInfo($frompool);
-  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
+  $seasonId = SeriesSeasonId($poolInfo['series']);
+  $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));
+  if ($bypassReadonlyAllowed || hasEditTeamsRight($poolInfo['series'])) {
     //move teams
     $query = sprintf(
       "SELECT pmt.*, ps.name, sn.name AS sname
