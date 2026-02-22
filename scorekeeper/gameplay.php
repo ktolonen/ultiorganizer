@@ -4,6 +4,8 @@ $html = "";
 
 $gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
+$seasoninfo = SeasonInfo(GameSeason($gameId));
+$hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 
@@ -56,7 +58,10 @@ if (mysqli_num_rows($goals) <= 0) {
 					}
 
 					$html .= "<tr class='" . $rowClass . "'><td>\n";
-					$html .= SecToMin($event['time']) . " " . $team . " " . $gameevent;
+					if (!$hideTimeOnScoresheet) {
+						$html .= SecToMin($event['time']) . " ";
+					}
+					$html .= $team . " " . $gameevent;
 					$html .= "</td></tr>\n";
 				}
 			}
@@ -70,7 +75,9 @@ if (mysqli_num_rows($goals) <= 0) {
 
 
 		$html .= "<tr class='" . $rowClass . "'><td>\n";
-		$html .= SecToMin($goal['time']) . " ";
+		if (!$hideTimeOnScoresheet) {
+			$html .= SecToMin($goal['time']) . " ";
+		}
 		$html .= $goal['homescore'] . " - " . $goal['visitorscore'] . " ";
 		if (intval($goal['iscallahan'])) {
 			$html .= _("Callahan-goal") . "&nbsp;";

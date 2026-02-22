@@ -51,6 +51,7 @@ if (!hasEditGameEventsRight($gameId))
 
 $season = GameSeason($gameId);
 $seasoninfo = SeasonInfo($season);
+$hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 
 //content
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
@@ -77,10 +78,13 @@ if (!empty($_POST['save'])) {
 	LogDefenseUpdate($gameId, "defensesheet saved", "adddefensesheet");
 	$time_delim = array(",", ";", ":");
 	//GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $number)
-	//set halftime
-	$htime = $_POST['halftime'];
-	$htime = str_replace($time_delim, ".", $htime);
-	$htime = TimeToSec($htime);
+	$htime = 0;
+	if (!$hideTimeOnScoresheet) {
+		//set halftime
+		$htime = $_POST['halftime'];
+		$htime = str_replace($time_delim, ".", $htime);
+		$htime = TimeToSec($htime);
+	}
 
 	//remove all old defenses (if any)
 	GameRemoveAllDefenses($gameId);
@@ -106,19 +110,23 @@ if (!empty($_POST['save'])) {
 			$caught = $_POST['caught' . $i];
 		if (!empty($_POST['callahan' . $i]))
 			$callahan = $_POST['callahan' . $i];
-		if (!empty($_POST['time' . $i]))
-			$time = $_POST['time' . $i];
+		if ($hideTimeOnScoresheet) {
+			$time = $prevtime + 1;
+		} else {
+			if (!empty($_POST['time' . $i]))
+				$time = $_POST['time' . $i];
 
-		$time = str_replace($time_delim, ".", $time);
-		$time = TimeToSec($time);
-		if (!empty($team) && $time == $htime) {
-			echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same as half-time ending") . "!</p>";
-			$errIds[] = "time$i";
-		}
+			$time = str_replace($time_delim, ".", $time);
+			$time = TimeToSec($time);
+			if (!empty($team) && $time == $htime) {
+				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same as half-time ending") . "!</p>";
+				$errIds[] = "time$i";
+			}
 
-		if (!empty($team) && $time <= $prevtime) {
-			echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same or earlier than the previous point") . "!</p>";
-			$errIds[] = "time$i";
+			if (!empty($team) && $time <= $prevtime) {
+				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same or earlier than the previous point") . "!</p>";
+				$errIds[] = "time$i";
+			}
 		}
 
 		//if(strcasecmp($pass,'xx')==0 || strcasecmp($pass,'x')==0)
@@ -217,62 +225,64 @@ echo "<tr><td style='width: 40px' class='center'><input id='vstart' name='starti
 echo "<td>" . utf8entities($game_result['visitorteamname']) . "</td></tr>";
 echo "</table>\n";
 
-//timeouts
-echo "<table cellspacing='0' width='100%' border='1'>";
-echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Time-outs") . "</th></tr>\n";
+if (!$hideTimeOnScoresheet) {
+	//timeouts
+	echo "<table cellspacing='0' width='100%' border='1'>";
+	echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Time-outs") . "</th></tr>\n";
 
-echo "<tr><th>" . _("Home") . "</th>\n";
+	echo "<tr><th>" . _("Home") . "</th>\n";
 
-//home team used timeouts
-$i = 0;
-$timeouts = GameTimeouts($gameId);
-while ($timeout = mysqli_fetch_assoc($timeouts)) {
-	if (intval($timeout['ishome'])) {
-		echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
-		$i++;
+	//home team used timeouts
+	$i = 0;
+	$timeouts = GameTimeouts($gameId);
+	while ($timeout = mysqli_fetch_assoc($timeouts)) {
+		if (intval($timeout['ishome'])) {
+			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+			$i++;
+		}
 	}
-}
 
-//empty slots
-for ($i; $i < $maxtimeouts; $i++) {
-	//two last slot are smaller for visual reasons
-	if ($i > ($maxtimeouts - 3))
-		echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
-	else
-		echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
-}
-echo "</tr>\n";
-
-echo "<tr><th>" . _("Away") . "</th>\n";
-
-//away team used timeouts
-$i = 0;
-$timeouts = GameTimeouts($gameId);
-while ($timeout = mysqli_fetch_assoc($timeouts)) {
-	if (!intval($timeout['ishome'])) {
-		echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
-		$i++;
+	//empty slots
+	for ($i; $i < $maxtimeouts; $i++) {
+		//two last slot are smaller for visual reasons
+		if ($i > ($maxtimeouts - 3))
+			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
+		else
+			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
 	}
-}
+	echo "</tr>\n";
 
-//empty slots
-for ($i; $i < $maxtimeouts; $i++) {
-	//two last slot are smaller for visual reasons
-	if ($i > ($maxtimeouts - 3))
-		echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
-	else
-		echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
-}
+	echo "<tr><th>" . _("Away") . "</th>\n";
 
-echo "</tr>";
-echo "</table>";
+	//away team used timeouts
+	$i = 0;
+	$timeouts = GameTimeouts($gameId);
+	while ($timeout = mysqli_fetch_assoc($timeouts)) {
+		if (!intval($timeout['ishome'])) {
+			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+			$i++;
+		}
+	}
 
-//halftime
-echo "<table cellspacing='0' width='100%' border='1'>\n";
-echo "<tr><th>" . _("Half-time ended at") . "</th></tr>";
-echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
+	//empty slots
+	for ($i; $i < $maxtimeouts; $i++) {
+		//two last slot are smaller for visual reasons
+		if ($i > ($maxtimeouts - 3))
+			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
+		else
+			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
+	}
+
+	echo "</tr>";
+	echo "</table>";
+
+	//halftime
+	echo "<table cellspacing='0' width='100%' border='1'>\n";
+	echo "<tr><th>" . _("Half-time ended at") . "</th></tr>";
+	echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 	maxlength='8' type='text' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
-echo "</table>\n";
+	echo "</table>\n";
+}
 
 //result		
 echo "<table cellspacing='0' width='100%' border='1'>\n";
@@ -330,7 +340,11 @@ echo "<tr><td colspan='2'>
 <p>" . _("Feed in the scoresheet") . ":</p>
 <ul>
 <li>" . _("In addition to the tab-key you can use the + key to change fields and the enter key to select a radio button.") . "</li>
-<li>" . _("As separator in the time field you can use any of the '.', ',', ':', or ';' characters") . ".</li>
+";
+if (!$hideTimeOnScoresheet) {
+	echo "<li>" . _("As separator in the time field you can use any of the '.', ',', ':', or ';' characters") . ".</li>";
+}
+echo "
 <li>" . _("Input XX as the assist in Callahan goals") . ".</li>
 <li>" . _("You can save the score sheet at any time while feeding it in") . "</li></ul></td></tr>";
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>" . _("Back to game responsibilities") . "</a></p></td></tr>";
@@ -359,7 +373,12 @@ echo "<tr><th style='background-color:#FFFFFF;border-style:none;border-width:0;b
 echo "<th style='$style_left'>" . _("Home") . "</th><th style='$style_mid'>" . _("Away") . "</th>";
 echo "<th style='$style_mid'>" . _("Player") . "</th><th style='$style_mid'>" . _("Caught") . "</th>";
 echo "<th style='$style_mid'>" . _("Touched") . "</th><th style='$style_mid'>" . _("Callahan") . "</th>";
-echo "<th style='$style_mid'>" . _("Not callahan") . "</th><th style='$style_right'>" . _("Time") . "</th>";
+echo "<th style='$style_mid'>" . _("Not callahan") . "</th>";
+if ($hideTimeOnScoresheet) {
+	echo "<th style='$style_right'></th>";
+} else {
+	echo "<th style='$style_right'>" . _("Time") . "</th>";
+}
 //echo "<th style='$style_right'>"._("Score")."</th></tr>\n";
 
 $scores = GameDefenses($gameId);
@@ -398,7 +417,11 @@ while ($row = mysqli_fetch_assoc($scores)) {
 	}
 
 
-	echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8' value='" . SecToMin($row['time']) . "'/></td>";
+	if ($hideTimeOnScoresheet) {
+		echo "<td style='width:60px;$style_right'></td>";
+	} else {
+		echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8' value='" . SecToMin($row['time']) . "'/></td>";
+	}
 
 	echo "</tr>\n";
 	$i++;
@@ -415,7 +438,11 @@ for ($i; $i < $maxdefenses; $i++) {
 	echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' value='T' /></td>";
 	echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio'  value='L' /></td>";
 	echo "<td style='width:40px;$style_mid' class='center'><input id='notCallahan$i' name='callahan$i' type='radio' value='N' /></td>";
-	echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8'/></td>";
+	if ($hideTimeOnScoresheet) {
+		echo "<td style='width:60px;$style_right'></td>";
+	} else {
+		echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8'/></td>";
+	}
 
 	echo "</tr>\n";
 }

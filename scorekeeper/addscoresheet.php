@@ -8,6 +8,7 @@ $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
 $_SESSION['game'] = $gameId;
 
 $seasoninfo = SeasonInfo(GameSeason($gameId));
+$hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $game_result = GameResult($gameId);
 $result = GameGoals($gameId);
 $scores = array();
@@ -57,17 +58,21 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
     $uo_goal['scorer'] = $_POST['goal'];
     $goal = $_POST['goal'];
   }
-  if (!empty($_POST['timemm'])) {
-    $timemm = intval($_POST['timemm']);
-  }
-  if (!empty($_POST['timess'])) {
-    $timess = intval($_POST['timess']);
-  }
+  if ($hideTimeOnScoresheet) {
+    $uo_goal['time'] = $prevtime + 1;
+  } else {
+    if (!empty($_POST['timemm'])) {
+      $timemm = intval($_POST['timemm']);
+    }
+    if (!empty($_POST['timess'])) {
+      $timess = intval($_POST['timess']);
+    }
 
-  $uo_goal['time'] = TimeToSec($timemm . "." . $timess);
+    $uo_goal['time'] = TimeToSec($timemm . "." . $timess);
 
-  if ($uo_goal['time'] <= $prevtime) {
-    $errors .= "<p class='warning'>" . _("Time can not be the same or earlier than the previous point") . "!</p>\n";
+    if ($uo_goal['time'] <= $prevtime) {
+      $errors .= "<p class='warning'>" . _("Time can not be the same or earlier than the previous point") . "!</p>\n";
+    }
   }
 
     if (strcasecmp($uo_goal['assist'], 'xx') == 0 || strcasecmp($uo_goal['assist'], 'x') == 0) {
@@ -148,7 +153,9 @@ if (count($scores) > 0) {
   //$html .= "<div class='ui-block-a'>\n";
 
   $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
-  $html .= "[" . SecToMin($lastscore['time']) . "] ";
+  if (!$hideTimeOnScoresheet) {
+    $html .= "[" . SecToMin($lastscore['time']) . "] ";
+  }
   if (intval($lastscore['iscallahan'])) {
     $lastpass = "xx";
   } else {
@@ -229,45 +236,49 @@ foreach ($played_players as $player) {
 }
 $html .= "</select>";
 
-if (isset($lastscore)) {
+if (!$hideTimeOnScoresheet && isset($lastscore)) {
   $time = explode(".", SecToMin($lastscore['time']));
   $timemm = $time[0];
   $timess = $time[1];
 }
 
-$html .= "<label for='timemm' class='select'>" . _("In time") . " " . _("min") . ":" . _("sec") . "</label>";
-$html .= "<div class='ui-grid-b'>";
-$html .= "<div class='ui-block-a'>\n";
-$html .= "<select id='timemm' name='timemm' >";
-for ($i = 0; $i <= 180; $i++) {
-  if ($i == $timemm) {
-    $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-  } else {
-    $html .= "<option value='" . $i . "'>" . $i . "</option>";
+if (!$hideTimeOnScoresheet) {
+  $html .= "<label for='timemm' class='select'>" . _("In time") . " " . _("min") . ":" . _("sec") . "</label>";
+  $html .= "<div class='ui-grid-b'>";
+  $html .= "<div class='ui-block-a'>\n";
+  $html .= "<select id='timemm' name='timemm' >";
+  for ($i = 0; $i <= 180; $i++) {
+    if ($i == $timemm) {
+      $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
+    } else {
+      $html .= "<option value='" . $i . "'>" . $i . "</option>";
+    }
   }
-}
-$html .= "</select>";
-$html .= "</div>";
-$html .= "<div class='ui-block-b'>\n";
-$html .= "<select id='timess' name='timess' >";
-for ($i = 0; $i <= 55; $i = $i + 5) {
-  if ($i == $timess) {
-    $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-  } else {
-    $html .= "<option value='" . $i . "'>" . $i . "</option>";
+  $html .= "</select>";
+  $html .= "</div>";
+  $html .= "<div class='ui-block-b'>\n";
+  $html .= "<select id='timess' name='timess' >";
+  for ($i = 0; $i <= 55; $i = $i + 5) {
+    if ($i == $timess) {
+      $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
+    } else {
+      $html .= "<option value='" . $i . "'>" . $i . "</option>";
+    }
   }
+  $html .= "</select>";
+  $html .= "</div>";
+  $html .= "</div>";
 }
-$html .= "</select>";
-$html .= "</div>";
-$html .= "</div>";
 
 
 if (empty($errors)) {
   $html .= "<input type='submit' name='add' data-ajax='false' value='" . _("Save goal") . "'/>";
 $html .= "<h3>" . _("Additional game data") . "</h3>";
   $html .= "<div class='action-row action-row--even'>\n";
-  $html .= "<a href='?view=addtimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Time-outs") . "</a>";
-  $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Half time") . "</a>";
+  if (!$hideTimeOnScoresheet) {
+    $html .= "<a href='?view=addtimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Time-outs") . "</a>";
+    $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Half time") . "</a>";
+  }
   $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
   $html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game official") . "</a>";
   $html .= "<a href='?view=addcomment&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game note") . "</a>";

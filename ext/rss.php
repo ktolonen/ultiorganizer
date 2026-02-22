@@ -89,6 +89,8 @@ switch ($feedtype) {
     //$path = substr($baseurl,0,$cutpos); //remove ext
 
     $game = GameInfo($id1);
+    $seasoninfo = SeasonInfo(GameSeason($id1));
+    $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
     $goals = GameGoals($id1);
     $gameevents = GameEvents($id1);
     $mediaevents = GameMediaEvents($id1);
@@ -120,7 +122,10 @@ switch ($feedtype) {
 
       $scorer = $goal['scorerfirstname'] . " " . $goal['scorerlastname'];
 
-      $desc = "[" . SecToMin($goal['time']) . "] ";
+      $desc = "";
+      if (!$hideTimeOnScoresheet) {
+        $desc .= "[" . SecToMin($goal['time']) . "] ";
+      }
       if (!empty($pass) || !empty($scorer)) {
         $desc .= $pass . " --> " . $scorer;
       }
@@ -137,7 +142,10 @@ switch ($feedtype) {
           elseif ($event['type'] == "offence")
             $gameevent = _("Offence");
 
-          $desc .= "<br/>[" . SecToMin($event['time']) . "] ";
+          $desc .= "<br/>";
+          if (!$hideTimeOnScoresheet) {
+            $desc .= "[" . SecToMin($event['time']) . "] ";
+          }
 
           if (intval($event['ishome']) > 0)
             $desc .=  $gameevent . " " . $game['hometeamname'];
@@ -171,7 +179,9 @@ switch ($feedtype) {
         if (!empty($desc)) {
           $desc .= "<br/>";
         }
-        $desc .= "[" . SecToMin($event['time']) . "] ";
+        if (!$hideTimeOnScoresheet) {
+          $desc .= "[" . SecToMin($event['time']) . "] ";
+        }
 
         if (intval($event['ishome']) > 0)
           $desc .=  $gameevent . " " . $game['hometeamname'];

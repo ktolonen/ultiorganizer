@@ -15,6 +15,7 @@ if (!$game_result) {
   return;
 }
 $seasoninfo = SeasonInfo(GameSeason($gameId));
+$hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $homecaptain = GameCaptain($gameId, $game_result['hometeam']);
 $awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
 
@@ -170,20 +171,31 @@ if (GameHasStarted($game_result) > 0) {
       $width_a = $points[$i][0] * $offset;
 
       if ($points[$i][1] == -2) {
-        $title = SecToMin($points[$i][4]) . " halftime";
+        $title = $hideTimeOnScoresheet ? "halftime" : SecToMin($points[$i][4]) . " halftime";
       } else {
-        $title = SecToMin($points[$i][4]) . " " . $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+        if ($hideTimeOnScoresheet) {
+          $title = $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+        } else {
+          $title = SecToMin($points[$i][4]) . " " . $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+        }
       }
       $html .= "<td style='width:" . $width_a . "px' class='$color' title='$title'></td>\n";
     }
     $html .= "</tr></table>\n";
 
     $html .= "<table border='1' cellpadding='2' width='100%'>\n";
-    $html .= "<tr><th>" . _("Scores") . "</th><th>" . _("Assist") . "</th><th>" . _("Goal") . "</th><th>" . _("Time") . "</th><th>" . _("Dur.") . "</th>";
+    $html .= "<tr><th>" . _("Scores") . "</th><th>" . _("Assist") . "</th><th>" . _("Goal") . "</th>";
+    if (!$hideTimeOnScoresheet) {
+      $html .= "<th>" . _("Time") . "</th><th>" . _("Dur.") . "</th>";
+    }
     if (count($gameevents) || count($mediaevents)) {
       $html .= "<th>" . _("Game events ") . "</th>";
     }
     $html .= "</tr>\n";
+    $goalTableColspan = $hideTimeOnScoresheet ? 3 : 5;
+    if (count($gameevents) || count($mediaevents)) {
+      $goalTableColspan++;
+    }
 
     $bHt = false;
 
@@ -191,7 +203,7 @@ if (GameHasStarted($game_result) > 0) {
     mysqli_data_seek($goals, 0);
     while ($goal = mysqli_fetch_assoc($goals)) {
       if (!$bHt && $game_result['halftime'] > 0 && $goal['time'] > $game_result['halftime']) {
-        $html .= "<tr><td colspan='6' class='halftime'>" . _("Half-time") . "</td></tr>";
+        $html .= "<tr><td colspan='" . $goalTableColspan . "' class='halftime'>" . _("Half-time") . "</td></tr>";
         $bHt = 1;
         $prevgoal = intval($game_result['halftime']);
       }
@@ -218,10 +230,11 @@ if (GameHasStarted($game_result) > 0) {
         $html .= "#" . utf8entities($goal['scorernum']) . " ";
       }
       $html .= utf8entities($goal['scorerfirstname']) ." ". utf8entities($goal['scorerlastname']) ."&nbsp;</td>";
-      $html .= "<td>" . SecToMin($goal['time']) . "</td>";
-      $duration = $goal['time'] - $prevgoal;
-
-      $html .= "<td>" . SecToMin($duration) . "</td>";
+      if (!$hideTimeOnScoresheet) {
+        $html .= "<td>" . SecToMin($goal['time']) . "</td>";
+        $duration = $goal['time'] - $prevgoal;
+        $html .= "<td>" . SecToMin($duration) . "</td>";
+      }
 
       if (count($gameevents) || count($mediaevents)) {
         $html .= "<td>";
@@ -243,9 +256,17 @@ if (GameHasStarted($game_result) > 0) {
             }
 
             if (intval($event['ishome']) > 0) {
-              $html .= "<div class='home'>" . $gameevent . "&nbsp;" . SecToMin($event['time']) . "</div>";
+              $html .= "<div class='home'>" . $gameevent;
+              if (!$hideTimeOnScoresheet) {
+                $html .= "&nbsp;" . SecToMin($event['time']);
+              }
+              $html .= "</div>";
             } else {
-              $html .= "<div class='guest'>" . $gameevent . "&nbsp;" . SecToMin($event['time']) . "</div>";
+              $html .= "<div class='guest'>" . $gameevent;
+              if (!$hideTimeOnScoresheet) {
+                $html .= "&nbsp;" . SecToMin($event['time']);
+              }
+              $html .= "</div>";
             }
           }
         }
@@ -269,12 +290,7 @@ if (GameHasStarted($game_result) > 0) {
     }
     if (intval($game_result['isongoing'])) {
       $html .= "<tr style='border-style:dashed;border-width:1px;'>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      if (count($gameevents) || count($mediaevents)) {
+      for ($i = 0; $i < $goalTableColspan; $i++) {
         $html .= "<td>&nbsp;</td>";
       }
       $html .= "</tr>";
@@ -474,21 +490,23 @@ if (GameHasStarted($game_result) > 0) {
       $dblHAvg = SafeDivide($nHTotalTime, ($nHTotalTime + $nVTotalTime)) * 100;
       $dblVAvg = SafeDivide($nVTotalTime, ($nHTotalTime + $nVTotalTime)) * 100;
 
-      $html .= "<tr><td>" . _("Time on offence") . ":</td>
+      if (!$hideTimeOnScoresheet) {
+        $html .= "<tr><td>" . _("Time on offence") . ":</td>
 			<td class='home'>" . SecToMin($nHTotalTime) . " min (" . number_format($dblHAvg, 1) . " %)</td>
 			<td class='guest'>" . SecToMin($nVTotalTime) . " min (" . number_format($dblVAvg, 1) . " %)</td></tr>\n";
 
-      $html .= "<tr><td>" . _("Time on defence") . ":</td>
+        $html .= "<tr><td>" . _("Time on defence") . ":</td>
 			<td class='home'>" . SecToMin($nVTotalTime) . " min (" . number_format($dblVAvg, 1) . " %)</td>
 			<td class='guest'>" . SecToMin($nHTotalTime) . " min (" . number_format($dblHAvg, 1) . " %)</td></tr>\n";
 
-      $html .= "<tr><td>" . _("Time on offence") . "/" . _("goal") . ":</td>
+        $html .= "<tr><td>" . _("Time on offence") . "/" . _("goal") . ":</td>
 			<td class='home'>" . SecToMin(SafeDivide($nHTotalTime, $nHGoals)) . " min</td>
 			<td class='guest'>" . SecToMin(SafeDivide($nVTotalTime, $nVGoals)) . " min</td></tr>\n";
 
-      $html .= "<tr><td>" . _("Time on defence") . "/" . _("goal") . ":</td>
+        $html .= "<tr><td>" . _("Time on defence") . "/" . _("goal") . ":</td>
 			<td class='home'>" . SecToMin(SafeDivide($nVTotalTime, $nVGoals)) . " min</td>
 			<td class='guest'>" . SecToMin(SafeDivide($nHTotalTime, $nHGoals)) . " min</td></tr>\n";
+      }
 
       $dblHAvg = SafeDivide(abs($nHGoals - $nHBreaks), $nHOffencePoint) * 100;
       $dblVAvg = SafeDivide(abs($nVGoals - $nVBreaks), $nVOffencePoint) * 100;
@@ -650,7 +668,11 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table></td></tr></table>\n";
 
       $html .= "<table border='1' cellpadding='2' width='100%'>\n";
-      $html .= "<tr><th>" . _("Time defense play") . "</th><th>" . _("Player") . "</th><th>" . _("Callahan defense") . "</th>";
+      if ($hideTimeOnScoresheet) {
+        $html .= "<tr><th>" . _("Player") . "</th><th>" . _("Callahan defense") . "</th>";
+      } else {
+        $html .= "<tr><th>" . _("Time defense play") . "</th><th>" . _("Player") . "</th><th>" . _("Callahan defense") . "</th>";
+      }
       $html .= "</tr>\n";
 
       //$bHt=false;
@@ -664,14 +686,16 @@ if (GameHasStarted($game_result) > 0) {
         // 			$prevgoal = intval($game_result['halftime']);
         // 		}
 
-        $html .= "<tr><td style='width:120px;white-space: nowrap'";
-        if (intval($defense['ishomedefense']) == 1) {
-          $html .= " class='home'>";
-        } else {
-          $html .= " class='guest'>";
+        $html .= "<tr>";
+        if (!$hideTimeOnScoresheet) {
+          $html .= "<td style='width:120px;white-space: nowrap'";
+          if (intval($defense['ishomedefense']) == 1) {
+            $html .= " class='home'>";
+          } else {
+            $html .= " class='guest'>";
+          }
+          $html .= SecToMin($defense['time']) . "</td>";
         }
-        $html .= SecToMin($defense['time']) . "</td>";
-        //$html .= $goal['homescore'] ." - ". $goal['visitorscore'] ."</td>";
         $html .= "<td>" . utf8entities($defense['defenderfirstname']) . " " . utf8entities($defense['defenderlastname']) . "&nbsp;</td>";
 
         if (intval($defense['iscallahan'])) {
