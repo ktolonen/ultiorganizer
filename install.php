@@ -404,6 +404,10 @@ function configurations()
   $upload_dir = isset($_POST['upload_dir']) ? trim($_POST['upload_dir']) : "images/uploads/";
   $customization = isset($_POST['customization']) ? trim($_POST['customization']) : "default";
   $baseurl = isset($_POST['baseurl']) ? trim($_POST['baseurl']) : GetURLBase();
+  $disable_self_registration = !empty($_POST['disable_self_registration']);
+  if (!isset($_POST['disable_self_registration']) && defined('DISABLE_SELF_REGISTRATION')) {
+    $disable_self_registration = (bool)DISABLE_SELF_REGISTRATION;
+  }
 
 
   $html = "";
@@ -431,6 +435,7 @@ function configurations()
   }
 
   $html .= "</select></td></tr>";
+  $html .= "<tr><td>Disable self-registration:</td><td><input type='checkbox' name='disable_self_registration' value='1'" . ($disable_self_registration ? " checked='checked'" : "") . "/> Only admins can add users</td></tr>";
   $html .= "</table>";
 
   //write configuration file
@@ -462,6 +467,7 @@ function configurations()
       fwrite($fh, "define('CUSTOMIZATIONS', '$customization');\n");
       fwrite($fh, "define('DATE_FORMAT', _(\"%d.%m.%Y %H:%M\"));\n");
       fwrite($fh, "define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');\n");
+      fwrite($fh, "define('DISABLE_SELF_REGISTRATION', " . ($disable_self_registration ? "true" : "false") . ");\n");
 
       fwrite($fh, "?>");
       fclose($fh);

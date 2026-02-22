@@ -16,8 +16,15 @@ define('CUSTOMIZATIONS', 'slkl');
 define('DATE_FORMAT', _("%d.%m.%Y %H:%M"));
 define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');
 
+// Do not enable on production. This gives unlimited access to database for admin user.
 define('ENABLE_ADMIN_DB_ACCESS', 'disabled');
+
+// Disable public self-registration; only admins can add users.
+define('DISABLE_SELF_REGISTRATION', false);
+
+// Allow install.php on server. Set to true only in developement.
 define('ALLOW_INSTALL', false);
+
 // Allow saving results from the scorekeeper result view without authentication.
 define('ANONYMOUS_RESULT_INPUT', false);
 

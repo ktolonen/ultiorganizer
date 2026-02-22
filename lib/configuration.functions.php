@@ -43,6 +43,26 @@ function ReadOnlyServer() {
 	return ($serverConf['ReadOnlyServer'] == "true");
 }
 
+function IsSelfRegistrationDisabled()
+{
+	if (!defined('DISABLE_SELF_REGISTRATION')) {
+		return false;
+	}
+
+	$flag = constant('DISABLE_SELF_REGISTRATION');
+	if (is_bool($flag)) {
+		return $flag;
+	}
+
+	$normalized = strtolower(trim((string)$flag));
+	return in_array($normalized, array("1", "true", "yes", "on", "enabled"), true);
+}
+
+function IsSelfRegistrationEnabled()
+{
+	return !IsSelfRegistrationDisabled();
+}
+
 function GetServerConf()
 {
 	$query = "SELECT * FROM uo_setting ORDER BY setting_id";
