@@ -1077,6 +1077,13 @@ function upgrade85()
 	}
 }
 
+function upgrade86()
+{
+	if (!hasColumn("uo_season", "hide_time_on_scoresheet")) {
+		addColumn("uo_season", "hide_time_on_scoresheet", "tinyint(1) DEFAULT 0");
+	}
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';
