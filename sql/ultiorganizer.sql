@@ -738,6 +738,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `showspiritpoints` tinyint(1) DEFAULT 0,
   `use_season_points` tinyint(1) DEFAULT 0,
   `hide_time_on_scoresheet` tinyint(1) DEFAULT 0,
+  `event_readonly` tinyint(1) DEFAULT 0,
   `api_public` tinyint(1) DEFAULT 0,
   `reg_id` int(10) unsigned DEFAULT NULL,
   `timezone` varchar(50) DEFAULT NULL,

@@ -1084,6 +1084,13 @@ function upgrade86()
 	}
 }
 
+function upgrade87()
+{
+	if (!hasColumn("uo_season", "event_readonly")) {
+		addColumn("uo_season", "event_readonly", "tinyint(1) DEFAULT 0");
+	}
+}
+
 function upgradeEngineToInnoDb() {
     $charset = 'utf8mb4';
     $collation = 'utf8mb4_unicode_ci';
