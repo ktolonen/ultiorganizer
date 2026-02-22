@@ -1081,6 +1081,16 @@ function upgrade85()
 	if (!hasColumn("uo_season", "event_readonly")) {
 		addColumn("uo_season", "event_readonly", "tinyint(1) DEFAULT 0");
 	}
+
+	if (!hasTable("uo_passwordresetrequest")) {
+		runQuery("CREATE TABLE `uo_passwordresetrequest` (
+			`userid` varchar(50) NOT NULL,
+			`token` varchar(100) DEFAULT NULL,
+			`requested` timestamp NOT NULL DEFAULT current_timestamp(),
+			PRIMARY KEY (`userid`),
+			UNIQUE KEY `uq_passwordresetrequest_token` (`token`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
 }
 
 function upgradeEngineToInnoDb() {

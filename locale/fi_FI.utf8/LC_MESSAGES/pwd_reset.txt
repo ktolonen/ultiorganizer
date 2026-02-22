@@ -1,4 +1,7 @@
-Tämä viesti sisältää uuden salasanan sivustolle $url.
+Salasanan vaihto pyydettiin sivustolle $url.
 
-Käyttäjätunnus: $username
-Salasana: $password
+Kayttajatunnus: $username
+Aseta uusi salasana avaamalla tama linkki:
+$url
+
+Jos et pyytanyt salasanan vaihtoa, voit jattaa taman viestin huomiotta.

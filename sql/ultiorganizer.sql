@@ -347,6 +347,14 @@ CREATE TABLE IF NOT EXISTS `uo_extraemailrequest` (
   PRIMARY KEY (`email`),
   KEY `fk_extraemailrequest_user` (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `uo_passwordresetrequest` (
+  `userid` varchar(50) NOT NULL,
+  `token` varchar(100) DEFAULT NULL,
+  `requested` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`userid`),
+  UNIQUE KEY `uq_passwordresetrequest_token` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 CREATE TABLE IF NOT EXISTS `uo_game` (
   `game_id` int(10) NOT NULL AUTO_INCREMENT,
   `hometeam` int(10) DEFAULT NULL,

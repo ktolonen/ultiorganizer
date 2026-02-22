@@ -72,7 +72,7 @@ function verifyUserPassword($password, $storedHash, $userId = null)
 function FailRedirect($user)
 {
 	SetUserSessionData('anonymous');
-	header("location:?view=login_failed&user=" . urlencode($user));
+	header("location:?view=login/login_failed&user=" . urlencode($user));
 	exit();
 }
 
@@ -1581,7 +1581,7 @@ function GameResponsibilityArray($season, $series = null)
 
 function UserResetPassword($userId)
 {
-	Log1("user", "change", $userId, "", "reset password");
+	Log1("user", "change", $userId, "", "request password reset");
 
 	$query = sprintf(
 		"SELECT email FROM uo_users WHERE userid='%s'",
@@ -1591,16 +1591,31 @@ function UserResetPassword($userId)
 
 	$row = mysqli_fetch_assoc($result);
 
-	$email = $row['email'];
+	$email = $row ? $row['email'] : null;
 	if (!empty($email)) {
-		$password = CreateRandomPassword();
+		$token = uuidSecure();
+		$query = sprintf(
+			"DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
+			DBEscapeString($userId)
+		);
+		DBQuery($query);
 
-		$url = GetURLBase();
+		$query = sprintf(
+			"INSERT INTO uo_passwordresetrequest (userid, token) VALUES ('%s', '%s')",
+			DBEscapeString($userId),
+			DBEscapeString($token)
+		);
+		DBQuery($query);
+
+		$baseUrl = defined('BASEURL') ? rtrim(BASEURL, '/') : '';
+		if (empty($baseUrl)) {
+			$baseUrl = GetURLBase();
+		}
+		$url = $baseUrl . "/?view=login/password_reset&token=" . urlencode($token);
 		$locale = getSessionLocale();
 		$message = file_get_contents('locale/' . $locale . '/LC_MESSAGES/pwd_reset.txt');
 		$message = str_replace('$url', $url, $message);
 		$message = str_replace('$username', $userId, $message);
-		$message = str_replace('$password', $password, $message);
 
 		$headers  = "MIME-Version: 1.0" . "\r\n";
 		$headers .= "Content-type: text/plain; charset=UTF-8" . "\r\n";
@@ -1608,16 +1623,52 @@ function UserResetPassword($userId)
 		global $serverConf;
 		$headers .= "From: " . $serverConf['EmailSource'] . "\r\n";
 
-		if (mail($email, _("New password to ultiorganizer"), $message, $headers)) {
-			updateUserPasswordHash($userId, $password);
-
+		if (mail($email, _("Password reset request for Ultiorganizer"), $message, $headers)) {
 			return true;
 		} else {
+			$query = sprintf(
+				"DELETE FROM uo_passwordresetrequest WHERE token='%s'",
+				DBEscapeString($token)
+			);
+			DBQuery($query);
 			return false;
 		}
 	} else {
 		return false;
 	}
+}
+
+function PasswordResetUIDByToken($token)
+{
+	$query = sprintf(
+		"SELECT userid FROM uo_passwordresetrequest WHERE token='%s'",
+		DBEscapeString($token)
+	);
+	$result = DBQuery($query);
+
+	if ($row = mysqli_fetch_assoc($result)) {
+		return $row['userid'];
+	}
+	return false;
+}
+
+function ConfirmPasswordReset($token, $newPassword)
+{
+	$userId = PasswordResetUIDByToken($token);
+	if (!$userId) {
+		return false;
+	}
+
+	updateUserPasswordHash($userId, $newPassword);
+	Log1("user", "change", $userId, "", "confirm password reset");
+
+	$query = sprintf(
+		"DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
+		DBEscapeString($userId)
+	);
+	DBQuery($query);
+
+	return true;
 }
 
 function CreateRandomPassword()

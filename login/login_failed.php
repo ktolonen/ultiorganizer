@@ -1,6 +1,6 @@
 <?php
 if (IsRegistered($_SESSION['uid'])) {
-  header("location:?view=mobile/respgames");
+  header("location:?view=frontpage");
 }
 
 $title = _("Login failed");
@@ -10,7 +10,7 @@ $html = "";
 
 if (IsSelfRegistrationDisabled()) {
   $html = "<p>" . _("Invalid username or password. Contact the system administrator if you need to reset your password.") . "</p>";
-  showPage($title, $html, true);
+  showPage($title, $html);
   return;
 }
 
@@ -26,7 +26,7 @@ if (isset($_POST['resetpassword'])) {
 if (empty($html)) {
   $validuser = IsRegistered($userId);
   if ($validuser) {
-    $html .= "<form method='post' action='?view=mobile/login_failed&amp;user=" . urlencode($userId) . "'>\n";
+    $html .= "<form method='post' action='?view=login/login_failed&amp;user=" . urlencode($userId) . "'>\n";
     $html .= "<p>" . _("Check your username and password.") . " \n";
     $html .= _("If you forgot your password, click the button below. A reset link will be sent to the email address you provided during registration.") . "</p>";
     $html .= "<p><input class='button' type='submit' name='resetpassword' value='" . _("Reset password") . "'/></p>\n";
@@ -35,4 +35,4 @@ if (empty($html)) {
     $html .= "<p>" . sprintf(_("Invalid username %s."), $safeUserId) . "</p>\n";
   }
 }
-showPage($title, $html, true);
+showPage($title, $html);
