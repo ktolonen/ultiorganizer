@@ -29,7 +29,7 @@ $html .= "<table style='width:60%' cellpadding='2'>\n";
 $html .= "<tr><th>" . _("Name") . "</th>
 	<th class='center'>" . _("Events") . "</th>
 	<th class='center'>" . _("Games") . "</th>
-	<th class='center'>" . _("Passes") . "</th>
+	<th class='center'>" . _("Assists") . "</th>
 	<th class='center'>" . _("Goals") . "</th>
 	<th class='center'>" . _("Tot.") . "</th></tr>\n";
 

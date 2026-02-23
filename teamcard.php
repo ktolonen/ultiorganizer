@@ -117,7 +117,7 @@ if (ShowDefenseStats()) {
     $html .= "<table style='width:80%'>\n";
     $html .= "<tr><th style='width:40%'>" . _("Name") . "</th>
 		<th class='center' style='width:15%'>" . _("Games") . "</th>
-		<th class='center' style='width:15%'>" . _("Passes") . "</th>
+		<th class='center' style='width:15%'>" . _("Assists") . "</th>
 		<th class='center' style='width:15%'>" . _("Goals") . "</th>
 		<th class='center' style='width:15%'>" . _("Tot.") . "</th>
 		<th class='center' style='width:15%'>" . _("Defenses") . "</th></tr>\n";
@@ -161,7 +161,7 @@ if (ShowDefenseStats()) {
     $html .= "<table style='width:80%'>\n";
     $html .= "<tr><th style='width:40%'>" . _("Name") . "</th>
 		<th class='center' style='width:15%'>" . _("Games") . "</th>
-		<th class='center' style='width:15%'>" . _("Passes") . "</th>
+		<th class='center' style='width:15%'>" . _("Assists") . "</th>
 		<th class='center' style='width:15%'>" . _("Goals") . "</th>
 		<th class='center' style='width:15%'>" . _("Tot.") . "</th></tr>\n";
 
@@ -310,9 +310,9 @@ if (ShowDefenseStats()) {
 		<th>" . _("Win-%") . "</th>
 		<th>" . _("Goals for") . "</th>
 		<th>" . _("GF/game") . "</th>
-		<th>" . _("against") . "</th>
+		<th>"._("Goals against")."</th>
 		<th>" . _("GA/game") . "</th>
-		<th>" . _("diff.") . "</th>
+		<th>"._("Goal diff")."</th>
 		<th>" . _("Spirit avg") . "</th>
 		<th>" . _("Defenses") . "</th>
 		</tr>";
@@ -399,9 +399,9 @@ if (ShowDefenseStats()) {
 	<th>" . _("Win-%") . "</th>
 	<th>" . _("Goals for") . "</th>
 	<th>" . _("GF/game") . "</th>
-	<th>" . _("against") . "</th>
+	<th>"._("Goals against")."</th>
 	<th>" . _("GA/game") . "</th>
-	<th>" . _("diff.") . "</th>
+	<th>"._("Goal diff")."</th>
 	<th>" . _("Spirit avg") . "</th>
 	<th>" . _("Defenses") . "</th>
 	</tr>";
@@ -507,9 +507,9 @@ if (ShowDefenseStats()) {
 		<th>" . _("Win-%") . "</th>
 		<th>" . _("Goals for") . "</th>
 		<th>" . _("GF/game") . "</th>
-		<th>" . _("against") . "</th>
+		<th>"._("Goals against")."</th>
 		<th>" . _("GA/game") . "</th>
-		<th>" . _("diff.") . "</th>
+		<th>"._("Goal diff")."</th>
 		<th>" . _("Spirit avg") . "</th>
 		</tr>";
 
@@ -592,9 +592,9 @@ if (ShowDefenseStats()) {
 	<th>" . _("Win-%") . "</th>
 	<th>" . _("Goals for") . "</th>
 	<th>" . _("GF/game") . "</th>
-	<th>" . _("against") . "</th>
+	<th>"._("Goals against")."</th>
 	<th>" . _("GA/game") . "</th>
-	<th>" . _("diff.") . "</th>
+	<th>"._("Goal diff")."</th>
 	<th>" . _("Spirit avg") . "</th>
 	</tr>";
 

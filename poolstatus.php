@@ -139,8 +139,8 @@ function scoreboard($id, $seriesScoreboard)
   if ($seriesScoreboard) {
     $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
     $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
-		<th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
+    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Gms")."</th>
+    <th class='center'>"._("Ast")."</th><th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot.")."</th><th class='center'>"._("Tot/Gm")."</th></tr>\n";
 
     $scores = SeriesScoreBoard($id, "total", 10);
     while ($row = mysqli_fetch_assoc($scores)) {
@@ -148,8 +148,11 @@ function scoreboard($id, $seriesScoreboard)
       $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
+      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
       $ret .= "<td class='center'>" . intval($row['done']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['total']) . "</td></tr>\n";
+      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+      $ret .= "<td class='center'>".intval($row['total'])."</td>";
+      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."<strong></td></tr>\n";
     }
 
     $ret .= "</table>";
@@ -157,8 +160,8 @@ function scoreboard($id, $seriesScoreboard)
   } else {
     $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
     $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
-		<th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
+    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Gms")."</th>
+    <th class='center'>"._("Ast")."</th><th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot.")."</th><th class='center'>"._("Tot/Gm")."</th></tr>\n";
 
     $poolinfo = PoolInfo($id);
     $pools = array();
@@ -177,8 +180,11 @@ function scoreboard($id, $seriesScoreboard)
       $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['done']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['total']) . "</td></tr>\n";
+      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
+      $ret .= "<td class='center'>".intval($row['done'])."</td>";
+      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+      $ret .= "<td class='center'>".intval($row['total'])."</td>";
+      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."<strong></td></tr>\n";
     }
 
     $ret .= "</table>";
@@ -333,15 +339,15 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
     $style = "style='font-weight: bold;'";
   }
   $ret .= "<table $style border='2' width='100%'>\n";
-  $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
+ $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
   $ret .= "<th class='center'>" . _("Games") . "</th>";
   $ret .= "<th class='center'>" . _("Wins") . "</th>";
   if ($poolinfo['drawsallowed'])
     $ret .= "<th class='center'>" . _("Draws") . "</th>";
   $ret .= "<th class='center'>" . _("Losses") . "</th>";
   $ret .= "<th class='center'>" . _("Goals for") . "</th>";
-  $ret .= "<th class='center'>" . _("against") . "</th>";
-  $ret .= "<th class='center'>" . _("diff.") . "</th>";
+  $ret .= "<th class='center'>" . _("Goals against") . "</th>";
+  $ret .= "<th class='center'>" . _("Goals diff") . "</th>";
   $ret .= "</tr>\n";
 
   $standings = PoolTeams($poolinfo['pool_id'], "rank");
@@ -369,11 +375,11 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
         $ret .= "<tr>";
       }
       if ($gamesplayed > 0) {
-        $ret .= "<td><div style='$colorcoding'>" . $row['activerank'] . "</div></td>";
+        $ret .= "<td class='center'><div style='$colorcoding'>".$row['activerank']."</div></td>";
       } else {
-        $ret .= "<td><div style='$colorcoding'>-</div></td>";
+        $ret .= "<td class='center'><div style='$colorcoding'>-</div></td>";
       }
-      $ret .= "<td><div>&nbsp;$flag<a href='?view=teamcard&amp;team=" . $row['team_id'] . "'>" . utf8entities($row['name']) . "</a></div></td>";
+      $ret .= "<td><div>&nbsp;$flag&nbsp;<a href='?view=teamcard&amp;team=".$row['team_id']."'>".utf8entities($row['name'])."</a>&nbsp;</div></td>";
       $ret .= "<td class='center'><div>" . intval($stats['games']) . "</div></td>";
       $ret .= "<td class='center'><div>" . intval($stats['wins']) . "</div></td>";
       if ($poolinfo['drawsallowed'])
@@ -401,15 +407,15 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
       } else {
         $ret .= "<tr>";
       }
-      $ret .= "<td style='$colorcoding'>-</td>";
+      $ret .= "<td class='center' style='$colorcoding'>-</td>";
       if ($realteam) {
         $flag = "";
         if (intval($seasoninfo['isinternational'])) {
           $flag = "<img height='10' src='images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
         }
-        $ret .= "<td><div>&nbsp;$flag<a href='?view=teamcard&amp;team=" . $realteam['team_id'] . "'>" . utf8entities($realteam['name']) . "</a></div></td>";
+        $ret .= "<td><div>&nbsp;$flag&nbsp;<a href='?view=teamcard&amp;team=".$realteam['team_id']."'>".utf8entities($realteam['name'])."</a>&nbsp;</div></td>";
       } else {
-        $ret .= "<td>" . utf8entities(U_($row['name'])) . "</td>";
+        $ret .= "<td>&nbsp;".utf8entities(U_($row['name']))."&nbsp;</td>";
       }
 
       $ret .= "<td class='center'>-</td>";
@@ -442,6 +448,7 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
     }
     $ret .= "</tr></table>\n";
   }
+  $ret .= "<h2>Games</h2>\n";
   $ret .= "<table width='100%'>\n";
   if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
     $mvgames = PoolMovedGames($poolinfo['pool_id']);
@@ -761,7 +768,12 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
     $ret .= "<tr>";
     $ret .= "<td class='center' style='" . $winnerpoolstyle . "'></td>";
     $ret .= "<td class='center' style='" . $loserpoolstyle . "'></td>";
-    $ret .= "<td style='width:10%'>" . _("Game") . " $i " . "</td>";
+        
+    if(!empty($game['gamename'])){
+      $ret .= "<td style='width:10%'>" . utf8entities(U_($game['gamename'])) . "</td>";
+    } else {
+      $ret .= "<td style='width:10%'>"._("Game")." $i "."</td>";
+    }
     $ret .= "<td></td>";
 
     // $goals = intval($game['homescore'])+intval($game['visitorscore']);
