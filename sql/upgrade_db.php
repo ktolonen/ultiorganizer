@@ -520,6 +520,24 @@ function upgrade74()
     ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci"
 		);
 	}
+
+	if (hasTable("uo_spirit") && hasColumn("uo_spirit", "comments")) {
+		runQuery("INSERT INTO uo_comment (`type`, `id`, `comment`)
+			SELECT
+				CASE
+					WHEN st.team_id = g.hometeam THEN 5
+					WHEN st.team_id = g.visitorteam THEN 6
+					ELSE NULL
+				END AS type,
+				CAST(st.game_id AS CHAR(10)) AS id,
+				st.comments AS comment
+			FROM uo_spirit st
+			JOIN uo_game g ON g.game_id = st.game_id
+			WHERE (st.team_id = g.hometeam OR st.team_id = g.visitorteam)
+				AND st.comments IS NOT NULL
+				AND LENGTH(TRIM(st.comments)) > 0
+			ON DUPLICATE KEY UPDATE comment=VALUES(comment)");
+	}
 }
 
 function upgrade75()
@@ -716,11 +734,6 @@ function upgrade75()
 
 		// clean up
 		runQuery("UPDATE uo_game SET time=NULL WHERE time < '0000-01-01 00:00:00';");
-		// TODO: this should not done on bruno-fork
-		//runQuery('DROP TABLE uo_spirit');
-		//dropField("uo_game", "homesotg");
-		//dropField("uo_game", "visitorsotg");
-		//dropField("uo_season", "spiritpoints");
 	}
 }
 
@@ -939,8 +952,22 @@ function upgrade82()
 // Catch up with Bruno's fork
 function upgrade83()
 {
-	if (hasTable("uo_spirit") && !hasColumn("uo_spirit", "comments")) {
-		addColumn("uo_spirit", "comments", "TEXT DEFAULT NULL");
+	// When reaching here we should been already run:
+	// upgrade74() copy comments from uo_spirit to uo_comment
+	// upgrade75() convert uo_spirit to uo_spirit_score
+	// upgrade75() copy homesotg and visitorsotg to uo_spirit_score
+	// upgrade75() introduce spiritmode into uo_season
+	if (hasTable("uo_spirit")) {
+		runQuery('DROP TABLE uo_spirit');
+	}
+	if (hasColumn("uo_game", "homesotg")) {
+		dropField("uo_game", "homesotg");
+	}
+	if (hasColumn("uo_game", "visitorsotg")) {
+		dropField("uo_game", "visitorsotg");
+	}
+	if (hasColumn("uo_season", "spiritpoints")) {
+		dropField("uo_season", "spiritpoints");
 	}
 
 	if (!hasRow("uo_setting", "name", "ShowSpiritComments")) {
