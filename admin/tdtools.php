@@ -9,34 +9,13 @@ include_once $include_prefix.'lib/timetable.functions.php';
 // function to search for missing spirit scores in played games (search by pool)
 // returns an array of game id's
 function SearchMissingSpiritByPool($poolId) {
-  $query = sprintf("SELECT game_id, th.name AS home, tv.name AS visitor, g.homescore, g.homesotg, g.visitorscore, g.visitorsotg, g.time AS time FROM uo_game AS g
-    JOIN uo_team AS th ON (g.hometeam=th.team_id)
-    JOIN uo_team AS tv ON (g.visitorteam=tv.team_id)
-    WHERE g.pool=%d 
-      AND g.isongoing=0 
-      AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0 
-      AND (g.homesotg IS NULL OR g.homesotg=0 OR g.visitorsotg IS NULL OR g.visitorsotg=0)
-      ORDER BY g.time ASC",
-    (int)$poolId);
-
-    return DBQueryToArray($query);
+    return SpiritMissingGamesByPool($poolId);
 }
 
 // function to search for missing spirit scores in played games (search by division)
 // returns an array of game id's
 function SearchMissingSpiritBySeries($seriesId) {
-  $query = sprintf("SELECT game_id, th.name AS home, tv.name AS visitor, g.homescore, g.homesotg, g.visitorscore, g.visitorsotg, g.time AS time, p.name AS poolname FROM uo_game AS g
-    JOIN uo_team AS th ON (g.hometeam=th.team_id)
-    JOIN uo_team AS tv ON (g.visitorteam=tv.team_id)
-    JOIN uo_pool AS p ON g.pool=p.pool_id
-    WHERE p.series=%d 
-      AND g.isongoing=0 
-      AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0 
-      AND (g.homesotg IS NULL OR g.homesotg=0 OR g.visitorsotg IS NULL OR g.visitorsotg=0)
-      ORDER BY g.time ASC",
-    (int)$seriesId);
-
-    return DBQueryToArray($query);
+    return SpiritMissingGamesBySeries($seriesId);
 }
 
 // function to search for spirit scores of '$catval' in at least one item
@@ -44,36 +23,16 @@ function SearchMissingSpiritBySeries($seriesId) {
 function TableSpiritSearchCat($season,$catval) {
 
   $ret = "";
+  $rows = SpiritToolRowsBySeason($season);
+  $matches = array();
+  foreach ($rows as $row) {
+    if ((int)$row['cat1'] === (int)$catval || (int)$row['cat2'] === (int)$catval ||
+      (int)$row['cat3'] === (int)$catval || (int)$row['cat4'] === (int)$catval || (int)$row['cat5'] === (int)$catval) {
+      $matches[] = $row;
+    }
+  }
 
-  $query = sprintf("SELECT 	sp.game_id AS game_id, 
-		IF(g.visitorteam = sp.team_id, tv.name, th.name) AS givenfor, 
-    	IF(g.visitorteam = sp.team_id, th.name, tv.name) AS givenby, 
-    	CONCAT(cat1,' ',cat2,' ',cat3,' ',cat4,' ',cat5) AS scores, 
-        (cat1+cat2+cat3+cat4+cat5) AS total,
-        p.name AS pool,
-        s.name AS division
-	FROM uo_spirit as sp
-    JOIN uo_game g ON g.game_id=sp.game_id
-    JOIN uo_team th ON th.team_id=g.hometeam
-	JOIN uo_team tv ON tv.team_id=g.visitorteam
-    JOIN uo_pool p ON p.pool_id=g.pool
-    JOIN uo_series s ON s.series_id=p.series
-    WHERE s.season='%s'
-      AND g.isongoing=0 
-      AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0 
-      AND (cat1+cat2+cat3+cat4+cat5)>0
-      AND (sp.cat1=%d OR sp.cat2=%d OR sp.cat3=%d OR sp.cat4=%d OR sp.cat5=%d)
-    ORDER BY p.series ASC, givenfor ASC",
-    $season,
-    (int)$catval,
-    (int)$catval,
-    (int)$catval,
-    (int)$catval,
-    (int)$catval);
-
-  $resultsTable = DBQuery($query);
-
-  if (DBNumRows($resultsTable)>0) {	
+  if (!empty($matches)) {	
 
     $ret .= "<p>"._("List of teams that received a '").$catval._("' in at least one category:")."</p>";
     $ret .= "<table width='100%'><tr>";
@@ -86,11 +45,12 @@ function TableSpiritSearchCat($season,$catval) {
     $ret .= "<th class='center'>"._("Link")."</th>";
     $ret .= "</tr>";
     
-    while ($row = DBFetchAssoc($resultsTable)) {
+    foreach ($matches as $row) {
       $ret .= "<tr>";
       $ret .= "<td>".$row['division']."</td>";
       $ret .= "<td>".$row['pool']."</td>";
-      $ret .= "<td class='center'>".$row['scores']."</td>";
+      $scores = intval($row['cat1'])." ".intval($row['cat2'])." ".intval($row['cat3'])." ".intval($row['cat4'])." ".intval($row['cat5']);
+      $ret .= "<td class='center'>".$scores."</td>";
       $ret .= "<td class='center'>".$row['total']."</td>";
       $ret .= "<td>".$row['givenfor']."</td>";
       $ret .= "<td>".$row['givenby']."</td>";
@@ -113,37 +73,27 @@ function TableSpiritSearchCat($season,$catval) {
 function TableSpiritSearchCatReps($season,$catnum,$catval) {
 
   $ret = "";
+  $rows = SpiritToolRowsBySeason($season);
+  $catField = "cat" . (int)$catnum;
+  $teamCounts = array();
+  foreach ($rows as $row) {
+    if (isset($row[$catField]) && (int)$row[$catField] === (int)$catval) {
+      if (!isset($teamCounts[$row['team_id']])) {
+        $teamCounts[$row['team_id']] = 0;
+      }
+      $teamCounts[$row['team_id']]++;
+    }
+  }
 
-  $query = sprintf("SELECT 	sp.game_id AS game_id, 
-		IF(g.visitorteam = sp.team_id, tv.name, th.name) AS givenfor, 
-    	IF(g.visitorteam = sp.team_id, th.name, tv.name) AS givenby, 
-    	CONCAT(cat1,' ',cat2,' ',cat3,' ',cat4,' ',cat5) AS scores, 
-        (cat1+cat2+cat3+cat4+cat5) AS total,
-        p.name AS pool,
-        s.name AS division,
-        g.time AS time
-	FROM uo_spirit as sp
-    JOIN (SELECT team_id, cat%d AS c, COUNT(*) FROM uo_spirit GROUP BY team_id,c HAVING COUNT(*)>1)reps ON sp.team_id = reps.team_id AND reps.c=%d
-    JOIN uo_game g ON g.game_id=sp.game_id
-    JOIN uo_team th ON th.team_id=g.hometeam
-	JOIN uo_team tv ON tv.team_id=g.visitorteam
-    JOIN uo_pool p ON p.pool_id=g.pool
-    JOIN uo_series s ON s.series_id=p.series
-    WHERE s.season='%s'
-      AND g.isongoing=0 
-      AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0 
-      AND (cat1+cat2+cat3+cat4+cat5)>0
-      AND sp.cat%d=%d
-    ORDER BY p.series ASC, givenfor ASC, time ASC",
-    (int)$catnum,
-    (int)$catval,
-    DBEscapeString($season),
-    (int)$catnum,
-    (int)$catval);
+  $matches = array();
+  foreach ($rows as $row) {
+    if (isset($teamCounts[$row['team_id']]) && $teamCounts[$row['team_id']] > 1 &&
+      isset($row[$catField]) && (int)$row[$catField] === (int)$catval) {
+      $matches[] = $row;
+    }
+  }
 
-  $resultsTable = DBQuery($query);
-
-  if (DBNumRows($resultsTable)>0) {	
+  if (!empty($matches)) {	
 
     $ret .= "<table width='100%'><tr>";
     $ret .= "<th class='center'>"._("Division")."</th>";
@@ -155,11 +105,12 @@ function TableSpiritSearchCatReps($season,$catnum,$catval) {
     $ret .= "<th class='center'>"._("Link")."</th>";
     $ret .= "</tr>";
     
-    while ($row = DBFetchAssoc($resultsTable)) {
+    foreach ($matches as $row) {
       $ret .= "<tr>";
       $ret .= "<td>".$row['division']."</td>";
       $ret .= "<td>".$row['pool']."</td>";
-      $ret .= "<td class='center'>".$row['scores']."</td>";
+      $scores = intval($row['cat1'])." ".intval($row['cat2'])." ".intval($row['cat3'])." ".intval($row['cat4'])." ".intval($row['cat5']);
+      $ret .= "<td class='center'>".$scores."</td>";
       $ret .= "<td class='center'>".$row['total']."</td>";
       $ret .= "<td>".$row['givenfor']."</td>";
       $ret .= "<td>".$row['givenby']."</td>";
@@ -184,33 +135,16 @@ function TableSpiritSearchTotal($season,$th,$higher=true) {
   $ret = "";
 
   $op = $higher ? '>' : '<';
+  $rows = SpiritToolRowsBySeason($season);
+  $matches = array();
+  foreach ($rows as $row) {
+    $total = (int)$row['total'];
+    if (($higher && $total > (int)$th) || (!$higher && $total < (int)$th)) {
+      $matches[] = $row;
+    }
+  }
 
-  $query = sprintf("SELECT 	sp.game_id AS game_id, 
-		IF(g.visitorteam = sp.team_id, tv.name, th.name) AS givenfor, 
-    	IF(g.visitorteam = sp.team_id, th.name, tv.name) AS givenby, 
-    	CONCAT(cat1,' ',cat2,' ',cat3,' ',cat4,' ',cat5) AS scores, 
-        (cat1+cat2+cat3+cat4+cat5) AS total,
-        p.name AS pool,
-        s.name AS division
-	FROM uo_spirit as sp
-    JOIN uo_game g ON g.game_id=sp.game_id
-    JOIN uo_team th ON th.team_id=g.hometeam
-	JOIN uo_team tv ON tv.team_id=g.visitorteam
-    JOIN uo_pool p ON p.pool_id=g.pool
-    JOIN uo_series s ON s.series_id=p.series
-    WHERE s.season='%s'
-      AND g.isongoing=0 
-      AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0 
-      AND (cat1+cat2+cat3+cat4+cat5)>0
-      AND (sp.cat1+sp.cat2+sp.cat3+sp.cat4+sp.cat5)%s%d
-    ORDER BY p.series ASC, givenfor ASC",
-    $season,
-    $op,
-    (int)$th);
-
-  $resultsTable = DBQuery($query);
-
-  if (DBNumRows($resultsTable)>0) {	
+  if (!empty($matches)) {	
 
     $ret .= "<p>"._("List of teams that received a score '").$op.$th."'</p>";
     $ret .= "<table width='100%'><tr>";
@@ -223,11 +157,12 @@ function TableSpiritSearchTotal($season,$th,$higher=true) {
     $ret .= "<th class='center'>"._("Link")."</th>";
     $ret .= "</tr>";
     
-    while ($row = DBFetchAssoc($resultsTable)) {
+    foreach ($matches as $row) {
       $ret .= "<tr>";
       $ret .= "<td>".$row['division']."</td>";
       $ret .= "<td>".$row['pool']."</td>";
-      $ret .= "<td class='center'>".$row['scores']."</td>";
+      $scores = intval($row['cat1'])." ".intval($row['cat2'])." ".intval($row['cat3'])." ".intval($row['cat4'])." ".intval($row['cat5']);
+      $ret .= "<td class='center'>".$scores."</td>";
       $ret .= "<td class='center'>".$row['total']."</td>";
       $ret .= "<td>".$row['givenfor']."</td>";
       $ret .= "<td>".$row['givenby']."</td>";
@@ -253,34 +188,44 @@ function TableSpiritSearchCatAvg($season,$th,$higher=true) {
   $ret = "";
 
   $op = $higher ? '>' : '<';
+  $rows = SpiritToolRowsBySeason($season);
+  $teams = array();
+  foreach ($rows as $row) {
+    $teamId = (int)$row['team_id'];
+    if (!isset($teams[$teamId])) {
+      $teams[$teamId] = array(
+        'seriesname' => $row['division'],
+        'teamname' => $row['givenfor'],
+        'sum1' => 0, 'sum2' => 0, 'sum3' => 0, 'sum4' => 0, 'sum5' => 0, 'games' => 0
+      );
+    }
+    $teams[$teamId]['sum1'] += (int)$row['cat1'];
+    $teams[$teamId]['sum2'] += (int)$row['cat2'];
+    $teams[$teamId]['sum3'] += (int)$row['cat3'];
+    $teams[$teamId]['sum4'] += (int)$row['cat4'];
+    $teams[$teamId]['sum5'] += (int)$row['cat5'];
+    $teams[$teamId]['games']++;
+  }
 
-  $query = sprintf("SELECT s.name AS seriesname, t.name AS teamname, 
-      ROUND(AVG(sp.cat1),2) AS cat1, ROUND(AVG(sp.cat2),2) AS cat2, 
-      ROUND(AVG(sp.cat3),2) AS cat3, ROUND(AVG(sp.cat4),2) AS cat4, 
-      ROUND(AVG(sp.cat5),2) AS cat5, 
-      ROUND(AVG(sp.cat1+sp.cat2+sp.cat3+sp.cat4+sp.cat5),2) AS total, 
-      COUNT(*) AS games
-    FROM uo_spirit AS sp
-    JOIN uo_team AS t ON sp.team_id=t.team_id
-    JOIN uo_game AS g ON sp.game_id=g.game_id
-    JOIN uo_pool AS p ON g.pool=p.pool_id
-    JOIN uo_series AS s ON p.series=s.series_id
-    WHERE s.season='%s' AND (sp.cat1+sp.cat2+sp.cat3+sp.cat4+sp.cat5)>0
-    GROUP BY sp.team_id
-    HAVING cat1%s%f OR cat2%s%f OR cat3%s%f OR cat4%s%f OR cat5%s%f
-    ORDER BY s.series_id
-  
-    ",
-    $season,
-    $op,(float)$th,
-    $op,(float)$th,
-    $op,(float)$th,
-    $op,(float)$th,
-    $op,(float)$th);
+  $matches = array();
+  foreach ($teams as $team) {
+    if ($team['games'] <= 0) {
+      continue;
+    }
+    $team['cat1'] = round($team['sum1'] / $team['games'], 2);
+    $team['cat2'] = round($team['sum2'] / $team['games'], 2);
+    $team['cat3'] = round($team['sum3'] / $team['games'], 2);
+    $team['cat4'] = round($team['sum4'] / $team['games'], 2);
+    $team['cat5'] = round($team['sum5'] / $team['games'], 2);
+    $team['total'] = round(($team['sum1'] + $team['sum2'] + $team['sum3'] + $team['sum4'] + $team['sum5']) / $team['games'], 2);
+    $matchesThreshold = ($higher && ($team['cat1'] > $th || $team['cat2'] > $th || $team['cat3'] > $th || $team['cat4'] > $th || $team['cat5'] > $th))
+      || (!$higher && ($team['cat1'] < $th || $team['cat2'] < $th || $team['cat3'] < $th || $team['cat4'] < $th || $team['cat5'] < $th));
+    if ($matchesThreshold) {
+      $matches[] = $team;
+    }
+  }
 
-  $resultsTable = DBQuery($query);
-
-  if (DBNumRows($resultsTable)>0) {	
+  if (!empty($matches)) {	
 
     $ret .= "<p>"._("List of teams that received an average '").$op.$th._("' in at least one category:")."</p>";
     $ret .= "<table width='100%'><tr>";
@@ -294,7 +239,7 @@ function TableSpiritSearchCatAvg($season,$th,$higher=true) {
     $ret .= "<th class='center'>"._("Total")."</th>";
     $ret .= "</tr>";
     
-    while ($row = DBFetchAssoc($resultsTable)) {
+    foreach ($matches as $row) {
       $ret .= "<tr>";
       $ret .= "<td>".$row['seriesname']."</td>";
       $ret .= "<td>".$row['teamname']."</td>";
@@ -323,27 +268,18 @@ function TableSpiritSearchCatAvg($season,$th,$higher=true) {
 function TableSpiritSearchComments($season) {
 
   $ret = "";
+  $rows = SpiritToolRowsBySeason($season);
+  $matches = array();
+  foreach ($rows as $row) {
+    if (strlen(trim((string)$row['comments'])) > 0) {
+      $matches[] = $row;
+    }
+  }
+  usort($matches, function ($a, $b) {
+    return strcmp((string)$b['time'], (string)$a['time']);
+  });
 
-  $query = "SELECT sp.*, 
-    (sp.cat1 + sp.cat2 + sp.cat3 + sp.cat4 + sp.cat5) AS total, 
-    CONCAT(cat1,' ',cat2,' ',cat3,' ',cat4,' ',cat5) AS scores,
-    IF(sp.team_id = g.hometeam, tv.name, th.name) AS givenby, 
-    IF(sp.team_id = g.hometeam, th.name, tv.name) AS givenfor,
-    s.name AS division,
-    p.name AS pool,
-    sp.game_id
-    FROM uo_spirit AS sp
-    JOIN uo_game AS g ON sp.game_id = g.game_id
-    JOIN uo_team AS th ON g.hometeam = th.team_id
-    JOIN uo_team AS tv ON g.visitorteam = tv.team_id
-    JOIN uo_pool AS p ON g.pool = p.pool_id
-    JOIN uo_series AS s ON p.series = s.series_id
-    WHERE LENGTH(trim(sp.comments)) > 0
-    ORDER BY g.`time` DESC, g.reservation";
-
-  $resultsTable = DBQuery($query);
-
-  if (DBNumRows($resultsTable)>0) {	
+  if (!empty($matches)) {	
 
     $ret .= "<p>"._("List of teams that received a comment in a game")."</p>";
     $ret .= "<table width='100%' border=1><tr>";
@@ -357,11 +293,12 @@ function TableSpiritSearchComments($season) {
     $ret .= "<th class='center'>"._("Link")."</th>";
     $ret .= "</tr>";
     
-    while ($row = DBFetchAssoc($resultsTable)) {
+    foreach ($matches as $row) {
       $ret .= "<tr>";
       $ret .= "<td>".$row['division']."</td>";
       $ret .= "<td>".$row['pool']."</td>";
-      $ret .= "<td class='center' style='white-space: nowrap;'>".$row['scores']."</td>";
+      $scores = intval($row['cat1'])." ".intval($row['cat2'])." ".intval($row['cat3'])." ".intval($row['cat4'])." ".intval($row['cat5']);
+      $ret .= "<td class='center' style='white-space: nowrap;'>".$scores."</td>";
       $ret .= "<td class='center'>".$row['total']."</td>";
       $ret .= "<td class='center'>".$row['comments']."</td>";
       $ret .= "<td>".$row['givenfor']."</td>";
