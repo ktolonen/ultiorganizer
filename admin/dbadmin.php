@@ -28,7 +28,8 @@ if (isSuperAdmin()) {
 			$messages[] = _("Conversion to InnoDB/utf8mb4 attempted. Review tables below for remaining MyISAM tables.");
 		} catch (Exception $e) {
 			$html .= "<div class='warning'>";
-			$html .= utf8entities(_("Conversion failed:") . " " . $e->getMessage());
+			$errorMessage = _("Conversion failed:") . "\n" . $e->getMessage();
+			$html .= nl2br(utf8entities($errorMessage));
 			$html .= "<br/>" . _("Fix suggestions:") . "<br/>";
 			$html .= "&bull; " . _("Clean orphans by setting nullable foreign keys to NULL or delete/reassign child rows.") . "<br/>";
 			$html .= "&bull; " . _("Insert missing parent rows for non-nullable references (e.g., required stats/plays/games).") . "<br/>";

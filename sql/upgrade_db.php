@@ -686,15 +686,15 @@ function upgrade75()
 						$row['cat' . $i]
 					)
 				);
+				}
+				if ($lastSeason != $row['season_id']) {
+					$lastSeason = $row['season_id'];
+					runQuery(sprintf(
+						"UPDATE uo_season SET `spiritmode` = 1002 WHERE `spiritpoints`=1 AND season_id='%s'",
+						DBEscapeString($lastSeason)
+					));
+				}
 			}
-			if ($lastSeason != $row['season_id']) {
-				$lastSeason = $row['season_id'];
-				runQuery(sprintf(
-					"UPDATE uo_season SET `spiritmode` = 1002 WHERE `spiritpoints`=1 AND season_id=%d",
-					(int)$lastSeason
-				));
-			}
-		}
 
 		// update remaining, simple scores
 		$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1001");
@@ -874,9 +874,7 @@ function upgrade80()
 			PRIMARY KEY (`round_id`),
 			UNIQUE KEY `uq_season_round_season_series_no` (`season`,`series`,`round_no`),
 			KEY `idx_season_round_season` (`season`),
-			KEY `idx_season_round_series` (`series`),
-			CONSTRAINT `fk_season_round_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-			CONSTRAINT `fk_season_round_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE
+			KEY `idx_season_round_series` (`series`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 	}
 
@@ -886,11 +884,10 @@ function upgrade80()
 			`team_id` int(10) NOT NULL,
 			`points` int(10) NOT NULL DEFAULT 0,
 			PRIMARY KEY (`round_id`,`team_id`),
-			KEY `idx_season_points_team` (`team_id`),
-			CONSTRAINT `fk_season_points_round` FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-			CONSTRAINT `fk_season_points_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
+			KEY `idx_season_points_team` (`team_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 	}
+
 }
 
 function upgrade81()
@@ -1121,37 +1118,176 @@ function upgrade85()
 }
 
 function upgradeEngineToInnoDb() {
-    $charset = 'utf8mb4';
-    $collation = 'utf8mb4_unicode_ci';
+	$charset = 'utf8mb4';
+	$collation = 'utf8mb4_unicode_ci';
 
-    // Clean nullable references and ensure no orphans before conversion.
-    cleanupNullableOrphans();
-    $errors = findOrphanErrors();
-    if (count($errors)) {
-        $instructions = "Cannot add foreign keys:\n" . implode("\n", $errors) . "\n";
-        throw new Exception($instructions);
-    }
+	// Clean nullable references and ensure no orphans before conversion.
+	cleanupNullableOrphans();
+	$errors = findOrphanErrors();
+	if (count($errors)) {
+		$instructions = "Cannot add foreign keys:\n" . implode("\n", $errors) . "\n";
+		throw new Exception($instructions);
+	}
+	$blockingFkCommands = getCharsetBlockingForeignKeyDropCommands();
+	if (count($blockingFkCommands)) {
+		$instructions = "Pre-check found foreign keys that can block charset conversion.\n";
+		$instructions .= "Run all commands below once, then rerun conversion:\n";
+		$instructions .= implode("\n", $blockingFkCommands) . "\n";
+		throw new Exception($instructions);
+	}
 
-    runQuery(sprintf(
-        "ALTER DATABASE `%s` CHARACTER SET %s COLLATE %s",
-        DB_DATABASE,
-        $charset,
-        $collation
-    ));
+	try {
+		runQuery(sprintf(
+			"ALTER DATABASE `%s` CHARACTER SET %s COLLATE %s",
+			DB_DATABASE,
+			$charset,
+			$collation
+		));
+	} catch (mysqli_sql_exception $e) {
+		throw new Exception(buildConversionFailureInstructions('database', $e->getMessage()), 0, $e);
+	}
 
-    $tables = runQuery(sprintf("SHOW TABLES FROM `%s`", DB_DATABASE));
-    while ($row = mysqli_fetch_row($tables)) {
-        $table = $row[0];
-        runQuery(sprintf(
-            "ALTER TABLE `%s` CONVERT TO CHARACTER SET %s COLLATE %s, ENGINE=InnoDB",
-            $table,
-            $charset,
-            $collation
-        ));
-    }
+	$tables = runQuery(sprintf("SHOW TABLES FROM `%s`", DB_DATABASE));
+	while ($row = mysqli_fetch_row($tables)) {
+		$table = $row[0];
+		try {
+			runQuery(sprintf(
+				"ALTER TABLE `%s` CONVERT TO CHARACTER SET %s COLLATE %s, ENGINE=InnoDB",
+				$table,
+				$charset,
+				$collation
+			));
+		} catch (mysqli_sql_exception $e) {
+			throw new Exception(buildConversionFailureInstructions($table, $e->getMessage()), 0, $e);
+		}
+	}
 
 	// Add foreign keys now that all tables use InnoDB.
 	addInnoDbForeignKeys();
+}
+
+function buildConversionFailureInstructions($target, $dbError)
+{
+	$message = "Conversion failed while updating `" . $target . "`\n";
+	$message .= "Error: " . $dbError . "\n";
+	$message .= "This usually means an existing foreign key blocks charset/engine conversion.\n";
+
+	$constraint = extractConstraintNameFromError($dbError);
+	if ($constraint !== null) {
+		$details = getForeignKeyDetails($constraint);
+		if ($details !== null) {
+			$message .= sprintf(
+				"Blocking FK `%s` is on `%s` (%s) referencing `%s` (%s).\n",
+				$constraint,
+				$details['table'],
+				implode(', ', $details['columns']),
+				$details['ref_table'],
+				implode(', ', $details['ref_columns'])
+			);
+			$message .= "If this is a legacy/custom FK, run:\n";
+			$message .= sprintf("Command: ALTER TABLE `%s` DROP FOREIGN KEY `%s`;\n", $details['table'], $constraint);
+			$message .= "Then rerun the upgrade.\n";
+			return $message;
+		}
+
+		$message .= "Find the FK metadata with:\n";
+		$message .= "SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME\n";
+		$message .= "FROM information_schema.KEY_COLUMN_USAGE\n";
+		$message .= sprintf("WHERE CONSTRAINT_SCHEMA='%s' AND CONSTRAINT_NAME='%s';\n", DB_DATABASE, DBEscapeString($constraint));
+	}
+
+	return $message;
+}
+
+function extractConstraintNameFromError($dbError)
+{
+	if (!preg_match("/constraint '([^']+)'/i", $dbError, $matches)) {
+		return null;
+	}
+	$fullName = $matches[1];
+	$parts = explode('/', $fullName);
+	return end($parts);
+}
+
+function getForeignKeyDetails($constraint)
+{
+	$query = sprintf(
+		"SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+		 FROM information_schema.KEY_COLUMN_USAGE
+		 WHERE CONSTRAINT_SCHEMA='%s'
+		   AND CONSTRAINT_NAME='%s'
+		   AND REFERENCED_TABLE_NAME IS NOT NULL
+		 ORDER BY ORDINAL_POSITION",
+		DBEscapeString(DB_DATABASE),
+		DBEscapeString($constraint)
+	);
+
+	$result = runQuery($query);
+	if (!$result) {
+		return null;
+	}
+
+	$columns = array();
+	$refColumns = array();
+	$table = null;
+	$refTable = null;
+	while ($row = mysqli_fetch_assoc($result)) {
+		$table = $row['TABLE_NAME'];
+		$refTable = $row['REFERENCED_TABLE_NAME'];
+		$columns[] = $row['COLUMN_NAME'];
+		$refColumns[] = $row['REFERENCED_COLUMN_NAME'];
+	}
+
+	if ($table === null || $refTable === null) {
+		return null;
+	}
+
+	return array(
+		'table' => $table,
+		'columns' => $columns,
+		'ref_table' => $refTable,
+		'ref_columns' => $refColumns
+	);
+}
+
+function getCharsetBlockingForeignKeyDropCommands()
+{
+	$query = sprintf(
+		"SELECT DISTINCT
+			kcu.TABLE_NAME AS child_table,
+			kcu.CONSTRAINT_NAME AS constraint_name
+		FROM information_schema.KEY_COLUMN_USAGE kcu
+		JOIN information_schema.COLUMNS child_col
+			ON child_col.TABLE_SCHEMA = kcu.TABLE_SCHEMA
+			AND child_col.TABLE_NAME = kcu.TABLE_NAME
+			AND child_col.COLUMN_NAME = kcu.COLUMN_NAME
+		JOIN information_schema.COLUMNS parent_col
+			ON parent_col.TABLE_SCHEMA = kcu.REFERENCED_TABLE_SCHEMA
+			AND parent_col.TABLE_NAME = kcu.REFERENCED_TABLE_NAME
+			AND parent_col.COLUMN_NAME = kcu.REFERENCED_COLUMN_NAME
+		WHERE kcu.TABLE_SCHEMA = '%s'
+			AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
+			AND (
+				child_col.CHARACTER_SET_NAME IS NOT NULL
+				OR parent_col.CHARACTER_SET_NAME IS NOT NULL
+			)
+		ORDER BY kcu.TABLE_NAME, kcu.CONSTRAINT_NAME",
+		DBEscapeString(DB_DATABASE)
+	);
+	$result = runQuery($query);
+	if (!$result) {
+		return array();
+	}
+
+	$commands = array();
+	while ($row = mysqli_fetch_assoc($result)) {
+		$commands[] = sprintf(
+			"ALTER TABLE `%s` DROP FOREIGN KEY `%s`;",
+			$row['child_table'],
+			$row['constraint_name']
+		);
+	}
+	return $commands;
 }
 
 
@@ -1370,6 +1506,12 @@ function addInnoDbForeignKeys()
 	addForeignKey('uo_spirit_score', 'fk_spirit_score_game', "FOREIGN KEY (`game_id`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_spirit_score', 'fk_spirit_score_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_spirit_score', 'fk_spirit_score_category', "FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_season_round', 'fk_season_round_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_season_round', 'fk_season_round_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_season_points', 'fk_season_points_round', "FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_season_points', 'fk_season_points_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 
 	addForeignKey('uo_defense', 'fk_defense_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_defense', 'fk_defense_author', "FOREIGN KEY (`author`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE");
