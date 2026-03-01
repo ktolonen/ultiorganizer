@@ -32,11 +32,45 @@ function RenderSpiritCommentForTeam($teamId, $spirit_comments, $comment_feedback
   return $html;
 }
 
+function QuickSpiritCategories($categories)
+{
+  $quick = array();
+  foreach ($categories as $category) {
+    if ((int)$category['index'] > 0) {
+      $quick[] = $category;
+    }
+  }
+  usort($quick, function ($a, $b) {
+    return (int)$a['index'] <=> (int)$b['index'];
+  });
+  return count($quick) === 5 ? $quick : array();
+}
+
+function ParseQuickSpiritScore($score, $quickCategories)
+{
+  $score = trim((string)$score);
+  if ($score === "") {
+    return null;
+  }
+  if (count($quickCategories) !== 5 || strlen($score) !== 5 || !preg_match('/^[0-4]{5}$/', $score)) {
+    return false;
+  }
+
+  $points = array();
+  for ($i = 0; $i < 5; $i++) {
+    $value = (int)$score[$i];
+    $points[(int)$quickCategories[$i]['category_id']] = $value;
+  }
+  return $points;
+}
+
 $season = SeasonInfo(GameSeason($gameId));
 if ($season['spiritmode'] > 0) {
   $game_result = GameResult($gameId);
   $mode = SpiritMode($season['spiritmode']);
   $categories = SpiritCategories($mode['mode']);
+  $quickCategories = QuickSpiritCategories($categories);
+  $allowQuickEntry = (count($quickCategories) === 5) && isSeasonAdmin($season['season_id']);
   $comment_feedback = "";
   $spirit_comments = array();
   if ($teamId > 0) {
@@ -85,7 +119,30 @@ if ($season['spiritmode'] > 0) {
 
   //process itself if save button was pressed
   if (!empty($_POST['save'])) {
-    if (isset($_POST['homevalueId'])) {
+    $homeSavedFromQuick = false;
+    $visitorSavedFromQuick = false;
+
+    if ($allowQuickEntry && isset($_POST['homespirit']) && trim($_POST['homespirit']) !== "") {
+      $quickHomePoints = ParseQuickSpiritScore($_POST['homespirit'], $quickCategories);
+      if ($quickHomePoints === false) {
+        $missing = sprintf(_("Invalid quick score for %s. "), $game_result['hometeamname']);
+      } else {
+        GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $quickHomePoints, $categories);
+        $homeSavedFromQuick = true;
+      }
+    }
+
+    if ($allowQuickEntry && isset($_POST['awayspirit']) && trim($_POST['awayspirit']) !== "") {
+      $quickVisitorPoints = ParseQuickSpiritScore($_POST['awayspirit'], $quickCategories);
+      if ($quickVisitorPoints === false) {
+        $missing = sprintf(_("Invalid quick score for %s. "), $game_result['visitorteamname']);
+      } else {
+        GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $quickVisitorPoints, $categories);
+        $visitorSavedFromQuick = true;
+      }
+    }
+
+    if (isset($_POST['homevalueId']) && !$homeSavedFromQuick) {
     $points = array();
     foreach ($_POST['homevalueId'] as $cat) {
       if (isset($_POST['homecat' . $cat]))
@@ -95,7 +152,7 @@ if ($season['spiritmode'] > 0) {
     }
     GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
     }
-    if (isset($_POST['visvalueId'])) {
+    if (isset($_POST['visvalueId']) && !$visitorSavedFromQuick) {
     $points = array();
     foreach ($_POST['visvalueId'] as $cat) {
       if (isset($_POST['viscat' . $cat]))
@@ -131,6 +188,53 @@ if ($season['spiritmode'] > 0) {
   $html .= pageMenu($menutabs, "", false);
 
   $html .= "<form  method='post' action='?view=user/addspirit&amp;game=" . $gameId . "&amp;team=$teamId'>";
+  if ($allowQuickEntry) {
+    $homeAbbr = TeamAbbreviation($game_result['hometeam']);
+    $visitorAbbr = TeamAbbreviation($game_result['visitorteam']);
+    if (empty($homeAbbr)) {
+      $homeAbbr = $game_result['hometeamname'];
+    }
+    if (empty($visitorAbbr)) {
+      $visitorAbbr = $game_result['visitorteamname'];
+    }
+    $html .= "<h3>" . _("Quick data entry:") . "</h3>\n";
+    $html .= "<table>";
+    $html .= "<tr><td class='center'>" . _("Given for") . "</td><td width='25px'></td><td class='center'>" . _("Given for") . "</td><td></td></tr>";
+    $html .= "<tr><td class='center'><strong>" . utf8entities($homeAbbr) . "</strong></td><td></td><td class='center'><strong>" . utf8entities($visitorAbbr) . "</strong></td><td></td></tr>";
+    $html .= "<tr>";
+    $html .= "<td class='center'><input class='input quickspirit-input' type='text' size='5' maxlength='5' name='homespirit' id='homespirit' inputmode='numeric' pattern='[0-4]{5}'/></td>";
+    $html .= "<td></td>";
+    $html .= "<td class='center'><input class='input quickspirit-input' type='text' size='5' maxlength='5' name='awayspirit' id='awayspirit' inputmode='numeric' pattern='[0-4]{5}'/></td>";
+    $html .= "<td class='center'><button class='button' type='submit' name='save' value='save'>" . _("Update & Save") . "</button></td>";
+    $html .= "</tr>";
+    $html .= "<tr><td colspan='2' class='center'>" . _("(eg. '21322')") . "</td></tr></table>";
+    $html .= "<script>
+      (function () {
+        function updateQuickInputState(el) {
+          var v = (el.value || '').trim();
+          var ok = /^[0-4]{5}$/.test(v);
+          if (ok || v === '') {
+            el.style.borderColor = '';
+            el.style.backgroundColor = '';
+          } else {
+            el.style.borderColor = '#c00';
+            el.style.backgroundColor = '#ffeaea';
+          }
+        }
+        var ids = ['homespirit', 'awayspirit'];
+        for (var i = 0; i < ids.length; i++) {
+          var el = document.getElementById(ids[i]);
+          if (!el) {
+            continue;
+          }
+          updateQuickInputState(el);
+          el.addEventListener('input', function () {
+            updateQuickInputState(this);
+          });
+        }
+      })();
+    </script>";
+  }
 
   if ($teamId > 0) {
     if ($teamId == $game_result['visitorteam']) {

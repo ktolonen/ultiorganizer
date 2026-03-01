@@ -51,6 +51,16 @@
 - Avoid large refactors unless explicitly requested.
 - If making UI changes, verify on both desktop and mobile layouts.
 
+## Spirit point handling
+- Core spirit score logic lives in `lib/spirit.functions.php` (modes/categories, read/write of game spirit points, totals, missing points, and team/series aggregates).
+- Spirit score entry UI is `user/addspirit.php`; season/team displays also use Spirit helpers in pages like `teamcard.php`, `gameplay.php`, `teams.php`, and `seriesstatus.php`.
+- Spirit comments are stored in `uo_comment` and handled in `lib/comment.functions.php`:
+  - Spirit comment types are `COMMENT_TYPE_SPIRIT_HOME` (`5`) and `COMMENT_TYPE_SPIRIT_VISITOR` (`6`).
+  - Main helpers are `SpiritCommentTypeForTeam()`, `CanCreateSpiritComment()`, `CanManageSpiritComment()`, and `SetSpiritComment()`.
+- Related flags/settings:
+  - `INSTALLATION_SETTING`: `ShowSpiritComments` (server config in `uo_setting`, managed in `admin/serverconf.php`, read via `ShowSpiritComments()` in `lib/configuration.functions.php`).
+  - `EVENT_SETTING`: `spiritmode` (which spirit category mode is used per season) and `showspiritpoints` (visibility of spirit points), managed in `admin/addseasons.php` and persisted via season SQL in `lib/season.functions.php`.
+
 ## API approach (planned)
 - API lives under `/api`, with versioned paths like `/api/v1/...` and a dedicated entry point in `/api/index.php`.
 - JSON only; no HTML responses. Use consistent `status`, `data`, and `error` payloads with HTTP status codes.
@@ -59,6 +69,34 @@
 - Rate limiting is required (keyed by token + IP), returning `429` and `Retry-After` when exceeded.
 - First endpoints mirror `teams.php`, `games.php`, and `gameplay.php`, excluding historical data.
 - OpenAPI documentation is required and should live alongside the API (e.g., `/api/openapi.yaml`).
+
+## Database updates
+
+### Database change requirements
+- If a new `INSTALLATION_SETTING` or `EVENT_SETTING` needs new schema/columns/tables:
+  - update base schema in `sql/ultiorganizer.sql`.
+  - add a new upgrade step in `sql/upgrade_db.php`.
+  - bump `DB_VERSION` so `CheckDB()` applies upgrade on startup.
+- Prefer backward-compatible migrations:
+  - nullable or defaulted new columns.
+  - safe fallback behavior in PHP until migration has run.
+
+### Database layout change workflow (basic)
+- Use this for any DB structure change (new table, new column, index, rename, drop).
+- Keep SQL DDL in migration functions in `sql/upgrade_db.php`; keep normal query SQL in `lib/`.
+- Steps:
+  - 1. Pick next version number `XX` from the latest `upgradeXX()` in `sql/upgrade_db.php`.
+  - 2. Add `function upgradeXX()` in `sql/upgrade_db.php` with required `ALTER/CREATE/...` statements.
+  - 3. Update `define('DB_VERSION', XX);` in `lib/database.php` so `CheckDB()` runs the new function.
+  - 4. Update base install schema in `sql/ultiorganizer.sql` so fresh installs include the final structure.
+  - 5. If PHP reads/writes the changed fields, update related SQL/data access in `lib/` (single source of truth).
+  - 6. Verify both paths:
+    - upgrade path: existing DB upgrades correctly via `CheckDB()`.
+    - clean install path: new DB from `sql/ultiorganizer.sql` matches expected structure.
+- Rules of thumb:
+  - prefer additive, backward-compatible changes first.
+  - if destructive change is required, include data copy/migration before remove/rename.
+  - never rely on manual DB edits outside `upgrade_db.php` + schema updates.
 
 ## Configuration flags
 
@@ -106,15 +144,6 @@ Use these exact type names when discussing configuration work:
   - expose in relevant event admin UI.
   - include in event create/edit flows and read paths that depend on it.
   - keep SQL/data access in `lib/`.
-
-### Database change requirements
-- If a new `INSTALLATION_SETTING` or `EVENT_SETTING` needs new schema/columns/tables:
-  - update base schema in `sql/ultiorganizer.sql`.
-  - add a new upgrade step in `sql/upgrade_db.php`.
-  - bump `DB_VERSION` so `CheckDB()` applies upgrade on startup.
-- Prefer backward-compatible migrations:
-  - nullable or defaulted new columns.
-  - safe fallback behavior in PHP until migration has run.
 
 ### Choosing configuration type
 - Choose `SYSTEM_FLAG` for deploy-time/environment/security toggles.

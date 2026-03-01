@@ -654,8 +654,8 @@ function upgrade75()
 			// set all to 1001
 			runQuery("UPDATE uo_season SET `spiritmode` = 1001 WHERE `spiritpoints`=1");
 
-			// update WFDF scores
-			$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1002");
+			// update WFDF scores. Assume: WFDF (five categories)
+			$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1003");
 		}
 
 		$categories = array();

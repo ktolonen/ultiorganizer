@@ -175,7 +175,7 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
     echo "</div><!--page_top-->\n";
 
     //navigation bar
-    echo "<div class='navigation_bar'><p class='navigation_bar_text'>";
+    echo "<div class='navigation_bar'><p class='navigation_bar_text'><span style='color: grey;'>Nav. History: </span>";
     echo navigationBar($title) . "</p></div>";
   }
 
@@ -557,11 +557,13 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   if ($pools) {
     $lastseason = "";
     $lastseries = "";
+    $seasoninfo = null;
     foreach ($pools as $row) {
       $season = $row['season'];
       $series = $row['series'];
       if ($lastseason != $season) {
         $lastseason = $season;
+        $seasoninfo = SeasonInfo($season);
         echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=bystandings'>";
         echo utf8entities(U_($row['season_name'])) . "</a></td></tr>\n";
         echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=bystandings'>" . utf8entities(_("Standings")) . "</a></td></tr>\n";
@@ -572,6 +574,12 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
       }
 
       if ($lastseries != $series) {
+        if (
+          !empty($lastseries)
+          && ShowSpiritScoresForSeason($seasoninfo)
+        ) {
+          echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit Scores")."</a></td></tr>\n";
+        }
         $lastseries = $series;
         echo "<tr><td class='menuserieslevel'>";
         echo "<a class='subnav' href='?view=seriesstatus&amp;series=" . $series . "'>" . utf8entities(U_($row['series_name'])) . "</a></td></tr>\n";
@@ -582,6 +590,9 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
       echo "<a class='navpoollink' href='?view=poolstatus&amp;pool=" . $row['pool'] . "'>&raquo; " . utf8entities(U_($row['pool_name'])) . "</a>\n";
       echo "</td></tr>\n";
     }
+	if (ShowSpiritScoresForSeason($seasoninfo)) {
+      echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit Scores")."</a></td></tr>\n";
+		}
   } else {
     $season = CurrentSeason();
     echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&amp;season=" .
@@ -740,7 +751,7 @@ function getEditSeasonLinks()
           if (count($teamresps) < 2) {
             $teamname = getTeamName($team);
             $links = $ret[$teamseason];
-            $links['?view=user/teamplayers&amp;team=' . $team] = _("Team") . ": " . $teamname;
+            $links['?view=user/teamplayers&amp;team='.$team] = _("Team").": ".utf8entities($teamname);
             $respgamesset[$teamseason] = "set";
             $teamPlayersSet["" . $team] = "set";
             $ret[$teamseason] = $links;
@@ -761,7 +772,7 @@ function getEditSeasonLinks()
             if (isset($ret[$teamseason])) {
               $teamname = getTeamName($team);
               $links = $ret[$teamseason];
-              $links['?view=user/teamplayers&amp;team=' . $team] = _("Team") . ": " . $teamname;
+              $links['?view=user/teamplayers&amp;team='.$team] = _("Team").": ".utf8entities($teamname);
               $links['?view=admin/accreditation&amp;season=' . $teamseason] = _("Accreditation");
               $teamPlayersSet["" . $team] = "set";
               $ret[$teamseason] = $links;

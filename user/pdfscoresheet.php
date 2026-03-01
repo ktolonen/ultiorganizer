@@ -58,6 +58,18 @@ if (!empty($_GET["filter2"])) {
 	$filter2  = $_GET["filter2"];
 }
 
+if(!empty($_GET["time"])) {
+	$time = $_GET["time"];
+  $games = TimetableGames(CurrentSeason(), "season", $time, "places", "");
+
+  if(!empty($_GET["timefilter1"])) {
+    $timefilter1  = $_GET["timefilter1"];
+  }
+
+  if(!empty($_GET["timefilter2"])) {
+    $timefilter2  = $_GET["timefilter2"];
+  }
+}
 if (!empty($_GET["reservation"])) {
 	$gameResponsibilities = GameResponsibilities($season);
 	$responsibilities = array();
@@ -122,6 +134,11 @@ if ($teamId) {
 		$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	}
 	$filename = "rosters-series-" . pdf_slug($seriesId) . "-" . $seasonSlug . ".pdf";
+} elseif (isset($_GET['blank'])) {
+  
+  $seasonname = SeasonName($season);
+  $pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "", array(), array());
+  
 } else {
 	$seasonname = SeasonName($season);
 

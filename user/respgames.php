@@ -215,6 +215,9 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         if (ShowDefenseStats()) {
           $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defense sheet") . "</a>";
         }
+	     if(isSeasonAdmin($seasoninfo['season_id'])) {
+        $html .= " | <a href='?view=admin/editgame&amp;season=".$season."&amp;game=".$gameId."'>"._("Edit")."</a>";
+      }
         $html .= "</td>";
       }
       $html .= "</tr>";

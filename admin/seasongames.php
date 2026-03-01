@@ -140,6 +140,13 @@ if ($mass) {
     ++$tab . "'>" . _("Mass input") . "</a></td></tr></table>";
 }
 
+$html .= "<p style='text-align: right;'>";
+$html .= "<a class='scoresheetslink' href='?view=user/pdfscoresheet&amp;blank&amp;season=" . $season . "' target='_blank' rel='noopener'>" . _("Print blank scoresheet") . "</a>";
+$html .= "<span style='margin: 0 1ex;'></span>";
+$html .= "<a class='scoresheetslink' href='?view=user/pdfscoresheet&amp;group=all&amp;season=" . $season . "' target='_blank' rel='noopener'>" . _("Print all scoresheets") . "</a>";
+$html .= "</p>";
+
+
 $html .= "<form method='post' action='?view=admin/seasongames&amp;season=$season&amp;group=$group'>";
 
 $pools = SeriesPools($series_id);

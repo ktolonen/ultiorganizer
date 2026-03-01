@@ -159,33 +159,27 @@ if (ShowDefenseStats()) {
     $html .= "<p><span class='profileheader'>" . utf8entities(U_(SeasonName($teaminfo['season']))) . " " . _("roster") . ":</span></p>\n";
 
     $html .= "<table style='width:80%'>\n";
-    $html .= "<tr><th style='width:40%'>" . _("Name") . "</th>
-		<th class='center' style='width:15%'>" . _("Games") . "</th>
-		<th class='center' style='width:15%'>" . _("Assists") . "</th>
-		<th class='center' style='width:15%'>" . _("Goals") . "</th>
-		<th class='center' style='width:15%'>" . _("Tot.") . "</th></tr>\n";
+    $html .= "<tr><th class='center' style='width:5%'>#</th>
+    <th style='width:35%'>"._("Name")."</th>
+		<th class='center' style='width:15%'>"._("Games")."</th>
+		<th class='center' style='width:15%'>"._("Assists")."</th>
+		<th class='center' style='width:15%'>"._("Goals")."</th>
+		<th class='center' style='width:15%'>"._("Total")."</th></tr>\n";
 
 
     while ($player = mysqli_fetch_assoc($players)) {
       $playerinfo = PlayerInfo($player['player_id']);
-      $html .= "<tr><td>";
-      if (!empty($playerinfo['profile_id'])) {
-        if ($playerinfo['num'] > -1) {
-          $html .= "<a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
-            "#" . $playerinfo['num'] . " " . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</a>";
-        } else {
-          $html .= "<a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
-            utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</a>";
+      $playernum = ( $playerinfo['num']>-1 ? $playerinfo['num'] : "" );
+      $html .= "<tr><td class='right' style='padding-right:1ex;'>".$playernum."</td>";
+      $html .= "<td>";
+      if(!empty($playerinfo['profile_id'])){
+        $html .= "<a href='?view=playercard&amp;series=0&amp;player=". $player['player_id']."'>".
+        utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']) ."</a>";
+        if(!empty($playerinfo['profile_image'])){
+          $html .= "&nbsp;<img width='10' height='10' src='images/linkicons/image.png' alt='"._("Photo")."'/>";
         }
-        if (!empty($playerinfo['profile_image'])) {
-          $html .= "&nbsp;<img width='10' height='10' src='images/linkicons/image.png' alt='" . _("Photo") . "'/>";
-        }
-      } else {
-        if ($playerinfo['num'] > -1) {
-          $html .= "#" . $playerinfo['num'] . " " . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
-        } else {
-          $html .= utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
-        }
+      }else{
+        $html .= utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']);
       }
       $html .= "</td>";
       $html .= "<td class='center'>" . $player['games'] . "</td>";
@@ -210,7 +204,7 @@ if ($allgames) {
 }
 
 $seasoninfo = SeasonInfo($teaminfo['season']);
-if ($seasoninfo && (int)$seasoninfo['spiritmode'] > 0 && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))) {
+if (ShowSpiritScoresForSeason($seasoninfo)) {
   $categories = SpiritCategories($seasoninfo['spiritmode']);
   $categoryStats = TeamSpiritCategoryStats($teamId, $seasoninfo['season_id'], $seasoninfo['spiritmode']);
   $categoryHistory = TeamSpiritCategoryHistoryAveragesByName($teaminfo['name'], $teaminfo['type'], $seasoninfo['spiritmode']);
@@ -282,6 +276,105 @@ if ($seasoninfo && (int)$seasoninfo['spiritmode'] > 0 && ($seasoninfo['showspiri
     $html .= "</tr>";
     $html .= $rows;
     $html .= "</table>\n";
+  }
+
+  $showSpiritComments = ShowSpiritComments() || isSeasonAdmin($seasoninfo['season_id']);
+  $scoreCategories = array();
+  foreach ($categories as $category) {
+    if ((int)$category['index'] > 0 && (float)$category['factor'] > 0) {
+      $scoreCategories[] = $category;
+    }
+  }
+  if (empty($scoreCategories)) {
+    foreach ($categories as $category) {
+      if ((int)$category['index'] > 0) {
+        $scoreCategories[] = $category;
+      }
+    }
+  }
+
+  if (!empty($scoreCategories)) {
+    $spiritReceivedRows = TeamSpiritPointsReceived($seasoninfo['season_id'], $teamId);
+    if (!empty($spiritReceivedRows)) {
+      $html .= "<h3>" . _("Spirit points received:") . "</h3>\n";
+      $html .= "<table width='100%' border='1'>\n";
+      $html .= "<tr><th style='width: 18%'>" . _("Given by") . "</th>";
+      foreach ($scoreCategories as $category) {
+        $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
+      }
+      $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
+      if ($showSpiritComments) {
+        $html .= "<th style='width: 40%'>" . _("Comments") . "</th>";
+      }
+      $html .= "</tr>\n";
+
+      foreach ($spiritReceivedRows as $row) {
+        if (!(intval($row['is_complete']) || isSeasonAdmin($seasoninfo['season_id']))) {
+          continue;
+        }
+        $html .= "<tr>";
+        $html .= "<td>" . utf8entities($row['givenby']) . "</td>";
+        foreach ($scoreCategories as $category) {
+          $col = 'cat' . (int)$category['index'];
+          if (is_null($row[$col])) {
+            $html .= "<td class='center'>-</td>";
+          } else {
+            $html .= "<td class='center'>" . (int)$row[$col] . "</td>";
+          }
+        }
+        if (is_null($row['total'])) {
+          $html .= "<td class='center'>-</td>";
+        } else {
+          $html .= "<td class='center'><b>" . number_format((float)$row['total'], 2) . "</b></td>";
+        }
+        if ($showSpiritComments) {
+          $html .= "<td>" . someHTML($row['comments']) . "</td>";
+        }
+        $html .= "</tr>\n";
+      }
+      $html .= "</table>\n";
+    }
+
+    $spiritGivenRows = TeamSpiritPointsGiven($seasoninfo['season_id'], $teamId);
+    if (!empty($spiritGivenRows)) {
+      $html .= "<h3>" . _("Spirit points given to the other teams:") . "</h3>\n";
+      $html .= "<table width='100%' border='1'>\n";
+      $html .= "<tr><th style='width: 18%'>" . _("Given for") . "</th>";
+      foreach ($scoreCategories as $category) {
+        $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
+      }
+      $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
+      if ($showSpiritComments) {
+        $html .= "<th style='width: 40%'>" . _("Comments") . "</th>";
+      }
+      $html .= "</tr>\n";
+
+      foreach ($spiritGivenRows as $row) {
+        if (!intval($row['is_complete'])) {
+          continue;
+        }
+        $html .= "<tr>";
+        $html .= "<td>" . utf8entities($row['givento']) . "</td>";
+        foreach ($scoreCategories as $category) {
+          $col = 'cat' . (int)$category['index'];
+          if (is_null($row[$col])) {
+            $html .= "<td class='center'>-</td>";
+          } else {
+            $html .= "<td class='center'>" . (int)$row[$col] . "</td>";
+          }
+        }
+        if (is_null($row['total'])) {
+          $html .= "<td class='center'>-</td>";
+        } else {
+          $html .= "<td class='center'><b>" . number_format((float)$row['total'], 2) . "</b></td>";
+        }
+        if ($showSpiritComments) {
+          $html .= "<td>" . someHTML($row['comments']) . "</td>";
+        }
+        $html .= "</tr>\n";
+      }
+      $html .= "</table>\n";
+    }
   }
 }
 

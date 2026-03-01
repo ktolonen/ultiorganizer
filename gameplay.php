@@ -536,7 +536,7 @@ if (GameHasStarted($game_result) > 0) {
 			<td class='home'>" . $nHTO . "</td>
 			<td class='guest'>" . $nVTO . "</td></tr>";
 
-      if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))) {
+      if (ShowSpiritScoresForSeason($seasoninfo)) {
         $html .= "<tr><td>" . _("Spirit points") . ":</td>";
         if (isset($game_result['homesotg']) && !is_null($game_result['homesotg'])) {
           $html .= "<td class='home'>" . $game_result['homesotg'] . "</td>";

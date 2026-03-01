@@ -4,6 +4,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
+include_once 'lib/spirit.functions.php';
 include_once 'lib/configuration.functions.php';
 
 $title = _("Data export");
@@ -28,6 +29,12 @@ $html .= "<a href='ext/resultscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$
 $html .= "<a href='ext/playerscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Player statistics") . "</a><br/>";
 $html .= "<a href='ext/teamscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Team statistics") . "</a><br/>";
 $html .= "<a href='ext/poolscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Pool standings") . "</a><br/>";
+
+$seasoninfo = SeasonInfo($season);
+
+if (ShowSpiritScoresForSeason($seasoninfo)) {
+  $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; "._("Spirit Scores")."</a><br/>";
+}
 $html .= "</p>";
 
 $html .= "<form method='post' action='?view=ext/export'>\n";
