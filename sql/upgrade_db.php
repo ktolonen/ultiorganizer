@@ -690,7 +690,7 @@ function upgrade75()
 				if ($lastSeason != $row['season_id']) {
 					$lastSeason = $row['season_id'];
 					runQuery(sprintf(
-						"UPDATE uo_season SET `spiritmode` = 1002 WHERE `spiritpoints`=1 AND season_id='%s'",
+						"UPDATE uo_season SET `spiritmode` = 1003 WHERE `spiritpoints`=1 AND season_id='%s'",
 						DBEscapeString($lastSeason)
 					));
 				}
