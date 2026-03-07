@@ -28,6 +28,12 @@ echo yuiLoad(array("yahoo-dom-event"));
 ?>
 <script type="text/javascript">
   var hideTimeOnScoresheet = <?php echo !empty($seasoninfo['hide_time_on_scoresheet']) ? "true" : "false"; ?>;
+function moveNext(i,evt) {
+  if (evt.which == 9) {
+    id = 'pass'+i;
+    document.getElementById(id).focus();
+  }
+}
 
   function validTime(field) {
     field.value = field.value.replace(/[^0-9]/g, '.');
@@ -154,10 +160,28 @@ echo yuiLoad(array("yahoo-dom-event"));
     }
     var node = (evt.target) ? evt.target : ((evt.srcElement) ? evt.srcElement : null);
     if ((code == 13) && ((node.type == "text") || (node.type == "checkbox") || (node.type == "radio"))) {
-      return false;
+    evt.preventDefault();
+    if (node.type=="text") {
+      t = node.id.substring(0,4);
+      n = node.id.substring(4);
+      switch (t) {
+        case "pass":
+          document.getElementById("goal"+n).focus();
+          break;
+        case "goal":
+          document.getElementById("time"+n).focus();
+          break;
+        case "time":
+          document.getElementById("pass"+(+n+1)).focus();
+          break;
+      }
     }
   }
+}
   document.onkeypress = keyfilter;
+function clickButton(id){
+  document.getElementById(id).click();
+}
   //-->
 </script>
 <?php
@@ -327,7 +351,7 @@ if (!empty($_POST['save'])) {
       }
 
       if ($pass == $goal) {
-        echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("Scorer and assist are the same player!") . " '" . $_POST['goal' . $i] . "'!</p>";
+        echo "<p class='warning'>"._("Point")." ",$i+1,": "._("Scorer and assist have the same number")." '".$_POST['goal'.$i]."'!</p>";
         $errIds[] = "pass$i";
         $errIds[] = "goal$i";
       }
@@ -363,7 +387,7 @@ if (!empty($_POST['save'])) {
       echo "<p>" . sprintf(_("Final result saved: %s - %s."), $h, $a) . ".</p>";
     }
   }
-  echo "<p>" . _("Score sheet saved") . " (" . _("Time") . ": " . DefTimestamp() . ")!</p>";
+  echo "<p>"._("Score sheet saved")." (". _("at")." ".DefTimestamp().")!</p>";
   echo "<a href='?view=gameplay&amp;game=$gameId'>" . _("Game play") . "</a>";
 }
 $game_result = GameResult($gameId);
@@ -373,11 +397,19 @@ $awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
 $home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
 $away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
-if (count($home_playerlist) == 0) {
-  echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['hometeamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Feed in the players in the game.") . "</a></p>";
+// get team abbreviations
+if (!($homeshortname = utf8entities(TeamAbbreviation($game_result['hometeam'])))) {
+  $homeshortname = _("Home");
 }
-if (count($away_playerlist) == 0) {
-  echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['visitorteamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Feed in the players in the game.") . "</a></p>";
+if (!($visitorshortname = utf8entities(TeamAbbreviation($game_result['visitorteam'])))) {
+  $visitorshortname = _("Away");
+}
+
+if(count($home_playerlist)==0){
+  echo "<p class='warning'>".utf8entities($game_result['hometeamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+}
+if(count($away_playerlist)==0){
+  echo "<p class='warning'>".utf8entities($game_result['visitorteamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
 }
 
 
@@ -390,9 +422,9 @@ echo "<tr><td valign='top'>\n";
 //team, place, time info and scoresheet keeper's name
 echo "<table cellspacing='0' width='100%' border='1'>";
 echo "<tr><th>" . _("Home team") . "</th></tr>";
-echo "<tr><td>" . utf8entities($game_result['hometeamname']) . "</td></tr>";
+echo "<tr><td>". utf8entities($game_result['hometeamname'])." (".$homeshortname.")</td></tr>";
 echo "<tr><th>" . _("Away team") . "</th></tr>";
-echo "<tr><td>" . utf8entities($game_result['visitorteamname']) . "</td></tr>";
+echo "<tr><td>". utf8entities($game_result['visitorteamname'])." (".$visitorshortname.")</td></tr>";
 echo "<tr><th>" . _("Field") . "</th></tr>";
 echo "<tr><td>" . utf8entities($place['name']) . " " . _("field") . " " . utf8entities($place['fieldname']) . "</td></tr>";
 echo "<tr><th>" . _("Scheduled start date and time") . "</th></tr>";
@@ -439,12 +471,12 @@ if (!$hideTimeOnScoresheet) {
   echo "<table cellspacing='0' width='100%' border='1'>";
   echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Time-outs") . "</th></tr>\n";
 
-  echo "<tr><th>" . _("Home") . "</th>\n";
+echo "<tr><th>".$homeshortname."</th>\n";
 
   //home team used timeouts
   $i = 0;
   $timeouts = GameTimeouts($gameId);
-  while ($timeout = mysqli_fetch_assoc($timeouts)) {
+  while ($timeout = DBFetchAssoc($timeouts)) {
     if (intval($timeout['ishome'])) {
       echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
       $i++;
@@ -462,12 +494,12 @@ if (!$hideTimeOnScoresheet) {
   }
   echo "</tr>\n";
 
-  echo "<tr><th>" . _("Away") . "</th>\n";
+echo "<tr><th>".$visitorshortname."</th>\n";
 
   //away team used timeouts
   $i = 0;
   $timeouts = GameTimeouts($gameId);
-  while ($timeout = mysqli_fetch_assoc($timeouts)) {
+  while ($timeout = DBFetchAssoc($timeouts)) {
     if (!intval($timeout['ishome'])) {
       echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
       $i++;
@@ -510,24 +542,26 @@ echo "<tr><th colspan='2'>" . _("Captains") . "</th></tr>";
 echo "<tr><td>" . utf8entities($game_result['hometeamname']) . "</td>";
 echo "<td><select style='width:100%' class='dropdown' name='homecaptain'>\n";
 echo "<option class='dropdown' value=''></option>\n";
-foreach ($home_playerlist as $player) {
+foreach($home_playerlist as $player){
   $playerInfo = PlayerInfo($player['player_id']);
-  if ($homecaptain == $player['player_id'])
-    echo "<option class='dropdown' selected='selected' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
+  $playerName = utf8entities($playerInfo['num'] ." - ". $playerInfo['firstname'] ." ". $playerInfo['lastname']);
+  if($homecaptain==$player['player_id'])
+    echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".$playerName."</option>\n";
   else
-    echo "<option class='dropdown' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
+    echo "<option class='dropdown' value='".$player['player_id']."'>".$playerName."</option>\n";
 }
 echo  "</select></td>\n";
 echo "</tr><tr>";
 echo "<td>" . utf8entities($game_result['visitorteamname']) . "</td>";
 echo "<td><select style='width:100%' class='dropdown' name='awaycaptain'>\n";
 echo "<option class='dropdown' value=''></option>\n";
-foreach ($away_playerlist as $player) {
+foreach($away_playerlist as $player){
   $playerInfo = PlayerInfo($player['player_id']);
-  if ($awaycaptain == $player['player_id'])
-    echo "<option class='dropdown' selected='selected' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
+  $playerName = utf8entities($playerInfo['num'] ." - ". $playerInfo['firstname'] ." ". $playerInfo['lastname']);
+  if($awaycaptain==$player['player_id'])
+    echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".$playerName."</option>\n";
   else
-    echo "<option class='dropdown' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
+    echo "<option class='dropdown' value='".$player['player_id']."'>".$playerName."</option>\n";
 }
 echo "</select></td>\n";
 echo "</tr>";
@@ -547,14 +581,14 @@ echo "</tr>";
 echo "<tr><td colspan='2'>
 		<a href='javascript://' onclick=\"eraseLast()\">" . _("Delete the last goal") . "</a></td></tr>";
 
-echo "<tr><td colspan='2'><p>" . _("Feed in the scoresheet") . ":</p><ul>";
-echo "<li>" . _("In addition to the tab-key you can use the + key to change fields and the enter key to select a radio button.") . "</li>";
-if (!$hideTimeOnScoresheet) {
-  echo "<li>" . _("As separator in the time field you can use any of the '.', ',', ':', or ';' characters") . ".</li>";
-}
-echo "<li>" . _("Input XX as the assist in Callahan goals") . ".</li>";
-echo "<li>" . _("You can save the score sheet at any time while feeding it in") . "</li></ul></td></tr>";
-echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>" . _("Back to game responsibilities") . "</a></p></td></tr>";
+echo "<tr><td colspan='2'>
+<p>"._("Feed in the scoresheet").":</p>
+<ul>
+<li>"._("In addition of tab-key you can use + key to swap between fields and enter key to select radio button.")."</li>
+<li>"._("As a separator in the time field you can use ")." .,:; "._("characters").".</li>
+<li>"._("Give XX as the assist in Callahan goals").".</li>
+<li>"._("You can save the score sheet any time while feeding it in")."</li></ul></td></tr>";
+echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>"._("Back to game responsibilities")."</a></p></td></tr>";
 echo "</table>\n";
 
 //scores
@@ -576,7 +610,7 @@ $style_right .= "border-left-style:dashed;border-left-width:1px;border-left-colo
 echo "</td><td>";
 echo "<table style='border-collapse:collapse' cellspacing='0' cellpadding='2' border='0'>\n";
 echo "<tr><th style='background-color:#FFFFFF;border-style:none;border-width:0;border-color:#FFFFFF'></th>";
-echo "<th style='$style_left'>" . _("Home") . "</th><th style='$style_mid'>" . _("Away") . "</th>";
+echo "<th style='$style_left'>".$homeshortname."</th><th style='$style_mid'>".$visitorshortname."</th>";
 echo "<th style='$style_mid'>" . _("Assist") . "</th><th style='$style_mid'>" . _("Goal") . "</th>";
 if (!$hideTimeOnScoresheet) {
   echo "<th style='$style_mid'>" . _("Time") . "</th>";
@@ -586,17 +620,20 @@ echo "<th style='$style_right'>" . _("Score") . "</th></tr>\n";
 $scores = GameGoals($gameId);
 
 $i = 0;
-while ($row = mysqli_fetch_assoc($scores)) {
+while ($row = DBFetchAssoc($scores)) {
 
   echo "<tr>";
   echo "<td class='center' style='width: 25px;color:#B0B0B0;'>", $i + 1, "</td>\n";
 
-  if (intval($row['ishomegoal'])) {
-    echo "<td style='width:40px;$style_left' class='center'><input onclick=\"updateScores($i);\" id='hteam$i' name='team$i' type='radio' checked='checked' value='H' /></td>";
-    echo "<td style='width:40px;$style_mid' class='center'><input onclick=\"updateScores($i);\" id='ateam$i' name='team$i' type='radio' value='A' /></td>";
-  } else {
-    echo "<td style='width:40px;$style_left' class='center'><input onclick=\"updateScores($i);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
-    echo "<td style='width:40px;$style_mid' class='center'><input onclick=\"updateScores($i);\" id='ateam$i' name='team$i' type='radio' checked='checked' value='A' /></td>";
+  if (intval($row['ishomegoal']))
+  {
+    echo "<td style='width:40px;$style_left' class='center' onclick=\"clickButton('hteam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='hteam$i' name='team$i' type='radio' checked='checked' value='H' /></td>";
+    echo "<td style='width:40px;$style_mid' class='center' onclick=\"clickButton('ateam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='ateam$i' name='team$i' type='radio' value='A' /></td>";
+  }
+  else
+  {
+    echo "<td style='width:40px;$style_left' class='center' onclick=\"clickButton('hteam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
+    echo "<td style='width:40px;$style_mid' class='center' onclick=\"clickButton('ateam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='ateam$i' name='team$i' type='radio' checked='checked' value='A' /></td>";
   }
 
   if (intval($row['iscallahan'])) {
@@ -613,7 +650,7 @@ while ($row = mysqli_fetch_assoc($scores)) {
   if ($n < 0)
     $n = "";
 
-  echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' maxlength='3' size='4' value='$n'/></td>";
+  echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' maxlength='2' size='3' value='$n'/></td>";
   if (!$hideTimeOnScoresheet) {
     echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8' value='" . SecToMin($row['time']) . "'/></td>";
   }
@@ -627,10 +664,10 @@ while ($row = mysqli_fetch_assoc($scores)) {
 for ($i; $i < $maxscores; $i++) {
   echo "<tr>";
   echo "<td class='center' style='width:25px;color:#B0B0B0;'>", $i + 1, "</td>\n";
-  echo "<td class='center' style='width:40px;$style_left'><input onclick=\"updateScores($i);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
-  echo "<td class='center' style='width:40px;$style_mid'><input onclick=\"updateScores($i);\" id='ateam$i' name='team$i' type='radio' value='A' /></td>";
-  echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' size='4' maxlength='3'/></td>";
-  echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' size='4' maxlength='3'/></td>";
+  echo "<td class='center' style='width:40px;$style_left' onclick=\"clickButton('hteam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
+  echo "<td class='center' style='width:40px;$style_mid' onclick=\"clickButton('ateam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='ateam$i' name='team$i' type='radio' value='A' /></td>";
+  echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' size='3' maxlength='2'/></td>";
+  echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' size='3' maxlength='2'/></td>";
   if (!$hideTimeOnScoresheet) {
     echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8'/></td>";
   }
