@@ -98,6 +98,12 @@ if ($games === null) {
 }
 
 $pdf = new PDF();
+$scoreSheetAcceptsPlayerLists = false;
+if (method_exists($pdf, 'PrintScoreSheet')) {
+	$printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
+	$scoreSheetAcceptsPlayerLists = $printScoreSheet->getNumberOfParameters() >= 9;
+}
+
 if ($teamId) {
 	$seasonSlug = pdf_slug(TeamSeason($teamId));
 } else {
@@ -135,9 +141,13 @@ if ($teamId) {
 	}
 	$filename = "rosters-series-" . pdf_slug($seriesId) . "-" . $seasonSlug . ".pdf";
 } elseif (isset($_GET['blank'])) {
-  
+	  
   $seasonname = SeasonName($season);
-  $pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "", array(), array());
+	if ($scoreSheetAcceptsPlayerLists) {
+		$pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "", array(), array());
+	} else {
+		$pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "");
+	}
   
 } else {
 	$seasonname = SeasonName($season);
@@ -182,17 +192,31 @@ if ($teamId) {
 		$home = empty($gameRow["hometeamname"]) ? U_($gameRow["phometeamname"]) : $gameRow["hometeamname"];
 		$visitor = empty($gameRow["visitorteamname"]) ? U_($gameRow["pvisitorteamname"]) : $gameRow["visitorteamname"];
 
-		$pdf->PrintScoreSheet(
-			U_($seasonname),
-			$sGid,
-			$home,
-			$visitor,
-			U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
-			$gameRow["time"],
-			U_($gameRow["placename"]) . " " . _("Field") . " " . U_($gameRow['fieldname'])
-		);
-		$pdf->PrintPlayerList($homeplayers, $visitorplayers);
+			if ($scoreSheetAcceptsPlayerLists) {
+				$pdf->PrintScoreSheet(
+					U_($seasonname),
+					$sGid,
+					$home,
+					$visitor,
+					U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
+					$gameRow["time"],
+					U_($gameRow["placename"]) . " " . _("Field") . " " . U_($gameRow['fieldname']),
+					$homeplayers,
+					$visitorplayers
+				);
+			} else {
+				$pdf->PrintScoreSheet(
+					U_($seasonname),
+					$sGid,
+					$home,
+					$visitor,
+					U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
+					$gameRow["time"],
+					U_($gameRow["placename"]) . " " . _("Field") . " " . U_($gameRow['fieldname'])
+				);
+				$pdf->PrintPlayerList($homeplayers, $visitorplayers);
+			}
+		}
 	}
-}
 
 $pdf->Output('I', $filename);

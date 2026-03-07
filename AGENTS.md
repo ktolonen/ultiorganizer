@@ -36,7 +36,13 @@
 
 ## Third-party components
 - YUI assets and loader live under `script/yui/` and `lib/yuiloader/`.
-- Bundled PHP libraries include `lib/fpdf/` and `lib/phpqrcode/`.
+- Bundled PHP libraries include `lib/tfpdf/` and `lib/phpqrcode/`.
+
+## PDF generation (`tFPDF`)
+- Use `lib/tfpdf/tfpdf.php` and extend `tFPDF` (or `tFPDF_CellFit` when `CellFitScale` is needed).
+- Register Unicode fonts with `AddFont(..., true)` (DejaVu TTFs are under `lib/tfpdf/font/unifont/`).
+- Keep PDF text in UTF-8; do not convert via `utf8_decode` or ISO-8859 transcoding helpers.
+- After registering DejaVu under family `Arial`, continue using `SetFont('Arial', ...)`.
 
 ## Plugins
 - `plugins/` are optional and primarily admin-only tools; normal operation should not depend on them.

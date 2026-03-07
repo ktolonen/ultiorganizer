@@ -1,8 +1,8 @@
 <?php 
-include_once 'lib/fpdf/fpdf.php';
+include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/HSVClass.php';
 
-class PDF extends FPDF
+class PDF extends tFPDF
 	{
 	var $B;
 	var $I;
@@ -18,23 +18,19 @@ class PDF extends FPDF
 				"time"=>"",
 				"placename"=>""
 				);
+
+		function __construct($orientation = 'P', $unit = 'mm', $size = 'A4')
+			{
+			parent::__construct($orientation, $unit, $size);
+			$this->AddFont('Arial', '', 'DejaVuSansCondensed.ttf', true);
+			$this->AddFont('Arial', 'B', 'DejaVuSansCondensed-Bold.ttf', true);
+			$this->AddFont('Arial', 'I', 'DejaVuSansCondensed-Oblique.ttf', true);
+			$this->AddFont('Arial', 'BI', 'DejaVuSansCondensed-BoldOblique.ttf', true);
+			}
 		
 		private function pdfText($text)
 			{
-			$text = (string)$text;
-			if (function_exists('mb_convert_encoding')) {
-				$converted = @mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
-				if ($converted !== false) {
-					return $converted;
-				}
-			}
-			if (function_exists('iconv')) {
-				$converted = @iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $text);
-				if ($converted !== false) {
-					return $converted;
-				}
-			}
-			return $text;
+			return (string)$text;
 			}
 		
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
