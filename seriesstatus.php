@@ -139,9 +139,9 @@ if ($sort == "name") {
  */
 
 if ($sort == "seed") {
-  $html .= "<th class='center'>" . _("Seed") . "</th>";
+  $html .= "<th class='center'>"._("Seed")."</th>";
 } else {
-  $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=seed'>" . _("Seed") . "</a></th>";
+  $html .= "<th class='center'><a class='thsort' href='".$viewUrl."&amp;Sort=seed'>"._("Seed")."</a></th>";
 }
 
 if ($sort == "ranking") {

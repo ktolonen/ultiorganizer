@@ -401,6 +401,27 @@ function TeamSpiritStats2($teamId, $includeIncomplete = false)
 	return DBQueryToRow($query);
 }
 
+function TeamSpiritTotalByPool($poolId, $teamId)
+{
+	$query = sprintf(
+		"SELECT COALESCE(SUM(ts.total), 0) AS spirit
+		FROM uo_game_pool gp
+		LEFT JOIN uo_game g ON (g.game_id = gp.game)
+		LEFT JOIN (
+			SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
+			FROM uo_spirit_score ssc
+			LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
+			GROUP BY ssc.game_id, ssc.team_id
+		) AS ts ON (ts.game_id = gp.game AND ts.team_id = %d)
+		WHERE gp.pool=%d
+			AND g.hasstarted>0
+			AND g.isongoing=0",
+		(int)$teamId,
+		(int)$poolId
+	);
+	return DBQueryToRow($query);
+}
+
 function SpiritScoreReplaceByGameTeam($gameId, $teamId, $points)
 {
 	$query = sprintf(

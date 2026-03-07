@@ -1156,12 +1156,13 @@ function PoolGames($poolId, $fieldId = null)
             p.hometeam, p.visitorteam,
             p.time, p.game_id, p.homescore, p.visitorscore,
             phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
-            ps.pool AS original_pool
+            ps.pool AS original_pool, pgame.name AS gamename 
             FROM uo_game p
             LEFT JOIN uo_team AS home ON (p.hometeam=home.team_id)
             LEFT JOIN uo_team AS visitor ON (p.visitorteam=visitor.team_id)
             LEFT JOIN uo_scheduling_name AS phome ON (p.scheduling_name_home=phome.scheduling_id)
             LEFT JOIN uo_scheduling_name AS pvisitor ON (p.scheduling_name_visitor=pvisitor.scheduling_id)
+	    LEFT JOIN uo_scheduling_name AS pgame ON (p.name=pgame.scheduling_id)
             LEFT JOIN uo_game_pool ps ON (p.game_id=ps.game)
             WHERE ps.pool = %d",
     (int)$poolId
@@ -1189,12 +1190,13 @@ function PoolGamesNotScheduled($poolId)
     "SELECT home.name AS hometeamname, visitor.name AS visitorteamname, p.hometeam, p.visitorteam,
         p.time, p.game_id, p.homescore, p.visitorscore,
         phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
-        ps.pool AS original_pool
+        ps.pool AS original_pool, pgame.name AS gamename
         FROM uo_game p
         LEFT JOIN uo_team AS home ON (p.hometeam=home.team_id)
         LEFT JOIN uo_team AS visitor ON (p.visitorteam=visitor.team_id)
         LEFT JOIN uo_scheduling_name AS phome ON (p.scheduling_name_home=phome.scheduling_id)
         LEFT JOIN uo_scheduling_name AS pvisitor ON (p.scheduling_name_visitor=pvisitor.scheduling_id)
+		LEFT JOIN uo_scheduling_name AS pgame ON (p.name=pgame.scheduling_id)
         LEFT JOIN uo_game_pool ps ON (p.game_id=ps.game)
         WHERE ps.pool = %d AND (p.time IS NULL OR p.reservation IS NULL) AND ps.timetable=1
         ORDER BY game_id",

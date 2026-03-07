@@ -197,6 +197,40 @@ td {
 	margin: 0 0 5px 0;
 }
 
+.menu_button {
+	display: none;
+}
+
+@media only screen and (max-width: 768px), only screen and (max-device-width: 768px) {
+	.menu_left {
+		display: none;
+		position: fixed;
+		top: 60px;
+		left: 0;
+		bottom: 0;
+		width: 220px;
+		max-width: 85vw;
+		padding: 8px;
+		background-color: rgba(0, 0, 0, 0.8);
+		overflow-y: auto;
+		z-index: 1000;
+	}
+
+	.menu_left.menu_open {
+		display: block;
+	}
+
+	.menu_button {
+		display: inline-block;
+		width: 30px;
+		padding: 5px 20px 0px 25px;
+	}
+
+	.navigation_bar {
+		display: none;
+	}
+}
+
 .leftmenulinks {
 	float: left;
 	text-align: left;

@@ -1,8 +1,10 @@
 <?php 
-include_once 'lib/fpdf/fpdf.php';
+//include_once 'lib/fpdf/fpdf.php';
+include_once 'lib/tfpdf/tfpdf.php';
+include_once 'lib/tfpdf/cellfit.php';
 include_once 'lib/HSVClass.php';
 
-class PDF extends FPDF
+class PDF extends tFPDF_CellFit
 	{
 	var $B;
 	var $I;
@@ -11,230 +13,581 @@ class PDF extends FPDF
 	
 
 	var $game = array(
-				"seasonname"=>"",
-				"game_id"=>"",
-				"hometeamname"=>"",
-				"visitorteamname"=>"",
-				"poolname"=>"",
-				"time"=>"",
-				"placename"=>""
-				);
+			"seasonname"=>"",
+			"game_id"=>"",
+			"hometeamname"=>"",
+			"visitorteamname"=>"",
+			"poolname"=>"",
+			"time"=>"",
+			"placename"=>""
+			);
+	
+	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename,$homeplayers,$visitorplayers) {
 		
-		private function pdfText($text)
-			{
-			$text = (string)$text;
-			if (function_exists('mb_convert_encoding')) {
-				$converted = @mb_convert_encoding($text, 'ISO-8859-1', 'UTF-8');
-				if ($converted !== false) {
-					return $converted;
-				}
-			}
-			if (function_exists('iconv')) {
-				$converted = @iconv('UTF-8', 'ISO-8859-1//TRANSLIT', $text);
-				if ($converted !== false) {
-					return $converted;
-				}
-			}
-			return $text;
-			}
-		
-	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
-			{
-			$this->game['seasonname'] = $this->pdfText($seasonname);
-			$this->game['game_id'] = $gameId."".getChkNum($gameId);
-			$this->game['hometeamname'] = $this->pdfText($hometeamname);
-			$this->game['visitorteamname'] = $this->pdfText($visitorteamname);
-			$this->game['poolname'] = $this->pdfText($poolname);
-			$this->game['time'] = $time;
-			$this->game['placename'] = $this->pdfText($placename);
-		
-		$this->AddPage();
-		
-		$data = _("World Flying Disc Federation");
-		$data .= " - ";
-		$data .= _("Game Record"); 
-		$data = $this->pdfText($data); //season name already decoded
-		$data .= " " . $this->game['seasonname'];
-		
-		$this->SetFont('Arial','B',16);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
-		$this->Cell(0,9,$data,1,1,'C',true);
-		
-		$this->SetY(21);
-		
-		$this->OneCellTable($this->pdfText(_("Game #")), $this->game['game_id']);
-		$this->OneCellTable($this->pdfText(_("Home team")), $this->game['hometeamname']);
-		$this->OneCellTable($this->pdfText(_("Away team")), $this->game['visitorteamname']);
-		$this->OneCellTable($this->pdfText(_("Division").", "._("Pool")), $this->game['poolname']);
-		$this->OneCellTable($this->pdfText(_("Field")), $this->game['placename']);
-		$this->OneCellTable($this->pdfText(_("Scheduled start date and time")), $this->game['time']);
-		$this->OneCellTable($this->pdfText(_("Game official")), "");
-		$this->SetFont('Arial','',10);
-		$this->Ln();
+    // event logo file name
+    $this->eventLogoLg = "cust/".CUSTOMIZATIONS."/logo-big.png";
+    $this->eventLogoSm = "cust/".CUSTOMIZATIONS."/logo-small.png";
 
-		$this->FirstOffence();
-		$this->Ln();
+		// 
+		$this->SetAutoPageBreak(false);
 
-		$this->Timeouts();
-		$this->Ln();
+		$this->game['seasonname'] = utf8_decode($seasonname);
+		$this->game['game_id'] = $gameId; //."".getChkNum($gameId);
+		$this->game['hometeamname'] = utf8_decode($hometeamname);
+		$this->game['visitorteamname'] = utf8_decode($visitorteamname);
+		$this->game['poolname'] = utf8_decode($poolname);
+		$this->game['time'] = $time;
+		$this->game['placename'] = utf8_decode($placename);
 
-		$this->OneCellTable($this->pdfText(_("Half time ends")), "");
-		$this->Ln();
-		$this->SpiritPoints();
-		$this->Ln();
-		$this->FinalScoreTable();
-		$this->Ln();
+		$this->show_note = false;
 
-		$this->Signatures();
-		$this->SetXY(95,21);
-		$this->ScoreGrid();
-		
-		$this->SetY(-25);
-		$data = "";
-		$data = $this->pdfText($data);
-		$this->SetFont('Arial','',10);
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
-		$this->MultiCell(0,2,$data);
-		$this->Image("cust/wfdf/wfdf_logo.jpg",10,255);
-		
-		$this->SetY(-23);
-		$data = _("After the match has ended, send SMS")." \"G ";
-		$data .= $this->game['game_id'];
-		$data .= " ["._("home score")."] ["._("guest score")."]\" ("._("without the quotes").") "._("to number +358404761685")."."; 
-		$data .= " "._("e.g.").": \"G ";
-		$data .= $this->game['game_id'];
-		$data .= " 16 21\""; 
-		$data = $this->pdfText($data);
-		$this->SetFont('Arial','',8);
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
-		$this->MultiCell(0,2,$data);
+    $this->gender_rule = "A";
+
+		// get team id's for this game
+		$gameinfo = GameInfo($gameId);
+		$hometeamid = $gameinfo['hometeam'];
+		$visitorteamid = $gameinfo['visitorteam'];
+
+		// get team abbreviations
+		$hometeaminfo = TeamInfo($hometeamid);
+		$visitorteaminfo = TeamInfo($visitorteamid);
+		if (!($this->game['homeshortname'] = $hometeaminfo['abbreviation'])) {
+			$this->game['homeshortname'] = _("Home");
 		}
+		if (!($this->game['visitorshortname'] = $visitorteaminfo['abbreviation'])) {
+			$this->game['visitorshortname'] = _("Away");
+		}
+
+    // get coaches names
+    /*
+    $hometeamprofile = TeamProfile($hometeamid);
+    $visitorteamprofile = TeamProfile($visitorteamid);
+    $this->game['homecoach'] = $hometeamprofile['coach'];
+    $this->game['visitorcoach'] = $visitorteamprofile['coach'];
+    */
+
+		// get reservation group
+		$resId = GameReservation($gameId);
+		$resinfo = ReservationInfo($resId);
+		$this->game['reservation_group'] = $resinfo['reservationgroup'];
+
+		// get time without date and remove seconds
+		$time_array = explode(' ',$time);
+		$time_array = explode(':',$time_array[1]);
+		$this->game['timeonly'] = $time_array[0].":".$time_array[1];
+
+		// get field number
+		$this->game['fieldnum'] = $gameinfo['fieldname'];
+
+		// get division only
+		$division_array = explode(',',$this->game['poolname']);
+		$this->game['division'] = trim($division_array[0]);
+    $this->game['pool'] = trim($division_array[1]);
+    
+    // determine if division is mixed gender (based on division name containing the word mixed)
+    $this->isMixed = !empty(stristr($this->game['division'],"mixed"));
+    if (empty($this->game['division'])) {
+      $this->isMixed = true;
+    }
+
+    // team names
+    //$this->homefullname = $hometeaminfo['abbreviation'] . " (" . $hometeaminfo['countryname'] . ")";
+    //$this->visitorfullname = $visitorteaminfo['abbreviation'] . " (" . $visitorteaminfo['countryname'] . ")";
+    $this->homefullname = $hometeamname;
+    $this->visitorfullname = $visitorteamname;
+
+    // ================
+    // PAGE STARTS HERE
+    // ================
+		$this->AddPage();
+
+    // add unicode font
+		$this->AddFont('Arial','','DejaVuSansCondensed.ttf',true);
+		$this->AddFont('Arial','B','DejaVuSansCondensed-Bold.ttf',true);
+		$this->AddFont('Arial','I','DejaVuSansCondensed-Oblique.ttf',true);
+		$this->AddFont('Arial','BI','DejaVuSansCondensed-BoldOblique.ttf',true);
+
+    // print top page header
+    $this->TopHeader();
+    $this->Ln(3);
+
+    // print game headers
+    $this->GameHeaderA();
+    $this->Ln(3);
+
+    // print players lists on front page
+		$this->PrintPlayerList($homeplayers,$visitorplayers);
+    
+    if ($this->show_note) {
+      $this->SetFont('Arial','IB',10);
+      $this->SetTextColor(0);
+      $this->SetFillColor(255);
+      $this->CellFitScale(100,6,_("(*) player not allowed to play (for medical or other reasons)"),0,1,'L',true);
+    }
+		$this->Ln();
+
+    // scoregrid
+		$this->SetXY(120,25);
+		$this->ScoreGrid();
+    $this->Ln(2);
+    
+    // second half start time
+		$this->SetX(132);
+		$this->HalfTime();
+    $this->Ln(4);
+
+    // timeouts
+    $this->SetX(120);
+		$this->Timeouts2();
+
+    // final score and captain's signatures
+    $this->SetXY(10,258);
+		$this->SigFinalScore();
+	
+    // event logo
+    $this->Image($this->eventLogoLg,140,265,50,0);
+
+
+    // ============
+    // START PAGE 2
+    // ============
+    if (PRINT_SPIRIT_SHEETS) {
+      $this->AddPage('L');
+
+      // cutting lines
+      $this->Line(149,10,149,200);
+
+      // team names = CCC (Country name)
+      //$spirithome = array($hometeaminfo['abbreviation'],$hometeaminfo['countryname']);
+      //$spiritvisitor = array($visitorteaminfo['abbreviation'],$visitorteaminfo['countryname']);
+      $spirithome = $hometeamname;
+      $spiritvisitor = $visitorteamname;
+
+      // print SOTG sheet for home team
+      $this->SetXY(10,10);
+      $this->SpiritHeader($spirithome,$spiritvisitor);
+      $this->Ln(3);
+      $this->SetX(10);
+      $this->SpiritTable();
+      $this->Ln(8);
+      $this->SetX(10);
+      $this->FeedbackGA();
+
+      // print SOTG sheet for visitor team
+      $this->SetXY(158,10);
+      $this->SpiritHeader($spiritvisitor,$spirithome);
+      $this->Ln(3);
+      $this->SetX(158);
+      $this->SpiritTable();
+      $this->Ln(8);
+      $this->SetX(158);
+      $this->FeedbackGA();
+    }
+
+  }
+
+	function PrintDefenseSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
+		{
+		$this->game['seasonname'] = utf8_decode($seasonname);
+		$this->game['game_id'] = $gameId."".getChkNum($gameId);
+		$this->game['hometeamname'] = utf8_decode($hometeamname);
+		$this->game['visitorteamname'] = utf8_decode($visitorteamname);
+		$this->game['poolname'] = utf8_decode($poolname);
+		$this->game['time'] = $time;
+		$this->game['placename'] = utf8_decode($placename);
+		
+		$this->SetAutoPageBreak(false);
+		
+		$data .= _("Defenses") . " " . _("for game") . " #" . $this->game['game_id']; 
+		$data = utf8_decode($data); //season name already decoded
+		//$data .= " " . $this->game['seasonname'];
+		
+		$this->Ln();
+
+		$this->SetFont('Arial','B',16);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(0,9,$data,1,1,'C',true);
+		//$this->Ln();
+		
+		$this->SetY($this->GetY() + 1);
+		$this->DefenseGrid();
+		
+		}
+
+  // Print top header of the scoresheet
+  function TopHeader() {
+
+    // first row
+
+		$this->SetFont('Arial','B',11);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->CellFitScale(30,6,$this->game['seasonname'],'LRT',0,'C',true);
+		$this->CellFitScale(20,6,_("Day"),1,0,'C',true);
+		$this->CellFitScale(16,6,_("Time"),1,0,'C',true);
+		$this->CellFitScale(16,6,_("Field"),1,0,'C',true);
+		$this->CellFitScale(35,6,_("Division"),1,0,'C',true);
+		$this->CellFitScale(55,6,_("Pool / Bracket"),1,0,'C',true);
+		$this->CellFitScale(18,6,_("Game #"),1,1,'C',true);
+
+    // second row
+    //$this->SetX($this->GetX()+30);
+		$this->CellFitScale(30,6,_("Scoresheet"),'LRB',0,'C',true);
+		
+    $this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+    
+    // day
+		$this->CellFitScale(20,6,$this->game['reservation_group'],1,0,'C',true);
+    
+    // time
+		$this->CellFitScale(16,6,$this->game['timeonly'],1,0,'C',true);
+    
+    // field number
+		$this->CellFitScale(16,6,$this->game['fieldnum'],1,0,'C',true);
+    
+    // division
+		$this->CellFitScale(35,6,$this->game['division'],1,0,'C',true);
+    
+    // pool
+		$this->CellFitScale(55,6,$this->game['pool'],1,0,'C',true);
+    
+    // game ref number
+		$this->SetFont('Arial','B',12);
+		$this->CellFitScale(18,6,$this->game['game_id'],1,1,'C',true);
+  }
+
+  function GameHeaderB() { // gender ratio rule B (endzones decides)
+    
+    $topY = $this->GetY();
+    $this->SetTextColor(0);
+    
+		// home team
+		$this->SetFont('Arial','B',10);
+		$this->SetFillColor(230);
+    $data = utf8_decode(_("Home"));
+		$this->Cell(12,5,$data,'LRTB',0,'C',true);
+		
+    $this->SetFont('Arial','',10);
+		$this->SetFillColor(255);
+    $data = $this->homefullname . " (" . $this->game['homeshortname'] . ")";
+		$this->CellFitScale(88,5,$data,'LRTB',1,'L',true);
+
+		// away team
+		$this->SetFont('Arial','B',10);
+		$this->SetFillColor(230);
+    $data = utf8_decode(_("Away"));
+		$this->Cell(12,5,$data,'LRTB',0,'C',true);
+		
+    $this->SetFont('Arial','',10);
+		$this->SetFillColor(255);
+    $data = $this->visitorfullname . " (" . $this->game['visitorshortname'] . ")";
+		$this->CellFitScale(88,5,$data,'LRTB',1,'L',true);
+    
+    $offsetX = $this->GetX() + 59;
+    
+    // Endzones
+    $this->Ln(3);
+    $this->EndzonesB();
+	
+    $bottomY = $this->GetY();
+
+    // scorekeepers names
+    $this->SetXY($offsetX,$topY+13);
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(41,5,utf8_decode(_("Scorekeeper(s)")),'LRTB',1,'C',true);
+    $this->SetX($offsetX);
+		$this->SetFillColor(255);
+		$this->Cell(41,18,'','LRTB',1,'C',true);
+
+    // notes
+    $this->Ln(4);
+    $this->SetX($offsetX);
+    $this->SetFont('Arial','I',10);
+		$this->CellFitScale(41,5,_("* mixed only"),0,1,'L',true);
+
+    if ($bottomY > $this->GetY())
+      $this->SetY($bottomY);
+
+  }
+
+  // print a field for writing game starting settings (rule B)
+  function EndzonesB() {
+    $offset = $this->GetX();
+
+    // header
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+		$this->CellFitScale(56,5,_("Game starting settings").":",'B',1,'C',true);
+
+    // first row
+		$this->SetFont('Arial','',10);
+		$this->Cell(11,6,"__",'LRT',0,'C',true);
+		$this->SetFillColor(230);
+		$this->Cell(34,6,_("Endzone")." (A/B)*",'LRT',0,'C',true);
+		$this->SetFillColor(255);
+		$this->Cell(11,6,"__",'LRT',1,'C',true);
+
+    // second row
+    $this->SetX($offset);
+		$this->Cell(11,6,"____",'LR',0,'C',true);
+		$this->SetFillColor(230);
+		$this->Cell(34,6,_("Teams (abbrev.)"),'LR',0,'C',true);
+		$this->SetFillColor(255);
+		$this->Cell(11,6,"____",'LR',1,'C',true);
+
+    // third row
+    $this->SetX($offset);
+		$this->SetFont('ZapfDingbats','',16);
+		$this->Cell(11,6,"q",'LRB',0,'C',true);
+		$this->SetFont('Arial','',10);
+		$this->SetFillColor(230);
+		$this->Cell(34,6,_("First Offense"),'LRB',0,'C',true);
+		$this->SetFillColor(255);
+	  $this->SetFont('ZapfDingbats','',16);
+		$this->Cell(11,6,"q",'LRB',1,'C',true);
+
+    // forth row
+    $this->Ln(1); // vertical spacer
+    $this->SetX($offset);
+		$this->SetFont('Arial','',8);
+		$this->CellFitScale(11,4,_("Endzone"),0,0,'C',true);
+		$this->Cell(9,4,"",'R',0,'C',true);
+    $this->SetFillColor(230);
+		$this->CellFitScale(16,4,_("Scorekeepers"),1,0,'C',true);
+    $this->SetFillColor(255);
+		$this->Cell(9,4,"",'L',0,'C',true);
+		$this->CellFitScale(11,4,_("Endzone"),0,1,'C',true);
+  }
+
+
+  function GameHeaderA() { // gender ratio rule A (Prescribed)
+		
+    $topY = $this->GetY();
+    $this->SetTextColor(0);
+    
+		// home team
+		$this->SetFont('Arial','B',10);
+		$this->SetFillColor(230);
+    $data = utf8_decode(_("Home"));
+		$this->Cell(12,5,$data,'LRTB',0,'C',true);
+		
+    $this->SetFont('Arial','',10);
+		$this->SetFillColor(255);
+    $data = empty($this->homefullname) ? "" : $this->homefullname . " (" . $this->game['homeshortname'] . ")";
+		$this->CellFitScale(88,5,$data,'LRTB',1,'L',true);
+
+		// away team
+		$this->SetFont('Arial','B',10);
+		$this->SetFillColor(230);
+    $data = utf8_decode(_("Away"));
+		$this->Cell(12,5,$data,'LRTB',0,'C',true);
+		
+    $this->SetFont('Arial','',10);
+		$this->SetFillColor(255);
+    $data = empty($this->visitorfullname) ? "" : $this->visitorfullname . " (" . $this->game['visitorshortname'] . ")";
+		$this->CellFitScale(88,5,$data,'LRTB',1,'L',true);
+    
+    // scorekeepers names
+    $this->Ln(3);
+		$this->SetFont('Arial','B',10);
+		$this->SetFillColor(230);
+		$this->CellFitScale(25,10,_("Scorekeeper(s)"),'LRTB',0,'C',true);	
+		$this->SetFillColor(255);
+		$this->Cell(75,10,"",'LRTB',1,'L',true);
+
+    // Endzones
+    $this->Ln(3);
+    $this->EndzonesA();
+
+    // gender ratio 1st point
+    if ($this->isMixed) {
+      switch (Seasontype(GetString('season'))) {
+        case "indoor":
+        case "beach":
+          $gender1 = "3M/2F";
+          $gender2 = "2M/3F";
+          break;
+        case "outdoor":
+        default:
+          $gender1 = "4M/3F";
+          $gender2 = "3M/4F";
+          break;
+      }
+      $this->Ln(5);
+      $this->SetFont('Arial','',10);
+      $this->CellFitScale(48,5,"* "._("Gender Ratio on 1st point").":",'R',0,'L',true);
+      $this->SetFont('Arial','B',10);
+      $this->CellFitScale(14,5,$gender1,1,0,'C',true);
+      $this->CellFitScale(2,5,"",'LR',0,'L',true);
+      $this->CellFitScale(14,5,$gender2,1,1,'C',true);
+      $this->Ln(1);
+      $this->SetFont('Arial','I',8);
+      $this->CellFitScale(100,5,_("Points with an asterisk (*) must have the same gender ratio as the first point."),'',1,'L',true);
+      //$this->CellFitScale(1,5,"",'L',0,'L',true);
+      //$this->SetFont('Arial','I',10);
+      //$this->CellFitScale(21,5,"("._("mixed only").")",0,1,'L',true);
+    } else {
+      $this->Ln(10);
+    }
+
+    $bottomY = $this->GetY();
+
+    if ($bottomY > $this->GetY())
+      $this->SetY($bottomY);
+
+  }
+
+  // print a field for writing game starting settings (rule A)
+  function EndzonesA() {
+    //$offset = $this->GetX();
+    $offset = $this->GetX()+11;
+
+    // header
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(100,5,_("Game starting conditions"),'',1,'C',true);
+    $this->Ln(3);
+
+    // first row
+    $this->SetX($offset);
+		$this->SetFont('Arial','',10);
+		$this->Cell(12,2,"",'LRT',0,'C',true);
+		$this->SetFillColor(230);
+		$this->Cell(54,2,"",'LRT',0,'C',true);
+		$this->SetFillColor(255);
+		$this->Cell(12,2,"",'LRT',1,'C',true);
+
+    // second row
+    $this->SetX($offset);
+		$this->Cell(12,10,"_____",'LR',0,'C',true);
+		$this->SetFillColor(230);
+		$this->CellFitScale(54,10,_("Which team started on which side?"),'LR',0,'C',true);
+		$this->SetFillColor(255);
+		$this->Cell(12,10,"_____",'LR',1,'C',true);
+
+    // third row
+    $this->SetX($offset);
+		$this->SetFont('ZapfDingbats','',16);
+		$this->Cell(12,10,"q",'LRB',0,'C',true);
+		$this->SetFont('Arial','',10);
+		$this->SetFillColor(230);
+		$this->CellFitScale(54,10,_("Who started on offense?"),'LRB',0,'C',true);
+		$this->SetFillColor(255);
+	  $this->SetFont('ZapfDingbats','',16);
+		$this->Cell(12,10,"q",'LRB',1,'C',true);
+
+    // forth row
+    $this->Ln(1); // vertical spacer
+    $this->SetX($offset);
+		$this->SetFont('Arial','',8);
+		$this->CellFitScale(12,4,_("Endzone"),0,0,'C',true);
+		$this->Cell(19,4,"",'R',0,'C',true);
+    $this->SetFillColor(230);
+		$this->CellFitScale(16,4,_("Scorekeepers"),1,0,'C',true);
+    $this->SetFillColor(255);
+		$this->Cell(19,4,"",'L',0,'C',true);
+		$this->CellFitScale(12,4,_("Endzone"),0,1,'C',true);
+  }
 
 	//Playerlist array("name"=>name, "accredited"=>accredited, "num"=>number)
 	function PrintPlayerList($homeplayers, $visitorplayers)
 		{
-		$this->AddPage();
-		
-		$data = _("World Flying Disc Federation");
-		$data .= " - ";
-		$data .= _("Roster"); 
-		$data .= " ". _("for game"). " #" . $this->game['game_id'];
-		$data = $this->pdfText($data);
-		$this->SetFont('Arial','B',16);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
-		$this->Cell(0,9,$data,1,1,'C',true);
-		
-		$this->SetY(21);
-		
-		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
+		$offset = $this->GetX();
 
-		$this->Cell(94,6,$this->game['hometeamname'],'LRTB',0,'C',true);
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+
+		$this->CellFitScale(49,5,$this->homefullname,'LRTB',0,'C',true);
 		
 		$this->SetFillColor(255);
-		$this->Cell(2,6,"",'LR',0,'C',true); //separator
+		$this->Cell(2,5,"",'LR',0,'C',true); //separator
 		
-		$this->SetFillColor(0,102,153);
-		$this->Cell(94,6,$this->game['visitorteamname'],'LRTB',0,'C',true);
+		$this->SetFillColor(230);
+		$this->CellFitScale(49,5,$this->visitorfullname,'LRTB',0,'C',true);
 		
 		$this->Ln();
-		$this->SetFont('Arial','',10);
-		//$this->Cell(8,6,"",'LRTB',0,'C',true);
-		$this->Cell(56,6,$this->pdfText(_("Name")),'LRTB',0,'C',true);
-		$this->Cell(15,6,$this->pdfText(_("Jersey#")),'LRTB',0,'C',true);
-		$this->Cell(23,6,$this->pdfText(_("Info")),'LRTB',0,'C',true);
-		//$this->Cell(10,6,_("License ok"),'LRTB',0,'C',true);
+		$this->SetX($offset);
+		$this->SetFont('Arial','B',10);
 		
-		$this->SetFillColor(255);
-		$this->Cell(2,6,"",'LR',0,'C',true); //separator
-		
-		$this->SetFillColor(0,102,153);
-		//$this->Cell(8,6,"",'LRTB',0,'C',true);
-		$this->Cell(56,6,$this->pdfText(_("Name")),'LRTB',0,'C',true);
-		$this->Cell(15,6,$this->pdfText(_("Jersey#")),'LRTB',0,'C',true);
-		$this->Cell(23,6,$this->pdfText(_("Info")),'LRTB',0,'C',true);		
-		//$this->Cell(10,6,_("License ok"),'LRTB',0,'C',true);
+		$this->SetFillColor(230);
 
-		$this->Ln();
+		$this->SetX($offset);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		for($i=1;$i<31;$i++)
-			{
+		for($i=1;$i<=28;$i++) {
 			$hplayer = "";
 			$hnumber = "";
 			$vplayer = "";
 			$vnumber = "";
 			
 			if(isset($homeplayers[$i-1]['name'])){
-				$hplayer = $this->pdfText($homeplayers[$i-1]['name']);
+				$hplayer = $homeplayers[$i-1]['name'];
 				$hnumber = $homeplayers[$i-1]['num'];
 			}
 			if(isset($visitorplayers[$i-1]['name'])){
-				$vplayer = $this->pdfText($visitorplayers[$i-1]['name']);
+				$vplayer = $visitorplayers[$i-1]['name'];
 				$vnumber = $visitorplayers[$i-1]['num'];
 			}
 			$this->SetFont('Arial','',10);
-			//$this->Cell(8,6,$i,'LRTB',0,'C',true);
 			
-			if(!empty($hplayer) && !($homeplayers[$i-1]['accredited'])){
-				$this->SetFont('Arial','IB',10);
+      //if ($i==29) { // replace this for the last one to display the coach instead
+      if (false) { // not in use
+		    $this->SetFillColor(230);
+        $this->Cell(7,5,'C','LRTB',0,'C',true);
+        $this->CellFitScale(42,5,$this->game['homecoach'],'LRTB',0,'L',true);
+		    $this->SetFillColor(255);
+      } else {
+        
+        if(!empty($hplayer) && !($homeplayers[$i-1]['accredited'])){
+          $this->SetFont('Arial','IB',10);
+          $hnumber = "(*)";
+          $this->show_note = true;
+        }
+        $this->Cell(7,5,$hnumber,'LRTB',0,'C',true);
+        $this->CellFitScale(42,5,$hplayer,'LRTB',0,'L',true);
 			}
-			
-			$this->Cell(56,6,$hplayer,'LRTB',0,'L',true);
-			
-			$this->SetFont('Arial','',10);
-			$this->Cell(15,6,$hnumber,'LRTB',0,'C',true);
-			$this->Cell(23,6,"",'LRTB',0,'C',true);
-			//$this->Cell(10,6,"",'LRTB',0,'C',true);
 
-			$this->Cell(2,6,"",'LR',0,'C',true); //separator
-			
-			//$this->Cell(8,6,$i,'LRTB',0,'C',true);
-			
-			if(!empty($vplayer) && !($visitorplayers[$i-1]['accredited'])){
-				$this->SetFont('Arial','IB',10);
-			}
-			$this->Cell(56,6,$vplayer,'LRTB',0,'L',true);
-			
 			$this->SetFont('Arial','',10);
-			$this->Cell(15,6,$vnumber,'LRTB',0,'C',true);
-			$this->Cell(23,6,"",'LRTB',0,'C',true);
-			//$this->Cell(10,6,"",'LRTB',0,'C',true);
+			$this->Cell(2,5,"",'LR',0,'C',true); //separator
+			
+      //if ($i==29) { // replace this for the last one to display the coach instead
+      if (false) {
+		    $this->SetFillColor(230);
+        $this->Cell(7,5,'C','LRTB',0,'C',true);
+        $this->CellFitScale(42,5,$this->game['visitorcoach'],'LRTB',0,'L',true);
+		    $this->SetFillColor(255);
+      } else {
+        
+        if(!empty($vplayer) && !($visitorplayers[$i-1]['accredited'])){
+          $this->SetFont('Arial','IB',10);
+          $vnumber = "(*)";
+          $this->show_note = true;
+        }
+        $this->Cell(7,5,$vnumber,'LRTB',0,'C',true);
+        $this->CellFitScale(42,5,$vplayer,'LRTB',0,'L',true);
+		  }
+
+			$this->SetFont('Arial','',10);
 			$this->Ln();			
-			}
+			$this->SetX($offset);
+		}
 		
 		$this->SetFont('Arial','',8);
 		$data = _("Total number of players:")." ". count($homeplayers);
-		$data = $this->pdfText($data);
-		$this->Cell(94,4,$data,'T',0,'L',true);
-		$this->Cell(2,6,"",'',0,'C',true); //separator
+		$this->Cell(49,4,$data,'T',0,'L',true);
+		$this->Cell(2,4,"",'',0,'C',true); //separator
 		$data = _("Total number of players:")." ". count($visitorplayers);
-		$data = $this->pdfText($data);
-		$this->Cell(94,4,$data,'T',0,'L',true);
+		$this->Cell(49,4,$data,'T',0,'L',true);
 		
 		$this->Ln();
-		
-		//instructions
-		$data = "<br><b>"._("Scoresheet filling instructions:")."</b><br>";
-		$data .= "1. "._("Officials fill in their names.")."<br>";
-		$data .= "2. "._("Captains confirm roster by crossing out injured players, and adjusting jersey numbers if necessary.")."<br>";
-		$data .= "3. "._("After the toss, officials check the team that will start on offence.")."<br>";
-		$data .= "4. "._("When half time starts, fill in time it ends (the second half start time).")."<br>";
-		$data .= "5. "._("During the game, fill in which team has scored, the jersey numbers of the player who threw the goal (Assist) and the player who caught the goal (Goal), the time that the goal was scored, and the scoreline after the goal. If a player scores an intercept goal (Callahan), then mark XX as assist.")."<br>";
-		$data .= "6. "._("When a team takes a time-out, mark the time in the \"Time-outs\" section.")."<br>";
-		$data .= "7. "._("After the game, each captain signs the scoresheet to confirm the final score.")."<br>";
-		$data .= "8. "._("Officials return the completed scoresheet to the results headquarters.");
-		$data = $this->pdfText($data);
-		$this->SetFont('Arial','',9);
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
-		$this->WriteHTML($data);
-		
+
 		}		
 
   function PrintRoster($teamname, $seriesname, $poolname, $players) {
@@ -243,7 +596,7 @@ class PDF extends FPDF
 		$data = $teamname;
 		$data .= " - ";
 		$data .= _("Roster"); 
-		$data = $this->pdfText($data);
+		$data = utf8_decode($data);
 		$this->SetFont('Arial','B',16);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
@@ -254,7 +607,7 @@ class PDF extends FPDF
 		$data .= U_($poolname);
 		$data .= ", ";
 		$data .= _("Game")." #:"; 
-		$data = $this->pdfText($data);
+		$data = utf8_decode($data);
 		$this->SetFont('Arial','',14);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -266,10 +619,10 @@ class PDF extends FPDF
 
 		$this->SetFont('Arial','',10);
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
-		$this->Cell(100,6,$this->pdfText(_("Name")),'LRTB',0,'C',true);
-		$this->Cell(10,6,$this->pdfText(_("Play")),'LRTB',0,'C',true);
-		$this->Cell(10,6,$this->pdfText(_("Game#")),'LRTB',0,'C',true);
-		$this->Cell(62,6,$this->pdfText(_("Info")),'LRTB',0,'C',true);
+		$this->Cell(100,6,utf8_decode(_("Name")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("Play")),'LRTB',0,'C',true);
+		$this->Cell(10,6,utf8_decode(_("Game#")),'LRTB',0,'C',true);
+		$this->Cell(62,6,utf8_decode(_("Info")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -277,11 +630,11 @@ class PDF extends FPDF
 			$player = "";
 
 			if(isset($players[$i-1]['firstname'])){
-				$player .= $this->pdfText($players[$i-1]['firstname']);
+				$player .= utf8_decode($players[$i-1]['firstname']);
 			}
 		    $player .= " ";
 			if(isset($players[$i-1]['lastname'])){
-				$player .= $this->pdfText($players[$i-1]['lastname']);
+				$player .= utf8_decode($players[$i-1]['lastname']);
 			}
 			
 			$this->SetFont('Arial','',10);
@@ -310,7 +663,7 @@ class PDF extends FPDF
 		$data = "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
 		$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
 		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
-		$data = $this->pdfText($data);
+		$data = utf8_decode($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -357,10 +710,10 @@ class PDF extends FPDF
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while($game = mysqli_fetch_assoc($games)){
+		while($game = DBFetchAssoc($games)){
 			
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) {
-				$txt = $this->pdfText(U_($game['reservationgroup']));
+				$txt = utf8_decode(U_($game['reservationgroup']));
 				$this->SetFont('Arial','B',12);
 				$this->SetTextColor(0);
 				$this->Ln();
@@ -380,7 +733,7 @@ class PDF extends FPDF
 			if(!empty($game['place_id']) && ($game['place_id'] != $prevPlace || $game['fieldname'] != $prevField || JustDate($game['starttime']) != $prevDate)){
 				$txt = U_($game['placename']);
 				$txt .= " "._("Field")." ".U_($game['fieldname']);
-				$txt = $this->pdfText($txt);
+				$txt = utf8_decode($txt);
 				
 				$this->SetFont('Arial','',10);
 				$this->SetTextColor(0);
@@ -402,7 +755,7 @@ class PDF extends FPDF
 		
 		}
 		
-	function PrintOnePageSchedule($scope, $id, $games, $colors=false){
+	function PrintOnePageSchedule($scope, $id, $games, $colors=true){
 		$left_margin = 10;
 		$top_margin = 10;
 		$xarea = 400;
@@ -433,22 +786,22 @@ class PDF extends FPDF
 		$time_offset = $top_margin+$yfieldtitle;
 		$field_offset = 0;
 		$gridx = 12;
-		$gridy = 5;
+		$gridy = 4;
 		$fieldlimit = 15;
 			
 		$this->SetTextColor(255);
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while($game = mysqli_fetch_assoc($games)){
+		while($game = DBFetchAssoc($games)){
 			
 			//one reservation group per page
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament || $prevDate != JustDate($game['starttime'])) {
 				$this->AddPage("L","A3");
 				
-				$title = $this->pdfText(SeasonName($id));
-				$title .= " ".$this->pdfText($game['reservationgroup']);
-				$title .= " (".$this->pdfText(ShortDate($game['starttime'])).")";
+				$title = utf8_decode(SeasonName($id));
+				$title .= " ".utf8_decode($game['reservationgroup']);
+				$title .= " (".utf8_decode(ShortDate($game['starttime'])).")";
 				$this->SetFont('Arial','BU',12);
 				$this->SetTextColor(0);
 				$this->Cell(0,0,$title,0,2,'C',false);
@@ -456,17 +809,23 @@ class PDF extends FPDF
 				$times = TimetableTimeslots($game['reservationgroup'],$id);
 				$timeslots = array();
 				$i=0;
-				$hour=8;
+				$hour=9;
 				$min=0;
-				for($i=1;$i<=25;$i++){
-				  $timeslots[DefHourFormat("$hour:$min")] = ($i-1)*5;
-				  //echo "<p>".DefHourFormat("$hour:$min")."</p>";
+				$slots=13*60+1;
+				$timegridy=0;
+				for($i=1;$i<=$slots;$i++){
 				  
-				  if($i%2){
-				    $min=30;
+				  $timeslots[DefHourFormat("$hour:$min")] = $timegridy;
+				  /*echo "<p>".DefHourFormat("$hour:$min")."</p>";*/
+				  
+				  if($i%60){
+				    $min++;
 				  }else{
 				    $hour++;
 				    $min=0;
+				  }
+				  if($min%8==0){
+				    $timegridy++;
 				  }
 				  
 				}
@@ -476,11 +835,11 @@ class PDF extends FPDF
 				//}
 				
 				$fieldstotal = TimetableFields($game['reservationgroup'],$id);
-				$fieldlimit = max($fieldstotal/2+1,10);
+				$fieldlimit = max($fieldstotal/2+1,8);
 				$gridx = $xarea/$fieldlimit;
 				$field = 0;
 				$prevField = "";
-				$time_offset = $top_margin+$yfieldtitle+$ypagetitle+(($yarea/2-count($timeslots)*$gridy)/2);
+				$time_offset = $top_margin+$yfieldtitle+$ypagetitle+(($yarea/2-(count($timeslots)/30)*$gridy)/2);
 			}
 			
 			//next field
@@ -499,7 +858,9 @@ class PDF extends FPDF
 				
 					//write times
 					foreach($timeslots as $time=>$toffset){
+					  if(strEndsWith($time, ":00")||strEndsWith($time, ":30")){
 						$this->Cell($xtimetitle,$gridy,$time,0,2,'L',false);
+					  }
 					}
 				}
 				
@@ -510,16 +871,18 @@ class PDF extends FPDF
 				$this->SetTextColor(0);
 				$this->SetFillColor(190);
 				
-				$txt = $this->pdfText(_("Field")." ".$game['fieldname']);
+				$txt = utf8_decode(_("Field")." ".$game['fieldname']);
 				$this->Cell($gridx,$yfieldtitle/2,$txt,"LRT",2,'C',true);
 				
 				$this->SetFont('Arial','',8);
 				$this->SetTextColor(0);
-				$txt = $this->pdfText($game['placename']);
+				$txt = utf8_decode($game['placename']);
 				$this->Cell($gridx,$yfieldtitle/2,$txt,"LR",2,'C',true);
 				//write grids
-				foreach($timeslots as $time){
+				foreach($timeslots as $time=>$toffset){
+				  if(strEndsWith($time, ":00")||strEndsWith($time, ":30")){
 					$this->Cell($gridx,$gridy,"",1,2,'L',false);
+				  }
 				}
 			}
 			
@@ -530,7 +893,7 @@ class PDF extends FPDF
 			$this->SetFillColor(230);
 			$this->SetDrawColor(0);
 			
-			$height=($game['timeslot']/30)*5;
+			$height=($game['timeslot']/30)*4;
 			$this->Cell($gridx,$height,"",'LRBT',0,'C',true);
 			
 			$this->SetXY($field_offset,$time_offset+$timeslots[$slot]);
@@ -542,19 +905,21 @@ class PDF extends FPDF
 			$this->SetTextColor(0);
 			$this->Cell($gridx,1,"",0,2,'',false);
 			if($game['hometeam'] && $game['visitorteam']){
-				$txt = $this->DynSetTeamName($game['hometeamname'],$game['homeshortname'],$gridx,$teamfont);
-				$this->Cell($gridx,4,$txt,0,2,'L',false);
-				$txt = $this->pdfText($game['visitorteamname']);
-				$txt = $this->DynSetTeamName($game['visitorteamname'],$game['visitorshortname'],$gridx,$teamfont);
-				$this->Cell($gridx,4,$txt,0,2,'L',false);
+				//$txt = $this->DynSetTeamName($game['hometeamname'],$game['homeshortname'],$gridx,$teamfont);
+				//$this->Cell($gridx,4,$txt,0,2,'L',false);
+				$txt = $game['hometeamname']." - ".$game['visitorteamname'];
+				//$stxt = utf8_decode($game['homeshortname']." - ".$game['visitorshortname']);
+				$txt = $this->DynSetTeamName($txt,"",$gridx,$teamfont);
+				$this->Cell($gridx,$gridy-1,$txt,0,2,'L',false);
 			}elseif($game['gamename']){
 				$txt = $this->DynSetTeamName($game['gamename'],"",$gridx,$teamfont);
-				$this->Cell($gridx,8,$txt,0,2,'L',false);
+				$this->Cell($gridx,$gridy-1,$txt,0,2,'L',false);
 			}else{
-				$txt = $this->DynSetTeamName($game['phometeamname'],"",$gridx,$teamfont);
-				$this->Cell($gridx,4,$txt,0,2,'L',false);
-				$txt = $this->DynSetTeamName($game['pvisitorteamname'],"",$gridx,$teamfont);
-				$this->Cell($gridx,4,$txt,0,2,'L',false);
+			    $txt = utf8_decode($game['phometeamname']." - ".$game['pvisitorteamname']);
+				//$txt = $this->DynSetTeamName($game['phometeamname'],"",$gridx,$teamfont);
+				//$this->Cell($gridx,4,$txt,0,2,'L',false);
+				$txt = $this->DynSetTeamName($txt,"",$gridx,$teamfont);
+				$this->Cell($gridx,$gridy-1,$txt,0,2,'L',false);
 			}
 			$this->SetFont('Arial','',$teamfont);
 			
@@ -572,15 +937,20 @@ class PDF extends FPDF
 			}
 			
 			$this->Cell($gridx,1,"",0,2,'L',$colors);
-			$txt = $this->pdfText($game['seriesname']);
+			$txt = utf8_decode($game['seriesname']);
 			if(strlen($game['poolname'])<15){
 				$txt .= ", \n";
 			}else{
 				$txt .= ", ";
 			}
-			$txt .= $this->pdfText($game['poolname']);
+			$txt .= utf8_decode($game['poolname']);
 			//$this->DynSetFont($txt,$gridx,8);
-			$this->MultiCell($gridx,4,$txt,"LR",2,'L',$colors);
+			//$this->MultiCell($gridx,4,$txt,"LR",2,'L',$colors);
+			$fontsize=10;
+		    while($this->GetStringWidth($txt)>$gridx-2){
+			  $this->SetFont('Arial','',--$fontsize);
+		    }
+			$this->Cell($gridx,$gridy-2,$txt,0,2,'LR',false);
 			
 			$this->SetTextColor(0);
 			$this->SetFillColor(255);
@@ -601,12 +971,12 @@ class PDF extends FPDF
 	}
 	
 	function Footer(){
-		$this->SetXY(-50,-8);
+	/*	$this->SetXY(-50,-8);
 		$this->SetFont('Arial','',6);
 		$this->SetTextColor(0);
 		$txt = date( 'Y-m-d H:i:s P', time());
 		$this->Cell(0,0,$txt,0,2,'R',false);
-	
+	*/
 	}
 
 
@@ -621,9 +991,9 @@ class PDF extends FPDF
 	
 	function DynSetTeamName($longname, $abbrev, $x, $fontsize){
 		$this->SetFont('Arial','B',$fontsize);
-		$text = $this->pdfText($longname);
+		$text = utf8_decode($longname);
 		if($this->GetStringWidth($text)>$x-2 && !empty($abbrev)){
-			$text = $this->pdfText($abbrev);
+			$text = utf8_decode($abbrev);
 		}
 		
 		while($this->GetStringWidth($text)>$x-2){
@@ -653,46 +1023,48 @@ class PDF extends FPDF
 		}
 		
 		if($field){
-			$txt = $this->pdfText(U_($info['fieldname']));
+			$txt = utf8_decode(U_($info['fieldname']));
 			$this->Cell(20,5,$txt,'TB',0,'L',true);
 		}
 		
 		$o=0;
 		if($game['gamename']){
 			$this->SetFont('Arial','B',8);
-			$txt = $this->pdfText(U_($game['gamename']).":");
+			$txt = utf8_decode(U_($game['gamename']).":");
 			$this->Cell(30,5,$txt,'TB',0,'L',true);
 			$o=15;
 			$this->SetFont('Arial','',8);
 		}
 		
 		if($game['hometeam'] && $game['visitorteam']){
-			$txt = $this->pdfText($game['hometeamname']);
+			$txt = utf8_decode($game['hometeamname']);
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 			$txt = " - ";
 			$this->Cell(5,5,$txt,'TB',0,'L',true);
-			$txt = $this->pdfText($game['visitorteamname']);
+			$txt = utf8_decode($game['visitorteamname']);
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 		}else{
 			$this->SetFont('Arial','I',8);
-			$txt = $this->pdfText($game['phometeamname']);
+			$txt = utf8_decode($game['phometeamname']);
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 			$txt = " - ";
 			$this->Cell(5,5,$txt,'TB',0,'L',true);
-			$txt = $this->pdfText($game['pvisitorteamname']);
+			$txt = utf8_decode($game['pvisitorteamname']);
 			$this->Cell(45-$o,5,$txt,'TB',0,'L',true);
 			$this->SetFont('Arial','',8);
 		}
 		if($pool){
-			$txt = $this->pdfText(U_($game['seriesname']));
+			$txt = utf8_decode(U_($game['seriesname']));
 			$this->Cell(20,5,$txt,'TB',0,'L',true);
 			
-			$txt = $this->pdfText(U_($game['poolname']));
+			$txt = utf8_decode(U_($game['poolname']));
 			$this->Cell(40,5,$txt,'TB',0,'L',true);
 		}
 
 		if($result){
-			if(GameHasStarted($game) &&  !intval($game['isongoing'])){
+			$goals = intval($game['homescore'])+intval($game['visitorscore']);
+	
+			if($goals && !intval($game['isongoing'])){
 				$txt = intval($game['homescore']);
 				$this->Cell(5,5,$txt,'TB',0,'L',true);
 				$txt = " - ";
@@ -729,7 +1101,7 @@ class PDF extends FPDF
 	function PrintSeasonPools($id) {
 		$left_margin = 10;
 		$top_margin = 10;
-		$title = $this->pdfText(SeasonName($id));
+		$title = utf8_decode(SeasonName($id));
 		$series = SeasonSeries($id, true);
 		
 		$this->SetFont('Arial','B',16);
@@ -743,7 +1115,7 @@ class PDF extends FPDF
 			if($this->GetY()+97 > 297){
 				$this->AddPage();
 			}
-			$name = $this->pdfText(U_($row['name']));
+			$name = utf8_decode(U_($row['name']));
 			$this->SetFont('Arial','B',14);
 			$this->SetTextColor(0);
 			
@@ -766,7 +1138,7 @@ class PDF extends FPDF
 		if($this->GetY()+97 > 297){
 			$this->AddPage();
 		}
-		$name = $this->pdfText(U_(SeriesName($id)));
+		$name = utf8_decode(U_(SeriesName($id)));
 		$this->SetFont('Arial','B',14);
 		$this->SetTextColor(0);
 		
@@ -796,7 +1168,7 @@ class PDF extends FPDF
 				$teams = PoolSchedulingTeams($pool['pool_id']);
 				$scheduling_teams = true;
 			}
-			$name = $this->pdfText(U_($poolinfo['name']));
+			$name = utf8_decode(U_($poolinfo['name']));
 			
 			if($i%6==0 && $i <= count($pools)){
 				$this->SetXY($left_margin,$max_y);
@@ -829,7 +1201,7 @@ class PDF extends FPDF
 			$this->SetTextColor($textcolor['r'],$textcolor['g'],$textcolor['b']);
 			
 			foreach($teams as $team){
-				$txt = $this->pdfText(U_($team['name']));
+				$txt = utf8_decode(U_($team['name']));
 				$fontsize=9;
 				if($scheduling_teams){
 					$this->SetFont('Arial','i',$fontsize);
@@ -865,44 +1237,253 @@ class PDF extends FPDF
 		
 	function Timeouts()
 		{
+    $curX = $this->GetX();
 		//header
-		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,$this->pdfText(_("Time-outs")),'LRTB',0,'C',true);
-		$this->Ln();
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(52,5,_("Time-outs (min:sec)"),'LRTB',1,'C',true);
+    $this->SetX($curX);
 		
 		//home grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(20,6,$this->pdfText(_("Home")),'LRTB',0,'L',true);
+		$this->Cell(12,12,$this->game['homeshortname'],'LRTB',0,'C',true);
 		
-		for($i=0;$i<4;$i++)
-			{
-			$this->Cell(15,6,"",'LRTB',0,'L',true);
-			}
-		
-		$this->Ln();
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
+    $this->SetX($curX+12);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
 		
 		//visitor grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(20,6,$this->pdfText(_("Away")),'LRTB',0,'L',true);
+    $this->SetX($curX);
+		$this->Cell(12,12,$this->game['visitorshortname'],'LRTB',0,'C',true);
 		
-		for($i=0;$i<4;$i++)
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
+    $this->SetX($curX+12);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
+	
+		}
+
+	function SpiritTimeouts()
+		{
+    $curX = $this->GetX();
+
+		//header
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(80,5,_("Spirit Time-outs (min:sec)"),'LRTB',0,'C',true);
+		$this->Ln();
+		$this->SetX($curX);
+
+		//home grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20,5,$this->game['homeshortname'],'LRTB',0,'C',true);
+		
+		for($i=0;$i<3;$i++)
 			{
-			$this->Cell(15,6,"",'LRTB',0,'L',true);
+			$this->Cell(20,5,":",'LRTB',0,'C',true);
 			}
+		
+		$this->Ln();
+		$this->SetX($curX);
+		
+		//visitor grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20,5,$this->game['visitorshortname'],'LRTB',0,'C',true);
+		
+		for($i=0;$i<3;$i++)
+			{
+			$this->Cell(20,5,":",'LRTB',0,'C',true);
+			}
+	
 		$this->Ln();	
+		}
+
+	function Timeouts2()
+		{
+    $curX = $this->GetX();
+		//header row 1
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(12,5,"",'R',0,'C',true);
+		$this->SetFillColor(230);
+		$this->CellFitScale(40,5,_("Time-outs"),'LRT',0,'C',true);
+		$this->SetFillColor(255);
+		//$this->Cell(1,5,"",'LR',0,'C',true);
+		$this->SetFillColor(230);
+		$this->CellFitScale(20,5,_("Spirit"),'LRT',1,'C',true);
+
+    //header row 2
+    $this->SetX($curX);
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(12,5,"",'R',0,'C',true);
+		$this->SetFillColor(230);
+		$this->SetFont('Arial','',10);
+		$this->CellFitScale(20,5,_("1st half"),'LRB',0,'C',true);
+		$this->CellFitScale(20,5,_("2nd half"),'LRB',0,'C',true);
+		$this->SetFont('Arial','B',10);
+		$this->SetFillColor(255);
+		//$this->Cell(1,5,"",'LR',0,'C',true);
+		$this->SetFillColor(230);
+		$this->CellFitScale(20,5,_("Time-outs"),'LRB',1,'C',true);
+		//$this->Ln(1);
+
+		//home grids
+    $this->SetX($curX);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->CellFitScale(12,12,$this->game['homeshortname'],'LRTB',0,'C',true);
+    //$this->Cell(1,12,"",0,'C',true);
+		
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		//$this->Cell(1,6,"",'LR',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
+    $this->SetX($curX+12);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		//$this->Cell(1,6,"",'LR',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
+		
+		//$this->Ln(1);
+
+		//visitor grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+    $this->SetX($curX);
+		$this->CellFitScale(12,12,$this->game['visitorshortname'],'LRTB',0,'C',true);
+    //$this->Cell(1,12,"",0,'C',true);
+		
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		//$this->Cell(1,6,"",'LR',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
+    $this->SetX($curX+12);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',0,'C',true);
+		//$this->Cell(1,6,"",'LR',0,'C',true);
+		$this->Cell(20,6,":",'LRTB',1,'C',true);
+	
+		}
+
+	function TimeoutsBeach()
+		{
+    $curX = $this->GetX();
+		//header row 1
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(12,6,"",'R',0,'C',true);
+		$this->SetFillColor(230);
+		$this->CellFitScale(20,6,_("Time-outs"),'LRTB',0,'C',true);
+		$this->SetFillColor(0);
+    $this->Cell(0.5,6,"",'LRTB',0,'C',true); // separator
+		$this->SetFillColor(230);
+		$this->CellFitScale(40,6,_("Spirit Time-outs"),'LRTB',1,'C',true);
+
+		//home grids
+    $this->SetX($curX);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->CellFitScale(12,8,$this->game['homeshortname'],'LRTB',0,'C',true);
+		
+		$this->Cell(20,8,":",'LRTB',0,'C',true);
+		$this->SetFillColor(0);
+    $this->Cell(0.5,8,"",'LRTB',0,'C',true); // separator
+		$this->SetFillColor(255);
+		$this->Cell(20,8,":",'LRTB',0,'C',true);
+		$this->Cell(20,8,":",'LRTB',1,'C',true);
+		
+		//visitor grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+    $this->SetX($curX);
+		$this->CellFitScale(12,8,$this->game['visitorshortname'],'LRTB',0,'C',true);
+		
+		$this->Cell(20,8,":",'LRTB',0,'C',true);
+		$this->SetFillColor(0);
+    $this->Cell(0.5,8,"",'LRTB',0,'C',true); // separator
+		$this->SetFillColor(255);
+		$this->Cell(20,8,":",'LRTB',0,'C',true);
+		$this->Cell(20,8,":",'LRTB',1,'C',true);
+	
+		}
+
+	function HalfTime()
+		{
+    $curX = $this->GetX();
+
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(45,5,_("Second half started at"),'LRTB',0,'C',true);
+		$this->Ln();
+
+    $this->SetX($curX);
+		
+		$this->SetFillColor(255);
+		$this->Cell(27,10,":",'LTB',0,'C',true);
+		$this->SetFont('Arial','',10);
+		$this->Cell(18,10,"(min:sec)",'RTB',0,'L',true);
+		$this->Ln();
+
+		}
+
+	function HalfTimeScore()
+		{
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(50,5,_("Half time score"),'LRTB',0,'C',true);
+		$this->Ln();
+
+		$this->SetFillColor(255);
+		$this->Cell(14,5,$this->game['homeshortname'],'LRTB',0,'C',true);
+		$this->Cell(22,5,"-",'LRTB',0,'C',true);
+		$this->Cell(14,5,$this->game['visitorshortname'],'LRTB',0,'C',true);
+		$this->Ln();
+
+		}
+
+	function FinalScore()
+		{
+    $curX = $this->GetX();
+
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(40,5,_("Final score"),'LRTB',0,'C',true);
+		$this->Ln();
+
+    $this->SetX($curX);
+
+		$this->SetFillColor(255);
+		$this->Cell(10,10,utf8_decode($this->game['homeshortname']),'LRTB',0,'C',true);
+		$this->Cell(20,10,"-",'LRTB',0,'C',true);
+		$this->Cell(10,10,utf8_decode($this->game['visitorshortname']),'LRTB',0,'C',true);
+		$this->Ln();
+
 		}
 
 	function FirstOffence()
 		{
 		//header
 		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,$this->pdfText(_("Starting offensive team")),'LRTB',0,'C',true);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(80,6,utf8_decode(_("Starting offensive team")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids
@@ -924,9 +1505,9 @@ class PDF extends FPDF
 		{
 		//header
 		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,$this->pdfText(_("Spirit points")),'LRTB',0,'C',true);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(80,6,utf8_decode(_("Spirit points")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -955,74 +1536,236 @@ class PDF extends FPDF
 		
 	function Signatures()
 		{
-		//$this->Ln();
+		$curX = $this->GetX();
+
 		//header
-		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,$this->pdfText(_("Captains' signatures")),'LRTB',0,'C',true);
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(80,5,utf8_decode(_("Captains' signatures")),'LRTB',0,'C',true);
 		$this->Ln();
 		
+    $this->SetX($curX);
+
 		//home grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(15,8,$this->pdfText(_("Home")),'LRTB',0,'L',true);
-		$this->Cell(65,8,"",'LRTB',0,'L',true);
+		$this->Cell(15,10,utf8_decode($this->game['homeshortname']),'LRTB',0,'C',true);
+		$this->Cell(65,10,"",'LRTB',0,'L',true);
 		
 		$this->Ln();
+    $this->SetX($curX);
 		
 		//visitor grids
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		$this->Cell(15,8,$this->pdfText(_("Away")),'LRTB',0,'L',true);
-		$this->Cell(65,8,"",'LRTB',0,'L',true);
+		$this->Cell(15,10,utf8_decode($this->game['visitorshortname']),'LRTB',0,'C',true);
+		$this->Cell(65,10,"",'LRTB',0,'L',true);
 		$this->Ln();	
 		}
 
-	function ScoreGrid()
+	function SigFinalScore()
 		{
+		$curX = $this->GetX();
+
+		//header
+		$this->SetFont('Arial','',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(30,5,_("Team"),'LRTB',0,'C',true);
+		$this->CellFitScale(18,5,_("Half time score"),'LRTB',0,'C',true);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(18,5,_("Final Score"),'LRTB',0,'C',true);
+		$this->CellFitScale(40,5,_("Captains' signatures"),'LRTB',0,'C',true);
+		$this->Cell(12,5,"#",'LRTB',0,'C',true);
+		$this->Ln();
+		
+    $this->SetX($curX);
+
+		//home grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+		$this->CellFitScale(30,12,$this->homefullname,'LRTB',0,'L',true);
+		$this->Cell(18,12,"",'LRTB',0,'L',true);
+		$this->Cell(18,12,"",'LRTB',0,'L',true);
+		$this->Cell(40,12,"",'LRTB',0,'L',true);
+		$this->Cell(12,12,"",'LRTB',0,'L',true);
+		$this->Ln();
+
+    $this->SetX($curX);
+		
+		//visitor grids
+		$this->CellFitScale(30,12,$this->visitorfullname,'LRTB',0,'L',true);
+		$this->Cell(18,12,"",'LRTB',0,'L',true);
+		$this->Cell(18,12,"",'LRTB',0,'L',true);
+		$this->Cell(40,12,"",'LRTB',0,'L',true);
+		$this->Cell(12,12,"",'LRTB',0,'L',true);
+		$this->Ln();	
+		
+    }
+
+	function ScoreGrid()
+		{ // narrower 100 -> 80 width
 		$this->SetFont('Arial','',8);
 		
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);		
-		$this->SetX(100);
-		$this->Cell(20,4,$this->pdfText(_("Scoring team")),'LRT',0,'C',true);
-		$this->Cell(30,4,$this->pdfText(_("Jersey numbers")),'LRT',0,'C',true);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->SetX(120);
+		$this->CellFitScale(16,4,utf8_decode(_("Scoring team")),'LRT',0,'C',true);
+		$this->CellFitScale(20,4,utf8_decode(_("Shirt numbers")),'LRT',0,'C',true);
+		$this->CellFitScale(20,4,utf8_decode(_("Time")),'LRT',0,'C',true);
+		$this->CellFitScale(20,4,utf8_decode(_("Score")),'LRT',0,'C',true);
 		$this->Ln();
-		$this->SetX(100);
-		$this->SetFont('Arial','',10);
-		$this->Cell(10,6,$this->pdfText(_("Home")),'LRB',0,'C',true);
-		$this->Cell(10,6,$this->pdfText(_("Away")),'LRB',0,'C',true);
-		$this->Cell(15,6,$this->pdfText(_("Assist")),'LRB',0,'C',true);
-		$this->Cell(15,6,$this->pdfText(_("Goal")),'LRB',0,'C',true);
-		$this->Cell(25,6,$this->pdfText(_("Time")),'LRTB',0,'C',true);
-		$this->Cell(25,6,$this->pdfText(_("Scores")),'LRTB',0,'C',true);
+		$this->SetX(120);
+		$this->SetFont('Arial','',9);
+		$this->CellFitScale(8,5,utf8_decode($this->game['homeshortname']),'LRB',0,'C',true);
+		$this->CellFitScale(8,5,utf8_decode($this->game['visitorshortname']),'LRB',0,'C',true);
+		$this->CellFitScale(10,5,utf8_decode(_("Assist")),'LRB',0,'C',true);
+		$this->CellFitScale(10,5,utf8_decode(_("Goal")),'LRB',0,'C',true);
+		$this->CellFitScale(20,5,utf8_decode(_("min : sec")),'LRB',0,'C',true);
+		$this->CellFitScale(20,5,utf8_decode($this->game['homeshortname'] . " - " . $this->game['visitorshortname']),'LRB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		for($i=1;$i<41;$i++)
+		for($i=1;$i<31;$i++)
 			{
-			$this->SetX(95);
+			$this->SetX(115);
 			$this->SetFont('Arial','',8);
-			$this->Cell(5,6,$i,'',0,'C',true);
+			$this->Cell(5,5,$i,'',0,'C',true);
 			$this->SetFont('Arial','',10);
-			$this->Cell(10,6,"",'LRTB',0,'C',true);
-			$this->Cell(10,6,"",'LRTB',0,'C',true);
-			$this->Cell(15,6,"",'LRTB',0,'C',true);
-			$this->Cell(15,6,"",'LRTB',0,'C',true);
-			$this->Cell(25,6,"",'LRTB',0,'C',true);
-			$this->Cell(25,6,"-",'LRTB',0,'C',true);
+		  $this->SetFont('ZapfDingbats','',14);
+			$this->Cell(8,5,"q",'LRTB',0,'C',true);
+			$this->Cell(8,5,"q",'LRTB',0,'C',true);
+		  $this->SetFont('Arial','',10);
+			$this->Cell(10,5,"",'LRTB',0,'C',true);
+			$this->Cell(10,5,"",'LRTB',0,'C',true);
+			$this->Cell(20,5,":",'LRTB',0,'C',true);
+			$this->Cell(20,5,"-",'LRTB',0,'C',true);
+			if (($this->gender_rule == "A") && $this->isMixed && (($i%4==0) || (($i-1)%4==0))) {
+        $this->Cell(4,5,"*",'L',0,'C',true);
+      }
+			$this->Ln();
+			}
+    $this->SetX(120);
+		$this->SetFont('Arial','I',9);
+		$this->CellFitScale(76,6,utf8_decode(_("Note: For Callahan goals write 'XX' as the assist.")),'T',1,'L',true);
+		}
+
+	function DefenseGridHeader()
+		{
+		$this->SetFont('Arial','',10);
+		$this->Cell(12,6,utf8_decode($this->game['homeshortname']),'LRTB',0,'C',true);
+		$this->Cell(12,6,utf8_decode($this->game['visitorshortname']),'LRTB',0,'C',true);
+		$this->SetFont('Arial','',8);
+		$this->Cell(12,6,utf8_decode(_("Player")),'LRTB',0,'C',true);
+		$this->Cell(12,6,utf8_decode(_("Caught")),'LRTB',0,'C',true);
+		$this->Cell(12,6,utf8_decode(_("Rejected")),'LRTB',0,'C',true);
+		$this->Cell(12,6,utf8_decode(_("Callahan")),'LRTB',0,'C',true);
+		$this->SetFont('Arial','',10);
+		$this->Cell(20,6,utf8_decode(_("Time")),'LRTB',0,'C',true);
+		}
+
+	function DefenseGrid()
+		{
+
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->SetX(10);
+		$this->DefenseGridHeader();
+		$this->SetX(108);
+		$this->DefenseGridHeader();
+		$this->Ln();
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$topY = $this->GetY();
+		for($i=1;$i<21;$i++)
+			{
+			if ($i == 11) {
+				$this->SetY($topY);
+			}
+			if ($i < 11) {
+				$this->SetX(5);
+			} else {
+				$this->SetX(103);
+			}
+			$this->SetFont('Arial','',8);
+			$this->Cell(5,6,$i,'',0,'R',true);
+			$this->SetFont('Arial','',10);
+			$this->Cell(12,6,"",'LRTB',0,'C',true);
+			$this->Cell(12,6,"",'LRTB',0,'C',true);
+			$this->Cell(12,6,"",'LRTB',0,'C',true);
+			$this->Cell(12,6,"",'LRTB',0,'C',true);
+			$this->Cell(12,6,"",'LRTB',0,'C',true);
+			$this->Cell(12,6,"",'LRTB',0,'C',true);
+			$this->Cell(20,6,":",'LRTB',0,'C',true);
 			$this->Ln();
 			}
 		}
-	
+	function Instructions()
+		{
+		$this->Ln(5);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		
+		$this->SetFont('Arial','B',9);
+		
+		$data = _("Scoresheet filling instructions:");
+		$this->SetX(100);
+		$this->MultiCell(100,5,utf8_decode($data),0,'C',true);
+		$this->Ln(3);
+		
+		$this->SetFont('Arial','',9);
+		
+		$data = "1. "._("Scorekeepers fill in their names.");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(3);
+		
+		$data = "2. "._("Check rosters with team captains. Cross out players not playing this game and correct any wrong shirt numbers.");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(3);
+		
+		$data = "3. "._("Mark which team is starting on offense.");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(3);
+
+		$data = "4. "._("Game Start. Use the timeline guide at the bottom of next page to aid you with time keeping and remember: It is the time keepers responsibility to blow the whistle, not to enforce what happens!");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(3);
+			
+		$data = "5. "._("At half time, write the game time when it happened as well as the current game score. Game time does not stop at half time.");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(3);
+		
+		$data = "6. "._("Enter goals: mark which team scored, write players numbers for assist and goal (XX for Callahan), write game time when the goal was scored and current game score.");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(3);
+		
+		$data = "7. "._("Time-outs: write the game time when it was called. Game time does not stop during time-outs.");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(3);
+		
+		$data = "8. "._("Game finished: write final score and get captain's signature.");
+		$this->SetX(100);
+		$this->MultiCell(100,4,utf8_decode($data),0,'L',true);
+		$this->Ln(1);
+
+		}
+
 	function FinalScoreTable()
 		{
 		//header
 		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,$this->pdfText(_("Final score")),'LRTB',0,'C',true);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(80,6,utf8_decode(_("Final score")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//data
@@ -1035,29 +1778,47 @@ class PDF extends FPDF
 			$this->SetFont('Arial','B',--$fontsize);
 		}
 		
-		$this->Cell(38,6,$this->game['hometeamname'],'LT',0,'C',true);
-		$this->Cell(4,6,"-",'T',0,'C',true);
+		$this->Cell(40,6,$this->game['hometeamname'],'LRT',0,'C',true);
+		//$this->Cell(4,6,"-",'T',0,'C',true);
 		
 		$fontsize=12;
 		$this->SetFont('Arial','B',$fontsize);
 		while($this->GetStringWidth($this->game['visitorteamname'])>36){
 			$this->SetFont('Arial','B',--$fontsize);
 		}
-		$this->Cell(38,6,$this->game['visitorteamname'],'RT',0,'C',true);
+		$this->Cell(40,6,$this->game['visitorteamname'],'LRT',0,'C',true);
 
 		$this->SetFont('Arial','B',12);
 		$this->Ln();
-		$this->Cell(80,6,"",'LRB',0,'C',true);
-		$this->Ln();
+		$this->Cell(40,12,"",'LRTB',0,'C',true);
+		$this->Cell(40,12,"",'LRTB',0,'C',true);
+		$this->Ln(6);
 		}
 		
+
+	function Scorekeepers()
+		{
+		//header
+    $this->SetX(71);
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(39,5,utf8_decode(_("Scorekeeper(s)")),'LRTB',0,'C',true);
+		$this->Ln();
+		
+		//blank cell
+    $this->SetX(71);
+		$this->SetFillColor(255);
+		$this->Cell(39,10,'','LRTB',0,'C',true);
+		$this->Ln();
+		}
 
 	function OneCellTable($header,$data)
 		{
 		//header
 		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
 		$this->Cell(80,6,$header,'LRTB',0,'C',true);
 		$this->Ln();
 		
@@ -1069,12 +1830,81 @@ class PDF extends FPDF
 		$this->Ln();
 		}
 
+	function SplitOneCellTable($header,$data)
+		{
+		//header
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(40,6,$header,'LRTB',0,'R',true);
+		
+		//data
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(40,6,$data,'LRTB',0,'L',true);
+		$this->Ln();
+		}
+
+	function SplitOneCellTable2($header,$data)
+		{
+		//header
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(20,6,$header,'LRTB',0,'C',true);
+		
+		//data
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(60,6,$data,'LRTB',0,'C',true);
+		$this->Ln();
+		}
+
+	function SplitOneCellTable3($header,$data,$w1,$w2)
+		{
+		//header
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell($w1,5,$header,'LRTB',0,'C',true);
+		
+		//data
+		$this->SetFont('Arial','',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell($w2,5,$data,'LRTB',0,'L',true);
+		$this->Ln();
+		}
+
+	function ThreeCellTable($header1,$header2,$header3,$data1,$data2,$data3)
+		{
+		//header
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(30,6,$header1,'LRTB',0,'C',true);
+		$this->Cell(20,6,$header2,'LRTB',0,'C',true);
+		$this->Cell(30,6,$header3,'LRTB',0,'C',true);
+		$this->Ln();
+		
+		//data
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(30,6,$data1,'LRTB',0,'C',true);
+		$this->Cell(20,6,$data2,'LRTB',0,'C',true);
+		$this->Cell(30,6,$data3,'LRTB',0,'C',true);
+		$this->Ln();
+		}
+
 	function DoubleCellTable($header,$data)
 		{
 		//header
 		$this->SetFont('Arial','B',12);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0,102,153);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
 		$this->Cell(80,6,$header,'LRTB',0,'C',true);
 		$this->Ln();
 		
@@ -1086,8 +1916,234 @@ class PDF extends FPDF
 		$this->Ln();
 		}
 
+	function SpiritHeader($yourteam,$opponent)
+		{
+		//get current X,Y position
+		$curX = $this->GetX();
+		$curY = $this->GetY();
+    $logoW = 18;
+    $logoH = 0; // if one of W or H is 0, it will automatically calculate the other to respect ratio
+
+		// event logo
+    $this->Image($this->eventLogoSm,$curX+1,$curY+11,$logoW,$logoH);
+    
+    $this->setXY($curX,$curY);
 		
-	function WriteHTML($html)
+    // page title
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','B',12);
+		$this->CellFitScale(80,6,"SPIRIT OF THE GAME SCORE SHEET",0,0,'C',true);
+		
+    $this->SetXY($curX+90,$curY);
+    $this->SetFont('Arial','B',9);
+		$this->CellFitScale(40,4,"Dear Scorekeeper,",0,1,'R',true);
+    $this->SetX($curX+90);
+    $this->SetFont('Arial','',9);
+		$this->CellFitScale(40,4,"Please give this sheet to",0,1,'R',true);
+    
+    $this->Ln(1);
+
+    $curX += $logoW+4;
+
+		// 1st row
+		$this->SetX($curX);
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(10,6,_("Day"),'LRTB',0,'C',true);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+		$this->CellFitScale(20,6,$this->game['reservation_group'],'LRTB',0,'C',true);
+		$this->Cell(2,6,"",'LR',0,'C',true);
+		$this->SetFillColor(230);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(18,6,"Your Team",'LRTB',0,'L',true);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+		$this->CellFitScale(36,6,$yourteam,'LRTB',0,'L',true);
+		//$this->SetFont('Arial','B',14);
+		//$this->CellFitScale(6,6,"←",'L',0,'L',true);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(20,6,"← this team",'L',1,'L',true);
+
+
+    $this->Ln(2);
+   
+		// 2nd row
+		$this->SetX($curX);
+		$this->SetFont('Arial','B',10);
+    $this->SetFillColor(230);
+		$this->CellFitScale(14,6,_("Game")." #",'LRTB',0,'L',true);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+		$this->CellFitScale(16,6,$this->game['game_id'],'LRTB',0,'C',true);
+		$this->Cell(2,6,"",'LR',0,'C',true);
+		$this->SetFillColor(230);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(18,6,"Opponent",'LRTB',0,'L',true);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+		$this->CellFitScale(36,6,$opponent,'LRTB',1,'L',true);
+
+    $this->Ln(2);
+
+    // 3rd row
+		$this->SetX($curX);
+		$this->SetFillColor(230);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(14,6,_("Division"),'LRTB',0,'L',true);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+    $this->CellFitScale(42,6,$this->game['division'],'LRTB',0,'C',true);
+		$this->Cell(2,6,"",'LR',0,'C',true);
+		$this->SetFillColor(230);
+		$this->SetFont('Arial','B',10);
+		$this->CellFitScale(8,6,_("Pool"),'LRTB',0,'L',true);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','',10);
+    $this->CellFitScale(40,6,$this->game['pool'],'LRTB',1,'C',true);
+
+		}
+
+	function SpiritTable()
+		{
+		//get current X,Y position
+		$curX = $this->GetX();
+		$curY = $this->GetY();
+
+    
+
+		//header
+    $this->SetXY($curX,$curY);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','B',8);
+    $this->Write(4,"Involve your whole team when rating the other team.\n");
+		$this->SetFont('Arial','',8);
+    $this->SetX($curX);
+    $this->Write(4,"Discuss each of the categories and CIRCLE a score\n");
+    $this->SetX($curX);
+    $this->Write(4,"from 0 to 4.");
+    $curY += 15;
+    $this->RotatedText($curX+86,$curY,"Poor",90);
+    $this->RotatedText($curX+96,$curY,"Not Good",90);
+		$this->SetFont('Arial','B',8);
+    $this->RotatedText($curX+106,$curY,"Good",90);
+		$this->SetFont('Arial','',8);
+    $this->RotatedText($curX+116,$curY,"Very Good",90);
+    $this->RotatedText($curX+126,$curY,"Excellent",90);
+		$this->SetXY($curX,$curY+3);
+
+		//scores
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+    $i = 1;
+		foreach(array(
+      array("Rules Knowledge and Use", "They did not purposefully misinterpret the rules. They kept to time limits. When they didn't know the rules, they showed a real willingness to learn."),
+      array("Fouls and Body Contact","They avoided fouling, contact, and dangerous plays. They played safely. The game flowed smoothly."),
+      array("Fair-Mindedness","They apologized in situations where it was appropriate, informed teammates about wrong/unnecessary calls. Only called significant breaches."),
+      array("Attitude and Self-Control","They were polite. They played with appropriate intensity irrespective of the score. They left an overall positive impression during and after the game."),
+      array("Communication","They communicated respectfully. They listened. They kept discussion to reasonable limits. They got to know us. They used hand signals.")
+      ) as $s ) {
+		  $curX = $this->GetX();
+  		$curY = $this->GetY();
+
+			$this->SetFont('Arial','B',10);
+			$this->CellFitScale(79,5,$i.". ".$s[0],0,1,'L',true);
+      $this->SetX($curX);
+			$this->SetFont('Arial','',6);
+			$this->MultiCell(79,3,"Examples: ".$s[1],0,'L',true);
+		  $this->SetXY($curX+80,$curY);
+			$this->SetFont('Arial','',12);
+			$this->Cell(10,10," 0*",'LRTB',0,'C',true);
+			$this->Cell(10,10,"1",'LRTB',0,'C',true);
+  		$this->SetFillColor(230);
+			$this->Cell(10,10,"2",'LRTB',0,'C',true);
+		  $this->SetFillColor(255);
+			$this->Cell(10,10,"3",'LRTB',0,'C',true);
+			$this->Cell(10,10," 4*",'LRTB',0,'C',true);
+			$this->SetXY($curX,$curY+12);
+      $i++;
+			}
+  	
+    $curY = $this->GetY();
+
+    // total sum
+    $this->SetFont('Arial','B',10);
+    $this->CellFitScale(79,5,"You Do the Math",0,1,'L',true);
+		$this->SetX($curX);
+    $this->SetFont('Arial','',6);
+    $this->MultiCell(79,3,"Add up the points to give a total Spirit score between 0 and 20.\nMost games will be between 8-13 pts.",0,'L',true);
+		$this->SetX($curX);
+    $this->SetFont('Arial','B',6);
+    $this->MultiCell(79,3,"A '10' is a common score.",0,'L',true);
+
+    $this->SetXY($curX+85,$curY);
+    $this->SetFont('Arial','B',12);
+    $this->Cell(10,10,"=",'R',0,'C',true);
+    $this->Cell(20,10,"",'LRTB',1,'C',true);
+
+		$this->Ln(6);
+		$this->SetX($curX);
+
+    // Comments
+		$this->SetFont('Arial','B',10);
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->CellFitScale(130,6,"*Comments",0,1,'L',true);
+		$this->SetX($curX);
+    $this->SetFont('Arial','',6);
+    $this->MultiCell(130,3,"Write additional details about the other team's spirit. REQUIRED if you pick a '0' or '4' in any category.\nComments will not be shared publicly, but will be shared with the other team.",0,'L',true);
+    $this->Ln(6);
+
+    // Comments' lines
+    $this->SetX($curX);
+    $this->Cell(130,6,"",'TB',1,'C',true);
+    $this->Ln(6);
+    $this->SetX($curX);
+    $this->Cell(130,6,"",'T',1,'C',true);
+    $bottomY = $this->getY();
+
+    $this->SetY($bottomY-6);
+
+    // Comments' lines
+    /*
+    $this->SetX($curX);
+		$this->Line($curX+27,$curY+7,$curX+100,$curY+7);
+		$this->Line($curX,$curY+12,$curX+54,$curY+12);
+		$this->Line($curX,$curY+18,$curX+90,$curY+18);
+		$this->Line($curX,$curY+24,$curX+90,$curY+24);
+    */
+
+		}
+
+	function FeedbackGA()
+		{
+		//get current X position
+		$curX = $this->GetX();
+
+		//header
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->SetFont('Arial','B',10);
+    $this->CellFitScale(130,6,"If you had Game Advisors for this game, please provide any feedback about them",0,1,'C',true);
+    $this->SetX($curX);
+		$this->Cell(130,6,"",'B',1,'C',true);
+    $this->SetX($curX);
+		$this->Cell(130,6,"",'TB',1,'C',true);
+    $this->SetX($curX);
+		$this->Cell(130,6,"",'TB',1,'C',true);
+/*
+    $this->SetX($curX);
+		$this->Cell(130,6,"",'TB',1,'C',true);
+    $this->SetX($curX);
+		$this->Cell(130,6,"",'TB',1,'C',true);
+*/
+    }	
+  
+  function WriteHTML($html)
 		{
 		//HTML parser
 		$html=str_replace("\n",' ',$html);

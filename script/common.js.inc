@@ -42,8 +42,20 @@ function confirmLeave(element, confirm, text) {
     }
   else
     window.onbeforeunload = null;
-};
+}
 
+function menu_toggle() {
+	var x = document.getElementById('menu_left') || document.querySelector('.menu_left');
+	if (!x) {
+		return;
+	}
+	x.style.display = '';
+	if (x.classList.contains('menu_open')) {
+		x.classList.remove('menu_open');
+	} else {
+		x.classList.add('menu_open');
+	}
+}
 
 //-->
 </script>
