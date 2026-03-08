@@ -366,28 +366,35 @@ if ($filter == 'teams') {
 	}
 
 	if (empty($groups)) {
-		$html .= "<th>" . _("Profile") . "</th><th>" . _("Name") . "</th><th>" . _("Stats refs") . "</th><th>" . _("Player refs") . "</th><th>" . _("Total refs") . "</th><th>" . _("Keep") . "</th></tr>\n";
-		$html .= "<tr><td colspan='6'>" . _("No duplicate profiles found") . "</td></tr>";
+		$html .= "<th>" . _("Profile ID") . "</th><th>" . _("Name") . "</th><th>" . _("Stats refs") . "</th><th>" . _("Player refs") . "</th><th>" . _("Total refs") . "</th><th>" . _("Keep") . "</th></tr>\n";
+		$html .= "<tr><td colspan='7'>" . _("No duplicate profiles found") . "</td></tr>";
 	} else {
-		$html .= "<th>" . _("Profile") . "</th><th>" . _("Name") . "</th><th>" . _("Stats refs") . "</th><th>" . _("Player refs") . "</th><th>" . _("Total refs") . "</th><th>" . _("Keep") . "</th></tr>\n";
+		$html .= "<th>" . _("Profile ID") . "</th><th>" . _("Name") . "</th><th>" . _("Stats refs") . "</th><th>" . _("Player refs") . "</th><th>" . _("Total refs") . "</th><th>" . _("Keep") . "</th></tr>\n";
 		foreach ($groups as $group) {
 			$counter++;
 			$keepId = $group['keep']['profile_id'];
-			foreach ($group['rows'] as $row) {
+				foreach ($group['rows'] as $row) {
+					$profileId = (int)$row['profile_id'];
+					$profileUrl = "index.php?view=user/playerprofile&profile=" . $profileId;
+					$name = trim($row['firstname'] . " " . $row['lastname']);
+					if ($name === "") {
+						$name = "-";
+					}
 				if ($counter % 2) {
 					$html .= "<tr class='highlight'>";
 				} else {
 					$html .= "<tr>";
-				}
-				$html .= "<td><input type='checkbox' name='ids[]' value='" . utf8entities($row['profile_id']) . "'/></td>";
-				$html .= "<td><b>" . utf8entities($row['firstname']) . " " . utf8entities($row['lastname']) . "</b></td>";
-				$html .= "<td class='center'>" . utf8entities($row['stats_refs']) . "</td>";
-				$html .= "<td class='center'>" . utf8entities($row['player_refs']) . "</td>";
-				$html .= "<td class='center'>" . utf8entities($row['total_refs']) . "</td>";
+					}
+					$html .= "<td><input type='checkbox' name='ids[]' value='" . utf8entities($row['profile_id']) . "'/></td>";
+					$html .= "<td><a href='" . utf8entities($profileUrl) . "'>" . utf8entities($profileId) . "</a></td>";
+					$html .= "<td><b>" . utf8entities($name) . "</b></td>";
+					$html .= "<td>" . utf8entities($row['stats_refs']) . "</td>";
+				$html .= "<td>" . utf8entities($row['player_refs']) . "</td>";
+				$html .= "<td>" . utf8entities($row['total_refs']) . "</td>";
 				if ($row['profile_id'] == $keepId) {
-					$html .= "<td class='center'><b>" . _("Keep (most referred)") . "</b></td>";
+					$html .= "<td><b>" . _("Keep (most referred)") . "</b></td>";
 				} else {
-					$html .= "<td class='center'>" . sprintf(_("-> %d"), $keepId) . "</td>";
+					$html .= "<td>" . sprintf(_("-> %d"), $keepId) . "</td>";
 				}
 				$html .= "</tr>\n";
 			}
