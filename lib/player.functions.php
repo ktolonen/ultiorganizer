@@ -16,8 +16,13 @@ function SetPlayer($playerId, $number, $fname, $lname, $accrId, $profileId)
 {
   $playerInfo = PlayerInfo($playerId);
   if (hasEditPlayersRight($playerInfo['team'])) {
-    if ($number < 0) $number = "null";
-    else $number = (int)$number;
+    $defaultNumber = 0;
+    if ($number < 0) {
+      $number = "null";
+    } else {
+      $defaultNumber = (int)$number;
+      $number = (int)$number;
+    }
     //echo "<p>".$profileId."</p>";
     $query = sprintf(
       "UPDATE uo_player SET num=%s, firstname='%s', lastname='%s', accreditation_id='%s',
@@ -30,10 +35,36 @@ function SetPlayer($playerId, $number, $fname, $lname, $accrId, $profileId)
       DBEscapeString($profileId),
       (int)$playerId
     );
-    return DBQuery($query);
+    $result = DBQuery($query);
+    if ($result && $defaultNumber > 0 && !empty($profileId)) {
+      SetPlayerProfileDefaultNumberIfEmpty($profileId, $defaultNumber);
+    }
+    return $result;
   } else {
     die("Insufficient rights to edit player");
   }
+}
+
+/**
+ * Set profile default jersey number if it is currently empty.
+ *
+ * @param int $profileId
+ * @param int $number
+ */
+function SetPlayerProfileDefaultNumberIfEmpty($profileId, $number)
+{
+  if (empty($profileId) || (int)$number <= 0) {
+    return false;
+  }
+
+  $query = sprintf(
+    "UPDATE uo_player_profile SET num=%d
+		WHERE profile_id=%d AND (num IS NULL OR num <= 0)",
+    (int)$number,
+    (int)$profileId
+  );
+
+  return DBQuery($query);
 }
 
 /**

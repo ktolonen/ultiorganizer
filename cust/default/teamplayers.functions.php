@@ -45,12 +45,25 @@ echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "containe
 		var lastname = oRecord.getData("Lastname");
 		var birthdate = oRecord.getData("BirthDate");
 		var jersey = oRecord.getData("Jersey");
+		var numberField = YAHOO.util.Dom.get('number' + playerId);
+		var existingNumber = "";
+		if (numberField && numberField.value) {
+			existingNumber = ("" + numberField.value).replace(/\s+/g, '');
+		}
+		var profileJersey = "";
+		if (jersey !== null && typeof jersey !== "undefined") {
+			profileJersey = ("" + jersey).replace(/\s+/g, '');
+		}
 
 		YAHOO.util.Dom.get('profileId' + playerId).value = profileId;
 		YAHOO.util.Dom.get('accrId' + playerId).value = accrId;
 		YAHOO.util.Dom.get('firstname' + playerId).value = firstname;
 		YAHOO.util.Dom.get('lastname' + playerId).value = lastname;
-		YAHOO.util.Dom.get('number' + playerId).value = jersey;
+
+		// Keep existing number untouched. Only fill from profile if empty.
+		if (existingNumber.length === 0 && profileJersey.length > 0 && numberField) {
+			numberField.value = profileJersey;
+		}
 
 		if (playerId == 0) {
 			YAHOO.util.Dom.get("add").value = "<?php echo _("Confirm"); ?>";

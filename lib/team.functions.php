@@ -1191,6 +1191,9 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
     }
     $query .= sprintf(")");
     $playerId = DBQueryInsert($query);
+    if (!empty($profileId) && $num >= 0) {
+      SetPlayerProfileDefaultNumberIfEmpty($profileId, $num);
+    }
     Log1("player", "add", $playerId, $teamId);
 
     return $playerId;
