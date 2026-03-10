@@ -325,21 +325,21 @@ if ($filter == 'teams') {
 	}
 } elseif ($filter == 'profiles') {
 	$duplicates = DBQuery("
-		SELECT pr.profile_id, pr.firstname, pr.lastname,
-		       COALESCE(ps.cnt, 0) AS stats_refs,
-		       COALESCE(p.cnt, 0) AS player_refs
-		FROM uo_player_profile pr
-		JOIN (
-			SELECT LOWER(firstname) AS fn, LOWER(lastname) AS ln
-			FROM uo_player_profile
-			WHERE firstname IS NOT NULL AND lastname IS NOT NULL
-			GROUP BY fn, ln
-			HAVING COUNT(*) > 1
-		) dup ON dup.fn = LOWER(pr.firstname) AND dup.ln = LOWER(pr.lastname)
-		LEFT JOIN (SELECT profile_id, COUNT(*) AS cnt FROM uo_player_stats GROUP BY profile_id) ps ON ps.profile_id = pr.profile_id
-		LEFT JOIN (SELECT profile_id, COUNT(*) AS cnt FROM uo_player GROUP BY profile_id) p ON p.profile_id = pr.profile_id
-		ORDER BY pr.firstname, pr.lastname, pr.profile_id
-	");
+			SELECT pr.profile_id, pr.firstname, pr.lastname,
+			       COALESCE(ps.cnt, 0) AS stats_refs,
+			       COALESCE(p.cnt, 0) AS player_refs
+			FROM uo_player_profile pr
+			JOIN (
+				SELECT LOWER(firstname) AS fn, LOWER(lastname) AS ln
+				FROM uo_player_profile
+				WHERE firstname IS NOT NULL AND lastname IS NOT NULL
+				GROUP BY fn, ln
+				HAVING COUNT(*) > 1
+			) dup ON dup.fn = LOWER(pr.firstname) AND dup.ln = LOWER(pr.lastname)
+			LEFT JOIN (SELECT profile_id, COUNT(*) AS cnt FROM uo_player_stats GROUP BY profile_id) ps ON ps.profile_id = pr.profile_id
+			LEFT JOIN (SELECT profile_id, COUNT(*) AS cnt FROM uo_player GROUP BY profile_id) p ON p.profile_id = pr.profile_id
+			ORDER BY pr.firstname, pr.lastname, pr.profile_id
+		");
 
 	$groups = array();
 	while ($row = mysqli_fetch_assoc($duplicates)) {
@@ -373,22 +373,22 @@ if ($filter == 'teams') {
 		foreach ($groups as $group) {
 			$counter++;
 			$keepId = $group['keep']['profile_id'];
-				foreach ($group['rows'] as $row) {
-					$profileId = (int)$row['profile_id'];
-					$profileUrl = "index.php?view=user/playerprofile&profile=" . $profileId;
-					$name = trim($row['firstname'] . " " . $row['lastname']);
-					if ($name === "") {
-						$name = "-";
-					}
+			foreach ($group['rows'] as $row) {
+				$profileId = (int)$row['profile_id'];
+				$profileUrl = "index.php?view=user/playerprofile&profile=" . $profileId;
+				$name = trim($row['firstname'] . " " . $row['lastname']);
+				if ($name === "") {
+					$name = "-";
+				}
 				if ($counter % 2) {
 					$html .= "<tr class='highlight'>";
 				} else {
 					$html .= "<tr>";
-					}
-					$html .= "<td><input type='checkbox' name='ids[]' value='" . utf8entities($row['profile_id']) . "'/></td>";
-					$html .= "<td><a href='" . utf8entities($profileUrl) . "'>" . utf8entities($profileId) . "</a></td>";
-					$html .= "<td><b>" . utf8entities($name) . "</b></td>";
-					$html .= "<td>" . utf8entities($row['stats_refs']) . "</td>";
+				}
+				$html .= "<td><input type='checkbox' name='ids[]' value='" . utf8entities($row['profile_id']) . "'/></td>";
+				$html .= "<td><a href='" . utf8entities($profileUrl) . "'>" . utf8entities($profileId) . "</a></td>";
+				$html .= "<td><b>" . utf8entities($name) . "</b></td>";
+				$html .= "<td>" . utf8entities($row['stats_refs']) . "</td>";
 				$html .= "<td>" . utf8entities($row['player_refs']) . "</td>";
 				$html .= "<td>" . utf8entities($row['total_refs']) . "</td>";
 				if ($row['profile_id'] == $keepId) {
