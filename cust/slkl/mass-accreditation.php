@@ -434,19 +434,40 @@ function slklUpdateLicensesFromCSV($handle, $season)
       } else {
         $gender = 'M';
       }
+      $existingProfileId = FindExistingPlayerProfileId(array(
+        "firstname" => $firstname,
+        "lastname" => $lastname,
+        "accreditation_id" => $accreditation_id,
+        "email" => $email,
+        "birthdate" => $birthdate
+      ));
 
-      $query = sprintf(
-        "INSERT INTO uo_player_profile (firstname,lastname,accreditation_id, gender, email, birthdate) VALUES
+      if ($existingProfileId > 0) {
+        $profile = DBQueryToRow("SELECT * FROM uo_player_profile WHERE profile_id=" . (int)$existingProfileId);
+        $query = "UPDATE uo_player_profile SET accreditation_id='" . DBEscapeString($accreditation_id) . "' ";
+        $query .= ",birthdate='" . DBEscapeString($birthdate) . "'";
+        if (empty($profile['gender'])) {
+          $query .= ",gender='" . DBEscapeString($gender) . "'";
+        }
+        if (empty($profile['email']) && !empty($email)) {
+          $query .= ",email='" . DBEscapeString($email) . "'";
+        }
+        $query .= " WHERE profile_id=" . (int)$existingProfileId;
+        DBQuery($query);
+      } else {
+        $query = sprintf(
+          "INSERT INTO uo_player_profile (firstname,lastname,accreditation_id, gender, email, birthdate) VALUES
 				('%s','%s','%s','%s','%s','%s')",
-        DBEscapeString($firstname),
-        DBEscapeString($lastname),
-        DBEscapeString($id),
-        DBEscapeString($gender),
-        DBEscapeString($email),
-        DBEscapeString($birthdate)
-      );
+          DBEscapeString($firstname),
+          DBEscapeString($lastname),
+          DBEscapeString($accreditation_id),
+          DBEscapeString($gender),
+          DBEscapeString($email),
+          DBEscapeString($birthdate)
+        );
 
-      $profileId = DBQueryInsert($query);
+        $profileId = DBQueryInsert($query);
+      }
     }
   }
   return $html;

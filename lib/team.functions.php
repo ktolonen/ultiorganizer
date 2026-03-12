@@ -1149,15 +1149,26 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
       $profile = PlayerProfile($profileId);
       $accreditationId = $profile['accreditation_id'];
     } else {
-      $query = sprintf(
-        "INSERT INTO uo_player_profile (firstname,lastname,num) VALUES
+      $existingProfileId = FindExistingPlayerProfileId(array(
+        "firstname" => $firstname,
+        "lastname" => $lastname
+      ));
+
+      if ($existingProfileId > 0) {
+        $profileId = $existingProfileId;
+        $profile = PlayerProfile($profileId);
+        $accreditationId = $profile['accreditation_id'];
+      } else {
+        $query = sprintf(
+          "INSERT INTO uo_player_profile (firstname,lastname,num) VALUES
 				('%s','%s',%d)",
-        DBEscapeString($firstname),
-        DBEscapeString($lastname),
-        (int)$num
-      );
-      $profileId = DBQueryInsert($query);
-      $accreditationId = 0;
+          DBEscapeString($firstname),
+          DBEscapeString($lastname),
+          (int)$num
+        );
+        $profileId = DBQueryInsert($query);
+        $accreditationId = 0;
+      }
     }
     $query = "INSERT INTO uo_player (firstname, lastname, profile_id, accreditation_id,team";
 
@@ -1180,6 +1191,9 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
     }
     $query .= sprintf(")");
     $playerId = DBQueryInsert($query);
+    if (!empty($profileId) && $num >= 0) {
+      SetPlayerProfileDefaultNumberIfEmpty($profileId, $num);
+    }
     Log1("player", "add", $playerId, $teamId);
 
     return $playerId;
