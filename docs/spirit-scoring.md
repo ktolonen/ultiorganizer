@@ -12,13 +12,14 @@ Keep those separate when planning changes. The repository does not yet implement
 - Core spirit score logic lives in `lib/spirit.functions.php`.
 - Spirit score entry UI is `user/addspirit.php`.
 - Public spirit displays are primarily in `teamcard.php`, `seriesstatus.php`, `spiritstatus.php`, and `gameplay.php`.
-- Admin event setup is in `admin/addseasons.php`.
-- Admin server-wide spirit comment visibility is in `admin/serverconf.php`.
-- Missing-score admin tooling is in `admin/spirit.php`.
+- Event creation and the top-level `spiritmode` switch are in `admin/addseasons.php`.
+- Detailed spirit settings are managed in `admin/spiritsettings.php`.
+- Spirit admin tooling and missing-score review are in `admin/spirit.php`.
 
 ## Data model and comment types
 
 - Spirit scores are stored in `uo_spirit_score`.
+- Game-level public spirit visibility is cached in `uo_game.show_spirit`.
 - Spirit category definitions are stored in `uo_spirit_category`.
 - Cached team averages are stored in `uo_team_spirit_stats`.
 - Spirit comments are stored in `uo_comment` and handled in `lib/comment.functions.php`.
@@ -51,11 +52,15 @@ Use the exact type names from [configuration-flags.md](/home/kari/code/ultiorgan
 ### Existing settings
 
 - `EVENT_SETTING`: `spiritmode`
-  Selects the scoring model for the event. For WFDF events, the expected default is the WFDF mode in use for that event, typically `1003` in this codebase.
+  Selects the scoring model for the event. This is also the event-level "is spirit scoring used at all" switch. When `spiritmode` is empty or `0`, spirit scoring is treated as disabled for the event and the admin Spirit menu should stay hidden.
 - `EVENT_SETTING`: `showspiritpoints`
-  Current repository behavior is only a boolean public visibility toggle. Admins bypass it via `ShowSpiritScoresForSeason()`.
+  Enables spirit score visibility for the event. Admins bypass it via `ShowSpiritScoresForSeason()`.
 - `EVENT_SETTING`: `showspiritcomments`
   Controls per-event visibility of spirit comments.
+- `EVENT_SETTING`: `showspiritpointsonlyoncomplete`
+  When enabled, non-admin users only see spirit scores and spirit-based averages after both teams have submitted complete scores for the game.
+- `EVENT_SETTING`: `lockteamspiritonsubmit`
+  When enabled, team-side edits are blocked after that team has submitted a complete spirit score for the game.
 
 ### Admin-only capabilities that should exist regardless of event settings
 
@@ -68,27 +73,69 @@ Use the exact type names from [configuration-flags.md](/home/kari/code/ultiorgan
 
 This section describes what the repository does today.
 
+### Admin setup and navigation
+
+- `spiritmode` is the top-level event switch that enables or disables spirit scoring for a season.
+- Detailed spirit settings are edited in `admin/spiritsettings.php`, linked from `admin/spirit.php`.
+- The admin `Spirit` menu entry is shown only for events where `spiritmode > 0`.
+- `admin/spirit.php` contains spirit review tools, missing-score searches, comment search, and SOTG token utilities.
+
 ### Score visibility
 
 - `ShowSpiritScoresForSeason()` allows spirit score visibility when the event has `spiritmode > 0` and `showspiritpoints` is enabled.
 - Season admins bypass the public visibility flag and can always see scores.
-- `teamcard.php` hides per-game public rows unless `GameSpiritComplete()` says both teams have fully submitted; admins can still see incomplete received rows.
+- `RefreshGameSpiritVisibility()` maintains `uo_game.show_spirit` as the shared visibility flag for public spirit rows and spirit-based calculations.
+- `CanViewSpiritScoresForGame()` and `CanViewSpiritCommentsForGame()` centralize non-admin visibility checks.
 - `spiritstatus.php` hides the full spirit page when `ShowSpiritScoresForSeason()` is false.
 
 ### Aggregate calculations
 
-- `SeriesSpiritBoardTotalAverages(..., false)` enforces complete-game-only averages.
-- `TeamSpiritTotal(..., false)` and `TeamSpiritStats2(..., false)` also support complete-game-only calculations.
+- `SeriesSpiritBoard()`, `SeriesSpiritBoardTotalAverages(..., false)`, `TeamSpiritTotal(..., false)`, `TeamSpiritStats2(..., false)`, `TeamSpiritTotalByPool()`, and `SpiritRebuildTeamStatsForSeason()` now read only games with `uo_game.show_spirit=1`.
 - `TeamSpiritTotal(..., true)` and `TeamSpiritStats2(..., true)` support admin-style incomplete-game inclusion.
+
+### Submission locking
+
+- `TeamSpiritSubmissionComplete()` treats a team submission as complete when all required spirit categories for the active mode exist for that game and team.
+- `GameSpiritComplete()` requires complete submissions from both teams.
+- `CanEditSpiritSubmission()` blocks team-side score edits after a complete submission when `lockteamspiritonsubmit=1`.
+- `CanDeleteSpiritSubmission()` and `GameDeleteSpiritPoints()` provide an admin-only path to remove a submitted spirit score and rebuild visibility/stat caches.
+- `user/addspirit.php` exposes the delete action as an admin-only button next to each existing submitted spirit score.
+- Spirit comment create/update/delete uses the same shared lock through `CanCreateSpiritComment()` and `CanManageSpiritComment()`.
 
 ### Important current gaps
 
-- `SeriesSpiritBoard()` does not filter out incomplete games before calculating per-team division averages. `seriesstatus.php` and `spiritstatus.php` currently use it.
-- `SpiritRebuildTeamStatsForSeason()` writes `uo_team_spirit_stats` from all submitted rows, not only complete games. `teamcard.php` reads those cached stats.
-- `gameplay.php` should respect the event-level `showspiritcomments` setting when rendering spirit notes.
-- The repository does not contain an event-level setting for "opponent can see received comments after submitting own score".
-- No first-class score deletion UI or explicit `N/A` state is documented here.
-- No spirit-timeout data model or UI exists in this repository.
+- There is no separate Spirit Director or spirit-admin permission model. Today this is still handled through season-admin style rights.
+- The repository does not contain an event-level setting for "opponent can see received scores/comments after submitting own score", and the token-based self-service flow does not enforce that reveal rule.
+- There is no explicit `N/A` state for spirit submissions.
+- There is no spirit-timeout data model, admin UI, entry UI, or reporting flow in this repository.
+
+## Planned Updates For Missing Features
+
+The main implementation gaps should be handled in this order.
+
+### 1. Spirit Director permissions
+
+- Add a dedicated event-level spirit-admin permission helper instead of relying only on season-admin rights.
+- Use that helper in `admin/spirit.php`, `admin/spiritsettings.php`, missing-score review, comment review, and any future spirit correction tools.
+- Keep season admins as a bypass role.
+
+### 2. Token and reveal workflow
+
+- Define the supported SOTG token submission flow explicitly.
+- Add an `EVENT_SETTING` for whether teams may see received spirit scores/comments only after they submit their own score.
+- Centralize that rule in shared spirit/comment visibility helpers so browser views, exports, and APIs follow the same behavior.
+- Make token-based submission use the same completion, lock, and visibility rules already used by logged-in users.
+
+### 3. Explicit `N/A` handling
+
+- Do not infer deletion from zero values; all-zero submissions must remain valid completed submissions.
+- If the event workflow needs it, add a distinct `N/A` state and decide whether it belongs in `uo_spirit_score`, a small side table, or a game/team metadata field before implementing UI.
+
+### 4. Spirit timeout support
+
+- Confirm the exact event workflow first: per-team count only, timestamped timeout events, or both.
+- Add a dedicated spirit-timeout data model in spirit-related code rather than overloading ordinary game timeout tables.
+- Add entry, admin review, and reporting surfaces only if the event uses the workflow.
 
 ## Notes For Future Changes
 

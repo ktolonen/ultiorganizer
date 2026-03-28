@@ -42,6 +42,272 @@ function ShowSpiritComments($seasoninfo)
 	);
 }
 
+function SpiritSeasonInfo($seasoninfo)
+{
+	if (!$seasoninfo) {
+		return array();
+	}
+	if (!is_array($seasoninfo)) {
+		$seasoninfo = SeasonInfo($seasoninfo);
+	}
+	return is_array($seasoninfo) ? $seasoninfo : array();
+}
+
+function SpiritGameRow($gameId)
+{
+	$query = sprintf(
+		"SELECT
+			g.game_id,
+			g.hometeam,
+			g.visitorteam,
+			g.show_spirit,
+			se.season_id,
+			se.spiritmode,
+			se.showspiritpoints,
+			se.showspiritcomments,
+			se.showspiritpointsonlyoncomplete,
+			se.lockteamspiritonsubmit
+		FROM uo_game g
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_season se ON (se.season_id = s.season)
+		WHERE g.game_id=%d",
+		(int)$gameId
+	);
+	return DBQueryToRow($query);
+}
+
+function SpiritRequiredCategoryCount($mode)
+{
+	$mode = (int)$mode;
+	if ($mode <= 0) {
+		return 0;
+	}
+	return (int)DBQueryToValue(sprintf(
+		"SELECT COUNT(*) FROM uo_spirit_category
+		WHERE mode=%d AND `index` > 0",
+		$mode
+	));
+}
+
+function TeamSpiritSubmissionComplete($gameId, $teamId, $spiritmode = null)
+{
+	$gameId = (int)$gameId;
+	$teamId = (int)$teamId;
+	$mode = is_null($spiritmode) ? 0 : (int)$spiritmode;
+	if ($gameId <= 0 || $teamId <= 0) {
+		return false;
+	}
+
+	if ($mode <= 0) {
+		$game = SpiritGameRow($gameId);
+		if (!$game) {
+			return false;
+		}
+		$mode = isset($game['spiritmode']) ? (int)$game['spiritmode'] : 0;
+	}
+	if ($mode <= 0) {
+		return false;
+	}
+
+	$required = SpiritRequiredCategoryCount($mode);
+	if ($required <= 0) {
+		return false;
+	}
+
+	$count = (int)DBQueryToValue(sprintf(
+		"SELECT COUNT(DISTINCT ssc.category_id)
+		FROM uo_spirit_score ssc
+		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
+		WHERE ssc.game_id=%d
+			AND ssc.team_id=%d
+			AND sct.mode=%d
+			AND sct.`index` > 0",
+		$gameId,
+		$teamId,
+		$mode
+	));
+
+	return $count >= $required;
+}
+
+function SpiritSubmissionLocked($gameId, $teamId)
+{
+	$game = SpiritGameRow($gameId);
+	if (!$game || empty($game['lockteamspiritonsubmit'])) {
+		return false;
+	}
+	return TeamSpiritSubmissionComplete($gameId, $teamId, (int)$game['spiritmode']);
+}
+
+function SpiritTeamIdForCommentType($gameId, $type)
+{
+	$game = SpiritGameRow($gameId);
+	if (!$game) {
+		return 0;
+	}
+	if ((int)$type === (int)COMMENT_TYPE_SPIRIT_HOME) {
+		return (int)$game['hometeam'];
+	}
+	if ((int)$type === (int)COMMENT_TYPE_SPIRIT_VISITOR) {
+		return (int)$game['visitorteam'];
+	}
+	return 0;
+}
+
+function CanEditSpiritSubmission($gameId, $teamId)
+{
+	$gameId = (int)$gameId;
+	$teamId = (int)$teamId;
+	if ($gameId <= 0 || $teamId <= 0) {
+		return false;
+	}
+	if (!function_exists('isLoggedIn') || !isLoggedIn()) {
+		return false;
+	}
+	if (function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId)) {
+		return true;
+	}
+	if (!function_exists('hasEditPlayersRight')) {
+		return false;
+	}
+
+	$game = SpiritGameRow($gameId);
+	if (!$game) {
+		return false;
+	}
+
+	$homeTeam = isset($game['hometeam']) ? (int)$game['hometeam'] : 0;
+	$visitorTeam = isset($game['visitorteam']) ? (int)$game['visitorteam'] : 0;
+	$responsibleTeamId = 0;
+	if ($teamId === $homeTeam) {
+		$responsibleTeamId = $visitorTeam;
+	} elseif ($teamId === $visitorTeam) {
+		$responsibleTeamId = $homeTeam;
+	}
+	if ($responsibleTeamId <= 0 || !hasEditPlayersRight($responsibleTeamId)) {
+		return false;
+	}
+
+	if (!empty($game['lockteamspiritonsubmit']) && TeamSpiritSubmissionComplete($gameId, $teamId, (int)$game['spiritmode'])) {
+		return false;
+	}
+
+	return true;
+}
+
+function GameSpiritVisibilityValue($gameId, $game = null)
+{
+	if (!$game) {
+		$game = SpiritGameRow($gameId);
+	}
+	if (!$game) {
+		return 0;
+	}
+	if (empty($game['spiritmode']) || empty($game['showspiritpoints'])) {
+		return 0;
+	}
+	if (!empty($game['showspiritpointsonlyoncomplete'])) {
+		return GameSpiritComplete($gameId, (int)$game['spiritmode']) ? 1 : 0;
+	}
+	return 1;
+}
+
+function RefreshGameSpiritVisibility($gameId)
+{
+	$gameId = (int)$gameId;
+	if ($gameId <= 0) {
+		return false;
+	}
+	$game = SpiritGameRow($gameId);
+	if (!$game) {
+		return false;
+	}
+	$showSpirit = GameSpiritVisibilityValue($gameId, $game);
+	DBQuery(sprintf(
+		"UPDATE uo_game SET show_spirit=%d WHERE game_id=%d",
+		$showSpirit,
+		$gameId
+	));
+	return true;
+}
+
+function RefreshSeasonSpiritVisibility($seasonId)
+{
+	$query = sprintf(
+		"SELECT g.game_id
+		FROM uo_game g
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		WHERE s.season='%s'",
+		DBEscapeString($seasonId)
+	);
+	$games = DBQueryToArray($query);
+	foreach ($games as $game) {
+		RefreshGameSpiritVisibility((int)$game['game_id']);
+	}
+	return true;
+}
+
+function RefreshSeasonSpiritData($seasonId)
+{
+	$seasonInfo = SpiritSeasonInfo($seasonId);
+	RefreshSeasonSpiritVisibility($seasonId);
+	if (!empty($seasonInfo['season_id'])) {
+		DBQuery(sprintf(
+			"DELETE FROM uo_team_spirit_stats WHERE season='%s'",
+			DBEscapeString($seasonInfo['season_id'])
+		));
+		if (!empty($seasonInfo['spiritmode'])) {
+			SpiritRebuildTeamStatsForSeason($seasonInfo['season_id'], (int)$seasonInfo['spiritmode']);
+		}
+	}
+	return true;
+}
+
+function RefreshGameSpiritData($gameId)
+{
+	if (!RefreshGameSpiritVisibility($gameId)) {
+		return false;
+	}
+	$seasonId = GameSeason($gameId);
+	if (!empty($seasonId)) {
+		RefreshSeasonSpiritData($seasonId);
+	}
+	return true;
+}
+
+function CanViewSpiritScoresForGame($gameId, $seasoninfo = null)
+{
+	$seasoninfo = SpiritSeasonInfo($seasoninfo ?: GameSeason($gameId));
+	if (!$seasoninfo || empty($seasoninfo['spiritmode'])) {
+		return false;
+	}
+	if (isSeasonAdmin($seasoninfo['season_id'])) {
+		return true;
+	}
+	if (empty($seasoninfo['showspiritpoints'])) {
+		return false;
+	}
+	$showSpirit = DBQueryToValue(sprintf(
+		"SELECT show_spirit FROM uo_game WHERE game_id=%d",
+		(int)$gameId
+	));
+	return !empty($showSpirit);
+}
+
+function CanViewSpiritCommentsForGame($gameId, $seasoninfo = null)
+{
+	$seasoninfo = SpiritSeasonInfo($seasoninfo ?: GameSeason($gameId));
+	if (!$seasoninfo || empty($seasoninfo['spiritmode'])) {
+		return false;
+	}
+	if (isSeasonAdmin($seasoninfo['season_id'])) {
+		return true;
+	}
+	return !empty($seasoninfo['showspiritcomments']) && CanViewSpiritScoresForGame($gameId, $seasoninfo);
+}
+
 function SpiritCategories($mode_id)
 {
 	$cats = SpiritCategoryRows($mode_id);
@@ -145,13 +411,12 @@ function SpiritToolRowsBySeason($season)
 				(ssc.team_id = g.visitorteam AND uc.type = 6)
 			)
 		)
-		WHERE s.season='%s'
-			AND g.isongoing=0
-			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
-			AND sct.`index` BETWEEN 1 AND 5
-		GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
-		HAVING total > 0
-		ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
+			WHERE s.season='%s'
+				AND g.isongoing=0
+				AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
+				AND sct.`index` BETWEEN 1 AND 5
+			GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
+			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
 		DBEscapeString($season)
 	);
 	return DBQueryToArray($query);
@@ -198,36 +463,56 @@ function SpiritMissingGamesByPool($poolId)
 	$query = sprintf(
 		"SELECT
 			g.game_id,
+			g.hometeam,
+			g.visitorteam,
 			th.name AS home,
 			tv.name AS visitor,
 			g.homescore,
-			COALESCE(hspirit.total, 0) AS homesotg,
 			g.visitorscore,
-			COALESCE(vspirit.total, 0) AS visitorsotg,
-			g.time AS time
+			g.time AS time,
+			se.spiritmode
 		FROM uo_game AS g
 		JOIN uo_team AS th ON (g.hometeam=th.team_id)
 		JOIN uo_team AS tv ON (g.visitorteam=tv.team_id)
-		LEFT JOIN (
-			SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-			FROM uo_spirit_score ssc
-			LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-			GROUP BY ssc.game_id, ssc.team_id
-		) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
-		LEFT JOIN (
-			SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-			FROM uo_spirit_score ssc
-			LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-			GROUP BY ssc.game_id, ssc.team_id
-		) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE g.pool=%d
 			AND g.isongoing=0
 			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
-			AND (COALESCE(hspirit.total,0)=0 OR COALESCE(vspirit.total,0)=0)
 		ORDER BY g.time ASC",
 		(int)$poolId
 	);
-	return DBQueryToArray($query);
+	$games = DBQueryToArray($query);
+	$rows = array();
+	$modeCategories = array();
+	foreach ($games as $game) {
+		$mode = (int)$game['spiritmode'];
+		if ($mode <= 0) {
+			continue;
+		}
+		if (!isset($modeCategories[$mode])) {
+			$modeCategories[$mode] = SpiritCategories($mode);
+		}
+		$homeComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['hometeam'], $mode);
+		$visitorComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['visitorteam'], $mode);
+		if ($homeComplete && $visitorComplete) {
+			continue;
+		}
+		$homePoints = GameGetSpiritPoints($game['game_id'], $game['hometeam']);
+		$visitorPoints = GameGetSpiritPoints($game['game_id'], $game['visitorteam']);
+		$rows[] = array(
+			'game_id' => (int)$game['game_id'],
+			'home' => $game['home'],
+			'visitor' => $game['visitor'],
+			'homescore' => $game['homescore'],
+			'homesotg' => SpiritTotal($homePoints, $modeCategories[$mode]),
+			'visitorscore' => $game['visitorscore'],
+			'visitorsotg' => SpiritTotal($visitorPoints, $modeCategories[$mode]),
+			'time' => $game['time']
+		);
+	}
+	return $rows;
 }
 
 function SpiritMissingGamesBySeries($seriesId)
@@ -235,38 +520,58 @@ function SpiritMissingGamesBySeries($seriesId)
 	$query = sprintf(
 		"SELECT
 			g.game_id,
+			g.hometeam,
+			g.visitorteam,
 			th.name AS home,
 			tv.name AS visitor,
 			g.homescore,
-			COALESCE(hspirit.total, 0) AS homesotg,
 			g.visitorscore,
-			COALESCE(vspirit.total, 0) AS visitorsotg,
 			g.time AS time,
-			p.name AS poolname
+			p.name AS poolname,
+			se.spiritmode
 		FROM uo_game AS g
 		JOIN uo_team AS th ON (g.hometeam=th.team_id)
 		JOIN uo_team AS tv ON (g.visitorteam=tv.team_id)
 		JOIN uo_pool AS p ON g.pool=p.pool_id
-		LEFT JOIN (
-			SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-			FROM uo_spirit_score ssc
-			LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-			GROUP BY ssc.game_id, ssc.team_id
-		) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
-		LEFT JOIN (
-			SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-			FROM uo_spirit_score ssc
-			LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-			GROUP BY ssc.game_id, ssc.team_id
-		) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE p.series=%d
 			AND g.isongoing=0
 			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
-			AND (COALESCE(hspirit.total,0)=0 OR COALESCE(vspirit.total,0)=0)
 		ORDER BY g.time ASC",
 		(int)$seriesId
 	);
-	return DBQueryToArray($query);
+	$games = DBQueryToArray($query);
+	$rows = array();
+	$modeCategories = array();
+	foreach ($games as $game) {
+		$mode = (int)$game['spiritmode'];
+		if ($mode <= 0) {
+			continue;
+		}
+		if (!isset($modeCategories[$mode])) {
+			$modeCategories[$mode] = SpiritCategories($mode);
+		}
+		$homeComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['hometeam'], $mode);
+		$visitorComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['visitorteam'], $mode);
+		if ($homeComplete && $visitorComplete) {
+			continue;
+		}
+		$homePoints = GameGetSpiritPoints($game['game_id'], $game['hometeam']);
+		$visitorPoints = GameGetSpiritPoints($game['game_id'], $game['visitorteam']);
+		$rows[] = array(
+			'game_id' => (int)$game['game_id'],
+			'home' => $game['home'],
+			'visitor' => $game['visitor'],
+			'homescore' => $game['homescore'],
+			'homesotg' => SpiritTotal($homePoints, $modeCategories[$mode]),
+			'visitorscore' => $game['visitorscore'],
+			'visitorsotg' => SpiritTotal($visitorPoints, $modeCategories[$mode]),
+			'time' => $game['time'],
+			'poolname' => $game['poolname']
+		);
+	}
+	return $rows;
 }
 
 function CountSpiritStats($teamId)
@@ -298,27 +603,29 @@ function GameGetSpiritPoints($gameId, $teamId)
 function TeamSpiritTotal($teamId, $includeIncomplete = false)
 {
 	$teamId = (int)$teamId;
+	$scoreSubquery = "
+		SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total, COUNT(*) AS score_count
+		FROM uo_spirit_score ssc
+		LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
+		GROUP BY ssc.game_id, ssc.team_id
+	";
 	if ($includeIncomplete) {
 		$query = sprintf(
 			"SELECT SUM(IF(g.hometeam=%d, hspirit.total, vspirit.total)) AS total
 			FROM uo_game g
 			LEFT JOIN (
-				SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-				FROM uo_spirit_score ssc
-				LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-				GROUP BY ssc.game_id, ssc.team_id
+				%s
 			) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
 			LEFT JOIN (
-				SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-				FROM uo_spirit_score ssc
-				LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-				GROUP BY ssc.game_id, ssc.team_id
+				%s
 			) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
 			WHERE
-				(g.hometeam=%d AND COALESCE(hspirit.total,0)>0)
+				(g.hometeam=%d AND hspirit.score_count IS NOT NULL)
 				OR
-				(g.visitorteam=%d AND COALESCE(vspirit.total,0)>0)",
+				(g.visitorteam=%d AND vspirit.score_count IS NOT NULL)",
 			$teamId,
+			$scoreSubquery,
+			$scoreSubquery,
 			$teamId,
 			$teamId
 		);
@@ -327,21 +634,18 @@ function TeamSpiritTotal($teamId, $includeIncomplete = false)
 			"SELECT SUM(IF(g.hometeam=%d, hspirit.total, vspirit.total)) AS total
 			FROM uo_game g
 			LEFT JOIN (
-				SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-				FROM uo_spirit_score ssc
-				LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-				GROUP BY ssc.game_id, ssc.team_id
+				%s
 			) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
 			LEFT JOIN (
-				SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-				FROM uo_spirit_score ssc
-				LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-				GROUP BY ssc.game_id, ssc.team_id
+				%s
 			) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
 			WHERE
 				(g.hometeam=%d OR g.visitorteam=%d)
-				AND COALESCE(hspirit.total,0)>0
-				AND COALESCE(vspirit.total,0)>0",
+				AND g.show_spirit=1
+				AND IF(g.hometeam=%d, hspirit.score_count, vspirit.score_count) IS NOT NULL",
+			$teamId,
+			$scoreSubquery,
+			$scoreSubquery,
 			$teamId,
 			$teamId,
 			$teamId
@@ -378,17 +682,21 @@ function TeamSpiritStats($teamId)
 function TeamSpiritStats2($teamId, $includeIncomplete = false)
 {
 	$teamId = (int)$teamId;
+	$scoreSubquery = "
+		SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total, COUNT(*) AS score_count
+		FROM uo_spirit_score ssc
+		LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
+		GROUP BY ssc.game_id, ssc.team_id
+	";
 	if ($includeIncomplete) {
 		$query = sprintf(
 			"SELECT COUNT(*) AS games
 			FROM uo_game g
 			LEFT JOIN (
-				SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-				FROM uo_spirit_score ssc
-				LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-				GROUP BY ssc.game_id, ssc.team_id
+				%s
 			) AS tscore ON (g.game_id = tscore.game_id AND tscore.team_id = %d)
-			WHERE (g.hometeam=%d OR g.visitorteam=%d) AND COALESCE(tscore.total,0)>0",
+			WHERE (g.hometeam=%d OR g.visitorteam=%d) AND tscore.score_count IS NOT NULL",
+			$scoreSubquery,
 			$teamId,
 			$teamId,
 			$teamId
@@ -398,20 +706,17 @@ function TeamSpiritStats2($teamId, $includeIncomplete = false)
 			"SELECT COUNT(*) AS games
 			FROM uo_game g
 			LEFT JOIN (
-				SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-				FROM uo_spirit_score ssc
-				LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-				GROUP BY ssc.game_id, ssc.team_id
+				%s
 			) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
 			LEFT JOIN (
-				SELECT ssc.game_id, ssc.team_id, SUM(ssc.value * sct.factor) AS total
-				FROM uo_spirit_score ssc
-				LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-				GROUP BY ssc.game_id, ssc.team_id
+				%s
 			) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
 			WHERE (g.hometeam=%d OR g.visitorteam=%d)
-				AND COALESCE(hspirit.total,0)>0
-				AND COALESCE(vspirit.total,0)>0",
+				AND g.show_spirit=1
+				AND IF(g.hometeam=%d, hspirit.score_count, vspirit.score_count) IS NOT NULL",
+			$scoreSubquery,
+			$scoreSubquery,
+			$teamId,
 			$teamId,
 			$teamId
 		);
@@ -433,7 +738,8 @@ function TeamSpiritTotalByPool($poolId, $teamId)
 		) AS ts ON (ts.game_id = gp.game AND ts.team_id = %d)
 		WHERE gp.pool=%d
 			AND g.hasstarted>0
-			AND g.isongoing=0",
+			AND g.isongoing=0
+			AND g.show_spirit=1",
 		(int)$teamId,
 		(int)$poolId
 	);
@@ -464,13 +770,45 @@ function SpiritScoreReplaceByGameTeam($gameId, $teamId, $points)
 	}
 }
 
+function CanDeleteSpiritSubmission($gameId, $teamId)
+{
+	$gameId = (int)$gameId;
+	$teamId = (int)$teamId;
+	if ($gameId <= 0 || $teamId <= 0) {
+		return false;
+	}
+	if (!function_exists('isLoggedIn') || !isLoggedIn()) {
+		return false;
+	}
+	$game = SpiritGameRow($gameId);
+	if (!$game) {
+		return false;
+	}
+	if ($teamId !== (int)$game['hometeam'] && $teamId !== (int)$game['visitorteam']) {
+		return false;
+	}
+	return function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId);
+}
+
 function GameSetSpiritPoints($gameId, $teamId, $home, $points, $categories)
 {
-	if (hasEditGameEventsRight($gameId)) {
+	if (CanEditSpiritSubmission($gameId, $teamId)) {
 		SpiritScoreReplaceByGameTeam($gameId, $teamId, $points);
+		RefreshGameSpiritData($gameId);
+		return true;
 	} else {
-		die('Insufficient rights to edit game');
+		return false;
 	}
+}
+
+function GameDeleteSpiritPoints($gameId, $teamId)
+{
+	if (!CanDeleteSpiritSubmission($gameId, $teamId)) {
+		return false;
+	}
+	SpiritScoreReplaceByGameTeam($gameId, $teamId, array());
+	RefreshGameSpiritData($gameId);
+	return true;
 }
 
 function GameSpiritComplete($gameId, $spiritmode = null)
@@ -478,16 +816,7 @@ function GameSpiritComplete($gameId, $spiritmode = null)
 	$gameId = (int)$gameId;
 	$mode = is_null($spiritmode) ? 0 : (int)$spiritmode;
 
-	$query = sprintf(
-		"SELECT g.hometeam, g.visitorteam, se.spiritmode
-		FROM uo_game g
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
-		LEFT JOIN uo_series s ON (s.series_id = p.series)
-		LEFT JOIN uo_season se ON (se.season_id = s.season)
-		WHERE g.game_id=%d",
-		$gameId
-	);
-	$game = DBQueryToRow($query);
+	$game = SpiritGameRow($gameId);
 	if (!$game) {
 		return false;
 	}
@@ -499,31 +828,6 @@ function GameSpiritComplete($gameId, $spiritmode = null)
 		return false;
 	}
 
-	$required = DBQueryToValue(sprintf(
-		"SELECT COUNT(*) FROM uo_spirit_category
-		WHERE mode=%d AND `index` > 0",
-		$mode
-	));
-	$required = (int)$required;
-	if ($required <= 0) {
-		return false;
-	}
-
-	$rows = DBQueryToArray(sprintf(
-		"SELECT ssc.team_id, COUNT(*) AS cnt
-		FROM uo_spirit_score ssc
-		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
-		WHERE ssc.game_id=%d AND sct.mode=%d AND sct.`index` > 0
-		GROUP BY ssc.team_id",
-		$gameId,
-		$mode
-	));
-
-	$counts = array();
-	foreach ($rows as $row) {
-		$counts[(int)$row['team_id']] = (int)$row['cnt'];
-	}
-
 	$homeTeam = isset($game['hometeam']) ? (int)$game['hometeam'] : 0;
 	$visitorTeam = isset($game['visitorteam']) ? (int)$game['visitorteam'] : 0;
 	if ($homeTeam <= 0 || $visitorTeam <= 0) {
@@ -531,18 +835,21 @@ function GameSpiritComplete($gameId, $spiritmode = null)
 	}
 
 	return (
-		isset($counts[$homeTeam]) && $counts[$homeTeam] >= $required &&
-		isset($counts[$visitorTeam]) && $counts[$visitorTeam] >= $required
+		TeamSpiritSubmissionComplete($gameId, $homeTeam, $mode) &&
+		TeamSpiritSubmissionComplete($gameId, $visitorTeam, $mode)
 	);
 }
 
 function SpiritTeamPointRows($seasonId, $teamId, $received = true)
 {
 	$teamId = (int)$teamId;
+	$seasonInfo = SpiritSeasonInfo($seasonId);
+	$isAdmin = !empty($seasonInfo['season_id']) && isSeasonAdmin($seasonInfo['season_id']);
 	$query = sprintf(
 		"SELECT
 			g.game_id,
 			g.time,
+			g.show_spirit,
 			g.hometeam,
 			g.visitorteam,
 			th.name AS homename,
@@ -588,6 +895,8 @@ function SpiritTeamPointRows($seasonId, $teamId, $received = true)
 		$points = GameGetSpiritPoints($game['game_id'], $ratedTeamId);
 		$total = SpiritTotal($points, $categories);
 		$complete = GameSpiritComplete($game['game_id'], $mode);
+		$isVisible = $isAdmin || (!empty($seasonInfo['showspiritpoints']) && !empty($game['show_spirit']));
+		$showComments = $isAdmin || ($isVisible && !empty($seasonInfo['showspiritcomments']));
 		$commentType = ($ratedTeamId === $homeTeam) ? COMMENT_TYPE_SPIRIT_HOME : COMMENT_TYPE_SPIRIT_VISITOR;
 
 		$row = array(
@@ -597,8 +906,9 @@ function SpiritTeamPointRows($seasonId, $teamId, $received = true)
 			'givenby' => $opponentName,
 			'givento' => $opponentName,
 			'total' => $total,
-			'comments' => CommentRaw($commentType, $game['game_id']),
-			'is_complete' => $complete ? 1 : 0
+			'comments' => $showComments ? CommentRaw($commentType, $game['game_id']) : null,
+			'is_complete' => $complete ? 1 : 0,
+			'is_visible' => $isVisible ? 1 : 0
 		);
 
 		foreach ($categories as $category) {
@@ -648,7 +958,7 @@ function SpiritSeriesScoreRows($seriesId)
 		LEFT JOIN uo_game_pool AS gp ON (st.game_id=gp.game)
 		LEFT JOIN uo_pool pool ON(gp.pool=pool.pool_id)
 		LEFT JOIN uo_game AS g1 ON (gp.game=g1.game_id)
-		WHERE pool.series=%d AND gp.timetable=1 AND g1.isongoing=0 AND g1.hasstarted>0
+		WHERE pool.series=%d AND gp.timetable=1 AND g1.isongoing=0 AND g1.hasstarted>0 AND g1.show_spirit=1
 		ORDER BY st.team_id, st.category_id",
 		(int)$seriesId
 	);
@@ -715,30 +1025,14 @@ function SeriesSpiritBoardTotalAverages($seriesId, $includeIncomplete = false)
 		return array();
 	}
 
-	$requiredCategories = (int)DBQueryToValue(sprintf(
-		"SELECT COUNT(*) FROM uo_spirit_category
-		WHERE mode=%d AND `index` > 0",
-		$mode
-	));
+	$requiredCategories = SpiritRequiredCategoryCount($mode);
 	if ($requiredCategories <= 0) {
 		return array();
 	}
 
 	$completeGameFilter = "";
 	if (!$includeIncomplete) {
-		$completeGameFilter = sprintf(
-			"AND g.game_id IN (
-				SELECT ssc2.game_id
-				FROM uo_spirit_score ssc2
-				LEFT JOIN uo_spirit_category sct2 ON (sct2.category_id = ssc2.category_id)
-				WHERE sct2.mode=%d AND sct2.`index` > 0
-				GROUP BY ssc2.game_id
-				HAVING COUNT(*) >= %d
-					AND COUNT(DISTINCT ssc2.team_id) = 2
-			)",
-			$mode,
-			$requiredCategories * 2
-		);
+		$completeGameFilter = "AND g.show_spirit=1";
 	}
 
 	$query = sprintf(
@@ -786,42 +1080,68 @@ function SeriesSpiritBoardTotalAverages($seriesId, $includeIncomplete = false)
 function SpiritSeriesMissingPointRows($seriesId)
 {
 	$query = sprintf(
-		"SELECT missing.team_id, missing.teamname, missing.giver_team_id, missing.giver_teamname,
-		missing.opponent_name, missing.home_name, missing.visitor_name, missing.game_id, missing.gamename, missing.time
-		FROM (
-			SELECT g.game_id, g.time, g.hometeam AS team_id, ht.name AS teamname,
-				g.visitorteam AS giver_team_id, vt.name AS giver_teamname,
-				vt.name AS opponent_name, ht.name AS home_name, vt.name AS visitor_name, sn.name AS gamename
-			FROM uo_game g
-			LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
-			LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
-			LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
-			LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
-			LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
-			LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
-			LEFT JOIN (SELECT DISTINCT game_id, team_id FROM uo_spirit_score) ssc
-				ON (ssc.game_id=g.game_id AND ssc.team_id=g.hometeam)
-			WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0 AND ssc.game_id IS NULL
-			UNION ALL
-			SELECT g.game_id, g.time, g.visitorteam AS team_id, vt.name AS teamname,
-				g.hometeam AS giver_team_id, ht.name AS giver_teamname,
-				ht.name AS opponent_name, ht.name AS home_name, vt.name AS visitor_name, sn.name AS gamename
-			FROM uo_game g
-			LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
-			LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
-			LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
-			LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
-			LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
-			LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
-			LEFT JOIN (SELECT DISTINCT game_id, team_id FROM uo_spirit_score) ssc
-				ON (ssc.game_id=g.game_id AND ssc.team_id=g.visitorteam)
-			WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0 AND ssc.game_id IS NULL
-		) AS missing
-		ORDER BY missing.teamname, missing.time, missing.game_id",
-		(int)$seriesId,
+		"SELECT g.game_id, g.time, g.hometeam, g.visitorteam,
+			ht.name AS homename, vt.name AS visitorname, sn.name AS gamename, se.spiritmode
+		FROM uo_game g
+		LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
+		LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
+		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
+		LEFT JOIN uo_season se ON (se.season_id = ser.season)
+		LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
+		LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
+		LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
+		WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0
+		ORDER BY g.time, g.game_id",
 		(int)$seriesId
 	);
-	return DBQueryToArray($query);
+	$games = DBQueryToArray($query);
+	$rows = array();
+	foreach ($games as $game) {
+		$mode = (int)$game['spiritmode'];
+		if ($mode <= 0) {
+			continue;
+		}
+		if (!TeamSpiritSubmissionComplete($game['game_id'], $game['hometeam'], $mode)) {
+			$rows[] = array(
+				'team_id' => (int)$game['hometeam'],
+				'teamname' => $game['homename'],
+				'giver_team_id' => (int)$game['visitorteam'],
+				'giver_teamname' => $game['visitorname'],
+				'opponent_name' => $game['visitorname'],
+				'home_name' => $game['homename'],
+				'visitor_name' => $game['visitorname'],
+				'game_id' => (int)$game['game_id'],
+				'gamename' => $game['gamename'],
+				'time' => $game['time']
+			);
+		}
+		if (!TeamSpiritSubmissionComplete($game['game_id'], $game['visitorteam'], $mode)) {
+			$rows[] = array(
+				'team_id' => (int)$game['visitorteam'],
+				'teamname' => $game['visitorname'],
+				'giver_team_id' => (int)$game['hometeam'],
+				'giver_teamname' => $game['homename'],
+				'opponent_name' => $game['homename'],
+				'home_name' => $game['homename'],
+				'visitor_name' => $game['visitorname'],
+				'game_id' => (int)$game['game_id'],
+				'gamename' => $game['gamename'],
+				'time' => $game['time']
+			);
+		}
+	}
+	usort($rows, function ($a, $b) {
+		$byName = strcmp((string)$a['teamname'], (string)$b['teamname']);
+		if ($byName !== 0) {
+			return $byName;
+		}
+		$byTime = strcmp((string)$a['time'], (string)$b['time']);
+		if ($byTime !== 0) {
+			return $byTime;
+		}
+		return ((int)$a['game_id']) <=> ((int)$b['game_id']);
+	});
+	return $rows;
 }
 
 function SeriesMissingSpiritPoints($seriesId)
@@ -915,6 +1235,7 @@ function SpiritRebuildTeamStatsForSeason($seasonId, $spiritmode)
 			AND gp.timetable=1
 			AND g.isongoing=0
 			AND g.hasstarted>0
+			AND g.show_spirit=1
 		GROUP BY ssc.team_id, ssc.category_id, ser.series_id
 		ON DUPLICATE KEY UPDATE
 			season=VALUES(season),

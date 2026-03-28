@@ -24,6 +24,8 @@ $sp = array(
 	"spiritmode" => 0,
 	"showspiritpoints" => 0,
 	"showspiritcomments" => 0,
+	"showspiritpointsonlyoncomplete" => 1,
+	"lockteamspiritonsubmit" => 1,
 	"use_season_points" => 0,
 	"hide_time_on_scoresheet" => 0,
 	"event_readonly" => 0,
@@ -56,8 +58,6 @@ if (!empty($_POST['add'])) {
 	$sp['iscurrent'] = !empty($_POST['iscurrent']);
 	$sp['api_public'] = !empty($_POST['api_public']);
 	$sp['spiritmode'] = $_POST['spiritmode'];
-	$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
-	$sp['showspiritcomments'] = !empty($_POST['showspiritcomments']);
 	$sp['use_season_points'] = !empty($_POST['use_season_points']);
 	$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
 	$sp['event_readonly'] = !empty($_POST['event_readonly']);
@@ -98,6 +98,7 @@ if (!empty($_POST['add'])) {
 	if (empty($_POST['seasonname'])) {
 		$html .= "<p class='warning'>" . _("Name can not be empty") . ".</p>";
 	} else {
+		$existingSpirit = SeasonInfo($seasonId);
 		$sp['season_id'] = $seasonId;
 		$sp['name'] = $_POST['seasonname'];
 		$sp['type'] = $_POST['type'];
@@ -113,8 +114,10 @@ if (!empty($_POST['add'])) {
 		$sp['iscurrent'] = !empty($_POST['iscurrent']);
 		$sp['api_public'] = !empty($_POST['api_public']);
 		$sp['spiritmode'] = $_POST['spiritmode'];
-		$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
-		$sp['showspiritcomments'] = !empty($_POST['showspiritcomments']);
+		$sp['showspiritpoints'] = isset($existingSpirit['showspiritpoints']) ? (int)$existingSpirit['showspiritpoints'] : 0;
+		$sp['showspiritcomments'] = isset($existingSpirit['showspiritcomments']) ? (int)$existingSpirit['showspiritcomments'] : 0;
+		$sp['showspiritpointsonlyoncomplete'] = isset($existingSpirit['showspiritpointsonlyoncomplete']) ? (int)$existingSpirit['showspiritpointsonlyoncomplete'] : 1;
+		$sp['lockteamspiritonsubmit'] = isset($existingSpirit['lockteamspiritonsubmit']) ? (int)$existingSpirit['lockteamspiritonsubmit'] : 1;
 		$sp['use_season_points'] = !empty($_POST['use_season_points']);
 		$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
 		$sp['event_readonly'] = !empty($_POST['event_readonly']);
@@ -148,6 +151,8 @@ if ($seasonId) {
 	$sp['spiritmode'] = isset($info['spiritmode']) ? $info['spiritmode'] : 0;
 	$sp['showspiritpoints'] = $info['showspiritpoints'];
 	$sp['showspiritcomments'] = isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0;
+	$sp['showspiritpointsonlyoncomplete'] = isset($info['showspiritpointsonlyoncomplete']) ? $info['showspiritpointsonlyoncomplete'] : 1;
+	$sp['lockteamspiritonsubmit'] = isset($info['lockteamspiritonsubmit']) ? $info['lockteamspiritonsubmit'] : 1;
 	$sp['use_season_points'] = isset($info['use_season_points']) ? $info['use_season_points'] : 0;
 	$sp['hide_time_on_scoresheet'] = isset($info['hide_time_on_scoresheet']) ? $info['hide_time_on_scoresheet'] : 0;
 	$sp['event_readonly'] = isset($info['event_readonly']) ? $info['event_readonly'] : 0;
@@ -339,18 +344,16 @@ foreach ($spiritmodes as $mode) {
 }
 $html .= "</select>\n";
 $html .= "</td></tr>\n";
-
-$html .= "<tr><td class='infocell'>" . _("Spirit points visible") . ": </td><td><input class='input' type='checkbox' name='showspiritpoints' ";
-if ($sp['showspiritpoints']) {
-	$html .= "checked='checked'";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>";
+if (empty($seasonId)) {
+	$html .= _("Spirit mode enables spirit scoring for the event. Detailed visibility and locking settings are available in the Spirit admin view after the event has been created.");
+} else if ((int)$sp['spiritmode'] > 0) {
+	$html .= _("Detailed spirit visibility, comment, and locking settings are managed in the Spirit admin view.");
+	$html .= " <a href='?view=admin/spiritsettings&amp;season=" . urlencode($seasonId) . "'>" . _("Open Spirit Settings") . "</a>";
+} else {
+	$html .= _("Leave spirit mode empty if this event does not record spirit scores.");
 }
-$html .= "/></td></tr>";
-
-$html .= "<tr><td class='infocell'>" . _("Spirit comments visible") . ": </td><td><input class='input' type='checkbox' name='showspiritcomments' ";
-if ($sp['showspiritcomments']) {
-	$html .= "checked='checked'";
-}
-$html .= "/></td></tr>";
+$html .= "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Season points") . ": </td><td><input class='input' type='checkbox' name='use_season_points' ";
 if ($sp['use_season_points']) {

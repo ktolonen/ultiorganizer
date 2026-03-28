@@ -643,8 +643,8 @@ function AddSeason($seasonId, $params, $comment = null)
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
 			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints, showspiritcomments,
-			use_season_points, hide_time_on_scoresheet, event_readonly, api_public, timezone) 
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, '%s')",
+			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, event_readonly, api_public, timezone) 
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
@@ -661,6 +661,8 @@ function AddSeason($seasonId, $params, $comment = null)
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
       (int)$params['showspiritcomments'],
+      (int)$params['showspiritpointsonlyoncomplete'],
+      (int)$params['lockteamspiritonsubmit'],
       (int)$params['use_season_points'],
       (int)$params['hide_time_on_scoresheet'],
       (int)$params['event_readonly'],
@@ -674,6 +676,9 @@ function AddSeason($seasonId, $params, $comment = null)
 
     if ($result && isset($comment)) {
       SetComment(1, $seasonId, $comment);
+    }
+    if ($result && function_exists('RefreshSeasonSpiritData')) {
+      RefreshSeasonSpiritData($seasonId);
     }
     return $result;
   } else {
@@ -700,7 +705,8 @@ function SetSeason($seasonId, $params, $comment = null)
 			season_id='%s', name='%s', type='%s', istournament='%d', isinternational='%d', 
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
-			spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, use_season_points=%d, hide_time_on_scoresheet=%d, event_readonly=%d, api_public=%d, timezone='%s'
+			spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d,
+			use_season_points=%d, hide_time_on_scoresheet=%d, event_readonly=%d, api_public=%d, timezone='%s'
 			WHERE season_id='%s'",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
@@ -718,6 +724,8 @@ function SetSeason($seasonId, $params, $comment = null)
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
       (int)$params['showspiritcomments'],
+      (int)$params['showspiritpointsonlyoncomplete'],
+      (int)$params['lockteamspiritonsubmit'],
       (int)$params['use_season_points'],
       (int)$params['hide_time_on_scoresheet'],
       (int)$params['event_readonly'],
@@ -727,6 +735,9 @@ function SetSeason($seasonId, $params, $comment = null)
     );
 
     $result = DBQuery($query);
+    if ($result && function_exists('RefreshSeasonSpiritData')) {
+      RefreshSeasonSpiritData($seasonId);
+    }
     if (isset($comment) && $result)
       SetComment(1, $seasonId, $comment);
     return $result;

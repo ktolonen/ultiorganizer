@@ -309,7 +309,7 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
       $html .= "</tr>\n";
 
       foreach ($spiritReceivedRows as $row) {
-        if (!(intval($row['is_complete']) || isSeasonAdmin($seasoninfo['season_id']))) {
+        if (!intval($row['is_visible'])) {
           continue;
         }
         $html .= "<tr>";
@@ -350,7 +350,7 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
       $html .= "</tr>\n";
 
       foreach ($spiritGivenRows as $row) {
-        if (!intval($row['is_complete'])) {
+        if (!intval($row['is_visible'])) {
           continue;
         }
         $html .= "<tr>";

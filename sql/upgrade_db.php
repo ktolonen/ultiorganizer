@@ -1132,6 +1132,31 @@ function upgrade86()
 	}
 }
 
+function upgrade87()
+{
+	if (!hasColumn("uo_season", "showspiritpointsonlyoncomplete")) {
+		addColumn("uo_season", "showspiritpointsonlyoncomplete", "tinyint(1) DEFAULT 1");
+	}
+	if (!hasColumn("uo_season", "lockteamspiritonsubmit")) {
+		addColumn("uo_season", "lockteamspiritonsubmit", "tinyint(1) DEFAULT 1");
+	}
+	if (!hasColumn("uo_game", "show_spirit")) {
+		addColumn("uo_game", "show_spirit", "tinyint(1) DEFAULT 0");
+	}
+
+	runQuery(
+		"UPDATE uo_game g
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_season se ON (se.season_id = s.season)
+		SET g.show_spirit =
+			CASE
+				WHEN COALESCE(se.spiritmode, 0) > 0 AND COALESCE(se.showspiritpoints, 0) = 1 THEN 1
+				ELSE 0
+			END"
+	);
+}
+
 function upgradeEngineToInnoDb() {
 	$charset = 'utf8mb4';
 	$collation = 'utf8mb4_unicode_ci';

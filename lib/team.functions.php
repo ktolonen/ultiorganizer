@@ -1683,7 +1683,7 @@ function TeamsToCsv($season, $separator)
         LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
         GROUP BY ssc.game_id, ssc.team_id
       ) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
-			WHERE g.isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k
+			WHERE g.isongoing=0 AND gp1.timetable=1 AND g.show_spirit=1 GROUP BY hometeam) AS k
 		ON (j.team_id=k.hometeam)
 		LEFT JOIN (SELECT COUNT(*) AS games, 
   			COUNT(g.homescore<g.visitorscore OR NULL) as wins, 
@@ -1698,7 +1698,7 @@ function TeamsToCsv($season, $separator)
         LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
         GROUP BY ssc.game_id, ssc.team_id
       ) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
-			WHERE g.isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v
+			WHERE g.isongoing=0 AND gp2.timetable=1 AND g.show_spirit=1 GROUP BY visitorteam) AS v
 			ON (j.team_id=v.visitorteam)
 		LEFT JOIN uo_series ser ON(ser.series_id=j.series)
 		LEFT JOIN uo_pool ps ON (j.pool=ps.pool_id) 		

@@ -369,6 +369,20 @@ $html = "";
 $html .= "<h1>" . $title . "</h1>\n";
 
 if (!empty($season) && isSeasonAdmin($season)) {
+  $seasonInfo = SeasonInfo($season);
+  if (empty($seasonInfo['spiritmode'])) {
+    $html .= "<p>" . _("Spirit scoring is disabled for this event.") . "</p>";
+    $html .= "<p><a href='?view=admin/addseasons&amp;season=" . urlencode($season) . "'>&raquo; " . _("Open event settings") . "</a></p>";
+    showPage($title, $html);
+    return;
+  }
+
+  $html .= "<div class='tdtools-box bg-td1'>";
+  $html .= "<h2>" . _("Settings") . "</h2>";
+  $html .= "<p>" . _("Manage event-level spirit visibility, comments, submission locking, and scoring mode in a dedicated settings view.") . "</p>";
+  $html .= "<p><a href='?view=admin/spiritsettings&amp;season=" . urlencode($season) . "'>&raquo; " . _("Open Spirit Settings") . "</a></p>";
+  $html .= "</div>";
+
   if (isset($_POST['game'])) {
     $gameId = intval($_POST['game']);
     if (!$gameId || !GamePool($gameId)) {

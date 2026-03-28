@@ -536,7 +536,7 @@ if (GameHasStarted($game_result) > 0) {
 			<td class='home'>" . $nHTO . "</td>
 			<td class='guest'>" . $nVTO . "</td></tr>";
 
-      if (ShowSpiritScoresForSeason($seasoninfo)) {
+      if (CanViewSpiritScoresForGame($gameId, $seasoninfo)) {
         $html .= "<tr><td>" . _("Spirit points") . ":</td>";
         if (isset($game_result['homesotg']) && !is_null($game_result['homesotg'])) {
           $html .= "<td class='home'>" . $game_result['homesotg'] . "</td>";
@@ -552,7 +552,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table>";
     }
     // spirit points
-    if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && !intval($game_result['isongoing'])) {
+    if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && !intval($game_result['isongoing']) && CanViewSpiritScoresForGame($gameId, $seasoninfo)) {
       $html .= "<h2>" . _("Spirit Points") . "</h2>\n";
       $categories = SpiritCategories($seasoninfo['spiritmode']);
       $homepoints = GameGetSpiritPoints($gameId, $game_result['hometeam']);
@@ -585,7 +585,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table>";
     }
     $game_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_GAME);
-    $showSpiritComments = ShowSpiritComments($seasoninfo) || isSeasonAdmin($seasoninfo['season_id']);
+    $showSpiritComments = CanViewSpiritCommentsForGame($gameId, $seasoninfo);
     $home_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_HOME) : "";
     $visitor_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_VISITOR) : "";
     if (!empty($game_comment_html) || !empty($home_spirit_comment_html) || !empty($visitor_spirit_comment_html)) {

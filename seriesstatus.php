@@ -324,7 +324,7 @@ if (ShowDefenseStats()) {
   $html .= "<a href='?view=defensestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Defenseboard") . "</a>";
 }
 
-if ($seasoninfo['showspiritpoints']) {
+if (ShowSpiritScoresForSeason($seasoninfo)) {
   $categories = SpiritCategories($seasoninfo['spiritmode']);
   $html .= "<h2>" . _("Spirit points average per category") . "</h2>\n";
 

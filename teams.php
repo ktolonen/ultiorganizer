@@ -40,7 +40,7 @@ if ($seasonPointsAvailable) {
   $menutabs[_("Points")] = "?view=teams&season=$season&list=seasonpoints";
 }
 $menutabs[_("Standings")] = "?view=teams&season=$season&list=bystandings";
-if ($seasonInfo['showspiritpoints']) {
+if (ShowSpiritScoresForSeason($seasonInfo)) {
   $menutabs[_("Spirit")] = "?view=teams&season=$season&list=byspirit";
 }
 
@@ -325,7 +325,7 @@ if ($list == "allteams" || $list == "byseeding") {
   $html .= "</table>\n";
 } elseif ($list == "byspirit") {
 
-  if ($seasonInfo['showspiritpoints']) {
+  if (ShowSpiritScoresForSeason($seasonInfo)) {
 
     $categories = SpiritCategories($seasonInfo['spiritmode']);
     $missingSpirit = array();

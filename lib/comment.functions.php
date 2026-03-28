@@ -203,6 +203,9 @@ function CanCreateSpiritComment($gameResult, $spiritTeamId)
 	if (!isLoggedIn()) {
 		return false;
 	}
+	if (function_exists('CanEditSpiritSubmission')) {
+		return CanEditSpiritSubmission($gameResult['game_id'], $spiritTeamId);
+	}
 	if (hasEditGameEventsRight($gameResult['game_id'])) {
 		return true;
 	}
@@ -234,6 +237,21 @@ function CanManageGameComment($gameId, $type)
 
 function CanManageSpiritComment($gameId, $type)
 {
+	if (!function_exists('hasEditGameEventsRight') || !function_exists('isLoggedIn')) {
+		return false;
+	}
+	if (!isLoggedIn()) {
+		return false;
+	}
+	if (hasEditGameEventsRight($gameId)) {
+		return true;
+	}
+	if (function_exists('SpiritTeamIdForCommentType') && function_exists('SpiritSubmissionLocked')) {
+		$teamId = SpiritTeamIdForCommentType($gameId, $type);
+		if ($teamId > 0 && SpiritSubmissionLocked($gameId, $teamId)) {
+			return false;
+		}
+	}
 	return CanManageGameComment($gameId, $type);
 }
 

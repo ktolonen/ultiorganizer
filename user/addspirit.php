@@ -64,6 +64,15 @@ function ParseQuickSpiritScore($score, $quickCategories)
   return $points;
 }
 
+function RenderSpiritDeleteControl($gameId, $teamId, $hasSpiritScore)
+{
+  if (!$hasSpiritScore || !CanDeleteSpiritSubmission($gameId, $teamId)) {
+    return "";
+  }
+  $confirmText = htmlspecialchars(addslashes(_("Delete this spirit score?")), ENT_QUOTES);
+  return "<p><button class='button' type='submit' name='delete_spirit_team' value='" . (int)$teamId . "' onclick='return confirm(\"" . $confirmText . "\");'>" . _("Delete spirit score") . "</button></p>";
+}
+
 $season = SeasonInfo(GameSeason($gameId));
 if ($season['spiritmode'] > 0) {
   $game_result = GameResult($gameId);
@@ -71,6 +80,7 @@ if ($season['spiritmode'] > 0) {
   $categories = SpiritCategories($mode['mode']);
   $quickCategories = QuickSpiritCategories($categories);
   $allowQuickEntry = (count($quickCategories) === 5) && isSeasonAdmin($season['season_id']);
+  $score_feedback = "";
   $comment_feedback = "";
   $spirit_comments = array();
   if ($teamId > 0) {
@@ -117,28 +127,38 @@ if ($season['spiritmode'] > 0) {
     );
   }
 
-  //process itself if save button was pressed
-  if (!empty($_POST['save'])) {
+  if (!empty($_POST['delete_spirit_team'])) {
+    $deleteTeamId = (int)$_POST['delete_spirit_team'];
+    if (GameDeleteSpiritPoints($gameId, $deleteTeamId)) {
+      $score_feedback = _("Spirit score deleted. ");
+    } else {
+      $score_feedback = _("Spirit score not deleted. ");
+    }
+  } elseif (!empty($_POST['save'])) {
     $homeSavedFromQuick = false;
     $visitorSavedFromQuick = false;
 
     if ($allowQuickEntry && isset($_POST['homespirit']) && trim($_POST['homespirit']) !== "") {
       $quickHomePoints = ParseQuickSpiritScore($_POST['homespirit'], $quickCategories);
       if ($quickHomePoints === false) {
-        $missing = sprintf(_("Invalid quick score for %s. "), $game_result['hometeamname']);
+        $score_feedback = sprintf(_("Invalid quick score for %s. "), $game_result['hometeamname']);
       } else {
-        GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $quickHomePoints, $categories);
-        $homeSavedFromQuick = true;
+        $homeSavedFromQuick = GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $quickHomePoints, $categories);
+        if (!$homeSavedFromQuick) {
+          $score_feedback = _("Spirit score not saved. ");
+        }
       }
     }
 
     if ($allowQuickEntry && isset($_POST['awayspirit']) && trim($_POST['awayspirit']) !== "") {
       $quickVisitorPoints = ParseQuickSpiritScore($_POST['awayspirit'], $quickCategories);
       if ($quickVisitorPoints === false) {
-        $missing = sprintf(_("Invalid quick score for %s. "), $game_result['visitorteamname']);
+        $score_feedback = sprintf(_("Invalid quick score for %s. "), $game_result['visitorteamname']);
       } else {
-        GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $quickVisitorPoints, $categories);
-        $visitorSavedFromQuick = true;
+        $visitorSavedFromQuick = GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $quickVisitorPoints, $categories);
+        if (!$visitorSavedFromQuick) {
+          $score_feedback = _("Spirit score not saved. ");
+        }
       }
     }
 
@@ -148,9 +168,11 @@ if ($season['spiritmode'] > 0) {
       if (isset($_POST['homecat' . $cat]))
         $points[$cat] = $_POST['homecat' . $cat];
       else
-        $missing = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
+        $score_feedback = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
     }
-    GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
+    if (!GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories)) {
+      $score_feedback = _("Spirit score not saved. ");
+    }
     }
     if (isset($_POST['visvalueId']) && !$visitorSavedFromQuick) {
     $points = array();
@@ -158,9 +180,11 @@ if ($season['spiritmode'] > 0) {
       if (isset($_POST['viscat' . $cat]))
         $points[$cat] = $_POST['viscat' . $cat];
       else
-        $missing = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
+        $score_feedback = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
     }
-    GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories);
+    if (!GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories)) {
+      $score_feedback = _("Spirit score not saved. ");
+    }
     }
     $game_result = GameResult($gameId);
   }
@@ -238,10 +262,11 @@ if ($season['spiritmode'] > 0) {
 
   if ($teamId > 0) {
     if ($teamId == $game_result['visitorteam']) {
-  $html .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($game_result['hometeamname']) . "</h3>\n";
+    $html .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($game_result['hometeamname']) . "</h3>\n";
 
     $points = GameGetSpiritPoints($gameId, $game_result['hometeam']);
     $html .= SpiritTable($game_result, $points, $categories, true);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['hometeam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['hometeam'], $spirit_comments, $comment_feedback);
     }
     if ($teamId == $game_result['hometeam']) {
@@ -249,6 +274,7 @@ if ($season['spiritmode'] > 0) {
 
   $points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
   $html .= SpiritTable($game_result, $points, $categories, false);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['visitorteam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['visitorteam'], $spirit_comments, $comment_feedback);
     }
   } else {
@@ -256,16 +282,18 @@ if ($season['spiritmode'] > 0) {
 
     $points = GameGetSpiritPoints($gameId, $game_result['hometeam']);
     $html .= SpiritTable($game_result, $points, $categories, true);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['hometeam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['hometeam'], $spirit_comments, $comment_feedback);
     $html .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($game_result['visitorteamname']) . "</h3>\n";
     $points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
     $html .= SpiritTable($game_result, $points, $categories, false);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['visitorteam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['visitorteam'], $spirit_comments, $comment_feedback);
   }
   $html .= "<p>";
   $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
-  if (isset($missing))
-    $html .= " $missing";
+  if (!empty($score_feedback))
+    $html .= " $score_feedback";
   $html .= "</p>";
   $html .= "</form>\n";
 } else {

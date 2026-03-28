@@ -341,13 +341,7 @@ function showSpiritAverageColumn()
   if (empty($seasoninfo) || !is_array($seasoninfo)) {
     return false;
   }
-  if (isset($seasoninfo['spiritmode'])) {
-    return (int)$seasoninfo['spiritmode'] > 0;
-  }
-  if (isset($seasoninfo['spiritpoints'])) {
-    return !empty($seasoninfo['spiritpoints']);
-  }
-  return false;
+  return !empty($seasoninfo['spiritmode']);
 }
 
 function swissHeading($poolId, $poolinfo, $editbuttons)

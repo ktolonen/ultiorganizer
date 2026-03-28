@@ -713,9 +713,11 @@ function getEditSeasonLinks()
         $links['?view=admin/seasonpools&amp;season=' . $season] = _("Pools");
         $links['?view=admin/reservations&amp;season=' . $season] = _("Scheduling");
         $links['?view=admin/seasongames&amp;season=' . $season] = _("Games");
-        $links['?view=admin/spirit&amp;season=' . $season] = _("Spirit");
-        $links['?view=admin/seasonstandings&amp;season=' . $season] = _("Standings");
         $seasonInfo = SeasonInfo($season);
+        if (!empty($seasonInfo['spiritmode'])) {
+          $links['?view=admin/spirit&amp;season=' . $season] = _("Spirit");
+        }
+        $links['?view=admin/seasonstandings&amp;season=' . $season] = _("Standings");
         if (!empty($seasonInfo['use_season_points'])) {
           $links['?view=admin/seasonpoints&amp;season=' . $season] = _("Season points");
         }

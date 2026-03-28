@@ -36,7 +36,9 @@ if ($season['spiritmode'] > 0) {
       else
         $missing = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
     }
-    GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
+    if (!GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories)) {
+      $missing = _("Spirit score not saved. ");
+    }
 
     $points = array();
     foreach ($_POST['visvalueId'] as $cat) {
@@ -45,7 +47,9 @@ if ($season['spiritmode'] > 0) {
       else
         $missing = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
     }
-    GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories);
+    if (!GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories)) {
+      $missing = _("Spirit score not saved. ");
+    }
 
     $game_result = GameResult($gameId);
     $delete_home = !empty($_POST['delete_spirit_comment_home']);
