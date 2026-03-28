@@ -278,7 +278,7 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
     $html .= "</table>\n";
   }
 
-  $showSpiritComments = ShowSpiritComments() || isSeasonAdmin($seasoninfo['season_id']);
+  $showSpiritComments = ShowSpiritComments($seasoninfo) || isSeasonAdmin($seasoninfo['season_id']);
   $scoreCategories = array();
   foreach ($categories as $category) {
     if ((int)$category['index'] > 0 && (float)$category['factor'] > 0) {

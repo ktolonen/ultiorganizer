@@ -33,7 +33,10 @@ $spirit = _("not given");
 
 if ((isset($info['spiritmode']) && $info['spiritmode'] > 0)) {
 	$spiritmode = SpiritMode($info['spiritmode']);
-	$spirit = utf8entities(_($spiritmode['name'])) . " / <em>" . (intval($info['showspiritpoints']) ? _("visible") : _("not visible")) . "</em>";
+	$spirit = utf8entities(_($spiritmode['name'])) . " / <em>" .
+		(intval($info['showspiritpoints']) ? _("scores visible") : _("scores hidden")) . ", " .
+		(intval(isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0) ? _("comments visible") : _("comments hidden")) .
+		"</em>";
 }
 $html .=  "<tr><td><b>" . _("Spirit points") . "</b></td><td>" . $spirit . "</td></tr>\n";
 
@@ -95,6 +98,7 @@ $html .=  "<p>";
 $html .=  "<a href='?view=admin/addseasons&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Change event properties") . "</a><br/>";
 $html .=  "<a href='?view=admin/addseasonusers&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit User access rights") . "</a><br/>";
 $html .=  "<a href='?view=admin/addseasonlinks&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit side menu links") . "</a><br/>";
+$html .=  "<a href='?view=admin/tdtools&amp;season=" . $info['season_id'] . "'>&raquo; " . _("TD Tools") . "</a><br/>";
 
 if (IsSeasonStatsCalculated($info['season_id'])) {
 	$html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Re-archive statistics") . "</a><br/>";

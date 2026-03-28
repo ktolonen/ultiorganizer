@@ -33,11 +33,6 @@ function ShowDefenseStats()
 	return ($serverConf['ShowDefenseStats'] == "true");
 }
 
-function ShowSpiritComments() {
-	global $serverConf;
-	return ($serverConf['ShowSpiritComments'] == "true");
-}
-
 function ReadOnlyServer() {
 	global $serverConf;
 	return ($serverConf['ReadOnlyServer'] == "true");

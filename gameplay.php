@@ -585,8 +585,9 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table>";
     }
     $game_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_GAME);
-    $home_spirit_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_HOME);
-    $visitor_spirit_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_VISITOR);
+    $showSpiritComments = ShowSpiritComments($seasoninfo) || isSeasonAdmin($seasoninfo['season_id']);
+    $home_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_HOME) : "";
+    $visitor_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_VISITOR) : "";
     if (!empty($game_comment_html) || !empty($home_spirit_comment_html) || !empty($visitor_spirit_comment_html)) {
       $html .= "<h2>" . _("Comments") . "</h2>\n";
       if (!empty($game_comment_html)) {

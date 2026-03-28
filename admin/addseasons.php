@@ -23,6 +23,7 @@ $sp = array(
 	"endtime" => "",
 	"spiritmode" => 0,
 	"showspiritpoints" => 0,
+	"showspiritcomments" => 0,
 	"use_season_points" => 0,
 	"hide_time_on_scoresheet" => 0,
 	"event_readonly" => 0,
@@ -56,6 +57,7 @@ if (!empty($_POST['add'])) {
 	$sp['api_public'] = !empty($_POST['api_public']);
 	$sp['spiritmode'] = $_POST['spiritmode'];
 	$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
+	$sp['showspiritcomments'] = !empty($_POST['showspiritcomments']);
 	$sp['use_season_points'] = !empty($_POST['use_season_points']);
 	$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
 	$sp['event_readonly'] = !empty($_POST['event_readonly']);
@@ -112,6 +114,7 @@ if (!empty($_POST['add'])) {
 		$sp['api_public'] = !empty($_POST['api_public']);
 		$sp['spiritmode'] = $_POST['spiritmode'];
 		$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
+		$sp['showspiritcomments'] = !empty($_POST['showspiritcomments']);
 		$sp['use_season_points'] = !empty($_POST['use_season_points']);
 		$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
 		$sp['event_readonly'] = !empty($_POST['event_readonly']);
@@ -144,6 +147,7 @@ if ($seasonId) {
 	$sp['isnationalteams'] = $info['isnationalteams'];
 	$sp['spiritmode'] = isset($info['spiritmode']) ? $info['spiritmode'] : 0;
 	$sp['showspiritpoints'] = $info['showspiritpoints'];
+	$sp['showspiritcomments'] = isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0;
 	$sp['use_season_points'] = isset($info['use_season_points']) ? $info['use_season_points'] : 0;
 	$sp['hide_time_on_scoresheet'] = isset($info['hide_time_on_scoresheet']) ? $info['hide_time_on_scoresheet'] : 0;
 	$sp['event_readonly'] = isset($info['event_readonly']) ? $info['event_readonly'] : 0;
@@ -338,6 +342,12 @@ $html .= "</td></tr>\n";
 
 $html .= "<tr><td class='infocell'>" . _("Spirit points visible") . ": </td><td><input class='input' type='checkbox' name='showspiritpoints' ";
 if ($sp['showspiritpoints']) {
+	$html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Spirit comments visible") . ": </td><td><input class='input' type='checkbox' name='showspiritcomments' ";
+if ($sp['showspiritcomments']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";

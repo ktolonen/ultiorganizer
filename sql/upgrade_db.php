@@ -1117,6 +1117,21 @@ function upgrade85()
 	}
 }
 
+function upgrade86()
+{
+	if (!hasColumn("uo_season", "showspiritcomments")) {
+		addColumn("uo_season", "showspiritcomments", "tinyint(1) DEFAULT 0");
+	}
+
+	$legacySetting = DBQueryToValue("SELECT value FROM uo_setting WHERE name='ShowSpiritComments'");
+	$showSpiritComments = ($legacySetting === "true") ? 1 : 0;
+	runQuery(sprintf("UPDATE uo_season SET showspiritcomments=%d", $showSpiritComments));
+
+	if (hasRow("uo_setting", "name", "ShowSpiritComments")) {
+		runQuery("DELETE FROM uo_setting WHERE name='ShowSpiritComments'");
+	}
+}
+
 function upgradeEngineToInnoDb() {
 	$charset = 'utf8mb4';
 	$collation = 'utf8mb4_unicode_ci';

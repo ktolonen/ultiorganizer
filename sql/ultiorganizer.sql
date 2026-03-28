@@ -744,6 +744,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `organizer` varchar(50) DEFAULT NULL,
   `category` varchar(50) DEFAULT NULL,
   `showspiritpoints` tinyint(1) DEFAULT 0,
+  `showspiritcomments` tinyint(1) DEFAULT 0,
   `use_season_points` tinyint(1) DEFAULT 0,
   `hide_time_on_scoresheet` tinyint(1) DEFAULT 0,
   `event_readonly` tinyint(1) DEFAULT 0,
@@ -835,9 +836,8 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('DefaultLocale', 'en_GB.utf8', 8),
 	('ShowDefenseStats', 'false', 9),
 	('AdminEmail', 'ultiorganizer_admin@example.com', 10),
-	('ShowSpiritComments', 'false', 11),
-	('ReadOnlyServer', 'false', 12),
-	('DisableVisitorLogging', 'false', 13);
+	('ReadOnlyServer', 'false', 11),
+	('DisableVisitorLogging', 'false', 12);
 
 CREATE TABLE IF NOT EXISTS `uo_sms` (
   `sms_id` int(10) NOT NULL AUTO_INCREMENT,

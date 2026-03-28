@@ -36,15 +36,6 @@ if (!empty($_POST['save'])) {
 	$settings[] = $setting;
 	
 	$setting = array();
-	$setting['name']="ShowSpiritComments";
-	if(!empty($_POST['ShowSpiritComments'])){
-		$setting['value']="true";
-	}else{
-		$setting['value']="false";
-	}
-	$settings[] = $setting;
-	
-	$setting = array();
 	$setting['name']="ReadOnlyServer";
 	if(!empty($_POST['ReadOnlyServer'])){
 		$setting['value']="true";
@@ -177,17 +168,6 @@ foreach ($settings as $setting) {
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowDefenseStats' checked='checked'/></td>";
 		} else {
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowDefenseStats'/></td>";
-		}
-		$htmltmp2 .= "</tr>\n";
-	}
-	
-	if($setting['name']=="ShowSpiritComments"){
-		$htmltmp2 .= "<tr>";
-		$htmltmp2 .= "<td class='infocell'>"._("Show Spirit Comments").":</td>";
-		if($setting['value']=="true"){
-			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowSpiritComments' checked='checked'/></td>";
-		}else{
-			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowSpiritComments'/></td>";
 		}
 		$htmltmp2 .= "</tr>\n";
 	}

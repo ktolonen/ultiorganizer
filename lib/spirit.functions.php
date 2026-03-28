@@ -24,6 +24,24 @@ function ShowSpiritScoresForSeason($seasoninfo)
 	);
 }
 
+function ShowSpiritComments($seasoninfo)
+{
+	if (!$seasoninfo) {
+		return false;
+	}
+	if (!is_array($seasoninfo)) {
+		$seasoninfo = SeasonInfo($seasoninfo);
+	}
+	if (!$seasoninfo || !isset($seasoninfo['season_id'])) {
+		return false;
+	}
+	return (
+		isset($seasoninfo['spiritmode']) &&
+		(int)$seasoninfo['spiritmode'] > 0 &&
+		!empty($seasoninfo['showspiritcomments'])
+	);
+}
+
 function SpiritCategories($mode_id)
 {
 	$cats = SpiritCategoryRows($mode_id);
@@ -146,7 +164,7 @@ function SpiritToCsv($season, $separator)
 	if (!$showSpiritPoints) {
 		die('Spirit points are not set visible');
 	}
-	$showSpiritComments = $showSpiritPoints && ShowSpiritComments();
+	$showSpiritComments = $showSpiritPoints && ShowSpiritComments($seasoninfo);
 	$rows = SpiritToolRowsBySeason($season);
 	$result = array();
 
