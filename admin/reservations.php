@@ -21,6 +21,11 @@ if (!empty($_GET["series"])) {
   $season = $_GET["season"];
 }
 
+if (!hasReservationsPageAccess($season)) {
+  showPage(_("Fields"), "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 if (!empty($_POST['remove_x'])) {
   $id = $_POST['hiddenDeleteId'];
   RemoveReservation($id, $season);

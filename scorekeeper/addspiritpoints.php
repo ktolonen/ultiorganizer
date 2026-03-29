@@ -10,6 +10,30 @@ $_SESSION['team'] = $teamId;
 
 
 $season = SeasonInfo(GameSeason($gameId));
+$entryTeamId = SpiritEntryTeamForUser($gameId);
+$hasFullSpiritView = HasFullGameSpiritViewRight($gameId);
+
+if ($entryTeamId < 0) {
+  echo "<p>" . _("Insufficient user rights") . "</p>";
+  return;
+}
+
+if ($entryTeamId > 0 && empty($teamId)) {
+  $teamId = $entryTeamId;
+  $_SESSION['team'] = $teamId;
+}
+
+if (
+  !$hasFullSpiritView &&
+  (
+    empty($teamId) ||
+    !hasEditPlayersRight((int)$teamId)
+  )
+) {
+  echo "<p>" . _("Insufficient user rights") . "</p>";
+  return;
+}
+
 if ($season['spiritmode'] > 0) {
   $game_result = GameResult($gameId);
   $ishome = $teamId == $game_result['hometeam'] ? 1 : 0;
@@ -84,10 +108,16 @@ if ($season['spiritmode'] > 0) {
     $html .= $comment_feedback;
   }
 
+  $canSaveSpirit = CanEditSpiritSubmission($gameId, $spirit_team_id);
   $html .= "<p>";
-  $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
-  if (isset($missing))
-    $html .= " $missing";
+  if ($canSaveSpirit) {
+    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
+    if (isset($missing)) {
+      $html .= " $missing";
+    }
+  } else {
+    $html .= "<span class='warning'>" . _("Read-only spirit review") . "</span>";
+  }
   $html .= "</p>";
   $html .= "</form>\n";
   if ($ishome) {

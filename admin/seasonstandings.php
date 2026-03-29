@@ -15,6 +15,11 @@ $series_id = CurrentSeries($season);
 
 $title = utf8entities(SeasonName($season)) . ": " . _("Pool standings");
 
+if (!hasSeasonSeriesPageAccess($season, $series_id)) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 if ($series_id <= 0) {
   showPage($title, "<p>" . _("No divisions defined. Define at least one division first.") . "</p>");
   die;

@@ -201,15 +201,10 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         $html .= "<td class='right nowrap'><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Result") . "</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Players") . "</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>" . _("Scoresheet") . "</a>";
-        if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {
-          $html .= " | <a href='?view=user/addspirit&amp;game=$gameId'>" . _("Spirit") . "</a>";
-        } elseif (isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) {
-          // TeamAdmin
-          if (hasEditPlayersRight($game['hometeam'])) {
-            $html .= " | <a href='?view=user/addspirit&amp;game=$gameId&amp;team=" . $game['hometeam'] . "'>" . _("Spirit") . "</a>";
-        }
-          if (hasEditPlayersRight($game['visitorteam'])) {
-            $html .= " | <a href='?view=user/addspirit&amp;game=$gameId&amp;team=" . $game['visitorteam'] . "'>" . _("Spirit") . "</a>";
+        if (!empty($seasoninfo['spiritmode'])) {
+          $spiritUrl = SpiritEntryUrl($gameId);
+          if (!empty($spiritUrl)) {
+            $html .= " | <a href='" . $spiritUrl . "'>" . _("Spirit") . "</a>";
           }
         }
         if (ShowDefenseStats()) {

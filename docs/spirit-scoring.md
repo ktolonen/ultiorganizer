@@ -104,34 +104,26 @@ This section describes what the repository does today.
 
 ### Important current gaps
 
-- There is no separate Spirit Director or spirit-admin permission model. Today this is still handled through season-admin style rights.
+- There is a dedicated `spiritadmin:<seasonId>` role for spirit tooling and review, but it intentionally does not include broad season-admin access.
 - The repository does not contain an event-level setting for "opponent can see received scores/comments after submitting own score", and the token-based self-service flow does not enforce that reveal rule.
 - There is no explicit `N/A` state for spirit submissions.
 - There is no spirit-timeout data model, admin UI, entry UI, or reporting flow in this repository.
 
-## Planned Updates For Missing Features
+## Remaining implementation gaps
 
-The main implementation gaps should be handled in this order.
-
-### 1. Spirit Director permissions
-
-- Add a dedicated event-level spirit-admin permission helper instead of relying only on season-admin rights.
-- Use that helper in `admin/spirit.php`, `admin/spiritsettings.php`, missing-score review, comment review, and any future spirit correction tools.
-- Keep season admins as a bypass role.
-
-### 2. Token and reveal workflow
+### 1. Token and reveal workflow
 
 - Define the supported SOTG token submission flow explicitly.
 - Add an `EVENT_SETTING` for whether teams may see received spirit scores/comments only after they submit their own score.
 - Centralize that rule in shared spirit/comment visibility helpers so browser views, exports, and APIs follow the same behavior.
 - Make token-based submission use the same completion, lock, and visibility rules already used by logged-in users.
 
-### 3. Explicit `N/A` handling
+### 2. Explicit `N/A` handling
 
 - Do not infer deletion from zero values; all-zero submissions must remain valid completed submissions.
 - If the event workflow needs it, add a distinct `N/A` state and decide whether it belongs in `uo_spirit_score`, a small side table, or a game/team metadata field before implementing UI.
 
-### 4. Spirit timeout support
+### 3. Spirit timeout support
 
 - Confirm the exact event workflow first: per-team count only, timestamped timeout events, or both.
 - Add a dedicated spirit-timeout data model in spirit-related code rather than overloading ordinary game timeout tables.

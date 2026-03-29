@@ -502,29 +502,6 @@ function setSuperAdmin($userid, $value)
 	}
 }
 
-function setTranslationAdmin($userid, $value)
-{
-	if (hasEditUsersRight()) {
-		if ($value && !isTranslationAdminByUserid($userid)) {
-			$query = sprintf(
-				"INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', 'translationadmin')",
-				DBEscapeString($userid)
-			);
-			$result = DBQuery($query);
-			Log1("security", "add", $userid, "", "translationadmin acceess granted");
-		} else if (!$value) {
-			$query = sprintf(
-				"DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='translationadmin'",
-				DBEscapeString($userid)
-			);
-			$result = DBQuery($query);
-			Log1("security", "add", $userid, "", "translationadmin acceess removed");
-		}
-	} else {
-		die('Insufficient rights to change superadmin userrole');
-	}
-}
-
 function isSuperAdminByUserid($userid)
 {
 	if (hasEditUsersRight()) {
@@ -542,31 +519,9 @@ function isSuperAdminByUserid($userid)
 	}
 }
 
-function isTranslationAdminByUserid($userid)
-{
-	if (hasEditUsersRight()) {
-		$query = sprintf(
-			"SELECT * FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='translationadmin'",
-			DBEscapeString($userid)
-		);
-		$result = DBQuery($query);
-
-		if ($row = mysqli_fetch_assoc($result)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-}
-
 function isSuperAdmin()
 {
 	return isset($_SESSION['userproperties']['userrole']['superadmin']);
-}
-
-function isTranslationAdmin()
-{
-	return isset($_SESSION['userproperties']['userrole']['translationadmin']);
 }
 
 function isPlayerAdmin($profile_id)
@@ -583,6 +538,64 @@ function isSeasonAdmin($season)
 {
 	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]);
+}
+
+function isSpiritAdmin($season)
+{
+	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+		isset($_SESSION['userproperties']['userrole']['spiritadmin'][$season]);
+}
+
+function hasSpiritToolsRight($season)
+{
+	return isSeasonAdmin($season) || isSpiritAdmin($season);
+}
+
+function hasSpiritEditRight($season)
+{
+	if (!hasSpiritToolsRight($season)) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
+}
+
+function hasSeasonSeriesPageAccess($season, $series)
+{
+	return isSuperAdmin() ||
+		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
+		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
+}
+
+function hasAccreditationPageAccess($season)
+{
+	if (isSuperAdmin() || isSeasonAdmin($season)) {
+		return true;
+	}
+
+	foreach (SeasonSeries($season) as $series) {
+		if (isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series['series_id']])) {
+			return true;
+		}
+	}
+
+	foreach (SeasonTeams($season) as $team) {
+		if (isset($_SESSION['userproperties']['userrole']['accradmin'][$team['team_id']])) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function hasReservationsPageAccess($season = "")
+{
+	if (empty($season)) {
+		return hasScheduleRights() || isSuperAdmin();
+	}
+	return isSuperAdmin() || isSeasonAdmin($season);
 }
 
 function canBypassEventReadonly($season)
@@ -768,8 +781,7 @@ function hasAccredidationRight($team)
 
 function hasTranslationRight()
 {
-	return isSuperAdmin() ||
-		isset($_SESSION['userproperties']['userrole']['translationadmin']);
+	return isSuperAdmin();
 }
 
 function hasAddMediaRight()
@@ -795,6 +807,11 @@ function UserListRightsHtml($userId)
 				break;
 			case "seasonadmin":
 				$rights .= "<span style='color:#ff00ff;'>" . $value[0] . ": ";
+				$rights .= utf8entities(SeasonName($value[1]));
+				$rights .= "</span><br/>";
+				break;
+			case "spiritadmin":
+				$rights .= "<span>spiritadmin: ";
 				$rights .= utf8entities(SeasonName($value[1]));
 				$rights .= "</span><br/>";
 				break;
@@ -1075,9 +1092,72 @@ function RemoveSeasonUserRole($userid, $role, $seasonId)
 			DBEscapeString($role)
 		);
 		$result = DBQuery($query);
+
+		if (!UserHasSeasonScopedRole($userid, $seasonId)) {
+			DBQuery(sprintf(
+				"DELETE FROM uo_userproperties WHERE userid='%s' AND name='editseason' AND value='%s'",
+				DBEscapeString($userid),
+				DBEscapeString($seasonId)
+			));
+		}
+
+		if ($userid == $_SESSION['uid']) {
+			SetUserSessionData($userid);
+		}
 	} else {
 		die('Insufficient rights to change user info');
 	}
+}
+
+function UserHasSeasonScopedRole($userid, $seasonId)
+{
+	$query = sprintf(
+		"SELECT value FROM uo_userproperties WHERE userid='%s' AND name='userrole'",
+		DBEscapeString($userid)
+	);
+	$roles = DBQueryToArray($query);
+
+	foreach ($roles as $row) {
+		$value = explode(':', $row['value'], 2);
+		$roleName = $value[0];
+		$roleValue = isset($value[1]) ? $value[1] : '';
+
+		switch ($roleName) {
+			case 'seasonadmin':
+			case 'spiritadmin':
+				if ($roleValue === (string)$seasonId) {
+					return true;
+				}
+				break;
+			case 'seriesadmin':
+				if (!empty($roleValue) && SeriesSeasonId((int)$roleValue) === $seasonId) {
+					return true;
+				}
+				break;
+			case 'teamadmin':
+			case 'accradmin':
+				if (!empty($roleValue) && getTeamSeason((int)$roleValue) === $seasonId) {
+					return true;
+				}
+				break;
+			case 'gameadmin':
+				if (!empty($roleValue) && GameSeason((int)$roleValue) === $seasonId) {
+					return true;
+				}
+				break;
+			case 'resgameadmin':
+				if (!empty($roleValue)) {
+					foreach (ReservationSeasons((int)$roleValue) as $resSeason) {
+						if ($resSeason === $seasonId) {
+							return true;
+						}
+					}
+				}
+				break;
+		}
+	}
+
+	return false;
 }
 
 function GetTeamAdmins($teamId)

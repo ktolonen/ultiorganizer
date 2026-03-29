@@ -290,8 +290,11 @@ $html .= "<h3>" . _("Additional game data") . "</h3>";
     $away = $lastscore['visitorscore'];
     $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as result") . " $home - $away'/>";
     $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Players") . "</a>";
-    if (intval($seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {
-      $html .= "<a href='?view=addspiritpoints&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Spirit points") . "</a>";
+    if (intval($seasoninfo['spiritmode']) > 0) {
+      $spiritUrl = SpiritEntryUrl($gameId, '?view=addspiritpoints');
+      if (!empty($spiritUrl)) {
+        $html .= "<a href='" . $spiritUrl . "' data-role='button' data-ajax='false'>" . _("Spirit points") . "</a>";
+      }
     }
   }
 } else {

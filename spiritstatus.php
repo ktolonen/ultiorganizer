@@ -45,11 +45,6 @@ if (!ShowSpiritScoresForSeason($seasoninfo)) {
 	return;
 }
 
-// add comment from Spirit Director for Women Masters division at WUGC16
-if (($seriesinfo['season'] == "WUGC16") && ((int)$seriesinfo['series_id'] === 5)) {
-	$html .= "<p><strong>Important Note:</strong> After the conclusion of the Women's Masters Final, the Spirit Award was presented to New Zealand as they had the highest average total Spirit score at the time. Subsequent placing games played after the final due to rain delays have been recorded in the final scores.</p>";
-}
-
 $categories = SpiritCategories($seasoninfo['spiritmode']);
 $scoreCategories = array();
 foreach ($categories as $cat) {

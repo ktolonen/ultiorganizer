@@ -237,13 +237,13 @@ function CanManageGameComment($gameId, $type)
 
 function CanManageSpiritComment($gameId, $type)
 {
-	if (!function_exists('hasEditGameEventsRight') || !function_exists('isLoggedIn')) {
+	if (!function_exists('HasFullGameSpiritEditRight') || !function_exists('isLoggedIn')) {
 		return false;
 	}
 	if (!isLoggedIn()) {
 		return false;
 	}
-	if (hasEditGameEventsRight($gameId)) {
+	if (HasFullGameSpiritEditRight($gameId)) {
 		return true;
 	}
 	if (function_exists('SpiritTeamIdForCommentType') && function_exists('SpiritSubmissionLocked')) {

@@ -726,22 +726,39 @@ function getEditSeasonLinks()
       }
       $ret[$season] = $links;
     }
-    if (isset($_SESSION['userproperties']['userrole']['seriesadmin'])) {
-      foreach ($_SESSION['userproperties']['userrole']['seriesadmin'] as $series => $param) {
-        $seriesseason = SeriesSeasonId($series);
-        // Links already added if superadmin or seasonadmin
-        if (isset($ret[$seriesseason]) && !isSeasonAdmin($seriesseason)) {
-          $links = $ret[$seriesseason];
-          $seriesname = U_(getSeriesName($series));
-          $links['?view=admin/seasonteams&amp;season=' . $season . '&amp;series=' . $series] = $seriesname . " " . _("Teams");
-          $links['?view=admin/seasongames&amp;season=' . $season . '&amp;series=' . $series] = $seriesname . " " . _("Games");
-          $links['?view=admin/seasonstandings&amp;season=' . $season . '&amp;series=' . $series] = $seriesname . " " . _("Pool standings");
-          $links['?view=admin/accreditation&amp;season=' . $seriesseason] = _("Accreditation");
-          $ret[$seriesseason] = $links;
-          $respgamesset[$seriesseason] = "set";
-        }
-      }
-    }
+	    if (isset($_SESSION['userproperties']['userrole']['seriesadmin'])) {
+	      foreach ($_SESSION['userproperties']['userrole']['seriesadmin'] as $series => $param) {
+	        $seriesseason = SeriesSeasonId($series);
+	        // Links already added if superadmin or seasonadmin
+	        if (isset($ret[$seriesseason]) && !isSeasonAdmin($seriesseason)) {
+	          $links = $ret[$seriesseason];
+	          $seriesname = U_(getSeriesName($series));
+	          $links['?view=admin/seasonteams&amp;season=' . $seriesseason . '&amp;series=' . $series] = $seriesname . " " . _("Teams");
+	          $links['?view=admin/seasongames&amp;season=' . $seriesseason . '&amp;series=' . $series] = $seriesname . " " . _("Games");
+	          $links['?view=admin/seasonstandings&amp;season=' . $seriesseason . '&amp;series=' . $series] = $seriesname . " " . _("Pool standings");
+	          $links['?view=admin/accreditation&amp;season=' . $seriesseason] = _("Accreditation");
+	          $ret[$seriesseason] = $links;
+	          $respgamesset[$seriesseason] = "set";
+	        }
+	      }
+	    }
+
+	    $spiritAdmins = array();
+	    if (isset($_SESSION['userproperties']['userrole']['spiritadmin'])) {
+	      $spiritAdmins += $_SESSION['userproperties']['userrole']['spiritadmin'];
+	    }
+	    foreach ($spiritAdmins as $season => $param) {
+	        if (!isset($ret[$season]) || isSeasonAdmin($season)) {
+	          continue;
+	        }
+	        $seasonInfo = SeasonInfo($season);
+	        if (empty($seasonInfo['spiritmode'])) {
+	          continue;
+	        }
+	        $links = $ret[$season];
+	        $links['?view=admin/spirit&amp;season=' . $season] = _("Spirit");
+	        $ret[$season] = $links;
+	      }
 
     $teamPlayersSet = array();
     if (isset($_SESSION['userproperties']['userrole']['teamadmin'])) {

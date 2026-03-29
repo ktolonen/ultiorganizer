@@ -12,5 +12,6 @@ This directory collects general project documentation.
 - `database-upgrades.md`: schema and migration workflow.
 - `configuration-flags.md`: configuration taxonomy and migration rules.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
+- `permissions.md`: permission storage, roles, enforcement helpers, and spirit-director behavior.
 
 The `docs/ai/` directory is reserved for future AI assets or automation files. Current markdown documentation lives under `docs/`.

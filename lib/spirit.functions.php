@@ -20,7 +20,7 @@ function ShowSpiritScoresForSeason($seasoninfo)
 	return (
 		isset($seasoninfo['spiritmode']) &&
 		(int)$seasoninfo['spiritmode'] > 0 &&
-		(!empty($seasoninfo['showspiritpoints']) || isSeasonAdmin($seasoninfo['season_id']))
+		(!empty($seasoninfo['showspiritpoints']) || hasSpiritToolsRight($seasoninfo['season_id']))
 	);
 }
 
@@ -38,7 +38,7 @@ function ShowSpiritComments($seasoninfo)
 	return (
 		isset($seasoninfo['spiritmode']) &&
 		(int)$seasoninfo['spiritmode'] > 0 &&
-		!empty($seasoninfo['showspiritcomments'])
+		(!empty($seasoninfo['showspiritcomments']) || hasSpiritToolsRight($seasoninfo['season_id']))
 	);
 }
 
@@ -131,6 +131,102 @@ function TeamSpiritSubmissionComplete($gameId, $teamId, $spiritmode = null)
 	return $count >= $required;
 }
 
+function HasFullGameSpiritEditRight($gameId, $game = null)
+{
+	$gameId = (int)$gameId;
+	if ($gameId <= 0 || !function_exists('isLoggedIn') || !isLoggedIn()) {
+		return false;
+	}
+
+	if (!$game) {
+		$game = SpiritGameRow($gameId);
+	}
+	if (!$game || empty($game['season_id'])) {
+		return false;
+	}
+
+	$seasonId = $game['season_id'];
+	if (hasSpiritEditRight($seasonId)) {
+		return true;
+	}
+	if (isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
+		return false;
+	}
+
+	$seriesId = GameSeries($gameId);
+	$reservationId = GameReservation($gameId);
+
+	return isset($_SESSION['userproperties']['userrole']['seriesadmin'][$seriesId]) ||
+		isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservationId]) ||
+		isset($_SESSION['userproperties']['userrole']['gameadmin'][$gameId]);
+}
+
+function HasFullGameSpiritViewRight($gameId, $game = null)
+{
+	$gameId = (int)$gameId;
+	if ($gameId <= 0 || !function_exists('isLoggedIn') || !isLoggedIn()) {
+		return false;
+	}
+
+	if (!$game) {
+		$game = SpiritGameRow($gameId);
+	}
+	if (!$game || empty($game['season_id'])) {
+		return false;
+	}
+
+	return hasSpiritToolsRight($game['season_id']) || HasFullGameSpiritEditRight($gameId, $game);
+}
+
+function SpiritEntryTeamForUser($gameId, $game = null)
+{
+	$gameId = (int)$gameId;
+	if ($gameId <= 0 || !function_exists('isLoggedIn') || !isLoggedIn()) {
+		return -1;
+	}
+
+	if (!$game) {
+		$game = SpiritGameRow($gameId);
+	}
+	if (!$game || empty($game['spiritmode'])) {
+		return -1;
+	}
+
+	if (HasFullGameSpiritViewRight($gameId, $game)) {
+		return 0;
+	}
+
+	$teams = array();
+	if (!empty($game['hometeam']) && hasEditPlayersRight((int)$game['hometeam'])) {
+		$teams[] = (int)$game['hometeam'];
+	}
+	if (!empty($game['visitorteam']) && hasEditPlayersRight((int)$game['visitorteam'])) {
+		$teams[] = (int)$game['visitorteam'];
+	}
+
+	if (count($teams) === 0) {
+		return -1;
+	}
+	if (count($teams) === 1) {
+		return $teams[0];
+	}
+	return 0;
+}
+
+function SpiritEntryUrl($gameId, $baseView = '?view=user/addspirit')
+{
+	$teamId = SpiritEntryTeamForUser($gameId);
+	if ($teamId < 0) {
+		return '';
+	}
+
+	$url = $baseView . '&game=' . (int)$gameId;
+	if ($teamId > 0) {
+		$url .= '&team=' . $teamId;
+	}
+	return $url;
+}
+
 function SpiritSubmissionLocked($gameId, $teamId)
 {
 	$game = SpiritGameRow($gameId);
@@ -165,15 +261,14 @@ function CanEditSpiritSubmission($gameId, $teamId)
 	if (!function_exists('isLoggedIn') || !isLoggedIn()) {
 		return false;
 	}
-	if (function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId)) {
+	$game = SpiritGameRow($gameId);
+	if (!$game) {
+		return false;
+	}
+	if (HasFullGameSpiritEditRight($gameId, $game)) {
 		return true;
 	}
 	if (!function_exists('hasEditPlayersRight')) {
-		return false;
-	}
-
-	$game = SpiritGameRow($gameId);
-	if (!$game) {
 		return false;
 	}
 
@@ -283,7 +378,7 @@ function CanViewSpiritScoresForGame($gameId, $seasoninfo = null)
 	if (!$seasoninfo || empty($seasoninfo['spiritmode'])) {
 		return false;
 	}
-	if (isSeasonAdmin($seasoninfo['season_id'])) {
+	if (hasSpiritToolsRight($seasoninfo['season_id'])) {
 		return true;
 	}
 	if (empty($seasoninfo['showspiritpoints'])) {
@@ -302,7 +397,7 @@ function CanViewSpiritCommentsForGame($gameId, $seasoninfo = null)
 	if (!$seasoninfo || empty($seasoninfo['spiritmode'])) {
 		return false;
 	}
-	if (isSeasonAdmin($seasoninfo['season_id'])) {
+	if (hasSpiritToolsRight($seasoninfo['season_id'])) {
 		return true;
 	}
 	return !empty($seasoninfo['showspiritcomments']) && CanViewSpiritScoresForGame($gameId, $seasoninfo);
@@ -787,7 +882,7 @@ function CanDeleteSpiritSubmission($gameId, $teamId)
 	if ($teamId !== (int)$game['hometeam'] && $teamId !== (int)$game['visitorteam']) {
 		return false;
 	}
-	return function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId);
+	return HasFullGameSpiritEditRight($gameId, $game);
 }
 
 function GameSetSpiritPoints($gameId, $teamId, $home, $points, $categories)
@@ -844,7 +939,7 @@ function SpiritTeamPointRows($seasonId, $teamId, $received = true)
 {
 	$teamId = (int)$teamId;
 	$seasonInfo = SpiritSeasonInfo($seasonId);
-	$isAdmin = !empty($seasonInfo['season_id']) && isSeasonAdmin($seasonInfo['season_id']);
+	$isAdmin = !empty($seasonInfo['season_id']) && hasSpiritToolsRight($seasonInfo['season_id']);
 	$query = sprintf(
 		"SELECT
 			g.game_id,

@@ -57,8 +57,11 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Score sheet")] = "?view=user/addscoresheet&game=$gameId";
-if ($seasoninfo['spiritmode'] > 0 && isSeasonAdmin($seasoninfo['season_id'])) {
-	$menutabs[_("Spirit points")] = "?view=user/addspirit&game=$gameId";
+if (!empty($seasoninfo['spiritmode'])) {
+	$spiritUrl = SpiritEntryUrl($gameId);
+	if (!empty($spiritUrl)) {
+		$menutabs[_("Spirit points")] = $spiritUrl;
+	}
 }
 if (ShowDefenseStats()) {
 	$menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId";

@@ -167,12 +167,6 @@ if ($userid != "anonymous") {
     if ($_POST['userrole'] == 'superadmin') {
       $selector = 'superadmin';
       AddUserRole($userid, $selector);
-    } elseif ($_POST['userrole'] == 'translationadmin') {
-      $selector = 'translationadmin';
-      AddUserRole($userid, $selector);
-    } elseif ($_POST['userrole'] == 'useradmin') {
-      $selector = 'useradmin';
-      AddUserRole($userid, $selector);
     } elseif ($_POST['userrole'] == 'teamadmin') {
       foreach ($_POST['teams'] as $teamid) {
         AddUserRole($userid, 'teamadmin:' . $teamid);
@@ -184,6 +178,10 @@ if ($userid != "anonymous") {
     } elseif ($_POST['userrole'] == 'seasonadmin') {
       foreach ($_POST['searchseasons'] as $seasonid) {
         AddUserRole($userid, 'seasonadmin:' . $seasonid);
+      }
+    } elseif ($_POST['userrole'] == 'spiritadmin') {
+      foreach ($_POST['searchseasons'] as $seasonid) {
+        AddUserRole($userid, 'spiritadmin:' . $seasonid);
       }
     } elseif ($_POST['userrole'] == 'seriesadmin') {
       foreach ($_POST['series'] as $seriesid) {
@@ -386,12 +384,19 @@ if (hasEditUsersRight() || $_SESSION['uid'] == $userid) {
         $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
       } elseif ($role == 'translationadmin') {
         $html .= "<tr><td>";
-        $html .= _("Translation administrator");
+        $html .= _("Translation administrator") . " (" . _("legacy, not enforced") . ")";
         $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
       } elseif ($role == 'useradmin') {
         $html .= "<tr><td>";
-        $html .= _("User administrator");
+        $html .= _("User administrator") . " (" . _("legacy, not enforced") . ")";
         $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
+      } elseif ($role == 'spiritadmin') {
+        foreach ($param as $akey => $prop_id) {
+          $html .= "<tr><td>";
+          $html .= _("Spirit admin");
+          $html .= " (" . utf8entities(SeasonName($akey)) . ")";
+          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+        }
       } elseif ($role == 'teamadmin') {
         foreach ($param as $akey => $prop_id) {
           $html .= "<tr><td>";
@@ -479,10 +484,9 @@ if (hasEditUsersRight()) {
   $html .= "<p>\n";
   $html .= "<select class='dropdown' name='userrole'>\n";
   $html .= "<option value='superadmin'>" . _("Administrator") . "</option>\n";
-  $html .= "<option value='translationadmin'>" . _("Translation administrator") . "</option>\n";
-  $html .= "<option value='useradmin'>" . _("User administrator") . "</option>\n";
   $html .= "<option value='teamadmin'>" . _("Team contact person") . "</option>\n";
   $html .= "<option value='seasonadmin'>" . _("Event responsible") . "</option>\n";
+  $html .= "<option value='spiritadmin'>" . _("Spirit admin") . "</option>\n";
   $html .= "<option value='seriesadmin'>" . _("Division organizer") . "</option>\n";
   $html .= "<option value='accradmin'>" . _("Accreditation official") . "</option>\n";
   $html .= "<option value='resadmin'>" . _("Scheduling right") . "</option>\n";

@@ -11,6 +11,11 @@ $html = "";
 
 $title = utf8entities(U_(SeasonName($season))) . ": " . _("Divisions");
 
+if (!isSeasonAdmin($season)) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 //process itself on submit
 if (!empty($_POST['remove_x'])) {
   $id = $_POST['hiddenDeleteId'];

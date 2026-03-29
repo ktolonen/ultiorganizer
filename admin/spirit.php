@@ -368,7 +368,7 @@ $html = "";
 
 $html .= "<h1>" . $title . "</h1>\n";
 
-if (!empty($season) && isSeasonAdmin($season)) {
+if (!empty($season) && hasSpiritToolsRight($season)) {
   $seasonInfo = SeasonInfo($season);
   if (empty($seasonInfo['spiritmode'])) {
     $html .= "<p>" . _("Spirit scoring is disabled for this event.") . "</p>";

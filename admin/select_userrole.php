@@ -29,24 +29,6 @@ if ($_GET['userrole'] == 'superadmin') {
 	echo "<input type='submit' name='cancel' value='" . _("Cancel") . "'/>\n";
 	echo "</p>";
 	echo "</form>\n";
-} elseif ($_GET['userrole'] == 'translationadmin') {
-	echo "<h3>" . _("Translation administrator") . "</h3>\n";
-	echo "<form method='post' action='?" . $target . "'>\n";
-	echo "<p>";
-	echo "<input type='hidden' name='userrole' value='translationadmin'/>\n";
-	echo "<input type='submit' name='selectuserrole' value='" . _("Select") . "'/>\n";
-	echo "<input type='submit' name='cancel' value='" . _("cancel") . "'/>\n";
-	echo "</p>";
-	echo "</form>\n";
-} elseif ($_GET['userrole'] == 'useradmin') {
-	echo "<h3>" . _("User administrator") . "</h3>\n";
-	echo "<form method='post' action='?" . $target . "'>\n";
-	echo "<p>";
-	echo "<input type='hidden' name='userrole' value='useradmin'/>\n";
-	echo "<input type='submit' name='selectuserrole' value='" . _("Select") . "'/>\n";
-	echo "<input type='submit' name='cancel' value='" . _("cancel") . "'/>\n";
-	echo "</p>";
-	echo "</form>\n";
 } elseif ($_GET['userrole'] == 'teamadmin') {
 	echo "<h3>" . _("Team contact person") . "</h3>";
 	echo SearchTeam($target, array('userrole' => 'teamadmin'), array('selectuserrole' => _("Select"), 'cancel' => _("Cancel")));
@@ -56,6 +38,9 @@ if ($_GET['userrole'] == 'superadmin') {
 } elseif ($_GET['userrole'] == 'seasonadmin') {
 	echo "<h3>" . _("Event responsible") . "</h3>";
 	echo SearchSeason($target, array('userrole' => 'seasonadmin'), array('selectuserrole' => _("Select"), 'cancel' => _("Cancel")));
+} elseif ($_GET['userrole'] == 'spiritadmin') {
+	echo "<h3>" . _("Spirit admin") . "</h3>";
+	echo SearchSeason($target, array('userrole' => 'spiritadmin'), array('selectuserrole' => _("Select"), 'cancel' => _("Cancel")));
 } elseif ($_GET['userrole'] == 'seriesadmin') {
 	echo "<h3>" . _("Division organizer") . "</h3>\n";
 	echo SearchSeries($target, array('userrole' => 'seriesadmin'), array('selectuserrole' => _("Select"), 'cancel' => _("Cancel")));

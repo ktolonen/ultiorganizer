@@ -19,6 +19,12 @@ if (isset($_GET['list'])) {
 } else {
   $view = "acc";
 }
+
+if (!hasAccreditationPageAccess($season)) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 $url = "?view=admin/accreditation&amp;season=" . $season . "&amp;list=" . $view;
 
 if (isset($_POST['acknowledge'])) {

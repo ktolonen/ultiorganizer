@@ -12,6 +12,11 @@ $info = SeasonInfo($_GET["season"]);
 $title = _("Event") . ": " . utf8entities(U_($info['name']));
 $html = "";
 
+if (!isSeasonAdmin($_GET["season"])) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 //common page
 pageTopHeadOpen($title);
 pageTopHeadClose($title);

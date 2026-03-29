@@ -562,7 +562,8 @@ function SeasonGameAdmins($seasonId)
       "SELECT u.userid, u.name, u.email, COUNT(*) AS games FROM uo_users u
   			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
   			LEFT JOIN uo_game g ON (SUBSTRING_INDEX(up.value, ':', -1)=g.game_id)
-  			WHERE g.game_id IN (SELECT gp.game FROM uo_game_pool gp 
+  			WHERE up.value LIKE 'gameadmin:%%'
+        AND g.game_id IN (SELECT gp.game FROM uo_game_pool gp 
 				LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool) 
 				LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
 				WHERE ser.season='%s' AND gp.timetable=1)
@@ -570,6 +571,34 @@ function SeasonGameAdmins($seasonId)
 			ORDER BY u.name",
       DBEscapeString($seasonId)
     );
+    return DBQueryToArray($query);
+  } else {
+    die('Insufficient rights');
+  }
+}
+
+/**
+ * Returns all spirit admins on given season.
+ *
+ * Access level: editseason
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return Array array of users
+ */
+function SeasonSpiritAdmins($seasonId)
+{
+  $seasonrights = getEditSeasons($_SESSION['uid']);
+  if (isset($seasonrights[$seasonId])) {
+    $query = sprintf(
+      "SELECT u.userid, u.name, u.email
+			FROM uo_users u
+			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
+			WHERE SUBSTRING_INDEX(up.value,':',1)='spiritadmin' AND SUBSTRING_INDEX(up.value, ':', -1)='%s'
+			GROUP BY u.userid, u.name, u.email
+      ORDER BY u.name",
+      DBEscapeString($seasonId)
+    );
+
     return DBQueryToArray($query);
   } else {
     die('Insufficient rights');

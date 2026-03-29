@@ -176,8 +176,11 @@ foreach ($respGameArray as $tournament => $resArray) {
             $html .= "<a href='?view=addresult&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Result") . "</a>";
             $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Players") . "</a>";
             $html .= "<a href='?view=addscoresheet&amp;game=$gameId' data-role='button' data-ajax='false'>" . _("Scoresheet") . "</a>";
-            if (intval($seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {
-              $html .= "<a href='?view=addspiritpoints&amp;game=$gameId&amp;team=" . $game['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Spirit") . "</a>";
+            if (intval($seasoninfo['spiritmode'] > 0)) {
+              $spiritUrl = SpiritEntryUrl($gameId, '?view=addspiritpoints');
+              if (!empty($spiritUrl)) {
+                $html .= "<a href='" . $spiritUrl . "' data-role='button' data-ajax='false'>" . _("Spirit") . "</a>";
+              }
             }
             $html .= "</div>\n";
           } else {

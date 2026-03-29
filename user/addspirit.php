@@ -74,12 +74,36 @@ function RenderSpiritDeleteControl($gameId, $teamId, $hasSpiritScore)
 }
 
 $season = SeasonInfo(GameSeason($gameId));
+$game_result = GameResult($gameId);
+$entryTeamId = SpiritEntryTeamForUser($gameId);
+$hasFullSpiritView = HasFullGameSpiritViewRight($gameId);
+$hasFullSpiritEdit = HasFullGameSpiritEditRight($gameId);
+
+if ($entryTeamId < 0) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
+if ($entryTeamId > 0 && $teamId <= 0) {
+  $teamId = $entryTeamId;
+}
+
+if (
+  !$hasFullSpiritView &&
+  (
+    ($teamId > 0 && !hasEditPlayersRight($teamId)) ||
+    ($teamId <= 0 && $entryTeamId > 0)
+  )
+) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 if ($season['spiritmode'] > 0) {
-  $game_result = GameResult($gameId);
   $mode = SpiritMode($season['spiritmode']);
   $categories = SpiritCategories($mode['mode']);
   $quickCategories = QuickSpiritCategories($categories);
-  $allowQuickEntry = (count($quickCategories) === 5) && isSeasonAdmin($season['season_id']);
+  $allowQuickEntry = (count($quickCategories) === 5) && $hasFullSpiritEdit;
   $score_feedback = "";
   $comment_feedback = "";
   $spirit_comments = array();
@@ -205,7 +229,7 @@ if ($season['spiritmode'] > 0) {
   $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
   $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
   $menutabs[_("Score sheet")] = "?view=user/addscoresheet&game=$gameId";
-  $menutabs[_("Spirit points")] = "?view=user/addspirit&game=$gameId";
+  $menutabs[_("Spirit points")] = SpiritEntryUrl($gameId);
   if (ShowDefenseStats()) {
     $menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId&amp;team=$teamId";
   }
@@ -290,10 +314,16 @@ if ($season['spiritmode'] > 0) {
     $html .= RenderSpiritDeleteControl($gameId, $game_result['visitorteam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['visitorteam'], $spirit_comments, $comment_feedback);
   }
+  $canSaveSpirit = CanEditSpiritSubmission($gameId, $game_result['hometeam']) || CanEditSpiritSubmission($gameId, $game_result['visitorteam']);
   $html .= "<p>";
-  $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
-  if (!empty($score_feedback))
-    $html .= " $score_feedback";
+  if ($canSaveSpirit) {
+    $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
+    if (!empty($score_feedback)) {
+      $html .= " $score_feedback";
+    }
+  } else {
+    $html .= "<span class='warning'>" . _("Read-only spirit review") . "</span>";
+  }
   $html .= "</p>";
   $html .= "</form>\n";
 } else {
