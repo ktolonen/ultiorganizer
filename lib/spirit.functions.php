@@ -12,6 +12,11 @@ function SpiritModes()
 	return SpiritCategoryModeRows();
 }
 
+function SpiritModeDisabledName()
+{
+	return _("No spirit scoring");
+}
+
 function ShowSpiritScoresForSeason($seasoninfo)
 {
 	if (!$seasoninfo || !isset($seasoninfo['season_id'])) {

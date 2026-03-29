@@ -11,6 +11,7 @@ This directory collects general project documentation.
 - `translations.md`: translation and gettext workflow.
 - `database-upgrades.md`: schema and migration workflow.
 - `configuration-flags.md`: configuration taxonomy and migration rules.
+- `schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `permissions.md`: permission storage, roles, enforcement helpers, and spirit-director behavior.

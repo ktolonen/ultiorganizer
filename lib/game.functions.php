@@ -1556,9 +1556,9 @@ function UnscheduledPoolGameInfo($poolId)
 {
 
 	$query = sprintf(
-		"SELECT game_id FROM uo_game 
-		WHERE reservation IS NULL AND time IS NULL AND pool=%d
-		ORDER BY game_id",
+		"SELECT g.game_id FROM uo_game g
+		WHERE g.reservation IS NULL AND g.time IS NULL AND g.pool=%d
+		ORDER BY g.game_id",
 		(int)$poolId
 	);
 
@@ -1575,10 +1575,10 @@ function UnscheduledSeriesGameInfo($seriesId)
 {
 
 	$query = sprintf(
-		"SELECT game_id FROM uo_game 
-		LEFT JOIN uo_pool pool ON(pool.pool_id=pool)
-		WHERE reservation IS NULL AND time IS NULL AND pool.series=%d
-		ORDER BY pool.ordering, game_id",
+		"SELECT g.game_id FROM uo_game g
+		LEFT JOIN uo_pool pool ON (pool.pool_id=g.pool)
+		WHERE g.reservation IS NULL AND g.time IS NULL AND pool.series=%d
+		ORDER BY pool.ordering, g.game_id",
 		(int)$seriesId
 	);
 
@@ -1595,11 +1595,11 @@ function UnscheduledSeasonGameInfo($seasonId)
 {
 
 	$query = sprintf(
-		"SELECT game_id FROM uo_game 
-		LEFT JOIN uo_pool pool ON(pool.pool_id=pool)
-		LEFT JOIN uo_series ser ON(ser.series_id=series)
-		WHERE reservation IS NULL AND time IS NULL AND ser.season='%s'
-		ORDER BY ser.ordering, pool.ordering, game_id",
+		"SELECT g.game_id FROM uo_game g
+		LEFT JOIN uo_pool pool ON (pool.pool_id=g.pool)
+		LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+		WHERE g.reservation IS NULL AND g.time IS NULL AND ser.season='%s'
+		ORDER BY ser.ordering, pool.ordering, g.game_id",
 		DBEscapeString($seasonId)
 	);
 

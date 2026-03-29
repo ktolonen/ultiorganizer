@@ -13,6 +13,48 @@ function pdf_slug($value)
   return $slug === '' ? 'pdf' : $slug;
 }
 
+function pool_group_schedule_title($poolIds)
+{
+  $seriesNames = array();
+  $poolNames = array();
+
+  foreach ((array)$poolIds as $poolId) {
+    $poolId = (int)$poolId;
+    if ($poolId <= 0) {
+      continue;
+    }
+
+    $poolInfo = PoolInfo($poolId);
+    if (empty($poolInfo)) {
+      continue;
+    }
+
+    $seriesId = isset($poolInfo['series']) ? (int)$poolInfo['series'] : 0;
+    $seriesLabel = isset($poolInfo['seriesname']) ? U_($poolInfo['seriesname']) : "";
+    if ($seriesId > 0 && !isset($seriesNames[$seriesId]) && $seriesLabel !== "") {
+      $seriesNames[$seriesId] = $seriesLabel;
+    }
+
+    if (!empty($poolInfo['name'])) {
+      $poolNames[] = U_($poolInfo['name']);
+    }
+  }
+
+  if (empty($seriesNames) && empty($poolNames)) {
+    return _("Schedule");
+  }
+
+  $titleParts = array();
+  if (!empty($seriesNames)) {
+    $titleParts[] = implode(" / ", $seriesNames);
+  }
+  if (!empty($poolNames)) {
+    $titleParts[] = implode(", ", $poolNames);
+  }
+
+  return _("Schedule") . " " . utf8entities(implode(", ", $titleParts));
+}
+
 if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
   include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
 } else {
@@ -48,7 +90,7 @@ if (iget("series")) {
     $id = implode(",", $poolIds);
     $baseurl .= "&pools=$id";
     $gamefilter = "poolgroup";
-    $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
+    $title = pool_group_schedule_title($poolIds);
   } else {
     // Fall back to season view if pool ids are invalid/empty
     $id = CurrentSeason();

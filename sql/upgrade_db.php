@@ -1122,18 +1122,6 @@ function upgrade86()
 	if (!hasColumn("uo_season", "showspiritcomments")) {
 		addColumn("uo_season", "showspiritcomments", "tinyint(1) DEFAULT 0");
 	}
-
-	$legacySetting = DBQueryToValue("SELECT value FROM uo_setting WHERE name='ShowSpiritComments'");
-	$showSpiritComments = ($legacySetting === "true") ? 1 : 0;
-	runQuery(sprintf("UPDATE uo_season SET showspiritcomments=%d", $showSpiritComments));
-
-	if (hasRow("uo_setting", "name", "ShowSpiritComments")) {
-		runQuery("DELETE FROM uo_setting WHERE name='ShowSpiritComments'");
-	}
-}
-
-function upgrade87()
-{
 	if (!hasColumn("uo_season", "showspiritpointsonlyoncomplete")) {
 		addColumn("uo_season", "showspiritpointsonlyoncomplete", "tinyint(1) DEFAULT 1");
 	}
@@ -1143,6 +1131,23 @@ function upgrade87()
 	if (!hasColumn("uo_game", "show_spirit")) {
 		addColumn("uo_game", "show_spirit", "tinyint(1) DEFAULT 0");
 	}
+
+	$legacySetting = DBQueryToValue("SELECT value FROM uo_setting WHERE name='ShowSpiritComments'");
+	$showSpiritComments = ($legacySetting === "true") ? 1 : 0;
+	runQuery(sprintf("UPDATE uo_season SET showspiritcomments=%d", $showSpiritComments));
+
+	if (hasRow("uo_setting", "name", "ShowSpiritComments")) {
+		runQuery("DELETE FROM uo_setting WHERE name='ShowSpiritComments'");
+	}
+
+	runQuery("UPDATE uo_spirit_category SET text='four categories plus comparison' WHERE mode=1002 AND `index`=0");
+	runQuery("UPDATE uo_spirit_category SET text='five categories, theirs and ours' WHERE mode=1004 AND `index`=0");
+	runQuery("UPDATE uo_spirit_category SET text='WFDF official (five categories)' WHERE mode=1003 AND `index`=0");
+
+	// Keep gettext aware of the renamed mode labels stored in the database.
+	_("four categories plus comparison");
+	_("five categories, theirs and ours");
+	_("WFDF official (five categories)");
 
 	runQuery(
 		"UPDATE uo_game g
@@ -1155,10 +1160,6 @@ function upgrade87()
 				ELSE 0
 			END"
 	);
-}
-
-function upgrade88()
-{
 	if (!hasTable("uo_spirit_timeout")) {
 		runQuery("CREATE TABLE `uo_spirit_timeout` (
 			`spirit_timeout_id` int(10) NOT NULL AUTO_INCREMENT,

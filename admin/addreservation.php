@@ -190,11 +190,9 @@ $html .= "<tr><td>" . _("End time") . " (" . _("hh:mm") . "):</td><td>";
 $html .= "<input type='text' class='input' name='endtime' value='" . utf8entities($res['endtime']) . "'/>\n";
 $html .= "</td></tr>\n";
 
-/* Not yet supported
-$html .= "<tr><td>"._("Timeslots")." ("._("hh:mm,hh:mm")."):</td><td>";
-$html .= "<input type='text' class='input' size='32' maxlength='100' name='timeslots' value='".utf8entities($res['timeslots'])."'/>\n";
+$html .= "<tr><td>" . _("Timeslots") . " (" . _("hh:mm,hh:mm") . "):</td><td>";
+$html .= "<input type='text' class='input' size='32' maxlength='100' name='timeslots' value='" . utf8entities($res['timeslots']) . "'/>\n";
 $html .= "</td></tr>\n";
-*/
 
 $html .= "<tr><td>" . _("Grouping name") . ":</td>";
 $html .= "<td>" . TranslatedField("reservationgroup", $res['reservationgroup']) . "</td></tr>\n";

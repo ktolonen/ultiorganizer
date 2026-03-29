@@ -46,6 +46,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `docs/routing.md`: request entry points and view resolution.
 - `docs/translations.md`: translation and gettext workflow.
 - `docs/permissions.md`: permission storage, roles, and enforcement helpers.
+- `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `docs/codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.

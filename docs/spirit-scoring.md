@@ -69,7 +69,6 @@ Use the exact type names from [configuration-flags.md](/home/kari/code/ultiorgan
 
 - Edit a submitted spirit score.
 - Delete a submitted spirit score explicitly.
-- Mark a score as not applicable if the workflow needs that distinction.
 - Review missing submissions by game, pool, and division.
 
 ## Current Repository Behavior
@@ -81,6 +80,7 @@ This section describes what the repository does today.
 - `spiritmode` is the top-level event switch that enables or disables spirit scoring for a season.
 - Detailed spirit settings are edited in `admin/spiritsettings.php`, linked from `admin/spirit.php`.
 - The admin `Spirit` menu entry is shown only for events where `spiritmode > 0`.
+- There is a dedicated `spiritadmin:<seasonId>` role for spirit-specific tooling and review. It is intentionally narrower than season admin and does not grant broader event administration rights.
 - `admin/spirit.php` contains spirit review tools, missing-score searches, comment search, and SOTG token utilities.
 - Spirit timeout recording is enabled only when `spiritmode > 0`.
 - Spirit timeout entry is additionally blocked when `hide_time_on_scoresheet` is enabled for the season.
@@ -118,11 +118,17 @@ This section describes what the repository does today.
 - `user/addspirit.php` exposes the delete action as an admin-only button next to each existing submitted spirit score.
 - Spirit comment create/update/delete uses the same shared lock through `CanCreateSpiritComment()` and `CanManageSpiritComment()`.
 
+### Submission state semantics
+
+- Presence of the required `uo_spirit_score` rows is the submission state for a game/team.
+- A score of all zeroes is still a valid completed submission if all required category rows exist.
+- If a game/team has no `uo_spirit_score` rows, that means there is no spirit submission for that game/team.
+- There is no separate `N/A` state in the current model, and none is planned.
+- Admin deletion removes the `uo_spirit_score` rows and returns the game/team to the same "no submission" state.
+
 ### Important current gaps
 
-- There is a dedicated `spiritadmin:<seasonId>` role for spirit tooling and review, but it intentionally does not include broad season-admin access.
 - The repository does not contain an event-level setting for "opponent can see received scores/comments after submitting own score", and the token-based self-service flow does not enforce that reveal rule.
-- There is no explicit `N/A` state for spirit submissions.
 
 ## Remaining implementation gaps
 
@@ -132,18 +138,3 @@ This section describes what the repository does today.
 - Add an `EVENT_SETTING` for whether teams may see received spirit scores/comments only after they submit their own score.
 - Centralize that rule in shared spirit/comment visibility helpers so browser views, exports, and APIs follow the same behavior.
 - Make token-based submission use the same completion, lock, and visibility rules already used by logged-in users.
-
-### 2. Explicit `N/A` handling
-
-- Do not infer deletion from zero values; all-zero submissions must remain valid completed submissions.
-- If the event workflow needs it, add a distinct `N/A` state and decide whether it belongs in `uo_spirit_score`, a small side table, or a game/team metadata field before implementing UI.
-
-## Notes For Future Changes
-
-- Prefer `EVENT_SETTING` over `INSTALLATION_SETTING` for spirit visibility rules unless the whole installation truly shares one policy.
-- Treat changes to `showspiritcomments` as event-level configuration work in season admin flows.
-- If WFDF behavior is the target, apply the "both teams submitted" rule consistently to:
-  game-level views,
-  pool/division/team averages,
-  CSV exports,
-  and any public comments display.

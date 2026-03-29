@@ -336,8 +336,9 @@ $html .= "/></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Spirit mode") . ": </td><td>";
 $spiritmodes = SpiritModes();
+$spiritModeDisabledSelected = ((int)$sp['spiritmode'] === 0) ? " selected='selected'" : "";
 $html .= "<select class='dropdown' id='spiritmode' name='spiritmode'>\n";
-$html .= "<option value='0'></option>\n";
+$html .= "<option value='0'" . $spiritModeDisabledSelected . ">" . utf8entities(SpiritModeDisabledName()) . "</option>\n";
 foreach ($spiritmodes as $mode) {
 	$selected =  ($sp['spiritmode'] == $mode['mode']) ? " selected='selected'" : "";
 	$html .= "<option $selected value='" . utf8entities($mode['mode']) . "'>" . utf8entities(_($mode['name'])) . "</option>\n";
