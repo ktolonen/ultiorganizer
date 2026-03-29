@@ -120,11 +120,11 @@ $html .= "<tr><td class='infocell'>" . _("Game points") . ":</td>
 		<td><input class='input' id='gameto' name='gameto' value='" . utf8entities($pp['winningscore']) . "'/></td>
 		<td></td></tr>
 		
-	<tr><td class='infocell'>" . _("Half-time") . ":</td>
+	<tr><td class='infocell'>" . _("Halftime") . ":</td>
 		<td><input class='input' id='halftimelength' name='halftimelength' value='" . utf8entities($pp['halftime']) . "'/></td>
 		<td>" . _("minutes") . "</td></tr>		
 
-	<tr><td class='infocell'>" . _("Half-time at point") . ":</td>
+	<tr><td class='infocell'>" . _("Halftime at point") . ":</td>
 		<td><input class='input' id='halftimepoint' name='halftimepoint' value='" . utf8entities($pp['halftimescore']) . "'/></td>
 		<td></td></tr>		
 		
@@ -149,7 +149,7 @@ $html .= "<tr><td class='infocell'>" . _("Game points") . ":</td>
 		<td><input class='input' id='timebetweenPoints' name='timebetweenPoints' value='" . utf8entities($pp['betweenpointslen']) . "'/></td>
 		<td>" . _("seconds") . "</td></tr>
 		
-	<tr><td class='infocell'>" . _("Time-outs") . ":</td>
+	<tr><td class='infocell'>" . _("Timeouts") . ":</td>
 		<td><input class='input' id='timeouts' name='timeouts' value='" . utf8entities($pp['timeouts']) . "'/></td>
 		<td>
 		<select class='dropdown' name='timeoutsfor'>";
@@ -168,11 +168,11 @@ if ($pp['timeoutsper'] == "half") {
 
 $html .= "	</select>
 		</td></tr>
-	<tr><td class='infocell'>" . _("Time-out duration") . ":</td>
+	<tr><td class='infocell'>" . _("Timeout duration") . ":</td>
 		<td><input class='input' id='timeoutlength' name='timeoutlength' value='" . utf8entities($pp['timeoutlen']) . "'/></td>
 		<td>" . _("seconds") . "</td></tr>
 
-	<tr><td class='infocell'>" . _("Time-outs on overtime") . ":</td>
+	<tr><td class='infocell'>" . _("Timeouts on overtime") . ":</td>
 		<td><input class='input' id='timeoutsOnOvertime' name='timeoutsOnOvertime' value='" . utf8entities($pp['timeoutsovertime']) . "'/></td>
 		<td>" . _("per team") . "</td></tr>";
 

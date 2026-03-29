@@ -22,10 +22,10 @@ $help = "<p>" . _("Feed in the data for your game responsibilities") . ":</p>
 	<ol>
 		<li> " . _("Result") . " </li>
 		<li> " . _("Players in the game") . " </li>
-		<li> " . _("Game score sheet") . " </li>
+		<li> " . _("Game scoresheet") . " </li>
 	</ol>
 	<p>" . _("Click on Mass input to input multiple results at once, then Save") . ".</p>
-	<p>" . _("Check the game play after feeding in the score sheet") . ".</p>";
+	<p>" . _("Check the gameplay after feeding in the scoresheet") . ".</p>";
 
 $html .= onPageHelpAvailable($help);
 //content
@@ -134,7 +134,7 @@ if (count($respGameArray) == 0) {
   $html .= "\n<p>" . _("No game responsibilities") . ".</p>\n";
 } else {
   $html .= "<noscript>
-	<p><b>" . _("Feeding in the score sheet requires JavaScript. Please enable JavaScript in your browser to continue!") . "</b></p>
+	<p><b>" . _("Feeding in the scoresheet requires JavaScript. Please enable JavaScript in your browser to continue!") . "</b></p>
 	</noscript>";
 }
 
@@ -193,7 +193,7 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         $html .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>";
       }
       if (intval($game['hasstarted']) > 0) {
-        $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . _("Game play") . "</a></td>";
+        $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . _("Gameplay") . "</a></td>";
       } else {
         $html .= "<td></td>";
       }

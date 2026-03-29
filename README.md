@@ -31,18 +31,11 @@ To install Ultiorganizer simply copy the files to your web server, call <http://
 
 ## Development
 
-For local development setup, see `docs/local-development.md`.
-
-Useful follow-up pages:
-
-* `docs/local-development.md`
-* `docs/translations.md`
-* `docs/database-upgrades.md`
-* `docs/configuration-flags.md`
+Project documentation is indexed in `docs/README.md`.
 
 ## HTTP API
 
-For API structure, documentation locations, and example requests, see `docs/api.md`.
+Project documentation, including API notes, is indexed in `docs/README.md`.
 
 ## Credits
 

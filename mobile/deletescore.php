@@ -48,7 +48,7 @@ if (count($scores) > 0) {
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='delete' value='" . _("Delete") . "'/>";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to score sheet") . "</a>";
+$html .= "<a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to scoresheet") . "</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>";

@@ -10,7 +10,7 @@ security=superadmin
 customization=all
 
 [DESCRIPTION]
-title = "Game play simulator"
+title = "Gameplay simulator"
 description = "Automatically plays all games selected."
 -->
 <?php

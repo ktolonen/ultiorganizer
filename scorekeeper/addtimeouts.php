@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/auth.php';
+
 $html = "";
 $maxtimeouts = 4;
 
@@ -7,6 +8,8 @@ $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
 $_SESSION['game'] = $gameId;
 
 $game_result = GameResult($gameId);
+$seasoninfo = SeasonInfo(GameSeason($gameId));
+$allowSpiritTimeouts = !empty($seasoninfo['spiritmode']) && empty($seasoninfo['hide_time_on_scoresheet']);
 
 if (isset($_POST['save'])) {
   $time = "0.0";
@@ -45,7 +48,7 @@ if (isset($_POST['save'])) {
 }
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . _("Time-outs") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
+$html .= "<h1>" . _("Timeouts") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
@@ -54,7 +57,7 @@ $html .= "<div data-role='content'>\n";
 $html .= "<form action='?view=addtimeouts' method='post' data-ajax='false'>\n";
 
 
-$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("time outs") . " (" . _("min") . ":" . _("sec") . "):</label>";
+$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("timeouts") . " (" . _("min") . ":" . _("sec") . "):</label>";
 $html .= "<div class='timeout-list'>";
 
 //used timeouts
@@ -134,7 +137,7 @@ for ($j; $j < $maxtimeouts; $j++) {
 }
 $html .= "</div>";
 
-$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("time outs") . " (" . _("min") . ":" . _("sec") . "):</label>";
+$html .= "<label for='timemm0' class='select'><b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("timeouts") . " (" . _("min") . ":" . _("sec") . "):</label>";
 $html .= "<div class='timeout-list'>";
 
 //used timeouts
@@ -211,8 +214,12 @@ for ($j; $j < $maxtimeouts; $j++) {
 }
 $html .= "</div>";
 
+if ($allowSpiritTimeouts) {
+  $html .= "<a href='?view=addspirittimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Spirit timeouts") . "</a>";
+}
+
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
-$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
+$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to scoresheet") . "</a>";
 
 
 $html .= "</form>";

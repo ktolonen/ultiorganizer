@@ -1281,7 +1281,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFont('Arial','B',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(52,5,_("Time-outs (min:sec)"),'LRTB',1,'C',true);
+		$this->Cell(52,5,_("Timeouts (min:sec)"),'LRTB',1,'C',true);
     $this->SetX($curX);
 		
 		//home grids
@@ -1317,7 +1317,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFont('Arial','B',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(80,5,_("Spirit Time-outs (min:sec)"),'LRTB',0,'C',true);
+		$this->Cell(80,5,_("Spirit timeouts (min:sec)"),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetX($curX);
 
@@ -1356,7 +1356,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFillColor(255);
 		$this->Cell(12,5,"",'R',0,'C',true);
 		$this->SetFillColor(230);
-		$this->CellFitScale(40,5,_("Time-outs"),'LRT',0,'C',true);
+		$this->CellFitScale(40,5,_("Timeouts"),'LRT',0,'C',true);
 		$this->SetFillColor(255);
 		//$this->Cell(1,5,"",'LR',0,'C',true);
 		$this->SetFillColor(230);
@@ -1376,7 +1376,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFillColor(255);
 		//$this->Cell(1,5,"",'LR',0,'C',true);
 		$this->SetFillColor(230);
-		$this->CellFitScale(20,5,_("Time-outs"),'LRB',1,'C',true);
+		$this->CellFitScale(20,5,_("Timeouts"),'LRB',1,'C',true);
 		//$this->Ln(1);
 
 		//home grids
@@ -1426,11 +1426,11 @@ class PDF extends tFPDF_CellFit
 		$this->SetFillColor(255);
 		$this->Cell(12,6,"",'R',0,'C',true);
 		$this->SetFillColor(230);
-		$this->CellFitScale(20,6,_("Time-outs"),'LRTB',0,'C',true);
+		$this->CellFitScale(20,6,_("Timeouts"),'LRTB',0,'C',true);
 		$this->SetFillColor(0);
     $this->Cell(0.5,6,"",'LRTB',0,'C',true); // separator
 		$this->SetFillColor(230);
-		$this->CellFitScale(40,6,_("Spirit Time-outs"),'LRTB',1,'C',true);
+		$this->CellFitScale(40,6,_("Spirit timeouts"),'LRTB',1,'C',true);
 
 		//home grids
     $this->SetX($curX);
@@ -1485,7 +1485,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFont('Arial','B',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(50,5,_("Half time score"),'LRTB',0,'C',true);
+		$this->Cell(50,5,_("Halftime score"),'LRTB',0,'C',true);
 		$this->Ln();
 
 		$this->SetFillColor(255);
@@ -1612,7 +1612,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
 		$this->Cell(30,5,_("Team"),'LRTB',0,'C',true);
-		$this->CellFitScale(18,5,_("Half time score"),'LRTB',0,'C',true);
+		$this->CellFitScale(18,5,_("Halftime score"),'LRTB',0,'C',true);
 		$this->SetFont('Arial','B',10);
 		$this->CellFitScale(18,5,_("Final Score"),'LRTB',0,'C',true);
 		$this->CellFitScale(40,5,_("Captains' signatures"),'LRTB',0,'C',true);
@@ -1776,7 +1776,7 @@ class PDF extends tFPDF_CellFit
 		$this->MultiCell(100,4,pdf_utf8_text($data),0,'L',true);
 		$this->Ln(3);
 			
-		$data = "5. "._("At half time, write the game time when it happened as well as the current game score. Game time does not stop at half time.");
+		$data = "5. "._("At halftime, write the game time when it happened as well as the current game score. Game time does not stop at halftime.");
 		$this->SetX(100);
 		$this->MultiCell(100,4,pdf_utf8_text($data),0,'L',true);
 		$this->Ln(3);
@@ -1786,7 +1786,7 @@ class PDF extends tFPDF_CellFit
 		$this->MultiCell(100,4,pdf_utf8_text($data),0,'L',true);
 		$this->Ln(3);
 		
-		$data = "7. "._("Time-outs: write the game time when it was called. Game time does not stop during time-outs.");
+		$data = "7. "._("Timeouts: write the game time when it was called. Game time does not stop during timeouts.");
 		$this->SetX(100);
 		$this->MultiCell(100,4,pdf_utf8_text($data),0,'L',true);
 		$this->Ln(3);

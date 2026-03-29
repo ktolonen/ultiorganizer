@@ -74,12 +74,13 @@ class PDF extends tFPDF
 		$this->Timeouts();
 		$this->Ln();
 
-		$this->OneCellTable(pdf_iso_text(_("Half time ends (time)")), "");
+		$this->OneCellTable(pdf_iso_text(_("Halftime ends (time)")), "");
 		$this->Ln();
 
-		$this->Ln();
 		$this->FinalScoreTable();
 		$this->Ln();
+
+		$this->SpiritTimeouts();
 
 		$this->Signatures();
 		$this->Ln();
@@ -829,7 +830,7 @@ class PDF extends tFPDF
 		$this->SetFont('Arial', 'B', 12);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(80, 6, pdf_iso_text(_("Time-outs (time)")), 'LRTB', 0, 'C', true);
+		$this->Cell(80, 6, pdf_iso_text(_("Timeouts (time)")), 'LRTB', 0, 'C', true);
 		$this->Ln();
 
 		$this->SetFont('Arial', '', 12);
@@ -852,6 +853,39 @@ class PDF extends tFPDF
 
 		for ($i = 0; $i < 4; $i++) {
 			$this->Cell(15, 6, "", 'LRTB', 0, 'L', true);
+		}
+		$this->Ln();
+	}
+
+	function SpiritTimeouts()
+	{
+		//header
+		$this->SetFont('Arial', 'B', 12);
+		$this->SetTextColor(0);
+		$this->SetFillColor(230);
+		$this->Cell(80, 6, pdf_iso_text(_("Spirit timeouts (time)")), 'LRTB', 0, 'C', true);
+		$this->Ln();
+
+		$this->SetFont('Arial', '', 12);
+
+		//home grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20, 6, pdf_iso_text(_("Home")), 'LRTB', 0, 'L', true);
+
+		for ($i = 0; $i < 2; $i++) {
+			$this->Cell(30, 6, "", 'LRTB', 0, 'L', true);
+		}
+
+		$this->Ln();
+
+		//visitor grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20, 6, pdf_iso_text(_("Away")), 'LRTB', 0, 'L', true);
+
+		for ($i = 0; $i < 2; $i++) {
+			$this->Cell(30, 6, "", 'LRTB', 0, 'L', true);
 		}
 		$this->Ln();
 	}
@@ -915,7 +949,6 @@ class PDF extends tFPDF
 	}
 	function Signatures()
 	{
-		$this->Ln();
 		$this->Ln();
 		//header
 		$this->SetFont('Arial', 'B', 12);
@@ -1006,9 +1039,6 @@ class PDF extends tFPDF
 		}
 		$this->Cell(38, 6, $this->game['visitorteamname'], 'RTB', 0, 'C', true);
 
-		$this->SetFont('Arial', 'B', 12);
-		$this->Ln();
-		$this->Cell(80, 6, "-", 'LRTB', 0, 'C', true);
 		$this->Ln();
 	}
 

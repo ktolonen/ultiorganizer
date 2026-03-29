@@ -44,7 +44,7 @@ if ($show_comment_form) {
 	$html .= "<p class='warning'>" . _("Insufficient rights to edit comment.") . "</p>\n";
 }
 $html .= "</form>";
-$html .= "<p><a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to score sheet") . "</a></p>";
+$html .= "<p><a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to scoresheet") . "</a></p>";
 
 echo $html;
 

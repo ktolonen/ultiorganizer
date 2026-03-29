@@ -28,6 +28,8 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - Avoid touching `conf/` unless required.
 - Keep edits ASCII unless the file already uses Unicode.
 - If making UI changes, verify both desktop and mobile layouts.
+- When adding a new markdown document under `docs/`, also add it to the topic lists in both `AGENTS.md` and `docs/README.md`.
+- Keep the root `README.md` pointing to `docs/README.md` as the documentation index instead of maintaining a parallel topic list there.
 
 ## Verification
 
@@ -36,9 +38,14 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 
 ## Topic docs
 
+- `docs/README.md`: index of project documentation under `docs/`.
 - `docs/local-development.md`: local Docker-based setup.
 - `docs/database-upgrades.md`: schema and migration workflow.
 - `docs/configuration-flags.md`: configuration taxonomy and migration rules. Use the exact type names `SYSTEM_FLAG`, `INSTALLATION_SETTING`, and `EVENT_SETTING`.
 - `docs/api.md`: API structure, constraints, and examples.
+- `docs/routing.md`: request entry points and view resolution.
+- `docs/translations.md`: translation and gettext workflow.
+- `docs/permissions.md`: permission storage, roles, and enforcement helpers.
+- `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `docs/codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.

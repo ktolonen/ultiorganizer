@@ -11,7 +11,7 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 
-mobilePageTop(_("Game play"));
+mobilePageTop(_("Gameplay"));
 
 $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
@@ -21,9 +21,9 @@ $html .= utf8entities($game_result['visitorteamname']);
 $html .= " " . intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']) . "</b>";
 $html .= "</td></tr><tr><td>\n";
 if (mysqli_num_rows($goals) <= 0) {
-	$html .= _("Not fed in");
+	$html .= _("No scores entered");
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=mobile/addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Feed in score sheet") . "</a>";
+	$html .=  "<a href='?view=mobile/addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a>";
 } else {
 	$html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "'>" . _("home team") . "</a> | ";
 	$html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "'>" . _("guest team") . "</a>";
@@ -35,7 +35,7 @@ if (mysqli_num_rows($goals) <= 0) {
 			(intval($game_result['halftime']) < intval($goal['time']))
 		) {
 			$html .= "</td></tr><tr><td>\n";
-			$html .= _("Half-time");
+			$html .= _("Halftime");
 		}
 
 		if (intval($goal['ishomegoal']) == 1)
@@ -51,7 +51,9 @@ if (mysqli_num_rows($goals) <= 0) {
 					(intval($event['time']) < intval($goal['time']))
 				) {
 					if ($event['type'] == "timeout")
-						$gameevent = _("time-out");
+						$gameevent = _("timeout");
+					elseif ($event['type'] == "spirit_timeout")
+						$gameevent = _("Spirit timeout");
 					elseif ($event['type'] == "turnover")
 						$gameevent = _("turnover");
 					elseif ($event['type'] == "offence")
@@ -93,7 +95,7 @@ if (mysqli_num_rows($goals) <= 0) {
 $html .= "</td></tr><tr><td>\n";
 $html .= "<a href='?view=mobile/respgames'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</td></tr><tr><td>\n";
-$html .=  "<a href='?view=gameplay&amp;game=" . $gameId . "'>" . _("Desktop score sheet") . "</a>";
+$html .=  "<a href='?view=gameplay&amp;game=" . $gameId . "'>" . _("Desktop gameplay") . "</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 

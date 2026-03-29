@@ -490,10 +490,18 @@ function GameEvents($gameId)
 {
 	$query = sprintf(
 		"SELECT time,ishome,type 
-		FROM (SELECT time,ishome,'timeout' AS type FROM `uo_timeout` 
-			WHERE game='%s' UNION ALL SELECT time,ishome,type FROM uo_gameevent WHERE game='%s') AS tapahtuma 
+		FROM (
+			SELECT time,ishome,'timeout' AS type FROM `uo_timeout`
+				WHERE game='%s'
+			UNION ALL
+			SELECT time,ishome,'spirit_timeout' AS type FROM `uo_spirit_timeout`
+				WHERE game='%s'
+			UNION ALL
+			SELECT time,ishome,type FROM uo_gameevent WHERE game='%s'
+		) AS tapahtuma 
 		WHERE type!='media'
 		ORDER BY time ",
+		DBEscapeString($gameId),
 		DBEscapeString($gameId),
 		DBEscapeString($gameId)
 	);
@@ -565,6 +573,25 @@ function GameTimeouts($gameId)
 function GameTimeoutsArray($gameId)
 {
 	$result = GameTimeouts($gameId);
+	return DBResourceToArray($result);
+}
+
+function GameSpiritTimeouts($gameId)
+{
+	$query = sprintf(
+		"SELECT num,time,ishome
+		FROM uo_spirit_timeout
+		WHERE game='%s'
+		ORDER BY time",
+		DBEscapeString($gameId)
+	);
+
+	return DBQuery($query);
+}
+
+function GameSpiritTimeoutsArray($gameId)
+{
+	$result = GameSpiritTimeouts($gameId);
 	return DBResourceToArray($result);
 }
 
@@ -1013,6 +1040,44 @@ function GameAddTimeout($gameId, $number, $time, $home)
 		$query = sprintf(
 			"INSERT INTO uo_timeout 
 			(game, num, time, ishome) 
+			VALUES ('%s', '%s', '%s', '%s')",
+			DBEscapeString($gameId),
+			DBEscapeString($number),
+			DBEscapeString($time),
+			DBEscapeString($home)
+		);
+
+		$result = DBQuery($query);
+
+		return $result;
+	} else {
+		die('Insufficient rights to edit game');
+	}
+}
+
+function GameRemoveAllSpiritTimeouts($gameId)
+{
+	if (hasEditGameEventsRight($gameId)) {
+		$query = sprintf(
+			"DELETE FROM uo_spirit_timeout
+			WHERE game='%s'",
+			DBEscapeString($gameId)
+		);
+
+		$result = DBQuery($query);
+
+		return $result;
+	} else {
+		die('Insufficient rights to edit game');
+	}
+}
+
+function GameAddSpiritTimeout($gameId, $number, $time, $home)
+{
+	if (hasEditGameEventsRight($gameId)) {
+		$query = sprintf(
+			"INSERT INTO uo_spirit_timeout
+			(game, num, time, ishome)
 			VALUES ('%s', '%s', '%s', '%s')",
 			DBEscapeString($gameId),
 			DBEscapeString($number),

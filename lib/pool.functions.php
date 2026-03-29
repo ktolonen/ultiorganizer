@@ -2317,7 +2317,7 @@ function CanDeleteTeamFromPool($poolId, $teamId)
  * @param int $home - home team id
  * @param int $away - away team id
  * @param boolean $psudoteams - true if scheduling ids used instead of team ids
- * @param boolean $homeresp - true if home team is responsible of game's score sheet
+ * @param boolean $homeresp - true if home team is responsible for the game's scoresheet
  */
 function PoolAddGame($poolId, $home, $away, $psudoteams = false, $homeresp = false)
 {
@@ -2551,7 +2551,7 @@ function GeneratePlayoffPools($poolId, $generate = true)
  * @param int $rounds - how many rounds f.ex. in Round Robin pool
  * @param boolean $generate - true if games are created
  * @param boolean $nomutual - true when no mutual games are created in case that teams are moved from same pool.
- * @param boolean $homeresp - true if home team is responsible of score sheet.
+ * @param boolean $homeresp - true if home team is responsible for the scoresheet.
  */
 function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false, $homeresp = false)
 {

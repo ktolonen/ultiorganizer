@@ -517,6 +517,54 @@ function SpiritToolRowsBySeason($season)
 	return DBQueryToArray($query);
 }
 
+function SpiritTimeoutSummaryBySeason($season)
+{
+	$query = sprintf(
+		"SELECT
+			COUNT(*) AS total,
+			COUNT(DISTINCT st.game) AS games,
+			COALESCE(SUM(CASE WHEN st.ishome = 1 THEN 1 ELSE 0 END), 0) AS home_total,
+			COALESCE(SUM(CASE WHEN st.ishome = 0 THEN 1 ELSE 0 END), 0) AS away_total
+		FROM uo_spirit_timeout st
+		LEFT JOIN uo_game g ON (g.game_id = st.game)
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		WHERE s.season='%s'",
+		DBEscapeString($season)
+	);
+	return DBQueryToRow($query);
+}
+
+function SpiritTimeoutGameRowsBySeason($season)
+{
+	$query = sprintf(
+		"SELECT
+			g.game_id,
+			s.series_id,
+			s.name AS division,
+			p.name AS pool,
+			g.time,
+			g.homescore,
+			g.visitorscore,
+			th.name AS home,
+			tv.name AS visitor,
+			COALESCE(SUM(CASE WHEN st.ishome = 1 THEN 1 ELSE 0 END), 0) AS home_total,
+			COALESCE(SUM(CASE WHEN st.ishome = 0 THEN 1 ELSE 0 END), 0) AS away_total,
+			COUNT(*) AS total
+		FROM uo_spirit_timeout st
+		LEFT JOIN uo_game g ON (g.game_id = st.game)
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
+		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
+		WHERE s.season='%s'
+		GROUP BY g.game_id, s.series_id, s.name, p.name, g.time, g.homescore, g.visitorscore, th.name, tv.name
+		ORDER BY s.name ASC, p.ordering ASC, g.time ASC, g.game_id ASC",
+		DBEscapeString($season)
+	);
+	return DBQueryToArray($query);
+}
+
 function SpiritToCsv($season, $separator)
 {
 	$seasoninfo = SeasonInfo($season);

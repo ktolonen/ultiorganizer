@@ -9,7 +9,7 @@ $gameId = intval(iget("game"));
 
 $game_result = GameResult($gameId);
 if (!$game_result) {
-  $title = _("Game play");
+  $title = _("Gameplay");
   $html .= "<h1>" . _("Game not found") . "</h1>";
   showPage($title, $html);
   return;
@@ -19,7 +19,7 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $homecaptain = GameCaptain($gameId, $game_result['hometeam']);
 $awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
 
-$title = _("Game play") . ": " . utf8entities($game_result['hometeamname']) . " vs. " . utf8entities($game_result['visitorteamname']);
+$title = _("Gameplay") . ": " . utf8entities($game_result['hometeamname']) . " vs. " . utf8entities($game_result['visitorteamname']);
 
 $home_team_score_board = GameTeamScoreBorad($gameId, $game_result['hometeam']);
 $guest_team_score_board = GameTeamScoreBorad($gameId, $game_result['visitorteam']);
@@ -44,8 +44,8 @@ if (GameHasStarted($game_result) > 0) {
   $html .= "</h1>\n";
 
   if(DBNumRows($goals) <= 0){
-    $html .= "<h2>" . _("Not fed in") . "</h2>
-			  <p>" . _("Please check the status again later") . "</p>";
+    $html .= "<h2>" . _("No scores entered") . "</h2>
+			  <p>" . _("Please check the status again later.") . "</p>";
   } else {
 
     //score board
@@ -189,7 +189,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "<th>" . _("Time") . "</th><th>" . _("Dur.") . "</th>";
     }
     if (count($gameevents) || count($mediaevents)) {
-      $html .= "<th>" . _("Game events ") . "</th>";
+      $html .= "<th>" . _("Game events") . "</th>";
     }
     $html .= "</tr>\n";
     $goalTableColspan = $hideTimeOnScoresheet ? 3 : 5;
@@ -203,7 +203,7 @@ if (GameHasStarted($game_result) > 0) {
     mysqli_data_seek($goals, 0);
     while ($goal = mysqli_fetch_assoc($goals)) {
       if (!$bHt && $game_result['halftime'] > 0 && $goal['time'] > $game_result['halftime']) {
-        $html .= "<tr><td colspan='" . $goalTableColspan . "' class='halftime'>" . _("Half-time") . "</td></tr>";
+        $html .= "<tr><td colspan='" . $goalTableColspan . "' class='halftime'>" . _("Halftime") . "</td></tr>";
         $bHt = 1;
         $prevgoal = intval($game_result['halftime']);
       }
@@ -244,7 +244,9 @@ if (GameHasStarted($game_result) > 0) {
             (intval($event['time']) < intval($goal['time']))
           ) {
             if ($event['type'] == "timeout") {
-              $gameevent = _("Time-out");
+              $gameevent = _("Timeout");
+            } elseif ($event['type'] == "spirit_timeout") {
+              $gameevent = _("Spirit timeout");
             } elseif ($event['type'] == "turnover") {
               $gameevent = _("Turnover");
             } elseif ($event['type'] == "offence") {
@@ -532,7 +534,7 @@ if (GameHasStarted($game_result) > 0) {
 			<td class='home'>" . $nHBreaks . "</td>
 			<td class='guest'>" . $nVBreaks . "</td></tr>";
 
-      $html .= "<tr><td>" . _("Time-outs") . ":</td>
+      $html .= "<tr><td>" . _("Timeouts") . ":</td>
 			<td class='home'>" . $nHTO . "</td>
 			<td class='guest'>" . $nVTO . "</td></tr>";
 

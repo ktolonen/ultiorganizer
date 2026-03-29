@@ -577,7 +577,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
       if (!intval($game['isongoing'])) {
         if (intval($game['scoresheet'])) {
           $ret .= "<td class='right nowrap' style='$infow'><span>&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
-          $ret .= _("Game play") . "</a></span></td>\n";
+          $ret .= _("Gameplay") . "</a></span></td>\n";
         } else {
           $ret .= "<td class='left' style='$infow'></td>\n";
         }

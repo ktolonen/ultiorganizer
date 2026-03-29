@@ -34,7 +34,7 @@ while ($row = mysqli_fetch_assoc($team_score_board)) {
 }
 $html .= "</tbody>\n";
 $html .= "</table>\n";
-$html .= "<a href='?view=gameplay&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to game sheet") . "</a>";
+$html .= "<a href='?view=gameplay&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to gameplay") . "</a>";
 
 $html .= "</div><!-- /content -->\n\n";
 

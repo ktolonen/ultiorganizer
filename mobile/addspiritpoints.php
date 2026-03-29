@@ -151,7 +151,7 @@ if ($season['spiritmode'] > 0) {
     $html .= "<span class='warning'>" . _("Read-only spirit review") . "</span>";
   }
   $html .= "</p>";
-  $html .= "<p><a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to score sheet") . "</a></p>";
+  $html .= "<p><a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to scoresheet") . "</a></p>";
   $html .= "</form>\n";
 } else {
   $html .= "<p>" . sprintf(_("Spirit points not given for %s."), utf8entities($season['name'])) . "</p>";

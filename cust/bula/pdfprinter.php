@@ -75,7 +75,10 @@ class PDF extends tFPDF
 		$this->Timeouts();
 		$this->Ln();
 
-		$this->OneCellTable($this->pdfText(_("Half time ends")), "");
+		$this->SpiritTimeouts();
+		$this->Ln();
+
+		$this->OneCellTable($this->pdfText(_("Halftime ends")), "");
 		$this->Ln();
 		$this->SpiritPoints();
 		$this->Ln();
@@ -221,9 +224,9 @@ class PDF extends tFPDF
 		$data .= "1. "._("Officials fill in their names.")."<br>";
 		$data .= "2. "._("Captains confirm roster by crossing out injured players, and adjusting jersey numbers if necessary.")."<br>";
 		$data .= "3. "._("After the toss, officials check the team that will start on offence.")."<br>";
-		$data .= "4. "._("When half time starts, fill in time it ends (the second half start time).")."<br>";
+		$data .= "4. "._("When halftime starts, fill in time it ends (the second-half start time).")."<br>";
 		$data .= "5. "._("During the game, fill in which team has scored, the jersey numbers of the player who threw the goal (Assist) and the player who caught the goal (Goal), the time that the goal was scored, and the scoreline after the goal. If a player scores an intercept goal (Callahan), then mark XX as assist.")."<br>";
-		$data .= "6. "._("When a team takes a time-out, mark the time in the \"Time-outs\" section.")."<br>";
+		$data .= "6. "._("When a team takes a timeout, mark the time in the \"Timeouts\" section.")."<br>";
 		$data .= "7. "._("After the game, each captain signs the scoresheet to confirm the final score.")."<br>";
 		$data .= "8. "._("Officials return the completed scoresheet to the results headquarters.");
 		$data = $this->pdfText($data);
@@ -878,12 +881,12 @@ class PDF extends tFPDF
 		}
 		
 	function Timeouts()
-		{
+	{
 		//header
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,$this->pdfText(_("Time-outs")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Timeouts")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids
@@ -910,6 +913,39 @@ class PDF extends tFPDF
 		$this->Ln();	
 		}
 
+	function SpiritTimeouts()
+		{
+		//header
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(255);
+		$this->SetFillColor(0,102,153);
+		$this->Cell(80,6,$this->pdfText(_("Spirit timeouts")),'LRTB',0,'C',true);
+		$this->Ln();
+
+		//home grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20,6,$this->pdfText(_("Home")),'LRTB',0,'L',true);
+
+		for($i=0;$i<4;$i++)
+			{
+			$this->Cell(15,6,"",'LRTB',0,'L',true);
+			}
+
+		$this->Ln();
+
+		//visitor grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20,6,$this->pdfText(_("Away")),'LRTB',0,'L',true);
+
+		for($i=0;$i<4;$i++)
+			{
+			$this->Cell(15,6,"",'LRTB',0,'L',true);
+			}
+		$this->Ln();	
+		}
+		
 	function FirstOffence()
 		{
 		//header

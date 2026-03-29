@@ -276,8 +276,11 @@ if (empty($errors)) {
 $html .= "<h3>" . _("Additional game data") . "</h3>";
   $html .= "<div class='action-row action-row--even'>\n";
   if (!$hideTimeOnScoresheet) {
-    $html .= "<a href='?view=addtimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Time-outs") . "</a>";
-    $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Half time") . "</a>";
+    $html .= "<a href='?view=addtimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Timeouts") . "</a>";
+    if (intval($seasoninfo['spiritmode']) > 0) {
+      $html .= "<a href='?view=addspirittimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Spirit timeouts") . "</a>";
+    }
+    $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Halftime") . "</a>";
   }
   $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
   $html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game official") . "</a>";

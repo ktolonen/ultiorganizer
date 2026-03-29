@@ -166,12 +166,12 @@ if (GameHasStarted($info)) {
 echo "<table>";
 echo "<tr><td><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Change game result") . "</a></td></tr>";
 echo "<tr><td><a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Change game roster") . "</a></td></tr>";
-echo "<tr><td><a href='?view=user/addscoresheet&amp;game=" . $gameId . "'>" . _("Change game score sheet") . " </a></td></tr>";
+echo "<tr><td><a href='?view=user/addscoresheet&amp;game=" . $gameId . "'>" . _("Change game scoresheet") . " </a></td></tr>";
 if (ShowDefenseStats()) {
 	echo "<tr><td><a href='?view=user/adddefensesheet&amp;game=" . $gameId . "'>" . _("Change game defense sheet") . " </a></td></tr>";
 }
 
-echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=" . $gameId . "' target='_blank' rel='noopener'>" . _("Print score sheet") . " </a></td></tr>";
+echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=" . $gameId . "' target='_blank' rel='noopener'>" . _("Print scoresheet") . " </a></td></tr>";
 echo "<tr><td><a href='?view=user/addmedialink&amp;game=$gameId'>" . _("Add media") . "</a></td></tr>";
 echo "</table>\n";
 

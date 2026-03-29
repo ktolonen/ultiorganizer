@@ -205,8 +205,11 @@ if (!$errors) {
 	$html .= "<input class='button' type='submit' name='add' value='" . _("Save goal") . "'/>";
 	$html .= "</td></tr><tr><td>\n";
 	if (!$hideTimeOnScoresheet) {
-		$html .=  "<a href='?view=mobile/addtimeouts&amp;game=" . $gameId . "'>" . _("Time-outs") . "</a> | ";
-		$html .=  "<a href='?view=mobile/addhalftime&amp;game=" . $gameId . "'>" . _("Half time") . "</a>";
+		$html .=  "<a href='?view=mobile/addtimeouts&amp;game=" . $gameId . "'>" . _("Timeouts") . "</a> | ";
+		if (intval($seasoninfo['spiritmode']) > 0) {
+			$html .=  "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit timeouts") . "</a> | ";
+		}
+		$html .=  "<a href='?view=mobile/addhalftime&amp;game=" . $gameId . "'>" . _("Halftime") . "</a>";
 		$html .= "</td></tr><tr><td>\n";
 	}
 	$html .=  "<a href='?view=mobile/addfirstoffence&amp;game=" . $gameId . "'>" . _("First offence") . "</a> | ";

@@ -56,7 +56,7 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 //content
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
-$menutabs[_("Score sheet")] = "?view=user/addscoresheet&game=$gameId";
+$menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
 	$spiritUrl = SpiritEntryUrl($gameId);
 	if (!empty($spiritUrl)) {
@@ -122,7 +122,7 @@ if (!empty($_POST['save'])) {
 			$time = str_replace($time_delim, ".", $time);
 			$time = TimeToSec($time);
 			if (!empty($team) && $time == $htime) {
-				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same as half-time ending") . "!</p>";
+				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same as halftime ending") . "!</p>";
 				$errIds[] = "time$i";
 			}
 
@@ -172,7 +172,7 @@ if (!empty($_POST['save'])) {
 	GameSetDefenses($gameId, $h, $a);
 	echo "<p>" . _("Defense sheet saved") . " (" . _("Time") . ": " . DefTimestamp() . ")!</p>";
 	// The defenseplay.php needs to be created
-	//echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Game play")."</a>";
+	//echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Gameplay")."</a>";
 }
 $game_result = GameResult($gameId);
 $place = ReservationInfo($game_result['reservation']);
@@ -182,17 +182,17 @@ $home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
 $away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
 if (count($home_playerlist) == 0) {
-	echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['hometeamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Feed in the players in the game.") . "</a></p>";
+	echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['hometeamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Enter the players for this game.") . "</a></p>";
 }
 if (count($away_playerlist) == 0) {
-	echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['visitorteamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Feed in the players in the game.") . "</a></p>";
+	echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['visitorteamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Enter the players for this game.") . "</a></p>";
 }
 
 
 echo "<form id='defensesheet' action='?view=user/adddefensesheet&amp;game=$gameId' method='post'>";
 echo "<table cellspacing='5' cellpadding='5'>";
 
-echo "<tr><td colspan='2'><h1>" . _("Defense score sheet") . " #$gameId</h1></td></tr>";
+echo "<tr><td colspan='2'><h1>" . _("Defense scoresheet") . " #$gameId</h1></td></tr>";
 echo "<tr><td valign='top'>\n";
 
 //team, place, time info and scoresheet keeper's name
@@ -231,7 +231,7 @@ echo "</table>\n";
 if (!$hideTimeOnScoresheet) {
 	//timeouts
 	echo "<table cellspacing='0' width='100%' border='1'>";
-	echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Time-outs") . "</th></tr>\n";
+	echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Timeouts") . "</th></tr>\n";
 
 	echo "<tr><th>" . _("Home") . "</th>\n";
 
@@ -281,7 +281,7 @@ if (!$hideTimeOnScoresheet) {
 
 	//halftime
 	echo "<table cellspacing='0' width='100%' border='1'>\n";
-	echo "<tr><th>" . _("Half-time ended at") . "</th></tr>";
+	echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
 	echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 	maxlength='8' type='text' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
 	echo "</table>\n";
@@ -340,7 +340,7 @@ echo "</tr>";
 		<a href='javascript://' onclick=\"eraseLast()\">"._("Delete the last defense")."</a></td></tr>";*/
 
 echo "<tr><td colspan='2'>
-<p>" . _("Feed in the scoresheet") . ":</p>
+<p>" . _("Fill in the scoresheet") . ":</p>
 <ul>
 <li>" . _("In addition to the tab-key you can use the + key to change fields and the enter key to select a radio button.") . "</li>
 ";
@@ -349,7 +349,7 @@ if (!$hideTimeOnScoresheet) {
 }
 echo "
 <li>" . _("Input XX as the assist in Callahan goals") . ".</li>
-<li>" . _("You can save the score sheet at any time while feeding it in") . "</li></ul></td></tr>";
+<li>" . _("You can save the scoresheet at any time while entering it") . "</li></ul></td></tr>";
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>" . _("Back to game responsibilities") . "</a></p></td></tr>";
 echo "</table>\n";
 

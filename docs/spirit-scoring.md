@@ -15,6 +15,8 @@ Keep those separate when planning changes. The repository does not yet implement
 - Event creation and the top-level `spiritmode` switch are in `admin/addseasons.php`.
 - Detailed spirit settings are managed in `admin/spiritsettings.php`.
 - Spirit admin tooling and missing-score review are in `admin/spirit.php`.
+- Spirit-timeout entry uses `user/addscoresheet.php`, `mobile/addspirittimeouts.php`, and `scorekeeper/addspirittimeouts.php`.
+- Printable field sheets are generated through `user/pdfscoresheet.php` and include a dedicated spirit-timeout area on the scoresheet PDF layouts.
 
 ## Data model and comment types
 
@@ -22,6 +24,7 @@ Keep those separate when planning changes. The repository does not yet implement
 - Game-level public spirit visibility is cached in `uo_game.show_spirit`.
 - Spirit category definitions are stored in `uo_spirit_category`.
 - Cached team averages are stored in `uo_team_spirit_stats`.
+- Spirit timeout rows are stored in `uo_spirit_timeout`.
 - Spirit comments are stored in `uo_comment` and handled in `lib/comment.functions.php`.
 - `COMMENT_TYPE_SPIRIT_HOME` is `5`.
 - `COMMENT_TYPE_SPIRIT_VISITOR` is `6`.
@@ -79,6 +82,19 @@ This section describes what the repository does today.
 - Detailed spirit settings are edited in `admin/spiritsettings.php`, linked from `admin/spirit.php`.
 - The admin `Spirit` menu entry is shown only for events where `spiritmode > 0`.
 - `admin/spirit.php` contains spirit review tools, missing-score searches, comment search, and SOTG token utilities.
+- Spirit timeout recording is enabled only when `spiritmode > 0`.
+- Spirit timeout entry is additionally blocked when `hide_time_on_scoresheet` is enabled for the season.
+
+### Spirit timeout behavior
+
+- Spirit timeouts are stored separately from ordinary timeouts in `uo_spirit_timeout`.
+- Each spirit-timeout row stores the game, team ownership, sequence number, and timestamp in seconds.
+- Spirit timeouts are edited from timeout-oriented score-sheet surfaces, but mobile and scorekeeper now use separate spirit-timeout pages.
+- Desktop bulk score-sheet editing in `user/addscoresheet.php` replaces all existing spirit-timeout rows for the game on save, then re-inserts the submitted rows.
+- `mobile/addspirittimeouts.php` and `scorekeeper/addspirittimeouts.php` save spirit timeouts independently from ordinary timeout pages, using the same replace-on-save model.
+- The data model does not enforce a hard maximum, but the current entry UIs and printable scoresheets provide four spirit-timeout slots per team.
+- `GameEvents()` exposes spirit timeouts as event type `spirit_timeout`, and gameplay replays label them `Spirit timeout`.
+- `admin/spirit.php` includes season-scoped spirit-timeout summary counts and links to games where spirit timeouts were recorded.
 
 ### Score visibility
 
@@ -107,7 +123,6 @@ This section describes what the repository does today.
 - There is a dedicated `spiritadmin:<seasonId>` role for spirit tooling and review, but it intentionally does not include broad season-admin access.
 - The repository does not contain an event-level setting for "opponent can see received scores/comments after submitting own score", and the token-based self-service flow does not enforce that reveal rule.
 - There is no explicit `N/A` state for spirit submissions.
-- There is no spirit-timeout data model, admin UI, entry UI, or reporting flow in this repository.
 
 ## Remaining implementation gaps
 
@@ -122,12 +137,6 @@ This section describes what the repository does today.
 
 - Do not infer deletion from zero values; all-zero submissions must remain valid completed submissions.
 - If the event workflow needs it, add a distinct `N/A` state and decide whether it belongs in `uo_spirit_score`, a small side table, or a game/team metadata field before implementing UI.
-
-### 3. Spirit timeout support
-
-- Confirm the exact event workflow first: per-team count only, timestamped timeout events, or both.
-- Add a dedicated spirit-timeout data model in spirit-related code rather than overloading ordinary game timeout tables.
-- Add entry, admin review, and reporting surfaces only if the event uses the workflow.
 
 ## Notes For Future Changes
 

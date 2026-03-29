@@ -174,7 +174,7 @@ if (CanGenerateGames($poolId)) {
 	if ($poolInfo['type'] == "1") {
 	$html .= "<p>"._("Round Robin -type of pool")."</p>\n";
 		$html .= "<p>" . _("Game rounds") . ": <input class='input' size='2' name='rounds' value='$rounds'/></p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
@@ -190,7 +190,7 @@ if (CanGenerateGames($poolId)) {
 	} elseif ($poolInfo['type'] == "2") {
 	$html .= "<p>"._("Playoff -type of pool")."</p>\n";
 	$html .= "<p>"._("best")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("matches")."</p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
@@ -198,7 +198,7 @@ if (CanGenerateGames($poolId)) {
 	} elseif ($poolInfo['type'] == "3") {
 	$html .= "<p>"._("Swissdraw pool")."</p>\n";
 	$html .= "<p>"._("with")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("rounds")."</p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
@@ -206,7 +206,7 @@ if (CanGenerateGames($poolId)) {
 	} elseif ($poolInfo['type'] == "4") {
 	$html .= "<p>"._("Crossmatch -type of pool")."</p>\n";
 	$html .= "<p>"._("best")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("matches")."</p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
@@ -365,7 +365,7 @@ if ($totalgames > 0) {
 
 if (!$poolInfo['played']) {
 	$html .= "<h2>" . _("Creation of single game") . "</h2>\n";
-	$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+	$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
 		$html .= "checked='checked'";
 	}

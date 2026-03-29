@@ -7,14 +7,29 @@ include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'lib/location.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 
+function ScoreSheetSpiritTimeoutValues($gameId, $home, $maxslots)
+{
+  $values = array();
+  foreach (GameSpiritTimeoutsArray($gameId) as $timeout) {
+    if ((int)$timeout['ishome'] === (int)$home && count($values) < $maxslots) {
+      $values[] = SecToMin($timeout['time']);
+    }
+  }
+  for ($i = count($values); $i < $maxslots; $i++) {
+    $values[] = "";
+  }
+  return $values;
+}
+
 $gameId = intval($_GET["game"]);
 
 if (!hasEditGameEventsRight($gameId))
   die('Insufficient rights to edit game');
 
 $LAYOUT_ID = ADDSCORESHEET;
-$title = _("Feed in score sheet");
+$title = _("Fill in scoresheet");
 $maxtimeouts = 6;
+$maxspirittimeouts = 4;
 $maxscores = 41;
 $season = GameSeason($gameId);
 $seasoninfo = SeasonInfo($season);
@@ -192,7 +207,7 @@ contentStart();
 //content
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
-$menutabs[_("Score sheet")] = "?view=user/addscoresheet&game=$gameId";
+$menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
   $spiritUrl = SpiritEntryUrl($gameId);
   if (!empty($spiritUrl)) {
@@ -234,7 +249,7 @@ if (!empty($_POST['save'])) {
   }
   LogGameUpdate($gameId, "scoresheet saved", "addscoresheet");
   $time_delim = array(",", ";", ":");
-  //set score sheet keeper
+  //set scoresheet keeper
   GameSetScoreSheetKeeper($gameId, $_POST['secretary']);
 
   //set captains
@@ -290,6 +305,30 @@ if (!empty($_POST['save'])) {
         GameAddTimeout($gameId, $j, TimeToSec($time), 0);
       }
     }
+
+    if (!empty($seasoninfo['spiritmode'])) {
+      GameRemoveAllSpiritTimeouts($gameId);
+
+      $j = 0;
+      for ($i = 0; $i < $maxspirittimeouts; $i++) {
+        $time = $_POST['shto' . $i];
+        $time = str_replace($time_delim, ".", $time);
+        if (!empty($time)) {
+          $j++;
+          GameAddSpiritTimeout($gameId, $j, TimeToSec($time), 1);
+        }
+      }
+
+      $j = 0;
+      for ($i = 0; $i < $maxspirittimeouts; $i++) {
+        $time = $_POST['sato' . $i];
+        $time = str_replace($time_delim, ".", $time);
+        if (!empty($time)) {
+          $j++;
+          GameAddSpiritTimeout($gameId, $j, TimeToSec($time), 0);
+        }
+      }
+    }
   }
 
   //remove all old scores (if any)
@@ -321,7 +360,7 @@ if (!empty($_POST['save'])) {
       $time = str_replace($time_delim, ".", $time);
       $time = TimeToSec($time);
       if (!empty($team) && $time == $htime) {
-        echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time can not be the same as half-time ending") . "!</p>";
+        echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time can not be the same as halftime ending") . "!</p>";
         $errIds[] = "time$i";
       }
 
@@ -390,8 +429,8 @@ if (!empty($_POST['save'])) {
       echo "<p>" . sprintf(_("Final result saved: %s - %s."), $h, $a) . ".</p>";
     }
   }
-  echo "<p>"._("Score sheet saved")." (". _("at")." ".DefTimestamp().")!</p>";
-  echo "<a href='?view=gameplay&amp;game=$gameId'>" . _("Game play") . "</a>";
+  echo "<p>"._("Scoresheet saved")." (". _("at")." ".DefTimestamp().")!</p>";
+  echo "<a href='?view=gameplay&amp;game=$gameId'>" . _("Gameplay") . "</a>";
 }
 $game_result = GameResult($gameId);
 $place = ReservationInfo($game_result['reservation']);
@@ -409,17 +448,17 @@ if (!($visitorshortname = utf8entities(TeamAbbreviation($game_result['visitortea
 }
 
 if(count($home_playerlist)==0){
-  echo "<p class='warning'>".utf8entities($game_result['hometeamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+  echo "<p class='warning'>".utf8entities($game_result['hometeamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Enter the players for this game.")."</a></p>";
 }
 if(count($away_playerlist)==0){
-  echo "<p class='warning'>".utf8entities($game_result['visitorteamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Feed in the players in the game.")."</a></p>";
+  echo "<p class='warning'>".utf8entities($game_result['visitorteamname'])." "._("has no played players for this game.")." <a href='?view=user/addplayerlists&amp;game=".$gameId."'>"._("Enter the players for this game.")."</a></p>";
 }
 
 
 echo "<form id='scoresheet' action='?view=user/addscoresheet&amp;game=$gameId' method='post'>";
 echo "<table cellspacing='5' cellpadding='5'>";
 
-echo "<tr><td colspan='2'><h1>" . _("Game score sheet") . " #$gameId</h1></td></tr>";
+echo "<tr><td colspan='2'><h1>" . _("Game scoresheet") . " #$gameId</h1></td></tr>";
 echo "<tr><td valign='top'>\n";
 
 //team, place, time info and scoresheet keeper's name
@@ -472,7 +511,7 @@ echo "</table>\n";
 if (!$hideTimeOnScoresheet) {
   //timeouts
   echo "<table cellspacing='0' width='100%' border='1'>";
-  echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Time-outs") . "</th></tr>\n";
+  echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Timeouts") . "</th></tr>\n";
 
 echo "<tr><th>".$homeshortname."</th>\n";
 
@@ -524,7 +563,7 @@ echo "<tr><th>".$visitorshortname."</th>\n";
 
   //halftime
   echo "<table cellspacing='0' width='100%' border='1'>\n";
-  echo "<tr><th>" . _("Half-time ended at") . "</th></tr>";
+  echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
   echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 	maxlength='8' type='text' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
   echo "</table>\n";
@@ -539,6 +578,35 @@ if ($game_result['isongoing']) {
 }
 echo "<tr><td>" . $game_result['homescore'] . " - " . $game_result['visitorscore'] . "</td></tr>";
 echo "</table>\n";
+
+if (!$hideTimeOnScoresheet && !empty($seasoninfo['spiritmode'])) {
+  $homeSpiritTimeouts = ScoreSheetSpiritTimeoutValues($gameId, 1, $maxspirittimeouts);
+  $awaySpiritTimeouts = ScoreSheetSpiritTimeoutValues($gameId, 0, $maxspirittimeouts);
+
+  echo "<table cellspacing='0' width='100%' border='1'>";
+  echo "<tr><th colspan='" . ($maxspirittimeouts + 1) . "'>" . _("Spirit timeouts") . "</th></tr>\n";
+
+  echo "<tr><th>" . $homeshortname . "</th>\n";
+  for ($i = 0; $i < $maxspirittimeouts; $i++) {
+    if ($i > ($maxspirittimeouts - 3)) {
+      echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='shto$i' name='shto$i' value='" . utf8entities($homeSpiritTimeouts[$i]) . "' /></td>\n";
+    } else {
+      echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='8' maxlength='8' id='shto$i' name='shto$i' value='" . utf8entities($homeSpiritTimeouts[$i]) . "' /></td>\n";
+    }
+  }
+  echo "</tr>\n";
+
+  echo "<tr><th>" . $visitorshortname . "</th>\n";
+  for ($i = 0; $i < $maxspirittimeouts; $i++) {
+    if ($i > ($maxspirittimeouts - 3)) {
+      echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='sato$i' name='sato$i' value='" . utf8entities($awaySpiritTimeouts[$i]) . "' /></td>\n";
+    } else {
+      echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='8' maxlength='8' id='sato$i' name='sato$i' value='" . utf8entities($awaySpiritTimeouts[$i]) . "' /></td>\n";
+    }
+  }
+  echo "</tr>\n";
+  echo "</table>\n";
+}
 
 echo "<table cellspacing='0' width='100%' border='1'>\n";
 echo "<tr><th colspan='2'>" . _("Captains") . "</th></tr>";
@@ -585,12 +653,12 @@ echo "<tr><td colspan='2'>
 		<a href='javascript://' onclick=\"eraseLast()\">" . _("Delete the last goal") . "</a></td></tr>";
 
 echo "<tr><td colspan='2'>
-<p>"._("Feed in the scoresheet").":</p>
+<p>"._("Fill in the scoresheet").":</p>
 <ul>
-<li>"._("In addition of tab-key you can use + key to swap between fields and enter key to select radio button.")."</li>
+<li>"._("In addition to the Tab key, you can use the + key to move between fields and the Enter key to select a radio button.")."</li>
 <li>"._("As a separator in the time field you can use ")." .,:; "._("characters").".</li>
 <li>"._("Give XX as the assist in Callahan goals").".</li>
-<li>"._("You can save the score sheet any time while feeding it in")."</li></ul></td></tr>";
+<li>"._("You can save the scoresheet at any time while entering it")."</li></ul></td></tr>";
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>"._("Back to game responsibilities")."</a></p></td></tr>";
 echo "</table>\n";
 

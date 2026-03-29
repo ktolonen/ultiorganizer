@@ -1157,6 +1157,21 @@ function upgrade87()
 	);
 }
 
+function upgrade88()
+{
+	if (!hasTable("uo_spirit_timeout")) {
+		runQuery("CREATE TABLE `uo_spirit_timeout` (
+			`spirit_timeout_id` int(10) NOT NULL AUTO_INCREMENT,
+			`game` int(10) DEFAULT NULL,
+			`num` smallint(5) DEFAULT NULL,
+			`time` int(10) DEFAULT NULL,
+			`ishome` tinyint(1) NOT NULL,
+			PRIMARY KEY (`spirit_timeout_id`),
+			KEY `idx_game` (`game`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+}
+
 function upgradeEngineToInnoDb() {
 	$charset = 'utf8mb4';
 	$collation = 'utf8mb4_unicode_ci';
@@ -1450,6 +1465,7 @@ function findOrphanErrors()
 		"uo_goal.assist/scorer" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_player p1 ON p1.player_id = go.assist LEFT JOIN uo_player p2 ON p2.player_id = go.scorer WHERE (go.assist IS NOT NULL AND p1.player_id IS NULL) OR (go.scorer IS NOT NULL AND p2.player_id IS NULL) LIMIT 1",
 		"uo_played.player/game" => "SELECT 1 FROM uo_played pl LEFT JOIN uo_player p ON p.player_id = pl.player LEFT JOIN uo_game g ON g.game_id = pl.game WHERE p.player_id IS NULL OR g.game_id IS NULL LIMIT 1",
 		"uo_timeout.game" => "SELECT 1 FROM uo_timeout ti LEFT JOIN uo_game g ON g.game_id = ti.game WHERE ti.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_spirit_timeout.game" => "SELECT 1 FROM uo_spirit_timeout sti LEFT JOIN uo_game g ON g.game_id = sti.game WHERE sti.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
 		"uo_gameevent.game" => "SELECT 1 FROM uo_gameevent ge LEFT JOIN uo_game g ON g.game_id = ge.game WHERE ge.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
 		"uo_game_pool.game/pool" => "SELECT 1 FROM uo_game_pool gp LEFT JOIN uo_game g ON g.game_id = gp.game LEFT JOIN uo_pool p ON p.pool_id = gp.pool WHERE (gp.game IS NOT NULL AND g.game_id IS NULL) OR (gp.pool IS NOT NULL AND p.pool_id IS NULL) LIMIT 1",
 		"uo_reservation.location" => "SELECT 1 FROM uo_reservation r LEFT JOIN uo_location l ON l.id = r.location WHERE r.location IS NOT NULL AND l.id IS NULL LIMIT 1",
@@ -1519,6 +1535,7 @@ function addInnoDbForeignKeys()
 	addForeignKey('uo_played', 'fk_played_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 
 	addForeignKey('uo_timeout', 'fk_timeout_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_spirit_timeout', 'fk_spirit_timeout_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_gameevent', 'fk_gameevent_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 
 	addForeignKey('uo_game_pool', 'fk_game_pool_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");

@@ -822,7 +822,7 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
     if (!$gameIsOngoing) {
       if (intval($game['scoresheet'])) {
         $ret .= "<td class='right'>&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
-        $ret .= _("Game play") . "</a></td>\n";
+        $ret .= _("Gameplay") . "</a></td>\n";
       } else {
         $ret .= "<td class='left'></td>\n";
       }

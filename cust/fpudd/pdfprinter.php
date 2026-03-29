@@ -77,6 +77,9 @@ class PDF extends tFPDF
 		$this->Timeouts();
 		$this->Ln();
 
+		$this->SpiritTimeouts();
+		$this->Ln();
+
 		$this->OneCellTable($this->pdfText(_("Fim do intervalo aos")), "");
 		$this->Ln();
 		$this->SpiritPoints();
@@ -823,7 +826,7 @@ class PDF extends tFPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,0,0);
-		$this->Cell(80,6,$this->pdfText(_("Time-outs")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Timeouts")),'LRTB',0,'C',true);
 		$this->Ln();
 		
 		//home grids
@@ -846,6 +849,39 @@ class PDF extends tFPDF
 		for($i=0;$i<6;$i++)
 			{
 			$this->Cell(10,6,"",'LRTB',0,'L',true);
+			}
+		$this->Ln();	
+		}
+
+	function SpiritTimeouts()
+		{
+		//header
+		$this->SetFont('Arial','B',12);
+		$this->SetTextColor(255);
+		$this->SetFillColor(0,102,153);
+		$this->Cell(80,6,$this->pdfText(_("Spirit timeouts")),'LRTB',0,'C',true);
+		$this->Ln();
+		
+		//home grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20,6,$this->pdfText(_("Casa")),'LRTB',0,'L',true);
+		
+		for($i=0;$i<4;$i++)
+			{
+			$this->Cell(15,6,"",'LRTB',0,'L',true);
+			}
+		
+		$this->Ln();
+		
+		//visitor grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(20,6,$this->pdfText(_("Visitante")),'LRTB',0,'L',true);
+		
+		for($i=0;$i<4;$i++)
+			{
+			$this->Cell(15,6,"",'LRTB',0,'L',true);
 			}
 		$this->Ln();	
 		}

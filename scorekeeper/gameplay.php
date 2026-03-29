@@ -10,7 +10,7 @@ $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . _("Game play") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
+$html .= "<h1>" . _("Gameplay") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
@@ -23,9 +23,9 @@ $html .= utf8entities($game_result['visitorteamname']);
 $html .= " " . intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']) . "</b>";
 $html .= "</td></tr><tr><td>\n";
 if (mysqli_num_rows($goals) <= 0) {
-	$html .= _("Not fed in");
+	$html .= _("No scores entered");
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Feed in score sheet") . "</a>";
+	$html .=  "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a>";
 } else {
 	$prevgoal = 0;
 	while ($goal = mysqli_fetch_assoc($goals)) {
@@ -34,7 +34,7 @@ if (mysqli_num_rows($goals) <= 0) {
 			(intval($game_result['halftime']) < intval($goal['time']))
 		) {
 			$html .= "<tr class='gameplay-row gameplay-row--halftime'><td>";
-			$html .= _("Half-time");
+			$html .= _("Halftime");
 			$html .= "</td></tr>\n";
 		}
 		if (count($gameevents)) {
@@ -43,7 +43,9 @@ if (mysqli_num_rows($goals) <= 0) {
 					(intval($event['time']) < intval($goal['time']))
 				) {
 					if ($event['type'] == "timeout")
-						$gameevent = _("time-out");
+						$gameevent = _("timeout");
+					elseif ($event['type'] == "spirit_timeout")
+						$gameevent = _("Spirit timeout");
 					elseif ($event['type'] == "turnover")
 						$gameevent = _("turnover");
 					elseif ($event['type'] == "offence")

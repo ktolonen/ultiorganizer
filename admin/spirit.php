@@ -309,6 +309,70 @@ function TableSpiritSearchComments($season)
   return $ret;
 }
 
+function TableSpiritTimeouts($season)
+{
+  $summary = SpiritTimeoutSummaryBySeason($season);
+  $rows = SpiritTimeoutGameRowsBySeason($season);
+
+  $ret = "<table width='100%' class='tdtools-table'><tr>";
+  $ret .= "<th class='center'>" . _("Total spirit timeouts") . "</th>";
+  $ret .= "<th class='center'>" . _("Games with spirit timeout") . "</th>";
+  $ret .= "<th class='center'>" . _("Home spirit timeouts") . "</th>";
+  $ret .= "<th class='center'>" . _("Away spirit timeouts") . "</th>";
+  $ret .= "</tr><tr>";
+  $ret .= "<td class='center'>" . (int)$summary['total'] . "</td>";
+  $ret .= "<td class='center'>" . (int)$summary['games'] . "</td>";
+  $ret .= "<td class='center'>" . (int)$summary['home_total'] . "</td>";
+  $ret .= "<td class='center'>" . (int)$summary['away_total'] . "</td>";
+  $ret .= "</tr></table>";
+
+  if (empty($rows)) {
+    $ret .= "<p>" . _("No spirit timeouts found.") . "</p>";
+    return $ret;
+  }
+
+  $ret .= "<table width='100%' class='tdtools-table'><tr>";
+  $ret .= "<th>" . _("Division") . "</th>";
+  $ret .= "<th>" . _("Pool") . "</th>";
+  $ret .= "<th>" . _("Home") . "</th>";
+  $ret .= "<th class='center'>" . _("Score") . "</th>";
+  $ret .= "<th>" . _("Away") . "</th>";
+  $ret .= "<th class='center'>" . _("Scheduled") . "</th>";
+  $ret .= "<th class='center'>" . _("Home spirit timeouts") . "</th>";
+  $ret .= "<th class='center'>" . _("Away spirit timeouts") . "</th>";
+  $ret .= "<th class='center'>" . _("Total") . "</th>";
+  $ret .= "<th class='center'>" . _("Links") . "</th>";
+  $ret .= "</tr>";
+
+  foreach ($rows as $row) {
+    $scheduled = "";
+    if (!empty($row['time'])) {
+      $scheduled = ShortDate($row['time']) . " " . DefHourFormat($row['time']);
+    }
+    $score = "";
+    if (!is_null($row['homescore']) || !is_null($row['visitorscore'])) {
+      $score = intval($row['homescore']) . " - " . intval($row['visitorscore']);
+    }
+
+    $ret .= "<tr>";
+    $ret .= "<td>" . utf8entities($row['division']) . "</td>";
+    $ret .= "<td>" . utf8entities($row['pool']) . "</td>";
+    $ret .= "<td>" . utf8entities($row['home']) . "</td>";
+    $ret .= "<td class='center'>" . $score . "</td>";
+    $ret .= "<td>" . utf8entities($row['visitor']) . "</td>";
+    $ret .= "<td class='center'>" . utf8entities($scheduled) . "</td>";
+    $ret .= "<td class='center'>" . (int)$row['home_total'] . "</td>";
+    $ret .= "<td class='center'>" . (int)$row['away_total'] . "</td>";
+    $ret .= "<td class='center'>" . (int)$row['total'] . "</td>";
+    $ret .= "<td class='center'><a href='?view=gameplay&amp;game=" . (int)$row['game_id'] . "'>" . _("Game") . "</a></td>";
+    $ret .= "</tr>";
+  }
+
+  $ret .= "</table>";
+
+  return $ret;
+}
+
 function TableSOTGURLs($season)
 {
   $query = sprintf(
@@ -471,6 +535,16 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
     }
   }
 
+  $html .= "</div>";
+
+  $html .= "<div class='tdtools-box bg-td2'>";
+  $html .= "<p>" . _("Spirit timeouts recorded for this season.") . "</p>";
+  $html .= "<p><form method='POST' action='?view=admin/spirit&amp;season=$season'>";
+  $html .= "<button class='button' type='submit' name='showspirittimeouts' value='1'>" . _("Show spirit timeouts") . "</button>";
+  $html .= "</form></p>";
+  if (isset($_POST['showspirittimeouts'])) {
+    $html .= TableSpiritTimeouts($season);
+  }
   $html .= "</div>";
 
   $html .= "<div class='tdtools-box bg-td2'>";

@@ -999,6 +999,16 @@ CREATE TABLE IF NOT EXISTS `uo_timeout` (
   KEY `idx_game` (`game`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+CREATE TABLE IF NOT EXISTS `uo_spirit_timeout` (
+  `spirit_timeout_id` int(10) NOT NULL AUTO_INCREMENT,
+  `game` int(10) DEFAULT NULL,
+  `num` smallint(5) DEFAULT NULL,
+  `time` int(10) DEFAULT NULL,
+  `ishome` tinyint(1) NOT NULL,
+  PRIMARY KEY (`spirit_timeout_id`),
+  KEY `idx_game` (`game`)
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 CREATE TABLE IF NOT EXISTS `uo_translation` (
   `translation_key` varchar(50) NOT NULL,
   `locale` varchar(15) NOT NULL,
@@ -1150,6 +1160,9 @@ ALTER TABLE `uo_played`
 
 ALTER TABLE `uo_timeout`
   ADD CONSTRAINT `fk_timeout_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+ALTER TABLE `uo_spirit_timeout`
+  ADD CONSTRAINT `fk_spirit_timeout_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 ALTER TABLE `uo_gameevent`
   ADD CONSTRAINT `fk_gameevent_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE;

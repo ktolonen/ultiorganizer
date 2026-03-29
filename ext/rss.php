@@ -136,7 +136,9 @@ switch ($feedtype) {
           (intval($event['time']) < intval($goal['time']))
         ) {
           if ($event['type'] == "timeout")
-            $gameevent = _("Time-out");
+            $gameevent = _("Timeout");
+          elseif ($event['type'] == "spirit_timeout")
+            $gameevent = _("Spirit timeout");
           elseif ($event['type'] == "turnover")
             $gameevent = _("Turnover");
           elseif ($event['type'] == "offence")
@@ -170,7 +172,9 @@ switch ($feedtype) {
     foreach ($gameevents as $event) {
       if ((intval($event['time']) >= $prevgoal)) {
         if ($event['type'] == "timeout")
-          $gameevent = _("Time-out");
+          $gameevent = _("Timeout");
+        elseif ($event['type'] == "spirit_timeout")
+          $gameevent = _("Spirit timeout");
         elseif ($event['type'] == "turnover")
           $gameevent = _("Turnover");
         elseif ($event['type'] == "offence")

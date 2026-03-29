@@ -4,11 +4,14 @@ include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/player.functions.php';
+include_once 'lib/season.functions.php';
 $html = "";
 $maxtimeouts = 6;
 
 $gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
+$seasoninfo = SeasonInfo(GameSeason($gameId));
+$allowSpiritTimeouts = !empty($seasoninfo['spiritmode']) && empty($seasoninfo['hide_time_on_scoresheet']);
 
 if (isset($_POST['save'])) {
 	$time = "0.0";
@@ -49,7 +52,7 @@ mobilePageTop(_("Score&nbsp;sheet"));
 $html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method='post'>\n";
 $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
-$html .= "<b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("time outs") . ":";
+$html .= "<b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("timeouts") . ":";
 $html .= "</td></tr><tr><td>\n";
 //used timeouts
 $i = 0;
@@ -70,7 +73,7 @@ for ($i; $i < $maxtimeouts; $i++) {
 		$html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
 }
 $html .= "</td></tr><tr><td>\n";
-$html .= "<b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("time outs") . ":";
+$html .= "<b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("timeouts") . ":";
 $html .= "</td></tr><tr><td>\n";
 
 //used timeouts
@@ -91,11 +94,15 @@ for ($i; $i < $maxtimeouts; $i++) {
 	else
 		$html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
 }
-$html .= "</td></tr><tr><td>\n";
+
+if ($allowSpiritTimeouts) {
+	$html .= "</td></tr><tr><td>\n";
+	$html .= "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit timeouts") . "</a>";
+}
 
 $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to score sheet") . "</a>";
+$html .= "<a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to scoresheet") . "</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>";
