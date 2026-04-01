@@ -750,6 +750,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `lockteamspiritonsubmit` tinyint(1) DEFAULT 1,
   `use_season_points` tinyint(1) DEFAULT 0,
   `hide_time_on_scoresheet` tinyint(1) DEFAULT 0,
+  `hometeammode` tinyint(1) DEFAULT 0,
   `event_readonly` tinyint(1) DEFAULT 0,
   `api_public` tinyint(1) DEFAULT 0,
   `reg_id` int(10) unsigned DEFAULT NULL,

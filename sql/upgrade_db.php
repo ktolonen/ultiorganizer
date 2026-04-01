@@ -1171,6 +1171,10 @@ function upgrade86()
 			KEY `idx_game` (`game`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 	}
+
+	if (!hasColumn("uo_season", "hometeammode")) {
+		addColumn("uo_season", "hometeammode", "tinyint(1) DEFAULT 0");
+	}
 }
 
 function upgradeEngineToInnoDb() {

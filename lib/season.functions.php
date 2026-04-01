@@ -159,6 +159,22 @@ function SeasonInfo($seasonId)
 }
 
 /**
+ * Returns the event-level home team assignment mode.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return int
+ */
+function SeasonHomeTeamMode($seasonId)
+{
+  $seasonInfo = SeasonInfo($seasonId);
+  if (!$seasonInfo || !isset($seasonInfo['hometeammode'])) {
+    return 0;
+  }
+
+  return (int)$seasonInfo['hometeammode'];
+}
+
+/**
  * Returns true if event (season) is in read-only mode.
  *
  * @param string $seasonId uo_season.season_id
@@ -672,8 +688,8 @@ function AddSeason($seasonId, $params, $comment = null)
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
 			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints, showspiritcomments,
-			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, event_readonly, api_public, timezone) 
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
+			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, api_public, timezone) 
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
@@ -694,6 +710,7 @@ function AddSeason($seasonId, $params, $comment = null)
       (int)$params['lockteamspiritonsubmit'],
       (int)$params['use_season_points'],
       (int)$params['hide_time_on_scoresheet'],
+      (int)$params['hometeammode'],
       (int)$params['event_readonly'],
       (int)$params['api_public'],
       DBEscapeString($params['timezone'])
@@ -735,7 +752,7 @@ function SetSeason($seasonId, $params, $comment = null)
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
 			spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d,
-			use_season_points=%d, hide_time_on_scoresheet=%d, event_readonly=%d, api_public=%d, timezone='%s'
+			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, api_public=%d, timezone='%s'
 			WHERE season_id='%s'",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
@@ -757,6 +774,7 @@ function SetSeason($seasonId, $params, $comment = null)
       (int)$params['lockteamspiritonsubmit'],
       (int)$params['use_season_points'],
       (int)$params['hide_time_on_scoresheet'],
+      (int)$params['hometeammode'],
       (int)$params['event_readonly'],
       (int)$params['api_public'],
       DBEscapeString($params['timezone']),

@@ -116,6 +116,13 @@ Reservations are created and edited through `admin/addreservation.php` with `Add
 
 `GenerateGames()` in `lib/pool.functions.php` supports round robin, playoff, Swiss draw, and crossmatch generation. It inserts rows into `uo_game` and visible linkage rows into `uo_game_pool` with `timetable=1`. When a pool does not yet contain real teams, generation can use placeholder participants from `uo_moveteams` and `uo_scheduling_name`.
 
+Home and away assignment for generated games is event-controlled through `uo_season.hometeammode`:
+
+- `0`: balance home team equally using the existing per-pool generation rules
+- `1`: keep the higher-ranked side as home based on generator order / seed order
+
+This setting affects generation previews and newly generated games only. It does not rewrite existing games, and it does not change manually added games.
+
 `uo_game_pool` has two relevant meanings in scheduling:
 
 - `timetable=1`: normal visible schedule membership
@@ -146,6 +153,7 @@ Direct schedule-affecting settings:
 
 - `uo_setting.CurrentSeason`: default public schedule scope
 - `uo_season.timezone`: rendered at the bottom of schedule views by `PrintTimeZone()`
+- `uo_season.hometeammode`: controls whether generated games balance home assignment or always keep the higher-ranked side at home
 - `uo_setting.GameRSSEnabled`: enables the per-row RSS icon in `GameRow()`
 - `uo_pool.timeslot` and `uo_game.timeslot`: affect scheduling duration, drag height, and overflow / conflict checks
 - `uo_pool.type`, `uo_pool.ordering`, `uo_pool.color`: affect generation strategy, ordering, and PDF / one-page visual output

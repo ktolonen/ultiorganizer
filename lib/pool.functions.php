@@ -2586,8 +2586,9 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
       }
 
       $games = array();
+      $homeTeamMode = isset($poolInfo['season']) ? (int)SeasonHomeTeamMode($poolInfo['season']) : 0;
 
-      // Round robin
+      // Pool type 1 = round robin.
       if ($poolInfo['type'] == 1) {
         for ($r = 0; $r < $rounds; $r++) {
           for ($i = 0; $i < count($teams); $i++) {
@@ -2611,50 +2612,33 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
                   }
                 }
               }
-              $game = array("home" => 0, "away" => 0);
-              $flip = flip($i + $r, $j + $skipped);
-              if ($flip) {
-                $game['home'] = (int)$teams[$j];
-                $game['away'] = (int)$teams[$i];
-              } else {
-                $game['home'] = (int)$teams[$i];
-                $game['away'] = (int)$teams[$j];
-              }
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$j], $r, $i + $r, $j + $skipped);
 
               $games[] = $game;
             }
           }
         }
+        // Pool type 2 = playoff.
       } elseif ($poolInfo['type'] == 2) {
         for ($r = 0; $r < $rounds; $r++) {
           for ($i = 0; $i < count($teams); $i += 2) {
 
             //support for odd numbers of team
             if ($i + 1 < count($teams)) {
-              $game = array("home" => 0, "away" => 0);
-              if (is_odd($r)) {
-                $game['home'] = (int)$teams[$i + 1];
-                $game['away'] = (int)$teams[$i];
-              } else {
-                $game['home'] = (int)$teams[$i];
-                $game['away'] = (int)$teams[$i + 1];
-              }
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + 1], $r);
               $games[] = $game;
             }
           }
         }
+        // Pool type 3 = Swiss draw.
       } elseif ($poolInfo['type'] == 3) {
-        // game generation for Swiss draw round
-
         if (count($teams) % 2 == 1) {
           $games[] = false;
         } else {
           if ($poolInfo['continuingpool']) {
             // if it's a continuation pool, team 1 plays team 2, etc.
             for ($i = 0; $i < count($teams); $i += 2) {
-              $game = array("home" => 0, "away" => 0);
-              $game['home'] = (int)$teams[$i];
-              $game['away'] = (int)$teams[$i + 1];
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + 1]);
               $games[] = $game;
             }
           } else {
@@ -2662,28 +2646,19 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
             // team 1 plays team n+1, 2 plays n+2 etc.
             $halfnbteams = count($teams) / 2;
             for ($i = 0; $i < $halfnbteams; $i++) {
-              $game = array("home" => 0, "away" => 0);
-              $game['home'] = (int)$teams[$i];
-              $game['away'] = (int)$teams[$i + $halfnbteams];
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + $halfnbteams]);
               $games[] = $game;
             }
           }
         }
-        //crossmatch
+        // Pool type 4 = crossmatch.
       } elseif ($poolInfo['type'] == 4) {
         for ($r = 0; $r < $rounds; $r++) {
           for ($i = 0; $i < count($teams); $i += 2) {
 
             //support for odd numbers of team
             if ($i + 1 < count($teams)) {
-              $game = array("home" => 0, "away" => 0);
-              if (is_odd($r)) {
-                $game['home'] = (int)$teams[$i + 1];
-                $game['away'] = (int)$teams[$i];
-              } else {
-                $game['home'] = (int)$teams[$i];
-                $game['away'] = (int)$teams[$i + 1];
-              }
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + 1], $r);
               $games[] = $game;
             }
           }
@@ -2752,15 +2727,57 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
 }
 
 /**
- * Used to test which team is home.
+ * Resolves home and away teams for a generated game.
  *
- * @param int $i
- * @param int $j
+ * Method 0 keeps the legacy balancing rules:
+ * - pool type 1 (round robin): use the existing parity-based balancing rule
+ * - pool types 2 and 4 (playoff / crossmatch): alternate by round
+ * - pool type 3 (Swiss draw): keep generator order
+ *
+ * Method 1 keeps the higher-ranked side at home, so the first generated team
+ * stays home regardless of pool type.
+ *
+ * @param int $poolType
+ * @param int $homeTeamMode
+ * @param int $firstTeam
+ * @param int $secondTeam
+ * @param int $round
+ * @param int $flipIndexI
+ * @param int $flipIndexJ
+ * @return array
  */
-function flip($i, $j)
+function ResolveGeneratedGameHomeAway($poolType, $homeTeamMode, $firstTeam, $secondTeam, $round = 0, $flipIndexI = 0, $flipIndexJ = 0)
 {
-  is_odd($i) ? $ret = is_odd($j) : $ret = !is_odd($j);
-  return $ret;
+  $game = array(
+    "home" => (int)$firstTeam,
+    "away" => (int)$secondTeam
+  );
+
+  // Method 1: higher-ranked / earlier generated team stays home.
+  if ((int)$homeTeamMode === 1) {
+    return $game;
+  }
+
+  // Method 0 + pool type 1: use the existing round-robin parity rule.
+  if ((int)$poolType === 1) {
+    $swapHomeAway = is_odd($flipIndexI) ? is_odd($flipIndexJ) : !is_odd($flipIndexJ);
+    if ($swapHomeAway) {
+      $game['home'] = (int)$secondTeam;
+      $game['away'] = (int)$firstTeam;
+    }
+    return $game;
+  }
+
+  // Method 0 + pool types 2/4: alternate home team by round.
+  if ((int)$poolType === 2 || (int)$poolType === 4) {
+    if (is_odd($round)) {
+      $game['home'] = (int)$secondTeam;
+      $game['away'] = (int)$firstTeam;
+    }
+  }
+
+  // Method 0 + pool type 3: keep Swiss-draw generator order.
+  return $game;
 }
 
 /**

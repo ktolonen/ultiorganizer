@@ -28,6 +28,7 @@ $sp = array(
 	"lockteamspiritonsubmit" => 1,
 	"use_season_points" => 0,
 	"hide_time_on_scoresheet" => 0,
+	"hometeammode" => 0,
 	"event_readonly" => 0,
 	"api_public" => 0,
 	"iscurrent" => 0,
@@ -60,6 +61,7 @@ if (!empty($_POST['add'])) {
 	$sp['spiritmode'] = $_POST['spiritmode'];
 	$sp['use_season_points'] = !empty($_POST['use_season_points']);
 	$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
+	$sp['hometeammode'] = isset($_POST['hometeammode']) ? (int)$_POST['hometeammode'] : 0;
 	$sp['event_readonly'] = !empty($_POST['event_readonly']);
 	$comment = $_POST['comment'];
 
@@ -120,6 +122,7 @@ if (!empty($_POST['add'])) {
 		$sp['lockteamspiritonsubmit'] = isset($existingSpirit['lockteamspiritonsubmit']) ? (int)$existingSpirit['lockteamspiritonsubmit'] : 1;
 		$sp['use_season_points'] = !empty($_POST['use_season_points']);
 		$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
+		$sp['hometeammode'] = isset($_POST['hometeammode']) ? (int)$_POST['hometeammode'] : 0;
 		$sp['event_readonly'] = !empty($_POST['event_readonly']);
 		$sp['timezone'] = $_POST['timezone'];
 		$comment = $_POST['comment'];
@@ -155,6 +158,7 @@ if ($seasonId) {
 	$sp['lockteamspiritonsubmit'] = isset($info['lockteamspiritonsubmit']) ? $info['lockteamspiritonsubmit'] : 1;
 	$sp['use_season_points'] = isset($info['use_season_points']) ? $info['use_season_points'] : 0;
 	$sp['hide_time_on_scoresheet'] = isset($info['hide_time_on_scoresheet']) ? $info['hide_time_on_scoresheet'] : 0;
+	$sp['hometeammode'] = isset($info['hometeammode']) ? $info['hometeammode'] : 0;
 	$sp['event_readonly'] = isset($info['event_readonly']) ? $info['event_readonly'] : 0;
 	$sp['timezone'] = $info['timezone'];
 	$comment = CommentRaw(1, $info['season_id']);
@@ -369,6 +373,16 @@ if ($sp['hide_time_on_scoresheet']) {
 }
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defense time input fields from scorekeeper sheets.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Home team assignment") . ": </td><td>";
+$html .= "<select class='dropdown' id='hometeammode' name='hometeammode'>\n";
+$balancedSelected = ((int)$sp['hometeammode'] === 0) ? " selected='selected'" : "";
+$higherRankSelected = ((int)$sp['hometeammode'] === 1) ? " selected='selected'" : "";
+$html .= "<option value='0'" . $balancedSelected . ">" . _("Balance home team equally") . "</option>\n";
+$html .= "<option value='1'" . $higherRankSelected . ">" . _("Higher rank is home team") . "</option>\n";
+$html .= "</select>\n";
+$html .= "</td></tr>\n";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls home and away assignment for generated games in this event. Existing games and manually added games are not changed.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Organizer") . ": </td><td><input class='input' size='50' maxlength='50' name='organizer' value='" . utf8entities($sp['organizer']) . "'/></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Category") . ": </td><td><input class='input' size='50' maxlength='50' name='category' value='" . utf8entities($sp['category']) . "'/></td></tr>";
