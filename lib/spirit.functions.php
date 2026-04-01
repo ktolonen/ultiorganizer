@@ -71,7 +71,8 @@ function SpiritGameRow($gameId)
 			se.showspiritpoints,
 			se.showspiritcomments,
 			se.showspiritpointsonlyoncomplete,
-			se.lockteamspiritonsubmit
+			se.lockteamspiritonsubmit,
+			se.event_readonly
 		FROM uo_game g
 		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
@@ -230,6 +231,229 @@ function SpiritEntryUrl($gameId, $baseView = '?view=user/addspirit')
 		$url .= '&team=' . $teamId;
 	}
 	return $url;
+}
+
+function SpiritTeamIdByToken($token)
+{
+	$token = trim((string)$token);
+	if ($token === '' || !ctype_alnum($token)) {
+		return 0;
+	}
+
+	$query = sprintf(
+		"SELECT team_id FROM uo_team WHERE sotg_token='%s' LIMIT 1",
+		DBEscapeString($token)
+	);
+	return (int)DBQueryToValue($query);
+}
+
+function SpiritTokenGameRows($teamId)
+{
+	$query = sprintf(
+		"SELECT
+			g.game_id,
+			g.time,
+			g.hasstarted,
+			g.isongoing,
+			g.hometeam,
+			g.visitorteam,
+			g.homescore,
+			g.visitorscore,
+			g.show_spirit,
+			th.name AS hometeamname,
+			tv.name AS visitorteamname,
+			p.name AS poolname,
+			s.name AS seriesname,
+			se.season_id,
+			se.name AS seasonname,
+			se.spiritmode,
+			se.showspiritpoints,
+			se.showspiritcomments,
+			se.showspiritpointsonlyoncomplete,
+			se.lockteamspiritonsubmit
+		FROM uo_game g
+		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
+		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_season se ON (se.season_id = s.season)
+		WHERE (g.hometeam=%d OR g.visitorteam=%d)
+			AND COALESCE(se.spiritmode, 0) > 0
+		ORDER BY g.time ASC, g.game_id ASC",
+		(int)$teamId,
+		(int)$teamId
+	);
+	return DBQueryToArray($query);
+}
+
+function SpiritTokenGameRow($gameId, $teamId)
+{
+	$teamId = (int)$teamId;
+	if ($teamId <= 0) {
+		return array();
+	}
+
+	foreach (SpiritTokenGameRows($teamId) as $game) {
+		if ((int)$game['game_id'] === (int)$gameId) {
+			return $game;
+		}
+	}
+
+	return array();
+}
+
+function SpiritTokenRatedTeamId($game, $tokenTeamId)
+{
+	$tokenTeamId = (int)$tokenTeamId;
+	$homeTeam = isset($game['hometeam']) ? (int)$game['hometeam'] : 0;
+	$visitorTeam = isset($game['visitorteam']) ? (int)$game['visitorteam'] : 0;
+
+	if ($tokenTeamId === $homeTeam) {
+		return $visitorTeam;
+	}
+	if ($tokenTeamId === $visitorTeam) {
+		return $homeTeam;
+	}
+	return 0;
+}
+
+function SpiritTokenHasOwnSubmission($gameId, $tokenTeamId, $game = null)
+{
+	if (!$game) {
+		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	}
+	if (!$game) {
+		return false;
+	}
+
+	$ratedTeamId = SpiritTokenRatedTeamId($game, $tokenTeamId);
+	if ($ratedTeamId <= 0) {
+		return false;
+	}
+
+	return TeamSpiritSubmissionComplete($gameId, $ratedTeamId, (int)$game['spiritmode']);
+}
+
+function SpiritTokenHasReceivedSubmission($gameId, $tokenTeamId, $game = null)
+{
+	if (!$game) {
+		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	}
+	if (!$game) {
+		return false;
+	}
+
+	return TeamSpiritSubmissionComplete($gameId, (int)$tokenTeamId, (int)$game['spiritmode']);
+}
+
+function SpiritTokenCanViewReceivedPoints($gameId, $tokenTeamId, $game = null)
+{
+	if (!$game) {
+		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	}
+	if (!$game) {
+		return false;
+	}
+
+	return SpiritTokenHasOwnSubmission($gameId, $tokenTeamId, $game) &&
+		SpiritTokenHasReceivedSubmission($gameId, $tokenTeamId, $game);
+}
+
+function SpiritTokenCanSubmit($gameId, $tokenTeamId, $game = null)
+{
+	$tokenTeamId = (int)$tokenTeamId;
+	if ($tokenTeamId <= 0) {
+		return false;
+	}
+
+	if (!$game) {
+		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	}
+	if (!$game) {
+		return false;
+	}
+
+	if (empty($game['spiritmode'])) {
+		return false;
+	}
+	if (!empty($game['event_readonly'])) {
+		return false;
+	}
+
+	$ratedTeamId = SpiritTokenRatedTeamId($game, $tokenTeamId);
+	if ($ratedTeamId <= 0) {
+		return false;
+	}
+
+	if ((int)$game['hasstarted'] <= 0) {
+		return false;
+	}
+
+	if (!empty($game['lockteamspiritonsubmit']) &&
+		TeamSpiritSubmissionComplete($gameId, $ratedTeamId, (int)$game['spiritmode'])) {
+		return false;
+	}
+
+	return true;
+}
+
+function SpiritValidateSubmittedPoints($submittedPoints, $categories)
+{
+	$validated = array();
+	$required = 0;
+	foreach ($categories as $category) {
+		if ((int)$category['index'] <= 0) {
+			continue;
+		}
+		$required++;
+
+		$categoryId = (int)$category['category_id'];
+		if (!isset($submittedPoints[$categoryId]) && !isset($submittedPoints[(string)$categoryId])) {
+			return false;
+		}
+
+		$rawValue = isset($submittedPoints[$categoryId]) ? $submittedPoints[$categoryId] : $submittedPoints[(string)$categoryId];
+		$rawValue = trim((string)$rawValue);
+		if ($rawValue === '' || !preg_match('/^-?\d+$/', $rawValue)) {
+			return false;
+		}
+
+		$value = (int)$rawValue;
+		if ($value < (int)$category['min'] || $value > (int)$category['max']) {
+			return false;
+		}
+
+		$validated[$categoryId] = $value;
+	}
+
+	if ($required === 0) {
+		return false;
+	}
+
+	return $validated;
+}
+
+function SpiritTokenSaveSubmission($gameId, $tokenTeamId, $points, $categories)
+{
+	$tokenTeamId = (int)$tokenTeamId;
+	$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	if (!$game || !SpiritTokenCanSubmit($gameId, $tokenTeamId, $game)) {
+		return false;
+	}
+
+	$ratedTeamId = SpiritTokenRatedTeamId($game, $tokenTeamId);
+	if ($ratedTeamId <= 0) {
+		return false;
+	}
+
+	$validatedPoints = SpiritValidateSubmittedPoints($points, $categories);
+	if ($validatedPoints === false) {
+		return false;
+	}
+
+	SpiritScoreReplaceByGameTeam($gameId, $ratedTeamId, $validatedPoints);
+	RefreshGameSpiritData($gameId);
+	return true;
 }
 
 function SpiritSubmissionLocked($gameId, $teamId)

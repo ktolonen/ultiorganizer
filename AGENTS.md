@@ -49,4 +49,5 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
+- `docs/sotg.md`: public token-based SOTG flow, entrypoint, and visibility rules.
 - `docs/codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
