@@ -12,6 +12,7 @@ This directory collects general project documentation.
 - `database-upgrades.md`: schema and migration workflow.
 - `configuration-flags.md`: configuration taxonomy and migration rules.
 - `schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
+- `scorekeeper.md`: Scorekeeper app routing, live clock workflow, and related pages.
 - `scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and current behavior.

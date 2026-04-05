@@ -654,6 +654,53 @@ function GameHasStarted($gameInfo)
 	return $gameInfo['hasstarted'] > 0;
 }
 
+function GameTimerState($gameId)
+{
+	$gameId = (int) $gameId;
+	$state = array(
+		"started" => false,
+		"ongoing" => false,
+		"paused" => false,
+		"mm" => 0,
+		"ss" => 0,
+		"rss" => 0
+	);
+
+	$query = sprintf(
+		"SELECT hasstarted, isongoing, timer_start, timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id=%d LIMIT 1",
+		$gameId
+	);
+	$row = DBQueryToRow($query);
+	if (!$row) {
+		return $state;
+	}
+
+	$state['started'] = ((int) $row['hasstarted'] > 0) || !empty($row['timer_start']);
+	$state['ongoing'] = (int) $row['isongoing'] === 1;
+	$state['paused'] = $state['ongoing'] && !empty($row['timer_pause_start']);
+
+	if (empty($row['timer_start'])) {
+		return $state;
+	}
+
+	$elapsed = time() - (int) $row['timer_start'] - (int) $row['timer_paused_duration'];
+	if (!empty($row['timer_pause_start'])) {
+		$elapsed -= time() - (int) $row['timer_pause_start'];
+	}
+	$elapsed = max(0, $elapsed);
+
+	$state['mm'] = (int) floor($elapsed / 60);
+	$state['ss'] = $elapsed % 60;
+	$state['rss'] = (int) (round($state['ss'] / 5) * 5);
+
+	if ($state['rss'] === 60) {
+		$state['mm']++;
+		$state['rss'] = 0;
+	}
+
+	return $state;
+}
+
 function CheckGameResult($game, $home, $away)
 {
 	$gameId = (int) substr($game, 0, -1);
@@ -705,7 +752,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
 	if (!$checkRights || hasEditGameEventsRight($gameId)) {
 		LogGameUpdate($gameId, "result: $home - $away");
 		$query = sprintf(
-			"UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2' WHERE game_id='%s'",
+			"UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
 			DBEscapeString($home),
 			DBEscapeString($away),
 			DBEscapeString($gameId)
@@ -728,7 +775,7 @@ function GameClearResult($gameId, $updatepools = true)
 	if (hasEditGameEventsRight($gameId)) {
 		LogGameUpdate($gameId, "result cleared");
 		$query = sprintf(
-			"UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0' WHERE game_id='%s'",
+			"UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
 			DBEscapeString($gameId)
 		);
 		$result = DBQuery($query);
@@ -1844,7 +1891,11 @@ function GameTimeStart($gameId) {
     die('Insufficient rights to edit game events');
   }
 
-  $query = sprintf("UPDATE uo_game SET isongoing = 1, timer_start = %d WHERE game_id = %d", time(), $gameId);
+  $query = sprintf(
+    "UPDATE uo_game SET hasstarted = 1, isongoing = 1, timer_start = %d, timer_pause_start = NULL, timer_paused_duration = 0 WHERE game_id = %d",
+    time(),
+    $gameId
+  );
 
   return DBQuery($query);
 }
@@ -1883,26 +1934,35 @@ function GameTimeResume($gameId) {
   return false; // Not paused or invalid
 }
 
-function GameElapsedTime($gameId) {
+function GameTimeSetElapsed($gameId, $elapsedSeconds) {
   $gameId = (int) $gameId;
+  $elapsedSeconds = max(0, (int) $elapsedSeconds);
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
 
-  $query = sprintf("SELECT timer_start, timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id=%d LIMIT 1", $gameId);
+  $query = sprintf(
+    "SELECT timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id = %d AND isongoing = 1 AND timer_pause_start IS NOT NULL LIMIT 1",
+    $gameId
+  );
   $row = DBQueryToRow($query);
 
-  $elapsed = time() - (int) $row['timer_start'] - (int) $row['timer_paused_duration'];
-
-  if ($row['timer_pause_start']) {
-    $elapsed -= time() - (int) $row['timer_pause_start'];
+  if (!$row || empty($row['timer_pause_start'])) {
+    return false;
   }
 
-  $minutes = floor($elapsed / 60);
-  $seconds = $elapsed % 60;
-  $roundedSeconds = round($seconds / 5) * 5;
+  $timerStart = (int) $row['timer_pause_start'] - (int) $row['timer_paused_duration'] - $elapsedSeconds;
+  $updateQuery = sprintf(
+    "UPDATE uo_game SET timer_start = %d WHERE game_id = %d",
+    $timerStart,
+    $gameId
+  );
 
-  if ($roundedSeconds == 60) {
-    $minutes++;
-    $roundedSeconds = 0;
-  }
+  return DBQuery($updateQuery);
+}
 
-  return [ "mm" => $minutes, "ss" => $seconds, "rss" => $roundedSeconds ];
+function GameElapsedTime($gameId) {
+  $state = GameTimerState($gameId);
+
+  return array("mm" => $state['mm'], "ss" => $state['ss'], "rss" => $state['rss']);
 }

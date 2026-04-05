@@ -99,6 +99,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `docs/translations.md`: translation and gettext workflow.
 - `docs/permissions.md`: permission storage, roles, and enforcement helpers.
 - `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
+- `docs/scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `docs/spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and visibility rules.
