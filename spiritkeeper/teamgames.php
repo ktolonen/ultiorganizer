@@ -26,9 +26,9 @@ $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $st
 	$html .= "<p><strong>" . _("Score") . ":</strong> " . utf8entities(SpiritkeeperGameScoreLabel($game)) . "</p>";
 
 	if ($ownSubmitted) {
-		$html .= "<p class='mobile-summary'><strong>" . _("Score given for") . " " . utf8entities($opponentName) . ":</strong> " . utf8entities(SpiritkeeperSpiritSummary($givenPoints, $categories)) . "</p>";
+		$html .= "<p class='mobile-summary'><strong>" . _("Score given for") . " " . utf8entities($opponentName) . ":</strong> " . utf8entities(SpiritPointsSummary($givenPoints, $categories)) . "</p>";
 		if ($canViewReceived) {
-			$html .= "<p class='mobile-summary'><strong>" . _("Score received") . ":</strong> " . utf8entities(SpiritkeeperSpiritSummary($receivedPoints, $categories)) . "</p>";
+			$html .= "<p class='mobile-summary'><strong>" . _("Score received") . ":</strong> " . utf8entities(SpiritPointsSummary($receivedPoints, $categories)) . "</p>";
 		} elseif ($receivedSubmitted) {
 			$html .= "<p class='mobile-status'>" . _("The opponent score is available, but not visible through this page.") . "</p>";
 		} else {
@@ -99,7 +99,7 @@ if (empty($selectedTeam) || $selectedTeamId <= 0) {
 }
 
 $pageTitle = _("Spiritkeeper") . " - " . $selectedTeam['name'];
-$games = SpiritkeeperTeamGameRows($selectedTeamId);
+$games = SpiritTokenGameRows($selectedTeamId);
 
 $pageHtml .= "<div class='card spiritkeeper-team-card'>";
 $pageHtml .= "<p>" . _("Spiritkeeper is the dedicated mobile surface for spirit score entry and review.") . "</p>";

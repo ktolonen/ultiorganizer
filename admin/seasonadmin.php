@@ -37,7 +37,7 @@ $html .=  "<tr><td><b>" . _("Organizer") . "</b></td><td>" . U_($info['organizer
 $spirit = _("not given");
 
 if ((isset($info['spiritmode']) && $info['spiritmode'] > 0)) {
-	$spiritmode = SpiritMode($info['spiritmode']);
+	$spiritmode = SpiritCategoryModeRow($info['spiritmode']);
 	$spirit = utf8entities(_($spiritmode['name'])) . " / <em>" .
 		(intval($info['showspiritpoints']) ? _("scores visible") : _("scores hidden")) . ", " .
 		(intval(isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0) ? _("comments visible") : _("comments hidden")) . ", " .

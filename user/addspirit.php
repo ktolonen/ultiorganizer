@@ -34,15 +34,7 @@ function RenderSpiritCommentForTeam($teamId, $spirit_comments, $comment_feedback
 
 function QuickSpiritCategories($categories)
 {
-  $quick = array();
-  foreach ($categories as $category) {
-    if ((int)$category['index'] > 0) {
-      $quick[] = $category;
-    }
-  }
-  usort($quick, function ($a, $b) {
-    return (int)$a['index'] <=> (int)$b['index'];
-  });
+  $quick = SpiritOrderedCategories($categories);
   return count($quick) === 5 ? $quick : array();
 }
 
@@ -100,8 +92,7 @@ if (
 }
 
 if ($season['spiritmode'] > 0) {
-  $mode = SpiritMode($season['spiritmode']);
-  $categories = SpiritCategories($mode['mode']);
+  $categories = SpiritCategories($season['spiritmode']);
   $quickCategories = QuickSpiritCategories($categories);
   $allowQuickEntry = (count($quickCategories) === 5) && $hasFullSpiritEdit;
   $score_feedback = "";

@@ -374,7 +374,7 @@ if ($list == "allteams" || $list == "byseeding") {
       $html .= "</table>";
       $html .= "</div>\n";
 
-      $missingRows = SeriesMissingSpiritPoints($row['series_id']);
+      $missingRows = SpiritSeriesMissingPointRows($row['series_id']);
       foreach ($missingRows as $missing) {
         $teamId = $missing['giver_team_id'];
         if (!isset($missingSpirit[$teamId])) {

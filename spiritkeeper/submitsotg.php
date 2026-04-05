@@ -1,7 +1,7 @@
 <?php
 $pageHtml = "";
 $gameId = GetInt('game');
-$game = SpiritTokenGameRow($gameId, $teamId);
+$game = SpiritTokenGame($gameId, $teamId);
 
 if ($gameId <= 0 || empty($game)) {
 	$pageHtml .= "<div class='mobile-notice mobile-notice--error'><p>" . _("Invalid game.") . "</p></div>";
@@ -11,12 +11,12 @@ if ($gameId <= 0 || empty($game)) {
 
 $ratedTeamId = SpiritTokenRatedTeamId($game, $teamId);
 $categories = SpiritCategories((int)$game['spiritmode']);
-$orderedCategories = SpiritkeeperSpiritCategories($categories);
+$orderedCategories = SpiritOrderedCategories($categories);
 $opponentName = ($ratedTeamId === (int)$game['hometeam']) ? $game['hometeamname'] : $game['visitorteamname'];
 $existingPoints = GameGetSpiritPoints($gameId, $ratedTeamId);
-$defaultPoints = empty($existingPoints) ? SpiritkeeperDefaultSpiritPoints($categories) : $existingPoints;
+$defaultPoints = empty($existingPoints) ? SpiritDefaultPoints($categories) : $existingPoints;
 $canSubmit = SpiritTokenCanSubmit($gameId, $teamId, $game);
-$commentType = SpiritTokenCommentType($gameId, $teamId, $game);
+$commentType = SpiritCommentTypeForTeam($game, $ratedTeamId);
 $spiritComment = $commentType > 0 ? CommentRaw($commentType, $gameId) : "";
 $commentFeedback = "";
 
@@ -136,7 +136,7 @@ if (empty($orderedCategories)) {
 	$pageHtml .= "<p><a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a></p>";
 } elseif (SpiritTokenHasOwnSubmission($gameId, $teamId, $game)) {
 	$pageHtml .= "<div class='mobile-notice mobile-notice--info'><p>" . _("You already submitted the spirit score for this game.") . "</p></div>";
-	$pageHtml .= "<p><strong>" . _("Score given") . ":</strong> " . utf8entities(SpiritkeeperSpiritSummary($existingPoints, $categories)) . "</p>";
+	$pageHtml .= "<p><strong>" . _("Score given") . ":</strong> " . utf8entities(SpiritPointsSummary($existingPoints, $categories)) . "</p>";
 	if (!empty($spiritComment)) {
 		$pageHtml .= "<p><strong>" . _("Spirit note") . ":</strong></p>";
 		$pageHtml .= "<div class='comment'>" . someHTML($spiritComment) . "</div>";

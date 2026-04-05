@@ -339,7 +339,7 @@ if ($sp['isnationalteams']) {
 $html .= "/></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Spirit mode") . ": </td><td>";
-$spiritmodes = SpiritModes();
+$spiritmodes = SpiritCategoryModeRows();
 $spiritModeDisabledSelected = ((int)$sp['spiritmode'] === 0) ? " selected='selected'" : "";
 $html .= "<select class='dropdown' id='spiritmode' name='spiritmode'>\n";
 $html .= "<option value='0'" . $spiritModeDisabledSelected . ">" . utf8entities(SpiritModeDisabledName()) . "</option>\n";

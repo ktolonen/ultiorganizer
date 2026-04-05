@@ -2,49 +2,9 @@
 
 include_once $include_prefix . 'lib/user.functions.php';
 
-function SpiritMode($mode_id)
-{
-	return SpiritCategoryModeRow($mode_id);
-}
-
-function SpiritModes()
-{
-	return SpiritCategoryModeRows();
-}
-
 function SpiritModeDisabledName()
 {
 	return _("No spirit scoring");
-}
-
-function ShowSpiritScoresForSeason($seasoninfo)
-{
-	if (!$seasoninfo || !isset($seasoninfo['season_id'])) {
-		return false;
-	}
-	return (
-		isset($seasoninfo['spiritmode']) &&
-		(int)$seasoninfo['spiritmode'] > 0 &&
-		(!empty($seasoninfo['showspiritpoints']) || hasSpiritToolsRight($seasoninfo['season_id']))
-	);
-}
-
-function ShowSpiritComments($seasoninfo)
-{
-	if (!$seasoninfo) {
-		return false;
-	}
-	if (!is_array($seasoninfo)) {
-		$seasoninfo = SeasonInfo($seasoninfo);
-	}
-	if (!$seasoninfo || !isset($seasoninfo['season_id'])) {
-		return false;
-	}
-	return (
-		isset($seasoninfo['spiritmode']) &&
-		(int)$seasoninfo['spiritmode'] > 0 &&
-		(!empty($seasoninfo['showspiritcomments']) || hasSpiritToolsRight($seasoninfo['season_id']))
-	);
 }
 
 function SpiritSeasonInfo($seasoninfo)
@@ -56,6 +16,83 @@ function SpiritSeasonInfo($seasoninfo)
 		$seasoninfo = SeasonInfo($seasoninfo);
 	}
 	return is_array($seasoninfo) ? $seasoninfo : array();
+}
+
+function ShowSpiritScoresForSeason($seasoninfo)
+{
+	$seasoninfo = SpiritSeasonInfo($seasoninfo);
+	if (empty($seasoninfo['season_id'])) {
+		return false;
+	}
+	return (
+		isset($seasoninfo['spiritmode']) &&
+		(int)$seasoninfo['spiritmode'] > 0 &&
+		(!empty($seasoninfo['showspiritpoints']) || hasSpiritToolsRight($seasoninfo['season_id']))
+	);
+}
+
+function ShowSpiritComments($seasoninfo)
+{
+	$seasoninfo = SpiritSeasonInfo($seasoninfo);
+	if (empty($seasoninfo['season_id'])) {
+		return false;
+	}
+	return (
+		isset($seasoninfo['spiritmode']) &&
+		(int)$seasoninfo['spiritmode'] > 0 &&
+		(!empty($seasoninfo['showspiritcomments']) || hasSpiritToolsRight($seasoninfo['season_id']))
+	);
+}
+
+function SpiritOrderedCategories($categories)
+{
+	$rows = array();
+	foreach ($categories as $category) {
+		if ((int)$category['index'] > 0) {
+			$rows[] = $category;
+		}
+	}
+
+	usort($rows, function ($a, $b) {
+		return (int)$a['index'] <=> (int)$b['index'];
+	});
+
+	return $rows;
+}
+
+function SpiritDefaultPoints($categories)
+{
+	$defaults = array();
+	foreach (SpiritOrderedCategories($categories) as $category) {
+		$min = (int)$category['min'];
+		$max = (int)$category['max'];
+		$defaults[(int)$category['category_id']] = (int)floor(($min + $max) / 2);
+	}
+	return $defaults;
+}
+
+function SpiritPointsSummary($points, $categories)
+{
+	if (empty($points)) {
+		return '';
+	}
+
+	$parts = array();
+	$total = SpiritTotal($points, $categories);
+	foreach (SpiritOrderedCategories($categories) as $category) {
+		$categoryId = (int)$category['category_id'];
+		if (!isset($points[$categoryId])) {
+			return '';
+		}
+		$parts[] = (string)$points[$categoryId];
+	}
+
+	$summary = implode(' ', $parts);
+	if (!is_null($total)) {
+		$summary .= ' (' . (int)$total . ')';
+	}
+
+	return $summary;
 }
 
 function SpiritGameRow($gameId)
@@ -286,7 +323,7 @@ function SpiritTokenGameRows($teamId)
 	return DBQueryToArray($query);
 }
 
-function SpiritTokenGameRow($gameId, $teamId)
+function SpiritTokenGame($gameId, $teamId)
 {
 	$teamId = (int)$teamId;
 	if ($teamId <= 0) {
@@ -320,7 +357,7 @@ function SpiritTokenRatedTeamId($game, $tokenTeamId)
 function SpiritTokenHasOwnSubmission($gameId, $tokenTeamId, $game = null)
 {
 	if (!$game) {
-		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+		$game = SpiritTokenGame($gameId, $tokenTeamId);
 	}
 	if (!$game) {
 		return false;
@@ -337,7 +374,7 @@ function SpiritTokenHasOwnSubmission($gameId, $tokenTeamId, $game = null)
 function SpiritTokenHasReceivedSubmission($gameId, $tokenTeamId, $game = null)
 {
 	if (!$game) {
-		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+		$game = SpiritTokenGame($gameId, $tokenTeamId);
 	}
 	if (!$game) {
 		return false;
@@ -349,7 +386,7 @@ function SpiritTokenHasReceivedSubmission($gameId, $tokenTeamId, $game = null)
 function SpiritTokenCanViewReceivedPoints($gameId, $tokenTeamId, $game = null)
 {
 	if (!$game) {
-		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+		$game = SpiritTokenGame($gameId, $tokenTeamId);
 	}
 	if (!$game) {
 		return false;
@@ -367,7 +404,7 @@ function SpiritTokenCanSubmit($gameId, $tokenTeamId, $game = null)
 	}
 
 	if (!$game) {
-		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+		$game = SpiritTokenGame($gameId, $tokenTeamId);
 	}
 	if (!$game) {
 		return false;
@@ -436,7 +473,7 @@ function SpiritValidateSubmittedPoints($submittedPoints, $categories)
 function SpiritTokenSaveSubmission($gameId, $tokenTeamId, $points, $categories)
 {
 	$tokenTeamId = (int)$tokenTeamId;
-	$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	$game = SpiritTokenGame($gameId, $tokenTeamId);
 	if (!$game || !SpiritTokenCanSubmit($gameId, $tokenTeamId, $game)) {
 		return false;
 	}
@@ -456,63 +493,27 @@ function SpiritTokenSaveSubmission($gameId, $tokenTeamId, $points, $categories)
 	return true;
 }
 
-function SpiritTokenCommentType($gameId, $tokenTeamId, $game = null)
-{
-	$tokenTeamId = (int)$tokenTeamId;
-	if (!$game) {
-		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
-	}
-	if (!$game) {
-		return 0;
-	}
-
-	$ratedTeamId = SpiritTokenRatedTeamId($game, $tokenTeamId);
-	if ($ratedTeamId <= 0) {
-		return 0;
-	}
-
-	return SpiritCommentTypeForTeam($game, $ratedTeamId);
-}
-
 function SpiritTokenSaveComment($gameId, $tokenTeamId, $comment, $delete = false, $game = null)
 {
 	$tokenTeamId = (int)$tokenTeamId;
 	if (!$game) {
-		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+		$game = SpiritTokenGame($gameId, $tokenTeamId);
 	}
 	if (!$game || !SpiritTokenCanSubmit($gameId, $tokenTeamId, $game)) {
 		return false;
 	}
 
-	$type = SpiritTokenCommentType($gameId, $tokenTeamId, $game);
+	$ratedTeamId = SpiritTokenRatedTeamId($game, $tokenTeamId);
+	if ($ratedTeamId <= 0) {
+		return false;
+	}
+
+	$type = SpiritCommentTypeForTeam($game, $ratedTeamId);
 	if ($type <= 0) {
 		return false;
 	}
 
-	$comment = CommentNormalize($comment);
-	$existing = CommentRaw($type, $gameId);
-
-	if ($delete || $comment === "") {
-		if ($existing === "") {
-			return true;
-		}
-		SetComment($type, $gameId, "");
-		LogGameCommentEvent($gameId, $type, "comment_delete");
-		return true;
-	}
-
-	if ($existing === "") {
-		SetComment($type, $gameId, $comment);
-		LogGameCommentEvent($gameId, $type, "comment_create");
-		return true;
-	}
-
-	if ($existing !== $comment) {
-		SetComment($type, $gameId, $comment);
-		LogGameCommentEvent($gameId, $type, "comment_update");
-	}
-
-	return true;
+	return ApplyCommentChange($type, $gameId, CommentRequestedChange($type, $gameId, $comment, $delete));
 }
 
 function SpiritkeeperGetToken()
@@ -521,57 +522,6 @@ function SpiritkeeperGetToken()
 		return (string)$_GET['token'];
 	}
 	return '';
-}
-
-function SpiritkeeperSpiritCategories($categories)
-{
-	$rows = array();
-	foreach ($categories as $category) {
-		if ((int)$category['index'] > 0) {
-			$rows[] = $category;
-		}
-	}
-
-	usort($rows, function ($a, $b) {
-		return (int)$a['index'] <=> (int)$b['index'];
-	});
-
-	return $rows;
-}
-
-function SpiritkeeperDefaultSpiritPoints($categories)
-{
-	$defaults = array();
-	foreach (SpiritkeeperSpiritCategories($categories) as $category) {
-		$min = (int)$category['min'];
-		$max = (int)$category['max'];
-		$defaults[(int)$category['category_id']] = (int)floor(($min + $max) / 2);
-	}
-	return $defaults;
-}
-
-function SpiritkeeperSpiritSummary($points, $categories)
-{
-	if (empty($points)) {
-		return '';
-	}
-
-	$parts = array();
-	$total = SpiritTotal($points, $categories);
-	foreach (SpiritkeeperSpiritCategories($categories) as $category) {
-		$categoryId = (int)$category['category_id'];
-		if (!isset($points[$categoryId])) {
-			return '';
-		}
-		$parts[] = (string)$points[$categoryId];
-	}
-
-	$summary = implode(' ', $parts);
-	if (!is_null($total)) {
-		$summary .= ' (' . (int)$total . ')';
-	}
-
-	return $summary;
 }
 
 function SpiritkeeperGameTimeLabel($game)
@@ -777,15 +727,6 @@ function SpiritkeeperSeasonTeamGroups($seasonId)
 	return $groups;
 }
 
-function SpiritkeeperTeamGameRows($teamId)
-{
-	$teamId = (int)$teamId;
-	if ($teamId <= 0) {
-		return array();
-	}
-	return SpiritTokenGameRows($teamId);
-}
-
 function SpiritkeeperTeamGamesUrl($teamId, $seasonId = '', $basePath = '')
 {
 	$basePath = (string)$basePath;
@@ -941,10 +882,6 @@ function RefreshSeasonSpiritData($seasonId)
 	$seasonInfo = SpiritSeasonInfo($seasonId);
 	RefreshSeasonSpiritVisibility($seasonId);
 	if (!empty($seasonInfo['season_id'])) {
-		DBQuery(sprintf(
-			"DELETE FROM uo_team_spirit_stats WHERE season='%s'",
-			DBEscapeString($seasonInfo['season_id'])
-		));
 		if (!empty($seasonInfo['spiritmode'])) {
 			SpiritRebuildTeamStatsForSeason($seasonInfo['season_id'], (int)$seasonInfo['spiritmode']);
 		}
@@ -1193,6 +1130,44 @@ function SpiritToCsv($season, $separator)
 	return ArrayToCsv($result, $separator);
 }
 
+function SpiritMissingGames($query)
+{
+	$games = DBQueryToArray($query);
+	$rows = array();
+	$modeCategories = array();
+	foreach ($games as $game) {
+		$mode = (int)$game['spiritmode'];
+		if ($mode <= 0) {
+			continue;
+		}
+		if (!isset($modeCategories[$mode])) {
+			$modeCategories[$mode] = SpiritCategories($mode);
+		}
+		if (
+			TeamSpiritSubmissionComplete($game['game_id'], $game['hometeam'], $mode) &&
+			TeamSpiritSubmissionComplete($game['game_id'], $game['visitorteam'], $mode)
+		) {
+			continue;
+		}
+
+		$row = array(
+			'game_id' => (int)$game['game_id'],
+			'home' => $game['home'],
+			'visitor' => $game['visitor'],
+			'homescore' => $game['homescore'],
+			'homesotg' => SpiritTotal(GameGetSpiritPoints($game['game_id'], $game['hometeam']), $modeCategories[$mode]),
+			'visitorscore' => $game['visitorscore'],
+			'visitorsotg' => SpiritTotal(GameGetSpiritPoints($game['game_id'], $game['visitorteam']), $modeCategories[$mode]),
+			'time' => $game['time']
+		);
+		if (isset($game['poolname'])) {
+			$row['poolname'] = $game['poolname'];
+		}
+		$rows[] = $row;
+	}
+	return $rows;
+}
+
 function SpiritMissingGamesByPool($poolId)
 {
 	$query = sprintf(
@@ -1218,36 +1193,7 @@ function SpiritMissingGamesByPool($poolId)
 		ORDER BY g.time ASC",
 		(int)$poolId
 	);
-	$games = DBQueryToArray($query);
-	$rows = array();
-	$modeCategories = array();
-	foreach ($games as $game) {
-		$mode = (int)$game['spiritmode'];
-		if ($mode <= 0) {
-			continue;
-		}
-		if (!isset($modeCategories[$mode])) {
-			$modeCategories[$mode] = SpiritCategories($mode);
-		}
-		$homeComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['hometeam'], $mode);
-		$visitorComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['visitorteam'], $mode);
-		if ($homeComplete && $visitorComplete) {
-			continue;
-		}
-		$homePoints = GameGetSpiritPoints($game['game_id'], $game['hometeam']);
-		$visitorPoints = GameGetSpiritPoints($game['game_id'], $game['visitorteam']);
-		$rows[] = array(
-			'game_id' => (int)$game['game_id'],
-			'home' => $game['home'],
-			'visitor' => $game['visitor'],
-			'homescore' => $game['homescore'],
-			'homesotg' => SpiritTotal($homePoints, $modeCategories[$mode]),
-			'visitorscore' => $game['visitorscore'],
-			'visitorsotg' => SpiritTotal($visitorPoints, $modeCategories[$mode]),
-			'time' => $game['time']
-		);
-	}
-	return $rows;
+	return SpiritMissingGames($query);
 }
 
 function SpiritMissingGamesBySeries($seriesId)
@@ -1276,37 +1222,7 @@ function SpiritMissingGamesBySeries($seriesId)
 		ORDER BY g.time ASC",
 		(int)$seriesId
 	);
-	$games = DBQueryToArray($query);
-	$rows = array();
-	$modeCategories = array();
-	foreach ($games as $game) {
-		$mode = (int)$game['spiritmode'];
-		if ($mode <= 0) {
-			continue;
-		}
-		if (!isset($modeCategories[$mode])) {
-			$modeCategories[$mode] = SpiritCategories($mode);
-		}
-		$homeComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['hometeam'], $mode);
-		$visitorComplete = TeamSpiritSubmissionComplete($game['game_id'], $game['visitorteam'], $mode);
-		if ($homeComplete && $visitorComplete) {
-			continue;
-		}
-		$homePoints = GameGetSpiritPoints($game['game_id'], $game['hometeam']);
-		$visitorPoints = GameGetSpiritPoints($game['game_id'], $game['visitorteam']);
-		$rows[] = array(
-			'game_id' => (int)$game['game_id'],
-			'home' => $game['home'],
-			'visitor' => $game['visitor'],
-			'homescore' => $game['homescore'],
-			'homesotg' => SpiritTotal($homePoints, $modeCategories[$mode]),
-			'visitorscore' => $game['visitorscore'],
-			'visitorsotg' => SpiritTotal($visitorPoints, $modeCategories[$mode]),
-			'time' => $game['time'],
-			'poolname' => $game['poolname']
-		);
-	}
-	return $rows;
+	return SpiritMissingGames($query);
 }
 
 function CountSpiritStats($teamId)
@@ -1879,12 +1795,7 @@ function SpiritSeriesMissingPointRows($seriesId)
 	return $rows;
 }
 
-function SeriesMissingSpiritPoints($seriesId)
-{
-	return SpiritSeriesMissingPointRows($seriesId);
-}
-
-function SpiritTeamCategoryStatsRows($teamId, $seasonId, $spiritmode)
+function TeamSpiritCategoryStats($teamId, $seasonId, $spiritmode)
 {
 	$query = sprintf(
 		"SELECT ts.category_id, ts.average, ts.games
@@ -1899,12 +1810,7 @@ function SpiritTeamCategoryStatsRows($teamId, $seasonId, $spiritmode)
 	return DBQueryToArray($query);
 }
 
-function TeamSpiritCategoryStats($teamId, $seasonId, $spiritmode)
-{
-	return SpiritTeamCategoryStatsRows($teamId, $seasonId, $spiritmode);
-}
-
-function SpiritTeamCategoryHistoryRowsByName($teamname, $seriestype, $spiritmode)
+function TeamSpiritCategoryHistoryAveragesByName($teamname, $seriestype, $spiritmode)
 {
 	$query = sprintf(
 		"SELECT ts.category_id,
@@ -1924,12 +1830,7 @@ function SpiritTeamCategoryHistoryRowsByName($teamname, $seriestype, $spiritmode
 	return DBQueryToArray($query);
 }
 
-function TeamSpiritCategoryHistoryAveragesByName($teamname, $seriestype, $spiritmode)
-{
-	return SpiritTeamCategoryHistoryRowsByName($teamname, $seriestype, $spiritmode);
-}
-
-function SpiritTeamAverageRowsByName($teamname, $seriestype)
+function TeamSpiritAveragesByName($teamname, $seriestype)
 {
 	$query = sprintf(
 		"SELECT ts.season, ts.series, SUM(ts.average * sct.factor) AS spirit_total
@@ -1943,11 +1844,6 @@ function SpiritTeamAverageRowsByName($teamname, $seriestype)
 		DBEscapeString($seriestype)
 	);
 	return DBQueryToArray($query);
-}
-
-function TeamSpiritAveragesByName($teamname, $seriestype)
-{
-	return SpiritTeamAverageRowsByName($teamname, $seriestype);
 }
 
 function SpiritRebuildTeamStatsForSeason($seasonId, $spiritmode)

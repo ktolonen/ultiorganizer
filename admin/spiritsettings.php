@@ -62,7 +62,7 @@ $html .= "<td class='infocell'>" . _("Spirit mode") . ": </td>";
 $spiritModeDisabledSelected = ((int)$spiritSettings['spiritmode'] === 0) ? " selected='selected'" : "";
 $html .= "<td><select class='dropdown' name='spiritmode'>";
 $html .= "<option value='0'" . $spiritModeDisabledSelected . ">" . utf8entities(SpiritModeDisabledName()) . "</option>";
-foreach (SpiritModes() as $mode) {
+foreach (SpiritCategoryModeRows() as $mode) {
 	$selected = ($spiritSettings['spiritmode'] === (int)$mode['mode']) ? " selected='selected'" : "";
 	$html .= "<option value='" . (int)$mode['mode'] . "'" . $selected . ">" . utf8entities(_($mode['name'])) . "</option>";
 }
