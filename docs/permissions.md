@@ -181,8 +181,7 @@ Examples of explicit route checks currently in use:
 Spirit entry pages also perform direct access checks before rendering:
 
 - [user/addspirit.php](../user/addspirit.php)
-- [mobile/addspiritpoints.php](../mobile/addspiritpoints.php)
-- [scorekeeper/addspiritpoints.php](../scorekeeper/addspiritpoints.php)
+- [spiritkeeper/editgame.php](../spiritkeeper/editgame.php)
 
 These pages use `SpiritEntryTeamForUser()` and `HasFullGameSpiritViewRight()` to decide whether the user has no access, team-scoped submit access, or full review access.
 
@@ -196,7 +195,7 @@ The spirit tab/link in these pages is shown through `SpiritEntryUrl()`:
 - [user/adddefensesheet.php](../user/adddefensesheet.php)
 - [user/respgames.php](../user/respgames.php)
 - [mobile/addscoresheet.php](../mobile/addscoresheet.php)
-- [scorekeeper/addscoresheet.php](../scorekeeper/addscoresheet.php)
-- [scorekeeper/respgames.php](../scorekeeper/respgames.php)
 
 If `SpiritEntryUrl()` returns an empty string, the spirit link is hidden.
+
+Scorekeeper no longer shows spirit links. Spirit entry has been moved out of `scorekeeper/` and into Spiritkeeper or the main logged-in user pages.

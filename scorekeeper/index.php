@@ -69,7 +69,7 @@ echo "<html>\n";
 echo "<head>\n";
 echo "<meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover'>\n";
 echo "<title>Scorekeeper</title>\n";
-echo "<link rel='stylesheet' href='" . BASEURL . "/scorekeeper/scorekeeper.css'/>\n";
+echo mobileStyles();
 
 echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
 

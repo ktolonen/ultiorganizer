@@ -390,11 +390,11 @@ function TableSOTGURLs($season)
   $ret .= "<tr>";
   $ret .= "<th class='center'>Division</th>";
   $ret .= "<th class='center'>Team</th>";
-  $ret .= "<th class='center'>SOTG URL</th>";
+  $ret .= "<th class='center'>" . _("Spiritkeeper URL") . "</th>";
   $ret .= "<tr>";
 
   foreach ($tokens as $token) {
-    $fullURL = empty($token['token']) ? "" : $baseURL . "/sotg/?token=" . $token['token'];
+    $fullURL = empty($token['token']) ? "" : $baseURL . "/spiritkeeper/?token=" . $token['token'];
     $ret .= "<tr>";
     $ret .= "<td>" . $token['series'] . "</td>";
     $ret .= "<td>" . $token['team'] . "</td>";
@@ -467,10 +467,10 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
   $html .= "</form></p>";
   $html .= "</div>";
 
-  $html .= "<hr/><h2>" . _("SOTG Tools") . "</h2>";
+  $html .= "<hr/><h2>" . _("Spiritkeeper Tools") . "</h2>";
 
   $html .= "<div class='tdtools-box bg-td2'>";
-  $html .= "<p><strong>" . _("URLs for teams (for entering SOTG scores online)") . "</strong></p>";
+  $html .= "<p><strong>" . _("URLs for teams (for entering spirit scores in Spiritkeeper)") . "</strong></p>";
   $html .= "<p><form method='POST' action='?view=admin/spirit&amp;season=$season'>";
   $html .= "<button class='button' type='submit' name='getsotgurls' value='all'>" . _("Show URLs for all teams") . "</button> ";
   $html .= "<button class='button' type='submit' name='generatesotgtokens' value='onlymissing'>" . _("Generate Tokens") . " (" . _("only missing") . ")" . "</button> ";
@@ -487,7 +487,7 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
   $html .= "</div>";
 
   $html .= "<div class='tdtools-box bg-td2'>";
-  $html .= "<p>" . _("To search for played games that are <b>missing SOTG scores</b>, press one of these buttons: ") . "</p>";
+  $html .= "<p>" . _("To search for played games that are <b>missing Spiritkeeper submissions</b>, press one of these buttons: ") . "</p>";
   $html .= "<p><form method='POST' action='?view=admin/spirit&amp;season=$season'>";
   $html .= "<button class='button' type='submit' name='missingsotgpool' value='search'>" . _("Search Missing by Pool") . "</button> ";
   $html .= "<button class='button' type='submit' name='missingsotgdiv' value='search'>" . _("Search Missing by Division") . "</button> ";
@@ -510,7 +510,7 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
       }
     }
     if ($nonemissing) {
-      $html .= "<p>" . _("No played games found missing SOTG scores!") . "</p>";
+      $html .= "<p>" . _("No played games found missing Spiritkeeper submissions!") . "</p>";
     }
   }
 
@@ -531,7 +531,7 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
       }
     }
     if ($nonemissing) {
-      $html .= "<p>" . _("No played games found missing SOTG scores!") . "</p>";
+      $html .= "<p>" . _("No played games found missing Spiritkeeper submissions!") . "</p>";
     }
   }
 

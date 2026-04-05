@@ -456,6 +456,369 @@ function SpiritTokenSaveSubmission($gameId, $tokenTeamId, $points, $categories)
 	return true;
 }
 
+function SpiritTokenCommentType($gameId, $tokenTeamId, $game = null)
+{
+	$tokenTeamId = (int)$tokenTeamId;
+	if (!$game) {
+		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	}
+	if (!$game) {
+		return 0;
+	}
+
+	$ratedTeamId = SpiritTokenRatedTeamId($game, $tokenTeamId);
+	if ($ratedTeamId <= 0) {
+		return 0;
+	}
+
+	return SpiritCommentTypeForTeam($game, $ratedTeamId);
+}
+
+function SpiritTokenSaveComment($gameId, $tokenTeamId, $comment, $delete = false, $game = null)
+{
+	$tokenTeamId = (int)$tokenTeamId;
+	if (!$game) {
+		$game = SpiritTokenGameRow($gameId, $tokenTeamId);
+	}
+	if (!$game || !SpiritTokenCanSubmit($gameId, $tokenTeamId, $game)) {
+		return false;
+	}
+
+	$type = SpiritTokenCommentType($gameId, $tokenTeamId, $game);
+	if ($type <= 0) {
+		return false;
+	}
+
+	$comment = CommentNormalize($comment);
+	$existing = CommentRaw($type, $gameId);
+
+	if ($delete || $comment === "") {
+		if ($existing === "") {
+			return true;
+		}
+		SetComment($type, $gameId, "");
+		LogGameCommentEvent($gameId, $type, "comment_delete");
+		return true;
+	}
+
+	if ($existing === "") {
+		SetComment($type, $gameId, $comment);
+		LogGameCommentEvent($gameId, $type, "comment_create");
+		return true;
+	}
+
+	if ($existing !== $comment) {
+		SetComment($type, $gameId, $comment);
+		LogGameCommentEvent($gameId, $type, "comment_update");
+	}
+
+	return true;
+}
+
+function SpiritkeeperGetToken()
+{
+	if (isset($_GET['token']) && ctype_alnum((string)$_GET['token'])) {
+		return (string)$_GET['token'];
+	}
+	return '';
+}
+
+function SpiritkeeperSpiritCategories($categories)
+{
+	$rows = array();
+	foreach ($categories as $category) {
+		if ((int)$category['index'] > 0) {
+			$rows[] = $category;
+		}
+	}
+
+	usort($rows, function ($a, $b) {
+		return (int)$a['index'] <=> (int)$b['index'];
+	});
+
+	return $rows;
+}
+
+function SpiritkeeperDefaultSpiritPoints($categories)
+{
+	$defaults = array();
+	foreach (SpiritkeeperSpiritCategories($categories) as $category) {
+		$min = (int)$category['min'];
+		$max = (int)$category['max'];
+		$defaults[(int)$category['category_id']] = (int)floor(($min + $max) / 2);
+	}
+	return $defaults;
+}
+
+function SpiritkeeperSpiritSummary($points, $categories)
+{
+	if (empty($points)) {
+		return '';
+	}
+
+	$parts = array();
+	$total = SpiritTotal($points, $categories);
+	foreach (SpiritkeeperSpiritCategories($categories) as $category) {
+		$categoryId = (int)$category['category_id'];
+		if (!isset($points[$categoryId])) {
+			return '';
+		}
+		$parts[] = (string)$points[$categoryId];
+	}
+
+	$summary = implode(' ', $parts);
+	if (!is_null($total)) {
+		$summary .= ' (' . (int)$total . ')';
+	}
+
+	return $summary;
+}
+
+function SpiritkeeperGameTimeLabel($game)
+{
+	if (empty($game['time'])) {
+		return _("Time TBD");
+	}
+	return ShortDate($game['time']) . ' ' . DefHourFormat($game['time']);
+}
+
+function SpiritkeeperGameScoreLabel($game)
+{
+	$homeScore = isset($game['homescore']) ? $game['homescore'] : null;
+	$visitorScore = isset($game['visitorscore']) ? $game['visitorscore'] : null;
+
+	if ($homeScore === null || $visitorScore === null || $homeScore === '' || $visitorScore === '') {
+		return '? - ?';
+	}
+
+	return (int)$homeScore . ' - ' . (int)$visitorScore;
+}
+
+function SpiritkeeperEditGameUrl($gameId, $teamId = 0)
+{
+	$url = '?view=editgame&game=' . (int)$gameId;
+	if ((int)$teamId > 0) {
+		$url .= '&team=' . (int)$teamId;
+	}
+	return $url;
+}
+
+function SpiritkeeperAccessibleTeams()
+{
+	if (!function_exists('isLoggedIn') || !isLoggedIn() || empty($_SESSION['uid'])) {
+		return array();
+	}
+
+	$seasonIds = array();
+	foreach (getEditSeasons($_SESSION['uid']) as $seasonId => $propId) {
+		$seasonIds[$seasonId] = true;
+	}
+	if (!empty($_SESSION['userproperties']['userrole']['seasonadmin'])) {
+		foreach ($_SESSION['userproperties']['userrole']['seasonadmin'] as $seasonId => $propId) {
+			$seasonIds[$seasonId] = true;
+		}
+	}
+	if (!empty($_SESSION['userproperties']['userrole']['spiritadmin'])) {
+		foreach ($_SESSION['userproperties']['userrole']['spiritadmin'] as $seasonId => $propId) {
+			$seasonIds[$seasonId] = true;
+		}
+	}
+	if (!empty($_SESSION['userproperties']['userrole']['teamadmin'])) {
+		foreach ($_SESSION['userproperties']['userrole']['teamadmin'] as $teamId => $propId) {
+			$seasonId = getTeamSeason($teamId);
+			if (!empty($seasonId)) {
+				$seasonIds[$seasonId] = true;
+			}
+		}
+	}
+
+	$teamsById = array();
+	foreach (array_keys($seasonIds) as $seasonId) {
+		$seasonInfo = SeasonInfo($seasonId);
+		if (empty($seasonInfo['season_id']) || empty($seasonInfo['spiritmode'])) {
+			continue;
+		}
+
+		if (hasSpiritToolsRight($seasonId)) {
+			$seasonTeams = SeasonTeams($seasonId);
+		} else {
+			$seasonTeams = array();
+			foreach (TeamResponsibilities($_SESSION['uid'], $seasonId) as $teamId) {
+				$teamInfo = TeamInfo($teamId);
+				if (!$teamInfo || empty($teamInfo['name'])) {
+					continue;
+				}
+				$teamInfo['team_id'] = (int)$teamId;
+				$seasonTeams[] = $teamInfo;
+			}
+		}
+
+		foreach ($seasonTeams as $team) {
+			$teamId = isset($team['team_id']) ? (int)$team['team_id'] : 0;
+			if ($teamId <= 0) {
+				continue;
+			}
+			$team['season_id'] = $seasonId;
+			$team['seasonname'] = $seasonInfo['name'];
+			$teamsById[$teamId] = $team;
+		}
+	}
+
+	$teams = array_values($teamsById);
+	usort($teams, function ($a, $b) {
+		$aSeason = isset($a['seasonname']) ? (string)$a['seasonname'] : '';
+		$bSeason = isset($b['seasonname']) ? (string)$b['seasonname'] : '';
+		$seasonCmp = strcasecmp($aSeason, $bSeason);
+		if ($seasonCmp !== 0) {
+			return $seasonCmp;
+		}
+
+		$aSeries = isset($a['seriesname']) ? (string)$a['seriesname'] : '';
+		$bSeries = isset($b['seriesname']) ? (string)$b['seriesname'] : '';
+		$seriesCmp = strcasecmp($aSeries, $bSeries);
+		if ($seriesCmp !== 0) {
+			return $seriesCmp;
+		}
+
+		$aName = isset($a['name']) ? (string)$a['name'] : '';
+		$bName = isset($b['name']) ? (string)$b['name'] : '';
+		return strcasecmp($aName, $bName);
+	});
+
+	return $teams;
+}
+
+function SpiritkeeperCurrentSeasons()
+{
+	$seasons = array();
+	$currentSeasonRows = CurrentSeasons();
+	if (!$currentSeasonRows) {
+		return $seasons;
+	}
+
+	while ($row = mysqli_fetch_assoc($currentSeasonRows)) {
+		$seasonId = isset($row['season_id']) ? (string)$row['season_id'] : '';
+		if ($seasonId === '') {
+			continue;
+		}
+		$seasons[$seasonId] = array(
+			'season_id' => $seasonId,
+			'name' => isset($row['name']) ? $row['name'] : $seasonId
+		);
+	}
+	return $seasons;
+}
+
+function SpiritkeeperCurrentAccessibleTeams()
+{
+	$currentSeasons = SpiritkeeperCurrentSeasons();
+	if (empty($currentSeasons)) {
+		return array();
+	}
+
+	$teams = array();
+	foreach (SpiritkeeperAccessibleTeams() as $team) {
+		$seasonId = isset($team['season_id']) ? (string)$team['season_id'] : '';
+		if ($seasonId !== '' && isset($currentSeasons[$seasonId])) {
+			$teams[] = $team;
+		}
+	}
+	return $teams;
+}
+
+function SpiritkeeperSeasonAccessibleTeams($seasonId)
+{
+	$seasonId = (string)$seasonId;
+	if ($seasonId === '') {
+		return array();
+	}
+
+	$teams = array();
+	foreach (SpiritkeeperAccessibleTeams() as $team) {
+		if (isset($team['season_id']) && (string)$team['season_id'] === $seasonId) {
+			$teams[(int)$team['team_id']] = $team;
+		}
+	}
+	return $teams;
+}
+
+function SpiritkeeperSeasonTeamGroups($seasonId)
+{
+	$seasonId = (string)$seasonId;
+	$accessibleTeams = SpiritkeeperSeasonAccessibleTeams($seasonId);
+	if (empty($accessibleTeams)) {
+		return array();
+	}
+
+	$groups = array();
+	$teamsBySeries = array();
+
+	foreach (SeasonTeams($seasonId) as $team) {
+		$teamId = isset($team['team_id']) ? (int)$team['team_id'] : 0;
+		if ($teamId <= 0 || !isset($accessibleTeams[$teamId])) {
+			continue;
+		}
+
+		$teamInfo = $accessibleTeams[$teamId];
+		$seriesLabel = !empty($team['seriesname']) ? $team['seriesname'] : _("No division");
+		if (!isset($teamsBySeries[$seriesLabel])) {
+			$teamsBySeries[$seriesLabel] = array();
+		}
+		$teamsBySeries[$seriesLabel][] = $teamInfo;
+	}
+
+	foreach ($teamsBySeries as $seriesLabel => $seriesTeams) {
+		$groups[] = array(
+			'seriesname' => $seriesLabel,
+			'teams' => $seriesTeams
+		);
+	}
+
+	return $groups;
+}
+
+function SpiritkeeperTeamGameRows($teamId)
+{
+	$teamId = (int)$teamId;
+	if ($teamId <= 0) {
+		return array();
+	}
+	return SpiritTokenGameRows($teamId);
+}
+
+function SpiritkeeperTeamGamesUrl($teamId, $seasonId = '', $basePath = '')
+{
+	$basePath = (string)$basePath;
+	$url = ($basePath === '') ? '?view=teamgames' : $basePath . '?view=teamgames';
+	$seasonId = (string)$seasonId;
+	if ($seasonId !== '') {
+		$url .= '&season=' . urlencode($seasonId);
+	}
+	$teamId = (int)$teamId;
+	if ($teamId > 0) {
+		$url .= '&team=' . $teamId;
+	}
+	return $url;
+}
+
+function SpiritkeeperHomeUrl($seasonId = '', $basePath = './spiritkeeper/')
+{
+	$basePath = (string)$basePath;
+	$url = ($basePath === '') ? '?view=home' : $basePath . '?view=home';
+	$seasonId = (string)$seasonId;
+	if ($seasonId !== '') {
+		$url .= '&season=' . urlencode($seasonId);
+		return $url;
+	}
+
+	$teams = SpiritkeeperCurrentAccessibleTeams();
+	if (count($teams) === 1 && !empty($teams[0]['team_id'])) {
+		$url .= '&season=' . urlencode($teams[0]['season_id']);
+		$url .= '&team=' . (int)$teams[0]['team_id'];
+	}
+	return $url;
+}
+
 function SpiritSubmissionLocked($gameId, $teamId)
 {
 	$game = SpiritGameRow($gameId);

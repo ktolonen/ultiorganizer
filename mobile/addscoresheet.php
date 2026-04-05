@@ -216,12 +216,6 @@ if (!$errors) {
 	$html .=  "<a href='?view=mobile/addofficial&amp;game=" . $gameId . "'>" . _("Game official") . "</a>";
 	$html .= " | <a href='?view=mobile/addcomment&amp;game=" . $gameId . "'>" . _("Game note") . "</a>";
 	$html .= "</td></tr><tr><td>\n";
-	if (intval($seasoninfo['spiritmode']) > 0) {
-		$spiritUrl = SpiritEntryUrl($gameId, '?view=mobile/addspiritpoints');
-		if (!empty($spiritUrl)) {
-			$html .=  "<a href='" . $spiritUrl . "'>" . _("Spirit points") . "</a> | ";
-		}
-	}
 	$html .=  "<a href='?view=mobile/deletescore&amp;game=" . $gameId . "'>" . _("Delete the last goal") . "</a>";
 	$html .= "</td></tr><tr><td>\n";
 	$html .= "<input class='button' type='submit' name='save' value='" . _("Save as result") . "'/>";

@@ -170,6 +170,7 @@ Related mobile actions are broken into separate pages:
 - `mobile/addfirstoffence.php` for starting offence.
 
 This means the mobile scoresheet is conceptually the same scoresheet, but the data is entered across several smaller pages instead of one bulk form.
+Spirit score submission itself is no longer part of the mobile flow and now lives in `spiritkeeper/`.
 
 ### Scorekeeper entry
 
@@ -202,6 +203,8 @@ Related metadata is handled in separate scorekeeper pages such as:
 - `scorekeeper/addfirstoffence.php`.
 
 Compared with the desktop editor, scorekeeper entry is incremental and segmented rather than bulk.
+
+Spirit score submission is intentionally not part of the scorekeeper surface. Spirit score workflows now live in `spiritkeeper/` or the main logged-in user pages.
 
 ## Database Model
 

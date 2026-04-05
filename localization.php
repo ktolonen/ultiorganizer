@@ -80,6 +80,21 @@ function styles() {
   return $ret;
 }
 
+function mobileStyles() {
+  global $styles_prefix;
+  global $include_prefix;
+  if (!isset($styles_prefix)) {
+    $styles_prefix = $include_prefix;
+  }
+  $ret = "";
+  if (is_file($include_prefix . 'cust/' . CUSTOMIZATIONS . '/ultiorganizer-mobile.css')) {
+    $ret .= "    <link rel=\"stylesheet\" href=\"" . $styles_prefix . "cust/" . CUSTOMIZATIONS . "/ultiorganizer-mobile.css\" type=\"text/css\" />\n";
+  } else {
+    $ret .= "    <link rel=\"stylesheet\" href=\"" . $styles_prefix . "cust/default/ultiorganizer-mobile.css\" type=\"text/css\" />\n";
+  }
+  return $ret;
+}
+
 function MapLocale($ext_locale) {
   global $localeMap;
   $locale = strtolower(str_replace("_",'-',$ext_locale));

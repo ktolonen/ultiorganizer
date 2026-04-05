@@ -655,6 +655,11 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   echo "<a class='subnav' href='?view=ext/export'>&raquo; " . utf8entities(_("Data export")) . "</a>\n";
   echo "<a class='subnav' href='?view=mobile/index'>&raquo; " . utf8entities(_("Mobile Administration")) . "</a>\n";
   echo "<a class='subnav' href='./scorekeeper/'>&raquo; " . utf8entities(_("Scorekeeper")) . "</a>\n";
+  $spiritkeeperUrl = './spiritkeeper/';
+  if (function_exists('SpiritkeeperHomeUrl')) {
+    $spiritkeeperUrl = SpiritkeeperHomeUrl();
+  }
+  echo "<a class='subnav' href='" . $spiritkeeperUrl . "'>&raquo; " . utf8entities(_("Spiritkeeper")) . "</a>\n";
   echo "</td></tr>\n";
   echo "</table>";
 

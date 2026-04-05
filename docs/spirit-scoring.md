@@ -15,6 +15,7 @@ Keep those separate when planning changes. The repository does not yet implement
 - Event creation and the top-level `spiritmode` switch are in `admin/addseasons.php`.
 - Detailed spirit settings are managed in `admin/spiritsettings.php`.
 - Spirit admin tooling and missing-score review are in `admin/spirit.php`.
+- Spiritkeeper provides the dedicated mobile spirit-entry surface for both token and authenticated access.
 - Spirit-timeout entry uses `user/addscoresheet.php`, `mobile/addspirittimeouts.php`, and `scorekeeper/addspirittimeouts.php`.
 - Printable field sheets are generated through `user/pdfscoresheet.php` and include a dedicated spirit-timeout area on the scoresheet PDF layouts.
 
@@ -81,7 +82,7 @@ This section describes what the repository does today.
 - Detailed spirit settings are edited in `admin/spiritsettings.php`, linked from `admin/spirit.php`.
 - The admin `Spirit` menu entry is shown only for events where `spiritmode > 0`.
 - There is a dedicated `spiritadmin:<seasonId>` role for spirit-specific tooling and review. It is intentionally narrower than season admin and does not grant broader event administration rights.
-- `admin/spirit.php` contains spirit review tools, missing-score searches, comment search, and SOTG token utilities.
+- `admin/spirit.php` contains spirit review tools, missing-score searches, comment search, and Spiritkeeper token utilities.
 - Spirit timeout recording is enabled only when `spiritmode > 0`.
 - Spirit timeout entry is additionally blocked when `hide_time_on_scoresheet` is enabled for the season.
 
@@ -89,7 +90,7 @@ This section describes what the repository does today.
 
 - Spirit timeouts are stored separately from ordinary timeouts in `uo_spirit_timeout`.
 - Each spirit-timeout row stores the game, team ownership, sequence number, and timestamp in seconds.
-- Spirit timeouts are edited from timeout-oriented score-sheet surfaces, but mobile and scorekeeper now use separate spirit-timeout pages.
+- Spirit timeouts are edited from timeout-oriented score-sheet surfaces, and mobile and scorekeeper both use dedicated spirit-timeout pages.
 - Desktop bulk score-sheet editing in `user/addscoresheet.php` replaces all existing spirit-timeout rows for the game on save, then re-inserts the submitted rows.
 - `mobile/addspirittimeouts.php` and `scorekeeper/addspirittimeouts.php` save spirit timeouts independently from ordinary timeout pages, using the same replace-on-save model.
 - The data model does not enforce a hard maximum, but the current entry UIs and printable scoresheets provide four spirit-timeout slots per team.
@@ -117,6 +118,7 @@ This section describes what the repository does today.
 - `CanDeleteSpiritSubmission()` and `GameDeleteSpiritPoints()` provide an admin-only path to remove a submitted spirit score and rebuild visibility/stat caches.
 - `user/addspirit.php` exposes the delete action as an admin-only button next to each existing submitted spirit score.
 - Spirit comment create/update/delete uses the same shared lock through `CanCreateSpiritComment()` and `CanManageSpiritComment()`.
+- Token-based spirit-note editing uses `SpiritTokenSaveComment()` and is allowed only while `SpiritTokenCanSubmit()` is still true for that team/game.
 
 ### Submission state semantics
 
@@ -128,13 +130,14 @@ This section describes what the repository does today.
 
 ### Important current gaps
 
-- The repository does not contain an event-level setting for "opponent can see received scores/comments after submitting own score", and the token-based self-service flow does not enforce that reveal rule.
+- The repository does not contain an event-level setting for "opponent can see received scores/comments after submitting own score".
+- The current token-based self-service flow hardcodes a narrow version of that reveal rule: received scores are shown only after the team has submitted its own score and the opponent has also submitted.
+- The current token-based self-service flow allows editing only the submitting team's own outbound spirit note. It does not expose opponent spirit notes.
 
 ## Remaining implementation gaps
 
 ### 1. Token and reveal workflow
 
-- Define the supported SOTG token submission flow explicitly.
 - Add an `EVENT_SETTING` for whether teams may see received spirit scores/comments only after they submit their own score.
 - Centralize that rule in shared spirit/comment visibility helpers so browser views, exports, and APIs follow the same behavior.
-- Make token-based submission use the same completion, lock, and visibility rules already used by logged-in users.
+- Decide whether token flows should ever expose received spirit notes, and if so under what event-level setting and moderation rules.
