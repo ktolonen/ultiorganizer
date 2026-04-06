@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('result');
+
 $allowAnonResult = defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
 if (!$allowAnonResult) {
   $include_prefix = __DIR__ . '/';

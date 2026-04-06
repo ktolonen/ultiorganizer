@@ -1,7 +1,7 @@
 <?php
-include_once $include_prefix . 'lib/season.functions.php';
-include_once $include_prefix . 'lib/team.functions.php';
-include_once $include_prefix . 'lib/swissdraw.functions.php';
+require_once __DIR__ . '/season.functions.php';
+require_once __DIR__ . '/team.functions.php';
+require_once __DIR__ . '/swissdraw.functions.php';
 
 /**
  * Gets all pools matching with given conditions.

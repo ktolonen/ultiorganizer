@@ -1,9 +1,9 @@
 <?php
-include_once $include_prefix . 'lib/season.functions.php';
-include_once $include_prefix . 'lib/standings.functions.php';
-include_once $include_prefix . 'lib/player.functions.php';
-include_once $include_prefix . 'lib/series.functions.php';
-include_once $include_prefix . 'lib/debug.functions.php';
+require_once __DIR__ . '/season.functions.php';
+require_once __DIR__ . '/standings.functions.php';
+require_once __DIR__ . '/player.functions.php';
+require_once __DIR__ . '/series.functions.php';
+require_once __DIR__ . '/debug.functions.php';
 
 function IsSeasonStatsCalculated($season)
 {

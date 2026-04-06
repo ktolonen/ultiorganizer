@@ -1,6 +1,6 @@
 <?php
-include_once $include_prefix . 'lib/accreditation.functions.php';
-include_once $include_prefix . 'lib/configuration.functions.php';
+require_once __DIR__ . '/accreditation.functions.php';
+require_once __DIR__ . '/configuration.functions.php';
 
 function GameSetPools($games)
 {

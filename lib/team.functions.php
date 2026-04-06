@@ -1,9 +1,9 @@
 <?php
-include_once $include_prefix . 'lib/pool.functions.php';
-include_once $include_prefix . 'lib/player.functions.php';
-include_once $include_prefix . 'lib/image.functions.php';
-include_once $include_prefix . 'lib/url.functions.php';
-include_once $include_prefix . 'lib/common.functions.php';
+require_once __DIR__ . '/pool.functions.php';
+require_once __DIR__ . '/player.functions.php';
+require_once __DIR__ . '/image.functions.php';
+require_once __DIR__ . '/url.functions.php';
+require_once __DIR__ . '/common.functions.php';
 
 function TeamPlayerArray($teamId)
 {

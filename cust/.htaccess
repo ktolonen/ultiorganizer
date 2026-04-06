@@ -1,0 +1,22 @@
+#
+# Most PHP files under cust/ are include-only customization fragments and
+# should never be web-accessible directly. Keep direct access denied by
+# default and explicitly allow only the few intentional HTTP endpoints.
+# If a new public customization endpoint is added, update this allowlist.
+#
+<IfModule mod_authz_core.c>
+    <FilesMatch "\.php$">
+        Require all denied
+    </FilesMatch>
+    <FilesMatch "^(players|jasenet)\.php$">
+        Require all granted
+    </FilesMatch>
+</IfModule>
+<IfModule !mod_authz_core.c>
+    <FilesMatch "\.php$">
+        Deny from all
+    </FilesMatch>
+    <FilesMatch "^(players|jasenet)\.php$">
+        Allow from all
+    </FilesMatch>
+</IfModule>

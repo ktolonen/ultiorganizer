@@ -1,6 +1,5 @@
 <?php
-
-include_once $include_prefix . 'lib/season.functions.php';
+require_once __DIR__ . '/season.functions.php';
 
 function SearchSeason($resultTarget, $hiddenProperties, $submitbuttons)
 {

@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('teams');
+
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/series.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';

@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('countrycard');
+
 include_once 'lib/team.functions.php';
 include_once 'lib/country.functions.php';
 

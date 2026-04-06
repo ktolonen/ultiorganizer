@@ -25,3 +25,5 @@ This page collects implementation details that are useful during coding work but
 - `cust/default` is the default skin.
 - `cust/slkl` is actively maintained and used in production at <https://www.ultimate.fi/pelikone>.
 - External license database integration is customization-specific. There is no single default external service.
+- Most `cust/*.php` files are include-only fragments and are blocked from direct web access by `cust/.htaccess`.
+- The current allowed customization HTTP endpoints are `players.php` and `jasenet.php`; if a new public endpoint is added under `cust/`, update `cust/.htaccess` at the same time.

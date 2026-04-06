@@ -1,5 +1,5 @@
 <?php
-include_once $include_prefix . 'lib/user.functions.php';
+require_once __DIR__ . '/user.functions.php';
 
 function ReservationLocationValid($locationId)
 {

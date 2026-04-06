@@ -1,6 +1,6 @@
 <?php
-include_once $include_prefix . 'lib/club.functions.php';
-include_once $include_prefix . 'lib/country.functions.php';
+require_once __DIR__ . '/club.functions.php';
+require_once __DIR__ . '/country.functions.php';
 
 
 /**

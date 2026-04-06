@@ -1,7 +1,7 @@
 <?php
-include_once $include_prefix . 'lib/HSVClass.php';
-include_once $include_prefix . 'lib/comment.functions.php';
-include_once $include_prefix . 'lib/spirit.functions.php';
+require_once __DIR__ . '/HSVClass.php';
+require_once __DIR__ . '/comment.functions.php';
+require_once __DIR__ . '/spirit.functions.php';
 
 if (!function_exists('convertToUtf8')) {
 function convertToUtf8($value, $sourceEncoding = 'ISO-8859-1')

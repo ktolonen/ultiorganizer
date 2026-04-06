@@ -75,6 +75,9 @@ $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', array('index', 'loca
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
 LogPageLoad($viewToLog);
 
+if (!defined('UO_ROUTED_VIEW')) {
+  define('UO_ROUTED_VIEW', true);
+}
 include $viewPath;
 
 CloseConnection();

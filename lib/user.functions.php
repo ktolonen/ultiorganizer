@@ -1,12 +1,11 @@
 <?php
-
-include_once $include_prefix . 'lib/session.functions.php';
-include_once $include_prefix . 'lib/season.functions.php';
-include_once $include_prefix . 'lib/series.functions.php';
-include_once $include_prefix . 'lib/team.functions.php';
-include_once $include_prefix . 'lib/reservation.functions.php';
-include_once $include_prefix . 'lib/logging.functions.php';
-include_once $include_prefix . 'lib/common.functions.php';
+require_once __DIR__ . '/session.functions.php';
+require_once __DIR__ . '/season.functions.php';
+require_once __DIR__ . '/series.functions.php';
+require_once __DIR__ . '/team.functions.php';
+require_once __DIR__ . '/reservation.functions.php';
+require_once __DIR__ . '/logging.functions.php';
+require_once __DIR__ . '/common.functions.php';
 
 //include_once $include_prefix.'lib/configuration.functions.php';
 

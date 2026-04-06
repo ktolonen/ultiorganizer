@@ -1,6 +1,6 @@
 <?php
-include_once $include_prefix . 'lib/configuration.functions.php';
-include_once $include_prefix . 'lib/game.functions.php';
+require_once __DIR__ . '/configuration.functions.php';
+require_once __DIR__ . '/game.functions.php';
 
 function CollectGameIdsFromResult($games)
 {
