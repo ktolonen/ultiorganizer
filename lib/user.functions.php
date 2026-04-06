@@ -120,8 +120,8 @@ function UserAuthenticate($user, $passwd, $failcallback)
 		SetUserSessionData($user);
 		DBQuery("UPDATE uo_users SET last_login=NOW() WHERE userid='" . DBEscapeString($user) . "'");
 
-		//first logging
-		if (empty($row['last_login']) && $user == "admin") {
+		// First-time superadmins land on server settings after initial login.
+		if (empty($row['last_login']) && isSuperAdmin()) {
 			header("location:?view=admin/serverconf");
 			exit();
 		}

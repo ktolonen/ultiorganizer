@@ -19,9 +19,9 @@
       include_once 'conf/config.inc.php';
     }
 
-    // page 1: pre-requisites
+    // page 1: prerequisites
     // page 2: database setup
-    // page 3: ultiorganizer configurations
+    // page 3: Ultiorganizer configurations
     // page 4: site settings
     // page 5: administration account
     // page 6: postconditions
@@ -167,7 +167,7 @@ function prerequisites()
   }
   $html .= "</tr>";
 
-  //Write acceess
+  //Write access
   $directory = "conf/";
   $html .= "<tr>";
   $html .= "<td>Write access to folder</td>";
@@ -183,7 +183,7 @@ function prerequisites()
   //read acceess
   $file = "sql/ultiorganizer.sql";
   $html .= "<tr>";
-  $html .= "<td>Database initalization file</td>";
+  $html .= "<td>Database initialization file</td>";
   $html .= "<td>$file</td>";
   if (is_readable($file)) {
     $html .= "<td style='color:green'>ok</td>";
@@ -217,7 +217,7 @@ function database()
 
   $html = "";
   $html .= "<table style='width:80%'>";
-  $html .= "<tr><td>Hostaddress (database.example.com):</td><td><input class='input' type='text' name='hostname' size='50' value='$db_hostname'/></td></tr>";
+  $html .= "<tr><td>Host address (database.example.com):</td><td><input class='input' type='text' name='hostname' size='50' value='$db_hostname'/></td></tr>";
   $html .= "<tr><td>Username:</td><td><input class='input' type='text' name='username' value='$db_username'/></td></tr>";
   $html .= "<tr><td>Password:</td><td><input class='input' type='password' name='password' value='$db_password'/></td></tr>";
   $html .= "<tr><td>Database name:</td><td><input class='input' type='text' name='database' value='$db_database'/></td></tr>";
@@ -274,39 +274,23 @@ function database()
         //echo "\"",$row[0]."\",";
       }
       }
-      // Base schema tables; upgrade-only tables are created via upgrade_db.php.
-      $required = array(
-        "uo_accreditationlog", "uo_club", "uo_country", "uo_database", "uo_enrolledteam",
-        "uo_event_log", "uo_extraemail", "uo_extraemailrequest", "uo_game", "uo_game_pool",
-        "uo_gameevent", "uo_goal", "uo_image", "uo_keys", "uo_location", "uo_moveteams",
-        "uo_played", "uo_player", "uo_player_profile", "uo_player_stats", "uo_pool",
-        "uo_pooltemplate", "uo_registerrequest", "uo_reservation", "uo_scheduling_name",
-        "uo_season", "uo_season_stats", "uo_series", "uo_series_stats", "uo_setting",
-        "uo_team", "uo_team_pool", "uo_team_profile", "uo_team_stats", "uo_timeout",
-        "uo_urls", "uo_userproperties", "uo_users", "uo_victorypoints"
-      );
-      $delta = array_diff($required, $tables);
-      if (!empty($delta)) {
-        $html .= "<br>Missing tables: " . implode(', ', $delta) . "</p>";
+      $html .= "<span style='color:green'>ok</span></p>";
 
-        $html .= "<p>Creating Ultiorganizer tables: ";
-        $ret = createtables($mysqlconnectionref);
-        if (empty($ret['errors'])) {
-          $html .= "<span style='color:green'>ok</span></p>";
-          if (!empty($ret['warnings'])) {
-            $html .= $ret['warnings'];
-          }
-        } else {
-          $html .= "<span style='color:red'>failed</span>";
-          $html .= $ret['errors'];
-          if (!empty($ret['warnings'])) {
-            $html .= $ret['warnings'];
-          }
-          $html .= "</p>";
-          $db_pass = false;
+      $html .= "<p>Creating Ultiorganizer tables: ";
+      $ret = createtables($mysqlconnectionref);
+      if (empty($ret['errors'])) {
+        $html .= "<span style='color:green'>ok</span></p>";
+        if (!empty($ret['warnings'])) {
+          $html .= $ret['warnings'];
         }
       } else {
-        $html .= "<span style='color:green'>ok</span></p>";
+        $html .= "<span style='color:red'>failed</span>";
+        $html .= $ret['errors'];
+        if (!empty($ret['warnings'])) {
+          $html .= $ret['warnings'];
+        }
+        $html .= "</p>";
+        $db_pass = false;
       }
     }
     //mysqli_close($mysqlconnectionref);
@@ -405,8 +389,12 @@ function configurations()
   $customization = isset($_POST['customization']) ? trim($_POST['customization']) : "default";
   $baseurl = isset($_POST['baseurl']) ? trim($_POST['baseurl']) : GetURLBase();
   $disable_self_registration = !empty($_POST['disable_self_registration']);
+  $anonymous_result_input = !empty($_POST['anonymous_result_input']);
   if (!isset($_POST['disable_self_registration']) && defined('DISABLE_SELF_REGISTRATION')) {
     $disable_self_registration = (bool)DISABLE_SELF_REGISTRATION;
+  }
+  if (!isset($_POST['anonymous_result_input']) && defined('ANONYMOUS_RESULT_INPUT')) {
+    $anonymous_result_input = (bool)ANONYMOUS_RESULT_INPUT;
   }
 
 
@@ -436,13 +424,14 @@ function configurations()
 
   $html .= "</select></td></tr>";
   $html .= "<tr><td>Disable self-registration:</td><td><input type='checkbox' name='disable_self_registration' value='1'" . ($disable_self_registration ? " checked='checked'" : "") . "/> Only admins can add users</td></tr>";
+  $html .= "<tr><td>Allow anonymous result input:</td><td><input type='checkbox' name='anonymous_result_input' value='1'" . ($anonymous_result_input ? " checked='checked'" : "") . "/> Allow saving results without authentication</td></tr>";
   $html .= "</table>";
 
   //write configuration file
   if (!empty($_POST['saveconf'])) {
     $passed = true;
     if (!is_writable($upload_dir)) {
-      $html .= "<p style='color:red'>Upload directory $upload_dir is not writeable.</p>";
+      $html .= "<p style='color:red'>Upload directory $upload_dir is not writable.</p>";
       $passed = false;
     }
     if (!$fh = fopen('conf/config.inc.php', 'w')) {
@@ -468,6 +457,7 @@ function configurations()
       fwrite($fh, "define('DATE_FORMAT', _(\"%d.%m.%Y %H:%M\"));\n");
       fwrite($fh, "define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');\n");
       fwrite($fh, "define('DISABLE_SELF_REGISTRATION', " . ($disable_self_registration ? "true" : "false") . ");\n");
+      fwrite($fh, "define('ANONYMOUS_RESULT_INPUT', " . ($anonymous_result_input ? "true" : "false") . ");\n");
 
       fwrite($fh, "?>");
       fclose($fh);
@@ -540,6 +530,7 @@ function site_settings()
   $admin_email = isset($_POST['admin']) ? trim($_POST['admin']) : "ultiorganizer_admin@example.com";
   $timezone = isset($_POST['timezone']) ? trim($_POST['timezone']) : "Europe/Helsinki";
   $locale = isset($_POST['locale']) ? trim($_POST['locale']) : "en_GB.utf8";
+  $disable_visitor_logging = !empty($_POST['disable_visitor_logging']);
 
   $page_title_esc = htmlspecialchars($page_title, ENT_QUOTES, "UTF-8");
   $maps_key_esc = htmlspecialchars($maps_key, ENT_QUOTES, "UTF-8");
@@ -553,6 +544,7 @@ function site_settings()
   $html .= "<tr><td>Google Maps key:</td><td><input class='input' type='text' size='50' name='maps' value='$maps_key_esc'/></td></tr>";
   $html .= "<tr><td>System email sender address:</td><td><input class='input' type='text' size='50' name='mail' value='$email_source_esc'/></td></tr>";
   $html .= "<tr><td>Admin contact email:</td><td><input class='input' type='text' size='50' name='admin' value='$admin_email_esc'/></td></tr>";
+  $html .= "<tr><td>Disable visitor logging:</td><td><input type='checkbox' name='disable_visitor_logging' value='1'" . ($disable_visitor_logging ? " checked='checked'" : "") . "/> Do not store visitor page-load logs</td></tr>";
 
   $timezones = class_exists("DateTimeZone") ? DateTimeZone::listIdentifiers() : array();
   if (!empty($timezones)) {
@@ -616,7 +608,8 @@ function site_settings()
             "EmailSource" => $email_source,
             "DefaultTimezone" => $timezone,
             "DefaultLocale" => $locale,
-            "AdminEmail" => $admin_email
+            "AdminEmail" => $admin_email,
+            "DisableVisitorLogging" => ($disable_visitor_logging ? "true" : "false")
           );
 
           foreach ($updates as $name => $value) {
@@ -651,6 +644,7 @@ function administration()
 {
   $passed = false;
 
+  $admin_userid = isset($_POST['admin_userid']) ? trim($_POST['admin_userid']) : "admin";
   $passwd1 = isset($_POST['passwd1']) ? trim($_POST['passwd1']) : "";
   $passwd2 = isset($_POST['passwd2']) ? trim($_POST['passwd2']) : "";
   $admin_email = isset($_POST['admin_email']) ? trim($_POST['admin_email']) : "";
@@ -666,9 +660,9 @@ function administration()
 
   $html = "";
 
-  $html .= "<p>Change password for Ultiorganizer addministration account.</p>";
+  $html .= "<p>Create the initial superadmin account.</p>";
   $html .= "<table style='width:100%'>";
-  $html .= "<tr><td>Username:</td><td><input type='text' disabled='disabled' name='admin' value='admin'/></td></tr>";
+  $html .= "<tr><td>Username:</td><td><input type='text' name='admin_userid' maxlength='50' value='" . htmlspecialchars($admin_userid, ENT_QUOTES, "UTF-8") . "'/></td></tr>";
   $html .= "<tr><td>Admin email:</td><td><input type='text' name='admin_email' value='" . htmlspecialchars($admin_email, ENT_QUOTES, "UTF-8") . "'/></td></tr>";
   $html .= "<tr><td>Password:</td><td><input type='password' name='passwd1' value='$passwd1'/></td></tr>";
   $html .= "<tr><td>Password (again):</td><td><input type='password' name='passwd2' value='$passwd2'/></td></tr>";
@@ -678,12 +672,12 @@ function administration()
     $passed = true;
 
     if (empty($passwd1) || (strlen($passwd1) < 5 || strlen($passwd1) > 20)) {
-      $html .= "<p style='color:red'>" . _("Invalid password (min. 5, max. 20 letters).") . "</p>";
+      $html .= "<p style='color:red'>" . _("Invalid password (min. 5, max. 20 characters).") . "</p>";
       $passed = false;
     }
 
     if ($passwd1 != $passwd2) {
-      $html .= "<p style='color:red'>Password doesn't match.</p>";
+      $html .= "<p style='color:red'>Passwords do not match.</p>";
       $passed = false;
     }
 
@@ -693,29 +687,71 @@ function administration()
         $html .= "<p style='color:red'>Failed to connect to database.</p>";
         $passed = false;
       } else {
+        mysqli_set_charset($mysqlconnectionref, 'utf8');
         $db = mysqli_select_db($mysqlconnectionref, DB_DATABASE);
         if (!$db) {
           $html .= "<p style='color:red'>Failed to select database.</p>";
           $passed = false;
         } else {
-          $result = mysqli_query($mysqlconnectionref, "SELECT userid FROM uo_users WHERE userid='admin' LIMIT 1");
-          if ($result && mysqli_num_rows($result) > 0) {
-            $html .= "<p>Admin user already exists; password change skipped.</p>";
+          if (empty($admin_userid) || strlen($admin_userid) < 3 || strlen($admin_userid) > 50) {
+            $html .= "<p style='color:red'>Invalid username (min. 3, max. 50 characters).</p>";
+            $passed = false;
+          } elseif ($admin_userid === "anonymous") {
+            $html .= "<p style='color:red'>Username anonymous is reserved.</p>";
+            $passed = false;
           } else {
-            mysqli_set_charset($mysqlconnectionref, 'utf8');
-            $hash = mysqli_real_escape_string($mysqlconnectionref, installHashPassword($passwd1));
-            $email_value = $admin_email !== "" ? "'" . mysqli_real_escape_string($mysqlconnectionref, $admin_email) . "'" : "NULL";
-            $query = sprintf(
-              "INSERT INTO uo_users (userid, password, name, email, last_login) VALUES ('admin', '%s', 'Administrator', %s, NULL)",
-              $hash,
-              $email_value
-            );
-            $result = mysqli_query($mysqlconnectionref, $query);
-            if ($result) {
-              $html .= "<p>Admin user created.</p>";
-            } else {
-              $html .= "<p style='color:red'>Failed to create admin user.</p>";
+            $admin_userid_esc = mysqli_real_escape_string($mysqlconnectionref, $admin_userid);
+            if ($admin_userid_esc !== $admin_userid || preg_match('/[ ]/', $admin_userid)) {
+              $html .= "<p style='color:red'>Username may not have spaces or special characters.</p>";
               $passed = false;
+            } else {
+              $result = mysqli_query($mysqlconnectionref, "SELECT userid FROM uo_users WHERE userid='$admin_userid_esc' LIMIT 1");
+              $created_user = false;
+              if ($result && mysqli_num_rows($result) > 0) {
+                $html .= "<p>User already exists; password change skipped.</p>";
+              } else {
+                $hash = mysqli_real_escape_string($mysqlconnectionref, installHashPassword($passwd1));
+                $email_value = $admin_email !== "" ? "'" . mysqli_real_escape_string($mysqlconnectionref, $admin_email) . "'" : "NULL";
+                $query = sprintf(
+                  "INSERT INTO uo_users (userid, password, name, email, last_login) VALUES ('%s', '%s', 'Administrator', %s, NULL)",
+                  $admin_userid_esc,
+                  $hash,
+                  $email_value
+                );
+                $result = mysqli_query($mysqlconnectionref, $query);
+                if ($result) {
+                  $created_user = true;
+                } else {
+                  $html .= "<p style='color:red'>Failed to create admin user.</p>";
+                  $passed = false;
+                }
+              }
+
+              if ($passed) {
+                $role_result = mysqli_query($mysqlconnectionref, "SELECT prop_id FROM uo_userproperties WHERE userid='$admin_userid_esc' AND name='userrole' AND value='superadmin' LIMIT 1");
+                if (!$role_result) {
+                  $html .= "<p style='color:red'>Failed to check superadmin role.</p>";
+                  $passed = false;
+                } elseif (mysqli_num_rows($role_result) === 0) {
+                  $role_insert = mysqli_query($mysqlconnectionref, "INSERT INTO uo_userproperties (userid, name, value) VALUES ('$admin_userid_esc', 'userrole', 'superadmin')");
+                  if (!$role_insert) {
+                    $html .= "<p style='color:red'>Failed to grant superadmin access.</p>";
+                    $passed = false;
+                  } else {
+                    if ($created_user) {
+                      $html .= "<p>Admin user created.</p>";
+                    } else {
+                      $html .= "<p>Existing user granted superadmin access.</p>";
+                    }
+                  }
+                } else {
+                  if ($created_user) {
+                    $html .= "<p>Admin user created.</p>";
+                  } else {
+                    $html .= "<p>Existing superadmin account confirmed.</p>";
+                  }
+                }
+              }
             }
           }
         }
@@ -741,33 +777,35 @@ function postconditions()
 {
   $passed = true;
   $html = "";
+  $html .= "<p>After installation, the web server / PHP user must not be able to write <i>conf/config.inc.php</i> or the <i>conf/</i> directory.</p>";
+  $html .= "<p>The installer tries to remove write access by setting the file to <code>0444</code> and the directory to <code>0555</code>. If your environment ignores or blocks that change, adjust ownership, ACLs, or permissions manually until the checks below pass.</p>";
   $html .= "<table style='width:100%'>";
 
 
   //Database configuration file
   $file = "conf/config.inc.php";
-  @chmod($file, 0644);
+  @chmod($file, 0444);
   $html .= "<tr>";
-  $html .= "<td>Remove write access</td>";
+  $html .= "<td>Protected from web server writes</td>";
   $html .= "<td>$file</td>";
   if (!is_writeable($file)) {
     $html .= "<td style='color:green'>ok</td>";
   } else {
-    $html .= "<td style='color:red'>manual action required (file writeable)</td>";
+    $html .= "<td style='color:red'>manual action required (must not be writable by PHP/web server user)</td>";
     $passed = false;
   }
   $html .= "</tr>";
 
-  //Write acceess
+  //Write access
   $directory = "conf/";
-  @chmod($directory, 0755);
+  @chmod($directory, 0555);
   $html .= "<tr>";
-  $html .= "<td>Remove write access</td>";
+  $html .= "<td>Protected from web server writes</td>";
   $html .= "<td>$directory</td>";
   if (!is_writable($directory)) {
     $html .= "<td style='color:green'>ok</td>";
   } else {
-    $html .= "<td style='color:red'>manual action required (directory writeable)</td>";
+    $html .= "<td style='color:red'>manual action required (must not be writable by PHP/web server user)</td>";
     $passed = false;
   }
   $html .= "</tr>";
@@ -777,9 +815,10 @@ function postconditions()
 
   $html .= "<p>";
   if ($passed) {
-    $html .= "<p>To finalize installation remove intall.php (this file) from server.</p>";
+    $html .= "<p>To finalize installation remove install.php (this file) from the server.</p>";
     $html .= "<input class='button' name='continue' id='continue' type='submit' value='Finish'/>";
   } else {
+    $html .= "<p>Manual action required: change ownership or permissions until both paths are not writable by the web server / PHP user, then refresh this step.</p>";
     $html .= "<input disabled='disabled' class='button' name='continue' id='continue' type='submit' value='Finish'/>";
   }
   $html .= " <input class='button' name='refresh' id='refresh' type='submit' value='Refresh'/> ";

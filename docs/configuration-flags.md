@@ -28,6 +28,11 @@ Use these exact type names when discussing configuration work:
 
 Prefer the narrowest valid scope. Do not use a broader configuration type than the behavior requires.
 
+## Installation coverage rule
+
+When adding a new `SYSTEM_FLAG` or `INSTALLATION_SETTING`, also cover it in the installation process.
+At minimum, check whether `install.php` should expose, persist, or preserve the value during install.
+
 ## Migration rule
 
 When moving a setting from one type to another, treat it as a data migration:

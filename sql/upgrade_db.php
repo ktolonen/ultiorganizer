@@ -1140,13 +1140,13 @@ function upgrade86()
 		runQuery("DELETE FROM uo_setting WHERE name='ShowSpiritComments'");
 	}
 
-	runQuery("UPDATE uo_spirit_category SET text='four categories plus comparison' WHERE mode=1002 AND `index`=0");
-	runQuery("UPDATE uo_spirit_category SET text='five categories, theirs and ours' WHERE mode=1004 AND `index`=0");
+	runQuery("UPDATE uo_spirit_category SET text='Four categories plus comparison' WHERE mode=1002 AND `index`=0");
+	runQuery("UPDATE uo_spirit_category SET text='Five categories, theirs and ours' WHERE mode=1004 AND `index`=0");
 	runQuery("UPDATE uo_spirit_category SET text='WFDF official (five categories)' WHERE mode=1003 AND `index`=0");
 
 	// Keep gettext aware of the renamed mode labels stored in the database.
-	_("four categories plus comparison");
-	_("five categories, theirs and ours");
+	_("Four categories plus comparison");
+	_("Five categories, theirs and ours");
 	_("WFDF official (five categories)");
 
 	runQuery(

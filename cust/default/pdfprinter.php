@@ -424,6 +424,7 @@ class PDF extends tFPDF
 		$prevTeam = "";
 		$prevDate = "";
 		$prevField = "";
+		$prevSeason = "";
 		$fieldstotal = 0;
 
 		$isTableOpen = false;
@@ -443,10 +444,20 @@ class PDF extends tFPDF
 		while ($game = mysqli_fetch_assoc($games)) {
 
 			//one reservation group per page
-			if (!$pageAdded || (!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament)) {
+			if (
+				!$pageAdded
+				|| (
+					!empty($game['place_id'])
+					&& (
+						$game['reservationgroup'] != $prevTournament
+						|| $game['season'] != $prevSeason
+					)
+				)
+			) {
 				$this->AddPage("L", "A3");
 				$pageAdded = true;
-				$times = TimetableTimeslots($game['reservationgroup'], $id);
+				$pageSeason = (int)$game['season'];
+				$times = TimetableTimeslots($game['reservationgroup'], $pageSeason);
 				$timeslots = array();
 				$i = 0;
 				foreach ($times as $time) {
@@ -454,7 +465,7 @@ class PDF extends tFPDF
 					$i++;
 				}
 
-				$fieldstotal = TimetableFields($game['reservationgroup'], $id);
+				$fieldstotal = TimetableFields($game['reservationgroup'], $pageSeason);
 				$fieldlimit = max($fieldstotal / 2 + 1, 10);
 				$gridx = $xarea / $fieldlimit;
 				$field = 0;
@@ -501,7 +512,11 @@ class PDF extends tFPDF
 			}
 
 			$slot = $game['time'];
-			$this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
+			if (!isset($timeslots[$slot])) {
+				$timeslots[$slot] = count($timeslots) * $gridy;
+			}
+			$slotOffset = $timeslots[$slot];
+			$this->SetXY($field_offset, $time_offset + $slotOffset);
 
 			$this->SetTextColor(0);
 			$this->SetFillColor(255);
@@ -550,7 +565,7 @@ class PDF extends tFPDF
 			//$this->DynSetFont($txt,$gridx,8);
 			$this->MultiCell($gridx, 3, $txt, "LR", 2, 'L', $colors);
 
-			$this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
+			$this->SetXY($field_offset, $time_offset + $slotOffset);
 			$this->Cell($gridx, $gridy, "", "LRBT", 2, 'L', false);
 
 			$prevTournament = $game['reservationgroup'];
@@ -560,6 +575,7 @@ class PDF extends tFPDF
 			$prevPool = $game['pool'];
 			$prevDate = JustDate($game['starttime']);
 			$prevTime = DefHourFormat($game['starttime']);
+			$prevSeason = $game['season'];
 		}
 	}
 
