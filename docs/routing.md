@@ -9,9 +9,12 @@
 ## Sub-app entry points
 
 - `api/index.php`: API entry point.
-- `mobile/index.php`: mobile entry point.
+- `mobile/index.php`: deprecated legacy mobile administration entry point kept for compatibility.
 - `scorekeeper/index.php`: touchscreen scorekeeper entry point.
+- `spiritkeeper/index.php`: standalone Spiritkeeper entry point.
 - `login/index.php` and `ext/index.php`: specialized entry points for those areas.
+
+`mobile/` is no longer the recommended operator surface. Use `scorekeeper/` for scorekeeping workflows and `spiritkeeper/` for spirit-entry workflows.
 
 ## Include structure
 

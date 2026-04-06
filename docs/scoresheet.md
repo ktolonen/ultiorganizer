@@ -145,6 +145,8 @@ Main pages:
 
 The mobile flow is designed for incremental entry rather than bulk editing.
 
+This legacy `mobile/` flow is deprecated and kept only for compatibility. New operator workflows should use `scorekeeper/` for score entry and `spiritkeeper/` for spirit workflows.
+
 Player-list behavior is separate and usually completed before point entry. The score-entry page then accepts one point at a time.
 
 What the operator enters for each point:

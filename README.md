@@ -12,7 +12,7 @@ The repository is organized as follows:
 * **lib** Shared utilities and SQL-backed data access.
 * **api** JSON API entry points and versioned routing.
 * **cust** Skins and installation-specific customizations.
-* **mobile**, **scorekeeper**, **ext** Specialized entry points for those use cases.
+* **mobile**, **scorekeeper**, **spiritkeeper**, **ext** Specialized entry points. `mobile/` is legacy and deprecated; `scorekeeper/` and `spiritkeeper/` are the supported replacements for the old mobile administration UI.
 * **conf**, **sql** Configuration and database assets that should not be exposed by the web server.
 
 Additional documentation lives under:

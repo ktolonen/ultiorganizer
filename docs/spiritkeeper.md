@@ -128,7 +128,8 @@ This means:
 - token users can edit only their own outbound spirit note on the token submit page while submission is open,
 - opponent spirit-note visibility remains limited to authenticated Spiritkeeper and the main logged-in spirit UI,
 - spirit timeouts remain on score-entry surfaces because they are recorded during the game by officials,
-- scorekeeper no longer exposes spirit entry pages.
+- scorekeeper no longer exposes spirit entry pages,
+- the deprecated `mobile/` interface is not the supported entry surface for spirit workflows anymore.
 
 ## Current gaps
 

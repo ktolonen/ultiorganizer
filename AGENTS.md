@@ -16,7 +16,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `lib/`: shared utilities; SQL belongs here.
 - `api/`: JSON API entry points and routing.
 - `cust/`: skins and installation-specific customizations.
-- `mobile/`, `scorekeeper/`, `spiritkeeper/`, `login/`, `ext/`: specialized entry points.
+- `mobile/`, `scorekeeper/`, `spiritkeeper/`, `login/`, `ext/`: specialized entry points. `mobile/` is a deprecated legacy interface kept for compatibility; `scorekeeper/` and `spiritkeeper/` are the supported replacements.
 - `images/`, `locale/`, `plugins/`: static assets, translations, and plugin code.
 - `live/`, `script/`: live-service and maintenance scripts.
 - `conf/`: server configuration; keep writable only during install.

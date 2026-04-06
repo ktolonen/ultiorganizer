@@ -179,7 +179,7 @@ The live clock additionally uses these `uo_game` columns:
 Scorekeeper overlaps with mobile and desktop scoresheet functionality, but it is intentionally narrower:
 
 - `user/addscoresheet.php` is the larger bulk editor
-- `mobile/addscoresheet.php` is another incremental mobile flow
+- `mobile/addscoresheet.php` is the deprecated legacy incremental mobile flow kept for compatibility
 - `scorekeeper/` is the dedicated officiating surface centered on responsibility-based game access and now on the live clock workflow
 
 Spirit score submission itself does not live in Scorekeeper. That workflow is handled in `spiritkeeper/` and the main logged-in spirit pages.
