@@ -146,10 +146,11 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
     echo "<tr>\n";
     echo "<td class='right' style='padding-top:5px'>";
 
-    $hidePublicAuth = ($user == 'anonymous' && function_exists('IsSelfRegistrationDisabled') && IsSelfRegistrationDisabled());
+    $hideInlineLogin = ($user == 'anonymous' && function_exists('IsSelfRegistrationDisabled') && IsSelfRegistrationDisabled());
+    $hideRegistration = ($user == 'anonymous' && function_exists('IsPublicRegistrationDisabled') && IsPublicRegistrationDisabled());
 
     if ($user == 'anonymous') {
-      if (!$hidePublicAuth) {
+      if (!$hideInlineLogin) {
         echo "<input class='input' type='text' id='myusername' name='myusername' size='10' style='border:1px solid #555555'/>&nbsp;";
         echo "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
         echo "<input class='button' type='submit' name='login' value='" . utf8entities(_("Login")) . "' style='border:1px solid #000000'/>";
@@ -162,7 +163,7 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
     echo "&nbsp;";
 
     if ($user == 'anonymous') {
-      if (!$hidePublicAuth) {
+      if (!$hideRegistration) {
         echo "<span class='topheadertext'><a class='topheaderlink' href='?view=register'>" . utf8entities(_("New user?")) . "</a></span>";
       }
     } else {

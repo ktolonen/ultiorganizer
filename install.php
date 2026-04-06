@@ -389,9 +389,13 @@ function configurations()
   $customization = isset($_POST['customization']) ? trim($_POST['customization']) : "default";
   $baseurl = isset($_POST['baseurl']) ? trim($_POST['baseurl']) : GetURLBase();
   $disable_self_registration = !empty($_POST['disable_self_registration']);
+  $disable_email = !empty($_POST['disable_email']);
   $anonymous_result_input = !empty($_POST['anonymous_result_input']);
   if (!isset($_POST['disable_self_registration']) && defined('DISABLE_SELF_REGISTRATION')) {
     $disable_self_registration = (bool)DISABLE_SELF_REGISTRATION;
+  }
+  if (!isset($_POST['disable_email']) && defined('NO_EMAIL')) {
+    $disable_email = (bool)NO_EMAIL;
   }
   if (!isset($_POST['anonymous_result_input']) && defined('ANONYMOUS_RESULT_INPUT')) {
     $anonymous_result_input = (bool)ANONYMOUS_RESULT_INPUT;
@@ -424,6 +428,7 @@ function configurations()
 
   $html .= "</select></td></tr>";
   $html .= "<tr><td>Disable self-registration:</td><td><input type='checkbox' name='disable_self_registration' value='1'" . ($disable_self_registration ? " checked='checked'" : "") . "/> Only admins can add users</td></tr>";
+  $html .= "<tr><td>Disable outbound email:</td><td><input type='checkbox' name='disable_email' value='1'" . ($disable_email ? " checked='checked'" : "") . "/> Do not send email; public self-registration is unavailable</td></tr>";
   $html .= "<tr><td>Allow anonymous result input:</td><td><input type='checkbox' name='anonymous_result_input' value='1'" . ($anonymous_result_input ? " checked='checked'" : "") . "/> Allow saving results without authentication</td></tr>";
   $html .= "</table>";
 
@@ -457,6 +462,7 @@ function configurations()
       fwrite($fh, "define('DATE_FORMAT', _(\"%d.%m.%Y %H:%M\"));\n");
       fwrite($fh, "define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');\n");
       fwrite($fh, "define('DISABLE_SELF_REGISTRATION', " . ($disable_self_registration ? "true" : "false") . ");\n");
+      fwrite($fh, "define('NO_EMAIL', " . ($disable_email ? "true" : "false") . ");\n");
       fwrite($fh, "define('ANONYMOUS_RESULT_INPUT', " . ($anonymous_result_input ? "true" : "false") . ");\n");
 
       fwrite($fh, "?>");

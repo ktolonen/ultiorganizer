@@ -237,8 +237,16 @@ if ($_SESSION['uid'] != "anonymous") {
 		<tr><td class='infocell'>" . _("Username") . ":</td>
 			<td><input class='input' maxlength='20' id='UserName' name='UserName' value='" . utf8entities($userinfo['userid']) . "'/></td></tr>
 		<tr><td class='infocell'>" . _("Primary email") . ":</td>
-			<td><a href='mailto:" . $userinfo['email'] . "'/>" . $userinfo['email'] . "</a>&nbsp;
-			<a href='?view=user/addextraemail&amp;user=" . utf8entities($userid) . "'>" . _("Add extra address") . "</a></td></tr>\n";
+			<td>";
+  if (!empty($userinfo['email'])) {
+    $html .= "<a href='mailto:" . utf8entities($userinfo['email']) . "'>" . utf8entities($userinfo['email']) . "</a>";
+  } else {
+    $html .= "-";
+  }
+  if (!IsEmailDisabled()) {
+    $html .= "&nbsp;<a href='?view=user/addextraemail&amp;user=" . utf8entities($userid) . "'>" . _("Add extra address") . "</a>";
+  }
+  $html .= "</td></tr>\n";
   $extraEmails = UserExtraEmails($userid);
   if ($extraEmails) {
     $html .= "		<tr><td rowspan='" . count($extraEmails) . "' class='infocell'>" . _("Extra emails") . ":</td>\n";

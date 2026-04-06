@@ -8,11 +8,12 @@ if ((!empty($_GET["season"]) && !isSeasonAdmin($_GET["season"])) && !isSuperAdmi
 
 $html = "";
 $mailsent = false;
+$emailRequired = !IsEmailDisabled();
 if (!empty($_POST['save'])) {
   $newUsername = $_POST['UserName'];
   $newPassword = $_POST['Password'];
   $newName = $_POST['Name'];
-  $newEmail = $_POST['Email'];
+  $newEmail = trim($_POST['Email']);
   $error = 0;
   $message = "";
   if (empty($newUsername) || strlen($newUsername) < 3 || strlen($newUsername) > 50) {
@@ -32,12 +33,12 @@ if (!empty($_POST['save'])) {
     $error = 1;
   }
 
-  if (empty($newEmail)) {
+  if ($emailRequired && empty($newEmail)) {
     $html .= "<p>" . _("Email can not be empty") . ".</p>";
     $error = 1;
   }
 
-  if (!validEmail($newEmail)) {
+  if (!empty($newEmail) && !validEmail($newEmail)) {
     $html .= "<p>" . _("Invalid email address") . ".</p>";
     $error = 1;
   }
@@ -57,13 +58,24 @@ if (!empty($_POST['save'])) {
   }
 
   if ($error == 0) {
-    if (AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail)) {
-      ConfirmRegisterUID($newUsername);
+    $created = false;
+    if (IsEmailDisabled()) {
+      $created = CreateUserAccount($newUsername, $newPassword, $newName, $newEmail, "added by administrator");
+    } elseif (AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail)) {
+      $created = ConfirmRegisterUID($newUsername);
+    }
+
+    if ($created) {
       AddEditSeason($newUsername, CurrentSeason());
       AddSeasonUserRole($newUsername, "teamadmin:" . $_POST["team"], CurrentSeason());
       $html .= "<p>" . _("Added new user") . "<br/>\n";
       $html .= _("Username") . ": " . $newUsername . "<br/>\n";
       $html .= _("Password") . ": " . $newPassword . "<br/>\n";
+      if (IsEmailDisabled()) {
+        $html .= _("Deliver the password to the user manually.") . "<br/>\n";
+      }
+    } else {
+      $html .= "<p>" . _("Adding the user failed. Please contact the system administrator.") . "</p>\n";
     }
   } else {
     $html .= "<p>" . _("Correct the errors and try again") . ".</p>\n";
@@ -99,7 +111,11 @@ $html .= "'/></td></tr>
 		<tr><td class='infocell'>" . _("Email") . ":</td>
 			<td><input type='text' class='input' maxlength='512' id='Email' name='Email' size='40' value='";
 if (isset($_POST['Email'])) $html .= $_POST['Email'];
-$html .= "'/></td></tr>";
+$html .= "'/>";
+if (!$emailRequired) {
+  $html .= "&nbsp;<span class='note'>" . _("Optional when email is disabled.") . "</span>";
+}
+$html .= "</td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Responsible team") . ":</td>";
 $teams = SeasonTeams(CurrentSeason());

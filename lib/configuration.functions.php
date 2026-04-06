@@ -38,13 +38,13 @@ function ReadOnlyServer() {
 	return ($serverConf['ReadOnlyServer'] == "true");
 }
 
-function IsSelfRegistrationDisabled()
+function ReadBooleanSystemFlag($name, $default = false)
 {
-	if (!defined('DISABLE_SELF_REGISTRATION')) {
-		return false;
+	if (!defined($name)) {
+		return $default;
 	}
 
-	$flag = constant('DISABLE_SELF_REGISTRATION');
+	$flag = constant($name);
 	if (is_bool($flag)) {
 		return $flag;
 	}
@@ -53,9 +53,24 @@ function IsSelfRegistrationDisabled()
 	return in_array($normalized, array("1", "true", "yes", "on", "enabled"), true);
 }
 
+function IsSelfRegistrationDisabled()
+{
+	return ReadBooleanSystemFlag('DISABLE_SELF_REGISTRATION', false);
+}
+
+function IsEmailDisabled()
+{
+	return ReadBooleanSystemFlag('NO_EMAIL', false);
+}
+
+function IsPublicRegistrationDisabled()
+{
+	return IsSelfRegistrationDisabled() || IsEmailDisabled();
+}
+
 function IsSelfRegistrationEnabled()
 {
-	return !IsSelfRegistrationDisabled();
+	return !IsPublicRegistrationDisabled();
 }
 
 function GetServerConf()

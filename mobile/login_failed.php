@@ -8,7 +8,7 @@ $userId = isset($_GET['user']) ? urldecode($_GET['user']) : "";
 $safeUserId = utf8entities($userId);
 $html = "";
 
-if (IsSelfRegistrationDisabled()) {
+if (IsEmailDisabled() || IsSelfRegistrationDisabled()) {
   $html = "<p>" . _("Invalid username or password. Contact the system administrator if you need to reset your password.") . "</p>";
   showPage($title, $html, true);
   return;

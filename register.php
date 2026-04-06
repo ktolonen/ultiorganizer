@@ -6,7 +6,7 @@ $message = "";
 $title = _("Register");
 $html .= file_get_contents('script/disable_enter.js.inc');
 
-if (IsSelfRegistrationDisabled() && empty($_GET['token'])) {
+if (IsPublicRegistrationDisabled() && empty($_GET['token'])) {
   header("location:?view=frontpage");
   exit;
 }
@@ -68,6 +68,8 @@ if (!empty($_POST['save'])) {
     if (AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail)) {
       $message .= "<p>" . _("Confirmation e-mail has been sent to the email address provided. You have to follow the link in the mail to finalize registration, before you can use the account.") . "</p>\n";
       $mailsent = true;
+    } else {
+      $message .= "<p>" . _("Registration could not be completed. Please contact the system administrator.") . "</p>\n";
     }
   } else {
     $message .= "<p>" . _("Correct the errors and try again") . ".</p>\n";

@@ -5,6 +5,7 @@ include_once 'lib/season.functions.php';
 
 $LAYOUT_ID = USERS;
 $title = _("Users");
+$message = "";
 
 if (hasEditUsersRight()) {
 	if (isset($_POST['deleteuser'])) {
@@ -18,7 +19,9 @@ if (hasEditUsersRight()) {
 			}
 		}
 	} elseif (isset($_POST['resetpassword'])) {
-		if (isset($_POST['users'])) {
+		if (IsEmailDisabled()) {
+			$message = "<p class='warning'>" . _("Password reset email is unavailable. Open the user information page to set a new password manually.") . "</p>";
+		} elseif (isset($_POST['users'])) {
 			foreach ($_POST['users'] as $userid) {
 				UserResetPassword(urldecode($userid));
 			}
@@ -45,8 +48,13 @@ $target = "view=admin/users";
 //content
 echo "<p><a href='?view=admin/adduser'>" . _("Add new user") . "</a></p>";
 echo "<h2>" . $title . "</h2>";
+echo $message;
 if (hasEditUsersRight()) {
-	echo SearchUser($target, array(), array('resetpassword' => _("Reset password"), 'deleteuser' => _("Delete")));
+	$actions = array('deleteuser' => _("Delete"));
+	if (!IsEmailDisabled()) {
+		$actions = array('resetpassword' => _("Reset password"), 'deleteuser' => _("Delete"));
+	}
+	echo SearchUser($target, array(), $actions);
 }
 
 contentEnd();

@@ -11,6 +11,7 @@ Use these exact type names when discussing configuration work:
 - Scope: installation or environment level.
 - Storage: `conf/config.inc.php` and `conf/config.inc.example.php`.
 - Use when the value is deployment-specific, security-sensitive, or infrastructure-specific.
+- Example: `NO_EMAIL` disables outbound mail at the installation level and makes public self-registration unavailable.
 
 ## INSTALLATION_SETTING
 

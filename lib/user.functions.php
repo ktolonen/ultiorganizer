@@ -1221,8 +1221,43 @@ function DeleteRegisterRequest($userid)
 	}
 }
 
+function CreateConfirmedUser($userid, $passwordHash, $name, $email = '', $logContext = '')
+{
+	$email = trim((string)$email);
+	$emailValue = $email === '' ? "NULL" : "'" . DBEscapeString($email) . "'";
+
+	$query = sprintf(
+		"INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', %s)",
+		DBEscapeString($name),
+		DBEscapeString($userid),
+		DBEscapeString($passwordHash),
+		$emailValue
+	);
+	$result = DBQuery($query);
+
+	if (!$result) {
+		return false;
+	}
+
+	FinalizeNewUser($userid, $email);
+	if (!empty($logContext)) {
+		Log1("user", "add", $userid, "", $logContext);
+	}
+
+	return true;
+}
+
+function CreateUserAccount($userid, $password, $name, $email = '', $logContext = '')
+{
+	return CreateConfirmedUser($userid, hashUserPassword($password), $name, $email, $logContext);
+}
+
 function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $message = 'register.txt')
 {
+	if (function_exists('IsEmailDisabled') && IsEmailDisabled()) {
+		return false;
+	}
+
 	Log1("user", "add", $newUsername, "", "register request");
 	$token = uuidSecure();
 	$query = sprintf(
@@ -1282,6 +1317,10 @@ function emailUsed($email)
 
 function AddExtraEmailRequest($userid, $extraEmail, $message = 'verify_email.txt')
 {
+	if (function_exists('IsEmailDisabled') && IsEmailDisabled()) {
+		return false;
+	}
+
 	Log1("user", "add", $userid, "", "extra email request");
 	$token = uuidSecure();
 	$query = sprintf(
@@ -1340,25 +1379,17 @@ function ConfirmRegister($token)
 	$result = DBQuery($query);
 
 	if ($row = mysqli_fetch_assoc($result)) {
-		$query = sprintf(
-			"INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
-			DBEscapeString($row['name']),
-			DBEscapeString($row['userid']),
-			DBEscapeString($row['password']),
-			DBEscapeString($row['email'])
-		);
-		$result = DBQuery($query);
-
-		$query = sprintf(
-			"DELETE FROM uo_registerrequest WHERE token='%s'",
-			DBEscapeString($token)
-		);
-		$result = DBQuery($query);
-
-		FinalizeNewUser($row['userid'], $row['email']);
-		Log1("user", "add", $row['userid'], "", "confirm register request");
-		return true;
+		if (CreateConfirmedUser($row['userid'], $row['password'], $row['name'], $row['email'], "confirm register request")) {
+			$query = sprintf(
+				"DELETE FROM uo_registerrequest WHERE token='%s'",
+				DBEscapeString($token)
+			);
+			DBQuery($query);
+			return true;
+		}
 	} else return false;
+
+	return false;
 }
 
 
@@ -1372,24 +1403,14 @@ function ConfirmRegisterUID($userid)
 		$result = DBQuery($query);
 
 		if ($row = mysqli_fetch_assoc($result)) {
-			$query = sprintf(
-				"INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
-				DBEscapeString($row['name']),
-				DBEscapeString($row['userid']),
-				DBEscapeString($row['password']),
-				DBEscapeString($row['email'])
-			);
-			$result = DBQuery($query);
-
-			$query = sprintf(
-				"DELETE FROM uo_registerrequest WHERE userid='%s'",
-				DBEscapeString($userid)
-			);
-			$result = DBQuery($query);
-
-			FinalizeNewUser($row['userid'], $row['email']);
-			Log1("user", "add", $row['userid'], "", "added by administrator");
-			return true;
+			if (CreateConfirmedUser($row['userid'], $row['password'], $row['name'], $row['email'], "added by administrator")) {
+				$query = sprintf(
+					"DELETE FROM uo_registerrequest WHERE userid='%s'",
+					DBEscapeString($userid)
+				);
+				DBQuery($query);
+				return true;
+			}
 		} else return false;
 	} else {
 		die("Insufficient user rights.");
@@ -1403,6 +1424,11 @@ function FinalizeNewUser($userid, $email)
 		DBEscapeString($userid)
 	);
 	$result = DBQuery($query);
+
+	$email = trim((string)$email);
+	if ($email === '') {
+		return;
+	}
 
 	$query = sprintf(
 		"SELECT DISTINCT profile_id FROM uo_player_profile WHERE LOWER(email)='%s'",
@@ -1661,6 +1687,10 @@ function GameResponsibilityArray($season, $series = null)
 
 function UserResetPassword($userId)
 {
+	if (function_exists('IsEmailDisabled') && IsEmailDisabled()) {
+		return false;
+	}
+
 	Log1("user", "change", $userId, "", "request password reset");
 
 	$query = sprintf(
