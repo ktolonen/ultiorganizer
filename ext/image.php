@@ -1,7 +1,7 @@
 <?php
 
-include_once '../lib/database.php';
-include_once '../lib/image.functions.php';
+include_once __DIR__ . '/../lib/database.php';
+include_once __DIR__ . '/../lib/image.functions.php';
 
 OpenConnection();
 $resize = false;

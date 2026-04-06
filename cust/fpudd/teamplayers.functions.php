@@ -1,5 +1,11 @@
 <?php 
-include_once 'lib/yui.functions.php';
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
+if (!isset($include_prefix)) {
+  $include_prefix = __DIR__ . '/../../';
+}
+include_once $include_prefix . 'lib/yui.functions.php';
 echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "container"));
 ?>
 <link rel="stylesheet" type="text/css" href="script/yui/container/assets/container.css" />
@@ -179,4 +185,3 @@ YAHOO.util.Event.addListener(window, "load", function() {
     }();
 });
 </script>
-

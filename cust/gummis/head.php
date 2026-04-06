@@ -1,4 +1,7 @@
 <?php 
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
 function logo() {
 	return "";
 }

@@ -1,4 +1,7 @@
 <?php
+include_once __DIR__ . '/auth.php';
+spiritkeeperRequireAuth(__FILE__, 'editgame');
+
 $pageHtml = "";
 $gameId = GetInt('game');
 $teamId = GetInt('team');

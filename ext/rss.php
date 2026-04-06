@@ -1,16 +1,16 @@
 <?php
-include_once 'localization.php';
-include_once '../lib/feed_generator/FeedWriter.php';
-include_once '../lib/feed_generator/FeedItem.php';
-include_once '../lib/player.functions.php';
-include_once '../lib/accreditation.functions.php';
+include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/feed_generator/FeedWriter.php';
+include_once __DIR__ . '/../lib/feed_generator/FeedItem.php';
+include_once __DIR__ . '/../lib/player.functions.php';
+include_once __DIR__ . '/../lib/accreditation.functions.php';
 
-include_once '../lib/season.functions.php';
-include_once '../lib/timetable.functions.php';
-include_once '../lib/team.functions.php';
-include_once '../lib/series.functions.php';
-include_once '../lib/common.functions.php';
-include_once '../lib/game.functions.php';
+include_once __DIR__ . '/../lib/season.functions.php';
+include_once __DIR__ . '/../lib/timetable.functions.php';
+include_once __DIR__ . '/../lib/team.functions.php';
+include_once __DIR__ . '/../lib/series.functions.php';
+include_once __DIR__ . '/../lib/common.functions.php';
+include_once __DIR__ . '/../lib/game.functions.php';
 
 $type = RSS2;
 $max_items = 25;

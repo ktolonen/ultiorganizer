@@ -1,4 +1,7 @@
 <?php
+include_once __DIR__ . '/auth.php';
+spiritkeeperRequireAuth(__FILE__, 'submitsotg', 'token');
+
 $pageHtml = "";
 $gameId = GetInt('game');
 $game = SpiritTokenGame($gameId, $teamId);

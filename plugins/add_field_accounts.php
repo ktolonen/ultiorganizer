@@ -1,4 +1,7 @@
 <?php
+include_once __DIR__ . '/auth.php';
+pluginRequireAdmin(__FILE__);
+
 ob_start();
 ?>
 <!--

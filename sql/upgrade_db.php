@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../lib/include_only.guard.php';
+denyDirectFileAccess(__FILE__);
+
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/image.functions.php';
 include_once $include_prefix . 'lib/logging.functions.php';

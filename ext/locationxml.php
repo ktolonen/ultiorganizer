@@ -1,7 +1,7 @@
 <?php
 
-include_once 'localization.php';
-include_once '../lib/location.functions.php';
+include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/location.functions.php';
 
 OpenConnection();
 header("Content-type: text/xml");

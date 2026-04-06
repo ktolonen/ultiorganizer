@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../lib/view.guard.php';
+requireRoutedView('login/login_failed', '../index.php');
+
 if (IsRegistered($_SESSION['uid'])) {
   header("location:?view=frontpage");
 }

@@ -1,5 +1,5 @@
 <?php
-include_once 'localization.php';
+include_once __DIR__ . '/localization.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
@@ -21,11 +21,11 @@ include_once 'localization.php';
 
 <body>
 	<?php
-	include_once '../lib/season.functions.php';
-	include_once '../lib/series.functions.php';
-	include_once '../lib/team.functions.php';
-	include_once '../lib/game.functions.php';
-	include_once '../lib/timetable.functions.php';
+	include_once __DIR__ . '/../lib/season.functions.php';
+	include_once __DIR__ . '/../lib/series.functions.php';
+	include_once __DIR__ . '/../lib/team.functions.php';
+	include_once __DIR__ . '/../lib/game.functions.php';
+	include_once __DIR__ . '/../lib/timetable.functions.php';
 
 
 	$season = iget("season");

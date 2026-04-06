@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../lib/view.guard.php';
+requireRoutedView('login/password_reset', '../index.php');
+
 $title = _("Reset password");
 $html = "";
 $message = "";

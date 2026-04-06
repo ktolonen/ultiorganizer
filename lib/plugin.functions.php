@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
 function GetPluginList($category, $type = "", $format = "")
 {
 	global $include_prefix;

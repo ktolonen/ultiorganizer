@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
 require_once __DIR__ . '/pool.functions.php';
 require_once __DIR__ . '/player.functions.php';
 require_once __DIR__ . '/image.functions.php';
@@ -1123,6 +1126,7 @@ function TeamCopyRoster($copyfrom, $copyto)
 
 function GetTeamPlayers()
 {
+  $search = "0";
   if (isset($_GET['search']) || isset($_GET['query']) || isset($_GET['q'])) {
     if (isset($_GET['search']))
       $search = $_GET['search'];

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 /* vim: set expandtab tabstop=4 shiftwidth=4 softtabstop=4: */
 

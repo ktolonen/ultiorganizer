@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
 require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/standings.functions.php';
 require_once __DIR__ . '/player.functions.php';

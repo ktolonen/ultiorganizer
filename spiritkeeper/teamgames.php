@@ -1,4 +1,7 @@
 <?php
+include_once __DIR__ . '/auth.php';
+spiritkeeperRequireAuth(__FILE__, 'teamgames', 'either');
+
 $pageHtml = "";
 $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $statusNote = "") {
 	$contextTeamId = (int)$contextTeamId;

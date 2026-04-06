@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
 require_once __DIR__ . '/season.functions.php';
 
 function SearchSeason($resultTarget, $hiddenProperties, $submitbuttons)

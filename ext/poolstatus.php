@@ -1,5 +1,5 @@
 <?php
-include_once 'localization.php';
+include_once __DIR__ . '/localization.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
@@ -21,13 +21,18 @@ include_once 'localization.php';
 
 <body>
   <?php
-  include_once '../lib/season.functions.php';
-  include_once '../lib/series.functions.php';
-  include_once '../lib/team.functions.php';
-  include_once '../lib/game.functions.php';
+  include_once __DIR__ . '/../lib/season.functions.php';
+  include_once __DIR__ . '/../lib/series.functions.php';
+  include_once __DIR__ . '/../lib/team.functions.php';
+  include_once __DIR__ . '/../lib/game.functions.php';
 
   $poolId = intval(iget("pool"));
   $poolinfo = PoolInfo($poolId);
+  if (!$poolinfo) {
+    echo "<p>" . _("Invalid pool.") . "</p>";
+    CloseConnection();
+    return;
+  }
 
   $season = iget("season");
   $seasoninfo = SeasonInfo($season);
@@ -114,7 +119,7 @@ include_once 'localization.php';
       $losers = 0;
       $games = 0;
       for ($i = 1; $i <= $totalteams; $i++) {
-        $team = $teams[$i - 1];
+      $team = isset($teams[$i - 1]) ? $teams[$i - 1] : array();
         $name = "";
         if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
           $name .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";

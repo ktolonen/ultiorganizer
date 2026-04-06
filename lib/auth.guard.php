@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
 if (!isset($include_prefix)) {
 	$include_prefix = __DIR__ . '/../';
 }

@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
 require_once __DIR__ . '/HSVClass.php';
 require_once __DIR__ . '/comment.functions.php';
 require_once __DIR__ . '/spirit.functions.php';

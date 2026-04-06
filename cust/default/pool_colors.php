@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
 // Default pool color palette.
 // Consumed via PoolColors() in lib/pool.functions.php for:
 // - assigning colors when creating/copying pools

@@ -1,4 +1,14 @@
 <?php
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
+if (!isset($include_prefix)) {
+  $include_prefix = __DIR__ . '/../../';
+}
+
+include_once $include_prefix . 'lib/auth.guard.php';
+include_once $include_prefix . 'lib/season.functions.php';
+
 echo "<h3>"._("Mass accreditation")."</h3>";
 echo "<table><tr>";
 $seriesResults = SeasonSeries($season);

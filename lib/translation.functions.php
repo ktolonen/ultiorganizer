@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 function U_($name)
 {
@@ -32,11 +34,12 @@ function loadDBTranslations($locale)
 
 function GetTranslations()
 {
+	$search = '';
 	if (isset($_GET['search']))
 		$search = $_GET['search'];
 	elseif (isset($_GET['query']))
 		$search = $_GET['query'];
-	else
+	elseif (isset($_GET['q']))
 		$search = $_GET['q'];
 	if (isset($_GET['autocomplete']) && "true" == $_GET['autocomplete']) {
 		return AllTranslations($search, true);
@@ -47,11 +50,12 @@ function GetTranslations()
 
 function GetAutocompleteTranslations()
 {
+	$search = '';
 	if (isset($_GET['search']))
 		$search = $_GET['search'];
 	elseif (isset($_GET['query']))
 		$search = $_GET['query'];
-	else
+	elseif (isset($_GET['q']))
 		$search = $_GET['q'];
 
 	return AllTranslations($search, true);
@@ -60,7 +64,14 @@ function GetAutocompleteTranslations()
 function AllTranslations($search, $autocomplete = false)
 {
 	global $locales;
+	$search = trim((string)$search);
+	if ($search === '') {
+		return array();
+	}
 	$splitted = preg_split(WORD_DELIMITER, $search, -1, PREG_SPLIT_NO_EMPTY);
+	if (empty($splitted)) {
+		return array();
+	}
 	$translation_arrays = array();
 	$results = array();
 	foreach ($locales as $loc => $name) {

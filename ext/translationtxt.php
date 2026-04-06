@@ -1,7 +1,7 @@
 <?php
 
-include_once 'localization.php';
-include_once '../lib/translation.functions.php';
+include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/translation.functions.php';
 
 header("Content-type: text/plain; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
