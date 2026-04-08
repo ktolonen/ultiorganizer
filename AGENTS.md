@@ -94,6 +94,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `docs/README.md`: index of project documentation under `docs/`.
 - `docs/local-development.md`: local Docker-based setup.
 - `docs/database-upgrades.md`: schema and migration workflow.
+- `docs/database-access.md`: database access boundaries, allowed helper layers, migration guidance, and checker behavior.
 - `docs/configuration-flags.md`: configuration taxonomy and migration rules. Use the exact type names `SYSTEM_FLAG`, `INSTALLATION_SETTING`, and `EVENT_SETTING`.
 - `docs/api.md`: API structure, constraints, and examples.
 - `docs/routing.md`: request entry points and view resolution.

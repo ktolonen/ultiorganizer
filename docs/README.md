@@ -10,6 +10,7 @@ This directory collects general project documentation.
 - `local-development.md`: local Docker-based setup.
 - `translations.md`: translation and gettext workflow.
 - `database-upgrades.md`: schema and migration workflow.
+- `database-access.md`: database access boundaries, allowed helper layers, migration guidance, and checker behavior.
 - `configuration-flags.md`: configuration taxonomy and migration rules.
 - `schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `scorekeeper.md`: Scorekeeper app routing, live clock workflow, and related pages.
