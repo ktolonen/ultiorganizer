@@ -429,6 +429,11 @@ function PoolScoreBoard($poolId, $sorting, $limit)
   return DBQuery($query);
 }
 
+function PoolScoreBoardArray($poolId, $sorting, $limit)
+{
+  return DBFetchAllAssoc(PoolScoreBoard($poolId, $sorting, $limit));
+}
+
 /**
  * Get score board for list of pools.
  *
@@ -524,6 +529,11 @@ function PoolsScoreBoard($pools, $sorting, $limit)
   return DBQuery($query);
 }
 
+function PoolsScoreBoardArray($pools, $sorting, $limit)
+{
+  return DBFetchAllAssoc(PoolsScoreBoard($pools, $sorting, $limit));
+}
+
 /**
  * Get pool score board with defenses
  *
@@ -612,6 +622,11 @@ function PoolsScoreBoardWithDefenses($pools, $sorting, $limit)
   }
 
   return DBQuery($query);
+}
+
+function PoolsScoreBoardWithDefensesArray($pools, $sorting, $limit)
+{
+  return DBFetchAllAssoc(PoolsScoreBoardWithDefenses($pools, $sorting, $limit));
 }
 
 /**
@@ -704,6 +719,11 @@ function PoolScoreBoardWithDefenses($poolId, $sorting, $limit)
   }
 
   return DBQuery($query);
+}
+
+function PoolScoreBoardWithDefensesArray($poolId, $sorting, $limit)
+{
+  return DBFetchAllAssoc(PoolScoreBoardWithDefenses($poolId, $sorting, $limit));
 }
 
 

@@ -39,9 +39,9 @@ include_once __DIR__ . '/localization.php';
 	echo "<th class='pk_scoreboard_th'>" . _("Tot.") . "</th>";
 	echo "</tr>";
 
-	$scores = PoolScoreBoard($poolId, $sort, 10);
+	$scores = PoolScoreBoardArray($poolId, $sort, 10);
 
-	while ($row = mysqli_fetch_assoc($scores)) {
+	foreach ($scores as $row) {
 		echo "<tr><td class='pk_scoreboard_td1'>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
 		echo "<td class='pk_scoreboard_td1'>" . utf8entities($row['teamname']) . "</td>";
 		echo "<td  class='pk_scoreboard_td2'>" . intval($row['games']) . "</td>";

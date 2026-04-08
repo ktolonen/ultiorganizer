@@ -5,7 +5,7 @@ function ScorekeeperTimeoutData($gameId, $home, $maxslots)
 {
   $values = array();
   $timeouts = GameTimeouts($gameId);
-  while ($timeout = DBFetchAssoc($timeouts)) {
+  foreach ($timeouts as $timeout) {
     if ((int) $timeout['ishome'] === (int) $home && count($values) < $maxslots) {
       $time = explode(".", SecToMin($timeout['time']));
       $values[] = array(

@@ -11,13 +11,10 @@ function CollectGameIdsFromResult($games)
   if (!$games) {
     return $ids;
   }
-  while ($row = mysqli_fetch_assoc($games)) {
+  foreach ($games as $row) {
     if (isset($row['game_id'])) {
       $ids[] = (int)$row['game_id'];
     }
-  }
-  if (!empty($ids)) {
-    mysqli_data_seek($games, 0);
   }
   return $ids;
 }
@@ -37,7 +34,7 @@ function TournamentView($games, $grouping = true)
   $rss = IsGameRSSEnabled();
   $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     $ret .= "\n<!-- res:" . $game['reservationgroup'] . " pool:" . $game['pool'] . " date:" . JustDate($game['starttime']) . "-->\n";
     if (
       $game['reservationgroup'] != $prevTournament
@@ -115,7 +112,7 @@ function SeriesView($games, $date = true, $time = false)
   $rss = IsGameRSSEnabled();
   $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     if (
       $game['series_id'] != $prevSeries
       || (empty($game['series_id']) && !$isTableOpen)
@@ -171,7 +168,7 @@ function PlaceView($games, $grouping = true)
   $rss = IsGameRSSEnabled();
   $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     if (
       $game['reservationgroup'] != $prevTournament
       || (empty($game['reservationgroup']) && !$isTableOpen)
@@ -237,7 +234,7 @@ function TimeView($games, $grouping = true)
   $rss = IsGameRSSEnabled();
   $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     if ($game['time'] != $prevTime) {
       if ($isTableOpen) {
         $ret .= "</table>\n";
@@ -279,7 +276,7 @@ function ExtTournamentView($games)
   $isTableOpen = false;
   $ret .= "<table width='95%'>";
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     if (
       $game['reservationgroup'] != $prevTournament
       || (empty($game['reservationgroup']) && !$isTableOpen)
@@ -361,7 +358,7 @@ function ExtGameView($games)
   $isTableOpen = false;
   $ret .= "<table style='white-space: nowrap' width='95%'>";
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     if (
       $game['reservationgroup'] != $prevTournament
       || (empty($game['reservationgroup']) && !$isTableOpen)
@@ -616,7 +613,7 @@ function PrintTimeZone($timezone)
 function NextGameDay($id, $gamefilter, $order)
 {
   $games = TimetableGames($id, $gamefilter, "coming", "time");
-  $game = mysqli_fetch_assoc($games);
+  $game = reset($games);
   $next = ShortEnDate($game['time']);
   $games = TimetableGames($id, $gamefilter, $next, $order);
   return $games;
@@ -625,7 +622,7 @@ function NextGameDay($id, $gamefilter, $order)
 function PrevGameDay($id, $gamefilter, $order)
 {
   $games = TimetableGames($id, $gamefilter, "past", "timedesc");
-  $game = mysqli_fetch_assoc($games);
+  $game = reset($games);
   $prev = ShortEnDate($game['time']);
   $games = TimetableGames($id, $gamefilter, $prev, $order);
   return $games;
@@ -781,15 +778,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
       break;
   }
 
-  $result = DBQuery($query);
-
-  return $result;
-}
-
-function TimetableGamesArray($id, $gamefilter, $timefilter, $order, $groupfilter = "")
-{
-  $result = TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter);
-  return DBResourceToArray($result);
+  return DBQueryToArray($query);
 }
 
 function TimetableGrouping($id, $gamefilter, $timefilter)
@@ -1013,7 +1002,7 @@ function IsGamesScheduled($id, $gamefilter, $timefilter)
 {
   $result = TimetableGames($id, $gamefilter, $timefilter, "");
 
-  return (mysqli_num_rows($result) > 0);
+  return !empty($result);
 }
 
 function TimetableToCsv($season, $separator)

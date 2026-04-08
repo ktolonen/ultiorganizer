@@ -101,7 +101,7 @@ $html .= "<div class='player-name'><h3>" . _("Player") . "</h3></div>\n";
 $html .= "<div class='player-number'><h3>" . _("Jersey") . "</h3></div>\n";
 $html .= "</div>\n";
 $i = 0;
-while ($player = mysqli_fetch_assoc($playerlist)) {
+foreach ($playerlist as $player) {
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
   $number = PlayerNumber($player['player_id'], $gameId);

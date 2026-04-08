@@ -66,9 +66,7 @@ function ReservationGames($placeId, $seasonId = "")
 
 	$query .= " ORDER BY pp.time ASC";
 
-	$result = DBQuery($query);
-
-	return  $result;
+	return DBQueryToArray($query);
 }
 
 
@@ -164,9 +162,7 @@ function ResponsibleReservationGames($placeId, $gameResponsibilities)
 	$query .= " AND game_id IN (" . implode(",", $gameResponsibilities) . ")
 		ORDER BY pp.time ASC";
 
-	$result = DBQuery($query);
-
-	return $result;
+	return DBQueryToArray($query);
 }
 
 function ReservationSeasons($reservationId)
@@ -275,8 +271,7 @@ function ReservationInfoArray($reservations)
 		$next = $ret[$row[0]];
 		$nextInfo = ReservationInfo($row[1]);
 		$nextGames = array();
-		$gameResults = ReservationGames($row[1]);
-		while ($gameRow = mysqli_fetch_assoc($gameResults)) {
+		foreach (ReservationGames($row[1]) as $gameRow) {
 			$nextGames["" . $gameRow['game_id']] = $gameRow;
 		}
 		$nextInfo['games'] = $nextGames;
@@ -284,6 +279,21 @@ function ReservationInfoArray($reservations)
 		$ret[$row[0]] = $next;
 	}
 	return $ret;
+}
+
+function ReservationGroupTimeoutStats()
+{
+	return DBQueryToArray(
+		"SELECT
+			r.reservationgroup,
+			COUNT(DISTINCT g.game_id) AS games,
+			COUNT(t.game) AS timeouts
+		FROM uo_reservation r
+		LEFT JOIN uo_game g ON g.reservation = r.id
+		LEFT JOIN uo_timeout t ON t.game = g.game_id
+		GROUP BY r.reservationgroup
+		ORDER BY r.reservationgroup"
+	);
 }
 
 function UnscheduledTeams()

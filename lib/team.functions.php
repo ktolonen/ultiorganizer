@@ -11,10 +11,8 @@ require_once __DIR__ . '/common.functions.php';
 function TeamPlayerArray($teamId)
 {
   $ret = array();
-  if ($result = TeamPlayerList($teamId)) {
-    while ($row = mysqli_fetch_assoc($result)) {
-      $ret["" . $row['player_id']] = $row['firstname'] . " " . $row['lastname'];
-    }
+  foreach (TeamPlayerList($teamId) as $row) {
+    $ret["" . $row['player_id']] = $row['firstname'] . " " . $row['lastname'];
   }
   return $ret;
 }
@@ -22,10 +20,8 @@ function TeamPlayerArray($teamId)
 function TeamPlayerAccreditationArray($teamId)
 {
   $ret = array();
-  if ($result = TeamPlayerList($teamId)) {
-    while ($row = mysqli_fetch_assoc($result)) {
-      $ret["" . $row['accreditation_id']] = $row['firstname'] . " " . $row['lastname'];
-    }
+  foreach (TeamPlayerList($teamId) as $row) {
+    $ret["" . $row['accreditation_id']] = $row['firstname'] . " " . $row['lastname'];
   }
   return $ret;
 }
@@ -35,7 +31,7 @@ function TeamPlayerList($teamId)
   $query = sprintf("SELECT player_id, firstname, lastname, num, accredited, accreditation_id, profile_id, reg_id FROM uo_player WHERE team = %d ORDER BY num ASC, lastname ASC, firstname ASC",
   (int)$teamId);
 
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 function TeamName($teamId)
@@ -153,7 +149,7 @@ function TeamNameListBySeriesType($seriesType)
     DBEscapeString($seriesType)
   );
 
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 function TeamProfile($teamId)
@@ -315,7 +311,7 @@ function TeamSerieGames($teamId, $serieId)
     DBEscapeString($teamId)
   );
 
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 function TeamPoolCountBYEs($teamId, $poolId)
@@ -352,6 +348,24 @@ function TeamPoolGames($teamId, $poolId)
   );
 
   return DBQuery($query);
+}
+
+function TeamPoolGamesArray($teamId, $poolId)
+{
+  $query = sprintf(
+    "
+			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
+			pp.visitorscore, pp.hasstarted, pp.time
+			FROM uo_game pp 
+			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+			WHERE pps.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
+			ORDER BY pp.time ASC",
+    DBEscapeString($poolId),
+    DBEscapeString($teamId),
+    DBEscapeString($teamId)
+  );
+
+  return DBQueryToArray($query);
 }
 
 function TeamPoolLastGame($teamId, $poolId)
@@ -896,6 +910,11 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
   return DBQuery($query);
 }
 
+function TeamScoreBoardArray($teamId, $pools, $sorting, $limit)
+{
+  return DBFetchAllAssoc(TeamScoreBoard($teamId, $pools, $sorting, $limit));
+}
+
 
 function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
 {
@@ -1069,6 +1088,11 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting)
   return DBQuery($query);
 }
 
+function GetAllPlayedGamesArray($team1, $team2, $seriestype, $sorting)
+{
+  return DBFetchAllAssoc(GetAllPlayedGames($team1, $team2, $seriestype, $sorting));
+}
+
 function TeamResponsibleGames($teamId, $placeId)
 {
   $query = sprintf(
@@ -1105,8 +1129,7 @@ function TeamGetTeamsByName($teamname)
 function TeamCopyRoster($copyfrom, $copyto)
 {
   if (hasEditPlayersRight($copyto)) {
-    $team_players = TeamPlayerList($copyfrom);
-    while ($player = mysqli_fetch_assoc($team_players)) {
+    foreach (TeamPlayerList($copyfrom) as $player) {
       $query = sprintf(
         "INSERT INTO uo_player(firstname, lastname, profile_id, accreditation_id, team, num)
       			VALUES ('%s','%s',%d,'%s',%d,%d)",

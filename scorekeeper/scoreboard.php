@@ -5,7 +5,7 @@ $html = "";
 $gameId = intval(iget("game"));
 $teamId = intval(iget("team"));
 $game_result = GameResult($gameId);
-$team_score_board = GameTeamScoreBorad($gameId, $teamId);
+$team_score_board = GameTeamScoreBoardArray($gameId, $teamId);
 
 $html .= "<div data-role='header'>\n";
 $html .= "<h1>" . utf8entities(TeamName($teamId)) . " " . _("Players of the game") . "</h1>\n";
@@ -14,7 +14,7 @@ $html .= "<div data-role='content'>\n";
 
 $html .= "<table class='scoreboard-table'>\n";
 $html .= "<tbody>\n";
-while ($row = mysqli_fetch_assoc($team_score_board)) {
+foreach ($team_score_board as $row) {
   $html .= "<tr>\n";
   $html .= "<td style='padding-left:10px'>";
   $html .= "#" . $row['num'] . " ";

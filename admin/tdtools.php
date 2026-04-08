@@ -3,25 +3,17 @@ include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/player.functions.php';
+include_once $include_prefix . 'lib/reservation.functions.php';
 
 // function to search missing jersey numbers on the rosters
 function TableMissingNumbers($season)
 {
   $ret = "";
 
-  $query = sprintf(
-    "SELECT p.num, p.firstname, p.lastname, t.name AS team, t.team_id AS team_id, s.name AS division
-    FROM uo_player p
-    JOIN uo_team t ON p.team = t.team_id
-    JOIN uo_series s ON t.series = s.series_id
-    WHERE s.season = '%s' AND p.num IS NULL
-    ORDER BY division, team, p.num",
-    $season
-  );
+  $resultsTable = SeasonPlayersMissingNumbers($season);
 
-  $resultsTable = DBQuery($query);
-
-  if (DBNumRows($resultsTable) > 0) {
+  if (!empty($resultsTable)) {
     $ret .= "<p>" . _("Missing shirt numbers found! (click the team name to edit the roster)") . "</p>";
     $ret .= "<table width='100%'><tr>";
     $ret .= "<th class='center'>" . _("Number") . "</th>";
@@ -32,7 +24,7 @@ function TableMissingNumbers($season)
     $ret .= "<th class='center'>" . _("Link") . "</th>";
     $ret .= "</tr>";
 
-    while ($row = DBFetchAssoc($resultsTable)) {
+    foreach ($resultsTable as $row) {
       $ret .= "<tr>";
       $ret .= "<td class='center'>" . $row['num'] . "</td>";
       $ret .= "<td>" . $row['firstname'] . "</td>";
@@ -55,26 +47,9 @@ function TableDuplicateNumbers($season)
 {
   $ret = "";
 
-  $query = sprintf(
-    "SELECT p.num, p.firstname, p.lastname, t.name AS team, t.team_id AS team_id, s.name AS division
-    FROM uo_player p
-    JOIN (
-    SELECT num, team, COUNT( * )
-    FROM uo_player
-    GROUP BY num, team
-    HAVING COUNT( * ) >1
-    )dups ON p.num = dups.num
-    AND p.team = dups.team
-    JOIN uo_team t ON p.team = t.team_id
-    JOIN uo_series s ON t.series = s.series_id
-    WHERE s.season = '%s'
-    ORDER BY division, team, p.num",
-    $season
-  );
+  $resultsTable = SeasonPlayersDuplicateNumbers($season);
 
-  $resultsTable = DBQuery($query);
-
-  if (DBNumRows($resultsTable) > 0) {
+  if (!empty($resultsTable)) {
     $ret .= "<p>" . _("Duplicates found! (click the team name to edit the roster)") . "</p>";
     $ret .= "<table width='100%'><tr>";
     $ret .= "<th class='center'>" . _("Number") . "</th>";
@@ -85,7 +60,7 @@ function TableDuplicateNumbers($season)
     $ret .= "<th class='center'>" . _("Link") . "</th>";
     $ret .= "</tr>";
 
-    while ($row = DBFetchAssoc($resultsTable)) {
+    foreach ($resultsTable as $row) {
       $ret .= "<tr>";
       $ret .= "<td class='center'>" . $row['num'] . "</td>";
       $ret .= "<td>" . $row['firstname'] . "</td>";
@@ -107,8 +82,7 @@ function TableTimeoutStats()
 {
   $ret = "";
 
-  $query = "SELECT DISTINCT reservationgroup FROM uo_reservation";
-  $reservations = DBQueryToArray($query);
+  $reservations = ReservationGroupTimeoutStats();
 
   $ret .= "<table width=50% border=1>";
   $ret .= "<tr>";
@@ -120,17 +94,8 @@ function TableTimeoutStats()
 
   foreach ($reservations as $r) {
     $group = $r['reservationgroup'];
-
-    $query = "SELECT COUNT(*) FROM uo_game AS g
-      JOIN uo_reservation AS r ON g.reservation=r.id
-      WHERE r.reservationgroup='$group'";
-    $games = DBQueryToValue($query);
-
-    $query = "SELECT COUNT(*) FROM `uo_timeout` AS t
-      JOIN uo_game AS g ON t.game=g.game_id
-      JOIN uo_reservation AS r ON g.reservation=r.id
-      WHERE r.reservationgroup='$group'";
-    $timeouts = DBQueryToValue($query);
+    $games = (int)$r['games'];
+    $timeouts = (int)$r['timeouts'];
 
     $ret .= "<tr>";
     $ret .= "<td>" . $group . "</td>";

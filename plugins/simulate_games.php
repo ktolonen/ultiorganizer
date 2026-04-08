@@ -67,14 +67,14 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 			//all players in roster are playing
 			$home_playerlist = TeamPlayerList($info['hometeam']);
 			$hplayers = array();
-			while ($player = mysqli_fetch_assoc($home_playerlist)) {
+			foreach ($home_playerlist as $player) {
 				GameAddPlayer($game['game_id'], $player['player_id'], intval($player['num']));
 				$hplayers[] = intval($player['num']);
 			}
 			$hplayers[] = 'xx'; //callahan
 			$away_playerlist = TeamPlayerList($info['visitorteam']);
 			$aplayers = array();
-			while ($player = mysqli_fetch_assoc($away_playerlist)) {
+			foreach ($away_playerlist as $player) {
 				GameAddPlayer($game['game_id'], $player['player_id'], intval($player['num']));
 				$aplayers[] = intval($player['num']);
 			}
@@ -211,7 +211,7 @@ if (empty($seasonId)) {
 
 	$seasons = Seasons();
 
-	while ($row = mysqli_fetch_assoc($seasons)) {
+	foreach ($seasons as $row) {
 		$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 	}
 

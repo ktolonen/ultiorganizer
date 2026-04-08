@@ -224,7 +224,7 @@ if (isSuperAdmin()) {
   $html .= "<option class='dropdown' value=''></option>";
   $seasons = Seasons();
 
-  while ($row = mysqli_fetch_assoc($seasons)) {
+  foreach ($seasons as $row) {
     if ($res['season'] == $row['season_id'] || $season == $row['season_id']) {
       $html .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
     } else {

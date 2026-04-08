@@ -7,7 +7,7 @@ $game_result = GameResult($gameId);
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $useGameClock = !$hideTimeOnScoresheet && !scorekeeperHasManualNoGameClock($gameId);
-$goals = GameGoals($gameId);
+$goalRows = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 $timerState = $useGameClock ? GameTimerState($gameId) : array(
   "started" => false,
@@ -21,10 +21,6 @@ $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 |
 
 $home = 0;
 $away = 0;
-$goalRows = array();
-while ($goal = DBFetchAssoc($goals)) {
-  $goalRows[] = $goal;
-}
 if (count($goalRows)) {
   $lastscore = $goalRows[count($goalRows) - 1];
   $home = intval($lastscore['homescore']);

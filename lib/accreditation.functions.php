@@ -25,9 +25,7 @@ function SeasonUnaccredited($season)
 		DBEscapeString($season)
 	);
 
-	$result = DBQuery($query);
-
-	return $result;
+	return DBQueryToArray($query);
 }
 
 function AccreditPlayer($playerId, $source)
@@ -216,7 +214,5 @@ function SeasonAccreditationLog($season)
 		DBEscapeString($season)
 	);
 
-	$result = DBQuery($query);
-
-	return $result;
+	return DBQueryToArray($query);
 }

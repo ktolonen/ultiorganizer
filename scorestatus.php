@@ -113,20 +113,20 @@ $html .= "</tr>";
 
 if ($teamId) {
   if (count($poolIds)) {
-    $scores = TeamScoreBoard($teamId, $poolIds, $sort, 0);
+    $scores = TeamScoreBoardArray($teamId, $poolIds, $sort, 0);
   } else {
-    $scores = TeamScoreBoard($teamId, $poolId, $sort, 0);
+    $scores = TeamScoreBoardArray($teamId, $poolId, $sort, 0);
   }
 } elseif ($poolId) {
-  $scores = PoolScoreBoard($poolId, $sort, 0);
+  $scores = PoolScoreBoardArray($poolId, $sort, 0);
 } elseif (count($poolIds)) {
-  $scores = PoolsScoreBoard($poolIds, $sort, 0);
+  $scores = PoolsScoreBoardArray($poolIds, $sort, 0);
 } elseif ($seriesId) {
-  $scores = SeriesScoreBoard($seriesId, $sort, 0);
+  $scores = SeriesScoreBoardArray($seriesId, $sort, 0);
 }
 $i = 1;
 if ($scores) {
-  while ($row = mysqli_fetch_assoc($scores)) {
+  foreach ($scores as $row) {
     $html .= "<tr>";
     $html .= "<td>" . $i++ . "</td>";
     if ($sort == "name") {

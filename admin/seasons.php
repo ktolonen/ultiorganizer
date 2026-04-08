@@ -101,7 +101,7 @@ $html .=  "<tr>
 
 $seasons = Seasons();
 
-while ($row = mysqli_fetch_assoc($seasons)) {
+foreach ($seasons as $row) {
 	$info = SeasonInfo($row['season_id']);
 
 	$html .=  "<tr>";

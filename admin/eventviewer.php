@@ -143,7 +143,7 @@ $event_ids = "";
 if (count($categoryfilter) > 0) {
 	$events = EventList($categoryfilter, $userfilter, $pageSize, $offset);
 
-	while ($event = mysqli_fetch_assoc($events)) {
+	foreach ($events as $event) {
 
 		if ($event['type'] == 'add' || ($event['category'] == 'security' && $event['description'] == 'success')) {
 			$html .= "<tr class='posvalue'>";

@@ -96,7 +96,7 @@ if ($view == "acclog") {
   echo "<table class='infotable'><tr><th>" . _("Player") . "</th><th>" . _("Team") . "</th><th>" . _("Game") . "</th><th>" . _("Acknowledged") . "</th></tr>\n";
   $acknowledged = array();
 
-  while ($row = mysqli_fetch_assoc($unAccredited)) {
+  foreach ($unAccredited as $row) {
     if (hasAccredidationRight($row['team'])) {
       if (!$row['acknowledged']) {
         echo "<tr>";
@@ -137,7 +137,7 @@ if ($view == "accevents") {
   echo "<th>" . _("Team") . "</th><th>" . _("Game") . "</th><th>" . _("Value") . "</th>";
   echo "<th>" . _("User") . "</th><th>" . _("Source") . "</th></tr>\n";
   $logResult = SeasonAccreditationLog($season);
-  while ($row = mysqli_fetch_assoc($logResult)) {
+  foreach ($logResult as $row) {
     if (hasAccredidationRight($row['team'])) {
       if ($row['value']) {
         echo "<tr class='posvalue'>";
@@ -228,8 +228,7 @@ if ($view == "accId") {
         'external_type' => '',
       );
       if (CUSTOMIZATIONS == "slkl") {
-        $query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d", (int)$playerinfo['accreditation_id']);
-        $licenseRow = DBQueryToRow($query);
+        $licenseRow = LicenseData($playerinfo['accreditation_id']);
         $row['membership'] = !empty($licenseRow['membership']) ? $licenseRow['membership'] : '';
         $row['external_type'] = !empty($licenseRow['external_type']) ? $licenseRow['external_type'] : '';
       }

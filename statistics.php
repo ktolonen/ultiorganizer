@@ -206,22 +206,7 @@ if ($list == "teamstandings") {
 
       $rows = array();
       foreach ($seasons as $season) {
-        $query = sprintf(
-          "SELECT t.team_id, t.name AS teamname, t.country, c.flagfile,
-            SUM(ts.average * sct.factor) AS spirit_total
-            FROM uo_team_spirit_stats ts
-            LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
-            LEFT JOIN uo_team t ON (t.team_id = ts.team_id)
-            LEFT JOIN uo_series ser ON (ser.series_id = ts.series)
-            LEFT JOIN uo_country c ON (t.country = c.country_id)
-            WHERE ts.season='%s' AND ser.type='%s'
-            GROUP BY ts.team_id, ser.series_id
-            ORDER BY spirit_total DESC, t.name ASC
-            LIMIT 3",
-          DBEscapeString($season['season_id']),
-          DBEscapeString($seriestype)
-        );
-        $spirit = DBQueryToArray($query);
+        $spirit = SeasonSpiritTopTeamsBySeriesType($season['season_id'], $seriestype, 3);
         if (!count($spirit)) {
           continue;
         }

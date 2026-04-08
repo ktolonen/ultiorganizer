@@ -52,9 +52,9 @@ $nT2Loses = 0;
 $t1 = preg_replace('/\s*/m', '', $team1['name']);
 $t2 = preg_replace('/\s*/m', '', $team2['name']);
 
-$games = GetAllPlayedGames($t1, $t2, $team1['type'], $sorting);
+$games = GetAllPlayedGamesArray($t1, $t2, $team1['type'], $sorting);
 
-while ($game = mysqli_fetch_assoc($games)) {
+foreach ($games as $game) {
   if (GameHasStarted($game)) {
     //ignore spaces from team name
     $t1 = preg_replace('/\s*/m', '', $team1['name']);
@@ -137,9 +137,7 @@ if ($nGames) {
   $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Division") . "</a></th></tr>";
 
   $points = array(array());
-  DBDataSeek($games,0);
-
-  while($game = DBFetchAssoc($games)){
+  foreach ($games as $game) {
     if (GameHasStarted($game)) {
       $arrayYear = strtok($game['season_id'], ".");
       $arraySeason = strtok(".");
@@ -159,10 +157,10 @@ if ($nGames) {
 
       $html .= "<td>" . utf8entities(U_($game['seasonname'])) . ": <a href='?view=poolstatus&amp;pool=" . $game['pool_id'] . "'>" . utf8entities($game['name']) . "</a></td></tr>";
 
-      $scores = GameScoreBoard($game['game_id']);
+      $scores = GameScoreBoardArray($game['game_id']);
       $i = 0;
 
-      while($row = DBFetchAssoc($scores)){
+      foreach ($scores as $row) {
         $bFound = false;
         for ($i = 0; ($i < 200) && !empty($points[$i][0]); $i++) {
           //ignore spaces from team name

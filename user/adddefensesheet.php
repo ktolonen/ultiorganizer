@@ -238,7 +238,7 @@ if (!$hideTimeOnScoresheet) {
 	//home team used timeouts
 	$i = 0;
 	$timeouts = GameTimeouts($gameId);
-	while ($timeout = mysqli_fetch_assoc($timeouts)) {
+	foreach ($timeouts as $timeout) {
 		if (intval($timeout['ishome'])) {
 			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
 			$i++;
@@ -259,8 +259,7 @@ if (!$hideTimeOnScoresheet) {
 
 	//away team used timeouts
 	$i = 0;
-	$timeouts = GameTimeouts($gameId);
-	while ($timeout = mysqli_fetch_assoc($timeouts)) {
+	foreach ($timeouts as $timeout) {
 		if (!intval($timeout['ishome'])) {
 			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
 			$i++;
@@ -387,7 +386,7 @@ if ($hideTimeOnScoresheet) {
 $scores = GameDefenses($gameId);
 
 $i = 0;
-while ($row = mysqli_fetch_assoc($scores)) {
+foreach ($scores as $row) {
 
 	echo "<tr>";
 	echo "<td class='center' style='width: 25px;color:#B0B0B0;'>", $i + 1, "</td>\n";

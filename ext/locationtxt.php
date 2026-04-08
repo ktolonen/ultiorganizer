@@ -8,9 +8,9 @@ OpenConnection();
 header("Content-type: text/plain; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");
-$result = GetSearchLocations();
+$result = GetSearchLocationsArray();
 // Iterate through the rows, adding XML nodes for each
-while ($row = @mysqli_fetch_assoc($result)) {
+foreach ($result as $row) {
 	echo U_($row['name']) . "\t" . $row['address'] . "\t" . $row['id'] . "\n";
 }
 CloseConnection();

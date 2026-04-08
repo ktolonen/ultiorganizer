@@ -6,6 +6,13 @@ if (!isset($include_prefix)) {
   $include_prefix = __DIR__ . '/../../';
 }
 include_once $include_prefix . 'lib/yui.functions.php';
+
+if (!isset($teamId)) {
+  $teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
+} else {
+  $teamId = intval($teamId);
+}
+
 echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "container"));
 ?>
 <link rel="stylesheet" type="text/css" href="script/yui/container/assets/container.css" />

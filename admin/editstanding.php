@@ -58,9 +58,9 @@ echo "<p><input class='button' name='save' type='submit' value='" . _("Save") . 
 echo "<h2>" . _("Games") . "</h2>\n";
 
 $games = TeamSerieGames($teamId, $poolId);
-if (mysqli_num_rows($games)) {
+if (!empty($games)) {
 	echo "<table border='0' cellpadding='4px' width='400px'>\n";
-	while ($row = mysqli_fetch_assoc($games)) {
+	foreach ($games as $row) {
 		echo "<tr>";
 		echo "<td>" . DefWeekDateFormat($row['time']) . "</td>";
 		echo "<td>" . utf8entities(TeamName($row['hometeam'])) . "</td>";

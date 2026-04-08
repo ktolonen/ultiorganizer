@@ -29,7 +29,7 @@ if (!empty($_POST['add'])) {
       $reservations = $_POST["reservations"];
       foreach ($reservations as $res) {
         $games = ReservationGames($res);
-        while ($game = mysqli_fetch_assoc($games)) {
+        foreach ($games as $game) {
           AddSeasonUserRole($userid, 'gameadmin:' . $game['game_id'], $seasonId);
         }
       }

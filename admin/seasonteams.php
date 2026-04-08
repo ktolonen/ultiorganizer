@@ -67,7 +67,7 @@ if (!empty($_POST['add'])) {
   $tp['abbreviation'] = !empty($_POST['abbrev0']) ? $_POST['abbrev0'] : "";
   try {
     AddTeam($tp);
-  } catch (mysqli_sql_exception $e) {
+  } catch (Throwable $e) {
     $addError = "<p class='warning'>" . _("Unable to add team. Please check the team details and pool setup.") . "</p>";
   }
 }
@@ -104,7 +104,7 @@ $teamnames = array();
 $teamlistnames = array();
 $teamlist = TeamNameListBySeriesType($series_info['type']);
 if ($teamlist) {
-  while ($row = mysqli_fetch_assoc($teamlist)) {
+  foreach ($teamlist as $row) {
     $name = $row['name'];
     if (!isset($teamnames[$name])) {
       $teamnames[$name] = true;
@@ -268,7 +268,7 @@ $html .=  "<input id='save' class='button' name='save' type='submit' value='" . 
 $html .=  "<input id='cancel' class='button' name='cancel' type='submit' value='" . _("Cancel") . "'/>";
 $html .=  "</p>";
 
-$seasons = SeasonsArray();
+$seasons = Seasons();
 
 if (count($seasons)) {
   $html .= "<p>" . _("Add teams from:") . " ";

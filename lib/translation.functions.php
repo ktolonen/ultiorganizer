@@ -122,8 +122,7 @@ function Translations()
 {
 	if (hasTranslationRight()) {
 		$query = "SELECT * FROM uo_translation ORDER BY translation_key ASC";
-		$result = DBQuery($query);
-		return $result;
+		return DBQueryToArray($query);
 	} else {
 		die('Insufficient rights to get translations');
 	}

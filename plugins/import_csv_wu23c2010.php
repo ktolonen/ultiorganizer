@@ -114,7 +114,7 @@ if (isset($_POST['import'])) {
 
 				if ($role == "player" || $role == "captain") {
 					$players = TeamPlayerList($teamId);
-					while ($player = mysqli_fetch_assoc($players)) {
+					foreach ($players as $player) {
 						//echo $player['firstname']."==$first && ".$player['lastname']."==$last &&". $player['num']."==$jersey";
 						if ($player['firstname'] == $first && $player['lastname'] == $last && intval($player['num']) == intval($jersey)) {
 							$playerId = $player['player_id'];
@@ -241,7 +241,7 @@ $html .= "<p>" . ("Select event") . ": <select class='dropdown' name='season'>\n
 
 $seasons = Seasons();
 
-while ($row = mysqli_fetch_assoc($seasons)) {
+foreach ($seasons as $row) {
 	$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 }
 

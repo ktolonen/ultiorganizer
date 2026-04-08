@@ -5,11 +5,7 @@ include_once 'lib/game.functions.php';
 
 $html = "";
 $gameId = intval(iget("game"));
-$result = GameGoals($gameId);
-$scores = array();
-while ($row = mysqli_fetch_assoc($result)) {
-	$scores[] = $row;
-}
+$scores = GameGoals($gameId);
 
 if (isset($_POST['delete'])) {
 	if (count($scores) > 0) {

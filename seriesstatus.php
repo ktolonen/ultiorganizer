@@ -293,8 +293,8 @@ $html .= "<table cellspacing='0' border='0' width='100%'>\n";
 $html .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 <th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
 
-$scores = SeriesScoreBoard($seriesinfo['series_id'], "total", 10);
-while ($row = mysqli_fetch_assoc($scores)) {
+$scores = SeriesScoreBoardArray($seriesinfo['series_id'], "total", 10);
+foreach ($scores as $row) {
   $html .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
   $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
   $html .= "<td class='center'>" . intval($row['games']) . "</td>";
@@ -314,8 +314,8 @@ if (ShowDefenseStats()) {
 	<th class='center'>" . _("Total defenses") . "</th></tr>\n";
 
 
-  $defenses = SeriesDefenseBoard($seriesinfo['series_id'], "deftotal", 10);
-  while ($row = mysqli_fetch_assoc($defenses)) {
+  $defenses = SeriesDefenseBoardArray($seriesinfo['series_id'], "deftotal", 10);
+  foreach ($defenses as $row) {
     $html .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
     $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
     $html .= "<td>" . _("Games") . "</td>";

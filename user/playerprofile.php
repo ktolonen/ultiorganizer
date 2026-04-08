@@ -6,6 +6,7 @@ include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/reservation.functions.php';
+include_once $include_prefix . 'lib/accreditation.functions.php';
 $LAYOUT_ID = PLAYERPROFILE;
 $max_file_size = 5 * 1024 * 1024; //5 MB
 $max_new_links = 3;
@@ -169,8 +170,7 @@ $html .= "<table>";
 $html .= "<tr><td colspan='2'>" . _("Player details") . "</td><td class='center'>" . _("Show in public profile") . "</td></tr>";
 
 if (CUSTOMIZATIONS == "slkl") {
-	$query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d", (int)$pp['accreditation_id']);
-	$row = DBQueryToRow($query);
+	$row = LicenseData($pp['accreditation_id']);
 	$html .= "<tr><td class='infocell'>" . _("License Id") . ":</td>";
 
 	if (isSuperAdmin()) {

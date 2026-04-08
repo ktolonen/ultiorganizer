@@ -4,6 +4,7 @@ include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/spirit.functions.php';
 
 // function to search for missing spirit scores in played games (search by pool)
 // returns an array of game id's
@@ -375,14 +376,7 @@ function TableSpiritTimeouts($season)
 
 function TableSOTGURLs($season)
 {
-  $query = sprintf(
-    "SELECT s.name AS series, t.name AS team, t.sotg_token AS token FROM uo_team AS t
-    JOIN uo_series AS s on t.series=s.series_id
-    WHERE s.season='%s'
-    ORDER BY s.name, t.name",
-    $season
-  );
-  $tokens = DBQuery($query);
+  $tokens = SpiritSotgUrlsBySeason($season);
 
   $baseURL = rtrim(BASEURL, "/");
 
@@ -409,20 +403,11 @@ function TableSOTGURLs($season)
 
 function GenerateSOTGTokens($season, $filter = "onlymissing")
 {
-  if ($filter == "onlymissing") {
-    $query = sprintf(
-      "UPDATE uo_team AS t
-      JOIN uo_series AS s on t.series=s.series_id
-      SET t.sotg_token=MD5(t.team_id+RAND())
-      WHERE s.season='%s' AND t.sotg_token IS NULL",
-      $season
-    );
-    DBQuery($query);
-
-    return "<p>Total number of new tokens generated: " . (int)DBAffectedRows() . "</p>";
+  $generated = SpiritGenerateSotgTokens($season, $filter);
+  if ($generated < 0) {
+    return "<p>Invalid filter.</p>";
   }
-
-  return "<p>Invalid filter.</p>";
+  return "<p>Total number of new tokens generated: " . $generated . "</p>";
 }
 
 $season = GetString("season");

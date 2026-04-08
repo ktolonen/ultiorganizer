@@ -364,7 +364,45 @@ function PlayerListAll($lastname = "")
 
   $query .= " GROUP BY profile_id, firstname, lastname ORDER BY lastname, firstname";
 
-  return DBQuery($query);
+	return DBQuery($query);
+}
+
+function SeasonPlayersMissingNumbers($season)
+{
+	return DBQueryToArray(sprintf(
+		"SELECT p.num, p.firstname, p.lastname, t.name AS team, t.team_id AS team_id, s.name AS division
+		FROM uo_player p
+		JOIN uo_team t ON p.team = t.team_id
+		JOIN uo_series s ON t.series = s.series_id
+		WHERE s.season = '%s' AND p.num IS NULL
+		ORDER BY division, team, p.num",
+		DBEscapeString($season)
+	));
+}
+
+function SeasonPlayersDuplicateNumbers($season)
+{
+	return DBQueryToArray(sprintf(
+		"SELECT p.num, p.firstname, p.lastname, t.name AS team, t.team_id AS team_id, s.name AS division
+		FROM uo_player p
+		JOIN (
+		SELECT num, team, COUNT(*) AS duplicates
+		FROM uo_player
+		GROUP BY num, team
+		HAVING COUNT(*) > 1
+		) dups ON p.num = dups.num
+		AND p.team = dups.team
+		JOIN uo_team t ON p.team = t.team_id
+		JOIN uo_series s ON t.series = s.series_id
+		WHERE s.season = '%s'
+		ORDER BY division, team, p.num",
+		DBEscapeString($season)
+	));
+}
+
+function PlayerListAllArray($lastname = "")
+{
+  return DBFetchAllAssoc(PlayerListAll($lastname));
 }
 
 /**

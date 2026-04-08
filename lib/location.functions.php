@@ -64,6 +64,11 @@ function GetSearchLocations()
 	return $result1;
 }
 
+function GetSearchLocationsArray()
+{
+	return DBFetchAllAssoc(GetSearchLocations());
+}
+
 function LocationInfo($id)
 {
 	$locale = str_replace(".", "_", getSessionLocale());

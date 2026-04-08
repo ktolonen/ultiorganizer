@@ -413,12 +413,12 @@ function navigationBar($title)
 function seasonSelection()
 {
   $seasons = CurrentSeasons();
-  if (mysqli_num_rows($seasons) > 1) {
+  if (count($seasons) > 1) {
     echo "<table><tr><td>";
     echo "<form action='?view=index' method='get' id='seasonsels'>";
     echo "<div><select class='seasondropdown' name='selseason'
 			onchange='changeseason(selseason.options[selseason.options.selectedIndex].value);'>";
-    while ($row = mysqli_fetch_assoc($seasons)) {
+    foreach ($seasons as $row) {
       $selected = "";
       if (isset($_SESSION['userproperties']['selseason']) && $_SESSION['userproperties']['selseason'] == $row['season_id']) {
         $selected = "selected='selected'";

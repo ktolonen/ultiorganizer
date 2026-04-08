@@ -22,13 +22,13 @@ $html .= " - ";
 $html .= utf8entities($game_result['visitorteamname']);
 $html .= " " . intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']) . "</b>";
 $html .= "</td></tr><tr><td>\n";
-if (mysqli_num_rows($goals) <= 0) {
+if (count($goals) <= 0) {
 	$html .= _("No scores entered");
 	$html .= "</td></tr><tr><td>\n";
 	$html .=  "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a>";
 } else {
 	$prevgoal = 0;
-	while ($goal = mysqli_fetch_assoc($goals)) {
+	foreach ($goals as $goal) {
 
 		if ((intval($game_result['halftime']) >= $prevgoal) &&
 			(intval($game_result['halftime']) < intval($goal['time']))

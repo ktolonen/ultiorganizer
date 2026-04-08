@@ -48,11 +48,11 @@ include_once __DIR__ . '/localization.php';
 	echo "</tr>";
 
 	if ($teamId)
-		$scores = TeamScoreBoard($teamId, $seriesId, $sort, 0);
+		$scores = TeamScoreBoardArray($teamId, $seriesId, $sort, 0);
 	else
-		$scores = PoolScoreBoard($seriesId, $sort, 0);
+		$scores = PoolScoreBoardArray($seriesId, $sort, 0);
 
-	while ($row = mysqli_fetch_assoc($scores)) {
+	foreach ($scores as $row) {
 		echo "<tr><td class='pk_scoreboard_td1'>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
 		echo "<td  class='pk_scoreboard_td2'>" . intval($row['games']) . "</td>";
 		echo "<td  class='pk_scoreboard_td2'>" . intval($row['fedin']) . "</td>";

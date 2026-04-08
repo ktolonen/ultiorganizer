@@ -89,17 +89,17 @@ if ($teamId) {
   }
 } elseif ($poolId) {
   //$scores = PoolScoreBoard($poolId, $sort, 0);
-  $defenses = PoolScoreBoardWithDefenses($poolId, $sort, 0);
+    $defenses = PoolScoreBoardWithDefensesArray($poolId, $sort, 0);
 } elseif (count($poolIds)) {
   //$scores = PoolsScoreBoard($poolIds, $sort, 0);
-  $defenses = PoolScoreBoardWithDefenses($poolIds, $sort, 0);
+  $defenses = PoolsScoreBoardWithDefensesArray($poolIds, $sort, 0);
 } elseif ($seriesId) {
   //$scores = SeriesScoreBoard($seriesId, $sort, 0);
-  $defenses = SeriesDefenseBoard($seriesId, $sort, 0);
+  $defenses = SeriesDefenseBoardArray($seriesId, $sort, 0);
 }
 $i = 1;
 if ($defenses) {
-  while ($row = mysqli_fetch_assoc($defenses)) {
+  foreach ($defenses as $row) {
     $html .= "<tr>";
     $html .= "<td>" . $i++ . "</td>";
     if ($sort == "name") {

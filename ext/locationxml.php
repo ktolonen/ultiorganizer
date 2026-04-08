@@ -7,7 +7,7 @@ OpenConnection();
 header("Content-type: text/xml");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");
-$result = GetSearchLocations();
+$result = GetSearchLocationsArray();
 
 $dom = new DOMDocument("1.0");
 $node = $dom->createElement("markers");
@@ -15,7 +15,7 @@ $parnode = $dom->appendChild($node);
 
 // Iterate through the rows, adding XML nodes for each
 $savedID = null;
-while ($row = @mysqli_fetch_assoc($result)) {
+foreach ($result as $row) {
 	if ($row['id'] !== $savedID) {
 		$node = $dom->createElement("marker");
 		$newnode = $parnode->appendChild($node);

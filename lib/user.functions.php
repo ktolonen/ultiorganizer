@@ -164,6 +164,16 @@ function UserIdForMail($mail)
 	return DBQueryToValue($query);
 }
 
+function UserExists($user_id)
+{
+	$query = sprintf(
+		"SELECT userid FROM uo_users WHERE userid='%s'",
+		DBEscapeString($user_id)
+	);
+	$row = DBQueryToRow($query);
+	return !empty($row);
+}
+
 function UserExtraEmails($user_id)
 {
 	if ($user_id == $_SESSION['uid'] || hasEditUsersRight()) {

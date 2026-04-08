@@ -9,7 +9,7 @@ $html = "";
 $gameId = intval(iget("game"));
 $teamId = intval(iget("team"));
 $game_result = GameResult($gameId);
-$team_score_board = GameTeamScoreBorad($gameId, $teamId);
+$team_score_board = GameTeamScoreBoardArray($gameId, $teamId);
 
 mobilePageTop(_("Players of the game"));
 
@@ -17,7 +17,7 @@ $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
 $html .= "<b>" . utf8entities(TeamName($teamId)) . "</b>";
 $html .= "</td></tr><tr><td>\n";
-while ($row = mysqli_fetch_assoc($team_score_board)) {
+foreach ($team_score_board as $row) {
 	$html .= $row['num'] . " ";
 	$html .= utf8entities($row['firstname']) . "&nbsp;" . utf8entities($row['lastname']) . " ";
 	$html .= $row['fedin'] . "+" . $row['done'] . "=" . $row['total'];

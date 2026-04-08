@@ -57,7 +57,7 @@ $html .= "</td></tr><tr><td>\n";
 //used timeouts
 $i = 0;
 $timeouts = GameTimeouts($gameId);
-while ($timeout = mysqli_fetch_assoc($timeouts)) {
+foreach ($timeouts as $timeout) {
 	if (intval($timeout['ishome'])) {
 		$html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /> ";
 		$i++;
@@ -78,8 +78,7 @@ $html .= "</td></tr><tr><td>\n";
 
 //used timeouts
 $i = 0;
-$timeouts = GameTimeouts($gameId);
-while ($timeout = mysqli_fetch_assoc($timeouts)) {
+foreach ($timeouts as $timeout) {
 	if (intval(!$timeout['ishome'])) {
 		$html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /> ";
 		$i++;

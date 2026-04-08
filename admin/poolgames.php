@@ -43,8 +43,8 @@ if (!empty($_POST['remove_x'])) {
 
 	//run some test to for safe deletion
 	$goals = GameAllGoals($id);
-	if (mysqli_num_rows($goals)) {
-		$html .= "<p class='warning'>" . _("Game has") . " " . mysqli_num_rows($goals) . " " . _("goals") . ". " . _("Goals must be removed before removing the team") . ".</p>";
+	if (count($goals)) {
+		$html .= "<p class='warning'>" . _("Game has") . " " . count($goals) . " " . _("goals") . ". " . _("Goals must be removed before removing the team") . ".</p>";
 		$ok = false;
 	}
 	if ($ok)
@@ -52,7 +52,7 @@ if (!empty($_POST['remove_x'])) {
 } elseif (!empty($_POST['swap_x'])) {
 	$id = $_POST['hiddenDeleteId'];
 	$goals = GameAllGoals($id);
-	if (!mysqli_num_rows($goals)) {
+	if (!count($goals)) {
 		GameChangeHome($id);
 	}
 } elseif (!empty($_POST['removemoved'])) {

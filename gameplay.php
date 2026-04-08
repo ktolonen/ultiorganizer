@@ -24,8 +24,8 @@ $awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
 
 $title = _("Gameplay") . ": " . utf8entities($game_result['hometeamname']) . " vs. " . utf8entities($game_result['visitorteamname']);
 
-$home_team_score_board = GameTeamScoreBorad($gameId, $game_result['hometeam']);
-$guest_team_score_board = GameTeamScoreBorad($gameId, $game_result['visitorteam']);
+$home_team_score_board = GameTeamScoreBoardArray($gameId, $game_result['hometeam']);
+$guest_team_score_board = GameTeamScoreBoardArray($gameId, $game_result['visitorteam']);
 
 $poolinfo = PoolInfo($game_result['pool']);
 
@@ -46,7 +46,7 @@ if (GameHasStarted($game_result) > 0) {
   }
   $html .= "</h1>\n";
 
-  if(DBNumRows($goals) <= 0){
+  if (count($goals) <= 0) {
     $html .= "<h2>" . _("No scores entered") . "</h2>
 			  <p>" . _("Please check the status again later.") . "</p>";
   } else {
@@ -62,7 +62,7 @@ if (GameHasStarted($game_result) > 0) {
     $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Assists") . "</th><th class='home center'>" . _("Goals") . "</th>
 		 <th class='home center'>" . _("Tot.") . "</th></tr>\n";
 
-    while($row = DBFetchAssoc($home_team_score_board))	{
+    foreach ($home_team_score_board as $row) {
       $html .= "<tr>";
       $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
@@ -90,7 +90,7 @@ if (GameHasStarted($game_result) > 0) {
     $html .= "</th><th class='guest center'>" . _("Tot.") . "</th></tr>\n";
 
 
-    while($row = DBFetchAssoc($guest_team_score_board)){
+    foreach ($guest_team_score_board as $row) {
       $html .= "<tr>";
       $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
@@ -118,7 +118,7 @@ if (GameHasStarted($game_result) > 0) {
     $bHt = false;
     $total = 0;
 
-    while($goal = DBFetchAssoc($goals)){
+    foreach ($goals as $goal) {
 
       if (!$bHt && $goal['time'] > $game_result['halftime']) {
         $points[$i][0] = (intval($game_result['halftime']) - $lprev);
@@ -174,15 +174,15 @@ if (GameHasStarted($game_result) > 0) {
       $width_a = $points[$i][0] * $offset;
 
       if ($points[$i][1] == -2) {
-        $title = $hideTimeOnScoresheet ? "halftime" : SecToMin($points[$i][4]) . " halftime";
+        $pointTitle = $hideTimeOnScoresheet ? "halftime" : SecToMin($points[$i][4]) . " halftime";
       } else {
         if ($hideTimeOnScoresheet) {
-          $title = $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+          $pointTitle = $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
         } else {
-          $title = SecToMin($points[$i][4]) . " " . $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+          $pointTitle = SecToMin($points[$i][4]) . " " . $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
         }
       }
-      $html .= "<td style='width:" . $width_a . "px' class='$color' title='$title'></td>\n";
+      $html .= "<td style='width:" . $width_a . "px' class='$color' title='$pointTitle'></td>\n";
     }
     $html .= "</tr></table>\n";
 
@@ -203,8 +203,7 @@ if (GameHasStarted($game_result) > 0) {
     $bHt = false;
 
     $prevgoal = 0;
-    mysqli_data_seek($goals, 0);
-    while ($goal = mysqli_fetch_assoc($goals)) {
+    foreach ($goals as $goal) {
       if (!$bHt && $game_result['halftime'] > 0 && $goal['time'] > $game_result['halftime']) {
         $html .= "<tr><td colspan='" . $goalTableColspan . "' class='halftime'>" . _("Halftime") . "</td></tr>";
         $bHt = 1;
@@ -358,10 +357,10 @@ if (GameHasStarted($game_result) > 0) {
       $nHLosesDisc = 0;
       $nVLosesDisc = 0;
 
-      $turnovers = GameTurnovers($gameId);
+      $turnovers = GameTurnoversArray($gameId);
 
-      $goal = DBFetchAssoc($allgoals);
-      $turnover = DBFetchAssoc($turnovers);
+      $goal = $allgoals[0];
+      $turnover = $turnovers[0] ?? null;
 
       //who start the game?
       $ishome = GameIsFirstOffenceHome($gameId);
@@ -402,11 +401,8 @@ if (GameHasStarted($game_result) > 0) {
       //whom start the game, starts offence
       $bHOffence = $bHStartTheGame;
 
-      //return internal pointers to first row
-      DBDataSeek($allgoals, 0);
-
       //loop all goals
-      while($goal = DBFetchAssoc($allgoals)){
+      foreach ($allgoals as $goal) {
         //halftime passed
         if (($nClockTime <= intval($game_result['halftime'])) && (intval($goal['time']) >= intval($game_result['halftime']))) {
           $nClockTime = intval($game_result['halftime']);
@@ -426,10 +422,7 @@ if (GameHasStarted($game_result) > 0) {
         }
         //If turnovers before goal
 
-        if(DBNumRows($turnovers)){
-          $turnovers = GameTurnovers($gameId);
-        }
-        while($turnover = DBFetchAssoc($turnovers)){
+        foreach ($turnovers as $turnover) {
           if ((intval($turnover['time']) > $nClockTime) &&
             (intval($turnover['time']) < intval($goal['time']))
           ) {
@@ -476,7 +469,7 @@ if (GameHasStarted($game_result) > 0) {
       //timeouts
       $timeouts = GameTimeouts($gameId);
 
-      while($timeout = DBFetchAssoc($timeouts)){
+      foreach ($timeouts as $timeout) {
         if (intval($timeout['ishome'])) {
           $nHTO++;
         } else {
@@ -619,8 +612,8 @@ if (GameHasStarted($game_result) > 0) {
     if (ShowDefenseStats()) {
       $html .= "<br><br>";
       $html .= "<h3>" . _("Defensive plays") . "</h3>\n";
-      $home_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['hometeam']);
-      $guest_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['visitorteam']);
+      $home_team_defense_board = GameTeamDefenseBoardArray($gameId,  $game_result['hometeam']);
+      $guest_team_defense_board = GameTeamDefenseBoardArray($gameId,  $game_result['visitorteam']);
       $defenses = GameDefenses($gameId);
       $html .= "<table style='width:100%'><tr><td valign='top' style='width:45%'>\n";
 
@@ -630,7 +623,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
       $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Defenses") . "</th></tr>\n";
 
-      while($row = DBFetchAssoc($home_team_defense_board)){
+      foreach ($home_team_defense_board as $row) {
         $html .= "<tr>";
         $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
@@ -655,7 +648,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "<tr><th class='guest'>#</th><th class='guest'>" . _("Name") . "</th><th class='guest center'>";
       $html .= _("Defenses") . "</th></tr>\n";
 
-      while($row = DBFetchAssoc($guest_team_defense_board)){
+      foreach ($guest_team_defense_board as $row) {
         $html .= "<tr>";
         $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
@@ -683,9 +676,7 @@ if (GameHasStarted($game_result) > 0) {
 
       //$bHt=false;
 
-      $prevdefense = 0;
-      DBDataSeek($defenses, 0);
-      while($defense = DBFetchAssoc($defenses)){
+      foreach ($defenses as $defense) {
         // 		if (!$bHt && $game_result['halftime']>0 && $goal['time'] > $game_result['halftime']){
         // 			$html .= "<tr><td colspan='6' class='halftime'>"._("Half-time")."</td></tr>";
         // 			$bHt = 1;

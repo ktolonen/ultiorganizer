@@ -44,7 +44,7 @@ $html .= "<p>" . _("Select event") . ":	<select class='dropdown' name='season'>\
 
 $seasons = Seasons();
 
-while ($row = mysqli_fetch_assoc($seasons)) {
+foreach ($seasons as $row) {
 	if ($row['season_id'] == $season)
 		$html .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 	else

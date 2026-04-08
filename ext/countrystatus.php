@@ -78,7 +78,7 @@ include_once __DIR__ . '/localization.php';
 			echo "<table width='95%'>\n";
 			if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
 				$mvgames = PoolMovedGames($poolinfo['pool_id']);
-				foreach ($games as $game) {
+				foreach ($mvgames as $game) {
 					if ($game['homecountryid'] == $countryId || $game['visitorcountryid'] == $countryId) {
 						echo "<tr>";
 						echo "<td style='border:none' class='pk_ser_td1'>" . utf8entities($game['hometeamname']) . "</td>\n";
@@ -92,7 +92,7 @@ include_once __DIR__ . '/localization.php';
 				}
 			}
 			$games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
-			while ($game = mysqli_fetch_assoc($games)) {
+			foreach ($games as $game) {
 				if ($game['homecountryid'] == $countryId || $game['visitorcountryid'] == $countryId) {
 					echo "<tr>";
 					echo "<td style='width:35%;border:none' class='pk_ser_td1'>" . utf8entities($game['hometeamname']) . "</td>\n";

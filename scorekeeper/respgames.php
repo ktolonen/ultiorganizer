@@ -5,7 +5,7 @@ $season = CurrentSeason();
 $currentSeasons = array();
 $currentSeasonRows = CurrentSeasons();
 if ($currentSeasonRows) {
-  while ($row = mysqli_fetch_assoc($currentSeasonRows)) {
+  foreach ($currentSeasonRows as $row) {
     $seasonId = isset($row['season_id']) ? (string)$row['season_id'] : '';
     if ($seasonId === '') {
       continue;

@@ -666,7 +666,7 @@ function api_handle_games($tokenRow)
     $group = 'all';
   }
 
-  $games = TimetableGamesArray($id, $gamefilter, $timefilter, $order, $group);
+  $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
   $rows = array();
   foreach ($games as $row) {
     $rows[] = api_normalize_game($row);
@@ -709,7 +709,7 @@ function api_gameplay_statistics($gameId, $gameResult)
     return null;
   }
 
-  $allgoals = GameAllGoalsArray($gameId);
+  $allgoals = GameAllGoals($gameId);
   if (empty($allgoals)) {
     return null;
   }
@@ -796,7 +796,7 @@ function api_gameplay_statistics($gameId, $gameResult)
     }
   }
 
-  $timeouts = GameTimeoutsArray($gameId);
+  $timeouts = GameTimeouts($gameId);
   $homeTimeouts = 0;
   $visitorTimeouts = 0;
   foreach ($timeouts as $timeout) {
@@ -874,7 +874,7 @@ function api_handle_gameplay($tokenRow)
   $homePlayers = GamePlayers($gameId, $gameResult['hometeam']);
   $visitorPlayers = GamePlayers($gameId, $gameResult['visitorteam']);
 
-  $goals = GameGoalsArray($gameId);
+  $goals = GameGoals($gameId);
   $events = GameEvents($gameId);
   $mediaEvents = GameMediaEvents($gameId);
   $media = GetMediaUrlList('game', $gameId);

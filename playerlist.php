@@ -38,7 +38,7 @@ $html .= "<tr><th>" . _("Name") . "</th>
 
 $stats = array(array());
 $i = 0;
-while ($player = mysqli_fetch_assoc($players)) {
+foreach ($players as $player) {
   $playerinfo = PlayerInfo($player['player_id']);
   if (!$playerinfo) {
     continue;

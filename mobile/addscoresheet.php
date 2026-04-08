@@ -14,11 +14,7 @@ $gameId = intval(iget("game"));
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $game_result = GameResult($gameId);
-$result = GameGoals($gameId);
-$scores = array();
-while ($row = mysqli_fetch_assoc($result)) {
-	$scores[] = $row;
-}
+$scores = GameGoals($gameId);
 $uo_goal = array(
 	"game" => $gameId,
 	"num" => 0,

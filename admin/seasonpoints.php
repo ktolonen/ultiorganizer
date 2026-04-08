@@ -22,7 +22,7 @@ if (empty($season)) {
 	$html .= "<input type='hidden' name='view' value='admin/seasonpoints'/>\n";
 	$html .= "<p>" . _("Select event") . ": <select class='dropdown' name='season'>\n";
 	$seasons = Seasons();
-	while ($row = mysqli_fetch_assoc($seasons)) {
+	foreach ($seasons as $row) {
 		$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 	}
 	$html .= "</select> <input class='button' type='submit' value='" . _("Select") . "'/></p>\n";

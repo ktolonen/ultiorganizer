@@ -5,13 +5,8 @@ $html = "";
 $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
 $_SESSION['game'] = $gameId;
 
-$result = GameGoals($gameId);
 $game_result = GameResult($gameId);
-
-$scores = array();
-while ($row = mysqli_fetch_assoc($result)) {
-	$scores[] = $row;
-}
+$scores = GameGoals($gameId);
 
 if (isset($_POST['delete'])) {
 	if (count($scores) > 0) {

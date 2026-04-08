@@ -118,11 +118,7 @@ if ($filename === null) {
 if ($teamId) {
 	$teaminfo = TeamInfo($teamId);
 	$players = array();
-	if ($result = TeamPlayerList($teamId)) {
-		while ($row = mysqli_fetch_assoc($result)) {
-			$players[] = $row;
-		}
-	}
+	$players = TeamPlayerList($teamId);
 	$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	$filename = "roster-" . pdf_slug($teaminfo['name']) . "-" . $seasonSlug . ".pdf";
 } elseif ($seriesId) {
@@ -132,11 +128,7 @@ if ($teamId) {
 	foreach ($teams as $team) {
 		$teaminfo = TeamInfo($team['team_id']);
 		$players = array();
-		if ($result = TeamPlayerList($team['team_id'])) {
-			while ($row = mysqli_fetch_assoc($result)) {
-				$players[] = $row;
-			}
-		}
+		$players = TeamPlayerList($team['team_id']);
 		$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	}
 	$filename = "rosters-series-" . pdf_slug($seriesId) . "-" . $seasonSlug . ".pdf";
@@ -153,12 +145,12 @@ if ($teamId) {
 	$seasonname = SeasonName($season);
 
 	// Bail out gracefully if no games were returned.
-	if (!$games || !is_object($games)) {
+	if (!$games || !is_array($games)) {
 		$pdf->Output('I', $filename);
 		return;
 	}
 
-	while ($gameRow = mysqli_fetch_assoc($games)) {
+	foreach ($games as $gameRow) {
 
 		if ($filter2 == "teams") {
 			if (!$gameRow['hometeam'] || !$gameRow['visitorteam']) {
@@ -171,18 +163,16 @@ if ($teamId) {
 
 		$homeplayers = array();
 
-		$playerlist = TeamPlayerList($gameRow["hometeam"]);
 		$i = 0;
-		while ($player = mysqli_fetch_assoc($playerlist)) {
+		foreach (TeamPlayerList($gameRow["hometeam"]) as $player) {
 			$homeplayers[$i]['name'] = $player['firstname'] . " " . $player['lastname'];
 			$homeplayers[$i]['accredited'] = $player['accredited'];
 			$homeplayers[$i]['num'] = $player['num'];
 			$i++;
 		}
 		$visitorplayers = array();
-		$playerlist = TeamPlayerList($gameRow["visitorteam"]);
 		$i = 0;
-		while ($player = mysqli_fetch_assoc($playerlist)) {
+		foreach (TeamPlayerList($gameRow["visitorteam"]) as $player) {
 			$visitorplayers[$i]['name'] = $player['firstname'] . " " . $player['lastname'];
 			$visitorplayers[$i]['accredited'] = $player['accredited'];
 			$visitorplayers[$i]['num'] = $player['num'];

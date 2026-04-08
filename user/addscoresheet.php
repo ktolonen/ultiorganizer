@@ -518,7 +518,7 @@ echo "<tr><th>".$homeshortname."</th>\n";
   //home team used timeouts
   $i = 0;
   $timeouts = GameTimeouts($gameId);
-  while ($timeout = DBFetchAssoc($timeouts)) {
+  foreach ($timeouts as $timeout) {
     if (intval($timeout['ishome'])) {
       echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
       $i++;
@@ -540,8 +540,7 @@ echo "<tr><th>".$visitorshortname."</th>\n";
 
   //away team used timeouts
   $i = 0;
-  $timeouts = GameTimeouts($gameId);
-  while ($timeout = DBFetchAssoc($timeouts)) {
+  foreach ($timeouts as $timeout) {
     if (!intval($timeout['ishome'])) {
       echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
       $i++;
@@ -691,7 +690,7 @@ echo "<th style='$style_right'>" . _("Score") . "</th></tr>\n";
 $scores = GameGoals($gameId);
 
 $i = 0;
-while ($row = DBFetchAssoc($scores)) {
+foreach ($scores as $row) {
 
   echo "<tr>";
   echo "<td class='center' style='width: 25px;color:#B0B0B0;'>", $i + 1, "</td>\n";

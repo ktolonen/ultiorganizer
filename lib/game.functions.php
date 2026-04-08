@@ -330,6 +330,11 @@ function GameAll($limit = 50)
 	return DBQuery($query);
 }
 
+function GameAllArray($limit = 50)
+{
+	return DBFetchAllAssoc(GameAll($limit));
+}
+
 function GamePlayerFromNumber($gameId, $teamId, $number)
 {
 	$query = sprintf(
@@ -373,8 +378,7 @@ function GameTeamScoreBorad($gameId, $teamId)
 
 function GameTeamScoreBoardArray($gameId, $teamId)
 {
-	$result = GameTeamScoreBorad($gameId, $teamId);
-	return DBResourceToArray($result);
+	return DBFetchAllAssoc(GameTeamScoreBorad($gameId, $teamId));
 }
 
 function GameTeamDefenseBoard($gameId, $teamId)
@@ -393,6 +397,11 @@ function GameTeamDefenseBoard($gameId, $teamId)
 
 	$result = DBQuery($query);
 	return $result;
+}
+
+function GameTeamDefenseBoardArray($gameId, $teamId)
+{
+	return DBFetchAllAssoc(GameTeamDefenseBoard($gameId, $teamId));
 }
 
 function GameScoreBoard($gameId)
@@ -419,6 +428,11 @@ function GameScoreBoard($gameId)
 	return $result;
 }
 
+function GameScoreBoardArray($gameId)
+{
+	return DBFetchAllAssoc(GameScoreBoard($gameId));
+}
+
 function GameGoals($gameId)
 	{
 	$query = sprintf("
@@ -430,14 +444,7 @@ function GameGoals($gameId)
 		DBEscapeString($gameId)
 	);
 
-	$result = DBQuery($query);
-	return $result;
-}
-
-function GameGoalsArray($gameId)
-{
-	$result = GameGoals($gameId);
-	return DBResourceToArray($result);
+	return DBQueryToArray($query);
 }
 
 function GameDefenses($gameId)
@@ -450,8 +457,7 @@ function GameDefenses($gameId)
 		DBEscapeString($gameId)
 	);
 
-	$result = DBQuery($query);
-	return $result;
+	return DBQueryToArray($query);
 }
 
 
@@ -479,14 +485,7 @@ function GameAllGoals($gameId)
 		DBEscapeString($gameId)
 	);
 
-	$result = DBQuery($query);
-	return $result;
-}
-
-function GameAllGoalsArray($gameId)
-{
-	$result = GameAllGoals($gameId);
-	return DBResourceToArray($result);
+	return DBQueryToArray($query);
 }
 
 function GameEvents($gameId)
@@ -570,13 +569,7 @@ function GameTimeouts($gameId)
 		DBEscapeString($gameId)
 	);
 
-	return DBQuery($query);
-}
-
-function GameTimeoutsArray($gameId)
-{
-	$result = GameTimeouts($gameId);
-	return DBResourceToArray($result);
+	return DBQueryToArray($query);
 }
 
 function GameSpiritTimeouts($gameId)
@@ -594,8 +587,7 @@ function GameSpiritTimeouts($gameId)
 
 function GameSpiritTimeoutsArray($gameId)
 {
-	$result = GameSpiritTimeouts($gameId);
-	return DBResourceToArray($result);
+	return DBFetchAllAssoc(GameSpiritTimeouts($gameId));
 }
 
 function GameTurnovers($gameId)
@@ -613,8 +605,7 @@ function GameTurnovers($gameId)
 
 function GameTurnoversArray($gameId)
 {
-	$result = GameTurnovers($gameId);
-	return DBResourceToArray($result);
+	return DBFetchAllAssoc(GameTurnovers($gameId));
 }
 
 function GameInfo($gameId)
@@ -1691,8 +1682,7 @@ function UnScheduleGame($gameId)
 
 function ClearReservation($reservationId)
 {
-	$result = ReservationGames($reservationId);
-	while ($row = mysqli_fetch_assoc($result)) {
+	foreach (ReservationGames($reservationId) as $row) {
 		if (hasEditGamesRight(GameSeries($row['game_id']))) {
 			UnScheduleGame($row['game_id']);
 		} // else ignore games not managed by user

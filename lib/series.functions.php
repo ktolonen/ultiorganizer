@@ -396,6 +396,11 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
   return DBQuery($query);
 }
 
+function SeriesScoreBoardArray($seriesId, $sorting, $limit)
+{
+  return DBFetchAllAssoc(SeriesScoreBoard($seriesId, $sorting, $limit));
+}
+
 /**
  * Get division defense board.
  * @param int $seriesId uo_series.series_id
@@ -461,6 +466,11 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit)
   return DBQuery($query);
 }
 
+function SeriesDefenseBoardArray($seriesId, $sorting, $limit)
+{
+  return DBFetchAllAssoc(SeriesDefenseBoard($seriesId, $sorting, $limit));
+}
+
 /**
  * Get all games in given division.
  * @param int $seriesId uo_series.series_id
@@ -513,7 +523,7 @@ function SeriesEnrolledTeams($seriesId)
 		WHERE team.series=%d ORDER BY team.enroll_time ASC",
       (int)$seriesId
     );
-    return DBQuery($query);
+    return DBQueryToArray($query);
   } else die("Insufficient rights to get all enrolled teams");
 }
 
@@ -661,7 +671,7 @@ function SeriesEnrolledTeamsByUser($seriesId, $userid)
       (int)$seriesId,
       DBEscapeString($userid)
     );
-    return DBQuery($query);
+    return DBQueryToArray($query);
   } else die("Insufficient rights to get all enrolled teams for other users");
 }
 

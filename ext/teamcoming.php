@@ -31,7 +31,7 @@ include_once __DIR__ . '/localization.php';
 
 	if ($teamId) {
 		$games = TimetableGames($teamId, "team", "coming", "tournaments");
-		if (!mysqli_num_rows($games)) {
+		if (!count($games)) {
 			echo "\n<p>" . _("No games") . ".</p>\n";
 		} else {
 			echo ExtGameView($games);

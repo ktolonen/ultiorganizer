@@ -2,6 +2,7 @@
 include_once __DIR__ . '/auth.php';
 include_once 'lib/api.functions.php';
 include_once 'lib/season.functions.php';
+include_once 'lib/user.functions.php';
 
 $LAYOUT_ID = APITOKENS;
 $title = _("API Tokens");
@@ -29,13 +30,8 @@ if (isSuperAdmin()) {
     } elseif ($scopeType === 'user') {
       if ($scopeId === '') {
         $errors[] = _("User id is required for user scope.");
-      } else {
-        $userExists = DBQueryToValue(
-          "SELECT userid FROM uo_users WHERE userid='" . DBEscapeString($scopeId) . "'"
-        );
-        if ($userExists === -1 || $userExists === null || $userExists === false) {
-          $errors[] = _("User not found.");
-        }
+      } elseif (!UserExists($scopeId)) {
+        $errors[] = _("User not found.");
       }
     } else {
       $scopeId = '';

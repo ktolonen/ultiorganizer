@@ -90,12 +90,12 @@ function CurrentSeason()
 /**
  * Returns all current seasons (uo_season.iscurrent=1).
  * 
- * @return mysqli_result array 
+ * @return array
  */
 function CurrentSeasons()
 {
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 /**
@@ -238,7 +238,7 @@ function SeasonNameExists($seasonName)
  * 
  * @param array $filter sql conditions
  * @param array $ordering sql ordering  
- * @return mysqli_result array of seasons
+ * @return array of seasons
  */
 function Seasons($filter = null, $ordering = null)
 {
@@ -248,7 +248,7 @@ function Seasons($filter = null, $ordering = null)
   $orderby = CreateOrdering(array("uo_season" => "season"), $ordering);
   $where = CreateFilter(array("uo_season" => "season"), $filter);
   $query = sprintf("SELECT season_id, name FROM uo_season season $where $orderby");
-  return DBQuery(trim($query));
+  return DBQueryToArray(trim($query));
 }
 
 /**
@@ -261,17 +261,6 @@ function SeasonsAllInfo()
   $query = "SELECT season_id, name, starttime, endtime, iscurrent, api_public, type, istournament, isinternational, isnationalteams
     FROM uo_season
     ORDER BY starttime DESC";
-  return DBQueryToArray($query);
-}
-
-/**
- * Returns all seasons.
- * 
- * @return array of seasons
- */
-function SeasonsArray()
-{
-  $query = sprintf("SELECT season_id, name FROM uo_season season ORDER BY starttime DESC");
   return DBQueryToArray($query);
 }
 

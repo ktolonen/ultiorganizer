@@ -648,7 +648,7 @@ function SpiritkeeperCurrentSeasons()
 		return $seasons;
 	}
 
-	while ($row = mysqli_fetch_assoc($currentSeasonRows)) {
+	foreach ($currentSeasonRows as $row) {
 		$seasonId = isset($row['season_id']) ? (string)$row['season_id'] : '';
 		if ($seasonId === '') {
 			continue;
@@ -1064,6 +1064,34 @@ function SpiritTimeoutSummaryBySeason($season)
 		DBEscapeString($season)
 	);
 	return DBQueryToRow($query);
+}
+
+function SpiritSotgUrlsBySeason($season)
+{
+	return DBQueryToArray(sprintf(
+		"SELECT s.name AS series, t.name AS team, t.sotg_token AS token FROM uo_team AS t
+		JOIN uo_series AS s on t.series=s.series_id
+		WHERE s.season='%s'
+		ORDER BY s.name, t.name",
+		DBEscapeString($season)
+	));
+}
+
+function SpiritGenerateSotgTokens($season, $filter = "onlymissing")
+{
+	if ($filter !== "onlymissing") {
+		return -1;
+	}
+
+	$query = sprintf(
+		"UPDATE uo_team AS t
+		JOIN uo_series AS s on t.series=s.series_id
+		SET t.sotg_token=MD5(t.team_id+RAND())
+		WHERE s.season='%s' AND t.sotg_token IS NULL",
+		DBEscapeString($season)
+	);
+	DBQuery($query);
+	return (int)DBAffectedRows();
 }
 
 function SpiritTimeoutGameRowsBySeason($season)

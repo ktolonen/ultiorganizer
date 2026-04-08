@@ -4,81 +4,12 @@
 #
 # New files must not be added here. Remove entries as files are migrated.
 
-# Repo root pages and helpers
-allplayers.php
-defensestatus.php
-gamecard.php
-gameplay.php
-games.php
-ical.php
-menufunctions.php
-playerlist.php
-poolstatus.php
-scorestatus.php
-seasonlist.php
-seriesstatus.php
-statistics.php
-teamcard.php
-
 # Admin pages
-admin/accreditation.php
-admin/addreservation.php
-admin/addseasonusers.php
-admin/apitokens.php
 admin/dbadmin.php
 admin/dbbackup.php
 admin/dbequalize.php
 admin/dbrestore.php
-admin/editstanding.php
-admin/eventdataexport.php
-admin/eventviewer.php
 admin/executesql.php
-admin/poolgames.php
-admin/schedule.php
-admin/seasongames.php
-admin/seasonpoints.php
-admin/seasons.php
-admin/seasonteams.php
-admin/sms.php
-admin/spirit.php
-admin/tdtools.php
-admin/translations.php
-
-# User pages
-user/adddefensesheet.php
-user/addplayerlists.php
-user/addscoresheet.php
-user/enrollteam.php
-user/pdfscoresheet.php
-user/playerprofile.php
-user/teamplayers.php
-user/userinfo.php
-
-# Legacy mobile and scorekeeper pages
-mobile/addplayerlists.php
-mobile/addscoresheet.php
-mobile/addtimeouts.php
-mobile/deletescore.php
-mobile/gameplay.php
-mobile/scoreboard.php
-scorekeeper/addplayerlists.php
-scorekeeper/addscoresheet.php
-scorekeeper/addtimeouts.php
-scorekeeper/deletescore.php
-scorekeeper/endgame.php
-scorekeeper/gameplay.php
-scorekeeper/respgames.php
-scorekeeper/scoreboard.php
 
 # External entry points
-ext/countrystatus.php
-ext/export.php
-ext/index.php
-ext/locationtxt.php
-ext/locationxml.php
-ext/poolscoreboard.php
-ext/rss.php
 ext/scorecounter.php
-ext/teamcoming.php
-ext/teamplayed.php
-ext/teamscoreboard.php

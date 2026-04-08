@@ -61,7 +61,7 @@ function EventList($categoryfilter, $userfilter, $limit = null, $offset = null)
 {
 	if (isSuperAdmin()) {
 		if (count($categoryfilter) == 0) {
-			return false;
+			return array();
 		}
 		$query = "SELECT * FROM uo_event_log WHERE ";
 
@@ -91,10 +91,9 @@ function EventList($categoryfilter, $userfilter, $limit = null, $offset = null)
 				$query .= sprintf(" OFFSET %d", intval($offset));
 			}
 		}
-		$result = DBQuery($query);
-
-		return $result;
+		return DBQueryToArray($query);
 	}
+	return array();
 }
 
 function EventCount($categoryfilter, $userfilter)

@@ -268,6 +268,28 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
 	return DBQueryToArray($query);
 }
 
+function SeasonSpiritTopTeamsBySeriesType($seasonId, $seriesType, $limit = 3)
+{
+	$query = sprintf(
+		"SELECT t.team_id, t.name AS teamname, t.country, c.flagfile,
+			SUM(ts.average * sct.factor) AS spirit_total
+		FROM uo_team_spirit_stats ts
+		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
+		LEFT JOIN uo_team t ON (t.team_id = ts.team_id)
+		LEFT JOIN uo_series ser ON (ser.series_id = ts.series)
+		LEFT JOIN uo_country c ON (t.country = c.country_id)
+		WHERE ts.season='%s' AND ser.type='%s'
+		GROUP BY ts.team_id, ser.series_id
+		ORDER BY spirit_total DESC, t.name ASC
+		LIMIT %d",
+		DBEscapeString($seasonId),
+		DBEscapeString($seriesType),
+		(int)$limit
+	);
+
+	return DBQueryToArray($query);
+}
+
 
 function SetTeamSeasonStanding($teamId, $standing)
 {

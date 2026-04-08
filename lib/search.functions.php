@@ -392,7 +392,7 @@ function SeasonControl()
 	$ret = "<select multiple='multiple' name='searchseasons[]' id='searchseasons' style='height:200px'>\n";
 
 	$seasons = Seasons();
-	while ($season = mysqli_fetch_assoc($seasons)) {
+	foreach ($seasons as $season) {
 		$ret .= "<option value='" . urlencode($season['season_id']) . "'";
 		if (isset($selected[$season['season_id']])) {
 			$ret .=	" selected='selected'";

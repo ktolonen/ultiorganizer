@@ -54,11 +54,7 @@ if ($useGameClock) {
 }
 
 $game_result = GameResult($gameId);
-$result = GameGoals($gameId);
-$scores = array();
-while ($row = DBFetchAssoc($result)) {
-  $scores[] = $row;
-}
+$scores = GameGoals($gameId);
 $lastscore = count($scores) ? $scores[count($scores) - 1] : null;
 $timerState = $useGameClock ? GameTimerState($gameId) : array(
   "started" => false,

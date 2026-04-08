@@ -5,9 +5,7 @@ denyDirectLibAccess(__FILE__);
 function GetAllSMS()
 {
 	$query = sprintf("SELECT * FROM uo_sms");
-	$result = DBQuery($query);
-
-	return $result;
+	return DBQueryToArray($query);
 }
 
 function SendSMS($sms)

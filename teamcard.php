@@ -157,7 +157,7 @@ if (ShowDefenseStats()) {
   }
 } else {
 
-  $players = TeamScoreBoard($teamId, 0, "name", 0);
+  $players = TeamScoreBoardArray($teamId, 0, "name", 0);
   if ($players) {
     $html .= "<p><span class='profileheader'>" . utf8entities(U_(SeasonName($teaminfo['season']))) . " " . _("roster") . ":</span></p>\n";
 
@@ -170,7 +170,7 @@ if (ShowDefenseStats()) {
 		<th class='center' style='width:15%'>"._("Total")."</th></tr>\n";
 
 
-    while ($player = mysqli_fetch_assoc($players)) {
+    foreach ($players as $player) {
       $playerinfo = PlayerInfo($player['player_id']);
       $playernum = ( $playerinfo['num']>-1 ? $playerinfo['num'] : "" );
       $html .= "<tr><td class='right' style='padding-right:1ex;'>".$playernum."</td>";
