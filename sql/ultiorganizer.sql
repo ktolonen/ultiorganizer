@@ -289,6 +289,7 @@ CREATE TABLE IF NOT EXISTS `uo_database` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
+	(46, '2025-12-05 07:29:02'),
 	(47, '2025-12-05 07:29:02'),
 	(48, '2025-12-05 07:29:02'),
 	(49, '2025-12-05 07:29:02'),
@@ -328,8 +329,7 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(83, '2026-04-06 08:36:23'),
 	(84, '2026-04-06 08:36:23'),
 	(85, '2026-04-06 08:36:23'),
-	(86, '2026-04-06 08:36:23'),
-	(87, '2026-04-06 08:36:23');
+	(86, '2026-04-06 08:36:23');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -1210,4 +1210,3 @@ CREATE TABLE IF NOT EXISTS `uo_visitor_counter` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-

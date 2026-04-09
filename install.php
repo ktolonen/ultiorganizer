@@ -386,6 +386,7 @@ function configurations()
   $passed = false;
 
   $upload_dir = isset($_POST['upload_dir']) ? trim($_POST['upload_dir']) : "images/uploads/";
+  $maintenance_runtime_dir = isset($_POST['maintenance_runtime_dir']) ? trim($_POST['maintenance_runtime_dir']) : (defined('MAINTENANCE_RUNTIME_DIR') ? MAINTENANCE_RUNTIME_DIR : installSuggestedMaintenanceRuntimeDir());
   $customization = isset($_POST['customization']) ? trim($_POST['customization']) : "default";
   $baseurl = isset($_POST['baseurl']) ? trim($_POST['baseurl']) : GetURLBase();
   $disable_self_registration = !empty($_POST['disable_self_registration']);
@@ -417,6 +418,7 @@ function configurations()
   $html .= "<table style='width:100%'>";
   $html .= "<tr><td>Primary URL:</td><td><input class='input' type='text' size='50' name='baseurl' value='$baseurl'/></td></tr>";
   $html .= "<tr><td>Upload directory:</td><td><input class='input' type='text' size='50' name='upload_dir' value='$upload_dir'/></td></tr>";
+  $html .= "<tr><td>Maintenance runtime directory:</td><td><input class='input' type='text' size='50' name='maintenance_runtime_dir' value='" . htmlspecialchars($maintenance_runtime_dir, ENT_QUOTES, "UTF-8") . "'/></td></tr>";
   $html .= "<tr><td>Customization:</td><td><select class='dropdown' name='customization'>";
   foreach ($customizations as $cust) {
     if ($customization == $cust) {
@@ -439,6 +441,22 @@ function configurations()
       $html .= "<p style='color:red'>Upload directory $upload_dir is not writable.</p>";
       $passed = false;
     }
+    if (empty($maintenance_runtime_dir)) {
+      $html .= "<p style='color:red'>Maintenance runtime directory must not be empty.</p>";
+      $passed = false;
+    } elseif (file_exists($maintenance_runtime_dir) && !is_dir($maintenance_runtime_dir)) {
+      $html .= "<p style='color:red'>Maintenance runtime path $maintenance_runtime_dir exists but is not a directory.</p>";
+      $passed = false;
+    } else {
+      if (!is_dir($maintenance_runtime_dir) && !@mkdir($maintenance_runtime_dir, 0775, true)) {
+        $html .= "<p style='color:red'>Cannot create maintenance runtime directory $maintenance_runtime_dir.</p>";
+        $passed = false;
+      }
+      if ($passed && !is_writable($maintenance_runtime_dir)) {
+        $html .= "<p style='color:red'>Maintenance runtime directory $maintenance_runtime_dir is not writable.</p>";
+        $passed = false;
+      }
+    }
     if (!$fh = fopen('conf/config.inc.php', 'w')) {
       $html .= "<p style='color:red'>Cannot open file: conf/config.inc.php</p>";
       $passed = false;
@@ -458,6 +476,7 @@ function configurations()
       fwrite($fh, "*/\n");
       fwrite($fh, "define('BASEURL', '$baseurl');\n");
       fwrite($fh, "define('UPLOAD_DIR', '$upload_dir');\n");
+      fwrite($fh, "define('MAINTENANCE_RUNTIME_DIR', '" . addslashes($maintenance_runtime_dir) . "');\n");
       fwrite($fh, "define('CUSTOMIZATIONS', '$customization');\n");
       fwrite($fh, "define('DATE_FORMAT', _(\"%d.%m.%Y %H:%M\"));\n");
       fwrite($fh, "define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');\n");
@@ -784,6 +803,7 @@ function postconditions()
   $passed = true;
   $html = "";
   $html .= "<p>After installation, the web server / PHP user must not be able to write <i>conf/config.inc.php</i> or the <i>conf/</i> directory.</p>";
+  $html .= "<p>The maintenance runtime directory is not secret. It must remain writable by the web server / PHP user for automatic database upgrade maintenance.</p>";
   $html .= "<p>The installer tries to remove write access by setting the file to <code>0444</code> and the directory to <code>0555</code>. If your environment ignores or blocks that change, adjust ownership, ACLs, or permissions manually until the checks below pass.</p>";
   $html .= "<table style='width:100%'>";
 
@@ -812,6 +832,18 @@ function postconditions()
     $html .= "<td style='color:green'>ok</td>";
   } else {
     $html .= "<td style='color:red'>manual action required (must not be writable by PHP/web server user)</td>";
+    $passed = false;
+  }
+  $html .= "</tr>";
+
+  $runtimeDirectory = defined('MAINTENANCE_RUNTIME_DIR') ? MAINTENANCE_RUNTIME_DIR : installSuggestedMaintenanceRuntimeDir();
+  $html .= "<tr>";
+  $html .= "<td>Writable runtime state directory</td>";
+  $html .= "<td>" . htmlspecialchars($runtimeDirectory, ENT_QUOTES, "UTF-8") . "</td>";
+  if (is_dir($runtimeDirectory) && is_writable($runtimeDirectory)) {
+    $html .= "<td style='color:green'>ok</td>";
+  } else {
+    $html .= "<td style='color:red'>manual action required (must exist and be writable by PHP/web server user)</td>";
     $passed = false;
   }
   $html .= "</tr>";
@@ -861,6 +893,12 @@ function GetURLBase()
     }
   }
   return $url;
+}
+
+function installSuggestedMaintenanceRuntimeDir()
+{
+  $base = function_exists('sys_get_temp_dir') ? sys_get_temp_dir() : '/tmp';
+  return rtrim($base, "/\\") . DIRECTORY_SEPARATOR . 'ultiorganizer-maintenance-' . substr(md5(__DIR__), 0, 12);
 }
 
 ?>

@@ -12,6 +12,7 @@ define('DB_DATABASE', 'ultiorganizer');
 */
 define('BASEURL', 'http://localhost/ultiorganizer');
 define('UPLOAD_DIR', 'images/uploads/');
+define('MAINTENANCE_RUNTIME_DIR', '/tmp/ultiorganizer-maintenance');
 define('CUSTOMIZATIONS', 'slkl');
 define('DATE_FORMAT', _("%d.%m.%Y %H:%M"));
 define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');

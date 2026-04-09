@@ -3,11 +3,23 @@ require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
 /**
- * @file
- * This file contains general functions to access and query database.
+ * Current database schema version expected by this codebase.
  *
+ * Update this constant whenever you add a new `upgradeNN()` step in
+ * `sql/upgrade_db.php`, and export the current schema from the upgraded database.
  */
+define('DB_VERSION', 86);
 
+/**
+ * Maximum age in seconds before an automatic upgrade lock is considered stale.
+ */
+define('DB_MAINTENANCE_LOCK_TIMEOUT', 600);
+
+/**
+ * Resolve the current host name used for host-specific config lookup.
+ *
+ * @return string
+ */
 function GetServerName()
 {
   if (isset($_SERVER['SERVER_NAME'])) {
@@ -19,6 +31,15 @@ function GetServerName()
   }
 }
 
+/**
+ * Walk up parent directories until a readable config file is found.
+ *
+ * The returned prefix is used by legacy entry points that include `lib/database.php`
+ * from different directory depths and still expect root-relative includes to work.
+ *
+ * @param string $serverName Current host name for host-specific config lookup
+ * @return string Relative prefix such as `""`, `"../"`, or `"../../"`
+ */
 function FindIncludePrefix($serverName)
 {
   $includePrefix = "";
@@ -51,17 +72,58 @@ if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
 
 include_once $include_prefix . 'sql/upgrade_db.php';
 
-//When adding new update function into upgrade_db.php change this number.
-//When you change the database, export the current schema from the running database.
-define('DB_VERSION', 86); //Database version matching to upgrade functions.
-
 $mysqlconnectionref;
 
+/**
+ * Exception type used when DB helpers are switched into exception mode.
+ */
+class DBOperationException extends RuntimeException
+{
+}
+
+/**
+ * Return the generic public-facing DB failure message.
+ *
+ * @return string
+ */
 function DBUserErrorMessage()
 {
   return 'Service is temporarily unavailable. Please try again shortly. If the problem persists, please contact the event organizer.';
 }
 
+/**
+ * Tell whether DB helpers should throw instead of terminating the request.
+ *
+ * Exception mode is used by the automatic upgrade path so it can mark the
+ * maintenance flag as failed instead of aborting mid-request.
+ *
+ * @return bool
+ */
+function DBShouldThrowExceptions()
+{
+  return !empty($GLOBALS['db_throw_exceptions']);
+}
+
+/**
+ * Toggle exception mode for low-level DB helper failures.
+ *
+ * @param bool $enabled
+ * @return void
+ */
+function DBSetExceptionMode($enabled)
+{
+  $GLOBALS['db_throw_exceptions'] = (bool)$enabled;
+}
+
+/**
+ * Log a DB failure and either throw or terminate with a generic user message.
+ *
+ * @param string $context Short helper-specific failure description
+ * @param string|null $query SQL text related to the failure, when available
+ * @param string|null $error Driver error text, when available
+ * @return never
+ * @throws DBOperationException When exception mode is enabled
+ */
 function DBAbort($context, $query = null, $error = null)
 {
   $details = array($context);
@@ -75,11 +137,22 @@ function DBAbort($context, $query = null, $error = null)
   }
 
   error_log(implode(' | ', $details));
+  if (DBShouldThrowExceptions()) {
+    throw new DBOperationException(DBUserErrorMessage());
+  }
   die(DBUserErrorMessage());
 }
 
+require_once __DIR__ . '/database.maintenance.php';
+
 /**
- * Open database connection.
+ * Open the mysqli connection, select the schema, and run maintenance gating.
+ *
+ * This is the main DB bootstrap entrypoint for web requests. It establishes the
+ * global connection handle, sets the connection charset, and then lets the
+ * maintenance module block requests or run controlled schema upgrades when needed.
+ *
+ * @return void
  */
 function OpenConnection()
 {
@@ -106,15 +179,13 @@ function OpenConnection()
     die("Unable to select database");
   }
 
-  //check if database is up-to-date
-  if (!isset($_SESSION['dbversion'])) {
-    CheckDB();
-    $_SESSION['dbversion'] = getDBVersion();
-  }
+  DBHandleMaintenanceState();
 }
 
 /**
- * Closes database connection.
+ * Close the active mysqli connection and clear the global handle.
+ *
+ * @return void
  */
 function CloseConnection()
 {
@@ -124,13 +195,20 @@ function CloseConnection()
 }
 
 /**
- * Checks if there is need to update database and execute upgrade functions.
+ * Run versioned schema upgrades until the database reaches `DB_VERSION`.
+ *
+ * This mutating function is intentionally called only through the maintenance
+ * gate, not from ordinary request flow. Each `upgradeNN()` function upgrades
+ * the schema to version `NN`, and successful execution records `NN` in
+ * `uo_database`.
+ *
+ * @return void
  */
 function CheckDB()
 {
-  // Ensure we always start from the first available upgrade function (upgrade46).
+  // Start from the next schema version after the installed one.
   $installedDb = (int)getDBVersion();
-  $startVersion = max($installedDb, 46);
+  $startVersion = max($installedDb + 1, 46);
   $installedVersions = array();
   $versionResult = mysqli_query($GLOBALS['mysqlconnectionref'], "SELECT version FROM uo_database WHERE version IS NOT NULL");
   if ($versionResult) {
@@ -145,8 +223,7 @@ function CheckDB()
       continue;
     }
 
-    $nextVersion = $i + 1;
-    if (isset($installedVersions[$nextVersion])) {
+    if (isset($installedVersions[$i])) {
       continue;
     }
 
@@ -157,14 +234,24 @@ function CheckDB()
        SELECT %d, NOW()
        FROM DUAL
        WHERE NOT EXISTS (SELECT 1 FROM uo_database WHERE version=%d)",
-      $nextVersion,
-      $nextVersion
+      $i,
+      $i
     );
     runQuery($query);
-    $installedVersions[$nextVersion] = true;
+    $installedVersions[$i] = true;
     LogDbUpgrade($i, true);
   }
 }
+
+/**
+ * Escape a scalar value for safe SQL string interpolation.
+ *
+ * This helper also normalizes invalid UTF-8 before escaping so MySQL does not
+ * reject malformed text input.
+ *
+ * @param mixed $escapestr
+ * @return string
+ */
 function DBEscapeString($escapestr)
 {
   global $mysqlconnectionref;
@@ -185,9 +272,9 @@ function DBEscapeString($escapestr)
 }
 
 /**
- * Returns ultiorganizer database internal version number.
+ * Return the highest recorded Ultiorganizer schema version in `uo_database`.
  *
- * @return integer version number
+ * @return int Internal schema version, or `0` when the table is missing or empty
  */
 function getDBVersion()
 {
@@ -204,10 +291,13 @@ function getDBVersion()
 }
 
 /**
- * Executes sql query and returns result as a mysqli array.
+ * Execute raw SQL and return the mysqli result resource.
  *
- * @param string $query database query
- * @return mysqli_result of rows
+ * Use this only when callers genuinely need cursor-style access. For ordinary
+ * reads, prefer `DBQueryToRow()`, `DBQueryToValue()`, or `DBQueryToArray()`.
+ *
+ * @param string $query Database query
+ * @return mysqli_result
  */
 function DBQuery($query)
 {
@@ -220,9 +310,9 @@ function DBQuery($query)
 }
 
 /**
- * Prepare a sql query and return mysqli statement.
+ * Prepare SQL and return the mysqli statement handle.
  *
- * @param string $query database query
+ * @param string $query Database query
  * @return mysqli_stmt|false
  */
 function DBPrepare($query)
@@ -232,7 +322,7 @@ function DBPrepare($query)
 }
 
 /**
- * Get last database error string.
+ * Return the last error message from the active mysqli connection.
  *
  * @return string
  */
@@ -243,8 +333,11 @@ function DBError()
 }
 
 /**
- * Bind parameters for a prepared statement.
+ * Bind PHP variables to a prepared statement.
  *
+ * @param mysqli_stmt $stmt
+ * @param string $types mysqli bind type string such as `ssi`
+ * @param mixed ...$vars Variables passed by reference to mysqli
  * @return bool
  */
 function DBStmtBindParam($stmt, $types, &...$vars)
@@ -255,6 +348,7 @@ function DBStmtBindParam($stmt, $types, &...$vars)
 /**
  * Execute a prepared statement.
  *
+ * @param mysqli_stmt $stmt
  * @return bool
  */
 function DBStmtExecute($stmt)
@@ -263,8 +357,9 @@ function DBStmtExecute($stmt)
 }
 
 /**
- * Get result for a prepared statement.
+ * Fetch a mysqli result resource from a prepared statement.
  *
+ * @param mysqli_stmt $stmt
  * @return mysqli_result|false
  */
 function DBStmtGetResult($stmt)
@@ -273,8 +368,9 @@ function DBStmtGetResult($stmt)
 }
 
 /**
- * Get error string for a prepared statement.
+ * Return the last error string for a prepared statement.
  *
+ * @param mysqli_stmt $stmt
  * @return string
  */
 function DBStmtError($stmt)
@@ -285,6 +381,7 @@ function DBStmtError($stmt)
 /**
  * Close a prepared statement.
  *
+ * @param mysqli_stmt $stmt
  * @return bool
  */
 function DBStmtClose($stmt)
@@ -293,9 +390,9 @@ function DBStmtClose($stmt)
 }
 
 /**
- * Executes sql query and returns the ID generated the query.
+ * Execute SQL and return the connection's last inserted auto-increment id.
  *
- * @param string $query database query
+ * @param string $query Database query
  * @return int
  */
 function DBQueryInsert($query)
@@ -309,9 +406,10 @@ function DBQueryInsert($query)
 }
 
 /**
- * Executes sql query and  returns result as an value.
+ * Execute SQL and return the first cell from the first row.
  *
- * @param string $query database query
+ * @param string $query Database query
+ * @param bool $docasting When true, cast numeric scalar values using field metadata
  * @return mixed|null first cell on first row, or null when the query returns no rows
  */
 function DBQueryToValue($query, $docasting = false)
@@ -334,10 +432,10 @@ function DBQueryToValue($query, $docasting = false)
 }
 
 /**
- * Executes sql query and returns number of rows in resultset
+ * Execute SQL and return the row count of the result set.
  *
- * @param string $query database query
- * @return number of rows
+ * @param string $query Database query
+ * @return int Number of rows
  */
 function DBQueryRowCount($query)
 {
@@ -350,10 +448,11 @@ function DBQueryRowCount($query)
   return mysqli_num_rows($result);
 }
 /**
- * Executes sql query and copy returns to php array.
+ * Execute SQL and materialize the full result set into an array of rows.
  *
- * @param string $query database query
- * @return Array of rows
+ * @param string $query Database query
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array Array of associative rows
  */
 function DBQueryToArray($query, $docasting = false)
 {
@@ -367,10 +466,11 @@ function DBQueryToArray($query, $docasting = false)
 
 
 /**
- * Converts a db resource to an array
+ * Convert a mysqli result resource into an array of associative rows.
  *
- * @param $result The database resource returned from mysqli_query
- * @return array of rows
+ * @param mysqli_result $result The database resource returned from mysqli_query
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array
  */
 function DBResourceToArray($result, $docasting = false)
 {
@@ -387,7 +487,8 @@ function DBResourceToArray($result, $docasting = false)
 /**
  * Fetch next row from result set as associative array.
  *
- * @param $result The database resource returned from mysqli_query
+ * @param mysqli_result $result The database resource returned from mysqli_query
+ * @param bool $docasting When true, cast row values using field metadata
  * @return array|null
  */
 function DBFetchAssoc($result, $docasting = false)
@@ -402,7 +503,8 @@ function DBFetchAssoc($result, $docasting = false)
 /**
  * Fetch all rows from result set as associative arrays.
  *
- * @param $result The database resource returned from mysqli_query
+ * @param mysqli_result $result The database resource returned from mysqli_query
+ * @param bool $docasting When true, cast row values using field metadata
  * @return array
  */
 function DBFetchAllAssoc($result, $docasting = false)
@@ -419,10 +521,11 @@ function DBFetchAllAssoc($result, $docasting = false)
 }
 
 /**
- * Executes sql query and copy returns to php array of first row.
+ * Execute SQL and return the first row as an associative array.
  *
- * @param string $query database query
- * @return first row in array
+ * @param string $query Database query
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array|null
  */
 function DBQueryToRow($query, $docasting = false)
 {
@@ -439,9 +542,15 @@ function DBQueryToRow($query, $docasting = false)
 }
 
 /**
- * Set data into database by updating existing row.
+ * Update an existing row using a validated field list and raw WHERE clause.
+ *
+ * Column names are checked against table metadata to avoid accidental writes to
+ * unknown fields. The caller is still responsible for providing a safe condition.
+ *
  * @param string $name Name of the table to update
- * @param array $row Data to insert: key=>field, value=>data
+ * @param array $data Data to update as `field => value`
+ * @param string $cond Raw SQL condition appended after `WHERE`
+ * @return mysqli_result
  */
 function DBSetRow($name, $data, $cond)
 {
@@ -483,11 +592,14 @@ function DBSetRow($name, $data, $cond)
 }
 
 /**
- * Copy mysqli_associative array row to regular php array.
+ * Cast a fetched row using the field types from the originating result set.
  *
- * @param $result return value of mysqli_query
- * @param $row mysqli_associative array row
- * @return php array of $row
+ * Integer and real columns are converted to PHP numeric types. Other columns are
+ * returned unchanged, and `NULL` values stay `null`.
+ *
+ * @param mysqli_result $result Return value of mysqli_query
+ * @param array $row Row fetched from the result resource
+ * @return array
  */
 function DBCastArray($result, $row)
 {
@@ -518,9 +630,9 @@ function DBCastArray($result, $row)
 }
 
 /**
- * Get current system status.
+ * Return connection status information from `mysqli_stat()`.
  *
- * @return string of resuls
+ * @return string
  */
 function DBStat()
 {
@@ -533,9 +645,9 @@ function DBStat()
 }
 
 /**
- * Get Client info.
+ * Return the mysqli client library version string.
  *
- * @return result string
+ * @return string
  */
 function DBClientInfo()
 {
@@ -548,9 +660,9 @@ function DBClientInfo()
 }
 
 /**
- * Get Host info.
+ * Return the host information for the current DB connection.
  *
- * @return result string
+ * @return string
  */
 function DBHostInfo()
 {
@@ -563,9 +675,9 @@ function DBHostInfo()
 }
 
 /**
- * Get Server info.
+ * Return the connected MySQL server version string.
  *
- * @return result string
+ * @return string
  */
 function DBServerInfo()
 {
@@ -578,9 +690,9 @@ function DBServerInfo()
 }
 
 /**
- * Get Protocol info.
+ * Return the MySQL protocol version used by the connection.
  *
- * @return result string
+ * @return int|string
  */
 function DBProtocolInfo()
 {
@@ -592,51 +704,28 @@ function DBProtocolInfo()
   return $result;
 }
 
-// wrapper for number of rows
+/**
+ * Legacy wrapper for `mysqli_num_rows()`.
+ *
+ * Keep for compatibility with the legacy `live/` API code.
+ *
+ * @param mysqli_result|array $res
+ * @return int
+ */
 function DBNumRows($res) {
+  if (is_array($res)) {
+    return count($res);
+  }
 
   return mysqli_num_rows($res);
 }
 
-// wrapper for fetch row
-function DBFetchRow($res) {
-
-  return mysqli_fetch_row($res);
-}
-
-// wrapper for fetch array
-function DBFetchArray($res) {
-
-  return mysqli_fetch_array($res);
-}
-
-// wrapper for mysql insert id
-function DBInsertId() {
-  global $mysqlconnectionref;
-
-  return mysqli_insert_id($mysqlconnectionref);
-}
-
-// wrapper for mysql data seek
-function DBDataSeek($res,$off) {
-
-  return mysqli_data_seek($res,$off);
-}
-
-// wrapper for mysql affected rows
-function DBAffectedRows() {
-  global $mysqlconnectionref;
-
-  return mysqli_affected_rows($mysqlconnectionref);
-}
-
-
 /**
- * Get the name of the specified field in a result
+ * Return the field name at the given result-set column offset.
  *
- * @param $result
- * @param $field_offset
- * @return bool
+ * @param mysqli_result $result
+ * @param int $field_offset
+ * @return string|false
  */
 function DBFieldName($result, $field_offset = 0)
 {
@@ -646,9 +735,13 @@ function DBFieldName($result, $field_offset = 0)
 
 
 /**
- * Get the type of the specified field in a result
+ * Return a normalized field type name for a result-set column.
+ *
+ * This maps mysqli's numeric field constants to stable string labels used by
+ * `DBCastArray()` and other internal helpers.
+ *
  * @param mysqli_result $result
- * @param $field_offset
+ * @param int $field_offset
  * @return string
  */
 function DBFieldType(mysqli_result $result, $field_offset = 0)

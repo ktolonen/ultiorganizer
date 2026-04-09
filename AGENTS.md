@@ -39,6 +39,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `lib/country.functions.php`: country CRUD, dropdown helpers, team/country relations, and timezone list helpers.
 - `lib/data.functions.php`: `EventDataXMLHandler` for season XML export/import and XML-to-database mapping.
 - `lib/database.php`: mysqli connection lifecycle, query/prepared-statement wrappers, result casting, and DB metadata helpers.
+- `lib/database.maintenance.php`: maintenance flag parsing, runtime-state locks, blocked maintenance responses, and controlled automatic DB-upgrade coordination.
 - `lib/debug.functions.php`: lightweight debug print helpers.
 - `lib/game.functions.php`: game CRUD, results, scoresheet events, media links, player assignments, scheduling, live timing, and spirit table output.
 - `lib/image.functions.php`: uploaded image lookup/removal plus JPEG conversion and thumbnail generation.

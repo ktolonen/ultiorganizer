@@ -12,6 +12,7 @@ Use these exact type names when discussing configuration work:
 - Storage: `conf/config.inc.php` and `conf/config.inc.example.php`.
 - Use when the value is deployment-specific, security-sensitive, or infrastructure-specific.
 - Example: `NO_EMAIL` disables outbound mail at the installation level and makes public self-registration unavailable.
+- Example: `MAINTENANCE_RUNTIME_DIR` points to the writable runtime-state directory used for automatic database-upgrade maintenance files and locks.
 
 ## INSTALLATION_SETTING
 

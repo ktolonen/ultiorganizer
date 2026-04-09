@@ -576,20 +576,21 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     $lastseason = "";
     $lastseries = "";
     $seasoninfo = null;
-    foreach ($pools as $row) {
-      $season = $row['season'];
-      $series = $row['series'];
-      if ($lastseason != $season) {
-        $lastseason = $season;
-        $seasoninfo = SeasonInfo($season);
-        echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=bystandings'>";
-        echo utf8entities(U_($row['season_name'])) . "</a></td></tr>\n";
-        echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=bystandings'>" . utf8entities(_("Standings")) . "</a></td></tr>\n";
-        echo "<tr><td><a class='nav' href='?view=games&amp;season=" . urlencode($season) . "&amp;filter=tournaments&amp;group=all'>" . utf8entities(_("Games")) . "</a></td></tr>\n";
-        //echo "<tr><td><a class='nav' href='?view=played&amp;season=".urlencode($season)."'>".utf8entities(_("Played games"))."</a></td></tr>\n";
-        echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . urlencode($season) . "&amp;list=allteams'>" . utf8entities(_("Teams")) . "</a></td></tr>\n";
-        echo "<tr><td class='menuseparator'></td></tr>\n";
-      }
+	    foreach ($pools as $row) {
+	      $season = $row['season'];
+	      $seasonParam = urlencode((string)$season);
+	      $series = $row['series'];
+	      if ($lastseason != $season) {
+	        $lastseason = $season;
+	        $seasoninfo = SeasonInfo($season);
+	        echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&amp;season=" . $seasonParam . "&amp;list=bystandings'>";
+	        echo utf8entities(U_($row['season_name'])) . "</a></td></tr>\n";
+	        echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . $seasonParam . "&amp;list=bystandings'>" . utf8entities(_("Standings")) . "</a></td></tr>\n";
+	        echo "<tr><td><a class='nav' href='?view=games&amp;season=" . $seasonParam . "&amp;filter=tournaments&amp;group=all'>" . utf8entities(_("Games")) . "</a></td></tr>\n";
+	        //echo "<tr><td><a class='nav' href='?view=played&amp;season=".urlencode($season)."'>".utf8entities(_("Played games"))."</a></td></tr>\n";
+	        echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . $seasonParam . "&amp;list=allteams'>" . utf8entities(_("Teams")) . "</a></td></tr>\n";
+	        echo "<tr><td class='menuseparator'></td></tr>\n";
+	      }
 
       if ($lastseries != $series) {
         if (
@@ -611,19 +612,26 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
 	if (ShowSpiritScoresForSeason($seasoninfo)) {
       echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit Scores")."</a></td></tr>\n";
 		}
-  } else {
-    $season = CurrentSeason();
-    echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&amp;season=" .
-      urlencode($season) . "&amp;list=bystandings'>" . utf8entities(U_(CurrentSeasonName())) . "</a></td></tr>\n";
-    echo "<tr><td><a class='nav' href='?view=timetables&amp;season=" . urlencode($season) . "&amp;filter=tournaments&amp;group=all'>" . utf8entities(_("Games")) . "</a></td></tr>\n";
-    //  echo "<tr><td><a class='nav' href='?view=played&amp;season=".urlencode($season)."'>".utf8entities(_("Played games"))."</a></td></tr>\n";
-    echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . urlencode($season) . "'>" . utf8entities(_("Teams")) . "</a></td></tr>\n";
-    echo "<tr><td class='menuseparator'></td></tr>\n";
-
-    $tmpseries = SeasonSeries($season, true);
-    foreach ($tmpseries as $row) {
-      echo "<tr><td class='menuserieslevel'>" . utf8entities(U_($row['name'])) . "</td></tr>\n";
-      echo "<tr><td class='menupoollevel'>\n";
+	  } else {
+	    $season = CurrentSeason();
+	    $seasonName = (string)CurrentSeasonName();
+	    if ($season === null || $season === "") {
+	      echo "<tr><td class='menuseasonlevel'><span class='seasonnav' style='display:block;text-align:center;'>&nbsp;</span></td></tr>\n";
+        echo "<tr><td>" . utf8entities(_("Log in to create an event")) . "</td></tr>\n";
+	      $tmpseries = array();
+	    } else {
+	      $seasonParam = urlencode((string)$season);
+	      echo "<tr><td class='menuseasonlevel'><a class='seasonnav' style='text-align:center;' href='?view=teams&amp;season=" .
+	        $seasonParam . "&amp;list=bystandings'>" . utf8entities($seasonName) . "</a></td></tr>\n";
+	      echo "<tr><td><a class='nav' href='?view=timetables&amp;season=" . $seasonParam . "&amp;filter=tournaments&amp;group=all'>" . utf8entities(_("Games")) . "</a></td></tr>\n";
+	      //  echo "<tr><td><a class='nav' href='?view=played&amp;season=".urlencode($season)."'>".utf8entities(_("Played games"))."</a></td></tr>\n";
+	      echo "<tr><td><a class='nav' href='?view=teams&amp;season=" . $seasonParam . "'>" . utf8entities(_("Teams")) . "</a></td></tr>\n";
+	      echo "<tr><td class='menuseparator'></td></tr>\n";
+	      $tmpseries = SeasonSeries($season, true);
+	    }
+	    foreach ($tmpseries as $row) {
+	      echo "<tr><td class='menuserieslevel'>" . utf8entities(U_($row['name'])) . "</td></tr>\n";
+	      echo "<tr><td class='menupoollevel'>\n";
       echo utf8entities(_("Pools not yet created"));
       echo "</td></tr>\n";
     }

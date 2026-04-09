@@ -1358,6 +1358,9 @@ function runQuery($query)
 {
 	global $mysqlconnectionref;
 	$result = mysqli_query($mysqlconnectionref, $query);
+	if (!$result) {
+		DBAbort('runQuery failed', $query, mysqli_error($mysqlconnectionref));
+	}
 	return $result;
 }
 

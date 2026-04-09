@@ -1091,7 +1091,7 @@ function SpiritGenerateSotgTokens($season, $filter = "onlymissing")
 		DBEscapeString($season)
 	);
 	DBQuery($query);
-	return (int)DBAffectedRows();
+	return (int)DBQueryToValue("SELECT ROW_COUNT()", true);
 }
 
 function SpiritTimeoutGameRowsBySeason($season)
