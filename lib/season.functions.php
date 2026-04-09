@@ -110,10 +110,12 @@ function CurrentSeasonName()
       "SELECT name FROM uo_season WHERE season_id='%s'",
       DBEscapeString($_SESSION['userproperties']['selseason'])
     );
-    return U_(DBQueryToValue($query));
+    $name = DBQueryToValue($query);
+    return $name === null ? "" : U_($name);
   }
   $query = sprintf("SELECT name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC LIMIT 1");
-  return U_(DBQueryToValue($query));
+  $name = DBQueryToValue($query);
+  return $name === null ? "" : U_($name);
 }
 
 /**
@@ -127,8 +129,8 @@ function SeasonName($seasonId)
     "SELECT name FROM uo_season WHERE season_id='%s'",
     DBEscapeString($seasonId)
   );
-  $name = U_(DBQueryToValue($query));
-  return ($name == -1) ? "" : $name;
+  $name = DBQueryToValue($query);
+  return ($name === null) ? "" : U_($name);
 }
 
 /**
@@ -143,7 +145,7 @@ function Seasontype($seasonId)
     DBEscapeString($seasonId)
   );
   $type = DBQueryToValue($query);
-  return ($type == -1) ? "" : $type;
+  return ($type === null) ? "" : $type;
 }
 
 /**

@@ -11,5 +11,3 @@ admin/dbequalize.php
 admin/dbrestore.php
 admin/executesql.php
 
-# External entry points
-ext/scorecounter.php

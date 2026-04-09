@@ -104,7 +104,7 @@ function SetServerConf($settings)
 			);
 			$result = DBQueryToValue($query);
 
-			if ($result !== -1 && $result !== null && $result !== false) {
+			if ($result !== null && $result !== false) {
 				$query = sprintf(
 					"UPDATE uo_setting SET value='%s' WHERE setting_id=%d",
 					DBEscapeString($setting['value']),

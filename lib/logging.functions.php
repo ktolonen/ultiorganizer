@@ -289,7 +289,7 @@ function LogPageLoad($page)
 	);
 	$loads = DBQueryToValue($query);
 
-	if ($loads < 0) {
+	if ($loads === null) {
 		$query = sprintf(
 			"INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s',%d)",
 			DBEscapeString($page),
@@ -310,7 +310,7 @@ function LogPageLoad($page)
 function IsVisitorLoggingDisabled()
 {
 	$value = DBQueryToValue("SELECT value FROM uo_setting WHERE name='DisableVisitorLogging'");
-	if ($value === -1 || $value === null || $value === false) {
+	if ($value === null || $value === false) {
 		return false;
 	}
 
@@ -335,7 +335,7 @@ function LogVisitor($ip)
 	);
 	$visits = DBQueryToValue($query);
 
-	if ($visits < 0) {
+	if ($visits === null) {
 		$query = sprintf(
 			"INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s',%d)",
 			DBEscapeString($ip),

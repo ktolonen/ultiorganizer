@@ -5,6 +5,20 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/accreditation.functions.php';
 require_once __DIR__ . '/configuration.functions.php';
 
+function SeasonScoreCounter($seasonId = "")
+{
+	$query = "SELECT COALESCE(SUM(game.homescore), 0) + COALESCE(SUM(game.visitorscore), 0) AS scores
+		FROM uo_game game
+		LEFT JOIN uo_pool pool ON(pool.pool_id=game.pool)
+		LEFT JOIN uo_series ser ON(pool.series=ser.series_id)";
+
+	if (!empty($seasonId)) {
+		$query .= sprintf(" WHERE ser.season='%s'", DBEscapeString($seasonId));
+	}
+
+	return (int) DBQueryToValue($query);
+}
+
 function GameSetPools($games)
 {
 	$gameIds = array_filter(array_map('intval', (array)$games), function ($val) {

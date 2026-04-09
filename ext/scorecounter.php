@@ -10,6 +10,7 @@ include_once __DIR__ . '/localization.php';
 	<meta http-equiv="Expires" content="-1" />
 	<?php
 	include_once __DIR__ . '/../lib/common.functions.php';
+	include_once __DIR__ . '/../lib/game.functions.php';
 	include_once __DIR__ . '/../lib/season.functions.php';
 	include_once __DIR__ . '/../lib/series.functions.php';
 	include_once __DIR__ . '/../lib/team.functions.php';
@@ -29,19 +30,7 @@ include_once __DIR__ . '/localization.php';
 		$lenght = intval(iget("numbers"));
 	}
 	echo "<table><tr>";
-	$query = "SELECT (SUM(game.homescore) + SUM(game.visitorscore)) AS scores FROM
-		uo_game game
-		LEFT JOIN uo_pool pool ON(pool.pool_id=game.pool)
-		LEFT JOIN uo_series ser ON(pool.series=ser.series_id)";
-
-	if (!empty($season)) {
-		$query .= sprintf(
-			"WHERE ser.season='%s'",
-			DBEscapeString($season)
-		);
-	}
-
-	$scores = (string)(DBQueryToValue($query) ?? 0);
+	$scores = (string) SeasonScoreCounter($season);
 
 	$chars = str_split($scores);
 	for ($i = count($chars); $i < $lenght; $i++) {

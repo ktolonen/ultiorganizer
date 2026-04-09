@@ -1398,7 +1398,7 @@ function someHTML($string)
 function CommentHTML($type, $id)
 {
 	$comment = CommentRaw($type, $id);
-	if ($comment != -1)
+	if ($comment !== "")
 		return "<div class='comment'>" . someHTML($comment) . "</div>\n";
 	else
 		return "";

@@ -19,12 +19,27 @@ function GetServerName()
   }
 }
 
+function FindIncludePrefix($serverName)
+{
+  $includePrefix = "";
+  $maxLevels = 25;
+
+  for ($level = 0; $level <= $maxLevels; $level++) {
+    if (
+      is_readable($includePrefix . 'conf/config.inc.php') ||
+      is_readable($includePrefix . 'conf/' . $serverName . ".config.inc.php")
+    ) {
+      return $includePrefix;
+    }
+    $includePrefix .= "../";
+  }
+
+  die("Cannot locate configuration file");
+}
+
 $serverName = GetServerName();
 //include prefix can be used to locate root level of directory tree.
-$include_prefix = "";
-while (!(is_readable($include_prefix . 'conf/config.inc.php') || is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php"))) {
-  $include_prefix .= "../";
-}
+$include_prefix = FindIncludePrefix($serverName);
 
 include_once $include_prefix . 'lib/common.functions.php';
 
@@ -42,6 +57,27 @@ define('DB_VERSION', 86); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;
 
+function DBUserErrorMessage()
+{
+  return 'Service is temporarily unavailable. Please try again shortly. If the problem persists, please contact the event organizer.';
+}
+
+function DBAbort($context, $query = null, $error = null)
+{
+  $details = array($context);
+
+  if ($query !== null && $query !== '') {
+    $details[] = 'query=' . str_replace(array("\r", "\n"), ' ', trim((string)$query));
+  }
+
+  if ($error !== null && $error !== '') {
+    $details[] = 'error=' . trim((string)$error);
+  }
+
+  error_log(implode(' | ', $details));
+  die(DBUserErrorMessage());
+}
+
 /**
  * Open database connection.
  */
@@ -49,18 +85,17 @@ function OpenConnection()
 {
 
   global $mysqlconnectionref;
-  $connectionErrorMessage = 'Service is temporarily unavailable. Please try again shortly. If the problem persists, please contact the event organizer.';
 
   //connect to database
   try {
     $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
   } catch (mysqli_sql_exception $e) {
     error_log('Database connection failed: ' . $e->getMessage());
-    die($connectionErrorMessage);
+    die(DBUserErrorMessage());
   }
   if (mysqli_connect_errno()) {
     error_log('Database connection failed: ' . mysqli_connect_error());
-    die($connectionErrorMessage);
+    die(DBUserErrorMessage());
   }
 
   //select schema
@@ -179,7 +214,7 @@ function DBQuery($query)
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQuery failed', $query, mysqli_error($mysqlconnectionref));
   }
   return $result;
 }
@@ -268,7 +303,7 @@ function DBQueryInsert($query)
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryInsert failed', $query, mysqli_error($mysqlconnectionref));
   }
   return mysqli_insert_id($mysqlconnectionref);
 }
@@ -277,14 +312,14 @@ function DBQueryInsert($query)
  * Executes sql query and  returns result as an value.
  *
  * @param string $query database query
- * @return  string of first cell on first row
+ * @return mixed|null first cell on first row, or null when the query returns no rows
  */
 function DBQueryToValue($query, $docasting = false)
 {
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryToValue failed', $query, mysqli_error($mysqlconnectionref));
   }
 
   if (mysqli_num_rows($result)) {
@@ -294,7 +329,7 @@ function DBQueryToValue($query, $docasting = false)
     }
     return $row[0];
   } else {
-    return -1;
+    return null;
   }
 }
 
@@ -309,7 +344,7 @@ function DBQueryRowCount($query)
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryRowCount failed', $query, mysqli_error($mysqlconnectionref));
   }
 
   return mysqli_num_rows($result);
@@ -325,7 +360,7 @@ function DBQueryToArray($query, $docasting = false)
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryToArray failed', $query, mysqli_error($mysqlconnectionref));
   }
   return DBResourceToArray($result, $docasting);
 }
@@ -394,7 +429,7 @@ function DBQueryToRow($query, $docasting = false)
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryToRow failed', $query, mysqli_error($mysqlconnectionref));
   }
   $ret = mysqli_fetch_assoc($result);
   if ($docasting && $ret) {
@@ -459,10 +494,23 @@ function DBCastArray($result, $row)
   $ret = array();
   $i = 0;
   foreach ($row as $key => $value) {
-    if (mysqli_fetch_field_direct($result, $i)->type == "int") {
-      $ret[$key] = (int) $value;
-    } else {
-      $ret[$key] = $value;
+    if ($value === null) {
+      $ret[$key] = null;
+      $i++;
+      continue;
+    }
+
+    switch (DBFieldType($result, $i)) {
+      case 'tinyint':
+      case 'int':
+        $ret[$key] = (int)$value;
+        break;
+      case 'real':
+        $ret[$key] = (float)$value;
+        break;
+      default:
+        $ret[$key] = $value;
+        break;
     }
     $i++;
   }

@@ -18,7 +18,7 @@ function CommentRaw($type, $id)
 		DBEscapeString($id)
 	);
 	$comment = DBQueryToValue($query);
-	if ($comment != -1)
+	if ($comment !== null)
 		return $comment;
 	else
 		return "";
