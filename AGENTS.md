@@ -81,6 +81,9 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - Avoid touching `conf/` unless required.
 - Keep edits ASCII unless the file already uses Unicode.
 - If making UI changes, verify both desktop and mobile layouts.
+- After adding or changing user-facing text, run `docs/ai/review-user-language/SKILL.md` as a final review step on your changes.
+- After adding or changing database-related functionality, run `docs/ai/review-database-access/SKILL.md` as a final review step on your changes.
+- If you present a plan for work that changes user-facing text or database access, include the relevant review-skill checks as final plan steps.
 - When adding a new `SYSTEM_FLAG` or `INSTALLATION_SETTING`, ask the user whether it should be added to the installation process, and cover `install.php` if the answer is yes.
 - When adding a new markdown document under `docs/`, also add it to the topic lists in both `AGENTS.md` and `docs/README.md`.
 - Keep the root `README.md` pointing to `docs/README.md` as the documentation index instead of maintaining a parallel topic list there.
@@ -110,3 +113,4 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `docs/terminology.md`: canonical Ultiorganizer terminology, aliases, and approved abbreviations.
 - `docs/ai/review-user-language/SKILL.md`: read-only skill for reviewing user-facing spelling, grammar, and terminology consistency.
 - `docs/ai/fix-user-language/SKILL.md`: fix skill for page-level or term-level user-facing wording and gettext updates.
+- `docs/ai/review-database-access/SKILL.md`: read-only skill for reviewing database access boundary violations and legacy cursor-style DB helper usage.

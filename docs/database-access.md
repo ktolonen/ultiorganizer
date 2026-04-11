@@ -1,6 +1,6 @@
 # Database Access Policy
 
-This document defines how Ultiorganizer code should access the database and how the incremental checker under `docs/ai/` enforces that boundary.
+This document defines how Ultiorganizer code should access the database and how the incremental checker under `docs/ai/review-database-access/` enforces that boundary.
 
 ## Goals
 
@@ -54,7 +54,7 @@ These files are exempt from page-layer enforcement because they are DB infrastru
 - `install.php`
 - `sql/upgrade_db.php`
 
-Some existing public/app files still violate the rule. Those are tracked in `docs/ai/db-access-allowlist.txt` until they are migrated. New files must not be added to that allowlist.
+Some existing public/app files still violate the rule. Those are tracked in `docs/ai/review-database-access/references/db-access-allowlist.txt` until they are migrated. New files must not be added to that allowlist.
 
 ## Migration Recipe
 
@@ -64,15 +64,15 @@ When converting a routed or entrypoint file away from raw MySQL result handling:
 2. Change that helper to return a PHP scalar, row, or array unless cursor semantics are genuinely required.
 3. Update the caller to iterate over the returned PHP structure instead of calling `mysqli_fetch_assoc()`, `mysqli_num_rows()`, or `mysqli_data_seek()`.
 4. If the helper still needs a cursor during transition, keep the cursor handling inside `lib/`, not in the page.
-5. Remove the file from `docs/ai/db-access-allowlist.txt` once it no longer violates the checker rules.
+5. Remove the file from `docs/ai/review-database-access/references/db-access-allowlist.txt` once it no longer violates the checker rules.
 
 ## Checker Behavior
 
-`docs/ai/check-db-access.php` supports two modes:
+`docs/ai/review-database-access/scripts/check-db-access.php` supports two modes:
 
-- `php docs/ai/check-db-access.php --all`
+- `php docs/ai/review-database-access/scripts/check-db-access.php --all`
   - scans the repository for current violations and backlog signals
-- `php docs/ai/check-db-access.php --changed`
+- `php docs/ai/review-database-access/scripts/check-db-access.php --changed`
   - scans changed PHP files from git
   - if you pass file paths after `--changed`, only those files are scanned
 

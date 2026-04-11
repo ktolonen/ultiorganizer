@@ -31,8 +31,8 @@ if (PHP_SAPI === 'cli') {
 function main(array $argv): void
 {
     $config = parseArguments($argv);
-    $repoRoot = dirname(__DIR__, 2);
-    $allowlist = loadAllowlist($repoRoot . '/docs/ai/db-access-allowlist.txt');
+    $repoRoot = dirname(__DIR__, 4);
+    $allowlist = loadAllowlist(__DIR__ . '/../references/db-access-allowlist.txt');
     $files = collectFiles($repoRoot, $config['mode'], $config['paths']);
     sort($files);
     $relevantFiles = array();
@@ -102,8 +102,8 @@ function printUsage(): void
 {
     $usage = <<<TXT
 Usage:
-  php docs/ai/check-db-access.php --all
-  php docs/ai/check-db-access.php --changed [path ...]
+  php docs/ai/review-database-access/scripts/check-db-access.php --all
+  php docs/ai/review-database-access/scripts/check-db-access.php --changed [path ...]
 
 Modes:
   --all      Scan the repository for policy violations and backlog signals.

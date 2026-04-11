@@ -21,5 +21,6 @@ This directory collects general project documentation.
 - `terminology.md`: canonical Ultiorganizer terminology, aliases, and approved abbreviations.
 - `ai/review-user-language/SKILL.md`: read-only review skill for US English spelling, grammar, and terminology consistency in user-facing content.
 - `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
+- `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.
 
-The `docs/ai/` directory contains repo-local AI assets and skills, including the DB-access checker and local review/fix skills.
+The `docs/ai/` directory contains repo-local AI assets and skills, including local review/fix skills and the database-access review skill with its bundled checker.

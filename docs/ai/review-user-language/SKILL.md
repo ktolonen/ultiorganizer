@@ -1,6 +1,6 @@
 ---
 name: review-user-language
-description: Read-only review skill for Ultiorganizer user-facing language. Use when reviewing changed content for US English spelling, grammar, gettext-backed wording, terminology correctness, and on-page terminology consistency. Prioritize user-modified files first, then check the surrounding page or module for consistency warnings. Do not apply fixes.
+description: Read-only review skill for Ultiorganizer user-facing language. Use after adding or changing a page, page module, or other code with user-facing text. Review changed content for US English spelling, grammar, gettext-backed wording, terminology correctness, and on-page terminology consistency. Prioritize user-modified files first, then check the surrounding page or module for consistency warnings. Do not apply fixes.
 metadata:
   short-description: Review user-facing wording and terminology
 ---
@@ -23,6 +23,8 @@ Use this skill for read-only review of:
 - consistency of user-facing terminology on the same page or module
 
 This skill reports findings only. It must not perform updates.
+
+Run this skill as a final review step after implementing new or changed user-facing text.
 
 ## Review scope
 

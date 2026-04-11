@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review Database Access"
+  short_description: "Review changed PHP for database access boundary violations"
+  default_prompt: "Review the changed Ultiorganizer PHP for database access boundary violations. Read docs/database-access.md, run the bundled checker first, prioritize changed files, and return findings only under Errors and Warnings without editing files."
