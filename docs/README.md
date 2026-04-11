@@ -19,7 +19,7 @@ This directory collects general project documentation.
 - `spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and current behavior.
 - `permissions.md`: permission storage, roles, enforcement helpers, and spirit-director behavior.
 - `terminology.md`: canonical Ultiorganizer terminology, aliases, and approved abbreviations.
-- `ai/review-user-language/SKILL.md`: read-only review skill for US English spelling, grammar, and terminology consistency in user-facing content.
+- `ai/review-user-language/SKILL.md`: read-only review skill for project spelling, grammar, and terminology consistency in user-facing content.
 - `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
 - `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.
 

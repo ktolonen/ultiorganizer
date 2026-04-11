@@ -8,7 +8,7 @@ $game_result = GameResult($gameId);
 $team_score_board = GameTeamScoreBoardArray($gameId, $teamId);
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . utf8entities(TeamName($teamId)) . " " . _("Players of the game") . "</h1>\n";
+$html .= "<h1>" . _("Scoreboard") . ": " . utf8entities(TeamName($teamId)) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 

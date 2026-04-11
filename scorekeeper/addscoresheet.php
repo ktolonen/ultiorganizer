@@ -87,7 +87,7 @@ $team = "";
 
 if (isset($_POST['add']) || isset($_POST['forceadd'])) {
   if ($useGameClock && !$timerState['ongoing']) {
-    $errors .= "<p class='warning'>" . _("Start the game clock before adding goals") . "!</p>\n";
+    $errors .= "<p class='warning'>" . _("Start the game clock before adding goals.") . "</p>\n";
   } else {
     $prevtime = 0;
     $timemm = "0";
@@ -125,7 +125,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
       $uo_goal['time'] = TimeToSec($timemm . "." . $timess);
 
       if ($uo_goal['time'] <= $prevtime) {
-        $errors .= "<p class='warning'>" . _("Time can not be the same or earlier than the previous point") . "!</p>\n";
+        $errors .= "<p class='warning'>" . _("Time cannot be the same as or earlier than the previous point.") . "</p>\n";
       }
     }
 
@@ -147,7 +147,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
       }
 
       if ($uo_goal['scorer'] == 0) {
-        $errors .= "<p class='warning'>" . _("Scorer's player not on the roster") . "!</p>\n";
+        $errors .= "<p class='warning'>" . _("Scoring player not on the roster.") . "</p>\n";
       }
     } elseif (!empty($team) && $team == 'A') {
       $uo_goal['visitorscore']++;
@@ -158,7 +158,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
       }
 
       if ($uo_goal['scorer'] == 0) {
-        $errors .= "<p class='warning'>" . _("Scorer's player not on the roster") . "!</p>\n";
+        $errors .= "<p class='warning'>" . _("Scoring player not on the roster.") . "</p>\n";
       }
     }
 
@@ -166,7 +166,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
       $errors .= "<p class='warning'>" . _("Scorer and assist are the same player!") . "</p>\n";
     }
     if (empty($team)) {
-      $errors .= "<p class='warning'>" . _("Select team scored") . "!</p>\n";
+      $errors .= "<p class='warning'>" . _("Select the team that scored.") . "</p>\n";
     }
 
     if (empty($errors) || isset($_POST['forceadd'])) {
@@ -242,7 +242,7 @@ if ($lastscore) {
   $lastgoal = "#" . PlayerNumber($lastscore['scorer'], $gameId) . " ";
   $lastgoal .= PlayerName($lastscore['scorer']);
   $html .= $lastpass . " --> " . $lastgoal;
-  $html .= " <a href='?view=deletescore&amp;game=" . $gameId . "' data-ajax='false'>" . _("Delete the goal") . "</a>";
+  $html .= " <a href='?view=deletescore&amp;game=" . $gameId . "' data-ajax='false'>" . _("Delete goal") . "</a>";
 } else {
   $html .= _("Score") . ": 0 - 0";
 }
@@ -352,7 +352,7 @@ if ($showGoalForm) {
     }
     $html .= "<option value='" . utf8entities($player['player_id']) . "' $selected>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
   }
-  $html .= "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
+  $html .= "<option value='xx'>XX " . _("Callahan goal") . "</option>";
   $html .= "</select>";
 
   $html .= "<label for='goal' class='select'>" . _("Scorer") . "</label>";
@@ -368,7 +368,7 @@ if ($showGoalForm) {
   $html .= "</select>";
 
   if (!$hideTimeOnScoresheet) {
-    $html .= "<label for='timemm' class='select'>" . _("In time") . " " . _("min") . ":" . _("sec") . "</label>";
+    $html .= "<label for='timemm' class='select'>" . _("Goal time") . " " . _("min") . ":" . _("sec") . "</label>";
     $html .= "<div class='ui-grid-b'>";
     $html .= "<div class='ui-block-a'>\n";
     $html .= "<select id='timemm' name='timemm' >";
@@ -399,7 +399,7 @@ if ($showGoalForm) {
     $html .= "<input type='submit' name='add' data-ajax='false' value='" . _("Save goal") . "'/>";
   } else {
     $html .= $errors;
-    $html .= _("Correct the errors or save goal with errors");
+    $html .= _("Correct the errors or save the goal with errors.");
     $html .= "<input class='button' type='submit' name='forceadd' value='" . _("Save goal with errors") . "'/>";
     $html .= "<input class='button' type='submit' name='cancel' value='" . _("Cancel") . "'/>";
   }
@@ -417,7 +417,7 @@ if ($canShowTimedActions) {
 $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
 $html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game official") . "</a>";
 $html .= "<a href='?view=addcomment&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game note") . "</a>";
-$html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Players") . "</a>";
+$html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Roster") . "</a>";
 $html .= "</div>\n";
 
 if (!$useGameClock) {
@@ -425,8 +425,8 @@ if (!$useGameClock) {
   if ($lastscore) {
     $home = $lastscore['homescore'];
     $away = $lastscore['visitorscore'];
-    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as result") . " $home - $away'/>";
-    $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Players") . "</a>";
+    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save final result") . " $home - $away'/>";
+    $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Roster") . "</a>";
   }
 }
 
@@ -443,7 +443,7 @@ echo $html;
                   foreach ($played_players as $player) {
                     $homeOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
                   }
-                  $homeOptions .= "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
+                  $homeOptions .= "<option value='xx'>XX " . _("Callahan goal") . "</option>";
                   echo json_encode($homeOptions);
                   ?>;
 
@@ -453,7 +453,7 @@ echo $html;
                   foreach ($played_players as $player) {
                     $awayOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
                   }
-                  $awayOptions .= "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
+                  $awayOptions .= "<option value='xx'>XX " . _("Callahan goal") . "</option>";
                   echo json_encode($awayOptions);
                   ?>;
 

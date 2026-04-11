@@ -44,7 +44,7 @@ if (
 }
 
 if ($season['spiritmode'] <= 0) {
-	$pageHtml .= "<div class='card'><p>" . sprintf(_("Spirit points not given for %s."), utf8entities($season['name'])) . "</p></div>";
+	$pageHtml .= "<div class='card'><p>" . sprintf(_("Spirit scoring is not enabled for %s."), utf8entities($season['name'])) . "</p></div>";
 	return;
 }
 
@@ -72,7 +72,7 @@ if (!empty($_POST['save'])) {
 		if (isset($_POST[$fieldPrefix . $cat])) {
 			$points[$cat] = $_POST[$fieldPrefix . $cat];
 		} else {
-			$saveFeedback = sprintf(_("Missing score for %s. "), $ratedTeamName);
+			$saveFeedback = sprintf(_("Missing spirit score for %s. "), $ratedTeamName);
 		}
 	}
 	if (empty($saveFeedback) && !GameSetSpiritPoints($gameId, $ratedTeamId, $ratesHomeTeam, $points, $categories)) {
@@ -100,18 +100,18 @@ $pageHtml .= "<h2>" . utf8entities($game_result['hometeamname']) . " - " . utf8e
 $pageHtml .= "<p class='mobile-meta'>" . utf8entities(SpiritkeeperGameTimeLabel($game_result)) . "</p>";
 $pageHtml .= "<p><strong>" . _("Score") . ":</strong> " . utf8entities(SpiritkeeperGameScoreLabel($game_result)) . "</p>";
 if ($saveSuccess) {
-	$pageHtml .= "<div class='mobile-notice mobile-notice--success'><p>" . _("Spirit score successfully submitted.") . "</p></div>";
+	$pageHtml .= "<div class='mobile-notice mobile-notice--success'><p>" . _("Spirit score saved.") . "</p></div>";
 }
 $pageHtml .= "<form action='" . SpiritkeeperEditGameUrl($gameId, $teamId) . "' method='post' data-ajax='false'>\n";
 
-$pageHtml .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($ratedTeamName) . "</h3>\n";
+$pageHtml .= "<h3>" . _("Spirit score for") . ": " . utf8entities($ratedTeamName) . "</h3>\n";
 $points = GameGetSpiritPoints($gameId, $ratedTeamId);
 $pageHtml .= SpiritTable($game_result, $points, $categories, $ratesHomeTeam, false);
 
 if ($showCommentForm) {
 	$pageHtml .= "<p><b>" . _("Spirit note") . "</b></p>";
 	$pageHtml .= "<p>" . $spiritCommentMetaHtml . "</p>";
-	$pageHtml .= "<textarea name='spiritcomment' rows='4' cols='40' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - add context for spirit points given (no blame).") . "'>" . htmlentities($spiritComment) . "</textarea>";
+	$pageHtml .= "<textarea name='spiritcomment' rows='4' cols='40' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - add context for the spirit score given (no blame).") . "'>" . htmlentities($spiritComment) . "</textarea>";
 	if ($canManageComment && !empty($spiritComment)) {
 		$pageHtml .= "<label><input type='checkbox' name='delete_spirit_comment' value='1'/> " . _("Delete comment") . "</label>";
 	}
@@ -134,7 +134,7 @@ $pageHtml .= "</form>\n";
 if ($hasFullSpiritView || $entryTeamId === 0) {
 	$otherResponsibleTeamId = ($responsibleTeamId === $homeTeamId) ? $visitorTeamId : $homeTeamId;
 	$otherRatedTeamName = ($otherResponsibleTeamId === $homeTeamId) ? $game_result['visitorteamname'] : $game_result['hometeamname'];
-	$pageHtml .= "<div class='mobile-actions'><a href='" . SpiritkeeperEditGameUrl($gameId, $otherResponsibleTeamId) . "' data-role='button' data-ajax='false'>" . _("Spirit points for") . " " . utf8entities($otherRatedTeamName) . "</a></div>";
+	$pageHtml .= "<div class='mobile-actions'><a href='" . SpiritkeeperEditGameUrl($gameId, $otherResponsibleTeamId) . "' data-role='button' data-ajax='false'>" . _("Spirit score for") . " " . utf8entities($otherRatedTeamName) . "</a></div>";
 }
 
 $pageHtml .= "<div class='mobile-actions'><a href='" . SpiritkeeperTeamGamesUrl($responsibleTeamId, $season['season_id'], '') . "' data-role='button' data-ajax='false'>" . _("Back") . "</a></div>";

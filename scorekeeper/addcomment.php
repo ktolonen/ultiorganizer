@@ -33,7 +33,7 @@ if ($show_comment_form) {
 	if (!empty($game_comment_meta_html)) {
 		$html .= "<div>" . $game_comment_meta_html . "</div>";
 	}
-$html .= "<textarea name='gamecomment' rows='4' cols='40' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interrupts.") . "'>" . htmlentities($game_comment) . "</textarea>";
+		$html .= "<textarea name='gamecomment' rows='4' cols='40' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interruptions.") . "'>" . htmlentities($game_comment) . "</textarea>";
 	if ($can_manage_comment && !empty($game_comment)) {
 		$html .= "<label><input type='checkbox' name='delete_game_comment' value='1'/> " . _("Delete comment") . "</label>";
 	}

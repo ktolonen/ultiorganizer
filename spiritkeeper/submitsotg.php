@@ -39,7 +39,7 @@ if (!empty($_POST['save']) && $canSubmit) {
 		$defaultPoints = $existingPoints;
 		$spiritComment = $commentType > 0 ? CommentRaw($commentType, $gameId) : "";
 		$canSubmit = SpiritTokenCanSubmit($gameId, $teamId, $game);
-		$pageHtml .= "<div class='mobile-notice mobile-notice--success'><p>" . _("Spirit score successfully submitted.") . "</p></div>";
+		$pageHtml .= "<div class='mobile-notice mobile-notice--success'><p>" . _("Spirit score submitted.") . "</p></div>";
 	} else {
 		$defaultPoints = $submittedPoints + $defaultPoints;
 		if (isset($_POST['spiritcomment'])) {
@@ -87,13 +87,13 @@ if (empty($orderedCategories)) {
 
 	$pageHtml .= "<p class='mobile-total'>" . _("Total") . ": <span id='sotg-total-points'>" . (int)SpiritTotal($defaultPoints, $categories) . "</span></p>";
 	$pageHtml .= "<label for='spiritcomment'>" . _("Spirit note") . "</label>";
-	$pageHtml .= "<textarea id='spiritcomment' name='spiritcomment' rows='4' cols='40' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - add context for spirit points given (no blame).") . "'>" . htmlentities($spiritComment) . "</textarea>";
+	$pageHtml .= "<textarea id='spiritcomment' name='spiritcomment' rows='4' cols='40' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - add context for the spirit score given (no blame).") . "'>" . htmlentities($spiritComment) . "</textarea>";
 	if (!empty($spiritComment)) {
 		$pageHtml .= "<label><input type='checkbox' name='delete_spirit_comment' value='1'/> " . _("Delete comment") . "</label>";
 	}
 	$pageHtml .= $commentFeedback;
 	$pageHtml .= "<div class='mobile-actions'>";
-	$pageHtml .= "<button type='submit' name='save' value='1'>" . _("Submit Scores") . "</button>";
+	$pageHtml .= "<button type='submit' name='save' value='1'>" . _("Submit Spirit Score") . "</button>";
 	$pageHtml .= "<a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a>";
 	$pageHtml .= "</div>";
 	$pageHtml .= "</form>";
@@ -139,7 +139,7 @@ if (empty($orderedCategories)) {
 	$pageHtml .= "<p><a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a></p>";
 } elseif (SpiritTokenHasOwnSubmission($gameId, $teamId, $game)) {
 	$pageHtml .= "<div class='mobile-notice mobile-notice--info'><p>" . _("You already submitted the spirit score for this game.") . "</p></div>";
-	$pageHtml .= "<p><strong>" . _("Score given") . ":</strong> " . utf8entities(SpiritPointsSummary($existingPoints, $categories)) . "</p>";
+	$pageHtml .= "<p><strong>" . _("Spirit score given") . ":</strong> " . utf8entities(SpiritPointsSummary($existingPoints, $categories)) . "</p>";
 	if (!empty($spiritComment)) {
 		$pageHtml .= "<p><strong>" . _("Spirit note") . ":</strong></p>";
 		$pageHtml .= "<div class='comment'>" . someHTML($spiritComment) . "</div>";

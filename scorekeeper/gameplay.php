@@ -42,14 +42,15 @@ if (count($goals) <= 0) {
 				if ((intval($event['time']) >= $prevgoal) &&
 					(intval($event['time']) < intval($goal['time']))
 				) {
-					if ($event['type'] == "timeout")
-						$gameevent = _("timeout");
-					elseif ($event['type'] == "spirit_timeout")
-						$gameevent = _("Spirit timeout");
-					elseif ($event['type'] == "turnover")
-						$gameevent = _("turnover");
-					elseif ($event['type'] == "offence")
-						$gameevent = _("offence");
+						if ($event['type'] == "timeout") {
+							$gameevent = _("timeout");
+						} elseif ($event['type'] == "spirit_timeout") {
+							$gameevent = _("Spirit timeout");
+						} elseif ($event['type'] == "turnover") {
+							$gameevent = _("turnover");
+						} elseif ($event['type'] == "offence") {
+							$gameevent = _("offence");
+						}
 
 					if (intval($event['ishome']) > 0) {
 						$team = utf8entities($game_result['hometeamname']);
@@ -82,7 +83,7 @@ if (count($goals) <= 0) {
 		}
 		$html .= $goal['homescore'] . " - " . $goal['visitorscore'] . " ";
 		if (intval($goal['iscallahan'])) {
-			$html .= _("Callahan-goal") . "&nbsp;";
+			$html .= _("Callahan goal") . "&nbsp;";
 		} else {
 			$html .= utf8entities($goal['assistfirstname']) . " " . utf8entities($goal['assistlastname']) . " --> ";
 		}
@@ -99,8 +100,8 @@ if (count($goals) <= 0) {
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "<div class='action-row action-row--half'>\n";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("scoreboard") . "</a>";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("scoreboard") . "</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("Scoreboard") . "</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("Scoreboard") . "</a>";
 $html .= "</div>\n";
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</div><!-- /content -->\n\n";

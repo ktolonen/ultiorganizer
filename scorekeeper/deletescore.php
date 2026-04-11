@@ -28,7 +28,7 @@ $html .= "<form action='?view=deletescore' method='post' data-ajax='false'>\n";
 //last score
 if (count($scores) > 0) {
 	$lastscore = $scores[count($scores) - 1];
-	$html .= _("Delete goal number") . " " . ($lastscore['num'] + 1) . ": ";
+	$html .= _("Delete goal") . " " . ($lastscore['num'] + 1) . ": ";
 	$html .= $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
 	$html .= "[" . SecToMin($lastscore['time']) . "] ";
 	if (intval($lastscore['iscallahan'])) {

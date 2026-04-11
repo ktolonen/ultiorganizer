@@ -1,4 +1,4 @@
 interface:
   display_name: "Fix User Language"
-  short_description: "Fix user-facing wording for US English, terminology, and gettext consistency"
-  default_prompt: "Fix Ultiorganizer user-facing wording for US English spelling, grammar, gettext-backed strings, and terminology correctness. Default to a single page sweep unless the request clearly asks for a single-term sweep across the system. Preserve internal identifiers unless the user explicitly asks for broader renames, and update tracked translation catalogs when gettext source strings change."
+  short_description: "Fix user-facing wording for project spelling, terminology, and gettext consistency"
+  default_prompt: "Fix Ultiorganizer user-facing wording for project spelling, grammar, gettext-backed strings, and terminology correctness. Use WFDF rules as the spelling source of truth where applicable. Default to a single page sweep unless the request clearly asks for a single-term sweep across the system. Preserve internal identifiers unless the user explicitly asks for broader renames, and update tracked translation catalogs when gettext source strings change."

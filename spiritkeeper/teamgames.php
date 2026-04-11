@@ -29,11 +29,11 @@ $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $st
 	$html .= "<p><strong>" . _("Score") . ":</strong> " . utf8entities(SpiritkeeperGameScoreLabel($game)) . "</p>";
 
 	if ($ownSubmitted) {
-		$html .= "<p class='mobile-summary'><strong>" . _("Score given for") . " " . utf8entities($opponentName) . ":</strong> " . utf8entities(SpiritPointsSummary($givenPoints, $categories)) . "</p>";
+		$html .= "<p class='mobile-summary'><strong>" . _("Spirit score given for") . " " . utf8entities($opponentName) . ":</strong> " . utf8entities(SpiritPointsSummary($givenPoints, $categories)) . "</p>";
 		if ($canViewReceived) {
-			$html .= "<p class='mobile-summary'><strong>" . _("Score received") . ":</strong> " . utf8entities(SpiritPointsSummary($receivedPoints, $categories)) . "</p>";
+			$html .= "<p class='mobile-summary'><strong>" . _("Spirit score received") . ":</strong> " . utf8entities(SpiritPointsSummary($receivedPoints, $categories)) . "</p>";
 		} elseif ($receivedSubmitted) {
-			$html .= "<p class='mobile-status'>" . _("The opponent score is available, but not visible through this page.") . "</p>";
+			$html .= "<p class='mobile-status'>" . _("The opponent spirit score is available, but not visible through this page.") . "</p>";
 		} else {
 			$html .= "<p class='mobile-status'>" . _("The opponent has not submitted a spirit score for this game yet.") . "</p>";
 		}

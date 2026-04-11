@@ -519,7 +519,7 @@ class PDF extends tFPDF_CellFit
 		$this->Cell(12,10,"q",'LRB',0,'C',true);
 		$this->SetFont('Arial','',10);
 		$this->SetFillColor(230);
-		$this->CellFitScale(54,10,_("Who started on offense?"),'LRB',0,'C',true);
+		$this->CellFitScale(54,10,_("Who started on offence?"),'LRB',0,'C',true);
 		$this->SetFillColor(255);
 	  $this->SetFont('ZapfDingbats','',16);
 		$this->Cell(12,10,"q",'LRB',1,'C',true);
@@ -1769,7 +1769,7 @@ class PDF extends tFPDF_CellFit
 		$this->MultiCell(100,4,pdf_utf8_text($data),0,'L',true);
 		$this->Ln(3);
 		
-		$data = "3. "._("Mark which team is starting on offense.");
+		$data = "3. "._("Mark which team is starting on offence.");
 		$this->SetX(100);
 		$this->MultiCell(100,4,pdf_utf8_text($data),0,'L',true);
 		$this->Ln(3);

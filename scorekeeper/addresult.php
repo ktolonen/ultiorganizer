@@ -63,7 +63,7 @@ $html .= $info;
 
 if (isset($_POST['save'])) {
 	$html .= "<input type='submit' name='save'  data-ajax='false' value='" . _("Save again") . "'/>";
-	$html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Fill Playerlists") . "</a>";
+	$html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
 } else {
 	$html .= "<div class='action-row action-row--stacked action-row--spaced'>\n";
 	$html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";

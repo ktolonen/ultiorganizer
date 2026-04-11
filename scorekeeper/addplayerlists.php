@@ -57,7 +57,7 @@ if (isset($_POST['save'])) {
             $playerinfo1 = PlayerInfo($playerId);
             $playerinfo2 = PlayerInfo($player['player_id']);
             $html .= "<p  class='warning'><i>" . utf8entities($playerinfo1['firstname'] . " " . $playerinfo1['lastname']) . "</i> " . _("and")
-              . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("same number") . " '$number'.</p>";
+              . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("have the same jersey number") . " '$number'.</p>";
             $found = true;
             break;
           }
@@ -67,7 +67,7 @@ if (isset($_POST['save'])) {
           GameAddPlayer($gameId, $playerId, $number);
       } else {
         $playerinfo = PlayerInfo($playerId);
-        $html .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("erroneous number") . " '$number'.</p>";
+        $html .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("has an invalid jersey number") . " '$number'.</p>";
       }
     }
   }
@@ -144,9 +144,9 @@ $html .= "</div>";
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
 $html .= "<div class='action-row action-row--half'>\n";
 if ($teamId == $game_result['visitorteam']) {
-  $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("playerlist") . "</a>";
+  $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("Roster") . "</a>";
 } else {
-  $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("playerlist") . "</a>";
+  $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("Roster") . "</a>";
 }
 $html .= "<a href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to scoresheet") . "</a>";
 $html .= "</div>\n";

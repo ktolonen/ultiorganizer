@@ -8,7 +8,7 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 
 ## Purpose and Scope
 
-- Canonical terms in this document use US English.
+- Canonical terms in this document follow WFDF rules spelling where applicable.
 - Only terms relevant to Ultiorganizer as it exists today are included.
 - Alias mappings cover words reviewers will encounter in current code, docs, API payloads, and UI labels.
 - Abbreviations are for narrow table layouts only, not normal prose.
@@ -33,12 +33,12 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 | Timeout | Ordinary timeout recorded during a game. | |
 | Spirit timeout | Spirit-specific timeout recorded separately from ordinary timeouts. | |
 | Halftime | Halftime marker or halftime end time for a game. | Prefer `halftime`, not `half-time`. |
-| Offense | Starting possession or offense-based gameplay/stat concept. | Prefer `offense`, not `offence`, in new docs. |
+| Offence | Starting possession or offence-based gameplay/stat concept. | Prefer `offence`, not `offense`, in new docs. |
 | Turnover | Recorded possession change in gameplay data. | |
-| Defense | Recorded defensive play/stat tracked through the defense sheet and defense stats. | Prefer `defense`, not `defence`, in new docs. |
+| Defence | Recorded defensive play/stat tracked through the defence sheet and defence stats. | Prefer `defence`, not `defense`, in new docs. |
 | Scoresheet | Detailed game record combining roster, goals, timeouts, note, official, and related metadata. | In Ultiorganizer this is a concept, not a single table. |
 | Gameplay | Replay or view of saved game goals and events. | Used by gameplay pages and API responses. |
-| Game event | Recorded non-goal gameplay marker. | Includes turnovers, offense markers, timeouts, spirit timeouts, and media-linked events. |
+| Game event | Recorded non-goal gameplay marker. | Includes turnovers, offence markers, timeouts, spirit timeouts, and media-linked events. |
 | Game note | Free-text note attached to a game. | Stored through comment helpers. |
 | Game official | Official name stored with a game. | |
 | Captain | Player marked as captain in game or spirit-related flows. | |
@@ -61,7 +61,7 @@ These terms are recognized in the current repository. They are not the preferred
 | Assist | `fedin`, `pass` | `pass` appears in legacy score-entry forms; `fedin` appears in stats helpers and API normalization. |
 | Scorer | `goal`, `scorer` | Legacy score-entry forms use `goal` as the scorer input field name. |
 | Callahan | `iscallahan`, `Callahan-goal` | `iscallahan` is the stored flag; replay views also use `Callahan-goal`. |
-| Offense | `offence`, `First offence`, `starting offence`, `offence_points`, `time_on_offence`, `goals_from_offence` | Use US spelling in new docs, but recognize existing UK spelling and field names. |
+| Offence | `offense`, `First offense`, `starting on offense`, `offence_points`, `time_on_offence`, `goals_from_offence` | Use WFDF spelling in new docs, but recognize existing alternate spellings and field names. |
 | Timeout | `time-out`, `timeouts`, `timeout` | Event rows use `timeout` as the type string. |
 | Spirit timeout | `spirit_timeout`, `Spirit timeouts` | `spirit_timeout` is the event type string. |
 | Scoresheet | `Game scoresheet`, `fill in scoresheet` | The repo uses both generic and page-specific scoresheet labels. |
@@ -70,7 +70,7 @@ These terms are recognized in the current repository. They are not the preferred
 | Game note | `comment`, `COMMENT_TYPE_GAME`, `Game comment` | Comment storage names are broader than the preferred user-facing term. |
 | Game official | `official`, `Game official(s)` | Storage field is `official`; UI labels vary slightly. |
 | Spirit score | `Spirit points` | Current UI often says `Spirit points`; use `Spirit score` in new docs when discussing the concept. |
-| Defense | `uo_defense`, `Defense sheet`, `deftotal` | Defensive stats use several internal names. |
+| Defence | `defense`, `Defense`, `uo_defense`, `Defense sheet`, `deftotal` | Use WFDF spelling in new docs, but recognize existing alternate spellings and internal names. |
 
 ## Abbreviations for Narrow Tables
 
@@ -86,7 +86,7 @@ Use these only when space is constrained, such as statistics tables, standings t
 | Average | `Avg.` | |
 | Timeouts | `TO` | Use in compact stat or summary tables only. |
 | Spirit timeouts | `STO` | Use in compact stat or summary tables only. |
-| Defense | `D` | Use only when the table is explicitly about defensive stats. |
+| Defence | `D` | Use only when the table is explicitly about defensive stats. |
 | Spirit of the Game | `SOTG` | Existing standard abbreviation. |
 
 ## Review Rules

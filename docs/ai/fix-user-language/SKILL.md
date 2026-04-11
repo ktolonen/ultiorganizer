@@ -1,6 +1,6 @@
 ---
 name: fix-user-language
-description: Fix Ultiorganizer user-facing language for US English spelling, grammar, gettext-backed wording, and terminology correctness. Use for either a single page sweep or a single-term sweep across user-facing surfaces. Default to one page or module when the caller is not explicit. Do not rename internal identifiers unless the user asks for that broader scope.
+description: Fix Ultiorganizer user-facing language for project spelling, grammar, gettext-backed wording, and terminology correctness. Use for either a single page sweep or a single-term sweep across user-facing surfaces. Default to one page or module when the caller is not explicit. Do not rename internal identifiers unless the user asks for that broader scope.
 metadata:
   short-description: Fix user-facing wording and terminology
 ---
@@ -18,7 +18,7 @@ Always read these references first:
 
 Use this skill to apply wording fixes for:
 
-- US English spelling and grammar
+- project spelling and grammar, with WFDF rules as the source of truth where applicable
 - terminology correctness
 - user-facing terminology consistency
 
@@ -37,7 +37,7 @@ If the caller is not explicit, default to `page sweep`.
 
 - Scan the selected page or module for user-facing strings, especially `_()` strings, headings, labels, buttons, warnings, notices, and nearby literals.
 - Normalize the page to one consistent terminology set instead of making a partial fix.
-- Apply US English spelling unless the user explicitly wants compatibility wording.
+- Apply project-preferred spelling, using WFDF rules where applicable, unless the user explicitly wants compatibility wording.
 - Use the preferred terms in `docs/terminology.md`, while leaving internal identifiers unchanged.
 
 ## Term sweep rules
@@ -52,6 +52,7 @@ If the caller is not explicit, default to `page sweep`.
 - When fixing gettext-backed source strings, update the tracked translation catalogs by default:
   - `locale/de_DE.utf8/LC_MESSAGES/messages.po`
   - `locale/fi_FI.utf8/LC_MESSAGES/messages.po`
+- Prefer the helper script `docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh` for catalog refreshes instead of ad hoc gettext commands.
 - If the environment supports rebuilding compiled catalogs, update the corresponding `messages.mo` files too.
 - If `.mo` rebuild tooling is unavailable, complete the source and `.po` changes and state that `.mo` regeneration could not be performed.
 - Do not add new locale trees or broaden locale coverage.
@@ -59,7 +60,7 @@ If the caller is not explicit, default to `page sweep`.
 ## Terminology rules
 
 - Treat `docs/terminology.md` as the canonical terminology source.
-- Prefer canonical US English terms in docs and user-facing strings.
+- Prefer the canonical terms in `docs/terminology.md` in docs and user-facing strings.
 - Allow legacy/internal names to remain in code identifiers and schema-facing contexts unless the caller asked for an internal rename.
 - If a page mixes terminology, finish the page in one consistent set of user-facing terms.
 
@@ -68,7 +69,7 @@ If the caller is not explicit, default to `page sweep`.
 1. Determine whether the task is a page sweep or a term sweep. Default to page sweep if unclear.
 2. Inspect changed or requested files first.
 3. Identify user-facing strings, prioritizing `_()` strings and visible copy.
-4. Apply terminology and US English fixes.
+4. Apply terminology and project spelling fixes.
 5. Update `.po` catalogs when gettext-backed strings changed.
 6. Rebuild `.mo` files if tooling is available.
 7. Report what was changed and any translation build steps that could not be completed.

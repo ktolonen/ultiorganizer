@@ -63,7 +63,7 @@ $pageHtml .= "<input type='text' id='myusername' name='myusername' size='15'/>";
 $pageHtml .= "<label for='mypassword'>" . _("Password") . ":</label>";
 $pageHtml .= "<input type='password' id='mypassword' name='mypassword' size='15'/>";
 $pageHtml .= "<div class='mobile-actions'>";
-$pageHtml .= "<input type='submit' name='login' value='" . _("Login") . "'/>";
+$pageHtml .= "<input type='submit' name='login' value='" . _("Log in") . "'/>";
 $pageHtml .= "</div>";
 $pageHtml .= "</form>";
 $pageHtml .= "</div>";

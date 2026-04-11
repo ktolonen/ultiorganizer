@@ -21,7 +21,7 @@ $html .= "<input type='text' id='myusername' name='myusername' size='15'/> ";
 $html .= "<label for='mypassword'>" . _("Password") . ":</label>";
 $html .= "<input type='password' id='mypassword' name='mypassword' size='15'/> ";
 $html .= "<div class='form-actions'>";
-$html .= "<input type='submit' name='login' value='" . _("Login") . "'/>";
+$html .= "<input type='submit' name='login' value='" . _("Log in") . "'/>";
 $allowAnonResult = defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
 if ($allowAnonResult) {
 	$html .= "<a href='?view=result' data-role='button' data-ajax='false'>" . _("Quick add result") . "</a>";
