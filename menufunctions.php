@@ -156,7 +156,7 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
       if (!$hideInlineLogin) {
         echo "<input class='input' type='text' id='myusername' name='myusername' size='10' style='border:1px solid #555555'/>&nbsp;";
         echo "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
-        echo "<input class='button' type='submit' name='login' value='" . utf8entities(_("Login")) . "' style='border:1px solid #000000'/>";
+        echo "<input class='button' type='submit' name='login' value='" . utf8entities(_("Log in")) . "' style='border:1px solid #000000'/>";
       }
     } else {
       $userinfo = UserInfo($user);
@@ -170,7 +170,7 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
         echo "<span class='topheadertext'><a class='topheaderlink' href='?view=register'>" . utf8entities(_("New user?")) . "</a></span>";
       }
     } else {
-      echo "<span class='topheadertext'><a class='topheaderlink' href='?view=logout'>&raquo; " . utf8entities(_("Logout")) . "</a></span>";
+      echo "<span class='topheadertext'><a class='topheaderlink' href='?view=logout'>&raquo; " . utf8entities(_("Log out")) . "</a></span>";
     }
     echo "</td></tr>\n";
     echo "</table>";
@@ -273,7 +273,7 @@ function mobilePageEnd($query = "")
       $html .= "</td></tr><tr><td>\n";
       $html .= "<input class='input' type='password' id='mypassword' name='mypassword' size='15'/> ";
       $html .= "</td></tr><tr><td>\n";
-      $html .= "<input class='button' type='submit' name='login' value='" . utf8entities(_("Login")) . "'/>";
+      $html .= "<input class='button' type='submit' name='login' value='" . utf8entities(_("Log in")) . "'/>";
       $html .= "</td></tr><tr><td>\n";
       $html .= "<hr/>\n";
       $html .= "</td></tr>\n";
@@ -300,7 +300,7 @@ function mobilePageEnd($query = "")
     $html .= "<tr><td><hr /></td></tr><tr><td>\n";
     $html .= "<a href='?view=frontpage'>" . utf8entities(_("Back to the Ultiorganizer")) . "</a>";
     $html .= "</td></tr><tr><td>\n";
-    $html .= "<a href='?view=mobile/logout'>" . utf8entities(_("Logout")) . "</a></td></tr></table>";
+    $html .= "<a href='?view=mobile/logout'>" . utf8entities(_("Log out")) . "</a></td></tr></table>";
   }
 
   $html .= "<div class='page_bottom'></div>";

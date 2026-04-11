@@ -196,9 +196,9 @@ if ($sort == "winavg") {
 }
 if (ShowSpiritScoresForSeason($seasoninfo)) {
   if ($sort == "spirit") {
-    $html .= "<th class='center'>" . _("Spirit points") . "</th>";
+    $html .= "<th class='center'>" . _("Spirit score") . "</th>";
   } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=spirit'>" . _("Spirit points") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=spirit'>" . _("Spirit score") . "</a></th>";
   }
 }
 
@@ -308,28 +308,27 @@ $html .= "<a href='?view=scorestatus&amp;series=" . $seriesinfo['series_id'] . "
 
 
 if (ShowDefenseStats()) {
-  $html .= "<h2>" . _("Defenseboard leaders") . "</h2>\n";
+  $html .= "<h2>" . _("Defence board leaders") . "</h2>\n";
   $html .= "<table cellspacing='0' border='0' width='100%'>\n";
   $html .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
-	<th class='center'>" . _("Total defenses") . "</th></tr>\n";
+	<th class='center'>" . _("Total defences") . "</th></tr>\n";
 
 
   $defenses = SeriesDefenseBoardArray($seriesinfo['series_id'], "deftotal", 10);
   foreach ($defenses as $row) {
     $html .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
     $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
-    $html .= "<td>" . _("Games") . "</td>";
     $html .= "<td class='center'>" . intval($row['games']) . "</td>";
     $html .= "<td class='center'>" . intval($row['deftotal']) . "</td></tr>\n";
   }
 
   $html .= "</table>";
-  $html .= "<a href='?view=defensestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Defenseboard") . "</a>";
+  $html .= "<a href='?view=defensestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Defence board") . "</a>";
 }
 
 if (ShowSpiritScoresForSeason($seasoninfo)) {
   $categories = SpiritCategories($seasoninfo['spiritmode']);
-  $html .= "<h2>" . _("Spirit points average per category") . "</h2>\n";
+  $html .= "<h2>" . _("Spirit score average per category") . "</h2>\n";
 
   $html .= "<table cellspacing='0' border='0' width='100%'>\n";
   $html .= "<tr><th style='width:150px'>" . _("Team") . "</th>";

@@ -926,7 +926,7 @@ class PDF extends tFPDF
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0,102,153);
-		$this->Cell(80,6,$this->pdfText(_("Spirit timeouts")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Spirit stoppages")),'LRTB',0,'C',true);
 		$this->Ln();
 
 		//home grids

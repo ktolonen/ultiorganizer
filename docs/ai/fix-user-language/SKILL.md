@@ -35,10 +35,13 @@ If the caller is not explicit, default to `page sweep`.
 
 ## Page sweep rules
 
-- Scan the selected page or module for user-facing strings, especially `_()` strings, headings, labels, buttons, warnings, notices, and nearby literals.
+- Scan the selected page or module for user-facing strings, especially `_()` strings, headings, labels, buttons, warnings, notices, table headers, compact stat labels, leaderboard headings, and nearby literals.
 - Normalize the page to one consistent terminology set instead of making a partial fix.
 - Apply project-preferred spelling, using WFDF rules where applicable, unless the user explicitly wants compatibility wording.
 - Use the preferred terms in `docs/terminology.md`, while leaving internal identifiers unchanged.
+- When one term is being fixed on a page, check the rest of that page for mixed variants and finish the page in one consistent user-facing set.
+- When one term is being fixed on a page, check the rest of that page for mixed variants such as `Spirit timeout` and `Spirit stoppage`, and finish the page in one consistent user-facing set.
+- Prefer verb forms such as `Log in` and `Log out` for action buttons, links, and headings.
 
 ## Term sweep rules
 
@@ -63,19 +66,22 @@ If the caller is not explicit, default to `page sweep`.
 - Prefer the canonical terms in `docs/terminology.md` in docs and user-facing strings.
 - Allow legacy/internal names to remain in code identifiers and schema-facing contexts unless the caller asked for an internal rename.
 - If a page mixes terminology, finish the page in one consistent set of user-facing terms.
+- Prefer explicit full labels over cryptic compact labels when space is not constrained. In narrow tables, use the approved abbreviations from `docs/terminology.md`.
 
 ## Workflow
 
 1. Determine whether the task is a page sweep or a term sweep. Default to page sweep if unclear.
 2. Inspect changed or requested files first.
 3. Identify user-facing strings, prioritizing `_()` strings and visible copy.
-4. Apply terminology and project spelling fixes.
-5. Update `.po` catalogs when gettext-backed strings changed.
-6. Rebuild `.mo` files if tooling is available.
-7. Report what was changed and any translation build steps that could not be completed.
+4. Apply terminology and project spelling fixes across the full page or requested term scope.
+5. Fix obvious local rendering mistakes that directly affect user-facing text when they are safe and tightly coupled to the wording change.
+6. Update `.po` catalogs when gettext-backed strings changed.
+7. Rebuild `.mo` files if tooling is available.
+8. Report what was changed and any translation build steps that could not be completed.
 
 ## Boundaries
 
 - Do not rename internal identifiers by default.
 - Do not change API or schema naming unless explicitly requested.
 - Keep fixes focused on the requested page or requested term scope.
+- Do not expand a wording pass into an unrelated refactor. Only fix nearby rendering or copy issues when they are clearly user-facing and local to the work.

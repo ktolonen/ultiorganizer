@@ -30,20 +30,25 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 | Assist | Final pass credited on a goal. | |
 | Scorer | Player credited with a goal. | |
 | Callahan | Goal flagged as a Callahan. | |
+| Callahan goal | User-facing label for a goal recorded as a Callahan. | Prefer `Callahan goal` over `Callahan-goal` in new UI text and docs. |
 | Timeout | Ordinary timeout recorded during a game. | |
-| Spirit timeout | Spirit-specific timeout recorded separately from ordinary timeouts. | |
+| Spirit stoppage | Spirit-specific stoppage recorded separately from ordinary timeouts. | Prefer this over `Spirit timeout` in new UI text and docs. |
 | Halftime | Halftime marker or halftime end time for a game. | Prefer `halftime`, not `half-time`. |
 | Offence | Starting possession or offence-based gameplay/stat concept. | Prefer `offence`, not `offense`, in new docs. |
 | Turnover | Recorded possession change in gameplay data. | |
 | Defence | Recorded defensive play/stat tracked through the defence sheet and defence stats. | Prefer `defence`, not `defense`, in new docs. |
+| Defence board | User-facing leaderboard or summary view for defensive stats. | Prefer the spaced form `Defence board`, not `Defenseboard`, in new UI text and docs. |
 | Scoresheet | Detailed game record combining roster, goals, timeouts, note, official, and related metadata. | In Ultiorganizer this is a concept, not a single table. |
 | Gameplay | Replay or view of saved game goals and events. | Used by gameplay pages and API responses. |
-| Game event | Recorded non-goal gameplay marker. | Includes turnovers, offence markers, timeouts, spirit timeouts, and media-linked events. |
+| Game event | Recorded non-goal gameplay marker. | Includes turnovers, offence markers, timeouts, spirit stoppages, and media-linked events. |
 | Game note | Free-text note attached to a game. | Stored through comment helpers. |
 | Game official | Official name stored with a game. | |
 | Captain | Player marked as captain in game or spirit-related flows. | |
 | Spirit score | Spirit scoring submission and total for a game. | Current UI often says `Spirit points`. |
+| Spirit score average | User-facing average label for spirit summaries and table headings. | Prefer this over `Spirit avg` or `Spirit points average` in new UI text and docs. |
 | Spirit of the Game (SOTG) | Spirit scoring context and totals. | |
+| Log in | User-facing action to authenticate into the system. | Prefer the verb form `Log in` for buttons, links, and headings. |
+| Log out | User-facing action to end the current session. | Prefer the verb form `Log out` for buttons, links, and headings. |
 | Winning score | Goals required to win under pool or format settings. | Repo fields also use `winningscore`. |
 | Point cap | Score cap used by pool or format settings. | Repo fields also use `scorecap`. |
 | Time cap | Time-cap setting used by pool or format settings. | Repo fields also use `timecap`. |
@@ -60,17 +65,22 @@ These terms are recognized in the current repository. They are not the preferred
 | Goal | `done`, `goals`, `ishomegoal` | `done` appears in stat queries and internal result rows. |
 | Assist | `fedin`, `pass` | `pass` appears in legacy score-entry forms; `fedin` appears in stats helpers and API normalization. |
 | Scorer | `goal`, `scorer` | Legacy score-entry forms use `goal` as the scorer input field name. |
-| Callahan | `iscallahan`, `Callahan-goal` | `iscallahan` is the stored flag; replay views also use `Callahan-goal`. |
+| Callahan | `iscallahan` | `iscallahan` is the stored flag. |
+| Callahan goal | `Callahan-goal` | Prefer the spaced form in new user-facing text. |
 | Offence | `offense`, `First offense`, `starting on offense`, `offence_points`, `time_on_offence`, `goals_from_offence` | Use WFDF spelling in new docs, but recognize existing alternate spellings and field names. |
 | Timeout | `time-out`, `timeouts`, `timeout` | Event rows use `timeout` as the type string. |
-| Spirit timeout | `spirit_timeout`, `Spirit timeouts` | `spirit_timeout` is the event type string. |
+| Spirit stoppage | `spirit_timeout`, `Spirit timeout`, `Spirit timeouts` | `spirit_timeout` remains the event type string and legacy/internal name. |
 | Scoresheet | `Game scoresheet`, `fill in scoresheet` | The repo uses both generic and page-specific scoresheet labels. |
 | Gameplay | `gameplay.php`, `gameplay` endpoint | Refers to saved game replay, not general game theory. |
 | Game event | `uo_gameevent`, `GameEvents()` | Also used indirectly through replay views and API event arrays. |
 | Game note | `comment`, `COMMENT_TYPE_GAME`, `Game comment` | Comment storage names are broader than the preferred user-facing term. |
 | Game official | `official`, `Game official(s)` | Storage field is `official`; UI labels vary slightly. |
 | Spirit score | `Spirit points` | Current UI often says `Spirit points`; use `Spirit score` in new docs when discussing the concept. |
+| Spirit score average | `Spirit avg`, `Spirit points average`, `Spirit points average per category` | Prefer `Spirit score average` or `Spirit score avg.` in new user-facing text. |
 | Defence | `defense`, `Defense`, `uo_defense`, `Defense sheet`, `deftotal` | Use WFDF spelling in new docs, but recognize existing alternate spellings and internal names. |
+| Defence board | `Defenseboard` | Prefer the spaced form in new user-facing text. |
+| Log in | `Login` | Treat `Login` as a legacy noun-style label in the repo. |
+| Log out | `Logout` | Treat `Logout` as a legacy noun-style label in the repo. |
 
 ## Abbreviations for Narrow Tables
 
@@ -85,8 +95,10 @@ Use these only when space is constrained, such as statistics tables, standings t
 | Games played | `GP` | Prefer `GP` over `G` to avoid confusion with goals. |
 | Average | `Avg.` | |
 | Timeouts | `TO` | Use in compact stat or summary tables only. |
-| Spirit timeouts | `STO` | Use in compact stat or summary tables only. |
+| Spirit stoppage | `STO` | Existing repo shorthand; prefer the full term when space allows. |
 | Defence | `D` | Use only when the table is explicitly about defensive stats. |
+| Defence average | `Defence avg.` | Prefer this over `Def. avg.` in new narrow-table labels. |
+| Spirit score average | `Spirit score avg.` | Prefer this over `Spirit avg` in new narrow-table labels. |
 | Spirit of the Game | `SOTG` | Existing standard abbreviation. |
 
 ## Review Rules

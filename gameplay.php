@@ -219,7 +219,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= $goal['homescore'] . " - " . $goal['visitorscore'] . "</td>";
 
       if (intval($goal['iscallahan'])) {
-        $html .= "<td class='callahan'>" . _("Callahan-goal") . "&nbsp;</td>";
+        $html .= "<td class='callahan'>" . _("Callahan goal") . "&nbsp;</td>";
       } else {
         $html .= "<td>";
         if ($goal['assistnum']>-1) { // prefix player's name with player's number
@@ -248,7 +248,7 @@ if (GameHasStarted($game_result) > 0) {
             if ($event['type'] == "timeout") {
               $gameevent = _("Timeout");
             } elseif ($event['type'] == "spirit_timeout") {
-              $gameevent = _("Spirit timeout");
+              $gameevent = _("Spirit stoppage");
             } elseif ($event['type'] == "turnover") {
               $gameevent = _("Turnover");
             } elseif ($event['type'] == "offence") {
@@ -535,7 +535,7 @@ if (GameHasStarted($game_result) > 0) {
 			<td class='guest'>" . $nVTO . "</td></tr>";
 
       if (CanViewSpiritScoresForGame($gameId, $seasoninfo)) {
-        $html .= "<tr><td>" . _("Spirit points") . ":</td>";
+        $html .= "<tr><td>" . _("Spirit score") . ":</td>";
         if (isset($game_result['homesotg']) && !is_null($game_result['homesotg'])) {
           $html .= "<td class='home'>" . $game_result['homesotg'] . "</td>";
         } else {
@@ -551,7 +551,7 @@ if (GameHasStarted($game_result) > 0) {
     }
     // spirit points
     if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && !intval($game_result['isongoing']) && CanViewSpiritScoresForGame($gameId, $seasoninfo)) {
-      $html .= "<h2>" . _("Spirit Points") . "</h2>\n";
+      $html .= "<h2>" . _("Spirit scores") . "</h2>\n";
       $categories = SpiritCategories($seasoninfo['spiritmode']);
       $homepoints = GameGetSpiritPoints($gameId, $game_result['hometeam']);
       $visitorpoints = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
@@ -621,7 +621,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "<tr style='height=20'><td align='center'><b>";
       $html .= utf8entities($game_result['hometeamname']) . "</b></td></tr>\n";
       $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-      $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Defenses") . "</th></tr>\n";
+      $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Defences") . "</th></tr>\n";
 
       foreach ($home_team_defense_board as $row) {
         $html .= "<tr>";
@@ -646,7 +646,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= utf8entities($game_result['visitorteamname']) . "</b></td></tr>\n";
       $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
       $html .= "<tr><th class='guest'>#</th><th class='guest'>" . _("Name") . "</th><th class='guest center'>";
-      $html .= _("Defenses") . "</th></tr>\n";
+      $html .= _("Defences") . "</th></tr>\n";
 
       foreach ($guest_team_defense_board as $row) {
         $html .= "<tr>";

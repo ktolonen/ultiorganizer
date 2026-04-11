@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-11 12:35+0300\n"
+"POT-Creation-Date: 2026-04-11 15:28+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -114,6 +114,14 @@ msgstr ""
 #: poolstatus.php:589 poolstatus.php:703 poolstatus.php:716
 msgid "???"
 msgstr "???"
+
+#: register.php:99
+#, fuzzy
+msgid ""
+"A confirmation email will be sent immediately to the email address provided. "
+"Some email clients may incorrectly filter the message as spam, so check your "
+"spam folder if it does not appear in your inbox."
+msgstr "Bestätigungsmail wird an die angegebene Email-Adresse versendet."
 
 #: allclubs.php:30 allclubs.php:32 allplayers.php:35 allplayers.php:37
 #: allteams.php:31 allteams.php:33
@@ -640,11 +648,12 @@ msgid "Away"
 msgstr "Gast"
 
 #: result.php:97
-msgid "Away Goals"
-msgstr "Punkte (Gast)"
+#, fuzzy
+msgid "Away score"
+msgstr "Endergebnis"
 
 #: admin/spirit.php:322 admin/spirit.php:343
-msgid "Away spirit timeouts"
+msgid "Away spirit stoppages"
 msgstr ""
 
 #: cust/bula/pdfprinter.php:71 cust/gummis/pdfprinter.php:69
@@ -764,14 +773,14 @@ msgstr "Callahan"
 msgid "Callahan defense"
 msgstr "Callahan-Defense"
 
-#: scorekeeper/addscoresheet.php:351 scorekeeper/addscoresheet.php:442
-#: scorekeeper/addscoresheet.php:452 scorekeeper/endgame.php:114
-#: scorekeeper/gameplay.php:86
+#: gameplay.php:222 playercard.php:570 scorekeeper/addscoresheet.php:351
+#: scorekeeper/addscoresheet.php:442 scorekeeper/addscoresheet.php:452
+#: scorekeeper/endgame.php:114 scorekeeper/gameplay.php:86
 #, fuzzy
 msgid "Callahan goal"
 msgstr "Callahan-Punkt"
 
-#: gameplay.php:222 playercard.php:570 mobile/gameplay.php:84
+#: mobile/gameplay.php:84
 msgid "Callahan-goal"
 msgstr "Callahan-Punkt"
 
@@ -864,8 +873,13 @@ msgstr "Spielerliste des Spiels ändern"
 msgid "Change game scoresheet"
 msgstr "Spielbericht ändern"
 
-#: result.php:70 scorekeeper/result.php:73
+#: scorekeeper/result.php:73
 msgid "Change result to"
+msgstr "Spielergebnis ändern"
+
+#: result.php:70
+#, fuzzy
+msgid "Change the result to"
 msgstr "Spielergebnis ändern"
 
 #: admin/addseasonteams.php:77
@@ -1121,14 +1135,6 @@ msgid "Confirmation email will be sent to the email address provided"
 msgstr ""
 "Eine Bestätigungsmail ist an die angegebene Email-Adresse versendet worden"
 
-#: register.php:99
-msgid ""
-"Confirmation mail will be sent immediately to the email address provided. "
-"(Note that confirmation mail can be incorrectly filterd as spam by e-mail "
-"client and in this case you can find the mail from spam -folder instead of "
-"inbox.)"
-msgstr "Bestätigungsmail wird an die angegebene Email-Adresse versendet."
-
 #: user/enrollteam.php:116
 msgid "Confirmed"
 msgstr "Bestätigt"
@@ -1346,10 +1352,6 @@ msgstr "Geburtstag"
 msgid "Day"
 msgstr ""
 
-#: playercard.php:227 playercard.php:304
-msgid "Def. avg."
-msgstr "Def. Mittel"
-
 #: admin/serverconf.php:226
 msgid "Default Locale"
 msgstr "Standardsprache"
@@ -1357,6 +1359,34 @@ msgstr "Standardsprache"
 #: admin/serverconf.php:210
 msgid "Default Timezone"
 msgstr "Zeitzonen-Voreinstellung"
+
+#: playercard.php:227 playercard.php:304
+#, fuzzy
+msgid "Defence avg."
+msgstr "Defensedurch."
+
+#: defensestatus.php:17 defensestatus.php:40 poolstatus.php:224
+#: poolstatus.php:252 poolstatus.php:254 seriesstatus.php:326
+#, fuzzy
+msgid "Defence board"
+msgstr "Defenseliste"
+
+#: poolstatus.php:210 poolstatus.php:226 seriesstatus.php:311
+#, fuzzy
+msgid "Defence board leaders"
+msgstr "Topscorer Defense"
+
+#: defensestatus.php:76 defensestatus.php:78 gameplay.php:624 gameplay.php:649
+#: playercard.php:173 playercard.php:225 playercard.php:302 teamcard.php:126
+#: teamcard.php:413 teamcard.php:502
+#, fuzzy
+msgid "Defences"
+msgstr "Defenses"
+
+#: playercard.php:178
+#, fuzzy
+msgid "Defences avg."
+msgstr "Defensedurch."
 
 #: user/adddefensesheet.php:125 user/adddefensesheet.php:130
 #: user/adddefensesheet.php:156 user/adddefensesheet.php:165
@@ -1378,32 +1408,13 @@ msgstr "Defensebericht"
 msgid "Defense sheet saved"
 msgstr "Denfensebericht gespeichert"
 
-#: defensestatus.php:17 defensestatus.php:40 poolstatus.php:224
-#: poolstatus.php:252 poolstatus.php:254 seriesstatus.php:327
-msgid "Defenseboard"
-msgstr "Defenseliste"
-
-#: poolstatus.php:210 poolstatus.php:226 seriesstatus.php:311
-msgid "Defenseboard leaders"
-msgstr "Topscorer Defense"
-
-#: defensestatus.php:76 defensestatus.php:78 gameplay.php:624 gameplay.php:649
-#: playercard.php:173 teamcard.php:126 teamcard.php:413 teamcard.php:502
 #: cust/wfdf/pdfprinter.php:243
 msgid "Defenses"
 msgstr "Defenses"
 
-#: playercard.php:178
-msgid "Defenses avg."
-msgstr "Defensedurch."
-
 #: cust/default/pdfprinter.php:122 cust/gummis/pdfprinter.php:121
 msgid "Defenses record"
 msgstr "Defense-Statistik"
-
-#: playercard.php:225 playercard.php:302
-msgid "Defenses."
-msgstr "Defenses."
 
 #: admin/seasongames.php:227
 msgid "Defensesheet"
@@ -1724,8 +1735,13 @@ msgstr "Email"
 msgid "Email address already registered"
 msgstr "Die Email-Adresse ist bereits registriert worden"
 
-#: register.php:43 admin/adduser.php:37 user/addextraemail.php:26
+#: admin/adduser.php:37 user/addextraemail.php:26
 msgid "Email can not be empty"
+msgstr "Email darf nicht leer sein"
+
+#: register.php:43
+#, fuzzy
+msgid "Email cannot be empty"
 msgstr "Email darf nicht leer sein"
 
 #: ext/index.php:59
@@ -2077,14 +2093,15 @@ msgstr "Spielbericht eingeben"
 msgid "Fill in the extra email address below"
 msgstr "Gib die Extra-Email-Adresse unten an"
 
+#: register.php:98
+#, fuzzy
+msgid "Fill in the registration information in the fields below."
+msgstr "Fülle das Formular mit den Registrierungsdaten aus."
+
 #: user/adddefensesheet.php:342 user/addscoresheet.php:655
 #, fuzzy
 msgid "Fill in the scoresheet"
 msgstr "Spielbericht eingeben"
-
-#: register.php:98
-msgid "Fill registration information in fields below."
-msgstr "Fülle das Formular mit den Registrierungsdaten aus."
 
 #: cust/slkl/pdfprinter.php:214
 msgid "Filling instructions:"
@@ -2189,8 +2206,16 @@ msgid "Follow the instructions in the e-mail to confirm the address"
 msgstr "Folge den Anweisungen in der Email, um die Adresse zu bestätigen"
 
 #: register.php:100
-msgid "Follow the link in the mail to confirm registration."
+#, fuzzy
+msgid "Follow the link in the email to confirm your registration."
 msgstr "Folge dem Link in der Email, um die Registrierung zu bestätigen."
+
+#: frontpage.php:30
+#, fuzzy
+msgid "For feedback, improvement ideas, or any other questions, contact:"
+msgstr ""
+"Für Feedback, Verbesserungsvorschläge und alle anderen Fragen wenden Sie "
+"sich an:"
 
 #: admin/addseasons.php:335
 msgid "For national teams"
@@ -2353,10 +2378,6 @@ msgstr "Frühere Spiele"
 msgid "Game input responsibility"
 msgstr "Spieleingabe-Recht"
 
-#: result.php:68
-msgid "Game is already played. Result:"
-msgstr "Spiel beendet. Ergebnis:"
-
 #: user/addresult.php:81
 msgid "Game is finished."
 msgstr "Spiel ist vorbei."
@@ -2495,19 +2516,18 @@ msgstr "Spielverlauf"
 #: playercard.php:468 playerlist.php:34 poolstatus.php:212 poolstatus.php:228
 #: poolstatus.php:273 poolstatus.php:346 scorestatus.php:71 scorestatus.php:73
 #: seriesstatus.php:157 seriesstatus.php:159 seriesstatus.php:293
-#: seriesstatus.php:313 seriesstatus.php:321 seriesstatus.php:336
-#: spiritstatus.php:100 spiritstatus.php:102 statistics.php:125
-#: statistics.php:167 teamcard.php:122 teamcard.php:167 teamcard.php:276
-#: teamcard.php:403 teamcard.php:492 teamcard.php:600 teamcard.php:685
-#: teams.php:123 teams.php:174 teams.php:354 admin/accreditation.php:193
-#: admin/accreditation.php:256 admin/editstanding.php:58 admin/poolgames.php:17
-#: admin/reservations.php:116 admin/seasonadmin.php:93 admin/seasongames.php:21
-#: admin/seasonseries.php:123 admin/seasonstandings.php:301
-#: admin/seasonstandings.php:358 admin/seasonstandings.php:406
-#: admin/seasonstats.php:20 admin/seasonstats.php:34 admin/seriesgames.php:30
-#: admin/stats.php:98 ext/countrystatus.php:50 ext/eventpools.php:47
-#: ext/poolscoreboard.php:36 ext/poolstatus.php:45 ext/teamscoreboard.php:44
-#: lib/search.functions.php:742
+#: seriesstatus.php:313 seriesstatus.php:335 spiritstatus.php:100
+#: spiritstatus.php:102 statistics.php:125 statistics.php:167 teamcard.php:122
+#: teamcard.php:167 teamcard.php:276 teamcard.php:403 teamcard.php:492
+#: teamcard.php:600 teamcard.php:685 teams.php:123 teams.php:174 teams.php:354
+#: admin/accreditation.php:193 admin/accreditation.php:256
+#: admin/editstanding.php:58 admin/poolgames.php:17 admin/reservations.php:116
+#: admin/seasonadmin.php:93 admin/seasongames.php:21 admin/seasonseries.php:123
+#: admin/seasonstandings.php:301 admin/seasonstandings.php:358
+#: admin/seasonstandings.php:406 admin/seasonstats.php:20
+#: admin/seasonstats.php:34 admin/seriesgames.php:30 admin/stats.php:98
+#: ext/countrystatus.php:50 ext/eventpools.php:47 ext/poolscoreboard.php:36
+#: ext/poolstatus.php:45 ext/teamscoreboard.php:44 lib/search.functions.php:742
 msgid "Games"
 msgstr "Spiele"
 
@@ -2545,7 +2565,7 @@ msgid "Games to move"
 msgstr "Mitzunehmende Spiele"
 
 #: admin/spirit.php:320
-msgid "Games with spirit timeout"
+msgid "Games with a spirit stoppage"
 msgstr ""
 
 #: scorekeeper/respgames.php:53
@@ -2863,12 +2883,14 @@ msgid "Home"
 msgstr "Heim"
 
 #: result.php:93
-msgid "Home Goals"
+#, fuzzy
+msgid "Home score"
 msgstr "Punkte (Heim)"
 
 #: admin/spirit.php:321 admin/spirit.php:342
-msgid "Home spirit timeouts"
-msgstr ""
+#, fuzzy
+msgid "Home spirit stoppages"
+msgstr "Spiritwertung"
 
 #: admin/editgame.php:181 cust/bula/pdfprinter.php:70
 #: cust/gummis/pdfprinter.php:68 cust/slkl/pdfprinter.php:66
@@ -2995,14 +3017,6 @@ msgid ""
 msgstr ""
 "Neben der Tab-Taste kann auch die + Taste benutzt werden, um von Feld zu "
 "Feld zu springen. Mit der Enter-Taste kann ein Radiobutton ausgewählt werden."
-
-#: frontpage.php:30
-#, fuzzy
-msgid ""
-"In case of feedback, improvement ideas or any other questions contact to:"
-msgstr ""
-"Für Feedback, Verbesserungsvorschläge und alle anderen Fragen wenden Sie "
-"sich an:"
 
 #: admin/addseasonusers.php:161 admin/addseasonusers.php:223
 msgid "In role of event admin"
@@ -3328,6 +3342,7 @@ msgstr "Ort"
 msgid "Lock spirit after submit"
 msgstr ""
 
+#: login.php:6 login.php:23 menufunctions.php:159 menufunctions.php:276
 #: scorekeeper/login.php:14 scorekeeper/login.php:24
 msgid "Log in"
 msgstr "Einloggen"
@@ -3341,7 +3356,11 @@ msgstr "Neue(s) Turnier/Saison"
 msgid "Log in with your existing account."
 msgstr ""
 
-#: login.php:6 login.php:23 menufunctions.php:159 menufunctions.php:276
+#: login.php:29 logout.php:5 menufunctions.php:173 menufunctions.php:303
+#, fuzzy
+msgid "Log out"
+msgstr "Einloggen"
+
 #: mobile/index.php:18
 msgid "Login"
 msgstr "Login"
@@ -3350,7 +3369,6 @@ msgstr "Login"
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
 
-#: login.php:29 logout.php:5 menufunctions.php:173 menufunctions.php:303
 #: mobile/respgames.php:144 scorekeeper/index.php:84
 msgid "Logout"
 msgstr "Abmelden"
@@ -3615,14 +3633,18 @@ msgstr "HINWEIS"
 msgid "Name"
 msgstr "Name"
 
-#: register.php:38 admin/addseasons.php:73 admin/addseasons.php:101
-#: admin/adduser.php:32
+#: admin/addseasons.php:73 admin/addseasons.php:101 admin/adduser.php:32
 msgid "Name can not be empty"
 msgstr "Name darf nicht leer sein"
 
 #: user/userinfo.php:43
 msgid "Name can not be empty."
 msgstr "Name darf nicht leer sein."
+
+#: register.php:38
+#, fuzzy
+msgid "Name cannot be empty"
+msgstr "Name darf nicht leer sein"
 
 #: admin/poolmoves.php:216 admin/poolmoves.php:246 admin/poolmoves.php:279
 #: admin/poolmoves.php:281 admin/poolmoves.php:320 admin/serieteams.php:187
@@ -3721,7 +3743,7 @@ msgid "No"
 msgstr "Nein"
 
 #: defensestatus.php:130
-msgid "No defense data available for the selected filter."
+msgid "No defence data available for the selected filter."
 msgstr ""
 
 #: lib/spirit.functions.php:715
@@ -3844,7 +3866,7 @@ msgstr "Spiritwertung"
 
 #: admin/spirit.php:331
 #, fuzzy
-msgid "No spirit timeouts found."
+msgid "No spirit stoppages found."
 msgstr "Keine Playoff-Baum-Vorlage gefunden."
 
 #: admin/addseasonpools.php:409
@@ -4078,11 +4100,11 @@ msgid "Pause game clock"
 msgstr ""
 
 #: scorekeeper/addspirittimeouts.php:104
-msgid "Pause the game clock during a spirit timeout."
+msgid "Pause the game clock during a spirit stoppage."
 msgstr ""
 
 #: scorekeeper/addspirittimeouts.php:296
-msgid "Pause the game clock for this spirit timeout?"
+msgid "Pause the game clock for this spirit stoppage?"
 msgstr ""
 
 #: scorekeeper/addscoresheet.php:538
@@ -4534,9 +4556,10 @@ msgid ""
 msgstr ""
 
 #: register.php:95
+#, fuzzy
 msgid ""
-"Registration is only needed for event organizers, team contact persons and "
-"players needing to create or change data in system."
+"Registration is only needed for event organizers, team contact persons, and "
+"players who need to create or change data in the system."
 msgstr ""
 "Eine Registrierung ist nur für Ausrichter, Team-Kontaktpersonen und Spieler, "
 "die Systemdaten eintragen oder ändern müssen, nötig."
@@ -5439,7 +5462,7 @@ msgstr "Zeige Gruppen"
 
 #: admin/spirit.php:528
 #, fuzzy
-msgid "Show spirit timeouts"
+msgid "Show spirit stoppages"
 msgstr "Spiritpunkte"
 
 #: scorekeeper/respgames.php:80
@@ -5479,11 +5502,6 @@ msgstr "Spezielle Playout-Baum-Vorlage"
 msgid "Spirit"
 msgstr "Spirit"
 
-#: gameplay.php:554
-#, fuzzy
-msgid "Spirit Points"
-msgstr "Spiritpunkte"
-
 #: menufunctions.php:600 menufunctions.php:613 ext/export.php:38
 #, fuzzy
 msgid "Spirit Scores"
@@ -5509,11 +5527,6 @@ msgstr "Tabellenstände"
 msgid "Spirit admins"
 msgstr "Tabellenstände"
 
-#: teamcard.php:412 teamcard.php:501 teamcard.php:609 teamcard.php:694
-#, fuzzy
-msgid "Spirit avg"
-msgstr "Spirit"
-
 #: admin/spiritsettings.php:78
 #, fuzzy
 msgid "Spirit comments visible"
@@ -5536,7 +5549,6 @@ msgstr ""
 msgid "Spirit note for"
 msgstr "Spiritpunkte für"
 
-#: gameplay.php:538 seriesstatus.php:199 seriesstatus.php:201
 #: admin/seasonadmin.php:46 admin/seasonstandings.php:364
 #: admin/seasonstandings.php:415 cust/bula/pdfprinter.php:986
 #: cust/default/pdfprinter.php:900 cust/gummis/pdfprinter.php:1046
@@ -5547,38 +5559,34 @@ msgstr "Spiritpunkte für"
 msgid "Spirit points"
 msgstr "Spiritpunkte"
 
-#: spiritstatus.php:46
-#, fuzzy
-msgid "Spirit points are not visible."
-msgstr "Spiritpunkte anzeigen"
-
-#: seriesstatus.php:332
-msgid "Spirit points average per category"
-msgstr "Spiritpunkte (Durchschnitt) pro Kategorie"
-
 #: user/addspirit.php:280 user/addspirit.php:288 user/addspirit.php:296
 #: user/addspirit.php:302
 msgid "Spirit points given for"
 msgstr "Spiritpunkte für"
-
-#: teamcard.php:343
-#, fuzzy
-msgid "Spirit points given to the other teams:"
-msgstr "Spiritpunkte für %s"
 
 #: user/addspirit.php:321
 #, php-format
 msgid "Spirit points not given for %s."
 msgstr "Spiritpunkte fehlen für %s."
 
-#: teamcard.php:302
-#, fuzzy
-msgid "Spirit points received:"
-msgstr "Spiritpunkte für"
-
 #: admin/spiritsettings.php:73
 msgid "Spirit points visible"
 msgstr "Spiritpunkte anzeigen"
+
+#: gameplay.php:538 seriesstatus.php:199 seriesstatus.php:201
+#, fuzzy
+msgid "Spirit score"
+msgstr "Spiritwertung"
+
+#: seriesstatus.php:331
+#, fuzzy
+msgid "Spirit score average per category"
+msgstr "Spiritpunkte (Durchschnitt) pro Kategorie"
+
+#: teamcard.php:412 teamcard.php:501 teamcard.php:609 teamcard.php:694
+#, fuzzy
+msgid "Spirit score avg."
+msgstr "Spiritwertung"
 
 #: user/addspirit.php:148
 #, fuzzy
@@ -5596,10 +5604,25 @@ msgstr "Spiritwertung"
 msgid "Spirit score not saved. "
 msgstr "Spiritwertung"
 
-#: teamcard.php:273
+#: gameplay.php:554 teamcard.php:273
 #, fuzzy
 msgid "Spirit scores"
 msgstr "Spiritwertung"
+
+#: spiritstatus.php:46
+#, fuzzy
+msgid "Spirit scores are not visible."
+msgstr "Spiritpunkte anzeigen"
+
+#: teamcard.php:343
+#, fuzzy
+msgid "Spirit scores given to the other teams:"
+msgstr "Spiritpunkte für %s"
+
+#: teamcard.php:302
+#, fuzzy
+msgid "Spirit scores received:"
+msgstr "Spiritpunkte für"
 
 #: admin/spirit.php:423
 msgid "Spirit scoring is disabled for this event."
@@ -5617,8 +5640,8 @@ msgstr ""
 #: gameplay.php:251 ext/rss.php:144 ext/rss.php:180 mobile/gameplay.php:56
 #: scorekeeper/endgame.php:75 scorekeeper/gameplay.php:48
 #, fuzzy
-msgid "Spirit timeout"
-msgstr "Spiritmodus"
+msgid "Spirit stoppage"
+msgstr "Spiritwertung"
 
 #: cust/bula/pdfprinter.php:929 cust/default/pdfprinter.php:869
 #: cust/fpudd/pdfprinter.php:869 cust/gummis/pdfprinter.php:995
@@ -5627,21 +5650,21 @@ msgstr "Spiritmodus"
 #: mobile/addtimeouts.php:99 scorekeeper/addscoresheet.php:409
 #: scorekeeper/addspirittimeouts.php:100 user/addscoresheet.php:586
 #, fuzzy
-msgid "Spirit timeouts"
-msgstr "Spiritpunkte"
+msgid "Spirit stoppages"
+msgstr "Spiritwertung"
 
 #: cust/wfdf/pdfprinter.php:1323
 #, fuzzy
-msgid "Spirit timeouts (min:sec)"
+msgid "Spirit stoppages (min:sec)"
 msgstr "Spiritpunkte anzeigen"
 
 #: cust/slkl/pdfprinter.php:869
 #, fuzzy
-msgid "Spirit timeouts (time)"
+msgid "Spirit stoppages (time)"
 msgstr "Auszeiten (Zeit)"
 
 #: admin/spirit.php:526
-msgid "Spirit timeouts recorded for this season."
+msgid "Spirit stoppages recorded for this event."
 msgstr ""
 
 #: menufunctions.php:250 menufunctions.php:687
@@ -5771,7 +5794,7 @@ msgstr "Aufgaben"
 #: playercard.php:399 poolstatus.php:145 poolstatus.php:166 poolstatus.php:212
 #: poolstatus.php:228 poolstatus.php:272 poolstatus.php:345 scorestatus.php:66
 #: scorestatus.php:68 seriesstatus.php:131 seriesstatus.php:133
-#: seriesstatus.php:293 seriesstatus.php:313 seriesstatus.php:335
+#: seriesstatus.php:293 seriesstatus.php:313 seriesstatus.php:334
 #: spiritstatus.php:95 spiritstatus.php:97 teamcard.php:793
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/accreditation.php:193
@@ -5858,8 +5881,9 @@ msgid "Team statistics"
 msgstr "Team-Statistiken"
 
 #: scorekeeper/addspirittimeouts.php:116
-msgid "Team taking spirit timeout"
-msgstr ""
+#, fuzzy
+msgid "Team taking the spirit stoppage"
+msgstr "Startzeit"
 
 #: scorekeeper/addtimeouts.php:93
 #, fuzzy
@@ -5950,6 +5974,11 @@ msgstr ""
 #: statistics.php:94
 msgid "Third"
 msgstr "3."
+
+#: result.php:68
+#, fuzzy
+msgid "This game has already been played. Current result:"
+msgstr "Spiel beendet. Ergebnis:"
 
 #: admin/eventdataimport.php:69
 msgid ""
@@ -6161,7 +6190,7 @@ msgstr "Morgen"
 #: gamecard.php:254 gameplay.php:63 gameplay.php:90 playercard.php:171
 #: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
 #: playerlist.php:37 poolstatus.php:146 poolstatus.php:167 scorestatus.php:103
-#: scorestatus.php:105 seriesstatus.php:294 seriesstatus.php:341
+#: scorestatus.php:105 seriesstatus.php:294 seriesstatus.php:340
 #: spiritstatus.php:113 spiritstatus.php:115 teamcard.php:125 teams.php:359
 #: ext/poolscoreboard.php:39 ext/teamscoreboard.php:47
 msgid "Tot."
@@ -6182,7 +6211,8 @@ msgid "Total"
 msgstr "Total"
 
 #: poolstatus.php:213 poolstatus.php:229 seriesstatus.php:314
-msgid "Total defenses"
+#, fuzzy
+msgid "Total defences"
 msgstr "Summe Defense"
 
 #: cust/bula/pdfprinter.php:219 cust/bula/pdfprinter.php:223
@@ -6204,7 +6234,7 @@ msgstr "Summe Defense"
 
 #: admin/spirit.php:319
 #, fuzzy
-msgid "Total spirit timeouts"
+msgid "Total spirit stoppages"
 msgstr "Gesamtpunkte"
 
 #: cust/default/pdfprinter.php:1000 cust/gummis/pdfprinter.php:1135
@@ -7150,8 +7180,8 @@ msgstr "durch Komma trennen"
 #: mobile/addspirittimeouts.php:68 mobile/addspirittimeouts.php:76
 #: scorekeeper/addspirittimeouts.php:123 scorekeeper/addspirittimeouts.php:154
 #, fuzzy
-msgid "spirit timeouts"
-msgstr "Auszeiten"
+msgid "spirit stoppages"
+msgstr "Spiritwertung"
 
 #: mobile/addfirstoffence.php:39
 msgid "starting on offence"
@@ -7214,6 +7244,9 @@ msgstr "ohne Anführungszeichen"
 msgid "yes"
 msgstr "ja"
 
+#~ msgid "Away Goals"
+#~ msgstr "Punkte (Gast)"
+
 #~ msgid "By division"
 #~ msgstr "Nach Klasse/Liga"
 
@@ -7250,6 +7283,12 @@ msgstr "ja"
 
 #~ msgid "Communication (theirs)"
 #~ msgstr "Kommunikation (sie)"
+
+#~ msgid "Def. avg."
+#~ msgstr "Def. Mittel"
+
+#~ msgid "Defenses."
+#~ msgstr "Defenses."
 
 #~ msgid "Delete goal number"
 #~ msgstr "Punkt löschen, #"
@@ -7288,8 +7327,14 @@ msgstr "ja"
 #~ msgid "Fouls and Body Contact (theirs)"
 #~ msgstr "Fouls und Körperkontakt (sie)"
 
+#~ msgid "Game is already played. Result:"
+#~ msgstr "Spiel beendet. Ergebnis:"
+
 #~ msgid "Half time"
 #~ msgstr "Halbzeit"
+
+#~ msgid "Home Goals"
+#~ msgstr "Punkte (Heim)"
 
 #~ msgid "In time"
 #~ msgstr "Zeit"
@@ -7340,9 +7385,25 @@ msgstr "ja"
 #~ msgstr "Spielbericht"
 
 #, fuzzy
+#~ msgid "Spirit Points"
+#~ msgstr "Spiritpunkte"
+
+#, fuzzy
+#~ msgid "Spirit avg"
+#~ msgstr "Spirit"
+
+#, fuzzy
 #~| msgid "Spirit mode"
 #~ msgid "Spirit note"
 #~ msgstr "Spiritmodus"
+
+#, fuzzy
+#~ msgid "Spirit timeout"
+#~ msgstr "Spiritmodus"
+
+#, fuzzy
+#~ msgid "Spirit timeouts"
+#~ msgstr "Spiritpunkte"
 
 #~ msgid ""
 #~ "This operation updates and adds event data in database with one from "
@@ -7383,6 +7444,10 @@ msgstr "ja"
 
 #~ msgid "scoreboard"
 #~ msgstr "Scorerliste"
+
+#, fuzzy
+#~ msgid "spirit timeouts"
+#~ msgstr "Auszeiten"
 
 #~ msgid "visible"
 #~ msgstr "sichtbar"

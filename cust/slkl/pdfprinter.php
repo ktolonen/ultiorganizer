@@ -866,7 +866,7 @@ class PDF extends tFPDF
 		$this->SetFont('Arial', 'B', 12);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(80, 6, pdf_iso_text(_("Spirit timeouts (time)")), 'LRTB', 0, 'C', true);
+		$this->Cell(80, 6, pdf_iso_text(_("Spirit stoppages (time)")), 'LRTB', 0, 'C', true);
 		$this->Ln();
 
 		$this->SetFont('Arial', '', 12);

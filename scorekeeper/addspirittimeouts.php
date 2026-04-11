@@ -97,11 +97,11 @@ $html .= "<div data-role='header'>\n";
 if ($showClock) {
   $html .= "<span id='gametime' style='float: left; margin: 0.2em 1.1em 0.25em 0.5ex; padding: 0.15em 0.4em; border-radius: 0.35em; background: #e6eef2; line-height: 1.3; font-size: 1.8em;'>" . sprintf("%02d", $timerState['mm']) . ":" . sprintf("%02d", $timerState['ss']) . "</span>";
 }
-$html .= "<h1>" . _("Spirit timeouts") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
+$html .= "<h1>" . _("Spirit stoppages") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
-$html .= "<p class='warning'><strong>" . _("Pause the game clock during a spirit timeout.") . "</strong> " . _("Resume it when play continues.") . "</p>";
+$html .= "<p class='warning'><strong>" . _("Pause the game clock during a spirit stoppage.") . "</strong> " . _("Resume it when play continues.") . "</p>";
 $html .= "<form action='?view=addspirittimeouts' method='post' data-ajax='false'>\n";
 
 if ($useGameClock && $timerState['ongoing']) {
@@ -113,14 +113,14 @@ if ($useGameClock && $timerState['ongoing']) {
 }
 
 $html .= "<fieldset data-role='controlgroup' id='spirit-timeout-team-selection'>";
-$html .= "<legend>" . _("Team taking spirit timeout") . "</legend>";
+$html .= "<legend>" . _("Team taking the spirit stoppage") . "</legend>";
 $html .= "<input type='radio' name='spirittimeoutteam' id='spirittimeoutteam-home' value='H' />";
 $html .= "<label for='spirittimeoutteam-home'>" . utf8entities($game_result['hometeamname']) . "</label>";
 $html .= "<input type='radio' name='spirittimeoutteam' id='spirittimeoutteam-away' value='A' />";
 $html .= "<label for='spirittimeoutteam-away'>" . utf8entities($game_result['visitorteamname']) . "</label>";
 $html .= "</fieldset>";
 
-$html .= "<label for='htomm0' class='select'><b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("spirit timeouts") . " (" . _("min") . ":" . _("sec") . "):</label>";
+$html .= "<label for='htomm0' class='select'><b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("spirit stoppages") . " (" . _("min") . ":" . _("sec") . "):</label>";
 $html .= "<div class='timeout-list'>";
 foreach ($homeTimeoutData['values'] as $j => $time) {
   $html .= "<div class='timeout-pair'>\n";
@@ -151,7 +151,7 @@ foreach ($homeTimeoutData['values'] as $j => $time) {
 }
 $html .= "</div>";
 
-$html .= "<label for='atomm0' class='select'><b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("spirit timeouts") . " (" . _("min") . ":" . _("sec") . "):</label>";
+$html .= "<label for='atomm0' class='select'><b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("spirit stoppages") . " (" . _("min") . ":" . _("sec") . "):</label>";
 $html .= "<div class='timeout-list'>";
 foreach ($awayTimeoutData['values'] as $j => $time) {
   $html .= "<div class='timeout-pair'>\n";
@@ -293,7 +293,7 @@ echo $html;
     var pauseButton = document.getElementById('pausegame');
     if (pauseButton) {
       pauseButton.addEventListener('click', function(event) {
-        if (!confirm(<?php echo json_encode(_("Pause the game clock for this spirit timeout?")); ?>)) {
+        if (!confirm(<?php echo json_encode(_("Pause the game clock for this spirit stoppage?")); ?>)) {
           event.preventDefault();
         }
       });

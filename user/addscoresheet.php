@@ -583,7 +583,7 @@ if (!$hideTimeOnScoresheet && !empty($seasoninfo['spiritmode'])) {
   $awaySpiritTimeouts = ScoreSheetSpiritTimeoutValues($gameId, 0, $maxspirittimeouts);
 
   echo "<table cellspacing='0' width='100%' border='1'>";
-  echo "<tr><th colspan='" . ($maxspirittimeouts + 1) . "'>" . _("Spirit timeouts") . "</th></tr>\n";
+  echo "<tr><th colspan='" . ($maxspirittimeouts + 1) . "'>" . _("Spirit stoppages") . "</th></tr>\n";
 
   echo "<tr><th>" . $homeshortname . "</th>\n";
   for ($i = 0; $i < $maxspirittimeouts; $i++) {

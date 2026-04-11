@@ -72,7 +72,7 @@ if (!count($goalRows)) {
           if ($event['type'] == "timeout") {
             $gameevent = _("timeout");
           } elseif ($event['type'] == "spirit_timeout") {
-            $gameevent = _("Spirit timeout");
+            $gameevent = _("Spirit stoppage");
           } elseif ($event['type'] == "turnover") {
             $gameevent = _("turnover");
           } elseif ($event['type'] == "offence") {

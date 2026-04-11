@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-11 12:35+0300\n"
+"POT-Creation-Date: 2026-04-11 15:28+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -116,6 +116,17 @@ msgstr ""
 #: poolstatus.php:589 poolstatus.php:703 poolstatus.php:716
 msgid "???"
 msgstr ""
+
+#: register.php:99
+#, fuzzy
+msgid ""
+"A confirmation email will be sent immediately to the email address provided. "
+"Some email clients may incorrectly filter the message as spam, so check your "
+"spam folder if it does not appear in your inbox."
+msgstr ""
+"Vahvistusviesti lähetetään välittömästi annettuun osoitteeseen. (Huomioi "
+"että jotkin sähköpostiohjelmat tulkitsevat viestin virheellisesti "
+"roskapostiksi. Tässä tapauksessa viesti löytyy roskapostikansiosta.)"
 
 #: allclubs.php:30 allclubs.php:32 allplayers.php:35 allplayers.php:37
 #: allteams.php:31 allteams.php:33
@@ -640,11 +651,12 @@ msgid "Away"
 msgstr "Vieras"
 
 #: result.php:97
-msgid "Away Goals"
-msgstr "Vierasmaalit"
+#, fuzzy
+msgid "Away score"
+msgstr "Pelin tulos"
 
 #: admin/spirit.php:322 admin/spirit.php:343
-msgid "Away spirit timeouts"
+msgid "Away spirit stoppages"
 msgstr ""
 
 #: cust/bula/pdfprinter.php:71 cust/gummis/pdfprinter.php:69
@@ -764,14 +776,14 @@ msgstr "Callahan"
 msgid "Callahan defense"
 msgstr "Callahan puolustus"
 
-#: scorekeeper/addscoresheet.php:351 scorekeeper/addscoresheet.php:442
-#: scorekeeper/addscoresheet.php:452 scorekeeper/endgame.php:114
-#: scorekeeper/gameplay.php:86
+#: gameplay.php:222 playercard.php:570 scorekeeper/addscoresheet.php:351
+#: scorekeeper/addscoresheet.php:442 scorekeeper/addscoresheet.php:452
+#: scorekeeper/endgame.php:114 scorekeeper/gameplay.php:86
 #, fuzzy
 msgid "Callahan goal"
 msgstr "Callahan-maali"
 
-#: gameplay.php:222 playercard.php:570 mobile/gameplay.php:84
+#: mobile/gameplay.php:84
 msgid "Callahan-goal"
 msgstr "Callahan-maali"
 
@@ -864,8 +876,13 @@ msgstr "Muuta pelin pelaajalista"
 msgid "Change game scoresheet"
 msgstr "Muuta pelin pöytäkirja"
 
-#: result.php:70 scorekeeper/result.php:73
+#: scorekeeper/result.php:73
 msgid "Change result to"
+msgstr "Muuta pelin tulos"
+
+#: result.php:70
+#, fuzzy
+msgid "Change the result to"
 msgstr "Muuta pelin tulos"
 
 #: admin/addseasonteams.php:77
@@ -1114,17 +1131,6 @@ msgstr "Vahvistusviesti lähetetty antamaasi sähköpostiosoitteeseen"
 msgid "Confirmation email will be sent to the email address provided"
 msgstr "Vahvistusviesti lähetetty antamaasi sähköpostiosoitteeseen"
 
-#: register.php:99
-msgid ""
-"Confirmation mail will be sent immediately to the email address provided. "
-"(Note that confirmation mail can be incorrectly filterd as spam by e-mail "
-"client and in this case you can find the mail from spam -folder instead of "
-"inbox.)"
-msgstr ""
-"Vahvistusviesti lähetetään välittömästi annettuun osoitteeseen. (Huomioi "
-"että jotkin sähköpostiohjelmat tulkitsevat viestin virheellisesti "
-"roskapostiksi. Tässä tapauksessa viesti löytyy roskapostikansiosta.)"
-
 #: user/enrollteam.php:116
 msgid "Confirmed"
 msgstr "Vahvistettu"
@@ -1339,10 +1345,6 @@ msgstr "Syntymäaika"
 msgid "Day"
 msgstr ""
 
-#: playercard.php:227 playercard.php:304
-msgid "Def. avg."
-msgstr "Puol. ka."
-
 #: admin/serverconf.php:226
 msgid "Default Locale"
 msgstr "Oletuskieli"
@@ -1350,6 +1352,34 @@ msgstr "Oletuskieli"
 #: admin/serverconf.php:210
 msgid "Default Timezone"
 msgstr "Oletusaikavyöhyke"
+
+#: playercard.php:227 playercard.php:304
+#, fuzzy
+msgid "Defence avg."
+msgstr "Puolustus ka."
+
+#: defensestatus.php:17 defensestatus.php:40 poolstatus.php:224
+#: poolstatus.php:252 poolstatus.php:254 seriesstatus.php:326
+#, fuzzy
+msgid "Defence board"
+msgstr "Puolustustilastot"
+
+#: poolstatus.php:210 poolstatus.php:226 seriesstatus.php:311
+#, fuzzy
+msgid "Defence board leaders"
+msgstr "Puolustuksen kärkisijat"
+
+#: defensestatus.php:76 defensestatus.php:78 gameplay.php:624 gameplay.php:649
+#: playercard.php:173 playercard.php:225 playercard.php:302 teamcard.php:126
+#: teamcard.php:413 teamcard.php:502
+#, fuzzy
+msgid "Defences"
+msgstr "Puolustukset"
+
+#: playercard.php:178
+#, fuzzy
+msgid "Defences avg."
+msgstr "Puolustus ka."
 
 #: user/adddefensesheet.php:125 user/adddefensesheet.php:130
 #: user/adddefensesheet.php:156 user/adddefensesheet.php:165
@@ -1371,32 +1401,13 @@ msgstr "Puolustustilasto"
 msgid "Defense sheet saved"
 msgstr "Puolustustilastot tallennettu"
 
-#: defensestatus.php:17 defensestatus.php:40 poolstatus.php:224
-#: poolstatus.php:252 poolstatus.php:254 seriesstatus.php:327
-msgid "Defenseboard"
-msgstr "Puolustustilastot"
-
-#: poolstatus.php:210 poolstatus.php:226 seriesstatus.php:311
-msgid "Defenseboard leaders"
-msgstr "Puolustuksen kärkisijat"
-
-#: defensestatus.php:76 defensestatus.php:78 gameplay.php:624 gameplay.php:649
-#: playercard.php:173 teamcard.php:126 teamcard.php:413 teamcard.php:502
 #: cust/wfdf/pdfprinter.php:243
 msgid "Defenses"
 msgstr "Puolustukset"
 
-#: playercard.php:178
-msgid "Defenses avg."
-msgstr "Puolustus ka."
-
 #: cust/default/pdfprinter.php:122 cust/gummis/pdfprinter.php:121
 msgid "Defenses record"
 msgstr "Puolustustilasto"
-
-#: playercard.php:225 playercard.php:302
-msgid "Defenses."
-msgstr "Puolustukset."
 
 #: admin/seasongames.php:227
 msgid "Defensesheet"
@@ -1710,8 +1721,13 @@ msgstr "Sähköposti"
 msgid "Email address already registered"
 msgstr "Sälöpostiosoite on jo rekisteröity"
 
-#: register.php:43 admin/adduser.php:37 user/addextraemail.php:26
+#: admin/adduser.php:37 user/addextraemail.php:26
 msgid "Email can not be empty"
+msgstr "Sähköposti ei voi olla tyhjä"
+
+#: register.php:43
+#, fuzzy
+msgid "Email cannot be empty"
 msgstr "Sähköposti ei voi olla tyhjä"
 
 #: ext/index.php:59
@@ -2063,14 +2079,15 @@ msgstr "Syötä pöytäkirja"
 msgid "Fill in the extra email address below"
 msgstr "Lisää sähköpostiosoitteita"
 
+#: register.php:98
+#, fuzzy
+msgid "Fill in the registration information in the fields below."
+msgstr "Täytä rekisteröitymistiedot alla oleviin kenttiin."
+
 #: user/adddefensesheet.php:342 user/addscoresheet.php:655
 #, fuzzy
 msgid "Fill in the scoresheet"
 msgstr "Syötä pelin pöytäkirja"
-
-#: register.php:98
-msgid "Fill registration information in fields below."
-msgstr "Täytä rekisteröitymistiedot alla oleviin kenttiin."
 
 #: cust/slkl/pdfprinter.php:214
 msgid "Filling instructions:"
@@ -2175,8 +2192,16 @@ msgid "Follow the instructions in the e-mail to confirm the address"
 msgstr "Seuraa sähköpostissa olevia ohjeita vahvistaaksesi rekisteröitymisen"
 
 #: register.php:100
-msgid "Follow the link in the mail to confirm registration."
+#, fuzzy
+msgid "Follow the link in the email to confirm your registration."
 msgstr "Seuraa sähköpostissa olevaa linkkiä vahvistaaksesi rekisteröitymisen."
+
+#: frontpage.php:30
+#, fuzzy
+msgid "For feedback, improvement ideas, or any other questions, contact:"
+msgstr ""
+"Jos haluat kysyä kysymyksen, antaa palautetta tai kehitysehdotuksia ota "
+"yhteyttä:"
 
 #: admin/addseasons.php:335
 msgid "For national teams"
@@ -2338,10 +2363,6 @@ msgstr "Otteluhistoria"
 msgid "Game input responsibility"
 msgstr "Pelin syöttövastuu"
 
-#: result.php:68
-msgid "Game is already played. Result:"
-msgstr "Peli on jo pelattu. Tulos:"
-
 #: user/addresult.php:81
 msgid "Game is finished."
 msgstr "Peli on päättynyt."
@@ -2479,19 +2500,18 @@ msgstr "Pelin kulku"
 #: playercard.php:468 playerlist.php:34 poolstatus.php:212 poolstatus.php:228
 #: poolstatus.php:273 poolstatus.php:346 scorestatus.php:71 scorestatus.php:73
 #: seriesstatus.php:157 seriesstatus.php:159 seriesstatus.php:293
-#: seriesstatus.php:313 seriesstatus.php:321 seriesstatus.php:336
-#: spiritstatus.php:100 spiritstatus.php:102 statistics.php:125
-#: statistics.php:167 teamcard.php:122 teamcard.php:167 teamcard.php:276
-#: teamcard.php:403 teamcard.php:492 teamcard.php:600 teamcard.php:685
-#: teams.php:123 teams.php:174 teams.php:354 admin/accreditation.php:193
-#: admin/accreditation.php:256 admin/editstanding.php:58 admin/poolgames.php:17
-#: admin/reservations.php:116 admin/seasonadmin.php:93 admin/seasongames.php:21
-#: admin/seasonseries.php:123 admin/seasonstandings.php:301
-#: admin/seasonstandings.php:358 admin/seasonstandings.php:406
-#: admin/seasonstats.php:20 admin/seasonstats.php:34 admin/seriesgames.php:30
-#: admin/stats.php:98 ext/countrystatus.php:50 ext/eventpools.php:47
-#: ext/poolscoreboard.php:36 ext/poolstatus.php:45 ext/teamscoreboard.php:44
-#: lib/search.functions.php:742
+#: seriesstatus.php:313 seriesstatus.php:335 spiritstatus.php:100
+#: spiritstatus.php:102 statistics.php:125 statistics.php:167 teamcard.php:122
+#: teamcard.php:167 teamcard.php:276 teamcard.php:403 teamcard.php:492
+#: teamcard.php:600 teamcard.php:685 teams.php:123 teams.php:174 teams.php:354
+#: admin/accreditation.php:193 admin/accreditation.php:256
+#: admin/editstanding.php:58 admin/poolgames.php:17 admin/reservations.php:116
+#: admin/seasonadmin.php:93 admin/seasongames.php:21 admin/seasonseries.php:123
+#: admin/seasonstandings.php:301 admin/seasonstandings.php:358
+#: admin/seasonstandings.php:406 admin/seasonstats.php:20
+#: admin/seasonstats.php:34 admin/seriesgames.php:30 admin/stats.php:98
+#: ext/countrystatus.php:50 ext/eventpools.php:47 ext/poolscoreboard.php:36
+#: ext/poolstatus.php:45 ext/teamscoreboard.php:44 lib/search.functions.php:742
 msgid "Games"
 msgstr "Pelit"
 
@@ -2528,7 +2548,7 @@ msgid "Games to move"
 msgstr "Siirrettävät pelit"
 
 #: admin/spirit.php:320
-msgid "Games with spirit timeout"
+msgid "Games with a spirit stoppage"
 msgstr ""
 
 #: scorekeeper/respgames.php:53
@@ -2843,12 +2863,14 @@ msgid "Home"
 msgstr "Koti"
 
 #: result.php:93
-msgid "Home Goals"
-msgstr "Kotimaalit"
+#, fuzzy
+msgid "Home score"
+msgstr "kotipisteet"
 
 #: admin/spirit.php:321 admin/spirit.php:342
-msgid "Home spirit timeouts"
-msgstr ""
+#, fuzzy
+msgid "Home spirit stoppages"
+msgstr "Spirit-pisteet"
 
 #: admin/editgame.php:181 cust/bula/pdfprinter.php:70
 #: cust/gummis/pdfprinter.php:68 cust/slkl/pdfprinter.php:66
@@ -2975,14 +2997,6 @@ msgid ""
 msgstr ""
 "Tab-näppäimen lisäksi voit käyttää + näppäintä kentästä toiseen siirtymiseen "
 "ja enter-näppäintä valintaan."
-
-#: frontpage.php:30
-#, fuzzy
-msgid ""
-"In case of feedback, improvement ideas or any other questions contact to:"
-msgstr ""
-"Jos haluat kysyä kysymyksen, antaa palautetta tai kehitysehdotuksia ota "
-"yhteyttä:"
 
 #: admin/addseasonusers.php:161 admin/addseasonusers.php:223
 msgid "In role of event admin"
@@ -3306,6 +3320,7 @@ msgstr "Paikka"
 msgid "Lock spirit after submit"
 msgstr ""
 
+#: login.php:6 login.php:23 menufunctions.php:159 menufunctions.php:276
 #: scorekeeper/login.php:14 scorekeeper/login.php:24
 msgid "Log in"
 msgstr "Kirjaudu sisään"
@@ -3319,7 +3334,11 @@ msgstr "Uusi tapahtuma"
 msgid "Log in with your existing account."
 msgstr ""
 
-#: login.php:6 login.php:23 menufunctions.php:159 menufunctions.php:276
+#: login.php:29 logout.php:5 menufunctions.php:173 menufunctions.php:303
+#, fuzzy
+msgid "Log out"
+msgstr "Kirjaudu sisään"
+
 #: mobile/index.php:18
 msgid "Login"
 msgstr "Kirjaudu"
@@ -3328,7 +3347,6 @@ msgstr "Kirjaudu"
 msgid "Login failed"
 msgstr "Kirjauminen epäonnistui"
 
-#: login.php:29 logout.php:5 menufunctions.php:173 menufunctions.php:303
 #: mobile/respgames.php:144 scorekeeper/index.php:84
 msgid "Logout"
 msgstr "Kirjaudu ulos"
@@ -3595,14 +3613,18 @@ msgstr "HUOM"
 msgid "Name"
 msgstr "Nimi"
 
-#: register.php:38 admin/addseasons.php:73 admin/addseasons.php:101
-#: admin/adduser.php:32
+#: admin/addseasons.php:73 admin/addseasons.php:101 admin/adduser.php:32
 msgid "Name can not be empty"
 msgstr "Nimi ei voi olla tyhjä"
 
 #: user/userinfo.php:43
 msgid "Name can not be empty."
 msgstr "Nimi ei voi olla tyhjä."
+
+#: register.php:38
+#, fuzzy
+msgid "Name cannot be empty"
+msgstr "Nimi ei voi olla tyhjä"
 
 #: admin/poolmoves.php:216 admin/poolmoves.php:246 admin/poolmoves.php:279
 #: admin/poolmoves.php:281 admin/poolmoves.php:320 admin/serieteams.php:187
@@ -3699,7 +3721,7 @@ msgid "No"
 msgstr "Ei"
 
 #: defensestatus.php:130
-msgid "No defense data available for the selected filter."
+msgid "No defence data available for the selected filter."
 msgstr ""
 
 #: lib/spirit.functions.php:715
@@ -3820,7 +3842,7 @@ msgstr "Spirit-pisteet"
 
 #: admin/spirit.php:331
 #, fuzzy
-msgid "No spirit timeouts found."
+msgid "No spirit stoppages found."
 msgstr "Päällekkäisä profiileja ei löytynyt"
 
 #: admin/addseasonpools.php:409
@@ -4056,11 +4078,11 @@ msgid "Pause game clock"
 msgstr ""
 
 #: scorekeeper/addspirittimeouts.php:104
-msgid "Pause the game clock during a spirit timeout."
+msgid "Pause the game clock during a spirit stoppage."
 msgstr ""
 
 #: scorekeeper/addspirittimeouts.php:296
-msgid "Pause the game clock for this spirit timeout?"
+msgid "Pause the game clock for this spirit stoppage?"
 msgstr ""
 
 #: scorekeeper/addscoresheet.php:538
@@ -4506,9 +4528,10 @@ msgid ""
 msgstr ""
 
 #: register.php:95
+#, fuzzy
 msgid ""
-"Registration is only needed for event organizers, team contact persons and "
-"players needing to create or change data in system."
+"Registration is only needed for event organizers, team contact persons, and "
+"players who need to create or change data in the system."
 msgstr ""
 "Rekisteröityminen on välttämätöntä vain tapahtumajärjestäjille, joukkueiden "
 "yhteyshenkilöille ja pelaajille, joiden pitää luoda tai muuttaa "
@@ -5400,7 +5423,7 @@ msgstr "Näytä sarjat"
 
 #: admin/spirit.php:528
 #, fuzzy
-msgid "Show spirit timeouts"
+msgid "Show spirit stoppages"
 msgstr "Spirit-pisteet"
 
 #: scorekeeper/respgames.php:80
@@ -5439,10 +5462,6 @@ msgstr "Playoff puun malli"
 msgid "Spirit"
 msgstr "Spirit-pisteet"
 
-#: gameplay.php:554
-msgid "Spirit Points"
-msgstr "Spirit-pisteet"
-
 #: menufunctions.php:600 menufunctions.php:613 ext/export.php:38
 #, fuzzy
 msgid "Spirit Scores"
@@ -5467,10 +5486,6 @@ msgstr "Spirit-sijoitukset"
 msgid "Spirit admins"
 msgstr "Spirit-sijoitukset"
 
-#: teamcard.php:412 teamcard.php:501 teamcard.php:609 teamcard.php:694
-msgid "Spirit avg"
-msgstr "Spirit ka."
-
 #: admin/spiritsettings.php:78
 #, fuzzy
 msgid "Spirit comments visible"
@@ -5492,7 +5507,6 @@ msgstr ""
 msgid "Spirit note for"
 msgstr "Spirit-kommentti joukkueelle"
 
-#: gameplay.php:538 seriesstatus.php:199 seriesstatus.php:201
 #: admin/seasonadmin.php:46 admin/seasonstandings.php:364
 #: admin/seasonstandings.php:415 cust/bula/pdfprinter.php:986
 #: cust/default/pdfprinter.php:900 cust/gummis/pdfprinter.php:1046
@@ -5503,38 +5517,34 @@ msgstr "Spirit-kommentti joukkueelle"
 msgid "Spirit points"
 msgstr "Spirit-pisteet"
 
-#: spiritstatus.php:46
-#, fuzzy
-msgid "Spirit points are not visible."
-msgstr "Spirit-pisteet näkyvissä"
-
-#: seriesstatus.php:332
-msgid "Spirit points average per category"
-msgstr "Spirit-pisteitä annettu per kategoria"
-
 #: user/addspirit.php:280 user/addspirit.php:288 user/addspirit.php:296
 #: user/addspirit.php:302
 msgid "Spirit points given for"
 msgstr "Spirit-pisteitä annettu"
-
-#: teamcard.php:343
-#, fuzzy
-msgid "Spirit points given to the other teams:"
-msgstr "Spirit-pisteitä annettu: %s"
 
 #: user/addspirit.php:321
 #, php-format
 msgid "Spirit points not given for %s."
 msgstr "Spirit-pisteitä ei ole annettu: %s."
 
-#: teamcard.php:302
-#, fuzzy
-msgid "Spirit points received:"
-msgstr "Spirit-pisteet"
-
 #: admin/spiritsettings.php:73
 msgid "Spirit points visible"
 msgstr "Spirit-pisteet näkyvissä"
+
+#: gameplay.php:538 seriesstatus.php:199 seriesstatus.php:201
+#, fuzzy
+msgid "Spirit score"
+msgstr "Spirit-pisteet"
+
+#: seriesstatus.php:331
+#, fuzzy
+msgid "Spirit score average per category"
+msgstr "Spirit-pisteitä annettu per kategoria"
+
+#: teamcard.php:412 teamcard.php:501 teamcard.php:609 teamcard.php:694
+#, fuzzy
+msgid "Spirit score avg."
+msgstr "Spirit-pisteet"
 
 #: user/addspirit.php:148
 #, fuzzy
@@ -5552,8 +5562,23 @@ msgstr "Spirit-pisteet"
 msgid "Spirit score not saved. "
 msgstr "Spirit-pisteet"
 
-#: teamcard.php:273
+#: gameplay.php:554 teamcard.php:273
 msgid "Spirit scores"
+msgstr "Spirit-pisteet"
+
+#: spiritstatus.php:46
+#, fuzzy
+msgid "Spirit scores are not visible."
+msgstr "Spirit-pisteet näkyvissä"
+
+#: teamcard.php:343
+#, fuzzy
+msgid "Spirit scores given to the other teams:"
+msgstr "Spirit-pisteitä annettu: %s"
+
+#: teamcard.php:302
+#, fuzzy
+msgid "Spirit scores received:"
 msgstr "Spirit-pisteet"
 
 #: admin/spirit.php:423
@@ -5573,8 +5598,8 @@ msgstr ""
 #: gameplay.php:251 ext/rss.php:144 ext/rss.php:180 mobile/gameplay.php:56
 #: scorekeeper/endgame.php:75 scorekeeper/gameplay.php:48
 #, fuzzy
-msgid "Spirit timeout"
-msgstr "Spirit malli"
+msgid "Spirit stoppage"
+msgstr "Spirit-pisteet"
 
 #: cust/bula/pdfprinter.php:929 cust/default/pdfprinter.php:869
 #: cust/fpudd/pdfprinter.php:869 cust/gummis/pdfprinter.php:995
@@ -5583,22 +5608,23 @@ msgstr "Spirit malli"
 #: mobile/addtimeouts.php:99 scorekeeper/addscoresheet.php:409
 #: scorekeeper/addspirittimeouts.php:100 user/addscoresheet.php:586
 #, fuzzy
-msgid "Spirit timeouts"
+msgid "Spirit stoppages"
 msgstr "Spirit-pisteet"
 
 #: cust/wfdf/pdfprinter.php:1323
 #, fuzzy
-msgid "Spirit timeouts (min:sec)"
+msgid "Spirit stoppages (min:sec)"
 msgstr "Spirit-pisteet"
 
 #: cust/slkl/pdfprinter.php:869
 #, fuzzy
-msgid "Spirit timeouts (time)"
+msgid "Spirit stoppages (time)"
 msgstr "Aikalisät (aika)"
 
 #: admin/spirit.php:526
-msgid "Spirit timeouts recorded for this season."
-msgstr ""
+#, fuzzy
+msgid "Spirit stoppages recorded for this event."
+msgstr "Pisteiden keräämininen ei ole päällä tälle tapahtumalle."
 
 #: menufunctions.php:250 menufunctions.php:687
 #, fuzzy
@@ -5725,7 +5751,7 @@ msgstr "Tehtävä"
 #: playercard.php:399 poolstatus.php:145 poolstatus.php:166 poolstatus.php:212
 #: poolstatus.php:228 poolstatus.php:272 poolstatus.php:345 scorestatus.php:66
 #: scorestatus.php:68 seriesstatus.php:131 seriesstatus.php:133
-#: seriesstatus.php:293 seriesstatus.php:313 seriesstatus.php:335
+#: seriesstatus.php:293 seriesstatus.php:313 seriesstatus.php:334
 #: spiritstatus.php:95 spiritstatus.php:97 teamcard.php:793
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/accreditation.php:193
@@ -5810,8 +5836,9 @@ msgid "Team statistics"
 msgstr "Joukkuetilastot"
 
 #: scorekeeper/addspirittimeouts.php:116
-msgid "Team taking spirit timeout"
-msgstr ""
+#, fuzzy
+msgid "Team taking the spirit stoppage"
+msgstr "Aloitusaika"
 
 #: scorekeeper/addtimeouts.php:93
 #, fuzzy
@@ -5900,6 +5927,11 @@ msgstr ""
 #: statistics.php:94
 msgid "Third"
 msgstr "Kolmas"
+
+#: result.php:68
+#, fuzzy
+msgid "This game has already been played. Current result:"
+msgstr "Peli on jo pelattu. Tulos:"
 
 #: admin/eventdataimport.php:69
 msgid ""
@@ -6109,7 +6141,7 @@ msgstr "Huomenna"
 #: gamecard.php:254 gameplay.php:63 gameplay.php:90 playercard.php:171
 #: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
 #: playerlist.php:37 poolstatus.php:146 poolstatus.php:167 scorestatus.php:103
-#: scorestatus.php:105 seriesstatus.php:294 seriesstatus.php:341
+#: scorestatus.php:105 seriesstatus.php:294 seriesstatus.php:340
 #: spiritstatus.php:113 spiritstatus.php:115 teamcard.php:125 teams.php:359
 #: ext/poolscoreboard.php:39 ext/teamscoreboard.php:47
 msgid "Tot."
@@ -6130,7 +6162,8 @@ msgid "Total"
 msgstr "Yhteensä"
 
 #: poolstatus.php:213 poolstatus.php:229 seriesstatus.php:314
-msgid "Total defenses"
+#, fuzzy
+msgid "Total defences"
 msgstr "Puolustus"
 
 #: cust/bula/pdfprinter.php:219 cust/bula/pdfprinter.php:223
@@ -6151,7 +6184,7 @@ msgstr "Yhteensä viitteitä"
 
 #: admin/spirit.php:319
 #, fuzzy
-msgid "Total spirit timeouts"
+msgid "Total spirit stoppages"
 msgstr "Pisteet yhteensä"
 
 #: cust/default/pdfprinter.php:1000 cust/gummis/pdfprinter.php:1135
@@ -7091,8 +7124,8 @@ msgstr "erota pilkulla"
 #: mobile/addspirittimeouts.php:68 mobile/addspirittimeouts.php:76
 #: scorekeeper/addspirittimeouts.php:123 scorekeeper/addspirittimeouts.php:154
 #, fuzzy
-msgid "spirit timeouts"
-msgstr "aikalisät"
+msgid "spirit stoppages"
+msgstr "Spirit-pisteet"
 
 #: mobile/addfirstoffence.php:39
 msgid "starting on offence"
@@ -7154,6 +7187,9 @@ msgstr "ilman lainausmerkkejä"
 msgid "yes"
 msgstr "kyllä"
 
+#~ msgid "Away Goals"
+#~ msgstr "Vierasmaalit"
+
 #~ msgid "By division"
 #~ msgstr "Sarjat"
 
@@ -7189,6 +7225,12 @@ msgstr "kyllä"
 
 #~ msgid "Communication (theirs)"
 #~ msgstr "Kommunikointi (ne)"
+
+#~ msgid "Def. avg."
+#~ msgstr "Puol. ka."
+
+#~ msgid "Defenses."
+#~ msgstr "Puolustukset."
 
 #~ msgid "Delete goal number"
 #~ msgstr "Poista maali numero"
@@ -7227,11 +7269,17 @@ msgstr "kyllä"
 #~ msgid "Fouls and Body Contact (theirs)"
 #~ msgstr "Virheet ja kehokontaktit (heidän)"
 
+#~ msgid "Game is already played. Result:"
+#~ msgstr "Peli on jo pelattu. Tulos:"
+
 #~ msgid "Games missing spirit points (by team to give)"
 #~ msgstr "Ottelut, joista puuttuu spirit-pisteet (antavan joukkueen mukaan)"
 
 #~ msgid "Half time"
 #~ msgstr "Puoliaika"
+
+#~ msgid "Home Goals"
+#~ msgstr "Kotimaalit"
 
 #~ msgid "In time"
 #~ msgstr "Ajassa"
@@ -7281,11 +7329,25 @@ msgstr "kyllä"
 #~ msgid "Score sheet"
 #~ msgstr "Pöytäkirja"
 
+#~ msgid "Spirit Points"
+#~ msgstr "Spirit-pisteet"
+
+#~ msgid "Spirit avg"
+#~ msgstr "Spirit ka."
+
 #~ msgid "Spirit note"
 #~ msgstr "Spirit-kommentti"
 
 #~ msgid "Spirit note (visitor)"
 #~ msgstr "Spirit-kommntti  näkyvissä"
+
+#, fuzzy
+#~ msgid "Spirit timeout"
+#~ msgstr "Spirit malli"
+
+#, fuzzy
+#~ msgid "Spirit timeouts"
+#~ msgstr "Spirit-pisteet"
 
 #~ msgid ""
 #~ "This operation updates and adds event data in database with one from "
@@ -7326,6 +7388,10 @@ msgstr "kyllä"
 
 #~ msgid "scoreboard"
 #~ msgstr "pistepörssi"
+
+#, fuzzy
+#~ msgid "spirit timeouts"
+#~ msgstr "aikalisät"
 
 #~ msgid "visible"
 #~ msgstr "näkyvissä"

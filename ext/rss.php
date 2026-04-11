@@ -141,7 +141,7 @@ switch ($feedtype) {
           if ($event['type'] == "timeout")
             $gameevent = _("Timeout");
           elseif ($event['type'] == "spirit_timeout")
-            $gameevent = _("Spirit timeout");
+            $gameevent = _("Spirit stoppage");
           elseif ($event['type'] == "turnover")
             $gameevent = _("Turnover");
           elseif ($event['type'] == "offence")
@@ -177,7 +177,7 @@ switch ($feedtype) {
         if ($event['type'] == "timeout")
           $gameevent = _("Timeout");
         elseif ($event['type'] == "spirit_timeout")
-          $gameevent = _("Spirit timeout");
+          $gameevent = _("Spirit stoppage");
         elseif ($event['type'] == "turnover")
           $gameevent = _("Turnover");
         elseif ($event['type'] == "offence")

@@ -203,7 +203,7 @@ if (!$errors) {
 	if (!$hideTimeOnScoresheet) {
 		$html .=  "<a href='?view=mobile/addtimeouts&amp;game=" . $gameId . "'>" . _("Timeouts") . "</a> | ";
 		if (intval($seasoninfo['spiritmode']) > 0) {
-			$html .=  "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit timeouts") . "</a> | ";
+			$html .=  "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit stoppages") . "</a> | ";
 		}
 		$html .=  "<a href='?view=mobile/addhalftime&amp;game=" . $gameId . "'>" . _("Halftime") . "</a>";
 		$html .= "</td></tr><tr><td>\n";

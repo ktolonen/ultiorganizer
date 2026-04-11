@@ -35,12 +35,12 @@ if (!empty($_POST['save'])) {
     $error = 1;
   }
   if (empty($newName)) {
-    $message .= "<p>" . _("Name can not be empty") . ".</p>";
+    $message .= "<p>" . _("Name cannot be empty") . ".</p>";
     $error = 1;
   }
 
   if (empty($newEmail)) {
-    $message .= "<p>" . _("Email can not be empty") . ".</p>";
+    $message .= "<p>" . _("Email cannot be empty") . ".</p>";
     $error = 1;
   }
 
@@ -92,12 +92,12 @@ if (!empty($_GET['token'])) {
 }
 
 //help
-$help = "<p>" . _("Registration is only needed for event organizers, team contact persons and players needing to create or change data in system.") . " ";
+$help = "<p>" . _("Registration is only needed for event organizers, team contact persons, and players who need to create or change data in the system.") . " ";
 $help .= _("Registration process:") . "</p>
 	<ol>
-		<li> " . _("Fill registration information in fields below.") . "</li>
-		<li> " . _("Confirmation mail will be sent immediately to the email address provided. (Note that confirmation mail can be incorrectly filterd as spam by e-mail client and in this case you can find the mail from spam -folder instead of inbox.)") . "</li>
-		<li> " . _("Follow the link in the mail to confirm registration.") . "</li>
+		<li> " . _("Fill in the registration information in the fields below.") . "</li>
+		<li> " . _("A confirmation email will be sent immediately to the email address provided. Some email clients may incorrectly filter the message as spam, so check your spam folder if it does not appear in your inbox.") . "</li>
+		<li> " . _("Follow the link in the email to confirm your registration.") . "</li>
 	</ol>";
 
 $help .= "<a href='?view=privacy'>" . _("Privacy Policy") . "</a>";

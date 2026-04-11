@@ -1320,7 +1320,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFont('Arial','B',10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(80,5,_("Spirit timeouts (min:sec)"),'LRTB',0,'C',true);
+		$this->Cell(80,5,_("Spirit stoppages (min:sec)"),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetX($curX);
 
@@ -1433,7 +1433,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFillColor(0);
     $this->Cell(0.5,6,"",'LRTB',0,'C',true); // separator
 		$this->SetFillColor(230);
-		$this->CellFitScale(40,6,_("Spirit timeouts"),'LRTB',1,'C',true);
+		$this->CellFitScale(40,6,_("Spirit stoppages"),'LRTB',1,'C',true);
 
 		//home grids
     $this->SetX($curX);

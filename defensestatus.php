@@ -14,7 +14,7 @@ $sort = "deftotal";
 $defenses = false;
 
 $html = "";
-$title = _("Defenseboard");
+$title = _("Defence board");
 
 
 if (iget("pool")) {
@@ -37,7 +37,7 @@ if (iget("sort")) {
   $sort = iget("sort");
 }
 
-$html .= "<h1>" . _("Defenseboard") . "</h1>\n";
+$html .= "<h1>" . _("Defence board") . "</h1>\n";
 
 $html .= "<table style='width:100%' cellpadding='1' border='1'>";
 
@@ -73,9 +73,9 @@ else
   $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "Sort=games'>" . _("Games") . "</a></th>";
 
 if ($sort == "deftotal")
-  $html .= "<th class='center' style='width:8%'><b>" . _("Defenses") . "</b></th>";
+  $html .= "<th class='center' style='width:8%'><b>" . _("Defences") . "</b></th>";
 else
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "Sort=deftotal'>" . _("Defenses") . "</a></th>";
+  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "Sort=deftotal'>" . _("Defences") . "</a></th>";
 
 $html .= "</tr>";
 
@@ -127,7 +127,7 @@ if ($defenses) {
       $html .= "<td class='center'>" . intval($row['deftotal']) . "</td>";
   }
 } else {
-  $html .= "<tr><td colspan='5'>" . _("No defense data available for the selected filter.") . "</td></tr>";
+  $html .= "<tr><td colspan='5'>" . _("No defence data available for the selected filter.") . "</td></tr>";
 }
 $html .= "</table>";
 

@@ -60,12 +60,12 @@ if (isset($_POST['save'])) {
 	header("location:?view=mobile/addscoresheet&game=" . $gameId);
 }
 
-mobilePageTop(_("Spirit timeouts"));
+mobilePageTop(_("Spirit stoppages"));
 
 $html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method='post'>\n";
 $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
-$html .= "<b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("spirit timeouts") . ":";
+$html .= "<b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("spirit stoppages") . ":";
 $html .= "</td></tr><tr><td>\n";
 
 foreach (MobileSpiritTimeoutValues($gameId, 1, $maxSpiritTimeouts) as $i => $timeValue) {
@@ -73,7 +73,7 @@ foreach (MobileSpiritTimeoutValues($gameId, 1, $maxSpiritTimeouts) as $i => $tim
 }
 
 $html .= "</td></tr><tr><td>\n";
-$html .= "<b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("spirit timeouts") . ":";
+$html .= "<b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("spirit stoppages") . ":";
 $html .= "</td></tr><tr><td>\n";
 
 foreach (MobileSpiritTimeoutValues($gameId, 0, $maxSpiritTimeouts) as $i => $timeValue) {

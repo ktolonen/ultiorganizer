@@ -316,10 +316,10 @@ function TableSpiritTimeouts($season)
   $rows = SpiritTimeoutGameRowsBySeason($season);
 
   $ret = "<table width='100%' class='tdtools-table'><tr>";
-  $ret .= "<th class='center'>" . _("Total spirit timeouts") . "</th>";
-  $ret .= "<th class='center'>" . _("Games with spirit timeout") . "</th>";
-  $ret .= "<th class='center'>" . _("Home spirit timeouts") . "</th>";
-  $ret .= "<th class='center'>" . _("Away spirit timeouts") . "</th>";
+  $ret .= "<th class='center'>" . _("Total spirit stoppages") . "</th>";
+  $ret .= "<th class='center'>" . _("Games with a spirit stoppage") . "</th>";
+  $ret .= "<th class='center'>" . _("Home spirit stoppages") . "</th>";
+  $ret .= "<th class='center'>" . _("Away spirit stoppages") . "</th>";
   $ret .= "</tr><tr>";
   $ret .= "<td class='center'>" . (int)$summary['total'] . "</td>";
   $ret .= "<td class='center'>" . (int)$summary['games'] . "</td>";
@@ -328,7 +328,7 @@ function TableSpiritTimeouts($season)
   $ret .= "</tr></table>";
 
   if (empty($rows)) {
-    $ret .= "<p>" . _("No spirit timeouts found.") . "</p>";
+    $ret .= "<p>" . _("No spirit stoppages found.") . "</p>";
     return $ret;
   }
 
@@ -339,8 +339,8 @@ function TableSpiritTimeouts($season)
   $ret .= "<th class='center'>" . _("Score") . "</th>";
   $ret .= "<th>" . _("Away") . "</th>";
   $ret .= "<th class='center'>" . _("Scheduled") . "</th>";
-  $ret .= "<th class='center'>" . _("Home spirit timeouts") . "</th>";
-  $ret .= "<th class='center'>" . _("Away spirit timeouts") . "</th>";
+  $ret .= "<th class='center'>" . _("Home spirit stoppages") . "</th>";
+  $ret .= "<th class='center'>" . _("Away spirit stoppages") . "</th>";
   $ret .= "<th class='center'>" . _("Total") . "</th>";
   $ret .= "<th class='center'>" . _("Links") . "</th>";
   $ret .= "</tr>";
@@ -523,9 +523,9 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
   $html .= "</div>";
 
   $html .= "<div class='tdtools-box bg-td2'>";
-  $html .= "<p>" . _("Spirit timeouts recorded for this season.") . "</p>";
+  $html .= "<p>" . _("Spirit stoppages recorded for this event.") . "</p>";
   $html .= "<p><form method='POST' action='?view=admin/spirit&amp;season=$season'>";
-  $html .= "<button class='button' type='submit' name='showspirittimeouts' value='1'>" . _("Show spirit timeouts") . "</button>";
+  $html .= "<button class='button' type='submit' name='showspirittimeouts' value='1'>" . _("Show spirit stoppages") . "</button>";
   $html .= "</form></p>";
   if (isset($_POST['showspirittimeouts'])) {
     $html .= TableSpiritTimeouts($season);

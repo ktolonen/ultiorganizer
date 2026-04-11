@@ -207,10 +207,10 @@ function defenseboard($id, $seriesDefenseboard)
   $ret = "";
 
   if ($seriesDefenseboard) {
-    $ret .= "<h2>" . _("Defenseboard leaders") . "</h2>\n";
+    $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
     $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
     $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
-		<th class='center'>" . _("Total defenses") . "</th></tr>\n";
+		<th class='center'>" . _("Total defences") . "</th></tr>\n";
     $poolinfo = PoolInfo($id);
     $defenses = SeriesDefenseBoardArray($poolinfo['series_id'], "deftotal", 10);
     foreach ($defenses as $row) {
@@ -221,12 +221,12 @@ function defenseboard($id, $seriesDefenseboard)
     }
 
     $ret .= "</table>";
-    $ret .= "<a href='?view=defensestatus&amp;series=" . $poolinfo['series_id'] . "'>" . _("Defenseboard") . "</a>";
+    $ret .= "<a href='?view=defensestatus&amp;series=" . $poolinfo['series_id'] . "'>" . _("Defence board") . "</a>";
   } else {
-    $ret .= "<h2>" . _("Defenseboard leaders") . "</h2>\n";
+    $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
     $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
     $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
-		<th class='center'>" . _("Total defenses") . "</th></tr>\n";
+		<th class='center'>" . _("Total defences") . "</th></tr>\n";
 
     $poolinfo = PoolInfo($id);
     $pools = array();
@@ -249,9 +249,9 @@ function defenseboard($id, $seriesDefenseboard)
 
     $ret .= "</table>";
     if ($poolinfo['type'] == 2) {
-      $ret .= "<a href='?view=defensestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Defenseboard") . "</a>";
+      $ret .= "<a href='?view=defensestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Defence board") . "</a>";
     } else {
-      $ret .= "<a href='?view=defensestatus&amp;pool=" . $id . "'>" . _("Defenseboard") . "</a>";
+      $ret .= "<a href='?view=defensestatus&amp;pool=" . $id . "'>" . _("Defence board") . "</a>";
     }
   }
   return $ret;

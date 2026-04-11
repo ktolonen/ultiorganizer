@@ -43,7 +43,7 @@ if (iget("spsort")) {
 $html .= "<h2>" . _("SOTG Scores:") . " " . utf8entities($seriesinfo['name']) . "</h2>";
 
 if (!ShowSpiritScoresForSeason($seasoninfo)) {
-	$html .= "<p>" . _("Spirit points are not visible.") . "</p>";
+	$html .= "<p>" . _("Spirit scores are not visible.") . "</p>";
 	showPage($title, $html);
 	return;
 }

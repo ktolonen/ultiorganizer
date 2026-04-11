@@ -123,7 +123,7 @@ if (ShowDefenseStats()) {
 		<th class='center' style='width:15%'>" . _("Assists") . "</th>
 		<th class='center' style='width:15%'>" . _("Goals") . "</th>
 		<th class='center' style='width:15%'>" . _("Tot.") . "</th>
-		<th class='center' style='width:15%'>" . _("Defenses") . "</th></tr>\n";
+		<th class='center' style='width:15%'>" . _("Defences") . "</th></tr>\n";
 
     foreach ($playerswihtdef as $player) {
       $playerinfo = PlayerInfo($player['player_id']);
@@ -299,7 +299,7 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
   if (!empty($scoreCategories)) {
     $spiritReceivedRows = TeamSpiritPointsReceived($seasoninfo['season_id'], $teamId);
     if (!empty($spiritReceivedRows)) {
-      $html .= "<h3>" . _("Spirit points received:") . "</h3>\n";
+      $html .= "<h3>" . _("Spirit scores received:") . "</h3>\n";
       $html .= "<table width='100%' border='1'>\n";
       $html .= "<tr><th style='width: 18%'>" . _("Given by") . "</th>";
       foreach ($scoreCategories as $category) {
@@ -340,7 +340,7 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
 
     $spiritGivenRows = TeamSpiritPointsGiven($seasoninfo['season_id'], $teamId);
     if (!empty($spiritGivenRows)) {
-      $html .= "<h3>" . _("Spirit points given to the other teams:") . "</h3>\n";
+      $html .= "<h3>" . _("Spirit scores given to the other teams:") . "</h3>\n";
       $html .= "<table width='100%' border='1'>\n";
       $html .= "<tr><th style='width: 18%'>" . _("Given for") . "</th>";
       foreach ($scoreCategories as $category) {
@@ -409,8 +409,8 @@ if (ShowDefenseStats()) {
 		<th>"._("Goals against")."</th>
 		<th>" . _("GA/game") . "</th>
 		<th>"._("Goal diff")."</th>
-		<th>" . _("Spirit avg") . "</th>
-		<th>" . _("Defenses") . "</th>
+		<th>" . _("Spirit score avg.") . "</th>
+		<th>" . _("Defences") . "</th>
 		</tr>";
 
 
@@ -498,8 +498,8 @@ if (ShowDefenseStats()) {
 	<th>"._("Goals against")."</th>
 	<th>" . _("GA/game") . "</th>
 	<th>"._("Goal diff")."</th>
-	<th>" . _("Spirit avg") . "</th>
-	<th>" . _("Defenses") . "</th>
+	<th>" . _("Spirit score avg.") . "</th>
+	<th>" . _("Defences") . "</th>
 	</tr>";
 
     $total_games = 0;
@@ -606,7 +606,7 @@ if (ShowDefenseStats()) {
 		<th>"._("Goals against")."</th>
 		<th>" . _("GA/game") . "</th>
 		<th>"._("Goal diff")."</th>
-		<th>" . _("Spirit avg") . "</th>
+		<th>" . _("Spirit score avg.") . "</th>
 		</tr>";
 
 
@@ -691,7 +691,7 @@ if (ShowDefenseStats()) {
 	<th>"._("Goals against")."</th>
 	<th>" . _("GA/game") . "</th>
 	<th>"._("Goal diff")."</th>
-	<th>" . _("Spirit avg") . "</th>
+	<th>" . _("Spirit score avg.") . "</th>
 	</tr>";
 
     $total_games = 0;

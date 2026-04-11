@@ -96,7 +96,7 @@ for ($i; $i < $maxtimeouts; $i++) {
 
 if ($allowSpiritTimeouts) {
 	$html .= "</td></tr><tr><td>\n";
-	$html .= "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit timeouts") . "</a>";
+	$html .= "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit stoppages") . "</a>";
 }
 
 $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";

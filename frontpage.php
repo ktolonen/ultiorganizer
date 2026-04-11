@@ -27,7 +27,7 @@ $html .= "</p>";
 $urls = GetUrlListByTypeArray(array("admin"), 0);
 if (!empty($urls)) {
   $html .= "<p>";
-$html .= _("In case of feedback, improvement ideas or any other questions contact to:");
+$html .= _("For feedback, improvement ideas, or any other questions, contact:");
   foreach ($urls as $url) {
     $email = trim($url['url']);
     if (stripos($email, "mailto:") === 0) {
