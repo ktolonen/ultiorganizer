@@ -40,12 +40,10 @@ if ((isset($info['spiritmode']) && $info['spiritmode'] > 0)) {
 	$spiritmode = SpiritCategoryModeRow($info['spiritmode']);
 	$spirit = utf8entities(_($spiritmode['name'])) . " / <em>" .
 		(intval($info['showspiritpoints']) ? _("scores visible") : _("scores hidden")) . ", " .
-		(intval(isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0) ? _("comments visible") : _("comments hidden")) . ", " .
-		(intval(isset($info['showspiritpointsonlyoncomplete']) ? $info['showspiritpointsonlyoncomplete'] : 0) ? _("visible after both teams submit") : _("visible immediately")) . ", " .
-		(intval(isset($info['lockteamspiritonsubmit']) ? $info['lockteamspiritonsubmit'] : 0) ? _("team edits locked after submit") : _("team edits allowed")) .
+		(intval(isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0) ? _("comments visible") : _("comments hidden")) .
 		"</em>";
 }
-$html .=  "<tr><td><b>" . _("Spirit points") . "</b></td><td>" . $spirit . "</td></tr>\n";
+$html .=  "<tr><td><b>" . _("Spirit points") . "</b></td><td style='white-space: normal; overflow-wrap: anywhere; word-break: break-word;'>" . $spirit . "</td></tr>\n";
 
 $html .=  "<tr><td><b>" . _("Time") . "</b></td><td>" . ShortDate($info['starttime']);
 $html .=  " - " . ShortDate($info['endtime']) . "</td></tr>\n";

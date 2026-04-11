@@ -28,8 +28,9 @@ include_once __DIR__ . '/localization.php';
 	include_once __DIR__ . '/../lib/timetable.functions.php';
 
 
-	$season = iget("season");
-	$seasoninfo = SeasonInfo($season);
+		$season = iget("season");
+		$seasoninfo = SeasonInfo($season);
+		$isInternational = !empty($seasoninfo) && !empty($seasoninfo['isinternational']);
 
 	$countryId = iget("country");
 
@@ -60,7 +61,7 @@ include_once __DIR__ . '/localization.php';
 				$stats = TeamStatsByPool($poolinfo['pool_id'], $row['team_id']);
 				$points = TeamPointsByPool($poolinfo['pool_id'], $row['team_id']);
 				$flag = "";
-				if (intval($seasoninfo['isinternational'])) {
+				if ($isInternational) {
 					$flag = "<img height='10' src='../images/flags/tiny/" . $row['flagfile'] . "' alt=''/> ";
 				}
 				echo "<tr><td class='pk_ser_td2'>" . $row['activerank'] . "</td>";
@@ -168,7 +169,7 @@ include_once __DIR__ . '/localization.php';
 				for ($i = 1; $i <= $totalteams; $i++) {
 					$team = $teams[$i - 1];
 					$name = "";
-					if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+					if ($isInternational && !empty($team['flagfile'])) {
 						$name .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
 					}
 					$name .= $team['name'];
@@ -180,7 +181,7 @@ include_once __DIR__ . '/localization.php';
 
 							if (count($gamesleft) == 0) {
 								$name = "";
-								if (intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])) {
+								if ($isInternational && !empty($realteam['flagfile'])) {
 									$name .= "<img height='10' src='../images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
 								}
 								$name .= "<i>" . utf8entities($realteam['name']) . "</i>";
@@ -226,7 +227,7 @@ include_once __DIR__ . '/localization.php';
 
 				if (count($gamesleft) == 0) {
 					$placementname = "";
-					if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+					if ($isInternational && !empty($team['flagfile'])) {
 						$placementname .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
 					}
 					$placementname .= "<b>" . U_($placement) . "</b> " . utf8entities($team['name']) . "";

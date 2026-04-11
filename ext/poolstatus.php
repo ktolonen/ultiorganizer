@@ -35,7 +35,9 @@ include_once __DIR__ . '/localization.php';
   }
 
   $season = iget("season");
-  $seasoninfo = SeasonInfo($season);
+  $seasonId = !empty($season) ? $season : $poolinfo['season'];
+  $seasoninfo = SeasonInfo($seasonId);
+  $isInternational = !empty($seasoninfo) && !empty($seasoninfo['isinternational']);
 
   if ($poolinfo['type'] == 1) {
     echo "<table class='pk_table'>\n";
@@ -54,7 +56,7 @@ include_once __DIR__ . '/localization.php';
       $stats = TeamStatsByPool($poolinfo['pool_id'], $row['team_id']);
       $points = TeamPointsByPool($poolinfo['pool_id'], $row['team_id']);
       $flag = "";
-      if (intval($seasoninfo['isinternational'])) {
+      if ($isInternational) {
         $flag = "<img height='10' src='../images/flags/tiny/" . $row['flagfile'] . "' alt=''/> ";
       }
       echo "<tr><td class='pk_ser_td2'>" . $row['activerank'] . "</td>";
@@ -121,7 +123,7 @@ include_once __DIR__ . '/localization.php';
       for ($i = 1; $i <= $totalteams; $i++) {
       $team = isset($teams[$i - 1]) ? $teams[$i - 1] : array();
         $name = "";
-        if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+        if ($isInternational && !empty($team['flagfile'])) {
           $name .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
         }
         $name .= $team['name'];
@@ -133,7 +135,7 @@ include_once __DIR__ . '/localization.php';
 
             if (count($gamesleft) == 0) {
               $name = "";
-              if (intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])) {
+              if ($isInternational && !empty($realteam['flagfile'])) {
                 $name .= "<img height='10' src='../images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
               }
               $name .= "<i>" . utf8entities($realteam['name']) . "</i>";
@@ -179,7 +181,7 @@ include_once __DIR__ . '/localization.php';
 
       if (count($gamesleft) == 0) {
         $placementname = "";
-        if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+        if ($isInternational && !empty($team['flagfile'])) {
           $placementname .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
         }
         $placementname .= "<b>" . U_($placement) . "</b> " . utf8entities($team['name']) . "";

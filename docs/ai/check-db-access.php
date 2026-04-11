@@ -23,7 +23,10 @@ const INFRASTRUCTURE_EXEMPTIONS = array(
     'sql/upgrade_db.php',
 );
 
-main($argv);
+if (PHP_SAPI === 'cli') {
+    $argv = isset($GLOBALS['argv']) && is_array($GLOBALS['argv']) ? $GLOBALS['argv'] : array(__FILE__);
+    main($argv);
+}
 
 function main(array $argv): void
 {
