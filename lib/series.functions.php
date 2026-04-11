@@ -550,6 +550,34 @@ function DeleteSeries($seriesId)
 }
 
 /**
+ * Normalize an optional pool template id for uo_series.pool_template.
+ *
+ * @param mixed $poolTemplateId uo_pooltemplate.template_id or empty value
+ * @return string SQL fragment for INSERT/UPDATE
+ */
+function SeriesPoolTemplateSql($poolTemplateId)
+{
+  if ($poolTemplateId === null || $poolTemplateId === '') {
+    return "NULL";
+  }
+
+  $templateId = (int)$poolTemplateId;
+  if ($templateId <= 0) {
+    return "NULL";
+  }
+
+  $query = sprintf(
+    "SELECT template_id FROM uo_pooltemplate WHERE template_id=%d",
+    $templateId
+  );
+  if (DBQueryToValue($query) === null) {
+    return "NULL";
+  }
+
+  return (string)$templateId;
+}
+
+/**
  * Add division.
  * 
  * Access level: Event admin
@@ -560,16 +588,17 @@ function DeleteSeries($seriesId)
 function AddSeries($params)
 {
   if (hasEditSeasonSeriesRight($params['season'])) {
+    $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
     $query = sprintf(
       "INSERT INTO uo_series
-				(name,type,ordering,season,valid,pool_template)
-				VALUES ('%s','%s','%s','%s',%d,%d)",
+					(name,type,ordering,season,valid,pool_template)
+					VALUES ('%s','%s','%s','%s',%d,%s)",
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
       DBEscapeString($params['ordering']),
       DBEscapeString($params['season']),
       (int)$params['valid'],
-      (int)$params['pool_template']
+      $poolTemplateSql
     );
 
     $id = DBQueryInsert($query);
@@ -589,17 +618,18 @@ function SetSeries($params)
 {
   $seriesInfo = SeriesInfo($params['series_id']);
   if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
+    $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
     $query = sprintf(
       "
-			UPDATE uo_series SET
-			name='%s', type='%s', ordering='%s', valid=%d,
-			pool_template=%d
-			WHERE series_id=%d",
+				UPDATE uo_series SET
+				name='%s', type='%s', ordering='%s', valid=%d,
+				pool_template=%s
+				WHERE series_id=%d",
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
       DBEscapeString($params['ordering']),
       (int)$params['valid'],
-      (int)$params['pool_template'],
+      $poolTemplateSql,
       (int)$params['series_id']
     );
 

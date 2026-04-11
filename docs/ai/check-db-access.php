@@ -8,6 +8,7 @@ const RULE_LEGACY_LIB_CURSOR_API = 'legacy-lib-cursor-api';
 const APP_SCOPE_PREFIXES = array(
     'admin/',
     'user/',
+    'cust/',
     'mobile/',
     'scorekeeper/',
     'spiritkeeper/',

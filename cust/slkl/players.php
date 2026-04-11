@@ -7,6 +7,7 @@ include_once $include_prefix . 'lib/auth.guard.php';
 
 include_once '../../lib/database.php';
 include_once '../../lib/common.functions.php';
+include_once '../../lib/player.functions.php';
 include_once '../../lib/user.functions.php';
 
 $firstname = isset($_GET['firstname']) ? normalizeTextInput($_GET['firstname']) : '';
@@ -20,35 +21,13 @@ OpenConnection();
 
 if (hasEditPlayersRight($teamId)) {
 
-	$query = sprintf(
-		"SELECT pp.profile_id, pp.accreditation_id, pp.firstname, pp.lastname, pp.birthdate, pp.gender, 
-			    pp.num, p2.teamname, p2.seasoname
-			FROM uo_player_profile pp 
-			LEFT JOIN (
-				SELECT p.profile_id, t.name AS teamname, sea.name AS seasoname
-				FROM uo_player p
-				INNER JOIN (
-					SELECT profile_id, MAX(player_id) AS player_id
-					FROM uo_player
-					GROUP BY profile_id
-				) AS latest ON (latest.player_id=p.player_id AND latest.profile_id=p.profile_id)
-			    LEFT JOIN uo_team t ON (p.team=t.team_id)
-    			LEFT JOIN uo_series ser ON (ser.series_id=t.series)
-			    LEFT JOIN uo_season sea ON (ser.season=sea.season_id)
-			) AS p2 ON (pp.profile_id=p2.profile_id)
-			LEFT JOIN uo_player AS p1 ON (p1.profile_id=pp.profile_id)
-			WHERE pp.firstname like '%%%s%%' and pp.lastname like '%%%s%%'
-			GROUP BY pp.profile_id ORDER BY pp.lastname, pp.firstname",
-		DBEscapeString($firstname),
-		DBEscapeString($lastname)
-	);
-	$result = DBQuery($query);
+	$players = SearchPlayerProfiles($firstname, $lastname);
 
 	$dom = new DOMDocument("1.0");
 	$node = $dom->createElement("MemberSet");
 	$parnode = $dom->appendChild($node);
 
-	while ($row = mysqli_fetch_assoc($result)) {
+	foreach ($players as $row) {
 		$node = $dom->createElement("Member");
 		$newNode = $parnode->appendChild($node);
 

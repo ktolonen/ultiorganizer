@@ -361,7 +361,7 @@ class PDF extends tFPDF
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while ($game = mysqli_fetch_assoc($games)) {
+		foreach ($games as $game) {
 
 			if (!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) {
 				$txt = $this->pdfText(U_($game['reservationgroup']));
@@ -444,7 +444,7 @@ class PDF extends tFPDF
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while ($game = mysqli_fetch_assoc($games)) {
+		foreach ($games as $game) {
 
 			//one reservation group per page
 			if (

@@ -752,7 +752,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while($game = DBFetchAssoc($games)){
+		foreach($games as $game){
 			
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) {
 				$txt = pdf_utf8_text(U_($game['reservationgroup']));
@@ -835,7 +835,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFillColor(0);
 		$this->SetDrawColor(0);
 		//print all games in order
-		while($game = DBFetchAssoc($games)){
+		foreach($games as $game){
 			
 			//one reservation group per page
 			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament || $prevDate != JustDate($game['starttime'])) {

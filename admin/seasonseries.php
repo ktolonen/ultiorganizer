@@ -16,6 +16,12 @@ if (!isSeasonAdmin($season)) {
   return;
 }
 
+$templates = PoolTemplates();
+$templateIds = array();
+foreach ($templates as $template) {
+  $templateIds[] = (int)$template['template_id'];
+}
+
 //process itself on submit
 if (!empty($_POST['remove_x'])) {
   $id = $_POST['hiddenDeleteId'];
@@ -28,7 +34,8 @@ if (!empty($_POST['remove_x'])) {
   $sp['ordering'] = !empty($_POST['ordering0']) ? $_POST['ordering0'] : "A";
   $sp['season'] = $season;
   $sp['valid'] = isset($_POST['valid0']) ? 1 : 0;
-  $sp['pool_template'] = $_POST['template0'];
+  $templateId = isset($_POST['template0']) && $_POST['template0'] !== '' ? (int)$_POST['template0'] : null;
+  $sp['pool_template'] = in_array($templateId, $templateIds, true) ? $templateId : null;
   AddSeries($sp);
 } else if (!empty($_POST['save'])) {
 
@@ -42,7 +49,8 @@ if (!empty($_POST['remove_x'])) {
     $sp['ordering'] = $_POST["ordering$id"];
     $sp['season'] = $season;
     $sp['valid'] = isset($_POST["valid$id"]) ? 1 : 0;
-    $sp['pool_template'] = $_POST["template$id"];
+    $templateId = isset($_POST["template$id"]) && $_POST["template$id"] !== '' ? (int)$_POST["template$id"] : null;
+    $sp['pool_template'] = in_array($templateId, $templateIds, true) ? $templateId : null;
     SetSeries($sp);
   }
 }
@@ -56,6 +64,9 @@ contentStart();
 
 $html .= "<form method='post' action='?view=admin/seasonseries&amp;season=$season'>";
 $html .= "<h2>" . _("Divisions") . "</h2>\n";
+if (empty($templates)) {
+  $html .= "<p class='warning'>" . _("No rule templates available.") . "</p>\n";
+}
 
 $series = SeasonSeries($season);
 $types = SeriesTypes();
@@ -84,8 +95,7 @@ foreach ($series as $row) {
   $html .= "</select></td>";
 
   $html .=  "<td><select class='dropdown' name='template$id'>\n";
-
-  $templates = PoolTemplates();
+  $html .= "<option class='dropdown' value=''></option>";
 
   foreach ($templates as $template) {
 
@@ -137,8 +147,7 @@ foreach ($types as $type) {
 
 $html .= "</select></td>";
 $html .=  "<td style='padding-top:15px'><select class='dropdown' name='template0'>\n";
-
-$templates = PoolTemplates();
+$html .= "<option class='dropdown' value=''></option>";
 
 foreach ($templates as $template) {
   if ($last_rule_template == $template['template_id']) {

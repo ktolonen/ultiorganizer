@@ -62,6 +62,25 @@ function LicenseData($accreditation_id)
 		FROM uo_license WHERE accreditation_id='" . DBEscapeString($accreditation_id) . "'");
 }
 
+/**
+ * Search license records by player name.
+ *
+ * @param string $firstname
+ * @param string $lastname
+ * @return array
+ */
+function SearchLicenseData($firstname = "", $lastname = "")
+{
+	return DBQueryToArray(sprintf(
+		"SELECT accreditation_id, firstname, lastname, membership, license, birthdate
+		FROM uo_license
+		WHERE firstname LIKE '%%%s%%' AND lastname LIKE '%%%s%%'
+		ORDER BY lastname, firstname",
+		DBEscapeString($firstname),
+		DBEscapeString($lastname)
+	));
+}
+
 function checkUserAdmin($playerInfo)
 {
 	// Check for existing user for player

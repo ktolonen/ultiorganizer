@@ -18,6 +18,7 @@ The following locations are treated as public or app entrypoints:
 - repo-root `*.php`
 - `admin/`
 - `user/`
+- `cust/`
 - `mobile/`
 - `scorekeeper/`
 - `spiritkeeper/`

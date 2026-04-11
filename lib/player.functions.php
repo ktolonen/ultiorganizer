@@ -406,6 +406,46 @@ function PlayerListAllArray($lastname = "")
 }
 
 /**
+ * Search player profiles with their latest known team and season context.
+ *
+ * @param string $firstname
+ * @param string $lastname
+ * @param bool $includeEmail
+ * @return array
+ */
+function SearchPlayerProfiles($firstname = "", $lastname = "", $includeEmail = false)
+{
+  $query = "
+    SELECT pp.profile_id, pp.accreditation_id, pp.firstname, pp.lastname, pp.birthdate, pp.gender,
+      pp.num";
+  if ($includeEmail) {
+    $query .= ", pp.email";
+  }
+  $query .= ",
+      p2.teamname, p2.seasoname
+    FROM uo_player_profile pp
+    LEFT JOIN (
+      SELECT p.profile_id, t.name AS teamname, sea.name AS seasoname
+      FROM uo_player p
+      INNER JOIN (
+        SELECT profile_id, MAX(player_id) AS player_id
+        FROM uo_player
+        GROUP BY profile_id
+      ) AS latest ON (latest.player_id=p.player_id AND latest.profile_id=p.profile_id)
+      LEFT JOIN uo_team t ON (p.team=t.team_id)
+      LEFT JOIN uo_series ser ON (ser.series_id=t.series)
+      LEFT JOIN uo_season sea ON (ser.season=sea.season_id)
+    ) AS p2 ON (pp.profile_id=p2.profile_id)
+    LEFT JOIN uo_player AS p1 ON (p1.profile_id=pp.profile_id)
+    WHERE pp.firstname LIKE '%%" . DBEscapeString($firstname) . "%%'
+      AND pp.lastname LIKE '%%" . DBEscapeString($lastname) . "%%'
+    GROUP BY pp.profile_id
+    ORDER BY pp.lastname, pp.firstname";
+
+  return DBQueryToArray($query);
+}
+
+/**
  * Returns player name. 
  * 
  * @param int $playerId

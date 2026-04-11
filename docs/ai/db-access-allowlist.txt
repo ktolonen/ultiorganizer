@@ -11,3 +11,5 @@ admin/dbequalize.php
 admin/dbrestore.php
 admin/executesql.php
 
+# Customization-specific pages
+cust/slkl/mass-accreditation.php
