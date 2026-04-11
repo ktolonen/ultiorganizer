@@ -1129,7 +1129,7 @@ function SpiritToCsv($season, $separator)
 	$seasoninfo = SeasonInfo($season);
 	$showSpiritPoints = ShowSpiritScoresForSeason($seasoninfo);
 	if (!$showSpiritPoints) {
-		die('Spirit points are not set visible');
+		die(_("Spirit scores are not visible."));
 	}
 	$showSpiritComments = $showSpiritPoints && ShowSpiritComments($seasoninfo);
 	$rows = SpiritToolRowsBySeason($season);

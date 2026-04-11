@@ -15,7 +15,7 @@ if (isset($_POST['login'])) {
 	header("location:?view=mobile/respgames");
 }
 
-mobilePageTop(_("Login"));
+mobilePageTop(_("Log in"));
 
 // echo $html;
 

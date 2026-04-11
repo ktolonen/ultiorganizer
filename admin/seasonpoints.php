@@ -77,7 +77,7 @@ if (!empty($_POST['add_round'])) {
 	if ($roundNo <= 0) {
 		$message .= "<p class='warning'>" . _("Round number must be a positive integer.") . "</p>";
 	} elseif ($roundName === "") {
-		$message .= "<p class='warning'>" . _("Round name can not be empty.") . "</p>";
+		$message .= "<p class='warning'>" . _("Round name cannot be empty.") . "</p>";
 	} else {
 		if (AddSeasonPointsRound($season, $seriesId, $roundNo, $roundName)) {
 			$message .= "<p>" . _("Round added.") . "</p>";

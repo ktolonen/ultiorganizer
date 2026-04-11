@@ -561,7 +561,7 @@ echo "<input type='button' id='showButton' value='" . _("Save") . "' /></td>";
 echo "<td class='center'><div id='responseStatus'></div>";
 if (!empty($zeroGames)) {
   echo "<p>" . sprintf(
-    _("Warning: Games with duration 0 found. They can not be scheduled. Edit the game duration or the time slot length of pool %s ..."),
+    _("Warning: Games with duration 0 found. They cannot be scheduled. Edit the game duration or the time slot length of pool %s ..."),
     gamePoolName($zeroGames[0])
   ) . "</p>";
 }

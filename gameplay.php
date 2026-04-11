@@ -668,9 +668,9 @@ if (GameHasStarted($game_result) > 0) {
 
       $html .= "<table border='1' cellpadding='2' width='100%'>\n";
       if ($hideTimeOnScoresheet) {
-        $html .= "<tr><th>" . _("Player") . "</th><th>" . _("Callahan defense") . "</th>";
+        $html .= "<tr><th>" . _("Player") . "</th><th>" . _("Callahan defence") . "</th>";
       } else {
-        $html .= "<tr><th>" . _("Time defense play") . "</th><th>" . _("Player") . "</th><th>" . _("Callahan defense") . "</th>";
+        $html .= "<tr><th>" . _("Time of defensive play") . "</th><th>" . _("Player") . "</th><th>" . _("Callahan defence") . "</th>";
       }
       $html .= "</tr>\n";
 

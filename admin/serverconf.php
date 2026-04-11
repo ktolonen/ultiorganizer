@@ -163,7 +163,7 @@ foreach ($settings as $setting) {
 
 	if ($setting['name'] == "ShowDefenseStats") {
 		$htmltmp2 .= "<tr>";
-		$htmltmp2 .= "<td class='infocell'>" . _("Show Defense statistics") . ":</td>";
+		$htmltmp2 .= "<td class='infocell'>" . _("Show Defence statistics") . ":</td>";
 		if ($setting['value'] == "true") {
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ShowDefenseStats' checked='checked'/></td>";
 		} else {

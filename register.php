@@ -52,7 +52,7 @@ if (!empty($_POST['save'])) {
   $uidcheck = DBEscapeString($newUsername);
 
   if ($uidcheck != $newUsername || preg_match('/[ ]/', $newUsername) || preg_match('/[^a-z0-9._]/i', $newUsername)) {
-    $message .= "<p>" . _("User id may not have spaces or special characters") . ".</p>";
+    $message .= "<p>" . _("User ID may not have spaces or special characters") . ".</p>";
     $error = 1;
   }
 

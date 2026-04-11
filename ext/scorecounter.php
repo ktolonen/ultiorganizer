@@ -16,7 +16,7 @@ include_once __DIR__ . '/localization.php';
 	include_once __DIR__ . '/../lib/team.functions.php';
 	include_once __DIR__ . '/../lib/timetable.functions.php';
 
-	echo "<title>" . _("Ultiorganizer Score Counter") . "</title>";
+	echo "<title>" . _("Ultiorganizer Score counter") . "</title>";
 	?>
 </head>
 

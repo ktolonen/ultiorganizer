@@ -361,7 +361,7 @@ function swissHeading($poolId, $poolinfo, $editbuttons)
   $html .= "<th class='center'>" . _("Margin") . "</th>";
   $html .= "<th class='center'>"._("Goals scored")."</th>";
   if (showSpiritAverageColumn()) {
-    $html .= "<th class='center'>"._("Spirit points")."</th>";
+    $html .= "<th class='center'>"._("Spirit score avg.")."</th>";
   }
   $html .= "<th></th></tr>";
   return $html;
@@ -412,7 +412,7 @@ function regularHeading($poolId, $poolinfo, $editbuttons)
       $html .= "<th class='center'>"._("Goals against")."</th>";
       $html .= "<th class='center'>"._("Goal diff")."</th>";
       if (showSpiritAverageColumn()) {
-        $html .= "<th class='center'>"._("Spirit points")."</th>";
+        $html .= "<th class='center'>"._("Spirit score avg.")."</th>";
       }
 
   $html .= "<th></th></tr>";

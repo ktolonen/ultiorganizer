@@ -49,7 +49,7 @@ if (!empty($_POST['remove_x']) && !empty($_POST['hiddenDeleteId'])) {
 	$cur = CurrentSeason();
 
 	if ($cur == $id) {
-		$html .= "<p class='warning'>" . _("You can not remove a current event") . ".</p>";
+		$html .= "<p class='warning'>" . _("You cannot remove a current event") . ".</p>";
 		$ok = false;
 	}
 	if ($ok) {

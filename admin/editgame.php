@@ -168,7 +168,7 @@ echo "<tr><td><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Cha
 echo "<tr><td><a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Change game roster") . "</a></td></tr>";
 echo "<tr><td><a href='?view=user/addscoresheet&amp;game=" . $gameId . "'>" . _("Change game scoresheet") . " </a></td></tr>";
 if (ShowDefenseStats()) {
-	echo "<tr><td><a href='?view=user/adddefensesheet&amp;game=" . $gameId . "'>" . _("Change game defense sheet") . " </a></td></tr>";
+	echo "<tr><td><a href='?view=user/adddefensesheet&amp;game=" . $gameId . "'>" . _("Change game defence sheet") . " </a></td></tr>";
 }
 
 echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=" . $gameId . "' target='_blank' rel='noopener'>" . _("Print scoresheet") . " </a></td></tr>";

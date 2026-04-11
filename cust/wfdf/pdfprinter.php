@@ -240,7 +240,7 @@ class PDF extends tFPDF_CellFit
 		
 		$this->SetAutoPageBreak(false);
 		
-		$data = _("Defenses") . " " . _("for game") . " #" . $this->game['game_id']; 
+		$data = _("Defences") . " " . _("for game") . " #" . $this->game['game_id']; 
 		$data = pdf_utf8_text($data); //season name already decoded
 		//$data .= " " . $this->game['seasonname'];
 		
@@ -388,7 +388,7 @@ class PDF extends tFPDF_CellFit
 		$this->Cell(11,6,"q",'LRB',0,'C',true);
 		$this->SetFont('Arial','',10);
 		$this->SetFillColor(230);
-		$this->Cell(34,6,_("First Offense"),'LRB',0,'C',true);
+		$this->Cell(34,6,_("First Offence"),'LRB',0,'C',true);
 		$this->SetFillColor(255);
 	  $this->SetFont('ZapfDingbats','',16);
 		$this->Cell(11,6,"q",'LRB',1,'C',true);
@@ -1549,7 +1549,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFont('Arial','B',12);
 		$this->SetTextColor(0);
 		$this->SetFillColor(230);
-		$this->Cell(80,6,pdf_utf8_text(_("Spirit points")),'LRTB',0,'C',true);
+		$this->Cell(80,6,pdf_utf8_text(_("Spirit score")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);

@@ -23,7 +23,7 @@ if (!$emailDisabled && !empty($_POST['add'])) {
 	$message = "";
 
 	if (empty($newEmail)) {
-		$message .= "<p>" . _("Email can not be empty") . ".</p>";
+		$message .= "<p>" . _("Email cannot be empty") . ".</p>";
 		$error = 1;
 	}
 

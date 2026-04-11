@@ -118,7 +118,7 @@ class PDF extends tFPDF
 		
 		$data = _("Organization");
 		$data .= " - ";
-		$data .= _("Defenses record"); 
+		$data .= _("Defence record"); 
 		$data = $this->pdfText($data); //season name already decoded
 		$data .= " " . $this->game['seasonname'];
 		
@@ -1043,7 +1043,7 @@ class PDF extends tFPDF
 		{
 		//header
 		$this->HeaderColors(2);
-		$this->Cell(80,6,$this->pdfText(_("Spirit points")),'LRTB',0,'C',true);
+		$this->Cell(80,6,$this->pdfText(_("Spirit score")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->EmptyColors();
 		while($this->GetStringWidth($this->game['hometeamname'])>38){

@@ -22,8 +22,8 @@ if (isset($_POST['change'])) {
 	$season = $_POST['season'];
 }
 
-$html .= "<h2>" . _("CSV-files") . "</h2>\n";
-$html .= "<p>" . _("Get comma separated UTF-8 encoded files by clicking links below.");
+$html .= "<h2>" . _("CSV files") . "</h2>\n";
+$html .= "<p>" . _("Get comma-separated UTF-8 encoded files by clicking the links below.");
 $html .= " " . _("You can also change encoding and separator.") . "</p>\n";
 $html .= "<p>" . SeasonName($season) . "<br/>";
 $html .= "<a href='ext/gamescsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("All scheduled games") . "</a><br/>";
@@ -35,7 +35,7 @@ $html .= "<a href='ext/poolscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$se
 $seasoninfo = SeasonInfo($season);
 
 if (ShowSpiritScoresForSeason($seasoninfo)) {
-  $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; "._("Spirit Scores")."</a><br/>";
+  $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; "._("Spirit scores")."</a><br/>";
 }
 $html .= "</p>";
 
@@ -53,7 +53,7 @@ foreach ($seasons as $row) {
 
 $html .= "</select></p>\n";
 
-$html .= "<p>" . ("Select encoding") . ": <select class='dropdown' name='encoding'>\n";
+$html .= "<p>" . _("Select encoding") . ": <select class='dropdown' name='encoding'>\n";
 $encodings = array("UTF-8", "ISO-8859-15", "Windows-1251", "Windows-1252");
 foreach ($encodings as $enc) {
 	if ($enc == $encoding) {
@@ -63,8 +63,8 @@ foreach ($encodings as $enc) {
 	}
 }
 $html .= "</select></p>\n";
-$html .= "<p>" . ("CSV separator") . ": <input class='input' maxlength='1' size='1' name='separator' value='$separator'/></p>\n";
-$html .= "<p><input class='button' type='submit' name='change' value='" . ("Change") . "'/></p>";
+$html .= "<p>" . _("CSV separator") . ": <input class='input' maxlength='1' size='1' name='separator' value='$separator'/></p>\n";
+$html .= "<p><input class='button' type='submit' name='change' value='" . _("Change") . "'/></p>";
 $html .= "</form>";
 
 showPage($title, $html);

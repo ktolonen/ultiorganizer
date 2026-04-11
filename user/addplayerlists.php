@@ -196,11 +196,11 @@ $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
   $spiritUrl = SpiritEntryUrl($gameId);
   if (!empty($spiritUrl)) {
-    $menutabs[_("Spirit points")] = $spiritUrl;
+    $menutabs[_("Spirit score")] = $spiritUrl;
   }
 }
 if (ShowDefenseStats()) {
-  $menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId";
+  $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 
 pageMenu($menutabs);

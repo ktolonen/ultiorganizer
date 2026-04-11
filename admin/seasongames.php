@@ -221,10 +221,10 @@ foreach ($pools as $pool) {
         $html .= "<a href='?view=user/addplayerlists&amp;game=" . $game['game_id'] . "'>" . _("Players") . "</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=" . $game['game_id'] . "'>" . _("Scoresheet") . "</a>";
         if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0)) {
-          $html .= " | <a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Spirit") . "</a>";
+          $html .= " | <a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Spirit score") . "</a>";
         }
         if (ShowDefenseStats()) {
-          $html .= " | <a href='?view=user/adddefensesheet&amp;game=" . $game['game_id'] . "'>" . _("Defensesheet") . "</a>";
+          $html .= " | <a href='?view=user/adddefensesheet&amp;game=" . $game['game_id'] . "'>" . _("Defence sheet") . "</a>";
         }
         $html .= "</td>";
       } else {

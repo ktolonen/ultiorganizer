@@ -70,7 +70,7 @@ $html .= "</select></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Selects the spirit scoring model used by the event. Set this to empty to disable spirit scoring entirely.") . "</span></td></tr>";
 
 $html .= "<tr>";
-$html .= "<td class='infocell'>" . _("Spirit points visible") . ": </td>";
+$html .= "<td class='infocell'>" . _("Spirit scores visible") . ": </td>";
 $html .= "<td><input class='input' type='checkbox' name='showspiritpoints' value='1'" . ($spiritSettings['showspiritpoints'] ? " checked='checked'" : "") . "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see spirit scores for this event. Season admins can still review spirit data regardless of this flag.") . "</span></td></tr>";
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-11 15:28+0300\n"
+"POT-Creation-Date: 2026-04-11 20:59+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -675,7 +675,8 @@ msgid "Back to Spirit tools"
 msgstr ""
 
 #: user/teamplayers.php:283
-msgid "Back to feeding in player numbers"
+#, fuzzy
+msgid "Back to entering player numbers"
 msgstr "Zurück zur Spielernummerneingabe"
 
 #: mobile/addplayerlists.php:131 mobile/addresult.php:53
@@ -739,8 +740,13 @@ msgid "C"
 msgstr "F"
 
 #: ext/export.php:25
-msgid "CSV-files"
+#, fuzzy
+msgid "CSV files"
 msgstr "CSV-Export"
+
+#: ext/export.php:66
+msgid "CSV separator"
+msgstr ""
 
 #: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
 #: scorestatus.php:97 scorestatus.php:99
@@ -770,18 +776,16 @@ msgid "Callahan"
 msgstr "Callahan"
 
 #: gameplay.php:671 gameplay.php:673
-msgid "Callahan defense"
+#, fuzzy
+msgid "Callahan defence"
 msgstr "Callahan-Defense"
 
-#: gameplay.php:222 playercard.php:570 scorekeeper/addscoresheet.php:351
-#: scorekeeper/addscoresheet.php:442 scorekeeper/addscoresheet.php:452
-#: scorekeeper/endgame.php:114 scorekeeper/gameplay.php:86
+#: gameplay.php:222 playercard.php:570 mobile/gameplay.php:84
+#: scorekeeper/addscoresheet.php:351 scorekeeper/addscoresheet.php:442
+#: scorekeeper/addscoresheet.php:452 scorekeeper/endgame.php:114
+#: scorekeeper/gameplay.php:86
 #, fuzzy
 msgid "Callahan goal"
-msgstr "Callahan-Punkt"
-
-#: mobile/gameplay.php:84
-msgid "Callahan-goal"
 msgstr "Callahan-Punkt"
 
 #: cust/fpudd/pdfprinter.php:75
@@ -848,6 +852,11 @@ msgstr "Kategorie"
 msgid "Caught"
 msgstr "Gefangen"
 
+#: ext/export.php:67
+#, fuzzy
+msgid "Change"
+msgstr "Änderungen gespeichert"
+
 #: user/userinfo.php:525
 msgid "Change Password"
 msgstr "Passwort ändern"
@@ -857,7 +866,8 @@ msgid "Change event properties"
 msgstr "Turniereigenschaften ändern"
 
 #: admin/editgame.php:171
-msgid "Change game defense sheet"
+#, fuzzy
+msgid "Change game defence sheet"
 msgstr "Denfensebericht ändern"
 
 #: admin/editgame.php:167
@@ -1360,6 +1370,12 @@ msgstr "Standardsprache"
 msgid "Default Timezone"
 msgstr "Zeitzonen-Voreinstellung"
 
+#: user/adddefensesheet.php:125 user/adddefensesheet.php:130
+#: user/adddefensesheet.php:156 user/adddefensesheet.php:165
+#, fuzzy
+msgid "Defence"
+msgstr "Defenses"
+
 #: playercard.php:227 playercard.php:304
 #, fuzzy
 msgid "Defence avg."
@@ -1376,9 +1392,31 @@ msgstr "Defenseliste"
 msgid "Defence board leaders"
 msgstr "Topscorer Defense"
 
+#: cust/default/pdfprinter.php:122 cust/gummis/pdfprinter.php:121
+#, fuzzy
+msgid "Defence record"
+msgstr "Defense-Statistik"
+
+#: user/adddefensesheet.php:195
+#, fuzzy
+msgid "Defence scoresheet"
+msgstr "Denfensebericht"
+
+#: admin/seasongames.php:227 user/adddefensesheet.php:67
+#: user/addplayerlists.php:203 user/addresult.php:67 user/addscoresheet.php:218
+#: user/addspirit.php:225 user/respgames.php:211
+#, fuzzy
+msgid "Defence sheet"
+msgstr "Defensebericht"
+
+#: user/adddefensesheet.php:173
+#, fuzzy
+msgid "Defence sheet saved"
+msgstr "Denfensebericht gespeichert"
+
 #: defensestatus.php:76 defensestatus.php:78 gameplay.php:624 gameplay.php:649
 #: playercard.php:173 playercard.php:225 playercard.php:302 teamcard.php:126
-#: teamcard.php:413 teamcard.php:502
+#: teamcard.php:413 teamcard.php:502 cust/wfdf/pdfprinter.php:243
 #, fuzzy
 msgid "Defences"
 msgstr "Defenses"
@@ -1387,38 +1425,6 @@ msgstr "Defenses"
 #, fuzzy
 msgid "Defences avg."
 msgstr "Defensedurch."
-
-#: user/adddefensesheet.php:125 user/adddefensesheet.php:130
-#: user/adddefensesheet.php:156 user/adddefensesheet.php:165
-msgid "Defense"
-msgstr "Defense"
-
-#: user/adddefensesheet.php:195
-#, fuzzy
-msgid "Defense scoresheet"
-msgstr "Denfensebericht"
-
-#: user/adddefensesheet.php:67 user/addplayerlists.php:203
-#: user/addresult.php:67 user/addscoresheet.php:218 user/addspirit.php:225
-#: user/respgames.php:211
-msgid "Defense sheet"
-msgstr "Defensebericht"
-
-#: user/adddefensesheet.php:173
-msgid "Defense sheet saved"
-msgstr "Denfensebericht gespeichert"
-
-#: cust/wfdf/pdfprinter.php:243
-msgid "Defenses"
-msgstr "Defenses"
-
-#: cust/default/pdfprinter.php:122 cust/gummis/pdfprinter.php:121
-msgid "Defenses record"
-msgstr "Defense-Statistik"
-
-#: admin/seasongames.php:227
-msgid "Defensesheet"
-msgstr "Defensebericht"
 
 #: gameplay.php:614
 msgid "Defensive plays"
@@ -1735,11 +1741,7 @@ msgstr "Email"
 msgid "Email address already registered"
 msgstr "Die Email-Adresse ist bereits registriert worden"
 
-#: admin/adduser.php:37 user/addextraemail.php:26
-msgid "Email can not be empty"
-msgstr "Email darf nicht leer sein"
-
-#: register.php:43
+#: register.php:43 admin/adduser.php:37 user/addextraemail.php:26
 #, fuzzy
 msgid "Email cannot be empty"
 msgstr "Email darf nicht leer sein"
@@ -1869,6 +1871,21 @@ msgstr ""
 msgid "Event"
 msgstr "Turnier"
 
+#: admin/addseasons.php:306
+#, fuzzy
+msgid "Event ID"
+msgstr "Turnier"
+
+#: admin/addseasons.php:69
+#, fuzzy
+msgid "Event ID cannot be empty"
+msgstr "Turnier-ID darf nicht leer sein"
+
+#: admin/addseasons.php:71
+#, fuzzy
+msgid "Event ID may not have spaces or special characters"
+msgstr "Die Turnier-ID darf keine Leer- oder Sonderzeichen enthalten"
+
 #: menufunctions.php:643
 msgid "Event Links"
 msgstr "Turnierlinks"
@@ -1880,18 +1897,6 @@ msgstr "Turnieradministratoren"
 #: admin/seasons.php:46
 msgid "Event has"
 msgstr "Turnier hat"
-
-#: admin/addseasons.php:306
-msgid "Event id"
-msgstr "Turnier-ID"
-
-#: admin/addseasons.php:69
-msgid "Event id can not be empty"
-msgstr "Turnier-ID darf nicht leer sein"
-
-#: admin/addseasons.php:71
-msgid "Event id may not have spaces or special characters"
-msgstr "Die Turnier-ID darf keine Leer- oder Sonderzeichen enthalten"
 
 #: admin/addseasonlinks.php:7
 msgid "Event links"
@@ -2001,10 +2006,6 @@ msgstr ""
 msgid "Fair"
 msgstr ""
 
-#: user/adddefensesheet.php:11
-msgid "Feed in defense sheet"
-msgstr "Defensebericht eingeben"
-
 #: user/respgames.php:21
 msgid "Feed in the data for your game responsibilities"
 msgstr "Dateneingabe für Spielverantwortliche:"
@@ -2083,6 +2084,11 @@ msgstr "Dateiformat wird nicht unterstützt"
 #: lib/team.functions.php:1331
 msgid "File is too large"
 msgstr "Datei ist zu groß"
+
+#: user/adddefensesheet.php:11
+#, fuzzy
+msgid "Fill in defence sheet"
+msgstr "Defensebericht eingeben"
 
 #: mobile/gameplay.php:26 scorekeeper/gameplay.php:28 user/addscoresheet.php:30
 #, fuzzy
@@ -2165,12 +2171,8 @@ msgid "First Name"
 msgstr "Vorname"
 
 #: cust/default/pdfprinter.php:72 cust/slkl/pdfprinter.php:902
-msgid "First Offence"
-msgstr "Erste Offence"
-
 #: cust/wfdf/pdfprinter.php:391
-#, fuzzy
-msgid "First Offense"
+msgid "First Offence"
 msgstr "Erste Offence"
 
 #: cust/default/teamplayers.functions.php:144
@@ -2590,7 +2592,8 @@ msgid "Generate all games"
 msgstr "Alle Spiele erzeugen"
 
 #: ext/export.php:26
-msgid "Get comma separated UTF-8 encoded files by clicking links below."
+#, fuzzy
+msgid "Get comma-separated UTF-8 encoded files by clicking the links below."
 msgstr "Folge den Links für komma-getrennte, UTF-8 codierte Dateien."
 
 #: user/addscoresheet.php:659
@@ -3343,7 +3346,7 @@ msgid "Lock spirit after submit"
 msgstr ""
 
 #: login.php:6 login.php:23 menufunctions.php:159 menufunctions.php:276
-#: scorekeeper/login.php:14 scorekeeper/login.php:24
+#: mobile/index.php:18 scorekeeper/login.php:14 scorekeeper/login.php:24
 msgid "Log in"
 msgstr "Einloggen"
 
@@ -3357,21 +3360,14 @@ msgid "Log in with your existing account."
 msgstr ""
 
 #: login.php:29 logout.php:5 menufunctions.php:173 menufunctions.php:303
+#: mobile/respgames.php:144 scorekeeper/index.php:84
 #, fuzzy
 msgid "Log out"
 msgstr "Einloggen"
 
-#: mobile/index.php:18
-msgid "Login"
-msgstr "Login"
-
 #: mobile/login_failed.php:9
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
-
-#: mobile/respgames.php:144 scorekeeper/index.php:84
-msgid "Logout"
-msgstr "Abmelden"
 
 #: menufunctions.php:484
 msgid "Logs"
@@ -3633,18 +3629,16 @@ msgstr "HINWEIS"
 msgid "Name"
 msgstr "Name"
 
-#: admin/addseasons.php:73 admin/addseasons.php:101 admin/adduser.php:32
-msgid "Name can not be empty"
-msgstr "Name darf nicht leer sein"
-
-#: user/userinfo.php:43
-msgid "Name can not be empty."
-msgstr "Name darf nicht leer sein."
-
-#: register.php:38
+#: register.php:38 admin/addseasons.php:73 admin/addseasons.php:101
+#: admin/adduser.php:32
 #, fuzzy
 msgid "Name cannot be empty"
 msgstr "Name darf nicht leer sein"
+
+#: user/userinfo.php:43
+#, fuzzy
+msgid "Name cannot be empty."
+msgstr "Name darf nicht leer sein."
 
 #: admin/poolmoves.php:216 admin/poolmoves.php:246 admin/poolmoves.php:279
 #: admin/poolmoves.php:281 admin/poolmoves.php:320 admin/serieteams.php:187
@@ -3989,12 +3983,9 @@ msgstr "Siegpunkte Gegner"
 msgid "Optional - add context for spirit points given (no blame)."
 msgstr ""
 
-#: scorekeeper/addcomment.php:36
+#: mobile/addcomment.php:37 scorekeeper/addcomment.php:36
+#: user/addscoresheet.php:484
 msgid "Optional - note unusual events or interruptions."
-msgstr ""
-
-#: mobile/addcomment.php:37 user/addscoresheet.php:484
-msgid "Optional - note unusual events or interrupts."
 msgstr ""
 
 #: admin/adduser.php:116
@@ -4586,7 +4577,7 @@ msgid "Remove all games"
 msgstr "Alle Spiele entfernen"
 
 #: admin/addseasons.php:375
-msgid "Removes point/defense time input fields from scorekeeper sheets."
+msgid "Removes point/defence time input fields from scorekeeper sheets."
 msgstr ""
 
 #: admin/dbequalize.php:233
@@ -4801,7 +4792,7 @@ msgstr "Kein Name"
 
 #: admin/seasonpoints.php:80
 #, fuzzy
-msgid "Round name can not be empty."
+msgid "Round name cannot be empty."
 msgstr "Name darf nicht leer sein."
 
 #: admin/seasonpoints.php:222
@@ -5257,6 +5248,11 @@ msgstr "Klasse/Liga wählen"
 msgid "Select divisions to check:"
 msgstr ""
 
+#: ext/export.php:56
+#, fuzzy
+msgid "Select encoding"
+msgstr "Gruppe"
+
 #: admin/schedule.php:371 admin/seasonpoints.php:23 ext/export.php:43
 #: ext/index.php:67 scorekeeper/respgames.php:64
 msgid "Select event"
@@ -5316,8 +5312,9 @@ msgid "Select user roles"
 msgstr "Benutzerrollen auswählen"
 
 #: ext/index.php:232
-msgid "Selected country's teams pool standings and game result"
-msgstr ""
+#, fuzzy
+msgid "Selected country's team standings and game results"
+msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
 
 #: ext/index.php:215
 msgid "Selected pool standings and scoreboard"
@@ -5391,7 +5388,8 @@ msgid "Show Comments"
 msgstr "Kommentar"
 
 #: admin/serverconf.php:166
-msgid "Show Defense statistics"
+#, fuzzy
+msgid "Show Defence statistics"
 msgstr "Defensestatistik anzeigen"
 
 #: admin/tdtools.php:163
@@ -5497,12 +5495,11 @@ msgid "Special playoff template"
 msgstr "Spezielle Playout-Baum-Vorlage"
 
 #: menufunctions.php:748 menufunctions.php:789 spiritstatus.php:12 teams.php:47
-#: admin/seasongames.php:224 admin/spirit.php:415 cust/wfdf/pdfprinter.php:1366
-#: user/addspirit.php:13 user/respgames.php:207
+#: admin/spirit.php:415 cust/wfdf/pdfprinter.php:1366 user/addspirit.php:13
 msgid "Spirit"
 msgstr "Spirit"
 
-#: menufunctions.php:600 menufunctions.php:613 ext/export.php:38
+#: menufunctions.php:600 menufunctions.php:613
 #, fuzzy
 msgid "Spirit Scores"
 msgstr "Spiritwertung"
@@ -5549,31 +5546,14 @@ msgstr ""
 msgid "Spirit note for"
 msgstr "Spiritpunkte für"
 
-#: admin/seasonadmin.php:46 admin/seasonstandings.php:364
-#: admin/seasonstandings.php:415 cust/bula/pdfprinter.php:986
-#: cust/default/pdfprinter.php:900 cust/gummis/pdfprinter.php:1046
-#: cust/slkl/pdfprinter.php:928 cust/wfdf/pdfprinter.php:1552
-#: cust/windmill/pdfprinter.php:945 user/adddefensesheet.php:63
-#: user/addplayerlists.php:199 user/addresult.php:63 user/addscoresheet.php:214
-#: user/addspirit.php:223
-msgid "Spirit points"
-msgstr "Spiritpunkte"
-
-#: user/addspirit.php:280 user/addspirit.php:288 user/addspirit.php:296
-#: user/addspirit.php:302
-msgid "Spirit points given for"
-msgstr "Spiritpunkte für"
-
-#: user/addspirit.php:321
-#, php-format
-msgid "Spirit points not given for %s."
-msgstr "Spiritpunkte fehlen für %s."
-
-#: admin/spiritsettings.php:73
-msgid "Spirit points visible"
-msgstr "Spiritpunkte anzeigen"
-
 #: gameplay.php:538 seriesstatus.php:199 seriesstatus.php:201
+#: admin/seasonadmin.php:46 admin/seasongames.php:224
+#: cust/bula/pdfprinter.php:986 cust/default/pdfprinter.php:900
+#: cust/gummis/pdfprinter.php:1046 cust/slkl/pdfprinter.php:928
+#: cust/wfdf/pdfprinter.php:1552 cust/windmill/pdfprinter.php:945
+#: user/adddefensesheet.php:63 user/addplayerlists.php:199
+#: user/addresult.php:63 user/addscoresheet.php:214 user/addspirit.php:223
+#: user/respgames.php:207
 #, fuzzy
 msgid "Spirit score"
 msgstr "Spiritwertung"
@@ -5584,6 +5564,7 @@ msgid "Spirit score average per category"
 msgstr "Spiritpunkte (Durchschnitt) pro Kategorie"
 
 #: teamcard.php:412 teamcard.php:501 teamcard.php:609 teamcard.php:694
+#: admin/seasonstandings.php:364 admin/seasonstandings.php:415
 #, fuzzy
 msgid "Spirit score avg."
 msgstr "Spiritwertung"
@@ -5592,6 +5573,12 @@ msgstr "Spiritwertung"
 #, fuzzy
 msgid "Spirit score deleted. "
 msgstr "Spiritwertung"
+
+#: user/addspirit.php:280 user/addspirit.php:288 user/addspirit.php:296
+#: user/addspirit.php:302
+#, fuzzy
+msgid "Spirit score given for"
+msgstr "Spiritpunkte für"
 
 #: user/addspirit.php:150
 #, fuzzy
@@ -5604,12 +5591,12 @@ msgstr "Spiritwertung"
 msgid "Spirit score not saved. "
 msgstr "Spiritwertung"
 
-#: gameplay.php:554 teamcard.php:273
+#: gameplay.php:554 teamcard.php:273 ext/export.php:38
 #, fuzzy
 msgid "Spirit scores"
 msgstr "Spiritwertung"
 
-#: spiritstatus.php:46
+#: spiritstatus.php:46 lib/spirit.functions.php:1132
 #, fuzzy
 msgid "Spirit scores are not visible."
 msgstr "Spiritpunkte anzeigen"
@@ -5624,9 +5611,19 @@ msgstr "Spiritpunkte für %s"
 msgid "Spirit scores received:"
 msgstr "Spiritpunkte für"
 
+#: admin/spiritsettings.php:73
+#, fuzzy
+msgid "Spirit scores visible"
+msgstr "Spiritpunkte anzeigen"
+
 #: admin/spirit.php:423
 msgid "Spirit scoring is disabled for this event."
 msgstr ""
+
+#: user/addspirit.php:321
+#, fuzzy, php-format
+msgid "Spirit scoring is not enabled for %s."
+msgstr "Spiritpunkte fehlen für %s."
 
 #: admin/spiritsettings.php:40
 #, fuzzy
@@ -6031,7 +6028,8 @@ msgid "Time cap"
 msgstr "Zeitobergrenze"
 
 #: gameplay.php:673
-msgid "Time defense play"
+#, fuzzy
+msgid "Time of defensive play"
 msgstr "Zeit der Defense-Aktion"
 
 #: gameplay.php:496 gameplay.php:504
@@ -6290,7 +6288,8 @@ msgid "Type"
 msgstr "Typ"
 
 #: admin/addseasons.php:75
-msgid "Type can not be empty"
+#, fuzzy
+msgid "Type cannot be empty"
 msgstr "Type darf nicht leer sein"
 
 #: admin/dbadmin.php:134
@@ -6336,8 +6335,9 @@ msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
 
 #: ext/scorecounter.php:19
-msgid "Ultiorganizer Score Counter"
-msgstr ""
+#, fuzzy
+msgid "Ultiorganizer Score counter"
+msgstr "Ultiorganizer links"
 
 #: menufunctions.php:680 ext/index.php:12
 msgid "Ultiorganizer links"
@@ -6434,6 +6434,15 @@ msgstr "Benutzer"
 msgid "User Guide"
 msgstr "Anleitung"
 
+#: admin/apitokens.php:32
+msgid "User ID is required for user scope."
+msgstr ""
+
+#: register.php:55 admin/adduser.php:49
+#, fuzzy
+msgid "User ID may not have spaces or special characters"
+msgstr "Der Benutzername darf keine Leerzeichen oder Sonderzeichen enthalten"
+
 #: admin/addseasonusers.php:83 admin/addseasonusers.php:106
 #: admin/addseasonusers.php:139 admin/addseasonusers.php:195
 #: admin/addseasonusers.php:239 admin/addteamadmins.php:80
@@ -6449,14 +6458,6 @@ msgstr "Benutzeradministrator"
 #: admin/visitors.php:63
 msgid "User credentials do not match"
 msgstr "Zugangsdaten stimmen nicht überein"
-
-#: admin/apitokens.php:32
-msgid "User id is required for user scope."
-msgstr ""
-
-#: register.php:55 admin/adduser.php:49
-msgid "User id may not have spaces or special characters"
-msgstr "Der Benutzername darf keine Leerzeichen oder Sonderzeichen enthalten"
 
 #: user/userinfo.php:212
 msgid "User information"
@@ -6574,9 +6575,9 @@ msgid "Warning: Game %s has a scheduling conflict with %s."
 msgstr "Warnung: Spiel %s hat einen Zeitkonflikt mit %s."
 
 #: admin/schedule.php:564
-#, php-format
+#, fuzzy, php-format
 msgid ""
-"Warning: Games with duration 0 found. They can not be scheduled. Edit the "
+"Warning: Games with duration 0 found. They cannot be scheduled. Edit the "
 "game duration or the time slot length of pool %s ..."
 msgstr ""
 "Warnung: Spiele mit Dauer 0 gefunden. Sie können nicht in den Spielplan "
@@ -6717,21 +6718,23 @@ msgid "You can also change encoding and separator."
 msgstr "Sie können die Kodierung und das Trennzeichen auch ändern."
 
 #: ext/index.php:61
+#, fuzzy
 msgid ""
-"You can embed the following statistics from ultiorganizer directly into your "
+"You can embed the following statistics from Ultiorganizer directly into your "
 "own pages"
 msgstr ""
 "Sie können die folgenden Stats aus Ultiorganizer direkt auf Ihrer eigenen "
 "Seite einbinden"
 
-#: admin/seasons.php:52
-msgid "You can not remove a current event"
-msgstr "Man kann ein aktuelles Turnier nicht löschen"
-
 #: user/adddefensesheet.php:351 user/addscoresheet.php:660
 #, fuzzy
 msgid "You can save the scoresheet at any time while entering it"
 msgstr "Sie können den Spielbericht jederzeit während der Eingabe speichern"
+
+#: admin/seasons.php:52
+#, fuzzy
+msgid "You cannot remove a current event"
+msgstr "Man kann ein aktuelles Turnier nicht löschen"
 
 #: logout.php:10
 msgid "You have logged out"
@@ -6782,7 +6785,8 @@ msgid "bytes"
 msgstr "Bytes"
 
 #: user/teamplayers.php:29
-msgid "can not be removed from the roster"
+#, fuzzy
+msgid "cannot be removed from the roster"
 msgstr "kann aus der Spielerliste entfernt werden"
 
 #: admin/dbequalize.php:145 admin/dbequalize.php:167 admin/dbequalize.php:174
@@ -7070,7 +7074,8 @@ msgid "or"
 msgstr "oder"
 
 #: ext/index.php:165
-msgid "or a link to a style definition of your own"
+#, fuzzy
+msgid "or a link to your own style definition"
 msgstr "oder einen Link zu einer eigenen Stil-Datei (CSS)"
 
 #: cust/fpudd/pdfprinter.php:160
@@ -7189,12 +7194,13 @@ msgstr "Erste Offence"
 
 #: user/adddefensesheet.php:125 user/addscoresheet.php:363
 #, fuzzy
-msgid "time can not be the same as halftime ending"
+msgid "time cannot be the same as halftime ending"
 msgstr "Zeit kann nicht gleich sein mit dem Ende der Halbzeit"
 
 #: mobile/addscoresheet.php:74 user/adddefensesheet.php:130
 #: user/addscoresheet.php:368
-msgid "time can not be the same or earlier than the previous point"
+#, fuzzy
+msgid "time cannot be the same or earlier than the previous point"
 msgstr ""
 "Zeit kann nicht die gleiche oder früher als die Zeit beim letzten Punkt sein"
 
@@ -7275,6 +7281,9 @@ msgstr "ja"
 #~ msgid "Callahan Goal"
 #~ msgstr "Callahan-Punkt"
 
+#~ msgid "Callahan-goal"
+#~ msgstr "Callahan-Punkt"
+
 #~ msgid "Communication"
 #~ msgstr "Kommunikation"
 
@@ -7287,14 +7296,29 @@ msgstr "ja"
 #~ msgid "Def. avg."
 #~ msgstr "Def. Mittel"
 
+#~ msgid "Defense"
+#~ msgstr "Defense"
+
+#~ msgid "Defenses"
+#~ msgstr "Defenses"
+
 #~ msgid "Defenses."
 #~ msgstr "Defenses."
+
+#~ msgid "Defensesheet"
+#~ msgstr "Defensebericht"
 
 #~ msgid "Delete goal number"
 #~ msgstr "Punkt löschen, #"
 
 #~ msgid "Desktop score sheet"
 #~ msgstr "Desktop-Spielbericht"
+
+#~ msgid "Email can not be empty"
+#~ msgstr "Email darf nicht leer sein"
+
+#~ msgid "Event id"
+#~ msgstr "Turnier-ID"
 
 #~ msgid "Events' Scoreboards"
 #~ msgstr "Turnier-Scorerliste"
@@ -7313,6 +7337,10 @@ msgstr "ja"
 
 #~ msgid "Fill Playerlists"
 #~ msgstr "Spielerlisten ausfüllen"
+
+#, fuzzy
+#~ msgid "First Offense"
+#~ msgstr "Erste Offence"
 
 #, fuzzy
 #~ msgid "First offense"
@@ -7339,8 +7367,17 @@ msgstr "ja"
 #~ msgid "In time"
 #~ msgstr "Zeit"
 
+#~ msgid "Login"
+#~ msgstr "Login"
+
+#~ msgid "Logout"
+#~ msgstr "Abmelden"
+
 #~ msgid "Mobile Administration"
 #~ msgstr "Mobile Administration"
+
+#~ msgid "Name can not be empty"
+#~ msgstr "Name darf nicht leer sein"
 
 #~ msgid "Not fed in"
 #~ msgstr "Noch nicht eingegeben"
@@ -7397,6 +7434,12 @@ msgstr "ja"
 #~ msgid "Spirit note"
 #~ msgstr "Spiritmodus"
 
+#~ msgid "Spirit points"
+#~ msgstr "Spiritpunkte"
+
+#~ msgid "Spirit points visible"
+#~ msgstr "Spiritpunkte anzeigen"
+
 #, fuzzy
 #~ msgid "Spirit timeout"
 #~ msgstr "Spiritmodus"
@@ -7448,6 +7491,11 @@ msgstr "ja"
 #, fuzzy
 #~ msgid "spirit timeouts"
 #~ msgstr "Auszeiten"
+
+#~ msgid "time can not be the same or earlier than the previous point"
+#~ msgstr ""
+#~ "Zeit kann nicht die gleiche oder früher als die Zeit beim letzten Punkt "
+#~ "sein"
 
 #~ msgid "visible"
 #~ msgstr "sichtbar"

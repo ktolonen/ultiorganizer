@@ -8,7 +8,7 @@ include_once $include_prefix . 'lib/location.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 
 $LAYOUT_ID = ADDDEFENSESHEET;
-$title = _("Feed in defense sheet");
+$title = _("Fill in defence sheet");
 $maxtimeouts = 6;
 $maxdefenses = 31;
 ob_start();
@@ -60,11 +60,11 @@ $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
 	$spiritUrl = SpiritEntryUrl($gameId);
 	if (!empty($spiritUrl)) {
-		$menutabs[_("Spirit points")] = $spiritUrl;
+		$menutabs[_("Spirit score")] = $spiritUrl;
 	}
 }
 if (ShowDefenseStats()) {
-	$menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId";
+	$menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 pageMenu($menutabs);
 
@@ -122,12 +122,12 @@ if (!empty($_POST['save'])) {
 			$time = str_replace($time_delim, ".", $time);
 			$time = TimeToSec($time);
 			if (!empty($team) && $time == $htime) {
-				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same as halftime ending") . "!</p>";
+				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
 				$errIds[] = "time$i";
 			}
 
 			if (!empty($team) && $time <= $prevtime) {
-				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("time can not be the same or earlier than the previous point") . "!</p>";
+				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("time cannot be the same or earlier than the previous point") . "!</p>";
 				$errIds[] = "time$i";
 			}
 		}
@@ -153,7 +153,7 @@ if (!empty($_POST['save'])) {
 
 			$defense = GamePlayerFromNumber($gameId, $game_result['hometeam'], $defense);
 			if ($defense == -1) {
-				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
+				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
 				$errIds[] = "defense$i";
 			}
 			GameAddDefense($gameId, $defense, 1, $iscaught, $time, $iscallahan, $i + 1);
@@ -162,7 +162,7 @@ if (!empty($_POST['save'])) {
 			$a++;
 			$defense = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $defense);
 			if ($defense == -1) {
-				echo "<p class='warning'>" . _("Defense") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
+				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
 				$errIds[] = "defense$i";
 			}
 
@@ -170,7 +170,7 @@ if (!empty($_POST['save'])) {
 		}
 	}
 	GameSetDefenses($gameId, $h, $a);
-	echo "<p>" . _("Defense sheet saved") . " (" . _("Time") . ": " . DefTimestamp() . ")!</p>";
+	echo "<p>" . _("Defence sheet saved") . " (" . _("Time") . ": " . DefTimestamp() . ")!</p>";
 	// The defenseplay.php needs to be created
 	//echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Gameplay")."</a>";
 }
@@ -192,7 +192,7 @@ if (count($away_playerlist) == 0) {
 echo "<form id='defensesheet' action='?view=user/adddefensesheet&amp;game=$gameId' method='post'>";
 echo "<table cellspacing='5' cellpadding='5'>";
 
-echo "<tr><td colspan='2'><h1>" . _("Defense scoresheet") . " #$gameId</h1></td></tr>";
+echo "<tr><td colspan='2'><h1>" . _("Defence scoresheet") . " #$gameId</h1></td></tr>";
 echo "<tr><td valign='top'>\n";
 
 //team, place, time info and scoresheet keeper's name

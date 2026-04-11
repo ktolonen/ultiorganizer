@@ -204,11 +204,11 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         if (!empty($seasoninfo['spiritmode'])) {
           $spiritUrl = SpiritEntryUrl($gameId);
           if (!empty($spiritUrl)) {
-            $html .= " | <a href='" . $spiritUrl . "'>" . _("Spirit") . "</a>";
+            $html .= " | <a href='" . $spiritUrl . "'>" . _("Spirit score") . "</a>";
           }
         }
         if (ShowDefenseStats()) {
-          $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defense sheet") . "</a>";
+          $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defence sheet") . "</a>";
         }
 	     if(isSeasonAdmin($seasoninfo['season_id'])) {
         $html .= " | <a href='?view=admin/editgame&amp;season=".$season."&amp;game=".$gameId."'>"._("Edit")."</a>";

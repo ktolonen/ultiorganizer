@@ -211,11 +211,11 @@ $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
   $spiritUrl = SpiritEntryUrl($gameId);
   if (!empty($spiritUrl)) {
-    $menutabs[_("Spirit points")] = $spiritUrl;
+    $menutabs[_("Spirit score")] = $spiritUrl;
   }
 }
 if (ShowDefenseStats()) {
-  $menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId";
+  $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 
 pageMenu($menutabs);
@@ -360,12 +360,12 @@ if (!empty($_POST['save'])) {
       $time = str_replace($time_delim, ".", $time);
       $time = TimeToSec($time);
       if (!empty($team) && $time == $htime) {
-        echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time can not be the same as halftime ending") . "!</p>";
+        echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
         $errIds[] = "time$i";
       }
 
       if (!empty($team) && $time <= $prevtime) {
-        echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time can not be the same or earlier than the previous point") . "!</p>";
+        echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same or earlier than the previous point") . "!</p>";
         $errIds[] = "time$i";
       }
     }
@@ -481,7 +481,7 @@ if ($show_comment_form) {
   if (!empty($game_comment_meta_html)) {
     echo "<tr><td>" . $game_comment_meta_html . "</td></tr>";
   }
-  echo "<tr><td><textarea class='input' style='width: 98%' rows='5' name='gamecomment' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interrupts.") . "'>" . htmlentities($game_comment) . "</textarea></td></tr>";
+  echo "<tr><td><textarea class='input' style='width: 98%' rows='5' name='gamecomment' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interruptions.") . "'>" . htmlentities($game_comment) . "</textarea></td></tr>";
   if ($can_manage_comment && !empty($game_comment)) {
     echo "<tr><td><label><input type='checkbox' name='delete_game_comment' value='1'/> " . _("Delete comment") . "</label></td></tr>";
   }

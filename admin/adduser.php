@@ -29,12 +29,12 @@ if (!empty($_POST['save'])) {
     $error = 1;
   }
   if (empty($newName)) {
-    $html .= "<p>" . _("Name can not be empty") . ".</p>";
+    $html .= "<p>" . _("Name cannot be empty") . ".</p>";
     $error = 1;
   }
 
   if ($emailRequired && empty($newEmail)) {
-    $html .= "<p>" . _("Email can not be empty") . ".</p>";
+    $html .= "<p>" . _("Email cannot be empty") . ".</p>";
     $error = 1;
   }
 
@@ -46,7 +46,7 @@ if (!empty($_POST['save'])) {
   $uidcheck = DBEscapeString($newUsername);
 
   if ($uidcheck != $newUsername || preg_match('/[ ]/', $newUsername) /*|| preg_match('/[^a-z0-9._]/i', $newUsername)*/) {
-    $html .= "<p>" . _("User id may not have spaces or special characters") . ".</p>";
+    $html .= "<p>" . _("User ID may not have spaces or special characters") . ".</p>";
     $error = 1;
   }
 

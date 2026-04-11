@@ -29,7 +29,7 @@ if (isSuperAdmin()) {
       }
     } elseif ($scopeType === 'user') {
       if ($scopeId === '') {
-        $errors[] = _("User id is required for user scope.");
+        $errors[] = _("User ID is required for user scope.");
       } elseif (!UserExists($scopeId)) {
         $errors[] = _("User not found.");
       }

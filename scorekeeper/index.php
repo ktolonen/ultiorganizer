@@ -81,7 +81,7 @@ include $viewPath;
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
 echo "<a class='footer-compact' href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . _("Ultiorganizer") . "</a>";
 if ($_SESSION['uid'] != "anonymous") {
-	echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Logout") . "</a>";
+	echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Log out") . "</a>";
 }
 echo "\n</div><!-- /footer -->\n\n";
 echo "</div><!-- /page -->\n";

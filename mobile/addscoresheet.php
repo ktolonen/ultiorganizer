@@ -71,7 +71,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
 		$uo_goal['time'] = TimeToSec($timemm . "." . $timess);
 
 		if ($uo_goal['time'] <= $prevtime) {
-			$html .= "<p class='warning'>" . _("time can not be the same or earlier than the previous point") . "!</p>\n";
+			$html .= "<p class='warning'>" . _("time cannot be the same or earlier than the previous point") . "!</p>\n";
 		}
 	}
 

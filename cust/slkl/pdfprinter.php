@@ -925,7 +925,7 @@ class PDF extends tFPDF
 		$this->SetFont('Arial', 'B', 12);
 		$this->SetTextColor(255);
 		$this->SetFillColor(0, 102, 153);
-		$this->Cell(80, 6, pdf_iso_text(_("Spirit points")), 'LRTB', 0, 'C', true);
+		$this->Cell(80, 6, pdf_iso_text(_("Spirit score")), 'LRTB', 0, 'C', true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);

@@ -141,7 +141,7 @@ if ($showall) {
 	$html .= "<a href='?view=mobile/respgames&amp;all=1'>" . _("Show all") . "</a>";
 }
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/logout'>"._("Logout")."</a>";
+$html .= "<a href='?view=mobile/logout'>"._("Log out")."</a>";
 $html .= "</td></tr><tr><td>\n";
 $html .= "<a href='?view=frontpage'>"._("Back to the Ultiorganizer")."</a>";
 $html .= "</td></tr>\n";

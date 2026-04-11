@@ -26,7 +26,7 @@ if (!empty($_POST['remove_x'])) {
   if ($games) {
     $playerInfo = PlayerInfo($id);
     echo "<div style='width:100%'>
-			<p class='warning'><i>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</i> " . _("can not be removed from the roster") . ".
+			<p class='warning'><i>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</i> " . _("cannot be removed from the roster") . ".
 			" . _("Games played in the team:") . " " . $games . "</p></div>";
   } else {
     RemovePlayer($id);
@@ -280,7 +280,7 @@ echo "</p></form>\n";
 
 
 if (!empty($gameId)) {
-  echo "<p><a href='?view=user/addplayerlists&amp;game=$gameId'>" . _("Back to feeding in player numbers") . "</a></p>";
+  echo "<p><a href='?view=user/addplayerlists&amp;game=$gameId'>" . _("Back to entering player numbers") . "</a></p>";
 }
 
 //echo "<hr/>\n";

@@ -81,7 +81,7 @@ if (count($goals) <= 0) {
 		}
 		$html .= $goal['homescore'] . " - " . $goal['visitorscore'] . " ";
 		if (intval($goal['iscallahan']))
-			$html .= _("Callahan-goal") . "&nbsp;";
+			$html .= _("Callahan goal") . "&nbsp;";
 		else
 			$html .= utf8entities($goal['assistfirstname']) . " " . utf8entities($goal['assistlastname']) . " --> ";
 		$html .= utf8entities($goal['scorerfirstname']) . " " . utf8entities($goal['scorerlastname']) . "&nbsp;";

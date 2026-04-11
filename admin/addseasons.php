@@ -66,13 +66,13 @@ if (!empty($_POST['add'])) {
 	$comment = $_POST['comment'];
 
 	if (empty($_POST['season_id'])) {
-		$html .= "<p class='warning'>" . _("Event id can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Event ID cannot be empty") . ".</p>";
 	} else if (preg_match('/[ ]/', $_POST['season_id']) || !preg_match('/[a-z0-9.]/i', $_POST['season_id'])) {
-		$html .= "<p class='warning'>" . _("Event id may not have spaces or special characters") . ".</p>";
+		$html .= "<p class='warning'>" . _("Event ID may not have spaces or special characters") . ".</p>";
 	} else if (empty($_POST['seasonname'])) {
-		$html .= "<p class='warning'>" . _("Name can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
 	} else if (empty($_POST['type'])) {
-		$html .= "<p class='warning'>" . _("Type can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Type cannot be empty") . ".</p>";
 	} else {
 		AddSeason($sp['season_id'], $sp, $comment);
 		$seasonId = $sp['season_id'];
@@ -98,7 +98,7 @@ if (!empty($_POST['add'])) {
 } else if (!empty($_POST['save'])) {
 	$backurl = utf8entities($_POST['backurl']);
 	if (empty($_POST['seasonname'])) {
-		$html .= "<p class='warning'>" . _("Name can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
 	} else {
 		$existingSpirit = SeasonInfo($seasonId);
 		$sp['season_id'] = $seasonId;
@@ -303,7 +303,7 @@ if (empty($seasonId)) {
 }
 
 $html .= "<table border='0'>";
-$html .= "<tr><td class='infocell'>" . _("Event id") . ": </td><td><input class='input' name='season_id' $disabled value='" . utf8entities($sp['season_id']) . "'/></td></tr>";
+$html .= "<tr><td class='infocell'>" . _("Event ID") . ": </td><td><input class='input' name='season_id' $disabled value='" . utf8entities($sp['season_id']) . "'/></td></tr>";
 $html .= "<tr rowspan='2'><td class='infocell'>" . _("Name") . ": </td>
 			<td>" . TranslatedField("seasonname", $sp['name']) . "</td>
 		</tr>\n";
@@ -372,7 +372,7 @@ if ($sp['hide_time_on_scoresheet']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defense time input fields from scorekeeper sheets.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defence time input fields from scorekeeper sheets.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Home team assignment") . ": </td><td>";
 $html .= "<select class='dropdown' id='hometeammode' name='hometeammode'>\n";
