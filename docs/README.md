@@ -18,5 +18,8 @@ This directory collects general project documentation.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and current behavior.
 - `permissions.md`: permission storage, roles, enforcement helpers, and spirit-director behavior.
+- `terminology.md`: canonical Ultiorganizer terminology, aliases, and approved abbreviations.
+- `ai/review-user-language/SKILL.md`: read-only review skill for US English spelling, grammar, and terminology consistency in user-facing content.
+- `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
 
-The `docs/ai/` directory is reserved for future AI assets or automation files. Current markdown documentation lives under `docs/`.
+The `docs/ai/` directory contains repo-local AI assets and skills, including the DB-access checker and local review/fix skills.

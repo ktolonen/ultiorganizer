@@ -107,3 +107,6 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `docs/spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and visibility rules.
 - `docs/codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
+- `docs/terminology.md`: canonical Ultiorganizer terminology, aliases, and approved abbreviations.
+- `docs/ai/review-user-language/SKILL.md`: read-only skill for reviewing user-facing spelling, grammar, and terminology consistency.
+- `docs/ai/fix-user-language/SKILL.md`: fix skill for page-level or term-level user-facing wording and gettext updates.

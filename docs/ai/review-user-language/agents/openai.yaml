@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review User Language"
+  short_description: "Review user-facing wording for US English and terminology consistency"
+  default_prompt: "Review the changed Ultiorganizer content for US English spelling, grammar, gettext-backed wording, terminology correctness, and page-level consistency. Check user-modified files first, prioritize user-facing strings, and return findings only under Errors and Warnings without editing files."
