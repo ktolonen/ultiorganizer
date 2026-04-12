@@ -419,19 +419,17 @@ function upgrade68()
 {
 	if (!hasTable("uo_spirit")) {
 		runQuery("CREATE TABLE `uo_spirit` (
-		`game_id` INT(10) NOT NULL,
-		`team_id` INT(10) NOT NULL,
-		`cat1` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat2` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat3` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat4` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat5` TINYINT(2) NOT NULL DEFAULT 0,
-		PRIMARY KEY (game_id,team_id)
-		)
-		COLLATE='latin1_swedish_ci'
-		ENGINE=MyISAM
-		ROW_FORMAT=DEFAULT
-		");
+			`game_id` INT(10) NOT NULL,
+			`team_id` INT(10) NOT NULL,
+			`cat1` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat2` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat3` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat4` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat5` TINYINT(2) NOT NULL DEFAULT 0,
+			PRIMARY KEY (game_id,team_id)
+			)
+			ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+			");
 	}
 }
 
@@ -454,15 +452,15 @@ function upgrade70()
 {
 	if (!hasTable("uo_movingtime")) {
 		runQuery("CREATE TABLE `uo_movingtime` (
-	`season` varchar(10) NOT NULL,
-    `fromlocation` int(10) NOT NULL,
+		`season` varchar(10) NOT NULL,
+	    `fromlocation` int(10) NOT NULL,
     `fromfield` varchar(50) NOT NULL,
-	`tolocation` int(10) NOT NULL,
-    `tofield` varchar(50) NOT NULL,
-    `time` int(10) DEFAULT 0,
-	PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`),
-	INDEX `idx_season` (`season`)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+		`tolocation` int(10) NOT NULL,
+	    `tofield` varchar(50) NOT NULL,
+	    `time` int(10) DEFAULT 0,
+		PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`),
+		INDEX `idx_season` (`season`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci");
 	}
 }
 
@@ -471,11 +469,11 @@ function upgrade71()
 	if (!hasTable("uo_location_info")) {
 		runQuery(
 			"CREATE TABLE `uo_location_info` (
-	`location_id` INT(10) NOT NULL,
-    `locale` varchar(20) NOT NULL,
-    `info` varchar(255) DEFAULT NULL,
-	PRIMARY KEY (`location_id`,`locale`)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci"
+		`location_id` INT(10) NOT NULL,
+	    `locale` varchar(20) NOT NULL,
+	    `info` varchar(255) DEFAULT NULL,
+		PRIMARY KEY (`location_id`,`locale`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"
 		);
 	}
 
@@ -515,12 +513,12 @@ function upgrade74()
 	if (!hasTable("uo_comment")) {
 		runQuery(
 			"CREATE TABLE `uo_comment` (
-    `type` tinyint(3) NOT NULL,
-    `id` varchar(10) NOT NULL,
-    `comment` text NOT NULL,
-	PRIMARY KEY (`type`,`id`),
-    INDEX `idx_id` (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci"
+	    `type` tinyint(3) NOT NULL,
+	    `id` varchar(10) NOT NULL,
+	    `comment` text NOT NULL,
+		PRIMARY KEY (`type`,`id`),
+	    INDEX `idx_id` (`id`)
+	    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"
 		);
 	}
 
@@ -547,16 +545,16 @@ function upgrade75()
 {
 	if (!hasTable("uo_spirit_category")) {
 		runQuery("CREATE TABLE `uo_spirit_category` (
-        `category_id` INT(10) NOT NULL AUTO_INCREMENT,
+	        `category_id` INT(10) NOT NULL AUTO_INCREMENT,
         `mode` INT(10) NOT NULL,
         `group` INT(5) NOT NULL DEFAULT 1,
         `index` INT(5) NOT NULL,
-        `min` INT(5) NOT NULL DEFAULT 0,
-        `max` INT(5) NOT NULL DEFAULT 4,
-        `factor` INT(5) NOT NULL DEFAULT 1,
-        `text` text NOT NULL,
-        PRIMARY KEY (`category_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
+	        `min` INT(5) NOT NULL DEFAULT 0,
+	        `max` INT(5) NOT NULL DEFAULT 4,
+	        `factor` INT(5) NOT NULL DEFAULT 1,
+	        `text` text NOT NULL,
+	        PRIMARY KEY (`category_id`)
+	        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1000");
 
 		// the gettext strings have no function here, but are needed so gettext replaces things like _($category) later ...
 		runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1001", 0, "One simple score")');
@@ -642,12 +640,12 @@ function upgrade75()
 		_("Communication (ours)");
 
 		runQuery("CREATE TABLE `uo_spirit_score` (
-        `game_id` INT(10) NOT NULL,
-        `team_id` INT(10) NOT NULL,
-		`category_id` INT(10) NOT NULL,
-        `value` INT (3) DEFAULT NULL,
-        PRIMARY KEY (`game_id`, `team_id`, `category_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
+	        `game_id` INT(10) NOT NULL,
+	        `team_id` INT(10) NOT NULL,
+			`category_id` INT(10) NOT NULL,
+	        `value` INT (3) DEFAULT NULL,
+	        PRIMARY KEY (`game_id`, `team_id`, `category_id`)
+	        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1000");
 
 		addColumn('uo_season', 'spiritmode', 'INT(10) DEFAULT NULL');
 		if (CUSTOMIZATIONS == "slkl") {
@@ -745,11 +743,11 @@ function upgrade76()
 	global $locales;
 	if (!hasTable("uo_translation")) {
 		runQuery("CREATE TABLE `uo_translation` (
-      `translation_key` varchar(50) NOT NULL,
-      `locale` varchar(15) NOT NULL,
-      `translation` varchar(100) NOT NULL,
-      PRIMARY KEY (`translation_key`, `locale`)
-      ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+	      `translation_key` varchar(50) NOT NULL,
+	      `locale` varchar(15) NOT NULL,
+	      `translation` varchar(100) NOT NULL,
+	      PRIMARY KEY (`translation_key`, `locale`)
+	      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci");
 
 		// Ensure we have locales even if config did not set them (e.g., during CLI upgrades).
 		if (!is_array($locales) || empty($locales)) {
