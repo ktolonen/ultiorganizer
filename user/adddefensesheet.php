@@ -71,8 +71,6 @@ pageMenu($menutabs);
 
 
 $game_result = GameResult($gameId);
-$homecaptain = -1;
-$awaycaptain = -1;
 
 $errIds = array();
 //process itself if submit was pressed
@@ -176,8 +174,6 @@ if (!empty($_POST['save'])) {
 }
 $game_result = GameResult($gameId);
 $place = ReservationInfo($game_result['reservation']);
-$homecaptain = GameCaptain($gameId, $game_result['hometeam']);
-$awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
 $home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
 $away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
@@ -294,34 +290,6 @@ if ($game_result['isongoing']) {
 	echo "<tr><th>" . _("Final score") . "</th></tr>";
 }
 echo "<tr><td>" . $game_result['homescore'] . " - " . $game_result['visitorscore'] . "</td></tr>";
-echo "</table>\n";
-
-echo "<table cellspacing='0' width='100%' border='1'>\n";
-echo "<tr><th colspan='2'>" . _("Captains") . "</th></tr>";
-echo "<tr><td>" . utf8entities($game_result['hometeamname']) . "</td>";
-echo "<td><select style='width:100%' class='dropdown' name='homecaptain'>\n";
-echo "<option class='dropdown' value=''></option>\n";
-foreach ($home_playerlist as $player) {
-	$playerInfo = PlayerInfo($player['player_id']);
-	if ($homecaptain == $player['player_id'])
-		echo "<option class='dropdown' selected='selected' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
-	else
-		echo "<option class='dropdown' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
-}
-echo  "</select></td>\n";
-echo "</tr><tr>";
-echo "<td>" . utf8entities($game_result['visitorteamname']) . "</td>";
-echo "<td><select style='width:100%' class='dropdown' name='awaycaptain'>\n";
-echo "<option class='dropdown' value=''></option>\n";
-foreach ($away_playerlist as $player) {
-	$playerInfo = PlayerInfo($player['player_id']);
-	if ($awaycaptain == $player['player_id'])
-		echo "<option class='dropdown' selected='selected' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
-	else
-		echo "<option class='dropdown' value='" . utf8entities($player['player_id']) . "'>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</option>\n";
-}
-echo "</select></td>\n";
-echo "</tr>";
 echo "</table>\n";
 
 //buttons

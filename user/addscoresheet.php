@@ -224,8 +224,6 @@ pageMenu($menutabs);
 
 
 $game_result = GameResult($gameId);
-$homecaptain = -1;
-$awaycaptain = -1;
 
 $errIds = array();
 $comment_feedback = "";
@@ -251,14 +249,6 @@ if (!empty($_POST['save'])) {
   $time_delim = array(",", ";", ":");
   //set scoresheet keeper
   GameSetScoreSheetKeeper($gameId, $_POST['secretary']);
-
-  //set captains
-  if (intval($_POST['homecaptain'])) {
-    GameSetCaptain($gameId, $game_result['hometeam'], intval($_POST['homecaptain']));
-  }
-  if (intval($_POST['awaycaptain'])) {
-    GameSetCaptain($gameId, $game_result['visitorteam'], intval($_POST['awaycaptain']));
-  }
 
   $htime = 0;
   if (!$hideTimeOnScoresheet) {
@@ -434,8 +424,6 @@ if (!empty($_POST['save'])) {
 }
 $game_result = GameResult($gameId);
 $place = ReservationInfo($game_result['reservation']);
-$homecaptain = GameCaptain($gameId, $game_result['hometeam']);
-$awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
 $home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
 $away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
@@ -606,36 +594,6 @@ if (!$hideTimeOnScoresheet && !empty($seasoninfo['spiritmode'])) {
   echo "</tr>\n";
   echo "</table>\n";
 }
-
-echo "<table cellspacing='0' width='100%' border='1'>\n";
-echo "<tr><th colspan='2'>" . _("Captains") . "</th></tr>";
-echo "<tr><td>" . utf8entities($game_result['hometeamname']) . "</td>";
-echo "<td><select style='width:100%' class='dropdown' name='homecaptain'>\n";
-echo "<option class='dropdown' value=''></option>\n";
-foreach($home_playerlist as $player){
-  $playerInfo = PlayerInfo($player['player_id']);
-  $playerName = utf8entities($playerInfo['num'] ." - ". $playerInfo['firstname'] ." ". $playerInfo['lastname']);
-  if($homecaptain==$player['player_id'])
-    echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".$playerName."</option>\n";
-  else
-    echo "<option class='dropdown' value='".$player['player_id']."'>".$playerName."</option>\n";
-}
-echo  "</select></td>\n";
-echo "</tr><tr>";
-echo "<td>" . utf8entities($game_result['visitorteamname']) . "</td>";
-echo "<td><select style='width:100%' class='dropdown' name='awaycaptain'>\n";
-echo "<option class='dropdown' value=''></option>\n";
-foreach($away_playerlist as $player){
-  $playerInfo = PlayerInfo($player['player_id']);
-  $playerName = utf8entities($playerInfo['num'] ." - ". $playerInfo['firstname'] ." ". $playerInfo['lastname']);
-  if($awaycaptain==$player['player_id'])
-    echo "<option class='dropdown' selected='selected' value='".$player['player_id']."'>".$playerName."</option>\n";
-  else
-    echo "<option class='dropdown' value='".$player['player_id']."'>".$playerName."</option>\n";
-}
-echo "</select></td>\n";
-echo "</tr>";
-echo "</table>\n";
 
 //buttons
 echo "<table cellspacing='0' cellpadding='10' width='100%'>\n";

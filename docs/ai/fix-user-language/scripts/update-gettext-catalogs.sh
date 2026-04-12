@@ -39,6 +39,7 @@ for locale_dir in locale/de_DE.utf8 locale/fi_FI.utf8; do
 
   msgmerge \
     --update \
+    --backup=none \
     --sort-output \
     "$po_file" \
     "$TMP_POT"

@@ -581,7 +581,7 @@ input[type="reset"]:active {
 
 .player-row {
   display: grid;
-  grid-template-columns: auto 1fr 5.5rem;
+  grid-template-columns: 2.2rem minmax(0, 1fr) 3.9rem 3.2rem;
   align-items: center;
   gap: 10px;
   font-size: 1rem;
@@ -622,6 +622,16 @@ input[type="reset"]:active {
 
 .player-number select {
   width: 100%;
+}
+
+.player-number {
+  padding-right: 2px;
+}
+
+.player-role select {
+  width: 100%;
+  padding-left: 4px;
+  padding-right: 4px;
 }
 
 .action-row {

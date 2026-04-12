@@ -43,7 +43,9 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 | Game event | Recorded non-goal gameplay marker. | Includes turnovers, offence markers, timeouts, spirit stoppages, and media-linked events. |
 | Game note | Free-text note attached to a game. | Stored through comment helpers. |
 | Game official | Official name stored with a game. | |
-| Captain | Player marked as captain in game or spirit-related flows. | |
+| Team captain | Player marked as team captain in a game-specific played roster. | Prefer this user-facing label when team-captain and spirit-captain roles appear together. |
+| Captain | Player marked as team captain in a game-specific played roster. | Use this as the compatibility term for existing `captain` fields and helpers. |
+| Spirit captain | Player marked as spirit captain in a game-specific played roster. | |
 | Spirit score | Spirit scoring submission and total for a game. | Current UI often says `Spirit points`. |
 | Spirit score average | User-facing average label for spirit summaries and table headings. | Prefer this over `Spirit avg` or `Spirit points average` in new UI text and docs. |
 | Spirit of the Game (SOTG) | Spirit scoring context and totals. | |
@@ -75,6 +77,8 @@ These terms are recognized in the current repository. They are not the preferred
 | Game event | `uo_gameevent`, `GameEvents()` | Also used indirectly through replay views and API event arrays. |
 | Game note | `comment`, `COMMENT_TYPE_GAME`, `Game comment` | Comment storage names are broader than the preferred user-facing term. |
 | Game official | `official`, `Game official(s)` | Storage field is `official`; UI labels vary slightly. |
+| Team captain | `captain`, `Captain` | Existing runtime names and helpers often shorten this to `captain`. |
+| Spirit captain | `spirit_captain` | `spirit_captain` is the stored flag and API role name. |
 | Spirit score | `Spirit points` | Current UI often says `Spirit points`; use `Spirit score` in new docs when discussing the concept. |
 | Spirit score average | `Spirit avg`, `Spirit points average`, `Spirit points average per category` | Prefer `Spirit score average` or `Spirit score avg.` in new user-facing text. |
 | Defence | `defense`, `Defense`, `uo_defense`, `Defense sheet`, `deftotal` | Use WFDF spelling in new docs, but recognize existing alternate spellings and internal names. |
@@ -100,6 +104,8 @@ Use these only when space is constrained, such as statistics tables, standings t
 | Defence average | `Defence avg.` | Prefer this over `Def. avg.` in new narrow-table labels. |
 | Spirit score average | `Spirit score avg.` | Prefer this over `Spirit avg` in new narrow-table labels. |
 | Spirit of the Game | `SOTG` | Existing standard abbreviation. |
+| Team captain | `C` | Use only in constrained roster or gameplay views where the captain context is explicit. |
+| Spirit captain | `SC` | Use only in constrained roster or gameplay views where the captain context is explicit. |
 
 ## Review Rules
 

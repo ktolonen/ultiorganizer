@@ -615,6 +615,7 @@ CREATE TABLE IF NOT EXISTS `uo_played` (
   `accredited` tinyint(1) NOT NULL DEFAULT 0,
   `acknowledged` tinyint(1) NOT NULL DEFAULT 0,
   `captain` tinyint(1) DEFAULT 0,
+  `spirit_captain` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`player`,`game`),
   KEY `idx_player` (`player`),
   KEY `idx_game` (`game`),

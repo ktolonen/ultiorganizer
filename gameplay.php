@@ -6,6 +6,24 @@ include_once 'lib/pool.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/common.functions.php';
 
+function GameplayCaptainMarker($playerId, $captains, $spiritCaptains)
+{
+  $isCaptain = isset($captains[(int)$playerId]);
+  $isSpiritCaptain = isset($spiritCaptains[(int)$playerId]);
+
+  if ($isCaptain && $isSpiritCaptain) {
+    return "&nbsp;" . _("(C, SC)");
+  }
+  if ($isCaptain) {
+    return "&nbsp;" . _("(C)");
+  }
+  if ($isSpiritCaptain) {
+    return "&nbsp;" . _("(SC)");
+  }
+
+  return "";
+}
+
 $html = "";
 
 $gameId = intval(iget("game"));
@@ -19,8 +37,10 @@ if (!$game_result) {
 }
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
-$homecaptain = GameCaptain($gameId, $game_result['hometeam']);
-$awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
+$homecaptains = array_flip(GameCaptains($gameId, $game_result['hometeam']));
+$awaycaptains = array_flip(GameCaptains($gameId, $game_result['visitorteam']));
+$homeSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['hometeam']));
+$awaySpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['visitorteam']));
 
 $title = _("Gameplay") . ": " . utf8entities($game_result['hometeamname']) . " vs. " . utf8entities($game_result['visitorteamname']);
 
@@ -68,9 +88,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
       $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
       $html .= utf8entities($row['lastname']) . "</a>";
-      if ($row['player_id'] == $homecaptain) {
-        $html .= "&nbsp;" . _("(C)");
-      }
+      $html .= GameplayCaptainMarker($row['player_id'], $homecaptains, $homeSpiritCaptains);
       $html .= "</td>";
       $html .= "<td class='center'>" . $row['fedin'] . "</td>";
       $html .= "<td class='center'>" . $row['done'] . "</td>";
@@ -96,9 +114,7 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
       $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
       $html .= utf8entities($row['lastname']) . "</a>";
-      if ($row['player_id'] == $awaycaptain) {
-        $html .= "&nbsp;" . _("(C)");
-      }
+      $html .= GameplayCaptainMarker($row['player_id'], $awaycaptains, $awaySpiritCaptains);
       $html .= "</td>";
       $html .= "<td class='center'>" . $row['fedin'] . "</td>";
       $html .= "<td class='center'>" . $row['done'] . "</td>";
@@ -629,9 +645,7 @@ if (GameHasStarted($game_result) > 0) {
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
         $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
         $html .= utf8entities($row['lastname']) . "</a>";
-        if ($row['player_id'] == $homecaptain) {
-          $html .= "&nbsp;" . _("(C)");
-        }
+        $html .= GameplayCaptainMarker($row['player_id'], $homecaptains, $homeSpiritCaptains);
         $html .= "</td>";
         //$html .= "<td class='center'>". $row['fedin'] ."</td>";
         $html .= "<td class='center'>" . $row['done'] . "</td>";
@@ -654,9 +668,7 @@ if (GameHasStarted($game_result) > 0) {
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
         $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
         $html .= utf8entities($row['lastname']) . "</a>";
-        if ($row['player_id'] == $awaycaptain) {
-          $html .= "&nbsp;" . _("(C)");
-        }
+        $html .= GameplayCaptainMarker($row['player_id'], $awaycaptains, $awaySpiritCaptains);
         $html .= "</td>";
         //$html .= "<td class='center'>". $row['fedin'] ."</td>";
         $html .= "<td class='center'>" . $row['done'] . "</td>";

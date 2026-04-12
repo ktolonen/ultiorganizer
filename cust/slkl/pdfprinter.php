@@ -212,10 +212,12 @@ class PDF extends tFPDF
 		//instructions
 		$data = "";
 		$data .= "<b>" . _("Filling instructions:") . "</b><BR>";
-		$data .= _("1. Mark team's captain with C letter after name.") . "<BR>";
-		$data .= _("2. Mark players playing with X on Play -column.") . "<BR>";
-		$data .= _("3. Add jersey numbers for players on # -column.") . "<BR>";
+		$data .= _("1. Mark the team captain with the letter C after the name.") . "<BR>";
+		$data .= _("2. Mark the spirit captain with the letters SC after the name.") . "<BR>";
+		$data .= _("3. Mark players who will play with an X in the Play column.") . "<BR>";
+		$data .= _("4. Add jersey numbers for players in the # column.") . "<BR>";
 		$data .= "<BR><BR>";
+
 		//$data .= "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
 		//$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
 		//$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";

@@ -289,7 +289,7 @@ function GameSeason($gameId)
 function GamePlayers($gameId, $teamId)
 {
 	$query = sprintf(
-		"SELECT p.player_id, pg.num, p.firstname, p.lastname 
+		"SELECT p.player_id, pg.num, p.firstname, p.lastname, pg.captain, pg.spirit_captain
 		FROM uo_played AS pg 
 		LEFT JOIN uo_player AS p ON(pg.player=p.player_id)
 		WHERE pg.game=%d AND p.team=%d",
@@ -300,18 +300,116 @@ function GamePlayers($gameId, $teamId)
 	return DBQueryToArray($query);
 }
 
-function GameCaptain($gameId, $teamId)
+function GameRolePlayers($gameId, $teamId, $roleColumn)
 {
+	if ($roleColumn !== 'captain' && $roleColumn !== 'spirit_captain') {
+		return array();
+	}
+
 	$query = sprintf(
-		"SELECT pg.player, pg.num 
+		"SELECT pg.player
 		FROM uo_played AS pg 
 		LEFT JOIN uo_player AS p ON(pg.player=p.player_id)
-		WHERE pg.captain=1 AND pg.game=%d AND p.team=%d",
+		WHERE pg.%s=1 AND pg.game=%d AND p.team=%d",
+		$roleColumn,
 		(int)$gameId,
 		(int)$teamId
 	);
 
-	return DBQueryToValue($query);
+	$rows = DBQueryToArray($query);
+	$playerIds = array();
+	foreach ($rows as $row) {
+		$playerIds[] = (int)$row['player'];
+	}
+
+	return $playerIds;
+}
+
+function GameCaptains($gameId, $teamId)
+{
+	return GameRolePlayers($gameId, $teamId, 'captain');
+}
+
+function GameSpiritCaptains($gameId, $teamId)
+{
+	return GameRolePlayers($gameId, $teamId, 'spirit_captain');
+}
+
+function GameCaptain($gameId, $teamId)
+{
+	$captains = GameCaptains($gameId, $teamId);
+	if (count($captains) > 0) {
+		return $captains[0];
+	}
+
+	return null;
+}
+
+function GameFilterRolePlayers($gameId, $teamId, $playerIds)
+{
+	$allowedPlayers = array();
+	foreach (GamePlayers($gameId, $teamId) as $player) {
+		$allowedPlayers[(int)$player['player_id']] = true;
+	}
+
+	$filteredPlayerIds = array();
+	foreach ((array)$playerIds as $playerId) {
+		$playerId = (int)$playerId;
+		if ($playerId > 0 && !empty($allowedPlayers[$playerId])) {
+			$filteredPlayerIds[$playerId] = $playerId;
+		}
+	}
+
+	return array_values($filteredPlayerIds);
+}
+
+function GameSetRolePlayers($gameId, $teamId, $roleColumn, $playerIds)
+{
+	if ($roleColumn !== 'captain' && $roleColumn !== 'spirit_captain') {
+		return false;
+	}
+
+	if (hasEditGameEventsRight($gameId)) {
+		$playerIds = GameFilterRolePlayers($gameId, $teamId, $playerIds);
+
+		$query = sprintf(
+			"UPDATE uo_played AS pg
+			LEFT JOIN uo_player AS p ON (pg.player=p.player_id)
+			SET pg.%s=0
+			WHERE pg.game=%d AND p.team=%d",
+			$roleColumn,
+			(int)$gameId,
+			(int)$teamId
+		);
+		DBQuery($query);
+
+		if (count($playerIds) === 0) {
+			return true;
+		}
+
+		$query = sprintf(
+			"UPDATE uo_played
+			SET %s=1
+			WHERE game=%d AND player IN (%s)",
+			$roleColumn,
+			(int)$gameId,
+			implode(',', $playerIds)
+		);
+
+		return DBQuery($query);
+	} else {
+		die('Insufficient rights to edit game');
+	}
+}
+
+function GameSetCaptains($gameId, $teamId, $playerIds)
+{
+	return GameSetRolePlayers($gameId, $teamId, 'captain', $playerIds);
+}
+
+function GameSetSpiritCaptains($gameId, $teamId, $playerIds)
+{
+	return GameSetRolePlayers($gameId, $teamId, 'spirit_captain', $playerIds);
 }
 
 function GameAll($limit = 50)
@@ -1195,34 +1293,11 @@ function GameSetHalftime($gameId, $time)
 
 function GameSetCaptain($gameId, $teamId, $playerId)
 {
-	if (hasEditGameEventsRight($gameId)) {
-
-		$captain = GameCaptain($gameId, $teamId);
-
-		if ($captain != $playerId) {
-			$query = sprintf(
-				"UPDATE uo_played 
-				SET captain=0 
-				WHERE game=%d AND player=%d",
-				(int)$gameId,
-				(int)$captain
-			);
-
-			DBQuery($query);
-
-			$query = sprintf(
-				"UPDATE uo_played 
-				SET captain=1 
-				WHERE game=%d AND player=%d",
-				(int)$gameId,
-				(int)$playerId
-			);
-
-			DBQuery($query);
-		}
-	} else {
-		die('Insufficient rights to edit game');
+	if ((int)$playerId <= 0) {
+		return GameSetCaptains($gameId, $teamId, array());
 	}
+
+	return GameSetCaptains($gameId, $teamId, array($playerId));
 }
 
 function GameSetStartingTeam($gameId, $home)

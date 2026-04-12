@@ -123,7 +123,7 @@ Scorekeeper stores related game metadata through separate pages:
 - `addfirstoffence.php`: starting offence
 - `addhalftime.php`: halftime end time
 - `addtimeouts.php`: ordinary timeouts
-- `addspirittimeouts.php`: spirit timeouts when spirit mode is enabled and timed scoresheets are visible
+- `addspirittimeouts.php`: spirit stoppages when spirit mode is enabled and timed scoresheets are visible
 
 Timeout-related pages now follow the same incremental pattern:
 
@@ -132,7 +132,7 @@ Timeout-related pages now follow the same incremental pattern:
 - that selection stamps the current rounded game time into the next empty slot for that team
 - changing the selection before saving moves the pending stamped timeout to the newly selected team
 
-`addspirittimeouts.php` also exposes local pause/resume controls for the game clock because spirit timeouts often require the clock to be paused.
+`addspirittimeouts.php` also exposes local pause/resume controls for the game clock because spirit stoppages often require the clock to be paused.
 
 ## Ending the game
 
@@ -164,7 +164,7 @@ Scorekeeper uses the same core scoresheet tables as the rest of the application:
 - `uo_played`: per-game player list
 - `uo_goal`: detailed scoring sequence
 - `uo_timeout`: ordinary timeouts
-- `uo_spirit_timeout`: spirit timeouts
+- `uo_spirit_timeout`: spirit stoppages
 - `uo_gameevent`: game events such as starting offence and other event markers
 - `uo_comment`: game notes
 

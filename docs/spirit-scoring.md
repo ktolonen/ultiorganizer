@@ -16,8 +16,8 @@ Keep those separate when planning changes. The repository does not yet implement
 - Detailed spirit settings are managed in `admin/spiritsettings.php`.
 - Spirit admin tooling and missing-score review are in `admin/spirit.php`.
 - Spiritkeeper provides the dedicated mobile spirit-entry surface for both token and authenticated access.
-- Spirit-timeout entry uses `user/addscoresheet.php`, `mobile/addspirittimeouts.php`, and `scorekeeper/addspirittimeouts.php`.
-- Printable field sheets are generated through `user/pdfscoresheet.php` and include a dedicated spirit-timeout area on the scoresheet PDF layouts.
+- Spirit stoppage entry uses `user/addscoresheet.php`, `mobile/addspirittimeouts.php`, and `scorekeeper/addspirittimeouts.php`.
+- Printable field sheets are generated through `user/pdfscoresheet.php` and include a dedicated spirit-stoppage area on the scoresheet PDF layouts.
 
 ## Data model and comment types
 
@@ -25,7 +25,7 @@ Keep those separate when planning changes. The repository does not yet implement
 - Game-level public spirit visibility is cached in `uo_game.show_spirit`.
 - Spirit category definitions are stored in `uo_spirit_category`.
 - Cached team averages are stored in `uo_team_spirit_stats`.
-- Spirit timeout rows are stored in `uo_spirit_timeout`.
+- Spirit stoppage rows are stored in `uo_spirit_timeout`.
 - Spirit comments are stored in `uo_comment` and handled in `lib/comment.functions.php`.
 - `COMMENT_TYPE_SPIRIT_HOME` is `5`.
 - `COMMENT_TYPE_SPIRIT_VISITOR` is `6`.
@@ -47,7 +47,7 @@ These are the operating principles Bruno described from WFDF events and Spirit D
 - Team-submitted spirit scores should be treated as final; later edits or deletion should be an admin or Spirit Director action.
 - A score of all zeroes must remain a valid submitted score. Deletion should be explicit, not inferred from zero values.
 - Missing-score tracking is an important Spirit Director workflow.
-- Recording spirit timeouts is a recurring event need and should have first-class support if the event uses that workflow.
+- Recording spirit stoppages is a recurring event need and should have first-class support if the event uses that workflow.
 
 ## Required Configuration Surface
 
@@ -83,19 +83,19 @@ This section describes what the repository does today.
 - The admin `Spirit` menu entry is shown only for events where `spiritmode > 0`.
 - There is a dedicated `spiritadmin:<seasonId>` role for spirit-specific tooling and review. It is intentionally narrower than season admin and does not grant broader event administration rights.
 - `admin/spirit.php` contains spirit review tools, missing-score searches, comment search, and Spiritkeeper token utilities.
-- Spirit timeout recording is enabled only when `spiritmode > 0`.
-- Spirit timeout entry is additionally blocked when `hide_time_on_scoresheet` is enabled for the season.
+- Spirit stoppage recording is enabled only when `spiritmode > 0`.
+- Spirit stoppage entry is additionally blocked when `hide_time_on_scoresheet` is enabled for the season.
 
-### Spirit timeout behavior
+### Spirit stoppage behavior
 
-- Spirit timeouts are stored separately from ordinary timeouts in `uo_spirit_timeout`.
-- Each spirit-timeout row stores the game, team ownership, sequence number, and timestamp in seconds.
-- Spirit timeouts are edited from timeout-oriented score-sheet surfaces, and mobile and scorekeeper both use dedicated spirit-timeout pages.
-- Desktop bulk score-sheet editing in `user/addscoresheet.php` replaces all existing spirit-timeout rows for the game on save, then re-inserts the submitted rows.
-- `mobile/addspirittimeouts.php` and `scorekeeper/addspirittimeouts.php` save spirit timeouts independently from ordinary timeout pages, using the same replace-on-save model.
-- The data model does not enforce a hard maximum, but the current entry UIs and printable scoresheets provide four spirit-timeout slots per team.
-- `GameEvents()` exposes spirit timeouts as event type `spirit_timeout`, and gameplay replays label them `Spirit timeout`.
-- `admin/spirit.php` includes season-scoped spirit-timeout summary counts and links to games where spirit timeouts were recorded.
+- Spirit stoppages are stored separately from ordinary timeouts in `uo_spirit_timeout`.
+- Each spirit-stoppage row stores the game, team ownership, sequence number, and timestamp in seconds.
+- Spirit stoppages are edited from timeout-oriented score-sheet surfaces, and mobile and scorekeeper both use dedicated spirit-stoppage pages.
+- Desktop bulk score-sheet editing in `user/addscoresheet.php` replaces all existing spirit-stoppage rows for the game on save, then re-inserts the submitted rows.
+- `mobile/addspirittimeouts.php` and `scorekeeper/addspirittimeouts.php` save spirit stoppages independently from ordinary timeout pages, using the same replace-on-save model.
+- The data model does not enforce a hard maximum, but the current entry UIs and printable scoresheets provide four spirit-stoppage slots per team.
+- `GameEvents()` exposes spirit stoppages as event type `spirit_timeout`, and gameplay replays label them `Spirit stoppage`.
+- `admin/spirit.php` includes season-scoped spirit-stoppage summary counts and links to games where spirit stoppages were recorded.
 
 ### Score visibility
 

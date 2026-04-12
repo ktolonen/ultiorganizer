@@ -841,6 +841,26 @@ function api_gameplay_statistics($gameId, $gameResult)
   );
 }
 
+function api_gameplay_role_data($playerId, $captains, $spiritCaptains)
+{
+  $roles = array();
+  $isCaptain = isset($captains[(int)$playerId]);
+  $isSpiritCaptain = isset($spiritCaptains[(int)$playerId]);
+
+  if ($isCaptain) {
+    $roles[] = 'team_captain';
+  }
+  if ($isSpiritCaptain) {
+    $roles[] = 'spirit_captain';
+  }
+
+  return array(
+    'captain' => $isCaptain,
+    'spirit_captain' => $isSpiritCaptain,
+    'roles' => $roles
+  );
+}
+
 /**
  * Handle gameplay endpoint.
  *
@@ -866,13 +886,15 @@ function api_handle_gameplay($tokenRow)
   $gameInfo = GameInfo($gameId);
   $poolInfo = PoolInfo($gameResult['pool']);
 
-  $homeCaptain = GameCaptain($gameId, $gameResult['hometeam']);
-  $visitorCaptain = GameCaptain($gameId, $gameResult['visitorteam']);
+  $homeCaptains = array_flip(GameCaptains($gameId, $gameResult['hometeam']));
+  $visitorCaptains = array_flip(GameCaptains($gameId, $gameResult['visitorteam']));
+  $homeSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $gameResult['hometeam']));
+  $visitorSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $gameResult['visitorteam']));
 
   $homeBoard = GameTeamScoreBoardArray($gameId, $gameResult['hometeam']);
   $visitorBoard = GameTeamScoreBoardArray($gameId, $gameResult['visitorteam']);
-  $homePlayers = GamePlayers($gameId, $gameResult['hometeam']);
-  $visitorPlayers = GamePlayers($gameId, $gameResult['visitorteam']);
+  $homePlayerRows = GamePlayers($gameId, $gameResult['hometeam']);
+  $visitorPlayerRows = GamePlayers($gameId, $gameResult['visitorteam']);
 
   $goals = GameGoals($gameId);
   $events = GameEvents($gameId);
@@ -912,8 +934,37 @@ function api_handle_gameplay($tokenRow)
     );
   }
 
+  $homePlayers = array();
+  foreach ($homePlayerRows as $row) {
+    $roleData = api_gameplay_role_data($row['player_id'], $homeCaptains, $homeSpiritCaptains);
+    $homePlayers[] = array(
+      'player_id' => (int)$row['player_id'],
+      'num' => isset($row['num']) ? (int)$row['num'] : null,
+      'firstname' => $row['firstname'],
+      'lastname' => $row['lastname'],
+      'captain' => $roleData['captain'],
+      'spirit_captain' => $roleData['spirit_captain'],
+      'roles' => $roleData['roles']
+    );
+  }
+
+  $visitorPlayers = array();
+  foreach ($visitorPlayerRows as $row) {
+    $roleData = api_gameplay_role_data($row['player_id'], $visitorCaptains, $visitorSpiritCaptains);
+    $visitorPlayers[] = array(
+      'player_id' => (int)$row['player_id'],
+      'num' => isset($row['num']) ? (int)$row['num'] : null,
+      'firstname' => $row['firstname'],
+      'lastname' => $row['lastname'],
+      'captain' => $roleData['captain'],
+      'spirit_captain' => $roleData['spirit_captain'],
+      'roles' => $roleData['roles']
+    );
+  }
+
   $homeScoreboard = array();
   foreach ($homeBoard as $row) {
+    $roleData = api_gameplay_role_data($row['player_id'], $homeCaptains, $homeSpiritCaptains);
     $homeScoreboard[] = array(
       'player_id' => (int)$row['player_id'],
       'num' => $row['num'],
@@ -922,12 +973,15 @@ function api_handle_gameplay($tokenRow)
       'assists' => (int)$row['fedin'],
       'goals' => (int)$row['done'],
       'total' => (int)$row['total'],
-      'captain' => ((int)$row['player_id'] === (int)$homeCaptain)
+      'captain' => $roleData['captain'],
+      'spirit_captain' => $roleData['spirit_captain'],
+      'roles' => $roleData['roles']
     );
   }
 
   $visitorScoreboard = array();
   foreach ($visitorBoard as $row) {
+    $roleData = api_gameplay_role_data($row['player_id'], $visitorCaptains, $visitorSpiritCaptains);
     $visitorScoreboard[] = array(
       'player_id' => (int)$row['player_id'],
       'num' => $row['num'],
@@ -936,7 +990,9 @@ function api_handle_gameplay($tokenRow)
       'assists' => (int)$row['fedin'],
       'goals' => (int)$row['done'],
       'total' => (int)$row['total'],
-      'captain' => ((int)$row['player_id'] === (int)$visitorCaptain)
+      'captain' => $roleData['captain'],
+      'spirit_captain' => $roleData['spirit_captain'],
+      'roles' => $roleData['roles']
     );
   }
 

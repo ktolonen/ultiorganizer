@@ -1180,6 +1180,13 @@ function upgrade86()
 	}
 }
 
+function upgrade87()
+{
+	if (!hasColumn("uo_played", "spirit_captain")) {
+		addColumn("uo_played", "spirit_captain", "tinyint(1) NOT NULL DEFAULT 0");
+	}
+}
+
 function upgradeEngineToInnoDb() {
 	$charset = 'utf8mb4';
 	$collation = 'utf8mb4_unicode_ci';

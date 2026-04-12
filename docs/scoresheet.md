@@ -7,7 +7,7 @@ In this codebase, a "scoresheet" is not a single object or table. It is a combin
 - game-level result and status stored on the game row,
 - per-game player participation stored separately from the team roster,
 - per-point goal rows and related game events,
-- supporting metadata such as official, captains, halftime, timeouts, spirit timeouts, and game note,
+- supporting metadata such as official, halftime, timeouts, spirit stoppages, and game note,
 - public or operator-facing views that replay the saved game data.
 
 This page focuses on current behavior. It does not propose workflow changes.
@@ -26,7 +26,7 @@ The practical result is that "feeding in a scoresheet" means combining several e
 - entering a result,
 - choosing the players who played,
 - entering the detailed sequence of points,
-- adding related metadata that makes the later visualization useful, including spirit timeouts when the event uses spirit scoring.
+- adding related metadata that makes the later visualization useful, including spirit stoppages when the event uses spirit scoring.
 
 ## Input Paths
 
@@ -68,12 +68,15 @@ What the operator enters:
 
 - which players played,
 - jersey numbers to use for the game.
+- in the desktop flow, team captains and spirit captains for the played roster.
 
 Current persistence behavior:
 
 - `GameAddPlayer()` inserts rows into `uo_played`,
 - `GameRemovePlayer()` removes unchecked rows from `uo_played`,
-- `GameSetPlayerNumber()` updates the jersey number stored on the `uo_played` row.
+- `GameSetPlayerNumber()` updates the jersey number stored on the `uo_played` row,
+- `GameSetCaptains()` updates the `captain` flag on `uo_played`,
+- `GameSetSpiritCaptains()` updates the `spirit_captain` flag on `uo_played`.
 
 Important distinction:
 
@@ -83,6 +86,7 @@ Important distinction:
 The detailed scoresheet does not resolve assist/scorer numbers directly from the team roster. It resolves them through `uo_played`, so missing player-list data weakens the detailed scoresheet flow.
 
 Desktop behavior in `user/addplayerlists.php` edits both teams on one page.
+It also stores captain-role selections for the played roster.
 
 Mobile and scorekeeper behavior differ:
 
@@ -104,10 +108,9 @@ What the operator enters:
 - scorer number,
 - point time unless the event hides times,
 - official name,
-- captains,
 - starting offence,
 - timeouts,
-- spirit timeouts for spirit-enabled seasons,
+- spirit stoppages for spirit-enabled seasons,
 - halftime end time,
 - optional game note,
 - whether the game is still ongoing.
@@ -115,7 +118,6 @@ What the operator enters:
 Current persistence behavior on save:
 
 - `GameSetScoreSheetKeeper()` updates `uo_game.official`,
-- `GameSetCaptain()` updates the `captain` flag on `uo_played`,
 - `GameSetHalftime()` updates `uo_game.halftime`,
 - `GameSetStartingTeam()` stores the first offence as a `uo_gameevent` row,
 - `SetGameComment(COMMENT_TYPE_GAME, ...)` stores the game note in `uo_comment`,
@@ -168,7 +170,7 @@ Related mobile actions are broken into separate pages:
 - `mobile/addcomment.php` for the game note,
 - `mobile/addhalftime.php` for halftime,
 - `mobile/addtimeouts.php` for ordinary timeouts,
-- `mobile/addspirittimeouts.php` for spirit timeouts when `spiritmode > 0` and time entry is visible,
+- `mobile/addspirittimeouts.php` for spirit stoppages when `spiritmode > 0` and time entry is visible,
 - `mobile/addfirstoffence.php` for starting offence.
 
 This means the mobile scoresheet is conceptually the same scoresheet, but the data is entered across several smaller pages instead of one bulk form.
@@ -201,7 +203,7 @@ Related metadata is handled in separate scorekeeper pages such as:
 - `scorekeeper/addcomment.php`,
 - `scorekeeper/addhalftime.php`,
 - `scorekeeper/addtimeouts.php` for ordinary timeouts,
-- `scorekeeper/addspirittimeouts.php` for spirit timeouts when `spiritmode > 0` and time entry is visible,
+- `scorekeeper/addspirittimeouts.php` for spirit stoppages when `spiritmode > 0` and time entry is visible,
 - `scorekeeper/addfirstoffence.php`.
 
 Compared with the desktop editor, scorekeeper entry is incremental and segmented rather than bulk.
@@ -277,12 +279,13 @@ Relevant columns:
 - `game`
 - `num`
 - `captain`
+- `spirit_captain`
 
 Role in the scoresheet:
 
 - records which players were marked as having played in the game,
 - stores the jersey number used for that game,
-- stores captain selection for gameplay displays.
+- stores team-captain and spirit-captain selections for gameplay displays.
 
 This is the bridge between the team roster and game-specific detailed entry.
 
@@ -433,7 +436,7 @@ It combines:
 - team scoreboards derived from `uo_goal`, `uo_played`, and `uo_player` via `GameTeamScoreBorad()`,
 - the chronological goal list from `uo_goal` via `GameGoals()`,
 - timeouts and other game events from `uo_timeout` and `uo_gameevent` via `GameEvents()`,
-- spirit timeouts from `uo_spirit_timeout` via `GameEvents()`,
+- spirit stoppages from `uo_spirit_timeout` via `GameEvents()`,
 - optional game note from `uo_comment` via `GameCommentHtml(COMMENT_TYPE_GAME)`.
 
 It also renders:
@@ -441,7 +444,7 @@ It also renders:
 - a point-by-point timeline,
 - halftime markers using `uo_game.halftime`,
 - assist and scorer names, optionally prefixed with the game-specific jersey numbers from `uo_played`,
-- captain markers based on `uo_played.captain`.
+- captain markers based on `uo_played.captain` and `uo_played.spirit_captain`.
 
 ### Mobile gameplay view
 
@@ -452,7 +455,7 @@ It still uses the same underlying saved data:
 - result from `uo_game`,
 - goals from `uo_goal`,
 - game events from `uo_timeout` and `uo_gameevent`,
-- spirit timeout events from `uo_spirit_timeout`,
+- spirit stoppage events from `uo_spirit_timeout`,
 - official name from `uo_game.official`.
 
 Compared with the desktop page, the mobile page shows a simpler sequential replay and links out to team scoreboards.
@@ -480,7 +483,7 @@ Current behavior:
 When it is enabled:
 
 - operators do not enter explicit point times,
-- operators do not enter regular timeouts or spirit timeouts from the score-sheet timeout pages,
+- operators do not enter regular timeouts or spirit stoppages from the score-sheet timeout pages,
 - detailed point rows still exist in `uo_goal`, but the entry flows synthesize increasing values instead of taking visible game-clock input,
 - gameplay views suppress time display even though the sequence of points is still preserved.
 
