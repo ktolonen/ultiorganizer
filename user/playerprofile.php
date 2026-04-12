@@ -19,7 +19,17 @@ if (isset($_GET["player"])) {
 	$playerId = PlayerLatestId(intval($_GET["profile"]));
 }
 
+if (empty($playerId)) {
+	showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
+	return;
+}
+
 $player = PlayerInfo($playerId);
+
+if (empty($player['player_id'])) {
+	showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
+	return;
+}
 
 if (empty($player['profile_id'])) {
 	CreatePlayerProfile($playerId);

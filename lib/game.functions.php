@@ -206,6 +206,9 @@ function GameRespTeam($gameId)
 	}
 
 	$row = mysqli_fetch_assoc($result);
+	if (!$row) {
+		return -1;
+	}
 	if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['hometeam']])) {
 		return $row['hometeam'];
 	}

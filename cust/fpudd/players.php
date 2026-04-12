@@ -20,64 +20,27 @@ if (hasEditPlayersRight($teamId)) {
 	$dom = new DOMDocument("1.0");
 	$node = $dom->createElement("MemberSet");
 	$parnode = $dom->appendChild($node);
+	$appendTextElement = function ($parentNode, $name, $value) use ($dom) {
+		$element = $dom->createElement($name);
+		$element = $parentNode->appendChild($element);
+		$text = $dom->createTextNode((string)($value ?? ''));
+		$element->appendChild($text);
+	};
 
 	foreach ($players as $row) {
 	  $node = $dom->createElement("Member");
 	  $newNode = $parnode->appendChild($node);
 	  
-	  $nextNode = $dom->createElement("AccreditationId"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['accreditation_id']);
-	  $nextText = $nextNode->appendChild($nextText);
-	  
-	  $nextNode = $dom->createElement("ProfileId"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['profile_id']);
-	  $nextText = $nextNode->appendChild($nextText);
-		
-	  $nextNode = $dom->createElement("Firstname"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['firstname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Lastname"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['lastname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("BirthDate"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode(DefBirthdayFormat($row['birthdate']));
-	  $nextText = $nextNode->appendChild($nextText);
-	  
-	  $nextNode = $dom->createElement("Team"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['teamname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Event"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['seasoname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Gender"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['gender']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Email"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['email']);
-	  $nextText = $nextNode->appendChild($nextText);	  
-		
-	  $nextNode = $dom->createElement("Jersey"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  if($row['num']<0){
-	    $nextText = $dom->createTextNode("");
-	  }else{
-	    $nextText = $dom->createTextNode($row['num']);
-	  }
-	  $nextText = $nextNode->appendChild($nextText);	
+	  $appendTextElement($newNode, "AccreditationId", $row['accreditation_id']);
+	  $appendTextElement($newNode, "ProfileId", $row['profile_id']);
+	  $appendTextElement($newNode, "Firstname", $row['firstname']);
+	  $appendTextElement($newNode, "Lastname", $row['lastname']);
+	  $appendTextElement($newNode, "BirthDate", DefBirthdayFormat($row['birthdate']));
+	  $appendTextElement($newNode, "Team", $row['teamname']);
+	  $appendTextElement($newNode, "Event", $row['seasoname']);
+	  $appendTextElement($newNode, "Gender", $row['gender']);
+	  $appendTextElement($newNode, "Email", $row['email']);
+	  $appendTextElement($newNode, "Jersey", ($row['num'] < 0) ? '' : $row['num']);
 	}
 	echo $dom->saveXML();
 }

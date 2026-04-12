@@ -32,6 +32,11 @@ function PlayerRoleSelectedIds($postedRoles, $selectedValue)
   return $playerIds;
 }
 
+if (empty($_GET["game"])) {
+	showPage(_("Rosters"), "<p class='warning'>" . _("Game not found") . ".</p>");
+	return;
+}
+
 $LAYOUT_ID = ADDPLAYERLISTS;
 $title = _("Rosters");
 $gameId = intval($_GET["game"]);

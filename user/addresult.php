@@ -7,6 +7,12 @@ include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 $html = "";
 $html2 = "";
+
+if (empty($_GET["game"])) {
+	showPage(_("Result"), "<p class='warning'>" . _("Game not found") . ".</p>");
+	return;
+}
+
 $gameId = intval($_GET["game"]);
 
 if (!hasEditGameEventsRight($gameId))

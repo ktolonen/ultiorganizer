@@ -7,6 +7,11 @@ include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'lib/location.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 
+if (empty($_GET["game"])) {
+	showPage(_("Defence sheet"), "<p class='warning'>" . _("Game not found") . ".</p>");
+	return;
+}
+
 $LAYOUT_ID = ADDDEFENSESHEET;
 $title = _("Fill in defence sheet");
 $maxtimeouts = 6;
