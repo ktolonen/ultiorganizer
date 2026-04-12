@@ -2,6 +2,7 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/reservation.functions.php';
 require_once __DIR__ . '/season.functions.php';
 
 function SearchSeason($resultTarget, $hiddenProperties, $submitbuttons)
@@ -742,9 +743,10 @@ function ReservationResults()
 		$ret .= "<th>" . _("Starts") . "</th><th>" . _("Ends") . "</th><th>" . _("Games") . "</th>";
 		$ret .= "<th>" . _("Scoresheets") . "</th><th></th></tr>\n";
 		while ($row = mysqli_fetch_assoc($result)) {
+			$placeLabel = utf8entities(ReservationPlaceText(U_($row['name']), U_($row['fieldname'])));
 			$ret .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='" . utf8entities($row['reservation_id']) . "'/></td>";
 			$ret .= "<td>" . utf8entities(U_($row['reservationgroup'])) . "</td>";
-			$ret .= "<td><a href='?view=admin/addreservation&amp;reservation=" . $row['reservation_id'] . "&amp;season=" . $row['season'] . "'>" . utf8entities(U_($row['name'])) . " " . _("Field") . " " . utf8entities(U_($row['fieldname'])) . "</a></td>";
+			$ret .= "<td><a href='?view=admin/addreservation&amp;reservation=" . $row['reservation_id'] . "&amp;season=" . $row['season'] . "'>" . $placeLabel . "</a></td>";
 			$ret .= "<td>" . DefWeekDateFormat($row['starttime']) . "</td>";
 			$ret .= "<td>" . DefHourFormat($row['starttime']) . "</td>";
 			$ret .= "<td>" . DefHourFormat($row['endtime']) . "</td>";
@@ -769,7 +771,7 @@ function GameResults()
 	} else {
 		$query = "SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
 			time, homescore, visitorscore, pool.timecap, pool.timeslot, pool.series,
-			CONCAT(loc.name, ' " . _("Field") . " ', res.fieldname) AS locationname,
+			loc.name AS locationname, res.fieldname,
 			res.reservationgroup,phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
 		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
 			left join uo_pool pool on (pp.pool=pool.pool_id)
@@ -816,9 +818,10 @@ function GameResults()
 		$ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"games\");'/></th>";
 		$ret .= "<th>" . _("Tournament") . "</th><th>" . _("Location") . "</th><th>" . _("Game") . "</th></tr>\n";
 		while ($row = mysqli_fetch_assoc($result)) {
+			$placeLabel = ReservationPlaceText(U_($row['locationname']), U_($row['fieldname']));
 			$ret .= "<tr><td><input type='checkbox' name='games[]' value='" . utf8entities($row['game_id']) . "'/></td>";
 			$ret .= "<td>" . utf8entities($row['reservationgroup']) . "</td>";
-			$ret .= "<td>" . utf8entities($row['locationname']) . "</td>";
+			$ret .= "<td>" . utf8entities($placeLabel) . "</td>";
 			$ret .= "<td>" . utf8entities(GameName($row)) . "</td>";
 			$ret .= "</tr>\n";
 		}

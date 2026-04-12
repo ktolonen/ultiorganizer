@@ -1690,7 +1690,7 @@ function GameResponsibilityArray($season, $series = null)
 		}
 		$gamesArray = $ret[$row['reservationgroup']][$row['res_id']];
 		$gamesArray['starttime'] = $row['starttime'];
-		$gamesArray['locationname'] = utf8entities($row['locationname']) . " " . _("Field") . " " . utf8entities($row['fieldname']);
+		$gamesArray['locationname'] = utf8entities(ReservationPlaceText(U_($row['locationname']), U_($row['fieldname'])));
 		$gamesArray[$row['game_id']] = $row;
 		$ret[$row['reservationgroup']][$row['res_id']] = $gamesArray;
 	}

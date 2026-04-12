@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
+include_once $include_prefix . 'lib/reservation.functions.php';
 include_once $include_prefix . 'lib/url.functions.php';
 
 $LAYOUT_ID = ADDSEASONUSERS;
@@ -198,8 +199,9 @@ if (!empty($_GET["access"]) && $_GET["access"] == "gameadmin") {
   $reservations = SeasonReservations($seasonId);
   $html .= "<tr><td colspan='5'><select multiple='multiple' size='" . count($reservations) . "' name='reservations[]'>";
   foreach ($reservations as $row) {
+    $placeLabel = ReservationPlaceText(U_($row['name']), U_($row['fieldname']));
     $html .= "<option value='" . utf8entities($row['id']) . "'>";
-    $html .= utf8entities($row['reservationgroup']) . " " . utf8entities($row['name']) . ", " . _("Field") . " " . utf8entities($row['fieldname']) . " (" . JustDate($row['starttime']) . ")";
+    $html .= utf8entities($row['reservationgroup']) . " " . utf8entities($placeLabel) . " (" . JustDate($row['starttime']) . ")";
     $html .= "</option>";
   }
   $html .= "</select></td></tr>";

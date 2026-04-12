@@ -198,7 +198,7 @@ echo "<tr><td>" . utf8entities($game_result['hometeamname']) . "</td></tr>";
 echo "<tr><th>" . _("Away team") . "</th></tr>";
 echo "<tr><td>" . utf8entities($game_result['visitorteamname']) . "</td></tr>";
 echo "<tr><th>" . _("Field") . "</th></tr>";
-echo "<tr><td>" . utf8entities($place['name']) . " " . _("field") . " " . utf8entities($place['fieldname']) . "</td></tr>";
+echo "<tr><td>" . utf8entities(ReservationPlaceText($place['name'], $place['fieldname'])) . "</td></tr>";
 echo "<tr><th>" . _("Scheduled start date and time") . "</th></tr>";
 echo "<tr><td>" . ShortDate($game_result['time']) . " " . DefHourFormat($game_result['time']) . "</td></tr>";
 echo "<tr><th>" . _("Game official(s)") . "</th></tr>";

@@ -110,7 +110,7 @@ Current quirks:
 
 ## Scheduling Workflow
 
-Reservations are created and edited through `admin/addreservation.php` with `AddReservation()` and `SetReservation()`. Relevant fields are season, location, field name, reservation group, start time, end time, and optional `timeslots`. Field input supports comma-separated fields and numeric ranges, so adding multiple fields creates multiple `uo_reservation` rows.
+Reservations are created and edited through `admin/addreservation.php` with `AddReservation()` and `SetReservation()`. Relevant fields are season, location, field name, reservation group, start time, and end time. Field input supports comma-separated fields and numeric ranges, so adding multiple fields creates multiple `uo_reservation` rows.
 
 `admin/poolgames.php` is the admin hub for generating games, previewing pairings, manually adding games, listing scheduled games by reservation, listing unscheduled games, listing moved games, and linking into drag-and-drop scheduling and manual editing. The main helpers here are `GenerateGames()`, `PoolAddGame()`, `PoolGames()`, `PoolGamesNotScheduled()`, and `PoolMovedGames()`.
 

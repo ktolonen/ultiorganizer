@@ -17,18 +17,19 @@ $parnode = $dom->appendChild($node);
 $savedID = null;
 foreach ($result as $row) {
 	if ($row['id'] !== $savedID) {
-		$node = $dom->createElement("marker");
-		$newnode = $parnode->appendChild($node);
-		$newnode->setAttribute("id", $row['id']);
-		$newnode->setAttribute("name", U_($row['name']));
-		$newnode->setAttribute("address", $row['address']);
-		$newnode->setAttribute("lat", $row['lat']);
-		$newnode->setAttribute("lng", $row['lng']);
-		$newnode->setAttribute("info", $row['info']);
-		$newnode->setAttribute("indoor", $row['indoor']);
-		$newnode->setAttribute("fields", $row['fields']);
+		/** @var DOMElement $newnode */
+		$newnode = $dom->createElement("marker");
+		$parnode->appendChild($newnode);
+		$newnode->setAttribute("id", (string)$row['id']);
+		$newnode->setAttribute("name", (string)U_($row['name']));
+		$newnode->setAttribute("address", (string)($row['address'] ?? ''));
+		$newnode->setAttribute("lat", (string)($row['lat'] ?? ''));
+		$newnode->setAttribute("lng", (string)($row['lng'] ?? ''));
+		$newnode->setAttribute("info", (string)($row['info'] ?? ''));
+		$newnode->setAttribute("indoor", (string)($row['indoor'] ?? ''));
+		$newnode->setAttribute("fields", (string)($row['fields'] ?? ''));
 	}
-	$newnode->setAttribute("info_" . $row['locale'], $row['locale_info']);
+	$newnode->setAttribute("info_" . $row['locale'], (string)($row['locale_info'] ?? ''));
 	$savedID = $row['id'];
 }
 

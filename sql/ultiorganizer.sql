@@ -329,7 +329,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(83, '2026-04-06 08:36:23'),
 	(84, '2026-04-06 08:36:23'),
 	(85, '2026-04-06 08:36:23'),
-	(86, '2026-04-06 08:36:23');
+	(86, '2026-04-06 08:36:23'),
+	(87, '2026-04-12 09:00:00'),
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -778,7 +779,7 @@ CREATE TABLE IF NOT EXISTS `uo_registerrequest` (
 
 CREATE TABLE IF NOT EXISTS `uo_reservation` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `location` int(10) NOT NULL,
+  `location` int(10) DEFAULT NULL,
   `fieldname` varchar(50) DEFAULT NULL,
   `reservationgroup` varchar(50) DEFAULT NULL,
   `starttime` datetime DEFAULT NULL,

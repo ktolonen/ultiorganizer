@@ -117,9 +117,10 @@ $html .= "<form method='post' id='reservations' action='?view=admin/reservations
   $html .= "<th>" . _("Scoresheets") . "</th><th></th></tr>\n";
   foreach ($reservations as $reservation) {
     $row = ReservationInfo($reservation['id']);
+    $placeLabel = utf8entities(ReservationPlaceText(U_($row['name']), U_($row['fieldname'])));
     $html  .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='" . utf8entities($row['id']) . "'/></td>";
     $html  .= "<td>" . utf8entities(U_($row['reservationgroup'])) . "</td>";
-    $html  .= "<td><a href='?view=admin/addreservation&amp;reservation=" . $row['id'] . "&amp;season=" . $row['season'] . "'>" . utf8entities(U_($row['name'])) . " " . _("Field") . " " . utf8entities(U_($row['fieldname'])) . "</a></td>";
+    $html  .= "<td><a href='?view=admin/addreservation&amp;reservation=" . $row['id'] . "&amp;season=" . $row['season'] . "'>" . $placeLabel . "</a></td>";
     $html  .= "<td>" . DefWeekDateFormat($row['starttime']) . "</td>";
     $html  .= "<td>" . DefHourFormat($row['starttime']) . "</td>";
     $html  .= "<td>" . DefHourFormat($row['endtime']) . "</td>";
@@ -147,7 +148,7 @@ $html .= "<form method='post' id='reservations' action='?view=admin/reservations
   foreach ($locations as $location) {
     $html .= "<input type='hidden' id='loc$i' name='loc[]' value='" . utf8entities($location['location']) . "'/>";
     $html .= "<input type='hidden' id='field$i' name='field[]' value='" . utf8entities($location['fieldname']) . "'/>";
-    $html .= "<p>" . ($i + 1) . ": " . $location['name'] . " " . _("Field") . " " . $location['fieldname'] . "</p>\n";
+    $html .= "<p>" . ($i + 1) . ": " . utf8entities(ReservationPlaceText(U_($location['name']), U_($location['fieldname']))) . "</p>\n";
     $i++;
   }
 

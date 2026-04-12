@@ -249,14 +249,14 @@ $tour = "";
 $totalgames = 0;
 foreach ($reservations as $res) {
 	$games = PoolGames($poolId, $res['id']);
-	$location = LocationInfo($res['location']);
+	$placeLabel = ReservationPlaceText(U_($res['name']), U_($res['fieldname']));
 	if (count($games)) {
 		if ($tour != $res['reservationgroup']) {
 			$html .= "<h2>" . utf8entities($res['reservationgroup']) . "</h2>";
 			$tour = $res['reservationgroup'];
 		}
 		$html .= "<table border='0' cellpadding='4px' width='400px'>\n";
-		$html .= "<tr><th colspan='4'>" . utf8entities($location['name']) . " ";
+		$html .= "<tr><th colspan='4'>" . utf8entities($placeLabel) . " ";
 		$html .= " " . DefWeekDateFormat($res['starttime']) . " " . DefHourFormat($res['starttime']) . "-";
 		$html .= DefHourFormat($res['endtime']) . "</th>";
 		$html .= "<th colspan='6' class='right'><a class='thlink' href='?view=admin/schedule&amp;season=$season&amp;series=" . $poolInfo['series'] . "&amp;pool=$poolId&amp;reservations=" . $res['id'] . "'>" . _("Add games") . "</a></th>";

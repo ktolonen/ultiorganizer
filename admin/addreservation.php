@@ -27,14 +27,13 @@ $res = array(
   "date" => "",
   "starttime" => "",
   "endtime" => "",
-  "season" => $season,
-  "timeslots" => ""
+  "season" => $season
 );
 
 if (isset($_POST['save']) || isset($_POST['add'])) {
 
   $res['id'] = isset($_POST['id']) ? $_POST['id'] : 0;
-  $res['location'] = isset($_POST['location']) ? $_POST['location'] : 0;
+  $res['location'] = isset($_POST['location']) ? trim((string)$_POST['location']) : "";
   $res['locationName'] = isset($_POST['locationName']) ? $_POST['locationName'] : "";
   $res['fieldname'] = isset($_POST['fieldname']) ? $_POST['fieldname'] : "";
   $res['reservationgroup'] = isset($_POST['reservationgroup']) ? $_POST['reservationgroup'] : "";
@@ -42,11 +41,10 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
   $res['starttime'] = isset($_POST['starttime']) ? ToInternalTimeFormat($res['date'] . " " . $_POST['starttime']) : ToInternalTimeFormat("1.1.1971 00:00");
   $res['endtime'] = isset($_POST['endtime']) ? ToInternalTimeFormat($res['date'] . " " . $_POST['endtime']) : ToInternalTimeFormat("1.1.1971 00:00");
   $res['date'] = ToInternalTimeFormat($res['date']);
-  $res['timeslots'] = isset($_POST['timeslots']) ? $_POST['timeslots'] : "";
   $res['season'] = isset($_POST['resseason']) ? $_POST['resseason'] : $season;
 
-  $locationInfo = ($res['location'] > 0) ? LocationInfo($res['location']) : null;
-  if (empty($locationInfo)) {
+  $locationInfo = ((int)$res['location'] > 0) ? LocationInfo($res['location']) : null;
+  if ((int)$res['location'] > 0 && empty($locationInfo)) {
     $html .= "<p>" . _("Select a valid location from the list or add it first.") . "</p>";
   } elseif ($res['id'] > 0) {
     SetReservation($res['id'], $res);
@@ -77,13 +75,8 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
       $reservationId = AddReservation($res);
       $displayDate = DefWeekDateFormat($res['starttime'] ?: $res['date']);
       $html .= "<li>" . $res['reservationgroup'] . ": " . $displayDate . " ";
-      if (!empty($res['timeslots'])) {
-        $html .= $res['timeslots'] . " ";
-      } else {
-        $html .=  DefHourFormat($res['starttime']) . "-" . DefHourFormat($res['endtime']) . " ";
-      }
-      $locationName = isset($locinfo['name']) ? $locinfo['name'] : _("Unknown location");
-      $html .=  $locationName . " " . _("field") . " " . $field;
+      $html .=  DefHourFormat($res['starttime']) . "-" . DefHourFormat($res['endtime']) . " ";
+      $html .= utf8entities(ReservationPlaceText(isset($locinfo['name']) ? $locinfo['name'] : "", $field));
       $html .= "</li>";
     }
     $html .= "</ul><hr/>";
@@ -164,7 +157,6 @@ if ($reservationId > 0) {
   $res['starttime'] = DefHourFormat($reservationInfo['starttime']);
   $res['endtime'] = DefHourFormat($reservationInfo['endtime']);
   $res['season'] = $reservationInfo['season'];
-  $res['timeslots'] = $reservationInfo['timeslots'];
   $res['locationName'] = isset($reservationInfo['name']) ? $reservationInfo['name'] : "";
   if (!empty($allfields)) {
     $res['fieldname'] = $allfields;
@@ -188,10 +180,6 @@ $html .= "</td></tr>\n";
 
 $html .= "<tr><td>" . _("End time") . " (" . _("hh:mm") . "):</td><td>";
 $html .= "<input type='text' class='input' name='endtime' value='" . utf8entities($res['endtime']) . "'/>\n";
-$html .= "</td></tr>\n";
-
-$html .= "<tr><td>" . _("Timeslots") . " (" . _("hh:mm,hh:mm") . "):</td><td>";
-$html .= "<input type='text' class='input' size='32' maxlength='100' name='timeslots' value='" . utf8entities($res['timeslots']) . "'/>\n";
 $html .= "</td></tr>\n";
 
 $html .= "<tr><td>" . _("Grouping name") . ":</td>";

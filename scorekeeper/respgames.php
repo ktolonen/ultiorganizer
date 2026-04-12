@@ -1,5 +1,6 @@
 <?php
 include_once __DIR__ . '/auth.php';
+include_once 'lib/reservation.functions.php';
 $html = "";
 $season = CurrentSeason();
 $currentSeasons = array();
@@ -145,7 +146,7 @@ foreach ($respGameArray as $tournament => $resArray) {
 
           $html .= "<li class='resp-location'>\n";
           $html .= "<details class='resp-location-toggle'>\n";
-          $html .= "<summary class='resp-location-title'>" . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</summary>";
+          $html .= "<summary class='resp-location-title'>" . utf8entities(ReservationPlaceText(U_($game['locationname']), U_($game['fieldname']))) . "</summary>";
           $html .= "<ul class='resp-game-list'>\n";
           $prevloc = $gameloc;
         }

@@ -4,6 +4,7 @@ denyDirectLibAccess(__FILE__);
 
 require_once __DIR__ . '/configuration.functions.php';
 require_once __DIR__ . '/game.functions.php';
+require_once __DIR__ . '/reservation.functions.php';
 
 function CollectGameIdsFromResult($games)
 {
@@ -35,6 +36,8 @@ function TournamentView($games, $grouping = true)
   $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
 
   foreach ($games as $game) {
+    $placeLabel = ReservationPlaceText(U_($game['placename']), U_($game['fieldname']));
+    $currentPlaceKey = empty($game['placename']) ? "reservation:" . $game['reservation_id'] : (string)$game['place_id'];
     $ret .= "\n<!-- res:" . $game['reservationgroup'] . " pool:" . $game['pool'] . " date:" . JustDate($game['starttime']) . "-->\n";
     if (
       $game['reservationgroup'] != $prevTournament
@@ -53,17 +56,19 @@ function TournamentView($games, $grouping = true)
       $prevPlace = "";
     }
 
-    if (JustDate($game['starttime']) != $prevDate || $game['place_id'] != $prevPlace) {
+    if (JustDate($game['starttime']) != $prevDate || $currentPlaceKey != $prevPlace) {
       if ($isTableOpen) {
         $ret .= "</table>\n";
         $isTableOpen = false;
       }
       $ret .= "<h3>";
       $ret .= DefWeekDateFormat($game['starttime']);
-      $ret .= " ";
-      $ret .= "<a href='?view=reservationinfo&amp;reservation=" . $game['reservation_id'] . "'>";
-      $ret .= utf8entities(U_($game['placename']));
-      $ret .= "</a>";
+      if ($placeLabel !== '') {
+        $ret .= " ";
+        $ret .= "<a href='?view=reservationinfo&amp;reservation=" . $game['reservation_id'] . "'>";
+        $ret .= utf8entities($placeLabel);
+        $ret .= "</a>";
+      }
       $ret .= "</h3>\n";
       $prevPool = "";
     }
@@ -84,7 +89,7 @@ function TournamentView($games, $grouping = true)
     }
 
     $prevTournament = $game['reservationgroup'];
-    $prevPlace = $game['place_id'];
+    $prevPlace = $currentPlaceKey;
     $prevSeries = $game['series_id'];
     $prevPool = $game['pool'];
     $prevDate = JustDate($game['starttime']);
@@ -294,7 +299,7 @@ function ExtTournamentView($games)
         $isTableOpen = false;
       }
       $ret .= "<tr><td style='width:100%'><table width='100%' class='pk_table'><tr><td class='pk_tournament_td1'>";
-      $ret .= utf8entities(U_($game['placename'])) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</td></tr></table></td></tr>\n";
+      $ret .= utf8entities(ReservationPlaceText(U_($game['placename']), U_($game['fieldname']))) . "</td></tr></table></td></tr>\n";
       $ret .= "<tr><td><table width='100%' class='pk_table'>\n";
       $isTableOpen = true;
     }
@@ -377,7 +382,11 @@ function ExtGameView($games)
       }
       $ret .= "<tr><td><table width='100%' class='pk_table'>";
       $ret .= "<tr><th class='pk_teamgames_th' colspan='12'>";
-      $ret .= DefWeekDateFormat($game['starttime']) . " " . utf8entities(U_($game['placename'])) . " " . _("Field") . " " . utf8entities($game['fieldname']);
+      $placeLabel = ReservationPlaceText(U_($game['placename']), U_($game['fieldname']));
+      $ret .= DefWeekDateFormat($game['starttime']);
+      if ($placeLabel !== '') {
+        $ret .= " " . utf8entities($placeLabel);
+      }
       $ret .= "</th></tr>\n";
       $isTableOpen = true;
     }
@@ -423,14 +432,12 @@ function ExtGameView($games)
 
 function PlaceHeaders($info, $field = false)
 {
+  $placeLabel = ReservationPlaceText($info['placename'], $field ? $info['fieldname'] : '');
   $ret = "<tr>\n";
   $ret .= "<th align='left' colspan='13'>";
   $ret .= "<a class='thlink' href='?view=reservationinfo&amp;reservation=" . $info['reservation_id'] . "'>";
-  $ret .= utf8entities($info['placename']);
+  $ret .= utf8entities($placeLabel);
   $ret .= "</a>";
-  if ($field) {
-    $ret .= " " . _("Field") . " " . utf8entities($info['fieldname']);
-  }
 
   $ret .= "</th>\n";
   $ret .= "</tr>\n";
@@ -631,6 +638,9 @@ function PrevGameDay($id, $gamefilter, $order)
 
 function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = "")
 {
+  $fieldOrder = "CAST(pr.fieldname AS UNSIGNED) ASC, pr.fieldname ASC";
+  $placeOrder = "CASE WHEN pl.id IS NULL THEN 1 ELSE 0 END, COALESCE(pl.id, pr.id) ASC";
+
   //common game query
   $query = "SELECT pp.game_id, pp.time, pp.hometeam, pp.visitorteam, pp.homescore,
 			pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
@@ -742,31 +752,31 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 
   switch ($order) {
     case "tournaments":
-      $query .= " ORDER BY ISNULL(pr.starttime), pr.starttime, pr.reservationgroup, pl.id, ps.ordering, pool.ordering, pp.time ASC, pr.fieldname + 0, pp.game_id ASC";
+      $query .= " ORDER BY ISNULL(pr.starttime), pr.starttime, pr.reservationgroup, " . $placeOrder . ", ps.ordering, pool.ordering, pp.time ASC, " . $fieldOrder . ", pp.game_id ASC";
       break;
 
     case "series":
-      $query .= " ORDER BY ps.ordering, pool.ordering, pp.time ASC, pr.starttime, pr.fieldname + 0, pp.game_id ASC";
+      $query .= " ORDER BY ps.ordering, pool.ordering, pp.time ASC, pr.starttime, " . $fieldOrder . ", pp.game_id ASC";
       break;
 
     case "places":
-      $query .= " ORDER BY pr.starttime, pr.reservationgroup, pl.id, pr.fieldname +0,  pp.time ASC, pp.game_id ASC";
+      $query .= " ORDER BY pr.starttime, pr.reservationgroup, pl.id, " . $fieldOrder . ", pp.time ASC, pp.game_id ASC";
       break;
 
     case "tournamentsdesc":
-      $query .= " ORDER BY pr.starttime DESC, pr.reservationgroup, pl.id, ps.ordering, pool.ordering, pp.time ASC, pp.game_id ASC";
+      $query .= " ORDER BY pr.starttime DESC, pr.reservationgroup, " . $placeOrder . ", ps.ordering, pool.ordering, pp.time ASC, pp.game_id ASC";
       break;
 
     case "placesdesc":
-      $query .= " ORDER BY pr.starttime DESC, pr.reservationgroup, pl.id, pr.fieldname + 0, pp.time ASC, pp.game_id ASC";
+      $query .= " ORDER BY pr.starttime DESC, pr.reservationgroup, pl.id, " . $fieldOrder . ", pp.time ASC, pp.game_id ASC";
       break;
 
     case "onepage":
-      $query .= " ORDER BY pr.reservationgroup, pr.starttime, pl.id, pr.fieldname +0, pp.time ASC, pp.game_id ASC";
+      $query .= " ORDER BY pr.reservationgroup, pr.starttime, pl.id, " . $fieldOrder . ", pp.time ASC, pp.game_id ASC";
       break;
 
     case "time":
-      $query .= " ORDER BY pp.time ASC, pr.fieldname +0, game_id ASC";
+      $query .= " ORDER BY pp.time ASC, " . $fieldOrder . ", game_id ASC";
       break;
 
     case "timedesc":

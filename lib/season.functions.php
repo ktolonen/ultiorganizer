@@ -412,19 +412,19 @@ function SeasonReservationgroups($seasonId)
  */
 function SeasonReservationLocations($seasonId, $group = "all")
 {
-  $query = sprintf(
+	$query = sprintf(
     "
 		SELECT DISTINCT pr.location, pl.name, pr.fieldname
 		FROM uo_reservation pr
         LEFT JOIN uo_location pl ON (pr.location=pl.id)
-		WHERE pr.season='%s'",
+		WHERE pr.season='%s' AND pr.location IS NOT NULL",
     DBEscapeString($seasonId)
   );
 
   if ($group != "all") {
     $query .= sprintf(" AND pr.reservationgroup = '%s'", DBEscapeString($group));
   }
-  $query .= "ORDER BY pr.location, pr.fieldname+0";
+  $query .= " ORDER BY pr.location, pr.fieldname+0";
 
   return DBQueryToArray($query);
 }

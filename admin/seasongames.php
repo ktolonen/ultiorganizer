@@ -186,7 +186,7 @@ foreach ($pools as $pool) {
     $html .= "<tr class='admintablerow'>";
 
     $html .= "<td style='width:15%'>" . ShortDate($game['starttime']) . " " . DefHourFormat($game['time']) . "<br/>";
-    $html .= utf8entities($game['placename']) . " " . utf8entities($game['fieldname']) . "</td>";
+    $html .= utf8entities(ReservationPlaceText($game['placename'], $game['fieldname'])) . "</td>";
 
     if ($game['hometeam']) {
       $html .= "<td  style='width:20%'>" . utf8entities(TeamName($game['hometeam'])) . "</td>";

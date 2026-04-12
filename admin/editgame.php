@@ -2,6 +2,7 @@
 include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/game.functions.php';
+include_once 'lib/reservation.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/common.functions.php';
 
@@ -198,13 +199,14 @@ echo "<option class='dropdown' value='0'></option>";
 $places = SeasonReservations($season);
 
 foreach ($places as $row) {
+	$placeLabel = ReservationPlaceText(U_($row['name']), U_($row['fieldname']));
 	if ($row['id'] == $info['reservation']) {
 		echo "<option class='dropdown' selected='selected' value='" . utf8entities($row['id']) . "'>";
-		echo utf8entities($row['reservationgroup']) . " " . utf8entities($row['name']) . ", " . _("Field") . " " . utf8entities($row['fieldname']) . " (" . JustDate($row['starttime']) . ")";
+		echo utf8entities($row['reservationgroup']) . " " . utf8entities($placeLabel) . " (" . JustDate($row['starttime']) . ")";
 		echo "</option>";
 	} else {
 		echo "<option class='dropdown' value='" . utf8entities($row['id']) . "'>";
-		echo utf8entities($row['reservationgroup']) . " " . utf8entities($row['name']) . ", " . _("Field") . " " . utf8entities($row['fieldname']) . " (" . JustDate($row['starttime']) . ")";
+		echo utf8entities($row['reservationgroup']) . " " . utf8entities($placeLabel) . " (" . JustDate($row['starttime']) . ")";
 		echo "</option>";
 	}
 }

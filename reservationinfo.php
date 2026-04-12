@@ -21,18 +21,31 @@ if (!$place) {
   pageEnd();
   return;
 }
-$title = _("Reservation") . ": " . utf8entities($place['name']) . " " . _("Field") . " " . utf8entities($place['fieldname']);
+$placeLabel = ReservationPlaceText($place['name'], $place['fieldname']);
+$title = _("Reservation");
+$headingText = _("Reservation");
+if ($placeLabel !== '') {
+  $title .= ": " . utf8entities($placeLabel);
+  $headingText .= ": " . $placeLabel;
+}
+$hasCoordinates = $place['lat'] !== null && $place['lat'] !== '' && $place['lng'] !== null && $place['lng'] !== '';
 
 //common page
 pageTopHeadOpen($title);
-pageTopHeadClose($title, false, "onload=\"load()\" onunload=\"GUnload()\"");
+$pageAttributes = $hasCoordinates ? "onload=\"load()\" onunload=\"GUnload()\"" : "";
+pageTopHeadClose($title, false, $pageAttributes);
 leftMenu();
 contentStart();
-echo "<h1>" . utf8entities($place['name']) . " " . _("Field") . " " . utf8entities($place['fieldname']) . "</h1>\n";
+echo "<h1>" . utf8entities($headingText) . "</h1>\n";
 echo "<p>" . DefTimeFormat($place['starttime']) . " - " . DefHourFormat($place['endtime']) . "</p>\n";
-echo "<p>" . utf8entities($place['address']) . "</p>\n";
-echo "<p>" . $place['info'] . "</p>\n";
-echo "<p>&nbsp;</p>";
+if (!empty($place['address'])) {
+  echo "<p>" . utf8entities($place['address']) . "</p>\n";
+}
+if (!empty($place['info'])) {
+  echo "<p>" . $place['info'] . "</p>\n";
+}
+if ($hasCoordinates) {
+  echo "<p>&nbsp;</p>";
 ?>
 <div id="googleMap" style="width: 600px; height: 400px; font-family: Arial, sans-serif; font-size: 11px; border: 1px solid black"></div>
 <script>
@@ -49,7 +62,7 @@ echo "<p>&nbsp;</p>";
     const contentString =
       '<div id="content">' +
       <?php
-      echo "'<h1>" . utf8entities($place['name']) . "</h1>'+";
+      echo "'<h1>" . utf8entities($placeLabel) . "</h1>'+";
       echo "'<p>" . utf8entities($place['address']) . "</p>'";
       ?> +
       "</div>";
@@ -59,7 +72,7 @@ echo "<p>&nbsp;</p>";
     const marker = new google.maps.Marker({
       position: field,
       map,
-      title: "<?php echo utf8entities($place['name']); ?>",
+      title: "<?php echo utf8entities($placeLabel); ?>",
     });
 
     marker.addListener("click", () => {
@@ -76,6 +89,7 @@ echo "<p>&nbsp;</p>";
 <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo GetGoogleMapsAPIKey(); ?>&callback=myMap"></script>
 
 <?php
+}
 contentEnd();
 pageEnd();
 ?>

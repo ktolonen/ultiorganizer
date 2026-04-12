@@ -181,6 +181,7 @@ if ($teamId) {
 
 		$home = empty($gameRow["hometeamname"]) ? U_($gameRow["phometeamname"]) : $gameRow["hometeamname"];
 		$visitor = empty($gameRow["visitorteamname"]) ? U_($gameRow["pvisitorteamname"]) : $gameRow["visitorteamname"];
+		$placeLabel = ReservationPlaceText(U_($gameRow["placename"]), U_($gameRow['fieldname']));
 
 			if ($scoreSheetAcceptsPlayerLists) {
 				$pdf->PrintScoreSheet(
@@ -190,7 +191,7 @@ if ($teamId) {
 					$visitor,
 					U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
 					$gameRow["time"],
-					U_($gameRow["placename"]) . " " . _("Field") . " " . U_($gameRow['fieldname']),
+					$placeLabel,
 					$homeplayers,
 					$visitorplayers
 				);
@@ -202,7 +203,7 @@ if ($teamId) {
 					$visitor,
 					U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
 					$gameRow["time"],
-					U_($gameRow["placename"]) . " " . _("Field") . " " . U_($gameRow['fieldname'])
+					$placeLabel
 				);
 				$pdf->PrintPlayerList($homeplayers, $visitorplayers);
 			}

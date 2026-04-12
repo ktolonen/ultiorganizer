@@ -1183,6 +1183,11 @@ function upgrade87()
 	if (!hasColumn("uo_played", "spirit_captain")) {
 		addColumn("uo_played", "spirit_captain", "tinyint(1) NOT NULL DEFAULT 0");
 	}
+
+	runQuery("ALTER TABLE uo_reservation MODIFY location int(10) DEFAULT NULL");
+	runQuery("UPDATE uo_reservation r LEFT JOIN uo_location l ON l.id = r.location
+		SET r.location = NULL
+		WHERE r.location IS NOT NULL AND (r.location = 0 OR l.id IS NULL)");
 }
 
 function upgradeEngineToInnoDb() {
@@ -1443,6 +1448,7 @@ function cleanupNullableOrphans()
 		"UPDATE uo_game g LEFT JOIN uo_team t ON t.team_id = g.visitorteam SET g.visitorteam = NULL WHERE g.visitorteam IS NOT NULL AND (g.visitorteam = 0 OR t.team_id IS NULL)",
 		"UPDATE uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool SET g.pool = NULL WHERE g.pool IS NOT NULL AND (g.pool = 0 OR p.pool_id IS NULL)",
 		"UPDATE uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation SET g.reservation = NULL WHERE g.reservation IS NOT NULL AND (g.reservation = 0 OR r.id IS NULL)",
+		"UPDATE uo_reservation r LEFT JOIN uo_location l ON l.id = r.location SET r.location = NULL WHERE r.location IS NOT NULL AND (r.location = 0 OR l.id IS NULL)",
 		"UPDATE uo_goal go LEFT JOIN uo_player p ON p.player_id = go.assist SET go.assist = NULL WHERE go.assist IS NOT NULL AND (go.assist = 0 OR p.player_id IS NULL)",
 		"UPDATE uo_goal go LEFT JOIN uo_player p ON p.player_id = go.scorer SET go.scorer = NULL WHERE go.scorer IS NOT NULL AND (go.scorer = 0 OR p.player_id IS NULL)",
 		"UPDATE uo_moveteams m LEFT JOIN uo_scheduling_name s ON s.scheduling_id = m.scheduling_id SET m.scheduling_id = NULL WHERE m.scheduling_id IS NOT NULL AND (m.scheduling_id = 0 OR s.scheduling_id IS NULL)",
