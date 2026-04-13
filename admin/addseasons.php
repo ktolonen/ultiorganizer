@@ -7,7 +7,7 @@ include_once 'lib/common.functions.php';
 $LAYOUT_ID = SEASONS;
 $seasonId = "";
 $html = "";
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 
 //season parameters
 $sp = array(

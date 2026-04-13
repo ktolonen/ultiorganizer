@@ -15,7 +15,7 @@ $teamId = $_GET["team"];
 
 $title = _("Edit");
 
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 //common page
 pageTopHeadOpen($title);
 pageTopHeadClose($title);

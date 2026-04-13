@@ -6,7 +6,7 @@ include_once 'lib/pool.functions.php';
 include_once 'lib/team.functions.php';
 $LAYOUT_ID = POOLMOVES;
 
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 $seriesId = 0;
 if (!empty($_GET["pool"]))
   $poolId = intval($_GET["pool"]);

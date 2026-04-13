@@ -5,7 +5,7 @@ include_once 'lib/series.functions.php';
 $seriesId = intval($_GET["series"]);
 $seasonInfo = SeasonInfo(SeriesSeasonId($seriesId));
 $teams = SeriesTeams($seriesId, true);
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 
 $html = "";
 if (isset($_POST['save'])) {

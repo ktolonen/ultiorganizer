@@ -1,6 +1,8 @@
 <?php
 include_once __DIR__ . '/auth.php';
-include_once 'lib/reservation.functions.php';
+include_once $include_prefix . 'lib/common.functions.php';
+include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/reservation.functions.php';
 $html = "";
 $season = CurrentSeason();
 $currentSeasons = array();

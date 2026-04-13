@@ -8,7 +8,7 @@ include_once 'lib/team.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/common.functions.php';
 $LAYOUT_ID = SERIETEAMS;
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 
 $seriesId = 0;
 if (!empty($_GET["pool"]))

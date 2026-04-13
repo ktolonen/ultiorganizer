@@ -8,7 +8,7 @@ $title = _("Team admins");
 $html = "";
 $seriesId = intval($_GET["series"]);
 $seriesinfo = SeriesInfo($seriesId);
-$backurl = isset($_POST['backurl']) ? utf8entities($_POST['backurl']) : utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = isset($_POST['backurl']) ? utf8entities($_POST['backurl']) : utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 $teams = SeriesTeams($seriesId);
 
 if (!isSeasonAdmin($seriesinfo['season'])) {

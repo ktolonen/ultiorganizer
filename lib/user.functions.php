@@ -1793,17 +1793,6 @@ function ConfirmPasswordReset($token, $newPassword)
 	return true;
 }
 
-function CreateRandomPassword()
-{
-
-	$chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789";
-	$password = '';
-	for ($i = 0; $i < 8; $i++) {
-		$password .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
-	}
-	return $password;
-}
-
 function CreateNewUsername($firstname, $lastname, $email)
 {
 	$firstname = strtolower($firstname);
@@ -1825,16 +1814,12 @@ function CreateNewUsername($firstname, $lastname, $email)
 
 function UserCreateRandomPassword()
 {
-
 	$chars = "abcdefghijkmnopqrstuvwxyz023456789";
-	srand((float)microtime() * 1000000);
-	$i = 0;
-	$pass = '';
-	while ($i <= 7) {
-		$num = rand() % 33;
-		$tmp = substr($chars, $num, 1);
-		$pass = $pass . $tmp;
-		$i++;
+	$length = 12;
+	$password = '';
+	$maxIndex = strlen($chars) - 1;
+	for ($i = 0; $i < $length; $i++) {
+		$password .= $chars[random_int(0, $maxIndex)];
 	}
-	return $pass;
+	return $password;
 }
