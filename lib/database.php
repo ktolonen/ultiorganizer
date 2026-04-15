@@ -491,12 +491,25 @@ function DBQueryToArray($query, $docasting = false)
 /**
  * Convert a mysqli result resource into an array of associative rows.
  *
- * @param mysqli_result $result The database resource returned from mysqli_query
+ * Accepts either a raw mysqli result or an already-materialized row array to
+ * preserve compatibility with legacy callers that still route helper output
+ * through `DBFetch*()` wrappers.
+ *
+ * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows
  * @param bool $docasting When true, cast row values using field metadata
  * @return array
  */
 function DBResourceToArray($result, $docasting = false)
 {
+  if (is_array($result)) {
+    if (empty($result)) {
+      return array();
+    }
+
+    $firstRow = reset($result);
+    return is_array($firstRow) ? array_values($result) : array($result);
+  }
+
   $retarray = array();
   while ($row = mysqli_fetch_assoc($result)) {
     if ($docasting) {
@@ -510,12 +523,21 @@ function DBResourceToArray($result, $docasting = false)
 /**
  * Fetch next row from result set as associative array.
  *
- * @param mysqli_result $result The database resource returned from mysqli_query
+ * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows
  * @param bool $docasting When true, cast row values using field metadata
  * @return array|null
  */
 function DBFetchAssoc($result, $docasting = false)
 {
+  if (is_array($result)) {
+    if (empty($result)) {
+      return null;
+    }
+
+    $firstRow = reset($result);
+    return is_array($firstRow) ? $firstRow : $result;
+  }
+
   $row = mysqli_fetch_assoc($result);
   if ($docasting && $row) {
     $row = DBCastArray($result, $row);
@@ -526,12 +548,21 @@ function DBFetchAssoc($result, $docasting = false)
 /**
  * Fetch all rows from result set as associative arrays.
  *
- * @param mysqli_result $result The database resource returned from mysqli_query
+ * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows
  * @param bool $docasting When true, cast row values using field metadata
  * @return array
  */
 function DBFetchAllAssoc($result, $docasting = false)
 {
+  if (is_array($result)) {
+    if (empty($result)) {
+      return array();
+    }
+
+    $firstRow = reset($result);
+    return is_array($firstRow) ? array_values($result) : array($result);
+  }
+
   if (!$docasting) {
     return mysqli_fetch_all($result, MYSQLI_ASSOC);
   }

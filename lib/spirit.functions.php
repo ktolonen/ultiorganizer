@@ -1691,6 +1691,87 @@ function SeriesSpiritBoard($seriesId)
 	return $averages;
 }
 
+/**
+ * Legacy compatibility wrapper for older `live/` API consumers.
+ *
+ * Historically this helper returned a numerically indexed row array with
+ * `team_id`, `teamname`, `total`, `games`, and `catN` fields. The newer
+ * `SeriesSpiritBoard()` returns an associative map keyed by team id instead.
+ *
+ * @param int $seriesId
+ * @param string $sorting One of `team`, `games`, `total`, or `catN`
+ * @param bool $includeIncomplete Retained for signature compatibility; current
+ *        implementation uses the same complete-game filtering as
+ *        `SeriesSpiritBoard()`
+ * @return array
+ */
+function SeriesSpiritBoardAlt2($seriesId, $sorting = "total", $includeIncomplete = false)
+{
+	$seriesId = (int)$seriesId;
+	$sorting = (string)$sorting;
+
+	$mode = (int)DBQueryToValue(sprintf(
+		"SELECT se.spiritmode
+		FROM uo_series sr
+		LEFT JOIN uo_season se ON (se.season_id = sr.season)
+		WHERE sr.series_id=%d",
+		$seriesId
+	));
+
+	$categoriesById = array();
+	if ($mode > 0) {
+		foreach (SpiritCategoryRows($mode) as $category) {
+			if ((int)$category['index'] > 0) {
+				$categoriesById[(int)$category['category_id']] = (int)$category['index'];
+			}
+		}
+	}
+
+	$rows = array();
+	foreach (SeriesSpiritBoard($seriesId) as $teamId => $teamRow) {
+		$row = array(
+			'team_id' => (int)$teamId,
+			'teamname' => $teamRow['teamname'],
+			'total' => isset($teamRow['total']) ? round((float)$teamRow['total'], 2) : 0,
+			'games' => isset($teamRow['games']) ? $teamRow['games'] : 0,
+		);
+
+		foreach ($teamRow as $key => $value) {
+			if (!is_int($key) && !ctype_digit((string)$key)) {
+				continue;
+			}
+
+			$categoryId = (int)$key;
+			if (!isset($categoriesById[$categoryId])) {
+				continue;
+			}
+
+			$row['cat' . $categoriesById[$categoryId]] = round((float)$value, 2);
+		}
+
+		$rows[] = $row;
+	}
+
+	usort($rows, function ($a, $b) use ($sorting) {
+		if ($sorting === "team") {
+			return strcasecmp((string)$a['teamname'], (string)$b['teamname']);
+		}
+
+		$allowedNumericSorts = array('games', 'total', 'cat1', 'cat2', 'cat3', 'cat4', 'cat5');
+		$sortKey = in_array($sorting, $allowedNumericSorts, true) ? $sorting : 'total';
+		$av = isset($a[$sortKey]) ? (float)$a[$sortKey] : 0.0;
+		$bv = isset($b[$sortKey]) ? (float)$b[$sortKey] : 0.0;
+
+		if ($av === $bv) {
+			return strcasecmp((string)$a['teamname'], (string)$b['teamname']);
+		}
+
+		return ($av < $bv) ? 1 : -1;
+	});
+
+	return $rows;
+}
+
 function SeriesSpiritBoardTotalAverages($seriesId, $includeIncomplete = false)
 {
 	$seriesId = (int)$seriesId;
