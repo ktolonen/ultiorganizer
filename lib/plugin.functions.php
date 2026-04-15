@@ -10,9 +10,17 @@ function GetPluginList($category, $type = "", $format = "")
 	if ($handle = opendir($include_prefix . 'plugins/')) {
 		while (false !== ($file = readdir($handle))) {
 			$fullfile = $include_prefix . 'plugins/' . $file;
-			if ($file != "." && $file != ".." && is_readable($fullfile) && is_file($fullfile)) {
-				$file = $fullfile;
-				$pluginf = fopen($file, "r") or die;
+			if (
+				$file != "."
+				&& $file != ".."
+				&& is_readable($fullfile)
+				&& is_file($fullfile)
+				&& pathinfo($fullfile, PATHINFO_EXTENSION) === 'php'
+			) {
+				$pluginf = fopen($fullfile, "r");
+				if ($pluginf === false) {
+					continue;
+				}
 				$inidata = "";
 				$readdata = false;
 
@@ -34,15 +42,28 @@ function GetPluginList($category, $type = "", $format = "")
 				if (empty($inidata)) {
 					continue;
 				}
-				$ini = parse_ini_string($inidata);
+				$ini = @parse_ini_string($inidata, false, INI_SCANNER_RAW);
+				if (
+					!is_array($ini)
+					|| empty($ini['category'])
+					|| empty($ini['type'])
+					|| empty($ini['format'])
+					|| !isset($ini['title'])
+					|| !isset($ini['description'])
+				) {
+					continue;
+				}
 
 				if (
 					$ini['category'] == $category
 					&& (empty($type) || $type == $ini['type'])
-					&& (empty($format) || $type == $ini['format'])
+					&& (empty($format) || $format == $ini['format'])
 				) {
-					$file = substr($file, 0, -4); //remove file extension
-					$plugins[] = array('file' => $file, 'title' => $ini['title'], 'description' => $ini['description']);
+					$plugins[] = array(
+						'file' => substr($fullfile, 0, -4), //remove file extension
+						'title' => $ini['title'],
+						'description' => $ini['description']
+					);
 				}
 			}
 		}

@@ -876,7 +876,7 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
       break;
   }
 
-  $query .= " GROUP BY pr.reservationgroup ORDER BY MAX(pp.time) ASC, pr.reservationgroup";
+  $query .= " GROUP BY pr.reservationgroup ORDER BY MAX(pp.time) ASC, ps.ordering, pr.reservationgroup";
 
   return DBQueryToArray($query);
 }

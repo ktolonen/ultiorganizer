@@ -310,6 +310,29 @@ function DBQuery($query)
 }
 
 /**
+ * Execute SQL statements from a line-based dump on the current connection.
+ *
+ * @param array $lines SQL dump content split into lines
+ * @return void
+ */
+function DBReplaySqlLines($lines)
+{
+  $statement = '';
+
+  foreach ($lines as $line) {
+    if (substr($line, 0, 2) == '--' || trim($line) === '') {
+      continue;
+    }
+
+    $statement .= $line;
+    if (substr(trim($line), -1, 1) == ';') {
+      DBQuery($statement);
+      $statement = '';
+    }
+  }
+}
+
+/**
  * Prepare SQL and return the mysqli statement handle.
  *
  * @param string $query Database query

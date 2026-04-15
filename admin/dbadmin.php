@@ -79,7 +79,7 @@ if (isSuperAdmin()) {
 		if (count($plugins)) {
 			$html .= "<p><span class='profileheader'>" . _("Plugins") . " ($type): </span><br/>\n";
 			foreach ($plugins as $plugin) {
-				$html .= "<a href='?view=" . $plugin['file'] . "'>&raquo; " . $plugin['title'] . "</a><br/>\n";
+				$html .= "<a href='?view=" . $plugin['file'] . "'>&raquo; " . utf8entities($plugin['title']) . "</a><br/>\n";
 			}
 			$html .= "</p>\n";
 		}
