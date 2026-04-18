@@ -13,6 +13,7 @@ services:
       - "${APP_PORT:-8080}:80"
     volumes:
       - ../..:/var/www/html
+      - ./php.dev.ini:/usr/local/etc/php/conf.d/zz-local-dev.ini:ro
 
   db:
     image: mariadb:10.11
@@ -53,6 +54,7 @@ services:
       LC_ALL: en_US.UTF-8
     volumes:
       - ../..:/workspace
+      - ./php.dev.ini:/usr/local/etc/php/conf.d/zz-local-dev.ini:ro
 
 volumes:
   ultiorganizer-db-data:

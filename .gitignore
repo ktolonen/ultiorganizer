@@ -1,4 +1,5 @@
 .codex
+/docs/dev/.env
 /conf/*
 !/conf/.htaccess
 !/conf/config.inc.example.php

@@ -22,6 +22,7 @@ docs/dev/compose.yaml
 docs/dev/Dockerfile.app
 docs/dev/Dockerfile.dev
 docs/dev/.env.example
+docs/dev/php.dev.ini
 ```
 
 ## Configure the stack
@@ -31,6 +32,8 @@ Copy the example environment file and adjust credentials or port mappings as nee
 ```sh
 cp docs/dev/.env.example docs/dev/.env
 ```
+
+Change `MYSQL_ROOT_PASSWORD` in `docs/dev/.env` before the first `docker compose up` so the database is not initialized with the default root password.
 
 The defaults create a local MariaDB database named `ultiorganizer` with user `ultiorganizer`.
 
@@ -49,6 +52,32 @@ This starts:
 
 You should then be able to open <http://localhost:8080/install.php>.
 
+When `install.php` asks for database connection details, use the Docker Compose service name as the database host:
+
+- Database host: `db`
+- Database name: `ultiorganizer` by default
+- Database user: `ultiorganizer` by default
+- Database password: the value of `MYSQL_PASSWORD` in `docs/dev/.env`
+
+## Allow the installer to write `conf/`
+
+The `app` container runs Apache/PHP as `www-data`, but the repository is bind-mounted from the host. On a typical local checkout, the installer may not be able to write `conf/` until you temporarily relax the host directory permissions.
+
+Before running the installer, allow writes to `conf/`:
+
+```sh
+chmod 777 conf
+```
+
+After installation has created `conf/config.inc.php`, tighten permissions again:
+
+```sh
+chmod 775 conf
+chmod 664 conf/config.inc.php
+```
+
+For non-local deployments, do not leave `conf/` world-writable.
+
 ## Optional developer workspace
 
 The stack also includes an optional `dev` service for AI agents, shell work, and repo tooling. It shares the same source tree as the running app but does not serve web traffic.
@@ -66,6 +95,26 @@ docker compose -f docs/dev/compose.yaml exec dev bash
 ```
 
 The `dev` image includes CLI tools useful for local development work such as `git`, `curl`, `less`, `mariadb-client`, and `ripgrep`.
+
+## PHP error logging
+
+The local Docker setup enables development-oriented PHP error reporting through `docs/dev/php.dev.ini`.
+
+- PHP errors are displayed in the browser
+- PHP errors are also written to `/tmp/ultiorganizer-php-error.log` inside the `app` container
+- Apache and PHP stderr output remains visible through `docker compose` logs
+
+To inspect the PHP error log directly:
+
+```sh
+docker compose -f docs/dev/compose.yaml exec app tail -f /tmp/ultiorganizer-php-error.log
+```
+
+To inspect the combined container log stream:
+
+```sh
+docker compose -f docs/dev/compose.yaml logs -f app
+```
 
 ## Container layout
 
