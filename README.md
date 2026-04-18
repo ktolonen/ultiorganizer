@@ -25,7 +25,17 @@ The `docs/ai/` directory is reserved for future AI assets or automation files. C
 
 To run Ultiorganizer you need a web server, PHP 8.3+ and a MariaDB 10.11+ database.
 
-Ensure the host has native gettext and locales available so PHP translations work (for Debian/Ubuntu: `sudo apt-get install gettext locales` and generate the locales you need with `sudo locale-gen`).
+For a local Debian/Ubuntu setup, install the required packages with:
+
+```bash
+sudo apt-get update && sudo apt-get install -y apache2 mariadb-server gettext locales php8.3 php8.3-mysql php8.3-intl php8.3-mbstring php8.3-xml
+```
+
+Ensure the host has native gettext and locales available so PHP translations work, then generate the locales you need. For example:
+
+```bash
+sudo locale-gen en_US.UTF-8
+```
 
 To install Ultiorganizer simply copy the files to your web server, call <http://yourpage.com/install.php> and follow the instructions.
 

@@ -1,0 +1,58 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: docs/dev/Dockerfile.app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    ports:
+      - "${APP_PORT:-8080}:80"
+    volumes:
+      - ../..:/var/www/html
+
+  db:
+    image: mariadb:10.11
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ultiorganizer}
+      MYSQL_USER: ${MYSQL_USER:-ultiorganizer}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-ultiorganizer}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+    healthcheck:
+      test:
+        - CMD
+        - mariadb-admin
+        - ping
+        - --host=127.0.0.1
+        - --user=root
+        - --password=${MYSQL_ROOT_PASSWORD:-changeme}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - ultiorganizer-db-data:/var/lib/mysql
+
+  dev:
+    profiles:
+      - devtools
+    build:
+      context: ../..
+      dockerfile: docs/dev/Dockerfile.dev
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - sleep
+      - infinity
+    environment:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+    volumes:
+      - ../..:/workspace
+
+volumes:
+  ultiorganizer-db-data:

@@ -8,6 +8,7 @@ This directory collects general project documentation.
 - `codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
 - `routing.md`: request entry points and view resolution.
 - `local-development.md`: local Docker-based setup.
+- `dev/`: Docker Compose assets and image definitions used by the local development guide.
 - `translations.md`: translation and gettext workflow.
 - `database-upgrades.md`: schema and migration workflow.
 - `database-access.md`: database access boundaries, allowed helper layers, migration guidance, and checker behavior.
