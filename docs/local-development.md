@@ -37,6 +37,8 @@ Change `MYSQL_ROOT_PASSWORD` in `docs/dev/.env` before the first `docker compose
 
 The defaults create a local MariaDB database named `ultiorganizer` with user `ultiorganizer`.
 
+The database container is also exposed to the host on `127.0.0.1:${DB_PORT}` for local database tools. The default host port is `3306`.
+
 ## Start the app and database
 
 Run the following command from the repository root:
@@ -95,6 +97,20 @@ docker compose -f docs/dev/compose.yaml exec dev bash
 ```
 
 The `dev` image includes CLI tools useful for local development work such as `git`, `curl`, `less`, `mariadb-client`, and `ripgrep`.
+
+## Connect with HeidiSQL or another host database client
+
+The local MariaDB container is published to the host so you can connect with HeidiSQL, DBeaver, or another desktop client.
+
+Use these connection settings:
+
+- Hostname: `127.0.0.1`
+- Port: `3306` by default, or the value of `DB_PORT` in `docs/dev/.env`
+- User: `ultiorganizer` by default
+- Password: the value of `MYSQL_PASSWORD` in `docs/dev/.env`
+- Database: `ultiorganizer` by default
+
+If you want full administrative access for local development, you can also connect as `root` with the password from `MYSQL_ROOT_PASSWORD`.
 
 ## PHP error logging
 

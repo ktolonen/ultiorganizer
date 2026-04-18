@@ -22,6 +22,8 @@ services:
       MYSQL_USER: ${MYSQL_USER:-ultiorganizer}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-ultiorganizer}
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+    ports:
+      - "127.0.0.1:${DB_PORT:-3306}:3306"
     healthcheck:
       test:
         - CMD
