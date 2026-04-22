@@ -91,6 +91,8 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 ## Verification
 
 - No automated test suite is documented.
+- If local `php` is not available, use the Docker-based local development environment from `docs/local-development.md`, preferably the optional `dev` workspace, for PHP linting, checker scripts, and other CLI verification.
+- Start the workspace with `docker compose -f docs/dev/compose.yaml --profile devtools up --build dev` and run commands with `docker compose -f docs/dev/compose.yaml exec -T dev ...`. If the `dev` service is unavailable but `app` is running, use `docker compose -f docs/dev/compose.yaml exec -T app ...` for equivalent PHP-based checks.
 - Verify changes by running the app and exercising the relevant page flow.
 
 ## Topic docs

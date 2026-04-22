@@ -9,6 +9,11 @@ if (!empty($_GET["season"])) {
   $season = $_GET["season"];
 }
 
+if ((empty($season) && !isSuperAdmin()) || (!empty($season) && !hasReservationsPageAccess($season))) {
+  showPage(_("Game locations"), "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 //process itself on submit
 if (!empty($_POST['remove_x']) && !empty($_POST['hiddenDeleteId'])) {
   $id = $_POST['hiddenDeleteId'];
@@ -40,7 +45,7 @@ $html = "";
 $html .= "<div id='googleMap' style='width:600px; height: 400px; font-family:Arial,";
 $html .= "sans-serif; font-size:11px; border:1px solid black'>";
 $html .= "</div>";
-$html .= "<form method='post' action='?view=admin/locations'>";
+$html .= "<form method='post' action='?view=admin/locations&amp;season=" . urlencode((string)$season) . "'>";
 
 $html .=  "<table style='white-space: nowrap;width:90%' border='0' cellpadding='4px'>\n";
 $html .=  "<tr>
@@ -56,7 +61,7 @@ foreach ($locations as $place) {
   $html .= "<td>" . utf8entities($place['name']) . "</td>";
   $html .= "<td>" . utf8entities($place['address']) . "</td>";
   $html .= "<td>[" . round($place['lat'], 2) . ", " . round($place['lng'], 2) . "]</td>";
-  $html .= "<td><a href='?view=admin/addlocations&location=" . $place['id'] . "'>" . _("edit") . "</a></td>";
+  $html .= "<td><a href='?view=admin/addlocations&amp;season=" . urlencode((string)$season) . "&amp;location=" . $place['id'] . "'>" . _("Edit") . "</a></td>";
   if (CanDeleteLocation($place['id'])) {
     $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"setId('" . $place['id'] . "');\"/></td>";
   } else {
@@ -65,7 +70,7 @@ foreach ($locations as $place) {
   $html .= "</tr>\n";
 }
 $html .=  "</table>";
-$html .= "<p><input type='button' onclick=\"window.location.href='?view=admin/addlocations'\" value='" . _('Add') . "'/></p>";
+$html .= "<p><input type='button' onclick=\"window.location.href='?view=admin/addlocations&amp;season=" . urlencode((string)$season) . "'\" value='" . _('Add') . "'/></p>";
 $html .=  "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 $html .=  "</form>";
 echo $html;
@@ -100,7 +105,7 @@ contentEnd();
           '<div id="content">' +
           '<h1>' + value.name + '</h1>' +
           '<p>' + value.address + '</p>' +
-          '<a href=?view=admin/addlocations&season=<?php echo $season ?>&location=' + value.id + '><?php echo _("edit") ?></a>' +
+          '<a href=?view=admin/addlocations&season=<?php echo $season ?>&location=' + value.id + '><?php echo _("Edit") ?></a>' +
           "</div>";
 
         const infowindow = new google.maps.InfoWindow({

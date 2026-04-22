@@ -343,7 +343,7 @@ function tableStart($dayArray, $skip, $max)
     if ($index > $skip + $max)
       break;
     $startTime = strtotime($reservationArray['starttime']);
-    echo "<th class='scheduling'>" . $reservationArray['name'] . " " . _("Field ") . " " . $reservationArray['fieldname'] .
+    echo "<th class='scheduling'>" . ReservationPlaceText($reservationArray['name'], $reservationArray['fieldname']) .
       " " . date("H:i", $startTime) . "</th>\n";
   }
   echo "<th>" . JustDate($reservationArray['starttime']) . "</th></tr><tr>\n";
@@ -521,7 +521,7 @@ if (count($reservationData) > 0) {
       $duration = ($endTime - $startTime) / 60;
 
       echo "<div style='vertical-align:bottom;min-height:" . intval($offset * MIN_HEIGHT) . "px'>";
-      echo "<h3>" . $reservationArray['name'] . " " . _("Field ") . " " . $reservationArray['fieldname'] . " " . date("H:i", $startTime) . "</h3></div>\n";
+      echo "<h3>" . ReservationPlaceText($reservationArray['name'], $reservationArray['fieldname']) . " " . date("H:i", $startTime) . "</h3></div>\n";
       echo "<div class='workarea' >\n";
       echo "<ul id='res" . $reservationId . "' class='draglist' style='min-height:" . ($duration * MIN_HEIGHT) . "px'>\n";
       $nextStart = $startTime;
@@ -558,10 +558,10 @@ if (count($reservationData) > 0) {
 echo "<table><tr>";
 echo "<td id='user_actions' style='float: left; padding: 20px'>";
 echo "<input type='button' id='showButton' value='" . _("Save") . "' /></td>";
-echo "<td class='center'><div id='responseStatus'></div>";
+echo "<td class='left'><div id='responseStatus'></div>";
 if (!empty($zeroGames)) {
   echo "<p>" . sprintf(
-    _("Warning: Games with duration 0 found. They cannot be scheduled. Edit the game duration or the time slot length of pool %s ..."),
+    _("Warning: Games with a duration of 0 minutes were found. They cannot be scheduled. Edit the game duration or the time slot length in %s."),
     gamePoolName($zeroGames[0])
   ) . "</p>";
 }

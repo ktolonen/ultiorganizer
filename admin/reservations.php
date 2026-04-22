@@ -88,7 +88,9 @@ if (!empty($urlparams)) {
 if (empty($season)) {
   $html .=  SearchReservation($url, $hidden, array('schedule' => _("Schedule selected")));
 } else {
-  $html .= "<p><a href='?view=admin/reservations'>" . _("Search") . "</a></p>";
+  if (isSuperAdmin()) {
+    $html .= "<p><a href='?view=admin/reservations'>" . _("Search") . "</a></p>";
+  }
   $groups = SeasonReservationgroups($season);
   if (count($groups) > 1) {
     $html .= "<p>\n";
@@ -143,7 +145,8 @@ $html .= "<form method='post' id='reservations' action='?view=admin/reservations
   $movetimes = TimetableMoveTimes($season);
 
   $html .= "<h2>" . _("Transfer times") . "</h2>";
-  $html .= "<p>" . _("Minimum times (in minutes) to move between fields") . "</p>\n";
+  $html .= "<p>" . _("Minimum transfer times in minutes between fields") . "</p>\n";
+  $html .= "<p>" . _("These transfer times are used during schedule validation to detect conflicts between consecutive games on different fields.") . "</p>\n";
   $i = 0;
   foreach ($locations as $location) {
     $html .= "<input type='hidden' id='loc$i' name='loc[]' value='" . utf8entities($location['location']) . "'/>";
@@ -152,7 +155,7 @@ $html .= "<form method='post' id='reservations' action='?view=admin/reservations
     $i++;
   }
 
-  $html .= "<table class='admintable'><tr><th>" . _("from\\to") . "</th>";
+  $html .= "<table class='admintable'><tr><th>" . _("From/to") . "</th>";
   $i = 0;
   foreach ($locations as $location) {
     $html .=  "<th>" . ($i + 1) . "</th>";

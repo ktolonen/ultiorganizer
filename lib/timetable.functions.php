@@ -991,12 +991,12 @@ function TimeTableSetMoveTimes($season, $times)
           " 
           INSERT INTO uo_movingtime
           (season, fromlocation, fromfield, tolocation, tofield, time) 
-          VALUES ('%s', '%d', '%d', '%d', '%d', '%d') ON DUPLICATE KEY UPDATE time='%d'",
+          VALUES ('%s', %d, '%s', %d, '%s', %d) ON DUPLICATE KEY UPDATE time=%d",
           DBEscapeString($season),
           (int) $times[$from]['location'],
-          (int) $times[$from]['field'],
+          DBEscapeString($times[$from]['field']),
           (int) $times[$to]['location'],
-          (int) $times[$to]['field'],
+          DBEscapeString($times[$to]['field']),
           (int) $times[$from][$to],
           (int) $times[$from][$to]
         );
