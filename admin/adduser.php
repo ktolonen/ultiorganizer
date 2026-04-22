@@ -2,12 +2,15 @@
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 
-if ((!empty($_GET["season"]) && !isSeasonAdmin($_GET["season"])) && !isSuperAdmin()) {
+if (!empty($_GET["season"])) {
+  if (!isSeasonAdmin($_GET["season"]) && !isSuperAdmin()) {
+    die("Insufficient user rights");
+  }
+} elseif (!isSuperAdmin()) {
   die("Insufficient user rights");
 }
 
 $html = "";
-$mailsent = false;
 $emailRequired = !IsEmailDisabled();
 if (!empty($_POST['save'])) {
   $newUsername = $_POST['UserName'];
@@ -66,13 +69,23 @@ if (!empty($_POST['save'])) {
     }
 
     if ($created) {
-      AddEditSeason($newUsername, CurrentSeason());
-      AddSeasonUserRole($newUsername, "teamadmin:" . $_POST["team"], CurrentSeason());
-      $html .= "<p>" . _("Added new user") . "<br/>\n";
-      $html .= _("Username") . ": " . $newUsername . "<br/>\n";
-      $html .= _("Password") . ": " . $newPassword . "<br/>\n";
-      if (IsEmailDisabled()) {
-        $html .= _("Deliver the password to the user manually.") . "<br/>\n";
+      foreach (CurrentSeasons() as $seasonInfo) {
+        $seasonId = $seasonInfo['season_id'];
+        if (hasEditUsersRight() || isSeasonAdmin($seasonId)) {
+          AddEditSeason($newUsername, $seasonId);
+        }
+      }
+
+      if (hasEditUsersRight()) {
+        header('location:?view=user/userinfo&user=' . urlencode($newUsername) . '&created=1');
+        exit;
+      } else {
+        $redirect = '?view=admin/adduser&createduser=' . urlencode($newUsername);
+        if (!empty($_GET['season'])) {
+          $redirect .= '&season=' . urlencode($_GET['season']);
+        }
+        header('location:' . $redirect);
+        exit;
       }
     } else {
       $html .= "<p>" . _("Adding the user failed. Please contact the system administrator.") . "</p>\n";
@@ -91,8 +104,17 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
+if (!empty($_GET['createduser'])) {
+  $html .= "<p>" . _("Added new user") . "<br/>\n";
+  $html .= _("Username") . ": " . utf8entities($_GET['createduser']) . "<br/>\n";
+  if (IsEmailDisabled()) {
+    $html .= _("Deliver the password to the user manually.") . "<br/>\n";
+  }
+  $html .= "</p>\n";
+}
 
 $html .= "<form method='post' action='?view=admin/adduser";
+$html .= !empty($_GET['season']) ? "&amp;season=" . urlencode($_GET['season']) : "";
 $html .= "'>\n";
 $html .= "<table cellpadding='8'>
 		<tr><td class='infocell'>" . _("Name") . ":</td>
@@ -116,23 +138,6 @@ if (!$emailRequired) {
   $html .= "&nbsp;<span class='note'>" . _("Optional when email is disabled.") . "</span>";
 }
 $html .= "</td></tr>";
-
-$html .= "<tr><td class='infocell'>" . _("Responsible team") . ":</td>";
-$teams = SeasonTeams(CurrentSeason());
-$html .= "<td><select class='dropdown' name='team'>";
-if (isset($_POST['team']))
-  $html .= "<option class='dropdown' value='0'></option>";
-else
-  $html .= "<option class='dropdown' selected='selected' value='0'></option>";
-
-foreach ($teams as $team) {
-  if (isset($_POST['team']) && $team['team_id'] == $_POST['team'])
-    $html .= "<option class='dropdown' selected='selected' value='" . utf8entities($team['team_id']) . "'>" . utf8entities(U_($team['seriesname'])) . " " . utf8entities($team['name']) . "</option>";
-  else
-    $html .= "<option class='dropdown' value='" . utf8entities($team['team_id']) . "'>" . utf8entities(U_($team['seriesname'])) . " " . utf8entities($team['name']) . "</option>";
-}
-
-$html .= "</select></td></tr>";
 
 $html .= "<tr><td colspan = '2' align='right'><br/>
 	      <input class='button' type='submit' name='save' value='" . _("Add") . "' />

@@ -22,6 +22,10 @@ if (!empty($_GET['user'])) {
 }
 
 if ($userid != "anonymous") {
+  if (!empty($_GET['created'])) {
+    $message .= "<p>" . _("Added new user") . "</p><hr/>";
+  }
+
   //process itself if submit was pressed
   if (!empty($_POST['save'])) {
     $newUsername = $_POST['UserName'];
