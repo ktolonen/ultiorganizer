@@ -35,17 +35,27 @@ cp docs/dev/.env.example docs/dev/.env
 
 Change `MYSQL_ROOT_PASSWORD` in `docs/dev/.env` before the first `docker compose up` so the database is not initialized with the default root password.
 
+Xdebug is enabled by default in the local PHP images. If you want to turn it off temporarily, set `XDEBUG_MODE=off` in `docs/dev/.env`.
+
 The defaults create a local MariaDB database named `ultiorganizer` with user `ultiorganizer`.
 
 The database container is also exposed to the host on `127.0.0.1:${DB_PORT}` for local database tools. The default host port is `3306`.
 
 ## Start the app and database
 
-Run the following command from the repository root:
+On the first start, or after changing `docs/dev/Dockerfile.app` or other build-time dependencies, run:
 
 ```sh
 docker compose -f docs/dev/compose.yaml up --build app db
 ```
+
+For normal restarts while working on the PHP codebase, start the same services without rebuilding:
+
+```sh
+docker compose -f docs/dev/compose.yaml up app db
+```
+
+Because the repository is bind-mounted into the `app` container, normal PHP, template, and static-asset edits do not require an image rebuild.
 
 This starts:
 
@@ -131,6 +141,42 @@ To inspect the combined container log stream:
 ```sh
 docker compose -f docs/dev/compose.yaml logs -f app
 ```
+
+## Xdebug
+
+The local `app` and `dev` images include Xdebug for browser and CLI debugging.
+
+Xdebug is controlled through `docs/dev/.env`:
+
+```sh
+XDEBUG_MODE=debug
+XDEBUG_START_WITH_REQUEST=yes
+XDEBUG_CLIENT_HOST=host.docker.internal
+XDEBUG_CLIENT_PORT=9003
+XDEBUG_IDEKEY=VSCODE
+```
+
+After changing Xdebug-related values in `docs/dev/.env`, restart the services:
+
+```sh
+docker compose -f docs/dev/compose.yaml up app db
+```
+
+If you changed the Dockerfiles or are starting the stack for the first time, rebuild instead:
+
+```sh
+docker compose -f docs/dev/compose.yaml up --build app db
+```
+
+With `XDEBUG_START_WITH_REQUEST=yes`, Xdebug tries to connect to your IDE on every request. If you want to turn that off temporarily, set `XDEBUG_START_WITH_REQUEST=trigger` and use an explicit trigger only when needed.
+
+Typical IDE settings:
+
+- Host: `localhost`
+- Port: `9003`
+- Path mapping: project root to `/var/www/html`
+
+The Compose file adds `host.docker.internal` for the local containers, so Xdebug can connect back to the IDE on the host machine on Linux, macOS, and Windows.
 
 ## Container layout
 

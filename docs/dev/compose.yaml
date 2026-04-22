@@ -9,8 +9,15 @@ services:
     environment:
       LANG: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      XDEBUG_MODE: ${XDEBUG_MODE:-debug}
+      XDEBUG_START_WITH_REQUEST: ${XDEBUG_START_WITH_REQUEST:-yes}
+      XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST:-host.docker.internal}
+      XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT:-9003}
+      XDEBUG_IDEKEY: ${XDEBUG_IDEKEY:-VSCODE}
     ports:
       - "${APP_PORT:-8080}:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ../..:/var/www/html
       - ./php.dev.ini:/usr/local/etc/php/conf.d/zz-local-dev.ini:ro
@@ -54,6 +61,13 @@ services:
     environment:
       LANG: en_US.UTF-8
       LC_ALL: en_US.UTF-8
+      XDEBUG_MODE: ${XDEBUG_MODE:-debug}
+      XDEBUG_START_WITH_REQUEST: ${XDEBUG_START_WITH_REQUEST:-yes}
+      XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST:-host.docker.internal}
+      XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT:-9003}
+      XDEBUG_IDEKEY: ${XDEBUG_IDEKEY:-VSCODE}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
     volumes:
       - ../..:/workspace
       - ./php.dev.ini:/usr/local/etc/php/conf.d/zz-local-dev.ini:ro
