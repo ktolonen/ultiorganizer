@@ -7,7 +7,7 @@ $seasonId = GetString("season");
 $title = _("Spirit Settings");
 $html = "";
 
-if (empty($seasonId) || !isSeasonAdmin($seasonId)) {
+if (empty($seasonId) || !hasSpiritToolsRight($seasonId)) {
 	$html .= "<p>" . _("Insufficient user rights") . "</p>";
 	showPage($title, $html);
 	return;
@@ -36,7 +36,7 @@ if (!empty($_POST['save'])) {
 	$seasonInfo['showspiritpointsonlyoncomplete'] = !empty($_POST['showspiritpointsonlyoncomplete']) ? 1 : 0;
 	$seasonInfo['lockteamspiritonsubmit'] = !empty($_POST['lockteamspiritonsubmit']) ? 1 : 0;
 
-	if (SetSeason($seasonId, $seasonInfo, $seasonComment)) {
+	if (SetSeasonSpiritSettings($seasonId, $seasonInfo)) {
 		$html .= "<p class='notice'>" . _("Spirit settings saved.") . "</p>";
 		$spiritSettings = array(
 			'spiritmode' => (int)$seasonInfo['spiritmode'],

@@ -309,7 +309,8 @@ function SpiritTokenGameRows($teamId)
 			se.showspiritpoints,
 			se.showspiritcomments,
 			se.showspiritpointsonlyoncomplete,
-			se.lockteamspiritonsubmit
+			se.lockteamspiritonsubmit,
+			se.event_readonly
 		FROM uo_game g
 		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
 		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
@@ -317,7 +318,21 @@ function SpiritTokenGameRows($teamId)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE (g.hometeam=%d OR g.visitorteam=%d)
-			AND COALESCE(se.spiritmode, 0) > 0
+			AND (
+				COALESCE(se.spiritmode, 0) > 0
+				OR EXISTS(
+					SELECT 1
+					FROM uo_spirit_score ssc
+					WHERE ssc.game_id = g.game_id
+						AND (ssc.team_id = g.hometeam OR ssc.team_id = g.visitorteam)
+				)
+				OR EXISTS(
+					SELECT 1
+					FROM uo_comment uc
+					WHERE CAST(uc.id AS UNSIGNED) = g.game_id
+						AND uc.type IN (5, 6)
+				)
+			)
 		ORDER BY g.time ASC, g.game_id ASC",
 		(int)$teamId,
 		(int)$teamId
@@ -491,6 +506,37 @@ function SpiritTokenSaveSubmission($gameId, $tokenTeamId, $points, $categories)
 	}
 
 	SpiritScoreReplaceByGameTeam($gameId, $ratedTeamId, $validatedPoints);
+	RefreshGameSpiritData($gameId);
+	return true;
+}
+
+function SpiritTokenSaveSubmissionWithComment($gameId, $tokenTeamId, $points, $categories, $comment, $delete = false, $game = null)
+{
+	$tokenTeamId = (int)$tokenTeamId;
+	if (!$game) {
+		$game = SpiritTokenGame($gameId, $tokenTeamId);
+	}
+	if (!$game || !SpiritTokenCanSubmit($gameId, $tokenTeamId, $game)) {
+		return false;
+	}
+
+	$ratedTeamId = SpiritTokenRatedTeamId($game, $tokenTeamId);
+	if ($ratedTeamId <= 0) {
+		return false;
+	}
+
+	$validatedPoints = SpiritValidateSubmittedPoints($points, $categories);
+	if ($validatedPoints === false) {
+		return false;
+	}
+
+	SpiritScoreReplaceByGameTeam($gameId, $ratedTeamId, $validatedPoints);
+
+	$type = SpiritCommentTypeForTeam($game, $ratedTeamId);
+	if ($type > 0) {
+		ApplyCommentChange($type, $gameId, CommentRequestedChange($type, $gameId, $comment, $delete));
+	}
+
 	RefreshGameSpiritData($gameId);
 	return true;
 }

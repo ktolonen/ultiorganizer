@@ -31,15 +31,10 @@ if (count($scores) > 0) {
 	$html .= _("Delete goal") . " " . ($lastscore['num'] + 1) . ": ";
 	$html .= $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
 	$html .= "[" . SecToMin($lastscore['time']) . "] ";
-	if (intval($lastscore['iscallahan'])) {
-		$lastpass = "xx";
-	} else {
-		$lastpass = "#" . PlayerNumber($lastscore['assist'], $gameId) . " ";
-		$lastpass .= PlayerName($lastscore['assist']);
+	$goalText = GoalDisplayText($lastscore, $gameId, true);
+	if ($goalText !== '') {
+		$html .= utf8entities($goalText);
 	}
-	$lastgoal = "#" . PlayerNumber($lastscore['scorer'], $gameId) . " ";
-	$lastgoal .= PlayerName($lastscore['scorer']);
-	$html .= $lastpass . " --> " . $lastgoal . "";
 } else {
 	$html .= _("Score") . ": 0 - 0";
 }

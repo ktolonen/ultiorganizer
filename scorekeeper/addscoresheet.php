@@ -135,7 +135,8 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
     }
 
     if (strcasecmp($uo_goal['scorer'], 'xx') == 0 || strcasecmp($uo_goal['scorer'], 'x') == 0) {
-      $uo_goal['scorer'] = 0;
+      $uo_goal['iscallahan'] = 1;
+      $uo_goal['scorer'] = -1;
     }
 
     if (!empty($team) && $team == 'H') {
@@ -233,15 +234,10 @@ if ($lastscore) {
   if (!$hideTimeOnScoresheet) {
     $html .= "[" . SecToMin($lastscore['time']) . "] ";
   }
-  if (intval($lastscore['iscallahan'])) {
-    $lastpass = "xx";
-  } else {
-    $lastpass = "#" . PlayerNumber($lastscore['assist'], $gameId) . " ";
-    $lastpass .= PlayerName($lastscore['assist']);
+  $goalText = GoalDisplayText($lastscore, $gameId, true);
+  if ($goalText !== '') {
+    $html .= utf8entities($goalText);
   }
-  $lastgoal = "#" . PlayerNumber($lastscore['scorer'], $gameId) . " ";
-  $lastgoal .= PlayerName($lastscore['scorer']);
-  $html .= $lastpass . " --> " . $lastgoal;
   $html .= " <a href='?view=deletescore&amp;game=" . $gameId . "' data-ajax='false'>" . _("Delete goal") . "</a>";
 } else {
   $html .= _("Score") . ": 0 - 0";

@@ -38,6 +38,27 @@ pageTopHeadOpen($title);
 			form.elements[i].checked = !form.elements[i].checked;
 		}
 	}
+
+	function confirmDeleteUsers() {
+		var form = document.getElementById('users');
+		var confirmMessage;
+
+		if (!form) {
+			return true;
+		}
+
+		if (form.querySelectorAll('input[name="users[]"]:checked').length === 0) {
+			return true;
+		}
+
+		if (form.querySelector('input[name="registerrequest"]')) {
+			confirmMessage = '<?php echo addslashes(_("Are you sure you want to delete the selected registration requests?")); ?>';
+		} else {
+			confirmMessage = '<?php echo addslashes(_("Are you sure you want to delete the selected users?")); ?>';
+		}
+
+		return confirm(confirmMessage);
+	}
 </script>
 <?php
 pageTopHeadClose($title);
@@ -55,6 +76,15 @@ if (hasEditUsersRight()) {
 		$actions = array('resetpassword' => _("Reset password"), 'deleteuser' => _("Delete"));
 	}
 	echo SearchUser($target, array(), $actions);
+	echo "<script type='text/javascript'>
+		(function() {
+			var deleteButton = document.querySelector(\"#users input[name='deleteuser']\");
+
+			if (deleteButton) {
+				deleteButton.onclick = confirmDeleteUsers;
+			}
+		})();
+	</script>";
 }
 
 contentEnd();

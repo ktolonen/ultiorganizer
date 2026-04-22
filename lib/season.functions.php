@@ -787,6 +787,41 @@ function SetSeason($seasonId, $params, $comment = null)
 }
 
 /**
+ * Change spirit-related season properties for a season.
+ *
+ * Access level: seasonadmin, spiritadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @param array $params spirit-related uo_season fields
+ * @return boolean TRUE on success or FALSE on error.
+ */
+function SetSeasonSpiritSettings($seasonId, $params)
+{
+  if (!hasSpiritToolsRight($seasonId)) {
+    return false;
+  }
+
+  $query = sprintf(
+    "
+		UPDATE uo_season SET
+		spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d
+		WHERE season_id='%s'",
+    (int)$params['spiritmode'],
+    (int)$params['showspiritpoints'],
+    (int)$params['showspiritcomments'],
+    (int)$params['showspiritpointsonlyoncomplete'],
+    (int)$params['lockteamspiritonsubmit'],
+    DBEscapeString($seasonId)
+  );
+
+  $result = DBQuery($query);
+  if ($result && function_exists('RefreshSeasonSpiritData')) {
+    RefreshSeasonSpiritData($seasonId);
+  }
+  return $result;
+}
+
+/**
  * Tests if season can be safely removed from database.
  *
  * @param string $seasonId uo_season.season_id

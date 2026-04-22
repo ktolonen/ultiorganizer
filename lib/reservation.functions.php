@@ -189,8 +189,16 @@ function ReservationSeasons($reservationId)
 		LEFT JOIN uo_pool pool ON (p.pool=pool.pool_id)
 		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
 		WHERE p.reservation=%d", (int)$reservationId);
-	$result = DBQueryToArray($query);
-	return $result;
+	$rows = DBQueryToArray($query);
+	$seasons = array();
+
+	foreach ($rows as $row) {
+		if (isset($row['season'])) {
+			$seasons[] = $row['season'];
+		}
+	}
+
+	return $seasons;
 }
 
 /**

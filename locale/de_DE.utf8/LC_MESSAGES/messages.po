@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-22 09:30+0000\n"
+"POT-Creation-Date: 2026-04-22 10:14+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -306,7 +306,7 @@ msgstr "Hinzufügen"
 msgid "Add new season/tournament"
 msgstr "Neue Saison/Turnier hinzufügen"
 
-#: admin/addteamadmins.php:85 admin/adduser.php:99 admin/users.php:49
+#: admin/addteamadmins.php:85 admin/adduser.php:99 admin/users.php:70
 msgid "Add new user"
 msgstr "Neuer Benutzer"
 
@@ -547,6 +547,16 @@ msgstr "Bist du sicher, dass du das Turnier löschen willst?"
 #, fuzzy
 msgid "Are you sure you want to delete the location?"
 msgstr "Bist du sicher, dass du das Turnier löschen willst?"
+
+#: admin/users.php:55
+msgid "Are you sure you want to delete the selected registration requests?"
+msgstr ""
+"Bist du sicher, dass du die ausgewählten Registrierungsanfragen löschen "
+"willst?"
+
+#: admin/users.php:57
+msgid "Are you sure you want to delete the selected users?"
+msgstr "Bist du sicher, dass du die ausgewählten Benutzer löschen willst?"
 
 #: admin/visitors.php:59
 #, fuzzy
@@ -1449,7 +1459,7 @@ msgid "Defensive plays"
 msgstr "Defensivaktionen"
 
 #: admin/poolmoves.php:217 admin/poolmoves.php:284 admin/seasonpoints.php:203
-#: admin/users.php:53 admin/users.php:55 mobile/deletescore.php:21
+#: admin/users.php:74 admin/users.php:76 mobile/deletescore.php:21
 #: mobile/deletescore.php:45 scorekeeper/deletescore.php:47
 #: user/teamplayers.php:172
 msgid "Delete"
@@ -4665,7 +4675,7 @@ msgstr "Zurücksetzen"
 msgid "Reset page load counter"
 msgstr ""
 
-#: admin/users.php:55 mobile/login_failed.php:35
+#: admin/users.php:76 mobile/login_failed.php:35
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
@@ -7285,6 +7295,14 @@ msgstr "ja"
 #, fuzzy
 #~ msgid "Add game location"
 #~ msgstr "Ort hinzufügen"
+
+#~ msgid "Are you sure you want to delete the selected registration request?"
+#~ msgstr ""
+#~ "Bist du sicher, dass du die ausgewählte Registrierungsanfrage löschen "
+#~ "willst?"
+
+#~ msgid "Are you sure you want to delete the selected user?"
+#~ msgstr "Bist du sicher, dass du den ausgewählten Benutzer löschen willst?"
 
 #~ msgid "Away Goals"
 #~ msgstr "Punkte (Gast)"

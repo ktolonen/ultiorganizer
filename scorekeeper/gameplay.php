@@ -82,12 +82,10 @@ if (count($goals) <= 0) {
 			$html .= SecToMin($goal['time']) . " ";
 		}
 		$html .= $goal['homescore'] . " - " . $goal['visitorscore'] . " ";
-		if (intval($goal['iscallahan'])) {
-			$html .= _("Callahan goal") . "&nbsp;";
-		} else {
-			$html .= utf8entities($goal['assistfirstname']) . " " . utf8entities($goal['assistlastname']) . " --> ";
+		$goalText = GoalDisplayText($goal, $gameId);
+		if ($goalText !== '') {
+			$html .= utf8entities($goalText) . "&nbsp;";
 		}
-		$html .= utf8entities($goal['scorerfirstname']) . " " . utf8entities($goal['scorerlastname']) . "&nbsp;";
 
 		$html .= "</td></tr>\n";
 

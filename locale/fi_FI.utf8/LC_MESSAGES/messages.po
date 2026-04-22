@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-22 09:30+0000\n"
+"POT-Creation-Date: 2026-04-22 10:14+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -312,7 +312,7 @@ msgstr "Lisää uusi"
 msgid "Add new season/tournament"
 msgstr "Lisää uusi kausi/turnaus"
 
-#: admin/addteamadmins.php:85 admin/adduser.php:99 admin/users.php:49
+#: admin/addteamadmins.php:85 admin/adduser.php:99 admin/users.php:70
 msgid "Add new user"
 msgstr "Lisää uusi käyttäjä"
 
@@ -553,6 +553,14 @@ msgstr "Haluatko varmasti poistaa tapahtuman?"
 #: admin/locations.php:32
 msgid "Are you sure you want to delete the location?"
 msgstr "Haluatko varmasti poistaa pelipaikan?"
+
+#: admin/users.php:55
+msgid "Are you sure you want to delete the selected registration requests?"
+msgstr "Haluatko varmasti poistaa valitut rekisteröitymispyynnöt?"
+
+#: admin/users.php:57
+msgid "Are you sure you want to delete the selected users?"
+msgstr "Haluatko varmasti poistaa valitut käyttäjät?"
 
 #: admin/visitors.php:59
 msgid "Are you sure you want to reset the page load counter?"
@@ -1443,7 +1451,7 @@ msgid "Defensive plays"
 msgstr "Puolustuspisteet"
 
 #: admin/poolmoves.php:217 admin/poolmoves.php:284 admin/seasonpoints.php:203
-#: admin/users.php:53 admin/users.php:55 mobile/deletescore.php:21
+#: admin/users.php:74 admin/users.php:76 mobile/deletescore.php:21
 #: mobile/deletescore.php:45 scorekeeper/deletescore.php:47
 #: user/teamplayers.php:172
 msgid "Delete"
@@ -4638,7 +4646,7 @@ msgstr "Nollaa"
 msgid "Reset page load counter"
 msgstr "Nolla sivun latauslaskurit"
 
-#: admin/users.php:55 mobile/login_failed.php:35
+#: admin/users.php:76 mobile/login_failed.php:35
 msgid "Reset password"
 msgstr "Nollaa salasana"
 
@@ -7229,6 +7237,12 @@ msgstr "kyllä"
 
 #~ msgid "Add game location"
 #~ msgstr "Lisää pelipaikka"
+
+#~ msgid "Are you sure you want to delete the selected registration request?"
+#~ msgstr "Haluatko varmasti poistaa valitun rekisteröitymispyynnön?"
+
+#~ msgid "Are you sure you want to delete the selected user?"
+#~ msgstr "Haluatko varmasti poistaa valitun käyttäjän?"
 
 #~ msgid "Away Goals"
 #~ msgstr "Vierasmaalit"

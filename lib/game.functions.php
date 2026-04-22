@@ -590,6 +590,53 @@ function GameLastGoal($gameId)
 	return DBQueryToRow($query);
 }
 
+function GoalPlayerDisplayText($playerId, $gameId, $firstname = '', $lastname = '')
+{
+	$playerId = (int)$playerId;
+	if ($playerId <= 0) {
+		return '';
+	}
+
+	$name = trim($firstname . ' ' . $lastname);
+	if ($name === '') {
+		$name = trim(PlayerName($playerId));
+	}
+
+	$number = PlayerNumber($playerId, $gameId);
+	$prefix = $number >= 0 ? "#" . $number . " " : '';
+
+	return trim($prefix . $name);
+}
+
+function GoalDisplayText($goal, $gameId, $withNumbers = false)
+{
+	if (!empty($goal['iscallahan'])) {
+		return _("Callahan goal");
+	}
+
+	$assistText = '';
+	$scorerText = '';
+	if ($withNumbers) {
+		$assistText = GoalPlayerDisplayText($goal['assist'], $gameId);
+		$scorerText = GoalPlayerDisplayText($goal['scorer'], $gameId);
+	} else {
+		$assistText = trim(($goal['assistfirstname'] ?? '') . ' ' . ($goal['assistlastname'] ?? ''));
+		$scorerText = trim(($goal['scorerfirstname'] ?? '') . ' ' . ($goal['scorerlastname'] ?? ''));
+	}
+
+	if ($assistText !== '' && $scorerText !== '') {
+		return $assistText . " --> " . $scorerText;
+	}
+	if ($scorerText !== '') {
+		return $scorerText;
+	}
+	if ($assistText !== '') {
+		return $assistText;
+	}
+
+	return '';
+}
+
 function GameAllGoals($gameId)
 {
 	$query = sprintf(

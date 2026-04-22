@@ -25,16 +25,12 @@ $commentFeedback = "";
 
 if (!empty($_POST['save']) && $canSubmit) {
 	$submittedPoints = isset($_POST['cat']) && is_array($_POST['cat']) ? $_POST['cat'] : array();
-	if (SpiritTokenSaveSubmission($gameId, $teamId, $submittedPoints, $categories)) {
-		$submittedComment = isset($_POST['spiritcomment']) ? (string)$_POST['spiritcomment'] : $spiritComment;
-		$deleteComment = !empty($_POST['delete_spirit_comment']);
-		if (!$deleteComment && trim($submittedComment) === '' && $spiritComment !== '') {
-			$submittedComment = $spiritComment;
-		}
-		if (($deleteComment || trim($submittedComment) !== '' || $spiritComment !== '') &&
-			!SpiritTokenSaveComment($gameId, $teamId, $submittedComment, $deleteComment, $game)) {
-			$commentFeedback = "<p class='warning'>" . _("Spirit note not saved.") . "</p>";
-		}
+	$submittedComment = isset($_POST['spiritcomment']) ? (string)$_POST['spiritcomment'] : $spiritComment;
+	$deleteComment = !empty($_POST['delete_spirit_comment']);
+	if (!$deleteComment && trim($submittedComment) === '' && $spiritComment !== '') {
+		$submittedComment = $spiritComment;
+	}
+	if (SpiritTokenSaveSubmissionWithComment($gameId, $teamId, $submittedPoints, $categories, $submittedComment, $deleteComment, $game)) {
 		$existingPoints = GameGetSpiritPoints($gameId, $ratedTeamId);
 		$defaultPoints = $existingPoints;
 		$spiritComment = $commentType > 0 ? CommentRaw($commentType, $gameId) : "";
