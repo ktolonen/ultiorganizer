@@ -389,6 +389,10 @@ function GetW3CLocale()
 
 function validEmail($email)
 {
+	if (!is_string($email) || $email === '') {
+		return false;
+	}
+
 	$isValid = true;
 	$atIndex = strrpos($email, "@");
 	if (is_bool($atIndex) && !$atIndex) {

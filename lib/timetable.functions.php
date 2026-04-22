@@ -492,10 +492,11 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
   }
 
   if ($field) {
-    if (!empty($game['fieldname']))
+    if (!empty($game['fieldname'])) {
       $ret .= "<td style='$fieldw'><span>" . _("Field") . " " . utf8entities($game['fieldname']) . "</span></td>\n";
-    else
+    } else {
       $ret .= "<td style='$fieldw'></td>\n";
+    }
   }
 
   if ($game['hometeam']) {
@@ -517,7 +518,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
   }
 
   if ($pool) {
-    $ret .= "<td style='$poolw'><span><a href='?view=poolstatus&pool=".(int)$game['pool']."'>" . utf8entities(U_($game['poolname'])) . "</span></td>\n";
+    $ret .= "<td style='$poolw'><span><a href='?view=poolstatus&pool=" . (int)$game['pool'] . "'>" . utf8entities(U_($game['poolname'])) . "</span></td>\n";
   }
 
   if (!GameHasStarted($game)) {
@@ -549,6 +550,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
     } else {
       $urls = GetMediaUrlList("game", $game['game_id'], "live");
     }
+
     $ret .= "<td style='$mediaw;white-space: nowrap;'>";
     // TODO: Add setting to show URLs always (bruno fork)
     if (count($urls) && (intval($game['isongoing']) || !GameHasStarted($game))) {
@@ -557,7 +559,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
         if (empty($title)) {
           $title = _("Live Broadcasting");
         }
-        $ret .= "<a href='" . $url['url'] . "' target='_blank'>" . "<img border='0' width='16' height='16' title='" . utf8entities($title) . "' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/></a>";
+        $ret .= "<a href='" . $url['url'] . "' target='_blank' rel='noopener'>" . "<img border='0' width='16' height='16' title='" . utf8entities($title) . "' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/></a>";
       }
     }
     $ret .= "</td>\n";
@@ -573,7 +575,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
         if (mysqli_num_rows($xgames) > 0) {
           $ret .= "<td class='right' style='$infow'><span style='white-space: nowrap'>";
           $ret .= "<a href='?view=gamecard&amp;team1=" . utf8entities($game['hometeam']) . "&amp;team2=" . utf8entities($game['visitorteam']) . "'>";
-          $ret .=  _("Game history") . "</a></span></td>\n";
+          $ret .= _("Game history") . "</a></span></td>\n";
         } else {
           $ret .= "<td class='left' style='$infow'></td>\n";
         }
@@ -602,7 +604,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
       $ret .= "<img src='images/feed-icon-14x14.png' width='10' height='10' alt='RSS'/></a></td>";
     }
   }
-  $ret .=  "</tr>\n";
+  $ret .= "</tr>\n";
   return $ret;
 }
 
@@ -646,7 +648,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 			pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
 			ps.series_id, ps.name AS seriesname, ps.season, ps.type, pr.fieldname, pr.reservationgroup,
 			pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, COALESCE(pm.goals,0) AS scoresheet,
-			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, home.name AS hometeamname, visitor.name AS visitorteamname,
+			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, pp.islive, home.name AS hometeamname, visitor.name AS visitorteamname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid, 
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry, 

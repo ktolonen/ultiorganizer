@@ -175,6 +175,19 @@ foreach ($pools as $pool) {
 
   foreach ($games as $game) {
     $i = $game['game_id'];
+    $gameMeta = array();
+
+    if (!empty($game['gamename'])) {
+      $gameMeta[] = utf8entities(U_($game['gamename']));
+    }
+
+    if (intval($game['islive']) > 0) {
+      $gameMeta[] = _("Live");
+    }
+
+    if ($game['isongoing']) {
+      $gameMeta[] = _("Ongoing");
+    }
 
     if (GameHasStarted($game)) {
       if ($_SESSION['hide_played_games']) {
@@ -206,15 +219,24 @@ foreach ($pools as $pool) {
     if ($_SESSION['massinput']) {
       $html .= "<td colspan='2'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/>
           <input type='text' size='3' maxlength='4' style='width:5ex' value='" . (is_null($game['homescore']) ? "" : intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' oninput='confirmLeave(this, true, null);' tabindex='" . ++$tab . "'/>
-          - <input type='text' size='3' maxlength='5' style='width:5ex'value='" . (is_null($game['visitorscore']) ? "" : intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' oninput='confirmLeave(this, true, null);' tabindex='" . ++$tab . "'/></td>";
+          - <input type='text' size='3' maxlength='5' style='width:5ex'value='" . (is_null($game['visitorscore']) ? "" : intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' oninput='confirmLeave(this, true, null);' tabindex='" . ++$tab . "'/>"
+        . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+        . "</td>";
     } else {
       if (GameHasStarted($game)) {
-        if ($game['isongoing'])
-          $html .= "<td><em>" . intval($game['homescore']) . "</em> - <em>" . intval($game['visitorscore']) . "</em></td>";
-        else
-          $html .= "<td>" . intval($game['homescore']) . " - " . intval($game['visitorscore']) . "</td>";
+        if ($game['isongoing']) {
+          $html .= "<td><em>" . intval($game['homescore']) . "</em> - <em>" . intval($game['visitorscore']) . "</em>"
+            . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+            . "</td>";
+        } else {
+          $html .= "<td>" . intval($game['homescore']) . " - " . intval($game['visitorscore'])
+            . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+            . "</td>";
+        }
       } else {
-        $html .= "<td>? - ?</td>";
+        $html .= "<td>? - ?"
+          . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+          . "</td>";
       }
       if ($game['hometeam'] && $game['visitorteam']) {
         $html .= "<td class='right'><a href='?view=user/addresult&amp;game=" . $game['game_id'] . "'>" . _("Result") . "</a> | ";
