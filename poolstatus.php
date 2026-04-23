@@ -142,8 +142,11 @@ function scoreboard($id, $seriesScoreboard)
   if ($seriesScoreboard) {
     $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
     $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Gms")."</th>
-    <th class='center'>"._("Ast")."</th><th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot.")."</th><th class='center'>"._("Tot/Gm")."</th></tr>\n";
+    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
+    <th class='center'>"._("Assists")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Tot.")."</th></tr>\n";
+    /*
+    <th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot/Gm")."</th>
+    */
 
     $scores = SeriesScoreBoardArray($id, "total", 10);
     foreach ($scores as $row) {
@@ -151,11 +154,13 @@ function scoreboard($id, $seriesScoreboard)
       $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
-      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
       $ret .= "<td class='center'>" . intval($row['done']) . "</td>";
+      $ret .= "<td class='center'><strong>".intval($row['total'])."</strong></td></tr>\n";
+      /*
+      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
       $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
-      $ret .= "<td class='center'>".intval($row['total'])."</td>";
-      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."<strong></td></tr>\n";
+      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."</strong></td></tr>\n";
+      */
     }
 
     $ret .= "</table>";
@@ -163,8 +168,11 @@ function scoreboard($id, $seriesScoreboard)
   } else {
     $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
     $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Gms")."</th>
-    <th class='center'>"._("Ast")."</th><th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot.")."</th><th class='center'>"._("Tot/Gm")."</th></tr>\n";
+    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
+    <th class='center'>"._("Assists")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Tot.")."</th></tr>\n";
+    /*
+    <th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot/Gm")."</th>
+    */
 
     $poolinfo = PoolInfo($id);
     $pools = array();
@@ -183,11 +191,13 @@ function scoreboard($id, $seriesScoreboard)
       $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
       $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
-      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
       $ret .= "<td class='center'>".intval($row['done'])."</td>";
+      $ret .= "<td class='center'><strong>".intval($row['total'])."</strong></td></tr>\n";
+      /*
+      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
       $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
-      $ret .= "<td class='center'>".intval($row['total'])."</td>";
-      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."<strong></td></tr>\n";
+      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."</strong></td></tr>\n";
+      */
     }
 
     $ret .= "</table>";

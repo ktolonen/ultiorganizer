@@ -173,7 +173,7 @@ if ($games) {
     $html .= "<th>" . _("Defences") . "</th>";
   }
   $html .= "<th>" . _("Assists avg.") . "</th>";
-  $html .= "<th>" . _("Goals avg.") . "</th><th>" . _("Point avg.") . "</th>";
+  $html .= "<th>" . _("Goals avg.") . "</th><th>" . _("Tot. avg.") . "</th>";
   if (ShowDefenseStats()) {
     $html .= "<th>" . _("Defences avg.") . "</th>";
   }
@@ -221,10 +221,10 @@ if (ShowDefenseStats()) {
 
 
       $html_tmp .= "<table style='white-space: nowrap;' border='1' cellspacing='0' width='100%'>\n
-			<tr><th>" . _("Event") . "</th><th>" . _("Division") . "</th><th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th><th>" . _("Cal.") . "</th><th>" . _("Tot.") . "</th>";
+			<tr><th>" . _("Event") . "</th><th>" . _("Division") . "</th><th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th><th>" . _("Call.") . "</th><th>" . _("Tot.") . "</th>";
       $html_tmp .= "<th>" . _("Defences") . "</th>";
-      $html_tmp .= "<th>" . _("Assists avg.") . "</th><th>" . _("Goal avg.") . "</th><th>" . _("Point avg.") . "</th>";
-      $html_tmp .= "<th>" . _("Defence avg.") . "</th>";
+      $html_tmp .= "<th>" . _("Assists avg.") . "</th><th>" . _("Goals avg.") . "</th><th>" . _("Tot. avg.") . "</th>";
+      $html_tmp .= "<th>" . _("Defences avg.") . "</th>";
       $html_tmp .= "<th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
 
@@ -298,10 +298,10 @@ if (ShowDefenseStats()) {
 
     //seasons total
     $html .= "<table border='1' width='100%'><tr>
-		<th>" . _("Event type") . "</th><th>" . _("Division") . "</th><th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th><th>" . _("Cal.") . "</th><th>" . _("Tot.") . "</th>";
+		<th>" . _("Event type") . "</th><th>" . _("Division") . "</th><th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th><th>" . _("Call.") . "</th><th>" . _("Tot.") . "</th>";
     $html .= "<th>" . _("Defences") . "</th><th>" . _("Assists avg.") . "</th>
-		<th>" . _("Goal avg.") . "</th><th>" . _("Point avg.") . "</th>";
-    $html .= "<th>" . _("Defence avg.") . "</th><th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
+		<th>" . _("Goals avg.") . "</th><th>" . _("Tot. avg.") . "</th>";
+    $html .= "<th>" . _("Defences avg.") . "</th><th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
     $total_games = 0;
     $total_goals = 0;
@@ -397,7 +397,7 @@ if (ShowDefenseStats()) {
 
       $html_tmp .= "<table style='white-space: nowrap;' border='1' cellspacing='0' width='100%'>\n
 			<tr><th>" . _("Event") . "</th><th>" . _("Division") . "</th><th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th>
-			<th>" . _("Cal.") . "</th><th>" . _("Tot.") . "</th><th>" . _("Assists avg.") . "</th><th>" . _("Goal avg.") . "</th><th>" . _("Point avg.") . "</th><th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
+			<th>" . _("Call.") . "</th><th>" . _("Tot.") . "</th><th>" . _("Assists avg.") . "</th><th>" . _("Goals avg.") . "</th><th>" . _("Tot. avg.") . "</th><th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
 
       foreach ($playedSeasons as $season) {
@@ -465,8 +465,8 @@ if (ShowDefenseStats()) {
 
     //seasons total
     $html .= "<table border='1' width='100%'><tr>
-		<th>" . _("Event type") . "</th><th>" . _("Division") . "</th><th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th><th>" . _("Cal.") . "</th><th>" . _("Tot.") . "</th><th>" . _("Assists avg.") . "</th>
-		<th>" . _("Goal avg.") . "</th><th>" . _("Point avg.") . "</th><th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
+		<th>" . _("Event type") . "</th><th>" . _("Division") . "</th><th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th><th>" . _("Call.") . "</th><th>" . _("Tot.") . "</th><th>" . _("Assists avg.") . "</th>
+		<th>" . _("Goals avg.") . "</th><th>" . _("Tot. avg.") . "</th><th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
     $total_games = 0;
     $total_goals = 0;

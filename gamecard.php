@@ -96,9 +96,9 @@ foreach ($games as $game) {
 $html .= "<h2>" . utf8entities($team1['name']) . " vs. " . utf8entities($team2['name']) . "</h2>\n";
 
 $html .= "<table border='1' width='100%'><tr>\n
-	<th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Wins") . "</th><th>" . _("Losses") . "</th><th>" . _("Win-%") . "</th><th>" . _("Scored") . "</th>
-	<th>" . _("Scored") . "/" . _("game") . "</th><th>" . _("Goals against") . "</th><th>" . _("Goals against") . "/" . _("game") . "</th><th>" . _("Goal difference") . "</th>
-	</tr>\n";
+		<th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Wins") . "</th><th>" . _("Losses") . "</th><th>" . _("Win-%") . "</th><th>" . _("Goals for") . "</th>
+		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th><th>" . _("Goals against") . "</th><th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th><th>" . _("Goals diff") . "</th>
+		</tr>\n";
 
 $html .= "<tr>
 	 <td><a href='?view=teamcard&amp;team=$teamId1'>" . utf8entities($team1['name']) . "</a></td>
@@ -127,14 +127,14 @@ $html .= "<tr>
 $html .= "</table>\n";
 
 if ($nGames) {
-  $html .= "<h2>" . _("Played") . " " . _("games") . "</h2>\n";
+  $html .= "<h2>" . _("Played games") . "</h2>\n";
   $html .= "<table border='1' cellspacing='2' width='80%'><tr>\n";
 
   $viewUrl = "?view=gamecard&amp;team1=$teamId1&amp;team2=$teamId2&amp;";
 
   $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=team'>" . _("Game") . "</a></th>";
   $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=result'>" . _("Result") . "</a></th>";
-  $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Division") . "</a></th></tr>";
+  $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Event / Pool") . "</a></th></tr>";
 
   $points = array(array());
   foreach ($games as $game) {
@@ -246,7 +246,7 @@ if ($nGames) {
   }
 
   if (($sorting == "ptotal") || (!$sorted)) {
-    $html .= "<th><b>Yht.</b></th></tr>\n";
+    $html .= "<th><b>" . _("Tot.") . "</b></th></tr>\n";
     mergesort($points, function ($a, $b) {
       return $a[6] == $b[6] ? 0 : ($a[6] > $b[6] ? -1 : 1);
     });

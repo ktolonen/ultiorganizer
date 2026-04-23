@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-22 15:01+0000\n"
+"POT-Creation-Date: 2026-04-23 13:04+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -26,9 +26,10 @@ msgstr ""
 msgid " (enter '0' if not live)"
 msgstr ""
 
+#: cust/default/pdfprinter.php:179 cust/default/pdfprinter.php:189
 #: cust/default/teamplayers.functions.php:139
-#: cust/fpudd/teamplayers.functions.php:116 cust/slkl/pdfprinter.php:155
-#: cust/slkl/pdfprinter.php:165 user/teamplayers.php:159
+#: cust/fpudd/teamplayers.functions.php:116 cust/slkl/pdfprinter.php:144
+#: cust/slkl/pdfprinter.php:154 user/teamplayers.php:159
 msgid "#"
 msgstr "#"
 
@@ -80,7 +81,7 @@ msgstr ""
 msgid "..."
 msgstr "..."
 
-#: cust/slkl/pdfprinter.php:215
+#: cust/default/pdfprinter.php:239 cust/slkl/pdfprinter.php:204
 #, fuzzy
 msgid "1. Mark the team captain with the letter C into the info grid."
 msgstr "1. Markiere den Team Captain mit einem an den Namen angehängten C."
@@ -90,7 +91,7 @@ msgstr "1. Markiere den Team Captain mit einem an den Namen angehängten C."
 msgid "1st half"
 msgstr "pro Halbzeit"
 
-#: cust/slkl/pdfprinter.php:216
+#: cust/default/pdfprinter.php:240 cust/slkl/pdfprinter.php:205
 #, fuzzy
 msgid "2. Mark the spirit captain with the letters SC into the info grid."
 msgstr "1. Markiere den Team Captain mit einem an den Namen angehängten C."
@@ -100,7 +101,7 @@ msgstr "1. Markiere den Team Captain mit einem an den Namen angehängten C."
 msgid "2nd half"
 msgstr "pro Halbzeit"
 
-#: cust/slkl/pdfprinter.php:217
+#: cust/default/pdfprinter.php:241 cust/slkl/pdfprinter.php:206
 #, fuzzy
 msgid "3. Mark players who will play with an X in the Play column."
 msgstr "2. Markiere Spieler mit X in der Spiel-Spalte."
@@ -109,25 +110,25 @@ msgstr "2. Markiere Spieler mit X in der Spiel-Spalte."
 msgid "3rd party API settings"
 msgstr "Einstellungen für fremde APIs"
 
-#: cust/slkl/pdfprinter.php:218
+#: cust/default/pdfprinter.php:242 cust/slkl/pdfprinter.php:207
 #, fuzzy
 msgid "4. Add jersey numbers for players in the # column."
 msgstr "3. Füge für die Spieler in der #-Spalte Trikot-Nummern hinzu."
 
-#: cust/bula/pdfprinter.php:319 cust/default/pdfprinter.php:317
-#: cust/fpudd/pdfprinter.php:340 cust/gummis/pdfprinter.php:324
-#: cust/wfdf/pdfprinter.php:707 cust/windmill/pdfprinter.php:318
+#: cust/bula/pdfprinter.php:319 cust/fpudd/pdfprinter.php:340
+#: cust/gummis/pdfprinter.php:324 cust/wfdf/pdfprinter.php:707
+#: cust/windmill/pdfprinter.php:318
 msgid ""
 "<b><i>Bold italic</i></b> printed players has problems with license. They "
 "are <u>not</u> allowed to play until problems are solved (= payment recipe "
 "or note from organizer shown)."
 msgstr ""
 
-#: admin/spirit.php:560
+#: admin/spirit.php:561
 msgid "<b>more than once</b>, in this category"
 msgstr ""
 
-#: poolstatus.php:589 poolstatus.php:703 poolstatus.php:716
+#: poolstatus.php:599 poolstatus.php:713 poolstatus.php:726
 msgid "???"
 msgstr "???"
 
@@ -415,17 +416,9 @@ msgstr ""
 msgid "After the match has ended, send SMS"
 msgstr "Sende eine SMS nach Abschluss des Spiels"
 
-#: cust/slkl/pdfprinter.php:113
+#: cust/default/pdfprinter.php:102 cust/slkl/pdfprinter.php:102
 msgid "After the match has ended, update result:"
 msgstr "Nach dem Ende des Spiels, geben Sie das Ergebnis ein:"
-
-#: cust/default/pdfprinter.php:99
-msgid ""
-"After the match has ended, update result:\n"
-"\n"
-msgstr ""
-"Nach dem Ende des Spiels, geben Sie das Ergebnis ein:\n"
-"\n"
 
 #: cust/bula/pdfprinter.php:233 cust/gummis/pdfprinter.php:248
 #: cust/windmill/pdfprinter.php:232
@@ -584,8 +577,8 @@ msgid "Assinaturas dos capitães"
 msgstr ""
 
 #: gameplay.php:206 cust/bula/pdfprinter.php:1053
-#: cust/default/pdfprinter.php:965 cust/gummis/pdfprinter.php:1102
-#: cust/slkl/pdfprinter.php:996 cust/wfdf/pdfprinter.php:1666
+#: cust/default/pdfprinter.php:1008 cust/gummis/pdfprinter.php:1102
+#: cust/slkl/pdfprinter.php:985 cust/wfdf/pdfprinter.php:1666
 #: cust/windmill/pdfprinter.php:1012 mobile/addscoresheet.php:191
 #: scorekeeper/addscoresheet.php:341 user/addscoresheet.php:647
 msgid "Assist"
@@ -601,10 +594,10 @@ msgstr "Vorlagengeber nicht auf der Spielerliste"
 
 #: clubcard.php:201 gamecard.php:229 gamecard.php:235 gameplay.php:82
 #: gameplay.php:107 playercard.php:171 playercard.php:224 playercard.php:301
-#: playercard.php:399 playercard.php:468 playerlist.php:35 scorestatus.php:76
-#: scorestatus.php:78 seriesstatus.php:294 statistics.php:126
-#: statistics.php:168 teamcard.php:123 teamcard.php:168
-#: ext/poolscoreboard.php:37 ext/teamscoreboard.php:45
+#: playercard.php:399 playercard.php:468 playerlist.php:35 poolstatus.php:146
+#: poolstatus.php:172 scorestatus.php:80 scorestatus.php:82
+#: seriesstatus.php:294 statistics.php:126 statistics.php:168 teamcard.php:123
+#: teamcard.php:168 ext/poolscoreboard.php:37 ext/teamscoreboard.php:45
 msgid "Assists"
 msgstr "Assists"
 
@@ -614,14 +607,10 @@ msgstr "Assists"
 msgid "Assists avg."
 msgstr "Assists"
 
-#: poolstatus.php:146 poolstatus.php:167
+#: scorestatus.php:85 scorestatus.php:87
 #, fuzzy
 msgid "Ast"
 msgstr "Assist"
-
-#: poolstatus.php:146 poolstatus.php:167 scorestatus.php:81 scorestatus.php:83
-msgid "Ast/Gm"
-msgstr ""
 
 #: cust/wfdf/pdfprinter.php:1782
 msgid ""
@@ -629,7 +618,7 @@ msgid ""
 "game score. Game time does not stop at halftime."
 msgstr ""
 
-#: admin/spirit.php:238 admin/spirit.php:564 admin/spirit.php:581
+#: admin/spirit.php:238 admin/spirit.php:565 admin/spirit.php:582
 #, fuzzy
 msgid "Attitude"
 msgstr "Breite"
@@ -653,14 +642,14 @@ msgstr "Alle Spiele erzeugen"
 
 #: admin/spirit.php:340 cust/bula/pdfprinter.php:914
 #: cust/bula/pdfprinter.php:947 cust/bula/pdfprinter.php:1034
-#: cust/bula/pdfprinter.php:1052 cust/default/pdfprinter.php:855
-#: cust/default/pdfprinter.php:886 cust/default/pdfprinter.php:947
-#: cust/default/pdfprinter.php:964 cust/default/pdfprinter.php:998
+#: cust/bula/pdfprinter.php:1052 cust/default/pdfprinter.php:872
+#: cust/default/pdfprinter.php:903 cust/default/pdfprinter.php:990
+#: cust/default/pdfprinter.php:1007 cust/default/pdfprinter.php:1041
 #: cust/gummis/pdfprinter.php:980 cust/gummis/pdfprinter.php:1013
 #: cust/gummis/pdfprinter.php:1086 cust/gummis/pdfprinter.php:1101
-#: cust/gummis/pdfprinter.php:1133 cust/slkl/pdfprinter.php:857
-#: cust/slkl/pdfprinter.php:890 cust/slkl/pdfprinter.php:978
-#: cust/slkl/pdfprinter.php:995 cust/wfdf/pdfprinter.php:93
+#: cust/gummis/pdfprinter.php:1133 cust/slkl/pdfprinter.php:846
+#: cust/slkl/pdfprinter.php:879 cust/slkl/pdfprinter.php:967
+#: cust/slkl/pdfprinter.php:984 cust/wfdf/pdfprinter.php:93
 #: cust/wfdf/pdfprinter.php:322 cust/wfdf/pdfprinter.php:429
 #: cust/windmill/pdfprinter.php:873 cust/windmill/pdfprinter.php:906
 #: cust/windmill/pdfprinter.php:993 cust/windmill/pdfprinter.php:1011
@@ -678,9 +667,10 @@ msgstr "Endergebnis"
 msgid "Away spirit stoppages"
 msgstr ""
 
-#: cust/bula/pdfprinter.php:71 cust/gummis/pdfprinter.php:69
-#: cust/slkl/pdfprinter.php:67 cust/windmill/pdfprinter.php:71
-#: user/adddefensesheet.php:203 user/addscoresheet.php:461
+#: cust/bula/pdfprinter.php:71 cust/default/pdfprinter.php:67
+#: cust/gummis/pdfprinter.php:69 cust/slkl/pdfprinter.php:67
+#: cust/windmill/pdfprinter.php:71 user/adddefensesheet.php:203
+#: user/addscoresheet.php:461
 msgid "Away team"
 msgstr "Gastteam"
 
@@ -779,11 +769,6 @@ msgstr "CSV-Export"
 msgid "CSV separator"
 msgstr ""
 
-#: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
-#: scorestatus.php:97 scorestatus.php:99
-msgid "Cal."
-msgstr "Cal."
-
 #: admin/seasons.php:139
 msgid "Calc. stats"
 msgstr "Statistik berechnen"
@@ -800,7 +785,13 @@ msgstr ""
 "Berechnung der Statistiken kann etwas dauern. Bitte schließen Sie das "
 "Browserfenster nicht."
 
-#: cust/default/pdfprinter.php:1002 cust/fpudd/pdfprinter.php:1030
+#: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
+#: scorestatus.php:101 scorestatus.php:103
+#, fuzzy
+msgid "Call."
+msgstr "Callahan"
+
+#: cust/default/pdfprinter.php:1045 cust/fpudd/pdfprinter.php:1030
 #: cust/gummis/pdfprinter.php:1137 cust/wfdf/pdfprinter.php:1706
 #: user/adddefensesheet.php:350
 msgid "Callahan"
@@ -856,8 +847,8 @@ msgstr ""
 "Captains confirm roster by crossing out injured players, and adjusting "
 "jersey numbers if necessary."
 
-#: cust/bula/pdfprinter.php:1020 cust/default/pdfprinter.php:933
-#: cust/gummis/pdfprinter.php:1074 cust/slkl/pdfprinter.php:962
+#: cust/bula/pdfprinter.php:1020 cust/default/pdfprinter.php:976
+#: cust/gummis/pdfprinter.php:1074 cust/slkl/pdfprinter.php:951
 #: cust/wfdf/pdfprinter.php:1587 cust/wfdf/pdfprinter.php:1621
 #: cust/windmill/pdfprinter.php:979
 msgid "Captains' signatures"
@@ -873,7 +864,7 @@ msgstr ""
 msgid "Category"
 msgstr "Kategorie"
 
-#: cust/default/pdfprinter.php:1001 cust/gummis/pdfprinter.php:1136
+#: cust/default/pdfprinter.php:1044 cust/gummis/pdfprinter.php:1136
 #: cust/wfdf/pdfprinter.php:1704 user/adddefensesheet.php:349
 msgid "Caught"
 msgstr "Gefangen"
@@ -1094,7 +1085,7 @@ msgstr "Farbe"
 msgid "Column information"
 msgstr "Spalteninfo"
 
-#: admin/spirit.php:239 admin/spirit.php:565 admin/spirit.php:584
+#: admin/spirit.php:239 admin/spirit.php:566 admin/spirit.php:585
 #, fuzzy
 msgid "Comm"
 msgstr "Kommentar"
@@ -1402,23 +1393,18 @@ msgstr "Zeitzonen-Voreinstellung"
 msgid "Defence"
 msgstr "Defenses"
 
-#: playercard.php:227 playercard.php:304
-#, fuzzy
-msgid "Defence avg."
-msgstr "Defensedurch."
-
-#: defensestatus.php:17 defensestatus.php:40 poolstatus.php:224
-#: poolstatus.php:252 poolstatus.php:254 seriesstatus.php:326
+#: defensestatus.php:17 defensestatus.php:40 poolstatus.php:234
+#: poolstatus.php:262 poolstatus.php:264 seriesstatus.php:326
 #, fuzzy
 msgid "Defence board"
 msgstr "Defenseliste"
 
-#: poolstatus.php:210 poolstatus.php:226 seriesstatus.php:311
+#: poolstatus.php:220 poolstatus.php:236 seriesstatus.php:311
 #, fuzzy
 msgid "Defence board leaders"
 msgstr "Topscorer Defense"
 
-#: cust/default/pdfprinter.php:122 cust/gummis/pdfprinter.php:121
+#: cust/default/pdfprinter.php:123 cust/gummis/pdfprinter.php:121
 #, fuzzy
 msgid "Defence record"
 msgstr "Defense-Statistik"
@@ -1448,7 +1434,7 @@ msgstr "Denfensebericht gespeichert"
 msgid "Defences"
 msgstr "Defenses"
 
-#: playercard.php:178
+#: playercard.php:178 playercard.php:227 playercard.php:304
 #, fuzzy
 msgid "Defences avg."
 msgstr "Defensedurch."
@@ -1573,26 +1559,26 @@ msgid "Disable visitor logging"
 msgstr ""
 
 #: clubcard.php:145 clubcard.php:169 countrycard.php:31 countrycard.php:83
-#: countrycard.php:91 gamecard.php:137 games.php:245 playercard.php:224
-#: playercard.php:301 playercard.php:399 playercard.php:468 teamcard.php:199
-#: teamcard.php:401 teamcard.php:598 teamcard.php:795 teams.php:184
-#: admin/addseasonpools.php:274 admin/addseasonpools.php:292
-#: admin/addseasonteams.php:165 admin/dbequalize.php:209
-#: admin/dbequalize.php:248 admin/dbequalize.php:289 admin/editgame.php:219
-#: admin/seasonpoints.php:180 admin/seasonstats.php:32 admin/spirit.php:43
-#: admin/spirit.php:102 admin/spirit.php:151 admin/spirit.php:233
-#: admin/spirit.php:281 admin/spirit.php:336 admin/spirit.php:509
-#: admin/stats.php:99 admin/tdtools.php:23 admin/tdtools.php:59
-#: cust/bula/pdfprinter.php:72 cust/default/pdfprinter.php:68
-#: cust/gummis/pdfprinter.php:70 cust/slkl/pdfprinter.php:68
-#: cust/wfdf/pdfprinter.php:272 cust/wfdf/pdfprinter.php:2040
-#: cust/windmill/pdfprinter.php:72 lib/search.functions.php:35
-#: lib/search.functions.php:67 lib/search.functions.php:73
-#: lib/search.functions.php:105 lib/search.functions.php:434
-#: lib/search.functions.php:475 lib/search.functions.php:517
-#: user/respteams.php:22 user/select_poolselector.php:30
-#: user/select_poolselector.php:33 user/userinfo.php:348 user/userinfo.php:352
-#: user/userinfo.php:370 user/userinfo.php:371
+#: countrycard.php:91 games.php:245 playercard.php:224 playercard.php:301
+#: playercard.php:399 playercard.php:468 teamcard.php:199 teamcard.php:401
+#: teamcard.php:598 teamcard.php:795 teams.php:184 admin/addseasonpools.php:274
+#: admin/addseasonpools.php:292 admin/addseasonteams.php:165
+#: admin/dbequalize.php:209 admin/dbequalize.php:248 admin/dbequalize.php:289
+#: admin/editgame.php:219 admin/seasonpoints.php:180 admin/seasonstats.php:32
+#: admin/spirit.php:43 admin/spirit.php:102 admin/spirit.php:151
+#: admin/spirit.php:233 admin/spirit.php:281 admin/spirit.php:336
+#: admin/spirit.php:509 admin/stats.php:99 admin/tdtools.php:23
+#: admin/tdtools.php:59 cust/bula/pdfprinter.php:72
+#: cust/default/pdfprinter.php:68 cust/gummis/pdfprinter.php:70
+#: cust/slkl/pdfprinter.php:68 cust/wfdf/pdfprinter.php:272
+#: cust/wfdf/pdfprinter.php:2040 cust/windmill/pdfprinter.php:72
+#: lib/search.functions.php:35 lib/search.functions.php:67
+#: lib/search.functions.php:73 lib/search.functions.php:105
+#: lib/search.functions.php:434 lib/search.functions.php:475
+#: lib/search.functions.php:517 user/respteams.php:22
+#: user/select_poolselector.php:30 user/select_poolselector.php:33
+#: user/userinfo.php:348 user/userinfo.php:352 user/userinfo.php:370
+#: user/userinfo.php:371
 msgid "Division"
 msgstr "Klasse"
 
@@ -1654,7 +1640,7 @@ msgstr ""
 "Wollen Sie trotzdem die Seite verlassen? Wenn Sie Ja auswählen, gehen Ihre "
 "Änderungen verloren."
 
-#: poolstatus.php:349 admin/seasonstandings.php:409
+#: poolstatus.php:359 admin/seasonstandings.php:409
 msgid "Draws"
 msgstr "Unentschieden"
 
@@ -1900,6 +1886,11 @@ msgstr ""
 msgid "Event"
 msgstr "Turnier"
 
+#: gamecard.php:137
+#, fuzzy
+msgid "Event / Pool"
+msgstr "Turnierlog"
+
 #: admin/addseasons.php:306
 #, fuzzy
 msgid "Event ID"
@@ -2031,7 +2022,7 @@ msgstr ""
 msgid "Failed to save points."
 msgstr ""
 
-#: admin/spirit.php:237 admin/spirit.php:563 admin/spirit.php:578
+#: admin/spirit.php:237 admin/spirit.php:564 admin/spirit.php:579
 msgid "Fair"
 msgstr ""
 
@@ -2058,12 +2049,12 @@ msgstr "Suche Koordinaten"
 
 #: games.php:246 admin/smsmoves.php:109 cust/bula/pdfprinter.php:73
 #: cust/bula/pdfprinter.php:389 cust/bula/pdfprinter.php:528
-#: cust/default/pdfprinter.php:69 cust/default/pdfprinter.php:386
-#: cust/default/pdfprinter.php:509 cust/fpudd/pdfprinter.php:410
+#: cust/default/pdfprinter.php:69 cust/default/pdfprinter.php:399
+#: cust/default/pdfprinter.php:528 cust/fpudd/pdfprinter.php:410
 #: cust/fpudd/pdfprinter.php:520 cust/gummis/pdfprinter.php:71
 #: cust/gummis/pdfprinter.php:392 cust/gummis/pdfprinter.php:551
-#: cust/slkl/pdfprinter.php:69 cust/slkl/pdfprinter.php:375
-#: cust/slkl/pdfprinter.php:504 cust/wfdf/pdfprinter.php:271
+#: cust/slkl/pdfprinter.php:69 cust/slkl/pdfprinter.php:364
+#: cust/slkl/pdfprinter.php:493 cust/wfdf/pdfprinter.php:271
 #: cust/wfdf/pdfprinter.php:777 cust/wfdf/pdfprinter.php:916
 #: cust/windmill/pdfprinter.php:73 cust/windmill/pdfprinter.php:388
 #: cust/windmill/pdfprinter.php:505 lib/reservation.functions.php:29
@@ -2125,7 +2116,7 @@ msgstr "Fülle das Formular mit den Registrierungsdaten aus."
 msgid "Fill in the scoresheet"
 msgstr "Spielbericht eingeben"
 
-#: cust/slkl/pdfprinter.php:214
+#: cust/default/pdfprinter.php:238 cust/slkl/pdfprinter.php:203
 msgid "Filling instructions:"
 msgstr "Anleitung:"
 
@@ -2156,8 +2147,8 @@ msgstr "Endergebnisse"
 msgid "Final result saved: %s - %s."
 msgstr "Endergebnis gespeichert: %s - %s."
 
-#: cust/bula/pdfprinter.php:1082 cust/default/pdfprinter.php:1028
-#: cust/gummis/pdfprinter.php:1161 cust/slkl/pdfprinter.php:1024
+#: cust/bula/pdfprinter.php:1082 cust/default/pdfprinter.php:1071
+#: cust/gummis/pdfprinter.php:1161 cust/slkl/pdfprinter.php:1013
 #: cust/wfdf/pdfprinter.php:1509 cust/wfdf/pdfprinter.php:1810
 #: cust/windmill/pdfprinter.php:1041 user/adddefensesheet.php:295
 #: user/addscoresheet.php:569
@@ -2173,7 +2164,7 @@ msgid "Final standings"
 msgstr "Endergebnis"
 
 #: cust/slkl/head.php:22 cust/slkl/pdfprinter.php:52
-#: cust/slkl/pdfprinter.php:126
+#: cust/slkl/pdfprinter.php:115
 msgid "Finnish Flying Disc Association"
 msgstr ""
 
@@ -2186,7 +2177,7 @@ msgstr "1."
 msgid "First Name"
 msgstr "Vorname"
 
-#: cust/default/pdfprinter.php:72 cust/slkl/pdfprinter.php:904
+#: cust/default/pdfprinter.php:917 cust/slkl/pdfprinter.php:893
 #: cust/wfdf/pdfprinter.php:391
 msgid "First Offence"
 msgstr "Erste Offence"
@@ -2239,9 +2230,9 @@ msgstr ""
 msgid "For national teams"
 msgstr "Für Nationalteams"
 
-#: cust/bula/pdfprinter.php:317 cust/default/pdfprinter.php:315
-#: cust/fpudd/pdfprinter.php:338 cust/gummis/pdfprinter.php:322
-#: cust/wfdf/pdfprinter.php:705 cust/windmill/pdfprinter.php:316
+#: cust/bula/pdfprinter.php:317 cust/fpudd/pdfprinter.php:338
+#: cust/gummis/pdfprinter.php:322 cust/wfdf/pdfprinter.php:705
+#: cust/windmill/pdfprinter.php:316
 msgid ""
 "For new players added, accreditation id or date of birth must be written "
 "down."
@@ -2261,7 +2252,7 @@ msgstr "Kampflos/Freilos-Punkte"
 msgid "Forum"
 msgstr "Forum"
 
-#: admin/spirit.php:236 admin/spirit.php:562 admin/spirit.php:575
+#: admin/spirit.php:236 admin/spirit.php:563 admin/spirit.php:576
 msgid "Fouls"
 msgstr ""
 
@@ -2307,20 +2298,22 @@ msgstr "Von"
 msgid "Frontpage"
 msgstr "Titelseite"
 
-#: teamcard.php:410 teamcard.php:499 teamcard.php:607 teamcard.php:692
-msgid "GA/game"
-msgstr "GA/Spiel"
+#: gamecard.php:100 teamcard.php:410 teamcard.php:499 teamcard.php:607
+#: teamcard.php:692
+msgid "GA Avg."
+msgstr ""
 
-#: teamcard.php:408 teamcard.php:497 teamcard.php:605 teamcard.php:690
-msgid "GF/game"
-msgstr "GF/Spiel"
+#: gamecard.php:100 teamcard.php:408 teamcard.php:497 teamcard.php:605
+#: teamcard.php:690
+msgid "GF Avg."
+msgstr ""
 
-#: gamecard.php:135 poolstatus.php:662 poolstatus.php:778
+#: gamecard.php:135 poolstatus.php:672 poolstatus.php:788
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/editgame.php:17 admin/spirit.php:368
-#: cust/bula/pdfprinter.php:263 cust/default/pdfprinter.php:261
+#: cust/bula/pdfprinter.php:263 cust/default/pdfprinter.php:272
 #: cust/fpudd/pdfprinter.php:284 cust/gummis/pdfprinter.php:274
-#: cust/slkl/pdfprinter.php:248 cust/wfdf/pdfprinter.php:651
+#: cust/slkl/pdfprinter.php:237 cust/wfdf/pdfprinter.php:651
 #: cust/wfdf/pdfprinter.php:2022 cust/windmill/pdfprinter.php:262
 #: lib/search.functions.php:819
 msgid "Game"
@@ -2347,8 +2340,8 @@ msgstr ""
 msgid "Game %s exceeds the reserved end time %s."
 msgstr "Spiel %s überschreitet die reservierte Zeit %s."
 
-#: cust/bula/pdfprinter.php:58 cust/default/pdfprinter.php:54
-#: cust/gummis/pdfprinter.php:57 cust/windmill/pdfprinter.php:58
+#: cust/bula/pdfprinter.php:58 cust/gummis/pdfprinter.php:57
+#: cust/windmill/pdfprinter.php:58
 msgid "Game Record"
 msgstr "Spielbericht"
 
@@ -2443,7 +2436,7 @@ msgstr "Punkte"
 msgid "Game number from scoresheet"
 msgstr "Spielnummer vom Spielbericht"
 
-#: gameplay.php:321 cust/bula/pdfprinter.php:75 cust/default/pdfprinter.php:70
+#: gameplay.php:321 cust/bula/pdfprinter.php:75 cust/default/pdfprinter.php:71
 #: cust/gummis/pdfprinter.php:73 cust/slkl/pdfprinter.php:71
 #: cust/windmill/pdfprinter.php:75 mobile/addofficial.php:22
 #: mobile/addscoresheet.php:212 mobile/gameplay.php:93
@@ -2522,14 +2515,13 @@ msgstr "Spielstatistik"
 msgid "Game statistics"
 msgstr "Spielstatistik"
 
-#: cust/bula/pdfprinter.php:278 cust/default/pdfprinter.php:178
-#: cust/default/pdfprinter.php:188 cust/default/pdfprinter.php:276
-#: cust/fpudd/pdfprinter.php:299 cust/gummis/pdfprinter.php:284
-#: cust/wfdf/pdfprinter.php:666 cust/windmill/pdfprinter.php:277
+#: cust/bula/pdfprinter.php:278 cust/fpudd/pdfprinter.php:299
+#: cust/gummis/pdfprinter.php:284 cust/wfdf/pdfprinter.php:666
+#: cust/windmill/pdfprinter.php:277
 msgid "Game#"
 msgstr "Spiel#"
 
-#: gameplay.php:33 gameplay.php:45 poolstatus.php:828
+#: gameplay.php:33 gameplay.php:45 poolstatus.php:838
 #: lib/timetable.functions.php:589 mobile/gameplay.php:14
 #: scorekeeper/gameplay.php:13 user/addscoresheet.php:428
 #: user/respgames.php:196
@@ -2547,13 +2539,14 @@ msgstr "Spielverlauf"
 #: gamecard.php:219 gamecard.php:225 menufunctions.php:589
 #: menufunctions.php:626 menufunctions.php:745 menufunctions.php:767
 #: playercard.php:171 playercard.php:224 playercard.php:301 playercard.php:399
-#: playercard.php:468 playerlist.php:34 poolstatus.php:212 poolstatus.php:228
-#: poolstatus.php:273 poolstatus.php:346 scorestatus.php:71 scorestatus.php:73
-#: seriesstatus.php:157 seriesstatus.php:159 seriesstatus.php:293
-#: seriesstatus.php:313 seriesstatus.php:335 spiritstatus.php:100
-#: spiritstatus.php:102 statistics.php:125 statistics.php:167 teamcard.php:122
-#: teamcard.php:167 teamcard.php:276 teamcard.php:403 teamcard.php:492
-#: teamcard.php:600 teamcard.php:685 teams.php:123 teams.php:174 teams.php:354
+#: playercard.php:468 playerlist.php:34 poolstatus.php:145 poolstatus.php:171
+#: poolstatus.php:222 poolstatus.php:238 poolstatus.php:283 poolstatus.php:356
+#: scorestatus.php:75 scorestatus.php:77 seriesstatus.php:157
+#: seriesstatus.php:159 seriesstatus.php:293 seriesstatus.php:313
+#: seriesstatus.php:335 spiritstatus.php:100 spiritstatus.php:102
+#: statistics.php:125 statistics.php:167 teamcard.php:122 teamcard.php:167
+#: teamcard.php:276 teamcard.php:403 teamcard.php:492 teamcard.php:600
+#: teamcard.php:685 teams.php:123 teams.php:174 teams.php:354
 #: admin/accreditation.php:193 admin/accreditation.php:256
 #: admin/editstanding.php:58 admin/poolgames.php:17 admin/reservations.php:118
 #: admin/seasonadmin.php:93 admin/seasongames.php:21 admin/seasonseries.php:123
@@ -2643,19 +2636,10 @@ msgstr ""
 msgid "Given for"
 msgstr ""
 
-#: poolstatus.php:146 poolstatus.php:167
+#: scorestatus.php:95 scorestatus.php:97
 #, fuzzy
 msgid "Gls"
 msgstr "Punkte"
-
-#: poolstatus.php:146 poolstatus.php:167 scorestatus.php:91 scorestatus.php:93
-msgid "Gls/Gm"
-msgstr ""
-
-#: poolstatus.php:145 poolstatus.php:166
-#, fuzzy
-msgid "Gms"
-msgstr "Spiele"
 
 #: menufunctions.php:429 admin/eventviewer.php:127
 msgid "Go"
@@ -2671,25 +2655,16 @@ msgid "Go to top"
 msgstr "Nach oben"
 
 #: gameplay.php:206 cust/bula/pdfprinter.php:1054
-#: cust/default/pdfprinter.php:966 cust/gummis/pdfprinter.php:1103
-#: cust/slkl/pdfprinter.php:997 cust/wfdf/pdfprinter.php:1667
+#: cust/default/pdfprinter.php:1009 cust/gummis/pdfprinter.php:1103
+#: cust/slkl/pdfprinter.php:986 cust/wfdf/pdfprinter.php:1667
 #: cust/windmill/pdfprinter.php:1013 mobile/addscoresheet.php:193
 #: user/addscoresheet.php:647
 msgid "Goal"
 msgstr "Punkt"
 
-#: playercard.php:226 playercard.php:303 playercard.php:400 playercard.php:469
-msgid "Goal avg."
-msgstr "Punktedurch."
-
-#: teamcard.php:411 teamcard.php:500 teamcard.php:608 teamcard.php:693
 #: admin/seasonstandings.php:413 ext/countrystatus.php:55 ext/eventpools.php:52
 #: ext/poolstatus.php:50
 msgid "Goal diff"
-msgstr "Punktedifferenz"
-
-#: gamecard.php:100
-msgid "Goal difference"
 msgstr "Punktedifferenz"
 
 #: scorekeeper/addscoresheet.php:367
@@ -2700,33 +2675,49 @@ msgstr "Ortszeit"
 #: clubcard.php:201 gamecard.php:239 gamecard.php:245 gameplay.php:82
 #: gameplay.php:107 gameplay.php:502 playercard.php:171 playercard.php:224
 #: playercard.php:301 playercard.php:399 playercard.php:468 playerlist.php:36
-#: poolstatus.php:277 scorestatus.php:86 scorestatus.php:88
-#: seriesstatus.php:294 statistics.php:126 statistics.php:168 teamcard.php:124
-#: teamcard.php:169 ext/poolscoreboard.php:38 ext/teamscoreboard.php:46
+#: poolstatus.php:146 poolstatus.php:172 poolstatus.php:287 scorestatus.php:90
+#: scorestatus.php:92 seriesstatus.php:294 statistics.php:126
+#: statistics.php:168 teamcard.php:124 teamcard.php:169
+#: ext/poolscoreboard.php:38 ext/teamscoreboard.php:46
 msgid "Goals"
 msgstr "Punkte"
 
-#: gamecard.php:100 poolstatus.php:352 seriesstatus.php:181
+#: gamecard.php:100 poolstatus.php:362 seriesstatus.php:181
 #: seriesstatus.php:183 teamcard.php:409 teamcard.php:498 teamcard.php:606
 #: teamcard.php:691 admin/seasonstandings.php:412 ext/countrystatus.php:54
 #: ext/eventpools.php:51 ext/poolstatus.php:49
 msgid "Goals against"
 msgstr "Gegenpunkte"
 
-#: playercard.php:176
+#: gamecard.php:100 teamcard.php:410 teamcard.php:499 teamcard.php:607
+#: teamcard.php:692
+#, fuzzy
+msgid "Goals against avg."
+msgstr "Gegenpunkte"
+
+#: playercard.php:176 playercard.php:226 playercard.php:303 playercard.php:400
+#: playercard.php:469
 msgid "Goals avg."
 msgstr "Punkte durchschnittl."
 
-#: poolstatus.php:353 seriesstatus.php:187 seriesstatus.php:189
+#: gamecard.php:100 poolstatus.php:363 seriesstatus.php:187
+#: seriesstatus.php:189 teamcard.php:411 teamcard.php:500 teamcard.php:608
+#: teamcard.php:693
 msgid "Goals diff"
 msgstr "Punktedifferenz"
 
-#: poolstatus.php:351 seriesstatus.php:175 seriesstatus.php:177
+#: gamecard.php:99 poolstatus.php:361 seriesstatus.php:175 seriesstatus.php:177
 #: teamcard.php:407 teamcard.php:496 teamcard.php:604 teamcard.php:689
 #: admin/seasonstandings.php:411 ext/countrystatus.php:53 ext/eventpools.php:50
 #: ext/poolstatus.php:48
 msgid "Goals for"
 msgstr "Punkte"
+
+#: gamecard.php:100 teamcard.php:408 teamcard.php:497 teamcard.php:605
+#: teamcard.php:690
+#, fuzzy
+msgid "Goals for avg."
+msgstr "Punkte durchschnittl."
 
 #: gameplay.php:535
 msgid "Goals from starting on defence"
@@ -2814,13 +2805,12 @@ msgstr "Halbzeit bei Punkt"
 msgid "Halftime ended at"
 msgstr "Halbzeit endet bei"
 
-#: cust/bula/pdfprinter.php:88 cust/default/pdfprinter.php:81
-#: cust/gummis/pdfprinter.php:86 cust/windmill/pdfprinter.php:88
-#: scorekeeper/addhalftime.php:54
+#: cust/bula/pdfprinter.php:88 cust/gummis/pdfprinter.php:86
+#: cust/windmill/pdfprinter.php:88 scorekeeper/addhalftime.php:54
 msgid "Halftime ends"
 msgstr "Halbzeit endet"
 
-#: cust/slkl/pdfprinter.php:80
+#: cust/default/pdfprinter.php:80 cust/slkl/pdfprinter.php:80
 #, fuzzy
 msgid "Halftime ends (time)"
 msgstr "Halbzeit endet (Zeit)"
@@ -2885,7 +2875,7 @@ msgstr "Spielbericht eingeben"
 msgid "Higher rank is home team"
 msgstr ""
 
-#: admin/spirit.php:598 admin/spirit.php:624
+#: admin/spirit.php:599 admin/spirit.php:625
 msgid "Higher than"
 msgstr ""
 
@@ -2901,14 +2891,14 @@ msgstr "Historie"
 
 #: admin/spirit.php:338 cust/bula/pdfprinter.php:902
 #: cust/bula/pdfprinter.php:935 cust/bula/pdfprinter.php:1026
-#: cust/bula/pdfprinter.php:1051 cust/default/pdfprinter.php:844
-#: cust/default/pdfprinter.php:875 cust/default/pdfprinter.php:939
-#: cust/default/pdfprinter.php:963 cust/default/pdfprinter.php:997
+#: cust/bula/pdfprinter.php:1051 cust/default/pdfprinter.php:861
+#: cust/default/pdfprinter.php:892 cust/default/pdfprinter.php:982
+#: cust/default/pdfprinter.php:1006 cust/default/pdfprinter.php:1040
 #: cust/gummis/pdfprinter.php:969 cust/gummis/pdfprinter.php:1001
 #: cust/gummis/pdfprinter.php:1079 cust/gummis/pdfprinter.php:1100
-#: cust/gummis/pdfprinter.php:1132 cust/slkl/pdfprinter.php:846
-#: cust/slkl/pdfprinter.php:879 cust/slkl/pdfprinter.php:970
-#: cust/slkl/pdfprinter.php:994 cust/wfdf/pdfprinter.php:90
+#: cust/gummis/pdfprinter.php:1132 cust/slkl/pdfprinter.php:835
+#: cust/slkl/pdfprinter.php:868 cust/slkl/pdfprinter.php:959
+#: cust/slkl/pdfprinter.php:983 cust/wfdf/pdfprinter.php:90
 #: cust/wfdf/pdfprinter.php:311 cust/wfdf/pdfprinter.php:418
 #: cust/windmill/pdfprinter.php:861 cust/windmill/pdfprinter.php:894
 #: cust/windmill/pdfprinter.php:985 cust/windmill/pdfprinter.php:1010
@@ -2928,9 +2918,9 @@ msgid "Home spirit stoppages"
 msgstr "Spiritwertung"
 
 #: admin/editgame.php:182 cust/bula/pdfprinter.php:70
-#: cust/gummis/pdfprinter.php:68 cust/slkl/pdfprinter.php:66
-#: cust/windmill/pdfprinter.php:70 user/adddefensesheet.php:201
-#: user/addscoresheet.php:459
+#: cust/default/pdfprinter.php:66 cust/gummis/pdfprinter.php:68
+#: cust/slkl/pdfprinter.php:66 cust/windmill/pdfprinter.php:70
+#: user/adddefensesheet.php:201 user/addscoresheet.php:459
 msgid "Home team"
 msgstr "Heimteam"
 
@@ -3076,10 +3066,11 @@ msgstr "Hallenfeld"
 
 #: admin/addlocations.php:123 cust/bula/pdfprinter.php:157
 #: cust/bula/pdfprinter.php:167 cust/bula/pdfprinter.php:279
-#: cust/default/pdfprinter.php:277 cust/fpudd/pdfprinter.php:300
+#: cust/default/pdfprinter.php:180 cust/default/pdfprinter.php:190
+#: cust/default/pdfprinter.php:288 cust/fpudd/pdfprinter.php:300
 #: cust/gummis/pdfprinter.php:173 cust/gummis/pdfprinter.php:183
-#: cust/gummis/pdfprinter.php:285 cust/slkl/pdfprinter.php:156
-#: cust/slkl/pdfprinter.php:166 cust/slkl/pdfprinter.php:264
+#: cust/gummis/pdfprinter.php:285 cust/slkl/pdfprinter.php:145
+#: cust/slkl/pdfprinter.php:155 cust/slkl/pdfprinter.php:253
 #: cust/wfdf/pdfprinter.php:667 cust/windmill/pdfprinter.php:156
 #: cust/windmill/pdfprinter.php:166 cust/windmill/pdfprinter.php:278
 #: scorekeeper/addplayerlists.php:147 user/addplayerlists.php:261
@@ -3117,7 +3108,7 @@ msgstr ""
 #: admin/accreditation.php:24 admin/addlocations.php:18 admin/locations.php:13
 #: admin/reservations.php:25 admin/seasonadmin.php:16 admin/seasongames.php:24
 #: admin/seasonpools.php:16 admin/seasonseries.php:15
-#: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:656
+#: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:657
 #: admin/spiritsettings.php:11 admin/tdtools.php:192 user/addspirit.php:75
 #: user/addspirit.php:90
 #, fuzzy
@@ -3171,11 +3162,11 @@ msgstr "Ungültiger Benutzername %s."
 msgid "Invalid scope type."
 msgstr "Ungültiger Benutzer"
 
-#: admin/spirit.php:631
+#: admin/spirit.php:632
 msgid "Invalid threshold! Please use a number between 0.1 and 3.9."
 msgstr ""
 
-#: admin/spirit.php:605
+#: admin/spirit.php:606
 msgid "Invalid threshold! Please use a number between 1 and 20."
 msgstr ""
 
@@ -3198,8 +3189,9 @@ msgid ""
 "to reset your password."
 msgstr ""
 
-#: cust/slkl/pdfprinter.php:263 scorekeeper/addplayerlists.php:146
-#: user/addplayerlists.php:261 user/addplayerlists.php:325
+#: cust/default/pdfprinter.php:287 cust/slkl/pdfprinter.php:252
+#: scorekeeper/addplayerlists.php:146 user/addplayerlists.php:261
+#: user/addplayerlists.php:325
 msgid "Jersey"
 msgstr "Trikot"
 
@@ -3207,8 +3199,8 @@ msgstr "Trikot"
 msgid "Jersey number"
 msgstr "Trikotnummer"
 
-#: cust/bula/pdfprinter.php:1047 cust/default/pdfprinter.php:959
-#: cust/gummis/pdfprinter.php:1096 cust/slkl/pdfprinter.php:990
+#: cust/bula/pdfprinter.php:1047 cust/default/pdfprinter.php:1002
+#: cust/gummis/pdfprinter.php:1096 cust/slkl/pdfprinter.php:979
 #: cust/windmill/pdfprinter.php:1006
 msgid "Jersey numbers"
 msgstr "Trikotnummer"
@@ -3246,10 +3238,6 @@ msgstr ""
 #: admin/translations.php:96
 msgid "Key"
 msgstr "Schlüssel"
-
-#: cust/default/head.php:12
-msgid "LOGO EXAMPLE"
-msgstr "LOGO EXAMPLE"
 
 #: admin/apitokens.php:140 admin/apitokens.php:163
 msgid "Label"
@@ -3312,10 +3300,6 @@ msgstr ""
 #: cust/slkl/mass-accreditation.php:130
 msgid "License for year:"
 msgstr "Lizenz für Jahr:"
-
-#: cust/default/pdfprinter.php:179 cust/default/pdfprinter.php:189
-msgid "License ok"
-msgstr "Lizenz ok"
 
 #: admin/spirit.php:49 admin/spirit.php:108 admin/spirit.php:157
 #: admin/spirit.php:288 admin/tdtools.php:24 admin/tdtools.php:60
@@ -3426,18 +3410,18 @@ msgstr "Logs"
 msgid "Longitude"
 msgstr "Länge"
 
-#: poolstatus.php:870
+#: poolstatus.php:880
 msgid "Losers continue in:"
 msgstr "Verlierer macht weiter in:"
 
-#: gamecard.php:99 poolstatus.php:350 seriesstatus.php:169 seriesstatus.php:171
+#: gamecard.php:99 poolstatus.php:360 seriesstatus.php:169 seriesstatus.php:171
 #: teamcard.php:405 teamcard.php:494 teamcard.php:602 teamcard.php:687
 #: admin/seasonstandings.php:410 ext/countrystatus.php:52 ext/eventpools.php:49
 #: ext/poolstatus.php:47
 msgid "Losses"
 msgstr "Niederlagen"
 
-#: admin/spirit.php:596 admin/spirit.php:622
+#: admin/spirit.php:597 admin/spirit.php:623
 msgid "Lower than"
 msgstr ""
 
@@ -3489,7 +3473,7 @@ msgstr ""
 msgid "Marcador final"
 msgstr ""
 
-#: poolstatus.php:276 admin/seasonstandings.php:361
+#: poolstatus.php:286 admin/seasonstandings.php:361
 msgid "Margin"
 msgstr "Abstand"
 
@@ -3634,14 +3618,13 @@ msgid "Mutual"
 msgstr "Gegenseitig"
 
 #: cust/bula/pdfprinter.php:317 cust/bula/pdfprinter.php:318
-#: cust/bula/pdfprinter.php:319 cust/default/pdfprinter.php:315
-#: cust/default/pdfprinter.php:316 cust/default/pdfprinter.php:317
-#: cust/fpudd/pdfprinter.php:338 cust/fpudd/pdfprinter.php:339
-#: cust/fpudd/pdfprinter.php:340 cust/gummis/pdfprinter.php:322
-#: cust/gummis/pdfprinter.php:323 cust/gummis/pdfprinter.php:324
-#: cust/wfdf/pdfprinter.php:705 cust/wfdf/pdfprinter.php:706
-#: cust/wfdf/pdfprinter.php:707 cust/windmill/pdfprinter.php:316
-#: cust/windmill/pdfprinter.php:317 cust/windmill/pdfprinter.php:318
+#: cust/bula/pdfprinter.php:319 cust/fpudd/pdfprinter.php:338
+#: cust/fpudd/pdfprinter.php:339 cust/fpudd/pdfprinter.php:340
+#: cust/gummis/pdfprinter.php:322 cust/gummis/pdfprinter.php:323
+#: cust/gummis/pdfprinter.php:324 cust/wfdf/pdfprinter.php:705
+#: cust/wfdf/pdfprinter.php:706 cust/wfdf/pdfprinter.php:707
+#: cust/windmill/pdfprinter.php:316 cust/windmill/pdfprinter.php:317
+#: cust/windmill/pdfprinter.php:318
 msgid "NOTICE"
 msgstr "HINWEIS"
 
@@ -3662,12 +3645,12 @@ msgstr "HINWEIS"
 #: admin/seasonstats.php:34 admin/seasonteams.php:174 admin/serieformats.php:28
 #: admin/seriesseeding.php:45 admin/serieteams.php:143 admin/serverconf.php:245
 #: cust/bula/pdfprinter.php:155 cust/bula/pdfprinter.php:165
-#: cust/bula/pdfprinter.php:276 cust/default/pdfprinter.php:176
-#: cust/default/pdfprinter.php:186 cust/default/pdfprinter.php:274
+#: cust/bula/pdfprinter.php:276 cust/default/pdfprinter.php:177
+#: cust/default/pdfprinter.php:187 cust/default/pdfprinter.php:285
 #: cust/fpudd/pdfprinter.php:194 cust/fpudd/pdfprinter.php:297
 #: cust/gummis/pdfprinter.php:171 cust/gummis/pdfprinter.php:181
-#: cust/gummis/pdfprinter.php:282 cust/slkl/pdfprinter.php:153
-#: cust/slkl/pdfprinter.php:163 cust/slkl/pdfprinter.php:261
+#: cust/gummis/pdfprinter.php:282 cust/slkl/pdfprinter.php:142
+#: cust/slkl/pdfprinter.php:152 cust/slkl/pdfprinter.php:250
 #: cust/wfdf/pdfprinter.php:664 cust/windmill/pdfprinter.php:154
 #: cust/windmill/pdfprinter.php:164 cust/windmill/pdfprinter.php:275
 #: lib/search.functions.php:148 lib/search.functions.php:208
@@ -3869,7 +3852,7 @@ msgstr ""
 msgid "No players given for team %s."
 msgstr "Keine Spieler angegeben für Spiel %s."
 
-#: poolstatus.php:503 ext/countrystatus.php:136 ext/eventpools.php:94
+#: poolstatus.php:513 ext/countrystatus.php:136 ext/eventpools.php:94
 #: ext/poolstatus.php:91
 msgid "No playoff tree template found."
 msgstr "Keine Playoff-Baum-Vorlage gefunden."
@@ -4001,7 +3984,7 @@ msgstr "Geben Sie den ausgefüllten Spielbericht bei der Turnierleitung ab."
 msgid "Old events"
 msgstr "Alte Turniere"
 
-#: poolstatus.php:835 poolstatus.php:837 admin/seasongames.php:189
+#: poolstatus.php:845 poolstatus.php:847 admin/seasongames.php:189
 #: lib/timetable.functions.php:596 lib/timetable.functions.php:598
 #: scorekeeper/respgames.php:187
 msgid "Ongoing"
@@ -4030,7 +4013,7 @@ msgstr "Anmeldung offen"
 msgid "Operations"
 msgstr "Operationen"
 
-#: poolstatus.php:275 admin/seasonstandings.php:360
+#: poolstatus.php:285 admin/seasonstandings.php:360
 msgid "Opponent VPs"
 msgstr "Siegpunkte Gegner"
 
@@ -4057,8 +4040,7 @@ msgstr "Reihenfolge"
 msgid "Ordering"
 msgstr "Reihenfolge"
 
-#: cust/default/pdfprinter.php:52 cust/default/pdfprinter.php:120
-#: cust/default/pdfprinter.php:149 cust/gummis/pdfprinter.php:119
+#: cust/gummis/pdfprinter.php:119
 msgid "Organization"
 msgstr "Organisation"
 
@@ -4185,7 +4167,7 @@ msgstr "Picasa"
 msgid "Place of birth"
 msgstr "Geburtsort"
 
-#: poolstatus.php:674 poolstatus.php:677 teams.php:293
+#: poolstatus.php:684 poolstatus.php:687 teams.php:293
 #: admin/seasonpools.php:107 ext/countrystatus.php:222 ext/eventpools.php:183
 #: ext/poolstatus.php:176
 msgid "Placement"
@@ -4195,11 +4177,11 @@ msgstr "Platzierung"
 msgid "Placement pool"
 msgstr "Platzierungsgruppe"
 
-#: cust/bula/pdfprinter.php:277 cust/default/pdfprinter.php:177
-#: cust/default/pdfprinter.php:187 cust/default/pdfprinter.php:275
+#: cust/bula/pdfprinter.php:277 cust/default/pdfprinter.php:178
+#: cust/default/pdfprinter.php:188 cust/default/pdfprinter.php:286
 #: cust/fpudd/pdfprinter.php:298 cust/gummis/pdfprinter.php:283
-#: cust/slkl/pdfprinter.php:154 cust/slkl/pdfprinter.php:164
-#: cust/slkl/pdfprinter.php:262 cust/wfdf/pdfprinter.php:665
+#: cust/slkl/pdfprinter.php:143 cust/slkl/pdfprinter.php:153
+#: cust/slkl/pdfprinter.php:251 cust/wfdf/pdfprinter.php:665
 #: cust/windmill/pdfprinter.php:276
 msgid "Play"
 msgstr "Plays"
@@ -4217,21 +4199,21 @@ msgstr "K.O.-Runde"
 msgid "Play-off games"
 msgstr "K.O.-Spiele"
 
-#: gamecard.php:130 admin/addseasonpools.php:349
+#: admin/addseasonpools.php:349
 msgid "Played"
 msgstr "Gespielt"
 
-#: result.php:106 seasonlist.php:31
+#: gamecard.php:130 result.php:106 seasonlist.php:31
 msgid "Played games"
 msgstr "Ergebnisse"
 
 #: defensestatus.php:61 defensestatus.php:63 gamecard.php:199 gamecard.php:205
-#: gameplay.php:683 gameplay.php:685 poolstatus.php:145 poolstatus.php:166
-#: poolstatus.php:212 poolstatus.php:228 scorestatus.php:61 scorestatus.php:63
+#: gameplay.php:683 gameplay.php:685 poolstatus.php:145 poolstatus.php:171
+#: poolstatus.php:222 poolstatus.php:238 scorestatus.php:65 scorestatus.php:67
 #: seriesstatus.php:293 seriesstatus.php:313 admin/accreditation.php:96
 #: admin/accreditation.php:117 admin/accreditation.php:136
 #: admin/accreditation.php:193 admin/accreditation.php:256
-#: cust/default/pdfprinter.php:999 cust/gummis/pdfprinter.php:1134
+#: cust/default/pdfprinter.php:1042 cust/gummis/pdfprinter.php:1134
 #: cust/wfdf/pdfprinter.php:1703 ext/poolscoreboard.php:34
 #: ext/teamscoreboard.php:43 user/adddefensesheet.php:349
 msgid "Player"
@@ -4340,11 +4322,6 @@ msgstr "Plugins"
 msgid "Point"
 msgstr "Punkt"
 
-#: playercard.php:176 playercard.php:226 playercard.php:303 playercard.php:400
-#: playercard.php:469
-msgid "Point avg."
-msgstr "Scorer-Punkte durchschnittl."
-
 #: admin/addseasonpools.php:437 admin/addserieformats.php:139
 #: admin/serieformats.php:28
 msgid "Point cap"
@@ -4443,7 +4420,7 @@ msgstr "Pos."
 msgid "Position"
 msgstr "Position"
 
-#: admin/spirit.php:646
+#: admin/spirit.php:647
 msgid "Press the button to search for spirit comments"
 msgstr ""
 
@@ -4796,10 +4773,10 @@ msgstr "Rechte"
 #: playerlist.php:18 playerlist.php:24 playerlist.php:28 teams.php:117
 #: admin/seasonteams.php:184 admin/seasonteams.php:234
 #: cust/bula/pdfprinter.php:130 cust/bula/pdfprinter.php:252
-#: cust/default/pdfprinter.php:151 cust/default/pdfprinter.php:250
+#: cust/default/pdfprinter.php:152 cust/default/pdfprinter.php:261
 #: cust/fpudd/pdfprinter.php:273 cust/gummis/pdfprinter.php:150
-#: cust/gummis/pdfprinter.php:265 cust/slkl/pdfprinter.php:128
-#: cust/slkl/pdfprinter.php:237 cust/wfdf/pdfprinter.php:640
+#: cust/gummis/pdfprinter.php:265 cust/slkl/pdfprinter.php:117
+#: cust/slkl/pdfprinter.php:226 cust/wfdf/pdfprinter.php:640
 #: cust/windmill/pdfprinter.php:129 cust/windmill/pdfprinter.php:251
 #: scorekeeper/addplayerlists.php:116 scorekeeper/addplayerlists.php:218
 #: scorekeeper/addplayerlists.php:220 scorekeeper/addscoresheet.php:416
@@ -4818,7 +4795,7 @@ msgstr "Rechte zur Akkreditierung"
 msgid "Rosters"
 msgstr "Spielerlisten"
 
-#: poolstatus.php:528 admin/seasonpoints.php:193 admin/seasonpoints.php:236
+#: poolstatus.php:538 admin/seasonpoints.php:193 admin/seasonpoints.php:236
 msgid "Round"
 msgstr "Runde"
 
@@ -4882,7 +4859,7 @@ msgid "Rule templates"
 msgstr "Regel-Vorlagen"
 
 #: admin/addseasonpools.php:413 admin/seasonseries.php:75 admin/spirit.php:235
-#: admin/spirit.php:561 admin/spirit.php:572
+#: admin/spirit.php:562 admin/spirit.php:573
 msgid "Rules"
 msgstr "Regeln"
 
@@ -4999,8 +4976,8 @@ msgid "Save times"
 msgstr "Zeiten speichern"
 
 #: games.php:47 games.php:58 games.php:82 games.php:87 games.php:102
-#: games.php:109 games.php:114 games.php:120 poolstatus.php:330
-#: poolstatus.php:469 poolstatus.php:732 poolstatus.php:889
+#: games.php:109 games.php:114 games.php:120 poolstatus.php:340
+#: poolstatus.php:479 poolstatus.php:742 poolstatus.php:899
 msgid "Schedule"
 msgstr "Spielplan"
 
@@ -5027,7 +5004,7 @@ msgstr "Mit Auswahl planen"
 msgid "Scheduled"
 msgstr "Spielplan"
 
-#: cust/bula/pdfprinter.php:74 cust/default/pdfprinter.php:71
+#: cust/bula/pdfprinter.php:74 cust/default/pdfprinter.php:70
 #: cust/gummis/pdfprinter.php:72 cust/slkl/pdfprinter.php:70
 #: cust/windmill/pdfprinter.php:74 user/adddefensesheet.php:207
 #: user/addscoresheet.php:465
@@ -5082,8 +5059,8 @@ msgid "Score&nbsp;sheet"
 msgstr "Spielbericht"
 
 #: clubcard.php:153 clubcard.php:180 countrycard.php:39 countrycard.php:64
-#: gamecard.php:193 poolstatus.php:162 poolstatus.php:195 poolstatus.php:197
-#: scorestatus.php:9 scorestatus.php:41 seriesstatus.php:307 teams.php:120
+#: gamecard.php:193 poolstatus.php:167 poolstatus.php:205 poolstatus.php:207
+#: scorestatus.php:9 scorestatus.php:45 seriesstatus.php:307 teams.php:120
 #: teams.php:142 scorekeeper/gameplay.php:101 scorekeeper/gameplay.php:102
 #: scorekeeper/scoreboard.php:11
 msgid "Scoreboard"
@@ -5093,7 +5070,7 @@ msgstr "Scorerliste"
 msgid "Scoreboard TOP 3"
 msgstr "Scorerliste TOP 3"
 
-#: poolstatus.php:143 poolstatus.php:164 seriesstatus.php:291
+#: poolstatus.php:143 poolstatus.php:169 seriesstatus.php:291
 msgid "Scoreboard leaders"
 msgstr "Topscorer"
 
@@ -5101,10 +5078,6 @@ msgstr "Topscorer"
 #, fuzzy
 msgid "Scoreboards"
 msgstr "Scorerliste"
-
-#: gamecard.php:99 gamecard.php:100
-msgid "Scored"
-msgstr "Scored"
 
 #: menufunctions.php:248 menufunctions.php:682
 msgid "Scorekeeper"
@@ -5141,12 +5114,13 @@ msgstr "Scorer und Assist sind identisch!"
 
 #: gameplay.php:206 admin/spirit.php:45 admin/spirit.php:104
 #: admin/spirit.php:153 admin/spirit.php:283 cust/bula/pdfprinter.php:1056
-#: cust/default/pdfprinter.php:968 cust/gummis/pdfprinter.php:1105
-#: cust/slkl/pdfprinter.php:999 cust/windmill/pdfprinter.php:1015
+#: cust/default/pdfprinter.php:1011 cust/gummis/pdfprinter.php:1105
+#: cust/slkl/pdfprinter.php:988 cust/windmill/pdfprinter.php:1015
 msgid "Scores"
 msgstr "Spielstände"
 
-#: admin/seasongames.php:244 admin/tdtools.php:154 cust/slkl/pdfprinter.php:54
+#: admin/seasongames.php:244 admin/tdtools.php:154
+#: cust/default/pdfprinter.php:54 cust/slkl/pdfprinter.php:54
 #: cust/wfdf/pdfprinter.php:278 mobile/respgames.php:177
 #: scorekeeper/addscoresheet.php:226 scorekeeper/respgames.php:195
 #: user/adddefensesheet.php:64 user/addplayerlists.php:238
@@ -5178,8 +5152,8 @@ msgstr "Spielberichte"
 msgid "Scoring player not on the roster."
 msgstr "Punktefänger nicht auf der Spielerliste"
 
-#: cust/bula/pdfprinter.php:1046 cust/default/pdfprinter.php:958
-#: cust/gummis/pdfprinter.php:1095 cust/slkl/pdfprinter.php:989
+#: cust/bula/pdfprinter.php:1046 cust/default/pdfprinter.php:1001
+#: cust/gummis/pdfprinter.php:1095 cust/slkl/pdfprinter.php:978
 #: cust/wfdf/pdfprinter.php:1657 cust/windmill/pdfprinter.php:1005
 msgid "Scoring team"
 msgstr "Scorendes Team"
@@ -5211,7 +5185,7 @@ msgstr ""
 msgid "Search Missing by Pool"
 msgstr ""
 
-#: admin/spirit.php:554
+#: admin/spirit.php:555
 msgid "Search for teams that received a"
 msgstr ""
 
@@ -5450,7 +5424,7 @@ msgstr "Trikotnummer"
 msgid "Show"
 msgstr "Anzeigen"
 
-#: admin/spirit.php:648
+#: admin/spirit.php:649
 #, fuzzy
 msgid "Show Comments"
 msgstr "Kommentar"
@@ -5536,7 +5510,7 @@ msgstr "Spiritpunkte"
 msgid "Show today only"
 msgstr "Pool zeigen"
 
-#: admin/spirit.php:569
+#: admin/spirit.php:570
 #, fuzzy
 msgid "Showing results for "
 msgstr "Spielergebnis ändern"
@@ -5616,8 +5590,8 @@ msgstr "Spiritpunkte für"
 
 #: gameplay.php:554 seriesstatus.php:199 seriesstatus.php:201
 #: admin/seasonadmin.php:46 admin/seasongames.php:246
-#: cust/bula/pdfprinter.php:986 cust/default/pdfprinter.php:900
-#: cust/gummis/pdfprinter.php:1046 cust/slkl/pdfprinter.php:930
+#: cust/bula/pdfprinter.php:986 cust/default/pdfprinter.php:943
+#: cust/gummis/pdfprinter.php:1046 cust/slkl/pdfprinter.php:919
 #: cust/wfdf/pdfprinter.php:1552 cust/windmill/pdfprinter.php:945
 #: user/adddefensesheet.php:68 user/addplayerlists.php:242
 #: user/addresult.php:69 user/addscoresheet.php:219 user/addspirit.php:223
@@ -5708,7 +5682,7 @@ msgstr ""
 msgid "Spirit stoppage"
 msgstr "Spiritwertung"
 
-#: cust/bula/pdfprinter.php:929 cust/default/pdfprinter.php:869
+#: cust/bula/pdfprinter.php:929 cust/default/pdfprinter.php:886
 #: cust/fpudd/pdfprinter.php:869 cust/gummis/pdfprinter.php:995
 #: cust/wfdf/pdfprinter.php:1436 cust/windmill/pdfprinter.php:888
 #: mobile/addscoresheet.php:206 mobile/addspirittimeouts.php:63
@@ -5723,7 +5697,7 @@ msgstr "Spiritwertung"
 msgid "Spirit stoppages (min:sec)"
 msgstr "Spiritpunkte anzeigen"
 
-#: cust/slkl/pdfprinter.php:871
+#: cust/slkl/pdfprinter.php:860
 #, fuzzy
 msgid "Spirit stoppages (time)"
 msgstr "Auszeiten (Zeit)"
@@ -5856,9 +5830,9 @@ msgstr "Aufgaben"
 #: countrycard.php:91 defensestatus.php:66 defensestatus.php:68 gamecard.php:99
 #: gamecard.php:209 gamecard.php:215 menufunctions.php:803
 #: menufunctions.php:824 playercard.php:54 playercard.php:224
-#: playercard.php:399 poolstatus.php:145 poolstatus.php:166 poolstatus.php:212
-#: poolstatus.php:228 poolstatus.php:272 poolstatus.php:345 scorestatus.php:66
-#: scorestatus.php:68 seriesstatus.php:131 seriesstatus.php:133
+#: playercard.php:399 poolstatus.php:145 poolstatus.php:171 poolstatus.php:222
+#: poolstatus.php:238 poolstatus.php:282 poolstatus.php:355 scorestatus.php:70
+#: scorestatus.php:72 seriesstatus.php:131 seriesstatus.php:133
 #: seriesstatus.php:293 seriesstatus.php:313 seriesstatus.php:334
 #: spiritstatus.php:95 spiritstatus.php:97 teamcard.php:793
 #: admin/accreditation.php:96 admin/accreditation.php:117
@@ -5996,9 +5970,9 @@ msgstr ""
 msgid "The legacy mobile administration interface is deprecated."
 msgstr ""
 
-#: cust/bula/pdfprinter.php:318 cust/default/pdfprinter.php:316
-#: cust/fpudd/pdfprinter.php:339 cust/gummis/pdfprinter.php:323
-#: cust/wfdf/pdfprinter.php:706 cust/windmill/pdfprinter.php:317
+#: cust/bula/pdfprinter.php:318 cust/fpudd/pdfprinter.php:339
+#: cust/gummis/pdfprinter.php:323 cust/wfdf/pdfprinter.php:706
+#: cust/windmill/pdfprinter.php:317
 msgid ""
 "The team is responsible for the accreditation of <u>all</u> players on the "
 "list."
@@ -6070,9 +6044,9 @@ msgstr "Do"
 
 #: gameplay.php:208 admin/accreditation.php:136 admin/eventviewer.php:136
 #: admin/seasonadmin.php:48 admin/smsmoves.php:108
-#: cust/bula/pdfprinter.php:1055 cust/default/pdfprinter.php:967
-#: cust/default/pdfprinter.php:1003 cust/gummis/pdfprinter.php:1104
-#: cust/gummis/pdfprinter.php:1138 cust/slkl/pdfprinter.php:998
+#: cust/bula/pdfprinter.php:1055 cust/default/pdfprinter.php:1010
+#: cust/default/pdfprinter.php:1046 cust/gummis/pdfprinter.php:1104
+#: cust/gummis/pdfprinter.php:1138 cust/slkl/pdfprinter.php:987
 #: cust/wfdf/pdfprinter.php:270 cust/wfdf/pdfprinter.php:1659
 #: cust/wfdf/pdfprinter.php:1708 cust/windmill/pdfprinter.php:1014
 #: mobile/addscoresheet.php:197 user/adddefensesheet.php:176
@@ -6135,7 +6109,7 @@ msgstr "Auszeitdauer"
 
 #: gameplay.php:549 admin/addseasonpools.php:450 admin/addserieformats.php:152
 #: admin/serieformats.php:28 cust/bula/pdfprinter.php:896
-#: cust/default/pdfprinter.php:838 cust/fpudd/pdfprinter.php:836
+#: cust/default/pdfprinter.php:855 cust/fpudd/pdfprinter.php:836
 #: cust/gummis/pdfprinter.php:964 cust/wfdf/pdfprinter.php:1362
 #: cust/wfdf/pdfprinter.php:1382 cust/wfdf/pdfprinter.php:1432
 #: cust/windmill/pdfprinter.php:855 mobile/addscoresheet.php:204
@@ -6150,7 +6124,7 @@ msgstr "Time-outs"
 msgid "Timeouts (min:sec)"
 msgstr "Auszeiten (Zeit)"
 
-#: cust/slkl/pdfprinter.php:838
+#: cust/slkl/pdfprinter.php:827
 #, fuzzy
 msgid "Timeouts (time)"
 msgstr "Auszeiten (Zeit)"
@@ -6218,13 +6192,13 @@ msgid ""
 "category, use these buttons: "
 msgstr ""
 
-#: admin/spirit.php:620
+#: admin/spirit.php:621
 msgid ""
 "To search for teams that have a low/high <b>average score</b> in any "
 "category enter a threshold and press the appropriate button:"
 msgstr ""
 
-#: admin/spirit.php:594
+#: admin/spirit.php:595
 msgid ""
 "To search for teams that received high/low <b>total scores</b> enter a "
 "threshold and press the appropriate button:"
@@ -6254,19 +6228,21 @@ msgstr ""
 msgid "Tomorrow"
 msgstr "Morgen"
 
-#: gamecard.php:254 gameplay.php:83 gameplay.php:108 playercard.php:171
-#: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
-#: playerlist.php:37 poolstatus.php:146 poolstatus.php:167 scorestatus.php:103
-#: scorestatus.php:105 seriesstatus.php:294 seriesstatus.php:340
+#: gamecard.php:249 gamecard.php:254 gameplay.php:83 gameplay.php:108
+#: playercard.php:171 playercard.php:224 playercard.php:301 playercard.php:400
+#: playercard.php:468 playerlist.php:37 poolstatus.php:146 poolstatus.php:172
+#: scorestatus.php:107 scorestatus.php:109 scorestatus.php:112
+#: scorestatus.php:114 seriesstatus.php:294 seriesstatus.php:340
 #: spiritstatus.php:113 spiritstatus.php:115 teamcard.php:125 teams.php:359
 #: ext/poolscoreboard.php:39 ext/teamscoreboard.php:47
 msgid "Tot."
 msgstr "Tot."
 
-#: poolstatus.php:146 poolstatus.php:167 scorestatus.php:108
-#: scorestatus.php:110
-msgid "Tot/Gm"
-msgstr ""
+#: playercard.php:176 playercard.php:226 playercard.php:303 playercard.php:400
+#: playercard.php:469
+#, fuzzy
+msgid "Tot. avg."
+msgstr "Scorer-Punkte durchschnittl."
 
 #: clubcard.php:202 playercard.php:369 playercard.php:526 statistics.php:127
 #: statistics.php:168 teamcard.php:170 teamcard.php:267 teamcard.php:308
@@ -6277,7 +6253,7 @@ msgstr ""
 msgid "Total"
 msgstr "Total"
 
-#: poolstatus.php:213 poolstatus.php:229 seriesstatus.php:314
+#: poolstatus.php:223 poolstatus.php:239 seriesstatus.php:314
 #, fuzzy
 msgid "Total defences"
 msgstr "Summe Defense"
@@ -6304,7 +6280,7 @@ msgstr "Summe Defense"
 msgid "Total spirit stoppages"
 msgstr "Gesamtpunkte"
 
-#: cust/default/pdfprinter.php:1000 cust/gummis/pdfprinter.php:1135
+#: cust/default/pdfprinter.php:1043 cust/gummis/pdfprinter.php:1135
 #: user/adddefensesheet.php:350
 msgid "Touched"
 msgstr "Berührt"
@@ -6395,10 +6371,11 @@ msgstr "Endergebnisse"
 msgid "Ultimate.fi"
 msgstr ""
 
-#: ical.php:50 cust/default/head.php:17 ext/countrystatus.php:18
-#: ext/eventpools.php:19 ext/poolscoreboard.php:17 ext/poolstatus.php:18
-#: ext/teamcoming.php:18 ext/teamplayed.php:19 ext/teamscoreboard.php:18
-#: ext/tournament.php:23 lib/user.functions.php:1290
+#: cust/default/head.php:14 cust/default/pdfprinter.php:52
+#: cust/default/pdfprinter.php:121 cust/default/pdfprinter.php:150
+#: ext/countrystatus.php:18 ext/eventpools.php:19 ext/poolscoreboard.php:17
+#: ext/poolstatus.php:18 ext/teamcoming.php:18 ext/teamplayed.php:19
+#: ext/teamscoreboard.php:18 ext/tournament.php:23 lib/user.functions.php:1290
 #: lib/user.functions.php:1351 scorekeeper/index.php:82
 msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
@@ -6573,7 +6550,7 @@ msgstr "Gültig"
 msgid "Value"
 msgstr "Wert"
 
-#: poolstatus.php:274 admin/seasonstandings.php:359
+#: poolstatus.php:284 admin/seasonstandings.php:359
 msgid "Victory Points"
 msgstr "Siegpunkte"
 
@@ -6726,7 +6703,7 @@ msgstr "Sieger ist"
 msgid "Winner is <span style='font-weight:bold'>%s</span>."
 msgstr "Der Gewinner ist <span style='font-weight:bold'>%s</span>."
 
-#: poolstatus.php:852
+#: poolstatus.php:862
 msgid "Winners continue in:"
 msgstr "Sieger macht weiter in:"
 
@@ -6735,7 +6712,7 @@ msgid "Winning points"
 msgstr "Gewinnpunkte"
 
 #: gamecard.php:99 playercard.php:180 playercard.php:228 playercard.php:304
-#: playercard.php:400 playercard.php:469 poolstatus.php:347
+#: playercard.php:400 playercard.php:469 poolstatus.php:357
 #: seriesstatus.php:163 seriesstatus.php:165 teamcard.php:404 teamcard.php:493
 #: teamcard.php:601 teamcard.php:686 admin/seasonstandings.php:407
 #: ext/countrystatus.php:51 ext/eventpools.php:48 ext/poolstatus.php:46
@@ -6940,9 +6917,8 @@ msgstr "falsche Nummer"
 msgid "events"
 msgstr "Turniere"
 
-#: cust/bula/pdfprinter.php:131 cust/default/pdfprinter.php:152
-#: cust/gummis/pdfprinter.php:151 cust/wfdf/pdfprinter.php:243
-#: cust/windmill/pdfprinter.php:130
+#: cust/bula/pdfprinter.php:131 cust/gummis/pdfprinter.php:151
+#: cust/wfdf/pdfprinter.php:243 cust/windmill/pdfprinter.php:130
 msgid "for game"
 msgstr "für Spiel"
 
@@ -6958,15 +6934,11 @@ msgstr ""
 msgid "from"
 msgstr "von"
 
-#: gamecard.php:100
-msgid "game"
-msgstr "Spiel"
-
 #: playercard.php:551
 msgid "game events"
 msgstr "Spielereignisse"
 
-#: gamecard.php:130 admin/poolgames.php:93
+#: admin/poolgames.php:93
 msgid "games"
 msgstr "Spiele"
 
@@ -7300,6 +7272,13 @@ msgstr "ja"
 #~ msgid "Add game location"
 #~ msgstr "Ort hinzufügen"
 
+#~ msgid ""
+#~ "After the match has ended, update result:\n"
+#~ "\n"
+#~ msgstr ""
+#~ "Nach dem Ende des Spiels, geben Sie das Ergebnis ein:\n"
+#~ "\n"
+
 #~ msgid "Are you sure you want to delete the selected registration request?"
 #~ msgstr ""
 #~ "Bist du sicher, dass du die ausgewählte Registrierungsanfrage löschen "
@@ -7336,6 +7315,9 @@ msgstr "ja"
 #~ msgid "By timeslot"
 #~ msgstr "Nach Zeit"
 
+#~ msgid "Cal."
+#~ msgstr "Cal."
+
 #~ msgid "Callahan Goal"
 #~ msgstr "Callahan-Punkt"
 
@@ -7360,6 +7342,10 @@ msgstr "ja"
 
 #~ msgid "Def. avg."
 #~ msgstr "Def. Mittel"
+
+#, fuzzy
+#~ msgid "Defence avg."
+#~ msgstr "Defensedurch."
 
 #~ msgid "Defense"
 #~ msgstr "Defense"
@@ -7423,8 +7409,24 @@ msgstr "ja"
 #~ msgid "Fouls and Body Contact (theirs)"
 #~ msgstr "Fouls und Körperkontakt (sie)"
 
+#~ msgid "GA/game"
+#~ msgstr "GA/Spiel"
+
+#~ msgid "GF/game"
+#~ msgstr "GF/Spiel"
+
 #~ msgid "Game is already played. Result:"
 #~ msgstr "Spiel beendet. Ergebnis:"
+
+#, fuzzy
+#~ msgid "Gms"
+#~ msgstr "Spiele"
+
+#~ msgid "Goal avg."
+#~ msgstr "Punktedurch."
+
+#~ msgid "Goal difference"
+#~ msgstr "Punktedifferenz"
 
 #~ msgid "Half time"
 #~ msgstr "Halbzeit"
@@ -7434,6 +7436,12 @@ msgstr "ja"
 
 #~ msgid "In time"
 #~ msgstr "Zeit"
+
+#~ msgid "LOGO EXAMPLE"
+#~ msgstr "LOGO EXAMPLE"
+
+#~ msgid "License ok"
+#~ msgstr "Lizenz ok"
 
 #, php-format
 #~ msgid "Live %d"
@@ -7492,6 +7500,9 @@ msgstr "ja"
 
 #~ msgid "Score sheet"
 #~ msgstr "Spielbericht"
+
+#~ msgid "Scored"
+#~ msgstr "Scored"
 
 #, fuzzy
 #~ msgid "Spirit Points"
@@ -7583,6 +7594,9 @@ msgstr "ja"
 
 #~ msgid "from\\to"
 #~ msgstr "von\\nach"
+
+#~ msgid "game"
+#~ msgstr "Spiel"
 
 #, fuzzy
 #~ msgid "hh:mm,hh:mm"

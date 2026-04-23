@@ -405,10 +405,10 @@ if (ShowDefenseStats()) {
 		<th>" . _("Losses") . "</th>
 		<th>" . _("Win-%") . "</th>
 		<th>" . _("Goals for") . "</th>
-		<th>" . _("GF/game") . "</th>
+		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
 		<th>"._("Goals against")."</th>
-		<th>" . _("GA/game") . "</th>
-		<th>"._("Goal diff")."</th>
+		<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
+		<th>"._("Goals diff")."</th>
 		<th>" . _("Spirit score avg.") . "</th>
 		<th>" . _("Defences") . "</th>
 		</tr>";
@@ -494,10 +494,10 @@ if (ShowDefenseStats()) {
 	<th>" . _("Losses") . "</th>
 	<th>" . _("Win-%") . "</th>
 	<th>" . _("Goals for") . "</th>
-	<th>" . _("GF/game") . "</th>
+	<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
 	<th>"._("Goals against")."</th>
-	<th>" . _("GA/game") . "</th>
-	<th>"._("Goal diff")."</th>
+	<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
+	<th>"._("Goals diff")."</th>
 	<th>" . _("Spirit score avg.") . "</th>
 	<th>" . _("Defences") . "</th>
 	</tr>";
@@ -602,10 +602,10 @@ if (ShowDefenseStats()) {
 		<th>" . _("Losses") . "</th>
 		<th>" . _("Win-%") . "</th>
 		<th>" . _("Goals for") . "</th>
-		<th>" . _("GF/game") . "</th>
+		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
 		<th>"._("Goals against")."</th>
-		<th>" . _("GA/game") . "</th>
-		<th>"._("Goal diff")."</th>
+		<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
+		<th>"._("Goals diff")."</th>
 		<th>" . _("Spirit score avg.") . "</th>
 		</tr>";
 
@@ -687,10 +687,10 @@ if (ShowDefenseStats()) {
 	<th>" . _("Losses") . "</th>
 	<th>" . _("Win-%") . "</th>
 	<th>" . _("Goals for") . "</th>
-	<th>" . _("GF/game") . "</th>
+	<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
 	<th>"._("Goals against")."</th>
-	<th>" . _("GA/game") . "</th>
-	<th>"._("Goal diff")."</th>
+	<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
+	<th>"._("Goals diff")."</th>
 	<th>" . _("Spirit score avg.") . "</th>
 	</tr>";
 

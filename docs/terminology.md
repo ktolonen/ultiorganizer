@@ -98,6 +98,8 @@ Use these only when space is constrained, such as statistics tables, standings t
 | Callahans | `Call.` | Prefer this over a single-letter shorthand. |
 | Games played | `GP` | Prefer `GP` over `G` to avoid confusion with goals. |
 | Average | `Avg.` | |
+| Goals for average | `GF Avg.` | Prefer this over `GF/game` in new narrow-table labels. |
+| Goals against average | `GA Avg.` | Prefer this over `GA/game` in new narrow-table labels. |
 | Timeouts | `TO` | Use in compact stat or summary tables only. |
 | Spirit stoppage | `STO` | Existing repo shorthand; prefer the full term when space allows. |
 | Defence | `D` | Use only when the table is explicitly about defensive stats. |
