@@ -688,19 +688,21 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
   echo "</td></tr>\n";
   echo "</table>";
 
-  echo "<table class='leftmenulinks'>\n";
-  echo "<tr><td class='menuseasonlevel'>" . utf8entities(_("Links")) . "</td></tr>\n";
-  echo "<tr><td>";
   $urls = GetUrlListByTypeArray(array("menulink", "menumail"), 0);
-  foreach ($urls as $url) {
-    if ($url['type'] == "menulink") {
-      echo "<a class='subnav' href='" . $url['url'] . "'>&raquo; " . U_($url['name']) . "</a>\n";
-    } elseif ($url['type'] == "menumail") {
-      echo "<a class='subnav' href='mailto:" . $url['url'] . "'>@ " . U_($url['name']) . "</a>\n";
+  if (count($urls) > 0) {
+    echo "<table class='leftmenulinks'>\n";
+    echo "<tr><td class='menuseasonlevel'>" . utf8entities(_("Links")) . "</td></tr>\n";
+    echo "<tr><td>";
+    foreach ($urls as $url) {
+      if ($url['type'] == "menulink") {
+        echo "<a class='subnav' href='" . $url['url'] . "'>&raquo; " . U_($url['name']) . "</a>\n";
+      } elseif ($url['type'] == "menumail") {
+        echo "<a class='subnav' href='mailto:" . $url['url'] . "'>@ " . U_($url['name']) . "</a>\n";
+      }
     }
+    echo "</td></tr>\n";
+    echo "</table>";
   }
-  echo "</td></tr>\n";
-  echo "</table>";
 
   //draw customizable logo if any
   echo "<table class='leftmenulinks_plain'>\n";
