@@ -2,8 +2,8 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
-include_once $include_prefix . 'lib/tfpdf/tfpdf.php';
-include_once $include_prefix . 'lib/HSVClass.php';
+include_once 'lib/tfpdf/tfpdf.php';
+include_once 'lib/HSVClass.php';
 include_once 'lib/phpqrcode/qrlib.php';
 
 class PDF extends tFPDF
@@ -49,9 +49,9 @@ class PDF extends tFPDF
 
 		$this->AddPage();
 
-		$data = _("Organization");
+		$data = _("Ultiorganizer");
 		$data .= " - ";
-		$data .= _("Game Record");
+		$data .= _("Scoresheet");
 		$data = $this->pdfText($data); //season name already decoded
 		$data .= " " . $this->game['seasonname'];
 
@@ -63,47 +63,48 @@ class PDF extends tFPDF
 		$this->SetY(21);
 
 		$this->OneCellTable($this->pdfText(_("Game #")), $this->game['game_id']);
-		/*		$this->OneCellTable($this->pdfText(_("Home team")), $this->game['hometeamname']);
-		$this->OneCellTable($this->pdfText(_("Away team")), $this->game['visitorteamname']);*/
+		$this->OneCellTable($this->pdfText(_("Home team")), $this->game['hometeamname']);
+		$this->OneCellTable($this->pdfText(_("Away team")), $this->game['visitorteamname']);
 		$this->OneCellTable($this->pdfText(_("Division") . ", " . _("Pool")), $this->game['poolname']);
 		$this->OneCellTable($this->pdfText(_("Field")), $this->game['placename']);
-		$this->OneCellTable($this->pdfText(_("Game official")), "");
 		$this->OneCellTable($this->pdfText(_("Scheduled start date and time")), $this->game['time']);
-		$this->OneCellTable($this->pdfText(_("First Offence")), "");
+		$this->OneCellTable($this->pdfText(_("Game official")), "");
+		$this->Ln();
+
+		$this->FirstOffence();
 		$this->Ln();
 
 		$this->Timeouts();
 		$this->Ln();
 
-		$this->SpiritTimeouts();
-		$this->Ln();
-
-		$this->OneCellTable($this->pdfText(_("Halftime ends")), "");
+		$this->OneCellTable($this->pdfText(_("Halftime ends (time)")), "");
 		$this->Ln();
 
 		$this->FinalScoreTable();
+		$this->Ln();
+
+		$this->SpiritTimeouts();
 
 		$this->Signatures();
+		$this->Ln();
 		$this->SetXY(95, 21);
 		$this->ScoreGrid();
 
 		//print QR-code for result URL
 		$filename = UPLOAD_DIR . $this->game['game_id'] . ".png";
-		$url = BASEURL . "scorekeeper/?view=result&g=" . $this->game['game_id'];
-
-		QRcode::png($url, $filename, 'h', 4, 2);
-		$this->Image($filename, 20, 210);
+		$url = BASEURL . "/scorekeeper/?view=result&g=" . $this->game['game_id'];
+		QRcode::png($url, $filename, 'h', 2, 2);
+		$this->Image($filename, 20, 246);
 		unlink($filename);
 
-		$this->SetY(-27);
-		$data = _("After the match has ended, update result:\n\n") . BASEURL . "/scorekeeper/?view=result";
+		$this->SetY(-22);
+
+		$data = _("After the match has ended, update result:") . " " . BASEURL . "/scorekeeper/?view=result";
 		$data = $this->pdfText($data);
-		$this->SetFont('Arial', '', 8);
+		$this->SetFont('Arial', '', 10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
-		//$this->Cell(38,6,$this->game['hometeamname'],'LTB',0,'C',true);
-
-		$this->MultiCell(0, 2, $data);
+		$this->MultiCell(0, 1, $data);
 	}
 	function PrintDefenseSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename)
 	{
@@ -117,7 +118,7 @@ class PDF extends tFPDF
 
 		$this->AddPage();
 
-		$data = _("Organization");
+		$data = _("Ultiorganizer");
 		$data .= " - ";
 		$data .= _("Defence record");
 		$data = $this->pdfText($data); //season name already decoded
@@ -146,10 +147,10 @@ class PDF extends tFPDF
 	{
 		$this->AddPage();
 
-		$data = _("Organization");
+		$data = _("Ultiorganizer");
 		$data .= " - ";
 		$data .= _("Roster");
-		$data .= " " . _("for game") . " #" . $this->game['game_id'];
+		$data .= " " . $this->game['game_id'];
 		$data = $this->pdfText($data);
 		$this->SetFont('Arial', 'B', 16);
 		$this->SetTextColor(255);
@@ -175,8 +176,8 @@ class PDF extends tFPDF
 		$this->Cell(8, 6, "", 'LRTB', 0, 'C', true);
 		$this->Cell(56, 6, $this->pdfText(_("Name")), 'LRTB', 0, 'C', true);
 		$this->Cell(10, 6, $this->pdfText(_("Play")), 'LRTB', 0, 'C', true);
-		$this->Cell(10, 6, $this->pdfText(_("Game#")), 'LRTB', 0, 'C', true);
-		$this->Cell(10, 6, $this->pdfText(_("License ok")), 'LRTB', 0, 'C', true);
+		$this->Cell(10, 6, $this->pdfText(_("#")), 'LRTB', 0, 'C', true);
+		$this->Cell(10, 6, $this->pdfText(_("Info")), 'LRTB', 0, 'C', true);
 
 		$this->SetFillColor(255);
 		$this->Cell(2, 6, "", 'LR', 0, 'C', true); //separator
@@ -185,8 +186,8 @@ class PDF extends tFPDF
 		$this->Cell(8, 6, "", 'LRTB', 0, 'C', true);
 		$this->Cell(56, 6, $this->pdfText(_("Name")), 'LRTB', 0, 'C', true);
 		$this->Cell(10, 6, $this->pdfText(_("Play")), 'LRTB', 0, 'C', true);
-		$this->Cell(10, 6, $this->pdfText(_("Game#")), 'LRTB', 0, 'C', true);
-		$this->Cell(10, 6, $this->pdfText(_("License ok")), 'LRTB', 0, 'C', true);
+		$this->Cell(10, 6, $this->pdfText(_("#")), 'LRTB', 0, 'C', true);
+		$this->Cell(10, 6, $this->pdfText(_("Info")), 'LRTB', 0, 'C', true);
 
 		$this->Ln();
 		$this->SetTextColor(0);
@@ -234,6 +235,16 @@ class PDF extends tFPDF
 
 		//instructions
 		$data = "";
+		$data .= "<b>" . _("Filling instructions:") . "</b><BR>";
+		$data .= _("1. Mark the team captain with the letter C into the info grid.") . "<BR>";
+		$data .= _("2. Mark the spirit captain with the letters SC into the info grid.") . "<BR>";
+		$data .= _("3. Mark players who will play with an X in the Play column.") . "<BR>";
+		$data .= _("4. Add jersey numbers for players in the # column.") . "<BR>";
+		$data .= "<BR><BR>";
+
+		//$data .= "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
 		$data = $this->pdfText($data);
 		$this->SetFont('Arial', '', 10);
 		$this->SetTextColor(0);
@@ -250,8 +261,8 @@ class PDF extends tFPDF
 		$data .= _("Roster");
 		$data = $this->pdfText($data);
 		$this->SetFont('Arial', 'B', 16);
-		$this->SetTextColor(0);
-		$this->SetFillColor(230);
+		$this->SetTextColor(255);
+		$this->SetFillColor(0, 0, 0);
 		$this->Cell(0, 9, $data, 1, 1, 'C', true);
 
 		$data = U_($seriesname);
@@ -266,15 +277,15 @@ class PDF extends tFPDF
 		$this->Cell(0, 6, $data, 1, 1, 'L', true);
 
 		$this->SetFont('Arial', 'B', 12);
-		$this->SetTextColor(0);
-		$this->SetFillColor(230);
+		$this->SetTextColor(255);
+		$this->SetFillColor(0, 0, 0);
 
 		$this->SetFont('Arial', '', 10);
 		$this->Cell(8, 6, "", 'LRTB', 0, 'C', true);
 		$this->Cell(100, 6, $this->pdfText(_("Name")), 'LRTB', 0, 'C', true);
 		$this->Cell(10, 6, $this->pdfText(_("Play")), 'LRTB', 0, 'C', true);
-		$this->Cell(10, 6, $this->pdfText(_("Game#")), 'LRTB', 0, 'C', true);
-		$this->Cell(62, 6, $this->pdfText(_("Info")), 'LRTB', 0, 'C', true);
+		$this->Cell(12, 6, $this->pdfText(_("Jersey")), 'LRTB', 0, 'C', true);
+		$this->Cell(60, 6, $this->pdfText(_("Info")), 'LRTB', 0, 'C', true);
 		$this->Ln();
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
@@ -300,11 +311,11 @@ class PDF extends tFPDF
 			$this->SetFont('Arial', '', 10);
 			$this->Cell(10, 6, "", 'LRTB', 0, 'C', true);
 			if (isset($players[$i - 1]['num']) && $players[$i - 1]['num'] >= 0) {
-				$this->Cell(10, 6, $players[$i - 1]['num'], 'LRTB', 0, 'C', true);
+				$this->Cell(12, 6, $players[$i - 1]['num'], 'LRTB', 0, 'C', true);
 			} else {
-				$this->Cell(10, 6, "", 'LRTB', 0, 'C', true);
+				$this->Cell(12, 6, "", 'LRTB', 0, 'C', true);
 			}
-			$this->Cell(62, 6, "", 'LRTB', 0, 'C', true);
+			$this->Cell(60, 6, "", 'LRTB', 0, 'C', true);
 
 			$this->Ln();
 		}
@@ -312,15 +323,17 @@ class PDF extends tFPDF
 		$this->Ln();
 
 		//instructions
-		$data = "<b>" . _("NOTICE") . " 1!</b> " . _("For new players added, accreditation id or date of birth must be written down.") . "<BR>";
-		$data .= "<b>" . _("NOTICE") . " 2!</b> " . _("The team is responsible for the accreditation of <u>all</u> players on the list.") . "<BR>";
-		$data .= "<b>" . _("NOTICE") . " 3! " . _("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).") . "";
+		$data = "";
+		//$data = "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
+		//$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
 		$data = $this->pdfText($data);
 		$this->SetFont('Arial', '', 10);
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
 		$this->WriteHTML($data);
 	}
+
 	function PrintSchedule($scope, $id, $games)
 	{
 		$left_margin = 10;
@@ -427,7 +440,6 @@ class PDF extends tFPDF
 		$prevTeam = "";
 		$prevDate = "";
 		$prevField = "";
-		$prevSeason = "";
 		$fieldstotal = 0;
 
 		$isTableOpen = false;
@@ -445,30 +457,37 @@ class PDF extends tFPDF
 		$this->SetDrawColor(0);
 		//print all games in order
 		foreach ($games as $game) {
+			// skip incomplete rows (no field/time) to avoid writing outside a page
+			if (empty($game['place_id']) || empty($game['time'])) {
+				continue;
+			}
 
 			//one reservation group per page
-			if (
-				!$pageAdded
-				|| (
-					!empty($game['place_id'])
-					&& (
-						$game['reservationgroup'] != $prevTournament
-						|| $game['season'] != $prevSeason
-					)
-				)
+			if (!$pageAdded || (!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament)
+				|| (!empty($prevDate) && JustDate($game['starttime']) != $prevDate)
 			) {
 				$this->AddPage("L", "A3");
 				$pageAdded = true;
-				$pageSeason = (int)$game['season'];
-				$times = TimetableTimeslots($game['reservationgroup'], $pageSeason);
+				$times = TimetableTimeslots($game['reservationgroup'], $id);
 				$timeslots = array();
+				$tmptimes = array();
 				$i = 0;
+
 				foreach ($times as $time) {
+
+					if (strtotime(JustDate($time['time'])) > strtotime(JustDate($game['starttime']))) {
+						break;
+					}
+					if (strtotime(JustDate($time['time'])) < strtotime(JustDate($game['starttime']))) {
+						continue;
+					}
+
 					$timeslots[$time['time']] = $i * 20;
+					$tmptimes[] = $time;
 					$i++;
 				}
-
-				$fieldstotal = TimetableFields($game['reservationgroup'], $pageSeason);
+				$times = $tmptimes;
+				$fieldstotal = TimetableFields($game['reservationgroup'], $id);
 				$fieldlimit = max($fieldstotal / 2 + 1, 10);
 				$gridx = $xarea / $fieldlimit;
 				$field = 0;
@@ -516,10 +535,9 @@ class PDF extends tFPDF
 
 			$slot = $game['time'];
 			if (!isset($timeslots[$slot])) {
-				$timeslots[$slot] = count($timeslots) * $gridy;
+				continue;
 			}
-			$slotOffset = $timeslots[$slot];
-			$this->SetXY($field_offset, $time_offset + $slotOffset);
+			$this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
 
 			$this->SetTextColor(0);
 			$this->SetFillColor(255);
@@ -568,7 +586,7 @@ class PDF extends tFPDF
 			//$this->DynSetFont($txt,$gridx,8);
 			$this->MultiCell($gridx, 3, $txt, "LR", 2, 'L', $colors);
 
-			$this->SetXY($field_offset, $time_offset + $slotOffset);
+			$this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
 			$this->Cell($gridx, $gridy, "", "LRBT", 2, 'L', false);
 
 			$prevTournament = $game['reservationgroup'];
@@ -578,7 +596,6 @@ class PDF extends tFPDF
 			$prevPool = $game['pool'];
 			$prevDate = JustDate($game['starttime']);
 			$prevTime = DefHourFormat($game['starttime']);
-			$prevSeason = $game['season'];
 		}
 	}
 
@@ -670,7 +687,7 @@ class PDF extends tFPDF
 		}
 
 		if ($result) {
-			if (GameHasStarted($game) && intval($game['isongoing'])) {
+			if (GameHasStarted($game) &&  !intval($game['isongoing'])) {
 				$txt = intval($game['homescore']);
 				$this->Cell(5, 5, $txt, 'TB', 0, 'L', true);
 				$txt = " - ";
@@ -843,8 +860,8 @@ class PDF extends tFPDF
 		$this->SetFillColor(255);
 		$this->Cell(20, 6, $this->pdfText(_("Home")), 'LRTB', 0, 'L', true);
 
-		for ($i = 0; $i < 6; $i++) {
-			$this->Cell(10, 6, "", 'LRTB', 0, 'L', true);
+		for ($i = 0; $i < 4; $i++) {
+			$this->Cell(15, 6, "", 'LRTB', 0, 'L', true);
 		}
 
 		$this->Ln();
@@ -854,8 +871,8 @@ class PDF extends tFPDF
 		$this->SetFillColor(255);
 		$this->Cell(20, 6, $this->pdfText(_("Away")), 'LRTB', 0, 'L', true);
 
-		for ($i = 0; $i < 6; $i++) {
-			$this->Cell(10, 6, "", 'LRTB', 0, 'L', true);
+		for ($i = 0; $i < 4; $i++) {
+			$this->Cell(15, 6, "", 'LRTB', 0, 'L', true);
 		}
 		$this->Ln();
 	}
@@ -874,8 +891,8 @@ class PDF extends tFPDF
 		$this->SetFillColor(255);
 		$this->Cell(20, 6, $this->pdfText(_("Home")), 'LRTB', 0, 'L', true);
 
-		for ($i = 0; $i < 4; $i++) {
-			$this->Cell(15, 6, "", 'LRTB', 0, 'L', true);
+		for ($i = 0; $i < 2; $i++) {
+			$this->Cell(30, 6, "", 'LRTB', 0, 'L', true);
 		}
 
 		$this->Ln();
@@ -885,9 +902,35 @@ class PDF extends tFPDF
 		$this->SetFillColor(255);
 		$this->Cell(20, 6, $this->pdfText(_("Away")), 'LRTB', 0, 'L', true);
 
-		for ($i = 0; $i < 4; $i++) {
-			$this->Cell(15, 6, "", 'LRTB', 0, 'L', true);
+		for ($i = 0; $i < 2; $i++) {
+			$this->Cell(30, 6, "", 'LRTB', 0, 'L', true);
 		}
+		$this->Ln();
+	}
+
+	function FirstOffence()
+	{
+		//header
+		$this->SetFont('Arial', 'B', 12);
+		$this->SetTextColor(255);
+		$this->SetFillColor(0, 0, 0);
+		$this->Cell(80, 6, $this->pdfText(_("First Offence")), 'LRTB', 0, 'C', true);
+		$this->Ln();
+
+		$this->SetFont('Arial', '', 12);
+
+		//home grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(10, 6, "", 'LRTB', 0, 'L', true);
+		$this->Cell(70, 6, $this->game['hometeamname'], 'LRTB', 0, 'L', true);
+		$this->Ln();
+
+		//visitor grids
+		$this->SetTextColor(0);
+		$this->SetFillColor(255);
+		$this->Cell(10, 6, "", 'LRTB', 0, 'L', true);
+		$this->Cell(70, 6, $this->game['visitorteamname'], 'LRTB', 0, 'L', true);
 		$this->Ln();
 	}
 
@@ -1023,8 +1066,8 @@ class PDF extends tFPDF
 	{
 		//header
 		$this->SetFont('Arial', 'B', 12);
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
+		$this->SetTextColor(255);
+		$this->SetFillColor(0, 0, 0);
 		$this->Cell(80, 6, $this->pdfText(_("Final score")), 'LRTB', 0, 'C', true);
 		$this->Ln();
 
@@ -1050,7 +1093,6 @@ class PDF extends tFPDF
 
 		$this->SetFont('Arial', 'B', 12);
 		$this->Ln();
-		$this->Cell(80, 6, "-", 'LRTB', 0, 'C', true);
 	}
 
 	function OneCellTable($header, $data)

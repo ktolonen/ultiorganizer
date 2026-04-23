@@ -81,7 +81,7 @@ msgstr "..."
 
 #: cust/slkl/pdfprinter.php:215
 #, fuzzy
-msgid "1. Mark the team captain with the letter C after the name."
+msgid "1. Mark the team captain with the letter C into the info grid."
 msgstr "1. Merkitse joukkueen kapteeni C-kirjaimella nimen jälkeen."
 
 #: cust/wfdf/pdfprinter.php:1376
@@ -91,7 +91,7 @@ msgstr "per puoliaika"
 
 #: cust/slkl/pdfprinter.php:216
 #, fuzzy
-msgid "2. Mark the spirit captain with the letters SC after the name."
+msgid "2. Mark the spirit captain with the letters SC into the info grid."
 msgstr "1. Merkitse joukkueen kapteeni C-kirjaimella nimen jälkeen."
 
 #: cust/wfdf/pdfprinter.php:1377
