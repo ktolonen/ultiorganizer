@@ -550,13 +550,14 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
   $html .= "</div>";
 
   $html .= "<div class='tdtools-box bg-td2'>";
+  $selectedSpiritSearchValue = isset($_POST['sotgrepsval']) ? intval($_POST['sotgrepsval']) : 1;
   $html .= "<form method='POST' action='?view=admin/spirit&amp;season=$season'>";
   $html .= "<p>" . _("Search for teams that received a") . "&nbsp;";
-  $html .= "<input type='radio' name='sotgrepsval' value='0'>0&nbsp;</button>";
-  $html .= "<input type='radio' name='sotgrepsval' value='1' checked>1&nbsp;</button>";
-  $html .= "<input type='radio' name='sotgrepsval' value='2'>2&nbsp;</button>";
-  $html .= "<input type='radio' name='sotgrepsval' value='3'>3&nbsp;</button>";
-  $html .= "<input type='radio' name='sotgrepsval' value='4'>4&nbsp;</button>";
+  $html .= "<input type='radio' name='sotgrepsval' value='0'" . ($selectedSpiritSearchValue === 0 ? " checked" : "") . ">0&nbsp;";
+  $html .= "<input type='radio' name='sotgrepsval' value='1'" . ($selectedSpiritSearchValue === 1 ? " checked" : "") . ">1&nbsp;";
+  $html .= "<input type='radio' name='sotgrepsval' value='2'" . ($selectedSpiritSearchValue === 2 ? " checked" : "") . ">2&nbsp;";
+  $html .= "<input type='radio' name='sotgrepsval' value='3'" . ($selectedSpiritSearchValue === 3 ? " checked" : "") . ">3&nbsp;";
+  $html .= "<input type='radio' name='sotgrepsval' value='4'" . ($selectedSpiritSearchValue === 4 ? " checked" : "") . ">4&nbsp;";
   $html .= "</p><p>" . _("<b>more than once</b>, in this category") . ":&nbsp;";
   $html .= "<button class='button' type='submit' name='sotgreps' value='1'>" . _("Rules") . "</button> ";
   $html .= "<button class='button' type='submit' name='sotgreps' value='2'>" . _("Fouls") . "</button> ";

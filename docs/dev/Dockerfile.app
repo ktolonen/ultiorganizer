@@ -7,7 +7,8 @@ RUN apt-get update && apt-get install -y \
     libpng-dev \
     zlib1g-dev \
  && sed -i '/^# *en_US.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
- && locale-gen en_US.UTF-8 \
+ && sed -i '/^# *fi_FI.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
+ && locale-gen en_US.UTF-8 fi_FI.UTF-8 \
  && pecl install xdebug \
  && docker-php-ext-enable xdebug \
  && docker-php-ext-install mysqli gettext gd mbstring \
