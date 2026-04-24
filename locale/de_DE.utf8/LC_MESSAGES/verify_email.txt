@@ -1,5 +1,5 @@
-This email has been sent to you as a response to a request to add a verified email address at $ultiorganizer.
+Diese E-Mail wurde Ihnen als Antwort auf eine Anfrage zum Hinzufügen einer bestätigten E-Mail-Adresse für $ultiorganizer gesendet.
 
-Please follow the link below or cut-and-paste it to a browser address bar to verify this address.
+Bitte folgen Sie dem untenstehenden Link oder kopieren Sie ihn in die Adressleiste Ihres Browsers, um diese Adresse zu bestätigen.
 
 $url

@@ -1,7 +1,7 @@
-A password reset was requested for $url.
+Für Ihr Ultiorganizer-Konto wurde das Zurücksetzen des Passworts angefordert.
 
-Username: $username
-To set a new password, open this link:
+Benutzername: $username
+Öffnen Sie diesen Link, um ein neues Passwort festzulegen:
 $url
 
-If you did not request this, you can ignore this message.
+Wenn Sie dies nicht angefordert haben, können Sie diese Nachricht ignorieren.

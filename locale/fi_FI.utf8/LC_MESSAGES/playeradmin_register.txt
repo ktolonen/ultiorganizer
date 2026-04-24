@@ -1,7 +1,6 @@
-Tämä viesti on lähetetty koska sinulle on luotu pelaajatietojen ylläpitämisen
-mahdollistava käyttäjätunnus $ultiorganizeressa.
+Tämä viesti lähetettiin sinulle, koska palveluun $ultiorganizer on luotu käyttäjätili,
+jonka avulla voit hallita pelaajaprofiiliasi.
 
-Seuraa alla olevaa linkkiä tai kopioi osoite selaimen osoitepalkkiin
-vahvistaaksesi tunnuksesi.
+Seuraa alla olevaa linkkiä tai kopioi se selaimesi osoiteriville vahvistaaksesi käyttäjätilisi.
 
 $url

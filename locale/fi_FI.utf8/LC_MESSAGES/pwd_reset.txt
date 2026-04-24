@@ -1,7 +1,8 @@
-Salasanan vaihto pyydettiin sivustolle $url.
+Ultiorganizer-tilillesi pyydettiin salasanan vaihtoa.
 
-Kayttajatunnus: $username
-Aseta uusi salasana avaamalla tama linkki:
+Käyttäjätunnus: $username
+
+Aseta uusi salasana avaamalla tämä linkki:
 $url
 
-Jos et pyytanyt salasanan vaihtoa, voit jattaa taman viestin huomiotta.
+Jos et pyytänyt salasanan vaihtoa, voit jättää tämän viestin huomiotta.

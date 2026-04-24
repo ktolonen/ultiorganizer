@@ -1,6 +1,7 @@
-A password reset was requested for Ultiorganizer at $url.
+A password reset was requested for your account on Ultiorganizer.
 
 Username: $username
+
 To set a new password, open this link:
 $url
 

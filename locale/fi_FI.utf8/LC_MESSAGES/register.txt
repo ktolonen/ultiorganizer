@@ -1,6 +1,5 @@
-Tämä viesti on lähetetty vastauksena pyyntöön rekisteröityä $ultiorganizeressa.
+Tämä viesti lähetettiin vastauksena pyyntöön rekisteröityä palveluun $ultiorganizer.
 
-Seuraa alla olevaa linkkiä tai kopioi osoite selaimen osoitepalkkiin vahvistaaksesi 
-rekisteröityminen.
+Seuraa alla olevaa linkkiä tai kopioi se selaimesi osoiteriville vahvistaaksesi rekisteröitymisesi.
 
 $url
