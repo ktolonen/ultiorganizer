@@ -293,11 +293,11 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 if (empty($seasonId)) {
-	$html .= "<h2>" . _("Add new season/tournament") . "</h2>\n";
+	$html .= "<h2>" . _("Create new event") . "</h2>\n";
 	$html .= "<form method='post' action='?view=admin/addseasons'>";
 	$disabled = "";
 } else {
-	$html .= "<h2>" . _("Edit season/tournament") . "</h2>\n";
+	$html .= "<h2>" . _("Edit event") . "</h2>\n";
 	$html .= "<form method='post' action='?view=admin/addseasons&amp;season=$seasonId'>";
 	$disabled = "disabled='disabled'";
 }

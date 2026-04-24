@@ -70,7 +70,7 @@ if ($list == "teamstandings") {
     }
   }
   if ($countall == 0) {
-    $html .= "<p>" . _("Season statistics have not yet been computed") . "</p>";
+    $html .= "<p>" . _("Event statistics have not yet been computed") . "</p>";
   }
 } elseif ($list == "playerscoreboard") {
   $html .= "<h1>" . _("Scoreboard TOP 3") . "</h1>\n";
@@ -244,7 +244,7 @@ if ($list == "teamstandings") {
   }
 
   if ($countall == 0) {
-    $html .= "<p>" . _("Season statistics have not yet been computed") . "</p>";
+    $html .= "<p>" . _("Event statistics have not yet been computed") . "</p>";
   }
 }
 

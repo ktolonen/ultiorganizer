@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 10:13+0300\n"
+"POT-Creation-Date: 2026-04-24 12:16+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -302,10 +302,6 @@ msgstr "Mehr hinzufügen ..."
 #: admin/clubs.php:52 admin/clubs.php:85
 msgid "Add new"
 msgstr "Hinzufügen"
-
-#: admin/addseasons.php:296
-msgid "Add new season/tournament"
-msgstr "Neue Saison/Turnier hinzufügen"
 
 #: admin/addteamadmins.php:85 admin/adduser.php:99 admin/users.php:70
 msgid "Add new user"
@@ -1308,7 +1304,7 @@ msgstr "Erzeugen"
 msgid "Create SMS"
 msgstr "SMS erzeugen"
 
-#: menufunctions.php:528
+#: menufunctions.php:528 admin/addseasons.php:296
 msgid "Create new event"
 msgstr "Neue(s) Turnier/Saison"
 
@@ -1587,7 +1583,8 @@ msgstr ""
 #: clubcard.php:145 clubcard.php:169 countrycard.php:31 countrycard.php:83
 #: countrycard.php:91 games.php:245 playercard.php:224 playercard.php:301
 #: playercard.php:399 playercard.php:468 teamcard.php:199 teamcard.php:401
-#: teamcard.php:598 teamcard.php:795 teams.php:184 admin/addseasonpools.php:274
+#: teamcard.php:598 teamcard.php:795 teams.php:184 admin/accreditation.php:193
+#: admin/accreditation.php:256 admin/addseasonpools.php:274
 #: admin/addseasonpools.php:292 admin/addseasonteams.php:165
 #: admin/dbequalize.php:209 admin/dbequalize.php:248 admin/dbequalize.php:289
 #: admin/editgame.php:219 admin/privacyplayer.php:86 admin/seasonpoints.php:180
@@ -1615,6 +1612,12 @@ msgstr "Klasse/Liga abgeschlossen."
 #: admin/addseasonseries.php:45 admin/addseasonseries.php:63
 msgid "Division name is mandatory!"
 msgstr "Klassenname erforderlich!"
+
+#: poolstatus.php:33 seriesstatus.php:19 seriesstatus.php:27
+#: spiritstatus.php:17 spiritstatus.php:24
+#, fuzzy
+msgid "Division not found"
+msgstr "Saison nicht gefunden"
 
 #: admin/select_userrole.php:45 user/userinfo.php:429 user/userinfo.php:502
 msgid "Division organizer"
@@ -1742,7 +1745,7 @@ msgstr "User Zugriffsrechte"
 msgid "Edit division"
 msgstr "Klasse verändern"
 
-#: admin/addseasons.php:133
+#: admin/addseasons.php:133 admin/addseasons.php:300
 msgid "Edit event"
 msgstr "Turnier/Saison ändern"
 
@@ -1761,10 +1764,6 @@ msgstr "Regel-Schablone ändern"
 #: admin/seasonseries.php:181
 msgid "Edit rule templates"
 msgstr "Regelvorlagen bearbeiten"
-
-#: admin/addseasons.php:300
-msgid "Edit season/tournament"
-msgstr "Turnier verändern"
 
 #: admin/seasonadmin.php:105
 msgid "Edit side menu links"
@@ -1910,15 +1909,15 @@ msgstr ""
 #: clubcard.php:169 countrycard.php:83 countrycard.php:91 menufunctions.php:742
 #: playercard.php:224 playercard.php:399 statistics.php:48 statistics.php:94
 #: statistics.php:224 teamcard.php:400 teamcard.php:597
-#: admin/accreditation.php:136 admin/dbequalize.php:248
-#: admin/dbequalize.php:289 admin/dbequalize.php:309 admin/privacyplayer.php:86
-#: admin/seasonadmin.php:12 admin/seasonstats.php:34
-#: lib/search.functions.php:11 lib/search.functions.php:31
-#: lib/search.functions.php:63 lib/search.functions.php:101
-#: lib/search.functions.php:139 lib/search.functions.php:199
-#: lib/search.functions.php:434 lib/search.functions.php:475
-#: lib/search.functions.php:517 user/select_poolselector.php:27
-#: user/userinfo.php:344 user/userinfo.php:369
+#: admin/accreditation.php:136 admin/addreservation.php:210
+#: admin/apitokens.php:145 admin/dbequalize.php:248 admin/dbequalize.php:289
+#: admin/dbequalize.php:309 admin/privacyplayer.php:86 admin/seasonadmin.php:12
+#: admin/seasonstats.php:34 lib/search.functions.php:11
+#: lib/search.functions.php:31 lib/search.functions.php:63
+#: lib/search.functions.php:101 lib/search.functions.php:139
+#: lib/search.functions.php:199 lib/search.functions.php:434
+#: lib/search.functions.php:475 lib/search.functions.php:517
+#: user/select_poolselector.php:27 user/userinfo.php:344 user/userinfo.php:369
 msgid "Event"
 msgstr "Turnier"
 
@@ -1936,6 +1935,10 @@ msgstr "Turnier"
 #, fuzzy
 msgid "Event ID cannot be empty"
 msgstr "Turnier-ID darf nicht leer sein"
+
+#: admin/apitokens.php:26
+msgid "Event ID is required for event scope."
+msgstr ""
 
 #: admin/addseasons.php:71
 #, fuzzy
@@ -1966,9 +1969,15 @@ msgstr "Turnierlog"
 msgid "Event mandatory"
 msgstr "Turnier/Saison erforderlich"
 
+#: poolstatus.php:21 seriesstatus.php:35 spiritstatus.php:31
 #: admin/spiritsettings.php:18
 #, fuzzy
 msgid "Event not found"
+msgstr "Saison nicht gefunden"
+
+#: admin/apitokens.php:28
+#, fuzzy
+msgid "Event not found."
 msgstr "Saison nicht gefunden"
 
 #: lib/game.functions.php:877
@@ -1983,6 +1992,11 @@ msgstr "Turnier-/Saisonverantwortlicher"
 msgid "Event statistics"
 msgstr "Turnierstatistik"
 
+#: statistics.php:73 statistics.php:247
+#, fuzzy
+msgid "Event statistics have not yet been computed"
+msgstr "Saisonstatistik wurde noch nicht erzeugt"
+
 #: lib/data.functions.php:542
 msgid "Event to replace doesn't exist"
 msgstr "Zu ersetzendes Turnier existiert nicht"
@@ -1996,7 +2010,7 @@ msgid "Event users"
 msgstr "Turnierbenutzer"
 
 #: menufunctions.php:468 menufunctions.php:665 playerlist.php:33
-#: admin/seasons.php:11 admin/seasonstats.php:18
+#: admin/seasons.php:11 admin/seasons.php:86 admin/seasonstats.php:18
 msgid "Events"
 msgstr "Turniere"
 
@@ -2401,11 +2415,6 @@ msgstr "Spielbogen"
 msgid "Game clock"
 msgstr "Spielorte"
 
-#: mobile/addcomment.php:9
-#, fuzzy
-msgid "Game comment"
-msgstr "Spiele verwalten"
-
 #: gameplay.php:211
 #, fuzzy
 msgid "Game events"
@@ -2461,8 +2470,9 @@ msgstr "Spiele verwalten"
 msgid "Game not found"
 msgstr "Spiel nicht gefunden"
 
-#: gameplay.php:608 mobile/addscoresheet.php:213 scorekeeper/addcomment.php:27
-#: scorekeeper/addscoresheet.php:415 user/addscoresheet.php:473
+#: gameplay.php:608 mobile/addcomment.php:9 mobile/addscoresheet.php:213
+#: scorekeeper/addcomment.php:27 scorekeeper/addscoresheet.php:415
+#: user/addscoresheet.php:473
 #, fuzzy
 msgid "Game note"
 msgstr "Punkte"
@@ -3429,6 +3439,11 @@ msgstr ""
 msgid "Log in"
 msgstr "Einloggen"
 
+#: mobile/login_failed.php:9
+#, fuzzy
+msgid "Log in failed"
+msgstr "Login fehlgeschlagen"
+
 #: menufunctions.php:620
 #, fuzzy
 msgid "Log in to create an event"
@@ -3443,10 +3458,6 @@ msgstr ""
 #, fuzzy
 msgid "Log out"
 msgstr "Einloggen"
-
-#: mobile/login_failed.php:9
-msgid "Login failed"
-msgstr "Login fehlgeschlagen"
 
 #: menufunctions.php:484
 msgid "Logs"
@@ -5312,27 +5323,13 @@ msgstr ""
 msgid "Search results"
 msgstr "Ergebnis speichern"
 
-#: admin/addreservation.php:210 admin/apitokens.php:145
 #: admin/seasonadmin.php:32
 msgid "Season"
 msgstr "Saision"
 
-#: admin/apitokens.php:26
-msgid "Season id is required for season scope."
-msgstr ""
-
 #: user/enrollteam.php:10
 msgid "Season mandatory"
 msgstr "Saison erforderlich"
-
-#: poolstatus.php:21 seriesstatus.php:35 spiritstatus.php:31
-msgid "Season not found"
-msgstr "Saison nicht gefunden"
-
-#: admin/apitokens.php:28
-#, fuzzy
-msgid "Season not found."
-msgstr "Saison nicht gefunden"
 
 #: menufunctions.php:754 admin/addseasons.php:363 admin/seasonpoints.php:14
 #: admin/seasonpoints.php:20 admin/seasonpoints.php:45
@@ -5344,14 +5341,6 @@ msgstr "Punkte"
 #: admin/seasonpoints.php:174
 msgid "Season points are not enabled for this event."
 msgstr ""
-
-#: statistics.php:73 statistics.php:247
-msgid "Season statistics have not yet been computed"
-msgstr "Saisonstatistik wurde noch nicht erzeugt"
-
-#: admin/seasons.php:86
-msgid "Seasons/Tournaments"
-msgstr "Saisons/Turniere"
 
 #: statistics.php:94
 msgid "Second"
@@ -5526,15 +5515,6 @@ msgstr ""
 #: admin/sms.php:67
 msgid "Sent"
 msgstr "Gesendet"
-
-#: admin/accreditation.php:193 admin/accreditation.php:256
-msgid "Series"
-msgstr ""
-
-#: poolstatus.php:33 seriesstatus.php:19 seriesstatus.php:27
-#: spiritstatus.php:17 spiritstatus.php:24
-msgid "Series not found"
-msgstr "Serie nicht gefunden"
 
 #: admin/serverconf.php:7
 msgid "Server configuration"
@@ -7424,6 +7404,9 @@ msgstr "ja"
 #~ msgid "Add game location"
 #~ msgstr "Ort hinzufügen"
 
+#~ msgid "Add new season/tournament"
+#~ msgstr "Neue Saison/Turnier hinzufügen"
+
 #~ msgid ""
 #~ "After the match has ended, update result:\n"
 #~ "\n"
@@ -7517,6 +7500,9 @@ msgstr "ja"
 #~ msgid "Desktop score sheet"
 #~ msgstr "Desktop-Spielbericht"
 
+#~ msgid "Edit season/tournament"
+#~ msgstr "Turnier verändern"
+
 #~ msgid "Email can not be empty"
 #~ msgstr "Email darf nicht leer sein"
 
@@ -7566,6 +7552,10 @@ msgstr "ja"
 
 #~ msgid "GF/game"
 #~ msgstr "GF/Spiel"
+
+#, fuzzy
+#~ msgid "Game comment"
+#~ msgstr "Spiele verwalten"
 
 #~ msgid "Game is already played. Result:"
 #~ msgstr "Spiel beendet. Ergebnis:"
@@ -7658,6 +7648,16 @@ msgstr "ja"
 
 #~ msgid "Scored"
 #~ msgstr "Scored"
+
+#, fuzzy
+#~ msgid "Season not found."
+#~ msgstr "Saison nicht gefunden"
+
+#~ msgid "Seasons/Tournaments"
+#~ msgstr "Saisons/Turniere"
+
+#~ msgid "Series not found"
+#~ msgstr "Serie nicht gefunden"
 
 #, fuzzy
 #~ msgid "Spirit Points"

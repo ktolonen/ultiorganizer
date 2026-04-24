@@ -6,7 +6,7 @@ include_once 'lib/game.functions.php';
 $html = "";
 $gameId = intval(iget("game"));
 
-mobilePageTop(_("Game comment"));
+mobilePageTop(_("Game note"));
 
 $game_result = GameResult($gameId);
 $comment_feedback = "";

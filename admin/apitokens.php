@@ -23,9 +23,9 @@ if (isSuperAdmin()) {
 
     if ($scopeType === 'season') {
       if ($scopeId === '') {
-        $errors[] = _("Season id is required for season scope.");
+        $errors[] = _("Event ID is required for event scope.");
       } elseif (!SeasonExists($scopeId)) {
-        $errors[] = _("Season not found.");
+        $errors[] = _("Event not found.");
       }
     } elseif ($scopeType === 'user') {
       if ($scopeId === '') {
@@ -142,7 +142,7 @@ echo "<td><input type='text' name='label' size='30'/></td></tr>";
 echo "<tr><td>" . _("Scope type") . "</td>";
 echo "<td><select name='scope_type' onchange='toggleScopeId()'>";
 echo "<option value='installation'>" . _("Installation") . "</option>";
-echo "<option value='season'>" . _("Season") . "</option>";
+echo "<option value='season'>" . _("Event") . "</option>";
 echo "<option value='user'>" . _("User") . "</option>";
 echo "</select></td></tr>";
 echo "<tr><td>" . _("Scope id") . "</td>";

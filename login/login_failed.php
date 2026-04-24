@@ -6,7 +6,7 @@ if (IsRegistered($_SESSION['uid'])) {
   header("location:?view=frontpage");
 }
 
-$title = _("Login failed");
+$title = _("Log in failed");
 $userId = isset($_GET['user']) ? urldecode($_GET['user']) : "";
 $safeUserId = utf8entities($userId);
 $html = "";

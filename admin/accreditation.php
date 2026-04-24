@@ -190,7 +190,7 @@ if ($view == "accId") {
 
   echo "<h3>" . _("Players without membership Id") . "</h3>";
   $players = SeasonAllPlayers($season);
-  echo "<table class='infotable'><tr><th>" . _("Series") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th></tr>";
+  echo "<table class='infotable'><tr><th>" . _("Division") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th></tr>";
   foreach ($players as $player) {
     $playerinfo = PlayerInfo($player['player_id']);
     if (empty($playerinfo['accreditation_id'])) {
@@ -253,7 +253,7 @@ if ($view == "accId") {
       return $aType <=> $bType;
     });
   }
-  echo "<table class='infotable'><tr><th>" . _("Series") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th>";
+  echo "<table class='infotable'><tr><th>" . _("Division") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th>";
   if (CUSTOMIZATIONS == "slkl") {
     if ($sort == "external") {
       echo "<th>" . _("Membership") . "</th><th>" . _("External accreditation") . "</th>";

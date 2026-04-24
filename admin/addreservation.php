@@ -207,7 +207,7 @@ $html .= "<tr><td>" . _("Location") . ":</td><td>";
 $html .= "</td></tr>\n";
 $html .= "<tr><td></td><td>&nbsp;</td></tr>\n";
 if (isSuperAdmin()) {
-  $html .= "<tr><td>" . _("Season") . ":</td><td>";
+  $html .= "<tr><td>" . _("Event") . ":</td><td>";
   $html .= "<select class='dropdown' name='resseason'>\n";
   $html .= "<option class='dropdown' value=''></option>";
   $seasons = Seasons();

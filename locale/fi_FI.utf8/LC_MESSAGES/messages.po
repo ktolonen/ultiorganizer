@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 10:13+0300\n"
+"POT-Creation-Date: 2026-04-24 12:16+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -308,10 +308,6 @@ msgstr "Lisää..."
 #: admin/clubs.php:52 admin/clubs.php:85
 msgid "Add new"
 msgstr "Lisää uusi"
-
-#: admin/addseasons.php:296
-msgid "Add new season/tournament"
-msgstr "Lisää uusi kausi/turnaus"
 
 #: admin/addteamadmins.php:85 admin/adduser.php:99 admin/users.php:70
 msgid "Add new user"
@@ -1300,7 +1296,7 @@ msgstr "Luo"
 msgid "Create SMS"
 msgstr "Luo SMS"
 
-#: menufunctions.php:528
+#: menufunctions.php:528 admin/addseasons.php:296
 msgid "Create new event"
 msgstr "Uusi tapahtuma"
 
@@ -1574,7 +1570,8 @@ msgstr ""
 #: clubcard.php:145 clubcard.php:169 countrycard.php:31 countrycard.php:83
 #: countrycard.php:91 games.php:245 playercard.php:224 playercard.php:301
 #: playercard.php:399 playercard.php:468 teamcard.php:199 teamcard.php:401
-#: teamcard.php:598 teamcard.php:795 teams.php:184 admin/addseasonpools.php:274
+#: teamcard.php:598 teamcard.php:795 teams.php:184 admin/accreditation.php:193
+#: admin/accreditation.php:256 admin/addseasonpools.php:274
 #: admin/addseasonpools.php:292 admin/addseasonteams.php:165
 #: admin/dbequalize.php:209 admin/dbequalize.php:248 admin/dbequalize.php:289
 #: admin/editgame.php:219 admin/privacyplayer.php:86 admin/seasonpoints.php:180
@@ -1602,6 +1599,11 @@ msgstr "Sarja pelattu."
 #: admin/addseasonseries.php:45 admin/addseasonseries.php:63
 msgid "Division name is mandatory!"
 msgstr "Sarjan nimi on pakollinen tieto!"
+
+#: poolstatus.php:33 seriesstatus.php:19 seriesstatus.php:27
+#: spiritstatus.php:17 spiritstatus.php:24
+msgid "Division not found"
+msgstr "Sarjaa ei löydy"
 
 #: admin/select_userrole.php:45 user/userinfo.php:429 user/userinfo.php:502
 msgid "Division organizer"
@@ -1726,7 +1728,7 @@ msgstr "Muokkaa käyttöoikeuksia"
 msgid "Edit division"
 msgstr "Muokkaa sarjaa"
 
-#: admin/addseasons.php:133
+#: admin/addseasons.php:133 admin/addseasons.php:300
 msgid "Edit event"
 msgstr "Muokkaa tapahtumaa"
 
@@ -1745,10 +1747,6 @@ msgstr "Muokkaa sääntöpohjaa"
 #: admin/seasonseries.php:181
 msgid "Edit rule templates"
 msgstr "Muokkaa sääntöpohjia"
-
-#: admin/addseasons.php:300
-msgid "Edit season/tournament"
-msgstr "Muokkaa kautta/turnausta"
 
 #: admin/seasonadmin.php:105
 msgid "Edit side menu links"
@@ -1895,15 +1893,15 @@ msgstr ""
 #: clubcard.php:169 countrycard.php:83 countrycard.php:91 menufunctions.php:742
 #: playercard.php:224 playercard.php:399 statistics.php:48 statistics.php:94
 #: statistics.php:224 teamcard.php:400 teamcard.php:597
-#: admin/accreditation.php:136 admin/dbequalize.php:248
-#: admin/dbequalize.php:289 admin/dbequalize.php:309 admin/privacyplayer.php:86
-#: admin/seasonadmin.php:12 admin/seasonstats.php:34
-#: lib/search.functions.php:11 lib/search.functions.php:31
-#: lib/search.functions.php:63 lib/search.functions.php:101
-#: lib/search.functions.php:139 lib/search.functions.php:199
-#: lib/search.functions.php:434 lib/search.functions.php:475
-#: lib/search.functions.php:517 user/select_poolselector.php:27
-#: user/userinfo.php:344 user/userinfo.php:369
+#: admin/accreditation.php:136 admin/addreservation.php:210
+#: admin/apitokens.php:145 admin/dbequalize.php:248 admin/dbequalize.php:289
+#: admin/dbequalize.php:309 admin/privacyplayer.php:86 admin/seasonadmin.php:12
+#: admin/seasonstats.php:34 lib/search.functions.php:11
+#: lib/search.functions.php:31 lib/search.functions.php:63
+#: lib/search.functions.php:101 lib/search.functions.php:139
+#: lib/search.functions.php:199 lib/search.functions.php:434
+#: lib/search.functions.php:475 lib/search.functions.php:517
+#: user/select_poolselector.php:27 user/userinfo.php:344 user/userinfo.php:369
 msgid "Event"
 msgstr "Tapahtuma"
 
@@ -1921,6 +1919,10 @@ msgstr "Tapahtuma"
 #, fuzzy
 msgid "Event ID cannot be empty"
 msgstr "Tapahtuman tunnus ei voi olla tyhjä"
+
+#: admin/apitokens.php:26
+msgid "Event ID is required for event scope."
+msgstr "Tapahtuman tunnus vaaditaan tapahtumarajauksessa."
 
 #: admin/addseasons.php:71
 #, fuzzy
@@ -1951,10 +1953,14 @@ msgstr "Tapahtumaloki"
 msgid "Event mandatory"
 msgstr "Tapahtuman määrittely pakollista"
 
+#: poolstatus.php:21 seriesstatus.php:35 spiritstatus.php:31
 #: admin/spiritsettings.php:18
-#, fuzzy
 msgid "Event not found"
-msgstr "Kautta ei löydy"
+msgstr "Tapahtumaa ei löydy"
+
+#: admin/apitokens.php:28
+msgid "Event not found."
+msgstr "Tapahtumaa ei löydy."
 
 #: lib/game.functions.php:877
 msgid "Event played."
@@ -1967,6 +1973,10 @@ msgstr "Tapahtumavastaava"
 #: admin/seasonstats.php:12 admin/stats.php:6
 msgid "Event statistics"
 msgstr "Tapahtuman tilastot"
+
+#: statistics.php:73 statistics.php:247
+msgid "Event statistics have not yet been computed"
+msgstr "Tapahtuman tilastoja ei ole vielä laskettu"
 
 #: lib/data.functions.php:542
 msgid "Event to replace doesn't exist"
@@ -1981,7 +1991,7 @@ msgid "Event users"
 msgstr "Tapahtuman käyttäjät"
 
 #: menufunctions.php:468 menufunctions.php:665 playerlist.php:33
-#: admin/seasons.php:11 admin/seasonstats.php:18
+#: admin/seasons.php:11 admin/seasons.php:86 admin/seasonstats.php:18
 msgid "Events"
 msgstr "Tapahtumat"
 
@@ -2385,10 +2395,6 @@ msgstr "Pelikortti"
 msgid "Game clock"
 msgstr "Pelipaikat"
 
-#: mobile/addcomment.php:9
-msgid "Game comment"
-msgstr "Peli-kommentti"
-
 #: gameplay.php:211
 #, fuzzy
 msgid "Game events"
@@ -2444,8 +2450,9 @@ msgstr "Pelienhallinta"
 msgid "Game not found"
 msgstr "Peliä ei löydy"
 
-#: gameplay.php:608 mobile/addscoresheet.php:213 scorekeeper/addcomment.php:27
-#: scorekeeper/addscoresheet.php:415 user/addscoresheet.php:473
+#: gameplay.php:608 mobile/addcomment.php:9 mobile/addscoresheet.php:213
+#: scorekeeper/addcomment.php:27 scorekeeper/addscoresheet.php:415
+#: user/addscoresheet.php:473
 msgid "Game note"
 msgstr "Peli-kommentti"
 
@@ -3405,6 +3412,10 @@ msgstr ""
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
+#: mobile/login_failed.php:9
+msgid "Log in failed"
+msgstr "Sisäänkirjautuminen epäonnistui"
+
 #: menufunctions.php:620
 #, fuzzy
 msgid "Log in to create an event"
@@ -3419,10 +3430,6 @@ msgstr ""
 #, fuzzy
 msgid "Log out"
 msgstr "Kirjaudu sisään"
-
-#: mobile/login_failed.php:9
-msgid "Login failed"
-msgstr "Kirjauminen epäonnistui"
 
 #: menufunctions.php:484
 msgid "Logs"
@@ -5272,26 +5279,13 @@ msgstr ""
 msgid "Search results"
 msgstr "Tallenna lopputulokseksi"
 
-#: admin/addreservation.php:210 admin/apitokens.php:145
 #: admin/seasonadmin.php:32
 msgid "Season"
 msgstr "Kausi"
 
-#: admin/apitokens.php:26
-msgid "Season id is required for season scope."
-msgstr "Season id vaaditaan kaudelle."
-
 #: user/enrollteam.php:10
 msgid "Season mandatory"
 msgstr "Kauden määrittely pakollista"
-
-#: poolstatus.php:21 seriesstatus.php:35 spiritstatus.php:31
-msgid "Season not found"
-msgstr "Kautta ei löydy"
-
-#: admin/apitokens.php:28
-msgid "Season not found."
-msgstr "Kautta ei löydy."
 
 #: menufunctions.php:754 admin/addseasons.php:363 admin/seasonpoints.php:14
 #: admin/seasonpoints.php:20 admin/seasonpoints.php:45
@@ -5302,14 +5296,6 @@ msgstr "Pisteet"
 #: admin/seasonpoints.php:174
 msgid "Season points are not enabled for this event."
 msgstr "Pisteiden keräämininen ei ole päällä tälle tapahtumalle."
-
-#: statistics.php:73 statistics.php:247
-msgid "Season statistics have not yet been computed"
-msgstr "Kauden tilastoja ei ole vielä laskettu"
-
-#: admin/seasons.php:86
-msgid "Seasons/Tournaments"
-msgstr "Kaudet/Turnaukset"
 
 #: statistics.php:94
 msgid "Second"
@@ -5482,15 +5468,6 @@ msgstr ""
 #: admin/sms.php:67
 msgid "Sent"
 msgstr "Lähetetty"
-
-#: admin/accreditation.php:193 admin/accreditation.php:256
-msgid "Series"
-msgstr "Sarja"
-
-#: poolstatus.php:33 seriesstatus.php:19 seriesstatus.php:27
-#: spiritstatus.php:17 spiritstatus.php:24
-msgid "Series not found"
-msgstr "Sarjaa ei löydy"
 
 #: admin/serverconf.php:7
 msgid "Server configuration"
@@ -7361,6 +7338,9 @@ msgstr "kyllä"
 #~ msgid "Add game location"
 #~ msgstr "Lisää pelipaikka"
 
+#~ msgid "Add new season/tournament"
+#~ msgstr "Lisää uusi kausi/turnaus"
+
 #~ msgid ""
 #~ "After the match has ended, update result:\n"
 #~ "\n"
@@ -7451,6 +7431,9 @@ msgstr "kyllä"
 #~ msgid "Desktop score sheet"
 #~ msgstr "Pelikoneen pöytäkirja"
 
+#~ msgid "Edit season/tournament"
+#~ msgstr "Muokkaa kautta/turnausta"
+
 #~ msgid "Email can not be empty"
 #~ msgstr "Sähköposti ei voi olla tyhjä"
 
@@ -7500,6 +7483,9 @@ msgstr "kyllä"
 
 #~ msgid "GF/game"
 #~ msgstr "TM/peli"
+
+#~ msgid "Game comment"
+#~ msgstr "Peli-kommentti"
 
 #~ msgid "Game is already played. Result:"
 #~ msgstr "Peli on jo pelattu. Tulos:"
@@ -7600,6 +7586,21 @@ msgstr "kyllä"
 
 #~ msgid "Scored"
 #~ msgstr "Tehdyt"
+
+#~ msgid "Season id is required for season scope."
+#~ msgstr "Season id vaaditaan kaudelle."
+
+#~ msgid "Season not found."
+#~ msgstr "Kautta ei löydy."
+
+#~ msgid "Seasons/Tournaments"
+#~ msgstr "Kaudet/Turnaukset"
+
+#~ msgid "Series"
+#~ msgstr "Sarja"
+
+#~ msgid "Series not found"
+#~ msgstr "Sarjaa ei löydy"
 
 #~ msgid "Spirit Points"
 #~ msgstr "Spirit-pisteet"

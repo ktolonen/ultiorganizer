@@ -14,21 +14,21 @@ $html = "";
 $spsort = "total";
 
 if (!iget("series")) {
-	$html .= "<h1>" . _("Series not found") . "</h1>";
+	$html .= "<h1>" . _("Division not found") . "</h1>";
 	showPage($title, $html);
 	return;
 }
 
 $seriesinfo = SeriesInfo(iget("series"));
 if (!$seriesinfo) {
-	$html .= "<h1>" . _("Series not found") . "</h1>";
+	$html .= "<h1>" . _("Division not found") . "</h1>";
 	showPage($title, $html);
 	return;
 }
 
 $seasoninfo = SeasonInfo($seriesinfo['season']);
 if (!$seasoninfo) {
-	$html .= "<h1>" . _("Season not found") . "</h1>";
+	$html .= "<h1>" . _("Event not found") . "</h1>";
 	showPage($title, $html);
 	return;
 }

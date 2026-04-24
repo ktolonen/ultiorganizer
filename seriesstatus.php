@@ -16,7 +16,7 @@ $html = "";
 
 if (!iget("series")) {
   $title = _("Statistics");
-  $html .= "<h1>" . _("Series not found") . "</h1>";
+  $html .= "<h1>" . _("Division not found") . "</h1>";
   showPage($title, $html);
   return;
 }
@@ -24,7 +24,7 @@ if (!iget("series")) {
 $seriesinfo = SeriesInfo(iget("series"));
 if (!$seriesinfo) {
   $title = _("Statistics");
-  $html .= "<h1>" . _("Series not found") . "</h1>";
+  $html .= "<h1>" . _("Division not found") . "</h1>";
   showPage($title, $html);
   return;
 }
@@ -32,7 +32,7 @@ $viewUrl .= "&amp;series=" . $seriesinfo['series_id'];
 $seasoninfo = SeasonInfo($seriesinfo['season']);
 if (!$seasoninfo) {
   $title = _("Statistics");
-  $html .= "<h1>" . _("Season not found") . "</h1>";
+  $html .= "<h1>" . _("Event not found") . "</h1>";
   showPage($title, $html);
   return;
 }

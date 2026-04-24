@@ -83,7 +83,7 @@ contentStart();
 
 $html .=  "<form method='post' action='?view=admin/seasons'>";
 
-$html .=  "<h2>" . _("Seasons/Tournaments") . "</h2>\n";
+$html .=  "<h2>" . _("Events") . "</h2>\n";
 
 $html .=  "<table style='white-space: nowrap;width:90%' border='0' cellpadding='4px'>\n";
 

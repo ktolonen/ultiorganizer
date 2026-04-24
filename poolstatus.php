@@ -18,7 +18,7 @@ if (iget("season")) {
   $seasoninfo = SeasonInfo(iget("season"));
   if (!$seasoninfo) {
     $title = _("Standings");
-    $html .= "<h1>" . _("Season not found") . "</h1>";
+    $html .= "<h1>" . _("Event not found") . "</h1>";
     showPage($title, $html);
     return;
   }
@@ -30,7 +30,7 @@ if (iget("season")) {
   $seriesinfo = SeriesInfo(iget("series"));
   if (!$seriesinfo) {
     $title = _("Standings");
-    $html .= "<h1>" . _("Series not found") . "</h1>";
+    $html .= "<h1>" . _("Division not found") . "</h1>";
     showPage($title, $html);
     return;
   }
