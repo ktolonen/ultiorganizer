@@ -44,7 +44,7 @@ if ($userid != "anonymous") {
     }
 
     if (empty($newName)) {
-      $message .= "<p class='warning'>" . _("Name cannot be empty.") . "</p>";
+      $message .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
       $error = 1;
     }
 

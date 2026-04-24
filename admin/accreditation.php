@@ -77,7 +77,7 @@ echo $html;
 
 if ($view == "acc") {
   echo "<p>";
-  echo _("Accreditation can be done manually player by player from team roster or automatically against event organizer's external license database.");
+  echo _("Accreditation can be done manually, player by player, from the team roster or automatically against the event organizer's external license database.");
   echo "</p>";
   if (is_file('cust/' . CUSTOMIZATIONS . '/mass-accreditation.php')) {
     include_once 'cust/' . CUSTOMIZATIONS . '/mass-accreditation.php';

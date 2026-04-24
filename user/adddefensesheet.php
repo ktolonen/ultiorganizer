@@ -314,10 +314,10 @@ echo "</tr>";
 echo "<tr><td colspan='2'>
 <p>" . _("Fill in the scoresheet") . ":</p>
 <ul>
-<li>" . _("In addition to the tab-key you can use the + key to change fields and the enter key to select a radio button.") . "</li>
+<li>" . _("In addition to the Tab key, you can use the + key to move between fields and the Enter key to select a radio button.") . "</li>
 ";
 if (!$hideTimeOnScoresheet) {
-	echo "<li>" . _("As separator in the time field you can use any of the '.', ',', ':', or ';' characters") . ".</li>";
+	echo "<li>" . _("As a separator in the time field you can use any of the '.', ',', ':', or ';' characters") . ".</li>";
 }
 echo "
 <li>" . _("Input XX as the assist in Callahan goals") . ".</li>

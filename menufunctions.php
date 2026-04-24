@@ -597,7 +597,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
           !empty($lastseries)
           && ShowSpiritScoresForSeason($seasoninfo)
         ) {
-          echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit Scores")."</a></td></tr>\n";
+          echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit scores")."</a></td></tr>\n";
         }
         $lastseries = $series;
         echo "<tr><td class='menuserieslevel'>";
@@ -610,7 +610,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
       echo "</td></tr>\n";
     }
 	if (ShowSpiritScoresForSeason($seasoninfo)) {
-      echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit Scores")."</a></td></tr>\n";
+      echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit scores")."</a></td></tr>\n";
 		}
 	  } else {
 	    $season = CurrentSeason();

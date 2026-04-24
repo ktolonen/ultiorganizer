@@ -9,7 +9,7 @@ if (!isSuperAdmin()) {
 }
 
 if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != "enabled") {
-	$html = "<p>" . _("Direct database access is disabled. To enable it, define(ENABLE_ADMIN_DB_ACCESS,'enabled') in the config.inc.php file") . "</p>";
+	$html = "<p>" . _("Direct database access is disabled. To enable it, define ENABLE_ADMIN_DB_ACCESS as 'enabled' in the config.inc.php file.") . "</p>";
 } else {
 	if (isset($_POST['restore']) && isSuperAdmin()) {
 			if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {

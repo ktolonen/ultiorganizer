@@ -109,7 +109,7 @@ echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "containe
 
 			var memberColumnDefs = [{
 					key: "memberId",
-					label: "<?php echo _("Accr. Id"); ?>",
+					label: "<?php echo _("Accr. ID"); ?>",
 					sortable: true
 				},
 				{

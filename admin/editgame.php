@@ -237,8 +237,8 @@ $users = GameAdmins($gameId);
 foreach ($users as $user) {
 	echo utf8entities($user['name']) . "<br/>";
 }
-echo _("User Id") . " <input class='input' size='20' name='userid'/> " . _("or") . " ";
-echo _("E-Mail") . " <input class='input' size='20' name='email'/>\n";
+echo _("User ID") . " <input class='input' size='20' name='userid'/> " . _("or") . " ";
+echo _("Email") . " <input class='input' size='20' name='email'/>\n";
 echo "</td></tr>";
 
 echo "<tr><td class='infocell'>" . _("Name") . ":</td>";

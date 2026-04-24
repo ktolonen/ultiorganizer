@@ -181,7 +181,7 @@ if (CanGenerateGames($poolId)) {
 		$html .= "/></p>";
 
 		if ($poolInfo['mvgames'] == 2) {
-			$html .= "<p>" . _("Do not generate mutual games for teams moved from same pool") . ":<input class='input' type='checkbox' name='nomutual'";
+			$html .= "<p>" . _("Do not generate mutual games for teams moved from the same pool") . ":<input class='input' type='checkbox' name='nomutual'";
 			if ($nomutual) {
 				$html .= "checked='checked'";
 			}

@@ -231,8 +231,8 @@ class PDF extends tFPDF
 		$data .= "1. "._("Officials fill in their names.")."<br>";
 		$data .= "2. "._("Captains confirm roster by crossing out injured players, and adjusting jersey numbers if necessary.")."<br>";
 		$data .= "3. "._("After the toss, officials check the team that will start on offence.")."<br>";
-		$data .= "4. "._("When halftime starts, fill in time it ends (the second-half start time).")."<br>";
-		$data .= "5. "._("During the game, fill in which team has scored, the jersey numbers of the player who threw the goal (Assist) and the player who caught the goal (Goal), the time that the goal was scored, and the scoreline after the goal. If a player scores an intercept goal (Callahan), then mark XX as assist.")."<br>";
+		$data .= "4. "._("When halftime starts, fill in the time it ends (the second-half start time).")."<br>";
+		$data .= "5. "._("During the game, fill in which team scored, the jersey numbers of the player who threw the assist (Assist) and the player who caught the goal (Goal), the time when the goal was scored, and the scoreline after the goal. If a player scores an intercept goal (Callahan), then mark XX as the assist.")."<br>";
 		$data .= "6. "._("When a team takes a timeout, mark the time in the \"Timeouts\" section.")."<br>";
 		$data .= "7. "._("After the game, each captain signs the scoresheet to confirm the final score.")."<br>";
 		$data .= "8. "._("Officials return the completed scoresheet to the results headquarters.");
@@ -275,7 +275,7 @@ class PDF extends tFPDF
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
 		$this->Cell(100,6,$this->pdfText(_("Name")),'LRTB',0,'C',true);
 		$this->Cell(10,6,$this->pdfText(_("Play")),'LRTB',0,'C',true);
-		$this->Cell(10,6,$this->pdfText(_("Game#")),'LRTB',0,'C',true);
+		$this->Cell(10,6,$this->pdfText(_("Game #")),'LRTB',0,'C',true);
 		$this->Cell(62,6,$this->pdfText(_("Info")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
@@ -316,7 +316,7 @@ class PDF extends tFPDF
 		//instructions
 		$data = "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
 		$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
-		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
+		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players have problems with their license. They are <u>not</u> allowed to play until the problems are resolved (= payment receipt or note from the organizer shown).")."";
 		$data = $this->pdfText($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);

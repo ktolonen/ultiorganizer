@@ -102,7 +102,7 @@ if ($view == "acc") {
 
 if ($view == "autoacc") {
   $seasonInfo = SeasonInfo($_GET['season']);
-  echo "<p>" . _("Accredit players against license database with selected conditions.") . "</p>";
+  echo "<p>" . _("Accredit players against the license database using the selected conditions.") . "</p>";
   echo "<form method='post' action='$url'>\n";
   //echo "<h4>"._("Series")."</h4>\n";
 

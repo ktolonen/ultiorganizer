@@ -112,7 +112,7 @@ YAHOO.util.Event.addListener(window, "load", function() {
 		}
 
 		var memberColumnDefs = [
-			{key:"ProfileId", label:"<?php echo _("Profile Id"); ?>", sortable:true},
+			{key:"ProfileId", label:"<?php echo _("Profile ID"); ?>", sortable:true},
 			{key:"Jersey", label:"<?php echo _("#"); ?>", sortable:true},
 			{key:"Firstname", label:"<?php echo _("First name"); ?>", sortable:true},
 			{key:"Lastname", label:"<?php echo _("Last name"); ?>", sortable:true},

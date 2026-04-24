@@ -241,7 +241,7 @@ if ($format == "pdf") {
 
 if (!$print && !$singleview) {
   $menutabs[_("Day")]= ($baseurl)."&filter=tournaments&group=$group";
-  $menutabs[_("Timeslot")] = ($baseurl) . "&filter=timeslot&group=$group";
+  $menutabs[_("Time slot")] = ($baseurl) . "&filter=timeslot&group=$group";
   $menutabs[_("Division")] = ($baseurl) . "&filter=series&group=$group";
   $menutabs[_("Field")]= ($baseurl)."&filter=places&group=$group";
   $menutabs[_("Today")] = ($baseurl) . "&filter=today&group=$group";

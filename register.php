@@ -69,7 +69,7 @@ if (!empty($_POST['save'])) {
 
   if ($error == 0) {
     if (AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail)) {
-      $message .= "<p>" . _("Confirmation e-mail has been sent to the email address provided. You have to follow the link in the mail to finalize registration, before you can use the account.") . "</p>\n";
+      $message .= "<p>" . _("A confirmation email has been sent to the provided email address. You must follow the link in the email to complete registration before you can use the account.") . "</p>\n";
       $mailsent = true;
     } else {
       $message .= "<p>" . _("Registration could not be completed. Please contact the system administrator.") . "</p>\n";

@@ -174,7 +174,7 @@ foreach ($settings as $setting) {
 	
 	if($setting['name']=="ReadOnlyServer"){
 		$htmltmp2 .= "<tr>";
-		$htmltmp2 .= "<td class='infocell'>"._("Read Only Server")."?</td>";
+		$htmltmp2 .= "<td class='infocell'>"._("Read-only Server")."?</td>";
 		if($setting['value']=="true"){
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ReadOnlyServer' checked='checked'/></td>";
 		}else{
@@ -242,7 +242,7 @@ $html .= "<form method='post' action='?view=admin/serverconf' id='Form'>";
 
 $html .= "<h1>" . _("UI settings") . "</h1>";
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
-$html .= "<tr><th>" . _("Type") . "</th><th>" . _("Order") . "</th><th>" . _("Name") . "</th><th>" . _("Url") . "</th><th></th></tr>\n";
+$html .= "<tr><th>" . _("Type") . "</th><th>" . _("Order") . "</th><th>" . _("Name") . "</th><th>" . _("URL") . "</th><th></th></tr>\n";
 $urls = GetUrlListByTypeArray(array("menulink", "menumail", "admin"), 0);
 $i = 0;
 foreach ($urls as $url) {

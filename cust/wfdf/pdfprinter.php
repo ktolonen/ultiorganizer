@@ -663,7 +663,7 @@ class PDF extends tFPDF_CellFit
 		$this->Cell(8,6,"",'LRTB',0,'C',true);
 		$this->Cell(100,6,$this->pdfText(_("Name")),'LRTB',0,'C',true);
 		$this->Cell(10,6,$this->pdfText(_("Play")),'LRTB',0,'C',true);
-		$this->Cell(10,6,$this->pdfText(_("Game#")),'LRTB',0,'C',true);
+		$this->Cell(10,6,$this->pdfText(_("Game #")),'LRTB',0,'C',true);
 		$this->Cell(62,6,$this->pdfText(_("Info")),'LRTB',0,'C',true);
 		$this->Ln();
 		$this->SetTextColor(0);
@@ -704,7 +704,7 @@ class PDF extends tFPDF_CellFit
 		//instructions
 		$data = "<b>"._("NOTICE")." 1!</b> "._("For new players added, accreditation id or date of birth must be written down.")."<BR>";
 		$data .= "<b>"._("NOTICE")." 2!</b> "._("The team is responsible for the accreditation of <u>all</u> players on the list.")."<BR>";
-		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players has problems with license. They are <u>not</u> allowed to play until problems are solved (= payment recipe or note from organizer shown).")."";
+		$data .= "<b>"._("NOTICE")." 3! "._("<b><i>Bold italic</i></b> printed players have problems with their license. They are <u>not</u> allowed to play until the problems are resolved (= payment receipt or note from the organizer shown).")."";
 		$data = $this->pdfText($data);
 		$this->SetFont('Arial','',10);
 		$this->SetTextColor(0);
@@ -1617,7 +1617,7 @@ class PDF extends tFPDF_CellFit
 		$this->Cell(30,5,_("Team"),'LRTB',0,'C',true);
 		$this->CellFitScale(18,5,_("Halftime score"),'LRTB',0,'C',true);
 		$this->SetFont('Arial','B',10);
-		$this->CellFitScale(18,5,_("Final Score"),'LRTB',0,'C',true);
+		$this->CellFitScale(18,5,_("Final score"),'LRTB',0,'C',true);
 		$this->CellFitScale(40,5,_("Captains' signatures"),'LRTB',0,'C',true);
 		$this->Cell(12,5,"#",'LRTB',0,'C',true);
 		$this->Ln();
@@ -1774,7 +1774,7 @@ class PDF extends tFPDF_CellFit
 		$this->MultiCell(100,4,$this->pdfText($data),0,'L',true);
 		$this->Ln(3);
 
-		$data = "4. "._("Game Start. Use the timeline guide at the bottom of next page to aid you with time keeping and remember: It is the time keepers responsibility to blow the whistle, not to enforce what happens!");
+		$data = "4. "._("Game start. Use the timeline guide at the bottom of the next page to aid you with timekeeping, and remember: it is the timekeeper's responsibility to blow the whistle, not to enforce what happens!");
 		$this->SetX(100);
 		$this->MultiCell(100,4,$this->pdfText($data),0,'L',true);
 		$this->Ln(3);
@@ -1784,7 +1784,7 @@ class PDF extends tFPDF_CellFit
 		$this->MultiCell(100,4,$this->pdfText($data),0,'L',true);
 		$this->Ln(3);
 		
-		$data = "6. "._("Enter goals: mark which team scored, write players numbers for assist and goal (XX for Callahan), write game time when the goal was scored and current game score.");
+		$data = "6. "._("Enter goals: mark which team scored, write players' numbers for the assist and goal (XX for Callahan), and write the game time when the goal was scored and the current game score.");
 		$this->SetX(100);
 		$this->MultiCell(100,4,$this->pdfText($data),0,'L',true);
 		$this->Ln(3);

@@ -24,7 +24,7 @@ $help = "<p>" . _("Feed in the data for your game responsibilities") . ":</p>
 		<li> " . _("Players in the game") . " </li>
 		<li> " . _("Game scoresheet") . " </li>
 	</ol>
-	<p>" . _("Click on Mass input to input multiple results at once, then Save") . ".</p>
+	<p>" . _("Click Mass input to enter multiple results at once, then click Save") . ".</p>
 	<p>" . _("Check the gameplay after feeding in the scoresheet") . ".</p>";
 
 $html .= onPageHelpAvailable($help);

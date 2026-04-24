@@ -17,7 +17,7 @@ $teamId = intval(iget("team"));
 // Short-circuit if team lookup fails to avoid null offsets.
 $team = TeamInfo($teamId);
 if (!$team) {
-	echo "<p class='warning'>" . _("Team not found.") . "</p>";
+	echo "<p class='warning'>" . _("Team not found") . ".</p>";
 	return;
 }
 

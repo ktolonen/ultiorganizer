@@ -25,7 +25,7 @@ if (isSuperAdmin()) {
       if ($scopeId === '') {
         $errors[] = _("Event ID is required for event scope.");
       } elseif (!SeasonExists($scopeId)) {
-        $errors[] = _("Event not found.");
+        $errors[] = _("Event not found");
       }
     } elseif ($scopeType === 'user') {
       if ($scopeId === '') {

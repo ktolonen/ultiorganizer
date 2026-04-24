@@ -173,7 +173,7 @@ if (!empty($season) && isSeasonAdmin($season)) {
 
   $html .= "<h2>" . _("Missing and duplicate shirt numbers") . "</h2>";
   $html .= "<div class='tdtools-box bg-td4'>";
-  $html .= "<p>" . _("To search for players with the same shirt number on the same team, or who don't have a shirt number assigned press the appropriate button: ") . "</p>";
+  $html .= "<p>" . _("To search for players with the same shirt number on the same team, or who do not have a shirt number assigned, press the appropriate button: ") . "</p>";
   $html .= "<p><form method='POST' action='?view=admin/tdtools&amp;season=$season'>";
   $html .= "<button class='button' type='submit' name='dups' value='search'>" . _("Duplicates") . "</button> ";
   $html .= "<button class='button' type='submit' name='missing' value='search'>" . _("Missing") . "</button> ";

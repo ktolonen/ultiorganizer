@@ -39,7 +39,7 @@ else
 $club = ClubInfo($clubId);
 if (!$club) {
 	if (!$teaminfo) {
-		echo "<p class='warning'>" . _("Club not found.") . "</p>";
+		echo "<p class='warning'>" . _("Club not found") . ".</p>";
 		return;
 	}
 	$club = array(

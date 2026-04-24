@@ -181,7 +181,7 @@ $html .= "<tr><td colspan='2'>" . _("Player details") . "</td><td class='center'
 
 if (CUSTOMIZATIONS == "slkl") {
 	$row = LicenseData($pp['accreditation_id']);
-	$html .= "<tr><td class='infocell'>" . _("License Id") . ":</td>";
+	$html .= "<tr><td class='infocell'>" . _("License ID") . ":</td>";
 
 	if (isSuperAdmin()) {
 		$html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
@@ -228,7 +228,7 @@ $html .= "<tr><td class='infocell'>" . _("Nickname") . ":</td>";
 $html .= "<td><input class='input' maxlength='20' name='nickname' value='" . utf8entities($pp['nickname']) . "'/></td>";
 $html .= privacyselection("nickname", $publicfields);
 
-$html .= "<tr><td class='infocell'>" . _("E-mail") . ":</td>";
+$html .= "<tr><td class='infocell'>" . _("Email") . ":</td>";
 $html .= "<td><input class='input' size='50' maxlength='100' name='email' value='" . utf8entities($pp['email']) . "'/></td>";
 $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='email'/></td></tr>\n";
 

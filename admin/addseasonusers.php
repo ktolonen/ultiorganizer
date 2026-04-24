@@ -81,8 +81,8 @@ foreach ($admins as $user) {
 $html .= "</table>";
 if (!empty($_GET["access"]) && $_GET["access"] == "eventadmin") {
   $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
-  $html .= "<tr><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
 } else {
@@ -104,8 +104,8 @@ foreach ($directors as $user) {
 $html .= "</table>";
 if (!empty($_GET["access"]) && $_GET["access"] == "spiritadmin") {
   $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
-  $html .= "<tr><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
 } else {
@@ -137,8 +137,8 @@ if (!empty($_GET["access"]) && $_GET["access"] == "teamadmin") {
   }
   $html .= "</select>";
 
-  $html .= "</td><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "</td><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
 } else {
@@ -193,8 +193,8 @@ if ($teamresp) {
 $html .= "</table>";
 if (!empty($_GET["access"]) && $_GET["access"] == "gameadmin") {
   $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
-  $html .= "<tr><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
 
   $reservations = SeasonReservations($seasonId);
   $html .= "<tr><td colspan='5'><select multiple='multiple' size='" . count($reservations) . "' name='reservations[]'>";
@@ -238,8 +238,8 @@ foreach ($admins as $user) {
 $html .= "</table>";
 if (!empty($_GET["access"]) && $_GET["access"] == "accradmin") {
   $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
-  $html .= "<tr><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
 
   $teams = SeasonTeams($seasonId);
   $html .= "<tr><td colspan='5'><select multiple='multiple' size='" . count($teams) . "' name='teams[]'>";

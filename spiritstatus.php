@@ -40,7 +40,7 @@ if (iget("spsort")) {
 } elseif (iget("sort")) {
 	$spsort = iget("sort");
 }
-$html .= "<h2>" . _("SOTG Scores:") . " " . utf8entities($seriesinfo['name']) . "</h2>";
+$html .= "<h2>" . _("Spirit scores") . " " . utf8entities($seriesinfo['name']) . "</h2>";
 
 if (!ShowSpiritScoresForSeason($seasoninfo)) {
 	$html .= "<p>" . _("Spirit scores are not visible.") . "</p>";

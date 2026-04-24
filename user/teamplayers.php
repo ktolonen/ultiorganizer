@@ -16,7 +16,7 @@ $teaminfo = TeamInfo($teamId);
 
 // Stop early if the team does not exist to avoid undefined array offsets.
 if (!$teaminfo) {
-  echo "<p class='warning'>" . _("Team not found.") . "</p>";
+  echo "<p class='warning'>" . _("Team not found") . ".</p>";
   return;
 }
 
@@ -140,8 +140,8 @@ pageMenu($menutabs);
 //help
 $help = "<p>" . _("Add players to team's roster:") . "</p>
 	<ul>
-		<li> " . _("Players already having a profile in Ultiorganizer: Enter full or part of the player name and press the search-button. Select correct player from the dialog and press the confirm-button.") . "</li>
-		<li> " . _("New players: Enter jersey number, first and last name. Press add-button.") . "</li>
+		<li> " . _("Players who already have a profile in Ultiorganizer: enter the full player name or part of it and press the Search button. Select the correct player from the dialog and press the Confirm button.") . "</li>
+		<li> " . _("New players: enter the jersey number, first name, and last name. Press the Add button.") . "</li>
 	</ul>";
 
 onPageHelpAvailable($help);
@@ -167,7 +167,7 @@ if (CUSTOMIZATIONS == "slkl") {
   echo "<th>" . _("License") . "</th>";
   echo "<th></th>";
 } else {
-  echo "<th>" . _("Profile Id") . "</th>";
+  echo "<th>" . _("Profile ID") . "</th>";
   // echo "<th></th>";
   echo "<th>" . _("Delete") . "</th>";
 }
