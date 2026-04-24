@@ -288,9 +288,9 @@ function SeasonsByType($seasontype)
 function EnrollSeasons()
 {
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE enrollopen=1 ORDER BY starttime DESC");
-  $seasons = DBQueryToArray($query);
+  $seasonRows = DBQueryToArray($query);
   $seasons = array();
-  foreach ($seasons as $season) {
+  foreach ($seasonRows as $season) {
     $seasons[$season['season_id']] = $season['name'];
   }
 

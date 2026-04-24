@@ -1610,6 +1610,10 @@ function DeleteTeam($teamId)
 {
   $series = getTeamSeries($teamId);
   if (hasEditTeamsRight($series)) {
+    if (!CanDeleteTeam($teamId)) {
+      return false;
+    }
+
     Log2("team", "delete", TeamName($teamId));
     $query = sprintf(
       "DELETE FROM uo_userproperties WHERE value='teamadmin:%d'",
@@ -1636,6 +1640,18 @@ function DeleteTeam($teamId)
   }
 }
 
+function TeamHasConfirmedEnrollment($teamId)
+{
+  $query = sprintf(
+    "SELECT COUNT(*) FROM uo_enrolledteam enrol
+		LEFT JOIN uo_team team ON (team.series=enrol.series AND team.name=enrol.name)
+		WHERE team.team_id=%d AND enrol.status=1",
+    (int)$teamId
+  );
+
+  return DBQueryToValue($query) > 0;
+}
+
 function CanDeleteTeam($teamId)
 {
   $query = sprintf(
@@ -1650,7 +1666,7 @@ function CanDeleteTeam($teamId)
       (int)$teamId
     );
     $count = DBQueryToValue($query);
-    return $count == 0;
+    return $count == 0 && !TeamHasConfirmedEnrollment($teamId);
   } else return false;
 }
 
