@@ -44,7 +44,7 @@ if (isset($_GET["id"])) {
 	}
 
 	if (empty($data)) {
-		if (extension_loaded("gd")) {
+		if (CanProcessImages() && function_exists('imagecolorallocate') && function_exists('imagestring') && function_exists('imagepng')) {
 			$string = _("No image");
 			$font  = 4;
 			$width  = imagefontwidth($font) * strlen($string);
@@ -63,7 +63,7 @@ if (isset($_GET["id"])) {
 			echo base64_decode('R0lGODlhAQABAIAAAP///wAAACH5BAEAAAAALAAAAAABAAEAAAICRAEAOw==');
 		}
 	} else {
-		if ($resize && extension_loaded("gd")) {
+		if ($resize && CanProcessImages() && function_exists('imagecreatefromstring') && function_exists('imagesx') && function_exists('imagesy')) {
 			$org = imagecreatefromstring($data);
 			$orgw = imagesx($org);
 			$orgh = imagesy($org);

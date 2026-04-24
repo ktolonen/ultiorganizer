@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 08:03+0300\n"
+"POT-Creation-Date: 2026-04-24 10:13+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -520,7 +520,7 @@ msgstr ""
 msgid "Always take a full database backup before running the conversion."
 msgstr ""
 
-#: admin/privacyplayer.php:110
+#: admin/privacyplayer.php:112
 msgid "Anonymize player data"
 msgstr "Spielerdaten anonymisieren"
 
@@ -532,7 +532,7 @@ msgstr ""
 msgid "Archive statistics"
 msgstr "Spielstatistik erzeugen"
 
-#: admin/privacyplayer.php:58
+#: admin/privacyplayer.php:59
 msgid ""
 "Are you sure you want to anonymize the selected player? This removes "
 "identifying player data but keeps competition history."
@@ -554,7 +554,7 @@ msgstr "Bist du sicher, dass du das Turnier löschen willst?"
 msgid "Are you sure you want to delete the location?"
 msgstr "Bist du sicher, dass du das Turnier löschen willst?"
 
-#: admin/privacyuser.php:60
+#: admin/privacyuser.php:61
 msgid ""
 "Are you sure you want to delete the selected registered user and all related "
 "privacy data, including matching logs? This action cannot be undone."
@@ -1500,7 +1500,7 @@ msgstr "Letzten Punkt löschen"
 msgid "Delete orphan profiles"
 msgstr "Spielerprofile"
 
-#: admin/privacyuser.php:112
+#: admin/privacyuser.php:113
 msgid "Delete registered user data"
 msgstr "Daten des registrierten Benutzers löschen"
 
@@ -1590,7 +1590,7 @@ msgstr ""
 #: teamcard.php:598 teamcard.php:795 teams.php:184 admin/addseasonpools.php:274
 #: admin/addseasonpools.php:292 admin/addseasonteams.php:165
 #: admin/dbequalize.php:209 admin/dbequalize.php:248 admin/dbequalize.php:289
-#: admin/editgame.php:219 admin/privacyplayer.php:85 admin/seasonpoints.php:180
+#: admin/editgame.php:219 admin/privacyplayer.php:86 admin/seasonpoints.php:180
 #: admin/seasonstats.php:32 admin/spirit.php:43 admin/spirit.php:102
 #: admin/spirit.php:151 admin/spirit.php:233 admin/spirit.php:281
 #: admin/spirit.php:336 admin/spirit.php:509 admin/stats.php:99
@@ -1666,11 +1666,11 @@ msgstr ""
 "Wollen Sie trotzdem die Seite verlassen? Wenn Sie Ja auswählen, gehen Ihre "
 "Änderungen verloren."
 
-#: admin/privacyplayer.php:109
+#: admin/privacyplayer.php:111
 msgid "Download player privacy report"
 msgstr "Datenschutzbericht des Spielers herunterladen"
 
-#: admin/privacyuser.php:111
+#: admin/privacyuser.php:112
 msgid "Download registered user privacy report"
 msgstr "Datenschutzbericht des registrierten Benutzers herunterladen"
 
@@ -1779,8 +1779,8 @@ msgstr "Team ändern"
 msgid "Edited by %s at %s"
 msgstr ""
 
-#: register.php:134 admin/adduser.php:133 admin/privacyplayer.php:85
-#: admin/privacyuser.php:87 lib/search.functions.php:160
+#: register.php:134 admin/adduser.php:133 admin/privacyplayer.php:86
+#: admin/privacyuser.php:88 lib/search.functions.php:160
 #: lib/search.functions.php:220 lib/search.functions.php:594
 #: lib/search.functions.php:682 user/addextraemail.php:86
 msgid "Email"
@@ -1911,13 +1911,14 @@ msgstr ""
 #: playercard.php:224 playercard.php:399 statistics.php:48 statistics.php:94
 #: statistics.php:224 teamcard.php:400 teamcard.php:597
 #: admin/accreditation.php:136 admin/dbequalize.php:248
-#: admin/dbequalize.php:289 admin/dbequalize.php:309 admin/seasonadmin.php:12
-#: admin/seasonstats.php:34 lib/search.functions.php:11
-#: lib/search.functions.php:31 lib/search.functions.php:63
-#: lib/search.functions.php:101 lib/search.functions.php:139
-#: lib/search.functions.php:199 lib/search.functions.php:434
-#: lib/search.functions.php:475 lib/search.functions.php:517
-#: user/select_poolselector.php:27 user/userinfo.php:344 user/userinfo.php:369
+#: admin/dbequalize.php:289 admin/dbequalize.php:309 admin/privacyplayer.php:86
+#: admin/seasonadmin.php:12 admin/seasonstats.php:34
+#: lib/search.functions.php:11 lib/search.functions.php:31
+#: lib/search.functions.php:63 lib/search.functions.php:101
+#: lib/search.functions.php:139 lib/search.functions.php:199
+#: lib/search.functions.php:434 lib/search.functions.php:475
+#: lib/search.functions.php:517 user/select_poolselector.php:27
+#: user/userinfo.php:344 user/userinfo.php:369
 msgid "Event"
 msgstr "Turnier"
 
@@ -3049,6 +3050,11 @@ msgstr "Benutzername enthält ungültige Zeichen."
 msgid "Image"
 msgstr "Bild"
 
+#: lib/club.functions.php:227 lib/player.functions.php:990
+#: lib/team.functions.php:1358
+msgid "Image upload failed because the server could not process the image."
+msgstr ""
+
 #: admin/eventdataimport.php:66
 msgid "Import"
 msgstr "Import"
@@ -3287,7 +3293,7 @@ msgstr "Sprache"
 msgid "Last Name"
 msgstr "Nachmane"
 
-#: admin/privacyuser.php:87 lib/search.functions.php:594
+#: admin/privacyuser.php:88 lib/search.functions.php:594
 msgid "Last login"
 msgstr "Letztes Login"
 
@@ -3342,7 +3348,7 @@ msgstr "Lizenz für Jahr:"
 msgid "Link"
 msgstr "Links"
 
-#: admin/privacyplayer.php:105
+#: admin/privacyplayer.php:107
 #, php-format
 msgid "Linked player rows: %d"
 msgstr "Verknüpfte Spielerzeilen: %d"
@@ -3588,8 +3594,8 @@ msgstr "Nummer des Vorlagengebers"
 
 #: lib/club.functions.php:212 lib/player.functions.php:975
 #: lib/team.functions.php:1343
-msgid "Missing gd extension for image handling."
-msgstr "Missing gd extensinon for image handiling."
+msgid "Missing image processing support on the server."
+msgstr ""
 
 #: user/addspirit.php:186 user/addspirit.php:198
 #, php-format
@@ -3680,7 +3686,7 @@ msgstr "HINWEIS"
 #: admin/clubs.php:92 admin/dbadmin.php:99 admin/dbbackup.php:102
 #: admin/dbequalize.php:270 admin/dbequalize.php:289 admin/dbequalize.php:309
 #: admin/dbequalize.php:369 admin/dbequalize.php:372 admin/editgame.php:244
-#: admin/locations.php:52 admin/privacyplayer.php:85 admin/privacyuser.php:87
+#: admin/locations.php:52 admin/privacyplayer.php:86 admin/privacyuser.php:88
 #: admin/seasonpoints.php:193 admin/seasonpools.php:103 admin/seasons.php:91
 #: admin/seasonseries.php:75 admin/seasonstats.php:20 admin/seasonstats.php:34
 #: admin/seasonteams.php:174 admin/serieformats.php:28
@@ -3893,7 +3899,7 @@ msgstr ""
 msgid "No players given for team %s."
 msgstr "Keine Spieler angegeben für Spiel %s."
 
-#: admin/privacyplayer.php:80
+#: admin/privacyplayer.php:81
 msgid "No players matched the search."
 msgstr "Die Suche ergab keine Spieler."
 
@@ -3906,7 +3912,7 @@ msgstr "Keine Playoff-Baum-Vorlage gefunden."
 msgid "No pool selector type was chosen."
 msgstr ""
 
-#: admin/privacyuser.php:82
+#: admin/privacyuser.php:83
 msgid "No registered users matched the search."
 msgstr "Die Suche ergab keine registrierten Benutzer."
 
@@ -4277,7 +4283,7 @@ msgstr "Spieleranonymisierung"
 msgid "Player card"
 msgstr "Spielerseiten"
 
-#: admin/privacyplayer.php:47
+#: admin/privacyplayer.php:48
 msgid "Player data could not be anonymized."
 msgstr "Spielerdaten konnten nicht anonymisiert werden."
 
@@ -4285,7 +4291,7 @@ msgstr "Spielerdaten konnten nicht anonymisiert werden."
 msgid "Player data report"
 msgstr "Spielerdatenbericht"
 
-#: admin/privacyplayer.php:44
+#: admin/privacyplayer.php:45
 msgid "Player data was anonymized."
 msgstr "Spielerdaten wurden anonymisiert."
 
@@ -4302,7 +4308,7 @@ msgstr "Spielerdaten"
 msgid "Player lists saved!"
 msgstr "Spielerlisten gespeichert!"
 
-#: admin/privacyplayer.php:72
+#: admin/privacyplayer.php:73
 msgid "Player name"
 msgstr "Spielername"
 
@@ -4314,7 +4320,7 @@ msgstr "Spieler nicht gefunden"
 msgid "Player pages"
 msgstr "Spielerseiten"
 
-#: admin/privacyplayer.php:35
+#: admin/privacyplayer.php:36
 msgid "Player privacy report could not be generated."
 msgstr "Der Datenschutzbericht des Spielers konnte nicht erstellt werden."
 
@@ -4653,7 +4659,7 @@ msgstr "Neu laden"
 msgid "Register"
 msgstr "Registrieren"
 
-#: admin/privacyuser.php:49
+#: admin/privacyuser.php:50
 msgid "Registered user data could not be deleted."
 msgstr "Die Daten des registrierten Benutzers konnten nicht gelöscht werden."
 
@@ -4661,7 +4667,7 @@ msgstr "Die Daten des registrierten Benutzers konnten nicht gelöscht werden."
 msgid "Registered user data report"
 msgstr "Datenbericht des registrierten Benutzers"
 
-#: admin/privacyuser.php:44
+#: admin/privacyuser.php:45
 msgid "Registered user data was deleted."
 msgstr "Die Daten des registrierten Benutzers wurden gelöscht."
 
@@ -4669,10 +4675,11 @@ msgstr "Die Daten des registrierten Benutzers wurden gelöscht."
 msgid "Registered user deletion"
 msgstr "Löschung des registrierten Benutzers"
 
-#: admin/privacyuser.php:35
+#: admin/privacyuser.php:36
 msgid "Registered user privacy report could not be generated."
 msgstr ""
-"Der Datenschutzbericht des registrierten Benutzers konnte nicht erstellt werden."
+"Der Datenschutzbericht des registrierten Benutzers konnte nicht erstellt "
+"werden."
 
 #: admin/privacyuser.php:7
 msgid "Registered user privacy tools"
@@ -4859,7 +4866,7 @@ msgstr ""
 msgid "Return"
 msgstr "Zurück"
 
-#: admin/privacyplayer.php:66 admin/privacyuser.php:68
+#: admin/privacyplayer.php:67 admin/privacyuser.php:69
 msgid "Return to Database administration"
 msgstr "Zur Datenbankverwaltung zurückkehren"
 
@@ -5268,7 +5275,7 @@ msgstr "Punktefänger nicht auf der Spielerliste"
 msgid "Scoring team"
 msgstr "Scorendes Team"
 
-#: admin/privacyplayer.php:73 admin/privacyuser.php:75
+#: admin/privacyplayer.php:74 admin/privacyuser.php:76
 #: admin/reservations.php:92 cust/slkl/teamplayers.functions.php:57
 #: lib/search.functions.php:41 lib/search.functions.php:79
 #: lib/search.functions.php:117 lib/search.functions.php:174
@@ -5300,7 +5307,7 @@ msgstr ""
 msgid "Search for teams that received a"
 msgstr ""
 
-#: admin/privacyplayer.php:78 admin/privacyuser.php:80
+#: admin/privacyplayer.php:79 admin/privacyuser.php:81
 #, fuzzy
 msgid "Search results"
 msgstr "Ergebnis speichern"
@@ -5365,8 +5372,8 @@ msgstr "Setzliste"
 msgid "Seeding"
 msgstr "Setzliste"
 
-#: admin/addseasonpools.php:383 admin/privacyplayer.php:97
-#: admin/privacyuser.php:99 admin/seasonpoints.php:28
+#: admin/addseasonpools.php:383 admin/privacyplayer.php:99
+#: admin/privacyuser.php:100 admin/seasonpoints.php:28
 #: admin/seasonpoints.php:185 admin/seasonpoints.php:242
 #: admin/select_userrole.php:28 admin/select_userrole.php:34
 #: admin/select_userrole.php:37 admin/select_userrole.php:40
@@ -5433,22 +5440,24 @@ msgstr ""
 msgid "Select licenses validity required:"
 msgstr ""
 
-#: admin/privacyplayer.php:50
+#: admin/privacyplayer.php:51
 msgid "Select one player before anonymizing data."
 msgstr "Wählen Sie einen Spieler aus, bevor Sie Daten anonymisieren."
 
-#: admin/privacyplayer.php:38
+#: admin/privacyplayer.php:39
 msgid "Select one player before downloading the privacy report."
-msgstr "Wählen Sie einen Spieler aus, bevor Sie den Datenschutzbericht herunterladen."
+msgstr ""
+"Wählen Sie einen Spieler aus, bevor Sie den Datenschutzbericht herunterladen."
 
-#: admin/privacyuser.php:52
+#: admin/privacyuser.php:53
 msgid "Select one registered user before deleting data."
 msgstr "Wählen Sie einen registrierten Benutzer aus, bevor Sie Daten löschen."
 
-#: admin/privacyuser.php:38
+#: admin/privacyuser.php:39
 msgid "Select one registered user before downloading the privacy report."
 msgstr ""
-"Wählen Sie einen registrierten Benutzer aus, bevor Sie den Datenschutzbericht herunterladen."
+"Wählen Sie einen registrierten Benutzer aus, bevor Sie den "
+"Datenschutzbericht herunterladen."
 
 #: ext/index.php:121
 msgid "Select pool"
@@ -5492,7 +5501,7 @@ msgstr "Benutzerrollen auswählen"
 msgid "Selected country's team standings and game results"
 msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
 
-#: admin/privacyplayer.php:103
+#: admin/privacyplayer.php:105
 msgid "Selected player"
 msgstr "Ausgewählter Spieler"
 
@@ -5504,7 +5513,7 @@ msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
 msgid "Selected team's games and scoreboard"
 msgstr "Spiele und Scoreboard eines ausgewählten Teams"
 
-#: admin/privacyuser.php:106
+#: admin/privacyuser.php:107
 msgid "Selected user"
 msgstr "Ausgewählter Benutzer"
 
@@ -5980,7 +5989,7 @@ msgstr "Aufgaben"
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/accreditation.php:193
 #: admin/accreditation.php:256 admin/dbequalize.php:248
-#: admin/privacyplayer.php:85 admin/seasonpoints.php:255
+#: admin/privacyplayer.php:86 admin/seasonpoints.php:255
 #: admin/seasonstandings.php:357 admin/seasonstandings.php:405
 #: admin/seasonstandings.php:466 admin/serieteams.php:184 admin/smsmoves.php:43
 #: admin/smsmoves.php:104 admin/spirit.php:234 admin/tdtools.php:22
@@ -6609,7 +6618,7 @@ msgid "Use game clock"
 msgstr ""
 
 #: login.php:28 menufunctions.php:163 admin/accreditation.php:138
-#: admin/apitokens.php:146 admin/eventviewer.php:136 admin/privacyuser.php:74
+#: admin/apitokens.php:146 admin/eventviewer.php:136 admin/privacyuser.php:75
 #: user/enrollteam.php:85
 msgid "User"
 msgstr "Benutzer"
@@ -6666,7 +6675,7 @@ msgid "User roles"
 msgstr "Nutzerrollen"
 
 #: login.php:19 menufunctions.php:268 register.php:122 admin/adduser.php:109
-#: admin/adduser.php:124 admin/privacyuser.php:87 lib/search.functions.php:594
+#: admin/adduser.php:124 admin/privacyuser.php:88 lib/search.functions.php:594
 #: scorekeeper/login.php:19 user/userinfo.php:241
 msgid "Username"
 msgstr "Benutzername"
@@ -7595,6 +7604,9 @@ msgstr "ja"
 
 #~ msgid "Logout"
 #~ msgstr "Abmelden"
+
+#~ msgid "Missing gd extension for image handling."
+#~ msgstr "Missing gd extensinon for image handiling."
 
 #~ msgid "Mobile Administration"
 #~ msgstr "Mobile Administration"

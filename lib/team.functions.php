@@ -1339,8 +1339,8 @@ function UploadTeamImage($teamId)
       return "<p class='warning'>" . _("File is not supported image format") . "</p>";
     }
 
-    if (!extension_loaded("gd")) {
-      return "<p class='warning'>" . _("Missing gd extension for image handling.") . "</p>";
+    if (!CanProcessImages()) {
+      return "<p class='warning'>" . _("Missing image processing support on the server.") . "</p>";
     }
 
     $file_tmp_name = $_FILES['picture']['tmp_name'];
@@ -1351,8 +1351,12 @@ function UploadTeamImage($teamId)
       recur_mkdirs($basedir . "thumbs/", 0775);
     }
 
-    ConvertToJpeg($file_tmp_name, $basedir . $imgname);
-    CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 320, 240);
+    if (
+      !ConvertToJpeg($file_tmp_name, $basedir . $imgname)
+      || !CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 320, 240)
+    ) {
+      return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
+    }
 
     //currently removes old image, in future there might be a gallery of images
     RemoveTeamProfileImage($teamId);

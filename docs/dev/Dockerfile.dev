@@ -4,6 +4,7 @@ RUN apt-get update && apt-get install -y \
     curl \
     gettext \
     git \
+    libjpeg62-turbo-dev \
     less \
     libonig-dev \
     locales \
@@ -16,6 +17,7 @@ RUN apt-get update && apt-get install -y \
  && locale-gen en_US.UTF-8 fi_FI.UTF-8 \
  && pecl install xdebug \
  && docker-php-ext-enable xdebug \
+ && docker-php-ext-configure gd --with-jpeg \
  && docker-php-ext-install mysqli gettext gd mbstring \
  && rm -rf /var/lib/apt/lists/*
 

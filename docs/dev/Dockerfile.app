@@ -2,6 +2,7 @@ FROM php:8.3-apache
 
 RUN apt-get update && apt-get install -y \
     gettext \
+    libjpeg62-turbo-dev \
     libonig-dev \
     locales \
     libpng-dev \
@@ -11,6 +12,7 @@ RUN apt-get update && apt-get install -y \
  && locale-gen en_US.UTF-8 fi_FI.UTF-8 \
  && pecl install xdebug \
  && docker-php-ext-enable xdebug \
+ && docker-php-ext-configure gd --with-jpeg \
  && docker-php-ext-install mysqli gettext gd mbstring \
  && printf "ServerName localhost\n" > /etc/apache2/conf-available/servername.conf \
  && a2enconf servername \
