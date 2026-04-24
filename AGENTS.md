@@ -83,6 +83,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - If making UI changes, verify both desktop and mobile layouts.
 - After adding or changing user-facing text, run `docs/ai/review-user-language/SKILL.md` as a final review step on your changes.
 - After adding or changing database-related functionality, run `docs/ai/review-database-access/SKILL.md` as a final review step on your changes.
+- If you add new player data or registered-user data, update the privacy tools and documentation so the new data is covered by the relevant privacy export and anonymization or deletion flow.
 - If you present a plan for work that changes user-facing text or database access, include the relevant review-skill checks as final plan steps.
 - When adding a new `SYSTEM_FLAG` or `INSTALLATION_SETTING`, ask the user whether it should be added to the installation process, and cover `install.php` if the answer is yes.
 - When adding a new markdown document under `docs/`, also add it to the topic lists in both `AGENTS.md` and `docs/README.md`.
@@ -106,6 +107,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `docs/routing.md`: request entry points and view resolution.
 - `docs/translations.md`: translation and gettext workflow.
 - `docs/permissions.md`: permission storage, roles, and enforcement helpers.
+- `docs/privacy.md`: privacy admin tools, export scope, and anonymization or deletion behavior by table.
 - `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `docs/scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.

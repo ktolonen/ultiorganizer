@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-23 13:04+0300\n"
+"POT-Creation-Date: 2026-04-24 08:03+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -195,8 +195,8 @@ msgstr ""
 msgid "Accredit players against license database with selected conditions."
 msgstr ""
 
-#: menufunctions.php:754 menufunctions.php:769 menufunctions.php:825
-#: menufunctions.php:834 admin/accreditation.php:8 admin/accreditation.php:64
+#: menufunctions.php:756 menufunctions.php:771 menufunctions.php:827
+#: menufunctions.php:836 admin/accreditation.php:8 admin/accreditation.php:64
 #: admin/accreditation.php:150
 msgid "Accreditation"
 msgstr "Akkreditierung"
@@ -391,7 +391,7 @@ msgstr "Zusätzl. Punkte nach Ablauf der Zeit"
 msgid "Address"
 msgstr "Adresse"
 
-#: menufunctions.php:716
+#: menufunctions.php:718
 msgid "Admin Help"
 msgstr "Admin-Hilfe"
 
@@ -520,6 +520,10 @@ msgstr ""
 msgid "Always take a full database backup before running the conversion."
 msgstr ""
 
+#: admin/privacyplayer.php:110
+msgid "Anonymize player data"
+msgstr "Spielerdaten anonymisieren"
+
 #: cust/fpudd/pdfprinter.php:1028
 msgid "Apanhado"
 msgstr ""
@@ -527,6 +531,15 @@ msgstr ""
 #: admin/seasonadmin.php:111
 msgid "Archive statistics"
 msgstr "Spielstatistik erzeugen"
+
+#: admin/privacyplayer.php:58
+msgid ""
+"Are you sure you want to anonymize the selected player? This removes "
+"identifying player data but keeps competition history."
+msgstr ""
+"Sind Sie sicher, dass Sie den ausgewählten Spieler anonymisieren möchten? "
+"Dadurch werden personenbezogene Spielerdaten entfernt, die "
+"Wettbewerbshistorie bleibt jedoch erhalten."
 
 #: user/addscoresheet.php:98
 msgid "Are you sure you want to delete last score?"
@@ -540,6 +553,15 @@ msgstr "Bist du sicher, dass du das Turnier löschen willst?"
 #, fuzzy
 msgid "Are you sure you want to delete the location?"
 msgstr "Bist du sicher, dass du das Turnier löschen willst?"
+
+#: admin/privacyuser.php:60
+msgid ""
+"Are you sure you want to delete the selected registered user and all related "
+"privacy data, including matching logs? This action cannot be undone."
+msgstr ""
+"Sind Sie sicher, dass Sie den ausgewählten registrierten Benutzer und alle "
+"zugehörigen Datenschutzdaten einschließlich passender Protokolle löschen "
+"möchten? Diese Aktion kann nicht rückgängig gemacht werden."
 
 #: admin/users.php:55
 msgid "Are you sure you want to delete the selected registration requests?"
@@ -623,7 +645,7 @@ msgstr ""
 msgid "Attitude"
 msgstr "Breite"
 
-#: admin/dbadmin.php:97 admin/dbbackup.php:107
+#: admin/dbadmin.php:104 admin/dbbackup.php:107
 msgid "Auto Increment"
 msgstr "Auto-Inkrement"
 
@@ -921,7 +943,7 @@ msgstr "Änderungen NICHT gespeichert"
 msgid "Changes were saved"
 msgstr "Änderungen gespeichert"
 
-#: admin/dbadmin.php:138
+#: admin/dbadmin.php:145
 msgid "Character set and collation"
 msgstr "Zeichensatz und Collation"
 
@@ -992,7 +1014,7 @@ msgstr ""
 "Klicken Sie auf Masseneingabe, dann auf Speichern, um mehrere Ergebnisse auf "
 "einmal einzugeben."
 
-#: admin/dbadmin.php:133
+#: admin/dbadmin.php:140
 msgid "Client Library version"
 msgstr ""
 
@@ -1186,7 +1208,7 @@ msgstr "Kontakt Turnierorganisator"
 msgid "Contact to Teams"
 msgstr "Kontakt Teams"
 
-#: clubcard.php:75 menufunctions.php:858 user/clubprofile.php:169
+#: clubcard.php:75 menufunctions.php:860 user/clubprofile.php:169
 #: user/contacts.php:5 user/contacts.php:17
 msgid "Contacts"
 msgstr "Kontakte"
@@ -1332,7 +1354,7 @@ msgstr "Aktuelles Bild"
 msgid "Current score"
 msgstr "Aktueller Spielstand"
 
-#: admin/dbadmin.php:95 admin/dbbackup.php:103
+#: admin/dbadmin.php:102 admin/dbbackup.php:103
 msgid "Data"
 msgstr "Daten"
 
@@ -1360,7 +1382,7 @@ msgstr "Datenbank-Backup"
 msgid "Database equalization"
 msgstr "Datenbank-Vereinheitlichungen"
 
-#: admin/dbadmin.php:119 admin/dbbackup.php:128
+#: admin/dbadmin.php:126 admin/dbbackup.php:128
 msgid "Database size"
 msgstr "Datenbankgröße"
 
@@ -1478,6 +1500,10 @@ msgstr "Letzten Punkt löschen"
 msgid "Delete orphan profiles"
 msgstr "Spielerprofile"
 
+#: admin/privacyuser.php:112
+msgid "Delete registered user data"
+msgstr "Daten des registrierten Benutzers löschen"
+
 #: mobile/deletescore.php:17
 msgid "Delete score"
 msgstr "Punkt löschen"
@@ -1564,11 +1590,11 @@ msgstr ""
 #: teamcard.php:598 teamcard.php:795 teams.php:184 admin/addseasonpools.php:274
 #: admin/addseasonpools.php:292 admin/addseasonteams.php:165
 #: admin/dbequalize.php:209 admin/dbequalize.php:248 admin/dbequalize.php:289
-#: admin/editgame.php:219 admin/seasonpoints.php:180 admin/seasonstats.php:32
-#: admin/spirit.php:43 admin/spirit.php:102 admin/spirit.php:151
-#: admin/spirit.php:233 admin/spirit.php:281 admin/spirit.php:336
-#: admin/spirit.php:509 admin/stats.php:99 admin/tdtools.php:23
-#: admin/tdtools.php:59 cust/bula/pdfprinter.php:72
+#: admin/editgame.php:219 admin/privacyplayer.php:85 admin/seasonpoints.php:180
+#: admin/seasonstats.php:32 admin/spirit.php:43 admin/spirit.php:102
+#: admin/spirit.php:151 admin/spirit.php:233 admin/spirit.php:281
+#: admin/spirit.php:336 admin/spirit.php:509 admin/stats.php:99
+#: admin/tdtools.php:23 admin/tdtools.php:59 cust/bula/pdfprinter.php:72
 #: cust/default/pdfprinter.php:68 cust/gummis/pdfprinter.php:70
 #: cust/slkl/pdfprinter.php:68 cust/wfdf/pdfprinter.php:272
 #: cust/wfdf/pdfprinter.php:2040 cust/windmill/pdfprinter.php:72
@@ -1606,7 +1632,7 @@ msgstr "Klassenstatistik"
 msgid "Division(s)"
 msgstr "Klasse(n)"
 
-#: menufunctions.php:741 teams.php:38 admin/seasonadmin.php:68
+#: menufunctions.php:743 teams.php:38 admin/seasonadmin.php:68
 #: admin/seasonseries.php:12 admin/seasonseries.php:66
 msgid "Divisions"
 msgstr "Klassen"
@@ -1639,6 +1665,14 @@ msgid ""
 msgstr ""
 "Wollen Sie trotzdem die Seite verlassen? Wenn Sie Ja auswählen, gehen Ihre "
 "Änderungen verloren."
+
+#: admin/privacyplayer.php:109
+msgid "Download player privacy report"
+msgstr "Datenschutzbericht des Spielers herunterladen"
+
+#: admin/privacyuser.php:111
+msgid "Download registered user privacy report"
+msgstr "Datenschutzbericht des registrierten Benutzers herunterladen"
 
 #: poolstatus.php:359 admin/seasonstandings.php:409
 msgid "Draws"
@@ -1745,7 +1779,8 @@ msgstr "Team ändern"
 msgid "Edited by %s at %s"
 msgstr ""
 
-#: register.php:134 admin/adduser.php:133 lib/search.functions.php:160
+#: register.php:134 admin/adduser.php:133 admin/privacyplayer.php:85
+#: admin/privacyuser.php:87 lib/search.functions.php:160
 #: lib/search.functions.php:220 lib/search.functions.php:594
 #: lib/search.functions.php:682 user/addextraemail.php:86
 msgid "Email"
@@ -1872,7 +1907,7 @@ msgstr "Fehler: %s."
 msgid "Estatísticas feitas por:"
 msgstr ""
 
-#: clubcard.php:169 countrycard.php:83 countrycard.php:91 menufunctions.php:740
+#: clubcard.php:169 countrycard.php:83 countrycard.php:91 menufunctions.php:742
 #: playercard.php:224 playercard.php:399 statistics.php:48 statistics.php:94
 #: statistics.php:224 teamcard.php:400 teamcard.php:597
 #: admin/accreditation.php:136 admin/dbequalize.php:248
@@ -1964,7 +1999,7 @@ msgstr "Turnierbenutzer"
 msgid "Events"
 msgstr "Turniere"
 
-#: admin/dbadmin.php:116 admin/dbadmin.php:130
+#: admin/dbadmin.php:123 admin/dbadmin.php:137
 msgid "Execute"
 msgstr "Ausführen"
 
@@ -2474,7 +2509,7 @@ msgstr "Punkte"
 msgid "Game reset"
 msgstr "Spiel zurückgesetzt"
 
-#: menufunctions.php:857 mobile/respgames.php:9 user/respgames.php:9
+#: menufunctions.php:859 mobile/respgames.php:9 user/respgames.php:9
 msgid "Game responsibilities"
 msgstr "Ergebniseingabe"
 
@@ -2537,7 +2572,7 @@ msgstr "Spielverlauf"
 #: clubcard.php:157 clubcard.php:184 clubcard.php:200 countrycard.php:43
 #: countrycard.php:68 defensestatus.php:71 defensestatus.php:73 gamecard.php:99
 #: gamecard.php:219 gamecard.php:225 menufunctions.php:589
-#: menufunctions.php:626 menufunctions.php:745 menufunctions.php:767
+#: menufunctions.php:626 menufunctions.php:747 menufunctions.php:769
 #: playercard.php:171 playercard.php:224 playercard.php:301 playercard.php:399
 #: playercard.php:468 playerlist.php:34 poolstatus.php:145 poolstatus.php:171
 #: poolstatus.php:222 poolstatus.php:238 poolstatus.php:283 poolstatus.php:356
@@ -3056,7 +3091,7 @@ msgstr "als Turnieradministrator"
 msgid "Inadequate user rights"
 msgstr "Benutzerrechte reichen nicht aus"
 
-#: admin/dbadmin.php:96 admin/dbbackup.php:104
+#: admin/dbadmin.php:103 admin/dbbackup.php:104
 msgid "Index"
 msgstr "Index"
 
@@ -3252,7 +3287,7 @@ msgstr "Sprache"
 msgid "Last Name"
 msgstr "Nachmane"
 
-#: lib/search.functions.php:594
+#: admin/privacyuser.php:87 lib/search.functions.php:594
 msgid "Last login"
 msgstr "Letztes Login"
 
@@ -3307,7 +3342,12 @@ msgstr "Lizenz für Jahr:"
 msgid "Link"
 msgstr "Links"
 
-#: menufunctions.php:692 admin/spirit.php:345
+#: admin/privacyplayer.php:105
+#, php-format
+msgid "Linked player rows: %d"
+msgstr "Verknüpfte Spielerzeilen: %d"
+
+#: menufunctions.php:694 admin/spirit.php:345
 msgid "Links"
 msgstr "Links"
 
@@ -3637,12 +3677,13 @@ msgstr "HINWEIS"
 #: admin/addseasons.php:307 admin/addseasonseries.php:98
 #: admin/addseasonteams.php:145 admin/addserieformats.php:116
 #: admin/adduser.php:120 admin/clubs.php:57 admin/clubs.php:86
-#: admin/clubs.php:92 admin/dbadmin.php:92 admin/dbbackup.php:102
+#: admin/clubs.php:92 admin/dbadmin.php:99 admin/dbbackup.php:102
 #: admin/dbequalize.php:270 admin/dbequalize.php:289 admin/dbequalize.php:309
 #: admin/dbequalize.php:369 admin/dbequalize.php:372 admin/editgame.php:244
-#: admin/locations.php:52 admin/seasonpoints.php:193 admin/seasonpools.php:103
-#: admin/seasons.php:91 admin/seasonseries.php:75 admin/seasonstats.php:20
-#: admin/seasonstats.php:34 admin/seasonteams.php:174 admin/serieformats.php:28
+#: admin/locations.php:52 admin/privacyplayer.php:85 admin/privacyuser.php:87
+#: admin/seasonpoints.php:193 admin/seasonpools.php:103 admin/seasons.php:91
+#: admin/seasonseries.php:75 admin/seasonstats.php:20 admin/seasonstats.php:34
+#: admin/seasonteams.php:174 admin/serieformats.php:28
 #: admin/seriesseeding.php:45 admin/serieteams.php:143 admin/serverconf.php:245
 #: cust/bula/pdfprinter.php:155 cust/bula/pdfprinter.php:165
 #: cust/bula/pdfprinter.php:276 cust/default/pdfprinter.php:177
@@ -3852,6 +3893,10 @@ msgstr ""
 msgid "No players given for team %s."
 msgstr "Keine Spieler angegeben für Spiel %s."
 
+#: admin/privacyplayer.php:80
+msgid "No players matched the search."
+msgstr "Die Suche ergab keine Spieler."
+
 #: poolstatus.php:513 ext/countrystatus.php:136 ext/eventpools.php:94
 #: ext/poolstatus.php:91
 msgid "No playoff tree template found."
@@ -3860,6 +3905,10 @@ msgstr "Keine Playoff-Baum-Vorlage gefunden."
 #: user/select_poolselector.php:36
 msgid "No pool selector type was chosen."
 msgstr ""
+
+#: admin/privacyuser.php:82
+msgid "No registered users matched the search."
+msgstr "Die Suche ergab keine registrierten Benutzer."
 
 #: admin/seasonpoints.php:190
 #, fuzzy
@@ -4219,10 +4268,26 @@ msgstr "Ergebnisse"
 msgid "Player"
 msgstr "Spieler"
 
+#: admin/dbadmin.php:77
+msgid "Player anonymization"
+msgstr "Spieleranonymisierung"
+
 #: playercard.php:24
 #, fuzzy
 msgid "Player card"
 msgstr "Spielerseiten"
+
+#: admin/privacyplayer.php:47
+msgid "Player data could not be anonymized."
+msgstr "Spielerdaten konnten nicht anonymisiert werden."
+
+#: admin/dbadmin.php:76
+msgid "Player data report"
+msgstr "Spielerdatenbericht"
+
+#: admin/privacyplayer.php:44
+msgid "Player data was anonymized."
+msgstr "Spielerdaten wurden anonymisiert."
 
 #: user/playerprofile.php:180
 msgid "Player details"
@@ -4237,6 +4302,10 @@ msgstr "Spielerdaten"
 msgid "Player lists saved!"
 msgstr "Spielerlisten gespeichert!"
 
+#: admin/privacyplayer.php:72
+msgid "Player name"
+msgstr "Spielername"
+
 #: playercard.php:25 user/playerprofile.php:23 user/playerprofile.php:30
 msgid "Player not found"
 msgstr "Spieler nicht gefunden"
@@ -4244,6 +4313,14 @@ msgstr "Spieler nicht gefunden"
 #: playercard.php:121
 msgid "Player pages"
 msgstr "Spielerseiten"
+
+#: admin/privacyplayer.php:35
+msgid "Player privacy report could not be generated."
+msgstr "Der Datenschutzbericht des Spielers konnte nicht erstellt werden."
+
+#: admin/privacyplayer.php:7
+msgid "Player privacy tools"
+msgstr "Datenschutzwerkzeuge für Spieler"
 
 #: admin/select_userrole.php:57 user/userinfo.php:470 user/userinfo.php:507
 msgid "Player profile administrator"
@@ -4311,7 +4388,7 @@ msgstr "Plays"
 msgid "Please check the status again later."
 msgstr "Bitte überprüfe den Status später noch einmal"
 
-#: admin/dbadmin.php:80
+#: admin/dbadmin.php:87
 msgid "Plugins"
 msgstr "Plugins"
 
@@ -4394,11 +4471,11 @@ msgstr "Gruppenname erforderlich"
 msgid "Pool not found"
 msgstr "Gruppe nicht gefunden"
 
-#: menufunctions.php:768 admin/seasonstandings.php:16 ext/export.php:33
+#: menufunctions.php:770 admin/seasonstandings.php:16 ext/export.php:33
 msgid "Pool standings"
 msgstr "Tabellenstände"
 
-#: menufunctions.php:743 admin/dbequalize.php:207 admin/seasonadmin.php:73
+#: menufunctions.php:745 admin/dbequalize.php:207 admin/seasonadmin.php:73
 #: admin/seasonpools.php:13 admin/seasonseries.php:122
 msgid "Pools"
 msgstr "Gruppen"
@@ -4482,7 +4559,11 @@ msgstr "Spielerlisten drucken"
 msgid "Printable version"
 msgstr "Druckversion"
 
-#: menufunctions.php:719 privacy.php:9 register.php:103
+#: admin/dbadmin.php:75
+msgid "Privacy"
+msgstr "Datenschutz"
+
+#: menufunctions.php:721 privacy.php:9 register.php:103
 msgid "Privacy Policy"
 msgstr "Datenschutzerklärung"
 
@@ -4510,7 +4591,7 @@ msgstr "Profilbild"
 msgid "Profiles"
 msgstr "Profil"
 
-#: admin/dbadmin.php:135
+#: admin/dbadmin.php:142
 msgid "Protocol version"
 msgstr ""
 
@@ -4571,6 +4652,31 @@ msgstr "Neu laden"
 #: register.php:9 register.php:140 user/addextraemail.php:4
 msgid "Register"
 msgstr "Registrieren"
+
+#: admin/privacyuser.php:49
+msgid "Registered user data could not be deleted."
+msgstr "Die Daten des registrierten Benutzers konnten nicht gelöscht werden."
+
+#: admin/dbadmin.php:78
+msgid "Registered user data report"
+msgstr "Datenbericht des registrierten Benutzers"
+
+#: admin/privacyuser.php:44
+msgid "Registered user data was deleted."
+msgstr "Die Daten des registrierten Benutzers wurden gelöscht."
+
+#: admin/dbadmin.php:79
+msgid "Registered user deletion"
+msgstr "Löschung des registrierten Benutzers"
+
+#: admin/privacyuser.php:35
+msgid "Registered user privacy report could not be generated."
+msgstr ""
+"Der Datenschutzbericht des registrierten Benutzers konnte nicht erstellt werden."
+
+#: admin/privacyuser.php:7
+msgid "Registered user privacy tools"
+msgstr "Datenschutzwerkzeuge für registrierte Benutzer"
 
 #: register.php:75
 msgid ""
@@ -4753,6 +4859,10 @@ msgstr ""
 msgid "Return"
 msgstr "Zurück"
 
+#: admin/privacyplayer.php:66 admin/privacyuser.php:68
+msgid "Return to Database administration"
+msgstr "Zur Datenbankverwaltung zurückkehren"
+
 #: admin/smsmoves.php:225
 msgid "Return without sending"
 msgstr "Zurück, nicht senden"
@@ -4846,7 +4956,7 @@ msgstr "Jeder gegen Jeden"
 msgid "Rounds"
 msgstr "Runde"
 
-#: admin/dbadmin.php:93 admin/dbbackup.php:105
+#: admin/dbadmin.php:100 admin/dbbackup.php:105
 msgid "Rows"
 msgstr "Zeilen"
 
@@ -5011,7 +5121,7 @@ msgstr "Spielplan"
 msgid "Scheduled start date and time"
 msgstr "Spielbeginn"
 
-#: menufunctions.php:475 menufunctions.php:744 admin/schedule.php:11
+#: menufunctions.php:475 menufunctions.php:746 admin/schedule.php:11
 msgid "Scheduling"
 msgstr "Spielplan"
 
@@ -5158,6 +5268,7 @@ msgstr "Punktefänger nicht auf der Spielerliste"
 msgid "Scoring team"
 msgstr "Scorendes Team"
 
+#: admin/privacyplayer.php:73 admin/privacyuser.php:75
 #: admin/reservations.php:92 cust/slkl/teamplayers.functions.php:57
 #: lib/search.functions.php:41 lib/search.functions.php:79
 #: lib/search.functions.php:117 lib/search.functions.php:174
@@ -5189,6 +5300,11 @@ msgstr ""
 msgid "Search for teams that received a"
 msgstr ""
 
+#: admin/privacyplayer.php:78 admin/privacyuser.php:80
+#, fuzzy
+msgid "Search results"
+msgstr "Ergebnis speichern"
+
 #: admin/addreservation.php:210 admin/apitokens.php:145
 #: admin/seasonadmin.php:32
 msgid "Season"
@@ -5211,7 +5327,7 @@ msgstr "Saison nicht gefunden"
 msgid "Season not found."
 msgstr "Saison nicht gefunden"
 
-#: menufunctions.php:752 admin/addseasons.php:363 admin/seasonpoints.php:14
+#: menufunctions.php:754 admin/addseasons.php:363 admin/seasonpoints.php:14
 #: admin/seasonpoints.php:20 admin/seasonpoints.php:45
 #: admin/seasonpoints.php:165 admin/seasonpoints.php:171
 #, fuzzy
@@ -5249,7 +5365,8 @@ msgstr "Setzliste"
 msgid "Seeding"
 msgstr "Setzliste"
 
-#: admin/addseasonpools.php:383 admin/seasonpoints.php:28
+#: admin/addseasonpools.php:383 admin/privacyplayer.php:97
+#: admin/privacyuser.php:99 admin/seasonpoints.php:28
 #: admin/seasonpoints.php:185 admin/seasonpoints.php:242
 #: admin/select_userrole.php:28 admin/select_userrole.php:34
 #: admin/select_userrole.php:37 admin/select_userrole.php:40
@@ -5316,6 +5433,23 @@ msgstr ""
 msgid "Select licenses validity required:"
 msgstr ""
 
+#: admin/privacyplayer.php:50
+msgid "Select one player before anonymizing data."
+msgstr "Wählen Sie einen Spieler aus, bevor Sie Daten anonymisieren."
+
+#: admin/privacyplayer.php:38
+msgid "Select one player before downloading the privacy report."
+msgstr "Wählen Sie einen Spieler aus, bevor Sie den Datenschutzbericht herunterladen."
+
+#: admin/privacyuser.php:52
+msgid "Select one registered user before deleting data."
+msgstr "Wählen Sie einen registrierten Benutzer aus, bevor Sie Daten löschen."
+
+#: admin/privacyuser.php:38
+msgid "Select one registered user before downloading the privacy report."
+msgstr ""
+"Wählen Sie einen registrierten Benutzer aus, bevor Sie den Datenschutzbericht herunterladen."
+
 #: ext/index.php:121
 msgid "Select pool"
 msgstr "Gruppe wählen"
@@ -5358,6 +5492,10 @@ msgstr "Benutzerrollen auswählen"
 msgid "Selected country's team standings and game results"
 msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
 
+#: admin/privacyplayer.php:103
+msgid "Selected player"
+msgstr "Ausgewählter Spieler"
+
 #: ext/index.php:215
 msgid "Selected pool standings and scoreboard"
 msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
@@ -5365,6 +5503,10 @@ msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
 #: ext/index.php:241
 msgid "Selected team's games and scoreboard"
 msgstr "Spiele und Scoreboard eines ausgewählten Teams"
+
+#: admin/privacyuser.php:106
+msgid "Selected user"
+msgstr "Ausgewählter Benutzer"
 
 #: admin/spiritsettings.php:70
 msgid ""
@@ -5389,7 +5531,7 @@ msgstr "Serie nicht gefunden"
 msgid "Server configuration"
 msgstr "Serverkonfiguration"
 
-#: admin/dbadmin.php:136
+#: admin/dbadmin.php:143
 msgid "Server version"
 msgstr ""
 
@@ -5536,7 +5678,7 @@ msgstr "Quelle"
 msgid "Special playoff template"
 msgstr "Spezielle Playout-Baum-Vorlage"
 
-#: menufunctions.php:748 menufunctions.php:789 spiritstatus.php:12 teams.php:47
+#: menufunctions.php:750 menufunctions.php:791 spiritstatus.php:12 teams.php:47
 #: admin/spirit.php:415 cust/wfdf/pdfprinter.php:1366 user/addspirit.php:13
 msgid "Spirit"
 msgstr "Spirit"
@@ -5724,7 +5866,7 @@ msgstr ""
 msgid "Standing"
 msgstr "Ergebnisse"
 
-#: menufunctions.php:588 menufunctions.php:750 poolstatus.php:11
+#: menufunctions.php:588 menufunctions.php:752 poolstatus.php:11
 #: poolstatus.php:20 poolstatus.php:32 poolstatus.php:46 statistics.php:22
 #: teams.php:45
 msgid "Standings"
@@ -5773,7 +5915,7 @@ msgstr "Zustand"
 
 #: menufunctions.php:663 seriesstatus.php:12 seriesstatus.php:18
 #: seriesstatus.php:26 seriesstatus.php:34 statistics.php:9
-#: admin/dbadmin.php:121
+#: admin/dbadmin.php:128
 msgid "Statistics"
 msgstr "Statistik"
 
@@ -5814,7 +5956,7 @@ msgstr "System Email Sender Adresse"
 msgid "TD Tools"
 msgstr "Gruppen für Team"
 
-#: admin/dbadmin.php:90
+#: admin/dbadmin.php:97
 msgid "Tables"
 msgstr "Tabellen"
 
@@ -5828,8 +5970,8 @@ msgstr "Aufgaben"
 
 #: clubcard.php:145 clubcard.php:169 countrycard.php:31 countrycard.php:83
 #: countrycard.php:91 defensestatus.php:66 defensestatus.php:68 gamecard.php:99
-#: gamecard.php:209 gamecard.php:215 menufunctions.php:803
-#: menufunctions.php:824 playercard.php:54 playercard.php:224
+#: gamecard.php:209 gamecard.php:215 menufunctions.php:805
+#: menufunctions.php:826 playercard.php:54 playercard.php:224
 #: playercard.php:399 poolstatus.php:145 poolstatus.php:171 poolstatus.php:222
 #: poolstatus.php:238 poolstatus.php:282 poolstatus.php:355 scorestatus.php:70
 #: scorestatus.php:72 seriesstatus.php:131 seriesstatus.php:133
@@ -5838,16 +5980,16 @@ msgstr "Aufgaben"
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/accreditation.php:193
 #: admin/accreditation.php:256 admin/dbequalize.php:248
-#: admin/seasonpoints.php:255 admin/seasonstandings.php:357
-#: admin/seasonstandings.php:405 admin/seasonstandings.php:466
-#: admin/serieteams.php:184 admin/smsmoves.php:43 admin/smsmoves.php:104
-#: admin/spirit.php:234 admin/tdtools.php:22 admin/tdtools.php:58
-#: cust/wfdf/pdfprinter.php:1617 ext/countrystatus.php:49 ext/eventpools.php:46
-#: ext/poolscoreboard.php:35 ext/poolstatus.php:44 lib/search.functions.php:111
-#: lib/search.functions.php:154 lib/search.functions.php:214
-#: lib/search.functions.php:355 lib/search.functions.php:517
-#: lib/search.functions.php:682 lib/swissdraw.functions.php:201
-#: user/enrollteam.php:78 user/respteams.php:21
+#: admin/privacyplayer.php:85 admin/seasonpoints.php:255
+#: admin/seasonstandings.php:357 admin/seasonstandings.php:405
+#: admin/seasonstandings.php:466 admin/serieteams.php:184 admin/smsmoves.php:43
+#: admin/smsmoves.php:104 admin/spirit.php:234 admin/tdtools.php:22
+#: admin/tdtools.php:58 cust/wfdf/pdfprinter.php:1617 ext/countrystatus.php:49
+#: ext/eventpools.php:46 ext/poolscoreboard.php:35 ext/poolstatus.php:44
+#: lib/search.functions.php:111 lib/search.functions.php:154
+#: lib/search.functions.php:214 lib/search.functions.php:355
+#: lib/search.functions.php:517 lib/search.functions.php:682
+#: lib/swissdraw.functions.php:201 user/enrollteam.php:78 user/respteams.php:21
 msgid "Team"
 msgstr "Team"
 
@@ -5906,7 +6048,7 @@ msgstr "Spielerprofil"
 msgid "Team registration"
 msgstr "Team-Anmeldung"
 
-#: menufunctions.php:809 menufunctions.php:833 user/respteams.php:8
+#: menufunctions.php:811 menufunctions.php:835 user/respteams.php:8
 #: user/respteams.php:18
 msgid "Team responsibilities"
 msgstr "Teamverwaltung"
@@ -5930,7 +6072,7 @@ msgid "Team taking timeout"
 msgstr "Startzeit"
 
 #: menufunctions.php:591 menufunctions.php:628 menufunctions.php:667
-#: menufunctions.php:742 menufunctions.php:766 seasonlist.php:30 teams.php:11
+#: menufunctions.php:744 menufunctions.php:768 seasonlist.php:30 teams.php:11
 #: teams.php:68 admin/addseasonpools.php:394 admin/clubs.php:57
 #: admin/clubs.php:92 admin/dbequalize.php:203 admin/dbequalize.php:270
 #: admin/seasonadmin.php:78 admin/seasonpools.php:219
@@ -6337,7 +6479,7 @@ msgstr "Typ"
 msgid "Type cannot be empty"
 msgstr "Type darf nicht leer sein"
 
-#: admin/dbadmin.php:134
+#: admin/dbadmin.php:141
 msgid "Type of connection in use"
 msgstr "Verbindungsart"
 
@@ -6445,7 +6587,7 @@ msgstr "Spielstand aktualisieren"
 msgid "Update ultiorganizer license database"
 msgstr "Aktualisiere die Ultiorganizer Lizenz-Datenbank"
 
-#: admin/dbadmin.php:98 admin/dbbackup.php:108
+#: admin/dbadmin.php:105 admin/dbbackup.php:108
 msgid "Updated"
 msgstr "Aktualisiert"
 
@@ -6467,11 +6609,12 @@ msgid "Use game clock"
 msgstr ""
 
 #: login.php:28 menufunctions.php:163 admin/accreditation.php:138
-#: admin/apitokens.php:146 admin/eventviewer.php:136 user/enrollteam.php:85
+#: admin/apitokens.php:146 admin/eventviewer.php:136 admin/privacyuser.php:74
+#: user/enrollteam.php:85
 msgid "User"
 msgstr "Benutzer"
 
-#: frontpage.php:24 menufunctions.php:714 user_guide.php:6
+#: frontpage.php:24 menufunctions.php:716 user_guide.php:6
 msgid "User Guide"
 msgstr "Anleitung"
 
@@ -6495,7 +6638,7 @@ msgstr "Benutzer-ID"
 msgid "User administrator"
 msgstr "Benutzeradministrator"
 
-#: admin/dbadmin.php:149 admin/dbbackup.php:133 admin/dbrestore.php:54
+#: admin/dbadmin.php:156 admin/dbbackup.php:133 admin/dbrestore.php:54
 #: admin/visitors.php:63
 msgid "User credentials do not match"
 msgstr "Zugangsdaten stimmen nicht überein"
@@ -6523,8 +6666,8 @@ msgid "User roles"
 msgstr "Nutzerrollen"
 
 #: login.php:19 menufunctions.php:268 register.php:122 admin/adduser.php:109
-#: admin/adduser.php:124 lib/search.functions.php:594 scorekeeper/login.php:19
-#: user/userinfo.php:241
+#: admin/adduser.php:124 admin/privacyuser.php:87 lib/search.functions.php:594
+#: scorekeeper/login.php:19 user/userinfo.php:241
 msgid "Username"
 msgstr "Benutzername"
 
@@ -6801,7 +6944,7 @@ msgstr "Nummer des Vorlagengebers"
 msgid "at"
 msgstr "Sa"
 
-#: admin/dbadmin.php:94 admin/dbbackup.php:106
+#: admin/dbadmin.php:101 admin/dbbackup.php:106
 msgid "avg. row length"
 msgstr "Durschn. Zeilenlänge"
 
@@ -6818,7 +6961,7 @@ msgstr "schwarz und weiß"
 msgid "both"
 msgstr "beidh."
 
-#: admin/dbadmin.php:119 admin/dbbackup.php:128
+#: admin/dbadmin.php:126 admin/dbbackup.php:128
 msgid "bytes"
 msgstr "Bytes"
 

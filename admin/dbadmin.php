@@ -72,6 +72,13 @@ if (isSuperAdmin()) {
 	$html .= "<a href='?view=admin/dbequalize'>&raquo; " . _("Equalization") . "</a><br/>\n";
 	$html .= "</p>\n";
 
+	$html .= "<p><span class='profileheader'>" . _("Privacy") . ": </span><br/>\n";
+	$html .= "<a href='?view=admin/privacyplayer'>&raquo; " . _("Player data report") . "</a><br/>\n";
+	$html .= "<a href='?view=admin/privacyplayer'>&raquo; " . _("Player anonymization") . "</a><br/>\n";
+	$html .= "<a href='?view=admin/privacyuser'>&raquo; " . _("Registered user data report") . "</a><br/>\n";
+	$html .= "<a href='?view=admin/privacyuser'>&raquo; " . _("Registered user deletion") . "</a><br/>\n";
+	$html .= "</p>\n";
+
 	$types = array("import", "updater", "simulator", "generator");
 
 	foreach ($types as $type) {
