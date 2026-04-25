@@ -4,7 +4,7 @@ denyDirectCustomizationAccess(__FILE__);
 
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/tfpdf/cellfit.php';
-include_once 'lib/HSVClass.php';
+include_once 'lib/hsvclass/HSVClass.php';
 
 class PDF extends tFPDF_CellFit
 	{

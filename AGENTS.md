@@ -28,7 +28,6 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 
 ### Root `lib/`
 
-- `lib/HSVClass.php`: `HSVClass` plus RGB/HSV conversion helpers for color math.
 - `lib/accreditation.functions.php`: player accreditation, license data, acknowledgements, and accreditation logs.
 - `lib/api.functions.php`: API token hashing, lookup, touch, CRUD, and rate limiting.
 - `lib/auth.guard.php`: include-time auth guard that starts the session and redirects anonymous users.
@@ -68,6 +67,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 ### 3rd party libraries
 
 - `lib/feed_generator/`: third-party RSS/Atom feed writer library (`FeedWriter`/`FeedItem`); treat the folder as vendor code.
+- `lib/hsvclass/`: third-party `HSVClass` plus RGB/HSV conversion helpers for color math; treat the folder as vendor code.
 - `lib/phpqrcode/`: third-party QR code generation library with bundled encoder, PNG/vector output, and support modules; prefer using the existing library entrypoints rather than editing internals.
 - `lib/tfpdf/`: third-party Unicode PDF library plus `cellfit` helper, bundled font metrics, and generated Unicode font metadata; treat the whole tree as vendor PDF infrastructure.
 - `lib/yuiloader/`: third-party YUI PHP loader/combo service with bundled version metadata; use it as legacy asset-loading infrastructure rather than app-specific business logic.

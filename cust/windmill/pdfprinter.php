@@ -7,7 +7,7 @@ if (!isset($include_prefix)) {
 }
 
 include_once $include_prefix . 'lib/tfpdf/tfpdf.php';
-include_once $include_prefix . 'lib/HSVClass.php';
+include_once $include_prefix . 'lib/hsvclass/HSVClass.php';
 
 class PDF extends tFPDF
 	{

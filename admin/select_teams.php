@@ -6,7 +6,7 @@ include_once 'lib/team.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
 include_once 'lib/common.functions.php';
-require_once("lib/HSVClass.php");
+require_once("lib/hsvclass/HSVClass.php");
 
 
 $LAYOUT_ID = SCHEDULE;

@@ -3,7 +3,7 @@ require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
 include_once 'lib/tfpdf/tfpdf.php';
-include_once 'lib/HSVClass.php';
+include_once 'lib/hsvclass/HSVClass.php';
 include_once 'lib/phpqrcode/qrlib.php';
 
 class PDF extends tFPDF

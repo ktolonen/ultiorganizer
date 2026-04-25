@@ -5,7 +5,7 @@ This page collects implementation details that are useful during coding work but
 ## Third-party components
 
 - YUI assets and loader live under `script/yui/` and `lib/yuiloader/`.
-- Bundled PHP libraries include `lib/tfpdf/` and `lib/phpqrcode/`.
+- Bundled PHP libraries include `lib/hsvclass/`, `lib/tfpdf/`, and `lib/phpqrcode/`.
 
 ## PDF generation
 
