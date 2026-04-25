@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 13:22+0300\n"
+"POT-Creation-Date: 2026-04-25 08:28+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -44,7 +44,8 @@ msgstr "' in mindestens einer Kategorie:"
 
 #: cust/wfdf/pdfprinter.php:165
 msgid "(*) player not allowed to play (for medical or other reasons)"
-msgstr "(*) Spieler darf nicht spielen (aus medizinischen oder anderen Gruenden)"
+msgstr ""
+"(*) Spieler darf nicht spielen (aus medizinischen oder anderen Gruenden)"
 
 #: gameplay.php:18
 msgid "(C)"
@@ -91,7 +92,8 @@ msgstr "1. Halbzeit"
 
 #: cust/default/pdfprinter.php:240 cust/slkl/pdfprinter.php:205
 msgid "2. Mark the spirit captain with the letters SC into the info grid."
-msgstr "2. Markiere den Spiritkapitaen mit den Buchstaben SC im Informationsfeld."
+msgstr ""
+"2. Markiere den Spiritkapitaen mit den Buchstaben SC im Informationsfeld."
 
 #: cust/wfdf/pdfprinter.php:1377
 msgid "2nd half"
@@ -373,8 +375,8 @@ msgid ""
 "Adding extra email addresses is not available when email is disabled on this "
 "server."
 msgstr ""
-"Das Hinzufuegen zusaetzlicher E-Mail-Adressen ist nicht verfuegbar, wenn "
-"E-Mail auf diesem Server deaktiviert ist."
+"Das Hinzufuegen zusaetzlicher E-Mail-Adressen ist nicht verfuegbar, wenn E-"
+"Mail auf diesem Server deaktiviert ist."
 
 #: admin/adduser.php:91
 msgid "Adding the user failed. Please contact the system administrator."
@@ -529,7 +531,9 @@ msgstr "Erlaubt Teams, Anmeldeanfragen fuer dieses Ereignis einzureichen."
 
 #: admin/dbadmin.php:55
 msgid "Always take a full database backup before running the conversion."
-msgstr "Erstelle immer eine vollstaendige Datenbanksicherung, bevor du die Umwandlung startest."
+msgstr ""
+"Erstelle immer eine vollstaendige Datenbanksicherung, bevor du die "
+"Umwandlung startest."
 
 #: admin/privacyplayer.php:112
 msgid "Anonymize player data"
@@ -595,7 +599,8 @@ msgstr "Als Trennzeichen im Zeitfeld kannst du "
 msgid ""
 "As a separator in the time field you can use any of the '.', ',', ':', or "
 "';' characters"
-msgstr "Als Trennzeichen im Zeitfeld kannst du '.', ',', ':' oder ';' verwenden"
+msgstr ""
+"Als Trennzeichen im Zeitfeld kannst du '.', ',', ':' oder ';' verwenden"
 
 #: gameplay.php:206 cust/bula/pdfprinter.php:1053
 #: cust/default/pdfprinter.php:1008 cust/gummis/pdfprinter.php:1102
@@ -687,6 +692,10 @@ msgstr "Spirit-Unterbrechungen Gastteam"
 #: user/addscoresheet.php:461
 msgid "Away team"
 msgstr "Gastteam"
+
+#: scorekeeper/result.php:96
+msgid "Away team score"
+msgstr "Punkte Auswaertsteam"
 
 #: cust/bula/head.php:10
 msgid "BULA"
@@ -791,7 +800,8 @@ msgid ""
 "Calculation of statistics takes some time; please wait without closing the "
 "browser."
 msgstr ""
-"Die Berechnung der Statistiken dauert eine Weile; bitte warte, ohne den Browser zu schliessen."
+"Die Berechnung der Statistiken dauert eine Weile; bitte warte, ohne den "
+"Browser zu schliessen."
 
 #: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
 #: scorestatus.php:101 scorestatus.php:103
@@ -973,7 +983,7 @@ msgstr ""
 "Bereinige verwaiste Eintraege, indem nullable Fremdschluessel auf NULL "
 "gesetzt oder untergeordnete Zeilen geloescht bzw. neu zugewiesen werden."
 
-#: admin/dbequalize.php:238 user/addresult.php:108
+#: admin/dbequalize.php:238 user/addresult.php:116
 msgid "Clear"
 msgstr "Löschen"
 
@@ -1629,7 +1639,8 @@ msgstr "Dubletten"
 
 #: admin/tdtools.php:53
 msgid "Duplicates found! (click the team name to edit the roster)"
-msgstr "Dubletten gefunden! (Klicke auf den Teamnamen, um den Kader zu bearbeiten)"
+msgstr ""
+"Dubletten gefunden! (Klicke auf den Teamnamen, um den Kader zu bearbeiten)"
 
 #: gameplay.php:208
 msgid "Dur."
@@ -1643,11 +1654,11 @@ msgid ""
 "time when the goal was scored, and the scoreline after the goal. If a player "
 "scores an intercept goal (Callahan), then mark XX as the assist."
 msgstr ""
-"Trage waehrend des Spiels ein, welches Team gepunktet hat, die "
-"Trikotnummern des Spielers, der den Assist geworfen hat (Assist), und des "
-"Spielers, der den Punkt gefangen hat (Goal), die Zeit des Punktes sowie den "
-"Spielstand nach dem Punkt. Wenn ein Spieler einen abgefangenen Punkt "
-"erzielt (Callahan), trage XX als Assist ein."
+"Trage waehrend des Spiels ein, welches Team gepunktet hat, die Trikotnummern "
+"des Spielers, der den Assist geworfen hat (Assist), und des Spielers, der "
+"den Punkt gefangen hat (Goal), die Zeit des Punktes sowie den Spielstand "
+"nach dem Punkt. Wenn ein Spieler einen abgefangenen Punkt erzielt "
+"(Callahan), trage XX als Assist ein."
 
 #: admin/addseasonpools.php:158 admin/addseasonseries.php:17
 #: admin/addseasonteams.php:101 admin/addserieformats.php:9
@@ -1729,7 +1740,9 @@ msgstr "Ultiorganizer in andere Seiten einbinden"
 
 #: admin/addseasons.php:368
 msgid "Enables season-level points/ranking features for this event."
-msgstr "Aktiviert Punkte-/Ranglistenfunktionen auf Veranstaltungsebene fuer dieses Ereignis."
+msgstr ""
+"Aktiviert Punkte-/Ranglistenfunktionen auf Veranstaltungsebene fuer dieses "
+"Ereignis."
 
 #: scorekeeper/addscoresheet.php:294 scorekeeper/endgame.php:43
 msgid "End game"
@@ -1787,11 +1800,14 @@ msgstr "Geben Sie Feldnummern an, z. B. 1,2,3 oder 1-30"
 
 #: admin/tdtools.php:149
 msgid "Enter the game ref. # on the paper scoresheet for a direct link: "
-msgstr "Gib die Spiel-Ref.-Nr. auf dem Papier-Spielbericht fuer einen Direktlink ein: "
+msgstr ""
+"Gib die Spiel-Ref.-Nr. auf dem Papier-Spielbericht fuer einen Direktlink "
+"ein: "
 
 #: admin/spirit.php:448
 msgid "Enter the game ref. # on the paper spirit sheet for a direct link: "
-msgstr "Gib die Spiel-Ref.-Nr. auf dem Spirit-Papierbogen fuer einen Direktlink ein: "
+msgstr ""
+"Gib die Spiel-Ref.-Nr. auf dem Spirit-Papierbogen fuer einen Direktlink ein: "
 
 #: user/adddefensesheet.php:186 user/adddefensesheet.php:189
 #: user/addscoresheet.php:444 user/addscoresheet.php:447
@@ -1934,7 +1950,8 @@ msgstr "Turnierdaten exportieren"
 
 #: admin/addseasons.php:445
 msgid "Exposes this event in API responses; does not grant write access."
-msgstr "Zeigt dieses Ereignis in API-Antworten an; gewaehrt keinen Schreibzugriff."
+msgstr ""
+"Zeigt dieses Ereignis in API-Antworten an; gewaehrt keinen Schreibzugriff."
 
 #: admin/accreditation.php:259 admin/accreditation.php:261
 msgid "External accreditation"
@@ -1947,7 +1964,9 @@ msgstr "Die Extra-Email-Adresse ist erfolgreich bestätigt worden"
 #: user/addextraemail.php:45
 msgid ""
 "Extra email could not be added. Please contact the system administrator."
-msgstr "Zusaetzliche E-Mail konnte nicht hinzugefuegt werden. Bitte kontaktiere den Systemadministrator."
+msgstr ""
+"Zusaetzliche E-Mail konnte nicht hinzugefuegt werden. Bitte kontaktiere den "
+"Systemadministrator."
 
 #: user/addextraemail.php:66 user/userinfo.php:256
 msgid "Extra emails"
@@ -2290,7 +2309,8 @@ msgstr "Spielereignisse"
 
 #: cust/wfdf/pdfprinter.php:1797
 msgid "Game finished: write final score and get captain's signature."
-msgstr "Spiel beendet: Endergebnis eintragen und Unterschrift des Kapitaens einholen."
+msgstr ""
+"Spiel beendet: Endergebnis eintragen und Unterschrift des Kapitaens einholen."
 
 #: admin/poolgames.php:47 admin/seasongames.php:74
 msgid "Game has"
@@ -2526,7 +2546,9 @@ msgstr "Alle Spiele erzeugen"
 
 #: ext/export.php:26
 msgid "Get comma-separated UTF-8 encoded files by clicking the links below."
-msgstr "Klicke auf die untenstehenden Links, um komma-getrennte UTF-8-codierte Dateien zu erhalten."
+msgstr ""
+"Klicke auf die untenstehenden Links, um komma-getrennte UTF-8-codierte "
+"Dateien zu erhalten."
 
 #: user/addscoresheet.php:622
 msgid "Give XX as the assist in Callahan goals"
@@ -2848,7 +2870,7 @@ msgstr "ID2"
 msgid "If game ended:"
 msgstr "Wenn das Spiel beendet ist:"
 
-#: user/addresult.php:104
+#: user/addresult.php:112
 msgid "If game ongoing, update as current result: "
 msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren:"
 
@@ -2864,7 +2886,7 @@ msgstr ""
 "Falls die Ergebnisse nicht korrekt sind, ziehen Sie die Teams mit der Maus "
 "auf die richtige Position und speichern Sie die Platzierungen."
 
-#: user/addresult.php:107
+#: user/addresult.php:115
 msgid "If this is all wrong, clear the result: "
 msgstr "Falls nicht zutreffend, Ergebnis löschen:"
 
@@ -2874,8 +2896,8 @@ msgid ""
 "sent to the email address you provided during registration."
 msgstr ""
 "Wenn du dein Passwort vergessen hast, klicke auf die Schaltflaeche unten. "
-"Ein Link zum Zuruecksetzen wird an die bei der Registrierung angegebene "
-"E-Mail-Adresse gesendet."
+"Ein Link zum Zuruecksetzen wird an die bei der Registrierung angegebene E-"
+"Mail-Adresse gesendet."
 
 #: register.php:62 admin/adduser.php:59
 msgid "Illegal characters in the password"
@@ -2892,7 +2914,9 @@ msgstr "Bild"
 #: lib/club.functions.php:227 lib/player.functions.php:990
 #: lib/team.functions.php:1358
 msgid "Image upload failed because the server could not process the image."
-msgstr "Das Hochladen des Bildes ist fehlgeschlagen, weil der Server das Bild nicht verarbeiten konnte."
+msgstr ""
+"Das Hochladen des Bildes ist fehlgeschlagen, weil der Server das Bild nicht "
+"verarbeiten konnte."
 
 #: admin/eventdataimport.php:66
 msgid "Import"
@@ -2961,8 +2985,8 @@ msgid ""
 "Insert missing parent rows for non-nullable references (e.g., required stats/"
 "plays/games)."
 msgstr ""
-"Fuege fehlende uebergeordnete Zeilen fuer nicht-nullbare Referenzen ein "
-"(z. B. erforderliche Statistiken/Spielzuege/Spiele)."
+"Fuege fehlende uebergeordnete Zeilen fuer nicht-nullbare Referenzen ein (z. "
+"B. erforderliche Statistiken/Spielzuege/Spiele)."
 
 #: admin/apitokens.php:144
 msgid "Installation"
@@ -3029,7 +3053,8 @@ msgstr "Ungueltiger Bereichstyp."
 
 #: admin/spirit.php:632
 msgid "Invalid threshold! Please use a number between 0.1 and 3.9."
-msgstr "Ungueltiger Schwellenwert! Bitte verwende eine Zahl zwischen 0.1 und 3.9."
+msgstr ""
+"Ungueltiger Schwellenwert! Bitte verwende eine Zahl zwischen 0.1 und 3.9."
 
 #: admin/spirit.php:606
 msgid "Invalid threshold! Please use a number between 1 and 20."
@@ -3139,7 +3164,9 @@ msgstr "Breite"
 
 #: admin/addseasons.php:359
 msgid "Leave spirit mode empty if this event does not record spirit scores."
-msgstr "Lasse den Spirit-Modus leer, wenn dieses Ereignis keine Spirit-Wertungen erfasst."
+msgstr ""
+"Lasse den Spirit-Modus leer, wenn dieses Ereignis keine Spirit-Wertungen "
+"erfasst."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:194
 #: user/teamplayers.php:167
@@ -3369,7 +3396,8 @@ msgstr ""
 
 #: admin/dbequalize.php:228
 msgid "Merge selected profiles to most referred"
-msgstr "Ausgewaehlte Profile mit dem am haeufigsten referenzierten zusammenfuehren"
+msgstr ""
+"Ausgewaehlte Profile mit dem am haeufigsten referenzierten zusammenfuehren"
 
 #: admin/reservations.php:148
 msgid "Minimum transfer times in minutes between fields"
@@ -3399,7 +3427,9 @@ msgstr "Fehlendes Ergebnis für %s."
 
 #: admin/tdtools.php:17
 msgid "Missing shirt numbers found! (click the team name to edit the roster)"
-msgstr "Fehlende Trikotnummern gefunden! (Klicke auf den Teamnamen, um den Kader zu bearbeiten)"
+msgstr ""
+"Fehlende Trikotnummern gefunden! (Klicke auf den Teamnamen, um den Kader zu "
+"bearbeiten)"
 
 #: teams.php:405
 msgid "Missing spirit submissions"
@@ -3570,7 +3600,8 @@ msgid ""
 "New players: enter the jersey number, first name, and last name. Press the "
 "Add button."
 msgstr ""
-"Neue Spieler: Gib Trikotnummer, Vorname und Nachname ein. Klicke auf die Schaltflaeche Hinzufuegen."
+"Neue Spieler: Gib Trikotnummer, Vorname und Nachname ein. Klicke auf die "
+"Schaltflaeche Hinzufuegen."
 
 #: admin/addseasons.php:86
 msgid "New season added"
@@ -3676,7 +3707,8 @@ msgstr "Keine verwaisten Profile gefunden"
 
 #: admin/spirit.php:498 admin/spirit.php:519
 msgid "No played games found missing Spiritkeeper submissions!"
-msgstr "Keine gespielten Spiele mit fehlenden Spiritkeeper-Einreichungen gefunden!"
+msgstr ""
+"Keine gespielten Spiele mit fehlenden Spiritkeeper-Einreichungen gefunden!"
 
 #: user/adddefensesheet.php:186 user/adddefensesheet.php:189
 #, php-format
@@ -3836,7 +3868,9 @@ msgstr "Siegpunkte Gegner"
 
 #: user/addspirit.php:25
 msgid "Optional - add context for spirit points given (no blame)."
-msgstr "Optional: Kontext zu den vergebenen Spirit-Punkten hinzufuegen (ohne Schuldzuweisung)."
+msgstr ""
+"Optional: Kontext zu den vergebenen Spirit-Punkten hinzufuegen (ohne "
+"Schuldzuweisung)."
 
 #: mobile/addcomment.php:37 scorekeeper/addcomment.php:36
 #: user/addscoresheet.php:477
@@ -3954,7 +3988,8 @@ msgstr "Die Spieluhr fuer diese Spirit-Unterbrechung anhalten?"
 
 #: scorekeeper/addscoresheet.php:538
 msgid "Pause the game clock? Use this only for exceptional stoppages."
-msgstr "Spieluhr anhalten? Nur bei aussergewoehnlichen Unterbrechungen verwenden."
+msgstr ""
+"Spieluhr anhalten? Nur bei aussergewoehnlichen Unterbrechungen verwenden."
 
 #: admin/schedule.php:277
 #, php-format
@@ -4130,10 +4165,10 @@ msgid ""
 "name or part of it and press the Search button. Select the correct player "
 "from the dialog and press the Confirm button."
 msgstr ""
-"Spieler, die bereits ein Profil in Ultiorganizer haben: Gib den vollstaendigen "
-"Spielernamen oder einen Teil davon ein und druecke die Schaltflaeche Suchen. "
-"Waehle den richtigen Spieler im Dialog aus und druecke die Schaltflaeche "
-"Bestaetigen."
+"Spieler, die bereits ein Profil in Ultiorganizer haben: Gib den "
+"vollstaendigen Spielernamen oder einen Teil davon ein und druecke die "
+"Schaltflaeche Suchen. Waehle den richtigen Spieler im Dialog aus und druecke "
+"die Schaltflaeche Bestaetigen."
 
 #: admin/accreditation.php:191
 msgid "Players without membership Id"
@@ -4456,7 +4491,8 @@ msgstr "Alle Spiele entfernen"
 
 #: admin/addseasons.php:375
 msgid "Removes point/defence time input fields from scorekeeper sheets."
-msgstr "Entfernt Eingabefelder fuer Punkt-/Defense-Zeiten aus den Scorekeeper-Boegen."
+msgstr ""
+"Entfernt Eingabefelder fuer Punkt-/Defense-Zeiten aus den Scorekeeper-Boegen."
 
 #: admin/dbequalize.php:233
 msgid "Rename selected"
@@ -4769,7 +4805,7 @@ msgstr "Spirit-Einstellungen speichern"
 msgid "Save again"
 msgstr "Erneut speichern"
 
-#: mobile/addresult.php:51 scorekeeper/addresult.php:70 user/addresult.php:113
+#: mobile/addresult.php:51 scorekeeper/addresult.php:70 user/addresult.php:121
 msgid "Save as final result"
 msgstr "Endergebnis speichern"
 
@@ -5201,8 +5237,8 @@ msgid ""
 "Selects the spirit scoring model used by the event. Set this to empty to "
 "disable spirit scoring entirely."
 msgstr ""
-"Waehlt das vom Ereignis verwendete Spirit-Bewertungsmodell. Leer lassen, "
-"um die Spirit-Bewertung vollstaendig zu deaktivieren."
+"Waehlt das vom Ereignis verwendete Spirit-Bewertungsmodell. Leer lassen, um "
+"die Spirit-Bewertung vollstaendig zu deaktivieren."
 
 #: admin/sms.php:67
 msgid "Sent"
@@ -5385,8 +5421,8 @@ msgid ""
 "been created."
 msgstr ""
 "Der Spirit-Modus aktiviert die Spirit-Bewertung fuer das Ereignis. "
-"Detaillierte Sichtbarkeits- und Sperreinstellungen sind in der Spirit-"
-"Admin-Ansicht verfuegbar, nachdem das Ereignis erstellt wurde."
+"Detaillierte Sichtbarkeits- und Sperreinstellungen sind in der Spirit-Admin-"
+"Ansicht verfuegbar, nachdem das Ereignis erstellt wurde."
 
 #: gameplay.php:612 gameplay.php:616 user/addspirit.php:109
 #: user/addspirit.php:124 user/addspirit.php:135
@@ -5726,6 +5762,21 @@ msgstr "Teams gespeichert"
 msgid "Template"
 msgstr "Vorlage"
 
+#: user/addresult.php:106
+#, php-format
+msgid ""
+"The away team is the BYE team. You should use the suggested result: %s - %s"
+msgstr ""
+"Das Auswaertsteam ist das BYE-Team. Verwende das vorgeschlagene Resultat: %s "
+"- %s"
+
+#: user/addresult.php:99
+#, php-format
+msgid ""
+"The home team is the BYE team. You should use the suggested result: %s - %s"
+msgstr ""
+"Das Heimteam ist das BYE-Team. Verwende das vorgeschlagene Resultat: %s - %s"
+
 #: admin/translations.php:83
 msgid "The key is case insensitive"
 msgstr "Groß-/Kleinschreibung des Schlüssels ist wichtig"
@@ -5733,8 +5784,8 @@ msgstr "Groß-/Kleinschreibung des Schlüssels ist wichtig"
 #: admin/translations.php:82
 msgid "The key is replaced with the text in the user-selected locale."
 msgstr ""
-"Der Schluessel wird durch den Text in der vom Benutzer ausgewaehlten "
-"Sprache ersetzt."
+"Der Schluessel wird durch den Text in der vom Benutzer ausgewaehlten Sprache "
+"ersetzt."
 
 #: menufunctions.php:245
 msgid "The legacy mobile administration interface is deprecated."
@@ -5790,9 +5841,8 @@ msgid ""
 "These transfer times are used during schedule validation to detect conflicts "
 "between consecutive games on different fields."
 msgstr ""
-"Diese Wechselzeiten werden bei der Spielplanpruefung verwendet, um "
-"Konflikte zwischen aufeinanderfolgenden Spielen auf verschiedenen Feldern "
-"zu erkennen."
+"Diese Wechselzeiten werden bei der Spielplanpruefung verwendet, um Konflikte "
+"zwischen aufeinanderfolgenden Spielen auf verschiedenen Feldern zu erkennen."
 
 #: statistics.php:94
 msgid "Third"
@@ -5910,8 +5960,8 @@ msgid ""
 "Timeouts: write the game time when it was called. Game time does not stop "
 "during timeouts."
 msgstr ""
-"Auszeiten: Trage die Spielzeit ein, zu der sie genommen wurde. Die "
-"Spielzeit laeuft waehrend Auszeiten nicht an."
+"Auszeiten: Trage die Spielzeit ein, zu der sie genommen wurde. Die Spielzeit "
+"laeuft waehrend Auszeiten nicht an."
 
 #: admin/addseasons.php:393 admin/seasonadmin.php:53
 #: lib/timetable.functions.php:613
@@ -5975,9 +6025,8 @@ msgid ""
 "To search for teams that received high/low <b>total scores</b> enter a "
 "threshold and press the appropriate button:"
 msgstr ""
-"Um nach Teams zu suchen, die hohe/niedrige <b>Gesamtpunktzahlen</b> "
-"erhalten haben, gib einen Schwellenwert ein und druecke die passende "
-"Schaltflaeche:"
+"Um nach Teams zu suchen, die hohe/niedrige <b>Gesamtpunktzahlen</b> erhalten "
+"haben, gib einen Schwellenwert ein und druecke die passende Schaltflaeche:"
 
 #: admin/sms.php:63
 msgid "To1"
@@ -6161,7 +6210,9 @@ msgstr "Ultiorganizer links"
 
 #: admin/seasonteams.php:71
 msgid "Unable to add team. Please check the team details and pool setup."
-msgstr "Team konnte nicht hinzugefuegt werden. Bitte Teamdetails und Pool-Konfiguration pruefen."
+msgstr ""
+"Team konnte nicht hinzugefuegt werden. Bitte Teamdetails und Pool-"
+"Konfiguration pruefen."
 
 #: lib/search.functions.php:166 user/enrollteam.php:113 user/enrollteam.php:139
 msgid "Unconfirmed"
@@ -6190,7 +6241,9 @@ msgstr "Nicht im Spielplan"
 
 #: admin/dbrestore.php:25
 msgid "Unsupported backup format. Please upload a .gz or .sql file."
-msgstr "Nicht unterstuetztes Backup-Format. Bitte eine .gz- oder .sql-Datei hochladen."
+msgstr ""
+"Nicht unterstuetztes Backup-Format. Bitte eine .gz- oder .sql-Datei "
+"hochladen."
 
 #: user/userinfo.php:60
 msgid "Unsupported language:"
@@ -6341,10 +6394,6 @@ msgstr "Besucherzaehler zuletzt zurueckgesetzt: %s"
 msgid "Visitor statistics"
 msgstr "Besucherstatistik"
 
-#: scorekeeper/result.php:96
-msgid "Visitor team score"
-msgstr "Punkte Gastteam"
-
 #: admin/visitors.php:32
 msgid "Visitors"
 msgstr "Besucher"
@@ -6369,7 +6418,8 @@ msgstr "Warnung: Planungs-Konflikte auf Basis von Wechselzeiten erkannt."
 
 #: admin/saveschedule.php:152
 msgid "Warning: Scheduling conflicts detected due to overlapping game times."
-msgstr "Warnung: Planungs-Konflikte aufgrund ueberlappender Spielzeiten erkannt."
+msgstr ""
+"Warnung: Planungs-Konflikte aufgrund ueberlappender Spielzeiten erkannt."
 
 #: admin/dbadmin.php:54
 msgid ""
@@ -6400,8 +6450,8 @@ msgstr "Gewicht"
 #: cust/windmill/pdfprinter.php:235
 msgid "When a team takes a timeout, mark the time in the \"Timeouts\" section."
 msgstr ""
-"Wenn ein Team eine Auszeit nimmt, trage die Zeit im Abschnitt "
-"\"Auszeiten\" ein."
+"Wenn ein Team eine Auszeit nimmt, trage die Zeit im Abschnitt \"Auszeiten\" "
+"ein."
 
 #: admin/spiritsettings.php:85
 msgid ""
@@ -6422,10 +6472,10 @@ msgid ""
 "once, but cannot later edit or delete that team's spirit score or spirit "
 "comment. Season admins still bypass the lock."
 msgstr ""
-"Wenn aktiviert, koennen Team-Benutzer ihre eigene vollstaendige "
-"Spirit-Punktzahl einmal einreichen, spaeter aber weder die Spirit-Punktzahl "
-"noch den Spirit-Kommentar dieses Teams bearbeiten oder loeschen. "
-"Saison-Admins umgehen die Sperre weiterhin."
+"Wenn aktiviert, koennen Team-Benutzer ihre eigene vollstaendige Spirit-"
+"Punktzahl einmal einreichen, spaeter aber weder die Spirit-Punktzahl noch "
+"den Spirit-Kommentar dieses Teams bearbeiten oder loeschen. Saison-Admins "
+"umgehen die Sperre weiterhin."
 
 #: cust/bula/pdfprinter.php:234 cust/gummis/pdfprinter.php:249
 #: cust/windmill/pdfprinter.php:233
@@ -6556,6 +6606,14 @@ msgstr "um"
 #: admin/dbadmin.php:101 admin/dbbackup.php:106
 msgid "avg. row length"
 msgstr "Durschn. Zeilenlänge"
+
+#: cust/windmill/pdfprinter.php:111
+msgid "away score"
+msgstr "Punkte (Auswaerts)"
+
+#: mobile/gameplay.php:29
+msgid "away team"
+msgstr "Auswaertsteam"
 
 #: admin/poolgames.php:192 admin/poolgames.php:208 admin/seriesgames.php:93
 msgid "best"
@@ -6696,14 +6754,6 @@ msgstr "Punkt"
 #: admin/poolgames.php:47 admin/seasongames.php:74
 msgid "goals"
 msgstr "Punkte"
-
-#: cust/windmill/pdfprinter.php:111
-msgid "guest score"
-msgstr "Punkte (Gast)"
-
-#: mobile/gameplay.php:29
-msgid "guest team"
-msgstr "Gastteam"
 
 #: scorekeeper/addplayerlists.php:98
 msgid "has an invalid jersey number"
@@ -6953,8 +7003,7 @@ msgstr "Zeit kann nicht gleich dem Halbzeitende sein"
 #: mobile/addscoresheet.php:74 user/adddefensesheet.php:133
 #: user/addscoresheet.php:363
 msgid "time cannot be the same or earlier than the previous point"
-msgstr ""
-"Zeit kann nicht gleich oder frueher als beim vorherigen Punkt sein"
+msgstr "Zeit kann nicht gleich oder frueher als beim vorherigen Punkt sein"
 
 #: mobile/gameplay.php:54 scorekeeper/endgame.php:73
 #: scorekeeper/gameplay.php:46
@@ -6975,7 +7024,7 @@ msgstr "An Nummer +358404761685"
 msgid "turnover"
 msgstr "Turnover"
 
-#: user/addresult.php:105
+#: user/addresult.php:113
 msgid "update"
 msgstr "update"
 

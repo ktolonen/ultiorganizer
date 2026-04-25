@@ -108,7 +108,7 @@ class PDF extends tFPDF
 		$this->SetY(-23);
 		$data = _("After the match has ended, send SMS")." \"G ";
 		$data .= $this->game['game_id'];
-		$data .= " ["._("home score")."] ["._("guest score")."]\" ("._("without the quotes").") "._("to number +358404761685")."."; 
+		$data .= " ["._("home score")."] ["._("away score")."]\" ("._("without the quotes").") "._("to number +358404761685")."."; 
 		$data .= " "._("e.g.").": \"G ";
 		$data .= $this->game['game_id'];
 		$data .= " 16 21\""; 

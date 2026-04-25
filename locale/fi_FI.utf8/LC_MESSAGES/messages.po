@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-24 13:22+0300\n"
+"POT-Creation-Date: 2026-04-25 08:28+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -145,9 +145,8 @@ msgid ""
 "spam folder if it does not appear in your inbox."
 msgstr ""
 "Vahvistusviesti lähetetään heti annettuun sähköpostiosoitteeseen. Jotkin "
-"sähköpostiohjelmat saattavat virheellisesti suodattaa viestin "
-"roskapostiksi, joten tarkista roskapostikansio, jos viestiä ei näy "
-"saapuneissa."
+"sähköpostiohjelmat saattavat virheellisesti suodattaa viestin roskapostiksi, "
+"joten tarkista roskapostikansio, jos viestiä ei näy saapuneissa."
 
 #: allclubs.php:30 allclubs.php:32 allplayers.php:35 allplayers.php:37
 #: allteams.php:31 allteams.php:33
@@ -509,8 +508,8 @@ msgid ""
 "Allows non-admin users to see spirit comments when spirit scores themselves "
 "are visible for the game."
 msgstr ""
-"Sallii muiden kuin ylläpitäjien nähdä spirit-kommentit, kun itse "
-"spirit-pisteet ovat näkyvissä kyseisessä pelissä."
+"Sallii muiden kuin ylläpitäjien nähdä spirit-kommentit, kun itse spirit-"
+"pisteet ovat näkyvissä kyseisessä pelissä."
 
 #: admin/spiritsettings.php:75
 msgid ""
@@ -590,7 +589,9 @@ msgstr "Aikakentän erottimena voit käyttää "
 msgid ""
 "As a separator in the time field you can use any of the '.', ',', ':', or "
 "';' characters"
-msgstr "Aikakentän erottimena voit käyttää mitä tahansa merkeistä '.', ',', ':' tai ';'"
+msgstr ""
+"Aikakentän erottimena voit käyttää mitä tahansa merkeistä '.', ',', ':' tai "
+"';'"
 
 #: gameplay.php:206 cust/bula/pdfprinter.php:1053
 #: cust/default/pdfprinter.php:1008 cust/gummis/pdfprinter.php:1102
@@ -682,6 +683,10 @@ msgstr "Vierasjoukkueen spirit-keskeytykset"
 #: user/addscoresheet.php:461
 msgid "Away team"
 msgstr "Vierasjoukkue"
+
+#: scorekeeper/result.php:96
+msgid "Away team score"
+msgstr "Vierasjoukkueen pisteet"
 
 #: cust/bula/head.php:10
 msgid "BULA"
@@ -785,8 +790,7 @@ msgstr "Laske"
 msgid ""
 "Calculation of statistics takes some time; please wait without closing the "
 "browser."
-msgstr ""
-"Tilastojen laskeminen kestää jonkin aikaa. Odota sulkematta selainta."
+msgstr "Tilastojen laskeminen kestää jonkin aikaa. Odota sulkematta selainta."
 
 #: playercard.php:224 playercard.php:301 playercard.php:400 playercard.php:468
 #: scorestatus.php:101 scorestatus.php:103
@@ -936,8 +940,7 @@ msgstr "Tarkista sijoitukset %s. Sitten: %s"
 
 #: user/respgames.php:28
 msgid "Check the gameplay after feeding in the scoresheet"
-msgstr ""
-"Tarkista pelin kulku syötettyäsi pöytäkirjan"
+msgstr "Tarkista pelin kulku syötettyäsi pöytäkirjan"
 
 #: mobile/index.php:10 scorekeeper/login.php:6
 msgid "Check the username and password."
@@ -968,13 +971,15 @@ msgstr ""
 "Siivoa orvot rivit asettamalla tyhjät vierasavaimet arvoon NULL tai poista/"
 "siirrä alirivit toiseen kohteeseen."
 
-#: admin/dbequalize.php:238 user/addresult.php:108
+#: admin/dbequalize.php:238 user/addresult.php:116
 msgid "Clear"
 msgstr "Tyhjennä"
 
 #: user/respgames.php:27
 msgid "Click Mass input to enter multiple results at once, then click Save"
-msgstr "Paina Massasyöttöä syöttääksesi monta tulosta kerralla ja paina sitten Tallenna"
+msgstr ""
+"Paina Massasyöttöä syöttääksesi monta tulosta kerralla ja paina sitten "
+"Tallenna"
 
 #: admin/dbadmin.php:140
 msgid "Client Library version"
@@ -1175,8 +1180,8 @@ msgid ""
 "Controls visibility in navigation; does not change edit rights or API "
 "visibility."
 msgstr ""
-"Määrittää näkyvyyden navigaatiossa; ei muuta muokkausoikeuksia eikä "
-"API-näkyvyyttä."
+"Määrittää näkyvyyden navigaatiossa; ei muuta muokkausoikeuksia eikä API-"
+"näkyvyyttä."
 
 #: admin/dbadmin.php:31
 msgid "Conversion failed:"
@@ -1618,7 +1623,9 @@ msgstr "Päällekkäisyydet"
 
 #: admin/tdtools.php:53
 msgid "Duplicates found! (click the team name to edit the roster)"
-msgstr "Päällekkäisyyksiä löytyi! (muokkaa pelaajalistaa napsauttamalla joukkueen nimeä)"
+msgstr ""
+"Päällekkäisyyksiä löytyi! (muokkaa pelaajalistaa napsauttamalla joukkueen "
+"nimeä)"
 
 #: gameplay.php:208
 msgid "Dur."
@@ -1632,7 +1639,10 @@ msgid ""
 "time when the goal was scored, and the scoreline after the goal. If a player "
 "scores an intercept goal (Callahan), then mark XX as the assist."
 msgstr ""
-"Pelin aikana merkitse maalin tehnyt joukkue, syötön antaneen pelaajan pelinumero (Assist), maalin kiinniottaneen pelaajan pelinumero (Goal), maalin syntyaika sekä tilanne maalin jälkeen. Jos pelaaja tekee katkomaalin (Callahan), merkitse syöttäjäksi XX."
+"Pelin aikana merkitse maalin tehnyt joukkue, syötön antaneen pelaajan "
+"pelinumero (Assist), maalin kiinniottaneen pelaajan pelinumero (Goal), "
+"maalin syntyaika sekä tilanne maalin jälkeen. Jos pelaaja tekee katkomaalin "
+"(Callahan), merkitse syöttäjäksi XX."
 
 #: admin/addseasonpools.php:158 admin/addseasonseries.php:17
 #: admin/addseasonteams.php:101 admin/addserieformats.php:9
@@ -1932,7 +1942,8 @@ msgstr "Sähköpostiosoite vahvistettiin onnistuneesti"
 #: user/addextraemail.php:45
 msgid ""
 "Extra email could not be added. Please contact the system administrator."
-msgstr "Lisäsähköpostiosoitetta ei voitu lisätä. Ota yhteyttä järjestelmänvalvojaan."
+msgstr ""
+"Lisäsähköpostiosoitetta ei voitu lisätä. Ota yhteyttä järjestelmänvalvojaan."
 
 #: user/addextraemail.php:66 user/userinfo.php:256
 msgid "Extra emails"
@@ -1967,7 +1978,8 @@ msgid ""
 "Feeding in the scoresheet requires JavaScript. Please enable JavaScript in "
 "your browser to continue!"
 msgstr ""
-"Pöytäkirjan syöttäminen vaatii JavaScriptin. Ota JavaScript käyttöön selaimessasi jatkaaksesi."
+"Pöytäkirjan syöttäminen vaatii JavaScriptin. Ota JavaScript käyttöön "
+"selaimessasi jatkaaksesi."
 
 #: user/playerprofile.php:249 user/playerprofile.php:251
 msgid "Female"
@@ -2239,12 +2251,16 @@ msgstr "Peli #"
 #: admin/saveschedule.php:41
 #, php-format
 msgid "Game %1$s at %2$s (%3$s) conflicts with %4$s at %5$s (%6$s)."
-msgstr "Ottelu %1$s ajassa %2$s (%3$s) on ristiriidassa ottelun %4$s kanssa ajassa %5$s (%6$s)."
+msgstr ""
+"Ottelu %1$s ajassa %2$s (%3$s) on ristiriidassa ottelun %4$s kanssa ajassa "
+"%5$s (%6$s)."
 
 #: admin/saveschedule.php:31
 #, php-format
 msgid "Game %1$s at %2$s conflicts with %3$s at %4$s in %5$s."
-msgstr "Ottelu %1$s ajassa %2$s on ristiriidassa ottelun %3$s kanssa ajassa %4$s paikassa %5$s."
+msgstr ""
+"Ottelu %1$s ajassa %2$s on ristiriidassa ottelun %3$s kanssa ajassa %4$s "
+"paikassa %5$s."
 
 #: admin/saveschedule.php:81
 #, php-format
@@ -2510,7 +2526,9 @@ msgstr "Luo kaikki pelit"
 
 #: ext/export.php:26
 msgid "Get comma-separated UTF-8 encoded files by clicking the links below."
-msgstr "Lataa pilkulla erotetut UTF-8-koodatut tiedostot klikkaamalla alla olevia linkkejä."
+msgstr ""
+"Lataa pilkulla erotetut UTF-8-koodatut tiedostot klikkaamalla alla olevia "
+"linkkejä."
 
 #: user/addscoresheet.php:622
 msgid "Give XX as the assist in Callahan goals"
@@ -2832,7 +2850,7 @@ msgstr "Id2"
 msgid "If game ended:"
 msgstr "Jos peli loppui:"
 
-#: user/addresult.php:104
+#: user/addresult.php:112
 msgid "If game ongoing, update as current result: "
 msgstr "Jos peli on menossa, päivitä tilanne: "
 
@@ -2848,7 +2866,7 @@ msgstr ""
 "Jos sijoitukset eivät ole oikein, voit hiirellä raahata joukkueet oikeaan "
 "järjestykseen. Paina Tallenna sijoitukset tallentaaksesi sijoitukset."
 
-#: user/addresult.php:107
+#: user/addresult.php:115
 msgid "If this is all wrong, clear the result: "
 msgstr "Jos tämä on väärin, tyhjennä tulos: "
 
@@ -2857,7 +2875,8 @@ msgid ""
 "If you forgot your password, click the button below. A reset link will be "
 "sent to the email address you provided during registration."
 msgstr ""
-"Jos unohdit salasanasi, napsauta alla olevaa painiketta. Nollauslinkki lähetetään rekisteröitymisen yhteydessä antamaasi sähköpostiosoitteeseen."
+"Jos unohdit salasanasi, napsauta alla olevaa painiketta. Nollauslinkki "
+"lähetetään rekisteröitymisen yhteydessä antamaasi sähköpostiosoitteeseen."
 
 #: register.php:62 admin/adduser.php:59
 msgid "Illegal characters in the password"
@@ -2874,7 +2893,8 @@ msgstr "Kuva"
 #: lib/club.functions.php:227 lib/player.functions.php:990
 #: lib/team.functions.php:1358
 msgid "Image upload failed because the server could not process the image."
-msgstr "Kuvan lataaminen epäonnistui, koska palvelin ei pystynyt käsittelemään kuvaa."
+msgstr ""
+"Kuvan lataaminen epäonnistui, koska palvelin ei pystynyt käsittelemään kuvaa."
 
 #: admin/eventdataimport.php:66
 msgid "Import"
@@ -2897,8 +2917,8 @@ msgid ""
 "In addition to the Tab key, you can use the + key to move between fields and "
 "the Enter key to select a radio button."
 msgstr ""
-"Tab-näppäimen lisäksi voit käyttää +-näppäintä siirtymiseen kentästä "
-"toiseen ja Enter-näppäintä radiopainikkeen valintaan."
+"Tab-näppäimen lisäksi voit käyttää +-näppäintä siirtymiseen kentästä toiseen "
+"ja Enter-näppäintä radiopainikkeen valintaan."
 
 #: admin/addseasonusers.php:162 admin/addseasonusers.php:225
 msgid "In role of event admin"
@@ -3035,8 +3055,8 @@ msgid ""
 "Invalid username or password. Contact the system administrator if you need "
 "to reset your password."
 msgstr ""
-"Virheellinen käyttäjätunnus tai salasana. Ota yhteyttä järjestelmänvalvojaan, "
-"jos sinun täytyy nollata salasanasi."
+"Virheellinen käyttäjätunnus tai salasana. Ota yhteyttä "
+"järjestelmänvalvojaan, jos sinun täytyy nollata salasanasi."
 
 #: cust/default/pdfprinter.php:287 cust/slkl/pdfprinter.php:252
 #: scorekeeper/addplayerlists.php:146 user/addplayerlists.php:261
@@ -3121,7 +3141,8 @@ msgstr "Leveysaste"
 
 #: admin/addseasons.php:359
 msgid "Leave spirit mode empty if this event does not record spirit scores."
-msgstr "Jätä spirit-tila tyhjäksi, jos tässä tapahtumassa ei kirjata spirit-pisteitä."
+msgstr ""
+"Jätä spirit-tila tyhjäksi, jos tässä tapahtumassa ei kirjata spirit-pisteitä."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:194
 #: user/teamplayers.php:167
@@ -3381,7 +3402,9 @@ msgstr "Piste puuttuu %s. "
 
 #: admin/tdtools.php:17
 msgid "Missing shirt numbers found! (click the team name to edit the roster)"
-msgstr "Puuttuvia pelinumeroita löytyi! (muokkaa pelaajalistaa napsauttamalla joukkueen nimeä)"
+msgstr ""
+"Puuttuvia pelinumeroita löytyi! (muokkaa pelaajalistaa napsauttamalla "
+"joukkueen nimeä)"
 
 #: teams.php:405
 msgid "Missing spirit submissions"
@@ -3552,7 +3575,8 @@ msgid ""
 "New players: enter the jersey number, first name, and last name. Press the "
 "Add button."
 msgstr ""
-"Uudet pelaajat: syötä pelinumero, etunimi ja sukunimi. Paina Lisää-painiketta."
+"Uudet pelaajat: syötä pelinumero, etunimi ja sukunimi. Paina Lisää-"
+"painiketta."
 
 #: admin/addseasons.php:86
 msgid "New season added"
@@ -3937,7 +3961,8 @@ msgstr "Keskeytetäänkö pelikello tämän spirit-keskeytyksen ajaksi?"
 
 #: scorekeeper/addscoresheet.php:538
 msgid "Pause the game clock? Use this only for exceptional stoppages."
-msgstr "Keskeytetäänkö pelikello? Käytä tätä vain poikkeuksellisissa keskeytyksissä."
+msgstr ""
+"Keskeytetäänkö pelikello? Käytä tätä vain poikkeuksellisissa keskeytyksissä."
 
 #: admin/schedule.php:277
 #, php-format
@@ -4113,7 +4138,9 @@ msgid ""
 "name or part of it and press the Search button. Select the correct player "
 "from the dialog and press the Confirm button."
 msgstr ""
-"Pelaajat, joilla on jo profiili Ultiorganizerissa: syötä pelaajan koko nimi tai osa siitä ja paina Hae-painiketta. Valitse oikea pelaaja avautuvasta ikkunasta ja paina Vahvista-painiketta."
+"Pelaajat, joilla on jo profiili Ultiorganizerissa: syötä pelaajan koko nimi "
+"tai osa siitä ja paina Hae-painiketta. Valitse oikea pelaaja avautuvasta "
+"ikkunasta ja paina Vahvista-painiketta."
 
 #: admin/accreditation.php:191
 msgid "Players without membership Id"
@@ -4404,7 +4431,9 @@ msgstr "Rekisteröidyn käyttäjän tietosuojatyökalut"
 #: register.php:75
 msgid ""
 "Registration could not be completed. Please contact the system administrator."
-msgstr "Rekisteröitymistä ei voitu suorittaa loppuun. Ota yhteyttä järjestelmänvalvojaan."
+msgstr ""
+"Rekisteröitymistä ei voitu suorittaa loppuun. Ota yhteyttä "
+"järjestelmänvalvojaan."
 
 #: register.php:95
 msgid ""
@@ -4433,7 +4462,8 @@ msgstr "Poista kaikki pelit"
 
 #: admin/addseasons.php:375
 msgid "Removes point/defence time input fields from scorekeeper sheets."
-msgstr "Poistaa pisteen/puolustuksen ajan syöttökentät scorekeeper-lomakkeista."
+msgstr ""
+"Poistaa pisteen/puolustuksen ajan syöttökentät scorekeeper-lomakkeista."
 
 #: admin/dbequalize.php:233
 msgid "Rename selected"
@@ -4746,7 +4776,7 @@ msgstr "Tallenna spirit-asetukset"
 msgid "Save again"
 msgstr "Tallenna uudestaan"
 
-#: mobile/addresult.php:51 scorekeeper/addresult.php:70 user/addresult.php:113
+#: mobile/addresult.php:51 scorekeeper/addresult.php:70 user/addresult.php:121
 msgid "Save as final result"
 msgstr "Tallenna lopputulos"
 
@@ -5701,6 +5731,18 @@ msgstr "Joukkueet tallennettu"
 msgid "Template"
 msgstr "Pohja"
 
+#: user/addresult.php:106
+#, php-format
+msgid ""
+"The away team is the BYE team. You should use the suggested result: %s - %s"
+msgstr "Vierasjoukkue on BYE-joukkue. Kayta ehdotettua tulosta: %s - %s"
+
+#: user/addresult.php:99
+#, php-format
+msgid ""
+"The home team is the BYE team. You should use the suggested result: %s - %s"
+msgstr "Kotijoukkue on BYE-joukkue. Kayta ehdotettua tulosta: %s - %s"
+
 #: admin/translations.php:83
 msgid "The key is case insensitive"
 msgstr "Avain ei riipu kirjainkoosta"
@@ -5724,7 +5766,8 @@ msgstr ""
 
 #: admin/translations.php:81
 msgid "The translations are used to localize all user-provided text fields."
-msgstr "Käännöksiä käytetään lokalisoimaan kaikki käyttäjän syöttämät tekstikentät."
+msgstr ""
+"Käännöksiä käytetään lokalisoimaan kaikki käyttäjän syöttämät tekstikentät."
 
 #: register.php:30 admin/adduser.php:27
 msgid "The username is already in use"
@@ -5877,8 +5920,8 @@ msgid ""
 "Timeouts: write the game time when it was called. Game time does not stop "
 "during timeouts."
 msgstr ""
-"Aikalisät: merkitse peliaika, jolloin aikalisä otettiin. Peliaika ei "
-"pysähdy aikalisien aikana."
+"Aikalisät: merkitse peliaika, jolloin aikalisä otettiin. Peliaika ei pysähdy "
+"aikalisien aikana."
 
 #: admin/addseasons.php:393 admin/seasonadmin.php:53
 #: lib/timetable.functions.php:613
@@ -5941,8 +5984,8 @@ msgid ""
 "To search for teams that received high/low <b>total scores</b> enter a "
 "threshold and press the appropriate button:"
 msgstr ""
-"Hakeaksesi joukkueita, jotka saivat korkeat tai matalat <b>kokonaispisteet</b>, "
-"syötä raja-arvo ja paina sopivaa painiketta:"
+"Hakeaksesi joukkueita, jotka saivat korkeat tai matalat <b>kokonaispisteet</"
+"b>, syötä raja-arvo ja paina sopivaa painiketta:"
 
 #: admin/sms.php:63
 msgid "To1"
@@ -6088,7 +6131,8 @@ msgstr "URL"
 
 #: admin/spirit.php:458
 msgid "URLs for teams (for entering spirit scores in Spiritkeeper)"
-msgstr "Joukkueiden URL-osoitteet (spirit-pisteiden syöttämiseen Spiritkeeperissä)"
+msgstr ""
+"Joukkueiden URL-osoitteet (spirit-pisteiden syöttämiseen Spiritkeeperissä)"
 
 #: cust/slkl/head.php:21
 msgid "Ultimate Pelikone"
@@ -6306,10 +6350,6 @@ msgstr "Kävijälaskuri viimeiksi nollattu: %s"
 msgid "Visitor statistics"
 msgstr "Vierailutilastot"
 
-#: scorekeeper/result.php:96
-msgid "Visitor team score"
-msgstr "Vierasjoukkueen pisteet"
-
 #: admin/visitors.php:32
 msgid "Visitors"
 msgstr "Vierailijat"
@@ -6324,7 +6364,8 @@ msgid ""
 "Warning: Games with a duration of 0 minutes were found. They cannot be "
 "scheduled. Edit the game duration or the time slot length in %s."
 msgstr ""
-"Varoitus: Löytyi otteluita, joiden kesto on 0 minuuttia. Niitä ei voida aikatauluttaa. Muokkaa ottelun kestoa tai aikavarauksen pituutta kohdassa %s."
+"Varoitus: Löytyi otteluita, joiden kesto on 0 minuuttia. Niitä ei voida "
+"aikatauluttaa. Muokkaa ottelun kestoa tai aikavarauksen pituutta kohdassa %s."
 
 #: admin/saveschedule.php:160
 msgid "Warning: Scheduling conflicts detected based on transfer times."
@@ -6332,15 +6373,17 @@ msgstr "Varoitus: Siirtymäaikoihin perustuvia aikatauluristiriitoja havaittu."
 
 #: admin/saveschedule.php:152
 msgid "Warning: Scheduling conflicts detected due to overlapping game times."
-msgstr "Varoitus: Päällekkäisistä otteluajoista johtuvia aikatauluristiriitoja havaittu."
+msgstr ""
+"Varoitus: Päällekkäisistä otteluajoista johtuvia aikatauluristiriitoja "
+"havaittu."
 
 #: admin/dbadmin.php:54
 msgid ""
 "Warning: Some tables are not using InnoDB. Consider converting to InnoDB/"
 "utf8mb4 for reliability, performance, and future-proofing."
 msgstr ""
-"Varoitus: kaikki taulut eivät käytä InnoDB:tä. Harkitse muuntamista "
-"InnoDB/utf8mb4-muotoon luotettavuuden, suorituskyvyn ja tulevaisuuden "
+"Varoitus: kaikki taulut eivät käytä InnoDB:tä. Harkitse muuntamista InnoDB/"
+"utf8mb4-muotoon luotettavuuden, suorituskyvyn ja tulevaisuuden "
 "yhteensopivuuden vuoksi."
 
 #: ext/eventpools.php:131
@@ -6369,9 +6412,9 @@ msgid ""
 "When enabled, non-admin spirit views and spirit-based averages only include "
 "games where both teams have submitted complete spirit scores."
 msgstr ""
-"Kun tämä on käytössä, muiden kuin ylläpitäjien spirit-näkymät ja "
-"spirit-pohjaiset keskiarvot sisältävät vain pelit, joissa molemmat joukkueet "
-"ovat lähettäneet täydelliset spirit-pisteet."
+"Kun tämä on käytössä, muiden kuin ylläpitäjien spirit-näkymät ja spirit-"
+"pohjaiset keskiarvot sisältävät vain pelit, joissa molemmat joukkueet ovat "
+"lähettäneet täydelliset spirit-pisteet."
 
 #: admin/addseasons.php:438
 msgid "When enabled, only superadmin can edit this event."
@@ -6517,6 +6560,14 @@ msgstr "ajassa"
 msgid "avg. row length"
 msgstr "ka. rivipituus"
 
+#: cust/windmill/pdfprinter.php:111
+msgid "away score"
+msgstr "vieraspisteet"
+
+#: mobile/gameplay.php:29
+msgid "away team"
+msgstr "vierasjoukkue"
+
 #: admin/poolgames.php:192 admin/poolgames.php:208 admin/seriesgames.php:93
 msgid "best"
 msgstr "paras"
@@ -6656,14 +6707,6 @@ msgstr "maali"
 #: admin/poolgames.php:47 admin/seasongames.php:74
 msgid "goals"
 msgstr "maalia"
-
-#: cust/windmill/pdfprinter.php:111
-msgid "guest score"
-msgstr "vieraspisteet"
-
-#: mobile/gameplay.php:29
-msgid "guest team"
-msgstr "vierasjoukkue"
 
 #: scorekeeper/addplayerlists.php:98
 msgid "has an invalid jersey number"
@@ -6934,7 +6977,7 @@ msgstr "numeroon +358415819744"
 msgid "turnover"
 msgstr "kiekonmenetys"
 
-#: user/addresult.php:105
+#: user/addresult.php:113
 msgid "update"
 msgstr "päivitä"
 

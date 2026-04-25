@@ -95,10 +95,18 @@ $html .= "<tr>
 
 if ($game_result['homevalid'] == 2) {
 	$poolInfo = PoolInfo($game_result['pool']);
-	$html .= "<p>" . "The home team is the BYE team. You should use the suggested result: " . $poolInfo['forfeitagainst'] . " - " . $poolInfo['forfeitscore'] . "</p>";
+	$html .= "<p>" . sprintf(
+		_("The home team is the BYE team. You should use the suggested result: %s - %s"),
+		$poolInfo['forfeitagainst'],
+		$poolInfo['forfeitscore']
+	) . "</p>";
 } elseif ($game_result['visitorvalid'] == 2) {
 	$poolInfo = PoolInfo($game_result['pool']);
-	$html .= "<p>" . "The visitor team is the BYE team. You should use the suggested result: " . $poolInfo['forfeitscore'] . " - " . $poolInfo['forfeitagainst'] . "</p>";
+	$html .= "<p>" . sprintf(
+		_("The away team is the BYE team. You should use the suggested result: %s - %s"),
+		$poolInfo['forfeitscore'],
+		$poolInfo['forfeitagainst']
+	) . "</p>";
 }
 
 $html .= "<p>" . _("If game ongoing, update as current result: ") . "    

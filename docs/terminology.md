@@ -23,8 +23,8 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 | Team | Competitive team in a game, pool, or division. | |
 | Roster | List of players for a team or for a game-specific played roster. | The detailed scoresheet uses a game-specific played roster. |
 | Game | Scheduled contest between two teams. | Main aggregate state lives on `uo_game`. |
-| Result | Aggregate game state expressed as the home and visitor score. | Use for current or final game result. |
-| Score | Numeric side of a result. | Use for aggregate score values such as home score and visitor score. |
+| Result | Aggregate game state expressed as the home and away score. | Use for current or final game result. |
+| Score | Numeric side of a result. | Use for aggregate score values such as home score and away score. |
 | Point | One scoring sequence in the detailed scoresheet flow. | In practice, detailed point data is stored as goal rows. |
 | Goal | Recorded scoring event in a game. | Detailed goal rows live in `uo_goal`. |
 | Assist | Final pass credited on a goal. | |

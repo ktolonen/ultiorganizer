@@ -93,7 +93,7 @@ if (!empty($_POST['save']) && empty($errors)) {
   $html .= "<label for='home'>" . _("Home team score") . ":</label>";
   $html .= "<input type='number' id='home' name='home' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
 
-  $html .= "<label for='away'>" . _("Visitor team score") . ":</label>";
+  $html .= "<label for='away'>" . _("Away team score") . ":</label>";
   $html .= "<input type='number' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
   
   $html .= "<div class='form-actions'>";

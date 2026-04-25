@@ -116,7 +116,7 @@ The spirit-specific logic is implemented in [lib/spirit.functions.php](../lib/sp
 
 - Users with `HasFullGameSpiritEditRight($gameId)` can edit either team’s submission.
 - Otherwise, the user must have `hasEditPlayersRight()` for the opposing team.
-  Example: editing the home team’s spirit submission requires player-edit rights for the visitor team.
+  Example: editing the home team’s spirit submission requires player-edit rights for the away team.
 - If `lockteamspiritonsubmit` is enabled and that team already has a complete spirit submission, editing is blocked.
 
 `CanDeleteSpiritSubmission($gameId, $teamId)` requires `HasFullGameSpiritEditRight($gameId)`. Team-scoped submitters cannot delete submissions unless they also have full spirit edit rights.

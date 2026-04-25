@@ -26,7 +26,7 @@ if (count($goals) <= 0) {
 	$html .=  "<a href='?view=mobile/addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a>";
 } else {
 	$html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "'>" . _("home team") . "</a> | ";
-	$html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "'>" . _("guest team") . "</a>";
+	$html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "'>" . _("away team") . "</a>";
 
 	$prevgoal = 0;
 	foreach ($goals as $goal) {
