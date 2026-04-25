@@ -921,22 +921,6 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('ReadOnlyServer', 'false', 11),
 	('DisableVisitorLogging', 'false', 12);
 
-CREATE TABLE IF NOT EXISTS `uo_sms` (
-  `sms_id` int(10) NOT NULL AUTO_INCREMENT,
-  `to1` int(15) NOT NULL,
-  `to2` int(15) DEFAULT NULL,
-  `to3` int(15) DEFAULT NULL,
-  `to4` int(15) DEFAULT NULL,
-  `to5` int(15) DEFAULT NULL,
-  `msg` varchar(400) DEFAULT NULL,
-  `created` timestamp NULL DEFAULT current_timestamp(),
-  `click_id` int(10) DEFAULT NULL,
-  `sent` datetime DEFAULT NULL,
-  `delivered` datetime DEFAULT NULL,
-  PRIMARY KEY (`sms_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-
 CREATE TABLE IF NOT EXISTS `uo_specialranking` (
   `frompool` int(10) NOT NULL,
   `fromplacing` int(5) NOT NULL,

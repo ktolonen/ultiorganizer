@@ -54,7 +54,6 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `lib/seasonpoints.functions.php`: season-points round CRUD, round scoring, and per-series totals.
 - `lib/series.functions.php`: series CRUD, team enrollment, series scoreboards, related games/pools, and team copy helpers.
 - `lib/session.functions.php`: secure session start/regenerate/destroy helpers and HTTPS detection.
-- `lib/sms.functions.php`: SMS queue/list access and send wrapper.
 - `lib/spirit.functions.php`: spirit mode/category config, submission/token flows, visibility rules, Spiritkeeper helpers, aggregates, rebuilds, and CSV export.
 - `lib/standings.functions.php`: pool standings resolution, tie-breakers, swiss ranking, and standings lookup helpers.
 - `lib/statistical.functions.php`: precomputed season/series/team/player stats reads and stat rebuild routines.

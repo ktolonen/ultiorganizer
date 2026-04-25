@@ -104,20 +104,6 @@ class PDF extends tFPDF
 		$this->SetFillColor(255);
 		$this->MultiCell(0,2,$data);
 		$this->Image("cust/bula/wcbu-logo.gif",30,255);
-		/*
-		$this->SetY(-23);
-		$data = _("After the match has ended, send SMS")." \"G ";
-		$data .= $this->game['game_id'];
-		$data .= " ["._("home score")."] ["._("away score")."]\" ("._("without the quotes").") "._("to number +358404761685")."."; 
-		$data .= " "._("e.g.").": \"G ";
-		$data .= $this->game['game_id'];
-		$data .= " 16 21\""; 
-		$data = $this->pdfText($data);
-		$this->SetFont('Arial','',8);
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
-		$this->MultiCell(0,2,$data);
-		*/
 		}
 
 	//Playerlist array("name"=>name, "accredited"=>accredited, "num"=>number)
