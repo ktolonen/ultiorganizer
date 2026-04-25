@@ -24,7 +24,7 @@ This page mirrors the current API guidance from `AGENTS.md`.
 
 ## Documentation
 
-OpenAPI documentation should live alongside the API, for example `/api/openapi.yaml`.
+OpenAPI documentation lives alongside the API in `api/openapi.json`.
 
 ## Access and examples
 

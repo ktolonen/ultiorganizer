@@ -15,6 +15,7 @@ const APP_SCOPE_PREFIXES = array(
     'ext/',
     'login/',
     'api/',
+    'plugins/',
 );
 
 const INFRASTRUCTURE_EXEMPTIONS = array(
@@ -295,7 +296,7 @@ function scanAppFile(string $repoRoot, string $path, bool $allowlisted, array &$
             }
         }
 
-        if (preg_match_all('/\b(DBQuery|DBPrepare|DBStmt[A-Za-z0-9_]*|DBQueryTo[A-Za-z0-9_]+|DBFetch[A-Za-z0-9_]+|DBNumRows|DBDataSeek|DBInsertId)\s*\(/', $line, $matches, PREG_SET_ORDER)) {
+        if (preg_match_all('/\b(DBQuery|DBQueryInsert|DBQueryRowCount|DBPrepare|DBStmt[A-Za-z0-9_]*|DBQueryTo[A-Za-z0-9_]+|DBFetch[A-Za-z0-9_]+|DBResourceToArray|DBSetRow|DBNumRows|DBDataSeek|DBInsertId|DBField[A-Za-z0-9_]*)\s*\(/', $line, $matches, PREG_SET_ORDER)) {
             foreach ($matches as $match) {
                 addFinding(
                     $report,

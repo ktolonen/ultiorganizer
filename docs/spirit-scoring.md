@@ -36,8 +36,8 @@ Keep those separate when planning changes. The repository does not yet implement
 These are the operating principles Bruno described from WFDF events and Spirit Director workflows.
 
 - If logged in as admin, all spirit scores and comments should be visible immediately.
-- New role needed for spirit admin (= spirit director) to see and control spirit related fucntionality.
-- There should be a new spirit menu on event menu. This should contain spirit related tools from td-tools and spirit board.
+- New role needed for spirit admin (= Spirit Director) to see and control spirit-related functionality.
+- There should be a new spirit menu on the event menu. This should contain spirit-related tools from td-tools and spirit board.
 - For non-admin users, spirit scores should normally become visible only after both teams have submitted their scores for the game.
 - A single submitted score should not make a game visible publicly and should not enter public averages yet.
 - Public spirit averages should be calculated only from games where both teams have submitted.
@@ -51,7 +51,7 @@ These are the operating principles Bruno described from WFDF events and Spirit D
 
 ## Required Configuration Surface
 
-Use the exact type names from [configuration-flags.md](/home/kari/code/ultiorganizer/docs/configuration-flags.md).
+Use the exact type names from [configuration-flags.md](configuration-flags.md).
 
 ### Existing settings
 

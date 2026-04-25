@@ -18,7 +18,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `cust/`: skins and installation-specific customizations.
 - `mobile/`, `scorekeeper/`, `spiritkeeper/`, `login/`, `ext/`: specialized entry points. `mobile/` is a deprecated legacy interface kept for compatibility; `scorekeeper/` and `spiritkeeper/` are the supported replacements.
 - `images/`, `locale/`, `plugins/`: static assets, translations, and plugin code.
-- `live/`, `script/`: live-service and maintenance scripts.
+- `script/`: client-side JavaScript assets.
 - `conf/`: server configuration; keep writable only during install.
 - `sql/`: schema and upgrade assets.
 
@@ -42,11 +42,13 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `lib/debug.functions.php`: lightweight debug print helpers.
 - `lib/game.functions.php`: game CRUD, results, scoresheet events, media links, player assignments, scheduling, live timing, and spirit table output.
 - `lib/image.functions.php`: uploaded image lookup/removal plus JPEG conversion and thumbnail generation.
+- `lib/include_only.guard.php`: include-time guard for files that must not be invoked directly.
 - `lib/location.functions.php`: location CRUD, search payloads, and localized location info text.
 - `lib/logging.functions.php`: audit/event logs, visitor/page-load logs, and helper log writers per domain action.
 - `lib/player.functions.php`: player/profile CRUD, roster/profile sync, player stats, profile media, and CSV export.
 - `lib/plugin.functions.php`: plugin manifest lookup by category/type/format.
 - `lib/pool.functions.php`: pool/template CRUD, pool teams and games, standings-derived moves, playoff generation, swiss helpers, and CSV export.
+- `lib/privacy.functions.php`: privacy export, anonymization, deletion, and audit helpers for registered-user and player data.
 - `lib/reservation.functions.php`: reservation/field CRUD, scheduled-game lookups, unscheduled-team helpers, and delete checks.
 - `lib/search.functions.php`: reusable search form builders and result renderers for seasons, series, pools, teams, users, players, reservations, and games.
 - `lib/season.functions.php`: season CRUD, season relations, reservations, admins/roles, readonly mode, and deletion checks.
@@ -62,6 +64,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `lib/translation.functions.php`: DB-backed translation loading, CRUD, autocomplete translation helpers, and translated field widgets.
 - `lib/url.functions.php`: generic URL/media/mail CRUD for owners and game media lookups.
 - `lib/user.functions.php`: authentication, password hashing/reset, registration/email confirmation, session setup, user roles, permission checks, and responsibility helpers.
+- `lib/view.guard.php`: include-time view guard for routed pages.
 - `lib/yui.functions.php`: thin wrapper for loading YUI assets.
 
 ### 3rd party libraries
@@ -99,6 +102,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 
 - `docs/README.md`: index of project documentation under `docs/`.
 - `docs/local-development.md`: local Docker-based setup.
+- `docs/dev/`: Docker Compose assets and image definitions used by the local development guide.
 - `docs/database-upgrades.md`: schema and migration workflow.
 - `docs/database-access.md`: database access boundaries, allowed helper layers, migration guidance, and checker behavior.
 - `docs/configuration-flags.md`: configuration taxonomy and migration rules. Use the exact type names `SYSTEM_FLAG`, `INSTALLATION_SETTING`, and `EVENT_SETTING`.

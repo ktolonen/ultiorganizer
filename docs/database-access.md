@@ -25,11 +25,12 @@ The following locations are treated as public or app entrypoints:
 - `ext/`
 - `login/`
 - `api/`
+- `plugins/`
 
 Files in these locations must not:
 
 - call `mysqli_*` functions directly
-- call low-level wrappers such as `DBQuery`, `DBPrepare`, `DBStmt*`, `DBQueryTo*`, `DBFetch*`, `DBNumRows`, `DBDataSeek`, or `DBInsertId`
+- call low-level wrappers such as `DBQuery`, `DBQueryInsert`, `DBQueryRowCount`, `DBPrepare`, `DBStmt*`, `DBQueryTo*`, `DBFetch*`, `DBResourceToArray`, `DBSetRow`, `DBNumRows`, `DBDataSeek`, `DBInsertId`, or `DBField*`
 
 Instead, they should call domain helpers from `lib/*.functions.php` and work with normal PHP values.
 
@@ -44,7 +45,7 @@ Instead, they should call domain helpers from `lib/*.functions.php` and work wit
   - `DBQueryToArray()` for a list of rows
 - `DBQuery()` should be reserved for cases where a cursor-style result is truly needed.
 
-The long-term goal is to keep direct `mysqli_*` usage inside [lib/database.php](/home/kari/code/ultiorganizer/lib/database.php) and a small number of documented legacy exceptions while existing cursor-heavy helpers are migrated.
+The long-term goal is to keep direct `mysqli_*` usage inside [lib/database.php](../lib/database.php) and a small number of documented legacy exceptions while existing cursor-heavy helpers are migrated.
 
 ## Exception Categories
 

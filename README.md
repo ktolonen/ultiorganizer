@@ -8,18 +8,21 @@ The repository is organized as follows:
 
 * **Repo root PHP pages** Public pages are routed through `index.php` with the `view` parameter.
 * **user** Logged-in user pages such as teams, results, and related tools.
-* **admin** Administrator pages for series and event management.
+* **admin** Administrator pages for division and event management.
 * **lib** Shared utilities and SQL-backed data access.
 * **api** JSON API entry points and versioned routing.
 * **cust** Skins and installation-specific customizations.
+* **login** Authentication and password reset entry points.
 * **mobile**, **scorekeeper**, **spiritkeeper**, **ext** Specialized entry points. `mobile/` is legacy and deprecated; `scorekeeper/` and `spiritkeeper/` are the supported replacements for the old mobile administration UI.
+* **images**, **locale**, **plugins** Static assets, translations, and plugin code.
+* **script** Client-side JavaScript assets.
 * **conf**, **sql** Configuration and database assets that should not be exposed by the web server.
 
 Additional documentation lives under:
 
-* **docs/** General project documentation
+* **docs/** General project documentation and repo-local AI review/fix skills
 
-The `docs/ai/` directory is reserved for future AI assets or automation files. Current markdown documentation lives under `docs/`.
+Current markdown documentation lives under `docs/`. Repo-local AI assets and skills live under `docs/ai/`.
 
 ## Installation
 
