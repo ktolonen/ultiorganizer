@@ -39,6 +39,53 @@ class PDF extends tFPDF
 			{
 			return (string)$text;
 			}
+
+		private function onePageScheduleGridBounds($times)
+			{
+			$firstTime = null;
+			$lastTime = null;
+			foreach ($times as $time) {
+				$timestamp = strtotime($time['time'] ?? '');
+				if ($timestamp === false) {
+					continue;
+				}
+				if ($firstTime === null || $timestamp < $firstTime) {
+					$firstTime = $timestamp;
+				}
+				if ($lastTime === null || $timestamp > $lastTime) {
+					$lastTime = $timestamp;
+				}
+			}
+			if ($firstTime === null) {
+				return array(9, 0, 13 * 60 + 1);
+			}
+			$startTimestamp = strtotime(date('Y-m-d H:00:00', $firstTime));
+			$endTimestamp = max($startTimestamp + 13 * 60 * 60, $lastTime + 2 * 60 * 60);
+			return array((int)date('G', $startTimestamp), 0, (int)ceil(($endTimestamp - $startTimestamp) / 60) + 1);
+			}
+
+		private function onePageScheduleFieldKey($game)
+			{
+			$field = trim((string)($game['fieldname'] ?? ''));
+			$location = "";
+			if (!empty($game['place_id'])) {
+				$location = "id:" . $game['place_id'];
+			} elseif (trim((string)($game['placename'] ?? '')) !== '') {
+				$location = "name:" . trim((string)$game['placename']);
+			}
+			return $location . "|" . $field;
+			}
+
+		private function onePageScheduleFitCell($width, $height, $text, $border, $ln, $align, $style, $maxSize, $fill = true, $minSize = 6)
+			{
+			$text = $this->pdfText($text);
+			$fontsize = $maxSize;
+			$this->SetFont('Arial', $style, $fontsize);
+			while ($this->GetStringWidth($text) > $width - 2 && $fontsize > $minSize) {
+				$this->SetFont('Arial', $style, --$fontsize);
+			}
+			$this->Cell($width, $height, $text, $border, $ln, $align, $fill);
+			}
 		
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename)
 			{
@@ -456,9 +503,12 @@ class PDF extends tFPDF
 		$g = 0;
 		foreach($games as $game){
 			$g++;
+			if (trim((string)($game['fieldname'] ?? '')) === '' || empty($game['time'])) {
+				continue;
+			}
 			
 			//one reservation group per page
-			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament || $prevDate != JustDate($game['starttime'])) {
+			if($game['reservationgroup'] != $prevTournament || $prevDate != JustDate($game['starttime'])) {
 				$this->AddPage("L","A3");
 				
 				$title = $this->pdfText(SeasonName($id));
@@ -470,8 +520,16 @@ class PDF extends tFPDF
 				$times = TimetableTimeslots($game['reservationgroup'],$id);
 				$timeslots = array();
 				
-				$startslot = floor(strtotime($times[0]['time']) / 60 / 30) * 30 * 60;
-				$endslot = ceil(strtotime($times[count($times) - 1]['time']) / 60 / 30) * 30 * 60;
+				$startslot = floor(strtotime($game['time']) / 60 / 30) * 30 * 60;
+				$endslot = ceil(strtotime($game['time']) / 60 / 30) * 30 * 60;
+				foreach ($times as $time) {
+					$timestamp = strtotime($time['time']);
+					if ($timestamp === false || JustDate($time['time']) != JustDate($game['starttime'])) {
+						continue;
+					}
+					$startslot = min($startslot, floor($timestamp / 60 / 30) * 30 * 60);
+					$endslot = max($endslot, ceil($timestamp / 60 / 30) * 30 * 60);
+				}
 				$numslots = ($endslot - $startslot) / 60 / 30 + 2;
 
 				$fieldstotal = TimetableFields($game['reservationgroup'], $id);
@@ -516,7 +574,8 @@ class PDF extends tFPDF
 			}
 			
 			//next field
-			if(!empty($game['place_id']) && $game['place_id'] != $prevPlace || $game['fieldname'] != $prevField){
+			$fieldKey = $this->onePageScheduleFieldKey($game);
+			if($fieldKey != $prevField){
 				$field++;
 
 				if($field > $fieldlimit){
@@ -548,13 +607,16 @@ class PDF extends tFPDF
 				$this->SetTextColor(0);
 				$this->SetFillColor(190);
 				
-				$txt = $this->pdfText(_("Field")." ".$game['fieldname']);
-				$this->Cell($gridx,$yfieldtitle/2,$txt,"LRT",2,'C',true);
-				
-				$this->SetFont('Arial','',8);
-				$this->SetTextColor(0);
-				$txt = $this->pdfText($game['placename']);
-				$this->Cell($gridx,$yfieldtitle/2,$txt,"LR",2,'C',true);
+				$fieldTitle = $this->pdfText(_("Field")." ".$game['fieldname']);
+				$placeTitle = $this->pdfText($game['placename'] ?? '');
+				if ($placeTitle !== '') {
+					$this->onePageScheduleFitCell($gridx,$yfieldtitle/2,$fieldTitle,"LRT",2,'C','B',10,true);
+					$this->SetFont('Arial','',8);
+					$this->SetTextColor(0);
+					$this->onePageScheduleFitCell($gridx,$yfieldtitle/2,$placeTitle,"LR",2,'C','',8,true);
+				} else {
+					$this->onePageScheduleFitCell($gridx,$yfieldtitle,$fieldTitle,"LRT",2,'C','B',10,true);
+				}
 				//write grids
 				foreach($timeslots as $time){
 					$this->Cell($gridx,$gridy,"",1,2,'L',false);
@@ -615,7 +677,7 @@ class PDF extends tFPDF
 			
 			$prevTournament = $game['reservationgroup'];
 			$prevPlace = $game['place_id'];
-			$prevField = $game['fieldname'];
+			$prevField = $fieldKey;
 			$prevSeries = $game['series_id'];
 			$prevPool = $game['pool'];
 			$prevDate = JustDate($game['starttime']);
