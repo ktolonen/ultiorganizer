@@ -33,6 +33,8 @@ xgettext \
   --output="$TMP_POT" \
   "${php_files[@]}"
 
+sed -i 's/charset=CHARSET/charset=UTF-8/' "$TMP_POT"
+
 for locale_dir in locale/de_DE.utf8 locale/fi_FI.utf8; do
   po_file="$locale_dir/LC_MESSAGES/messages.po"
   mo_file="$locale_dir/LC_MESSAGES/messages.mo"

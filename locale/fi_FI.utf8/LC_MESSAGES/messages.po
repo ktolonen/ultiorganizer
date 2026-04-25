@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 08:49+0300\n"
+"POT-Creation-Date: 2026-04-25 09:28+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -688,7 +688,8 @@ msgstr "Vierasjoukkueen pisteet"
 msgid "BULA"
 msgstr "BULA"
 
-#: admin/addserieformats.php:194
+#: admin/addserieformats.php:194 spiritkeeper/editgame.php:140
+#: spiritkeeper/teamgames.php:100
 msgid "Back"
 msgstr "Takaisin"
 
@@ -699,6 +700,12 @@ msgstr "Takaisin spirit-työkaluihin"
 #: user/teamplayers.php:283
 msgid "Back to entering player numbers"
 msgstr "Takaisin syöttämään pelaajanumeroita"
+
+#: spiritkeeper/submitsotg.php:11 spiritkeeper/submitsotg.php:59
+#: spiritkeeper/submitsotg.php:93 spiritkeeper/submitsotg.php:135
+#: spiritkeeper/submitsotg.php:143 spiritkeeper/submitsotg.php:146
+msgid "Back to game list"
+msgstr "Takaisin pelilistaan"
 
 #: mobile/addplayerlists.php:131 mobile/addresult.php:53
 #: mobile/addscoresheet.php:226 mobile/gameplay.php:96
@@ -889,6 +896,10 @@ msgstr "Muuta pelin pöytäkirja"
 msgid "Change result to"
 msgstr "Muuta pelin tulos"
 
+#: spiritkeeper/teamgames.php:117
+msgid "Change team"
+msgstr "Vaihda joukkuetta"
+
 #: result.php:70
 msgid "Change the result to"
 msgstr "Muuta tulokseksi"
@@ -938,11 +949,11 @@ msgstr "Tarkista sijoitukset %s. Sitten: %s"
 msgid "Check the gameplay after feeding in the scoresheet"
 msgstr "Tarkista pelin kulku syötettyäsi pöytäkirjan"
 
-#: mobile/index.php:10 scorekeeper/login.php:6
+#: mobile/index.php:10 scorekeeper/login.php:6 spiritkeeper/login.php:23
 msgid "Check the username and password."
 msgstr "Tarkista käyttäjätunnus ja salasana."
 
-#: mobile/login_failed.php:33
+#: login/login_failed.php:33 mobile/login_failed.php:33
 msgid "Check your username and password."
 msgstr "Tarkista käyttäjätunnuksesi ja salasanasi."
 
@@ -1082,7 +1093,8 @@ msgid "Comment by %s at %s"
 msgstr "Kommentoinut %s (%s)"
 
 #: mobile/addcomment.php:23 scorekeeper/addcomment.php:20
-#: user/addscoresheet.php:247 user/addspirit.php:211
+#: spiritkeeper/editgame.php:86 user/addscoresheet.php:247
+#: user/addspirit.php:211
 msgid "Comment not saved."
 msgstr "Kommenttia ei tallennettu."
 
@@ -1219,7 +1231,7 @@ msgstr "Korjaa virheet tai tallenna maali virheineen"
 msgid "Correct the errors or save the goal with errors."
 msgstr "Korjaa virheet tai tallenna maali virheineen."
 
-#: mobile/login_failed.php:25
+#: login/login_failed.php:25 mobile/login_failed.php:25
 #, php-format
 msgid ""
 "Could not send a password reset link for '%s'. The email address may be "
@@ -1301,7 +1313,7 @@ msgstr "Data"
 msgid "Data export"
 msgstr "Tiedon vienti"
 
-#: admin/eventdataimport.php:53
+#: admin/eventdataimport.php:53 plugins/import_xml_ffindr.php:64
 msgid "Data imported!"
 msgstr "Tiedot tuotu!"
 
@@ -1403,6 +1415,7 @@ msgid "Delete"
 msgstr "Poista"
 
 #: mobile/addcomment.php:39 scorekeeper/addcomment.php:38
+#: spiritkeeper/editgame.php:116 spiritkeeper/submitsotg.php:88
 #: user/addscoresheet.php:479 user/addspirit.php:27
 msgid "Delete comment"
 msgstr "Poista kommentti"
@@ -1646,6 +1659,10 @@ msgstr "Muokkaa"
 msgid "Edit Spirit"
 msgstr "Muokkaa spirit-pisteitä"
 
+#: spiritkeeper/teamgames.php:74 spiritkeeper/teamgames.php:134
+msgid "Edit Spirit Score"
+msgstr "Muokkaa spirit-pisteitä"
+
 #: admin/seasonadmin.php:104
 msgid "Edit User access rights"
 msgstr "Muokkaa käyttöoikeuksia"
@@ -1754,6 +1771,10 @@ msgstr "Ilmoittautuminen"
 msgid "Enrollment open"
 msgstr "Ilmoittautuminen avoinna"
 
+#: spiritkeeper/teamgames.php:134
+msgid "Enter Spirit Score"
+msgstr "Syötä spirit-pisteet"
+
 #: cust/wfdf/pdfprinter.php:1787
 msgid ""
 "Enter goals: mark which team scored, write players' numbers for the assist "
@@ -1780,6 +1801,10 @@ msgstr "Syötä paperisen spirit-lomakkeen peliviite # suoraa linkkiä varten: "
 #: user/addscoresheet.php:444 user/addscoresheet.php:447
 msgid "Enter the players for this game."
 msgstr "Syötä pelin pelaajat."
+
+#: login/password_reset.php:64
+msgid "Enter your new password below."
+msgstr "Syötä uusi salasanasi alle."
 
 #: admin/dbadmin.php:72
 msgid "Equalization"
@@ -1813,6 +1838,7 @@ msgstr "Virheet: %s."
 #: lib/search.functions.php:101 lib/search.functions.php:139
 #: lib/search.functions.php:199 lib/search.functions.php:434
 #: lib/search.functions.php:475 lib/search.functions.php:517
+#: spiritkeeper/home.php:58 spiritkeeper/teamgames.php:110
 #: user/select_poolselector.php:27 user/userinfo.php:344 user/userinfo.php:369
 msgid "Event"
 msgstr "Tapahtuma"
@@ -2180,12 +2206,12 @@ msgstr ":"
 #: admin/poolmoves.php:211 admin/poolmoves.php:243 admin/poolmoves.php:277
 #: admin/poolmoves.php:283 admin/poolmoves.php:318 admin/seasonmoves.php:157
 #: admin/seasonstandings.php:461 admin/serieteams.php:182
-#: lib/swissdraw.functions.php:199
+#: lib/swissdraw.functions.php:199 plugins/reassign_playoffpools.php:51
 msgid "From pool"
 msgstr "Lohkosta"
 
 #: admin/poolmoves.php:278 admin/poolmoves.php:282 admin/serieteams.php:183
-#: lib/swissdraw.functions.php:200
+#: lib/swissdraw.functions.php:200 plugins/reassign_playoffpools.php:52
 msgid "From pos."
 msgstr "Sijalta"
 
@@ -2320,6 +2346,10 @@ msgstr "Pelienhallinta"
 #: user/addresult.php:12 user/addscoresheet.php:11
 msgid "Game not found"
 msgstr "Peliä ei löydy"
+
+#: spiritkeeper/teamgames.php:41
+msgid "Game not started yet."
+msgstr "Peli ei ole vielä alkanut."
 
 #: gameplay.php:608 mobile/addcomment.php:9 mobile/addscoresheet.php:213
 #: scorekeeper/addcomment.php:27 scorekeeper/addscoresheet.php:415
@@ -2480,7 +2510,7 @@ msgstr "Ottelutulokset puuttuu"
 msgid "Games to generate"
 msgstr "Luotavat pelit"
 
-#: admin/serieteams.php:227
+#: admin/serieteams.php:227 plugins/reassign_playoffpools.php:92
 msgid "Games to move"
 msgstr "Siirrettävät pelit"
 
@@ -2854,7 +2884,7 @@ msgstr ""
 msgid "If this is all wrong, clear the result: "
 msgstr "Jos tämä on väärin, tyhjennä tulos: "
 
-#: mobile/login_failed.php:34
+#: login/login_failed.php:34 mobile/login_failed.php:34
 msgid ""
 "If you forgot your password, click the button below. A reset link will be "
 "sent to the email address you provided during registration."
@@ -2862,7 +2892,7 @@ msgstr ""
 "Jos unohdit salasanasi, napsauta alla olevaa painiketta. Nollauslinkki "
 "lähetetään rekisteröitymisen yhteydessä antamaasi sähköpostiosoitteeseen."
 
-#: register.php:62 admin/adduser.php:59
+#: register.php:62 admin/adduser.php:59 login/password_reset.php:39
 msgid "Illegal characters in the password"
 msgstr "Ei sallittuja merkkejä salasanassa"
 
@@ -2880,7 +2910,7 @@ msgid "Image upload failed because the server could not process the image."
 msgstr ""
 "Kuvan lataaminen epäonnistui, koska palvelin ei pystynyt käsittelemään kuvaa."
 
-#: admin/eventdataimport.php:66
+#: admin/eventdataimport.php:66 plugins/import_xml_ffindr.php:77
 msgid "Import"
 msgstr "Tuo"
 
@@ -2966,8 +2996,9 @@ msgstr "Ei oikeuksia."
 #: admin/reservations.php:25 admin/seasonadmin.php:16 admin/seasongames.php:24
 #: admin/seasonpools.php:16 admin/seasonseries.php:15
 #: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:657
-#: admin/spiritsettings.php:11 admin/tdtools.php:192 user/addspirit.php:75
-#: user/addspirit.php:90
+#: admin/spiritsettings.php:11 admin/tdtools.php:192
+#: spiritkeeper/editgame.php:23 spiritkeeper/editgame.php:42
+#: user/addspirit.php:75 user/addspirit.php:90
 msgid "Insufficient user rights"
 msgstr "Riittämättömät käyttöoikeudet."
 
@@ -2986,6 +3017,10 @@ msgstr "Sähköposti ei ole kelvollinen"
 #: admin/spirit.php:438 admin/tdtools.php:125
 msgid "Invalid game number."
 msgstr "Virheellinen pelinumero."
+
+#: spiritkeeper/editgame.php:11 spiritkeeper/submitsotg.php:10
+msgid "Invalid game."
+msgstr "Virheellinen peli."
 
 #: user/addmedialink.php:62
 msgid "Invalid link target."
@@ -3013,6 +3048,10 @@ msgstr "Virheelliset pikapisteet joukkueelle %s. "
 msgid "Invalid scope type."
 msgstr "Virheellinen scope tyyppi"
 
+#: spiritkeeper/editgame.php:34 spiritkeeper/teamgames.php:99
+msgid "Invalid team."
+msgstr "Virheellinen joukkue."
+
 #: admin/spirit.php:632
 msgid "Invalid threshold! Please use a number between 0.1 and 3.9."
 msgstr "Virheellinen raja-arvo! Käytä lukua väliltä 0.1-3.9."
@@ -3020,6 +3059,14 @@ msgstr "Virheellinen raja-arvo! Käytä lukua väliltä 0.1-3.9."
 #: admin/spirit.php:606
 msgid "Invalid threshold! Please use a number between 1 and 20."
 msgstr "Virheellinen raja-arvo! Käytä lukua väliltä 1-20."
+
+#: spiritkeeper/index.php:43
+msgid ""
+"Invalid token. Please use the full link provided by the Tournament Director "
+"or the Spirit Director."
+msgstr ""
+"Virheellinen tunniste. Käytä koko linkkiä, jonka turnausjohtaja tai Spirit "
+"Director on antanut."
 
 #: admin/addseasonusers.php:45
 msgid "Invalid user"
@@ -3029,12 +3076,12 @@ msgstr "Virheellinen käyttäjätunnus"
 msgid "Invalid user:"
 msgstr "Virheellinen käyttäjätunnus:"
 
-#: mobile/login_failed.php:38
+#: login/login_failed.php:38 mobile/login_failed.php:38
 #, php-format
 msgid "Invalid username %s."
 msgstr "Virheellinen käyttäjätunnus: %s."
 
-#: mobile/login_failed.php:15
+#: login/login_failed.php:15 mobile/login_failed.php:15
 msgid ""
 "Invalid username or password. Contact the system administrator if you need "
 "to reset your password."
@@ -3220,10 +3267,11 @@ msgstr "Lukitse spirit lähetyksen jälkeen"
 
 #: login.php:6 login.php:23 menufunctions.php:159 menufunctions.php:276
 #: mobile/index.php:18 scorekeeper/login.php:14 scorekeeper/login.php:24
+#: spiritkeeper/login.php:66
 msgid "Log in"
 msgstr "Kirjaudu sisään"
 
-#: mobile/login_failed.php:9
+#: login/login_failed.php:9 mobile/login_failed.php:9
 msgid "Log in failed"
 msgstr "Sisäänkirjautuminen epäonnistui"
 
@@ -3236,9 +3284,13 @@ msgid "Log in with your existing account."
 msgstr "Kirjaudu sisään olemassa olevalla tunnuksellasi."
 
 #: login.php:29 logout.php:5 menufunctions.php:173 menufunctions.php:303
-#: mobile/respgames.php:145 scorekeeper/index.php:84
+#: mobile/respgames.php:145 scorekeeper/index.php:84 spiritkeeper/index.php:106
 msgid "Log out"
 msgstr "Kirjaudu ulos"
+
+#: spiritkeeper/index.php:97
+msgid "Logged in as"
+msgstr "Kirjautuneena käyttäjänä"
 
 #: menufunctions.php:484
 msgid "Logs"
@@ -3390,6 +3442,11 @@ msgstr ""
 "Puuttuvia pelinumeroita löytyi! (muokkaa pelaajalistaa napsauttamalla "
 "joukkueen nimeä)"
 
+#: spiritkeeper/editgame.php:75
+#, php-format
+msgid "Missing spirit score for %s. "
+msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
+
 #: teams.php:405
 msgid "Missing spirit submissions"
 msgstr "Puuttuvat spirit-arvioinnit"
@@ -3496,7 +3553,7 @@ msgstr "Nimi ei voi olla tyhjä"
 
 #: admin/poolmoves.php:216 admin/poolmoves.php:246 admin/poolmoves.php:279
 #: admin/poolmoves.php:281 admin/poolmoves.php:320 admin/serieteams.php:187
-#: lib/swissdraw.functions.php:204
+#: lib/swissdraw.functions.php:204 plugins/reassign_playoffpools.php:56
 msgid "Name in Schedule"
 msgstr "Nimi aikataulussa"
 
@@ -3582,6 +3639,14 @@ msgstr "Lempinimi"
 msgid "No"
 msgstr "Ei"
 
+#: plugins/generate_teams.php:51
+msgid "No countries available for team generation."
+msgstr "Joukkueiden luontiin ei ole saatavilla maita."
+
+#: spiritkeeper/home.php:13
+msgid "No current events are available."
+msgstr "Nykyisiä tapahtumia ei ole saatavilla."
+
 #: defensestatus.php:130
 msgid "No defence data available for the selected filter."
 msgstr "Valitulle suodattimelle ei ole puolustusdataa."
@@ -3623,7 +3688,7 @@ msgstr "Ei vastuupelejä"
 msgid "No games"
 msgstr "Ei pelejä"
 
-#: admin/serieteams.php:245
+#: admin/serieteams.php:245 plugins/reassign_playoffpools.php:98
 msgid "No games to move"
 msgstr "Ei siirrettäviä pelejä"
 
@@ -3711,9 +3776,25 @@ msgstr "Ei spirit-pisteytystä"
 msgid "No spirit stoppages found."
 msgstr "Spirit-keskeytyksiä ei löytynyt."
 
+#: spiritkeeper/teamgames.php:121
+msgid "No spirit-scored games found for the selected team."
+msgstr "Valitulle joukkueelle ei löytynyt spirit-pisteytettyjä pelejä."
+
+#: spiritkeeper/teamgames.php:65
+msgid "No spirit-scored games found for this team."
+msgstr "Tälle joukkueelle ei löytynyt spirit-pisteytettyjä pelejä."
+
 #: admin/addseasonpools.php:409
 msgid "No teams"
 msgstr "Ei joukkueita"
+
+#: spiritkeeper/home.php:64
+msgid ""
+"No teams are available for spirit entry in the selected event with your "
+"current user rights."
+msgstr ""
+"Valitussa tapahtumassa ei ole spirit-kirjaukseen saatavilla joukkueita "
+"nykyisillä käyttöoikeuksillasi."
 
 #: admin/serieteams.php:145
 msgid "No teams without a pool"
@@ -3762,6 +3843,10 @@ msgstr "Ei tuloksia."
 #: admin/tdtools.php:19 admin/tdtools.php:55 cust/fpudd/pdfprinter.php:195
 msgid "Number"
 msgstr "Numero"
+
+#: plugins/generate_teams.php:45
+msgid "Number of teams to generate must be a positive integer."
+msgstr "Luotavien joukkueiden määrän pitää olla positiivinen kokonaisluku."
 
 #: gameplay.php:271 ext/rss.php:148 ext/rss.php:184
 msgid "Offence"
@@ -3812,8 +3897,16 @@ msgstr "Toiminnot"
 msgid "Opponent VPs"
 msgstr "Vastustajan VP:t"
 
+#: spiritkeeper/teamgames.php:81
+msgid "Opponent spirit notes are not shown in the public token flow."
+msgstr "Vastustajan spirit-kommentteja ei näytetä julkisessa linkkinäkymässä."
+
 #: user/addspirit.php:25
 msgid "Optional - add context for spirit points given (no blame)."
+msgstr "Valinnainen - perustelut annetuille spirit-pisteille (ei syytöksiä)."
+
+#: spiritkeeper/editgame.php:114 spiritkeeper/submitsotg.php:86
+msgid "Optional - add context for the spirit score given (no blame)."
 msgstr "Valinnainen - perustelut annetuille spirit-pisteille (ei syytöksiä)."
 
 #: mobile/addcomment.php:37 scorekeeper/addcomment.php:36
@@ -3879,7 +3972,8 @@ msgid "Pair"
 msgstr "Pari"
 
 #: login.php:21 menufunctions.php:272 register.php:126 admin/adduser.php:128
-#: scorekeeper/login.php:21
+#: login/password_reset.php:74 scorekeeper/login.php:21
+#: spiritkeeper/login.php:63
 msgid "Password"
 msgstr "Salasana"
 
@@ -3887,7 +3981,16 @@ msgstr "Salasana"
 msgid "Password cannot be empty."
 msgstr "Nimi ei voi olla tyhjä."
 
-#: register.php:34 admin/adduser.php:31 user/userinfo.php:104
+#: login/password_reset.php:50
+msgid ""
+"Password has been reset successfully. You can now log in with your new "
+"password."
+msgstr ""
+"Salasana on nollattu onnistuneesti. Voit nyt kirjautua sisään uudella "
+"salasanallasi."
+
+#: register.php:34 admin/adduser.php:31 login/password_reset.php:33
+#: user/userinfo.php:104
 msgid "Password is too short (min. 5 letters)."
 msgstr "Salasana liian lyhyt (min. 5 merkkiä)."
 
@@ -3899,7 +4002,7 @@ msgstr ""
 "Salasanan nollauksen sähköposti ei ole käytettävissä. Avaa käyttäjätietosivu "
 "ja aseta uusi salasana manuaalisesti."
 
-#: mobile/login_failed.php:23
+#: login/login_failed.php:23 mobile/login_failed.php:23
 msgid "Password reset link sent."
 msgstr "Salasanan nollauslinkki lähetetty."
 
@@ -3907,7 +4010,7 @@ msgstr "Salasanan nollauslinkki lähetetty."
 msgid "Password reset request for Ultiorganizer"
 msgstr "Ultiorganizerin salasanan nollauspyyntö"
 
-#: register.php:66
+#: register.php:66 login/password_reset.php:44
 msgid "Passwords do not match"
 msgstr "Salasanat eivät täsmää"
 
@@ -4125,6 +4228,14 @@ msgstr "Pelaa"
 #: gameplay.php:71
 msgid "Please check the status again later."
 msgstr "Tarkista tilanne myöhemmin uudelleen."
+
+#: login/password_reset.php:56
+msgid "Please correct the errors and try again."
+msgstr "Korjaa virheet ja yritä uudelleen."
+
+#: plugins/generate_teams.php:43
+msgid "Please select a valid division."
+msgstr "Valitse kelvollinen sarja."
 
 #: admin/dbadmin.php:87
 msgid "Plugins"
@@ -4356,7 +4467,7 @@ msgstr "Vain luku -palvelin"
 msgid "Read-only event"
 msgstr "Vain luku -tapahtuma"
 
-#: user/addspirit.php:316
+#: spiritkeeper/editgame.php:129 user/addspirit.php:316
 msgid "Read-only spirit review"
 msgstr "Spiritin vain luku -tarkastelu"
 
@@ -4437,7 +4548,7 @@ msgstr ""
 msgid "Rename selected"
 msgstr "Nimeä valitut"
 
-#: register.php:130 user/userinfo.php:526
+#: register.php:130 login/password_reset.php:76 user/userinfo.php:526
 msgid "Repeat password"
 msgstr "Toista salasana"
 
@@ -4478,7 +4589,8 @@ msgstr "Nollaa"
 msgid "Reset page load counter"
 msgstr "Nolla sivun latauslaskurit"
 
-#: admin/users.php:76 mobile/login_failed.php:35
+#: admin/users.php:76 login/login_failed.php:35 login/password_reset.php:5
+#: login/password_reset.php:79 mobile/login_failed.php:35
 msgid "Reset password"
 msgstr "Nollaa salasana"
 
@@ -4569,14 +4681,20 @@ msgstr "Jatka sitä, kun peli jatkuu."
 #: admin/executesql.php:124 admin/failed.php:27 admin/help.php:22
 #: admin/poolmoves.php:371 admin/schedule.php:252 admin/schedule.php:569
 #: admin/seasonmoves.php:214 admin/seriesseeding.php:74
-#: admin/serieteams.php:253 admin/success.php:27 user/addmedialink.php:219
-#: user/clubprofile.php:243 user/playerprofile.php:386 user/teamprofile.php:190
+#: admin/serieteams.php:253 admin/success.php:27
+#: plugins/lisence_modifier.php:187 plugins/reassign_playoffpools.php:123
+#: user/addmedialink.php:219 user/clubprofile.php:243
+#: user/playerprofile.php:386 user/teamprofile.php:190
 msgid "Return"
 msgstr "Palaa"
 
 #: admin/privacyplayer.php:67 admin/privacyuser.php:69
 msgid "Return to Database administration"
 msgstr "Palaa tietokannan ylläpitoon"
+
+#: spiritkeeper/teamgames.php:134
+msgid "Review Spirit Score"
+msgstr "Tarkastele spirit-pisteitä"
 
 #: admin/apitokens.php:194
 msgid "Revoke"
@@ -4714,10 +4832,11 @@ msgstr "La"
 #: mobile/addhalftime.php:35 mobile/addofficial.php:26
 #: mobile/addplayerlists.php:129 mobile/addspirittimeouts.php:84
 #: mobile/addtimeouts.php:102 mobile/respgames.php:133
-#: scorekeeper/addcomment.php:41 scorekeeper/addfirstoffence.php:46
-#: scorekeeper/addhalftime.php:85 scorekeeper/addofficial.php:24
-#: scorekeeper/addplayerlists.php:215 scorekeeper/addspirittimeouts.php:185
-#: scorekeeper/addtimeouts.php:162 scorekeeper/result.php:100
+#: plugins/lisence_modifier.php:186 scorekeeper/addcomment.php:41
+#: scorekeeper/addfirstoffence.php:46 scorekeeper/addhalftime.php:85
+#: scorekeeper/addofficial.php:24 scorekeeper/addplayerlists.php:215
+#: scorekeeper/addspirittimeouts.php:185 scorekeeper/addtimeouts.php:162
+#: scorekeeper/result.php:100 spiritkeeper/editgame.php:124
 #: user/addmedialink.php:218 user/addplayerlists.php:388 user/addspirit.php:311
 #: user/clubprofile.php:242 user/playerprofile.php:385 user/respgames.php:225
 #: user/teamplayers.php:271 user/teamprofile.php:189 user/userinfo.php:290
@@ -4838,7 +4957,8 @@ msgstr "Scopen tyyppi"
 #: mobile/addscoresheet.php:156 mobile/addscoresheet.php:176
 #: mobile/deletescore.php:26 mobile/deletescore.php:42
 #: scorekeeper/addscoresheet.php:233 scorekeeper/addscoresheet.php:243
-#: scorekeeper/deletescore.php:39 user/addscoresheet.php:651
+#: scorekeeper/deletescore.php:39 spiritkeeper/editgame.php:101
+#: spiritkeeper/teamgames.php:29 user/addscoresheet.php:651
 msgid "Score"
 msgstr "Tilanne"
 
@@ -5064,11 +5184,11 @@ msgid "Select encoding"
 msgstr "Valitse merkistökoodaus"
 
 #: admin/schedule.php:371 admin/seasonpoints.php:23 ext/export.php:43
-#: ext/index.php:67 scorekeeper/respgames.php:67
+#: ext/index.php:67 scorekeeper/respgames.php:67 spiritkeeper/home.php:48
 msgid "Select event"
 msgstr "Valitse turnaus"
 
-#: admin/eventdataimport.php:60
+#: admin/eventdataimport.php:60 plugins/import_xml_ffindr.php:71
 msgid "Select file to import"
 msgstr "Valitse tiedosto, josta tiedot tuodaan"
 
@@ -5149,6 +5269,10 @@ msgstr "Valittu pelaaja"
 msgid "Selected pool standings and scoreboard"
 msgstr "Valitun lohkon tilanne ja pistepörssi"
 
+#: spiritkeeper/teamgames.php:116
+msgid "Selected team"
+msgstr "Valittu joukkue"
+
 #: ext/index.php:241
 msgid "Selected team's games and scoreboard"
 msgstr "Valitun joukkueen pelit sekä pistepörssi"
@@ -5197,7 +5321,8 @@ msgstr "Asetukset"
 msgid "Shirt numbers"
 msgstr "Pelinumerot"
 
-#: admin/apitokens.php:87 admin/apitokens.php:180 user/userinfo.php:314
+#: admin/apitokens.php:87 admin/apitokens.php:180 spiritkeeper/home.php:55
+#: user/userinfo.php:314
 msgid "Show"
 msgstr "Näytä"
 
@@ -5345,10 +5470,19 @@ msgstr ""
 "näkyvyys- ja lukitusasetukset ovat käytettävissä spirit-ylläpidon näkymässä "
 "sen jälkeen, kun tapahtuma on luotu."
 
+#: spiritkeeper/editgame.php:112 spiritkeeper/submitsotg.php:85
+#: spiritkeeper/submitsotg.php:140
+msgid "Spirit note"
+msgstr "Spirit-kommentti"
+
 #: gameplay.php:612 gameplay.php:616 user/addspirit.php:109
 #: user/addspirit.php:124 user/addspirit.php:135
 msgid "Spirit note for"
 msgstr "Spirit-kommentti joukkueelle"
+
+#: spiritkeeper/teamgames.php:80
+msgid "Spirit notes can be added and edited on the token submission page."
+msgstr "Spirit-kommentteja voi lisätä ja muokata tunnistelinkin lähetyssivulla."
 
 #: gameplay.php:554 seriesstatus.php:199 seriesstatus.php:201
 #: admin/seasonadmin.php:46 admin/seasongames.php:246
@@ -5374,8 +5508,17 @@ msgstr "Spirit-pisteiden ka."
 msgid "Spirit score deleted. "
 msgstr "Spirit-pisteet poistettu. "
 
-#: user/addspirit.php:280 user/addspirit.php:288 user/addspirit.php:296
-#: user/addspirit.php:302
+#: spiritkeeper/editgame.php:107 spiritkeeper/editgame.php:137
+#: spiritkeeper/submitsotg.php:49
+msgid "Spirit score for"
+msgstr "Spirit-pisteet joukkueelle"
+
+#: spiritkeeper/submitsotg.php:138
+msgid "Spirit score given"
+msgstr "Annetut spirit-pisteet"
+
+#: spiritkeeper/teamgames.php:32 user/addspirit.php:280 user/addspirit.php:288
+#: user/addspirit.php:296 user/addspirit.php:302
 msgid "Spirit score given for"
 msgstr "Spirit-piste annettu joukkueelle"
 
@@ -5383,10 +5526,30 @@ msgstr "Spirit-piste annettu joukkueelle"
 msgid "Spirit score not deleted. "
 msgstr "Spirit-pisteitä ei poistettu. "
 
-#: user/addspirit.php:163 user/addspirit.php:175 user/addspirit.php:189
-#: user/addspirit.php:201
+#: spiritkeeper/editgame.php:79 user/addspirit.php:163 user/addspirit.php:175
+#: user/addspirit.php:189 user/addspirit.php:201
 msgid "Spirit score not saved. "
 msgstr "Spirit-pisteitä ei tallennettu. "
+
+#: spiritkeeper/submitsotg.php:44
+msgid ""
+"Spirit score not saved. Check that all values are valid and the submission "
+"is still open."
+msgstr ""
+"Spirit-pisteitä ei tallennettu. Tarkista, että kaikki arvot ovat kelvollisia "
+"ja kirjaus on yhä avoinna."
+
+#: spiritkeeper/teamgames.php:34
+msgid "Spirit score received"
+msgstr "Saadut spirit-pisteet"
+
+#: spiritkeeper/editgame.php:103
+msgid "Spirit score saved."
+msgstr "Spirit-pisteet tallennettu."
+
+#: spiritkeeper/submitsotg.php:38
+msgid "Spirit score submitted."
+msgstr "Spirit-pisteet lähetetty."
 
 #: gameplay.php:570 menufunctions.php:599 menufunctions.php:612
 #: spiritstatus.php:43 teamcard.php:273 ext/export.php:38
@@ -5413,7 +5576,11 @@ msgstr "Spirit-pisteet näkyvissä"
 msgid "Spirit scoring is disabled for this event."
 msgstr "Spirit-pisteytys ei ole käytössä tässä tapahtumassa."
 
-#: user/addspirit.php:321
+#: spiritkeeper/submitsotg.php:58
+msgid "Spirit scoring is not configured correctly for this event."
+msgstr "Spirit-pisteytystä ei ole määritetty oikein tälle tapahtumalle."
+
+#: spiritkeeper/editgame.php:47 user/addspirit.php:321
 #, php-format
 msgid "Spirit scoring is not enabled for %s."
 msgstr "Spirit-pisteytys ei ole käytössä tapahtumassa %s."
@@ -5452,7 +5619,14 @@ msgstr "Spirit-keskeytykset (aika)"
 msgid "Spirit stoppages recorded for this event."
 msgstr "Tähän tapahtumaan on kirjattu spirit-keskeytyksiä."
 
-#: menufunctions.php:250 menufunctions.php:686
+#: spiritkeeper/submitsotg.php:145
+msgid "Spirit submission is not available for this game."
+msgstr "Spirit-kirjaus ei ole saatavilla tähän peliin."
+
+#: menufunctions.php:250 menufunctions.php:686 spiritkeeper/editgame.php:8
+#: spiritkeeper/editgame.php:51 spiritkeeper/home.php:5
+#: spiritkeeper/index.php:27 spiritkeeper/index.php:34 spiritkeeper/login.php:5
+#: spiritkeeper/teamgames.php:104
 msgid "Spiritkeeper"
 msgstr "Spiritkeeper"
 
@@ -5463,6 +5637,15 @@ msgstr "Spiritkeeper-työkalut"
 #: admin/spirit.php:387
 msgid "Spiritkeeper URL"
 msgstr "Spiritkeeperin URL"
+
+#: spiritkeeper/home.php:12 spiritkeeper/home.php:44
+#: spiritkeeper/teamgames.php:108
+msgid ""
+"Spiritkeeper is the dedicated mobile surface for spirit score entry and "
+"review."
+msgstr ""
+"Spiritkeeper on mobiilikäyttöön tarkoitettu näkymä spirit-pisteiden "
+"syöttämiseen ja tarkasteluun."
 
 #: admin/editstanding.php:43 admin/editstanding.php:46
 msgid "Standing"
@@ -5529,6 +5712,10 @@ msgstr "Tilastoviitteitä"
 msgid "Status"
 msgstr "Tila"
 
+#: spiritkeeper/submitsotg.php:92 spiritkeeper/teamgames.php:74
+msgid "Submit Spirit Score"
+msgstr "Lähetä spirit-pisteet"
+
 #: admin/visitors.php:29
 msgid "Summary"
 msgstr "Yhteensä"
@@ -5586,7 +5773,8 @@ msgstr "Tehtävä"
 #: lib/search.functions.php:154 lib/search.functions.php:214
 #: lib/search.functions.php:355 lib/search.functions.php:517
 #: lib/search.functions.php:682 lib/swissdraw.functions.php:201
-#: user/enrollteam.php:78 user/respteams.php:21
+#: plugins/reassign_playoffpools.php:53 user/enrollteam.php:78
+#: user/respteams.php:21
 msgid "Team"
 msgstr "Joukkue"
 
@@ -5675,6 +5863,10 @@ msgstr "Joukkueet"
 msgid "Teams (abbrev.)"
 msgstr "Joukkueet (lyh.)"
 
+#: spiritkeeper/home.php:61
+msgid "Teams in selected event"
+msgstr "Valitun tapahtuman joukkueet"
+
 #: admin/saveteampools.php:46
 msgid "Teams saved"
 msgstr "Joukkueet tallennettu"
@@ -5706,6 +5898,21 @@ msgstr "Avain korvataan tekstillä käyttäjän valitsemalla kielellä."
 #: menufunctions.php:245
 msgid "The legacy mobile administration interface is deprecated."
 msgstr "Vanha mobiilihallinnan käyttöliittymä on poistumassa käytöstä."
+
+#: spiritkeeper/teamgames.php:38
+msgid "The opponent has not submitted a spirit score for this game yet."
+msgstr "Vastustaja ei ole vielä lähettänyt spirit-pisteitä tästä pelistä."
+
+#: spiritkeeper/teamgames.php:36
+msgid ""
+"The opponent spirit score is available, but not visible through this page."
+msgstr ""
+"Vastustajan spirit-pisteet ovat saatavilla, mutta niitä ei näytetä tällä "
+"sivulla."
+
+#: plugins/generate_teams.php:79
+msgid "The selected event has no divisions."
+msgstr "Valitussa tapahtumassa ei ole sarjoja."
 
 #: cust/bula/pdfprinter.php:304 cust/fpudd/pdfprinter.php:339
 #: cust/gummis/pdfprinter.php:323 cust/wfdf/pdfprinter.php:706
@@ -5765,6 +5972,19 @@ msgstr "Kolmas"
 msgid "This game has already been played. Current result:"
 msgstr "Tämä peli on jo pelattu. Nykyinen tulos:"
 
+#: spiritkeeper/submitsotg.php:134
+msgid "This game has not started yet. Return after the game begins."
+msgstr "Tämä peli ei ole vielä alkanut. Palaa pelin alkamisen jälkeen."
+
+#: plugins/import_xml_ffindr.php:79
+msgid ""
+"This operation updates and adds event data in database with one from file. "
+"It will not delete any data or change user rights."
+msgstr ""
+"Tämä toiminto päivittää ja lisää tapahtuman tiedot tietokantaan annetusta "
+"tiedostosta. Tietokannassa olevia tietoja ei poisteta eikä käyttöoikeuksia "
+"muuteta."
+
 #: admin/eventdataimport.php:69
 msgid ""
 "This operation updates and adds event data in the database with the content "
@@ -5773,6 +5993,15 @@ msgstr ""
 "Tämä toiminto päivittää ja lisää tapahtuman tiedot tietokantaan annetusta "
 "tiedostosta. Tietokannassa olevia tietoja ei poisteta eikä käyttöoikeuksia "
 "muuteta."
+
+#: login/password_reset.php:28 login/password_reset.php:53
+#: login/password_reset.php:62
+msgid "This password reset link is invalid or has expired."
+msgstr "Tämä salasanan nollauslinkki on virheellinen tai vanhentunut."
+
+#: spiritkeeper/teamgames.php:135
+msgid "This spirit submission is currently read-only."
+msgstr "Tämä spirit-kirjaus on tällä hetkellä vain luettavissa."
 
 #: admin/poolgames.php:362
 msgid "This will remove all games from this pool."
@@ -5886,11 +6115,12 @@ msgstr ":"
 
 #: admin/poolmoves.php:213 admin/seasonmoves.php:159
 #: admin/seasonstandings.php:464 admin/serieteams.php:186
-#: lib/swissdraw.functions.php:203
+#: lib/swissdraw.functions.php:203 plugins/reassign_playoffpools.php:55
 msgid "To pool"
 msgstr "Lohkoon"
 
 #: admin/serieteams.php:185 lib/swissdraw.functions.php:202
+#: plugins/reassign_playoffpools.php:54
 msgid "To pos."
 msgstr "Sijalle"
 
@@ -5970,7 +6200,7 @@ msgstr "Yht. ka."
 #: teamcard.php:349 teamcard.php:567 teamcard.php:754 admin/spirit.php:46
 #: admin/spirit.php:105 admin/spirit.php:154 admin/spirit.php:240
 #: admin/spirit.php:284 admin/spirit.php:344
-#: cust/slkl/mass-accreditation.php:79
+#: cust/slkl/mass-accreditation.php:79 spiritkeeper/submitsotg.php:84
 msgid "Total"
 msgstr "Yhteensä"
 
@@ -6096,6 +6326,7 @@ msgstr "Ultimate.fi"
 #: ext/poolstatus.php:18 ext/teamcoming.php:18 ext/teamplayed.php:19
 #: ext/teamscoreboard.php:18 ext/tournament.php:23 lib/user.functions.php:1290
 #: lib/user.functions.php:1351 scorekeeper/index.php:82
+#: spiritkeeper/index.php:104
 msgid "Ultiorganizer"
 msgstr "Pelikone"
 
@@ -6144,7 +6375,7 @@ msgstr "Varmuuskopio formaatti ei ole tuettu. Lattaa .qz tai .sql file."
 msgid "Unsupported language:"
 msgstr "Ei tuettu kieli:"
 
-#: admin/eventdataimport.php:70
+#: admin/eventdataimport.php:70 plugins/import_xml_ffindr.php:80
 msgid "Update"
 msgstr "Päivitä"
 
@@ -6233,7 +6464,7 @@ msgstr "Käyttöoikeudet"
 
 #: login.php:19 menufunctions.php:268 register.php:122 admin/adduser.php:109
 #: admin/adduser.php:124 admin/privacyuser.php:88 lib/search.functions.php:594
-#: scorekeeper/login.php:19 user/userinfo.php:241
+#: scorekeeper/login.php:19 spiritkeeper/login.php:61 user/userinfo.php:241
 msgid "Username"
 msgstr "Käyttäjätunnus"
 
@@ -6439,6 +6670,7 @@ msgstr "Maailman Liitokiekkoliitto"
 #: admin/seasonstandings.php:448 admin/seasonteams.php:239
 #: admin/serieformats.php:47 admin/serverconf.php:254
 #: admin/translations.php:121 lib/search.functions.php:756
+#: plugins/simulate_games.php:225
 msgid "X"
 msgstr "X"
 
@@ -6449,6 +6681,10 @@ msgstr "Kyllä"
 #: games.php:249
 msgid "Yesterday"
 msgstr "Eilen"
+
+#: spiritkeeper/submitsotg.php:137
+msgid "You already submitted the spirit score for this game."
+msgstr "Olet jo lähettänyt spirit-pisteet tästä pelistä."
 
 #: ext/export.php:27
 msgid "You can also change encoding and separator."
@@ -6472,6 +6708,18 @@ msgstr "Et voi poistaa nykyistä tapahtumaa"
 #: logout.php:10
 msgid "You have logged out"
 msgstr "Olet kirjautunut ulos"
+
+#: spiritkeeper/teamgames.php:43
+msgid "You have not submitted a spirit score for this game yet."
+msgstr "Et ole vielä lähettänyt spirit-pisteitä tästä pelistä."
+
+#: spiritkeeper/teamgames.php:75
+msgid "Your spirit submission is locked."
+msgstr "Spirit-kirjauksesi on lukittu."
+
+#: spiritkeeper/index.php:91
+msgid "Your team"
+msgstr "Joukkueesi"
 
 #: admin/addseasonteams.php:83
 msgid "added"
@@ -6580,7 +6828,8 @@ msgid "division"
 msgstr "sarja"
 
 #: admin/editstanding.php:70 admin/poolgames.php:288 admin/poolgames.php:329
-#: admin/poolgames.php:353 user/teamplayers.php:207
+#: admin/poolgames.php:353 plugins/lisence_modifier.php:240
+#: user/teamplayers.php:207
 msgid "edit"
 msgstr "muokkaa"
 

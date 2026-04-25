@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 08:49+0300\n"
+"POT-Creation-Date: 2026-04-25 09:28+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -697,7 +697,8 @@ msgstr "Punkte Auswaertsteam"
 msgid "BULA"
 msgstr "BULA"
 
-#: admin/addserieformats.php:194
+#: admin/addserieformats.php:194 spiritkeeper/editgame.php:140
+#: spiritkeeper/teamgames.php:100
 msgid "Back"
 msgstr "Zurück"
 
@@ -708,6 +709,12 @@ msgstr "Zurueck zu den Spirit-Werkzeugen"
 #: user/teamplayers.php:283
 msgid "Back to entering player numbers"
 msgstr "Zurück zur Spielernummerneingabe"
+
+#: spiritkeeper/submitsotg.php:11 spiritkeeper/submitsotg.php:59
+#: spiritkeeper/submitsotg.php:93 spiritkeeper/submitsotg.php:135
+#: spiritkeeper/submitsotg.php:143 spiritkeeper/submitsotg.php:146
+msgid "Back to game list"
+msgstr "Zurück zur Spieleliste"
 
 #: mobile/addplayerlists.php:131 mobile/addresult.php:53
 #: mobile/addscoresheet.php:226 mobile/gameplay.php:96
@@ -900,6 +907,10 @@ msgstr "Spielbericht ändern"
 msgid "Change result to"
 msgstr "Spielergebnis ändern"
 
+#: spiritkeeper/teamgames.php:117
+msgid "Change team"
+msgstr "Team wechseln"
+
 #: result.php:70
 msgid "Change the result to"
 msgstr "Ergebnis aendern in"
@@ -950,11 +961,11 @@ msgid "Check the gameplay after feeding in the scoresheet"
 msgstr ""
 "Kontrollieren Sie nach der Eingabe des Spielberichts  dessen Korrektheit."
 
-#: mobile/index.php:10 scorekeeper/login.php:6
+#: mobile/index.php:10 scorekeeper/login.php:6 spiritkeeper/login.php:23
 msgid "Check the username and password."
 msgstr "Überprüfe Benutzername und Passwort."
 
-#: mobile/login_failed.php:33
+#: login/login_failed.php:33 mobile/login_failed.php:33
 msgid "Check your username and password."
 msgstr "Ueberpruefe deinen Benutzernamen und dein Passwort."
 
@@ -1094,7 +1105,8 @@ msgid "Comment by %s at %s"
 msgstr "Kommentar von %s um %s"
 
 #: mobile/addcomment.php:23 scorekeeper/addcomment.php:20
-#: user/addscoresheet.php:247 user/addspirit.php:211
+#: spiritkeeper/editgame.php:86 user/addscoresheet.php:247
+#: user/addspirit.php:211
 msgid "Comment not saved."
 msgstr "Kommentar nicht gespeichert."
 
@@ -1233,7 +1245,7 @@ msgstr "Fehler korrigieren oder Punkt mit Fehlern speichern"
 msgid "Correct the errors or save the goal with errors."
 msgstr "Korrigiere die Fehler oder speichere den Punkt mit Fehlern."
 
-#: mobile/login_failed.php:25
+#: login/login_failed.php:25 mobile/login_failed.php:25
 #, php-format
 msgid ""
 "Could not send a password reset link for '%s'. The email address may be "
@@ -1315,7 +1327,7 @@ msgstr "Daten"
 msgid "Data export"
 msgstr "Daten exportieren"
 
-#: admin/eventdataimport.php:53
+#: admin/eventdataimport.php:53 plugins/import_xml_ffindr.php:64
 msgid "Data imported!"
 msgstr "Daten importiert!"
 
@@ -1417,6 +1429,7 @@ msgid "Delete"
 msgstr "Löschen"
 
 #: mobile/addcomment.php:39 scorekeeper/addcomment.php:38
+#: spiritkeeper/editgame.php:116 spiritkeeper/submitsotg.php:88
 #: user/addscoresheet.php:479 user/addspirit.php:27
 msgid "Delete comment"
 msgstr "Kommentar loeschen"
@@ -1662,6 +1675,10 @@ msgstr "Ändern"
 msgid "Edit Spirit"
 msgstr "Spirit bearbeiten"
 
+#: spiritkeeper/teamgames.php:74 spiritkeeper/teamgames.php:134
+msgid "Edit Spirit Score"
+msgstr "Spirit-Bewertung bearbeiten"
+
 #: admin/seasonadmin.php:104
 msgid "Edit User access rights"
 msgstr "User Zugriffsrechte"
@@ -1772,6 +1789,10 @@ msgstr "Anmeldung"
 msgid "Enrollment open"
 msgstr "Anmeldung offen"
 
+#: spiritkeeper/teamgames.php:134
+msgid "Enter Spirit Score"
+msgstr "Spirit-Bewertung eingeben"
+
 #: cust/wfdf/pdfprinter.php:1787
 msgid ""
 "Enter goals: mark which team scored, write players' numbers for the assist "
@@ -1801,6 +1822,10 @@ msgstr ""
 #: user/addscoresheet.php:444 user/addscoresheet.php:447
 msgid "Enter the players for this game."
 msgstr "Gib die Spieler fuer dieses Spiel ein."
+
+#: login/password_reset.php:64
+msgid "Enter your new password below."
+msgstr "Gib unten dein neues Passwort ein."
 
 #: admin/dbadmin.php:72
 msgid "Equalization"
@@ -1834,6 +1859,7 @@ msgstr "Fehler: %s."
 #: lib/search.functions.php:101 lib/search.functions.php:139
 #: lib/search.functions.php:199 lib/search.functions.php:434
 #: lib/search.functions.php:475 lib/search.functions.php:517
+#: spiritkeeper/home.php:58 spiritkeeper/teamgames.php:110
 #: user/select_poolselector.php:27 user/userinfo.php:344 user/userinfo.php:369
 msgid "Event"
 msgstr "Turnier"
@@ -2203,12 +2229,12 @@ msgstr "Von"
 #: admin/poolmoves.php:211 admin/poolmoves.php:243 admin/poolmoves.php:277
 #: admin/poolmoves.php:283 admin/poolmoves.php:318 admin/seasonmoves.php:157
 #: admin/seasonstandings.php:461 admin/serieteams.php:182
-#: lib/swissdraw.functions.php:199
+#: lib/swissdraw.functions.php:199 plugins/reassign_playoffpools.php:51
 msgid "From pool"
 msgstr "Von Gruppe"
 
 #: admin/poolmoves.php:278 admin/poolmoves.php:282 admin/serieteams.php:183
-#: lib/swissdraw.functions.php:200
+#: lib/swissdraw.functions.php:200 plugins/reassign_playoffpools.php:52
 msgid "From pos."
 msgstr "Von Pos."
 
@@ -2340,6 +2366,10 @@ msgstr "Spiele verwalten"
 #: user/addresult.php:12 user/addscoresheet.php:11
 msgid "Game not found"
 msgstr "Spiel nicht gefunden"
+
+#: spiritkeeper/teamgames.php:41
+msgid "Game not started yet."
+msgstr "Spiel hat noch nicht begonnen."
 
 #: gameplay.php:608 mobile/addcomment.php:9 mobile/addscoresheet.php:213
 #: scorekeeper/addcomment.php:27 scorekeeper/addscoresheet.php:415
@@ -2500,7 +2530,7 @@ msgstr "Ergebnisse fehlen für"
 msgid "Games to generate"
 msgstr "Zu generierende Spiele"
 
-#: admin/serieteams.php:227
+#: admin/serieteams.php:227 plugins/reassign_playoffpools.php:92
 msgid "Games to move"
 msgstr "Mitzunehmende Spiele"
 
@@ -2874,7 +2904,7 @@ msgstr ""
 msgid "If this is all wrong, clear the result: "
 msgstr "Falls nicht zutreffend, Ergebnis löschen:"
 
-#: mobile/login_failed.php:34
+#: login/login_failed.php:34 mobile/login_failed.php:34
 msgid ""
 "If you forgot your password, click the button below. A reset link will be "
 "sent to the email address you provided during registration."
@@ -2883,7 +2913,7 @@ msgstr ""
 "Ein Link zum Zuruecksetzen wird an die bei der Registrierung angegebene E-"
 "Mail-Adresse gesendet."
 
-#: register.php:62 admin/adduser.php:59
+#: register.php:62 admin/adduser.php:59 login/password_reset.php:39
 msgid "Illegal characters in the password"
 msgstr "Passwort enthält ungültige Zeichen"
 
@@ -2902,7 +2932,7 @@ msgstr ""
 "Das Hochladen des Bildes ist fehlgeschlagen, weil der Server das Bild nicht "
 "verarbeiten konnte."
 
-#: admin/eventdataimport.php:66
+#: admin/eventdataimport.php:66 plugins/import_xml_ffindr.php:77
 msgid "Import"
 msgstr "Import"
 
@@ -2988,8 +3018,9 @@ msgstr "Unzureichende Rechte."
 #: admin/reservations.php:25 admin/seasonadmin.php:16 admin/seasongames.php:24
 #: admin/seasonpools.php:16 admin/seasonseries.php:15
 #: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:657
-#: admin/spiritsettings.php:11 admin/tdtools.php:192 user/addspirit.php:75
-#: user/addspirit.php:90
+#: admin/spiritsettings.php:11 admin/tdtools.php:192
+#: spiritkeeper/editgame.php:23 spiritkeeper/editgame.php:42
+#: user/addspirit.php:75 user/addspirit.php:90
 msgid "Insufficient user rights"
 msgstr "Benutzerrechte reichen nicht aus."
 
@@ -3008,6 +3039,10 @@ msgstr "Ungültige Email-Adresse"
 #: admin/spirit.php:438 admin/tdtools.php:125
 msgid "Invalid game number."
 msgstr "Ungueltige Spielnummer."
+
+#: spiritkeeper/editgame.php:11 spiritkeeper/submitsotg.php:10
+msgid "Invalid game."
+msgstr "Ungültiges Spiel."
 
 #: user/addmedialink.php:62
 msgid "Invalid link target."
@@ -3035,6 +3070,10 @@ msgstr "Ungueltige Schnellwertung fuer %s. "
 msgid "Invalid scope type."
 msgstr "Ungueltiger Bereichstyp."
 
+#: spiritkeeper/editgame.php:34 spiritkeeper/teamgames.php:99
+msgid "Invalid team."
+msgstr "Ungültiges Team."
+
 #: admin/spirit.php:632
 msgid "Invalid threshold! Please use a number between 0.1 and 3.9."
 msgstr ""
@@ -3044,6 +3083,14 @@ msgstr ""
 msgid "Invalid threshold! Please use a number between 1 and 20."
 msgstr "Ungueltiger Schwellenwert! Bitte verwende eine Zahl zwischen 1 und 20."
 
+#: spiritkeeper/index.php:43
+msgid ""
+"Invalid token. Please use the full link provided by the Tournament Director "
+"or the Spirit Director."
+msgstr ""
+"Ungültiges Token. Bitte verwende den vollständigen Link, den die "
+"Turnierleitung oder der Spirit Director bereitgestellt hat."
+
 #: admin/addseasonusers.php:45
 msgid "Invalid user"
 msgstr "Ungültiger Benutzer"
@@ -3052,12 +3099,12 @@ msgstr "Ungültiger Benutzer"
 msgid "Invalid user:"
 msgstr "Ungültiger Benutzer:"
 
-#: mobile/login_failed.php:38
+#: login/login_failed.php:38 mobile/login_failed.php:38
 #, php-format
 msgid "Invalid username %s."
 msgstr "Ungültiger Benutzername %s."
 
-#: mobile/login_failed.php:15
+#: login/login_failed.php:15 mobile/login_failed.php:15
 msgid ""
 "Invalid username or password. Contact the system administrator if you need "
 "to reset your password."
@@ -3244,10 +3291,11 @@ msgstr "Spirit nach dem Absenden sperren"
 
 #: login.php:6 login.php:23 menufunctions.php:159 menufunctions.php:276
 #: mobile/index.php:18 scorekeeper/login.php:14 scorekeeper/login.php:24
+#: spiritkeeper/login.php:66
 msgid "Log in"
 msgstr "Einloggen"
 
-#: mobile/login_failed.php:9
+#: login/login_failed.php:9 mobile/login_failed.php:9
 msgid "Log in failed"
 msgstr "Anmeldung fehlgeschlagen"
 
@@ -3260,9 +3308,13 @@ msgid "Log in with your existing account."
 msgstr "Melde dich mit deinem bestehenden Konto an."
 
 #: login.php:29 logout.php:5 menufunctions.php:173 menufunctions.php:303
-#: mobile/respgames.php:145 scorekeeper/index.php:84
+#: mobile/respgames.php:145 scorekeeper/index.php:84 spiritkeeper/index.php:106
 msgid "Log out"
 msgstr "Abmelden"
+
+#: spiritkeeper/index.php:97
+msgid "Logged in as"
+msgstr "Angemeldet als"
 
 #: menufunctions.php:484
 msgid "Logs"
@@ -3415,6 +3467,11 @@ msgstr ""
 "Fehlende Trikotnummern gefunden! (Klicke auf den Teamnamen, um den Kader zu "
 "bearbeiten)"
 
+#: spiritkeeper/editgame.php:75
+#, php-format
+msgid "Missing spirit score for %s. "
+msgstr "Spirit-Bewertung für %s fehlt. "
+
 #: teams.php:405
 msgid "Missing spirit submissions"
 msgstr "Fehlende Spirit-Einreichungen"
@@ -3521,7 +3578,7 @@ msgstr "Name darf nicht leer sein"
 
 #: admin/poolmoves.php:216 admin/poolmoves.php:246 admin/poolmoves.php:279
 #: admin/poolmoves.php:281 admin/poolmoves.php:320 admin/serieteams.php:187
-#: lib/swissdraw.functions.php:204
+#: lib/swissdraw.functions.php:204 plugins/reassign_playoffpools.php:56
 msgid "Name in Schedule"
 msgstr "Name im Spielplan"
 
@@ -3607,6 +3664,14 @@ msgstr "Spitzname"
 msgid "No"
 msgstr "Nein"
 
+#: plugins/generate_teams.php:51
+msgid "No countries available for team generation."
+msgstr "Für die Teamerstellung sind keine Länder verfügbar."
+
+#: spiritkeeper/home.php:13
+msgid "No current events are available."
+msgstr "Keine aktuellen Turniere verfügbar."
+
 #: defensestatus.php:130
 msgid "No defence data available for the selected filter."
 msgstr "Keine Defense-Daten fuer den ausgewaehlten Filter verfuegbar."
@@ -3648,7 +3713,7 @@ msgstr "Keine Spielverantwortlichkeiten"
 msgid "No games"
 msgstr "Keine Spiele"
 
-#: admin/serieteams.php:245
+#: admin/serieteams.php:245 plugins/reassign_playoffpools.php:98
 msgid "No games to move"
 msgstr "Keine Spiele zum Mitnehmen"
 
@@ -3737,9 +3802,25 @@ msgstr "Keine Spirit-Wertung"
 msgid "No spirit stoppages found."
 msgstr "Keine Spirit-Unterbrechungen gefunden."
 
+#: spiritkeeper/teamgames.php:121
+msgid "No spirit-scored games found for the selected team."
+msgstr "Für das ausgewählte Team wurden keine Spiele mit Spirit-Bewertung gefunden."
+
+#: spiritkeeper/teamgames.php:65
+msgid "No spirit-scored games found for this team."
+msgstr "Für dieses Team wurden keine Spiele mit Spirit-Bewertung gefunden."
+
 #: admin/addseasonpools.php:409
 msgid "No teams"
 msgstr "Keine Teams"
+
+#: spiritkeeper/home.php:64
+msgid ""
+"No teams are available for spirit entry in the selected event with your "
+"current user rights."
+msgstr ""
+"Im ausgewählten Turnier sind mit deinen aktuellen Rechten keine Teams für "
+"die Spirit-Eingabe verfügbar."
 
 #: admin/serieteams.php:145
 msgid "No teams without a pool"
@@ -3788,6 +3869,10 @@ msgstr "Nichts gefunden."
 #: admin/tdtools.php:19 admin/tdtools.php:55 cust/fpudd/pdfprinter.php:195
 msgid "Number"
 msgstr "Nummer"
+
+#: plugins/generate_teams.php:45
+msgid "Number of teams to generate must be a positive integer."
+msgstr "Die Anzahl der zu erstellenden Teams muss eine positive ganze Zahl sein."
 
 #: gameplay.php:271 ext/rss.php:148 ext/rss.php:184
 msgid "Offence"
@@ -3838,8 +3923,18 @@ msgstr "Operationen"
 msgid "Opponent VPs"
 msgstr "Siegpunkte Gegner"
 
+#: spiritkeeper/teamgames.php:81
+msgid "Opponent spirit notes are not shown in the public token flow."
+msgstr "Spirit-Notizen des Gegners werden im öffentlichen Token-Ablauf nicht angezeigt."
+
 #: user/addspirit.php:25
 msgid "Optional - add context for spirit points given (no blame)."
+msgstr ""
+"Optional: Kontext zu den vergebenen Spirit-Punkten hinzufuegen (ohne "
+"Schuldzuweisung)."
+
+#: spiritkeeper/editgame.php:114 spiritkeeper/submitsotg.php:86
+msgid "Optional - add context for the spirit score given (no blame)."
 msgstr ""
 "Optional: Kontext zu den vergebenen Spirit-Punkten hinzufuegen (ohne "
 "Schuldzuweisung)."
@@ -3906,7 +4001,8 @@ msgid "Pair"
 msgstr "Paar"
 
 #: login.php:21 menufunctions.php:272 register.php:126 admin/adduser.php:128
-#: scorekeeper/login.php:21
+#: login/password_reset.php:74 scorekeeper/login.php:21
+#: spiritkeeper/login.php:63
 msgid "Password"
 msgstr "Passwort"
 
@@ -3914,7 +4010,16 @@ msgstr "Passwort"
 msgid "Password cannot be empty."
 msgstr "Passwort darf nicht leer sein."
 
-#: register.php:34 admin/adduser.php:31 user/userinfo.php:104
+#: login/password_reset.php:50
+msgid ""
+"Password has been reset successfully. You can now log in with your new "
+"password."
+msgstr ""
+"Das Passwort wurde erfolgreich zurückgesetzt. Du kannst dich jetzt mit "
+"deinem neuen Passwort anmelden."
+
+#: register.php:34 admin/adduser.php:31 login/password_reset.php:33
+#: user/userinfo.php:104
 msgid "Password is too short (min. 5 letters)."
 msgstr "Passwort ist zu kurz (min. 5 Buchstaben)."
 
@@ -3926,7 +4031,7 @@ msgstr ""
 "E-Mail zum Zuruecksetzen des Passworts ist nicht verfuegbar. Oeffne die "
 "Benutzerinformationsseite, um manuell ein neues Passwort zu setzen."
 
-#: mobile/login_failed.php:23
+#: login/login_failed.php:23 mobile/login_failed.php:23
 msgid "Password reset link sent."
 msgstr "Link zum Zuruecksetzen des Passworts gesendet."
 
@@ -3934,7 +4039,7 @@ msgstr "Link zum Zuruecksetzen des Passworts gesendet."
 msgid "Password reset request for Ultiorganizer"
 msgstr "Anfrage zum Zuruecksetzen des Passworts fuer Ultiorganizer"
 
-#: register.php:66
+#: register.php:66 login/password_reset.php:44
 msgid "Passwords do not match"
 msgstr "Passwörter stimmen nicht überein"
 
@@ -4153,6 +4258,14 @@ msgstr "Plays"
 #: gameplay.php:71
 msgid "Please check the status again later."
 msgstr "Bitte den Status spaeter erneut pruefen."
+
+#: login/password_reset.php:56
+msgid "Please correct the errors and try again."
+msgstr "Bitte korrigiere die Fehler und versuche es erneut."
+
+#: plugins/generate_teams.php:43
+msgid "Please select a valid division."
+msgstr "Bitte wähle eine gültige Division."
 
 #: admin/dbadmin.php:87
 msgid "Plugins"
@@ -4384,7 +4497,7 @@ msgstr "Schreibgeschuetzter Server"
 msgid "Read-only event"
 msgstr "Schreibgeschuetztes Ereignis"
 
-#: user/addspirit.php:316
+#: spiritkeeper/editgame.php:129 user/addspirit.php:316
 msgid "Read-only spirit review"
 msgstr "Schreibgeschuetzte Spirit-Bewertung"
 
@@ -4466,7 +4579,7 @@ msgstr ""
 msgid "Rename selected"
 msgstr "Ausgewähltes umbenennen"
 
-#: register.php:130 user/userinfo.php:526
+#: register.php:130 login/password_reset.php:76 user/userinfo.php:526
 msgid "Repeat password"
 msgstr "Passwort (Wdh.)"
 
@@ -4507,7 +4620,8 @@ msgstr "Zurücksetzen"
 msgid "Reset page load counter"
 msgstr "Seitenladezaehler zuruecksetzen"
 
-#: admin/users.php:76 mobile/login_failed.php:35
+#: admin/users.php:76 login/login_failed.php:35 login/password_reset.php:5
+#: login/password_reset.php:79 mobile/login_failed.php:35
 msgid "Reset password"
 msgstr "Passwort zurücksetzen"
 
@@ -4598,14 +4712,20 @@ msgstr "Fortsetzen, wenn das Spiel weitergeht."
 #: admin/executesql.php:124 admin/failed.php:27 admin/help.php:22
 #: admin/poolmoves.php:371 admin/schedule.php:252 admin/schedule.php:569
 #: admin/seasonmoves.php:214 admin/seriesseeding.php:74
-#: admin/serieteams.php:253 admin/success.php:27 user/addmedialink.php:219
-#: user/clubprofile.php:243 user/playerprofile.php:386 user/teamprofile.php:190
+#: admin/serieteams.php:253 admin/success.php:27
+#: plugins/lisence_modifier.php:187 plugins/reassign_playoffpools.php:123
+#: user/addmedialink.php:219 user/clubprofile.php:243
+#: user/playerprofile.php:386 user/teamprofile.php:190
 msgid "Return"
 msgstr "Zurück"
 
 #: admin/privacyplayer.php:67 admin/privacyuser.php:69
 msgid "Return to Database administration"
 msgstr "Zur Datenbankverwaltung zurückkehren"
+
+#: spiritkeeper/teamgames.php:134
+msgid "Review Spirit Score"
+msgstr "Spirit-Bewertung ansehen"
 
 #: admin/apitokens.php:194
 msgid "Revoke"
@@ -4743,10 +4863,11 @@ msgstr "Sa"
 #: mobile/addhalftime.php:35 mobile/addofficial.php:26
 #: mobile/addplayerlists.php:129 mobile/addspirittimeouts.php:84
 #: mobile/addtimeouts.php:102 mobile/respgames.php:133
-#: scorekeeper/addcomment.php:41 scorekeeper/addfirstoffence.php:46
-#: scorekeeper/addhalftime.php:85 scorekeeper/addofficial.php:24
-#: scorekeeper/addplayerlists.php:215 scorekeeper/addspirittimeouts.php:185
-#: scorekeeper/addtimeouts.php:162 scorekeeper/result.php:100
+#: plugins/lisence_modifier.php:186 scorekeeper/addcomment.php:41
+#: scorekeeper/addfirstoffence.php:46 scorekeeper/addhalftime.php:85
+#: scorekeeper/addofficial.php:24 scorekeeper/addplayerlists.php:215
+#: scorekeeper/addspirittimeouts.php:185 scorekeeper/addtimeouts.php:162
+#: scorekeeper/result.php:100 spiritkeeper/editgame.php:124
 #: user/addmedialink.php:218 user/addplayerlists.php:388 user/addspirit.php:311
 #: user/clubprofile.php:242 user/playerprofile.php:385 user/respgames.php:225
 #: user/teamplayers.php:271 user/teamprofile.php:189 user/userinfo.php:290
@@ -4867,7 +4988,8 @@ msgstr "Bereichstyp"
 #: mobile/addscoresheet.php:156 mobile/addscoresheet.php:176
 #: mobile/deletescore.php:26 mobile/deletescore.php:42
 #: scorekeeper/addscoresheet.php:233 scorekeeper/addscoresheet.php:243
-#: scorekeeper/deletescore.php:39 user/addscoresheet.php:651
+#: scorekeeper/deletescore.php:39 spiritkeeper/editgame.php:101
+#: spiritkeeper/teamgames.php:29 user/addscoresheet.php:651
 msgid "Score"
 msgstr "Spielstand"
 
@@ -5093,11 +5215,11 @@ msgid "Select encoding"
 msgstr "Kodierung auswaehlen"
 
 #: admin/schedule.php:371 admin/seasonpoints.php:23 ext/export.php:43
-#: ext/index.php:67 scorekeeper/respgames.php:67
+#: ext/index.php:67 scorekeeper/respgames.php:67 spiritkeeper/home.php:48
 msgid "Select event"
 msgstr "Turnier wählen"
 
-#: admin/eventdataimport.php:60
+#: admin/eventdataimport.php:60 plugins/import_xml_ffindr.php:71
 msgid "Select file to import"
 msgstr "Datei zum Import wählen"
 
@@ -5180,6 +5302,10 @@ msgstr "Ausgewählter Spieler"
 msgid "Selected pool standings and scoreboard"
 msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
 
+#: spiritkeeper/teamgames.php:116
+msgid "Selected team"
+msgstr "Ausgewähltes Team"
+
 #: ext/index.php:241
 msgid "Selected team's games and scoreboard"
 msgstr "Spiele und Scoreboard eines ausgewählten Teams"
@@ -5228,7 +5354,8 @@ msgstr "Einstellungen"
 msgid "Shirt numbers"
 msgstr "Trikotnummern"
 
-#: admin/apitokens.php:87 admin/apitokens.php:180 user/userinfo.php:314
+#: admin/apitokens.php:87 admin/apitokens.php:180 spiritkeeper/home.php:55
+#: user/userinfo.php:314
 msgid "Show"
 msgstr "Anzeigen"
 
@@ -5376,10 +5503,19 @@ msgstr ""
 "Detaillierte Sichtbarkeits- und Sperreinstellungen sind in der Spirit-Admin-"
 "Ansicht verfuegbar, nachdem das Ereignis erstellt wurde."
 
+#: spiritkeeper/editgame.php:112 spiritkeeper/submitsotg.php:85
+#: spiritkeeper/submitsotg.php:140
+msgid "Spirit note"
+msgstr "Spirit-Notiz"
+
 #: gameplay.php:612 gameplay.php:616 user/addspirit.php:109
 #: user/addspirit.php:124 user/addspirit.php:135
 msgid "Spirit note for"
 msgstr "Spirit-Notiz fuer"
+
+#: spiritkeeper/teamgames.php:80
+msgid "Spirit notes can be added and edited on the token submission page."
+msgstr "Spirit-Notizen können auf der Token-Einreichungsseite hinzugefügt und bearbeitet werden."
 
 #: gameplay.php:554 seriesstatus.php:199 seriesstatus.php:201
 #: admin/seasonadmin.php:46 admin/seasongames.php:246
@@ -5405,8 +5541,17 @@ msgstr "Spirit-Punktzahl im Schnitt"
 msgid "Spirit score deleted. "
 msgstr "Spirit-Punktzahl geloescht. "
 
-#: user/addspirit.php:280 user/addspirit.php:288 user/addspirit.php:296
-#: user/addspirit.php:302
+#: spiritkeeper/editgame.php:107 spiritkeeper/editgame.php:137
+#: spiritkeeper/submitsotg.php:49
+msgid "Spirit score for"
+msgstr "Spirit-Bewertung für"
+
+#: spiritkeeper/submitsotg.php:138
+msgid "Spirit score given"
+msgstr "Vergebene Spirit-Bewertung"
+
+#: spiritkeeper/teamgames.php:32 user/addspirit.php:280 user/addspirit.php:288
+#: user/addspirit.php:296 user/addspirit.php:302
 msgid "Spirit score given for"
 msgstr "Spirit-Punktzahl vergeben fuer"
 
@@ -5414,10 +5559,30 @@ msgstr "Spirit-Punktzahl vergeben fuer"
 msgid "Spirit score not deleted. "
 msgstr "Spirit-Punktzahl nicht geloescht. "
 
-#: user/addspirit.php:163 user/addspirit.php:175 user/addspirit.php:189
-#: user/addspirit.php:201
+#: spiritkeeper/editgame.php:79 user/addspirit.php:163 user/addspirit.php:175
+#: user/addspirit.php:189 user/addspirit.php:201
 msgid "Spirit score not saved. "
 msgstr "Spirit-Punktzahl nicht gespeichert. "
+
+#: spiritkeeper/submitsotg.php:44
+msgid ""
+"Spirit score not saved. Check that all values are valid and the submission "
+"is still open."
+msgstr ""
+"Spirit-Bewertung wurde nicht gespeichert. Prüfe, ob alle Werte gültig sind "
+"und die Einreichung noch offen ist."
+
+#: spiritkeeper/teamgames.php:34
+msgid "Spirit score received"
+msgstr "Erhaltene Spirit-Bewertung"
+
+#: spiritkeeper/editgame.php:103
+msgid "Spirit score saved."
+msgstr "Spirit-Bewertung gespeichert."
+
+#: spiritkeeper/submitsotg.php:38
+msgid "Spirit score submitted."
+msgstr "Spirit-Bewertung eingereicht."
 
 #: gameplay.php:570 menufunctions.php:599 menufunctions.php:612
 #: spiritstatus.php:43 teamcard.php:273 ext/export.php:38
@@ -5444,7 +5609,11 @@ msgstr "Spirit-Punktzahlen sichtbar"
 msgid "Spirit scoring is disabled for this event."
 msgstr "Die Spirit-Bewertung ist fuer dieses Ereignis deaktiviert."
 
-#: user/addspirit.php:321
+#: spiritkeeper/submitsotg.php:58
+msgid "Spirit scoring is not configured correctly for this event."
+msgstr "Spirit-Bewertung ist für dieses Turnier nicht korrekt konfiguriert."
+
+#: spiritkeeper/editgame.php:47 user/addspirit.php:321
 #, php-format
 msgid "Spirit scoring is not enabled for %s."
 msgstr "Die Spirit-Bewertung ist fuer %s nicht aktiviert."
@@ -5483,7 +5652,14 @@ msgstr "Spirit-Unterbrechungen (Zeit)"
 msgid "Spirit stoppages recorded for this event."
 msgstr "Spirit-Unterbrechungen werden fuer dieses Ereignis erfasst."
 
-#: menufunctions.php:250 menufunctions.php:686
+#: spiritkeeper/submitsotg.php:145
+msgid "Spirit submission is not available for this game."
+msgstr "Spirit-Einreichung ist für dieses Spiel nicht verfügbar."
+
+#: menufunctions.php:250 menufunctions.php:686 spiritkeeper/editgame.php:8
+#: spiritkeeper/editgame.php:51 spiritkeeper/home.php:5
+#: spiritkeeper/index.php:27 spiritkeeper/index.php:34 spiritkeeper/login.php:5
+#: spiritkeeper/teamgames.php:104
 msgid "Spiritkeeper"
 msgstr "Spiritkeeper"
 
@@ -5494,6 +5670,15 @@ msgstr "Spiritkeeper-Werkzeuge"
 #: admin/spirit.php:387
 msgid "Spiritkeeper URL"
 msgstr "Spiritkeeper-URL"
+
+#: spiritkeeper/home.php:12 spiritkeeper/home.php:44
+#: spiritkeeper/teamgames.php:108
+msgid ""
+"Spiritkeeper is the dedicated mobile surface for spirit score entry and "
+"review."
+msgstr ""
+"Spiritkeeper ist die mobile Oberfläche für Spirit-Bewertung und "
+"-Überprüfung."
 
 #: admin/editstanding.php:43 admin/editstanding.php:46
 msgid "Standing"
@@ -5560,6 +5745,10 @@ msgstr "Statistikreferenzen"
 msgid "Status"
 msgstr "Zustand"
 
+#: spiritkeeper/submitsotg.php:92 spiritkeeper/teamgames.php:74
+msgid "Submit Spirit Score"
+msgstr "Spirit-Bewertung einreichen"
+
 #: admin/visitors.php:29
 msgid "Summary"
 msgstr "Zusammenfassung"
@@ -5617,7 +5806,8 @@ msgstr "Aufgaben"
 #: lib/search.functions.php:154 lib/search.functions.php:214
 #: lib/search.functions.php:355 lib/search.functions.php:517
 #: lib/search.functions.php:682 lib/swissdraw.functions.php:201
-#: user/enrollteam.php:78 user/respteams.php:21
+#: plugins/reassign_playoffpools.php:53 user/enrollteam.php:78
+#: user/respteams.php:21
 msgid "Team"
 msgstr "Team"
 
@@ -5706,6 +5896,10 @@ msgstr "Teams"
 msgid "Teams (abbrev.)"
 msgstr "Teams (Abk.)"
 
+#: spiritkeeper/home.php:61
+msgid "Teams in selected event"
+msgstr "Teams im ausgewählten Turnier"
+
 #: admin/saveteampools.php:46
 msgid "Teams saved"
 msgstr "Teams gespeichert"
@@ -5742,6 +5936,21 @@ msgstr ""
 #: menufunctions.php:245
 msgid "The legacy mobile administration interface is deprecated."
 msgstr "Die alte mobile Administrationsoberflaeche ist veraltet."
+
+#: spiritkeeper/teamgames.php:38
+msgid "The opponent has not submitted a spirit score for this game yet."
+msgstr "Der Gegner hat für dieses Spiel noch keine Spirit-Bewertung eingereicht."
+
+#: spiritkeeper/teamgames.php:36
+msgid ""
+"The opponent spirit score is available, but not visible through this page."
+msgstr ""
+"Die Spirit-Bewertung des Gegners ist verfügbar, wird aber auf dieser Seite "
+"nicht angezeigt."
+
+#: plugins/generate_teams.php:79
+msgid "The selected event has no divisions."
+msgstr "Das ausgewählte Turnier hat keine Divisionen."
 
 #: cust/bula/pdfprinter.php:304 cust/fpudd/pdfprinter.php:339
 #: cust/gummis/pdfprinter.php:323 cust/wfdf/pdfprinter.php:706
@@ -5804,6 +6013,19 @@ msgstr "3."
 msgid "This game has already been played. Current result:"
 msgstr "Dieses Spiel wurde bereits gespielt. Aktuelles Ergebnis:"
 
+#: spiritkeeper/submitsotg.php:134
+msgid "This game has not started yet. Return after the game begins."
+msgstr "Dieses Spiel hat noch nicht begonnen. Kehre nach Spielbeginn zurück."
+
+#: plugins/import_xml_ffindr.php:79
+msgid ""
+"This operation updates and adds event data in database with one from file. "
+"It will not delete any data or change user rights."
+msgstr ""
+"Diese Operation aktualisiert die Turnierdaten in der Datenbank mit denen aus "
+"der Datei oder fügt sie hinzu. Es wird nichts gelöscht oder Benutzerrechte "
+"verändert."
+
 #: admin/eventdataimport.php:69
 msgid ""
 "This operation updates and adds event data in the database with the content "
@@ -5812,6 +6034,15 @@ msgstr ""
 "Diese Operation aktualisiert die Turnierdaten in der Datenbank mit denen aus "
 "der Datei oder fügt sie hinzu. Es wird nichts gelöscht oder Benutzerrechte "
 "verändert."
+
+#: login/password_reset.php:28 login/password_reset.php:53
+#: login/password_reset.php:62
+msgid "This password reset link is invalid or has expired."
+msgstr "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
+
+#: spiritkeeper/teamgames.php:135
+msgid "This spirit submission is currently read-only."
+msgstr "Diese Spirit-Einreichung ist derzeit schreibgeschützt."
 
 #: admin/poolgames.php:362
 msgid "This will remove all games from this pool."
@@ -5926,11 +6157,12 @@ msgstr "Nach"
 
 #: admin/poolmoves.php:213 admin/seasonmoves.php:159
 #: admin/seasonstandings.php:464 admin/serieteams.php:186
-#: lib/swissdraw.functions.php:203
+#: lib/swissdraw.functions.php:203 plugins/reassign_playoffpools.php:55
 msgid "To pool"
 msgstr "Nach Gruppe"
 
 #: admin/serieteams.php:185 lib/swissdraw.functions.php:202
+#: plugins/reassign_playoffpools.php:54
 msgid "To pos."
 msgstr "Nach Pos."
 
@@ -6011,7 +6243,7 @@ msgstr "Ges.-Schnitt"
 #: teamcard.php:349 teamcard.php:567 teamcard.php:754 admin/spirit.php:46
 #: admin/spirit.php:105 admin/spirit.php:154 admin/spirit.php:240
 #: admin/spirit.php:284 admin/spirit.php:344
-#: cust/slkl/mass-accreditation.php:79
+#: cust/slkl/mass-accreditation.php:79 spiritkeeper/submitsotg.php:84
 msgid "Total"
 msgstr "Total"
 
@@ -6136,6 +6368,7 @@ msgstr "Ultimate.fi"
 #: ext/poolstatus.php:18 ext/teamcoming.php:18 ext/teamplayed.php:19
 #: ext/teamscoreboard.php:18 ext/tournament.php:23 lib/user.functions.php:1290
 #: lib/user.functions.php:1351 scorekeeper/index.php:82
+#: spiritkeeper/index.php:104
 msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
 
@@ -6188,7 +6421,7 @@ msgstr ""
 msgid "Unsupported language:"
 msgstr "Nicht-unterstützte Sprachei:"
 
-#: admin/eventdataimport.php:70
+#: admin/eventdataimport.php:70 plugins/import_xml_ffindr.php:80
 msgid "Update"
 msgstr "Aktualisieren"
 
@@ -6277,7 +6510,7 @@ msgstr "Nutzerrollen"
 
 #: login.php:19 menufunctions.php:268 register.php:122 admin/adduser.php:109
 #: admin/adduser.php:124 admin/privacyuser.php:88 lib/search.functions.php:594
-#: scorekeeper/login.php:19 user/userinfo.php:241
+#: scorekeeper/login.php:19 spiritkeeper/login.php:61 user/userinfo.php:241
 msgid "Username"
 msgstr "Benutzername"
 
@@ -6485,6 +6718,7 @@ msgstr "World Flying Disc Federation"
 #: admin/seasonstandings.php:448 admin/seasonteams.php:239
 #: admin/serieformats.php:47 admin/serverconf.php:254
 #: admin/translations.php:121 lib/search.functions.php:756
+#: plugins/simulate_games.php:225
 msgid "X"
 msgstr "X"
 
@@ -6495,6 +6729,10 @@ msgstr "Ja"
 #: games.php:249
 msgid "Yesterday"
 msgstr "Gestern"
+
+#: spiritkeeper/submitsotg.php:137
+msgid "You already submitted the spirit score for this game."
+msgstr "Du hast die Spirit-Bewertung für dieses Spiel bereits eingereicht."
 
 #: ext/export.php:27
 msgid "You can also change encoding and separator."
@@ -6519,6 +6757,18 @@ msgstr "Du kannst ein aktuelles Ereignis nicht entfernen"
 #: logout.php:10
 msgid "You have logged out"
 msgstr "Sie sind ausgeloggt"
+
+#: spiritkeeper/teamgames.php:43
+msgid "You have not submitted a spirit score for this game yet."
+msgstr "Du hast für dieses Spiel noch keine Spirit-Bewertung eingereicht."
+
+#: spiritkeeper/teamgames.php:75
+msgid "Your spirit submission is locked."
+msgstr "Deine Spirit-Einreichung ist gesperrt."
+
+#: spiritkeeper/index.php:91
+msgid "Your team"
+msgstr "Dein Team"
 
 #: admin/addseasonteams.php:83
 msgid "added"
@@ -6627,7 +6877,8 @@ msgid "division"
 msgstr "Klasse"
 
 #: admin/editstanding.php:70 admin/poolgames.php:288 admin/poolgames.php:329
-#: admin/poolgames.php:353 user/teamplayers.php:207
+#: admin/poolgames.php:353 plugins/lisence_modifier.php:240
+#: user/teamplayers.php:207
 msgid "edit"
 msgstr "bearbeiten"
 
