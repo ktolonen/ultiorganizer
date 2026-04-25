@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 09:28+0300\n"
+"POT-Creation-Date: 2026-04-25 09:41+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -1102,6 +1102,18 @@ msgstr "Kommenttia ei tallennettu."
 msgid "Comments"
 msgstr "Kommentit"
 
+#: sql/upgrade_db.php:599
+msgid "Communication"
+msgstr "Kommunikaatio"
+
+#: sql/upgrade_db.php:640
+msgid "Communication (ours)"
+msgstr "Kommunikaatio (meidän)"
+
+#: sql/upgrade_db.php:636
+msgid "Communication (theirs)"
+msgstr "Kommunikaatio (heidän)"
+
 #: result.php:83 cust/default/teamplayers.functions.php:79
 #: cust/fpudd/teamplayers.functions.php:65
 #: cust/slkl/teamplayers.functions.php:65 scorekeeper/result.php:86
@@ -1983,6 +1995,18 @@ msgstr "Pisteiden tallentaminen epäonnistui."
 msgid "Fair"
 msgstr "Reiluus"
 
+#: sql/upgrade_db.php:576 sql/upgrade_db.php:593
+msgid "Fair-Mindedness"
+msgstr "Reiluus"
+
+#: sql/upgrade_db.php:626
+msgid "Fair-Mindedness (ours)"
+msgstr "Reiluus (meidän)"
+
+#: sql/upgrade_db.php:622
+msgid "Fair-Mindedness (theirs)"
+msgstr "Reiluus (heidän)"
+
 #: user/respgames.php:21
 msgid "Feed in the data for your game responsibilities"
 msgstr "Syötä vastuullasi oleviin peleihin"
@@ -2131,6 +2155,10 @@ msgstr "Etunimi"
 msgid "First offence"
 msgstr "Ensimmäinen hyökkäys"
 
+#: sql/upgrade_db.php:1150
+msgid "Five categories, theirs and ours"
+msgstr "Viisi kategoriaa, heidän ja meidän"
+
 #: admin/dbadmin.php:33
 msgid "Fix suggestions:"
 msgstr "Korjausehdotukset:"
@@ -2187,6 +2215,18 @@ msgstr "Foorumi"
 msgid "Fouls"
 msgstr "Rikkeet"
 
+#: sql/upgrade_db.php:574 sql/upgrade_db.php:591
+msgid "Fouls and Body Contact"
+msgstr "Virheet ja fyysinen kontakti"
+
+#: sql/upgrade_db.php:620
+msgid "Fouls and Body Contact (ours)"
+msgstr "Virheet ja fyysinen kontakti (meidän)"
+
+#: sql/upgrade_db.php:616
+msgid "Fouls and Body Contact (theirs)"
+msgstr "Virheet ja fyysinen kontakti (heidän)"
+
 #: clubcard.php:60
 msgid "Founded"
 msgstr "Perustettu"
@@ -2194,6 +2234,10 @@ msgstr "Perustettu"
 #: user/clubprofile.php:165
 msgid "Founded on year"
 msgstr "Perustettu vuonna"
+
+#: sql/upgrade_db.php:1149
+msgid "Four categories plus comparison"
+msgstr "Neljä kategoriaa sekä vertailu"
 
 #: lib/common.functions.php:137
 msgid "Fri"
@@ -3866,6 +3910,10 @@ msgstr "Toimitsija palauttaa täytetyn lomakkeen kisatoimistoon."
 msgid "Old events"
 msgstr "Vanhat tapahtumat"
 
+#: sql/upgrade_db.php:561
+msgid "One simple score"
+msgstr "Yksi yksinkertainen pisteytys"
+
 #: poolstatus.php:845 poolstatus.php:847 admin/seasongames.php:189
 #: lib/timetable.functions.php:596 lib/timetable.functions.php:598
 #: scorekeeper/respgames.php:187
@@ -3941,6 +3989,10 @@ msgstr "Järjestäjä"
 #: user/playerprofile.php:261
 msgid "Other"
 msgstr "Muu"
+
+#: sql/upgrade_db.php:584
+msgid "Our Spirit compared to theirs"
+msgstr "Meidän spirit verrattuna heidän spiritiinsä"
 
 #: admin/reservations.php:130 lib/search.functions.php:754
 msgid "PDF"
@@ -4340,6 +4392,18 @@ msgstr "Sij."
 #: playercard.php:98
 msgid "Position"
 msgstr "Pelipaikka"
+
+#: sql/upgrade_db.php:580 sql/upgrade_db.php:597
+msgid "Positive Attitude and Self-Control"
+msgstr "Positiivinen asenne ja itsehillintä"
+
+#: sql/upgrade_db.php:634
+msgid "Positive Attitude and Self-Control (ours)"
+msgstr "Positiivinen asenne ja itsehillintä (meidän)"
+
+#: sql/upgrade_db.php:630
+msgid "Positive Attitude and Self-Control (theirs)"
+msgstr "Positiivinen asenne ja itsehillintä (heidän)"
 
 #: admin/spirit.php:647
 msgid "Press the button to search for spirit comments"
@@ -4794,6 +4858,18 @@ msgstr "Sääntöpohjat"
 #: admin/spirit.php:562 admin/spirit.php:573
 msgid "Rules"
 msgstr "Säännöt"
+
+#: sql/upgrade_db.php:572 sql/upgrade_db.php:589
+msgid "Rules Knowledge and Use"
+msgstr "Sääntöjen tuntemus ja käyttö"
+
+#: sql/upgrade_db.php:612
+msgid "Rules Knowledge and Use (ours)"
+msgstr "Sääntöjen tuntemus ja käyttö (meidän)"
+
+#: sql/upgrade_db.php:608
+msgid "Rules Knowledge and Use (theirs)"
+msgstr "Sääntöjen tuntemus ja käyttö (heidän)"
 
 #: admin/executesql.php:120 admin/executesql.php:122
 msgid "Run"
@@ -5482,16 +5558,17 @@ msgstr "Spirit-kommentti joukkueelle"
 
 #: spiritkeeper/teamgames.php:80
 msgid "Spirit notes can be added and edited on the token submission page."
-msgstr "Spirit-kommentteja voi lisätä ja muokata tunnistelinkin lähetyssivulla."
+msgstr ""
+"Spirit-kommentteja voi lisätä ja muokata tunnistelinkin lähetyssivulla."
 
 #: gameplay.php:554 seriesstatus.php:199 seriesstatus.php:201
 #: admin/seasonadmin.php:46 admin/seasongames.php:246
 #: cust/bula/pdfprinter.php:972 cust/default/pdfprinter.php:943
 #: cust/gummis/pdfprinter.php:1046 cust/slkl/pdfprinter.php:919
 #: cust/wfdf/pdfprinter.php:1552 cust/windmill/pdfprinter.php:933
-#: user/adddefensesheet.php:68 user/addplayerlists.php:242
-#: user/addresult.php:69 user/addscoresheet.php:219 user/addspirit.php:223
-#: user/respgames.php:207
+#: sql/upgrade_db.php:565 user/adddefensesheet.php:68
+#: user/addplayerlists.php:242 user/addresult.php:69 user/addscoresheet.php:219
+#: user/addspirit.php:223 user/respgames.php:207
 msgid "Spirit score"
 msgstr "Spirit-piste"
 
@@ -6527,6 +6604,22 @@ msgstr "Vierailijat"
 #: admin/visitors.php:35
 msgid "Visits"
 msgstr "Vierailut"
+
+#: sql/upgrade_db.php:587
+msgid "WFDF (five categories)"
+msgstr "WFDF (viisi kategoriaa)"
+
+#: sql/upgrade_db.php:604
+msgid "WFDF (five categories, theirs and ours)"
+msgstr "WFDF (viisi kategoriaa, heidän ja meidän)"
+
+#: sql/upgrade_db.php:570
+msgid "WFDF (four categories plus comparison)"
+msgstr "WFDF (neljä kategoriaa sekä vertailu)"
+
+#: sql/upgrade_db.php:1151
+msgid "WFDF official (five categories)"
+msgstr "WFDF virallinen (viisi kategoriaa)"
 
 #: admin/schedule.php:564
 #, php-format

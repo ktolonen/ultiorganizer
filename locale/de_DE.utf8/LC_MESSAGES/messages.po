@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-25 09:28+0300\n"
+"POT-Creation-Date: 2026-04-25 09:41+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -1114,6 +1114,18 @@ msgstr "Kommentar nicht gespeichert."
 msgid "Comments"
 msgstr "Kommentare"
 
+#: sql/upgrade_db.php:599
+msgid "Communication"
+msgstr "Kommunikation"
+
+#: sql/upgrade_db.php:640
+msgid "Communication (ours)"
+msgstr "Kommunikation (unsere)"
+
+#: sql/upgrade_db.php:636
+msgid "Communication (theirs)"
+msgstr "Kommunikation (ihre)"
+
 #: result.php:83 cust/default/teamplayers.functions.php:79
 #: cust/fpudd/teamplayers.functions.php:65
 #: cust/slkl/teamplayers.functions.php:65 scorekeeper/result.php:86
@@ -2006,6 +2018,18 @@ msgstr "Punkte konnten nicht gespeichert werden."
 msgid "Fair"
 msgstr "Fairness"
 
+#: sql/upgrade_db.php:576 sql/upgrade_db.php:593
+msgid "Fair-Mindedness"
+msgstr "Fairness"
+
+#: sql/upgrade_db.php:626
+msgid "Fair-Mindedness (ours)"
+msgstr "Fairness (unsere)"
+
+#: sql/upgrade_db.php:622
+msgid "Fair-Mindedness (theirs)"
+msgstr "Fairness (ihre)"
+
 #: user/respgames.php:21
 msgid "Feed in the data for your game responsibilities"
 msgstr "Dateneingabe für Spielverantwortliche:"
@@ -2154,6 +2178,10 @@ msgstr "Vorname"
 msgid "First offence"
 msgstr "Erste Offence"
 
+#: sql/upgrade_db.php:1150
+msgid "Five categories, theirs and ours"
+msgstr "Fünf Kategorien, ihre und unsere"
+
 #: admin/dbadmin.php:33
 msgid "Fix suggestions:"
 msgstr "Vorschlaege zur Behebung:"
@@ -2210,6 +2238,18 @@ msgstr "Forum"
 msgid "Fouls"
 msgstr "Fouls"
 
+#: sql/upgrade_db.php:574 sql/upgrade_db.php:591
+msgid "Fouls and Body Contact"
+msgstr "Fouls und Körperkontakt"
+
+#: sql/upgrade_db.php:620
+msgid "Fouls and Body Contact (ours)"
+msgstr "Fouls und Körperkontakt (unsere)"
+
+#: sql/upgrade_db.php:616
+msgid "Fouls and Body Contact (theirs)"
+msgstr "Fouls und Körperkontakt (ihre)"
+
 #: clubcard.php:60
 msgid "Founded"
 msgstr "Gegründet"
@@ -2217,6 +2257,10 @@ msgstr "Gegründet"
 #: user/clubprofile.php:165
 msgid "Founded on year"
 msgstr "Gegründet im Jahre"
+
+#: sql/upgrade_db.php:1149
+msgid "Four categories plus comparison"
+msgstr "Vier Kategorien plus Vergleich"
 
 #: lib/common.functions.php:137
 msgid "Fri"
@@ -3804,7 +3848,8 @@ msgstr "Keine Spirit-Unterbrechungen gefunden."
 
 #: spiritkeeper/teamgames.php:121
 msgid "No spirit-scored games found for the selected team."
-msgstr "Für das ausgewählte Team wurden keine Spiele mit Spirit-Bewertung gefunden."
+msgstr ""
+"Für das ausgewählte Team wurden keine Spiele mit Spirit-Bewertung gefunden."
 
 #: spiritkeeper/teamgames.php:65
 msgid "No spirit-scored games found for this team."
@@ -3872,7 +3917,8 @@ msgstr "Nummer"
 
 #: plugins/generate_teams.php:45
 msgid "Number of teams to generate must be a positive integer."
-msgstr "Die Anzahl der zu erstellenden Teams muss eine positive ganze Zahl sein."
+msgstr ""
+"Die Anzahl der zu erstellenden Teams muss eine positive ganze Zahl sein."
 
 #: gameplay.php:271 ext/rss.php:148 ext/rss.php:184
 msgid "Offence"
@@ -3891,6 +3937,10 @@ msgstr "Geben Sie den ausgefüllten Spielbericht bei der Turnierleitung ab."
 #: seasonlist.php:8
 msgid "Old events"
 msgstr "Alte Turniere"
+
+#: sql/upgrade_db.php:561
+msgid "One simple score"
+msgstr "Eine einfache Bewertung"
 
 #: poolstatus.php:845 poolstatus.php:847 admin/seasongames.php:189
 #: lib/timetable.functions.php:596 lib/timetable.functions.php:598
@@ -3925,7 +3975,9 @@ msgstr "Siegpunkte Gegner"
 
 #: spiritkeeper/teamgames.php:81
 msgid "Opponent spirit notes are not shown in the public token flow."
-msgstr "Spirit-Notizen des Gegners werden im öffentlichen Token-Ablauf nicht angezeigt."
+msgstr ""
+"Spirit-Notizen des Gegners werden im öffentlichen Token-Ablauf nicht "
+"angezeigt."
 
 #: user/addspirit.php:25
 msgid "Optional - add context for spirit points given (no blame)."
@@ -3970,6 +4022,10 @@ msgstr "Organisator"
 #: user/playerprofile.php:261
 msgid "Other"
 msgstr "Sonst."
+
+#: sql/upgrade_db.php:584
+msgid "Our Spirit compared to theirs"
+msgstr "Unser Spirit im Vergleich zu ihrem"
 
 #: admin/reservations.php:130 lib/search.functions.php:754
 msgid "PDF"
@@ -4370,6 +4426,18 @@ msgstr "Pos."
 #: playercard.php:98
 msgid "Position"
 msgstr "Position"
+
+#: sql/upgrade_db.php:580 sql/upgrade_db.php:597
+msgid "Positive Attitude and Self-Control"
+msgstr "Positive Einstellung und Selbstkontrolle"
+
+#: sql/upgrade_db.php:634
+msgid "Positive Attitude and Self-Control (ours)"
+msgstr "Positive Einstellung und Selbstkontrolle (unsere)"
+
+#: sql/upgrade_db.php:630
+msgid "Positive Attitude and Self-Control (theirs)"
+msgstr "Positive Einstellung und Selbstkontrolle (ihre)"
 
 #: admin/spirit.php:647
 msgid "Press the button to search for spirit comments"
@@ -4825,6 +4893,18 @@ msgstr "Regel-Vorlagen"
 #: admin/spirit.php:562 admin/spirit.php:573
 msgid "Rules"
 msgstr "Regeln"
+
+#: sql/upgrade_db.php:572 sql/upgrade_db.php:589
+msgid "Rules Knowledge and Use"
+msgstr "Regelkenntnis und Anwendung"
+
+#: sql/upgrade_db.php:612
+msgid "Rules Knowledge and Use (ours)"
+msgstr "Regelkenntnis und Anwendung (unsere)"
+
+#: sql/upgrade_db.php:608
+msgid "Rules Knowledge and Use (theirs)"
+msgstr "Regelkenntnis und Anwendung (ihre)"
 
 #: admin/executesql.php:120 admin/executesql.php:122
 msgid "Run"
@@ -5515,16 +5595,18 @@ msgstr "Spirit-Notiz fuer"
 
 #: spiritkeeper/teamgames.php:80
 msgid "Spirit notes can be added and edited on the token submission page."
-msgstr "Spirit-Notizen können auf der Token-Einreichungsseite hinzugefügt und bearbeitet werden."
+msgstr ""
+"Spirit-Notizen können auf der Token-Einreichungsseite hinzugefügt und "
+"bearbeitet werden."
 
 #: gameplay.php:554 seriesstatus.php:199 seriesstatus.php:201
 #: admin/seasonadmin.php:46 admin/seasongames.php:246
 #: cust/bula/pdfprinter.php:972 cust/default/pdfprinter.php:943
 #: cust/gummis/pdfprinter.php:1046 cust/slkl/pdfprinter.php:919
 #: cust/wfdf/pdfprinter.php:1552 cust/windmill/pdfprinter.php:933
-#: user/adddefensesheet.php:68 user/addplayerlists.php:242
-#: user/addresult.php:69 user/addscoresheet.php:219 user/addspirit.php:223
-#: user/respgames.php:207
+#: sql/upgrade_db.php:565 user/adddefensesheet.php:68
+#: user/addplayerlists.php:242 user/addresult.php:69 user/addscoresheet.php:219
+#: user/addspirit.php:223 user/respgames.php:207
 msgid "Spirit score"
 msgstr "Spirit-Punktzahl"
 
@@ -5677,8 +5759,7 @@ msgid ""
 "Spiritkeeper is the dedicated mobile surface for spirit score entry and "
 "review."
 msgstr ""
-"Spiritkeeper ist die mobile Oberfläche für Spirit-Bewertung und "
-"-Überprüfung."
+"Spiritkeeper ist die mobile Oberfläche für Spirit-Bewertung und -Überprüfung."
 
 #: admin/editstanding.php:43 admin/editstanding.php:46
 msgid "Standing"
@@ -5939,7 +6020,8 @@ msgstr "Die alte mobile Administrationsoberflaeche ist veraltet."
 
 #: spiritkeeper/teamgames.php:38
 msgid "The opponent has not submitted a spirit score for this game yet."
-msgstr "Der Gegner hat für dieses Spiel noch keine Spirit-Bewertung eingereicht."
+msgstr ""
+"Der Gegner hat für dieses Spiel noch keine Spirit-Bewertung eingereicht."
 
 #: spiritkeeper/teamgames.php:36
 msgid ""
@@ -6038,7 +6120,8 @@ msgstr ""
 #: login/password_reset.php:28 login/password_reset.php:53
 #: login/password_reset.php:62
 msgid "This password reset link is invalid or has expired."
-msgstr "Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
+msgstr ""
+"Dieser Link zum Zurücksetzen des Passworts ist ungültig oder abgelaufen."
 
 #: spiritkeeper/teamgames.php:135
 msgid "This spirit submission is currently read-only."
@@ -6573,6 +6656,22 @@ msgstr "Besucher"
 #: admin/visitors.php:35
 msgid "Visits"
 msgstr "Besuche"
+
+#: sql/upgrade_db.php:587
+msgid "WFDF (five categories)"
+msgstr "WFDF (fünf Kategorien)"
+
+#: sql/upgrade_db.php:604
+msgid "WFDF (five categories, theirs and ours)"
+msgstr "WFDF (fünf Kategorien, ihre und unsere)"
+
+#: sql/upgrade_db.php:570
+msgid "WFDF (four categories plus comparison)"
+msgstr "WFDF (vier Kategorien plus Vergleich)"
+
+#: sql/upgrade_db.php:1151
+msgid "WFDF official (five categories)"
+msgstr "WFDF offiziell (fünf Kategorien)"
 
 #: admin/schedule.php:564
 #, php-format
