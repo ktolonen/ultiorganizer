@@ -21,9 +21,9 @@
     }
   },
   "paths": {
-    "/api/v1/seasons": {
+    "/api/v1/events": {
       "get": {
-        "summary": "List all seasons available on the server",
+        "summary": "List all events available on the server",
         "security": [
           {
             "ApiTokenAuth": []
@@ -31,7 +31,7 @@
         ],
         "responses": {
           "200": {
-            "description": "Seasons response",
+            "description": "Events response",
             "content": {
               "application/json": {
                 "schema": {
@@ -45,7 +45,7 @@
     },
     "/api/v1/teams": {
       "get": {
-        "summary": "List teams for a season",
+        "summary": "List teams for an event",
         "security": [
           {
             "ApiTokenAuth": []
@@ -53,13 +53,13 @@
         ],
         "parameters": [
           {
-            "name": "season",
+            "name": "event",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Season id."
+            "description": "Event id."
           },
           {
             "name": "order",
@@ -87,7 +87,7 @@
     },
     "/api/v1/divisions": {
       "get": {
-        "summary": "List divisions and pools for a season",
+        "summary": "List divisions and pools for an event",
         "security": [
           {
             "ApiTokenAuth": []
@@ -95,13 +95,13 @@
         ],
         "parameters": [
           {
-            "name": "season",
+            "name": "event",
             "in": "query",
             "required": true,
             "schema": {
               "type": "string"
             },
-            "description": "Season id."
+            "description": "Event id."
           }
         ],
         "responses": {
@@ -120,16 +120,15 @@
     },
     "/api/v1/games": {
       "get": {
-        "summary": "List games for the current season",
+        "summary": "List games for the current event",
         "security": [
           {
             "ApiTokenAuth": []
           }
         ],
         "parameters": [
-          { "name": "season", "in": "query", "schema": { "type": "string" } },
+          { "name": "event", "in": "query", "schema": { "type": "string" }, "description": "Event id." },
           { "name": "division", "in": "query", "schema": { "type": "integer" } },
-          { "name": "series", "in": "query", "schema": { "type": "integer" } },
           { "name": "pool", "in": "query", "schema": { "type": "integer" } },
           { "name": "pools", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated pool ids." },
           { "name": "team", "in": "query", "schema": { "type": "integer" } },
@@ -138,7 +137,7 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["tournaments", "series", "places", "timeslot", "today", "tomorrow", "yesterday", "next", "all"]
+              "enum": ["tournaments", "divisions", "places", "timeslot", "today", "tomorrow", "yesterday", "next", "all"]
             }
           },
           { "name": "group", "in": "query", "schema": { "type": "string" } }

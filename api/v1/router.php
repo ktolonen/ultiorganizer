@@ -206,7 +206,7 @@ function api_require_token()
 }
 
 /**
- * Validate that a season exists and is exposed to the public API.
+ * Validate that an event exists and is exposed to the public API.
  *
  * @param string $seasonId
  * @return array
@@ -214,14 +214,14 @@ function api_require_token()
 function api_require_public_season($seasonId)
 {
   if (empty($seasonId)) {
-    api_error(400, 'season_required', 'Season is required.');
+    api_error(400, 'event_required', 'Event is required.');
   }
   $seasonInfo = SeasonInfo($seasonId);
   if (!$seasonInfo) {
-    api_error(404, 'season_not_found', 'Season not found.');
+    api_error(404, 'event_not_found', 'Event not found.');
   }
   if (empty($seasonInfo['api_public'])) {
-    api_error(403, 'season_not_public', 'Season is not available on public API.');
+    api_error(403, 'event_not_public', 'Event is not available on public API.');
   }
   return $seasonInfo;
 }
@@ -243,7 +243,7 @@ function api_enforce_token_scope($tokenRow, $seasonId)
   }
   if ($scopeType === 'season') {
     if ((string)$tokenRow['scope_id'] !== (string)$seasonId) {
-      api_error(403, 'season_scope_mismatch', 'Token does not grant access to this season.');
+      api_error(403, 'event_scope_mismatch', 'Token does not grant access to this event.');
     }
     return;
   }
@@ -272,6 +272,15 @@ function api_resolve_season_id($requestedSeason, $tokenRow)
   api_require_public_season($seasonId);
   api_enforce_token_scope($tokenRow, $seasonId);
   return $seasonId;
+}
+
+function api_get_requested_event_id()
+{
+  $eventId = iget('event');
+  if ($eventId !== '') {
+    return $eventId;
+  }
+  return iget('season');
 }
 
 /**
@@ -316,7 +325,7 @@ function api_normalize_game($row)
     'scoresheet_count' => isset($row['scoresheet']) ? (int)$row['scoresheet'] : 0,
     'scores' => array(
       'home' => is_null($row['homescore']) ? null : (int)$row['homescore'],
-      'visitor' => is_null($row['visitorscore']) ? null : (int)$row['visitorscore']
+      'away' => is_null($row['visitorscore']) ? null : (int)$row['visitorscore']
     ),
     'teams' => array(
       'home' => array(
@@ -329,7 +338,7 @@ function api_normalize_game($row)
           'flagfile' => $row['homeflag'] ?? null
         )
       ),
-      'visitor' => array(
+      'away' => array(
         'team_id' => isset($row['visitorteam']) ? (int)$row['visitorteam'] : null,
         'name' => $row['visitorteamname'],
         'abbreviation' => $row['visitorshortname'] ?? null,
@@ -341,7 +350,7 @@ function api_normalize_game($row)
       ),
       'placeholder' => array(
         'home' => $row['phometeamname'] ?? null,
-        'visitor' => $row['pvisitorteamname'] ?? null
+        'away' => $row['pvisitorteamname'] ?? null
       )
     ),
     'pool' => array(
@@ -353,7 +362,7 @@ function api_normalize_game($row)
     'division' => array(
       'division_id' => isset($row['series_id']) ? (int)$row['series_id'] : null,
       'name' => $row['seriesname'] ?? null,
-      'season' => $row['season'] ?? null,
+      'event_id' => $row['season'] ?? null,
       'type' => isset($row['type']) ? (int)$row['type'] : null
     ),
     'reservation' => array(
@@ -382,13 +391,13 @@ function api_normalize_game($row)
 function api_handle_teams($tokenRow)
 {
   api_require_method('GET');
-  $seasonId = iget('season');
+  $seasonId = api_get_requested_event_id();
   if ($seasonId === '') {
-    api_error(400, 'season_required', 'Season is required.');
+    api_error(400, 'event_required', 'Event is required.');
   }
   $seasonInfo = SeasonInfo($seasonId);
   if (!$seasonInfo) {
-    api_error(404, 'season_not_found', 'Season not found.');
+    api_error(404, 'event_not_found', 'Event not found.');
   }
   api_enforce_token_scope($tokenRow, $seasonId);
   $order = strtolower(iget('order'));
@@ -413,8 +422,8 @@ function api_handle_teams($tokenRow)
   api_send_json(200, array(
     'status' => 'ok',
     'data' => array(
-      'season' => array(
-        'season_id' => $seasonInfo['season_id'],
+      'event' => array(
+        'event_id' => $seasonInfo['season_id'],
         'name' => $seasonInfo['name']
       ),
       'divisions' => $divisions
@@ -423,19 +432,19 @@ function api_handle_teams($tokenRow)
 }
 
 /**
- * Handle seasons endpoint.
+ * Handle events endpoint.
  */
-function api_handle_seasons()
+function api_handle_events()
 {
   api_require_method('GET');
   $rows = SeasonsAllInfo();
-  $seasons = array();
+  $events = array();
   foreach ($rows as $row) {
     if (empty($row['api_public'])) {
       continue;
     }
-    $seasons[] = array(
-      'season_id' => $row['season_id'],
+    $events[] = array(
+      'event_id' => $row['season_id'],
       'name' => $row['name'],
       'starttime' => $row['starttime'],
       'endtime' => $row['endtime'],
@@ -450,7 +459,7 @@ function api_handle_seasons()
   api_send_json(200, array(
     'status' => 'ok',
     'data' => array(
-      'seasons' => $seasons
+      'events' => $events
     )
   ));
 }
@@ -463,13 +472,13 @@ function api_handle_seasons()
 function api_handle_divisions($tokenRow)
 {
   api_require_method('GET');
-  $seasonId = iget('season');
+  $seasonId = api_get_requested_event_id();
   if ($seasonId === '') {
-    api_error(400, 'season_required', 'Season is required.');
+    api_error(400, 'event_required', 'Event is required.');
   }
   $seasonInfo = SeasonInfo($seasonId);
   if (!$seasonInfo) {
-    api_error(404, 'season_not_found', 'Season not found.');
+    api_error(404, 'event_not_found', 'Event not found.');
   }
   api_enforce_token_scope($tokenRow, $seasonId);
 
@@ -501,8 +510,8 @@ function api_handle_divisions($tokenRow)
   api_send_json(200, array(
     'status' => 'ok',
     'data' => array(
-      'season' => array(
-        'season_id' => $seasonInfo['season_id'],
+      'event' => array(
+        'event_id' => $seasonInfo['season_id'],
         'name' => $seasonInfo['name']
       ),
       'divisions' => $divisions
@@ -562,7 +571,7 @@ function api_games_context($tokenRow)
         if ($seasonId === '') {
           $seasonId = $poolInfo['season'];
         } elseif ($seasonId !== $poolInfo['season']) {
-          api_error(400, 'pool_season_mismatch', 'Pools must belong to the same season.');
+          api_error(400, 'pool_event_mismatch', 'Pools must belong to the same event.');
         }
       }
     } else {
@@ -574,8 +583,8 @@ function api_games_context($tokenRow)
     $id = (int)iget('team');
     $gamefilter = 'team';
     $seasonId = TeamSeason($id);
-  } elseif (iget('season')) {
-    $id = iget('season');
+  } elseif (api_get_requested_event_id() !== '') {
+    $id = api_get_requested_event_id();
     $gamefilter = 'season';
     $seasonId = $id;
   } else {
@@ -625,6 +634,7 @@ function api_games_filter()
       $timefilter = 'all';
       $order = 'tournaments';
       break;
+    case 'divisions':
     case 'series':
       $timefilter = 'all';
       $order = 'series';
@@ -648,6 +658,28 @@ function api_games_filter()
   }
 
   return array($filter, $timefilter, $order);
+}
+
+function api_public_game_context($gamefilter)
+{
+  if ($gamefilter === 'season') {
+    return 'event';
+  }
+  if ($gamefilter === 'series') {
+    return 'division';
+  }
+  if ($gamefilter === 'poolgroup') {
+    return 'pools';
+  }
+  return $gamefilter;
+}
+
+function api_public_game_order($order)
+{
+  if ($order === 'series') {
+    return 'division';
+  }
+  return $order;
 }
 
 /**
@@ -683,11 +715,11 @@ function api_handle_games($tokenRow)
   api_send_json(200, array(
     'status' => 'ok',
     'data' => array(
-      'season_id' => $seasonId,
+      'event_id' => $seasonId,
       'filter' => array(
-        'gamefilter' => $gamefilter,
-        'timefilter' => $timefilter,
-        'order' => $order,
+        'context' => api_public_game_context($gamefilter),
+        'time' => $timefilter,
+        'order' => api_public_game_order($order),
         'group' => $group
       ),
       'groupings' => $groupings,
@@ -737,16 +769,16 @@ function api_gameplay_statistics($gameId, $gameResult)
 
   $homeOffence = $homeStarts;
   $homeOffencePoints = 0;
-  $visitorOffencePoints = 0;
+  $awayOffencePoints = 0;
   $homeBreaks = 0;
-  $visitorBreaks = 0;
+  $awayBreaks = 0;
   $homeTime = 0;
-  $visitorTime = 0;
+  $awayTime = 0;
   $homeGoals = 0;
-  $visitorGoals = 0;
+  $awayGoals = 0;
   $clockTime = 0;
   $homeTurnovers = 0;
-  $visitorTurnovers = 0;
+  $awayTurnovers = 0;
 
   foreach ($allgoals as $goal) {
     if (($clockTime <= intval($gameResult['halftime'])) && (intval($goal['time']) >= intval($gameResult['halftime']))) {
@@ -757,7 +789,7 @@ function api_gameplay_statistics($gameId, $gameResult)
     if ($homeOffence) {
       $homeOffencePoints++;
     } else {
-      $visitorOffencePoints++;
+      $awayOffencePoints++;
     }
 
     if (!empty($turnovers)) {
@@ -766,7 +798,7 @@ function api_gameplay_statistics($gameId, $gameResult)
           if (intval($turnover['ishome'])) {
             $homeTurnovers++;
           } else {
-            $visitorTurnovers++;
+            $awayTurnovers++;
           }
         }
       }
@@ -775,7 +807,7 @@ function api_gameplay_statistics($gameId, $gameResult)
     if (intval($goal['ishomegoal']) && !$homeOffence) {
       $homeBreaks++;
     } elseif (!intval($goal['ishomegoal']) && $homeOffence) {
-      $visitorBreaks++;
+      $awayBreaks++;
     }
 
     $duration = intval($goal['time']) - $clockTime;
@@ -784,59 +816,59 @@ function api_gameplay_statistics($gameId, $gameResult)
     if ($homeOffence) {
       $homeTime += $duration;
     } else {
-      $visitorTime += $duration;
+      $awayTime += $duration;
     }
 
     if (intval($goal['ishomegoal'])) {
       $homeGoals++;
       $homeOffence = false;
     } else {
-      $visitorGoals++;
+      $awayGoals++;
       $homeOffence = true;
     }
   }
 
   $timeouts = GameTimeouts($gameId);
   $homeTimeouts = 0;
-  $visitorTimeouts = 0;
+  $awayTimeouts = 0;
   foreach ($timeouts as $timeout) {
     if (intval($timeout['ishome'])) {
       $homeTimeouts++;
     } else {
-      $visitorTimeouts++;
+      $awayTimeouts++;
     }
   }
 
-  $totalTime = $homeTime + $visitorTime;
+  $totalTime = $homeTime + $awayTime;
   $homePct = SafeDivide($homeTime, $totalTime) * 100;
-  $visitorPct = SafeDivide($visitorTime, $totalTime) * 100;
+  $awayPct = SafeDivide($awayTime, $totalTime) * 100;
 
   $homeOffenceGoals = abs($homeGoals - $homeBreaks);
-  $visitorOffenceGoals = abs($visitorGoals - $visitorBreaks);
+  $awayOffenceGoals = abs($awayGoals - $awayBreaks);
 
   return array(
-    'goals' => array('home' => $homeGoals, 'visitor' => $visitorGoals),
-    'offence_points' => array('home' => $homeOffencePoints, 'visitor' => $visitorOffencePoints),
-    'breaks' => array('home' => $homeBreaks, 'visitor' => $visitorBreaks),
-    'turnovers' => array('home' => $homeTurnovers, 'visitor' => $visitorTurnovers),
-    'timeouts' => array('home' => $homeTimeouts, 'visitor' => $visitorTimeouts),
+    'goals' => array('home' => $homeGoals, 'away' => $awayGoals),
+    'offence_points' => array('home' => $homeOffencePoints, 'away' => $awayOffencePoints),
+    'breaks' => array('home' => $homeBreaks, 'away' => $awayBreaks),
+    'turnovers' => array('home' => $homeTurnovers, 'away' => $awayTurnovers),
+    'timeouts' => array('home' => $homeTimeouts, 'away' => $awayTimeouts),
     'time_on_offence' => array(
       'home_seconds' => $homeTime,
-      'visitor_seconds' => $visitorTime,
+      'away_seconds' => $awayTime,
       'home_pct' => round($homePct, 1),
-      'visitor_pct' => round($visitorPct, 1)
+      'away_pct' => round($awayPct, 1)
     ),
     'time_on_offence_per_goal' => array(
       'home_seconds' => SafeDivide($homeTime, $homeGoals),
-      'visitor_seconds' => SafeDivide($visitorTime, $visitorGoals)
+      'away_seconds' => SafeDivide($awayTime, $awayGoals)
     ),
     'goals_from_offence' => array(
       'home' => $homeOffenceGoals,
-      'visitor' => $visitorOffenceGoals
+      'away' => $awayOffenceGoals
     ),
     'goals_from_defence' => array(
       'home' => $homeBreaks,
-      'visitor' => $visitorBreaks
+      'away' => $awayBreaks
     )
   );
 }
@@ -887,14 +919,14 @@ function api_handle_gameplay($tokenRow)
   $poolInfo = PoolInfo($gameResult['pool']);
 
   $homeCaptains = array_flip(GameCaptains($gameId, $gameResult['hometeam']));
-  $visitorCaptains = array_flip(GameCaptains($gameId, $gameResult['visitorteam']));
+  $awayCaptains = array_flip(GameCaptains($gameId, $gameResult['visitorteam']));
   $homeSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $gameResult['hometeam']));
-  $visitorSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $gameResult['visitorteam']));
+  $awaySpiritCaptains = array_flip(GameSpiritCaptains($gameId, $gameResult['visitorteam']));
 
   $homeBoard = GameTeamScoreBoardArray($gameId, $gameResult['hometeam']);
-  $visitorBoard = GameTeamScoreBoardArray($gameId, $gameResult['visitorteam']);
+  $awayBoard = GameTeamScoreBoardArray($gameId, $gameResult['visitorteam']);
   $homePlayerRows = GamePlayers($gameId, $gameResult['hometeam']);
-  $visitorPlayerRows = GamePlayers($gameId, $gameResult['visitorteam']);
+  $awayPlayerRows = GamePlayers($gameId, $gameResult['visitorteam']);
 
   $goals = GameGoals($gameId);
   $events = GameEvents($gameId);
@@ -910,7 +942,7 @@ function api_handle_gameplay($tokenRow)
   if (!intval($gameResult['isongoing']) && !empty($seasonInfo['spiritmode'])) {
     $categories = SpiritCategories($seasonInfo['spiritmode']);
     $homePoints = GameGetSpiritPoints($gameId, $gameResult['hometeam']);
-    $visitorPoints = GameGetSpiritPoints($gameId, $gameResult['visitorteam']);
+    $awayPoints = GameGetSpiritPoints($gameId, $gameResult['visitorteam']);
     $spiritCategories = array();
     foreach ($categories as $cat) {
       if ($cat['index'] == 0) {
@@ -923,13 +955,13 @@ function api_handle_gameplay($tokenRow)
         'name' => $cat['text'],
         'factor' => isset($cat['factor']) ? (float)$cat['factor'] : null,
         'home' => isset($homePoints[$id]) ? (int)$homePoints[$id] : null,
-        'visitor' => isset($visitorPoints[$id]) ? (int)$visitorPoints[$id] : null
+        'away' => isset($awayPoints[$id]) ? (int)$awayPoints[$id] : null
       );
     }
     $spirit = array(
       'mode' => (int)$seasonInfo['spiritmode'],
       'home_total' => isset($gameResult['homesotg']) ? (float)$gameResult['homesotg'] : null,
-      'visitor_total' => isset($gameResult['visitorsotg']) ? (float)$gameResult['visitorsotg'] : null,
+      'away_total' => isset($gameResult['visitorsotg']) ? (float)$gameResult['visitorsotg'] : null,
       'categories' => $spiritCategories
     );
   }
@@ -948,10 +980,10 @@ function api_handle_gameplay($tokenRow)
     );
   }
 
-  $visitorPlayers = array();
-  foreach ($visitorPlayerRows as $row) {
-    $roleData = api_gameplay_role_data($row['player_id'], $visitorCaptains, $visitorSpiritCaptains);
-    $visitorPlayers[] = array(
+  $awayPlayers = array();
+  foreach ($awayPlayerRows as $row) {
+    $roleData = api_gameplay_role_data($row['player_id'], $awayCaptains, $awaySpiritCaptains);
+    $awayPlayers[] = array(
       'player_id' => (int)$row['player_id'],
       'num' => isset($row['num']) ? (int)$row['num'] : null,
       'firstname' => $row['firstname'],
@@ -979,10 +1011,10 @@ function api_handle_gameplay($tokenRow)
     );
   }
 
-  $visitorScoreboard = array();
-  foreach ($visitorBoard as $row) {
-    $roleData = api_gameplay_role_data($row['player_id'], $visitorCaptains, $visitorSpiritCaptains);
-    $visitorScoreboard[] = array(
+  $awayScoreboard = array();
+  foreach ($awayBoard as $row) {
+    $roleData = api_gameplay_role_data($row['player_id'], $awayCaptains, $awaySpiritCaptains);
+    $awayScoreboard[] = array(
       'player_id' => (int)$row['player_id'],
       'num' => $row['num'],
       'firstname' => $row['firstname'],
@@ -1001,10 +1033,12 @@ function api_handle_gameplay($tokenRow)
     $goalRows[] = array(
       'num' => isset($goal['num']) ? (int)$goal['num'] : null,
       'time' => isset($goal['time']) ? (int)$goal['time'] : null,
-      'ishomegoal' => isset($goal['ishomegoal']) ? (int)$goal['ishomegoal'] : null,
-      'homescore' => isset($goal['homescore']) ? (int)$goal['homescore'] : null,
-      'visitorscore' => isset($goal['visitorscore']) ? (int)$goal['visitorscore'] : null,
-      'iscallahan' => isset($goal['iscallahan']) ? (int)$goal['iscallahan'] : null,
+      'scoring_team' => isset($goal['ishomegoal']) ? (intval($goal['ishomegoal']) ? 'home' : 'away') : null,
+      'scores' => array(
+        'home' => isset($goal['homescore']) ? (int)$goal['homescore'] : null,
+        'away' => isset($goal['visitorscore']) ? (int)$goal['visitorscore'] : null
+      ),
+      'callahan' => isset($goal['iscallahan']) ? (int)$goal['iscallahan'] : null,
       'scorer' => array(
         'player_id' => isset($goal['scorer']) ? (int)$goal['scorer'] : null,
         'firstname' => $goal['scorerfirstname'] ?? null,
@@ -1022,7 +1056,7 @@ function api_handle_gameplay($tokenRow)
   foreach ($events as $event) {
     $eventRows[] = array(
       'time' => (int)$event['time'],
-      'ishome' => (int)$event['ishome'],
+      'team' => intval($event['ishome']) ? 'home' : 'away',
       'type' => $event['type']
     );
   }
@@ -1031,7 +1065,7 @@ function api_handle_gameplay($tokenRow)
   foreach ($mediaEvents as $event) {
     $mediaEventRows[] = array(
       'time' => isset($event['time']) ? (int)$event['time'] : null,
-      'ishome' => isset($event['ishome']) ? (int)$event['ishome'] : null,
+      'team' => isset($event['ishome']) ? (intval($event['ishome']) ? 'home' : 'away') : null,
       'type' => $event['eventtype'] ?? null,
       'url' => $event['url'] ?? null,
       'name' => $event['name'] ?? null,
@@ -1047,7 +1081,7 @@ function api_handle_gameplay($tokenRow)
       'type' => $entry['type'] ?? null,
       'url' => $entry['url'] ?? null,
       'name' => $entry['name'] ?? null,
-      'mediaowner' => $entry['mediaowner'] ?? null,
+      'owner' => $entry['mediaowner'] ?? null,
       'publisher' => $entry['publisher'] ?? null,
       'time' => isset($entry['time']) ? (int)$entry['time'] : null
     );
@@ -1064,17 +1098,19 @@ function api_handle_gameplay($tokenRow)
         'isongoing' => (int)$gameResult['isongoing'],
         'halftime' => isset($gameResult['halftime']) ? (int)$gameResult['halftime'] : null,
         'official' => $gameResult['official'] ?? null,
-        'homescore' => is_null($gameResult['homescore']) ? null : (int)$gameResult['homescore'],
-        'visitorscore' => is_null($gameResult['visitorscore']) ? null : (int)$gameResult['visitorscore'],
-        'gamename' => $gameResult['gamename'] ?? null,
+        'scores' => array(
+          'home' => is_null($gameResult['homescore']) ? null : (int)$gameResult['homescore'],
+          'away' => is_null($gameResult['visitorscore']) ? null : (int)$gameResult['visitorscore']
+        ),
+        'name' => $gameResult['gamename'] ?? null,
         'pool' => array(
           'pool_id' => isset($poolInfo['pool_id']) ? (int)$poolInfo['pool_id'] : null,
           'name' => $poolInfo['name'] ?? null,
-          'series_id' => isset($poolInfo['series']) ? (int)$poolInfo['series'] : null
+          'division_id' => isset($poolInfo['series']) ? (int)$poolInfo['series'] : null
         ),
         'location' => array(
-          'placename' => $gameInfo['placename'] ?? null,
-          'fieldname' => $gameInfo['fieldname'] ?? null
+          'place' => $gameInfo['placename'] ?? null,
+          'field' => $gameInfo['fieldname'] ?? null
         )
       ),
       'teams' => array(
@@ -1082,18 +1118,18 @@ function api_handle_gameplay($tokenRow)
           'team_id' => isset($gameResult['hometeam']) ? (int)$gameResult['hometeam'] : null,
           'name' => $gameResult['hometeamname'] ?? null
         ),
-        'visitor' => array(
+        'away' => array(
           'team_id' => isset($gameResult['visitorteam']) ? (int)$gameResult['visitorteam'] : null,
           'name' => $gameResult['visitorteamname'] ?? null
         )
       ),
       'players' => array(
         'home' => $homePlayers,
-        'visitor' => $visitorPlayers
+        'away' => $awayPlayers
       ),
       'scoreboard' => array(
         'home' => $homeScoreboard,
-        'visitor' => $visitorScoreboard
+        'away' => $awayScoreboard
       ),
       'goals' => $goalRows,
       'events' => $eventRows,
@@ -1143,8 +1179,9 @@ function api_v1_route($parts)
   api_enforce_rate_limit($tokenRow['token_hash'], $clientIp);
 
   switch ($resource) {
+    case 'events':
     case 'seasons':
-      api_handle_seasons();
+      api_handle_events();
       break;
     case 'divisions':
       api_handle_divisions($tokenRow);

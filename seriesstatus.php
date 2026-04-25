@@ -376,7 +376,7 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
   $html .= "<ul>";
   foreach ($categories as $cat) {
     if ($cat['index'] > 0)
-      $html .= "<li>" . $cat['index'] . " " . $cat['text'] . "</li>";
+      $html .= "<li>" . $cat['index'] . " " . _($cat['text']) . "</li>";
   }
   $html .= "</ul>\n";
 }

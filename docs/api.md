@@ -19,7 +19,7 @@ This page mirrors the current API guidance from `AGENTS.md`.
 ## Initial scope
 
 - Public data first.
-- Token authentication can be installation, season, or user scoped.
+- Token authentication can be installation, event, or user scoped.
 - Early endpoints mirror `teams.php`, `games.php`, and `gameplay.php`, excluding historical data.
 
 ## Documentation
@@ -38,8 +38,8 @@ Tokens are managed through the admin UI at `?view=admin/apitokens`.
 Example requests:
 
 ```sh
-curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/seasons"
-curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?season=2025"
-curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?season=2025"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/events"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?event=2025"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?event=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
 ```
