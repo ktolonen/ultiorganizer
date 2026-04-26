@@ -70,9 +70,14 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
     $errors .= "<p class='warning'>" . _("Time can not be the same or earlier than the previous point") . "!</p>\n";
   }
 
-  if (strcasecmp($uo_goal['assist'], 'xx') == 0 || strcasecmp($uo_goal['assist'], 'x') == 0)
-    $uo_goal['iscallahan'] = 1;
+    if (strcasecmp($uo_goal['assist'], 'xx') == 0 || strcasecmp($uo_goal['assist'], 'x') == 0) {
+      $uo_goal['iscallahan'] = 1;
+      $uo_goal['assist'] = -1;
+    }
 
+    if (strcasecmp($uo_goal['scorer'], 'xx') == 0 || strcasecmp($uo_goal['scorer'], 'x') == 0) {
+      $uo_goal['scorer'] = 0;
+    }
   if (!empty($team) && $team == 'H') {
     $uo_goal['homescore']++;
     $uo_goal['ishomegoal'] = 1;
@@ -292,7 +297,7 @@ $html .= "</div><!-- /content -->\n\n";
 echo $html;
 ?>
 <script type="text/javascript">
-  var homelist = <?php
+  var homeAssistList = <?php
                   $homeOptions = "<option value='0'>-</option>";
                   $played_players = GamePlayers($gameId, $game_result['hometeam']);
                   foreach ($played_players as $player) {
@@ -302,13 +307,31 @@ echo $html;
                   echo json_encode($homeOptions);
                   ?>;
 
-  var awaylist = <?php
+  var awayAssistList = <?php
                   $awayOptions = "<option value='0'>-</option>";
                   $played_players = GamePlayers($gameId, $game_result['visitorteam']);
                   foreach ($played_players as $player) {
                     $awayOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
                   }
                   $awayOptions .= "<option value='xx'>XX " . _("Callahan Goal") . "</option>";
+                  echo json_encode($awayOptions);
+                  ?>;
+
+  var homeScorerList = <?php
+                  $homeOptions = "<option value='0'>-</option>";
+                  $played_players = GamePlayers($gameId, $game_result['hometeam']);
+                  foreach ($played_players as $player) {
+                    $homeOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
+                  }
+                  echo json_encode($homeOptions);
+                  ?>;
+
+  var awayScorerList = <?php
+                  $awayOptions = "<option value='0'>-</option>";
+                  $played_players = GamePlayers($gameId, $game_result['visitorteam']);
+                  foreach ($played_players as $player) {
+                    $awayOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
+                  }
                   echo json_encode($awayOptions);
                   ?>;
 
@@ -319,11 +342,11 @@ echo $html;
       return;
     }
     if (teamValue === "H") {
-      passSelect.innerHTML = homelist;
-      goalSelect.innerHTML = homelist;
+      passSelect.innerHTML = homeAssistList;
+      goalSelect.innerHTML = homeScorerList;
     } else {
-      passSelect.innerHTML = awaylist;
-      goalSelect.innerHTML = awaylist;
+      passSelect.innerHTML = awayAssistList;
+      goalSelect.innerHTML = awayScorerList;
     }
   }
 
