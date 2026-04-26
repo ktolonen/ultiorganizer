@@ -111,6 +111,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `docs/translations.md`: translation and gettext workflow.
 - `docs/permissions.md`: permission storage, roles, and enforcement helpers.
 - `docs/privacy.md`: privacy admin tools, export scope, and anonymization or deletion behavior by table.
+- `docs/pdf-printing.md`: PDF entrypoints, purpose files, customization fallbacks, and tFPDF notes.
 - `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `docs/scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.

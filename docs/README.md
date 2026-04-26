@@ -6,6 +6,7 @@ This directory collects general project documentation.
 
 - `api.md`: API structure, constraints, and examples.
 - `codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
+- `pdf-printing.md`: PDF entrypoints, purpose files, customization fallbacks, and tFPDF notes.
 - `routing.md`: request entry points and view resolution.
 - `local-development.md`: local Docker-based setup.
 - `dev/`: Docker Compose assets and image definitions used by the local development guide.

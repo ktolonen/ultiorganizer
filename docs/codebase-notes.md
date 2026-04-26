@@ -28,7 +28,7 @@ This page collects implementation details that are useful during coding work but
 - External license database integration is customization-specific. There is no single default external service.
 - Most `cust/*.php` files are include-only fragments. They are blocked by `cust/.htaccess` on Apache and by `cust/include_only.guard.php` in PHP for cross-server portability.
 - The current allowed customization HTTP endpoints are `players.php` and `jasenet.php`; if a new public endpoint is added under `cust/`, update `cust/.htaccess` at the same time.
-- Files such as `head.php`, `pdfprinter.php`, `mass-accreditation.php`, `teamplayers.functions.php`, `teamplayers.inc.php`, and `pool_colors.php` are customization hooks loaded by the main app, not public entry points.
+- Files such as `head.php`, `pdfschedule.php`, `pdfscoresheet.php`, `mass-accreditation.php`, `teamplayers.functions.php`, `teamplayers.inc.php`, and `pool_colors.php` are customization hooks loaded by the main app, not public entry points.
 
 ## Standalone Rendering And Guards
 

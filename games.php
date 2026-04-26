@@ -58,10 +58,10 @@ function pool_group_schedule_title($poolIds)
   return _("Schedule") . " " . utf8entities(implode(", ", $titleParts));
 }
 
-if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
-  include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
+if (is_file('cust/' . CUSTOMIZATIONS . '/pdfschedule.php')) {
+  include_once 'cust/' . CUSTOMIZATIONS . '/pdfschedule.php';
 } else {
-  include_once 'cust/default/pdfprinter.php';
+  include_once 'cust/default/pdfschedule.php';
 }
 
 $html = "";

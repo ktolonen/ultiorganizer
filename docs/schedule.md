@@ -186,7 +186,7 @@ The schedule row and footer link into:
 - printable HTML
 - PDF list and one-page schedule output
 
-The PDF layer in `cust/default/pdfprinter.php` uses the same timetable rowset, but renders it differently from `GameRow()`. The API schedule normalizer in `api/v1/router.php` also uses more of the row than the HTML renderer does, especially abbreviations and country / flag data.
+The PDF layer in `cust/default/pdfschedule.php` uses the same timetable rowset, but renders it differently from `GameRow()`. The API schedule normalizer in `api/v1/router.php` also uses more of the row than the HTML renderer does, especially abbreviations and country / flag data.
 
 ## Database Model
 

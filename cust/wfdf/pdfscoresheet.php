@@ -45,93 +45,6 @@ class PDF extends tFPDF_CellFit
 		return (string)$text;
 	}
 
-	private function onePageScheduleGridBounds($times)
-	{
-		$firstTime = null;
-		$lastTime = null;
-
-		foreach ($times as $time) {
-			$timestamp = strtotime($time['time'] ?? '');
-			if ($timestamp === false) {
-				continue;
-			}
-			if ($firstTime === null || $timestamp < $firstTime) {
-				$firstTime = $timestamp;
-			}
-			if ($lastTime === null || $timestamp > $lastTime) {
-				$lastTime = $timestamp;
-			}
-		}
-
-		if ($firstTime === null) {
-			return array(9, 0, 13 * 60 + 1);
-		}
-
-		$startTimestamp = strtotime(date('Y-m-d H:00:00', $firstTime));
-		$endTimestamp = max($startTimestamp + 13 * 60 * 60, $lastTime + 2 * 60 * 60);
-		$slots = (int)ceil(($endTimestamp - $startTimestamp) / 60) + 1;
-
-		return array((int)date('G', $startTimestamp), 0, $slots);
-	}
-
-	private function onePageScheduleFieldKey($game)
-	{
-		$field = trim((string)($game['fieldname'] ?? ''));
-		$location = "";
-		if (!empty($game['place_id'])) {
-			$location = "id:" . $game['place_id'];
-		} elseif (trim((string)($game['placename'] ?? '')) !== '') {
-			$location = "name:" . trim((string)$game['placename']);
-		}
-
-		return $location . "|" . $field;
-	}
-
-	private function onePageScheduleFitCell($width, $height, $text, $border, $ln, $align, $style, $maxSize, $fill = true, $minSize = 6)
-	{
-		$text = $this->pdfText($text);
-		$fontsize = $maxSize;
-		$this->SetFont('Arial', $style, $fontsize);
-		while ($this->GetStringWidth($text) > $width - 2 && $fontsize > $minSize) {
-			$this->SetFont('Arial', $style, --$fontsize);
-		}
-		$this->Cell($width, $height, $text, $border, $ln, $align, $fill);
-	}
-
-	private function onePageScheduleTimeRowsForDate($times, $currentGame, $games)
-	{
-		$timeRows = array();
-		$currentDate = JustDate($currentGame['starttime']);
-
-		foreach ($times as $time) {
-			if (JustDate($time['time']) != $currentDate) {
-				continue;
-			}
-
-			$timestamp = strtotime($time['time']);
-			if ($timestamp !== false) {
-				$timeRows[$timestamp] = array('time' => $time['time']);
-			}
-		}
-
-		foreach ($games as $game) {
-			if (trim((string)($game['fieldname'] ?? '')) === '' || empty($game['time'])) {
-				continue;
-			}
-			if ($game['reservationgroup'] != $currentGame['reservationgroup'] || JustDate($game['starttime']) != $currentDate) {
-				continue;
-			}
-
-			$timestamp = strtotime($game['time']);
-			if ($timestamp !== false) {
-				$timeRows[$timestamp] = array('time' => $game['time']);
-			}
-		}
-
-		ksort($timeRows);
-		return array_values($timeRows);
-	}
-		
 	function PrintScoreSheet($seasonname,$gameId,$hometeamname,$visitorteamname,$poolname,$time,$placename,$homeplayers,$visitorplayers) {
 		
     // event logo file name
@@ -344,7 +257,6 @@ class PDF extends tFPDF_CellFit
 		
 		}
 
-  // Print top header of the scoresheet
   function TopHeader() {
 
     // first row
@@ -443,7 +355,6 @@ class PDF extends tFPDF_CellFit
 
   }
 
-  // print a field for writing game starting settings (rule B)
   function EndzonesB() {
     $offset = $this->GetX();
 
@@ -571,7 +482,6 @@ class PDF extends tFPDF_CellFit
 
   }
 
-  // print a field for writing game starting settings (rule A)
   function EndzonesA() {
     //$offset = $this->GetX();
     $offset = $this->GetX()+11;
@@ -624,7 +534,6 @@ class PDF extends tFPDF_CellFit
 		$this->CellFitScale(12,4,_("Endzone"),0,1,'C',true);
   }
 
-	//Playerlist array("name"=>name, "accredited"=>accredited, "num"=>number)
 	function PrintPlayerList($homeplayers, $visitorplayers)
 		{
 		$offset = $this->GetX();
@@ -717,8 +626,7 @@ class PDF extends tFPDF_CellFit
 		
 		$this->Ln();
 
-		}		
-
+		}
   function PrintRoster($teamname, $seriesname, $poolname, $players) {
 		$this->AddPage();
 		
@@ -798,297 +706,7 @@ class PDF extends tFPDF_CellFit
 		$this->SetFillColor(255);
 		$this->WriteHTML($data);
 		
-		}		
-	function PrintSchedule($scope, $id, $games)
-		{
-		$left_margin = 10;
-		$top_margin = 10;
-		//event title
-		$this->SetAutoPageBreak(false,$top_margin);
-		$this->SetMargins($left_margin,$top_margin); 
-		
-		$this->AddPage();
-		
-		switch($scope){
-			case "season":
-				$this->PrintSeasonPools($id);
-				$this->AddPage();
-				break;
-		
-			case "series":
-				$this->PrintSeriesPools($id);
-				$this->AddPage();
-				break;
-
-			case "pool":
-			case "team":
-				break;
 		}
-		
-		$this->SetAutoPageBreak(true,$top_margin);
-		$prevTournament = "";
-		$prevPlace = "";
-		$prevSeries = "";
-		$prevPool = "";
-		$prevTeam = "";
-		$prevDate = "";
-		$prevField = "";
-		$isTableOpen = false;
-	
-		$this->SetTextColor(255);
-		$this->SetFillColor(0);
-		$this->SetDrawColor(0);
-		//print all games in order
-		foreach($games as $game){
-			
-			if(!empty($game['place_id']) && $game['reservationgroup'] != $prevTournament) {
-				$txt = $this->pdfText(U_($game['reservationgroup']));
-				$this->SetFont('Arial','B',12);
-				$this->SetTextColor(0);
-				$this->Ln();
-				$this->Write(5, $txt);
-				$this->Ln();
-				$prevDate="";
-			}	
-
-			if(!empty($game['place_id']) && JustDate($game['starttime']) != $prevDate){
-				$txt = DefWeekDateFormat($game['starttime']);
-				$this->SetFont('Arial','B',10);
-				$this->SetTextColor(0);
-				$this->Ln();
-				$this->Write(5, $txt);
-			}
-			
-			if(!empty($game['place_id']) && ($game['place_id'] != $prevPlace || $game['fieldname'] != $prevField || JustDate($game['starttime']) != $prevDate)){
-				$txt = U_($game['placename']);
-				$txt .= " "._("Field")." ".U_($game['fieldname']);
-				$txt = $this->pdfText($txt);
-				
-				$this->SetFont('Arial','',10);
-				$this->SetTextColor(0);
-				$this->Ln();
-				$this->Cell(0,5,$txt,0,2,'L',false);
-			}
-			if(!empty($game['reservationgroup']) && !empty($game['place_id'])){
-				$this->GameRowWithPool($game, false, true, false);
-				$this->Ln();
-			}
-			
-			$prevTournament = $game['reservationgroup'];
-			$prevPlace = $game['place_id'];
-			$prevField = $game['fieldname'];
-			$prevSeries = $game['series_id'];
-			$prevPool = $game['pool'];
-			$prevDate = JustDate($game['starttime']);
-		}
-		
-		}
-		
-	function PrintOnePageSchedule($scope, $id, $games, $colors=true){
-		$left_margin = 10;
-		$top_margin = 10;
-		$xarea = 400;
-		$yarea = 270;
-		$yfieldtitle = 8;
-		$xtimetitle = 12;
-		$ypagetitle = 5;
-		$teamfont = 10;
-		
-		//event title
-		$this->SetAutoPageBreak(false,$top_margin);
-		$this->SetMargins($left_margin,$top_margin); 
-		
-		$timeslots = array();
-		$times = array();
-		$prevTournament = "";
-		$prevPlace = "";
-		$prevSeries = "";
-		$prevPool = "";
-		$prevTeam = "";
-		$prevDate = "";
-		$prevField = "";
-		$fieldstotal = 0;
-		
-		$isTableOpen = false;
-	
-		$field = 0;
-		$time_offset = $top_margin+$yfieldtitle;
-		$field_offset = 0;
-		$gridx = 12;
-		$gridy = 4;
-		$fieldlimit = 15;
-		$numRows = 1;
-		$sectionHeight = $yarea;
-			
-		$this->SetTextColor(255);
-		$this->SetFillColor(0);
-		$this->SetDrawColor(0);
-		//print all games in order
-		foreach($games as $game){
-			if (trim((string)($game['fieldname'] ?? '')) === '' || empty($game['time'])) {
-				continue;
-			}
-			
-			//one reservation group per page
-			if($game['reservationgroup'] != $prevTournament || $prevDate != JustDate($game['starttime'])) {
-				$this->AddPage("L","A3");
-				
-				$title = $this->pdfText(SeasonName($id));
-				$title .= " ".$this->pdfText($game['reservationgroup']);
-				$title .= " (".$this->pdfText(ShortDate($game['starttime'])).")";
-				$this->SetFont('Arial','BU',12);
-				$this->SetTextColor(0);
-				$this->Cell(0,0,$title,0,2,'C',false);
-				
-				$times = TimetableTimeslots($game['reservationgroup'],$id);
-				$timeslots = array();
-				$times = $this->onePageScheduleTimeRowsForDate($times, $game, $games);
-				$timeCount = max(count($times), 1);
-				$fieldstotal = TimetableFields($game['reservationgroup'],$id);
-				$numRows = $fieldstotal > 7 ? 2 : 1;
-				$sectionHeight = $yarea / $numRows;
-				$fieldlimit = $numRows == 1 ? max($fieldstotal + 1, 8) : max(ceil($fieldstotal / 2) + 1, 8);
-				$gridy = min(22, max(8, ($sectionHeight - 2 * $yfieldtitle - $ypagetitle - 8) / $timeCount));
-				$i = 0;
-				foreach($times as $time){
-				  $timeslots[DefHourFormat($time['time'])] = $i * $gridy;
-				  $i++;
-				}
-				
-				$gridx = $xarea/$fieldlimit;
-				$field = 0;
-				$prevField = "";
-				$time_offset = $top_margin+$yfieldtitle+$ypagetitle+(($sectionHeight-count($timeslots)*$gridy)/2);
-			}
-			
-			//next field
-			$fieldKey = $this->onePageScheduleFieldKey($game);
-			if($fieldKey != $prevField){
-				$field++;
-
-				if($field >= $fieldlimit){
-					$field=1;
-					$time_offset = $sectionHeight+$top_margin+2*$yfieldtitle+$ypagetitle;
-				}
-				//write times
-				if($field==1){
-					$this->SetFont('Arial','B',10);
-					$this->SetTextColor(0);
-					$this->SetXY($left_margin,$time_offset);
-				
-					//write times
-					foreach($times as $time){
-						$time = DefHourFormat($time['time']);
-						$this->Cell($xtimetitle,$gridy,$time,0,2,'L',false);
-					}
-				}
-				
-				$field_offset = $left_margin+($field-1)*$gridx+$xtimetitle;
-				$this->SetXY($field_offset,$time_offset-$yfieldtitle);
-								
-				$this->SetFont('Arial','B',10);
-				$this->SetTextColor(0);
-				$this->SetFillColor(190);
-				
-				$fieldTitle = $this->pdfText(_("Field")." ".$game['fieldname']);
-				$placeTitle = $this->pdfText($game['placename'] ?? '');
-				if ($placeTitle !== '') {
-					$this->onePageScheduleFitCell($gridx,$yfieldtitle/2,$fieldTitle,"LRT",2,'C','B',10,true);
-					$this->SetFont('Arial','',8);
-					$this->SetTextColor(0);
-					$this->onePageScheduleFitCell($gridx,$yfieldtitle/2,$placeTitle,"LR",2,'C','',8,true);
-				} else {
-					$this->onePageScheduleFitCell($gridx,$yfieldtitle,$fieldTitle,"LRT",2,'C','B',10,true);
-				}
-				//write grids
-				foreach($times as $time){
-					$this->Cell($gridx,$gridy,"",1,2,'L',false);
-				}
-			}
-			
-			$slot = DefHourFormat($game['time']);
-			if (!isset($timeslots[$slot])) {
-				continue;
-			}
-			$this->SetXY($field_offset,$time_offset+$timeslots[$slot]);
-			
-			$this->SetTextColor(0);
-			$this->SetFillColor(230);
-			$this->SetDrawColor(0);
-			
-			$height=$gridy;
-			$this->Cell($gridx,$height,"",'LRBT',0,'C',true);
-			
-			$this->SetXY($field_offset,$time_offset+$timeslots[$slot]);
-			
-			$this->SetTextColor(0);
-			$this->SetFillColor(255);
-			$this->SetDrawColor(0);
-			$this->SetFont('Arial','',$teamfont);
-			$this->SetTextColor(0);
-			$this->Cell($gridx,1,"",0,2,'',false);
-			if($game['hometeam'] && $game['visitorteam']){
-				//$txt = $this->DynSetTeamName($game['hometeamname'],$game['homeshortname'],$gridx,$teamfont);
-				//$this->Cell($gridx,4,$txt,0,2,'L',false);
-				$txt = $game['hometeamname']." - ".$game['visitorteamname'];
-				//$stxt = $this->pdfText($game['homeshortname']." - ".$game['visitorshortname']);
-				$txt = $this->DynSetTeamName($txt,"",$gridx,$teamfont);
-				$this->Cell($gridx,max(3,$gridy/3),$txt,0,2,'L',false);
-			}elseif($game['gamename']){
-				$txt = $this->DynSetTeamName($game['gamename'],"",$gridx,$teamfont);
-				$this->Cell($gridx,max(3,$gridy/3),$txt,0,2,'L',false);
-			}else{
-			    $txt = $this->pdfText($game['phometeamname']." - ".$game['pvisitorteamname']);
-				//$txt = $this->DynSetTeamName($game['phometeamname'],"",$gridx,$teamfont);
-				//$this->Cell($gridx,4,$txt,0,2,'L',false);
-				$txt = $this->DynSetTeamName($txt,"",$gridx,$teamfont);
-				$this->Cell($gridx,max(3,$gridy/3),$txt,0,2,'L',false);
-			}
-			$this->SetFont('Arial','',$teamfont);
-			
-			if($colors){
-				$textcolor = $this->TextColor($game['color']);
-				$fillcolor = colorstring2rgb($game['color']);
-			
-				$this->SetDrawColor($textcolor['r'],$textcolor['g'],$textcolor['b']);
-				$this->SetFillColor($fillcolor['r'],$fillcolor['g'],$fillcolor['b']);
-				$this->SetTextColor($textcolor['r'],$textcolor['g'],$textcolor['b']);
-			}else{
-				$this->SetTextColor(0);
-				$this->SetFillColor(230);
-				$this->SetDrawColor(0);
-			}
-			
-			$this->Cell($gridx,1,"",0,2,'L',$colors);
-			$txt = $this->pdfText($game['seriesname']);
-			$txt .= ", ";
-			$txt .= $this->pdfText($game['poolname']);
-			//$this->DynSetFont($txt,$gridx,8);
-			//$this->MultiCell($gridx,4,$txt,"LR",2,'L',$colors);
-			$fontsize=10;
-		    while($this->GetStringWidth($txt)>$gridx-2){
-			  $this->SetFont('Arial','',--$fontsize);
-		    }
-			$this->Cell($gridx,max(3,$gridy/3),$txt,0,2,'LR',false);
-			
-			$this->SetTextColor(0);
-			$this->SetFillColor(255);
-			$this->SetDrawColor(0);
-				
-			$this->SetXY($field_offset,$time_offset+$timeslots[$slot]);
-			//$this->Cell($gridx,$gridy,"","LRBT",2,'L',false);			
-			
-			$prevTournament = $game['reservationgroup'];
-			$prevPlace = $game['place_id'];
-			$prevField = $fieldKey;
-			$prevSeries = $game['series_id'];
-			$prevPool = $game['pool'];
-			$prevDate = JustDate($game['starttime']);
-			$prevTime = DefHourFormat($game['starttime']);
-		}
-		
-	}
-	
 	function Footer(){
 	/*	$this->SetXY(-50,-8);
 		$this->SetFont('Arial','',6);
@@ -1107,7 +725,6 @@ class PDF extends tFPDF_CellFit
 		$hsv->setHSV($hsvArr['h'], 1-$hsvArr['s'],1-$hsvArr['v']);
 		return $hsv->getRGB();
 	}
-	
 	function DynSetTeamName($longname, $abbrev, $x, $fontsize){
 		$this->SetFont('Arial','B',$fontsize);
 		$text = $this->pdfText($longname);
@@ -1121,7 +738,6 @@ class PDF extends tFPDF_CellFit
 		
 		return $text;
 	}
-	
 	function GameRowWithPool($game, $date=false, $time=true, $field=true, $pool=true, $result=true) {
 	
 		$this->SetFont('Arial','',8);
@@ -1216,144 +832,6 @@ class PDF extends tFPDF_CellFit
 		//$this->Write(6, $txt);
 		
 	}
-	
-	function PrintSeasonPools($id) {
-		$left_margin = 10;
-		$top_margin = 10;
-		$title = $this->pdfText(SeasonName($id));
-		$series = SeasonSeries($id, true);
-		
-		$this->SetFont('Arial','B',16);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0);
-		$this->Cell(0,9,$title,1,1,'C',true);
-		
-		//print all series with color coding
-		foreach($series as $row){
-			
-			if($this->GetY()+97 > 297){
-				$this->AddPage();
-			}
-			$name = $this->pdfText(U_($row['name']));
-			$this->SetFont('Arial','B',14);
-			$this->SetTextColor(0);
-			
-			$this->Ln();
-			$this->Write(6, $name);
-			$this->Ln();
-			$pools = SeriesPools($row['series_id'], false);
-			$max_y = $this->PrintPools($pools);
-			$this->SetXY($left_margin,$max_y);
-		}
-	}
-	
-	function PrintSeriesPools($id) {
-		
-		$this->SetFont('Arial','B',16);
-		$this->SetTextColor(255);
-		$this->SetFillColor(0);
-		$this->Cell(0,9,$title,1,1,'C',true);
-		
-		if($this->GetY()+97 > 297){
-			$this->AddPage();
-		}
-		$name = $this->pdfText(U_(SeriesName($id)));
-		$this->SetFont('Arial','B',14);
-		$this->SetTextColor(0);
-		
-		$this->Ln();
-		$this->Write(6, $name);
-		$this->Ln();
-		$pools = SeriesPools($id, false);
-		$max_y = $this->PrintPools($pools);
-		$this->SetXY($left_margin,$max_y);
-	}
-	
-	function PrintPools($pools) {
-		
-		$left_margin = 10;
-		$top_margin = 10;
-		$pools_x = $left_margin;
-		$pools_y = $this->GetY();
-		$max_y = $this->GetY();
-		$i=0;
-		foreach ($pools as $pool) {
-			
-			$poolinfo = PoolInfo($pool['pool_id']);
-			$teams = PoolTeams($pool['pool_id']);
-			$scheduling_teams = false;
-			
-			if(!count($teams)){
-				$teams = PoolSchedulingTeams($pool['pool_id']);
-				$scheduling_teams = true;
-			}
-			$name = $this->pdfText(U_($poolinfo['name']));
-			
-			if($i%6==0 && $i <= count($pools)){
-				$this->SetXY($left_margin,$max_y);
-				$max_y = $this->GetY();
-				$pools_y = $this->GetY();
-				$pools_x = $left_margin;
-			}else{
-				$this->SetXY($pools_x,$pools_y);
-			}
-			
-			//pool header
-			$fontsize=10;
-			$this->SetFont('Arial','B',$fontsize);
-			while($this->GetStringWidth($name)>28){
-				$this->SetFont('Arial','B',--$fontsize);
-			}
-			
-			$this->SetTextColor(0);
-			$this->SetFillColor(255);
-			$this->SetDrawColor(0);
-			$this->Cell(30,5,$name,1,2,'C',false);
-			
-			//pool teams
-			
-			$textcolor = $this->TextColor($poolinfo['color']);
-			$fillcolor = colorstring2rgb($poolinfo['color']);
-			
-			$this->SetDrawColor($textcolor['r'],$textcolor['g'],$textcolor['b']);
-			$this->SetFillColor($fillcolor['r'],$fillcolor['g'],$fillcolor['b']);
-			$this->SetTextColor($textcolor['r'],$textcolor['g'],$textcolor['b']);
-			
-			foreach($teams as $team){
-				$txt = $this->pdfText(U_($team['name']));
-				$fontsize=9;
-				if($scheduling_teams){
-					$this->SetFont('Arial','i',$fontsize);
-				}else{
-					$this->SetFont('Arial','',$fontsize);
-				}
-				while($this->GetStringWidth($txt)>28){
-					if($scheduling_teams){
-						$this->SetFont('Arial','i',--$fontsize);
-					}else{
-						$this->SetFont('Arial','',--$fontsize);
-					}
-				}
-				$this->Cell(30,4,$txt,'1',2,'L',true);
-			}
-			
-			$pools_x += 31;
-			if($this->GetY() > $max_y){$max_y = $this->GetY()+1;}
-			$i++;	
-		}
-	return $max_y;
-	}
-	
-	function PrintError($text)
-		{
-		$this->AddPage();
-		
-		$this->SetFont('Arial','',12);
-		$this->SetTextColor(0);
-		$this->SetFillColor(255);
-		$this->MultiCell(0,8,$text);
-		}
-		
 	function Timeouts()
 		{
     $curX = $this->GetX();
@@ -1619,7 +1097,6 @@ class PDF extends tFPDF_CellFit
 		$this->Cell(70,6,$this->game['visitorteamname'],'LRTB',0,'L',true);
 		$this->Ln();	
 		}
-		
 	function SpiritPoints()
 		{
 		//header
@@ -1652,7 +1129,6 @@ class PDF extends tFPDF_CellFit
 		$this->Ln();
 		
 		}
-		
 	function Signatures()
 		{
 		$curX = $this->GetX();
@@ -1913,8 +1389,6 @@ class PDF extends tFPDF_CellFit
 		$this->Cell(40,12,"",'LRTB',0,'C',true);
 		$this->Ln(6);
 		}
-		
-
 	function Scorekeepers()
 		{
 		//header
@@ -2262,8 +1736,7 @@ class PDF extends tFPDF_CellFit
     $this->SetX($curX);
 		$this->Cell(130,6,"",'TB',1,'C',true);
 */
-    }	
-  
+    }
   function WriteHTML($html)
 		{
 		//HTML parser
@@ -2320,7 +1793,6 @@ class PDF extends tFPDF_CellFit
 		if($tag=='A')
 			$this->HREF='';
 		}
-	
 	function SetStyle($tag,$enable)
 		{
 		//Modify style and select corresponding font

@@ -493,6 +493,10 @@ Main page:
 
 - `user/pdfscoresheet.php`
 
+PDF layout file:
+
+- `cust/<customization>/pdfscoresheet.php`, with fallback to `cust/default/pdfscoresheet.php`
+
 The PDF scoresheet flow is related to the scoresheet concept, but it is not the same as the saved detailed in-app scoresheet.
 
 Current concept:

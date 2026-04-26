@@ -15,10 +15,10 @@ function pdf_slug($value)
 	return $slug === '' ? 'pdf' : $slug;
 }
 
-if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
-	include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
+if (is_file('cust/' . CUSTOMIZATIONS . '/pdfscoresheet.php')) {
+	include_once 'cust/' . CUSTOMIZATIONS . '/pdfscoresheet.php';
 } else {
-	include_once 'cust/default/pdfprinter.php';
+	include_once 'cust/default/pdfscoresheet.php';
 }
 $season = "";
 $filter1 = "";
