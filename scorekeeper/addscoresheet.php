@@ -70,9 +70,15 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
     $errors .= "<p class='warning'>" . _("Time can not be the same or earlier than the previous point") . "!</p>\n";
   }
 
-  if (strcasecmp($uo_goal['assist'], 'xx') == 0 || strcasecmp($uo_goal['assist'], 'x') == 0)
-    $uo_goal['iscallahan'] = 1;
+    if (strcasecmp($uo_goal['assist'], 'xx') == 0 || strcasecmp($uo_goal['assist'], 'x') == 0) {
+      $uo_goal['iscallahan'] = 1;
+      $uo_goal['assist'] = -1;
+    }
 
+    if (strcasecmp($uo_goal['scorer'], 'xx') == 0 || strcasecmp($uo_goal['scorer'], 'x') == 0) {
+      $uo_goal['iscallahan'] = 1;
+      $uo_goal['scorer'] = -1;
+    }
   if (!empty($team) && $team == 'H') {
     $uo_goal['homescore']++;
     $uo_goal['ishomegoal'] = 1;

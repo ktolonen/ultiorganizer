@@ -959,14 +959,19 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
 function GameAddScoreEntry($uo_goal)
 {
 	if (hasEditGameEventsRight($uo_goal['game'])) {
+		$assist = $uo_goal['assist'];
+		$scorer = $uo_goal['scorer'];
+		$assistValue = ($assist === -1 || $assist === 0 || $assist === "0" || $assist === "" || $assist === null || strcasecmp((string)$assist, "x") == 0 || strcasecmp((string)$assist, "xx") == 0) ? "NULL" : "'" . DBEscapeString($assist) . "'";
+		$scorerValue = ($scorer === -1 || $scorer === 0 || $scorer === "0" || $scorer === "" || $scorer === null || strcasecmp((string)$scorer, "x") == 0 || strcasecmp((string)$scorer, "xx") == 0) ? "NULL" : "'" . DBEscapeString($scorer) . "'";
+
 		$query = sprintf(
 			"INSERT INTO uo_goal 
 			(game, num, assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan) 
-			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
+			VALUES ('%s', '%s', %s, %s, '%s', '%s', '%s', '%s', '%s')",
 			DBEscapeString($uo_goal['game']),
 			DBEscapeString($uo_goal['num']),
-			DBEscapeString($uo_goal['assist']),
-			DBEscapeString($uo_goal['scorer']),
+			$assistValue,
+			$scorerValue,
 			DBEscapeString($uo_goal['time']),
 			DBEscapeString($uo_goal['homescore']),
 			DBEscapeString($uo_goal['visitorscore']),
