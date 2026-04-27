@@ -1432,21 +1432,29 @@ function SetGame($gameId, $params)
 				"liveurl"
 			));
 
+			$nullableFKs = array('reservation', 'hometeam', 'visitorteam');
 			foreach ($params as $key => $param) {
-				$shouldUpdate = isset($allowedKeys[$key]) &&
-					$param !== null &&
-					$param !== false &&
-					($param !== '' || $key === 'liveurl');
-				if ($shouldUpdate) {
+				if (!isset($allowedKeys[$key]) || $param === null || $param === false) {
+					continue;
+				}
+				$isNullableFK = in_array($key, $nullableFKs, true);
+				if (empty($param) && $isNullableFK) {
 					$query = sprintf(
-						"UPDATE uo_game SET " . $key . "='%s' 
-						WHERE game_id='%s'\n",
+						"UPDATE uo_game SET %s=NULL WHERE game_id='%s'",
+						$key,
+						DBEscapeString($gameId)
+					);
+				} elseif ($param === '' && $key !== 'liveurl') {
+					continue;
+				} else {
+					$query = sprintf(
+						"UPDATE uo_game SET %s='%s' WHERE game_id='%s'",
+						$key,
 						DBEscapeString($param),
 						DBEscapeString($gameId)
 					);
-
-					$result = DBQuery($query);
 				}
+				$result = DBQuery($query);
 			}
 
 			if (!empty($params['respteam'])) {

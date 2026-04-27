@@ -217,7 +217,6 @@ echo "<tr><td class='infocell'>" . _("Starting time") . " (hh:mm):</td>
 
 
 echo "<tr><td class='infocell'>" . _("Division") . ":</td><td><select class='dropdown' name='pool'>\n";
-echo "<option class='dropdown' value='0'></option>";
 
 $pools = SeasonPools($season);
 foreach ($pools as $row) {
