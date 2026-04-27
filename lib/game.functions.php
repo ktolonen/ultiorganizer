@@ -1478,7 +1478,7 @@ function SetGame($gameId, $params)
 
 		if (!empty($params['name'])) {
 			$query = sprintf(
-				"INSERT INTO uo_scheduling_name 
+				"INSERT INTO uo_scheduling_name
 				(name) VALUES ('%s')",
 				DBEscapeString($params['name'])
 			);
@@ -1489,6 +1489,12 @@ function SetGame($gameId, $params)
 				"UPDATE uo_game SET
 					name=%d	WHERE game_id=%d",
 				(int)$nameId,
+				(int)$gameId
+			);
+			DBQuery($query);
+		} elseif (isset($params['name']) && $params['name'] === '') {
+			$query = sprintf(
+				"UPDATE uo_game SET name=NULL WHERE game_id=%d",
 				(int)$gameId
 			);
 			DBQuery($query);
