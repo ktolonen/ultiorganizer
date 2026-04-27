@@ -1797,6 +1797,7 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool)
  */
 function PoolAddTeam($poolId, $teamId, $rank, $updaterank = false, $checkrights = true)
 {
+  if (!$teamId) return;
   $poolInfo = PoolInfo($poolId);
   $seasonId = SeriesSeasonId($poolInfo['series']);
   $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));

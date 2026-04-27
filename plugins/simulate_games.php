@@ -114,7 +114,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 					} else {
 						$pass = GamePlayerFromNumber($game['game_id'], $info['hometeam'], $pass);
 					}
-					$goal = $hplayers[rand(0, count($hplayers) - 2)]; //-2 removes callahan
+					$goal = $hplayers[rand(0, max(0, count($hplayers) - 2))]; //-2 removes callahan
 					$goal = GamePlayerFromNumber($game['game_id'], $info['hometeam'], $goal);
 				} else {
 					$a++;
