@@ -50,7 +50,7 @@ if (!empty($_POST['save']) || !empty($_POST['add'])) {
 			$clubId = ClubId($_POST['club']);
 
 			//slot owner club not found
-			if ($clubId == -1) {
+			if ($clubId === null) {
 				$clubId = AddClub($seriesId, $_POST['club']);
 			}
 			$tp['club'] = $clubId;

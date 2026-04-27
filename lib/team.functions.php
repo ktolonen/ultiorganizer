@@ -1440,8 +1440,10 @@ function AddTeam($params)
 
     $teamId = DBQueryInsert($query);
 
-    if (!empty($params['country'])) {
+    if ((int)$params['country'] > 0) {
       DBQuery("UPDATE uo_team SET country=" . (int)$params['country'] . " WHERE team_id=$teamId");
+    } elseif ((int)$params['country'] === -1) {
+      DBQuery("UPDATE uo_team SET country=NULL WHERE team_id=$teamId");
     }
     if (!empty($params['club'])) {
       DBQuery("UPDATE uo_team SET club=" . (int)$params['club'] . " WHERE team_id=$teamId");
@@ -1479,8 +1481,10 @@ function SetTeam($params)
 
     $result = DBQuery($query);
 
-    if (!empty($params['country'])) {
+    if ((int)$params['country'] > 0) {
       DBQuery("UPDATE uo_team SET country=" . (int)$params['country'] . " WHERE team_id=" . (int)$params['team_id']);
+    } elseif ((int)$params['country'] === -1) {
+      DBQuery("UPDATE uo_team SET country=NULL WHERE team_id=" . (int)$params['team_id']);
     }
     if (!empty($params['club'])) {
       DBQuery("UPDATE uo_team SET club=" . (int)$params['club'] . " WHERE team_id=" . (int)$params['team_id']);

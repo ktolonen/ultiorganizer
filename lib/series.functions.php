@@ -787,7 +787,7 @@ function ConfirmEnrolledTeam($seriesId, $id)
     $countryId = CountryId($teaminfo['countryname']);
 
     //clubname not found
-    if (!empty($teaminfo['clubname']) && $clubId == -1) {
+    if (!empty($teaminfo['clubname']) && $clubId === null) {
       $clubId = AddClub($seriesId, $teaminfo['clubname']);
     }
 

@@ -58,7 +58,7 @@ if (!empty($_POST['add'])) {
   $tp['rank'] = !empty($_POST["seed0"]) ? $_POST["seed0"] : "0";
   if (!empty($tp['club'])) {
     $clubId = ClubId($tp['club']);
-    if ($clubId == -1) {
+    if ($clubId === null) {
       $clubId = AddClub($series_id, $tp['club']);
     }
     $tp['club'] = $clubId;
@@ -83,7 +83,7 @@ if (!empty($_POST['save'])) {
     $tp['rank'] = !empty($_POST["seed$team_id"]) ? $_POST["seed$team_id"] : "0";
     if (!empty($tp['club'])) {
       $clubId = ClubId($tp['club']);
-      if ($clubId == -1) {
+      if ($clubId === null) {
         $clubId = AddClub($series_id, $tp['club']);
       }
       $tp['club'] = $clubId;
@@ -244,22 +244,22 @@ foreach ($teams as $team) {
 
 $total++;
 $html .=  "<tr>";
-$html .= "<td style='padding-top:15px; width:$colSeed'><input class='input' maxlength='4' style='width:$colSeed' name='seed0' value='$total'/></td>";
-$html .= "<td style='padding-top:0px; width:$colName'><div id='teamAutoComplete' class='yui-skin-sam' style='width:$colName'><input class='input' maxlength='50' style='width:$colName' name='name0' id='name0' value=''/><div id='teamContainer' style='width:$colNameList'></div></div></td>";
-$html .= "<td style='padding-top:15px; width:$colAbbrev'><input class='input' maxlength='15' style='width:$colAbbrev' name='abbrev0' value=''/></td>";
+$html .= "<td style='padding-top:18px; width:$colSeed'><input class='input' maxlength='4' style='width:$colSeed' name='seed0' value='$total'/></td>";
+$html .= "<td style='padding-top:0px; width:$colName'><div id='teamAutoComplete' class='yui-skin-sam' style='position:relative; margin-right: 10px; width:$colName'><input class='input' maxlength='50' style='width:$colName' name='name0' id='name0' value=''/><div id='teamContainer' style='position:absolute; width:$colNameList'></div></div></td>";
+$html .= "<td style='padding-top:18px; width:$colAbbrev'><input class='input' maxlength='15' style='width:$colAbbrev' name='abbrev0' value=''/></td>";
 if (!intval($seasonInfo['isnationalteams'])) {
-  $html .= "<td style='padding-top:0px; width:$colClub'><div id='clubAutoComplete' class='yui-skin-sam' style='width:$colClub'><input class='input' maxlength='50' style='width:$colClub' name='club0' id='club0' value=''/><div id='clubContainer' style='width:$colClubList'></div></div></td>";
+  $html .= "<td style='padding-top:0px; width:$colClub'><div id='clubAutoComplete' class='yui-skin-sam' style='position:relative; margin-right: 10px; width:$colClub'><input class='input' maxlength='50' style='width:$colClub' name='club0' id='club0' value=''/><div id='clubContainer' style='position:absolute; width:$colClubList'></div></div></td>";
 }
 if (intval($seasonInfo['isinternational'])) {
   if (!intval($seasonInfo['isnationalteams'])) {
-    $html .= "<td style='padding-top:15px; width:$colCountry'>" . CountryDropListWithValues("country0", "country0", "", "80px") . "</td>";
+    $html .= "<td style='padding-top:18px; width:$colCountry'>" . CountryDropListWithValues("country0", "country0", "", "80px") . "</td>";
   } else {
-    $html .= "<td style='padding-top:15px; width:$colCountry'>" . CountryDropListWithValues("country0", "country0", "", "") . "</td>";
+    $html .= "<td style='padding-top:18px; width:$colCountry'>" . CountryDropListWithValues("country0", "country0", "", "") . "</td>";
   }
 }
 
 
-$html .=  "<td style='padding-top:15px'><input style='margin-left:15px' id='add' class='button' name='add' type='submit' value='" . _("Add") . "'/></td>";
+$html .=  "<td style='padding-top:18px' colspan='3'><input style='margin-left:15px' id='add' class='button' name='add' type='submit' value='" . _("Add") . "'/></td>";
 $html .=  "</tr>\n";
 
 $html .= "</table>\n";

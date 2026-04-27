@@ -935,14 +935,18 @@ function PoolTeamFromStandings($poolId, $activerank, $countbye = true)
       (int)$activerank
     );
   }
-  return DBQueryToRow($query);
+  $row = DBQueryToRow($query);
+  if ($row === null) {
+    return array('team_id' => null, 'name' => '', 'activerank' => null, 'flagfile' => null);
+  }
+  return $row;
 }
 
 /**
  * Get team from given position from given pool.
  * returns team ranked $activerank from pool $poolId if $countbye=true
  * if $countbye=false, $activerank is corrected by one if BYE team is ranked ahead in this pool
- * 
+ *
  * New function added by Bruno, returns array of teams if there are ties.
  * Meant to be used in teams.php (bystandings).
  * (notice the subtle change in the function name from Team to Teams)
@@ -1702,6 +1706,7 @@ function SetPoolName($poolId, $name)
  */
 function PoolDeleteTeam($poolId, $teamId, $checkrights = true)
 {
+  if (!$teamId) return;
   $poolInfo = PoolInfo($poolId);
   $seasonId = SeriesSeasonId($poolInfo['series']);
   $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));
