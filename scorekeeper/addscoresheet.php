@@ -51,6 +51,14 @@ if ($useGameClock) {
     header("location:?view=addscoresheet&game=" . $gameId);
     exit;
   }
+  if (isset($_POST['resetgameclock'])) {
+    $result = GameResult($gameId);
+    if (intval($result['homescore']) === 0 && intval($result['visitorscore']) === 0) {
+      GameTimeReset($gameId);
+    }
+    header("location:?view=addscoresheet&game=" . $gameId);
+    exit;
+  }
 }
 
 $game_result = GameResult($gameId);
@@ -289,6 +297,9 @@ if ($useGameClock) {
     $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'/>";
     $html .= "<input type='submit' name='nogameclock' data-ajax='false' value='" . _("No game clock") . "'/>";
     $html .= "</div>";
+  }
+  if ($timerState['started'] && $lastscore === null) {
+    $html .= "<input type='submit' name='resetgameclock' data-ajax='false' value='" . _("Reset game clock") . "'/>";
   }
   if ($timerState['started'] || GameHasStarted($game_result)) {
     $html .= "<a href='?view=endgame&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("End game") . "</a>";

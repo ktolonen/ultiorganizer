@@ -2031,6 +2031,20 @@ function isGamePaused($gameId) {
   return (int) DBQueryToValue($query);
 }
 
+function GameTimeReset($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+
+  $query = sprintf(
+    "UPDATE uo_game SET timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0, isongoing=0, hasstarted=0 WHERE game_id=%d",
+    $gameId
+  );
+
+  return DBQuery($query);
+}
+
 function GameTimeStart($gameId) {
   $gameId = (int) $gameId;
   if (!hasEditGameEventsRight($gameId)) {
