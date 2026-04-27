@@ -1,10 +1,13 @@
+.claude
 .codex
 /docs/dev/.env
 /conf/*
 !/conf/.htaccess
 !/conf/config.inc.example.php
 /images/uploads/
-/live/
+/live/*
+!/live/ultiorganizer-compat.patch
+!/live/ultiorganizer-patch.md
 lib/tfpdf/font/unifont/*.mtx.php
 lib/tfpdf/font/unifont/*.cw.dat
 lib/tfpdf/font/unifont/*.cw127.php

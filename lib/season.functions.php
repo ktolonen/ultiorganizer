@@ -159,7 +159,12 @@ function SeasonInfo($seasonId)
     "SELECT * FROM uo_season WHERE season_id='%s'",
     DBEscapeString($seasonId)
   );
-  return DBQueryToRow($query, true);
+  $row = DBQueryToRow($query, true);
+  if (is_array($row) && !array_key_exists('spiritpoints', $row)) {
+    // Deprecated alias kept for live-skin backward compatibility; use spiritmode instead.
+    $row['spiritpoints'] = (int)(($row['spiritmode'] ?? 0) > 0);
+  }
+  return $row;
 }
 
 /**
@@ -237,10 +242,10 @@ function SeasonNameExists($seasonName)
 
 /**
  * Returns all seasons.
- * 
+ *
  * @param array $filter sql conditions
- * @param array $ordering sql ordering  
- * @return array of seasons
+ * @param array $ordering sql ordering
+ * @return array
  */
 function Seasons($filter = null, $ordering = null)
 {
