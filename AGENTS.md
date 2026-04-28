@@ -80,6 +80,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - Keep SQL and shared data access in `lib/`.
 - Use the existing `?view=...` routing pattern for new pages.
 - Prefer small, focused changes and avoid large refactors unless explicitly requested.
+- When adding a schema change: add `upgradeXX()` in `sql/upgrade_db.php`, bump `DB_VERSION` in `lib/database.php`, and update `sql/ultiorganizer.sql` for fresh installs. See `docs/database-upgrades.md`.
 - Avoid touching `conf/` unless required.
 - Keep edits ASCII unless the file already uses Unicode.
 - If making UI changes, verify both desktop and mobile layouts.
@@ -94,6 +95,10 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 ## Verification
 
 - No automated test suite is documented.
+- PHP syntax check a single file: `php -l <file.php>`
+- DB access boundary check (changed files): `php docs/ai/review-database-access/scripts/check-db-access.php --changed`
+- DB access boundary check (full repo): `php docs/ai/review-database-access/scripts/check-db-access.php --all`
+- Refresh gettext catalogs after changing translated strings: `./docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh`
 - If local `php` is not available, use the Docker-based local development environment from `docs/local-development.md`, preferably the optional `dev` workspace, for PHP linting, checker scripts, and other CLI verification.
 - Start the workspace with `docker compose -f docs/dev/compose.yaml --profile devtools up --build dev` and run commands with `docker compose -f docs/dev/compose.yaml exec -T dev ...`. If the `dev` service is unavailable but `app` is running, use `docker compose -f docs/dev/compose.yaml exec -T app ...` for equivalent PHP-based checks.
 - Verify changes by running the app and exercising the relevant page flow.
@@ -112,6 +117,7 @@ Prefer reusing these helpers before adding new utility code or direct SQL.
 - `docs/permissions.md`: permission storage, roles, and enforcement helpers.
 - `docs/privacy.md`: privacy admin tools, export scope, and anonymization or deletion behavior by table.
 - `docs/pdf-printing.md`: PDF entrypoints, purpose files, customization fallbacks, and tFPDF notes.
+- `docs/ranking.md`: pool ranking resolvers per pool type, tie-break order, special-ranking overrides, and event final-standings rendering.
 - `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `docs/scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.

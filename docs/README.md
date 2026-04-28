@@ -14,6 +14,7 @@ This directory collects general project documentation.
 - `database-upgrades.md`: schema and migration workflow.
 - `database-access.md`: database access boundaries, allowed helper layers, migration guidance, and checker behavior.
 - `configuration-flags.md`: configuration taxonomy and migration rules.
+- `ranking.md`: pool ranking resolvers per pool type, tie-break order, special-ranking overrides, and event final-standings rendering.
 - `schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
 - `scorekeeper.md`: Scorekeeper app routing, live clock workflow, and related pages.
 - `scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
