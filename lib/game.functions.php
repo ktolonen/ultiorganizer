@@ -116,8 +116,8 @@ function GameHomeTeamResults($teamId, $poolId)
 {
 	$query = sprintf(
 		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.visitorteam, COALESCE(pm.goals,0) AS scoresheet,
-			sn.name AS gamename, g.isongoing, g.hasstarted
-			FROM uo_game g 
+			sn.name AS gamename, g.isongoing, g.hasstarted, g.forfeit
+			FROM uo_game g
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
 			LEFT JOIN uo_scheduling_name sn ON(g.name=sn.scheduling_id)
 			WHERE g.hometeam=%d AND g.pool=%d
@@ -146,8 +146,9 @@ function GameHomePseudoTeamResults($schedulingId, $poolId)
 function GameVisitorTeamResults($teamId, $poolId)
 {
 	$query = sprintf(
-		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.hometeam, COALESCE(pm.goals,0) AS scoresheet
-			FROM uo_game g 
+		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.hometeam, COALESCE(pm.goals,0) AS scoresheet,
+			g.isongoing, g.forfeit
+			FROM uo_game g
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
 			WHERE g.visitorteam=%d AND g.pool=%d AND g.hasstarted>0 AND g.valid=1 AND isongoing=0
 			GROUP BY g.game_id",
@@ -926,12 +927,54 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
 	}
 }
 
+function SeasonForfeitGames($seasonId)
+{
+	$query = sprintf(
+		"SELECT g.game_id, g.time, g.homescore, g.visitorscore,
+		        ht.name AS hometeamname, vt.name AS visitorteamname,
+		        po.pool_id, po.name AS poolname,
+		        se.series_id, se.name AS seriesname
+		 FROM uo_game g
+		 LEFT JOIN uo_team ht ON g.hometeam = ht.team_id
+		 LEFT JOIN uo_team vt ON g.visitorteam = vt.team_id
+		 LEFT JOIN uo_pool po ON g.pool = po.pool_id
+		 LEFT JOIN uo_series se ON po.series = se.series_id
+		 WHERE se.season = '%s' AND g.forfeit = 1
+		 ORDER BY g.time",
+		DBEscapeString($seasonId)
+	);
+	$result = DBQuery($query);
+	$games = array();
+	while ($row = mysqli_fetch_assoc($result)) {
+		$games[] = $row;
+	}
+	return $games;
+}
+
+function GameSetForfeit($gameId, $isForfeit)
+{
+	$seasonId = GameSeason($gameId);
+	if (isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
+		die('Insufficient rights to edit game');
+	}
+	if (!hasEditGameEventsRight($gameId)) {
+		die('Insufficient rights to edit game');
+	}
+	LogGameUpdate($gameId, "forfeit: " . ($isForfeit ? "yes" : "no"));
+	$query = sprintf(
+		"UPDATE uo_game SET forfeit='%d' WHERE game_id='%s'",
+		$isForfeit ? 1 : 0,
+		DBEscapeString($gameId)
+	);
+	return DBQuery($query);
+}
+
 function GameClearResult($gameId, $updatepools = true)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		LogGameUpdate($gameId, "result cleared");
 		$query = sprintf(
-			"UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
+			"UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', forfeit='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
 			DBEscapeString($gameId)
 		);
 		$result = DBQuery($query);

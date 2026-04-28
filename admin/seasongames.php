@@ -230,6 +230,7 @@ foreach ($pools as $pool) {
             . "</td>";
         } else {
           $html .= "<td>" . intval($game['homescore']) . " - " . intval($game['visitorscore'])
+            . (!empty($game['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
             . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
             . "</td>";
         }

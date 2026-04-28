@@ -1181,9 +1181,9 @@ function PoolGames($poolId, $fieldId = null)
   $query = sprintf(
     "SELECT home.name AS hometeamname, visitor.name AS visitorteamname, CONCAT(home.name, ' - ', visitor.name) AS name,
             p.hometeam, p.visitorteam,
-            p.time, p.game_id, p.homescore, p.visitorscore,
+            p.time, p.game_id, p.homescore, p.visitorscore, p.forfeit,
             phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
-            ps.pool AS original_pool, pgame.name AS gamename 
+            ps.pool AS original_pool, pgame.name AS gamename
             FROM uo_game p
             LEFT JOIN uo_team AS home ON (p.hometeam=home.team_id)
             LEFT JOIN uo_team AS visitor ON (p.visitorteam=visitor.team_id)

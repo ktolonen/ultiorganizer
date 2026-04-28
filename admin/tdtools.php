@@ -78,6 +78,36 @@ function TableDuplicateNumbers($season)
   return $ret;
 }
 
+function TableForfeitGames($season)
+{
+  $ret = "";
+  $games = SeasonForfeitGames($season);
+
+  if (!empty($games)) {
+    $ret .= "<table border='1' width='100%'><tr>";
+    $ret .= "<th>" . _("Date") . "</th>";
+    $ret .= "<th>" . _("Game") . "</th>";
+    $ret .= "<th>" . _("Result") . "</th>";
+    $ret .= "<th>" . _("Pool") . "</th>";
+    $ret .= "<th>" . _("Edit") . "</th>";
+    $ret .= "</tr>";
+    foreach ($games as $game) {
+      $ret .= "<tr>";
+      $ret .= "<td style='white-space:nowrap'>" . ShortDate($game['time']) . " " . DefHourFormat($game['time']) . "</td>";
+      $ret .= "<td>" . utf8entities($game['hometeamname']) . " - " . utf8entities($game['visitorteamname']) . "</td>";
+      $ret .= "<td>" . intval($game['homescore']) . " - " . intval($game['visitorscore']) . "</td>";
+      $ret .= "<td>" . utf8entities(U_($game['seriesname'])) . ": " . utf8entities(U_($game['poolname'])) . "</td>";
+      $ret .= "<td><a href='?view=admin/editgame&amp;season=$season&amp;game=" . $game['game_id'] . "'>" . _("Edit") . "</a></td>";
+      $ret .= "</tr>";
+    }
+    $ret .= "</table>";
+  } else {
+    $ret = "<p>" . _("No forfeit games found.") . "</p>";
+  }
+
+  return $ret;
+}
+
 function TableTimeoutStats()
 {
   $ret = "";
@@ -185,6 +215,20 @@ if (!empty($season) && isSeasonAdmin($season)) {
 
   if (isset($_POST['missing'])) {
     $html .= TableMissingNumbers($season);
+  }
+
+  $html .= "</div>";
+
+  $html .= "<hr />";
+
+  $html .= "<h2>" . _("Forfeit games") . "</h2>";
+  $html .= "<div class='tdtools-box bg-td2'>";
+  $html .= "<p><form method='POST' action='?view=admin/tdtools&amp;season=$season'>";
+  $html .= "<button class='button' type='submit' name='forfeits' value='search'>" . _("Show forfeit games") . "</button> ";
+  $html .= "</form></p>";
+
+  if (isset($_POST['forfeits'])) {
+    $html .= TableForfeitGames($season);
   }
 
   $html .= "</div>";

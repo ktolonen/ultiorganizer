@@ -65,7 +65,9 @@ if (!empty($_POST['save']) && empty($errors)) {
 
   if (GameHasStarted($game_result)) {
     $html .=  "<br/>";
-    $html .= _("This game has already been played. Current result:") . " " . intval($game_result['homescore']) . " - " . $game_result['visitorscore'] . ".";
+    $html .= _("This game has already been played. Current result:") . " " . intval($game_result['homescore']) . " - " . $game_result['visitorscore']
+      . (!empty($game_result['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
+      . ".";
     $html .=  "<br/><br/>";
     $html .=  "<span style='font-weight:bold'>" . _("Change the result to") . " $home - $away?" . "</span>";
   } else {

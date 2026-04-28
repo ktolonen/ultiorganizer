@@ -1190,6 +1190,13 @@ function upgrade87()
 		WHERE r.location IS NOT NULL AND (r.location = 0 OR l.id IS NULL)");
 }
 
+function upgrade88()
+{
+	if (!hasColumn("uo_game", "forfeit")) {
+		addColumn("uo_game", "forfeit", "tinyint(1) NOT NULL DEFAULT 0");
+	}
+}
+
 function upgradeEngineToInnoDb() {
 	$charset = 'utf8mb4';
 	$collation = 'utf8mb4_unicode_ci';

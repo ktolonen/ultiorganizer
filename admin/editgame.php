@@ -76,6 +76,11 @@ if (!empty($_POST['save'])) {
 
 	SetGame($gameId, $gp);
 
+	$info = GameResult($gameId);
+	if (intval($info['hasstarted']) == 2 && !empty($_POST['forfeit_shown'])) {
+		GameSetForfeit($gameId, !empty($_POST['forfeit']) ? 1 : 0);
+	}
+
 	$userid = $_POST['userid'];
 	if (empty($userid)) {
 		$userid = UserIdForMail($_POST['email']);
@@ -245,12 +250,14 @@ echo "<td>" . TranslatedField("name", $info['gamename']);
 echo TranslationScript("name");
 echo "</td></tr>\n";
 
-if (intval($info['valid'])) {
-	echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
-		<td><input class='input' type='checkbox' id='valid' name='valid' checked='checked' value='" . utf8entities($info['valid']) . "'/></td></tr>";
-} else {
-	echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
-		<td><input class='input' type='checkbox' id='valid' name='valid' value='" . utf8entities($info['valid']) . "'/></td></tr>";
+$validChecked = intval($info['valid']) ? " checked='checked'" : "";
+echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
+	<td><input class='input' type='checkbox' id='valid' name='valid' value='1'" . $validChecked . "/></td></tr>";
+if (intval($info['hasstarted']) == 2) {
+	$checked = !empty($info['forfeit']) ? " checked='checked'" : "";
+	echo "<tr><td class='infocell'>" . _("Forfeit") . ":</td>
+		<td><input class='input' type='checkbox' name='forfeit' value='1'" . $checked . "/>
+		<input type='hidden' name='forfeit_shown' value='1'/></td></tr>";
 }
 
 // live stream

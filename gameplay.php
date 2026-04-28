@@ -64,6 +64,9 @@ if (GameHasStarted($game_result) > 0) {
   if (intval($game_result['isongoing'])) {
     $html .= " (" . _("ongoing") . ")";
   }
+  if (!empty($game_result['forfeit'])) {
+    $html .= " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>";
+  }
   $html .= "</h1>\n";
 
   if (count($goals) <= 0) {

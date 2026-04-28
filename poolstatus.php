@@ -7,6 +7,7 @@ include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/timetable.functions.php';
+include_once 'lib/game.functions.php';
 
 $title = _("Standings") . " ";
 $seriesScoreboard = false;
@@ -650,9 +651,12 @@ function printPlayoffTree($seasoninfo, $poolinfo)
             }
             if ($res['scoresheet'] && !$resIsOngoing) {
               $game .= "<a href='?view=gameplay&amp;game=" . $res['game_id'] . "'>";
-              $game .= $res['homescore'] . "-" . $res['visitorscore'] . "</a> ";
+              $game .= $res['homescore'] . "-" . $res['visitorscore'] . "</a>"
+                . (!empty($res['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
+                . " ";
             } elseif (GameHasStarted($res) > 0 && !$resIsOngoing) {
-              $game .= $res['homescore'] . "-" . $res['visitorscore'];
+              $game .= $res['homescore'] . "-" . $res['visitorscore']
+                . (!empty($res['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "");
             } elseif (!empty($res['gamename'])) {
               $game .= "<span class='lowlight'>" . utf8entities(U_($res['gamename'])) . "</span>";
             }
@@ -825,11 +829,13 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
       $ret .= "<td>?</td>\n";
       $ret .= "<td>-</td>\n";
       $ret .= "<td>?</td>\n";
+      $ret .= "<td></td>\n";
     } else {
       if ($gameIsOngoing)
-        $ret .= "<td><em>" . intval($game['homescore']) . "</em></td><td>-</td><td><em>" . intval($game['visitorscore']) . "</em></td>\n";
+        $ret .= "<td><em>" . intval($game['homescore']) . "</em></td><td>-</td><td><em>" . intval($game['visitorscore']) . "</em></td><td></td>\n";
       else
-        $ret .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>\n";
+        $ret .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>"
+          . "<td>" . (!empty($game['forfeit']) ? "<span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "") . "</td>\n";
     }
 
     if (!$gameIsOngoing) {

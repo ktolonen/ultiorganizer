@@ -15,6 +15,8 @@ The main source for pool ranking is `lib/standings.functions.php`. Final-standin
 
 Each resolver writes the resulting position into `uo_team_pool.activerank`.
 
+Games marked as forfeits (`uo_game.forfeit = 1`) are treated identically to played games in all ranking calculations. The forfeit flag is a display annotation only and has no effect on standings, tie-breaks, or pool moves.
+
 ## `uo_team_pool` rank fields
 
 - `rank`: initial seeding inside the pool. Set when teams are placed and not changed by the resolvers.

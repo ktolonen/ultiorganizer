@@ -109,17 +109,20 @@ if ($game_result['homevalid'] == 2) {
 	) . "</p>";
 }
 
-$html .= "<p>" . _("If game ongoing, update as current result: ") . "    
+$html .= "<p>" . _("If game ongoing, update as current result: ") . "
 	<input class='button' type='submit' name='update' value='" . _("update") . "'/></p>";
 
-$html .= "<p>" . _("If this is all wrong, clear the result: ") . "    
+$html .= "<p>" . _("If this is all wrong, clear the result: ") . "
 	<input class='button' type='submit' name='clear' value='" . _("Clear") . "'/></p>";
 
 $html .= $html2;
 
-$html .= "<p>    
+$html .= "<p>
 		<input class='button' type='submit' name='save' value='" . _("Save as final result") . "'/>
-	</p></form>";
+	</p>";
+
+
+$html .= "</form>";
 
 
 echo $html;

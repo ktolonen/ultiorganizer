@@ -525,15 +525,22 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
     $ret .= "<td style='$scoresw'><span>?</span></td>\n";
     $ret .= "<td style='$againstmarkw'><span>-</span></td>\n";
     $ret .= "<td style='$scoresw'><span>?</span></td>\n";
+    $ret .= "<td></td>\n";
   } else {
     if ($game['isongoing']) {
       $ret .= "<td style='$scoresw'><span><em>" . intval($game['homescore']) . "</em></span></td>\n";
       $ret .= "<td style='$againstmarkw'><span>-</span></td>\n";
       $ret .= "<td style='$scoresw'><span><em>" . intval($game['visitorscore']) . "</em></span></td>\n";
+      $ret .= "<td></td>\n";
     } else {
       $ret .= "<td style='$scoresw'><span>" . intval($game['homescore']) . "</span></td>\n";
       $ret .= "<td style='$againstmarkw'><span>-</span></td>\n";
       $ret .= "<td style='$scoresw'><span>" . intval($game['visitorscore']) . "</span></td>\n";
+      if (!empty($game['forfeit'])) {
+        $ret .= "<td><span class='forfeit-mark'>(" . _("forfeit") . ")</span></td>\n";
+      } else {
+        $ret .= "<td></td>\n";
+      }
     }
   }
 
@@ -648,10 +655,10 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 			pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
 			ps.series_id, ps.name AS seriesname, ps.season, ps.type, pr.fieldname, pr.reservationgroup,
 			pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, COALESCE(pm.goals,0) AS scoresheet,
-			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, pp.islive, home.name AS hometeamname, visitor.name AS visitorteamname,
+			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, pp.islive, pp.forfeit, home.name AS hometeamname, visitor.name AS visitorteamname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
-			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid, 
-			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry, 
+			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid,
+			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry,
 			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone
 			FROM uo_game pp 
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)

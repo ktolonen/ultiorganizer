@@ -1050,8 +1050,8 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting)
   $query = sprintf(
     "
 		SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore,
-  			pp.hasstarted, ser.season AS season_id, ps.name, 
-			pp.game_id, ps.pool_id, s.name AS seasonname 
+  			pp.hasstarted, ser.season AS season_id, ps.name,
+			pp.game_id, ps.pool_id, s.name AS seasonname, pp.forfeit
 		FROM uo_game pp 
 		LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool) 
 		LEFT JOIN uo_series ser ON (ps.series=ser.series_id)

@@ -427,6 +427,7 @@ CREATE TABLE IF NOT EXISTS `uo_game` (
   `timer_start` bigint(20) DEFAULT NULL,
   `timer_pause_start` bigint(20) DEFAULT NULL,
   `timer_paused_duration` bigint(20) NOT NULL DEFAULT 0,
+  `forfeit` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`game_id`),
   KEY `idx_hometeam` (`hometeam`),
   KEY `idx_visitorteam` (`visitorteam`),
