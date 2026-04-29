@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-04-28 19:32+0300\n"
+"POT-Creation-Date: 2026-04-29 14:23+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -76,7 +76,7 @@ msgstr "* nur Mixed"
 msgid "-> %d"
 msgstr "-> %d"
 
-#: admin/seasongames.php:119 admin/seasonpools.php:94
+#: admin/seasongames.php:119 admin/seasonpools.php:103
 #: admin/seasonstandings.php:171 admin/seasonteams.php:160
 #: admin/seasonteams.php:231 admin/seriesseeding.php:36 user/respgames.php:70
 msgid "..."
@@ -258,8 +258,8 @@ msgstr "Aktiv"
 #: admin/addseasonpools.php:260 admin/addseasons.php:449
 #: admin/addseasonseries.php:129 admin/addseasonteams.php:212
 #: admin/addserieformats.php:191 admin/adduser.php:143 admin/clubs.php:54
-#: admin/clubs.php:89 admin/locations.php:73 admin/poolmoves.php:369
-#: admin/seasonpools.php:292 admin/seasons.php:155 admin/seasonseries.php:165
+#: admin/clubs.php:89 admin/locations.php:73 admin/poolmoves.php:385
+#: admin/seasonpools.php:301 admin/seasons.php:155 admin/seasonseries.php:165
 #: admin/seasonteams.php:262 admin/serieformats.php:51
 #: admin/translations.php:131 user/addextraemail.php:92 user/enrollteam.php:140
 #: user/teamplayers.php:261 user/userinfo.php:377 user/userinfo.php:513
@@ -697,8 +697,8 @@ msgstr "Punkte Auswaertsteam"
 msgid "BULA"
 msgstr "BULA"
 
-#: admin/addserieformats.php:194 spiritkeeper/editgame.php:140
-#: spiritkeeper/teamgames.php:100
+#: admin/addserieformats.php:194 admin/select_teams.php:150
+#: spiritkeeper/editgame.php:140 spiritkeeper/teamgames.php:100
 msgid "Back"
 msgstr "Zurück"
 
@@ -769,7 +769,7 @@ msgstr "Blogger"
 msgid "Bronze"
 msgstr "Bronze"
 
-#: admin/seasonpools.php:106 admin/seasonpools.php:252
+#: admin/seasonpools.php:115 admin/seasonpools.php:261
 #: scorekeeper/addplayerlists.php:198 scorekeeper/addplayerlists.php:205
 #: user/addplayerlists.php:297 user/addplayerlists.php:308
 #: user/addplayerlists.php:361 user/addplayerlists.php:372
@@ -826,7 +826,7 @@ msgstr "Callahan-Defense"
 msgid "Callahan goal"
 msgstr "Callahan-Punkt"
 
-#: result.php:86 admin/seasonpools.php:297 admin/seasonseries.php:173
+#: result.php:86 admin/seasonpools.php:306 admin/seasonseries.php:173
 #: admin/seasonteams.php:268 admin/select_userrole.php:29
 #: admin/select_userrole.php:34 admin/select_userrole.php:37
 #: admin/select_userrole.php:40 admin/select_userrole.php:43
@@ -1193,11 +1193,11 @@ msgstr "Kontakt Teams"
 msgid "Contacts"
 msgstr "Kontakte"
 
-#: admin/seasonpools.php:106
+#: admin/seasonpools.php:115
 msgid "Continuing"
 msgstr "Folge-Gruppe"
 
-#: admin/addseasonpools.php:357 admin/poolmoves.php:20
+#: admin/addseasonpools.php:357 admin/poolmoves.php:23
 msgid "Continuing pool"
 msgstr "Folge-Gruppe"
 
@@ -1434,7 +1434,7 @@ msgstr "Defenses im Schnitt"
 msgid "Defensive plays"
 msgstr "Defensivaktionen"
 
-#: admin/poolmoves.php:217 admin/poolmoves.php:284 admin/seasonpoints.php:203
+#: admin/poolmoves.php:225 admin/poolmoves.php:294 admin/seasonpoints.php:203
 #: admin/users.php:74 admin/users.php:76 mobile/deletescore.php:21
 #: mobile/deletescore.php:45 scorekeeper/deletescore.php:42
 #: user/teamplayers.php:172
@@ -2278,19 +2278,19 @@ msgstr "Fr"
 msgid "From"
 msgstr "Von"
 
-#: admin/poolmoves.php:211 admin/poolmoves.php:243 admin/poolmoves.php:277
-#: admin/poolmoves.php:283 admin/poolmoves.php:318 admin/seasonmoves.php:157
+#: admin/poolmoves.php:219 admin/poolmoves.php:257 admin/poolmoves.php:287
+#: admin/poolmoves.php:293 admin/poolmoves.php:334 admin/seasonmoves.php:157
 #: admin/seasonstandings.php:461 admin/serieteams.php:182
 #: lib/swissdraw.functions.php:199 plugins/reassign_playoffpools.php:51
 msgid "From pool"
 msgstr "Von Gruppe"
 
-#: admin/poolmoves.php:278 admin/poolmoves.php:282 admin/serieteams.php:183
+#: admin/poolmoves.php:288 admin/poolmoves.php:292 admin/serieteams.php:183
 #: lib/swissdraw.functions.php:200 plugins/reassign_playoffpools.php:52
 msgid "From pos."
 msgstr "Von Pos."
 
-#: admin/poolmoves.php:212 admin/poolmoves.php:244 admin/poolmoves.php:319
+#: admin/poolmoves.php:220 admin/poolmoves.php:258 admin/poolmoves.php:335
 #: admin/seasonmoves.php:158
 msgid "From position"
 msgstr "Von Position"
@@ -2410,7 +2410,7 @@ msgstr "Spiel läuft."
 msgid "Game locations"
 msgstr "Spielorte"
 
-#: admin/seasonpools.php:242 admin/seasonpools.php:244
+#: admin/seasonpools.php:251 admin/seasonpools.php:253
 msgid "Game management"
 msgstr "Spiele verwalten"
 
@@ -2607,7 +2607,7 @@ msgstr "Geschlechterverhaeltnis beim 1. Punkt"
 msgid "Generate Tokens"
 msgstr "Tokens erzeugen"
 
-#: admin/poolgames.php:218 admin/seasonpools.php:302 admin/seriesgames.php:99
+#: admin/poolgames.php:218 admin/seasonpools.php:311 admin/seriesgames.php:99
 msgid "Generate all games"
 msgstr "Alle Spiele erzeugen"
 
@@ -3408,7 +3408,7 @@ msgstr "Wartung"
 msgid "Make this pool visible on menu"
 msgstr "Diesen Pool im Menü sichtbar machen"
 
-#: admin/poolmoves.php:239 admin/poolmoves.php:315
+#: admin/poolmoves.php:247 admin/poolmoves.php:325
 msgid "Make transfer rule"
 msgstr "Neue Transfer-Regel"
 
@@ -3424,7 +3424,7 @@ msgstr ""
 "Verwalte Spirit-Sichtbarkeit, Kommentare, Absende-Sperren und "
 "Bewertungsmodus auf Ereignisebene in einer eigenen Einstellungsansicht."
 
-#: admin/seasonpools.php:228 admin/seasonstandings.php:518
+#: admin/seasonpools.php:237 admin/seasonstandings.php:518
 #: admin/serieteams.php:225
 msgid "Manage moves"
 msgstr "Transfers verwalten"
@@ -3541,7 +3541,7 @@ msgstr "Mo"
 msgid "Move from"
 msgstr "Transfer von"
 
-#: admin/addseasonpools.php:313 admin/poolmoves.php:215
+#: admin/addseasonpools.php:313 admin/poolmoves.php:223
 #: admin/seasonmoves.php:162
 msgid "Move games"
 msgstr "Spiele mitnehmen"
@@ -3550,7 +3550,7 @@ msgstr "Spiele mitnehmen"
 msgid "Move not allowed. Game already played!"
 msgstr "Transfer nicht erlaubt. Spiel ist schon gespielt!"
 
-#: admin/seasonpools.php:223 admin/seasonpools.php:225
+#: admin/seasonpools.php:232 admin/seasonpools.php:234
 msgid "Move teams"
 msgstr "Teams transferieren"
 
@@ -3602,7 +3602,7 @@ msgstr "HINWEIS"
 #: admin/dbequalize.php:270 admin/dbequalize.php:289 admin/dbequalize.php:309
 #: admin/dbequalize.php:369 admin/dbequalize.php:372 admin/editgame.php:248
 #: admin/locations.php:52 admin/privacyplayer.php:86 admin/privacyuser.php:88
-#: admin/seasonpoints.php:193 admin/seasonpools.php:103 admin/seasons.php:91
+#: admin/seasonpoints.php:193 admin/seasonpools.php:112 admin/seasons.php:91
 #: admin/seasonseries.php:75 admin/seasonstats.php:20 admin/seasonstats.php:34
 #: admin/seasonteams.php:174 admin/serieformats.php:28
 #: admin/seriesseeding.php:45 admin/serieteams.php:143 admin/serverconf.php:245
@@ -3629,8 +3629,8 @@ msgstr "Name"
 msgid "Name cannot be empty"
 msgstr "Name darf nicht leer sein"
 
-#: admin/poolmoves.php:216 admin/poolmoves.php:246 admin/poolmoves.php:279
-#: admin/poolmoves.php:281 admin/poolmoves.php:320 admin/serieteams.php:187
+#: admin/poolmoves.php:224 admin/poolmoves.php:260 admin/poolmoves.php:289
+#: admin/poolmoves.php:291 admin/poolmoves.php:336 admin/serieteams.php:187
 #: lib/swissdraw.functions.php:204 plugins/reassign_playoffpools.php:56
 msgid "Name in Schedule"
 msgstr "Name im Spielplan"
@@ -3839,7 +3839,7 @@ msgstr "Keine Regelvorlagen verfuegbar."
 msgid "No schedule"
 msgstr "Nicht im Spielplan"
 
-#: admin/poolmoves.php:97 admin/poolmoves.php:126
+#: admin/poolmoves.php:102 admin/poolmoves.php:133
 msgid "No scheduling name given"
 msgstr "Kein Spielplanname gegeben"
 
@@ -3978,7 +3978,7 @@ msgstr "Ereigniseinstellungen oeffnen"
 msgid "Open for enrollment"
 msgstr "Anmeldung offen"
 
-#: admin/apitokens.php:169 admin/locations.php:55 admin/seasonpools.php:109
+#: admin/apitokens.php:169 admin/locations.php:55 admin/seasonpools.php:118
 #: admin/seasons.php:98 admin/seasonseries.php:76
 msgid "Operations"
 msgstr "Operationen"
@@ -4016,7 +4016,7 @@ msgstr "Optional, wenn E-Mail deaktiviert ist."
 
 #: admin/addseasonlinks.php:63 admin/addseasonpools.php:240
 #: admin/addseasonpools.php:278 admin/addseasonseries.php:102
-#: admin/seasonpools.php:104 admin/serverconf.php:245
+#: admin/seasonpools.php:113 admin/serverconf.php:245
 msgid "Order"
 msgstr "Reihenfolge"
 
@@ -4066,7 +4066,7 @@ msgstr "Seitenaufrufe pro Seite"
 msgid "Page title"
 msgstr "Seitentitel"
 
-#: admin/poolmoves.php:329
+#: admin/poolmoves.php:341
 msgid "Pair"
 msgstr "Paar"
 
@@ -4162,7 +4162,7 @@ msgid "Place of birth"
 msgstr "Geburtsort"
 
 #: poolstatus.php:688 poolstatus.php:691 teams.php:293
-#: admin/seasonpools.php:107 ext/countrystatus.php:222 ext/eventpools.php:183
+#: admin/seasonpools.php:116 ext/countrystatus.php:222 ext/eventpools.php:183
 #: ext/poolstatus.php:176
 msgid "Placement"
 msgstr "Platzierung"
@@ -4188,7 +4188,7 @@ msgstr "Pool vom Typ Play-off"
 msgid "Play-off"
 msgstr "K.O.-Runde"
 
-#: admin/seasonpools.php:235 admin/seasonpools.php:237
+#: admin/seasonpools.php:244 admin/seasonpools.php:246
 msgid "Play-off games"
 msgstr "K.O.-Spiele"
 
@@ -4797,7 +4797,7 @@ msgstr "Fortsetzen, wenn das Spiel weitergeht."
 #: admin/dbrestore.php:51 admin/editgame.php:274 admin/editstanding.php:76
 #: admin/eventdataimport.php:67 admin/eventdataimport.php:71
 #: admin/executesql.php:124 admin/failed.php:27 admin/help.php:22
-#: admin/poolmoves.php:371 admin/schedule.php:252 admin/schedule.php:569
+#: admin/poolmoves.php:387 admin/schedule.php:252 admin/schedule.php:569
 #: admin/seasonmoves.php:214 admin/seriesseeding.php:74
 #: admin/serieteams.php:253 admin/success.php:27
 #: plugins/lisence_modifier.php:187 plugins/reassign_playoffpools.php:123
@@ -4954,9 +4954,9 @@ msgstr "Sa"
 #: admin/clubs.php:82 admin/clubs.php:119 admin/editgame.php:272
 #: admin/editstanding.php:56 admin/schedule.php:560 admin/seasongames.php:271
 #: admin/seasonmoves.php:213 admin/seasonpoints.php:270
-#: admin/seasonpools.php:296 admin/seasonseries.php:172
+#: admin/seasonpools.php:305 admin/seasonseries.php:172
 #: admin/seasonstandings.php:537 admin/seasonteams.php:267
-#: admin/select_teams.php:148 admin/seriesseeding.php:73
+#: admin/select_teams.php:149 admin/seriesseeding.php:73
 #: admin/serieteams.php:177 admin/serverconf.php:281 admin/translations.php:135
 #: mobile/addcomment.php:41 mobile/addfirstoffence.php:46
 #: mobile/addhalftime.php:35 mobile/addofficial.php:26
@@ -5373,7 +5373,7 @@ msgstr "Tabellen für Backup wählen"
 msgid "Select team"
 msgstr "Team wählen"
 
-#: admin/seasonpools.php:214 admin/seasonpools.php:216 admin/serieteams.php:135
+#: admin/seasonpools.php:223 admin/seasonpools.php:225 admin/serieteams.php:135
 msgid "Select teams"
 msgstr "Teams auswählen"
 
@@ -5428,6 +5428,10 @@ msgstr "Serverkonfiguration"
 #: admin/dbadmin.php:143
 msgid "Server version"
 msgstr "Serverversion"
+
+#: admin/poolmoves.php:383
+msgid "Set"
+msgstr "Setzen"
 
 #: user/userinfo.php:266
 msgid "Set as primary"
@@ -5486,7 +5490,7 @@ msgstr "Alle anzeigen"
 msgid "Show all games"
 msgstr "Alle Spiele anzeigen"
 
-#: admin/seasonpools.php:301
+#: admin/seasonpools.php:310
 msgid "Show all moves"
 msgstr "Alle Transfers anzeigen"
 
@@ -5940,7 +5944,7 @@ msgstr "Team-Kontaktperson"
 msgid "Team details"
 msgstr "Teamdaten"
 
-#: admin/poolmoves.php:144 admin/poolmoves.php:154
+#: admin/poolmoves.php:151 admin/poolmoves.php:161
 msgid "Team has already moved."
 msgstr "Team wurde schon transferiert"
 
@@ -5990,7 +5994,7 @@ msgstr "Team, das das Timeout nimmt"
 #: menufunctions.php:743 menufunctions.php:767 seasonlist.php:30 teams.php:11
 #: teams.php:68 admin/addseasonpools.php:394 admin/clubs.php:57
 #: admin/clubs.php:92 admin/dbequalize.php:203 admin/dbequalize.php:270
-#: admin/seasonadmin.php:78 admin/seasonpools.php:219
+#: admin/poolmoves.php:382 admin/seasonadmin.php:78 admin/seasonpools.php:228
 #: admin/seasonseries.php:121 admin/seasonstats.php:20 admin/seasonstats.php:34
 #: admin/seasonteams.php:16 admin/serieteams.php:23 admin/stats.php:96
 msgid "Teams"
@@ -6261,7 +6265,7 @@ msgstr "Zeitzone"
 msgid "To"
 msgstr "Nach"
 
-#: admin/poolmoves.php:213 admin/seasonmoves.php:159
+#: admin/poolmoves.php:221 admin/seasonmoves.php:159
 #: admin/seasonstandings.php:464 admin/serieteams.php:186
 #: lib/swissdraw.functions.php:203 plugins/reassign_playoffpools.php:55
 msgid "To pool"
@@ -6272,7 +6276,7 @@ msgstr "Nach Gruppe"
 msgid "To pos."
 msgstr "Nach Pos."
 
-#: admin/poolmoves.php:214 admin/poolmoves.php:245 admin/seasonmoves.php:160
+#: admin/poolmoves.php:222 admin/poolmoves.php:259 admin/seasonmoves.php:160
 msgid "To position"
 msgstr "Nach Position"
 
@@ -6387,7 +6391,7 @@ msgstr "Berührt"
 msgid "Tournament"
 msgstr "Turnier"
 
-#: admin/poolmoves.php:100 admin/poolmoves.php:129
+#: admin/poolmoves.php:105 admin/poolmoves.php:136
 msgid "Transfer already exists"
 msgstr "Transfer existiert schon"
 
@@ -6422,7 +6426,7 @@ msgstr "Twitter"
 #: admin/addseasonlinks.php:63 admin/addseasonpools.php:286
 #: admin/addseasons.php:90 admin/addseasons.php:310
 #: admin/addseasonseries.php:105 admin/eventviewer.php:137
-#: admin/seasonadmin.php:34 admin/seasonpools.php:108 admin/seasons.php:92
+#: admin/seasonadmin.php:34 admin/seasonpools.php:117 admin/seasons.php:92
 #: admin/seasonseries.php:75 admin/seasonstats.php:20 admin/seasonstats.php:34
 #: admin/serverconf.php:245 user/addmedialink.php:192 user/clubprofile.php:205
 #: user/playerprofile.php:348 user/teamprofile.php:152
@@ -6628,7 +6632,7 @@ msgstr "Benutzername ist zu kurz (min. 3 Buchstaben)"
 msgid "Users"
 msgstr "Benutzer"
 
-#: admin/seasonpools.php:105 admin/seasonseries.php:75
+#: admin/seasonpools.php:114 admin/seasonseries.php:75
 msgid "V"
 msgstr "S"
 
@@ -6650,7 +6654,7 @@ msgid "Video"
 msgstr "Video"
 
 #: admin/addseasonpools.php:333 admin/seasonadmin.php:61
-#: admin/seasonpools.php:105 admin/seasons.php:96 admin/seasonseries.php:75
+#: admin/seasonpools.php:114 admin/seasons.php:96 admin/seasonseries.php:75
 msgid "Visible"
 msgstr "Sichtbar"
 
@@ -6832,9 +6836,9 @@ msgstr "World Flying Disc Federation"
 #: admin/addteamadmins.php:68 admin/apitokens.php:200 admin/clubs.php:75
 #: admin/clubs.php:111 admin/locations.php:66 admin/poolgames.php:290
 #: admin/poolgames.php:291 admin/poolgames.php:330 admin/poolgames.php:331
-#: admin/poolgames.php:354 admin/poolgames.php:355 admin/poolmoves.php:234
-#: admin/poolmoves.php:308 admin/reservations.php:132 admin/seasongames.php:261
-#: admin/seasonmoves.php:164 admin/seasonpools.php:254 admin/seasons.php:146
+#: admin/poolgames.php:354 admin/poolgames.php:355 admin/poolmoves.php:242
+#: admin/poolmoves.php:318 admin/reservations.php:132 admin/seasongames.php:261
+#: admin/seasonmoves.php:164 admin/seasonpools.php:263 admin/seasons.php:146
 #: admin/seasonseries.php:129 admin/seasonstandings.php:392
 #: admin/seasonstandings.php:448 admin/seasonteams.php:239
 #: admin/serieformats.php:47 admin/serverconf.php:254
@@ -6895,7 +6899,7 @@ msgstr "Dein Team"
 msgid "added"
 msgstr "hinzugefügt"
 
-#: admin/poolmoves.php:228 admin/seasonmoves.php:187
+#: admin/poolmoves.php:236 admin/seasonmoves.php:187
 msgid "all"
 msgstr "alles"
 
@@ -6958,7 +6962,7 @@ msgstr "ursprüngliche Reihenfolge bearbeiten"
 msgid "characters"
 msgstr "Zeichen"
 
-#: admin/seasonpools.php:252
+#: admin/seasonpools.php:261
 msgid "clone"
 msgstr "klonen"
 
@@ -7003,7 +7007,7 @@ msgstr "Klasse"
 msgid "edit"
 msgstr "bearbeiten"
 
-#: admin/seasongames.php:258 admin/seasonpools.php:250
+#: admin/seasongames.php:258 admin/seasonpools.php:259
 #: admin/seasonteams.php:237
 msgid "edit details"
 msgstr "Detail ändern"
@@ -7123,7 +7127,7 @@ msgstr "Minuten"
 msgid "moved %d players, %d stats"
 msgstr "%d Spieler, %d Statistiken verschoben"
 
-#: admin/poolmoves.php:232 admin/seasonmoves.php:191
+#: admin/poolmoves.php:240 admin/seasonmoves.php:191
 msgid "mutual"
 msgstr "gegenseitig"
 
@@ -7144,7 +7148,7 @@ msgstr "ohne Ränder"
 msgid "not given"
 msgstr "nicht gegeben"
 
-#: admin/poolmoves.php:230 admin/seasonmoves.php:189
+#: admin/poolmoves.php:238 admin/seasonmoves.php:189
 msgid "nothing"
 msgstr "nichts"
 
@@ -7225,7 +7229,7 @@ msgstr "Punkte für das aufgebende / Freilosteam"
 msgid "points for their remaining opponent"
 msgstr "Punkte für den verbleibenden Gegner"
 
-#: admin/seasonpools.php:254
+#: admin/seasonpools.php:263
 msgid "remove"
 msgstr "entfernen"
 
@@ -7329,7 +7333,7 @@ msgstr "update"
 msgid "view"
 msgstr "anzeigen"
 
-#: teams.php:390 admin/poolmoves.php:298
+#: teams.php:390 admin/poolmoves.php:308
 msgid "vs."
 msgstr "gg."
 
