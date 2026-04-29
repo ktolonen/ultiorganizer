@@ -67,12 +67,21 @@ if (!empty($_POST['save'])) {
   $pools = SeriesPools($series_id);
   foreach ($pools as $pool) {
     $pool_id = $pool['pool_id'];
+    $pool_info = PoolInfo($pool_id);
     $pp['name'] = !empty($_POST["name$pool_id"]) ? $_POST["name$pool_id"] : "no name";
     $pp['type'] = intval($_POST["type$pool_id"]);
     $pp['ordering'] = !empty($_POST["ordering$pool_id"]) ? $_POST["ordering$pool_id"] : "A";
-    $pp['visible'] = isset($_POST["visible$pool_id"]) ? 1 : 0;
-    $pp['continuingpool'] = isset($_POST["continuation$pool_id"]) ? 1 : 0;
-    $pp['placementpool'] = isset($_POST["placement$pool_id"]) ? 1 : 0;
+    // Disabled checkboxes are not submitted; for non-root playoff pools these fields
+    // are disabled in the form and controlled by the root pool, so preserve existing values.
+    if ($pool_info['type'] == 2 && PoolPlayoffRoot($pool_id) != $pool_id) {
+      $pp['visible'] = intval($pool_info['visible']);
+      $pp['continuingpool'] = intval($pool_info['continuingpool']);
+      $pp['placementpool'] = intval($pool_info['placementpool']);
+    } else {
+      $pp['visible'] = isset($_POST["visible$pool_id"]) ? 1 : 0;
+      $pp['continuingpool'] = isset($_POST["continuation$pool_id"]) ? 1 : 0;
+      $pp['placementpool'] = isset($_POST["placement$pool_id"]) ? 1 : 0;
+    }
     SetPoolDetails($pool_id, $pp);
   }
 }
@@ -209,7 +218,7 @@ foreach ($pools as $pool) {
 
   $html .= "<td>";
 
-  if (!intval($info['continuingpool']) && $moves == 0 && !$started) {
+  if (!intval($info['continuingpool']) && !$started) {
     if ($teams) {
       $html .= "<a href='?view=admin/select_teams&amp;series=" . $series_id . "'>" . _("Select teams") . "</a> | ";
     } else {

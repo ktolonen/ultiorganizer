@@ -895,7 +895,7 @@ function pageMenu($menuitems, $current = "", $echoed = true)
       if (!$first)
         $html .= "<td> - </td>";
       $first = false;
-      if ($url == $current || strrpos($_SERVER["REQUEST_URI"], $url)) {
+      if ($url == $current || (empty($current) && strrpos($_SERVER["REQUEST_URI"], $url) !== false)) {
         $html .= "<th><a class='current' href='" . htmlentities($url) . "'>" . utf8entities($name) . "</a></th>\n";
       } else {
         $html .= "<th><a href='" . htmlentities($url) . "'>" . utf8entities($name) . "</a></th>\n";
@@ -907,9 +907,7 @@ function pageMenu($menuitems, $current = "", $echoed = true)
 
     foreach ($menuitems as $name => $url) {
 
-      if ($url == $current) {
-        $html .= "<li><a class='current' href='" . htmlentities($url) . "'>" . utf8entities($name) . "</a></li>\n";
-      } elseif (strrpos($_SERVER["REQUEST_URI"], $url)) {
+      if ($url == $current || (empty($current) && strrpos($_SERVER["REQUEST_URI"], $url) !== false)) {
         $html .= "<li><a class='current' href='" . htmlentities($url) . "'>" . utf8entities($name) . "</a></li>\n";
       } else {
         $html .= "<li><a href='" . htmlentities($url) . "'>" . utf8entities($name) . "</a></li>\n";

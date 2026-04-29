@@ -144,9 +144,11 @@ echo "</tr></table>\n";
 echo "</td></tr>\n";
 echo "<tr><td>\n";
 //save button
+$seriesinfo = SeriesInfo($seriesId);
 echo "<table><tr><td id='user_actions' style='float:left;padding:20px'>\n";
 echo "<input type='button' id='saveButton' value='" . _("Save") . "'/>\n";
-echo "</td><td class='center'><div id='responseStatus'></div></td></tr></table>\n";
+echo "</td><td style='padding:20px'><a href='?view=admin/seasonpools&amp;season=" . $seriesinfo['season'] . "&amp;series=" . $seriesId . "'>" . _("Back") . "</a></td>";
+echo "<td class='center'><div id='responseStatus'></div></td></tr></table>\n";
 echo "</td></tr></table>\n";
 
 ?>
