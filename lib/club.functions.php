@@ -168,14 +168,15 @@ function SetClubProfile($teamId, $profile)
 {
 	$teaminfo = TeamInfo($teamId);
 	if (isSuperAdmin() || (hasEditPlayersRight($teamId) && $teaminfo['club'] == $profile['club_id'])) {
+		$countryValue = (int)$profile['country'] > 0 ? (string)(int)$profile['country'] : "NULL";
 
 		$query = sprintf(
 			"UPDATE uo_club SET name='%s', contacts='%s', 
-				country='%s', city='%s', founded='%s', story='%s',
+				country=%s, city='%s', founded='%s', story='%s',
 				achievements='%s', valid=%d WHERE club_id='%s'",
 			DBEscapeString($profile['name']),
 			DBEscapeString($profile['contacts']),
-			DBEscapeString($profile['country']),
+			$countryValue,
 			DBEscapeString($profile['city']),
 			DBEscapeString($profile['founded']),
 			DBEscapeString($profile['story']),

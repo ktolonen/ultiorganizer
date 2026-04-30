@@ -1197,6 +1197,11 @@ function upgrade88()
 	}
 }
 
+function upgrade89()
+{
+	dropForeignKey('uo_urls', 'uo_urls_FK');
+}
+
 function upgradeEngineToInnoDb() {
 	$charset = 'utf8mb4';
 	$collation = 'utf8mb4_unicode_ci';
@@ -1436,6 +1441,26 @@ function addForeignKey($table, $constraint, $definition)
 	}
 
 	runQuery(sprintf("ALTER TABLE `%s` ADD CONSTRAINT `%s` %s", $table, $constraint, $definition));
+}
+
+/**
+ * Drop a foreign key if it exists.
+ */
+function dropForeignKey($table, $constraint)
+{
+	$existsQuery = sprintf(
+		"SELECT 1 FROM information_schema.TABLE_CONSTRAINTS
+     WHERE CONSTRAINT_SCHEMA = '%s' AND TABLE_NAME = '%s' AND CONSTRAINT_NAME = '%s' AND CONSTRAINT_TYPE = 'FOREIGN KEY'",
+		DBEscapeString(DB_DATABASE),
+		DBEscapeString($table),
+		DBEscapeString($constraint)
+	);
+	$exists = runQuery($existsQuery);
+	if (!$exists || mysqli_num_rows($exists) == 0) {
+		return;
+	}
+
+	runQuery(sprintf("ALTER TABLE `%s` DROP FOREIGN KEY `%s`", $table, $constraint));
 }
 
 /**
