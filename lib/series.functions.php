@@ -589,13 +589,15 @@ function AddSeries($params)
 {
   if (hasEditSeasonSeriesRight($params['season'])) {
     $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
+    $ordering = trim(isset($params['ordering']) ? (string)$params['ordering'] : "");
+    $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
     $query = sprintf(
       "INSERT INTO uo_series
 					(name,type,ordering,season,valid,pool_template)
 					VALUES ('%s','%s','%s','%s',%d,%s)",
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
-      DBEscapeString($params['ordering']),
+      DBEscapeString($ordering),
       DBEscapeString($params['season']),
       (int)$params['valid'],
       $poolTemplateSql
@@ -619,6 +621,8 @@ function SetSeries($params)
   $seriesInfo = SeriesInfo($params['series_id']);
   if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
     $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
+    $ordering = trim(isset($params['ordering']) ? (string)$params['ordering'] : "");
+    $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
     $query = sprintf(
       "
 				UPDATE uo_series SET
@@ -627,7 +631,7 @@ function SetSeries($params)
 				WHERE series_id=%d",
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
-      DBEscapeString($params['ordering']),
+      DBEscapeString($ordering),
       (int)$params['valid'],
       $poolTemplateSql,
       (int)$params['series_id']

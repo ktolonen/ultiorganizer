@@ -22,6 +22,9 @@ if (isset($_GET['series'])) {
 $pools = SeriesPools($seriesId, false, true, true);
 $not_started = array();
 foreach ($pools as $pool) {
+    if($pool['type'] == 2 && PoolPlayoffRoot($pool['pool_id']) != $pool['pool_id']) {
+        continue;
+    }
     if (!IsPoolStarted($pool['pool_id'])) {
         $not_started[] = $pool['pool_id'];
     }

@@ -135,7 +135,14 @@ foreach ($series as $row) {
 if (!$last_ordering) {
   $last_ordering = 'A';
 } else {
-  $last_ordering++;
+  $last_ordering = strtoupper(substr(trim($last_ordering), 0, 1));
+  if ($last_ordering >= '0' && $last_ordering < '9') {
+    $last_ordering = chr(ord($last_ordering) + 1);
+  } elseif ($last_ordering >= 'A' && $last_ordering < 'Z') {
+    $last_ordering = chr(ord($last_ordering) + 1);
+  } else {
+    $last_ordering = 'A';
+  }
 }
 $html .= "<tr>";
 $html .= "<td style='padding-top:15px'><input class='input' size='15' maxlength='50' id='name0' name='name0'/></td>";
@@ -159,7 +166,7 @@ foreach ($templates as $template) {
 
 $html .=  "</select></td>";
 
-$html .= "<td style='padding-top:15px'><input class='input' size='3' maxlength='1' name='ordering0' value='$last_ordering'/></td>";
+$html .= "<td style='padding-top:15px'><input class='input' size='3' maxlength='1' name='ordering0' value='" . utf8entities($last_ordering) . "'/></td>";
 $html .= "<td style='padding-top:15px'><input class='input' type='checkbox' name='valid0' checked='checked'/></td>";
 
 $html .= "<td style='padding-top:15px'><input id='add' class='button' name='add' type='submit' value='" . _("Add") . "'/></td>";

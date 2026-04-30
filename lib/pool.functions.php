@@ -1117,6 +1117,9 @@ function PoolGetGamesToMove($poolId, $mvgames)
   $moves = PoolMovingsToPool($poolId);
   foreach ($moves as $row) {
     $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing']);
+    if (empty($team['team_id'])) {
+      continue;
+    }
     if ($mvgames == 0) {
       $teamgames = TeamPoolGames($team['team_id'], $row['frompool']);
       if (mysqli_num_rows($teamgames)) {
@@ -1136,7 +1139,10 @@ function PoolGetGamesToMove($poolId, $mvgames)
       $moves2 = PoolMovingsToPool($poolId);
       foreach ($moves2 as $row2) {
         $team2 = PoolTeamFromStandings($row2['frompool'], $row2['fromplacing']);
-        if ($row2['frompool'] == $row2['frompool']) {
+        if (empty($team2['team_id'])) {
+          continue;
+        }
+        if ($row['frompool'] == $row2['frompool']) {
           $teamgames = TeamPoolGamesAgainst($team['team_id'], $team2['team_id'], $row['frompool']);
           if (count($teamgames)) {
             foreach ($teamgames as $game) {
@@ -1956,7 +1962,7 @@ function PoolMakeMoves($poolId)
   $poolInfo = PoolInfo($poolId);
   if (hasEditTeamsRight($poolInfo['series'])) {
     //move teams
-    LogPoolUpdate($poolId, "Teams moved");
+    $movesMade = false;
     $moves = PoolMovingsToPool($poolId);
     $topool = 0;
     foreach ($moves as $row) {
@@ -1967,22 +1973,28 @@ function PoolMakeMoves($poolId)
 
       //add team to target pool
       $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing'], $poolInfo['type'] != 2); // do not count BYE team if we are moving to a playoff pool
-      PoolAddTeam($row['topool'], $team['team_id'], $row['torank'], true);
+      $teamId = empty($team['team_id']) ? null : (int)$team['team_id'];
+      if (!$teamId) {
+        continue;
+      }
+
+      PoolAddTeam($row['topool'], $teamId, $row['torank'], true);
 
       //replace pseudo team with real team in games
+      $teamSql = (string)$teamId;
       if (isRespTeamHomeTeam()) {
         $query = sprintf(
           "UPDATE uo_game SET
-                    hometeam=%d, respteam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-          (int)$team['team_id'],
-          (int)$team['team_id'],
+                    hometeam=%s, respteam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+          $teamSql,
+          $teamSql,
           (int)$row['scheduling_id']
         );
       } else {
         $query = sprintf(
           "UPDATE uo_game SET
-                    hometeam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-          (int)$team['team_id'],
+                    hometeam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+          $teamSql,
           (int)$row['scheduling_id']
         );
       }
@@ -1990,8 +2002,8 @@ function PoolMakeMoves($poolId)
       DBQuery($query);
 
       $query = sprintf(
-        "UPDATE uo_game SET visitorteam=%d WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
-        (int)$team['team_id'],
+        "UPDATE uo_game SET visitorteam=%s WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+        $teamSql,
         (int)$row['scheduling_id']
       );
 
@@ -2005,6 +2017,11 @@ function PoolMakeMoves($poolId)
       );
 
       DBQuery($query);
+      $movesMade = true;
+    }
+
+    if ($movesMade) {
+      LogPoolUpdate($poolId, "Teams moved");
     }
 
     //games to move
@@ -2052,9 +2069,15 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
       (int)$fromplacing
     );
     $row = DBQueryToRow($query);
-    LogPoolUpdate($row['frompool'], "Teams moved");
+    if (!$row) {
+      return;
+    }
     // add team to target pool
     $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing'], $poolInfo['type'] != 2); // do not count BYE team if we are moving to a playoff pool
+    $teamId = empty($team['team_id']) ? null : (int)$team['team_id'];
+    if (!$teamId) {
+      return;
+    }
 
     // delete previously moved team
     $previous = PoolTeamFromInitialRank($row['topool'], $row['torank']);
@@ -2062,22 +2085,23 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
       PoolDeleteTeam($row['topool'], $previous['team_id'], $checkrights);
     }
 
-    PoolAddTeam($row['topool'], $team['team_id'], $row['torank'], true, $checkrights);
+    PoolAddTeam($row['topool'], $teamId, $row['torank'], true, $checkrights);
 
     // replace pseudo team with real team in games
+    $teamSql = (string)$teamId;
     if (isRespTeamHomeTeam()) {
       $query = sprintf(
         "UPDATE uo_game SET
-                    hometeam=%d, respteam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-        (int) $team['team_id'],
-        (int) $team['team_id'],
+                    hometeam=%s, respteam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+        $teamSql,
+        $teamSql,
         (int) $row['scheduling_id']
       );
     } else {
       $query = sprintf(
         "UPDATE uo_game SET
-                    hometeam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-        (int) $team['team_id'],
+                    hometeam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+        $teamSql,
         (int) $row['scheduling_id']
       );
     }
@@ -2085,8 +2109,8 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
     DBQuery($query);
 
     $query = sprintf(
-      "UPDATE uo_game SET visitorteam=%d WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
-      (int) $team['team_id'],
+      "UPDATE uo_game SET visitorteam=%s WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+      $teamSql,
       (int) $row['scheduling_id']
     );
 
@@ -2100,6 +2124,8 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
     );
 
     DBQuery($query);
+
+    LogPoolUpdate($row['frompool'], "Teams moved");
   } else {
     die('Insufficient rights to move teams');
   }
@@ -2455,15 +2481,18 @@ function GeneratePlayoffPools($poolId, $generate = true)
 
     // try to parse moves
     $specialmoves = false;
+    $moves = array();
 
-    if (substr($html, 0, 26) == "<!-- corresponding moves:") {
-      $movestring = substr($html, 28, strpos($html, "-->") - 29);
-      $movelines = explode("\n", $movestring);
-      foreach ($movelines as $move) {
-        $moves[] = str_getcsv($move, " ");
+    if (preg_match('/^<!--\s*corresponding moves:\s*\r?\n(.*?)\r?\n?-->/s', $html, $cm)) {
+      foreach (preg_split('/\r?\n/', $cm[1]) as $move) {
+        $move = trim($move);
+        if ($move === '') {
+          continue;
+        }
+        $moves[] = preg_split('/\s+/', $move);
       }
       if (count($moves) == $rounds) {
-        $specialmoves = true; //parsing succesful
+        $specialmoves = true; //parsing successful
       }
     }
 
