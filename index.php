@@ -1,13 +1,6 @@
 <?php
-$serverName = $_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? null);
-$configPath = null;
-if ($serverName && is_readable('conf/' . $serverName . '.config.inc.php')) {
-  $configPath = 'conf/' . $serverName . '.config.inc.php';
-} elseif (is_readable('conf/config.inc.php')) {
-  $configPath = 'conf/config.inc.php';
-}
-if ($configPath) {
-  include_once $configPath;
+if (is_readable('conf/config.inc.php')) {
+  include_once 'conf/config.inc.php';
 } else {
   http_response_code(500);
   die("Missing configuration. Run install.php or setup conf/config.inc.php manually.");
@@ -55,10 +48,11 @@ include_once 'localization.php';
 setSessionLocale();
 
 if (isset($_POST['myusername'])) {
+  $password = $_POST['mypassword'] ?? '';
   if (strpos($rawView, "mobile") === false)
-    UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirect");
+    UserAuthenticate($_POST['myusername'], $password, "FailRedirect");
   else
-    UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirectMobile");
+    UserAuthenticate($_POST['myusername'], $password, "FailRedirectMobile");
 }
 
 if (!$rawView) {

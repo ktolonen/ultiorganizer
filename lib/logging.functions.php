@@ -309,13 +309,21 @@ function LogPageLoad($page)
 
 function IsVisitorLoggingDisabled()
 {
+	static $disabled = null;
+
+	if ($disabled !== null) {
+		return $disabled;
+	}
+
 	$value = DBQueryToValue("SELECT value FROM uo_setting WHERE name='DisableVisitorLogging'");
 	if ($value === null || $value === false) {
-		return false;
+		$disabled = false;
+		return $disabled;
 	}
 
 	$normalized = strtolower(trim((string)$value));
-	return in_array($normalized, array("1", "true", "yes", "on", "enabled"), true);
+	$disabled = in_array($normalized, array("1", "true", "yes", "on", "enabled"), true);
+	return $disabled;
 }
 
 /**

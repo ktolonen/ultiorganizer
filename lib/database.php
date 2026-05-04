@@ -32,24 +32,20 @@ function GetServerName()
 }
 
 /**
- * Walk up parent directories until a readable config file is found.
+ * Walk up parent directories until the readable config file is found.
  *
  * The returned prefix is used by legacy entry points that include `lib/database.php`
  * from different directory depths and still expect root-relative includes to work.
  *
- * @param string $serverName Current host name for host-specific config lookup
  * @return string Relative prefix such as `""`, `"../"`, or `"../../"`
  */
-function FindIncludePrefix($serverName)
+function FindIncludePrefix()
 {
   $includePrefix = "";
   $maxLevels = 25;
 
   for ($level = 0; $level <= $maxLevels; $level++) {
-    if (
-      is_readable($includePrefix . 'conf/config.inc.php') ||
-      is_readable($includePrefix . 'conf/' . $serverName . ".config.inc.php")
-    ) {
+    if (is_readable($includePrefix . 'conf/config.inc.php')) {
       return $includePrefix;
     }
     $includePrefix .= "../";
@@ -58,17 +54,12 @@ function FindIncludePrefix($serverName)
   die("Cannot locate configuration file");
 }
 
-$serverName = GetServerName();
 //include prefix can be used to locate root level of directory tree.
-$include_prefix = FindIncludePrefix($serverName);
+$include_prefix = FindIncludePrefix();
 
 include_once $include_prefix . 'lib/common.functions.php';
 
-if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
-  require_once $include_prefix . 'conf/' . $serverName . ".config.inc.php";
-} else {
-  require_once $include_prefix . 'conf/config.inc.php';
-}
+require_once $include_prefix . 'conf/config.inc.php';
 
 include_once $include_prefix . 'sql/upgrade_db.php';
 

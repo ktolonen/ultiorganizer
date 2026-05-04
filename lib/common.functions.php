@@ -1365,7 +1365,7 @@ function resolveViewPath($view, $baseDir, $default = 'frontpage', $deny = array(
 
 	// Ensure file exists and is within base dir
 	$targetReal = realpath($target);
-	if ($targetReal === false || strpos($targetReal, $baseDirReal) !== 0 || !is_file($targetReal)) {
+	if ($targetReal === false || strpos($targetReal, $baseDirReal . DIRECTORY_SEPARATOR) !== 0 || !is_file($targetReal)) {
 		http_response_code(404);
 		$view = $default;
 		$targetReal = $baseDirReal . '/' . $view . '.php';
