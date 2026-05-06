@@ -43,6 +43,7 @@ if (!isset($_SESSION['uid'])) {
 }
 
 require_once $include_prefix . 'lib/configuration.functions.php';
+include_once $include_prefix . 'lib/season.functions.php';
 
 include_once 'localization.php';
 setSessionLocale();
@@ -64,6 +65,7 @@ global $serverConf;
 $user = $_SESSION['uid'];
 
 setSelectedSeason();
+EnforceSoftMaintenanceForView($rawView);
 
 $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', array('index', 'localization', 'install'));
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));

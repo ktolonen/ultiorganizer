@@ -94,6 +94,7 @@ $html .=  "<tr>
 	<th>" . _("Ends") . "</th>
 	<th>" . _("Enrollment") . "</th>
 	<th>" . _("Visible") . "</th>
+	<th>" . _("Maintenance") . "</th>
 	<th>" . _("API") . "</th>
 	<th>" . _("Operations") . "</th>
 	<th></th>
@@ -127,6 +128,9 @@ foreach ($seasons as $row) {
 
 	$visible = intval($info['iscurrent']) ? _("yes") : _("no");
 	$html .=  "<td>" . $visible . "</td>";
+
+	$maintenance = !empty($info['maintenance_mode']) ? _("yes") : _("no");
+	$html .=  "<td>" . $maintenance . "</td>";
 
 	$apiVisible = !empty($info['api_public']) ? _("yes") : _("no");
 	$html .=  "<td>" . $apiVisible . "</td>";

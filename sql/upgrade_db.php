@@ -1202,6 +1202,16 @@ function upgrade89()
 	dropForeignKey('uo_urls', 'uo_urls_FK');
 }
 
+function upgrade90()
+{
+	if (!hasColumn("uo_season", "maintenance_mode")) {
+		addColumn("uo_season", "maintenance_mode", "tinyint(1) DEFAULT 0");
+	}
+	if (!hasRow("uo_setting", "name", "SoftMaintenanceMode")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("SoftMaintenanceMode", "false")');
+	}
+}
+
 function upgradeEngineToInnoDb() {
 	$charset = 'utf8mb4';
 	$collation = 'utf8mb4_unicode_ci';

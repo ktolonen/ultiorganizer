@@ -223,6 +223,9 @@ function api_require_public_season($seasonId)
   if (empty($seasonInfo['api_public'])) {
     api_error(403, 'event_not_public', 'Event is not available on public API.');
   }
+  if (IsSeasonInMaintenance($seasonId)) {
+    RenderSoftMaintenanceResponse($seasonId);
+  }
   return $seasonInfo;
 }
 
@@ -395,10 +398,7 @@ function api_handle_teams($tokenRow)
   if ($seasonId === '') {
     api_error(400, 'event_required', 'Event is required.');
   }
-  $seasonInfo = SeasonInfo($seasonId);
-  if (!$seasonInfo) {
-    api_error(404, 'event_not_found', 'Event not found.');
-  }
+  $seasonInfo = api_require_public_season($seasonId);
   api_enforce_token_scope($tokenRow, $seasonId);
   $order = strtolower(iget('order'));
   $bySeeding = ($order === 'seeding');
@@ -443,6 +443,9 @@ function api_handle_events()
     if (empty($row['api_public'])) {
       continue;
     }
+    if (!empty($row['maintenance_mode'])) {
+      continue;
+    }
     $events[] = array(
       'event_id' => $row['season_id'],
       'name' => $row['name'],
@@ -476,10 +479,7 @@ function api_handle_divisions($tokenRow)
   if ($seasonId === '') {
     api_error(400, 'event_required', 'Event is required.');
   }
-  $seasonInfo = SeasonInfo($seasonId);
-  if (!$seasonInfo) {
-    api_error(404, 'event_not_found', 'Event not found.');
-  }
+  $seasonInfo = api_require_public_season($seasonId);
   api_enforce_token_scope($tokenRow, $seasonId);
 
   $series = SeasonSeries($seasonId, true);
@@ -1169,6 +1169,10 @@ function api_send_openapi()
  */
 function api_v1_route($parts)
 {
+  if (SoftMaintenanceMode()) {
+    RenderSoftMaintenanceResponse();
+  }
+
   $resource = isset($parts[0]) ? $parts[0] : '';
   if ($resource === '' || $resource === 'openapi') {
     api_send_openapi();

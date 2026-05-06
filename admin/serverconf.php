@@ -45,6 +45,15 @@ if (!empty($_POST['save'])) {
 	$settings[] = $setting;
 
 	$setting = array();
+	$setting['name'] = "SoftMaintenanceMode";
+	if (!empty($_POST['SoftMaintenanceMode'])) {
+		$setting['value'] = "true";
+	} else {
+		$setting['value'] = "false";
+	}
+	$settings[] = $setting;
+
+	$setting = array();
 	$setting['name'] = "DisableVisitorLogging";
 	if (!empty($_POST['DisableVisitorLogging'])) {
 		$setting['value'] = "true";
@@ -179,6 +188,17 @@ foreach ($settings as $setting) {
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ReadOnlyServer' checked='checked'/></td>";
 		}else{
 			$htmltmp2 .= "<td><input class='input' type='checkbox' name='ReadOnlyServer'/></td>";
+		}
+		$htmltmp2 .= "</tr>\n";
+	}
+
+	if ($setting['name'] == "SoftMaintenanceMode") {
+		$htmltmp2 .= "<tr>";
+		$htmltmp2 .= "<td class='infocell'>" . _("Soft maintenance mode") . ":</td>";
+		if ($setting['value'] == "true") {
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='SoftMaintenanceMode' checked='checked'/></td>";
+		} else {
+			$htmltmp2 .= "<td><input class='input' type='checkbox' name='SoftMaintenanceMode'/></td>";
 		}
 		$htmltmp2 .= "</tr>\n";
 	}

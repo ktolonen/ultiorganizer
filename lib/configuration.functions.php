@@ -41,6 +41,75 @@ function ReadOnlyServer() {
 	return ($serverConf['ReadOnlyServer'] == "true");
 }
 
+function SoftMaintenanceMode()
+{
+	global $serverConf;
+	return isset($serverConf['SoftMaintenanceMode']) && $serverConf['SoftMaintenanceMode'] == "true";
+}
+
+function SoftMaintenanceRequestPrefersJson()
+{
+	$scriptName = $_SERVER['SCRIPT_NAME'] ?? '';
+	$accept = $_SERVER['HTTP_ACCEPT'] ?? '';
+
+	if (strpos($scriptName, '/api/') !== false || substr($scriptName, -8) === 'json.php') {
+		return true;
+	}
+
+	return stripos($accept, 'application/json') !== false;
+}
+
+function SoftMaintenanceText($text)
+{
+	return function_exists('_') ? _($text) : $text;
+}
+
+function RenderSoftMaintenanceResponse($seasonId = "")
+{
+	$title = SoftMaintenanceText("Maintenance");
+	$message = SoftMaintenanceText("Ultiorganizer is currently under maintenance. Please try again later.");
+
+	if (!empty($seasonId) && function_exists('SeasonName')) {
+		$seasonName = SeasonName($seasonId);
+		if (!empty($seasonName)) {
+			$message = sprintf(
+				SoftMaintenanceText("%s is currently under maintenance. Please try again later."),
+				$seasonName
+			);
+		}
+	}
+
+	if (!headers_sent()) {
+		http_response_code(503);
+		header('Retry-After: 60');
+	}
+
+	if (SoftMaintenanceRequestPrefersJson()) {
+		if (!headers_sent()) {
+			header('Content-Type: application/json; charset=UTF-8');
+		}
+		echo json_encode(array(
+			'error' => 'maintenance',
+			'title' => $title,
+			'message' => $message,
+		));
+		exit();
+	}
+
+	if (!headers_sent()) {
+		header('Content-Type: text/html; charset=UTF-8');
+	}
+
+	echo "<!DOCTYPE html>\n";
+	echo "<html lang='en'>\n";
+	echo "<head><meta charset='UTF-8'/><meta name='viewport' content='width=device-width, initial-scale=1'/><title>" . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . "</title></head>\n";
+	echo "<body><main style='max-width:42rem;margin:4rem auto;padding:0 1rem;font-family:sans-serif;line-height:1.5'>";
+	echo "<h1>" . htmlspecialchars($title, ENT_QUOTES, 'UTF-8') . "</h1>";
+	echo "<p>" . htmlspecialchars($message, ENT_QUOTES, 'UTF-8') . "</p>";
+	echo "</main></body></html>\n";
+	exit();
+}
+
 function ReadBooleanSystemFlag($name, $default = false)
 {
 	if (!defined($name)) {

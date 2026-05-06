@@ -826,6 +826,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `hide_time_on_scoresheet` tinyint(1) DEFAULT 0,
   `hometeammode` tinyint(1) DEFAULT 0,
   `event_readonly` tinyint(1) DEFAULT 0,
+  `maintenance_mode` tinyint(1) DEFAULT 0,
   `api_public` tinyint(1) DEFAULT 0,
   `reg_id` int(10) unsigned DEFAULT NULL,
   `timezone` varchar(50) DEFAULT NULL,
@@ -922,7 +923,8 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('ShowDefenseStats', 'false', 9),
 	('AdminEmail', 'ultiorganizer_admin@example.com', 10),
 	('ReadOnlyServer', 'false', 11),
-	('DisableVisitorLogging', 'false', 12);
+	('DisableVisitorLogging', 'false', 12),
+	('SoftMaintenanceMode', 'false', 13);
 
 CREATE TABLE IF NOT EXISTS `uo_specialranking` (
   `frompool` int(10) NOT NULL,

@@ -556,6 +556,7 @@ function site_settings()
   $timezone = isset($_POST['timezone']) ? trim($_POST['timezone']) : "Europe/Helsinki";
   $locale = isset($_POST['locale']) ? trim($_POST['locale']) : "en_GB.utf8";
   $disable_visitor_logging = !empty($_POST['disable_visitor_logging']);
+  $soft_maintenance_mode = !empty($_POST['soft_maintenance_mode']);
 
   $page_title_esc = htmlspecialchars($page_title, ENT_QUOTES, "UTF-8");
   $maps_key_esc = htmlspecialchars($maps_key, ENT_QUOTES, "UTF-8");
@@ -570,6 +571,7 @@ function site_settings()
   $html .= "<tr><td>System email sender address:</td><td><input class='input' type='text' size='50' name='mail' value='$email_source_esc'/></td></tr>";
   $html .= "<tr><td>Admin contact email:</td><td><input class='input' type='text' size='50' name='admin' value='$admin_email_esc'/></td></tr>";
   $html .= "<tr><td>Disable visitor logging:</td><td><input type='checkbox' name='disable_visitor_logging' value='1'" . ($disable_visitor_logging ? " checked='checked'" : "") . "/> Do not store visitor page-load logs</td></tr>";
+  $html .= "<tr><td>Soft maintenance mode:</td><td><input type='checkbox' name='soft_maintenance_mode' value='1'" . ($soft_maintenance_mode ? " checked='checked'" : "") . "/> Show a maintenance page for public read views</td></tr>";
 
   $timezones = class_exists("DateTimeZone") ? DateTimeZone::listIdentifiers() : array();
   if (!empty($timezones)) {
@@ -634,7 +636,8 @@ function site_settings()
             "DefaultTimezone" => $timezone,
             "DefaultLocale" => $locale,
             "AdminEmail" => $admin_email,
-            "DisableVisitorLogging" => ($disable_visitor_logging ? "true" : "false")
+            "DisableVisitorLogging" => ($disable_visitor_logging ? "true" : "false"),
+            "SoftMaintenanceMode" => ($soft_maintenance_mode ? "true" : "false")
           );
 
           foreach ($updates as $name => $value) {

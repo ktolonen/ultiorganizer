@@ -195,6 +195,136 @@ function isEventReadonly($seasonId)
   return !empty($seasonInfo['event_readonly']);
 }
 
+function IsSeasonInMaintenance($seasonId)
+{
+  if (empty($seasonId)) {
+    return false;
+  }
+  return (bool)DBQueryToValue(sprintf(
+    "SELECT maintenance_mode FROM uo_season WHERE season_id='%s'",
+    DBEscapeString($seasonId)
+  ));
+}
+
+function CanBypassEventMaintenance($seasonId)
+{
+  if (function_exists('isSuperAdmin') && isSuperAdmin()) {
+    return true;
+  }
+  return !empty($seasonId) && function_exists('isSeasonAdmin') && isSeasonAdmin($seasonId);
+}
+
+function MaintenanceSeasonFromView($rawView)
+{
+  $view = preg_replace('/\.php$/i', '', (string)$rawView);
+
+  if (iget("season")) {
+    return iget("season");
+  }
+  if (iget("series")) {
+    return DBQueryToValue(sprintf(
+      "SELECT season FROM uo_series WHERE series_id=%d",
+      (int)iget("series")
+    ));
+  }
+  if (iget("pool")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_pool pool
+       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+       WHERE pool.pool_id=%d",
+      (int)iget("pool")
+    ));
+  }
+  if (iget("game")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_game game
+       LEFT JOIN uo_pool pool ON (pool.pool_id=game.pool)
+       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+       WHERE game.game_id=%d",
+      (int)iget("game")
+    ));
+  }
+  if (iget("team")) {
+    return MaintenanceSeasonFromTeam(iget("team"));
+  }
+  if (iget("player")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_player player
+       LEFT JOIN uo_team team ON (team.team_id=player.team)
+       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+       WHERE player.player_id=%d",
+      (int)iget("player")
+    ));
+  }
+  if (iget("profile")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_player player
+       LEFT JOIN uo_team team ON (team.team_id=player.team)
+       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+       WHERE player.profile_id=%d
+       ORDER BY player.player_id DESC
+       LIMIT 1",
+      (int)iget("profile")
+    ));
+  }
+  if (iget("team1")) {
+    $season1 = MaintenanceSeasonFromTeam(iget("team1"));
+    $season2 = iget("team2") ? MaintenanceSeasonFromTeam(iget("team2")) : "";
+    if (!empty($season1) && IsSeasonInMaintenance($season1)) {
+      return $season1;
+    }
+    if (!empty($season2) && IsSeasonInMaintenance($season2)) {
+      return $season2;
+    }
+    return $season1;
+  }
+
+  $currentSeasonViews = array(
+    "teams", "games", "timetables", "played", "scorestatus", "seriesstatus",
+    "poolstatus", "spiritstatus", "gameplay"
+  );
+  if (in_array($view, $currentSeasonViews, true)) {
+    return CurrentSeason();
+  }
+
+  return "";
+}
+
+function MaintenanceSeasonFromTeam($teamId)
+{
+  if (empty($teamId)) {
+    return "";
+  }
+  return DBQueryToValue(sprintf(
+    "SELECT ser.season
+     FROM uo_team team
+     LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+     WHERE team.team_id=%d",
+    (int)$teamId
+  ));
+}
+
+function EnforceSoftMaintenanceForView($rawView)
+{
+  $view = preg_replace('/\.php$/i', '', (string)$rawView);
+  if ($view === "" || $view === "index" || strpos($view, "admin/") === 0 || strpos($view, "user/") === 0 || in_array($view, array("login", "logout"), true)) {
+    return;
+  }
+
+  if (function_exists('SoftMaintenanceMode') && SoftMaintenanceMode() && !(function_exists('isSuperAdmin') && isSuperAdmin())) {
+    RenderSoftMaintenanceResponse();
+  }
+
+  $seasonId = MaintenanceSeasonFromView($rawView);
+  if (!empty($seasonId) && IsSeasonInMaintenance($seasonId) && !CanBypassEventMaintenance($seasonId)) {
+    RenderSoftMaintenanceResponse($seasonId);
+  }
+}
+
 /**
  * Marks event (season) read-only.
  *
@@ -265,7 +395,7 @@ function Seasons($filter = null, $ordering = null)
  */
 function SeasonsAllInfo()
 {
-  $query = "SELECT season_id, name, starttime, endtime, iscurrent, api_public, type, istournament, isinternational, isnationalteams
+  $query = "SELECT season_id, name, starttime, endtime, iscurrent, api_public, maintenance_mode, type, istournament, isinternational, isnationalteams
     FROM uo_season
     ORDER BY starttime DESC";
   return DBQueryToArray($query);
@@ -686,8 +816,8 @@ function AddSeason($seasonId, $params, $comment = null)
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
 			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints, showspiritcomments,
-			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, api_public, timezone) 
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
+			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, maintenance_mode, api_public, timezone)
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
@@ -710,6 +840,7 @@ function AddSeason($seasonId, $params, $comment = null)
       (int)$params['hide_time_on_scoresheet'],
       (int)$params['hometeammode'],
       (int)$params['event_readonly'],
+      (int)$params['maintenance_mode'],
       (int)$params['api_public'],
       DBEscapeString($params['timezone'])
     );
@@ -750,7 +881,7 @@ function SetSeason($seasonId, $params, $comment = null)
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
 			spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d,
-			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, api_public=%d, timezone='%s'
+			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, maintenance_mode=%d, api_public=%d, timezone='%s'
 			WHERE season_id='%s'",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
@@ -774,6 +905,7 @@ function SetSeason($seasonId, $params, $comment = null)
       (int)$params['hide_time_on_scoresheet'],
       (int)$params['hometeammode'],
       (int)$params['event_readonly'],
+      (int)$params['maintenance_mode'],
       (int)$params['api_public'],
       DBEscapeString($params['timezone']),
       DBEscapeString($seasonId)

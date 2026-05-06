@@ -30,6 +30,7 @@ $sp = array(
 	"hide_time_on_scoresheet" => 0,
 	"hometeammode" => 0,
 	"event_readonly" => 0,
+	"maintenance_mode" => 0,
 	"api_public" => 0,
 	"iscurrent" => 0,
 	"enrollopen" => 0,
@@ -63,6 +64,7 @@ if (!empty($_POST['add'])) {
 	$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
 	$sp['hometeammode'] = isset($_POST['hometeammode']) ? (int)$_POST['hometeammode'] : 0;
 	$sp['event_readonly'] = !empty($_POST['event_readonly']);
+	$sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
 	$comment = $_POST['comment'];
 
 	if (empty($_POST['season_id'])) {
@@ -124,6 +126,7 @@ if (!empty($_POST['add'])) {
 		$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
 		$sp['hometeammode'] = isset($_POST['hometeammode']) ? (int)$_POST['hometeammode'] : 0;
 		$sp['event_readonly'] = !empty($_POST['event_readonly']);
+		$sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
 		$sp['timezone'] = $_POST['timezone'];
 		$comment = $_POST['comment'];
 		SetSeason($sp['season_id'], $sp, $comment);
@@ -160,6 +163,7 @@ if ($seasonId) {
 	$sp['hide_time_on_scoresheet'] = isset($info['hide_time_on_scoresheet']) ? $info['hide_time_on_scoresheet'] : 0;
 	$sp['hometeammode'] = isset($info['hometeammode']) ? $info['hometeammode'] : 0;
 	$sp['event_readonly'] = isset($info['event_readonly']) ? $info['event_readonly'] : 0;
+	$sp['maintenance_mode'] = isset($info['maintenance_mode']) ? $info['maintenance_mode'] : 0;
 	$sp['timezone'] = $info['timezone'];
 	$comment = CommentRaw(1, $info['season_id']);
 } else {
@@ -429,6 +433,13 @@ if ($sp['iscurrent']) {
 }
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls visibility in navigation; does not change edit rights or API visibility.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Soft maintenance mode") . ": </td><td><input class='input' type='checkbox' name='maintenance_mode' ";
+if ($sp['maintenance_mode']) {
+	$html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Shows a maintenance page for public event views while admins keep access.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Read-only event") . ": </td><td><input class='input' type='checkbox' name='event_readonly' ";
 if ($sp['event_readonly']) {
