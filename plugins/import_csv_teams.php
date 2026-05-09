@@ -19,7 +19,7 @@ description = "CSV file format: team,club,country,series id or name. If series d
 <?php
 ob_end_clean();
 if (!isSuperAdmin()) {
-	die('Insufficient user rights');
+    die('Insufficient user rights');
 }
 
 include_once 'lib/season.functions.php';
@@ -30,56 +30,56 @@ $title = ("Import Teams from CSV file");
 
 if (isset($_POST['import'])) {
 
-	$utf8 = !empty($_POST['utf8']);
-	$season = $_POST['season'];
-	$separator = $_POST['separator'];
-	$series = SeasonSeries($season);
-	$ser = array();
-	foreach($series as $row) {
-		$ser[] = array('id' => $row['series_id'], 'name' => $row['seriesname']);
-	}
+    $utf8 = !empty($_POST['utf8']);
+    $season = $_POST['season'];
+    $separator = $_POST['separator'];
+    $series = SeasonSeries($season);
+    $ser = [];
+    foreach ($series as $row) {
+        $ser[] = ['id' => $row['series_id'], 'name' => $row['seriesname']];
+    }
 
-	if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-		$row = 1;
-		if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== FALSE) {
-			while (($data = fgetcsv($handle, 0, ";")) !== FALSE) {
-				$team = $utf8 ? $data[0] : convertToUtf8($data[0]);
-				$club = $utf8 ? $data[1] : convertToUtf8($data[1]);
-				$country = $utf8 ? $data[2] : convertToUtf8($data[2]);
-				$series = $utf8 ? $data[3] : convertToUtf8($data[3]);
+    if (is_uploaded_file($_FILES['file']['tmp_name'])) {
+        $row = 1;
+        if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== false) {
+            while (($data = fgetcsv($handle, 0, ";")) !== false) {
+                $team = $utf8 ? $data[0] : convertToUtf8($data[0]);
+                $club = $utf8 ? $data[1] : convertToUtf8($data[1]);
+                $country = $utf8 ? $data[2] : convertToUtf8($data[2]);
+                $series = $utf8 ? $data[3] : convertToUtf8($data[3]);
 
-				//if series is given as name
-				if (!is_int($series)) {
-					foreach ($ser as $s) {
-						if ($s['name'] == $series) {
-							$series = $s['id'];
-							break;
-						}
-					}
-					//not found
-					if (!is_int($series)) {
-						$sp = array(
-							"series_id" => "",
-							"name" => $series,
-							"type" => "",
-							"ordering" => "",
-							"season" => $season,
-							"valid" => "1"
-						);
+                //if series is given as name
+                if (!is_int($series)) {
+                    foreach ($ser as $s) {
+                        if ($s['name'] == $series) {
+                            $series = $s['id'];
+                            break;
+                        }
+                    }
+                    //not found
+                    if (!is_int($series)) {
+                        $sp = [
+                            "series_id" => "",
+                            "name" => $series,
+                            "type" => "",
+                            "ordering" => "",
+                            "season" => $season,
+                            "valid" => "1",
+                        ];
 
-						$id = AddSeries($sp);
-						$ser[] = array('id' => $id, 'name' => $series);
-						$series = $id;
-					}
-				}
-				$id = AddSeriesEnrolledTeam($series, $_SESSION['uid'], $team, $club, $country);
-				ConfirmEnrolledTeam($series, $id);
-			}
-			fclose($handle);
-		}
-	} else {
-		$html .= "<p>" . ("There was an error uploading the file, please try again!") . "</p>";
-	}
+                        $id = AddSeries($sp);
+                        $ser[] = ['id' => $id, 'name' => $series];
+                        $series = $id;
+                    }
+                }
+                $id = AddSeriesEnrolledTeam($series, $_SESSION['uid'], $team, $club, $country);
+                ConfirmEnrolledTeam($series, $id);
+            }
+            fclose($handle);
+        }
+    } else {
+        $html .= "<p>" . ("There was an error uploading the file, please try again!") . "</p>";
+    }
 }
 
 //season selection
@@ -89,7 +89,7 @@ $html .= "<p>" . ("Select event") . ": <select class='dropdown' name='season'>\n
 $seasons = Seasons();
 
 foreach ($seasons as $row) {
-	$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+    $html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 }
 
 $html .= "</select></p>\n";

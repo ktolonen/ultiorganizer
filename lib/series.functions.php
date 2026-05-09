@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
@@ -8,34 +9,34 @@ require_once __DIR__ . '/country.functions.php';
 
 /**
  * Returns selected division based on url or session variable.
- * 
+ *
  * @return uo_series.series_id
  */
 function CurrentSeries($season)
 {
 
-  if (!empty($_GET["series"])) {
-    $_SESSION['division'] = $_GET["series"];
-    return $_GET["series"];
-  }
-
-  $series = SeasonSeries($season);
-
-  if (!empty($_SESSION['division'])) {
-    foreach ($series as $ser) {
-      if ($ser['series_id'] == $_SESSION['division']) {
-        return $_SESSION['division'];
-      }
+    if (!empty($_GET["series"])) {
+        $_SESSION['division'] = $_GET["series"];
+        return $_GET["series"];
     }
-  }
+
+    $series = SeasonSeries($season);
+
+    if (!empty($_SESSION['division'])) {
+        foreach ($series as $ser) {
+            if ($ser['series_id'] == $_SESSION['division']) {
+                return $_SESSION['division'];
+            }
+        }
+    }
 
 
-  if (count($series)) {
-    $_SESSION['division'] = $series[0]['series_id'];
-    return $series[0]['series_id'];
-  }
+    if (count($series)) {
+        $_SESSION['division'] = $series[0]['series_id'];
+        return $series[0]['series_id'];
+    }
 
-  return -1;
+    return -1;
 }
 
 /**
@@ -43,28 +44,28 @@ function CurrentSeries($season)
  *
  * @param int $seriesId uo_series.series_id
  * @param boolean $onlyvisible set TRUE if only visible pools are returned.
- * @param boolean $nocontinuingpools set TRUE if continuation pools are exluded. 
+ * @param boolean $nocontinuingpools set TRUE if continuation pools are exluded.
  * @param boolean $noplacementpools set TRUE if placement pools are exluded.
  * @return Array array of pools
  */
 function SeriesPools($seriesId, $onlyvisible = false, $nocontinuingpools = false, $noplacementpools = false)
 {
 
-  $query = sprintf("SELECT pool_id, name, type FROM uo_pool WHERE series=%d", (int)$seriesId);
+    $query = sprintf("SELECT pool_id, name, type FROM uo_pool WHERE series=%d", (int) $seriesId);
 
-  if ($onlyvisible) {
-    $query .= " AND visible=1";
-  }
-  if ($nocontinuingpools) {
-    $query .= " AND continuingpool=0";
-  }
-  if ($noplacementpools) {
-    $query .= " AND placementpool=0";
-  }
+    if ($onlyvisible) {
+        $query .= " AND visible=1";
+    }
+    if ($nocontinuingpools) {
+        $query .= " AND continuingpool=0";
+    }
+    if ($noplacementpools) {
+        $query .= " AND placementpool=0";
+    }
 
-  $query .= " ORDER BY ordering ASC, name, pool_id";
+    $query .= " ORDER BY ordering ASC, name, pool_id";
 
-  return DBQueryToArray($query, true);
+    return DBQueryToArray($query, true);
 }
 
 /**
@@ -75,12 +76,12 @@ function SeriesPools($seriesId, $onlyvisible = false, $nocontinuingpools = false
 function SeriesPlacementPoolIds($seriesId)
 {
 
-  $query = sprintf(
-    "SELECT pool_id, played, type FROM uo_pool WHERE series=%d AND placementpool=1 ORDER BY ordering ASC",
-    (int)$seriesId
-  );
+    $query = sprintf(
+        "SELECT pool_id, played, type FROM uo_pool WHERE series=%d AND placementpool=1 ORDER BY ordering ASC",
+        (int) $seriesId,
+    );
 
-  return DBQueryToArray($query);
+    return DBQueryToArray($query);
 }
 
 /**
@@ -89,26 +90,26 @@ function SeriesPlacementPoolIds($seriesId)
  */
 function SeriesTypes()
 {
-  return array(
-    "open",
-    "women",
-    "mixed",
-    "master open",
-    "master women",
-    "master mixed",
-    "grandmaster open",
-    "grandmaster women",
-    "grandmaster mixed",
-    "greatgrandmaster",
-    "U19 open",
-    "U19 women",
-    "U19 mixed",
-    "U23 open",
-    "U23 women",
-    "U23 mixed",
-    "junior open",
-    "junior women"
-  );
+    return [
+        "open",
+        "women",
+        "mixed",
+        "master open",
+        "master women",
+        "master mixed",
+        "grandmaster open",
+        "grandmaster women",
+        "grandmaster mixed",
+        "greatgrandmaster",
+        "U19 open",
+        "U19 women",
+        "U19 mixed",
+        "U23 open",
+        "U23 women",
+        "U23 mixed",
+        "junior open",
+        "junior women",
+    ];
 }
 
 /**
@@ -119,8 +120,8 @@ function SeriesTypes()
  */
 function SeriesTeams($seriesId, $orderbyseeding = false)
 {
-  $query = sprintf(
-    "SELECT t.team_id, t.name, t.abbreviation, t.club, t.valid, cl.name AS clubname,
+    $query = sprintf(
+        "SELECT t.team_id, t.name, t.abbreviation, t.club, t.valid, cl.name AS clubname,
 			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
 			c.flagfile
 			FROM uo_team t
@@ -133,15 +134,15 @@ function SeriesTeams($seriesId, $orderbyseeding = false)
 			WHERE t.series = '%d'
 			GROUP BY t.team_id
 			",
-    (int)($seriesId)
-  );
+        (int) ($seriesId),
+    );
 
-  if ($orderbyseeding) {
-    $query .= " ORDER BY t.rank, t.name, t.team_id";
-  } else {
-    $query .= " ORDER BY t.name, t.team_id";
-  }
-  return DBQueryToArray($query);
+    if ($orderbyseeding) {
+        $query .= " ORDER BY t.rank, t.name, t.team_id";
+    } else {
+        $query .= " ORDER BY t.name, t.team_id";
+    }
+    return DBQueryToArray($query);
 }
 
 /**
@@ -151,8 +152,8 @@ function SeriesTeams($seriesId, $orderbyseeding = false)
  */
 function SeriesTeamStatsPoints($seriesId)
 {
-  $query = sprintf(
-    "
+    $query = sprintf(
+        "
     SELECT team_id,
       SUM(games) AS games,
       SUM(wins) AS wins,
@@ -187,16 +188,16 @@ function SeriesTeamStatsPoints($seriesId)
     ) AS totals
     GROUP BY team_id
     ",
-    (int)$seriesId,
-    (int)$seriesId
-  );
+        (int) $seriesId,
+        (int) $seriesId,
+    );
 
-  $rows = DBQueryToArray($query);
-  $stats = array();
-  foreach ($rows as $row) {
-    $stats[$row['team_id']] = $row;
-  }
-  return $stats;
+    $rows = DBQueryToArray($query);
+    $stats = [];
+    foreach ($rows as $row) {
+        $stats[$row['team_id']] = $row;
+    }
+    return $stats;
 }
 
 /**
@@ -206,30 +207,30 @@ function SeriesTeamStatsPoints($seriesId)
  */
 function SeriesTeamsWithoutPool($seriesId)
 {
-  $query = sprintf(
-    "SELECT pj.team_id, pj.name, pj.club, club.name as clubname, pj.rank 
+    $query = sprintf(
+        "SELECT pj.team_id, pj.name, pj.club, club.name as clubname, pj.rank 
 		FROM uo_team pj
 		LEFT JOIN uo_team_pool pjs ON (pj.team_id=pjs.team)
 		LEFT JOIN uo_club club ON (pj.club=club.club_id)	
 		WHERE pj.series = %d AND pjs.pool IS NULL
 		ORDER BY pj.rank ASC",
-    (int)$seriesId
-  );
-  return DBQueryToArray($query);
+        (int) $seriesId,
+    );
+    return DBQueryToArray($query);
 }
 
 function Series($filter = null, $ordering = null)
 {
-  if (!isset($ordering)) {
-    $ordering = array("series.name" => "ASC");
-  }
-  $tables = array("uo_series" => "series", "uo_season" => "season");
-  $orderby = CreateOrdering($tables, $ordering);
-  $where = CreateFilter($tables, $filter);
-  $query = sprintf("SELECT series_id, series.name as name, season.name as seasonname, series.season
+    if (!isset($ordering)) {
+        $ordering = ["series.name" => "ASC"];
+    }
+    $tables = ["uo_series" => "series", "uo_season" => "season"];
+    $orderby = CreateOrdering($tables, $ordering);
+    $where = CreateFilter($tables, $filter);
+    $query = sprintf("SELECT series_id, series.name as name, season.name as seasonname, series.season
 	FROM uo_series series LEFT JOIN uo_season season ON (series.season=season.season_id)
 	$where $orderby");
-  return DBQuery(trim($query));
+    return DBQuery(trim($query));
 }
 
 /**
@@ -239,14 +240,14 @@ function Series($filter = null, $ordering = null)
  */
 function SeriesAllPlayers($seriesId)
 {
-  $query = sprintf(
-    "SELECT p.player_id, p.accreditation_id, p.profile_id FROM uo_player p
+    $query = sprintf(
+        "SELECT p.player_id, p.accreditation_id, p.profile_id FROM uo_player p
 			LEFT JOIN uo_team t ON (p.team=t.team_id)
 			LEFT JOIN uo_series ser ON (t.series=ser.series_id)
 			WHERE ser.series_id='%d'",
-    (int) $seriesId
-  );
-  return DBQueryToArray($query);
+        (int) $seriesId,
+    );
+    return DBQueryToArray($query);
 }
 
 /**
@@ -256,12 +257,12 @@ function SeriesAllPlayers($seriesId)
  */
 function SeriesName($serieId)
 {
-  $query = sprintf(
-    "SELECT name FROM uo_series WHERE series_id=%d",
-    (int)$serieId
-  );
+    $query = sprintf(
+        "SELECT name FROM uo_series WHERE series_id=%d",
+        (int) $serieId,
+    );
 
-  return U_(DBQueryToValue($query));
+    return U_(DBQueryToValue($query));
 }
 
 /**
@@ -271,14 +272,14 @@ function SeriesName($serieId)
  */
 function SeriesSeasonName($serieId)
 {
-  $query = sprintf(
-    "SELECT s.name FROM uo_series ser
+    $query = sprintf(
+        "SELECT s.name FROM uo_series ser
 		LEFT JOIN uo_season s ON(s.season_id=ser.season)
 		WHERE ser.series_id=%d",
-    (int)$serieId
-  );
+        (int) $serieId,
+    );
 
-  return U_(DBQueryToValue($query));
+    return U_(DBQueryToValue($query));
 }
 
 /**
@@ -288,27 +289,27 @@ function SeriesSeasonName($serieId)
  */
 function SeriesSeasonId($serieId)
 {
-  $query = sprintf(
-    "SELECT s.season_id FROM uo_series ser
+    $query = sprintf(
+        "SELECT s.season_id FROM uo_series ser
 		LEFT JOIN uo_season s ON(s.season_id=ser.season)
 		WHERE ser.series_id=%d",
-    (int)$serieId
-  );
+        (int) $serieId,
+    );
 
-  return DBQueryToValue($query);
+    return DBQueryToValue($query);
 }
 
 /**
  * Get division score board.
  * @param int $seriesId uo_series.series_id
- * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"  
+ * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
  * @return mysqli_result array of players.
  */
 function SeriesScoreBoard($seriesId, $sorting, $limit)
 {
-  $query = sprintf(
-    "
+    $query = sprintf(
+        "
 		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(t.done/pel.games,0) AS doneavg,
 		COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, COALESCE(s.fedin/pel.games,0) AS fedinavg, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total,
     COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg, pel.games
@@ -336,82 +337,82 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
 			WHERE pool.series=%d AND g4.isongoing=0 
 			GROUP BY player) AS pel ON (p.player_id=pel.player) 
 		WHERE pel.games > 0 AND j.series=%d",
-    (int)$seriesId,
-    (int)$seriesId,
-    (int)$seriesId,
-    (int)$seriesId,
-    (int)$seriesId
-  );
+        (int) $seriesId,
+        (int) $seriesId,
+        (int) $seriesId,
+        (int) $seriesId,
+        (int) $seriesId,
+    );
 
-  switch ($sorting) {
-    case "total":
-      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
-      break;
+    switch ($sorting) {
+        case "total":
+            $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
+            break;
 
-    case "goal":
-      $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
-      break;
+        case "goal":
+            $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
+            break;
 
-    case "goalavg":
-      $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC";
-      break;
+        case "goalavg":
+            $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC";
+            break;
 
-    case "pass":
-      $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
-      break;
+        case "pass":
+            $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
+            break;
 
-    case "passavg":
-      $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC";
-      break;
+        case "passavg":
+            $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC";
+            break;
 
-    case "games":
-      $query .= " ORDER BY games DESC, total DESC, done DESC, fedin DESC, lastname ASC";
-      break;
+        case "games":
+            $query .= " ORDER BY games DESC, total DESC, done DESC, fedin DESC, lastname ASC";
+            break;
 
-    case "team":
-      $query .= " ORDER BY teamname ASC, total DESC, done DESC, fedin DESC, lastname ASC";
-      break;
+        case "team":
+            $query .= " ORDER BY teamname ASC, total DESC, done DESC, fedin DESC, lastname ASC";
+            break;
 
-    case "name":
-      $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC";
-      break;
+        case "name":
+            $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC";
+            break;
 
-    case "callahan":
-      $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
-      break;
+        case "callahan":
+            $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
+            break;
 
-    case "totalavg":
-      $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC";
-      break;
+        case "totalavg":
+            $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC";
+            break;
 
-    default:
-      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
-      break;
-  }
+        default:
+            $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
+            break;
+    }
 
-  if ($limit > 0) {
-    $query .= " limit $limit";
-  }
+    if ($limit > 0) {
+        $query .= " limit $limit";
+    }
 
-  return DBQuery($query);
+    return DBQuery($query);
 }
 
 function SeriesScoreBoardArray($seriesId, $sorting, $limit)
 {
-  return DBFetchAllAssoc(SeriesScoreBoard($seriesId, $sorting, $limit));
+    return DBFetchAllAssoc(SeriesScoreBoard($seriesId, $sorting, $limit));
 }
 
 /**
  * Get division defense board.
  * @param int $seriesId uo_series.series_id
- * @param string $sorting one of: "total", "games", "team", "name", "callahan"  
+ * @param string $sorting one of: "total", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
  * @return mysqli_result array of players.
  */
 function SeriesDefenseBoard($seriesId, $sorting, $limit)
 {
-  $query = sprintf(
-    "
+    $query = sprintf(
+        "
 		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS deftotal, 
 		pel.games 
 		FROM uo_player AS p 
@@ -428,47 +429,47 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit)
 			WHERE pool.series=%d AND g4.isongoing=0 
 			GROUP BY player) AS pel ON (p.player_id=pel.player) 
 		WHERE pel.games > 0 AND j.series=%d",
-    (int)$seriesId,
-    (int)$seriesId,
-    (int)$seriesId
-  );
+        (int) $seriesId,
+        (int) $seriesId,
+        (int) $seriesId,
+    );
 
-  switch ($sorting) {
-    case "deftotal":
-      $query .= " ORDER BY deftotal DESC, lastname ASC";
-      break;
+    switch ($sorting) {
+        case "deftotal":
+            $query .= " ORDER BY deftotal DESC, lastname ASC";
+            break;
 
-    case "games":
-      $query .= " ORDER BY games DESC, deftotal DESC, lastname ASC";
-      break;
+        case "games":
+            $query .= " ORDER BY games DESC, deftotal DESC, lastname ASC";
+            break;
 
-    case "team":
-      $query .= " ORDER BY teamname ASC, deftotal DESC, lastname ASC";
-      break;
+        case "team":
+            $query .= " ORDER BY teamname ASC, deftotal DESC, lastname ASC";
+            break;
 
-    case "name":
-      $query .= " ORDER BY firstname,lastname ASC, deftotal DESC";
-      break;
+        case "name":
+            $query .= " ORDER BY firstname,lastname ASC, deftotal DESC";
+            break;
 
-    case "callahan":
-      $query .= " ORDER BY callahan DESC, deftotal DESC, lastname ASC";
-      break;
+        case "callahan":
+            $query .= " ORDER BY callahan DESC, deftotal DESC, lastname ASC";
+            break;
 
-    default:
-      $query .= " ORDER BY deftotal DESC, lastname ASC";
-      break;
-  }
+        default:
+            $query .= " ORDER BY deftotal DESC, lastname ASC";
+            break;
+    }
 
-  if ($limit > 0) {
-    $query .= " limit $limit";
-  }
+    if ($limit > 0) {
+        $query .= " limit $limit";
+    }
 
-  return DBQuery($query);
+    return DBQuery($query);
 }
 
 function SeriesDefenseBoardArray($seriesId, $sorting, $limit)
 {
-  return DBFetchAllAssoc(SeriesDefenseBoard($seriesId, $sorting, $limit));
+    return DBFetchAllAssoc(SeriesDefenseBoard($seriesId, $sorting, $limit));
 }
 
 /**
@@ -478,75 +479,77 @@ function SeriesDefenseBoardArray($seriesId, $sorting, $limit)
  */
 function SeriesAllGames($seriesId)
 {
-  $query = sprintf(
-    "
+    $query = sprintf(
+        "
 		SELECT gp.game
 		FROM uo_game_pool gp 
 		LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool) 
 		LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
 		WHERE ser.series_id='%d' AND gp.timetable=1
 		ORDER BY gp.game",
-    (int) $seriesId
-  );
+        (int) $seriesId,
+    );
 
-  return DBQueryToArray($query);
+    return DBQueryToArray($query);
 }
 
 /**
  * Get all information (uo_series.*) for given division.
  * @param int $seriesId uo_series.series_id
- * @return PHP array of information. 
+ * @return PHP array of information.
  */
 function SeriesInfo($seriesId)
 {
-  $query = sprintf(
-    "SELECT * FROM uo_series WHERE series_id=%d",
-    (int)$seriesId
-  );
-  return DBQueryToRow($query, true);
+    $query = sprintf(
+        "SELECT * FROM uo_series WHERE series_id=%d",
+        (int) $seriesId,
+    );
+    return DBQueryToRow($query, true);
 }
 
 /**
  * Get all enrolled teams in given division.
- * 
+ *
  * Access level: Division admin
- * 
+ *
  * @param int $seriesId uo_series.series_id
- * @return mysql array of information. 
+ * @return mysql array of information.
  */
 function SeriesEnrolledTeams($seriesId)
 {
-  if (hasEditTeamsRight($seriesId)) {
-    $query = sprintf(
-      "SELECT team.*, user.name AS username FROM uo_enrolledteam team
+    if (hasEditTeamsRight($seriesId)) {
+        $query = sprintf(
+            "SELECT team.*, user.name AS username FROM uo_enrolledteam team
 		LEFT JOIN uo_users user ON(team.userid=user.userid)
 		WHERE team.series=%d ORDER BY team.enroll_time ASC",
-      (int)$seriesId
-    );
-    return DBQueryToArray($query);
-  } else die("Insufficient rights to get all enrolled teams");
+            (int) $seriesId,
+        );
+        return DBQueryToArray($query);
+    } else {
+        die("Insufficient rights to get all enrolled teams");
+    }
 }
 
 /**
  * Delete division.
- * 
+ *
  * Access level: Division admin
- * 
+ *
  * @param int $seriesId uo_series.series_id
- * @return mysql array of information. 
+ * @return mysql array of information.
  */
 function DeleteSeries($seriesId)
 {
-  $seriesInfo = SeriesInfo($seriesId);
-  if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
-    Log2("series", "delete", SeriesName($seriesId));
-    $query = sprintf(
-      "DELETE FROM uo_series WHERE series_id='%d'",
-      (int)$seriesId
-    );
+    $seriesInfo = SeriesInfo($seriesId);
+    if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
+        Log2("series", "delete", SeriesName($seriesId));
+        $query = sprintf(
+            "DELETE FROM uo_series WHERE series_id='%d'",
+            (int) $seriesId,
+        );
 
-    return DBQuery($query);
-  }
+        return DBQuery($query);
+    }
 }
 
 /**
@@ -557,163 +560,169 @@ function DeleteSeries($seriesId)
  */
 function SeriesPoolTemplateSql($poolTemplateId)
 {
-  if ($poolTemplateId === null || $poolTemplateId === '') {
-    return "NULL";
-  }
+    if ($poolTemplateId === null || $poolTemplateId === '') {
+        return "NULL";
+    }
 
-  $templateId = (int)$poolTemplateId;
-  if ($templateId <= 0) {
-    return "NULL";
-  }
+    $templateId = (int) $poolTemplateId;
+    if ($templateId <= 0) {
+        return "NULL";
+    }
 
-  $query = sprintf(
-    "SELECT template_id FROM uo_pooltemplate WHERE template_id=%d",
-    $templateId
-  );
-  if (DBQueryToValue($query) === null) {
-    return "NULL";
-  }
+    $query = sprintf(
+        "SELECT template_id FROM uo_pooltemplate WHERE template_id=%d",
+        $templateId,
+    );
+    if (DBQueryToValue($query) === null) {
+        return "NULL";
+    }
 
-  return (string)$templateId;
+    return (string) $templateId;
 }
 
 /**
  * Add division.
- * 
+ *
  * Access level: Event admin
- * 
+ *
  * @param int $params array of uo_series.* data
- * @return new uo_series.series_id. 
+ * @return new uo_series.series_id.
  */
 function AddSeries($params)
 {
-  if (hasEditSeasonSeriesRight($params['season'])) {
-    $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
-    $ordering = trim(isset($params['ordering']) ? (string)$params['ordering'] : "");
-    $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
-    $query = sprintf(
-      "INSERT INTO uo_series
+    if (hasEditSeasonSeriesRight($params['season'])) {
+        $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
+        $ordering = trim(isset($params['ordering']) ? (string) $params['ordering'] : "");
+        $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
+        $query = sprintf(
+            "INSERT INTO uo_series
 					(name,type,ordering,season,valid,pool_template)
 					VALUES ('%s','%s','%s','%s',%d,%s)",
-      DBEscapeString($params['name']),
-      DBEscapeString($params['type']),
-      DBEscapeString($ordering),
-      DBEscapeString($params['season']),
-      (int)$params['valid'],
-      $poolTemplateSql
-    );
+            DBEscapeString($params['name']),
+            DBEscapeString($params['type']),
+            DBEscapeString($ordering),
+            DBEscapeString($params['season']),
+            (int) $params['valid'],
+            $poolTemplateSql,
+        );
 
-    $id = DBQueryInsert($query);
-    Log1("series", "add", $id);
-    return $id;
-  }
+        $id = DBQueryInsert($query);
+        Log1("series", "add", $id);
+        return $id;
+    }
 }
 
 /**
  * Change division data.
- * 
+ *
  * Access level: Event admin
- * 
+ *
  * @param int $params array of uo_series.* data
  */
 function SetSeries($params)
 {
-  $seriesInfo = SeriesInfo($params['series_id']);
-  if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
-    $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
-    $ordering = trim(isset($params['ordering']) ? (string)$params['ordering'] : "");
-    $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
-    $query = sprintf(
-      "
+    $seriesInfo = SeriesInfo($params['series_id']);
+    if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
+        $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
+        $ordering = trim(isset($params['ordering']) ? (string) $params['ordering'] : "");
+        $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
+        $query = sprintf(
+            "
 				UPDATE uo_series SET
 				name='%s', type='%s', ordering='%s', valid=%d,
 				pool_template=%s
 				WHERE series_id=%d",
-      DBEscapeString($params['name']),
-      DBEscapeString($params['type']),
-      DBEscapeString($ordering),
-      (int)$params['valid'],
-      $poolTemplateSql,
-      (int)$params['series_id']
-    );
+            DBEscapeString($params['name']),
+            DBEscapeString($params['type']),
+            DBEscapeString($ordering),
+            (int) $params['valid'],
+            $poolTemplateSql,
+            (int) $params['series_id'],
+        );
 
-    return DBQuery($query);
-  }
+        return DBQuery($query);
+    }
 }
 
 /**
  * Change division name.
- * 
+ *
  * Access level: Event admin
- * 
+ *
  * @param int $params array of uo_series.* data
  * @param string $name new name for division.
  */
 function SetSeriesName($seriesId, $name)
 {
-  $seriesInfo = SeriesInfo($seriesId);
-  if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
-    $query = sprintf(
-      "
+    $seriesInfo = SeriesInfo($seriesId);
+    if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
+        $query = sprintf(
+            "
 			UPDATE uo_series SET name='%s' WHERE series_id='%s'",
-      DBEscapeString($name),
-      DBEscapeString($seriesId)
-    );
+            DBEscapeString($name),
+            DBEscapeString($seriesId),
+        );
 
-    return DBQuery($query);
-  }
+        return DBQuery($query);
+    }
 }
 
 /**
  * Get enrolled team by id.
- *  
+ *
  * Access level: Division admin
- *  
+ *
  * @param int $seriesId uo_series.series_id
  * @param int $id uo_enrolledteam.id
  * @return php array of uo_enrolledteam.*
  */
 function SeriesEnrolledTeamById($seriesId, $id)
 {
-  if (hasEditTeamsRight($seriesId)) {
-    $query = sprintf(
-      "SELECT * FROM uo_enrolledteam WHERE series=%d and id=%d",
-      (int)$seriesId,
-      (int)$id
-    );
-    return DBQueryToRow($query);
-  } else die("Insufficient rights to get all enrolled teams");
+    if (hasEditTeamsRight($seriesId)) {
+        $query = sprintf(
+            "SELECT * FROM uo_enrolledteam WHERE series=%d and id=%d",
+            (int) $seriesId,
+            (int) $id,
+        );
+        return DBQueryToRow($query);
+    } else {
+        die("Insufficient rights to get all enrolled teams");
+    }
 }
 
 /**
  * Get enrolled teams by user_id.
- *  
+ *
  * Access level: valid user
- *  
+ *
  * @param int $seriesId uo_series.series_id
  * @param int $userid uo_user.userid
  * @return mysqli_result of teams.
  */
 function SeriesEnrolledTeamsByUser($seriesId, $userid)
 {
-  if ($userid == 'anonymous') die("Can not enroll for anonymous");
-  if ($userid == $_SESSION['uid'] || hasEditTeamsRight($seriesId)) {
-    $query = sprintf(
-      "SELECT team.*, user.name AS username FROM uo_enrolledteam team
+    if ($userid == 'anonymous') {
+        die("Can not enroll for anonymous");
+    }
+    if ($userid == $_SESSION['uid'] || hasEditTeamsRight($seriesId)) {
+        $query = sprintf(
+            "SELECT team.*, user.name AS username FROM uo_enrolledteam team
 				LEFT JOIN uo_users user ON(team.userid=user.userid)
 				WHERE team.series=%d and team.userid='%s' ORDER BY team.enroll_time ASC",
-      (int)$seriesId,
-      DBEscapeString($userid)
-    );
-    return DBQueryToArray($query);
-  } else die("Insufficient rights to get all enrolled teams for other users");
+            (int) $seriesId,
+            DBEscapeString($userid),
+        );
+        return DBQueryToArray($query);
+    } else {
+        die("Insufficient rights to get all enrolled teams for other users");
+    }
 }
 
 /**
  * Enroll team into division.
- *   
+ *
  * Access level: valid user
- *  
+ *
  * @param int $seriesId uo_series.series_id
  * @param string $userid uo_user.userid will be granted as team admin.
  * @param string $name name of team
@@ -723,21 +732,25 @@ function SeriesEnrolledTeamsByUser($seriesId, $userid)
  */
 function AddSeriesEnrolledTeam($seriesId, $userid, $name, $club, $country)
 {
-  if ($userid == 'anonymous') die("Can not enroll for anonymous");
-  if ($userid == $_SESSION['uid'] || hasEditTeamsRight($seriesId)) {
-    $query = sprintf(
-      "INSERT INTO uo_enrolledteam (series, userid, name, clubname, countryname, enroll_time)
+    if ($userid == 'anonymous') {
+        die("Can not enroll for anonymous");
+    }
+    if ($userid == $_SESSION['uid'] || hasEditTeamsRight($seriesId)) {
+        $query = sprintf(
+            "INSERT INTO uo_enrolledteam (series, userid, name, clubname, countryname, enroll_time)
 				VALUES (%d, '%s', '%s', '%s', '%s', now())",
-      (int)$seriesId,
-      DBEscapeString($userid),
-      DBEscapeString($name),
-      DBEscapeString($club),
-      DBEscapeString($country)
-    );
-    $id = DBQueryInsert($query);
-    Log1("enrolment", "add", $seriesId, "$name");
-    return $id;
-  } else die("Insufficient rights to add enrolled teams for other users");
+            (int) $seriesId,
+            DBEscapeString($userid),
+            DBEscapeString($name),
+            DBEscapeString($club),
+            DBEscapeString($country),
+        );
+        $id = DBQueryInsert($query);
+        Log1("enrolment", "add", $seriesId, "$name");
+        return $id;
+    } else {
+        die("Insufficient rights to add enrolled teams for other users");
+    }
 }
 
 /**
@@ -746,37 +759,41 @@ function AddSeriesEnrolledTeam($seriesId, $userid, $name, $club, $country)
  * Access level: user enrolled the team or division admin
  *
  * @param int $seriesId uo_series.series_id
- * @param string $userid uo_user.userid 
+ * @param string $userid uo_user.userid
  * @param int $id uo_enrolledteam.id
  */
 function RemoveSeriesEnrolledTeam($seriesId, $userid, $id)
 {
-  if ($userid == 'anonymous') die("Can not remove enrolled team for anonymous");
-  if ($userid == $_SESSION['uid'] || hasEditTeamsRight($seriesId)) {
-    if (!hasEditTeamsRight($seriesId)) {
-      $query = "DELETE FROM uo_enrolledteam WHERE series=%d and userid='%s' and id=%d and status=0";
-      $query = sprintf(
-        $query,
-        (int)$seriesId,
-        DBEscapeString($userid),
-        (int)$id
-      );
-    } else {
-      $query = "DELETE FROM uo_enrolledteam WHERE series=%d and id=%d";
-      $query = sprintf(
-        $query,
-        (int)$seriesId,
-        (int)$id
-      );
+    if ($userid == 'anonymous') {
+        die("Can not remove enrolled team for anonymous");
     }
-    Log1("enrolment", "delete", $seriesId, $id);
-    return DBQuery($query);
-  } else die("Insufficient rights to delete enrolled teams for other users");
+    if ($userid == $_SESSION['uid'] || hasEditTeamsRight($seriesId)) {
+        if (!hasEditTeamsRight($seriesId)) {
+            $query = "DELETE FROM uo_enrolledteam WHERE series=%d and userid='%s' and id=%d and status=0";
+            $query = sprintf(
+                $query,
+                (int) $seriesId,
+                DBEscapeString($userid),
+                (int) $id,
+            );
+        } else {
+            $query = "DELETE FROM uo_enrolledteam WHERE series=%d and id=%d";
+            $query = sprintf(
+                $query,
+                (int) $seriesId,
+                (int) $id,
+            );
+        }
+        Log1("enrolment", "delete", $seriesId, $id);
+        return DBQuery($query);
+    } else {
+        die("Insufficient rights to delete enrolled teams for other users");
+    }
 }
 
 /**
  * Confirm team enrollment into division.
- * 
+ *
  * Access level: Division admin
  *
  * @param int $seriesId uo_series.series_id
@@ -785,76 +802,78 @@ function RemoveSeriesEnrolledTeam($seriesId, $userid, $id)
  */
 function ConfirmEnrolledTeam($seriesId, $id)
 {
-  if (hasEditTeamsRight($seriesId)) {
-    $teaminfo = SeriesEnrolledTeamById($seriesId, $id);
-    $clubId = ClubId($teaminfo['clubname']);
-    $countryId = CountryId($teaminfo['countryname']);
+    if (hasEditTeamsRight($seriesId)) {
+        $teaminfo = SeriesEnrolledTeamById($seriesId, $id);
+        $clubId = ClubId($teaminfo['clubname']);
+        $countryId = CountryId($teaminfo['countryname']);
 
-    //clubname not found
-    if (!empty($teaminfo['clubname']) && $clubId === null) {
-      $clubId = AddClub($seriesId, $teaminfo['clubname']);
-    }
+        //clubname not found
+        if (!empty($teaminfo['clubname']) && $clubId === null) {
+            $clubId = AddClub($seriesId, $teaminfo['clubname']);
+        }
 
-    $query = sprintf(
-      "INSERT INTO uo_team (name, series, valid) VALUES ('%s', %d, 1)",
-      DBEscapeString($teaminfo['name']),
-      (int)$seriesId
-    );
+        $query = sprintf(
+            "INSERT INTO uo_team (name, series, valid) VALUES ('%s', %d, 1)",
+            DBEscapeString($teaminfo['name']),
+            (int) $seriesId,
+        );
 
-    $teamId = DBQueryInsert($query);
+        $teamId = DBQueryInsert($query);
 
-    //update team/country info if available
-    if ($countryId) {
-      DBQuery("UPDATE uo_team SET country=$countryId WHERE team_id=$teamId");
-    }
-    if ($clubId) {
-      DBQuery("UPDATE uo_team SET club=$clubId WHERE team_id=$teamId");
-    }
+        //update team/country info if available
+        if ($countryId) {
+            DBQuery("UPDATE uo_team SET country=$countryId WHERE team_id=$teamId");
+        }
+        if ($clubId) {
+            DBQuery("UPDATE uo_team SET club=$clubId WHERE team_id=$teamId");
+        }
 
-    if ($countryId && !$clubId) {
-      $countryinfo = CountryInfo($countryId);
-      DBQuery("UPDATE uo_team SET abbreviation=UPPER('" . $countryinfo['abbreviation'] . "') WHERE team_id=$teamId");
-    } else {
-      $allteams = SeriesTeams($seriesId);
-      $notfound = true;
-      $letters = 3;
-      $num = 0;
-      $abb = substr($teaminfo['name'], 0, $letters);
-      while ($notfound) {
-        $notfound = false;
-
-        foreach ($allteams as $t) {
-          if ($abb == $t['abbreviation']) {
+        if ($countryId && !$clubId) {
+            $countryinfo = CountryInfo($countryId);
+            DBQuery("UPDATE uo_team SET abbreviation=UPPER('" . $countryinfo['abbreviation'] . "') WHERE team_id=$teamId");
+        } else {
+            $allteams = SeriesTeams($seriesId);
             $notfound = true;
-            break;
-          }
-        }
-        if ($notfound) {
-          $letters++;
-          if ($letters > 6) {
-            $num++;
-            $abb = substr($teaminfo['name'], 0, 5) . "$num";
-          } else {
+            $letters = 3;
+            $num = 0;
             $abb = substr($teaminfo['name'], 0, $letters);
-          }
+            while ($notfound) {
+                $notfound = false;
+
+                foreach ($allteams as $t) {
+                    if ($abb == $t['abbreviation']) {
+                        $notfound = true;
+                        break;
+                    }
+                }
+                if ($notfound) {
+                    $letters++;
+                    if ($letters > 6) {
+                        $num++;
+                        $abb = substr($teaminfo['name'], 0, 5) . "$num";
+                    } else {
+                        $abb = substr($teaminfo['name'], 0, $letters);
+                    }
+                }
+            }
+            DBQuery("UPDATE uo_team SET abbreviation=UPPER('" . DBEscapeString($abb) . "') WHERE team_id=$teamId");
         }
-      }
-      DBQuery("UPDATE uo_team SET abbreviation=UPPER('" . DBEscapeString($abb) . "') WHERE team_id=$teamId");
+
+
+        $seriesInfo = SeriesInfo($seriesId);
+        AddSeasonUserRole($teaminfo['userid'], "teamadmin:" . $teamId, $seriesInfo['season']);
+        $query = sprintf(
+            "UPDATE uo_enrolledteam SET status=1 WHERE id=%d",
+            (int) $id,
+        );
+
+        DBQuery($query);
+
+        Log1("enrolment", "confirm", $seriesId, $teamId);
+        return $teamId;
+    } else {
+        die("Insufficient rights to delete enrolled teams for other users");
     }
-
-
-    $seriesInfo = SeriesInfo($seriesId);
-    AddSeasonUserRole($teaminfo['userid'], "teamadmin:" . $teamId, $seriesInfo['season']);
-    $query = sprintf(
-      "UPDATE uo_enrolledteam SET status=1 WHERE id=%d",
-      (int)$id
-    );
-
-    DBQuery($query);
-
-    Log1("enrolment", "confirm", $seriesId, $teamId);
-    return $teamId;
-  } else die("Insufficient rights to delete enrolled teams for other users");
 }
 
 /**
@@ -864,24 +883,26 @@ function ConfirmEnrolledTeam($seriesId, $id)
  */
 function CanDeleteSeries($seriesId)
 {
-  $query = sprintf(
-    "SELECT count(*) FROM uo_pool WHERE series='%s'",
-    DBEscapeString($seriesId)
-  );
-  $result = DBQueryToValue($query);
-  if ($result == 0) {
     $query = sprintf(
-      "SELECT count(*) FROM uo_team WHERE series='%s'",
-      DBEscapeString($seriesId)
+        "SELECT count(*) FROM uo_pool WHERE series='%s'",
+        DBEscapeString($seriesId),
     );
     $result = DBQueryToValue($query);
-    return $result == 0;
-  } else return false;
+    if ($result == 0) {
+        $query = sprintf(
+            "SELECT count(*) FROM uo_team WHERE series='%s'",
+            DBEscapeString($seriesId),
+        );
+        $result = DBQueryToValue($query);
+        return $result == 0;
+    } else {
+        return false;
+    }
 }
 
 /**
  * Get list of team admins for given division
- * 
+ *
  * Access level: Team admin
  *
  * @param int $seriesId uo_series.series_id
@@ -889,54 +910,54 @@ function CanDeleteSeries($seriesId)
  */
 function SeriesTeamResponsibles($seriesId)
 {
-  $seasonrights = getEditSeasons($_SESSION['uid']);
-  $season = SeriesSeasonId($seriesId);
-  if (isset($seasonrights[$season])) {
-    $query = sprintf(
-      "SELECT u.userid, u.name, u.email, j.name AS teamname
+    $seasonrights = getEditSeasons($_SESSION['uid']);
+    $season = SeriesSeasonId($seriesId);
+    if (isset($seasonrights[$season])) {
+        $query = sprintf(
+            "SELECT u.userid, u.name, u.email, j.name AS teamname
 			FROM uo_users u
 			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
 			LEFT JOIN uo_team j ON (SUBSTRING_INDEX(up.value, ':', -1)=j.team_id)
 			WHERE j.series=%d AND SUBSTRING_INDEX(up.value,':',1)='teamadmin'
 			GROUP BY u.userid, u.name, u.email, j.name",
-      (int)$seriesId
-    );
+            (int) $seriesId,
+        );
 
-    return DBQueryToArray($query);
-  } else {
-    die('Insufficient rights');
-  }
+        return DBQueryToArray($query);
+    } else {
+        die('Insufficient rights');
+    }
 }
 
 /**
  * Copy teams from one division to another.
- * 
+ *
  * Access level: Season admin
- * 
+ *
  * @param int $to uo_series.series_id
  * @param int $from uo_series.series_id
- * 
+ *
  */
 function SeriesCopyTeams($to, $from)
 {
-  if (isSeasonAdmin(SeriesSeasonId($to))) {
-    $teams = SeriesTeams($from);
-    foreach ($teams as $team) {
-      $clubValue = (empty($team['club']) || (int)$team['club'] === 0) ? "NULL" : (int)$team['club'];
-      $countryValue = (empty($team['country']) || (int)$team['country'] === 0) ? "NULL" : (int)$team['country'];
-      $query = sprintf(
-        "INSERT INTO uo_team(name, club, country, uo_team.rank, abbreviation, valid, series )
+    if (isSeasonAdmin(SeriesSeasonId($to))) {
+        $teams = SeriesTeams($from);
+        foreach ($teams as $team) {
+            $clubValue = (empty($team['club']) || (int) $team['club'] === 0) ? "NULL" : (int) $team['club'];
+            $countryValue = (empty($team['country']) || (int) $team['country'] === 0) ? "NULL" : (int) $team['country'];
+            $query = sprintf(
+                "INSERT INTO uo_team(name, club, country, uo_team.rank, abbreviation, valid, series )
       			VALUES ('%s',%s,%s,%d,'%s',1,%d)",
-        DBEscapeString($team['name']),
-        $clubValue,
-        $countryValue,
-        (int) $team['rank'],
-        DBEscapeString($team['abbreviation']),
-        (int) $to
-      );
-      DBQuery($query);
+                DBEscapeString($team['name']),
+                $clubValue,
+                $countryValue,
+                (int) $team['rank'],
+                DBEscapeString($team['abbreviation']),
+                (int) $to,
+            );
+            DBQuery($query);
+        }
+    } else {
+        die('Insufficient rights');
     }
-  } else {
-    die('Insufficient rights');
-  }
 }

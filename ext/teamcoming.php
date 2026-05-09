@@ -10,35 +10,36 @@ include_once __DIR__ . '/localization.php';
 	<meta http-equiv="Expires" content="-1" />
 	<?php
 
-	$style = iget("style");
-	if (empty($style))
-		$style = 'pelikone.css';
+    $style = iget("style");
+if (empty($style)) {
+    $style = 'pelikone.css';
+}
 
-	echo "<link rel='stylesheet' href='$style' type='text/css' />";
-	echo "<title>" . _("Ultiorganizer") . "</title>";
-	?>
+echo "<link rel='stylesheet' href='$style' type='text/css' />";
+echo "<title>" . _("Ultiorganizer") . "</title>";
+?>
 </head>
 
 <body>
 	<?php
 
-	include_once __DIR__ . '/../lib/team.functions.php';
-	include_once __DIR__ . '/../lib/common.functions.php';
-	include_once __DIR__ . '/../lib/timetable.functions.php';
+include_once __DIR__ . '/../lib/team.functions.php';
+include_once __DIR__ . '/../lib/common.functions.php';
+include_once __DIR__ . '/../lib/timetable.functions.php';
 
-	$teamId = intval(iget("team"));
-	$season = iget("season");
+$teamId = intval(iget("team"));
+$season = iget("season");
 
-	if ($teamId) {
-		$games = TimetableGames($teamId, "team", "coming", "tournaments");
-		if (!count($games)) {
-			echo "\n<p>" . _("No games") . ".</p>\n";
-		} else {
-			echo ExtGameView($games);
-		}
-	}
-	CloseConnection();
-	?>
+if ($teamId) {
+    $games = TimetableGames($teamId, "team", "coming", "tournaments");
+    if (!count($games)) {
+        echo "\n<p>" . _("No games") . ".</p>\n";
+    } else {
+        echo ExtGameView($games);
+    }
+}
+CloseConnection();
+?>
 </body>
 
 </html>

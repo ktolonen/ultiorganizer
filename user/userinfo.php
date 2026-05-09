@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
@@ -12,203 +13,203 @@ $message = "";
 $error = 0;
 
 if (!empty($_GET['user'])) {
-  if (($_GET['user']) != $_SESSION['uid'] && !hasEditUsersRight()) {
-    die('Insufficient rights to change user info');
-  } else {
-    $userid = $_GET['user'];
-  }
+    if (($_GET['user']) != $_SESSION['uid'] && !hasEditUsersRight()) {
+        die('Insufficient rights to change user info');
+    } else {
+        $userid = $_GET['user'];
+    }
 } else {
-  $userid = $_SESSION['uid'];
+    $userid = $_SESSION['uid'];
 }
 
 if ($userid != "anonymous") {
-  if (!empty($_GET['created'])) {
-    $message .= "<p>" . _("Added new user") . "</p><hr/>";
-  }
-
-  //process itself if submit was pressed
-  if (!empty($_POST['save'])) {
-    $newUsername = $_POST['UserName'];
-    $newName = $_POST['Name'];
-    $newLocale = $_POST['userlocale'];
-
-    $message = "";
-    if (empty($newUsername) || strlen($newUsername) < 3 || strlen($newUsername) > 20) {
-      $message .= "<p class='warning'>" . _("Username is too short (min. 3 letters)") . ".</p>";
-      $error = 1;
+    if (!empty($_GET['created'])) {
+        $message .= "<p>" . _("Added new user") . "</p><hr/>";
     }
 
-    if (IsRegistered($newUsername) && $userid != $newUsername) {
-      $message .=  "<p class='warning'>" . _("The username is already in use.") . "</p>";
-      $error = 1;
-    }
+    //process itself if submit was pressed
+    if (!empty($_POST['save'])) {
+        $newUsername = $_POST['UserName'];
+        $newName = $_POST['Name'];
+        $newLocale = $_POST['userlocale'];
 
-    if (empty($newName)) {
-      $message .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
-      $error = 1;
-    }
-
-    $uidcheck = DBEscapeString($newUsername);
-
-    if ($uidcheck != $newUsername) {
-      $message .= "<p class='warning'>" . _("Illegal characters in the username.") . "</p>";
-      $error = 1;
-    }
-
-    global $locales;
-    if (!isset($locales[$newLocale])) {
-      $message .= "<p class='warning'>" . _("Unsupported language:") . " " . $newLocale . "</p>";
-      $error = 1;
-    }
-
-    if (!$error) {
-      $message .= "<p>" . _("Changes were saved") . "</p><hr/>";
-    } else {
-      $message .= "<p class='warning'><b>" . _("Changes were NOT saved") . "</b></p><hr/>";
-    }
-
-
-    if (!$error) {
-      $success = false;
-      $oldLocale = getUserLocale($userid);
-      if ($oldLocale != $newLocale) {
-        SetUserLocale($userid, $newLocale);
-        if ($_SESSION['uid'] == $userid) {
-          $_SESSION['userproperties']['locale'] = array($newLocale => 0);
-          setSessionLocale();
-          loadDBTranslations($newLocale);
+        $message = "";
+        if (empty($newUsername) || strlen($newUsername) < 3 || strlen($newUsername) > 20) {
+            $message .= "<p class='warning'>" . _("Username is too short (min. 3 letters)") . ".</p>";
+            $error = 1;
         }
-      }
-      $userinfo = UserInfo($userid);
-      $success = UserUpdateInfo($userinfo['id'], $userid, $newUsername, $newName);
-      if ($success) {
-        if ($newUsername != $_SESSION['uid'] && $userid != $newUsername) {
-          header('location:?view=user/userinfo&user=' . urlencode($newUsername));
-          exit;
+
+        if (IsRegistered($newUsername) && $userid != $newUsername) {
+            $message .=  "<p class='warning'>" . _("The username is already in use.") . "</p>";
+            $error = 1;
+        }
+
+        if (empty($newName)) {
+            $message .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
+            $error = 1;
+        }
+
+        $uidcheck = DBEscapeString($newUsername);
+
+        if ($uidcheck != $newUsername) {
+            $message .= "<p class='warning'>" . _("Illegal characters in the username.") . "</p>";
+            $error = 1;
+        }
+
+        global $locales;
+        if (!isset($locales[$newLocale])) {
+            $message .= "<p class='warning'>" . _("Unsupported language:") . " " . $newLocale . "</p>";
+            $error = 1;
+        }
+
+        if (!$error) {
+            $message .= "<p>" . _("Changes were saved") . "</p><hr/>";
         } else {
-          $userid = $newUsername;
+            $message .= "<p class='warning'><b>" . _("Changes were NOT saved") . "</b></p><hr/>";
         }
-      }
-    }
-  }
 
-  if (!empty($_POST['changepsw'])) {
-    $newPassword1 = $_POST['Password1'];
-    $newPassword2 = $_POST['Password2'];
-    if (empty($newPassword1)) {
-      $message .= "<p class='warning'>" . _("Password cannot be empty.") . "</p>";
-      $error = 1;
+
+        if (!$error) {
+            $success = false;
+            $oldLocale = getUserLocale($userid);
+            if ($oldLocale != $newLocale) {
+                SetUserLocale($userid, $newLocale);
+                if ($_SESSION['uid'] == $userid) {
+                    $_SESSION['userproperties']['locale'] = [$newLocale => 0];
+                    setSessionLocale();
+                    loadDBTranslations($newLocale);
+                }
+            }
+            $userinfo = UserInfo($userid);
+            $success = UserUpdateInfo($userinfo['id'], $userid, $newUsername, $newName);
+            if ($success) {
+                if ($newUsername != $_SESSION['uid'] && $userid != $newUsername) {
+                    header('location:?view=user/userinfo&user=' . urlencode($newUsername));
+                    exit;
+                } else {
+                    $userid = $newUsername;
+                }
+            }
+        }
     }
 
-    if (!empty($newPassword1) && (strlen($newPassword1) < 5 || strlen($newPassword1) > 20)) {
-      $message .= "<p class='warning'>" . _("Password is too short (min. 5 letters).") . "</p>";
-      $error = 1;
+    if (!empty($_POST['changepsw'])) {
+        $newPassword1 = $_POST['Password1'];
+        $newPassword2 = $_POST['Password2'];
+        if (empty($newPassword1)) {
+            $message .= "<p class='warning'>" . _("Password cannot be empty.") . "</p>";
+            $error = 1;
+        }
+
+        if (!empty($newPassword1) && (strlen($newPassword1) < 5 || strlen($newPassword1) > 20)) {
+            $message .= "<p class='warning'>" . _("Password is too short (min. 5 letters).") . "</p>";
+            $error = 1;
+        }
+
+        if (!empty($newPassword1) && ($newPassword1 != $newPassword2)) {
+            $message .= "<p class='warning'>" . _("Passwords do not match.") . "</p>";
+            $error = 1;
+        }
+        if (!$error) {
+            $message .= "<p>" . _("Changes were saved") . "</p><hr/>";
+        } else {
+            $message .= "<p class='warning'><b>" . _("Changes were NOT saved") . "</b></p><hr/>";
+        }
+
+        if (!$error) {
+            UserChangePassword($userid, $newPassword1);
+        }
     }
 
-    if (!empty($newPassword1) && ($newPassword1 != $newPassword2)) {
-      $message .= "<p class='warning'>" . _("Passwords do not match.") . "</p>";
-      $error = 1;
+    if (!empty($_POST['addeditseasons']) && !empty($_POST['addeditseasonslist'])) {
+        foreach ($_POST['addeditseasonslist'] as $seasonid) {
+            AddEditSeason($userid, $seasonid);
+        }
     }
-    if (!$error) {
-      $message .= "<p>" . _("Changes were saved") . "</p><hr/>";
-    } else {
-      $message .= "<p class='warning'><b>" . _("Changes were NOT saved") . "</b></p><hr/>";
+    if (!empty($_POST['remeditseasons']) && !empty($_POST['remeditseasonslist'])) {
+        foreach ($_POST['remeditseasonslist'] as $propid) {
+            RemoveEditSeason($userid, $propid);
+        }
+    }
+    if (!empty($_POST['rempoolselector_x'])) {
+        RemovePoolSelector($userid, $_POST['deleteSelectorId']);
+    }
+    if (!empty($_POST['remuserrole_x'])) {
+        RemoveUserRole($userid, $_POST['deleteRoleId']);
+    }
+    if (!empty($_POST['remextraemail_x'])) {
+        RemoveExtraEmail($userid, $_POST['deleteExtraEmail']);
     }
 
-    if (!$error) {
-      UserChangePassword($userid, $newPassword1);
+    if (!empty($_POST['toprimaryemail'])) {
+        ToPrimaryEmail($userid, $_POST['toPrimaryEmailVal']);
     }
-  }
 
-  if (!empty($_POST['addeditseasons']) && !empty($_POST['addeditseasonslist'])) {
-    foreach ($_POST['addeditseasonslist'] as $seasonid) {
-      AddEditSeason($userid, $seasonid);
+    if (!empty($_POST['selectpoolselector'])) {
+        if ($_POST['selectortype'] == 'currentseason') {
+            $selector = 'currentseason';
+            AddPoolSelector($userid, $selector);
+        } elseif ($_POST['selectortype'] == 'team') {
+            foreach ($_POST['teams'] as $teamid) {
+                AddPoolSelector($userid, 'team:' . $teamid);
+            }
+        } elseif ($_POST['selectortype'] == 'season') {
+            foreach ($_POST['searchseasons'] as $seasonid) {
+                AddPoolSelector($userid, 'season:' . $seasonid);
+            }
+        } elseif ($_POST['selectortype'] == 'series') {
+            foreach ($_POST['series'] as $seriesid) {
+                AddPoolSelector($userid, 'series:' . $seriesid);
+            }
+        } elseif ($_POST['selectortype'] == 'pool') {
+            foreach ($_POST['pools'] as $poolid) {
+                AddPoolSelector($userid, 'pool:' . $poolid);
+            }
+        }
     }
-  }
-  if (!empty($_POST['remeditseasons']) && !empty($_POST['remeditseasonslist'])) {
-    foreach ($_POST['remeditseasonslist'] as $propid) {
-      RemoveEditSeason($userid, $propid);
-    }
-  }
-  if (!empty($_POST['rempoolselector_x'])) {
-    RemovePoolSelector($userid, $_POST['deleteSelectorId']);
-  }
-  if (!empty($_POST['remuserrole_x'])) {
-    RemoveUserRole($userid, $_POST['deleteRoleId']);
-  }
-  if (!empty($_POST['remextraemail_x'])) {
-    RemoveExtraEmail($userid, $_POST['deleteExtraEmail']);
-  }
 
-  if (!empty($_POST['toprimaryemail'])) {
-    ToPrimaryEmail($userid, $_POST['toPrimaryEmailVal']);
-  }
-
-  if (!empty($_POST['selectpoolselector'])) {
-    if ($_POST['selectortype'] == 'currentseason') {
-      $selector = 'currentseason';
-      AddPoolSelector($userid, $selector);
-    } elseif ($_POST['selectortype'] == 'team') {
-      foreach ($_POST['teams'] as $teamid) {
-        AddPoolSelector($userid, 'team:' . $teamid);
-      }
-    } elseif ($_POST['selectortype'] == 'season') {
-      foreach ($_POST['searchseasons'] as $seasonid) {
-        AddPoolSelector($userid, 'season:' . $seasonid);
-      }
-    } elseif ($_POST['selectortype'] == 'series') {
-      foreach ($_POST['series'] as $seriesid) {
-        AddPoolSelector($userid, 'series:' . $seriesid);
-      }
-    } elseif ($_POST['selectortype'] == 'pool') {
-      foreach ($_POST['pools'] as $poolid) {
-        AddPoolSelector($userid, 'pool:' . $poolid);
-      }
+    if (!empty($_POST['selectuserrole'])) {
+        if ($_POST['userrole'] == 'superadmin') {
+            $selector = 'superadmin';
+            AddUserRole($userid, $selector);
+        } elseif ($_POST['userrole'] == 'teamadmin') {
+            foreach ($_POST['teams'] as $teamid) {
+                AddUserRole($userid, 'teamadmin:' . $teamid);
+            }
+        } elseif ($_POST['userrole'] == 'accradmin') {
+            foreach ($_POST['teams'] as $teamid) {
+                AddUserRole($userid, 'accradmin:' . $teamid);
+            }
+        } elseif ($_POST['userrole'] == 'seasonadmin') {
+            foreach ($_POST['searchseasons'] as $seasonid) {
+                AddUserRole($userid, 'seasonadmin:' . $seasonid);
+            }
+        } elseif ($_POST['userrole'] == 'spiritadmin') {
+            foreach ($_POST['searchseasons'] as $seasonid) {
+                AddUserRole($userid, 'spiritadmin:' . $seasonid);
+            }
+        } elseif ($_POST['userrole'] == 'seriesadmin') {
+            foreach ($_POST['series'] as $seriesid) {
+                AddUserRole($userid, 'seriesadmin:' . $seriesid);
+            }
+        } elseif ($_POST['userrole'] == 'resadmin') {
+            foreach ($_POST['reservations'] as $reservationId) {
+                AddUserRole($userid, 'resadmin:' . $reservationId);
+            }
+        } elseif ($_POST['userrole'] == 'resgameadmin') {
+            foreach ($_POST['reservations'] as $reservationId) {
+                AddUserRole($userid, 'resgameadmin:' . $reservationId);
+            }
+        } elseif ($_POST['userrole'] == 'gameadmin') {
+            foreach ($_POST['games'] as $gameId) {
+                AddUserRole($userid, 'gameadmin:' . $gameId);
+            }
+        } elseif ($_POST['userrole'] == 'playeradmin') {
+            foreach ($_POST['players'] as $playerId) {
+                AddUserRole($userid, 'playeradmin:' . $playerId);
+            }
+        }
     }
-  }
-
-  if (!empty($_POST['selectuserrole'])) {
-    if ($_POST['userrole'] == 'superadmin') {
-      $selector = 'superadmin';
-      AddUserRole($userid, $selector);
-    } elseif ($_POST['userrole'] == 'teamadmin') {
-      foreach ($_POST['teams'] as $teamid) {
-        AddUserRole($userid, 'teamadmin:' . $teamid);
-      }
-    } elseif ($_POST['userrole'] == 'accradmin') {
-      foreach ($_POST['teams'] as $teamid) {
-        AddUserRole($userid, 'accradmin:' . $teamid);
-      }
-    } elseif ($_POST['userrole'] == 'seasonadmin') {
-      foreach ($_POST['searchseasons'] as $seasonid) {
-        AddUserRole($userid, 'seasonadmin:' . $seasonid);
-      }
-    } elseif ($_POST['userrole'] == 'spiritadmin') {
-      foreach ($_POST['searchseasons'] as $seasonid) {
-        AddUserRole($userid, 'spiritadmin:' . $seasonid);
-      }
-    } elseif ($_POST['userrole'] == 'seriesadmin') {
-      foreach ($_POST['series'] as $seriesid) {
-        AddUserRole($userid, 'seriesadmin:' . $seriesid);
-      }
-    } elseif ($_POST['userrole'] == 'resadmin') {
-      foreach ($_POST['reservations'] as $reservationId) {
-        AddUserRole($userid, 'resadmin:' . $reservationId);
-      }
-    } elseif ($_POST['userrole'] == 'resgameadmin') {
-      foreach ($_POST['reservations'] as $reservationId) {
-        AddUserRole($userid, 'resgameadmin:' . $reservationId);
-      }
-    } elseif ($_POST['userrole'] == 'gameadmin') {
-      foreach ($_POST['games'] as $gameId) {
-        AddUserRole($userid, 'gameadmin:' . $gameId);
-      }
-    } elseif ($_POST['userrole'] == 'playeradmin') {
-      foreach ($_POST['players'] as $playerId) {
-        AddUserRole($userid, 'playeradmin:' . $playerId);
-      }
-    }
-  }
 }
 
 
@@ -227,64 +228,64 @@ function setId(id, name)
 </script>";
 
 if ($_SESSION['uid'] != "anonymous") {
-  //print_r($_POST);
-  $html .= $message;
+    //print_r($_POST);
+    $html .= $message;
 
-  $html .= "<form method='post' action='?view=user/userinfo";
-  if (!empty($_GET['user'])) {
-    $html .= "&amp;user=" . urlencode($_GET['user']);
-  }
-  $html .= "'>\n";
-  $html .= "<table cellpadding='8'>
+    $html .= "<form method='post' action='?view=user/userinfo";
+    if (!empty($_GET['user'])) {
+        $html .= "&amp;user=" . urlencode($_GET['user']);
+    }
+    $html .= "'>\n";
+    $html .= "<table cellpadding='8'>
 		<tr><td class='infocell'>" . _("Name") . ":</td>
 			<td><input class='input' maxlength='256' id='Name' name='Name' value='" . utf8entities($userinfo['name']) . "'/></td></tr>
 		<tr><td class='infocell'>" . _("Username") . ":</td>
 			<td><input class='input' maxlength='20' id='UserName' name='UserName' value='" . utf8entities($userinfo['userid']) . "'/></td></tr>
 		<tr><td class='infocell'>" . _("Primary email") . ":</td>
 			<td>";
-  if (!empty($userinfo['email'])) {
-    $html .= "<a href='mailto:" . utf8entities($userinfo['email']) . "'>" . utf8entities($userinfo['email']) . "</a>";
-  } else {
-    $html .= "-";
-  }
-  if (!IsEmailDisabled()) {
-    $html .= "&nbsp;<a href='?view=user/addextraemail&amp;user=" . utf8entities($userid) . "'>" . _("Add extra address") . "</a>";
-  }
-  $html .= "</td></tr>\n";
-  $extraEmails = UserExtraEmails($userid);
-  if ($extraEmails) {
-    $html .= "		<tr><td rowspan='" . count($extraEmails) . "' class='infocell'>" . _("Extra emails") . ":</td>\n";
-    $first = true;
-    foreach ($extraEmails as $extraEmail) {
-      if ($first) {
-        $first = false;
-      } else {
-        $html .= "		<tr>\n";
-      }
-      $html .= "		  <td><a href='mailto:" . utf8entities($extraEmail) . "'>" . utf8entities($extraEmail) . "</a>
+    if (!empty($userinfo['email'])) {
+        $html .= "<a href='mailto:" . utf8entities($userinfo['email']) . "'>" . utf8entities($userinfo['email']) . "</a>";
+    } else {
+        $html .= "-";
+    }
+    if (!IsEmailDisabled()) {
+        $html .= "&nbsp;<a href='?view=user/addextraemail&amp;user=" . utf8entities($userid) . "'>" . _("Add extra address") . "</a>";
+    }
+    $html .= "</td></tr>\n";
+    $extraEmails = UserExtraEmails($userid);
+    if ($extraEmails) {
+        $html .= "		<tr><td rowspan='" . count($extraEmails) . "' class='infocell'>" . _("Extra emails") . ":</td>\n";
+        $first = true;
+        foreach ($extraEmails as $extraEmail) {
+            if ($first) {
+                $first = false;
+            } else {
+                $html .= "		<tr>\n";
+            }
+            $html .= "		  <td><a href='mailto:" . utf8entities($extraEmail) . "'>" . utf8entities($extraEmail) . "</a>
 						<input class='deletebutton' type='image' src='images/remove.png' name='remextraemail' value='X' alt='X' onclick='setId(\"" . $extraEmail . "\", \"deleteExtraEmail\");'/>
 						<input class='button' type='submit' name='toprimaryemail' value='" . _("Set as primary") . "' onclick='setId(\"" . $extraEmail . "\", \"toPrimaryEmailVal\");'/>
 						</td></tr>\n";
+        }
     }
-  }
-  $html .= "		<tr><td class='infocell'>" . _("Language") . ":</td>
+    $html .= "		<tr><td class='infocell'>" . _("Language") . ":</td>
 			<td><select class='dropdown' name='userlocale'>";
-  global $locales;
+    global $locales;
 
-  $userlocale = getUserLocale($userinfo['userid']);
+    $userlocale = getUserLocale($userinfo['userid']);
 
 
-  foreach ($locales as $localestr => $localename) {
-    $html .= "<option value='" . utf8entities($localestr) . "'";
-    if ($localestr == $userlocale) {
-      $html .= " selected='selected'";
+    foreach ($locales as $localestr => $localename) {
+        $html .= "<option value='" . utf8entities($localestr) . "'";
+        if ($localestr == $userlocale) {
+            $html .= " selected='selected'";
+        }
+        $html .= ">" . utf8entities($localename) . "</option>\n";
     }
-    $html .= ">" . utf8entities($localename) . "</option>\n";
-  }
 
-  $html .= "</select></td></tr>";
+    $html .= "</select></td></tr>";
 
-  $html .= "<tr><td colspan = '2' align='right'><br/>
+    $html .= "<tr><td colspan = '2' align='right'><br/>
 		  <input type='hidden' id='deleteExtraEmail' name='deleteExtraEmail'/>
 		  <input type='hidden' id='toPrimaryEmailVal' name='toPrimaryEmailVal'/>
 		  <input class='button' type='submit' name='save' value='" . _("Save") . "' />
@@ -292,232 +293,232 @@ if ($_SESSION['uid'] != "anonymous") {
 	      </td></tr>\n";
 
 
-  $html .= "</table>\n";
+    $html .= "</table>\n";
 
-  $html .= "</form>";
+    $html .= "</form>";
 
-  $html .= "<hr />\n";
+    $html .= "<hr />\n";
 
-  $html .= "<h2>" . _("Show administration responsibilities") . "</h2>\n";
-  $html .= "<form method='post' action='?view=user/userinfo";
-  if (!empty($_GET['user'])) {
-    $html .= "&amp;user=" . urlencode($_GET['user']);
-  }
-  $html .= "'>\n";
-  $editseasons = getEditSeasons($userid);
-  $html .= "<table><tr><td><select multiple='multiple' name='remeditseasonslist[]' id='remeditseasonslist' style='height:200px;width:250px'>\n";
-  foreach ($editseasons as $season => $id) {
-    $html .= "<option value='" . utf8entities($id) . "'>" . utf8entities(SeasonName($season)) . "</option>";
-  }
-  $html .= "</select></td><td>\n";
-  $html .= "<input class='button' type='submit' name='remeditseasons' value='" . _("Hide") . " &raquo;' /><br />
-	      <input class='button' type='submit' name='addeditseasons' value='&laquo; " . _("Show") . "' /></td><td>\n";
-
-  $html .= "<select multiple='multiple' name='addeditseasonslist[]' id='addeditseasonslist' style='height:200px;width:250px'>\n";
-  $seasons = Seasons();
-  foreach ($seasons as $season) {
-    if (empty($editseasons[$season['season_id']])) {
-      $html .= "<option value='" . urlencode($season['season_id']) . "'>" . utf8entities($season['name']) . "</option>";
-    }
-  }
-  $html .= "</select></td></tr></table></form>\n";
-
-  $html .= "<hr />\n";
-
-  $html .= "<h2>" . _("Show pools") . "</h2>\n";
-  $poolselectors = getPoolselectors($userid);
-  if (!empty($poolselectors)) {
+    $html .= "<h2>" . _("Show administration responsibilities") . "</h2>\n";
     $html .= "<form method='post' action='?view=user/userinfo";
     if (!empty($_GET['user'])) {
-      $html .= "&amp;user=" . urlencode($_GET['user']);
+        $html .= "&amp;user=" . urlencode($_GET['user']);
     }
-    $html .= "'>\n<table cellpadding='2'>\n";
-    foreach ($poolselectors as $selector => $param) {
-      $html .= "<tr><td>";
-      if ($selector == 'currentseason') {
-        $html .= _("Current event");
-      } elseif ($selector == 'team') {
-        $html .= _("Team pools");
-        $html .= " (" . utf8entities(getTeamName(key($param))) . ")";
-        $param = current($param);
-      } elseif ($selector == 'season') {
-        $html .= _("Event");
-        $html .= " (" . utf8entities(SeasonName(key($param))) . ")";
-        $param = current($param);
-      } elseif ($selector == 'series') {
-        $html .= _("Division");
-        $html .= " (" . utf8entities(getSeriesName(key($param))) . ")";
-        $param = current($param);
-      } elseif ($selector == 'pool') {
-        $html .= _("Division");
-        $html .= " (" . utf8entities(U_(PoolSeriesName(key($param))) . ", " . U_(PoolName(key($param)))) . ")";
-        $param = current($param);
-      }
-      $html .= "</td><td><input class='deletebutton' src='images/remove.png' type='image' name='rempoolselector' value='X' alt='X' onclick='setId(" . $param . ", \"deleteSelectorId\");'/></td></tr>\n";
+    $html .= "'>\n";
+    $editseasons = getEditSeasons($userid);
+    $html .= "<table><tr><td><select multiple='multiple' name='remeditseasonslist[]' id='remeditseasonslist' style='height:200px;width:250px'>\n";
+    foreach ($editseasons as $season => $id) {
+        $html .= "<option value='" . utf8entities($id) . "'>" . utf8entities(SeasonName($season)) . "</option>";
     }
-    $html .= "<tr><td><input type='hidden' id='deleteSelectorId' name='deleteSelectorId'/></td><td></td></tr>";
-    $html .= "</table></form>";
-  }
-  $html .= "<form method='get' action='?view=user/select_poolselector";
-  if (!empty($_GET['user'])) {
-    $html .= "&amp;user=" . urlencode($_GET['user']);
-  }
-  $html .= "'>";
-  $html .= "<p><select class='dropdown' name='selectortype'>\n";
-  $html .= "<option value='currentseason'>" . _("Current event") . "</option>\n";
-  $html .= "<option value='team'>" . _("Team pools") . "</option>\n";
-  $html .= "<option value='season'>" . _("Event") . "</option>\n";
-  $html .= "<option value='series'>" . _("Division") . "</option>\n";
-  $html .= "<option value='pool'>" . _("Division") . "</option>\n";
-  $html .= "</select>\n";
-  $html .= "<input type='hidden' name='view' value='user/select_poolselector'/>\n";
-  if (!empty($_GET['user'])) {
-    $html .= "<input type='hidden' name='user' value='" . urlencode($_GET['user']) . "'/>\n";
-  }
-  $html .= "<input class='button' type='submit' name='addpoolselector' value='" . _("Add") . "...' /></p>\n";
-  $html .= "</form>\n";
+    $html .= "</select></td><td>\n";
+    $html .= "<input class='button' type='submit' name='remeditseasons' value='" . _("Hide") . " &raquo;' /><br />
+	      <input class='button' type='submit' name='addeditseasons' value='&laquo; " . _("Show") . "' /></td><td>\n";
+
+    $html .= "<select multiple='multiple' name='addeditseasonslist[]' id='addeditseasonslist' style='height:200px;width:250px'>\n";
+    $seasons = Seasons();
+    foreach ($seasons as $season) {
+        if (empty($editseasons[$season['season_id']])) {
+            $html .= "<option value='" . urlencode($season['season_id']) . "'>" . utf8entities($season['name']) . "</option>";
+        }
+    }
+    $html .= "</select></td></tr></table></form>\n";
+
+    $html .= "<hr />\n";
+
+    $html .= "<h2>" . _("Show pools") . "</h2>\n";
+    $poolselectors = getPoolselectors($userid);
+    if (!empty($poolselectors)) {
+        $html .= "<form method='post' action='?view=user/userinfo";
+        if (!empty($_GET['user'])) {
+            $html .= "&amp;user=" . urlencode($_GET['user']);
+        }
+        $html .= "'>\n<table cellpadding='2'>\n";
+        foreach ($poolselectors as $selector => $param) {
+            $html .= "<tr><td>";
+            if ($selector == 'currentseason') {
+                $html .= _("Current event");
+            } elseif ($selector == 'team') {
+                $html .= _("Team pools");
+                $html .= " (" . utf8entities(getTeamName(key($param))) . ")";
+                $param = current($param);
+            } elseif ($selector == 'season') {
+                $html .= _("Event");
+                $html .= " (" . utf8entities(SeasonName(key($param))) . ")";
+                $param = current($param);
+            } elseif ($selector == 'series') {
+                $html .= _("Division");
+                $html .= " (" . utf8entities(getSeriesName(key($param))) . ")";
+                $param = current($param);
+            } elseif ($selector == 'pool') {
+                $html .= _("Division");
+                $html .= " (" . utf8entities(U_(PoolSeriesName(key($param))) . ", " . U_(PoolName(key($param)))) . ")";
+                $param = current($param);
+            }
+            $html .= "</td><td><input class='deletebutton' src='images/remove.png' type='image' name='rempoolselector' value='X' alt='X' onclick='setId(" . $param . ", \"deleteSelectorId\");'/></td></tr>\n";
+        }
+        $html .= "<tr><td><input type='hidden' id='deleteSelectorId' name='deleteSelectorId'/></td><td></td></tr>";
+        $html .= "</table></form>";
+    }
+    $html .= "<form method='get' action='?view=user/select_poolselector";
+    if (!empty($_GET['user'])) {
+        $html .= "&amp;user=" . urlencode($_GET['user']);
+    }
+    $html .= "'>";
+    $html .= "<p><select class='dropdown' name='selectortype'>\n";
+    $html .= "<option value='currentseason'>" . _("Current event") . "</option>\n";
+    $html .= "<option value='team'>" . _("Team pools") . "</option>\n";
+    $html .= "<option value='season'>" . _("Event") . "</option>\n";
+    $html .= "<option value='series'>" . _("Division") . "</option>\n";
+    $html .= "<option value='pool'>" . _("Division") . "</option>\n";
+    $html .= "</select>\n";
+    $html .= "<input type='hidden' name='view' value='user/select_poolselector'/>\n";
+    if (!empty($_GET['user'])) {
+        $html .= "<input type='hidden' name='user' value='" . urlencode($_GET['user']) . "'/>\n";
+    }
+    $html .= "<input class='button' type='submit' name='addpoolselector' value='" . _("Add") . "...' /></p>\n";
+    $html .= "</form>\n";
 }
 
 if (hasEditUsersRight() || $_SESSION['uid'] == $userid) {
-  $html .= "<hr />\n";
+    $html .= "<hr />\n";
 
-  $html .= "<h2>" . _("User roles") . "</h2>\n";
-  $userroles = getUserroles($userid);
-  if (!empty($userroles)) {
-    $html .= "<form method='post' action='?view=user/userinfo";
-    if (!empty($_GET['user'])) {
-      $html .= "&amp;user=" . urlencode($_GET['user']);
-    }
-    $html .= "'>\n<table>\n";
-    foreach ($userroles as $role => $param) {
-      if ($role == 'superadmin') {
-        $html .= "<tr><td>";
-        $html .= _("Administrator");
-        $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
-      } elseif ($role == 'translationadmin') {
-        $html .= "<tr><td>";
-        $html .= _("Translation administrator") . " (" . _("legacy, not enforced") . ")";
-        $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
-      } elseif ($role == 'useradmin') {
-        $html .= "<tr><td>";
-        $html .= _("User administrator") . " (" . _("legacy, not enforced") . ")";
-        $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
-      } elseif ($role == 'spiritadmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Spirit admin");
-          $html .= " (" . utf8entities(SeasonName($akey)) . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+    $html .= "<h2>" . _("User roles") . "</h2>\n";
+    $userroles = getUserroles($userid);
+    if (!empty($userroles)) {
+        $html .= "<form method='post' action='?view=user/userinfo";
+        if (!empty($_GET['user'])) {
+            $html .= "&amp;user=" . urlencode($_GET['user']);
         }
-      } elseif ($role == 'teamadmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Team contact person");
-          $html .= " (" . utf8entities(getTeamName($akey)) . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-        }
-      } elseif ($role == 'seasonadmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Event responsible");
-          $html .= " (" . utf8entities(SeasonName($akey)) . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-        }
-      } elseif ($role == 'seriesadmin' || $role == 'series') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Division organizer");
-          $html .= " (" . utf8entities(getSeriesName($akey)) . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-        }
-      } elseif ($role == 'accradmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Accreditation official");
-          $html .= " (" . utf8entities(getTeamName($akey)) . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-        }
-      } elseif ($role == 'resadmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Scheduling right");
-          $reservationInfo = ReservationInfo($akey);
-          $resName = ReservationName($reservationInfo);
-          $html .= " (" . $resName . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-        }
-      } elseif ($role == 'resgameadmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Reservation game input responsible");
-          $reservationInfo = ReservationInfo($akey);
-          $resName = ReservationName($reservationInfo);
-          $html .= " (" . $resName . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-        }
-      } elseif ($role == 'gameadmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Game input responsibility");
-          $gameInfo = GameInfo($akey);
-          $gameName = GameName($gameInfo);
-          $html .= " (" . utf8entities($gameName) . ")";
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
-        }
-      } elseif ($role == 'playeradmin') {
-        foreach ($param as $akey => $prop_id) {
-          $html .= "<tr><td>";
-          $html .= _("Player profile administrator");
-          $playerInfo = PlayerProfile($akey);
-          if ($playerInfo) {
-            $first = isset($playerInfo['firstname']) ? trim($playerInfo['firstname']) : "";
-            $last = isset($playerInfo['lastname']) ? trim($playerInfo['lastname']) : "";
-            $displayName = trim($first . " " . $last);
-            if ($displayName === "") {
-              $displayName = _("Unnamed player");
+        $html .= "'>\n<table>\n";
+        foreach ($userroles as $role => $param) {
+            if ($role == 'superadmin') {
+                $html .= "<tr><td>";
+                $html .= _("Administrator");
+                $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
+            } elseif ($role == 'translationadmin') {
+                $html .= "<tr><td>";
+                $html .= _("Translation administrator") . " (" . _("legacy, not enforced") . ")";
+                $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
+            } elseif ($role == 'useradmin') {
+                $html .= "<tr><td>";
+                $html .= _("User administrator") . " (" . _("legacy, not enforced") . ")";
+                $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
+            } elseif ($role == 'spiritadmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Spirit admin");
+                    $html .= " (" . utf8entities(SeasonName($akey)) . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'teamadmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Team contact person");
+                    $html .= " (" . utf8entities(getTeamName($akey)) . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'seasonadmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Event responsible");
+                    $html .= " (" . utf8entities(SeasonName($akey)) . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'seriesadmin' || $role == 'series') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Division organizer");
+                    $html .= " (" . utf8entities(getSeriesName($akey)) . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'accradmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Accreditation official");
+                    $html .= " (" . utf8entities(getTeamName($akey)) . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'resadmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Scheduling right");
+                    $reservationInfo = ReservationInfo($akey);
+                    $resName = ReservationName($reservationInfo);
+                    $html .= " (" . $resName . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'resgameadmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Reservation game input responsible");
+                    $reservationInfo = ReservationInfo($akey);
+                    $resName = ReservationName($reservationInfo);
+                    $html .= " (" . $resName . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'gameadmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Game input responsibility");
+                    $gameInfo = GameInfo($akey);
+                    $gameName = GameName($gameInfo);
+                    $html .= " (" . utf8entities($gameName) . ")";
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
+            } elseif ($role == 'playeradmin') {
+                foreach ($param as $akey => $prop_id) {
+                    $html .= "<tr><td>";
+                    $html .= _("Player profile administrator");
+                    $playerInfo = PlayerProfile($akey);
+                    if ($playerInfo) {
+                        $first = isset($playerInfo['firstname']) ? trim($playerInfo['firstname']) : "";
+                        $last = isset($playerInfo['lastname']) ? trim($playerInfo['lastname']) : "";
+                        $displayName = trim($first . " " . $last);
+                        if ($displayName === "") {
+                            $displayName = _("Unnamed player");
+                        }
+                        $html .= " (" . utf8entities($displayName) . ")";
+                    }
+                    $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+                }
             }
-            $html .= " (" . utf8entities($displayName) . ")";
-          }
-          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
         }
-      }
+        $html .= "</table>\n";
+        $html .= "<div><input type='hidden' id='deleteRoleId' name='deleteRoleId'/></div>";
+        $html .= "</form>\n";
     }
-    $html .= "</table>\n";
-    $html .= "<div><input type='hidden' id='deleteRoleId' name='deleteRoleId'/></div>";
-    $html .= "</form>\n";
-  }
 }
 if (hasEditUsersRight()) {
-  $html .= "<form method='get' action='?view=admin/select_userrole";
-  if (!empty($_GET['user'])) {
-    $html .= "&amp;user=" . urlencode($_GET['user']);
-  }
-  $html .= "'>";
-  $html .= "<p>\n";
-  $html .= "<select class='dropdown' name='userrole'>\n";
-  $html .= "<option value='superadmin'>" . _("Administrator") . "</option>\n";
-  $html .= "<option value='teamadmin'>" . _("Team contact person") . "</option>\n";
-  $html .= "<option value='seasonadmin'>" . _("Event responsible") . "</option>\n";
-  $html .= "<option value='spiritadmin'>" . _("Spirit admin") . "</option>\n";
-  $html .= "<option value='seriesadmin'>" . _("Division organizer") . "</option>\n";
-  $html .= "<option value='accradmin'>" . _("Accreditation official") . "</option>\n";
-  $html .= "<option value='resadmin'>" . _("Scheduling right") . "</option>\n";
-  $html .= "<option value='resgameadmin'>" . _("Reservation game input responsible") . "</option>\n";
-  $html .= "<option value='gameadmin'>" . _("Game input responsibility") . "</option>\n";
-  $html .= "<option value='playeradmin'>" . _("Player profile administrator") . "</option>\n";
-  $html .= "</select>\n";
-  $html .= "<input type='hidden' name='view' value='admin/select_userrole'/>\n";
-  if (!empty($_GET['user'])) {
-    $html .= "<input type='hidden' name='user' value='" . urlencode($_GET['user']) . "'/>\n";
-  }
-  $html .= "<input class='button' type='submit' name='addpoolselector' value='" . _("Add") . "...' />\n";
-  $html .= "</p>\n";
-  $html .= "</form>\n";
+    $html .= "<form method='get' action='?view=admin/select_userrole";
+    if (!empty($_GET['user'])) {
+        $html .= "&amp;user=" . urlencode($_GET['user']);
+    }
+    $html .= "'>";
+    $html .= "<p>\n";
+    $html .= "<select class='dropdown' name='userrole'>\n";
+    $html .= "<option value='superadmin'>" . _("Administrator") . "</option>\n";
+    $html .= "<option value='teamadmin'>" . _("Team contact person") . "</option>\n";
+    $html .= "<option value='seasonadmin'>" . _("Event responsible") . "</option>\n";
+    $html .= "<option value='spiritadmin'>" . _("Spirit admin") . "</option>\n";
+    $html .= "<option value='seriesadmin'>" . _("Division organizer") . "</option>\n";
+    $html .= "<option value='accradmin'>" . _("Accreditation official") . "</option>\n";
+    $html .= "<option value='resadmin'>" . _("Scheduling right") . "</option>\n";
+    $html .= "<option value='resgameadmin'>" . _("Reservation game input responsible") . "</option>\n";
+    $html .= "<option value='gameadmin'>" . _("Game input responsibility") . "</option>\n";
+    $html .= "<option value='playeradmin'>" . _("Player profile administrator") . "</option>\n";
+    $html .= "</select>\n";
+    $html .= "<input type='hidden' name='view' value='admin/select_userrole'/>\n";
+    if (!empty($_GET['user'])) {
+        $html .= "<input type='hidden' name='user' value='" . urlencode($_GET['user']) . "'/>\n";
+    }
+    $html .= "<input class='button' type='submit' name='addpoolselector' value='" . _("Add") . "...' />\n";
+    $html .= "</p>\n";
+    $html .= "</form>\n";
 }
 $html .= "<hr/>\n";
 $html .= "<form method='post' action='?view=user/userinfo";
 if (!empty($_GET['user'])) {
-  $html .= "&amp;user=" . urlencode($_GET['user']);
+    $html .= "&amp;user=" . urlencode($_GET['user']);
 }
 $html .= "'>\n";
 $html .= "<table cellpadding='8'>";

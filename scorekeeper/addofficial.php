@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 $html = "";
 
@@ -8,8 +9,8 @@ $_SESSION['game'] = $gameId;
 $game_result = GameResult($gameId);
 
 if (isset($_POST['save'])) {
-	GameSetScoreSheetKeeper($gameId, $_POST['official']);
-	header("location:?view=addscoresheet&game=" . $gameId);
+    GameSetScoreSheetKeeper($gameId, $_POST['official']);
+    header("location:?view=addscoresheet&game=" . $gameId);
 }
 
 $html .= "<div data-role='header'>\n";

@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
@@ -14,37 +15,37 @@ $seasoninfo = SeasonInfo(GameSeason($gameId));
 $allowSpiritTimeouts = !empty($seasoninfo['spiritmode']) && empty($seasoninfo['hide_time_on_scoresheet']);
 
 if (isset($_POST['save'])) {
-	$time = "0.0";
-	$time_delim = array(",", ";", ":", "#", "*");
+    $time = "0.0";
+    $time_delim = [",", ";", ":", "#", "*"];
 
-	//remove all old timeouts (if any)
-	GameRemoveAllTimeouts($gameId);
+    //remove all old timeouts (if any)
+    GameRemoveAllTimeouts($gameId);
 
-	//insert home timeouts
-	$j = 0;
-	for ($i = 0; $i < $maxtimeouts; $i++) {
-		$time = $_POST['hto' . $i];
-		$time = str_replace($time_delim, ".", $time);
+    //insert home timeouts
+    $j = 0;
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        $time = $_POST['hto' . $i];
+        $time = str_replace($time_delim, ".", $time);
 
-		if (!empty($time)) {
-			$j++;
-			GameAddTimeout($gameId, $j, TimeToSec($time), 1);
-		}
-	}
+        if (!empty($time)) {
+            $j++;
+            GameAddTimeout($gameId, $j, TimeToSec($time), 1);
+        }
+    }
 
-	//insert away timeouts
-	$j = 0;
-	for ($i = 0; $i < $maxtimeouts; $i++) {
-		$time = $_POST['ato' . $i];
-		$time = str_replace($time_delim, ".", $time);
+    //insert away timeouts
+    $j = 0;
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        $time = $_POST['ato' . $i];
+        $time = str_replace($time_delim, ".", $time);
 
-		if (!empty($time)) {
-			$j++;
-			GameAddTimeout($gameId, $j, TimeToSec($time), 0);
-		}
-	}
+        if (!empty($time)) {
+            $j++;
+            GameAddTimeout($gameId, $j, TimeToSec($time), 0);
+        }
+    }
 
-	header("location:?view=mobile/addscoresheet&game=" . $gameId);
+    header("location:?view=mobile/addscoresheet&game=" . $gameId);
 }
 
 mobilePageTop(_("Score&nbsp;sheet"));
@@ -58,19 +59,20 @@ $html .= "</td></tr><tr><td>\n";
 $i = 0;
 $timeouts = GameTimeouts($gameId);
 foreach ($timeouts as $timeout) {
-	if (intval($timeout['ishome'])) {
-		$html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /> ";
-		$i++;
-	}
+    if (intval($timeout['ishome'])) {
+        $html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /> ";
+        $i++;
+    }
 }
 
 //empty slots
 for ($i; $i < $maxtimeouts; $i++) {
-	//two last slot are smaller for visual reasons
-	if ($i > ($maxtimeouts - 3))
-		$html .= "<input class='input' type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
-	else
-		$html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
+    //two last slot are smaller for visual reasons
+    if ($i > ($maxtimeouts - 3)) {
+        $html .= "<input class='input' type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
+    } else {
+        $html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
+    }
 }
 $html .= "</td></tr><tr><td>\n";
 $html .= "<b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("timeouts") . ":";
@@ -79,24 +81,25 @@ $html .= "</td></tr><tr><td>\n";
 //used timeouts
 $i = 0;
 foreach ($timeouts as $timeout) {
-	if (intval(!$timeout['ishome'])) {
-		$html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /> ";
-		$i++;
-	}
+    if (intval(!$timeout['ishome'])) {
+        $html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /> ";
+        $i++;
+    }
 }
 
 //empty slots
 for ($i; $i < $maxtimeouts; $i++) {
-	//two last slot are smaller for visual reasons
-	if ($i > ($maxtimeouts - 3))
-		$html .= "<input class='input' type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
-	else
-		$html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
+    //two last slot are smaller for visual reasons
+    if ($i > ($maxtimeouts - 3)) {
+        $html .= "<input class='input' type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
+    } else {
+        $html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
+    }
 }
 
 if ($allowSpiritTimeouts) {
-	$html .= "</td></tr><tr><td>\n";
-	$html .= "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit stoppages") . "</a>";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit stoppages") . "</a>";
 }
 
 $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";

@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
@@ -11,20 +12,20 @@ $html = "";
 $gameId = intval(iget("game"));
 
 if (isset($_POST['save'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	LogGameUpdate($gameId,"result: $home - $away", "Mobile");
-	$ok = GameSetResult($gameId, $home, $away);
-	if ($ok) {
-		ResolvePoolStandings(GamePool($gameId));
-		PoolResolvePlayed(GamePool($gameId));
-		$game_result = GameResult($gameId);
-		header("location:?view=mobile/addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam']);
-	}
+    $home = intval($_POST['home']);
+    $away = intval($_POST['away']);
+    LogGameUpdate($gameId, "result: $home - $away", "Mobile");
+    $ok = GameSetResult($gameId, $home, $away);
+    if ($ok) {
+        ResolvePoolStandings(GamePool($gameId));
+        PoolResolvePlayed(GamePool($gameId));
+        $game_result = GameResult($gameId);
+        header("location:?view=mobile/addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam']);
+    }
 } elseif (isset($_POST['update'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	$ok = GameUpdateResult($gameId, $home, $away);
+    $home = intval($_POST['home']);
+    $away = intval($_POST['away']);
+    $ok = GameUpdateResult($gameId, $home, $away);
 }
 
 mobilePageTop(_("Game result"));

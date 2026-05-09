@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/database.php';
 include_once 'lib/series.functions.php';
@@ -17,8 +18,8 @@ contentStart();
 
 //process itself on submit
 if (!empty($_POST['remove_x'])) {
-  $id = $_POST['hiddenDeleteId'];
-  DeletePoolTemplate($id);
+    $id = $_POST['hiddenDeleteId'];
+    DeletePoolTemplate($id);
 }
 
 $html .= "<form method='post' action='?view=admin/serieformats'>";
@@ -31,21 +32,21 @@ $html .= "</tr>\n";
 $templates = PoolTemplates();
 
 foreach ($templates as $row) {
-  $html .= "<tr>";
+    $html .= "<tr>";
 
-  $html .= "<td><a href='?view=admin/addserieformats&amp;template=" . $row['template_id'] . "'>" . utf8entities(U_($row['name'])) . "</a></td>";
-  $html .= "<td class='center'>" . $row['winningscore'] . "</td>";
-  $html .= "<td class='center'>" . $row['scorecap'] . "</td>";
-  $html .= "<td class='center'>" . $row['drawsallowed'] . "</td>";
-  $html .= "<td class='center'>" . $row['timecap'] . "</td>";
-  if (!empty($row['timeouts'])) {
-    $html .= "<td class='center'>" . $row['timeouts'] . "</td>";
-  } else {
-    $html .= "<td class='center'>-</td>";
-  }
+    $html .= "<td><a href='?view=admin/addserieformats&amp;template=" . $row['template_id'] . "'>" . utf8entities(U_($row['name'])) . "</a></td>";
+    $html .= "<td class='center'>" . $row['winningscore'] . "</td>";
+    $html .= "<td class='center'>" . $row['scorecap'] . "</td>";
+    $html .= "<td class='center'>" . $row['drawsallowed'] . "</td>";
+    $html .= "<td class='center'>" . $row['timecap'] . "</td>";
+    if (!empty($row['timeouts'])) {
+        $html .= "<td class='center'>" . $row['timeouts'] . "</td>";
+    } else {
+        $html .= "<td class='center'>-</td>";
+    }
 
-  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"setId(" . $row['template_id'] . ");\"/></td>";
-  $html .= "</tr>\n";
+    $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"setId(" . $row['template_id'] . ");\"/></td>";
+    $html .= "</tr>\n";
 }
 
 $html .= "</table><p><input class='button' name='add' type='button' value='" . _("Add") . "' onclick=\"window.location.href='?view=admin/addserieformats'\"/></p>";

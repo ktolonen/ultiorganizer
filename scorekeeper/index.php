@@ -1,4 +1,5 @@
 <?php
+
 $include_prefix = "../";
 
 //Open database connection
@@ -28,24 +29,24 @@ startSecureSession();
 
 
 if (!isset($_SESSION['uid']) && iget('view') != "result") {
-	$_SESSION['uid'] = "anonymous";
-	SetUserSessionData("anonymous");
-	header("location:?view=login");
+    $_SESSION['uid'] = "anonymous";
+    SetUserSessionData("anonymous");
+    header("location:?view=login");
 }
 
 
 if (isset($_POST['myusername'])) {
-	UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "");
+    UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "");
 }
 
 if (!isset($_SESSION['uid'])) {
-	$_SESSION['uid'] = "anonymous";
+    $_SESSION['uid'] = "anonymous";
 }
 $user = $_SESSION['uid'];
 
 if (!isset($_SESSION['VISIT_COUNTER'])) {
-	LogVisitor($_SERVER['REMOTE_ADDR']);
-	$_SESSION['VISIT_COUNTER'] = true;
+    LogVisitor($_SERVER['REMOTE_ADDR']);
+    $_SESSION['VISIT_COUNTER'] = true;
 }
 
 setSessionLocale();
@@ -54,12 +55,12 @@ $_SESSION['userproperties']['selseason'] = CurrentSeason();
 
 $rawView = iget('view');
 if (!$rawView) {
-	header("location:?view=login");
-	exit();
+    header("location:?view=login");
+    exit();
 }
 
 // Resolve view script with format/deny & path checks.
-$viewPath = resolveViewPath($rawView, __DIR__, 'login', array('index'));
+$viewPath = resolveViewPath($rawView, __DIR__, 'login', ['index']);
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
 LogPageLoad($viewToLog);
 
@@ -81,7 +82,7 @@ include $viewPath;
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
 echo "<a class='footer-compact' href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . _("Ultiorganizer") . "</a>";
 if ($_SESSION['uid'] != "anonymous") {
-	echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Log out") . "</a>";
+    echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Log out") . "</a>";
 }
 echo "\n</div><!-- /footer -->\n\n";
 echo "</div><!-- /page -->\n";

@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/localization.php';
 include_once __DIR__ . '/../lib/game.functions.php';
 
@@ -7,10 +8,10 @@ $encoding = 'UTF-8';
 $separator = ',';
 
 if (iget('enc')) {
-	$encoding = iget('enc');
+    $encoding = iget('enc');
 }
 if (iget('sep')) {
-	$separator = iget('sep');
+    $separator = iget('sep');
 }
 
 $data = ResultsToCsv($season, $separator);

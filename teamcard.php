@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('teamcard');
 
@@ -16,387 +17,387 @@ $teaminfo = TeamInfo($teamId);
 $profile = TeamProfile($teamId);
 
 if (!$teaminfo) {
-  $html .= "<h1>" . _("Team not found") . "</h1>";
-  echo $html;
-  return;
+    $html .= "<h1>" . _("Team not found") . "</h1>";
+    echo $html;
+    return;
 }
 
 $title = utf8entities($teaminfo['name']);
 
 $html .= "<h1>";
-$html .= utf8entities($teaminfo['name'])." (".U_($teaminfo['seriesname']).")</h1>";
+$html .= utf8entities($teaminfo['name']) . " (" . U_($teaminfo['seriesname']) . ")</h1>";
 
 if (intval($teaminfo['country']) > 0) {
-  $html .= "<p>";
-  $html .= "<img height='10' src='images/flags/tiny/" . $teaminfo['flagfile'] . "' alt=''/>&nbsp;";
-  $html .= "<a class='headerlink' href='?view=countrycard&amp;country=" . $teaminfo['country'] . "'>" . utf8entities($teaminfo['countryname']) . "</a></p>";
+    $html .= "<p>";
+    $html .= "<img height='10' src='images/flags/tiny/" . $teaminfo['flagfile'] . "' alt=''/>&nbsp;";
+    $html .= "<a class='headerlink' href='?view=countrycard&amp;country=" . $teaminfo['country'] . "'>" . utf8entities($teaminfo['countryname']) . "</a></p>";
 }
 if (intval($teaminfo['club']) > 0) {
-  $html .= "<p>" . _("Club") . ": <a class='headerlink' href='?view=clubcard&amp;club=" . $teaminfo['club'] . "'>" . utf8entities($teaminfo['clubname']) . "</a></p>";
+    $html .= "<p>" . _("Club") . ": <a class='headerlink' href='?view=clubcard&amp;club=" . $teaminfo['club'] . "'>" . utf8entities($teaminfo['clubname']) . "</a></p>";
 }
 if ($profile) {
-  $html .= "<table style='width:100%'>";
+    $html .= "<table style='width:100%'>";
 
-  if (!empty($profile['profile_image'])) {
-    $html .= "<tr><td colspan='2'><a href='" . UPLOAD_DIR . "teams/$teamId/" . $profile['profile_image'] . "'>";
-    $html .= "<img src='" . UPLOAD_DIR . "teams/$teamId/thumbs/" . $profile['profile_image'] . "' alt='" . _("Profile image") . "'/></a></td></tr>\n";
-  } else {
-    $html .= "<tr><td colspan='2'></td></tr>";
-  }
+    if (!empty($profile['profile_image'])) {
+        $html .= "<tr><td colspan='2'><a href='" . UPLOAD_DIR . "teams/$teamId/" . $profile['profile_image'] . "'>";
+        $html .= "<img src='" . UPLOAD_DIR . "teams/$teamId/thumbs/" . $profile['profile_image'] . "' alt='" . _("Profile image") . "'/></a></td></tr>\n";
+    } else {
+        $html .= "<tr><td colspan='2'></td></tr>";
+    }
 
-  if (!empty($profile['coach'])) {
-    $html .= "<tr><td class='profileheader' style='width:100px'>" . _("Coach") . ":</td>";
-    $html .= "<td>" . utf8entities($profile['coach']) . "</td></tr>\n";
-  }
-  if (!empty($profile['captain'])) {
-    $html .= "<tr><td class='profileheader' style='width:100px'>" . _("Captain") . ":</td>";
-    $html .= "<td>" . utf8entities($profile['captain']) . "</td></tr>\n";
-  }
+    if (!empty($profile['coach'])) {
+        $html .= "<tr><td class='profileheader' style='width:100px'>" . _("Coach") . ":</td>";
+        $html .= "<td>" . utf8entities($profile['coach']) . "</td></tr>\n";
+    }
+    if (!empty($profile['captain'])) {
+        $html .= "<tr><td class='profileheader' style='width:100px'>" . _("Captain") . ":</td>";
+        $html .= "<td>" . utf8entities($profile['captain']) . "</td></tr>\n";
+    }
 
-  if (!empty($profile['story'])) {
-    $html .= "<tr><td colspan='2'>&nbsp;</td></tr>\n";
-    $story = utf8entities($profile['story']);
-    $story = str_replace("\n", '<br/>', $story);
-    $html .= "<tr><td colspan='2'>" . $story . "</td></tr>\n";
-  }
+    if (!empty($profile['story'])) {
+        $html .= "<tr><td colspan='2'>&nbsp;</td></tr>\n";
+        $story = utf8entities($profile['story']);
+        $story = str_replace("\n", '<br/>', $story);
+        $html .= "<tr><td colspan='2'>" . $story . "</td></tr>\n";
+    }
 
-  if (!empty($profile['achievements'])) {
-    $html .= "<tr><td colspan='2'>&nbsp;</td></tr>\n";
-    $html .= "<tr><td class='profileheader' colspan='2'>" . _("Achievements") . ":</td></tr>\n";
-    $html .= "<tr><td colspan='2'></td></tr>\n";
-    $achievements = utf8entities($profile['achievements']);
-    $achievements = str_replace("\n", '<br/>', $achievements);
-    $html .= "<tr><td colspan='2'>" . $achievements . "</td></tr>\n";
-  }
-  $html .= "</table>";
+    if (!empty($profile['achievements'])) {
+        $html .= "<tr><td colspan='2'>&nbsp;</td></tr>\n";
+        $html .= "<tr><td class='profileheader' colspan='2'>" . _("Achievements") . ":</td></tr>\n";
+        $html .= "<tr><td colspan='2'></td></tr>\n";
+        $achievements = utf8entities($profile['achievements']);
+        $achievements = str_replace("\n", '<br/>', $achievements);
+        $html .= "<tr><td colspan='2'>" . $achievements . "</td></tr>\n";
+    }
+    $html .= "</table>";
 }
 
 $urls = GetUrlList("team", $teamId);
 if (count($urls)) {
-  $html .= "<table style='width:100%'>";
-  $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Team pages") . ":</td></tr>";
-  foreach ($urls as $url) {
-    $html .= "<tr>";
-    $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
-    $html .= "</td><td>";
-    if (!empty($url['name'])) {
-      $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a>";
-    } else {
-      $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+    $html .= "<table style='width:100%'>";
+    $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Team pages") . ":</td></tr>";
+    foreach ($urls as $url) {
+        $html .= "<tr>";
+        $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+        $html .= "</td><td>";
+        if (!empty($url['name'])) {
+            $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a>";
+        } else {
+            $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+        }
+        $html .= "</td>";
+        $html .= "</tr>";
     }
-    $html .= "</td>";
-    $html .= "</tr>";
-  }
-  $html .= "</table>";
+    $html .= "</table>";
 }
 
 $urls = GetMediaUrlList("team", $teamId);
 if (count($urls)) {
-  $html .= "<table style='width:100%'>";
-  $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Photos and Videos") . ":</td></tr>";
-  foreach ($urls as $url) {
-    $html .= "<tr>";
-    $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
-    $html .= "</td><td>";
-    if (!empty($url['name'])) {
-      $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a>";
-    } else {
-      $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+    $html .= "<table style='width:100%'>";
+    $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Photos and Videos") . ":</td></tr>";
+    foreach ($urls as $url) {
+        $html .= "<tr>";
+        $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+        $html .= "</td><td>";
+        if (!empty($url['name'])) {
+            $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a>";
+        } else {
+            $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+        }
+        if (!empty($url['mediaowner'])) {
+            $html .= " " . _("from") . " " . $url['mediaowner'];
+        }
+        $html .= "</td>";
+        $html .= "</tr>";
     }
-    if (!empty($url['mediaowner'])) {
-      $html .= " " . _("from") . " " . $url['mediaowner'];
-    }
-    $html .= "</td>";
-    $html .= "</tr>";
-  }
-  $html .= "</table>";
+    $html .= "</table>";
 }
 
 if (ShowDefenseStats()) {
-  $playerswihtdef = TeamScoreBoardWithDefenses($teamId, 0, "name", 0);
-  if ($playerswihtdef) {
-    $html .= "<p><span class='profileheader'>" . utf8entities(U_(SeasonName($teaminfo['season']))) . " " . _("roster") . ":</span></p>\n";
+    $playerswihtdef = TeamScoreBoardWithDefenses($teamId, 0, "name", 0);
+    if ($playerswihtdef) {
+        $html .= "<p><span class='profileheader'>" . utf8entities(U_(SeasonName($teaminfo['season']))) . " " . _("roster") . ":</span></p>\n";
 
-    $html .= "<table style='width:80%'>\n";
-    $html .= "<tr><th style='width:40%'>" . _("Name") . "</th>
+        $html .= "<table style='width:80%'>\n";
+        $html .= "<tr><th style='width:40%'>" . _("Name") . "</th>
 		<th class='center' style='width:15%'>" . _("Games") . "</th>
 		<th class='center' style='width:15%'>" . _("Assists") . "</th>
 		<th class='center' style='width:15%'>" . _("Goals") . "</th>
 		<th class='center' style='width:15%'>" . _("Tot.") . "</th>
 		<th class='center' style='width:15%'>" . _("Defences") . "</th></tr>\n";
 
-    foreach ($playerswihtdef as $player) {
-      $playerinfo = PlayerInfo($player['player_id']);
-      $html .= "<tr><td>";
-      if (!empty($playerinfo['profile_id'])) {
-        if ($playerinfo['num'] > -1) {
-          $html .= "<a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
-            "#" . $playerinfo['num'] . " " . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</a>";
-        } else {
-          $html .= "<a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
-            utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</a>";
+        foreach ($playerswihtdef as $player) {
+            $playerinfo = PlayerInfo($player['player_id']);
+            $html .= "<tr><td>";
+            if (!empty($playerinfo['profile_id'])) {
+                if ($playerinfo['num'] > -1) {
+                    $html .= "<a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
+                      "#" . $playerinfo['num'] . " " . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</a>";
+                } else {
+                    $html .= "<a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
+                      utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</a>";
+                }
+                if (!empty($playerinfo['profile_image'])) {
+                    $html .= "&nbsp;<img width='10' height='10' src='images/linkicons/image.png' alt='" . _("Photo") . "'/>";
+                }
+            } else {
+                if ($playerinfo['num'] > -1) {
+                    $html .= "#" . $playerinfo['num'] . " " . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
+                } else {
+                    $html .= utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
+                }
+            }
+            $html .= "</td>";
+            $html .= "<td class='center'>" . $player['games'] . "</td>";
+            $html .= "<td class='center'>" . $player['fedin'] . "</td>";
+            $html .= "<td class='center'>" . $player['done'] . "</td>";
+            $html .= "<td class='center'>" . $player['total'] . "</td>";
+            $html .= "<td class='center'>" . $player['deftotal'] . "</td></tr>\n";
         }
-        if (!empty($playerinfo['profile_image'])) {
-          $html .= "&nbsp;<img width='10' height='10' src='images/linkicons/image.png' alt='" . _("Photo") . "'/>";
-        }
-      } else {
-        if ($playerinfo['num'] > -1) {
-          $html .= "#" . $playerinfo['num'] . " " . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
-        } else {
-          $html .= utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
-        }
-      }
-      $html .= "</td>";
-      $html .= "<td class='center'>" . $player['games'] . "</td>";
-      $html .= "<td class='center'>" . $player['fedin'] . "</td>";
-      $html .= "<td class='center'>" . $player['done'] . "</td>";
-      $html .= "<td class='center'>" . $player['total'] . "</td>";
-      $html .= "<td class='center'>" . $player['deftotal'] . "</td></tr>\n";
+        $html .= "</table>\n";
     }
-    $html .= "</table>\n";
-  }
 } else {
 
-  $players = TeamScoreBoardArray($teamId, 0, "name", 0);
-  if ($players) {
-    $html .= "<p><span class='profileheader'>" . utf8entities(U_(SeasonName($teaminfo['season']))) . " " . _("roster") . ":</span></p>\n";
+    $players = TeamScoreBoardArray($teamId, 0, "name", 0);
+    if ($players) {
+        $html .= "<p><span class='profileheader'>" . utf8entities(U_(SeasonName($teaminfo['season']))) . " " . _("roster") . ":</span></p>\n";
 
-    $html .= "<table style='width:80%'>\n";
-    $html .= "<tr><th class='center' style='width:5%'>#</th>
-    <th style='width:35%'>"._("Name")."</th>
-		<th class='center' style='width:15%'>"._("Games")."</th>
-		<th class='center' style='width:15%'>"._("Assists")."</th>
-		<th class='center' style='width:15%'>"._("Goals")."</th>
-		<th class='center' style='width:15%'>"._("Total")."</th></tr>\n";
+        $html .= "<table style='width:80%'>\n";
+        $html .= "<tr><th class='center' style='width:5%'>#</th>
+    <th style='width:35%'>" . _("Name") . "</th>
+		<th class='center' style='width:15%'>" . _("Games") . "</th>
+		<th class='center' style='width:15%'>" . _("Assists") . "</th>
+		<th class='center' style='width:15%'>" . _("Goals") . "</th>
+		<th class='center' style='width:15%'>" . _("Total") . "</th></tr>\n";
 
 
-    foreach ($players as $player) {
-      $playerinfo = PlayerInfo($player['player_id']);
-      $playernum = ( $playerinfo['num']>-1 ? $playerinfo['num'] : "" );
-      $html .= "<tr><td class='right' style='padding-right:1ex;'>".$playernum."</td>";
-      $html .= "<td>";
-      if(!empty($playerinfo['profile_id'])){
-        $html .= "<a href='?view=playercard&amp;series=0&amp;player=". $player['player_id']."'>".
-        utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']) ."</a>";
-        if(!empty($playerinfo['profile_image'])){
-          $html .= "&nbsp;<img width='10' height='10' src='images/linkicons/image.png' alt='"._("Photo")."'/>";
+        foreach ($players as $player) {
+            $playerinfo = PlayerInfo($player['player_id']);
+            $playernum = ($playerinfo['num'] > -1 ? $playerinfo['num'] : "");
+            $html .= "<tr><td class='right' style='padding-right:1ex;'>" . $playernum . "</td>";
+            $html .= "<td>";
+            if (!empty($playerinfo['profile_id'])) {
+                $html .= "<a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
+                utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</a>";
+                if (!empty($playerinfo['profile_image'])) {
+                    $html .= "&nbsp;<img width='10' height='10' src='images/linkicons/image.png' alt='" . _("Photo") . "'/>";
+                }
+            } else {
+                $html .= utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']);
+            }
+            $html .= "</td>";
+            $html .= "<td class='center'>" . $player['games'] . "</td>";
+            $html .= "<td class='center'>" . $player['fedin'] . "</td>";
+            $html .= "<td class='center'>" . $player['done'] . "</td>";
+            $html .= "<td class='center'>" . $player['total'] . "</td></tr>\n";
         }
-      }else{
-        $html .= utf8entities($playerinfo['firstname'] ." ". $playerinfo['lastname']);
-      }
-      $html .= "</td>";
-      $html .= "<td class='center'>" . $player['games'] . "</td>";
-      $html .= "<td class='center'>" . $player['fedin'] . "</td>";
-      $html .= "<td class='center'>" . $player['done'] . "</td>";
-      $html .= "<td class='center'>" . $player['total'] . "</td></tr>\n";
+        $html .= "</table>\n";
     }
-    $html .= "</table>\n";
-  }
 }
 $allgames = TimetableGames($teamId, "team", "all", "time");
 if ($allgames) {
-  $html .= "<h2>" . U_(SeasonName($teaminfo['season'])) . ":</h2>\n";
-  $html .=  "<p>" . _("Division") . ": <a href='?view=poolstatus&amp;series=" . $teaminfo['series'] . "'>" . utf8entities(U_($teaminfo['seriesname'])) . "</a></p>";
-  $html .= "<table style='width:80%'>\n";
-  foreach ($allgames as $game) {
-    //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-    $html .= GameRow($game, false, false, false, false, false, true);
-  }
+    $html .= "<h2>" . U_(SeasonName($teaminfo['season'])) . ":</h2>\n";
+    $html .=  "<p>" . _("Division") . ": <a href='?view=poolstatus&amp;series=" . $teaminfo['series'] . "'>" . utf8entities(U_($teaminfo['seriesname'])) . "</a></p>";
+    $html .= "<table style='width:80%'>\n";
+    foreach ($allgames as $game) {
+        //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
+        $html .= GameRow($game, false, false, false, false, false, true);
+    }
 
-  $html .= "</table>\n";
+    $html .= "</table>\n";
 }
 
 $seasoninfo = SeasonInfo($teaminfo['season']);
 if (ShowSpiritScoresForSeason($seasoninfo)) {
-  $categories = SpiritCategories($seasoninfo['spiritmode']);
-  $categoryStats = TeamSpiritCategoryStats($teamId, $seasoninfo['season_id'], $seasoninfo['spiritmode']);
-  $categoryHistory = TeamSpiritCategoryHistoryAveragesByName($teaminfo['name'], $teaminfo['type'], $seasoninfo['spiritmode']);
-  $statsByCategory = array();
-  foreach ($categoryStats as $row) {
-    $statsByCategory[$row['category_id']] = $row;
-  }
-  $historyByCategory = array();
-  foreach ($categoryHistory as $row) {
-    $historyByCategory[$row['category_id']] = $row;
-  }
-  $rows = "";
-  $rowcount = 0;
-  $avg_sum = 0;
-  $avg_count = 0;
-  $history_sum = 0;
-  $history_count = 0;
+    $categories = SpiritCategories($seasoninfo['spiritmode']);
+    $categoryStats = TeamSpiritCategoryStats($teamId, $seasoninfo['season_id'], $seasoninfo['spiritmode']);
+    $categoryHistory = TeamSpiritCategoryHistoryAveragesByName($teaminfo['name'], $teaminfo['type'], $seasoninfo['spiritmode']);
+    $statsByCategory = [];
+    foreach ($categoryStats as $row) {
+        $statsByCategory[$row['category_id']] = $row;
+    }
+    $historyByCategory = [];
+    foreach ($categoryHistory as $row) {
+        $historyByCategory[$row['category_id']] = $row;
+    }
+    $rows = "";
+    $rowcount = 0;
+    $avg_sum = 0;
+    $avg_count = 0;
+    $history_sum = 0;
+    $history_count = 0;
 
-  foreach ($categories as $category) {
-    $category_id = $category['category_id'];
-    if (!isset($statsByCategory[$category_id])) {
-      continue;
-    }
-    $rowcount++;
-    $avg = $statsByCategory[$category_id]['average'];
-    $games = $statsByCategory[$category_id]['games'];
-    $history_avg = null;
-    if (isset($historyByCategory[$category_id])) {
-      $history_avg = $historyByCategory[$category_id]['average'];
-    }
-    $avg_sum += $avg;
-    $avg_count++;
-    if (!is_null($history_avg)) {
-      $history_sum += $history_avg;
-      $history_count++;
-    }
-    $rows .= "<tr>";
-    $rows .= "<td>" . utf8entities(_($category['text'])) . "</td>";
-    $rows .= "<td>" . $games . "</td>";
-    $rows .= "<td>" . number_format((float)$avg, 2) . "</td>";
-    if (!is_null($history_avg)) {
-      $rows .= "<td>" . number_format((float)$history_avg, 2) . "</td>";
-    } else {
-      $rows .= "<td>-</td>";
-    }
-    $rows .= "</tr>";
-  }
-
-  if ($rowcount > 0) {
-    $overall_avg = $avg_count > 0 ? number_format((SafeDivide($avg_sum, $avg_count)), 2) : "-";
-    if ($history_count > 0) {
-      $overall_history = number_format((SafeDivide($history_sum, $history_count)), 2);
-    } else {
-      $overall_history = "-";
-    }
-    $rows .= "<tr class='highlight'>";
-    $rows .= "<td>" . _("Total") . "</td>";
-    $rows .= "<td></td>";
-    $rows .= "<td>" . $overall_avg . "</td>";
-    $rows .= "<td>" . $overall_history . "</td>";
-    $rows .= "</tr>";
-
-    $html .= "<h2>" . _("Spirit scores") . "</h2>\n";
-    $html .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>";
-    $html .= "<th>" . _("Category") . "</th>";
-    $html .= "<th>" . _("Games") . "</th>";
-    $html .= "<th>" . _("Average") . "</th>";
-    $html .= "<th>" . _("Historical avg") . "</th>";
-    $html .= "</tr>";
-    $html .= $rows;
-    $html .= "</table>\n";
-  }
-
-  $showSpiritComments = ShowSpiritComments($seasoninfo) || isSeasonAdmin($seasoninfo['season_id']);
-  $scoreCategories = array();
-  foreach ($categories as $category) {
-    if ((int)$category['index'] > 0 && (float)$category['factor'] > 0) {
-      $scoreCategories[] = $category;
-    }
-  }
-  if (empty($scoreCategories)) {
     foreach ($categories as $category) {
-      if ((int)$category['index'] > 0) {
-        $scoreCategories[] = $category;
-      }
-    }
-  }
-
-  if (!empty($scoreCategories)) {
-    $spiritReceivedRows = TeamSpiritPointsReceived($seasoninfo['season_id'], $teamId);
-    if (!empty($spiritReceivedRows)) {
-      $html .= "<h3>" . _("Spirit scores received:") . "</h3>\n";
-      $html .= "<table width='100%' border='1'>\n";
-      $html .= "<tr><th style='width: 18%'>" . _("Given by") . "</th>";
-      foreach ($scoreCategories as $category) {
-        $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
-      }
-      $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
-      if ($showSpiritComments) {
-        $html .= "<th style='width: 40%'>" . _("Comments") . "</th>";
-      }
-      $html .= "</tr>\n";
-
-      foreach ($spiritReceivedRows as $row) {
-        if (!intval($row['is_visible'])) {
-          continue;
+        $category_id = $category['category_id'];
+        if (!isset($statsByCategory[$category_id])) {
+            continue;
         }
-        $html .= "<tr>";
-        $html .= "<td>" . utf8entities($row['givenby']) . "</td>";
-        foreach ($scoreCategories as $category) {
-          $col = 'cat' . (int)$category['index'];
-          if (is_null($row[$col])) {
-            $html .= "<td class='center'>-</td>";
-          } else {
-            $html .= "<td class='center'>" . (int)$row[$col] . "</td>";
-          }
+        $rowcount++;
+        $avg = $statsByCategory[$category_id]['average'];
+        $games = $statsByCategory[$category_id]['games'];
+        $history_avg = null;
+        if (isset($historyByCategory[$category_id])) {
+            $history_avg = $historyByCategory[$category_id]['average'];
         }
-        if (is_null($row['total'])) {
-          $html .= "<td class='center'>-</td>";
+        $avg_sum += $avg;
+        $avg_count++;
+        if (!is_null($history_avg)) {
+            $history_sum += $history_avg;
+            $history_count++;
+        }
+        $rows .= "<tr>";
+        $rows .= "<td>" . utf8entities(_($category['text'])) . "</td>";
+        $rows .= "<td>" . $games . "</td>";
+        $rows .= "<td>" . number_format((float) $avg, 2) . "</td>";
+        if (!is_null($history_avg)) {
+            $rows .= "<td>" . number_format((float) $history_avg, 2) . "</td>";
         } else {
-          $html .= "<td class='center'><b>" . number_format((float)$row['total'], 2) . "</b></td>";
+            $rows .= "<td>-</td>";
         }
-        if ($showSpiritComments) {
-          $html .= "<td>" . someHTML($row['comments']) . "</td>";
-        }
-        $html .= "</tr>\n";
-      }
-      $html .= "</table>\n";
+        $rows .= "</tr>";
     }
 
-    $spiritGivenRows = TeamSpiritPointsGiven($seasoninfo['season_id'], $teamId);
-    if (!empty($spiritGivenRows)) {
-      $html .= "<h3>" . _("Spirit scores given to the other teams:") . "</h3>\n";
-      $html .= "<table width='100%' border='1'>\n";
-      $html .= "<tr><th style='width: 18%'>" . _("Given for") . "</th>";
-      foreach ($scoreCategories as $category) {
-        $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
-      }
-      $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
-      if ($showSpiritComments) {
-        $html .= "<th style='width: 40%'>" . _("Comments") . "</th>";
-      }
-      $html .= "</tr>\n";
-
-      foreach ($spiritGivenRows as $row) {
-        if (!intval($row['is_visible'])) {
-          continue;
-        }
-        $html .= "<tr>";
-        $html .= "<td>" . utf8entities($row['givento']) . "</td>";
-        foreach ($scoreCategories as $category) {
-          $col = 'cat' . (int)$category['index'];
-          if (is_null($row[$col])) {
-            $html .= "<td class='center'>-</td>";
-          } else {
-            $html .= "<td class='center'>" . (int)$row[$col] . "</td>";
-          }
-        }
-        if (is_null($row['total'])) {
-          $html .= "<td class='center'>-</td>";
+    if ($rowcount > 0) {
+        $overall_avg = $avg_count > 0 ? number_format((SafeDivide($avg_sum, $avg_count)), 2) : "-";
+        if ($history_count > 0) {
+            $overall_history = number_format((SafeDivide($history_sum, $history_count)), 2);
         } else {
-          $html .= "<td class='center'><b>" . number_format((float)$row['total'], 2) . "</b></td>";
+            $overall_history = "-";
         }
-        if ($showSpiritComments) {
-          $html .= "<td>" . someHTML($row['comments']) . "</td>";
-        }
-        $html .= "</tr>\n";
-      }
-      $html .= "</table>\n";
+        $rows .= "<tr class='highlight'>";
+        $rows .= "<td>" . _("Total") . "</td>";
+        $rows .= "<td></td>";
+        $rows .= "<td>" . $overall_avg . "</td>";
+        $rows .= "<td>" . $overall_history . "</td>";
+        $rows .= "</tr>";
+
+        $html .= "<h2>" . _("Spirit scores") . "</h2>\n";
+        $html .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>";
+        $html .= "<th>" . _("Category") . "</th>";
+        $html .= "<th>" . _("Games") . "</th>";
+        $html .= "<th>" . _("Average") . "</th>";
+        $html .= "<th>" . _("Historical avg") . "</th>";
+        $html .= "</tr>";
+        $html .= $rows;
+        $html .= "</table>\n";
     }
-  }
+
+    $showSpiritComments = ShowSpiritComments($seasoninfo) || isSeasonAdmin($seasoninfo['season_id']);
+    $scoreCategories = [];
+    foreach ($categories as $category) {
+        if ((int) $category['index'] > 0 && (float) $category['factor'] > 0) {
+            $scoreCategories[] = $category;
+        }
+    }
+    if (empty($scoreCategories)) {
+        foreach ($categories as $category) {
+            if ((int) $category['index'] > 0) {
+                $scoreCategories[] = $category;
+            }
+        }
+    }
+
+    if (!empty($scoreCategories)) {
+        $spiritReceivedRows = TeamSpiritPointsReceived($seasoninfo['season_id'], $teamId);
+        if (!empty($spiritReceivedRows)) {
+            $html .= "<h3>" . _("Spirit scores received:") . "</h3>\n";
+            $html .= "<table width='100%' border='1'>\n";
+            $html .= "<tr><th style='width: 18%'>" . _("Given by") . "</th>";
+            foreach ($scoreCategories as $category) {
+                $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
+            }
+            $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
+            if ($showSpiritComments) {
+                $html .= "<th style='width: 40%'>" . _("Comments") . "</th>";
+            }
+            $html .= "</tr>\n";
+
+            foreach ($spiritReceivedRows as $row) {
+                if (!intval($row['is_visible'])) {
+                    continue;
+                }
+                $html .= "<tr>";
+                $html .= "<td>" . utf8entities($row['givenby']) . "</td>";
+                foreach ($scoreCategories as $category) {
+                    $col = 'cat' . (int) $category['index'];
+                    if (is_null($row[$col])) {
+                        $html .= "<td class='center'>-</td>";
+                    } else {
+                        $html .= "<td class='center'>" . (int) $row[$col] . "</td>";
+                    }
+                }
+                if (is_null($row['total'])) {
+                    $html .= "<td class='center'>-</td>";
+                } else {
+                    $html .= "<td class='center'><b>" . number_format((float) $row['total'], 2) . "</b></td>";
+                }
+                if ($showSpiritComments) {
+                    $html .= "<td>" . someHTML($row['comments']) . "</td>";
+                }
+                $html .= "</tr>\n";
+            }
+            $html .= "</table>\n";
+        }
+
+        $spiritGivenRows = TeamSpiritPointsGiven($seasoninfo['season_id'], $teamId);
+        if (!empty($spiritGivenRows)) {
+            $html .= "<h3>" . _("Spirit scores given to the other teams:") . "</h3>\n";
+            $html .= "<table width='100%' border='1'>\n";
+            $html .= "<tr><th style='width: 18%'>" . _("Given for") . "</th>";
+            foreach ($scoreCategories as $category) {
+                $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
+            }
+            $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
+            if ($showSpiritComments) {
+                $html .= "<th style='width: 40%'>" . _("Comments") . "</th>";
+            }
+            $html .= "</tr>\n";
+
+            foreach ($spiritGivenRows as $row) {
+                if (!intval($row['is_visible'])) {
+                    continue;
+                }
+                $html .= "<tr>";
+                $html .= "<td>" . utf8entities($row['givento']) . "</td>";
+                foreach ($scoreCategories as $category) {
+                    $col = 'cat' . (int) $category['index'];
+                    if (is_null($row[$col])) {
+                        $html .= "<td class='center'>-</td>";
+                    } else {
+                        $html .= "<td class='center'>" . (int) $row[$col] . "</td>";
+                    }
+                }
+                if (is_null($row['total'])) {
+                    $html .= "<td class='center'>-</td>";
+                } else {
+                    $html .= "<td class='center'><b>" . number_format((float) $row['total'], 2) . "</b></td>";
+                }
+                if ($showSpiritComments) {
+                    $html .= "<td>" . someHTML($row['comments']) . "</td>";
+                }
+                $html .= "</tr>\n";
+            }
+            $html .= "</table>\n";
+        }
+    }
 }
 
 $seasons = TeamStatisticsByName($teaminfo['name'], $teaminfo['type']);
-$spiritAverages = array();
+$spiritAverages = [];
 if (!empty($seasons)) {
-  $spiritRows = TeamSpiritAveragesByName($teaminfo['name'], $teaminfo['type']);
-  foreach ($spiritRows as $row) {
-    $key = $row['season'] . "_" . $row['series'];
-    $spiritAverages[$key] = $row['spirit_total'];
-  }
+    $spiritRows = TeamSpiritAveragesByName($teaminfo['name'], $teaminfo['type']);
+    foreach ($spiritRows as $row) {
+        $key = $row['season'] . "_" . $row['series'];
+        $spiritAverages[$key] = $row['spirit_total'];
+    }
 }
 if (ShowDefenseStats()) {
-  if (count($seasons)) {
-    $html .= "<h2>" . _("History") . ":</h2>\n";
+    if (count($seasons)) {
+        $html .= "<h2>" . _("History") . ":</h2>\n";
 
-    $tmphtml = "";
+        $tmphtml = "";
 
-    $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>
+        $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>
 		<th>" . _("Event") . "</th>
 		<th>" . _("Division") . "</th>
 		<th>" . _("Pos.") . "</th>
@@ -406,88 +407,88 @@ if (ShowDefenseStats()) {
 		<th>" . _("Win-%") . "</th>
 		<th>" . _("Goals for") . "</th>
 		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-		<th>"._("Goals against")."</th>
+		<th>" . _("Goals against") . "</th>
 		<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-		<th>"._("Goals diff")."</th>
+		<th>" . _("Goals diff") . "</th>
 		<th>" . _("Spirit score avg.") . "</th>
 		<th>" . _("Defences") . "</th>
 		</tr>";
 
 
-    $prevseason = "";
-    $seasoncounter = 0;
+        $prevseason = "";
+        $seasoncounter = 0;
 
-    $nCurSer = 0;
+        $nCurSer = 0;
 
-    $stats = array();
+        $stats = [];
 
-    foreach ($seasons as $season) {
+        foreach ($seasons as $season) {
 
-      //played games
-      $pg = array(
-        "season_type" => "",
-        "games" => 0,
-        "wins" => 0,
-        "losses" => 0,
-        "goals_made" => 0,
-        "goals_against" => 0,
-        "defenses" => 0
-      );
+            //played games
+            $pg = [
+                "season_type" => "",
+                "games" => 0,
+                "wins" => 0,
+                "losses" => 0,
+                "goals_made" => 0,
+                "goals_against" => 0,
+                "defenses" => 0,
+            ];
 
-      $pg['season_type'] = $season['seasontype'];
-      if ($season['season'] != $prevseason) {
-        $seasoncounter++;
-        $prevseason = $season['season'];
-      }
+            $pg['season_type'] = $season['seasontype'];
+            if ($season['season'] != $prevseason) {
+                $seasoncounter++;
+                $prevseason = $season['season'];
+            }
 
-      if ($seasoncounter % 2) {
-        $tmphtml .= "<tr class='highlight'>";
-      } else {
-        $tmphtml .= "<tr>";
-      }
-      $seasonName = utf8entities(U_($season['seasonname']));
-      $seasonTeamId = isset($season['team_id']) ? (int)$season['team_id'] : 0;
-      if ($seasonTeamId > 0) {
-        $seasonName = "<a href=\"?view=teamcard&amp;team=$seasonTeamId\">" . $seasonName . "</a>";
-      }
-      $tmphtml .= "<td>" . $seasonName . "</td>";
-      $tmphtml .= "<td>" . utf8entities(U_($season['seriesname'])) . "</td>";
-      $tmphtml .= "<td>" . $season['standing'] . "</td>";
-      $pg['goals_made'] = $season['goals_made'];
-      $pg['goals_against'] = $season['goals_against'];
-      $pg['wins'] = $season['wins'];
-      $pg['losses'] = $season['losses'];
-      $pg['games'] = $season['wins'] + $season['losses'];
-      $pg['defenses'] = $season['defenses_total'];
-      $spirit_key = $season['season'] . "_" . $season['series'];
-      $pg['spirit_total'] = isset($spiritAverages[$spirit_key]) ? $spiritAverages[$spirit_key] : null;
+            if ($seasoncounter % 2) {
+                $tmphtml .= "<tr class='highlight'>";
+            } else {
+                $tmphtml .= "<tr>";
+            }
+            $seasonName = utf8entities(U_($season['seasonname']));
+            $seasonTeamId = isset($season['team_id']) ? (int) $season['team_id'] : 0;
+            if ($seasonTeamId > 0) {
+                $seasonName = "<a href=\"?view=teamcard&amp;team=$seasonTeamId\">" . $seasonName . "</a>";
+            }
+            $tmphtml .= "<td>" . $seasonName . "</td>";
+            $tmphtml .= "<td>" . utf8entities(U_($season['seriesname'])) . "</td>";
+            $tmphtml .= "<td>" . $season['standing'] . "</td>";
+            $pg['goals_made'] = $season['goals_made'];
+            $pg['goals_against'] = $season['goals_against'];
+            $pg['wins'] = $season['wins'];
+            $pg['losses'] = $season['losses'];
+            $pg['games'] = $season['wins'] + $season['losses'];
+            $pg['defenses'] = $season['defenses_total'];
+            $spirit_key = $season['season'] . "_" . $season['series'];
+            $pg['spirit_total'] = isset($spiritAverages[$spirit_key]) ? $spiritAverages[$spirit_key] : null;
 
-      $tmphtml .= "<td>" . $pg['games'] . "</td>";
-      $tmphtml .= "<td>" . $pg['wins'] . "</td>";
-      $tmphtml .= "<td>" . $pg['losses'] . "</td>";
-      $tmphtml .= "<td>" . number_format((SafeDivide($pg['wins'], $pg['games']) * 100), 1) . "%</td>";
-      $tmphtml .= "<td>" . $pg['goals_made'] . "</td>";
-      $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_made'], $pg['games']), 1) . "</td>";
-      $tmphtml .= "<td>" . $pg['goals_against'] . "</td>";
-      $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_against'], $pg['games']), 1) . "</td>";
-      $tmphtml .= "<td>" . ($pg['goals_made'] - $pg['goals_against']) . "</td>";
-      if (!is_null($pg['spirit_total'])) {
-        $tmphtml .= "<td>" . number_format((float)$pg['spirit_total'], 2) . "</td>";
-      } else {
-        $tmphtml .= "<td>-</td>";
-      }
-      $tmphtml .= "<td>" . $pg['defenses'] . "</td>";
-      $tmphtml .= "</tr>";
+            $tmphtml .= "<td>" . $pg['games'] . "</td>";
+            $tmphtml .= "<td>" . $pg['wins'] . "</td>";
+            $tmphtml .= "<td>" . $pg['losses'] . "</td>";
+            $tmphtml .= "<td>" . number_format((SafeDivide($pg['wins'], $pg['games']) * 100), 1) . "%</td>";
+            $tmphtml .= "<td>" . $pg['goals_made'] . "</td>";
+            $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_made'], $pg['games']), 1) . "</td>";
+            $tmphtml .= "<td>" . $pg['goals_against'] . "</td>";
+            $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_against'], $pg['games']), 1) . "</td>";
+            $tmphtml .= "<td>" . ($pg['goals_made'] - $pg['goals_against']) . "</td>";
+            if (!is_null($pg['spirit_total'])) {
+                $tmphtml .= "<td>" . number_format((float) $pg['spirit_total'], 2) . "</td>";
+            } else {
+                $tmphtml .= "<td>-</td>";
+            }
+            $tmphtml .= "<td>" . $pg['defenses'] . "</td>";
+            $tmphtml .= "</tr>";
 
-      $stats[] = $pg;
-    }
-    $tmphtml .= "</table><p></p>";
+            $stats[] = $pg;
+        }
+        $tmphtml .= "</table><p></p>";
 
-    mergesort($stats, function ($b, $a) {
-      return strcmp($b['season_type'], $a['season_type']);
-    });
+        mergesort($stats, function ($b, $a) {
+            return strcmp($b['season_type'], $a['season_type']);
+        });
 
-    $html .= "<table class='history-table' border='1' width='100%'><tr>
+        $html .= "<table class='history-table' border='1' width='100%'><tr>
 	<th>" . _("Event type") . "</th>
 	<th>" . _("Games") . "</th>
 	<th>" . _("Wins") . "</th>
@@ -495,105 +496,105 @@ if (ShowDefenseStats()) {
 	<th>" . _("Win-%") . "</th>
 	<th>" . _("Goals for") . "</th>
 	<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-	<th>"._("Goals against")."</th>
+	<th>" . _("Goals against") . "</th>
 	<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-	<th>"._("Goals diff")."</th>
+	<th>" . _("Goals diff") . "</th>
 	<th>" . _("Spirit score avg.") . "</th>
 	<th>" . _("Defences") . "</th>
 	</tr>";
 
-    $total_games = 0;
-    $total_wins = 0;
-    $total_losses = 0;
-    $total_goals_made = 0;
-    $total_goals_against = 0;
-    $total_defenses = 0;
-    $total_spirit_sum = 0;
-    $total_spirit_count = 0;
+        $total_games = 0;
+        $total_wins = 0;
+        $total_losses = 0;
+        $total_goals_made = 0;
+        $total_goals_against = 0;
+        $total_defenses = 0;
+        $total_spirit_sum = 0;
+        $total_spirit_count = 0;
 
-    for ($i = 0; $i < count($stats);) {
-      $season_type = $stats[$i]['season_type'];
-      $games = $stats[$i]['games'];
-      $wins = $stats[$i]['wins'];
-      $losses = $stats[$i]['losses'];
-      $goals_made = $stats[$i]['goals_made'];
-      $goals_against = $stats[$i]['goals_against'];
-      $defenses = $stats[$i]['defenses'];
-      $spirit_sum = is_null($stats[$i]['spirit_total']) ? 0 : $stats[$i]['spirit_total'];
-      $spirit_count = is_null($stats[$i]['spirit_total']) ? 0 : 1;
+        for ($i = 0; $i < count($stats);) {
+            $season_type = $stats[$i]['season_type'];
+            $games = $stats[$i]['games'];
+            $wins = $stats[$i]['wins'];
+            $losses = $stats[$i]['losses'];
+            $goals_made = $stats[$i]['goals_made'];
+            $goals_against = $stats[$i]['goals_against'];
+            $defenses = $stats[$i]['defenses'];
+            $spirit_sum = is_null($stats[$i]['spirit_total']) ? 0 : $stats[$i]['spirit_total'];
+            $spirit_count = is_null($stats[$i]['spirit_total']) ? 0 : 1;
 
-      for ($i = $i + 1; $i < count($stats) && $season_type == $stats[$i]['season_type']; $i++) {
-        $games += $stats[$i]['games'];
-        $wins += $stats[$i]['wins'];
-        $losses += $stats[$i]['losses'];
-        $goals_made += $stats[$i]['goals_made'];
-        $goals_against += $stats[$i]['goals_against'];
-        $defenses += $stats[$i]['defenses'];
-        if (!is_null($stats[$i]['spirit_total'])) {
-          $spirit_sum += $stats[$i]['spirit_total'];
-          $spirit_count += 1;
+            for ($i = $i + 1; $i < count($stats) && $season_type == $stats[$i]['season_type']; $i++) {
+                $games += $stats[$i]['games'];
+                $wins += $stats[$i]['wins'];
+                $losses += $stats[$i]['losses'];
+                $goals_made += $stats[$i]['goals_made'];
+                $goals_against += $stats[$i]['goals_against'];
+                $defenses += $stats[$i]['defenses'];
+                if (!is_null($stats[$i]['spirit_total'])) {
+                    $spirit_sum += $stats[$i]['spirit_total'];
+                    $spirit_count += 1;
+                }
+            }
+            $total_games += $games;
+            $total_wins += $wins;
+            $total_losses += $losses;
+            $total_goals_made += $goals_made;
+            $total_goals_against += $goals_against;
+            $total_defenses += $defenses;
+            $total_spirit_sum += $spirit_sum;
+            $total_spirit_count += $spirit_count;
+
+            $html .= "<tr>";
+            $html .= "<td>" . U_($season_type) . "</td>";
+            $html .= "<td>$games</td>";
+            $html .= "<td>$wins</td>";
+            $html .= "<td>$losses</td>";
+            $html .= "<td>" . (number_format((SafeDivide($wins, $games) * 100), 1)) . " %</td>";
+            $html .= "<td>$goals_made</td>";
+            $html .= "<td>" . (number_format(SafeDivide($goals_made, $games), 1)) . "</td>";
+            $html .= "<td>$goals_against</td>";
+            $html .= "<td>" . (number_format(SafeDivide($goals_against, $games), 1)) . "</td>";
+            $html .= "<td>" . ($goals_made - $goals_against) . "</td>";
+            if ($spirit_count > 0) {
+                $html .= "<td>" . number_format((SafeDivide($spirit_sum, $spirit_count)), 2) . "</td>";
+            } else {
+                $html .= "<td>-</td>";
+            }
+            $html .= "<td>$defenses</td>";
+            $html .= "</tr>";
         }
-      }
-      $total_games += $games;
-      $total_wins += $wins;
-      $total_losses += $losses;
-      $total_goals_made += $goals_made;
-      $total_goals_against += $goals_against;
-      $total_defenses += $defenses;
-      $total_spirit_sum += $spirit_sum;
-      $total_spirit_count += $spirit_count;
 
-      $html .= "<tr>";
-      $html .= "<td>" . U_($season_type) . "</td>";
-      $html .= "<td>$games</td>";
-      $html .= "<td>$wins</td>";
-      $html .= "<td>$losses</td>";
-      $html .= "<td>" . (number_format((SafeDivide($wins, $games) * 100), 1)) . " %</td>";
-      $html .= "<td>$goals_made</td>";
-      $html .= "<td>" . (number_format(SafeDivide($goals_made, $games), 1)) . "</td>";
-      $html .= "<td>$goals_against</td>";
-      $html .= "<td>" . (number_format(SafeDivide($goals_against, $games), 1)) . "</td>";
-      $html .= "<td>" . ($goals_made - $goals_against) . "</td>";
-      if ($spirit_count > 0) {
-        $html .= "<td>" . number_format((SafeDivide($spirit_sum, $spirit_count)), 2) . "</td>";
-      } else {
-        $html .= "<td>-</td>";
-      }
-      $html .= "<td>$defenses</td>";
-      $html .= "</tr>";
+        $html .= "<tr class='highlight'>";
+        $html .= "<td>" . _("Total") . "</td>";
+        $html .= "<td>$total_games</td>";
+        $html .= "<td>$total_wins</td>";
+        $html .= "<td>$total_losses</td>";
+        $html .= "<td>" . (number_format((SafeDivide($total_wins, $total_games) * 100), 1)) . " %</td>";
+        $html .= "<td>$total_goals_made</td>";
+        $html .= "<td>" . (number_format(SafeDivide($total_goals_made, $total_games), 1)) . "</td>";
+        $html .= "<td>$total_goals_against</td>";
+        $html .= "<td>" . (number_format(SafeDivide($total_goals_against, $total_games), 1)) . "</td>";
+        $html .= "<td>" . ($total_goals_made - $total_goals_against) . "</td>";
+        if ($total_spirit_count > 0) {
+            $html .= "<td>" . number_format((SafeDivide($total_spirit_sum, $total_spirit_count)), 2) . "</td>";
+        } else {
+            $html .= "<td>-</td>";
+        }
+        $html .= "<td>$total_defenses</td>";
+        $html .= "</tr>";
+
+
+        $html .= "</table>";
+
+        $html .= $tmphtml;
     }
-
-    $html .= "<tr class='highlight'>";
-    $html .= "<td>" . _("Total") . "</td>";
-    $html .= "<td>$total_games</td>";
-    $html .= "<td>$total_wins</td>";
-    $html .= "<td>$total_losses</td>";
-    $html .= "<td>" . (number_format((SafeDivide($total_wins, $total_games) * 100), 1)) . " %</td>";
-    $html .= "<td>$total_goals_made</td>";
-    $html .= "<td>" . (number_format(SafeDivide($total_goals_made, $total_games), 1)) . "</td>";
-    $html .= "<td>$total_goals_against</td>";
-    $html .= "<td>" . (number_format(SafeDivide($total_goals_against, $total_games), 1)) . "</td>";
-    $html .= "<td>" . ($total_goals_made - $total_goals_against) . "</td>";
-    if ($total_spirit_count > 0) {
-      $html .= "<td>" . number_format((SafeDivide($total_spirit_sum, $total_spirit_count)), 2) . "</td>";
-    } else {
-      $html .= "<td>-</td>";
-    }
-    $html .= "<td>$total_defenses</td>";
-    $html .= "</tr>";
-
-
-    $html .= "</table>";
-
-    $html .= $tmphtml;
-  }
 } else {
-  if (count($seasons)) {
-    $html .= "<h2>" . _("History") . ":</h2>\n";
+    if (count($seasons)) {
+        $html .= "<h2>" . _("History") . ":</h2>\n";
 
-    $tmphtml = "";
+        $tmphtml = "";
 
-    $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>
+        $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>
 		<th>" . _("Event") . "</th>
 		<th>" . _("Division") . "</th>
 		<th>" . _("Pos.") . "</th>
@@ -603,84 +604,84 @@ if (ShowDefenseStats()) {
 		<th>" . _("Win-%") . "</th>
 		<th>" . _("Goals for") . "</th>
 		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-		<th>"._("Goals against")."</th>
+		<th>" . _("Goals against") . "</th>
 		<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-		<th>"._("Goals diff")."</th>
+		<th>" . _("Goals diff") . "</th>
 		<th>" . _("Spirit score avg.") . "</th>
 		</tr>";
 
 
-    $prevseason = "";
-    $seasoncounter = 0;
+        $prevseason = "";
+        $seasoncounter = 0;
 
-    $nCurSer = 0;
+        $nCurSer = 0;
 
-    $stats = array();
+        $stats = [];
 
-    foreach ($seasons as $season) {
+        foreach ($seasons as $season) {
 
-      //played games
-      $pg = array(
-        "season_type" => "",
-        "games" => 0,
-        "wins" => 0,
-        "losses" => 0,
-        "goals_made" => 0,
-        "goals_against" => 0
-      );
+            //played games
+            $pg = [
+                "season_type" => "",
+                "games" => 0,
+                "wins" => 0,
+                "losses" => 0,
+                "goals_made" => 0,
+                "goals_against" => 0,
+            ];
 
-      $pg['season_type'] = $season['seasontype'];
-      if ($season['season'] != $prevseason) {
-        $seasoncounter++;
-        $prevseason = $season['season'];
-      }
+            $pg['season_type'] = $season['seasontype'];
+            if ($season['season'] != $prevseason) {
+                $seasoncounter++;
+                $prevseason = $season['season'];
+            }
 
-      if ($seasoncounter % 2) {
-        $tmphtml .= "<tr class='highlight'>";
-      } else {
-        $tmphtml .= "<tr>";
-      }
-      $seasonName = utf8entities(U_($season['seasonname']));
-      $seasonTeamId = isset($season['team_id']) ? (int)$season['team_id'] : 0;
-      if ($seasonTeamId > 0) {
-        $seasonName = "<a href=\"?view=teamcard&amp;team=$seasonTeamId\">" . $seasonName . "</a>";
-      }
-      $tmphtml .= "<td>" . $seasonName . "</td>";
-      $tmphtml .= "<td>" . utf8entities(U_($season['seriesname'])) . "</td>";
-      $tmphtml .= "<td>" . $season['standing'] . "</td>";
-      $pg['goals_made'] = $season['goals_made'];
-      $pg['goals_against'] = $season['goals_against'];
-      $pg['wins'] = $season['wins'];
-      $pg['losses'] = $season['losses'];
-      $pg['games'] = $season['wins'] + $season['losses'];
-      $spirit_key = $season['season'] . "_" . $season['series'];
-      $pg['spirit_total'] = isset($spiritAverages[$spirit_key]) ? $spiritAverages[$spirit_key] : null;
+            if ($seasoncounter % 2) {
+                $tmphtml .= "<tr class='highlight'>";
+            } else {
+                $tmphtml .= "<tr>";
+            }
+            $seasonName = utf8entities(U_($season['seasonname']));
+            $seasonTeamId = isset($season['team_id']) ? (int) $season['team_id'] : 0;
+            if ($seasonTeamId > 0) {
+                $seasonName = "<a href=\"?view=teamcard&amp;team=$seasonTeamId\">" . $seasonName . "</a>";
+            }
+            $tmphtml .= "<td>" . $seasonName . "</td>";
+            $tmphtml .= "<td>" . utf8entities(U_($season['seriesname'])) . "</td>";
+            $tmphtml .= "<td>" . $season['standing'] . "</td>";
+            $pg['goals_made'] = $season['goals_made'];
+            $pg['goals_against'] = $season['goals_against'];
+            $pg['wins'] = $season['wins'];
+            $pg['losses'] = $season['losses'];
+            $pg['games'] = $season['wins'] + $season['losses'];
+            $spirit_key = $season['season'] . "_" . $season['series'];
+            $pg['spirit_total'] = isset($spiritAverages[$spirit_key]) ? $spiritAverages[$spirit_key] : null;
 
-      $tmphtml .= "<td>" . $pg['games'] . "</td>";
-      $tmphtml .= "<td>" . $pg['wins'] . "</td>";
-      $tmphtml .= "<td>" . $pg['losses'] . "</td>";
-      $tmphtml .= "<td>" . number_format((SafeDivide($pg['wins'], $pg['games']) * 100), 1) . "%</td>";
-      $tmphtml .= "<td>" . $pg['goals_made'] . "</td>";
-      $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_made'], $pg['games']), 1) . "</td>";
-      $tmphtml .= "<td>" . $pg['goals_against'] . "</td>";
-      $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_against'], $pg['games']), 1) . "</td>";
-      $tmphtml .= "<td>" . ($pg['goals_made'] - $pg['goals_against']) . "</td>";
-      if (!is_null($pg['spirit_total'])) {
-        $tmphtml .= "<td>" . number_format((float)$pg['spirit_total'], 2) . "</td>";
-      } else {
-        $tmphtml .= "<td>-</td>";
-      }
-      $tmphtml .= "</tr>";
+            $tmphtml .= "<td>" . $pg['games'] . "</td>";
+            $tmphtml .= "<td>" . $pg['wins'] . "</td>";
+            $tmphtml .= "<td>" . $pg['losses'] . "</td>";
+            $tmphtml .= "<td>" . number_format((SafeDivide($pg['wins'], $pg['games']) * 100), 1) . "%</td>";
+            $tmphtml .= "<td>" . $pg['goals_made'] . "</td>";
+            $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_made'], $pg['games']), 1) . "</td>";
+            $tmphtml .= "<td>" . $pg['goals_against'] . "</td>";
+            $tmphtml .= "<td>" . number_format(SafeDivide($pg['goals_against'], $pg['games']), 1) . "</td>";
+            $tmphtml .= "<td>" . ($pg['goals_made'] - $pg['goals_against']) . "</td>";
+            if (!is_null($pg['spirit_total'])) {
+                $tmphtml .= "<td>" . number_format((float) $pg['spirit_total'], 2) . "</td>";
+            } else {
+                $tmphtml .= "<td>-</td>";
+            }
+            $tmphtml .= "</tr>";
 
-      $stats[] = $pg;
-    }
-    $tmphtml .= "</table><p></p>";
+            $stats[] = $pg;
+        }
+        $tmphtml .= "</table><p></p>";
 
-    mergesort($stats, function ($b, $a) {
-      return strcmp($b['season_type'], $a['season_type']);
-    });
+        mergesort($stats, function ($b, $a) {
+            return strcmp($b['season_type'], $a['season_type']);
+        });
 
-    $html .= "<table class='history-table' border='1' width='100%'><tr>
+        $html .= "<table class='history-table' border='1' width='100%'><tr>
 	<th>" . _("Event type") . "</th>
 	<th>" . _("Games") . "</th>
 	<th>" . _("Wins") . "</th>
@@ -688,141 +689,143 @@ if (ShowDefenseStats()) {
 	<th>" . _("Win-%") . "</th>
 	<th>" . _("Goals for") . "</th>
 	<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-	<th>"._("Goals against")."</th>
+	<th>" . _("Goals against") . "</th>
 	<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-	<th>"._("Goals diff")."</th>
+	<th>" . _("Goals diff") . "</th>
 	<th>" . _("Spirit score avg.") . "</th>
 	</tr>";
 
-    $total_games = 0;
-    $total_wins = 0;
-    $total_losses = 0;
-    $total_goals_made = 0;
-    $total_goals_against = 0;
-    $total_spirit_sum = 0;
-    $total_spirit_count = 0;
+        $total_games = 0;
+        $total_wins = 0;
+        $total_losses = 0;
+        $total_goals_made = 0;
+        $total_goals_against = 0;
+        $total_spirit_sum = 0;
+        $total_spirit_count = 0;
 
-    for ($i = 0; $i < count($stats);) {
-      $season_type = $stats[$i]['season_type'];
-      $games = $stats[$i]['games'];
-      $wins = $stats[$i]['wins'];
-      $losses = $stats[$i]['losses'];
-      $goals_made = $stats[$i]['goals_made'];
-      $goals_against = $stats[$i]['goals_against'];
-      $spirit_sum = is_null($stats[$i]['spirit_total']) ? 0 : $stats[$i]['spirit_total'];
-      $spirit_count = is_null($stats[$i]['spirit_total']) ? 0 : 1;
+        for ($i = 0; $i < count($stats);) {
+            $season_type = $stats[$i]['season_type'];
+            $games = $stats[$i]['games'];
+            $wins = $stats[$i]['wins'];
+            $losses = $stats[$i]['losses'];
+            $goals_made = $stats[$i]['goals_made'];
+            $goals_against = $stats[$i]['goals_against'];
+            $spirit_sum = is_null($stats[$i]['spirit_total']) ? 0 : $stats[$i]['spirit_total'];
+            $spirit_count = is_null($stats[$i]['spirit_total']) ? 0 : 1;
 
-      for ($i = $i + 1; $i < count($stats) && $season_type == $stats[$i]['season_type']; $i++) {
-        $games += $stats[$i]['games'];
-        $wins += $stats[$i]['wins'];
-        $losses += $stats[$i]['losses'];
-        $goals_made += $stats[$i]['goals_made'];
-        $goals_against += $stats[$i]['goals_against'];
-        if (!is_null($stats[$i]['spirit_total'])) {
-          $spirit_sum += $stats[$i]['spirit_total'];
-          $spirit_count += 1;
+            for ($i = $i + 1; $i < count($stats) && $season_type == $stats[$i]['season_type']; $i++) {
+                $games += $stats[$i]['games'];
+                $wins += $stats[$i]['wins'];
+                $losses += $stats[$i]['losses'];
+                $goals_made += $stats[$i]['goals_made'];
+                $goals_against += $stats[$i]['goals_against'];
+                if (!is_null($stats[$i]['spirit_total'])) {
+                    $spirit_sum += $stats[$i]['spirit_total'];
+                    $spirit_count += 1;
+                }
+            }
+            $total_games += $games;
+            $total_wins += $wins;
+            $total_losses += $losses;
+            $total_goals_made += $goals_made;
+            $total_goals_against += $goals_against;
+            $total_spirit_sum += $spirit_sum;
+            $total_spirit_count += $spirit_count;
+
+            $html .= "<tr>";
+            $html .= "<td>" . U_($season_type) . "</td>";
+            $html .= "<td>$games</td>";
+            $html .= "<td>$wins</td>";
+            $html .= "<td>$losses</td>";
+            $html .= "<td>" . (number_format((SafeDivide($wins, $games) * 100), 1)) . " %</td>";
+            $html .= "<td>$goals_made</td>";
+            $html .= "<td>" . (number_format(SafeDivide($goals_made, $games), 1)) . "</td>";
+            $html .= "<td>$goals_against</td>";
+            $html .= "<td>" . (number_format(SafeDivide($goals_against, $games), 1)) . "</td>";
+            $html .= "<td>" . ($goals_made - $goals_against) . "</td>";
+            if ($spirit_count > 0) {
+                $html .= "<td>" . number_format((SafeDivide($spirit_sum, $spirit_count)), 2) . "</td>";
+            } else {
+                $html .= "<td>-</td>";
+            }
+            $html .= "</tr>";
         }
-      }
-      $total_games += $games;
-      $total_wins += $wins;
-      $total_losses += $losses;
-      $total_goals_made += $goals_made;
-      $total_goals_against += $goals_against;
-      $total_spirit_sum += $spirit_sum;
-      $total_spirit_count += $spirit_count;
 
-      $html .= "<tr>";
-      $html .= "<td>" . U_($season_type) . "</td>";
-      $html .= "<td>$games</td>";
-      $html .= "<td>$wins</td>";
-      $html .= "<td>$losses</td>";
-      $html .= "<td>" . (number_format((SafeDivide($wins, $games) * 100), 1)) . " %</td>";
-      $html .= "<td>$goals_made</td>";
-      $html .= "<td>" . (number_format(SafeDivide($goals_made, $games), 1)) . "</td>";
-      $html .= "<td>$goals_against</td>";
-      $html .= "<td>" . (number_format(SafeDivide($goals_against, $games), 1)) . "</td>";
-      $html .= "<td>" . ($goals_made - $goals_against) . "</td>";
-      if ($spirit_count > 0) {
-        $html .= "<td>" . number_format((SafeDivide($spirit_sum, $spirit_count)), 2) . "</td>";
-      } else {
-        $html .= "<td>-</td>";
-      }
-      $html .= "</tr>";
+        $html .= "<tr class='highlight'>";
+        $html .= "<td>" . _("Total") . "</td>";
+        $html .= "<td>$total_games</td>";
+        $html .= "<td>$total_wins</td>";
+        $html .= "<td>$total_losses</td>";
+        $html .= "<td>" . (number_format((SafeDivide($total_wins, $total_games) * 100), 1)) . " %</td>";
+        $html .= "<td>$total_goals_made</td>";
+        $html .= "<td>" . (number_format(SafeDivide($total_goals_made, $total_games), 1)) . "</td>";
+        $html .= "<td>$total_goals_against</td>";
+        $html .= "<td>" . (number_format(SafeDivide($total_goals_against, $total_games), 1)) . "</td>";
+        $html .= "<td>" . ($total_goals_made - $total_goals_against) . "</td>";
+        if ($total_spirit_count > 0) {
+            $html .= "<td>" . number_format((SafeDivide($total_spirit_sum, $total_spirit_count)), 2) . "</td>";
+        } else {
+            $html .= "<td>-</td>";
+        }
+        $html .= "</tr>";
+
+
+        $html .= "</table>";
+
+        $html .= $tmphtml;
     }
-
-    $html .= "<tr class='highlight'>";
-    $html .= "<td>" . _("Total") . "</td>";
-    $html .= "<td>$total_games</td>";
-    $html .= "<td>$total_wins</td>";
-    $html .= "<td>$total_losses</td>";
-    $html .= "<td>" . (number_format((SafeDivide($total_wins, $total_games) * 100), 1)) . " %</td>";
-    $html .= "<td>$total_goals_made</td>";
-    $html .= "<td>" . (number_format(SafeDivide($total_goals_made, $total_games), 1)) . "</td>";
-    $html .= "<td>$total_goals_against</td>";
-    $html .= "<td>" . (number_format(SafeDivide($total_goals_against, $total_games), 1)) . "</td>";
-    $html .= "<td>" . ($total_goals_made - $total_goals_against) . "</td>";
-    if ($total_spirit_count > 0) {
-      $html .= "<td>" . number_format((SafeDivide($total_spirit_sum, $total_spirit_count)), 2) . "</td>";
-    } else {
-      $html .= "<td>-</td>";
-    }
-    $html .= "</tr>";
-
-
-    $html .= "</table>";
-
-    $html .= $tmphtml;
-  }
 }
 
 
 $sort = iget("sort");
 
 if (empty($sort)) {
-  $sort = "serie";
+    $sort = "serie";
 }
 
 $played = TeamPlayedGames($teaminfo['name'], $teaminfo['type'], $sort);
 if ($played) {
-  $html .= "<h2>" . _("Game history") . "</h2>";
+    $html .= "<h2>" . _("Game history") . "</h2>";
 
-  $viewUrl = "?view=teamcard&amp;team=$teamId&amp;";
+    $viewUrl = "?view=teamcard&amp;team=$teamId&amp;";
 
-  $html .= "<table border='1' cellspacing='2' width='100%'><tr>";
+    $html .= "<table border='1' cellspacing='2' width='100%'><tr>";
 
-  $html .= "<th><a class='thsort' href=\"" . $viewUrl . "sort=team\">" . _("Team") . "</a></th>";
-  $html .= "<th><a class='thsort' href=\"" . $viewUrl . "sort=result\">" . _("Result") . "</a></th>";
-  $html .= "<th><a class='thsort' href=\"" . $viewUrl . "sort=serie\">" . _("Division") . "</a></th></tr>";
-  $curSeason = Currentseason();
+    $html .= "<th><a class='thsort' href=\"" . $viewUrl . "sort=team\">" . _("Team") . "</a></th>";
+    $html .= "<th><a class='thsort' href=\"" . $viewUrl . "sort=result\">" . _("Result") . "</a></th>";
+    $html .= "<th><a class='thsort' href=\"" . $viewUrl . "sort=serie\">" . _("Division") . "</a></th></tr>";
+    $curSeason = Currentseason();
 
-  foreach ($played as $row) {
-    if ($row['season_id'] == $curSeason) {
-      continue;
+    foreach ($played as $row) {
+        if ($row['season_id'] == $curSeason) {
+            continue;
+        }
+        if (GameHasStarted($row)) {
+            $seasonName = SeasonName($row['season_id']);
+
+            if ($row['homescore'] > $row['visitorscore']) {
+                $html .= "<tr><td><b>" . utf8entities($row['hometeamname']) . "</b>";
+            } else {
+                $html .= "<tr><td>" . utf8entities($row['hometeamname']);
+            }
+
+
+            if ($row['homescore'] < $row['visitorscore']) {
+                $html .= " - <b>" . utf8entities($row['visitorteamname']) . "</b></td>";
+            } else {
+                $html .= " - " . utf8entities($row['visitorteamname']) . "</td>";
+            }
+
+
+            $html .= "<td><a href=\"?view=gameplay&amp;game=" . $row['game_id'] . "\">" . $row['homescore'] . " - " . $row['visitorscore'] . "</a></td>";
+
+            $html .= "<td>" . utf8entities(U_($seasonName)) . ": <a href=\"?view=poolstatus&amp;pool=" . $row['pool_id'] . "\">" . utf8entities(U_($row['name'])) . "</a></td></tr>";
+        }
     }
-    if (GameHasStarted($row)) {
-      $seasonName = SeasonName($row['season_id']);
 
-      if ($row['homescore'] > $row['visitorscore'])
-        $html .= "<tr><td><b>" . utf8entities($row['hometeamname']) . "</b>";
-      else
-        $html .= "<tr><td>" . utf8entities($row['hometeamname']);
-
-
-      if ($row['homescore'] < $row['visitorscore'])
-        $html .= " - <b>" . utf8entities($row['visitorteamname']) . "</b></td>";
-      else
-        $html .= " - " . utf8entities($row['visitorteamname']) . "</td>";
-
-
-      $html .= "<td><a href=\"?view=gameplay&amp;game=" . $row['game_id'] . "\">" . $row['homescore'] . " - " . $row['visitorscore'] . "</a></td>";
-
-      $html .= "<td>" . utf8entities(U_($seasonName)) . ": <a href=\"?view=poolstatus&amp;pool=" . $row['pool_id'] . "\">" . utf8entities(U_($row['name'])) . "</a></td></tr>";
-    }
-  }
-
-  $html .= "</table>";
+    $html .= "</table>";
 }
 if ($_SESSION['uid'] != 'anonymous') {
-  $html .= "<div style='float:left;'><hr/><a href='?view=user/addmedialink&amp;team=$teamId'>" . _("Add media") . "</a></div>";
+    $html .= "<div style='float:left;'><hr/><a href='?view=user/addmedialink&amp;team=$teamId'>" . _("Add media") . "</a></div>";
 }
 showPage($title, $html);

@@ -5,12 +5,12 @@ denyDirectCustomizationAccess(__FILE__);
 include_once 'lib/yui.functions.php';
 
 if (!isset($teamId)) {
-	$teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
+    $teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
 } else {
-	$teamId = intval($teamId);
+    $teamId = intval($teamId);
 }
 
-echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "container"));
+echo yuiLoad(["utilities", "datasource", "datatable", "dragdrop", "container"]);
 ?>
 <link rel="stylesheet" type="text/css" href="script/yui/container/assets/container.css" />
 <link rel="stylesheet" type="text/css" href="script/yui/datatable/assets/datatable-core.css" />
@@ -169,12 +169,12 @@ echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "containe
 			];
 
 			<?php
-			if (is_file('cust/' . CUSTOMIZATIONS . '/players.php')) {
-				$datasource = 'cust/' . CUSTOMIZATIONS . '/players.php?';
-			} else {
-				$datasource = "cust/default/players.php?";
-			}
-			?>
+            if (is_file('cust/' . CUSTOMIZATIONS . '/players.php')) {
+                $datasource = 'cust/' . CUSTOMIZATIONS . '/players.php?';
+            } else {
+                $datasource = "cust/default/players.php?";
+            }
+?>
 			memberDataSource = new YAHOO.util.DataSource("<?php echo $datasource; ?>");
 
 

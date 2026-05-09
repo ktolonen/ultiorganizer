@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
@@ -15,17 +16,17 @@ $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $game_result = GameResult($gameId);
 $scores = GameGoals($gameId);
-$uo_goal = array(
-	"game" => $gameId,
-	"num" => 0,
-	"assist" => -1,
-	"scorer" => -1,
-	"time" => "",
-	"homescore" => 0,
-	"visitorscore" => 0,
-	"ishomegoal" => 0,
-	"iscallahan" => 0
-);
+$uo_goal = [
+    "game" => $gameId,
+    "num" => 0,
+    "assist" => -1,
+    "scorer" => -1,
+    "time" => "",
+    "homescore" => 0,
+    "visitorscore" => 0,
+    "ishomegoal" => 0,
+    "iscallahan" => 0,
+];
 $timemm = "";
 $timess = "";
 $pass = "";
@@ -34,114 +35,117 @@ $team = "";
 
 if (isset($_POST['add']) || isset($_POST['forceadd'])) {
 
-	$prevtime = 0;
-	$time_delim = array(",", ";", ":", "#", "*");
-	$timemm = "0";
-	$timess = "0";
+    $prevtime = 0;
+    $time_delim = [",", ";", ":", "#", "*"];
+    $timemm = "0";
+    $timess = "0";
 
-	if (count($scores) > 0) {
-		$lastscore = $scores[count($scores) - 1];
-		$prevtime = $lastscore['time'];
-		$uo_goal['num'] = $lastscore['num'] + 1;
-		$uo_goal['homescore'] = $lastscore['homescore'];
-		$uo_goal['visitorscore'] = $lastscore['visitorscore'];
-	}
+    if (count($scores) > 0) {
+        $lastscore = $scores[count($scores) - 1];
+        $prevtime = $lastscore['time'];
+        $uo_goal['num'] = $lastscore['num'] + 1;
+        $uo_goal['homescore'] = $lastscore['homescore'];
+        $uo_goal['visitorscore'] = $lastscore['visitorscore'];
+    }
 
-	if (!empty($_POST['team']))
-		$team = $_POST['team'];
-	if (!empty($_POST['pass'])) {
-		$uo_goal['assist'] = $_POST['pass'];
-		$pass = $_POST['pass'];
-	}
-	if (!empty($_POST['goal'])) {
-		$uo_goal['scorer'] = $_POST['goal'];
-		$goal = $_POST['goal'];
-	}
-	if ($hideTimeOnScoresheet) {
-		$uo_goal['time'] = $prevtime + 1;
-	} else {
-		if (!empty($_POST['timemm'])) {
-			$timemm = intval($_POST['timemm']);
-		}
-		if (!empty($_POST['timess'])) {
-			$timess = intval($_POST['timess']);
-		}
+    if (!empty($_POST['team'])) {
+        $team = $_POST['team'];
+    }
+    if (!empty($_POST['pass'])) {
+        $uo_goal['assist'] = $_POST['pass'];
+        $pass = $_POST['pass'];
+    }
+    if (!empty($_POST['goal'])) {
+        $uo_goal['scorer'] = $_POST['goal'];
+        $goal = $_POST['goal'];
+    }
+    if ($hideTimeOnScoresheet) {
+        $uo_goal['time'] = $prevtime + 1;
+    } else {
+        if (!empty($_POST['timemm'])) {
+            $timemm = intval($_POST['timemm']);
+        }
+        if (!empty($_POST['timess'])) {
+            $timess = intval($_POST['timess']);
+        }
 
-		//$time = str_replace($time_delim,".",$time);
-		$uo_goal['time'] = TimeToSec($timemm . "." . $timess);
+        //$time = str_replace($time_delim,".",$time);
+        $uo_goal['time'] = TimeToSec($timemm . "." . $timess);
 
-		if ($uo_goal['time'] <= $prevtime) {
-			$html .= "<p class='warning'>" . _("time cannot be the same or earlier than the previous point") . "!</p>\n";
-		}
-	}
+        if ($uo_goal['time'] <= $prevtime) {
+            $html .= "<p class='warning'>" . _("time cannot be the same or earlier than the previous point") . "!</p>\n";
+        }
+    }
 
-	if (strcasecmp($uo_goal['assist'], 'xx') == 0 || strcasecmp($uo_goal['assist'], 'x') == 0)
-		$uo_goal['iscallahan'] = 1;
+    if (strcasecmp($uo_goal['assist'], 'xx') == 0 || strcasecmp($uo_goal['assist'], 'x') == 0) {
+        $uo_goal['iscallahan'] = 1;
+    }
 
-	if (!empty($team) && $team == 'H') {
-		$uo_goal['homescore']++;
-		$uo_goal['ishomegoal'] = 1;
-		if (!$uo_goal['iscallahan']) {
-			$uo_goal['assist'] = GamePlayerFromNumber($gameId, $game_result['hometeam'], $uo_goal['assist']);
-			if ($uo_goal['assist'] == -1) {
-				$html .= "<p class='warning'>" . _("assisting player's number") . " '" . $_POST['pass'] . "' " . _("Not on the roster") . "!</p>\n";
-			}
-		} else {
-			$uo_goal['assist'] = -1;
-		}
-		$uo_goal['scorer'] = GamePlayerFromNumber($gameId, $game_result['hometeam'], $uo_goal['scorer']);
-		if ($uo_goal['scorer'] == -1) {
-			$html .= "<p class='warning'>" . _("scorer's number") . " '" . $_POST['goal'] . "' " . _("Not on the roster") . "!</p>\n";
-		}
-	} elseif (!empty($team) && $team == 'A') {
-		$uo_goal['visitorscore']++;
-		$uo_goal['ishomegoal'] = 0;
-		if (!$uo_goal['iscallahan']) {
-			$uo_goal['assist'] = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $uo_goal['assist']);
-			if ($uo_goal['assist'] == -1) {
-				$html .= "<p class='warning'>" . _("assisting player's number") . " '" . $_POST['pass'] . "' " . _("Not on the roster") . "!</p>\n";
-			}
-		} else
-			$uo_goal['assist'] = -1;
+    if (!empty($team) && $team == 'H') {
+        $uo_goal['homescore']++;
+        $uo_goal['ishomegoal'] = 1;
+        if (!$uo_goal['iscallahan']) {
+            $uo_goal['assist'] = GamePlayerFromNumber($gameId, $game_result['hometeam'], $uo_goal['assist']);
+            if ($uo_goal['assist'] == -1) {
+                $html .= "<p class='warning'>" . _("assisting player's number") . " '" . $_POST['pass'] . "' " . _("Not on the roster") . "!</p>\n";
+            }
+        } else {
+            $uo_goal['assist'] = -1;
+        }
+        $uo_goal['scorer'] = GamePlayerFromNumber($gameId, $game_result['hometeam'], $uo_goal['scorer']);
+        if ($uo_goal['scorer'] == -1) {
+            $html .= "<p class='warning'>" . _("scorer's number") . " '" . $_POST['goal'] . "' " . _("Not on the roster") . "!</p>\n";
+        }
+    } elseif (!empty($team) && $team == 'A') {
+        $uo_goal['visitorscore']++;
+        $uo_goal['ishomegoal'] = 0;
+        if (!$uo_goal['iscallahan']) {
+            $uo_goal['assist'] = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $uo_goal['assist']);
+            if ($uo_goal['assist'] == -1) {
+                $html .= "<p class='warning'>" . _("assisting player's number") . " '" . $_POST['pass'] . "' " . _("Not on the roster") . "!</p>\n";
+            }
+        } else {
+            $uo_goal['assist'] = -1;
+        }
 
-		$uo_goal['scorer'] = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $uo_goal['scorer']);
-		if ($uo_goal['scorer'] == -1) {
-			$html .= "<p class='warning'>" . _("scorer's number") . " '" . $_POST['goal'] . "' " . _("Not on the roster") . "!</p>\n";
-		}
-	}
-	if (($uo_goal['assist'] != -1 || $uo_goal['scorer'] != -1) && $uo_goal['assist'] == $uo_goal['scorer']) {
-		$html .= "<p class='warning'>" . _("Scorer and assist are the same player!") . " '" . $_POST['goal'] . "'!</p>\n";
-	}
-	if (empty($team)) {
-		$html .=  "<p class='warning'>" . _("Select scoring team!") . "</p>\n";
-	}
+        $uo_goal['scorer'] = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $uo_goal['scorer']);
+        if ($uo_goal['scorer'] == -1) {
+            $html .= "<p class='warning'>" . _("scorer's number") . " '" . $_POST['goal'] . "' " . _("Not on the roster") . "!</p>\n";
+        }
+    }
+    if (($uo_goal['assist'] != -1 || $uo_goal['scorer'] != -1) && $uo_goal['assist'] == $uo_goal['scorer']) {
+        $html .= "<p class='warning'>" . _("Scorer and assist are the same player!") . " '" . $_POST['goal'] . "'!</p>\n";
+    }
+    if (empty($team)) {
+        $html .=  "<p class='warning'>" . _("Select scoring team!") . "</p>\n";
+    }
 
-	if (empty($html) || isset($_POST['forceadd'])) {
-		GameAddScoreEntry($uo_goal);
-		$result = GameResult($gameId);
-		//save as result, if result is not already set
-		if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
-			LogGameUpdate($gameId,"result: $home - $away", "Mobile");
-			GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
-		}
-		header("location:?view=mobile/addscoresheet&game=" . $gameId);
-	} else {
-		$errors = true;
-	}
+    if (empty($html) || isset($_POST['forceadd'])) {
+        GameAddScoreEntry($uo_goal);
+        $result = GameResult($gameId);
+        //save as result, if result is not already set
+        if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
+            LogGameUpdate($gameId, "result: $home - $away", "Mobile");
+            GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
+        }
+        header("location:?view=mobile/addscoresheet&game=" . $gameId);
+    } else {
+        $errors = true;
+    }
 } elseif (isset($_POST['save'])) {
-	$home = 0;
-	$away = 0;
-	if (count($scores) > 0) {
-		$lastscore = $scores[count($scores) - 1];
+    $home = 0;
+    $away = 0;
+    if (count($scores) > 0) {
+        $lastscore = $scores[count($scores) - 1];
 
-		$home = $lastscore['homescore'];
-		$away = $lastscore['visitorscore'];
-	}
-	LogGameUpdate($gameId,"result: $home - $away", "Mobile");
-	GameSetResult($gameId, $home, $away);
-	ResolvePoolStandings(GamePool($gameId));
-	PoolResolvePlayed(GamePool($gameId));
-	header("location:?view=mobile/gameplay&game=" . $gameId);
+        $home = $lastscore['homescore'];
+        $away = $lastscore['visitorscore'];
+    }
+    LogGameUpdate($gameId, "result: $home - $away", "Mobile");
+    GameSetResult($gameId, $home, $away);
+    ResolvePoolStandings(GamePool($gameId));
+    PoolResolvePlayed(GamePool($gameId));
+    header("location:?view=mobile/gameplay&game=" . $gameId);
 }
 
 mobilePageTop(_("Score&nbsp;sheet"));
@@ -152,36 +156,36 @@ $html .= "<tr><td>\n";
 
 //last score
 if (count($scores) > 0) {
-	$lastscore = $scores[count($scores) - 1];
-	$html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
-	if (!$hideTimeOnScoresheet) {
-		$html .= " [<i>" . SecToMin($lastscore['time']);
-	} else {
-		$html .= " [<i>";
-	}
-	if (intval($lastscore['iscallahan'])) {
-		$lastpass = "xx";
-	} else {
-		$lastpass = PlayerNumber($lastscore['assist'], $gameId);
-	}
-	$lastgoal = PlayerNumber($lastscore['scorer'], $gameId);
-	if ($lastgoal == -1) {
-		$lastgoal = "";
-	}
-	if ($lastpass == -1) {
-		$lastpass = "";
-	}
-	$html .= " " . $lastpass . " --> " . $lastgoal . "</i>]";
+    $lastscore = $scores[count($scores) - 1];
+    $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
+    if (!$hideTimeOnScoresheet) {
+        $html .= " [<i>" . SecToMin($lastscore['time']);
+    } else {
+        $html .= " [<i>";
+    }
+    if (intval($lastscore['iscallahan'])) {
+        $lastpass = "xx";
+    } else {
+        $lastpass = PlayerNumber($lastscore['assist'], $gameId);
+    }
+    $lastgoal = PlayerNumber($lastscore['scorer'], $gameId);
+    if ($lastgoal == -1) {
+        $lastgoal = "";
+    }
+    if ($lastpass == -1) {
+        $lastpass = "";
+    }
+    $html .= " " . $lastpass . " --> " . $lastgoal . "</i>]";
 } else {
-	$html .= _("Score") . ": 0 - 0";
+    $html .= _("Score") . ": 0 - 0";
 }
 
 $vgoal = "";
 $hgoal = "";
 if ($team == 'H') {
-	$hgoal = "checked='checked'";
+    $hgoal = "checked='checked'";
 } elseif ($team == 'A') {
-	$vgoal = "checked='checked'";
+    $vgoal = "checked='checked'";
 }
 
 $html .= "</td></tr><tr><td>\n";
@@ -192,35 +196,35 @@ $html .= "<input class='input' id='pass' name='pass' maxlength='3' size='3' valu
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='input' id='goal' name='goal' maxlength='3' size='3' value='" . utf8entities($goal) . "'/> " . _("Goal");
 if (!$hideTimeOnScoresheet) {
-	$html .= "</td></tr><tr><td>\n";
-	$html .= "<input class='input' id='timemm' name='timemm' maxlength='3' size='3' value='" . utf8entities($timemm) . "'/>:";
-	$html .= "<input class='input' id='timess' name='timess' maxlength='2' size='2' value='" . utf8entities($timess) . "'/> " . _("Time") . " " . _("min") . ":" . _("sec");
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<input class='input' id='timemm' name='timemm' maxlength='3' size='3' value='" . utf8entities($timemm) . "'/>:";
+    $html .= "<input class='input' id='timess' name='timess' maxlength='2' size='2' value='" . utf8entities($timess) . "'/> " . _("Time") . " " . _("min") . ":" . _("sec");
 }
 $html .= "</td></tr><tr><td>\n";
 if (!$errors) {
-	$html .= "<input class='button' type='submit' name='add' value='" . _("Save goal") . "'/>";
-	$html .= "</td></tr><tr><td>\n";
-	if (!$hideTimeOnScoresheet) {
-		$html .=  "<a href='?view=mobile/addtimeouts&amp;game=" . $gameId . "'>" . _("Timeouts") . "</a> | ";
-		if (intval($seasoninfo['spiritmode']) > 0) {
-			$html .=  "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit stoppages") . "</a> | ";
-		}
-		$html .=  "<a href='?view=mobile/addhalftime&amp;game=" . $gameId . "'>" . _("Halftime") . "</a>";
-		$html .= "</td></tr><tr><td>\n";
-	}
-	$html .=  "<a href='?view=mobile/addfirstoffence&amp;game=" . $gameId . "'>" . _("First offence") . "</a> | ";
-	$html .=  "<a href='?view=mobile/addofficial&amp;game=" . $gameId . "'>" . _("Game official") . "</a>";
-	$html .= " | <a href='?view=mobile/addcomment&amp;game=" . $gameId . "'>" . _("Game note") . "</a>";
-	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=mobile/deletescore&amp;game=" . $gameId . "'>" . _("Delete the last goal") . "</a>";
-	$html .= "</td></tr><tr><td>\n";
-	$html .= "<input class='button' type='submit' name='save' value='" . _("Save as result") . "'/>";
+    $html .= "<input class='button' type='submit' name='add' value='" . _("Save goal") . "'/>";
+    $html .= "</td></tr><tr><td>\n";
+    if (!$hideTimeOnScoresheet) {
+        $html .=  "<a href='?view=mobile/addtimeouts&amp;game=" . $gameId . "'>" . _("Timeouts") . "</a> | ";
+        if (intval($seasoninfo['spiritmode']) > 0) {
+            $html .=  "<a href='?view=mobile/addspirittimeouts&amp;game=" . $gameId . "'>" . _("Spirit stoppages") . "</a> | ";
+        }
+        $html .=  "<a href='?view=mobile/addhalftime&amp;game=" . $gameId . "'>" . _("Halftime") . "</a>";
+        $html .= "</td></tr><tr><td>\n";
+    }
+    $html .=  "<a href='?view=mobile/addfirstoffence&amp;game=" . $gameId . "'>" . _("First offence") . "</a> | ";
+    $html .=  "<a href='?view=mobile/addofficial&amp;game=" . $gameId . "'>" . _("Game official") . "</a>";
+    $html .= " | <a href='?view=mobile/addcomment&amp;game=" . $gameId . "'>" . _("Game note") . "</a>";
+    $html .= "</td></tr><tr><td>\n";
+    $html .=  "<a href='?view=mobile/deletescore&amp;game=" . $gameId . "'>" . _("Delete the last goal") . "</a>";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<input class='button' type='submit' name='save' value='" . _("Save as result") . "'/>";
 } else {
-	$html .= _("Correct the errors or save goal with errors");
-	$html .= "</td></tr><tr><td>\n";
-	$html .= "<input class='button' type='submit' name='forceadd' value='" . _("Save goal") . "'/>";
-	$html .= "</td></tr><tr><td>\n";
-	$html .= "<input class='button' type='submit' name='cancel' value='" . _("Cancel") . "'/>";
+    $html .= _("Correct the errors or save goal with errors");
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<input class='button' type='submit' name='forceadd' value='" . _("Save goal") . "'/>";
+    $html .= "</td></tr><tr><td>\n";
+    $html .= "<input class='button' type='submit' name='cancel' value='" . _("Cancel") . "'/>";
 }
 $html .= "</td></tr><tr><td>\n";
 $html .= "<a href='?view=mobile/respgames'>" . _("Back to game responsibilities") . "</a>";

@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
@@ -14,152 +15,154 @@ $html = "";
 $playerId = 0;
 
 if (isset($_GET["player"])) {
-	$playerId = intval($_GET["player"]);
+    $playerId = intval($_GET["player"]);
 } elseif (isset($_GET["profile"])) {
-	$playerId = PlayerLatestId(intval($_GET["profile"]));
+    $playerId = PlayerLatestId(intval($_GET["profile"]));
 }
 
 if (empty($playerId)) {
-	showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
-	return;
+    showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
+    return;
 }
 
 $player = PlayerInfo($playerId);
 
 if (empty($player['player_id'])) {
-	showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
-	return;
+    showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
+    return;
 }
 
 if (empty($player['profile_id'])) {
-	CreatePlayerProfile($playerId);
-	$player = PlayerInfo($playerId);
+    CreatePlayerProfile($playerId);
+    $player = PlayerInfo($playerId);
 }
 
 //$accId = 0;
 if (!hasEditPlayerProfileRight($playerId)) {
-	die('Insufficient rights to edit player profile');
+    die('Insufficient rights to edit player profile');
 }
 
 
-if (isset($_SERVER['HTTP_REFERER']))
-	$backurl = utf8entities($_SERVER['HTTP_REFERER']);
-else
-	$backurl = "?view=user/teamplayers&team=" . $player['team'];
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $backurl = utf8entities($_SERVER['HTTP_REFERER']);
+} else {
+    $backurl = "?view=user/teamplayers&team=" . $player['team'];
+}
 
 $title = _("Player information") . ": " . utf8entities($player['firstname'] . " " . $player['lastname']);
 
 //player profile
-$pp = array(
-	"profile_id" => $player['profile_id'],
-	"accreditation_id" => "",
-	"num" => $player['num'],
-	"firstname" => $player['firstname'],
-	"lastname" => $player['lastname'],
-	"nickname" => "",
-	"gender" => "",
-	"email" => "",
-	"national_id" => "",
-	"info" => "",
-	"birthdate" => "",
-	"birthplace" => "",
-	"nationality" => "",
-	"throwing_hand" => "",
-	"height" => "",
-	"weight" => "",
-	"position" => "",
-	"story" => "",
-	"achievements" => "",
-	"profile_image" => "",
-	"public" => ""
-);
+$pp = [
+    "profile_id" => $player['profile_id'],
+    "accreditation_id" => "",
+    "num" => $player['num'],
+    "firstname" => $player['firstname'],
+    "lastname" => $player['lastname'],
+    "nickname" => "",
+    "gender" => "",
+    "email" => "",
+    "national_id" => "",
+    "info" => "",
+    "birthdate" => "",
+    "birthplace" => "",
+    "nationality" => "",
+    "throwing_hand" => "",
+    "height" => "",
+    "weight" => "",
+    "position" => "",
+    "story" => "",
+    "achievements" => "",
+    "profile_image" => "",
+    "public" => "",
+];
 
 if (isset($_POST['save'])) {
-	$backurl = utf8entities($_POST['backurl']);
+    $backurl = utf8entities($_POST['backurl']);
 
-	if (isset($_POST['accreditationId'])) {
-		$pp['accreditation_id'] = $_POST['accreditationId'];
-	} else {
-		$pp['accreditation_id'] = "";
-	}
-	$pp['nickname'] = $_POST['nickname'];
-	$pp['firstname'] = $_POST['firstname'];
-	$pp['lastname'] = $_POST['lastname'];
-	$pp['num'] = $_POST['num'];
-	$pp['email'] = $_POST['email'];
-	$pp['gender'] = $_POST['gender'];
-	$pp['info'] = $_POST['info'];
-	$pp['national_id'] = $_POST['national_id'];
+    if (isset($_POST['accreditationId'])) {
+        $pp['accreditation_id'] = $_POST['accreditationId'];
+    } else {
+        $pp['accreditation_id'] = "";
+    }
+    $pp['nickname'] = $_POST['nickname'];
+    $pp['firstname'] = $_POST['firstname'];
+    $pp['lastname'] = $_POST['lastname'];
+    $pp['num'] = $_POST['num'];
+    $pp['email'] = $_POST['email'];
+    $pp['gender'] = $_POST['gender'];
+    $pp['info'] = $_POST['info'];
+    $pp['national_id'] = $_POST['national_id'];
 
-	$pp['birthdate'] = ToInternalTimeFormat($_POST['birthdate']);
-	$pp['birthplace'] = $_POST['birthplace'];
-	$pp['nationality'] = $_POST['nationality'];
-	$pp['throwing_hand'] = $_POST['throwing_hand'];
-	$pp['height'] = $_POST['height'];
-	$pp['weight'] = $_POST['weight'];
-	$pp['position'] = $_POST['position'];
-	$pp['story'] = $_POST['story'];
-	$pp['achievements'] = $_POST['achievements'];
-	$pp['public'] = "";
-	if (!empty($_POST["public"])) {
-		foreach ($_POST["public"] as $column) {
-			if (strlen($pp['public']) > 0) {
-				$pp['public'] .= "|";
-			}
-			$pp['public'] .= $column;
-		}
-	}
+    $pp['birthdate'] = ToInternalTimeFormat($_POST['birthdate']);
+    $pp['birthplace'] = $_POST['birthplace'];
+    $pp['nationality'] = $_POST['nationality'];
+    $pp['throwing_hand'] = $_POST['throwing_hand'];
+    $pp['height'] = $_POST['height'];
+    $pp['weight'] = $_POST['weight'];
+    $pp['position'] = $_POST['position'];
+    $pp['story'] = $_POST['story'];
+    $pp['achievements'] = $_POST['achievements'];
+    $pp['public'] = "";
+    if (!empty($_POST["public"])) {
+        foreach ($_POST["public"] as $column) {
+            if (strlen($pp['public']) > 0) {
+                $pp['public'] .= "|";
+            }
+            $pp['public'] .= $column;
+        }
+    }
 
-	SetPlayerProfile($player['team'], $playerId, $pp);
+    SetPlayerProfile($player['team'], $playerId, $pp);
 
-	for ($i = 0; $i < $max_new_links; $i++) {
+    for ($i = 0; $i < $max_new_links; $i++) {
 
-		if (!empty($_POST["url$i"])) {
-			$name = "";
-			if (!empty($_POST["urlname$i"])) {
-				$name = $_POST["urlname$i"];
-			}
-			AddPlayerProfileUrl($playerId, $_POST["urltype$i"], $_POST["url$i"], $name);
-		}
-	}
+        if (!empty($_POST["url$i"])) {
+            $name = "";
+            if (!empty($_POST["urlname$i"])) {
+                $name = $_POST["urlname$i"];
+            }
+            AddPlayerProfileUrl($playerId, $_POST["urltype$i"], $_POST["url$i"], $name);
+        }
+    }
 
-	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
-		$html .= UploadPlayerImage($playerId);
-	}
+    if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
+        $html .= UploadPlayerImage($playerId);
+    }
 } elseif (isset($_POST['remove'])) {
-	RemovePlayerProfileImage($playerId);
+    RemovePlayerProfileImage($playerId);
 } elseif (isset($_POST['removeurl_x'])) {
-	$id = $_POST['hiddenDeleteId'];
-	RemovePlayerProfileUrl($playerId, $id);
+    $id = $_POST['hiddenDeleteId'];
+    RemovePlayerProfileUrl($playerId, $id);
 }
 
 $player = PlayerInfo($playerId);
 $profile = PlayerProfile($player['profile_id']);
 
 if ($profile) {
-	$pp['profile_id'] = $player['profile_id'];
-	$pp['accreditation_id'] = $profile['accreditation_id'];
-	$pp['firstname'] = !empty($profile['firstname']) ? $profile['firstname'] : $player['firstname'];
-	$pp['lastname'] = !empty($profile['lastname']) ? $profile['lastname'] : $player['lastname'];
-	$pp['nickname'] = $profile['nickname'];
-	$pp['num'] = $player['num'];
-	$pp['email'] = $player['email'];
-	$pp['gender'] = $profile['gender'];
-	$pp['info'] = $profile['info'];
-	$pp['national_id'] = $profile['national_id'];
-	$pp['birthdate'] = $profile['birthdate'];
-	if (isEmptyDate($pp['birthdate']))
-		$pp['birthdate'] = "";
-	$pp['birthplace'] = $profile['birthplace'];
-	$pp['nationality'] = $profile['nationality'];
-	$pp['throwing_hand'] = $profile['throwing_hand'];
-	$pp['height'] = intval($profile['height']);
-	$pp['weight'] = intval($profile['weight']);
-	$pp['position'] = $profile['position'];
-	$pp['story'] = $profile['story'];
-	$pp['achievements'] = $profile['achievements'];
-	$pp['profile_image'] = $profile['profile_image'];
-	$pp['public'] = $profile['public'];
+    $pp['profile_id'] = $player['profile_id'];
+    $pp['accreditation_id'] = $profile['accreditation_id'];
+    $pp['firstname'] = !empty($profile['firstname']) ? $profile['firstname'] : $player['firstname'];
+    $pp['lastname'] = !empty($profile['lastname']) ? $profile['lastname'] : $player['lastname'];
+    $pp['nickname'] = $profile['nickname'];
+    $pp['num'] = $player['num'];
+    $pp['email'] = $player['email'];
+    $pp['gender'] = $profile['gender'];
+    $pp['info'] = $profile['info'];
+    $pp['national_id'] = $profile['national_id'];
+    $pp['birthdate'] = $profile['birthdate'];
+    if (isEmptyDate($pp['birthdate'])) {
+        $pp['birthdate'] = "";
+    }
+    $pp['birthplace'] = $profile['birthplace'];
+    $pp['nationality'] = $profile['nationality'];
+    $pp['throwing_hand'] = $profile['throwing_hand'];
+    $pp['height'] = intval($profile['height']);
+    $pp['weight'] = intval($profile['weight']);
+    $pp['position'] = $profile['position'];
+    $pp['story'] = $profile['story'];
+    $pp['achievements'] = $profile['achievements'];
+    $pp['profile_image'] = $profile['profile_image'];
+    $pp['public'] = $profile['public'];
 }
 
 $publicfields = explode("|", $profile['public']);
@@ -180,36 +183,36 @@ $html .= "<table>";
 $html .= "<tr><td colspan='2'>" . _("Player details") . "</td><td class='center'>" . _("Show in public profile") . "</td></tr>";
 
 if (CUSTOMIZATIONS == "slkl") {
-	$row = LicenseData($pp['accreditation_id']);
-	$html .= "<tr><td class='infocell'>" . _("License ID") . ":</td>";
+    $row = LicenseData($pp['accreditation_id']);
+    $html .= "<tr><td class='infocell'>" . _("License ID") . ":</td>";
 
-	if (isSuperAdmin()) {
-		$html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
-	} else {
-		$html .= "<td>" . $pp['accreditation_id'] . "";
-		$html .= "<input class='input' hidden='hidden' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
-	}
-	$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
+    if (isSuperAdmin()) {
+        $html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
+    } else {
+        $html .= "<td>" . $pp['accreditation_id'] . "";
+        $html .= "<input class='input' hidden='hidden' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
+    }
+    $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
 
-	$html .= "<tr><td class='infocell'>" . _("License") . ":</td>";
-	if (!empty($row['external_validity'])) {
-		$html .= "<td>" . U_($row['external_validity']) . "</td>";
-	} elseif (!empty($row['membership'])) {
-		$html .= "<td>" . $row['license'] . "</td>";
-	} else {
-		$html .= "<td>-</td>";
-	}
-	$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
+    $html .= "<tr><td class='infocell'>" . _("License") . ":</td>";
+    if (!empty($row['external_validity'])) {
+        $html .= "<td>" . U_($row['external_validity']) . "</td>";
+    } elseif (!empty($row['membership'])) {
+        $html .= "<td>" . $row['license'] . "</td>";
+    } else {
+        $html .= "<td>-</td>";
+    }
+    $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
 
-	$html .= "<tr><td class='infocell'>" . _("Membership") . ":</td>";
-	if (!empty($row['external_type'])) {
-		$html .= "<td>" . U_($row['external_type']) . "</td>";
-	} elseif (!empty($row['membership'])) {
-		$html .= "<td>" . $row['membership'] . "</td>";
-	} else {
-		$html .= "<td>-</td>";
-	}
-	$html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
+    $html .= "<tr><td class='infocell'>" . _("Membership") . ":</td>";
+    if (!empty($row['external_type'])) {
+        $html .= "<td>" . U_($row['external_type']) . "</td>";
+    } elseif (!empty($row['membership'])) {
+        $html .= "<td>" . $row['membership'] . "</td>";
+    } else {
+        $html .= "<td>-</td>";
+    }
+    $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value=''/></td></tr>\n";
 }
 
 $html .= "<tr><td class='infocell'>" . _("Jersey number") . ":</td>";
@@ -246,19 +249,19 @@ $html .= "<td><select class='dropdown' name='gender'>";
 
 $html .= "<option class='dropdown' value=''></option>";
 if ($pp['gender'] != "F") {
-	$html .= "<option class='dropdown' selected='selected' value='F'>" . _("Female") . "</option>";
+    $html .= "<option class='dropdown' selected='selected' value='F'>" . _("Female") . "</option>";
 } else {
-	$html .= "<option class='dropdown' value='F'>" . _("Female") . "</option>";
+    $html .= "<option class='dropdown' value='F'>" . _("Female") . "</option>";
 }
 if ($pp['gender'] == "M") {
-	$html .= "<option class='dropdown' selected='selected' value='M'>" . _("Male") . "</option>";
+    $html .= "<option class='dropdown' selected='selected' value='M'>" . _("Male") . "</option>";
 } else {
-	$html .= "<option class='dropdown' value='M'>" . _("Male") . "</option>";
+    $html .= "<option class='dropdown' value='M'>" . _("Male") . "</option>";
 }
 if ($pp['gender'] == "O") {
-	$html .= "<option class='dropdown' selected='selected' value='O'>" . _("Other") . "</option>";
+    $html .= "<option class='dropdown' selected='selected' value='O'>" . _("Other") . "</option>";
 } else {
-	$html .= "<option class='dropdown' value='o'>" . _("Other") . "</option>";
+    $html .= "<option class='dropdown' value='o'>" . _("Other") . "</option>";
 }
 
 
@@ -279,7 +282,7 @@ $html .= privacyselection("nationality", $publicfields);
 
 $html .= "<tr><td class='infocell'>" . _("Hand") . ":</td>";
 $html .= "<td><select class='dropdown' name='throwing_hand'>\n";
-$types = array("", "right", "left", "both");
+$types = ["", "right", "left", "both"];
 
 /* for gettext */
 _("left");
@@ -287,10 +290,11 @@ _("right");
 _("both");
 
 foreach ($types as $type) {
-	if ($pp['throwing_hand'] == $type)
-		$html .= "<option class='dropdown' selected='selected' value='$type'>" . U_($type) . "</option>\n";
-	else
-		$html .= "<option class='dropdown' value='$type'>" . U_($type) . "</option>\n";
+    if ($pp['throwing_hand'] == $type) {
+        $html .= "<option class='dropdown' selected='selected' value='$type'>" . U_($type) . "</option>\n";
+    } else {
+        $html .= "<option class='dropdown' value='$type'>" . U_($type) . "</option>\n";
+    }
 }
 
 $html .= "</select></td>";
@@ -324,24 +328,24 @@ $html .= "<table border='0'>";
 $urls = GetUrlList("player", $player['profile_id']);
 
 foreach ($urls as $url) {
-	$html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
-	$html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
-	if (!empty($url['name'])) {
-		$html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a> (" . $url['url'] . ")";
-	} else {
-		$html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
-	}
+    $html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
+    $html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+    if (!empty($url['name'])) {
+        $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a> (" . $url['url'] . ")";
+    } else {
+        $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+    }
 
-	$html .= "</td>";
-	$html .= "<td class='right'><input class='deletebutton' type='image' src='images/remove.png' name='removeurl' value='X' alt='X' onclick='setId(" . $url['url_id'] . ");'/></td>";
-	$html .= "</tr>";
+    $html .= "</td>";
+    $html .= "<td class='right'><input class='deletebutton' type='image' src='images/remove.png' name='removeurl' value='X' alt='X' onclick='setId(" . $url['url_id'] . ");'/></td>";
+    $html .= "</tr>";
 }
 
 //empty line
 if (count($urls)) {
-	$html .= "<tr>";
-	$html .= "<td colspan='3'>&nbsp;</td>";
-	$html .= "</tr>";
+    $html .= "<tr>";
+    $html .= "<td colspan='3'>&nbsp;</td>";
+    $html .= "</tr>";
 }
 
 $html .= "<tr>";
@@ -352,15 +356,15 @@ $html .= "</tr>";
 
 $urltypes = GetUrlTypes();
 for ($i = 0; $i < $max_new_links; $i++) {
-	$html .= "<tr>";
-	$html .= "<td><select class='dropdown' name='urltype$i'>\n";
-	foreach ($urltypes as $type) {
-		$html .= "<option value='" . utf8entities($type['type']) . "'>" . utf8entities($type['name']) . "</option>\n";
-	}
-	$html .= "</select></td>";
-	$html .= "<td><input class='input' maxlength='500' size='40' name='url$i' value=''/></td>";
-	$html .= "<td><input class='input' maxlength='500' size='40' name='urlname$i' value=''/></td>";
-	$html .= "</tr>";
+    $html .= "<tr>";
+    $html .= "<td><select class='dropdown' name='urltype$i'>\n";
+    foreach ($urltypes as $type) {
+        $html .= "<option value='" . utf8entities($type['type']) . "'>" . utf8entities($type['name']) . "</option>\n";
+    }
+    $html .= "</select></td>";
+    $html .= "<td><input class='input' maxlength='500' size='40' name='url$i' value=''/></td>";
+    $html .= "<td><input class='input' maxlength='500' size='40' name='urlname$i' value=''/></td>";
+    $html .= "</tr>";
 }
 
 $html .= "</table>";
@@ -369,15 +373,15 @@ $html .= "</td></tr>\n";
 
 $html .= "<tr><td class='infocell' style='vertical-align:top'>" . _("Current image") . ":</td>";
 if (!empty($pp['profile_image'])) {
-	$html .= "<td><a href='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/" . utf8entities($pp['profile_image']) . "'>";
-	$html .= "<img src='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/thumbs/" . utf8entities($pp['profile_image']) . "' alt='" . _("Profile image") . "'/></a></td>";
-	$html .= privacyselection("profile_image", $publicfields);
+    $html .= "<td><a href='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/" . utf8entities($pp['profile_image']) . "'>";
+    $html .= "<img src='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/thumbs/" . utf8entities($pp['profile_image']) . "' alt='" . _("Profile image") . "'/></a></td>";
+    $html .= privacyselection("profile_image", $publicfields);
 
-	$html .= "<tr><td></td><td class='infocell'></td>";
-	$html .= "<td><input class='button' type='submit' name='remove' value='" . _("Delete image") . "' /></td></tr>\n";
+    $html .= "<tr><td></td><td class='infocell'></td>";
+    $html .= "<td><input class='button' type='submit' name='remove' value='" . _("Delete image") . "' /></td></tr>\n";
 } else {
-	$html .= "<td>" . _("No image") . "</td>\n";
-	$html .= "<td class='center'><input type='checkbox' hidden='hidden' name='public[]' checked='checked' value='profile_image'/></td></tr>\n";
+    $html .= "<td>" . _("No image") . "</td>\n";
+    $html .= "<td class='center'><input type='checkbox' hidden='hidden' name='public[]' checked='checked' value='profile_image'/></td></tr>\n";
 }
 $html .= "<tr><td class='infocell'>" . _("New image") . ":</td>";
 $html .= "<td colspan='2'><input class='input' type='file' size='50' name='picture'/></td></tr>\n";
@@ -399,9 +403,9 @@ pageEnd();
 
 function privacyselection($fieldname, $flags)
 {
-	if (in_array($fieldname, $flags)) {
-		return "<td class='center'><input type='checkbox' name='public[]' checked='checked' value='$fieldname'/></td></tr>\n";
-	} else {
-		return "<td class='center'><input type='checkbox' name='public[]' value='$fieldname'/></td></tr>\n";
-	}
+    if (in_array($fieldname, $flags)) {
+        return "<td class='center'><input type='checkbox' name='public[]' checked='checked' value='$fieldname'/></td></tr>\n";
+    } else {
+        return "<td class='center'><input type='checkbox' name='public[]' value='$fieldname'/></td></tr>\n";
+    }
 }

@@ -19,7 +19,7 @@ description = "Automatically creates field responsibility users and add responsi
 <?php
 ob_end_clean();
 if (!isSuperAdmin()) {
-	die('Insufficient user rights');
+    die('Insufficient user rights');
 }
 
 include_once 'lib/season.functions.php';
@@ -34,43 +34,43 @@ $season = "";
 
 
 if (!empty($_POST['create'])) {
-	$season = $_POST['season'];
-	$maxfields = 0;
-	$fields = ReservationFields($season);
-	while ($field = mysqli_fetch_assoc($fields)) {
-		if (is_numeric($field['fieldname'])) {
-			$name = "field" . intval($field['fieldname']);
-		} else {
-			$name = $field['fieldname'];
-		}
-		$user = DBQueryToValue("SELECT COUNT(*) FROM uo_users WHERE userid='$name'");
-		if ($user < 1) {
-			$passwordHash = hashUserPassword($name);
-			DBQuery(sprintf(
-				"INSERT INTO uo_users(name, userid, password, email) VALUES ('%s', '%s', '%s', '')",
-				DBEscapeString($name),
-				DBEscapeString($name),
-				DBEscapeString($passwordHash)
-			));
-			DBQuery(sprintf(
-				"INSERT INTO uo_userproperties(userid, name, value) VALUES ('%s', 'poolselector', 'currentseason')",
-				DBEscapeString($name)
-			));
-			DBQuery(sprintf(
-				"INSERT INTO uo_userproperties(userid, name, value) VALUES ('%s', 'editseason', '%s')",
-				DBEscapeString($name),
-				DBEscapeString($season)
-			));
-		}
+    $season = $_POST['season'];
+    $maxfields = 0;
+    $fields = ReservationFields($season);
+    while ($field = mysqli_fetch_assoc($fields)) {
+        if (is_numeric($field['fieldname'])) {
+            $name = "field" . intval($field['fieldname']);
+        } else {
+            $name = $field['fieldname'];
+        }
+        $user = DBQueryToValue("SELECT COUNT(*) FROM uo_users WHERE userid='$name'");
+        if ($user < 1) {
+            $passwordHash = hashUserPassword($name);
+            DBQuery(sprintf(
+                "INSERT INTO uo_users(name, userid, password, email) VALUES ('%s', '%s', '%s', '')",
+                DBEscapeString($name),
+                DBEscapeString($name),
+                DBEscapeString($passwordHash),
+            ));
+            DBQuery(sprintf(
+                "INSERT INTO uo_userproperties(userid, name, value) VALUES ('%s', 'poolselector', 'currentseason')",
+                DBEscapeString($name),
+            ));
+            DBQuery(sprintf(
+                "INSERT INTO uo_userproperties(userid, name, value) VALUES ('%s', 'editseason', '%s')",
+                DBEscapeString($name),
+                DBEscapeString($season),
+            ));
+        }
 
-		$games = ReservationGamesByField($field['fieldname'], $season);
-		while ($game = mysqli_fetch_assoc($games)) {
-			$exist = DBQueryToValue("SELECT COUNT(*) FROM uo_userproperties WHERE userid='$name' AND value='gameadmin:" . $game['game_id'] . "'");
-			if ($user < 1) {
-				DBQuery("INSERT INTO uo_userproperties(userid, name, value) VALUES ('$name', 'userrole', 'gameadmin:" . $game['game_id'] . "')");
-			}
-		}
-	}
+        $games = ReservationGamesByField($field['fieldname'], $season);
+        while ($game = mysqli_fetch_assoc($games)) {
+            $exist = DBQueryToValue("SELECT COUNT(*) FROM uo_userproperties WHERE userid='$name' AND value='gameadmin:" . $game['game_id'] . "'");
+            if ($user < 1) {
+                DBQuery("INSERT INTO uo_userproperties(userid, name, value) VALUES ('$name', 'userrole', 'gameadmin:" . $game['game_id'] . "')");
+            }
+        }
+    }
 }
 
 //season selection
@@ -81,7 +81,7 @@ $html .= "<p>" . ("Create field specific user accounts on select event") . ": <s
 $seasons = Seasons();
 
 foreach ($seasons as $row) {
-	$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+    $html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 }
 
 $html .= "</select></p>\n";

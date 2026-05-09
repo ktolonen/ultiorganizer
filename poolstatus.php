@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('poolstatus');
 
@@ -16,893 +17,896 @@ $html = "";
 $comment = "";
 
 if (iget("season")) {
-  $seasoninfo = SeasonInfo(iget("season"));
-  if (!$seasoninfo) {
-    $title = _("Standings");
-    $html .= "<h1>" . _("Event not found") . "</h1>";
-    showPage($title, $html);
-    return;
-  }
-  $pools = SeasonPools($seasoninfo['season_id'], true, true);
-  $title .= U_($seasoninfo['name']);
-  $comment = CommentHTML(1, $seasoninfo['season_id']);
-  $seriesScoreboard = true;
-} else if (iget("series")) {
-  $seriesinfo = SeriesInfo(iget("series"));
-  if (!$seriesinfo) {
-    $title = _("Standings");
-    $html .= "<h1>" . _("Division not found") . "</h1>";
-    showPage($title, $html);
-    return;
-  }
-  $pools = SeriesPools($seriesinfo['series_id'], true);
-  $title .= U_($seriesinfo['name']);
-  $comment = CommentHTML(2, $seriesinfo['series_id']);
-  $seriesScoreboard = true;
-  $seasoninfo = SeasonInfo($seriesinfo['season']);
-} else if (iget("pool")) {
+    $seasoninfo = SeasonInfo(iget("season"));
+    if (!$seasoninfo) {
+        $title = _("Standings");
+        $html .= "<h1>" . _("Event not found") . "</h1>";
+        showPage($title, $html);
+        return;
+    }
+    $pools = SeasonPools($seasoninfo['season_id'], true, true);
+    $title .= U_($seasoninfo['name']);
+    $comment = CommentHTML(1, $seasoninfo['season_id']);
+    $seriesScoreboard = true;
+} elseif (iget("series")) {
+    $seriesinfo = SeriesInfo(iget("series"));
+    if (!$seriesinfo) {
+        $title = _("Standings");
+        $html .= "<h1>" . _("Division not found") . "</h1>";
+        showPage($title, $html);
+        return;
+    }
+    $pools = SeriesPools($seriesinfo['series_id'], true);
+    $title .= U_($seriesinfo['name']);
+    $comment = CommentHTML(2, $seriesinfo['series_id']);
+    $seriesScoreboard = true;
+    $seasoninfo = SeasonInfo($seriesinfo['season']);
+} elseif (iget("pool")) {
 
-  $poolinfo = PoolInfo(iget("pool"));
-  if (!$poolinfo) {
-    $title = _("Standings");
-    $html .= "<h1>" . _("Pool not found") . "</h1>";
-    showPage($title, $html);
-    return;
-  }
-  $games = PoolGames($poolinfo['pool_id']);
-
-
-  //if pool has only one game, show game's schoresheet if exist
-  if (count($games) == 1 && $poolinfo['type'] == 1) {
-    $game = $games[0];
-    header("location:?view=gameplay&game=" . $game['game_id']);
-    exit();
-  }
-  $pools[] = array(
-    "pool_id" => $poolinfo['pool_id'],
-    "name" => $poolinfo['name']
-  );
+    $poolinfo = PoolInfo(iget("pool"));
+    if (!$poolinfo) {
+        $title = _("Standings");
+        $html .= "<h1>" . _("Pool not found") . "</h1>";
+        showPage($title, $html);
+        return;
+    }
+    $games = PoolGames($poolinfo['pool_id']);
 
 
-  $seasoninfo = SeasonInfo($poolinfo['season']);
-  $title .= utf8entities(U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']));
+    //if pool has only one game, show game's schoresheet if exist
+    if (count($games) == 1 && $poolinfo['type'] == 1) {
+        $game = $games[0];
+        header("location:?view=gameplay&game=" . $game['game_id']);
+        exit();
+    }
+    $pools[] = [
+        "pool_id" => $poolinfo['pool_id'],
+        "name" => $poolinfo['name'],
+    ];
+
+
+    $seasoninfo = SeasonInfo($poolinfo['season']);
+    $title .= utf8entities(U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']));
 }
 if (iget("print")) {
-  $print = intval(iget("print"));
-  $format = "paper";
+    $print = intval(iget("print"));
+    $format = "paper";
 }
 
 $html .= $comment;
 
 $prevseries = 0;
 if (!empty($pools) && is_array($pools)) {
-  foreach ($pools as $pool) {
+    foreach ($pools as $pool) {
 
-    $poolinfo = PoolInfo($pool['pool_id']);
+        $poolinfo = PoolInfo($pool['pool_id']);
 
-    if ($prevseries && $prevseries != $poolinfo['series']) {
-      $html .= scoreboard($prevseries, true);
-      if (ShowDefenseStats()) {
-        $html .= defenseboard($prevseries, true);
-      }
+        if ($prevseries && $prevseries != $poolinfo['series']) {
+            $html .= scoreboard($prevseries, true);
+            if (ShowDefenseStats()) {
+                $html .= defenseboard($prevseries, true);
+            }
+        }
+        $prevseries = $poolinfo['series'];
+        $seriesName = U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']);
+
+        $html .= "<h2>" . utf8entities($seriesName) . "</h2>";
+
+        $html .= CommentHTML(3, $pool['pool_id']);
+
+        if ($poolinfo['type'] == 1) {
+            // round robin
+            $html .= printRoundRobinPool($seasoninfo, $poolinfo);
+        } elseif ($poolinfo['type'] == 2) {
+            // playoff
+            $html .= printPlayoffTree($seasoninfo, $poolinfo);
+        } elseif ($poolinfo['type'] == 3) {
+            // Swissdraw
+            $html .= printSwissdraw($seasoninfo, $poolinfo);
+        } elseif ($poolinfo['type'] == 4) {
+            // Cross matches
+            $html .= printCrossmatchPool($seasoninfo, $poolinfo);
+        }
+
+        if (!$seriesScoreboard && !$print) {
+            $html .= scoreboard($pool['pool_id'], false);
+            if (ShowDefenseStats()) {
+                $html .= defenseboard($pool['pool_id'], false);
+            }
+        }
     }
-    $prevseries = $poolinfo['series'];
-    $seriesName = U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']);
-
-    $html .= "<h2>" . utf8entities($seriesName) . "</h2>";
-
-    $html .= CommentHTML(3, $pool['pool_id']);
-
-    if ($poolinfo['type'] == 1) {
-      // round robin
-      $html .= printRoundRobinPool($seasoninfo, $poolinfo);
-    } elseif ($poolinfo['type'] == 2) {
-      // playoff
-      $html .= printPlayoffTree($seasoninfo, $poolinfo);
-    } elseif ($poolinfo['type'] == 3) {
-      // Swissdraw
-      $html .= printSwissdraw($seasoninfo, $poolinfo);
-    } elseif ($poolinfo['type'] == 4) {
-      // Cross matches
-      $html .= printCrossmatchPool($seasoninfo, $poolinfo);
-    }
-
-    if (!$seriesScoreboard && !$print) {
-      $html .= scoreboard($pool['pool_id'], false);
-      if (ShowDefenseStats()) {
-        $html .= defenseboard($pool['pool_id'], false);
-      }
-    }
-  }
 }
 if ($seriesScoreboard && !$print && $prevseries) {
-  $html .= scoreboard($prevseries, true);
+    $html .= scoreboard($prevseries, true);
 }
 
 $querystring = $_SERVER['QUERY_STRING'];
 $querystring = preg_replace('/(&|^)print=[^&]*/i', '', $querystring);
 $querystring = ltrim($querystring, '&');
 if ($print) {
-  $html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "'>" . _("Return") . "</a></div>";
+    $html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "'>" . _("Return") . "</a></div>";
 } else {
-  $html .= "<hr/>";
-  $html .= "<div style='text-align:right'><a href='?" . utf8entities($querystring) . "&amp;print=1'>" . _("Printable version") . "</a></div>";
+    $html .= "<hr/>";
+    $html .= "<div style='text-align:right'><a href='?" . utf8entities($querystring) . "&amp;print=1'>" . _("Printable version") . "</a></div>";
 }
 
 if ($print) {
-  showPrintablePage($title, $html);
+    showPrintablePage($title, $html);
 } else {
-  showPage($title, $html);
+    showPage($title, $html);
 }
 
 function scoreboard($id, $seriesScoreboard)
 {
 
-  $ret = "";
+    $ret = "";
 
-  if ($seriesScoreboard) {
-    $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
-    $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
-    <th class='center'>"._("Assists")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Tot.")."</th></tr>\n";
-    /*
-    <th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot/Gm")."</th>
-    */
+    if ($seriesScoreboard) {
+        $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
+        $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
+        $ret .= "<tr><th style='width:120px'>" . _("Player") . "</th><th style='width:120px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
+    <th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
+        /*
+        <th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot/Gm")."</th>
+        */
 
-    $scores = SeriesScoreBoardArray($id, "total", 10);
-    foreach ($scores as $row) {
-      $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
-      $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['done']) . "</td>";
-      $ret .= "<td class='center'><strong>".intval($row['total'])."</strong></td></tr>\n";
-      /*
-      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
-      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
-      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."</strong></td></tr>\n";
-      */
-    }
+        $scores = SeriesScoreBoardArray($id, "total", 10);
+        foreach ($scores as $row) {
+            $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
+            $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['done']) . "</td>";
+            $ret .= "<td class='center'><strong>" . intval($row['total']) . "</strong></td></tr>\n";
+            /*
+            $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
+            $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+            $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."</strong></td></tr>\n";
+            */
+        }
 
-    $ret .= "</table>";
-    $ret .= "<a href='?view=scorestatus&amp;series=" . $id . "'>" . _("Scoreboard") . "</a>";
-  } else {
-    $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
-    $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:120px'>"._("Player")."</th><th style='width:120px'>"._("Team")."</th><th class='center'>"._("Games")."</th>
-    <th class='center'>"._("Assists")."</th><th class='center'>"._("Goals")."</th><th class='center'>"._("Tot.")."</th></tr>\n";
-    /*
-    <th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot/Gm")."</th>
-    */
-
-    $poolinfo = PoolInfo($id);
-    $pools = array();
-    if ($poolinfo['type'] == 2) {
-      //find out sub pools
-      $pools[] = $id;
-      $followers = PoolFollowersArray($poolinfo['pool_id']);
-      $pools = array_merge($pools, $followers);
-      $scores = PoolsScoreBoardArray($pools, "total", 5);
+        $ret .= "</table>";
+        $ret .= "<a href='?view=scorestatus&amp;series=" . $id . "'>" . _("Scoreboard") . "</a>";
     } else {
-      $scores = PoolScoreBoardArray($id, "total", 5);
-    }
+        $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
+        $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
+        $ret .= "<tr><th style='width:120px'>" . _("Player") . "</th><th style='width:120px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
+    <th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
+        /*
+        <th class='center'>"._("Ast/Gm")."</th><th class='center'>"._("Gls/Gm")."</th><th class='center'>"._("Tot/Gm")."</th>
+        */
 
-    foreach ($scores as $row) {
-      $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
-      $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
-      $ret .= "<td class='center'>".intval($row['done'])."</td>";
-      $ret .= "<td class='center'><strong>".intval($row['total'])."</strong></td></tr>\n";
-      /*
-      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
-      $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
-      $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."</strong></td></tr>\n";
-      */
-    }
+        $poolinfo = PoolInfo($id);
+        $pools = [];
+        if ($poolinfo['type'] == 2) {
+            //find out sub pools
+            $pools[] = $id;
+            $followers = PoolFollowersArray($poolinfo['pool_id']);
+            $pools = array_merge($pools, $followers);
+            $scores = PoolsScoreBoardArray($pools, "total", 5);
+        } else {
+            $scores = PoolScoreBoardArray($id, "total", 5);
+        }
 
-    $ret .= "</table>";
-    if ($poolinfo['type'] == 2) {
-      $ret .= "<a href='?view=scorestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Scoreboard") . "</a>";
-    } else {
-      $ret .= "<a href='?view=scorestatus&amp;pool=" . $id . "'>" . _("Scoreboard") . "</a>";
+        foreach ($scores as $row) {
+            $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
+            $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['fedin']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['done']) . "</td>";
+            $ret .= "<td class='center'><strong>" . intval($row['total']) . "</strong></td></tr>\n";
+            /*
+            $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
+            $ret .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+            $ret .= "<td class='center'><strong>".sprintf("%.2f",floatval($row['totalavg']))."</strong></td></tr>\n";
+            */
+        }
+
+        $ret .= "</table>";
+        if ($poolinfo['type'] == 2) {
+            $ret .= "<a href='?view=scorestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Scoreboard") . "</a>";
+        } else {
+            $ret .= "<a href='?view=scorestatus&amp;pool=" . $id . "'>" . _("Scoreboard") . "</a>";
+        }
     }
-  }
-  return $ret;
+    return $ret;
 }
 
 
 function defenseboard($id, $seriesDefenseboard)
 {
 
-  $ret = "";
+    $ret = "";
 
-  if ($seriesDefenseboard) {
-    $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
-    $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
+    if ($seriesDefenseboard) {
+        $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
+        $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
+        $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 		<th class='center'>" . _("Total defences") . "</th></tr>\n";
-    $poolinfo = PoolInfo($id);
-    $defenses = SeriesDefenseBoardArray($poolinfo['series_id'], "deftotal", 10);
-    foreach ($defenses as $row) {
-      $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
-      $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['deftotal']) . "</td></tr>\n";
-    }
+        $poolinfo = PoolInfo($id);
+        $defenses = SeriesDefenseBoardArray($poolinfo['series_id'], "deftotal", 10);
+        foreach ($defenses as $row) {
+            $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
+            $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['deftotal']) . "</td></tr>\n";
+        }
 
-    $ret .= "</table>";
-    $ret .= "<a href='?view=defensestatus&amp;series=" . $poolinfo['series_id'] . "'>" . _("Defence board") . "</a>";
-  } else {
-    $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
-    $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
-    $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
+        $ret .= "</table>";
+        $ret .= "<a href='?view=defensestatus&amp;series=" . $poolinfo['series_id'] . "'>" . _("Defence board") . "</a>";
+    } else {
+        $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
+        $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
+        $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 		<th class='center'>" . _("Total defences") . "</th></tr>\n";
 
-    $poolinfo = PoolInfo($id);
-    $pools = array();
-    if ($poolinfo['type'] == 2) {
-      //find out sub pools
-      $pools[] = $id;
-      $followers = PoolFollowersArray($poolinfo['pool_id']);
-      $pools = array_merge($pools, $followers);
-      $scores = PoolsScoreBoardWithDefensesArray($pools, "deftotal", 5);
-    } else {
-      $scores = PoolScoreBoardWithDefensesArray($id, "deftotal", 5);
-    }
+        $poolinfo = PoolInfo($id);
+        $pools = [];
+        if ($poolinfo['type'] == 2) {
+            //find out sub pools
+            $pools[] = $id;
+            $followers = PoolFollowersArray($poolinfo['pool_id']);
+            $pools = array_merge($pools, $followers);
+            $scores = PoolsScoreBoardWithDefensesArray($pools, "deftotal", 5);
+        } else {
+            $scores = PoolScoreBoardWithDefensesArray($id, "deftotal", 5);
+        }
 
-    foreach ($scores as $row) {
-      $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
-      $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
-      $ret .= "<td class='center'>" . intval($row['deftotal']) . "</td></tr>\n";
-    }
+        foreach ($scores as $row) {
+            $ret .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
+            $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['games']) . "</td>";
+            $ret .= "<td class='center'>" . intval($row['deftotal']) . "</td></tr>\n";
+        }
 
-    $ret .= "</table>";
-    if ($poolinfo['type'] == 2) {
-      $ret .= "<a href='?view=defensestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Defence board") . "</a>";
-    } else {
-      $ret .= "<a href='?view=defensestatus&amp;pool=" . $id . "'>" . _("Defence board") . "</a>";
+        $ret .= "</table>";
+        if ($poolinfo['type'] == 2) {
+            $ret .= "<a href='?view=defensestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Defence board") . "</a>";
+        } else {
+            $ret .= "<a href='?view=defensestatus&amp;pool=" . $id . "'>" . _("Defence board") . "</a>";
+        }
     }
-  }
-  return $ret;
+    return $ret;
 }
 
 
 function printSwissdraw($seasoninfo, $poolinfo)
 {
-  // prints Swiss draw standing
+    // prints Swiss draw standing
 
-  $ret = "";
-  $style = "";
+    $ret = "";
+    $style = "";
 
-  if ($poolinfo['played']) {
-    $style = "class='playedpool'";
-  }
-  $ret .= "<table $style border='2' width='100%'>\n";
-  $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
-  $ret .= "<th class='center'>" . _("Games") . "</th>";
-  $ret .= "<th class='center'>" . _("Victory Points") . "</th>";
-  $ret .= "<th class='center'>" . _("Opponent VPs") . "</th>";
-  $ret .= "<th class='center'>" . _("Margin") . "</th>";
-  $ret .= "<th class='center'>" . _("Goals") . "</th>";
-  $ret .= "</tr>\n";
-
-  $standings = PoolTeams($poolinfo['pool_id'], "rank");
-
-  if (count($standings)) {
-    foreach ($standings as $row) {
-      //			$stats = TeamStatsByPool($poolinfo['pool_id'], $row['team_id']);
-      $vp = TeamVictoryPointsByPool($poolinfo['pool_id'], $row['team_id']);
-      //			$points=TeamPointsByPool($poolinfo['pool_id'], $row['team_id']);
-      $flag = "";
-      if (intval($seasoninfo['isinternational'])) {
-        $flag = "<img height='10' src='images/flags/tiny/" . $row['flagfile'] . "' alt=''/> ";
-      }
-      $ret .= "<tr><td>" . $row['activerank'] . "</td>";
-      $ret .= "<td>&nbsp;$flag<a href='?view=teamcard&amp;team=" . $row['team_id'] . "'>" . utf8entities(U_($row['name'])) . "</a></td>";
-      $ret .= "<td class='center'>" . intval($vp['games']) . "</td>";
-      $ret .= "<td class='center'>" . intval($vp['victorypoints']) . "</td>";
-      $ret .= "<td class='center'>" . intval($vp['oppvp']) . "</td>";
-      $ret .= "<td class='center'>" . intval($vp['margin']) . "</td>";
-      $ret .= "<td class='center'>" . intval($vp['score']) . "</td>";
-      $ret .= "</tr>\n";
+    if ($poolinfo['played']) {
+        $style = "class='playedpool'";
     }
-  } else {
-    $teams = PoolSchedulingTeams($poolinfo['pool_id']);
-    foreach ($teams as $row) {
-      $ret .= "<tr><td>-</td>";
-      $ret .= "<td>" . utf8entities(U_($row['name'])) . "</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "</tr>\n";
-    }
-  }
-  $ret .= "</table>\n";
+    $ret .= "<table $style border='2' width='100%'>\n";
+    $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
+    $ret .= "<th class='center'>" . _("Games") . "</th>";
+    $ret .= "<th class='center'>" . _("Victory Points") . "</th>";
+    $ret .= "<th class='center'>" . _("Opponent VPs") . "</th>";
+    $ret .= "<th class='center'>" . _("Margin") . "</th>";
+    $ret .= "<th class='center'>" . _("Goals") . "</th>";
+    $ret .= "</tr>\n";
 
-  $ret .= "<table width='100%'>\n";
-  if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
-    $mvgames = PoolMovedGames($poolinfo['pool_id']);
-    foreach ($mvgames as $game) {
-      $ret .= GameRow($game, false, false, false, false, false, true);
-    }
-  }
-  $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
-  foreach ($games as $game) {
-    //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-    $ret .= GameRow($game, false, false, false, false, false, true);
-  }
-  $ret .= "</table>\n";
+    $standings = PoolTeams($poolinfo['pool_id'], "rank");
 
-  $ret .= "<p><a href='?view=games&amp;pool=" . $poolinfo['pool_id'] . ".&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
-  return $ret;
+    if (count($standings)) {
+        foreach ($standings as $row) {
+            //			$stats = TeamStatsByPool($poolinfo['pool_id'], $row['team_id']);
+            $vp = TeamVictoryPointsByPool($poolinfo['pool_id'], $row['team_id']);
+            //			$points=TeamPointsByPool($poolinfo['pool_id'], $row['team_id']);
+            $flag = "";
+            if (intval($seasoninfo['isinternational'])) {
+                $flag = "<img height='10' src='images/flags/tiny/" . $row['flagfile'] . "' alt=''/> ";
+            }
+            $ret .= "<tr><td>" . $row['activerank'] . "</td>";
+            $ret .= "<td>&nbsp;$flag<a href='?view=teamcard&amp;team=" . $row['team_id'] . "'>" . utf8entities(U_($row['name'])) . "</a></td>";
+            $ret .= "<td class='center'>" . intval($vp['games']) . "</td>";
+            $ret .= "<td class='center'>" . intval($vp['victorypoints']) . "</td>";
+            $ret .= "<td class='center'>" . intval($vp['oppvp']) . "</td>";
+            $ret .= "<td class='center'>" . intval($vp['margin']) . "</td>";
+            $ret .= "<td class='center'>" . intval($vp['score']) . "</td>";
+            $ret .= "</tr>\n";
+        }
+    } else {
+        $teams = PoolSchedulingTeams($poolinfo['pool_id']);
+        foreach ($teams as $row) {
+            $ret .= "<tr><td>-</td>";
+            $ret .= "<td>" . utf8entities(U_($row['name'])) . "</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "</tr>\n";
+        }
+    }
+    $ret .= "</table>\n";
+
+    $ret .= "<table width='100%'>\n";
+    if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
+        $mvgames = PoolMovedGames($poolinfo['pool_id']);
+        foreach ($mvgames as $game) {
+            $ret .= GameRow($game, false, false, false, false, false, true);
+        }
+    }
+    $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
+    foreach ($games as $game) {
+        //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
+        $ret .= GameRow($game, false, false, false, false, false, true);
+    }
+    $ret .= "</table>\n";
+
+    $ret .= "<p><a href='?view=games&amp;pool=" . $poolinfo['pool_id'] . ".&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
+    return $ret;
 }
 
 
 function printRoundRobinPool($seasoninfo, $poolinfo)
 {
 
-  $ret = "";
-  $style = "";
+    $ret = "";
+    $style = "";
 
-  if ($poolinfo['played']) {
-    $style = "style='font-weight: bold;'";
-  }
-  $ret .= "<table $style border='2' width='100%'>\n";
- $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
-  $ret .= "<th class='center'>" . _("Games") . "</th>";
-  $ret .= "<th class='center'>" . _("Wins") . "</th>";
-  if ($poolinfo['drawsallowed'])
-    $ret .= "<th class='center'>" . _("Draws") . "</th>";
-  $ret .= "<th class='center'>" . _("Losses") . "</th>";
-  $ret .= "<th class='center'>" . _("Goals for") . "</th>";
-  $ret .= "<th class='center'>" . _("Goals against") . "</th>";
-  $ret .= "<th class='center'>" . _("Goals diff") . "</th>";
-  $ret .= "</tr>\n";
-
-  $standings = PoolTeams($poolinfo['pool_id'], "rank");
-  $teams = PoolSchedulingTeams($poolinfo['pool_id']);
-  $continuationpools = array();
-  $gamesplayed = PoolTotalPlayedGames($poolinfo['pool_id']);
-
-  if (!$poolinfo['continuingpool'] || count($standings) >= count($teams)) {
-    $i = 1;
-    foreach ($standings as $row) {
-      $stats = TeamStatsByPool($poolinfo['pool_id'], $row['team_id']);
-      $points = TeamPointsByPool($poolinfo['pool_id'], $row['team_id']);
-      $movetopool = PoolGetMoveToPool($poolinfo['pool_id'], $i);
-      $flag = "";
-      if (intval($seasoninfo['isinternational'])) {
-        $flag = "<img height='10' src='images/flags/tiny/" . $row['flagfile'] . "' alt=''/> ";
-      }
-      $colorcoding = "";
-      if ($movetopool) {
-        //$iebackground="filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF,endColorstr=#".$movetopool['color'].");";
-        $colorcoding = "background-color:#" . $movetopool['color'] . ";background-color:" . RGBtoRGBa($movetopool['color'], 0.3) . ";color:#" . textColor($movetopool['color']);
-        $ret .= "<tr>";
-        $continuationpools[] = $movetopool;
-      } else {
-        $ret .= "<tr>";
-      }
-      if ($gamesplayed > 0) {
-        $ret .= "<td class='center'><div style='$colorcoding'>".$row['activerank']."</div></td>";
-      } else {
-        $ret .= "<td class='center'><div style='$colorcoding'>-</div></td>";
-      }
-      $ret .= "<td><div>&nbsp;$flag&nbsp;<a href='?view=teamcard&amp;team=".$row['team_id']."'>".utf8entities($row['name'])."</a>&nbsp;</div></td>";
-      $ret .= "<td class='center'><div>" . intval($stats['games']) . "</div></td>";
-      $ret .= "<td class='center'><div>" . intval($stats['wins']) . "</div></td>";
-      if ($poolinfo['drawsallowed'])
-        $ret .= "<td class='center'><div>" . intval($stats['draws']) . "</div></td>";
-      $ret .= "<td class='center'><div>" . intval($stats['losses']) . "</div></td>";
-      // $ret .= "<td class='center'><div>".(intval($stats['games'])-intval($stats['wins']))."</div></td>";
-      $ret .= "<td class='center'><div>" . intval($points['scores']) . "</div></td>";
-      $ret .= "<td class='center'><div>" . intval($points['against']) . "</div></td>";
-      $ret .= "<td class='center'><div>" . (intval($points['scores']) - intval($points['against'])) . "</div></td>";
-      $ret .= "</tr>\n";
-      $i++;
+    if ($poolinfo['played']) {
+        $style = "style='font-weight: bold;'";
     }
-  } else {
+    $ret .= "<table $style border='2' width='100%'>\n";
+    $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
+    $ret .= "<th class='center'>" . _("Games") . "</th>";
+    $ret .= "<th class='center'>" . _("Wins") . "</th>";
+    if ($poolinfo['drawsallowed']) {
+        $ret .= "<th class='center'>" . _("Draws") . "</th>";
+    }
+    $ret .= "<th class='center'>" . _("Losses") . "</th>";
+    $ret .= "<th class='center'>" . _("Goals for") . "</th>";
+    $ret .= "<th class='center'>" . _("Goals against") . "</th>";
+    $ret .= "<th class='center'>" . _("Goals diff") . "</th>";
+    $ret .= "</tr>\n";
 
-    $i = 1;
-    foreach ($teams as $row) {
-      $realteam = PoolTeamFromStandings($poolinfo['pool_id'], $i);
-      $movetopool = PoolGetMoveToPool($poolinfo['pool_id'], $i);
-      $colorcoding = "";
-      if ($movetopool) {
-        //$iebackground="background:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF,endColorstr=#".$movetopool['color'].");zoom: 1;";
-        $colorcoding = "background-color:#" . $movetopool['color'] . ";background-color:" . RGBtoRGBa($movetopool['color'], 0.3) . ";color:#" . textColor($movetopool['color']);
-        $ret .= "<tr>";
-        $continuationpools[] = $movetopool;
-      } else {
-        $ret .= "<tr>";
-      }
-      $ret .= "<td class='center' style='$colorcoding'>-</td>";
-      if ($realteam) {
-        $flag = "";
-        if (intval($seasoninfo['isinternational'])) {
-          $flag = "<img height='10' src='images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
+    $standings = PoolTeams($poolinfo['pool_id'], "rank");
+    $teams = PoolSchedulingTeams($poolinfo['pool_id']);
+    $continuationpools = [];
+    $gamesplayed = PoolTotalPlayedGames($poolinfo['pool_id']);
+
+    if (!$poolinfo['continuingpool'] || count($standings) >= count($teams)) {
+        $i = 1;
+        foreach ($standings as $row) {
+            $stats = TeamStatsByPool($poolinfo['pool_id'], $row['team_id']);
+            $points = TeamPointsByPool($poolinfo['pool_id'], $row['team_id']);
+            $movetopool = PoolGetMoveToPool($poolinfo['pool_id'], $i);
+            $flag = "";
+            if (intval($seasoninfo['isinternational'])) {
+                $flag = "<img height='10' src='images/flags/tiny/" . $row['flagfile'] . "' alt=''/> ";
+            }
+            $colorcoding = "";
+            if ($movetopool) {
+                //$iebackground="filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF,endColorstr=#".$movetopool['color'].");";
+                $colorcoding = "background-color:#" . $movetopool['color'] . ";background-color:" . RGBtoRGBa($movetopool['color'], 0.3) . ";color:#" . textColor($movetopool['color']);
+                $ret .= "<tr>";
+                $continuationpools[] = $movetopool;
+            } else {
+                $ret .= "<tr>";
+            }
+            if ($gamesplayed > 0) {
+                $ret .= "<td class='center'><div style='$colorcoding'>" . $row['activerank'] . "</div></td>";
+            } else {
+                $ret .= "<td class='center'><div style='$colorcoding'>-</div></td>";
+            }
+            $ret .= "<td><div>&nbsp;$flag&nbsp;<a href='?view=teamcard&amp;team=" . $row['team_id'] . "'>" . utf8entities($row['name']) . "</a>&nbsp;</div></td>";
+            $ret .= "<td class='center'><div>" . intval($stats['games']) . "</div></td>";
+            $ret .= "<td class='center'><div>" . intval($stats['wins']) . "</div></td>";
+            if ($poolinfo['drawsallowed']) {
+                $ret .= "<td class='center'><div>" . intval($stats['draws']) . "</div></td>";
+            }
+            $ret .= "<td class='center'><div>" . intval($stats['losses']) . "</div></td>";
+            // $ret .= "<td class='center'><div>".(intval($stats['games'])-intval($stats['wins']))."</div></td>";
+            $ret .= "<td class='center'><div>" . intval($points['scores']) . "</div></td>";
+            $ret .= "<td class='center'><div>" . intval($points['against']) . "</div></td>";
+            $ret .= "<td class='center'><div>" . (intval($points['scores']) - intval($points['against'])) . "</div></td>";
+            $ret .= "</tr>\n";
+            $i++;
         }
-        $ret .= "<td><div>&nbsp;$flag&nbsp;<a href='?view=teamcard&amp;team=".$realteam['team_id']."'>".utf8entities($realteam['name'])."</a>&nbsp;</div></td>";
-      } else {
-        $ret .= "<td>&nbsp;".utf8entities(U_($row['name']))."&nbsp;</td>";
-      }
+    } else {
 
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "<td class='center'>-</td>";
-      $ret .= "</tr>\n";
-      $i++;
-    }
-  }
-  $ret .= "</table>\n";
+        $i = 1;
+        foreach ($teams as $row) {
+            $realteam = PoolTeamFromStandings($poolinfo['pool_id'], $i);
+            $movetopool = PoolGetMoveToPool($poolinfo['pool_id'], $i);
+            $colorcoding = "";
+            if ($movetopool) {
+                //$iebackground="background:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF,endColorstr=#".$movetopool['color'].");zoom: 1;";
+                $colorcoding = "background-color:#" . $movetopool['color'] . ";background-color:" . RGBtoRGBa($movetopool['color'], 0.3) . ";color:#" . textColor($movetopool['color']);
+                $ret .= "<tr>";
+                $continuationpools[] = $movetopool;
+            } else {
+                $ret .= "<tr>";
+            }
+            $ret .= "<td class='center' style='$colorcoding'>-</td>";
+            if ($realteam) {
+                $flag = "";
+                if (intval($seasoninfo['isinternational'])) {
+                    $flag = "<img height='10' src='images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
+                }
+                $ret .= "<td><div>&nbsp;$flag&nbsp;<a href='?view=teamcard&amp;team=" . $realteam['team_id'] . "'>" . utf8entities($realteam['name']) . "</a>&nbsp;</div></td>";
+            } else {
+                $ret .= "<td>&nbsp;" . utf8entities(U_($row['name'])) . "&nbsp;</td>";
+            }
 
-  if (count($continuationpools)) {
-    $ret .= "<table width='100%'><tr>\n";
-    $prev = "";
-    $width = 100 / count($continuationpools);
-    foreach ($continuationpools as $cpool) {
-      if ($cpool['topool'] != $prev) {
-        $ret .= "<td style='background-color:#" . $cpool['color'] . ";background-color:" . RGBtoRGBa($cpool['color'], 0.3) . ";color:#" . textColor($cpool['color']) . ";width:" . $width . "%'>";
-        if ($cpool['visible']) {
-          $ret .= "<a href='?view=poolstatus&amp;pool=" . $cpool['topool'] . "'>" . utf8entities(U_($cpool['name'])) . "</a>";
-        } else {
-          $ret .= utf8entities(U_($cpool['name']));
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "<td class='center'>-</td>";
+            $ret .= "</tr>\n";
+            $i++;
         }
-        $ret .= "</td>";
-        $prev = $cpool['topool'];
-      }
     }
-    $ret .= "</tr></table>\n";
-  }
-  $ret .= "<h2>Games</h2>\n";
-  $ret .= "<table width='100%'>\n";
-  if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
-    $mvgames = PoolMovedGames($poolinfo['pool_id']);
-    foreach ($mvgames as $game) {
-      $ret .= GameRow($game, false, false, false, false, false, true);
-    }
-  }
-  $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
-  foreach ($games as $game) {
-    //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-    $ret .= GameRow($game, false, false, false, false, false, true);
-  }
-  $ret .= "</table>\n";
+    $ret .= "</table>\n";
 
-  $ret .= "<p><a href='?view=games&amp;pool=" . $poolinfo['pool_id'] . "&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
-  return $ret;
+    if (count($continuationpools)) {
+        $ret .= "<table width='100%'><tr>\n";
+        $prev = "";
+        $width = 100 / count($continuationpools);
+        foreach ($continuationpools as $cpool) {
+            if ($cpool['topool'] != $prev) {
+                $ret .= "<td style='background-color:#" . $cpool['color'] . ";background-color:" . RGBtoRGBa($cpool['color'], 0.3) . ";color:#" . textColor($cpool['color']) . ";width:" . $width . "%'>";
+                if ($cpool['visible']) {
+                    $ret .= "<a href='?view=poolstatus&amp;pool=" . $cpool['topool'] . "'>" . utf8entities(U_($cpool['name'])) . "</a>";
+                } else {
+                    $ret .= utf8entities(U_($cpool['name']));
+                }
+                $ret .= "</td>";
+                $prev = $cpool['topool'];
+            }
+        }
+        $ret .= "</tr></table>\n";
+    }
+    $ret .= "<h2>Games</h2>\n";
+    $ret .= "<table width='100%'>\n";
+    if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
+        $mvgames = PoolMovedGames($poolinfo['pool_id']);
+        foreach ($mvgames as $game) {
+            $ret .= GameRow($game, false, false, false, false, false, true);
+        }
+    }
+    $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
+    foreach ($games as $game) {
+        //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
+        $ret .= GameRow($game, false, false, false, false, false, true);
+    }
+    $ret .= "</table>\n";
+
+    $ret .= "<p><a href='?view=games&amp;pool=" . $poolinfo['pool_id'] . "&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
+    return $ret;
 }
 
 function printPlayoffTree($seasoninfo, $poolinfo)
 {
 
-  $ret = "";
-  $pools = array();
-  $pools[] = $poolinfo['pool_id'];
+    $ret = "";
+    $pools = [];
+    $pools[] = $poolinfo['pool_id'];
 
-  //find out total rounds played
-  $followers = PoolPlayoffFollowersArray($poolinfo['pool_id']);
+    //find out total rounds played
+    $followers = PoolPlayoffFollowersArray($poolinfo['pool_id']);
 
-  if (count($followers) == 0) {
-    $followers = PoolFollowersArray($poolinfo['pool_id']);
-  }
-  $pools = array_merge($pools, $followers);
-  $rounds = count($pools);
-
-  //find out total teams in pool
-  $teams = PoolTeams($poolinfo['pool_id']);
-  $steams = PoolSchedulingTeams($poolinfo['pool_id']);
-  if (count($teams) < count($steams)) {
-    $teams = $steams;
-    $totalteams = count($steams);
-  } else {
-    $totalteams = count($teams);
-  }
-
-  global $include_prefix;
-
-  $template = PlayoffTemplate($totalteams, $rounds, $poolinfo['playoff_template']);
-  if (empty($template)) {
-    $ret .= "<p>" . _("No playoff tree template found.") . "</p>\n";
-  }
-  $notemplate = "";
-
-  $round = 0;
-  foreach ($pools as $poolId) {
-    $pool = PoolInfo($poolId);
-
-    //find out round name
-    switch (count($pools) - $round) {
-      case 1:
-        $roundname = U_("Finals");
-        break;
-      case 2:
-        $roundname = U_("Semifinals");
-        break;
-      case 3:
-        $roundname = U_("Quarterfinals");
-        break;
-      default:
-        $roundname = U_("Round") . " " . ($round + 1);
-        break;
+    if (count($followers) == 0) {
+        $followers = PoolFollowersArray($poolinfo['pool_id']);
     }
+    $pools = array_merge($pools, $followers);
+    $rounds = count($pools);
 
-    if (empty($template)) {
-      $notemplate .= "<h4>" . _("Round") . " " . ($round + 1) . "</h4>\n";
-
-      if (empty($pool)) {
-        $notemplate .= "<p>???</p>";
-      } else {
-        $notemplate .= "<table width='100%'>\n";
-        $games = TimetableGames($pool['pool_id'], "pool", "all", "series");
-        foreach ($games as $game) {
-          $notemplate .= GameRow($game, false, false, false, false, false, true);
-        }
-        $notemplate .= "</table>\n";
-      }
+    //find out total teams in pool
+    $teams = PoolTeams($poolinfo['pool_id']);
+    $steams = PoolSchedulingTeams($poolinfo['pool_id']);
+    if (count($teams) < count($steams)) {
+        $teams = $steams;
+        $totalteams = count($steams);
     } else {
-      $template = str_replace("[round " . ($round + 1) . "]", $roundname, $template);
+        $totalteams = count($teams);
     }
 
-    $winners = 0;
-    $losers = 0;
-    $games = 0;
+    global $include_prefix;
+
+    $template = PlayoffTemplate($totalteams, $rounds, $poolinfo['playoff_template']);
+    if (empty($template)) {
+        $ret .= "<p>" . _("No playoff tree template found.") . "</p>\n";
+    }
+    $notemplate = "";
+
+    $round = 0;
+    foreach ($pools as $poolId) {
+        $pool = PoolInfo($poolId);
+
+        //find out round name
+        switch (count($pools) - $round) {
+            case 1:
+                $roundname = U_("Finals");
+                break;
+            case 2:
+                $roundname = U_("Semifinals");
+                break;
+            case 3:
+                $roundname = U_("Quarterfinals");
+                break;
+            default:
+                $roundname = U_("Round") . " " . ($round + 1);
+                break;
+        }
+
+        if (empty($template)) {
+            $notemplate .= "<h4>" . _("Round") . " " . ($round + 1) . "</h4>\n";
+
+            if (empty($pool)) {
+                $notemplate .= "<p>???</p>";
+            } else {
+                $notemplate .= "<table width='100%'>\n";
+                $games = TimetableGames($pool['pool_id'], "pool", "all", "series");
+                foreach ($games as $game) {
+                    $notemplate .= GameRow($game, false, false, false, false, false, true);
+                }
+                $notemplate .= "</table>\n";
+            }
+        } else {
+            $template = str_replace("[round " . ($round + 1) . "]", $roundname, $template);
+        }
+
+        $winners = 0;
+        $losers = 0;
+        $games = 0;
+        for ($i = 1; $i <= $totalteams; $i++) {
+
+            if (!isset($pool['pool_id'])) {
+                continue;
+            }
+            $team = PoolTeamFromInitialRank($pool['pool_id'], $i);
+            $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
+            $frompool = $movefrom['frompool'] ?? null;
+            $fromplacing = $movefrom['fromplacing'] ?? null;
+            $sname = [];
+
+            $name = "";
+            $byeName = "";
+            $previousRoundByeName = "";
+            //find out team name
+            if (isset($team['team_id'])) {
+                if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+                    $name .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
+                }
+                $name .= "<a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a>";
+            } else {
+                if ($frompool !== null && $fromplacing !== null) {
+                    $realteam = PoolTeamFromStandings($frompool, $fromplacing);
+                } else {
+                    $realteam = [];
+                }
+                $gamesleft = [];
+                if (isset($realteam['team_id'])) {
+                    $gamesleft = TeamPoolGamesLeft($realteam['team_id'], $frompool);
+                }
+                $frompoolinfo = ($frompool !== null) ? PoolInfo($frompool) : [];
+                $isodd = is_odd($totalteams) && $i == $totalteams;
+                if (isset($realteam['team_id']) && !empty($frompoolinfo['played']) && count($gamesleft) == 0 && !$isodd) {
+                    if (intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])) {
+                        $name .= "<img height='10' src='images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
+                    }
+                    $name .= "<i>" . utf8entities($realteam['name']) . "</i>";
+                } else {
+                    $sname = SchedulingNameByMoveTo($pool['pool_id'], $i);
+                    if (!empty($sname['name'])) {
+                        $name .= utf8entities(U_($sname['name']));
+                    } else {
+                        $name .= "<i>" . _("???") . "</i>";
+                    }
+                }
+            }
+
+
+            if (isset($team['team_id'])) {
+                $gamesinpool = TeamPoolGamesArray($team['team_id'], $pool['pool_id']);
+                if (count($gamesinpool) == 0) { // that's the BYE team
+                    $byeName = $name; // save its name
+                    //$ret .= $round." ".$name." ".$pool['pool_id']." ".$team['team_id']."<br>";
+                }
+            }
+            //update team name to template
+            $theName = $name;
+            if ($round == 0) {
+                $template = str_replace("[team $i]", $name, $template);
+            } else {
+                if ($fromplacing === null) {
+                    $winners++;
+                    $template = str_replace("[winner $round/$winners]", $name, $template);
+                } elseif ($fromplacing == $totalteams && $totalteams % 2 == 1) { // Assuming the BYE team is always last in a pool
+                    $winners = ceil($fromplacing / 2);
+
+                    $template = str_replace("[winner $round/$winners]", $previousRoundByeName, $template);
+                    $theName = $previousRoundByeName;
+                } elseif ($fromplacing % 2 == 1) {
+                    $winners = ceil($fromplacing / 2);
+                    $template = str_replace("[winner $round/$winners]", $name, $template);
+                } else {
+                    $losers = ceil($fromplacing / 2);
+                    $template = str_replace("[loser $round/$losers]", $name, $template);
+                }
+            }
+            //update game results
+            if ($i % 2 == 1) {
+                $games++;
+                $game = "";
+                if (isset($team['team_id'])) {
+                    $results = GameHomeTeamResults($team['team_id'], $pool['pool_id']);
+                    $reverse = false;
+                    if (!$results) {
+                        $results = GameVisitorTeamResults($team['team_id'], $pool['pool_id']);
+                        $reverse = true;
+                    }
+                    foreach ($results as $res) {
+                        $resIsOngoing = !empty($res['isongoing']);
+                        if ($reverse) {
+                            $dummy = $res['homescore'];
+                            $res['homescore'] = $res['visitorscore'];
+                            $res['visitorscore'] = $dummy;
+                        }
+                        if ($res['scoresheet'] && !$resIsOngoing) {
+                            $game .= "<a href='?view=gameplay&amp;game=" . $res['game_id'] . "'>";
+                            $game .= $res['homescore'] . "-" . $res['visitorscore'] . "</a>"
+                              . (!empty($res['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
+                              . " ";
+                        } elseif (GameHasStarted($res) > 0 && !$resIsOngoing) {
+                            $game .= $res['homescore'] . "-" . $res['visitorscore']
+                              . (!empty($res['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "");
+                        } elseif (!empty($res['gamename'])) {
+                            $game .= "<span class='lowlight'>" . utf8entities(U_($res['gamename'])) . "</span>";
+                        }
+                    }
+                }
+                if (empty($game) && isset($sname['scheduling_id'])) {
+                    $results = GameHomePseudoTeamResults($sname['scheduling_id'], $pool['pool_id']);
+                    foreach ($results as $res) {
+                        if (!empty($res['gamename'])) {
+                            $game .= "<span class='lowlight'>" . utf8entities(U_($res['gamename'])) . "</span>";
+                        }
+                    }
+                }
+
+                if (empty($game)) {
+                    //$game = "&nbsp;";
+                    $game .= "<span class='lowlight'>" . _("Game") . " " . $games . "</span>";
+                }
+                $template = str_replace("[game " . ($round + 1) . "/$games]", $game, $template);
+            }
+        }
+        if ($totalteams % 2 == 1) {
+            $previousRoundByeName = $byeName; // save previous pool Bye name
+        }
+        $round++;
+    }
+
+    //placements
+    $notemplate .= "<h4>" . _("Placement") . "</h4>\n";
+    $notemplate .= "<table width='100%'>\n";
+
+    $template = str_replace("[placement]", _("Placement"), $template);
     for ($i = 1; $i <= $totalteams; $i++) {
-
-      if (!isset($pool['pool_id'])) {
-        continue;
-      }
-      $team = PoolTeamFromInitialRank($pool['pool_id'], $i);
-      $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
-      $frompool = $movefrom['frompool'] ?? null;
-      $fromplacing = $movefrom['fromplacing'] ?? null;
-      $sname = array();
-
-      $name = "";
-      $byeName = "";
-      $previousRoundByeName = "";
-      //find out team name
-      if (isset($team['team_id'])) {
-        if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
-          $name .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
+        $placementname = "";
+        if (!isset($pool['pool_id'])) {
+            continue;
         }
-        $name .= "<a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a>";
-      } else {
-        if ($frompool !== null && $fromplacing !== null) {
-          $realteam = PoolTeamFromStandings($frompool, $fromplacing);
-        } else {
-          $realteam = array();
-        }
-        $gamesleft = array();
-        if (isset($realteam['team_id'])) {
-          $gamesleft = TeamPoolGamesLeft($realteam['team_id'], $frompool);
-        }
-        $frompoolinfo = ($frompool !== null) ? PoolInfo($frompool) : array();
-        $isodd = is_odd($totalteams) && $i == $totalteams;
-        if (isset($realteam['team_id']) && !empty($frompoolinfo['played']) && count($gamesleft) == 0 && !$isodd) {
-          if (intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])) {
-            $name .= "<img height='10' src='images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
-          }
-          $name .= "<i>" . utf8entities($realteam['name']) . "</i>";
-        } else {
-          $sname = SchedulingNameByMoveTo($pool['pool_id'], $i);
-          if (!empty($sname['name'])) {
-            $name .= utf8entities(U_($sname['name']));
-          } else {
-            $name .= "<i>" . _("???") . "</i>";
-          }
-        }
-      }
-
-
-      if (isset($team['team_id'])) {
-        $gamesinpool = TeamPoolGamesArray($team['team_id'], $pool['pool_id']);
-        if (count($gamesinpool) == 0) { // that's the BYE team
-          $byeName = $name; // save its name
-          //$ret .= $round." ".$name." ".$pool['pool_id']." ".$team['team_id']."<br>";
-        }
-      }
-      //update team name to template
-      $theName = $name;
-      if ($round == 0) {
-        $template = str_replace("[team $i]", $name, $template);
-      } else {
-        if ($fromplacing === null) {
-          $winners++;
-          $template = str_replace("[winner $round/$winners]", $name, $template);
-        } elseif ($fromplacing == $totalteams && $totalteams % 2 == 1) { // Assuming the BYE team is always last in a pool
-          $winners = ceil($fromplacing / 2);
-
-          $template = str_replace("[winner $round/$winners]", $previousRoundByeName, $template);
-          $theName = $previousRoundByeName;
-        } elseif ($fromplacing % 2 == 1) {
-          $winners = ceil($fromplacing / 2);
-          $template = str_replace("[winner $round/$winners]", $name, $template);
-        } else {
-          $losers = ceil($fromplacing / 2);
-          $template = str_replace("[loser $round/$losers]", $name, $template);
-        }
-      }
-      //update game results
-      if ($i % 2 == 1) {
-        $games++;
-        $game = "";
-        if (isset($team['team_id'])) {
-          $results = GameHomeTeamResults($team['team_id'], $pool['pool_id']);
-          $reverse = false;
-          if (!$results) {
-            $results = GameVisitorTeamResults($team['team_id'], $pool['pool_id']);
-            $reverse = true;
-          }
-          foreach ($results as $res) {
-            $resIsOngoing = !empty($res['isongoing']);
-            if ($reverse) {
-              $dummy = $res['homescore'];
-              $res['homescore'] = $res['visitorscore'];
-              $res['visitorscore'] = $dummy;
+        $gamesleft = -1;
+        $team = [];
+        if (!empty($pool)) {
+            $team = PoolTeamFromStandings($pool['pool_id'], $i);
+            if (!empty($team)) {
+                $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
             }
-            if ($res['scoresheet'] && !$resIsOngoing) {
-              $game .= "<a href='?view=gameplay&amp;game=" . $res['game_id'] . "'>";
-              $game .= $res['homescore'] . "-" . $res['visitorscore'] . "</a>"
-                . (!empty($res['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
-                . " ";
-            } elseif (GameHasStarted($res) > 0 && !$resIsOngoing) {
-              $game .= $res['homescore'] . "-" . $res['visitorscore']
-                . (!empty($res['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "");
-            } elseif (!empty($res['gamename'])) {
-              $game .= "<span class='lowlight'>" . utf8entities(U_($res['gamename'])) . "</span>";
+        }
+        $teampart = "";
+        $unknown = "";
+
+        if (!PoolMoveExist($pool['pool_id'], $i)) {
+            $placement = PoolPlacementString($pool['pool_id'], $i);
+            $placementname = "<b>" . U_($placement) . "</b> ";
+            if ($gamesleft == 0 && !empty($team)) {
+                if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+                    $teampart .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
+                }
+                $teampart .= utf8entities($team['name']);
+            } else {
+                $unknown = "<i>" . _("???") . "</i>";
             }
-          }
-        }
-        if (empty($game) && isset($sname['scheduling_id'])) {
-          $results = GameHomePseudoTeamResults($sname['scheduling_id'], $pool['pool_id']);
-          foreach ($results as $res) {
-            if (!empty($res['gamename'])) {
-              $game .= "<span class='lowlight'>" . utf8entities(U_($res['gamename'])) . "</span>";
+        } else {
+            $movetopool = PoolGetMoveToPool($pool['pool_id'], $i);
+            $placementname .= "<a href='?view=poolstatus&amp;pool=" . $movetopool['topool'] . "'>&raquo; " . utf8entities(U_($movetopool['name'])) . "</a>&nbsp; ";
+
+            if ($gamesleft == 0 && !empty($team)) {
+                if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+                    $teampart .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
+                }
+
+                $teampart .= utf8entities($team['name']);
+            } else {
+                $unknown = "<i>" . _("???") . "</i>";
             }
-          }
         }
 
-        if (empty($game)) {
-          //$game = "&nbsp;";
-          $game .= "<span class='lowlight'>" . _("Game") . " " . $games . "</span>";
+        if (empty($template)) {
+            $notemplate .= "<tr><td>" . $placementname . "</td><td>" . $teampart . $unknown . "</td></tr>\n";
+        } else {
+            $template = str_replace("[placement $i]", $placementname . $teampart, $template);
         }
-        $template = str_replace("[game " . ($round + 1) . "/$games]", $game, $template);
-      }
     }
-    if ($totalteams % 2 == 1) {
-      $previousRoundByeName = $byeName; // save previous pool Bye name
-    }
-    $round++;
-  }
-
-  //placements
-  $notemplate .= "<h4>" . _("Placement") . "</h4>\n";
-  $notemplate .= "<table width='100%'>\n";
-
-  $template = str_replace("[placement]", _("Placement"), $template);
-  for ($i = 1; $i <= $totalteams; $i++) {
-    $placementname = "";
-    if (!isset($pool['pool_id'])) {
-      continue;
-    }
-    $gamesleft = -1;
-    $team = array();
-    if (!empty($pool)) {
-      $team = PoolTeamFromStandings($pool['pool_id'], $i);
-      if (!empty($team)) {
-        $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
-      }
-    }
-    $teampart = "";
-    $unknown = "";
-
-    if (!PoolMoveExist($pool['pool_id'], $i)) {
-      $placement = PoolPlacementString($pool['pool_id'], $i);
-      $placementname = "<b>" . U_($placement) . "</b> ";
-      if ($gamesleft == 0 && !empty($team)) {
-        if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
-          $teampart .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
-        }
-        $teampart .= utf8entities($team['name']);
-      } else {
-        $unknown = "<i>" . _("???") . "</i>";
-      }
-    } else {
-      $movetopool = PoolGetMoveToPool($pool['pool_id'], $i);
-      $placementname .= "<a href='?view=poolstatus&amp;pool=" . $movetopool['topool'] . "'>&raquo; " . utf8entities(U_($movetopool['name'])) . "</a>&nbsp; ";
-
-      if ($gamesleft == 0 && !empty($team)) {
-        if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
-          $teampart .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
-        }
-
-        $teampart .= utf8entities($team['name']);
-      } else {
-        $unknown = "<i>" . _("???") . "</i>";
-      }
-    }
-
     if (empty($template)) {
-      $notemplate .= "<tr><td>" . $placementname . "</td><td>" . $teampart . $unknown . "</td></tr>\n";
+        $notemplate .= "</table>\n";
+        $ret .= $notemplate;
     } else {
-      $template = str_replace("[placement $i]", $placementname . $teampart, $template);
+        $ret .= $template;
     }
-  }
-  if (empty($template)) {
-    $notemplate .= "</table>\n";
-    $ret .= $notemplate;
-  } else {
-    $ret .= $template;
-  }
-  $ret .= "<p><a href='?view=games&amp;pools=" . implode(",", $pools) . "&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
-  return $ret;
+    $ret .= "<p><a href='?view=games&amp;pools=" . implode(",", $pools) . "&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
+    return $ret;
 }
 
 function printCrossmatchPool($seasoninfo, $poolinfo)
 {
 
-  $ret = "";
-  $style = "";
+    $ret = "";
+    $style = "";
 
-  if ($poolinfo['played']) {
-    $style = "style='font-weight: bold;'";
-  }
-
-  $ret .= "<table $style width='100%'>\n";
-
-
-  $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "crossmatch");
-  $i = 0;
-  $pos = 1;
-  $winnerpools = array();
-  $loserspools = array();
-
-  foreach ($games as $game) {
-    $i++;
-    $winnerspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos);
-    $winnercolor = isset($winnerspool['color']) ? $winnerspool['color'] : "ffffff";
-    $winnerpoolstyle = "background-color:#" . $winnercolor . ";background-color:" . RGBtoRGBa($winnercolor, 0.3) . ";color:#" . textColor($winnercolor);
-    if (isset($winnerspool['topool'])) {
-      $winnerpools[$winnerspool['topool']] = $winnercolor;
+    if ($poolinfo['played']) {
+        $style = "style='font-weight: bold;'";
     }
 
-    $loserspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos + 1);
-    $losercolor = isset($loserspool['color']) ? $loserspool['color'] : "ffffff";
-    $loserpoolstyle = "background-color:#" . $losercolor . ";background-color:" . RGBtoRGBa($losercolor, 0.3) . ";color:#" . textColor($losercolor);
-    if (isset($loserspool['topool'])) {
-      $loserspools[$loserspool['topool']] = $losercolor;
-    }
+    $ret .= "<table $style width='100%'>\n";
 
-    $ret .= "<tr>";
-    $ret .= "<td class='center' style='" . $winnerpoolstyle . "'></td>";
-    $ret .= "<td class='center' style='" . $loserpoolstyle . "'></td>";
-        
-    if(!empty($game['gamename'])){
-      $ret .= "<td style='width:10%'>" . utf8entities(U_($game['gamename'])) . "</td>";
-    } else {
-      $ret .= "<td style='width:10%'>"._("Game")." $i "."</td>";
-    }
-    $ret .= "<td></td>";
 
-    // $goals = intval($game['homescore'])+intval($game['visitorscore']);
+    $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "crossmatch");
+    $i = 0;
+    $pos = 1;
+    $winnerpools = [];
+    $loserspools = [];
 
-    $gameIsOngoing = !empty($game['isongoing']);
-    $gameHasStarted = GameHasStarted($game);
-    if ($gameHasStarted && !$gameIsOngoing && $game['hometeam'] && $game['visitorteam']) {
-      if (intval($game['homescore']) > intval($game['visitorscore'])) {
-        $ret .= "<td style='" . $winnerpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
-        $ret .= "<td class='center'>-</td>\n";
-        $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
-      } elseif (intval($game['homescore']) < intval($game['visitorscore'])) {
-        $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
-        $ret .= "<td class='center'>-</td>\n";
-        $ret .= "<td style='" . $winnerpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
-      } else {
-        $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
-        $ret .= "<td class='center'>-</td>\n";
-        $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
-      }
-    } else {
-      if ($game['hometeam']) {
-        $ret .= "<td><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
-      } else {
-        $ret .= "<td>" . utf8entities($game['phometeamname']) . "</td>\n";
-      }
-      $ret .= "<td class='center'>-</td>\n";
-      if ($game['visitorteam']) {
-        $ret .= "<td><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
-      } else {
-        $ret .= "<td>" . utf8entities($game['pvisitorteamname']) . "</td>\n";
-      }
-    }
-
-    if (!$gameHasStarted) {
-      $ret .= "<td>?</td>\n";
-      $ret .= "<td>-</td>\n";
-      $ret .= "<td>?</td>\n";
-      $ret .= "<td></td>\n";
-    } else {
-      if ($gameIsOngoing)
-        $ret .= "<td><em>" . intval($game['homescore']) . "</em></td><td>-</td><td><em>" . intval($game['visitorscore']) . "</em></td><td></td>\n";
-      else
-        $ret .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>"
-          . "<td>" . (!empty($game['forfeit']) ? "<span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "") . "</td>\n";
-    }
-
-    if (!$gameIsOngoing) {
-      if (intval($game['scoresheet'])) {
-        $ret .= "<td class='right'>&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
-        $ret .= _("Gameplay") . "</a></td>\n";
-      } else {
-        $ret .= "<td class='left'></td>\n";
-      }
-    } else {
-      if (intval($game['scoresheet'])) {
-        $ret .= "<td class='right'>&nbsp;&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
-        $ret .= _("Ongoing") . "</a></td>\n";
-      } else {
-        $ret .= "<td class='right'>&nbsp;&nbsp;" . _("Ongoing") . "</td>\n";
-      }
-    }
-    $ret .= "</tr>\n";
-    $pos += 2;
-  }
-  $ret .= "</table>\n";
-
-  $winnerCount = count($winnerpools);
-  $loserCount = count($loserspools);
-  $poolInfoCache = array();
-  if ($winnerCount > 0 || $loserCount > 0) {
-    $ret .= "<table style='white-space: nowrap' cellpadding='2' width='100%'><tr>\n";
-
-    if ($winnerCount > 0) {
-      $ret .= "<td>" . _("Winners continue in:") . "</td>";
-      foreach ($winnerpools as $winnerId => $color) {
-        if (!isset($poolInfoCache[$winnerId])) {
-          $poolInfoCache[$winnerId] = PoolInfo($winnerId);
+    foreach ($games as $game) {
+        $i++;
+        $winnerspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos);
+        $winnercolor = isset($winnerspool['color']) ? $winnerspool['color'] : "ffffff";
+        $winnerpoolstyle = "background-color:#" . $winnercolor . ";background-color:" . RGBtoRGBa($winnercolor, 0.3) . ";color:#" . textColor($winnercolor);
+        if (isset($winnerspool['topool'])) {
+            $winnerpools[$winnerspool['topool']] = $winnercolor;
         }
-        $winnerInfo = $poolInfoCache[$winnerId];
-        $winnerWidth = 50 / $winnerCount;
-        $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . $winnerWidth . "%'>";
-        if (!empty($winnerInfo['visible'])) {
-          $ret .= "<a href='?view=poolstatus&amp;pool=" . $winnerId . "'>" . utf8entities(U_(PoolName($winnerId))) . "</a>";
+
+        $loserspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos + 1);
+        $losercolor = isset($loserspool['color']) ? $loserspool['color'] : "ffffff";
+        $loserpoolstyle = "background-color:#" . $losercolor . ";background-color:" . RGBtoRGBa($losercolor, 0.3) . ";color:#" . textColor($losercolor);
+        if (isset($loserspool['topool'])) {
+            $loserspools[$loserspool['topool']] = $losercolor;
+        }
+
+        $ret .= "<tr>";
+        $ret .= "<td class='center' style='" . $winnerpoolstyle . "'></td>";
+        $ret .= "<td class='center' style='" . $loserpoolstyle . "'></td>";
+
+        if (!empty($game['gamename'])) {
+            $ret .= "<td style='width:10%'>" . utf8entities(U_($game['gamename'])) . "</td>";
         } else {
-          $ret .= utf8entities(U_(PoolName($winnerId)));
+            $ret .= "<td style='width:10%'>" . _("Game") . " $i " . "</td>";
         }
-        $ret .= "</td>";
-      }
-    }
+        $ret .= "<td></td>";
 
-    if ($loserCount > 0) {
-      $ret .= "<td>" . _("Losers continue in:") . "</td>";
-      foreach ($loserspools as $loserId => $color) {
-        if (!isset($poolInfoCache[$loserId])) {
-          $poolInfoCache[$loserId] = PoolInfo($loserId);
-        }
-        $loserInfo = $poolInfoCache[$loserId];
-        $loserWidth = 50 / $loserCount;
-        $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . $loserWidth . "%'>";
-        if (!empty($loserInfo['visible'])) {
-          $ret .= "<a href='?view=poolstatus&amp;pool=" . $loserId . "'>" . utf8entities(PoolName($loserId)) . "</a>";
+        // $goals = intval($game['homescore'])+intval($game['visitorscore']);
+
+        $gameIsOngoing = !empty($game['isongoing']);
+        $gameHasStarted = GameHasStarted($game);
+        if ($gameHasStarted && !$gameIsOngoing && $game['hometeam'] && $game['visitorteam']) {
+            if (intval($game['homescore']) > intval($game['visitorscore'])) {
+                $ret .= "<td style='" . $winnerpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
+                $ret .= "<td class='center'>-</td>\n";
+                $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
+            } elseif (intval($game['homescore']) < intval($game['visitorscore'])) {
+                $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
+                $ret .= "<td class='center'>-</td>\n";
+                $ret .= "<td style='" . $winnerpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
+            } else {
+                $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
+                $ret .= "<td class='center'>-</td>\n";
+                $ret .= "<td style='" . $loserpoolstyle . "'><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
+            }
         } else {
-          $ret .= utf8entities(PoolName($loserId));
+            if ($game['hometeam']) {
+                $ret .= "<td><a href='?view=teamcard&amp;team=" . $game['hometeam'] . "'>" . utf8entities($game['hometeamname']) . "</a></td>\n";
+            } else {
+                $ret .= "<td>" . utf8entities($game['phometeamname']) . "</td>\n";
+            }
+            $ret .= "<td class='center'>-</td>\n";
+            if ($game['visitorteam']) {
+                $ret .= "<td><a href='?view=teamcard&amp;team=" . $game['visitorteam'] . "'>" . utf8entities($game['visitorteamname']) . "</a></td>\n";
+            } else {
+                $ret .= "<td>" . utf8entities($game['pvisitorteamname']) . "</td>\n";
+            }
         }
-        $ret .= "</td>";
-      }
+
+        if (!$gameHasStarted) {
+            $ret .= "<td>?</td>\n";
+            $ret .= "<td>-</td>\n";
+            $ret .= "<td>?</td>\n";
+            $ret .= "<td></td>\n";
+        } else {
+            if ($gameIsOngoing) {
+                $ret .= "<td><em>" . intval($game['homescore']) . "</em></td><td>-</td><td><em>" . intval($game['visitorscore']) . "</em></td><td></td>\n";
+            } else {
+                $ret .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>"
+                    . "<td>" . (!empty($game['forfeit']) ? "<span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "") . "</td>\n";
+            }
+        }
+
+        if (!$gameIsOngoing) {
+            if (intval($game['scoresheet'])) {
+                $ret .= "<td class='right'>&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
+                $ret .= _("Gameplay") . "</a></td>\n";
+            } else {
+                $ret .= "<td class='left'></td>\n";
+            }
+        } else {
+            if (intval($game['scoresheet'])) {
+                $ret .= "<td class='right'>&nbsp;&nbsp;<a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>";
+                $ret .= _("Ongoing") . "</a></td>\n";
+            } else {
+                $ret .= "<td class='right'>&nbsp;&nbsp;" . _("Ongoing") . "</td>\n";
+            }
+        }
+        $ret .= "</tr>\n";
+        $pos += 2;
     }
-    $ret .= "</tr></table>\n";
-  }
+    $ret .= "</table>\n";
 
-  $ret .= "<p><a href='?view=games&amp;pool=" . $poolinfo['pool_id'] . "&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
+    $winnerCount = count($winnerpools);
+    $loserCount = count($loserspools);
+    $poolInfoCache = [];
+    if ($winnerCount > 0 || $loserCount > 0) {
+        $ret .= "<table style='white-space: nowrap' cellpadding='2' width='100%'><tr>\n";
 
-  return $ret;
+        if ($winnerCount > 0) {
+            $ret .= "<td>" . _("Winners continue in:") . "</td>";
+            foreach ($winnerpools as $winnerId => $color) {
+                if (!isset($poolInfoCache[$winnerId])) {
+                    $poolInfoCache[$winnerId] = PoolInfo($winnerId);
+                }
+                $winnerInfo = $poolInfoCache[$winnerId];
+                $winnerWidth = 50 / $winnerCount;
+                $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . $winnerWidth . "%'>";
+                if (!empty($winnerInfo['visible'])) {
+                    $ret .= "<a href='?view=poolstatus&amp;pool=" . $winnerId . "'>" . utf8entities(U_(PoolName($winnerId))) . "</a>";
+                } else {
+                    $ret .= utf8entities(U_(PoolName($winnerId)));
+                }
+                $ret .= "</td>";
+            }
+        }
+
+        if ($loserCount > 0) {
+            $ret .= "<td>" . _("Losers continue in:") . "</td>";
+            foreach ($loserspools as $loserId => $color) {
+                if (!isset($poolInfoCache[$loserId])) {
+                    $poolInfoCache[$loserId] = PoolInfo($loserId);
+                }
+                $loserInfo = $poolInfoCache[$loserId];
+                $loserWidth = 50 / $loserCount;
+                $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . $loserWidth . "%'>";
+                if (!empty($loserInfo['visible'])) {
+                    $ret .= "<a href='?view=poolstatus&amp;pool=" . $loserId . "'>" . utf8entities(PoolName($loserId)) . "</a>";
+                } else {
+                    $ret .= utf8entities(PoolName($loserId));
+                }
+                $ret .= "</td>";
+            }
+        }
+        $ret .= "</tr></table>\n";
+    }
+
+    $ret .= "<p><a href='?view=games&amp;pool=" . $poolinfo['pool_id'] . "&amp;singleview=1'>" . _("Schedule") . "</a><br/></p>";
+
+    return $ret;
 }

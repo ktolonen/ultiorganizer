@@ -9,9 +9,9 @@ $html = "";
 
 $season = $_GET["season"];
 $missing_profiles_count = SeasonMissingPlayerProfilesCount($season);
-$seasons = array();
-$series = array();
-$teams = array();
+$seasons = [];
+$series = [];
+$teams = [];
 
 if (!empty($_POST['calc'])) {
     set_time_limit(120);
@@ -62,7 +62,7 @@ pageTopHeadOpen($title);
 
 <?php
 include_once 'lib/yui.functions.php';
-echo yuiLoad(array("animation", "dragdrop", "connection"));
+echo yuiLoad(["animation", "dragdrop", "connection"]);
 
 pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
@@ -83,11 +83,11 @@ if (!IsSeasonStatsCalculated($season)) {
 } else {
     $seasons = SeasonStatistics($season);
     if (!$seasons) {
-        $seasons = array(
+        $seasons = [
             'teams' => 0,
             'players' => 0,
-            'games' => 0
-        );
+            'games' => 0,
+        ];
     }
     $series = SeriesStatistics($season);
     $teams = SeasonTeamStatistics($season);
@@ -154,16 +154,16 @@ echo $html;
                 <?php
                 $prevseries = -1;
 
-                foreach ($teams as $team) {
-                    if ($team['series'] != $prevseries) {
-                        echo "new YAHOO.util.DDTarget('ol" . $team['series'] . "');\n";
-                        echo "new YAHOO.example.DDList('li" . $team['team_id'] . "');\n";
-                        $prevseries = $team['series'];
-                    } else {
-                        echo "new YAHOO.example.DDList('li" . $team['team_id'] . "');\n";
-                    }
-                }
-                ?>
+foreach ($teams as $team) {
+    if ($team['series'] != $prevseries) {
+        echo "new YAHOO.util.DDTarget('ol" . $team['series'] . "');\n";
+        echo "new YAHOO.example.DDList('li" . $team['team_id'] . "');\n";
+        $prevseries = $team['series'];
+    } else {
+        echo "new YAHOO.example.DDList('li" . $team['team_id'] . "');\n";
+    }
+}
+?>
                 Event.on("saveButton", "click", this.requestString);
             },
 
@@ -182,15 +182,15 @@ echo $html;
                 };
                 <?php
 
-                foreach ($series as $ser) {
-                    echo "	var ol" . $ser['series_id'] . "=Dom.get(\"ol" . $ser['series_id'] . "\");\n";
-                }
-                echo "var request = ";
-                foreach ($series as $ser) {
-                    echo " parseList(ol" . $ser['series_id'] . ", \"" . $ser['series_id'] . "\")+ \"|\" + ";
-                }
-                echo "\"\";\n";
-                ?>
+foreach ($series as $ser) {
+    echo "	var ol" . $ser['series_id'] . "=Dom.get(\"ol" . $ser['series_id'] . "\");\n";
+}
+echo "var request = ";
+foreach ($series as $ser) {
+    echo " parseList(ol" . $ser['series_id'] . ", \"" . $ser['series_id'] . "\")+ \"|\" + ";
+}
+echo "\"\";\n";
+?>
                 var responseDiv = Dom.get("responseStatus");
                 Dom.setStyle(responseDiv, "background-image", "url('images/indicator.gif')");
                 Dom.setStyle(responseDiv, "background-repeat", "no-repeat");

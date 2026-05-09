@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
@@ -11,15 +12,15 @@ denyDirectLibAccess(__FILE__);
  */
 function SeasonPointsRounds($seasonId, $seriesId)
 {
-  $query = sprintf(
-    "SELECT round_id, round_no, name
+    $query = sprintf(
+        "SELECT round_id, round_no, name
 		FROM uo_season_round
 		WHERE season='%s' AND series=%d
 		ORDER BY round_no",
-    DBEscapeString($seasonId),
-    (int)$seriesId
-  );
-  return DBQueryToArray($query);
+        DBEscapeString($seasonId),
+        (int) $seriesId,
+    );
+    return DBQueryToArray($query);
 }
 
 /**
@@ -30,13 +31,13 @@ function SeasonPointsRounds($seasonId, $seriesId)
  */
 function SeasonPointsRoundInfo($roundId)
 {
-  $query = sprintf(
-    "SELECT round_id, season, series, round_no, name
+    $query = sprintf(
+        "SELECT round_id, season, series, round_no, name
 		FROM uo_season_round
 		WHERE round_id=%d",
-    (int)$roundId
-  );
-  return DBQueryToRow($query, true);
+        (int) $roundId,
+    );
+    return DBQueryToRow($query, true);
 }
 
 /**
@@ -50,18 +51,18 @@ function SeasonPointsRoundInfo($roundId)
  */
 function AddSeasonPointsRound($seasonId, $seriesId, $roundNo, $name)
 {
-  if (!isSeasonAdmin($seasonId)) {
-    die('Insufficient rights to add season points round');
-  }
-  $query = sprintf(
-    "INSERT INTO uo_season_round (season, series, round_no, name)
+    if (!isSeasonAdmin($seasonId)) {
+        die('Insufficient rights to add season points round');
+    }
+    $query = sprintf(
+        "INSERT INTO uo_season_round (season, series, round_no, name)
 		VALUES ('%s', %d, %d, '%s')",
-    DBEscapeString($seasonId),
-    (int)$seriesId,
-    (int)$roundNo,
-    DBEscapeString($name)
-  );
-  return DBQuery($query);
+        DBEscapeString($seasonId),
+        (int) $seriesId,
+        (int) $roundNo,
+        DBEscapeString($name),
+    );
+    return DBQuery($query);
 }
 
 /**
@@ -72,18 +73,18 @@ function AddSeasonPointsRound($seasonId, $seriesId, $roundNo, $name)
  */
 function DeleteSeasonPointsRound($roundId)
 {
-  $round = SeasonPointsRoundInfo($roundId);
-  if (!$round) {
-    return false;
-  }
-  if (!isSeasonAdmin($round['season'])) {
-    die('Insufficient rights to delete season points round');
-  }
-  $query = sprintf(
-    "DELETE FROM uo_season_round WHERE round_id=%d",
-    (int)$roundId
-  );
-  return DBQuery($query);
+    $round = SeasonPointsRoundInfo($roundId);
+    if (!$round) {
+        return false;
+    }
+    if (!isSeasonAdmin($round['season'])) {
+        die('Insufficient rights to delete season points round');
+    }
+    $query = sprintf(
+        "DELETE FROM uo_season_round WHERE round_id=%d",
+        (int) $roundId,
+    );
+    return DBQuery($query);
 }
 
 /**
@@ -94,18 +95,18 @@ function DeleteSeasonPointsRound($roundId)
  */
 function SeasonPointsRoundPoints($roundId)
 {
-  $query = sprintf(
-    "SELECT team_id, points
+    $query = sprintf(
+        "SELECT team_id, points
 		FROM uo_season_points
 		WHERE round_id=%d",
-    (int)$roundId
-  );
-  $rows = DBQueryToArray($query);
-  $points = array();
-  foreach ($rows as $row) {
-    $points[$row['team_id']] = (int)$row['points'];
-  }
-  return $points;
+        (int) $roundId,
+    );
+    $rows = DBQueryToArray($query);
+    $points = [];
+    foreach ($rows as $row) {
+        $points[$row['team_id']] = (int) $row['points'];
+    }
+    return $points;
 }
 
 /**
@@ -117,28 +118,28 @@ function SeasonPointsRoundPoints($roundId)
  */
 function SaveSeasonPointsRoundPoints($roundId, $pointsByTeam)
 {
-  $round = SeasonPointsRoundInfo($roundId);
-  if (!$round) {
-    return false;
-  }
-  if (!isSeasonAdmin($round['season'])) {
-    die('Insufficient rights to edit season points');
-  }
+    $round = SeasonPointsRoundInfo($roundId);
+    if (!$round) {
+        return false;
+    }
+    if (!isSeasonAdmin($round['season'])) {
+        die('Insufficient rights to edit season points');
+    }
 
-  foreach ($pointsByTeam as $teamId => $points) {
-    $query = sprintf(
-      "INSERT INTO uo_season_points (round_id, team_id, points)
+    foreach ($pointsByTeam as $teamId => $points) {
+        $query = sprintf(
+            "INSERT INTO uo_season_points (round_id, team_id, points)
 			VALUES (%d, %d, %d)
 			ON DUPLICATE KEY UPDATE points=VALUES(points)",
-      (int)$roundId,
-      (int)$teamId,
-      (int)$points
-    );
-    if (!DBQuery($query)) {
-      return false;
+            (int) $roundId,
+            (int) $teamId,
+            (int) $points,
+        );
+        if (!DBQuery($query)) {
+            return false;
+        }
     }
-  }
-  return true;
+    return true;
 }
 
 /**
@@ -150,19 +151,19 @@ function SaveSeasonPointsRoundPoints($roundId, $pointsByTeam)
  */
 function SeasonPointsSeriesTotals($seasonId, $seriesId)
 {
-  $query = sprintf(
-    "SELECT tp.team_id, SUM(tp.points) AS total
+    $query = sprintf(
+        "SELECT tp.team_id, SUM(tp.points) AS total
 		FROM uo_season_points tp
 		LEFT JOIN uo_season_round tr ON (tp.round_id = tr.round_id)
 		WHERE tr.season='%s' AND tr.series=%d
 		GROUP BY tp.team_id",
-    DBEscapeString($seasonId),
-    (int)$seriesId
-  );
-  $rows = DBQueryToArray($query);
-  $totals = array();
-  foreach ($rows as $row) {
-    $totals[$row['team_id']] = (int)$row['total'];
-  }
-  return $totals;
+        DBEscapeString($seasonId),
+        (int) $seriesId,
+    );
+    $rows = DBQueryToArray($query);
+    $totals = [];
+    foreach ($rows as $row) {
+        $totals[$row['team_id']] = (int) $row['total'];
+    }
+    return $totals;
 }

@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/series.functions.php';
 
@@ -9,13 +10,13 @@ $backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_RE
 
 $html = "";
 if (isset($_POST['save'])) {
-	$backurl = utf8entities($_POST['backurl']);
-	//revalidate
-	for ($i = 0; $i < count($teams); $i++) {
-		$teamId = $_POST["team$i"];
-		$seed = $_POST["seed$i"];
-		SetTeamSeeding($seriesId, $teamId, $seed);
-	}
+    $backurl = utf8entities($_POST['backurl']);
+    //revalidate
+    for ($i = 0; $i < count($teams); $i++) {
+        $teamId = $_POST["team$i"];
+        $seed = $_POST["seed$i"];
+        SetTeamSeeding($seriesId, $teamId, $seed);
+    }
 }
 
 $teams = SeriesTeams($seriesId, true);
@@ -31,7 +32,7 @@ contentStart();
 
 $series = SeasonSeries($seasonInfo['season_id']);
 foreach ($series as $row) {
-	$menutabs[U_($row['name'])] = "?view=admin/seriesseeding&season=" . $seasonInfo['season_id'] . "&series=" . $row['series_id'];
+    $menutabs[U_($row['name'])] = "?view=admin/seriesseeding&season=" . $seasonInfo['season_id'] . "&series=" . $row['series_id'];
 }
 $menutabs[_("...")] = "?view=admin/seasonseries&season=" . $seasonInfo['season_id'];
 pageMenu($menutabs);
@@ -44,10 +45,10 @@ $html .= "<tr>";
 $html .= "<th>" . _("Seed") . "</th>";
 $html .= "<th>" . _("Name") . "</th>";
 if (!intval($seasonInfo['isnationalteams'])) {
-	$html .= "<th>" . _("Club") . "</th>";
+    $html .= "<th>" . _("Club") . "</th>";
 }
 if (intval($seasonInfo['isinternational'])) {
-	$html .= "<th>" . _("Country") . "</th>";
+    $html .= "<th>" . _("Country") . "</th>";
 }
 
 $html .= "<th></th></tr>\n";
@@ -56,18 +57,18 @@ $i = 0;
 
 foreach ($teams as $team) {
 
-	$html .= "<tr>";
-	$html .= "<td><input class='input' maxlength='3' size='2' name='seed$i' value='" . utf8entities($team['rank']) . "'/></td>";
-	$html .= "<td><input type='hidden' name='team$i' value='" . utf8entities($team['team_id']) . "'/>" . utf8entities($team['name']) . "</td>";
-	if (!intval($seasonInfo['isnationalteams'])) {
-		$html .= "<td>" . utf8entities($team['clubname']) . "</td>";
-	}
-	if (intval($seasonInfo['isinternational'])) {
-		$html .= "<td>" . utf8entities(U_($team['countryname'])) . "</td>";
-	}
+    $html .= "<tr>";
+    $html .= "<td><input class='input' maxlength='3' size='2' name='seed$i' value='" . utf8entities($team['rank']) . "'/></td>";
+    $html .= "<td><input type='hidden' name='team$i' value='" . utf8entities($team['team_id']) . "'/>" . utf8entities($team['name']) . "</td>";
+    if (!intval($seasonInfo['isnationalteams'])) {
+        $html .= "<td>" . utf8entities($team['clubname']) . "</td>";
+    }
+    if (intval($seasonInfo['isinternational'])) {
+        $html .= "<td>" . utf8entities(U_($team['countryname'])) . "</td>";
+    }
 
-	$html .= "</tr>\n";
-	$i++;
+    $html .= "</tr>\n";
+    $i++;
 }
 $html .= "</table>";
 $html .= "<p><input class='button' type='submit' name='save' value='" . _("Save") . "'/>";

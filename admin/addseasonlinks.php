@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'lib/url.functions.php';
@@ -9,47 +10,47 @@ $html = "";
 $seasonId = $_GET["season"];
 
 if (!empty($_POST['save'])) {
-	for ($i = 0; !empty($_POST["urlid$i"]); $i++) {
-		$url = array(
-			"url_id" => $_POST["urlid$i"],
-			"owner" => "ultiorganizer",
-			"owner_id" => $seasonId,
-			"type" => $_POST["urltype$i"],
-			"ordering" => $_POST["urlorder$i"],
-			"url" => $_POST["url$i"],
-			"ismedialink" => 0,
-			"name" => $_POST["urlname$i"],
-			"mediaowner" => "",
-			"publisher_id" => ""
-		);
+    for ($i = 0; !empty($_POST["urlid$i"]); $i++) {
+        $url = [
+            "url_id" => $_POST["urlid$i"],
+            "owner" => "ultiorganizer",
+            "owner_id" => $seasonId,
+            "type" => $_POST["urltype$i"],
+            "ordering" => $_POST["urlorder$i"],
+            "url" => $_POST["url$i"],
+            "ismedialink" => 0,
+            "name" => $_POST["urlname$i"],
+            "mediaowner" => "",
+            "publisher_id" => "",
+        ];
 
-		if ($_POST["urltype$i"] == "menumail") {
-			SetMail($url);
-		} else {
-			SetUrl($url);
-		}
-	}
-	if (!empty($_POST["newurl"])) {
-		$url = array(
-			"owner" => "ultiorganizer",
-			"owner_id" => $seasonId,
-			"type" => $_POST["newurltype"],
-			"ordering" => $_POST["newurlorder"],
-			"url" => $_POST["newurl"],
-			"ismedialink" => 0,
-			"name" => $_POST["newurlname"],
-			"mediaowner" => "",
-			"publisher_id" => ""
-		);
-		if ($_POST["newurltype"] == "menumail") {
-			AddMail($url);
-		} else {
-			AddUrl($url);
-		}
-	}
+        if ($_POST["urltype$i"] == "menumail") {
+            SetMail($url);
+        } else {
+            SetUrl($url);
+        }
+    }
+    if (!empty($_POST["newurl"])) {
+        $url = [
+            "owner" => "ultiorganizer",
+            "owner_id" => $seasonId,
+            "type" => $_POST["newurltype"],
+            "ordering" => $_POST["newurlorder"],
+            "url" => $_POST["newurl"],
+            "ismedialink" => 0,
+            "name" => $_POST["newurlname"],
+            "mediaowner" => "",
+            "publisher_id" => "",
+        ];
+        if ($_POST["newurltype"] == "menumail") {
+            AddMail($url);
+        } else {
+            AddUrl($url);
+        }
+    }
 } elseif (!empty($_POST['remove_x'])) {
-	$id = $_POST['hiddenDeleteId'];
-	RemoveUrl($id);
+    $id = $_POST['hiddenDeleteId'];
+    RemoveUrl($id);
 }
 
 //common page
@@ -61,18 +62,18 @@ $html .= "<form method='post' action='?view=admin/addseasonlinks&amp;season=" . 
 
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= "<tr><th>" . _("Type") . "</th><th>" . _("Order") . "</th><th>" . _("Name") . "</th><th>" . _("URL") . "</th><th></th></tr>\n";
-$urls = GetUrlListByTypeArray(array("menulink", "menumail"), $seasonId);
+$urls = GetUrlListByTypeArray(["menulink", "menumail"], $seasonId);
 $i = 0;
 foreach ($urls as $url) {
-	$html .= "<tr>";
-	$html .= "<td>" . $url['type'] . "<input type='hidden' name='urltype" . $i . "' value='" . utf8entities($url['type']) . "'/></td>";
-	$html .= "<td><input class='input' size='3' maxlength='2' name='urlorder" . $i . "' value='" . utf8entities($url['ordering']) . "'/></td>";
-	$html .= "<td><input class='input' size='30' maxlength='150' name='urlname" . $i . "' value='" . utf8entities($url['name']) . "'/></td>";
-	$html .= "<td><input class='input' size='40' maxlength='500' name='url" . $i . "' value='" . utf8entities($url['url']) . "'/></td>";
-	$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' name='remove' alt='" . _("X") . "' onclick=\"setId(" . $url['url_id'] . ");\"/></td>";
-	$html .= "<td><input type='hidden' name='urlid" . $i . "' value='" . utf8entities($url['url_id']) . "'/></td>";
-	$html .= "</tr>\n";
-	$i++;
+    $html .= "<tr>";
+    $html .= "<td>" . $url['type'] . "<input type='hidden' name='urltype" . $i . "' value='" . utf8entities($url['type']) . "'/></td>";
+    $html .= "<td><input class='input' size='3' maxlength='2' name='urlorder" . $i . "' value='" . utf8entities($url['ordering']) . "'/></td>";
+    $html .= "<td><input class='input' size='30' maxlength='150' name='urlname" . $i . "' value='" . utf8entities($url['name']) . "'/></td>";
+    $html .= "<td><input class='input' size='40' maxlength='500' name='url" . $i . "' value='" . utf8entities($url['url']) . "'/></td>";
+    $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' name='remove' alt='" . _("X") . "' onclick=\"setId(" . $url['url_id'] . ");\"/></td>";
+    $html .= "<td><input type='hidden' name='urlid" . $i . "' value='" . utf8entities($url['url_id']) . "'/></td>";
+    $html .= "</tr>\n";
+    $i++;
 }
 $html .= "<tr><td><select class='dropdown' name='newurltype'>\n";
 $html .= "<option value='menulink'>" . _("Menu link") . "</option>\n";

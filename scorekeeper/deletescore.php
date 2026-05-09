@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 $html = "";
 
@@ -9,11 +10,11 @@ $game_result = GameResult($gameId);
 $scores = GameGoals($gameId);
 
 if (isset($_POST['delete'])) {
-	if (count($scores) > 0) {
-		$lastscore = $scores[count($scores) - 1];
-		GameRemoveScore($gameId, $lastscore['num']);
-		header("location:?view=addscoresheet&game=" . $gameId);
-	}
+    if (count($scores) > 0) {
+        $lastscore = $scores[count($scores) - 1];
+        GameRemoveScore($gameId, $lastscore['num']);
+        header("location:?view=addscoresheet&game=" . $gameId);
+    }
 }
 
 $html .= "<div data-role='header'>\n";
@@ -27,16 +28,16 @@ $html .= "<form action='?view=deletescore' method='post' data-ajax='false'>\n";
 
 //last score
 if (count($scores) > 0) {
-	$lastscore = $scores[count($scores) - 1];
-	$html .= _("Delete goal") . " " . ($lastscore['num'] + 1) . ": ";
-	$html .= $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
-	$html .= "[" . SecToMin($lastscore['time']) . "] ";
-	$goalText = GoalDisplayText($lastscore, $gameId, true);
-	if ($goalText !== '') {
-		$html .= utf8entities($goalText);
-	}
+    $lastscore = $scores[count($scores) - 1];
+    $html .= _("Delete goal") . " " . ($lastscore['num'] + 1) . ": ";
+    $html .= $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
+    $html .= "[" . SecToMin($lastscore['time']) . "] ";
+    $goalText = GoalDisplayText($lastscore, $gameId, true);
+    if ($goalText !== '') {
+        $html .= utf8entities($goalText);
+    }
 } else {
-	$html .= _("Score") . ": 0 - 0";
+    $html .= _("Score") . ": 0 - 0";
 }
 
 $html .= "<input type='submit' name='delete' data-ajax='false' value='" . _("Delete") . "'/>";

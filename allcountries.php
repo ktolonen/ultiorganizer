@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('allcountries');
 
@@ -13,23 +14,23 @@ $html .= "<h1>" . _("Countries") . "</h1>\n";
 $html .= "<table width='100%' border='0' cellspacing='0' cellpadding='2'>\n";
 foreach ($countries as $country) {
 
-  if ($counter == 0) {
-    $html .= "<tr>\n";
-  }
+    if ($counter == 0) {
+        $html .= "<tr>\n";
+    }
 
-  $html .= "<td style='width:20%'>";
-  $html .= "<a href='?view=countrycard&amp;country=" . $country['country_id'] . "'>";
-  $html .= "<img src='images/flags/small/" . $country['flagfile'] . "' alt=''/><br/>";
-  $html .= utf8entities($country['name']) . "</a></td>";
+    $html .= "<td style='width:20%'>";
+    $html .= "<a href='?view=countrycard&amp;country=" . $country['country_id'] . "'>";
+    $html .= "<img src='images/flags/small/" . $country['flagfile'] . "' alt=''/><br/>";
+    $html .= utf8entities($country['name']) . "</a></td>";
 
-  $counter++;
-  if ($counter >= $maxcols) {
-    $html .= "</tr>\n";
-    $counter = 0;
-  }
+    $counter++;
+    if ($counter >= $maxcols) {
+        $html .= "</tr>\n";
+        $counter = 0;
+    }
 }
 if ($counter > 0 && $counter <= $maxcols) {
-  $html .= "</tr>\n";
+    $html .= "</tr>\n";
 };
 $html .= "</table>\n";
 

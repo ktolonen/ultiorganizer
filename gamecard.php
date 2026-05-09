@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('gamecard');
 
@@ -16,22 +17,22 @@ $teamId2 = 0;
 $sorting = "series";
 
 if (iget("team1")) {
-  $teamId1 = intval(iget("team1"));
+    $teamId1 = intval(iget("team1"));
 }
 if (iget("team2")) {
-  $teamId2 = intval(iget("team2"));
+    $teamId2 = intval(iget("team2"));
 }
 if (iget("sort")) {
-  $sorting = iget("sort");
+    $sorting = iget("sort");
 }
 $team1 = TeamInfo($teamId1);
 $team2 = TeamInfo($teamId2);
 
 if (!$team1 || !$team2) {
-  $title = _("Game card");
-  $html .= "<h1>" . _("Team not found") . "</h1>";
-  showPage($title, $html);
-  return;
+    $title = _("Game card");
+    $html .= "<h1>" . _("Team not found") . "</h1>";
+    showPage($title, $html);
+    return;
 }
 
 $title = _("Game card") . ": " . utf8entities($team1['name']) . " vs. " . utf8entities($team2['name']);
@@ -55,42 +56,42 @@ $t2 = preg_replace('/\s*/m', '', $team2['name']);
 $games = GetAllPlayedGamesArray($t1, $t2, $team1['type'], $sorting);
 
 foreach ($games as $game) {
-  if (GameHasStarted($game)) {
-    //ignore spaces from team name
-    $t1 = preg_replace('/\s*/m', '', $team1['name']);
-    $t2 = preg_replace('/\s*/m', '', $game['hometeamname']);
+    if (GameHasStarted($game)) {
+        //ignore spaces from team name
+        $t1 = preg_replace('/\s*/m', '', $team1['name']);
+        $t2 = preg_replace('/\s*/m', '', $game['hometeamname']);
 
-    if (strcasecmp($t1, $t2) == 0) {
-      if (intval($game['homescore']) > intval($game['visitorscore'])) {
-        $nT1Wins++;
-        $nT2Loses++;
-      } elseif (intval($game['homescore']) < intval($game['visitorscore'])) {
-        $nT2Wins++;
-        $nT1Loses++;
-      }
-      $nT1GoalsMade += intval($game['homescore']);
-      $nT2GoalsAgainst += intval($game['homescore']);
+        if (strcasecmp($t1, $t2) == 0) {
+            if (intval($game['homescore']) > intval($game['visitorscore'])) {
+                $nT1Wins++;
+                $nT2Loses++;
+            } elseif (intval($game['homescore']) < intval($game['visitorscore'])) {
+                $nT2Wins++;
+                $nT1Loses++;
+            }
+            $nT1GoalsMade += intval($game['homescore']);
+            $nT2GoalsAgainst += intval($game['homescore']);
 
-      $nT2GoalsMade += intval($game['visitorscore']);
-      $nT1GoalsAgainst += intval($game['visitorscore']);
-    } else {
-      if (intval($game['homescore']) < intval($game['visitorscore'])) {
-        $nT1Wins++;
-        $nT2Loses++;
-      } elseif (intval($game['homescore']) > intval($game['visitorscore'])) {
-        $nT2Wins++;
-        $nT1Loses++;
-      }
+            $nT2GoalsMade += intval($game['visitorscore']);
+            $nT1GoalsAgainst += intval($game['visitorscore']);
+        } else {
+            if (intval($game['homescore']) < intval($game['visitorscore'])) {
+                $nT1Wins++;
+                $nT2Loses++;
+            } elseif (intval($game['homescore']) > intval($game['visitorscore'])) {
+                $nT2Wins++;
+                $nT1Loses++;
+            }
 
-      $nT1GoalsMade += intval($game['visitorscore']);
-      $nT2GoalsAgainst += intval($game['visitorscore']);
+            $nT1GoalsMade += intval($game['visitorscore']);
+            $nT2GoalsAgainst += intval($game['visitorscore']);
 
-      $nT2GoalsMade += intval($game['homescore']);
-      $nT1GoalsAgainst += intval($game['homescore']);
+            $nT2GoalsMade += intval($game['homescore']);
+            $nT1GoalsAgainst += intval($game['homescore']);
+        }
+
+        $nGames++;
     }
-
-    $nGames++;
-  }
 }
 
 $html .= "<h2>" . utf8entities($team1['name']) . " vs. " . utf8entities($team2['name']) . "</h2>\n";
@@ -127,173 +128,173 @@ $html .= "<tr>
 $html .= "</table>\n";
 
 if ($nGames) {
-  $html .= "<h2>" . _("Played games") . "</h2>\n";
-  $html .= "<table border='1' cellspacing='2' width='80%'><tr>\n";
+    $html .= "<h2>" . _("Played games") . "</h2>\n";
+    $html .= "<table border='1' cellspacing='2' width='80%'><tr>\n";
 
-  $viewUrl = "?view=gamecard&amp;team1=$teamId1&amp;team2=$teamId2&amp;";
+    $viewUrl = "?view=gamecard&amp;team1=$teamId1&amp;team2=$teamId2&amp;";
 
-  $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=team'>" . _("Game") . "</a></th>";
-  $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=result'>" . _("Result") . "</a></th>";
-  $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Event / Pool") . "</a></th></tr>";
+    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=team'>" . _("Game") . "</a></th>";
+    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=result'>" . _("Result") . "</a></th>";
+    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Event / Pool") . "</a></th></tr>";
 
-  $points = array(array());
-  foreach ($games as $game) {
-    if (GameHasStarted($game)) {
-      $arrayYear = strtok($game['season_id'], ".");
-      $arraySeason = strtok(".");
+    $points = [[]];
+    foreach ($games as $game) {
+        if (GameHasStarted($game)) {
+            $arrayYear = strtok($game['season_id'], ".");
+            $arraySeason = strtok(".");
 
-      if (intval($game['homescore']) > intval($game['visitorscore'])) {
-        $html .= "<tr><td><b>" . utf8entities($game['hometeamname']) . "</b>";
-      } else {
-        $html .= "<tr><td>" . utf8entities($game['hometeamname']);
-      }
+            if (intval($game['homescore']) > intval($game['visitorscore'])) {
+                $html .= "<tr><td><b>" . utf8entities($game['hometeamname']) . "</b>";
+            } else {
+                $html .= "<tr><td>" . utf8entities($game['hometeamname']);
+            }
 
-      if (intval($game['homescore']) < intval($game['visitorscore'])) {
-        $html .= " - <b>" . utf8entities($game['visitorteamname']) . "</b></td>";
-      } else {
-        $html .= " - " . utf8entities($game['visitorteamname']) . "</td>";
-      }
-      $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . $game['homescore'] . " - " . $game['visitorscore'] . "</a>"
-        . (!empty($game['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
-        . "</td>";
+            if (intval($game['homescore']) < intval($game['visitorscore'])) {
+                $html .= " - <b>" . utf8entities($game['visitorteamname']) . "</b></td>";
+            } else {
+                $html .= " - " . utf8entities($game['visitorteamname']) . "</td>";
+            }
+            $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . $game['homescore'] . " - " . $game['visitorscore'] . "</a>"
+              . (!empty($game['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
+              . "</td>";
 
-      $html .= "<td>" . utf8entities(U_($game['seasonname'])) . ": <a href='?view=poolstatus&amp;pool=" . $game['pool_id'] . "'>" . utf8entities($game['name']) . "</a></td></tr>";
+            $html .= "<td>" . utf8entities(U_($game['seasonname'])) . ": <a href='?view=poolstatus&amp;pool=" . $game['pool_id'] . "'>" . utf8entities($game['name']) . "</a></td></tr>";
 
-      $scores = GameScoreBoardArray($game['game_id']);
-      $i = 0;
+            $scores = GameScoreBoardArray($game['game_id']);
+            $i = 0;
 
-      foreach ($scores as $row) {
-        $bFound = false;
-        for ($i = 0; ($i < 200) && !empty($points[$i][0]); $i++) {
-          //ignore spaces from team name
-          $t1 = preg_replace('/\s*/m', '', $row['teamname']);
-          $t2 = preg_replace('/\s*/m', '', $points[$i][2]);
-          if (($points[$i][0] == $row['profile_id']) && (strcasecmp($t1, $t2) == 0)) {
-            $points[$i][3]++;
-            $points[$i][4] += intval($row['fedin']);
-            $points[$i][5] += intval($row['done']);
-            $points[$i][6] = $points[$i][4] + $points[$i][5];
-            $bFound = true;
-          }
+            foreach ($scores as $row) {
+                $bFound = false;
+                for ($i = 0; ($i < 200) && !empty($points[$i][0]); $i++) {
+                    //ignore spaces from team name
+                    $t1 = preg_replace('/\s*/m', '', $row['teamname']);
+                    $t2 = preg_replace('/\s*/m', '', $points[$i][2]);
+                    if (($points[$i][0] == $row['profile_id']) && (strcasecmp($t1, $t2) == 0)) {
+                        $points[$i][3]++;
+                        $points[$i][4] += intval($row['fedin']);
+                        $points[$i][5] += intval($row['done']);
+                        $points[$i][6] = $points[$i][4] + $points[$i][5];
+                        $bFound = true;
+                    }
+                }
+
+                if (!$bFound && $i < 200) {
+                    $points[$i][0] = $row['profile_id'];
+                    $points[$i][1] = $row['firstname'] . " " . $row['lastname'];
+                    $points[$i][2] = $row['teamname'];
+                    $points[$i][3] = 1;
+                    $points[$i][4] = intval($row['fedin']);
+                    $points[$i][5] = intval($row['done']);
+                    $points[$i][6] = $points[$i][4] + $points[$i][5];
+                    $points[$i][7] = $row['player_id'];
+                }
+            }
         }
-
-        if (!$bFound && $i < 200) {
-          $points[$i][0] = $row['profile_id'];
-          $points[$i][1] = $row['firstname'] . " " . $row['lastname'];
-          $points[$i][2] = $row['teamname'];
-          $points[$i][3] = 1;
-          $points[$i][4] = intval($row['fedin']);
-          $points[$i][5] = intval($row['done']);
-          $points[$i][6] = $points[$i][4] + $points[$i][5];
-          $points[$i][7] = $row['player_id'];
-        }
-      }
     }
-  }
-  $html .= "</table>\n";
+    $html .= "</table>\n";
 
-  $html .= "<h2>" . _("Scoreboard") . "</h2>\n";
-  $html .= "<table border='1' width='80%'><tr><th>#</th>";
+    $html .= "<h2>" . _("Scoreboard") . "</h2>\n";
+    $html .= "<table border='1' width='80%'><tr><th>#</th>";
 
-  $sorted = false;
-
-  if ($sorting == "pname") {
-    $html .= "<th><b>" . _("Player") . "</b></th>";
-    mergesort($points, function ($b, $a) {
-      return strcmp($b[1], $a[1]);
-    });
-    $sorted = true;
-  } else {
-    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pname'>" . _("Player") . "</a></th>";
-  }
-
-  if ($sorting == "pteam") {
-    $html .= "<th><b>" . _("Team") . "</b></th>";
-    mergesort($points, function ($b, $a) {
-      return strcmp($b[2], $a[2]);
-    });
-    $sorted = true;
-  } else {
-    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pteam'>" . _("Team") . "</a></th>";
-  }
-
-  if ($sorting == "pgames") {
-    $html .= "<th><b>" . _("Games") . "</b></th>";
-    mergesort($points, function ($a, $b) {
-      return $a[3] == $b[3] ? 0 : ($a[3] > $b[3] ? -1 : 1);
-    });
-    $sorted = true;
-  } else {
-    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pgames'>" . _("Games") . "</a></th>";
-  }
-
-  if ($sorting == "ppasses") {
-    $html .= "<th><b>" . _("Assists") . "</b></th>";
-    mergesort($points, function ($a, $b) {
-      return $a[4] == $b[4] ? 0 : ($a[4] > $b[4] ? -1 : 1);
-    });
-    $sorted = true;
-  } else {
-    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=ppasses'>" . _("Assists") . "</a></th>";
-  }
-
-  if ($sorting == "pgoals") {
-    $html .= "<th><b>" . _("Goals") . "</b></th>";
-    mergesort($points, function ($a, $b) {
-      return $a[5] == $b[5] ? 0 : ($a[5] > $b[5] ? -1 : 1);
-    });
-    $sorted = true;
-  } else {
-    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pgoals'>" . _("Goals") . "</a></th>";
-  }
-
-  if (($sorting == "ptotal") || (!$sorted)) {
-    $html .= "<th><b>" . _("Tot.") . "</b></th></tr>\n";
-    mergesort($points, function ($a, $b) {
-      return $a[6] == $b[6] ? 0 : ($a[6] > $b[6] ? -1 : 1);
-    });
-  } else {
-    $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=ptotal'>" . _("Tot.") . "</a></th></tr>\n";
-  }
-
-
-  for ($i = 0; $i < 200 && !empty($points[$i][0]); $i++) {
-    $html .= "<tr> <td>" . ($i + 1) . "</td>";
+    $sorted = false;
 
     if ($sorting == "pname") {
-      $html .= "<td class='highlight'><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
+        $html .= "<th><b>" . _("Player") . "</b></th>";
+        mergesort($points, function ($b, $a) {
+            return strcmp($b[1], $a[1]);
+        });
+        $sorted = true;
     } else {
-      $html .= "<td><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
+        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pname'>" . _("Player") . "</a></th>";
     }
 
     if ($sorting == "pteam") {
-      $html .= "<td class='highlight'>" . utf8entities($points[$i][2]) . "</td>";
+        $html .= "<th><b>" . _("Team") . "</b></th>";
+        mergesort($points, function ($b, $a) {
+            return strcmp($b[2], $a[2]);
+        });
+        $sorted = true;
     } else {
-      $html .= "<td>" . utf8entities($points[$i][2]) . "</td>";
+        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pteam'>" . _("Team") . "</a></th>";
     }
+
     if ($sorting == "pgames") {
-      $html .= "<td class='highlight cntr'>" . $points[$i][3] . "</td>";
+        $html .= "<th><b>" . _("Games") . "</b></th>";
+        mergesort($points, function ($a, $b) {
+            return $a[3] == $b[3] ? 0 : ($a[3] > $b[3] ? -1 : 1);
+        });
+        $sorted = true;
     } else {
-      $html .= "<td class='cntr'>" . $points[$i][3] . "</td>";
+        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pgames'>" . _("Games") . "</a></th>";
     }
+
     if ($sorting == "ppasses") {
-      $html .= "<td class='highlight cntr'>" . $points[$i][4] . "</td>";
+        $html .= "<th><b>" . _("Assists") . "</b></th>";
+        mergesort($points, function ($a, $b) {
+            return $a[4] == $b[4] ? 0 : ($a[4] > $b[4] ? -1 : 1);
+        });
+        $sorted = true;
     } else {
-      $html .= "<td class='cntr'>" . $points[$i][4] . "</td>";
+        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=ppasses'>" . _("Assists") . "</a></th>";
     }
+
     if ($sorting == "pgoals") {
-      $html .= "<td class='highlight cntr'>" . $points[$i][5] . "</td>";
+        $html .= "<th><b>" . _("Goals") . "</b></th>";
+        mergesort($points, function ($a, $b) {
+            return $a[5] == $b[5] ? 0 : ($a[5] > $b[5] ? -1 : 1);
+        });
+        $sorted = true;
     } else {
-      $html .= "<td class='cntr'>" . $points[$i][5] . "</td>";
+        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pgoals'>" . _("Goals") . "</a></th>";
     }
+
     if (($sorting == "ptotal") || (!$sorted)) {
-      $html .= "<td class='highlight cntr'>" . $points[$i][6] . "</td>";
+        $html .= "<th><b>" . _("Tot.") . "</b></th></tr>\n";
+        mergesort($points, function ($a, $b) {
+            return $a[6] == $b[6] ? 0 : ($a[6] > $b[6] ? -1 : 1);
+        });
     } else {
-      $html .= "<td class='cntr'>" . $points[$i][6] . "</td>";
+        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=ptotal'>" . _("Tot.") . "</a></th></tr>\n";
     }
-    $html .= "</tr>";
-  }
-  $html .= "</table>\n";
+
+
+    for ($i = 0; $i < 200 && !empty($points[$i][0]); $i++) {
+        $html .= "<tr> <td>" . ($i + 1) . "</td>";
+
+        if ($sorting == "pname") {
+            $html .= "<td class='highlight'><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
+        } else {
+            $html .= "<td><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
+        }
+
+        if ($sorting == "pteam") {
+            $html .= "<td class='highlight'>" . utf8entities($points[$i][2]) . "</td>";
+        } else {
+            $html .= "<td>" . utf8entities($points[$i][2]) . "</td>";
+        }
+        if ($sorting == "pgames") {
+            $html .= "<td class='highlight cntr'>" . $points[$i][3] . "</td>";
+        } else {
+            $html .= "<td class='cntr'>" . $points[$i][3] . "</td>";
+        }
+        if ($sorting == "ppasses") {
+            $html .= "<td class='highlight cntr'>" . $points[$i][4] . "</td>";
+        } else {
+            $html .= "<td class='cntr'>" . $points[$i][4] . "</td>";
+        }
+        if ($sorting == "pgoals") {
+            $html .= "<td class='highlight cntr'>" . $points[$i][5] . "</td>";
+        } else {
+            $html .= "<td class='cntr'>" . $points[$i][5] . "</td>";
+        }
+        if (($sorting == "ptotal") || (!$sorted)) {
+            $html .= "<td class='highlight cntr'>" . $points[$i][6] . "</td>";
+        } else {
+            $html .= "<td class='cntr'>" . $points[$i][6] . "</td>";
+        }
+        $html .= "</tr>";
+    }
+    $html .= "</table>\n";
 }
 
 showPage($title, $html);

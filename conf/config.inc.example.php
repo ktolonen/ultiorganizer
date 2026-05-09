@@ -1,4 +1,5 @@
 <?php
+
 /**
 * MySQL Settings - you can get this information from your web hosting company.
 */
@@ -42,5 +43,4 @@ define('API_RATE_LIMIT', 120);
 define('API_RATE_WINDOW', 60);
 
 global $locales;
-$locales = array("en_GB.utf8" => "English", "fi_FI.utf8" => "Suomi");
-?>
+$locales = ["en_GB.utf8" => "English", "fi_FI.utf8" => "Suomi"];

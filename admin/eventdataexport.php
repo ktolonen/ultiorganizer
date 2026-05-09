@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 
 include_once 'lib/season.functions.php';
@@ -10,21 +11,21 @@ $title = ("Event data export");
 $seasonId = "";
 
 if (!empty($_POST['season'])) {
-	$seasonId = $_POST['season'];
+    $seasonId = $_POST['season'];
 
-	$filename = $seasonId . ".xml";
-	header("Pragma: public");
-	header("Expires: -1");
-	header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-	header("Cache-Control: public");
-	header("Content-Description: File Transfer");
-	header("Content-Disposition: attachment; filename=$filename;");
-	header("Content-Transfer-Encoding: binary");
+    $filename = $seasonId . ".xml";
+    header("Pragma: public");
+    header("Expires: -1");
+    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
+    header("Cache-Control: public");
+    header("Content-Description: File Transfer");
+    header("Content-Disposition: attachment; filename=$filename;");
+    header("Content-Transfer-Encoding: binary");
 
-	$eventdatahandler = new EventDataXMLHandler();
-	$data = $eventdatahandler->EventToXML($seasonId);
-	header("Content-Length: " . strlen($data));
-	echo $data;
+    $eventdatahandler = new EventDataXMLHandler();
+    $data = $eventdatahandler->EventToXML($seasonId);
+    header("Content-Length: " . strlen($data));
+    echo $data;
 }
 
 
@@ -36,7 +37,7 @@ $html .= "<p>" . ("Select event") . ": <select class='dropdown' name='season'>\n
 $seasons = Seasons();
 
 foreach ($seasons as $row) {
-	$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+    $html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 }
 
 $html .= "</select></p>\n";
@@ -44,5 +45,6 @@ $html .= "<p><input class='button' type='submit' name='select' value='" . ("Sele
 
 $html .= "</form>";
 
-if (empty($seasonId))
-	showPage($title, $html);
+if (empty($seasonId)) {
+    showPage($title, $html);
+}

@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../lib/view.guard.php';
 requireRoutedView('ext/export', '../index.php');
 
@@ -17,9 +18,9 @@ $separator = ",";
 $season = CurrentSeason();
 
 if (isset($_POST['change'])) {
-	$separator = $_POST['separator'];
-	$encoding = $_POST['encoding'];
-	$season = $_POST['season'];
+    $separator = $_POST['separator'];
+    $encoding = $_POST['encoding'];
+    $season = $_POST['season'];
 }
 
 $html .= "<h2>" . _("CSV files") . "</h2>\n";
@@ -35,7 +36,7 @@ $html .= "<a href='ext/poolscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$se
 $seasoninfo = SeasonInfo($season);
 
 if (ShowSpiritScoresForSeason($seasoninfo)) {
-  $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; "._("Spirit scores")."</a><br/>";
+    $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Spirit scores") . "</a><br/>";
 }
 $html .= "</p>";
 
@@ -45,22 +46,23 @@ $html .= "<p>" . _("Select event") . ":	<select class='dropdown' name='season'>\
 $seasons = Seasons();
 
 foreach ($seasons as $row) {
-	if ($row['season_id'] == $season)
-		$html .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
-	else
-		$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+    if ($row['season_id'] == $season) {
+        $html .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+    } else {
+        $html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+    }
 }
 
 $html .= "</select></p>\n";
 
 $html .= "<p>" . _("Select encoding") . ": <select class='dropdown' name='encoding'>\n";
-$encodings = array("UTF-8", "ISO-8859-15", "Windows-1251", "Windows-1252");
+$encodings = ["UTF-8", "ISO-8859-15", "Windows-1251", "Windows-1252"];
 foreach ($encodings as $enc) {
-	if ($enc == $encoding) {
-		$html .= "<option class='dropdown' selected='selected' value='$enc'>" . utf8entities($enc) . "</option>";
-	} else {
-		$html .= "<option class='dropdown' value='$enc'>" . utf8entities($enc) . "</option>";
-	}
+    if ($enc == $encoding) {
+        $html .= "<option class='dropdown' selected='selected' value='$enc'>" . utf8entities($enc) . "</option>";
+    } else {
+        $html .= "<option class='dropdown' value='$enc'>" . utf8entities($enc) . "</option>";
+    }
 }
 $html .= "</select></p>\n";
 $html .= "<p>" . _("CSV separator") . ": <input class='input' maxlength='1' size='1' name='separator' value='$separator'/></p>\n";

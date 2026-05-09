@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
@@ -13,77 +14,77 @@ $html = "";
 $title = utf8entities(SeasonName($season)) . ": " . _("Pools");
 
 if (!isSeasonAdmin($season)) {
-  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
-  return;
+    showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+    return;
 }
 
 if ($series_id <= 0) {
-  showPage($title, "<p>" . _("No divisions defined. Define at least one division first.") . "</p>");
-  die;
+    showPage($title, "<p>" . _("No divisions defined. Define at least one division first.") . "</p>");
+    die;
 }
 
 $seriesinfo = SeriesInfo($series_id);
 
 //pool parameters
-$pp = array(
-  "name" => "no name",
-  "ordering" => "A",
-  "visible" => "1",
-  "continuingpool" => "0",
-  "placementpool" => "0",
-  "type" => "1"
-);
+$pp = [
+    "name" => "no name",
+    "ordering" => "A",
+    "visible" => "1",
+    "continuingpool" => "0",
+    "placementpool" => "0",
+    "type" => "1",
+];
 
 //remove
 if (!empty($_POST['remove_x'])) {
-  $id = $_POST['hiddenDeleteId'];
-  if (CanDeletePool($id)) {
-    DeletePool($id);
-  }
+    $id = $_POST['hiddenDeleteId'];
+    if (CanDeletePool($id)) {
+        DeletePool($id);
+    }
 }
 
 //clone
 if (!empty($_POST['clone_x'])) {
-  $id = $_POST['hiddenDeleteId'];
-  $poolinfo = PoolInfo($id);
-  PoolFromAnotherPool($series_id, $poolinfo['name'], $poolinfo['ordering'], $id);
+    $id = $_POST['hiddenDeleteId'];
+    $poolinfo = PoolInfo($id);
+    PoolFromAnotherPool($series_id, $poolinfo['name'], $poolinfo['ordering'], $id);
 }
 
 //add
 if (!empty($_POST['add'])) {
-  $pp['name'] = !empty($_POST['name0']) ? $_POST['name0'] : "no name";
-  $pp['type'] = intval($_POST["type0"]);
-  $pp['ordering'] = !empty($_POST['ordering0']) ? $_POST['ordering0'] : "A";
-  $pp['visible'] = isset($_POST["visible0"]) ? 1 : 0;
-  $pp['continuingpool'] = isset($_POST["continuation0"]) ? 1 : 0;
-  $pp['placementpool'] = isset($_POST["placement0"]) ? 1 : 0;
+    $pp['name'] = !empty($_POST['name0']) ? $_POST['name0'] : "no name";
+    $pp['type'] = intval($_POST["type0"]);
+    $pp['ordering'] = !empty($_POST['ordering0']) ? $_POST['ordering0'] : "A";
+    $pp['visible'] = isset($_POST["visible0"]) ? 1 : 0;
+    $pp['continuingpool'] = isset($_POST["continuation0"]) ? 1 : 0;
+    $pp['placementpool'] = isset($_POST["placement0"]) ? 1 : 0;
 
-  $poolId = PoolFromPoolTemplate($series_id, $pp['name'], $pp['ordering'], $_POST['new_pool_template']);
-  SetPoolDetails($poolId, $pp);
+    $poolId = PoolFromPoolTemplate($series_id, $pp['name'], $pp['ordering'], $_POST['new_pool_template']);
+    SetPoolDetails($poolId, $pp);
 }
 
 //save
 if (!empty($_POST['save'])) {
-  $pools = SeriesPools($series_id);
-  foreach ($pools as $pool) {
-    $pool_id = $pool['pool_id'];
-    $pool_info = PoolInfo($pool_id);
-    $pp['name'] = !empty($_POST["name$pool_id"]) ? $_POST["name$pool_id"] : "no name";
-    $pp['type'] = intval($_POST["type$pool_id"]);
-    $pp['ordering'] = !empty($_POST["ordering$pool_id"]) ? $_POST["ordering$pool_id"] : "A";
-    // Disabled checkboxes are not submitted; for non-root playoff pools these fields
-    // are disabled in the form and controlled by the root pool, so preserve existing values.
-    if ($pool_info['type'] == 2 && PoolPlayoffRoot($pool_id) != $pool_id) {
-      $pp['visible'] = intval($pool_info['visible']);
-      $pp['continuingpool'] = intval($pool_info['continuingpool']);
-      $pp['placementpool'] = intval($pool_info['placementpool']);
-    } else {
-      $pp['visible'] = isset($_POST["visible$pool_id"]) ? 1 : 0;
-      $pp['continuingpool'] = isset($_POST["continuation$pool_id"]) ? 1 : 0;
-      $pp['placementpool'] = isset($_POST["placement$pool_id"]) ? 1 : 0;
+    $pools = SeriesPools($series_id);
+    foreach ($pools as $pool) {
+        $pool_id = $pool['pool_id'];
+        $pool_info = PoolInfo($pool_id);
+        $pp['name'] = !empty($_POST["name$pool_id"]) ? $_POST["name$pool_id"] : "no name";
+        $pp['type'] = intval($_POST["type$pool_id"]);
+        $pp['ordering'] = !empty($_POST["ordering$pool_id"]) ? $_POST["ordering$pool_id"] : "A";
+        // Disabled checkboxes are not submitted; for non-root playoff pools these fields
+        // are disabled in the form and controlled by the root pool, so preserve existing values.
+        if ($pool_info['type'] == 2 && PoolPlayoffRoot($pool_id) != $pool_id) {
+            $pp['visible'] = intval($pool_info['visible']);
+            $pp['continuingpool'] = intval($pool_info['continuingpool']);
+            $pp['placementpool'] = intval($pool_info['placementpool']);
+        } else {
+            $pp['visible'] = isset($_POST["visible$pool_id"]) ? 1 : 0;
+            $pp['continuingpool'] = isset($_POST["continuation$pool_id"]) ? 1 : 0;
+            $pp['placementpool'] = isset($_POST["placement$pool_id"]) ? 1 : 0;
+        }
+        SetPoolDetails($pool_id, $pp);
     }
-    SetPoolDetails($pool_id, $pp);
-  }
 }
 
 $series = SeasonSeries($season);
@@ -98,7 +99,7 @@ contentStart();
 
 
 foreach ($series as $row) {
-  $menutabs[U_($row['name'])] = "?view=admin/seasonpools&season=" . $season . "&series=" . $row['series_id'];
+    $menutabs[U_($row['name'])] = "?view=admin/seasonpools&season=" . $season . "&series=" . $row['series_id'];
 }
 $menutabs[_("...")] = "?view=admin/seasonseries&season=" . $season;
 pageMenu($menutabs, "?view=admin/seasonpools&season=" . $season . "&series=" . $series_id);
@@ -127,152 +128,152 @@ $is_visible = "";
 $is_played = "";
 
 foreach ($pools as $pool) {
-  $info = PoolInfo($pool['pool_id']);
-  $id = $pool['pool_id'];
-  $placements = "";
-  $allmoved = true;
-  $moves = 1;
-  $started = IsPoolStarted($pool['pool_id']);
-  $teams = count(PoolTeams($pool['pool_id']));
+    $info = PoolInfo($pool['pool_id']);
+    $id = $pool['pool_id'];
+    $placements = "";
+    $allmoved = true;
+    $moves = 1;
+    $started = IsPoolStarted($pool['pool_id']);
+    $teams = count(PoolTeams($pool['pool_id']));
 
-  if (intval($info['continuingpool'])) {
-    $allmoved = PoolIsAllMoved($pool['pool_id']);
-    $moves = count(PoolMovingsToPool($pool['pool_id']));
-    $movestotal += $moves;
-  }
-  if (intval($info['placementpool']) && !intval($info['follower'])) {
-    $ppools = SeriesPlacementPoolIds($series_id);
-    $placementfrom = 1;
-    $placementto = 0;
-    foreach ($ppools as $ppool) {
-      $teams = PoolTeams($ppool['pool_id']);
-      if (count($teams) == 0) {
-        $teams = PoolSchedulingTeams($ppool['pool_id']);
-      }
-      if ($pool['pool_id'] == $ppool['pool_id']) {
+    if (intval($info['continuingpool'])) {
+        $allmoved = PoolIsAllMoved($pool['pool_id']);
+        $moves = count(PoolMovingsToPool($pool['pool_id']));
+        $movestotal += $moves;
+    }
+    if (intval($info['placementpool']) && !intval($info['follower'])) {
+        $ppools = SeriesPlacementPoolIds($series_id);
+        $placementfrom = 1;
+        $placementto = 0;
+        foreach ($ppools as $ppool) {
+            $teams = PoolTeams($ppool['pool_id']);
+            if (count($teams) == 0) {
+                $teams = PoolSchedulingTeams($ppool['pool_id']);
+            }
+            if ($pool['pool_id'] == $ppool['pool_id']) {
 
-        for ($i = 1; $i <= count($teams); $i++) {
-          $moved = PoolMoveExist($ppool['pool_id'], $i);
-          if (!$moved) {
-            $placementto++;
-          }
+                for ($i = 1; $i <= count($teams); $i++) {
+                    $moved = PoolMoveExist($ppool['pool_id'], $i);
+                    if (!$moved) {
+                        $placementto++;
+                    }
+                }
+                break;
+            }
+            for ($i = 1; $i <= count($teams); $i++) {
+                $moved = PoolMoveExist($ppool['pool_id'], $i);
+                if (!$moved) {
+                    $placementfrom++;
+                    $placementto++;
+                }
+            }
         }
-        break;
-      }
-      for ($i = 1; $i <= count($teams); $i++) {
-        $moved = PoolMoveExist($ppool['pool_id'], $i);
-        if (!$moved) {
-          $placementfrom++;
-          $placementto++;
+        if ($placementfrom <= $placementto) {
+            $placements .= " [$placementfrom.-$placementto.]";
+        } else {
+            $placements .= " [$placementfrom...]";
         }
-      }
     }
-    if ($placementfrom <= $placementto) {
-      $placements .= " [$placementfrom.-$placementto.]";
+
+    $html .= "<tr class='admintablerow'>";
+    $html .= "<td><input class='input' size='20' maxlength='50' name='name$id' value='" . utf8entities($info['name']) . "'/></td>";
+    $html .= "<td><input class='input' size='3' maxlength='20' name='ordering$id' value='" . utf8entities($info['ordering']) . "'/></td>";
+
+    $is_continuation = intval($info['continuingpool']) ? "checked='checked'" : "";
+    $is_placement = intval($info['placementpool']) ? "checked='checked'" : "";
+    $is_visible = intval($info['visible']) ? "checked='checked'" : "";
+    $is_played = intval($info['played']) ? "checked='checked'" : "";
+    $is_root = true;
+
+    if ($info['type'] == 2) {
+        $rootid = PoolPlayoffRoot($id);
+        if ($rootid != $id) {
+            $is_root = false;
+            $root_info = PoolInfo($rootid);
+            $is_visible = intval($root_info['visible']) ? "checked='checked'" : "";
+            $is_visible .= " disabled='disabled'";
+            $is_continuation = intval($root_info['continuingpool']) ? "checked='checked'" : "";
+            $is_continuation .= " disabled='disabled'";
+            $is_placement = intval($root_info['placementpool']) ? "checked='checked'" : "";
+            $is_placement .= " disabled='disabled'";
+        }
+    }
+
+    $html .= "<td class='center'><input class='input' type='checkbox' name='visible$id' $is_visible/></td>";
+    $html .= "<td class='center'><input class='input' type='checkbox' name='continuation$id' $is_continuation/></td>";
+    $html .= "<td><input class='input' type='checkbox' name='placement$id' $is_placement/> <span style='vertical-align:top;font-size:80%'>$placements</span></td>";
+
+    $html .= "<td><select class='dropdown' name='type$id'>\n";
+
+
+    foreach ($types as $type => $value) {
+        if ($value == $info['type']) {
+            $html .=   "<option class='dropdown' selected='selected' value='" . utf8entities($value) . "'>" . U_($type) . "</option>";
+        } else {
+            $html .=   "<option class='dropdown' value='" . utf8entities($value) . "'>" . U_($type) . "</option>";
+        }
+    }
+
+    $html .=  "</select></td>";
+
+    //$html .= "<td style='background-color:#".$info['color'].";background-color:".RGBtoRGBa($info['color'],0.3).";color:#".textColor($info['color']).";'>"._("Team")."</td>";
+    //$html .= "<td><a href='?view=admin/addseasonpools&amp;pool=$id'>"._("Edit")."</a></td>";
+
+    $html .= "<td>";
+    if (!intval($info['continuingpool']) && !$started && $is_root) {
+        if ($teams) {
+            $html .= "<a href='?view=admin/select_teams&amp;series=" . $series_id . "'>" . _("Select teams") . "</a> | ";
+        } else {
+            $html .= "<b><a href='?view=admin/select_teams&amp;series=" . $series_id . "'>" . _("Select teams") . "</a></b> | ";
+        }
+    } elseif ($allmoved && $moves > 0 || $started) {
+        $html .= "<a href='?view=admin/serieteams&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Teams") . "</a> | ";
     } else {
-      $placements .= " [$placementfrom...]";
+        if ($moves) {
+            if (PoolIsMoveFromPoolsPlayed($info['pool_id'])) {
+                $html .= "<b><a href='?view=admin/serieteams&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Move teams") . "</a></b> | ";
+            } else {
+                $html .= "<a href='?view=admin/serieteams&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Move teams") . "</a> | ";
+            }
+        } else {
+            $html .= "<b><a href='?view=admin/poolmoves&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Manage moves") . "</a></b> | ";
+        }
     }
-  }
 
-  $html .= "<tr class='admintablerow'>";
-  $html .= "<td><input class='input' size='20' maxlength='50' name='name$id' value='" . utf8entities($info['name']) . "'/></td>";
-  $html .= "<td><input class='input' size='3' maxlength='20' name='ordering$id' value='" . utf8entities($info['ordering']) . "'/></td>";
-
-  $is_continuation = intval($info['continuingpool']) ? "checked='checked'" : "";
-  $is_placement = intval($info['placementpool']) ? "checked='checked'" : "";
-  $is_visible = intval($info['visible']) ? "checked='checked'" : "";
-  $is_played = intval($info['played']) ? "checked='checked'" : "";
-  $is_root = true;
-
-  if ($info['type'] == 2) {
-    $rootid = PoolPlayoffRoot($id);
-    if ($rootid != $id) {
-      $is_root = false;
-      $root_info = PoolInfo($rootid);
-      $is_visible = intval($root_info['visible']) ? "checked='checked'" : "";
-      $is_visible .= " disabled='disabled'";
-      $is_continuation = intval($root_info['continuingpool']) ? "checked='checked'" : "";
-      $is_continuation .= " disabled='disabled'";
-      $is_placement = intval($root_info['placementpool']) ? "checked='checked'" : "";
-      $is_placement .= " disabled='disabled'";
-    }
-  }
-
-  $html .= "<td class='center'><input class='input' type='checkbox' name='visible$id' $is_visible/></td>";
-  $html .= "<td class='center'><input class='input' type='checkbox' name='continuation$id' $is_continuation/></td>";
-  $html .= "<td><input class='input' type='checkbox' name='placement$id' $is_placement/> <span style='vertical-align:top;font-size:80%'>$placements</span></td>";
-
-  $html .= "<td><select class='dropdown' name='type$id'>\n";
-
-
-  foreach ($types as $type => $value) {
-    if ($value == $info['type']) {
-      $html .=   "<option class='dropdown' selected='selected' value='" . utf8entities($value) . "'>" . U_($type) . "</option>";
+    //playoff pool
+    if ($info['type'] == 2) {
+        if (CanGenerateGames($info['pool_id'])) {
+            $html .= "<b><a href='?view=admin/poolgames&amp;season=" . $info['season'] . "&amp;series=" . $info['series'] . "&amp;pool=" . $info['pool_id'] . "'>" . _("Play-off games") . "</a></b>";
+        } else {
+            $html .= "<a href='?view=admin/poolgames&amp;season=" . $info['season'] . "&amp;series=" . $info['series'] . "&amp;pool=" . $info['pool_id'] . "'>" . _("Play-off games") . "</a>";
+            $cangenerateallgames = false;
+        }
     } else {
-      $html .=   "<option class='dropdown' value='" . utf8entities($value) . "'>" . U_($type) . "</option>";
+        if (CanGenerateGames($info['pool_id'])) {
+            $html .= "<b><a href='?view=admin/poolgames&amp;season=$season&amp;pool=" . $info['pool_id'] . "'>" . _("Game management") . "</a></b>";
+        } else {
+            $html .= "<a href='?view=admin/poolgames&amp;season=$season&amp;pool=" . $info['pool_id'] . "'>" . _("Game management") . "</a>";
+            $cangenerateallgames = false;
+        }
     }
-  }
+    $html .= "</td>";
+    $html .= "<td>";
+    $html .= "<a href='?view=admin/addseasonpools&amp;pool=$id'><img class='deletebutton' src='images/settings.png' alt='D' title='" . _("edit details") . "'/></a>";
 
-  $html .=  "</select></td>";
-
-  //$html .= "<td style='background-color:#".$info['color'].";background-color:".RGBtoRGBa($info['color'],0.3).";color:#".textColor($info['color']).";'>"._("Team")."</td>";
-  //$html .= "<td><a href='?view=admin/addseasonpools&amp;pool=$id'>"._("Edit")."</a></td>";
-
-  $html .= "<td>";
-  if (!intval($info['continuingpool']) && !$started && $is_root) {
-    if ($teams) {
-      $html .= "<a href='?view=admin/select_teams&amp;series=" . $series_id . "'>" . _("Select teams") . "</a> | ";
-    } else {
-      $html .= "<b><a href='?view=admin/select_teams&amp;series=" . $series_id . "'>" . _("Select teams") . "</a></b> | ";
+    $html .= "<input class='deletebutton' type='image' src='images/clone.png' alt='C' name='clone' title='" . _("clone") . "' value='" . _("C") . "' onclick=\"setId(" . $info['pool_id'] . ");\"/>";
+    if (CanDeletePool($info['pool_id'])) {
+        $html .= "<input class='deletebutton' type='image' src='images/remove.png' alt='X' title='" . _("remove") . "' name='remove' value='" . _("X") . "' onclick=\"setId(" . $info['pool_id'] . ");\"/>";
     }
-  } elseif ($allmoved && $moves > 0 || $started) {
-    $html .= "<a href='?view=admin/serieteams&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Teams") . "</a> | ";
-  } else {
-    if ($moves) {
-      if (PoolIsMoveFromPoolsPlayed($info['pool_id'])) {
-        $html .= "<b><a href='?view=admin/serieteams&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Move teams") . "</a></b> | ";
-      } else {
-        $html .= "<a href='?view=admin/serieteams&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Move teams") . "</a> | ";
-      }
-    } else {
-      $html .= "<b><a href='?view=admin/poolmoves&amp;season=$season&amp;series=" . $series_id . "&amp;pool=" . $info['pool_id'] . "'>" . _("Manage moves") . "</a></b> | ";
-    }
-  }
+    $html .= "</td>";
 
-  //playoff pool
-  if ($info['type'] == 2) {
-    if (CanGenerateGames($info['pool_id'])) {
-      $html .= "<b><a href='?view=admin/poolgames&amp;season=" . $info['season'] . "&amp;series=" . $info['series'] . "&amp;pool=" . $info['pool_id'] . "'>" . _("Play-off games") . "</a></b>";
-    } else {
-      $html .= "<a href='?view=admin/poolgames&amp;season=" . $info['season'] . "&amp;series=" . $info['series'] . "&amp;pool=" . $info['pool_id'] . "'>" . _("Play-off games") . "</a>";
-      $cangenerateallgames = false;
-    }
-  } else {
-    if (CanGenerateGames($info['pool_id'])) {
-      $html .= "<b><a href='?view=admin/poolgames&amp;season=$season&amp;pool=" . $info['pool_id'] . "'>" . _("Game management") . "</a></b>";
-    } else {
-      $html .= "<a href='?view=admin/poolgames&amp;season=$season&amp;pool=" . $info['pool_id'] . "'>" . _("Game management") . "</a>";
-      $cangenerateallgames = false;
-    }
-  }
-  $html .= "</td>";
-  $html .= "<td>";
-  $html .= "<a href='?view=admin/addseasonpools&amp;pool=$id'><img class='deletebutton' src='images/settings.png' alt='D' title='" . _("edit details") . "'/></a>";
-
-  $html .= "<input class='deletebutton' type='image' src='images/clone.png' alt='C' name='clone' title='" . _("clone") . "' value='" . _("C") . "' onclick=\"setId(" . $info['pool_id'] . ");\"/>";
-  if (CanDeletePool($info['pool_id'])) {
-    $html .= "<input class='deletebutton' type='image' src='images/remove.png' alt='X' title='" . _("remove") . "' name='remove' value='" . _("X") . "' onclick=\"setId(" . $info['pool_id'] . ");\"/>";
-  }
-  $html .= "</td>";
-
-  $html .= "</tr>\n";
-  $last_ordering = $info['ordering'];
+    $html .= "</tr>\n";
+    $last_ordering = $info['ordering'];
 }
 
 if (!$last_ordering) {
-  $last_ordering = 'A';
+    $last_ordering = 'A';
 } else {
-  $last_ordering++;
+    $last_ordering++;
 }
 
 $html .=  "<tr>";
@@ -284,7 +285,7 @@ $html .= "<td class='center' style='padding-top:15px'><input class='input' type=
 $html .= "<td style='padding-top:15px'><select class='dropdown' name='type0'>\n";
 
 foreach ($types as $type => $value) {
-  $html .=   "<option class='dropdown' value='" . utf8entities($value) . "'>" . U_($type) . "</option>";
+    $html .=   "<option class='dropdown' value='" . utf8entities($value) . "'>" . U_($type) . "</option>";
 }
 
 $html .=  "</select></td>";
@@ -292,10 +293,11 @@ $html .=  "</select></td>";
 $html .= "<td colspan='2' style='padding-top:15px'><select class='dropdown' name='new_pool_template'>\n";
 $templates = PoolTemplates();
 foreach ($templates as $template) {
-  if ($template['template_id'] == $seriesinfo['pool_template'])
-    $html .= "<option class='dropdown' selected='selected' value='" . utf8entities($template['template_id']) . "'>" . utf8entities(U_($template['name'])) . "</option>";
-  else
-    $html .= "<option class='dropdown' value='" . utf8entities($template['template_id']) . "'>" . utf8entities(U_($template['name'])) . "</option>";
+    if ($template['template_id'] == $seriesinfo['pool_template']) {
+        $html .= "<option class='dropdown' selected='selected' value='" . utf8entities($template['template_id']) . "'>" . utf8entities(U_($template['name'])) . "</option>";
+    } else {
+        $html .= "<option class='dropdown' value='" . utf8entities($template['template_id']) . "'>" . utf8entities(U_($template['name'])) . "</option>";
+    }
 }
 $html .=  "</select>";
 

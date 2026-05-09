@@ -11,6 +11,6 @@ header("Expires: -1");
 $result = GetSearchLocationsArray();
 // Iterate through the rows, adding XML nodes for each
 foreach ($result as $row) {
-	echo U_($row['name']) . "\t" . $row['address'] . "\t" . $row['id'] . "\n";
+    echo U_($row['name']) . "\t" . $row['address'] . "\t" . $row['id'] . "\n";
 }
 CloseConnection();

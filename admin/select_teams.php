@@ -20,9 +20,9 @@ if (isset($_GET['series'])) {
 }
 
 $pools = SeriesPools($seriesId, false, true, true);
-$not_started = array();
+$not_started = [];
 foreach ($pools as $pool) {
-    if($pool['type'] == 2 && PoolPlayoffRoot($pool['pool_id']) != $pool['pool_id']) {
+    if ($pool['type'] == 2 && PoolPlayoffRoot($pool['pool_id']) != $pool['pool_id']) {
         continue;
     }
     if (!IsPoolStarted($pool['pool_id'])) {
@@ -36,7 +36,7 @@ $teamsNotInPool = SeriesTeamsWithoutPool($seriesId);
 pageTopHeadOpen($title);
 
 include_once 'lib/yui.functions.php';
-echo yuiLoad(array("utilities", "dragdrop"));
+echo yuiLoad(["utilities", "dragdrop"]);
 ?>
 
 <style type="text/css">
@@ -122,8 +122,9 @@ $areacount = 0;
 
 foreach ($pools as $poolId) {
     $areacount++;
-    if ($areacount % 3 == 0)
+    if ($areacount % 3 == 0) {
         echo "</tr><tr>\n";
+    }
 
     echo "<td>\n";
     $poolinfo = PoolInfo($poolId);
@@ -178,23 +179,23 @@ echo "</td></tr></table>\n";
             init: function() {
                 <?php
                 echo "		new YAHOO.util.DDTarget(\"unpooled\");\n";
-                foreach ($pools as $poolId) {
-                    echo "		new YAHOO.util.DDTarget(\"res" . $poolId . "\");\n";
-                    $poolteams = PoolTeams($poolId);
-                    foreach ($poolteams as $team) {
-                        if (hasEditTeamsRight($seriesId)) {
-                            echo "		new YAHOO.example.DDList(\"team" . $team['team_id'] . "\");\n";
-                        }
-                    }
-                }
+foreach ($pools as $poolId) {
+    echo "		new YAHOO.util.DDTarget(\"res" . $poolId . "\");\n";
+    $poolteams = PoolTeams($poolId);
+    foreach ($poolteams as $team) {
+        if (hasEditTeamsRight($seriesId)) {
+            echo "		new YAHOO.example.DDList(\"team" . $team['team_id'] . "\");\n";
+        }
+    }
+}
 
-                foreach ($teamsNotInPool as $team) {
-                    if (hasEditTeamsRight($seriesId)) {
-                        echo "		new YAHOO.example.DDList(\"team" . $team['team_id'] . "\");\n";
-                    }
-                }
+foreach ($teamsNotInPool as $team) {
+    if (hasEditTeamsRight($seriesId)) {
+        echo "		new YAHOO.example.DDList(\"team" . $team['team_id'] . "\");\n";
+    }
+}
 
-                ?>
+?>
                 Event.on("saveButton", "click", this.requestString);
             },
 
@@ -220,16 +221,16 @@ echo "</td></tr></table>\n";
                     return out;
                 };
                 <?php
-                echo "	var unpooled=Dom.get(\"unpooled\");\n";
-                foreach ($pools as $poolId) {
-                    echo "	var res" . $poolId . "=Dom.get(\"res" . $poolId . "\");\n";
-                }
-                echo "	var request = parseList(unpooled, \"0\") + \"\\n\"";
-                foreach ($pools as $poolId) {
-                    echo " + \"|\" + parseList(res" . $poolId . ", \"" . $poolId . "\")";
-                }
-                echo ";\n";
-                ?>
+echo "	var unpooled=Dom.get(\"unpooled\");\n";
+foreach ($pools as $poolId) {
+    echo "	var res" . $poolId . "=Dom.get(\"res" . $poolId . "\");\n";
+}
+echo "	var request = parseList(unpooled, \"0\") + \"\\n\"";
+foreach ($pools as $poolId) {
+    echo " + \"|\" + parseList(res" . $poolId . ", \"" . $poolId . "\")";
+}
+echo ";\n";
+?>
                 var responseDiv = Dom.get("responseStatus");
                 Dom.setStyle(responseDiv, "background-image", "url('images/indicator.gif')");
                 Dom.setStyle(responseDiv, "background-repeat", "no-repeat");

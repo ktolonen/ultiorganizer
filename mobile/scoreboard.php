@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/pool.functions.php';
@@ -18,10 +19,10 @@ $html .= "<tr><td>\n";
 $html .= "<b>" . utf8entities(TeamName($teamId)) . "</b>";
 $html .= "</td></tr><tr><td>\n";
 foreach ($team_score_board as $row) {
-	$html .= $row['num'] . " ";
-	$html .= utf8entities($row['firstname']) . "&nbsp;" . utf8entities($row['lastname']) . " ";
-	$html .= $row['fedin'] . "+" . $row['done'] . "=" . $row['total'];
-	$html .= "</td></tr><tr><td>\n";
+    $html .= $row['num'] . " ";
+    $html .= utf8entities($row['firstname']) . "&nbsp;" . utf8entities($row['lastname']) . " ";
+    $html .= $row['fedin'] . "+" . $row['done'] . "=" . $row['total'];
+    $html .= "</td></tr><tr><td>\n";
 }
 
 $html .= "<a href='?view=mobile/gameplay&amp;game=" . $gameId . "'>" . _("Back to gameplay") . "</a>";
