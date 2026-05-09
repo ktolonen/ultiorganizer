@@ -1,0 +1,75 @@
+#!/usr/bin/env bash
+# Ultiorganizer pre-commit hook.
+#
+# Runs PHP-CS-Fixer on staged PHP files (re-staging fixes) and PHPStan on the
+# same set. Skipped automatically when no PHP files are staged.
+#
+# Install once with:
+#   git config core.hooksPath .githooks
+#
+# Override paths or skip:
+#   SKIP_PHP_CS_FIXER=1 git commit ...   # skip formatter
+#   SKIP_PHPSTAN=1 git commit ...        # skip static analysis
+#   PHP_CS_FIXER_BIN=/path/to/php-cs-fixer git commit ...
+#   PHPSTAN_BIN=/path/to/phpstan git commit ...
+#
+# By default, the hook tries vendor/bin/<tool>, then docker compose exec dev
+# vendor/bin/<tool>, then docker compose exec app vendor/bin/<tool>.
+
+set -e
+
+REPO_ROOT="$(git rev-parse --show-toplevel)"
+cd "$REPO_ROOT"
+
+mapfile -t STAGED_PHP < <(git diff --cached --name-only --diff-filter=ACMR -- '*.php' ':!lib/tfpdf/**' ':!lib/yuiloader/**' ':!lib/phpqrcode/**' ':!lib/feed_generator/**' ':!lib/hsvclass/**' ':!vendor/**' ':!conf/**' ':!live/**')
+
+if [ "${#STAGED_PHP[@]}" -eq 0 ]; then
+    exit 0
+fi
+
+run_tool() {
+    local label="$1"
+    local env_bin="$2"
+    local local_bin="$3"
+    shift 3
+
+    if [ -n "$env_bin" ]; then
+        "$env_bin" "$@"
+        return $?
+    fi
+
+    if [ -x "$local_bin" ]; then
+        "$local_bin" "$@"
+        return $?
+    fi
+
+    if command -v docker >/dev/null 2>&1; then
+        local compose_file="docs/dev/compose.yaml"
+        if docker compose -f "$compose_file" ps --services --filter status=running 2>/dev/null | grep -qx dev; then
+            docker compose -f "$compose_file" exec -T dev "$local_bin" "$@"
+            return $?
+        fi
+        if docker compose -f "$compose_file" ps --services --filter status=running 2>/dev/null | grep -qx app; then
+            docker compose -f "$compose_file" exec -T app "$local_bin" "$@"
+            return $?
+        fi
+    fi
+
+    echo "pre-commit: $label not found. Install dev dependencies with 'composer install' or set ${label}_BIN." >&2
+    return 127
+}
+
+if [ "${SKIP_PHP_CS_FIXER:-0}" != "1" ]; then
+    echo "pre-commit: running PHP-CS-Fixer on ${#STAGED_PHP[@]} staged PHP file(s)..."
+    run_tool "PHP_CS_FIXER" "${PHP_CS_FIXER_BIN:-}" "vendor/bin/php-cs-fixer" \
+        fix --quiet --using-cache=yes -- "${STAGED_PHP[@]}"
+    git add -- "${STAGED_PHP[@]}"
+fi
+
+if [ "${SKIP_PHPSTAN:-0}" != "1" ]; then
+    echo "pre-commit: running PHPStan on ${#STAGED_PHP[@]} staged PHP file(s)..."
+    run_tool "PHPSTAN" "${PHPSTAN_BIN:-}" "vendor/bin/phpstan" \
+        analyse --no-progress --memory-limit=1G -- "${STAGED_PHP[@]}"
+fi
+
+exit 0

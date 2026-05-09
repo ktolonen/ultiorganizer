@@ -12,6 +12,7 @@ This directory collects general project documentation.
 - `routing.md`: request entry points and view resolution.
 - `local-development.md`: local Docker-based setup.
 - `dev/`: Docker Compose assets and image definitions used by the local development guide.
+- `code-style.md`: PHP code style conventions, formatter and linter setup, and pre-commit hook.
 
 ### Data, configuration, and security
 
@@ -46,5 +47,6 @@ This directory collects general project documentation.
 - `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
 - `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.
 - `ai/review-playoff-layouts/SKILL.md`: read-only review skill for playoff bracket layout placeholders, CSS widths, and the move-comment block.
+- `ai/format-and-lint/SKILL.md`: fix skill that runs PHP-CS-Fixer and PHPStan on changed PHP files and applies safe fixes.
 
 The `docs/ai/` directory contains repo-local AI assets and skills, including local review/fix skills and the database-access review skill with its bundled checker.

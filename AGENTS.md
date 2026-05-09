@@ -28,6 +28,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 
 ## Working rules
 
+- Follow the PHP code style described in `docs/code-style.md` (PER-CS 2.0). Run `composer format` and `composer lint` on changed files before handing back work; the pre-commit hook at `.githooks/pre-commit` enforces this on commit.
 - Keep SQL and shared data access in `lib/`.
 - Put permission checks inside reusable `lib/` mutation helpers, not only in routed page handlers, so future callers cannot accidentally bypass access control.
 - Use the existing `?view=...` routing pattern for new pages.
@@ -40,6 +41,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Reuse existing translated strings when feasible instead of adding synonyms, capitalization-only variants, or comma/punctuation-only variants.
 - After adding or changing database-related functionality, run `docs/ai/review-database-access/SKILL.md` as a final review step on your changes.
 - After adding or changing a playoff bracket layout under `cust/*/layouts/`, or the placeholder contract in `lib/pool.functions.php`, run `docs/ai/review-playoff-layouts/SKILL.md` as a final review step on your changes.
+- After adding or changing PHP code, run `docs/ai/format-and-lint/SKILL.md` to apply PER-CS 2.0 formatting and surface PHPStan findings on the changed files.
 - If you add new player data or registered-user data, update the privacy tools and documentation so the new data is covered by the relevant privacy export and anonymization or deletion flow.
 - If you present a plan for work that changes user-facing text or database access, include the relevant review-skill checks as final plan steps.
 - When adding a new `SYSTEM_FLAG` or `INSTALLATION_SETTING`, ask the user whether it should be added to the installation process, and cover `install.php` if the answer is yes.
@@ -50,6 +52,9 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 
 - No automated test suite is documented.
 - PHP syntax check a single file: `php -l <file.php>`
+- Format changed PHP: `composer format` (check-only: `composer format:check`)
+- Static analysis: `composer lint` (uses `phpstan-baseline.neon` for legacy findings)
+- Combined format-check + lint: `composer check`
 - DB access boundary check (changed files): `php docs/ai/review-database-access/scripts/check-db-access.php --changed`
 - DB access boundary check (full repo): `php docs/ai/review-database-access/scripts/check-db-access.php --all`
 - Playoff layout templates (all): `php docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php`
@@ -70,6 +75,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - `docs/routing.md`: request entry points and view resolution.
 - `docs/local-development.md`: local Docker-based setup.
 - `docs/dev/`: Docker Compose assets and image definitions used by the local development guide.
+- `docs/code-style.md`: PHP code style conventions, formatter and linter setup, and pre-commit hook.
 
 ### Data, configuration, and security
 
@@ -104,3 +110,4 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - `docs/ai/fix-user-language/SKILL.md`: fix skill for page-level or term-level user-facing wording and gettext updates.
 - `docs/ai/review-database-access/SKILL.md`: read-only skill for reviewing database access boundary violations and legacy cursor-style DB helper usage.
 - `docs/ai/review-playoff-layouts/SKILL.md`: read-only skill for reviewing playoff bracket layout placeholders, widths, and the move-comment block.
+- `docs/ai/format-and-lint/SKILL.md`: fix skill that runs PHP-CS-Fixer and PHPStan on changed PHP files and applies safe fixes.

@@ -1,0 +1,35 @@
+parameters:
+    level: 1
+    paths:
+        - admin
+        - api
+        - cust
+        - ext
+        - lib
+        - login
+        - mobile
+        - plugins
+        - scorekeeper
+        - spiritkeeper
+        - user
+        - .
+    excludePaths:
+        - vendor/*
+        - conf/*
+        - live/*
+        - images/*
+        - locale/*
+        - script/*
+        - lib/tfpdf/*
+        - lib/yuiloader/*
+        - lib/phpqrcode/*
+        - lib/feed_generator/*
+        - lib/hsvclass/*
+    fileExtensions:
+        - php
+    parallel:
+        maximumNumberOfProcesses: 4
+    treatPhpDocTypesAsCertain: false
+    reportUnmatchedIgnoredErrors: false
+includes:
+    - phpstan-baseline.neon
