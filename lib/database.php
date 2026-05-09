@@ -514,19 +514,28 @@ function DBResourceToArray($result, $docasting = false)
 /**
  * Fetch next row from result set as associative array.
  *
- * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows
+ * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows.
+ *     Array-backed results are consumed one row at a time.
  * @param bool $docasting When true, cast row values using field metadata
  * @return array|null
  */
-function DBFetchAssoc($result, $docasting = false)
+function DBFetchAssoc(&$result, $docasting = false)
 {
   if (is_array($result)) {
     if (empty($result)) {
       return null;
     }
 
-    $firstRow = reset($result);
-    return is_array($firstRow) ? $firstRow : $result;
+    $firstKey = array_key_first($result);
+    $firstRow = $result[$firstKey];
+    if (is_array($firstRow)) {
+      unset($result[$firstKey]);
+      return $firstRow;
+    }
+
+    $row = $result;
+    $result = array();
+    return $row;
   }
 
   $row = mysqli_fetch_assoc($result);
