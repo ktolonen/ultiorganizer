@@ -490,8 +490,8 @@ class PDF extends tFPDF
         $text2 = $this->pdfText($longname2);
         $fs2 = min($fontsize, $height / 3);
         $this->SetFont('Arial', '', $fs2);
-        if ($this->GetStringWidth($text2) > $x - 2 && !empty($abbrev)) {
-            $text1 = $this->pdfText($abbrev2);
+        if ($this->GetStringWidth($text2) > $x - 2 && !empty($abbrev2)) {
+            $text2 = $this->pdfText($abbrev2);
         }
         while ($this->GetStringWidth($text2) > $x - 2) {
             $this->SetFont('Arial', '', --$fs2);
@@ -806,17 +806,17 @@ class PDF extends tFPDF
                             $attr[strtoupper($a3[1])] = $a3[2];
                         }
                     }
-                    $this->OpenTag($tag,$attr);
+                    $this->OpenTag($tag, $attr);
                 }
             }
         }
     }
 
-    public function OpenTag($tag,$attr)
+    public function OpenTag($tag, $attr)
     {
         //Opening tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,true);
+            $this->SetStyle($tag, true);
         }
         if ($tag == 'A') {
             $this->HREF = $attr['HREF'];
@@ -830,13 +830,13 @@ class PDF extends tFPDF
     {
         //Closing tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,false);
+            $this->SetStyle($tag, false);
         }
         if ($tag == 'A') {
             $this->HREF = '';
         }
     }
-    public function SetStyle($tag,$enable)
+    public function SetStyle($tag, $enable)
     {
         //Modify style and select corresponding font
         $this->$tag += ($enable ? 1 : -1);
@@ -846,16 +846,16 @@ class PDF extends tFPDF
                 $style .= $s;
             }
         }
-        $this->SetFont('',$style);
+        $this->SetFont('', $style);
     }
 
-    public function PutLink($URL,$txt)
+    public function PutLink($URL, $txt)
     {
         //Put a hyperlink
-        $this->SetTextColor(0,0,255);
-        $this->SetStyle('U',true);
-        $this->Write(4,$txt,$URL);
-        $this->SetStyle('U',false);
+        $this->SetTextColor(0, 0, 255);
+        $this->SetStyle('U', true);
+        $this->Write(4, $txt, $URL);
+        $this->SetStyle('U', false);
         $this->SetTextColor(0);
     }
 }

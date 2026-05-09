@@ -374,7 +374,6 @@ function PoolScoreBoard($poolId, $sorting, $limit)
         (int) $poolId,
         (int) $poolId,
         (int) $poolId,
-        (int) $poolId,
     );
 
     switch ($sorting) {

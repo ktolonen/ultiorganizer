@@ -1164,7 +1164,6 @@ function PlayersToCsv($season, $separator)
         DBEscapeString($season),
         DBEscapeString($season),
         DBEscapeString($season),
-        DBEscapeString($season),
     );
 
     // Gets the data from the database

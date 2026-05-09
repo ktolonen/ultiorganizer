@@ -383,7 +383,6 @@ function slklUpdateLicensesFromCSV($handle, $season)
                     DBEscapeString($id),
                     DBEscapeString($external_type),
                     DBEscapeString($id),
-                    1,
                 );
                 DBQuery($query);
                 $html .= "<p>" . utf8entities($id) . " " . utf8entities($firstname) . " " . utf8entities($lastname) . "</p>";

@@ -536,7 +536,7 @@ function SeriesEnrolledTeams($seriesId)
  * Access level: Division admin
  *
  * @param int $seriesId uo_series.series_id
- * @return mysql array of information.
+ * @return mysqli_result|bool|null Result of the delete query, or null when the caller lacks permission.
  */
 function DeleteSeries($seriesId)
 {
@@ -550,6 +550,8 @@ function DeleteSeries($seriesId)
 
         return DBQuery($query);
     }
+
+    return null;
 }
 
 /**
@@ -586,7 +588,7 @@ function SeriesPoolTemplateSql($poolTemplateId)
  * Access level: Event admin
  *
  * @param int $params array of uo_series.* data
- * @return new uo_series.series_id.
+ * @return int|null new uo_series.series_id, or null when the caller lacks permission.
  */
 function AddSeries($params)
 {
@@ -608,8 +610,11 @@ function AddSeries($params)
 
         $id = DBQueryInsert($query);
         Log1("series", "add", $id);
+
         return $id;
     }
+
+    return null;
 }
 
 /**

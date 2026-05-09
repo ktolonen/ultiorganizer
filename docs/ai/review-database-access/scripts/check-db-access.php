@@ -60,7 +60,7 @@ function main(array $argv): void
         }
     }
 
-    printReport($config['mode'], array_keys($relevantFiles), $report);
+    printDbAccessReport($config['mode'], array_keys($relevantFiles), $report);
     exit(hasBlockingFindings($report) ? 1 : 0);
 }
 
@@ -394,7 +394,7 @@ function addFinding(array &$report, string $rule, string $path, int $lineNumber,
     ];
 }
 
-function printReport(string $mode, array $scannedFiles, array $report): void
+function printDbAccessReport(string $mode, array $scannedFiles, array $report): void
 {
     $scannedCount = count($scannedFiles);
     fwrite(STDOUT, "DB access check mode: --{$mode}\n");

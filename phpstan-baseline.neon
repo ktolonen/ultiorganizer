@@ -169,28 +169,10 @@ parameters:
 			path: cust/fpudd/pdfscoresheet.php
 
 		-
-			message: '#^Variable \$abbrev in empty\(\) is never defined\.$#'
-			identifier: empty.variable
-			count: 1
-			path: cust/gummis/pdfschedule.php
-
-		-
 			message: '#^Variable \$row might not be defined\.$#'
 			identifier: variable.undefined
 			count: 1
 			path: cust/gummis/pdfschedule.php
-
-		-
-			message: '#^Variable \$abbrev in empty\(\) is never defined\.$#'
-			identifier: empty.variable
-			count: 1
-			path: cust/gummis/pdfscoresheet.php
-
-		-
-			message: '#^Call to sprintf contains 10 placeholders, 11 values given\.$#'
-			identifier: argument.sprintf
-			count: 1
-			path: cust/slkl/mass-accreditation.php
 
 		-
 			message: '#^Variable \$birthdate in empty\(\) always exists and is not falsy\.$#'
@@ -257,12 +239,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: cust/windmill/pdfscoresheet.php
-
-		-
-			message: '#^Function printReport invoked with 3 parameters, 4 required\.$#'
-			identifier: arguments.count
-			count: 1
-			path: docs/ai/review-database-access/scripts/check-db-access.php
 
 		-
 			message: '#^Variable \$newnode might not be defined\.$#'
@@ -337,34 +313,10 @@ parameters:
 			path: lib/image.functions.php
 
 		-
-			message: '#^Call to sprintf contains 5 placeholders, 6 values given\.$#'
-			identifier: argument.sprintf
-			count: 1
-			path: lib/player.functions.php
-
-		-
 			message: '#^Function parse_ini_string invoked with 3 parameters, 1 required\.$#'
 			identifier: arguments.count
 			count: 1
 			path: lib/plugin.functions.php
-
-		-
-			message: '#^Call to sprintf contains 4 placeholders, 5 values given\.$#'
-			identifier: argument.sprintf
-			count: 1
-			path: lib/pool.functions.php
-
-		-
-			message: '#^Function AddSeries\(\) should return new but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: lib/series.functions.php
-
-		-
-			message: '#^Function DeleteSeries\(\) should return mysql but return statement is missing\.$#'
-			identifier: return.missing
-			count: 1
-			path: lib/series.functions.php
 
 		-
 			message: '#^Function HavePlayed not found\.$#'
