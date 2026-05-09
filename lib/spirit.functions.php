@@ -342,18 +342,72 @@ function SpiritTokenGameRows($teamId)
 
 function SpiritTokenGame($gameId, $teamId)
 {
+	$gameId = (int)$gameId;
 	$teamId = (int)$teamId;
-	if ($teamId <= 0) {
+	if ($gameId <= 0 || $teamId <= 0) {
 		return array();
 	}
 
-	foreach (SpiritTokenGameRows($teamId) as $game) {
-		if ((int)$game['game_id'] === (int)$gameId) {
-			return $game;
-		}
+	static $games = array();
+	$cacheKey = $gameId . ':' . $teamId;
+	if (array_key_exists($cacheKey, $games)) {
+		return $games[$cacheKey];
 	}
 
-	return array();
+	$query = sprintf(
+		"SELECT
+			g.game_id,
+			g.time,
+			g.hasstarted,
+			g.isongoing,
+			g.hometeam,
+			g.visitorteam,
+			g.homescore,
+			g.visitorscore,
+			g.show_spirit,
+			th.name AS hometeamname,
+			tv.name AS visitorteamname,
+			p.name AS poolname,
+			s.name AS seriesname,
+			se.season_id,
+			se.name AS seasonname,
+			se.spiritmode,
+			se.showspiritpoints,
+			se.showspiritcomments,
+			se.showspiritpointsonlyoncomplete,
+			se.lockteamspiritonsubmit,
+			se.event_readonly
+		FROM uo_game g
+		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
+		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_season se ON (se.season_id = s.season)
+		WHERE g.game_id=%d
+			AND (g.hometeam=%d OR g.visitorteam=%d)
+			AND (
+				COALESCE(se.spiritmode, 0) > 0
+				OR EXISTS(
+					SELECT 1
+					FROM uo_spirit_score ssc
+					WHERE ssc.game_id = g.game_id
+						AND (ssc.team_id = g.hometeam OR ssc.team_id = g.visitorteam)
+				)
+				OR EXISTS(
+					SELECT 1
+					FROM uo_comment uc
+					WHERE CAST(uc.id AS UNSIGNED) = g.game_id
+						AND uc.type IN (5, 6)
+				)
+			)",
+		$gameId,
+		$teamId,
+		$teamId
+	);
+
+	$game = DBQueryToRow($query);
+	$games[$cacheKey] = $game ? $game : array();
+	return $games[$cacheKey];
 }
 
 function SpiritTokenRatedTeamId($game, $tokenTeamId)
