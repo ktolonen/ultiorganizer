@@ -7,5 +7,5 @@
 # Add the SHA of large mechanical changes (e.g. the initial PER-CS 2.0
 # reformat) on its own line, with a short comment above it.
 
-# Initial PER-CS 2.0 reformat (placeholder - replace with the actual SHA after
-# running `composer format` and committing the result).
+# Initial PER-CS 2.0 reformat.
+d557b4b173d3a5997ee199003529efbbe09e1422
