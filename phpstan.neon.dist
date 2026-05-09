@@ -27,6 +27,9 @@ parameters:
         - lib/hsvclass/*
     fileExtensions:
         - php
+    bootstrapFiles:
+        - lib/tfpdf/tfpdf.php
+        - lib/tfpdf/cellfit.php
     parallel:
         maximumNumberOfProcesses: 4
     treatPhpDocTypesAsCertain: false

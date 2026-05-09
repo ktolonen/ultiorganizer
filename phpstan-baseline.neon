@@ -1,2 +1,1091 @@
 parameters:
-    ignoreErrors: []
+	ignoreErrors:
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 8
+			path: admin/accreditation.php
+
+		-
+			message: "#^Variable \\$locales might not be defined\\.$#"
+			count: 3
+			path: admin/addlocations.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 2
+			path: admin/addseasonlinks.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 3
+			path: admin/addseasonusers.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 2
+			path: admin/addteamadmins.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 1
+			path: admin/adduser.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 4
+			path: admin/editgame.php
+
+		-
+			message: "#^Variable \\$arraycolumnsblob might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsdefault might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsmaxlength might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsmultiplekey might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsname might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsnotnull might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsnumeric might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsprimarykey might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnstable might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnstype might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsuniquekey might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnsunsigned might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$arraycolumnszerofill might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$isSelect might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$isShow might not be defined\\.$#"
+			count: 1
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$result might not be defined\\.$#"
+			count: 2
+			path: admin/executesql.php
+
+		-
+			message: "#^Variable \\$poolId might not be defined\\.$#"
+			count: 13
+			path: admin/poolmoves.php
+
+		-
+			message: "#^Variable \\$pteamname might not be defined\\.$#"
+			count: 2
+			path: admin/poolmoves.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 2
+			path: admin/poolmoves.php
+
+		-
+			message: "#^Variable \\$total_teams might not be defined\\.$#"
+			count: 1
+			path: admin/poolmoves.php
+
+		-
+			message: "#^Variable \\$reservationArray might not be defined\\.$#"
+			count: 1
+			path: admin/schedule.php
+
+		-
+			message: "#^Variable \\$startTime might not be defined\\.$#"
+			count: 1
+			path: admin/schedule.php
+
+		-
+			message: "#^Variable \\$end might not be defined\\.$#"
+			count: 2
+			path: admin/seasonstandings.php
+
+		-
+			message: "#^Variable \\$moves might not be defined\\.$#"
+			count: 1
+			path: admin/seasonstandings.php
+
+		-
+			message: "#^Variable \\$start might not be defined\\.$#"
+			count: 2
+			path: admin/seasonstandings.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 2
+			path: admin/seriesgames.php
+
+		-
+			message: "#^Variable \\$seriesId might not be defined\\.$#"
+			count: 3
+			path: admin/seriesgames.php
+
+		-
+			message: "#^Variable \\$PlayoffOK might not be defined\\.$#"
+			count: 1
+			path: admin/serieteams.php
+
+		-
+			message: "#^Variable \\$poolId might not be defined\\.$#"
+			count: 21
+			path: admin/serieteams.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 2
+			path: admin/serieteams.php
+
+		-
+			message: "#^Variable \\$team might not be defined\\.$#"
+			count: 1
+			path: admin/serieteams.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 3
+			path: admin/serverconf.php
+
+		-
+			message: "#^Constant BASEURL not found\\.$#"
+			count: 1
+			path: admin/spirit.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 5
+			path: admin/spirit.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 2
+			path: admin/spiritsettings.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 5
+			path: admin/tdtools.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 1
+			path: admin/test.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: admin/translations.php
+
+		-
+			message: "#^Variable \\$locales might not be defined\\.$#"
+			count: 3
+			path: admin/translations.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 2
+			path: clubcard.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/bula/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$left_margin$#"
+			count: 1
+			path: cust/bula/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$title$#"
+			count: 1
+			path: cust/bula/pdfschedule.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/bula/pdfscoresheet.php
+
+		-
+			message: "#^Undefined variable\\: \\$info$#"
+			count: 1
+			path: cust/bula/pdfscoresheet.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 2
+			path: cust/default/mass-accreditation.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/default/pdfschedule.php
+
+		-
+			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
+			count: 1
+			path: cust/default/pdfschedule.php
+
+		-
+			message: "#^Call to static method png\\(\\) on an unknown class QRcode\\.$#"
+			count: 1
+			path: cust/default/pdfscoresheet.php
+
+		-
+			message: "#^Constant BASEURL not found\\.$#"
+			count: 2
+			path: cust/default/pdfscoresheet.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 1
+			path: cust/default/pdfscoresheet.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/default/pdfscoresheet.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: cust/default/teamplayers.functions.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 2
+			path: cust/fpudd/mass-accreditation.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/fpudd/pdfschedule.php
+
+		-
+			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
+			count: 1
+			path: cust/fpudd/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$left_margin$#"
+			count: 1
+			path: cust/fpudd/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$title$#"
+			count: 1
+			path: cust/fpudd/pdfschedule.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/fpudd/pdfscoresheet.php
+
+		-
+			message: "#^Undefined variable\\: \\$info$#"
+			count: 1
+			path: cust/fpudd/pdfscoresheet.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: cust/fpudd/teamplayers.functions.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/gummis/pdfschedule.php
+
+		-
+			message: "#^Variable \\$abbrev in empty\\(\\) is never defined\\.$#"
+			count: 1
+			path: cust/gummis/pdfschedule.php
+
+		-
+			message: "#^Variable \\$row might not be defined\\.$#"
+			count: 1
+			path: cust/gummis/pdfschedule.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/gummis/pdfscoresheet.php
+
+		-
+			message: "#^Variable \\$abbrev in empty\\(\\) is never defined\\.$#"
+			count: 1
+			path: cust/gummis/pdfscoresheet.php
+
+		-
+			message: "#^Call to sprintf contains 10 placeholders, 11 values given\\.$#"
+			count: 1
+			path: cust/slkl/mass-accreditation.php
+
+		-
+			message: "#^Variable \\$birthdate in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: cust/slkl/mass-accreditation.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 2
+			path: cust/slkl/mass-accreditation.php
+
+		-
+			message: "#^Variable \\$url might not be defined\\.$#"
+			count: 2
+			path: cust/slkl/mass-accreditation.php
+
+		-
+			message: "#^Variable \\$view might not be defined\\.$#"
+			count: 2
+			path: cust/slkl/mass-accreditation.php
+
+		-
+			message: "#^Call to static method png\\(\\) on an unknown class QRcode\\.$#"
+			count: 1
+			path: cust/slkl/pdfscoresheet.php
+
+		-
+			message: "#^Constant BASEURL not found\\.$#"
+			count: 2
+			path: cust/slkl/pdfscoresheet.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 1
+			path: cust/slkl/pdfscoresheet.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/slkl/pdfscoresheet.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/wfdf/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$left_margin$#"
+			count: 1
+			path: cust/wfdf/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$title$#"
+			count: 1
+			path: cust/wfdf/pdfschedule.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: cust/wfdf/pdfscoresheet.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/wfdf/pdfscoresheet.php
+
+		-
+			message: "#^Undefined variable\\: \\$info$#"
+			count: 1
+			path: cust/wfdf/pdfscoresheet.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/windmill/pdfschedule.php
+
+		-
+			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
+			count: 1
+			path: cust/windmill/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$left_margin$#"
+			count: 1
+			path: cust/windmill/pdfschedule.php
+
+		-
+			message: "#^Undefined variable\\: \\$title$#"
+			count: 1
+			path: cust/windmill/pdfschedule.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: cust/windmill/pdfscoresheet.php
+
+		-
+			message: "#^Undefined variable\\: \\$info$#"
+			count: 1
+			path: cust/windmill/pdfscoresheet.php
+
+		-
+			message: "#^Function printReport invoked with 4 parameters, 3 required\\.$#"
+			count: 1
+			path: docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php
+
+		-
+			message: "#^Result of function main \\(void\\) is used\\.$#"
+			count: 1
+			path: docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 1
+			path: ext/index.php
+
+		-
+			message: "#^Variable \\$newnode might not be defined\\.$#"
+			count: 1
+			path: ext/locationxml.php
+
+		-
+			message: "#^Constant RSS2 not found\\.$#"
+			count: 2
+			path: ext/rss.php
+
+		-
+			message: "#^Instantiated class FeedWriter not found\\.$#"
+			count: 1
+			path: ext/rss.php
+
+		-
+			message: "#^Variable \\$gameevent might not be defined\\.$#"
+			count: 4
+			path: ext/rss.php
+
+		-
+			message: "#^Variable \\$pass in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ext/rss.php
+
+		-
+			message: "#^Variable \\$scorer in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: ext/rss.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: frontpage.php
+
+		-
+			message: "#^Variable \\$user might not be defined\\.$#"
+			count: 2
+			path: frontpage.php
+
+		-
+			message: "#^Variable \\$gameevent might not be defined\\.$#"
+			count: 2
+			path: gameplay.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: games.php
+
+		-
+			message: "#^Variable \\$games might not be defined\\.$#"
+			count: 1
+			path: games.php
+
+		-
+			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: games.php
+
+		-
+			message: "#^Constant BASEURL not found\\.$#"
+			count: 1
+			path: install.php
+
+		-
+			message: "#^Constant DB_DATABASE not found\\.$#"
+			count: 3
+			path: install.php
+
+		-
+			message: "#^Constant DB_HOST not found\\.$#"
+			count: 2
+			path: install.php
+
+		-
+			message: "#^Constant DB_PASSWORD not found\\.$#"
+			count: 2
+			path: install.php
+
+		-
+			message: "#^Constant DB_USER not found\\.$#"
+			count: 2
+			path: install.php
+
+		-
+			message: "#^Variable \\$lines might not be defined\\.$#"
+			count: 1
+			path: install.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 3
+			path: lib/club.functions.php
+
+		-
+			message: "#^Constant DATE_FORMAT not found\\.$#"
+			count: 3
+			path: lib/common.functions.php
+
+		-
+			message: "#^Instantiated class HSVClass not found\\.$#"
+			count: 1
+			path: lib/common.functions.php
+
+		-
+			message: "#^Variable \\$fields might not be defined\\.$#"
+			count: 1
+			path: lib/common.functions.php
+
+		-
+			message: "#^Variable \\$ret might not be defined\\.$#"
+			count: 2
+			path: lib/common.functions.php
+
+		-
+			message: "#^Variable \\$table in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 2
+			path: lib/common.functions.php
+
+		-
+			message: "#^Constant DB_DATABASE not found\\.$#"
+			count: 1
+			path: lib/database.php
+
+		-
+			message: "#^Constant DB_HOST not found\\.$#"
+			count: 1
+			path: lib/database.php
+
+		-
+			message: "#^Constant DB_PASSWORD not found\\.$#"
+			count: 1
+			path: lib/database.php
+
+		-
+			message: "#^Constant DB_USER not found\\.$#"
+			count: 1
+			path: lib/database.php
+
+		-
+			message: "#^Variable \\$mysqlconnectionref might not be defined\\.$#"
+			count: 1
+			path: lib/database.php
+
+		-
+			message: "#^Variable \\$result might not be defined\\.$#"
+			count: 1
+			path: lib/game.functions.php
+
+		-
+			message: "#^Variable \\$img_src might not be defined\\.$#"
+			count: 2
+			path: lib/image.functions.php
+
+		-
+			message: "#^Call to sprintf contains 5 placeholders, 6 values given\\.$#"
+			count: 1
+			path: lib/player.functions.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 3
+			path: lib/player.functions.php
+
+		-
+			message: "#^Call to sprintf contains 4 placeholders, 5 values given\\.$#"
+			count: 1
+			path: lib/pool.functions.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 3
+			path: lib/pool.functions.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 5
+			path: lib/privacy.functions.php
+
+		-
+			message: "#^Function AddSeries\\(\\) should return new but return statement is missing\\.$#"
+			count: 1
+			path: lib/series.functions.php
+
+		-
+			message: "#^Function DeleteSeries\\(\\) should return mysql but return statement is missing\\.$#"
+			count: 1
+			path: lib/series.functions.php
+
+		-
+			message: "#^Variable \\$defenses might not be defined\\.$#"
+			count: 1
+			path: lib/statistical.functions.php
+
+		-
+			message: "#^Function HavePlayed not found\\.$#"
+			count: 2
+			path: lib/swissdraw.functions.php
+
+		-
+			message: "#^Function len not found\\.$#"
+			count: 2
+			path: lib/swissdraw.functions.php
+
+		-
+			message: "#^Variable \\$rounds might not be defined\\.$#"
+			count: 2
+			path: lib/swissdraw.functions.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 3
+			path: lib/team.functions.php
+
+		-
+			message: "#^Variable \\$prevTimezone might not be defined\\.$#"
+			count: 1
+			path: lib/timetable.functions.php
+
+		-
+			message: "#^Constant WORD_DELIMITER not found\\.$#"
+			count: 6
+			path: lib/translation.functions.php
+
+		-
+			message: "#^Variable \\$list might not be defined\\.$#"
+			count: 1
+			path: lib/url.functions.php
+
+		-
+			message: "#^Instantiated class YAHOO_util_Loader not found\\.$#"
+			count: 1
+			path: lib/yui.functions.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 4
+			path: localization.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 2
+			path: localization.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 3
+			path: menufunctions.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 3
+			path: menufunctions.php
+
+		-
+			message: "#^Variable \\$links in isset\\(\\) always exists and is not nullable\\.$#"
+			count: 1
+			path: menufunctions.php
+
+		-
+			message: "#^Variable \\$season might not be defined\\.$#"
+			count: 4
+			path: menufunctions.php
+
+		-
+			message: "#^Variable \\$away might not be defined\\.$#"
+			count: 1
+			path: mobile/addscoresheet.php
+
+		-
+			message: "#^Variable \\$home might not be defined\\.$#"
+			count: 1
+			path: mobile/addscoresheet.php
+
+		-
+			message: "#^Variable \\$gameevent might not be defined\\.$#"
+			count: 1
+			path: mobile/gameplay.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 2
+			path: playercard.php
+
+		-
+			message: "#^Call to an undefined method XMLHandler\\:\\:ReplaceInDatabase\\(\\)\\.$#"
+			count: 1
+			path: plugins/import_xml_ffindr.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: plugins/import_xml_ffindr.php
+
+		-
+			message: "#^Variable \\$cond might not be defined\\.$#"
+			count: 4
+			path: plugins/import_xml_ffindr.php
+
+		-
+			message: "#^Variable \\$name might not be defined\\.$#"
+			count: 4
+			path: plugins/import_xml_ffindr.php
+
+		-
+			message: "#^Variable \\$seasonId in empty\\(\\) always exists and is always falsy\\.$#"
+			count: 1
+			path: plugins/import_xml_ffindr.php
+
+		-
+			message: "#^Variable \\$BYEs might not be defined\\.$#"
+			count: 1
+			path: plugins/reassign_playoffpools.php
+
+		-
+			message: "#^Variable \\$PlayoffOK might not be defined\\.$#"
+			count: 1
+			path: plugins/reassign_playoffpools.php
+
+		-
+			message: "#^Variable \\$playoffpool might not be defined\\.$#"
+			count: 1
+			path: plugins/reassign_playoffpools.php
+
+		-
+			message: "#^Variable \\$byeName might not be defined\\.$#"
+			count: 1
+			path: poolstatus.php
+
+		-
+			message: "#^Variable \\$pool in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: poolstatus.php
+
+		-
+			message: "#^Variable \\$seasoninfo might not be defined\\.$#"
+			count: 4
+			path: poolstatus.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: privacy.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 1
+			path: register.php
+
+		-
+			message: "#^Variable \\$away might not be defined\\.$#"
+			count: 4
+			path: result.php
+
+		-
+			message: "#^Variable \\$game might not be defined\\.$#"
+			count: 1
+			path: result.php
+
+		-
+			message: "#^Variable \\$gameId might not be defined\\.$#"
+			count: 1
+			path: result.php
+
+		-
+			message: "#^Variable \\$home might not be defined\\.$#"
+			count: 4
+			path: result.php
+
+		-
+			message: "#^Variable \\$game_result might not be defined\\.$#"
+			count: 1
+			path: scorekeeper/addresult.php
+
+		-
+			message: "#^Variable \\$gameevent might not be defined\\.$#"
+			count: 1
+			path: scorekeeper/gameplay.php
+
+		-
+			message: "#^Constant BASEURL not found\\.$#"
+			count: 2
+			path: scorekeeper/index.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 3
+			path: scorekeeper/respgames.php
+
+		-
+			message: "#^Variable \\$away might not be defined\\.$#"
+			count: 4
+			path: scorekeeper/result.php
+
+		-
+			message: "#^Variable \\$gameId might not be defined\\.$#"
+			count: 1
+			path: scorekeeper/result.php
+
+		-
+			message: "#^Variable \\$home might not be defined\\.$#"
+			count: 4
+			path: scorekeeper/result.php
+
+		-
+			message: "#^Constant BASEURL not found\\.$#"
+			count: 1
+			path: spiritkeeper/index.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 6
+			path: spiritkeeper/index.php
+
+		-
+			message: "#^Variable \\$view in empty\\(\\) always exists and is not falsy\\.$#"
+			count: 1
+			path: spiritkeeper/index.php
+
+		-
+			message: "#^Variable \\$teamId might not be defined\\.$#"
+			count: 6
+			path: spiritkeeper/submitsotg.php
+
+		-
+			message: "#^Variable \\$token might not be defined\\.$#"
+			count: 7
+			path: spiritkeeper/submitsotg.php
+
+		-
+			message: "#^Variable \\$teamId might not be defined\\.$#"
+			count: 4
+			path: spiritkeeper/teamgames.php
+
+		-
+			message: "#^Variable \\$token might not be defined\\.$#"
+			count: 1
+			path: spiritkeeper/teamgames.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 1
+			path: sql/upgrade_db.php
+
+		-
+			message: "#^Constant DB_DATABASE not found\\.$#"
+			count: 8
+			path: sql/upgrade_db.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 6
+			path: sql/upgrade_db.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 3
+			path: sql/upgrade_db.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 2
+			path: teamcard.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 5
+			path: teams.php
+
+		-
+			message: "#^Variable \\$playoffpools might not be defined\\.$#"
+			count: 1
+			path: teams.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 6
+			path: user/adddefensesheet.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 1
+			path: user/addextraemail.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 7
+			path: user/addmedialink.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 4
+			path: user/addplayerlists.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 5
+			path: user/addresult.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 6
+			path: user/addscoresheet.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 5
+			path: user/addspirit.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 2
+			path: user/clubprofile.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 10
+			path: user/clubprofile.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 1
+			path: user/contacts.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 4
+			path: user/enrollteam.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: user/pdfscoresheet.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 6
+			path: user/pdfscoresheet.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 1
+			path: user/playerprofile.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 2
+			path: user/playerprofile.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 7
+			path: user/playerprofile.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 5
+			path: user/respgames.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 4
+			path: user/respteams.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 2
+			path: user/select_poolselector.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: user/teamplayers.php
+
+		-
+			message: "#^Variable \\$gameId in empty\\(\\) always exists and is always falsy\\.$#"
+			count: 2
+			path: user/teamplayers.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 4
+			path: user/teamplayers.php
+
+		-
+			message: "#^Constant UPLOAD_DIR not found\\.$#"
+			count: 2
+			path: user/teamprofile.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 7
+			path: user/teamprofile.php
+
+		-
+			message: "#^Variable \\$include_prefix might not be defined\\.$#"
+			count: 6
+			path: user/userinfo.php
+
+		-
+			message: "#^Constant CUSTOMIZATIONS not found\\.$#"
+			count: 2
+			path: user_guide.php
