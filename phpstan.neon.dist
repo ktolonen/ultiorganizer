@@ -15,11 +15,7 @@ parameters:
         - .
     excludePaths:
         - vendor/*
-        - conf/*
         - live/*
-        - images/*
-        - locale/*
-        - script/*
         - lib/tfpdf/*
         - lib/yuiloader/*
         - lib/phpqrcode/*

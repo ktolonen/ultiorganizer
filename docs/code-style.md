@@ -15,7 +15,6 @@ This document summarizes the rules that apply to this repository, lists project-
 - **Imports**: `use` statements are alphabetically ordered, grouped by classes, functions, and constants.
 - **Braces**: opening brace of a function/method on a new line; opening brace of control structures on the same line.
 - **Control structures**: one space after the keyword, one space before the opening brace, no space after the opening parenthesis or before the closing parenthesis.
-- **Strings**: prefer single quotes when no interpolation is required.
 - **Arrays**: short syntax `[...]` only.
 - **Trailing commas**: required in multi-line arrays, argument lists, and parameter lists.
 - **Booleans, null**: lowercase (`true`, `false`, `null`).
@@ -53,10 +52,10 @@ composer check           # format:check + lint
 
 ## Excluded directories
 
-The following paths are excluded from both tools because they are third-party, generated, or non-PHP content:
+PHP-CS-Fixer and PHPStan exclude these third-party or runtime paths:
 
 - `vendor/`
-- `conf/`, `live/`, `images/`, `locale/`, `script/`
+- `live/`
 - `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/`, `lib/hsvclass/`
 
 ## Local installation

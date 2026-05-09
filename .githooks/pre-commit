@@ -21,7 +21,7 @@ set -e
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-mapfile -t STAGED_PHP < <(git diff --cached --name-only --diff-filter=ACMR -- '*.php' ':!lib/tfpdf/**' ':!lib/yuiloader/**' ':!lib/phpqrcode/**' ':!lib/feed_generator/**' ':!lib/hsvclass/**' ':!vendor/**' ':!conf/**' ':!live/**')
+mapfile -t STAGED_PHP < <(git diff --cached --name-only --diff-filter=ACMR -- '*.php' ':!lib/tfpdf/**' ':!lib/yuiloader/**' ':!lib/phpqrcode/**' ':!lib/feed_generator/**' ':!lib/hsvclass/**' ':!vendor/**' ':!live/**')
 
 if [ "${#STAGED_PHP[@]}" -eq 0 ]; then
     exit 0
