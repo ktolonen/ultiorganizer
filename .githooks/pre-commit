@@ -28,24 +28,34 @@ if [ "${#STAGED_PHP[@]}" -eq 0 ]; then
     exit 0
 fi
 
-UNSTAGED_PATCH=""
+UNSTAGED_DIR=""
+UNSTAGED_MISSING_DIR=""
+UNSTAGED_PHP=()
 RESTORE_UNSTAGED=0
 
 restore_unstaged_changes() {
     local status=$?
     local index_tree
+    local path
 
     if [ "$RESTORE_UNSTAGED" -eq 1 ]; then
         echo "pre-commit: restoring unstaged PHP changes..."
         index_tree="$(git write-tree)"
-        if git apply --quiet --3way --whitespace=nowarn "$UNSTAGED_PATCH"; then
-            git read-tree "$index_tree"
-            rm -f "$UNSTAGED_PATCH"
+        for path in "${UNSTAGED_PHP[@]}"; do
+            if [ -f "$UNSTAGED_MISSING_DIR/$path" ]; then
+                rm -f -- "$path"
+            else
+                mkdir -p -- "$(dirname "$path")"
+                cp -p -- "$UNSTAGED_DIR/$path" "$path"
+            fi
+        done
+
+        if git read-tree "$index_tree"; then
+            rm -rf "$UNSTAGED_DIR"
             RESTORE_UNSTAGED=0
         else
-            git read-tree "$index_tree" || true
-            echo "pre-commit: failed to restore unstaged changes from $UNSTAGED_PATCH." >&2
-            echo "pre-commit: resolve the conflict or re-apply that patch manually, then retry the commit." >&2
+            echo "pre-commit: restored unstaged files but failed to restore the index." >&2
+            echo "pre-commit: review 'git status' before retrying the commit." >&2
             status=1
         fi
     fi
@@ -54,14 +64,35 @@ restore_unstaged_changes() {
 }
 
 preserve_unstaged_changes() {
-    if git diff --quiet -- "${STAGED_PHP[@]}"; then
+    local path
+
+    UNSTAGED_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ultiorganizer-pre-commit.XXXXXX")"
+    UNSTAGED_MISSING_DIR="$UNSTAGED_DIR/.missing"
+
+    for path in "${STAGED_PHP[@]}"; do
+        if git diff --quiet -- "$path"; then
+            continue
+        fi
+
+        UNSTAGED_PHP+=("$path")
+        if [ -e "$path" ]; then
+            mkdir -p -- "$(dirname "$UNSTAGED_DIR/$path")"
+            cp -p -- "$path" "$UNSTAGED_DIR/$path"
+        else
+            mkdir -p -- "$(dirname "$UNSTAGED_MISSING_DIR/$path")"
+            touch "$UNSTAGED_MISSING_DIR/$path"
+        fi
+    done
+
+    if [ "${#UNSTAGED_PHP[@]}" -eq 0 ]; then
+        rm -rf "$UNSTAGED_DIR"
+        UNSTAGED_DIR=""
+        UNSTAGED_MISSING_DIR=""
         return 0
     fi
 
-    UNSTAGED_PATCH="$(mktemp "${TMPDIR:-/tmp}/ultiorganizer-pre-commit.XXXXXX.patch")"
-    git diff --binary --full-index -- "${STAGED_PHP[@]}" > "$UNSTAGED_PATCH"
-    git apply --quiet --reverse --whitespace=nowarn "$UNSTAGED_PATCH"
     RESTORE_UNSTAGED=1
+    git checkout-index -f -- "${UNSTAGED_PHP[@]}"
 }
 
 run_tool() {
