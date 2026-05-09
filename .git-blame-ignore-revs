@@ -1,0 +1,11 @@
+# Revisions intentionally skipped by `git blame` to keep authorship history
+# meaningful across sweeping mechanical reformats.
+#
+# Enable locally with:
+#   git config blame.ignoreRevsFile .git-blame-ignore-revs
+#
+# Add the SHA of large mechanical changes (e.g. the initial PER-CS 2.0
+# reformat) on its own line, with a short comment above it.
+
+# Initial PER-CS 2.0 reformat.
+d557b4b173d3a5997ee199003529efbbe09e1422

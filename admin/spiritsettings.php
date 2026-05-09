@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
@@ -8,46 +9,46 @@ $title = _("Spirit Settings");
 $html = "";
 
 if (empty($seasonId) || !hasSpiritToolsRight($seasonId)) {
-	$html .= "<p>" . _("Insufficient user rights") . "</p>";
-	showPage($title, $html);
-	return;
+    $html .= "<p>" . _("Insufficient user rights") . "</p>";
+    showPage($title, $html);
+    return;
 }
 
 $seasonInfo = SeasonInfo($seasonId);
 if (!$seasonInfo) {
-	$html .= "<p>" . _("Event not found") . "</p>";
-	showPage($title, $html);
-	return;
+    $html .= "<p>" . _("Event not found") . "</p>";
+    showPage($title, $html);
+    return;
 }
 
 $seasonComment = CommentRaw(1, $seasonId);
-$spiritSettings = array(
-	'spiritmode' => isset($seasonInfo['spiritmode']) ? (int)$seasonInfo['spiritmode'] : 0,
-	'showspiritpoints' => !empty($seasonInfo['showspiritpoints']) ? 1 : 0,
-	'showspiritcomments' => !empty($seasonInfo['showspiritcomments']) ? 1 : 0,
-	'showspiritpointsonlyoncomplete' => isset($seasonInfo['showspiritpointsonlyoncomplete']) ? (int)!empty($seasonInfo['showspiritpointsonlyoncomplete']) : 1,
-	'lockteamspiritonsubmit' => isset($seasonInfo['lockteamspiritonsubmit']) ? (int)!empty($seasonInfo['lockteamspiritonsubmit']) : 1,
-);
+$spiritSettings = [
+    'spiritmode' => isset($seasonInfo['spiritmode']) ? (int) $seasonInfo['spiritmode'] : 0,
+    'showspiritpoints' => !empty($seasonInfo['showspiritpoints']) ? 1 : 0,
+    'showspiritcomments' => !empty($seasonInfo['showspiritcomments']) ? 1 : 0,
+    'showspiritpointsonlyoncomplete' => isset($seasonInfo['showspiritpointsonlyoncomplete']) ? (int) !empty($seasonInfo['showspiritpointsonlyoncomplete']) : 1,
+    'lockteamspiritonsubmit' => isset($seasonInfo['lockteamspiritonsubmit']) ? (int) !empty($seasonInfo['lockteamspiritonsubmit']) : 1,
+];
 
 if (!empty($_POST['save'])) {
-	$seasonInfo['spiritmode'] = isset($_POST['spiritmode']) ? (int)$_POST['spiritmode'] : 0;
-	$seasonInfo['showspiritpoints'] = !empty($_POST['showspiritpoints']) ? 1 : 0;
-	$seasonInfo['showspiritcomments'] = !empty($_POST['showspiritcomments']) ? 1 : 0;
-	$seasonInfo['showspiritpointsonlyoncomplete'] = !empty($_POST['showspiritpointsonlyoncomplete']) ? 1 : 0;
-	$seasonInfo['lockteamspiritonsubmit'] = !empty($_POST['lockteamspiritonsubmit']) ? 1 : 0;
+    $seasonInfo['spiritmode'] = isset($_POST['spiritmode']) ? (int) $_POST['spiritmode'] : 0;
+    $seasonInfo['showspiritpoints'] = !empty($_POST['showspiritpoints']) ? 1 : 0;
+    $seasonInfo['showspiritcomments'] = !empty($_POST['showspiritcomments']) ? 1 : 0;
+    $seasonInfo['showspiritpointsonlyoncomplete'] = !empty($_POST['showspiritpointsonlyoncomplete']) ? 1 : 0;
+    $seasonInfo['lockteamspiritonsubmit'] = !empty($_POST['lockteamspiritonsubmit']) ? 1 : 0;
 
-	if (SetSeasonSpiritSettings($seasonId, $seasonInfo)) {
-		$html .= "<p class='notice'>" . _("Spirit settings saved.") . "</p>";
-		$spiritSettings = array(
-			'spiritmode' => (int)$seasonInfo['spiritmode'],
-			'showspiritpoints' => (int)$seasonInfo['showspiritpoints'],
-			'showspiritcomments' => (int)$seasonInfo['showspiritcomments'],
-			'showspiritpointsonlyoncomplete' => (int)$seasonInfo['showspiritpointsonlyoncomplete'],
-			'lockteamspiritonsubmit' => (int)$seasonInfo['lockteamspiritonsubmit'],
-		);
-	} else {
-		$html .= "<p class='warning'>" . _("Spirit settings were not saved.") . "</p>";
-	}
+    if (SetSeasonSpiritSettings($seasonId, $seasonInfo)) {
+        $html .= "<p class='notice'>" . _("Spirit settings saved.") . "</p>";
+        $spiritSettings = [
+            'spiritmode' => (int) $seasonInfo['spiritmode'],
+            'showspiritpoints' => (int) $seasonInfo['showspiritpoints'],
+            'showspiritcomments' => (int) $seasonInfo['showspiritcomments'],
+            'showspiritpointsonlyoncomplete' => (int) $seasonInfo['showspiritpointsonlyoncomplete'],
+            'lockteamspiritonsubmit' => (int) $seasonInfo['lockteamspiritonsubmit'],
+        ];
+    } else {
+        $html .= "<p class='warning'>" . _("Spirit settings were not saved.") . "</p>";
+    }
 }
 
 $title .= ": " . utf8entities(U_($seasonInfo['name']));
@@ -59,12 +60,12 @@ $html .= "<table border='0'>";
 
 $html .= "<tr>";
 $html .= "<td class='infocell'>" . _("Spirit mode") . ": </td>";
-$spiritModeDisabledSelected = ((int)$spiritSettings['spiritmode'] === 0) ? " selected='selected'" : "";
+$spiritModeDisabledSelected = ((int) $spiritSettings['spiritmode'] === 0) ? " selected='selected'" : "";
 $html .= "<td><select class='dropdown' name='spiritmode'>";
 $html .= "<option value='0'" . $spiritModeDisabledSelected . ">" . utf8entities(SpiritModeDisabledName()) . "</option>";
 foreach (SpiritCategoryModeRows() as $mode) {
-	$selected = ($spiritSettings['spiritmode'] === (int)$mode['mode']) ? " selected='selected'" : "";
-	$html .= "<option value='" . (int)$mode['mode'] . "'" . $selected . ">" . utf8entities(_($mode['name'])) . "</option>";
+    $selected = ($spiritSettings['spiritmode'] === (int) $mode['mode']) ? " selected='selected'" : "";
+    $html .= "<option value='" . (int) $mode['mode'] . "'" . $selected . ">" . utf8entities(_($mode['name'])) . "</option>";
 }
 $html .= "</select></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Selects the spirit scoring model used by the event. Set this to empty to disable spirit scoring entirely.") . "</span></td></tr>";
@@ -94,4 +95,3 @@ $html .= "<p><input class='button' type='submit' name='save' value='" . _("Save 
 $html .= "</form>";
 
 showPage($title, $html);
-?>

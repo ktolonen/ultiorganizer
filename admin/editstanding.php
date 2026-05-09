@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/database.php';
 include_once 'lib/season.functions.php';
@@ -25,16 +26,18 @@ contentStart();
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-	$backurl = utf8entities($_POST['backurl']);
-	$rank = 0;
-	$activerank = 0;
-	if (!empty($_POST['rank']))
-		$rank = $_POST['rank'];
+    $backurl = utf8entities($_POST['backurl']);
+    $rank = 0;
+    $activerank = 0;
+    if (!empty($_POST['rank'])) {
+        $rank = $_POST['rank'];
+    }
 
-	if (!empty($_POST['activerank']))
-		$activerank = $_POST['activerank'];
+    if (!empty($_POST['activerank'])) {
+        $activerank = $_POST['activerank'];
+    }
 
-	SetTeamSerieRank($teamId, $poolId, $rank, $activerank);
+    SetTeamSerieRank($teamId, $poolId, $rank, $activerank);
 }
 
 echo "<form method='post' action='?view=admin/editstanding&amp;season=$season&amp;pool=$poolId&amp;team=$teamId'>";
@@ -59,18 +62,18 @@ echo "<h2>" . _("Games") . "</h2>\n";
 
 $games = TeamSerieGames($teamId, $poolId);
 if (!empty($games)) {
-	echo "<table border='0' cellpadding='4px' width='400px'>\n";
-	foreach ($games as $row) {
-		echo "<tr>";
-		echo "<td>" . DefWeekDateFormat($row['time']) . "</td>";
-		echo "<td>" . utf8entities(TeamName($row['hometeam'])) . "</td>";
-		echo "<td>-</td>";
-		echo "<td>" . utf8entities(TeamName($row['visitorteam'])) . "</td>";
-		echo "<td>" . intval($row['homescore']) . "</td><td style='width:2%'>-</td><td style='width:5%'>" . intval($row['visitorscore']) . "</td>";
-		echo "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=" . $row['game_id'] . "'>" . _("edit") . "</a></td>";
-		echo "</tr>\n";
-	}
-	echo "</table>";
+    echo "<table border='0' cellpadding='4px' width='400px'>\n";
+    foreach ($games as $row) {
+        echo "<tr>";
+        echo "<td>" . DefWeekDateFormat($row['time']) . "</td>";
+        echo "<td>" . utf8entities(TeamName($row['hometeam'])) . "</td>";
+        echo "<td>-</td>";
+        echo "<td>" . utf8entities(TeamName($row['visitorteam'])) . "</td>";
+        echo "<td>" . intval($row['homescore']) . "</td><td style='width:2%'>-</td><td style='width:5%'>" . intval($row['visitorscore']) . "</td>";
+        echo "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=" . $row['game_id'] . "'>" . _("edit") . "</a></td>";
+        echo "</tr>\n";
+    }
+    echo "</table>";
 }
 echo "<p><input type='hidden' name='backurl' value='$backurl'/>";
 echo "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/></p>";

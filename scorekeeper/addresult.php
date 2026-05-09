@@ -8,18 +8,18 @@ $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
 $_SESSION['game'] = $gameId;
 
 if (isset($_POST['save'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	$ok = GameSetResult($gameId, $home, $away);
-	if ($ok) {
-		$game_result = GameResult($gameId);
-		$info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
-	}
+    $home = intval($_POST['home']);
+    $away = intval($_POST['away']);
+    $ok = GameSetResult($gameId, $home, $away);
+    if ($ok) {
+        $game_result = GameResult($gameId);
+        $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
+    }
 } elseif (isset($_POST['update'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	$ok = GameUpdateResult($gameId, $home, $away);
-	$info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";
+    $home = intval($_POST['home']);
+    $away = intval($_POST['away']);
+    $ok = GameUpdateResult($gameId, $home, $away);
+    $info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";
 }
 
 $html .= "<div data-role='header'>\n";
@@ -62,13 +62,13 @@ $html .= "</div>";
 $html .= $info;
 
 if (isset($_POST['save'])) {
-	$html .= "<input type='submit' name='save'  data-ajax='false' value='" . _("Save again") . "'/>";
-	$html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
+    $html .= "<input type='submit' name='save'  data-ajax='false' value='" . _("Save again") . "'/>";
+    $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
 } else {
-	$html .= "<div class='action-row action-row--stacked action-row--spaced'>\n";
-	$html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
-	$html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
-	$html .= "</div>\n";
+    $html .= "<div class='action-row action-row--stacked action-row--spaced'>\n";
+    $html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
+    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
+    $html .= "</div>\n";
 }
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</form>";

@@ -11,6 +11,7 @@ RUN apt-get update && apt-get install -y \
     default-mysql-client \
     libpng-dev \
     ripgrep \
+    unzip \
     zlib1g-dev \
  && sed -i '/^# *en_US.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
  && sed -i '/^# *fi_FI.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
@@ -19,6 +20,7 @@ RUN apt-get update && apt-get install -y \
  && docker-php-ext-enable xdebug \
  && docker-php-ext-configure gd --with-jpeg \
  && docker-php-ext-install mysqli gettext gd mbstring \
+ && curl -sSf https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
  && rm -rf /var/lib/apt/lists/*
 
 ENV LANG=en_US.UTF-8

@@ -1,11 +1,12 @@
 <?php
+
 declare(strict_types=1);
 
 const RULE_FORBIDDEN_MYSQLI = 'forbidden-mysqli';
 const RULE_FORBIDDEN_LOW_LEVEL_DB_CALL = 'forbidden-low-level-db-call';
 const RULE_LEGACY_LIB_CURSOR_API = 'legacy-lib-cursor-api';
 
-const APP_SCOPE_PREFIXES = array(
+const APP_SCOPE_PREFIXES = [
     'admin/',
     'user/',
     'cust/',
@@ -16,16 +17,16 @@ const APP_SCOPE_PREFIXES = array(
     'login/',
     'api/',
     'plugins/',
-);
+];
 
-const INFRASTRUCTURE_EXEMPTIONS = array(
+const INFRASTRUCTURE_EXEMPTIONS = [
     'install.php',
     'lib/database.php',
     'sql/upgrade_db.php',
-);
+];
 
 if (PHP_SAPI === 'cli') {
-    $argv = isset($GLOBALS['argv']) && is_array($GLOBALS['argv']) ? $GLOBALS['argv'] : array(__FILE__);
+    $argv = isset($GLOBALS['argv']) && is_array($GLOBALS['argv']) ? $GLOBALS['argv'] : [__FILE__];
     main($argv);
 }
 
@@ -36,13 +37,13 @@ function main(array $argv): void
     $allowlist = loadAllowlist(__DIR__ . '/../references/db-access-allowlist.txt');
     $files = collectFiles($repoRoot, $config['mode'], $config['paths']);
     sort($files);
-    $relevantFiles = array();
+    $relevantFiles = [];
 
-    $report = array(
-        RULE_FORBIDDEN_MYSQLI => array(),
-        RULE_FORBIDDEN_LOW_LEVEL_DB_CALL => array(),
-        RULE_LEGACY_LIB_CURSOR_API => array(),
-    );
+    $report = [
+        RULE_FORBIDDEN_MYSQLI => [],
+        RULE_FORBIDDEN_LOW_LEVEL_DB_CALL => [],
+        RULE_LEGACY_LIB_CURSOR_API => [],
+    ];
 
     foreach ($files as $path) {
         $classification = classifyPath($path);
@@ -66,7 +67,7 @@ function main(array $argv): void
 function parseArguments(array $argv): array
 {
     $mode = null;
-    $paths = array();
+    $paths = [];
 
     foreach (array_slice($argv, 1) as $arg) {
         if ($arg === '--all') {
@@ -93,10 +94,10 @@ function parseArguments(array $argv): array
         exit(2);
     }
 
-    return array(
+    return [
         'mode' => $mode,
         'paths' => $paths,
-    );
+    ];
 }
 
 function printUsage(): void
@@ -118,13 +119,13 @@ TXT;
 function loadAllowlist(string $filename): array
 {
     if (!is_readable($filename)) {
-        return array();
+        return [];
     }
 
-    $entries = array();
+    $entries = [];
     $lines = file($filename, FILE_IGNORE_NEW_LINES);
     if ($lines === false) {
-        return array();
+        return [];
     }
 
     foreach ($lines as $line) {
@@ -153,9 +154,9 @@ function collectFiles(string $repoRoot, string $mode, array $paths): array
 
 function collectAllPhpFiles(string $repoRoot): array
 {
-    $files = array();
+    $files = [];
     $iterator = new RecursiveIteratorIterator(
-        new RecursiveDirectoryIterator($repoRoot, FilesystemIterator::SKIP_DOTS)
+        new RecursiveDirectoryIterator($repoRoot, FilesystemIterator::SKIP_DOTS),
     );
 
     foreach ($iterator as $fileInfo) {
@@ -176,7 +177,7 @@ function collectAllPhpFiles(string $repoRoot): array
 
 function normalizeInputPaths(string $repoRoot, array $paths): array
 {
-    $normalized = array();
+    $normalized = [];
 
     foreach ($paths as $path) {
         $resolved = $path;
@@ -201,16 +202,16 @@ function normalizeInputPaths(string $repoRoot, array $paths): array
 
 function collectChangedPhpFiles(string $repoRoot): array
 {
-    $files = array();
-    $commands = array(
+    $files = [];
+    $commands = [
         'git -C %s diff --name-only --diff-filter=ACMR --relative --',
         'git -C %s diff --cached --name-only --diff-filter=ACMR --relative --',
         'git -C %s ls-files --others --exclude-standard',
-    );
+    ];
 
     foreach ($commands as $commandTemplate) {
         $command = sprintf($commandTemplate, escapeshellarg($repoRoot));
-        $output = array();
+        $output = [];
         $status = 0;
         exec($command, $output, $status);
         if ($status !== 0) {
@@ -291,7 +292,7 @@ function scanAppFile(string $repoRoot, string $path, bool $allowlisted, array &$
                     $path,
                     $lineNumber,
                     'Direct mysqli call: ' . $match[2] . '()',
-                    $allowlisted
+                    $allowlisted,
                 );
             }
         }
@@ -304,7 +305,7 @@ function scanAppFile(string $repoRoot, string $path, bool $allowlisted, array &$
                     $path,
                     $lineNumber,
                     'Low-level DB wrapper call: ' . $match[1] . '()',
-                    $allowlisted
+                    $allowlisted,
                 );
             }
         }
@@ -329,7 +330,7 @@ function scanLibFile(string $repoRoot, string $path, array &$report): void
                 $path,
                 $index + 1,
                 'Docblock still advertises mysqli_result',
-                false
+                false,
             );
         }
     }
@@ -342,7 +343,7 @@ function scanLibFile(string $repoRoot, string $path, array &$report): void
                 $path,
                 $index + 1,
                 'Helper still returns DBQuery() cursor directly',
-                false
+                false,
             );
         }
     }
@@ -385,12 +386,12 @@ function preserveLineBreaks(string $text): string
 
 function addFinding(array &$report, string $rule, string $path, int $lineNumber, string $message, bool $allowlisted): void
 {
-    $report[$rule][] = array(
+    $report[$rule][] = [
         'path' => $path,
         'line' => $lineNumber,
         'message' => $message,
         'allowlisted' => $allowlisted,
-    );
+    ];
 }
 
 function printReport(string $mode, array $scannedFiles, array $report): void
@@ -399,7 +400,7 @@ function printReport(string $mode, array $scannedFiles, array $report): void
     fwrite(STDOUT, "DB access check mode: --{$mode}\n");
     fwrite(STDOUT, "Scanned policy-relevant PHP files: {$scannedCount}\n");
 
-    foreach (array(RULE_FORBIDDEN_MYSQLI, RULE_FORBIDDEN_LOW_LEVEL_DB_CALL, RULE_LEGACY_LIB_CURSOR_API) as $rule) {
+    foreach ([RULE_FORBIDDEN_MYSQLI, RULE_FORBIDDEN_LOW_LEVEL_DB_CALL, RULE_LEGACY_LIB_CURSOR_API] as $rule) {
         $findings = $report[$rule];
         fwrite(STDOUT, "\n{$rule}\n");
 
@@ -422,8 +423,8 @@ function printReport(string $mode, array $scannedFiles, array $report): void
                     $finding['line'],
                     $rule,
                     $allowlisted,
-                    $finding['message']
-                )
+                    $finding['message'],
+                ),
             );
         }
     }
@@ -437,8 +438,8 @@ function printReport(string $mode, array $scannedFiles, array $report): void
             "\nSummary: blocking=%d allowlisted=%d legacy=%d\n",
             $blockingCount,
             $allowlistedCount,
-            $legacyCount
-        )
+            $legacyCount,
+        ),
     );
 }
 
@@ -446,7 +447,7 @@ function countBlockingFindings(array $report): int
 {
     $count = 0;
 
-    foreach (array(RULE_FORBIDDEN_MYSQLI, RULE_FORBIDDEN_LOW_LEVEL_DB_CALL) as $rule) {
+    foreach ([RULE_FORBIDDEN_MYSQLI, RULE_FORBIDDEN_LOW_LEVEL_DB_CALL] as $rule) {
         foreach ($report[$rule] as $finding) {
             if (!$finding['allowlisted']) {
                 $count++;
@@ -461,7 +462,7 @@ function countAllowlistedFindings(array $report): int
 {
     $count = 0;
 
-    foreach (array(RULE_FORBIDDEN_MYSQLI, RULE_FORBIDDEN_LOW_LEVEL_DB_CALL) as $rule) {
+    foreach ([RULE_FORBIDDEN_MYSQLI, RULE_FORBIDDEN_LOW_LEVEL_DB_CALL] as $rule) {
         foreach ($report[$rule] as $finding) {
             if ($finding['allowlisted']) {
                 $count++;

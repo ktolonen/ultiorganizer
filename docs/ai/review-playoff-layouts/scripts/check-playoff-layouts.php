@@ -122,7 +122,7 @@ function resolveFiles(string $repo, array $opts): array
         }
     }
     if ($opts['odd']) {
-        $files = array_values(array_filter($files, fn ($f) => isOddFilename($f)));
+        $files = array_values(array_filter($files, fn($f) => isOddFilename($f)));
     }
     sort($files);
     return $files;
@@ -399,12 +399,12 @@ function checkMoveComment(string $html, int $teams, int $rounds, array &$errors,
 
     // Validate the comment by intent: each non-empty line is a permutation of 1..N
     // and there are exactly $rounds lines.
-    $lines = array_values(array_filter(array_map('trim', preg_split('/\r?\n/', $body)), fn ($l) => $l !== ''));
+    $lines = array_values(array_filter(array_map('trim', preg_split('/\r?\n/', $body)), fn($l) => $l !== ''));
     if (count($lines) !== $rounds) {
         $errors[] = 'Move comment has ' . count($lines) . " line(s), expected $rounds (one per round, last line = final ranking)";
     }
     foreach ($lines as $i => $line) {
-        $tokens = array_values(array_filter(preg_split('/\s+/', $line), fn ($t) => $t !== ''));
+        $tokens = array_values(array_filter(preg_split('/\s+/', $line), fn($t) => $t !== ''));
         if (count($tokens) !== $teams) {
             $errors[] = 'Move line ' . ($i + 1) . ' has ' . count($tokens) . " entries, expected $teams";
             continue;

@@ -1,10 +1,11 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 
 $html = "";
 $print = 0;
 if (!empty($_GET["print"])) {
-	$print = intval($_GET["print"]);
+    $print = intval($_GET["print"]);
 }
 //common page
 $title = _("Helps");
@@ -19,9 +20,9 @@ $querystring = $_SERVER['QUERY_STRING'];
 $querystring = preg_replace('/(&|^)print=[^&]*/i', '', $querystring);
 $querystring = ltrim($querystring, '&');
 if ($print) {
-	$html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "'>" . _("Return") . "</a></div>";
+    $html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "'>" . _("Return") . "</a></div>";
 } else {
-	$html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "&amp;print=1'>" . _("Printable version") . "</a></div>";
+    $html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "&amp;print=1'>" . _("Printable version") . "</a></div>";
 }
 
 echo $html;

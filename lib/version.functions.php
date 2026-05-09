@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
@@ -11,20 +12,20 @@ denyDirectLibAccess(__FILE__);
  */
 function ReadVersionMetadata($path, $constantName = '')
 {
-  if (!is_file($path)) {
+    if (!is_file($path)) {
+        return '';
+    }
+
+    $version = include $path;
+    if (is_string($version) && trim($version) !== '') {
+        return trim($version);
+    }
+
+    if ($constantName !== '' && defined($constantName) && trim((string) constant($constantName)) !== '') {
+        return trim((string) constant($constantName));
+    }
+
     return '';
-  }
-
-  $version = include $path;
-  if (is_string($version) && trim($version) !== '') {
-    return trim($version);
-  }
-
-  if ($constantName !== '' && defined($constantName) && trim((string)constant($constantName)) !== '') {
-    return trim((string)constant($constantName));
-  }
-
-  return '';
 }
 
 /**
@@ -34,15 +35,15 @@ function ReadVersionMetadata($path, $constantName = '')
  */
 function GetUltiorganizerVersion()
 {
-  global $include_prefix;
+    global $include_prefix;
 
-  $prefix = isset($include_prefix) ? $include_prefix : '';
-  $version = ReadVersionMetadata($prefix . 'version.php', 'ULTIORGANIZER_VERSION');
-  if ($version !== '') {
-    return $version;
-  }
+    $prefix = isset($include_prefix) ? $include_prefix : '';
+    $version = ReadVersionMetadata($prefix . 'version.php', 'ULTIORGANIZER_VERSION');
+    if ($version !== '') {
+        return $version;
+    }
 
-  return '0.0';
+    return '0.0';
 }
 
 /**
@@ -52,13 +53,13 @@ function GetUltiorganizerVersion()
  */
 function GetUltiorganizerVersionInfo()
 {
-  $version = GetUltiorganizerVersion();
-  $parts = explode('.', $version);
-  return array(
-    'version' => $version,
-    'major' => isset($parts[0]) ? (int)$parts[0] : 0,
-    'minor' => isset($parts[1]) ? (int)$parts[1] : 0
-  );
+    $version = GetUltiorganizerVersion();
+    $parts = explode('.', $version);
+    return [
+        'version' => $version,
+        'major' => isset($parts[0]) ? (int) $parts[0] : 0,
+        'minor' => isset($parts[1]) ? (int) $parts[1] : 0,
+    ];
 }
 
 /**
@@ -68,9 +69,9 @@ function GetUltiorganizerVersionInfo()
  */
 function GetDatabaseVersionInfo()
 {
-  return array(
-    'version' => (int)getDBVersion()
-  );
+    return [
+        'version' => (int) getDBVersion(),
+    ];
 }
 
 /**
@@ -80,10 +81,10 @@ function GetDatabaseVersionInfo()
  */
 function GetCustomizationId()
 {
-  if (defined('CUSTOMIZATIONS')) {
-    return (string)CUSTOMIZATIONS;
-  }
-  return 'default';
+    if (defined('CUSTOMIZATIONS')) {
+        return (string) CUSTOMIZATIONS;
+    }
+    return 'default';
 }
 
 /**
@@ -97,18 +98,18 @@ function GetCustomizationId()
  */
 function GetCustomizationVersion()
 {
-  global $include_prefix;
+    global $include_prefix;
 
-  $customization = GetCustomizationId();
-  $prefix = isset($include_prefix) ? $include_prefix : '';
-  $versionFile = $prefix . 'cust/' . $customization . '/version.php';
+    $customization = GetCustomizationId();
+    $prefix = isset($include_prefix) ? $include_prefix : '';
+    $versionFile = $prefix . 'cust/' . $customization . '/version.php';
 
-  $version = ReadVersionMetadata($versionFile, 'CUSTOMIZATION_VERSION');
-  if ($version !== '') {
-    return $version;
-  }
+    $version = ReadVersionMetadata($versionFile, 'CUSTOMIZATION_VERSION');
+    if ($version !== '') {
+        return $version;
+    }
 
-  return '0.0';
+    return '0.0';
 }
 
 /**
@@ -118,8 +119,8 @@ function GetCustomizationVersion()
  */
 function GetCustomizationVersionInfo()
 {
-  return array(
-    'id' => GetCustomizationId(),
-    'version' => GetCustomizationVersion()
-  );
+    return [
+        'id' => GetCustomizationId(),
+        'version' => GetCustomizationVersion(),
+    ];
 }

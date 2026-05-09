@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/statistical.functions.php';
@@ -13,8 +14,8 @@ $title = _("Event") . ": " . utf8entities(U_($info['name']));
 $html = "";
 
 if (!isSeasonAdmin($_GET["season"])) {
-  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
-  return;
+    showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+    return;
 }
 
 //common page
@@ -37,11 +38,11 @@ $html .=  "<tr><td><b>" . _("Organizer") . "</b></td><td>" . U_($info['organizer
 $spirit = _("not given");
 
 if ((isset($info['spiritmode']) && $info['spiritmode'] > 0)) {
-	$spiritmode = SpiritCategoryModeRow($info['spiritmode']);
-	$spirit = utf8entities(_($spiritmode['name'])) . " / <em>" .
-		(intval($info['showspiritpoints']) ? _("scores visible") : _("scores hidden")) . ", " .
-		(intval(isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0) ? _("comments visible") : _("comments hidden")) .
-		"</em>";
+    $spiritmode = SpiritCategoryModeRow($info['spiritmode']);
+    $spirit = utf8entities(_($spiritmode['name'])) . " / <em>" .
+        (intval($info['showspiritpoints']) ? _("scores visible") : _("scores hidden")) . ", " .
+        (intval(isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0) ? _("comments visible") : _("comments hidden")) .
+        "</em>";
 }
 $html .=  "<tr><td><b>" . _("Spirit score") . "</b></td><td style='white-space: normal; overflow-wrap: anywhere; word-break: break-word;'>" . $spirit . "</td></tr>\n";
 
@@ -52,8 +53,8 @@ $html .=  "<tr><td><b>" . _("Enrollment") . "</b></td><td>" . $enrollment . " ("
 
 $html .=  "<tr><td><b>" . _("Timezone") . "</b></td><td>" . utf8entities($info['timezone']);
 if (class_exists("DateTime") && !empty($info['timezone'])) {
-	$dateTime = new DateTime("now", new DateTimeZone($info['timezone']));
-	$html .= " (" . DefTimeFormat($dateTime->format("Y-m-d H:i:s")) . " )";
+    $dateTime = new DateTime("now", new DateTimeZone($info['timezone']));
+    $html .= " (" . DefTimeFormat($dateTime->format("Y-m-d H:i:s")) . " )";
 }
 $html .= "</td></tr>\n";
 
@@ -106,9 +107,9 @@ $html .=  "<a href='?view=admin/addseasonlinks&amp;season=" . $info['season_id']
 $html .=  "<a href='?view=admin/tdtools&amp;season=" . $info['season_id'] . "'>&raquo; " . _("TD Tools") . "</a><br/>";
 
 if (IsSeasonStatsCalculated($info['season_id'])) {
-	$html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Re-archive statistics") . "</a><br/>";
+    $html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Re-archive statistics") . "</a><br/>";
 } else {
-	$html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Archive statistics") . "</a><br/>";
+    $html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Archive statistics") . "</a><br/>";
 }
 $html .= "</p>\n";
 

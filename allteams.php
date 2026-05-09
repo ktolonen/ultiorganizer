@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('allteams');
 
@@ -10,27 +11,27 @@ $html = "";
 $filter = "A";
 
 if (iget("list")) {
-  $filter = strtoupper(iget("list"));
+    $filter = strtoupper(iget("list"));
 }
 
-$validletters = array("#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+$validletters = ["#", "A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 $maxcols = 3;
 
 $html .= "<h1>" . $title . "</h1>\n";
 
 $html .= "<table style='white-space: nowrap;'><tr>\n";
 foreach ($validletters as $let) {
-  $letter = (string)$let;
-  if ($letter == $filter) {
-    $html .= "<td class='selgroupinglink'>&nbsp;" . utf8entities($letter) . "&nbsp;</td>";
-  } else {
-    $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allteams&amp;list=" . urlencode($letter) . "'>" . utf8entities($letter) . "</a>&nbsp;</td>";
-  }
+    $letter = (string) $let;
+    if ($letter == $filter) {
+        $html .= "<td class='selgroupinglink'>&nbsp;" . utf8entities($letter) . "&nbsp;</td>";
+    } else {
+        $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allteams&amp;list=" . urlencode($letter) . "'>" . utf8entities($letter) . "</a>&nbsp;</td>";
+    }
 }
 if ($filter == "ALL") {
-  $html .= "<td class='selgroupinglink'>&nbsp;" . _("ALL") . "</td>";
+    $html .= "<td class='selgroupinglink'>&nbsp;" . _("ALL") . "</td>";
 } else {
-  $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allteams&amp;list=all'>" . _("ALL") . "</a></td>";
+    $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allteams&amp;list=all'>" . _("ALL") . "</a></td>";
 }
 $html .= "</tr></table>\n";
 
@@ -43,45 +44,45 @@ $counter = 0;
 
 foreach ($teams as $team) {
 
-  if ($filter == "ALL") {
-    $teamName = isset($team['name']) ? (string) $team['name'] : '';
-    if (function_exists('mb_substr')) {
-      $firstchar = mb_strtoupper(mb_substr($teamName, 0, 1, 'UTF-8'), 'UTF-8');
-    } else {
-      $firstchar = strtoupper(substr($teamName, 0, 1));
+    if ($filter == "ALL") {
+        $teamName = isset($team['name']) ? (string) $team['name'] : '';
+        if (function_exists('mb_substr')) {
+            $firstchar = mb_strtoupper(mb_substr($teamName, 0, 1, 'UTF-8'), 'UTF-8');
+        } else {
+            $firstchar = strtoupper(substr($teamName, 0, 1));
+        }
+        if ($listletter != $firstchar && in_array($firstchar, $validletters)) {
+            $listletter = $firstchar;
+            if ($counter > 0 && $counter <= $maxcols) {
+                $html .= "</tr>\n";
+            }
+            $html .= "<tr><td></td></tr>\n";
+            $html .= "<tr><td class='list_letter' colspan='$maxcols'>" . utf8entities($listletter) . "</td></tr>\n";
+            $counter = 0;
+        }
     }
-    if ($listletter != $firstchar && in_array($firstchar, $validletters)) {
-      $listletter = $firstchar;
-      if ($counter > 0 && $counter <= $maxcols) {
-        $html .= "</tr>\n";
-      }
-      $html .= "<tr><td></td></tr>\n";
-      $html .= "<tr><td class='list_letter' colspan='$maxcols'>" . utf8entities($listletter) . "</td></tr>\n";
-      $counter = 0;
+    if ($counter == 0) {
+        $html .= "<tr>\n";
     }
-  }
-  if ($counter == 0) {
-    $html .= "<tr>\n";
-  }
-  $teaminfo = TeamInfo($team['team_id']);
-  $html .= "<td style='width:33%'>";
-  $countryId = isset($teaminfo['country']) ? intval($teaminfo['country']) : 0;
-  $flagFile = isset($teaminfo['flagfile']) ? $teaminfo['flagfile'] : null;
-  if ($countryId && !empty($flagFile)) {
-    $html .= "<img height='10' src='images/flags/tiny/" . $flagFile . "' alt=''/>&nbsp;";
-  }
-  $html .= "<a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a>";
-  $seriesName = isset($team['seriesname']) ? $team['seriesname'] : '';
-  $html .= " [" . utf8entities(U_($seriesName)) . "]</td>";
-  $counter++;
+    $teaminfo = TeamInfo($team['team_id']);
+    $html .= "<td style='width:33%'>";
+    $countryId = isset($teaminfo['country']) ? intval($teaminfo['country']) : 0;
+    $flagFile = isset($teaminfo['flagfile']) ? $teaminfo['flagfile'] : null;
+    if ($countryId && !empty($flagFile)) {
+        $html .= "<img height='10' src='images/flags/tiny/" . $flagFile . "' alt=''/>&nbsp;";
+    }
+    $html .= "<a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a>";
+    $seriesName = isset($team['seriesname']) ? $team['seriesname'] : '';
+    $html .= " [" . utf8entities(U_($seriesName)) . "]</td>";
+    $counter++;
 
-  if ($counter >= $maxcols) {
-    $html .= "</tr>\n";
-    $counter = 0;
-  }
+    if ($counter >= $maxcols) {
+        $html .= "</tr>\n";
+        $counter = 0;
+    }
 }
 if ($counter > 0 && $counter <= $maxcols) {
-  $html .= "</tr>\n";
+    $html .= "</tr>\n";
 };
 $html .= "</table>\n";
 

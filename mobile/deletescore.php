@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
@@ -8,11 +9,11 @@ $gameId = intval(iget("game"));
 $scores = GameGoals($gameId);
 
 if (isset($_POST['delete'])) {
-	if (count($scores) > 0) {
-		$lastscore = $scores[count($scores) - 1];
-		GameRemoveScore($gameId, $lastscore['num']);
-		header("location:?view=mobile/addscoresheet&game=" . $gameId);
-	}
+    if (count($scores) > 0) {
+        $lastscore = $scores[count($scores) - 1];
+        GameRemoveScore($gameId, $lastscore['num']);
+        header("location:?view=mobile/addscoresheet&game=" . $gameId);
+    }
 }
 mobilePageTop(_("Delete score"));
 $html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method='post'>\n";
@@ -22,24 +23,24 @@ $html .= _("Delete") . ":";
 $html .= "</td></tr><tr><td>\n";
 //last score
 if (count($scores) > 0) {
-	$lastscore = $scores[count($scores) - 1];
-	$html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
-	$html .= " [<i>" . SecToMin($lastscore['time']);
-	if (intval($lastscore['iscallahan'])) {
-		$lastpass = "xx";
-	} else {
-		$lastpass = PlayerNumber($lastscore['assist'], $gameId);
-	}
-	$lastgoal = PlayerNumber($lastscore['scorer'], $gameId);
-	if ($lastgoal == -1) {
-		$lastgoal = "";
-	}
-	if ($lastpass == -1) {
-		$lastpass = "";
-	}
-	$html .= " " . $lastpass . " --> " . $lastgoal . "</i>]";
+    $lastscore = $scores[count($scores) - 1];
+    $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
+    $html .= " [<i>" . SecToMin($lastscore['time']);
+    if (intval($lastscore['iscallahan'])) {
+        $lastpass = "xx";
+    } else {
+        $lastpass = PlayerNumber($lastscore['assist'], $gameId);
+    }
+    $lastgoal = PlayerNumber($lastscore['scorer'], $gameId);
+    if ($lastgoal == -1) {
+        $lastgoal = "";
+    }
+    if ($lastpass == -1) {
+        $lastpass = "";
+    }
+    $html .= " " . $lastpass . " --> " . $lastgoal . "</i>]";
 } else {
-	$html .= _("Score") . ": 0 - 0";
+    $html .= _("Score") . ": 0 - 0";
 }
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='delete' value='" . _("Delete") . "'/>";

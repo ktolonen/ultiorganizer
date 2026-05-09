@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
@@ -9,14 +10,15 @@ $html = "";
 $html2 = "";
 
 if (empty($_GET["game"])) {
-	showPage(_("Result"), "<p class='warning'>" . _("Game not found") . ".</p>");
-	return;
+    showPage(_("Result"), "<p class='warning'>" . _("Game not found") . ".</p>");
+    return;
 }
 
 $gameId = intval($_GET["game"]);
 
-if (!hasEditGameEventsRight($gameId))
-  die('Insufficient rights to edit game');
+if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game');
+}
 
 $game_result = GameInfo($gameId);
 $seasoninfo = SeasonInfo($game_result['season']);
@@ -26,31 +28,31 @@ $title = _("Result");
 
 //process itself if save button was pressed
 if (!empty($_POST['save'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	$ok = GameSetResult($gameId, $home, $away);
-	if ($ok) {
-		$html2 .= "<p>" . sprintf(_("Final result saved: %s - %s."), $home, $away) . " ";
-		if ($home > $away) {
-			$html2 .=  sprintf(_("Winner is <span style='font-weight:bold'>%s</span>."), utf8entities($game_result['hometeamname']));
-		} elseif ($away > $home) {
-			$html2 .=  sprintf(_("Winner is <span style='font-weight:bold'>%s</span>."), utf8entities($game_result['visitorteamname']));
-		}
-		$html2 .= "</p>";
-	}
-	$game_result = GameInfo($gameId);
+    $home = intval($_POST['home']);
+    $away = intval($_POST['away']);
+    $ok = GameSetResult($gameId, $home, $away);
+    if ($ok) {
+        $html2 .= "<p>" . sprintf(_("Final result saved: %s - %s."), $home, $away) . " ";
+        if ($home > $away) {
+            $html2 .=  sprintf(_("Winner is <span style='font-weight:bold'>%s</span>."), utf8entities($game_result['hometeamname']));
+        } elseif ($away > $home) {
+            $html2 .=  sprintf(_("Winner is <span style='font-weight:bold'>%s</span>."), utf8entities($game_result['visitorteamname']));
+        }
+        $html2 .= "</p>";
+    }
+    $game_result = GameInfo($gameId);
 } elseif (isset($_POST['update'])) {
-	$home = intval($_POST['home']);
-	$away = intval($_POST['away']);
-	$ok = GameUpdateResult($gameId, $home, $away);
-	$html2 .= "<p>" . sprintf(_("Game ongoing. Current score: %s - %s."), $home, $away) . "</p>";
-	$game_result = GameInfo($gameId);
+    $home = intval($_POST['home']);
+    $away = intval($_POST['away']);
+    $ok = GameUpdateResult($gameId, $home, $away);
+    $html2 .= "<p>" . sprintf(_("Game ongoing. Current score: %s - %s."), $home, $away) . "</p>";
+    $game_result = GameInfo($gameId);
 } elseif (isset($_POST['clear'])) {
-	$ok = GameClearResult($gameId);
-	if ($ok) {
-		$html2 .= "<p>" . _("Game reset") . ".</p>";
-	}
-	$game_result = GameInfo($gameId);
+    $ok = GameClearResult($gameId);
+    if ($ok) {
+        $html2 .= "<p>" . _("Game reset") . ".</p>";
+    }
+    $game_result = GameInfo($gameId);
 }
 
 //common page
@@ -64,13 +66,13 @@ $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
-	$spiritUrl = SpiritEntryUrl($gameId);
-	if (!empty($spiritUrl)) {
-		$menutabs[_("Spirit score")] = $spiritUrl;
-	}
+    $spiritUrl = SpiritEntryUrl($gameId);
+    if (!empty($spiritUrl)) {
+        $menutabs[_("Spirit score")] = $spiritUrl;
+    }
 }
 if (ShowDefenseStats()) {
-	$menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
+    $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 
 
@@ -81,10 +83,11 @@ $html .= "<form  method='post' action='?view=user/addresult&amp;game=" . $gameId
 <tr><td><b>" . utf8entities($game_result['hometeamname']) . "</b></td><td><b> - </b></td><td><b>" . utf8entities($game_result['visitorteamname']) . "</b></td></tr>";
 
 $html .= "<tr><td>";
-if ($game_result['isongoing'])
-	$html .= _("Game is running.");
-else if ($game_result['hasstarted'])
-	$html .= _("Game is finished.");
+if ($game_result['isongoing']) {
+    $html .= _("Game is running.");
+} elseif ($game_result['hasstarted']) {
+    $html .= _("Game is finished.");
+}
 $html .= "<tr><td>";
 
 $html .= "<tr>
@@ -94,19 +97,19 @@ $html .= "<tr>
 </table>";
 
 if ($game_result['homevalid'] == 2) {
-	$poolInfo = PoolInfo($game_result['pool']);
-	$html .= "<p>" . sprintf(
-		_("The home team is the BYE team. You should use the suggested result: %s - %s"),
-		$poolInfo['forfeitagainst'],
-		$poolInfo['forfeitscore']
-	) . "</p>";
+    $poolInfo = PoolInfo($game_result['pool']);
+    $html .= "<p>" . sprintf(
+        _("The home team is the BYE team. You should use the suggested result: %s - %s"),
+        $poolInfo['forfeitagainst'],
+        $poolInfo['forfeitscore'],
+    ) . "</p>";
 } elseif ($game_result['visitorvalid'] == 2) {
-	$poolInfo = PoolInfo($game_result['pool']);
-	$html .= "<p>" . sprintf(
-		_("The away team is the BYE team. You should use the suggested result: %s - %s"),
-		$poolInfo['forfeitscore'],
-		$poolInfo['forfeitagainst']
-	) . "</p>";
+    $poolInfo = PoolInfo($game_result['pool']);
+    $html .= "<p>" . sprintf(
+        _("The away team is the BYE team. You should use the suggested result: %s - %s"),
+        $poolInfo['forfeitscore'],
+        $poolInfo['forfeitagainst'],
+    ) . "</p>";
 }
 
 $html .= "<p>" . _("If game ongoing, update as current result: ") . "

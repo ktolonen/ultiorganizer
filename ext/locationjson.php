@@ -11,4 +11,3 @@ header("Expires: -1");
 $result = GetLocations();
 echo json_encode($result);
 CloseConnection();
-?>

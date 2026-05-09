@@ -9,51 +9,52 @@ include_once __DIR__ . '/localization.php';
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Expires" content="-1" />
 	<?php
-	$style = iget("style");
-	if (empty($style))
-		$style = 'pelikone.css';
+    $style = iget("style");
+if (empty($style)) {
+    $style = 'pelikone.css';
+}
 
-	echo "<link rel='stylesheet' href='$style' type='text/css' />";
-	echo "<title>" . _("Ultiorganizer") . "</title>";
-	?>
+echo "<link rel='stylesheet' href='$style' type='text/css' />";
+echo "<title>" . _("Ultiorganizer") . "</title>";
+?>
 </head>
 
 <body>
 	<?php
 
-	include_once __DIR__ . '/../lib/season.functions.php';
-	include_once __DIR__ . '/../lib/series.functions.php';
-	include_once __DIR__ . '/../lib/team.functions.php';
+include_once __DIR__ . '/../lib/season.functions.php';
+include_once __DIR__ . '/../lib/series.functions.php';
+include_once __DIR__ . '/../lib/team.functions.php';
 
-	$poolId = intval(iget("pool"));
-	$season = iget("season");
-	$sort = "total";
+$poolId = intval(iget("pool"));
+$season = iget("season");
+$sort = "total";
 
-	echo "<table class='pk_table'>";
+echo "<table class='pk_table'>";
 
-	echo "<tr><th class='pk_scoreboard_th'>" . _("Player") . "</th>";
-	echo "<th class='pk_scoreboard_th'>" . _("Team") . "</th>";
-	echo "<th class='pk_scoreboard_th'>" . _("Games") . "</th>";
-	echo "<th class='pk_scoreboard_th'>" . _("Assists") . "</th>";
-	echo "<th class='pk_scoreboard_th'>" . _("Goals") . "</th>";
-	echo "<th class='pk_scoreboard_th'>" . _("Tot.") . "</th>";
-	echo "</tr>";
+echo "<tr><th class='pk_scoreboard_th'>" . _("Player") . "</th>";
+echo "<th class='pk_scoreboard_th'>" . _("Team") . "</th>";
+echo "<th class='pk_scoreboard_th'>" . _("Games") . "</th>";
+echo "<th class='pk_scoreboard_th'>" . _("Assists") . "</th>";
+echo "<th class='pk_scoreboard_th'>" . _("Goals") . "</th>";
+echo "<th class='pk_scoreboard_th'>" . _("Tot.") . "</th>";
+echo "</tr>";
 
-	$scores = PoolScoreBoardArray($poolId, $sort, 10);
+$scores = PoolScoreBoardArray($poolId, $sort, 10);
 
-	foreach ($scores as $row) {
-		echo "<tr><td class='pk_scoreboard_td1'>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
-		echo "<td class='pk_scoreboard_td1'>" . utf8entities($row['teamname']) . "</td>";
-		echo "<td  class='pk_scoreboard_td2'>" . intval($row['games']) . "</td>";
-		echo "<td  class='pk_scoreboard_td2'>" . intval($row['fedin']) . "</td>";
-		echo "<td  class='pk_scoreboard_td2'>" . intval($row['done']) . "</td>";
-		echo "<td  class='pk_scoreboard_td2'>" . intval($row['total']) . "</td></tr>";
-	}
+foreach ($scores as $row) {
+    echo "<tr><td class='pk_scoreboard_td1'>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
+    echo "<td class='pk_scoreboard_td1'>" . utf8entities($row['teamname']) . "</td>";
+    echo "<td  class='pk_scoreboard_td2'>" . intval($row['games']) . "</td>";
+    echo "<td  class='pk_scoreboard_td2'>" . intval($row['fedin']) . "</td>";
+    echo "<td  class='pk_scoreboard_td2'>" . intval($row['done']) . "</td>";
+    echo "<td  class='pk_scoreboard_td2'>" . intval($row['total']) . "</td></tr>";
+}
 
-	echo "</table>";
+echo "</table>";
 
-	CloseConnection();
-	?>
+CloseConnection();
+?>
 </body>
 
 </html>

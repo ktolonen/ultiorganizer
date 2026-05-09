@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
@@ -10,8 +11,8 @@ $gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
 
 if (isset($_POST['save'])) {
-	GameSetScoreSheetKeeper($gameId, $_POST['official']);
-	header("location:?view=mobile/addscoresheet&game=" . $gameId);
+    GameSetScoreSheetKeeper($gameId, $_POST['official']);
+    header("location:?view=mobile/addscoresheet&game=" . $gameId);
 }
 
 mobilePageTop(_("Score&nbsp;sheet"));

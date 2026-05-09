@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../lib/database.php';
 OpenConnection();
 
@@ -17,16 +18,16 @@ require_once __DIR__ . '/v1/router.php';
 
 $parts = api_get_path_parts();
 if (empty($parts)) {
-  api_not_found();
+    api_not_found();
 }
 
 $version = array_shift($parts);
 switch ($version) {
-  case 'v1':
-    api_v1_route($parts);
-    break;
-  default:
-    api_not_found();
+    case 'v1':
+        api_v1_route($parts);
+        break;
+    default:
+        api_not_found();
 }
 
 CloseConnection();

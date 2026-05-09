@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
@@ -7,33 +8,33 @@ denyDirectLibAccess(__FILE__);
  */
 function startSecureSession()
 {
-	if (session_status() === PHP_SESSION_ACTIVE) {
-		return;
-	}
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        return;
+    }
 
-	$cookie = session_get_cookie_params();
-	$path = isset($cookie['path']) ? $cookie['path'] : '/';
-	$domain = isset($cookie['domain']) ? $cookie['domain'] : '';
-	$secure = isHttpsRequest();
-	$httponly = true;
-	$lifetime = 0;
-	$samesite = 'Lax';
+    $cookie = session_get_cookie_params();
+    $path = isset($cookie['path']) ? $cookie['path'] : '/';
+    $domain = isset($cookie['domain']) ? $cookie['domain'] : '';
+    $secure = isHttpsRequest();
+    $httponly = true;
+    $lifetime = 0;
+    $samesite = 'Lax';
 
-	if (PHP_VERSION_ID >= 70300) {
-		session_set_cookie_params([
-			'lifetime' => $lifetime,
-			'path' => $path,
-			'domain' => $domain,
-			'secure' => $secure,
-			'httponly' => $httponly,
-			'samesite' => $samesite
-		]);
-	} else {
-		session_set_cookie_params($lifetime, $path . '; SameSite=' . $samesite, $domain, $secure, $httponly);
-	}
+    if (PHP_VERSION_ID >= 70300) {
+        session_set_cookie_params([
+            'lifetime' => $lifetime,
+            'path' => $path,
+            'domain' => $domain,
+            'secure' => $secure,
+            'httponly' => $httponly,
+            'samesite' => $samesite,
+        ]);
+    } else {
+        session_set_cookie_params($lifetime, $path . '; SameSite=' . $samesite, $domain, $secure, $httponly);
+    }
 
-	session_name('UO_SESSID');
-	session_start();
+    session_name('UO_SESSID');
+    session_start();
 }
 
 /**
@@ -41,9 +42,9 @@ function startSecureSession()
  */
 function regenerateSessionId()
 {
-	if (session_status() === PHP_SESSION_ACTIVE) {
-		session_regenerate_id(true);
-	}
+    if (session_status() === PHP_SESSION_ACTIVE) {
+        session_regenerate_id(true);
+    }
 }
 
 /**
@@ -51,26 +52,26 @@ function regenerateSessionId()
  */
 function destroySessionCompletely()
 {
-	if (session_status() !== PHP_SESSION_ACTIVE) {
-		return;
-	}
+    if (session_status() !== PHP_SESSION_ACTIVE) {
+        return;
+    }
 
-	$_SESSION = array();
+    $_SESSION = [];
 
-	if (ini_get('session.use_cookies')) {
-		$params = session_get_cookie_params();
-		setcookie(
-			session_name(),
-			'',
-			time() - 42000,
-			$params['path'],
-			$params['domain'],
-			$params['secure'],
-			$params['httponly']
-		);
-	}
+    if (ini_get('session.use_cookies')) {
+        $params = session_get_cookie_params();
+        setcookie(
+            session_name(),
+            '',
+            time() - 42000,
+            $params['path'],
+            $params['domain'],
+            $params['secure'],
+            $params['httponly'],
+        );
+    }
 
-	session_destroy();
+    session_destroy();
 }
 
 /**
@@ -78,18 +79,18 @@ function destroySessionCompletely()
  */
 function isHttpsRequest()
 {
-	if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
-		return true;
-	}
+    if (!empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off') {
+        return true;
+    }
 
-	if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
-		return true;
-	}
+    if (isset($_SERVER['SERVER_PORT']) && $_SERVER['SERVER_PORT'] == 443) {
+        return true;
+    }
 
-	if (defined('BASEURL')) {
-		$scheme = parse_url(BASEURL, PHP_URL_SCHEME);
-		return ($scheme === 'https');
-	}
+    if (defined('BASEURL')) {
+        $scheme = parse_url(BASEURL, PHP_URL_SCHEME);
+        return ($scheme === 'https');
+    }
 
-	return false;
+    return false;
 }

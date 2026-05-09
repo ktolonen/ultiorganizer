@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
@@ -10,17 +11,18 @@ $gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
 
 if (isset($_POST['save'])) {
-	$time = "0.0";
-	$time_delim = array(",", ";", ":", "#", "*");
+    $time = "0.0";
+    $time_delim = [",", ";", ":", "#", "*"];
 
-	if (isset($_POST['halftime']))
-		$time = $_POST['halftime'];
+    if (isset($_POST['halftime'])) {
+        $time = $_POST['halftime'];
+    }
 
-	$time = str_replace($time_delim, ".", $time);
-	$htime = TimeToSec($time);
-	GameSetHalftime($gameId, $htime);
+    $time = str_replace($time_delim, ".", $time);
+    $htime = TimeToSec($time);
+    GameSetHalftime($gameId, $htime);
 
-	header("location:?view=mobile/addscoresheet&game=" . $gameId);
+    header("location:?view=mobile/addscoresheet&game=" . $gameId);
 }
 
 mobilePageTop(_("Score&nbsp;sheet"));

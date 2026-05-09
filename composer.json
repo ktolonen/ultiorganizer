@@ -1,0 +1,26 @@
+{
+    "name": "ultiorganizer/ultiorganizer",
+    "description": "Ultimate tournament score keeping web app.",
+    "type": "project",
+    "license": "GPL-3.0-or-later",
+    "require": {
+        "php": "^8.1"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^3.64",
+        "phpstan/phpstan": "^1.12"
+    },
+    "scripts": {
+        "format": "php-cs-fixer fix",
+        "format:check": "php-cs-fixer fix --dry-run --diff",
+        "lint": "phpstan analyse --memory-limit=1G",
+        "lint:baseline": "phpstan analyse --memory-limit=1G --generate-baseline",
+        "check": [
+            "@format:check",
+            "@lint"
+        ]
+    },
+    "config": {
+        "sort-packages": true
+    }
+}

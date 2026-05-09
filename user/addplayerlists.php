@@ -7,50 +7,51 @@ include_once $include_prefix . 'lib/player.functions.php';
 
 function PlayerRoleSelectionValue($isCaptain, $isSpiritCaptain)
 {
-  if ($isCaptain && $isSpiritCaptain) {
-    return "both";
-  }
-  if ($isCaptain) {
-    return "captain";
-  }
-  if ($isSpiritCaptain) {
-    return "spirit_captain";
-  }
+    if ($isCaptain && $isSpiritCaptain) {
+        return "both";
+    }
+    if ($isCaptain) {
+        return "captain";
+    }
+    if ($isSpiritCaptain) {
+        return "spirit_captain";
+    }
 
-  return "";
+    return "";
 }
 
 function PlayerRoleSelectedIds($postedRoles, $selectedValue)
 {
-  $playerIds = array();
-  foreach ((array)$postedRoles as $playerId => $role) {
-    if ($role === $selectedValue || ($selectedValue !== "" && $role === "both")) {
-      $playerIds[] = (int)$playerId;
+    $playerIds = [];
+    foreach ((array) $postedRoles as $playerId => $role) {
+        if ($role === $selectedValue || ($selectedValue !== "" && $role === "both")) {
+            $playerIds[] = (int) $playerId;
+        }
     }
-  }
 
-  return $playerIds;
+    return $playerIds;
 }
 
 if (empty($_GET["game"])) {
-	showPage(_("Rosters"), "<p class='warning'>" . _("Game not found") . ".</p>");
-	return;
+    showPage(_("Rosters"), "<p class='warning'>" . _("Game not found") . ".</p>");
+    return;
 }
 
 $LAYOUT_ID = ADDPLAYERLISTS;
 $title = _("Rosters");
 $gameId = intval($_GET["game"]);
 
-if (!hasEditGameEventsRight($gameId))
-  die('Insufficient rights to edit game');
+if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game');
+}
 
 $game_result = GameResult($gameId);
 
 $season = GameSeason($gameId);
 if (isset($_SERVER['HTTP_REFERER'])) {
-  $backurl = utf8entities($_SERVER['HTTP_REFERER']);
+    $backurl = utf8entities($_SERVER['HTTP_REFERER']);
 } else {
-  $backurl = "?view=user/respgames&season=$season";
+    $backurl = "?view=user/respgames&season=$season";
 }
 $seasoninfo = SeasonInfo($season);
 $home_playerlist = TeamPlayerList($game_result['hometeam']);
@@ -61,137 +62,137 @@ $html2 = "";
 
 //process itself if submit was pressed
 if (!empty($_POST['save'])) {
-  $backurl = $_POST['backurl'];
-  LogGameUpdate($gameId, "playerlist saved", "addplayerlist");
-  //HOME PLAYERS
-  $played_players = GamePlayers($gameId, $game_result['hometeam']);
+    $backurl = $_POST['backurl'];
+    LogGameUpdate($gameId, "playerlist saved", "addplayerlist");
+    //HOME PLAYERS
+    $played_players = GamePlayers($gameId, $game_result['hometeam']);
 
-  //delete unchecked players
-  foreach ($played_players as $player) {
-    $found = false;
-    if (!empty($_POST["homecheck"])) {
-      foreach ($_POST["homecheck"] as $playerId) {
-        if ($player['player_id'] == $playerId) {
-          $found = true;
-          break;
-        }
-      }
-    }
-    if (!$found) {
-      GameRemovePlayer($gameId, $player['player_id']);
-    }
-  }
-
-  //handle checked players
-  if (!empty($_POST["homecheck"])) {
-    foreach ($_POST["homecheck"] as $playerId) {
-      $number = $_POST["p$playerId"];
-      //if number
-      if (is_numeric($number)) {
-        //check if already in list with correct number
-        $played_players = GamePlayers($gameId, $game_result['hometeam']);
+    //delete unchecked players
+    foreach ($played_players as $player) {
         $found = false;
-        foreach ($played_players as $player) {
-          //$html .= "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
-
-          //if exist
-          if ($player['player_id'] == $playerId && $player['num'] == $number) {
-            $found = true;
-            break;
-          }
-          //if found, but with different number
-          if ($player['player_id'] == $playerId && $player['num'] != $number) {
-            GameSetPlayerNumber($gameId, $playerId, $number);
-            $found = true;
-            break;
-          }
-          //if two players with same number
-          if ($player['player_id'] != $playerId && $player['num'] == $number) {
-            $playerinfo1 = PlayerInfo($playerId);
-            $playerinfo2 = PlayerInfo($player['player_id']);
-            $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo1['firstname'] . " " . $playerinfo1['lastname']) . "</i> " . _("and")
-              . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("same number") . " '$number'.</p>";
-            $found = true;
-            break;
-          }
+        if (!empty($_POST["homecheck"])) {
+            foreach ($_POST["homecheck"] as $playerId) {
+                if ($player['player_id'] == $playerId) {
+                    $found = true;
+                    break;
+                }
+            }
         }
-
         if (!$found) {
-          GameAddPlayer($gameId, $playerId, $number);
+            GameRemovePlayer($gameId, $player['player_id']);
         }
-      } else {
-        $playerinfo = PlayerInfo($playerId);
-        $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("erroneous number") . " '$number'.</p>";
-      }
     }
-  }
-  //AWAY PLAYERS
-  $played_players = GamePlayers($gameId, $game_result['visitorteam']);
 
-  //delete unchecked players
-  foreach ($played_players as $player) {
-    $found = false;
-    if (!empty($_POST["awaycheck"])) {
-      foreach ($_POST["awaycheck"] as $playerId) {
-        if ($player['player_id'] == $playerId) {
-          $found = true;
-          break;
-        }
-      }
-    }
-    if (!$found) {
-      GameRemovePlayer($gameId, $player['player_id']);
-    }
-  }
-
-  if (!empty($_POST["awaycheck"])) {
     //handle checked players
-    foreach ($_POST["awaycheck"] as $playerId) {
-      $number = $_POST["p$playerId"];
-      //if number
-      if (is_numeric($number)) {
-        //check if already in list with correct number
-        $played_players = GamePlayers($gameId, $game_result['visitorteam']);
-        $found = false;
-        foreach ($played_players as $player) {
-          //$html .= "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
+    if (!empty($_POST["homecheck"])) {
+        foreach ($_POST["homecheck"] as $playerId) {
+            $number = $_POST["p$playerId"];
+            //if number
+            if (is_numeric($number)) {
+                //check if already in list with correct number
+                $played_players = GamePlayers($gameId, $game_result['hometeam']);
+                $found = false;
+                foreach ($played_players as $player) {
+                    //$html .= "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
 
-          //if exist
-          if ($player['player_id'] == $playerId && $player['num'] == $number) {
-            $found = true;
-            break;
-          }
-          //if found, but with different number
-          if ($player['player_id'] == $playerId && $player['num'] != $number) {
-            GameSetPlayerNumber($gameId, $playerId, $number);
-            $found = true;
-            break;
-          }
-          //if two players with same number
-          if ($player['player_id'] != $playerId && $player['num'] == $number) {
-            $playerinfo1 = PlayerInfo($playerId);
-            $playerinfo2 = PlayerInfo($player['player_id']);
-            $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo1['firstname'] . " " . $playerinfo1['lastname']) . "</i> " . _("and")
-              . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("same number") . "'$number'.</p>";
-            $found = true;
-            break;
-          }
-        }
+                    //if exist
+                    if ($player['player_id'] == $playerId && $player['num'] == $number) {
+                        $found = true;
+                        break;
+                    }
+                    //if found, but with different number
+                    if ($player['player_id'] == $playerId && $player['num'] != $number) {
+                        GameSetPlayerNumber($gameId, $playerId, $number);
+                        $found = true;
+                        break;
+                    }
+                    //if two players with same number
+                    if ($player['player_id'] != $playerId && $player['num'] == $number) {
+                        $playerinfo1 = PlayerInfo($playerId);
+                        $playerinfo2 = PlayerInfo($player['player_id']);
+                        $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo1['firstname'] . " " . $playerinfo1['lastname']) . "</i> " . _("and")
+                          . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("same number") . " '$number'.</p>";
+                        $found = true;
+                        break;
+                    }
+                }
 
-        if (!$found) {
-          GameAddPlayer($gameId, $playerId, $number);
+                if (!$found) {
+                    GameAddPlayer($gameId, $playerId, $number);
+                }
+            } else {
+                $playerinfo = PlayerInfo($playerId);
+                $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("erroneous number") . " '$number'.</p>";
+            }
         }
-      } else {
-        $playerinfo = PlayerInfo($playerId);
-        $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("erroneous number") . " '$number'.</p>";
-      }
     }
-  }
-  GameSetCaptains($gameId, $game_result['hometeam'], PlayerRoleSelectedIds($_POST['homerole'] ?? array(), "captain"));
-  GameSetCaptains($gameId, $game_result['visitorteam'], PlayerRoleSelectedIds($_POST['awayrole'] ?? array(), "captain"));
-  GameSetSpiritCaptains($gameId, $game_result['hometeam'], PlayerRoleSelectedIds($_POST['homerole'] ?? array(), "spirit_captain"));
-  GameSetSpiritCaptains($gameId, $game_result['visitorteam'], PlayerRoleSelectedIds($_POST['awayrole'] ?? array(), "spirit_captain"));
-  $html2 .= "<p>" . _("Player lists saved!") . "</p>";
+    //AWAY PLAYERS
+    $played_players = GamePlayers($gameId, $game_result['visitorteam']);
+
+    //delete unchecked players
+    foreach ($played_players as $player) {
+        $found = false;
+        if (!empty($_POST["awaycheck"])) {
+            foreach ($_POST["awaycheck"] as $playerId) {
+                if ($player['player_id'] == $playerId) {
+                    $found = true;
+                    break;
+                }
+            }
+        }
+        if (!$found) {
+            GameRemovePlayer($gameId, $player['player_id']);
+        }
+    }
+
+    if (!empty($_POST["awaycheck"])) {
+        //handle checked players
+        foreach ($_POST["awaycheck"] as $playerId) {
+            $number = $_POST["p$playerId"];
+            //if number
+            if (is_numeric($number)) {
+                //check if already in list with correct number
+                $played_players = GamePlayers($gameId, $game_result['visitorteam']);
+                $found = false;
+                foreach ($played_players as $player) {
+                    //$html .= "<p>".$player['player_id']."==".$playerId ."&&". $player['num']."==".$number."</p>";
+
+                    //if exist
+                    if ($player['player_id'] == $playerId && $player['num'] == $number) {
+                        $found = true;
+                        break;
+                    }
+                    //if found, but with different number
+                    if ($player['player_id'] == $playerId && $player['num'] != $number) {
+                        GameSetPlayerNumber($gameId, $playerId, $number);
+                        $found = true;
+                        break;
+                    }
+                    //if two players with same number
+                    if ($player['player_id'] != $playerId && $player['num'] == $number) {
+                        $playerinfo1 = PlayerInfo($playerId);
+                        $playerinfo2 = PlayerInfo($player['player_id']);
+                        $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo1['firstname'] . " " . $playerinfo1['lastname']) . "</i> " . _("and")
+                          . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("same number") . "'$number'.</p>";
+                        $found = true;
+                        break;
+                    }
+                }
+
+                if (!$found) {
+                    GameAddPlayer($gameId, $playerId, $number);
+                }
+            } else {
+                $playerinfo = PlayerInfo($playerId);
+                $html2 .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("erroneous number") . " '$number'.</p>";
+            }
+        }
+    }
+    GameSetCaptains($gameId, $game_result['hometeam'], PlayerRoleSelectedIds($_POST['homerole'] ?? [], "captain"));
+    GameSetCaptains($gameId, $game_result['visitorteam'], PlayerRoleSelectedIds($_POST['awayrole'] ?? [], "captain"));
+    GameSetSpiritCaptains($gameId, $game_result['hometeam'], PlayerRoleSelectedIds($_POST['homerole'] ?? [], "spirit_captain"));
+    GameSetSpiritCaptains($gameId, $game_result['visitorteam'], PlayerRoleSelectedIds($_POST['awayrole'] ?? [], "spirit_captain"));
+    $html2 .= "<p>" . _("Player lists saved!") . "</p>";
 }
 
 //common page
@@ -237,13 +238,13 @@ $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
-  $spiritUrl = SpiritEntryUrl($gameId);
-  if (!empty($spiritUrl)) {
-    $menutabs[_("Spirit score")] = $spiritUrl;
-  }
+    $spiritUrl = SpiritEntryUrl($gameId);
+    if (!empty($spiritUrl)) {
+        $menutabs[_("Spirit score")] = $spiritUrl;
+    }
 }
 if (ShowDefenseStats()) {
-  $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
+    $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 
 pageMenu($menutabs);
@@ -266,51 +267,51 @@ $homeSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['homet
 
 $i = 0;
 foreach ($home_playerlist as $player) {
-  $i++;
-  $playerinfo = PlayerInfo($player['player_id']);
-  $playerId = (int)$player['player_id'];
-  $numberFieldId = "p" . $playerId;
-  $roleFieldId = "homerole" . $playerId;
-  $fieldIds = $numberFieldId . "," . $roleFieldId;
-  $selectedRole = PlayerRoleSelectionValue(isset($homeCaptains[$playerId]), isset($homeSpiritCaptains[$playerId]));
-  $html .= "<tr>";
-  $number = PlayerNumber($playerId, $gameId);
-  if ($number < 0) {
-    $number = "";
-  }
-
-  $found = false;
-  foreach ($played_players as $playedPlayer) {
-    if ($player['player_id'] == $playedPlayer['player_id']) {
-      $found = true;
-      break;
+    $i++;
+    $playerinfo = PlayerInfo($player['player_id']);
+    $playerId = (int) $player['player_id'];
+    $numberFieldId = "p" . $playerId;
+    $roleFieldId = "homerole" . $playerId;
+    $fieldIds = $numberFieldId . "," . $roleFieldId;
+    $selectedRole = PlayerRoleSelectionValue(isset($homeCaptains[$playerId]), isset($homeSpiritCaptains[$playerId]));
+    $html .= "<tr>";
+    $number = PlayerNumber($playerId, $gameId);
+    if ($number < 0) {
+        $number = "";
     }
-  }
 
-  if ($found) {
-    $html .= "<td class='center' style='width:32px'>
+    $found = false;
+    foreach ($played_players as $playedPlayer) {
+        if ($player['player_id'] == $playedPlayer['player_id']) {
+            $found = true;
+            break;
+        }
+    }
+
+    if ($found) {
+        $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
-    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-    $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
-    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "'>";
-    $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
-    $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
-    $html .= "<option value='spirit_captain'" . ($selectedRole === "spirit_captain" ? " selected='selected'" : "") . ">" . _("SC") . "</option>";
-    $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
-    $html .= "</select></td>";
-  } else {
-    $html .= "<td class='center' style='width:32px'>
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
+        $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "'>";
+        $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
+        $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
+        $html .= "<option value='spirit_captain'" . ($selectedRole === "spirit_captain" ? " selected='selected'" : "") . ">" . _("SC") . "</option>";
+        $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
+        $html .= "</select></td>";
+    } else {
+        $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "'/></td>";
-    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-    $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
-    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
-    $html .= "<option value='' selected='selected'></option>";
-    $html .= "<option value='captain'>" . _("C") . "</option>";
-    $html .= "<option value='spirit_captain'>" . _("SC") . "</option>";
-    $html .= "<option value='both'>" . _("C&SC") . "</option>";
-    $html .= "</select></td>";
-  }
-  $html .= "</tr>\n";
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
+        $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
+        $html .= "<option value='' selected='selected'></option>";
+        $html .= "<option value='captain'>" . _("C") . "</option>";
+        $html .= "<option value='spirit_captain'>" . _("SC") . "</option>";
+        $html .= "<option value='both'>" . _("C&SC") . "</option>";
+        $html .= "</select></td>";
+    }
+    $html .= "</tr>\n";
 }
 $html .= "<tr><td colspan='4'>";
 $html .= _("Total number of players:") . " " . count($home_playerlist);
@@ -330,51 +331,51 @@ $awaySpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['visit
 
 $i = 0;
 foreach ($away_playerlist as $player) {
-  $i++;
-  $playerinfo = PlayerInfo($player['player_id']);
-  $playerId = (int)$player['player_id'];
-  $numberFieldId = "p" . $playerId;
-  $roleFieldId = "awayrole" . $playerId;
-  $fieldIds = $numberFieldId . "," . $roleFieldId;
-  $selectedRole = PlayerRoleSelectionValue(isset($awayCaptains[$playerId]), isset($awaySpiritCaptains[$playerId]));
-  $html .= "<tr>";
-  $number = PlayerNumber($playerId, $gameId);
-  if ($number < 0) {
-    $number = "";
-  }
-
-  $found = false;
-  foreach ($played_players as $playedPlayer) {
-    if ($player['player_id'] == $playedPlayer['player_id']) {
-      $found = true;
-      break;
+    $i++;
+    $playerinfo = PlayerInfo($player['player_id']);
+    $playerId = (int) $player['player_id'];
+    $numberFieldId = "p" . $playerId;
+    $roleFieldId = "awayrole" . $playerId;
+    $fieldIds = $numberFieldId . "," . $roleFieldId;
+    $selectedRole = PlayerRoleSelectionValue(isset($awayCaptains[$playerId]), isset($awaySpiritCaptains[$playerId]));
+    $html .= "<tr>";
+    $number = PlayerNumber($playerId, $gameId);
+    if ($number < 0) {
+        $number = "";
     }
-  }
 
-  if ($found) {
-    $html .= "<td class='center' style='width:32px'>
+    $found = false;
+    foreach ($played_players as $playedPlayer) {
+        if ($player['player_id'] == $playedPlayer['player_id']) {
+            $found = true;
+            break;
+        }
+    }
+
+    if ($found) {
+        $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
-    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-    $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
-    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "'>";
-    $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
-    $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
-    $html .= "<option value='spirit_captain'" . ($selectedRole === "spirit_captain" ? " selected='selected'" : "") . ">" . _("SC") . "</option>";
-    $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
-    $html .= "</select></td>";
-  } else {
-    $html .= "<td class='center' style='width:32px'>
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
+        $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "'>";
+        $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
+        $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
+        $html .= "<option value='spirit_captain'" . ($selectedRole === "spirit_captain" ? " selected='selected'" : "") . ">" . _("SC") . "</option>";
+        $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
+        $html .= "</select></td>";
+    } else {
+        $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "'/></td>";
-    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-    $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
-    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
-    $html .= "<option value='' selected='selected'></option>";
-    $html .= "<option value='captain'>" . _("C") . "</option>";
-    $html .= "<option value='spirit_captain'>" . _("SC") . "</option>";
-    $html .= "<option value='both'>" . _("C&SC") . "</option>";
-    $html .= "</select></td>";
-  }
-  $html .= "</tr>\n";
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
+        $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
+        $html .= "<option value='' selected='selected'></option>";
+        $html .= "<option value='captain'>" . _("C") . "</option>";
+        $html .= "<option value='spirit_captain'>" . _("SC") . "</option>";
+        $html .= "<option value='both'>" . _("C&SC") . "</option>";
+        $html .= "</select></td>";
+    }
+    $html .= "</tr>\n";
 }
 $html .= "<tr><td colspan='4'>";
 $html .= _("Total number of players:") . " " . count($away_playerlist);

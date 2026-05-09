@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('allplayers');
 
@@ -9,7 +10,7 @@ $html = "";
 $filter = "A";
 
 if (iget("list")) {
-  $filter = strtoupper(iget("list"));
+    $filter = strtoupper(iget("list"));
 }
 
 $html .= "<h1>" . $title . "</h1>\n";
@@ -18,67 +19,67 @@ $players = PlayerListAllArray($filter);
 
 $firstchar = " ";
 $listletter = " ";
-$validletters = array("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z");
+$validletters = ["A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "K", "L", "M", "N", "O", "P", "Q", "R", "S", "T", "U", "V", "W", "X", "Y", "Z"];
 $counter = 0;
 $maxcols = 4;
 
 $html .= "<table style='white-space: nowrap;width:100%'><tr>\n";
 foreach ($validletters as $let) {
-  $letter = (string)$let;
-  if ($letter == $filter) {
-    $html .= "<td class='selgroupinglink'>&nbsp;" . utf8entities($letter) . "&nbsp;</td>";
-  } else {
-    $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allplayers&amp;list=" . urlencode($letter) . "'>" . utf8entities($letter) . "</a>&nbsp;</td>";
-  }
+    $letter = (string) $let;
+    if ($letter == $filter) {
+        $html .= "<td class='selgroupinglink'>&nbsp;" . utf8entities($letter) . "&nbsp;</td>";
+    } else {
+        $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allplayers&amp;list=" . urlencode($letter) . "'>" . utf8entities($letter) . "</a>&nbsp;</td>";
+    }
 }
 if ($filter == "ALL") {
-  $html .= "<td class='selgroupinglink'>&nbsp;" . _("ALL") . "</td>";
+    $html .= "<td class='selgroupinglink'>&nbsp;" . _("ALL") . "</td>";
 } else {
-  $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allplayers&amp;list=all'>" . _("ALL") . "</a></td>";
+    $html .= "<td>&nbsp;<a class='groupinglink' href='?view=allplayers&amp;list=all'>" . _("ALL") . "</a></td>";
 }
 $html .= "</tr></table>\n";
 
-  $html .= "<table width='90%' style='white-space: nowrap;'>\n";
+$html .= "<table width='90%' style='white-space: nowrap;'>\n";
 
-  foreach ($players as $player) {
+foreach ($players as $player) {
 
     if ($filter == "ALL") {
-      $lastName = isset($player['lastname']) ? (string) $player['lastname'] : '';
-      if (function_exists('mb_substr')) {
-        $firstchar = mb_strtoupper(mb_substr($lastName, 0, 1, 'UTF-8'), 'UTF-8');
-      } else {
-        $firstchar = strtoupper(substr($lastName, 0, 1));
-      }
-      if ($listletter != $firstchar && in_array($firstchar, $validletters)) {
-        $listletter = $firstchar;
-        if ($counter > 0 && $counter <= $maxcols) {
-          $html .= "</tr>\n";
+        $lastName = isset($player['lastname']) ? (string) $player['lastname'] : '';
+        if (function_exists('mb_substr')) {
+            $firstchar = mb_strtoupper(mb_substr($lastName, 0, 1, 'UTF-8'), 'UTF-8');
+        } else {
+            $firstchar = strtoupper(substr($lastName, 0, 1));
         }
-        $html .= "<tr><td></td></tr>\n";
-        $html .= "<tr><td class='list_letter' colspan='$maxcols'>" . utf8entities($listletter) . "</td></tr>\n";
-        $counter = 0;
-      }
+        if ($listletter != $firstchar && in_array($firstchar, $validletters)) {
+            $listletter = $firstchar;
+            if ($counter > 0 && $counter <= $maxcols) {
+                $html .= "</tr>\n";
+            }
+            $html .= "<tr><td></td></tr>\n";
+            $html .= "<tr><td class='list_letter' colspan='$maxcols'>" . utf8entities($listletter) . "</td></tr>\n";
+            $counter = 0;
+        }
     }
 
-  if ($counter == 0) {
-    $html .= "<tr>\n";
-  }
+    if ($counter == 0) {
+        $html .= "<tr>\n";
+    }
 
-  if (!empty($player['profile_id'])) {
-    $html .= "<td style='width:" . (100 / $maxcols) . "%'><a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
-      utf8entities($player['lastname'] . " " . $player['firstname']) . "</a></td>\n";
-  } else {
-    $html .= "<td style='width:" . (100 / $maxcols) . "%'>" . utf8entities($player['lastname'] . " " . $player['firstname']) . "</td>\n";
-  }
-  $counter++;
+    if (!empty($player['profile_id'])) {
+        $html .= "<td style='width:" . (100 / $maxcols) . "%'><a href='?view=playercard&amp;series=0&amp;player=" . $player['player_id'] . "'>" .
+          utf8entities($player['lastname'] . " " . $player['firstname']) . "</a></td>\n";
+    } else {
+        $html .= "<td style='width:" . (100 / $maxcols) . "%'>" . utf8entities($player['lastname'] . " " . $player['firstname']) . "</td>\n";
+    }
+    $counter++;
 
-  if ($counter >= $maxcols) {
-    $html .= "</tr>\n";
-    $counter = 0;
-  }
+    if ($counter >= $maxcols) {
+        $html .= "</tr>\n";
+        $counter = 0;
+    }
 }
 if ($counter > 0 && $counter <= $maxcols) {
-  $html .= "</tr>\n";
+    $html .= "</tr>\n";
 };
 $html .= "</table>\n";
 

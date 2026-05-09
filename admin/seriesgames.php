@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/database.php';
 include_once 'lib/pool.functions.php';
@@ -11,14 +12,15 @@ include_once 'lib/reservation.functions.php';
 
 $LAYOUT_ID = POOLGAMES;
 
-if (!empty($_GET["season"]))
-	$season = $_GET["season"];
+if (!empty($_GET["season"])) {
+    $season = $_GET["season"];
+}
 
 if (!empty($_GET["series"])) {
-	$seriesId = $_GET["series"];
-	if (empty($season)) {
-		$season = SeriesSeasonId($seriesId);
-	}
+    $seriesId = $_GET["series"];
+    if (empty($season)) {
+        $season = SeriesSeasonId($seriesId);
+    }
 }
 
 $seriesinfo = SeriesInfo($seriesId);
@@ -31,46 +33,46 @@ $title = utf8entities(U_($seriesinfo['name'])) . ": " . _("Games");
 $html = "";
 
 if (!empty($_POST['generate'])) {
-	if (!empty($_POST['rounds'])) {
-		$rounds = $_POST['rounds'];
-	}
-	if (!empty($_POST['matches'])) {
-		$matches = $_POST['matches'];
-	}
-	$nomutual = isset($_POST["nomutual"]);
+    if (!empty($_POST['rounds'])) {
+        $rounds = $_POST['rounds'];
+    }
+    if (!empty($_POST['matches'])) {
+        $matches = $_POST['matches'];
+    }
+    $nomutual = isset($_POST["nomutual"]);
 
-	$pools = SeriesPools($seriesId);
+    $pools = SeriesPools($seriesId);
 
-	foreach ($pools as $pool) {
-		if (!CanGenerateGames($pool['pool_id'])) {
-			continue;
-		}
-		$info = PoolInfo($pool['pool_id']);
-		if ($info['type'] == 1) {
+    foreach ($pools as $pool) {
+        if (!CanGenerateGames($pool['pool_id'])) {
+            continue;
+        }
+        $info = PoolInfo($pool['pool_id']);
+        if ($info['type'] == 1) {
 
-			if ($info['mvgames'] == 2) {
-				GenerateGames($pool['pool_id'], $rounds, true, $nomutual, $homeresp);
-			} else {
-				GenerateGames($pool['pool_id'], $rounds, true, false, $homeresp);
-			}
-		} elseif ($info['type'] == 2) {
-			GenerateGames($pool['pool_id'], $matches, true);
-			//generate pools needed to solve standings
-			$generatedpools = GeneratePlayoffPools($pool['pool_id'], true);
+            if ($info['mvgames'] == 2) {
+                GenerateGames($pool['pool_id'], $rounds, true, $nomutual, $homeresp);
+            } else {
+                GenerateGames($pool['pool_id'], $rounds, true, false, $homeresp);
+            }
+        } elseif ($info['type'] == 2) {
+            GenerateGames($pool['pool_id'], $matches, true);
+            //generate pools needed to solve standings
+            $generatedpools = GeneratePlayoffPools($pool['pool_id'], true);
 
-			//generate games into generated pools
-			foreach ($generatedpools as $gpool) {
-				if (CanGenerateGames($gpool['pool_id'])) {
-					GenerateGames($gpool['pool_id'], $matches, true);
-				}
-			}
-		// crossmatch
-		} elseif ($info['type'] == 4) {
-			GenerateGames($pool['pool_id'], $rounds, true, false, $homeresp);
-		}
-	}
-	session_write_close();
-	header("location:?view=admin/seasonpools&season=$season");
+            //generate games into generated pools
+            foreach ($generatedpools as $gpool) {
+                if (CanGenerateGames($gpool['pool_id'])) {
+                    GenerateGames($gpool['pool_id'], $matches, true);
+                }
+            }
+            // crossmatch
+        } elseif ($info['type'] == 4) {
+            GenerateGames($pool['pool_id'], $rounds, true, false, $homeresp);
+        }
+    }
+    session_write_close();
+    header("location:?view=admin/seasonpools&season=$season");
 }
 
 //common page
@@ -82,18 +84,18 @@ contentStart();
 $html .= "<form method='post' action='?view=admin/seriesgames&amp;season=$season&amp;series=$seriesId'>";
 
 $html .= "<h2>" . _("Creation of games") . "</h2>\n";
-$html .= "<p><b>"._("Round Robin -type of pool")."</b></p>\n";
+$html .= "<p><b>" . _("Round Robin -type of pool") . "</b></p>\n";
 $html .= "<p>" . _("Game rounds") . ": <input class='input' size='2' name='rounds' value='$rounds'/></p>\n";
 $html .= "<p><input class='input' type='checkbox' name='nomutual'";
 if ($nomutual) {
-	$html .= "checked='checked'";
+    $html .= "checked='checked'";
 }
 $html .= "/> " . _("Do not generate mutual games for teams moved from the same pool if the pool format includes mutual games") . ".</p>";
-$html .= "<p><b>"._("Play off -type of pool")."</b></p>\n";
-$html .= "<p>"._("best")." <input class='input' size='2' name='matches' value='$matches'/> "._("matches")."</p>\n";
+$html .= "<p><b>" . _("Play off -type of pool") . "</b></p>\n";
+$html .= "<p>" . _("best") . " <input class='input' size='2' name='matches' value='$matches'/> " . _("matches") . "</p>\n";
 $html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 if (isRespTeamHomeTeam()) {
-	$html .= "checked='checked'";
+    $html .= "checked='checked'";
 }
 $html .= "/></p>";
 $html .= "<p><input type='submit' name='generate' value='" . _("Generate all games") . "'/></p>";

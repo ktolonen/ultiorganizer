@@ -8,8 +8,8 @@ include_once $include_prefix . 'lib/location.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 
 if (empty($_GET["game"])) {
-	showPage(_("Defence sheet"), "<p class='warning'>" . _("Game not found") . ".</p>");
-	return;
+    showPage(_("Defence sheet"), "<p class='warning'>" . _("Game not found") . ".</p>");
+    return;
 }
 
 $LAYOUT_ID = ADDDEFENSESHEET;
@@ -21,7 +21,7 @@ ob_start();
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
 include_once 'lib/yui.functions.php';
-echo yuiLoad(array("yahoo-dom-event"));
+echo yuiLoad(["yahoo-dom-event"]);
 ?>
 <script type="text/javascript">
 	function validTime(field) {
@@ -51,8 +51,9 @@ contentStart();
 //echo "First line"
 $gameId = intval($_GET["game"]);
 
-if (!hasEditGameEventsRight($gameId))
-  die('Insufficient rights to edit game');
+if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game');
+}
 
 $season = GameSeason($gameId);
 $seasoninfo = SeasonInfo($season);
@@ -63,13 +64,13 @@ $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
-	$spiritUrl = SpiritEntryUrl($gameId);
-	if (!empty($spiritUrl)) {
-		$menutabs[_("Spirit score")] = $spiritUrl;
-	}
+    $spiritUrl = SpiritEntryUrl($gameId);
+    if (!empty($spiritUrl)) {
+        $menutabs[_("Spirit score")] = $spiritUrl;
+    }
 }
 if (ShowDefenseStats()) {
-	$menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
+    $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 pageMenu($menutabs);
 
@@ -77,105 +78,110 @@ pageMenu($menutabs);
 
 $game_result = GameResult($gameId);
 
-$errIds = array();
+$errIds = [];
 //process itself if submit was pressed
 
 if (!empty($_POST['save'])) {
-	LogDefenseUpdate($gameId, "defensesheet saved", "adddefensesheet");
-	$time_delim = array(",", ";", ":");
-	//GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $number)
-	$htime = 0;
-	if (!$hideTimeOnScoresheet) {
-		//set halftime
-		$htime = $_POST['halftime'];
-		$htime = str_replace($time_delim, ".", $htime);
-		$htime = TimeToSec($htime);
-	}
+    LogDefenseUpdate($gameId, "defensesheet saved", "adddefensesheet");
+    $time_delim = [",", ";", ":"];
+    //GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $number)
+    $htime = 0;
+    if (!$hideTimeOnScoresheet) {
+        //set halftime
+        $htime = $_POST['halftime'];
+        $htime = str_replace($time_delim, ".", $htime);
+        $htime = TimeToSec($htime);
+    }
 
-	//remove all old defenses (if any)
-	GameRemoveAllDefenses($gameId);
+    //remove all old defenses (if any)
+    GameRemoveAllDefenses($gameId);
 
-	//insert defenses
-	$h = 0;
-	$a = 0;
-	$prevtime = 0;
-	for ($i = 0; $i < $maxdefenses; $i++) {
-		$team = "";
-		$defense = -1;
-		$goal = -1;
-		$caught = "";
-		$iscaught = -1;
-		$callahan = "";
-		$iscallahan = -1;
-		$time = "";
-		if (!empty($_POST['team' . $i]))
-			$team = $_POST['team' . $i];
-		if (!empty($_POST['defense' . $i]) || $_POST['defense' . $i] == "0")
-			$defense = $_POST['defense' . $i];
-		if (!empty($_POST['caught' . $i]))
-			$caught = $_POST['caught' . $i];
-		if (!empty($_POST['callahan' . $i]))
-			$callahan = $_POST['callahan' . $i];
-		if ($hideTimeOnScoresheet) {
-			$time = $prevtime + 1;
-		} else {
-			if (!empty($_POST['time' . $i]))
-				$time = $_POST['time' . $i];
+    //insert defenses
+    $h = 0;
+    $a = 0;
+    $prevtime = 0;
+    for ($i = 0; $i < $maxdefenses; $i++) {
+        $team = "";
+        $defense = -1;
+        $goal = -1;
+        $caught = "";
+        $iscaught = -1;
+        $callahan = "";
+        $iscallahan = -1;
+        $time = "";
+        if (!empty($_POST['team' . $i])) {
+            $team = $_POST['team' . $i];
+        }
+        if (!empty($_POST['defense' . $i]) || $_POST['defense' . $i] == "0") {
+            $defense = $_POST['defense' . $i];
+        }
+        if (!empty($_POST['caught' . $i])) {
+            $caught = $_POST['caught' . $i];
+        }
+        if (!empty($_POST['callahan' . $i])) {
+            $callahan = $_POST['callahan' . $i];
+        }
+        if ($hideTimeOnScoresheet) {
+            $time = $prevtime + 1;
+        } else {
+            if (!empty($_POST['time' . $i])) {
+                $time = $_POST['time' . $i];
+            }
 
-			$time = str_replace($time_delim, ".", $time);
-			$time = TimeToSec($time);
-			if (!empty($team) && $time == $htime) {
-				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
-				$errIds[] = "time$i";
-			}
+            $time = str_replace($time_delim, ".", $time);
+            $time = TimeToSec($time);
+            if (!empty($team) && $time == $htime) {
+                echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
+                $errIds[] = "time$i";
+            }
 
-			if (!empty($team) && $time <= $prevtime) {
-				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("time cannot be the same or earlier than the previous point") . "!</p>";
-				$errIds[] = "time$i";
-			}
-		}
+            if (!empty($team) && $time <= $prevtime) {
+                echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("time cannot be the same or earlier than the previous point") . "!</p>";
+                $errIds[] = "time$i";
+            }
+        }
 
-		//if(strcasecmp($pass,'xx')==0 || strcasecmp($pass,'x')==0)
-		//	$iscallahan = 1;
+        //if(strcasecmp($pass,'xx')==0 || strcasecmp($pass,'x')==0)
+        //	$iscallahan = 1;
 
-		$prevtime = $time;
-		if (!empty($caught) && $caught == 'C') {
-			$iscaught = 1;
-		} else if (!empty($caught) && $caught == 'T') {
-			$iscaught = 0;
-		}
-		if (!empty($callahan) && $callahan == 'L') {
-			$iscallahan = 1;
-		} else if (!empty($callahan) && $callahan == 'N') {
-			$iscallahan = 0;
-		}
+        $prevtime = $time;
+        if (!empty($caught) && $caught == 'C') {
+            $iscaught = 1;
+        } elseif (!empty($caught) && $caught == 'T') {
+            $iscaught = 0;
+        }
+        if (!empty($callahan) && $callahan == 'L') {
+            $iscallahan = 1;
+        } elseif (!empty($callahan) && $callahan == 'N') {
+            $iscallahan = 0;
+        }
 
 
-		if (!empty($team) && $team == 'H') {
-			$h++;
+        if (!empty($team) && $team == 'H') {
+            $h++;
 
-			$defense = GamePlayerFromNumber($gameId, $game_result['hometeam'], $defense);
-			if ($defense == -1) {
-				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
-				$errIds[] = "defense$i";
-			}
-			GameAddDefense($gameId, $defense, 1, $iscaught, $time, $iscallahan, $i + 1);
-			//GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,1,$iscallahan);
-		} elseif (!empty($team) && $team == 'A') {
-			$a++;
-			$defense = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $defense);
-			if ($defense == -1) {
-				echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
-				$errIds[] = "defense$i";
-			}
+            $defense = GamePlayerFromNumber($gameId, $game_result['hometeam'], $defense);
+            if ($defense == -1) {
+                echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
+                $errIds[] = "defense$i";
+            }
+            GameAddDefense($gameId, $defense, 1, $iscaught, $time, $iscallahan, $i + 1);
+            //GameAddScore($gameId,$pass,$goal,$time,$i+1,$h,$a,1,$iscallahan);
+        } elseif (!empty($team) && $team == 'A') {
+            $a++;
+            $defense = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $defense);
+            if ($defense == -1) {
+                echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
+                $errIds[] = "defense$i";
+            }
 
-			GameAddDefense($gameId, $defense, 0, $iscaught, $time, $iscallahan, $i + 1);
-		}
-	}
-	GameSetDefenses($gameId, $h, $a);
-	echo "<p>" . _("Defence sheet saved") . " (" . _("Time") . ": " . DefTimestamp() . ")!</p>";
-	// The defenseplay.php needs to be created
-	//echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Gameplay")."</a>";
+            GameAddDefense($gameId, $defense, 0, $iscaught, $time, $iscallahan, $i + 1);
+        }
+    }
+    GameSetDefenses($gameId, $h, $a);
+    echo "<p>" . _("Defence sheet saved") . " (" . _("Time") . ": " . DefTimestamp() . ")!</p>";
+    // The defenseplay.php needs to be created
+    //echo "<a href='?view=gameplay&amp;game=$gameId'>"._("Gameplay")."</a>";
 }
 $game_result = GameResult($gameId);
 $place = ReservationInfo($game_result['reservation']);
@@ -183,10 +189,10 @@ $home_playerlist = GamePlayers($gameId, $game_result['hometeam']);
 $away_playerlist = GamePlayers($gameId, $game_result['visitorteam']);
 
 if (count($home_playerlist) == 0) {
-	echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['hometeamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Enter the players for this game.") . "</a></p>";
+    echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['hometeamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Enter the players for this game.") . "</a></p>";
 }
 if (count($away_playerlist) == 0) {
-	echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['visitorteamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Enter the players for this game.") . "</a></p>";
+    echo "<p class='warning'>" . utf8entities(sprintf(_("No players given for team %s."), $game_result['visitorteamname'])) . "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Enter the players for this game.") . "</a></p>";
 }
 
 
@@ -215,9 +221,9 @@ $hoffence = "";
 $voffence = "";
 $ishome = GameIsFirstOffenceHome($gameId);
 if ($ishome == 1) {
-	$hoffence = "checked='checked'";
+    $hoffence = "checked='checked'";
 } elseif ($ishome == 0) {
-	$voffence = "checked='checked'";
+    $voffence = "checked='checked'";
 }
 
 echo "<table cellspacing='0' width='100%' border='1'>\n";
@@ -230,69 +236,71 @@ echo "<td>" . utf8entities($game_result['visitorteamname']) . "</td></tr>";
 echo "</table>\n";
 
 if (!$hideTimeOnScoresheet) {
-	//timeouts
-	echo "<table cellspacing='0' width='100%' border='1'>";
-	echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Timeouts") . "</th></tr>\n";
+    //timeouts
+    echo "<table cellspacing='0' width='100%' border='1'>";
+    echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Timeouts") . "</th></tr>\n";
 
-	echo "<tr><th>" . _("Home") . "</th>\n";
+    echo "<tr><th>" . _("Home") . "</th>\n";
 
-	//home team used timeouts
-	$i = 0;
-	$timeouts = GameTimeouts($gameId);
-	foreach ($timeouts as $timeout) {
-		if (intval($timeout['ishome'])) {
-			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
-			$i++;
-		}
-	}
+    //home team used timeouts
+    $i = 0;
+    $timeouts = GameTimeouts($gameId);
+    foreach ($timeouts as $timeout) {
+        if (intval($timeout['ishome'])) {
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+            $i++;
+        }
+    }
 
-	//empty slots
-	for ($i; $i < $maxtimeouts; $i++) {
-		//two last slot are smaller for visual reasons
-		if ($i > ($maxtimeouts - 3))
-			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
-		else
-			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
-	}
-	echo "</tr>\n";
+    //empty slots
+    for ($i; $i < $maxtimeouts; $i++) {
+        //two last slot are smaller for visual reasons
+        if ($i > ($maxtimeouts - 3)) {
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
+        } else {
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
+        }
+    }
+    echo "</tr>\n";
 
-	echo "<tr><th>" . _("Away") . "</th>\n";
+    echo "<tr><th>" . _("Away") . "</th>\n";
 
-	//away team used timeouts
-	$i = 0;
-	foreach ($timeouts as $timeout) {
-		if (!intval($timeout['ishome'])) {
-			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
-			$i++;
-		}
-	}
+    //away team used timeouts
+    $i = 0;
+    foreach ($timeouts as $timeout) {
+        if (!intval($timeout['ishome'])) {
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+            $i++;
+        }
+    }
 
-	//empty slots
-	for ($i; $i < $maxtimeouts; $i++) {
-		//two last slot are smaller for visual reasons
-		if ($i > ($maxtimeouts - 3))
-			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
-		else
-			echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
-	}
+    //empty slots
+    for ($i; $i < $maxtimeouts; $i++) {
+        //two last slot are smaller for visual reasons
+        if ($i > ($maxtimeouts - 3)) {
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
+        } else {
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
+        }
+    }
 
-	echo "</tr>";
-	echo "</table>";
+    echo "</tr>";
+    echo "</table>";
 
-	//halftime
-	echo "<table cellspacing='0' width='100%' border='1'>\n";
-	echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
-	echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
+    //halftime
+    echo "<table cellspacing='0' width='100%' border='1'>\n";
+    echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
+    echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
 	maxlength='8' type='text' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
-	echo "</table>\n";
+    echo "</table>\n";
 }
 
-//result		
+//result
 echo "<table cellspacing='0' width='100%' border='1'>\n";
 if ($game_result['isongoing']) {
-	echo "<tr><th>" . _("Current score") . "</th></tr>";
+    echo "<tr><th>" . _("Current score") . "</th></tr>";
 } else {
-	echo "<tr><th>" . _("Final score") . "</th></tr>";
+    echo "<tr><th>" . _("Final score") . "</th></tr>";
 }
 echo "<tr><td>" . $game_result['homescore'] . " - " . $game_result['visitorscore'] . "</td></tr>";
 echo "</table>\n";
@@ -309,7 +317,7 @@ echo "<td><input class='button' type='submit' value='" . _("Save defenses") . "'
 echo "<td><input class='button' type='reset' value='" . _("Cancel") . "' name='reset'/></td>";
 echo "</tr>";
 /*echo "<tr><td colspan='2'>
-		<a href='javascript://' onclick=\"eraseLast()\">"._("Delete the last defense")."</a></td></tr>";*/
+        <a href='javascript://' onclick=\"eraseLast()\">"._("Delete the last defense")."</a></td></tr>";*/
 
 echo "<tr><td colspan='2'>
 <p>" . _("Fill in the scoresheet") . ":</p>
@@ -317,7 +325,7 @@ echo "<tr><td colspan='2'>
 <li>" . _("In addition to the Tab key, you can use the + key to move between fields and the Enter key to select a radio button.") . "</li>
 ";
 if (!$hideTimeOnScoresheet) {
-	echo "<li>" . _("As a separator in the time field you can use any of the '.', ',', ':', or ';' characters") . ".</li>";
+    echo "<li>" . _("As a separator in the time field you can use any of the '.', ',', ':', or ';' characters") . ".</li>";
 }
 echo "
 <li>" . _("Input XX as the assist in Callahan goals") . ".</li>
@@ -350,9 +358,9 @@ echo "<th style='$style_mid'>" . _("Player") . "</th><th style='$style_mid'>" . 
 echo "<th style='$style_mid'>" . _("Touched") . "</th><th style='$style_mid'>" . _("Callahan") . "</th>";
 echo "<th style='$style_mid'>" . _("Not callahan") . "</th>";
 if ($hideTimeOnScoresheet) {
-	echo "<th style='$style_right'></th>";
+    echo "<th style='$style_right'></th>";
 } else {
-	echo "<th style='$style_right'>" . _("Time") . "</th>";
+    echo "<th style='$style_right'>" . _("Time") . "</th>";
 }
 //echo "<th style='$style_right'>"._("Score")."</th></tr>\n";
 
@@ -361,71 +369,72 @@ $scores = GameDefenses($gameId);
 $i = 0;
 foreach ($scores as $row) {
 
-	echo "<tr>";
-	echo "<td class='center' style='width: 25px;color:#B0B0B0;'>", $i + 1, "</td>\n";
+    echo "<tr>";
+    echo "<td class='center' style='width: 25px;color:#B0B0B0;'>", $i + 1, "</td>\n";
 
-	if (intval($row['ishomedefense'])) {
-		echo "<td style='width:40px;$style_left' class='center'><input id='hteam$i' name='team$i' type='radio' checked='checked' value='H' /></td>";
-		echo "<td style='width:40px;$style_mid' class='center'><input id='ateam$i' name='team$i' type='radio' value='A' /></td>";
-	} else {
-		echo "<td style='width:40px;$style_left' class='center'><input id='hteam$i' name='team$i' type='radio' value='H' /></td>";
-		echo "<td style='width:40px;$style_mid' class='center'><input id='ateam$i' name='team$i' type='radio' checked='checked' value='A' /></td>";
-	}
-	$n = PlayerNumber($row['author'], $gameId);
-	if ($n < 0)
-		$n = "";
+    if (intval($row['ishomedefense'])) {
+        echo "<td style='width:40px;$style_left' class='center'><input id='hteam$i' name='team$i' type='radio' checked='checked' value='H' /></td>";
+        echo "<td style='width:40px;$style_mid' class='center'><input id='ateam$i' name='team$i' type='radio' value='A' /></td>";
+    } else {
+        echo "<td style='width:40px;$style_left' class='center'><input id='hteam$i' name='team$i' type='radio' value='H' /></td>";
+        echo "<td style='width:40px;$style_mid' class='center'><input id='ateam$i' name='team$i' type='radio' checked='checked' value='A' /></td>";
+    }
+    $n = PlayerNumber($row['author'], $gameId);
+    if ($n < 0) {
+        $n = "";
+    }
 
-	echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' maxlength='3' size='3' value='$n'/></td>";
-	if (intval($row['iscaught'])) {
-		echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' checked='checked' value='C' /></td>";
-		echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' value='T' /></td>";
-	} else {
-		echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' value='C' /></td>";
-		echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' checked='checked' value='T' /></td>";
-	}
-	if (intval($row['iscallahan'])) {
-		echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio' checked='checked' value='L' /></td>";
-		echo "<td style='width:40px;$style_mid' class='center'><input id='notCallahan$i' name='callahan$i' type='radio' value='N' /></td>";
-	} else {
-		echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio' value='L' /></td>";
-		echo "<td style='width:40px;$style_mid' class='center'><input id='notCallahan$i' name='callahan$i' type='radio' checked='checked' value='N' /></td>";
-	}
+    echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' maxlength='3' size='3' value='$n'/></td>";
+    if (intval($row['iscaught'])) {
+        echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' checked='checked' value='C' /></td>";
+        echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' value='T' /></td>";
+    } else {
+        echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' value='C' /></td>";
+        echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' checked='checked' value='T' /></td>";
+    }
+    if (intval($row['iscallahan'])) {
+        echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio' checked='checked' value='L' /></td>";
+        echo "<td style='width:40px;$style_mid' class='center'><input id='notCallahan$i' name='callahan$i' type='radio' value='N' /></td>";
+    } else {
+        echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio' value='L' /></td>";
+        echo "<td style='width:40px;$style_mid' class='center'><input id='notCallahan$i' name='callahan$i' type='radio' checked='checked' value='N' /></td>";
+    }
 
 
-	if ($hideTimeOnScoresheet) {
-		echo "<td style='width:60px;$style_right'></td>";
-	} else {
-		echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8' value='" . SecToMin($row['time']) . "'/></td>";
-	}
+    if ($hideTimeOnScoresheet) {
+        echo "<td style='width:60px;$style_right'></td>";
+    } else {
+        echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8' value='" . SecToMin($row['time']) . "'/></td>";
+    }
 
-	echo "</tr>\n";
-	$i++;
+    echo "</tr>\n";
+    $i++;
 }
 
 
 for ($i; $i < $maxdefenses; $i++) {
-	echo "<tr>";
-	echo "<td class='center' style='width:25px;color:#B0B0B0;'>", $i + 1, "</td>\n";
-	echo "<td class='center' style='width:40px;$style_left'><input id='hteam$i' name='team$i' type='radio' value='H' /></td>";
-	echo "<td class='center' style='width:40px;$style_mid'><input id='ateam$i' name='team$i' type='radio' value='A' /></td>";
-	echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' size='3' maxlength='3'/></td>";
-	echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' value='C' /></td>";
-	echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' value='T' /></td>";
-	echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio'  value='L' /></td>";
-	echo "<td style='width:40px;$style_mid' class='center'><input id='notCallahan$i' name='callahan$i' type='radio' value='N' /></td>";
-	if ($hideTimeOnScoresheet) {
-		echo "<td style='width:60px;$style_right'></td>";
-	} else {
-		echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8'/></td>";
-	}
+    echo "<tr>";
+    echo "<td class='center' style='width:25px;color:#B0B0B0;'>", $i + 1, "</td>\n";
+    echo "<td class='center' style='width:40px;$style_left'><input id='hteam$i' name='team$i' type='radio' value='H' /></td>";
+    echo "<td class='center' style='width:40px;$style_mid'><input id='ateam$i' name='team$i' type='radio' value='A' /></td>";
+    echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='defense$i' name='defense$i' size='3' maxlength='3'/></td>";
+    echo "<td style='width:40px;$style_left' class='center'><input id='caught$i' name='caught$i' type='radio' value='C' /></td>";
+    echo "<td style='width:40px;$style_mid' class='center'><input id='touched$i' name='caught$i' type='radio' value='T' /></td>";
+    echo "<td style='width:40px;$style_left' class='center'><input id='callahan$i' name='callahan$i' type='radio'  value='L' /></td>";
+    echo "<td style='width:40px;$style_mid' class='center'><input id='notCallahan$i' name='callahan$i' type='radio' value='N' /></td>";
+    if ($hideTimeOnScoresheet) {
+        echo "<td style='width:60px;$style_right'></td>";
+    } else {
+        echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8'/></td>";
+    }
 
-	echo "</tr>\n";
+    echo "</tr>\n";
 }
 echo "</table>\n";
 echo "</td></tr></table></form>\n";
 
 foreach ($errIds as $id) {
-	echo "<script type=\"text/javascript\">highlightError(\"$id\");</script>";
+    echo "<script type=\"text/javascript\">highlightError(\"$id\");</script>";
 }
 
 //common end

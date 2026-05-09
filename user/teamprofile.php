@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/common.functions.php';
@@ -17,78 +18,79 @@ $teamId = intval(iget("team"));
 // Short-circuit if team lookup fails to avoid null offsets.
 $team = TeamInfo($teamId);
 if (!$team) {
-	echo "<p class='warning'>" . _("Team not found") . ".</p>";
-	return;
+    echo "<p class='warning'>" . _("Team not found") . ".</p>";
+    return;
 }
 
-if (isset($_SERVER['HTTP_REFERER']))
-	$backurl = utf8entities($_SERVER['HTTP_REFERER']);
-else
-	$backurl = "?view=user/teamplayers&team=$teamId";
+if (isset($_SERVER['HTTP_REFERER'])) {
+    $backurl = utf8entities($_SERVER['HTTP_REFERER']);
+} else {
+    $backurl = "?view=user/teamplayers&team=$teamId";
+}
 
 $title = _("Team details") . ": " . utf8entities($team['name']);
 
 //team profile
-$tp = array(
-	"team_id" => $teamId,
-	"profile_image" => "",
-	"abbreviation" => "",
-	"captain" => "",
-	"coach" => "",
-	"story" => "",
-	"achievements" => ""
-);
+$tp = [
+    "team_id" => $teamId,
+    "profile_image" => "",
+    "abbreviation" => "",
+    "captain" => "",
+    "coach" => "",
+    "story" => "",
+    "achievements" => "",
+];
 
 if (isset($_POST['save'])) {
-	$backurl = utf8entities($_POST['backurl']);
-	$tp['captain'] = $_POST['captain'];
-	$tp['abbreviation'] = $_POST['abbreviation'];
-	if (strlen($tp['abbreviation']) < 2) {
-		$tp['abbreviation'] = $team['abbreviation'];
-		$html .= "<p class='warning'>" . _("Abbreviation too short.") . "</p>";
-	}
-	$allteams = SeriesTeams($team['series']);
-	foreach ($allteams as $t) {
-		if ($tp['team_id'] != $teamId && $tp['abbreviation'] == $t['abbreviation']) {
-			$tp['abbreviation'] = $team['abbreviation'];
-			$html .= "<p class='warning'>" . _("Abbreviation already used by") . " " . utf8entities($t['name']) . ".</p>";
-			break;
-		}
-	}
-	$tp['coach'] = $_POST['coach'];
-	$tp['story'] = $_POST['story'];
-	$tp['achievements'] = $_POST['achievements'];
-	SetTeamProfile($tp);
+    $backurl = utf8entities($_POST['backurl']);
+    $tp['captain'] = $_POST['captain'];
+    $tp['abbreviation'] = $_POST['abbreviation'];
+    if (strlen($tp['abbreviation']) < 2) {
+        $tp['abbreviation'] = $team['abbreviation'];
+        $html .= "<p class='warning'>" . _("Abbreviation too short.") . "</p>";
+    }
+    $allteams = SeriesTeams($team['series']);
+    foreach ($allteams as $t) {
+        if ($tp['team_id'] != $teamId && $tp['abbreviation'] == $t['abbreviation']) {
+            $tp['abbreviation'] = $team['abbreviation'];
+            $html .= "<p class='warning'>" . _("Abbreviation already used by") . " " . utf8entities($t['name']) . ".</p>";
+            break;
+        }
+    }
+    $tp['coach'] = $_POST['coach'];
+    $tp['story'] = $_POST['story'];
+    $tp['achievements'] = $_POST['achievements'];
+    SetTeamProfile($tp);
 
-	for ($i = 0; $i < $max_new_links; $i++) {
+    for ($i = 0; $i < $max_new_links; $i++) {
 
-		if (!empty($_POST["url$i"])) {
-			$name = "";
-			if (!empty($_POST["urlname$i"])) {
-				$name = $_POST["urlname$i"];
-			}
-			AddTeamProfileUrl($teamId, $_POST["urltype$i"], $_POST["url$i"], $name);
-		}
-	}
+        if (!empty($_POST["url$i"])) {
+            $name = "";
+            if (!empty($_POST["urlname$i"])) {
+                $name = $_POST["urlname$i"];
+            }
+            AddTeamProfileUrl($teamId, $_POST["urltype$i"], $_POST["url$i"], $name);
+        }
+    }
 
-	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
-		$html .= UploadTeamImage($teamId);
-	}
+    if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
+        $html .= UploadTeamImage($teamId);
+    }
 } elseif (isset($_POST['remove'])) {
-	RemoveTeamProfileImage($teamId);
+    RemoveTeamProfileImage($teamId);
 } elseif (isset($_POST['removeurl_x'])) {
-	$id = $_POST['hiddenDeleteId'];
-	RemoveTeamProfileUrl($teamId, $id);
+    $id = $_POST['hiddenDeleteId'];
+    RemoveTeamProfileUrl($teamId, $id);
 }
 $team = TeamInfo($teamId);
 $profile = TeamProfile($teamId);
 if ($profile) {
-	$tp['captain'] = $profile['captain'];
-	$tp['abbreviation'] = $team['abbreviation'];
-	$tp['coach'] = $profile['coach'];
-	$tp['story'] = $profile['story'];
-	$tp['achievements'] = $profile['achievements'];
-	$tp['profile_image'] = $profile['profile_image'];
+    $tp['captain'] = $profile['captain'];
+    $tp['abbreviation'] = $team['abbreviation'];
+    $tp['coach'] = $profile['coach'];
+    $tp['story'] = $profile['story'];
+    $tp['achievements'] = $profile['achievements'];
+    $tp['profile_image'] = $profile['profile_image'];
 }
 
 $html .= file_get_contents('script/disable_enter.js.inc');
@@ -126,26 +128,26 @@ $html .= "<table border='0'>";
 $urls = GetUrlList("team", $teamId);
 
 foreach ($urls as $url) {
-	$urlHref = utf8entities($url['url']);
-	$urlName = utf8entities($url['name']);
-	$html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
-	$html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
-	if (!empty($url['name'])) {
-		$html .= "<a href='" . $urlHref . "'>" . $urlName . "</a> (" . $urlHref . ")";
-	} else {
-		$html .= "<a href='" . $urlHref . "'>" . $urlHref . "</a>";
-	}
+    $urlHref = utf8entities($url['url']);
+    $urlName = utf8entities($url['name']);
+    $html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
+    $html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+    if (!empty($url['name'])) {
+        $html .= "<a href='" . $urlHref . "'>" . $urlName . "</a> (" . $urlHref . ")";
+    } else {
+        $html .= "<a href='" . $urlHref . "'>" . $urlHref . "</a>";
+    }
 
-	$html .= "</td>";
-	$html .= "<td class='right'><input class='deletebutton' type='image' src='images/remove.png' name='removeurl' value='X' alt='X' onclick='setId(" . $url['url_id'] . ");'/></td>";
-	$html .= "</tr>";
+    $html .= "</td>";
+    $html .= "<td class='right'><input class='deletebutton' type='image' src='images/remove.png' name='removeurl' value='X' alt='X' onclick='setId(" . $url['url_id'] . ");'/></td>";
+    $html .= "</tr>";
 }
 
 //empty line
 if (count($urls)) {
-	$html .= "<tr>";
-	$html .= "<td colspan='3'>&nbsp;</td>";
-	$html .= "</tr>";
+    $html .= "<tr>";
+    $html .= "<td colspan='3'>&nbsp;</td>";
+    $html .= "</tr>";
 }
 
 $html .= "<tr>";
@@ -156,15 +158,15 @@ $html .= "</tr>";
 
 $urltypes = GetUrlTypes();
 for ($i = 0; $i < $max_new_links; $i++) {
-	$html .= "<tr>";
-	$html .= "<td><select class='dropdown' name='urltype$i'>\n";
-	foreach ($urltypes as $type) {
-		$html .= "<option value='" . utf8entities($type['type']) . "'>" . utf8entities($type['name']) . "</option>\n";
-	}
-	$html .= "</select></td>";
-	$html .= "<td><input class='input' maxlength='500' size='40' name='url$i' value=''/></td>";
-	$html .= "<td><input class='input' maxlength='500' size='40' name='urlname$i' value=''/></td>";
-	$html .= "</tr>";
+    $html .= "<tr>";
+    $html .= "<td><select class='dropdown' name='urltype$i'>\n";
+    foreach ($urltypes as $type) {
+        $html .= "<option value='" . utf8entities($type['type']) . "'>" . utf8entities($type['name']) . "</option>\n";
+    }
+    $html .= "</select></td>";
+    $html .= "<td><input class='input' maxlength='500' size='40' name='url$i' value=''/></td>";
+    $html .= "<td><input class='input' maxlength='500' size='40' name='urlname$i' value=''/></td>";
+    $html .= "</tr>";
 }
 
 $html .= "</table>";
@@ -173,12 +175,12 @@ $html .= "</td></tr>\n";
 
 $html .= "<tr><td class='infocell' style='vertical-align:top'>" . _("Current image") . ":</td>";
 if (!empty($tp['profile_image'])) {
-	$html .= "<td><a href='" . UPLOAD_DIR . "teams/$teamId/" . $tp['profile_image'] . "'>";
-	$html .= "<img src='" . UPLOAD_DIR . "teams/$teamId/thumbs/" . $tp['profile_image'] . "' alt='" . _("Profile image") . "'/></a></td></tr>";
-	$html .= "<tr><td class='infocell'></td>";
-	$html .= "<td><input class='button' type='submit' name='remove' value='" . _("Delete image") . "' /></td></tr>\n";
+    $html .= "<td><a href='" . UPLOAD_DIR . "teams/$teamId/" . $tp['profile_image'] . "'>";
+    $html .= "<img src='" . UPLOAD_DIR . "teams/$teamId/thumbs/" . $tp['profile_image'] . "' alt='" . _("Profile image") . "'/></a></td></tr>";
+    $html .= "<tr><td class='infocell'></td>";
+    $html .= "<td><input class='button' type='submit' name='remove' value='" . _("Delete image") . "' /></td></tr>\n";
 } else {
-	$html .= "<td>" . _("No image") . "</td></tr>\n";
+    $html .= "<td>" . _("No image") . "</td></tr>\n";
 }
 
 $html .= "<tr><td class='infocell'>" . _("New image") . ":</td>";

@@ -12,21 +12,21 @@ $place = ReservationInfo($reservationId);
 $title = _("Reservation");
 
 if (!$place) {
-  pageTopHeadOpen($title);
-  pageTopHeadClose($title, false);
-  leftMenu();
-  contentStart();
-  echo "<h1>" . _("Reservation not found") . "</h1>\n";
-  contentEnd();
-  pageEnd();
-  return;
+    pageTopHeadOpen($title);
+    pageTopHeadClose($title, false);
+    leftMenu();
+    contentStart();
+    echo "<h1>" . _("Reservation not found") . "</h1>\n";
+    contentEnd();
+    pageEnd();
+    return;
 }
 $placeLabel = ReservationPlaceText($place['name'], $place['fieldname']);
 $title = _("Reservation");
 $headingText = _("Reservation");
 if ($placeLabel !== '') {
-  $title .= ": " . utf8entities($placeLabel);
-  $headingText .= ": " . $placeLabel;
+    $title .= ": " . utf8entities($placeLabel);
+    $headingText .= ": " . $placeLabel;
 }
 $hasCoordinates = $place['lat'] !== null && $place['lat'] !== '' && $place['lng'] !== null && $place['lng'] !== '';
 
@@ -39,14 +39,14 @@ contentStart();
 echo "<h1>" . utf8entities($headingText) . "</h1>\n";
 echo "<p>" . DefTimeFormat($place['starttime']) . " - " . DefHourFormat($place['endtime']) . "</p>\n";
 if (!empty($place['address'])) {
-  echo "<p>" . utf8entities($place['address']) . "</p>\n";
+    echo "<p>" . utf8entities($place['address']) . "</p>\n";
 }
 if (!empty($place['info'])) {
-  echo "<p>" . $place['info'] . "</p>\n";
+    echo "<p>" . $place['info'] . "</p>\n";
 }
 if ($hasCoordinates) {
-  echo "<p>&nbsp;</p>";
-?>
+    echo "<p>&nbsp;</p>";
+    ?>
 <div id="googleMap" style="width: 600px; height: 400px; font-family: Arial, sans-serif; font-size: 11px; border: 1px solid black"></div>
 <script>
   function myMap() {
@@ -62,9 +62,9 @@ if ($hasCoordinates) {
     const contentString =
       '<div id="content">' +
       <?php
-      echo "'<h1>" . utf8entities($placeLabel) . "</h1>'+";
-      echo "'<p>" . utf8entities($place['address']) . "</p>'";
-      ?> +
+          echo "'<h1>" . utf8entities($placeLabel) . "</h1>'+";
+    echo "'<p>" . utf8entities($place['address']) . "</p>'";
+    ?> +
       "</div>";
     const infowindow = new google.maps.InfoWindow({
       content: contentString,

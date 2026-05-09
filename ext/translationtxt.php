@@ -8,8 +8,8 @@ header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");
 $result = GetTranslations();
 foreach ($result as $lang => $translations) {
-	foreach ((array)$translations as $key => $translation) {
-		echo $lang . "\t" . $key . "\t" . $translation . "\n";
-	}
+    foreach ((array) $translations as $key => $translation) {
+        echo $lang . "\t" . $key . "\t" . $translation . "\n";
+    }
 }
 CloseConnection();

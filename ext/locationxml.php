@@ -16,21 +16,21 @@ $parnode = $dom->appendChild($node);
 // Iterate through the rows, adding XML nodes for each
 $savedID = null;
 foreach ($result as $row) {
-	if ($row['id'] !== $savedID) {
-		/** @var DOMElement $newnode */
-		$newnode = $dom->createElement("marker");
-		$parnode->appendChild($newnode);
-		$newnode->setAttribute("id", (string)$row['id']);
-		$newnode->setAttribute("name", (string)U_($row['name']));
-		$newnode->setAttribute("address", (string)($row['address'] ?? ''));
-		$newnode->setAttribute("lat", (string)($row['lat'] ?? ''));
-		$newnode->setAttribute("lng", (string)($row['lng'] ?? ''));
-		$newnode->setAttribute("info", (string)($row['info'] ?? ''));
-		$newnode->setAttribute("indoor", (string)($row['indoor'] ?? ''));
-		$newnode->setAttribute("fields", (string)($row['fields'] ?? ''));
-	}
-	$newnode->setAttribute("info_" . $row['locale'], (string)($row['locale_info'] ?? ''));
-	$savedID = $row['id'];
+    if ($row['id'] !== $savedID) {
+        /** @var DOMElement $newnode */
+        $newnode = $dom->createElement("marker");
+        $parnode->appendChild($newnode);
+        $newnode->setAttribute("id", (string) $row['id']);
+        $newnode->setAttribute("name", (string) U_($row['name']));
+        $newnode->setAttribute("address", (string) ($row['address'] ?? ''));
+        $newnode->setAttribute("lat", (string) ($row['lat'] ?? ''));
+        $newnode->setAttribute("lng", (string) ($row['lng'] ?? ''));
+        $newnode->setAttribute("info", (string) ($row['info'] ?? ''));
+        $newnode->setAttribute("indoor", (string) ($row['indoor'] ?? ''));
+        $newnode->setAttribute("fields", (string) ($row['fields'] ?? ''));
+    }
+    $newnode->setAttribute("info_" . $row['locale'], (string) ($row['locale_info'] ?? ''));
+    $savedID = $row['id'];
 }
 
 echo $dom->saveXML();

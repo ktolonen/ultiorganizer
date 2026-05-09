@@ -1,6 +1,7 @@
 <?php
+
 if (!isset($include_prefix)) {
-	$include_prefix = __DIR__ . '/../';
+    $include_prefix = __DIR__ . '/../';
 }
 
 $auth_redirect = '../index.php?view=mobile/index';

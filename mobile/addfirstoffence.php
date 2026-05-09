@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
@@ -10,15 +11,15 @@ $gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
 
 if (isset($_POST['save'])) {
-	if (!empty($_POST['starting'])) {
-		$starting = $_POST['starting'];
-		if ($starting == "H") {
-			GameSetStartingTeam($gameId, 1);
-		} elseif ($starting == "V") {
-			GameSetStartingTeam($gameId, 0);
-		}
-	}
-	header("location:?view=mobile/addscoresheet&game=" . $gameId);
+    if (!empty($_POST['starting'])) {
+        $starting = $_POST['starting'];
+        if ($starting == "H") {
+            GameSetStartingTeam($gameId, 1);
+        } elseif ($starting == "V") {
+            GameSetStartingTeam($gameId, 0);
+        }
+    }
+    header("location:?view=mobile/addscoresheet&game=" . $gameId);
 }
 
 mobilePageTop(_("Score&nbsp;sheet"));
@@ -28,9 +29,9 @@ $hoffence = "";
 $voffence = "";
 $ishome = GameIsFirstOffenceHome($gameId);
 if ($ishome == 1) {
-	$hoffence = "checked='checked'";
+    $hoffence = "checked='checked'";
 } elseif ($ishome == 0) {
-	$voffence = "checked='checked'";
+    $voffence = "checked='checked'";
 }
 
 $html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method='post'>\n";

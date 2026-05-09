@@ -9,35 +9,36 @@ include_once __DIR__ . '/localization.php';
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Expires" content="-1" />
 	<?php
-	include_once __DIR__ . '/../lib/common.functions.php';
-	include_once __DIR__ . '/../lib/season.functions.php';
-	include_once __DIR__ . '/../lib/series.functions.php';
-	include_once __DIR__ . '/../lib/team.functions.php';
-	include_once __DIR__ . '/../lib/timetable.functions.php';
+    include_once __DIR__ . '/../lib/common.functions.php';
+include_once __DIR__ . '/../lib/season.functions.php';
+include_once __DIR__ . '/../lib/series.functions.php';
+include_once __DIR__ . '/../lib/team.functions.php';
+include_once __DIR__ . '/../lib/timetable.functions.php';
 
-	$style = iget("style");
-	if (empty($style))
-		$style = 'pelikone.css';
+$style = iget("style");
+if (empty($style)) {
+    $style = 'pelikone.css';
+}
 
-	echo "<link rel='stylesheet' href='$style' type='text/css' />";
-	echo "<title>" . _("Ultiorganizer") . "</title>";
-	?>
+echo "<link rel='stylesheet' href='$style' type='text/css' />";
+echo "<title>" . _("Ultiorganizer") . "</title>";
+?>
 </head>
 
 <body>
 	<?php
 
-	$season = iget("season");
-	$group = iget("tournament");
+$season = iget("season");
+$group = iget("tournament");
 
-	if (!$season) {
-		$season = CurrentSeason();
-	}
-	$games = TimetableGames($season, "season", "all", "places", $group);
+if (!$season) {
+    $season = CurrentSeason();
+}
+$games = TimetableGames($season, "season", "all", "places", $group);
 
-	echo ExtTournamentView($games);
-	CloseConnection();
-	?>
+echo ExtTournamentView($games);
+CloseConnection();
+?>
 </body>
 
 </html>

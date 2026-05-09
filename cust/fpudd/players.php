@@ -1,4 +1,5 @@
 <?php
+
 include_once '../../lib/database.php';
 include_once '../../lib/common.functions.php';
 include_once '../../lib/player.functions.php';
@@ -14,36 +15,35 @@ startSecureSession();
 OpenConnection();
 
 if (hasEditPlayersRight($teamId)) {
-	
-	$players = SearchPlayerProfiles($firstname, $lastname, true);
 
-	$dom = new DOMDocument("1.0");
-	$node = $dom->createElement("MemberSet");
-	$parnode = $dom->appendChild($node);
-	$appendTextElement = function ($parentNode, $name, $value) use ($dom) {
-		$element = $dom->createElement($name);
-		$element = $parentNode->appendChild($element);
-		$text = $dom->createTextNode((string)($value ?? ''));
-		$element->appendChild($text);
-	};
+    $players = SearchPlayerProfiles($firstname, $lastname, true);
 
-	foreach ($players as $row) {
-	  $node = $dom->createElement("Member");
-	  $newNode = $parnode->appendChild($node);
-	  
-	  $appendTextElement($newNode, "AccreditationId", $row['accreditation_id']);
-	  $appendTextElement($newNode, "ProfileId", $row['profile_id']);
-	  $appendTextElement($newNode, "Firstname", $row['firstname']);
-	  $appendTextElement($newNode, "Lastname", $row['lastname']);
-	  $appendTextElement($newNode, "BirthDate", DefBirthdayFormat($row['birthdate']));
-	  $appendTextElement($newNode, "Team", $row['teamname']);
-	  $appendTextElement($newNode, "Event", $row['seasoname']);
-	  $appendTextElement($newNode, "Gender", $row['gender']);
-	  $appendTextElement($newNode, "Email", $row['email']);
-	  $appendTextElement($newNode, "Jersey", ($row['num'] < 0) ? '' : $row['num']);
-	}
-	echo $dom->saveXML();
+    $dom = new DOMDocument("1.0");
+    $node = $dom->createElement("MemberSet");
+    $parnode = $dom->appendChild($node);
+    $appendTextElement = function ($parentNode, $name, $value) use ($dom) {
+        $element = $dom->createElement($name);
+        $element = $parentNode->appendChild($element);
+        $text = $dom->createTextNode((string) ($value ?? ''));
+        $element->appendChild($text);
+    };
+
+    foreach ($players as $row) {
+        $node = $dom->createElement("Member");
+        $newNode = $parnode->appendChild($node);
+
+        $appendTextElement($newNode, "AccreditationId", $row['accreditation_id']);
+        $appendTextElement($newNode, "ProfileId", $row['profile_id']);
+        $appendTextElement($newNode, "Firstname", $row['firstname']);
+        $appendTextElement($newNode, "Lastname", $row['lastname']);
+        $appendTextElement($newNode, "BirthDate", DefBirthdayFormat($row['birthdate']));
+        $appendTextElement($newNode, "Team", $row['teamname']);
+        $appendTextElement($newNode, "Event", $row['seasoname']);
+        $appendTextElement($newNode, "Gender", $row['gender']);
+        $appendTextElement($newNode, "Email", $row['email']);
+        $appendTextElement($newNode, "Jersey", ($row['num'] < 0) ? '' : $row['num']);
+    }
+    echo $dom->saveXML();
 }
 
 CloseConnection();
-?>

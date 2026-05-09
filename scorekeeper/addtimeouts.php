@@ -3,27 +3,27 @@ include_once __DIR__ . '/auth.php';
 
 function ScorekeeperTimeoutData($gameId, $home, $maxslots)
 {
-  $values = array();
-  $timeouts = GameTimeouts($gameId);
-  foreach ($timeouts as $timeout) {
-    if ((int) $timeout['ishome'] === (int) $home && count($values) < $maxslots) {
-      $time = explode(".", SecToMin($timeout['time']));
-      $values[] = array(
-        "mm" => intval($time[0]),
-        "ss" => intval($time[1])
-      );
+    $values = [];
+    $timeouts = GameTimeouts($gameId);
+    foreach ($timeouts as $timeout) {
+        if ((int) $timeout['ishome'] === (int) $home && count($values) < $maxslots) {
+            $time = explode(".", SecToMin($timeout['time']));
+            $values[] = [
+                "mm" => intval($time[0]),
+                "ss" => intval($time[1]),
+            ];
+        }
     }
-  }
 
-  $filled = count($values);
-  for ($i = $filled; $i < $maxslots; $i++) {
-    $values[] = array("mm" => 0, "ss" => 0);
-  }
+    $filled = count($values);
+    for ($i = $filled; $i < $maxslots; $i++) {
+        $values[] = ["mm" => 0, "ss" => 0];
+    }
 
-  return array(
-    "values" => $values,
-    "filled" => $filled
-  );
+    return [
+        "values" => $values,
+        "filled" => $filled,
+    ];
 }
 
 $html = "";
@@ -36,52 +36,52 @@ $game_result = GameResult($gameId);
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $useGameClock = !$hideTimeOnScoresheet && !scorekeeperHasManualNoGameClock($gameId);
-$timerState = $useGameClock ? GameTimerState($gameId) : array(
-  "started" => false,
-  "ongoing" => false,
-  "paused" => false,
-  "mm" => 0,
-  "ss" => 0,
-  "rss" => 0
-);
+$timerState = $useGameClock ? GameTimerState($gameId) : [
+    "started" => false,
+    "ongoing" => false,
+    "paused" => false,
+    "mm" => 0,
+    "ss" => 0,
+    "rss" => 0,
+];
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
 $homeTimeoutData = ScorekeeperTimeoutData($gameId, 1, $maxtimeouts);
 $awayTimeoutData = ScorekeeperTimeoutData($gameId, 0, $maxtimeouts);
 
 if (isset($_POST['save'])) {
-  GameRemoveAllTimeouts($gameId);
+    GameRemoveAllTimeouts($gameId);
 
-  $j = 0;
-  for ($i = 0; $i < $maxtimeouts; $i++) {
-    $timemm = $_POST['htomm' . $i];
-    $timess = $_POST['htoss' . $i];
-    $time = $timemm . "." . $timess;
+    $j = 0;
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        $timemm = $_POST['htomm' . $i];
+        $timess = $_POST['htoss' . $i];
+        $time = $timemm . "." . $timess;
 
-    if (($timemm + $timess) > 0) {
-      $j++;
-      GameAddTimeout($gameId, $j, TimeToSec($time), 1);
+        if (($timemm + $timess) > 0) {
+            $j++;
+            GameAddTimeout($gameId, $j, TimeToSec($time), 1);
+        }
     }
-  }
 
-  $j = 0;
-  for ($i = 0; $i < $maxtimeouts; $i++) {
-    $timemm = $_POST['atomm' . $i];
-    $timess = $_POST['atoss' . $i];
-    $time = $timemm . "." . $timess;
+    $j = 0;
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        $timemm = $_POST['atomm' . $i];
+        $timess = $_POST['atoss' . $i];
+        $time = $timemm . "." . $timess;
 
-    if (($timemm + $timess) > 0) {
-      $j++;
-      GameAddTimeout($gameId, $j, TimeToSec($time), 0);
+        if (($timemm + $timess) > 0) {
+            $j++;
+            GameAddTimeout($gameId, $j, TimeToSec($time), 0);
+        }
     }
-  }
 
-  header("location:?view=addscoresheet&game=" . $gameId);
-  exit;
+    header("location:?view=addscoresheet&game=" . $gameId);
+    exit;
 }
 
 $html .= "<div data-role='header'>\n";
 if ($showClock) {
-  $html .= "<span id='gametime' style='float: left; margin: 0.2em 1.1em 0.25em 0.5ex; padding: 0.15em 0.4em; border-radius: 0.35em; background: #e6eef2; line-height: 1.3; font-size: 1.8em;'>" . sprintf("%02d", $timerState['mm']) . ":" . sprintf("%02d", $timerState['ss']) . "</span>";
+    $html .= "<span id='gametime' style='float: left; margin: 0.2em 1.1em 0.25em 0.5ex; padding: 0.15em 0.4em; border-radius: 0.35em; background: #e6eef2; line-height: 1.3; font-size: 1.8em;'>" . sprintf("%02d", $timerState['mm']) . ":" . sprintf("%02d", $timerState['ss']) . "</span>";
 }
 $html .= "<h1>" . _("Timeouts") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
@@ -100,62 +100,62 @@ $html .= "</fieldset>";
 $html .= "<label for='htomm0' class='select'><b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("timeouts") . " (" . _("min") . ":" . _("sec") . "):</label>";
 $html .= "<div class='timeout-list'>";
 foreach ($homeTimeoutData['values'] as $j => $time) {
-  $html .= "<div class='timeout-pair'>\n";
-  $html .= "<div class='ui-block-a'>\n";
-  $html .= "<select id='htomm$j' name='htomm$j' >";
-  for ($i = 0; $i <= 180; $i++) {
-    if ($i == $time['mm']) {
-      $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-    } else {
-      $html .= "<option value='" . $i . "'>" . $i . "</option>";
+    $html .= "<div class='timeout-pair'>\n";
+    $html .= "<div class='ui-block-a'>\n";
+    $html .= "<select id='htomm$j' name='htomm$j' >";
+    for ($i = 0; $i <= 180; $i++) {
+        if ($i == $time['mm']) {
+            $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
+        } else {
+            $html .= "<option value='" . $i . "'>" . $i . "</option>";
+        }
     }
-  }
-  $html .= "</select>";
-  $html .= "</div>";
-  $html .= "<span class='timeout-separator'>:</span>";
-  $html .= "<div class='ui-block-b'>\n";
-  $html .= "<select id='htoss$j' name='htoss$j' >";
-  for ($i = 0; $i <= 55; $i = $i + 5) {
-    if ($i == $time['ss']) {
-      $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-    } else {
-      $html .= "<option value='" . $i . "'>" . $i . "</option>";
+    $html .= "</select>";
+    $html .= "</div>";
+    $html .= "<span class='timeout-separator'>:</span>";
+    $html .= "<div class='ui-block-b'>\n";
+    $html .= "<select id='htoss$j' name='htoss$j' >";
+    for ($i = 0; $i <= 55; $i = $i + 5) {
+        if ($i == $time['ss']) {
+            $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
+        } else {
+            $html .= "<option value='" . $i . "'>" . $i . "</option>";
+        }
     }
-  }
-  $html .= "</select>";
-  $html .= "</div>";
-  $html .= "</div>";
+    $html .= "</select>";
+    $html .= "</div>";
+    $html .= "</div>";
 }
 $html .= "</div>";
 
 $html .= "<label for='atomm0' class='select'><b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("timeouts") . " (" . _("min") . ":" . _("sec") . "):</label>";
 $html .= "<div class='timeout-list'>";
 foreach ($awayTimeoutData['values'] as $j => $time) {
-  $html .= "<div class='timeout-pair'>\n";
-  $html .= "<div class='ui-block-a'>\n";
-  $html .= "<select id='atomm$j' name='atomm$j' >";
-  for ($i = 0; $i <= 180; $i++) {
-    if ($i == $time['mm']) {
-      $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-    } else {
-      $html .= "<option value='" . $i . "'>" . $i . "</option>";
+    $html .= "<div class='timeout-pair'>\n";
+    $html .= "<div class='ui-block-a'>\n";
+    $html .= "<select id='atomm$j' name='atomm$j' >";
+    for ($i = 0; $i <= 180; $i++) {
+        if ($i == $time['mm']) {
+            $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
+        } else {
+            $html .= "<option value='" . $i . "'>" . $i . "</option>";
+        }
     }
-  }
-  $html .= "</select>";
-  $html .= "</div>";
-  $html .= "<span class='timeout-separator'>:</span>";
-  $html .= "<div class='ui-block-b'>\n";
-  $html .= "<select id='atoss$j' name='atoss$j' >";
-  for ($i = 0; $i <= 55; $i = $i + 5) {
-    if ($i == $time['ss']) {
-      $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-    } else {
-      $html .= "<option value='" . $i . "'>" . $i . "</option>";
+    $html .= "</select>";
+    $html .= "</div>";
+    $html .= "<span class='timeout-separator'>:</span>";
+    $html .= "<div class='ui-block-b'>\n";
+    $html .= "<select id='atoss$j' name='atoss$j' >";
+    for ($i = 0; $i <= 55; $i = $i + 5) {
+        if ($i == $time['ss']) {
+            $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
+        } else {
+            $html .= "<option value='" . $i . "'>" . $i . "</option>";
+        }
     }
-  }
-  $html .= "</select>";
-  $html .= "</div>";
-  $html .= "</div>";
+    $html .= "</select>";
+    $html .= "</div>";
+    $html .= "</div>";
 }
 $html .= "</div>";
 

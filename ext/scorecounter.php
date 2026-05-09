@@ -9,42 +9,42 @@ include_once __DIR__ . '/localization.php';
 	<meta http-equiv="Pragma" content="no-cache" />
 	<meta http-equiv="Expires" content="-1" />
 	<?php
-	include_once __DIR__ . '/../lib/common.functions.php';
-	include_once __DIR__ . '/../lib/game.functions.php';
-	include_once __DIR__ . '/../lib/season.functions.php';
-	include_once __DIR__ . '/../lib/series.functions.php';
-	include_once __DIR__ . '/../lib/team.functions.php';
-	include_once __DIR__ . '/../lib/timetable.functions.php';
+    include_once __DIR__ . '/../lib/common.functions.php';
+include_once __DIR__ . '/../lib/game.functions.php';
+include_once __DIR__ . '/../lib/season.functions.php';
+include_once __DIR__ . '/../lib/series.functions.php';
+include_once __DIR__ . '/../lib/team.functions.php';
+include_once __DIR__ . '/../lib/timetable.functions.php';
 
-	echo "<title>" . _("Ultiorganizer Score counter") . "</title>";
-	?>
+echo "<title>" . _("Ultiorganizer Score counter") . "</title>";
+?>
 </head>
 
 <body>
 	<?php
 
-	$season = iget("season");
+$season = iget("season");
 
-	$lenght = 6;
-	if (iget("numbers")) {
-		$lenght = intval(iget("numbers"));
-	}
-	echo "<table><tr>";
-	$scores = (string) SeasonScoreCounter($season);
+$lenght = 6;
+if (iget("numbers")) {
+    $lenght = intval(iget("numbers"));
+}
+echo "<table><tr>";
+$scores = (string) SeasonScoreCounter($season);
 
-	$chars = str_split($scores);
-	for ($i = count($chars); $i < $lenght; $i++) {
-		echo "<td>0</td>";
-	}
-	foreach ($chars as $char) {
-		echo "<td class='center' style='width:10px'>$char</td>";
-	}
+$chars = str_split($scores);
+for ($i = count($chars); $i < $lenght; $i++) {
+    echo "<td>0</td>";
+}
+foreach ($chars as $char) {
+    echo "<td class='center' style='width:10px'>$char</td>";
+}
 
-	echo "</tr></table>";
+echo "</tr></table>";
 
 
-	CloseConnection();
-	?>
+CloseConnection();
+?>
 </body>
 
 </html>

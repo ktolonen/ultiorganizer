@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 $html = "";
 
@@ -8,15 +9,15 @@ $_SESSION['game'] = $gameId;
 $game_result = GameResult($gameId);
 
 if (isset($_POST['save'])) {
-	if (!empty($_POST['team'])) {
-		$starting = $_POST['team'];
-		if ($starting == "H") {
-			GameSetStartingTeam($gameId, 1);
-		} elseif ($starting == "V") {
-			GameSetStartingTeam($gameId, 0);
-		}
-	}
-	header("location:?view=addscoresheet&game=" . $gameId);
+    if (!empty($_POST['team'])) {
+        $starting = $_POST['team'];
+        if ($starting == "H") {
+            GameSetStartingTeam($gameId, 1);
+        } elseif ($starting == "V") {
+            GameSetStartingTeam($gameId, 0);
+        }
+    }
+    header("location:?view=addscoresheet&game=" . $gameId);
 }
 
 //starting team
@@ -24,9 +25,9 @@ $hoffence = "";
 $voffence = "";
 $ishome = GameIsFirstOffenceHome($gameId);
 if ($ishome == 1) {
-	$hoffence = "checked='checked'";
+    $hoffence = "checked='checked'";
 } elseif ($ishome == 0) {
-	$voffence = "checked='checked'";
+    $voffence = "checked='checked'";
 }
 
 $html .= "<div data-role='header'>\n";
