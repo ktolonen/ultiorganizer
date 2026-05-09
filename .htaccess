@@ -1,0 +1,15 @@
+# Deny direct web access to development-only files at the project root.
+# The application's normal entry points (index.php, login.php, etc.) are
+# not affected because this only matches the listed dev artifacts.
+#
+# Note: .git/ and .githooks/ directories should also not be deployed.
+# .githooks/ has its own .htaccess; .git/ is best excluded at deploy time.
+
+<FilesMatch "^(\.editorconfig|\.git.*|\.php-cs-fixer\..*|composer\.(json|lock)|phpstan\.neon\.dist|phpstan-baseline\.neon|phpstan-stubs\.php)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Deny from all
+    </IfModule>
+</FilesMatch>
