@@ -1,416 +1,499 @@
 parameters:
 	ignoreErrors:
 		-
-			message: "#^Variable \\$locales might not be defined\\.$#"
+			message: '#^Variable \$locales might not be defined\.$#'
+			identifier: variable.undefined
 			count: 3
 			path: admin/addlocations.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 4
 			path: admin/editgame.php
 
 		-
-			message: "#^Variable \\$poolId might not be defined\\.$#"
+			message: '#^Variable \$poolId might not be defined\.$#'
+			identifier: variable.undefined
 			count: 13
 			path: admin/poolmoves.php
 
 		-
-			message: "#^Variable \\$pteamname might not be defined\\.$#"
+			message: '#^Variable \$pteamname might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: admin/poolmoves.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: admin/poolmoves.php
 
 		-
-			message: "#^Variable \\$total_teams might not be defined\\.$#"
+			message: '#^Variable \$total_teams might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: admin/poolmoves.php
 
 		-
-			message: "#^Variable \\$reservationArray might not be defined\\.$#"
+			message: '#^Variable \$reservationArray might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: admin/schedule.php
 
 		-
-			message: "#^Variable \\$startTime might not be defined\\.$#"
+			message: '#^Variable \$startTime might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: admin/schedule.php
 
 		-
-			message: "#^Variable \\$end might not be defined\\.$#"
+			message: '#^Variable \$end might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: admin/seasonstandings.php
 
 		-
-			message: "#^Variable \\$moves might not be defined\\.$#"
+			message: '#^Variable \$moves might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: admin/seasonstandings.php
 
 		-
-			message: "#^Variable \\$start might not be defined\\.$#"
+			message: '#^Variable \$start might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: admin/seasonstandings.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: admin/seriesgames.php
 
 		-
-			message: "#^Variable \\$seriesId might not be defined\\.$#"
+			message: '#^Variable \$seriesId might not be defined\.$#'
+			identifier: variable.undefined
 			count: 3
 			path: admin/seriesgames.php
 
 		-
-			message: "#^Variable \\$PlayoffOK might not be defined\\.$#"
+			message: '#^Variable \$PlayoffOK might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: admin/serieteams.php
 
 		-
-			message: "#^Variable \\$poolId might not be defined\\.$#"
+			message: '#^Variable \$poolId might not be defined\.$#'
+			identifier: variable.undefined
 			count: 21
 			path: admin/serieteams.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: admin/serieteams.php
 
 		-
-			message: "#^Variable \\$team might not be defined\\.$#"
+			message: '#^Variable \$team might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: admin/serieteams.php
 
 		-
-			message: "#^Variable \\$locales might not be defined\\.$#"
+			message: '#^Variable \$locales might not be defined\.$#'
+			identifier: variable.undefined
 			count: 3
 			path: admin/translations.php
 
 		-
-			message: "#^Undefined variable\\: \\$left_margin$#"
+			message: '#^Undefined variable\: \$left_margin$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/bula/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$title$#"
+			message: '#^Undefined variable\: \$title$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/bula/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$info$#"
+			message: '#^Undefined variable\: \$info$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/bula/pdfscoresheet.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: cust/default/mass-accreditation.php
 
 		-
-			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
+			message: '#^Method tFPDF\:\:MultiCell\(\) invoked with 7 parameters, 3\-6 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: cust/default/pdfschedule.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: cust/fpudd/mass-accreditation.php
 
 		-
-			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
+			message: '#^Method tFPDF\:\:MultiCell\(\) invoked with 7 parameters, 3\-6 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: cust/fpudd/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$left_margin$#"
+			message: '#^Undefined variable\: \$left_margin$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/fpudd/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$title$#"
+			message: '#^Undefined variable\: \$title$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/fpudd/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$info$#"
+			message: '#^Undefined variable\: \$info$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/fpudd/pdfscoresheet.php
 
 		-
-			message: "#^Variable \\$abbrev in empty\\(\\) is never defined\\.$#"
+			message: '#^Variable \$abbrev in empty\(\) is never defined\.$#'
+			identifier: empty.variable
 			count: 1
 			path: cust/gummis/pdfschedule.php
 
 		-
-			message: "#^Variable \\$row might not be defined\\.$#"
+			message: '#^Variable \$row might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/gummis/pdfschedule.php
 
 		-
-			message: "#^Variable \\$abbrev in empty\\(\\) is never defined\\.$#"
+			message: '#^Variable \$abbrev in empty\(\) is never defined\.$#'
+			identifier: empty.variable
 			count: 1
 			path: cust/gummis/pdfscoresheet.php
 
 		-
-			message: "#^Call to sprintf contains 10 placeholders, 11 values given\\.$#"
+			message: '#^Call to sprintf contains 10 placeholders, 11 values given\.$#'
+			identifier: argument.sprintf
 			count: 1
 			path: cust/slkl/mass-accreditation.php
 
 		-
-			message: "#^Variable \\$birthdate in empty\\(\\) always exists and is not falsy\\.$#"
+			message: '#^Variable \$birthdate in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: cust/slkl/mass-accreditation.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: cust/slkl/mass-accreditation.php
 
 		-
-			message: "#^Variable \\$url might not be defined\\.$#"
+			message: '#^Variable \$url might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: cust/slkl/mass-accreditation.php
 
 		-
-			message: "#^Variable \\$view might not be defined\\.$#"
+			message: '#^Variable \$view might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: cust/slkl/mass-accreditation.php
 
 		-
-			message: "#^Undefined variable\\: \\$left_margin$#"
+			message: '#^Undefined variable\: \$left_margin$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/wfdf/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$title$#"
+			message: '#^Undefined variable\: \$title$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/wfdf/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$info$#"
+			message: '#^Undefined variable\: \$info$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/wfdf/pdfscoresheet.php
 
 		-
-			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
+			message: '#^Method tFPDF\:\:MultiCell\(\) invoked with 7 parameters, 3\-6 required\.$#'
+			identifier: arguments.count
 			count: 1
 			path: cust/windmill/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$left_margin$#"
+			message: '#^Undefined variable\: \$left_margin$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/windmill/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$title$#"
+			message: '#^Undefined variable\: \$title$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/windmill/pdfschedule.php
 
 		-
-			message: "#^Undefined variable\\: \\$info$#"
+			message: '#^Undefined variable\: \$info$#'
+			identifier: variable.undefined
 			count: 1
 			path: cust/windmill/pdfscoresheet.php
 
 		-
-			message: "#^Function printReport invoked with 4 parameters, 3 required\\.$#"
+			message: '#^Function printReport invoked with 3 parameters, 4 required\.$#'
+			identifier: arguments.count
 			count: 1
-			path: docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php
+			path: docs/ai/review-database-access/scripts/check-db-access.php
 
 		-
-			message: "#^Result of function main \\(void\\) is used\\.$#"
-			count: 1
-			path: docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php
-
-		-
-			message: "#^Variable \\$newnode might not be defined\\.$#"
+			message: '#^Variable \$newnode might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: ext/locationxml.php
 
 		-
-			message: "#^Variable \\$pass in empty\\(\\) always exists and is not falsy\\.$#"
+			message: '#^Variable \$pass in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: ext/rss.php
 
 		-
-			message: "#^Variable \\$scorer in empty\\(\\) always exists and is not falsy\\.$#"
+			message: '#^Variable \$scorer in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: ext/rss.php
 
 		-
-			message: "#^Variable \\$games might not be defined\\.$#"
+			message: '#^Variable \$games might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: games.php
 
 		-
-			message: "#^Variable \\$group in empty\\(\\) always exists and is not falsy\\.$#"
+			message: '#^Variable \$group in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: games.php
 
 		-
-			message: "#^Variable \\$lines might not be defined\\.$#"
+			message: '#^Variable \$lines might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: install.php
 
 		-
-			message: "#^Variable \\$fields might not be defined\\.$#"
+			message: '#^Variable \$fields might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: lib/common.functions.php
 
 		-
-			message: "#^Variable \\$ret might not be defined\\.$#"
+			message: '#^Variable \$ret might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: lib/common.functions.php
 
 		-
-			message: "#^Variable \\$table in isset\\(\\) always exists and is not nullable\\.$#"
+			message: '#^Variable \$table in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
 			count: 2
 			path: lib/common.functions.php
 
 		-
-			message: "#^Variable \\$mysqlconnectionref might not be defined\\.$#"
+			message: '#^Variable \$mysqlconnectionref might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: lib/database.php
 
 		-
-			message: "#^Variable \\$result might not be defined\\.$#"
+			message: '#^Variable \$result might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: lib/game.functions.php
 
 		-
-			message: "#^Variable \\$img_src might not be defined\\.$#"
+			message: '#^Variable \$img_src might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: lib/image.functions.php
 
 		-
-			message: "#^Call to sprintf contains 5 placeholders, 6 values given\\.$#"
+			message: '#^Call to sprintf contains 5 placeholders, 6 values given\.$#'
+			identifier: argument.sprintf
 			count: 1
 			path: lib/player.functions.php
 
 		-
-			message: "#^Call to sprintf contains 4 placeholders, 5 values given\\.$#"
+			message: '#^Function parse_ini_string invoked with 3 parameters, 1 required\.$#'
+			identifier: arguments.count
+			count: 1
+			path: lib/plugin.functions.php
+
+		-
+			message: '#^Call to sprintf contains 4 placeholders, 5 values given\.$#'
+			identifier: argument.sprintf
 			count: 1
 			path: lib/pool.functions.php
 
 		-
-			message: "#^Function AddSeries\\(\\) should return new but return statement is missing\\.$#"
+			message: '#^Function AddSeries\(\) should return new but return statement is missing\.$#'
+			identifier: return.missing
 			count: 1
 			path: lib/series.functions.php
 
 		-
-			message: "#^Function DeleteSeries\\(\\) should return mysql but return statement is missing\\.$#"
+			message: '#^Function DeleteSeries\(\) should return mysql but return statement is missing\.$#'
+			identifier: return.missing
 			count: 1
 			path: lib/series.functions.php
 
 		-
-			message: "#^Variable \\$defenses might not be defined\\.$#"
-			count: 1
-			path: lib/statistical.functions.php
-
-		-
-			message: "#^Function HavePlayed not found\\.$#"
+			message: '#^Function HavePlayed not found\.$#'
+			identifier: function.notFound
 			count: 2
 			path: lib/swissdraw.functions.php
 
 		-
-			message: "#^Function len not found\\.$#"
+			message: '#^Function len not found\.$#'
+			identifier: function.notFound
 			count: 2
 			path: lib/swissdraw.functions.php
 
 		-
-			message: "#^Variable \\$rounds might not be defined\\.$#"
+			message: '#^Variable \$rounds might not be defined\.$#'
+			identifier: variable.undefined
 			count: 2
 			path: lib/swissdraw.functions.php
 
 		-
-			message: "#^Variable \\$prevTimezone might not be defined\\.$#"
+			message: '#^Variable \$prevTimezone might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: lib/timetable.functions.php
 
 		-
-			message: "#^Regex pattern is invalid\\: Empty regular expression in pattern\\:  $#"
+			message: '#^Regex pattern is invalid\: Empty regular expression in pattern\:  $#'
+			identifier: regexp.pattern
 			count: 6
 			path: lib/translation.functions.php
 
 		-
-			message: "#^Variable \\$list might not be defined\\.$#"
+			message: '#^Variable \$list might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: lib/url.functions.php
 
 		-
-			message: "#^Variable \\$links in isset\\(\\) always exists and is not nullable\\.$#"
+			message: '#^Variable \$links in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.variable
 			count: 1
 			path: menufunctions.php
 
 		-
-			message: "#^Variable \\$season might not be defined\\.$#"
+			message: '#^Variable \$season might not be defined\.$#'
+			identifier: variable.undefined
 			count: 4
 			path: menufunctions.php
 
 		-
-			message: "#^Call to an undefined method XMLHandler\\:\\:ReplaceInDatabase\\(\\)\\.$#"
+			message: '#^Call to an undefined method XMLHandler\:\:ReplaceInDatabase\(\)\.$#'
+			identifier: method.notFound
 			count: 1
 			path: plugins/import_xml_ffindr.php
 
 		-
-			message: "#^Variable \\$cond might not be defined\\.$#"
+			message: '#^Variable \$cond might not be defined\.$#'
+			identifier: variable.undefined
 			count: 4
 			path: plugins/import_xml_ffindr.php
 
 		-
-			message: "#^Variable \\$name might not be defined\\.$#"
+			message: '#^Variable \$name might not be defined\.$#'
+			identifier: variable.undefined
 			count: 4
 			path: plugins/import_xml_ffindr.php
 
 		-
-			message: "#^Variable \\$seasonId in empty\\(\\) always exists and is always falsy\\.$#"
+			message: '#^Variable \$seasonId in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: plugins/import_xml_ffindr.php
 
 		-
-			message: "#^Variable \\$BYEs might not be defined\\.$#"
+			message: '#^Variable \$BYEs might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: plugins/reassign_playoffpools.php
 
 		-
-			message: "#^Variable \\$PlayoffOK might not be defined\\.$#"
+			message: '#^Variable \$PlayoffOK might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: plugins/reassign_playoffpools.php
 
 		-
-			message: "#^Variable \\$playoffpool might not be defined\\.$#"
+			message: '#^Variable \$playoffpool might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: plugins/reassign_playoffpools.php
 
 		-
-			message: "#^Variable \\$byeName might not be defined\\.$#"
+			message: '#^Variable \$byeName might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: poolstatus.php
 
 		-
-			message: "#^Variable \\$pool in empty\\(\\) always exists and is not falsy\\.$#"
+			message: '#^Variable \$pool in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: poolstatus.php
 
 		-
-			message: "#^Variable \\$seasoninfo might not be defined\\.$#"
+			message: '#^Variable \$seasoninfo might not be defined\.$#'
+			identifier: variable.undefined
 			count: 4
 			path: poolstatus.php
 
 		-
-			message: "#^Variable \\$view in empty\\(\\) always exists and is not falsy\\.$#"
+			message: '#^Variable \$team in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
+			count: 2
+			path: poolstatus.php
+
+		-
+			message: '#^Variable \$view in empty\(\) always exists and is not falsy\.$#'
+			identifier: empty.variable
 			count: 1
 			path: spiritkeeper/index.php
 
 		-
-			message: "#^Variable \\$playoffpools might not be defined\\.$#"
+			message: '#^Variable \$playoffpools might not be defined\.$#'
+			identifier: variable.undefined
 			count: 1
 			path: teams.php
 
 		-
-			message: "#^Variable \\$gameId in empty\\(\\) always exists and is always falsy\\.$#"
+			message: '#^Variable \$gameId in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.variable
 			count: 2
 			path: user/teamplayers.php
