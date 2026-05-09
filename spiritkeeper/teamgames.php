@@ -3,6 +3,12 @@
 include_once __DIR__ . '/auth.php';
 spiritkeeperRequireAuth(__FILE__, 'teamgames', 'either');
 
+// $token and $teamId are set up by spiritkeeper/index.php before this file
+// is included; spiritkeeperRequireAuth() above blocks direct access. With
+// 'either' auth mode $token may be empty when reached via full login.
+/** @var string $token */
+/** @var int $teamId */
+
 $pageHtml = "";
 $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $statusNote = "") {
     $contextTeamId = (int) $contextTeamId;

@@ -6,28 +6,28 @@ if (!$allowAnonResult) {
 $html = "";
 $errors = "";
 $saved = isset($_GET['saved']) ? 1 : 0;
-$game = isset($_GET['g']) ? $_GET['g'] : "";
+$game = isset($_GET['g']) ? intval($_GET['g']) : 0;
+$home = 0;
+$away = 0;
+$gameId = 0;
+$showConfirmation = false;
 
-if (!empty($_POST['save'])) {
-    $game = intval($_POST['game']);
-    $home = intval($_POST['home']);
-    $away = intval($_POST['away']);
+if (!empty($_POST['save']) || !empty($_POST['confirm'])) {
+    $game = intval($_POST['game'] ?? 0);
+    $home = intval($_POST['home'] ?? 0);
+    $away = intval($_POST['away'] ?? 0);
     $errors = CheckGameResult($game, $home, $away);
-    $gameId = (int) substr($game, 0, -1);
-}
-if (!empty($_POST['confirm'])) {
-    $game = intval($_POST['game']);
-    $home = intval($_POST['home']);
-    $away = intval($_POST['away']);
-    $errors = CheckGameResult($game, $home, $away);
-    if (empty($errors)) {
-        $gameId = (int) substr($game, 0, -1);
+    $gameId = (int) substr((string) $game, 0, -1);
+
+    if (!empty($_POST['confirm']) && empty($errors)) {
         $ok = GameSetResult($gameId, $home, $away, true, false);
         if ($ok) {
             header("location:?view=result&saved=1");
         } else {
             $errors .= "<p>" . _("Error: Could not save result.") . "</p>\n";
         }
+    } elseif (!empty($_POST['save']) && empty($errors)) {
+        $showConfirmation = true;
     }
 }
 
@@ -47,7 +47,7 @@ if ($saved) {
     $html .= "<p>" . _("Result saved!") . "</p>";
 }
 
-if (!empty($_POST['save']) && empty($errors)) {
+if ($showConfirmation) {
     $html .= "<p>";
     $html .= "<input class='input' type='hidden' id='game' name='game' value='$game'/> ";
     $html .= "<input class='input' type='hidden' id='home' name='home' value='$home'/> ";
@@ -89,7 +89,7 @@ if (!empty($_POST['save']) && empty($errors)) {
     $html .=  "</p>";
 } else {
     $html .= "<label for='game'>" . _("Game number from scoresheet") . ":</label>";
-    $html .= "<input type='number' id='game' name='game' size='6' maxlength='5' value='$game' onkeyup='validNumber(this);'/> ";
+    $html .= "<input type='number' id='game' name='game' size='6' maxlength='5' value='" . ($game ?: '') . "' onkeyup='validNumber(this);'/> ";
 
     $html .= "<label for='home'>" . _("Home team score") . ":</label>";
     $html .= "<input type='number' id='home' name='home' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";

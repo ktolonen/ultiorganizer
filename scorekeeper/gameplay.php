@@ -43,6 +43,7 @@ if (count($goals) <= 0) {
                 if ((intval($event['time']) >= $prevgoal) &&
                     (intval($event['time']) < intval($goal['time']))
                 ) {
+                    $gameevent = '';
                     if ($event['type'] == "timeout") {
                         $gameevent = _("timeout");
                     } elseif ($event['type'] == "spirit_timeout") {
