@@ -17,6 +17,7 @@ function PrivacyPlayerMatches($search)
 	if ($search === '') {
 		return array();
 	}
+	$search = addcslashes($search, "%_\\");
 
 	$query = sprintf(
 		"SELECT p.player_id, p.profile_id, p.firstname, p.lastname,
