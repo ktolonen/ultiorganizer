@@ -385,14 +385,27 @@ function TableSOTGURLs($season)
   $ret .= "<th class='center'>Division</th>";
   $ret .= "<th class='center'>Team</th>";
   $ret .= "<th class='center'>" . _("Spiritkeeper URL") . "</th>";
-  $ret .= "<tr>";
+  $ret .= "<th class='center'>" . _("Operations") . "</th>";
+  $ret .= "</tr>";
 
   foreach ($tokens as $token) {
     $fullURL = empty($token['token']) ? "" : $baseURL . "/spiritkeeper/?token=" . $token['token'];
     $ret .= "<tr>";
     $ret .= "<td>" . $token['series'] . "</td>";
     $ret .= "<td>" . $token['team'] . "</td>";
-    $ret .= "<td><a href='" . $fullURL . "'>" . $fullURL . "</a></td>";
+    $ret .= "<td>";
+    if (!empty($fullURL)) {
+      $ret .= "<a href='" . $fullURL . "'>" . $fullURL . "</a>";
+    }
+    $ret .= "</td>";
+    $ret .= "<td class='center'>";
+    if (!empty($token['token'])) {
+      $ret .= "<form method='POST' action='?view=admin/spirit&amp;season=" . urlencode($season) . "'>";
+      $ret .= "<input type='hidden' name='delete_sotg_token' value='" . (int)$token['team_id'] . "'/>";
+      $ret .= "<button class='button' type='submit'>" . _("Delete") . "</button>";
+      $ret .= "</form>";
+    }
+    $ret .= "</td>";
     $ret .= "</tr>";
   }
 
@@ -403,11 +416,28 @@ function TableSOTGURLs($season)
 
 function GenerateSOTGTokens($season, $filter = "onlymissing")
 {
+  if (!hasSpiritToolsRight($season)) {
+    return "<p>" . _("Insufficient rights.") . "</p>";
+  }
+
   $generated = SpiritGenerateSotgTokens($season, $filter);
   if ($generated < 0) {
     return "<p>Invalid filter.</p>";
   }
   return "<p>Total number of new tokens generated: " . $generated . "</p>";
+}
+
+function DeleteSOTGToken($season, $teamId)
+{
+  if (!hasSpiritToolsRight($season)) {
+    return "<p>" . _("Insufficient rights.") . "</p>";
+  }
+
+  $deleted = SpiritDeleteSotgToken($season, $teamId);
+  if ($deleted > 0) {
+    return "<p>" . _("Token deleted.") . "</p>";
+  }
+  return "<p>" . _("No token deleted.") . "</p>";
 }
 
 $season = GetString("season");
@@ -461,7 +491,11 @@ if (!empty($season) && hasSpiritToolsRight($season)) {
   $html .= "<button class='button' type='submit' name='generatesotgtokens' value='onlymissing'>" . _("Generate Tokens") . " (" . _("only missing") . ")" . "</button> ";
   $html .= "</form></p>";
 
-  if (isset($_POST['getsotgurls'])) {
+  if (isset($_POST['delete_sotg_token'])) {
+    $html .= DeleteSOTGToken($season, filter_input(INPUT_POST, 'delete_sotg_token', FILTER_VALIDATE_INT));
+  }
+
+  if (isset($_POST['getsotgurls']) || isset($_POST['delete_sotg_token'])) {
     $html .= TableSOTGURLs($season);
   }
 

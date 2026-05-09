@@ -29,6 +29,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 ## Working rules
 
 - Keep SQL and shared data access in `lib/`.
+- Put permission checks inside reusable `lib/` mutation helpers, not only in routed page handlers, so future callers cannot accidentally bypass access control.
 - Use the existing `?view=...` routing pattern for new pages.
 - Prefer small, focused changes and avoid large refactors unless explicitly requested.
 - When adding a schema change: add `upgradeXX()` in `sql/upgrade_db.php`, bump `DB_VERSION` in `lib/database.php`, and update `sql/ultiorganizer.sql` for fresh installs. See `docs/database-upgrades.md`.
@@ -36,6 +37,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Keep edits ASCII unless the file already uses Unicode.
 - If making UI changes, verify both desktop and mobile layouts.
 - After adding or changing user-facing text, run `docs/ai/review-user-language/SKILL.md` as a final review step on your changes.
+- Reuse existing translated strings when feasible instead of adding synonyms, capitalization-only variants, or comma/punctuation-only variants.
 - After adding or changing database-related functionality, run `docs/ai/review-database-access/SKILL.md` as a final review step on your changes.
 - After adding or changing a playoff bracket layout under `cust/*/layouts/`, or the placeholder contract in `lib/pool.functions.php`, run `docs/ai/review-playoff-layouts/SKILL.md` as a final review step on your changes.
 - If you add new player data or registered-user data, update the privacy tools and documentation so the new data is covered by the relevant privacy export and anonymization or deletion flow.

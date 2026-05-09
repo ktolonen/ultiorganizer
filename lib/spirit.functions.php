@@ -1169,7 +1169,7 @@ function SpiritTimeoutSummaryBySeason($season)
 function SpiritSotgUrlsBySeason($season)
 {
 	return DBQueryToArray(sprintf(
-		"SELECT s.name AS series, t.name AS team, t.sotg_token AS token FROM uo_team AS t
+		"SELECT t.team_id, s.name AS series, t.name AS team, t.sotg_token AS token FROM uo_team AS t
 		JOIN uo_series AS s on t.series=s.series_id
 		WHERE s.season='%s'
 		ORDER BY s.name, t.name",
@@ -1177,21 +1177,59 @@ function SpiritSotgUrlsBySeason($season)
 	));
 }
 
+function SpiritDeleteSotgToken($season, $teamId)
+{
+	if (!hasSpiritToolsRight($season)) {
+		die('Insufficient rights');
+	}
+
+	$teamId = (int)$teamId;
+	if ($teamId <= 0) {
+		return 0;
+	}
+
+	DBQuery(sprintf(
+		"UPDATE uo_team AS t
+		JOIN uo_series AS s on t.series=s.series_id
+		SET t.sotg_token=NULL
+		WHERE s.season='%s' AND t.team_id=%d AND t.sotg_token IS NOT NULL",
+		DBEscapeString($season),
+		$teamId
+	));
+	return (int)DBQueryToValue("SELECT ROW_COUNT()", true);
+}
+
 function SpiritGenerateSotgTokens($season, $filter = "onlymissing")
 {
+	if (!hasSpiritToolsRight($season)) {
+		die('Insufficient rights');
+	}
+
 	if ($filter !== "onlymissing") {
 		return -1;
 	}
 
-	$query = sprintf(
-		"UPDATE uo_team AS t
+	$teams = DBQueryToArray(sprintf(
+		"SELECT t.team_id FROM uo_team AS t
 		JOIN uo_series AS s on t.series=s.series_id
-		SET t.sotg_token=MD5(t.team_id+RAND())
 		WHERE s.season='%s' AND t.sotg_token IS NULL",
 		DBEscapeString($season)
-	);
-	DBQuery($query);
-	return (int)DBQueryToValue("SELECT ROW_COUNT()", true);
+	));
+
+	$generated = 0;
+	foreach ($teams as $team) {
+		$token = bin2hex(random_bytes(16));
+		DBQuery(sprintf(
+			"UPDATE uo_team
+			SET sotg_token='%s'
+			WHERE team_id=%d AND sotg_token IS NULL",
+			DBEscapeString($token),
+			(int)$team['team_id']
+		));
+		$generated += (int)DBQueryToValue("SELECT ROW_COUNT()", true);
+	}
+
+	return $generated;
 }
 
 function SpiritTimeoutGameRowsBySeason($season)

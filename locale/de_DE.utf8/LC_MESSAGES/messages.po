@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-09 10:40+0300\n"
+"POT-Creation-Date: 2026-05-09 13:29+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -103,7 +103,7 @@ msgstr "2. Halbzeit"
 msgid "3. Mark players who will play with an X in the Play column."
 msgstr "3. Markiere die spielenden Spieler mit einem X in der Spalte Play."
 
-#: admin/serverconf.php:356
+#: admin/serverconf.php:367
 msgid "3rd party API settings"
 msgstr "Einstellungen für fremde APIs"
 
@@ -123,7 +123,7 @@ msgstr ""
 "Sie duerfen <u>nicht</u> spielen, bis die Probleme geklaert sind (= "
 "Zahlungsbeleg oder Vermerk des Veranstalters vorgelegt)."
 
-#: admin/spirit.php:561
+#: admin/spirit.php:595
 msgid "<b>more than once</b>, in this category"
 msgstr "<b>mehr als einmal</b> in dieser Kategorie"
 
@@ -408,7 +408,7 @@ msgstr "Admin-Hilfe"
 msgid "Administration"
 msgstr "Administration"
 
-#: admin/select_userrole.php:24 admin/serverconf.php:347 user/userinfo.php:395
+#: admin/select_userrole.php:24 admin/serverconf.php:358 user/userinfo.php:395
 #: user/userinfo.php:498
 msgid "Administrator"
 msgstr "Administrator"
@@ -636,7 +636,7 @@ msgstr ""
 "Zur Halbzeit trage die Spielzeit ein, zu der sie eingetreten ist, sowie den "
 "aktuellen Spielstand. Die Spielzeit wird in der Halbzeit nicht angehalten."
 
-#: admin/spirit.php:238 admin/spirit.php:565 admin/spirit.php:582
+#: admin/spirit.php:238 admin/spirit.php:599 admin/spirit.php:616
 msgid "Attitude"
 msgstr "Auftreten"
 
@@ -1087,7 +1087,7 @@ msgstr "Farbe"
 msgid "Column information"
 msgstr "Spalteninfo"
 
-#: admin/spirit.php:239 admin/spirit.php:566 admin/spirit.php:585
+#: admin/spirit.php:239 admin/spirit.php:600 admin/spirit.php:619
 msgid "Comm"
 msgstr "Komm."
 
@@ -1331,11 +1331,11 @@ msgstr "Aktuelles Bild"
 msgid "Current score"
 msgstr "Aktueller Spielstand"
 
-#: admin/serverconf.php:201
+#: admin/serverconf.php:212
 msgid "Customization"
 msgstr "Anpassung"
 
-#: admin/serverconf.php:202
+#: admin/serverconf.php:213
 msgid "Customization version"
 msgstr "Anpassungsversion"
 
@@ -1371,7 +1371,7 @@ msgstr "Datenbank-Vereinheitlichungen"
 msgid "Database size"
 msgstr "Datenbankgröße"
 
-#: admin/serverconf.php:200
+#: admin/serverconf.php:211
 msgid "Database version"
 msgstr "Datenbankversion"
 
@@ -1391,11 +1391,11 @@ msgstr "Geburtstag"
 msgid "Day"
 msgstr "Tag"
 
-#: admin/serverconf.php:311
+#: admin/serverconf.php:322
 msgid "Default Locale"
 msgstr "Standardsprache"
 
-#: admin/serverconf.php:295
+#: admin/serverconf.php:306
 msgid "Default Timezone"
 msgstr "Zeitzonen-Voreinstellung"
 
@@ -1447,9 +1447,9 @@ msgid "Defensive plays"
 msgstr "Defensivaktionen"
 
 #: admin/poolmoves.php:225 admin/poolmoves.php:294 admin/seasonpoints.php:203
-#: admin/users.php:74 admin/users.php:76 mobile/deletescore.php:21
-#: mobile/deletescore.php:45 scorekeeper/deletescore.php:42
-#: user/teamplayers.php:172
+#: admin/spirit.php:405 admin/users.php:74 admin/users.php:76
+#: mobile/deletescore.php:21 mobile/deletescore.php:45
+#: scorekeeper/deletescore.php:42 user/teamplayers.php:172
 msgid "Delete"
 msgstr "Löschen"
 
@@ -1537,7 +1537,7 @@ msgstr ""
 "Detaillierte Einstellungen zur Spirit-Sichtbarkeit, zu Kommentaren und zur "
 "Sperrung werden in der Spirit-Admin-Ansicht verwaltet."
 
-#: admin/spirit.php:446
+#: admin/spirit.php:476
 msgid "Direct Link"
 msgstr "Direktlink"
 
@@ -1553,7 +1553,7 @@ msgstr ""
 "Direkter Datenbankzugriff ist deaktiviert. Um ihn zu aktivieren, setze "
 "ENABLE_ADMIN_DB_ACCESS in der Datei config.inc.php auf 'enabled'."
 
-#: admin/serverconf.php:273
+#: admin/serverconf.php:284
 msgid "Disable visitor logging"
 msgstr "Besucherprotokollierung deaktivieren"
 
@@ -1567,7 +1567,7 @@ msgstr "Besucherprotokollierung deaktivieren"
 #: admin/editgame.php:224 admin/privacyplayer.php:86 admin/seasonpoints.php:180
 #: admin/seasonstats.php:32 admin/spirit.php:43 admin/spirit.php:102
 #: admin/spirit.php:151 admin/spirit.php:233 admin/spirit.php:281
-#: admin/spirit.php:336 admin/spirit.php:509 admin/stats.php:99
+#: admin/spirit.php:336 admin/spirit.php:543 admin/stats.php:99
 #: admin/tdtools.php:23 admin/tdtools.php:59 cust/bula/pdfscoresheet.php:71
 #: cust/default/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:69
 #: cust/slkl/pdfscoresheet.php:68 cust/wfdf/pdfscoresheet.php:271
@@ -1695,8 +1695,8 @@ msgid "Edit"
 msgstr "Ändern"
 
 #: admin/spirit.php:61 admin/spirit.php:120 admin/spirit.php:169
-#: admin/spirit.php:301 admin/spirit.php:451 admin/spirit.php:492
-#: admin/spirit.php:513
+#: admin/spirit.php:301 admin/spirit.php:481 admin/spirit.php:526
+#: admin/spirit.php:547
 msgid "Edit Spirit"
 msgstr "Spirit bearbeiten"
 
@@ -1838,7 +1838,7 @@ msgstr ""
 "Gib die Spiel-Ref.-Nr. auf dem Papier-Spielbericht fuer einen Direktlink "
 "ein: "
 
-#: admin/spirit.php:448
+#: admin/spirit.php:478
 msgid "Enter the game ref. # on the paper spirit sheet for a direct link: "
 msgstr ""
 "Gib die Spiel-Ref.-Nr. auf dem Spirit-Papierbogen fuer einen Direktlink ein: "
@@ -2027,7 +2027,7 @@ msgstr "Runde konnte nicht geloescht werden."
 msgid "Failed to save points."
 msgstr "Punkte konnten nicht gespeichert werden."
 
-#: admin/spirit.php:237 admin/spirit.php:564 admin/spirit.php:579
+#: admin/spirit.php:237 admin/spirit.php:598 admin/spirit.php:613
 msgid "Fair"
 msgstr "Fairness"
 
@@ -2254,7 +2254,7 @@ msgstr "Kampflos/Freilos-Punkte"
 msgid "Forum"
 msgstr "Forum"
 
-#: admin/spirit.php:236 admin/spirit.php:563 admin/spirit.php:576
+#: admin/spirit.php:236 admin/spirit.php:597 admin/spirit.php:610
 msgid "Fouls"
 msgstr "Fouls"
 
@@ -2615,7 +2615,7 @@ msgstr "Geschlecht"
 msgid "Gender Ratio on 1st point"
 msgstr "Geschlechterverhaeltnis beim 1. Punkt"
 
-#: admin/spirit.php:461
+#: admin/spirit.php:491
 msgid "Generate Tokens"
 msgstr "Tokens erzeugen"
 
@@ -2746,7 +2746,7 @@ msgstr "Erzielte Punkte"
 msgid "Gold"
 msgstr "Gold"
 
-#: admin/serverconf.php:226
+#: admin/serverconf.php:237
 msgid "Google Maps key"
 msgstr "Google Maps-Schlüssel"
 
@@ -2861,7 +2861,7 @@ msgstr "Zeit im Spielbericht ausblenden"
 msgid "Higher rank is home team"
 msgstr "Hoeherer Rang ist Heimteam"
 
-#: admin/spirit.php:599 admin/spirit.php:625
+#: admin/spirit.php:633 admin/spirit.php:659
 msgid "Higher than"
 msgstr "Hoeher als"
 
@@ -2916,7 +2916,7 @@ msgstr "Zuordnung Heimteam"
 msgid "Home team has rights to edit game scoresheet"
 msgstr "Das Heimteam hat das Recht, den Spielbericht zu bearbeiten"
 
-#: admin/serverconf.php:284
+#: admin/serverconf.php:295
 msgid "Home team is game responsible"
 msgstr "Heimteam ist für Spieleingabe verantwortlich"
 
@@ -3071,7 +3071,7 @@ msgstr ""
 msgid "Installation"
 msgstr "Installation"
 
-#: admin/serverconf.php:205
+#: admin/serverconf.php:216
 msgid "Installation configuration"
 msgstr "Installationskonfiguration"
 
@@ -3079,21 +3079,21 @@ msgstr "Installationskonfiguration"
 msgid "Insufficient rights to edit comment."
 msgstr "Unzureichende Rechte zum Bearbeiten des Kommentars."
 
-#: admin/apitokens.php:116
+#: admin/apitokens.php:116 admin/spirit.php:420 admin/spirit.php:433
 msgid "Insufficient rights."
 msgstr "Unzureichende Rechte."
 
 #: admin/accreditation.php:24 admin/addlocations.php:18 admin/locations.php:13
 #: admin/reservations.php:25 admin/seasonadmin.php:16 admin/seasongames.php:24
 #: admin/seasonpools.php:16 admin/seasonseries.php:15
-#: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:657
+#: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:691
 #: admin/spiritsettings.php:11 admin/tdtools.php:236
 #: spiritkeeper/editgame.php:23 spiritkeeper/editgame.php:42
 #: user/addspirit.php:75 user/addspirit.php:90
 msgid "Insufficient user rights"
 msgstr "Benutzerrechte reichen nicht aus."
 
-#: admin/serverconf.php:362
+#: admin/serverconf.php:373
 msgid "Internal settings"
 msgstr "Interne Einstellungen"
 
@@ -3105,7 +3105,7 @@ msgstr "International"
 msgid "Invalid email address"
 msgstr "Ungültige Email-Adresse"
 
-#: admin/spirit.php:438 admin/tdtools.php:155
+#: admin/spirit.php:468 admin/tdtools.php:155
 msgid "Invalid game number."
 msgstr "Ungueltige Spielnummer."
 
@@ -3143,12 +3143,12 @@ msgstr "Ungueltiger Bereichstyp."
 msgid "Invalid team."
 msgstr "Ungültiges Team."
 
-#: admin/spirit.php:632
+#: admin/spirit.php:666
 msgid "Invalid threshold! Please use a number between 0.1 and 3.9."
 msgstr ""
 "Ungueltiger Schwellenwert! Bitte verwende eine Zahl zwischen 0.1 und 3.9."
 
-#: admin/spirit.php:606
+#: admin/spirit.php:640
 msgid "Invalid threshold! Please use a number between 1 and 20."
 msgstr "Ungueltiger Schwellenwert! Bitte verwende eine Zahl zwischen 1 und 20."
 
@@ -3404,7 +3404,7 @@ msgstr "Verlierer macht weiter in:"
 msgid "Losses"
 msgstr "Niederlagen"
 
-#: admin/spirit.php:597 admin/spirit.php:623
+#: admin/spirit.php:631 admin/spirit.php:657
 msgid "Lower than"
 msgstr "Niedriger als"
 
@@ -3432,7 +3432,7 @@ msgstr "Neue Transfer-Regel"
 msgid "Male"
 msgstr "Männlich"
 
-#: admin/spirit.php:431
+#: admin/spirit.php:461
 msgid ""
 "Manage event-level spirit visibility, comments, submission locking, and "
 "scoring mode in a dedicated settings view."
@@ -3483,11 +3483,11 @@ msgstr "Mitgliedschaft"
 msgid "Membership database (a file with .csv suffix)"
 msgstr "Mitgliederdatenbank (eine Datei mit der Endung .csv)"
 
-#: admin/addseasonlinks.php:78 admin/serverconf.php:345
+#: admin/addseasonlinks.php:78 admin/serverconf.php:356
 msgid "Menu link"
 msgstr "Menü-Link"
 
-#: admin/addseasonlinks.php:79 admin/serverconf.php:346
+#: admin/addseasonlinks.php:79 admin/serverconf.php:357
 msgid "Menu mail"
 msgstr "Menü-E-Mail"
 
@@ -3621,7 +3621,7 @@ msgstr "HINWEIS"
 #: admin/seasonpoints.php:193 admin/seasonpools.php:112 admin/seasons.php:91
 #: admin/seasonseries.php:75 admin/seasonstats.php:20 admin/seasonstats.php:34
 #: admin/seasonteams.php:174 admin/serieformats.php:28
-#: admin/seriesseeding.php:45 admin/serieteams.php:143 admin/serverconf.php:330
+#: admin/seriesseeding.php:45 admin/serieteams.php:143 admin/serverconf.php:341
 #: cust/bula/pdfscoresheet.php:139 cust/bula/pdfscoresheet.php:149
 #: cust/bula/pdfscoresheet.php:259 cust/default/pdfscoresheet.php:176
 #: cust/default/pdfscoresheet.php:186 cust/default/pdfscoresheet.php:284
@@ -3745,7 +3745,7 @@ msgstr "Keine aktuellen Turniere verfügbar."
 msgid "No defence data available for the selected filter."
 msgstr "Keine Defense-Daten fuer den ausgewaehlten Filter verfuegbar."
 
-#: lib/spirit.functions.php:761
+#: lib/spirit.functions.php:815
 msgid "No division"
 msgstr "Keine Division"
 
@@ -3816,7 +3816,7 @@ msgstr "Kein Name"
 msgid "No orphan profiles found"
 msgstr "Keine verwaisten Profile gefunden"
 
-#: admin/spirit.php:498 admin/spirit.php:519
+#: admin/spirit.php:532 admin/spirit.php:553
 msgid "No played games found missing Spiritkeeper submissions!"
 msgstr ""
 "Keine gespielten Spiele mit fehlenden Spiritkeeper-Einreichungen gefunden!"
@@ -3901,6 +3901,11 @@ msgstr ""
 msgid "No teams without a pool"
 msgstr "Kein Team ohne Gruppe"
 
+#: admin/spirit.php:440
+#, fuzzy
+msgid "No token deleted."
+msgstr "Keine Tokens erstellt."
+
 #: admin/apitokens.php:157
 msgid "No tokens created."
 msgstr "Keine Tokens erstellt."
@@ -3982,11 +3987,11 @@ msgstr "Spiel läuft"
 msgid "Only user"
 msgstr "Nur Benutzer"
 
-#: admin/addseasons.php:361 admin/spirit.php:432
+#: admin/addseasons.php:361 admin/spirit.php:462
 msgid "Open Spirit Settings"
 msgstr "Spirit-Einstellungen oeffnen"
 
-#: admin/spirit.php:424
+#: admin/spirit.php:454
 msgid "Open event settings"
 msgstr "Ereigniseinstellungen oeffnen"
 
@@ -3995,7 +4000,7 @@ msgid "Open for enrollment"
 msgstr "Anmeldung offen"
 
 #: admin/apitokens.php:169 admin/locations.php:55 admin/seasonpools.php:118
-#: admin/seasons.php:99 admin/seasonseries.php:76
+#: admin/seasons.php:99 admin/seasonseries.php:76 admin/spirit.php:388
 msgid "Operations"
 msgstr "Operationen"
 
@@ -4032,7 +4037,7 @@ msgstr "Optional, wenn E-Mail deaktiviert ist."
 
 #: admin/addseasonlinks.php:63 admin/addseasonpools.php:240
 #: admin/addseasonpools.php:278 admin/addseasonseries.php:102
-#: admin/seasonpools.php:113 admin/serverconf.php:330
+#: admin/seasonpools.php:113 admin/serverconf.php:341
 msgid "Order"
 msgstr "Reihenfolge"
 
@@ -4078,7 +4083,7 @@ msgstr "Seitenaufrufe"
 msgid "Page loads per page"
 msgstr "Seitenaufrufe pro Seite"
 
-#: admin/serverconf.php:218
+#: admin/serverconf.php:229
 msgid "Page title"
 msgstr "Seitentitel"
 
@@ -4396,7 +4401,7 @@ msgstr ""
 
 #: teams.php:178 teams.php:180 admin/spirit.php:44 admin/spirit.php:103
 #: admin/spirit.php:152 admin/spirit.php:282 admin/spirit.php:337
-#: admin/spirit.php:488 admin/tdtools.php:91 cust/bula/pdfscoresheet.php:71
+#: admin/spirit.php:522 admin/tdtools.php:91 cust/bula/pdfscoresheet.php:71
 #: cust/default/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:69
 #: cust/slkl/pdfscoresheet.php:68 cust/wfdf/pdfscoresheet.php:1598
 #: cust/windmill/pdfscoresheet.php:71
@@ -4469,7 +4474,7 @@ msgstr "Positive Einstellung und Selbstkontrolle (unsere)"
 msgid "Positive Attitude and Self-Control (theirs)"
 msgstr "Positive Einstellung und Selbstkontrolle (ihre)"
 
-#: admin/spirit.php:647
+#: admin/spirit.php:681
 msgid "Press the button to search for spirit comments"
 msgstr "Druecke die Schaltflaeche, um nach Spirit-Kommentaren zu suchen"
 
@@ -4587,7 +4592,7 @@ msgstr "Statistik neu berechn."
 msgid "Read-only"
 msgstr "Schreibgeschuetzt"
 
-#: admin/serverconf.php:251
+#: admin/serverconf.php:262
 msgid "Read-only Server"
 msgstr "Schreibgeschuetzter Server"
 
@@ -4925,7 +4930,7 @@ msgid "Rule templates"
 msgstr "Regel-Vorlagen"
 
 #: admin/addseasonpools.php:413 admin/seasonseries.php:75 admin/spirit.php:235
-#: admin/spirit.php:562 admin/spirit.php:573
+#: admin/spirit.php:596 admin/spirit.php:607
 msgid "Rules"
 msgstr "Regeln"
 
@@ -4973,7 +4978,7 @@ msgstr "Sa"
 #: admin/seasonpools.php:306 admin/seasonseries.php:179
 #: admin/seasonstandings.php:537 admin/seasonteams.php:267
 #: admin/select_teams.php:152 admin/seriesseeding.php:73
-#: admin/serieteams.php:177 admin/serverconf.php:366 admin/translations.php:135
+#: admin/serieteams.php:177 admin/serverconf.php:377 admin/translations.php:135
 #: mobile/addcomment.php:41 mobile/addfirstoffence.php:46
 #: mobile/addhalftime.php:35 mobile/addofficial.php:26
 #: mobile/addplayerlists.php:129 mobile/addspirittimeouts.php:84
@@ -5222,23 +5227,23 @@ msgstr "Scorendes Team"
 msgid "Search"
 msgstr "Suchen"
 
-#: admin/spirit.php:538
+#: admin/spirit.php:572
 msgid "Search 0's"
 msgstr "Nach 0ern suchen"
 
-#: admin/spirit.php:539
+#: admin/spirit.php:573
 msgid "Search 4's"
 msgstr "Nach 4ern suchen"
 
-#: admin/spirit.php:478
+#: admin/spirit.php:512
 msgid "Search Missing by Division"
 msgstr "Fehlende Eintraege nach Division suchen"
 
-#: admin/spirit.php:477
+#: admin/spirit.php:511
 msgid "Search Missing by Pool"
 msgstr "Fehlende Eintraege nach Pool suchen"
 
-#: admin/spirit.php:555
+#: admin/spirit.php:589
 msgid "Search for teams that received a"
 msgstr "Suche nach Teams, die eine/n"
 
@@ -5465,7 +5470,7 @@ msgstr "Spieluhr setzen auf"
 msgid "Set rosters"
 msgstr "Kader festlegen"
 
-#: menufunctions.php:486 admin/spirit.php:430
+#: menufunctions.php:486 admin/spirit.php:460
 msgid "Settings"
 msgstr "Einstellungen"
 
@@ -5478,11 +5483,11 @@ msgstr "Trikotnummern"
 msgid "Show"
 msgstr "Anzeigen"
 
-#: admin/spirit.php:649
+#: admin/spirit.php:683
 msgid "Show Comments"
 msgstr "Kommentare anzeigen"
 
-#: admin/serverconf.php:240
+#: admin/serverconf.php:251
 msgid "Show Defence statistics"
 msgstr "Defensestatistik anzeigen"
 
@@ -5490,7 +5495,7 @@ msgstr "Defensestatistik anzeigen"
 msgid "Show Timeout Stats"
 msgstr "Timeout-Statistiken anzeigen"
 
-#: admin/spirit.php:460
+#: admin/spirit.php:490
 msgid "Show URLs for all teams"
 msgstr "URLs fuer alle Teams anzeigen"
 
@@ -5530,7 +5535,7 @@ msgstr "Im öfftl. Profil anzeigen"
 msgid "Show on club list"
 msgstr "In Vereinsliste anzeigen"
 
-#: admin/serverconf.php:190
+#: admin/serverconf.php:201
 msgid "Show phpinfo()"
 msgstr "phpinfo() anzeigen"
 
@@ -5554,7 +5559,7 @@ msgstr "Pool zeigen"
 msgid "Show pools"
 msgstr "Zeige Gruppen"
 
-#: admin/spirit.php:528
+#: admin/spirit.php:562
 msgid "Show spirit stoppages"
 msgstr "Spirit-Unterbrechungen anzeigen"
 
@@ -5562,7 +5567,7 @@ msgstr "Spirit-Unterbrechungen anzeigen"
 msgid "Show today only"
 msgstr "Nur heute anzeigen"
 
-#: admin/spirit.php:570
+#: admin/spirit.php:604
 msgid "Showing results for "
 msgstr "Ergebnisse werden angezeigt fuer "
 
@@ -5582,7 +5587,7 @@ msgstr ""
 msgid "Silver"
 msgstr "Silber"
 
-#: admin/addseasons.php:437 admin/serverconf.php:262
+#: admin/addseasons.php:437 admin/serverconf.php:273
 msgid "Soft maintenance mode"
 msgstr "Weicher Wartungsmodus"
 
@@ -5599,7 +5604,7 @@ msgid "Special playoff template"
 msgstr "Spezielle Playout-Baum-Vorlage"
 
 #: menufunctions.php:753 menufunctions.php:794 spiritstatus.php:12 teams.php:47
-#: admin/spirit.php:415 cust/wfdf/pdfscoresheet.php:921 user/addspirit.php:13
+#: admin/spirit.php:445 cust/wfdf/pdfscoresheet.php:921 user/addspirit.php:13
 msgid "Spirit"
 msgstr "Spirit"
 
@@ -5725,7 +5730,7 @@ msgstr "Spirit-Bewertung eingereicht."
 msgid "Spirit scores"
 msgstr "Spirit-Punktzahlen"
 
-#: spiritstatus.php:46 lib/spirit.functions.php:1178
+#: spiritstatus.php:46 lib/spirit.functions.php:1270
 msgid "Spirit scores are not visible."
 msgstr "Spirit-Punktzahlen sind nicht sichtbar."
 
@@ -5741,7 +5746,7 @@ msgstr "Erhaltene Spirit-Punktzahlen:"
 msgid "Spirit scores visible"
 msgstr "Spirit-Punktzahlen sichtbar"
 
-#: admin/spirit.php:423
+#: admin/spirit.php:453
 msgid "Spirit scoring is disabled for this event."
 msgstr "Die Spirit-Bewertung ist fuer dieses Ereignis deaktiviert."
 
@@ -5784,7 +5789,7 @@ msgstr "Spirit-Unterbrechungen (Min:Sek)"
 msgid "Spirit stoppages (time)"
 msgstr "Spirit-Unterbrechungen (Zeit)"
 
-#: admin/spirit.php:526
+#: admin/spirit.php:560
 msgid "Spirit stoppages recorded for this event."
 msgstr "Spirit-Unterbrechungen werden fuer dieses Ereignis erfasst."
 
@@ -5799,7 +5804,7 @@ msgstr "Spirit-Einreichung ist für dieses Spiel nicht verfügbar."
 msgid "Spiritkeeper"
 msgstr "Spiritkeeper"
 
-#: admin/spirit.php:455
+#: admin/spirit.php:485
 msgid "Spiritkeeper Tools"
 msgstr "Spiritkeeper-Werkzeuge"
 
@@ -5900,7 +5905,7 @@ msgstr "Schweizer System"
 msgid "Swissdraw pool"
 msgstr "Pool vom Typ Swiss Draw"
 
-#: admin/serverconf.php:233
+#: admin/serverconf.php:244
 msgid "System email sender address"
 msgstr "System Email Sender Adresse"
 
@@ -6202,7 +6207,7 @@ msgstr "Do"
 msgid "Time"
 msgstr "Zeit"
 
-#: lib/spirit.functions.php:578
+#: lib/spirit.functions.php:632
 msgid "Time TBD"
 msgstr "Zeit noch offen"
 
@@ -6307,7 +6312,7 @@ msgstr "Nach Pos."
 msgid "To position"
 msgstr "Nach Position"
 
-#: admin/spirit.php:475
+#: admin/spirit.php:509
 msgid ""
 "To search for played games that are <b>missing Spiritkeeper submissions</b>, "
 "press one of these buttons: "
@@ -6323,7 +6328,7 @@ msgstr ""
 "Um nach Spielern mit derselben Trikotnummer im selben Team oder ohne "
 "zugewiesene Trikotnummer zu suchen, druecke die passende Schaltflaeche: "
 
-#: admin/spirit.php:536
+#: admin/spirit.php:570
 msgid ""
 "To search for teams that <b>received a '0' or '4'</b> in at least one "
 "category, use these buttons: "
@@ -6331,7 +6336,7 @@ msgstr ""
 "Um nach Teams zu suchen, die in mindestens einer Kategorie <b>eine '0' oder "
 "'4' erhalten haben</b>, verwende diese Schaltflaechen: "
 
-#: admin/spirit.php:621
+#: admin/spirit.php:655
 msgid ""
 "To search for teams that have a low/high <b>average score</b> in any "
 "category enter a threshold and press the appropriate button:"
@@ -6340,7 +6345,7 @@ msgstr ""
 "hohe <b>Durchschnittspunktzahl</b> haben, gib einen Schwellenwert ein und "
 "druecke die passende Schaltflaeche:"
 
-#: admin/spirit.php:595
+#: admin/spirit.php:629
 msgid ""
 "To search for teams that received high/low <b>total scores</b> enter a "
 "threshold and press the appropriate button:"
@@ -6355,6 +6360,11 @@ msgstr "Heute"
 #: admin/apitokens.php:132
 msgid "Token created."
 msgstr "Token erstellt."
+
+#: admin/spirit.php:438
+#, fuzzy
+msgid "Token deleted."
+msgstr "Runde geloescht."
 
 #: games.php:248
 msgid "Tomorrow"
@@ -6455,7 +6465,7 @@ msgstr "Twitter"
 #: admin/addseasonseries.php:105 admin/eventviewer.php:137
 #: admin/seasonadmin.php:34 admin/seasonpools.php:117 admin/seasons.php:92
 #: admin/seasonseries.php:75 admin/seasonstats.php:20 admin/seasonstats.php:34
-#: admin/serverconf.php:330 user/addmedialink.php:192 user/clubprofile.php:208
+#: admin/serverconf.php:341 user/addmedialink.php:192 user/clubprofile.php:208
 #: user/playerprofile.php:348 user/teamprofile.php:152
 msgid "Type"
 msgstr "Typ"
@@ -6468,17 +6478,17 @@ msgstr "Typ darf nicht leer sein"
 msgid "Type of connection in use"
 msgstr "Verbindungsart"
 
-#: admin/serverconf.php:328
+#: admin/serverconf.php:339
 msgid "UI settings"
 msgstr "UI-Einstellungen"
 
-#: admin/addseasonlinks.php:63 admin/serverconf.php:330
+#: admin/addseasonlinks.php:63 admin/serverconf.php:341
 #: user/addmedialink.php:173 user/addmedialink.php:193 user/clubprofile.php:209
 #: user/playerprofile.php:349 user/teamprofile.php:153
 msgid "URL"
 msgstr "URL"
 
-#: admin/spirit.php:458
+#: admin/spirit.php:488
 msgid "URLs for teams (for entering spirit scores in Spiritkeeper)"
 msgstr "URLs fuer Teams (zum Eintragen von Spirit-Punktzahlen im Spiritkeeper)"
 
@@ -6517,7 +6527,7 @@ msgstr "Ultiorganizer Punktzaehler"
 msgid "Ultiorganizer links"
 msgstr "Ultiorganizer links"
 
-#: admin/serverconf.php:199
+#: admin/serverconf.php:210
 msgid "Ultiorganizer version"
 msgstr "Ultiorganizer-Version"
 
@@ -6676,7 +6686,7 @@ msgstr "Gültig"
 msgid "Value"
 msgstr "Wert"
 
-#: admin/serverconf.php:197
+#: admin/serverconf.php:208
 msgid "Version information"
 msgstr "Versionsinformationen"
 
@@ -6876,7 +6886,7 @@ msgstr "World Flying Disc Federation"
 #: admin/seasonmoves.php:164 admin/seasonpools.php:264 admin/seasons.php:150
 #: admin/seasonseries.php:129 admin/seasonstandings.php:392
 #: admin/seasonstandings.php:448 admin/seasonteams.php:239
-#: admin/serieformats.php:47 admin/serverconf.php:339
+#: admin/serieformats.php:47 admin/serverconf.php:350
 #: admin/translations.php:121 lib/search.functions.php:756
 #: plugins/simulate_games.php:261
 msgid "X"
@@ -7204,7 +7214,7 @@ msgstr "läuft"
 msgid "only informational"
 msgstr "nur zur Information"
 
-#: admin/spirit.php:461
+#: admin/spirit.php:491
 msgid "only missing"
 msgstr "nur fehlende"
 
@@ -7380,6 +7390,14 @@ msgstr "mit"
 #: admin/seasons.php:132 admin/seasons.php:135
 msgid "yes"
 msgstr "ja"
+
+#, fuzzy
+#~ msgid "Actions"
+#~ msgstr "Ort"
+
+#, fuzzy
+#~ msgid "Delete token"
+#~ msgstr "Kommentar loeschen"
 
 #~ msgid "Ultiorganizer major version"
 #~ msgstr "Ultiorganizer-Hauptversion"
