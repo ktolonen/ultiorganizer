@@ -468,6 +468,26 @@ function api_handle_events()
 }
 
 /**
+ * Handle version endpoint.
+ */
+function api_handle_version()
+{
+  api_require_method('GET');
+
+  api_send_json(200, array(
+    'status' => 'ok',
+    'data' => array(
+      'ultiorganizer' => GetUltiorganizerVersionInfo(),
+      'api' => array(
+        'version' => 'v1'
+      ),
+      'database' => GetDatabaseVersionInfo(),
+      'customization' => GetCustomizationVersionInfo()
+    )
+  ));
+}
+
+/**
  * Handle divisions endpoint.
  *
  * @param array $tokenRow
@@ -1198,6 +1218,9 @@ function api_v1_route($parts)
       break;
     case 'gameplay':
       api_handle_gameplay($tokenRow);
+      break;
+    case 'version':
+      api_handle_version();
       break;
     default:
       api_not_found();

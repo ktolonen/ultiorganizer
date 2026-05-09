@@ -2,6 +2,7 @@
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'lib/url.functions.php';
+include_once $include_prefix . 'lib/version.functions.php';
 
 $LAYOUT_ID = SERVERCONFIGURATION;
 $title = _("Server configuration");
@@ -134,6 +135,64 @@ if (!empty($_POST['save'])) {
 
 $settings = GetServerConf();
 
+function ServerConfInfoRow($label, $value)
+{
+	return "<tr><td class='infocell'>" . utf8entities($label) . ":</td><td>" . utf8entities($value) . "</td></tr>\n";
+}
+
+function ServerConfConstantValue($name)
+{
+	if (!defined($name)) {
+		$defaults = array(
+			'ENABLE_ADMIN_DB_ACCESS' => 'disabled',
+			'DISABLE_SELF_REGISTRATION' => false,
+			'NO_EMAIL' => false,
+			'ALLOW_INSTALL' => false,
+			'ANONYMOUS_RESULT_INPUT' => false,
+			'API_RATE_LIMIT' => 120,
+			'API_RATE_WINDOW' => 60
+		);
+
+		if (!array_key_exists($name, $defaults)) {
+			return "";
+		}
+
+		$value = $defaults[$name];
+	} else {
+		$value = constant($name);
+	}
+
+	if (is_bool($value)) {
+		return $value ? "true" : "false";
+	}
+
+	return (string)$value;
+}
+
+function ServerConfConfigInfoRows()
+{
+	$constants = array(
+		'DB_HOST',
+		'DB_DATABASE',
+		'BASEURL',
+		'CUSTOMIZATIONS',
+		'ENABLE_ADMIN_DB_ACCESS',
+		'DISABLE_SELF_REGISTRATION',
+		'NO_EMAIL',
+		'ALLOW_INSTALL',
+		'ANONYMOUS_RESULT_INPUT',
+		'API_RATE_LIMIT',
+		'API_RATE_WINDOW'
+	);
+
+	$html = "";
+	foreach ($constants as $constant) {
+		$html .= ServerConfInfoRow($constant, ServerConfConstantValue($constant));
+	}
+
+	return $html;
+}
+
 //common page
 pageTop($title);
 leftMenu($LAYOUT_ID);
@@ -141,6 +200,23 @@ contentStart();
 if (isSuperAdmin()) {
 	$html .= "<p><a href='?view=admin/test'>" . _("Show phpinfo()") . "</a></p>\n";
 }
+
+$ultiorganizerVersion = GetUltiorganizerVersionInfo();
+$databaseVersion = GetDatabaseVersionInfo();
+$customizationVersion = GetCustomizationVersionInfo();
+
+$html .= "<h1>" . _("Version information") . "</h1>";
+$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
+$html .= ServerConfInfoRow(_("Ultiorganizer version"), $ultiorganizerVersion['version']);
+$html .= ServerConfInfoRow(_("Database version"), $databaseVersion['version']);
+$html .= ServerConfInfoRow(_("Customization"), $customizationVersion['id']);
+$html .= ServerConfInfoRow(_("Customization version"), $customizationVersion['version']);
+$html .= "</table>\n";
+
+$html .= "<h1>" . _("Installation configuration") . "</h1>";
+$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
+$html .= ServerConfConfigInfoRows();
+$html .= "</table>\n";
 
 $htmltmp1 = "";
 $htmltmp2 = "";
@@ -257,7 +333,7 @@ foreach ($settings as $setting) {
 		$htmltmp2 .= "</td></tr>\n";
 	}
 }
-
+$html .= "<hr/>";
 $html .= "<form method='post' action='?view=admin/serverconf' id='Form'>";
 
 $html .= "<h1>" . _("UI settings") . "</h1>";
@@ -293,7 +369,7 @@ $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= $htmltmp1;
 $html .= "</table>\n";
 
-$html .= "<hr/>";
+
 $html .= "<h1>" . _("Internal settings") . "</h1>";
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= $htmltmp2;

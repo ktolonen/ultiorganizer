@@ -40,6 +40,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/translation.functions.php`: DB-backed translation loading, CRUD, autocomplete translation helpers, and translated field widgets.
 - `lib/url.functions.php`: generic URL/media/mail CRUD for owners and game media lookups.
 - `lib/user.functions.php`: authentication, password hashing/reset, registration/email confirmation, session setup, user roles, permission checks, and responsibility helpers.
+- `lib/version.functions.php`: Ultiorganizer, database, and customization version metadata helpers.
 - `lib/view.guard.php`: include-time view guard for routed pages.
 - `lib/yui.functions.php`: thin wrapper for loading YUI assets.
 

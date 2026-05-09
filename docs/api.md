@@ -39,7 +39,15 @@ Example requests:
 
 ```sh
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/events"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/version"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?event=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?event=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
 ```
+
+`/api/v1/version` returns the Ultiorganizer application compatibility version,
+the API route version, the installed database version recorded in the database,
+and the active customization id and version. The Ultiorganizer application
+version is read from `version.php`. The active customization version is read
+from `cust/<customization>/version.php`, which may return a version string or
+define `CUSTOMIZATION_VERSION`; missing customization metadata reports `0.0`.

@@ -43,6 +43,48 @@
         }
       }
     },
+    "/api/v1/version": {
+      "get": {
+        "summary": "Get Ultiorganizer, database, and customization version information",
+        "security": [
+          {
+            "ApiTokenAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Version response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "ultiorganizer": {
+                      "version": "4.0",
+                      "major": 4,
+                      "minor": 0
+                    },
+                    "api": {
+                      "version": "v1"
+                    },
+                    "database": {
+                      "version": 90
+                    },
+                    "customization": {
+                      "id": "slkl",
+                      "version": "1.0"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/v1/teams": {
       "get": {
         "summary": "List teams for an event",
