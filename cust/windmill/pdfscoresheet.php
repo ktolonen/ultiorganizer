@@ -102,7 +102,7 @@ class PDF extends tFPDF
 		$this->SetTextColor(0);
 		$this->SetFillColor(255);
 		$this->MultiCell(0,2,$data);
-		$this->Image("cust/wfdf/wfdf_logo.jpg",10,255);
+		$this->Image("cust/wfdf/wfdf-logo.jpg",10,255);
 		
 		}
 
