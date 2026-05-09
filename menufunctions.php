@@ -579,6 +579,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     $lastseason = "";
     $lastseries = "";
     $seasoninfo = null;
+    $lastseriesSeasonInfo = null;
 	    foreach ($pools as $row) {
 	      $season = $row['season'];
 	      $seasonParam = urlencode((string)$season);
@@ -598,11 +599,12 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
       if ($lastseries != $series) {
         if (
           !empty($lastseries)
-          && ShowSpiritScoresForSeason($seasoninfo)
+          && ShowSpiritScoresForSeason($lastseriesSeasonInfo)
         ) {
           echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit scores")."</a></td></tr>\n";
         }
         $lastseries = $series;
+        $lastseriesSeasonInfo = $seasoninfo;
         echo "<tr><td class='menuserieslevel'>";
         echo "<a class='subnav' href='?view=seriesstatus&amp;series=" . $series . "'>" . utf8entities(U_($row['series_name'])) . "</a></td></tr>\n";
         echo "<tr><td class='navpoollink'>\n";
@@ -612,7 +614,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
       echo "<a class='navpoollink' href='?view=poolstatus&amp;pool=" . $row['pool'] . "'>&raquo; " . utf8entities(U_($row['pool_name'])) . "</a>\n";
       echo "</td></tr>\n";
     }
-	if (ShowSpiritScoresForSeason($seasoninfo)) {
+		if (ShowSpiritScoresForSeason($lastseriesSeasonInfo)) {
       echo "<tr><td class='menupoollevel'><a class='navpoollink' href='?view=spiritstatus&amp;series=".$lastseries."'>"._("Spirit scores")."</a></td></tr>\n";
 		}
 	  } else {
@@ -805,7 +807,7 @@ function getEditSeasonLinks()
           if (count($teamresps) < 2) {
             $teamname = getTeamName($team);
             $links = $ret[$teamseason];
-            $links['?view=user/teamplayers&amp;team='.$team] = _("Team").": ".utf8entities($teamname);
+            $links['?view=user/teamplayers&amp;team='.$team] = _("Team").": ".$teamname;
             $respgamesset[$teamseason] = "set";
             $teamPlayersSet["" . $team] = "set";
             $ret[$teamseason] = $links;
@@ -826,7 +828,7 @@ function getEditSeasonLinks()
             if (isset($ret[$teamseason])) {
               $teamname = getTeamName($team);
               $links = $ret[$teamseason];
-              $links['?view=user/teamplayers&amp;team='.$team] = _("Team").": ".utf8entities($teamname);
+              $links['?view=user/teamplayers&amp;team='.$team] = _("Team").": ".$teamname;
               $links['?view=admin/accreditation&amp;season=' . $teamseason] = _("Accreditation");
               $teamPlayersSet["" . $team] = "set";
               $ret[$teamseason] = $links;
