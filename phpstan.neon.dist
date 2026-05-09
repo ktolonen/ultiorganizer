@@ -26,6 +26,10 @@ parameters:
     bootstrapFiles:
         - lib/tfpdf/tfpdf.php
         - lib/tfpdf/cellfit.php
+        - phpstan-stubs.php
+    ignoreErrors:
+        -
+            message: '#^Variable \$include_prefix might not be defined\.$#'
     parallel:
         maximumNumberOfProcesses: 4
     treatPhpDocTypesAsCertain: false
