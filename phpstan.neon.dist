@@ -26,6 +26,11 @@ parameters:
     bootstrapFiles:
         - lib/tfpdf/tfpdf.php
         - lib/tfpdf/cellfit.php
+        - lib/hsvclass/HSVClass.php
+        - lib/feed_generator/FeedWriter.php
+        - lib/feed_generator/FeedItem.php
+        - lib/phpqrcode/phpqrcode.php
+        - lib/yuiloader/phploader/loader.php
         - phpstan-stubs.php
     ignoreErrors:
         -

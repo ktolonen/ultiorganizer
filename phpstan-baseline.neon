@@ -171,11 +171,6 @@ parameters:
 			path: admin/translations.php
 
 		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/bula/pdfschedule.php
-
-		-
 			message: "#^Undefined variable\\: \\$left_margin$#"
 			count: 1
 			path: cust/bula/pdfschedule.php
@@ -184,11 +179,6 @@ parameters:
 			message: "#^Undefined variable\\: \\$title$#"
 			count: 1
 			path: cust/bula/pdfschedule.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/bula/pdfscoresheet.php
 
 		-
 			message: "#^Undefined variable\\: \\$info$#"
@@ -201,34 +191,14 @@ parameters:
 			path: cust/default/mass-accreditation.php
 
 		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/default/pdfschedule.php
-
-		-
 			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
 			count: 1
 			path: cust/default/pdfschedule.php
 
 		-
-			message: "#^Call to static method png\\(\\) on an unknown class QRcode\\.$#"
-			count: 1
-			path: cust/default/pdfscoresheet.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/default/pdfscoresheet.php
-
-		-
 			message: "#^Variable \\$season might not be defined\\.$#"
 			count: 2
 			path: cust/fpudd/mass-accreditation.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/fpudd/pdfschedule.php
 
 		-
 			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
@@ -246,19 +216,9 @@ parameters:
 			path: cust/fpudd/pdfschedule.php
 
 		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/fpudd/pdfscoresheet.php
-
-		-
 			message: "#^Undefined variable\\: \\$info$#"
 			count: 1
 			path: cust/fpudd/pdfscoresheet.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/gummis/pdfschedule.php
 
 		-
 			message: "#^Variable \\$abbrev in empty\\(\\) is never defined\\.$#"
@@ -269,11 +229,6 @@ parameters:
 			message: "#^Variable \\$row might not be defined\\.$#"
 			count: 1
 			path: cust/gummis/pdfschedule.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/gummis/pdfscoresheet.php
 
 		-
 			message: "#^Variable \\$abbrev in empty\\(\\) is never defined\\.$#"
@@ -306,21 +261,6 @@ parameters:
 			path: cust/slkl/mass-accreditation.php
 
 		-
-			message: "#^Call to static method png\\(\\) on an unknown class QRcode\\.$#"
-			count: 1
-			path: cust/slkl/pdfscoresheet.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/slkl/pdfscoresheet.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/wfdf/pdfschedule.php
-
-		-
 			message: "#^Undefined variable\\: \\$left_margin$#"
 			count: 1
 			path: cust/wfdf/pdfschedule.php
@@ -331,19 +271,9 @@ parameters:
 			path: cust/wfdf/pdfschedule.php
 
 		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/wfdf/pdfscoresheet.php
-
-		-
 			message: "#^Undefined variable\\: \\$info$#"
 			count: 1
 			path: cust/wfdf/pdfscoresheet.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/windmill/pdfschedule.php
 
 		-
 			message: "#^Method tFPDF\\:\\:MultiCell\\(\\) invoked with 7 parameters, 3\\-6 required\\.$#"
@@ -359,11 +289,6 @@ parameters:
 			message: "#^Undefined variable\\: \\$title$#"
 			count: 1
 			path: cust/windmill/pdfschedule.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: cust/windmill/pdfscoresheet.php
 
 		-
 			message: "#^Undefined variable\\: \\$info$#"
@@ -384,11 +309,6 @@ parameters:
 			message: "#^Variable \\$newnode might not be defined\\.$#"
 			count: 1
 			path: ext/locationxml.php
-
-		-
-			message: "#^Instantiated class FeedWriter not found\\.$#"
-			count: 1
-			path: ext/rss.php
 
 		-
 			message: "#^Variable \\$gameevent might not be defined\\.$#"
@@ -429,11 +349,6 @@ parameters:
 			message: "#^Variable \\$lines might not be defined\\.$#"
 			count: 1
 			path: install.php
-
-		-
-			message: "#^Instantiated class HSVClass not found\\.$#"
-			count: 1
-			path: lib/common.functions.php
 
 		-
 			message: "#^Variable \\$fields might not be defined\\.$#"
@@ -519,11 +434,6 @@ parameters:
 			message: "#^Variable \\$list might not be defined\\.$#"
 			count: 1
 			path: lib/url.functions.php
-
-		-
-			message: "#^Instantiated class YAHOO_util_Loader not found\\.$#"
-			count: 1
-			path: lib/yui.functions.php
 
 		-
 			message: "#^Variable \\$links in isset\\(\\) always exists and is not nullable\\.$#"
