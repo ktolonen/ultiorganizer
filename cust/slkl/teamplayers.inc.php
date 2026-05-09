@@ -1,3 +1,7 @@
+<?php
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+?>
 <div class="yui-skin-sam">
 	<div id="selectaccreditation_id" class="yui-pre-content">
 		<div class="hd"><?php echo _("Choose best match"); ?></div>

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 function GetLocations()
 {
@@ -60,6 +62,11 @@ function GetSearchLocations()
 	$result1 = DBQuery($query1);
 
 	return $result1;
+}
+
+function GetSearchLocationsArray()
+{
+	return DBFetchAllAssoc(GetSearchLocations());
 }
 
 function LocationInfo($id)

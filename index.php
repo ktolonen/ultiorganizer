@@ -1,13 +1,6 @@
 <?php
-$serverName = $_SERVER['SERVER_NAME'] ?? ($_SERVER['HTTP_HOST'] ?? null);
-$configPath = null;
-if ($serverName && is_readable('conf/' . $serverName . '.config.inc.php')) {
-  $configPath = 'conf/' . $serverName . '.config.inc.php';
-} elseif (is_readable('conf/config.inc.php')) {
-  $configPath = 'conf/config.inc.php';
-}
-if ($configPath) {
-  include_once $configPath;
+if (is_readable('conf/config.inc.php')) {
+  include_once 'conf/config.inc.php';
 } else {
   http_response_code(500);
   die("Missing configuration. Run install.php or setup conf/config.inc.php manually.");
@@ -30,6 +23,13 @@ include_once $include_prefix . 'lib/debug.functions.php';
 
 
 startSecureSession();
+
+// Include Live! by BULA
+$liveEnableFile = __DIR__ . '/live/enable-live.php';
+if (is_readable($liveEnableFile)) {
+  include_once $liveEnableFile;
+}
+
 if (!isset($_SESSION['VISIT_COUNTER'])) {
   LogVisitor($_SERVER['REMOTE_ADDR']);
   $_SESSION['VISIT_COUNTER'] = true;
@@ -43,15 +43,17 @@ if (!isset($_SESSION['uid'])) {
 }
 
 require_once $include_prefix . 'lib/configuration.functions.php';
+include_once $include_prefix . 'lib/season.functions.php';
 
 include_once 'localization.php';
 setSessionLocale();
 
 if (isset($_POST['myusername'])) {
+  $password = $_POST['mypassword'] ?? '';
   if (strpos($rawView, "mobile") === false)
-    UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirect");
+    UserAuthenticate($_POST['myusername'], $password, "FailRedirect");
   else
-    UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "FailRedirectMobile");
+    UserAuthenticate($_POST['myusername'], $password, "FailRedirectMobile");
 }
 
 if (!$rawView) {
@@ -63,11 +65,15 @@ global $serverConf;
 $user = $_SESSION['uid'];
 
 setSelectedSeason();
+EnforceSoftMaintenanceForView($rawView);
 
 $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', array('index', 'localization', 'install'));
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
 LogPageLoad($viewToLog);
 
+if (!defined('UO_ROUTED_VIEW')) {
+  define('UO_ROUTED_VIEW', true);
+}
 include $viewPath;
 
 CloseConnection();

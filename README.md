@@ -4,95 +4,72 @@ This is the **Ultimate Organizer**, a web application for online score keeping o
 
 ## What is here
 
-The files are organized as follows:
+The repository is organized as follows:
 
-* **PHP files in main directory** Only index.php is called directly. All other pages are called using the view parameter e.g. <http://hostname.org/?view=pageXYZ>. The pages in the main directory are accessible to all users.
-* **user** Pages in this directory are accessible to logged in users. Maintaining user and team info and result reporting.
-* **admin** Pages in this directory are for administrators (including series and event administrators).
-* **lib** Contains utilities used by all pages. SQL statements should only go in here!
-* **script** JavaScript files
-* **api** HTTP API endpoints (JSON only).
-* **conf** Contains config.inc.php, which contains MySQL user information, password and other server configuration. It should be writable during installation, but later you should restrict access to it as much as possible!
-* **cust** Contains skins for customized Ultiorganizer instances.
-* **locale** Contains translations. To update, simply edit the html files. To update translations in PHP pages you need the gettext utilities. The simplest way to add translations is by calling `poedit locales/de_DE.utf8/LC_MESSAGES/messages.po`. Then call 'update', add translations and save.
-* **images** Contains icons, flags, and, by default, the image and media upload directory.
-* **mobile** Contains pages for small screens on mobile devices with keyboard.
-* **scorekeeper** Contains pages for thouchscreen mobile devices.
-* **ext** Contains pages to be embedded in external pages. See ?view=ext/index
-* **plugins** Mainly tools for maintenance, export, import. Some are rather experimental!
-* **sql** database utilities
+* **Repo root PHP pages** Public pages are routed through `index.php` with the `view` parameter.
+* **user** Logged-in user pages such as teams, results, and related tools.
+* **admin** Administrator pages for division and event management.
+* **lib** Shared utilities and SQL-backed data access.
+* **api** JSON API entry points and versioned routing.
+* **cust** Skins and installation-specific customizations.
+* **login** Authentication and password reset entry points.
+* **mobile**, **scorekeeper**, **spiritkeeper**, **ext** Specialized entry points. `mobile/` is legacy and deprecated; `scorekeeper/` and `spiritkeeper/` are the supported replacements for the old mobile administration UI.
+* **images**, **locale**, **plugins** Static assets, translations, and plugin code.
+* **script** Client-side JavaScript assets.
+* **conf**, **sql** Configuration and database assets that should not be exposed by the web server.
+
+Additional documentation lives under:
+
+* **docs/** General project documentation and repo-local AI review/fix skills
+
+Current markdown documentation lives under `docs/`. Repo-local AI assets and skills live under `docs/ai/`.
 
 ## Installation
 
 To run Ultiorganizer you need a web server, PHP 8.3+ and a MariaDB 10.11+ database.
 
-Ensure the host has native gettext and locales available so PHP translations work (for Debian/Ubuntu: `sudo apt-get install gettext locales` and generate the locales you need with `sudo locale-gen`).
+For a local Debian/Ubuntu setup, install the required packages with:
+
+```bash
+sudo apt-get update && sudo apt-get install -y apache2 mariadb-server gettext locales php8.3 php8.3-mysql php8.3-intl php8.3-mbstring php8.3-xml
+```
+
+Ensure the host has native gettext and locales available so PHP translations work, then generate the locales you need. For example:
+
+```bash
+sudo locale-gen en_US.UTF-8
+```
 
 To install Ultiorganizer simply copy the files to your web server, call <http://yourpage.com/install.php> and follow the instructions.
 
 ## Development
 
-To enable fast start to Ultiorganizer development follow the instructions below to set up a development environment using Docker containers.
-
-In order to install Docker follow the instructions on <https://docs.docker.com/get-docker/>
-
-### Create a network
-
-Adding a Docker network allows you to refer to the database with the containers name instead of using an IP-address in addition to isolating your development environment from your other containers. This step is optional but recommended.
-
-```sh
-docker network create ultiorganizer-net
-```
-
-### Create the DB
-MariaDB 10.11+ is used for development to match the current production compatibility.
-
-```sh
-export MYSQL_ROOT_PASSWORD='<root password>'
-
-docker run --detach --name=ultiorganizer-db --network ultiorganizer-net --env "MYSQL_ROOT_PASSWORD=$MYSQL_ROOT_PASSWORD" mariadb:10.11
-
-```
-
-#### Create user and grant accesses
-
-```sh
-docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="CREATE USER ultiorganizer IDENTIFIED BY 'ultiorganizer'"
-
-docker exec ultiorganizer-db mysql --user=root --password="$MYSQL_ROOT_PASSWORD" --execute="GRANT ALL PRIVILEGES ON ultiorganizer.* TO ultiorganizer"
-```
-
-### Create the web server
-
-The command below should be run in the folder where you have cloned your Ultiorganizer Git repo. If not, then substitute `$PWD` with a path to the code or copy the code to the container.
-
-```sh
-docker run --network ultiorganizer-net --name=ultiorganizer --publish 8080:80 --volume "$PWD":/var/www/html --detach php:8.3-apache
-```
-
-The base PHP apache image is missing some libraries and extensions that need to be installed.
-
-```sh
-docker exec ultiorganizer sh -c 'apt-get --assume-yes update && apt-get --assume-yes install zlib1g-dev libpng-dev gettext locales && locale-gen en_US.UTF-8'
-
-docker exec ultiorganizer sh -c 'docker-php-ext-install mysqli gettext gd mbstring && apachectl restart'
-```
-
-Now you should be able to connect to your development Ultiorganizer by opening your browser to <http://localhost:8080/>
+Project documentation is indexed in `docs/README.md`.
 
 ## HTTP API
 
-Ultiorganizer can act as the backend and management UI, while the HTTP API can be used by frontend clients to access season/event data.
+Project documentation, including API notes, is indexed in `docs/README.md`.
 
-API documentation is available at:
-- `https://your-host/api/v1/openapi` (production URL with .htaccess rewrite)
-- `http://localhost:8000/api/index.php/v1/openapi` (When using PHP built-in server)
+## Credits
 
-Tokens are managed via the admin UI at `?view=admin/apitokens`. Example requests:
+Ultiorganizer was first introduced at the 2002 World Championships in Turku, after already being used by the Finnish Flying Disc Association from 1999. Even though the codebase has since been fully rewritten on a modern technology stack, the original vision has remained the same: a free, open, and reliable live-scoring system for Ultimate. This journey has only been possible because of the many people who use the system in real events and continuously improve it through feedback, testing, and patches.
 
-```sh
-curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/seasons"
-curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?season=2025"
-curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?season=2025"
-curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
-```
+Special thanks to **Pasi Niemi**, whose early and significant contributions helped launch the rewrite of the scoring system in PHP.
+
+Special thanks to **Bruno Gravato** for years of practical development work on a long-running fork used by major Ultimate organizations, including BULA, WFDF, EUF, and national federations. Bruno’s contributions include substantial maintenance and feature work beyond the 2014 upstream baseline.
+
+Thanks as well to **Justin Palmer** and **Patrick** for the [Live by BULA](https://github.com/layoutd/live-by-bula) collaboration.
+
+Contributors:
+- Asmo Soinio
+- Bruno Gravato
+- Hartti Suomela
+- Juha Jalovaara
+- Kari
+- Artsa
+- Pasi Niemi
+- cschaffner
+- Les
+- Plinio Moreno
+- Jonathan Potts
+- Steffen Mecke

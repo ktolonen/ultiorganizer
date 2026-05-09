@@ -1,5 +1,5 @@
 <?php
-include_once 'localization.php';
+include_once __DIR__ . '/localization.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
@@ -22,14 +22,15 @@ include_once 'localization.php';
 
 <body>
 	<?php
-	include_once '../lib/season.functions.php';
-	include_once '../lib/series.functions.php';
-	include_once '../lib/team.functions.php';
-	include_once '../lib/game.functions.php';
+	include_once __DIR__ . '/../lib/season.functions.php';
+	include_once __DIR__ . '/../lib/series.functions.php';
+	include_once __DIR__ . '/../lib/team.functions.php';
+	include_once __DIR__ . '/../lib/game.functions.php';
 
 
-	$season = iget("season");
-	$seasoninfo = SeasonInfo($season);
+		$season = iget("season");
+		$seasoninfo = SeasonInfo($season);
+		$isInternational = !empty($seasoninfo) && !empty($seasoninfo['isinternational']);
 
 	$prevdivision = "";
 	$allpools = SeasonPools($season, true);
@@ -57,7 +58,7 @@ include_once 'localization.php';
 				$stats = TeamStatsByPool($poolinfo['pool_id'], $row['team_id']);
 				$points = TeamPointsByPool($poolinfo['pool_id'], $row['team_id']);
 				$flag = "";
-				if (intval($seasoninfo['isinternational'])) {
+				if ($isInternational) {
 					$flag = "<img height='10' src='../images/flags/tiny/" . $row['flagfile'] . "' alt=''/> ";
 				}
 				echo "<tr><td class='pk_ser_td2'>" . $row['activerank'] . "</td>";
@@ -129,7 +130,7 @@ include_once 'localization.php';
 					else
 						$team = array('name' => _("Warning: missing team"), 'team_id' => -1);
 					$name = "";
-					if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+					if ($isInternational && !empty($team['flagfile'])) {
 						$name .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
 					}
 					$name .= $team['name'];
@@ -141,7 +142,7 @@ include_once 'localization.php';
 
 							if (count($gamesleft) == 0) {
 								$name = "";
-								if (intval($seasoninfo['isinternational']) && !empty($realteam['flagfile'])) {
+								if ($isInternational && !empty($realteam['flagfile'])) {
 									$name .= "<img height='10' src='../images/flags/tiny/" . $realteam['flagfile'] . "' alt=''/> ";
 								}
 								$name .= "<i>" . utf8entities($realteam['name']) . "</i>";
@@ -187,7 +188,7 @@ include_once 'localization.php';
 
 				if (count($gamesleft) == 0) {
 					$placementname = "";
-					if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
+					if ($isInternational && !empty($team['flagfile'])) {
 						$placementname .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
 					}
 					$placementname .= "<b>" . U_($placement) . "</b> " . utf8entities($team['name']) . "";

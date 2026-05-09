@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 // Dump the contents of a variable into HTML comments for debugging:
 function debugVar($var)

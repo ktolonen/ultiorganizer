@@ -1,7 +1,7 @@
 <?php
 
-include_once 'localization.php';
-include_once '../lib/team.functions.php';
+include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/team.functions.php';
 
 header("Content-type: text/xml");
 header("Cache-Control: no-cache, must-revalidate");

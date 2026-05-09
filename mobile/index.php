@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../lib/view.guard.php';
+requireRoutedView('mobile/index', '../index.php');
+
 include_once 'lib/common.functions.php';
 $html = "";
 
@@ -12,7 +15,7 @@ if (isset($_POST['login'])) {
 	header("location:?view=mobile/respgames");
 }
 
-mobilePageTop(_("Login"));
+mobilePageTop(_("Log in"));
 
 // echo $html;
 

@@ -100,7 +100,7 @@ echo "<table cellpadding='2px'>
 			</td>
 			</tr>\n";
 echo "<tr><td class='infocell'>" . _("Order") . " (A,B,C,D..):</td>
-			<td><input class='input' id='ordering' name='ordering' value='" . utf8entities($sp['ordering']) . "'/></td></tr>";
+			<td><input class='input' size='3' maxlength='1' id='ordering' name='ordering' value='" . utf8entities($sp['ordering']) . "'/></td></tr>";
 
 echo "<tr><td class='infocell'>" . _("Type") . ": </td><td><select class='dropdown' name='type'>\n";
 

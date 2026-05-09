@@ -16,7 +16,7 @@ $teaminfo = TeamInfo($teamId);
 
 // Stop early if the team does not exist to avoid undefined array offsets.
 if (!$teaminfo) {
-  echo "<p class='warning'>" . _("Team not found.") . "</p>";
+  echo "<p class='warning'>" . _("Team not found") . ".</p>";
   return;
 }
 
@@ -26,7 +26,7 @@ if (!empty($_POST['remove_x'])) {
   if ($games) {
     $playerInfo = PlayerInfo($id);
     echo "<div style='width:100%'>
-			<p class='warning'><i>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</i> " . _("can not be removed from the roster") . ".
+			<p class='warning'><i>" . utf8entities($playerInfo['firstname'] . " " . $playerInfo['lastname']) . "</i> " . _("cannot be removed from the roster") . ".
 			" . _("Games played in the team:") . " " . $games . "</p></div>";
   } else {
     RemovePlayer($id);
@@ -140,8 +140,8 @@ pageMenu($menutabs);
 //help
 $help = "<p>" . _("Add players to team's roster:") . "</p>
 	<ul>
-		<li> " . _("Players already having a profile in Ultiorganizer: Enter full or part of the player name and press the search-button. Select correct player from the dialog and press the confirm-button.") . "</li>
-		<li> " . _("New players: Enter jersey number, first and last name. Press add-button.") . "</li>
+		<li> " . _("Players who already have a profile in Ultiorganizer: enter the full player name or part of it and press the Search button. Select the correct player from the dialog and press the Confirm button.") . "</li>
+		<li> " . _("New players: enter the jersey number, first name, and last name. Press the Add button.") . "</li>
 	</ul>";
 
 onPageHelpAvailable($help);
@@ -167,7 +167,7 @@ if (CUSTOMIZATIONS == "slkl") {
   echo "<th>" . _("License") . "</th>";
   echo "<th></th>";
 } else {
-  echo "<th>" . _("Profile Id") . "</th>";
+  echo "<th>" . _("Profile ID") . "</th>";
   // echo "<th></th>";
   echo "<th>" . _("Delete") . "</th>";
 }
@@ -177,7 +177,7 @@ echo "</tr>\n";
 
 $team_players = TeamPlayerList($teamId);
 
-if (mysqli_num_rows($team_players) == 0 && (hasAccredidationRight($teamId) || hasEditPlayersRight($teamId))) {
+if (count($team_players) == 0 && (hasAccredidationRight($teamId) || hasEditPlayersRight($teamId))) {
   $teams = TeamGetTeamsByName($teaminfo['name']);
   if (count($teams)) {
     echo "<p>" . _("Copy team roster from:") . " ";
@@ -194,7 +194,7 @@ if (mysqli_num_rows($team_players) == 0 && (hasAccredidationRight($teamId) || ha
   }
 }
 
-while ($player = mysqli_fetch_assoc($team_players)) {
+foreach ($team_players as $player) {
   $playerInfo = PlayerInfo($player['player_id']);
 
   echo "<tr>";
@@ -230,8 +230,7 @@ while ($player = mysqli_fetch_assoc($team_players)) {
       echo "<td class='center attention'><a id='showAccrId" . $player['player_id'] . "' onclick=\"ChgPlayer(" . $player['player_id'] . ");\" href='javascript:checkProfileId(\"" . $player['player_id'] . "\");'>" . _("Search") . "</a></td>\n";
     }
 
-    $query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d", (int)$playerInfo['accreditation_id']);
-    $row = DBQueryToRow($query);
+    $row = LicenseData($playerInfo['accreditation_id']);
     if (!empty($row['membership'])) {
       echo "<td class='center' style='white-space: nowrap'>" . $row['membership'] . "</td>";
     } else {
@@ -281,7 +280,7 @@ echo "</p></form>\n";
 
 
 if (!empty($gameId)) {
-  echo "<p><a href='?view=user/addplayerlists&amp;game=$gameId'>" . _("Back to feeding in player numbers") . "</a></p>";
+  echo "<p><a href='?view=user/addplayerlists&amp;game=$gameId'>" . _("Back to entering player numbers") . "</a></p>";
 }
 
 //echo "<hr/>\n";

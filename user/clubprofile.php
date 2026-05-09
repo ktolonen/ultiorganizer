@@ -39,7 +39,7 @@ else
 $club = ClubInfo($clubId);
 if (!$club) {
 	if (!$teaminfo) {
-		echo "<p class='warning'>" . _("Club not found.") . "</p>";
+		echo "<p class='warning'>" . _("Club not found") . ".</p>";
 		return;
 	}
 	$club = array(
@@ -105,11 +105,14 @@ if (isset($_POST['save'])) {
 	if (is_uploaded_file($_FILES['picture']['tmp_name'])) {
 		$html .= UploadClubImage($teamId, $clubId);
 	}
+	$club = ClubInfo($clubId);
 } elseif (isset($_POST['remove'])) {
 	RemoveClubProfileImage($teamId, $clubId);
+	$club = ClubInfo($clubId);
 } elseif (isset($_POST['removeurl_x'])) {
 	$id = $_POST['hiddenDeleteId'];
 	RemoveClubProfileUrl($teamId, $clubId, $id);
+	$club = ClubInfo($clubId);
 }
 
 	if ($club) {

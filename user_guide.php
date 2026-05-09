@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('user_guide');
+
 
 $title = _("User Guide");
 $html = "";

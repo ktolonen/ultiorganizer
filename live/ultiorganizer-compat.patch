@@ -1,0 +1,188 @@
+--- a/admin.php
++++ b/admin.php
+@@ -40,38 +40,11 @@
+         // Open database connection
+         OpenConnection();
+ 
+-        // Use prepared statement to prevent SQL injection
+-        global $dbcon;
+-
+-        // Create a prepared statement
+-        $stmt = mysqli_prepare($dbcon, "SELECT COUNT(*) as count FROM uo_season WHERE season_id = ?");
+-        if (!$stmt) {
+-            error_log("Failed to prepare statement: " . mysqli_error($dbcon));
+-            return false;
+-        }
+-
+-        // Bind the parameter and execute
+-        mysqli_stmt_bind_param($stmt, "s", $seasonId);
+-        if (!mysqli_stmt_execute($stmt)) {
+-            error_log("Failed to execute statement: " . mysqli_stmt_error($stmt));
+-            mysqli_stmt_close($stmt);
+-            return false;
+-        }
+-
+-        // Get the result
+-        $result = mysqli_stmt_get_result($stmt);
+-        if (!$result) {
+-            error_log("Failed to get result: " . mysqli_stmt_error($stmt));
+-            mysqli_stmt_close($stmt);
+-            return false;
+-        }
+-
+-        // Fetch the count
+-        $row = mysqli_fetch_assoc($result);
+-        $count = isset($row['count']) ? (int)$row['count'] : 0;
+-
+-        // Clean up
+-        mysqli_stmt_close($stmt);
++        $query = sprintf(
++            "SELECT COUNT(*) FROM uo_season WHERE season_id = '%s'",
++            DBEscapeString($seasonId)
++        );
++        $count = (int)DBQueryToValue($query);
+ 
+         return $count > 0;
+     } catch (Exception $e) {
+--- a/api/AdminManager.php
++++ b/api/AdminManager.php
+@@ -158,10 +158,9 @@
+     public function getAvailableSeasons() {
+         try {
+             // Get all seasons
+-            $seasons = Seasons();
+             $allSeasons = [];
+ 
+-            while ($season = DBFetchAssoc($seasons)) {
++            foreach (DBFetchAllAssoc(Seasons()) as $season) {
+                 $allSeasons[] = [
+                     'season_id' => $season['season_id'],
+                     'name' => $season['name']
+--- a/api/GameManager.php
++++ b/api/GameManager.php
+@@ -205,14 +205,14 @@
+ 			'seasoninfo'             => $seasonInfo,
+ 
+ 			// Fetch the scoreboard data for both the home and visiting teams
+-			'hometeam_scoreboard'    => mysqli_fetch_all(GameTeamScoreBorad($gameId, $gameResult['hometeam']), MYSQLI_ASSOC),
+-			'visitorteam_scoreboard' => mysqli_fetch_all(GameTeamScoreBorad($gameId, $gameResult['visitorteam']), MYSQLI_ASSOC),
++			'hometeam_scoreboard'    => DBFetchAllAssoc(GameTeamScoreBorad($gameId, $gameResult['hometeam'])),
++			'visitorteam_scoreboard' => DBFetchAllAssoc(GameTeamScoreBorad($gameId, $gameResult['visitorteam'])),
+ 
+ 			// Fetch the pool information associated with the game
+ 			'poolinfo'               => PoolInfo($gameResult['pool']),
+ 
+ 			// Fetch detailed data on goals and game events
+-			'goals'                  => mysqli_fetch_all(GameGoals($gameId), MYSQLI_ASSOC),
++			'goals'                  => DBFetchAllAssoc(GameGoals($gameId)),
+ 			'gameevents'             => GameEvents($gameId),
+ 			'mediaevents'            => GameMediaEvents($gameId),
+ 
+@@ -244,11 +244,46 @@
+ 		$game['spiritstats'] = [
+ 			'note' => 'These are the scores FOR the specified team'
+ 		];
+-		$game['spiritstats']['hometeam'] = GameGetSpiritPoints($gameId, $gameResult['hometeam']);
+-		$game['spiritstats']['visitorteam'] = GameGetSpiritPoints($gameId, $gameResult['visitorteam']);
++
++		$homePoints    = GameGetSpiritPoints($gameId, $gameResult['hometeam']);
++		$visitorPoints = GameGetSpiritPoints($gameId, $gameResult['visitorteam']);
++
++		// The frontend expects {cat1: value, cat2: value, ...} keyed by category index.
++		// GameGetSpiritPoints returns {category_id: value}, so remap using index from the
++		// spirit category table. Guard with is_array() for backward compat.
++		if (is_array($homePoints)) {
++			$categories = ($seasonInfo && isset($seasonInfo['spiritmode']))
++				? SpiritCategoryRows((int)$seasonInfo['spiritmode'])
++				: [];
++
++			$catIndexMap = [];
++			foreach ($categories as $cat) {
++				if ((int)$cat['index'] > 0) {
++					$catIndexMap[(int)$cat['category_id']] = 'cat' . (int)$cat['index'];
++				}
++			}
++
++			$remap = function ($points) use ($catIndexMap) {
++				if (empty($points)) return null;
++				$out = [];
++				foreach ($points as $catId => $value) {
++					if (isset($catIndexMap[(int)$catId])) {
++						$out[$catIndexMap[(int)$catId]] = $value;
++					}
++				}
++				return empty($out) ? null : $out;
++			};
++
++			$game['spiritstats']['hometeam']    = $remap($homePoints);
++			$game['spiritstats']['visitorteam'] = $remap($visitorPoints);
++		} else {
++			// Future-proof: scalar return passes through; null/false collapses to null.
++			$game['spiritstats']['hometeam']    = $homePoints ?: null;
++			$game['spiritstats']['visitorteam'] = $visitorPoints ?: null;
++		}
+ 
+ 		// remove comments if the aren't enabled in the season
+-		$spiritAllowed = ShowSpiritComments();
++		$spiritAllowed = ShowSpiritComments($seasonInfo);
+ 		if(!$spiritAllowed) {
+ 			foreach($game['spiritstats'] as &$spirit) {
+ 				if(isset($spirit['comments'])) {
+@@ -256,7 +291,7 @@
+ 				}
+ 			}
+ 		}
+-
++			
+ 		// Set cache interval based on the game's current status
+ 		$interval = self::CACHE_SECONDS_GAME_DETAIL_DEFAULT;
+ 		if ($game['game_result']['status'] === 'ongoing') {
+--- a/api/ReferenceData.php
++++ b/api/ReferenceData.php
+@@ -76,7 +76,7 @@
+ 		$ref['season']['utcOffset'] = TimeHelper::getTimezoneOffset($ref['season']['timezone']);
+ 		// Spirit is active and visible
+ 		$ref['season']['spirit'] = intval($seasonInfo['spiritpoints'] && $seasonInfo['showspiritpoints']);
+-		$ref['season']['showspiritcomments'] = intval(ShowSpiritComments());
++		$ref['season']['showspiritcomments'] = intval(ShowSpiritComments($seasonInfo));
+ 		$ref['season']['gameTimesByDay'] = $this->calculateGameTimesByDay( (new GameManager())->getGames() );
+ 
+ 		// Determine current time in local time
+--- a/api/StandingsManager.php
++++ b/api/StandingsManager.php
+@@ -161,7 +161,7 @@
+ 		}
+ 
+ 		$seriesId = $filters['id'] ?? 0;
+-		$spiritBoard = mysqli_fetch_all(SeriesSpiritBoardAlt2($seriesId, "total", false), MYSQLI_ASSOC);
++		$spiritBoard = DBFetchAllAssoc(SeriesSpiritBoardAlt2($seriesId, "total", false));
+ 		return [
+ 			'spirit' => $spiritBoard,
+ 		];
+--- a/api/TeamManager.php
++++ b/api/TeamManager.php
+@@ -112,12 +112,12 @@
+ 		if ($includeSpiritStats) {
+ 			$team['spiritstats'] = TeamSpiritStats2($id, false);
+ 			$team['spirittotal'] = TeamSpiritTotal($id, false);
+-			$team['spiritgiven'] = mysqli_fetch_all(TeamSpiritPointsGiven(LIVE_SEASON_ID, $id), MYSQLI_ASSOC);
+-			$team['spiritreceived'] = mysqli_fetch_all(TeamSpiritPointsReceived(LIVE_SEASON_ID, $id), MYSQLI_ASSOC );
++			$team['spiritgiven'] = DBFetchAllAssoc(TeamSpiritPointsGiven(LIVE_SEASON_ID, $id));
++			$team['spiritreceived'] = DBFetchAllAssoc(TeamSpiritPointsReceived(LIVE_SEASON_ID, $id));
+ 			$team['points']['spiritavg'] = number_format(SafeDivide((int)$team['spirittotal']['total'], (int)$team['spiritstats']['games']), 2);
+ 
+ 			// If spirit comments are not enabled, set them to null for all spirit given and received
+-		  $showSpiritComments = ShowSpiritComments();
++			$showSpiritComments = ShowSpiritComments($seasonInfo);
+ 			if ( ! $showSpiritComments ) {
+ 				foreach($team['spiritgiven'] as &$spirit) {
+ 					$spirit['comments'] = null;
+@@ -128,7 +128,7 @@
+ 			}
+ 		}
+ 
+-		$team['players'] = mysqli_fetch_all($players, MYSQLI_ASSOC);
++		$team['players'] = DBFetchAllAssoc($players);
+ 
+ 		foreach ($team['players'] as &$player) {
+ 			$info = PlayerInfo($player['player_id']);

@@ -6,7 +6,7 @@ include_once 'lib/team.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
 include_once 'lib/common.functions.php';
-require_once("lib/HSVClass.php");
+require_once("lib/hsvclass/HSVClass.php");
 
 
 $LAYOUT_ID = SCHEDULE;
@@ -19,9 +19,12 @@ if (isset($_GET['series'])) {
     $seriesId = intval($_GET['series']);
 }
 
-$pools = SeriesPools($seriesId, false, true, false);
+$pools = SeriesPools($seriesId, false, true, true);
 $not_started = array();
 foreach ($pools as $pool) {
+    if($pool['type'] == 2 && PoolPlayoffRoot($pool['pool_id']) != $pool['pool_id']) {
+        continue;
+    }
     if (!IsPoolStarted($pool['pool_id'])) {
         $not_started[] = $pool['pool_id'];
     }
@@ -144,9 +147,11 @@ echo "</tr></table>\n";
 echo "</td></tr>\n";
 echo "<tr><td>\n";
 //save button
+$seriesinfo = SeriesInfo($seriesId);
 echo "<table><tr><td id='user_actions' style='float:left;padding:20px'>\n";
 echo "<input type='button' id='saveButton' value='" . _("Save") . "'/>\n";
-echo "</td><td class='center'><div id='responseStatus'></div></td></tr></table>\n";
+echo "</td><td style='padding:20px'><a href='?view=admin/seasonpools&amp;season=" . $seriesinfo['season'] . "&amp;series=" . $seriesId . "'>" . _("Back") . "</a></td>";
+echo "<td class='center'><div id='responseStatus'></div></td></tr></table>\n";
 echo "</td></tr></table>\n";
 
 ?>

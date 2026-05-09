@@ -20,6 +20,7 @@ if (!empty($_POST['calc'])) {
     CalcTeamStats($season);
     CalcTeamSpiritStats($season);
     CalcPlayerStats($season);
+    SetEventReadonly($season);
 }
 if (!empty($_POST['undo'])) {
     set_time_limit(120);
@@ -67,7 +68,7 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 $html .= "<form method='post' action='?view=admin/stats&amp;season=$season'>\n";
-$html .= "<p>" . _("Calculation of statistics takes some time; please wait without closing browser.") . "</p>\n";
+$html .= "<p>" . _("Calculation of statistics takes some time; please wait without closing the browser.") . "</p>\n";
 
 if (!IsSeasonStatsCalculated($season)) {
     if ($missing_profiles_count > 0) {
@@ -105,12 +106,12 @@ if (!IsSeasonStatsCalculated($season)) {
         $confirm_msg = sprintf(_("There are %d players without a profile id. Run statistics anyway?"), $missing_profiles_count);
         $confirm_attr = " onclick='return confirm(\"" . addslashes($confirm_msg) . "\")'";
     }
-    $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Re-Calculate") . "'" . $confirm_attr . "/></p>\n";
+    $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Recalculate") . "'" . $confirm_attr . "/></p>\n";
     $html .= "<p><input class='button' name='undo' type='submit' value='" . _("Undo") . "'/></p>\n";
 
     $prevseries = -1;
     $html .= "<h1>" . _("Final Standings") . "</h1>";
-    $html .= "<p>" . _("If standings are not correct, use mouse to drag teams into correct order and press save standings.") . "\n";
+    $html .= "<p>" . _("If the standings are not correct, use the mouse to drag teams into the correct order and press Save standings.") . "\n";
     $html .= "<input type='button' id='saveButton' value='" . _("Save standings") . "'/></p>\n";
     $html .= "<div id='responseStatus'></div>\n";
 

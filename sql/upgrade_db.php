@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../lib/include_only.guard.php';
+denyDirectFileAccess(__FILE__);
+
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/image.functions.php';
 include_once $include_prefix . 'lib/logging.functions.php';
@@ -416,19 +419,17 @@ function upgrade68()
 {
 	if (!hasTable("uo_spirit")) {
 		runQuery("CREATE TABLE `uo_spirit` (
-		`game_id` INT(10) NOT NULL,
-		`team_id` INT(10) NOT NULL,
-		`cat1` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat2` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat3` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat4` TINYINT(2) NOT NULL DEFAULT 0,
-		`cat5` TINYINT(2) NOT NULL DEFAULT 0,
-		PRIMARY KEY (game_id,team_id)
-		)
-		COLLATE='latin1_swedish_ci'
-		ENGINE=MyISAM
-		ROW_FORMAT=DEFAULT
-		");
+			`game_id` INT(10) NOT NULL,
+			`team_id` INT(10) NOT NULL,
+			`cat1` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat2` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat3` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat4` TINYINT(2) NOT NULL DEFAULT 0,
+			`cat5` TINYINT(2) NOT NULL DEFAULT 0,
+			PRIMARY KEY (game_id,team_id)
+			)
+			ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci
+			");
 	}
 }
 
@@ -451,15 +452,15 @@ function upgrade70()
 {
 	if (!hasTable("uo_movingtime")) {
 		runQuery("CREATE TABLE `uo_movingtime` (
-	`season` varchar(10) NOT NULL,
-    `fromlocation` int(10) NOT NULL,
+		`season` varchar(10) NOT NULL,
+	    `fromlocation` int(10) NOT NULL,
     `fromfield` varchar(50) NOT NULL,
-	`tolocation` int(10) NOT NULL,
-    `tofield` varchar(50) NOT NULL,
-    `time` int(10) DEFAULT 0,
-	PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`),
-	INDEX `idx_season` (`season`)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+		`tolocation` int(10) NOT NULL,
+	    `tofield` varchar(50) NOT NULL,
+	    `time` int(10) DEFAULT 0,
+		PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`),
+		INDEX `idx_season` (`season`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci");
 	}
 }
 
@@ -468,11 +469,11 @@ function upgrade71()
 	if (!hasTable("uo_location_info")) {
 		runQuery(
 			"CREATE TABLE `uo_location_info` (
-	`location_id` INT(10) NOT NULL,
-    `locale` varchar(20) NOT NULL,
-    `info` varchar(255) DEFAULT NULL,
-	PRIMARY KEY (`location_id`,`locale`)
-	) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci"
+		`location_id` INT(10) NOT NULL,
+	    `locale` varchar(20) NOT NULL,
+	    `info` varchar(255) DEFAULT NULL,
+		PRIMARY KEY (`location_id`,`locale`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"
 		);
 	}
 
@@ -512,13 +513,31 @@ function upgrade74()
 	if (!hasTable("uo_comment")) {
 		runQuery(
 			"CREATE TABLE `uo_comment` (
-    `type` tinyint(3) NOT NULL,
-    `id` varchar(10) NOT NULL,
-    `comment` text NOT NULL,
-	PRIMARY KEY (`type`,`id`),
-    INDEX `idx_id` (`id`)
-    ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci"
+	    `type` tinyint(3) NOT NULL,
+	    `id` varchar(10) NOT NULL,
+	    `comment` text NOT NULL,
+		PRIMARY KEY (`type`,`id`),
+	    INDEX `idx_id` (`id`)
+	    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci"
 		);
+	}
+
+	if (hasTable("uo_spirit") && hasColumn("uo_spirit", "comments")) {
+		runQuery("INSERT INTO uo_comment (`type`, `id`, `comment`)
+			SELECT
+				CASE
+					WHEN st.team_id = g.hometeam THEN 5
+					WHEN st.team_id = g.visitorteam THEN 6
+					ELSE NULL
+				END AS type,
+				CAST(st.game_id AS CHAR(10)) AS id,
+				st.comments AS comment
+			FROM uo_spirit st
+			JOIN uo_game g ON g.game_id = st.game_id
+			WHERE (st.team_id = g.hometeam OR st.team_id = g.visitorteam)
+				AND st.comments IS NOT NULL
+				AND LENGTH(TRIM(st.comments)) > 0
+			ON DUPLICATE KEY UPDATE comment=VALUES(comment)");
 	}
 }
 
@@ -526,16 +545,16 @@ function upgrade75()
 {
 	if (!hasTable("uo_spirit_category")) {
 		runQuery("CREATE TABLE `uo_spirit_category` (
-        `category_id` INT(10) NOT NULL AUTO_INCREMENT,
+	        `category_id` INT(10) NOT NULL AUTO_INCREMENT,
         `mode` INT(10) NOT NULL,
         `group` INT(5) NOT NULL DEFAULT 1,
         `index` INT(5) NOT NULL,
-        `min` INT(5) NOT NULL DEFAULT 0,
-        `max` INT(5) NOT NULL DEFAULT 4,
-        `factor` INT(5) NOT NULL DEFAULT 1,
-        `text` text NOT NULL,
-        PRIMARY KEY (`category_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
+	        `min` INT(5) NOT NULL DEFAULT 0,
+	        `max` INT(5) NOT NULL DEFAULT 4,
+	        `factor` INT(5) NOT NULL DEFAULT 1,
+	        `text` text NOT NULL,
+	        PRIMARY KEY (`category_id`)
+	        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1000");
 
 		// the gettext strings have no function here, but are needed so gettext replaces things like _($category) later ...
 		runQuery('INSERT INTO uo_spirit_category (`mode`, `index`, `text`) VALUES ("1001", 0, "One simple score")');
@@ -621,12 +640,12 @@ function upgrade75()
 		_("Communication (ours)");
 
 		runQuery("CREATE TABLE `uo_spirit_score` (
-        `game_id` INT(10) NOT NULL,
-        `team_id` INT(10) NOT NULL,
-		`category_id` INT(10) NOT NULL,
-        `value` INT (3) DEFAULT NULL,
-        PRIMARY KEY (`game_id`, `team_id`, `category_id`)
-        ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci AUTO_INCREMENT=1000");
+	        `game_id` INT(10) NOT NULL,
+	        `team_id` INT(10) NOT NULL,
+			`category_id` INT(10) NOT NULL,
+	        `value` INT (3) DEFAULT NULL,
+	        PRIMARY KEY (`game_id`, `team_id`, `category_id`)
+	        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci AUTO_INCREMENT=1000");
 
 		addColumn('uo_season', 'spiritmode', 'INT(10) DEFAULT NULL');
 		if (CUSTOMIZATIONS == "slkl") {
@@ -636,8 +655,8 @@ function upgrade75()
 			// set all to 1001
 			runQuery("UPDATE uo_season SET `spiritmode` = 1001 WHERE `spiritpoints`=1");
 
-			// update WFDF scores
-			$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1002");
+			// update WFDF scores. Assume: WFDF (five categories)
+			$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1003");
 		}
 
 		$categories = array();
@@ -668,15 +687,15 @@ function upgrade75()
 						$row['cat' . $i]
 					)
 				);
+				}
+				if ($lastSeason != $row['season_id']) {
+					$lastSeason = $row['season_id'];
+					runQuery(sprintf(
+						"UPDATE uo_season SET `spiritmode` = 1003 WHERE `spiritpoints`=1 AND season_id='%s'",
+						DBEscapeString($lastSeason)
+					));
+				}
 			}
-			if ($lastSeason != $row['season_id']) {
-				$lastSeason = $row['season_id'];
-				runQuery(sprintf(
-					"UPDATE uo_season SET `spiritmode` = 1002 WHERE `spiritpoints`=1 AND season_id=%d",
-					(int)$lastSeason
-				));
-			}
-		}
 
 		// update remaining, simple scores
 		$categoriesResult = runQuery("SELECT * FROM `uo_spirit_category` WHERE mode=1001");
@@ -715,11 +734,7 @@ function upgrade75()
     */
 
 		// clean up
-		runQuery('DROP TABLE uo_spirit');
 		runQuery("UPDATE uo_game SET time=NULL WHERE time < '0000-01-01 00:00:00';");
-		dropField("uo_game", "homesotg");
-		dropField("uo_game", "visitorsotg");
-		dropField("uo_season", "spiritpoints");
 	}
 }
 
@@ -728,11 +743,11 @@ function upgrade76()
 	global $locales;
 	if (!hasTable("uo_translation")) {
 		runQuery("CREATE TABLE `uo_translation` (
-      `translation_key` varchar(50) NOT NULL,
-      `locale` varchar(15) NOT NULL,
-      `translation` varchar(100) NOT NULL,
-      PRIMARY KEY (`translation_key`, `locale`)
-      ) ENGINE=MyISAM DEFAULT CHARSET=utf8 COLLATE utf8_general_ci");
+	      `translation_key` varchar(50) NOT NULL,
+	      `locale` varchar(15) NOT NULL,
+	      `translation` varchar(100) NOT NULL,
+	      PRIMARY KEY (`translation_key`, `locale`)
+	      ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_unicode_ci");
 
 		// Ensure we have locales even if config did not set them (e.g., during CLI upgrades).
 		if (!is_array($locales) || empty($locales)) {
@@ -860,9 +875,7 @@ function upgrade80()
 			PRIMARY KEY (`round_id`),
 			UNIQUE KEY `uq_season_round_season_series_no` (`season`,`series`,`round_no`),
 			KEY `idx_season_round_season` (`season`),
-			KEY `idx_season_round_series` (`series`),
-			CONSTRAINT `fk_season_round_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-			CONSTRAINT `fk_season_round_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE
+			KEY `idx_season_round_series` (`series`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 	}
 
@@ -872,11 +885,10 @@ function upgrade80()
 			`team_id` int(10) NOT NULL,
 			`points` int(10) NOT NULL DEFAULT 0,
 			PRIMARY KEY (`round_id`,`team_id`),
-			KEY `idx_season_points_team` (`team_id`),
-			CONSTRAINT `fk_season_points_round` FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-			CONSTRAINT `fk_season_points_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
+			KEY `idx_season_points_team` (`team_id`)
 		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
 	}
+
 }
 
 function upgrade81()
@@ -913,38 +925,464 @@ function upgrade81()
 	}
 }
 
+function upgrade82()
+{
+	runQuery("INSERT INTO uo_country (country_id, name, abbreviation, flagfile, valid) VALUES
+		(1039, 'People\\'s Republic of China', 'CHN', 'China.png', 1),
+		(1051, 'Czechia', 'CZE', 'Czech_Republic.png', 1),
+		(1082, 'Hong Kong, China', 'HKG', 'Hong_Kong.png', 1),
+		(1102, 'Republic of Korea', 'KOR', 'South_Korea.png', 1),
+		(1111, 'Lebanon', 'LBN', 'Lebanon.png', 1),
+		(1158, 'Russian Federation', 'RUS', 'Russian_Federation.png', 1),
+		(1163, 'Singapore', 'SGP', 'Singapore.png', 1),
+		(1187, 'Chinese Taipei', 'TPE', 'Chinese_Taipei.png', 1),
+		(1190, 'Türkiye', 'TUR', 'Turkey.png', 1),
+		(1192, 'United Arab Emirates', 'UAE', 'UAE.png', 1),
+		(1196, 'United States of America', 'USA', 'United_States_of_America.png', 1),
+		(1205, 'World', 'WRD', 'wfdf.png', 1)
+		ON DUPLICATE KEY UPDATE
+			name = VALUES(name),
+			abbreviation = VALUES(abbreviation),
+			flagfile = VALUES(flagfile),
+			valid = VALUES(valid)");
+}
+
+// Catch up with Bruno's fork
+function upgrade83()
+{
+	// When reaching here we should been already run:
+	// upgrade74() copy comments from uo_spirit to uo_comment
+	// upgrade75() convert uo_spirit to uo_spirit_score
+	// upgrade75() copy homesotg and visitorsotg to uo_spirit_score
+	// upgrade75() introduce spiritmode into uo_season
+	if (hasTable("uo_spirit")) {
+		runQuery('DROP TABLE uo_spirit');
+	}
+	if (hasColumn("uo_game", "homesotg")) {
+		dropField("uo_game", "homesotg");
+	}
+	if (hasColumn("uo_game", "visitorsotg")) {
+		dropField("uo_game", "visitorsotg");
+	}
+	if (hasColumn("uo_season", "spiritpoints")) {
+		dropField("uo_season", "spiritpoints");
+	}
+
+	if (!hasRow("uo_setting", "name", "ShowSpiritComments")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("ShowSpiritComments", "false")');
+	}
+
+	if (!hasRow("uo_setting", "name", "ReadOnlyServer")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("ReadOnlyServer", "false")');
+	}
+
+	if (!hasColumn("uo_game", "islive")) {
+		addColumn("uo_game", "islive", "TINYINT(1) DEFAULT 0");
+	}
+
+	if (!hasColumn("uo_game", "liveurl")) {
+		addColumn("uo_game", "liveurl", "VARCHAR(512) DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_game", "timer_start")) {
+		addColumn("uo_game", "timer_start", "BIGINT DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_game", "timer_pause_start")) {
+		addColumn("uo_game", "timer_pause_start", "BIGINT DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_game", "timer_paused_duration")) {
+		addColumn("uo_game", "timer_paused_duration", "BIGINT NOT NULL DEFAULT 0");
+	}
+
+	if (!hasColumn("uo_goal", "timestamp")) {
+		addColumn("uo_goal", "timestamp", "DATETIME DEFAULT current_timestamp()");
+	}
+
+	if (!hasColumn("uo_player", "reg_id")) {
+		addColumn("uo_player", "reg_id", "INT UNSIGNED DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_team", "reg_id")) {
+		addColumn("uo_team", "reg_id", "INT UNSIGNED DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_season", "reg_id")) {
+		addColumn("uo_season", "reg_id", "INT UNSIGNED DEFAULT NULL");
+	}
+
+	if (!hasColumn("uo_team", "sotg_token")) {
+		addColumn("uo_team", "sotg_token", "VARCHAR(64) DEFAULT NULL");
+	}
+}
+
+function upgrade84()
+{
+	// Canonical upstream changes introduced in old upgrade69-73.
+	// Might be missing from Bruno's fork used by many
+	$missingCanonical =
+		!hasColumn("uo_pool", "drawsallowed") ||
+		!hasColumn("uo_pooltemplate", "drawsallowed") ||
+		!hasTable("uo_movingtime") ||
+		!hasTable("uo_location_info") ||
+		hasColumn("uo_team_stats", "loses") ||
+		!hasColumn("uo_pool", "playoff_template");
+
+	if (!$missingCanonical) {
+		return;
+	}
+
+	if (!hasColumn("uo_pool", "drawsallowed")) {
+		addColumn("uo_pool", "drawsallowed", "smallint(5) DEFAULT 0");
+	}
+	if (!hasColumn("uo_pooltemplate", "drawsallowed")) {
+		addColumn("uo_pooltemplate", "drawsallowed", "smallint(5) DEFAULT 0");
+	}
+	if (!hasColumn("uo_game", "hasstarted")) {
+		runQuery("UPDATE uo_game SET time=NULL WHERE time < '0000-01-01 00:00:00';");
+		addColumn("uo_game", "hasstarted", "tinyint(1) DEFAULT 0");
+		runQuery("UPDATE uo_game SET hasstarted='1' WHERE isongoing>0 OR homescore>0 OR visitorscore>0");
+	}
+
+	if (!hasTable("uo_movingtime")) {
+		runQuery("CREATE TABLE `uo_movingtime` (
+			`season` varchar(10) NOT NULL,
+			`fromlocation` int(10) NOT NULL,
+			`fromfield` varchar(50) NOT NULL,
+			`tolocation` int(10) NOT NULL,
+			`tofield` varchar(50) NOT NULL,
+			`time` int(10) DEFAULT 0,
+			PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+
+	if (!hasTable("uo_location_info")) {
+		runQuery(
+			"CREATE TABLE `uo_location_info` (
+				`location_id` int(10) NOT NULL,
+				`locale` varchar(20) NOT NULL,
+				`info` varchar(255) DEFAULT NULL,
+				PRIMARY KEY (`location_id`,`locale`)
+			) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci"
+		);
+	}
+
+	$results = runQuery("SELECT * FROM uo_location");
+	while ($row = mysqli_fetch_assoc($results)) {
+		foreach ($row as $key => $value) {
+			if (substr($key, 0, 5) === "info_" && !empty($value)) {
+				$locale = substr($key, 5);
+				runQuery(
+					sprintf(
+						"INSERT IGNORE INTO `uo_location_info` (`location_id`, `locale`, `info`)
+						 VALUES (%d, '%s', '%s')",
+						(int)$row['id'],
+						DBEscapeString($locale),
+						DBEscapeString($value)
+					)
+				);
+			}
+		}
+	}
+
+	if (hasColumn("uo_team_stats", "loses")) {
+		renameField("uo_team_stats", "loses", "losses");
+	}
+
+	if (!hasColumn("uo_pool", "playoff_template")) {
+		addColumn("uo_pool", "playoff_template", "varchar(30) default NULL");
+	}
+}
+
+function upgrade85()
+{
+	if (!hasRow("uo_setting", "name", "DisableVisitorLogging")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("DisableVisitorLogging", "false")');
+	}
+	if (!hasColumn("uo_season", "hide_time_on_scoresheet")) {
+		addColumn("uo_season", "hide_time_on_scoresheet", "tinyint(1) DEFAULT 0");
+	}
+	if (!hasColumn("uo_season", "event_readonly")) {
+		addColumn("uo_season", "event_readonly", "tinyint(1) DEFAULT 0");
+	}
+
+	if (!hasTable("uo_passwordresetrequest")) {
+		runQuery("CREATE TABLE `uo_passwordresetrequest` (
+			`userid` varchar(50) NOT NULL,
+			`token` varchar(100) DEFAULT NULL,
+			`requested` timestamp NOT NULL DEFAULT current_timestamp(),
+			PRIMARY KEY (`userid`),
+			UNIQUE KEY `uq_passwordresetrequest_token` (`token`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+}
+
+function upgrade86()
+{
+	if (!hasColumn("uo_season", "showspiritcomments")) {
+		addColumn("uo_season", "showspiritcomments", "tinyint(1) DEFAULT 0");
+	}
+	if (!hasColumn("uo_season", "showspiritpointsonlyoncomplete")) {
+		addColumn("uo_season", "showspiritpointsonlyoncomplete", "tinyint(1) DEFAULT 1");
+	}
+	if (!hasColumn("uo_season", "lockteamspiritonsubmit")) {
+		addColumn("uo_season", "lockteamspiritonsubmit", "tinyint(1) DEFAULT 1");
+	}
+	if (!hasColumn("uo_game", "show_spirit")) {
+		addColumn("uo_game", "show_spirit", "tinyint(1) DEFAULT 0");
+	}
+
+	$legacySetting = DBQueryToValue("SELECT value FROM uo_setting WHERE name='ShowSpiritComments'");
+	$showSpiritComments = ($legacySetting === "true") ? 1 : 0;
+	runQuery(sprintf("UPDATE uo_season SET showspiritcomments=%d", $showSpiritComments));
+
+	if (hasRow("uo_setting", "name", "ShowSpiritComments")) {
+		runQuery("DELETE FROM uo_setting WHERE name='ShowSpiritComments'");
+	}
+
+	runQuery("UPDATE uo_spirit_category SET text='Four categories plus comparison' WHERE mode=1002 AND `index`=0");
+	runQuery("UPDATE uo_spirit_category SET text='Five categories, theirs and ours' WHERE mode=1004 AND `index`=0");
+	runQuery("UPDATE uo_spirit_category SET text='WFDF official (five categories)' WHERE mode=1003 AND `index`=0");
+
+	// Keep gettext aware of the renamed mode labels stored in the database.
+	_("Four categories plus comparison");
+	_("Five categories, theirs and ours");
+	_("WFDF official (five categories)");
+
+	runQuery(
+		"UPDATE uo_game g
+		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_series s ON (s.series_id = p.series)
+		LEFT JOIN uo_season se ON (se.season_id = s.season)
+		SET g.show_spirit =
+			CASE
+				WHEN COALESCE(se.spiritmode, 0) > 0 AND COALESCE(se.showspiritpoints, 0) = 1 THEN 1
+				ELSE 0
+			END"
+	);
+	if (!hasTable("uo_spirit_timeout")) {
+		runQuery("CREATE TABLE `uo_spirit_timeout` (
+			`spirit_timeout_id` int(10) NOT NULL AUTO_INCREMENT,
+			`game` int(10) DEFAULT NULL,
+			`num` smallint(5) DEFAULT NULL,
+			`time` int(10) DEFAULT NULL,
+			`ishome` tinyint(1) NOT NULL,
+			PRIMARY KEY (`spirit_timeout_id`),
+			KEY `idx_game` (`game`)
+		) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+	}
+
+	if (!hasColumn("uo_season", "hometeammode")) {
+		addColumn("uo_season", "hometeammode", "tinyint(1) DEFAULT 0");
+	}
+}
+
+function upgrade87()
+{
+	if (!hasColumn("uo_played", "spirit_captain")) {
+		addColumn("uo_played", "spirit_captain", "tinyint(1) NOT NULL DEFAULT 0");
+	}
+
+	runQuery("ALTER TABLE uo_reservation MODIFY location int(10) DEFAULT NULL");
+	runQuery("UPDATE uo_reservation r LEFT JOIN uo_location l ON l.id = r.location
+		SET r.location = NULL
+		WHERE r.location IS NOT NULL AND (r.location = 0 OR l.id IS NULL)");
+}
+
+function upgrade88()
+{
+	if (!hasColumn("uo_game", "forfeit")) {
+		addColumn("uo_game", "forfeit", "tinyint(1) NOT NULL DEFAULT 0");
+	}
+}
+
+function upgrade89()
+{
+	dropForeignKey('uo_urls', 'uo_urls_FK');
+}
+
+function upgrade90()
+{
+	if (!hasColumn("uo_season", "maintenance_mode")) {
+		addColumn("uo_season", "maintenance_mode", "tinyint(1) DEFAULT 0");
+	}
+	if (!hasRow("uo_setting", "name", "SoftMaintenanceMode")) {
+		runQuery('INSERT INTO uo_setting (name, value) VALUES ("SoftMaintenanceMode", "false")');
+	}
+}
+
 function upgradeEngineToInnoDb() {
-    $charset = 'utf8mb4';
-    $collation = 'utf8mb4_unicode_ci';
+	$charset = 'utf8mb4';
+	$collation = 'utf8mb4_unicode_ci';
 
-    // Clean nullable references and ensure no orphans before conversion.
-    cleanupNullableOrphans();
-    $errors = findOrphanErrors();
-    if (count($errors)) {
-        $instructions = "Cannot add foreign keys:\n" . implode("\n", $errors) . "\n";
-        throw new Exception($instructions);
-    }
+	// Clean nullable references and ensure no orphans before conversion.
+	cleanupNullableOrphans();
+	$errors = findOrphanErrors();
+	if (count($errors)) {
+		$instructions = "Cannot add foreign keys:\n" . implode("\n", $errors) . "\n";
+		throw new Exception($instructions);
+	}
+	$blockingFkCommands = getCharsetBlockingForeignKeyDropCommands();
+	if (count($blockingFkCommands)) {
+		$instructions = "Pre-check found foreign keys that can block charset conversion.\n";
+		$instructions .= "Run all commands below once, then rerun conversion:\n";
+		$instructions .= implode("\n", $blockingFkCommands) . "\n";
+		throw new Exception($instructions);
+	}
 
-    runQuery(sprintf(
-        "ALTER DATABASE `%s` CHARACTER SET %s COLLATE %s",
-        DB_DATABASE,
-        $charset,
-        $collation
-    ));
+	try {
+		runQuery(sprintf(
+			"ALTER DATABASE `%s` CHARACTER SET %s COLLATE %s",
+			DB_DATABASE,
+			$charset,
+			$collation
+		));
+	} catch (mysqli_sql_exception $e) {
+		throw new Exception(buildConversionFailureInstructions('database', $e->getMessage()), 0, $e);
+	}
 
-    $tables = runQuery(sprintf("SHOW TABLES FROM `%s`", DB_DATABASE));
-    while ($row = mysqli_fetch_row($tables)) {
-        $table = $row[0];
-        runQuery(sprintf(
-            "ALTER TABLE `%s` CONVERT TO CHARACTER SET %s COLLATE %s, ENGINE=InnoDB",
-            $table,
-            $charset,
-            $collation
-        ));
-    }
+	$tables = runQuery(sprintf("SHOW TABLES FROM `%s`", DB_DATABASE));
+	while ($row = mysqli_fetch_row($tables)) {
+		$table = $row[0];
+		try {
+			runQuery(sprintf(
+				"ALTER TABLE `%s` CONVERT TO CHARACTER SET %s COLLATE %s, ENGINE=InnoDB",
+				$table,
+				$charset,
+				$collation
+			));
+		} catch (mysqli_sql_exception $e) {
+			throw new Exception(buildConversionFailureInstructions($table, $e->getMessage()), 0, $e);
+		}
+	}
 
 	// Add foreign keys now that all tables use InnoDB.
 	addInnoDbForeignKeys();
+}
+
+function buildConversionFailureInstructions($target, $dbError)
+{
+	$message = "Conversion failed while updating `" . $target . "`\n";
+	$message .= "Error: " . $dbError . "\n";
+	$message .= "This usually means an existing foreign key blocks charset/engine conversion.\n";
+
+	$constraint = extractConstraintNameFromError($dbError);
+	if ($constraint !== null) {
+		$details = getForeignKeyDetails($constraint);
+		if ($details !== null) {
+			$message .= sprintf(
+				"Blocking FK `%s` is on `%s` (%s) referencing `%s` (%s).\n",
+				$constraint,
+				$details['table'],
+				implode(', ', $details['columns']),
+				$details['ref_table'],
+				implode(', ', $details['ref_columns'])
+			);
+			$message .= "If this is a legacy/custom FK, run:\n";
+			$message .= sprintf("Command: ALTER TABLE `%s` DROP FOREIGN KEY `%s`;\n", $details['table'], $constraint);
+			$message .= "Then rerun the upgrade.\n";
+			return $message;
+		}
+
+		$message .= "Find the FK metadata with:\n";
+		$message .= "SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME\n";
+		$message .= "FROM information_schema.KEY_COLUMN_USAGE\n";
+		$message .= sprintf("WHERE CONSTRAINT_SCHEMA='%s' AND CONSTRAINT_NAME='%s';\n", DB_DATABASE, DBEscapeString($constraint));
+	}
+
+	return $message;
+}
+
+function extractConstraintNameFromError($dbError)
+{
+	if (!preg_match("/constraint '([^']+)'/i", $dbError, $matches)) {
+		return null;
+	}
+	$fullName = $matches[1];
+	$parts = explode('/', $fullName);
+	return end($parts);
+}
+
+function getForeignKeyDetails($constraint)
+{
+	$query = sprintf(
+		"SELECT TABLE_NAME, COLUMN_NAME, REFERENCED_TABLE_NAME, REFERENCED_COLUMN_NAME
+		 FROM information_schema.KEY_COLUMN_USAGE
+		 WHERE CONSTRAINT_SCHEMA='%s'
+		   AND CONSTRAINT_NAME='%s'
+		   AND REFERENCED_TABLE_NAME IS NOT NULL
+		 ORDER BY ORDINAL_POSITION",
+		DBEscapeString(DB_DATABASE),
+		DBEscapeString($constraint)
+	);
+
+	$result = runQuery($query);
+	if (!$result) {
+		return null;
+	}
+
+	$columns = array();
+	$refColumns = array();
+	$table = null;
+	$refTable = null;
+	while ($row = mysqli_fetch_assoc($result)) {
+		$table = $row['TABLE_NAME'];
+		$refTable = $row['REFERENCED_TABLE_NAME'];
+		$columns[] = $row['COLUMN_NAME'];
+		$refColumns[] = $row['REFERENCED_COLUMN_NAME'];
+	}
+
+	if ($table === null || $refTable === null) {
+		return null;
+	}
+
+	return array(
+		'table' => $table,
+		'columns' => $columns,
+		'ref_table' => $refTable,
+		'ref_columns' => $refColumns
+	);
+}
+
+function getCharsetBlockingForeignKeyDropCommands()
+{
+	$query = sprintf(
+		"SELECT DISTINCT
+			kcu.TABLE_NAME AS child_table,
+			kcu.CONSTRAINT_NAME AS constraint_name
+		FROM information_schema.KEY_COLUMN_USAGE kcu
+		JOIN information_schema.COLUMNS child_col
+			ON child_col.TABLE_SCHEMA = kcu.TABLE_SCHEMA
+			AND child_col.TABLE_NAME = kcu.TABLE_NAME
+			AND child_col.COLUMN_NAME = kcu.COLUMN_NAME
+		JOIN information_schema.COLUMNS parent_col
+			ON parent_col.TABLE_SCHEMA = kcu.REFERENCED_TABLE_SCHEMA
+			AND parent_col.TABLE_NAME = kcu.REFERENCED_TABLE_NAME
+			AND parent_col.COLUMN_NAME = kcu.REFERENCED_COLUMN_NAME
+		WHERE kcu.TABLE_SCHEMA = '%s'
+			AND kcu.REFERENCED_TABLE_NAME IS NOT NULL
+			AND (
+				child_col.CHARACTER_SET_NAME IS NOT NULL
+				OR parent_col.CHARACTER_SET_NAME IS NOT NULL
+			)
+		ORDER BY kcu.TABLE_NAME, kcu.CONSTRAINT_NAME",
+		DBEscapeString(DB_DATABASE)
+	);
+	$result = runQuery($query);
+	if (!$result) {
+		return array();
+	}
+
+	$commands = array();
+	while ($row = mysqli_fetch_assoc($result)) {
+		$commands[] = sprintf(
+			"ALTER TABLE `%s` DROP FOREIGN KEY `%s`;",
+			$row['child_table'],
+			$row['constraint_name']
+		);
+	}
+	return $commands;
 }
 
 
@@ -952,6 +1390,9 @@ function runQuery($query)
 {
 	global $mysqlconnectionref;
 	$result = mysqli_query($mysqlconnectionref, $query);
+	if (!$result) {
+		DBAbort('runQuery failed', $query, mysqli_error($mysqlconnectionref));
+	}
 	return $result;
 }
 
@@ -1013,6 +1454,26 @@ function addForeignKey($table, $constraint, $definition)
 }
 
 /**
+ * Drop a foreign key if it exists.
+ */
+function dropForeignKey($table, $constraint)
+{
+	$existsQuery = sprintf(
+		"SELECT 1 FROM information_schema.TABLE_CONSTRAINTS
+     WHERE CONSTRAINT_SCHEMA = '%s' AND TABLE_NAME = '%s' AND CONSTRAINT_NAME = '%s' AND CONSTRAINT_TYPE = 'FOREIGN KEY'",
+		DBEscapeString(DB_DATABASE),
+		DBEscapeString($table),
+		DBEscapeString($constraint)
+	);
+	$exists = runQuery($existsQuery);
+	if (!$exists || mysqli_num_rows($exists) == 0) {
+		return;
+	}
+
+	runQuery(sprintf("ALTER TABLE `%s` DROP FOREIGN KEY `%s`", $table, $constraint));
+}
+
+/**
  * Null out nullable references that point to missing parents.
  */
 function cleanupNullableOrphans()
@@ -1029,6 +1490,7 @@ function cleanupNullableOrphans()
 		"UPDATE uo_game g LEFT JOIN uo_team t ON t.team_id = g.visitorteam SET g.visitorteam = NULL WHERE g.visitorteam IS NOT NULL AND (g.visitorteam = 0 OR t.team_id IS NULL)",
 		"UPDATE uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool SET g.pool = NULL WHERE g.pool IS NOT NULL AND (g.pool = 0 OR p.pool_id IS NULL)",
 		"UPDATE uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation SET g.reservation = NULL WHERE g.reservation IS NOT NULL AND (g.reservation = 0 OR r.id IS NULL)",
+		"UPDATE uo_reservation r LEFT JOIN uo_location l ON l.id = r.location SET r.location = NULL WHERE r.location IS NOT NULL AND (r.location = 0 OR l.id IS NULL)",
 		"UPDATE uo_goal go LEFT JOIN uo_player p ON p.player_id = go.assist SET go.assist = NULL WHERE go.assist IS NOT NULL AND (go.assist = 0 OR p.player_id IS NULL)",
 		"UPDATE uo_goal go LEFT JOIN uo_player p ON p.player_id = go.scorer SET go.scorer = NULL WHERE go.scorer IS NOT NULL AND (go.scorer = 0 OR p.player_id IS NULL)",
 		"UPDATE uo_moveteams m LEFT JOIN uo_scheduling_name s ON s.scheduling_id = m.scheduling_id SET m.scheduling_id = NULL WHERE m.scheduling_id IS NOT NULL AND (m.scheduling_id = 0 OR s.scheduling_id IS NULL)",
@@ -1067,6 +1529,7 @@ function findOrphanErrors()
 		"uo_goal.assist/scorer" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_player p1 ON p1.player_id = go.assist LEFT JOIN uo_player p2 ON p2.player_id = go.scorer WHERE (go.assist IS NOT NULL AND p1.player_id IS NULL) OR (go.scorer IS NOT NULL AND p2.player_id IS NULL) LIMIT 1",
 		"uo_played.player/game" => "SELECT 1 FROM uo_played pl LEFT JOIN uo_player p ON p.player_id = pl.player LEFT JOIN uo_game g ON g.game_id = pl.game WHERE p.player_id IS NULL OR g.game_id IS NULL LIMIT 1",
 		"uo_timeout.game" => "SELECT 1 FROM uo_timeout ti LEFT JOIN uo_game g ON g.game_id = ti.game WHERE ti.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
+		"uo_spirit_timeout.game" => "SELECT 1 FROM uo_spirit_timeout sti LEFT JOIN uo_game g ON g.game_id = sti.game WHERE sti.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
 		"uo_gameevent.game" => "SELECT 1 FROM uo_gameevent ge LEFT JOIN uo_game g ON g.game_id = ge.game WHERE ge.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
 		"uo_game_pool.game/pool" => "SELECT 1 FROM uo_game_pool gp LEFT JOIN uo_game g ON g.game_id = gp.game LEFT JOIN uo_pool p ON p.pool_id = gp.pool WHERE (gp.game IS NOT NULL AND g.game_id IS NULL) OR (gp.pool IS NOT NULL AND p.pool_id IS NULL) LIMIT 1",
 		"uo_reservation.location" => "SELECT 1 FROM uo_reservation r LEFT JOIN uo_location l ON l.id = r.location WHERE r.location IS NOT NULL AND l.id IS NULL LIMIT 1",
@@ -1136,6 +1599,7 @@ function addInnoDbForeignKeys()
 	addForeignKey('uo_played', 'fk_played_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 
 	addForeignKey('uo_timeout', 'fk_timeout_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_spirit_timeout', 'fk_spirit_timeout_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_gameevent', 'fk_gameevent_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 
 	addForeignKey('uo_game_pool', 'fk_game_pool_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
@@ -1163,6 +1627,12 @@ function addInnoDbForeignKeys()
 	addForeignKey('uo_spirit_score', 'fk_spirit_score_game', "FOREIGN KEY (`game_id`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_spirit_score', 'fk_spirit_score_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_spirit_score', 'fk_spirit_score_category', "FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_season_round', 'fk_season_round_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_season_round', 'fk_season_round_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+
+	addForeignKey('uo_season_points', 'fk_season_points_round', "FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+	addForeignKey('uo_season_points', 'fk_season_points_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 
 	addForeignKey('uo_defense', 'fk_defense_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
 	addForeignKey('uo_defense', 'fk_defense_author', "FOREIGN KEY (`author`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE");

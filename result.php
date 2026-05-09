@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('result');
+
 $allowAnonResult = defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
 if (!$allowAnonResult) {
   $include_prefix = __DIR__ . '/';
@@ -62,9 +65,11 @@ if (!empty($_POST['save']) && empty($errors)) {
 
   if (GameHasStarted($game_result)) {
     $html .=  "<br/>";
-    $html .= _("Game is already played. Result:") . " " . intval($game_result['homescore']) . " - " . $game_result['visitorscore'] . ".";
+    $html .= _("This game has already been played. Current result:") . " " . intval($game_result['homescore']) . " - " . $game_result['visitorscore']
+      . (!empty($game_result['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
+      . ".";
     $html .=  "<br/><br/>";
-    $html .=  "<span style='font-weight:bold'>" . _("Change result to") . " $home - $away?" . "</span>";
+    $html .=  "<span style='font-weight:bold'>" . _("Change the result to") . " $home - $away?" . "</span>";
   } else {
     $html .=  "<span style='font-weight:bold'> $home - $away</span>";
   }
@@ -87,11 +92,11 @@ if (!empty($_POST['save']) && empty($errors)) {
   $html .= "</td><td>\n";
   $html .= "<input class='input' type='text' id='game' name='game' size='6' maxlength='5' onkeyup='validNumber(this);'/> ";
   $html .= "</td></tr><tr><td class='infocell'>\n";
-  $html .= _("Home Goals") . ":";
+  $html .= _("Home score") . ":";
   $html .= "</td><td>\n";
   $html .= "<input class='input' type='text' id='home' name='home' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
   $html .= "</td></tr><tr><td class='infocell'>\n";
-  $html .= _("Away Goals") . ":";
+  $html .= _("Away score") . ":";
   $html .= "</td><td>\n";
   $html .= "<input class='input' type='text' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
   $html .= "</td></tr><tr><td style='padding-top:15px' colspan='2'>\n";

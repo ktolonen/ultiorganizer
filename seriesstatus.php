@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('seriesstatus');
+
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
@@ -13,7 +16,7 @@ $html = "";
 
 if (!iget("series")) {
   $title = _("Statistics");
-  $html .= "<h1>" . _("Series not found") . "</h1>";
+  $html .= "<h1>" . _("Division not found") . "</h1>";
   showPage($title, $html);
   return;
 }
@@ -21,7 +24,7 @@ if (!iget("series")) {
 $seriesinfo = SeriesInfo(iget("series"));
 if (!$seriesinfo) {
   $title = _("Statistics");
-  $html .= "<h1>" . _("Series not found") . "</h1>";
+  $html .= "<h1>" . _("Division not found") . "</h1>";
   showPage($title, $html);
   return;
 }
@@ -29,7 +32,7 @@ $viewUrl .= "&amp;series=" . $seriesinfo['series_id'];
 $seasoninfo = SeasonInfo($seriesinfo['season']);
 if (!$seasoninfo) {
   $title = _("Statistics");
-  $html .= "<h1>" . _("Season not found") . "</h1>";
+  $html .= "<h1>" . _("Event not found") . "</h1>";
   showPage($title, $html);
   return;
 }
@@ -139,9 +142,9 @@ if ($sort == "name") {
  */
 
 if ($sort == "seed") {
-  $html .= "<th class='center'>" . _("Seed") . "</th>";
+  $html .= "<th class='center'>"._("Seed")."</th>";
 } else {
-  $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=seed'>" . _("Seed") . "</a></th>";
+  $html .= "<th class='center'><a class='thsort' href='".$viewUrl."&amp;Sort=seed'>"._("Seed")."</a></th>";
 }
 
 if ($sort == "ranking") {
@@ -191,11 +194,11 @@ if ($sort == "winavg") {
 } else {
   $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=winavg'>" . _("Win-%") . "</a></th>";
 }
-if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))) {
+if (ShowSpiritScoresForSeason($seasoninfo)) {
   if ($sort == "spirit") {
-    $html .= "<th class='center'>" . _("Spirit points") . "</th>";
+    $html .= "<th class='center'>" . _("Spirit score") . "</th>";
   } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=spirit'>" . _("Spirit points") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=spirit'>" . _("Spirit score") . "</a></th>";
   }
 }
 
@@ -273,7 +276,7 @@ foreach ($allteams as $stats) {
     $html .= "<td class='center'>" . $stats['winavg'] . "%</td>";
   }
 
-  if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seriesinfo['season']))) {
+  if (ShowSpiritScoresForSeason($seasoninfo)) {
     if ($sort == "spirit") {
       $html .= "<td class='center highlight'>" . ($stats['spirit'] ? number_format($stats['spirit'], 2) : "-") . "</td>";
     } else {
@@ -290,8 +293,8 @@ $html .= "<table cellspacing='0' border='0' width='100%'>\n";
 $html .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 <th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
 
-$scores = SeriesScoreBoard($seriesinfo['series_id'], "total", 10);
-while ($row = mysqli_fetch_assoc($scores)) {
+$scores = SeriesScoreBoardArray($seriesinfo['series_id'], "total", 10);
+foreach ($scores as $row) {
   $html .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
   $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
   $html .= "<td class='center'>" . intval($row['games']) . "</td>";
@@ -305,28 +308,27 @@ $html .= "<a href='?view=scorestatus&amp;series=" . $seriesinfo['series_id'] . "
 
 
 if (ShowDefenseStats()) {
-  $html .= "<h2>" . _("Defenseboard leaders") . "</h2>\n";
+  $html .= "<h2>" . _("Defence board leaders") . "</h2>\n";
   $html .= "<table cellspacing='0' border='0' width='100%'>\n";
   $html .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
-	<th class='center'>" . _("Total defenses") . "</th></tr>\n";
+	<th class='center'>" . _("Total defences") . "</th></tr>\n";
 
 
-  $defenses = SeriesDefenseBoard($seriesinfo['series_id'], "deftotal", 10);
-  while ($row = mysqli_fetch_assoc($defenses)) {
+  $defenses = SeriesDefenseBoardArray($seriesinfo['series_id'], "deftotal", 10);
+  foreach ($defenses as $row) {
     $html .= "<tr><td>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
     $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
-    $html .= "<td>" . _("Games") . "</td>";
     $html .= "<td class='center'>" . intval($row['games']) . "</td>";
     $html .= "<td class='center'>" . intval($row['deftotal']) . "</td></tr>\n";
   }
 
   $html .= "</table>";
-  $html .= "<a href='?view=defensestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Defenseboard") . "</a>";
+  $html .= "<a href='?view=defensestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Defence board") . "</a>";
 }
 
-if ($seasoninfo['showspiritpoints']) {
+if (ShowSpiritScoresForSeason($seasoninfo)) {
   $categories = SpiritCategories($seasoninfo['spiritmode']);
-  $html .= "<h2>" . _("Spirit points average per category") . "</h2>\n";
+  $html .= "<h2>" . _("Spirit score average per category") . "</h2>\n";
 
   $html .= "<table cellspacing='0' border='0' width='100%'>\n";
   $html .= "<tr><th style='width:150px'>" . _("Team") . "</th>";
@@ -374,7 +376,7 @@ if ($seasoninfo['showspiritpoints']) {
   $html .= "<ul>";
   foreach ($categories as $cat) {
     if ($cat['index'] > 0)
-      $html .= "<li>" . $cat['index'] . " " . $cat['text'] . "</li>";
+      $html .= "<li>" . $cat['index'] . " " . _($cat['text']) . "</li>";
   }
   $html .= "</ul>\n";
 }

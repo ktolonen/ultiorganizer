@@ -22,10 +22,10 @@ $help = "<p>" . _("Feed in the data for your game responsibilities") . ":</p>
 	<ol>
 		<li> " . _("Result") . " </li>
 		<li> " . _("Players in the game") . " </li>
-		<li> " . _("Game score sheet") . " </li>
+		<li> " . _("Game scoresheet") . " </li>
 	</ol>
-	<p>" . _("Click on Mass input to input multiple results at once, then Save") . ".</p>
-	<p>" . _("Check the game play after feeding in the score sheet") . ".</p>";
+	<p>" . _("Click Mass input to enter multiple results at once, then click Save") . ".</p>
+	<p>" . _("Check the gameplay after feeding in the scoresheet") . ".</p>";
 
 $html .= onPageHelpAvailable($help);
 //content
@@ -134,7 +134,7 @@ if (count($respGameArray) == 0) {
   $html .= "\n<p>" . _("No game responsibilities") . ".</p>\n";
 } else {
   $html .= "<noscript>
-	<p><b>" . _("Feeding in the score sheet requires JavaScript. Please enable JavaScript in your browser to continue!") . "</b></p>
+	<p><b>" . _("Feeding in the scoresheet requires JavaScript. Please enable JavaScript in your browser to continue!") . "</b></p>
 	</noscript>";
 }
 
@@ -193,7 +193,7 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         $html .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>";
       }
       if (intval($game['hasstarted']) > 0) {
-        $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . _("Game play") . "</a></td>";
+        $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . _("Gameplay") . "</a></td>";
       } else {
         $html .= "<td></td>";
       }
@@ -201,20 +201,18 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         $html .= "<td class='right nowrap'><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Result") . "</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Players") . "</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>" . _("Scoresheet") . "</a>";
-        if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {
-          $html .= " | <a href='?view=user/addspirit&amp;game=$gameId'>" . _("Spirit") . "</a>";
-        } elseif (isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) {
-          // TeamAdmin
-          if (hasEditPlayersRight($game['hometeam'])) {
-            $html .= " | <a href='?view=user/addspirit&amp;game=$gameId&amp;team=" . $game['hometeam'] . "'>" . _("Spirit") . "</a>";
-        }
-          if (hasEditPlayersRight($game['visitorteam'])) {
-            $html .= " | <a href='?view=user/addspirit&amp;game=$gameId&amp;team=" . $game['visitorteam'] . "'>" . _("Spirit") . "</a>";
+        if (!empty($seasoninfo['spiritmode'])) {
+          $spiritUrl = SpiritEntryUrl($gameId);
+          if (!empty($spiritUrl)) {
+            $html .= " | <a href='" . $spiritUrl . "'>" . _("Spirit score") . "</a>";
           }
         }
         if (ShowDefenseStats()) {
-          $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defense sheet") . "</a>";
+          $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defence sheet") . "</a>";
         }
+	     if(isSeasonAdmin($seasoninfo['season_id'])) {
+        $html .= " | <a href='?view=admin/editgame&amp;season=".$season."&amp;game=".$gameId."'>"._("Edit")."</a>";
+      }
         $html .= "</td>";
       }
       $html .= "</tr>";

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 /**
  * @file
@@ -88,12 +90,12 @@ function CurrentSeason()
 /**
  * Returns all current seasons (uo_season.iscurrent=1).
  * 
- * @return mysqli_result array 
+ * @return array
  */
 function CurrentSeasons()
 {
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 /**
@@ -108,10 +110,12 @@ function CurrentSeasonName()
       "SELECT name FROM uo_season WHERE season_id='%s'",
       DBEscapeString($_SESSION['userproperties']['selseason'])
     );
-    return U_(DBQueryToValue($query));
+    $name = DBQueryToValue($query);
+    return $name === null ? "" : U_($name);
   }
   $query = sprintf("SELECT name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC LIMIT 1");
-  return U_(DBQueryToValue($query));
+  $name = DBQueryToValue($query);
+  return $name === null ? "" : U_($name);
 }
 
 /**
@@ -125,8 +129,8 @@ function SeasonName($seasonId)
     "SELECT name FROM uo_season WHERE season_id='%s'",
     DBEscapeString($seasonId)
   );
-  $name = U_(DBQueryToValue($query));
-  return ($name == -1) ? "" : $name;
+  $name = DBQueryToValue($query);
+  return ($name === null) ? "" : U_($name);
 }
 
 /**
@@ -141,7 +145,7 @@ function Seasontype($seasonId)
     DBEscapeString($seasonId)
   );
   $type = DBQueryToValue($query);
-  return ($type == -1) ? "" : $type;
+  return ($type === null) ? "" : $type;
 }
 
 /**
@@ -155,7 +159,191 @@ function SeasonInfo($seasonId)
     "SELECT * FROM uo_season WHERE season_id='%s'",
     DBEscapeString($seasonId)
   );
-  return DBQueryToRow($query, true);
+  $row = DBQueryToRow($query, true);
+  if (is_array($row) && !array_key_exists('spiritpoints', $row)) {
+    // Deprecated alias kept for live-skin backward compatibility; use spiritmode instead.
+    $row['spiritpoints'] = (int)(($row['spiritmode'] ?? 0) > 0);
+  }
+  return $row;
+}
+
+/**
+ * Returns the event-level home team assignment mode.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return int
+ */
+function SeasonHomeTeamMode($seasonId)
+{
+  $seasonInfo = SeasonInfo($seasonId);
+  if (!$seasonInfo || !isset($seasonInfo['hometeammode'])) {
+    return 0;
+  }
+
+  return (int)$seasonInfo['hometeammode'];
+}
+
+/**
+ * Returns true if event (season) is in read-only mode.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return bool
+ */
+function isEventReadonly($seasonId)
+{
+  $seasonInfo = SeasonInfo($seasonId);
+  return !empty($seasonInfo['event_readonly']);
+}
+
+function IsSeasonInMaintenance($seasonId)
+{
+  if (empty($seasonId)) {
+    return false;
+  }
+  return (bool)DBQueryToValue(sprintf(
+    "SELECT maintenance_mode FROM uo_season WHERE season_id='%s'",
+    DBEscapeString($seasonId)
+  ));
+}
+
+function CanBypassEventMaintenance($seasonId)
+{
+  if (function_exists('isSuperAdmin') && isSuperAdmin()) {
+    return true;
+  }
+  return !empty($seasonId) && function_exists('isSeasonAdmin') && isSeasonAdmin($seasonId);
+}
+
+function MaintenanceSeasonFromView($rawView)
+{
+  $view = preg_replace('/\.php$/i', '', (string)$rawView);
+
+  if (iget("season")) {
+    return iget("season");
+  }
+  if (iget("series")) {
+    return DBQueryToValue(sprintf(
+      "SELECT season FROM uo_series WHERE series_id=%d",
+      (int)iget("series")
+    ));
+  }
+  if (iget("pool")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_pool pool
+       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+       WHERE pool.pool_id=%d",
+      (int)iget("pool")
+    ));
+  }
+  if (iget("game")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_game game
+       LEFT JOIN uo_pool pool ON (pool.pool_id=game.pool)
+       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+       WHERE game.game_id=%d",
+      (int)iget("game")
+    ));
+  }
+  if (iget("team")) {
+    return MaintenanceSeasonFromTeam(iget("team"));
+  }
+  if (iget("player")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_player player
+       LEFT JOIN uo_team team ON (team.team_id=player.team)
+       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+       WHERE player.player_id=%d",
+      (int)iget("player")
+    ));
+  }
+  if (iget("profile")) {
+    return DBQueryToValue(sprintf(
+      "SELECT ser.season
+       FROM uo_player player
+       LEFT JOIN uo_team team ON (team.team_id=player.team)
+       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+       WHERE player.profile_id=%d
+       ORDER BY player.player_id DESC
+       LIMIT 1",
+      (int)iget("profile")
+    ));
+  }
+  if (iget("team1")) {
+    $season1 = MaintenanceSeasonFromTeam(iget("team1"));
+    $season2 = iget("team2") ? MaintenanceSeasonFromTeam(iget("team2")) : "";
+    if (!empty($season1) && IsSeasonInMaintenance($season1)) {
+      return $season1;
+    }
+    if (!empty($season2) && IsSeasonInMaintenance($season2)) {
+      return $season2;
+    }
+    return $season1;
+  }
+
+  $currentSeasonViews = array(
+    "teams", "games", "timetables", "played", "scorestatus", "seriesstatus",
+    "poolstatus", "spiritstatus", "gameplay"
+  );
+  if (in_array($view, $currentSeasonViews, true)) {
+    return CurrentSeason();
+  }
+
+  return "";
+}
+
+function MaintenanceSeasonFromTeam($teamId)
+{
+  if (empty($teamId)) {
+    return "";
+  }
+  return DBQueryToValue(sprintf(
+    "SELECT ser.season
+     FROM uo_team team
+     LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+     WHERE team.team_id=%d",
+    (int)$teamId
+  ));
+}
+
+function EnforceSoftMaintenanceForView($rawView)
+{
+  $view = preg_replace('/\.php$/i', '', (string)$rawView);
+  if ($view === "" || $view === "index" || strpos($view, "admin/") === 0 || strpos($view, "user/") === 0 || in_array($view, array("login", "logout"), true)) {
+    return;
+  }
+
+  if (function_exists('SoftMaintenanceMode') && SoftMaintenanceMode() && !(function_exists('isSuperAdmin') && isSuperAdmin())) {
+    RenderSoftMaintenanceResponse();
+  }
+
+  $seasonId = MaintenanceSeasonFromView($rawView);
+  if (!empty($seasonId) && IsSeasonInMaintenance($seasonId) && !CanBypassEventMaintenance($seasonId)) {
+    RenderSoftMaintenanceResponse($seasonId);
+  }
+}
+
+/**
+ * Marks event (season) read-only.
+ *
+ * Access level: seasonadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return boolean TRUE on success or FALSE on error.
+ */
+function SetEventReadonly($seasonId)
+{
+  if (isSeasonAdmin($seasonId)) {
+    $query = sprintf(
+      "UPDATE uo_season SET event_readonly=1 WHERE season_id='%s'",
+      DBEscapeString($seasonId)
+    );
+    return DBQuery($query);
+  } else {
+    die('Insufficient rights to edit season');
+  }
 }
 
 /**
@@ -184,10 +372,10 @@ function SeasonNameExists($seasonName)
 
 /**
  * Returns all seasons.
- * 
+ *
  * @param array $filter sql conditions
- * @param array $ordering sql ordering  
- * @return mysqli_result array of seasons
+ * @param array $ordering sql ordering
+ * @return array
  */
 function Seasons($filter = null, $ordering = null)
 {
@@ -197,7 +385,7 @@ function Seasons($filter = null, $ordering = null)
   $orderby = CreateOrdering(array("uo_season" => "season"), $ordering);
   $where = CreateFilter(array("uo_season" => "season"), $filter);
   $query = sprintf("SELECT season_id, name FROM uo_season season $where $orderby");
-  return DBQuery(trim($query));
+  return DBQueryToArray(trim($query));
 }
 
 /**
@@ -207,20 +395,9 @@ function Seasons($filter = null, $ordering = null)
  */
 function SeasonsAllInfo()
 {
-  $query = "SELECT season_id, name, starttime, endtime, iscurrent, api_public, type, istournament, isinternational, isnationalteams
+  $query = "SELECT season_id, name, starttime, endtime, iscurrent, api_public, maintenance_mode, type, istournament, isinternational, isnationalteams
     FROM uo_season
     ORDER BY starttime DESC";
-  return DBQueryToArray($query);
-}
-
-/**
- * Returns all seasons.
- * 
- * @return array of seasons
- */
-function SeasonsArray()
-{
-  $query = sprintf("SELECT season_id, name FROM uo_season season ORDER BY starttime DESC");
   return DBQueryToArray($query);
 }
 
@@ -246,9 +423,9 @@ function SeasonsByType($seasontype)
 function EnrollSeasons()
 {
   $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE enrollopen=1 ORDER BY starttime DESC");
-  $seasons = DBQueryToArray($query);
+  $seasonRows = DBQueryToArray($query);
   $seasons = array();
-  foreach ($seasons as $season) {
+  foreach ($seasonRows as $season) {
     $seasons[$season['season_id']] = $season['name'];
   }
 
@@ -370,19 +547,19 @@ function SeasonReservationgroups($seasonId)
  */
 function SeasonReservationLocations($seasonId, $group = "all")
 {
-  $query = sprintf(
+	$query = sprintf(
     "
 		SELECT DISTINCT pr.location, pl.name, pr.fieldname
 		FROM uo_reservation pr
         LEFT JOIN uo_location pl ON (pr.location=pl.id)
-		WHERE pr.season='%s'",
+		WHERE pr.season='%s' AND pr.location IS NOT NULL",
     DBEscapeString($seasonId)
   );
 
   if ($group != "all") {
     $query .= sprintf(" AND pr.reservationgroup = '%s'", DBEscapeString($group));
   }
-  $query .= "ORDER BY pr.location, pr.fieldname+0";
+  $query .= " ORDER BY pr.location, pr.fieldname+0";
 
   return DBQueryToArray($query);
 }
@@ -529,7 +706,8 @@ function SeasonGameAdmins($seasonId)
       "SELECT u.userid, u.name, u.email, COUNT(*) AS games FROM uo_users u
   			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
   			LEFT JOIN uo_game g ON (SUBSTRING_INDEX(up.value, ':', -1)=g.game_id)
-  			WHERE g.game_id IN (SELECT gp.game FROM uo_game_pool gp 
+  			WHERE up.value LIKE 'gameadmin:%%'
+        AND g.game_id IN (SELECT gp.game FROM uo_game_pool gp 
 				LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool) 
 				LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
 				WHERE ser.season='%s' AND gp.timetable=1)
@@ -537,6 +715,34 @@ function SeasonGameAdmins($seasonId)
 			ORDER BY u.name",
       DBEscapeString($seasonId)
     );
+    return DBQueryToArray($query);
+  } else {
+    die('Insufficient rights');
+  }
+}
+
+/**
+ * Returns all spirit admins on given season.
+ *
+ * Access level: editseason
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return Array array of users
+ */
+function SeasonSpiritAdmins($seasonId)
+{
+  $seasonrights = getEditSeasons($_SESSION['uid']);
+  if (isset($seasonrights[$seasonId])) {
+    $query = sprintf(
+      "SELECT u.userid, u.name, u.email
+			FROM uo_users u
+			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
+			WHERE SUBSTRING_INDEX(up.value,':',1)='spiritadmin' AND SUBSTRING_INDEX(up.value, ':', -1)='%s'
+			GROUP BY u.userid, u.name, u.email
+      ORDER BY u.name",
+      DBEscapeString($seasonId)
+    );
+
     return DBQueryToArray($query);
   } else {
     die('Insufficient rights');
@@ -609,9 +815,9 @@ function AddSeason($seasonId, $params, $comment = null)
       "
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
-			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints,
-			use_season_points, api_public, timezone) 
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, '%s')",
+			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints, showspiritcomments,
+			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, maintenance_mode, api_public, timezone)
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
@@ -627,7 +833,14 @@ function AddSeason($seasonId, $params, $comment = null)
       DBEscapeString($params['enroll_deadline']),
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
+      (int)$params['showspiritcomments'],
+      (int)$params['showspiritpointsonlyoncomplete'],
+      (int)$params['lockteamspiritonsubmit'],
       (int)$params['use_season_points'],
+      (int)$params['hide_time_on_scoresheet'],
+      (int)$params['hometeammode'],
+      (int)$params['event_readonly'],
+      (int)$params['maintenance_mode'],
       (int)$params['api_public'],
       DBEscapeString($params['timezone'])
     );
@@ -638,6 +851,9 @@ function AddSeason($seasonId, $params, $comment = null)
 
     if ($result && isset($comment)) {
       SetComment(1, $seasonId, $comment);
+    }
+    if ($result && function_exists('RefreshSeasonSpiritData')) {
+      RefreshSeasonSpiritData($seasonId);
     }
     return $result;
   } else {
@@ -664,7 +880,8 @@ function SetSeason($seasonId, $params, $comment = null)
 			season_id='%s', name='%s', type='%s', istournament='%d', isinternational='%d', 
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
-			spiritmode=%d, showspiritpoints=%d, use_season_points=%d, api_public=%d, timezone='%s'
+			spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d,
+			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, maintenance_mode=%d, api_public=%d, timezone='%s'
 			WHERE season_id='%s'",
       DBEscapeString($seasonId),
       DBEscapeString($params['name']),
@@ -681,19 +898,64 @@ function SetSeason($seasonId, $params, $comment = null)
       DBEscapeString($params['enroll_deadline']),
       (int)$params['spiritmode'],
       (int)$params['showspiritpoints'],
+      (int)$params['showspiritcomments'],
+      (int)$params['showspiritpointsonlyoncomplete'],
+      (int)$params['lockteamspiritonsubmit'],
       (int)$params['use_season_points'],
+      (int)$params['hide_time_on_scoresheet'],
+      (int)$params['hometeammode'],
+      (int)$params['event_readonly'],
+      (int)$params['maintenance_mode'],
       (int)$params['api_public'],
       DBEscapeString($params['timezone']),
       DBEscapeString($seasonId)
     );
 
     $result = DBQuery($query);
+    if ($result && function_exists('RefreshSeasonSpiritData')) {
+      RefreshSeasonSpiritData($seasonId);
+    }
     if (isset($comment) && $result)
       SetComment(1, $seasonId, $comment);
     return $result;
   } else {
     die('Insufficient rights to edit season');
   }
+}
+
+/**
+ * Change spirit-related season properties for a season.
+ *
+ * Access level: seasonadmin, spiritadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @param array $params spirit-related uo_season fields
+ * @return boolean TRUE on success or FALSE on error.
+ */
+function SetSeasonSpiritSettings($seasonId, $params)
+{
+  if (!hasSpiritToolsRight($seasonId)) {
+    return false;
+  }
+
+  $query = sprintf(
+    "
+		UPDATE uo_season SET
+		spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d
+		WHERE season_id='%s'",
+    (int)$params['spiritmode'],
+    (int)$params['showspiritpoints'],
+    (int)$params['showspiritcomments'],
+    (int)$params['showspiritpointsonlyoncomplete'],
+    (int)$params['lockteamspiritonsubmit'],
+    DBEscapeString($seasonId)
+  );
+
+  $result = DBQuery($query);
+  if ($result && function_exists('RefreshSeasonSpiritData')) {
+    RefreshSeasonSpiritData($seasonId);
+  }
+  return $result;
 }
 
 /**
@@ -719,52 +981,4 @@ function CanDeleteSeason($seasonId)
 
     return !($result == $seasonId);
   } else return false;
-}
-
-function SpiritMode($mode_id)
-{
-  $query = sprintf("SELECT mode, text AS name FROM `uo_spirit_category`
-          WHERE `mode` = \"%d\" AND `index` = \"0\"", (int) $mode_id);
-  return DBQueryToRow($query);
-}
-
-function SpiritModes()
-{
-  $query = sprintf("SELECT mode, text AS name FROM `uo_spirit_category`
-          WHERE `index` = 0");
-  return DBQueryToArray($query);
-}
-
-function SpiritCategories($mode_id)
-{
-  $query = sprintf(
-    "SELECT * FROM `uo_spirit_category` 
-      WHERE `mode`=%d
-      ORDER BY `group` ASC, `index` ASC",
-    (int) $mode_id
-  );
-  $cats = DBQueryToArray($query);
-  $categories = array();
-  foreach ($cats as $cat) {
-    $categories[$cat['category_id']] = $cat;
-  }
-  return $categories;
-}
-
-function SpiritTotal($points, $categories)
-{
-  $allset = true;
-  $total = 0;
-  foreach ($categories as $cat) {
-    if ($cat['index'] > 0)
-      if (isset($points[$cat['category_id']])) {
-        $total += $points[$cat['category_id']] * $cat['factor'];
-      } else {
-        $allset = false;
-      }
-  }
-  if ($allset)
-    return $total;
-  else
-    return null;
 }

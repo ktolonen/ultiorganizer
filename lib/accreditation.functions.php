@@ -1,6 +1,9 @@
 <?php
-include_once $include_prefix . 'lib/player.functions.php';
-include_once $include_prefix . 'lib/common.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/player.functions.php';
+require_once __DIR__ . '/common.functions.php';
 
 function SeasonUnaccredited($season)
 {
@@ -22,9 +25,7 @@ function SeasonUnaccredited($season)
 		DBEscapeString($season)
 	);
 
-	$result = DBQuery($query);
-
-	return $result;
+	return DBQueryToArray($query);
 }
 
 function AccreditPlayer($playerId, $source)
@@ -59,6 +60,25 @@ function LicenseData($accreditation_id)
 {
 	return DBQueryToRow("SELECT membership, license, external_id, external_type, external_validity, ultimate 
 		FROM uo_license WHERE accreditation_id='" . DBEscapeString($accreditation_id) . "'");
+}
+
+/**
+ * Search license records by player name.
+ *
+ * @param string $firstname
+ * @param string $lastname
+ * @return array
+ */
+function SearchLicenseData($firstname = "", $lastname = "")
+{
+	return DBQueryToArray(sprintf(
+		"SELECT accreditation_id, firstname, lastname, membership, license, birthdate
+		FROM uo_license
+		WHERE firstname LIKE '%%%s%%' AND lastname LIKE '%%%s%%'
+		ORDER BY lastname, firstname",
+		DBEscapeString($firstname),
+		DBEscapeString($lastname)
+	));
 }
 
 function checkUserAdmin($playerInfo)
@@ -213,7 +233,5 @@ function SeasonAccreditationLog($season)
 		DBEscapeString($season)
 	);
 
-	$result = DBQuery($query);
-
-	return $result;
+	return DBQueryToArray($query);
 }

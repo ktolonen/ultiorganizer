@@ -1,0 +1,23 @@
+# Existing legacy files that still violate the database access policy.
+# One relative repository path per line.
+# Inline comments are allowed after "#".
+#
+# New files must not be added here. Remove entries as files are migrated.
+
+# Admin pages
+admin/dbadmin.php
+admin/dbbackup.php
+admin/dbequalize.php
+admin/dbrestore.php
+admin/executesql.php
+
+# Customization-specific pages
+cust/slkl/mass-accreditation.php
+
+# Legacy plugin admin views
+plugins/add_field_accounts.php
+plugins/import_xml_ffindr.php
+plugins/lisence_modifier.php
+plugins/reassign_playoffpools.php
+plugins/reschedule.php
+plugins/update_pool_colors.php

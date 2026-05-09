@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 function ResolvePoolStandings($poolId)
 {
@@ -176,7 +178,7 @@ function CompareTeamsSwissdraw($a, $b)
 		// 1. victory points
 		// 2. margin
 		// 3. total points scored
-		// 4. spirit score <-- REMOVED!
+	// 4. spirit score		
 		if ($a['vp'] != $b['vp']) {
 			return ($a['vp'] > $b['vp']) ? -1 : 1;
 		} else {
@@ -186,7 +188,11 @@ function CompareTeamsSwissdraw($a, $b)
 				if ($a['score'] != $b['score']) {
 					return ($a['score'] > $b['score']) ? -1 : 1;
 				} else {
-					return 0;
+					if ($a['spirit'] != $b['spirit']) {
+						return ($a['spirit'] > $b['spirit']) ? -1 : 1;
+					} else {
+						return 0;
+					}
 				}
 			}
 		}
@@ -210,9 +216,13 @@ function CompareTeamsSwissdraw($a, $b)
 					if ($a['score'] != $b['score']) {
 						return ($a['score'] > $b['score']) ? -1 : 1;
 					} else {
+					if ($a['spirit'] != $b['spirit']) {
+						return ($a['spirit'] > $b['spirit']) ? -1 : 1;
+					} else {
 						return 0;
 					}
-				}
+					}
+				}	
 			}
 		}
 	}
@@ -268,6 +278,7 @@ function ResolveSwissdrawPoolStandings($poolId)
 		$points[$i]['oppvp'] = $stats1['oppvp'];
 		$points[$i]['margin'] = $stats1['margin'];
 		$points[$i]['score'] = $stats1['score'];
+		$points[$i]['spirit'] = $stats1['spirit'];			
 		$i++;
 	}
 

@@ -1,6 +1,10 @@
 <?php
-include_once $include_prefix . 'lib/HSVClass.php';
-include_once $include_prefix . 'lib/comment.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/hsvclass/HSVClass.php';
+require_once __DIR__ . '/comment.functions.php';
+require_once __DIR__ . '/spirit.functions.php';
 
 if (!function_exists('convertToUtf8')) {
 function convertToUtf8($value, $sourceEncoding = 'ISO-8859-1')
@@ -385,6 +389,10 @@ function GetW3CLocale()
 
 function validEmail($email)
 {
+	if (!is_string($email) || $email === '') {
+		return false;
+	}
+
 	$isValid = true;
 	$atIndex = strrpos($email, "@");
 	if (is_bool($atIndex) && !$atIndex) {
@@ -1269,37 +1277,65 @@ function strEndsWith($whole, $end)
 	return (strpos($whole, $end, strlen($whole) - strlen($end)) !== false);
 }
 
+
 /**
  * 
  * Returns string from $_GET by ignoring case. 
  * @param string $string
  */
-function iget($string)
-{
+function iget($string){
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
+  
+  $string = strtolower($string);
+  
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
 
-	$string = strtolower($string);
+  $string = ucfirst($string);
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
 
-	$string = ucfirst($string);
+  $string = strtoupper($string);
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
+  if(!empty($_GET[$string])) {
+    return GetString($string);
+  }
+  
+  return "";
+}
 
-	$string = strtoupper($string);
+/**
+ * 
+ * Validates INT from $_GET using filter_input. 
+ * @param string $string
+ */
+function GetInt($string){
+  return filter_input(INPUT_GET,$string,FILTER_VALIDATE_INT);
+}
 
-	if (!empty($_GET[$string])) {
-		return urldecode($_GET[$string]);
-	}
 
-	return "";
+/**
+ * 
+ * Returns a normalized string value from $_GET.
+ * Use context-specific escaping at output/SQL boundaries.
+ * @param string $string
+ */
+function GetString($string){
+
+  $str = filter_input(INPUT_GET, $string, FILTER_UNSAFE_RAW, FILTER_NULL_ON_FAILURE);
+  if ($str === null || $str === false || !is_string($str)) {
+    return "";
+  }
+
+  $str = convertToUtf8(urldecode($str));
+  $str = str_replace("\0", "", $str);
+  return trim($str);
 }
 
 /**
@@ -1329,7 +1365,7 @@ function resolveViewPath($view, $baseDir, $default = 'frontpage', $deny = array(
 
 	// Ensure file exists and is within base dir
 	$targetReal = realpath($target);
-	if ($targetReal === false || strpos($targetReal, $baseDirReal) !== 0 || !is_file($targetReal)) {
+	if ($targetReal === false || strpos($targetReal, $baseDirReal . DIRECTORY_SEPARATOR) !== 0 || !is_file($targetReal)) {
 		http_response_code(404);
 		$view = $default;
 		$targetReal = $baseDirReal . '/' . $view . '.php';
@@ -1366,7 +1402,7 @@ function someHTML($string)
 function CommentHTML($type, $id)
 {
 	$comment = CommentRaw($type, $id);
-	if ($comment != -1)
+	if ($comment !== "")
 		return "<div class='comment'>" . someHTML($comment) . "</div>\n";
 	else
 		return "";

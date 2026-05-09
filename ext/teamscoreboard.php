@@ -1,5 +1,5 @@
 <?php
-include_once 'localization.php';
+include_once __DIR__ . '/localization.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
@@ -22,9 +22,9 @@ include_once 'localization.php';
 <body>
 	<?php
 
-	include_once '../lib/season.functions.php';
-	include_once '../lib/series.functions.php';
-	include_once '../lib/team.functions.php';
+	include_once __DIR__ . '/../lib/season.functions.php';
+	include_once __DIR__ . '/../lib/series.functions.php';
+	include_once __DIR__ . '/../lib/team.functions.php';
 
 	$seriesId = 0;
 	$teamId = 0;
@@ -48,11 +48,11 @@ include_once 'localization.php';
 	echo "</tr>";
 
 	if ($teamId)
-		$scores = TeamScoreBoard($teamId, $seriesId, $sort, 0);
+		$scores = TeamScoreBoardArray($teamId, $seriesId, $sort, 0);
 	else
-		$scores = PoolScoreBoard($seriesId, $sort, 0);
+		$scores = PoolScoreBoardArray($seriesId, $sort, 0);
 
-	while ($row = mysqli_fetch_assoc($scores)) {
+	foreach ($scores as $row) {
 		echo "<tr><td class='pk_scoreboard_td1'>" . utf8entities($row['firstname'] . " " . $row['lastname']) . "</td>";
 		echo "<td  class='pk_scoreboard_td2'>" . intval($row['games']) . "</td>";
 		echo "<td  class='pk_scoreboard_td2'>" . intval($row['fedin']) . "</td>";

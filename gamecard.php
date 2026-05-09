@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('gamecard');
+
 include_once 'lib/team.functions.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/season.functions.php';
@@ -49,9 +52,9 @@ $nT2Loses = 0;
 $t1 = preg_replace('/\s*/m', '', $team1['name']);
 $t2 = preg_replace('/\s*/m', '', $team2['name']);
 
-$games = GetAllPlayedGames($t1, $t2, $team1['type'], $sorting);
+$games = GetAllPlayedGamesArray($t1, $t2, $team1['type'], $sorting);
 
-while ($game = mysqli_fetch_assoc($games)) {
+foreach ($games as $game) {
   if (GameHasStarted($game)) {
     //ignore spaces from team name
     $t1 = preg_replace('/\s*/m', '', $team1['name']);
@@ -93,9 +96,9 @@ while ($game = mysqli_fetch_assoc($games)) {
 $html .= "<h2>" . utf8entities($team1['name']) . " vs. " . utf8entities($team2['name']) . "</h2>\n";
 
 $html .= "<table border='1' width='100%'><tr>\n
-	<th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Wins") . "</th><th>" . _("Losses") . "</th><th>" . _("Win-%") . "</th><th>" . _("Scored") . "</th>
-	<th>" . _("Scored") . "/" . _("game") . "</th><th>" . _("Goals against") . "</th><th>" . _("Goals against") . "/" . _("game") . "</th><th>" . _("Goal difference") . "</th>
-	</tr>\n";
+		<th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Wins") . "</th><th>" . _("Losses") . "</th><th>" . _("Win-%") . "</th><th>" . _("Goals for") . "</th>
+		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th><th>" . _("Goals against") . "</th><th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th><th>" . _("Goals diff") . "</th>
+		</tr>\n";
 
 $html .= "<tr>
 	 <td><a href='?view=teamcard&amp;team=$teamId1'>" . utf8entities($team1['name']) . "</a></td>
@@ -124,19 +127,17 @@ $html .= "<tr>
 $html .= "</table>\n";
 
 if ($nGames) {
-  $html .= "<h2>" . _("Played") . " " . _("games") . "</h2>\n";
+  $html .= "<h2>" . _("Played games") . "</h2>\n";
   $html .= "<table border='1' cellspacing='2' width='80%'><tr>\n";
 
   $viewUrl = "?view=gamecard&amp;team1=$teamId1&amp;team2=$teamId2&amp;";
 
   $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=team'>" . _("Game") . "</a></th>";
   $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=result'>" . _("Result") . "</a></th>";
-  $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Division") . "</a></th></tr>";
+  $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=series'>" . _("Event / Pool") . "</a></th></tr>";
 
   $points = array(array());
-  mysqli_data_seek($games, 0);
-
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     if (GameHasStarted($game)) {
       $arrayYear = strtok($game['season_id'], ".");
       $arraySeason = strtok(".");
@@ -152,14 +153,16 @@ if ($nGames) {
       } else {
         $html .= " - " . utf8entities($game['visitorteamname']) . "</td>";
       }
-      $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . $game['homescore'] . " - " . $game['visitorscore'] . "</a></td>";
+      $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . $game['homescore'] . " - " . $game['visitorscore'] . "</a>"
+        . (!empty($game['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
+        . "</td>";
 
       $html .= "<td>" . utf8entities(U_($game['seasonname'])) . ": <a href='?view=poolstatus&amp;pool=" . $game['pool_id'] . "'>" . utf8entities($game['name']) . "</a></td></tr>";
 
-      $scores = GameScoreBoard($game['game_id']);
+      $scores = GameScoreBoardArray($game['game_id']);
       $i = 0;
 
-      while ($row = mysqli_fetch_assoc($scores)) {
+      foreach ($scores as $row) {
         $bFound = false;
         for ($i = 0; ($i < 200) && !empty($points[$i][0]); $i++) {
           //ignore spaces from team name
@@ -245,7 +248,7 @@ if ($nGames) {
   }
 
   if (($sorting == "ptotal") || (!$sorted)) {
-    $html .= "<th><b>Yht.</b></th></tr>\n";
+    $html .= "<th><b>" . _("Tot.") . "</b></th></tr>\n";
     mergesort($points, function ($a, $b) {
       return $a[6] == $b[6] ? 0 : ($a[6] > $b[6] ? -1 : 1);
     });

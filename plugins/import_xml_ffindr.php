@@ -1,4 +1,7 @@
 <?php
+include_once __DIR__ . '/auth.php';
+pluginRequireAdmin(__FILE__);
+
 ob_start();
 ?>
 <!--
@@ -348,7 +351,7 @@ class XMLHandler
                 "INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
                 DBEscapeString($email),
                 DBEscapeString($email),
-                DBEscapeString(hashUserPassword(CreateRandomPassword())),
+                DBEscapeString(hashUserPassword(UserCreateRandomPassword())),
                 DBEscapeString($email)
               );
               DBQuery($query);

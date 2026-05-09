@@ -11,7 +11,7 @@ $html = "";
 // Fetch querydata to be presented later
 if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != "enabled") {
 	$html = "<h2>" . _("Run SQL") . "</h2>\n";
-	$html = "<p>" . _("Direct database access is disabled. To enable it, define(ENABLE_ADMIN_DB_ACCESS,'enabled') in the config.inc.php file") . "</p>";
+	$html = "<p>" . _("Direct database access is disabled. To enable it, define ENABLE_ADMIN_DB_ACCESS as 'enabled' in the config.inc.php file.") . "</p>";
 } else {
 
 	if (!empty($_POST['sql']) || !empty($_GET['sql'])) {

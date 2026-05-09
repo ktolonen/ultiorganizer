@@ -1,4 +1,6 @@
 SET NAMES 'utf8mb4';
+SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS;
+SET FOREIGN_KEY_CHECKS=0;
 
 CREATE TABLE IF NOT EXISTS `uo_accreditationlog` (
   `player` int(10) DEFAULT NULL,
@@ -9,6 +11,32 @@ CREATE TABLE IF NOT EXISTS `uo_accreditationlog` (
   `time` datetime DEFAULT NULL,
   `game` int(10) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `uo_api_rate_limit` (
+  `rate_key` varchar(128) NOT NULL,
+  `window_start` int(10) NOT NULL,
+  `request_count` int(10) NOT NULL,
+  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`rate_key`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `uo_api_token` (
+  `token_id` int(10) NOT NULL AUTO_INCREMENT,
+  `token_hash` char(64) NOT NULL,
+  `token_value` varchar(100) DEFAULT NULL,
+  `label` varchar(100) DEFAULT NULL,
+  `scope_type` varchar(20) NOT NULL,
+  `scope_id` varchar(50) DEFAULT NULL,
+  `revoked` tinyint(1) NOT NULL DEFAULT 0,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `last_used` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`token_id`),
+  UNIQUE KEY `uq_api_token_hash` (`token_hash`),
+  KEY `idx_api_token_scope` (`scope_type`,`scope_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_club` (
   `club_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -23,7 +51,8 @@ CREATE TABLE IF NOT EXISTS `uo_club` (
   `profile_image` varchar(20) DEFAULT NULL,
   `founded` int(4) DEFAULT NULL,
   PRIMARY KEY (`club_id`),
-  KEY `fk_club_country` (`country`)
+  KEY `fk_club_country` (`country`),
+  CONSTRAINT `fk_club_country` FOREIGN KEY (`country`) REFERENCES `uo_country` (`country_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -35,6 +64,7 @@ CREATE TABLE IF NOT EXISTS `uo_comment` (
   KEY `idx_id` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 CREATE TABLE IF NOT EXISTS `uo_country` (
   `country_id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) NOT NULL,
@@ -42,7 +72,7 @@ CREATE TABLE IF NOT EXISTS `uo_country` (
   `flagfile` varchar(50) DEFAULT NULL,
   `valid` tinyint(4) NOT NULL DEFAULT 1,
   PRIMARY KEY (`country_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1205 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=1206 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile`, `valid`) VALUES
 	(1000, 'Afghanistan', 'AFG', 'Afghanistan.png', 1),
@@ -84,7 +114,7 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1036, 'Congo', 'CGO', NULL, 1),
 	(1037, 'Chad', 'CHA', 'Chad.png', 1),
 	(1038, 'Chile', 'CHI', 'Chile.png', 1),
-	(1039, 'China', 'CHN', 'China.png', 1),
+	(1039, 'People\'s Republic of China', 'CHN', 'China.png', 1),
 	(1040, 'Côte d\'Ivoire', 'CIV', NULL, 1),
 	(1041, 'Cameroon', 'CMR', 'Cameroon.png', 1),
 	(1042, 'DR Congo', 'COD', NULL, 1),
@@ -96,7 +126,7 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1048, 'Croatia', 'CRO', 'Croatia.png', 1),
 	(1049, 'Cuba', 'CUB', 'Cuba.png', 1),
 	(1050, 'Cyprus', 'CYP', 'Cyprus.png', 1),
-	(1051, 'Czech Republic', 'CZE', 'Czech_Republic.png', 1),
+	(1051, 'Czechia', 'CZE', 'Czech_Republic.png', 1),
 	(1052, 'Denmark', 'DEN', 'Denmark.png', 1),
 	(1053, 'Djibouti', 'DJI', 'Djibouti.png', 1),
 	(1054, 'Dominica', 'DMA', 'Dominica.png', 1),
@@ -127,7 +157,7 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1079, 'Guam', 'GUM', 'Guam.png', 1),
 	(1080, 'Guyana', 'GUY', 'Guyana.png', 1),
 	(1081, 'Haiti', 'HAI', 'Haiti.png', 1),
-	(1082, 'Hong Kong', 'HKG', 'Hong_Kong.png', 1),
+	(1082, 'Hong Kong, China', 'HKG', 'Hong_Kong.png', 1),
 	(1083, 'Honduras', 'HON', 'Honduras.png', 1),
 	(1084, 'Hungary', 'HUN', 'Hungary.png', 1),
 	(1085, 'Indonesia', 'INA', 'Indonesia.png', 1),
@@ -147,7 +177,7 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1099, 'Kenya', 'KEN', 'Kenya.png', 1),
 	(1100, 'Kyrgyzstan', 'KGZ', 'Kyrgyzstan.png', 1),
 	(1101, 'Kiribati', 'KIR', 'Kiribati.png', 1),
-	(1102, 'South Korea', 'KOR', 'South_Korea.png', 1),
+	(1102, 'Republic of Korea', 'KOR', 'South_Korea.png', 1),
 	(1103, 'Saudi Arabia', 'KSA', 'Saudi_Arabia.png', 1),
 	(1104, 'Kuwait', 'KUW', 'Kuwait.png', 1),
 	(1105, 'Laos', 'LAO', 'Laos.png', 1),
@@ -156,7 +186,7 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1108, 'Liberia', 'LBR', 'Liberia.png', 1),
 	(1109, 'Saint Lucia', 'LCA', 'Saint_Lucia.png', 1),
 	(1110, 'Lesotho', 'LES', 'Lesotho.png', 1),
-	(1111, 'Lebanon', 'LIB', 'Lebanon.png', 1),
+	(1111, 'Lebanon', 'LBN', 'Lebanon.png', 1),
 	(1112, 'Liechtenstein', 'LIE', 'Liechtenstein.png', 1),
 	(1113, 'Lithuania', 'LTU', 'Lithuania.png', 1),
 	(1114, 'Luxembourg', 'LUX', 'Luxembourg.png', 1),
@@ -203,12 +233,12 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1155, 'Qatar', 'QAT', 'Qatar.png', 1),
 	(1156, 'Romania', 'ROU', 'Romania.png', 1),
 	(1157, 'South Africa', 'RSA', 'South_Africa.png', 1),
-	(1158, 'Russia', 'RUS', 'Russian_Federation.png', 1),
+	(1158, 'Russian Federation', 'RUS', 'Russian_Federation.png', 1),
 	(1159, 'Rwanda', 'RWA', 'Rwanda.png', 1),
 	(1160, 'Samoa', 'SAM', 'Samoa.png', 1),
 	(1161, 'Senegal', 'SEN', 'Senegal.png', 1),
 	(1162, 'Seychelles', 'SEY', NULL, 1),
-	(1163, 'Singapore', 'SIN', 'Singapore.png', 1),
+	(1163, 'Singapore', 'SGP', 'Singapore.png', 1),
 	(1164, 'Saint Kitts and Nevis', 'SKN', 'Saint_Kitts_and_Nevis.png', 1),
 	(1165, 'Sierra Leone', 'SLE', 'Sierra_Leone.png', 1),
 	(1166, 'Slovenia', 'SLO', 'Slovenia.png', 1),
@@ -232,16 +262,16 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1184, 'Turkmenistan', 'TKM', 'Turkmenistan.png', 1),
 	(1185, 'Timor-Leste', 'TLS', NULL, 1),
 	(1186, 'Togo', 'TOG', 'Togo.png', 1),
-	(1187, 'Chinese Taipei', 'TPE', 'Taiwan.png', 1),
+	(1187, 'Chinese Taipei', 'TPE', 'Chinese_Taipei.png', 1),
 	(1188, 'Trinidad and Tobago', 'TRI', 'Trinidad_and_Tobago.png', 1),
 	(1189, 'Tunisia', 'TUN', 'Tunisia.png', 1),
-	(1190, 'Turkey', 'TUR', 'Turkey.png', 1),
+	(1190, 'Türkiye', 'TUR', 'Turkey.png', 1),
 	(1191, 'Tuvalu', 'TUV', 'Tuvalu.png', 1),
-	(1192, 'United Arab Emirates', 'UAE', NULL, 1),
+	(1192, 'United Arab Emirates', 'UAE', 'UAE.png', 1),
 	(1193, 'Uganda', 'UGA', 'Uganda.png', 1),
 	(1194, 'Ukraine', 'UKR', 'Ukraine.png', 1),
 	(1195, 'Uruguay', 'URU', 'Uruguay.png', 1),
-	(1196, 'United States', 'USA', 'United_States_of_America.png', 1),
+	(1196, 'United States of America', 'USA', 'United_States_of_America.png', 1),
 	(1197, 'Uzbekistan', 'UZB', 'Uzbekistan.png', 1),
 	(1198, 'Vanuatu', 'VAN', 'Vanuatu.png', 1),
 	(1199, 'Venezuela', 'VEN', 'Venezuela.png', 1),
@@ -249,8 +279,8 @@ INSERT IGNORE INTO `uo_country` (`country_id`, `name`, `abbreviation`, `flagfile
 	(1201, 'Saint Vincent and the Grenadines', 'VIN', 'Saint_Vicent_and_the_Grenadines.png', 1),
 	(1202, 'Yemen', 'YEM', 'Yemen.png', 1),
 	(1203, 'Zambia', 'ZAM', 'Zambia.png', 1),
-	(1204, 'Zimbabwe', 'ZIM', 'Zimbabwe.png', 1);
-
+	(1204, 'Zimbabwe', 'ZIM', 'Zimbabwe.png', 1),
+	(1205, 'World', 'WRD', 'wfdf.png', 1);
 
 CREATE TABLE IF NOT EXISTS `uo_database` (
   `version` int(10) DEFAULT NULL,
@@ -259,6 +289,7 @@ CREATE TABLE IF NOT EXISTS `uo_database` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
+	(46, '2025-12-05 07:29:02'),
 	(47, '2025-12-05 07:29:02'),
 	(48, '2025-12-05 07:29:02'),
 	(49, '2025-12-05 07:29:02'),
@@ -289,7 +320,19 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(74, '2025-12-05 07:29:04'),
 	(75, '2025-12-05 07:29:04'),
 	(76, '2025-12-05 07:29:04'),
-	(77, '2025-12-05 07:29:04');
+	(77, '2025-12-05 07:29:04'),
+	(78, '2026-04-06 08:36:23'),
+	(79, '2026-04-06 08:36:23'),
+	(80, '2026-04-06 08:36:23'),
+	(81, '2026-04-06 08:36:23'),
+	(82, '2026-04-06 08:36:23'),
+	(83, '2026-04-06 08:36:23'),
+	(84, '2026-04-06 08:36:23'),
+	(85, '2026-04-06 08:36:23'),
+	(86, '2026-04-06 08:36:23'),
+	(87, '2026-04-12 09:00:00'),
+	(88, '2026-04-30 00:00:00'),
+	(89, '2026-04-30 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -301,8 +344,11 @@ CREATE TABLE IF NOT EXISTS `uo_defense` (
   `ishomedefense` tinyint(1) NOT NULL,
   PRIMARY KEY (`game`,`num`),
   KEY `idx_game` (`game`),
-  KEY `idx_player` (`author`)
+  KEY `idx_player` (`author`),
+  CONSTRAINT `fk_defense_author` FOREIGN KEY (`author`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_defense_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_enrolledteam` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -315,8 +361,11 @@ CREATE TABLE IF NOT EXISTS `uo_enrolledteam` (
   `countryname` varchar(50) DEFAULT NULL,
   PRIMARY KEY (`id`),
   KEY `idx_series` (`series`),
-  KEY `fk_enrolledteam_user` (`userid`)
+  KEY `fk_enrolledteam_user` (`userid`),
+  CONSTRAINT `fk_enrolledteam_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_enrolledteam_user` FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_event_log` (
   `event_id` int(15) NOT NULL AUTO_INCREMENT,
@@ -332,20 +381,26 @@ CREATE TABLE IF NOT EXISTS `uo_event_log` (
   PRIMARY KEY (`event_id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 CREATE TABLE IF NOT EXISTS `uo_extraemail` (
   `userid` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   PRIMARY KEY (`email`),
-  KEY `fk_extraemail_user` (`userid`)
+  KEY `fk_extraemail_user` (`userid`),
+  CONSTRAINT `fk_extraemail_user` FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_extraemailrequest` (
   `userid` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `token` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`email`),
-  KEY `fk_extraemailrequest_user` (`userid`)
+  KEY `fk_extraemailrequest_user` (`userid`),
+  CONSTRAINT `fk_extraemailrequest_user` FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 CREATE TABLE IF NOT EXISTS `uo_game` (
   `game_id` int(10) NOT NULL AUTO_INCREMENT,
   `hometeam` int(10) DEFAULT NULL,
@@ -368,14 +423,30 @@ CREATE TABLE IF NOT EXISTS `uo_game` (
   `homedefenses` smallint(5) DEFAULT 0,
   `visitordefenses` smallint(5) DEFAULT 0,
   `hasstarted` tinyint(1) DEFAULT 0,
+  `islive` tinyint(1) DEFAULT 0,
+  `liveurl` varchar(512) DEFAULT NULL,
+  `show_spirit` tinyint(1) DEFAULT 0,
+  `timer_start` bigint(20) DEFAULT NULL,
+  `timer_pause_start` bigint(20) DEFAULT NULL,
+  `timer_paused_duration` bigint(20) NOT NULL DEFAULT 0,
+  `forfeit` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`game_id`),
   KEY `idx_hometeam` (`hometeam`),
   KEY `idx_visitorteam` (`visitorteam`),
   KEY `idx_reservation` (`reservation`),
   KEY `idx_game_id` (`game_id`),
   KEY `idx_name` (`name`),
-  KEY `idx_pool` (`pool`)
+  KEY `idx_pool` (`pool`),
+  KEY `idx_game_valid_time` (`valid`,`time`),
+  KEY `idx_game_valid_pool_time` (`valid`,`pool`,`time`),
+  KEY `idx_game_valid_hometeam_time` (`valid`,`hometeam`,`time`),
+  KEY `idx_game_valid_visitorteam_time` (`valid`,`visitorteam`,`time`),
+  CONSTRAINT `fk_game_hometeam` FOREIGN KEY (`hometeam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_game_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_game_reservation` FOREIGN KEY (`reservation`) REFERENCES `uo_reservation` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_game_visitorteam` FOREIGN KEY (`visitorteam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_game_pool` (
   `game` int(10) NOT NULL,
@@ -383,8 +454,12 @@ CREATE TABLE IF NOT EXISTS `uo_game_pool` (
   `timetable` tinyint(1) NOT NULL,
   PRIMARY KEY (`game`,`pool`),
   KEY `idx_game` (`game`),
-  KEY `idx_pool` (`pool`)
+  KEY `idx_pool` (`pool`),
+  KEY `idx_pool_timetable_game` (`pool`,`timetable`,`game`),
+  CONSTRAINT `fk_game_pool_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_game_pool_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_gameevent` (
   `game` int(10) NOT NULL,
@@ -393,8 +468,10 @@ CREATE TABLE IF NOT EXISTS `uo_gameevent` (
   `type` varchar(10) DEFAULT NULL,
   `ishome` tinyint(1) NOT NULL,
   `info` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`game`,`num`)
+  PRIMARY KEY (`game`,`num`),
+  CONSTRAINT `fk_gameevent_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_goal` (
   `game` int(10) NOT NULL,
@@ -406,11 +483,19 @@ CREATE TABLE IF NOT EXISTS `uo_goal` (
   `visitorscore` tinyint(3) unsigned DEFAULT NULL,
   `ishomegoal` tinyint(1) NOT NULL,
   `iscallahan` tinyint(1) NOT NULL,
+  `timestamp` datetime DEFAULT current_timestamp(),
   PRIMARY KEY (`game`,`num`),
   KEY `idx_game` (`game`),
   KEY `idx_assist` (`assist`),
-  KEY `idx_scorer` (`scorer`)
+  KEY `idx_scorer` (`scorer`),
+  KEY `idx_goal_game_scorer` (`game`,`scorer`),
+  KEY `idx_goal_game_assist` (`game`,`assist`),
+  KEY `idx_goal_game_callahan_scorer` (`game`,`iscallahan`,`scorer`),
+  CONSTRAINT `fk_goal_assist` FOREIGN KEY (`assist`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_goal_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_goal_scorer` FOREIGN KEY (`scorer`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_image` (
   `image_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -436,6 +521,7 @@ CREATE TABLE IF NOT EXISTS `uo_keys` (
   `url` varchar(200) DEFAULT NULL,
   PRIMARY KEY (`key_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_license` (
   `lastname` varchar(255) DEFAULT NULL,
@@ -468,12 +554,15 @@ CREATE TABLE IF NOT EXISTS `uo_location` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 CREATE TABLE IF NOT EXISTS `uo_location_info` (
   `location_id` int(10) NOT NULL,
   `locale` varchar(20) NOT NULL,
   `info` varchar(255) DEFAULT NULL,
-  PRIMARY KEY (`location_id`,`locale`)
+  PRIMARY KEY (`location_id`,`locale`),
+  CONSTRAINT `fk_location_info_location` FOREIGN KEY (`location_id`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_moveteams` (
   `frompool` int(10) NOT NULL,
@@ -484,7 +573,10 @@ CREATE TABLE IF NOT EXISTS `uo_moveteams` (
   `scheduling_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`frompool`,`fromplacing`),
   KEY `idx_scheduling_id` (`scheduling_id`),
-  KEY `idx_topool` (`topool`)
+  KEY `idx_topool` (`topool`),
+  CONSTRAINT `fk_moveteams_frompool` FOREIGN KEY (`frompool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_moveteams_scheduling` FOREIGN KEY (`scheduling_id`) REFERENCES `uo_scheduling_name` (`scheduling_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_moveteams_topool` FOREIGN KEY (`topool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_movingtime` (
@@ -497,7 +589,10 @@ CREATE TABLE IF NOT EXISTS `uo_movingtime` (
   PRIMARY KEY (`season`,`fromlocation`,`fromfield`,`tolocation`,`tofield`),
   KEY `idx_season` (`season`),
   KEY `fk_movingtime_fromlocation` (`fromlocation`),
-  KEY `fk_movingtime_tolocation` (`tolocation`)
+  KEY `fk_movingtime_tolocation` (`tolocation`),
+  CONSTRAINT `fk_movingtime_fromlocation` FOREIGN KEY (`fromlocation`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_movingtime_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_movingtime_tolocation` FOREIGN KEY (`tolocation`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_pageload_counter` (
@@ -508,6 +603,15 @@ CREATE TABLE IF NOT EXISTS `uo_pageload_counter` (
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
+CREATE TABLE IF NOT EXISTS `uo_passwordresetrequest` (
+  `userid` varchar(50) NOT NULL,
+  `token` varchar(100) DEFAULT NULL,
+  `requested` timestamp NOT NULL DEFAULT current_timestamp(),
+  PRIMARY KEY (`userid`),
+  UNIQUE KEY `uq_passwordresetrequest_token` (`token`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
 CREATE TABLE IF NOT EXISTS `uo_played` (
   `player` int(10) NOT NULL,
   `game` int(10) NOT NULL,
@@ -515,10 +619,14 @@ CREATE TABLE IF NOT EXISTS `uo_played` (
   `accredited` tinyint(1) NOT NULL DEFAULT 0,
   `acknowledged` tinyint(1) NOT NULL DEFAULT 0,
   `captain` tinyint(1) DEFAULT 0,
+  `spirit_captain` tinyint(1) NOT NULL DEFAULT 0,
   PRIMARY KEY (`player`,`game`),
   KEY `idx_player` (`player`),
-  KEY `idx_game` (`game`)
+  KEY `idx_game` (`game`),
+  CONSTRAINT `fk_played_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_played_player` FOREIGN KEY (`player`) REFERENCES `uo_player` (`player_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_player` (
   `player_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -528,11 +636,15 @@ CREATE TABLE IF NOT EXISTS `uo_player` (
   `num` tinyint(3) unsigned DEFAULT NULL,
   `accreditation_id` varchar(150) DEFAULT NULL,
   `accredited` tinyint(1) NOT NULL DEFAULT 0,
+  `reg_id` int(10) unsigned DEFAULT NULL,
   `profile_id` int(10) DEFAULT NULL,
   PRIMARY KEY (`player_id`),
   KEY `idx_accreditation_id` (`profile_id`),
-  KEY `idx_team` (`team`)
+  KEY `idx_team` (`team`),
+  CONSTRAINT `fk_player_profile` FOREIGN KEY (`profile_id`) REFERENCES `uo_player_profile` (`profile_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_player_team` FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_player_profile` (
   `profile_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -561,6 +673,7 @@ CREATE TABLE IF NOT EXISTS `uo_player_profile` (
   PRIMARY KEY (`profile_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 CREATE TABLE IF NOT EXISTS `uo_player_stats` (
   `player_id` int(10) NOT NULL,
   `profile_id` int(10) NOT NULL,
@@ -582,9 +695,13 @@ CREATE TABLE IF NOT EXISTS `uo_player_stats` (
   KEY `idx_profile_id` (`profile_id`),
   KEY `idx_team` (`team`),
   KEY `idx_season` (`season`),
-  KEY `idx_series` (`series`)
+  KEY `idx_series` (`series`),
+  CONSTRAINT `fk_player_stats_player` FOREIGN KEY (`player_id`) REFERENCES `uo_player` (`player_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_player_stats_profile` FOREIGN KEY (`profile_id`) REFERENCES `uo_player_profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_player_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_player_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_player_stats_team` FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
 
 
 CREATE TABLE IF NOT EXISTS `uo_pool` (
@@ -619,8 +736,10 @@ CREATE TABLE IF NOT EXISTS `uo_pool` (
   `drawsallowed` smallint(5) DEFAULT 0,
   `playoff_template` varchar(30) DEFAULT NULL,
   PRIMARY KEY (`pool_id`),
-  KEY `idx_series` (`series`)
+  KEY `idx_series` (`series`),
+  KEY `idx_pool_series_ordering` (`series`,`ordering`)
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_pooltemplate` (
   `template_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -649,6 +768,7 @@ CREATE TABLE IF NOT EXISTS `uo_pooltemplate` (
   PRIMARY KEY (`template_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 CREATE TABLE IF NOT EXISTS `uo_registerrequest` (
   `userid` varchar(50) NOT NULL,
   `password` varchar(255) DEFAULT NULL,
@@ -659,32 +779,10 @@ CREATE TABLE IF NOT EXISTS `uo_registerrequest` (
   PRIMARY KEY (`userid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `uo_api_token` (
-  `token_id` int(10) NOT NULL AUTO_INCREMENT,
-  `token_hash` char(64) NOT NULL,
-  `token_value` varchar(100) DEFAULT NULL,
-  `label` varchar(100) DEFAULT NULL,
-  `scope_type` varchar(20) NOT NULL,
-  `scope_id` varchar(50) DEFAULT NULL,
-  `revoked` tinyint(1) NOT NULL DEFAULT 0,
-  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
-  `last_used` timestamp NULL DEFAULT NULL,
-  PRIMARY KEY (`token_id`),
-  UNIQUE KEY `uq_api_token_hash` (`token_hash`),
-  KEY `idx_api_token_scope` (`scope_type`,`scope_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
-CREATE TABLE IF NOT EXISTS `uo_api_rate_limit` (
-  `rate_key` varchar(128) NOT NULL,
-  `window_start` int(10) NOT NULL,
-  `request_count` int(10) NOT NULL,
-  `updated` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
-  PRIMARY KEY (`rate_key`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_reservation` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `location` int(10) NOT NULL,
+  `location` int(10) DEFAULT NULL,
   `fieldname` varchar(50) DEFAULT NULL,
   `reservationgroup` varchar(50) DEFAULT NULL,
   `starttime` datetime DEFAULT NULL,
@@ -693,7 +791,9 @@ CREATE TABLE IF NOT EXISTS `uo_reservation` (
   `timeslots` varchar(100) DEFAULT NULL,
   `date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
-  KEY `idx_location` (`location`)
+  KEY `idx_location` (`location`),
+  KEY `idx_reservation_group_time_loc_field` (`reservationgroup`,`starttime`,`location`,`fieldname`),
+  CONSTRAINT `fk_reservation_location` FOREIGN KEY (`location`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -702,6 +802,7 @@ CREATE TABLE IF NOT EXISTS `uo_scheduling_name` (
   `name` varchar(100) DEFAULT NULL,
   PRIMARY KEY (`scheduling_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_season` (
   `season_id` varchar(10) NOT NULL,
@@ -718,12 +819,32 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `organizer` varchar(50) DEFAULT NULL,
   `category` varchar(50) DEFAULT NULL,
   `showspiritpoints` tinyint(1) DEFAULT 0,
+  `showspiritcomments` tinyint(1) DEFAULT 0,
+  `showspiritpointsonlyoncomplete` tinyint(1) DEFAULT 1,
+  `lockteamspiritonsubmit` tinyint(1) DEFAULT 1,
   `use_season_points` tinyint(1) DEFAULT 0,
+  `hide_time_on_scoresheet` tinyint(1) DEFAULT 0,
+  `hometeammode` tinyint(1) DEFAULT 0,
+  `event_readonly` tinyint(1) DEFAULT 0,
+  `maintenance_mode` tinyint(1) DEFAULT 0,
   `api_public` tinyint(1) DEFAULT 0,
+  `reg_id` int(10) unsigned DEFAULT NULL,
   `timezone` varchar(50) DEFAULT NULL,
   `spiritmode` int(10) DEFAULT NULL,
   PRIMARY KEY (`season_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `uo_season_points` (
+  `round_id` int(10) NOT NULL,
+  `team_id` int(10) NOT NULL,
+  `points` int(10) NOT NULL DEFAULT 0,
+  PRIMARY KEY (`round_id`,`team_id`),
+  KEY `idx_season_points_team` (`team_id`),
+  CONSTRAINT `fk_season_points_round` FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_season_points_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_season_round` (
   `round_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -734,16 +855,11 @@ CREATE TABLE IF NOT EXISTS `uo_season_round` (
   PRIMARY KEY (`round_id`),
   UNIQUE KEY `uq_season_round_season_series_no` (`season`,`series`,`round_no`),
   KEY `idx_season_round_season` (`season`),
-  KEY `idx_season_round_series` (`series`)
+  KEY `idx_season_round_series` (`series`),
+  CONSTRAINT `fk_season_round_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_season_round_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `uo_season_points` (
-  `round_id` int(10) NOT NULL,
-  `team_id` int(10) NOT NULL,
-  `points` int(10) NOT NULL DEFAULT 0,
-  PRIMARY KEY (`round_id`,`team_id`),
-  KEY `idx_season_points_team` (`team_id`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 CREATE TABLE IF NOT EXISTS `uo_season_stats` (
   `season` varchar(10) NOT NULL,
@@ -757,7 +873,6 @@ CREATE TABLE IF NOT EXISTS `uo_season_stats` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
-
 CREATE TABLE IF NOT EXISTS `uo_series` (
   `series_id` int(10) NOT NULL AUTO_INCREMENT,
   `name` varchar(50) DEFAULT NULL,
@@ -769,7 +884,9 @@ CREATE TABLE IF NOT EXISTS `uo_series` (
   `pool_template` int(10) DEFAULT NULL,
   PRIMARY KEY (`series_id`),
   KEY `idx_season` (`season`),
-  KEY `fk_series_pooltemplate` (`pool_template`)
+  KEY `fk_series_pooltemplate` (`pool_template`),
+  KEY `idx_series_season_ordering` (`season`,`ordering`),
+  CONSTRAINT `fk_series_pooltemplate` FOREIGN KEY (`pool_template`) REFERENCES `uo_pooltemplate` (`template_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -792,7 +909,7 @@ CREATE TABLE IF NOT EXISTS `uo_setting` (
   `value` varchar(200) DEFAULT '',
   `setting_id` int(10) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`setting_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=14 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('CurrentSeason', NULL, 1),
@@ -804,23 +921,10 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('DefaultTimezone', 'Europe/Helsinki', 7),
 	('DefaultLocale', 'en_GB.utf8', 8),
 	('ShowDefenseStats', 'false', 9),
-	('AdminEmail', 'ultiorganizer_admin@example.com', 10);
-
-CREATE TABLE IF NOT EXISTS `uo_sms` (
-  `sms_id` int(10) NOT NULL AUTO_INCREMENT,
-  `to1` int(15) NOT NULL,
-  `to2` int(15) DEFAULT NULL,
-  `to3` int(15) DEFAULT NULL,
-  `to4` int(15) DEFAULT NULL,
-  `to5` int(15) DEFAULT NULL,
-  `msg` varchar(400) DEFAULT NULL,
-  `created` timestamp NULL DEFAULT current_timestamp(),
-  `click_id` int(10) DEFAULT NULL,
-  `sent` datetime DEFAULT NULL,
-  `delivered` datetime DEFAULT NULL,
-  PRIMARY KEY (`sms_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
+	('AdminEmail', 'ultiorganizer_admin@example.com', 10),
+	('ReadOnlyServer', 'false', 11),
+	('DisableVisitorLogging', 'false', 12),
+	('SoftMaintenanceMode', 'false', 13);
 
 CREATE TABLE IF NOT EXISTS `uo_specialranking` (
   `frompool` int(10) NOT NULL,
@@ -847,19 +951,19 @@ CREATE TABLE IF NOT EXISTS `uo_spirit_category` (
 INSERT IGNORE INTO `uo_spirit_category` (`category_id`, `mode`, `group`, `index`, `min`, `max`, `factor`, `text`) VALUES
 	(1000, 1001, 1, 0, 0, 4, 1, 'One simple score'),
 	(1001, 1001, 1, 1, 0, 20, 1, 'Spirit score'),
-	(1002, 1002, 1, 0, 0, 4, 1, 'WFDF (four categories plus comparison)'),
+	(1002, 1002, 1, 0, 0, 4, 1, 'Four categories plus comparison'),
 	(1003, 1002, 1, 1, 0, 4, 1, 'Rules Knowledge and Use'),
 	(1004, 1002, 1, 2, 0, 4, 1, 'Fouls and Body Contact'),
 	(1005, 1002, 1, 3, 0, 4, 1, 'Fair-Mindedness'),
 	(1006, 1002, 1, 4, 0, 4, 1, 'Positive Attitude and Self-Control'),
 	(1007, 1002, 1, 5, 0, 4, 1, 'Our Spirit compared to theirs'),
-	(1008, 1003, 1, 0, 0, 4, 1, 'WFDF (five categories)'),
+	(1008, 1003, 1, 0, 0, 4, 1, 'WFDF official (five categories)'),
 	(1009, 1003, 1, 1, 0, 4, 1, 'Rules Knowledge and Use'),
 	(1010, 1003, 1, 2, 0, 4, 1, 'Fouls and Body Contact'),
 	(1011, 1003, 1, 3, 0, 4, 1, 'Fair-Mindedness'),
 	(1012, 1003, 1, 4, 0, 4, 1, 'Positive Attitude and Self-Control'),
 	(1013, 1003, 1, 5, 0, 4, 1, 'Communication'),
-	(1014, 1004, 1, 0, 0, 4, 1, 'WFDF (five categories, theirs and ours)'),
+	(1014, 1004, 1, 0, 0, 4, 1, 'Five categories, theirs and ours'),
 	(1015, 1004, 1, 1, 0, 4, 1, 'Rules Knowledge and Use (theirs)'),
 	(1016, 1004, 1, 2, 0, 4, 0, 'Rules Knowledge and Use (ours)'),
 	(1017, 1004, 1, 3, 0, 4, 1, 'Fouls and Body Contact (theirs)'),
@@ -878,22 +982,24 @@ CREATE TABLE IF NOT EXISTS `uo_spirit_score` (
   `value` int(3) DEFAULT NULL,
   PRIMARY KEY (`game_id`,`team_id`,`category_id`),
   KEY `fk_spirit_score_team` (`team_id`),
-  KEY `fk_spirit_score_category` (`category_id`)
+  KEY `fk_spirit_score_category` (`category_id`),
+  CONSTRAINT `fk_spirit_score_category` FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_spirit_score_game` FOREIGN KEY (`game_id`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_spirit_score_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
-CREATE TABLE IF NOT EXISTS `uo_team_spirit_stats` (
-  `team_id` int(10) NOT NULL,
-  `season` varchar(10) DEFAULT NULL,
-  `series` int(10) DEFAULT NULL,
-  `category_id` int(10) NOT NULL,
-  `games` int(5) DEFAULT 0,
-  `average` decimal(6,2) DEFAULT 0,
-  PRIMARY KEY (`team_id`,`category_id`),
-  KEY `fk_team_spirit_stats_team` (`team_id`),
-  KEY `fk_team_spirit_stats_category` (`category_id`),
-  KEY `fk_team_spirit_stats_series` (`series`),
-  KEY `fk_team_spirit_stats_season` (`season`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+CREATE TABLE IF NOT EXISTS `uo_spirit_timeout` (
+  `spirit_timeout_id` int(10) NOT NULL AUTO_INCREMENT,
+  `game` int(10) DEFAULT NULL,
+  `num` smallint(5) DEFAULT NULL,
+  `time` int(10) DEFAULT NULL,
+  `ishome` tinyint(1) NOT NULL,
+  PRIMARY KEY (`spirit_timeout_id`),
+  KEY `idx_game` (`game`),
+  CONSTRAINT `fk_spirit_timeout_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_team` (
   `team_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -905,13 +1011,20 @@ CREATE TABLE IF NOT EXISTS `uo_team` (
   `valid` tinyint(1) NOT NULL,
   `series` int(10) DEFAULT NULL,
   `country` int(10) DEFAULT NULL,
+  `reg_id` int(10) unsigned DEFAULT NULL,
+  `sotg_token` varchar(64) DEFAULT NULL,
   `abbreviation` varchar(15) DEFAULT NULL,
   PRIMARY KEY (`team_id`),
   KEY `idx_club` (`club`),
   KEY `idx_country` (`country`),
   KEY `idx_series` (`series`),
-  KEY `idx_pool` (`pool`)
+  KEY `idx_pool` (`pool`),
+  CONSTRAINT `fk_team_club` FOREIGN KEY (`club`) REFERENCES `uo_club` (`club_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_country` FOREIGN KEY (`country`) REFERENCES `uo_country` (`country_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_team_pool` (
   `team` int(10) NOT NULL,
@@ -923,6 +1036,7 @@ CREATE TABLE IF NOT EXISTS `uo_team_pool` (
   KEY `idx_pool` (`pool`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+
 CREATE TABLE IF NOT EXISTS `uo_team_profile` (
   `team_id` int(11) NOT NULL,
   `coach` varchar(100) DEFAULT NULL,
@@ -932,8 +1046,29 @@ CREATE TABLE IF NOT EXISTS `uo_team_profile` (
   `profile_image` varchar(20) DEFAULT NULL,
   `captain` varchar(100) DEFAULT '',
   `ffindr_id` int(10) DEFAULT NULL,
-  PRIMARY KEY (`team_id`)
+  PRIMARY KEY (`team_id`),
+  CONSTRAINT `fk_team_profile_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `uo_team_spirit_stats` (
+  `team_id` int(10) NOT NULL,
+  `season` varchar(10) DEFAULT NULL,
+  `series` int(10) DEFAULT NULL,
+  `category_id` int(10) NOT NULL,
+  `games` int(5) DEFAULT 0,
+  `average` decimal(6,2) DEFAULT 0.00,
+  PRIMARY KEY (`team_id`,`category_id`),
+  KEY `fk_team_spirit_stats_team` (`team_id`),
+  KEY `fk_team_spirit_stats_category` (`category_id`),
+  KEY `fk_team_spirit_stats_series` (`series`),
+  KEY `fk_team_spirit_stats_season` (`season`),
+  CONSTRAINT `fk_team_spirit_stats_category` FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_spirit_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_spirit_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_spirit_stats_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_team_stats` (
   `team_id` int(10) NOT NULL,
@@ -947,7 +1082,10 @@ CREATE TABLE IF NOT EXISTS `uo_team_stats` (
   `defenses_total` int(5) DEFAULT 0,
   PRIMARY KEY (`team_id`),
   KEY `fk_team_stats_series` (`series`),
-  KEY `fk_team_stats_season` (`season`)
+  KEY `fk_team_stats_season` (`season`),
+  CONSTRAINT `fk_team_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_stats_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -958,8 +1096,10 @@ CREATE TABLE IF NOT EXISTS `uo_timeout` (
   `time` int(10) DEFAULT NULL,
   `ishome` tinyint(1) NOT NULL,
   PRIMARY KEY (`timeout_id`),
-  KEY `idx_game` (`game`)
+  KEY `idx_game` (`game`),
+  CONSTRAINT `fk_timeout_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_translation` (
   `translation_key` varchar(50) NOT NULL,
@@ -967,6 +1107,7 @@ CREATE TABLE IF NOT EXISTS `uo_translation` (
   `translation` varchar(100) NOT NULL,
   PRIMARY KEY (`translation_key`,`locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 
 CREATE TABLE IF NOT EXISTS `uo_urls` (
   `url_id` int(10) NOT NULL AUTO_INCREMENT,
@@ -997,8 +1138,7 @@ CREATE TABLE IF NOT EXISTS `uo_userproperties` (
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_userproperties` (`prop_id`, `userid`, `name`, `value`) VALUES
-	(1, 'anonymous', 'poolselector', 'currentseason'),
-	(2, 'admin', 'userrole', 'superadmin');
+	(1, 'anonymous', 'poolselector', 'currentseason');
 
 CREATE TABLE IF NOT EXISTS `uo_users` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
@@ -1060,108 +1200,4 @@ CREATE TABLE IF NOT EXISTS `uo_visitor_counter` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Foreign key constraints
-ALTER TABLE `uo_club`
-  ADD CONSTRAINT `fk_club_country` FOREIGN KEY (`country`) REFERENCES `uo_country` (`country_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_team`
-  ADD CONSTRAINT `fk_team_club` FOREIGN KEY (`club`) REFERENCES `uo_club` (`club_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_country` FOREIGN KEY (`country`) REFERENCES `uo_country` (`country_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_team_profile`
-  ADD CONSTRAINT `fk_team_profile_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_team_stats`
-  ADD CONSTRAINT `fk_team_stats_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_team_spirit_stats`
-  ADD CONSTRAINT `fk_team_spirit_stats_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_spirit_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_spirit_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_team_spirit_stats_category` FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_player`
-  ADD CONSTRAINT `fk_player_team` FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_player_profile` FOREIGN KEY (`profile_id`) REFERENCES `uo_player_profile` (`profile_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_player_stats`
-  ADD CONSTRAINT `fk_player_stats_player` FOREIGN KEY (`player_id`) REFERENCES `uo_player` (`player_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_player_stats_profile` FOREIGN KEY (`profile_id`) REFERENCES `uo_player_profile` (`profile_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_player_stats_team` FOREIGN KEY (`team`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_player_stats_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_player_stats_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_game`
-  ADD CONSTRAINT `fk_game_hometeam` FOREIGN KEY (`hometeam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_game_visitorteam` FOREIGN KEY (`visitorteam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_game_reservation` FOREIGN KEY (`reservation`) REFERENCES `uo_reservation` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_game_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_goal`
-  ADD CONSTRAINT `fk_goal_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_goal_assist` FOREIGN KEY (`assist`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_goal_scorer` FOREIGN KEY (`scorer`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_played`
-  ADD CONSTRAINT `fk_played_player` FOREIGN KEY (`player`) REFERENCES `uo_player` (`player_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_played_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_timeout`
-  ADD CONSTRAINT `fk_timeout_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_gameevent`
-  ADD CONSTRAINT `fk_gameevent_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_game_pool`
-  ADD CONSTRAINT `fk_game_pool_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_game_pool_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_reservation`
-  ADD CONSTRAINT `fk_reservation_location` FOREIGN KEY (`location`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_location_info`
-  ADD CONSTRAINT `fk_location_info_location` FOREIGN KEY (`location_id`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_moveteams`
-  ADD CONSTRAINT `fk_moveteams_frompool` FOREIGN KEY (`frompool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_moveteams_topool` FOREIGN KEY (`topool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_moveteams_scheduling` FOREIGN KEY (`scheduling_id`) REFERENCES `uo_scheduling_name` (`scheduling_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_movingtime`
-  ADD CONSTRAINT `fk_movingtime_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_movingtime_fromlocation` FOREIGN KEY (`fromlocation`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_movingtime_tolocation` FOREIGN KEY (`tolocation`) REFERENCES `uo_location` (`id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_series`
-  ADD CONSTRAINT `fk_series_pooltemplate` FOREIGN KEY (`pool_template`) REFERENCES `uo_pooltemplate` (`template_id`) ON DELETE SET NULL ON UPDATE CASCADE;
-
-ALTER TABLE `uo_enrolledteam`
-  ADD CONSTRAINT `fk_enrolledteam_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_enrolledteam_user` FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_extraemail`
-  ADD CONSTRAINT `fk_extraemail_user` FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_extraemailrequest`
-  ADD CONSTRAINT `fk_extraemailrequest_user` FOREIGN KEY (`userid`) REFERENCES `uo_users` (`userid`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_spirit_score`
-  ADD CONSTRAINT `fk_spirit_score_game` FOREIGN KEY (`game_id`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_spirit_score_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_spirit_score_category` FOREIGN KEY (`category_id`) REFERENCES `uo_spirit_category` (`category_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_season_round`
-  ADD CONSTRAINT `fk_season_round_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_season_round_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_season_points`
-  ADD CONSTRAINT `fk_season_points_round` FOREIGN KEY (`round_id`) REFERENCES `uo_season_round` (`round_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_season_points_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE;
-
-ALTER TABLE `uo_defense`
-  ADD CONSTRAINT `fk_defense_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-  ADD CONSTRAINT `fk_defense_author` FOREIGN KEY (`author`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE;
+SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

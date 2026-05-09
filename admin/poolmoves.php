@@ -6,7 +6,8 @@ include_once 'lib/pool.functions.php';
 include_once 'lib/team.functions.php';
 $LAYOUT_ID = POOLMOVES;
 
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl_raw = !empty($_GET['backurl']) ? $_GET['backurl'] : (empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
+$backurl = utf8entities($backurl_raw);
 $seriesId = 0;
 if (!empty($_GET["pool"]))
   $poolId = intval($_GET["pool"]);
@@ -16,6 +17,8 @@ if (!empty($_GET["series"]))
 
 if (!empty($_GET["season"]))
   $season = $_GET["season"];
+
+$rows_override = !empty($_GET['rows']) ? min(64, max(1, intval($_GET['rows']))) : 0;
 
 $title = _("Continuing pool");
 
@@ -85,6 +88,8 @@ if (!empty($_POST['add'])) {
     $total_teams = 10;
     if ($poolinfo['teams'] > 0)
       $total_teams = $poolinfo['teams'];
+    if ($rows_override > 0)
+      $total_teams = $rows_override;
 
     for ($i = 0; $i < $total_teams; $i++) {
       if (isset($_POST["frompool$i"]) && isset($_POST["movefrom$i"]) && isset($_POST["moveto$i"])) {
@@ -110,6 +115,8 @@ if (!empty($_POST['add'])) {
     $total_teams = 8;
     if ($poolinfo['teams'] > 0)
       $total_teams = $poolinfo['teams'];
+    if ($rows_override > 0)
+      $total_teams = $rows_override;
 
     for ($i = 0; $i < $total_teams; $i++) {
 
@@ -158,7 +165,8 @@ if (!empty($_POST['add'])) {
     }
   }
 }
-echo "<form method='post' action='?view=admin/poolmoves&amp;series=$seriesId&amp;pool=$poolId&amp;season=$season'>";
+$rows_param = $rows_override > 0 ? "&amp;rows=" . intval($rows_override) : "";
+echo "<form method='post' autocomplete='off' action='?view=admin/poolmoves&amp;series=$seriesId&amp;pool=$poolId&amp;season=$season$rows_param&amp;backurl=" . rawurlencode($backurl_raw) . "'>";
 
 echo $err;
 
@@ -238,17 +246,19 @@ if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
   echo "<hr/>\n";
   echo "<h2>" . _("Make transfer rule") . ":</h2>\n";
 
+  $total_teams = 10;
+  if ($poolinfo['teams'] > 0)
+    $total_teams = $poolinfo['teams'];
+  if ($rows_override > 0)
+    $total_teams = $rows_override;
+
   echo "<table>";
   echo "<tr>
 		<th>" . _("From pool") . "</th>
 		<th>" . _("From position") . "</th>
-		<th>" . _("To position") . "</th>	
+		<th>" . _("To position") . "</th>
 		<th>" . _("Name in Schedule") . "</th>
 		</tr>";
-
-  $total_teams = 10;
-  if ($poolinfo['teams'] > 0)
-    $total_teams = $poolinfo['teams'];
 
   for ($i = 0; $i < $total_teams; $i++) {
     echo "<tr>\n";
@@ -314,15 +324,17 @@ if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
   echo "<hr/>\n";
   echo "<h2>" . _("Make transfer rule") . ":</h2>\n";
 
+  $total_teams = 8;
+  if ($poolinfo['teams'] > 0)
+    $total_teams = $poolinfo['teams'];
+  if ($rows_override > 0)
+    $total_teams = $rows_override;
+
   echo "<table border='0' cellpadding='3' width='250'><tr>
 		<th>" . _("From pool") . "</th>
 		<th>" . _("From position") . "</th>
 		<th>" . _("Name in Schedule") . "</th>
 		</tr>";
-
-  $total_teams = 8;
-  if ($poolinfo['teams'] > 0)
-    $total_teams = $poolinfo['teams'];
 
   for ($i = 0; $i < $total_teams; $i++) {
 
@@ -365,6 +377,10 @@ if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
   }
   echo "</table>";
 }
+
+$rows_url = "?view=admin/poolmoves&series=" . intval($seriesId) . "&pool=" . intval($poolId) . "&season=" . rawurlencode($season) . "&backurl=" . rawurlencode($backurl_raw) . "&rows=";
+echo "<p>" . _("Teams") . ": <input class='input' type='number' id='rows_input' value='" . intval($total_teams) . "' min='1' max='64' size='3'/> ";
+echo "<input class='button' type='button' value='" . _("Set") . "' onclick=\"window.location.href='" . $rows_url . "'+document.getElementById('rows_input').value;\"/></p>";
 
 echo "<p><input class='button' name='add' type='submit' value='" . _("Add") . "'/>";
 echo "<input type='hidden' name='backurl' value='$backurl'/>";

@@ -78,8 +78,8 @@ contentStart();
 //help
 $help = "<p>" . _("Modify translations") . ":</p>
 	<ol>
-		<li> " . _("The translations are used to localize all user-provided text fields") . " </li>
-		<li> " . _("The key is substituted with the text in the user-selected locale") . " </li>
+		<li> " . _("The translations are used to localize all user-provided text fields.") . " </li>
+		<li> " . _("The key is replaced with the text in the user-selected locale.") . " </li>
 		<li> " . _("The key is case insensitive") . " </li>
 	</ol>";
 
@@ -101,13 +101,13 @@ if (hasTranslationRight()) {
 
 	$translations = Translations();
 	$i = 0;
-	$translation = mysqli_fetch_assoc($translations);
+	$translation = reset($translations);
 	while ($translation) {
 		$tkey = $translation['translation_key'];
 		$values = array();
-		while ($translations && (isset($translation['translation_key']) && $translation['translation_key'] == $tkey)) {
+		while ($translation && isset($translation['translation_key']) && $translation['translation_key'] == $tkey) {
 			$values[$translation['locale']] = $translation['translation'];
-			$translation = mysqli_fetch_assoc($translations);
+			$translation = next($translations);
 		}
 		echo "<tr>\n<td>" . utf8entities($tkey);
 		echo "<input type='hidden' id='translationEdited" . $i . "' name='translationEdited[]' value='no'/>\n";

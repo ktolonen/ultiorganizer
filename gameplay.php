@@ -1,7 +1,28 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('gameplay');
+
 include_once 'lib/pool.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/common.functions.php';
+
+function GameplayCaptainMarker($playerId, $captains, $spiritCaptains)
+{
+  $isCaptain = isset($captains[(int)$playerId]);
+  $isSpiritCaptain = isset($spiritCaptains[(int)$playerId]);
+
+  if ($isCaptain && $isSpiritCaptain) {
+    return "&nbsp;" . _("(C, SC)");
+  }
+  if ($isCaptain) {
+    return "&nbsp;" . _("(C)");
+  }
+  if ($isSpiritCaptain) {
+    return "&nbsp;" . _("(SC)");
+  }
+
+  return "";
+}
 
 $html = "";
 
@@ -9,19 +30,22 @@ $gameId = intval(iget("game"));
 
 $game_result = GameResult($gameId);
 if (!$game_result) {
-  $title = _("Game play");
+  $title = _("Gameplay");
   $html .= "<h1>" . _("Game not found") . "</h1>";
   showPage($title, $html);
   return;
 }
 $seasoninfo = SeasonInfo(GameSeason($gameId));
-$homecaptain = GameCaptain($gameId, $game_result['hometeam']);
-$awaycaptain = GameCaptain($gameId, $game_result['visitorteam']);
+$hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
+$homecaptains = array_flip(GameCaptains($gameId, $game_result['hometeam']));
+$awaycaptains = array_flip(GameCaptains($gameId, $game_result['visitorteam']));
+$homeSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['hometeam']));
+$awaySpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['visitorteam']));
 
-$title = _("Game play") . ": " . utf8entities($game_result['hometeamname']) . " vs. " . utf8entities($game_result['visitorteamname']);
+$title = _("Gameplay") . ": " . utf8entities($game_result['hometeamname']) . " vs. " . utf8entities($game_result['visitorteamname']);
 
-$home_team_score_board = GameTeamScoreBorad($gameId, $game_result['hometeam']);
-$guest_team_score_board = GameTeamScoreBorad($gameId, $game_result['visitorteam']);
+$home_team_score_board = GameTeamScoreBoardArray($gameId, $game_result['hometeam']);
+$guest_team_score_board = GameTeamScoreBoardArray($gameId, $game_result['visitorteam']);
 
 $poolinfo = PoolInfo($game_result['pool']);
 
@@ -40,11 +64,14 @@ if (GameHasStarted($game_result) > 0) {
   if (intval($game_result['isongoing'])) {
     $html .= " (" . _("ongoing") . ")";
   }
+  if (!empty($game_result['forfeit'])) {
+    $html .= " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>";
+  }
   $html .= "</h1>\n";
 
-  if (mysqli_num_rows($goals) <= 0) {
-    $html .= "<h2>" . _("Not fed in") . "</h2>
-			  <p>" . _("Please check the status again later") . "</p>";
+  if (count($goals) <= 0) {
+    $html .= "<h2>" . _("No scores entered") . "</h2>
+			  <p>" . _("Please check the status again later.") . "</p>";
   } else {
 
     //score board
@@ -58,15 +85,13 @@ if (GameHasStarted($game_result) > 0) {
     $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Assists") . "</th><th class='home center'>" . _("Goals") . "</th>
 		 <th class='home center'>" . _("Tot.") . "</th></tr>\n";
 
-    while ($row = mysqli_fetch_assoc($home_team_score_board)) {
+    foreach ($home_team_score_board as $row) {
       $html .= "<tr>";
       $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
       $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
       $html .= utf8entities($row['lastname']) . "</a>";
-      if ($row['player_id'] == $homecaptain) {
-        $html .= "&nbsp;" . _("(C)");
-      }
+      $html .= GameplayCaptainMarker($row['player_id'], $homecaptains, $homeSpiritCaptains);
       $html .= "</td>";
       $html .= "<td class='center'>" . $row['fedin'] . "</td>";
       $html .= "<td class='center'>" . $row['done'] . "</td>";
@@ -86,15 +111,13 @@ if (GameHasStarted($game_result) > 0) {
     $html .= "</th><th class='guest center'>" . _("Tot.") . "</th></tr>\n";
 
 
-    while ($row = mysqli_fetch_assoc($guest_team_score_board)) {
+    foreach ($guest_team_score_board as $row) {
       $html .= "<tr>";
       $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
       $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
       $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
       $html .= utf8entities($row['lastname']) . "</a>";
-      if ($row['player_id'] == $awaycaptain) {
-        $html .= "&nbsp;" . _("(C)");
-      }
+      $html .= GameplayCaptainMarker($row['player_id'], $awaycaptains, $awaySpiritCaptains);
       $html .= "</td>";
       $html .= "<td class='center'>" . $row['fedin'] . "</td>";
       $html .= "<td class='center'>" . $row['done'] . "</td>";
@@ -114,7 +137,7 @@ if (GameHasStarted($game_result) > 0) {
     $bHt = false;
     $total = 0;
 
-    while ($goal = mysqli_fetch_assoc($goals)) {
+    foreach ($goals as $goal) {
 
       if (!$bHt && $goal['time'] > $game_result['halftime']) {
         $points[$i][0] = (intval($game_result['halftime']) - $lprev);
@@ -170,28 +193,38 @@ if (GameHasStarted($game_result) > 0) {
       $width_a = $points[$i][0] * $offset;
 
       if ($points[$i][1] == -2) {
-        $title = SecToMin($points[$i][4]) . " halftime";
+        $pointTitle = $hideTimeOnScoresheet ? "halftime" : SecToMin($points[$i][4]) . " halftime";
       } else {
-        $title = SecToMin($points[$i][4]) . " " . $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+        if ($hideTimeOnScoresheet) {
+          $pointTitle = $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+        } else {
+          $pointTitle = SecToMin($points[$i][4]) . " " . $points[$i][5] . "-" . $points[$i][6] . " " . $points[$i][3] . " -> " . $points[$i][2];
+        }
       }
-      $html .= "<td style='width:" . $width_a . "px' class='$color' title='$title'></td>\n";
+      $html .= "<td style='width:" . $width_a . "px' class='$color' title='$pointTitle'></td>\n";
     }
     $html .= "</tr></table>\n";
 
     $html .= "<table border='1' cellpadding='2' width='100%'>\n";
-    $html .= "<tr><th>" . _("Scores") . "</th><th>" . _("Assist") . "</th><th>" . _("Goal") . "</th><th>" . _("Time") . "</th><th>" . _("Dur.") . "</th>";
+    $html .= "<tr><th>" . _("Scores") . "</th><th>" . _("Assist") . "</th><th>" . _("Goal") . "</th>";
+    if (!$hideTimeOnScoresheet) {
+      $html .= "<th>" . _("Time") . "</th><th>" . _("Dur.") . "</th>";
+    }
     if (count($gameevents) || count($mediaevents)) {
-      $html .= "<th>" . _("Game events ") . "</th>";
+      $html .= "<th>" . _("Game events") . "</th>";
     }
     $html .= "</tr>\n";
+    $goalTableColspan = $hideTimeOnScoresheet ? 3 : 5;
+    if (count($gameevents) || count($mediaevents)) {
+      $goalTableColspan++;
+    }
 
     $bHt = false;
 
     $prevgoal = 0;
-    mysqli_data_seek($goals, 0);
-    while ($goal = mysqli_fetch_assoc($goals)) {
+    foreach ($goals as $goal) {
       if (!$bHt && $game_result['halftime'] > 0 && $goal['time'] > $game_result['halftime']) {
-        $html .= "<tr><td colspan='6' class='halftime'>" . _("Half-time") . "</td></tr>";
+        $html .= "<tr><td colspan='" . $goalTableColspan . "' class='halftime'>" . _("Halftime") . "</td></tr>";
         $bHt = 1;
         $prevgoal = intval($game_result['halftime']);
       }
@@ -205,15 +238,24 @@ if (GameHasStarted($game_result) > 0) {
       $html .= $goal['homescore'] . " - " . $goal['visitorscore'] . "</td>";
 
       if (intval($goal['iscallahan'])) {
-        $html .= "<td class='callahan'>" . _("Callahan-goal") . "&nbsp;</td>";
+        $html .= "<td class='callahan'>" . _("Callahan goal") . "&nbsp;</td>";
       } else {
-        $html .= "<td>" . utf8entities($goal['assistfirstname']) . " " . utf8entities($goal['assistlastname']) . "&nbsp;</td>";
+        $html .= "<td>";
+        if ($goal['assistnum']>-1) { // prefix player's name with player's number
+          $html .= "#" . utf8entities($goal['assistnum']) . " ";
+        }
+        $html .= utf8entities($goal['assistfirstname']) ." ". utf8entities($goal['assistlastname']) ."&nbsp;</td>";
       }
-      $html .= "<td>" . utf8entities($goal['scorerfirstname']) . " " . utf8entities($goal['scorerlastname']) . "&nbsp;</td>";
-      $html .= "<td>" . SecToMin($goal['time']) . "</td>";
-      $duration = $goal['time'] - $prevgoal;
-
-      $html .= "<td>" . SecToMin($duration) . "</td>";
+      $html .= "<td>";
+      if ($goal['scorernum']>-1) { // prefix player's name with player's number
+        $html .= "#" . utf8entities($goal['scorernum']) . " ";
+      }
+      $html .= utf8entities($goal['scorerfirstname']) ." ". utf8entities($goal['scorerlastname']) ."&nbsp;</td>";
+      if (!$hideTimeOnScoresheet) {
+        $html .= "<td>" . SecToMin($goal['time']) . "</td>";
+        $duration = $goal['time'] - $prevgoal;
+        $html .= "<td>" . SecToMin($duration) . "</td>";
+      }
 
       if (count($gameevents) || count($mediaevents)) {
         $html .= "<td>";
@@ -223,7 +265,9 @@ if (GameHasStarted($game_result) > 0) {
             (intval($event['time']) < intval($goal['time']))
           ) {
             if ($event['type'] == "timeout") {
-              $gameevent = _("Time-out");
+              $gameevent = _("Timeout");
+            } elseif ($event['type'] == "spirit_timeout") {
+              $gameevent = _("Spirit stoppage");
             } elseif ($event['type'] == "turnover") {
               $gameevent = _("Turnover");
             } elseif ($event['type'] == "offence") {
@@ -235,9 +279,17 @@ if (GameHasStarted($game_result) > 0) {
             }
 
             if (intval($event['ishome']) > 0) {
-              $html .= "<div class='home'>" . $gameevent . "&nbsp;" . SecToMin($event['time']) . "</div>";
+              $html .= "<div class='home'>" . $gameevent;
+              if (!$hideTimeOnScoresheet) {
+                $html .= "&nbsp;" . SecToMin($event['time']);
+              }
+              $html .= "</div>";
             } else {
-              $html .= "<div class='guest'>" . $gameevent . "&nbsp;" . SecToMin($event['time']) . "</div>";
+              $html .= "<div class='guest'>" . $gameevent;
+              if (!$hideTimeOnScoresheet) {
+                $html .= "&nbsp;" . SecToMin($event['time']);
+              }
+              $html .= "</div>";
             }
           }
         }
@@ -261,12 +313,7 @@ if (GameHasStarted($game_result) > 0) {
     }
     if (intval($game_result['isongoing'])) {
       $html .= "<tr style='border-style:dashed;border-width:1px;'>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      $html .= "<td>&nbsp;</td>";
-      if (count($gameevents) || count($mediaevents)) {
+      for ($i = 0; $i < $goalTableColspan; $i++) {
         $html .= "<td>&nbsp;</td>";
       }
       $html .= "</tr>";
@@ -329,10 +376,10 @@ if (GameHasStarted($game_result) > 0) {
       $nHLosesDisc = 0;
       $nVLosesDisc = 0;
 
-      $turnovers = GameTurnovers($gameId);
+      $turnovers = GameTurnoversArray($gameId);
 
-      $goal = mysqli_fetch_assoc($allgoals);
-      $turnover = mysqli_fetch_assoc($turnovers);
+      $goal = $allgoals[0];
+      $turnover = $turnovers[0] ?? null;
 
       //who start the game?
       $ishome = GameIsFirstOffenceHome($gameId);
@@ -373,11 +420,8 @@ if (GameHasStarted($game_result) > 0) {
       //whom start the game, starts offence
       $bHOffence = $bHStartTheGame;
 
-      //return internal pointers to first row
-      mysqli_data_seek($allgoals, 0);
-
       //loop all goals
-      while ($goal = mysqli_fetch_assoc($allgoals)) {
+      foreach ($allgoals as $goal) {
         //halftime passed
         if (($nClockTime <= intval($game_result['halftime'])) && (intval($goal['time']) >= intval($game_result['halftime']))) {
           $nClockTime = intval($game_result['halftime']);
@@ -397,10 +441,7 @@ if (GameHasStarted($game_result) > 0) {
         }
         //If turnovers before goal
 
-        if (mysqli_num_rows($turnovers)) {
-          $turnovers = GameTurnovers($gameId);
-        }
-        while ($turnover = mysqli_fetch_assoc($turnovers)) {
+        foreach ($turnovers as $turnover) {
           if ((intval($turnover['time']) > $nClockTime) &&
             (intval($turnover['time']) < intval($goal['time']))
           ) {
@@ -447,7 +488,7 @@ if (GameHasStarted($game_result) > 0) {
       //timeouts
       $timeouts = GameTimeouts($gameId);
 
-      while ($timeout = mysqli_fetch_assoc($timeouts)) {
+      foreach ($timeouts as $timeout) {
         if (intval($timeout['ishome'])) {
           $nHTO++;
         } else {
@@ -466,21 +507,23 @@ if (GameHasStarted($game_result) > 0) {
       $dblHAvg = SafeDivide($nHTotalTime, ($nHTotalTime + $nVTotalTime)) * 100;
       $dblVAvg = SafeDivide($nVTotalTime, ($nHTotalTime + $nVTotalTime)) * 100;
 
-      $html .= "<tr><td>" . _("Time on offence") . ":</td>
+      if (!$hideTimeOnScoresheet) {
+        $html .= "<tr><td>" . _("Time on offence") . ":</td>
 			<td class='home'>" . SecToMin($nHTotalTime) . " min (" . number_format($dblHAvg, 1) . " %)</td>
 			<td class='guest'>" . SecToMin($nVTotalTime) . " min (" . number_format($dblVAvg, 1) . " %)</td></tr>\n";
 
-      $html .= "<tr><td>" . _("Time on defence") . ":</td>
+        $html .= "<tr><td>" . _("Time on defence") . ":</td>
 			<td class='home'>" . SecToMin($nVTotalTime) . " min (" . number_format($dblVAvg, 1) . " %)</td>
 			<td class='guest'>" . SecToMin($nHTotalTime) . " min (" . number_format($dblHAvg, 1) . " %)</td></tr>\n";
 
-      $html .= "<tr><td>" . _("Time on offence") . "/" . _("goal") . ":</td>
+        $html .= "<tr><td>" . _("Time on offence") . "/" . _("goal") . ":</td>
 			<td class='home'>" . SecToMin(SafeDivide($nHTotalTime, $nHGoals)) . " min</td>
 			<td class='guest'>" . SecToMin(SafeDivide($nVTotalTime, $nVGoals)) . " min</td></tr>\n";
 
-      $html .= "<tr><td>" . _("Time on defence") . "/" . _("goal") . ":</td>
+        $html .= "<tr><td>" . _("Time on defence") . "/" . _("goal") . ":</td>
 			<td class='home'>" . SecToMin(SafeDivide($nVTotalTime, $nVGoals)) . " min</td>
 			<td class='guest'>" . SecToMin(SafeDivide($nHTotalTime, $nHGoals)) . " min</td></tr>\n";
+      }
 
       $dblHAvg = SafeDivide(abs($nHGoals - $nHBreaks), $nHOffencePoint) * 100;
       $dblVAvg = SafeDivide(abs($nVGoals - $nVBreaks), $nVOffencePoint) * 100;
@@ -506,12 +549,12 @@ if (GameHasStarted($game_result) > 0) {
 			<td class='home'>" . $nHBreaks . "</td>
 			<td class='guest'>" . $nVBreaks . "</td></tr>";
 
-      $html .= "<tr><td>" . _("Time-outs") . ":</td>
+      $html .= "<tr><td>" . _("Timeouts") . ":</td>
 			<td class='home'>" . $nHTO . "</td>
 			<td class='guest'>" . $nVTO . "</td></tr>";
 
-      if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && ($seasoninfo['showspiritpoints'] || isSeasonAdmin($seasoninfo['season_id']))) {
-        $html .= "<tr><td>" . _("Spirit points") . ":</td>";
+      if (CanViewSpiritScoresForGame($gameId, $seasoninfo)) {
+        $html .= "<tr><td>" . _("Spirit score") . ":</td>";
         if (isset($game_result['homesotg']) && !is_null($game_result['homesotg'])) {
           $html .= "<td class='home'>" . $game_result['homesotg'] . "</td>";
         } else {
@@ -526,8 +569,8 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table>";
     }
     // spirit points
-    if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && !intval($game_result['isongoing'])) {
-      $html .= "<h2>" . _("Spirit Points") . "</h2>\n";
+    if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && !intval($game_result['isongoing']) && CanViewSpiritScoresForGame($gameId, $seasoninfo)) {
+      $html .= "<h2>" . _("Spirit scores") . "</h2>\n";
       $categories = SpiritCategories($seasoninfo['spiritmode']);
       $homepoints = GameGetSpiritPoints($gameId, $game_result['hometeam']);
       $visitorpoints = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
@@ -559,8 +602,9 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table>";
     }
     $game_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_GAME);
-    $home_spirit_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_HOME);
-    $visitor_spirit_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_VISITOR);
+    $showSpiritComments = CanViewSpiritCommentsForGame($gameId, $seasoninfo);
+    $home_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_HOME) : "";
+    $visitor_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_VISITOR) : "";
     if (!empty($game_comment_html) || !empty($home_spirit_comment_html) || !empty($visitor_spirit_comment_html)) {
       $html .= "<h2>" . _("Comments") . "</h2>\n";
       if (!empty($game_comment_html)) {
@@ -587,8 +631,8 @@ if (GameHasStarted($game_result) > 0) {
     if (ShowDefenseStats()) {
       $html .= "<br><br>";
       $html .= "<h3>" . _("Defensive plays") . "</h3>\n";
-      $home_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['hometeam']);
-      $guest_team_defense_board = GameTeamDefenseBoard($gameId,  $game_result['visitorteam']);
+      $home_team_defense_board = GameTeamDefenseBoardArray($gameId,  $game_result['hometeam']);
+      $guest_team_defense_board = GameTeamDefenseBoardArray($gameId,  $game_result['visitorteam']);
       $defenses = GameDefenses($gameId);
       $html .= "<table style='width:100%'><tr><td valign='top' style='width:45%'>\n";
 
@@ -596,17 +640,15 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "<tr style='height=20'><td align='center'><b>";
       $html .= utf8entities($game_result['hometeamname']) . "</b></td></tr>\n";
       $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-      $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Defenses") . "</th></tr>\n";
+      $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Defences") . "</th></tr>\n";
 
-      while ($row = mysqli_fetch_assoc($home_team_defense_board)) {
+      foreach ($home_team_defense_board as $row) {
         $html .= "<tr>";
         $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
         $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
         $html .= utf8entities($row['lastname']) . "</a>";
-        if ($row['player_id'] == $homecaptain) {
-          $html .= "&nbsp;" . _("(C)");
-        }
+        $html .= GameplayCaptainMarker($row['player_id'], $homecaptains, $homeSpiritCaptains);
         $html .= "</td>";
         //$html .= "<td class='center'>". $row['fedin'] ."</td>";
         $html .= "<td class='center'>" . $row['done'] . "</td>";
@@ -621,17 +663,15 @@ if (GameHasStarted($game_result) > 0) {
       $html .= utf8entities($game_result['visitorteamname']) . "</b></td></tr>\n";
       $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
       $html .= "<tr><th class='guest'>#</th><th class='guest'>" . _("Name") . "</th><th class='guest center'>";
-      $html .= _("Defenses") . "</th></tr>\n";
+      $html .= _("Defences") . "</th></tr>\n";
 
-      while ($row = mysqli_fetch_assoc($guest_team_defense_board)) {
+      foreach ($guest_team_defense_board as $row) {
         $html .= "<tr>";
         $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
         $html .= "<td><a href='?view=playercard&amp;series=0&amp;player=" . $row['player_id'];
         $html .= "'>" . utf8entities($row['firstname']) . "&nbsp;";
         $html .= utf8entities($row['lastname']) . "</a>";
-        if ($row['player_id'] == $awaycaptain) {
-          $html .= "&nbsp;" . _("(C)");
-        }
+        $html .= GameplayCaptainMarker($row['player_id'], $awaycaptains, $awaySpiritCaptains);
         $html .= "</td>";
         //$html .= "<td class='center'>". $row['fedin'] ."</td>";
         $html .= "<td class='center'>" . $row['done'] . "</td>";
@@ -642,28 +682,32 @@ if (GameHasStarted($game_result) > 0) {
       $html .= "</table></td></tr></table>\n";
 
       $html .= "<table border='1' cellpadding='2' width='100%'>\n";
-      $html .= "<tr><th>" . _("Time defense play") . "</th><th>" . _("Player") . "</th><th>" . _("Callahan defense") . "</th>";
+      if ($hideTimeOnScoresheet) {
+        $html .= "<tr><th>" . _("Player") . "</th><th>" . _("Callahan defence") . "</th>";
+      } else {
+        $html .= "<tr><th>" . _("Time of defensive play") . "</th><th>" . _("Player") . "</th><th>" . _("Callahan defence") . "</th>";
+      }
       $html .= "</tr>\n";
 
       //$bHt=false;
 
-      $prevdefense = 0;
-      mysqli_data_seek($defenses, 0);
-      while ($defense = mysqli_fetch_assoc($defenses)) {
+      foreach ($defenses as $defense) {
         // 		if (!$bHt && $game_result['halftime']>0 && $goal['time'] > $game_result['halftime']){
         // 			$html .= "<tr><td colspan='6' class='halftime'>"._("Half-time")."</td></tr>";
         // 			$bHt = 1;
         // 			$prevgoal = intval($game_result['halftime']);
         // 		}
 
-        $html .= "<tr><td style='width:120px;white-space: nowrap'";
-        if (intval($defense['ishomedefense']) == 1) {
-          $html .= " class='home'>";
-        } else {
-          $html .= " class='guest'>";
+        $html .= "<tr>";
+        if (!$hideTimeOnScoresheet) {
+          $html .= "<td style='width:120px;white-space: nowrap'";
+          if (intval($defense['ishomedefense']) == 1) {
+            $html .= " class='home'>";
+          } else {
+            $html .= " class='guest'>";
+          }
+          $html .= SecToMin($defense['time']) . "</td>";
         }
-        $html .= SecToMin($defense['time']) . "</td>";
-        //$html .= $goal['homescore'] ." - ". $goal['visitorscore'] ."</td>";
         $html .= "<td>" . utf8entities($defense['defenderfirstname']) . " " . utf8entities($defense['defenderlastname']) . "&nbsp;</td>";
 
         if (intval($defense['iscallahan'])) {

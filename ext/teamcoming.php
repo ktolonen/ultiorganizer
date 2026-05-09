@@ -1,5 +1,5 @@
 <?php
-include_once 'localization.php';
+include_once __DIR__ . '/localization.php';
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
@@ -22,16 +22,16 @@ include_once 'localization.php';
 <body>
 	<?php
 
-	include_once '../lib/team.functions.php';
-	include_once '../lib/common.functions.php';
-	include_once '../lib/timetable.functions.php';
+	include_once __DIR__ . '/../lib/team.functions.php';
+	include_once __DIR__ . '/../lib/common.functions.php';
+	include_once __DIR__ . '/../lib/timetable.functions.php';
 
 	$teamId = intval(iget("team"));
 	$season = iget("season");
 
 	if ($teamId) {
 		$games = TimetableGames($teamId, "team", "coming", "tournaments");
-		if (!mysqli_num_rows($games)) {
+		if (!count($games)) {
 			echo "\n<p>" . _("No games") . ".</p>\n";
 		} else {
 			echo ExtGameView($games);

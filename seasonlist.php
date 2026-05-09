@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('seasonlist');
+
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 
@@ -12,7 +15,7 @@ $html .= "\n<h1>" . $title . "</h1>\n";
 $seasons = Seasons();
 
 $html .= "<table width='100%' border='0' cellspacing='0' cellpadding='2'>\n";
-while ($season = mysqli_fetch_assoc($seasons)) {
+foreach ($seasons as $season) {
   if (!IsSeasonStatsCalculated($season['season_id'])) {
     continue;
   }

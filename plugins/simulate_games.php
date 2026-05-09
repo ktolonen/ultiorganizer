@@ -1,4 +1,7 @@
 <?php
+include_once __DIR__ . '/auth.php';
+pluginRequireAdmin(__FILE__);
+
 ob_start();
 ?>
 <!--
@@ -10,7 +13,7 @@ security=superadmin
 customization=all
 
 [DESCRIPTION]
-title = "Game play simulator"
+title = "Gameplay simulator"
 description = "Automatically plays all games selected."
 -->
 <?php
@@ -22,6 +25,7 @@ if (!isSuperAdmin()) {
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/standings.functions.php';
+include_once 'lib/team.functions.php';
 
 function undoPoolMoves($poolId)
 {
@@ -43,9 +47,19 @@ function undoPoolMoves($poolId)
 $html = "";
 $title = ("Game simulator");
 $seasonId = "";
+$winnerModes = array(
+	"rank" => "Higher rank always wins",
+	"home" => "Home team always wins",
+	"away" => "Away team always wins",
+	"random" => "Random"
+);
+$winnerMode = "rank";
 
 if (!empty($_POST['season'])) {
 	$seasonId = $_POST['season'];
+}
+if (!empty($_POST['winner_mode']) && isset($winnerModes[$_POST['winner_mode']])) {
+	$winnerMode = $_POST['winner_mode'];
 }
 
 if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
@@ -58,110 +72,135 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 		$games = PoolGames($poolId);
 		set_time_limit(300); //game simulation takes time because so much inserts
 
-		foreach ($games as $game) {
-			$info = GameInfo($game['game_id']);
+			foreach ($games as $game) {
+				$info = GameInfo($game['game_id']);
+				if (empty($info['hometeam']) || empty($info['visitorteam'])) {
+					continue;
+				}
 
-			//all players in roster are playing
-			$home_playerlist = TeamPlayerList($info['hometeam']);
-			$hplayers = array();
-			while ($player = mysqli_fetch_assoc($home_playerlist)) {
-				GameAddPlayer($game['game_id'], $player['player_id'], intval($player['num']));
-				$hplayers[] = intval($player['num']);
-			}
-			$hplayers[] = 'xx'; //callahan
-			$away_playerlist = TeamPlayerList($info['visitorteam']);
-			$aplayers = array();
-			while ($player = mysqli_fetch_assoc($away_playerlist)) {
-				GameAddPlayer($game['game_id'], $player['player_id'], intval($player['num']));
-				$aplayers[] = intval($player['num']);
-			}
-			$aplayers[] = 'xx'; //callahan
+				//all players in roster are playing
+				$home_playerlist = TeamPlayerList($info['hometeam']);
+				$hplayers = array();
+				foreach ($home_playerlist as $player) {
+					GameAddPlayer($game['game_id'], $player['player_id'], intval($player['num']));
+					$hplayers[] = intval($player['num']);
+				}
+				$hplayers[] = 'xx'; //callahan
+				$away_playerlist = TeamPlayerList($info['visitorteam']);
+				$aplayers = array();
+				foreach ($away_playerlist as $player) {
+					GameAddPlayer($game['game_id'], $player['player_id'], intval($player['num']));
+					$aplayers[] = intval($player['num']);
+				}
+				$aplayers[] = 'xx'; //callahan
 
-			GameSetStartingTeam($game['game_id'], rand(0, 1));
+				GameSetStartingTeam($game['game_id'], rand(0, 1));
 
-			$h = 0;
-			$a = 0;
-			$time = 0;
-			$maxscore = $poolinfo['winningscore'];
-			if ($maxscore <= 0) $maxscore = rand(2, 15);
-			$draw = 0;
-			if ($poolinfo['drawsallowed'] && rand(0, 10) == 1)
-				$draw = 1;
-			for ($i = 0; ($draw == 0 && $h < $maxscore && $a < $maxscore) || ($draw == 1 && ($h < $maxscore || $a < $maxscore)); $i++) {
+				$h = 0;
+				$a = 0;
+				$time = 0;
+				$maxscore = $poolinfo['winningscore'];
+				if ($maxscore <= 0) $maxscore = rand(2, 15);
 
-				if ($h == $maxscore)
-					$home = 0;
-				elseif ($a == $maxscore)
-					$home = 1;
-				else
-					$home = rand(0, 1);
-
-				$pass = 0;
-				$goal = 0;
-				$iscallahan = 0;
-				$time = $time + rand(30, 200);
-
-				if ($home) {
-					$h++;
-					$pass = $hplayers[rand(0, count($hplayers) - 1)];
-
-					if (strcasecmp($pass, 'xx') == 0 || strcasecmp($pass, 'x') == 0) {
-						$iscallahan = 1;
-						$pass = -1;
-					} else {
-						$pass = GamePlayerFromNumber($game['game_id'], $info['hometeam'], $pass);
-					}
-					$goal = $hplayers[rand(0, count($hplayers) - 2)]; //-2 removes callahan
-					$goal = GamePlayerFromNumber($game['game_id'], $info['hometeam'], $goal);
+				if ($winnerMode == "home") {
+					$winnerHome = true;
+				} elseif ($winnerMode == "away") {
+					$winnerHome = false;
+				} elseif ($winnerMode == "random") {
+					$winnerHome = (bool)rand(0, 1);
 				} else {
-					$a++;
-					$pass = $aplayers[rand(0, count($aplayers) - 1)];
-
-					if (strcasecmp($pass, 'xx') == 0 || strcasecmp($pass, 'x') == 0) {
-						$iscallahan = 1;
-						$pass = -1;
+					$homeRankInfo = TeamPoolInfo($info['hometeam'], $poolId);
+					$awayRankInfo = TeamPoolInfo($info['visitorteam'], $poolId);
+					$homePoolRank = isset($homeRankInfo['poolrank']) ? (int)$homeRankInfo['poolrank'] : 0;
+					$awayPoolRank = isset($awayRankInfo['poolrank']) ? (int)$awayRankInfo['poolrank'] : 0;
+					$homeRank = !empty($homeRankInfo['activerank']) ? (int)$homeRankInfo['activerank'] : $homePoolRank;
+					$awayRank = !empty($awayRankInfo['activerank']) ? (int)$awayRankInfo['activerank'] : $awayPoolRank;
+					if ($homeRank <= 0 || $awayRank <= 0 || $homeRank == $awayRank) {
+						$winnerHome = true;
 					} else {
-						$pass = GamePlayerFromNumber($game['game_id'], $info['visitorteam'], $pass);
+						$winnerHome = $homeRank < $awayRank;
 					}
-					$goal = $aplayers[rand(0, count($aplayers) - 1)]; //-1 removes callahan
-					$goal = GamePlayerFromNumber($game['game_id'], $info['visitorteam'], $goal);
 				}
-				GameAddScore($game['game_id'], $pass, $goal, $time, $i + 1, $h, $a, $home, $iscallahan);
-				if ($h == $poolinfo['halftimescore'] || $a == $poolinfo['halftimescore']) {
-					$time = $time + $poolinfo['halftime'];
-					GameSetHalftime($game['game_id'], $time);
+
+				for ($i = 0; $h < $maxscore && $a < $maxscore; $i++) {
+
+					if ($winnerHome && $h == $maxscore - 1)
+						$home = 1;
+					elseif (!$winnerHome && $a == $maxscore - 1)
+						$home = 0;
+					elseif ($h == $maxscore - 1)
+						$home = 0;
+					elseif ($a == $maxscore - 1)
+						$home = 1;
+					else
+						$home = rand(0, 1);
+
+					$pass = 0;
+					$goal = 0;
+					$iscallahan = 0;
+					$time = $time + rand(30, 200);
+
+					if ($home) {
+						$h++;
+						$pass = $hplayers[rand(0, count($hplayers) - 1)];
+
+						if (strcasecmp($pass, 'xx') == 0 || strcasecmp($pass, 'x') == 0) {
+							$iscallahan = 1;
+							$pass = -1;
+						} else {
+							$pass = GamePlayerFromNumber($game['game_id'], $info['hometeam'], $pass);
+						}
+						$goal = $hplayers[rand(0, max(0, count($hplayers) - 2))]; //-2 removes callahan
+						$goal = GamePlayerFromNumber($game['game_id'], $info['hometeam'], $goal);
+					} else {
+						$a++;
+						$pass = $aplayers[rand(0, count($aplayers) - 1)];
+
+						if (strcasecmp($pass, 'xx') == 0 || strcasecmp($pass, 'x') == 0) {
+							$iscallahan = 1;
+							$pass = -1;
+						} else {
+							$pass = GamePlayerFromNumber($game['game_id'], $info['visitorteam'], $pass);
+						}
+						$goal = $aplayers[rand(0, count($aplayers) - 1)]; //-1 removes callahan
+						$goal = GamePlayerFromNumber($game['game_id'], $info['visitorteam'], $goal);
+					}
+					GameAddScore($game['game_id'], $pass, $goal, $time, $i + 1, $h, $a, $home, $iscallahan);
+					if ($h == $poolinfo['halftimescore'] || $a == $poolinfo['halftimescore']) {
+						$time = $time + $poolinfo['halftime'];
+						GameSetHalftime($game['game_id'], $time);
+					}
 				}
+
+				//home team timeouts
+				$timeouts = rand(0, $poolinfo['timeouts']);
+				$timeoutstime = array();
+				for ($i = 0; $i <= $timeouts; $i++) {
+					$timeoutstime[] = rand(0, $time);
+				}
+				sort($timeoutstime, SORT_NUMERIC);
+
+				for ($i = 0; $i <= $timeouts; $i++) {
+					GameAddTimeout($game['game_id'], $i + 1, $timeoutstime[$i], 1);
+				}
+
+				//away team timeouts
+				$timeouts = rand(0, $poolinfo['timeouts']);
+				$timeoutstime = array();
+				for ($i = 0; $i <= $timeouts; $i++) {
+					$timeoutstime[] = rand(0, $time);
+				}
+				sort($timeoutstime, SORT_NUMERIC);
+
+				for ($i = 0; $i <= $timeouts; $i++) {
+					GameAddTimeout($game['game_id'], $i + 1, $timeoutstime[$i], 0);
+				}
+
+				//game official
+				GameSetScoreSheetKeeper($game['game_id'], "Game Simulator");
+
+				GameSetResult($game['game_id'], $h, $a, false);
 			}
-
-			//home team timeouts
-			$timeouts = rand(0, $poolinfo['timeouts']);
-			$timeoutstime = array();
-			for ($i = 0; $i <= $timeouts; $i++) {
-				$timeoutstime[] = rand(0, $time);
-			}
-			sort($timeoutstime, SORT_NUMERIC);
-
-			for ($i = 0; $i <= $timeouts; $i++) {
-				GameAddTimeout($game['game_id'], $i + 1, $timeoutstime[$i], 1);
-			}
-
-			//away team timeouts
-			$timeouts = rand(0, $poolinfo['timeouts']);
-			$timeoutstime = array();
-			for ($i = 0; $i <= $timeouts; $i++) {
-				$timeoutstime[] = rand(0, $time);
-			}
-			sort($timeoutstime, SORT_NUMERIC);
-
-			for ($i = 0; $i <= $timeouts; $i++) {
-				GameAddTimeout($game['game_id'], $i + 1, $timeoutstime[$i], 0);
-			}
-
-			//game official
-			GameSetScoreSheetKeeper($game['game_id'], "Game Simulator");
-
-			GameSetResult($game['game_id'], $h, $a, false);
-		}
 		ResolvePoolStandings($poolId);
 		PoolResolvePlayed($poolId);
 	}
@@ -208,7 +247,7 @@ if (empty($seasonId)) {
 
 	$seasons = Seasons();
 
-	while ($row = mysqli_fetch_assoc($seasons)) {
+	foreach ($seasons as $row) {
 		$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 	}
 
@@ -246,10 +285,16 @@ if (empty($seasonId)) {
 			$html .= "<td class='center'>" . PoolTotalPlayedGames($pool['pool_id']);
 			$html .= "/" . count(PoolGames($pool['pool_id'])) . "</td>";
 			$html .= "</tr>\n";
+			}
 		}
-	}
-	$html .= "</table>\n";
-	$html .= "<p><input class='button' type='submit' name='simulate' value='" . ("Simulate") . "'/> <input class='button' type='submit' name='reset' value='" . ("Reset played games") . "'/></p>";
+		$html .= "</table>\n";
+		$html .= "<p>" . ("Winner") . ": <select class='dropdown' name='winner_mode'>\n";
+		foreach ($winnerModes as $mode => $label) {
+			$selected = ($winnerMode == $mode) ? " selected='selected'" : "";
+			$html .= "<option class='dropdown' value='" . utf8entities($mode) . "'" . $selected . ">" . utf8entities($label) . "</option>\n";
+		}
+		$html .= "</select></p>\n";
+		$html .= "<p><input class='button' type='submit' name='simulate' value='" . ("Simulate") . "'/> <input class='button' type='submit' name='reset' value='" . ("Reset played games") . "'/></p>";
 	$html .= "<div>";
 	$html .= "<input type='hidden' name='season' value='$seasonId' />\n";
 	$html .= "</div>\n";

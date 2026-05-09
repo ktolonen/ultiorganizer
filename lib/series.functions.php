@@ -1,6 +1,9 @@
 <?php
-include_once $include_prefix . 'lib/club.functions.php';
-include_once $include_prefix . 'lib/country.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/club.functions.php';
+require_once __DIR__ . '/country.functions.php';
 
 
 /**
@@ -93,7 +96,10 @@ function SeriesTypes()
     "master open",
     "master women",
     "master mixed",
-    "grand master",
+    "grandmaster open",
+    "grandmaster women",
+    "grandmaster mixed",
+    "greatgrandmaster",
     "U19 open",
     "U19 women",
     "U19 mixed",
@@ -114,8 +120,8 @@ function SeriesTypes()
 function SeriesTeams($seriesId, $orderbyseeding = false)
 {
   $query = sprintf(
-    "SELECT DISTINCT t.team_id, t.name, t.abbreviation, t.club, cl.name AS clubname,
-			t.country, c.name AS countryname, t.rank, c.flagfile,
+    "SELECT t.team_id, t.name, t.abbreviation, t.club, t.valid, cl.name AS clubname,
+			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
 			c.flagfile
 			FROM uo_team t
 			LEFT JOIN uo_series ser ON(ser.series_id=t.series)
@@ -125,6 +131,7 @@ function SeriesTeams($seriesId, $orderbyseeding = false)
 			LEFT JOIN uo_club cl ON(cl.club_id=t.club)
 			LEFT JOIN uo_country c ON(c.country_id=t.country)
 			WHERE t.series = '%d'
+			GROUP BY t.team_id
 			",
     (int)($seriesId)
   );
@@ -302,8 +309,9 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
 {
   $query = sprintf(
     "
-		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, 
-		COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.games 
+		SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(t.done/pel.games,0) AS doneavg,
+		COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, COALESCE(s.fedin/pel.games,0) AS fedinavg, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total,
+    COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg, pel.games
 		FROM uo_player AS p 
 		LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
 			LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
@@ -344,8 +352,16 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
       $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
       break;
 
+    case "goalavg":
+      $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC";
+      break;
+
     case "pass":
       $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
+      break;
+
+    case "passavg":
+      $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC";
       break;
 
     case "games":
@@ -364,6 +380,10 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
       $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
       break;
 
+    case "totalavg":
+      $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
+
     default:
       $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
       break;
@@ -374,6 +394,11 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
   }
 
   return DBQuery($query);
+}
+
+function SeriesScoreBoardArray($seriesId, $sorting, $limit)
+{
+  return DBFetchAllAssoc(SeriesScoreBoard($seriesId, $sorting, $limit));
 }
 
 /**
@@ -441,119 +466,9 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit)
   return DBQuery($query);
 }
 
-/**
- * Get division spirit score per category.
- * @param int $seriesId uo_series.series_id
- * @return Array array of spirit scores per team.
-
- */
-function SeriesSpiritBoard($seriesId)
+function SeriesDefenseBoardArray($seriesId, $sorting, $limit)
 {
-  $factorRows = DBQueryToArray("SELECT category_id, factor FROM uo_spirit_category");
-  $factor = array();
-  foreach ($factorRows as $row) {
-    $factor[$row['category_id']] = $row['factor'];
-  }
-
-  $query = sprintf(
-    "SELECT st.team_id, te.name, st.category_id, st.value, pool.series
-      FROM uo_team AS te
-      LEFT JOIN uo_spirit_score AS st ON (te.team_id=st.team_id)
-      LEFT JOIN uo_game_pool AS gp ON (st.game_id=gp.game)
-      LEFT JOIN uo_pool pool ON(gp.pool=pool.pool_id)
-      LEFT JOIN uo_game AS g1 ON (gp.game=g1.game_id)
-      WHERE pool.series=%d AND gp.timetable=1 AND g1.isongoing=0 AND g1.hasstarted>0
-      ORDER BY st.team_id, st.category_id",
-    $seriesId
-  );
-
-  $scores = DBQueryToArray($query);
-  $last_team = null;
-  $last_category = null;
-  $averages = array();
-  $total = 0;
-  $sum = 0;
-  $games = 0;
-  foreach ($scores as $row) {
-    if ($last_team != $row['team_id'] || $last_category != $row['category_id']) {
-      if (!is_null($last_category)) {
-        $teamline[$last_category] = SafeDivide($sum, $games);
-        $factorValue = isset($factor[$last_category]) ? $factor[$last_category] : 0;
-        $total += SafeDivide($factorValue * $sum, $games);
-      }
-      if ($last_team != $row['team_id']) {
-        if (!is_null($last_team)) {
-          $teamline['total'] = $total;
-          $teamline['games'] = $games;
-          $averages[$last_team] = $teamline;
-          $total = 0;
-        }
-        $teamline = array('teamname' => $row['name']);
-      }
-      $sum = 0;
-      $games = 0;
-      $last_team = $row['team_id'];
-      $last_category = $row['category_id'];
-    }
-    $sum += $row['value'];
-    ++$games;
-  }
-  if (!is_null($last_team)) {
-    $teamline[$last_category] = SafeDivide($sum, $games);
-    $factorValue = isset($factor[$last_category]) ? $factor[$last_category] : 0;
-    $total += SafeDivide($factorValue * $sum, $games);
-    $teamline['total'] = $total;
-    $teamline['games'] = $games;
-    $averages[$last_team] = $teamline;
-  }
-  return $averages;
-}
-
-/**
- * Get games where teams are missing spirit points in given division.
- * @param int $seriesId uo_series.series_id
- * @return Array array of missing spirit point rows.
- */
-function SeriesMissingSpiritPoints($seriesId)
-{
-  $query = sprintf(
-    "SELECT missing.team_id, missing.teamname, missing.giver_team_id, missing.giver_teamname,
-      missing.opponent_name, missing.home_name, missing.visitor_name, missing.game_id, missing.gamename, missing.time
-      FROM (
-        SELECT g.game_id, g.time, g.hometeam AS team_id, ht.name AS teamname,
-          g.visitorteam AS giver_team_id, vt.name AS giver_teamname,
-          vt.name AS opponent_name, ht.name AS home_name, vt.name AS visitor_name, sn.name AS gamename
-        FROM uo_game g
-        LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
-        LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
-        LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
-        LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
-        LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
-        LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
-        LEFT JOIN (SELECT DISTINCT game_id, team_id FROM uo_spirit_score) ssc
-          ON (ssc.game_id=g.game_id AND ssc.team_id=g.hometeam)
-        WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0 AND ssc.game_id IS NULL
-        UNION ALL
-        SELECT g.game_id, g.time, g.visitorteam AS team_id, vt.name AS teamname,
-          g.hometeam AS giver_team_id, ht.name AS giver_teamname,
-          ht.name AS opponent_name, ht.name AS home_name, vt.name AS visitor_name, sn.name AS gamename
-        FROM uo_game g
-        LEFT JOIN uo_game_pool gp ON (g.game_id=gp.game)
-        LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
-        LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
-        LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
-        LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
-        LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
-        LEFT JOIN (SELECT DISTINCT game_id, team_id FROM uo_spirit_score) ssc
-          ON (ssc.game_id=g.game_id AND ssc.team_id=g.visitorteam)
-        WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0 AND ssc.game_id IS NULL
-      ) AS missing
-      ORDER BY missing.teamname, missing.time, missing.game_id",
-    (int)$seriesId,
-    (int)$seriesId
-  );
-
-  return DBQueryToArray($query);
+  return DBFetchAllAssoc(SeriesDefenseBoard($seriesId, $sorting, $limit));
 }
 
 /**
@@ -608,7 +523,7 @@ function SeriesEnrolledTeams($seriesId)
 		WHERE team.series=%d ORDER BY team.enroll_time ASC",
       (int)$seriesId
     );
-    return DBQuery($query);
+    return DBQueryToArray($query);
   } else die("Insufficient rights to get all enrolled teams");
 }
 
@@ -635,6 +550,34 @@ function DeleteSeries($seriesId)
 }
 
 /**
+ * Normalize an optional pool template id for uo_series.pool_template.
+ *
+ * @param mixed $poolTemplateId uo_pooltemplate.template_id or empty value
+ * @return string SQL fragment for INSERT/UPDATE
+ */
+function SeriesPoolTemplateSql($poolTemplateId)
+{
+  if ($poolTemplateId === null || $poolTemplateId === '') {
+    return "NULL";
+  }
+
+  $templateId = (int)$poolTemplateId;
+  if ($templateId <= 0) {
+    return "NULL";
+  }
+
+  $query = sprintf(
+    "SELECT template_id FROM uo_pooltemplate WHERE template_id=%d",
+    $templateId
+  );
+  if (DBQueryToValue($query) === null) {
+    return "NULL";
+  }
+
+  return (string)$templateId;
+}
+
+/**
  * Add division.
  * 
  * Access level: Event admin
@@ -645,16 +588,19 @@ function DeleteSeries($seriesId)
 function AddSeries($params)
 {
   if (hasEditSeasonSeriesRight($params['season'])) {
+    $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
+    $ordering = trim(isset($params['ordering']) ? (string)$params['ordering'] : "");
+    $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
     $query = sprintf(
       "INSERT INTO uo_series
-				(name,type,ordering,season,valid,pool_template)
-				VALUES ('%s','%s','%s','%s',%d,%d)",
+					(name,type,ordering,season,valid,pool_template)
+					VALUES ('%s','%s','%s','%s',%d,%s)",
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
-      DBEscapeString($params['ordering']),
+      DBEscapeString($ordering),
       DBEscapeString($params['season']),
       (int)$params['valid'],
-      (int)$params['pool_template']
+      $poolTemplateSql
     );
 
     $id = DBQueryInsert($query);
@@ -674,17 +620,20 @@ function SetSeries($params)
 {
   $seriesInfo = SeriesInfo($params['series_id']);
   if (hasEditSeasonSeriesRight($seriesInfo['season'])) {
+    $poolTemplateSql = SeriesPoolTemplateSql(isset($params['pool_template']) ? $params['pool_template'] : null);
+    $ordering = trim(isset($params['ordering']) ? (string)$params['ordering'] : "");
+    $ordering = $ordering === "" ? "A" : substr($ordering, 0, 1);
     $query = sprintf(
       "
-			UPDATE uo_series SET
-			name='%s', type='%s', ordering='%s', valid=%d,
-			pool_template=%d
-			WHERE series_id=%d",
+				UPDATE uo_series SET
+				name='%s', type='%s', ordering='%s', valid=%d,
+				pool_template=%s
+				WHERE series_id=%d",
       DBEscapeString($params['name']),
       DBEscapeString($params['type']),
-      DBEscapeString($params['ordering']),
+      DBEscapeString($ordering),
       (int)$params['valid'],
-      (int)$params['pool_template'],
+      $poolTemplateSql,
       (int)$params['series_id']
     );
 
@@ -756,7 +705,7 @@ function SeriesEnrolledTeamsByUser($seriesId, $userid)
       (int)$seriesId,
       DBEscapeString($userid)
     );
-    return DBQuery($query);
+    return DBQueryToArray($query);
   } else die("Insufficient rights to get all enrolled teams for other users");
 }
 
@@ -842,7 +791,7 @@ function ConfirmEnrolledTeam($seriesId, $id)
     $countryId = CountryId($teaminfo['countryname']);
 
     //clubname not found
-    if (!empty($teaminfo['clubname']) && $clubId == -1) {
+    if (!empty($teaminfo['clubname']) && $clubId === null) {
       $clubId = AddClub($seriesId, $teaminfo['clubname']);
     }
 

@@ -1,11 +1,25 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 /**
- * @file
- * This file contains general functions to access and query database.
+ * Current database schema version expected by this codebase.
  *
+ * Update this constant whenever you add a new `upgradeNN()` step in
+ * `sql/upgrade_db.php`, and export the current schema from the upgraded database.
  */
+define('DB_VERSION', 90);
 
+/**
+ * Maximum age in seconds before an automatic upgrade lock is considered stale.
+ */
+define('DB_MAINTENANCE_LOCK_TIMEOUT', 600);
+
+/**
+ * Resolve the current host name used for host-specific config lookup.
+ *
+ * @return string
+ */
 function GetServerName()
 {
   if (isset($_SERVER['SERVER_NAME'])) {
@@ -17,31 +31,119 @@ function GetServerName()
   }
 }
 
-$serverName = GetServerName();
-//include prefix can be used to locate root level of directory tree.
-$include_prefix = "";
-while (!(is_readable($include_prefix . 'conf/config.inc.php') || is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php"))) {
-  $include_prefix .= "../";
+/**
+ * Walk up parent directories until the readable config file is found.
+ *
+ * The returned prefix is used by legacy entry points that include `lib/database.php`
+ * from different directory depths and still expect root-relative includes to work.
+ *
+ * @return string Relative prefix such as `""`, `"../"`, or `"../../"`
+ */
+function FindIncludePrefix()
+{
+  $includePrefix = "";
+  $maxLevels = 25;
+
+  for ($level = 0; $level <= $maxLevels; $level++) {
+    if (is_readable($includePrefix . 'conf/config.inc.php')) {
+      return $includePrefix;
+    }
+    $includePrefix .= "../";
+  }
+
+  die("Cannot locate configuration file");
 }
+
+//include prefix can be used to locate root level of directory tree.
+$include_prefix = FindIncludePrefix();
 
 include_once $include_prefix . 'lib/common.functions.php';
 
-if (is_readable($include_prefix . 'conf/' . $serverName . ".config.inc.php")) {
-  require_once $include_prefix . 'conf/' . $serverName . ".config.inc.php";
-} else {
-  require_once $include_prefix . 'conf/config.inc.php';
-}
+require_once $include_prefix . 'conf/config.inc.php';
 
 include_once $include_prefix . 'sql/upgrade_db.php';
-
-//When adding new update function into upgrade_db.php change this number.
-//When you change the database, export the current schema from the running database.
-define('DB_VERSION', 81); //Database version matching to upgrade functions.
 
 $mysqlconnectionref;
 
 /**
- * Open database connection.
+ * Exception type used when DB helpers are switched into exception mode.
+ */
+class DBOperationException extends RuntimeException
+{
+}
+
+/**
+ * Return the generic public-facing DB failure message.
+ *
+ * @return string
+ */
+function DBUserErrorMessage()
+{
+  return 'Service is temporarily unavailable. Please try again shortly. If the problem persists, please contact the event organizer.';
+}
+
+/**
+ * Tell whether DB helpers should throw instead of terminating the request.
+ *
+ * Exception mode is used by the automatic upgrade path so it can mark the
+ * maintenance flag as failed instead of aborting mid-request.
+ *
+ * @return bool
+ */
+function DBShouldThrowExceptions()
+{
+  return !empty($GLOBALS['db_throw_exceptions']);
+}
+
+/**
+ * Toggle exception mode for low-level DB helper failures.
+ *
+ * @param bool $enabled
+ * @return void
+ */
+function DBSetExceptionMode($enabled)
+{
+  $GLOBALS['db_throw_exceptions'] = (bool)$enabled;
+}
+
+/**
+ * Log a DB failure and either throw or terminate with a generic user message.
+ *
+ * @param string $context Short helper-specific failure description
+ * @param string|null $query SQL text related to the failure, when available
+ * @param string|null $error Driver error text, when available
+ * @return never
+ * @throws DBOperationException When exception mode is enabled
+ */
+function DBAbort($context, $query = null, $error = null)
+{
+  $details = array($context);
+
+  if ($query !== null && $query !== '') {
+    $details[] = 'query=' . str_replace(array("\r", "\n"), ' ', trim((string)$query));
+  }
+
+  if ($error !== null && $error !== '') {
+    $details[] = 'error=' . trim((string)$error);
+  }
+
+  error_log(implode(' | ', $details));
+  if (DBShouldThrowExceptions()) {
+    throw new DBOperationException(DBUserErrorMessage());
+  }
+  die(DBUserErrorMessage());
+}
+
+require_once __DIR__ . '/database.maintenance.php';
+
+/**
+ * Open the mysqli connection, select the schema, and run maintenance gating.
+ *
+ * This is the main DB bootstrap entrypoint for web requests. It establishes the
+ * global connection handle, sets the connection charset, and then lets the
+ * maintenance module block requests or run controlled schema upgrades when needed.
+ *
+ * @return void
  */
 function OpenConnection()
 {
@@ -49,9 +151,15 @@ function OpenConnection()
   global $mysqlconnectionref;
 
   //connect to database
-  $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
+  try {
+    $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
+  } catch (mysqli_sql_exception $e) {
+    error_log('Database connection failed: ' . $e->getMessage());
+    die(DBUserErrorMessage());
+  }
   if (mysqli_connect_errno()) {
-    die('Failed to connect to server: ' . mysqli_connect_error());
+    error_log('Database connection failed: ' . mysqli_connect_error());
+    die(DBUserErrorMessage());
   }
 
   //select schema
@@ -62,15 +170,13 @@ function OpenConnection()
     die("Unable to select database");
   }
 
-  //check if database is up-to-date
-  if (!isset($_SESSION['dbversion'])) {
-    CheckDB();
-    $_SESSION['dbversion'] = getDBVersion();
-  }
+  DBHandleMaintenanceState();
 }
 
 /**
- * Closes database connection.
+ * Close the active mysqli connection and clear the global handle.
+ *
+ * @return void
  */
 function CloseConnection()
 {
@@ -80,13 +186,20 @@ function CloseConnection()
 }
 
 /**
- * Checks if there is need to update database and execute upgrade functions.
+ * Run versioned schema upgrades until the database reaches `DB_VERSION`.
+ *
+ * This mutating function is intentionally called only through the maintenance
+ * gate, not from ordinary request flow. Each `upgradeNN()` function upgrades
+ * the schema to version `NN`, and successful execution records `NN` in
+ * `uo_database`.
+ *
+ * @return void
  */
 function CheckDB()
 {
-  // Ensure we always start from the first available upgrade function (upgrade46).
+  // Start from the next schema version after the installed one.
   $installedDb = (int)getDBVersion();
-  $startVersion = max($installedDb, 46);
+  $startVersion = max($installedDb + 1, 46);
   $installedVersions = array();
   $versionResult = mysqli_query($GLOBALS['mysqlconnectionref'], "SELECT version FROM uo_database WHERE version IS NOT NULL");
   if ($versionResult) {
@@ -101,8 +214,7 @@ function CheckDB()
       continue;
     }
 
-    $nextVersion = $i + 1;
-    if (isset($installedVersions[$nextVersion])) {
+    if (isset($installedVersions[$i])) {
       continue;
     }
 
@@ -113,14 +225,24 @@ function CheckDB()
        SELECT %d, NOW()
        FROM DUAL
        WHERE NOT EXISTS (SELECT 1 FROM uo_database WHERE version=%d)",
-      $nextVersion,
-      $nextVersion
+      $i,
+      $i
     );
     runQuery($query);
-    $installedVersions[$nextVersion] = true;
+    $installedVersions[$i] = true;
     LogDbUpgrade($i, true);
   }
 }
+
+/**
+ * Escape a scalar value for safe SQL string interpolation.
+ *
+ * This helper also normalizes invalid UTF-8 before escaping so MySQL does not
+ * reject malformed text input.
+ *
+ * @param mixed $escapestr
+ * @return string
+ */
 function DBEscapeString($escapestr)
 {
   global $mysqlconnectionref;
@@ -141,9 +263,9 @@ function DBEscapeString($escapestr)
 }
 
 /**
- * Returns ultiorganizer database internal version number.
+ * Return the highest recorded Ultiorganizer schema version in `uo_database`.
  *
- * @return integer version number
+ * @return int Internal schema version, or `0` when the table is missing or empty
  */
 function getDBVersion()
 {
@@ -160,25 +282,131 @@ function getDBVersion()
 }
 
 /**
- * Executes sql query and returns result as a mysqli array.
+ * Execute raw SQL and return the mysqli result resource.
  *
- * @param string $query database query
- * @return mysqli_result of rows
+ * Use this only when callers genuinely need cursor-style access. For ordinary
+ * reads, prefer `DBQueryToRow()`, `DBQueryToValue()`, or `DBQueryToArray()`.
+ *
+ * @param string $query Database query
+ * @return mysqli_result
  */
 function DBQuery($query)
 {
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQuery failed', $query, mysqli_error($mysqlconnectionref));
   }
   return $result;
 }
 
 /**
- * Executes sql query and returns the ID generated the query.
+ * Execute SQL statements from a line-based dump on the current connection.
  *
- * @param string $query database query
+ * @param array $lines SQL dump content split into lines
+ * @return void
+ */
+function DBReplaySqlLines($lines)
+{
+  $statement = '';
+
+  foreach ($lines as $line) {
+    if (substr($line, 0, 2) == '--' || trim($line) === '') {
+      continue;
+    }
+
+    $statement .= $line;
+    if (substr(trim($line), -1, 1) == ';') {
+      DBQuery($statement);
+      $statement = '';
+    }
+  }
+}
+
+/**
+ * Prepare SQL and return the mysqli statement handle.
+ *
+ * @param string $query Database query
+ * @return mysqli_stmt|false
+ */
+function DBPrepare($query)
+{
+  global $mysqlconnectionref;
+  return mysqli_prepare($mysqlconnectionref, $query);
+}
+
+/**
+ * Return the last error message from the active mysqli connection.
+ *
+ * @return string
+ */
+function DBError()
+{
+  global $mysqlconnectionref;
+  return mysqli_error($mysqlconnectionref);
+}
+
+/**
+ * Bind PHP variables to a prepared statement.
+ *
+ * @param mysqli_stmt $stmt
+ * @param string $types mysqli bind type string such as `ssi`
+ * @param mixed ...$vars Variables passed by reference to mysqli
+ * @return bool
+ */
+function DBStmtBindParam($stmt, $types, &...$vars)
+{
+  return mysqli_stmt_bind_param($stmt, $types, ...$vars);
+}
+
+/**
+ * Execute a prepared statement.
+ *
+ * @param mysqli_stmt $stmt
+ * @return bool
+ */
+function DBStmtExecute($stmt)
+{
+  return mysqli_stmt_execute($stmt);
+}
+
+/**
+ * Fetch a mysqli result resource from a prepared statement.
+ *
+ * @param mysqli_stmt $stmt
+ * @return mysqli_result|false
+ */
+function DBStmtGetResult($stmt)
+{
+  return mysqli_stmt_get_result($stmt);
+}
+
+/**
+ * Return the last error string for a prepared statement.
+ *
+ * @param mysqli_stmt $stmt
+ * @return string
+ */
+function DBStmtError($stmt)
+{
+  return mysqli_stmt_error($stmt);
+}
+
+/**
+ * Close a prepared statement.
+ *
+ * @param mysqli_stmt $stmt
+ * @return bool
+ */
+function DBStmtClose($stmt)
+{
+  return mysqli_stmt_close($stmt);
+}
+
+/**
+ * Execute SQL and return the connection's last inserted auto-increment id.
+ *
+ * @param string $query Database query
  * @return int
  */
 function DBQueryInsert($query)
@@ -186,23 +414,24 @@ function DBQueryInsert($query)
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryInsert failed', $query, mysqli_error($mysqlconnectionref));
   }
   return mysqli_insert_id($mysqlconnectionref);
 }
 
 /**
- * Executes sql query and  returns result as an value.
+ * Execute SQL and return the first cell from the first row.
  *
- * @param string $query database query
- * @return  string of first cell on first row
+ * @param string $query Database query
+ * @param bool $docasting When true, cast numeric scalar values using field metadata
+ * @return mixed|null first cell on first row, or null when the query returns no rows
  */
 function DBQueryToValue($query, $docasting = false)
 {
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryToValue failed', $query, mysqli_error($mysqlconnectionref));
   }
 
   if (mysqli_num_rows($result)) {
@@ -212,51 +441,66 @@ function DBQueryToValue($query, $docasting = false)
     }
     return $row[0];
   } else {
-    return -1;
+    return null;
   }
 }
 
 /**
- * Executes sql query and returns number of rows in resultset
+ * Execute SQL and return the row count of the result set.
  *
- * @param string $query database query
- * @return number of rows
+ * @param string $query Database query
+ * @return int Number of rows
  */
 function DBQueryRowCount($query)
 {
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryRowCount failed', $query, mysqli_error($mysqlconnectionref));
   }
 
   return mysqli_num_rows($result);
 }
 /**
- * Executes sql query and copy returns to php array.
+ * Execute SQL and materialize the full result set into an array of rows.
  *
- * @param string $query database query
- * @return Array of rows
+ * @param string $query Database query
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array Array of associative rows
  */
 function DBQueryToArray($query, $docasting = false)
 {
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryToArray failed', $query, mysqli_error($mysqlconnectionref));
   }
   return DBResourceToArray($result, $docasting);
 }
 
 
 /**
- * Converts a db resource to an array
+ * Convert a mysqli result resource into an array of associative rows.
  *
- * @param $result The database resource returned from mysqli_query
- * @return array of rows
+ * Accepts either a raw mysqli result or an already-materialized row array to
+ * preserve compatibility with legacy callers that still route helper output
+ * through `DBFetch*()` wrappers.
+ *
+ * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array
  */
 function DBResourceToArray($result, $docasting = false)
 {
+  if (is_array($result)) {
+    if (empty($result)) {
+      return array();
+    }
+
+    $firstRow = reset($result);
+    return is_array($firstRow) ? array_values($result) : array($result);
+  }
+
   $retarray = array();
   while ($row = mysqli_fetch_assoc($result)) {
     if ($docasting) {
@@ -268,17 +512,81 @@ function DBResourceToArray($result, $docasting = false)
 }
 
 /**
- * Executes sql query and copy returns to php array of first row.
+ * Fetch next row from result set as associative array.
  *
- * @param string $query database query
- * @return first row in array
+ * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows.
+ *     Array-backed results are consumed one row at a time.
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array|null
+ */
+function DBFetchAssoc(&$result, $docasting = false)
+{
+  if (is_array($result)) {
+    if (empty($result)) {
+      return null;
+    }
+
+    $firstKey = array_key_first($result);
+    $firstRow = $result[$firstKey];
+    if (is_array($firstRow)) {
+      unset($result[$firstKey]);
+      return $firstRow;
+    }
+
+    $row = $result;
+    $result = array();
+    return $row;
+  }
+
+  $row = mysqli_fetch_assoc($result);
+  if ($docasting && $row) {
+    $row = DBCastArray($result, $row);
+  }
+  return $row;
+}
+
+/**
+ * Fetch all rows from result set as associative arrays.
+ *
+ * @param mysqli_result|array $result The database resource returned from mysqli_query, or an array of rows
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array
+ */
+function DBFetchAllAssoc($result, $docasting = false)
+{
+  if (is_array($result)) {
+    if (empty($result)) {
+      return array();
+    }
+
+    $firstRow = reset($result);
+    return is_array($firstRow) ? array_values($result) : array($result);
+  }
+
+  if (!$docasting) {
+    return mysqli_fetch_all($result, MYSQLI_ASSOC);
+  }
+
+  $rows = array();
+  while ($row = mysqli_fetch_assoc($result)) {
+    $rows[] = DBCastArray($result, $row);
+  }
+  return $rows;
+}
+
+/**
+ * Execute SQL and return the first row as an associative array.
+ *
+ * @param string $query Database query
+ * @param bool $docasting When true, cast row values using field metadata
+ * @return array|null
  */
 function DBQueryToRow($query, $docasting = false)
 {
   global $mysqlconnectionref;
   $result = mysqli_query($mysqlconnectionref, $query);
   if (!$result) {
-    die('Invalid query: ("' . $query . '")' . "<br/>\n" . mysqli_error($mysqlconnectionref));
+    DBAbort('DBQueryToRow failed', $query, mysqli_error($mysqlconnectionref));
   }
   $ret = mysqli_fetch_assoc($result);
   if ($docasting && $ret) {
@@ -288,9 +596,15 @@ function DBQueryToRow($query, $docasting = false)
 }
 
 /**
- * Set data into database by updating existing row.
+ * Update an existing row using a validated field list and raw WHERE clause.
+ *
+ * Column names are checked against table metadata to avoid accidental writes to
+ * unknown fields. The caller is still responsible for providing a safe condition.
+ *
  * @param string $name Name of the table to update
- * @param array $row Data to insert: key=>field, value=>data
+ * @param array $data Data to update as `field => value`
+ * @param string $cond Raw SQL condition appended after `WHERE`
+ * @return mysqli_result
  */
 function DBSetRow($name, $data, $cond)
 {
@@ -332,21 +646,37 @@ function DBSetRow($name, $data, $cond)
 }
 
 /**
- * Copy mysqli_associative array row to regular php array.
+ * Cast a fetched row using the field types from the originating result set.
  *
- * @param $result return value of mysqli_query
- * @param $row mysqli_associative array row
- * @return php array of $row
+ * Integer and real columns are converted to PHP numeric types. Other columns are
+ * returned unchanged, and `NULL` values stay `null`.
+ *
+ * @param mysqli_result $result Return value of mysqli_query
+ * @param array $row Row fetched from the result resource
+ * @return array
  */
 function DBCastArray($result, $row)
 {
   $ret = array();
   $i = 0;
   foreach ($row as $key => $value) {
-    if (mysqli_fetch_field_direct($result, $i)->type == "int") {
-      $ret[$key] = (int) $value;
-    } else {
-      $ret[$key] = $value;
+    if ($value === null) {
+      $ret[$key] = null;
+      $i++;
+      continue;
+    }
+
+    switch (DBFieldType($result, $i)) {
+      case 'tinyint':
+      case 'int':
+        $ret[$key] = (int)$value;
+        break;
+      case 'real':
+        $ret[$key] = (float)$value;
+        break;
+      default:
+        $ret[$key] = $value;
+        break;
     }
     $i++;
   }
@@ -354,9 +684,9 @@ function DBCastArray($result, $row)
 }
 
 /**
- * Get current system status.
+ * Return connection status information from `mysqli_stat()`.
  *
- * @return string of resuls
+ * @return string
  */
 function DBStat()
 {
@@ -369,9 +699,9 @@ function DBStat()
 }
 
 /**
- * Get Client info.
+ * Return the mysqli client library version string.
  *
- * @return result string
+ * @return string
  */
 function DBClientInfo()
 {
@@ -384,9 +714,9 @@ function DBClientInfo()
 }
 
 /**
- * Get Host info.
+ * Return the host information for the current DB connection.
  *
- * @return result string
+ * @return string
  */
 function DBHostInfo()
 {
@@ -399,9 +729,9 @@ function DBHostInfo()
 }
 
 /**
- * Get Server info.
+ * Return the connected MySQL server version string.
  *
- * @return result string
+ * @return string
  */
 function DBServerInfo()
 {
@@ -414,9 +744,9 @@ function DBServerInfo()
 }
 
 /**
- * Get Protocol info.
+ * Return the MySQL protocol version used by the connection.
  *
- * @return result string
+ * @return int|string
  */
 function DBProtocolInfo()
 {
@@ -426,4 +756,99 @@ function DBProtocolInfo()
     die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
   }
   return $result;
+}
+
+/**
+ * Legacy wrapper for `mysqli_num_rows()`.
+ *
+ * Keep for compatibility with the legacy `live/` API code.
+ *
+ * @param mysqli_result|array $res
+ * @return int
+ */
+function DBNumRows($res) {
+  if (is_array($res)) {
+    return count($res);
+  }
+
+  return mysqli_num_rows($res);
+}
+
+/**
+ * Return the field name at the given result-set column offset.
+ *
+ * @param mysqli_result $result
+ * @param int $field_offset
+ * @return string|false
+ */
+function DBFieldName($result, $field_offset = 0)
+{
+  $props = mysqli_fetch_field_direct($result, $field_offset);
+  return is_object($props) ? $props->name : false;
+}
+
+
+/**
+ * Return a normalized field type name for a result-set column.
+ *
+ * This maps mysqli's numeric field constants to stable string labels used by
+ * `DBCastArray()` and other internal helpers.
+ *
+ * @param mysqli_result $result
+ * @param int $field_offset
+ * @return string
+ */
+function DBFieldType(mysqli_result $result, $field_offset = 0)
+{
+  $unknown = 'unknown';
+  $info = mysqli_fetch_field_direct($result, $field_offset);
+  if (!is_object($info) || !isset($info->type)) {
+    return $unknown;
+  }
+  switch ($info->type) {
+    case MYSQLI_TYPE_FLOAT:
+    case MYSQLI_TYPE_DOUBLE:
+    case MYSQLI_TYPE_DECIMAL:
+    case MYSQLI_TYPE_NEWDECIMAL:
+      return 'real';
+    case MYSQLI_TYPE_BIT:
+      return 'bit';
+    case MYSQLI_TYPE_TINY:
+      return 'tinyint';
+    case MYSQLI_TYPE_TIME:
+      return 'time';
+    case MYSQLI_TYPE_DATE:
+      return 'date';
+    case MYSQLI_TYPE_DATETIME:
+      return 'datetime';
+    case MYSQLI_TYPE_TIMESTAMP:
+      return 'timestamp';
+    case MYSQLI_TYPE_YEAR:
+      return 'year';
+    case MYSQLI_TYPE_STRING:
+    case MYSQLI_TYPE_VAR_STRING:
+      return 'string';
+    case MYSQLI_TYPE_SHORT:
+    case MYSQLI_TYPE_LONG:
+    case MYSQLI_TYPE_LONGLONG:
+    case MYSQLI_TYPE_INT24:
+      return 'int';
+    case MYSQLI_TYPE_CHAR:
+      return 'char';
+    case MYSQLI_TYPE_ENUM:
+      return 'enum';
+    case MYSQLI_TYPE_TINY_BLOB:
+    case MYSQLI_TYPE_MEDIUM_BLOB:
+    case MYSQLI_TYPE_LONG_BLOB:
+    case MYSQLI_TYPE_BLOB:
+      return 'blob';
+    case MYSQLI_TYPE_NULL:
+      return 'null';
+    case MYSQLI_TYPE_NEWDATE:
+    case MYSQLI_TYPE_INTERVAL:
+    case MYSQLI_TYPE_SET:
+    case MYSQLI_TYPE_GEOMETRY:
+    default:
+      return $unknown;
+  }
 }

@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . '/auth.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
+include_once $include_prefix . 'lib/reservation.functions.php';
 include_once $include_prefix . 'lib/url.functions.php';
 
 $LAYOUT_ID = ADDSEASONUSERS;
@@ -21,13 +22,15 @@ if (!empty($_POST['add'])) {
   if (IsRegistered($userid)) {
     if ($_GET["access"] == "eventadmin") {
       AddSeasonUserRole($userid, "seasonadmin:" . $seasonId, $seasonId);
+    } elseif ($_GET["access"] == "spiritadmin") {
+      AddSeasonUserRole($userid, "spiritadmin:" . $seasonId, $seasonId);
     } elseif ($_GET["access"] == "teamadmin") {
       AddSeasonUserRole($userid, "teamadmin:" . $_POST["team"], $seasonId);
     } elseif ($_GET["access"] == "gameadmin") {
       $reservations = $_POST["reservations"];
       foreach ($reservations as $res) {
         $games = ReservationGames($res);
-        while ($game = mysqli_fetch_assoc($games)) {
+        foreach ($games as $game) {
           AddSeasonUserRole($userid, 'gameadmin:' . $game['game_id'], $seasonId);
         }
       }
@@ -44,8 +47,14 @@ if (!empty($_POST['add'])) {
 } elseif (!empty($_POST['remove_x'])) {
   if ($_GET["access"] == "eventadmin") {
     RemoveSeasonUserRole($_POST['delId'], "seasonadmin:" . $seasonId, $seasonId);
+  } elseif ($_GET["access"] == "spiritadmin") {
+    RemoveSeasonUserRole($_POST['delId'], "spiritadmin:" . $seasonId, $seasonId);
   } elseif ($_GET["access"] == "teamadmin") {
     RemoveSeasonUserRole($_POST['delId'], "teamadmin:" . $_POST['teamId'], $seasonId);
+  } elseif ($_GET["access"] == "gameadmin") {
+    foreach (SeasonAllGames($seasonId) as $game) {
+      RemoveSeasonUserRole($_POST['delId'], "gameadmin:" . $game['game_id'], $seasonId);
+    }
   } elseif ($_GET["access"] == "accradmin") {
     RemoveSeasonUserRole($_POST['delId'], "accradmin:" . $_POST['teamId'], $seasonId);
   }
@@ -72,12 +81,35 @@ foreach ($admins as $user) {
 $html .= "</table>";
 if (!empty($_GET["access"]) && $_GET["access"] == "eventadmin") {
   $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
-  $html .= "<tr><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
 } else {
   $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=eventadmin'>" . _("Add more ...") . "</a></p>";
+}
+$html .= "<div><input type='hidden' name='delId'/></div>";
+$html .= "</form>";
+
+$html .= "<h3>" . _("Spirit admins") . ":</h3>";
+$directors = SeasonSpiritAdmins($seasonId);
+$html .= "<form method='post' action='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=spiritadmin' name='spiritadmin'>";
+$html .= "<table>";
+foreach ($directors as $user) {
+  $html .= "<tr>";
+  $html .= "<td style='width:75px'>" . $user['userid'] . "</td><td>" . utf8entities($user['name']) . " (<a href='mailto:" . utf8entities($user['email']) . "'>" . utf8entities($user['email']) . "</a>)</td>";
+  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.spiritadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
+  $html .= "</tr>\n";
+}
+$html .= "</table>";
+if (!empty($_GET["access"]) && $_GET["access"] == "spiritadmin") {
+  $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "</table>";
+  $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
+} else {
+  $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=spiritadmin'>" . _("Add more ...") . "</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "</form>";
@@ -105,8 +137,8 @@ if (!empty($_GET["access"]) && $_GET["access"] == "teamadmin") {
   }
   $html .= "</select>";
 
-  $html .= "</td><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "</td><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
   $html .= "</table>";
   $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
 } else {
@@ -141,6 +173,7 @@ foreach ($admins as $user) {
   } else {
     $html .= "<td>" . _("Some games") . "</td>";
   }
+  $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.gameadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
   $html .= "</tr>\n";;
 }
 
@@ -160,14 +193,15 @@ if ($teamresp) {
 $html .= "</table>";
 if (!empty($_GET["access"]) && $_GET["access"] == "gameadmin") {
   $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
-  $html .= "<tr><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
 
   $reservations = SeasonReservations($seasonId);
   $html .= "<tr><td colspan='5'><select multiple='multiple' size='" . count($reservations) . "' name='reservations[]'>";
   foreach ($reservations as $row) {
+    $placeLabel = ReservationPlaceText(U_($row['name']), U_($row['fieldname']));
     $html .= "<option value='" . utf8entities($row['id']) . "'>";
-    $html .= utf8entities($row['reservationgroup']) . " " . utf8entities($row['name']) . ", " . _("Field") . " " . utf8entities($row['fieldname']) . " (" . JustDate($row['starttime']) . ")";
+    $html .= utf8entities($row['reservationgroup']) . " " . utf8entities($placeLabel) . " (" . JustDate($row['starttime']) . ")";
     $html .= "</option>";
   }
   $html .= "</select></td></tr>";
@@ -176,6 +210,7 @@ if (!empty($_GET["access"]) && $_GET["access"] == "gameadmin") {
 } else {
   $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=gameadmin'>" . _("Add more ...") . "</a></p>";
 }
+$html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "</form>";
 
 $html .= "<h3>" . _("Roster accreditation rights") . ":</h3>";
@@ -203,8 +238,8 @@ foreach ($admins as $user) {
 $html .= "</table>";
 if (!empty($_GET["access"]) && $_GET["access"] == "accradmin") {
   $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
-  $html .= "<tr><td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
+  $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
 
   $teams = SeasonTeams($seasonId);
   $html .= "<tr><td colspan='5'><select multiple='multiple' size='" . count($teams) . "' name='teams[]'>";

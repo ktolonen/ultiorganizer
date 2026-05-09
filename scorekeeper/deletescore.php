@@ -5,13 +5,8 @@ $html = "";
 $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
 $_SESSION['game'] = $gameId;
 
-$result = GameGoals($gameId);
 $game_result = GameResult($gameId);
-
-$scores = array();
-while ($row = mysqli_fetch_assoc($result)) {
-	$scores[] = $row;
-}
+$scores = GameGoals($gameId);
 
 if (isset($_POST['delete'])) {
 	if (count($scores) > 0) {
@@ -33,24 +28,19 @@ $html .= "<form action='?view=deletescore' method='post' data-ajax='false'>\n";
 //last score
 if (count($scores) > 0) {
 	$lastscore = $scores[count($scores) - 1];
-	$html .= _("Delete goal number") . " " . ($lastscore['num'] + 1) . ": ";
+	$html .= _("Delete goal") . " " . ($lastscore['num'] + 1) . ": ";
 	$html .= $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
 	$html .= "[" . SecToMin($lastscore['time']) . "] ";
-	if (intval($lastscore['iscallahan'])) {
-		$lastpass = "xx";
-	} else {
-		$lastpass = "#" . PlayerNumber($lastscore['assist'], $gameId) . " ";
-		$lastpass .= PlayerName($lastscore['assist']);
+	$goalText = GoalDisplayText($lastscore, $gameId, true);
+	if ($goalText !== '') {
+		$html .= utf8entities($goalText);
 	}
-	$lastgoal = "#" . PlayerNumber($lastscore['scorer'], $gameId) . " ";
-	$lastgoal .= PlayerName($lastscore['scorer']);
-	$html .= $lastpass . " --> " . $lastgoal . "";
 } else {
 	$html .= _("Score") . ": 0 - 0";
 }
 
 $html .= "<input type='submit' name='delete' data-ajax='false' value='" . _("Delete") . "'/>";
-$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
+$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to scoresheet") . "</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 

@@ -1,4 +1,8 @@
-Tämä viesti sisältää uuden salasanan sivustolle $url.
+Ultiorganizer-tilillesi pyydettiin salasanan vaihtoa.
 
 Käyttäjätunnus: $username
-Salasana: $password
+
+Aseta uusi salasana avaamalla tämä linkki:
+$url
+
+Jos et pyytänyt salasanan vaihtoa, voit jättää tämän viestin huomiotta.

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 function U_($name)
 {
@@ -32,11 +34,12 @@ function loadDBTranslations($locale)
 
 function GetTranslations()
 {
+	$search = '';
 	if (isset($_GET['search']))
 		$search = $_GET['search'];
 	elseif (isset($_GET['query']))
 		$search = $_GET['query'];
-	else
+	elseif (isset($_GET['q']))
 		$search = $_GET['q'];
 	if (isset($_GET['autocomplete']) && "true" == $_GET['autocomplete']) {
 		return AllTranslations($search, true);
@@ -47,11 +50,12 @@ function GetTranslations()
 
 function GetAutocompleteTranslations()
 {
+	$search = '';
 	if (isset($_GET['search']))
 		$search = $_GET['search'];
 	elseif (isset($_GET['query']))
 		$search = $_GET['query'];
-	else
+	elseif (isset($_GET['q']))
 		$search = $_GET['q'];
 
 	return AllTranslations($search, true);
@@ -60,7 +64,14 @@ function GetAutocompleteTranslations()
 function AllTranslations($search, $autocomplete = false)
 {
 	global $locales;
+	$search = trim((string)$search);
+	if ($search === '') {
+		return array();
+	}
 	$splitted = preg_split(WORD_DELIMITER, $search, -1, PREG_SPLIT_NO_EMPTY);
+	if (empty($splitted)) {
+		return array();
+	}
 	$translation_arrays = array();
 	$results = array();
 	foreach ($locales as $loc => $name) {
@@ -111,8 +122,7 @@ function Translations()
 {
 	if (hasTranslationRight()) {
 		$query = "SELECT * FROM uo_translation ORDER BY translation_key ASC";
-		$result = DBQuery($query);
-		return $result;
+		return DBQueryToArray($query);
 	} else {
 		die('Insufficient rights to get translations');
 	}
@@ -192,6 +202,12 @@ function translate($name, $translation_array)
 {
 	$retArr = array();
 	$ret = "";
+	
+	// Handle null or empty name parameter
+	if ($name === null || $name === '') {
+		$retArr[''] = '';
+		return $retArr;
+	}
 
 	$key = strtolower((string)$name);
 	if ($name !== '' && isset($translation_array[$key])) {
@@ -225,6 +241,12 @@ function translate($name, $translation_array)
 function autocompleteTranslate($name, $translation_array)
 {
 	$ret = array();
+
+	// Handle null or empty name parameter
+	if ($name === null || $name === '') {
+		return $ret;
+	}
+
 	foreach ($translation_array as $key => $translation) {
 		if (strpos($key, strtolower($name)) === 0) {
 			if (strlen($key) > strlen($name)) {

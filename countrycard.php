@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('countrycard');
+
 include_once 'lib/team.functions.php';
 include_once 'lib/country.functions.php';
 
@@ -16,7 +19,9 @@ if (!$profile) {
 $title = utf8entities(_($profile['name']));
 
 $html .= "<h1>" . utf8entities(_($profile['name'])) . "</h1>";
-$html .= "<img class='flag' src='images/flags/medium/" . $profile['flagfile'] . "' alt=''/>";
+if (!empty($profile['flagfile'])) {
+  $html .= "<img class='flag' src='images/flags/medium/" . $profile['flagfile'] . "' alt=''/>";
+}
 $season = CurrentSeason();
 if (!empty($season)) {
   $teams = CountryTeams($countryId, $season);

@@ -7,7 +7,7 @@ include_once 'lib/common.functions.php';
 $LAYOUT_ID = SEASONS;
 $seasonId = "";
 $html = "";
-$backurl = utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 
 //season parameters
 $sp = array(
@@ -23,7 +23,14 @@ $sp = array(
 	"endtime" => "",
 	"spiritmode" => 0,
 	"showspiritpoints" => 0,
+	"showspiritcomments" => 0,
+	"showspiritpointsonlyoncomplete" => 1,
+	"lockteamspiritonsubmit" => 1,
 	"use_season_points" => 0,
+	"hide_time_on_scoresheet" => 0,
+	"hometeammode" => 0,
+	"event_readonly" => 0,
+	"maintenance_mode" => 0,
 	"api_public" => 0,
 	"iscurrent" => 0,
 	"enrollopen" => 0,
@@ -53,18 +60,21 @@ if (!empty($_POST['add'])) {
 	$sp['iscurrent'] = !empty($_POST['iscurrent']);
 	$sp['api_public'] = !empty($_POST['api_public']);
 	$sp['spiritmode'] = $_POST['spiritmode'];
-	$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
 	$sp['use_season_points'] = !empty($_POST['use_season_points']);
+	$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
+	$sp['hometeammode'] = isset($_POST['hometeammode']) ? (int)$_POST['hometeammode'] : 0;
+	$sp['event_readonly'] = !empty($_POST['event_readonly']);
+	$sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
 	$comment = $_POST['comment'];
 
 	if (empty($_POST['season_id'])) {
-		$html .= "<p class='warning'>" . _("Event id can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Event ID cannot be empty") . ".</p>";
 	} else if (preg_match('/[ ]/', $_POST['season_id']) || !preg_match('/[a-z0-9.]/i', $_POST['season_id'])) {
-		$html .= "<p class='warning'>" . _("Event id may not have spaces or special characters") . ".</p>";
+		$html .= "<p class='warning'>" . _("Event ID may not have spaces or special characters") . ".</p>";
 	} else if (empty($_POST['seasonname'])) {
-		$html .= "<p class='warning'>" . _("Name can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
 	} else if (empty($_POST['type'])) {
-		$html .= "<p class='warning'>" . _("Type can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Type cannot be empty") . ".</p>";
 	} else {
 		AddSeason($sp['season_id'], $sp, $comment);
 		$seasonId = $sp['season_id'];
@@ -90,8 +100,9 @@ if (!empty($_POST['add'])) {
 } else if (!empty($_POST['save'])) {
 	$backurl = utf8entities($_POST['backurl']);
 	if (empty($_POST['seasonname'])) {
-		$html .= "<p class='warning'>" . _("Name can not be empty") . ".</p>";
+		$html .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
 	} else {
+		$existingSpirit = SeasonInfo($seasonId);
 		$sp['season_id'] = $seasonId;
 		$sp['name'] = $_POST['seasonname'];
 		$sp['type'] = $_POST['type'];
@@ -107,8 +118,15 @@ if (!empty($_POST['add'])) {
 		$sp['iscurrent'] = !empty($_POST['iscurrent']);
 		$sp['api_public'] = !empty($_POST['api_public']);
 		$sp['spiritmode'] = $_POST['spiritmode'];
-		$sp['showspiritpoints'] = !empty($_POST['showspiritpoints']);
+		$sp['showspiritpoints'] = isset($existingSpirit['showspiritpoints']) ? (int)$existingSpirit['showspiritpoints'] : 0;
+		$sp['showspiritcomments'] = isset($existingSpirit['showspiritcomments']) ? (int)$existingSpirit['showspiritcomments'] : 0;
+		$sp['showspiritpointsonlyoncomplete'] = isset($existingSpirit['showspiritpointsonlyoncomplete']) ? (int)$existingSpirit['showspiritpointsonlyoncomplete'] : 1;
+		$sp['lockteamspiritonsubmit'] = isset($existingSpirit['lockteamspiritonsubmit']) ? (int)$existingSpirit['lockteamspiritonsubmit'] : 1;
 		$sp['use_season_points'] = !empty($_POST['use_season_points']);
+		$sp['hide_time_on_scoresheet'] = !empty($_POST['hide_time_on_scoresheet']);
+		$sp['hometeammode'] = isset($_POST['hometeammode']) ? (int)$_POST['hometeammode'] : 0;
+		$sp['event_readonly'] = !empty($_POST['event_readonly']);
+		$sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
 		$sp['timezone'] = $_POST['timezone'];
 		$comment = $_POST['comment'];
 		SetSeason($sp['season_id'], $sp, $comment);
@@ -138,7 +156,14 @@ if ($seasonId) {
 	$sp['isnationalteams'] = $info['isnationalteams'];
 	$sp['spiritmode'] = isset($info['spiritmode']) ? $info['spiritmode'] : 0;
 	$sp['showspiritpoints'] = $info['showspiritpoints'];
+	$sp['showspiritcomments'] = isset($info['showspiritcomments']) ? $info['showspiritcomments'] : 0;
+	$sp['showspiritpointsonlyoncomplete'] = isset($info['showspiritpointsonlyoncomplete']) ? $info['showspiritpointsonlyoncomplete'] : 1;
+	$sp['lockteamspiritonsubmit'] = isset($info['lockteamspiritonsubmit']) ? $info['lockteamspiritonsubmit'] : 1;
 	$sp['use_season_points'] = isset($info['use_season_points']) ? $info['use_season_points'] : 0;
+	$sp['hide_time_on_scoresheet'] = isset($info['hide_time_on_scoresheet']) ? $info['hide_time_on_scoresheet'] : 0;
+	$sp['hometeammode'] = isset($info['hometeammode']) ? $info['hometeammode'] : 0;
+	$sp['event_readonly'] = isset($info['event_readonly']) ? $info['event_readonly'] : 0;
+	$sp['maintenance_mode'] = isset($info['maintenance_mode']) ? $info['maintenance_mode'] : 0;
 	$sp['timezone'] = $info['timezone'];
 	$comment = CommentRaw(1, $info['season_id']);
 } else {
@@ -272,17 +297,17 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 if (empty($seasonId)) {
-	$html .= "<h2>" . _("Add new season/tournament") . "</h2>\n";
+	$html .= "<h2>" . _("Create new event") . "</h2>\n";
 	$html .= "<form method='post' action='?view=admin/addseasons'>";
 	$disabled = "";
 } else {
-	$html .= "<h2>" . _("Edit season/tournament") . "</h2>\n";
+	$html .= "<h2>" . _("Edit event") . "</h2>\n";
 	$html .= "<form method='post' action='?view=admin/addseasons&amp;season=$seasonId'>";
 	$disabled = "disabled='disabled'";
 }
 
 $html .= "<table border='0'>";
-$html .= "<tr><td class='infocell'>" . _("Event id") . ": </td><td><input class='input' name='season_id' $disabled value='" . utf8entities($sp['season_id']) . "'/></td></tr>";
+$html .= "<tr><td class='infocell'>" . _("Event ID") . ": </td><td><input class='input' name='season_id' $disabled value='" . utf8entities($sp['season_id']) . "'/></td></tr>";
 $html .= "<tr rowspan='2'><td class='infocell'>" . _("Name") . ": </td>
 			<td>" . TranslatedField("seasonname", $sp['name']) . "</td>
 		</tr>\n";
@@ -318,27 +343,50 @@ if ($sp['isnationalteams']) {
 $html .= "/></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Spirit mode") . ": </td><td>";
-$spiritmodes = SpiritModes();
+$spiritmodes = SpiritCategoryModeRows();
+$spiritModeDisabledSelected = ((int)$sp['spiritmode'] === 0) ? " selected='selected'" : "";
 $html .= "<select class='dropdown' id='spiritmode' name='spiritmode'>\n";
-$html .= "<option value='0'></option>\n";
+$html .= "<option value='0'" . $spiritModeDisabledSelected . ">" . utf8entities(SpiritModeDisabledName()) . "</option>\n";
 foreach ($spiritmodes as $mode) {
 	$selected =  ($sp['spiritmode'] == $mode['mode']) ? " selected='selected'" : "";
 	$html .= "<option $selected value='" . utf8entities($mode['mode']) . "'>" . utf8entities(_($mode['name'])) . "</option>\n";
 }
 $html .= "</select>\n";
 $html .= "</td></tr>\n";
-
-$html .= "<tr><td class='infocell'>" . _("Spirit points visible") . ": </td><td><input class='input' type='checkbox' name='showspiritpoints' ";
-if ($sp['showspiritpoints']) {
-	$html .= "checked='checked'";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>";
+if (empty($seasonId)) {
+	$html .= _("Spirit mode enables spirit scoring for the event. Detailed visibility and locking settings are available in the Spirit admin view after the event has been created.");
+} else if ((int)$sp['spiritmode'] > 0) {
+	$html .= _("Detailed spirit visibility, comment, and locking settings are managed in the Spirit admin view.");
+	$html .= " <a href='?view=admin/spiritsettings&amp;season=" . urlencode($seasonId) . "'>" . _("Open Spirit Settings") . "</a>";
+} else {
+	$html .= _("Leave spirit mode empty if this event does not record spirit scores.");
 }
-$html .= "/></td></tr>";
+$html .= "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Season points") . ": </td><td><input class='input' type='checkbox' name='use_season_points' ";
 if ($sp['use_season_points']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Enables season-level points/ranking features for this event.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Hide time on scoresheet") . ": </td><td><input class='input' type='checkbox' name='hide_time_on_scoresheet' ";
+if ($sp['hide_time_on_scoresheet']) {
+	$html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defence time input fields from scorekeeper sheets.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Home team assignment") . ": </td><td>";
+$html .= "<select class='dropdown' id='hometeammode' name='hometeammode'>\n";
+$balancedSelected = ((int)$sp['hometeammode'] === 0) ? " selected='selected'" : "";
+$higherRankSelected = ((int)$sp['hometeammode'] === 1) ? " selected='selected'" : "";
+$html .= "<option value='0'" . $balancedSelected . ">" . _("Balance home team equally") . "</option>\n";
+$html .= "<option value='1'" . $higherRankSelected . ">" . _("Higher rank is home team") . "</option>\n";
+$html .= "</select>\n";
+$html .= "</td></tr>\n";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls home and away assignment for generated games in this event. Existing games and manually added games are not changed.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Organizer") . ": </td><td><input class='input' size='50' maxlength='50' name='organizer' value='" . utf8entities($sp['organizer']) . "'/></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Category") . ": </td><td><input class='input' size='50' maxlength='50' name='category' value='" . utf8entities($sp['category']) . "'/></td></tr>";
@@ -373,6 +421,7 @@ if ($sp['enrollopen']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows teams to submit enrollment requests for this event.") . "</span></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Enrolling ends") . "<br/>(" . _("only informational") . "): </td>";
 $html .= "<td><input class='input' size='12' maxlength='10' id='enrollendtime' name='enrollendtime'  value='" . ShortDate($sp['enroll_deadline']) . "'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal3'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
@@ -383,12 +432,28 @@ if ($sp['iscurrent']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls visibility in navigation; does not change edit rights or API visibility.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Soft maintenance mode") . ": </td><td><input class='input' type='checkbox' name='maintenance_mode' ";
+if ($sp['maintenance_mode']) {
+	$html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Shows a maintenance page for public event views while admins keep access.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Read-only event") . ": </td><td><input class='input' type='checkbox' name='event_readonly' ";
+if ($sp['event_readonly']) {
+	$html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, only superadmin can edit this event.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Visible in public API") . ": </td><td><input class='input' type='checkbox' name='api_public' ";
 if ($sp['api_public']) {
 	$html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Exposes this event in API responses; does not grant write access.") . "</span></td></tr>";
 
 $html .= "</table>\n";
 if (empty($seasonId)) {

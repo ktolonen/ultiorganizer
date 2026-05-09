@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('statistics');
+
 include_once 'lib/season.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/statistical.functions.php';
@@ -67,7 +70,7 @@ if ($list == "teamstandings") {
     }
   }
   if ($countall == 0) {
-    $html .= "<p>" . _("Season statistics have not yet been computed") . "</p>";
+    $html .= "<p>" . _("Event statistics have not yet been computed") . "</p>";
   }
 } elseif ($list == "playerscoreboard") {
   $html .= "<h1>" . _("Scoreboard TOP 3") . "</h1>\n";
@@ -120,7 +123,7 @@ if ($list == "teamstandings") {
   $scores = ScoreboardAllTime(100, "", "", "", $sort);
   $html .= "<table border='1' width='100%'><tr>
 				<th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=games'>" . _("Games") . "</a></th>
-				<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Passes") . "</a></th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a>
+				<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a>
 				</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Total") . "</a></th></tr>\n";
   $i = 1;
   foreach ($scores as $row) {
@@ -162,7 +165,7 @@ if ($list == "teamstandings") {
       $scores = ScoreboardAllTime(30, $seasontype, $seriestype, "", $sort);
       $html .= "<table border='1' width='100%'><tr>
 						<th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th><th class='center'>" . _("Games") . "</th>
-						<th class='center'>" . _("Passes") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Total") . "</th></tr>\n";
+						<th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Total") . "</th></tr>\n";
       $i = 1;
       foreach ($scores as $row) {
         $html .= "<tr>\n";
@@ -203,22 +206,7 @@ if ($list == "teamstandings") {
 
       $rows = array();
       foreach ($seasons as $season) {
-        $query = sprintf(
-          "SELECT t.team_id, t.name AS teamname, t.country, c.flagfile,
-            SUM(ts.average * sct.factor) AS spirit_total
-            FROM uo_team_spirit_stats ts
-            LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
-            LEFT JOIN uo_team t ON (t.team_id = ts.team_id)
-            LEFT JOIN uo_series ser ON (ser.series_id = ts.series)
-            LEFT JOIN uo_country c ON (t.country = c.country_id)
-            WHERE ts.season='%s' AND ser.type='%s'
-            GROUP BY ts.team_id, ser.series_id
-            ORDER BY spirit_total DESC, t.name ASC
-            LIMIT 3",
-          DBEscapeString($season['season_id']),
-          DBEscapeString($seriestype)
-        );
-        $spirit = DBQueryToArray($query);
+        $spirit = SeasonSpiritTopTeamsBySeriesType($season['season_id'], $seriestype, 3);
         if (!count($spirit)) {
           continue;
         }
@@ -256,7 +244,7 @@ if ($list == "teamstandings") {
   }
 
   if ($countall == 0) {
-    $html .= "<p>" . _("Season statistics have not yet been computed") . "</p>";
+    $html .= "<p>" . _("Event statistics have not yet been computed") . "</p>";
   }
 }
 

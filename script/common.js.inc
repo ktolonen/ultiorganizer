@@ -27,22 +27,8 @@ function setId(id)
 	}
 
 function changeseason(id){
-	var url = location.href;
-	
-	var param = "selseason";
-	var re = new RegExp("([?|&])" + param + "=.*?(&|$)","i");
-    if (url.match(re)){
-        url=url.replace(re,'$1' + param + "=" + id + '$2');
-    }else{
-        
-		if(location.href.search("view=") !=-1){
-			url = url + '&' + param + "=" + id;
-		}else{
-			url = url.substring(0,url.lastIndexOf('/'));
-			url = url + "/index.php?"+ param + "=" + id; 
-		}
-	}
-	location.href=url;
+	var sid = encodeURIComponent(id);
+	window.location.href = "index.php?view=games&season=" + sid + "&selseason=" + sid;
 }
 
 function confirmLeave(element, confirm, text) {
@@ -56,8 +42,20 @@ function confirmLeave(element, confirm, text) {
     }
   else
     window.onbeforeunload = null;
-};
+}
 
+function menu_toggle() {
+	var x = document.getElementById('menu_left') || document.querySelector('.menu_left');
+	if (!x) {
+		return;
+	}
+	x.style.display = '';
+	if (x.classList.contains('menu_open')) {
+		x.classList.remove('menu_open');
+	} else {
+		x.classList.add('menu_open');
+	}
+}
 
 //-->
 </script>

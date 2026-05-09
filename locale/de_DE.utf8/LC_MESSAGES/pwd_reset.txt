@@ -1,4 +1,7 @@
-This e-mail contains a new password for $url.
+Für Ihr Ultiorganizer-Konto wurde das Zurücksetzen des Passworts angefordert.
 
-Username: $username
-New password: $password
+Benutzername: $username
+Öffnen Sie diesen Link, um ein neues Passwort festzulegen:
+$url
+
+Wenn Sie dies nicht angefordert haben, können Sie diese Nachricht ignorieren.

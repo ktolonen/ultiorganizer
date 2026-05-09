@@ -89,7 +89,7 @@ foreach ($result as $row) {
 		$result2 = SeriesEnrolledTeamsByUser($row['series_id'], $_SESSION['uid']);
 	}
 
-	while ($row2 = mysqli_fetch_assoc($result2)) {
+	foreach ($result2 as $row2) {
 
 		echo "<tr><td>";
 		if (!intval($seasonInfo['isnationalteams'])) {

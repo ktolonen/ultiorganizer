@@ -1,5 +1,18 @@
 <?php 
-include_once 'lib/yui.functions.php';
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
+if (!isset($include_prefix)) {
+  $include_prefix = __DIR__ . '/../../';
+}
+include_once $include_prefix . 'lib/yui.functions.php';
+
+if (!isset($teamId)) {
+  $teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
+} else {
+  $teamId = intval($teamId);
+}
+
 echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "container"));
 ?>
 <link rel="stylesheet" type="text/css" href="script/yui/container/assets/container.css" />
@@ -99,7 +112,7 @@ YAHOO.util.Event.addListener(window, "load", function() {
 		}
 
 		var memberColumnDefs = [
-			{key:"ProfileId", label:"<?php echo _("Profile Id"); ?>", sortable:true},
+			{key:"ProfileId", label:"<?php echo _("Profile ID"); ?>", sortable:true},
 			{key:"Jersey", label:"<?php echo _("#"); ?>", sortable:true},
 			{key:"Firstname", label:"<?php echo _("First name"); ?>", sortable:true},
 			{key:"Lastname", label:"<?php echo _("Last name"); ?>", sortable:true},
@@ -179,4 +192,3 @@ YAHOO.util.Event.addListener(window, "load", function() {
     }();
 });
 </script>
-

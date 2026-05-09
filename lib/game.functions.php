@@ -1,6 +1,23 @@
 <?php
-include_once $include_prefix . 'lib/accreditation.functions.php';
-include_once $include_prefix . 'lib/configuration.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/accreditation.functions.php';
+require_once __DIR__ . '/configuration.functions.php';
+
+function SeasonScoreCounter($seasonId = "")
+{
+	$query = "SELECT COALESCE(SUM(game.homescore), 0) + COALESCE(SUM(game.visitorscore), 0) AS scores
+		FROM uo_game game
+		LEFT JOIN uo_pool pool ON(pool.pool_id=game.pool)
+		LEFT JOIN uo_series ser ON(pool.series=ser.series_id)";
+
+	if (!empty($seasonId)) {
+		$query .= sprintf(" WHERE ser.season='%s'", DBEscapeString($seasonId));
+	}
+
+	return (int) DBQueryToValue($query);
+}
 
 function GameSetPools($games)
 {
@@ -99,8 +116,8 @@ function GameHomeTeamResults($teamId, $poolId)
 {
 	$query = sprintf(
 		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.visitorteam, COALESCE(pm.goals,0) AS scoresheet,
-			sn.name AS gamename, g.isongoing, g.hasstarted
-			FROM uo_game g 
+			sn.name AS gamename, g.isongoing, g.hasstarted, g.forfeit
+			FROM uo_game g
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
 			LEFT JOIN uo_scheduling_name sn ON(g.name=sn.scheduling_id)
 			WHERE g.hometeam=%d AND g.pool=%d
@@ -129,8 +146,9 @@ function GameHomePseudoTeamResults($schedulingId, $poolId)
 function GameVisitorTeamResults($teamId, $poolId)
 {
 	$query = sprintf(
-		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.hometeam, COALESCE(pm.goals,0) AS scoresheet
-			FROM uo_game g 
+		"SELECT g.game_id, g.homescore, g.visitorscore, g.hasstarted, g.hometeam, COALESCE(pm.goals,0) AS scoresheet,
+			g.isongoing, g.forfeit
+			FROM uo_game g
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (g.game_id=pm.game)
 			WHERE g.visitorteam=%d AND g.pool=%d AND g.hasstarted>0 AND g.valid=1 AND isongoing=0
 			GROUP BY g.game_id",
@@ -189,6 +207,9 @@ function GameRespTeam($gameId)
 	}
 
 	$row = mysqli_fetch_assoc($result);
+	if (!$row) {
+		return -1;
+	}
 	if (isset($_SESSION['userproperties']['userrole']['teamadmin'][$row['hometeam']])) {
 		return $row['hometeam'];
 	}
@@ -272,7 +293,7 @@ function GameSeason($gameId)
 function GamePlayers($gameId, $teamId)
 {
 	$query = sprintf(
-		"SELECT p.player_id, pg.num, p.firstname, p.lastname 
+		"SELECT p.player_id, pg.num, p.firstname, p.lastname, pg.captain, pg.spirit_captain
 		FROM uo_played AS pg 
 		LEFT JOIN uo_player AS p ON(pg.player=p.player_id)
 		WHERE pg.game=%d AND p.team=%d",
@@ -283,18 +304,116 @@ function GamePlayers($gameId, $teamId)
 	return DBQueryToArray($query);
 }
 
-function GameCaptain($gameId, $teamId)
+function GameRolePlayers($gameId, $teamId, $roleColumn)
 {
+	if ($roleColumn !== 'captain' && $roleColumn !== 'spirit_captain') {
+		return array();
+	}
+
 	$query = sprintf(
-		"SELECT pg.player, pg.num 
+		"SELECT pg.player
 		FROM uo_played AS pg 
 		LEFT JOIN uo_player AS p ON(pg.player=p.player_id)
-		WHERE pg.captain=1 AND pg.game=%d AND p.team=%d",
+		WHERE pg.%s=1 AND pg.game=%d AND p.team=%d",
+		$roleColumn,
 		(int)$gameId,
 		(int)$teamId
 	);
 
-	return DBQueryToValue($query);
+	$rows = DBQueryToArray($query);
+	$playerIds = array();
+	foreach ($rows as $row) {
+		$playerIds[] = (int)$row['player'];
+	}
+
+	return $playerIds;
+}
+
+function GameCaptains($gameId, $teamId)
+{
+	return GameRolePlayers($gameId, $teamId, 'captain');
+}
+
+function GameSpiritCaptains($gameId, $teamId)
+{
+	return GameRolePlayers($gameId, $teamId, 'spirit_captain');
+}
+
+function GameCaptain($gameId, $teamId)
+{
+	$captains = GameCaptains($gameId, $teamId);
+	if (count($captains) > 0) {
+		return $captains[0];
+	}
+
+	return null;
+}
+
+function GameFilterRolePlayers($gameId, $teamId, $playerIds)
+{
+	$allowedPlayers = array();
+	foreach (GamePlayers($gameId, $teamId) as $player) {
+		$allowedPlayers[(int)$player['player_id']] = true;
+	}
+
+	$filteredPlayerIds = array();
+	foreach ((array)$playerIds as $playerId) {
+		$playerId = (int)$playerId;
+		if ($playerId > 0 && !empty($allowedPlayers[$playerId])) {
+			$filteredPlayerIds[$playerId] = $playerId;
+		}
+	}
+
+	return array_values($filteredPlayerIds);
+}
+
+function GameSetRolePlayers($gameId, $teamId, $roleColumn, $playerIds)
+{
+	if ($roleColumn !== 'captain' && $roleColumn !== 'spirit_captain') {
+		return false;
+	}
+
+	if (hasEditGameEventsRight($gameId)) {
+		$playerIds = GameFilterRolePlayers($gameId, $teamId, $playerIds);
+
+		$query = sprintf(
+			"UPDATE uo_played AS pg
+			LEFT JOIN uo_player AS p ON (pg.player=p.player_id)
+			SET pg.%s=0
+			WHERE pg.game=%d AND p.team=%d",
+			$roleColumn,
+			(int)$gameId,
+			(int)$teamId
+		);
+		DBQuery($query);
+
+		if (count($playerIds) === 0) {
+			return true;
+		}
+
+		$query = sprintf(
+			"UPDATE uo_played
+			SET %s=1
+			WHERE game=%d AND player IN (%s)",
+			$roleColumn,
+			(int)$gameId,
+			implode(',', $playerIds)
+		);
+
+		return DBQuery($query);
+	} else {
+		die('Insufficient rights to edit game');
+	}
+}
+
+function GameSetCaptains($gameId, $teamId, $playerIds)
+{
+	return GameSetRolePlayers($gameId, $teamId, 'captain', $playerIds);
+}
+
+function GameSetSpiritCaptains($gameId, $teamId, $playerIds)
+{
+	return GameSetRolePlayers($gameId, $teamId, 'spirit_captain', $playerIds);
 }
 
 function GameAll($limit = 50)
@@ -325,6 +444,11 @@ function GameAll($limit = 50)
 			WHERE pp.valid=true AND pp.hasstarted>0 AND pp.isongoing=0  ORDER BY pp.time DESC, ps.ordering, pool.ordering, pp.game_id
 			LIMIT $limit";
 	return DBQuery($query);
+}
+
+function GameAllArray($limit = 50)
+{
+	return DBFetchAllAssoc(GameAll($limit));
 }
 
 function GamePlayerFromNumber($gameId, $teamId, $number)
@@ -370,8 +494,7 @@ function GameTeamScoreBorad($gameId, $teamId)
 
 function GameTeamScoreBoardArray($gameId, $teamId)
 {
-	$result = GameTeamScoreBorad($gameId, $teamId);
-	return DBResourceToArray($result);
+	return DBFetchAllAssoc(GameTeamScoreBorad($gameId, $teamId));
 }
 
 function GameTeamDefenseBoard($gameId, $teamId)
@@ -390,6 +513,11 @@ function GameTeamDefenseBoard($gameId, $teamId)
 
 	$result = DBQuery($query);
 	return $result;
+}
+
+function GameTeamDefenseBoardArray($gameId, $teamId)
+{
+	return DBFetchAllAssoc(GameTeamDefenseBoard($gameId, $teamId));
 }
 
 function GameScoreBoard($gameId)
@@ -416,10 +544,15 @@ function GameScoreBoard($gameId)
 	return $result;
 }
 
-function GameGoals($gameId)
+function GameScoreBoardArray($gameId)
 {
-	$query = sprintf(
-		"SELECT m.*, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
+	return DBFetchAllAssoc(GameScoreBoard($gameId));
+}
+
+function GameGoals($gameId)
+	{
+	$query = sprintf("
+		SELECT m.*, s.num AS assistnum, s.firstname AS assistfirstname, s.lastname AS assistlastname, t.num AS scorernum, t.firstname AS scorerfirstname, t.lastname AS scorerlastname 
 		FROM (uo_goal AS m LEFT JOIN uo_player AS s ON (m.assist = s.player_id)) 
 		LEFT JOIN uo_player AS t ON (m.scorer=t.player_id) 
 		WHERE m.game='%s' 
@@ -427,14 +560,7 @@ function GameGoals($gameId)
 		DBEscapeString($gameId)
 	);
 
-	$result = DBQuery($query);
-	return $result;
-}
-
-function GameGoalsArray($gameId)
-{
-	$result = GameGoals($gameId);
-	return DBResourceToArray($result);
+	return DBQueryToArray($query);
 }
 
 function GameDefenses($gameId)
@@ -447,8 +573,7 @@ function GameDefenses($gameId)
 		DBEscapeString($gameId)
 	);
 
-	$result = DBQuery($query);
-	return $result;
+	return DBQueryToArray($query);
 }
 
 
@@ -466,6 +591,53 @@ function GameLastGoal($gameId)
 	return DBQueryToRow($query);
 }
 
+function GoalPlayerDisplayText($playerId, $gameId, $firstname = '', $lastname = '')
+{
+	$playerId = (int)$playerId;
+	if ($playerId <= 0) {
+		return '';
+	}
+
+	$name = trim($firstname . ' ' . $lastname);
+	if ($name === '') {
+		$name = trim(PlayerName($playerId));
+	}
+
+	$number = PlayerNumber($playerId, $gameId);
+	$prefix = $number >= 0 ? "#" . $number . " " : '';
+
+	return trim($prefix . $name);
+}
+
+function GoalDisplayText($goal, $gameId, $withNumbers = false)
+{
+	if (!empty($goal['iscallahan'])) {
+		return _("Callahan goal");
+	}
+
+	$assistText = '';
+	$scorerText = '';
+	if ($withNumbers) {
+		$assistText = GoalPlayerDisplayText($goal['assist'], $gameId);
+		$scorerText = GoalPlayerDisplayText($goal['scorer'], $gameId);
+	} else {
+		$assistText = trim(($goal['assistfirstname'] ?? '') . ' ' . ($goal['assistlastname'] ?? ''));
+		$scorerText = trim(($goal['scorerfirstname'] ?? '') . ' ' . ($goal['scorerlastname'] ?? ''));
+	}
+
+	if ($assistText !== '' && $scorerText !== '') {
+		return $assistText . " --> " . $scorerText;
+	}
+	if ($scorerText !== '') {
+		return $scorerText;
+	}
+	if ($assistText !== '') {
+		return $assistText;
+	}
+
+	return '';
+}
+
 function GameAllGoals($gameId)
 {
 	$query = sprintf(
@@ -476,24 +648,25 @@ function GameAllGoals($gameId)
 		DBEscapeString($gameId)
 	);
 
-	$result = DBQuery($query);
-	return $result;
-}
-
-function GameAllGoalsArray($gameId)
-{
-	$result = GameAllGoals($gameId);
-	return DBResourceToArray($result);
+	return DBQueryToArray($query);
 }
 
 function GameEvents($gameId)
 {
 	$query = sprintf(
 		"SELECT time,ishome,type 
-		FROM (SELECT time,ishome,'timeout' AS type FROM `uo_timeout` 
-			WHERE game='%s' UNION ALL SELECT time,ishome,type FROM uo_gameevent WHERE game='%s') AS tapahtuma 
+		FROM (
+			SELECT time,ishome,'timeout' AS type FROM `uo_timeout`
+				WHERE game='%s'
+			UNION ALL
+			SELECT time,ishome,'spirit_timeout' AS type FROM `uo_spirit_timeout`
+				WHERE game='%s'
+			UNION ALL
+			SELECT time,ishome,type FROM uo_gameevent WHERE game='%s'
+		) AS tapahtuma 
 		WHERE type!='media'
 		ORDER BY time ",
+		DBEscapeString($gameId),
 		DBEscapeString($gameId),
 		DBEscapeString($gameId)
 	);
@@ -559,13 +732,25 @@ function GameTimeouts($gameId)
 		DBEscapeString($gameId)
 	);
 
+	return DBQueryToArray($query);
+}
+
+function GameSpiritTimeouts($gameId)
+{
+	$query = sprintf(
+		"SELECT num,time,ishome
+		FROM uo_spirit_timeout
+		WHERE game='%s'
+		ORDER BY time",
+		DBEscapeString($gameId)
+	);
+
 	return DBQuery($query);
 }
 
-function GameTimeoutsArray($gameId)
+function GameSpiritTimeoutsArray($gameId)
 {
-	$result = GameTimeouts($gameId);
-	return DBResourceToArray($result);
+	return DBFetchAllAssoc(GameSpiritTimeouts($gameId));
 }
 
 function GameTurnovers($gameId)
@@ -583,8 +768,7 @@ function GameTurnovers($gameId)
 
 function GameTurnoversArray($gameId)
 {
-	$result = GameTurnovers($gameId);
-	return DBResourceToArray($result);
+	return DBFetchAllAssoc(GameTurnovers($gameId));
 }
 
 function GameInfo($gameId)
@@ -625,6 +809,53 @@ function GameName($gameInfo)
 function GameHasStarted($gameInfo)
 {
 	return $gameInfo['hasstarted'] > 0;
+}
+
+function GameTimerState($gameId)
+{
+	$gameId = (int) $gameId;
+	$state = array(
+		"started" => false,
+		"ongoing" => false,
+		"paused" => false,
+		"mm" => 0,
+		"ss" => 0,
+		"rss" => 0
+	);
+
+	$query = sprintf(
+		"SELECT hasstarted, isongoing, timer_start, timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id=%d LIMIT 1",
+		$gameId
+	);
+	$row = DBQueryToRow($query);
+	if (!$row) {
+		return $state;
+	}
+
+	$state['started'] = ((int) $row['hasstarted'] > 0) || !empty($row['timer_start']);
+	$state['ongoing'] = (int) $row['isongoing'] === 1;
+	$state['paused'] = $state['ongoing'] && !empty($row['timer_pause_start']);
+
+	if (empty($row['timer_start'])) {
+		return $state;
+	}
+
+	$elapsed = time() - (int) $row['timer_start'] - (int) $row['timer_paused_duration'];
+	if (!empty($row['timer_pause_start'])) {
+		$elapsed -= time() - (int) $row['timer_pause_start'];
+	}
+	$elapsed = max(0, $elapsed);
+
+	$state['mm'] = (int) floor($elapsed / 60);
+	$state['ss'] = $elapsed % 60;
+	$state['rss'] = (int) (round($state['ss'] / 5) * 5);
+
+	if ($state['rss'] === 60) {
+		$state['mm']++;
+		$state['rss'] = 0;
+	}
+
+	return $state;
 }
 
 function CheckGameResult($game, $home, $away)
@@ -671,10 +902,14 @@ function GameUpdateResult($gameId, $home, $away)
 
 function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights = true)
 {
+	$seasonId = GameSeason($gameId);
+	if (!$checkRights && isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
+		die('Insufficient rights to edit game');
+	}
 	if (!$checkRights || hasEditGameEventsRight($gameId)) {
 		LogGameUpdate($gameId, "result: $home - $away");
 		$query = sprintf(
-			"UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2' WHERE game_id='%s'",
+			"UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
 			DBEscapeString($home),
 			DBEscapeString($away),
 			DBEscapeString($gameId)
@@ -692,12 +927,54 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
 	}
 }
 
+function SeasonForfeitGames($seasonId)
+{
+	$query = sprintf(
+		"SELECT g.game_id, g.time, g.homescore, g.visitorscore,
+		        ht.name AS hometeamname, vt.name AS visitorteamname,
+		        po.pool_id, po.name AS poolname,
+		        se.series_id, se.name AS seriesname
+		 FROM uo_game g
+		 LEFT JOIN uo_team ht ON g.hometeam = ht.team_id
+		 LEFT JOIN uo_team vt ON g.visitorteam = vt.team_id
+		 LEFT JOIN uo_pool po ON g.pool = po.pool_id
+		 LEFT JOIN uo_series se ON po.series = se.series_id
+		 WHERE se.season = '%s' AND g.forfeit = 1
+		 ORDER BY g.time",
+		DBEscapeString($seasonId)
+	);
+	$result = DBQuery($query);
+	$games = array();
+	while ($row = mysqli_fetch_assoc($result)) {
+		$games[] = $row;
+	}
+	return $games;
+}
+
+function GameSetForfeit($gameId, $isForfeit)
+{
+	$seasonId = GameSeason($gameId);
+	if (isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
+		die('Insufficient rights to edit game');
+	}
+	if (!hasEditGameEventsRight($gameId)) {
+		die('Insufficient rights to edit game');
+	}
+	LogGameUpdate($gameId, "forfeit: " . ($isForfeit ? "yes" : "no"));
+	$query = sprintf(
+		"UPDATE uo_game SET forfeit='%d' WHERE game_id='%s'",
+		$isForfeit ? 1 : 0,
+		DBEscapeString($gameId)
+	);
+	return DBQuery($query);
+}
+
 function GameClearResult($gameId, $updatepools = true)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		LogGameUpdate($gameId, "result cleared");
 		$query = sprintf(
-			"UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0' WHERE game_id='%s'",
+			"UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', forfeit='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
 			DBEscapeString($gameId)
 		);
 		$result = DBQuery($query);
@@ -1024,45 +1301,39 @@ function GameAddTimeout($gameId, $number, $time, $home)
 	}
 }
 
-function GameGetSpiritPoints($gameId, $teamId)
-{
-	$query = sprintf(
-		"SELECT * FROM uo_spirit_score WHERE game_id=%d AND team_id=%d",
-		(int)$gameId,
-		(int)$teamId
-	);
-	$scores = DBQueryToArray($query);
-	$points = array();
-	foreach ($scores as $score) {
-		$points[$score['category_id']] = $score['value'];
-	}
-	return $points;
-}
-
-function GameSetSpiritPoints($gameId, $teamId, $home, $points, $categories)
+function GameRemoveAllSpiritTimeouts($gameId)
 {
 	if (hasEditGameEventsRight($gameId)) {
 		$query = sprintf(
-			"DELETE FROM uo_spirit_score 
-        WHERE game_id=%d AND team_id=%d",
-			(int) $gameId,
-			(int) $teamId
+			"DELETE FROM uo_spirit_timeout
+			WHERE game='%s'",
+			DBEscapeString($gameId)
 		);
-		DBQuery($query);
 
-		foreach ($points as $cat => $value) {
-			if (!is_null($value)) {
-				$query = sprintf(
-					"INSERT INTO uo_spirit_score (`game_id`, `team_id`, `category_id`, `value`)
-            VALUES (%d, %d, %d, %d)",
-					(int) $gameId,
-					(int) $teamId,
-					(int) $cat,
-					(int) $value
-				);
-				DBQuery($query);
-			}
-		}
+		$result = DBQuery($query);
+
+		return $result;
+	} else {
+		die('Insufficient rights to edit game');
+	}
+}
+
+function GameAddSpiritTimeout($gameId, $number, $time, $home)
+{
+	if (hasEditGameEventsRight($gameId)) {
+		$query = sprintf(
+			"INSERT INTO uo_spirit_timeout
+			(game, num, time, ishome)
+			VALUES ('%s', '%s', '%s', '%s')",
+			DBEscapeString($gameId),
+			DBEscapeString($number),
+			DBEscapeString($time),
+			DBEscapeString($home)
+		);
+
+		$result = DBQuery($query);
+
+		return $result;
 	} else {
 		die('Insufficient rights to edit game');
 	}
@@ -1115,34 +1386,11 @@ function GameSetHalftime($gameId, $time)
 
 function GameSetCaptain($gameId, $teamId, $playerId)
 {
-	if (hasEditGameEventsRight($gameId)) {
-
-		$captain = GameCaptain($gameId, $teamId);
-
-		if ($captain != $playerId) {
-			$query = sprintf(
-				"UPDATE uo_played 
-				SET captain=0 
-				WHERE game=%d AND player=%d",
-				(int)$gameId,
-				(int)$captain
-			);
-
-			DBQuery($query);
-
-			$query = sprintf(
-				"UPDATE uo_played 
-				SET captain=1 
-				WHERE game=%d AND player=%d",
-				(int)$gameId,
-				(int)$playerId
-			);
-
-			DBQuery($query);
-		}
-	} else {
-		die('Insufficient rights to edit game');
+	if ((int)$playerId <= 0) {
+		return GameSetCaptains($gameId, $teamId, array());
 	}
+
+	return GameSetCaptains($gameId, $teamId, array($playerId));
 }
 
 function GameSetStartingTeam($gameId, $home)
@@ -1214,32 +1462,45 @@ function SetGame($gameId, $params)
 {
 	$poolinfo = PoolInfo($params['pool']);
 	if (hasEditGamesRight($poolinfo['series'])) {
-		$allowedKeys = array_flip(array(
-			"hometeam",
-			"visitorteam",
-			"scheduling_name_home",
-			"scheduling_name_visitor",
-			"reservation",
-			"time",
-			"pool",
-			"valid"
-		));
+			$allowedKeys = array_flip(array(
+				"hometeam",
+				"visitorteam",
+				"scheduling_name_home",
+				"scheduling_name_visitor",
+				"reservation",
+				"time",
+				"pool",
+				"valid",
+				"islive",
+				"liveurl"
+			));
 
-		foreach ($params as $key => $param) {
-			if (!empty($param) && isset($allowedKeys[$key])) {
-				$query = sprintf(
-					"UPDATE uo_game SET " . $key . "='%s' 
-					WHERE game_id='%s'\n",
-					DBEscapeString($param),
-					DBEscapeString($gameId)
-				);
-
+			$nullableFKs = array('reservation', 'hometeam', 'visitorteam');
+			foreach ($params as $key => $param) {
+				if (!isset($allowedKeys[$key]) || $param === null || $param === false) {
+					continue;
+				}
+				$isNullableFK = in_array($key, $nullableFKs, true);
+				if (empty($param) && $isNullableFK) {
+					$query = sprintf(
+						"UPDATE uo_game SET %s=NULL WHERE game_id='%s'",
+						$key,
+						DBEscapeString($gameId)
+					);
+				} elseif ($param === '' && $key !== 'liveurl') {
+					continue;
+				} else {
+					$query = sprintf(
+						"UPDATE uo_game SET %s='%s' WHERE game_id='%s'",
+						$key,
+						DBEscapeString($param),
+						DBEscapeString($gameId)
+					);
+				}
 				$result = DBQuery($query);
 			}
-		}
 
-
-		if (!empty($params['respteam'])) {
+			if (!empty($params['respteam'])) {
 			$query = sprintf(
 				"UPDATE uo_game SET respteam=%d
 					WHERE game_id=%d",
@@ -1260,7 +1521,7 @@ function SetGame($gameId, $params)
 
 		if (!empty($params['name'])) {
 			$query = sprintf(
-				"INSERT INTO uo_scheduling_name 
+				"INSERT INTO uo_scheduling_name
 				(name) VALUES ('%s')",
 				DBEscapeString($params['name'])
 			);
@@ -1271,6 +1532,12 @@ function SetGame($gameId, $params)
 				"UPDATE uo_game SET
 					name=%d	WHERE game_id=%d",
 				(int)$nameId,
+				(int)$gameId
+			);
+			DBQuery($query);
+		} elseif (isset($params['name']) && $params['name'] === '') {
+			$query = sprintf(
+				"UPDATE uo_game SET name=NULL WHERE game_id=%d",
 				(int)$gameId
 			);
 			DBQuery($query);
@@ -1526,9 +1793,9 @@ function UnscheduledPoolGameInfo($poolId)
 {
 
 	$query = sprintf(
-		"SELECT game_id FROM uo_game 
-		WHERE reservation IS NULL AND time IS NULL AND pool=%d
-		ORDER BY game_id",
+		"SELECT g.game_id FROM uo_game g
+		WHERE g.reservation IS NULL AND g.time IS NULL AND g.pool=%d
+		ORDER BY g.game_id",
 		(int)$poolId
 	);
 
@@ -1545,10 +1812,10 @@ function UnscheduledSeriesGameInfo($seriesId)
 {
 
 	$query = sprintf(
-		"SELECT game_id FROM uo_game 
-		LEFT JOIN uo_pool pool ON(pool.pool_id=pool)
-		WHERE reservation IS NULL AND time IS NULL AND pool.series=%d
-		ORDER BY pool.ordering, game_id",
+		"SELECT g.game_id FROM uo_game g
+		LEFT JOIN uo_pool pool ON (pool.pool_id=g.pool)
+		WHERE g.reservation IS NULL AND g.time IS NULL AND pool.series=%d
+		ORDER BY pool.ordering, g.game_id",
 		(int)$seriesId
 	);
 
@@ -1565,11 +1832,11 @@ function UnscheduledSeasonGameInfo($seasonId)
 {
 
 	$query = sprintf(
-		"SELECT game_id FROM uo_game 
-		LEFT JOIN uo_pool pool ON(pool.pool_id=pool)
-		LEFT JOIN uo_series ser ON(ser.series_id=series)
-		WHERE reservation IS NULL AND time IS NULL AND ser.season='%s'
-		ORDER BY ser.ordering, pool.ordering, game_id",
+		"SELECT g.game_id FROM uo_game g
+		LEFT JOIN uo_pool pool ON (pool.pool_id=g.pool)
+		LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+		WHERE g.reservation IS NULL AND g.time IS NULL AND ser.season='%s'
+		ORDER BY ser.ordering, pool.ordering, g.game_id",
 		DBEscapeString($seasonId)
 	);
 
@@ -1611,8 +1878,7 @@ function UnScheduleGame($gameId)
 
 function ClearReservation($reservationId)
 {
-	$result = ReservationGames($reservationId);
-	while ($row = mysqli_fetch_assoc($result)) {
+	foreach (ReservationGames($reservationId) as $row) {
 		if (hasEditGamesRight(GameSeries($row['game_id']))) {
 			UnScheduleGame($row['game_id']);
 		} // else ignore games not managed by user
@@ -1762,4 +2028,144 @@ function SpiritTable($gameinfo, $points, $categories, $home, $wide = true)
 	$html .= "</table>\n";
 
 	return $html;
+}
+
+function isGameLive($gameId) {
+
+  $query = sprintf("SELECT islive FROM uo_game WHERE game_id=%d LIMIT 1",(int) $gameId);
+
+  return (int) DBQueryToValue($query);
+}
+
+function GameLiveURL($gameId) {
+
+  $query = sprintf("SELECT liveurl FROM uo_game WHERE game_id=%d LIMIT 1", (int) $gameId);
+
+  $result = DBQueryToValue($query);
+
+  if ($result)
+    return filter_var($result,FILTER_VALIDATE_URL);
+  else
+    return false;
+}
+
+function UpdateGameLiveURL($gameId, $url) {
+  $gameId = (int) $gameId;
+  if (!hasEditGamesRight(GameSeries($gameId))) {
+    die('Insufficient rights to edit game');
+  }
+
+  $query = sprintf("UPDATE uo_game SET liveurl = '%s' WHERE game_id = %d", DBEscapeString($url), $gameId);
+
+  return DBQuery($query);
+}
+
+function isGameOngoing($gameId) {
+
+  $query = sprintf("SELECT isongoing FROM uo_game WHERE game_id=%d LIMIT 1", (int) $gameId);
+
+  return (int) DBQueryToValue($query);
+}
+
+function isGamePaused($gameId) {
+  
+  $query = sprintf("SELECT (isongoing=1 AND timer_pause_start IS NOT NULL) AS ispaused FROM uo_game WHERE game_id=%d LIMIT 1", (int) $gameId);
+  
+  return (int) DBQueryToValue($query);
+}
+
+function GameTimeReset($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+
+  $query = sprintf(
+    "UPDATE uo_game SET timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0, isongoing=0, hasstarted=0 WHERE game_id=%d",
+    $gameId
+  );
+
+  return DBQuery($query);
+}
+
+function GameTimeStart($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+
+  $query = sprintf(
+    "UPDATE uo_game SET hasstarted = 1, isongoing = 1, timer_start = %d, timer_pause_start = NULL, timer_paused_duration = 0 WHERE game_id = %d",
+    time(),
+    $gameId
+  );
+
+  return DBQuery($query);
+}
+
+function GameTimePause($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+
+  $query = sprintf("UPDATE uo_game SET timer_pause_start = %d 
+    WHERE game_id = %d AND isongoing = 1 AND timer_pause_start IS NULL", time(), $gameId);
+
+  return DBQuery($query);
+}
+
+function GameTimeResume($gameId) {
+  $gameId = (int) $gameId;
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+  
+  $query = sprintf("SELECT timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id = %d LIMIT 1", $gameId);
+  $row = DBQueryToRow($query);
+  
+  if ($row && $row['timer_pause_start']) {
+    $pausedTime = time() - (int) $row['timer_pause_start'];
+    $totalPaused = (int) $row['timer_paused_duration'] + $pausedTime;
+    
+    $updateQuery = sprintf("UPDATE uo_game SET timer_paused_duration = %d, timer_pause_start = NULL 
+      WHERE game_id = %d", $totalPaused, $gameId);
+    
+    return DBQuery($updateQuery);
+  }
+
+  return false; // Not paused or invalid
+}
+
+function GameTimeSetElapsed($gameId, $elapsedSeconds) {
+  $gameId = (int) $gameId;
+  $elapsedSeconds = max(0, (int) $elapsedSeconds);
+  if (!hasEditGameEventsRight($gameId)) {
+    die('Insufficient rights to edit game events');
+  }
+
+  $query = sprintf(
+    "SELECT timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id = %d AND isongoing = 1 AND timer_pause_start IS NOT NULL LIMIT 1",
+    $gameId
+  );
+  $row = DBQueryToRow($query);
+
+  if (!$row || empty($row['timer_pause_start'])) {
+    return false;
+  }
+
+  $timerStart = (int) $row['timer_pause_start'] - (int) $row['timer_paused_duration'] - $elapsedSeconds;
+  $updateQuery = sprintf(
+    "UPDATE uo_game SET timer_start = %d WHERE game_id = %d",
+    $timerStart,
+    $gameId
+  );
+
+  return DBQuery($updateQuery);
+}
+
+function GameElapsedTime($gameId) {
+  $state = GameTimerState($gameId);
+
+  return array("mm" => $state['mm'], "ss" => $state['ss'], "rss" => $state['rss']);
 }

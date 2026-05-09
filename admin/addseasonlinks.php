@@ -56,11 +56,11 @@ if (!empty($_POST['save'])) {
 pageTop($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-$htmltmp1 = "";
+
 $html .= "<form method='post' action='?view=admin/addseasonlinks&amp;season=" . $seasonId . "' id='Form'>";
 
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
-$html .= "<tr><th>" . _("Type") . "</th><th>" . _("Order") . "</th><th>" . _("Name") . "</th><th>" . _("Url") . "</th><th></th></tr>\n";
+$html .= "<tr><th>" . _("Type") . "</th><th>" . _("Order") . "</th><th>" . _("Name") . "</th><th>" . _("URL") . "</th><th></th></tr>\n";
 $urls = GetUrlListByTypeArray(array("menulink", "menumail"), $seasonId);
 $i = 0;
 foreach ($urls as $url) {
@@ -82,12 +82,6 @@ $html .= "<td><input class='input' size='3' maxlength='2' name='newurlorder' val
 $html .= "<td><input class='input' size='30' maxlength='150' name='newurlname' value=''/></td>";
 $html .= "<td><input class='input' size='40' maxlength='500' name='newurl' value=''/></td>";
 $html .= "</tr>\n";
-$html .= "</table>\n";
-
-
-$html .= "<h1>" . _("3rd party API settings") . "</h1>";
-$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
-$html .= $htmltmp1;
 $html .= "</table>\n";
 
 

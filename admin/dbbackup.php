@@ -10,7 +10,9 @@ if (!isSuperAdmin()) {
 
 if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()) {
 	$tables = $_POST["tables"];
-	$return = "SET NAMES 'utf8';\n\n";
+	$return = "SET NAMES 'utf8';\n";
+	$return .= "SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS;\n";
+	$return .= "SET FOREIGN_KEY_CHECKS=0;\n\n";
 	if (count($tables) == 1) {
 		$filename = 'db-backup-' . date('Y-m-d-Hi') . '-' . $tables[0] . '.sql';
 	} else {
@@ -62,6 +64,9 @@ if (isset($_POST['backup']) && !empty($_POST['tables']) && isSuperAdmin()) {
 
 		$return .= "\n\n\n";
 	}
+
+	$return .= "SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;\n";
+	$return .= "SET @OLD_FOREIGN_KEY_CHECKS=NULL;\n";
 
 
 	$gzipoutput = gzencode($return);

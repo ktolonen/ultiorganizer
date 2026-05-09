@@ -32,7 +32,7 @@ if (!empty($_POST['confirm'])) {
 
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . _("Add result with game id") . "</h1>\n";
+$html .= "<h1>" . _("Add result by game ID") . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 
@@ -68,7 +68,7 @@ if (!empty($_POST['save']) && empty($errors)) {
 
   if (GameHasStarted($game_result)) {
     $html .=  "<br/>";
-    $html .= _("Game is already played. Result:") . " " . intval($game_result['homescore']) . " - " . $game_result['visitorscore'] . ".";
+    $html .= _("Game has already been played. Current result:") . " " . intval($game_result['homescore']) . " - " . $game_result['visitorscore'] . ".";
     $html .=  "<br/><br/>";
     $html .=  "<span style='font-weight:bold'>" . _("Change result to") . " $home - $away?" . "</span>";
   } else {
@@ -87,13 +87,13 @@ if (!empty($_POST['save']) && empty($errors)) {
   $html .= "<input type='submit' name='cancel' data-ajax='false' value='" . _("Cancel") . "'/>";
   $html .=  "</p>";
 } else {
-  $html .= "<label for='game'>" . _("Game number from Scoresheet") . ":</label>";
+  $html .= "<label for='game'>" . _("Game number from scoresheet") . ":</label>";
   $html .= "<input type='number' id='game' name='game' size='6' maxlength='5' value='$game' onkeyup='validNumber(this);'/> ";
 
-  $html .= "<label for='home'>" . _("Home team goals") . ":</label>";
+  $html .= "<label for='home'>" . _("Home team score") . ":</label>";
   $html .= "<input type='number' id='home' name='home' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
 
-  $html .= "<label for='away'>" . _("Visitor team goals") . ":</label>";
+  $html .= "<label for='away'>" . _("Away team score") . ":</label>";
   $html .= "<input type='number' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
   
   $html .= "<div class='form-actions'>";

@@ -15,10 +15,10 @@ function pdf_slug($value)
 	return $slug === '' ? 'pdf' : $slug;
 }
 
-if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
-	include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
+if (is_file('cust/' . CUSTOMIZATIONS . '/pdfscoresheet.php')) {
+	include_once 'cust/' . CUSTOMIZATIONS . '/pdfscoresheet.php';
 } else {
-	include_once 'cust/default/pdfprinter.php';
+	include_once 'cust/default/pdfscoresheet.php';
 }
 $season = "";
 $filter1 = "";
@@ -58,6 +58,18 @@ if (!empty($_GET["filter2"])) {
 	$filter2  = $_GET["filter2"];
 }
 
+if(!empty($_GET["time"])) {
+	$time = $_GET["time"];
+  $games = TimetableGames(CurrentSeason(), "season", $time, "places", "");
+
+  if(!empty($_GET["timefilter1"])) {
+    $timefilter1  = $_GET["timefilter1"];
+  }
+
+  if(!empty($_GET["timefilter2"])) {
+    $timefilter2  = $_GET["timefilter2"];
+  }
+}
 if (!empty($_GET["reservation"])) {
 	$gameResponsibilities = GameResponsibilities($season);
 	$responsibilities = array();
@@ -86,6 +98,12 @@ if ($games === null) {
 }
 
 $pdf = new PDF();
+$scoreSheetAcceptsPlayerLists = false;
+if (method_exists($pdf, 'PrintScoreSheet')) {
+	$printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
+	$scoreSheetAcceptsPlayerLists = $printScoreSheet->getNumberOfParameters() >= 9;
+}
+
 if ($teamId) {
 	$seasonSlug = pdf_slug(TeamSeason($teamId));
 } else {
@@ -100,11 +118,7 @@ if ($filename === null) {
 if ($teamId) {
 	$teaminfo = TeamInfo($teamId);
 	$players = array();
-	if ($result = TeamPlayerList($teamId)) {
-		while ($row = mysqli_fetch_assoc($result)) {
-			$players[] = $row;
-		}
-	}
+	$players = TeamPlayerList($teamId);
 	$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	$filename = "roster-" . pdf_slug($teaminfo['name']) . "-" . $seasonSlug . ".pdf";
 } elseif ($seriesId) {
@@ -114,24 +128,29 @@ if ($teamId) {
 	foreach ($teams as $team) {
 		$teaminfo = TeamInfo($team['team_id']);
 		$players = array();
-		if ($result = TeamPlayerList($team['team_id'])) {
-			while ($row = mysqli_fetch_assoc($result)) {
-				$players[] = $row;
-			}
-		}
+		$players = TeamPlayerList($team['team_id']);
 		$pdf->PrintRoster($teaminfo['name'], $teaminfo['seriesname'], $teaminfo['poolname'], $players);
 	}
 	$filename = "rosters-series-" . pdf_slug($seriesId) . "-" . $seasonSlug . ".pdf";
+} elseif (isset($_GET['blank'])) {
+	  
+  $seasonname = SeasonName($season);
+	if ($scoreSheetAcceptsPlayerLists) {
+		$pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "", array(), array());
+	} else {
+		$pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "");
+	}
+  
 } else {
 	$seasonname = SeasonName($season);
 
 	// Bail out gracefully if no games were returned.
-	if (!$games || !is_object($games)) {
+	if (!$games || !is_array($games)) {
 		$pdf->Output('I', $filename);
 		return;
 	}
 
-	while ($gameRow = mysqli_fetch_assoc($games)) {
+	foreach ($games as $gameRow) {
 
 		if ($filter2 == "teams") {
 			if (!$gameRow['hometeam'] || !$gameRow['visitorteam']) {
@@ -144,18 +163,16 @@ if ($teamId) {
 
 		$homeplayers = array();
 
-		$playerlist = TeamPlayerList($gameRow["hometeam"]);
 		$i = 0;
-		while ($player = mysqli_fetch_assoc($playerlist)) {
+		foreach (TeamPlayerList($gameRow["hometeam"]) as $player) {
 			$homeplayers[$i]['name'] = $player['firstname'] . " " . $player['lastname'];
 			$homeplayers[$i]['accredited'] = $player['accredited'];
 			$homeplayers[$i]['num'] = $player['num'];
 			$i++;
 		}
 		$visitorplayers = array();
-		$playerlist = TeamPlayerList($gameRow["visitorteam"]);
 		$i = 0;
-		while ($player = mysqli_fetch_assoc($playerlist)) {
+		foreach (TeamPlayerList($gameRow["visitorteam"]) as $player) {
 			$visitorplayers[$i]['name'] = $player['firstname'] . " " . $player['lastname'];
 			$visitorplayers[$i]['accredited'] = $player['accredited'];
 			$visitorplayers[$i]['num'] = $player['num'];
@@ -164,18 +181,33 @@ if ($teamId) {
 
 		$home = empty($gameRow["hometeamname"]) ? U_($gameRow["phometeamname"]) : $gameRow["hometeamname"];
 		$visitor = empty($gameRow["visitorteamname"]) ? U_($gameRow["pvisitorteamname"]) : $gameRow["visitorteamname"];
+		$placeLabel = ReservationPlaceText(U_($gameRow["placename"]), U_($gameRow['fieldname']));
 
-		$pdf->PrintScoreSheet(
-			U_($seasonname),
-			$sGid,
-			$home,
-			$visitor,
-			U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
-			$gameRow["time"],
-			U_($gameRow["placename"]) . " " . _("Field") . " " . U_($gameRow['fieldname'])
-		);
-		$pdf->PrintPlayerList($homeplayers, $visitorplayers);
+			if ($scoreSheetAcceptsPlayerLists) {
+				$pdf->PrintScoreSheet(
+					U_($seasonname),
+					$sGid,
+					$home,
+					$visitor,
+					U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
+					$gameRow["time"],
+					$placeLabel,
+					$homeplayers,
+					$visitorplayers
+				);
+			} else {
+				$pdf->PrintScoreSheet(
+					U_($seasonname),
+					$sGid,
+					$home,
+					$visitor,
+					U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
+					$gameRow["time"],
+					$placeLabel
+				);
+				$pdf->PrintPlayerList($homeplayers, $visitorplayers);
+			}
+		}
 	}
-}
 
 $pdf->Output('I', $filename);

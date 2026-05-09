@@ -304,6 +304,12 @@ td {
 	/*border:1px solid #333;*/
 }
 
+.header_text {
+	display: inline-flex;
+	align-items: center;
+	gap: 8px;
+}
+
 .header_text:link,
 .header_text:visited,
 .header_text:active,
@@ -316,6 +322,11 @@ td {
 	font-weight: normal;
 	text-decoration: none;
 	text-transform: uppercase;
+}
+
+.header_logo {
+	width: auto;
+	height: 40px;
 }
 
 .header_text_small:link,

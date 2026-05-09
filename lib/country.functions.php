@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 function CountryName($countryId)
 {
@@ -6,7 +8,8 @@ function CountryName($countryId)
     "SELECT name FROM uo_country WHERE country_id=%d",
     (int)$countryId
   );
-  return _(DBQueryToValue($query));
+  $name = DBQueryToValue($query);
+  return $name !== null ? _($name) : '';
 }
 
 function CountryId($countryname)
@@ -27,6 +30,9 @@ function CountryInfo($countryId)
     (int)$countryId
   );
   $ret = DBQueryToRow($query);
+  if (!$ret) {
+    return array();
+  }
   $ret['name'] = _($ret['name']);
   return $ret;
 }

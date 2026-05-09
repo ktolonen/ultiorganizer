@@ -30,7 +30,7 @@ if ($ishome == 1) {
 }
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . _("First Offence") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
+$html .= "<h1>" . _("First offence") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
@@ -44,7 +44,7 @@ $html .= "<input type='radio' name='team' id='vstart' value='V' $voffence  />";
 $html .= "<label for='vstart'>" . utf8entities($game_result['visitorteamname']) . "</label>";
 $html .= "</fieldset>";
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
-$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
+$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to scoresheet") . "</a>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/../lib/view.guard.php';
+requireRoutedView('ext/index', '../index.php');
 
 include_once 'lib/season.functions.php';
 include_once 'lib/common.functions.php';
@@ -56,7 +58,7 @@ if (empty($season))
 
 $html .= "<h1>" . _("Embedding Ultiorganizer into other pages") . "</h1>";
 
-$html .= "<p>" . _("You can embed the following statistics from ultiorganizer directly into your own pages") . ".</p>\n";
+$html .= "<p>" . _("You can embed the following statistics from Ultiorganizer directly into your own pages") . ".</p>\n";
 $html .= "<form method='post' action='?view=ext/index'>\n";
 
 $html .= "<h2>" . _("Select") . "</h2>";
@@ -66,7 +68,7 @@ $selector = "<p>" . _("Select event") . ":	<select class='dropdown' name='season
 
 $seasons = Seasons();
 
-while ($row = mysqli_fetch_assoc($seasons)) {
+foreach ($seasons as $row) {
 
 	if ($row['season_id'] == $season)
 		$selector .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
@@ -160,7 +162,7 @@ for ($i = 0; $i < count($styles); $i++) {
 		$selector .=  "<option class='dropdown' value='$styles[$i]'>$stylenames[$i]</option>";
 }
 
-$selector .=  "</select><br/>" . _("or a link to a style definition of your own") . ":\n";
+$selector .=  "</select><br/>" . _("or a link to your own style definition") . ":\n";
 $selector .= "<input class='input' size='50' name='ownstyle' value='$lastown'/></p>";
 
 
@@ -227,7 +229,7 @@ if (!empty($selpool)) {
 	$html .= "<p><object data='$baseurl/ext/poolscoreboard.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='200px'></object></p>\n";
 }
 if (!empty($selcountry)) {
-	$html .= "<h2>" . _("Selected country's teams pool standings and game result") . "</h2>\n";
+	$html .= "<h2>" . _("Selected country's team standings and game results") . "</h2>\n";
 	$html .= "<p class='highlight' ><code>
 		&lt;object data='$baseurl/ext/countrystatus.php?Country=$selcountry&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='500px' height='300px'&gt;&lt;/object&gt;
@@ -246,7 +248,7 @@ if (!empty($selteam)) {
 	$html .= "<p><object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
 
 	$html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/teampcoming.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/teamcoming.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
 		type='text/html' width='400px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 

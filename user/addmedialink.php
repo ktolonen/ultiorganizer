@@ -23,6 +23,7 @@ $seriesId = 0;
 $poolId = 0;
 $owner = "";
 $owner_id = 0;
+$backurl = "?view=frontpage";
 
 if (!empty($_GET["team"])) {
 	$owner_id = intval($_GET["team"]);
@@ -57,6 +58,10 @@ if (!empty($_GET["pool"])) {
 if (isset($_SERVER['HTTP_REFERER']))
 	$backurl = utf8entities($_SERVER['HTTP_REFERER']);
 
+if (empty($owner) || empty($owner_id)) {
+	showPage($title, "<p class='warning'>" . _("Invalid link target.") . "</p>");
+	return;
+}
 
 $pageurl = "?view=user/addmedialink&amp;$owner=$owner_id";
 

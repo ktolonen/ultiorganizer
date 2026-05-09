@@ -1,15 +1,15 @@
 <?php
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
 function logo()
 {
-	global $styles_prefix;
 	global $include_prefix;
-	if (!isset($styles_prefix)) {
-		$styles_prefix = $include_prefix;
-	}
-	return "<img class='header_logo' src='" . $styles_prefix . "cust/default/logo.gif' alt='" . _("LOGO EXAMPLE") . "'/>";
+	return "<div><a href='https://github.com/ktolonen/ultiorganizer/'><img class='logo' src='" . $include_prefix . "cust/default/logo-big.png'/></a></div>";
 }
 
 function pageHeader()
 {
-	return "<a href='https://github.com/ktolonen/ultiorganizer' class='header_text'>" . _("Ultiorganizer") . "</a><br/>\n";
+	global $include_prefix;
+	return "<a href='https://github.com/ktolonen/ultiorganizer' class='header_text'><img class='header_logo' style='width:auto;height:40px;' src='" . $include_prefix . "cust/default/logo.png' alt=''/>" . _("Ultiorganizer") . "</a><br/>\n";
 }

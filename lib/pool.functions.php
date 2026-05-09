@@ -1,7 +1,10 @@
 <?php
-include_once $include_prefix . 'lib/season.functions.php';
-include_once $include_prefix . 'lib/team.functions.php';
-include_once $include_prefix . 'lib/swissdraw.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/season.functions.php';
+require_once __DIR__ . '/team.functions.php';
+require_once __DIR__ . '/swissdraw.functions.php';
 
 /**
  * Gets all pools matching with given conditions.
@@ -335,14 +338,15 @@ function PoolSchedulingTeams($poolId)
  * @param int $poolId uo_pool.pool_id
  * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysqli_result array of players.
+ * @return mysql array of players.
  */
 function PoolScoreBoard($poolId, $sorting, $limit)
 {
   $query = sprintf(
     "
-        SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done,
-        COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.games
+			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(t.done / NULLIF(pel.games, 0),0) AS doneavg, 
+			COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, COALESCE(s.fedin / NULLIF(pel.games, 0),0) AS fedinavg, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, 
+	    COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0)) / NULLIF(pel.games, 0),0) AS totalavg, pel.games 
         FROM uo_player AS p
         LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m
             LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
@@ -375,6 +379,118 @@ function PoolScoreBoard($poolId, $sorting, $limit)
   switch ($sorting) {
     case "total":
       $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "goalavg":
+      $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "passavg":
+      $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC, p.player_id";
+      break;
+
+    case "totalavg":
+      $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+      
+    case "goal":
+      $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+      case "pass":
+      $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC, p.player_id";
+      break;
+
+    case "games":
+      $query .= " ORDER BY games DESC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "team":
+      $query .= " ORDER BY teamname ASC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "name":
+      $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC, p.player_id";
+      break;
+
+    case "callahan":
+      $query .= " ORDER BY callahan DESC, total DESC, lastname ASC, p.player_id";
+      break;
+
+    default:
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+  }
+
+  if ($limit > 0) {
+    $query .= " limit $limit";
+  }
+
+  return DBQuery($query);
+}
+
+function PoolScoreBoardArray($poolId, $sorting, $limit)
+{
+  return DBFetchAllAssoc(PoolScoreBoard($poolId, $sorting, $limit));
+}
+
+/**
+ * Get score board for list of pools.
+ *
+ * @param Array $pools comma separated list of pools
+ * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
+ * @param int $limit Numbers of rows returned, 0 if unlimited
+ * @return mysqli_result array of players.
+ */
+function PoolsScoreBoard($pools, $sorting, $limit)
+{
+
+  $poolIds = array_filter(array_map('intval', (array)$pools), function ($val) {
+    return $val > 0;
+  });
+  $poolIds = empty($poolIds) ? array(0) : $poolIds;
+  $poolList = implode(",", $poolIds);
+
+  $query = " SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done,
+        COALESCE(t.done / NULLIF(pel.games, 0),0) AS doneavg, COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin,
+        COALESCE(s.fedin / NULLIF(pel.games, 0),0) AS fedinavg, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total,
+        COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0)) / NULLIF(pel.games, 0),0) AS totalavg, pel.games
+        FROM uo_player AS p
+        LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m
+            LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
+            LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
+            WHERE ps.pool IN($poolList) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer)
+        LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1
+            LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game)
+            LEFT JOIN uo_game AS g2 ON (ps1.game=g2.game_id)
+            WHERE ps1.pool IN($poolList) AND m1.scorer IS NOT NULL AND g2.isongoing=0 AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1)
+        LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin
+            FROM uo_goal AS m2 LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game)
+            LEFT JOIN uo_game AS g3 ON (ps2.game=g3.game_id)
+            WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
+        LEFT JOIN uo_team AS j ON (p.team=j.team_id)
+        LEFT JOIN (SELECT up.player, COUNT(*) AS games
+            FROM uo_played up
+            LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
+            WHERE g4.pool IN($poolList) AND g4.isongoing=0 GROUP BY player)
+            AS pel ON (p.player_id=pel.player)
+        WHERE pel.games > 0";
+
+  switch ($sorting) {
+    case "total":
+      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+      
+    case "goalavg":
+      $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC, p.player_id";
+      break;
+
+    case "passavg":
+      $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC, p.player_id";
+      break;
+
+    case "totalavg":
+      $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
       break;
 
     case "goal":
@@ -413,85 +529,9 @@ function PoolScoreBoard($poolId, $sorting, $limit)
   return DBQuery($query);
 }
 
-/**
- * Get score board for list of pools.
- *
- * @param Array $pools comma separated list of pools
- * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
- * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysqli_result array of players.
- */
-function PoolsScoreBoard($pools, $sorting, $limit)
+function PoolsScoreBoardArray($pools, $sorting, $limit)
 {
-
-  $poolIds = array_filter(array_map('intval', (array)$pools), function ($val) {
-    return $val > 0;
-  });
-  $poolIds = empty($poolIds) ? array(0) : $poolIds;
-  $poolList = implode(",", $poolIds);
-
-  $query = " SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done,
-        COALESCE(t1.callahan,0) AS callahan, COALESCE(s.fedin,0) AS fedin, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.games
-        FROM uo_player AS p
-        LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m
-            LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game)
-            LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
-            WHERE ps.pool IN($poolList) AND scorer IS NOT NULL AND g1.isongoing=0 GROUP BY scorer) AS t ON (p.player_id=t.scorer)
-        LEFT JOIN (SELECT m1.scorer AS scorer1, COUNT(*) AS callahan FROM uo_goal AS m1
-            LEFT JOIN uo_game_pool AS ps1 ON (m1.game=ps1.game)
-            LEFT JOIN uo_game AS g2 ON (ps1.game=g2.game_id)
-            WHERE ps1.pool IN($poolList) AND m1.scorer IS NOT NULL AND g2.isongoing=0 AND iscallahan=1 GROUP BY m1.scorer) AS t1 ON (p.player_id=t1.scorer1)
-        LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin
-            FROM uo_goal AS m2 LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game)
-            LEFT JOIN uo_game AS g3 ON (ps2.game=g3.game_id)
-            WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist)
-        LEFT JOIN uo_team AS j ON (p.team=j.team_id)
-        LEFT JOIN (SELECT up.player, COUNT(*) AS games
-            FROM uo_played up
-            LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-            WHERE g4.pool IN($poolList) AND g4.isongoing=0 GROUP BY player)
-            AS pel ON (p.player_id=pel.player)
-        WHERE pel.games > 0";
-
-  switch ($sorting) {
-    case "total":
-      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
-      break;
-
-    case "goal":
-      $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC, p.player_id";
-      break;
-
-    case "pass":
-      $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC, p.player_id";
-      break;
-
-    case "games":
-      $query .= " ORDER BY games DESC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
-      break;
-
-    case "team":
-      $query .= " ORDER BY teamname ASC, total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
-      break;
-
-    case "name":
-      $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC, p.player_id";
-      break;
-
-    case "callahan":
-      $query .= " ORDER BY callahan DESC, total DESC, lastname ASC, p.player_id";
-      break;
-
-    default:
-      $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC, p.player_id";
-      break;
-  }
-
-  if ($limit > 0) {
-    $query .= " limit $limit";
-  }
-
-  return DBQuery($query);
+  return DBFetchAllAssoc(PoolsScoreBoard($pools, $sorting, $limit));
 }
 
 /**
@@ -584,6 +624,11 @@ function PoolsScoreBoardWithDefenses($pools, $sorting, $limit)
   return DBQuery($query);
 }
 
+function PoolsScoreBoardWithDefensesArray($pools, $sorting, $limit)
+{
+  return DBFetchAllAssoc(PoolsScoreBoardWithDefenses($pools, $sorting, $limit));
+}
+
 /**
  * Get pool score board with defenses
  *
@@ -674,6 +719,11 @@ function PoolScoreBoardWithDefenses($poolId, $sorting, $limit)
   }
 
   return DBQuery($query);
+}
+
+function PoolScoreBoardWithDefensesArray($poolId, $sorting, $limit)
+{
+  return DBFetchAllAssoc(PoolScoreBoardWithDefenses($poolId, $sorting, $limit));
 }
 
 
@@ -885,9 +935,53 @@ function PoolTeamFromStandings($poolId, $activerank, $countbye = true)
       (int)$activerank
     );
   }
-  return DBQueryToRow($query);
+  $row = DBQueryToRow($query);
+  if ($row === null) {
+    return array('team_id' => null, 'name' => '', 'activerank' => null, 'flagfile' => null);
+  }
+  return $row;
 }
 
+/**
+ * Get team from given position from given pool.
+ * returns team ranked $activerank from pool $poolId if $countbye=true
+ * if $countbye=false, $activerank is corrected by one if BYE team is ranked ahead in this pool
+ *
+ * New function added by Bruno, returns array of teams if there are ties.
+ * Meant to be used in teams.php (bystandings).
+ * (notice the subtle change in the function name from Team to Teams)
+ *
+ * @param int $poolId
+ * @param int $activerank
+ * @param boolean $countbye
+ * @return PHP array row
+ */
+function PoolTeamsFromStandings($poolId, $activerank, $countbye=true) { 
+  if($countbye) {
+    $query = sprintf("SELECT j.team_id, j.name, js.activerank, c.flagfile
+  			FROM uo_team AS j 
+  			LEFT JOIN uo_team_pool AS js ON (j.team_id = js.team)
+  			LEFT JOIN uo_country c ON(c.country_id=j.country)
+  			WHERE js.pool=%d AND js.activerank=%d",
+              (int)$poolId,
+              (int)$activerank);
+  }else{
+    $query = sprintf("SELECT j.team_id, j.name, js.activerank, c.flagfile
+  			FROM uo_team AS j 
+  			LEFT JOIN uo_team_pool AS js ON (j.team_id = js.team)
+  			LEFT JOIN uo_country c ON(c.country_id=j.country)
+  			WHERE js.pool=%d AND js.activerank=%d+
+  				(SELECT count(j.team_id)
+  				 FROM uo_team AS j 
+  				 LEFT JOIN uo_team_pool AS js ON (j.team_id = js.team)
+  				 WHERE js.pool=%d and js.activerank<=%d and j.valid=2)",
+              (int)$poolId,
+              (int)$activerank,
+              (int)$poolId,
+              (int)$activerank);
+  }
+  return DBQueryToArray($query);
+}
 /**
  * Get team from given initial position from given pool.
  * returns team ranked $rank from pool $poolId if $countbye=true
@@ -1023,6 +1117,9 @@ function PoolGetGamesToMove($poolId, $mvgames)
   $moves = PoolMovingsToPool($poolId);
   foreach ($moves as $row) {
     $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing']);
+    if (empty($team['team_id'])) {
+      continue;
+    }
     if ($mvgames == 0) {
       $teamgames = TeamPoolGames($team['team_id'], $row['frompool']);
       if (mysqli_num_rows($teamgames)) {
@@ -1042,7 +1139,10 @@ function PoolGetGamesToMove($poolId, $mvgames)
       $moves2 = PoolMovingsToPool($poolId);
       foreach ($moves2 as $row2) {
         $team2 = PoolTeamFromStandings($row2['frompool'], $row2['fromplacing']);
-        if ($row2['frompool'] == $row2['frompool']) {
+        if (empty($team2['team_id'])) {
+          continue;
+        }
+        if ($row['frompool'] == $row2['frompool']) {
           $teamgames = TeamPoolGamesAgainst($team['team_id'], $team2['team_id'], $row['frompool']);
           if (count($teamgames)) {
             foreach ($teamgames as $game) {
@@ -1087,14 +1187,15 @@ function PoolGames($poolId, $fieldId = null)
   $query = sprintf(
     "SELECT home.name AS hometeamname, visitor.name AS visitorteamname, CONCAT(home.name, ' - ', visitor.name) AS name,
             p.hometeam, p.visitorteam,
-            p.time, p.game_id, p.homescore, p.visitorscore,
+            p.time, p.game_id, p.homescore, p.visitorscore, p.forfeit,
             phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
-            ps.pool AS original_pool
+            ps.pool AS original_pool, pgame.name AS gamename
             FROM uo_game p
             LEFT JOIN uo_team AS home ON (p.hometeam=home.team_id)
             LEFT JOIN uo_team AS visitor ON (p.visitorteam=visitor.team_id)
             LEFT JOIN uo_scheduling_name AS phome ON (p.scheduling_name_home=phome.scheduling_id)
             LEFT JOIN uo_scheduling_name AS pvisitor ON (p.scheduling_name_visitor=pvisitor.scheduling_id)
+	    LEFT JOIN uo_scheduling_name AS pgame ON (p.name=pgame.scheduling_id)
             LEFT JOIN uo_game_pool ps ON (p.game_id=ps.game)
             WHERE ps.pool = %d",
     (int)$poolId
@@ -1122,12 +1223,13 @@ function PoolGamesNotScheduled($poolId)
     "SELECT home.name AS hometeamname, visitor.name AS visitorteamname, p.hometeam, p.visitorteam,
         p.time, p.game_id, p.homescore, p.visitorscore,
         phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
-        ps.pool AS original_pool
+        ps.pool AS original_pool, pgame.name AS gamename
         FROM uo_game p
         LEFT JOIN uo_team AS home ON (p.hometeam=home.team_id)
         LEFT JOIN uo_team AS visitor ON (p.visitorteam=visitor.team_id)
         LEFT JOIN uo_scheduling_name AS phome ON (p.scheduling_name_home=phome.scheduling_id)
         LEFT JOIN uo_scheduling_name AS pvisitor ON (p.scheduling_name_visitor=pvisitor.scheduling_id)
+		LEFT JOIN uo_scheduling_name AS pgame ON (p.name=pgame.scheduling_id)
         LEFT JOIN uo_game_pool ps ON (p.game_id=ps.game)
         WHERE ps.pool = %d AND (p.time IS NULL OR p.reservation IS NULL) AND ps.timetable=1
         ORDER BY game_id",
@@ -1387,6 +1489,47 @@ function DeletePoolTemplate($poolId)
   }
 }
 
+function PoolColors()
+{
+  global $include_prefix;
+  static $poolColors = null;
+
+  if (isset($poolColors)) {
+    return $poolColors;
+  }
+
+  $poolColors = array();
+  $customPath = $include_prefix . "cust/" . CUSTOMIZATIONS . "/pool_colors.php";
+  $defaultPath = $include_prefix . "cust/default/pool_colors.php";
+
+  if (is_file($customPath)) {
+    $colors = include $customPath;
+    if (is_array($colors)) {
+      $poolColors = $colors;
+    }
+  } elseif (is_file($defaultPath)) {
+    $colors = include $defaultPath;
+    if (is_array($colors)) {
+      $poolColors = $colors;
+    }
+  }
+
+  $validColors = array();
+  foreach ($poolColors as $color) {
+    $color = strtoupper(trim((string)$color));
+    if (preg_match('/^[0-9A-F]{6}$/', $color)) {
+      $validColors[] = $color;
+    }
+  }
+  $poolColors = $validColors;
+
+  if (empty($poolColors)) {
+    $poolColors = array("F0F8FF");
+  }
+
+  return $poolColors;
+}
+
 /**
  * Creates a pool based on given template.
  *
@@ -1400,134 +1543,7 @@ function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
 {
   $seriesinfo = SeriesInfo($seriesId);
   if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
-    $colors = array(
-      "F0F8FF",
-      "FAEBD7",
-      "00FFFF",
-      "7FFFD4",
-      "F0FFFF",
-      "F5F5DC",
-      "FFE4C4",
-      "0000FF",
-      "8A2BE2",
-      "DEB887",
-      "FFFF00",
-      "5F9EA0",
-      "7FFF00",
-      "D2691E",
-      "FF7F50",
-      "6495ED",
-      "FFF8DC",
-      "DC143C",
-      "00FFFF",
-      "00008B",
-      "008B8B",
-      "B8860B",
-      "A9A9A9",
-      "006400",
-      "BDB76B",
-      "8B008B",
-      "FF8C00",
-      "9932CC",
-      "8B0000",
-      "E9967A",
-      "8FBC8F",
-      "00CED1",
-      "9400D3",
-      "FF1493",
-      "00BFFF",
-      "1E90FF",
-      "B22222",
-      "228B22",
-      "FF00FF",
-      "DCDCDC",
-      "F8F8FF",
-      "FFD700",
-      "DAA520",
-      "008000",
-      "ADFF2F",
-      "F0FFF0",
-      "FF69B4",
-      "CD5C5C",
-      "FFFFF0",
-      "F0E68C",
-      "E6E6FA",
-      "FFF0F5",
-      "7CFC00",
-      "FFFACD",
-      "ADD8E6",
-      "F08080",
-      "E0FFFF",
-      "FAFAD2",
-      "D3D3D3",
-      "90EE90",
-      "FFB6C1",
-      "FFA07A",
-      "20B2AA",
-      "87CEFA",
-      "778899",
-      "B0C4DE",
-      "FFFFE0",
-      "00FF00",
-      "32CD32",
-      "FAF0E6",
-      "FF00FF",
-      "800000",
-      "66CDAA",
-      "0000CD",
-      "BA55D3",
-      "9370D8",
-      "3CB371",
-      "7B68EE",
-      "00FA9A",
-      "48D1CC",
-      "C71585",
-      "191970",
-      "F5FFFA",
-      "FFE4E1",
-      "FFE4B5",
-      "FFDEAD",
-      "FDF5E6",
-      "808000",
-      "6B8E23",
-      "FFA500",
-      "FF4500",
-      "DA70D6",
-      "EEE8AA",
-      "98FB98",
-      "AFEEEE",
-      "D87093",
-      "FFEFD5",
-      "FFDAB9",
-      "CD853F",
-      "FFC0CB",
-      "DDA0DD",
-      "B0E0E6",
-      "800080",
-      "FF0000",
-      "BC8F8F",
-      "4169E1",
-      "FA8072",
-      "F4A460",
-      "2E8B57",
-      "FFF5EE",
-      "A0522D",
-      "C0C0C0",
-      "87CEEB",
-      "6A5ACD",
-      "708090",
-      "FFFAFA",
-      "00FF7F",
-      "4682B4",
-      "D2B48C",
-      "D8BFD8",
-      "FF6347",
-      "40E0D0",
-      "EE82EE",
-      "F5DEB3",
-      "F5F5F5",
-      "9ACD32"
-    );
+    $colors = PoolColors();
     $query = sprintf(
       "INSERT INTO uo_pool
             (type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts,
@@ -1569,134 +1585,7 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
 {
   $seriesinfo = SeriesInfo($seriesId);
   if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
-    $colors = array(
-      "F0F8FF",
-      "FAEBD7",
-      "00FFFF",
-      "7FFFD4",
-      "F0FFFF",
-      "F5F5DC",
-      "FFE4C4",
-      "0000FF",
-      "8A2BE2",
-      "DEB887",
-      "FFFF00",
-      "5F9EA0",
-      "7FFF00",
-      "D2691E",
-      "FF7F50",
-      "6495ED",
-      "FFF8DC",
-      "DC143C",
-      "00FFFF",
-      "00008B",
-      "008B8B",
-      "B8860B",
-      "A9A9A9",
-      "006400",
-      "BDB76B",
-      "8B008B",
-      "FF8C00",
-      "9932CC",
-      "8B0000",
-      "E9967A",
-      "8FBC8F",
-      "00CED1",
-      "9400D3",
-      "FF1493",
-      "00BFFF",
-      "1E90FF",
-      "B22222",
-      "228B22",
-      "FF00FF",
-      "DCDCDC",
-      "F8F8FF",
-      "FFD700",
-      "DAA520",
-      "008000",
-      "ADFF2F",
-      "F0FFF0",
-      "FF69B4",
-      "CD5C5C",
-      "FFFFF0",
-      "F0E68C",
-      "E6E6FA",
-      "FFF0F5",
-      "7CFC00",
-      "FFFACD",
-      "ADD8E6",
-      "F08080",
-      "E0FFFF",
-      "FAFAD2",
-      "D3D3D3",
-      "90EE90",
-      "FFB6C1",
-      "FFA07A",
-      "20B2AA",
-      "87CEFA",
-      "778899",
-      "B0C4DE",
-      "FFFFE0",
-      "00FF00",
-      "32CD32",
-      "FAF0E6",
-      "FF00FF",
-      "800000",
-      "66CDAA",
-      "0000CD",
-      "BA55D3",
-      "9370D8",
-      "3CB371",
-      "7B68EE",
-      "00FA9A",
-      "48D1CC",
-      "C71585",
-      "191970",
-      "F5FFFA",
-      "FFE4E1",
-      "FFE4B5",
-      "FFDEAD",
-      "FDF5E6",
-      "808000",
-      "6B8E23",
-      "FFA500",
-      "FF4500",
-      "DA70D6",
-      "EEE8AA",
-      "98FB98",
-      "AFEEEE",
-      "D87093",
-      "FFEFD5",
-      "FFDAB9",
-      "CD853F",
-      "FFC0CB",
-      "DDA0DD",
-      "B0E0E6",
-      "800080",
-      "FF0000",
-      "BC8F8F",
-      "4169E1",
-      "FA8072",
-      "F4A460",
-      "2E8B57",
-      "FFF5EE",
-      "A0522D",
-      "C0C0C0",
-      "87CEEB",
-      "6A5ACD",
-      "708090",
-      "FFFAFA",
-      "00FF7F",
-      "4682B4",
-      "D2B48C",
-      "D8BFD8",
-      "FF6347",
-      "40E0D0",
-      "EE82EE",
-      "F5DEB3",
-      "F5F5F5",
-      "9ACD32"
-    );
+    $colors = PoolColors();
     $query = sprintf(
       "INSERT INTO uo_pool
             (type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts,
@@ -1823,8 +1712,11 @@ function SetPoolName($poolId, $name)
  */
 function PoolDeleteTeam($poolId, $teamId, $checkrights = true)
 {
+  if (!$teamId) return;
   $poolInfo = PoolInfo($poolId);
-  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
+  $seasonId = SeriesSeasonId($poolInfo['series']);
+  $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));
+  if ($bypassReadonlyAllowed || hasEditTeamsRight($poolInfo['series'])) {
 
     $query = sprintf(
       "DELETE FROM uo_team_pool WHERE pool=%d AND team=%d",
@@ -1911,9 +1803,11 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool)
  */
 function PoolAddTeam($poolId, $teamId, $rank, $updaterank = false, $checkrights = true)
 {
+  if (!$teamId) return;
   $poolInfo = PoolInfo($poolId);
-
-  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
+  $seasonId = SeriesSeasonId($poolInfo['series']);
+  $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));
+  if ($bypassReadonlyAllowed || hasEditTeamsRight($poolInfo['series'])) {
 
     if ($updaterank) {
       $query = sprintf(
@@ -2068,7 +1962,7 @@ function PoolMakeMoves($poolId)
   $poolInfo = PoolInfo($poolId);
   if (hasEditTeamsRight($poolInfo['series'])) {
     //move teams
-    LogPoolUpdate($poolId, "Teams moved");
+    $movesMade = false;
     $moves = PoolMovingsToPool($poolId);
     $topool = 0;
     foreach ($moves as $row) {
@@ -2079,22 +1973,28 @@ function PoolMakeMoves($poolId)
 
       //add team to target pool
       $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing'], $poolInfo['type'] != 2); // do not count BYE team if we are moving to a playoff pool
-      PoolAddTeam($row['topool'], $team['team_id'], $row['torank'], true);
+      $teamId = empty($team['team_id']) ? null : (int)$team['team_id'];
+      if (!$teamId) {
+        continue;
+      }
+
+      PoolAddTeam($row['topool'], $teamId, $row['torank'], true);
 
       //replace pseudo team with real team in games
+      $teamSql = (string)$teamId;
       if (isRespTeamHomeTeam()) {
         $query = sprintf(
           "UPDATE uo_game SET
-                    hometeam=%d, respteam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-          (int)$team['team_id'],
-          (int)$team['team_id'],
+                    hometeam=%s, respteam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+          $teamSql,
+          $teamSql,
           (int)$row['scheduling_id']
         );
       } else {
         $query = sprintf(
           "UPDATE uo_game SET
-                    hometeam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-          (int)$team['team_id'],
+                    hometeam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+          $teamSql,
           (int)$row['scheduling_id']
         );
       }
@@ -2102,8 +2002,8 @@ function PoolMakeMoves($poolId)
       DBQuery($query);
 
       $query = sprintf(
-        "UPDATE uo_game SET visitorteam=%d WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
-        (int)$team['team_id'],
+        "UPDATE uo_game SET visitorteam=%s WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+        $teamSql,
         (int)$row['scheduling_id']
       );
 
@@ -2117,6 +2017,11 @@ function PoolMakeMoves($poolId)
       );
 
       DBQuery($query);
+      $movesMade = true;
+    }
+
+    if ($movesMade) {
+      LogPoolUpdate($poolId, "Teams moved");
     }
 
     //games to move
@@ -2149,7 +2054,9 @@ function PoolMakeMoves($poolId)
 function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
 {
   $poolInfo = PoolInfo($frompool);
-  if (!$checkrights || hasEditTeamsRight($poolInfo['series'])) {
+  $seasonId = SeriesSeasonId($poolInfo['series']);
+  $bypassReadonlyAllowed = !$checkrights && (!isEventReadonly($seasonId) || canBypassEventReadonly($seasonId));
+  if ($bypassReadonlyAllowed || hasEditTeamsRight($poolInfo['series'])) {
     //move teams
     $query = sprintf(
       "SELECT pmt.*, ps.name, sn.name AS sname
@@ -2162,9 +2069,15 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
       (int)$fromplacing
     );
     $row = DBQueryToRow($query);
-    LogPoolUpdate($row['frompool'], "Teams moved");
+    if (!$row) {
+      return;
+    }
     // add team to target pool
     $team = PoolTeamFromStandings($row['frompool'], $row['fromplacing'], $poolInfo['type'] != 2); // do not count BYE team if we are moving to a playoff pool
+    $teamId = empty($team['team_id']) ? null : (int)$team['team_id'];
+    if (!$teamId) {
+      return;
+    }
 
     // delete previously moved team
     $previous = PoolTeamFromInitialRank($row['topool'], $row['torank']);
@@ -2172,22 +2085,23 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
       PoolDeleteTeam($row['topool'], $previous['team_id'], $checkrights);
     }
 
-    PoolAddTeam($row['topool'], $team['team_id'], $row['torank'], true, $checkrights);
+    PoolAddTeam($row['topool'], $teamId, $row['torank'], true, $checkrights);
 
     // replace pseudo team with real team in games
+    $teamSql = (string)$teamId;
     if (isRespTeamHomeTeam()) {
       $query = sprintf(
         "UPDATE uo_game SET
-                    hometeam=%d, respteam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-        (int) $team['team_id'],
-        (int) $team['team_id'],
+                    hometeam=%s, respteam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+        $teamSql,
+        $teamSql,
         (int) $row['scheduling_id']
       );
     } else {
       $query = sprintf(
         "UPDATE uo_game SET
-                    hometeam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
-        (int) $team['team_id'],
+                    hometeam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+        $teamSql,
         (int) $row['scheduling_id']
       );
     }
@@ -2195,8 +2109,8 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
     DBQuery($query);
 
     $query = sprintf(
-      "UPDATE uo_game SET visitorteam=%d WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
-      (int) $team['team_id'],
+      "UPDATE uo_game SET visitorteam=%s WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+      $teamSql,
       (int) $row['scheduling_id']
     );
 
@@ -2210,6 +2124,8 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
     );
 
     DBQuery($query);
+
+    LogPoolUpdate($row['frompool'], "Teams moved");
   } else {
     die('Insufficient rights to move teams');
   }
@@ -2456,7 +2372,7 @@ function CanDeleteTeamFromPool($poolId, $teamId)
  * @param int $home - home team id
  * @param int $away - away team id
  * @param boolean $psudoteams - true if scheduling ids used instead of team ids
- * @param boolean $homeresp - true if home team is responsible of game's score sheet
+ * @param boolean $homeresp - true if home team is responsible for the game's scoresheet
  */
 function PoolAddGame($poolId, $home, $away, $psudoteams = false, $homeresp = false)
 {
@@ -2565,15 +2481,18 @@ function GeneratePlayoffPools($poolId, $generate = true)
 
     // try to parse moves
     $specialmoves = false;
+    $moves = array();
 
-    if (substr($html, 0, 26) == "<!-- corresponding moves:") {
-      $movestring = substr($html, 28, strpos($html, "-->") - 29);
-      $movelines = explode("\n", $movestring);
-      foreach ($movelines as $move) {
-        $moves[] = str_getcsv($move, " ");
+    if (preg_match('/^<!--\s*corresponding moves:\s*\r?\n(.*?)\r?\n?-->/s', $html, $cm)) {
+      foreach (preg_split('/\r?\n/', $cm[1]) as $move) {
+        $move = trim($move);
+        if ($move === '') {
+          continue;
+        }
+        $moves[] = preg_split('/\s+/', $move);
       }
       if (count($moves) == $rounds) {
-        $specialmoves = true; //parsing succesful
+        $specialmoves = true; //parsing successful
       }
     }
 
@@ -2690,7 +2609,7 @@ function GeneratePlayoffPools($poolId, $generate = true)
  * @param int $rounds - how many rounds f.ex. in Round Robin pool
  * @param boolean $generate - true if games are created
  * @param boolean $nomutual - true when no mutual games are created in case that teams are moved from same pool.
- * @param boolean $homeresp - true if home team is responsible of score sheet.
+ * @param boolean $homeresp - true if home team is responsible for the scoresheet.
  */
 function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false, $homeresp = false)
 {
@@ -2725,8 +2644,9 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
       }
 
       $games = array();
+      $homeTeamMode = isset($poolInfo['season']) ? (int)SeasonHomeTeamMode($poolInfo['season']) : 0;
 
-      // Round robin
+      // Pool type 1 = round robin.
       if ($poolInfo['type'] == 1) {
         for ($r = 0; $r < $rounds; $r++) {
           for ($i = 0; $i < count($teams); $i++) {
@@ -2750,50 +2670,33 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
                   }
                 }
               }
-              $game = array("home" => 0, "away" => 0);
-              $flip = flip($i + $r, $j + $skipped);
-              if ($flip) {
-                $game['home'] = (int)$teams[$j];
-                $game['away'] = (int)$teams[$i];
-              } else {
-                $game['home'] = (int)$teams[$i];
-                $game['away'] = (int)$teams[$j];
-              }
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$j], $r, $i + $r, $j + $skipped);
 
               $games[] = $game;
             }
           }
         }
+        // Pool type 2 = playoff.
       } elseif ($poolInfo['type'] == 2) {
         for ($r = 0; $r < $rounds; $r++) {
           for ($i = 0; $i < count($teams); $i += 2) {
 
             //support for odd numbers of team
             if ($i + 1 < count($teams)) {
-              $game = array("home" => 0, "away" => 0);
-              if (is_odd($r)) {
-                $game['home'] = (int)$teams[$i + 1];
-                $game['away'] = (int)$teams[$i];
-              } else {
-                $game['home'] = (int)$teams[$i];
-                $game['away'] = (int)$teams[$i + 1];
-              }
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + 1], $r);
               $games[] = $game;
             }
           }
         }
+        // Pool type 3 = Swiss draw.
       } elseif ($poolInfo['type'] == 3) {
-        // game generation for Swiss draw round
-
         if (count($teams) % 2 == 1) {
           $games[] = false;
         } else {
           if ($poolInfo['continuingpool']) {
             // if it's a continuation pool, team 1 plays team 2, etc.
             for ($i = 0; $i < count($teams); $i += 2) {
-              $game = array("home" => 0, "away" => 0);
-              $game['home'] = (int)$teams[$i];
-              $game['away'] = (int)$teams[$i + 1];
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + 1]);
               $games[] = $game;
             }
           } else {
@@ -2801,28 +2704,19 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
             // team 1 plays team n+1, 2 plays n+2 etc.
             $halfnbteams = count($teams) / 2;
             for ($i = 0; $i < $halfnbteams; $i++) {
-              $game = array("home" => 0, "away" => 0);
-              $game['home'] = (int)$teams[$i];
-              $game['away'] = (int)$teams[$i + $halfnbteams];
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + $halfnbteams]);
               $games[] = $game;
             }
           }
         }
-        //crossmatch
+        // Pool type 4 = crossmatch.
       } elseif ($poolInfo['type'] == 4) {
         for ($r = 0; $r < $rounds; $r++) {
           for ($i = 0; $i < count($teams); $i += 2) {
 
             //support for odd numbers of team
             if ($i + 1 < count($teams)) {
-              $game = array("home" => 0, "away" => 0);
-              if (is_odd($r)) {
-                $game['home'] = (int)$teams[$i + 1];
-                $game['away'] = (int)$teams[$i];
-              } else {
-                $game['home'] = (int)$teams[$i];
-                $game['away'] = (int)$teams[$i + 1];
-              }
+              $game = ResolveGeneratedGameHomeAway($poolInfo['type'], $homeTeamMode, $teams[$i], $teams[$i + 1], $r);
               $games[] = $game;
             }
           }
@@ -2891,15 +2785,57 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
 }
 
 /**
- * Used to test which team is home.
+ * Resolves home and away teams for a generated game.
  *
- * @param int $i
- * @param int $j
+ * Method 0 keeps the legacy balancing rules:
+ * - pool type 1 (round robin): use the existing parity-based balancing rule
+ * - pool types 2 and 4 (playoff / crossmatch): alternate by round
+ * - pool type 3 (Swiss draw): keep generator order
+ *
+ * Method 1 keeps the higher-ranked side at home, so the first generated team
+ * stays home regardless of pool type.
+ *
+ * @param int $poolType
+ * @param int $homeTeamMode
+ * @param int $firstTeam
+ * @param int $secondTeam
+ * @param int $round
+ * @param int $flipIndexI
+ * @param int $flipIndexJ
+ * @return array
  */
-function flip($i, $j)
+function ResolveGeneratedGameHomeAway($poolType, $homeTeamMode, $firstTeam, $secondTeam, $round = 0, $flipIndexI = 0, $flipIndexJ = 0)
 {
-  is_odd($i) ? $ret = is_odd($j) : $ret = !is_odd($j);
-  return $ret;
+  $game = array(
+    "home" => (int)$firstTeam,
+    "away" => (int)$secondTeam
+  );
+
+  // Method 1: higher-ranked / earlier generated team stays home.
+  if ((int)$homeTeamMode === 1) {
+    return $game;
+  }
+
+  // Method 0 + pool type 1: use the existing round-robin parity rule.
+  if ((int)$poolType === 1) {
+    $swapHomeAway = is_odd($flipIndexI) ? is_odd($flipIndexJ) : !is_odd($flipIndexJ);
+    if ($swapHomeAway) {
+      $game['home'] = (int)$secondTeam;
+      $game['away'] = (int)$firstTeam;
+    }
+    return $game;
+  }
+
+  // Method 0 + pool types 2/4: alternate home team by round.
+  if ((int)$poolType === 2 || (int)$poolType === 4) {
+    if (is_odd($round)) {
+      $game['home'] = (int)$secondTeam;
+      $game['away'] = (int)$firstTeam;
+    }
+  }
+
+  // Method 0 + pool type 3: keep Swiss-draw generator order.
+  return $game;
 }
 
 /**

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 function ClubName($clubId)
 {
@@ -166,14 +168,15 @@ function SetClubProfile($teamId, $profile)
 {
 	$teaminfo = TeamInfo($teamId);
 	if (isSuperAdmin() || (hasEditPlayersRight($teamId) && $teaminfo['club'] == $profile['club_id'])) {
+		$countryValue = (int)$profile['country'] > 0 ? (string)(int)$profile['country'] : "NULL";
 
 		$query = sprintf(
 			"UPDATE uo_club SET name='%s', contacts='%s', 
-				country='%s', city='%s', founded='%s', story='%s',
+				country=%s, city='%s', founded='%s', story='%s',
 				achievements='%s', valid=%d WHERE club_id='%s'",
 			DBEscapeString($profile['name']),
 			DBEscapeString($profile['contacts']),
-			DBEscapeString($profile['country']),
+			$countryValue,
 			DBEscapeString($profile['city']),
 			DBEscapeString($profile['founded']),
 			DBEscapeString($profile['story']),
@@ -206,8 +209,8 @@ function UploadClubImage($teamId, $clubId)
 			return "<p class='warning'>" . _("File is not supported image format") . "</p>";
 		}
 
-		if (!extension_loaded("gd")) {
-			return "<p class='warning'>" . _("Missing gd extension for image handling.") . "</p>";
+		if (!CanProcessImages()) {
+			return "<p class='warning'>" . _("Missing image processing support on the server.") . "</p>";
 		}
 
 		$file_tmp_name = $_FILES['picture']['tmp_name'];
@@ -218,8 +221,12 @@ function UploadClubImage($teamId, $clubId)
 			recur_mkdirs($basedir . "thumbs/", 0775);
 		}
 
-		ConvertToJpeg($file_tmp_name, $basedir . $imgname);
-		CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 160, 120);
+		if (
+			!ConvertToJpeg($file_tmp_name, $basedir . $imgname)
+			|| !CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 160, 120)
+		) {
+			return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
+		}
 
 		//currently removes old image, in future there might be a gallery of images
 		RemoveClubProfileImage($teamId, $clubId);

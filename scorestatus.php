@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('scorestatus');
+
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
@@ -10,8 +13,12 @@ $poolId = 0;
 $poolIds = array();
 $seriesId = 0;
 $teamId = 0;
-$sort = "total";
+$sort="total";
 $scores = null;
+$rankColumnWidth = "5%";
+$playerColumnWidth = "27%";
+$teamColumnWidth = "20%";
+$numericColumnWidth = "6%";
 
 if (iget("pool")) {
   $poolId = intval(iget("pool"));
@@ -53,62 +60,77 @@ if ($seriesId) {
 }
 
 $html .= "<tr>\n";
-$html .= "<th style='width:5%'>#</th>";
+$html .= "<th style='width:" . $rankColumnWidth . "'>#</th>";
 if ($sort == "name") {
-  $html .= "<th style='width:30%'>" . _("Player") . "</th>";
+  $html .= "<th style='width:" . $playerColumnWidth . "'>" . _("Player") . "</th>";
 } else {
-  $html .= "<th style='width:30%'><a class='thsort' href='" . $viewUrl . "sort=name'>" . _("Player") . "</a></th>";
+  $html .= "<th style='width:" . $playerColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=name'>" . _("Player") . "</a></th>";
 }
 if ($sort == "team") {
-  $html .= "<th style='width:25%'><b>" . _("Team") . "</b></th>";
+  $html .= "<th style='width:" . $teamColumnWidth . "'><b>" . _("Team") . "</b></th>";
 } else {
-  $html .= "<th style='width:25%'><a class='thsort' href='" . $viewUrl . "sort=team'>" . _("Team") . "</a></th>";
+  $html .= "<th style='width:" . $teamColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=team'>" . _("Team") . "</a></th>";
 }
 if ($sort == "games") {
-  $html .= "<th class='center' style='width:8%'><b>" . _("Games") . "</b></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Games") . "</b></th>";
 } else {
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=games'>" . _("Games") . "</a></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=games'>" . _("Games") . "</a></th>";
 }
 if ($sort == "pass") {
-  $html .= "<th class='center' style='width:8%'><b>" . _("Assists") . "</b></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Assists") . "</b></th>";
 } else {
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th>";
 }
-if ($sort == "goal") {
-  $html .= "<th class='center' style='width:8%'><b>" . _("Goals") . "</b></th>";
-} else {
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a></th>";
+if($sort == "passavg"){
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Ast") . " Avg.</b></th>";
+}else{
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=passavg'>" . _("Ast") . " Avg.</a></th>";
+}
+if($sort == "goal") {
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>"._("Goals")."</b></th>";
+}else{
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='".$viewUrl."sort=goal'>"._("Goals")."</a></th>";
+}
+if($sort == "goalavg") {
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Gls") . " Avg.</b></th>";
+}else{
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=goalavg'>" . _("Gls") . " Avg.</a></th>";
 }
 
 if ($sort == "callahan") {
-  $html .= "<th class='center' style='width:8%'><b>" . _("Cal.") . "</b></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Call.") . "</b></th>";
 } else {
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=callahan'>" . _("Cal.") . "</a></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=callahan'>" . _("Call.") . "</a></th>";
 }
 
 if ($sort == "total") {
-  $html .= "<th class='center' style='width:8%'><b>" . _("Tot.") . "</b></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Tot.") . "</b></th>";
 } else {
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Tot.") . "</a></th>";
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Tot.") . "</a></th>";
+}
+if($sort == "totalavg") {
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Tot.") . " Avg.</b></th>";
+}else{
+  $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=totalavg'>" . _("Tot.") . " Avg.</a></th>";
 }
 $html .= "</tr>";
 
 if ($teamId) {
   if (count($poolIds)) {
-    $scores = TeamScoreBoard($teamId, $poolIds, $sort, 0);
+    $scores = TeamScoreBoardArray($teamId, $poolIds, $sort, 0);
   } else {
-    $scores = TeamScoreBoard($teamId, $poolId, $sort, 0);
+    $scores = TeamScoreBoardArray($teamId, $poolId, $sort, 0);
   }
 } elseif ($poolId) {
-  $scores = PoolScoreBoard($poolId, $sort, 0);
+  $scores = PoolScoreBoardArray($poolId, $sort, 0);
 } elseif (count($poolIds)) {
-  $scores = PoolsScoreBoard($poolIds, $sort, 0);
+  $scores = PoolsScoreBoardArray($poolIds, $sort, 0);
 } elseif ($seriesId) {
-  $scores = SeriesScoreBoard($seriesId, $sort, 0);
+  $scores = SeriesScoreBoardArray($seriesId, $sort, 0);
 }
 $i = 1;
 if ($scores) {
-  while ($row = mysqli_fetch_assoc($scores)) {
+  foreach ($scores as $row) {
     $html .= "<tr>";
     $html .= "<td>" . $i++ . "</td>";
     if ($sort == "name") {
@@ -135,11 +157,21 @@ if ($scores) {
     } else {
       $html .= "<td class='center'>" . intval($row['fedin']) . "</td>";
     }
+  if($sort == "passavg"){
+    $html .= "<td class='center highlight'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
+  }else{
+    $html .= "<td class='center'>".sprintf("%.2f",floatval($row['fedinavg']))."</td>";
+  }
     if ($sort == "goal") {
       $html .= "<td class='center highlight'>" . intval($row['done']) . "</td>";
     } else {
       $html .= "<td class='center'>" . intval($row['done']) . "</td>";
     }
+  if($sort == "goalavg"){
+    $html .= "<td class='center highlight'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+  }else{
+    $html .= "<td class='center'>".sprintf("%.2f",floatval($row['doneavg']))."</td>";
+  }
 
     if ($sort == "callahan") {
       $html .= "<td class='center highlight'>" . intval($row['callahan']) . "</td>";
@@ -147,12 +179,17 @@ if ($scores) {
       $html .= "<td class='center'>" . intval($row['callahan']) . "</td>";
     }
 
-    if ($sort == "total") {
-      $html .= "<td class='center highlight'>" . intval($row['total']) . "</td></tr>";
-    } else {
-      $html .= "<td class='center'>" . intval($row['total']) . "</td></tr>";
-    }
+  if($sort == "total") {
+    $html .= "<td class='center highlight'>".intval($row['total'])."</td>";
+  }else{
+    $html .= "<td class='center'>".intval($row['total'])."</td>";
   }
+  if($sort == "totalavg") {
+    $html .= "<td class='center highlight'>".sprintf("%.2f",floatval($row['totalavg']))."</td></tr>";
+  }else{
+    $html .= "<td class='center'>".sprintf("%.2f",floatval($row['totalavg']))."</td></tr>";
+  }
+}
 }
 
 $html .= "</table>";

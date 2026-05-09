@@ -1,7 +1,10 @@
 <?php
-include_once $include_prefix . 'lib/image.functions.php';
-include_once $include_prefix . 'lib/url.functions.php';
-include_once $include_prefix . 'lib/common.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/image.functions.php';
+require_once __DIR__ . '/url.functions.php';
+require_once __DIR__ . '/common.functions.php';
 
 /**
  * Set player details.
@@ -44,6 +47,42 @@ function SetPlayer($playerId, $number, $fname, $lname, $accrId, $profileId)
     die("Insufficient rights to edit player");
   }
 }
+
+
+/**
+ * Update player's jersey number
+ * 
+ * @param int $playerId
+ * @param int $number
+ * 
+ */
+function SetPlayerNumber($playerId,$number) {
+  
+  $playerInfo = PlayerInfo($playerId);
+  if (!$playerInfo) {
+    die("Invalid player");
+  }
+
+  if (hasEditPlayersRight($playerInfo['team'])) {
+    $normalized = is_string($number) ? trim($number) : $number;
+    $numberSql = "NULL";
+
+    if ($normalized !== "" && $normalized !== null) {
+      $intNumber = filter_var(
+        $normalized,
+        FILTER_VALIDATE_INT,
+        array("options" => array("min_range" => 0, "max_range" => 99))
+      );
+      if ($intNumber !== false) {
+        $numberSql = (string)$intNumber;
+      }
+    }
+
+    $query = sprintf("UPDATE uo_player SET num=%s WHERE player_id=%d", $numberSql, (int) $playerId);
+    return DBQuery($query);
+  } else { die("Insufficient rights to edit player"); }
+}
+
 
 /**
  * Set profile default jersey number if it is currently empty.
@@ -315,7 +354,7 @@ function PlayerLatestId($profileId)
 
 function PlayerListAll($lastname = "")
 {
-  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname, profile_id
+  $query = "SELECT MAX(player_id) AS player_id, firstname, lastname, num, accreditation_id, profile_id, team, uo_team.name AS teamname
 		FROM uo_player p 
 		LEFT JOIN uo_team ON p.team=team_id
 		WHERE accredited=1";
@@ -325,7 +364,85 @@ function PlayerListAll($lastname = "")
 
   $query .= " GROUP BY profile_id, firstname, lastname ORDER BY lastname, firstname";
 
-  return DBQuery($query);
+	return DBQuery($query);
+}
+
+function SeasonPlayersMissingNumbers($season)
+{
+	return DBQueryToArray(sprintf(
+		"SELECT p.num, p.firstname, p.lastname, t.name AS team, t.team_id AS team_id, s.name AS division
+		FROM uo_player p
+		JOIN uo_team t ON p.team = t.team_id
+		JOIN uo_series s ON t.series = s.series_id
+		WHERE s.season = '%s' AND p.num IS NULL
+		ORDER BY division, team, p.num",
+		DBEscapeString($season)
+	));
+}
+
+function SeasonPlayersDuplicateNumbers($season)
+{
+	return DBQueryToArray(sprintf(
+		"SELECT p.num, p.firstname, p.lastname, t.name AS team, t.team_id AS team_id, s.name AS division
+		FROM uo_player p
+		JOIN (
+		SELECT num, team, COUNT(*) AS duplicates
+		FROM uo_player
+		GROUP BY num, team
+		HAVING COUNT(*) > 1
+		) dups ON p.num = dups.num
+		AND p.team = dups.team
+		JOIN uo_team t ON p.team = t.team_id
+		JOIN uo_series s ON t.series = s.series_id
+		WHERE s.season = '%s'
+		ORDER BY division, team, p.num",
+		DBEscapeString($season)
+	));
+}
+
+function PlayerListAllArray($lastname = "")
+{
+  return DBFetchAllAssoc(PlayerListAll($lastname));
+}
+
+/**
+ * Search player profiles with their latest known team and season context.
+ *
+ * @param string $firstname
+ * @param string $lastname
+ * @param bool $includeEmail
+ * @return array
+ */
+function SearchPlayerProfiles($firstname = "", $lastname = "", $includeEmail = false)
+{
+  $query = "
+    SELECT pp.profile_id, pp.accreditation_id, pp.firstname, pp.lastname, pp.birthdate, pp.gender,
+      pp.num";
+  if ($includeEmail) {
+    $query .= ", pp.email";
+  }
+  $query .= ",
+      p2.teamname, p2.seasoname
+    FROM uo_player_profile pp
+    LEFT JOIN (
+      SELECT p.profile_id, t.name AS teamname, sea.name AS seasoname
+      FROM uo_player p
+      INNER JOIN (
+        SELECT profile_id, MAX(player_id) AS player_id
+        FROM uo_player
+        GROUP BY profile_id
+      ) AS latest ON (latest.player_id=p.player_id AND latest.profile_id=p.profile_id)
+      LEFT JOIN uo_team t ON (p.team=t.team_id)
+      LEFT JOIN uo_series ser ON (ser.series_id=t.series)
+      LEFT JOIN uo_season sea ON (ser.season=sea.season_id)
+    ) AS p2 ON (pp.profile_id=p2.profile_id)
+    LEFT JOIN uo_player AS p1 ON (p1.profile_id=pp.profile_id)
+    WHERE pp.firstname LIKE '%%" . DBEscapeString($firstname) . "%%'
+      AND pp.lastname LIKE '%%" . DBEscapeString($lastname) . "%%'
+    GROUP BY pp.profile_id
+    ORDER BY pp.lastname, pp.firstname";
+
+  return DBQueryToArray($query);
 }
 
 /**
@@ -796,6 +913,41 @@ function SetPlayerProfile($teamId, $playerId, $profile)
   }
 }
 
+// Update names and number on player profile
+function UpdatePlayerProfile($profileId, $first, $last, $num) {
+  $profileId = (int)$profileId;
+  $playerId = (int)PlayerLatestId($profileId);
+  if ($profileId <= 0 || $playerId <= 0) {
+    die('Invalid player profile');
+  }
+  if (!hasEditPlayerProfileRight($playerId)) {
+    die('Insufficient rights to edit player profile');
+  }
+
+  $normalized = is_string($num) ? trim($num) : $num;
+  $numSql = "NULL";
+  if ($normalized !== "" && $normalized !== null) {
+    $intNum = filter_var(
+      $normalized,
+      FILTER_VALIDATE_INT,
+      array("options" => array("min_range" => 0, "max_range" => 99))
+    );
+    if ($intNum !== false) {
+      $numSql = (string)$intNum;
+    }
+  }
+
+  $query = sprintf("UPDATE uo_player_profile 
+    SET firstname = '%s', lastname = '%s', num = %s 
+    WHERE profile_id = %d",
+    DBEscapeString($first),
+    DBEscapeString($last),
+    $numSql,
+    $profileId
+  );
+  DBQuery($query);
+}
+
 /**
  * Add image on player profile.
  * 
@@ -819,8 +971,8 @@ function UploadPlayerImage($playerId)
       return "<p class='warning'>" . _("File is not supported image format") . "</p>";
     }
 
-    if (!extension_loaded("gd")) {
-      return "<p class='warning'>" . _("Missing gd extension for image handling.") . "</p>";
+    if (!CanProcessImages()) {
+      return "<p class='warning'>" . _("Missing image processing support on the server.") . "</p>";
     }
 
     $file_tmp_name = $_FILES['picture']['tmp_name'];
@@ -831,8 +983,12 @@ function UploadPlayerImage($playerId)
       recur_mkdirs($basedir . "thumbs/", 0775);
     }
 
-    ConvertToJpeg($file_tmp_name, $basedir . $imgname);
-    CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 120, 160);
+    if (
+      !ConvertToJpeg($file_tmp_name, $basedir . $imgname)
+      || !CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 120, 160)
+    ) {
+      return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
+    }
 
     //currently removes old image, in future there might be a gallery of images
     RemovePlayerProfileImage($playerId);

@@ -1,17 +1,18 @@
 <?php
-include_once $include_prefix . 'lib/pool.functions.php';
-include_once $include_prefix . 'lib/player.functions.php';
-include_once $include_prefix . 'lib/image.functions.php';
-include_once $include_prefix . 'lib/url.functions.php';
-include_once $include_prefix . 'lib/common.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/pool.functions.php';
+require_once __DIR__ . '/player.functions.php';
+require_once __DIR__ . '/image.functions.php';
+require_once __DIR__ . '/url.functions.php';
+require_once __DIR__ . '/common.functions.php';
 
 function TeamPlayerArray($teamId)
 {
   $ret = array();
-  if ($result = TeamPlayerList($teamId)) {
-    while ($row = mysqli_fetch_assoc($result)) {
-      $ret["" . $row['player_id']] = $row['firstname'] . " " . $row['lastname'];
-    }
+  foreach (TeamPlayerList($teamId) as $row) {
+    $ret["" . $row['player_id']] = $row['firstname'] . " " . $row['lastname'];
   }
   return $ret;
 }
@@ -19,21 +20,18 @@ function TeamPlayerArray($teamId)
 function TeamPlayerAccreditationArray($teamId)
 {
   $ret = array();
-  if ($result = TeamPlayerList($teamId)) {
-    while ($row = mysqli_fetch_assoc($result)) {
-      $ret["" . $row['accreditation_id']] = $row['firstname'] . " " . $row['lastname'];
-    }
+  foreach (TeamPlayerList($teamId) as $row) {
+    $ret["" . $row['accreditation_id']] = $row['firstname'] . " " . $row['lastname'];
   }
   return $ret;
 }
 
 function TeamPlayerList($teamId)
 {
-  $query = sprintf(
-    "SELECT player_id, firstname, lastname, num, accredited, accreditation_id, profile_id FROM uo_player WHERE team = %d ORDER BY lastname ASC, firstname ASC",
-    (int)$teamId
-  );
-  return DBQuery($query);
+  $query = sprintf("SELECT player_id, firstname, lastname, num, accredited, accreditation_id, profile_id, reg_id FROM uo_player WHERE team = %d ORDER BY num ASC, lastname ASC, firstname ASC",
+  (int)$teamId);
+
+  return DBQueryToArray($query);
 }
 
 function TeamName($teamId)
@@ -60,7 +58,8 @@ function TeamInfo($teamId)
 {
   $query = sprintf(
     "SELECT team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
-		team.series, ser.type, ser.season, s.name AS seasonname, team.abbreviation, team.country, c.name AS countryname, c.flagfile
+		team.series, ser.type, ser.season, s.name AS seasonname, team.abbreviation, team.country, c.name AS countryname, c.flagfile,
+	        team.valid
 		FROM uo_team team 
 		LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
 		LEFT JOIN uo_series ser ON (ser.series_id=team.series)
@@ -92,11 +91,14 @@ function Teams($filter = null, $ordering = null)
 
 function TeamListAll($grouped = false, $onlyold = false, $namefilter = "")
 {
-  if ($grouped) {
-    $query = sprintf("SELECT MAX(team.team_id) AS team_id, team.name, ser.name AS seriesname
+  if($grouped){
+    $query = sprintf("SELECT MAX(team.team_id) AS team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
+			COUNT(ser.season) AS seasons, team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
 			FROM uo_team team 
 			LEFT JOIN uo_pool pool ON (team.pool=pool.pool_id) 
 			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+			LEFT JOIN uo_club club ON (team.club=club.club_id)
+			LEFT JOIN uo_country c ON (team.country=c.country_id)
 			LEFT JOIN uo_season season ON (ser.season=season.season_id)");
     if ($onlyold) {
       $query .= sprintf("RIGHT JOIN uo_season_stats ss ON(ser.season=ss.season)");
@@ -110,8 +112,8 @@ function TeamListAll($grouped = false, $onlyold = false, $namefilter = "")
     }
 
     $query .= sprintf(" GROUP BY team.name, ser.name
-			ORDER BY team.name, ser.name");
-  } else {
+			ORDER BY team.name, ser.name, season.name, club.name");
+  }else{
     $query = sprintf("SELECT team.team_id, team.name, team.club, club.name AS clubname, team.pool, pool.name AS poolname, ser.name AS seriesname,
 			team.series, ser.type, ser.season, season.name AS seasonname, team.country, c.flagfile
 			FROM uo_team team 
@@ -147,7 +149,7 @@ function TeamNameListBySeriesType($seriesType)
     DBEscapeString($seriesType)
   );
 
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 function TeamProfile($teamId)
@@ -309,7 +311,7 @@ function TeamSerieGames($teamId, $serieId)
     DBEscapeString($teamId)
   );
 
-  return DBQuery($query);
+  return DBQueryToArray($query);
 }
 
 function TeamPoolCountBYEs($teamId, $poolId)
@@ -346,6 +348,24 @@ function TeamPoolGames($teamId, $poolId)
   );
 
   return DBQuery($query);
+}
+
+function TeamPoolGamesArray($teamId, $poolId)
+{
+  $query = sprintf(
+    "
+			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
+			pp.visitorscore, pp.hasstarted, pp.time
+			FROM uo_game pp 
+			RIGHT JOIN uo_game_pool pps ON(pps.game=pp.game_id)
+			WHERE pps.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
+			ORDER BY pp.time ASC",
+    DBEscapeString($poolId),
+    DBEscapeString($teamId),
+    DBEscapeString($teamId)
+  );
+
+  return DBQueryToArray($query);
 }
 
 function TeamPoolLastGame($teamId, $poolId)
@@ -780,7 +800,8 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     $query = sprintf(
       "
 			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games 
+				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games,
+        COALESCE(t.done/pel.games,0) AS doneavg, COALESCE(s.fedin/pel.games,0) AS fedinavg, COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg
 			FROM uo_player AS p 
 				LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
 					LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 
@@ -805,7 +826,8 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     $query = sprintf(
       "
 			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games 
+				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, 
+        COALESCE(t.done/pel.games,0) AS doneavg, COALESCE(s.fedin/pel.games,0) AS fedinavg, COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg
 			FROM uo_player AS p 
 			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m LEFT JOIN uo_game AS game ON (m.game=game.game_id) 
 				WHERE (game.hometeam=%d or game.visitorteam=%d) AND game.isongoing=0 AND scorer IS NOT NULL GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
@@ -839,6 +861,10 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     case "goal":
       $query .= " ORDER BY done DESC, total DESC, fedin DESC, lastname ASC";
       break;
+      	
+    case "goalavg":
+      $query .= " ORDER BY doneavg DESC, done DESC, total DESC, fedin DESC, lastname ASC";
+      break;
 
     case "callahan":
       $query .= " ORDER BY callahan DESC, total DESC, lastname ASC";
@@ -846,6 +872,10 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 
     case "pass":
       $query .= " ORDER BY fedin DESC, total DESC, done DESC, lastname ASC";
+      break;
+
+    case "passavg":
+      $query .= " ORDER BY fedinavg DESC, fedin DESC, total DESC, done DESC, lastname ASC";
       break;
 
     case "games":
@@ -859,6 +889,14 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
     case "name":
       $query .= " ORDER BY firstname,lastname ASC, total DESC, done DESC, fedin DESC";
       break;
+      	
+    case "num":
+      $query .= " ORDER BY num,firstname,lastname ASC, total DESC, done DESC, fedin DESC";
+      break;
+
+    case "totalavg":
+      $query .= " ORDER BY totalavg DESC, total DESC, done DESC, fedin DESC, lastname ASC";
+      break;
 
     default:
       $query .= " ORDER BY total DESC, done DESC, fedin DESC, lastname ASC";
@@ -870,6 +908,11 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
   }
 
   return DBQuery($query);
+}
+
+function TeamScoreBoardArray($teamId, $pools, $sorting, $limit)
+{
+  return DBFetchAllAssoc(TeamScoreBoard($teamId, $pools, $sorting, $limit));
 }
 
 
@@ -1007,8 +1050,8 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting)
   $query = sprintf(
     "
 		SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore,
-  			pp.hasstarted, ser.season AS season_id, ps.name, 
-			pp.game_id, ps.pool_id, s.name AS seasonname 
+  			pp.hasstarted, ser.season AS season_id, ps.name,
+			pp.game_id, ps.pool_id, s.name AS seasonname, pp.forfeit
 		FROM uo_game pp 
 		LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool) 
 		LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
@@ -1043,6 +1086,11 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting)
       break;
   }
   return DBQuery($query);
+}
+
+function GetAllPlayedGamesArray($team1, $team2, $seriestype, $sorting)
+{
+  return DBFetchAllAssoc(GetAllPlayedGames($team1, $team2, $seriestype, $sorting));
 }
 
 function TeamResponsibleGames($teamId, $placeId)
@@ -1081,8 +1129,7 @@ function TeamGetTeamsByName($teamname)
 function TeamCopyRoster($copyfrom, $copyto)
 {
   if (hasEditPlayersRight($copyto)) {
-    $team_players = TeamPlayerList($copyfrom);
-    while ($player = mysqli_fetch_assoc($team_players)) {
+    foreach (TeamPlayerList($copyfrom) as $player) {
       $query = sprintf(
         "INSERT INTO uo_player(firstname, lastname, profile_id, accreditation_id, team, num)
       			VALUES ('%s','%s',%d,'%s',%d,%d)",
@@ -1102,6 +1149,7 @@ function TeamCopyRoster($copyfrom, $copyto)
 
 function GetTeamPlayers()
 {
+  $search = "0";
   if (isset($_GET['search']) || isset($_GET['query']) || isset($_GET['q'])) {
     if (isset($_GET['search']))
       $search = $_GET['search'];
@@ -1141,8 +1189,7 @@ function RemovePlayer($playerId)
   }
 }
 
-function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
-{
+function AddPlayer($teamId, $firstname, $lastname, $profileId, $num=-1, $regId=NULL) {
   if (hasEditPlayersRight($teamId)) {
 
     if (!empty($profileId)) {
@@ -1176,6 +1223,9 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
       $query .= ",num";
     }
 
+    if ($regId !== null && $regId !== '') {
+      $query .= ", reg_id";
+    }
     $query .= ") ";
     $query .= sprintf(
       "VALUES ('%s', '%s', %d, '%s', %d",
@@ -1188,6 +1238,9 @@ function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1)
 
     if ($num >= 0) {
       $query .= sprintf(",%d", (int)$num);
+    }
+    if ($regId !== null && $regId !== '') {
+      $query .= sprintf(", %d", (int)$regId);
     }
     $query .= sprintf(")");
     $playerId = DBQueryInsert($query);
@@ -1286,8 +1339,8 @@ function UploadTeamImage($teamId)
       return "<p class='warning'>" . _("File is not supported image format") . "</p>";
     }
 
-    if (!extension_loaded("gd")) {
-      return "<p class='warning'>" . _("Missing gd extension for image handling.") . "</p>";
+    if (!CanProcessImages()) {
+      return "<p class='warning'>" . _("Missing image processing support on the server.") . "</p>";
     }
 
     $file_tmp_name = $_FILES['picture']['tmp_name'];
@@ -1298,8 +1351,12 @@ function UploadTeamImage($teamId)
       recur_mkdirs($basedir . "thumbs/", 0775);
     }
 
-    ConvertToJpeg($file_tmp_name, $basedir . $imgname);
-    CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 320, 240);
+    if (
+      !ConvertToJpeg($file_tmp_name, $basedir . $imgname)
+      || !CreateThumb($basedir . $imgname, $basedir . "thumbs/" . $imgname, 320, 240)
+    ) {
+      return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
+    }
 
     //currently removes old image, in future there might be a gallery of images
     RemoveTeamProfileImage($teamId);
@@ -1365,22 +1422,28 @@ function AddTeam($params)
 {
   if (hasEditTeamsRight($params['series'])) {
     $poolValue = !empty($params['pool']) ? (int)$params['pool'] : "NULL";
+    $regIdValue = (isset($params['reg_id']) && $params['reg_id'] !== '' && $params['reg_id'] !== null)
+      ? (string)(int)$params['reg_id']
+      : "NULL";
     $query = sprintf(
       "
-			INSERT INTO uo_team
-			(name, pool, uo_team.rank, valid, series) 
-			VALUES ('%s', %s, '%s', '%s', '%s')",
+				INSERT INTO uo_team
+				(name, pool, uo_team.rank, valid, series, sotg_token, reg_id) 
+				VALUES ('%s', %s, %d, %d, %d, MD5(RAND()), %s)",
       DBEscapeString($params['name']),
       $poolValue,
-      DBEscapeString($params['rank']),
-      DBEscapeString($params['valid']),
-      DBEscapeString($params['series'])
+      (int)$params['rank'],
+      (int)$params['valid'],
+      (int)$params['series'],
+      $regIdValue
     );
 
     $teamId = DBQueryInsert($query);
 
-    if (!empty($params['country'])) {
+    if ((int)$params['country'] > 0) {
       DBQuery("UPDATE uo_team SET country=" . (int)$params['country'] . " WHERE team_id=$teamId");
+    } elseif ((int)$params['country'] === -1) {
+      DBQuery("UPDATE uo_team SET country=NULL WHERE team_id=$teamId");
     }
     if (!empty($params['club'])) {
       DBQuery("UPDATE uo_team SET club=" . (int)$params['club'] . " WHERE team_id=$teamId");
@@ -1418,8 +1481,10 @@ function SetTeam($params)
 
     $result = DBQuery($query);
 
-    if (!empty($params['country'])) {
+    if ((int)$params['country'] > 0) {
       DBQuery("UPDATE uo_team SET country=" . (int)$params['country'] . " WHERE team_id=" . (int)$params['team_id']);
+    } elseif ((int)$params['country'] === -1) {
+      DBQuery("UPDATE uo_team SET country=NULL WHERE team_id=" . (int)$params['team_id']);
     }
     if (!empty($params['club'])) {
       DBQuery("UPDATE uo_team SET club=" . (int)$params['club'] . " WHERE team_id=" . (int)$params['team_id']);
@@ -1553,6 +1618,10 @@ function DeleteTeam($teamId)
 {
   $series = getTeamSeries($teamId);
   if (hasEditTeamsRight($series)) {
+    if (!CanDeleteTeam($teamId)) {
+      return false;
+    }
+
     Log2("team", "delete", TeamName($teamId));
     $query = sprintf(
       "DELETE FROM uo_userproperties WHERE value='teamadmin:%d'",
@@ -1579,6 +1648,18 @@ function DeleteTeam($teamId)
   }
 }
 
+function TeamHasConfirmedEnrollment($teamId)
+{
+  $query = sprintf(
+    "SELECT COUNT(*) FROM uo_enrolledteam enrol
+		LEFT JOIN uo_team team ON (team.series=enrol.series AND team.name=enrol.name)
+		WHERE team.team_id=%d AND enrol.status=1",
+    (int)$teamId
+  );
+
+  return DBQueryToValue($query) > 0;
+}
+
 function CanDeleteTeam($teamId)
 {
   $query = sprintf(
@@ -1593,7 +1674,7 @@ function CanDeleteTeam($teamId)
       (int)$teamId
     );
     $count = DBQueryToValue($query);
-    return $count == 0;
+    return $count == 0 && !TeamHasConfirmedEnrollment($teamId);
   } else return false;
 }
 
@@ -1653,7 +1734,7 @@ function TeamsToCsv($season, $separator)
         LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
         GROUP BY ssc.game_id, ssc.team_id
       ) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
-			WHERE g.isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k
+			WHERE g.isongoing=0 AND gp1.timetable=1 AND g.show_spirit=1 GROUP BY hometeam) AS k
 		ON (j.team_id=k.hometeam)
 		LEFT JOIN (SELECT COUNT(*) AS games, 
   			COUNT(g.homescore<g.visitorscore OR NULL) as wins, 
@@ -1668,7 +1749,7 @@ function TeamsToCsv($season, $separator)
         LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
         GROUP BY ssc.game_id, ssc.team_id
       ) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
-			WHERE g.isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v
+			WHERE g.isongoing=0 AND gp2.timetable=1 AND g.show_spirit=1 GROUP BY visitorteam) AS v
 			ON (j.team_id=v.visitorteam)
 		LEFT JOIN uo_series ser ON(ser.series_id=j.series)
 		LEFT JOIN uo_pool ps ON (j.pool=ps.pool_id) 		
@@ -1682,4 +1763,11 @@ function TeamsToCsv($season, $separator)
 
   $result = DBQuery($query);
   return ResultsetToCsv($result, $separator);
+}
+
+function TeamAbbreviation($teamId) {
+  // return team's abbreviation
+
+  $query = sprintf("SELECT abbreviation FROM uo_team WHERE team_id=%d",$teamId);
+  return DBQueryToValue($query);
 }

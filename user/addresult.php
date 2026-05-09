@@ -7,7 +7,17 @@ include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 $html = "";
 $html2 = "";
+
+if (empty($_GET["game"])) {
+	showPage(_("Result"), "<p class='warning'>" . _("Game not found") . ".</p>");
+	return;
+}
+
 $gameId = intval($_GET["game"]);
+
+if (!hasEditGameEventsRight($gameId))
+  die('Insufficient rights to edit game');
+
 $game_result = GameInfo($gameId);
 $seasoninfo = SeasonInfo($game_result['season']);
 
@@ -52,12 +62,15 @@ contentStart();
 //content
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
-$menutabs[_("Score sheet")] = "?view=user/addscoresheet&game=$gameId";
-if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {
-	$menutabs[_("Spirit points")] = "?view=user/addspirit&game=$gameId";
+$menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
+if (!empty($seasoninfo['spiritmode'])) {
+	$spiritUrl = SpiritEntryUrl($gameId);
+	if (!empty($spiritUrl)) {
+		$menutabs[_("Spirit score")] = $spiritUrl;
+	}
 }
 if (ShowDefenseStats()) {
-	$menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId";
+	$menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 
 
@@ -82,23 +95,34 @@ $html .= "<tr>
 
 if ($game_result['homevalid'] == 2) {
 	$poolInfo = PoolInfo($game_result['pool']);
-	$html .= "<p>" . "The home team is the BYE team. You should use the suggested result: " . $poolInfo['forfeitagainst'] . " - " . $poolInfo['forfeitscore'] . "</p>";
+	$html .= "<p>" . sprintf(
+		_("The home team is the BYE team. You should use the suggested result: %s - %s"),
+		$poolInfo['forfeitagainst'],
+		$poolInfo['forfeitscore']
+	) . "</p>";
 } elseif ($game_result['visitorvalid'] == 2) {
 	$poolInfo = PoolInfo($game_result['pool']);
-	$html .= "<p>" . "The visitor team is the BYE team. You should use the suggested result: " . $poolInfo['forfeitscore'] . " - " . $poolInfo['forfeitagainst'] . "</p>";
+	$html .= "<p>" . sprintf(
+		_("The away team is the BYE team. You should use the suggested result: %s - %s"),
+		$poolInfo['forfeitscore'],
+		$poolInfo['forfeitagainst']
+	) . "</p>";
 }
 
-$html .= "<p>" . _("If game ongoing, update as current result: ") . "    
+$html .= "<p>" . _("If game ongoing, update as current result: ") . "
 	<input class='button' type='submit' name='update' value='" . _("update") . "'/></p>";
 
-$html .= "<p>" . _("If this is all wrong, clear the result: ") . "    
+$html .= "<p>" . _("If this is all wrong, clear the result: ") . "
 	<input class='button' type='submit' name='clear' value='" . _("Clear") . "'/></p>";
 
 $html .= $html2;
 
-$html .= "<p>    
+$html .= "<p>
 		<input class='button' type='submit' name='save' value='" . _("Save as final result") . "'/>
-	</p></form>";
+	</p>";
+
+
+$html .= "</form>";
 
 
 echo $html;

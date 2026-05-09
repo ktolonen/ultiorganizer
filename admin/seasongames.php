@@ -20,6 +20,11 @@ $seasoninfo = SeasonInfo($season);
 
 $title = utf8entities(SeasonName($season)) . ": " . _("Games");
 
+if (!hasSeasonSeriesPageAccess($season, $series_id)) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 if ($series_id <= 0) {
   showPage($title, "<p>" . _("No divisions defined. Define at least one division first.") . "</p>");
   die;
@@ -65,8 +70,8 @@ if (!empty($_POST['remove_x'])) {
 
   //run some test to for safe deletion
   $goals = GameAllGoals($id);
-  if (mysqli_num_rows($goals)) {
-    $html .= "<p class='warning'>" . _("Game has") . " " . mysqli_num_rows($goals) . " " . _("goals") . ". " . _("Goals must be removed before removing the team") . ".</p>";
+  if (count($goals)) {
+    $html .= "<p class='warning'>" . _("Game has") . " " . count($goals) . " " . _("goals") . ". " . _("Goals must be removed before removing the team") . ".</p>";
     $ok = false;
   }
   if ($ok) {
@@ -140,6 +145,13 @@ if ($mass) {
     ++$tab . "'>" . _("Mass input") . "</a></td></tr></table>";
 }
 
+$html .= "<p style='text-align: right;'>";
+$html .= "<a class='scoresheetslink' href='?view=user/pdfscoresheet&amp;blank&amp;season=" . $season . "' target='_blank' rel='noopener'>" . _("Print blank scoresheet") . "</a>";
+$html .= "<span style='margin: 0 1ex;'></span>";
+$html .= "<a class='scoresheetslink' href='?view=user/pdfscoresheet&amp;group=all&amp;season=" . $season . "' target='_blank' rel='noopener'>" . _("Print all scoresheets") . "</a>";
+$html .= "</p>";
+
+
 $html .= "<form method='post' action='?view=admin/seasongames&amp;season=$season&amp;group=$group'>";
 
 $pools = SeriesPools($series_id);
@@ -161,8 +173,21 @@ foreach ($pools as $pool) {
   $html .= "<th class='right' colspan='3' ><a class='thlink' href='?view=user/pdfscoresheet&amp;season=$season&amp;pool=" . $pool['pool_id'] . "' target='_blank' rel='noopener'>" . _("Print scoresheets") . "</a></th>";
   $html .= "</tr>";
 
-  while ($game = mysqli_fetch_assoc($games)) {
+  foreach ($games as $game) {
     $i = $game['game_id'];
+    $gameMeta = array();
+
+    if (!empty($game['gamename'])) {
+      $gameMeta[] = utf8entities(U_($game['gamename']));
+    }
+
+    if (intval($game['islive']) > 0) {
+      $gameMeta[] = _("Live");
+    }
+
+    if ($game['isongoing']) {
+      $gameMeta[] = _("Ongoing");
+    }
 
     if (GameHasStarted($game)) {
       if ($_SESSION['hide_played_games']) {
@@ -174,7 +199,7 @@ foreach ($pools as $pool) {
     $html .= "<tr class='admintablerow'>";
 
     $html .= "<td style='width:15%'>" . ShortDate($game['starttime']) . " " . DefHourFormat($game['time']) . "<br/>";
-    $html .= utf8entities($game['placename']) . " " . utf8entities($game['fieldname']) . "</td>";
+    $html .= utf8entities(ReservationPlaceText($game['placename'], $game['fieldname'])) . "</td>";
 
     if ($game['hometeam']) {
       $html .= "<td  style='width:20%'>" . utf8entities(TeamName($game['hometeam'])) . "</td>";
@@ -194,25 +219,35 @@ foreach ($pools as $pool) {
     if ($_SESSION['massinput']) {
       $html .= "<td colspan='2'><input type='hidden' id='scoreId" . $i . "' name='scoreId[]' value='$i'/>
           <input type='text' size='3' maxlength='4' style='width:5ex' value='" . (is_null($game['homescore']) ? "" : intval($game['homescore'])) . "' id='homescore$i' name='homescore[]' oninput='confirmLeave(this, true, null);' tabindex='" . ++$tab . "'/>
-          - <input type='text' size='3' maxlength='5' style='width:5ex'value='" . (is_null($game['visitorscore']) ? "" : intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' oninput='confirmLeave(this, true, null);' tabindex='" . ++$tab . "'/></td>";
+          - <input type='text' size='3' maxlength='5' style='width:5ex'value='" . (is_null($game['visitorscore']) ? "" : intval($game['visitorscore'])) . "' id='visitorscore$i' name='visitorscore[]' oninput='confirmLeave(this, true, null);' tabindex='" . ++$tab . "'/>"
+        . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+        . "</td>";
     } else {
       if (GameHasStarted($game)) {
-        if ($game['isongoing'])
-          $html .= "<td><em>" . intval($game['homescore']) . "</em> - <em>" . intval($game['visitorscore']) . "</em></td>";
-        else
-          $html .= "<td>" . intval($game['homescore']) . " - " . intval($game['visitorscore']) . "</td>";
+        if ($game['isongoing']) {
+          $html .= "<td><em>" . intval($game['homescore']) . "</em> - <em>" . intval($game['visitorscore']) . "</em>"
+            . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+            . "</td>";
+        } else {
+          $html .= "<td>" . intval($game['homescore']) . " - " . intval($game['visitorscore'])
+            . (!empty($game['forfeit']) ? " <span class='forfeit-mark'>(" . _("forfeit") . ")</span>" : "")
+            . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+            . "</td>";
+        }
       } else {
-        $html .= "<td>? - ?</td>";
+        $html .= "<td>? - ?"
+          . (count($gameMeta) ? "<br/><span class='lowlight'>" . implode(" | ", $gameMeta) . "</span>" : "")
+          . "</td>";
       }
       if ($game['hometeam'] && $game['visitorteam']) {
         $html .= "<td class='right'><a href='?view=user/addresult&amp;game=" . $game['game_id'] . "'>" . _("Result") . "</a> | ";
         $html .= "<a href='?view=user/addplayerlists&amp;game=" . $game['game_id'] . "'>" . _("Players") . "</a> | ";
         $html .= "<a href='?view=user/addscoresheet&amp;game=" . $game['game_id'] . "'>" . _("Scoresheet") . "</a>";
         if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0)) {
-          $html .= " | <a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Spirit") . "</a>";
+          $html .= " | <a href='?view=user/addspirit&amp;game=" . $game['game_id'] . "'>" . _("Spirit score") . "</a>";
         }
         if (ShowDefenseStats()) {
-          $html .= " | <a href='?view=user/adddefensesheet&amp;game=" . $game['game_id'] . "'>" . _("Defensesheet") . "</a>";
+          $html .= " | <a href='?view=user/adddefensesheet&amp;game=" . $game['game_id'] . "'>" . _("Defence sheet") . "</a>";
         }
         $html .= "</td>";
       } else {

@@ -1,0 +1,4 @@
+interface:
+  display_name: "Review User Language"
+  short_description: "Review user-facing wording for project spelling and terminology consistency"
+  default_prompt: "Review the changed Ultiorganizer content for project spelling, grammar, gettext-backed wording, terminology correctness, and page-level consistency. Use WFDF rules as the spelling source of truth where applicable. Check user-modified files first, prioritize user-facing strings, and return findings only under Errors and Warnings without editing files."

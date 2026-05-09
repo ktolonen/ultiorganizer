@@ -49,7 +49,7 @@ if (!empty($_POST['remove_x']) && !empty($_POST['hiddenDeleteId'])) {
 	$cur = CurrentSeason();
 
 	if ($cur == $id) {
-		$html .= "<p class='warning'>" . _("You can not remove a current event") . ".</p>";
+		$html .= "<p class='warning'>" . _("You cannot remove a current event") . ".</p>";
 		$ok = false;
 	}
 	if ($ok) {
@@ -83,7 +83,7 @@ contentStart();
 
 $html .=  "<form method='post' action='?view=admin/seasons'>";
 
-$html .=  "<h2>" . _("Seasons/Tournaments") . "</h2>\n";
+$html .=  "<h2>" . _("Events") . "</h2>\n";
 
 $html .=  "<table style='white-space: nowrap;width:90%' border='0' cellpadding='4px'>\n";
 
@@ -94,6 +94,7 @@ $html .=  "<tr>
 	<th>" . _("Ends") . "</th>
 	<th>" . _("Enrollment") . "</th>
 	<th>" . _("Visible") . "</th>
+	<th>" . _("Maintenance") . "</th>
 	<th>" . _("API") . "</th>
 	<th>" . _("Operations") . "</th>
 	<th></th>
@@ -101,7 +102,7 @@ $html .=  "<tr>
 
 $seasons = Seasons();
 
-while ($row = mysqli_fetch_assoc($seasons)) {
+foreach ($seasons as $row) {
 	$info = SeasonInfo($row['season_id']);
 
 	$html .=  "<tr>";
@@ -127,6 +128,9 @@ while ($row = mysqli_fetch_assoc($seasons)) {
 
 	$visible = intval($info['iscurrent']) ? _("yes") : _("no");
 	$html .=  "<td>" . $visible . "</td>";
+
+	$maintenance = !empty($info['maintenance_mode']) ? _("yes") : _("no");
+	$html .=  "<td>" . $maintenance . "</td>";
 
 	$apiVisible = !empty($info['api_public']) ? _("yes") : _("no");
 	$html .=  "<td>" . $apiVisible . "</td>";

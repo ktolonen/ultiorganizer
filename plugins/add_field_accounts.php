@@ -1,4 +1,7 @@
 <?php
+include_once __DIR__ . '/auth.php';
+pluginRequireAdmin(__FILE__);
+
 ob_start();
 ?>
 <!--
@@ -77,7 +80,7 @@ $html .= "<p>" . ("Create field specific user accounts on select event") . ": <s
 
 $seasons = Seasons();
 
-while ($row = mysqli_fetch_assoc($seasons)) {
+foreach ($seasons as $row) {
 	$html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 }
 

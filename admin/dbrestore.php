@@ -9,7 +9,7 @@ if (!isSuperAdmin()) {
 }
 
 if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != "enabled") {
-	$html = "<p>" . _("Direct database access is disabled. To enable it, define(ENABLE_ADMIN_DB_ACCESS,'enabled') in the config.inc.php file") . "</p>";
+	$html = "<p>" . _("Direct database access is disabled. To enable it, define ENABLE_ADMIN_DB_ACCESS as 'enabled' in the config.inc.php file.") . "</p>";
 } else {
 	if (isset($_POST['restore']) && isSuperAdmin()) {
 			if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
@@ -26,20 +26,8 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
 				}
 
 				if (is_array($lines)) {
-					$templine = '';
 					set_time_limit(300);
-
-					foreach ($lines as $line) {
-						// Skip it if it's a comment
-						if (substr($line, 0, 2) == '--' || $line == '')
-							continue;
-
-						$templine .= $line;
-						if (substr(trim($line), -1, 1) == ';') {
-							DBQuery($templine);
-							$templine = '';
-						}
-					}
+					DBReplaySqlLines($lines);
 					unlink($_FILES['restorefile']['tmp_name']);
 					unset($_SESSION['dbversion']);
 					$html .= "<p>" . _("Restore") . "</p>";

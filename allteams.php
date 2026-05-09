@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('allteams');
+
 include_once 'lib/team.functions.php';
 
 $title = _("All teams");

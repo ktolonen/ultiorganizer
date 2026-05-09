@@ -15,6 +15,11 @@ $series_id = CurrentSeries($season);
 
 $title = utf8entities(SeasonName($season)) . ": " . _("Pool standings");
 
+if (!hasSeasonSeriesPageAccess($season, $series_id)) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 if ($series_id <= 0) {
   showPage($title, "<p>" . _("No divisions defined. Define at least one division first.") . "</p>");
   die;
@@ -335,6 +340,15 @@ function poolLink($id, $name)
   return "<a href='#P" . intval($id) . "'>" . utf8entities($name) . "</a>";
 }
 
+function showSpiritAverageColumn()
+{
+  global $seasoninfo;
+  if (empty($seasoninfo) || !is_array($seasoninfo)) {
+    return false;
+  }
+  return !empty($seasoninfo['spiritmode']);
+}
+
 function swissHeading($poolId, $poolinfo, $editbuttons)
 {
   $html = "";
@@ -345,7 +359,10 @@ function swissHeading($poolId, $poolinfo, $editbuttons)
   $html .= "<th class='center'>" . _("Victory Points") . "</th>";
   $html .= "<th class='center'>" . _("Opponent VPs") . "</th>";
   $html .= "<th class='center'>" . _("Margin") . "</th>";
-  $html .= "<th class='center'>" . _("Goals") . "</th>";
+  $html .= "<th class='center'>"._("Goals scored")."</th>";
+  if (showSpiritAverageColumn()) {
+    $html .= "<th class='center'>"._("Spirit score avg.")."</th>";
+  }
   $html .= "<th></th></tr>";
   return $html;
 }
@@ -354,6 +371,7 @@ function swissRow($poolId, $poolinfo, $row, $teamNum)
 {
   $html = "";
   $vp = TeamVictoryPointsByPool($poolId, $row['team_id']);
+  $spirit = TeamSpiritTotalByPool($poolId, $row['team_id']);
 
   $html .= "<tr>";
   $html .= "<td>" . editField("seed", $teamNum, $row['team_id'], intval($row['Rank'])) . "</td>";
@@ -365,6 +383,9 @@ function swissRow($poolId, $poolinfo, $row, $teamNum)
   $html .= "<td class='center'>" . intval($vp['oppvp']) . "</td>";
   $html .= "<td class='center'>" . intval($vp['margin']) . "</td>";
   $html .= "<td class='center'>" . intval($vp['score']) . "</td>";
+          if (showSpiritAverageColumn()) {
+          $html .= "<td class='center'>". (number_format(SafeDivide(floatval($spirit['spirit']), intval($vp['games'])),1)) ."</td>";
+        }
   if (CanDeleteTeamFromPool($poolId, $row['team_id'])) {
     $html .= "<td class='center' style='width:20px;'>
               <input class='deletebutton' type='image' src='images/remove.png' alt='X' title='" . _("delete team from pool") . "' name='remove' 
@@ -388,8 +409,12 @@ function regularHeading($poolId, $poolinfo, $editbuttons)
     $html .= "<th class='center'>" . _("Draws") . "</th>";
   $html .= "<th class='center'>" . _("Losses") . "</th>";
   $html .= "<th class='center'>" . _("Goals for") . "</th>";
-  $html .= "<th class='center'>" . _("against") . "</th>";
-  $html .= "<th class='center'>" . _("diff.") . "</th>";
+      $html .= "<th class='center'>"._("Goals against")."</th>";
+      $html .= "<th class='center'>"._("Goal diff")."</th>";
+      if (showSpiritAverageColumn()) {
+        $html .= "<th class='center'>"._("Spirit score avg.")."</th>";
+      }
+
   $html .= "<th></th></tr>";
   return $html;
 }
@@ -399,6 +424,7 @@ function regularRow($poolId, $poolinfo, $row, $teamNum)
   $html = "";
   $stats = TeamStatsByPool($poolId, $row['team_id']);
   $points = TeamPointsByPool($poolId, $row['team_id']);
+  $spirit = TeamSpiritTotalByPool($poolId, $row['team_id']);
 
   $html .= "<tr>";
   $html .= "<td>" . editField("seed", $teamNum, $row['team_id'], intval($row['Rank'])) . "</td>";
@@ -413,6 +439,9 @@ function regularRow($poolId, $poolinfo, $row, $teamNum)
   $html .= "<td class='center'>" . intval($points['scores']) . "</td>";
   $html .= "<td class='center'>" . intval($points['against']) . "</td>";
   $html .= "<td class='center'>" . ((intval($points['scores']) - intval($points['against']))) . "</td>";
+          if (showSpiritAverageColumn()) {
+          $html .= "<td class='center'>".(number_format(SafeDivide(floatval($spirit['spirit']), intval($stats['games'])),1))."</td>";
+        }
   if (CanDeleteTeamFromPool($poolId, $row['team_id'])) {
     $html .= "<td class='center' style='width:20px;'>
               <input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' title='" . _("delete team from pool") . "'

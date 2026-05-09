@@ -5,9 +5,45 @@ include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
 
+function PlayerRoleSelectionValue($isCaptain, $isSpiritCaptain)
+{
+  if ($isCaptain && $isSpiritCaptain) {
+    return "both";
+  }
+  if ($isCaptain) {
+    return "captain";
+  }
+  if ($isSpiritCaptain) {
+    return "spirit_captain";
+  }
+
+  return "";
+}
+
+function PlayerRoleSelectedIds($postedRoles, $selectedValue)
+{
+  $playerIds = array();
+  foreach ((array)$postedRoles as $playerId => $role) {
+    if ($role === $selectedValue || ($selectedValue !== "" && $role === "both")) {
+      $playerIds[] = (int)$playerId;
+    }
+  }
+
+  return $playerIds;
+}
+
+if (empty($_GET["game"])) {
+	showPage(_("Rosters"), "<p class='warning'>" . _("Game not found") . ".</p>");
+	return;
+}
+
 $LAYOUT_ID = ADDPLAYERLISTS;
 $title = _("Rosters");
 $gameId = intval($_GET["game"]);
+
+if (!hasEditGameEventsRight($gameId))
+  die('Insufficient rights to edit game');
+
 $game_result = GameResult($gameId);
 
 $season = GameSeason($gameId);
@@ -151,6 +187,10 @@ if (!empty($_POST['save'])) {
       }
     }
   }
+  GameSetCaptains($gameId, $game_result['hometeam'], PlayerRoleSelectedIds($_POST['homerole'] ?? array(), "captain"));
+  GameSetCaptains($gameId, $game_result['visitorteam'], PlayerRoleSelectedIds($_POST['awayrole'] ?? array(), "captain"));
+  GameSetSpiritCaptains($gameId, $game_result['hometeam'], PlayerRoleSelectedIds($_POST['homerole'] ?? array(), "spirit_captain"));
+  GameSetSpiritCaptains($gameId, $game_result['visitorteam'], PlayerRoleSelectedIds($_POST['awayrole'] ?? array(), "spirit_captain"));
   $html2 .= "<p>" . _("Player lists saved!") . "</p>";
 }
 
@@ -159,25 +199,32 @@ pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
 ?>
 <script type="text/javascript">
-  function toggleField(checkbox, fieldid) {
-    var input = document.getElementById(fieldid);
-    input.disabled = !checkbox.checked;
+  function toggleField(checkbox, fieldids) {
+    var ids = fieldids.split(",");
+    for (var i = 0; i < ids.length; i++) {
+      var input = document.getElementById(ids[i]);
+      if (input) {
+        input.disabled = !checkbox.checked;
+        if (!checkbox.checked && input.type == "checkbox") {
+          input.checked = false;
+        }
+      }
+    }
   }
 
   function checkAll(field) {
     var div = document.getElementById(field);
-
     var elems = div.getElementsByTagName("input");
-
-    for (var i = 1; i < elems.length; i++) {
-      switch (elems[i].type) {
-        case "checkbox":
-          elems[i].checked = !elems[i].checked;
-          break;
-        case "text":
-          elems[i].disabled = !elems[i].disabled;
-          break;
+    var playedCheckboxes = [];
+    for (var i = 0; i < elems.length; i++) {
+      if (elems[i].className.indexOf("played-toggle") !== -1) {
+        playedCheckboxes.push(elems[i]);
       }
+    }
+
+    for (var j = 0; j < playedCheckboxes.length; j++) {
+      playedCheckboxes[j].checked = !playedCheckboxes[j].checked;
+      toggleField(playedCheckboxes[j], playedCheckboxes[j].getAttribute("data-fields"));
     }
   }
 </script>
@@ -188,12 +235,15 @@ contentStart();
 
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
-$menutabs[_("Score sheet")] = "?view=user/addscoresheet&game=$gameId";
-if ((isset($seasoninfo['spiritmode']) && $seasoninfo['spiritmode'] > 0)  && isSeasonAdmin($seasoninfo['season_id'])) {
-  $menutabs[_("Spirit points")] = "?view=user/addspirit&game=$gameId";
+$menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
+if (!empty($seasoninfo['spiritmode'])) {
+  $spiritUrl = SpiritEntryUrl($gameId);
+  if (!empty($spiritUrl)) {
+    $menutabs[_("Spirit score")] = $spiritUrl;
+  }
 }
 if (ShowDefenseStats()) {
-  $menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId";
+  $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
 }
 
 pageMenu($menutabs);
@@ -207,43 +257,63 @@ $html .= "<table width='600px'><tr><td valign='top' style='width:45%'>\n";
 $html .= "<table width='100%' cellspacing='0' cellpadding='0' border='0'>\n";
 $html .= "<tr style='height=20'><td align='center'><b>";
 $html .= utf8entities($game_result['hometeamname']) . "</b></td></tr>\n";
-$html .= "</table><div id='home'><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-$html .= "<tr><th class='home'>" . _("Name") . "</th><th class='home right' style='white-space: nowrap' >" . _("Played") . " <input type='checkbox' onclick='checkAll(\"home\");'/></th><th class='home'>" . _("Jersey#") . "</th></tr>\n";
+$html .= "</table><div id='home'><table width='100%' cellspacing='0' cellpadding='2' border='0' style='table-layout: fixed'>";
+$html .= "<tr><th class='home center' style='width:32px'><div style='line-height:1.05; text-align:center'>" . _("In") . "<br/><input type='checkbox' style='margin: 1px 0 0 0; vertical-align: middle' onclick='checkAll(\"home\");'/></div></th><th class='home'>" . _("Name") . "</th><th class='home center' style='width:44px'>" . _("Jersey") . "</th><th class='home center' style='width:50px'>" . _("Info") . "</th></tr>\n";
 
 $played_players = GamePlayers($gameId, $game_result['hometeam']);
+$homeCaptains = array_flip(GameCaptains($gameId, $game_result['hometeam']));
+$homeSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['hometeam']));
 
 $i = 0;
-while ($player = mysqli_fetch_assoc($home_playerlist)) {
+foreach ($home_playerlist as $player) {
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
+  $playerId = (int)$player['player_id'];
+  $numberFieldId = "p" . $playerId;
+  $roleFieldId = "homerole" . $playerId;
+  $fieldIds = $numberFieldId . "," . $roleFieldId;
+  $selectedRole = PlayerRoleSelectionValue(isset($homeCaptains[$playerId]), isset($homeSpiritCaptains[$playerId]));
   $html .= "<tr>";
-  $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-  $number = PlayerNumber($player['player_id'], $gameId);
+  $number = PlayerNumber($playerId, $gameId);
   if ($number < 0) {
     $number = "";
   }
 
   $found = false;
-  foreach ($played_players as $playerId) {
-    if ($player['player_id'] == $playerId['player_id']) {
+  foreach ($played_players as $playedPlayer) {
+    if ($player['player_id'] == $playedPlayer['player_id']) {
       $found = true;
       break;
     }
   }
 
   if ($found) {
-    $html .= "<td class='center'>
-			<input onchange=\"toggleField(this,'p" . $player['player_id'] . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($player['player_id']) . "' checked='checked'/></td>";
-    $html .= "<td  class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $player['player_id'] . "' id='p" . $player['player_id'] . "' style='width: 20px' maxlength='3' size='3' value='$number'/></td>";
+    $html .= "<td class='center' style='width:32px'>
+			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
+    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+    $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
+    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "'>";
+    $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
+    $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
+    $html .= "<option value='spirit_captain'" . ($selectedRole === "spirit_captain" ? " selected='selected'" : "") . ">" . _("SC") . "</option>";
+    $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
+    $html .= "</select></td>";
   } else {
-    $html .= "<td class='center'>
-			<input onchange=\"toggleField(this,'p" . $player['player_id'] . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($player['player_id']) . "'/></td>";
-    $html .= "<td class='left'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $player['player_id'] . "' id='p" . $player['player_id'] . "' style='width: 20px' maxlength='3' size='3' value='$number' disabled='disabled'/></td>";
+    $html .= "<td class='center' style='width:32px'>
+			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "'/></td>";
+    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+    $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
+    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
+    $html .= "<option value='' selected='selected'></option>";
+    $html .= "<option value='captain'>" . _("C") . "</option>";
+    $html .= "<option value='spirit_captain'>" . _("SC") . "</option>";
+    $html .= "<option value='both'>" . _("C&SC") . "</option>";
+    $html .= "</select></td>";
   }
   $html .= "</tr>\n";
 }
-$html .= "<tr><td colspan='3'>";
-$html .= _("Total number of players:") . " " . mysqli_num_rows($home_playerlist);
+$html .= "<tr><td colspan='4'>";
+$html .= _("Total number of players:") . " " . count($home_playerlist);
 $html .= "</td></tr>";
 
 $html .= "</table></div></td>\n<td style='width:10%'>&nbsp;</td><td valign='top' style='width:45%'>";
@@ -251,43 +321,63 @@ $html .= "</table></div></td>\n<td style='width:10%'>&nbsp;</td><td valign='top'
 $html .= "<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
 $html .= "<tr><td><b>";
 $html .= utf8entities($game_result['visitorteamname']) . "</b></td></tr>\n";
-$html .= "</table><div id='away'><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
-$html .= "<tr><th class='guest'>" . _("Name") . "</th><th class='guest right' style='white-space: nowrap'>" . _("Played") . " <input type='checkbox' onclick='checkAll(\"away\");'/></th><th class='guest'>" . _("Jersey#") . "</th></tr>\n";
+$html .= "</table><div id='away'><table width='100%' cellspacing='0' cellpadding='2' border='0' style='table-layout: fixed'>";
+$html .= "<tr><th class='guest center' style='width:32px'><div style='line-height:1.05; text-align:center'>" . _("In") . "<br/><input type='checkbox' style='margin: 1px 0 0 0; vertical-align: middle' onclick='checkAll(\"away\");'/></div></th><th class='guest'>" . _("Name") . "</th><th class='guest center' style='width:44px'>" . _("Jersey") . "</th><th class='guest center' style='width:50px'>" . _("Info") . "</th></tr>\n";
 
 $played_players = GamePlayers($gameId, $game_result['visitorteam']);
+$awayCaptains = array_flip(GameCaptains($gameId, $game_result['visitorteam']));
+$awaySpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['visitorteam']));
 
 $i = 0;
-while ($player = mysqli_fetch_assoc($away_playerlist)) {
+foreach ($away_playerlist as $player) {
   $i++;
   $playerinfo = PlayerInfo($player['player_id']);
+  $playerId = (int)$player['player_id'];
+  $numberFieldId = "p" . $playerId;
+  $roleFieldId = "awayrole" . $playerId;
+  $fieldIds = $numberFieldId . "," . $roleFieldId;
+  $selectedRole = PlayerRoleSelectionValue(isset($awayCaptains[$playerId]), isset($awaySpiritCaptains[$playerId]));
   $html .= "<tr>";
-  $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-  $number = PlayerNumber($player['player_id'], $gameId);
+  $number = PlayerNumber($playerId, $gameId);
   if ($number < 0) {
     $number = "";
   }
 
   $found = false;
-  foreach ($played_players as $playerId) {
-    if ($player['player_id'] == $playerId['player_id']) {
+  foreach ($played_players as $playedPlayer) {
+    if ($player['player_id'] == $playedPlayer['player_id']) {
       $found = true;
       break;
     }
   }
 
   if ($found) {
-    $html .= "<td class='center'>
-			<input onchange=\"toggleField(this,'p" . $player['player_id'] . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($player['player_id']) . "' checked='checked'/></td>";
-    $html .= "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $player['player_id'] . "' id='p" . $player['player_id'] . "' style='width: 20px' maxlength='3' size='3' value='$number'/></td>";
+    $html .= "<td class='center' style='width:32px'>
+			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
+    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+    $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
+    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "'>";
+    $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
+    $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
+    $html .= "<option value='spirit_captain'" . ($selectedRole === "spirit_captain" ? " selected='selected'" : "") . ">" . _("SC") . "</option>";
+    $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
+    $html .= "</select></td>";
   } else {
-    $html .= "<td class='center'>
-			<input onchange=\"toggleField(this,'p" . $player['player_id'] . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($player['player_id']) . "'/></td>";
-    $html .= "<td><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $player['player_id'] . "' id='p" . $player['player_id'] . "' style='width: 20px' maxlength='3' size='3' value='$number' disabled='disabled'/></td>";
+    $html .= "<td class='center' style='width:32px'>
+			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "'/></td>";
+    $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+    $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
+    $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
+    $html .= "<option value='' selected='selected'></option>";
+    $html .= "<option value='captain'>" . _("C") . "</option>";
+    $html .= "<option value='spirit_captain'>" . _("SC") . "</option>";
+    $html .= "<option value='both'>" . _("C&SC") . "</option>";
+    $html .= "</select></td>";
   }
   $html .= "</tr>\n";
 }
-$html .= "<tr><td colspan='3'>";
-$html .= _("Total number of players:") . " " . mysqli_num_rows($away_playerlist);
+$html .= "<tr><td colspan='4'>";
+$html .= _("Total number of players:") . " " . count($away_playerlist);
 $html .= "</td></tr>";
 
 $html .= "</table></div></td></tr></table>\n";

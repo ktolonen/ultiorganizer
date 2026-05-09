@@ -1,6 +1,6 @@
 <?php
 
-include_once 'localization.php';
+include_once __DIR__ . '/localization.php';
 
 header("Content-type: text/plain; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");

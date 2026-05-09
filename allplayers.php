@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('allplayers');
+
 include_once 'lib/player.functions.php';
 
 $title = _("All players");
@@ -11,7 +14,7 @@ if (iget("list")) {
 
 $html .= "<h1>" . $title . "</h1>\n";
 
-$players = PlayerListAll($filter);
+$players = PlayerListAllArray($filter);
 
 $firstchar = " ";
 $listletter = " ";
@@ -37,7 +40,7 @@ $html .= "</tr></table>\n";
 
   $html .= "<table width='90%' style='white-space: nowrap;'>\n";
 
-  while ($player = mysqli_fetch_assoc($players)) {
+  foreach ($players as $player) {
 
     if ($filter == "ALL") {
       $lastName = isset($player['lastname']) ? (string) $player['lastname'] : '';

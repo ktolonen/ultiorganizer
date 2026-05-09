@@ -2,6 +2,7 @@
 include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/game.functions.php';
+include_once 'lib/reservation.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/common.functions.php';
 
@@ -27,7 +28,9 @@ $gp = array(
 	"pool" => $info['pool'],
 	"valid" => 1,
 	"respteam" => 0,
-	"name" => ""
+	"name"=>"",
+  	"islive"=>0,
+  	"liveurl"=>""
 );
 
 //process itself on submit
@@ -65,8 +68,18 @@ if (!empty($_POST['save'])) {
 	if (!empty($_POST['name']))
 		$gp['name'] = $_POST['name'];
 
+	if(!empty($_POST['islive']))
+		$gp['islive'] = filter_input(INPUT_POST,'islive',FILTER_VALIDATE_INT);
+
+	if(!empty($_POST['liveurl'])) 
+		$gp['liveurl'] = filter_input(INPUT_POST,'liveurl',FILTER_VALIDATE_URL);
 
 	SetGame($gameId, $gp);
+
+	$info = GameResult($gameId);
+	if (intval($info['hasstarted']) == 2 && !empty($_POST['forfeit_shown'])) {
+		GameSetForfeit($gameId, !empty($_POST['forfeit']) ? 1 : 0);
+	}
 
 	$userid = $_POST['userid'];
 	if (empty($userid)) {
@@ -159,12 +172,12 @@ if (GameHasStarted($info)) {
 echo "<table>";
 echo "<tr><td><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Change game result") . "</a></td></tr>";
 echo "<tr><td><a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Change game roster") . "</a></td></tr>";
-echo "<tr><td><a href='?view=user/addscoresheet&amp;game=" . $gameId . "'>" . _("Change game score sheet") . " </a></td></tr>";
+echo "<tr><td><a href='?view=user/addscoresheet&amp;game=" . $gameId . "'>" . _("Change game scoresheet") . " </a></td></tr>";
 if (ShowDefenseStats()) {
-	echo "<tr><td><a href='?view=user/adddefensesheet&amp;game=" . $gameId . "'>" . _("Change game defense sheet") . " </a></td></tr>";
+	echo "<tr><td><a href='?view=user/adddefensesheet&amp;game=" . $gameId . "'>" . _("Change game defence sheet") . " </a></td></tr>";
 }
 
-echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=" . $gameId . "' target='_blank' rel='noopener'>" . _("Print score sheet") . " </a></td></tr>";
+echo "<tr><td><a href='?view=user/pdfscoresheet&amp;game=" . $gameId . "' target='_blank' rel='noopener'>" . _("Print scoresheet") . " </a></td></tr>";
 echo "<tr><td><a href='?view=user/addmedialink&amp;game=$gameId'>" . _("Add media") . "</a></td></tr>";
 echo "</table>\n";
 
@@ -191,13 +204,14 @@ echo "<option class='dropdown' value='0'></option>";
 $places = SeasonReservations($season);
 
 foreach ($places as $row) {
+	$placeLabel = ReservationPlaceText(U_($row['name']), U_($row['fieldname']));
 	if ($row['id'] == $info['reservation']) {
 		echo "<option class='dropdown' selected='selected' value='" . utf8entities($row['id']) . "'>";
-		echo utf8entities($row['reservationgroup']) . " " . utf8entities($row['name']) . ", " . _("Field") . " " . utf8entities($row['fieldname']) . " (" . JustDate($row['starttime']) . ")";
+		echo utf8entities($row['reservationgroup']) . " " . utf8entities($placeLabel) . " (" . JustDate($row['starttime']) . ")";
 		echo "</option>";
 	} else {
 		echo "<option class='dropdown' value='" . utf8entities($row['id']) . "'>";
-		echo utf8entities($row['reservationgroup']) . " " . utf8entities($row['name']) . ", " . _("Field") . " " . utf8entities($row['fieldname']) . " (" . JustDate($row['starttime']) . ")";
+		echo utf8entities($row['reservationgroup']) . " " . utf8entities($placeLabel) . " (" . JustDate($row['starttime']) . ")";
 		echo "</option>";
 	}
 }
@@ -208,7 +222,6 @@ echo "<tr><td class='infocell'>" . _("Starting time") . " (hh:mm):</td>
 
 
 echo "<tr><td class='infocell'>" . _("Division") . ":</td><td><select class='dropdown' name='pool'>\n";
-echo "<option class='dropdown' value='0'></option>";
 
 $pools = SeasonPools($season);
 foreach ($pools as $row) {
@@ -228,8 +241,8 @@ $users = GameAdmins($gameId);
 foreach ($users as $user) {
 	echo utf8entities($user['name']) . "<br/>";
 }
-echo _("User Id") . " <input class='input' size='20' name='userid'/> " . _("or") . " ";
-echo _("E-Mail") . " <input class='input' size='20' name='email'/>\n";
+echo _("User ID") . " <input class='input' size='20' name='userid'/> " . _("or") . " ";
+echo _("Email") . " <input class='input' size='20' name='email'/>\n";
 echo "</td></tr>";
 
 echo "<tr><td class='infocell'>" . _("Name") . ":</td>";
@@ -237,13 +250,21 @@ echo "<td>" . TranslatedField("name", $info['gamename']);
 echo TranslationScript("name");
 echo "</td></tr>\n";
 
-if (intval($info['valid'])) {
-	echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
-		<td><input class='input' type='checkbox' id='valid' name='valid' checked='checked' value='" . utf8entities($info['valid']) . "'/></td></tr>";
-} else {
-	echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
-		<td><input class='input' type='checkbox' id='valid' name='valid' value='" . utf8entities($info['valid']) . "'/></td></tr>";
+$validChecked = intval($info['valid']) ? " checked='checked'" : "";
+echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
+	<td><input class='input' type='checkbox' id='valid' name='valid' value='1'" . $validChecked . "/></td></tr>";
+if (intval($info['hasstarted']) == 2) {
+	$checked = !empty($info['forfeit']) ? " checked='checked'" : "";
+	echo "<tr><td class='infocell'>" . _("Forfeit") . ":</td>
+		<td><input class='input' type='checkbox' name='forfeit' value='1'" . $checked . "/>
+		<input type='hidden' name='forfeit_shown' value='1'/></td></tr>";
 }
+
+// live stream
+echo "<tr><td class='infocell'>"._("Live Stream Number").":</td>
+  <td><input class='input' size='2' name='islive' value='".isGameLive($gameId)."' />"._(" (enter '0' if not live)")."</td>";
+echo "<tr><td class='infocell'>"._("Live Stream URL").":</td>
+  <td><input class='input' size='50' name='liveurl' value='".GameLiveURL($gameId)."' /></td>";
 
 echo "</table>";
 

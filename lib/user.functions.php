@@ -1,12 +1,14 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
-include_once $include_prefix . 'lib/session.functions.php';
-include_once $include_prefix . 'lib/season.functions.php';
-include_once $include_prefix . 'lib/series.functions.php';
-include_once $include_prefix . 'lib/team.functions.php';
-include_once $include_prefix . 'lib/reservation.functions.php';
-include_once $include_prefix . 'lib/logging.functions.php';
-include_once $include_prefix . 'lib/common.functions.php';
+require_once __DIR__ . '/session.functions.php';
+require_once __DIR__ . '/season.functions.php';
+require_once __DIR__ . '/series.functions.php';
+require_once __DIR__ . '/team.functions.php';
+require_once __DIR__ . '/reservation.functions.php';
+require_once __DIR__ . '/logging.functions.php';
+require_once __DIR__ . '/common.functions.php';
 
 //include_once $include_prefix.'lib/configuration.functions.php';
 
@@ -72,7 +74,7 @@ function verifyUserPassword($password, $storedHash, $userId = null)
 function FailRedirect($user)
 {
 	SetUserSessionData('anonymous');
-	header("location:?view=login_failed&user=" . urlencode($user));
+	header("location:?view=login/login_failed&user=" . urlencode($user));
 	exit();
 }
 
@@ -120,8 +122,8 @@ function UserAuthenticate($user, $passwd, $failcallback)
 		SetUserSessionData($user);
 		DBQuery("UPDATE uo_users SET last_login=NOW() WHERE userid='" . DBEscapeString($user) . "'");
 
-		//first logging
-		if (empty($row['last_login']) && $user == "admin") {
+		// First-time superadmins land on server settings after initial login.
+		if (empty($row['last_login']) && isSuperAdmin()) {
 			header("location:?view=admin/serverconf");
 			exit();
 		}
@@ -160,6 +162,16 @@ function UserIdForMail($mail)
 		DBEscapeString($mail)
 	);
 	return DBQueryToValue($query);
+}
+
+function UserExists($user_id)
+{
+	$query = sprintf(
+		"SELECT userid FROM uo_users WHERE userid='%s'",
+		DBEscapeString($user_id)
+	);
+	$row = DBQueryToRow($query);
+	return !empty($row);
 }
 
 function UserExtraEmails($user_id)
@@ -502,29 +514,6 @@ function setSuperAdmin($userid, $value)
 	}
 }
 
-function setTranslationAdmin($userid, $value)
-{
-	if (hasEditUsersRight()) {
-		if ($value && !isTranslationAdminByUserid($userid)) {
-			$query = sprintf(
-				"INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', 'translationadmin')",
-				DBEscapeString($userid)
-			);
-			$result = DBQuery($query);
-			Log1("security", "add", $userid, "", "translationadmin acceess granted");
-		} else if (!$value) {
-			$query = sprintf(
-				"DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='translationadmin'",
-				DBEscapeString($userid)
-			);
-			$result = DBQuery($query);
-			Log1("security", "add", $userid, "", "translationadmin acceess removed");
-		}
-	} else {
-		die('Insufficient rights to change superadmin userrole');
-	}
-}
-
 function isSuperAdminByUserid($userid)
 {
 	if (hasEditUsersRight()) {
@@ -542,31 +531,9 @@ function isSuperAdminByUserid($userid)
 	}
 }
 
-function isTranslationAdminByUserid($userid)
-{
-	if (hasEditUsersRight()) {
-		$query = sprintf(
-			"SELECT * FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='translationadmin'",
-			DBEscapeString($userid)
-		);
-		$result = DBQuery($query);
-
-		if ($row = mysqli_fetch_assoc($result)) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-}
-
 function isSuperAdmin()
 {
 	return isset($_SESSION['userproperties']['userrole']['superadmin']);
-}
-
-function isTranslationAdmin()
-{
-	return isset($_SESSION['userproperties']['userrole']['translationadmin']);
 }
 
 function isPlayerAdmin($profile_id)
@@ -583,6 +550,69 @@ function isSeasonAdmin($season)
 {
 	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]);
+}
+
+function isSpiritAdmin($season)
+{
+	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+		isset($_SESSION['userproperties']['userrole']['spiritadmin'][$season]);
+}
+
+function hasSpiritToolsRight($season)
+{
+	return isSeasonAdmin($season) || isSpiritAdmin($season);
+}
+
+function hasSpiritEditRight($season)
+{
+	if (!hasSpiritToolsRight($season)) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
+}
+
+function hasSeasonSeriesPageAccess($season, $series)
+{
+	return isSuperAdmin() ||
+		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
+		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
+}
+
+function hasAccreditationPageAccess($season)
+{
+	if (isSuperAdmin() || isSeasonAdmin($season)) {
+		return true;
+	}
+
+	foreach (SeasonSeries($season) as $series) {
+		if (isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series['series_id']])) {
+			return true;
+		}
+	}
+
+	foreach (SeasonTeams($season) as $team) {
+		if (isset($_SESSION['userproperties']['userrole']['accradmin'][$team['team_id']])) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function hasReservationsPageAccess($season = "")
+{
+	if (empty($season)) {
+		return hasScheduleRights() || isSuperAdmin();
+	}
+	return isSuperAdmin() || isSeasonAdmin($season);
+}
+
+function canBypassEventReadonly($season)
+{
+	return isset($_SESSION['userproperties']['userrole']['superadmin']);
 }
 
 function hasScheduleRights()
@@ -618,30 +648,58 @@ function hasCurrentSeasonsEditRight()
 
 function hasEditSeasonSeriesRight($season)
 {
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditPlacesRight($season)
 {
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditTeamsRight($series)
 {
 	$season = SeriesSeasonId($series);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function  hasEditGamesRight($series)
 {
 	$season = SeriesSeasonId($series);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditPlayerProfileRight($playerId)
@@ -650,21 +708,35 @@ function hasEditPlayerProfileRight($playerId)
 	$team = $playerInfo['team'];
 	$series = getTeamSeries($team);
 	$season = SeriesSeasonId($series);
-	return isPlayerAdmin($playerInfo['profile_id']) ||
+	$hasEditRight = isPlayerAdmin($playerInfo['profile_id']) ||
 		isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditPlayersRight($team)
 {
 	$series = getTeamSeries($team);
 	$season = SeriesSeasonId($series);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditGamePlayersRight($game)
@@ -673,12 +745,19 @@ function hasEditGamePlayersRight($game)
 	$series = GameSeries($game);
 	$season = SeriesSeasonId($series);
 	$reservation = GameReservation($game);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]) ||
 		isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservation]) ||
 		isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 
 function hasEditGameEventsRight($game)
@@ -687,23 +766,34 @@ function hasEditGameEventsRight($game)
 	$series = GameSeries($game);
 	$season = SeriesSeasonId($series);
 	$reservation = GameReservation($game);
-	return isset($_SESSION['userproperties']['userrole']['superadmin']) ||
+	$hasEditRight = isset($_SESSION['userproperties']['userrole']['superadmin']) ||
 		isset($_SESSION['userproperties']['userrole']['seasonadmin'][$season]) ||
 		isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
 		isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]) ||
 		isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservation]) ||
 		isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]);
+	if (!$hasEditRight) {
+		return false;
+	}
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return true;
 }
 function hasAccredidationRight($team)
 {
-	return hasEditTeamsRight(getTeamSeries($team)) ||
+	$series = getTeamSeries($team);
+	$season = SeriesSeasonId($series);
+	if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+		return false;
+	}
+	return hasEditTeamsRight($series) ||
 		isset($_SESSION['userproperties']['userrole']['accradmin'][$team]);
 }
 
 function hasTranslationRight()
 {
-	return isSuperAdmin() ||
-		isset($_SESSION['userproperties']['userrole']['translationadmin']);
+	return isSuperAdmin();
 }
 
 function hasAddMediaRight()
@@ -729,6 +819,11 @@ function UserListRightsHtml($userId)
 				break;
 			case "seasonadmin":
 				$rights .= "<span style='color:#ff00ff;'>" . $value[0] . ": ";
+				$rights .= utf8entities(SeasonName($value[1]));
+				$rights .= "</span><br/>";
+				break;
+			case "spiritadmin":
+				$rights .= "<span>spiritadmin: ";
 				$rights .= utf8entities(SeasonName($value[1]));
 				$rights .= "</span><br/>";
 				break;
@@ -1009,9 +1104,72 @@ function RemoveSeasonUserRole($userid, $role, $seasonId)
 			DBEscapeString($role)
 		);
 		$result = DBQuery($query);
+
+		if (!UserHasSeasonScopedRole($userid, $seasonId)) {
+			DBQuery(sprintf(
+				"DELETE FROM uo_userproperties WHERE userid='%s' AND name='editseason' AND value='%s'",
+				DBEscapeString($userid),
+				DBEscapeString($seasonId)
+			));
+		}
+
+		if ($userid == $_SESSION['uid']) {
+			SetUserSessionData($userid);
+		}
 	} else {
 		die('Insufficient rights to change user info');
 	}
+}
+
+function UserHasSeasonScopedRole($userid, $seasonId)
+{
+	$query = sprintf(
+		"SELECT value FROM uo_userproperties WHERE userid='%s' AND name='userrole'",
+		DBEscapeString($userid)
+	);
+	$roles = DBQueryToArray($query);
+
+	foreach ($roles as $row) {
+		$value = explode(':', $row['value'], 2);
+		$roleName = $value[0];
+		$roleValue = isset($value[1]) ? $value[1] : '';
+
+		switch ($roleName) {
+			case 'seasonadmin':
+			case 'spiritadmin':
+				if ($roleValue === (string)$seasonId) {
+					return true;
+				}
+				break;
+			case 'seriesadmin':
+				if (!empty($roleValue) && SeriesSeasonId((int)$roleValue) === $seasonId) {
+					return true;
+				}
+				break;
+			case 'teamadmin':
+			case 'accradmin':
+				if (!empty($roleValue) && getTeamSeason((int)$roleValue) === $seasonId) {
+					return true;
+				}
+				break;
+			case 'gameadmin':
+				if (!empty($roleValue) && GameSeason((int)$roleValue) === $seasonId) {
+					return true;
+				}
+				break;
+			case 'resgameadmin':
+				if (!empty($roleValue)) {
+					foreach (ReservationSeasons((int)$roleValue) as $resSeason) {
+						if ($resSeason === $seasonId) {
+							return true;
+						}
+					}
+				}
+				break;
+		}
+	}
+
+	return false;
 }
 
 function GetTeamAdmins($teamId)
@@ -1075,8 +1233,43 @@ function DeleteRegisterRequest($userid)
 	}
 }
 
+function CreateConfirmedUser($userid, $passwordHash, $name, $email = '', $logContext = '')
+{
+	$email = trim((string)$email);
+	$emailValue = $email === '' ? "NULL" : "'" . DBEscapeString($email) . "'";
+
+	$query = sprintf(
+		"INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', %s)",
+		DBEscapeString($name),
+		DBEscapeString($userid),
+		DBEscapeString($passwordHash),
+		$emailValue
+	);
+	$result = DBQuery($query);
+
+	if (!$result) {
+		return false;
+	}
+
+	FinalizeNewUser($userid, $email);
+	if (!empty($logContext)) {
+		Log1("user", "add", $userid, "", $logContext);
+	}
+
+	return true;
+}
+
+function CreateUserAccount($userid, $password, $name, $email = '', $logContext = '')
+{
+	return CreateConfirmedUser($userid, hashUserPassword($password), $name, $email, $logContext);
+}
+
 function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $message = 'register.txt')
 {
+	if (function_exists('IsEmailDisabled') && IsEmailDisabled()) {
+		return false;
+	}
+
 	Log1("user", "add", $newUsername, "", "register request");
 	$token = uuidSecure();
 	$query = sprintf(
@@ -1136,6 +1329,10 @@ function emailUsed($email)
 
 function AddExtraEmailRequest($userid, $extraEmail, $message = 'verify_email.txt')
 {
+	if (function_exists('IsEmailDisabled') && IsEmailDisabled()) {
+		return false;
+	}
+
 	Log1("user", "add", $userid, "", "extra email request");
 	$token = uuidSecure();
 	$query = sprintf(
@@ -1194,25 +1391,17 @@ function ConfirmRegister($token)
 	$result = DBQuery($query);
 
 	if ($row = mysqli_fetch_assoc($result)) {
-		$query = sprintf(
-			"INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
-			DBEscapeString($row['name']),
-			DBEscapeString($row['userid']),
-			DBEscapeString($row['password']),
-			DBEscapeString($row['email'])
-		);
-		$result = DBQuery($query);
-
-		$query = sprintf(
-			"DELETE FROM uo_registerrequest WHERE token='%s'",
-			DBEscapeString($token)
-		);
-		$result = DBQuery($query);
-
-		FinalizeNewUser($row['userid'], $row['email']);
-		Log1("user", "add", $row['userid'], "", "confirm register request");
-		return true;
+		if (CreateConfirmedUser($row['userid'], $row['password'], $row['name'], $row['email'], "confirm register request")) {
+			$query = sprintf(
+				"DELETE FROM uo_registerrequest WHERE token='%s'",
+				DBEscapeString($token)
+			);
+			DBQuery($query);
+			return true;
+		}
 	} else return false;
+
+	return false;
 }
 
 
@@ -1226,24 +1415,14 @@ function ConfirmRegisterUID($userid)
 		$result = DBQuery($query);
 
 		if ($row = mysqli_fetch_assoc($result)) {
-			$query = sprintf(
-				"INSERT INTO uo_users (name, userid, password, email) VALUES ('%s', '%s', '%s', '%s')",
-				DBEscapeString($row['name']),
-				DBEscapeString($row['userid']),
-				DBEscapeString($row['password']),
-				DBEscapeString($row['email'])
-			);
-			$result = DBQuery($query);
-
-			$query = sprintf(
-				"DELETE FROM uo_registerrequest WHERE userid='%s'",
-				DBEscapeString($userid)
-			);
-			$result = DBQuery($query);
-
-			FinalizeNewUser($row['userid'], $row['email']);
-			Log1("user", "add", $row['userid'], "", "added by administrator");
-			return true;
+			if (CreateConfirmedUser($row['userid'], $row['password'], $row['name'], $row['email'], "added by administrator")) {
+				$query = sprintf(
+					"DELETE FROM uo_registerrequest WHERE userid='%s'",
+					DBEscapeString($userid)
+				);
+				DBQuery($query);
+				return true;
+			}
 		} else return false;
 	} else {
 		die("Insufficient user rights.");
@@ -1257,6 +1436,11 @@ function FinalizeNewUser($userid, $email)
 		DBEscapeString($userid)
 	);
 	$result = DBQuery($query);
+
+	$email = trim((string)$email);
+	if ($email === '') {
+		return;
+	}
 
 	$query = sprintf(
 		"SELECT DISTINCT profile_id FROM uo_player_profile WHERE LOWER(email)='%s'",
@@ -1506,7 +1690,7 @@ function GameResponsibilityArray($season, $series = null)
 		}
 		$gamesArray = $ret[$row['reservationgroup']][$row['res_id']];
 		$gamesArray['starttime'] = $row['starttime'];
-		$gamesArray['locationname'] = utf8entities($row['locationname']) . " " . _("Field") . " " . utf8entities($row['fieldname']);
+		$gamesArray['locationname'] = utf8entities(ReservationPlaceText(U_($row['locationname']), U_($row['fieldname'])));
 		$gamesArray[$row['game_id']] = $row;
 		$ret[$row['reservationgroup']][$row['res_id']] = $gamesArray;
 	}
@@ -1515,7 +1699,11 @@ function GameResponsibilityArray($season, $series = null)
 
 function UserResetPassword($userId)
 {
-	Log1("user", "change", $userId, "", "reset password");
+	if (function_exists('IsEmailDisabled') && IsEmailDisabled()) {
+		return false;
+	}
+
+	Log1("user", "change", $userId, "", "request password reset");
 
 	$query = sprintf(
 		"SELECT email FROM uo_users WHERE userid='%s'",
@@ -1525,16 +1713,31 @@ function UserResetPassword($userId)
 
 	$row = mysqli_fetch_assoc($result);
 
-	$email = $row['email'];
+	$email = $row ? $row['email'] : null;
 	if (!empty($email)) {
-		$password = CreateRandomPassword();
+		$token = uuidSecure();
+		$query = sprintf(
+			"DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
+			DBEscapeString($userId)
+		);
+		DBQuery($query);
 
-		$url = GetURLBase();
+		$query = sprintf(
+			"INSERT INTO uo_passwordresetrequest (userid, token) VALUES ('%s', '%s')",
+			DBEscapeString($userId),
+			DBEscapeString($token)
+		);
+		DBQuery($query);
+
+		$baseUrl = defined('BASEURL') ? rtrim(BASEURL, '/') : '';
+		if (empty($baseUrl)) {
+			$baseUrl = GetURLBase();
+		}
+		$url = $baseUrl . "/?view=login/password_reset&token=" . urlencode($token);
 		$locale = getSessionLocale();
 		$message = file_get_contents('locale/' . $locale . '/LC_MESSAGES/pwd_reset.txt');
 		$message = str_replace('$url', $url, $message);
 		$message = str_replace('$username', $userId, $message);
-		$message = str_replace('$password', $password, $message);
 
 		$headers  = "MIME-Version: 1.0" . "\r\n";
 		$headers .= "Content-type: text/plain; charset=UTF-8" . "\r\n";
@@ -1542,11 +1745,14 @@ function UserResetPassword($userId)
 		global $serverConf;
 		$headers .= "From: " . $serverConf['EmailSource'] . "\r\n";
 
-		if (mail($email, _("New password to ultiorganizer"), $message, $headers)) {
-			updateUserPasswordHash($userId, $password);
-
+		if (mail($email, _("Password reset request for Ultiorganizer"), $message, $headers)) {
 			return true;
 		} else {
+			$query = sprintf(
+				"DELETE FROM uo_passwordresetrequest WHERE token='%s'",
+				DBEscapeString($token)
+			);
+			DBQuery($query);
 			return false;
 		}
 	} else {
@@ -1554,15 +1760,37 @@ function UserResetPassword($userId)
 	}
 }
 
-function CreateRandomPassword()
+function PasswordResetUIDByToken($token)
 {
+	$query = sprintf(
+		"SELECT userid FROM uo_passwordresetrequest WHERE token='%s'",
+		DBEscapeString($token)
+	);
+	$result = DBQuery($query);
 
-	$chars = "abcdefghijkmnpqrstuvwxyzABCDEFGHIJKLMNPQRSTUVWXYZ23456789";
-	$password = '';
-	for ($i = 0; $i < 8; $i++) {
-		$password .= substr($chars, mt_rand(0, strlen($chars) - 1), 1);
+	if ($row = mysqli_fetch_assoc($result)) {
+		return $row['userid'];
 	}
-	return $password;
+	return false;
+}
+
+function ConfirmPasswordReset($token, $newPassword)
+{
+	$userId = PasswordResetUIDByToken($token);
+	if (!$userId) {
+		return false;
+	}
+
+	updateUserPasswordHash($userId, $newPassword);
+	Log1("user", "change", $userId, "", "confirm password reset");
+
+	$query = sprintf(
+		"DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
+		DBEscapeString($userId)
+	);
+	DBQuery($query);
+
+	return true;
 }
 
 function CreateNewUsername($firstname, $lastname, $email)
@@ -1586,16 +1814,12 @@ function CreateNewUsername($firstname, $lastname, $email)
 
 function UserCreateRandomPassword()
 {
-
 	$chars = "abcdefghijkmnopqrstuvwxyz023456789";
-	srand((float)microtime() * 1000000);
-	$i = 0;
-	$pass = '';
-	while ($i <= 7) {
-		$num = rand() % 33;
-		$tmp = substr($chars, $num, 1);
-		$pass = $pass . $tmp;
-		$i++;
+	$length = 12;
+	$password = '';
+	$maxIndex = strlen($chars) - 1;
+	for ($i = 0; $i < $length; $i++) {
+		$password .= $chars[random_int(0, $maxIndex)];
 	}
-	return $pass;
+	return $password;
 }

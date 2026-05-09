@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('games');
+
 include_once 'lib/common.functions.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
@@ -13,10 +16,52 @@ function pdf_slug($value)
   return $slug === '' ? 'pdf' : $slug;
 }
 
-if (is_file('cust/' . CUSTOMIZATIONS . '/pdfprinter.php')) {
-  include_once 'cust/' . CUSTOMIZATIONS . '/pdfprinter.php';
+function pool_group_schedule_title($poolIds)
+{
+  $seriesNames = array();
+  $poolNames = array();
+
+  foreach ((array)$poolIds as $poolId) {
+    $poolId = (int)$poolId;
+    if ($poolId <= 0) {
+      continue;
+    }
+
+    $poolInfo = PoolInfo($poolId);
+    if (empty($poolInfo)) {
+      continue;
+    }
+
+    $seriesId = isset($poolInfo['series']) ? (int)$poolInfo['series'] : 0;
+    $seriesLabel = isset($poolInfo['seriesname']) ? U_($poolInfo['seriesname']) : "";
+    if ($seriesId > 0 && !isset($seriesNames[$seriesId]) && $seriesLabel !== "") {
+      $seriesNames[$seriesId] = $seriesLabel;
+    }
+
+    if (!empty($poolInfo['name'])) {
+      $poolNames[] = U_($poolInfo['name']);
+    }
+  }
+
+  if (empty($seriesNames) && empty($poolNames)) {
+    return _("Schedule");
+  }
+
+  $titleParts = array();
+  if (!empty($seriesNames)) {
+    $titleParts[] = implode(" / ", $seriesNames);
+  }
+  if (!empty($poolNames)) {
+    $titleParts[] = implode(", ", $poolNames);
+  }
+
+  return _("Schedule") . " " . utf8entities(implode(", ", $titleParts));
+}
+
+if (is_file('cust/' . CUSTOMIZATIONS . '/pdfschedule.php')) {
+  include_once 'cust/' . CUSTOMIZATIONS . '/pdfschedule.php';
 } else {
-  include_once 'cust/default/pdfprinter.php';
+  include_once 'cust/default/pdfschedule.php';
 }
 
 $html = "";
@@ -48,7 +93,7 @@ if (iget("series")) {
     $id = implode(",", $poolIds);
     $baseurl .= "&pools=$id";
     $gamefilter = "poolgroup";
-    $title = _("Schedule") . " " . utf8entities(U_(PoolSeriesName($id)) . ", " . U_(PoolName($id)));
+    $title = pool_group_schedule_title($poolIds);
   } else {
     // Fall back to season view if pool ids are invalid/empty
     $id = CurrentSeason();
@@ -195,10 +240,10 @@ if ($format == "pdf") {
 }
 
 if (!$print && !$singleview) {
-  $menutabs[_("Group")] = ($baseurl) . "&filter=tournaments&group=$group";
-  $menutabs[_("Timeslot")] = ($baseurl) . "&filter=timeslot&group=$group";
+  $menutabs[_("Day")]= ($baseurl)."&filter=tournaments&group=$group";
+  $menutabs[_("Time slot")] = ($baseurl) . "&filter=timeslot&group=$group";
   $menutabs[_("Division")] = ($baseurl) . "&filter=series&group=$group";
-  $menutabs[_("Location")] = ($baseurl) . "&filter=places&group=$group";
+  $menutabs[_("Field")]= ($baseurl)."&filter=places&group=$group";
   $menutabs[_("Today")] = ($baseurl) . "&filter=today&group=$group";
   $menutabs[_("Tomorrow")] = ($baseurl) . "&filter=tomorrow&group=$group";
   $menutabs[_("Yesterday")] = ($baseurl) . "&filter=yesterday&group=$group";
@@ -229,7 +274,7 @@ if (!empty($group) && $group != "all") {
   $groupheader = false;
 }
 
-if (mysqli_num_rows($games) == 0) {
+if (count($games) == 0) {
   $html .= "\n<p>" . _("No games") . ".</p>\n";
 } elseif ($filter == 'tournaments') {
   $html .= TournamentView($games, $groupheader);
@@ -257,7 +302,7 @@ $querystring = preg_replace('/(&|^)print=[^&]*/i', '', $querystring);
 $querystring = ltrim($querystring, '&');
 if ($print) {
   $html .= "<hr/><div style='text-align:right'><a href='?" . utf8entities($querystring) . "'>" . _("Return") . "</a></div>";
-} elseif (mysqli_num_rows($games)) {
+} elseif (count($games)) {
   $html .= "<hr/>\n";
   $html .= "<p>";
   $html .= "<a href='?view=ical&amp;$gamefilter=$id&amp;time=$timefilter&amp;order=$order'>" . _("iCalendar (.ical)") . "</a> | ";

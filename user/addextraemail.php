@@ -15,14 +15,15 @@ if (!empty($_GET['user'])) {
 	$userid = $_SESSION['uid'];
 }
 
+$emailDisabled = IsEmailDisabled();
 $mailsent = false;
-if (!empty($_POST['add'])) {
+if (!$emailDisabled && !empty($_POST['add'])) {
 	$newEmail = $_POST['Email'];
 	$error = 0;
 	$message = "";
 
 	if (empty($newEmail)) {
-		$message .= "<p>" . _("Email can not be empty") . ".</p>";
+		$message .= "<p>" . _("Email cannot be empty") . ".</p>";
 		$error = 1;
 	}
 
@@ -40,6 +41,8 @@ if (!empty($_POST['add'])) {
 		if (AddExtraEmailRequest($userid, $newEmail)) {
 			$message .= "<p>" . _("Confirmation email has been sent to the email address provided") . ".</p>\n";
 			$mailsent = true;
+		} else {
+			$message .= "<p>" . _("Extra email could not be added. Please contact the system administrator.") . "</p>\n";
 		}
 	} else {
 		$message .= "<p>" . _("Correct the errors and try again") . ".</p>\n";
@@ -59,18 +62,24 @@ if (!empty($_GET['token'])) {
 $html .= file_get_contents('script/disable_enter.js.inc');
 
 //help
-$help = "<p>" . _("Extra emails") . ":</p>
+if (!$emailDisabled || !empty($_GET['token'])) {
+	$help = "<p>" . _("Extra emails") . ":</p>
 	<ol>
 		<li> " . _("Fill in the extra email address below") . ". </li>
 		<li> " . _("Confirmation email will be sent to the email address provided") . ". </li>
 		<li> " . _("Follow the instructions in the e-mail to confirm the address") . ".</li>
 	</ol>";
-$html .= onPageHelpAvailable($help);
+	$html .= onPageHelpAvailable($help);
+}
 
 //content
+if ($emailDisabled && empty($_GET['token']) && empty($message)) {
+	$message = "<p>" . _("Adding extra email addresses is not available when email is disabled on this server.") . "</p>";
+}
+
 $html .= $message;
 
-if (!$confirmed && !$mailsent) {
+if (!$emailDisabled && !$confirmed && !$mailsent) {
 	$html .= "<form method='post' action='?view=user/addextraemail&amp;user=" . $userid;
 	$html .= "'>\n";
 	$html .= "<table cellpadding='8px'>

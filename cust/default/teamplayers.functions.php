@@ -1,5 +1,15 @@
 <?php
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
 include_once 'lib/yui.functions.php';
+
+if (!isset($teamId)) {
+	$teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
+} else {
+	$teamId = intval($teamId);
+}
+
 echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "container"));
 ?>
 <link rel="stylesheet" type="text/css" href="script/yui/container/assets/container.css" />
@@ -121,7 +131,7 @@ echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "containe
 
 			var memberColumnDefs = [{
 					key: "ProfileId",
-					label: "<?php echo _("Profile Id"); ?>",
+					label: "<?php echo _("Profile ID"); ?>",
 					sortable: true
 				},
 				{

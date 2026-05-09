@@ -13,7 +13,7 @@ if (isset($_POST['save'])) {
 }
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . _("Officials") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
+$html .= "<h1>" . _("Game official") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
@@ -22,7 +22,7 @@ $html .= "<label for='official'>" . _("Game official") . ":</label>";
 $html .= "<input type='text' name='official' id='official' value='" . utf8entities($game_result['official']) . "'/>";
 $html .= "<div class='form-actions'>";
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
-$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to score sheet") . "</a>";
+$html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to scoresheet") . "</a>";
 $html .= "</div>";
 $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";

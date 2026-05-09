@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('teams');
+
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/series.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
@@ -40,7 +43,7 @@ if ($seasonPointsAvailable) {
   $menutabs[_("Points")] = "?view=teams&season=$season&list=seasonpoints";
 }
 $menutabs[_("Standings")] = "?view=teams&season=$season&list=bystandings";
-if ($seasonInfo['showspiritpoints']) {
+if (ShowSpiritScoresForSeason($seasonInfo)) {
   $menutabs[_("Spirit")] = "?view=teams&season=$season&list=byspirit";
 }
 
@@ -325,7 +328,7 @@ if ($list == "allteams" || $list == "byseeding") {
   $html .= "</table>\n";
 } elseif ($list == "byspirit") {
 
-  if ($seasonInfo['showspiritpoints']) {
+  if (ShowSpiritScoresForSeason($seasonInfo)) {
 
     $categories = SpiritCategories($seasonInfo['spiritmode']);
     $missingSpirit = array();
@@ -374,7 +377,7 @@ if ($list == "allteams" || $list == "byseeding") {
       $html .= "</table>";
       $html .= "</div>\n";
 
-      $missingRows = SeriesMissingSpiritPoints($row['series_id']);
+      $missingRows = SpiritSeriesMissingPointRows($row['series_id']);
       foreach ($missingRows as $missing) {
         $teamId = $missing['giver_team_id'];
         if (!isset($missingSpirit[$teamId])) {

@@ -1,10 +1,18 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('register');
+
 include_once $include_prefix . 'lib/common.functions.php';
 
 $html = "";
 $message = "";
 $title = _("Register");
 $html .= file_get_contents('script/disable_enter.js.inc');
+
+if (IsPublicRegistrationDisabled() && empty($_GET['token'])) {
+  header("location:?view=frontpage");
+  exit;
+}
 
 $mailsent = false;
 if (!empty($_POST['save'])) {
@@ -27,12 +35,12 @@ if (!empty($_POST['save'])) {
     $error = 1;
   }
   if (empty($newName)) {
-    $message .= "<p>" . _("Name can not be empty") . ".</p>";
+    $message .= "<p>" . _("Name cannot be empty") . ".</p>";
     $error = 1;
   }
 
   if (empty($newEmail)) {
-    $message .= "<p>" . _("Email can not be empty") . ".</p>";
+    $message .= "<p>" . _("Email cannot be empty") . ".</p>";
     $error = 1;
   }
 
@@ -44,7 +52,7 @@ if (!empty($_POST['save'])) {
   $uidcheck = DBEscapeString($newUsername);
 
   if ($uidcheck != $newUsername || preg_match('/[ ]/', $newUsername) || preg_match('/[^a-z0-9._]/i', $newUsername)) {
-    $message .= "<p>" . _("User id may not have spaces or special characters") . ".</p>";
+    $message .= "<p>" . _("User ID may not have spaces or special characters") . ".</p>";
     $error = 1;
   }
 
@@ -61,8 +69,10 @@ if (!empty($_POST['save'])) {
 
   if ($error == 0) {
     if (AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail)) {
-      $message .= "<p>" . _("Confirmation e-mail has been sent to the email address provided. You have to follow the link in the mail to finalize registration, before you can use the account.") . "</p>\n";
+      $message .= "<p>" . _("A confirmation email has been sent to the provided email address. You must follow the link in the email to complete registration before you can use the account.") . "</p>\n";
       $mailsent = true;
+    } else {
+      $message .= "<p>" . _("Registration could not be completed. Please contact the system administrator.") . "</p>\n";
     }
   } else {
     $message .= "<p>" . _("Correct the errors and try again") . ".</p>\n";
@@ -82,12 +92,12 @@ if (!empty($_GET['token'])) {
 }
 
 //help
-$help = "<p>" . _("Registration is only needed for event organizers, team contact persons and players needing to create or change data in system.") . " ";
+$help = "<p>" . _("Registration is only needed for event organizers, team contact persons, and players who need to create or change data in the system.") . " ";
 $help .= _("Registration process:") . "</p>
 	<ol>
-		<li> " . _("Fill registration information in fields below.") . "</li>
-		<li> " . _("Confirmation mail will be sent immediately to the email address provided. (Note that confirmation mail can be incorrectly filterd as spam by e-mail client and in this case you can find the mail from spam -folder instead of inbox.)") . "</li>
-		<li> " . _("Follow the link in the mail to confirm registration.") . "</li>
+		<li> " . _("Fill in the registration information in the fields below.") . "</li>
+		<li> " . _("A confirmation email will be sent immediately to the email address provided. Some email clients may incorrectly filter the message as spam, so check your spam folder if it does not appear in your inbox.") . "</li>
+		<li> " . _("Follow the link in the email to confirm your registration.") . "</li>
 	</ol>";
 
 $help .= "<a href='?view=privacy'>" . _("Privacy Policy") . "</a>";

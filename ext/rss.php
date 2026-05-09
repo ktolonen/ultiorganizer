@@ -1,16 +1,16 @@
 <?php
-include_once 'localization.php';
-include_once '../lib/feed_generator/FeedWriter.php';
-include_once '../lib/feed_generator/FeedItem.php';
-include_once '../lib/player.functions.php';
-include_once '../lib/accreditation.functions.php';
+include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/feed_generator/FeedWriter.php';
+include_once __DIR__ . '/../lib/feed_generator/FeedItem.php';
+include_once __DIR__ . '/../lib/player.functions.php';
+include_once __DIR__ . '/../lib/accreditation.functions.php';
 
-include_once '../lib/season.functions.php';
-include_once '../lib/timetable.functions.php';
-include_once '../lib/team.functions.php';
-include_once '../lib/series.functions.php';
-include_once '../lib/common.functions.php';
-include_once '../lib/game.functions.php';
+include_once __DIR__ . '/../lib/season.functions.php';
+include_once __DIR__ . '/../lib/timetable.functions.php';
+include_once __DIR__ . '/../lib/team.functions.php';
+include_once __DIR__ . '/../lib/series.functions.php';
+include_once __DIR__ . '/../lib/common.functions.php';
+include_once __DIR__ . '/../lib/game.functions.php';
 
 $type = RSS2;
 $max_items = 25;
@@ -56,7 +56,10 @@ switch ($feedtype) {
     }
     $i = 0;
 
-    while (($game = mysqli_fetch_assoc($games)) && $i < $max_items) {
+    foreach ($games as $game) {
+      if ($i >= $max_items) {
+        break;
+      }
 
       if (GameHasStarted($game)) {
         $newItem = $feed->createNewItem();
@@ -89,6 +92,8 @@ switch ($feedtype) {
     //$path = substr($baseurl,0,$cutpos); //remove ext
 
     $game = GameInfo($id1);
+    $seasoninfo = SeasonInfo(GameSeason($id1));
+    $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
     $goals = GameGoals($id1);
     $gameevents = GameEvents($id1);
     $mediaevents = GameMediaEvents($id1);
@@ -100,7 +105,7 @@ switch ($feedtype) {
     $prevgoal = 0;
     $items = array();
 
-    while ($goal = mysqli_fetch_assoc($goals)) {
+    foreach ($goals as $goal) {
       $newItem = $feed->createNewItem();
       $newItem->setGuid($goal['time']);
 
@@ -120,7 +125,10 @@ switch ($feedtype) {
 
       $scorer = $goal['scorerfirstname'] . " " . $goal['scorerlastname'];
 
-      $desc = "[" . SecToMin($goal['time']) . "] ";
+      $desc = "";
+      if (!$hideTimeOnScoresheet) {
+        $desc .= "[" . SecToMin($goal['time']) . "] ";
+      }
       if (!empty($pass) || !empty($scorer)) {
         $desc .= $pass . " --> " . $scorer;
       }
@@ -131,13 +139,18 @@ switch ($feedtype) {
           (intval($event['time']) < intval($goal['time']))
         ) {
           if ($event['type'] == "timeout")
-            $gameevent = _("Time-out");
+            $gameevent = _("Timeout");
+          elseif ($event['type'] == "spirit_timeout")
+            $gameevent = _("Spirit stoppage");
           elseif ($event['type'] == "turnover")
             $gameevent = _("Turnover");
           elseif ($event['type'] == "offence")
             $gameevent = _("Offence");
 
-          $desc .= "<br/>[" . SecToMin($event['time']) . "] ";
+          $desc .= "<br/>";
+          if (!$hideTimeOnScoresheet) {
+            $desc .= "[" . SecToMin($event['time']) . "] ";
+          }
 
           if (intval($event['ishome']) > 0)
             $desc .=  $gameevent . " " . $game['hometeamname'];
@@ -162,7 +175,9 @@ switch ($feedtype) {
     foreach ($gameevents as $event) {
       if ((intval($event['time']) >= $prevgoal)) {
         if ($event['type'] == "timeout")
-          $gameevent = _("Time-out");
+          $gameevent = _("Timeout");
+        elseif ($event['type'] == "spirit_timeout")
+          $gameevent = _("Spirit stoppage");
         elseif ($event['type'] == "turnover")
           $gameevent = _("Turnover");
         elseif ($event['type'] == "offence")
@@ -171,7 +186,9 @@ switch ($feedtype) {
         if (!empty($desc)) {
           $desc .= "<br/>";
         }
-        $desc .= "[" . SecToMin($event['time']) . "] ";
+        if (!$hideTimeOnScoresheet) {
+          $desc .= "[" . SecToMin($event['time']) . "] ";
+        }
 
         if (intval($event['ishome']) > 0)
           $desc .=  $gameevent . " " . $game['hometeamname'];
@@ -201,9 +218,9 @@ switch ($feedtype) {
     $feed->setTitle(_("Ultimate results"));
     $feed->setLink($baseurl . "/?view=played");
     $feed->setDescription(_("Ultimate results"));
-    $games = GameAll(20);
+    $games = GameAllArray(20);
 
-    while (($game = mysqli_fetch_assoc($games))) {
+    foreach ($games as $game) {
 
       if (GameHasStarted($game)) {
         $newItem = $feed->createNewItem();

@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 /**
  * Returns the raw form of a comment field.
@@ -16,7 +18,7 @@ function CommentRaw($type, $id)
 		DBEscapeString($id)
 	);
 	$comment = DBQueryToValue($query);
-	if ($comment != -1)
+	if ($comment !== null)
 		return $comment;
 	else
 		return "";
@@ -203,6 +205,9 @@ function CanCreateSpiritComment($gameResult, $spiritTeamId)
 	if (!isLoggedIn()) {
 		return false;
 	}
+	if (function_exists('CanEditSpiritSubmission')) {
+		return CanEditSpiritSubmission($gameResult['game_id'], $spiritTeamId);
+	}
 	if (hasEditGameEventsRight($gameResult['game_id'])) {
 		return true;
 	}
@@ -234,6 +239,21 @@ function CanManageGameComment($gameId, $type)
 
 function CanManageSpiritComment($gameId, $type)
 {
+	if (!function_exists('HasFullGameSpiritEditRight') || !function_exists('isLoggedIn')) {
+		return false;
+	}
+	if (!isLoggedIn()) {
+		return false;
+	}
+	if (HasFullGameSpiritEditRight($gameId)) {
+		return true;
+	}
+	if (function_exists('SpiritTeamIdForCommentType') && function_exists('SpiritSubmissionLocked')) {
+		$teamId = SpiritTeamIdForCommentType($gameId, $type);
+		if ($teamId > 0 && SpiritSubmissionLocked($gameId, $teamId)) {
+			return false;
+		}
+	}
 	return CanManageGameComment($gameId, $type);
 }
 
@@ -247,41 +267,75 @@ function LogGameCommentEvent($gameId, $type, $eventType)
 	Log1("game", $eventType, $gameId, $key, $label, "comments");
 }
 
-function SetGameComment($type, $gameId, $comment, $delete = false)
+function CommentRequestedChange($type, $id, $comment, $delete = false)
 {
 	$comment = CommentNormalize($comment);
-	$existing = CommentRaw($type, $gameId);
+	$existing = CommentRaw($type, $id);
 
 	if ($delete || $comment === "") {
-		if ($existing === "") {
-			return true;
-		}
-		if (!CanManageGameComment($gameId, $type)) {
-			return false;
-		}
-		SetComment($type, $gameId, "");
-		LogGameCommentEvent($gameId, $type, "comment_delete");
-		return true;
+		return array(
+			'action' => ($existing === "") ? "noop" : "delete",
+			'comment' => "",
+			'existing' => $existing
+		);
 	}
 
 	if ($existing === "") {
-		if (!CanCreateGameComment($gameId)) {
-			return false;
-		}
-		SetComment($type, $gameId, $comment);
-		LogGameCommentEvent($gameId, $type, "comment_create");
-		return true;
+		return array(
+			'action' => "create",
+			'comment' => $comment,
+			'existing' => $existing
+		);
 	}
 
 	if ($existing !== $comment) {
-		if (!CanManageGameComment($gameId, $type)) {
-			return false;
-		}
-		SetComment($type, $gameId, $comment);
-		LogGameCommentEvent($gameId, $type, "comment_update");
+		return array(
+			'action' => "update",
+			'comment' => $comment,
+			'existing' => $existing
+		);
 	}
 
-	return true;
+	return array(
+		'action' => "noop",
+		'comment' => $comment,
+		'existing' => $existing
+	);
+}
+
+function ApplyCommentChange($type, $id, $change)
+{
+	switch ($change['action']) {
+		case "delete":
+			SetComment($type, $id, "");
+			LogGameCommentEvent($id, $type, "comment_delete");
+			return true;
+		case "create":
+			SetComment($type, $id, $change['comment']);
+			LogGameCommentEvent($id, $type, "comment_create");
+			return true;
+		case "update":
+			SetComment($type, $id, $change['comment']);
+			LogGameCommentEvent($id, $type, "comment_update");
+			return true;
+		default:
+			return true;
+	}
+}
+
+function SetGameComment($type, $gameId, $comment, $delete = false)
+{
+	$change = CommentRequestedChange($type, $gameId, $comment, $delete);
+
+	if ($change['action'] === "create" && !CanCreateGameComment($gameId)) {
+		return false;
+	}
+	if (($change['action'] === "delete" || $change['action'] === "update") &&
+		!CanManageGameComment($gameId, $type)) {
+		return false;
+	}
+
+	return ApplyCommentChange($type, $gameId, $change);
 }
 
 function SetSpiritComment($gameResult, $spiritTeamId, $comment, $delete = false)
@@ -290,37 +344,15 @@ function SetSpiritComment($gameResult, $spiritTeamId, $comment, $delete = false)
 	if (!$type) {
 		return false;
 	}
-	$comment = CommentNormalize($comment);
-	$existing = CommentRaw($type, $gameResult['game_id']);
+	$change = CommentRequestedChange($type, $gameResult['game_id'], $comment, $delete);
 
-	if ($delete || $comment === "") {
-		if ($existing === "") {
-			return true;
-		}
-		if (!CanManageSpiritComment($gameResult['game_id'], $type)) {
-			return false;
-		}
-		SetComment($type, $gameResult['game_id'], "");
-		LogGameCommentEvent($gameResult['game_id'], $type, "comment_delete");
-		return true;
+	if ($change['action'] === "create" && !CanCreateSpiritComment($gameResult, $spiritTeamId)) {
+		return false;
+	}
+	if (($change['action'] === "delete" || $change['action'] === "update") &&
+		!CanManageSpiritComment($gameResult['game_id'], $type)) {
+		return false;
 	}
 
-	if ($existing === "") {
-		if (!CanCreateSpiritComment($gameResult, $spiritTeamId)) {
-			return false;
-		}
-		SetComment($type, $gameResult['game_id'], $comment);
-		LogGameCommentEvent($gameResult['game_id'], $type, "comment_create");
-		return true;
-	}
-
-	if ($existing !== $comment) {
-		if (!CanManageSpiritComment($gameResult['game_id'], $type)) {
-			return false;
-		}
-		SetComment($type, $gameResult['game_id'], $comment);
-		LogGameCommentEvent($gameResult['game_id'], $type, "comment_update");
-	}
-
-	return true;
+	return ApplyCommentChange($type, $gameResult['game_id'], $change);
 }

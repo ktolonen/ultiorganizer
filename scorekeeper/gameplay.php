@@ -4,11 +4,13 @@ $html = "";
 
 $gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
+$seasoninfo = SeasonInfo(GameSeason($gameId));
+$hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . _("Game play") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
+$html .= "<h1>" . _("Gameplay") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
@@ -20,19 +22,19 @@ $html .= " - ";
 $html .= utf8entities($game_result['visitorteamname']);
 $html .= " " . intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']) . "</b>";
 $html .= "</td></tr><tr><td>\n";
-if (mysqli_num_rows($goals) <= 0) {
-	$html .= _("Not fed in");
+if (count($goals) <= 0) {
+	$html .= _("No scores entered");
 	$html .= "</td></tr><tr><td>\n";
-	$html .=  "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Feed in score sheet") . "</a>";
+	$html .=  "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a>";
 } else {
 	$prevgoal = 0;
-	while ($goal = mysqli_fetch_assoc($goals)) {
+	foreach ($goals as $goal) {
 
 		if ((intval($game_result['halftime']) >= $prevgoal) &&
 			(intval($game_result['halftime']) < intval($goal['time']))
 		) {
 			$html .= "<tr class='gameplay-row gameplay-row--halftime'><td>";
-			$html .= _("Half-time");
+			$html .= _("Halftime");
 			$html .= "</td></tr>\n";
 		}
 		if (count($gameevents)) {
@@ -40,12 +42,15 @@ if (mysqli_num_rows($goals) <= 0) {
 				if ((intval($event['time']) >= $prevgoal) &&
 					(intval($event['time']) < intval($goal['time']))
 				) {
-					if ($event['type'] == "timeout")
-						$gameevent = _("time-out");
-					elseif ($event['type'] == "turnover")
-						$gameevent = _("turnover");
-					elseif ($event['type'] == "offence")
-						$gameevent = _("offence");
+						if ($event['type'] == "timeout") {
+							$gameevent = _("timeout");
+						} elseif ($event['type'] == "spirit_timeout") {
+							$gameevent = _("Spirit stoppage");
+						} elseif ($event['type'] == "turnover") {
+							$gameevent = _("turnover");
+						} elseif ($event['type'] == "offence") {
+							$gameevent = _("offence");
+						}
 
 					if (intval($event['ishome']) > 0) {
 						$team = utf8entities($game_result['hometeamname']);
@@ -56,7 +61,10 @@ if (mysqli_num_rows($goals) <= 0) {
 					}
 
 					$html .= "<tr class='" . $rowClass . "'><td>\n";
-					$html .= SecToMin($event['time']) . " " . $team . " " . $gameevent;
+					if (!$hideTimeOnScoresheet) {
+						$html .= SecToMin($event['time']) . " ";
+					}
+					$html .= $team . " " . $gameevent;
 					$html .= "</td></tr>\n";
 				}
 			}
@@ -70,14 +78,14 @@ if (mysqli_num_rows($goals) <= 0) {
 
 
 		$html .= "<tr class='" . $rowClass . "'><td>\n";
-		$html .= SecToMin($goal['time']) . " ";
-		$html .= $goal['homescore'] . " - " . $goal['visitorscore'] . " ";
-		if (intval($goal['iscallahan'])) {
-			$html .= _("Callahan-goal") . "&nbsp;";
-		} else {
-			$html .= utf8entities($goal['assistfirstname']) . " " . utf8entities($goal['assistlastname']) . " --> ";
+		if (!$hideTimeOnScoresheet) {
+			$html .= SecToMin($goal['time']) . " ";
 		}
-		$html .= utf8entities($goal['scorerfirstname']) . " " . utf8entities($goal['scorerlastname']) . "&nbsp;";
+		$html .= $goal['homescore'] . " - " . $goal['visitorscore'] . " ";
+		$goalText = GoalDisplayText($goal, $gameId);
+		if ($goalText !== '') {
+			$html .= utf8entities($goalText) . "&nbsp;";
+		}
 
 		$html .= "</td></tr>\n";
 
@@ -90,8 +98,8 @@ if (mysqli_num_rows($goals) <= 0) {
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "<div class='action-row action-row--half'>\n";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("scoreboard") . "</a>";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("scoreboard") . "</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("Scoreboard") . "</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("Scoreboard") . "</a>";
 $html .= "</div>\n";
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</div><!-- /content -->\n\n";

@@ -1,7 +1,28 @@
 <?php
 include_once __DIR__ . '/auth.php';
+include_once $include_prefix . 'lib/common.functions.php';
+include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/reservation.functions.php';
 $html = "";
 $season = CurrentSeason();
+$currentSeasons = array();
+$currentSeasonRows = CurrentSeasons();
+if ($currentSeasonRows) {
+  foreach ($currentSeasonRows as $row) {
+    $seasonId = isset($row['season_id']) ? (string)$row['season_id'] : '';
+    if ($seasonId === '') {
+      continue;
+    }
+    $currentSeasons[$seasonId] = array(
+      'season_id' => $seasonId,
+      'name' => isset($row['name']) ? $row['name'] : $seasonId
+    );
+  }
+}
+if (!empty($currentSeasons) && !isset($currentSeasons[$season])) {
+  $currentSeasonIds = array_keys($currentSeasons);
+  $season = $currentSeasonIds[0];
+}
 $seasoninfo = SeasonInfo($season);
 $reservationgroup = "";
 $location = "";
@@ -41,17 +62,13 @@ $respGameArray = GameResponsibilityArray($season);
 $html .= "<form action='?view=respgames' method='post' data-ajax='false'>\n";
 
 $html .= "<div class='ui-grid-solo'>";
-$seasons = SeasonsArray();
 
-if (count($seasons)) {
+if (count($currentSeasons)) {
   $html .=  "<label for='selseason' class='select'>" . _("Select event") . ":</label>\n";
   $html .=  "<select name='selseason' id='selseason' onchange='changeseason(selseason.options[selseason.options.selectedIndex].value);'>\n";
-  foreach ($seasons as $row) {
-    $selected = "";
-    if ($_SESSION['userproperties']['selseason'] == $row['season_id']) {
-      $selected = "selected='selected'";
-    }
-    $html .=   "<option class='dropdown' $selected value='" . utf8entities($row['season_id']) . "'>" . SeasonName($row['season_id']) . "</option>";
+  foreach ($currentSeasons as $row) {
+    $selected = ($season == $row['season_id']) ? "selected='selected'" : "";
+    $html .=   "<option class='dropdown' $selected value='" . utf8entities($row['season_id']) . "'>" . utf8entities(U_($row['name'])) . "</option>";
   }
   $html .=  "</select>";
 }
@@ -131,7 +148,7 @@ foreach ($respGameArray as $tournament => $resArray) {
 
           $html .= "<li class='resp-location'>\n";
           $html .= "<details class='resp-location-toggle'>\n";
-          $html .= "<summary class='resp-location-title'>" . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</summary>";
+          $html .= "<summary class='resp-location-title'>" . utf8entities(ReservationPlaceText(U_($game['locationname']), U_($game['fieldname']))) . "</summary>";
           $html .= "<ul class='resp-game-list'>\n";
           $prevloc = $gameloc;
         }
@@ -174,11 +191,8 @@ foreach ($respGameArray as $tournament => $resArray) {
 
             $html .= "<div class='resp-actions' data-role='controlgroup' data-type='horizontal'>\n";
             $html .= "<a href='?view=addresult&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Result") . "</a>";
-            $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Players") . "</a>";
+            $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Roster") . "</a>";
             $html .= "<a href='?view=addscoresheet&amp;game=$gameId' data-role='button' data-ajax='false'>" . _("Scoresheet") . "</a>";
-            if (intval($seasoninfo['spiritmode'] > 0) && isSeasonAdmin($seasoninfo['season_id'])) {
-              $html .= "<a href='?view=addspiritpoints&amp;game=$gameId&amp;team=" . $game['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Spirit") . "</a>";
-            }
             $html .= "</div>\n";
           } else {
             $html .= utf8entities($game['phometeamname']) . " - " . utf8entities($game['pvisitorteamname']) . " ";

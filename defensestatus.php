@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('defensestatus');
+
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
@@ -8,9 +11,10 @@ $poolIds = array();
 $seriesId = 0;
 $teamId = 0;
 $sort = "deftotal";
+$defenses = false;
 
 $html = "";
-$title = _("Defenseboard");
+$title = _("Defence board");
 
 
 if (iget("pool")) {
@@ -33,7 +37,7 @@ if (iget("sort")) {
   $sort = iget("sort");
 }
 
-$html .= "<h1>" . _("Defenseboard") . "</h1>\n";
+$html .= "<h1>" . _("Defence board") . "</h1>\n";
 
 $html .= "<table style='width:100%' cellpadding='1' border='1'>";
 
@@ -69,9 +73,9 @@ else
   $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "Sort=games'>" . _("Games") . "</a></th>";
 
 if ($sort == "deftotal")
-  $html .= "<th class='center' style='width:8%'><b>" . _("Defenses") . "</b></th>";
+  $html .= "<th class='center' style='width:8%'><b>" . _("Defences") . "</b></th>";
 else
-  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "Sort=deftotal'>" . _("Defenses") . "</a></th>";
+  $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "Sort=deftotal'>" . _("Defences") . "</a></th>";
 
 $html .= "</tr>";
 
@@ -85,41 +89,45 @@ if ($teamId) {
   }
 } elseif ($poolId) {
   //$scores = PoolScoreBoard($poolId, $sort, 0);
-  $defenses = PoolScoreBoardWithDefenses($poolId, $sort, 0);
+    $defenses = PoolScoreBoardWithDefensesArray($poolId, $sort, 0);
 } elseif (count($poolIds)) {
   //$scores = PoolsScoreBoard($poolIds, $sort, 0);
-  $defenses = PoolScoreBoardWithDefenses($poolIds, $sort, 0);
+  $defenses = PoolsScoreBoardWithDefensesArray($poolIds, $sort, 0);
 } elseif ($seriesId) {
   //$scores = SeriesScoreBoard($seriesId, $sort, 0);
-  $defenses = SeriesDefenseBoard($seriesId, $sort, 0);
+  $defenses = SeriesDefenseBoardArray($seriesId, $sort, 0);
 }
 $i = 1;
-while ($row = mysqli_fetch_assoc($defenses)) {
-  $html .= "<tr>";
-  $html .= "<td>" . $i++ . "</td>";
-  if ($sort == "name") {
-    $html .= "<td class='highlight'><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
-    $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
-    $html .= "</a></td>";
-  } else {
-    $html .= "<td><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
-    $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
-    $html .= "</a></td>";
+if ($defenses) {
+  foreach ($defenses as $row) {
+    $html .= "<tr>";
+    $html .= "<td>" . $i++ . "</td>";
+    if ($sort == "name") {
+      $html .= "<td class='highlight'><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
+      $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
+      $html .= "</a></td>";
+    } else {
+      $html .= "<td><a href='?view=playercard&amp;series=$poolId&amp;player=" . $row['player_id'] . "'>";
+      $html .= utf8entities($row['firstname'] . " " . $row['lastname']);
+      $html .= "</a></td>";
+    }
+    if ($sort == "team")
+      $html .= "<td class='highlight'>" . utf8entities($row['teamname']) . "</td>";
+    else
+      $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
+
+    if ($sort == "games")
+      $html .= "<td class='center highlight'>" . intval($row['games']) . "</td>";
+    else
+      $html .= "<td class='center'>" . intval($row['games']) . "</td>";
+
+    if ($sort == "deftotal")
+      $html .= "<td class='center highlight'>" . intval($row['deftotal']) . "</td>";
+    else
+      $html .= "<td class='center'>" . intval($row['deftotal']) . "</td>";
   }
-  if ($sort == "team")
-    $html .= "<td class='highlight'>" . utf8entities($row['teamname']) . "</td>";
-  else
-    $html .= "<td>" . utf8entities($row['teamname']) . "</td>";
-
-  if ($sort == "games")
-    $html .= "<td class='center highlight'>" . intval($row['games']) . "</td>";
-  else
-    $html .= "<td class='center'>" . intval($row['games']) . "</td>";
-
-  if ($sort == "deftotal")
-    $html .= "<td class='center highlight'>" . intval($row['deftotal']) . "</td>";
-  else
-    $html .= "<td class='center'>" . intval($row['deftotal']) . "</td>";
+} else {
+  $html .= "<tr><td colspan='5'>" . _("No defence data available for the selected filter.") . "</td></tr>";
 }
 $html .= "</table>";
 

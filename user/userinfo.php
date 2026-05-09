@@ -22,6 +22,10 @@ if (!empty($_GET['user'])) {
 }
 
 if ($userid != "anonymous") {
+  if (!empty($_GET['created'])) {
+    $message .= "<p>" . _("Added new user") . "</p><hr/>";
+  }
+
   //process itself if submit was pressed
   if (!empty($_POST['save'])) {
     $newUsername = $_POST['UserName'];
@@ -40,7 +44,7 @@ if ($userid != "anonymous") {
     }
 
     if (empty($newName)) {
-      $message .= "<p class='warning'>" . _("Name can not be empty.") . "</p>";
+      $message .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
       $error = 1;
     }
 
@@ -167,12 +171,6 @@ if ($userid != "anonymous") {
     if ($_POST['userrole'] == 'superadmin') {
       $selector = 'superadmin';
       AddUserRole($userid, $selector);
-    } elseif ($_POST['userrole'] == 'translationadmin') {
-      $selector = 'translationadmin';
-      AddUserRole($userid, $selector);
-    } elseif ($_POST['userrole'] == 'useradmin') {
-      $selector = 'useradmin';
-      AddUserRole($userid, $selector);
     } elseif ($_POST['userrole'] == 'teamadmin') {
       foreach ($_POST['teams'] as $teamid) {
         AddUserRole($userid, 'teamadmin:' . $teamid);
@@ -184,6 +182,10 @@ if ($userid != "anonymous") {
     } elseif ($_POST['userrole'] == 'seasonadmin') {
       foreach ($_POST['searchseasons'] as $seasonid) {
         AddUserRole($userid, 'seasonadmin:' . $seasonid);
+      }
+    } elseif ($_POST['userrole'] == 'spiritadmin') {
+      foreach ($_POST['searchseasons'] as $seasonid) {
+        AddUserRole($userid, 'spiritadmin:' . $seasonid);
       }
     } elseif ($_POST['userrole'] == 'seriesadmin') {
       foreach ($_POST['series'] as $seriesid) {
@@ -239,8 +241,16 @@ if ($_SESSION['uid'] != "anonymous") {
 		<tr><td class='infocell'>" . _("Username") . ":</td>
 			<td><input class='input' maxlength='20' id='UserName' name='UserName' value='" . utf8entities($userinfo['userid']) . "'/></td></tr>
 		<tr><td class='infocell'>" . _("Primary email") . ":</td>
-			<td><a href='mailto:" . $userinfo['email'] . "'/>" . $userinfo['email'] . "</a>&nbsp;
-			<a href='?view=user/addextraemail&amp;user=" . utf8entities($userid) . "'>" . _("Add extra address") . "</a></td></tr>\n";
+			<td>";
+  if (!empty($userinfo['email'])) {
+    $html .= "<a href='mailto:" . utf8entities($userinfo['email']) . "'>" . utf8entities($userinfo['email']) . "</a>";
+  } else {
+    $html .= "-";
+  }
+  if (!IsEmailDisabled()) {
+    $html .= "&nbsp;<a href='?view=user/addextraemail&amp;user=" . utf8entities($userid) . "'>" . _("Add extra address") . "</a>";
+  }
+  $html .= "</td></tr>\n";
   $extraEmails = UserExtraEmails($userid);
   if ($extraEmails) {
     $html .= "		<tr><td rowspan='" . count($extraEmails) . "' class='infocell'>" . _("Extra emails") . ":</td>\n";
@@ -305,7 +315,7 @@ if ($_SESSION['uid'] != "anonymous") {
 
   $html .= "<select multiple='multiple' name='addeditseasonslist[]' id='addeditseasonslist' style='height:200px;width:250px'>\n";
   $seasons = Seasons();
-  while ($season = mysqli_fetch_assoc($seasons)) {
+  foreach ($seasons as $season) {
     if (empty($editseasons[$season['season_id']])) {
       $html .= "<option value='" . urlencode($season['season_id']) . "'>" . utf8entities($season['name']) . "</option>";
     }
@@ -386,12 +396,19 @@ if (hasEditUsersRight() || $_SESSION['uid'] == $userid) {
         $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
       } elseif ($role == 'translationadmin') {
         $html .= "<tr><td>";
-        $html .= _("Translation administrator");
+        $html .= _("Translation administrator") . " (" . _("legacy, not enforced") . ")";
         $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
       } elseif ($role == 'useradmin') {
         $html .= "<tr><td>";
-        $html .= _("User administrator");
+        $html .= _("User administrator") . " (" . _("legacy, not enforced") . ")";
         $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $param . ", \"deleteRoleId\");'/></td></tr>\n";
+      } elseif ($role == 'spiritadmin') {
+        foreach ($param as $akey => $prop_id) {
+          $html .= "<tr><td>";
+          $html .= _("Spirit admin");
+          $html .= " (" . utf8entities(SeasonName($akey)) . ")";
+          $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
+        }
       } elseif ($role == 'teamadmin') {
         foreach ($param as $akey => $prop_id) {
           $html .= "<tr><td>";
@@ -479,10 +496,9 @@ if (hasEditUsersRight()) {
   $html .= "<p>\n";
   $html .= "<select class='dropdown' name='userrole'>\n";
   $html .= "<option value='superadmin'>" . _("Administrator") . "</option>\n";
-  $html .= "<option value='translationadmin'>" . _("Translation administrator") . "</option>\n";
-  $html .= "<option value='useradmin'>" . _("User administrator") . "</option>\n";
   $html .= "<option value='teamadmin'>" . _("Team contact person") . "</option>\n";
   $html .= "<option value='seasonadmin'>" . _("Event responsible") . "</option>\n";
+  $html .= "<option value='spiritadmin'>" . _("Spirit admin") . "</option>\n";
   $html .= "<option value='seriesadmin'>" . _("Division organizer") . "</option>\n";
   $html .= "<option value='accradmin'>" . _("Accreditation official") . "</option>\n";
   $html .= "<option value='resadmin'>" . _("Scheduling right") . "</option>\n";

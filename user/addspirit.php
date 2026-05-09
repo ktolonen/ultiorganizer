@@ -32,11 +32,70 @@ function RenderSpiritCommentForTeam($teamId, $spirit_comments, $comment_feedback
   return $html;
 }
 
+function QuickSpiritCategories($categories)
+{
+  $quick = SpiritOrderedCategories($categories);
+  return count($quick) === 5 ? $quick : array();
+}
+
+function ParseQuickSpiritScore($score, $quickCategories)
+{
+  $score = trim((string)$score);
+  if ($score === "") {
+    return null;
+  }
+  if (count($quickCategories) !== 5 || strlen($score) !== 5 || !preg_match('/^[0-4]{5}$/', $score)) {
+    return false;
+  }
+
+  $points = array();
+  for ($i = 0; $i < 5; $i++) {
+    $value = (int)$score[$i];
+    $points[(int)$quickCategories[$i]['category_id']] = $value;
+  }
+  return $points;
+}
+
+function RenderSpiritDeleteControl($gameId, $teamId, $hasSpiritScore)
+{
+  if (!$hasSpiritScore || !CanDeleteSpiritSubmission($gameId, $teamId)) {
+    return "";
+  }
+  $confirmText = htmlspecialchars(addslashes(_("Delete this spirit score?")), ENT_QUOTES);
+  return "<p><button class='button' type='submit' name='delete_spirit_team' value='" . (int)$teamId . "' onclick='return confirm(\"" . $confirmText . "\");'>" . _("Delete spirit score") . "</button></p>";
+}
+
 $season = SeasonInfo(GameSeason($gameId));
+$game_result = GameResult($gameId);
+$entryTeamId = SpiritEntryTeamForUser($gameId);
+$hasFullSpiritView = HasFullGameSpiritViewRight($gameId);
+$hasFullSpiritEdit = HasFullGameSpiritEditRight($gameId);
+
+if ($entryTeamId < 0) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
+if ($entryTeamId > 0 && $teamId <= 0) {
+  $teamId = $entryTeamId;
+}
+
+if (
+  !$hasFullSpiritView &&
+  (
+    ($teamId > 0 && !hasEditPlayersRight($teamId)) ||
+    ($teamId <= 0 && $entryTeamId > 0)
+  )
+) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 if ($season['spiritmode'] > 0) {
-  $game_result = GameResult($gameId);
-  $mode = SpiritMode($season['spiritmode']);
-  $categories = SpiritCategories($mode['mode']);
+  $categories = SpiritCategories($season['spiritmode']);
+  $quickCategories = QuickSpiritCategories($categories);
+  $allowQuickEntry = (count($quickCategories) === 5) && $hasFullSpiritEdit;
+  $score_feedback = "";
   $comment_feedback = "";
   $spirit_comments = array();
   if ($teamId > 0) {
@@ -83,27 +142,64 @@ if ($season['spiritmode'] > 0) {
     );
   }
 
-  //process itself if save button was pressed
-  if (!empty($_POST['save'])) {
-    if (isset($_POST['homevalueId'])) {
+  if (!empty($_POST['delete_spirit_team'])) {
+    $deleteTeamId = (int)$_POST['delete_spirit_team'];
+    if (GameDeleteSpiritPoints($gameId, $deleteTeamId)) {
+      $score_feedback = _("Spirit score deleted. ");
+    } else {
+      $score_feedback = _("Spirit score not deleted. ");
+    }
+  } elseif (!empty($_POST['save'])) {
+    $homeSavedFromQuick = false;
+    $visitorSavedFromQuick = false;
+
+    if ($allowQuickEntry && isset($_POST['homespirit']) && trim($_POST['homespirit']) !== "") {
+      $quickHomePoints = ParseQuickSpiritScore($_POST['homespirit'], $quickCategories);
+      if ($quickHomePoints === false) {
+        $score_feedback = sprintf(_("Invalid quick score for %s. "), $game_result['hometeamname']);
+      } else {
+        $homeSavedFromQuick = GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $quickHomePoints, $categories);
+        if (!$homeSavedFromQuick) {
+          $score_feedback = _("Spirit score not saved. ");
+        }
+      }
+    }
+
+    if ($allowQuickEntry && isset($_POST['awayspirit']) && trim($_POST['awayspirit']) !== "") {
+      $quickVisitorPoints = ParseQuickSpiritScore($_POST['awayspirit'], $quickCategories);
+      if ($quickVisitorPoints === false) {
+        $score_feedback = sprintf(_("Invalid quick score for %s. "), $game_result['visitorteamname']);
+      } else {
+        $visitorSavedFromQuick = GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $quickVisitorPoints, $categories);
+        if (!$visitorSavedFromQuick) {
+          $score_feedback = _("Spirit score not saved. ");
+        }
+      }
+    }
+
+    if (isset($_POST['homevalueId']) && !$homeSavedFromQuick) {
     $points = array();
     foreach ($_POST['homevalueId'] as $cat) {
       if (isset($_POST['homecat' . $cat]))
         $points[$cat] = $_POST['homecat' . $cat];
       else
-        $missing = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
+        $score_feedback = sprintf(_("Missing score for %s. "), $game_result['hometeamname']);
     }
-    GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories);
+    if (!GameSetSpiritPoints($gameId, $game_result['hometeam'], 1, $points, $categories)) {
+      $score_feedback = _("Spirit score not saved. ");
     }
-    if (isset($_POST['visvalueId'])) {
+    }
+    if (isset($_POST['visvalueId']) && !$visitorSavedFromQuick) {
     $points = array();
     foreach ($_POST['visvalueId'] as $cat) {
       if (isset($_POST['viscat' . $cat]))
         $points[$cat] = $_POST['viscat' . $cat];
       else
-        $missing = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
+        $score_feedback = sprintf(_("Missing score for %s. "), $game_result['visitorteamname']);
     }
-    GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories);
+    if (!GameSetSpiritPoints($gameId, $game_result['visitorteam'], 0, $points, $categories)) {
+      $score_feedback = _("Spirit score not saved. ");
+    }
     }
     $game_result = GameResult($gameId);
   }
@@ -123,48 +219,105 @@ if ($season['spiritmode'] > 0) {
 
   $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
   $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
-  $menutabs[_("Score sheet")] = "?view=user/addscoresheet&game=$gameId";
-  $menutabs[_("Spirit points")] = "?view=user/addspirit&game=$gameId";
+  $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
+  $menutabs[_("Spirit score")] = SpiritEntryUrl($gameId);
   if (ShowDefenseStats()) {
-    $menutabs[_("Defense sheet")] = "?view=user/adddefensesheet&game=$gameId&amp;team=$teamId";
+    $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId&amp;team=$teamId";
   }
   $html .= pageMenu($menutabs, "", false);
 
   $html .= "<form  method='post' action='?view=user/addspirit&amp;game=" . $gameId . "&amp;team=$teamId'>";
+  if ($allowQuickEntry) {
+    $homeAbbr = TeamAbbreviation($game_result['hometeam']);
+    $visitorAbbr = TeamAbbreviation($game_result['visitorteam']);
+    if (empty($homeAbbr)) {
+      $homeAbbr = $game_result['hometeamname'];
+    }
+    if (empty($visitorAbbr)) {
+      $visitorAbbr = $game_result['visitorteamname'];
+    }
+    $html .= "<h3>" . _("Quick data entry:") . "</h3>\n";
+    $html .= "<table>";
+    $html .= "<tr><td class='center'>" . _("Given for") . "</td><td width='25px'></td><td class='center'>" . _("Given for") . "</td><td></td></tr>";
+    $html .= "<tr><td class='center'><strong>" . utf8entities($homeAbbr) . "</strong></td><td></td><td class='center'><strong>" . utf8entities($visitorAbbr) . "</strong></td><td></td></tr>";
+    $html .= "<tr>";
+    $html .= "<td class='center'><input class='input quickspirit-input' type='text' size='5' maxlength='5' name='homespirit' id='homespirit' inputmode='numeric' pattern='[0-4]{5}'/></td>";
+    $html .= "<td></td>";
+    $html .= "<td class='center'><input class='input quickspirit-input' type='text' size='5' maxlength='5' name='awayspirit' id='awayspirit' inputmode='numeric' pattern='[0-4]{5}'/></td>";
+    $html .= "<td class='center'><button class='button' type='submit' name='save' value='save'>" . _("Update & Save") . "</button></td>";
+    $html .= "</tr>";
+    $html .= "<tr><td colspan='2' class='center'>" . _("(eg. '21322')") . "</td></tr></table>";
+    $html .= "<script>
+      (function () {
+        function updateQuickInputState(el) {
+          var v = (el.value || '').trim();
+          var ok = /^[0-4]{5}$/.test(v);
+          if (ok || v === '') {
+            el.style.borderColor = '';
+            el.style.backgroundColor = '';
+          } else {
+            el.style.borderColor = '#c00';
+            el.style.backgroundColor = '#ffeaea';
+          }
+        }
+        var ids = ['homespirit', 'awayspirit'];
+        for (var i = 0; i < ids.length; i++) {
+          var el = document.getElementById(ids[i]);
+          if (!el) {
+            continue;
+          }
+          updateQuickInputState(el);
+          el.addEventListener('input', function () {
+            updateQuickInputState(this);
+          });
+        }
+      })();
+    </script>";
+  }
 
   if ($teamId > 0) {
     if ($teamId == $game_result['visitorteam']) {
-  $html .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($game_result['hometeamname']) . "</h3>\n";
+    $html .= "<h3>" . _("Spirit score given for") . ": " . utf8entities($game_result['hometeamname']) . "</h3>\n";
 
     $points = GameGetSpiritPoints($gameId, $game_result['hometeam']);
     $html .= SpiritTable($game_result, $points, $categories, true);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['hometeam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['hometeam'], $spirit_comments, $comment_feedback);
     }
     if ($teamId == $game_result['hometeam']) {
-  $html .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($game_result['visitorteamname']) . "</h3>\n";
+  $html .= "<h3>" . _("Spirit score given for") . ": " . utf8entities($game_result['visitorteamname']) . "</h3>\n";
 
   $points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
   $html .= SpiritTable($game_result, $points, $categories, false);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['visitorteam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['visitorteam'], $spirit_comments, $comment_feedback);
     }
   } else {
-    $html .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($game_result['hometeamname']) . "</h3>\n";
+    $html .= "<h3>" . _("Spirit score given for") . ": " . utf8entities($game_result['hometeamname']) . "</h3>\n";
 
     $points = GameGetSpiritPoints($gameId, $game_result['hometeam']);
     $html .= SpiritTable($game_result, $points, $categories, true);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['hometeam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['hometeam'], $spirit_comments, $comment_feedback);
-    $html .= "<h3>" . _("Spirit points given for") . ": " . utf8entities($game_result['visitorteamname']) . "</h3>\n";
+    $html .= "<h3>" . _("Spirit score given for") . ": " . utf8entities($game_result['visitorteamname']) . "</h3>\n";
     $points = GameGetSpiritPoints($gameId, $game_result['visitorteam']);
     $html .= SpiritTable($game_result, $points, $categories, false);
+    $html .= RenderSpiritDeleteControl($gameId, $game_result['visitorteam'], !empty($points));
     $html .= RenderSpiritCommentForTeam($game_result['visitorteam'], $spirit_comments, $comment_feedback);
   }
+  $canSaveSpirit = CanEditSpiritSubmission($gameId, $game_result['hometeam']) || CanEditSpiritSubmission($gameId, $game_result['visitorteam']);
   $html .= "<p>";
-  $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
-  if (isset($missing))
-    $html .= " $missing";
+  if ($canSaveSpirit) {
+    $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
+    if (!empty($score_feedback)) {
+      $html .= " $score_feedback";
+    }
+  } else {
+    $html .= "<span class='warning'>" . _("Read-only spirit review") . "</span>";
+  }
   $html .= "</p>";
   $html .= "</form>\n";
 } else {
-  $html .= "<p>" . sprintf(_("Spirit points not given for %s."), utf8entities($season['name'])) . "</p>";
+  $html .= "<p>" . sprintf(_("Spirit scoring is not enabled for %s."), utf8entities($season['name'])) . "</p>";
 }
 showPage($title, $html);

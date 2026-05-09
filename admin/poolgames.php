@@ -43,8 +43,8 @@ if (!empty($_POST['remove_x'])) {
 
 	//run some test to for safe deletion
 	$goals = GameAllGoals($id);
-	if (mysqli_num_rows($goals)) {
-		$html .= "<p class='warning'>" . _("Game has") . " " . mysqli_num_rows($goals) . " " . _("goals") . ". " . _("Goals must be removed before removing the team") . ".</p>";
+	if (count($goals)) {
+		$html .= "<p class='warning'>" . _("Game has") . " " . count($goals) . " " . _("goals") . ". " . _("Goals must be removed before removing the team") . ".</p>";
 		$ok = false;
 	}
 	if ($ok)
@@ -52,7 +52,7 @@ if (!empty($_POST['remove_x'])) {
 } elseif (!empty($_POST['swap_x'])) {
 	$id = $_POST['hiddenDeleteId'];
 	$goals = GameAllGoals($id);
-	if (!mysqli_num_rows($goals)) {
+	if (!count($goals)) {
 		GameChangeHome($id);
 	}
 } elseif (!empty($_POST['removemoved'])) {
@@ -172,40 +172,41 @@ if (CanGenerateGames($poolId)) {
 	$html .= "<h2>" . _("Creation of pool games") . "</h2>\n";
 
 	if ($poolInfo['type'] == "1") {
-		$html .= "<p>" . _("Round Robin pool") . "</p>\n";
+	$html .= "<p>"._("Round Robin -type of pool")."</p>\n";
 		$html .= "<p>" . _("Game rounds") . ": <input class='input' size='2' name='rounds' value='$rounds'/></p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
 		$html .= "/></p>";
 
 		if ($poolInfo['mvgames'] == 2) {
-			$html .= "<p>" . _("Do not generate mutual games for teams moved from same pool") . ":<input class='input' type='checkbox' name='nomutual'";
+			$html .= "<p>" . _("Do not generate mutual games for teams moved from the same pool") . ":<input class='input' type='checkbox' name='nomutual'";
 			if ($nomutual) {
 				$html .= "checked='checked'";
 			}
 			$html .= "/></p>";
 		}
 	} elseif ($poolInfo['type'] == "2") {
-		$html .= "<p>" . _("Play-off pool") . "</p>\n";
-		$html .= "<p>" . sprintf(utf8entities(_("best of %s games")), ": <input class='input' size='2' name='rounds' value='$rounds'/>") . "</p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+	$html .= "<p>"._("Playoff -type of pool")."</p>\n";
+	$html .= "<p>"._("best")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("matches")."</p>\n";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
 		$html .= "/></p>";
 	} elseif ($poolInfo['type'] == "3") {
-		$html .= "<p>" . _("Swissdraw pool: ") . "<input class='input' size='2' name='rounds' value='$rounds'/> " . _("rounds") . "</p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+	$html .= "<p>"._("Swissdraw pool")."</p>\n";
+	$html .= "<p>"._("with")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("rounds")."</p>\n";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
 		$html .= "/></p>";
 	} elseif ($poolInfo['type'] == "4") {
-		$html .= "<p>" . _("Crossmatch pool") . "</p>\n";
-		$html .= "<p>" . sprintf(utf8entities(_("best of %s games")), ": <input class='input' size='2' name='rounds' value='$rounds'/>") . "</p>\n";
-		$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+	$html .= "<p>"._("Crossmatch -type of pool")."</p>\n";
+	$html .= "<p>"._("best")." <input class='input' size='2' name='rounds' value='$rounds'/> "._("matches")."</p>\n";
+		$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 		if (isRespTeamHomeTeam()) {
 			$html .= "checked='checked'";
 		}
@@ -248,14 +249,14 @@ $tour = "";
 $totalgames = 0;
 foreach ($reservations as $res) {
 	$games = PoolGames($poolId, $res['id']);
-	$location = LocationInfo($res['location']);
+	$placeLabel = ReservationPlaceText(U_($res['name']), U_($res['fieldname']));
 	if (count($games)) {
 		if ($tour != $res['reservationgroup']) {
 			$html .= "<h2>" . utf8entities($res['reservationgroup']) . "</h2>";
 			$tour = $res['reservationgroup'];
 		}
 		$html .= "<table border='0' cellpadding='4px' width='400px'>\n";
-		$html .= "<tr><th colspan='4'>" . utf8entities($location['name']) . " ";
+		$html .= "<tr><th colspan='4'>" . utf8entities($placeLabel) . " ";
 		$html .= " " . DefWeekDateFormat($res['starttime']) . " " . DefHourFormat($res['starttime']) . "-";
 		$html .= DefHourFormat($res['endtime']) . "</th>";
 		$html .= "<th colspan='6' class='right'><a class='thlink' href='?view=admin/schedule&amp;season=$season&amp;series=" . $poolInfo['series'] . "&amp;pool=$poolId&amp;reservations=" . $res['id'] . "'>" . _("Add games") . "</a></th>";
@@ -279,6 +280,11 @@ foreach ($reservations as $res) {
 				$html .= "<td>-</td>";
 				$html .= "<td style='width:30%'>" . utf8entities($row['visitorteamname']) . "</td>";
 			}
+			      if(empty($row['gamename'])){
+        $html .= "<td>&nbsp;</td>";
+      }else{
+        $html .= "<td>(". utf8entities($row['gamename']) .")</td>";
+      }
 			$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=" . $row['game_id'] . "'>" . _("edit") . "</a></td>";
 			$html .= "<td style='width:5%'>" . intval($row['homescore']) . "</td><td style='width:2%'>-</td><td style='width:5%'>" . intval($row['visitorscore']) . "</td>";
 			$html .= "<td class='center'><input class='deletebutton' type='image' src='images/swap.png' alt='<->' name='swap' value='" . _("X") . "' onclick=\"setId(" . $row['game_id'] . ");\"/></td>";
@@ -315,6 +321,11 @@ if (count($games)) {
 		} else {
 			$html .= "<td style='width:30%'>" . utf8entities(U_($row['pvisitorteamname'])) . "</td>";
 		}
+    if(empty($row['gamename'])){
+      $html .= "<td>&nbsp;</td>";
+    }else{
+      $html .= "<td>(". utf8entities($row['gamename']) .")</td>";
+    }
 		$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=" . $row['game_id'] . "'>" . _("edit") . "</a></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/swap.png' alt='<->' name='swap' value='" . _("X") . "' onclick=\"setId(" . $row['game_id'] . ");\"/></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"setId(" . $row['game_id'] . ");\"/></td>";
@@ -334,6 +345,11 @@ if (count($games)) {
 		$html .= "<td>-</td>";
 		$html .= "<td style='width:30%'>" . utf8entities($row['visitorteamname']) . "</td>";
 		$html .= "<td style='width:5%'>" . intval($row['homescore']) . "</td><td style='width:2%'>-</td><td style='width:5%'>" . intval($row['visitorscore']) . "</td>";
+    if(empty($row['gamename'])){
+      $html .= "<td>&nbsp;</td>";
+    }else{
+      $html .= "<td>(". utf8entities($row['gamename']) .")</td>";
+    }
 		$html .= "<td class='center'><a href='?view=admin/editgame&amp;season=$season&amp;game=" . $row['game_id'] . "'>" . _("edit") . "</a></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/swap.png' alt='<->' name='swap' value='" . _("X") . "' onclick=\"setId(" . $row['game_id'] . ");\"/></td>";
 		$html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='removemoved' value='" . _("X") . "' onclick=\"setId(" . $row['game_id'] . ");\"/></td>";
@@ -349,7 +365,7 @@ if ($totalgames > 0) {
 
 if (!$poolInfo['played']) {
 	$html .= "<h2>" . _("Creation of single game") . "</h2>\n";
-	$html .= "<p>" . _("Home team has rights to edit game score sheet") . ":<input class='input' type='checkbox' name='homeresp'";
+	$html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 	if (isRespTeamHomeTeam()) {
 		$html .= "checked='checked'";
 	}

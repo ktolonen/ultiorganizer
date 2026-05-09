@@ -11,6 +11,7 @@ require_once __DIR__ . '/../lib/team.functions.php';
 require_once __DIR__ . '/../lib/url.functions.php';
 require_once __DIR__ . '/../lib/configuration.functions.php';
 require_once __DIR__ . '/../lib/api.functions.php';
+require_once __DIR__ . '/../lib/version.functions.php';
 
 require_once __DIR__ . '/v1/router.php';
 

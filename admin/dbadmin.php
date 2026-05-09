@@ -28,7 +28,8 @@ if (isSuperAdmin()) {
 			$messages[] = _("Conversion to InnoDB/utf8mb4 attempted. Review tables below for remaining MyISAM tables.");
 		} catch (Exception $e) {
 			$html .= "<div class='warning'>";
-			$html .= utf8entities(_("Conversion failed:") . " " . $e->getMessage());
+			$errorMessage = _("Conversion failed:") . "\n" . $e->getMessage();
+			$html .= nl2br(utf8entities($errorMessage));
 			$html .= "<br/>" . _("Fix suggestions:") . "<br/>";
 			$html .= "&bull; " . _("Clean orphans by setting nullable foreign keys to NULL or delete/reassign child rows.") . "<br/>";
 			$html .= "&bull; " . _("Insert missing parent rows for non-nullable references (e.g., required stats/plays/games).") . "<br/>";
@@ -71,6 +72,13 @@ if (isSuperAdmin()) {
 	$html .= "<a href='?view=admin/dbequalize'>&raquo; " . _("Equalization") . "</a><br/>\n";
 	$html .= "</p>\n";
 
+	$html .= "<p><span class='profileheader'>" . _("Privacy") . ": </span><br/>\n";
+	$html .= "<a href='?view=admin/privacyplayer'>&raquo; " . _("Player data report") . "</a><br/>\n";
+	$html .= "<a href='?view=admin/privacyplayer'>&raquo; " . _("Player anonymization") . "</a><br/>\n";
+	$html .= "<a href='?view=admin/privacyuser'>&raquo; " . _("Registered user data report") . "</a><br/>\n";
+	$html .= "<a href='?view=admin/privacyuser'>&raquo; " . _("Registered user deletion") . "</a><br/>\n";
+	$html .= "</p>\n";
+
 	$types = array("import", "updater", "simulator", "generator");
 
 	foreach ($types as $type) {
@@ -78,7 +86,7 @@ if (isSuperAdmin()) {
 		if (count($plugins)) {
 			$html .= "<p><span class='profileheader'>" . _("Plugins") . " ($type): </span><br/>\n";
 			foreach ($plugins as $plugin) {
-				$html .= "<a href='?view=" . $plugin['file'] . "'>&raquo; " . $plugin['title'] . "</a><br/>\n";
+				$html .= "<a href='?view=" . $plugin['file'] . "'>&raquo; " . utf8entities($plugin['title']) . "</a><br/>\n";
 			}
 			$html .= "</p>\n";
 		}

@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('allcountries');
+
 include_once 'lib/country.functions.php';
 
 $title = _("Countries");

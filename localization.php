@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/include_only.guard.php';
+denyDirectFileAccess(__FILE__);
+
 include_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'lib/translation.functions.php';
 
@@ -76,6 +79,21 @@ function styles() {
     $ret .= "		<link rel=\"stylesheet\" href=\"".$styles_prefix."cust/".CUSTOMIZATIONS."/ultiorganizer.css\" type=\"text/css\" />\n";
   } else {
     $ret .= "		<link rel=\"stylesheet\" href=\"".$styles_prefix."cust/default/ultiorganizer.css\" type=\"text/css\" />\n";
+  }
+  return $ret;
+}
+
+function mobileStyles() {
+  global $styles_prefix;
+  global $include_prefix;
+  if (!isset($styles_prefix)) {
+    $styles_prefix = $include_prefix;
+  }
+  $ret = "";
+  if (is_file($include_prefix . 'cust/' . CUSTOMIZATIONS . '/ultiorganizer-mobile.css')) {
+    $ret .= "    <link rel=\"stylesheet\" href=\"" . $styles_prefix . "cust/" . CUSTOMIZATIONS . "/ultiorganizer-mobile.css\" type=\"text/css\" />\n";
+  } else {
+    $ret .= "    <link rel=\"stylesheet\" href=\"" . $styles_prefix . "cust/default/ultiorganizer-mobile.css\" type=\"text/css\" />\n";
   }
   return $ret;
 }

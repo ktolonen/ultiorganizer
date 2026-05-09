@@ -1,6 +1,7 @@
 <?php
 include_once __DIR__ . '/auth.php';
 include_once 'lib/common.functions.php';
+include_once 'lib/reservation.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
@@ -109,10 +110,10 @@ if (count($respGameArray) == 0) {
 					if ($prevloc != $gameloc) {
 						$html .= "</td></tr><tr><td>\n";
 						if ($location == $gameloc && $day == JustDate($game['starttime'])) {
-							$html .= "&nbsp;&nbsp;<b>" . utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</b>";
+							$html .= "&nbsp;&nbsp;<b>" . utf8entities(ReservationPlaceText(U_($game['locationname']), U_($game['fieldname']))) . "</b>";
 						} else {
 							$html .= "&nbsp;+<a href='?view=mobile/respgames&amp;rg=" . urlencode($currentGroup) . "&amp;loc=" . urlencode($gameloc) . "&amp;day=" . urlencode(JustDate($game['starttime'])) . "$massPar'>";
-							$html .= utf8entities($game['locationname']) . " " . _("Field") . " " . utf8entities($game['fieldname']) . "</a>";
+							$html .= utf8entities(ReservationPlaceText(U_($game['locationname']), U_($game['fieldname']))) . "</a>";
 						}
 
 						$html .= "</td></tr><tr><td>\n";
@@ -140,7 +141,12 @@ if ($showall) {
 } else {
 	$html .= "<a href='?view=mobile/respgames&amp;all=1'>" . _("Show all") . "</a>";
 }
-$html .= "</td></tr></table>\n";
+$html .= "</td></tr><tr><td>\n";
+$html .= "<a href='?view=mobile/logout'>"._("Log out")."</a>";
+$html .= "</td></tr><tr><td>\n";
+$html .= "<a href='?view=frontpage'>"._("Back to the Ultiorganizer")."</a>";
+$html .= "</td></tr>\n";
+$html .= "</table>\n";
 $html .= "</form>";
 
 echo $html;

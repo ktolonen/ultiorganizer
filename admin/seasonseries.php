@@ -11,6 +11,17 @@ $html = "";
 
 $title = utf8entities(U_(SeasonName($season))) . ": " . _("Divisions");
 
+if (!isSeasonAdmin($season)) {
+  showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
+$templates = PoolTemplates();
+$templateIds = array();
+foreach ($templates as $template) {
+  $templateIds[] = (int)$template['template_id'];
+}
+
 //process itself on submit
 if (!empty($_POST['remove_x'])) {
   $id = $_POST['hiddenDeleteId'];
@@ -23,7 +34,8 @@ if (!empty($_POST['remove_x'])) {
   $sp['ordering'] = !empty($_POST['ordering0']) ? $_POST['ordering0'] : "A";
   $sp['season'] = $season;
   $sp['valid'] = isset($_POST['valid0']) ? 1 : 0;
-  $sp['pool_template'] = $_POST['template0'];
+  $templateId = isset($_POST['template0']) && $_POST['template0'] !== '' ? (int)$_POST['template0'] : null;
+  $sp['pool_template'] = in_array($templateId, $templateIds, true) ? $templateId : null;
   AddSeries($sp);
 } else if (!empty($_POST['save'])) {
 
@@ -37,7 +49,8 @@ if (!empty($_POST['remove_x'])) {
     $sp['ordering'] = $_POST["ordering$id"];
     $sp['season'] = $season;
     $sp['valid'] = isset($_POST["valid$id"]) ? 1 : 0;
-    $sp['pool_template'] = $_POST["template$id"];
+    $templateId = isset($_POST["template$id"]) && $_POST["template$id"] !== '' ? (int)$_POST["template$id"] : null;
+    $sp['pool_template'] = in_array($templateId, $templateIds, true) ? $templateId : null;
     SetSeries($sp);
   }
 }
@@ -51,6 +64,9 @@ contentStart();
 
 $html .= "<form method='post' action='?view=admin/seasonseries&amp;season=$season'>";
 $html .= "<h2>" . _("Divisions") . "</h2>\n";
+if (empty($templates)) {
+  $html .= "<p class='warning'>" . _("No rule templates available.") . "</p>\n";
+}
 
 $series = SeasonSeries($season);
 $types = SeriesTypes();
@@ -79,8 +95,7 @@ foreach ($series as $row) {
   $html .= "</select></td>";
 
   $html .=  "<td><select class='dropdown' name='template$id'>\n";
-
-  $templates = PoolTemplates();
+  $html .= "<option class='dropdown' value=''></option>";
 
   foreach ($templates as $template) {
 
@@ -120,7 +135,14 @@ foreach ($series as $row) {
 if (!$last_ordering) {
   $last_ordering = 'A';
 } else {
-  $last_ordering++;
+  $last_ordering = strtoupper(substr(trim($last_ordering), 0, 1));
+  if ($last_ordering >= '0' && $last_ordering < '9') {
+    $last_ordering = chr(ord($last_ordering) + 1);
+  } elseif ($last_ordering >= 'A' && $last_ordering < 'Z') {
+    $last_ordering = chr(ord($last_ordering) + 1);
+  } else {
+    $last_ordering = 'A';
+  }
 }
 $html .= "<tr>";
 $html .= "<td style='padding-top:15px'><input class='input' size='15' maxlength='50' id='name0' name='name0'/></td>";
@@ -132,8 +154,7 @@ foreach ($types as $type) {
 
 $html .= "</select></td>";
 $html .=  "<td style='padding-top:15px'><select class='dropdown' name='template0'>\n";
-
-$templates = PoolTemplates();
+$html .= "<option class='dropdown' value=''></option>";
 
 foreach ($templates as $template) {
   if ($last_rule_template == $template['template_id']) {
@@ -145,7 +166,7 @@ foreach ($templates as $template) {
 
 $html .=  "</select></td>";
 
-$html .= "<td style='padding-top:15px'><input class='input' size='3' maxlength='1' name='ordering0' value='$last_ordering'/></td>";
+$html .= "<td style='padding-top:15px'><input class='input' size='3' maxlength='1' name='ordering0' value='" . utf8entities($last_ordering) . "'/></td>";
 $html .= "<td style='padding-top:15px'><input class='input' type='checkbox' name='valid0' checked='checked'/></td>";
 
 $html .= "<td style='padding-top:15px'><input id='add' class='button' name='add' type='submit' value='" . _("Add") . "'/></td>";

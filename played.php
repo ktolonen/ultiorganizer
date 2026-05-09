@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('played');
+
 if (iget("season")) {
   $season = iget("season");
 } else {

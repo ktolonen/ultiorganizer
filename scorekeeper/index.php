@@ -69,7 +69,7 @@ echo "<html>\n";
 echo "<head>\n";
 echo "<meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover'>\n";
 echo "<title>Scorekeeper</title>\n";
-echo "<link rel='stylesheet' href='" . BASEURL . "/scorekeeper/scorekeeper.css'/>\n";
+echo mobileStyles();
 
 echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
 
@@ -81,7 +81,7 @@ include $viewPath;
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
 echo "<a class='footer-compact' href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . _("Ultiorganizer") . "</a>";
 if ($_SESSION['uid'] != "anonymous") {
-	echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Logout") . "</a>";
+	echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Log out") . "</a>";
 }
 echo "\n</div><!-- /footer -->\n\n";
 echo "</div><!-- /page -->\n";

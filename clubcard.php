@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('clubcard');
+
 include_once 'lib/team.functions.php';
 include_once 'lib/club.functions.php';
 include_once 'lib/country.functions.php';
@@ -195,7 +198,7 @@ if (!empty($sqlClubTeams)) {
 
   $html .= "<table border='1' width='100%'><tr>
 				<th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=games'>" . _("Games") . "</a></th>
-				<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Passes") . "</a></th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a>
+				<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a>
 				</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Total") . "</a></th></tr>\n";
   $i = 1;
   foreach ($scores as $row) {

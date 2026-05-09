@@ -14,6 +14,11 @@ if (isset($_GET['location'])) {
   $locationId = (int)$_GET['location'];
 }
 
+if ((empty($season) && !isSuperAdmin()) || (!empty($season) && !hasReservationsPageAccess($season))) {
+  showPage(_("Add location"), "<p>" . _("Insufficient user rights") . "</p>");
+  return;
+}
+
 if (isset($_POST['save']) && isset($_POST['id'])) {
   $id = $_POST['id'];
   $name = _("Not named");
@@ -55,19 +60,19 @@ if (isset($_POST['add'])) {
   if (isset($_POST['lat'])) $lat = $_POST['lat'];
   if (isset($_POST['lng'])) $lng = $_POST['lng'];
   $newId = AddLocation($name, $address, $info, $fields, $indoor, $lat, $lng, $season);
-  header('location: ?view=admin/addlocations&location=' . $newId . "&amp;season=" . $season);
+  header('location: ?view=admin/addlocations&location=' . $newId . '&season=' . urlencode((string)$season));
   exit();
 }
 
 if (isset($_POST['delete']) && isset($_POST['id'])) {
   $id = $_POST['id'];
   RemoveLocation($id);
-  header('location: ?view=admin/locations');
+  header('location: ?view=admin/locations&season=' . urlencode((string)$season));
   exit();
 }
 
 //common page
-$title = _("Add game location");
+$title = _("Add location");
 $LAYOUT_ID = ADDLOCATION;
 pageTopHeadOpen($title);
 

@@ -1,6 +1,7 @@
 <?php
 include_once '../../lib/database.php';
 include_once '../../lib/common.functions.php';
+include_once '../../lib/player.functions.php';
 include_once '../../lib/user.functions.php';
 
 $firstname = isset($_GET['firstname']) ? normalizeTextInput($_GET['firstname']) : '';
@@ -14,82 +15,32 @@ OpenConnection();
 
 if (hasEditPlayersRight($teamId)) {
 	
-	$query = sprintf("SELECT pp.profile_id, pp.accreditation_id, pp.firstname, pp.lastname, pp.birthdate, pp.gender, pp.email,
-			    pp.num, p2.teamname, p2.seasoname
-			FROM uo_player_profile pp 
-			LEFT JOIN(SELECT p.profile_id, p.firstname, p.lastname,
-			    p.num, t.name AS teamname, sea.name AS seasoname FROM uo_player p
-			    LEFT JOIN uo_team t ON (p.team=t.team_id)
-    			LEFT JOIN uo_series ser ON (ser.series_id=t.series)
-			    LEFT JOIN uo_season sea ON (ser.season=sea.season_id)
-				ORDER BY p.player_id DESC) AS p2 ON (pp.profile_id=p2.profile_id)
-			LEFT JOIN uo_player AS p1 ON (p1.profile_id=pp.profile_id)
-			WHERE pp.firstname like '%%%s%%' and pp.lastname like '%%%s%%'
-			GROUP BY pp.profile_id ORDER BY pp.lastname, pp.firstname",
-						DBEscapeString($firstname), DBEscapeString($lastname));
-	$result = DBQuery($query);
+	$players = SearchPlayerProfiles($firstname, $lastname, true);
 
 	$dom = new DOMDocument("1.0");
 	$node = $dom->createElement("MemberSet");
 	$parnode = $dom->appendChild($node);
+	$appendTextElement = function ($parentNode, $name, $value) use ($dom) {
+		$element = $dom->createElement($name);
+		$element = $parentNode->appendChild($element);
+		$text = $dom->createTextNode((string)($value ?? ''));
+		$element->appendChild($text);
+	};
 
-	while ($row = mysqli_fetch_assoc($result)) {
+	foreach ($players as $row) {
 	  $node = $dom->createElement("Member");
 	  $newNode = $parnode->appendChild($node);
 	  
-	  $nextNode = $dom->createElement("AccreditationId"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['accreditation_id']);
-	  $nextText = $nextNode->appendChild($nextText);
-	  
-	  $nextNode = $dom->createElement("ProfileId"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['profile_id']);
-	  $nextText = $nextNode->appendChild($nextText);
-		
-	  $nextNode = $dom->createElement("Firstname"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['firstname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Lastname"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['lastname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("BirthDate"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode(DefBirthdayFormat($row['birthdate']));
-	  $nextText = $nextNode->appendChild($nextText);
-	  
-	  $nextNode = $dom->createElement("Team"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['teamname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Event"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['seasoname']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Gender"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['gender']);
-	  $nextText = $nextNode->appendChild($nextText);
-
-	  $nextNode = $dom->createElement("Email"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  $nextText = $dom->createTextNode($row['email']);
-	  $nextText = $nextNode->appendChild($nextText);	  
-		
-	  $nextNode = $dom->createElement("Jersey"); 
-	  $nextNode = $newNode->appendChild($nextNode);
-	  if($row['num']<0){
-	    $nextText = $dom->createTextNode("");
-	  }else{
-	    $nextText = $dom->createTextNode($row['num']);
-	  }
-	  $nextText = $nextNode->appendChild($nextText);	
+	  $appendTextElement($newNode, "AccreditationId", $row['accreditation_id']);
+	  $appendTextElement($newNode, "ProfileId", $row['profile_id']);
+	  $appendTextElement($newNode, "Firstname", $row['firstname']);
+	  $appendTextElement($newNode, "Lastname", $row['lastname']);
+	  $appendTextElement($newNode, "BirthDate", DefBirthdayFormat($row['birthdate']));
+	  $appendTextElement($newNode, "Team", $row['teamname']);
+	  $appendTextElement($newNode, "Event", $row['seasoname']);
+	  $appendTextElement($newNode, "Gender", $row['gender']);
+	  $appendTextElement($newNode, "Email", $row['email']);
+	  $appendTextElement($newNode, "Jersey", ($row['num'] < 0) ? '' : $row['num']);
 	}
 	echo $dom->saveXML();
 }

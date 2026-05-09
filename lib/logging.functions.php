@@ -1,4 +1,6 @@
 <?php
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
 
 function EventCategories()
 {
@@ -59,7 +61,7 @@ function EventList($categoryfilter, $userfilter, $limit = null, $offset = null)
 {
 	if (isSuperAdmin()) {
 		if (count($categoryfilter) == 0) {
-			return false;
+			return array();
 		}
 		$query = "SELECT * FROM uo_event_log WHERE ";
 
@@ -89,10 +91,9 @@ function EventList($categoryfilter, $userfilter, $limit = null, $offset = null)
 				$query .= sprintf(" OFFSET %d", intval($offset));
 			}
 		}
-		$result = DBQuery($query);
-
-		return $result;
+		return DBQueryToArray($query);
 	}
+	return array();
 }
 
 function EventCount($categoryfilter, $userfilter)
@@ -273,6 +274,10 @@ function LogDbUpgrade($version, $end = false, $source = "")
  */
 function LogPageLoad($page)
 {
+	if (IsVisitorLoggingDisabled()) {
+		return;
+	}
+
 	// Guard against logging raw or clearly invalid input
 	if (empty($page) || !preg_match('/^[a-z0-9_\\/\\-]+$/i', $page)) {
 		return;
@@ -284,7 +289,7 @@ function LogPageLoad($page)
 	);
 	$loads = DBQueryToValue($query);
 
-	if ($loads < 0) {
+	if ($loads === null) {
 		$query = sprintf(
 			"INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s',%d)",
 			DBEscapeString($page),
@@ -302,6 +307,25 @@ function LogPageLoad($page)
 	}
 }
 
+function IsVisitorLoggingDisabled()
+{
+	static $disabled = null;
+
+	if ($disabled !== null) {
+		return $disabled;
+	}
+
+	$value = DBQueryToValue("SELECT value FROM uo_setting WHERE name='DisableVisitorLogging'");
+	if ($value === null || $value === false) {
+		$disabled = false;
+		return $disabled;
+	}
+
+	$normalized = strtolower(trim((string)$value));
+	$disabled = in_array($normalized, array("1", "true", "yes", "on", "enabled"), true);
+	return $disabled;
+}
+
 /**
  * Log visitors visit into database for usage statistics.
  * 
@@ -309,6 +333,9 @@ function LogPageLoad($page)
  */
 function LogVisitor($ip)
 {
+	if (IsVisitorLoggingDisabled()) {
+		return;
+	}
 
 	$query = sprintf(
 		"SELECT visits FROM uo_visitor_counter WHERE ip='%s'",
@@ -316,7 +343,7 @@ function LogVisitor($ip)
 	);
 	$visits = DBQueryToValue($query);
 
-	if ($visits < 0) {
+	if ($visits === null) {
 		$query = sprintf(
 			"INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s',%d)",
 			DBEscapeString($ip),

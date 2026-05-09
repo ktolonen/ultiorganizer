@@ -8,7 +8,7 @@ $title = _("Team admins");
 $html = "";
 $seriesId = intval($_GET["series"]);
 $seriesinfo = SeriesInfo($seriesId);
-$backurl = isset($_POST['backurl']) ? utf8entities($_POST['backurl']) : utf8entities($_SERVER['HTTP_REFERER']);
+$backurl = isset($_POST['backurl']) ? utf8entities($_POST['backurl']) : utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 $teams = SeriesTeams($seriesId);
 
 if (!isSeasonAdmin($seriesinfo['season'])) {
@@ -77,8 +77,8 @@ foreach ($teams as $team) {
   $teaminfo = TeamInfo($team['team_id']);
   $html .= "<tr>";
   $html .= "<td style='width:175px'>" . utf8entities(U_($teaminfo['name'])) . "</td>\n";
-  $html .= "<td>" . _("User Id") . "</td><td><input class='input' size='20' name='userid" . $team['team_id'] . "' id='userid" . $team['team_id'] . "'/></td><td>" . _("or") . "</td>\n";
-  $html .= "<td>" . _("E-Mail") . "</td><td><input class='input' size='20' name='email" . $team['team_id'] . "' id='email" . $team['team_id'] . "'/</td></tr>\n";
+  $html .= "<td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid" . $team['team_id'] . "' id='userid" . $team['team_id'] . "'/></td><td>" . _("or") . "</td>\n";
+  $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email" . $team['team_id'] . "' id='email" . $team['team_id'] . "'/</td></tr>\n";
   $html .= "</tr>\n";;
 }
 $html .= "</table>";

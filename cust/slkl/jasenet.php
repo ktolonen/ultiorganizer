@@ -6,6 +6,7 @@ if (!isset($include_prefix)) {
 include_once $include_prefix . 'lib/auth.guard.php';
 
 include_once '../../lib/database.php';
+include_once '../../lib/accreditation.functions.php';
 include_once '../../lib/common.functions.php';
 include_once '../../lib/user.functions.php';
 
@@ -20,18 +21,13 @@ OpenConnection();
 
 if (hasEditPlayersRight($teamId)) {
 
-	$query = sprintf(
-		"SELECT accreditation_id, firstname, lastname, membership, license, birthdate FROM uo_license WHERE firstname like '%%%s%%' and lastname like '%%%s%%'",
-		DBEscapeString($firstname),
-		DBEscapeString($lastname)
-	);
-	$result = DBQuery($query);
+	$licenses = SearchLicenseData($firstname, $lastname);
 
 	$dom = new DOMDocument("1.0");
 	$node = $dom->createElement("MemberSet");
 	$parnode = $dom->appendChild($node);
 
-	while ($row = mysqli_fetch_assoc($result)) {
+	foreach ($licenses as $row) {
 		$node = $dom->createElement("Member");
 		$newNode = $parnode->appendChild($node);
 

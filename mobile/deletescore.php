@@ -5,11 +5,7 @@ include_once 'lib/game.functions.php';
 
 $html = "";
 $gameId = intval(iget("game"));
-$result = GameGoals($gameId);
-$scores = array();
-while ($row = mysqli_fetch_assoc($result)) {
-	$scores[] = $row;
-}
+$scores = GameGoals($gameId);
 
 if (isset($_POST['delete'])) {
 	if (count($scores) > 0) {
@@ -48,7 +44,7 @@ if (count($scores) > 0) {
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='delete' value='" . _("Delete") . "'/>";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to score sheet") . "</a>";
+$html .= "<a href='?view=mobile/addscoresheet&amp;game=" . $gameId . "'>" . _("Back to scoresheet") . "</a>";
 $html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>";

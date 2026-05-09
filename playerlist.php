@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('playerlist');
+
 include_once 'lib/team.functions.php';
 include_once 'lib/common.functions.php';
 include_once 'lib/season.functions.php';
@@ -29,13 +32,13 @@ $html .= "<table style='width:60%' cellpadding='2'>\n";
 $html .= "<tr><th>" . _("Name") . "</th>
 	<th class='center'>" . _("Events") . "</th>
 	<th class='center'>" . _("Games") . "</th>
-	<th class='center'>" . _("Passes") . "</th>
+	<th class='center'>" . _("Assists") . "</th>
 	<th class='center'>" . _("Goals") . "</th>
 	<th class='center'>" . _("Tot.") . "</th></tr>\n";
 
 $stats = array(array());
 $i = 0;
-while ($player = mysqli_fetch_assoc($players)) {
+foreach ($players as $player) {
   $playerinfo = PlayerInfo($player['player_id']);
   if (!$playerinfo) {
     continue;

@@ -1,11 +1,15 @@
 <?php
-include_once $include_prefix . 'lib/user.functions.php';
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/user.functions.php';
 
 function ReservationLocationValid($locationId)
 {
 	$locationId = (int)$locationId;
 	if ($locationId <= 0) {
-		return false;
+		return true;
 	}
 
 	$query = sprintf(
@@ -14,6 +18,23 @@ function ReservationLocationValid($locationId)
 	);
 
 	return DBQueryToValue($query) > 0;
+}
+
+function ReservationPlaceText($locationName, $fieldName)
+{
+	$locationName = trim((string)$locationName);
+	$fieldName = trim((string)$fieldName);
+
+	if ($locationName !== '' && $fieldName !== '') {
+		return $locationName . " " . _("Field") . " " . $fieldName;
+	}
+	if ($locationName !== '') {
+		return $locationName;
+	}
+	if ($fieldName !== '') {
+		return _("Field") . " " . $fieldName;
+	}
+	return '';
 }
 
 /**
@@ -25,7 +46,7 @@ function ReservationInfo($id)
 {
 	$locale = str_replace(".", "_", getSessionLocale());
 	$query = sprintf("SELECT res.id, res.location, res.fieldname, res.reservationgroup, 
-		res.date, res.starttime, res.endtime, res.timeslots, loc.name, loc.lat, loc.lng,
+		res.date, res.starttime, res.endtime, loc.name, loc.lat, loc.lng,
 		inf.info as info, loc.address, res.season, count(game_id) as games  
 		FROM uo_reservation as res 
 	    left join uo_location as loc on (res.location=loc.id)
@@ -37,7 +58,7 @@ function ReservationInfo($id)
 
 function ReservationName($reservationInfo)
 {
-	return utf8entities($reservationInfo['name']) . " " . _("Field") . " " . utf8entities($reservationInfo['fieldname']) . " " . ShortDate($reservationInfo['starttime']) . " " . DefHourFormat($reservationInfo['starttime']);
+	return utf8entities(ReservationPlaceText($reservationInfo['name'], $reservationInfo['fieldname'])) . " " . ShortDate($reservationInfo['starttime']) . " " . DefHourFormat($reservationInfo['starttime']);
 }
 
 function ReservationGames($placeId, $seasonId = "")
@@ -46,7 +67,7 @@ function ReservationGames($placeId, $seasonId = "")
 		SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
 			time, homescore, visitorscore, pool.timecap, pool.timeslot, pp.timeslot as gametimeslot, pool.series, pool.color, 
 			CONCAT(ser.name, ', ', pool.name) as seriespoolname, ser.name AS seriesname, pool.name AS poolname,
-			CONCAT(loc.name, ' " . _("Field") . " ', res.fieldname) AS locationname,
+			loc.name AS locationname, res.fieldname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
 		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
 			left join uo_pool pool on (pp.pool=pool.pool_id)
@@ -63,9 +84,7 @@ function ReservationGames($placeId, $seasonId = "")
 
 	$query .= " ORDER BY pp.time ASC";
 
-	$result = DBQuery($query);
-
-	return  $result;
+	return DBQueryToArray($query);
 }
 
 
@@ -92,7 +111,7 @@ function ReservationGamesByField($fieldname, $seasonId = "")
 		SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
 			time, homescore, visitorscore, pool.timecap, pool.timeslot, pool.series, pool.color, 
 			CONCAT(ser.name, ', ', pool.name) as seriespoolname, ser.name AS seriesname, pool.name AS poolname,
-			CONCAT(loc.name, ' " . _("Field") . " ', res.fieldname) AS locationname,
+			loc.name AS locationname, res.fieldname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
 		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
 			left join uo_pool pool on (pp.pool=pool.pool_id)
@@ -161,9 +180,7 @@ function ResponsibleReservationGames($placeId, $gameResponsibilities)
 	$query .= " AND game_id IN (" . implode(",", $gameResponsibilities) . ")
 		ORDER BY pp.time ASC";
 
-	$result = DBQuery($query);
-
-	return $result;
+	return DBQueryToArray($query);
 }
 
 function ReservationSeasons($reservationId)
@@ -172,8 +189,16 @@ function ReservationSeasons($reservationId)
 		LEFT JOIN uo_pool pool ON (p.pool=pool.pool_id)
 		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
 		WHERE p.reservation=%d", (int)$reservationId);
-	$result = DBQueryToArray($query);
-	return $result;
+	$rows = DBQueryToArray($query);
+	$seasons = array();
+
+	foreach ($rows as $row) {
+		if (isset($row['season'])) {
+			$seasons[] = $row['season'];
+		}
+	}
+
+	return $seasons;
 }
 
 /**
@@ -190,17 +215,18 @@ function SetReservation($reservationId, $data)
 		if (!ReservationLocationValid($data['location'])) {
 			die('Invalid reservation location');
 		}
+		$locationId = (int)$data['location'];
+		$locationSql = $locationId > 0 ? (string)$locationId : "NULL";
 
 		$query = sprintf(
-			"UPDATE uo_reservation SET location=%d, fieldname='%s', reservationgroup='%s', 
-			date='%s', starttime='%s', endtime='%s', timeslots='%s', season='%s' WHERE id=%d",
-			(int)$data['location'],
+			"UPDATE uo_reservation SET location=%s, fieldname='%s', reservationgroup='%s',
+			date='%s', starttime='%s', endtime='%s', season='%s' WHERE id=%d",
+			$locationSql,
 			DBEscapeString($data['fieldname']),
 			DBEscapeString($data['reservationgroup']),
 			DBEscapeString($data['date']),
 			DBEscapeString($data['starttime']),
 			DBEscapeString($data['endtime']),
-			DBEscapeString($data['timeslots']),
 			DBEscapeString($data['season']),
 			(int)$reservationId
 		);
@@ -224,17 +250,18 @@ function AddReservation($data)
 		if (!ReservationLocationValid($data['location'])) {
 			die('Invalid reservation location');
 		}
+		$locationId = (int)$data['location'];
+		$locationSql = $locationId > 0 ? (string)$locationId : "NULL";
 
 		$query = sprintf(
 			"INSERT INTO uo_reservation (location, fieldname, reservationgroup, date, 
-			starttime, endtime, timeslots, season) VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s', '%s')",
-			(int)$data['location'],
+			starttime, endtime, season) VALUES (%s, '%s', '%s', '%s', '%s', '%s', '%s')",
+			$locationSql,
 			DBEscapeString($data['fieldname']),
 			DBEscapeString($data['reservationgroup']),
 			DBEscapeString($data['date']),
 			DBEscapeString($data['starttime']),
 			DBEscapeString($data['endtime']),
-			DBEscapeString($data['timeslots']),
 			DBEscapeString($data['season'])
 		);
 		return DBQueryInsert($query);
@@ -272,8 +299,7 @@ function ReservationInfoArray($reservations)
 		$next = $ret[$row[0]];
 		$nextInfo = ReservationInfo($row[1]);
 		$nextGames = array();
-		$gameResults = ReservationGames($row[1]);
-		while ($gameRow = mysqli_fetch_assoc($gameResults)) {
+		foreach (ReservationGames($row[1]) as $gameRow) {
 			$nextGames["" . $gameRow['game_id']] = $gameRow;
 		}
 		$nextInfo['games'] = $nextGames;
@@ -281,6 +307,21 @@ function ReservationInfoArray($reservations)
 		$ret[$row[0]] = $next;
 	}
 	return $ret;
+}
+
+function ReservationGroupTimeoutStats()
+{
+	return DBQueryToArray(
+		"SELECT
+			r.reservationgroup,
+			COUNT(DISTINCT g.game_id) AS games,
+			COUNT(t.game) AS timeouts
+		FROM uo_reservation r
+		LEFT JOIN uo_game g ON g.reservation = r.id
+		LEFT JOIN uo_timeout t ON t.game = g.game_id
+		GROUP BY r.reservationgroup
+		ORDER BY r.reservationgroup"
+	);
 }
 
 function UnscheduledTeams()

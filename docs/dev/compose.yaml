@@ -1,0 +1,76 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: docs/dev/Dockerfile.app
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      XDEBUG_MODE: ${XDEBUG_MODE:-debug}
+      XDEBUG_START_WITH_REQUEST: ${XDEBUG_START_WITH_REQUEST:-yes}
+      XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST:-host.docker.internal}
+      XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT:-9003}
+      XDEBUG_IDEKEY: ${XDEBUG_IDEKEY:-VSCODE}
+    ports:
+      - "${APP_PORT:-8080}:80"
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../..:/var/www/html
+      - ./php.dev.ini:/usr/local/etc/php/conf.d/zz-local-dev.ini:ro
+
+  db:
+    image: mariadb:10.11
+    environment:
+      MYSQL_DATABASE: ${MYSQL_DATABASE:-ultiorganizer}
+      MYSQL_USER: ${MYSQL_USER:-ultiorganizer}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-ultiorganizer}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-changeme}
+    ports:
+      - "127.0.0.1:${DB_PORT:-3306}:3306"
+    healthcheck:
+      test:
+        - CMD
+        - mariadb-admin
+        - ping
+        - --host=127.0.0.1
+        - --user=root
+        - --password=${MYSQL_ROOT_PASSWORD:-changeme}
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 10s
+    volumes:
+      - ultiorganizer-db-data:/var/lib/mysql
+
+  dev:
+    profiles:
+      - devtools
+    build:
+      context: ../..
+      dockerfile: docs/dev/Dockerfile.dev
+    depends_on:
+      db:
+        condition: service_healthy
+    command:
+      - sleep
+      - infinity
+    environment:
+      LANG: en_US.UTF-8
+      LC_ALL: en_US.UTF-8
+      XDEBUG_MODE: ${XDEBUG_MODE:-debug}
+      XDEBUG_START_WITH_REQUEST: ${XDEBUG_START_WITH_REQUEST:-yes}
+      XDEBUG_CLIENT_HOST: ${XDEBUG_CLIENT_HOST:-host.docker.internal}
+      XDEBUG_CLIENT_PORT: ${XDEBUG_CLIENT_PORT:-9003}
+      XDEBUG_IDEKEY: ${XDEBUG_IDEKEY:-VSCODE}
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    volumes:
+      - ../..:/workspace
+      - ./php.dev.ini:/usr/local/etc/php/conf.d/zz-local-dev.ini:ro
+
+volumes:
+  ultiorganizer-db-data:

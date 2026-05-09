@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/../include_only.guard.php';
+denyDirectCustomizationAccess(__FILE__);
+
 include_once 'lib/yui.functions.php';
 
 // Ensure $teamId is always defined before using it in the JS snippet below.
@@ -106,7 +109,7 @@ echo yuiLoad(array("utilities", "datasource", "datatable", "dragdrop", "containe
 
 			var memberColumnDefs = [{
 					key: "memberId",
-					label: "<?php echo _("Accr. Id"); ?>",
+					label: "<?php echo _("Accr. ID"); ?>",
 					sortable: true
 				},
 				{

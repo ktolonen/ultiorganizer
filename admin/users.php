@@ -5,6 +5,7 @@ include_once 'lib/season.functions.php';
 
 $LAYOUT_ID = USERS;
 $title = _("Users");
+$message = "";
 
 if (hasEditUsersRight()) {
 	if (isset($_POST['deleteuser'])) {
@@ -18,7 +19,9 @@ if (hasEditUsersRight()) {
 			}
 		}
 	} elseif (isset($_POST['resetpassword'])) {
-		if (isset($_POST['users'])) {
+		if (IsEmailDisabled()) {
+			$message = "<p class='warning'>" . _("Password reset email is unavailable. Open the user information page to set a new password manually.") . "</p>";
+		} elseif (isset($_POST['users'])) {
 			foreach ($_POST['users'] as $userid) {
 				UserResetPassword(urldecode($userid));
 			}
@@ -35,6 +38,27 @@ pageTopHeadOpen($title);
 			form.elements[i].checked = !form.elements[i].checked;
 		}
 	}
+
+	function confirmDeleteUsers() {
+		var form = document.getElementById('users');
+		var confirmMessage;
+
+		if (!form) {
+			return true;
+		}
+
+		if (form.querySelectorAll('input[name="users[]"]:checked').length === 0) {
+			return true;
+		}
+
+		if (form.querySelector('input[name="registerrequest"]')) {
+			confirmMessage = '<?php echo addslashes(_("Are you sure you want to delete the selected registration requests?")); ?>';
+		} else {
+			confirmMessage = '<?php echo addslashes(_("Are you sure you want to delete the selected users?")); ?>';
+		}
+
+		return confirm(confirmMessage);
+	}
 </script>
 <?php
 pageTopHeadClose($title);
@@ -45,8 +69,22 @@ $target = "view=admin/users";
 //content
 echo "<p><a href='?view=admin/adduser'>" . _("Add new user") . "</a></p>";
 echo "<h2>" . $title . "</h2>";
+echo $message;
 if (hasEditUsersRight()) {
-	echo SearchUser($target, array(), array('resetpassword' => _("Reset password"), 'deleteuser' => _("Delete")));
+	$actions = array('deleteuser' => _("Delete"));
+	if (!IsEmailDisabled()) {
+		$actions = array('resetpassword' => _("Reset password"), 'deleteuser' => _("Delete"));
+	}
+	echo SearchUser($target, array(), $actions);
+	echo "<script type='text/javascript'>
+		(function() {
+			var deleteButton = document.querySelector(\"#users input[name='deleteuser']\");
+
+			if (deleteButton) {
+				deleteButton.onclick = confirmDeleteUsers;
+			}
+		})();
+	</script>";
 }
 
 contentEnd();

@@ -98,7 +98,7 @@ $html .= "<b>" . utf8entities(TeamName($teamId)) . "</b> " . _("roster");
 $played_players = GamePlayers($gameId, $teamId);
 
 $i = 0;
-while ($player = mysqli_fetch_assoc($playerlist)) {
+foreach ($playerlist as $player) {
 	$i++;
 	$playerinfo = PlayerInfo($player['player_id']);
 	$number = PlayerNumber($player['player_id'], $gameId);

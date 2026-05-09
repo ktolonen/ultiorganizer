@@ -6,6 +6,7 @@ include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/reservation.functions.php';
+include_once $include_prefix . 'lib/accreditation.functions.php';
 $LAYOUT_ID = PLAYERPROFILE;
 $max_file_size = 5 * 1024 * 1024; //5 MB
 $max_new_links = 3;
@@ -18,7 +19,17 @@ if (isset($_GET["player"])) {
 	$playerId = PlayerLatestId(intval($_GET["profile"]));
 }
 
+if (empty($playerId)) {
+	showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
+	return;
+}
+
 $player = PlayerInfo($playerId);
+
+if (empty($player['player_id'])) {
+	showPage(_("Player information"), "<p class='warning'>" . _("Player not found") . ".</p>");
+	return;
+}
 
 if (empty($player['profile_id'])) {
 	CreatePlayerProfile($playerId);
@@ -169,9 +180,8 @@ $html .= "<table>";
 $html .= "<tr><td colspan='2'>" . _("Player details") . "</td><td class='center'>" . _("Show in public profile") . "</td></tr>";
 
 if (CUSTOMIZATIONS == "slkl") {
-	$query = sprintf("SELECT membership, license, external_type, external_validity FROM uo_license WHERE accreditation_id=%d", (int)$pp['accreditation_id']);
-	$row = DBQueryToRow($query);
-	$html .= "<tr><td class='infocell'>" . _("License Id") . ":</td>";
+	$row = LicenseData($pp['accreditation_id']);
+	$html .= "<tr><td class='infocell'>" . _("License ID") . ":</td>";
 
 	if (isSuperAdmin()) {
 		$html .= "<td><input class='input' maxlength='10' size='10' name='accreditationId' value='" . utf8entities($pp['accreditation_id']) . "'/></td>";
@@ -218,7 +228,7 @@ $html .= "<tr><td class='infocell'>" . _("Nickname") . ":</td>";
 $html .= "<td><input class='input' maxlength='20' name='nickname' value='" . utf8entities($pp['nickname']) . "'/></td>";
 $html .= privacyselection("nickname", $publicfields);
 
-$html .= "<tr><td class='infocell'>" . _("E-mail") . ":</td>";
+$html .= "<tr><td class='infocell'>" . _("Email") . ":</td>";
 $html .= "<td><input class='input' size='50' maxlength='100' name='email' value='" . utf8entities($pp['email']) . "'/></td>";
 $html .= "<td class='center'><input type='checkbox' name='public[]' disabled='disabled' value='email'/></td></tr>\n";
 

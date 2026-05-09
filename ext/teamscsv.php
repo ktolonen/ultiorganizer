@@ -1,6 +1,6 @@
 <?php
-include_once 'localization.php';
-include_once '../lib/team.functions.php';
+include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/team.functions.php';
 
 $season = iget("season");
 $encoding = 'UTF-8';

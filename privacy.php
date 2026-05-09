@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/lib/view.guard.php';
+requireRoutedView('privacy');
+
 $html = "";
 global $include_prefix;
 $print = iget("print");
