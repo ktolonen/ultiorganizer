@@ -22,13 +22,17 @@ set -e
 REPO_ROOT="$(git rev-parse --show-toplevel)"
 cd "$REPO_ROOT"
 
-mapfile -t STAGED_PHP < <(git diff --cached --name-only --diff-filter=ACMR -- '*.php' ':!lib/tfpdf/**' ':!lib/yuiloader/**' ':!lib/phpqrcode/**' ':!lib/feed_generator/**' ':!lib/hsvclass/**' ':!vendor/**' ':!live/**')
+STAGED_PHP=()
+while IFS= read -r path; do
+    STAGED_PHP+=("$path")
+done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.php' ':!lib/tfpdf/**' ':!lib/yuiloader/**' ':!lib/phpqrcode/**' ':!lib/feed_generator/**' ':!lib/hsvclass/**' ':!vendor/**' ':!live/**')
 
 if [ "${#STAGED_PHP[@]}" -eq 0 ]; then
     exit 0
 fi
 
 UNSTAGED_DIR=""
+UNSTAGED_BASE_DIR=""
 UNSTAGED_MISSING_DIR=""
 UNSTAGED_PHP=()
 RESTORE_UNSTAGED=0
@@ -36,6 +40,7 @@ RESTORE_UNSTAGED=0
 restore_unstaged_changes() {
     local status=$?
     local index_tree
+    local merged
     local path
 
     if [ "$RESTORE_UNSTAGED" -eq 1 ]; then
@@ -44,9 +49,23 @@ restore_unstaged_changes() {
         for path in "${UNSTAGED_PHP[@]}"; do
             if [ -f "$UNSTAGED_MISSING_DIR/$path" ]; then
                 rm -f -- "$path"
+            elif [ -e "$path" ]; then
+                merged="$(mktemp "${TMPDIR:-/tmp}/ultiorganizer-pre-commit-merge.XXXXXX")"
+                if git merge-file -p "$path" "$UNSTAGED_BASE_DIR/$path" "$UNSTAGED_DIR/$path" > "$merged"; then
+                    cp -p -- "$merged" "$path"
+                else
+                    cp -p -- "$UNSTAGED_DIR/$path" "$path"
+                    echo "pre-commit: failed to merge unstaged changes back into $path." >&2
+                    echo "pre-commit: restored the original unstaged file and aborted the commit." >&2
+                    status=1
+                fi
+                rm -f "$merged"
             else
                 mkdir -p -- "$(dirname "$path")"
                 cp -p -- "$UNSTAGED_DIR/$path" "$path"
+                echo "pre-commit: formatted staged file $path disappeared before restore." >&2
+                echo "pre-commit: restored the original unstaged file and aborted the commit." >&2
+                status=1
             fi
         done
 
@@ -67,7 +86,9 @@ preserve_unstaged_changes() {
     local path
 
     UNSTAGED_DIR="$(mktemp -d "${TMPDIR:-/tmp}/ultiorganizer-pre-commit.XXXXXX")"
+    UNSTAGED_BASE_DIR="$UNSTAGED_DIR/.staged"
     UNSTAGED_MISSING_DIR="$UNSTAGED_DIR/.missing"
+    mkdir -p "$UNSTAGED_BASE_DIR"
 
     for path in "${STAGED_PHP[@]}"; do
         if git diff --quiet -- "$path"; then
@@ -75,6 +96,7 @@ preserve_unstaged_changes() {
         fi
 
         UNSTAGED_PHP+=("$path")
+        git checkout-index --prefix="$UNSTAGED_BASE_DIR/" -- "$path"
         if [ -e "$path" ]; then
             mkdir -p -- "$(dirname "$UNSTAGED_DIR/$path")"
             cp -p -- "$path" "$UNSTAGED_DIR/$path"
@@ -87,6 +109,7 @@ preserve_unstaged_changes() {
     if [ "${#UNSTAGED_PHP[@]}" -eq 0 ]; then
         rm -rf "$UNSTAGED_DIR"
         UNSTAGED_DIR=""
+        UNSTAGED_BASE_DIR=""
         UNSTAGED_MISSING_DIR=""
         return 0
     fi
