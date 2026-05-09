@@ -11,3 +11,6 @@
 lib/tfpdf/font/unifont/*.mtx.php
 lib/tfpdf/font/unifont/*.cw.dat
 lib/tfpdf/font/unifont/*.cw127.php
+/vendor/*
+*.cache
+
