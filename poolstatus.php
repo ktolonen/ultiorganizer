@@ -15,6 +15,8 @@ $seriesScoreboard = false;
 $print = 0;
 $html = "";
 $comment = "";
+$pools = [];
+$seasoninfo = null;
 
 if (iget("season")) {
     $seasoninfo = SeasonInfo(iget("season"));
@@ -67,6 +69,11 @@ if (iget("season")) {
 
     $seasoninfo = SeasonInfo($poolinfo['season']);
     $title .= utf8entities(U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']));
+} else {
+    $title = _("Standings");
+    $html .= "<h1>" . _("Pool not found") . "</h1>";
+    showPage($title, $html);
+    return;
 }
 if (iget("print")) {
     $print = intval(iget("print"));
@@ -93,6 +100,10 @@ if (!empty($pools) && is_array($pools)) {
         $html .= "<h2>" . utf8entities($seriesName) . "</h2>";
 
         $html .= CommentHTML(3, $pool['pool_id']);
+
+        if ($seasoninfo === null) {
+            continue;
+        }
 
         if ($poolinfo['type'] == 1) {
             // round robin
@@ -519,6 +530,7 @@ function printPlayoffTree($seasoninfo, $poolinfo)
     $notemplate = "";
 
     $round = 0;
+    $previousRoundByeName = "";
     foreach ($pools as $poolId) {
         $pool = PoolInfo($poolId);
 
@@ -558,6 +570,7 @@ function printPlayoffTree($seasoninfo, $poolinfo)
         $winners = 0;
         $losers = 0;
         $games = 0;
+        $byeName = "";
         for ($i = 1; $i <= $totalteams; $i++) {
 
             if (!isset($pool['pool_id'])) {
@@ -570,8 +583,6 @@ function printPlayoffTree($seasoninfo, $poolinfo)
             $sname = [];
 
             $name = "";
-            $byeName = "";
-            $previousRoundByeName = "";
             //find out team name
             if (isset($team['team_id'])) {
                 if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
@@ -698,12 +709,10 @@ function printPlayoffTree($seasoninfo, $poolinfo)
             continue;
         }
         $gamesleft = -1;
-        $team = [];
-        if (!empty($pool)) {
-            $team = PoolTeamFromStandings($pool['pool_id'], $i);
-            if (!empty($team)) {
-                $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
-            }
+        $team = PoolTeamFromStandings($pool['pool_id'], $i);
+        $hasPlacedTeam = isset($team['team_id']);
+        if ($hasPlacedTeam) {
+            $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
         }
         $teampart = "";
         $unknown = "";
@@ -711,7 +720,7 @@ function printPlayoffTree($seasoninfo, $poolinfo)
         if (!PoolMoveExist($pool['pool_id'], $i)) {
             $placement = PoolPlacementString($pool['pool_id'], $i);
             $placementname = "<b>" . U_($placement) . "</b> ";
-            if ($gamesleft == 0 && !empty($team)) {
+            if ($gamesleft == 0 && $hasPlacedTeam) {
                 if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
                     $teampart .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
                 }
@@ -723,7 +732,7 @@ function printPlayoffTree($seasoninfo, $poolinfo)
             $movetopool = PoolGetMoveToPool($pool['pool_id'], $i);
             $placementname .= "<a href='?view=poolstatus&amp;pool=" . $movetopool['topool'] . "'>&raquo; " . utf8entities(U_($movetopool['name'])) . "</a>&nbsp; ";
 
-            if ($gamesleft == 0 && !empty($team)) {
+            if ($gamesleft == 0 && $hasPlacedTeam) {
                 if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
                     $teampart .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
                 }

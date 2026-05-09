@@ -63,6 +63,7 @@ if (!empty($_POST['editType'])) {
 
 if (!empty($_POST['undoFromPlacing'])) {
     $place = -1;
+    $moves = [];
     if ($_POST['undoFromPlacing'] == "from") {
         $moves = PoolMovingsFromPool($_POST['PoolId']);
     } elseif ($_POST['undoFromPlacing'] == "to") {
@@ -553,12 +554,18 @@ function editField($prefix, $teamNum, $id, $value)
 
 function editPoolStandings($type, $pool, $startIds, $editStarts, $editEnds, $seedIds, $seeds, $rankIds, $ranks)
 {
+    $start = null;
+    $end = null;
     foreach ($startIds as $key => $value) {
         if ($value == $pool) {
             $start = $editStarts[$key];
             $end = $editEnds[$key];
             break;
         }
+    }
+
+    if ($start === null || $end === null) {
+        return;
     }
 
     if ($type == "seed") {

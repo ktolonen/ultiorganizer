@@ -10,9 +10,15 @@ $LAYOUT_ID = EDITGAME;
 $backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 $gameId = $_GET["game"];
 $info = GameResult($gameId);
+$season = "";
 
 if (!empty($_GET["season"])) {
     $season = $_GET["season"];
+} elseif (!empty($info['pool'])) {
+    $gamePoolInfo = PoolInfo($info['pool']);
+    if (!empty($gamePoolInfo['season'])) {
+        $season = $gamePoolInfo['season'];
+    }
 }
 
 $title = _("Game") . " $gameId";

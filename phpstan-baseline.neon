@@ -1,72 +1,6 @@
 parameters:
 	ignoreErrors:
 		-
-			message: '#^Variable \$locales might not be defined\.$#'
-			identifier: variable.undefined
-			count: 3
-			path: admin/addlocations.php
-
-		-
-			message: '#^Variable \$season might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: admin/editgame.php
-
-		-
-			message: '#^Variable \$poolId might not be defined\.$#'
-			identifier: variable.undefined
-			count: 13
-			path: admin/poolmoves.php
-
-		-
-			message: '#^Variable \$pteamname might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: admin/poolmoves.php
-
-		-
-			message: '#^Variable \$season might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: admin/poolmoves.php
-
-		-
-			message: '#^Variable \$total_teams might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: admin/poolmoves.php
-
-		-
-			message: '#^Variable \$reservationArray might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: admin/schedule.php
-
-		-
-			message: '#^Variable \$startTime might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: admin/schedule.php
-
-		-
-			message: '#^Variable \$end might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: admin/seasonstandings.php
-
-		-
-			message: '#^Variable \$moves might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: admin/seasonstandings.php
-
-		-
-			message: '#^Variable \$start might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: admin/seasonstandings.php
-
-		-
 			message: '#^Variable \$season might not be defined\.$#'
 			identifier: variable.undefined
 			count: 2
@@ -77,30 +11,6 @@ parameters:
 			identifier: variable.undefined
 			count: 3
 			path: admin/seriesgames.php
-
-		-
-			message: '#^Variable \$PlayoffOK might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: admin/serieteams.php
-
-		-
-			message: '#^Variable \$poolId might not be defined\.$#'
-			identifier: variable.undefined
-			count: 21
-			path: admin/serieteams.php
-
-		-
-			message: '#^Variable \$season might not be defined\.$#'
-			identifier: variable.undefined
-			count: 2
-			path: admin/serieteams.php
-
-		-
-			message: '#^Variable \$team might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: admin/serieteams.php
 
 		-
 			message: '#^Variable \$locales might not be defined\.$#'
@@ -407,30 +317,6 @@ parameters:
 			identifier: variable.undefined
 			count: 1
 			path: plugins/reassign_playoffpools.php
-
-		-
-			message: '#^Variable \$byeName might not be defined\.$#'
-			identifier: variable.undefined
-			count: 1
-			path: poolstatus.php
-
-		-
-			message: '#^Variable \$pool in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 1
-			path: poolstatus.php
-
-		-
-			message: '#^Variable \$seasoninfo might not be defined\.$#'
-			identifier: variable.undefined
-			count: 4
-			path: poolstatus.php
-
-		-
-			message: '#^Variable \$team in empty\(\) always exists and is not falsy\.$#'
-			identifier: empty.variable
-			count: 2
-			path: poolstatus.php
 
 		-
 			message: '#^Variable \$view in empty\(\) always exists and is not falsy\.$#'

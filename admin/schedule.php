@@ -341,6 +341,8 @@ function tableStart($dayArray, $skip, $max)
 {
     echo "<table><tr>\n";
     $index = 0;
+    $startTime = 0;
+    $dateHeader = "";
     foreach ($dayArray as $reservationId => $reservationArray) {
         if (++$index <= $skip) {
             continue;
@@ -349,10 +351,13 @@ function tableStart($dayArray, $skip, $max)
             break;
         }
         $startTime = strtotime($reservationArray['starttime']);
+        if ($dateHeader == "") {
+            $dateHeader = JustDate($reservationArray['starttime']);
+        }
         echo "<th class='scheduling'>" . ReservationPlaceText($reservationArray['name'], $reservationArray['fieldname']) .
           " " . date("H:i", $startTime) . "</th>\n";
     }
-    echo "<th>" . JustDate($reservationArray['starttime']) . "</th></tr><tr>\n";
+    echo "<th>" . $dateHeader . "</th></tr><tr>\n";
     return $startTime;
 }
 
