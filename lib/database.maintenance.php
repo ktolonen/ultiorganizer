@@ -375,6 +375,10 @@ function DBHandleMaintenanceState()
   $state = DBReadMaintenanceState();
 
   if ($state['mode'] === 'manual') {
+    if (($state['reason'] ?? '') === 'runtime_dir_unavailable' && $dbVersion === DB_VERSION) {
+      error_log('Maintenance runtime directory unavailable, continuing because database is current: ' . ($state['path'] ?? DBMaintenanceRuntimeDir()));
+      return;
+    }
     DBRenderMaintenanceResponse($state);
   }
 
