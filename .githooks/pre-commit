@@ -2,7 +2,8 @@
 # Ultiorganizer pre-commit hook.
 #
 # Runs PHP-CS-Fixer on staged PHP files (re-staging fixes) and PHPStan on the
-# same set. Skipped automatically when no PHP files are staged.
+# same set. Unstaged hunks in those files are preserved and restored before the
+# commit continues. Skipped automatically when no PHP files are staged.
 #
 # Install once with:
 #   git config core.hooksPath .githooks
@@ -26,6 +27,42 @@ mapfile -t STAGED_PHP < <(git diff --cached --name-only --diff-filter=ACMR -- '*
 if [ "${#STAGED_PHP[@]}" -eq 0 ]; then
     exit 0
 fi
+
+UNSTAGED_PATCH=""
+RESTORE_UNSTAGED=0
+
+restore_unstaged_changes() {
+    local status=$?
+    local index_tree
+
+    if [ "$RESTORE_UNSTAGED" -eq 1 ]; then
+        echo "pre-commit: restoring unstaged PHP changes..."
+        index_tree="$(git write-tree)"
+        if git apply --quiet --3way --whitespace=nowarn "$UNSTAGED_PATCH"; then
+            git read-tree "$index_tree"
+            rm -f "$UNSTAGED_PATCH"
+            RESTORE_UNSTAGED=0
+        else
+            git read-tree "$index_tree" || true
+            echo "pre-commit: failed to restore unstaged changes from $UNSTAGED_PATCH." >&2
+            echo "pre-commit: resolve the conflict or re-apply that patch manually, then retry the commit." >&2
+            status=1
+        fi
+    fi
+
+    exit "$status"
+}
+
+preserve_unstaged_changes() {
+    if git diff --quiet -- "${STAGED_PHP[@]}"; then
+        return 0
+    fi
+
+    UNSTAGED_PATCH="$(mktemp "${TMPDIR:-/tmp}/ultiorganizer-pre-commit.XXXXXX.patch")"
+    git diff --binary --full-index -- "${STAGED_PHP[@]}" > "$UNSTAGED_PATCH"
+    git apply --quiet --reverse --whitespace=nowarn "$UNSTAGED_PATCH"
+    RESTORE_UNSTAGED=1
+}
 
 run_tool() {
     local label="$1"
@@ -58,6 +95,9 @@ run_tool() {
     echo "pre-commit: $label not found. Install dev dependencies with 'composer install' or set ${label}_BIN." >&2
     return 127
 }
+
+trap restore_unstaged_changes EXIT
+preserve_unstaged_changes
 
 if [ "${SKIP_PHP_CS_FIXER:-0}" != "1" ]; then
     echo "pre-commit: running PHP-CS-Fixer on ${#STAGED_PHP[@]} staged PHP file(s)..."
