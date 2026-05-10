@@ -117,7 +117,7 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
             }
         } else {
             $html .= "<tr>";
-            $html .= "<td>" . $result . "</td>";
+            $html .= "<td>OK</td>";
             $html .= "</tr>";
         }
 

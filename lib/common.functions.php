@@ -497,7 +497,7 @@ function getChkNum($sNum)
     $sNum = str_split($sNum);
     $chkSum = 0;
     for ($i = $sNumLen - 1; $i >= 0; --$i) {
-        $chkSum += $sNum[$i] * $multipliers[($sNumLen - 1 - $i) % 3];
+        $chkSum += (int) $sNum[$i] * $multipliers[($sNumLen - 1 - $i) % 3];
     }
     return (10 - $chkSum % 10) % 10;
 }
@@ -1129,7 +1129,7 @@ function _handleFunction($filter, $fields)
     $finalArgs = [];
     foreach ($args as $nextarg) {
         if (!is_array($nextarg)) {
-            die("Invalid function argument " . $nextarg);
+            die("Invalid function argument " . var_export($nextarg, true));
         }
         if (isset($nextarg['field'])) {
             $fieldAndType = _handleFieldName($nextarg['field'], $fields);
@@ -1137,7 +1137,7 @@ function _handleFunction($filter, $fields)
         } elseif (isset($nextarg['value']) && isset($nextarg['type'])) {
             $finalArgs[] = _handleLiteral("=", $nextarg['type'], $nextarg['value']);
         } else {
-            die("Invalid function argument " . $nextarg);
+            die("Invalid function argument " . var_export($nextarg, true));
         }
     }
     $ret = $func . "(" . implode(', ', $finalArgs) . ")";

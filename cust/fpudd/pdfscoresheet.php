@@ -43,7 +43,7 @@ class PDF extends tFPDF
     {
         $this->AddPage();
     }
-    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename)
+    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename, $homeplayers = [], $visitorplayers = [])
     {
         $this->game['seasonname'] = $this->pdfText($seasonname);
         $this->game['game_id'] = $gameId . "" . getChkNum($gameId);

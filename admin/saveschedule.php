@@ -72,7 +72,7 @@ foreach ($places as $placeGameStr) {
             $gameArr = explode("/", $games[$i]);
             $gameInfo = GameInfo($gameArr[0]);
             $season = $gameInfo['season'];
-            $time = $firstStart + (60 * $gameArr[1]);
+            $time = $firstStart + (60 * (int) $gameArr[1]);
             if (!empty($gameInfo['gametimeslot'])) {
                 $gameEnd = $time + ($gameInfo['gametimeslot'] * 60);
             } else {

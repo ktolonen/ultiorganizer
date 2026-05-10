@@ -233,8 +233,10 @@ if ($format == "pdf") {
     $filename = "schedule-" . $layout . "-" . pdf_slug($nameLabel) . ".pdf";
     $pdf = new PDF();
     if ($filter == "onepage") {
+        // @phpstan-ignore method.notFound (cust/*/pdfschedule.php skin defines this; PHPStan resolves PDF to a pdfscoresheet variant)
         $pdf->PrintOnePageSchedule($gamefilter, $id, $games);
     } else {
+        // @phpstan-ignore method.notFound
         $pdf->PrintSchedule($gamefilter, $id, $games);
     }
     $pdf->Output('I', $filename);

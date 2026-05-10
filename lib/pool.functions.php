@@ -1808,7 +1808,7 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool)
  * @param int $poolId
  * @param int $teamId
  * @param int $rank - team rank in pool
- * @param int $updaterank - if activerank is updated
+ * @param bool $updaterank - if activerank is updated
  */
 function PoolAddTeam($poolId, $teamId, $rank, $updaterank = false, $checkrights = true)
 {
@@ -2559,9 +2559,9 @@ function GeneratePlayoffPools($poolId, $generate = true)
                         if ($frompos == $realteams && $realteams > $teams) { // in case of odd number of teams
                             $movename = $prevname . " Team " . $realteams;
                         } elseif (is_odd($frompos)) {
-                            $movename = $prevname . " Winner " . (($frompos + 1) / 2);
+                            $movename = $prevname . " Winner " . (((int) $frompos + 1) / 2);
                         } else {
-                            $movename = $prevname . " Loser " . ($frompos / 2);
+                            $movename = $prevname . " Loser " . ((int) $frompos / 2);
                         }
                         PoolAddMove($prevpoolId, $id, $frompos, $j + 1, $movename);
 
