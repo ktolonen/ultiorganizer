@@ -587,7 +587,14 @@ function SeriesPoolTemplateSql($poolTemplateId)
  *
  * Access level: Event admin
  *
- * @param int $params array of uo_series.* data
+ * @phpstan-param array{
+ *     name: mixed,
+ *     type: mixed,
+ *     season: mixed,
+ *     valid: mixed,
+ *     ordering?: mixed,
+ *     pool_template?: mixed
+ * } $params uo_series fields
  * @return int|null new uo_series.series_id, or null when the caller lacks permission.
  */
 function AddSeries($params)
@@ -622,7 +629,14 @@ function AddSeries($params)
  *
  * Access level: Event admin
  *
- * @param int $params array of uo_series.* data
+ * @phpstan-param array{
+ *     series_id: mixed,
+ *     name: mixed,
+ *     type: mixed,
+ *     valid: mixed,
+ *     ordering?: mixed,
+ *     pool_template?: mixed
+ * } $params uo_series fields
  */
 function SetSeries($params)
 {

@@ -805,7 +805,32 @@ function DeleteSeason($seasonId)
  * Access level: superadmin
  *
  * @param string $seasonId uo_season.season_id
- * @param string $params uo_season fields
+ * @phpstan-param array{
+ *     name: mixed,
+ *     type: mixed,
+ *     istournament: mixed,
+ *     isinternational: mixed,
+ *     organizer: mixed,
+ *     category: mixed,
+ *     isnationalteams: mixed,
+ *     starttime: mixed,
+ *     endtime: mixed,
+ *     iscurrent: mixed,
+ *     enrollopen: mixed,
+ *     enroll_deadline: mixed,
+ *     spiritmode: mixed,
+ *     showspiritpoints: mixed,
+ *     showspiritcomments: mixed,
+ *     showspiritpointsonlyoncomplete: mixed,
+ *     lockteamspiritonsubmit: mixed,
+ *     use_season_points: mixed,
+ *     hide_time_on_scoresheet: mixed,
+ *     hometeammode: mixed,
+ *     event_readonly: mixed,
+ *     maintenance_mode: mixed,
+ *     api_public: mixed,
+ *     timezone: mixed
+ * } $params uo_season fields
  * @param string $comment uo_comment for the season
  * @return boolean TRUE on success or FALSE on error.
  */
@@ -868,7 +893,32 @@ function AddSeason($seasonId, $params, $comment = null)
  * Access level: seasonadmin
  *
  * @param string $seasonId uo_season.season_id
- * @param string $params uo_season fields
+ * @phpstan-param array{
+ *     name: mixed,
+ *     type: mixed,
+ *     istournament: mixed,
+ *     isinternational: mixed,
+ *     organizer: mixed,
+ *     category: mixed,
+ *     isnationalteams: mixed,
+ *     starttime: mixed,
+ *     endtime: mixed,
+ *     iscurrent: mixed,
+ *     enrollopen: mixed,
+ *     enroll_deadline: mixed,
+ *     spiritmode: mixed,
+ *     showspiritpoints: mixed,
+ *     showspiritcomments: mixed,
+ *     showspiritpointsonlyoncomplete: mixed,
+ *     lockteamspiritonsubmit: mixed,
+ *     use_season_points: mixed,
+ *     hide_time_on_scoresheet: mixed,
+ *     hometeammode: mixed,
+ *     event_readonly: mixed,
+ *     maintenance_mode: mixed,
+ *     api_public: mixed,
+ *     timezone: mixed
+ * } $params uo_season fields
  * @param string $comment uo_comment for the season
  * @return boolean TRUE on success or FALSE on error.
  */
