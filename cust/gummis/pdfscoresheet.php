@@ -7,10 +7,11 @@ if (!isset($include_prefix)) {
     $include_prefix = __DIR__ . '/../../';
 }
 
+include_once $include_prefix . 'lib/pdf.interfaces.php';
 include_once $include_prefix . 'lib/tfpdf/tfpdf.php';
 include_once $include_prefix . 'lib/hsvclass/HSVClass.php';
 
-class PDF extends tFPDF
+class PDF extends tFPDF implements ScoreSheetPdf
 {
     public $B;
     public $I;

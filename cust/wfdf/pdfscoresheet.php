@@ -3,11 +3,12 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
+include_once 'lib/pdf.interfaces.php';
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/tfpdf/cellfit.php';
 include_once 'lib/hsvclass/HSVClass.php';
 
-class PDF extends tFPDF_CellFit
+class PDF extends tFPDF_CellFit implements ScoreSheetPdf
 {
     public $B;
     public $I;
@@ -46,7 +47,7 @@ class PDF extends tFPDF_CellFit
         return (string) $text;
     }
 
-    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename, $homeplayers, $visitorplayers)
+    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename, $homeplayers = [], $visitorplayers = [])
     {
 
         // event logo file name

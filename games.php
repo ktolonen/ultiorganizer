@@ -8,6 +8,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/timetable.functions.php';
+include_once 'lib/pdf.interfaces.php';
 
 function pdf_slug($value)
 {
@@ -232,11 +233,12 @@ if ($format == "pdf") {
     $layout = $filter == "onepage" ? "grid" : "list";
     $filename = "schedule-" . $layout . "-" . pdf_slug($nameLabel) . ".pdf";
     $pdf = new PDF();
+    if (!$pdf instanceof SchedulePdf) {
+        throw new UnexpectedValueException('Schedule PDF customization must implement SchedulePdf.');
+    }
     if ($filter == "onepage") {
-        // @phpstan-ignore method.notFound (cust/*/pdfschedule.php skin defines this; PHPStan resolves PDF to a pdfscoresheet variant)
         $pdf->PrintOnePageSchedule($gamefilter, $id, $games);
     } else {
-        // @phpstan-ignore method.notFound
         $pdf->PrintSchedule($gamefilter, $id, $games);
     }
     $pdf->Output('I', $filename);

@@ -7,6 +7,7 @@ include_once $include_prefix . 'lib/reservation.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/user.functions.php';
 include_once $include_prefix . 'lib/timetable.functions.php';
+include_once $include_prefix . 'lib/pdf.interfaces.php';
 
 function pdf_slug($value)
 {
@@ -99,6 +100,9 @@ if ($games === null) {
 }
 
 $pdf = new PDF();
+if (!$pdf instanceof ScoreSheetPdf) {
+    throw new UnexpectedValueException('Scoresheet PDF customization must implement ScoreSheetPdf.');
+}
 $scoreSheetAcceptsPlayerLists = false;
 if (method_exists($pdf, 'PrintScoreSheet')) {
     $printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
