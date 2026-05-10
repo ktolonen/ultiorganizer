@@ -794,7 +794,27 @@ function PlayerGameEvents($playerId, $gameId)
  *
  * @param int $teamId
  * @param int $playerId
- * @param int $profile
+ * @phpstan-param array{
+ *     accreditation_id: mixed,
+ *     firstname: mixed,
+ *     lastname: mixed,
+ *     num: mixed,
+ *     email: mixed,
+ *     nickname: mixed,
+ *     gender: mixed,
+ *     info: mixed,
+ *     national_id: mixed,
+ *     birthdate: mixed,
+ *     birthplace: mixed,
+ *     nationality: mixed,
+ *     throwing_hand: mixed,
+ *     height: mixed,
+ *     weight: mixed,
+ *     position: mixed,
+ *     story: mixed,
+ *     achievements: mixed,
+ *     public: mixed
+ * } $profile player profile fields
  */
 function SetPlayerProfile($teamId, $playerId, $profile)
 {
