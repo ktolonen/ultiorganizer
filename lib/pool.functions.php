@@ -1037,7 +1037,7 @@ function PoolTeamFromInitialRank($poolId, $rank, $countbye = true)
  *
  * @param int $frompool
  * @param int $fromplacing
- * @return 1 if exist, 0 otherwise
+ * @return int 1 if moved, 0 otherwise
  */
 function PoolIsMoved($frompool, $fromplacing)
 {
@@ -1056,7 +1056,7 @@ function PoolIsMoved($frompool, $fromplacing)
  * Test if all pools to move from are played or not.
  *
  * @param int $topool
- * @return true if played, false otherwise
+ * @return bool true if played, false otherwise
  */
 function PoolIsMoveFromPoolsPlayed($topool)
 {
@@ -1076,7 +1076,7 @@ function PoolIsMoveFromPoolsPlayed($topool)
  *
  * @param int $frompool
  * @param int $fromplacing
- * @return 0 if move doesn't exist. 1 if exist.
+ * @return int 0 if move doesn't exist, 1 if it does
  */
 function PoolMoveExist($frompool, $fromplacing)
 {
@@ -1095,7 +1095,7 @@ function PoolMoveExist($frompool, $fromplacing)
  * Test if all moves done.
  *
  * @param int $topool
- * @return true if no moves
+ * @return bool true if all moves done
  */
 function PoolIsAllMoved($topool)
 {
@@ -1332,7 +1332,7 @@ function PoolResolvePlayed($poolId)
  * Test if one or more games already played in given pool.
  *
  * @param int $poolId
- * @return true if pool started.
+ * @return bool true if pool started
  */
 function IsPoolStarted($poolId)
 {
@@ -2284,7 +2284,7 @@ function PoolSetSchedulingName($scheduling_id, $name, $season)
  * Test if games can be generated to given pool.
  *
  * @param int $poolId
- * @return true if games can be generated.
+ * @return bool true if games can be generated
  */
 function CanGenerateGames($poolId)
 {
@@ -2299,7 +2299,7 @@ function CanGenerateGames($poolId)
  * Test if there is real teams in pool.
  *
  * @param int $poolId
- * @return true if there is no real teams in pool.
+ * @return bool true if there are no real teams in pool
  */
 function PseudoTeamsOnly($poolId)
 {

@@ -1449,7 +1449,7 @@ function CommentHTML($type, $id)
  * @param int $type The type of entity. 1: season, 2: series, 3: pool.
  * @param string $id The id of the season, series, or pool.
  * @param string $comment the new value or an empty string or null if the comment should be deleted.
- * @return true if the query was successfull, false otherwise
+ * @return bool true if the query was successful, false otherwise
  */
 function SetComment($type, $id, $comment)
 {
@@ -1470,7 +1470,7 @@ function SetComment($type, $id, $comment)
             DBEscapeString($comment),
         );
     }
-    return DBQuery($query);
+    return DBExecute($query);
 }
 
 /**

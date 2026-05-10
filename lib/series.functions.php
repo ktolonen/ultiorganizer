@@ -702,7 +702,7 @@ function SeriesEnrolledTeamById($seriesId, $id)
  *
  * @param int $seriesId uo_series.series_id
  * @param int $userid uo_user.userid
- * @return mysqli_result of teams.
+ * @return array enrolled teams
  */
 function SeriesEnrolledTeamsByUser($seriesId, $userid)
 {
@@ -884,7 +884,7 @@ function ConfirmEnrolledTeam($seriesId, $id)
 /**
  * Test if division can be deleted.
  * @param int $seriesId uo_series.series_id
- * @return TRUE if division can be deleted, FALSE otherwise.
+ * @return bool true if division can be deleted, false otherwise
  */
 function CanDeleteSeries($seriesId)
 {

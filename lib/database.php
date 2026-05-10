@@ -289,7 +289,7 @@ function getDBVersion()
  * reads, prefer `DBQueryToRow()`, `DBQueryToValue()`, or `DBQueryToArray()`.
  *
  * @param string $query Database query
- * @return mysqli_result
+ * @return mysqli_result|true
  */
 function DBQuery($query)
 {
@@ -299,6 +299,20 @@ function DBQuery($query)
         DBAbort('DBQuery failed', $query, mysqli_error($mysqlconnectionref));
     }
     return $result;
+}
+
+/**
+ * Execute a mutating SQL statement and return true when it completes.
+ *
+ * DB helpers abort or throw on failure, so callers only receive true.
+ *
+ * @param string $query Database query
+ * @return true
+ */
+function DBExecute($query)
+{
+    DBQuery($query);
+    return true;
 }
 
 /**

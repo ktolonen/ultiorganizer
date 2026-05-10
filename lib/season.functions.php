@@ -341,7 +341,7 @@ function SetEventReadonly($seasonId)
             "UPDATE uo_season SET event_readonly=1 WHERE season_id='%s'",
             DBEscapeString($seasonId),
         );
-        return DBQuery($query);
+        return DBExecute($query);
     } else {
         die('Insufficient rights to edit season');
     }
@@ -350,7 +350,7 @@ function SetEventReadonly($seasonId)
 /**
  * Returns true if season exists.
  * @param string $seasonId uo_season.season_id
- * @return true if season with given id exists
+ * @return bool true if season with given id exists
  */
 function SeasonExists($seasonId)
 {
@@ -793,7 +793,7 @@ function DeleteSeason($seasonId)
             "DELETE FROM uo_season WHERE season_id='%s'",
             DBEscapeString($seasonId),
         );
-        return DBQuery($query);
+        return DBExecute($query);
     } else {
         die('Insufficient rights to delete season');
     }
@@ -848,7 +848,7 @@ function AddSeason($seasonId, $params, $comment = null)
 
         Log1("season", "add", $seasonId);
 
-        $result = DBQuery($query);
+        $result = DBExecute($query);
 
         if ($result && isset($comment)) {
             SetComment(1, $seasonId, $comment);
@@ -912,7 +912,7 @@ function SetSeason($seasonId, $params, $comment = null)
             DBEscapeString($seasonId),
         );
 
-        $result = DBQuery($query);
+        $result = DBExecute($query);
         if ($result && function_exists('RefreshSeasonSpiritData')) {
             RefreshSeasonSpiritData($seasonId);
         }
@@ -953,7 +953,7 @@ function SetSeasonSpiritSettings($seasonId, $params)
         DBEscapeString($seasonId),
     );
 
-    $result = DBQuery($query);
+    $result = DBExecute($query);
     if ($result && function_exists('RefreshSeasonSpiritData')) {
         RefreshSeasonSpiritData($seasonId);
     }
