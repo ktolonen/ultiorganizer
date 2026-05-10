@@ -310,7 +310,7 @@ class PDF extends tFPDF
             $txt .= ", ";
             $txt .= $this->pdfText($game['poolname']);
             //$this->DynSetFont($txt,$gridx,8);
-            $this->MultiCell($gridx, 3, $txt, "LR", 2, 'L', $colors);
+            $this->MultiCell($gridx, 3, $txt, "LR", 'L', $colors);
 
             $this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
             $this->Cell($gridx, $gridy, "", "LRBT", 2, 'L', false);
@@ -460,10 +460,11 @@ class PDF extends tFPDF
     public function PrintSeriesPools($id)
     {
 
+        $left_margin = 10;
         $this->SetFont('Arial', 'B', 16);
         $this->SetTextColor(255);
         $this->SetFillColor(0);
-        $this->Cell(0, 9, $title, 1, 1, 'C', true);
+        $this->Cell(0, 9, "", 1, 1, 'C', true);
 
         if ($this->GetY() + 97 > 297) {
             $this->AddPage();
@@ -592,17 +593,17 @@ class PDF extends tFPDF
                             $attr[strtoupper($a3[1])] = $a3[2];
                         }
                     }
-                    $this->OpenTag($tag,$attr);
+                    $this->OpenTag($tag, $attr);
                 }
             }
         }
     }
 
-    public function OpenTag($tag,$attr)
+    public function OpenTag($tag, $attr)
     {
         //Opening tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,true);
+            $this->SetStyle($tag, true);
         }
         if ($tag == 'A') {
             $this->HREF = $attr['HREF'];
@@ -616,13 +617,13 @@ class PDF extends tFPDF
     {
         //Closing tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,false);
+            $this->SetStyle($tag, false);
         }
         if ($tag == 'A') {
             $this->HREF = '';
         }
     }
-    public function SetStyle($tag,$enable)
+    public function SetStyle($tag, $enable)
     {
         //Modify style and select corresponding font
         $this->$tag += ($enable ? 1 : -1);
@@ -632,16 +633,16 @@ class PDF extends tFPDF
                 $style .= $s;
             }
         }
-        $this->SetFont('',$style);
+        $this->SetFont('', $style);
     }
 
-    public function PutLink($URL,$txt)
+    public function PutLink($URL, $txt)
     {
         //Put a hyperlink
-        $this->SetTextColor(0,0,255);
-        $this->SetStyle('U',true);
-        $this->Write(5,$txt,$URL);
-        $this->SetStyle('U',false);
+        $this->SetTextColor(0, 0, 255);
+        $this->SetStyle('U', true);
+        $this->Write(5, $txt, $URL);
+        $this->SetStyle('U', false);
         $this->SetTextColor(0);
     }
 }

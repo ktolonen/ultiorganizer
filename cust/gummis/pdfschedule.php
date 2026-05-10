@@ -213,6 +213,7 @@ class PDF extends tFPDF
         $isTableOpen = false;
 
         $field = 0;
+        $row = 1;
         $time_offset = $top_margin + $yfieldtitle;
         $field_offset = 0;
         $gridx = 12;

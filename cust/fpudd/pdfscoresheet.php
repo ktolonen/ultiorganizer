@@ -390,7 +390,7 @@ class PDF extends tFPDF
         }
 
         if ($field) {
-            $txt = $this->pdfText(U_($info['fieldname']));
+            $txt = $this->pdfText(U_($game['fieldname']));
             $this->Cell(20, 5, $txt, 'TB', 0, 'L', true);
         }
 
@@ -692,78 +692,78 @@ class PDF extends tFPDF
         $this->Cell(80, 6, "-", 'LRTB', 0, 'C', true);
         $this->Ln();
     }
-    public function OneCellTable($header,$data)
+    public function OneCellTable($header, $data)
     {
         //header
-        $this->SetFont('Arial','B',12);
+        $this->SetFont('Arial', 'B', 12);
         $this->SetTextColor(255);
-        $this->SetFillColor(0,0,0);
-        $this->Cell(80,6,$header,'LRTB',0,'C',true);
+        $this->SetFillColor(0, 0, 0);
+        $this->Cell(80, 6, $header, 'LRTB', 0, 'C', true);
         $this->Ln();
 
         //data
-        $this->SetFont('Arial','B',12);
+        $this->SetFont('Arial', 'B', 12);
         $this->SetTextColor(0);
         $this->SetFillColor(255);
-        $this->Cell(80,6,$data,'LRTB',0,'C',true);
+        $this->Cell(80, 6, $data, 'LRTB', 0, 'C', true);
         $this->Ln();
     }
 
-    public function DoubleCellTable($header,$data)
+    public function DoubleCellTable($header, $data)
     {
         //header
-        $this->SetFont('Arial','B',12);
+        $this->SetFont('Arial', 'B', 12);
         $this->SetTextColor(255);
-        $this->SetFillColor(0,0,0);
-        $this->Cell(80,6,$header,'LRTB',0,'C',true);
+        $this->SetFillColor(0, 0, 0);
+        $this->Cell(80, 6, $header, 'LRTB', 0, 'C', true);
         $this->Ln();
 
         //data
-        $this->SetFont('Arial','B',12);
+        $this->SetFont('Arial', 'B', 12);
         $this->SetTextColor(0);
         $this->SetFillColor(255);
-        $this->Cell(80,12,$data,'LRTB',0,'C',true);
+        $this->Cell(80, 12, $data, 'LRTB', 0, 'C', true);
         $this->Ln();
     }
 
     public function WriteHTML($html)
     {
         //HTML parser
-        $html = str_replace("\n",' ',$html);
-        $a = preg_split('/<(.*)>/U',$html,-1,PREG_SPLIT_DELIM_CAPTURE);
+        $html = str_replace("\n", ' ', $html);
+        $a = preg_split('/<(.*)>/U', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
         foreach ($a as $i => $e) {
             if ($i % 2 == 0) {
                 //Text
                 if ($this->HREF) {
-                    $this->PutLink($this->HREF,$e);
+                    $this->PutLink($this->HREF, $e);
                 } else {
-                    $this->Write(5,$e);
+                    $this->Write(5, $e);
                 }
             } else {
                 //Tag
                 if ($e[0] == '/') {
-                    $this->CloseTag(strtoupper(substr($e,1)));
+                    $this->CloseTag(strtoupper(substr($e, 1)));
                 } else {
                     //Extract attributes
-                    $a2 = explode(' ',$e);
+                    $a2 = explode(' ', $e);
                     $tag = strtoupper(array_shift($a2));
                     $attr = [];
                     foreach ($a2 as $v) {
-                        if (preg_match('/([^=]*)=["\']?([^"\']*)/',$v,$a3)) {
+                        if (preg_match('/([^=]*)=["\']?([^"\']*)/', $v, $a3)) {
                             $attr[strtoupper($a3[1])] = $a3[2];
                         }
                     }
-                    $this->OpenTag($tag,$attr);
+                    $this->OpenTag($tag, $attr);
                 }
             }
         }
     }
 
-    public function OpenTag($tag,$attr)
+    public function OpenTag($tag, $attr)
     {
         //Opening tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,true);
+            $this->SetStyle($tag, true);
         }
         if ($tag == 'A') {
             $this->HREF = $attr['HREF'];
@@ -777,13 +777,13 @@ class PDF extends tFPDF
     {
         //Closing tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,false);
+            $this->SetStyle($tag, false);
         }
         if ($tag == 'A') {
             $this->HREF = '';
         }
     }
-    public function SetStyle($tag,$enable)
+    public function SetStyle($tag, $enable)
     {
         //Modify style and select corresponding font
         $this->$tag += ($enable ? 1 : -1);
@@ -793,10 +793,10 @@ class PDF extends tFPDF
                 $style .= $s;
             }
         }
-        $this->SetFont('',$style);
+        $this->SetFont('', $style);
     }
 
-    public function PutLink($URL,$txt)
+    public function PutLink($URL, $txt)
     {
         //Put a hyperlink
         $this->SetTextColor(0,0,255);
