@@ -1,2 +1,343 @@
 parameters:
-	ignoreErrors: []
+	ignoreErrors:
+		-
+			message: '#^Loose comparison using \=\= between ''default'' and ''slkl'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 4
+			path: admin/accreditation.php
+
+		-
+			message: '#^Offset ''external_type'' on array\{playerinfo\: mixed, games\: mixed, membership\: '''', external_type\: ''''\} in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.offset
+			count: 1
+			path: admin/accreditation.php
+
+		-
+			message: '#^Offset ''membership'' on array\{playerinfo\: mixed, games\: mixed, membership\: '''', external_type\: ''''\} in empty\(\) always exists and is always falsy\.$#'
+			identifier: empty.offset
+			count: 1
+			path: admin/accreditation.php
+
+		-
+			message: '#^Result of && is always false\.$#'
+			identifier: booleanAnd.alwaysFalse
+			count: 1
+			path: admin/accreditation.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: admin/addseasonpools.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between non\-empty\-array\<string, float\|int\|string\|null\> and null will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: admin/dbequalize.php
+
+		-
+			message: '#^Comparison operation "\<\=" between int\<1, max\> and 0 is always false\.$#'
+			identifier: smallerOrEqual.alwaysFalse
+			count: 1
+			path: admin/spirit.php
+
+		-
+			message: '#^Call to function onPageHelpAvailable\(\) on a separate line has no effect\.$#'
+			identifier: function.resultUnused
+			count: 1
+			path: admin/translations.php
+
+		-
+			message: '#^Comparison operation "\<\=" between int\<1, 2\> and 3 is always true\.$#'
+			identifier: smallerOrEqual.alwaysTrue
+			count: 1
+			path: allclubs.php
+
+		-
+			message: '#^Comparison operation "\<\=" between int\<1, 4\> and 5 is always true\.$#'
+			identifier: smallerOrEqual.alwaysTrue
+			count: 1
+			path: allcountries.php
+
+		-
+			message: '#^Comparison operation "\<\=" between int\<1, 3\> and 4 is always true\.$#'
+			identifier: smallerOrEqual.alwaysTrue
+			count: 1
+			path: allplayers.php
+
+		-
+			message: '#^Comparison operation "\<\=" between int\<1, 2\> and 3 is always true\.$#'
+			identifier: smallerOrEqual.alwaysTrue
+			count: 1
+			path: allteams.php
+
+		-
+			message: '#^Method PDF\:\:onePageScheduleGridBounds\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: cust/gummis/pdfschedule.php
+
+		-
+			message: '#^Ternary operator condition is always false\.$#'
+			identifier: ternary.alwaysFalse
+			count: 8
+			path: cust/slkl/mass-accreditation.php
+
+		-
+			message: '#^Method PDF\:\:onePageScheduleGridBounds\(\) is unused\.$#'
+			identifier: method.unused
+			count: 1
+			path: cust/wfdf/pdfschedule.php
+
+		-
+			message: '#^If condition is always false\.$#'
+			identifier: if.alwaysFalse
+			count: 3
+			path: cust/wfdf/pdfscoresheet.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between numeric\-string and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 2
+			path: docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: ext/index.php
+
+		-
+			message: '#^Instanceof between PDF and SchedulePdf will always evaluate to false\.$#'
+			identifier: instanceof.alwaysFalse
+			count: 1
+			path: games.php
+
+		-
+			message: '#^Unreachable statement \- code above always terminates\.$#'
+			identifier: deadCode.unreachable
+			count: 1
+			path: games.php
+
+		-
+			message: '#^Negated boolean expression is always false\.$#'
+			identifier: booleanNot.alwaysFalse
+			count: 1
+			path: index.php
+
+		-
+			message: '#^Call to function is_null\(\) with mixed will always evaluate to false\.$#'
+			identifier: function.impossibleType
+			count: 1
+			path: lib/common.functions.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''"'' and '''' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 2
+			path: lib/common.functions.php
+
+		-
+			message: '#^Negated boolean expression is always true\.$#'
+			identifier: booleanNot.alwaysTrue
+			count: 1
+			path: lib/common.functions.php
+
+		-
+			message: '#^Function DBProtocolInfo\(\) never returns string so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: lib/database.php
+
+		-
+			message: '#^Strict comparison using \=\=\= between string and false will always evaluate to false\.$#'
+			identifier: identical.alwaysFalse
+			count: 1
+			path: lib/database.php
+
+		-
+			message: '#^Comparison operation "\>" between 1 and 0 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: lib/game.functions.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between non\-falsy\-string and ''0'' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: lib/player.functions.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<4, max\> and 3 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: lib/pool.functions.php
+
+		-
+			message: '#^Function PoolFromPoolTemplate\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: lib/pool.functions.php
+
+		-
+			message: '#^Function PoolScoreBoard\(\) never returns false so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: lib/pool.functions.php
+
+		-
+			message: '#^Function PoolTotalPlayedGames\(\) never returns float so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: lib/pool.functions.php
+
+		-
+			message: '#^Loose comparison using \=\= between int\<1, max\> and 0 will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: lib/pool.functions.php
+
+		-
+			message: '#^Function AddSeriesEnrolledTeam\(\) never returns null so it can be removed from the return type\.$#'
+			identifier: return.unusedType
+			count: 1
+			path: lib/series.functions.php
+
+		-
+			message: '#^Comparison operation "\>\=" between int\<80100, 80599\> and 70300 is always true\.$#'
+			identifier: greaterOrEqual.alwaysTrue
+			count: 1
+			path: lib/session.functions.php
+
+		-
+			message: '#^Offset ''domain'' on array\{lifetime\: int\<0, max\>, path\: non\-falsy\-string, domain\: string, secure\: bool, httponly\: bool, samesite\: ''Lax''\|''lax''\|''None''\|''none''\|''Strict''\|''strict''\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: lib/session.functions.php
+
+		-
+			message: '#^Offset ''path'' on array\{lifetime\: int\<0, max\>, path\: non\-falsy\-string, domain\: string, secure\: bool, httponly\: bool, samesite\: ''Lax''\|''lax''\|''None''\|''none''\|''Strict''\|''strict''\} in isset\(\) always exists and is not nullable\.$#'
+			identifier: isset.offset
+			count: 1
+			path: lib/session.functions.php
+
+		-
+			message: '#^Left side of && is always true\.$#'
+			identifier: booleanAnd.leftAlwaysTrue
+			count: 1
+			path: lib/spirit.functions.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed and null will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: lib/team.functions.php
+
+		-
+			message: '#^Strict comparison using \!\=\= between mixed~\(''''\|null\) and '''' will always evaluate to true\.$#'
+			identifier: notIdentical.alwaysTrue
+			count: 1
+			path: lib/translation.functions.php
+
+		-
+			message: '#^Left side of \|\| is always false\.$#'
+			identifier: booleanOr.leftAlwaysFalse
+			count: 1
+			path: lib/user.functions.php
+
+		-
+			message: '#^Offset ''userproperties'' on non\-empty\-array\<mixed, mixed\> in isset\(\) does not exist\.$#'
+			identifier: isset.offset
+			count: 1
+			path: lib/user.functions.php
+
+		-
+			message: '#^If condition is always true\.$#'
+			identifier: if.alwaysTrue
+			count: 1
+			path: playercard.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: plugins/import_xml_ffindr.php
+
+		-
+			message: '#^Loose comparison using \=\= between 0 and \-1 will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: plugins/reassign_playoffpools.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: result.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: scorekeeper/login.php
+
+		-
+			message: '#^Right side of && is always true\.$#'
+			identifier: booleanAnd.rightAlwaysTrue
+			count: 1
+			path: scorekeeper/result.php
+
+		-
+			message: '#^Call to function _\(\) on a separate line has no effect\.$#'
+			identifier: function.resultUnused
+			count: 28
+			path: sql/upgrade_db.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''default'' and ''slkl'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: sql/upgrade_db.php
+
+		-
+			message: '#^Comparison operation "\>" between int\<3, max\> and 2 is always true\.$#'
+			identifier: greater.alwaysTrue
+			count: 1
+			path: teams.php
+
+		-
+			message: '#^Call to function method_exists\(\) with PDF and ''PrintScoreSheet'' will always evaluate to true\.$#'
+			identifier: function.alreadyNarrowedType
+			count: 1
+			path: user/pdfscoresheet.php
+
+		-
+			message: '#^Instanceof between PDF and ScoreSheetPdf will always evaluate to true\.$#'
+			identifier: instanceof.alwaysTrue
+			count: 1
+			path: user/pdfscoresheet.php
+
+		-
+			message: '#^Call to function _\(\) on a separate line has no effect\.$#'
+			identifier: function.resultUnused
+			count: 3
+			path: user/playerprofile.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''default'' and ''slkl'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 1
+			path: user/playerprofile.php
+
+		-
+			message: '#^Call to function onPageHelpAvailable\(\) on a separate line has no effect\.$#'
+			identifier: function.resultUnused
+			count: 1
+			path: user/teamplayers.php
+
+		-
+			message: '#^Loose comparison using \=\= between ''default'' and ''slkl'' will always evaluate to false\.$#'
+			identifier: equal.alwaysFalse
+			count: 2
+			path: user/teamplayers.php
