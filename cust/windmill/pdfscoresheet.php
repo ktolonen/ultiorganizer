@@ -755,9 +755,9 @@ class PDF extends tFPDF
     {
         //Put a hyperlink
         $this->SetTextColor(0, 0, 255);
-        $this->SetStyle('U',true);
-        $this->Write(4,$txt,$URL);
-        $this->SetStyle('U',false);
+        $this->SetStyle('U', true);
+        $this->Write(4, $txt, $URL);
+        $this->SetStyle('U', false);
         $this->SetTextColor(0);
     }
 }
