@@ -42,6 +42,9 @@ if (!empty($_POST['series'])) {
     foreach ($pools as $pool) {
         $poolId = $pool['pool_id'];
         $poolinfo = PoolInfo($poolId);
+        $BYEs = false;
+        $PlayoffOK = 0;
+        $playoffpool = false;
         //		if(PoolIsMoveFromPoolsPlayed($poolId) && !PoolIsAllMoved($poolId)) {
         if (!PoolIsAllMoved($poolId)) {
             $moveablepools[] = $pool;

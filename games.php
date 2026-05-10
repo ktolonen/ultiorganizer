@@ -74,7 +74,7 @@ $gamefilter = "season";
 $format = "html";
 $group = "";
 $groupheader = true;
-$games;
+$games = [];
 
 if (iget("series")) {
     $id = iget("series");
@@ -271,7 +271,7 @@ if (!$print && !$singleview) {
         $html .= "</p>\n";
     }
 }
-if (!empty($group) && $group != "all") {
+if ($group != "all") {
     $groupheader = false;
 }
 

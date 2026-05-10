@@ -121,10 +121,10 @@ switch ($feedtype) {
             if (intval($goal['iscallahan'])) {
                 $pass = "xx";
             } else {
-                $pass = $goal['assistfirstname'] . " " . $goal['assistlastname'];
+                $pass = trim($goal['assistfirstname'] . " " . $goal['assistlastname']);
             }
 
-            $scorer = $goal['scorerfirstname'] . " " . $goal['scorerlastname'];
+            $scorer = trim($goal['scorerfirstname'] . " " . $goal['scorerlastname']);
 
             $desc = "";
             if (!$hideTimeOnScoresheet) {

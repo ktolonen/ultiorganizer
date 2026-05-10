@@ -41,7 +41,7 @@ if (!defined('DATE_FORMAT')) {
 }
 
 if (!defined('WORD_DELIMITER')) {
-    define('WORD_DELIMITER', ' ');
+    define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');
 }
 
 // FeedWriter format constant.

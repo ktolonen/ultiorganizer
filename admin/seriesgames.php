@@ -2,6 +2,7 @@
 
 include_once __DIR__ . '/auth.php';
 include_once 'lib/database.php';
+include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/location.functions.php';
@@ -11,16 +12,24 @@ include_once 'lib/game.functions.php';
 include_once 'lib/reservation.functions.php';
 
 $LAYOUT_ID = POOLGAMES;
+$season = "";
+$seriesId = 0;
 
 if (!empty($_GET["season"])) {
     $season = $_GET["season"];
+    $seriesId = CurrentSeries($season);
 }
 
 if (!empty($_GET["series"])) {
-    $seriesId = $_GET["series"];
+    $seriesId = (int) $_GET["series"];
     if (empty($season)) {
         $season = SeriesSeasonId($seriesId);
     }
+}
+
+if ($seriesId <= 0) {
+    showPage(_("Games"), "<p>" . _("No divisions defined. Define at least one division first.") . "</p>");
+    return;
 }
 
 $seriesinfo = SeriesInfo($seriesId);

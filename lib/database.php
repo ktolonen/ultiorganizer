@@ -64,7 +64,7 @@ require_once $include_prefix . 'conf/config.inc.php';
 
 include_once $include_prefix . 'sql/upgrade_db.php';
 
-$mysqlconnectionref;
+$mysqlconnectionref = null;
 
 /**
  * Exception type used when DB helpers are switched into exception mode.

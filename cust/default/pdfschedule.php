@@ -398,7 +398,7 @@ class PDF extends tFPDF
             }
             $txt .= $this->pdfText($game['poolname']);
             //$this->DynSetFont($txt,$gridx,8);
-            $this->MultiCell($gridx, 3, $txt, "LR", 2, 'L', $colors);
+            $this->MultiCell($gridx, 3, $txt, "LR", 'L', $colors);
 
             $this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
             $this->Cell($gridx, $gridy, "", "LRBT", 2, 'L', false);

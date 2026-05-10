@@ -1466,6 +1466,7 @@ function SetGame($gameId, $params)
 {
     $poolinfo = PoolInfo($params['pool']);
     if (hasEditGamesRight($poolinfo['series'])) {
+        $result = null;
         $allowedKeys = array_flip([
             "hometeam",
             "visitorteam",

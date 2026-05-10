@@ -725,7 +725,7 @@ function colorstring2rgb($color)
 # Does not accept comments after values
 if (!function_exists('parse_ini_string')) {
 
-    function parse_ini_string($string)
+    function parse_ini_string($string, $process_sections = false, $scanner_mode = INI_SCANNER_NORMAL)
     {
         $array = [];
 
@@ -891,6 +891,7 @@ function CreateOrdering($tables, $orderby)
         $check = $orderby;
     }
 
+    $fields = [];
     if (is_array($tables)) {
         foreach ($tables as $table => $alias) {
             $fields[$alias] = GetTableColumns($table);
@@ -899,7 +900,7 @@ function CreateOrdering($tables, $orderby)
         $fields[$tables] = GetTableColumns($tables);
     }
     $ret = "";
-    foreach ($orderby as $field => $direction) {
+    foreach ($check as $field => $direction) {
         if (is_numeric($field)) {
             $field = $direction;
             $direction = "ASC";
@@ -923,9 +924,7 @@ function CreateOrdering($tables, $orderby)
         if (!isset($tableFields[$field])) {
             die("Invalid field '" . $field . "'");
         }
-        if (isset($table)) {
-            $field = $table . "." . $field;
-        }
+        $field = $table . "." . $field;
         $ret .= ", " . $field . " " . $direction;
     }
     if (strlen($ret) > 0) {
@@ -947,6 +946,7 @@ function CreateFilter($tables, $filter)
     } else {
         $fields[$tables] = GetTableColumns($tables);
     }
+    $ret = "";
     if (isset($filter["field"])) {
         $ret = _handleCriteria($filter, $fields);
     } elseif (isset($filter["join"])) {
@@ -1111,9 +1111,7 @@ function _handleFieldName($field, $fields)
         die("Invalid field '" . $field . "'");
     }
     $type = $tableFields[$field];
-    if (isset($table)) {
-        $field = $table . "." . $field;
-    }
+    $field = $table . "." . $field;
     return [$field, $type];
 }
 

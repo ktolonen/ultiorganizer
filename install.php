@@ -330,6 +330,7 @@ function installHashPassword($password)
     {
         $errors = "";
         $warnings = "";
+        $lines = [];
 
         //Create tables if required
         if (!($sql_file_contents = file_get_contents("sql/ultiorganizer.sql"))) {

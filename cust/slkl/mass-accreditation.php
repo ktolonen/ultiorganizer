@@ -9,6 +9,10 @@ if (!isset($include_prefix)) {
 
 include_once $include_prefix . 'lib/auth.guard.php';
 
+$season = isset($season) ? $season : ($_GET['season'] ?? CurrentSeason());
+$view = isset($view) ? $view : ($_GET['list'] ?? "acc");
+$url = isset($url) ? $url : "?view=admin/accreditation&amp;season=" . $season . "&amp;list=" . $view;
+
 $new_players = "";
 $updated = false;
 
@@ -309,9 +313,7 @@ function slklUpdateLicensesFromCSV($handle, $season)
             if (!empty($gender)) {
                 $query .= ",women=$women";
             }
-            if (!empty($birthdate)) {
-                $query .= ",birthdate='" . $birthdate . "'";
-            }
+            $query .= ",birthdate='" . $birthdate . "'";
             if (!empty($external_type)) {
                 $query .= ",external_type='" . $external_type . "'";
             }

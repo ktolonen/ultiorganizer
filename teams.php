@@ -138,6 +138,7 @@ if ($list == "allteams" || $list == "byseeding") {
             continue;
         }
         foreach ($pools as $pool) {
+            $playoffpools = "";
             $html .= "<table class='teams-table' border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
             $html .= "<tr>";
             $html .= "<th colspan='" . ($cols - 1) . "'>" . utf8entities(U_(PoolSeriesName($pool['pool_id'])) . ", " . U_($pool['name'])) . "</th><th class='right'>" . _("Scoreboard") . "</th>\n";

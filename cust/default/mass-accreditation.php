@@ -9,6 +9,8 @@ if (!isset($include_prefix)) {
 
 include_once $include_prefix . 'lib/auth.guard.php';
 
+$season = isset($season) ? $season : ($_GET['season'] ?? "");
+
 echo "<h3>" . _("Mass accreditation") . "</h3>";
 echo "<table><tr>";
 $seriesResults = SeasonSeries($season);

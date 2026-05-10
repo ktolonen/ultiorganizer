@@ -100,6 +100,7 @@ function ConvertToJpeg($file_src, $file_dst)
         return false;
     }
 
+    $img_src = false;
     switch ($type) {
         case 1:   //   gif -> jpg
             $img_src = imagecreatefromgif($file_src);
@@ -149,6 +150,7 @@ function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
     } else {
         $h_dst = floor($w_dst / $ratio);
     }
+    $img_src = false;
     switch ($type) {
         case 1:   //   gif -> jpg
             $img_src = imagecreatefromgif($file_src);
