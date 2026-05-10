@@ -226,7 +226,7 @@ function GameRespTeam($gameId)
  * Returns game admins (scorekeepers) for given game.
  *
  * @param int $gameId uo_game.game_id
- * @return php array of users
+ * @return array array of users
  */
 function GameAdmins($gameId)
 {

@@ -1258,8 +1258,8 @@ function startsWith($haystack, $needle)
 /**
  * returns the English ordinal of an integer
  *
- * @param  integer   a number
- * @return string    the ordinal number in the current locale
+ * @param int $number a number
+ * @return string the ordinal number in the current locale
  */
 
 function ordinal($number)

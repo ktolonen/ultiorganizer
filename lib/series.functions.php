@@ -10,7 +10,7 @@ require_once __DIR__ . '/country.functions.php';
 /**
  * Returns selected division based on url or session variable.
  *
- * @return uo_series.series_id
+ * @return int|string|null uo_series.series_id
  */
 function CurrentSeries($season)
 {
@@ -71,7 +71,7 @@ function SeriesPools($seriesId, $onlyvisible = false, $nocontinuingpools = false
 /**
  * Get all placement pools in given division.
  * @param int $seriesId uo_series.series_id
- * @return PHP array of pools
+ * @return array array of pools
  */
 function SeriesPlacementPoolIds($seriesId)
 {
@@ -252,7 +252,7 @@ function SeriesAllPlayers($seriesId)
 
 /**
  * Get name for given division.
- * @param int $seriesId uo_series.series_id
+ * @param int $serieId uo_series.series_id
  * @return string The division name.
  */
 function SeriesName($serieId)
@@ -267,7 +267,7 @@ function SeriesName($serieId)
 
 /**
  * Get season name for given division.
- * @param int $seriesId uo_series.series_id
+ * @param int $serieId uo_series.series_id
  * @return string The season name.
  */
 function SeriesSeasonName($serieId)
@@ -284,7 +284,7 @@ function SeriesSeasonName($serieId)
 
 /**
  * Get season id for given division.
- * @param int $seriesId uo_series.series_id
+ * @param int $serieId uo_series.series_id
  * @return string The season id.
  */
 function SeriesSeasonId($serieId)
@@ -496,7 +496,7 @@ function SeriesAllGames($seriesId)
 /**
  * Get all information (uo_series.*) for given division.
  * @param int $seriesId uo_series.series_id
- * @return PHP array of information.
+ * @return array array of information.
  */
 function SeriesInfo($seriesId)
 {
@@ -513,7 +513,7 @@ function SeriesInfo($seriesId)
  * Access level: Division admin
  *
  * @param int $seriesId uo_series.series_id
- * @return mysql array of information.
+ * @return array array of information.
  */
 function SeriesEnrolledTeams($seriesId)
 {
@@ -654,7 +654,7 @@ function SetSeries($params)
  *
  * Access level: Event admin
  *
- * @param int $params array of uo_series.* data
+ * @param int $seriesId uo_series.series_id
  * @param string $name new name for division.
  */
 function SetSeriesName($seriesId, $name)
@@ -679,7 +679,7 @@ function SetSeriesName($seriesId, $name)
  *
  * @param int $seriesId uo_series.series_id
  * @param int $id uo_enrolledteam.id
- * @return php array of uo_enrolledteam.*
+ * @return array array of uo_enrolledteam.*
  */
 function SeriesEnrolledTeamById($seriesId, $id)
 {
@@ -733,7 +733,7 @@ function SeriesEnrolledTeamsByUser($seriesId, $userid)
  * @param string $name name of team
  * @param int $club uo_club.club_id
  * @param int $country uo_country.country_id
- * @return uo_enrolledteam.id
+ * @return int|null uo_enrolledteam.id
  */
 function AddSeriesEnrolledTeam($seriesId, $userid, $name, $club, $country)
 {
@@ -911,7 +911,7 @@ function CanDeleteSeries($seriesId)
  * Access level: Team admin
  *
  * @param int $seriesId uo_series.series_id
- * @return PHP array of users
+ * @return array array of users
  */
 function SeriesTeamResponsibles($seriesId)
 {

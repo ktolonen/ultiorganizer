@@ -32,7 +32,7 @@ function Pools($filter = null, $ordering = null)
  * Information of given pool.
  *
  * @param int $poolId uo_pool.pool_id
- * @return php array of pool information.
+ * @return array array of pool information.
  */
 function PoolInfo($poolId)
 {
@@ -91,7 +91,7 @@ function PoolPlayoffFollowersArray($poolId)
 /**
  * Get playoff 1st round pool for given pool based on follower id (uo_pool.follower).
  * @param int $poolId uo_pool.pool_id
- * @return root pool id.
+ * @return int root pool id.
  */
 function PoolPlayoffRoot($poolId)
 {
@@ -114,7 +114,7 @@ function PoolPlayoffRoot($poolId)
  * Information of given pool template.
  *
  * @param int $poolId uo_pooltemplate.template_id
- * @return php array of pool template information.
+ * @return array array of pool template information.
  */
 function PoolTemplateInfo($poolId)
 {
@@ -128,7 +128,7 @@ function PoolTemplateInfo($poolId)
 /**
  * Get all pool templates.
  *
- * @return php array of pool template information.
+ * @return array array of pool template information.
  */
 function PoolTemplates()
 {
@@ -139,7 +139,7 @@ function PoolTemplates()
 /**
  * Gives shorter name for given pool.
  * @param int $poolId uo_pool.pool_id
- * @return short name.
+ * @return string short name.
  */
 function PoolShortName($poolId)
 {
@@ -177,7 +177,7 @@ function PoolName($poolId)
 /**
  * Get division name for given pool.
  * @param int $poolId uo_pool.pool_id
- * @return Division name.
+ * @return string division name.
  */
 function PoolSeriesName($poolId)
 {
@@ -208,7 +208,7 @@ function PoolListAll()
 
 /**
  * Get list of pool types.
- * @return Hardcoded PHP array of pool types.
+ * @return array hardcoded list of pool types.
  */
 function PoolTypes()
 {
@@ -265,7 +265,7 @@ function PoolTeams($poolId, $order = "rank")
  * @param int $poolId uo_pool.pool_id
  * @param int $pos position to get name
  * @param boolean $ordinal TRUE if ordinal string
- * @return name of position
+ * @return string name of position
  */
 function PoolPlacementString($poolId, $pos, $ordinal = true)
 {
@@ -339,7 +339,7 @@ function PoolSchedulingTeams($poolId)
  * @param int $poolId uo_pool.pool_id
  * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result|false result set of players.
  */
 function PoolScoreBoard($poolId, $sorting, $limit)
 {
@@ -841,7 +841,7 @@ function PoolGetMoveToPool($poolId, $fromrank)
  * Get move from given pool and position.
  *
  * @param int $topool uo_pool.pool_id
- * @param int $topos move to position
+ * @param int $torank move to position
  * @return array row
  */
 function PoolGetMoveFrom($topool, $torank)
@@ -861,7 +861,7 @@ function PoolGetMoveFrom($topool, $torank)
  * Get pool where team is moved by scheduling id.
  *
  * @param int $schedulingId
- * @return uo_moveteams.frompool
+ * @return int|string|null uo_moveteams.frompool
  */
 function PoolGetFromPoolBySchedulingId($schedulingId)
 {
@@ -880,7 +880,7 @@ function PoolGetFromPoolBySchedulingId($schedulingId)
  *
  * @param int $poolId
  * @param int $teamId
- * @return uo_moveteams.frompool
+ * @return int|string|null uo_moveteams.frompool
  */
 function PoolGetFromPoolByTeamId($poolId, $teamId)
 {
@@ -904,7 +904,7 @@ function PoolGetFromPoolByTeamId($poolId, $teamId)
  * @param int $poolId
  * @param int $activerank
  * @param boolean $countbye
- * @return PHP array row
+ * @return array array row
  */
 function PoolTeamFromStandings($poolId, $activerank, $countbye = true)
 {
@@ -954,7 +954,7 @@ function PoolTeamFromStandings($poolId, $activerank, $countbye = true)
  * @param int $poolId
  * @param int $activerank
  * @param boolean $countbye
- * @return PHP array row
+ * @return array array row
  */
 function PoolTeamsFromStandings($poolId, $activerank, $countbye = true)
 {
@@ -993,9 +993,9 @@ function PoolTeamsFromStandings($poolId, $activerank, $countbye = true)
  * if $countbye=false, $rank is corrected by one if BYE team is ranked ahead in this pool
  *
  * @param int $poolId
- * @param int $activerank
+ * @param int $rank
  * @param boolean $countbye
- * @return PHP array row
+ * @return array array row
  */
 function PoolTeamFromInitialRank($poolId, $rank, $countbye = true)
 {
@@ -1356,7 +1356,7 @@ function IsPoolLocked($poolId)
 /**
  * Adds pool template.
  *
- * @param uo_pooltemplate $params
+ * @param array $params uo_pooltemplate.* data
  */
 function AddPoolTemplate($params)
 {
@@ -1402,7 +1402,7 @@ function AddPoolTemplate($params)
  * Updates pool template.
  *
  * @param int $poolId
- * @param uo_pooltemplate $params
+ * @param array $params uo_pooltemplate.* data
  */
 function SetPoolTemplate($poolId, $params)
 {
@@ -1542,7 +1542,7 @@ function PoolColors()
  * @param string $name - Pool name
  * @param string $ordering - Pool order
  * @param int $poolTemplateId - Pool template
- * @return id to created pool.
+ * @return int|null id of the created pool.
  */
 function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
 {
@@ -1628,7 +1628,7 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
  * Update all pool parameters.
  *
  * @param int $poolId
- * @param uo_pool $params
+ * @param array $params uo_pool.* data
  */
 function SetPoolDetails($poolId, $params, $comment = null)
 {
@@ -1647,7 +1647,7 @@ function SetPoolDetails($poolId, $params, $comment = null)
  * Update pool key parameters.
  *
  * @param int $poolId
- * @param uo_pool $params
+ * @param array $params uo_pool.* data
  */
 function SetPool($poolId, $params)
 {

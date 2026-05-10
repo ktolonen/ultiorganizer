@@ -241,7 +241,7 @@ function FindExistingPlayerProfileId($profile)
 /**
  * Create profile for player.
  *
- * @param unknown_type $playerId
+ * @param int $playerId uo_player.player_id
  */
 function CreatePlayerProfile($playerId)
 {
@@ -291,8 +291,8 @@ function CreatePlayerProfile($playerId)
 /**
  * Gets players.
  *
- * @param unknown_type $filter
- * @param unknown_type $ordering
+ * @param array|null $filter
+ * @param array|null $ordering
  */
 function Players($filter = null, $ordering = null)
 {

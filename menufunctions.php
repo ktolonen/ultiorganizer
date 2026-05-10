@@ -891,8 +891,7 @@ function getEditSeasonLinks()
  * @param array $menuitems - key is link name, value is url.
  * @param string $current - links to this url obtain the class 'current'
  * @param boolean $echoed if true (the default), the menu is echoed
- * @return the menu
- *
+ * @return string the menu
  */
 function pageMenu($menuitems, $current = "", $echoed = true)
 {

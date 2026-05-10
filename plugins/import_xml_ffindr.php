@@ -496,7 +496,7 @@ class XMLHandler
     /**
      * Inserts data into database as new data.
      * @param string $name Name of the table to insert
-     * @param array $row Data to insert: key=>field, value=>data
+     * @param array $data Data to insert: key=>field, value=>data
      */
     public function InsertRow($name, $data)
     {

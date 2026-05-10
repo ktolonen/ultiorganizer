@@ -211,8 +211,8 @@ function ReservationSeasons($reservationId)
  *
  * Access level: eventadmin
  *
- * @param Int $id: Reservation id
- * @param array $data: Field data for uo_reservation
+ * @param int $reservationId Reservation id
+ * @param array $data Field data for uo_reservation
  */
 function SetReservation($reservationId, $data)
 {
