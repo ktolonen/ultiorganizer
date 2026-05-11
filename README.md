@@ -40,7 +40,9 @@ Ensure the host has native gettext and locales available so PHP translations wor
 sudo locale-gen en_US.UTF-8
 ```
 
-To install Ultiorganizer simply copy the files to your web server, call <http://yourpage.com/install.php> and follow the instructions.
+For production installation, use a release package instead of uploading a full repository checkout. Extract the release ZIP, upload the extracted contents to your web server, open <http://yourpage.com/install.php>, and follow the instructions.
+
+Maintainers can build release packages with `docs/release/build-release.sh`. Deployment notes are in `docs/deployment.md`.
 
 ## Development
 

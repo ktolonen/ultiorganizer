@@ -47,6 +47,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - When adding a new `SYSTEM_FLAG` or `INSTALLATION_SETTING`, ask the user whether it should be added to the installation process, and cover `install.php` if the answer is yes.
 - When adding a new markdown document under `docs/`, also add it to the topic lists in both `AGENTS.md` and `docs/README.md`.
 - Keep the root `README.md` pointing to `docs/README.md` as the documentation index instead of maintaining a parallel topic list there.
+- When adding new files or directories, decide whether they belong in the production release package. Runtime files must be included by `docs/release/build-release.sh`; development-only files must be excluded through `.gitattributes` `export-ignore`. Run `docs/release/build-release.sh` and inspect the package contents when changing release-relevant paths.
 
 ## Verification
 
@@ -73,6 +74,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - `docs/codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
 - `docs/lib-index.md`: file-by-file map of shared helpers and third-party libraries under `lib/`.
 - `docs/routing.md`: request entry points and view resolution.
+- `docs/deployment.md`: production release package and installation guidance.
 - `docs/local-development.md`: local Docker-based setup.
 - `docs/dev/`: Docker Compose assets and image definitions used by the local development guide.
 - `docs/code-style.md`: PHP code style conventions, formatter and linter setup, and pre-commit hook.

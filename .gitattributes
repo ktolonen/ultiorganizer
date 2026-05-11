@@ -1,0 +1,21 @@
+# Keep generated release archives focused on runtime installation files.
+/.agents/** export-ignore
+/.claude/** export-ignore
+/.codex/** export-ignore
+/.git* export-ignore
+/.githooks/** export-ignore
+/.github/** export-ignore
+/.php-cs-fixer.dist.php export-ignore
+/.settings/** export-ignore
+/.vscode/** export-ignore
+/AGENTS.md export-ignore
+/CLAUDE.md export-ignore
+/composer.json export-ignore
+/composer.lock export-ignore
+/dist/** export-ignore
+/docs/** export-ignore
+/docs/deployment.md !export-ignore
+/live/** export-ignore
+/phpstan* export-ignore
+/reports/** export-ignore
+/vendor/** export-ignore
