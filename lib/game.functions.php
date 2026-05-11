@@ -226,7 +226,7 @@ function GameRespTeam($gameId)
  * Returns game admins (scorekeepers) for given game.
  *
  * @param int $gameId uo_game.game_id
- * @return php array of users
+ * @return array array of users
  */
 function GameAdmins($gameId)
 {
@@ -1466,6 +1466,7 @@ function SetGame($gameId, $params)
 {
     $poolinfo = PoolInfo($params['pool']);
     if (hasEditGamesRight($poolinfo['series'])) {
+        $result = null;
         $allowedKeys = array_flip([
             "hometeam",
             "visitorteam",
@@ -1681,11 +1682,9 @@ function GameProcessMassInput($post)
         $html .= "<p>" . sprintf(_("Errors: %s."), ($error_clear + $error_set)) . "</p>";
     }
 
-    foreach ($changed as $poolId => $ok) {
-        if ($ok > 0) {
-            ResolvePoolStandings($poolId);
-            PoolResolvePlayed($poolId);
-        }
+    foreach ($changed as $poolId => $_) {
+        ResolvePoolStandings($poolId);
+        PoolResolvePlayed($poolId);
     }
 
     return $html;

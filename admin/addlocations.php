@@ -6,6 +6,7 @@ include_once 'lib/configuration.functions.php';
 
 $season = 0;
 $locationId = 0;
+$locales = getAvailableLocalizations();
 
 if (!empty($_GET["season"])) {
     $season = $_GET["season"];

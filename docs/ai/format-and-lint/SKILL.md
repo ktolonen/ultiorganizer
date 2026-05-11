@@ -18,33 +18,47 @@ Always read these references first:
 
 ## Scope
 
-Limit the run to PHP files the user has modified in the current worktree. Use:
+Limit the run to PHP files changed in the current worktree or index. Use:
 
 - `git status --short`
 - `git diff --name-only`
 - `git diff --cached --name-only`
 
-Filter to `*.php` and skip the excluded directories listed in `docs/code-style.md` (`vendor/`, `conf/`, `live/`, `images/`, `locale/`, `script/`, `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/`, `lib/hsvclass/`).
+Filter to `*.php` and skip the excluded directories listed in `docs/code-style.md`, `.php-cs-fixer.dist.php`, and `phpstan.neon.dist` (`vendor/`, `live/`, `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/`, `lib/hsvclass/`).
 
 If no PHP files changed, report `no PHP changes` and stop.
 
 ## Tool resolution
 
-Prefer the local Composer install. If `vendor/bin/php-cs-fixer` and `vendor/bin/phpstan` are missing, fall back to the dev container:
+Prefer the same tool resolution order as `.githooks/pre-commit`:
+
+1. `PHP_CS_FIXER_BIN` / `PHPSTAN_BIN` environment variables, when set.
+2. `vendor/bin/php-cs-fixer` and `vendor/bin/phpstan` from the local Composer install.
+3. `docker compose -f docs/dev/compose.yaml exec -T dev vendor/bin/...` when the `dev` service is running.
+4. `docker compose -f docs/dev/compose.yaml exec -T app vendor/bin/...` when `app` is running and `dev` is not.
+
+Local commands:
+
+```sh
+vendor/bin/php-cs-fixer ...
+vendor/bin/phpstan ...
+```
+
+Dev-container fallback:
 
 ```sh
 docker compose -f docs/dev/compose.yaml exec -T dev vendor/bin/php-cs-fixer ...
 docker compose -f docs/dev/compose.yaml exec -T dev vendor/bin/phpstan ...
 ```
 
-If the `dev` service is not running but `app` is, run inside `app` instead. If neither container is available, ask the user to install dev dependencies (`composer install`) or to start the `dev` workspace (`docs/local-development.md`).
+If neither local tools nor a running container are available, ask the user to install dev dependencies (`composer install`) or to start the `dev` workspace (`docs/local-development.md`).
 
 ## Formatting step (PHP-CS-Fixer)
 
 1. Run the formatter on the changed files only, in fix mode:
 
    ```sh
-   vendor/bin/php-cs-fixer fix -- <changed files>
+   vendor/bin/php-cs-fixer fix --config=.php-cs-fixer.dist.php -- <changed files>
    ```
 
 2. Stage the rewritten files for the user. Do not commit. The user controls commit timing.

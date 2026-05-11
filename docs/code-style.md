@@ -37,7 +37,7 @@ composer format:check    # report violations without writing
 
 ### PHPStan (static analysis)
 
-Configuration: [`phpstan.neon.dist`](../phpstan.neon.dist). Starts at level 1; existing findings are captured in [`phpstan-baseline.neon`](../phpstan-baseline.neon) so they do not block work. New code must analyse cleanly.
+Configuration: [`phpstan.neon.dist`](../phpstan.neon.dist). Currently at level 5; the baseline is empty so all findings must be resolved. New code must analyse cleanly.
 
 ```sh
 composer lint            # analyse against current baseline

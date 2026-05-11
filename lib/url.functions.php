@@ -44,8 +44,12 @@ function GetUrlList($owner, $ownerId, $medialinks = false)
 
 function GetUrlListByTypeArray($typearray, $ownerId)
 {
+    $list = [];
     foreach ($typearray as $type) {
         $list[] = "'" . DBEscapeString($type) . "'";
+    }
+    if (empty($list)) {
+        return [];
     }
     $liststring = implode(",", $list);
     $query = "SELECT * FROM uo_urls WHERE type IN($liststring) AND owner_id='" . DBEscapeString($ownerId) . "' ORDER BY ordering,type, name";

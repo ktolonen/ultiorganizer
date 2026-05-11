@@ -212,9 +212,6 @@ function TableSpiritSearchCatAvg($season, $th, $higher = true)
 
     $matches = [];
     foreach ($teams as $team) {
-        if ($team['games'] <= 0) {
-            continue;
-        }
         $team['cat1'] = round($team['sum1'] / $team['games'], 2);
         $team['cat2'] = round($team['sum2'] / $team['games'], 2);
         $team['cat3'] = round($team['sum3'] / $team['games'], 2);

@@ -42,6 +42,8 @@ if (!empty($_POST['series'])) {
     foreach ($pools as $pool) {
         $poolId = $pool['pool_id'];
         $poolinfo = PoolInfo($poolId);
+        $BYEs = false;
+        $playoffpool = false;
         //		if(PoolIsMoveFromPoolsPlayed($poolId) && !PoolIsAllMoved($poolId)) {
         if (!PoolIsAllMoved($poolId)) {
             $moveablepools[] = $pool;
@@ -83,10 +85,6 @@ if (!empty($_POST['series'])) {
 
             if ($BYEs) {
                 $html .= "<p>teams in <b>bold</b> had a BYE previously</p>\n";
-            }
-
-            if ($PlayoffOK == -1) {
-                $html .= "<p><b>Warning:</b> You are about to move an odd number of teams, which might result in one of the teams having another BYE.</p>\n";
             }
 
             $html .= "<p>" . _("Games to move") . ":</p>\n";

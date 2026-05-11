@@ -51,9 +51,7 @@ if ($token !== '') {
 
     if (!isLoggedIn() && $view !== 'login') {
         $redirect = '?view=login';
-        if (!empty($view)) {
-            $redirect .= '&nextview=' . urlencode($view);
-        }
+        $redirect .= '&nextview=' . urlencode($view);
         if (GetInt('game') > 0) {
             $redirect .= '&game=' . GetInt('game');
         }

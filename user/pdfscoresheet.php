@@ -7,6 +7,7 @@ include_once $include_prefix . 'lib/reservation.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/user.functions.php';
 include_once $include_prefix . 'lib/timetable.functions.php';
+include_once $include_prefix . 'lib/pdf.interfaces.php';
 
 function pdf_slug($value)
 {
@@ -99,11 +100,13 @@ if ($games === null) {
 }
 
 $pdf = new PDF();
-$scoreSheetAcceptsPlayerLists = false;
-if (method_exists($pdf, 'PrintScoreSheet')) {
-    $printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
-    $scoreSheetAcceptsPlayerLists = $printScoreSheet->getNumberOfParameters() >= 9;
+// @phpstan-ignore instanceof.alwaysTrue, instanceof.alwaysFalse (PDF resolves through runtime customization includes)
+if (!$pdf instanceof ScoreSheetPdf) {
+    throw new UnexpectedValueException('Scoresheet PDF customization must implement ScoreSheetPdf.');
 }
+// @phpstan-ignore deadCode.unreachable
+$printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
+$scoreSheetAcceptsPlayerLists = $printScoreSheet->getNumberOfParameters() >= 9;
 
 if ($teamId) {
     $seasonSlug = pdf_slug(TeamSeason($teamId));

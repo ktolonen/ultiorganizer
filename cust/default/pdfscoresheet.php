@@ -3,11 +3,12 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
+include_once 'lib/pdf.interfaces.php';
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/hsvclass/HSVClass.php';
 include_once 'lib/phpqrcode/qrlib.php';
 
-class PDF extends tFPDF
+class PDF extends tFPDF implements ScoreSheetPdf
 {
     public $B;
     public $I;
@@ -38,7 +39,7 @@ class PDF extends tFPDF
         return (string) $text;
     }
 
-    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename)
+    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename, $homeplayers = [], $visitorplayers = [])
     {
         $this->game['seasonname'] = $this->pdfText($seasonname);
         $this->game['game_id'] = $gameId . "" . getChkNum($gameId);

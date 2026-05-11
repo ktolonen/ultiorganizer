@@ -7,7 +7,7 @@ denyDirectLibAccess(__FILE__);
  * Returns the raw form of a comment field.
  *
  * @param int $type The type of entity. 1: season, 2: series, 3: pool.
- * @param string $id The id of the season, series, or pool.
+ * @param int|string $id The id of the season, series, or pool.
  * @return string the comment or an empty string if no comment exists.
  */
 function CommentRaw($type, $id)

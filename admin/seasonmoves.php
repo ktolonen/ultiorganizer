@@ -65,18 +65,18 @@ if (isset($_POST['hiddenDeleteId'])) {
 if (!empty($_POST['remove_x'])) {
     $move = preg_split('/:/', $_POST['hiddenDeleteId']);
 
-    PoolDeleteMove($move[0], $move[1]);
+    PoolDeleteMove((int) $move[0], (int) $move[1]);
 } elseif (!empty($_POST['undo'])) {
     $move = preg_split('/:/', $_POST['hiddenDeleteId']);
 
-    PoolUndoMove($move[0], $move[1], $move[2]);
+    PoolUndoMove((int) $move[0], (int) $move[1], (int) $move[2]);
 } elseif (!empty($_POST['removeAll_x'])) {
     $params = preg_split('/:/', $_POST['hiddenPoolId']);
 
     if ($order == "from") { // FIXME or parms[1]?
-        $moves = PoolMovingsFromPool($params[0]);
+        $moves = PoolMovingsFromPool((int) $params[0]);
     } else {
-        $moves = PoolMovingsToPool($params[0]);
+        $moves = PoolMovingsToPool((int) $params[0]);
     }
 
     foreach ($moves as $row) {
@@ -88,9 +88,9 @@ if (!empty($_POST['remove_x'])) {
     $params = preg_split('/:/', $_POST['hiddenPoolId']);
 
     if ($order == "from") { // FIXME or parms[1]?
-        $moves = PoolMovingsFromPool($params[0]);
+        $moves = PoolMovingsFromPool((int) $params[0]);
     } else {
-        $moves = PoolMovingsToPool($params[0]);
+        $moves = PoolMovingsToPool((int) $params[0]);
     }
 
     foreach ($moves as $row) {
@@ -113,8 +113,8 @@ if (!empty($_POST['remove_x'])) {
             $id = $_POST['moveId'][$i];
             //PoolSetSchedulingName($id, $_POST["sn$i"], $season);
             $move = preg_split('/:/', $id);
-            $frompool = $move[0];
-            $fromplacing = $move[1];
+            $frompool = (int) $move[0];
+            $fromplacing = (int) $move[1];
             $newfp =  $_POST["fromplacing$i"];
             $newtp =  $_POST["torank$i"];
             PoolSetMove($frompool, $fromplacing, $newfp, $newtp);

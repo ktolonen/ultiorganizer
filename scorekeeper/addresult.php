@@ -3,6 +3,8 @@ include_once __DIR__ . '/auth.php';
 
 $html = "";
 $info = "";
+$game_result = [];
+$saveSucceeded = false;
 
 $gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
 $_SESSION['game'] = $gameId;
@@ -13,7 +15,10 @@ if (isset($_POST['save'])) {
     $ok = GameSetResult($gameId, $home, $away);
     if ($ok) {
         $game_result = GameResult($gameId);
+        $saveSucceeded = true;
         $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
+    } else {
+        $info = "<p class='warning'>" . _("Error: Could not save result.") . "</p>";
     }
 } elseif (isset($_POST['update'])) {
     $home = intval($_POST['home']);
@@ -61,7 +66,7 @@ $html .= "</div>";
 
 $html .= $info;
 
-if (isset($_POST['save'])) {
+if ($saveSucceeded) {
     $html .= "<input type='submit' name='save'  data-ajax='false' value='" . _("Save again") . "'/>";
     $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
 } else {

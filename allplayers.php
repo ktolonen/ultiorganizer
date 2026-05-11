@@ -52,7 +52,7 @@ foreach ($players as $player) {
         }
         if ($listletter != $firstchar && in_array($firstchar, $validletters)) {
             $listletter = $firstchar;
-            if ($counter > 0 && $counter <= $maxcols) {
+            if ($counter > 0) {
                 $html .= "</tr>\n";
             }
             $html .= "<tr><td></td></tr>\n";
@@ -78,7 +78,7 @@ foreach ($players as $player) {
         $counter = 0;
     }
 }
-if ($counter > 0 && $counter <= $maxcols) {
+if ($counter > 0) {
     $html .= "</tr>\n";
 };
 $html .= "</table>\n";

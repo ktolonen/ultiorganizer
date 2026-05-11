@@ -3,6 +3,10 @@
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('frontpage');
 
+// $user is set by index.php from $_SESSION['uid'] before this view is
+// included; requireRoutedView() above blocks direct access.
+/** @var string $user */
+
 $html = "";
 $title = _("Frontpage");
 

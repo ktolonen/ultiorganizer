@@ -64,7 +64,7 @@ require_once $include_prefix . 'conf/config.inc.php';
 
 include_once $include_prefix . 'sql/upgrade_db.php';
 
-$mysqlconnectionref;
+$mysqlconnectionref = null;
 
 /**
  * Exception type used when DB helpers are switched into exception mode.
@@ -289,7 +289,7 @@ function getDBVersion()
  * reads, prefer `DBQueryToRow()`, `DBQueryToValue()`, or `DBQueryToArray()`.
  *
  * @param string $query Database query
- * @return mysqli_result
+ * @return mysqli_result|true
  */
 function DBQuery($query)
 {
@@ -299,6 +299,20 @@ function DBQuery($query)
         DBAbort('DBQuery failed', $query, mysqli_error($mysqlconnectionref));
     }
     return $result;
+}
+
+/**
+ * Execute a mutating SQL statement and return true when it completes.
+ *
+ * DB helpers abort or throw on failure, so callers only receive true.
+ *
+ * @param string $query Database query
+ * @return true
+ */
+function DBExecute($query)
+{
+    DBQuery($query);
+    return true;
 }
 
 /**
@@ -708,9 +722,6 @@ function DBClientInfo()
 {
     global $mysqlconnectionref;
     $info = mysqli_get_client_info();
-    if ($info === false) {
-        die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
-    }
     return $info;
 }
 
@@ -747,7 +758,7 @@ function DBServerInfo()
 /**
  * Return the MySQL protocol version used by the connection.
  *
- * @return int|string
+ * @return int
  */
 function DBProtocolInfo()
 {

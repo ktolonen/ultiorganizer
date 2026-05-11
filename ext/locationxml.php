@@ -15,8 +15,9 @@ $parnode = $dom->appendChild($node);
 
 // Iterate through the rows, adding XML nodes for each
 $savedID = null;
+$newnode = null;
 foreach ($result as $row) {
-    if ($row['id'] !== $savedID) {
+    if ($row['id'] !== $savedID || $newnode === null) {
         /** @var DOMElement $newnode */
         $newnode = $dom->createElement("marker");
         $parnode->appendChild($newnode);

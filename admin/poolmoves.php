@@ -9,6 +9,9 @@ $LAYOUT_ID = POOLMOVES;
 $backurl_raw = !empty($_GET['backurl']) ? $_GET['backurl'] : (empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 $backurl = utf8entities($backurl_raw);
 $seriesId = 0;
+$poolId = 0;
+$season = "";
+$total_teams = 0;
 if (!empty($_GET["pool"])) {
     $poolId = intval($_GET["pool"]);
 }
@@ -101,9 +104,8 @@ if (!empty($_POST['add'])) {
                 $frompool = intval($_POST["frompool$i"]);
                 $movefrom = intval($_POST["movefrom$i"]);
                 $moveto = intval($_POST["moveto$i"]);
-                if (!empty($_POST["pteamname$i"])) {
-                    $pteamname = $_POST["pteamname$i"];
-                } else {
+                $pteamname = empty($_POST["pteamname$i"]) ? "" : $_POST["pteamname$i"];
+                if ($pteamname == "") {
                     $err .= "<p class='warning'>" . _("No scheduling name given") . ".</p>\n";
                 }
                 if (PoolMoveExist($frompool, $movefrom)) {
@@ -133,10 +135,8 @@ if (!empty($_POST['add'])) {
                 $moves = PoolMovingsToPool($poolId);
                 $moveto = count($moves) + 1;
 
-                if (!empty($_POST["pteamname$i"])) {
-                    $pteamname = $_POST["pteamname$i"];
-                    //$pteamname .= " ($moveto)";
-                } else {
+                $pteamname = empty($_POST["pteamname$i"]) ? "" : $_POST["pteamname$i"];
+                if ($pteamname == "") {
                     $err .= "<p class='warning'>" . _("No scheduling name given") . ".</p>\n";
                 }
                 if (PoolMoveExist($frompool, $movefrom)) {
@@ -154,20 +154,20 @@ if (!empty($_POST['add'])) {
 
     if ($poolinfo['type'] == 1) {
         $move = preg_split('/:/', $_POST['hiddenDeleteId']);
-        if (PoolIsMoved($move[0], $move[1])) {
+        if (PoolIsMoved((int) $move[0], (int) $move[1])) {
             $err .= "<p class='warning'>" . _("Team has already moved.") . "</p>\n";
         } else {
-            PoolDeleteMove($move[0], $move[1]);
+            PoolDeleteMove((int) $move[0], (int) $move[1]);
         }
     } else {
         $moves = preg_split('/:/', $_POST['hiddenDeleteId']);
 
         foreach ($moves as $m) {
             $move = preg_split('/,/', $m);
-            if (PoolIsMoved($move[0], $move[1])) {
+            if (PoolIsMoved((int) $move[0], (int) $move[1])) {
                 $err .= "<p class='warning'>" . _("Team has already moved.") . "</p>\n";
             } else {
-                PoolDeleteMove($move[0], $move[1]);
+                PoolDeleteMove((int) $move[0], (int) $move[1]);
             }
         }
     }

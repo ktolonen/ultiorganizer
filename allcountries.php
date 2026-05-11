@@ -29,7 +29,7 @@ foreach ($countries as $country) {
         $counter = 0;
     }
 }
-if ($counter > 0 && $counter <= $maxcols) {
+if ($counter > 0) {
     $html .= "</tr>\n";
 };
 $html .= "</table>\n";

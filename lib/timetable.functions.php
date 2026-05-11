@@ -236,6 +236,7 @@ function TimeView($games, $grouping = true)
     $ret = "";
     $prevTournament = "";
     $prevTime = "";
+    $prevTimezone = "";
     $isTableOpen = false;
     $rss = IsGameRSSEnabled();
     $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");

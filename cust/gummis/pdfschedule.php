@@ -7,10 +7,11 @@ if (!isset($include_prefix)) {
     $include_prefix = __DIR__ . '/../../';
 }
 
+include_once $include_prefix . 'lib/pdf.interfaces.php';
 include_once $include_prefix . 'lib/tfpdf/tfpdf.php';
 include_once $include_prefix . 'lib/hsvclass/HSVClass.php';
 
-class PDF extends tFPDF
+class PDF extends tFPDF implements SchedulePdf
 {
     public $B;
     public $I;
@@ -38,30 +39,6 @@ class PDF extends tFPDF
     private function pdfText($text)
     {
         return (string) $text;
-    }
-
-    private function onePageScheduleGridBounds($times)
-    {
-        $firstTime = null;
-        $lastTime = null;
-        foreach ($times as $time) {
-            $timestamp = strtotime($time['time'] ?? '');
-            if ($timestamp === false) {
-                continue;
-            }
-            if ($firstTime === null || $timestamp < $firstTime) {
-                $firstTime = $timestamp;
-            }
-            if ($lastTime === null || $timestamp > $lastTime) {
-                $lastTime = $timestamp;
-            }
-        }
-        if ($firstTime === null) {
-            return [9, 0, 13 * 60 + 1];
-        }
-        $startTimestamp = strtotime(date('Y-m-d H:00:00', $firstTime));
-        $endTimestamp = max($startTimestamp + 13 * 60 * 60, $lastTime + 2 * 60 * 60);
-        return [(int) date('G', $startTimestamp), 0, (int) ceil(($endTimestamp - $startTimestamp) / 60) + 1];
     }
 
     private function onePageScheduleFieldKey($game)
@@ -213,6 +190,7 @@ class PDF extends tFPDF
         $isTableOpen = false;
 
         $field = 0;
+        $row = 1;
         $time_offset = $top_margin + $yfieldtitle;
         $field_offset = 0;
         $gridx = 12;
@@ -276,7 +254,7 @@ class PDF extends tFPDF
                 $i = 0;
 
                 for ($i = 0, $slot = $startslot; $i < max(3, $numslots); $i++) {
-                    $timeslots[date("H:i", $slot)] = $i * $gridy;
+                    $timeslots[date("H:i", (int) $slot)] = $i * $gridy;
                     $slot = $slot + 60 * 30;
                 }
                 //foreach($times as $time){
@@ -490,8 +468,8 @@ class PDF extends tFPDF
         $text2 = $this->pdfText($longname2);
         $fs2 = min($fontsize, $height / 3);
         $this->SetFont('Arial', '', $fs2);
-        if ($this->GetStringWidth($text2) > $x - 2 && !empty($abbrev)) {
-            $text1 = $this->pdfText($abbrev2);
+        if ($this->GetStringWidth($text2) > $x - 2 && !empty($abbrev2)) {
+            $text2 = $this->pdfText($abbrev2);
         }
         while ($this->GetStringWidth($text2) > $x - 2) {
             $this->SetFont('Arial', '', --$fs2);
@@ -806,17 +784,17 @@ class PDF extends tFPDF
                             $attr[strtoupper($a3[1])] = $a3[2];
                         }
                     }
-                    $this->OpenTag($tag,$attr);
+                    $this->OpenTag($tag, $attr);
                 }
             }
         }
     }
 
-    public function OpenTag($tag,$attr)
+    public function OpenTag($tag, $attr)
     {
         //Opening tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,true);
+            $this->SetStyle($tag, true);
         }
         if ($tag == 'A') {
             $this->HREF = $attr['HREF'];
@@ -830,13 +808,13 @@ class PDF extends tFPDF
     {
         //Closing tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,false);
+            $this->SetStyle($tag, false);
         }
         if ($tag == 'A') {
             $this->HREF = '';
         }
     }
-    public function SetStyle($tag,$enable)
+    public function SetStyle($tag, $enable)
     {
         //Modify style and select corresponding font
         $this->$tag += ($enable ? 1 : -1);
@@ -846,16 +824,16 @@ class PDF extends tFPDF
                 $style .= $s;
             }
         }
-        $this->SetFont('',$style);
+        $this->SetFont('', $style);
     }
 
-    public function PutLink($URL,$txt)
+    public function PutLink($URL, $txt)
     {
         //Put a hyperlink
-        $this->SetTextColor(0,0,255);
-        $this->SetStyle('U',true);
-        $this->Write(4,$txt,$URL);
-        $this->SetStyle('U',false);
+        $this->SetTextColor(0, 0, 255);
+        $this->SetStyle('U', true);
+        $this->Write(4, $txt, $URL);
+        $this->SetStyle('U', false);
         $this->SetTextColor(0);
     }
 }

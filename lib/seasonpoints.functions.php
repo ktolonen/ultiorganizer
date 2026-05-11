@@ -62,7 +62,7 @@ function AddSeasonPointsRound($seasonId, $seriesId, $roundNo, $name)
         (int) $roundNo,
         DBEscapeString($name),
     );
-    return DBQuery($query);
+    return DBExecute($query);
 }
 
 /**
@@ -84,7 +84,7 @@ function DeleteSeasonPointsRound($roundId)
         "DELETE FROM uo_season_round WHERE round_id=%d",
         (int) $roundId,
     );
-    return DBQuery($query);
+    return DBExecute($query);
 }
 
 /**

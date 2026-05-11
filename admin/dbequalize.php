@@ -97,9 +97,6 @@ if (isset($_POST['deleteorphan']) && isSuperAdmin() && $filter == 'profiles') {
 
         foreach ($groups as $groupKey => $data) {
             $keep = $data['keep'];
-            if ($keep === null) {
-                continue;
-            }
 
             foreach ($data['rows'] as $row) {
                 if (!array_key_exists($row['profile_id'], $selectedLookup)) {

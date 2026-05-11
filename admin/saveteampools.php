@@ -28,15 +28,15 @@ foreach ($pools as $PoolStr) {
 
             $teamArr = explode("/", $pools[$i]);
             foreach ($poolIds as $PoolId) {
-                PoolDeleteTeam($PoolId, $teamArr[0]);
+                PoolDeleteTeam((int) $PoolId, (int) $teamArr[0]);
             }
-            PoolAddTeam($pools[0], $teamArr[0], $i);
+            PoolAddTeam((int) $pools[0], (int) $teamArr[0], $i);
         }
     } else {
         for ($i = 1; $i < count($pools); $i++) {
             $teamArr = explode("/", $pools[$i]);
             foreach ($poolIds as $PoolId) {
-                PoolDeleteTeam($PoolId, $teamArr[0]);
+                PoolDeleteTeam((int) $PoolId, (int) $teamArr[0]);
             }
         }
     }

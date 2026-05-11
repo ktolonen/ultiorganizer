@@ -12,6 +12,7 @@ $title = _("Roster");
 
 
 $teamId = iget("team");
+$gameId = iget("game");
 $teaminfo = TeamInfo($teamId);
 
 // Stop early if the team does not exist to avoid undefined array offsets.
@@ -144,7 +145,7 @@ $help = "<p>" . _("Add players to team's roster:") . "</p>
 		<li> " . _("New players: enter the jersey number, first name, and last name. Press the Add button.") . "</li>
 	</ul>";
 
-onPageHelpAvailable($help);
+echo onPageHelpAvailable($help);
 
 //content
 echo "<h2>" . utf8entities($teaminfo['name']) . " (" . utf8entities($teaminfo['seriesname']) . ")</h2>\n";

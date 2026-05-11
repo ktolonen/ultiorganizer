@@ -33,17 +33,7 @@ $html = "";
 $title = ("Import FFindr data from XML-file");
 $seasonId = "";
 
-if (isset($_POST['add']) && isSuperAdmin()) {
-    if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
-
-        $templine = '';
-        set_time_limit(300);
-        $eventdatahandler = new XMLHandler();
-        $eventdatahandler->XMLToEvent($_FILES['restorefile']['tmp_name'], $seasonId, "new");
-        unlink($_FILES['restorefile']['tmp_name']);
-        $imported = true;
-    }
-} elseif (isset($_POST['replace'])) {
+if (isset($_POST['add'])) {
     if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
 
         $templine = '';
@@ -73,12 +63,7 @@ $html .= "<p><span class='profileheader'>" . _("Select file to import") . ": </s
 $html .= "<p><input class='input' type='file' size='80' name='restorefile'/>";
 $html .= "<input type='hidden' name='MAX_FILE_SIZE' value='100000000'/></p>";
 
-if (empty($seasonId)) {
-    $html .= "<p><input class='button' type='submit' name='add' value='" . _("Import") . "'/></p>";
-} else {
-    $html .= "<p>" . _("This operation updates and adds event data in database with one from file. It will not delete any data or change user rights.") . "</p>";
-    $html .= "<p><input class='button' type='submit' name='replace' value='" . _("Update") . "'/></p>";
-}
+$html .= "<p><input class='button' type='submit' name='add' value='" . _("Import") . "'/></p>";
 
 $html .= "</form>";
 
@@ -162,10 +147,6 @@ class XMLHandler
                 case "new":
                     $this->InsertToDatabase($name, $row);
                     break;
-
-                case "replace":
-                    $this->ReplaceInDatabase($name, $row);
-                    break;
             }
         }
     }
@@ -225,7 +206,9 @@ class XMLHandler
                     $cond = "club_id=" . $this->clubId;
                     $name = "uo_club";
                 }
-                $this->SetRow($name, $data, $cond);
+                if (isset($name, $cond)) {
+                    $this->SetRow($name, $data, $cond);
+                }
                 break;
 
             case "ACHIEVEMENTS":
@@ -241,7 +224,9 @@ class XMLHandler
                     $cond = "club_id=" . $this->clubId;
                     $name = "uo_club";
                 }
-                $this->SetRow($name, $data, $cond);
+                if (isset($name, $cond)) {
+                    $this->SetRow($name, $data, $cond);
+                }
                 break;
 
             case "INFO":
@@ -257,7 +242,9 @@ class XMLHandler
                     $cond = "club_id=" . $this->clubId;
                     $name = "uo_club";
                 }
-                $this->SetRow($name, $data, $cond);
+                if (isset($name, $cond)) {
+                    $this->SetRow($name, $data, $cond);
+                }
                 break;
 
             case "CONTACTS":
@@ -273,7 +260,9 @@ class XMLHandler
                     $cond = "club_id=" . $this->clubId;
                     $name = "uo_club";
                 }
-                $this->SetRow($name, $data, $cond);
+                if (isset($name, $cond)) {
+                    $this->SetRow($name, $data, $cond);
+                }
                 break;
         }
     }
@@ -507,7 +496,7 @@ class XMLHandler
     /**
      * Inserts data into database as new data.
      * @param string $name Name of the table to insert
-     * @param array $row Data to insert: key=>field, value=>data
+     * @param array $data Data to insert: key=>field, value=>data
      */
     public function InsertRow($name, $data)
     {

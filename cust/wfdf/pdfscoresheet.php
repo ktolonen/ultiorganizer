@@ -3,11 +3,12 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
+include_once 'lib/pdf.interfaces.php';
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/tfpdf/cellfit.php';
 include_once 'lib/hsvclass/HSVClass.php';
 
-class PDF extends tFPDF_CellFit
+class PDF extends tFPDF_CellFit implements ScoreSheetPdf
 {
     public $B;
     public $I;
@@ -20,6 +21,7 @@ class PDF extends tFPDF_CellFit
     public $isMixed = true;
     public $homefullname = "";
     public $visitorfullname = "";
+    public $printCoachRow = false;
 
 
     public $game = [
@@ -30,6 +32,8 @@ class PDF extends tFPDF_CellFit
         "poolname" => "",
         "time" => "",
         "placename" => "",
+        "homecoach" => "",
+        "visitorcoach" => "",
     ];
 
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4')
@@ -46,7 +50,7 @@ class PDF extends tFPDF_CellFit
         return (string) $text;
     }
 
-    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename, $homeplayers, $visitorplayers)
+    public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename, $homeplayers = [], $visitorplayers = [])
     {
 
         // event logo file name
@@ -95,13 +99,15 @@ class PDF extends tFPDF_CellFit
             $this->game['visitorshortname'] = _("Away");
         }
 
-        // get coaches names
-        /*
-        $hometeamprofile = TeamProfile($hometeamid);
-        $visitorteamprofile = TeamProfile($visitorteamid);
-        $this->game['homecoach'] = $hometeamprofile['coach'];
-        $this->game['visitorcoach'] = $visitorteamprofile['coach'];
-        */
+        // Optional WFDF scoresheet evolution: enable when an event wants coaches
+        // printed in the final player-list row.
+        // @phpstan-ignore if.alwaysFalse
+        if ($this->printCoachRow) {
+            $hometeamprofile = TeamProfile($hometeamid);
+            $visitorteamprofile = TeamProfile($visitorteamid);
+            $this->game['homecoach'] = is_array($hometeamprofile) ? (string) ($hometeamprofile['coach'] ?? '') : '';
+            $this->game['visitorcoach'] = is_array($visitorteamprofile) ? (string) ($visitorteamprofile['coach'] ?? '') : '';
+        }
 
         // get reservation group
         $this->game['reservation_group'] = "";
@@ -160,6 +166,7 @@ class PDF extends tFPDF_CellFit
         // print players lists on front page
         $this->PrintPlayerList($homeplayers, $visitorplayers);
 
+        // @phpstan-ignore if.alwaysFalse (show_note is set to true by PrintPlayerList when non-accredited players exist; PHPStan cannot track cross-method property mutation)
         if ($this->show_note) {
             $this->SetFont('Arial', 'IB', 10);
             $this->SetTextColor(0);
@@ -303,7 +310,8 @@ class PDF extends tFPDF_CellFit
     }
 
     public function GameHeaderB() // gender ratio rule B (endzones decides)
-    {$topY = $this->GetY();
+    {
+        $topY = $this->GetY();
         $this->SetTextColor(0);
 
         // home team
@@ -410,7 +418,8 @@ class PDF extends tFPDF_CellFit
 
 
     public function GameHeaderA() // gender ratio rule A (Prescribed)
-    {$topY = $this->GetY();
+    {
+        $topY = $this->GetY();
         $this->SetTextColor(0);
 
         // home team
@@ -579,15 +588,15 @@ class PDF extends tFPDF_CellFit
                 $vnumber = $visitorplayers[$i - 1]['num'];
             }
             $this->SetFont('Arial', '', 10);
+            // @phpstan-ignore booleanAnd.leftAlwaysFalse
+            $coachRow = $this->printCoachRow && $i === 28 && ($this->game['homecoach'] !== '' || $this->game['visitorcoach'] !== '');
 
-            //if ($i==29) { // replace this for the last one to display the coach instead
-            if (false) { // not in use
+            if ($coachRow) {
                 $this->SetFillColor(230);
                 $this->Cell(7, 5, 'C', 'LRTB', 0, 'C', true);
                 $this->CellFitScale(42, 5, $this->game['homecoach'], 'LRTB', 0, 'L', true);
                 $this->SetFillColor(255);
             } else {
-
                 if (!empty($hplayer) && !($homeplayers[$i - 1]['accredited'])) {
                     $this->SetFont('Arial', 'IB', 10);
                     $hnumber = "(*)";
@@ -600,14 +609,12 @@ class PDF extends tFPDF_CellFit
             $this->SetFont('Arial', '', 10);
             $this->Cell(2, 5, "", 'LR', 0, 'C', true); //separator
 
-            //if ($i==29) { // replace this for the last one to display the coach instead
-            if (false) {
+            if ($coachRow) {
                 $this->SetFillColor(230);
                 $this->Cell(7, 5, 'C', 'LRTB', 0, 'C', true);
                 $this->CellFitScale(42, 5, $this->game['visitorcoach'], 'LRTB', 0, 'L', true);
                 $this->SetFillColor(255);
             } else {
-
                 if (!empty($vplayer) && !($visitorplayers[$i - 1]['accredited'])) {
                     $this->SetFont('Arial', 'IB', 10);
                     $vnumber = "(*)";
@@ -768,7 +775,7 @@ class PDF extends tFPDF_CellFit
         }
 
         if ($field) {
-            $txt = $this->pdfText(U_($info['fieldname']));
+            $txt = $this->pdfText(U_($game['fieldname']));
             $this->Cell(20, 5, $txt, 'TB', 0, 'L', true);
         }
 
@@ -1582,29 +1589,29 @@ class PDF extends tFPDF_CellFit
         $this->CellFitScale(16, 6, $this->game['game_id'], 'LRTB', 0, 'C', true);
         $this->Cell(2, 6, "", 'LR', 0, 'C', true);
         $this->SetFillColor(230);
-        $this->SetFont('Arial','B',10);
-        $this->CellFitScale(18,6,"Opponent",'LRTB',0,'L',true);
+        $this->SetFont('Arial', 'B', 10);
+        $this->CellFitScale(18, 6, "Opponent", 'LRTB', 0, 'L', true);
         $this->SetFillColor(255);
-        $this->SetFont('Arial','',10);
-        $this->CellFitScale(36,6,$opponent,'LRTB',1,'L',true);
+        $this->SetFont('Arial', '', 10);
+        $this->CellFitScale(36, 6, $opponent, 'LRTB', 1, 'L', true);
 
         $this->Ln(2);
 
         // 3rd row
         $this->SetX($curX);
         $this->SetFillColor(230);
-        $this->SetFont('Arial','B',10);
-        $this->CellFitScale(14,6,_("Division"),'LRTB',0,'L',true);
+        $this->SetFont('Arial', 'B', 10);
+        $this->CellFitScale(14, 6, _("Division"), 'LRTB', 0, 'L', true);
         $this->SetFillColor(255);
-        $this->SetFont('Arial','',10);
-        $this->CellFitScale(42,6,$this->game['division'],'LRTB',0,'C',true);
-        $this->Cell(2,6,"",'LR',0,'C',true);
+        $this->SetFont('Arial', '', 10);
+        $this->CellFitScale(42, 6, $this->game['division'], 'LRTB', 0, 'C', true);
+        $this->Cell(2, 6, "", 'LR', 0, 'C', true);
         $this->SetFillColor(230);
-        $this->SetFont('Arial','B',10);
-        $this->CellFitScale(8,6,_("Pool"),'LRTB',0,'L',true);
+        $this->SetFont('Arial', 'B', 10);
+        $this->CellFitScale(8, 6, _("Pool"), 'LRTB', 0, 'L', true);
         $this->SetFillColor(255);
-        $this->SetFont('Arial','',10);
-        $this->CellFitScale(40,6,$this->game['pool'],'LRTB',1,'C',true);
+        $this->SetFont('Arial', '', 10);
+        $this->CellFitScale(40, 6, $this->game['pool'], 'LRTB', 1, 'C', true);
 
     }
 
@@ -1617,25 +1624,25 @@ class PDF extends tFPDF_CellFit
 
 
         //header
-        $this->SetXY($curX,$curY);
+        $this->SetXY($curX, $curY);
         $this->SetTextColor(0);
         $this->SetFillColor(255);
-        $this->SetFont('Arial','B',8);
-        $this->Write(4,"Involve your whole team when rating the other team.\n");
-        $this->SetFont('Arial','',8);
+        $this->SetFont('Arial', 'B', 8);
+        $this->Write(4, "Involve your whole team when rating the other team.\n");
+        $this->SetFont('Arial', '', 8);
         $this->SetX($curX);
-        $this->Write(4,"Discuss each of the categories and CIRCLE a score\n");
+        $this->Write(4, "Discuss each of the categories and CIRCLE a score\n");
         $this->SetX($curX);
-        $this->Write(4,"from 0 to 4.");
+        $this->Write(4, "from 0 to 4.");
         $curY += 15;
-        $this->RotatedText($curX + 86,$curY,"Poor",90);
-        $this->RotatedText($curX + 96,$curY,"Not Good",90);
-        $this->SetFont('Arial','B',8);
-        $this->RotatedText($curX + 106,$curY,"Good",90);
-        $this->SetFont('Arial','',8);
-        $this->RotatedText($curX + 116,$curY,"Very Good",90);
-        $this->RotatedText($curX + 126,$curY,"Excellent",90);
-        $this->SetXY($curX,$curY + 3);
+        $this->RotatedText($curX + 86, $curY, "Poor", 90);
+        $this->RotatedText($curX + 96, $curY, "Not Good", 90);
+        $this->SetFont('Arial', 'B', 8);
+        $this->RotatedText($curX + 106, $curY, "Good", 90);
+        $this->SetFont('Arial', '', 8);
+        $this->RotatedText($curX + 116, $curY, "Very Good", 90);
+        $this->RotatedText($curX + 126, $curY, "Excellent", 90);
+        $this->SetXY($curX, $curY + 3);
 
         //scores
         $this->SetTextColor(0);
@@ -1651,60 +1658,60 @@ class PDF extends tFPDF_CellFit
             $curX = $this->GetX();
             $curY = $this->GetY();
 
-            $this->SetFont('Arial','B',10);
-            $this->CellFitScale(79,5,$i . ". " . $s[0],0,1,'L',true);
+            $this->SetFont('Arial', 'B', 10);
+            $this->CellFitScale(79, 5, $i . ". " . $s[0], 0, 1, 'L', true);
             $this->SetX($curX);
-            $this->SetFont('Arial','',6);
-            $this->MultiCell(79,3,"Examples: " . $s[1],0,'L',true);
-            $this->SetXY($curX + 80,$curY);
-            $this->SetFont('Arial','',12);
-            $this->Cell(10,10," 0*",'LRTB',0,'C',true);
-            $this->Cell(10,10,"1",'LRTB',0,'C',true);
+            $this->SetFont('Arial', '', 6);
+            $this->MultiCell(79, 3, "Examples: " . $s[1], 0, 'L', true);
+            $this->SetXY($curX + 80, $curY);
+            $this->SetFont('Arial', '', 12);
+            $this->Cell(10, 10, " 0*", 'LRTB', 0, 'C', true);
+            $this->Cell(10, 10, "1", 'LRTB', 0, 'C', true);
             $this->SetFillColor(230);
-            $this->Cell(10,10,"2",'LRTB',0,'C',true);
+            $this->Cell(10, 10, "2", 'LRTB', 0, 'C', true);
             $this->SetFillColor(255);
-            $this->Cell(10,10,"3",'LRTB',0,'C',true);
-            $this->Cell(10,10," 4*",'LRTB',0,'C',true);
-            $this->SetXY($curX,$curY + 12);
+            $this->Cell(10, 10, "3", 'LRTB', 0, 'C', true);
+            $this->Cell(10, 10, " 4*", 'LRTB', 0, 'C', true);
+            $this->SetXY($curX, $curY + 12);
             $i++;
         }
 
         $curY = $this->GetY();
 
         // total sum
-        $this->SetFont('Arial','B',10);
-        $this->CellFitScale(79,5,"You Do the Math",0,1,'L',true);
+        $this->SetFont('Arial', 'B', 10);
+        $this->CellFitScale(79, 5, "You Do the Math", 0, 1, 'L', true);
         $this->SetX($curX);
-        $this->SetFont('Arial','',6);
-        $this->MultiCell(79,3,"Add up the points to give a total Spirit score between 0 and 20.\nMost games will be between 8-13 pts.",0,'L',true);
+        $this->SetFont('Arial', '', 6);
+        $this->MultiCell(79, 3, "Add up the points to give a total Spirit score between 0 and 20.\nMost games will be between 8-13 pts.", 0, 'L', true);
         $this->SetX($curX);
-        $this->SetFont('Arial','B',6);
-        $this->MultiCell(79,3,"A '10' is a common score.",0,'L',true);
+        $this->SetFont('Arial', 'B', 6);
+        $this->MultiCell(79, 3, "A '10' is a common score.", 0, 'L', true);
 
-        $this->SetXY($curX + 85,$curY);
-        $this->SetFont('Arial','B',12);
-        $this->Cell(10,10,"=",'R',0,'C',true);
-        $this->Cell(20,10,"",'LRTB',1,'C',true);
+        $this->SetXY($curX + 85, $curY);
+        $this->SetFont('Arial', 'B', 12);
+        $this->Cell(10, 10, "=", 'R', 0, 'C', true);
+        $this->Cell(20, 10, "", 'LRTB', 1, 'C', true);
 
         $this->Ln(6);
         $this->SetX($curX);
 
         // Comments
-        $this->SetFont('Arial','B',10);
+        $this->SetFont('Arial', 'B', 10);
         $this->SetTextColor(0);
         $this->SetFillColor(255);
-        $this->CellFitScale(130,6,"*Comments",0,1,'L',true);
+        $this->CellFitScale(130, 6, "*Comments", 0, 1, 'L', true);
         $this->SetX($curX);
-        $this->SetFont('Arial','',6);
-        $this->MultiCell(130,3,"Write additional details about the other team's spirit. REQUIRED if you pick a '0' or '4' in any category.\nComments will not be shared publicly, but will be shared with the other team.",0,'L',true);
+        $this->SetFont('Arial', '', 6);
+        $this->MultiCell(130, 3, "Write additional details about the other team's spirit. REQUIRED if you pick a '0' or '4' in any category.\nComments will not be shared publicly, but will be shared with the other team.", 0, 'L', true);
         $this->Ln(6);
 
         // Comments' lines
         $this->SetX($curX);
-        $this->Cell(130,6,"",'TB',1,'C',true);
+        $this->Cell(130, 6, "", 'TB', 1, 'C', true);
         $this->Ln(6);
         $this->SetX($curX);
-        $this->Cell(130,6,"",'T',1,'C',true);
+        $this->Cell(130, 6, "", 'T', 1, 'C', true);
         $bottomY = $this->getY();
 
         $this->SetY($bottomY - 6);
@@ -1728,14 +1735,14 @@ class PDF extends tFPDF_CellFit
         //header
         $this->SetTextColor(0);
         $this->SetFillColor(255);
-        $this->SetFont('Arial','B',10);
-        $this->CellFitScale(130,6,"If you had Game Advisors for this game, please provide any feedback about them",0,1,'C',true);
+        $this->SetFont('Arial', 'B', 10);
+        $this->CellFitScale(130, 6, "If you had Game Advisors for this game, please provide any feedback about them", 0, 1, 'C', true);
         $this->SetX($curX);
-        $this->Cell(130,6,"",'B',1,'C',true);
+        $this->Cell(130, 6, "", 'B', 1, 'C', true);
         $this->SetX($curX);
-        $this->Cell(130,6,"",'TB',1,'C',true);
+        $this->Cell(130, 6, "", 'TB', 1, 'C', true);
         $this->SetX($curX);
-        $this->Cell(130,6,"",'TB',1,'C',true);
+        $this->Cell(130, 6, "", 'TB', 1, 'C', true);
         /*
             $this->SetX($curX);
                 $this->Cell(130,6,"",'TB',1,'C',true);
@@ -1746,41 +1753,41 @@ class PDF extends tFPDF_CellFit
     public function WriteHTML($html)
     {
         //HTML parser
-        $html = str_replace("\n",' ',$html);
-        $a = preg_split('/<(.*)>/U',$html,-1,PREG_SPLIT_DELIM_CAPTURE);
+        $html = str_replace("\n", ' ', $html);
+        $a = preg_split('/<(.*)>/U', $html, -1, PREG_SPLIT_DELIM_CAPTURE);
         foreach ($a as $i => $e) {
             if ($i % 2 == 0) {
                 //Text
                 if ($this->HREF) {
-                    $this->PutLink($this->HREF,$e);
+                    $this->PutLink($this->HREF, $e);
                 } else {
-                    $this->Write(4,$e);
+                    $this->Write(4, $e);
                 }
             } else {
                 //Tag
                 if ($e[0] == '/') {
-                    $this->CloseTag(strtoupper(substr($e,1)));
+                    $this->CloseTag(strtoupper(substr($e, 1)));
                 } else {
                     //Extract attributes
-                    $a2 = explode(' ',$e);
+                    $a2 = explode(' ', $e);
                     $tag = strtoupper(array_shift($a2));
                     $attr = [];
                     foreach ($a2 as $v) {
-                        if (preg_match('/([^=]*)=["\']?([^"\']*)/',$v,$a3)) {
+                        if (preg_match('/([^=]*)=["\']?([^"\']*)/', $v, $a3)) {
                             $attr[strtoupper($a3[1])] = $a3[2];
                         }
                     }
-                    $this->OpenTag($tag,$attr);
+                    $this->OpenTag($tag, $attr);
                 }
             }
         }
     }
 
-    public function OpenTag($tag,$attr)
+    public function OpenTag($tag, $attr)
     {
         //Opening tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,true);
+            $this->SetStyle($tag, true);
         }
         if ($tag == 'A') {
             $this->HREF = $attr['HREF'];
@@ -1794,13 +1801,13 @@ class PDF extends tFPDF_CellFit
     {
         //Closing tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,false);
+            $this->SetStyle($tag, false);
         }
         if ($tag == 'A') {
             $this->HREF = '';
         }
     }
-    public function SetStyle($tag,$enable)
+    public function SetStyle($tag, $enable)
     {
         //Modify style and select corresponding font
         $this->$tag += ($enable ? 1 : -1);
@@ -1810,16 +1817,16 @@ class PDF extends tFPDF_CellFit
                 $style .= $s;
             }
         }
-        $this->SetFont('',$style);
+        $this->SetFont('', $style);
     }
 
-    public function PutLink($URL,$txt)
+    public function PutLink($URL, $txt)
     {
         //Put a hyperlink
-        $this->SetTextColor(0,0,255);
-        $this->SetStyle('U',true);
-        $this->Write(4,$txt,$URL);
-        $this->SetStyle('U',false);
+        $this->SetTextColor(0, 0, 255);
+        $this->SetStyle('U', true);
+        $this->Write(4, $txt, $URL);
+        $this->SetStyle('U', false);
         $this->SetTextColor(0);
     }
 }

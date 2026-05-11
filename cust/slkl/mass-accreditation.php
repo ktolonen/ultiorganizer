@@ -9,6 +9,10 @@ if (!isset($include_prefix)) {
 
 include_once $include_prefix . 'lib/auth.guard.php';
 
+$season = isset($season) ? $season : ($_GET['season'] ?? CurrentSeason());
+$view = isset($view) ? $view : ($_GET['list'] ?? "acc");
+$url = isset($url) ? $url : "?view=admin/accreditation&amp;season=" . $season . "&amp;list=" . $view;
+
 $new_players = "";
 $updated = false;
 
@@ -152,29 +156,25 @@ if ($view == "autoacc") {
 function slklUpdateLicensesFromCSV($handle, $season)
 {
     $html = "";
-    $utf8 = false;
     $length = 1000; //row length in file
     $delimiter = ';';
-    //$enclosure = '';
 
     while (($data = fgetcsv($handle, $length, $delimiter)) !== false) {
 
-        $id = trim($utf8 ? $data[0] : convertToUtf8($data[0]));
+        $id = trim(convertToUtf8($data[0]));
 
         if (!is_numeric($id)) {
             continue;
         }
 
-        $lastname = trim($utf8 ? $data[1] : convertToUtf8($data[1]));
-        $firstname = trim($utf8 ? $data[2] : convertToUtf8($data[2]));
-        $birthdate = trim($utf8 ? $data[3] : convertToUtf8($data[3]));
-        $gender = trim($utf8 ? $data[4] : convertToUtf8($data[4]));
+        $lastname = trim(convertToUtf8($data[1]));
+        $firstname = trim(convertToUtf8($data[2]));
+        $birthdate = trim(convertToUtf8($data[3]));
+        $gender = trim(convertToUtf8($data[4]));
 
-        //$license_string = trim($utf8 ? $data[6] : convertToUtf8($data[6]));
-        $license_id = trim($utf8 ? $data[5] : convertToUtf8($data[5]));
-        //$cond = trim($utf8 ? $data[7] : convertToUtf8($data[7]));
-        $year = trim($utf8 ? $data[6] : convertToUtf8($data[6]));
-        $email = trim($utf8 ? $data[7] : convertToUtf8($data[7]));
+        $license_id = trim(convertToUtf8($data[5]));
+        $year = trim(convertToUtf8($data[6]));
+        $email = trim(convertToUtf8($data[7]));
 
         //if($cond=="avoin"){
         //  continue;
@@ -309,9 +309,7 @@ function slklUpdateLicensesFromCSV($handle, $season)
             if (!empty($gender)) {
                 $query .= ",women=$women";
             }
-            if (!empty($birthdate)) {
-                $query .= ",birthdate='" . $birthdate . "'";
-            }
+            $query .= ",birthdate='" . $birthdate . "'";
             if (!empty($external_type)) {
                 $query .= ",external_type='" . $external_type . "'";
             }
@@ -383,7 +381,6 @@ function slklUpdateLicensesFromCSV($handle, $season)
                     DBEscapeString($id),
                     DBEscapeString($external_type),
                     DBEscapeString($id),
-                    1,
                 );
                 DBQuery($query);
                 $html .= "<p>" . utf8entities($id) . " " . utf8entities($firstname) . " " . utf8entities($lastname) . "</p>";

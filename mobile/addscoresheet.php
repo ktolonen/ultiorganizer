@@ -125,7 +125,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         $result = GameResult($gameId);
         //save as result, if result is not already set
         if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
-            LogGameUpdate($gameId, "result: $home - $away", "Mobile");
+            LogGameUpdate($gameId, "result: " . $uo_goal['homescore'] . " - " . $uo_goal['visitorscore'], "Mobile");
             GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
         }
         header("location:?view=mobile/addscoresheet&game=" . $gameId);

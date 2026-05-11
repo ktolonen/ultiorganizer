@@ -213,7 +213,7 @@ function translate($name, $translation_array)
     }
 
     $key = strtolower((string) $name);
-    if ($name !== '' && isset($translation_array[$key])) {
+    if (isset($translation_array[$key])) {
         $retArr[$name] = $translation_array[$key];
         return $retArr;
     } else {
@@ -228,7 +228,7 @@ function translate($name, $translation_array)
                     $ret .= $part;
                 } else {
                     $partKey = strtolower((string) $part);
-                    if ($part !== '' && isset($translation_array[$partKey])) {
+                    if (isset($translation_array[$partKey])) {
                         $ret .= $translation_array[$partKey];
                     } else {
                         $ret .= $part;

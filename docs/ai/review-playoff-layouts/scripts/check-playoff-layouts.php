@@ -192,8 +192,8 @@ function scanTokens(string $html): array
     $gamesPerRound = [];
     foreach ($matches as $m) {
         $kind = $m[1];
-        $a = isset($m[2]) && $m[2] !== '' ? (int) $m[2] : null;
-        $b = isset($m[3]) && $m[3] !== '' ? (int) $m[3] : null;
+        $a = isset($m[2]) ? (int) $m[2] : null;
+        $b = isset($m[3]) ? (int) $m[3] : null;
         if ($a !== null && $b !== null) {
             $key = "$kind $a/$b";
         } elseif ($a !== null) {

@@ -63,7 +63,6 @@ if (!empty($_POST['add'])) {
 }
 
 if (!empty($_POST['save'])) {
-    $ok = true;
     $pp['name'] = $_POST['name'];
     $pp['series'] = $seriesId;
     /*$pp['teams']=intval($_POST['teams']);*/
@@ -123,11 +122,9 @@ if (!empty($_POST['save'])) {
         $pp['drawsallowed'] = 0;
     }
 
-    if ($ok) {
-        SetPoolDetails($poolId, $pp, $comment);
-        session_write_close();
-        header("location:?view=admin/seasonpools&season=$season");
-    }
+    SetPoolDetails($poolId, $pp, $comment);
+    session_write_close();
+    header("location:?view=admin/seasonpools&season=$season");
 }
 if ($poolId) {
     $info = PoolInfo($poolId);

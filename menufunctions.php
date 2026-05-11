@@ -825,7 +825,8 @@ function getEditSeasonLinks()
             }
         }
         if (isset($_SESSION['userproperties']['userrole']['accradmin'])) {
-            if (count($_SESSION['userproperties']['userrole']['teamadmin']) <= 4) {
+            $teamAdminRoles = $_SESSION['userproperties']['userrole']['teamadmin'] ?? [];
+            if (count($teamAdminRoles) <= 4) {
                 foreach ($_SESSION['userproperties']['userrole']['accradmin'] as $team => $param) {
                     if (!isset($teamPlayersSet[$team])) {
                         $teamseason = getTeamSeason($team);
@@ -840,10 +841,15 @@ function getEditSeasonLinks()
                     }
                 }
             } else {
-                $links = $ret[$season];
-                $links['?view=user/respteams&amp;season=' . $season] = _("Team responsibilities");
-                $links['?view=admin/accreditation&amp;season=' . $season] = _("Accreditation");
-                $ret[$season] = $links;
+                foreach ($_SESSION['userproperties']['userrole']['accradmin'] as $team => $param) {
+                    $teamseason = getTeamSeason($team);
+                    if (isset($ret[$teamseason])) {
+                        $links = $ret[$teamseason];
+                        $links['?view=user/respteams&amp;season=' . $teamseason] = _("Team responsibilities");
+                        $links['?view=admin/accreditation&amp;season=' . $teamseason] = _("Accreditation");
+                        $ret[$teamseason] = $links;
+                    }
+                }
             }
         }
         if (isset($_SESSION['userproperties']['userrole']['gameadmin'])) {
@@ -872,7 +878,7 @@ function getEditSeasonLinks()
     }
 
     foreach ($ret as $season => $links) {
-        if (!isset($links) || empty($links) || count($links) == 0) {
+        if (empty($links) || count($links) == 0) {
             unset($ret[$season]);
         }
     }
@@ -885,8 +891,7 @@ function getEditSeasonLinks()
  * @param array $menuitems - key is link name, value is url.
  * @param string $current - links to this url obtain the class 'current'
  * @param boolean $echoed if true (the default), the menu is echoed
- * @return the menu
- *
+ * @return string the menu
  */
 function pageMenu($menuitems, $current = "", $echoed = true)
 {

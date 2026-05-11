@@ -32,7 +32,7 @@ function Pools($filter = null, $ordering = null)
  * Information of given pool.
  *
  * @param int $poolId uo_pool.pool_id
- * @return php array of pool information.
+ * @return array array of pool information.
  */
 function PoolInfo($poolId)
 {
@@ -91,7 +91,7 @@ function PoolPlayoffFollowersArray($poolId)
 /**
  * Get playoff 1st round pool for given pool based on follower id (uo_pool.follower).
  * @param int $poolId uo_pool.pool_id
- * @return root pool id.
+ * @return int root pool id.
  */
 function PoolPlayoffRoot($poolId)
 {
@@ -114,7 +114,7 @@ function PoolPlayoffRoot($poolId)
  * Information of given pool template.
  *
  * @param int $poolId uo_pooltemplate.template_id
- * @return php array of pool template information.
+ * @return array array of pool template information.
  */
 function PoolTemplateInfo($poolId)
 {
@@ -128,7 +128,7 @@ function PoolTemplateInfo($poolId)
 /**
  * Get all pool templates.
  *
- * @return php array of pool template information.
+ * @return array array of pool template information.
  */
 function PoolTemplates()
 {
@@ -139,7 +139,7 @@ function PoolTemplates()
 /**
  * Gives shorter name for given pool.
  * @param int $poolId uo_pool.pool_id
- * @return short name.
+ * @return string short name.
  */
 function PoolShortName($poolId)
 {
@@ -177,7 +177,7 @@ function PoolName($poolId)
 /**
  * Get division name for given pool.
  * @param int $poolId uo_pool.pool_id
- * @return Division name.
+ * @return string division name.
  */
 function PoolSeriesName($poolId)
 {
@@ -208,7 +208,7 @@ function PoolListAll()
 
 /**
  * Get list of pool types.
- * @return Hardcoded PHP array of pool types.
+ * @return array hardcoded list of pool types.
  */
 function PoolTypes()
 {
@@ -265,7 +265,7 @@ function PoolTeams($poolId, $order = "rank")
  * @param int $poolId uo_pool.pool_id
  * @param int $pos position to get name
  * @param boolean $ordinal TRUE if ordinal string
- * @return name of position
+ * @return string name of position
  */
 function PoolPlacementString($poolId, $pos, $ordinal = true)
 {
@@ -295,15 +295,13 @@ function PoolPlacementString($poolId, $pos, $ordinal = true)
         }
 
         if ($ordinal) {
-            if ($placementfrom == 0) {
-                $ret = "";
-            } elseif ($placementfrom == 1) {
+            if ($placementfrom == 1) {
                 $ret = _("Gold");
             } elseif ($placementfrom == 2) {
                 $ret = _("Silver");
             } elseif ($placementfrom == 3) {
                 $ret = _("Bronze");
-            } elseif ($placementfrom > 3) {
+            } else {
                 $ret = ordinal($placementfrom);
             }
         } else {
@@ -339,7 +337,7 @@ function PoolSchedulingTeams($poolId)
  * @param int $poolId uo_pool.pool_id
  * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysql array of players.
+ * @return mysqli_result result set of players.
  */
 function PoolScoreBoard($poolId, $sorting, $limit)
 {
@@ -370,7 +368,6 @@ function PoolScoreBoard($poolId, $sorting, $limit)
             WHERE ps4.pool=%d AND g4.isongoing=0 GROUP BY player)
             AS pel ON (p.player_id=pel.player)
         WHERE pel.games > 0",
-        (int) $poolId,
         (int) $poolId,
         (int) $poolId,
         (int) $poolId,
@@ -842,7 +839,7 @@ function PoolGetMoveToPool($poolId, $fromrank)
  * Get move from given pool and position.
  *
  * @param int $topool uo_pool.pool_id
- * @param int $topos move to position
+ * @param int $torank move to position
  * @return array row
  */
 function PoolGetMoveFrom($topool, $torank)
@@ -862,7 +859,7 @@ function PoolGetMoveFrom($topool, $torank)
  * Get pool where team is moved by scheduling id.
  *
  * @param int $schedulingId
- * @return uo_moveteams.frompool
+ * @return int|string|null uo_moveteams.frompool
  */
 function PoolGetFromPoolBySchedulingId($schedulingId)
 {
@@ -881,7 +878,7 @@ function PoolGetFromPoolBySchedulingId($schedulingId)
  *
  * @param int $poolId
  * @param int $teamId
- * @return uo_moveteams.frompool
+ * @return int|string|null uo_moveteams.frompool
  */
 function PoolGetFromPoolByTeamId($poolId, $teamId)
 {
@@ -905,7 +902,7 @@ function PoolGetFromPoolByTeamId($poolId, $teamId)
  * @param int $poolId
  * @param int $activerank
  * @param boolean $countbye
- * @return PHP array row
+ * @return array array row
  */
 function PoolTeamFromStandings($poolId, $activerank, $countbye = true)
 {
@@ -955,7 +952,7 @@ function PoolTeamFromStandings($poolId, $activerank, $countbye = true)
  * @param int $poolId
  * @param int $activerank
  * @param boolean $countbye
- * @return PHP array row
+ * @return array array row
  */
 function PoolTeamsFromStandings($poolId, $activerank, $countbye = true)
 {
@@ -994,9 +991,9 @@ function PoolTeamsFromStandings($poolId, $activerank, $countbye = true)
  * if $countbye=false, $rank is corrected by one if BYE team is ranked ahead in this pool
  *
  * @param int $poolId
- * @param int $activerank
+ * @param int $rank
  * @param boolean $countbye
- * @return PHP array row
+ * @return array array row
  */
 function PoolTeamFromInitialRank($poolId, $rank, $countbye = true)
 {
@@ -1038,7 +1035,7 @@ function PoolTeamFromInitialRank($poolId, $rank, $countbye = true)
  *
  * @param int $frompool
  * @param int $fromplacing
- * @return 1 if exist, 0 otherwise
+ * @return int 1 if moved, 0 otherwise
  */
 function PoolIsMoved($frompool, $fromplacing)
 {
@@ -1057,7 +1054,7 @@ function PoolIsMoved($frompool, $fromplacing)
  * Test if all pools to move from are played or not.
  *
  * @param int $topool
- * @return true if played, false otherwise
+ * @return bool true if played, false otherwise
  */
 function PoolIsMoveFromPoolsPlayed($topool)
 {
@@ -1077,7 +1074,7 @@ function PoolIsMoveFromPoolsPlayed($topool)
  *
  * @param int $frompool
  * @param int $fromplacing
- * @return 0 if move doesn't exist. 1 if exist.
+ * @return int 0 if move doesn't exist, 1 if it does
  */
 function PoolMoveExist($frompool, $fromplacing)
 {
@@ -1096,7 +1093,7 @@ function PoolMoveExist($frompool, $fromplacing)
  * Test if all moves done.
  *
  * @param int $topool
- * @return true if no moves
+ * @return bool true if all moves done
  */
 function PoolIsAllMoved($topool)
 {
@@ -1289,7 +1286,7 @@ function PoolMovedGames($poolId)
  * Get number of games played in given pool.
  *
  * @param int $poolId
- * @return Number of games played
+ * @return int number of games played
  */
 function PoolTotalPlayedGames($poolId)
 {
@@ -1333,7 +1330,7 @@ function PoolResolvePlayed($poolId)
  * Test if one or more games already played in given pool.
  *
  * @param int $poolId
- * @return true if pool started.
+ * @return bool true if pool started
  */
 function IsPoolStarted($poolId)
 {
@@ -1357,7 +1354,7 @@ function IsPoolLocked($poolId)
 /**
  * Adds pool template.
  *
- * @param uo_pooltemplate $params
+ * @param array $params uo_pooltemplate.* data
  */
 function AddPoolTemplate($params)
 {
@@ -1403,7 +1400,7 @@ function AddPoolTemplate($params)
  * Updates pool template.
  *
  * @param int $poolId
- * @param uo_pooltemplate $params
+ * @param array $params uo_pooltemplate.* data
  */
 function SetPoolTemplate($poolId, $params)
 {
@@ -1543,7 +1540,7 @@ function PoolColors()
  * @param string $name - Pool name
  * @param string $ordering - Pool order
  * @param int $poolTemplateId - Pool template
- * @return id to created pool.
+ * @return int id of the created pool.
  */
 function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
 {
@@ -1629,7 +1626,7 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
  * Update all pool parameters.
  *
  * @param int $poolId
- * @param uo_pool $params
+ * @param array $params uo_pool.* data
  */
 function SetPoolDetails($poolId, $params, $comment = null)
 {
@@ -1648,7 +1645,7 @@ function SetPoolDetails($poolId, $params, $comment = null)
  * Update pool key parameters.
  *
  * @param int $poolId
- * @param uo_pool $params
+ * @param array $params uo_pool.* data
  */
 function SetPool($poolId, $params)
 {
@@ -1675,7 +1672,7 @@ function SetPool($poolId, $params)
  * Sets pool visibility (= shown for public or not)
  *
  * @param int $poolId
- * @param int $visible: 0 hidden, 1 visible
+ * @param bool|int $visible: 0/false hidden, 1/true visible
  */
 function SetPoolVisibility($poolId, $visible)
 {
@@ -1809,7 +1806,7 @@ function PoolSetTeam($curpool, $teamId, $rank, $newpool)
  * @param int $poolId
  * @param int $teamId
  * @param int $rank - team rank in pool
- * @param int $updaterank - if activerank is updated
+ * @param bool $updaterank - if activerank is updated
  */
 function PoolAddTeam($poolId, $teamId, $rank, $updaterank = false, $checkrights = true)
 {
@@ -2285,7 +2282,7 @@ function PoolSetSchedulingName($scheduling_id, $name, $season)
  * Test if games can be generated to given pool.
  *
  * @param int $poolId
- * @return true if games can be generated.
+ * @return bool true if games can be generated
  */
 function CanGenerateGames($poolId)
 {
@@ -2300,7 +2297,7 @@ function CanGenerateGames($poolId)
  * Test if there is real teams in pool.
  *
  * @param int $poolId
- * @return true if there is no real teams in pool.
+ * @return bool true if there are no real teams in pool
  */
 function PseudoTeamsOnly($poolId)
 {
@@ -2556,18 +2553,18 @@ function GeneratePlayoffPools($poolId, $generate = true)
 
                 if ($specialmoves) { // use specialmoves from HTML comment
                     for ($j = 0; $j < $realteams; $j++) {
-                        $frompos = $moves[$i - 1][$j];
+                        $frompos = (int) $moves[$i - 1][$j];
                         if ($frompos == $realteams && $realteams > $teams) { // in case of odd number of teams
                             $movename = $prevname . " Team " . $realteams;
                         } elseif (is_odd($frompos)) {
-                            $movename = $prevname . " Winner " . (($frompos + 1) / 2);
+                            $movename = $prevname . " Winner " . (((int) $frompos + 1) / 2);
                         } else {
-                            $movename = $prevname . " Loser " . ($frompos / 2);
+                            $movename = $prevname . " Loser " . ((int) $frompos / 2);
                         }
                         PoolAddMove($prevpoolId, $id, $frompos, $j + 1, $movename);
 
                         if ($i == $rounds - 1) { // add also the special ranking moves
-                            AddSpecialRankingRule($id, $moves[$i][$j], $j + 1, " Rank " . ($j + 1));
+                            AddSpecialRankingRule($id, (int) $moves[$i][$j], $j + 1, " Rank " . ($j + 1));
                         }
                     }
                 } else { // do standard moves as before

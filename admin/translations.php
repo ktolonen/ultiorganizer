@@ -1,8 +1,10 @@
 <?php
 include_once __DIR__ . '/auth.php';
+include_once 'lib/configuration.functions.php';
 include_once 'lib/translation.functions.php';
 
 $LAYOUT_ID = TRANSLATIONS;
+$locales = getAvailableLocalizations();
 
 $title = _("Translations");
 
@@ -83,7 +85,7 @@ $help = "<p>" . _("Modify translations") . ":</p>
 		<li> " . _("The key is case insensitive") . " </li>
 	</ol>";
 
-onPageHelpAvailable($help);
+echo onPageHelpAvailable($help);
 
 //content
 echo "<h2>" . _("Translations") . "</h2>\n";

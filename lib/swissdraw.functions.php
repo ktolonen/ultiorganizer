@@ -304,31 +304,6 @@ function TeamsHavePlayed($teamid1, $teamid2, $games)
 }
 
 
-function FindSwissProblem($moves, $games)
-{
-    $totalmoves = len($moves);
-    $problemMove = 0;
-    $i = 1;
-    while ($i < $rounds && $problemMove == 0) {
-        if (HavePlayed($moves($i), $moves($i + 1), $games)) {
-            $problemMove = $i;
-        }
-        $i = $i + 2;
-    }
-}
-function SwissAllMovesOK($moves, $games)
-{
-    $totalmoves = len($moves);
-    $allOK = true;
-    $i = 1;
-    while ($i < $rounds && $allOK) {
-        if (HavePlayed($moves($i), $moves($i + 1), $games)) {
-            $allOK = false;
-        }
-        $i = $i + 2;
-    }
-}
-
 function GenerateSwissdrawPools($poolId, $rounds, $generate = true)
 {
     $poolInfo = PoolInfo($poolId);

@@ -3,11 +3,12 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
+include_once 'lib/pdf.interfaces.php';
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/tfpdf/cellfit.php';
 include_once 'lib/hsvclass/HSVClass.php';
 
-class PDF extends tFPDF_CellFit
+class PDF extends tFPDF_CellFit implements SchedulePdf
 {
     public $B;
     public $I;
@@ -44,35 +45,6 @@ class PDF extends tFPDF_CellFit
     private function pdfText($text)
     {
         return (string) $text;
-    }
-
-    private function onePageScheduleGridBounds($times)
-    {
-        $firstTime = null;
-        $lastTime = null;
-
-        foreach ($times as $time) {
-            $timestamp = strtotime($time['time'] ?? '');
-            if ($timestamp === false) {
-                continue;
-            }
-            if ($firstTime === null || $timestamp < $firstTime) {
-                $firstTime = $timestamp;
-            }
-            if ($lastTime === null || $timestamp > $lastTime) {
-                $lastTime = $timestamp;
-            }
-        }
-
-        if ($firstTime === null) {
-            return [9, 0, 13 * 60 + 1];
-        }
-
-        $startTimestamp = strtotime(date('Y-m-d H:00:00', $firstTime));
-        $endTimestamp = max($startTimestamp + 13 * 60 * 60, $lastTime + 2 * 60 * 60);
-        $slots = (int) ceil(($endTimestamp - $startTimestamp) / 60) + 1;
-
-        return [(int) date('G', $startTimestamp), 0, $slots];
     }
 
     private function onePageScheduleFieldKey($game)
@@ -597,10 +569,11 @@ class PDF extends tFPDF_CellFit
     public function PrintSeriesPools($id)
     {
 
+        $left_margin = 10;
         $this->SetFont('Arial', 'B', 16);
         $this->SetTextColor(255);
         $this->SetFillColor(0);
-        $this->Cell(0, 9, $title, 1, 1, 'C', true);
+        $this->Cell(0, 9, "", 1, 1, 'C', true);
 
         if ($this->GetY() + 97 > 297) {
             $this->AddPage();
@@ -725,21 +698,21 @@ class PDF extends tFPDF_CellFit
                     $tag = strtoupper(array_shift($a2));
                     $attr = [];
                     foreach ($a2 as $v) {
-                        if (preg_match('/([^=]*)=["\']?([^"\']*)/',$v,$a3)) {
+                        if (preg_match('/([^=]*)=["\']?([^"\']*)/', $v, $a3)) {
                             $attr[strtoupper($a3[1])] = $a3[2];
                         }
                     }
-                    $this->OpenTag($tag,$attr);
+                    $this->OpenTag($tag, $attr);
                 }
             }
         }
     }
 
-    public function OpenTag($tag,$attr)
+    public function OpenTag($tag, $attr)
     {
         //Opening tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,true);
+            $this->SetStyle($tag, true);
         }
         if ($tag == 'A') {
             $this->HREF = $attr['HREF'];
@@ -753,13 +726,13 @@ class PDF extends tFPDF_CellFit
     {
         //Closing tag
         if ($tag == 'B' || $tag == 'I' || $tag == 'U') {
-            $this->SetStyle($tag,false);
+            $this->SetStyle($tag, false);
         }
         if ($tag == 'A') {
             $this->HREF = '';
         }
     }
-    public function SetStyle($tag,$enable)
+    public function SetStyle($tag, $enable)
     {
         //Modify style and select corresponding font
         $this->$tag += ($enable ? 1 : -1);
@@ -769,16 +742,16 @@ class PDF extends tFPDF_CellFit
                 $style .= $s;
             }
         }
-        $this->SetFont('',$style);
+        $this->SetFont('', $style);
     }
 
-    public function PutLink($URL,$txt)
+    public function PutLink($URL, $txt)
     {
         //Put a hyperlink
-        $this->SetTextColor(0,0,255);
-        $this->SetStyle('U',true);
-        $this->Write(4,$txt,$URL);
-        $this->SetStyle('U',false);
+        $this->SetTextColor(0, 0, 255);
+        $this->SetStyle('U', true);
+        $this->Write(4, $txt, $URL);
+        $this->SetStyle('U', false);
         $this->SetTextColor(0);
     }
 }

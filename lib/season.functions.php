@@ -152,7 +152,7 @@ function Seasontype($seasonId)
 /**
  * Returns information about season.
  * @param string $seasonId uo_season.season_id
- * @return uo_season.*
+ * @return array
  */
 function SeasonInfo($seasonId)
 {
@@ -341,7 +341,7 @@ function SetEventReadonly($seasonId)
             "UPDATE uo_season SET event_readonly=1 WHERE season_id='%s'",
             DBEscapeString($seasonId),
         );
-        return DBQuery($query);
+        return DBExecute($query);
     } else {
         die('Insufficient rights to edit season');
     }
@@ -350,7 +350,7 @@ function SetEventReadonly($seasonId)
 /**
  * Returns true if season exists.
  * @param string $seasonId uo_season.season_id
- * @return true if season with given id exists
+ * @return bool true if season with given id exists
  */
 function SeasonExists($seasonId)
 {
@@ -360,8 +360,8 @@ function SeasonExists($seasonId)
 
 /**
  * Returns true if season exists.
- * @param string $seasonId uo_season.name
- * @return true if season with given name exists
+ * @param string $seasonName uo_season.name
+ * @return bool true if season with given name exists
  */
 function SeasonNameExists($seasonName)
 {
@@ -406,8 +406,8 @@ function SeasonsAllInfo()
  * Returns all seasons for given type.
  * @see SeasonTypes()
  *
- * @param string $seasonId uo_season.season_id
- * @return Array array of seasons
+ * @param string $seasontype uo_season.type
+ * @return array array of seasons
  */
 function SeasonsByType($seasontype)
 {
@@ -474,7 +474,7 @@ function SeasonMissingPlayerProfilesCount($seasonId)
 /**
  * Returns all teams playing on given season.
  *
- * @param string $seasonId uo_season.season_id
+ * @param string $season uo_season.season_id
  * @param boolean $onlyvalid true if only uo_team.valid=1 rows selected.
  * @return array of teams
  */
@@ -569,7 +569,7 @@ function SeasonReservationLocations($seasonId, $group = "all")
  * Returns all games played on given season without scheduled starting time.
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of games
+ * @return array array of games
  */
 function SeasonGamesNotScheduled($seasonId)
 {
@@ -597,8 +597,8 @@ function SeasonGamesNotScheduled($seasonId)
 /**
  * Returns all games played on given season.
  *
- * @param string $seasonId uo_season.season_id
- * @return Array array of games
+ * @param string $season uo_season.season_id
+ * @return array array of games
  */
 function SeasonAllGames($season)
 {
@@ -756,7 +756,7 @@ function SeasonSpiritAdmins($seasonId)
  * Access level: editseason
  *
  * @param string $seasonId uo_season.season_id
- * @return php array of users
+ * @return array array of users
  */
 function SeasonAdmins($seasonId)
 {
@@ -793,7 +793,7 @@ function DeleteSeason($seasonId)
             "DELETE FROM uo_season WHERE season_id='%s'",
             DBEscapeString($seasonId),
         );
-        return DBQuery($query);
+        return DBExecute($query);
     } else {
         die('Insufficient rights to delete season');
     }
@@ -805,7 +805,32 @@ function DeleteSeason($seasonId)
  * Access level: superadmin
  *
  * @param string $seasonId uo_season.season_id
- * @param string $params uo_season fields
+ * @phpstan-param array{
+ *     name: mixed,
+ *     type: mixed,
+ *     istournament: mixed,
+ *     isinternational: mixed,
+ *     organizer: mixed,
+ *     category: mixed,
+ *     isnationalteams: mixed,
+ *     starttime: mixed,
+ *     endtime: mixed,
+ *     iscurrent: mixed,
+ *     enrollopen: mixed,
+ *     enroll_deadline: mixed,
+ *     spiritmode: mixed,
+ *     showspiritpoints: mixed,
+ *     showspiritcomments: mixed,
+ *     showspiritpointsonlyoncomplete: mixed,
+ *     lockteamspiritonsubmit: mixed,
+ *     use_season_points: mixed,
+ *     hide_time_on_scoresheet: mixed,
+ *     hometeammode: mixed,
+ *     event_readonly: mixed,
+ *     maintenance_mode: mixed,
+ *     api_public: mixed,
+ *     timezone: mixed
+ * } $params uo_season fields
  * @param string $comment uo_comment for the season
  * @return boolean TRUE on success or FALSE on error.
  */
@@ -848,7 +873,7 @@ function AddSeason($seasonId, $params, $comment = null)
 
         Log1("season", "add", $seasonId);
 
-        $result = DBQuery($query);
+        $result = DBExecute($query);
 
         if ($result && isset($comment)) {
             SetComment(1, $seasonId, $comment);
@@ -868,7 +893,32 @@ function AddSeason($seasonId, $params, $comment = null)
  * Access level: seasonadmin
  *
  * @param string $seasonId uo_season.season_id
- * @param string $params uo_season fields
+ * @phpstan-param array{
+ *     name: mixed,
+ *     type: mixed,
+ *     istournament: mixed,
+ *     isinternational: mixed,
+ *     organizer: mixed,
+ *     category: mixed,
+ *     isnationalteams: mixed,
+ *     starttime: mixed,
+ *     endtime: mixed,
+ *     iscurrent: mixed,
+ *     enrollopen: mixed,
+ *     enroll_deadline: mixed,
+ *     spiritmode: mixed,
+ *     showspiritpoints: mixed,
+ *     showspiritcomments: mixed,
+ *     showspiritpointsonlyoncomplete: mixed,
+ *     lockteamspiritonsubmit: mixed,
+ *     use_season_points: mixed,
+ *     hide_time_on_scoresheet: mixed,
+ *     hometeammode: mixed,
+ *     event_readonly: mixed,
+ *     maintenance_mode: mixed,
+ *     api_public: mixed,
+ *     timezone: mixed
+ * } $params uo_season fields
  * @param string $comment uo_comment for the season
  * @return boolean TRUE on success or FALSE on error.
  */
@@ -912,7 +962,7 @@ function SetSeason($seasonId, $params, $comment = null)
             DBEscapeString($seasonId),
         );
 
-        $result = DBQuery($query);
+        $result = DBExecute($query);
         if ($result && function_exists('RefreshSeasonSpiritData')) {
             RefreshSeasonSpiritData($seasonId);
         }
@@ -953,7 +1003,7 @@ function SetSeasonSpiritSettings($seasonId, $params)
         DBEscapeString($seasonId),
     );
 
-    $result = DBQuery($query);
+    $result = DBExecute($query);
     if ($result && function_exists('RefreshSeasonSpiritData')) {
         RefreshSeasonSpiritData($seasonId);
     }

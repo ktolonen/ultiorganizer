@@ -65,14 +65,14 @@ foreach ($places as $placeGameStr) {
     if (intval($games[0]) != 0) {
 
         ClearReservation($games[0]);
-        $resInfo = ReservationInfo($games[0]);
+        $resInfo = ReservationInfo((int) $games[0]);
         $firstStart = strtotime($resInfo['starttime']);
         $resEnd = strtotime($resInfo['endtime']);
         for ($i = 1; $i < count($games); $i++) {
             $gameArr = explode("/", $games[$i]);
             $gameInfo = GameInfo($gameArr[0]);
             $season = $gameInfo['season'];
-            $time = $firstStart + (60 * $gameArr[1]);
+            $time = $firstStart + (60 * (int) $gameArr[1]);
             if (!empty($gameInfo['gametimeslot'])) {
                 $gameEnd = $time + ($gameInfo['gametimeslot'] * 60);
             } else {

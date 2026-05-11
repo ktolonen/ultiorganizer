@@ -3,11 +3,12 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
+include_once 'lib/pdf.interfaces.php';
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/hsvclass/HSVClass.php';
 include_once 'lib/phpqrcode/qrlib.php';
 
-class PDF extends tFPDF
+class PDF extends tFPDF implements SchedulePdf
 {
     public $B;
     public $I;
@@ -398,7 +399,7 @@ class PDF extends tFPDF
             }
             $txt .= $this->pdfText($game['poolname']);
             //$this->DynSetFont($txt,$gridx,8);
-            $this->MultiCell($gridx, 3, $txt, "LR", 2, 'L', $colors);
+            $this->MultiCell($gridx, 3, $txt, "LR", 'L', $colors);
 
             $this->SetXY($field_offset, $time_offset + $timeslots[$slot]);
             $this->Cell($gridx, $gridy, "", "LRBT", 2, 'L', false);

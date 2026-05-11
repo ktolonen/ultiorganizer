@@ -121,10 +121,10 @@ switch ($feedtype) {
             if (intval($goal['iscallahan'])) {
                 $pass = "xx";
             } else {
-                $pass = $goal['assistfirstname'] . " " . $goal['assistlastname'];
+                $pass = trim($goal['assistfirstname'] . " " . $goal['assistlastname']);
             }
 
-            $scorer = $goal['scorerfirstname'] . " " . $goal['scorerlastname'];
+            $scorer = trim($goal['scorerfirstname'] . " " . $goal['scorerlastname']);
 
             $desc = "";
             if (!$hideTimeOnScoresheet) {
@@ -139,6 +139,7 @@ switch ($feedtype) {
                 if ((intval($event['time']) >= $prevgoal) &&
                   (intval($event['time']) < intval($goal['time']))
                 ) {
+                    $gameevent = '';
                     if ($event['type'] == "timeout") {
                         $gameevent = _("Timeout");
                     } elseif ($event['type'] == "spirit_timeout") {
@@ -177,6 +178,7 @@ switch ($feedtype) {
         $desc = "";
         foreach ($gameevents as $event) {
             if ((intval($event['time']) >= $prevgoal)) {
+                $gameevent = '';
                 if ($event['type'] == "timeout") {
                     $gameevent = _("Timeout");
                 } elseif ($event['type'] == "spirit_timeout") {

@@ -156,7 +156,7 @@ preserve_unstaged_changes
 if [ "${SKIP_PHP_CS_FIXER:-0}" != "1" ]; then
     echo "pre-commit: running PHP-CS-Fixer on ${#STAGED_PHP[@]} staged PHP file(s)..."
     run_tool "PHP_CS_FIXER" "${PHP_CS_FIXER_BIN:-}" "vendor/bin/php-cs-fixer" \
-        fix --quiet --using-cache=yes -- "${STAGED_PHP[@]}"
+        fix --quiet --using-cache=yes --config=.php-cs-fixer.dist.php -- "${STAGED_PHP[@]}"
     git add -- "${STAGED_PHP[@]}"
 fi
 

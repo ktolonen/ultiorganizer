@@ -1,5 +1,5 @@
 parameters:
-    level: 1
+    level: 5
     paths:
         - admin
         - api
@@ -26,6 +26,21 @@ parameters:
     bootstrapFiles:
         - lib/tfpdf/tfpdf.php
         - lib/tfpdf/cellfit.php
+        - lib/hsvclass/HSVClass.php
+        - lib/feed_generator/FeedWriter.php
+        - lib/feed_generator/FeedItem.php
+        - lib/phpqrcode/phpqrcode.php
+        - lib/yuiloader/phploader/loader.php
+        - phpstan-stubs.php
+    ignoreErrors:
+        -
+            message: '#^Variable \$include_prefix might not be defined\.$#'
+        -
+            # Intentional xgettext registration markers - strings have no runtime function.
+            message: '#^Call to function _\(\) on a separate line has no effect\.$#'
+            paths:
+                - sql/upgrade_db.php
+                - user/playerprofile.php
     parallel:
         maximumNumberOfProcesses: 4
     treatPhpDocTypesAsCertain: false

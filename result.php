@@ -13,26 +13,28 @@ include_once 'lib/game.functions.php';
 include_once 'lib/statistical.functions.php';
 include_once 'lib/configuration.functions.php';
 $html = "";
-
 $errors = "";
-if (!empty($_POST['save'])) {
-    $game = intval($_POST['game']);
-    $home = intval($_POST['home']);
-    $away = intval($_POST['away']);
+$game = 0;
+$home = 0;
+$away = 0;
+$gameId = 0;
+$showConfirmation = false;
+
+if (!empty($_POST['save']) || !empty($_POST['confirm'])) {
+    $game = intval($_POST['game'] ?? 0);
+    $home = intval($_POST['home'] ?? 0);
+    $away = intval($_POST['away'] ?? 0);
     $errors = CheckGameResult($game, $home, $away);
-    $gameId = (int) substr($game, 0, -1);
-}
-if (!empty($_POST['confirm'])) {
-    $game = intval($_POST['game']);
-    $home = intval($_POST['home']);
-    $away = intval($_POST['away']);
-    $errors = CheckGameResult($game, $home, $away);
-    if (empty($errors)) {
-        $gameId = (int) substr($game, 0, -1);
+    $gameId = (int) substr((string) $game, 0, -1);
+
+    if (!empty($_POST['confirm']) && empty($errors)) {
         GameSetResult($gameId, $home, $away, true, false);
         header("location:?" . $_SERVER['QUERY_STRING']);
+    } elseif (!empty($_POST['save']) && empty($errors)) {
+        $showConfirmation = true;
     }
 }
+
 if (!empty($_POST['cancel'])) {
     $html .= "<p class='warning'>" . _("Result not saved!") . "</p>";
 }
@@ -43,7 +45,7 @@ $html .= $errors;
 $html .= "<div style='font-size:14px;'>";
 
 $html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method='post'>\n";
-if (!empty($_POST['save']) && empty($errors)) {
+if ($showConfirmation) {
     $html .= "<p>";
     $html .= "<input class='input' type='hidden' id='game' name='game' value='$game'/> ";
     $html .= "<input class='input' type='hidden' id='home' name='home' value='$home'/> ";

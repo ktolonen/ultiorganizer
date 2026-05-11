@@ -170,7 +170,7 @@ function FindExistingPlayerProfileId($profile)
     };
 
     $accreditationMatchId = 0;
-    if (!empty($accreditationId) && $accreditationId !== "0") {
+    if (!empty($accreditationId)) {
         $condition = sprintf("pr.accreditation_id='%s'", DBEscapeString($accreditationId));
         if ($matchCount($condition) > 0) {
             $accreditationMatchId = $bestMatchId($condition);
@@ -241,7 +241,7 @@ function FindExistingPlayerProfileId($profile)
 /**
  * Create profile for player.
  *
- * @param unknown_type $playerId
+ * @param int $playerId uo_player.player_id
  */
 function CreatePlayerProfile($playerId)
 {
@@ -291,8 +291,8 @@ function CreatePlayerProfile($playerId)
 /**
  * Gets players.
  *
- * @param unknown_type $filter
- * @param unknown_type $ordering
+ * @param array|null $filter
+ * @param array|null $ordering
  */
 function Players($filter = null, $ordering = null)
 {
@@ -794,7 +794,27 @@ function PlayerGameEvents($playerId, $gameId)
  *
  * @param int $teamId
  * @param int $playerId
- * @param int $profile
+ * @phpstan-param array{
+ *     accreditation_id: mixed,
+ *     firstname: mixed,
+ *     lastname: mixed,
+ *     num: mixed,
+ *     email: mixed,
+ *     nickname: mixed,
+ *     gender: mixed,
+ *     info: mixed,
+ *     national_id: mixed,
+ *     birthdate: mixed,
+ *     birthplace: mixed,
+ *     nationality: mixed,
+ *     throwing_hand: mixed,
+ *     height: mixed,
+ *     weight: mixed,
+ *     position: mixed,
+ *     story: mixed,
+ *     achievements: mixed,
+ *     public: mixed
+ * } $profile player profile fields
  */
 function SetPlayerProfile($teamId, $playerId, $profile)
 {
@@ -1159,7 +1179,6 @@ function PlayersToCsv($season, $separator)
 			GROUP BY player) AS pel ON (p.player_id=pel.player)
 		WHERE divi.season='%s'
 		ORDER BY j.name, p.lastname, p.firstname", // FIXME g4.hasstarted>0??
-        DBEscapeString($season),
         DBEscapeString($season),
         DBEscapeString($season),
         DBEscapeString($season),

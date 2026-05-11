@@ -8,6 +8,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/timetable.functions.php';
+include_once 'lib/pdf.interfaces.php';
 
 function pdf_slug($value)
 {
@@ -74,7 +75,7 @@ $gamefilter = "season";
 $format = "html";
 $group = "";
 $groupheader = true;
-$games;
+$games = [];
 
 if (iget("series")) {
     $id = iget("series");
@@ -232,6 +233,11 @@ if ($format == "pdf") {
     $layout = $filter == "onepage" ? "grid" : "list";
     $filename = "schedule-" . $layout . "-" . pdf_slug($nameLabel) . ".pdf";
     $pdf = new PDF();
+    // @phpstan-ignore instanceof.alwaysFalse, instanceof.alwaysTrue (PDF resolves through runtime customization includes)
+    if (!$pdf instanceof SchedulePdf) {
+        throw new UnexpectedValueException('Schedule PDF customization must implement SchedulePdf.');
+    }
+    // @phpstan-ignore deadCode.unreachable
     if ($filter == "onepage") {
         $pdf->PrintOnePageSchedule($gamefilter, $id, $games);
     } else {
@@ -271,7 +277,7 @@ if (!$print && !$singleview) {
         $html .= "</p>\n";
     }
 }
-if (!empty($group) && $group != "all") {
+if ($group != "all") {
     $groupheader = false;
 }
 

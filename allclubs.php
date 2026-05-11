@@ -52,7 +52,7 @@ foreach ($clubs as $club) {
         }
         if ($listletter != $firstchar && in_array($firstchar, $validletters)) {
             $listletter = $firstchar;
-            if ($counter > 0 && $counter <= $maxcols) {
+            if ($counter > 0) {
                 $html .= "</tr>\n";
             }
             $html .= "<tr><td></td></tr>\n";
@@ -79,7 +79,7 @@ foreach ($clubs as $club) {
         $counter = 0;
     }
 }
-if ($counter > 0 && $counter <= $maxcols) {
+if ($counter > 0) {
     $html .= "</tr>\n";
 }
 $html .= "</table>\n";

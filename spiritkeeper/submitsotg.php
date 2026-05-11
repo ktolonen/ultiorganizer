@@ -3,6 +3,11 @@
 include_once __DIR__ . '/auth.php';
 spiritkeeperRequireAuth(__FILE__, 'submitsotg', 'token');
 
+// $token and $teamId are set up by spiritkeeper/index.php before this file
+// is included; spiritkeeperRequireAuth() above blocks direct access.
+/** @var string $token */
+/** @var int $teamId */
+
 $pageHtml = "";
 $gameId = GetInt('game');
 $game = SpiritTokenGame($gameId, $teamId);

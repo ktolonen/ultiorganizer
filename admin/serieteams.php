@@ -11,6 +11,9 @@ $LAYOUT_ID = SERIETEAMS;
 $backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 
 $seriesId = 0;
+$poolId = 0;
+$season = "";
+$PlayoffOK = 0;
 if (!empty($_GET["pool"])) {
     $poolId = intval($_GET["pool"]);
 }
@@ -61,7 +64,7 @@ if (!empty($_POST['save'])) {
                 }
             }
             if ($found) {
-                PoolSetTeam($poolId, $team['team_id'], $rank, $poolId);
+                PoolSetTeam($poolId, $selId, $rank, $poolId);
             } else {
                 PoolAddTeam($poolId, $selId, $rank, true);
             }

@@ -7,6 +7,22 @@ $LAYOUT_ID = EXECUTESQL;
 $title = _("Run SQL");
 $query = "";
 $html = "";
+$result = null;
+$isSelect = false;
+$isShow = false;
+$arraycolumnsname = [];
+$arraycolumnstype = [];
+$arraycolumnstable = [];
+$arraycolumnsdefault = [];
+$arraycolumnsmaxlength = [];
+$arraycolumnsnotnull = [];
+$arraycolumnsprimarykey = [];
+$arraycolumnsmultiplekey = [];
+$arraycolumnsuniquekey = [];
+$arraycolumnsnumeric = [];
+$arraycolumnsblob = [];
+$arraycolumnsunsigned = [];
+$arraycolumnszerofill = [];
 
 // process itself on submit
 // Fetch querydata to be presented later
@@ -23,15 +39,11 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
         }
         $isSelect = (strpos(strtolower($query), "select") === 0);
         $isShow = (strpos(strtolower($query), "show") === 0);
-        $isUpdate = (strpos(strtolower($query), "update") === 0);
-        $isSet = (strpos(strtolower($query), "set") === 0);
-        $isDelete = (strpos(strtolower($query), "delete") === 0);
-        $arraycolumnsname = [];
         if (isSuperAdmin()) {
             $result = DBQuery($query);
         }
 
-        if ($isSelect || $isShow) {
+        if (($isSelect || $isShow) && $result instanceof mysqli_result) {
             $i = 0;
             while ($i < mysqli_num_fields($result)) {
                 $meta = mysqli_fetch_field($result);
@@ -59,7 +71,7 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
 
     $html .= "<form method='post' action='?view=admin/executesql'>";
 
-    if (!empty($result)) {
+    if ($result !== null) {
         $html .= "<table>";
         $html .= "<tr>";
         foreach ($arraycolumnsname as $i => $columnname) {
@@ -105,7 +117,7 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
             }
         } else {
             $html .= "<tr>";
-            $html .= "<td>" . $result . "</td>";
+            $html .= "<td>OK</td>";
             $html .= "</tr>";
         }
 

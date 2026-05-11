@@ -74,7 +74,7 @@ function StripFromQueryString($query_string, $needle)
 
 function SafeDivide($dividend, $divisor)
 {
-    if (!isset($divisor) || is_null($divisor) || $divisor == 0) {
+    if (!isset($divisor) || $divisor == 0) {
         $result = 0;
     } else {
         $result = $dividend / $divisor;
@@ -88,7 +88,7 @@ function SecToMin($sec)
     $s = intval($sec);
     $str = $s % 60;
 
-    if (strlen($str) == 1) {
+    if ($str < 10) {
         $str = "0" . $str;
     }
 
@@ -410,7 +410,7 @@ function validEmail($email)
 
     $isValid = true;
     $atIndex = strrpos($email, "@");
-    if (is_bool($atIndex) && !$atIndex) {
+    if ($atIndex === false) {
         $isValid = false;
     } else {
         $domain = substr($email, $atIndex + 1);
@@ -497,7 +497,7 @@ function getChkNum($sNum)
     $sNum = str_split($sNum);
     $chkSum = 0;
     for ($i = $sNumLen - 1; $i >= 0; --$i) {
-        $chkSum += $sNum[$i] * $multipliers[($sNumLen - 1 - $i) % 3];
+        $chkSum += (int) $sNum[$i] * $multipliers[($sNumLen - 1 - $i) % 3];
     }
     return (10 - $chkSum % 10) % 10;
 }
@@ -725,7 +725,7 @@ function colorstring2rgb($color)
 # Does not accept comments after values
 if (!function_exists('parse_ini_string')) {
 
-    function parse_ini_string($string)
+    function parse_ini_string($string, $process_sections = false, $scanner_mode = INI_SCANNER_NORMAL)
     {
         $array = [];
 
@@ -799,12 +799,8 @@ function ResultsetToCsv($result, $separator)
         for ($j = 0; $j < $fields_cnt; $j++) {
             if ($row[$j] == '0' || $row[$j] != '') {
 
-                if ($csv_enclosed == '') {
-                    $schema_insert .= $row[$j];
-                } else {
-                    $schema_insert .= $csv_enclosed .
-                        str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $row[$j]) . $csv_enclosed;
-                }
+                $schema_insert .= $csv_enclosed .
+                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $row[$j]) . $csv_enclosed;
             } else {
                 $schema_insert .= '';
             }
@@ -856,12 +852,8 @@ function ArrayToCsv($result, $separator)
         foreach ($row as $value) {
             if ($value == '0' || $value != '') {
 
-                if ($csv_enclosed == '') {
-                    $schema_insert .= $value;
-                } else {
-                    $schema_insert .= $csv_enclosed .
-                        str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $value) . $csv_enclosed;
-                }
+                $schema_insert .= $csv_enclosed .
+                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $value) . $csv_enclosed;
             } else {
                 $schema_insert .= '';
             }
@@ -891,6 +883,7 @@ function CreateOrdering($tables, $orderby)
         $check = $orderby;
     }
 
+    $fields = [];
     if (is_array($tables)) {
         foreach ($tables as $table => $alias) {
             $fields[$alias] = GetTableColumns($table);
@@ -899,7 +892,7 @@ function CreateOrdering($tables, $orderby)
         $fields[$tables] = GetTableColumns($tables);
     }
     $ret = "";
-    foreach ($orderby as $field => $direction) {
+    foreach ($check as $field => $direction) {
         if (is_numeric($field)) {
             $field = $direction;
             $direction = "ASC";
@@ -923,9 +916,7 @@ function CreateOrdering($tables, $orderby)
         if (!isset($tableFields[$field])) {
             die("Invalid field '" . $field . "'");
         }
-        if (isset($table)) {
-            $field = $table . "." . $field;
-        }
+        $field = $table . "." . $field;
         $ret .= ", " . $field . " " . $direction;
     }
     if (strlen($ret) > 0) {
@@ -947,6 +938,7 @@ function CreateFilter($tables, $filter)
     } else {
         $fields[$tables] = GetTableColumns($tables);
     }
+    $ret = "";
     if (isset($filter["field"])) {
         $ret = _handleCriteria($filter, $fields);
     } elseif (isset($filter["join"])) {
@@ -1111,9 +1103,7 @@ function _handleFieldName($field, $fields)
         die("Invalid field '" . $field . "'");
     }
     $type = $tableFields[$field];
-    if (isset($table)) {
-        $field = $table . "." . $field;
-    }
+    $field = $table . "." . $field;
     return [$field, $type];
 }
 
@@ -1131,7 +1121,7 @@ function _handleFunction($filter, $fields)
     $finalArgs = [];
     foreach ($args as $nextarg) {
         if (!is_array($nextarg)) {
-            die("Invalid function argument " . $nextarg);
+            die("Invalid function argument " . var_export($nextarg, true));
         }
         if (isset($nextarg['field'])) {
             $fieldAndType = _handleFieldName($nextarg['field'], $fields);
@@ -1139,7 +1129,7 @@ function _handleFunction($filter, $fields)
         } elseif (isset($nextarg['value']) && isset($nextarg['type'])) {
             $finalArgs[] = _handleLiteral("=", $nextarg['type'], $nextarg['value']);
         } else {
-            die("Invalid function argument " . $nextarg);
+            die("Invalid function argument " . var_export($nextarg, true));
         }
     }
     $ret = $func . "(" . implode(', ', $finalArgs) . ")";
@@ -1260,8 +1250,8 @@ function startsWith($haystack, $needle)
 /**
  * returns the English ordinal of an integer
  *
- * @param  integer   a number
- * @return string    the ordinal number in the current locale
+ * @param int $number a number
+ * @return string the ordinal number in the current locale
  */
 
 function ordinal($number)
@@ -1449,9 +1439,9 @@ function CommentHTML($type, $id)
  * Sets or deletes a comment.
  *
  * @param int $type The type of entity. 1: season, 2: series, 3: pool.
- * @param string $id The id of the season, series, or pool.
+ * @param int|string $id The id of the season, series, or pool.
  * @param string $comment the new value or an empty string or null if the comment should be deleted.
- * @return true if the query was successfull, false otherwise
+ * @return bool true if the query was successful, false otherwise
  */
 function SetComment($type, $id, $comment)
 {
@@ -1472,7 +1462,7 @@ function SetComment($type, $id, $comment)
             DBEscapeString($comment),
         );
     }
-    return DBQuery($query);
+    return DBExecute($query);
 }
 
 /**
