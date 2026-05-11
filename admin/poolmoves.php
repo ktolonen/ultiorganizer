@@ -154,20 +154,20 @@ if (!empty($_POST['add'])) {
 
     if ($poolinfo['type'] == 1) {
         $move = preg_split('/:/', $_POST['hiddenDeleteId']);
-        if (PoolIsMoved($move[0], $move[1])) {
+        if (PoolIsMoved((int) $move[0], (int) $move[1])) {
             $err .= "<p class='warning'>" . _("Team has already moved.") . "</p>\n";
         } else {
-            PoolDeleteMove($move[0], $move[1]);
+            PoolDeleteMove((int) $move[0], (int) $move[1]);
         }
     } else {
         $moves = preg_split('/:/', $_POST['hiddenDeleteId']);
 
         foreach ($moves as $m) {
             $move = preg_split('/,/', $m);
-            if (PoolIsMoved($move[0], $move[1])) {
+            if (PoolIsMoved((int) $move[0], (int) $move[1])) {
                 $err .= "<p class='warning'>" . _("Team has already moved.") . "</p>\n";
             } else {
-                PoolDeleteMove($move[0], $move[1]);
+                PoolDeleteMove((int) $move[0], (int) $move[1]);
             }
         }
     }

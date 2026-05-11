@@ -65,7 +65,7 @@ foreach ($places as $placeGameStr) {
     if (intval($games[0]) != 0) {
 
         ClearReservation($games[0]);
-        $resInfo = ReservationInfo($games[0]);
+        $resInfo = ReservationInfo((int) $games[0]);
         $firstStart = strtotime($resInfo['starttime']);
         $resEnd = strtotime($resInfo['endtime']);
         for ($i = 1; $i < count($games); $i++) {

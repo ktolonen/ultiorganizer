@@ -254,7 +254,7 @@ class PDF extends tFPDF implements SchedulePdf
                 $i = 0;
 
                 for ($i = 0, $slot = $startslot; $i < max(3, $numslots); $i++) {
-                    $timeslots[date("H:i", $slot)] = $i * $gridy;
+                    $timeslots[date("H:i", (int) $slot)] = $i * $gridy;
                     $slot = $slot + 60 * 30;
                 }
                 //foreach($times as $time){

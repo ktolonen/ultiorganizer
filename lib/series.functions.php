@@ -745,8 +745,8 @@ function SeriesEnrolledTeamsByUser($seriesId, $userid)
  * @param int $seriesId uo_series.series_id
  * @param string $userid uo_user.userid will be granted as team admin.
  * @param string $name name of team
- * @param int $club uo_club.club_id
- * @param int $country uo_country.country_id
+ * @param string $club club name stored in uo_enrolledteam.clubname
+ * @param string $country country name stored in uo_enrolledteam.countryname
  * @return int uo_enrolledteam.id
  */
 function AddSeriesEnrolledTeam($seriesId, $userid, $name, $club, $country)

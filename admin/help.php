@@ -3,9 +3,9 @@
 include_once __DIR__ . '/auth.php';
 
 $html = "";
-$print = 0;
+$print = false;
 if (!empty($_GET["print"])) {
-    $print = intval($_GET["print"]);
+    $print = (bool) $_GET["print"];
 }
 //common page
 $title = _("Helps");

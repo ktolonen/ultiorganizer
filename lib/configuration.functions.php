@@ -249,7 +249,7 @@ function getAvailableLocalizations()
     global $include_prefix;
     $localizations = [];
     $temp = scandir($include_prefix . "locale/");
-    $currentLocale = setlocale(LC_MESSAGES, 0);
+    $currentLocale = setlocale(LC_MESSAGES, "0");
     $fallbackEnglishLocale = 'en_GB.utf8';
 
     foreach ($temp as $fh) {

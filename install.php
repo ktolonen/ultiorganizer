@@ -523,7 +523,7 @@ function installHashPassword($password)
     {
         $localizations = [];
         $temp = @scandir("locale/");
-        $currentLocale = setlocale(LC_MESSAGES, 0);
+        $currentLocale = setlocale(LC_MESSAGES, "0");
         $fallbackEnglishLocale = 'en_GB.utf8';
 
         if ($temp !== false) {

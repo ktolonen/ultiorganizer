@@ -88,7 +88,7 @@ function SecToMin($sec)
     $s = intval($sec);
     $str = $s % 60;
 
-    if (strlen($str) == 1) {
+    if ($str < 10) {
         $str = "0" . $str;
     }
 
@@ -1439,7 +1439,7 @@ function CommentHTML($type, $id)
  * Sets or deletes a comment.
  *
  * @param int $type The type of entity. 1: season, 2: series, 3: pool.
- * @param string $id The id of the season, series, or pool.
+ * @param int|string $id The id of the season, series, or pool.
  * @param string $comment the new value or an empty string or null if the comment should be deleted.
  * @return bool true if the query was successful, false otherwise
  */

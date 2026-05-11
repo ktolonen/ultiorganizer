@@ -1672,7 +1672,7 @@ function SetPool($poolId, $params)
  * Sets pool visibility (= shown for public or not)
  *
  * @param int $poolId
- * @param int $visible: 0 hidden, 1 visible
+ * @param bool|int $visible: 0/false hidden, 1/true visible
  */
 function SetPoolVisibility($poolId, $visible)
 {
@@ -2553,7 +2553,7 @@ function GeneratePlayoffPools($poolId, $generate = true)
 
                 if ($specialmoves) { // use specialmoves from HTML comment
                     for ($j = 0; $j < $realteams; $j++) {
-                        $frompos = $moves[$i - 1][$j];
+                        $frompos = (int) $moves[$i - 1][$j];
                         if ($frompos == $realteams && $realteams > $teams) { // in case of odd number of teams
                             $movename = $prevname . " Team " . $realteams;
                         } elseif (is_odd($frompos)) {
@@ -2564,7 +2564,7 @@ function GeneratePlayoffPools($poolId, $generate = true)
                         PoolAddMove($prevpoolId, $id, $frompos, $j + 1, $movename);
 
                         if ($i == $rounds - 1) { // add also the special ranking moves
-                            AddSpecialRankingRule($id, $moves[$i][$j], $j + 1, " Rank " . ($j + 1));
+                            AddSpecialRankingRule($id, (int) $moves[$i][$j], $j + 1, " Rank " . ($j + 1));
                         }
                     }
                 } else { // do standard moves as before
