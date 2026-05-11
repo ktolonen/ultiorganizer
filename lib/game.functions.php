@@ -1682,11 +1682,9 @@ function GameProcessMassInput($post)
         $html .= "<p>" . sprintf(_("Errors: %s."), ($error_clear + $error_set)) . "</p>";
     }
 
-    foreach ($changed as $poolId => $ok) {
-        if ($ok > 0) {
-            ResolvePoolStandings($poolId);
-            PoolResolvePlayed($poolId);
-        }
+    foreach ($changed as $poolId => $_) {
+        ResolvePoolStandings($poolId);
+        PoolResolvePlayed($poolId);
     }
 
     return $html;

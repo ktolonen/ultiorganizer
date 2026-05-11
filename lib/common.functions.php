@@ -74,7 +74,7 @@ function StripFromQueryString($query_string, $needle)
 
 function SafeDivide($dividend, $divisor)
 {
-    if (!isset($divisor) || is_null($divisor) || $divisor == 0) {
+    if (!isset($divisor) || $divisor == 0) {
         $result = 0;
     } else {
         $result = $dividend / $divisor;
@@ -410,7 +410,7 @@ function validEmail($email)
 
     $isValid = true;
     $atIndex = strrpos($email, "@");
-    if (is_bool($atIndex) && !$atIndex) {
+    if ($atIndex === false) {
         $isValid = false;
     } else {
         $domain = substr($email, $atIndex + 1);
@@ -799,12 +799,8 @@ function ResultsetToCsv($result, $separator)
         for ($j = 0; $j < $fields_cnt; $j++) {
             if ($row[$j] == '0' || $row[$j] != '') {
 
-                if ($csv_enclosed == '') {
-                    $schema_insert .= $row[$j];
-                } else {
-                    $schema_insert .= $csv_enclosed .
-                        str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $row[$j]) . $csv_enclosed;
-                }
+                $schema_insert .= $csv_enclosed .
+                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $row[$j]) . $csv_enclosed;
             } else {
                 $schema_insert .= '';
             }
@@ -856,12 +852,8 @@ function ArrayToCsv($result, $separator)
         foreach ($row as $value) {
             if ($value == '0' || $value != '') {
 
-                if ($csv_enclosed == '') {
-                    $schema_insert .= $value;
-                } else {
-                    $schema_insert .= $csv_enclosed .
-                        str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $value) . $csv_enclosed;
-                }
+                $schema_insert .= $csv_enclosed .
+                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $value) . $csv_enclosed;
             } else {
                 $schema_insert .= '';
             }

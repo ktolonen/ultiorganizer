@@ -22,10 +22,7 @@ $season = "";
 $lastown = 'http://';
 
 $baseurl = GetURLBase();
-$defaultcss = "default";
-if (CUSTOMIZATIONS) {
-    $defaultcss = CUSTOMIZATIONS;
-}
+$defaultcss = CUSTOMIZATIONS ?: "default";
 
 $styles = [urlencode("$baseurl/ext/$defaultcss.css"), urlencode("$baseurl/ext/black.css"), urlencode("$baseurl/ext/noborder.css")];
 $stylenames = [_("default"), _("black and white"), _("no borders")];

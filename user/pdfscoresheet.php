@@ -100,14 +100,13 @@ if ($games === null) {
 }
 
 $pdf = new PDF();
+// @phpstan-ignore instanceof.alwaysTrue, instanceof.alwaysFalse (PDF resolves through runtime customization includes)
 if (!$pdf instanceof ScoreSheetPdf) {
     throw new UnexpectedValueException('Scoresheet PDF customization must implement ScoreSheetPdf.');
 }
-$scoreSheetAcceptsPlayerLists = false;
-if (method_exists($pdf, 'PrintScoreSheet')) {
-    $printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
-    $scoreSheetAcceptsPlayerLists = $printScoreSheet->getNumberOfParameters() >= 9;
-}
+// @phpstan-ignore deadCode.unreachable
+$printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
+$scoreSheetAcceptsPlayerLists = $printScoreSheet->getNumberOfParameters() >= 9;
 
 if ($teamId) {
     $seasonSlug = pdf_slug(TeamSeason($teamId));

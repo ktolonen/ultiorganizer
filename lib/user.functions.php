@@ -277,9 +277,7 @@ function SetUserSessionData($user_id)
     );
     $result = DBQuery($query);
 
-    if (!isset($_SESSION['userproperties'])) {
-        $_SESSION['userproperties'] = [];
-    }
+    $_SESSION['userproperties'] = [];
 
     while ($property = mysqli_fetch_assoc($result)) {
         $propname = $property['name'];
@@ -642,10 +640,8 @@ function hasCurrentSeasonsEditRight()
 {
     $seasons = EnrollSeasons();
     $seasons[] = CurrentSeason();
-    $ret = false;
     foreach ($seasons as $season) {
-        $ret = $ret || isSeasonAdmin($season);
-        if ($ret) {
+        if (isSeasonAdmin($season)) {
             return true;
         }
     }

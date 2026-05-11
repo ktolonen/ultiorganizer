@@ -54,67 +54,65 @@ if (is_numeric($profile['num'])) {
 }
 $html .= "<p>" . _("Team") . ": <a class='headerlink' href='?view=teamcard&amp;team=" . $player['team'] . "'>" . utf8entities($player['teamname']) . "</a></p>";
 
-if ($profile) {
-    $publicfields = explode("|", $profile['public']);
-    $html .= "<table style='width:100%'>";
+$publicfields = explode("|", $profile['public']);
+$html .= "<table style='width:100%'>";
 
-    if (!empty($profile['profile_image']) && in_array("profile_image", $publicfields)) {
-        $html .= "<tr><td style='width:125px'><a href='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/" . $profile['profile_image'] . "'>";
-        $html .= "<img src='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/thumbs/" . $profile['profile_image'] . "' alt='" . _("Profile image") . "'/></a></td>\n";
-    } else {
-        $html .= "<tr><td></td>";
-    }
-
-    $html .= "<td style='vertical-align:top;text-align:left'><table>";
-    $html .= "<tr><td></td></tr>";
-    if (!empty($profile['nickname']) && in_array("nickname", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Nickname") . ":</td>";
-        $html .= "<td>" . utf8entities($profile['nickname']) . "</td></tr>\n";
-    }
-    if (isset($profile['birthdate']) && !isEmptyDate($profile['birthdate']) && in_array("birthdate", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Date of birth") . ":</td>";
-        $html .= "<td>" . ShortDate($profile['birthdate']) . "</td></tr>\n";
-    }
-    if (!empty($profile['birthplace']) && in_array("birthplace", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Place of birth") . ":</td>";
-        $html .= "<td>" . utf8entities($profile['birthplace']) . "</td></tr>\n";
-    }
-    if (!empty($profile['nationality']) && in_array("nationality", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Nationality") . ":</td>";
-        $html .= "<td>" . utf8entities($profile['nationality']) . "</td></tr>\n";
-    }
-    if (!empty($profile['throwing_hand']) && in_array("throwing_hand", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Hand") . ":</td>";
-        $html .= "<td>" . U_($profile['throwing_hand']) . "</td></tr>\n";
-    }
-    if (!empty($profile['height']) && in_array("height", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Height") . ":</td>";
-        $html .= "<td>" . utf8entities($profile['height']) . " " . _("cm") . "</td></tr>\n";
-    }
-    if (!empty($profile['weight']) && in_array("weight", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Weight") . ":</td>";
-        $html .= "<td>" . utf8entities($profile['weight']) . " " . _("kg") . "</td></tr>\n";
-    }
-    if (!empty($profile['position']) && in_array("position", $publicfields)) {
-        $html .= "<tr><td class='profileheader'>" . _("Position") . ":</td>";
-        $html .= "<td>" . utf8entities($profile['position']) . "</td></tr>\n";
-    }
-    $html .= "</table>";
-    $html .= "</td></tr>";
-
-    if (!empty($profile['story']) && in_array("story", $publicfields)) {
-        $story = someHTML($profile['story']);
-        $html .= "<tr><td colspan='2'>" . $story . "</td></tr>\n";
-    }
-    if (!empty($profile['achievements']) && in_array("achievements", $publicfields)) {
-        $html .= "<tr><td colspan='2'>&nbsp;</td></tr>\n";
-        $html .= "<tr><td colspan='2'  class='profileheader'>" . _("Achievements") . ":</td></tr>\n";
-        $html .= "<tr><td colspan='2'></td></tr>\n";
-        $achievements = someHTML($profile['achievements']);
-        $html .= "<tr><td colspan='2'>" . $achievements . "</td></tr>\n";
-    }
-    $html .= "</table>";
+if (!empty($profile['profile_image']) && in_array("profile_image", $publicfields)) {
+    $html .= "<tr><td style='width:125px'><a href='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/" . $profile['profile_image'] . "'>";
+    $html .= "<img src='" . UPLOAD_DIR . "players/" . $player['profile_id'] . "/thumbs/" . $profile['profile_image'] . "' alt='" . _("Profile image") . "'/></a></td>\n";
+} else {
+    $html .= "<tr><td></td>";
 }
+
+$html .= "<td style='vertical-align:top;text-align:left'><table>";
+$html .= "<tr><td></td></tr>";
+if (!empty($profile['nickname']) && in_array("nickname", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Nickname") . ":</td>";
+    $html .= "<td>" . utf8entities($profile['nickname']) . "</td></tr>\n";
+}
+if (isset($profile['birthdate']) && !isEmptyDate($profile['birthdate']) && in_array("birthdate", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Date of birth") . ":</td>";
+    $html .= "<td>" . ShortDate($profile['birthdate']) . "</td></tr>\n";
+}
+if (!empty($profile['birthplace']) && in_array("birthplace", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Place of birth") . ":</td>";
+    $html .= "<td>" . utf8entities($profile['birthplace']) . "</td></tr>\n";
+}
+if (!empty($profile['nationality']) && in_array("nationality", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Nationality") . ":</td>";
+    $html .= "<td>" . utf8entities($profile['nationality']) . "</td></tr>\n";
+}
+if (!empty($profile['throwing_hand']) && in_array("throwing_hand", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Hand") . ":</td>";
+    $html .= "<td>" . U_($profile['throwing_hand']) . "</td></tr>\n";
+}
+if (!empty($profile['height']) && in_array("height", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Height") . ":</td>";
+    $html .= "<td>" . utf8entities($profile['height']) . " " . _("cm") . "</td></tr>\n";
+}
+if (!empty($profile['weight']) && in_array("weight", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Weight") . ":</td>";
+    $html .= "<td>" . utf8entities($profile['weight']) . " " . _("kg") . "</td></tr>\n";
+}
+if (!empty($profile['position']) && in_array("position", $publicfields)) {
+    $html .= "<tr><td class='profileheader'>" . _("Position") . ":</td>";
+    $html .= "<td>" . utf8entities($profile['position']) . "</td></tr>\n";
+}
+$html .= "</table>";
+$html .= "</td></tr>";
+
+if (!empty($profile['story']) && in_array("story", $publicfields)) {
+    $story = someHTML($profile['story']);
+    $html .= "<tr><td colspan='2'>" . $story . "</td></tr>\n";
+}
+if (!empty($profile['achievements']) && in_array("achievements", $publicfields)) {
+    $html .= "<tr><td colspan='2'>&nbsp;</td></tr>\n";
+    $html .= "<tr><td colspan='2'  class='profileheader'>" . _("Achievements") . ":</td></tr>\n";
+    $html .= "<tr><td colspan='2'></td></tr>\n";
+    $achievements = someHTML($profile['achievements']);
+    $html .= "<tr><td colspan='2'>" . $achievements . "</td></tr>\n";
+}
+$html .= "</table>";
 
 $urls = GetUrlList("player", $profileId);
 if (count($urls)) {

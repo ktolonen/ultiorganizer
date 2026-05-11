@@ -170,7 +170,7 @@ function FindExistingPlayerProfileId($profile)
     };
 
     $accreditationMatchId = 0;
-    if (!empty($accreditationId) && $accreditationId !== "0") {
+    if (!empty($accreditationId)) {
         $condition = sprintf("pr.accreditation_id='%s'", DBEscapeString($accreditationId));
         if ($matchCount($condition) > 0) {
             $accreditationMatchId = $bestMatchId($condition);

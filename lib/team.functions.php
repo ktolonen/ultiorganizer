@@ -1428,7 +1428,7 @@ function AddTeam($params)
 {
     if (hasEditTeamsRight($params['series'])) {
         $poolValue = !empty($params['pool']) ? (int) $params['pool'] : "NULL";
-        $regIdValue = (isset($params['reg_id']) && $params['reg_id'] !== '' && $params['reg_id'] !== null)
+        $regIdValue = (isset($params['reg_id']) && $params['reg_id'] !== '')
           ? (string) (int) $params['reg_id']
           : "NULL";
         $query = sprintf(

@@ -85,7 +85,7 @@ $help = "<p>" . _("Modify translations") . ":</p>
 		<li> " . _("The key is case insensitive") . " </li>
 	</ol>";
 
-onPageHelpAvailable($help);
+echo onPageHelpAvailable($help);
 
 //content
 echo "<h2>" . _("Translations") . "</h2>\n";

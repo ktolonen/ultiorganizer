@@ -312,7 +312,7 @@ if ($list == "allteams" || $list == "byseeding") {
             $html .= "<td>" . _("Silver") . "</td>";
         } elseif ($i == 2) {
             $html .= "<td>" . _("Bronze") . "</td>";
-        } elseif ($i > 2) {
+        } else {
             $html .= "<td>" . ordinal($i + 1) . "</td>";
         }
 

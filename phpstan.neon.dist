@@ -35,6 +35,12 @@ parameters:
     ignoreErrors:
         -
             message: '#^Variable \$include_prefix might not be defined\.$#'
+        -
+            # Intentional xgettext registration markers - strings have no runtime function.
+            message: '#^Call to function _\(\) on a separate line has no effect\.$#'
+            paths:
+                - sql/upgrade_db.php
+                - user/playerprofile.php
     parallel:
         maximumNumberOfProcesses: 4
     treatPhpDocTypesAsCertain: false

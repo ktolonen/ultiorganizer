@@ -9,7 +9,9 @@
 // Loaded via bootstrapFiles in phpstan.neon.dist.
 
 if (!defined('CUSTOMIZATIONS')) {
-    define('CUSTOMIZATIONS', 'default');
+    // Use an env lookup so PHPStan infers string without pinning a literal value;
+    // pinning 'default' causes false-positive "always false" warnings for other skin checks.
+    define('CUSTOMIZATIONS', (string) ($_ENV['CUSTOMIZATIONS'] ?? 'default'));
 }
 
 if (!defined('UPLOAD_DIR')) {
@@ -34,6 +36,20 @@ if (!defined('DB_PASSWORD')) {
 
 if (!defined('DB_DATABASE')) {
     define('DB_DATABASE', '');
+}
+
+if (!defined('ALLOW_INSTALL')) {
+    // Use an env lookup so PHPStan infers bool without pinning true;
+    // the local conf/config.inc.php sets this to true, which causes false-positive
+    // "always false" warnings on the !defined('ALLOW_INSTALL') guard.
+    define('ALLOW_INSTALL', (bool) ($_ENV['ALLOW_INSTALL'] ?? false));
+}
+
+if (!defined('ANONYMOUS_RESULT_INPUT')) {
+    // Use an env lookup so PHPStan infers bool without pinning true/false;
+    // the local conf/config.inc.php sets this to true, which causes false-positive
+    // "always true" warnings on the defined() && CONSTANT guard pattern.
+    define('ANONYMOUS_RESULT_INPUT', (bool) ($_ENV['ANONYMOUS_RESULT_INPUT'] ?? false));
 }
 
 if (!defined('DATE_FORMAT')) {

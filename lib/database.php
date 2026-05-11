@@ -722,9 +722,6 @@ function DBClientInfo()
 {
     global $mysqlconnectionref;
     $info = mysqli_get_client_info();
-    if ($info === false) {
-        die('Invalid result' . "<br/>\n" . mysqli_error($mysqlconnectionref));
-    }
     return $info;
 }
 
@@ -761,7 +758,7 @@ function DBServerInfo()
 /**
  * Return the MySQL protocol version used by the connection.
  *
- * @return int|string
+ * @return int
  */
 function DBProtocolInfo()
 {

@@ -33,7 +33,7 @@ $html = "";
 $title = ("Import FFindr data from XML-file");
 $seasonId = "";
 
-if (isset($_POST['add']) && isSuperAdmin()) {
+if (isset($_POST['add'])) {
     if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
 
         $templine = '';

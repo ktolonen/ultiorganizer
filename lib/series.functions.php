@@ -747,7 +747,7 @@ function SeriesEnrolledTeamsByUser($seriesId, $userid)
  * @param string $name name of team
  * @param int $club uo_club.club_id
  * @param int $country uo_country.country_id
- * @return int|null uo_enrolledteam.id
+ * @return int uo_enrolledteam.id
  */
 function AddSeriesEnrolledTeam($seriesId, $userid, $name, $club, $country)
 {

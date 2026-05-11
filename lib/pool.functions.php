@@ -295,15 +295,13 @@ function PoolPlacementString($poolId, $pos, $ordinal = true)
         }
 
         if ($ordinal) {
-            if ($placementfrom == 0) {
-                $ret = "";
-            } elseif ($placementfrom == 1) {
+            if ($placementfrom == 1) {
                 $ret = _("Gold");
             } elseif ($placementfrom == 2) {
                 $ret = _("Silver");
             } elseif ($placementfrom == 3) {
                 $ret = _("Bronze");
-            } elseif ($placementfrom > 3) {
+            } else {
                 $ret = ordinal($placementfrom);
             }
         } else {
@@ -339,7 +337,7 @@ function PoolSchedulingTeams($poolId)
  * @param int $poolId uo_pool.pool_id
  * @param string $sorting one of: "total", "goal", "pass", "games", "team", "name", "callahan"
  * @param int $limit Numbers of rows returned, 0 if unlimited
- * @return mysqli_result|false result set of players.
+ * @return mysqli_result result set of players.
  */
 function PoolScoreBoard($poolId, $sorting, $limit)
 {
@@ -1288,7 +1286,7 @@ function PoolMovedGames($poolId)
  * Get number of games played in given pool.
  *
  * @param int $poolId
- * @return Number of games played
+ * @return int number of games played
  */
 function PoolTotalPlayedGames($poolId)
 {
@@ -1542,7 +1540,7 @@ function PoolColors()
  * @param string $name - Pool name
  * @param string $ordering - Pool order
  * @param int $poolTemplateId - Pool template
- * @return int|null id of the created pool.
+ * @return int id of the created pool.
  */
 function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
 {

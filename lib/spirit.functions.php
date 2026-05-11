@@ -1270,7 +1270,7 @@ function SpiritToCsv($season, $separator)
     if (!$showSpiritPoints) {
         die(_("Spirit scores are not visible."));
     }
-    $showSpiritComments = $showSpiritPoints && ShowSpiritComments($seasoninfo);
+    $showSpiritComments = ShowSpiritComments($seasoninfo);
     $rows = SpiritToolRowsBySeason($season);
     $result = [];
 

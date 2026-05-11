@@ -47,35 +47,6 @@ class PDF extends tFPDF_CellFit implements SchedulePdf
         return (string) $text;
     }
 
-    private function onePageScheduleGridBounds($times)
-    {
-        $firstTime = null;
-        $lastTime = null;
-
-        foreach ($times as $time) {
-            $timestamp = strtotime($time['time'] ?? '');
-            if ($timestamp === false) {
-                continue;
-            }
-            if ($firstTime === null || $timestamp < $firstTime) {
-                $firstTime = $timestamp;
-            }
-            if ($lastTime === null || $timestamp > $lastTime) {
-                $lastTime = $timestamp;
-            }
-        }
-
-        if ($firstTime === null) {
-            return [9, 0, 13 * 60 + 1];
-        }
-
-        $startTimestamp = strtotime(date('Y-m-d H:00:00', $firstTime));
-        $endTimestamp = max($startTimestamp + 13 * 60 * 60, $lastTime + 2 * 60 * 60);
-        $slots = (int) ceil(($endTimestamp - $startTimestamp) / 60) + 1;
-
-        return [(int) date('G', $startTimestamp), 0, $slots];
-    }
-
     private function onePageScheduleFieldKey($game)
     {
         $field = trim((string) ($game['fieldname'] ?? ''));

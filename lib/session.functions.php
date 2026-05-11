@@ -13,25 +13,21 @@ function startSecureSession()
     }
 
     $cookie = session_get_cookie_params();
-    $path = isset($cookie['path']) ? $cookie['path'] : '/';
-    $domain = isset($cookie['domain']) ? $cookie['domain'] : '';
+    $path = $cookie['path'];
+    $domain = $cookie['domain'];
     $secure = isHttpsRequest();
     $httponly = true;
     $lifetime = 0;
     $samesite = 'Lax';
 
-    if (PHP_VERSION_ID >= 70300) {
-        session_set_cookie_params([
-            'lifetime' => $lifetime,
-            'path' => $path,
-            'domain' => $domain,
-            'secure' => $secure,
-            'httponly' => $httponly,
-            'samesite' => $samesite,
-        ]);
-    } else {
-        session_set_cookie_params($lifetime, $path . '; SameSite=' . $samesite, $domain, $secure, $httponly);
-    }
+    session_set_cookie_params([
+        'lifetime' => $lifetime,
+        'path' => $path,
+        'domain' => $domain,
+        'secure' => $secure,
+        'httponly' => $httponly,
+        'samesite' => $samesite,
+    ]);
 
     session_name('UO_SESSID');
     session_start();

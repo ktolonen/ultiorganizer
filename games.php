@@ -233,9 +233,11 @@ if ($format == "pdf") {
     $layout = $filter == "onepage" ? "grid" : "list";
     $filename = "schedule-" . $layout . "-" . pdf_slug($nameLabel) . ".pdf";
     $pdf = new PDF();
+    // @phpstan-ignore instanceof.alwaysFalse, instanceof.alwaysTrue (PDF resolves through runtime customization includes)
     if (!$pdf instanceof SchedulePdf) {
         throw new UnexpectedValueException('Schedule PDF customization must implement SchedulePdf.');
     }
+    // @phpstan-ignore deadCode.unreachable
     if ($filter == "onepage") {
         $pdf->PrintOnePageSchedule($gamefilter, $id, $games);
     } else {

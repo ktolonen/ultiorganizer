@@ -21,6 +21,7 @@ class PDF extends tFPDF_CellFit implements ScoreSheetPdf
     public $isMixed = true;
     public $homefullname = "";
     public $visitorfullname = "";
+    public $printCoachRow = false;
 
 
     public $game = [
@@ -31,6 +32,8 @@ class PDF extends tFPDF_CellFit implements ScoreSheetPdf
         "poolname" => "",
         "time" => "",
         "placename" => "",
+        "homecoach" => "",
+        "visitorcoach" => "",
     ];
 
     public function __construct($orientation = 'P', $unit = 'mm', $size = 'A4')
@@ -96,13 +99,15 @@ class PDF extends tFPDF_CellFit implements ScoreSheetPdf
             $this->game['visitorshortname'] = _("Away");
         }
 
-        // get coaches names
-        /*
-        $hometeamprofile = TeamProfile($hometeamid);
-        $visitorteamprofile = TeamProfile($visitorteamid);
-        $this->game['homecoach'] = $hometeamprofile['coach'];
-        $this->game['visitorcoach'] = $visitorteamprofile['coach'];
-        */
+        // Optional WFDF scoresheet evolution: enable when an event wants coaches
+        // printed in the final player-list row.
+        // @phpstan-ignore if.alwaysFalse
+        if ($this->printCoachRow) {
+            $hometeamprofile = TeamProfile($hometeamid);
+            $visitorteamprofile = TeamProfile($visitorteamid);
+            $this->game['homecoach'] = is_array($hometeamprofile) ? (string) ($hometeamprofile['coach'] ?? '') : '';
+            $this->game['visitorcoach'] = is_array($visitorteamprofile) ? (string) ($visitorteamprofile['coach'] ?? '') : '';
+        }
 
         // get reservation group
         $this->game['reservation_group'] = "";
@@ -161,6 +166,7 @@ class PDF extends tFPDF_CellFit implements ScoreSheetPdf
         // print players lists on front page
         $this->PrintPlayerList($homeplayers, $visitorplayers);
 
+        // @phpstan-ignore if.alwaysFalse (show_note is set to true by PrintPlayerList when non-accredited players exist; PHPStan cannot track cross-method property mutation)
         if ($this->show_note) {
             $this->SetFont('Arial', 'IB', 10);
             $this->SetTextColor(0);
@@ -582,15 +588,15 @@ class PDF extends tFPDF_CellFit implements ScoreSheetPdf
                 $vnumber = $visitorplayers[$i - 1]['num'];
             }
             $this->SetFont('Arial', '', 10);
+            // @phpstan-ignore booleanAnd.leftAlwaysFalse
+            $coachRow = $this->printCoachRow && $i === 28 && ($this->game['homecoach'] !== '' || $this->game['visitorcoach'] !== '');
 
-            //if ($i==29) { // replace this for the last one to display the coach instead
-            if (false) { // not in use
+            if ($coachRow) {
                 $this->SetFillColor(230);
                 $this->Cell(7, 5, 'C', 'LRTB', 0, 'C', true);
                 $this->CellFitScale(42, 5, $this->game['homecoach'], 'LRTB', 0, 'L', true);
                 $this->SetFillColor(255);
             } else {
-
                 if (!empty($hplayer) && !($homeplayers[$i - 1]['accredited'])) {
                     $this->SetFont('Arial', 'IB', 10);
                     $hnumber = "(*)";
@@ -603,14 +609,12 @@ class PDF extends tFPDF_CellFit implements ScoreSheetPdf
             $this->SetFont('Arial', '', 10);
             $this->Cell(2, 5, "", 'LR', 0, 'C', true); //separator
 
-            //if ($i==29) { // replace this for the last one to display the coach instead
-            if (false) {
+            if ($coachRow) {
                 $this->SetFillColor(230);
                 $this->Cell(7, 5, 'C', 'LRTB', 0, 'C', true);
                 $this->CellFitScale(42, 5, $this->game['visitorcoach'], 'LRTB', 0, 'L', true);
                 $this->SetFillColor(255);
             } else {
-
                 if (!empty($vplayer) && !($visitorplayers[$i - 1]['accredited'])) {
                     $this->SetFont('Arial', 'IB', 10);
                     $vnumber = "(*)";
