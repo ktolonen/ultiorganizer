@@ -69,7 +69,7 @@ while IFS= read -r -d '' path; do
 
     mkdir -p "${PACKAGE_DIR}/$(dirname "${path}")"
     cp -p "${path}" "${PACKAGE_DIR}/${path}"
-done < <(git ls-files --cached --others --exclude-standard -z)
+done < <(git ls-files -z)
 
 required_paths=(
     "README.md"
