@@ -5,7 +5,7 @@ Ultiorganizer has two different working layouts:
 - the full repository checkout for development
 - the release package for production installation
 
-Production installations should use the release package. The package contains the runtime application, installer, default configuration example, SQL schema, skins, translations, and static assets. It leaves out development-only files such as AI review assets, Docker development files, IDE settings, Composer tooling, PHPStan configuration, Git hooks, and repository metadata.
+Production installations should use the release package. The package contains the runtime application, installer, default configuration example, SQL schema, skins, translations, and static assets. It leaves out documentation, AI review assets, Docker development files, IDE settings, Composer tooling, PHPStan configuration, Git hooks, and repository metadata.
 
 ## Build a release package
 
@@ -41,4 +41,4 @@ The installer needs `sql/ultiorganizer.sql` and `conf/config.inc.example.php`, s
 
 Developers can continue to run Ultiorganizer directly from the repository checkout. That layout is useful for local work because it includes documentation, development tooling, and review assets.
 
-Do not upload a full checkout to production unless the web server is configured to block private and development-only paths. The repository includes Apache `.htaccess` files as defense in depth, but other web servers may ignore them. The release package is the safer production default because those files are not present.
+Do not upload a full checkout to production unless the web server is configured to block private and development-only paths. The repository includes Apache `.htaccess` files as defense in depth, but other web servers may ignore them. The release package is the safer production default because documentation and development-only files are not present.
