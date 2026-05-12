@@ -29,6 +29,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 ## Working rules
 
 - Follow the PHP code style described in `docs/code-style.md` (PER-CS 2.0). Run `composer format` and `composer lint` on changed files before handing back work; the pre-commit hook at `.githooks/pre-commit` enforces this on commit.
+- Hand-written client JavaScript under `script/` (including the `script/*.inc` `<script>` snippets) is linted with ESLint (`docker compose -f docs/dev/compose.yaml exec -T dev eslint script`). The config lives at `/eslint.config.js`; the toolchain is installed inside the `dev` Docker image, not at the repo root.
 - Keep SQL and shared data access in `lib/`.
 - Put permission checks inside reusable `lib/` mutation helpers, not only in routed page handlers, so future callers cannot accidentally bypass access control.
 - Use the existing `?view=...` routing pattern for new pages.
@@ -56,6 +57,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Format changed PHP: `composer format` (check-only: `composer format:check`)
 - Static analysis: `composer lint` (uses `phpstan-baseline.neon` for legacy findings)
 - Combined format-check + lint: `composer check`
+- Lint JavaScript in `script/` (run via the `dev` container; ESLint is not installed on the host): `docker compose -f docs/dev/compose.yaml exec -T dev eslint script` (apply autofixes with `--fix`).
 - DB access boundary check (changed files): `php docs/ai/review-database-access/scripts/check-db-access.php --changed`
 - DB access boundary check (full repo): `php docs/ai/review-database-access/scripts/check-db-access.php --all`
 - Playoff layout templates (all): `php docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php`
