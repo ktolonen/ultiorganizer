@@ -33,8 +33,8 @@ function changeseason(id){
 
 function confirmLeave(element, confirm, text) {
   if (element) {
-    if (!element.className.contains("highlight"))
-      element.className += "highlight";
+    if (!element.classList.contains("highlight"))
+      element.classList.add("highlight");
   }
   if (confirm)
     window.onbeforeunload = function() {
