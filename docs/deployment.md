@@ -18,10 +18,27 @@ docs/release/build-release.sh
 The package is written to `dist/` with a name like:
 
 ```text
-ultiorganizer-4.0-abc1234.zip
+ultiorganizer-install-4.0-abc1234.zip
 ```
 
 The first part comes from `version.php`; the second part is the current Git commit hash. If the current commit has an exact Git tag and that tag does not match `version.php`, the build prints a warning but still creates the package.
+
+The default package type is `install`. To build an update package for an existing installation, use:
+
+```sh
+docs/release/build-release.sh --update
+```
+
+Update packages leave out `install.php` and `.sql` files. They keep runtime upgrade code such as `sql/upgrade_db.php`.
+
+By default, release packages include every customization under `cust/`. To build a package with only one customization plus the required default customization, use:
+
+```sh
+docs/release/build-release.sh --cust wfdf
+```
+
+`cust/default` is always included. Repeat `--cust` or pass a comma-separated list to include more than one non-default customization.
+When customizations are selected, the package filename includes the selected customization set, such as `ultiorganizer-update-cust-default-wfdf-4.0-abc1234.zip`.
 
 ## Install from a release package
 
