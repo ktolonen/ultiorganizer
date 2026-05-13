@@ -106,3 +106,35 @@ git config blame.ignoreRevsFile .git-blame-ignore-revs
 ## Editor integration
 
 PHP-CS-Fixer and PHPStan have first-party support in PhpStorm and VS Code (via the official PHP-CS-Fixer and PHPStan extensions). Point them at `.php-cs-fixer.dist.php` and `phpstan.neon.dist`. Format-on-save is encouraged but optional; the pre-commit hook is the source of truth.
+
+The repository also ships an [`.editorconfig`](../.editorconfig) at the root, which most editors honour out of the box. It pins UTF-8, LF endings, final newline, and per-language indentation: 4 spaces for PHP, 2 spaces for JS / `.inc` snippets, YAML, JSON, NEON, and Markdown.
+
+## JavaScript
+
+Hand-written client JavaScript lives under `script/`:
+
+- `script/ultiorganizer.js` — plain `.js` file included by some pages.
+- `script/*.inc` — `<script>`-wrapped snippets included into PHP pages. A couple of them reference YUI globals (`YAHOO.*`).
+- `script/yui/` is vendored third-party YUI 2 and is not linted.
+- `live/assets/` is a built React/Vite bundle and is not linted from this repo.
+
+JS uses **2-space indentation** (modern community standard — Prettier, StandardJS, Airbnb, Google, Node.js core all use this). The legacy tab-indented files in `script/` were reformatted in one pass when ESLint was introduced.
+
+ESLint 9 (flat config) is the linter. Configuration: [`eslint.config.js`](../eslint.config.js). The toolchain is installed inside the `dev` Docker image under `/opt/eslint/`; the repo intentionally does not ship a root `package.json` because Ultiorganizer is a PHP project, not an npm project.
+
+```sh
+docker compose -f docs/dev/compose.yaml exec -T dev eslint script
+docker compose -f docs/dev/compose.yaml exec -T dev eslint script --fix
+```
+
+Notable rule choices:
+
+- `eslint:recommended` as the base.
+- `indent: ["error", 2]` to enforce the 2-space convention.
+- `no-trailing-spaces: "error"`.
+- `no-unused-vars: ["warn", { args: "none" }]` — many top-level functions are intentionally exposed as globals for inline HTML handlers and look "unused" to ESLint; the warning is left in place so genuinely dead code still surfaces.
+- `ecmaVersion: 5`, `sourceType: "script"` — matches the existing pre-ES6 style. Bump these if newer syntax is needed.
+
+The pre-commit hook does **not** currently run ESLint; lint JS manually when changing files under `script/`.
+
+Inline JS inside `<script>` blocks in `.php` files is intentionally **not linted**. Most of it is page-local glue (YUI calendar setup, Google Maps helpers, form-specific handlers) that references DOM IDs and server-rendered config only available on that page, and roughly half of those blocks contain `<?= ?>` / `<?php ... ?>` interpolation that ESLint cannot parse without a custom preprocessor. New shared utility JS should still go under `script/` so it gets lint coverage.

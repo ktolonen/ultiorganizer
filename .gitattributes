@@ -14,6 +14,7 @@
 /composer.lock export-ignore
 /dist/** export-ignore
 /docs/** export-ignore
+/eslint.config.js export-ignore
 /live/** export-ignore
 /phpstan* export-ignore
 /reports/** export-ignore

@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     locales \
     default-mysql-client \
     libpng-dev \
+    nodejs \
+    npm \
     ripgrep \
     unzip \
     zlib1g-dev \
@@ -22,6 +24,20 @@ RUN apt-get update && apt-get install -y \
  && docker-php-ext-install mysqli gettext gd mbstring \
  && curl -sSf https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
  && rm -rf /var/lib/apt/lists/*
+
+# JS linting toolchain. Installed into a self-contained prefix so the repo
+# doesn't need a package.json, and exposed via NODE_PATH + PATH so the
+# eslint.config.js can require() these packages from anywhere in the tree.
+RUN mkdir -p /opt/eslint \
+ && cd /opt/eslint \
+ && npm install --no-save --no-package-lock \
+      eslint@9.16.0 \
+      @eslint/js@9.16.0 \
+      eslint-plugin-html@8.1.2 \
+      globals@15.13.0 \
+ && npm cache clean --force
+ENV NODE_PATH=/opt/eslint/node_modules
+ENV PATH=/opt/eslint/node_modules/.bin:$PATH
 
 ENV LANG=en_US.UTF-8
 ENV LC_ALL=en_US.UTF-8
