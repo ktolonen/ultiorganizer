@@ -1,0 +1,110 @@
+name: CI
+
+on:
+  push:
+    branches: [master]
+  pull_request:
+
+# Cancel in-progress runs when a PR is pushed again. Pushes to master are
+# left alone so every master commit gets its own confirmed-green run.
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+permissions:
+  contents: read
+
+jobs:
+  php-quality:
+    name: PHP format + PHPStan
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Run format check + PHPStan
+        run: composer check
+
+  composer-audit:
+    name: Composer audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Cache Composer
+        uses: actions/cache@v4
+        with:
+          path: ~/.composer/cache
+          key: composer-${{ runner.os }}-${{ hashFiles('composer.lock') }}
+          restore-keys: composer-${{ runner.os }}-
+      - name: Install dependencies
+        run: composer install --prefer-dist --no-progress --no-interaction
+      - name: Audit dependencies
+        run: composer audit
+
+  js-lint:
+    name: ESLint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Install ESLint
+        # Versions pinned to match docs/dev/Dockerfile.dev. Keep in sync when
+        # bumping either side.
+        run: |
+          npm install -g \
+            eslint@9.16.0 \
+            @eslint/js@9.16.0 \
+            eslint-plugin-html@8.1.2 \
+            globals@15.13.0
+          echo "NODE_PATH=$(npm root -g)" >> "$GITHUB_ENV"
+      - name: Lint JavaScript
+        run: eslint script
+
+  repo-checkers:
+    name: In-repo checker scripts
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Database access boundary check
+        run: php docs/ai/review-database-access/scripts/check-db-access.php --all
+      - name: Playoff layout templates check
+        run: php docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php
+
+  release-package-smoke:
+    name: Release package build
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # The release script uses `git describe` and `git ls-files`; full
+          # history avoids shallow-clone surprises.
+          fetch-depth: 0
+      - name: Build release package
+        run: bash docs/release/build-release.sh
+      - name: Verify archive contents
+        run: |
+          set -euo pipefail
+          archive="$(ls dist/ultiorganizer-install-*.zip | head -n 1)"
+          test -n "$archive"
+          unzip -l "$archive" | grep -q 'index\.php$'
+          echo "Built: $archive"

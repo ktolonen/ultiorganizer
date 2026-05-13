@@ -75,6 +75,8 @@ docker compose -f docs/dev/compose.yaml exec -T dev composer install
 
 ## Pre-commit hook
 
+The same checks run automatically in GitHub Actions on every push and pull request (see [`.github/workflows/ci.yml`](../.github/workflows/ci.yml)). The pre-commit hook is the fast local gate; CI is the source of truth for what is allowed to merge.
+
 The repository ships a pre-commit hook at [`.githooks/pre-commit`](../.githooks/pre-commit) that runs PHP-CS-Fixer (with auto-fix and re-stage) and PHPStan against staged PHP files. Enable it once per clone:
 
 ```sh

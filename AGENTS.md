@@ -66,6 +66,18 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Start the workspace with `docker compose -f docs/dev/compose.yaml --profile devtools up --build dev` and run commands with `docker compose -f docs/dev/compose.yaml exec -T dev ...`. If the `dev` service is unavailable but `app` is running, use `docker compose -f docs/dev/compose.yaml exec -T app ...` for equivalent PHP-based checks.
 - Verify changes by running the app and exercising the relevant page flow.
 
+## CI
+
+GitHub Actions runs the same checks automatically on every push to `master` and on every pull request. The workflow is at [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and has five jobs:
+
+- `php-quality` — `composer check` (PHP-CS-Fixer + PHPStan) on PHP 8.3.
+- `composer-audit` — `composer audit` against `composer.lock`; fails on any reported security advisory.
+- `js-lint` — `eslint script` against the same ESLint 9 config used locally (`eslint.config.js`).
+- `repo-checkers` — DB access boundary check and playoff layout templates check.
+- `release-package-smoke` — runs `docs/release/build-release.sh` and asserts the archive contains `index.php`.
+
+Pre-commit hooks remain the fast local gate; CI is the source of truth for what is allowed to merge. The test harness in the sibling `ultiorganizer-tests` repo is not wired into CI yet; run it locally per its README.
+
 ## Topic docs
 
 - `docs/README.md`: index of project documentation under `docs/`.
