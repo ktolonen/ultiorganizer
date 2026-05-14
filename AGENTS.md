@@ -68,15 +68,16 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 
 ## CI
 
-GitHub Actions runs the same checks automatically on every push to `master` and on every pull request. The workflow is at [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and has five jobs:
+GitHub Actions runs the same checks automatically on every push to `master` and on every pull request. The workflow is at [`.github/workflows/ci.yml`](.github/workflows/ci.yml) and has six jobs:
 
 - `php-quality` — `composer check` (PHP-CS-Fixer + PHPStan) on PHP 8.3.
 - `composer-audit` — `composer audit` against `composer.lock`; fails on any reported security advisory.
 - `js-lint` — `eslint script` against the same ESLint 9 config used locally (`eslint.config.js`).
 - `repo-checkers` — DB access boundary check and playoff layout templates check.
 - `release-package-smoke` — runs `docs/release/build-release.sh` and asserts the archive contains `index.php`.
+- `harness` — checks out the sibling `ktolonen/ultiorganizer-tests` repository and runs its full test matrix (lint, unit, integration, export, api, smoke, crawl) against the pull request's code.
 
-Pre-commit hooks remain the fast local gate; CI is the source of truth for what is allowed to merge. The test harness in the sibling `ultiorganizer-tests` repo is not wired into CI yet; run it locally per its README.
+Pre-commit hooks remain the fast local gate; CI is the source of truth for what is allowed to merge. The `harness` job is the production test suite — it lives in a separate public repository so it can be developed and versioned independently; see that repository's README for the suite definitions and how to run it locally.
 
 ## Topic docs
 
