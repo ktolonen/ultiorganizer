@@ -44,6 +44,7 @@ This directory collects general project documentation.
 
 ### AI review assets
 
+- `ai/runtime-cache.md`: guidance for request-local helper caching and live-scoring cache boundaries.
 - `ai/review-user-language/SKILL.md`: read-only review skill for project spelling, grammar, and terminology consistency in user-facing content.
 - `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
 - `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.

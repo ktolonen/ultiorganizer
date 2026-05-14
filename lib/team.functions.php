@@ -39,6 +39,11 @@ function TeamPlayerList($teamId)
 
 function TeamName($teamId)
 {
+    $teamId = (string) $teamId;
+    if ($teamId === '' || (int) $teamId <= 0) {
+        return "";
+    }
+
     $query = sprintf(
         "SELECT name FROM uo_team WHERE team_id='%s'",
         DBEscapeString($teamId),

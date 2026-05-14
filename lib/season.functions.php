@@ -3,6 +3,8 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/cache.functions.php';
+
 /**
  * @file
  * This file contains all event handling functions. For historical reasons event (tournament/season) is referred as a season.
@@ -75,6 +77,18 @@ function SeasonTypes()
 }
 
 /**
+ * Clear request-local season lookup caches after mutating season metadata.
+ *
+ * @return void
+ */
+function ClearSeasonRuntimeCache()
+{
+    CacheForgetNamespace('current_season');
+    CacheForgetNamespace('current_seasons');
+    CacheForgetNamespace('season_info');
+}
+
+/**
  * Returns current season, which can be user selected if multiple seasons set as current (uo_season.iscurrent=1).
  * User selected season is stored into $_SESSION['userproperties']['selseason']
  * @return String uo_season.season_id
@@ -84,8 +98,11 @@ function CurrentSeason()
     if (isset($_SESSION['userproperties']['selseason'])) {
         return $_SESSION['userproperties']['selseason'];
     }
-    $query = sprintf("SELECT season_id FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
-    return DBQueryToValue($query);
+
+    return CacheRemember('current_season', 'default', function () {
+        $query = sprintf("SELECT season_id FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
+        return DBQueryToValue($query);
+    });
 }
 
 /**
@@ -95,8 +112,10 @@ function CurrentSeason()
  */
 function CurrentSeasons()
 {
-    $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
-    return DBQueryToArray($query);
+    return CacheRemember('current_seasons', 'default', function () {
+        $query = sprintf("SELECT season_id AS season_id, name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
+        return DBQueryToArray($query);
+    });
 }
 
 /**
@@ -156,16 +175,19 @@ function Seasontype($seasonId)
  */
 function SeasonInfo($seasonId)
 {
-    $query = sprintf(
-        "SELECT * FROM uo_season WHERE season_id='%s'",
-        DBEscapeString($seasonId),
-    );
-    $row = DBQueryToRow($query, true);
-    if (is_array($row) && !array_key_exists('spiritpoints', $row)) {
-        // Deprecated alias kept for live-skin backward compatibility; use spiritmode instead.
-        $row['spiritpoints'] = (int) (($row['spiritmode'] ?? 0) > 0);
-    }
-    return $row;
+    $seasonId = (string) $seasonId;
+    return CacheRemember('season_info', $seasonId, function () use ($seasonId) {
+        $query = sprintf(
+            "SELECT * FROM uo_season WHERE season_id='%s'",
+            DBEscapeString($seasonId),
+        );
+        $row = DBQueryToRow($query, true);
+        if (is_array($row) && !array_key_exists('spiritpoints', $row)) {
+            // Deprecated alias kept for live-skin backward compatibility; use spiritmode instead.
+            $row['spiritpoints'] = (int) (($row['spiritmode'] ?? 0) > 0);
+        }
+        return $row;
+    });
 }
 
 /**
@@ -201,10 +223,9 @@ function IsSeasonInMaintenance($seasonId)
     if (empty($seasonId)) {
         return false;
     }
-    return (bool) DBQueryToValue(sprintf(
-        "SELECT maintenance_mode FROM uo_season WHERE season_id='%s'",
-        DBEscapeString($seasonId),
-    ));
+
+    $seasonInfo = SeasonInfo($seasonId);
+    return !empty($seasonInfo['maintenance_mode']);
 }
 
 function CanBypassEventMaintenance($seasonId)
@@ -341,7 +362,11 @@ function SetEventReadonly($seasonId)
             "UPDATE uo_season SET event_readonly=1 WHERE season_id='%s'",
             DBEscapeString($seasonId),
         );
-        return DBExecute($query);
+        $result = DBExecute($query);
+        if ($result) {
+            ClearSeasonRuntimeCache();
+        }
+        return $result;
     } else {
         die('Insufficient rights to edit season');
     }
@@ -793,7 +818,11 @@ function DeleteSeason($seasonId)
             "DELETE FROM uo_season WHERE season_id='%s'",
             DBEscapeString($seasonId),
         );
-        return DBExecute($query);
+        $result = DBExecute($query);
+        if ($result) {
+            ClearSeasonRuntimeCache();
+        }
+        return $result;
     } else {
         die('Insufficient rights to delete season');
     }
@@ -877,6 +906,9 @@ function AddSeason($seasonId, $params, $comment = null)
 
         if ($result && isset($comment)) {
             SetComment(1, $seasonId, $comment);
+        }
+        if ($result) {
+            ClearSeasonRuntimeCache();
         }
         if ($result && function_exists('RefreshSeasonSpiritData')) {
             RefreshSeasonSpiritData($seasonId);
@@ -963,11 +995,14 @@ function SetSeason($seasonId, $params, $comment = null)
         );
 
         $result = DBExecute($query);
-        if ($result && function_exists('RefreshSeasonSpiritData')) {
-            RefreshSeasonSpiritData($seasonId);
-        }
         if (isset($comment) && $result) {
             SetComment(1, $seasonId, $comment);
+        }
+        if ($result) {
+            ClearSeasonRuntimeCache();
+        }
+        if ($result && function_exists('RefreshSeasonSpiritData')) {
+            RefreshSeasonSpiritData($seasonId);
         }
         return $result;
     } else {
@@ -1004,6 +1039,9 @@ function SetSeasonSpiritSettings($seasonId, $params)
     );
 
     $result = DBExecute($query);
+    if ($result) {
+        ClearSeasonRuntimeCache();
+    }
     if ($result && function_exists('RefreshSeasonSpiritData')) {
         RefreshSeasonSpiritData($seasonId);
     }
