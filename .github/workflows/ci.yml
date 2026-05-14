@@ -108,3 +108,38 @@ jobs:
           test -n "$archive"
           unzip -l "$archive" | grep -q 'index\.php$'
           echo "Built: $archive"
+
+  harness:
+    name: Test harness (full matrix)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout SUT (this PR)
+        uses: actions/checkout@v4
+        with:
+          path: ultiorganizer
+      - name: Checkout test harness
+        uses: actions/checkout@v4
+        with:
+          repository: ktolonen/ultiorganizer-tests
+          ref: main
+          path: ultiorganizer-tests
+      - name: Run doctor
+        working-directory: ultiorganizer-tests
+        run: ./doctor
+      - name: Run full matrix against this PR
+        working-directory: ultiorganizer-tests
+        # The harness defaults --sut-path to ../ultiorganizer, which the
+        # sibling checkout layout above satisfies. Empty --pr-* values on
+        # push events are treated as a local checkout context.
+        run: |
+          ./test:matrix \
+            --pr-number "${{ github.event.pull_request.number }}" \
+            --pr-head-ref "${{ github.head_ref }}" \
+            --pr-base-ref "${{ github.base_ref }}"
+      - name: Upload reports on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: harness-reports
+          path: ultiorganizer-tests/reports/
+          retention-days: 14
