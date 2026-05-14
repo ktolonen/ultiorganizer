@@ -41,6 +41,13 @@ parameters:
             paths:
                 - sql/upgrade_db.php
                 - user/playerprofile.php
+        -
+            # conf/config.inc.php is generated at install time and intentionally gitignored;
+            # both include sites are guarded by is_readable/is_file checks.
+            message: '#^Path in include_once\(\) "conf/config\.inc\.php" is not a file or it does not exist\.$#'
+            paths:
+                - index.php
+                - install.php
     parallel:
         maximumNumberOfProcesses: 4
     treatPhpDocTypesAsCertain: false
