@@ -3,6 +3,7 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/cache.functions.php';
 require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/standings.functions.php';
 require_once __DIR__ . '/player.functions.php';
@@ -20,7 +21,9 @@ function IsSeasonStatsCalculated($season)
 
 function IsStatsDataAvailable()
 {
-    return DBQueryToValue("SELECT 1 FROM uo_season_stats LIMIT 1");
+    return CacheRemember('stats_data_available', 'default', function () {
+        return DBQueryToValue("SELECT 1 FROM uo_season_stats LIMIT 1");
+    });
 }
 
 function DeleteSeasonStats($season)
@@ -32,6 +35,7 @@ function DeleteSeasonStats($season)
         DBQuery(sprintf("DELETE FROM uo_team_stats WHERE season='%s'", $season_safe));
         DBQuery(sprintf("DELETE FROM uo_team_spirit_stats WHERE season='%s'", $season_safe));
         DBQuery(sprintf("DELETE FROM uo_player_stats WHERE season='%s'", $season_safe));
+        CacheForgetNamespace('stats_data_available');
     } else {
         die('Insufficient rights to archive season');
     }
@@ -368,6 +372,7 @@ function CalcSeasonStats($season)
 				players=$played_players" . $defense_str .
             "WHERE season='" . $season_info['season_id'] . "'";
         DBQuery($query);
+        CacheForgetNamespace('stats_data_available');
     } else {
         die('Insufficient rights to archive season');
     }

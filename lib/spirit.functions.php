@@ -3,6 +3,7 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/cache.functions.php';
 require_once __DIR__ . '/user.functions.php';
 
 function SpiritModeDisabledName()
@@ -129,11 +130,14 @@ function SpiritRequiredCategoryCount($mode)
     if ($mode <= 0) {
         return 0;
     }
-    return (int) DBQueryToValue(sprintf(
-        "SELECT COUNT(*) FROM uo_spirit_category
-		WHERE mode=%d AND `index` > 0",
-        $mode,
-    ));
+
+    return CacheRemember('spirit_required_category_count', $mode, function () use ($mode) {
+        return (int) DBQueryToValue(sprintf(
+            "SELECT COUNT(*) FROM uo_spirit_category
+			WHERE mode=%d AND `index` > 0",
+            $mode,
+        ));
+    });
 }
 
 function TeamSpiritSubmissionComplete($gameId, $teamId, $spiritmode = null)
@@ -349,14 +353,9 @@ function SpiritTokenGame($gameId, $teamId)
         return [];
     }
 
-    static $games = [];
-    $cacheKey = $gameId . ':' . $teamId;
-    if (array_key_exists($cacheKey, $games)) {
-        return $games[$cacheKey];
-    }
-
-    $query = sprintf(
-        "SELECT
+    return CacheRemember('spirit_token_game', [$gameId, $teamId], function () use ($gameId, $teamId) {
+        $query = sprintf(
+            "SELECT
 			g.game_id,
 			g.time,
 			g.hasstarted,
@@ -401,14 +400,14 @@ function SpiritTokenGame($gameId, $teamId)
 						AND uc.type IN (5, 6)
 				)
 			)",
-        $gameId,
-        $teamId,
-        $teamId,
-    );
+            $gameId,
+            $teamId,
+            $teamId,
+        );
 
-    $game = DBQueryToRow($query);
-    $games[$cacheKey] = $game ? $game : [];
-    return $games[$cacheKey];
+        $game = DBQueryToRow($query);
+        return $game ? $game : [];
+    });
 }
 
 function SpiritTokenRatedTeamId($game, $tokenTeamId)

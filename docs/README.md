@@ -10,6 +10,7 @@ This directory collects general project documentation.
 - `codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
 - `lib-index.md`: file-by-file map of shared helpers and third-party libraries under `lib/`.
 - `routing.md`: request entry points and view resolution.
+- `runtime-cache.md`: request-local helper caching guidance and database-log recapture commands.
 - `deployment.md`: production release package and installation guidance.
 - `local-development.md`: local Docker-based setup.
 - `dev/`: Docker Compose assets and image definitions used by the local development guide.

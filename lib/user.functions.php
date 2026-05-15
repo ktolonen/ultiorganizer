@@ -879,7 +879,12 @@ function getTeamSeason($team)
 
 function getTeamName($team)
 {
-    $query = sprintf("SELECT name FROM uo_team WHERE team_id=%d", (int) $team);
+    $team = (int) $team;
+    if ($team <= 0) {
+        return "";
+    }
+
+    $query = sprintf("SELECT name FROM uo_team WHERE team_id=%d", $team);
     $result = DBQuery($query);
 
     if ($row = mysqli_fetch_assoc($result)) {

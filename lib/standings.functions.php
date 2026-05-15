@@ -699,16 +699,16 @@ function TeamSeriesStanding($teamId)
     //loop all placement pools
     foreach ($ppools as $ppool) {
         $teams = PoolTeams($ppool['pool_id']);
+        $movedPlacings = PoolMovedPlacings($ppool['pool_id']);
         $i = 0;
         //loop all teams
         foreach ($teams as $team) {
             $i++;
-            $moved = PoolMoveExist($ppool['pool_id'], $i);
             //if not moved and team searched exit loop
-            if (!$moved && $team['team_id'] == $teamId) {
+            if (!isset($movedPlacings[$i]) && $team['team_id'] == $teamId) {
                 $found = true;
                 break;
-            } elseif (!$moved) {
+            } elseif (!isset($movedPlacings[$i])) {
                 $standing++;
             }
         }
