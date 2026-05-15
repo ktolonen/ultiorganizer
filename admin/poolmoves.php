@@ -200,8 +200,9 @@ function PoolHasMovesFromAllPositions($poolId)
         return false;
     }
 
+    $movedPlacings = PoolMovedPlacings($poolId);
     for ($i = 1; $i <= $total_teams; $i++) {
-        if (!PoolMoveExist($poolId, $i)) {
+        if (!isset($movedPlacings[$i])) {
             return false;
         }
     }

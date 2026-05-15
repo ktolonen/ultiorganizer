@@ -3,6 +3,7 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/cache.functions.php';
 require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/team.functions.php';
 require_once __DIR__ . '/swissdraw.functions.php';
@@ -276,17 +277,16 @@ function PoolPlacementString($poolId, $pos, $ordinal = true)
         $placementfrom = 1;
         foreach ($ppools as $ppool) {
             $teams = PoolSchedulingTeams($ppool['pool_id']);
+            $movedPlacings = PoolMovedPlacings($ppool['pool_id']);
             if ($info['pool_id'] != $ppool['pool_id']) {
                 for ($i = 1; $i <= count($teams); $i++) {
-                    $moved = PoolMoveExist($ppool['pool_id'], $i);
-                    if (!$moved) {
+                    if (!isset($movedPlacings[$i])) {
                         $placementfrom++;
                     }
                 }
             } else {
                 for ($i = 1; $i <= count($teams) && $i < $pos; $i++) {
-                    $moved = PoolMoveExist($ppool['pool_id'], $i);
-                    if (!$moved) {
+                    if (!isset($movedPlacings[$i])) {
                         $placementfrom++;
                     }
                 }
@@ -1090,6 +1090,32 @@ function PoolMoveExist($frompool, $fromplacing)
 }
 
 /**
+ * Return moved fromplacing values for a source pool.
+ *
+ * @param int $frompool
+ * @return array<int, bool>
+ */
+function PoolMovedPlacings($frompool)
+{
+    $frompool = (int) $frompool;
+    return CacheRemember('pool_moved_placings', $frompool, function () use ($frompool) {
+        $query = sprintf(
+            "SELECT fromplacing
+            FROM uo_moveteams
+            WHERE frompool=%d",
+            $frompool,
+        );
+
+        $placings = [];
+        foreach (DBQueryToArray($query) as $row) {
+            $placings[(int) $row['fromplacing']] = true;
+        }
+
+        return $placings;
+    });
+}
+
+/**
  * Test if all moves done.
  *
  * @param int $topool
@@ -1467,6 +1493,7 @@ function DeletePool($poolId)
         );
 
         DBQuery($query);
+        CacheForgetNamespace('pool_moved_placings');
     } else {
         die('Insufficient rights to delete pool');
     }
@@ -1926,7 +1953,9 @@ function PoolAddMove($frompool, $topool, $fromplacing, $torank, $pteamname)
             (int) $pteam,
         );
 
-        return DBQueryInsert($query);
+        $moveId = DBQueryInsert($query);
+        CacheForgetNamespace('pool_moved_placings');
+        return $moveId;
     } else {
         die('Insufficient rights to add pool moves');
     }
@@ -1954,7 +1983,9 @@ function PoolSetMove($frompool, $oldfpos, $fromplacing, $torank)
             (int) $oldfpos,
         );
 
-        return DBQuery($query);
+        $result = DBQuery($query);
+        CacheForgetNamespace('pool_moved_placings');
+        return $result;
     } else {
         die('Insufficient rights to add pool moves');
     }
@@ -2156,6 +2187,7 @@ function PoolDeleteMove($frompool, $fromplacing)
         );
 
         DBQuery($query);
+        CacheForgetNamespace('pool_moved_placings');
     } else {
         die('Insufficient rights to move teams');
     }
@@ -2902,6 +2934,7 @@ function SeriesRanking($series_id)
     foreach ($ppools as $ppool) {
         $teams = PoolTeams($ppool['pool_id']);
         $steams = PoolSchedulingTeams($ppool['pool_id']);
+        $movedPlacings = PoolMovedPlacings($ppool['pool_id']);
         if (count($teams) < count($steams)) {
             $totalteams = count($steams);
         } else {
@@ -2909,8 +2942,7 @@ function SeriesRanking($series_id)
         }
 
         for ($i = 1; $i <= $totalteams; $i++) {
-            $moved = PoolMoveExist($ppool['pool_id'], $i);
-            if (!$moved) {
+            if (!isset($movedPlacings[$i])) {
                 $team = PoolTeamFromStandings($ppool['pool_id'], $i);
                 $gamesleft = 1;
                 if (isset($team['team_id'])) {

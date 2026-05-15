@@ -703,6 +703,7 @@ function printPlayoffTree($seasoninfo, $poolinfo)
     $notemplate .= "<table width='100%'>\n";
 
     $template = str_replace("[placement]", _("Placement"), $template);
+    $movedPlacings = PoolMovedPlacings($pool['pool_id']);
     for ($i = 1; $i <= $totalteams; $i++) {
         $placementname = "";
         if (!isset($pool['pool_id'])) {
@@ -717,7 +718,7 @@ function printPlayoffTree($seasoninfo, $poolinfo)
         $teampart = "";
         $unknown = "";
 
-        if (!PoolMoveExist($pool['pool_id'], $i)) {
+        if (!isset($movedPlacings[$i])) {
             $placement = PoolPlacementString($pool['pool_id'], $i);
             $placementname = "<b>" . U_($placement) . "</b> ";
             if ($gamesleft == 0 && $hasPlacedTeam) {

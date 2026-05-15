@@ -414,6 +414,12 @@ function TeamGetNextGames($teamId, $poolId)
 
 function TeamPoolGamesLeft($teamId, $poolId)
 {
+    $teamId = (int) $teamId;
+    $poolId = (int) $poolId;
+    if ($teamId <= 0 || $poolId <= 0) {
+        return [];
+    }
+
     $query = sprintf(
         "
 			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.time
@@ -422,9 +428,9 @@ function TeamPoolGamesLeft($teamId, $poolId)
 			WHERE pps.pool='%s' AND pp.valid=true 
 				AND (pp.hasstarted=0 OR pp.isongoing=1) AND (hometeam=%d OR visitorteam=%d)					
 			ORDER BY pp.time ASC",
-        DBEscapeString($poolId),
-        DBEscapeString($teamId),
-        DBEscapeString($teamId),
+        $poolId,
+        $teamId,
+        $teamId,
     );
 
     return DBQueryToArray($query);

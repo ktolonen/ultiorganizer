@@ -147,22 +147,21 @@ foreach ($pools as $pool) {
         $placementto = 0;
         foreach ($ppools as $ppool) {
             $teams = PoolTeams($ppool['pool_id']);
+            $movedPlacings = PoolMovedPlacings($ppool['pool_id']);
             if (count($teams) == 0) {
                 $teams = PoolSchedulingTeams($ppool['pool_id']);
             }
             if ($pool['pool_id'] == $ppool['pool_id']) {
 
                 for ($i = 1; $i <= count($teams); $i++) {
-                    $moved = PoolMoveExist($ppool['pool_id'], $i);
-                    if (!$moved) {
+                    if (!isset($movedPlacings[$i])) {
                         $placementto++;
                     }
                 }
                 break;
             }
             for ($i = 1; $i <= count($teams); $i++) {
-                $moved = PoolMoveExist($ppool['pool_id'], $i);
-                if (!$moved) {
+                if (!isset($movedPlacings[$i])) {
                     $placementfrom++;
                     $placementto++;
                 }

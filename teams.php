@@ -400,11 +400,11 @@ if ($list == "allteams" || $list == "byseeding") {
         if (!empty($missingSpirit)) {
             $missingList = array_values($missingSpirit);
             usort($missingList, function ($a, $b) {
-                $seriesCmp = strcasecmp($a['seriesname'], $b['seriesname']);
+                $seriesCmp = strcasecmp((string) $a['seriesname'], (string) $b['seriesname']);
                 if ($seriesCmp !== 0) {
                     return $seriesCmp;
                 }
-                return strcasecmp($a['teamname'], $b['teamname']);
+                return strcasecmp((string) $a['teamname'], (string) $b['teamname']);
             });
             $html .= "<div class='TableContainer3'>\n";
             $html .= "<h3>" . _("Missing spirit submissions") . "</h3>\n";
