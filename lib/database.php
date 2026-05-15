@@ -9,7 +9,7 @@ denyDirectLibAccess(__FILE__);
  * Update this constant whenever you add a new `upgradeNN()` step in
  * `sql/upgrade_db.php`, and export the current schema from the upgraded database.
  */
-define('DB_VERSION', 90);
+define('DB_VERSION', 91);
 
 /**
  * Maximum age in seconds before an automatic upgrade lock is considered stale.

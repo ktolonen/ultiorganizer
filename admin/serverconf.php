@@ -88,6 +88,16 @@ if (!empty($_POST['save'])) {
     $setting['value'] = $_POST['DefaultLocale'];
     $settings[] = $setting;
 
+    $setting = [];
+    $setting['name'] = "PersistentCacheEnabled";
+    $setting['value'] = !empty($_POST['PersistentCacheEnabled']) ? "true" : "false";
+    $settings[] = $setting;
+
+    $setting = [];
+    $setting['name'] = "PersistentCacheTtlSeconds";
+    $setting['value'] = (string) max(1, (int) ($_POST['PersistentCacheTtlSeconds'] ?? 30));
+    $settings[] = $setting;
+
     SetServerConf($settings);
 
     for ($i = 0; !empty($_POST["urlid$i"]); $i++) {
@@ -288,6 +298,24 @@ foreach ($settings as $setting) {
         } else {
             $htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableVisitorLogging'/></td>";
         }
+        $htmltmp2 .= "</tr>\n";
+    }
+
+    if ($setting['name'] == "PersistentCacheEnabled") {
+        $htmltmp2 .= "<tr>";
+        $htmltmp2 .= "<td class='infocell'>" . _("Persistent cache") . ":</td>";
+        if ($setting['value'] == "true") {
+            $htmltmp2 .= "<td><input class='input' type='checkbox' name='PersistentCacheEnabled' checked='checked'/></td>";
+        } else {
+            $htmltmp2 .= "<td><input class='input' type='checkbox' name='PersistentCacheEnabled'/></td>";
+        }
+        $htmltmp2 .= "</tr>\n";
+    }
+
+    if ($setting['name'] == "PersistentCacheTtlSeconds") {
+        $htmltmp2 .= "<tr>";
+        $htmltmp2 .= "<td class='infocell'>" . _("Cache TTL (seconds)") . ":</td>";
+        $htmltmp2 .= "<td><input class='input' type='number' min='1' max='3600' name='PersistentCacheTtlSeconds' value='" . utf8entities($setting['value']) . "'/></td>";
         $htmltmp2 .= "</tr>\n";
     }
 

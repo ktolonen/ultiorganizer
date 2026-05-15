@@ -270,3 +270,16 @@ function getAvailableLocalizations()
 
     return $localizations;
 }
+
+function IsPersistentCacheEnabled()
+{
+    global $serverConf;
+    return !isset($serverConf['PersistentCacheEnabled']) || $serverConf['PersistentCacheEnabled'] === 'true';
+}
+
+function GetPersistentCacheTtlSeconds()
+{
+    global $serverConf;
+    $ttl = (int) ($serverConf['PersistentCacheTtlSeconds'] ?? 30);
+    return $ttl > 0 ? $ttl : 30;
+}

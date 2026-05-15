@@ -14,6 +14,10 @@ define('DB_DATABASE', 'ultiorganizer');
 define('BASEURL', 'http://localhost/ultiorganizer');
 define('UPLOAD_DIR', 'images/uploads/');
 define('MAINTENANCE_RUNTIME_DIR', '/tmp/ultiorganizer-maintenance');
+// Directory for cross-request persistent cache files. Must be writable by the
+// web server. Defaults to /tmp; point at a faster tmpfs or a persistent path
+// if needed. Set to '' to disable filesystem caching (admin toggle still works).
+define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
 define('CUSTOMIZATIONS', 'slkl');
 define('DATE_FORMAT', _("%d.%m.%Y %H:%M"));
 define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');

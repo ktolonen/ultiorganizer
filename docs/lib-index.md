@@ -8,6 +8,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/api.functions.php`: API token hashing, lookup, touch, CRUD, and rate limiting.
 - `lib/auth.guard.php`: include-time auth guard that starts the session and redirects anonymous users.
 - `lib/cache.functions.php`: request-local cache helpers for repeated deterministic lookups.
+- `lib/persistent-cache.functions.php`: cross-request TTL cache helpers (`CacheRememberFor`, `CacheForgetPersistent`, `CacheWipePersistent`) backed by files under `PERSISTENT_CACHE_DIR`.
 - `lib/club.functions.php`: club CRUD, club-team links, profiles, images, and external URLs.
 - `lib/comment.functions.php`: game and spirit comment storage, permission checks, metadata, HTML rendering, and logging hooks.
 - `lib/common.functions.php`: shared low-level helpers for dates, locale/time formatting, colors, CSV export, SQL filter/order builders, view resolution, and generic comment helpers.

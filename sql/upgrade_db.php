@@ -1207,6 +1207,16 @@ function upgrade90()
     }
 }
 
+function upgrade91()
+{
+    if (!hasRow("uo_setting", "name", "PersistentCacheEnabled")) {
+        runQuery('INSERT INTO uo_setting (name, value) VALUES ("PersistentCacheEnabled", "true")');
+    }
+    if (!hasRow("uo_setting", "name", "PersistentCacheTtlSeconds")) {
+        runQuery('INSERT INTO uo_setting (name, value) VALUES ("PersistentCacheTtlSeconds", "30")');
+    }
+}
+
 function upgradeEngineToInnoDb()
 {
     $charset = 'utf8mb4';
