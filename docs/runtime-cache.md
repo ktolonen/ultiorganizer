@@ -5,11 +5,10 @@ Use `lib/cache.functions.php` for request-local caching of repeated deterministi
 This cache is intentionally small in scope:
 
 - It lives only for the current PHP request.
-- It should be used only when the same helper can repeat the same database lookup several times during one request.
+- It should be used only when the same helper can repeat the same database lookup several times during one request (= one page load).
 - It should not be used as a cross-request live scoring cache.
-- It should not be used for helpers that only appear frequently because a crawler visited many different pages.
 
-Prefer explicit helper-level use such as season metadata, static spirit-category counts, or stats availability checks. Do not add transparent caching inside the low-level database wrappers unless the invalidation rules are clear for live scoring writes.
+Example: use runtime caching when one routed page calls `SeasonInfo($seasonId)` early for event metadata and later calls helpers such as `SeasonName($seasonId)`, `Seasontype($seasonId)`, or `IsSeasonInMaintenance($seasonId)` for the same event. The first call can load the row, and later helpers can reuse it during that same page load.
 
 When a cached helper reads data that can be changed in the same request, clear the relevant namespace from the mutation helper after the write succeeds.
 
@@ -77,12 +76,3 @@ SET GLOBAL general_log = OFF;
 SET GLOBAL slow_query_log = OFF;
 "'
 ```
-
-When comparing captures, watch whether these counts drop:
-
-- `SELECT COUNT(*) FROM uo_spirit_category WHERE mode=... AND index > 0`
-- `SELECT * FROM uo_season WHERE season_id=...`
-- `SELECT season_id ... FROM uo_season WHERE iscurrent=1 ...`
-- `SELECT maintenance_mode FROM uo_season ...`
-- `SELECT 1 FROM uo_season_stats LIMIT 1`
-- `SELECT name FROM uo_team WHERE team_id=''`

@@ -83,7 +83,6 @@ function SeasonTypes()
  */
 function ClearSeasonRuntimeCache()
 {
-    CacheForgetNamespace('current_season');
     CacheForgetNamespace('current_seasons');
     CacheForgetNamespace('season_info');
 }
@@ -99,10 +98,12 @@ function CurrentSeason()
         return $_SESSION['userproperties']['selseason'];
     }
 
-    return CacheRemember('current_season', 'default', function () {
-        $query = sprintf("SELECT season_id FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC");
-        return DBQueryToValue($query);
-    });
+    $currentSeasons = CurrentSeasons();
+    if (empty($currentSeasons)) {
+        return "";
+    }
+
+    return $currentSeasons[0]['season_id'];
 }
 
 /**
@@ -126,16 +127,11 @@ function CurrentSeasons()
 function CurrentSeasonName()
 {
     if (isset($_SESSION['userproperties']['selseason'])) {
-        $query = sprintf(
-            "SELECT name FROM uo_season WHERE season_id='%s'",
-            DBEscapeString($_SESSION['userproperties']['selseason']),
-        );
-        $name = DBQueryToValue($query);
-        return $name === null ? "" : U_($name);
+        return SeasonName($_SESSION['userproperties']['selseason']);
     }
-    $query = sprintf("SELECT name FROM uo_season WHERE iscurrent=1 ORDER BY starttime DESC LIMIT 1");
-    $name = DBQueryToValue($query);
-    return $name === null ? "" : U_($name);
+
+    $seasonId = CurrentSeason();
+    return $seasonId === "" ? "" : SeasonName($seasonId);
 }
 
 /**
@@ -145,12 +141,12 @@ function CurrentSeasonName()
  */
 function SeasonName($seasonId)
 {
-    $query = sprintf(
-        "SELECT name FROM uo_season WHERE season_id='%s'",
-        DBEscapeString($seasonId),
-    );
-    $name = DBQueryToValue($query);
-    return ($name === null) ? "" : U_($name);
+    $seasonInfo = SeasonInfo($seasonId);
+    if (!is_array($seasonInfo) || !isset($seasonInfo['name'])) {
+        return "";
+    }
+
+    return U_($seasonInfo['name']);
 }
 
 /**
@@ -160,12 +156,12 @@ function SeasonName($seasonId)
  */
 function Seasontype($seasonId)
 {
-    $query = sprintf(
-        "SELECT type FROM uo_season WHERE season_id='%s'",
-        DBEscapeString($seasonId),
-    );
-    $type = DBQueryToValue($query);
-    return ($type === null) ? "" : $type;
+    $seasonInfo = SeasonInfo($seasonId);
+    if (!is_array($seasonInfo) || !isset($seasonInfo['type'])) {
+        return "";
+    }
+
+    return $seasonInfo['type'];
 }
 
 /**

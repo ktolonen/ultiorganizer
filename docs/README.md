@@ -10,6 +10,7 @@ This directory collects general project documentation.
 - `codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
 - `lib-index.md`: file-by-file map of shared helpers and third-party libraries under `lib/`.
 - `routing.md`: request entry points and view resolution.
+- `runtime-cache.md`: request-local helper caching guidance and database-log recapture commands.
 - `deployment.md`: production release package and installation guidance.
 - `local-development.md`: local Docker-based setup.
 - `dev/`: Docker Compose assets and image definitions used by the local development guide.
@@ -44,7 +45,6 @@ This directory collects general project documentation.
 
 ### AI review assets
 
-- `ai/runtime-cache.md`: guidance for request-local helper caching and live-scoring cache boundaries.
 - `ai/review-user-language/SKILL.md`: read-only review skill for project spelling, grammar, and terminology consistency in user-facing content.
 - `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
 - `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.
