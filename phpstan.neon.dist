@@ -16,6 +16,7 @@ parameters:
     excludePaths:
         - vendor/*
         - live/*
+        - conf/*
         - lib/tfpdf/*
         - lib/yuiloader/*
         - lib/phpqrcode/*
@@ -41,6 +42,13 @@ parameters:
             paths:
                 - sql/upgrade_db.php
                 - user/playerprofile.php
+        -
+            # CUSTOMIZATIONS is a deployment constant; its value differs per install.
+            # The example config defines a specific value that makes this historical
+            # migration check evaluate as always-true under static analysis.
+            message: '#^Loose comparison using == between .+ will always evaluate to true\.$#'
+            paths:
+                - sql/upgrade_db.php
         -
             # conf/config.inc.php is generated at install time and intentionally gitignored;
             # both include sites are guarded by is_readable/is_file checks.

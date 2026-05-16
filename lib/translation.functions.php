@@ -25,10 +25,10 @@ function loadDBTranslations($locale)
         "select translation_key, translation as value from uo_translation WHERE `locale`='%s'",
         DBEscapeString(str_replace(".", "_", $locale)),
     );
-    $result = DBQuery($query);
+    $rows = DBQueryToArray($query);
 
     $_SESSION['dbtranslations'] = [];
-    while ($translation = mysqli_fetch_assoc($result)) {
+    foreach ($rows as $translation) {
         $_SESSION['dbtranslations'][strtolower($translation['translation_key'])] = $translation['value'];
     }
 }

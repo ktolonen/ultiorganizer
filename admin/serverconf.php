@@ -13,6 +13,11 @@ if (!isSuperAdmin()) {
     Forbidden(isset($_SESSION['uid']) ? $_SESSION['uid'] : 'anonymous');
 }
 
+$cacheCleared = null;
+if (!empty($_POST['wipecache'])) {
+    $cacheCleared = CacheWipePersistent();
+}
+
 if (!empty($_POST['save'])) {
 
     $settings = [];
@@ -86,6 +91,16 @@ if (!empty($_POST['save'])) {
     $setting = [];
     $setting['name'] = "DefaultLocale";
     $setting['value'] = $_POST['DefaultLocale'];
+    $settings[] = $setting;
+
+    $setting = [];
+    $setting['name'] = "PersistentCacheEnabled";
+    $setting['value'] = !empty($_POST['PersistentCacheEnabled']) ? "true" : "false";
+    $settings[] = $setting;
+
+    $setting = [];
+    $setting['name'] = "PersistentCacheTtlSeconds";
+    $setting['value'] = (string) max(1, (int) ($_POST['PersistentCacheTtlSeconds'] ?? 30));
     $settings[] = $setting;
 
     SetServerConf($settings);
@@ -221,6 +236,7 @@ $html .= "</table>\n";
 
 $htmltmp1 = "";
 $htmltmp2 = "";
+$htmltmp3 = "";
 
 foreach ($settings as $setting) {
 
@@ -289,6 +305,35 @@ foreach ($settings as $setting) {
             $htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableVisitorLogging'/></td>";
         }
         $htmltmp2 .= "</tr>\n";
+    }
+
+    if ($setting['name'] == "PersistentCacheEnabled") {
+        $htmltmp3 .= "<tr>";
+        $htmltmp3 .= "<td class='infocell'>" . _("Persistent cache") . ":</td>";
+        if ($setting['value'] == "true") {
+            $htmltmp3 .= "<td><input class='input' type='checkbox' name='PersistentCacheEnabled' checked='checked'/></td>";
+        } else {
+            $htmltmp3 .= "<td><input class='input' type='checkbox' name='PersistentCacheEnabled'/></td>";
+        }
+        $htmltmp3 .= "</tr>\n";
+    }
+
+    if ($setting['name'] == "PersistentCacheTtlSeconds") {
+        $htmltmp3 .= "<tr>";
+        $htmltmp3 .= "<td class='infocell'>" . _("Cache TTL (seconds)") . ":</td>";
+        $htmltmp3 .= "<td><input class='input' type='number' min='1' max='3600' name='PersistentCacheTtlSeconds' value='" . utf8entities($setting['value']) . "'/></td>";
+        $htmltmp3 .= "</tr>\n";
+
+        $cacheStats = PersistentCacheStats();
+        if ($cacheStats['bytes'] < 1024 * 1024) {
+            $cacheSize = sprintf("%.1f KB", $cacheStats['bytes'] / 1024);
+        } else {
+            $cacheSize = sprintf("%.1f MB", $cacheStats['bytes'] / 1024 / 1024);
+        }
+        $htmltmp3 .= "<tr>";
+        $htmltmp3 .= "<td class='infocell'>" . _("Cache size") . ":</td>";
+        $htmltmp3 .= "<td>" . sprintf(_("%d files, %s"), $cacheStats['files'], $cacheSize) . "</td>";
+        $htmltmp3 .= "</tr>\n";
     }
 
     if ($setting['name'] == "HomeTeamResponsible") {
@@ -375,10 +420,24 @@ $html .= "<h1>" . _("Internal settings") . "</h1>";
 $html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
 $html .= $htmltmp2;
 $html .= "</table>\n";
+
+$html .= "<h1>" . _("Cache settings") . "</h1>";
+$html .= "<table style='white-space: nowrap' cellpadding='2'>\n";
+$html .= $htmltmp3;
+$html .= "</table>\n";
+
 $html .= "<p><input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
 //$html .= "<input type='hidden' name='save' value='hiddensave'/>\n";
 $html .= "<input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 $html .= "</form>";
+
+if ($cacheCleared !== null) {
+    $html .= "<p>" . sprintf(_("%d cache files cleared."), $cacheCleared) . "</p>";
+}
+$html .= "<form method='post' action='?view=admin/serverconf' id='WipeCacheForm'>";
+$html .= "<p><input class='button' name='wipecache' type='submit' value='" . _("Clear cache") . "' onclick=\"return confirm('" . _("Clear cache?") . "');\"/></p>";
+$html .= "</form>";
+
 echo $html;
 contentEnd();
 

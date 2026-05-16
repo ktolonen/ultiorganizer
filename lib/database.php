@@ -9,7 +9,7 @@ denyDirectLibAccess(__FILE__);
  * Update this constant whenever you add a new `upgradeNN()` step in
  * `sql/upgrade_db.php`, and export the current schema from the upgraded database.
  */
-define('DB_VERSION', 90);
+define('DB_VERSION', 91);
 
 /**
  * Maximum age in seconds before an automatic upgrade lock is considered stale.
@@ -134,6 +134,43 @@ function DBAbort($context, $query = null, $error = null)
 }
 
 require_once __DIR__ . '/database.maintenance.php';
+require_once __DIR__ . '/persistent-cache.functions.php';
+
+/**
+ * Decide whether a read-only query result should be served from the persistent
+ * cache. Returns true only for GET requests with a SELECT statement and the
+ * persistent cache feature enabled.
+ *
+ * The TTL is short (`PersistentCacheTtlSeconds`, default 5 s) so freshness is
+ * bounded without explicit invalidation: writes during POST/PUT/DELETE pages
+ * always bypass the cache, and GET pages tolerate a few seconds of staleness.
+ *
+ * During very early bootstrap (before `configuration.functions.php` and
+ * `persistent-cache.functions.php` are both loaded), calls fall through to the
+ * uncached path so the bootstrap server-config read in
+ * `configuration.functions.php` and the maintenance gate's reads in
+ * `database.maintenance.php` continue to work unmodified.
+ *
+ * @param string $query
+ * @return bool
+ */
+function DBQueryCacheable($query)
+{
+    if (!function_exists('CacheRememberFor') || !function_exists('IsPersistentCacheEnabled')) {
+        return false;
+    }
+    if (!IsPersistentCacheEnabled()) {
+        return false;
+    }
+    if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'GET') {
+        return false;
+    }
+    $trimmed = ltrim($query);
+    if ($trimmed === '' || stripos($trimmed, 'SELECT') !== 0) {
+        return false;
+    }
+    return true;
+}
 
 /**
  * Open the mysqli connection, select the schema, and run maintenance gating.
@@ -443,6 +480,19 @@ function DBQueryInsert($query)
  */
 function DBQueryToValue($query, $docasting = false)
 {
+    if (DBQueryCacheable($query)) {
+        return CacheRememberFor(
+            'db_query_value',
+            [$query, $docasting],
+            0,
+            fn() => DBQueryToValueUncached($query, $docasting),
+        );
+    }
+    return DBQueryToValueUncached($query, $docasting);
+}
+
+function DBQueryToValueUncached($query, $docasting = false)
+{
     global $mysqlconnectionref;
     $result = mysqli_query($mysqlconnectionref, $query);
     if (!$result) {
@@ -468,6 +518,19 @@ function DBQueryToValue($query, $docasting = false)
  */
 function DBQueryRowCount($query)
 {
+    if (DBQueryCacheable($query)) {
+        return CacheRememberFor(
+            'db_query_rowcount',
+            [$query],
+            0,
+            fn() => DBQueryRowCountUncached($query),
+        );
+    }
+    return DBQueryRowCountUncached($query);
+}
+
+function DBQueryRowCountUncached($query)
+{
     global $mysqlconnectionref;
     $result = mysqli_query($mysqlconnectionref, $query);
     if (!$result) {
@@ -484,6 +547,19 @@ function DBQueryRowCount($query)
  * @return array Array of associative rows
  */
 function DBQueryToArray($query, $docasting = false)
+{
+    if (DBQueryCacheable($query)) {
+        return CacheRememberFor(
+            'db_query_array',
+            [$query, $docasting],
+            0,
+            fn() => DBQueryToArrayUncached($query, $docasting),
+        );
+    }
+    return DBQueryToArrayUncached($query, $docasting);
+}
+
+function DBQueryToArrayUncached($query, $docasting = false)
 {
     global $mysqlconnectionref;
     $result = mysqli_query($mysqlconnectionref, $query);
@@ -597,6 +673,19 @@ function DBFetchAllAssoc($result, $docasting = false)
  * @return array|null
  */
 function DBQueryToRow($query, $docasting = false)
+{
+    if (DBQueryCacheable($query)) {
+        return CacheRememberFor(
+            'db_query_row',
+            [$query, $docasting],
+            0,
+            fn() => DBQueryToRowUncached($query, $docasting),
+        );
+    }
+    return DBQueryToRowUncached($query, $docasting);
+}
+
+function DBQueryToRowUncached($query, $docasting = false)
 {
     global $mysqlconnectionref;
     $result = mysqli_query($mysqlconnectionref, $query);
