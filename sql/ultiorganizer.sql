@@ -926,7 +926,7 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('DisableVisitorLogging', 'false', 12),
 	('SoftMaintenanceMode', 'false', 13),
 	('PersistentCacheEnabled', 'true', 14),
-	('PersistentCacheTtlSeconds', '3', 15);
+	('PersistentCacheTtlSeconds', '5', 15);
 
 CREATE TABLE IF NOT EXISTS `uo_specialranking` (
   `frompool` int(10) NOT NULL,

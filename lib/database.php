@@ -141,7 +141,7 @@ require_once __DIR__ . '/persistent-cache.functions.php';
  * cache. Returns true only for GET requests with a SELECT statement and the
  * persistent cache feature enabled.
  *
- * The TTL is short (`PersistentCacheTtlSeconds`, default 3 s) so freshness is
+ * The TTL is short (`PersistentCacheTtlSeconds`, default 5 s) so freshness is
  * bounded without explicit invalidation: writes during POST/PUT/DELETE pages
  * always bypass the cache, and GET pages tolerate a few seconds of staleness.
  *

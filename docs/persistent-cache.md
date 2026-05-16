@@ -6,7 +6,7 @@ flows through `DBQueryToValue`, `DBQueryToRow`, `DBQueryToArray`, or
 `DBQueryRowCount` is automatically cached during GET requests with no per-call
 changes required.
 
-Invalidation is **TTL-only**: the configured TTL (default 3 seconds) bounds how
+Invalidation is **TTL-only**: the configured TTL (default 5 seconds) bounds how
 stale any cached read can become. Mutation helpers do not call any explicit
 invalidation function.
 
@@ -14,7 +14,7 @@ This cache complements the request-local cache in `lib/cache.functions.php`:
 
 | | Request-local cache | Persistent cache |
 |---|---|---|
-| Lifetime | Single PHP request | Configurable TTL (default 3 s) |
+| Lifetime | Single PHP request | Configurable TTL (default 5 s) |
 | Storage | `$GLOBALS['runtime_cache']` | Files under `PERSISTENT_CACHE_DIR` |
 | Use case | Deduplicate repeated helper calls on one page | Offload DB CPU across many concurrent GET requests |
 
@@ -48,7 +48,7 @@ running the resolver uncached.
 | Name | Default | Description |
 |---|---|---|
 | `PersistentCacheEnabled` | `true` | Master on/off switch. Turn off to bypass caching without a code deploy. |
-| `PersistentCacheTtlSeconds` | `3` | Default TTL in seconds. Short enough that mutations show up quickly without explicit invalidation. |
+| `PersistentCacheTtlSeconds` | `5` | Default TTL in seconds. Short enough that mutations show up quickly without explicit invalidation. |
 
 ## Direct API
 

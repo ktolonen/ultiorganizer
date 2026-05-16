@@ -280,6 +280,6 @@ function IsPersistentCacheEnabled()
 function GetPersistentCacheTtlSeconds()
 {
     global $serverConf;
-    $ttl = (int) ($serverConf['PersistentCacheTtlSeconds'] ?? 3);
-    return $ttl > 0 ? $ttl : 3;
+    $ttl = (int) ($serverConf['PersistentCacheTtlSeconds'] ?? 5);
+    return $ttl > 0 ? $ttl : 5;
 }
