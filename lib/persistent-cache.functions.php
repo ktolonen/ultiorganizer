@@ -45,7 +45,14 @@ function CacheRememberFor($namespace, $key, $ttlSeconds, $resolver)
 
     $lockFile = $filePath . '.lock';
     $lock = @fopen($lockFile, 'c');
-    if ($lock !== false && flock($lock, LOCK_EX | LOCK_NB)) {
+    if ($lock === false) {
+        // Lock file could not be opened (permission/disk issue, not contention).
+        // Returning stale data here could keep stale forever if the lock file
+        // cannot be created again; compute fresh instead.
+        return $resolver();
+    }
+
+    if (flock($lock, LOCK_EX | LOCK_NB)) {
         // Re-read inside lock: another worker may have refreshed just before us.
         $recheck = PersistentCacheRead($filePath);
         if ($recheck !== null && time() < $recheck['expires']) {
@@ -61,12 +68,10 @@ function CacheRememberFor($namespace, $key, $ttlSeconds, $resolver)
         return $value;
     }
 
-    if ($lock !== false) {
-        fclose($lock);
-    }
-
-    // Another worker holds the lock — return stale value to avoid DB stampede,
-    // or compute without cache if no stale value is available.
+    // flock failed: another worker holds the lock (true contention). Return
+    // stale value to avoid DB stampede, or compute without cache if no stale
+    // value is available.
+    fclose($lock);
     if ($cached !== null) {
         return $cached['payload'];
     }

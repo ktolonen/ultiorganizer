@@ -19,7 +19,10 @@ function ApiTokenLookup($token)
         DBEscapeString($tokenHash),
     );
 
-    $row = DBQueryToRow($query, true);
+    // Must bypass the persistent cache: token revocation needs to take effect
+    // immediately. A cached row would let a revoked token authenticate for up
+    // to the TTL window after revocation.
+    $row = DBQueryToRowUncached($query, true);
     if (empty($row) || !empty($row['revoked'])) {
         return null;
     }
