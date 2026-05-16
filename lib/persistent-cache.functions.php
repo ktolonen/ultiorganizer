@@ -109,6 +109,33 @@ function CacheForgetPersistent($namespace, $key = null)
 }
 
 /**
+ * Return the current number of cache files and their total size in bytes.
+ * Returns zeros when the cache directory is not configured or readable, so
+ * callers can render "no data" without special-casing.
+ *
+ * @return array{files: int, bytes: int}
+ */
+function PersistentCacheStats()
+{
+    $dir = PersistentCacheDir();
+    if ($dir === null) {
+        return ['files' => 0, 'bytes' => 0];
+    }
+    $files = 0;
+    $bytes = 0;
+    foreach (glob($dir . '/*.cache') as $file) {
+        if (is_file($file)) {
+            ++$files;
+            $size = @filesize($file);
+            if ($size !== false) {
+                $bytes += (int) $size;
+            }
+        }
+    }
+    return ['files' => $files, 'bytes' => $bytes];
+}
+
+/**
  * Remove all cache files. Returns the number of .cache files removed.
  */
 function CacheWipePersistent()
@@ -164,7 +191,10 @@ function PersistentCacheRead($filePath)
         return null;
     }
     $data = unserialize($raw, ['allowed_classes' => false]);
-    if (!is_array($data) || !isset($data['expires'], $data['payload'])) {
+    // array_key_exists distinguishes "missing key" from "key with null value"; a
+    // legitimate cached null payload (e.g. DBQueryToValue with no row) must not
+    // be re-fetched on every call.
+    if (!is_array($data) || !array_key_exists('expires', $data) || !array_key_exists('payload', $data)) {
         return null;
     }
     return $data;

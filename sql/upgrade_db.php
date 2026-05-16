@@ -1213,7 +1213,7 @@ function upgrade91()
         runQuery('INSERT INTO uo_setting (name, value) VALUES ("PersistentCacheEnabled", "true")');
     }
     if (!hasRow("uo_setting", "name", "PersistentCacheTtlSeconds")) {
-        runQuery('INSERT INTO uo_setting (name, value) VALUES ("PersistentCacheTtlSeconds", "30")');
+        runQuery('INSERT INTO uo_setting (name, value) VALUES ("PersistentCacheTtlSeconds", "3")');
     }
 }
 

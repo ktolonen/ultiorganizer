@@ -1,16 +1,35 @@
 # Persistent Cache
 
-Use `lib/persistent-cache.functions.php` for cross-request, time-limited caching
-of expensive read-only helper results such as aggregate standings, schedule rows,
-and player scoreboards.
+Cross-request, time-limited file cache for read-only database results. The cache
+is wired into the four read helpers in `lib/database.php` — every `SELECT` that
+flows through `DBQueryToValue`, `DBQueryToRow`, `DBQueryToArray`, or
+`DBQueryRowCount` is automatically cached during GET requests with no per-call
+changes required.
+
+Invalidation is **TTL-only**: the configured TTL (default 3 seconds) bounds how
+stale any cached read can become. Mutation helpers do not call any explicit
+invalidation function.
 
 This cache complements the request-local cache in `lib/cache.functions.php`:
 
 | | Request-local cache | Persistent cache |
 |---|---|---|
-| Lifetime | Single PHP request | Configurable TTL (seconds) |
+| Lifetime | Single PHP request | Configurable TTL (default 3 s) |
 | Storage | `$GLOBALS['runtime_cache']` | Files under `PERSISTENT_CACHE_DIR` |
-| Use case | Deduplicate repeated helper calls on one page | Offload DB CPU across many concurrent requests |
+| Use case | Deduplicate repeated helper calls on one page | Offload DB CPU across many concurrent GET requests |
+
+## When the cache is consulted
+
+`DBQueryCacheable($query)` returns true only when **all** of the following hold:
+
+- `PersistentCacheEnabled` is on.
+- `$_SERVER['REQUEST_METHOD']` is `GET`. POST/PUT/DELETE pages always bypass the
+  cache so they never see stale reads after their own writes.
+- The statement starts with `SELECT` (defensive — non-SELECT statements should
+  not be routed through the read helpers anyway).
+
+CLI scripts and background jobs have no `REQUEST_METHOD` and therefore bypass
+the cache.
 
 ## Configuration
 
@@ -18,18 +37,24 @@ This cache complements the request-local cache in `lib/cache.functions.php`:
 
 ```php
 // Directory for persistent cache files. Must be writable by the web server.
-// Set to '' to disable filesystem caching (the admin toggle still applies).
 define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
 ```
+
+If `PERSISTENT_CACHE_DIR` is undefined or not writable, the helper falls back to
+running the resolver uncached.
 
 **INSTALLATION_SETTING** (editable in `admin/serverconf.php` > Internal settings):
 
 | Name | Default | Description |
 |---|---|---|
 | `PersistentCacheEnabled` | `true` | Master on/off switch. Turn off to bypass caching without a code deploy. |
-| `PersistentCacheTtlSeconds` | `30` | Default TTL in seconds. Call sites may override with an explicit positive value. |
+| `PersistentCacheTtlSeconds` | `3` | Default TTL in seconds. Short enough that mutations show up quickly without explicit invalidation. |
 
-## Public API
+## Direct API
+
+The helper functions remain available for code that needs explicit TTL control
+or namespace-wide invalidation, but the database-layer caching above is
+sufficient for the live-scoring read paths and should be preferred.
 
 ```php
 // Return cached value or compute and store it.
@@ -42,34 +67,17 @@ CacheForgetPersistent(string $namespace, mixed $key = null): void
 CacheWipePersistent(): int
 ```
 
-### Example
+## Trade-offs
 
-```php
-require_once __DIR__ . '/../lib/persistent-cache.functions.php';
-
-function TimetableGames($seasonId, $seriesId) {
-    return CacheRememberFor(
-        'timetable_games',
-        [$seasonId, $seriesId],
-        0,              // 0 = use PersistentCacheTtlSeconds setting
-        function () use ($seasonId, $seriesId) {
-            // ... original DB query ...
-        }
-    );
-}
-```
-
-### Invalidation
-
-Call `CacheForgetPersistent($namespace, $key)` from mutation helpers after writes,
-so stale data is not served within the TTL window:
-
-```php
-function SaveGameResult($gameId, ...) {
-    // ... write to DB ...
-    CacheForgetPersistent('timetable_games', [$seasonId, $seriesId]);
-}
-```
+- **Pro:** zero per-helper wiring; new SELECT helpers benefit automatically.
+- **Pro:** writes during POST flows bypass the cache, so the typical
+  read → write → render cycle in admin/scorekeeping pages is unaffected.
+- **Con:** within a single GET request, a `read → write → read` pattern on the
+  same row could return the cached pre-write value. This is rare in GET handlers
+  and bounded to the TTL window in any case.
+- **Con:** every distinct SELECT becomes a cache file. Under heavy use the
+  cache directory grows; clean it periodically with `CacheWipePersistent()` or
+  filesystem TTL tooling.
 
 ## Cache key derivation
 
@@ -80,7 +88,9 @@ Keys are built with `CacheRuntimeKey($namespace, $key)` (from
 {sanitised_namespace}_{md5(namespace:keytext)}.cache
 ```
 
-The namespace prefix enables glob-based namespace-wide invalidation.
+The database layer uses namespaces `db_query_value`, `db_query_row`,
+`db_query_array`, and `db_query_rowcount`, with the SQL string and casting flag
+as the key components.
 
 ## Stampede control
 
@@ -93,10 +103,11 @@ through to the resolver if no stale file exists.
 
 Values are serialised with PHP's native `serialize()` / `unserialize()`.
 `unserialize` is called with `allowed_classes: false` to prevent PHP object
-injection. igbinary is not used in this version.
+injection. The four read helpers all return scalars or arrays of scalars, so
+serialisation is safe.
 
 ## Write safety
 
 Writes go to a `*.tmp.<pid>` file first, then `rename()` atomically replaces the
-destination, so readers never see partial data. If `rename()` fails the temporary
-file is removed.
+destination, so readers never see partial data. If `rename()` fails the
+temporary file is removed.
