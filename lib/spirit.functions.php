@@ -968,7 +968,7 @@ function RefreshGameSpiritVisibility($gameId)
 function RefreshSeasonSpiritVisibility($seasonId)
 {
     $query = sprintf(
-        "SELECT g.game_id
+		"SELECT g.game_id
 		FROM uo_game g
 		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
 		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
@@ -1000,7 +1000,8 @@ function RefreshGameSpiritData($gameId)
     if (!RefreshGameSpiritVisibility($gameId)) {
         return false;
     }
-    $seasonId = GameSeason($gameId);
+    $game = SpiritGameRow($gameId);
+    $seasonId = $game && !empty($game['season_id']) ? $game['season_id'] : null;
     if (!empty($seasonId)) {
         RefreshSeasonSpiritData($seasonId);
     }
@@ -1009,7 +1010,12 @@ function RefreshGameSpiritData($gameId)
 
 function CanViewSpiritScoresForGame($gameId, $seasoninfo = null)
 {
-    $seasoninfo = SpiritSeasonInfo($seasoninfo ?: GameSeason($gameId));
+    $game = null;
+    if (!$seasoninfo) {
+        $game = SpiritGameRow($gameId);
+        $seasoninfo = $game && !empty($game['season_id']) ? $game['season_id'] : null;
+    }
+    $seasoninfo = SpiritSeasonInfo($seasoninfo);
     if (!$seasoninfo || empty($seasoninfo['spiritmode'])) {
         return false;
     }
@@ -1028,7 +1034,11 @@ function CanViewSpiritScoresForGame($gameId, $seasoninfo = null)
 
 function CanViewSpiritCommentsForGame($gameId, $seasoninfo = null)
 {
-    $seasoninfo = SpiritSeasonInfo($seasoninfo ?: GameSeason($gameId));
+    if (!$seasoninfo) {
+        $game = SpiritGameRow($gameId);
+        $seasoninfo = $game && !empty($game['season_id']) ? $game['season_id'] : null;
+    }
+    $seasoninfo = SpiritSeasonInfo($seasoninfo);
     if (!$seasoninfo || empty($seasoninfo['spiritmode'])) {
         return false;
     }
@@ -1121,11 +1131,7 @@ function SpiritToolRowsBySeason($season)
 			MAX(CASE WHEN sct.`index` = 3 THEN ssc.value END) AS cat3,
 			MAX(CASE WHEN sct.`index` = 4 THEN ssc.value END) AS cat4,
 			MAX(CASE WHEN sct.`index` = 5 THEN ssc.value END) AS cat5,
-			COALESCE(MAX(CASE WHEN sct.`index` = 1 THEN ssc.value END), 0) +
-			COALESCE(MAX(CASE WHEN sct.`index` = 2 THEN ssc.value END), 0) +
-			COALESCE(MAX(CASE WHEN sct.`index` = 3 THEN ssc.value END), 0) +
-			COALESCE(MAX(CASE WHEN sct.`index` = 4 THEN ssc.value END), 0) +
-			COALESCE(MAX(CASE WHEN sct.`index` = 5 THEN ssc.value END), 0) AS total,
+			COALESCE(SUM(ssc.value * sct.factor), 0) AS total,
 			MAX(uc.comment) AS comments
 		FROM uo_spirit_score ssc
 		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
@@ -1142,11 +1148,11 @@ function SpiritToolRowsBySeason($season)
 				(ssc.team_id = g.visitorteam AND uc.type = 6)
 			)
 		)
-			WHERE s.season='%s'
-				AND g.isongoing=0
-				AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
-				AND sct.`index` BETWEEN 1 AND 5
-			GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
+				WHERE s.season='%s'
+					AND g.isongoing=0
+					AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
+					AND sct.`index` > 0
+				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
 			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
         DBEscapeString($season),
     );
