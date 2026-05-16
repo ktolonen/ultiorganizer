@@ -51,5 +51,6 @@ This directory collects general project documentation.
 - `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.
 - `ai/review-playoff-layouts/SKILL.md`: read-only review skill for playoff bracket layout placeholders, CSS widths, and the move-comment block.
 - `ai/format-and-lint/SKILL.md`: fix skill that runs PHP-CS-Fixer and PHPStan on changed PHP files and applies safe fixes.
+- `ai/analyze-lib-functions/SKILL.md`: analysis skill for lib PHP function usage counts and dead-code candidate triage.
 
 The `docs/ai/` directory contains repo-local AI assets and skills, including local review/fix skills and the database-access review skill with its bundled checker.
