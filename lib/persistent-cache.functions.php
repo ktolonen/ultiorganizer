@@ -168,7 +168,12 @@ function PersistentCacheDir()
     if (!defined('PERSISTENT_CACHE_DIR')) {
         return null;
     }
-    $dir = PERSISTENT_CACHE_DIR;
+    // Scope to a per-install subdirectory so multiple Ultiorganizer
+    // deployments that point to the same PERSISTENT_CACHE_DIR (the example
+    // config uses a shared /tmp path) cannot read each other's cached rows
+    // for identical SELECT strings against different databases.
+    $instanceKey = defined('DB_DATABASE') ? (string) DB_DATABASE : '';
+    $dir = PERSISTENT_CACHE_DIR . '/' . md5($instanceKey);
     if (!is_dir($dir) && !@mkdir($dir, 0700, true)) {
         return null;
     }

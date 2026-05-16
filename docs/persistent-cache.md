@@ -43,6 +43,10 @@ define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
 If `PERSISTENT_CACHE_DIR` is undefined or not writable, the helper falls back to
 running the resolver uncached.
 
+Files live in a per-install subdirectory named after `md5(DB_DATABASE)` so
+multiple Ultiorganizer deployments that share the same `PERSISTENT_CACHE_DIR`
+do not collide on identical SELECT strings against different databases.
+
 **INSTALLATION_SETTING** (editable in `admin/serverconf.php` > Internal settings):
 
 | Name | Default | Description |
