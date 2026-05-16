@@ -47,9 +47,11 @@ empty string (`define('PERSISTENT_CACHE_DIR', '')`) to disable the filesystem
 cache explicitly. If the resolved directory cannot be created or written to,
 the helper falls back to running the resolver uncached.
 
-Files live in a per-install subdirectory named after `md5(DB_DATABASE)` so
-multiple Ultiorganizer deployments that share the same `PERSISTENT_CACHE_DIR`
-do not collide on identical SELECT strings against different databases.
+Files live in a per-install subdirectory named after
+`md5(DB_HOST|DB_DATABASE|DB_USER)` so multiple Ultiorganizer deployments that
+share the same `PERSISTENT_CACHE_DIR` do not collide on identical SELECT
+strings — even when two installs use the same schema name on different MySQL
+hosts (e.g. prod and staging both named `ultiorganizer`).
 
 **INSTALLATION_SETTING** (editable in `admin/serverconf.php` > Internal settings):
 

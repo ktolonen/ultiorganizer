@@ -177,9 +177,14 @@ function PersistentCacheDir()
     }
     // Scope to a per-install subdirectory so multiple Ultiorganizer
     // deployments that point to the same PERSISTENT_CACHE_DIR cannot read
-    // each other's cached rows for identical SELECT strings against
-    // different databases.
-    $instanceKey = defined('DB_DATABASE') ? (string) DB_DATABASE : '';
+    // each other's cached rows. Combine host, database, and user so that
+    // installs sharing a schema name on different MySQL hosts (e.g. prod and
+    // staging both named "ultiorganizer") still map to distinct directories.
+    $instanceKey = implode('|', [
+        defined('DB_HOST') ? (string) DB_HOST : '',
+        defined('DB_DATABASE') ? (string) DB_DATABASE : '',
+        defined('DB_USER') ? (string) DB_USER : '',
+    ]);
     $dir = rtrim($base, '/') . '/' . md5($instanceKey);
     if (!is_dir($dir) && !@mkdir($dir, 0700, true)) {
         return null;
