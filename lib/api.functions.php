@@ -41,6 +41,10 @@ function ApiRateLimitCheck($rateKey, $limit, $windowSeconds)
     $now = time();
     $windowStart = $now - ($now % $windowSeconds);
 
+    // Must bypass the persistent cache: this row is read, incremented, and
+    // written back. A cached read would let concurrent requests within the
+    // TTL window all see the same stale count and overwrite each other with
+    // the same +1, breaking rate limiting.
     $query = sprintf(
         "SELECT window_start, request_count
      FROM uo_api_rate_limit
@@ -48,7 +52,7 @@ function ApiRateLimitCheck($rateKey, $limit, $windowSeconds)
      LIMIT 1",
         DBEscapeString($rateKey),
     );
-    $row = DBQueryToRow($query);
+    $row = DBQueryToRowUncached($query);
 
     if (empty($row)) {
         $insert = sprintf(

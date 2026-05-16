@@ -293,11 +293,12 @@ function LogPageLoad($page)
         return;
     }
 
+    // Must bypass the persistent cache: read-then-write counter pattern.
     $query = sprintf(
         "SELECT loads FROM uo_pageload_counter WHERE page='%s'",
         DBEscapeString($page),
     );
-    $loads = DBQueryToValue($query);
+    $loads = DBQueryToValueUncached($query);
 
     if ($loads === null) {
         $query = sprintf(
@@ -347,11 +348,12 @@ function LogVisitor($ip)
         return;
     }
 
+    // Must bypass the persistent cache: read-then-write counter pattern.
     $query = sprintf(
         "SELECT visits FROM uo_visitor_counter WHERE ip='%s'",
         DBEscapeString($ip),
     );
-    $visits = DBQueryToValue($query);
+    $visits = DBQueryToValueUncached($query);
 
     if ($visits === null) {
         $query = sprintf(
