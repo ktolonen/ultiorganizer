@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-15 23:45+0300\n"
+"POT-Creation-Date: 2026-05-16 18:29+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -2296,6 +2296,10 @@ msgstr "Neljä kategoriaa sekä vertailu"
 msgid "Fri"
 msgstr "Pe"
 
+#: lib/common.functions.php:141
+msgid "Friday"
+msgstr "Perjantai"
+
 #: admin/seasonstandings.php:469
 msgid "From"
 msgstr ":"
@@ -3561,6 +3565,10 @@ msgstr "Muuta käännöksiä"
 #: lib/common.functions.php:129
 msgid "Mon"
 msgstr "Ma"
+
+#: lib/common.functions.php:129
+msgid "Monday"
+msgstr "Maanantai"
 
 #: admin/seasonmoves.php:127
 msgid "Move from"
@@ -4972,6 +4980,10 @@ msgstr "SC"
 msgid "Sat"
 msgstr "La"
 
+#: lib/common.functions.php:144
+msgid "Saturday"
+msgstr "Lauantai"
+
 #: result.php:105 admin/addlocations.php:186 admin/addreservation.php:232
 #: admin/addseasonlinks.php:90 admin/addseasonpools.php:518
 #: admin/addseasons.php:464 admin/addseasonseries.php:135
@@ -5899,6 +5911,10 @@ msgstr "Yhteensä"
 msgid "Sun"
 msgstr "Su"
 
+#: lib/common.functions.php:126
+msgid "Sunday"
+msgstr "Sunnuntai"
+
 #: admin/addseasonpools.php:305 admin/addseasonpools.php:307
 msgid "Swissdraw"
 msgstr "Swissdraw"
@@ -6177,6 +6193,10 @@ msgstr "Tämä poistaa kaikki pelit tästä lohkosta."
 msgid "Thu"
 msgstr "To"
 
+#: lib/common.functions.php:138
+msgid "Thursday"
+msgstr "Torstai"
+
 #: gameplay.php:212 admin/accreditation.php:136 admin/eventviewer.php:140
 #: admin/seasonadmin.php:49 cust/bula/pdfscoresheet.php:597
 #: cust/default/pdfscoresheet.php:603 cust/default/pdfscoresheet.php:639
@@ -6428,6 +6448,10 @@ msgstr "Käännökset"
 #: lib/common.functions.php:132
 msgid "Tue"
 msgstr "Ti"
+
+#: lib/common.functions.php:132
+msgid "Tuesday"
+msgstr "Tiistai"
 
 #: gameplay.php:274 ext/rss.php:148 ext/rss.php:187
 msgid "Turnover"
@@ -6761,6 +6785,10 @@ msgstr "WWW-sivut (kotisivut, blogit, kuvat, videot)"
 #: lib/common.functions.php:135
 msgid "Wed"
 msgstr "Ke"
+
+#: lib/common.functions.php:135
+msgid "Wednesday"
+msgstr "Keskiviikko"
 
 #: playercard.php:94 user/playerprofile.php:307
 msgid "Weight"
