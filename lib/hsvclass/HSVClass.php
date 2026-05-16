@@ -150,7 +150,15 @@ class HSVClass
      */
     function setRGBString($arg_html_string)
     {
-        if (!is_string($arg_html_string) || strlen($arg_html_string) != 6) return false;
+        if (!is_string($arg_html_string)) {
+            return $this->setRGB(0, 0, 0);
+        }
+        if (strlen($arg_html_string) > 0 && $arg_html_string[0] == '#') {
+            $arg_html_string = substr($arg_html_string, 1);
+        }
+        if (strlen($arg_html_string) != 6) {
+            return $this->setRGB(0, 0, 0);
+        }
         $r = $arg_html_string[0] . $arg_html_string[1];
         $g = $arg_html_string[2] . $arg_html_string[3];
         $b = $arg_html_string[4] . $arg_html_string[5];

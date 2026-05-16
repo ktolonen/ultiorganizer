@@ -697,6 +697,10 @@ function SafeUrl($url)
 
 function colorstring2rgb($color)
 {
+    if (!is_string($color) || $color === '') {
+        return ['r' => 230, 'g' => 230, 'b' => 230];
+    }
+
     if ($color[0] == '#') {
         $color = substr($color, 1);
     }
@@ -710,7 +714,7 @@ function colorstring2rgb($color)
     } elseif (strlen($color) == 3) {
         list($r, $g, $b) = [$color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]];
     } else {
-        return false;
+        return ['r' => 230, 'g' => 230, 'b' => 230];
     }
 
     $r = hexdec($r);
