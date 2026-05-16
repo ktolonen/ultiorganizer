@@ -165,15 +165,22 @@ function CacheWipePersistent()
 
 function PersistentCacheDir()
 {
-    if (!defined('PERSISTENT_CACHE_DIR')) {
+    // Resolve the base directory. Undefined falls back to a safe runtime
+    // default so upgraded installs that have not edited conf/config.inc.php
+    // still benefit from caching. Empty string is the documented way to
+    // disable filesystem caching even when the admin toggle is on.
+    $base = defined('PERSISTENT_CACHE_DIR')
+        ? (string) PERSISTENT_CACHE_DIR
+        : sys_get_temp_dir() . '/ultiorganizer-cache';
+    if (trim($base) === '') {
         return null;
     }
     // Scope to a per-install subdirectory so multiple Ultiorganizer
-    // deployments that point to the same PERSISTENT_CACHE_DIR (the example
-    // config uses a shared /tmp path) cannot read each other's cached rows
-    // for identical SELECT strings against different databases.
+    // deployments that point to the same PERSISTENT_CACHE_DIR cannot read
+    // each other's cached rows for identical SELECT strings against
+    // different databases.
     $instanceKey = defined('DB_DATABASE') ? (string) DB_DATABASE : '';
-    $dir = PERSISTENT_CACHE_DIR . '/' . md5($instanceKey);
+    $dir = rtrim($base, '/') . '/' . md5($instanceKey);
     if (!is_dir($dir) && !@mkdir($dir, 0700, true)) {
         return null;
     }

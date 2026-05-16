@@ -40,8 +40,12 @@ the cache.
 define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
 ```
 
-If `PERSISTENT_CACHE_DIR` is undefined or not writable, the helper falls back to
-running the resolver uncached.
+If `PERSISTENT_CACHE_DIR` is undefined, the helper falls back to
+`sys_get_temp_dir() . '/ultiorganizer-cache'` so upgraded installs that have
+not edited `conf/config.inc.php` still benefit from caching. Set it to an
+empty string (`define('PERSISTENT_CACHE_DIR', '')`) to disable the filesystem
+cache explicitly. If the resolved directory cannot be created or written to,
+the helper falls back to running the resolver uncached.
 
 Files live in a per-install subdirectory named after `md5(DB_DATABASE)` so
 multiple Ultiorganizer deployments that share the same `PERSISTENT_CACHE_DIR`
