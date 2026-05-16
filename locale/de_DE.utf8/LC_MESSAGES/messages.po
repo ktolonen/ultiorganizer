@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-15 22:38+0300\n"
+"POT-Creation-Date: 2026-05-15 23:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -32,6 +32,16 @@ msgstr " (gib '0' ein, wenn nicht live)"
 #: cust/slkl/pdfscoresheet.php:155 user/teamplayers.php:162
 msgid "#"
 msgstr "#"
+
+#: admin/serverconf.php:435
+#, php-format
+msgid "%d cache files cleared."
+msgstr ""
+
+#: admin/serverconf.php:335
+#, php-format
+msgid "%d files, %s"
+msgstr ""
 
 #: admin/schedule.php:306
 #, php-format
@@ -103,7 +113,7 @@ msgstr "2. Halbzeit"
 msgid "3. Mark players who will play with an X in the Play column."
 msgstr "3. Markiere die spielenden Spieler mit einem X in der Spalte Play."
 
-#: admin/serverconf.php:396
+#: admin/serverconf.php:413
 msgid "3rd party API settings"
 msgstr "Einstellungen für fremde APIs"
 
@@ -408,7 +418,7 @@ msgstr "Admin-Hilfe"
 msgid "Administration"
 msgstr "Administration"
 
-#: admin/select_userrole.php:25 admin/serverconf.php:387 user/userinfo.php:396
+#: admin/select_userrole.php:25 admin/serverconf.php:404 user/userinfo.php:396
 #: user/userinfo.php:499
 msgid "Administrator"
 msgstr "Administrator"
@@ -790,9 +800,19 @@ msgstr "CSV-Dateien"
 msgid "CSV separator"
 msgstr "CSV-Trennzeichen"
 
-#: admin/serverconf.php:317
+#: admin/serverconf.php:323
 msgid "Cache TTL (seconds)"
 msgstr ""
+
+#: admin/serverconf.php:424
+#, fuzzy
+msgid "Cache settings"
+msgstr "UI-Einstellungen"
+
+#: admin/serverconf.php:334
+#, fuzzy
+msgid "Cache size"
+msgstr "Datenbankgröße"
 
 #: admin/seasons.php:146
 msgid "Calc. stats"
@@ -997,6 +1017,15 @@ msgstr ""
 #: admin/dbequalize.php:236 user/addresult.php:119
 msgid "Clear"
 msgstr "Löschen"
+
+#: admin/serverconf.php:438
+#, fuzzy
+msgid "Clear cache"
+msgstr "Löschen"
+
+#: admin/serverconf.php:438
+msgid "Clear cache?"
+msgstr ""
 
 #: user/respgames.php:28
 msgid "Click Mass input to enter multiple results at once, then click Save"
@@ -1335,11 +1364,11 @@ msgstr "Aktuelles Bild"
 msgid "Current score"
 msgstr "Aktueller Spielstand"
 
-#: admin/serverconf.php:223
+#: admin/serverconf.php:228
 msgid "Customization"
 msgstr "Anpassung"
 
-#: admin/serverconf.php:224
+#: admin/serverconf.php:229
 msgid "Customization version"
 msgstr "Anpassungsversion"
 
@@ -1375,7 +1404,7 @@ msgstr "Datenbank-Vereinheitlichungen"
 msgid "Database size"
 msgstr "Datenbankgröße"
 
-#: admin/serverconf.php:222
+#: admin/serverconf.php:227
 msgid "Database version"
 msgstr "Datenbankversion"
 
@@ -1395,11 +1424,11 @@ msgstr "Geburtstag"
 msgid "Day"
 msgstr "Tag"
 
-#: admin/serverconf.php:351
+#: admin/serverconf.php:368
 msgid "Default Locale"
 msgstr "Standardsprache"
 
-#: admin/serverconf.php:335
+#: admin/serverconf.php:352
 msgid "Default Timezone"
 msgstr "Zeitzonen-Voreinstellung"
 
@@ -1557,7 +1586,7 @@ msgstr ""
 "Direkter Datenbankzugriff ist deaktiviert. Um ihn zu aktivieren, setze "
 "ENABLE_ADMIN_DB_ACCESS in der Datei config.inc.php auf 'enabled'."
 
-#: admin/serverconf.php:295
+#: admin/serverconf.php:301
 msgid "Disable visitor logging"
 msgstr "Besucherprotokollierung deaktivieren"
 
@@ -2751,7 +2780,7 @@ msgstr "Erzielte Punkte"
 msgid "Gold"
 msgstr "Gold"
 
-#: admin/serverconf.php:248
+#: admin/serverconf.php:254
 msgid "Google Maps key"
 msgstr "Google Maps-Schlüssel"
 
@@ -2921,7 +2950,7 @@ msgstr "Zuordnung Heimteam"
 msgid "Home team has rights to edit game scoresheet"
 msgstr "Das Heimteam hat das Recht, den Spielbericht zu bearbeiten"
 
-#: admin/serverconf.php:324
+#: admin/serverconf.php:341
 msgid "Home team is game responsible"
 msgstr "Heimteam ist für Spieleingabe verantwortlich"
 
@@ -3076,7 +3105,7 @@ msgstr ""
 msgid "Installation"
 msgstr "Installation"
 
-#: admin/serverconf.php:227
+#: admin/serverconf.php:232
 msgid "Installation configuration"
 msgstr "Installationskonfiguration"
 
@@ -3098,7 +3127,7 @@ msgstr "Unzureichende Rechte."
 msgid "Insufficient user rights"
 msgstr "Benutzerrechte reichen nicht aus."
 
-#: admin/serverconf.php:402
+#: admin/serverconf.php:419
 msgid "Internal settings"
 msgstr "Interne Einstellungen"
 
@@ -3488,11 +3517,11 @@ msgstr "Mitgliedschaft"
 msgid "Membership database (a file with .csv suffix)"
 msgstr "Mitgliederdatenbank (eine Datei mit der Endung .csv)"
 
-#: admin/addseasonlinks.php:79 admin/serverconf.php:385
+#: admin/addseasonlinks.php:79 admin/serverconf.php:402
 msgid "Menu link"
 msgstr "Menü-Link"
 
-#: admin/addseasonlinks.php:80 admin/serverconf.php:386
+#: admin/addseasonlinks.php:80 admin/serverconf.php:403
 msgid "Menu mail"
 msgstr "Menü-E-Mail"
 
@@ -3626,7 +3655,7 @@ msgstr "HINWEIS"
 #: admin/seasonpoints.php:194 admin/seasonpools.php:113 admin/seasons.php:91
 #: admin/seasonseries.php:76 admin/seasonstats.php:21 admin/seasonstats.php:35
 #: admin/seasonteams.php:174 admin/serieformats.php:29
-#: admin/seriesseeding.php:46 admin/serieteams.php:150 admin/serverconf.php:370
+#: admin/seriesseeding.php:46 admin/serieteams.php:150 admin/serverconf.php:387
 #: cust/bula/pdfscoresheet.php:141 cust/bula/pdfscoresheet.php:151
 #: cust/bula/pdfscoresheet.php:261 cust/default/pdfscoresheet.php:178
 #: cust/default/pdfscoresheet.php:188 cust/default/pdfscoresheet.php:286
@@ -4043,7 +4072,7 @@ msgstr "Optional, wenn E-Mail deaktiviert ist."
 
 #: admin/addseasonlinks.php:64 admin/addseasonpools.php:243
 #: admin/addseasonpools.php:281 admin/addseasonseries.php:108
-#: admin/seasonpools.php:114 admin/serverconf.php:370
+#: admin/seasonpools.php:114 admin/serverconf.php:387
 msgid "Order"
 msgstr "Reihenfolge"
 
@@ -4089,7 +4118,7 @@ msgstr "Seitenaufrufe"
 msgid "Page loads per page"
 msgstr "Seitenaufrufe pro Seite"
 
-#: admin/serverconf.php:240
+#: admin/serverconf.php:246
 msgid "Page title"
 msgstr "Seitentitel"
 
@@ -4172,7 +4201,7 @@ msgstr "Pause: %s&thinsp;min."
 msgid "Paused"
 msgstr "Pausiert"
 
-#: admin/serverconf.php:306
+#: admin/serverconf.php:312
 msgid "Persistent cache"
 msgstr ""
 
@@ -4602,7 +4631,7 @@ msgstr "Statistik neu berechn."
 msgid "Read-only"
 msgstr "Schreibgeschuetzt"
 
-#: admin/serverconf.php:273
+#: admin/serverconf.php:279
 msgid "Read-only Server"
 msgstr "Schreibgeschuetzter Server"
 
@@ -4988,7 +5017,7 @@ msgstr "Sa"
 #: admin/seasonpools.php:307 admin/seasonseries.php:180
 #: admin/seasonstandings.php:544 admin/seasonteams.php:268
 #: admin/select_teams.php:153 admin/seriesseeding.php:74
-#: admin/serieteams.php:184 admin/serverconf.php:406 admin/translations.php:137
+#: admin/serieteams.php:184 admin/serverconf.php:429 admin/translations.php:137
 #: mobile/addcomment.php:42 mobile/addfirstoffence.php:47
 #: mobile/addhalftime.php:37 mobile/addofficial.php:27
 #: mobile/addplayerlists.php:132 mobile/addspirittimeouts.php:85
@@ -5497,7 +5526,7 @@ msgstr "Anzeigen"
 msgid "Show Comments"
 msgstr "Kommentare anzeigen"
 
-#: admin/serverconf.php:262
+#: admin/serverconf.php:268
 msgid "Show Defence statistics"
 msgstr "Defensestatistik anzeigen"
 
@@ -5545,7 +5574,7 @@ msgstr "Im öfftl. Profil anzeigen"
 msgid "Show on club list"
 msgstr "In Vereinsliste anzeigen"
 
-#: admin/serverconf.php:212
+#: admin/serverconf.php:217
 msgid "Show phpinfo()"
 msgstr "phpinfo() anzeigen"
 
@@ -5597,7 +5626,7 @@ msgstr ""
 msgid "Silver"
 msgstr "Silber"
 
-#: admin/addseasons.php:439 admin/serverconf.php:284
+#: admin/addseasons.php:439 admin/serverconf.php:290
 msgid "Soft maintenance mode"
 msgstr "Weicher Wartungsmodus"
 
@@ -5915,7 +5944,7 @@ msgstr "Schweizer System"
 msgid "Swissdraw pool"
 msgstr "Pool vom Typ Swiss Draw"
 
-#: admin/serverconf.php:255
+#: admin/serverconf.php:261
 msgid "System email sender address"
 msgstr "System Email Sender Adresse"
 
@@ -6466,7 +6495,7 @@ msgstr "Twitter"
 #: admin/addseasonseries.php:111 admin/eventviewer.php:141
 #: admin/seasonadmin.php:35 admin/seasonpools.php:118 admin/seasons.php:92
 #: admin/seasonseries.php:76 admin/seasonstats.php:21 admin/seasonstats.php:35
-#: admin/serverconf.php:370 user/addmedialink.php:193 user/clubprofile.php:214
+#: admin/serverconf.php:387 user/addmedialink.php:193 user/clubprofile.php:214
 #: user/playerprofile.php:352 user/teamprofile.php:154
 msgid "Type"
 msgstr "Typ"
@@ -6479,11 +6508,11 @@ msgstr "Typ darf nicht leer sein"
 msgid "Type of connection in use"
 msgstr "Verbindungsart"
 
-#: admin/serverconf.php:368
+#: admin/serverconf.php:385
 msgid "UI settings"
 msgstr "UI-Einstellungen"
 
-#: admin/addseasonlinks.php:64 admin/serverconf.php:370
+#: admin/addseasonlinks.php:64 admin/serverconf.php:387
 #: user/addmedialink.php:174 user/addmedialink.php:194 user/clubprofile.php:215
 #: user/playerprofile.php:353 user/teamprofile.php:155
 msgid "URL"
@@ -6528,7 +6557,7 @@ msgstr "Ultiorganizer Punktzaehler"
 msgid "Ultiorganizer links"
 msgstr "Ultiorganizer links"
 
-#: admin/serverconf.php:221
+#: admin/serverconf.php:226
 msgid "Ultiorganizer version"
 msgstr "Ultiorganizer-Version"
 
@@ -6687,7 +6716,7 @@ msgstr "Gültig"
 msgid "Value"
 msgstr "Wert"
 
-#: admin/serverconf.php:219
+#: admin/serverconf.php:224
 msgid "Version information"
 msgstr "Versionsinformationen"
 
@@ -6887,7 +6916,7 @@ msgstr "World Flying Disc Federation"
 #: admin/seasonmoves.php:166 admin/seasonpools.php:264 admin/seasons.php:153
 #: admin/seasonseries.php:130 admin/seasonstandings.php:396
 #: admin/seasonstandings.php:453 admin/seasonteams.php:240
-#: admin/serieformats.php:48 admin/serverconf.php:379
+#: admin/serieformats.php:48 admin/serverconf.php:396
 #: admin/translations.php:123 lib/search.functions.php:794
 #: plugins/simulate_games.php:264
 msgid "X"

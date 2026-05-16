@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-15 22:38+0300\n"
+"POT-Creation-Date: 2026-05-15 23:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -31,6 +31,16 @@ msgstr " (syötä '0', jos ei ole live)"
 #: cust/slkl/pdfscoresheet.php:155 user/teamplayers.php:162
 msgid "#"
 msgstr "#"
+
+#: admin/serverconf.php:435
+#, php-format
+msgid "%d cache files cleared."
+msgstr ""
+
+#: admin/serverconf.php:335
+#, php-format
+msgid "%d files, %s"
+msgstr ""
 
 #: admin/schedule.php:306
 #, php-format
@@ -100,7 +110,7 @@ msgstr "2. puoliaika"
 msgid "3. Mark players who will play with an X in the Play column."
 msgstr "3. Merkitse pelaavat pelaajat X:llä Play-sarakkeeseen."
 
-#: admin/serverconf.php:396
+#: admin/serverconf.php:413
 msgid "3rd party API settings"
 msgstr "Ulkopuolisten palvelujen asennukset"
 
@@ -401,7 +411,7 @@ msgstr "Ylläpitäjän ohje"
 msgid "Administration"
 msgstr "Hallinto"
 
-#: admin/select_userrole.php:25 admin/serverconf.php:387 user/userinfo.php:396
+#: admin/select_userrole.php:25 admin/serverconf.php:404 user/userinfo.php:396
 #: user/userinfo.php:499
 msgid "Administrator"
 msgstr "Ylläpitäjä"
@@ -781,9 +791,19 @@ msgstr "CSV-tiedostot"
 msgid "CSV separator"
 msgstr "CSV-erotin"
 
-#: admin/serverconf.php:317
+#: admin/serverconf.php:323
 msgid "Cache TTL (seconds)"
 msgstr ""
+
+#: admin/serverconf.php:424
+#, fuzzy
+msgid "Cache settings"
+msgstr "UI asetukset"
+
+#: admin/serverconf.php:334
+#, fuzzy
+msgid "Cache size"
+msgstr "Tietokannan koko"
 
 #: admin/seasons.php:146
 msgid "Calc. stats"
@@ -985,6 +1005,15 @@ msgstr ""
 #: admin/dbequalize.php:236 user/addresult.php:119
 msgid "Clear"
 msgstr "Tyhjennä"
+
+#: admin/serverconf.php:438
+#, fuzzy
+msgid "Clear cache"
+msgstr "Tyhjennä"
+
+#: admin/serverconf.php:438
+msgid "Clear cache?"
+msgstr ""
 
 #: user/respgames.php:28
 msgid "Click Mass input to enter multiple results at once, then click Save"
@@ -1321,11 +1350,11 @@ msgstr "Nykyinen kuva"
 msgid "Current score"
 msgstr "Tilanne"
 
-#: admin/serverconf.php:223
+#: admin/serverconf.php:228
 msgid "Customization"
 msgstr "Mukautus"
 
-#: admin/serverconf.php:224
+#: admin/serverconf.php:229
 msgid "Customization version"
 msgstr "Mukautuksen versio"
 
@@ -1361,7 +1390,7 @@ msgstr "Tietokannan yhdenmukaistaminen"
 msgid "Database size"
 msgstr "Tietokannan koko"
 
-#: admin/serverconf.php:222
+#: admin/serverconf.php:227
 msgid "Database version"
 msgstr "Tietokannan versio"
 
@@ -1381,11 +1410,11 @@ msgstr "Syntymäaika"
 msgid "Day"
 msgstr "Päivä"
 
-#: admin/serverconf.php:351
+#: admin/serverconf.php:368
 msgid "Default Locale"
 msgstr "Oletuskieli"
 
-#: admin/serverconf.php:335
+#: admin/serverconf.php:352
 msgid "Default Timezone"
 msgstr "Oletusaikavyöhyke"
 
@@ -1543,7 +1572,7 @@ msgstr ""
 "Suora tietokantakäyttö on poistettu käytöstä. Ota se käyttöön määrittämällä "
 "config.inc.php-tiedostossa ENABLE_ADMIN_DB_ACCESS arvoksi 'enabled'."
 
-#: admin/serverconf.php:295
+#: admin/serverconf.php:301
 msgid "Disable visitor logging"
 msgstr "Poista kävijäloki käytöstä"
 
@@ -2731,7 +2760,7 @@ msgstr "Tehdyt maalit"
 msgid "Gold"
 msgstr "Kulta"
 
-#: admin/serverconf.php:248
+#: admin/serverconf.php:254
 msgid "Google Maps key"
 msgstr "Google Maps avain"
 
@@ -2901,7 +2930,7 @@ msgstr "Kotijoukkueen määritys"
 msgid "Home team has rights to edit game scoresheet"
 msgstr "Kotijoukkueella on oikeus muuttaa pelin pöytäkirjaa"
 
-#: admin/serverconf.php:324
+#: admin/serverconf.php:341
 msgid "Home team is game responsible"
 msgstr "Kotijoukkue on vastuussa pelistä"
 
@@ -3054,7 +3083,7 @@ msgstr ""
 msgid "Installation"
 msgstr "Asennus"
 
-#: admin/serverconf.php:227
+#: admin/serverconf.php:232
 msgid "Installation configuration"
 msgstr "Asennuksen asetukset"
 
@@ -3076,7 +3105,7 @@ msgstr "Ei oikeuksia."
 msgid "Insufficient user rights"
 msgstr "Riittämättömät käyttöoikeudet."
 
-#: admin/serverconf.php:402
+#: admin/serverconf.php:419
 msgid "Internal settings"
 msgstr "Sisäiset asetukset"
 
@@ -3464,11 +3493,11 @@ msgstr "Jäsenmaksu"
 msgid "Membership database (a file with .csv suffix)"
 msgstr "Jäsenrekisterikantatiedosto (.cvs -päätteinen tiedosto)"
 
-#: admin/addseasonlinks.php:79 admin/serverconf.php:385
+#: admin/addseasonlinks.php:79 admin/serverconf.php:402
 msgid "Menu link"
 msgstr "Valikkolinkki"
 
-#: admin/addseasonlinks.php:80 admin/serverconf.php:386
+#: admin/addseasonlinks.php:80 admin/serverconf.php:403
 msgid "Menu mail"
 msgstr "Valikko e-mail"
 
@@ -3601,7 +3630,7 @@ msgstr "HUOM"
 #: admin/seasonpoints.php:194 admin/seasonpools.php:113 admin/seasons.php:91
 #: admin/seasonseries.php:76 admin/seasonstats.php:21 admin/seasonstats.php:35
 #: admin/seasonteams.php:174 admin/serieformats.php:29
-#: admin/seriesseeding.php:46 admin/serieteams.php:150 admin/serverconf.php:370
+#: admin/seriesseeding.php:46 admin/serieteams.php:150 admin/serverconf.php:387
 #: cust/bula/pdfscoresheet.php:141 cust/bula/pdfscoresheet.php:151
 #: cust/bula/pdfscoresheet.php:261 cust/default/pdfscoresheet.php:178
 #: cust/default/pdfscoresheet.php:188 cust/default/pdfscoresheet.php:286
@@ -4010,7 +4039,7 @@ msgstr "Valinnainen, kun sähköposti on poistettu käytöstä."
 
 #: admin/addseasonlinks.php:64 admin/addseasonpools.php:243
 #: admin/addseasonpools.php:281 admin/addseasonseries.php:108
-#: admin/seasonpools.php:114 admin/serverconf.php:370
+#: admin/seasonpools.php:114 admin/serverconf.php:387
 msgid "Order"
 msgstr "Järjestys"
 
@@ -4056,7 +4085,7 @@ msgstr "Sivulataukset"
 msgid "Page loads per page"
 msgstr "Latauksia per sivu"
 
-#: admin/serverconf.php:240
+#: admin/serverconf.php:246
 msgid "Page title"
 msgstr "Sivunotsikko"
 
@@ -4139,7 +4168,7 @@ msgstr "Tauko: %s&thinsp;min."
 msgid "Paused"
 msgstr "Keskeytetty"
 
-#: admin/serverconf.php:306
+#: admin/serverconf.php:312
 msgid "Persistent cache"
 msgstr ""
 
@@ -4568,7 +4597,7 @@ msgstr "Tilastoi uudelleen"
 msgid "Read-only"
 msgstr "Vain luku"
 
-#: admin/serverconf.php:273
+#: admin/serverconf.php:279
 msgid "Read-only Server"
 msgstr "Vain luku -palvelin"
 
@@ -4953,7 +4982,7 @@ msgstr "La"
 #: admin/seasonpools.php:307 admin/seasonseries.php:180
 #: admin/seasonstandings.php:544 admin/seasonteams.php:268
 #: admin/select_teams.php:153 admin/seriesseeding.php:74
-#: admin/serieteams.php:184 admin/serverconf.php:406 admin/translations.php:137
+#: admin/serieteams.php:184 admin/serverconf.php:429 admin/translations.php:137
 #: mobile/addcomment.php:42 mobile/addfirstoffence.php:47
 #: mobile/addhalftime.php:37 mobile/addofficial.php:27
 #: mobile/addplayerlists.php:132 mobile/addspirittimeouts.php:85
@@ -5460,7 +5489,7 @@ msgstr "Näytä"
 msgid "Show Comments"
 msgstr "Näytä kommentit"
 
-#: admin/serverconf.php:262
+#: admin/serverconf.php:268
 msgid "Show Defence statistics"
 msgstr "Näytä puolustustilastot"
 
@@ -5508,7 +5537,7 @@ msgstr "Näytä julkisessa profiilissa"
 msgid "Show on club list"
 msgstr "Näytä seuralistauksessa"
 
-#: admin/serverconf.php:212
+#: admin/serverconf.php:217
 msgid "Show phpinfo()"
 msgstr "Näytä phpinfo()"
 
@@ -5560,7 +5589,7 @@ msgstr ""
 msgid "Silver"
 msgstr "Hopea"
 
-#: admin/addseasons.php:439 admin/serverconf.php:284
+#: admin/addseasons.php:439 admin/serverconf.php:290
 msgid "Soft maintenance mode"
 msgstr "Pehmeä ylläpitotila"
 
@@ -5878,7 +5907,7 @@ msgstr "Swissdraw"
 msgid "Swissdraw pool"
 msgstr "Swissdraw-lohko"
 
-#: admin/serverconf.php:255
+#: admin/serverconf.php:261
 msgid "System email sender address"
 msgstr "Sähköpostin lähettäjänosoite"
 
@@ -6417,7 +6446,7 @@ msgstr "Twitter"
 #: admin/addseasonseries.php:111 admin/eventviewer.php:141
 #: admin/seasonadmin.php:35 admin/seasonpools.php:118 admin/seasons.php:92
 #: admin/seasonseries.php:76 admin/seasonstats.php:21 admin/seasonstats.php:35
-#: admin/serverconf.php:370 user/addmedialink.php:193 user/clubprofile.php:214
+#: admin/serverconf.php:387 user/addmedialink.php:193 user/clubprofile.php:214
 #: user/playerprofile.php:352 user/teamprofile.php:154
 msgid "Type"
 msgstr "Tyyppi"
@@ -6430,11 +6459,11 @@ msgstr "Tyyppi ei voi olla tyhjä"
 msgid "Type of connection in use"
 msgstr "Type of connection in use"
 
-#: admin/serverconf.php:368
+#: admin/serverconf.php:385
 msgid "UI settings"
 msgstr "UI asetukset"
 
-#: admin/addseasonlinks.php:64 admin/serverconf.php:370
+#: admin/addseasonlinks.php:64 admin/serverconf.php:387
 #: user/addmedialink.php:174 user/addmedialink.php:194 user/clubprofile.php:215
 #: user/playerprofile.php:353 user/teamprofile.php:155
 msgid "URL"
@@ -6480,7 +6509,7 @@ msgstr "Pelikoneen pistelaskuri"
 msgid "Ultiorganizer links"
 msgstr "Pelikone linkit"
 
-#: admin/serverconf.php:221
+#: admin/serverconf.php:226
 msgid "Ultiorganizer version"
 msgstr "Ultiorganizerin versio"
 
@@ -6635,7 +6664,7 @@ msgstr "Voimassa"
 msgid "Value"
 msgstr "Arvo"
 
-#: admin/serverconf.php:219
+#: admin/serverconf.php:224
 msgid "Version information"
 msgstr "Versiotiedot"
 
@@ -6833,7 +6862,7 @@ msgstr "Maailman Liitokiekkoliitto"
 #: admin/seasonmoves.php:166 admin/seasonpools.php:264 admin/seasons.php:153
 #: admin/seasonseries.php:130 admin/seasonstandings.php:396
 #: admin/seasonstandings.php:453 admin/seasonteams.php:240
-#: admin/serieformats.php:48 admin/serverconf.php:379
+#: admin/serieformats.php:48 admin/serverconf.php:396
 #: admin/translations.php:123 lib/search.functions.php:794
 #: plugins/simulate_games.php:264
 msgid "X"
