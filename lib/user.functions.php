@@ -275,11 +275,11 @@ function SetUserSessionData($user_id)
         "SELECT prop_id, name, value FROM uo_userproperties WHERE userid='%s'",
         DBEscapeString($user_id),
     );
-    $result = DBQuery($query);
+    $rows = DBQueryToArray($query);
 
     $_SESSION['userproperties'] = [];
 
-    while ($property = mysqli_fetch_assoc($result)) {
+    foreach ($rows as $property) {
         $propname = $property['name'];
         $propvalue = explode(":", $property['value']);
         $propid = $property['prop_id'];

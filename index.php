@@ -15,6 +15,7 @@ if (is_file('install.php') && (!defined('ALLOW_INSTALL') || !ALLOW_INSTALL)) {
 include_once 'lib/database.php';
 OpenConnection();
 global $include_prefix;
+require_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'menufunctions.php';
 include_once $include_prefix . 'view_ids.inc.php';
 include_once $include_prefix . 'lib/user.functions.php';
@@ -43,7 +44,6 @@ if (!isset($_SESSION['uid'])) {
     SetUserSessionData("anonymous");
 }
 
-require_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
 
 include_once 'localization.php';
