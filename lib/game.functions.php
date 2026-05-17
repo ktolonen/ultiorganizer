@@ -1826,9 +1826,9 @@ function PoolDeleteAllGames($poolId)
 function PoolSeries($poolId)
 {
     $query = sprintf(
-        "SELECT pool_id
+        "SELECT series
 		FROM uo_pool
-		WHERE series='%d'",
+		WHERE pool_id='%d'",
         (int) $poolId,
     );
     return DBQueryToValue($query);
