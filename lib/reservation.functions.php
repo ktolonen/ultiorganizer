@@ -65,13 +65,15 @@ function ReservationName($reservationInfo)
 function ReservationGames($placeId, $seasonId = "")
 {
     $query = sprintf("
-		SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
-			time, homescore, visitorscore, pool.timecap, pool.timeslot, pp.timeslot as gametimeslot, pool.series, pool.color, 
+		SELECT pp.game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, gp.pool as pool,
+			time, homescore, visitorscore, pool.timecap, pool.timeslot, pp.timeslot as gametimeslot, pool.series, pool.color,
 			CONCAT(ser.name, ', ', pool.name) as seriespoolname, ser.name AS seriesname, pool.name AS poolname,
 			loc.name AS locationname, res.fieldname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
-		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
-			left join uo_pool pool on (pp.pool=pool.pool_id)
+		FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			left join uo_reservation res on (pp.reservation=res.id)
+			left join uo_pool pool on (pool.pool_id=gp.pool)
 			left join uo_series ser on (pool.series=ser.series_id)
 			left join uo_location loc on (res.location=loc.id)
 			left join uo_team kj on (pp.hometeam=kj.team_id)
@@ -111,13 +113,15 @@ function ReservationGetGame($reservationId, $time = "")
 function ReservationGamesByField($fieldname, $seasonId = "")
 {
     $query = sprintf("
-		SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
-			time, homescore, visitorscore, pool.timecap, pool.timeslot, pool.series, pool.color, 
+		SELECT pp.game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, gp.pool as pool,
+			time, homescore, visitorscore, pool.timecap, pool.timeslot, pool.series, pool.color,
 			CONCAT(ser.name, ', ', pool.name) as seriespoolname, ser.name AS seriesname, pool.name AS poolname,
 			loc.name AS locationname, res.fieldname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
-		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
-			left join uo_pool pool on (pp.pool=pool.pool_id)
+		FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			left join uo_reservation res on (pp.reservation=res.id)
+			left join uo_pool pool on (pool.pool_id=gp.pool)
 			left join uo_series ser on (pool.series=ser.series_id)
 			left join uo_location loc on (res.location=loc.id)
 			left join uo_team kj on (pp.hometeam=kj.team_id)
@@ -142,8 +146,10 @@ function ReservationFields($seasonId)
     $query = sprintf(
         "
 		SELECT loc.name, res.fieldname
-			FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
-			left join uo_pool pool on (pp.pool=pool.pool_id)
+			FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			left join uo_reservation res on (pp.reservation=res.id)
+			left join uo_pool pool on (pool.pool_id=gp.pool)
 			left join uo_series ser on (pool.series=ser.series_id)
 			left join uo_location loc on (res.location=loc.id)
 			left join uo_team kj on (pp.hometeam=kj.team_id)
@@ -162,14 +168,16 @@ function ReservationFields($seasonId)
 
 function ResponsibleReservationGames($placeId, $gameResponsibilities)
 {
-    $query = "SELECT game_id, hometeam, kj.name as hometeamname, visitorteam,
-			vj.name as visitorteamname, pp.pool as pool, time, homescore, visitorscore,
-			pool.timecap, pool.timeslot, pool.series, 
+    $query = "SELECT pp.game_id, hometeam, kj.name as hometeamname, visitorteam,
+			vj.name as visitorteamname, gp.pool as pool, time, homescore, visitorscore,
+			pool.timecap, pool.timeslot, pool.series,
 			ser.name as seriesname, pool.name as poolname,
 			loc.name as placename, res.fieldname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename
-		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
-			left join uo_pool pool on (pp.pool=pool.pool_id)
+		FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			left join uo_reservation res on (pp.reservation=res.id)
+			left join uo_pool pool on (pool.pool_id=gp.pool)
 			left join uo_series ser on (pool.series=ser.series_id)
 			left join uo_location loc on (res.location=loc.id)
 			left join uo_team kj on (pp.hometeam=kj.team_id)
@@ -182,7 +190,7 @@ function ResponsibleReservationGames($placeId, $gameResponsibilities)
     } else {
         $query .= "WHERE res.id IS NULL";
     }
-    $query .= " AND game_id IN (" . implode(",", $gameResponsibilities) . ")
+    $query .= " AND pp.game_id IN (" . implode(",", $gameResponsibilities) . ")
 		ORDER BY pp.time ASC";
 
     return DBQueryToArray($query);
@@ -190,8 +198,9 @@ function ResponsibleReservationGames($placeId, $gameResponsibilities)
 
 function ReservationSeasons($reservationId)
 {
-    $query = sprintf("SELECT DISTINCT ser.season FROM uo_game p 
-		LEFT JOIN uo_pool pool ON (p.pool=pool.pool_id)
+    $query = sprintf("SELECT DISTINCT ser.season FROM uo_game p
+		INNER JOIN uo_game_pool gp ON (gp.game=p.game_id AND gp.timetable=1)
+		LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
 		WHERE p.reservation=%d", (int) $reservationId);
     $rows = DBQueryToArray($query);

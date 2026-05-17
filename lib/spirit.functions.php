@@ -115,7 +115,8 @@ function SpiritGameRow($gameId)
 			se.lockteamspiritonsubmit,
 			se.event_readonly
 		FROM uo_game g
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE g.game_id=%d",
@@ -319,7 +320,8 @@ function SpiritTokenGameRows($teamId)
 		FROM uo_game g
 		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
 		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE (g.hometeam=%d OR g.visitorteam=%d)
@@ -380,7 +382,8 @@ function SpiritTokenGame($gameId, $teamId)
 		FROM uo_game g
 		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
 		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE g.game_id=%d
@@ -967,7 +970,8 @@ function RefreshSeasonSpiritVisibility($seasonId)
     $query = sprintf(
         "SELECT g.game_id
 		FROM uo_game g
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		WHERE s.season='%s'",
         DBEscapeString($seasonId),
@@ -1126,7 +1130,8 @@ function SpiritToolRowsBySeason($season)
 		FROM uo_spirit_score ssc
 		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
 		LEFT JOIN uo_game g ON (g.game_id = ssc.game_id)
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
 		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
@@ -1158,7 +1163,8 @@ function SpiritTimeoutSummaryBySeason($season)
 			COALESCE(SUM(CASE WHEN st.ishome = 0 THEN 1 ELSE 0 END), 0) AS away_total
 		FROM uo_spirit_timeout st
 		LEFT JOIN uo_game g ON (g.game_id = st.game)
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		WHERE s.season='%s'",
         DBEscapeString($season),
@@ -1250,7 +1256,8 @@ function SpiritTimeoutGameRowsBySeason($season)
 			COUNT(*) AS total
 		FROM uo_spirit_timeout st
 		LEFT JOIN uo_game g ON (g.game_id = st.game)
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)
 		LEFT JOIN uo_team tv ON (tv.team_id = g.visitorteam)
@@ -1352,10 +1359,11 @@ function SpiritMissingGamesByPool($poolId)
 		FROM uo_game AS g
 		JOIN uo_team AS th ON (g.hometeam=th.team_id)
 		JOIN uo_team AS tv ON (g.visitorteam=tv.team_id)
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
-		WHERE g.pool=%d
+		WHERE gp.pool=%d
 			AND g.isongoing=0
 			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 		ORDER BY g.time ASC",
@@ -1381,7 +1389,8 @@ function SpiritMissingGamesBySeries($seriesId)
 		FROM uo_game AS g
 		JOIN uo_team AS th ON (g.hometeam=th.team_id)
 		JOIN uo_team AS tv ON (g.visitorteam=tv.team_id)
-		JOIN uo_pool AS p ON g.pool=p.pool_id
+		INNER JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		JOIN uo_pool AS p ON p.pool_id = gp.pool
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE p.series=%d
@@ -1675,7 +1684,8 @@ function SpiritTeamPointRows($seasonId, $teamId, $received = true)
 			tv.name AS visitorname,
 			se.spiritmode
 		FROM uo_game g
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		LEFT JOIN uo_team th ON (th.team_id = g.hometeam)

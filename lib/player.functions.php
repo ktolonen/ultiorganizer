@@ -553,14 +553,13 @@ function PlayerNumber($playerId, $gameId)
 function PlayerSeasonGames($playerId, $seasonId)
 {
     $query = sprintf(
-        "SELECT game_id,hometeam,visitorteam 
-		FROM uo_game p 
-		WHERE p.pool IN
-			(SELECT pool.pool_id 
-			FROM uo_pool pool 
-				LEFT JOIN uo_series ser ON (pool.series=ser.series_id) 
-			WHERE ser.season='%s') 
-		AND p.game_id IN (SELECT uo_goal.game FROM uo_goal 
+        "SELECT p.game_id,hometeam,visitorteam
+		FROM uo_game p
+		INNER JOIN uo_game_pool gp ON (gp.game=p.game_id AND gp.timetable=1)
+		LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
+		WHERE ser.season='%s'
+		AND p.game_id IN (SELECT uo_goal.game FROM uo_goal
 			WHERE scorer=%d OR assist=%d)
 		AND p.isongoing=0
 		ORDER BY p.time, p.game_id",
@@ -1170,12 +1169,13 @@ function PlayersToCsv($season, $separator)
 		LEFT JOIN uo_series AS divi ON(divi.series_id=j.series)
 		LEFT JOIN uo_country AS c ON(c.country_id=j.country)
 		LEFT JOIN uo_club AS club ON(club.club_id=j.club)
-		LEFT JOIN (SELECT up.player, COUNT(*) AS games 
+		LEFT JOIN (SELECT up.player, COUNT(*) AS games
 			FROM uo_played up
 			LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-			LEFT JOIN uo_pool pool ON(g4.pool=pool.pool_id)
+			INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
+			LEFT JOIN uo_pool pool ON(pool.pool_id=gp4.pool)
 			LEFT JOIN uo_series ser ON(ser.series_id=pool.series)
-			WHERE ser.season='%s' AND g4.isongoing=0 
+			WHERE ser.season='%s' AND g4.isongoing=0
 			GROUP BY player) AS pel ON (p.player_id=pel.player)
 		WHERE divi.season='%s'
 		ORDER BY j.name, p.lastname, p.firstname", // FIXME g4.hasstarted>0??

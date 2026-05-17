@@ -123,10 +123,12 @@ Home and away assignment for generated games is event-controlled through `uo_sea
 
 This setting affects generation previews and newly generated games only. It does not rewrite existing games, and it does not change manually added games.
 
-`uo_game_pool` has two relevant meanings in scheduling:
+`uo_game_pool` is the single source of truth for a game's pool membership. Each row associates one game with one pool, and the `timetable` flag distinguishes the two roles:
 
-- `timetable=1`: normal visible schedule membership
-- `timetable=0`: moved-game linkage into another pool
+- `timetable=1`: the owning / scheduled pool. Each game has exactly one such row, created when the game is generated or manually added. Pool, series, and season lookups all join through this row.
+- `timetable=0`: carryover linkage into a continuation pool (for example pool A → upper pool F). Zero or more such rows per game. They let pool- and team-level stats include results from earlier pools without duplicating the game itself.
+
+`uo_game` itself no longer carries a `pool` column.
 
 `admin/schedule.php` builds a drag-and-drop board from unscheduled games loaded through `UnscheduledPoolGameInfo()`, `UnscheduledSeriesGameInfo()`, or `UnscheduledSeasonGameInfo()`, and reservation columns loaded through `ReservationInfoArray()`.
 
@@ -192,8 +194,8 @@ The PDF layer in `cust/default/pdfschedule.php` uses the same timetable rowset, 
 
 The most important tables for schedule behavior are:
 
-- `uo_game`: the actual game row, including teams or placeholders, reservation, time, pool, score state, duration override, and related flags
-- `uo_game_pool`: visible and moved pool membership
+- `uo_game`: the actual game row, including teams or placeholders, reservation, time, score state, duration override, and related flags
+- `uo_game_pool`: single source of truth for the game-to-pool relationship; `timetable=1` is the owning pool, `timetable=0` is carryover membership in a continuation pool
 - `uo_reservation`: reservation group, field, season, and reservation time window
 - `uo_location`: venue identity used by reservations
 - `uo_pool`: pool type, ordering, default timeslot, color, and series linkage

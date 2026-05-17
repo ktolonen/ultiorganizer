@@ -258,7 +258,8 @@ function MaintenanceSeasonFromView($rawView)
         return DBQueryToValue(sprintf(
             "SELECT ser.season
        FROM uo_game game
-       LEFT JOIN uo_pool pool ON (pool.pool_id=game.pool)
+       INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+       LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
        LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
        WHERE game.game_id=%d",
             (int) iget("game"),
@@ -600,11 +601,11 @@ function SeasonGamesNotScheduled($seasonId)
 			p.game_id IN (SELECT DISTINCT game FROM uo_goal) As goals,
 			Kj.team_id AS kId, Vj.team_id AS vId,phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
 			ps.name AS poolname, ser.name AS seriesname
-		FROM uo_game p 
+		FROM uo_game p
+		INNER JOIN uo_game_pool pss ON (pss.game=p.game_id AND pss.timetable=1)
 		LEFT JOIN uo_team AS Kj ON (p.hometeam=Kj.team_id)
 		LEFT JOIN uo_team AS Vj ON (p.visitorteam=Vj.team_id)
-		LEFT JOIN uo_game_pool pss ON (p.game_id=pss.game) 
-		LEFT JOIN uo_pool ps ON (p.pool=ps.pool_id)
+		LEFT JOIN uo_pool ps ON (ps.pool_id=pss.pool)
 		LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
 		LEFT JOIN uo_scheduling_name AS phome ON (p.scheduling_name_home=phome.scheduling_id)
 		LEFT JOIN uo_scheduling_name AS pvisitor ON (p.scheduling_name_visitor=pvisitor.scheduling_id)
@@ -626,8 +627,9 @@ function SeasonAllGames($season)
     $query = sprintf(
         "
 		SELECT game.*
-		FROM uo_game game 
-		LEFT JOIN uo_pool pool ON (pool.pool_id=game.pool) 
+		FROM uo_game game
+		INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+		LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 		LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
 		WHERE ser.season='%s'
 		ORDER BY game.game_id",

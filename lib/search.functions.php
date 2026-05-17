@@ -807,12 +807,14 @@ function GameResults()
     if (empty($_POST['searchgame'])) {
         return "";
     } else {
-        $query = "SELECT game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, pp.pool as pool,
+        $query = "SELECT pp.game_id, hometeam, kj.name as hometeamname, visitorteam, vj.name as visitorteamname, gp.pool as pool,
 			time, homescore, visitorscore, pool.timecap, pool.timeslot, pool.series,
 			loc.name AS locationname, res.fieldname,
 			res.reservationgroup,phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
-		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
-			left join uo_pool pool on (pp.pool=pool.pool_id)
+		FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			left join uo_reservation res on (pp.reservation=res.id)
+			left join uo_pool pool on (pool.pool_id=gp.pool)
 			left join uo_team kj on (pp.hometeam=kj.team_id)
 			left join uo_team vj on (pp.visitorteam=vj.team_id)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)

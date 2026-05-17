@@ -655,7 +655,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 
     //common game query
     $query = "SELECT pp.game_id, pp.time, pp.hometeam, pp.visitorteam, pp.homescore,
-			pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
+			pp.visitorscore, gp.pool AS pool, pool.name AS poolname, pool.timeslot,
 			ps.series_id, ps.name AS seriesname, ps.season, ps.type, pr.fieldname, pr.reservationgroup,
 			pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, COALESCE(pm.goals,0) AS scoresheet,
 			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, pp.islive, pp.forfeit, home.name AS hometeamname, visitor.name AS visitorteamname,
@@ -663,15 +663,16 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid,
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry,
 			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone
-			FROM uo_game pp 
+			FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
-			LEFT JOIN uo_pool pool ON (pool.pool_id=pp.pool) 
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series ps ON (pool.series=ps.series_id)
 			LEFT JOIN uo_season s ON (s.season_id=ps.season)
 			LEFT JOIN uo_reservation pr ON (pp.reservation=pr.id)
 			LEFT JOIN uo_location pl ON (pr.location=pl.id)
 			LEFT JOIN uo_team AS home ON (pp.hometeam=home.team_id)
-			LEFT JOIN uo_team_pool AS homepool ON (pp.hometeam=homepool.team AND pp.pool=homepool.pool)
+			LEFT JOIN uo_team_pool AS homepool ON (pp.hometeam=homepool.team AND gp.pool=homepool.pool)
 			LEFT JOIN uo_team AS visitor ON (pp.visitorteam=visitor.team_id)
 			LEFT JOIN uo_country AS homec ON (homec.country_id=home.country)
 			LEFT JOIN uo_country AS visitorc ON (visitorc.country_id=visitor.country)
@@ -689,14 +690,14 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
             break;
 
         case "pool":
-            $query .= " WHERE pp.valid=true AND pp.pool='" . (int) $id . "'";
+            $query .= " WHERE pp.valid=true AND gp.pool='" . (int) $id . "'";
             break;
 
         case "poolgroup":
             //keep pool filter as it is to give better performance for single pool query
             //extra explode needed to make parameters safe
             $pools = explode(",", DBEscapeString($id));
-            $query .= " WHERE pp.valid=true AND pp.pool IN(" . implode(",", $pools) . ")";
+            $query .= " WHERE pp.valid=true AND gp.pool IN(" . implode(",", $pools) . ")";
             break;
 
         case "team":
@@ -807,9 +808,10 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
 {
     //common game query
     $query = "SELECT pr.reservationgroup, MAX(pp.time)
-			FROM uo_game pp 
+			FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
-			LEFT JOIN uo_pool pool ON (pool.pool_id=pp.pool) 
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series ps ON (pool.series=ps.series_id)
 			LEFT JOIN uo_reservation pr ON (pp.reservation=pr.id)
 			LEFT JOIN uo_location pl ON (pr.location=pl.id)
@@ -828,14 +830,14 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
             break;
 
         case "pool":
-            $query .= " WHERE pp.valid=true AND pp.pool='" . (int) $id . "'";
+            $query .= " WHERE pp.valid=true AND gp.pool='" . (int) $id . "'";
             break;
 
         case "poolgroup":
             //keep pool filter as it is to give better performance for single pool query
             //extra explode needed to make parameters safe
             $pools = explode(",", DBEscapeString($id));
-            $query .= " WHERE pp.valid=true AND pp.pool IN(" . implode(",", $pools) . ")";
+            $query .= " WHERE pp.valid=true AND gp.pool IN(" . implode(",", $pools) . ")";
             break;
 
         case "team":
@@ -896,9 +898,10 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
 function TimetableFields($reservationgroup, $season)
 {
     $query = "SELECT COUNT(*) as games
-			FROM uo_game pp 
+			FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
-			LEFT JOIN uo_pool pool ON (pool.pool_id=pp.pool) 
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series ps ON (pool.series=ps.series_id)
 			LEFT JOIN uo_reservation pr ON (pp.reservation=pr.id)";
 
@@ -911,8 +914,9 @@ function TimetableFields($reservationgroup, $season)
 function TimetableTimeslots($reservationgroup, $season)
 {
     $query = "SELECT pp.time
-			FROM uo_game pp 
-			LEFT JOIN uo_pool pool ON (pool.pool_id=pp.pool) 
+			FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series ps ON (pool.series=ps.series_id)
 			LEFT JOIN uo_reservation pr ON (pp.reservation=pr.id)";
 
@@ -923,17 +927,19 @@ function TimetableTimeslots($reservationgroup, $season)
 
 function TimetableIntraPoolConflicts($season)
 {
-    $query = "SELECT g1.game_id as game1, g2.game_id as game2, g1.pool as pool1, g2.pool as pool2,  
-      g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2, 
-      g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1, 
-      g2.scheduling_name_home as scheduling_home2, g2.scheduling_name_visitor as scheduling_visitor2, 
-      g1.reservation as reservation1, g2.reservation as reservation2, g1.time as time1, g2.time as time2, 
-      p1.timeslot as slot1, p2.timeslot as slot2, 
-      res1.location location1, res1.fieldname as field1, res2.location as location2, res2.fieldname as field2  
+    $query = "SELECT g1.game_id as game1, g2.game_id as game2, gp1.pool as pool1, gp2.pool as pool2,
+      g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2,
+      g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1,
+      g2.scheduling_name_home as scheduling_home2, g2.scheduling_name_visitor as scheduling_visitor2,
+      g1.reservation as reservation1, g2.reservation as reservation2, g1.time as time1, g2.time as time2,
+      p1.timeslot as slot1, p2.timeslot as slot2,
+      res1.location location1, res1.fieldname as field1, res2.location as location2, res2.fieldname as field2
       FROM uo_game as g1
+      INNER JOIN uo_game_pool gp1 ON (gp1.game = g1.game_id AND gp1.timetable = 1)
       LEFT JOIN uo_game as g2 ON ((g1.hometeam=g2.hometeam OR g1.visitorteam = g2.visitorteam OR g1.hometeam=g2.visitorteam OR g1.visitorteam = g2.hometeam) AND g1.game_id != g2.game_id )
-      LEFT JOIN uo_pool as p1 ON (p1.pool_id = g1.pool)
-      LEFT JOIN uo_pool as p2 ON (p2.pool_id = g2.pool)
+      LEFT JOIN uo_game_pool gp2 ON (gp2.game = g2.game_id AND gp2.timetable = 1)
+      LEFT JOIN uo_pool as p1 ON (p1.pool_id = gp1.pool)
+      LEFT JOIN uo_pool as p2 ON (p2.pool_id = gp2.pool)
       LEFT JOIN uo_reservation as res1 ON (res1.id = g1.reservation)
       LEFT JOIN uo_reservation as res2 ON (res2.id = g2.reservation)
       LEFT JOIN uo_series as ser1 ON (ser1.series_id = p1.series)
@@ -945,18 +951,20 @@ function TimetableIntraPoolConflicts($season)
 
 function TimetableInterPoolConflicts($season)
 {
-    $query = "SELECT  g1.game_id as game1, g2.game_id as game2, g1.pool as pool1, g2.pool as pool2,  
-      g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2, 
-      g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1, 
-      g2.scheduling_name_home as scheduling_home2, g2.scheduling_name_visitor as scheduling_visitor2, 
-      g1.reservation as reservation1, g2.reservation as reservation2, g1.time as time1, g2.time as time2, 
-      p1.timeslot as slot1, p2.timeslot as slot2, 
+    $query = "SELECT  g1.game_id as game1, g2.game_id as game2, gp1.pool as pool1, gp2.pool as pool2,
+      g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2,
+      g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1,
+      g2.scheduling_name_home as scheduling_home2, g2.scheduling_name_visitor as scheduling_visitor2,
+      g1.reservation as reservation1, g2.reservation as reservation2, g1.time as time1, g2.time as time2,
+      p1.timeslot as slot1, p2.timeslot as slot2,
       res1.location location1, res1.fieldname as field1, res2.location as location2, res2.fieldname as field2
       FROM uo_moveteams as mv
-      LEFT JOIN uo_game as g1 ON (g1.pool = mv.frompool)
-      LEFT JOIN uo_game as g2 ON (g2.pool = mv.topool AND g1.game_id != g2.game_id )
-      LEFT JOIN uo_pool as p1 ON (p1.pool_id = g1.pool)
-      LEFT JOIN uo_pool as p2 ON (p2.pool_id = g2.pool)
+      LEFT JOIN uo_game_pool as gp1 ON (gp1.pool = mv.frompool AND gp1.timetable = 1)
+      LEFT JOIN uo_game as g1 ON (g1.game_id = gp1.game)
+      LEFT JOIN uo_game_pool as gp2 ON (gp2.pool = mv.topool AND gp2.timetable = 1 AND gp1.game != gp2.game)
+      LEFT JOIN uo_game as g2 ON (g2.game_id = gp2.game)
+      LEFT JOIN uo_pool as p1 ON (p1.pool_id = gp1.pool)
+      LEFT JOIN uo_pool as p2 ON (p2.pool_id = gp2.pool)
       LEFT JOIN uo_reservation as res1 ON (res1.id = g1.reservation)
       LEFT JOIN uo_reservation as res2 ON (res2.id = g2.reservation)
       LEFT JOIN uo_series as ser1 ON (ser1.series_id = p1.series)
@@ -1038,9 +1046,10 @@ function TimetableToCsv($season, $separator)
 			pp.visitorscore AS VisitorScores, pool.name AS Pool, ps.name AS Division, 
 			pr.fieldname AS Field, pr.reservationgroup AS ReservationGroup,
 			pl.name AS Place, pp.name AS GameName
-			FROM uo_game pp 
+			FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
-			LEFT JOIN uo_pool pool ON (pool.pool_id=pp.pool) 
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 			LEFT JOIN uo_series ps ON (pool.series=ps.series_id)
 			LEFT JOIN uo_reservation pr ON (pp.reservation=pr.id)
 			LEFT JOIN uo_location pl ON (pr.location=pl.id)
