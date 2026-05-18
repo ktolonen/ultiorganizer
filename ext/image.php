@@ -57,7 +57,6 @@ if (isset($_GET["id"])) {
             imagestring($image, $font, 0, 0, $string, $black);
             header("Content-type: image/png");
             imagepng($image);
-            imagedestroy($image);
         } else {
             //empty image
             header("Content-type: image/gif");
@@ -66,14 +65,22 @@ if (isset($_GET["id"])) {
     } else {
         if ($resize && CanProcessImages() && function_exists('imagecreatefromstring') && function_exists('imagesx') && function_exists('imagesy')) {
             $org = imagecreatefromstring($data);
-            $orgw = imagesx($org);
-            $orgh = imagesy($org);
-            $new = imagecreatetruecolor($width, $height);
-            imagecopyresampled($new, $org, 0, 0, 0, 0, $width, $height, $orgw, $orgh);
-            header("Content-type: image/jpeg");
-            imageJPEG($new);
-            imagedestroy($new);
-            imagedestroy($org);
+            if ($org) {
+                $orgw = imagesx($org);
+                $orgh = imagesy($org);
+                $new = imagecreatetruecolor($width, $height);
+                if ($new) {
+                    imagecopyresampled($new, $org, 0, 0, 0, 0, $width, $height, $orgw, $orgh);
+                    header("Content-type: image/jpeg");
+                    imageJPEG($new);
+                } else {
+                    header("Content-type: " . $type);
+                    echo $data;
+                }
+            } else {
+                header("Content-type: " . $type);
+                echo $data;
+            }
         } else {
             header("Content-type: " . $type);
             echo $data;

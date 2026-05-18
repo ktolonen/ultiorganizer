@@ -9,8 +9,8 @@ function GetImage($imageId)
         "
 		SELECT image, image_type
 		FROM uo_image 
-		WHERE image_id='%s'",
-        DBEscapeString($imageId),
+		WHERE image_id=%d",
+        (int) $imageId,
     );
 
     $result = DBQueryToRow($query);
@@ -23,8 +23,8 @@ function GetThumb($imageId)
         "
 		SELECT thumb
 		FROM uo_image 
-		WHERE image_id='%s'",
-        DBEscapeString($imageId),
+		WHERE image_id=%d",
+        (int) $imageId,
     );
 
     $result = DBQueryToRow($query);
@@ -37,8 +37,8 @@ function ImageInfo($imageId)
         "
 		SELECT image_type, image_width, image_height, thumb_height, thumb_width, image_size
 		FROM uo_image 
-		WHERE image_id='%s'",
-        DBEscapeString($imageId),
+		WHERE image_id=%d",
+        (int) $imageId,
     );
 
     $result = DBQueryToRow($query);
@@ -49,8 +49,8 @@ function RemoveImage($imageId)
 {
     if (isSuperAdmin()) {
         $query = sprintf(
-            "DELETE FROM uo_image WHERE image_id='%s'",
-            DBEscapeString($imageId),
+            "DELETE FROM uo_image WHERE image_id=%d",
+            (int) $imageId,
         );
 
         $result = DBQuery($query);
@@ -81,14 +81,35 @@ function CanReadImageType($type)
     }
 }
 
+function WriteJpegImage($image, $fileDst)
+{
+    $dir = dirname($fileDst);
+    if (!is_dir($dir) || !is_writable($dir)) {
+        return false;
+    }
+
+    $tmp = tempnam($dir, basename($fileDst) . '.');
+    if ($tmp === false) {
+        return false;
+    }
+
+    if (!imagejpeg($image, $tmp)) {
+        unlink($tmp);
+        return false;
+    }
+
+    if (!rename($tmp, $fileDst)) {
+        unlink($tmp);
+        return false;
+    }
+
+    return true;
+}
+
 function ConvertToJpeg($file_src, $file_dst)
 {
     if (!CanProcessImages()) {
         return false;
-    }
-
-    if (is_file($file_dst)) {
-        unlink($file_dst); //  remove old images if present
     }
 
     $imageInfo = getimagesize($file_src);
@@ -119,9 +140,8 @@ function ConvertToJpeg($file_src, $file_dst)
         return false;
     }
 
-    imagejpeg($img_src, $file_dst);    //  save new image
-    imagedestroy($img_src);
-    return true;
+    $result = WriteJpegImage($img_src, $file_dst);
+    return $result;
 }
 
 function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
@@ -130,8 +150,10 @@ function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
         return false;
     }
 
-    if (is_file($file_dst)) {
-        unlink($file_dst); //  remove old images if present
+    $w_dst = (int) $w_dst;
+    $h_dst = (int) $h_dst;
+    if ($w_dst <= 0 || $h_dst <= 0) {
+        return false;
     }
 
     $imageInfo = getimagesize($file_src);
@@ -139,6 +161,9 @@ function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
         return false;
     }
     list($w_src, $h_src, $type) = $imageInfo;
+    if ($w_src <= 0 || $h_src <= 0) {
+        return false;
+    }
     if (!CanReadImageType($type)) {
         return false;
     }
@@ -146,9 +171,9 @@ function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
     // create new dimensions, keeping aspect ratio
     $ratio = $w_src / $h_src;
     if ($w_dst / $h_dst > $ratio) {
-        $w_dst = floor($h_dst * $ratio);
+        $w_dst = max(1, (int) floor($h_dst * $ratio));
     } else {
-        $h_dst = floor($w_dst / $ratio);
+        $h_dst = max(1, (int) floor($w_dst / $ratio));
     }
     $img_src = false;
     switch ($type) {
@@ -171,14 +196,11 @@ function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
 
     $img_dst = imagecreatetruecolor($w_dst, $h_dst);  //  resample
     if (!$img_dst) {
-        imagedestroy($img_src);
         return false;
     }
 
     imagecopyresampled($img_dst, $img_src, 0, 0, 0, 0, $w_dst, $h_dst, $w_src, $h_src);
-    imagejpeg($img_dst, $file_dst);    //  save new image
+    $result = WriteJpegImage($img_dst, $file_dst);
 
-    imagedestroy($img_src);
-    imagedestroy($img_dst);
-    return true;
+    return $result;
 }
