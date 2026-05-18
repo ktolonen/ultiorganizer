@@ -122,18 +122,19 @@ function SeriesTeams($seriesId, $orderbyseeding = false)
 {
     $query = sprintf(
         "SELECT t.team_id, t.name, t.abbreviation, t.club, t.valid, cl.name AS clubname,
-			t.country, c.name AS countryname, t.rank, c.flagfile, tp.name AS poolname,
-			c.flagfile
-			FROM uo_team t
-			LEFT JOIN uo_series ser ON(ser.series_id=t.series)
-			LEFT JOIN (SELECT team, ordering, pool, name FROM uo_team_pool tp
-				LEFT JOIN uo_pool p ON(tp.pool=p.pool_id)
-				ORDER BY ordering DESC) AS tp ON(t.team_id=tp.team)
-			LEFT JOIN uo_club cl ON(cl.club_id=t.club)
-			LEFT JOIN uo_country c ON(c.country_id=t.country)
-			WHERE t.series = '%d'
-			GROUP BY t.team_id
-			",
+            t.country, c.name AS countryname, t.rank, c.flagfile, tp.poolname
+            FROM uo_team t
+            LEFT JOIN uo_series ser ON(ser.series_id=t.series)
+            LEFT JOIN (
+                SELECT tp.team, GROUP_CONCAT(DISTINCT p.name ORDER BY p.ordering ASC, p.name SEPARATOR ', ') AS poolname
+                FROM uo_team_pool tp
+                LEFT JOIN uo_pool p ON(tp.pool=p.pool_id)
+                GROUP BY tp.team
+            ) AS tp ON(t.team_id=tp.team)
+            LEFT JOIN uo_club cl ON(cl.club_id=t.club)
+            LEFT JOIN uo_country c ON(c.country_id=t.country)
+            WHERE t.series = '%d'
+            ",
         (int) ($seriesId),
     );
 
@@ -330,7 +331,7 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
 			LEFT JOIN uo_pool pool ON(ps2.pool=pool.pool_id)
 			WHERE pool.series=%d AND ps2.timetable=1 AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
 		LEFT JOIN uo_team AS j ON (p.team=j.team_id)
-		LEFT JOIN (SELECT up.player, COUNT(*) AS games
+		LEFT JOIN (SELECT up.player, COUNT(DISTINCT up.game) AS games
 			FROM uo_played up
 			LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
 			INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
@@ -423,7 +424,7 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit)
 			LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
 			WHERE pool.series=%d AND ps.timetable=1 AND g1.isongoing=0 GROUP BY author) AS t ON (p.player_id=t.author) 
 		LEFT JOIN uo_team AS j ON (p.team=j.team_id)
-		LEFT JOIN (SELECT up.player, COUNT(*) AS games
+		LEFT JOIN (SELECT up.player, COUNT(DISTINCT up.game) AS games
 			FROM uo_played up
 			LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
 			INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
@@ -454,7 +455,7 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit)
             break;
 
         case "callahan":
-            $query .= " ORDER BY callahan DESC, deftotal DESC, lastname ASC";
+            $query .= " ORDER BY deftotal DESC, lastname ASC";
             break;
 
         default:
@@ -819,12 +820,16 @@ function RemoveSeriesEnrolledTeam($seriesId, $userid, $id)
  *
  * @param int $seriesId uo_series.series_id
  * @param int $id uo_enrolledteam.id
- * @return int uo_team.team_id
+ * @return int|null uo_team.team_id, or null when the enrollment row is missing
  */
 function ConfirmEnrolledTeam($seriesId, $id)
 {
     if (hasEditTeamsRight($seriesId)) {
         $teaminfo = SeriesEnrolledTeamById($seriesId, $id);
+        if (empty($teaminfo)) {
+            return null;
+        }
+
         $clubId = ClubId($teaminfo['clubname']);
         $countryId = CountryId($teaminfo['countryname']);
 

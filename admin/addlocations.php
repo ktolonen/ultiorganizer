@@ -6,6 +6,7 @@ include_once 'lib/configuration.functions.php';
 
 $season = 0;
 $locationId = 0;
+$locationInfo = [];
 $locales = getAvailableLocalizations();
 
 if (!empty($_GET["season"])) {
@@ -100,6 +101,14 @@ if (isset($_POST['delete']) && isset($_POST['id'])) {
     exit();
 }
 
+if ($locationId > 0) {
+    $locationInfo = LocationInfo($locationId);
+    if (!$locationInfo) {
+        showPage(_("Add location"), "<p>" . _("Location not found") . "</p>");
+        return;
+    }
+}
+
 //common page
 $title = _("Add location");
 $LAYOUT_ID = ADDLOCATION;
@@ -112,7 +121,6 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 if ($locationId > 0) {
-    $locationInfo = LocationInfo($locationId);
     $loc['id'] = $locationInfo['id'];
     $loc['name'] = $locationInfo['name'];
     $loc['address'] = $locationInfo['address'];

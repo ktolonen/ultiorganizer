@@ -495,8 +495,8 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
         if ($team_exist && $team_exist != $teamId) {
             $query = sprintf(
                 "SELECT g.game_id FROM uo_game g
-            			LEFT JOIN uo_game_pool gp ON(g.game_id=game)
-      					WHERE (g.hometeam=%d OR g.hometeam=%d) AND (g.hasstarted>0)  
+                    LEFT JOIN uo_game_pool gp ON(g.game_id=gp.game)
+                    WHERE (g.hometeam=%d OR g.visitorteam=%d) AND (g.hasstarted>0)
       					AND gp.pool=%d",
                 (int) $team_exist,
                 (int) $team_exist,
@@ -513,6 +513,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
                     (int) $move['topool'],
                     (int) $move['torank'],
                 );
+                DBQuery($query);
             }
         }
     }
@@ -535,7 +536,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
         "UPDATE uo_team SET
 			pool=%d WHERE team_id=%d",
         (int) $move['topool'],
-        (int) $move['torank'],
+        (int) $teamId,
     );
 
     DBQuery($query);
@@ -833,11 +834,11 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 					LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
 						WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
 				LEFT JOIN uo_team AS j ON (p.team=j.team_id)
-				LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+				LEFT JOIN (SELECT up.player, COUNT(DISTINCT up.game) AS games FROM uo_played up
 					LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
 					INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
 						WHERE gp4.pool IN($poolList) AND g4.isongoing=0
-						GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
+						GROUP BY up.player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
             (int) $teamId,
         );
     } else {
@@ -968,11 +969,11 @@ function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
 					LEFT JOIN uo_game AS g3 ON (m3.game=g3.game_id) 
 					WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY author) AS d ON (p.player_id=d.author)
 				LEFT JOIN uo_team AS j ON (p.team=j.team_id)
-				LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
+				LEFT JOIN (SELECT up.player, COUNT(DISTINCT up.game) AS games FROM uo_played up
 					LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
 					INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
 					WHERE gp4.pool IN($poolList) AND g4.isongoing=0
-					GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
+					GROUP BY up.player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
             (int) $teamId,
         );
     } else {
@@ -1069,7 +1070,7 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting)
     $query = sprintf(
         "
 		SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore,
-  			pp.hasstarted, ser.season AS season_id, ps.name,
+			pp.hasstarted, ser.season AS season_id, ps.name,
 			pp.game_id, ps.pool_id, s.name AS seasonname, pp.forfeit
 		FROM uo_game pp
 		INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
@@ -1118,13 +1119,13 @@ function TeamResponsibleGames($teamId, $placeId)
     $query = sprintf(
         "
 		SELECT Kj.name As hometeamname, Vj.name As visitorteamname, p.time, p.game_id, p.homescore,
-  			p.visitorscore, pp.hasstarted, COALESCE(m.goals,0) As goals 
+			p.visitorscore, p.hasstarted, COALESCE(m.goals,0) As goals
 		FROM uo_game AS p 
 		LEFT JOIN (SELECT COUNT(*) AS goals, game 
 			FROM uo_goal GROUP BY game) AS m ON (p.game_id=m.game), uo_team As Kj, uo_team As Vj  
 			WHERE p.visitorteam=Vj.team_id AND p.hometeam=Kj.team_id 
-			AND (p.reservation=%d AND p.RespTeam=%d))
-		GROUP BY Kj.name, Vj.name, p.time, p.game_id, p.homescore, p.visitorscore, pp.hasstarted",
+			AND p.reservation=%d AND p.RespTeam=%d
+		GROUP BY Kj.name, Vj.name, p.time, p.game_id, p.homescore, p.visitorscore, p.hasstarted",
         (int) $placeId,
         (int) $teamId,
     );
@@ -1511,6 +1512,8 @@ function SetTeam($params)
         }
         if (!empty($params['club'])) {
             DBQuery("UPDATE uo_team SET club=" . (int) $params['club'] . " WHERE team_id=" . (int) $params['team_id']);
+        } elseif (array_key_exists('club', $params)) {
+            DBQuery("UPDATE uo_team SET club=NULL WHERE team_id=" . (int) $params['team_id']);
         }
 
         return $result;
@@ -1725,8 +1728,9 @@ function RemoveTeamProfileUrl($teamId, $urlId)
 {
     if (isSuperAdmin() || hasEditPlayersRight($teamId)) {
         $query = sprintf(
-            "DELETE FROM uo_urls WHERE url_id=%d",
+            "DELETE FROM uo_urls WHERE url_id=%d AND owner='team' AND owner_id='%s'",
             (int) $urlId,
+            DBEscapeString($teamId),
         );
         return DBQuery($query);
     } else {

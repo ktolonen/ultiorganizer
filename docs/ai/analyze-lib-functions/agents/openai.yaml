@@ -1,0 +1,4 @@
+interface:
+  display_name: "Analyze Lib Functions"
+  short_description: "Find PHP lib function usage and dead-code candidates."
+  default_prompt: "Analyze lib PHP function usage and identify dead-code candidates."

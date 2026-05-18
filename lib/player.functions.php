@@ -7,6 +7,35 @@ require_once __DIR__ . '/image.functions.php';
 require_once __DIR__ . '/url.functions.php';
 require_once __DIR__ . '/common.functions.php';
 
+function NormalizedPlayerNumberSql($number)
+{
+    $normalized = is_string($number) ? trim($number) : $number;
+    if ($normalized === "" || $normalized === null) {
+        return "NULL";
+    }
+
+    $intNumber = filter_var(
+        $normalized,
+        FILTER_VALIDATE_INT,
+        ["options" => ["min_range" => 0, "max_range" => 99]],
+    );
+    if ($intNumber === false) {
+        return "NULL";
+    }
+
+    return (string) $intNumber;
+}
+
+function RequirePlayerInfo($playerId)
+{
+    $playerInfo = PlayerInfo($playerId);
+    if (!$playerInfo) {
+        die("Invalid player");
+    }
+
+    return $playerInfo;
+}
+
 /**
  * Set player details.
  *
@@ -18,21 +47,16 @@ require_once __DIR__ . '/common.functions.php';
  */
 function SetPlayer($playerId, $number, $fname, $lname, $accrId, $profileId)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayersRight($playerInfo['team'])) {
-        $defaultNumber = 0;
-        if ($number < 0) {
-            $number = "null";
-        } else {
-            $defaultNumber = (int) $number;
-            $number = (int) $number;
-        }
+        $numberSql = NormalizedPlayerNumberSql($number);
+        $defaultNumber = $numberSql === "NULL" ? 0 : (int) $numberSql;
         //echo "<p>".$profileId."</p>";
         $query = sprintf(
             "UPDATE uo_player SET num=%s, firstname='%s', lastname='%s', accreditation_id='%s',
     		profile_id='%s'
 			WHERE player_id=%d",
-            $number,
+            $numberSql,
             DBEscapeString($fname),
             DBEscapeString($lname),
             DBEscapeString($accrId),
@@ -60,26 +84,10 @@ function SetPlayer($playerId, $number, $fname, $lname, $accrId, $profileId)
 function SetPlayerNumber($playerId, $number)
 {
 
-    $playerInfo = PlayerInfo($playerId);
-    if (!$playerInfo) {
-        die("Invalid player");
-    }
+    $playerInfo = RequirePlayerInfo($playerId);
 
     if (hasEditPlayersRight($playerInfo['team'])) {
-        $normalized = is_string($number) ? trim($number) : $number;
-        $numberSql = "NULL";
-
-        if ($normalized !== "" && $normalized !== null) {
-            $intNumber = filter_var(
-                $normalized,
-                FILTER_VALIDATE_INT,
-                ["options" => ["min_range" => 0, "max_range" => 99]],
-            );
-            if ($intNumber !== false) {
-                $numberSql = (string) $intNumber;
-            }
-        }
-
+        $numberSql = NormalizedPlayerNumberSql($number);
         $query = sprintf("UPDATE uo_player SET num=%s WHERE player_id=%d", $numberSql, (int) $playerId);
         return DBQuery($query);
     } else {
@@ -245,7 +253,7 @@ function FindExistingPlayerProfileId($profile)
  */
 function CreatePlayerProfile($playerId)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayersRight($playerInfo['team'])) {
         $existingProfileId = FindExistingPlayerProfileId([
             "firstname" => $playerInfo['firstname'],
@@ -358,15 +366,22 @@ function PlayerLatestId($profileId)
 
 function PlayerListAll($lastname = "")
 {
-    $query = "SELECT MAX(player_id) AS player_id, firstname, lastname, num, accreditation_id, profile_id, team, uo_team.name AS teamname
-		FROM uo_player p 
-		LEFT JOIN uo_team ON p.team=team_id
-		WHERE accredited=1";
+    $where = "WHERE accredited=1";
     if (!empty($lastname) && $lastname != "ALL") {
-        $query .= " AND UPPER(lastname) LIKE '" . DBEscapeString($lastname) . "%'";
+        $where .= " AND UPPER(lastname) LIKE '" . DBEscapeString($lastname) . "%'";
     }
 
-    $query .= " GROUP BY profile_id, firstname, lastname ORDER BY lastname, firstname";
+    $query = "SELECT p.player_id, p.firstname, p.lastname, p.num, p.accreditation_id, p.profile_id, p.team,
+		uo_team.name AS teamname
+		FROM uo_player p
+		INNER JOIN (
+			SELECT MAX(player_id) AS player_id
+			FROM uo_player
+			$where
+			GROUP BY profile_id, firstname, lastname
+		) latest ON (latest.player_id=p.player_id)
+		LEFT JOIN uo_team ON p.team=team_id
+		ORDER BY p.lastname, p.firstname";
 
     return DBQuery($query);
 }
@@ -817,7 +832,7 @@ function PlayerGameEvents($playerId, $gameId)
  */
 function SetPlayerProfile($teamId, $playerId, $profile)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayerProfileRight($playerId) && $playerInfo['team'] == $teamId) {
         $profileId = (int) $playerInfo['profile_id'];
 
@@ -831,17 +846,13 @@ function SetPlayerProfile($teamId, $playerId, $profile)
         $exist = DBQueryRowCount($query);
 
         //SetPlayer($playerId, $profile['num'], $profile['firstname'], $profile['lastname'], $profile['accreditation_id']);
-        if (empty($profile['num']) || $profile['num'] < 0) {
-            $number = "null";
-        } else {
-            $number = (int) $profile['num'];
-        }
+        $numberSql = NormalizedPlayerNumberSql($profile['num']);
 
         //update player data according profile data
         $query = sprintf(
             "UPDATE uo_player SET num=%s, firstname='%s', lastname='%s', accreditation_id='%s'
 			WHERE player_id=%d",
-            $number,
+            $numberSql,
             DBEscapeString($profile['firstname']),
             DBEscapeString($profile['lastname']),
             DBEscapeString($profile['accreditation_id']),
@@ -868,14 +879,14 @@ function SetPlayerProfile($teamId, $playerId, $profile)
         if (!$exist) {
             $query = sprintf(
                 "INSERT INTO uo_player_profile (accreditation_id, firstname,
-			lastname, num, email, nickname, gender, info, national_id, birthdate, birthplace, nationality, 
-			throwing_hand, height, weight, position, story, achievements, public) VALUES 
-			('%s', '%s','%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', 
+				lastname, num, email, nickname, gender, info, national_id, birthdate, birthplace, nationality,
+				throwing_hand, height, weight, position, story, achievements, public) VALUES
+			('%s', '%s','%s', %s, '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s',
 			'%s', '%s', '%s', '%s', '%s', '%s')",
                 DBEscapeString($profile['accreditation_id']),
                 DBEscapeString($profile['firstname']),
                 DBEscapeString($profile['lastname']),
-                (int) ($profile['num']),
+                $numberSql,
                 DBEscapeString($profile['email']),
                 DBEscapeString($profile['nickname']),
                 DBEscapeString($profile['gender']),
@@ -903,14 +914,14 @@ function SetPlayerProfile($teamId, $playerId, $profile)
             DBQuery($query);
         } else {
             $query = sprintf(
-                "UPDATE uo_player_profile SET accreditation_id='%s', email='%s', firstname='%s', lastname='%s', num='%s',
+                "UPDATE uo_player_profile SET accreditation_id='%s', email='%s', firstname='%s', lastname='%s', num=%s,
 			nickname='%s', gender='%s', info='%s', national_id='%s', birthdate='%s', birthplace='%s', nationality='%s', throwing_hand='%s', 
 			height='%s', weight='%s', position='%s', story='%s', achievements='%s', public='%s' WHERE profile_id='%s'",
                 DBEscapeString($profile['accreditation_id']),
                 DBEscapeString($profile['email']),
                 DBEscapeString($profile['firstname']),
                 DBEscapeString($profile['lastname']),
-                (int) ($profile['num']),
+                $numberSql,
                 DBEscapeString($profile['nickname']),
                 DBEscapeString($profile['gender']),
                 DBEscapeString($profile['info']),
@@ -949,18 +960,7 @@ function UpdatePlayerProfile($profileId, $first, $last, $num)
         die('Insufficient rights to edit player profile');
     }
 
-    $normalized = is_string($num) ? trim($num) : $num;
-    $numSql = "NULL";
-    if ($normalized !== "" && $normalized !== null) {
-        $intNum = filter_var(
-            $normalized,
-            FILTER_VALIDATE_INT,
-            ["options" => ["min_range" => 0, "max_range" => 99]],
-        );
-        if ($intNum !== false) {
-            $numSql = (string) $intNum;
-        }
-    }
+    $numSql = NormalizedPlayerNumberSql($num);
 
     $query = sprintf(
         "UPDATE uo_player_profile 
@@ -981,7 +981,7 @@ function UpdatePlayerProfile($profileId, $first, $last, $num)
  */
 function UploadPlayerImage($playerId)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayerProfileRight($playerId)) {
         $max_file_size = 5 * 1024 * 1024; //5 MB
 
@@ -1034,7 +1034,7 @@ function UploadPlayerImage($playerId)
  */
 function SetPlayerProfileImage($playerId, $filename)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayerProfileRight($playerId)) {
 
         $query = sprintf(
@@ -1051,7 +1051,7 @@ function SetPlayerProfileImage($playerId, $filename)
 
 function RemovePlayerProfileImage($playerId)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayerProfileRight($playerId)) {
 
         $profile = PlayerProfile($playerInfo['profile_id']);
@@ -1093,7 +1093,7 @@ function RemovePlayerProfileImage($playerId)
  */
 function AddPlayerProfileUrl($playerId, $type, $url, $name)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayerProfileRight($playerId)) {
         $url = SafeUrl($url);
         $query = sprintf(
@@ -1118,11 +1118,12 @@ function AddPlayerProfileUrl($playerId, $type, $url, $name)
  */
 function RemovePlayerProfileUrl($playerId, $urlId)
 {
-    $playerInfo = PlayerInfo($playerId);
+    $playerInfo = RequirePlayerInfo($playerId);
     if (hasEditPlayerProfileRight($playerId)) {
         $query = sprintf(
-            "DELETE FROM uo_urls WHERE url_id=%d",
+            "DELETE FROM uo_urls WHERE url_id=%d AND owner='player' AND owner_id='%s'",
             (int) $urlId,
+            DBEscapeString($playerInfo['profile_id']),
         );
         return DBQuery($query);
     } else {

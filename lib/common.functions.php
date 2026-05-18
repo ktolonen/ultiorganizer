@@ -123,25 +123,25 @@ function WeekdayString($timestamp, $cap)
     $weekday = date('w', $datetime);
     switch ($weekday) {
         case 0:
-            $weekday = $cap ? _("Sun") : _("Sun");
+            $weekday = $cap ? _("Sun") : _("Sunday");
             break;
         case 1:
-            $weekday = $cap ? _("Mon") : _("Mon");
+            $weekday = $cap ? _("Mon") : _("Monday");
             break;
         case 2:
-            $weekday = $cap ? _("Tue") : _("Tue");
+            $weekday = $cap ? _("Tue") : _("Tuesday");
             break;
         case 3:
-            $weekday = $cap ? _("Wed") : _("Wed");
+            $weekday = $cap ? _("Wed") : _("Wednesday");
             break;
         case 4:
-            $weekday = $cap ? _("Thu") : _("Thu");
+            $weekday = $cap ? _("Thu") : _("Thursday");
             break;
         case 5:
-            $weekday = $cap ? _("Fri") : _("Fri");
+            $weekday = $cap ? _("Fri") : _("Friday");
             break;
         case 6:
-            $weekday = $cap ? _("Sat") : _("Sat");
+            $weekday = $cap ? _("Sat") : _("Saturday");
             break;
         default:
             $weekday = '';
@@ -697,6 +697,10 @@ function SafeUrl($url)
 
 function colorstring2rgb($color)
 {
+    if (!is_string($color) || $color === '') {
+        return ['r' => 230, 'g' => 230, 'b' => 230];
+    }
+
     if ($color[0] == '#') {
         $color = substr($color, 1);
     }
@@ -710,7 +714,7 @@ function colorstring2rgb($color)
     } elseif (strlen($color) == 3) {
         list($r, $g, $b) = [$color[0] . $color[0], $color[1] . $color[1], $color[2] . $color[2]];
     } else {
-        return false;
+        return ['r' => 230, 'g' => 230, 'b' => 230];
     }
 
     $r = hexdec($r);

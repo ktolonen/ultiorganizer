@@ -52,7 +52,7 @@ function GetUrlListByTypeArray($typearray, $ownerId)
         return [];
     }
     $liststring = implode(",", $list);
-    $query = "SELECT * FROM uo_urls WHERE type IN($liststring) AND owner_id='" . DBEscapeString($ownerId) . "' ORDER BY ordering,type, name";
+    $query = "SELECT * FROM uo_urls WHERE owner='ultiorganizer' AND type IN($liststring) AND owner_id='" . DBEscapeString($ownerId) . "' ORDER BY ordering,type, name";
     return DBQueryToArray($query);
 }
 
@@ -244,9 +244,10 @@ function RemoveUrl($urlId)
 
 function AddMediaUrl($urlparams)
 {
-    if (hasAddMediaRight()) {
+    if (CanEditMediaTarget($urlparams['owner'], $urlparams['owner_id'])) {
 
         $url = SafeUrl($urlparams['url']);
+        $publisherId = CurrentUserDatabaseId();
 
         $query = sprintf(
             "INSERT INTO uo_urls (owner,owner_id,type,name,url,ismedialink,mediaowner,publisher_id)
@@ -257,7 +258,7 @@ function AddMediaUrl($urlparams)
             DBEscapeString($urlparams['name']),
             DBEscapeString($url),
             DBEscapeString($urlparams['mediaowner']),
-            DBEscapeString($urlparams['publisher_id']),
+            DBEscapeString($publisherId),
         );
         Log2("Media", "Add", $urlparams['url']);
 
@@ -269,14 +270,110 @@ function AddMediaUrl($urlparams)
 
 function RemoveMediaUrl($urlId)
 {
-    if (hasAddMediaRight()) {
-        $query = sprintf(
-            "DELETE FROM uo_urls WHERE url_id=%d",
-            (int) $urlId,
-        );
-        Log2("Media", "Remove", $urlId);
-        return DBQuery($query);
-    } else {
+    $url = GetUrlById($urlId);
+    if (!$url || (int) $url['ismedialink'] !== 1) {
+        return false;
+    }
+
+    if (!CanRemoveMediaUrl($url)) {
         die('Insufficient rights to remove url');
     }
+
+    DBQuery(sprintf(
+        "DELETE FROM uo_gameevent WHERE type='media' AND info=%d",
+        (int) $urlId,
+    ));
+
+    $query = sprintf(
+        "DELETE FROM uo_urls WHERE url_id=%d AND ismedialink=1",
+        (int) $urlId,
+    );
+    Log2("Media", "Remove", $urlId);
+    return DBQuery($query);
+}
+
+function CurrentUserDatabaseId()
+{
+    $query = sprintf(
+        "SELECT id FROM uo_users WHERE userid='%s'",
+        DBEscapeString($_SESSION['uid']),
+    );
+    return (int) DBQueryToValue($query);
+}
+
+function CanRemoveMediaUrl($url)
+{
+    if (isSuperAdmin()) {
+        return true;
+    }
+
+    return hasAddMediaRight() && (int) $url['publisher_id'] === CurrentUserDatabaseId();
+}
+
+function CanEditMediaTarget($owner, $ownerId)
+{
+    if (isSuperAdmin()) {
+        return true;
+    }
+    if (!hasAddMediaRight()) {
+        return false;
+    }
+
+    $ownerId = (int) $ownerId;
+    if ($ownerId <= 0) {
+        return false;
+    }
+
+    switch ($owner) {
+        case 'game':
+            return hasEditGameEventsRight($ownerId);
+        case 'team':
+            return hasEditPlayersRight($ownerId);
+        case 'player':
+            return CanEditPlayerMediaTarget($ownerId);
+        case 'club':
+            return CanEditClubMediaTarget($ownerId);
+        case 'series':
+            return hasEditGamesRight($ownerId);
+        case 'pool':
+            $poolInfo = PoolInfo($ownerId);
+            return !empty($poolInfo['series']) && hasEditGamesRight($poolInfo['series']);
+        case 'country':
+            return false;
+    }
+
+    return false;
+}
+
+function CanEditClubMediaTarget($clubId)
+{
+    $query = sprintf(
+        "SELECT team_id FROM uo_team WHERE club=%d",
+        (int) $clubId,
+    );
+    foreach (DBQueryToArray($query) as $team) {
+        if (hasEditPlayersRight((int) $team['team_id'])) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function CanEditPlayerMediaTarget($profileId)
+{
+    if (isPlayerAdmin($profileId)) {
+        return true;
+    }
+
+    $query = sprintf(
+        "SELECT MAX(player_id) FROM uo_player WHERE profile_id=%d",
+        (int) $profileId,
+    );
+    $playerId = (int) DBQueryToValue($query);
+    if ($playerId <= 0) {
+        return false;
+    }
+
+    return hasEditPlayerProfileRight($playerId);
 }

@@ -330,8 +330,9 @@ function RemoveClubProfileUrl($teamId, $clubId, $urlId)
     $teaminfo = TeamInfo($teamId);
     if (isSuperAdmin() || (hasEditPlayersRight($teamId) && $teaminfo['club'] == $clubId)) {
         $query = sprintf(
-            "DELETE FROM uo_urls WHERE url_id=%d",
+            "DELETE FROM uo_urls WHERE url_id=%d AND owner='club' AND owner_id='%s'",
             (int) $urlId,
+            DBEscapeString($clubId),
         );
         return DBQuery($query);
     } else {

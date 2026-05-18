@@ -156,16 +156,20 @@ function CountryTeams($countryId, $season = "")
 
 function RemoveCountry($countryId)
 {
-    if (isSuperAdmin()) {
-        Log2("country", "delete", CountryName($countryId));
-        $query = sprintf(
-            "DELETE FROM uo_country WHERE country_id=%d",
-            (int) $countryId,
-        );
-        return DBQuery($query);
-    } else {
+    if (!isSuperAdmin()) {
         die('Insufficient rights to remove country');
     }
+
+    if (!CanDeleteCountry($countryId)) {
+        die('Country is in use');
+    }
+
+    Log2("country", "delete", CountryName($countryId));
+    $query = sprintf(
+        "DELETE FROM uo_country WHERE country_id=%d",
+        (int) $countryId,
+    );
+    return DBQuery($query);
 }
 
 function AddCountry($name, $abbreviation, $flag)
@@ -190,8 +194,13 @@ function AddCountry($name, $abbreviation, $flag)
 function CanDeleteCountry($countryId)
 {
     $query = sprintf(
-        "SELECT count(*) FROM uo_team WHERE country='%s'",
-        DBEscapeString($countryId),
+        "SELECT (
+            SELECT count(*) FROM uo_team WHERE country=%d
+        ) + (
+            SELECT count(*) FROM uo_club WHERE country=%d
+        )",
+        (int) $countryId,
+        (int) $countryId,
     );
     $result = DBQueryToValue($query);
     return ($result == 0);

@@ -163,21 +163,28 @@ function AddLocation($name, $address, $info, $fields, $indoor, $lat, $lng, $seas
 
 function RemoveLocation($id)
 {
-    if (isSuperAdmin()) {
-        $query = sprintf("DELETE FROM uo_location WHERE id=%d", (int) $id);
-        $result = DBQuery($query);
-
-        $query = sprintf("DELETE FROM uo_location_info WHERE location_id=%d", (int) $id);
-        $result = DBQuery($query);
-    } else {
+    if (!isSuperAdmin()) {
         die('Insufficient rights to remove location');
     }
+
+    if (!CanDeleteLocation($id)) {
+        die('Location is in use');
+    }
+
+    $query = sprintf("DELETE FROM uo_location WHERE id=%d", (int) $id);
+    return (bool) DBQuery($query);
 }
 
 function CanDeleteLocation($id)
 {
     $query = sprintf(
-        "SELECT count(*) FROM uo_reservation WHERE location=%d",
+        "SELECT (
+            SELECT count(*) FROM uo_reservation WHERE location=%d
+        ) + (
+            SELECT count(*) FROM uo_movingtime WHERE fromlocation=%d OR tolocation=%d
+        )",
+        (int) $id,
+        (int) $id,
         (int) $id,
     );
     $result = DBQueryToValue($query);

@@ -21,6 +21,29 @@ function CollectGameIdsFromResult($games)
     return $ids;
 }
 
+function TimetablePoolIdListSql($id)
+{
+    $poolIds = array_filter(array_map('intval', explode(',', (string) $id)), function ($poolId) {
+        return $poolId > 0;
+    });
+
+    if (empty($poolIds)) {
+        return 'NULL';
+    }
+
+    return implode(',', array_unique($poolIds));
+}
+
+function TimetableMediaIconType($type)
+{
+    $type = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $type);
+    if ($type === '') {
+        return 'live';
+    }
+
+    return $type;
+}
+
 function TournamentView($games, $grouping = true)
 {
 
@@ -521,7 +544,7 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
     }
 
     if ($pool) {
-        $ret .= "<td style='$poolw'><span><a href='?view=poolstatus&pool=" . (int) $game['pool'] . "'>" . utf8entities(U_($game['poolname'])) . "</span></td>\n";
+        $ret .= "<td style='$poolw'><span><a href='?view=poolstatus&pool=" . (int) $game['pool'] . "'>" . utf8entities(U_($game['poolname'])) . "</a></span></td>\n";
     }
 
     if (!GameHasStarted($game)) {
@@ -569,7 +592,9 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
                 if (empty($title)) {
                     $title = _("Live Broadcasting");
                 }
-                $ret .= "<a href='" . $url['url'] . "' target='_blank' rel='noopener'>" . "<img border='0' width='16' height='16' title='" . utf8entities($title) . "' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/></a>";
+                $iconType = TimetableMediaIconType($url['type']);
+                $ret .= "<a href='" . utf8entities($url['url']) . "' target='_blank' rel='noopener'>";
+                $ret .= "<img border='0' width='16' height='16' title='" . utf8entities($title) . "' src='images/linkicons/" . $iconType . ".png' alt='" . utf8entities($iconType) . "'/></a>";
             }
         }
         $ret .= "</td>\n";
@@ -633,6 +658,9 @@ function NextGameDay($id, $gamefilter, $order)
 {
     $games = TimetableGames($id, $gamefilter, "coming", "time");
     $game = reset($games);
+    if (!$game) {
+        return [];
+    }
     $next = ShortEnDate($game['time']);
     $games = TimetableGames($id, $gamefilter, $next, $order);
     return $games;
@@ -642,6 +670,9 @@ function PrevGameDay($id, $gamefilter, $order)
 {
     $games = TimetableGames($id, $gamefilter, "past", "timedesc");
     $game = reset($games);
+    if (!$game) {
+        return [];
+    }
     $prev = ShortEnDate($game['time']);
     $games = TimetableGames($id, $gamefilter, $prev, $order);
     return $games;
@@ -694,10 +725,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
             break;
 
         case "poolgroup":
-            //keep pool filter as it is to give better performance for single pool query
-            //extra explode needed to make parameters safe
-            $pools = explode(",", DBEscapeString($id));
-            $query .= " WHERE pp.valid=true AND gp.pool IN(" . implode(",", $pools) . ")";
+            $query .= " WHERE pp.valid=true AND gp.pool IN(" . TimetablePoolIdListSql($id) . ")";
             break;
 
         case "team":
@@ -834,10 +862,7 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
             break;
 
         case "poolgroup":
-            //keep pool filter as it is to give better performance for single pool query
-            //extra explode needed to make parameters safe
-            $pools = explode(",", DBEscapeString($id));
-            $query .= " WHERE pp.valid=true AND gp.pool IN(" . implode(",", $pools) . ")";
+            $query .= " WHERE pp.valid=true AND gp.pool IN(" . TimetablePoolIdListSql($id) . ")";
             break;
 
         case "team":
@@ -927,6 +952,7 @@ function TimetableTimeslots($reservationgroup, $season)
 
 function TimetableIntraPoolConflicts($season)
 {
+    $season = DBEscapeString($season);
     $query = "SELECT g1.game_id as game1, g2.game_id as game2, gp1.pool as pool1, gp2.pool as pool2,
       g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2,
       g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1,
@@ -951,6 +977,7 @@ function TimetableIntraPoolConflicts($season)
 
 function TimetableInterPoolConflicts($season)
 {
+    $season = DBEscapeString($season);
     $query = "SELECT  g1.game_id as game1, g2.game_id as game2, gp1.pool as pool1, gp2.pool as pool2,
       g1.hometeam as home1, g1.visitorteam as visitor1, g2.hometeam as home2, g2.visitorteam as visitor2,
       g1.scheduling_name_home as scheduling_home1, g1.scheduling_name_visitor as scheduling_visitor1,
@@ -980,7 +1007,7 @@ function TimeTableMoveTimes($season)
 {
     $query = sprintf("SELECT * FROM uo_movingtime
             WHERE season = '%s'
-            ORDER BY fromlocation, fromfield+0, tolocation, tofield+0", $season);
+            ORDER BY fromlocation, fromfield+0, tolocation, tofield+0", DBEscapeString($season));
 
     $result = DBQuery($query);
 
@@ -1045,7 +1072,7 @@ function TimetableToCsv($season, $separator)
 			home.name AS HomeTeam, visitor.name AS AwayTeam, pp.homescore AS HomeScores, 
 			pp.visitorscore AS VisitorScores, pool.name AS Pool, ps.name AS Division, 
 			pr.fieldname AS Field, pr.reservationgroup AS ReservationGroup,
-			pl.name AS Place, pp.name AS GameName
+			pl.name AS Place, pgame.name AS GameName
 			FROM uo_game pp
 			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
