@@ -1591,9 +1591,13 @@ function GameResponsibilities($season)
     $criteria = "";
     if (isSeasonAdmin($season)) {
         $criteria = sprintf(
-            " pool IN 
-		(SELECT pool_id FROM uo_pool WHERE series IN 
-			(SELECT series_id FROM uo_series WHERE season='%s'))",
+            "game_id IN (
+				SELECT game FROM uo_game_pool WHERE pool IN (
+					SELECT pool_id FROM uo_pool WHERE series IN (
+						SELECT series_id FROM uo_series WHERE season='%s'
+					)
+				)
+			)",
             DBEscapeString($season),
         );
     } else {
@@ -1606,7 +1610,11 @@ function GameResponsibilities($season)
             }
         }
         if (count($seasonSeriesAdmin) > 0) {
-            $criteria = "(pool IN (SELECT pool_id FROM uo_pool WHERE series IN (" . implode(",", $seasonSeriesAdmin) . ")))";
+            $criteria = "(game_id IN (
+				SELECT game FROM uo_game_pool WHERE pool IN (
+					SELECT pool_id FROM uo_pool WHERE series IN (" . implode(",", $seasonSeriesAdmin) . ")
+				)
+			))";
         }
 
         // TeamAdmin
