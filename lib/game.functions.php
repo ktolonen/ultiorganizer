@@ -1445,10 +1445,16 @@ function GameSetStartingTeam($gameId, $home)
 
 /**
  * Set the owning (timetable=1) pool for a game in uo_game_pool, guaranteeing
- * exactly one owner row. Removes any stale timetable=1 row pointing elsewhere
- * and promotes an existing timetable=0 carryover row if it happens to target
- * the same pool. Callers must have verified the appropriate edit-rights for
- * the destination pool's series before invoking.
+ * exactly one owner row. Promotes an existing timetable=0 carryover row at
+ * the same pool and removes any stale timetable=1 row pointing elsewhere.
+ * Callers must have verified the appropriate edit-rights for the destination
+ * pool's series before invoking.
+ *
+ * The insert runs before the delete inside a transaction, so a failure on the
+ * destination row (for example, an FK violation against uo_pool) rolls back
+ * cleanly and leaves the existing owner row in place. This protects against
+ * the game disappearing from owner-row joins that the rest of the schema
+ * now depends on.
  */
 function SetGamePool($gameId, $poolId)
 {
@@ -1457,17 +1463,28 @@ function SetGamePool($gameId, $poolId)
     if ($gameId <= 0 || $poolId <= 0) {
         return;
     }
-    DBQuery(sprintf(
-        "DELETE FROM uo_game_pool WHERE game=%d AND timetable=1 AND pool!=%d",
-        $gameId,
-        $poolId,
-    ));
-    DBQuery(sprintf(
-        "INSERT INTO uo_game_pool (game, pool, timetable) VALUES (%d, %d, 1)
-            ON DUPLICATE KEY UPDATE timetable=1",
-        $gameId,
-        $poolId,
-    ));
+    $previousExceptionMode = DBShouldThrowExceptions();
+    DBSetExceptionMode(true);
+    try {
+        DBQuery('START TRANSACTION');
+        DBQuery(sprintf(
+            "INSERT INTO uo_game_pool (game, pool, timetable) VALUES (%d, %d, 1)
+                ON DUPLICATE KEY UPDATE timetable=1",
+            $gameId,
+            $poolId,
+        ));
+        DBQuery(sprintf(
+            "DELETE FROM uo_game_pool WHERE game=%d AND timetable=1 AND pool!=%d",
+            $gameId,
+            $poolId,
+        ));
+        DBQuery('COMMIT');
+    } catch (Throwable $e) {
+        DBQuery('ROLLBACK');
+        DBSetExceptionMode($previousExceptionMode);
+        throw $e;
+    }
+    DBSetExceptionMode($previousExceptionMode);
 }
 
 function AddGame($params)
