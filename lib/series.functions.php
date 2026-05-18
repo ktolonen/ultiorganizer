@@ -329,13 +329,14 @@ function SeriesScoreBoard($seriesId, $sorting, $limit)
 			LEFT JOIN uo_game AS g3 ON (ps2.game=g3.game_id)
 			LEFT JOIN uo_pool pool ON(ps2.pool=pool.pool_id)
 			WHERE pool.series=%d AND ps2.timetable=1 AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
-		LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
-		LEFT JOIN (SELECT up.player, COUNT(*) AS games 
+		LEFT JOIN uo_team AS j ON (p.team=j.team_id)
+		LEFT JOIN (SELECT up.player, COUNT(*) AS games
 			FROM uo_played up
 			LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-			LEFT JOIN uo_pool pool ON(g4.pool=pool.pool_id)
-			WHERE pool.series=%d AND g4.isongoing=0 
-			GROUP BY player) AS pel ON (p.player_id=pel.player) 
+			INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
+			LEFT JOIN uo_pool pool ON(pool.pool_id=gp4.pool)
+			WHERE pool.series=%d AND g4.isongoing=0
+			GROUP BY player) AS pel ON (p.player_id=pel.player)
 		WHERE pel.games > 0 AND j.series=%d",
         (int) $seriesId,
         (int) $seriesId,
@@ -421,13 +422,14 @@ function SeriesDefenseBoard($seriesId, $sorting, $limit)
 			LEFT JOIN uo_pool pool ON(ps.pool=pool.pool_id)
 			LEFT JOIN uo_game AS g1 ON (ps.game=g1.game_id)
 			WHERE pool.series=%d AND ps.timetable=1 AND g1.isongoing=0 GROUP BY author) AS t ON (p.player_id=t.author) 
-		LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
-		LEFT JOIN (SELECT up.player, COUNT(*) AS games 
+		LEFT JOIN uo_team AS j ON (p.team=j.team_id)
+		LEFT JOIN (SELECT up.player, COUNT(*) AS games
 			FROM uo_played up
 			LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-			LEFT JOIN uo_pool pool ON(g4.pool=pool.pool_id)
-			WHERE pool.series=%d AND g4.isongoing=0 
-			GROUP BY player) AS pel ON (p.player_id=pel.player) 
+			INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
+			LEFT JOIN uo_pool pool ON(pool.pool_id=gp4.pool)
+			WHERE pool.series=%d AND g4.isongoing=0
+			GROUP BY player) AS pel ON (p.player_id=pel.player)
 		WHERE pel.games > 0 AND j.series=%d",
         (int) $seriesId,
         (int) $seriesId,

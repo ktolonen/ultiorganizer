@@ -20,7 +20,8 @@ function SeasonUnaccredited($season)
 		LEFT JOIN uo_team pt ON (p.team=pt.team_id)
 		LEFT JOIN uo_reservation res ON (pp.reservation=res.id)
 		LEFT JOIN uo_location loc ON (res.location=loc.id)
-		LEFT JOIN uo_pool pool ON (pp.pool=pool.pool_id)
+		LEFT JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+		LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
 		LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
 	WHERE played.accredited=0 AND ser.season='%s'",
         DBEscapeString($season),

@@ -1677,15 +1677,17 @@ function GameResponsibilityArray($season, $series = null)
         return [];
     }
     $query = sprintf(
-        "SELECT game_id, hometeam, kj.name as hometeamname, visitorteam,
-			vj.name as visitorteamname, pp.pool as pool, time, homescore, visitorscore,
+        "SELECT pp.game_id, hometeam, kj.name as hometeamname, visitorteam,
+			vj.name as visitorteamname, gp.pool as pool, time, homescore, visitorscore,
 			pool.timecap, pool.timeslot, pool.series, res.reservationgroup,
 			ser.name, pool.name as poolname, res.id as res_id, res.starttime,
 			loc.name AS locationname, res.fieldname AS fieldname, res.location,
 			COALESCE(m.goals,0) AS goals, phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
 	        pp.isongoing, pp.hasstarted
-		FROM uo_game pp left join uo_reservation res on (pp.reservation=res.id) 
-			left join uo_pool pool on (pp.pool=pool.pool_id)
+		FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			left join uo_reservation res on (pp.reservation=res.id)
+			left join uo_pool pool on (pool.pool_id=gp.pool)
 			left join uo_series ser on (pool.series=ser.series_id)
 			left join uo_location loc on (res.location=loc.id)
 			left join uo_team kj on (pp.hometeam=kj.team_id)
@@ -1693,7 +1695,7 @@ function GameResponsibilityArray($season, $series = null)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
 			left join (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS m ON (pp.game_id=m.game)
-		WHERE game_id IN (" . implode(",", array_column($gameResponsibilities, 'game_id')) . ")"
+		WHERE pp.game_id IN (" . implode(",", array_column($gameResponsibilities, 'game_id')) . ")"
             . ($series ? " AND pool.series=%d" : "") . "
 		ORDER BY res.starttime ASC, res.reservationgroup ASC, res.fieldname+0,pp.time ASC",
         $series ? (int) $series : 0,

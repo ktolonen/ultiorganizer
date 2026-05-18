@@ -409,7 +409,6 @@ CREATE TABLE IF NOT EXISTS `uo_game` (
   `visitorscore` smallint(5) DEFAULT NULL,
   `reservation` int(10) DEFAULT NULL,
   `time` datetime DEFAULT NULL,
-  `pool` int(10) DEFAULT NULL,
   `valid` tinyint(1) NOT NULL,
   `halftime` int(10) DEFAULT NULL,
   `official` varchar(50) DEFAULT NULL,
@@ -436,13 +435,10 @@ CREATE TABLE IF NOT EXISTS `uo_game` (
   KEY `idx_reservation` (`reservation`),
   KEY `idx_game_id` (`game_id`),
   KEY `idx_name` (`name`),
-  KEY `idx_pool` (`pool`),
   KEY `idx_game_valid_time` (`valid`,`time`),
-  KEY `idx_game_valid_pool_time` (`valid`,`pool`,`time`),
   KEY `idx_game_valid_hometeam_time` (`valid`,`hometeam`,`time`),
   KEY `idx_game_valid_visitorteam_time` (`valid`,`visitorteam`,`time`),
   CONSTRAINT `fk_game_hometeam` FOREIGN KEY (`hometeam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE,
-  CONSTRAINT `fk_game_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_game_reservation` FOREIGN KEY (`reservation`) REFERENCES `uo_reservation` (`id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_game_visitorteam` FOREIGN KEY (`visitorteam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

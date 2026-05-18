@@ -274,14 +274,15 @@ function TeamGames($teamId)
         $defense_str = ",pp.homedefenses,pp.visitordefenses ";
     }
     $query = sprintf(
-        "SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, pp.visitorscore, 
-  				pp.hasstarted, pp.pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank" . $defense_str .
-        "FROM uo_game pp 
-				LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool)
+        "SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, pp.visitorscore,
+					pp.hasstarted, gp.pool AS pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank" . $defense_str .
+        "FROM uo_game pp
+				INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+				LEFT JOIN uo_pool ps ON (ps.pool_id=gp.pool)
 				LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
-				LEFT JOIN uo_team_pool pjs ON(pp.pool=pjs.pool AND pjs.team='%s') WHERE pp.valid=true 
+				LEFT JOIN uo_team_pool pjs ON(gp.pool=pjs.pool AND pjs.team='%s') WHERE pp.valid=true
 					AND (pp.visitorteam='%s' OR pp.hometeam='%s') AND (pp.hasstarted>0)
-				ORDER BY pp.pool",
+				ORDER BY gp.pool",
         DBEscapeString($teamId),
         DBEscapeString($teamId),
         DBEscapeString($teamId),
@@ -309,10 +310,11 @@ function TeamSerieGames($teamId, $serieId)
 {
     $query = sprintf(
         "
-			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, 
+			SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore,
 			pp.visitorscore, pp.hasstarted, pp.time
-			FROM uo_game pp 
-			WHERE pp.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s') 
+			FROM uo_game pp
+			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+			WHERE gp.pool='%s' AND pp.valid=true AND (pp.visitorteam='%s' OR pp.hometeam='%s')
 			ORDER BY pp.time ASC",
         DBEscapeString($serieId),
         DBEscapeString($teamId),
@@ -612,12 +614,13 @@ function TeamPlayedGames($name, $seriestype, $sorting, $curSeason = false)
     $query = sprintf(
         "SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore, pp.hasstarted,
 	ser.season as season_id, ps.name, pp.game_id, ps.pool_id
-	FROM uo_game pp 
-	LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool)
+	FROM uo_game pp
+	INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+	LEFT JOIN uo_pool ps ON (ps.pool_id=gp.pool)
 	LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
-	LEFT JOIN uo_team pj1 ON(pp.hometeam=pj1.team_id) 
+	LEFT JOIN uo_team pj1 ON(pp.hometeam=pj1.team_id)
 	LEFT JOIN uo_team pj2 ON (pp.visitorteam=pj2.team_id)
-	WHERE (pj1.name='%s' OR pj2.name='%s') AND ser.type='%s' 
+	WHERE (pj1.name='%s' OR pj2.name='%s') AND ser.type='%s'
 	AND pp.valid=true",
         DBEscapeString($name),
         DBEscapeString($name),
@@ -829,18 +832,19 @@ function TeamScoreBoard($teamId, $pools, $sorting, $limit)
 					LEFT JOIN uo_game_pool AS ps2 ON (m2.game=ps2.game) 
 					LEFT JOIN uo_game AS g3 ON (m2.game=g3.game_id) 
 						WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY assist) AS s ON (p.player_id=s.assist) 
-				LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+				LEFT JOIN uo_team AS j ON (p.team=j.team_id)
 				LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
 					LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-						WHERE g4.pool IN($poolList) AND g4.isongoing=0 
+					INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
+						WHERE gp4.pool IN($poolList) AND g4.isongoing=0
 						GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
             (int) $teamId,
         );
     } else {
         $query = sprintf(
             "
-			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, 
+			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin,
+				COALESCE(t1.callahan,0) AS callahan,(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games,
         COALESCE(t.done/pel.games,0) AS doneavg, COALESCE(s.fedin/pel.games,0) AS fedinavg, COALESCE((COALESCE(t.done,0) + COALESCE(s.fedin,0))/pel.games,0) AS totalavg
 			FROM uo_player AS p 
 			LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m LEFT JOIN uo_game AS game ON (m.game=game.game_id) 
@@ -963,10 +967,11 @@ function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
 					LEFT JOIN uo_game_pool AS ps2 ON (m3.game=ps2.game) 
 					LEFT JOIN uo_game AS g3 ON (m3.game=g3.game_id) 
 					WHERE ps2.pool IN($poolList) AND g3.isongoing=0 GROUP BY author) AS d ON (p.player_id=d.author)
-				LEFT JOIN uo_team AS j ON (p.team=j.team_id) 
+				LEFT JOIN uo_team AS j ON (p.team=j.team_id)
 				LEFT JOIN (SELECT player, COUNT(*) AS games FROM uo_played up
 					LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-					WHERE g4.pool IN($poolList) AND g4.isongoing=0 
+					INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
+					WHERE gp4.pool IN($poolList) AND g4.isongoing=0
 					GROUP BY player) AS pel ON (p.player_id=pel.player) WHERE p.team=%d",
             (int) $teamId,
         );
@@ -1066,11 +1071,12 @@ function GetAllPlayedGames($team1, $team2, $seriestype, $sorting)
 		SELECT pj1.name AS hometeamname, pj2.name AS visitorteamname, pp.homescore, pp.visitorscore,
   			pp.hasstarted, ser.season AS season_id, ps.name,
 			pp.game_id, ps.pool_id, s.name AS seasonname, pp.forfeit
-		FROM uo_game pp 
-		LEFT JOIN uo_pool ps ON (ps.pool_id=pp.pool) 
+		FROM uo_game pp
+		INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+		LEFT JOIN uo_pool ps ON (ps.pool_id=gp.pool)
 		LEFT JOIN uo_series ser ON (ps.series=ser.series_id)
 		LEFT JOIN uo_season s ON (s.season_id=ser.season)
-		LEFT JOIN uo_team pj1 ON(pp.hometeam=pj1.team_id) 
+		LEFT JOIN uo_team pj1 ON(pp.hometeam=pj1.team_id)
 		LEFT JOIN uo_team pj2 ON (pp.visitorteam=pj2.team_id)
 		WHERE ((REPLACE(pj1.name,' ','')='%s' AND REPLACE(pj2.name,' ','')='%s') OR (REPLACE(pj1.name,' ','')='%s' AND REPLACE(pj2.name,' ','')='%s'))
 			AND (pp.hasstarted > 0)

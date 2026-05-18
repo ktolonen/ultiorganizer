@@ -425,11 +425,12 @@ function CheckBYESchedule($poolId)
 
     $query = sprintf(
         "
-		SELECT game_id,hometeam,visitorteam,reservation,g.time
-		FROM uo_game AS g 
+		SELECT g.game_id,hometeam,visitorteam,reservation,g.time
+		FROM uo_game AS g
+		INNER JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
 		LEFT JOIN uo_team AS tvisit ON (g.visitorteam = tvisit.team_id)
 		LEFT JOIN uo_team as thome  ON (g.hometeam = thome.team_id)
-		WHERE g.pool='%s' AND ((thome.valid=2 OR tvisit.valid=2 AND g.time is not NULL) OR 
+		WHERE gp.pool='%s' AND ((thome.valid=2 OR tvisit.valid=2 AND g.time is not NULL) OR
 			(g.time is NULL AND thome.valid=1 AND tvisit.valid=1) )
 		ORDER BY g.time",
         DBEscapeString($poolId),
@@ -481,8 +482,11 @@ function CheckBYE($poolId)
         // if the visitor-team is the BYE-team assign the appropriate scores to home and visitor
         $query = sprintf(
             "
-				UPDATE uo_game,uo_team SET uo_game.visitorscore='%s', uo_game.homescore='%s', uo_game.hasstarted='2'
-				WHERE (uo_game.pool='%s' AND uo_game.visitorteam=uo_team.team_id AND uo_team.valid=2)",
+				UPDATE uo_game
+				INNER JOIN uo_game_pool gp ON (gp.game=uo_game.game_id AND gp.timetable=1)
+				INNER JOIN uo_team ON (uo_game.visitorteam=uo_team.team_id)
+				SET uo_game.visitorscore='%s', uo_game.homescore='%s', uo_game.hasstarted='2'
+				WHERE gp.pool='%s' AND uo_team.valid=2",
             DBEscapeString($poolInfo['forfeitagainst']),
             DBEscapeString($poolInfo['forfeitscore']),
             DBEscapeString($poolId),
@@ -493,8 +497,11 @@ function CheckBYE($poolId)
         // if the home-team is the BYE-team assign the appropriate scores to home and visitor
         $query = sprintf(
             "
-				UPDATE uo_game,uo_team SET uo_game.homescore='%s', uo_game.visitorscore='%s', uo_game.hasstarted='2'
-				WHERE (uo_game.pool='%s' AND uo_game.hometeam=uo_team.team_id AND uo_team.valid=2)",
+				UPDATE uo_game
+				INNER JOIN uo_game_pool gp ON (gp.game=uo_game.game_id AND gp.timetable=1)
+				INNER JOIN uo_team ON (uo_game.hometeam=uo_team.team_id)
+				SET uo_game.homescore='%s', uo_game.visitorscore='%s', uo_game.hasstarted='2'
+				WHERE gp.pool='%s' AND uo_team.valid=2",
             DBEscapeString($poolInfo['forfeitagainst']),
             DBEscapeString($poolInfo['forfeitscore']),
             DBEscapeString($poolId),

@@ -444,14 +444,14 @@ function ResolveSeriesPoolStandings($poolId)
     }
 
     //test if pool is played
-    $games = DBQueryRowCount("SELECT game_id
+    $games = DBQueryRowCount("SELECT game.game_id
 		FROM uo_game game
-		LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
-		WHERE p.pool_id=$poolId");
-    $played = DBQueryRowCount("SELECT game_id
+		INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+		WHERE gp.pool=$poolId");
+    $played = DBQueryRowCount("SELECT game.game_id
 		FROM uo_game game
-		LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
-		WHERE p.pool_id=$poolId AND (game.hasstarted>0) AND game.isongoing=0");
+		INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+		WHERE gp.pool=$poolId AND (game.hasstarted>0) AND game.isongoing=0");
     if ($games == $played) {
 
         //test that standings are not shared

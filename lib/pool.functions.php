@@ -470,7 +470,8 @@ function PoolsScoreBoard($pools, $sorting, $limit)
         LEFT JOIN (SELECT up.player, COUNT(*) AS games
             FROM uo_played up
             LEFT JOIN uo_game AS g4 ON (up.game=g4.game_id)
-            WHERE g4.pool IN($poolList) AND g4.isongoing=0 GROUP BY player)
+            INNER JOIN uo_game_pool gp4 ON (gp4.game=g4.game_id AND gp4.timetable=1)
+            WHERE gp4.pool IN($poolList) AND g4.isongoing=0 GROUP BY player)
             AS pel ON (p.player_id=pel.player)
         WHERE pel.games > 0";
 
@@ -1196,10 +1197,10 @@ function PoolGetGamesToMove($poolId, $mvgames)
 
 function PoolCountGames($poolId)
 {
-    $games = DBQuery("SELECT game_id
+    $games = DBQuery("SELECT game.game_id
       FROM uo_game game
-      LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
-      WHERE p.pool_id=$poolId");
+      INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+      WHERE gp.pool=$poolId");
     return mysqli_num_rows($games);
 }
 
@@ -1220,18 +1221,18 @@ function PoolGames($poolId, $fieldId = null)
             phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
             ps.pool AS original_pool, pgame.name AS gamename
             FROM uo_game p
+            INNER JOIN uo_game_pool ps ON (p.game_id=ps.game AND ps.timetable=1)
             LEFT JOIN uo_team AS home ON (p.hometeam=home.team_id)
             LEFT JOIN uo_team AS visitor ON (p.visitorteam=visitor.team_id)
             LEFT JOIN uo_scheduling_name AS phome ON (p.scheduling_name_home=phome.scheduling_id)
             LEFT JOIN uo_scheduling_name AS pvisitor ON (p.scheduling_name_visitor=pvisitor.scheduling_id)
 	    LEFT JOIN uo_scheduling_name AS pgame ON (p.name=pgame.scheduling_id)
-            LEFT JOIN uo_game_pool ps ON (p.game_id=ps.game)
             WHERE ps.pool = %d",
         (int) $poolId,
     );
     if (isset($fieldId)) {
         $query .= sprintf(
-            " AND p.reservation = %d AND ps.timetable=1",
+            " AND p.reservation = %d",
             (int) $fieldId,
         );
     }
@@ -1254,13 +1255,13 @@ function PoolGamesNotScheduled($poolId)
         phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
         ps.pool AS original_pool, pgame.name AS gamename
         FROM uo_game p
+        INNER JOIN uo_game_pool ps ON (p.game_id=ps.game AND ps.timetable=1)
         LEFT JOIN uo_team AS home ON (p.hometeam=home.team_id)
         LEFT JOIN uo_team AS visitor ON (p.visitorteam=visitor.team_id)
         LEFT JOIN uo_scheduling_name AS phome ON (p.scheduling_name_home=phome.scheduling_id)
         LEFT JOIN uo_scheduling_name AS pvisitor ON (p.scheduling_name_visitor=pvisitor.scheduling_id)
 		LEFT JOIN uo_scheduling_name AS pgame ON (p.name=pgame.scheduling_id)
-        LEFT JOIN uo_game_pool ps ON (p.game_id=ps.game)
-        WHERE ps.pool = %d AND (p.time IS NULL OR p.reservation IS NULL) AND ps.timetable=1
+        WHERE ps.pool = %d AND (p.time IS NULL OR p.reservation IS NULL)
         ORDER BY game_id",
         (int) $poolId,
     );
@@ -1279,7 +1280,7 @@ function PoolMovedGames($poolId)
 {
     $query = sprintf(
         "SELECT pp.game_id, pp.time, pp.hometeam, pp.visitorteam, pp.homescore,
-            pp.visitorscore, pp.pool AS pool, pool.name AS poolname, pool.timeslot,
+            pp.visitorscore, gpo.pool AS pool, pool.name AS poolname, pool.timeslot,
             ps.series_id, ps.name AS seriesname, ps.season, ps.type, pr.fieldname, pr.reservationgroup,
             pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, COALESCE(pm.goals,0) AS scoresheet,
             pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, home.name AS hometeamname, visitor.name AS visitorteamname,
@@ -1288,8 +1289,9 @@ function PoolMovedGames($poolId)
             homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry
             FROM uo_game_pool gp
             LEFT JOIN uo_game pp ON (gp.game=pp.game_id)
+            LEFT JOIN uo_game_pool gpo ON (gpo.game=pp.game_id AND gpo.timetable=1)
             LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
-            LEFT JOIN uo_pool pool ON (pool.pool_id=pp.pool)
+            LEFT JOIN uo_pool pool ON (pool.pool_id=gpo.pool)
             LEFT JOIN uo_series ps ON (pool.series=ps.series_id)
             LEFT JOIN uo_reservation pr ON (pp.reservation=pr.id)
             LEFT JOIN uo_location pl ON (pr.location=pl.id)
@@ -1300,7 +1302,7 @@ function PoolMovedGames($poolId)
             LEFT JOIN uo_scheduling_name AS pgame ON (pp.name=pgame.scheduling_id)
             LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
             LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
-            WHERE pp.valid=true AND gp.pool=%d AND timetable=0
+            WHERE pp.valid=true AND gp.pool=%d AND gp.timetable=0
             ORDER BY pr.starttime, pr.reservationgroup, pl.id, pr.fieldname +0, pp.time ASC, pp.game_id ASC",
         (int) $poolId,
     );
@@ -1337,14 +1339,14 @@ function PoolTotalPlayedGames($poolId)
 function PoolResolvePlayed($poolId)
 {
     $poolId = intval($poolId);
-    $games = DBQuery("SELECT game_id
+    $games = DBQuery("SELECT game.game_id
             FROM uo_game game
-            LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
-            WHERE p.pool_id=$poolId");
-    $played = DBQuery("SELECT game_id
+            INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+            WHERE gp.pool=$poolId");
+    $played = DBQuery("SELECT game.game_id
             FROM uo_game game
-            LEFT JOIN uo_pool p ON (p.pool_id=game.pool)
-            WHERE p.pool_id=$poolId AND game.hasstarted AND game.isongoing=0");
+            INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+            WHERE gp.pool=$poolId AND game.hasstarted AND game.isongoing=0");
     if (mysqli_num_rows($games) == mysqli_num_rows($played)) {
         DBQuery("UPDATE uo_pool SET played=1 WHERE pool_id=$poolId");
     } else {
@@ -1362,10 +1364,10 @@ function IsPoolStarted($poolId)
 {
 
     $query = sprintf(
-        "SELECT game_id
-            FROM uo_pool pool
-            LEFT JOIN uo_game pp ON (pool.pool_id=pp.pool)
-            WHERE pool.pool_id=$poolId AND (pp.hasstarted>0)",
+        "SELECT pp.game_id
+            FROM uo_game pp
+            INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
+            WHERE gp.pool=%d AND pp.hasstarted>0",
         (int) $poolId,
     );
     return DBQueryRowCount($query) ? true : false;
@@ -2319,7 +2321,7 @@ function PoolSetSchedulingName($scheduling_id, $name, $season)
 function CanGenerateGames($poolId)
 {
     $query = sprintf(
-        "SELECT count(*) FROM uo_game WHERE pool=%d",
+        "SELECT count(*) FROM uo_game_pool WHERE pool=%d AND timetable=1",
         (int) $poolId,
     );
     return DBQueryToValue($query) == 0;
@@ -2359,7 +2361,7 @@ function CanDeletePool($poolId)
     $count = DBQueryToValue($query);
     if ($count == 0) {
         $query = sprintf(
-            "SELECT count(*) FROM uo_game WHERE pool=%d",
+            "SELECT count(*) FROM uo_game_pool WHERE pool=%d AND timetable=1",
             (int) $poolId,
         );
         $count = DBQueryToValue($query);
@@ -2387,7 +2389,9 @@ function CanDeletePool($poolId)
 function CanDeleteTeamFromPool($poolId, $teamId)
 {
     $query = sprintf(
-        "SELECT count(*) FROM uo_game WHERE pool=%d AND ((hometeam='%s' OR visitorteam='%s') AND (homescore>0 OR visitorscore>0 OR hasstarted>0))",
+        "SELECT count(*) FROM uo_game g
+            INNER JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+            WHERE gp.pool=%d AND ((g.hometeam='%s' OR g.visitorteam='%s') AND (g.homescore>0 OR g.visitorscore>0 OR g.hasstarted>0))",
         (int) $poolId,
         (int) $teamId,
         (int) $teamId,
@@ -2436,20 +2440,18 @@ function PoolAddGame($poolId, $home, $away, $psudoteams = false, $homeresp = fal
         if ($homeresp) {
 
             $query = sprintf(
-                "INSERT INTO uo_game ($hometeam, $visitorteam, pool, valid, respteam)
-                    values (%d, %d, %d, 1, %d)",
+                "INSERT INTO uo_game ($hometeam, $visitorteam, valid, respteam)
+                    values (%d, %d, 1, %d)",
                 (int) $home,
                 (int) $away,
-                (int) $poolId,
                 (int) $home,
             );
         } else {
             $query = sprintf(
-                "INSERT INTO uo_game ($hometeam, $visitorteam, pool, valid)
-                    values (%d, %d, %d, 1)",
+                "INSERT INTO uo_game ($hometeam, $visitorteam, valid)
+                    values (%d, %d, 1)",
                 (int) $home,
                 (int) $away,
-                (int) $poolId,
             );
         }
         $id = DBQueryInsert($query);
@@ -2775,39 +2777,35 @@ function GenerateGames($poolId, $rounds = 1, $generate = true, $nomutual = false
                     if ($homeresp) {
                         if ($pseudoteams) {
                             $query = sprintf(
-                                "INSERT INTO uo_game (scheduling_name_home, scheduling_name_visitor, pool, valid, respteam)
-                                    values (%d, %d, %d, 1, %d)",
+                                "INSERT INTO uo_game (scheduling_name_home, scheduling_name_visitor, valid, respteam)
+                                    values (%d, %d, 1, %d)",
                                 (int) $game['home'],
                                 (int) $game['away'],
-                                (int) $poolId,
                                 (int) $game['home'],
                             );
                         } else {
                             $query = sprintf(
-                                "INSERT INTO uo_game (hometeam, visitorteam, pool, valid, respteam)
-                                    values (%d, %d, %d, 1, %d)",
+                                "INSERT INTO uo_game (hometeam, visitorteam, valid, respteam)
+                                    values (%d, %d, 1, %d)",
                                 (int) $game['home'],
                                 (int) $game['away'],
-                                (int) $poolId,
                                 (int) $game['home'],
                             );
                         }
                     } else {
                         if ($pseudoteams) {
                             $query = sprintf(
-                                "INSERT INTO uo_game (scheduling_name_home, scheduling_name_visitor, pool, valid)
-                                    values (%d, %d, %d, 1)",
+                                "INSERT INTO uo_game (scheduling_name_home, scheduling_name_visitor, valid)
+                                    values (%d, %d, 1)",
                                 (int) $game['home'],
                                 (int) $game['away'],
-                                (int) $poolId,
                             );
                         } else {
                             $query = sprintf(
-                                "INSERT INTO uo_game (hometeam, visitorteam, pool, valid)
-                                    values (%d, %d, %d, 1)",
+                                "INSERT INTO uo_game (hometeam, visitorteam, valid)
+                                    values (%d, %d, 1)",
                                 (int) $game['home'],
                                 (int) $game['away'],
-                                (int) $poolId,
                             );
                         }
                     }

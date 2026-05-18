@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/include_only.guard.php';
+require_once __DIR__ . '/game.functions.php';
 denyDirectLibAccess(__FILE__);
 
 /**
@@ -25,6 +26,7 @@ class EventDataXMLHandler
     public $uo_game = []; //game id mapping array
     public $uo_reservation = []; //reservation id mapping array
     public $followers = []; // pools with unresolved followers
+    public $legacy_game_pool = []; //fallback owner pool from legacy uo_game.POOL cell: new_game_id => new_pool_id
     public $mode; //import mode: 'add' or 'replace'
 
     /**
@@ -104,12 +106,13 @@ class EventDataXMLHandler
                 }
 
                 //uo_scheduling_name, referenced by either games or moves
-                $schedulings = DBQuery("SELECT sched.* FROM uo_scheduling_name sched 
+                $schedulings = DBQuery("SELECT sched.* FROM uo_scheduling_name sched
             LEFT JOIN uo_game game ON (sched.scheduling_id = game.scheduling_name_home OR sched.scheduling_id = game.scheduling_name_visitor)
-            LEFT JOIN uo_pool pool ON (game.pool = pool.pool_id)
+            LEFT JOIN uo_game_pool gp ON (gp.game = game.game_id AND gp.timetable = 1)
+            LEFT JOIN uo_pool pool ON (pool.pool_id = gp.pool)
             LEFT JOIN uo_moveteams mv ON (sched.scheduling_id = mv.scheduling_id)
             LEFT JOIN uo_pool pool2 ON (mv.frompool = pool2.pool_id OR mv.topool = pool2.pool_id)
-            WHERE pool2.series = $seriesId  OR pool.series = $seriesId 
+            WHERE pool2.series = $seriesId  OR pool.series = $seriesId
             GROUP BY scheduling_id");
                 while ($row = mysqli_fetch_assoc($schedulings)) {
                     $ret .= $this->RowToXML("uo_scheduling_name", $row);
@@ -127,7 +130,9 @@ class EventDataXMLHandler
                     }
 
                     //uo_game
-                    $games = DBQuery("SELECT * FROM uo_game WHERE pool='" . DBEscapeString($row['pool_id']) . "'");
+                    $games = DBQuery("SELECT g.* FROM uo_game g
+                        INNER JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+                        WHERE gp.pool = '" . DBEscapeString($row['pool_id']) . "'");
                     while ($row = mysqli_fetch_assoc($games)) {
                         $ret .= $this->RowToXML("uo_game", $row, false);
 
@@ -243,6 +248,21 @@ class EventDataXMLHandler
             foreach ($this->followers as $pool => $follow) {
                 $query = "UPDATE uo_pool SET follower='" . ((int) $this->uo_pool[$follow]) . "' WHERE pool_id='$pool'";
                 DBQuery($query);
+            }
+
+            // Backfill timetable=1 uo_game_pool rows from legacy uo_game.POOL cells.
+            // Skip games that already received an explicit owner row from
+            // <uo_game_pool> elements during import; otherwise route through
+            // SetGamePool() so the "exactly one owner per game" invariant is
+            // upheld (it handles conflicting carryovers at the target pool).
+            foreach ($this->legacy_game_pool as $gameId => $poolId) {
+                $hasOwner = DBQueryToValue(sprintf(
+                    "SELECT 1 FROM uo_game_pool WHERE game=%d AND timetable=1 LIMIT 1",
+                    (int) $gameId,
+                ));
+                if (!$hasOwner) {
+                    SetGamePool((int) $gameId, (int) $poolId);
+                }
             }
 
             xml_parser_free($xmlparser);
@@ -418,9 +438,14 @@ class EventDataXMLHandler
                 if (!empty($row["RESERVATION"]) && isset($this->uo_reservation[$row["RESERVATION"]])) {
                     $row["RESERVATION"] = $this->uo_reservation[$row["RESERVATION"]];
                 }
-                if (!empty($row["POOL"])) {
-                    $row["POOL"] = $this->uo_pool[$row["POOL"]];
+                // Capture legacy POOL cell as a fallback owner pool; uo_game has no pool column.
+                $legacyPool = null;
+                if (isset($row["POOL"]) && !empty($row["POOL"]) && $row["POOL"] != "NULL") {
+                    if (isset($this->uo_pool[$row["POOL"]])) {
+                        $legacyPool = (int) $this->uo_pool[$row["POOL"]];
+                    }
                 }
+                unset($row["POOL"]);
                 if (!empty($row["SCHEDULING_NAME_HOME"]) && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]])) {
                     $row["SCHEDULING_NAME_HOME"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]];
                 }
@@ -431,6 +456,9 @@ class EventDataXMLHandler
                 $newId = $this->InsertRow($name, $row);
 
                 $this->uo_game[$key] = $newId;
+                if ($legacyPool !== null) {
+                    $this->legacy_game_pool[$newId] = $legacyPool;
+                }
                 break;
 
             case "uo_goal":
@@ -464,7 +492,15 @@ class EventDataXMLHandler
             case "uo_game_pool":
                 $row["GAME"] = $this->uo_game[$row["GAME"]];
                 $row["POOL"] = $this->uo_pool[$row["POOL"]];
-                $this->InsertRow($name, $row);
+                if (isset($row["TIMETABLE"]) && (int) $row["TIMETABLE"] === 1) {
+                    // Route owner rows through the upsert helper so any
+                    // earlier-imported owner row for this game is replaced and
+                    // a conflicting carryover at the same pool is promoted,
+                    // keeping the invariant intact even on malformed XML.
+                    SetGamePool((int) $row["GAME"], (int) $row["POOL"]);
+                } else {
+                    $this->InsertRow($name, $row);
+                }
                 break;
 
             case "uo_moveteams":
@@ -683,19 +719,20 @@ class EventDataXMLHandler
                 if (!empty($row["RESERVATION"]) && isset($this->uo_reservation[$row["RESERVATION"]])) {
                     $row["RESERVATION"] = $this->uo_reservation[$row["RESERVATION"]];
                 }
-                if (!empty($row["POOL"])) {
-                    $row["POOL"] = $this->uo_pool[$row["POOL"]];
+                // Capture legacy POOL cell as a fallback owner pool; uo_game has no pool column.
+                $legacyPool = null;
+                if (isset($row["POOL"]) && !empty($row["POOL"]) && $row["POOL"] != "NULL") {
+                    if (isset($this->uo_pool[$row["POOL"]])) {
+                        $legacyPool = (int) $this->uo_pool[$row["POOL"]];
+                    }
                 }
+                unset($row["POOL"]);
                 if (!empty($row["SCHEDULING_NAME_HOME"]) && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]])) {
                     $row["SCHEDULING_NAME_HOME"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]];
                 }
                 if (!empty($row["SCHEDULING_NAME_VISITOR"] && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]]))) {
                     $row["SCHEDULING_NAME_VISITOR"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]];
                 }
-
-                $newId = $this->InsertRow($name, $row);
-
-                $this->uo_game[$key] = $newId;
 
                 $cond = "game_id='" . $key . "'";
                 $query = "SELECT * FROM " . $name . " WHERE " . $cond;
@@ -704,9 +741,15 @@ class EventDataXMLHandler
                 if ($exist) {
                     $this->SetRow($name, $row, $cond);
                     $this->uo_game[$key] = $key;
+                    if ($legacyPool !== null) {
+                        $this->legacy_game_pool[$key] = $legacyPool;
+                    }
                 } else {
                     $newId = $this->InsertRow($name, $row);
                     $this->uo_game[$key] = $newId;
+                    if ($legacyPool !== null) {
+                        $this->legacy_game_pool[$newId] = $legacyPool;
+                    }
                 }
                 break;
 
@@ -779,14 +822,21 @@ class EventDataXMLHandler
                 $row["GAME"] = $this->uo_game[$row["GAME"]];
                 $row["POOL"] = $this->uo_pool[$row["POOL"]];
 
-                $cond = "game='" . $row["GAME"] . "' AND pool='" . $row["POOL"] . "'";
-                $query = "SELECT * FROM " . $name . " WHERE " . $cond;
-                $exist = DBQueryRowCount($query);
-
-                if ($exist) {
-                    $this->SetRow($name, $row, $cond);
+                if (isset($row["TIMETABLE"]) && (int) $row["TIMETABLE"] === 1) {
+                    // Owner rows must respect the single-owner-per-game
+                    // invariant even when a row at (game, pool) already
+                    // exists with a different timetable value.
+                    SetGamePool((int) $row["GAME"], (int) $row["POOL"]);
                 } else {
-                    $this->InsertRow($name, $row);
+                    $cond = "game='" . $row["GAME"] . "' AND pool='" . $row["POOL"] . "'";
+                    $query = "SELECT * FROM " . $name . " WHERE " . $cond;
+                    $exist = DBQueryRowCount($query);
+
+                    if ($exist) {
+                        $this->SetRow($name, $row, $cond);
+                    } else {
+                        $this->InsertRow($name, $row);
+                    }
                 }
 
                 break;

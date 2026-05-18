@@ -1217,6 +1217,121 @@ function upgrade91()
     }
 }
 
+/**
+ * Drop uo_game.pool in favor of uo_game_pool as the single source of truth.
+ *
+ * Backfills any missing timetable=1 rows from the legacy column, then removes
+ * the column, its indexes, and the foreign key. Pre-existing divergence
+ * (uo_game.pool changed without a matching uo_game_pool update) is patched
+ * silently; the operator can inspect server error log for the counts.
+ */
+function upgrade92()
+{
+    if (!hasColumn('uo_game', 'pool')) {
+        return;
+    }
+
+    $missingOwner = DBQueryToValue(
+        "SELECT COUNT(*) FROM uo_game g
+            LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+            WHERE g.pool IS NOT NULL AND gp.game IS NULL",
+    );
+    $divergent = DBQueryToValue(
+        "SELECT COUNT(*) FROM uo_game g
+            INNER JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+            WHERE g.pool IS NOT NULL AND gp.pool != g.pool",
+    );
+    $orphans = DBQueryToValue(
+        "SELECT COUNT(*) FROM uo_game g
+            LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
+            WHERE g.pool IS NULL AND gp.game IS NULL",
+    );
+    $duplicateOwners = DBQueryToValue(
+        "SELECT COUNT(*) FROM (
+            SELECT game FROM uo_game_pool WHERE timetable = 1 GROUP BY game HAVING COUNT(*) > 1
+        ) t",
+    );
+    error_log(sprintf(
+        "upgrade92: backfilling uo_game_pool from uo_game.pool: missing_owner=%d divergent=%d orphans=%d duplicate_owners=%d",
+        (int) $missingOwner,
+        (int) $divergent,
+        (int) $orphans,
+        (int) $duplicateOwners,
+    ));
+
+    // Dedup timetable=1 rows first: keep the row whose pool matches uo_game.pool
+    // if any, else the lowest pool_id, so the divergent UPDATE below cannot hit
+    // a PK collision and the application's "exactly one owner row per game"
+    // invariant is enforced before we drop the column.
+    runQuery(
+        "DELETE gp FROM uo_game_pool gp
+            LEFT JOIN uo_game g ON g.game_id = gp.game
+            INNER JOIN (
+                SELECT game,
+                    MIN(CASE WHEN g2.pool = gp2.pool THEN gp2.pool END) AS preferred_pool,
+                    MIN(gp2.pool) AS fallback_pool
+                FROM uo_game_pool gp2
+                INNER JOIN uo_game g2 ON g2.game_id = gp2.game
+                WHERE gp2.timetable = 1
+                GROUP BY game
+                HAVING COUNT(*) > 1
+            ) dups ON dups.game = gp.game
+            WHERE gp.timetable = 1
+              AND gp.pool != COALESCE(dups.preferred_pool, dups.fallback_pool)",
+    );
+
+    // Realign owner rows so uo_game.pool wins (it captures the most recent
+    // SetGame() intent, which historically only updated the column). Use a
+    // delete + insert pattern rather than UPDATE so we never collide on the
+    // (game, pool) primary key when a carryover row already exists at the
+    // target pool.
+
+    // 1. Drop divergent owner rows.
+    runQuery(
+        "DELETE gp FROM uo_game_pool gp
+            INNER JOIN uo_game g ON g.game_id = gp.game
+            WHERE gp.timetable = 1 AND g.pool IS NOT NULL AND gp.pool != g.pool",
+    );
+    // 2. Drop any carryover row sitting at the target pool; it would conflict
+    //    with the owner row we're about to insert and is semantically redundant
+    //    (a game cannot be both owner and carryover in the same pool).
+    runQuery(
+        "DELETE gp FROM uo_game_pool gp
+            INNER JOIN uo_game g ON g.game_id = gp.game
+            WHERE gp.timetable = 0 AND g.pool IS NOT NULL AND gp.pool = g.pool",
+    );
+    // 3. Insert the owner row. INSERT IGNORE makes step 3 a no-op when an
+    //    already-matching owner row survived from step 1.
+    runQuery(
+        "INSERT IGNORE INTO uo_game_pool (game, pool, timetable)
+            SELECT game_id, pool, 1 FROM uo_game WHERE pool IS NOT NULL",
+    );
+
+    // Drop any foreign key that references uo_game.pool, regardless of constraint name.
+    // Older installs (pre-InnoDB conversion) use auto-generated names like uo_game_FK_3;
+    // newer installs use the canonical fk_game_pool.
+    $fkResult = runQuery(sprintf(
+        "SELECT CONSTRAINT_NAME FROM information_schema.KEY_COLUMN_USAGE
+            WHERE CONSTRAINT_SCHEMA = '%s' AND TABLE_NAME = 'uo_game' AND COLUMN_NAME = 'pool'
+            AND REFERENCED_TABLE_NAME IS NOT NULL",
+        DBEscapeString(DB_DATABASE),
+    ));
+    if ($fkResult) {
+        while ($row = mysqli_fetch_assoc($fkResult)) {
+            dropForeignKey('uo_game', $row['CONSTRAINT_NAME']);
+        }
+    }
+
+    if (hasIndex('uo_game', 'idx_pool')) {
+        runQuery("ALTER TABLE `uo_game` DROP INDEX `idx_pool`");
+    }
+    if (hasIndex('uo_game', 'idx_game_valid_pool_time')) {
+        runQuery("ALTER TABLE `uo_game` DROP INDEX `idx_game_valid_pool_time`");
+    }
+
+    runQuery("ALTER TABLE `uo_game` DROP COLUMN `pool`");
+}
+
 function upgradeEngineToInnoDb()
 {
     $charset = 'utf8mb4';
@@ -1494,7 +1609,6 @@ function cleanupNullableOrphans()
         "UPDATE uo_player p LEFT JOIN uo_player_profile pr ON pr.profile_id = p.profile_id SET p.profile_id = NULL WHERE p.profile_id IS NOT NULL AND (p.profile_id = 0 OR pr.profile_id IS NULL)",
         "UPDATE uo_game g LEFT JOIN uo_team t ON t.team_id = g.hometeam SET g.hometeam = NULL WHERE g.hometeam IS NOT NULL AND (g.hometeam = 0 OR t.team_id IS NULL)",
         "UPDATE uo_game g LEFT JOIN uo_team t ON t.team_id = g.visitorteam SET g.visitorteam = NULL WHERE g.visitorteam IS NOT NULL AND (g.visitorteam = 0 OR t.team_id IS NULL)",
-        "UPDATE uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool SET g.pool = NULL WHERE g.pool IS NOT NULL AND (g.pool = 0 OR p.pool_id IS NULL)",
         "UPDATE uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation SET g.reservation = NULL WHERE g.reservation IS NOT NULL AND (g.reservation = 0 OR r.id IS NULL)",
         "UPDATE uo_reservation r LEFT JOIN uo_location l ON l.id = r.location SET r.location = NULL WHERE r.location IS NOT NULL AND (r.location = 0 OR l.id IS NULL)",
         "UPDATE uo_goal go LEFT JOIN uo_player p ON p.player_id = go.assist SET go.assist = NULL WHERE go.assist IS NOT NULL AND (go.assist = 0 OR p.player_id IS NULL)",
@@ -1529,7 +1643,6 @@ function findOrphanErrors()
         "uo_player_stats.series" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_series s ON s.series_id = ps.series WHERE ps.series IS NOT NULL AND s.series_id IS NULL LIMIT 1",
         "uo_player_stats.season" => "SELECT 1 FROM uo_player_stats ps LEFT JOIN uo_season se ON se.season_id = ps.season WHERE ps.season IS NOT NULL AND se.season_id IS NULL LIMIT 1",
         "uo_game.hometeam/visitorteam" => "SELECT 1 FROM uo_game g LEFT JOIN uo_team t1 ON t1.team_id = g.hometeam LEFT JOIN uo_team t2 ON t2.team_id = g.visitorteam WHERE (g.hometeam IS NOT NULL AND t1.team_id IS NULL) OR (g.visitorteam IS NOT NULL AND t2.team_id IS NULL) LIMIT 1",
-        "uo_game.pool" => "SELECT 1 FROM uo_game g LEFT JOIN uo_pool p ON p.pool_id = g.pool WHERE g.pool IS NOT NULL AND p.pool_id IS NULL LIMIT 1",
         "uo_game.reservation" => "SELECT 1 FROM uo_game g LEFT JOIN uo_reservation r ON r.id = g.reservation WHERE g.reservation IS NOT NULL AND r.id IS NULL LIMIT 1",
         "uo_goal.game" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_game g ON g.game_id = go.game WHERE go.game IS NOT NULL AND g.game_id IS NULL LIMIT 1",
         "uo_goal.assist/scorer" => "SELECT 1 FROM uo_goal go LEFT JOIN uo_player p1 ON p1.player_id = go.assist LEFT JOIN uo_player p2 ON p2.player_id = go.scorer WHERE (go.assist IS NOT NULL AND p1.player_id IS NULL) OR (go.scorer IS NOT NULL AND p2.player_id IS NULL) LIMIT 1",
@@ -1595,7 +1708,6 @@ function addInnoDbForeignKeys()
     addForeignKey('uo_game', 'fk_game_hometeam', "FOREIGN KEY (`hometeam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE");
     addForeignKey('uo_game', 'fk_game_visitorteam', "FOREIGN KEY (`visitorteam`) REFERENCES `uo_team` (`team_id`) ON DELETE SET NULL ON UPDATE CASCADE");
     addForeignKey('uo_game', 'fk_game_reservation', "FOREIGN KEY (`reservation`) REFERENCES `uo_reservation` (`id`) ON DELETE SET NULL ON UPDATE CASCADE");
-    addForeignKey('uo_game', 'fk_game_pool', "FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE");
 
     addForeignKey('uo_goal', 'fk_goal_game', "FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE");
     addForeignKey('uo_goal', 'fk_goal_assist', "FOREIGN KEY (`assist`) REFERENCES `uo_player` (`player_id`) ON DELETE SET NULL ON UPDATE CASCADE");
