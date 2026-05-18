@@ -1728,8 +1728,9 @@ function RemoveTeamProfileUrl($teamId, $urlId)
 {
     if (isSuperAdmin() || hasEditPlayersRight($teamId)) {
         $query = sprintf(
-            "DELETE FROM uo_urls WHERE url_id=%d",
+            "DELETE FROM uo_urls WHERE url_id=%d AND owner='team' AND owner_id='%s'",
             (int) $urlId,
+            DBEscapeString($teamId),
         );
         return DBQuery($query);
     } else {
