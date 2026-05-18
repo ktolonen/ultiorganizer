@@ -330,7 +330,7 @@ function CanEditMediaTarget($owner, $ownerId)
         case 'team':
             return hasEditPlayersRight($ownerId);
         case 'player':
-            return hasEditPlayerProfileRight($ownerId);
+            return CanEditPlayerMediaTarget($ownerId);
         case 'club':
             return CanEditClubMediaTarget($ownerId);
         case 'series':
@@ -358,4 +358,22 @@ function CanEditClubMediaTarget($clubId)
     }
 
     return false;
+}
+
+function CanEditPlayerMediaTarget($profileId)
+{
+    if (isPlayerAdmin($profileId)) {
+        return true;
+    }
+
+    $query = sprintf(
+        "SELECT MAX(player_id) FROM uo_player WHERE profile_id=%d",
+        (int) $profileId,
+    );
+    $playerId = (int) DBQueryToValue($query);
+    if ($playerId <= 0) {
+        return false;
+    }
+
+    return hasEditPlayerProfileRight($playerId);
 }
