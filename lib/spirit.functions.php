@@ -968,7 +968,7 @@ function RefreshGameSpiritVisibility($gameId)
 function RefreshSeasonSpiritVisibility($seasonId)
 {
     $query = sprintf(
-		"SELECT g.game_id
+        "SELECT g.game_id
 		FROM uo_game g
 		LEFT JOIN uo_game_pool gp ON (gp.game = g.game_id AND gp.timetable = 1)
 		LEFT JOIN uo_pool p ON (p.pool_id = gp.pool)
