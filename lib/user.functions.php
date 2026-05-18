@@ -89,23 +89,15 @@ function FailRedirectMobile($user)
 function FailUnauthorized($user)
 {
     header('WWW-Authenticate: Basic realm="ultiorganizer"');
-    if (strpos("Microsoft", $_SERVER["SERVER_SOFTWARE"])) {
-        header("Status: 401 Unauthorized");
-    } else {
-        header("HTTP/1.0 401 Unauthorized");
-    }
-    echo "<html><head><title>Login failed</title></head><body><h1>Login failed for " . $user . "</h1></body></html>\n";
+    header("HTTP/1.0 401 Unauthorized");
+    echo "<html><head><title>Login failed</title></head><body><h1>Login failed for " . utf8entities($user) . "</h1></body></html>\n";
     exit();
 }
 
 function Forbidden($user)
 {
-    if (strpos("Microsoft", $_SERVER["SERVER_SOFTWARE"])) {
-        header("Status: 403 Forbidden");
-    } else {
-        header("HTTP/1.0 403 Forbidden");
-    }
-    echo "<html><head><title>Operation not allowed.</title></head><body><h1>Operation not allowed for " . $user . "</h1></body></html>\n";
+    header("HTTP/1.0 403 Forbidden");
+    echo "<html><head><title>Operation not allowed.</title></head><body><h1>Operation not allowed for " . utf8entities($user) . "</h1></body></html>\n";
     exit();
 }
 
@@ -707,6 +699,10 @@ function hasEditGamesRight($series)
 function hasEditPlayerProfileRight($playerId)
 {
     $playerInfo = PlayerInfo($playerId);
+    if (!$playerInfo) {
+        return false;
+    }
+
     $team = $playerInfo['team'];
     $series = getTeamSeries($team);
     $season = SeriesSeasonId($series);
@@ -1060,6 +1056,15 @@ function RemoveUserRole($userid, $propid)
 function AddUserRole($userid, $role)
 {
     if (hasEditUsersRight()) {
+        $query = sprintf(
+            "SELECT COUNT(*) FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
+            DBEscapeString($userid),
+            DBEscapeString($role),
+        );
+        if (DBQueryToValue($query) > 0) {
+            return false;
+        }
+
         $query = sprintf(
             "INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', '%s')",
             DBEscapeString($userid),
@@ -1680,6 +1685,7 @@ function GameResponsibilities($season)
 
 function GameResponsibilityArray($season, $series = null)
 {
+    $series = (int) $series;
     $gameResponsibilities = GameResponsibilities($season);
     if (!$gameResponsibilities) {
         return [];
@@ -1703,10 +1709,10 @@ function GameResponsibilityArray($season, $series = null)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
 			left join (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS m ON (pp.game_id=m.game)
-		WHERE pp.game_id IN (" . implode(",", array_column($gameResponsibilities, 'game_id')) . ")"
-            . ($series ? " AND pool.series=%d" : "") . "
+        WHERE pp.game_id IN (" . implode(",", array_column($gameResponsibilities, 'game_id')) . ")"
+            . ($series > 0 ? " AND pool.series=%d" : "") . "
 		ORDER BY res.starttime ASC, res.reservationgroup ASC, res.fieldname+0,pp.time ASC",
-        $series ? (int) $series : 0,
+        $series,
     );
 
     $result = DBQuery($query);
