@@ -113,6 +113,10 @@ contentStart();
 
 if ($locationId > 0) {
     $locationInfo = LocationInfo($locationId);
+    if (!$locationInfo) {
+        showPage(_("Add location"), "<p>" . _("Location not found") . "</p>");
+        return;
+    }
     $loc['id'] = $locationInfo['id'];
     $loc['name'] = $locationInfo['name'];
     $loc['address'] = $locationInfo['address'];
