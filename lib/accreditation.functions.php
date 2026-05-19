@@ -88,7 +88,7 @@ function checkUserAdmin($playerInfo)
     // Check for existing user for player
     $query = sprintf(
         "SELECT userid FROM uo_userproperties WHERE name='userrole' AND value='playeradmin:%s'",
-        DBEscapeString($playerInfo['accreditation_id']),
+        DBEscapeString($playerInfo['profile_id']),
     );
     $result = DBQueryToValue($query);
     if ($result > 0) {
