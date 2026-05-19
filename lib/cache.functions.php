@@ -12,13 +12,7 @@ denyDirectLibAccess(__FILE__);
  */
 function CacheRuntimeKey($namespace, $key)
 {
-    if (is_scalar($key) || $key === null) {
-        $keyText = (string) $key;
-    } else {
-        $keyText = md5(serialize($key));
-    }
-
-    return (string) $namespace . ':' . $keyText;
+    return (string) $namespace . ':' . md5(serialize($key));
 }
 
 /**

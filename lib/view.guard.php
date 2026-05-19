@@ -9,10 +9,14 @@ function requireRoutedView($view, $indexPath = 'index.php')
         return;
     }
 
-    $location = $indexPath . '?view=' . urlencode($view);
+    $query = [];
     if (!empty($_SERVER['QUERY_STRING'])) {
-        $location .= '&' . $_SERVER['QUERY_STRING'];
+        parse_str($_SERVER['QUERY_STRING'], $query);
+        unset($query['view']);
     }
+
+    $query = array_merge(['view' => $view], $query);
+    $location = $indexPath . '?' . http_build_query($query);
     header('Location: ' . $location);
     exit();
 }
