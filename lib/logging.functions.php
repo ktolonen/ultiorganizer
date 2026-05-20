@@ -314,7 +314,7 @@ function LogPageLoad($page)
         DBEscapeString($page),
     ));
 
-    if ((int) DBQueryToValue("SELECT ROW_COUNT()", true) === 0) {
+    if ((int) DBQueryToValueUncached("SELECT ROW_COUNT()", true) === 0) {
         DBQuery(sprintf(
             "INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s', 1)",
             DBEscapeString($page),
@@ -357,7 +357,7 @@ function LogVisitor($ip)
         DBEscapeString($ip),
     ));
 
-    if ((int) DBQueryToValue("SELECT ROW_COUNT()", true) === 0) {
+    if ((int) DBQueryToValueUncached("SELECT ROW_COUNT()", true) === 0) {
         DBQuery(sprintf(
             "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s', 1)",
             DBEscapeString($ip),
