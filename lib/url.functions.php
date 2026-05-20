@@ -64,7 +64,7 @@ function GetMediaUrlList($owner, $ownerId, $type = "")
             "SELECT urls.*, u.name AS publisher, e.time
 			FROM uo_urls urls 
 			LEFT JOIN uo_users u ON (u.id=urls.publisher_id)
-			LEFT JOIN uo_gameevent e ON(e.info=urls.url_id)
+			LEFT JOIN uo_gameevent e ON(e.info=urls.url_id AND e.type='media')
 			WHERE urls.owner='%s' AND urls.owner_id='%s' AND urls.ismedialink=1",
             DBEscapeString($owner),
             DBEscapeString($ownerId),
@@ -101,7 +101,7 @@ function GetMediaUrlListForGames($gameIds, $type = "")
     $query = "SELECT urls.*, u.name AS publisher, e.time
 		FROM uo_urls urls 
 		LEFT JOIN uo_users u ON (u.id=urls.publisher_id)
-		LEFT JOIN uo_gameevent e ON (e.info=urls.url_id)
+		LEFT JOIN uo_gameevent e ON (e.info=urls.url_id AND e.type='media')
 		WHERE urls.owner='game' AND urls.owner_id IN (" . implode(",", $ids) . ") AND urls.ismedialink=1";
     if (!empty($type)) {
         $query .= sprintf(" AND urls.type='%s'", DBEscapeString($type));

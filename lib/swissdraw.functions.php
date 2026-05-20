@@ -260,13 +260,13 @@ function FindUnplayedTeam($teamid, $startPos, $moves, $games, $forward)
 
     if ($forward) {
         $sign = 1;
-        $stopPos = count($moves) - 1;
+        $stopPos = count($moves);
         if ($startPos > $stopPos) {
             return (-1);
         }
     } else {
         $sign = -1;
-        $stopPos = 1;
+        $stopPos = -1;
         if ($startPos < $stopPos) {
             return (-1);
         }
@@ -430,7 +430,7 @@ function CheckBYESchedule($poolId)
 		INNER JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
 		LEFT JOIN uo_team AS tvisit ON (g.visitorteam = tvisit.team_id)
 		LEFT JOIN uo_team as thome  ON (g.hometeam = thome.team_id)
-		WHERE gp.pool='%s' AND ((thome.valid=2 OR tvisit.valid=2 AND g.time is not NULL) OR
+		WHERE gp.pool='%s' AND (((thome.valid=2 OR tvisit.valid=2) AND g.time is not NULL) OR
 			(g.time is NULL AND thome.valid=1 AND tvisit.valid=1) )
 		ORDER BY g.time",
         DBEscapeString($poolId),
@@ -492,6 +492,7 @@ function CheckBYE($poolId)
             DBEscapeString($poolId),
         );
         $result = DBQuery($query);
+        $changes += (int) DBQueryToValue("SELECT ROW_COUNT()", true);
 
 
         // if the home-team is the BYE-team assign the appropriate scores to home and visitor
@@ -507,6 +508,7 @@ function CheckBYE($poolId)
             DBEscapeString($poolId),
         );
         $result = DBQuery($query);
+        $changes += (int) DBQueryToValue("SELECT ROW_COUNT()", true);
     }
     return $changes;
 }
@@ -532,4 +534,5 @@ function CheckPlayoffMoves($poolId)
             return -1;
         }
     }
+    return 0;
 }
