@@ -309,40 +309,17 @@ function LogPageLoad($page)
         return;
     }
 
-    DBQuery('LOCK TABLES uo_pageload_counter WRITE');
-
-    $query = sprintf(
-        "SELECT id, loads FROM uo_pageload_counter WHERE page='%s' ORDER BY id ASC",
+    DBQuery(sprintf(
+        "UPDATE uo_pageload_counter SET loads=COALESCE(loads, 0) + 1 WHERE page='%s'",
         DBEscapeString($page),
-    );
-    $rows = DBQueryToArrayUncached($query);
+    ));
 
-    if (empty($rows)) {
+    if ((int) DBQueryToValue("SELECT ROW_COUNT()", true) === 0) {
         DBQuery(sprintf(
             "INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s', 1)",
             DBEscapeString($page),
         ));
-    } else {
-        $keepId = (int) $rows[0]['id'];
-        $loads = 1;
-        $deleteIds = [];
-        foreach ($rows as $row) {
-            $loads += (int) $row['loads'];
-            if ((int) $row['id'] !== $keepId) {
-                $deleteIds[] = (int) $row['id'];
-            }
-        }
-        DBQuery(sprintf(
-            "UPDATE uo_pageload_counter SET loads=%d WHERE id=%d",
-            $loads,
-            $keepId,
-        ));
-        if (!empty($deleteIds)) {
-            DBQuery("DELETE FROM uo_pageload_counter WHERE id IN (" . implode(',', $deleteIds) . ")");
-        }
     }
-
-    DBQuery('UNLOCK TABLES');
 }
 
 function IsVisitorLoggingDisabled()
@@ -375,40 +352,17 @@ function LogVisitor($ip)
         return;
     }
 
-    DBQuery('LOCK TABLES uo_visitor_counter WRITE');
-
-    $query = sprintf(
-        "SELECT id, visits FROM uo_visitor_counter WHERE ip='%s' ORDER BY id ASC",
+    DBQuery(sprintf(
+        "UPDATE uo_visitor_counter SET visits=COALESCE(visits, 0) + 1 WHERE ip='%s'",
         DBEscapeString($ip),
-    );
-    $rows = DBQueryToArrayUncached($query);
+    ));
 
-    if (empty($rows)) {
+    if ((int) DBQueryToValue("SELECT ROW_COUNT()", true) === 0) {
         DBQuery(sprintf(
             "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s', 1)",
             DBEscapeString($ip),
         ));
-    } else {
-        $keepId = (int) $rows[0]['id'];
-        $visits = 1;
-        $deleteIds = [];
-        foreach ($rows as $row) {
-            $visits += (int) $row['visits'];
-            if ((int) $row['id'] !== $keepId) {
-                $deleteIds[] = (int) $row['id'];
-            }
-        }
-        DBQuery(sprintf(
-            "UPDATE uo_visitor_counter SET visits=%d WHERE id=%d",
-            $visits,
-            $keepId,
-        ));
-        if (!empty($deleteIds)) {
-            DBQuery("DELETE FROM uo_visitor_counter WHERE id IN (" . implode(',', $deleteIds) . ")");
-        }
     }
-
-    DBQuery('UNLOCK TABLES');
 }
 
 /**
