@@ -66,9 +66,18 @@ function GetSearchLocations()
     return $result1;
 }
 
-function GetSearchLocationsArray()
+function GetSearchLocationsArray($includeLocalizedInfo = true)
 {
-    return DBFetchAllAssoc(GetSearchLocations());
+    $locations = DBFetchAllAssoc(GetSearchLocations());
+    if ($includeLocalizedInfo) {
+        return $locations;
+    }
+
+    $deduped = [];
+    foreach ($locations as $location) {
+        $deduped[$location['id']] = $location;
+    }
+    return array_values($deduped);
 }
 
 function LocationInfo($id)

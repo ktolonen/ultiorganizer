@@ -65,13 +65,6 @@ if (!function_exists('normalizeTextInput')) {
     }
 }
 
-function StripFromQueryString($query_string, $needle)
-{
-    $safeNeedle = preg_quote($needle, '/');
-    $query_string = preg_replace("/(\&|\?)*{$safeNeedle}=[a-zA-Z0-9].*?(\&;|$)/", '$2', $query_string);
-    return preg_replace("/(&)+/", "&", $query_string);
-}
-
 function SafeDivide($dividend, $divisor)
 {
     if (!isset($divisor) || $divisor == 0) {
@@ -352,16 +345,23 @@ function GetScriptName()
 
 function GetURLBase()
 {
-    $url = "http://";
+    $url = "http";
+    if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+        $url .= "s";
+    }
+    $url .= "://";
     $url .= GetServerName();
     $url .= GetScriptName();
 
     $cutpos = strrpos($url, "/");
     $url = substr($url, 0, $cutpos);
     global $include_prefix;
-    if (strlen($include_prefix) > 0) {
-        $updirs = explode($include_prefix, "/");
+    if (!empty($include_prefix)) {
+        $updirs = explode("/", trim($include_prefix, "/"));
         foreach ($updirs as $dotdot) {
+            if ($dotdot !== "..") {
+                continue;
+            }
             $cutpos = strrpos($url, "/");
             $url = substr($url, 0, $cutpos);
         }
@@ -1199,8 +1199,22 @@ function GetTableColumns($table)
     ));
     $fields = mysqli_num_fields($result);
     for ($i = 0; $i < $fields; $i++) {
-        $name  = strtolower(mysqli_fetch_field_direct($result, $i)->name);
-        $ret[$name] = mysqli_fetch_field_direct($result, $i)->name;
+        $field = mysqli_fetch_field_direct($result, $i);
+        $name  = strtolower($field->name);
+        switch ($field->type) {
+            case MYSQLI_TYPE_TINY:
+            case MYSQLI_TYPE_SHORT:
+            case MYSQLI_TYPE_LONG:
+            case MYSQLI_TYPE_INT24:
+            case MYSQLI_TYPE_LONGLONG:
+            case MYSQLI_TYPE_YEAR:
+                $ret[$name] = 'int';
+                break;
+
+            default:
+                $ret[$name] = 'string';
+                break;
+        }
     }
     return $ret;
 }

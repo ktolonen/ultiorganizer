@@ -44,62 +44,18 @@ function ApiRateLimitCheck($rateKey, $limit, $windowSeconds)
     $now = time();
     $windowStart = $now - ($now % $windowSeconds);
 
-    // Must bypass the persistent cache: this row is read, incremented, and
-    // written back. A cached read would let concurrent requests within the
-    // TTL window all see the same stale count and overwrite each other with
-    // the same +1, breaking rate limiting.
-    $query = sprintf(
-        "SELECT window_start, request_count
-     FROM uo_api_rate_limit
-     WHERE rate_key='%s'
-     LIMIT 1",
+    $upsert = sprintf(
+        "INSERT INTO uo_api_rate_limit (rate_key, window_start, request_count)
+        VALUES ('%s', %d, LAST_INSERT_ID(1))
+        ON DUPLICATE KEY UPDATE
+            request_count=LAST_INSERT_ID(IF(window_start=VALUES(window_start), request_count + 1, 1)),
+            window_start=VALUES(window_start)",
         DBEscapeString($rateKey),
+        (int) $windowStart,
     );
-    $row = DBQueryToRowUncached($query);
+    DBQuery($upsert);
 
-    if (empty($row)) {
-        $insert = sprintf(
-            "INSERT INTO uo_api_rate_limit (rate_key, window_start, request_count)
-       VALUES ('%s', %d, 1)",
-            DBEscapeString($rateKey),
-            (int) $windowStart,
-        );
-        DBQuery($insert);
-        return [
-            'allowed' => true,
-            'remaining' => max(0, $limit - 1),
-            'reset' => $windowStart + $windowSeconds,
-        ];
-    }
-
-    $storedWindow = (int) $row['window_start'];
-    $count = (int) $row['request_count'];
-
-    if ($storedWindow !== (int) $windowStart) {
-        $update = sprintf(
-            "UPDATE uo_api_rate_limit
-       SET window_start=%d, request_count=1
-       WHERE rate_key='%s'",
-            (int) $windowStart,
-            DBEscapeString($rateKey),
-        );
-        DBQuery($update);
-        return [
-            'allowed' => true,
-            'remaining' => max(0, $limit - 1),
-            'reset' => $windowStart + $windowSeconds,
-        ];
-    }
-
-    $count++;
-    $update = sprintf(
-        "UPDATE uo_api_rate_limit
-     SET request_count=%d
-     WHERE rate_key='%s'",
-        (int) $count,
-        DBEscapeString($rateKey),
-    );
-    DBQuery($update);
+    $count = (int) DBQueryToValueUncached("SELECT LAST_INSERT_ID()", true);
 
     return [
         'allowed' => ($count <= $limit),

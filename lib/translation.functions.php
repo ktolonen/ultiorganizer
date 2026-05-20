@@ -146,10 +146,12 @@ function SetTranslation($key, $translations)
                 DBQuery($query);
             } else {
                 $query = sprintf(
-                    "UPDATE uo_translation SET translation='%s' WHERE locale='%s' AND translation_key='%s'",
-                    DBEscapeString($value),
-                    DBEscapeString($locale),
+                    "INSERT INTO uo_translation (translation_key, locale, translation)
+		      VALUES ('%s', '%s', '%s')
+		      ON DUPLICATE KEY UPDATE translation=VALUES(translation)",
                     DBEscapeString($key),
+                    DBEscapeString($locale),
+                    DBEscapeString($value),
                 );
                 $result = DBQuery($query);
             }
@@ -175,7 +177,8 @@ function AddTranslation($key, $translations)
             } else {
                 $query = sprintf(
                     "INSERT INTO uo_translation (translation_key, locale, translation)
-	      VALUES ('%s', '%s', '%s')",
+		      VALUES ('%s', '%s', '%s')
+		      ON DUPLICATE KEY UPDATE translation=VALUES(translation)",
                     DBEscapeString($key),
                     DBEscapeString($locale),
                     DBEscapeString($value),

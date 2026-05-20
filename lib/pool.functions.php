@@ -1706,10 +1706,14 @@ function SetPool($poolId, $params)
 function SetPoolVisibility($poolId, $visible)
 {
     $poolinfo = PoolInfo($poolId);
-    $query = sprintf("UPDATE uo_pool SET visible=%d
-            WHERE pool_id=%d", (int) $visible, (int) $poolId);
+    if (hasEditSeasonSeriesRight($poolinfo['season'])) {
+        $query = sprintf("UPDATE uo_pool SET visible=%d
+                WHERE pool_id=%d", (int) $visible, (int) $poolId);
 
-    return DBQuery($query);
+        return DBQuery($query);
+    } else {
+        die('Insufficient rights to edit pool');
+    }
 }
 
 /**

@@ -319,12 +319,19 @@ function localeSelection()
     global $locales;
 
     $ret = "";
+    $queryParams = [];
+    if (!empty($_SERVER['QUERY_STRING'])) {
+        parse_str($_SERVER['QUERY_STRING'], $queryParams);
+    }
+    unset($queryParams['locale'], $queryParams['goindex']);
+    $queryString = http_build_query($queryParams);
 
     foreach ($locales as $localestr => $localename) {
-        $query_string = StripFromQueryString($_SERVER['QUERY_STRING'], "locale");
-        $query_string = StripFromQueryString($query_string, "goindex");
-        $ret .= "<a href='?" . utf8entities($query_string) . "&amp;";
-        $ret .= "locale=" . $localestr . "'><img class='localeselection' src='locale/" . $localestr . "/flag.png' alt='" . utf8entities($localename) . "'/></a>\n";
+        $ret .= "<a href='?";
+        if ($queryString !== "") {
+            $ret .= utf8entities($queryString) . "&amp;";
+        }
+        $ret .= "locale=" . urlencode($localestr) . "'><img class='localeselection' src='locale/" . utf8entities($localestr) . "/flag.png' alt='" . utf8entities($localename) . "'/></a>\n";
     }
 
     return $ret;

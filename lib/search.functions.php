@@ -36,7 +36,7 @@ function SearchSeries($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Division") . "</td><td>";
     $ret .= "<input type='text' name='seriesname' value='";
     if (isset($_POST['seriesname'])) {
-        $ret .= $_POST['seriesname'];
+        $ret .= utf8entities($_POST['seriesname']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -70,7 +70,7 @@ function SearchPool($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Division") . "</td><td>";
     $ret .= "<input type='text' name='seriesname' value='";
     if (isset($_POST['seriesname'])) {
-        $ret .= $_POST['seriesname'];
+        $ret .= utf8entities($_POST['seriesname']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -78,7 +78,7 @@ function SearchPool($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Division") . "</td><td>";
     $ret .= "<input type='text' name='poolname' value='";
     if (isset($_POST['poolname'])) {
-        $ret .= $_POST['poolname'];
+        $ret .= utf8entities($_POST['poolname']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -112,7 +112,7 @@ function SearchTeam($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Division") . "</td><td>";
     $ret .= "<input type='text' name='seriesname' value='";
     if (isset($_POST['seriesname'])) {
-        $ret .= $_POST['seriesname'];
+        $ret .= utf8entities($_POST['seriesname']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -120,7 +120,7 @@ function SearchTeam($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Team") . "</td><td>";
     $ret .= "<input type='text' name='teamname' value='";
     if (isset($_POST['teamname'])) {
-        $ret .= $_POST['teamname'];
+        $ret .= utf8entities($_POST['teamname']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -159,7 +159,7 @@ function SearchUser($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Name") . "</td><td>";
     $ret .= "<input type='text' name='username' value='";
     if (isset($_POST['username'])) {
-        $ret .= $_POST['username'];
+        $ret .= utf8entities($_POST['username']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -167,7 +167,7 @@ function SearchUser($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Team") . "</td><td>";
     $ret .= "<input type='text' name='teamname' value='";
     if (isset($_POST['teamname'])) {
-        $ret .= $_POST['teamname'];
+        $ret .= utf8entities($_POST['teamname']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -175,7 +175,7 @@ function SearchUser($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Email") . "</td><td>";
     $ret .= "<input type='text' name='email' value='";
     if (isset($_POST['email'])) {
-        $ret .= $_POST['email'];
+        $ret .= utf8entities($_POST['email']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -225,7 +225,7 @@ function SearchPlayer($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Name") . "</td><td>";
     $ret .= "<input type='text' name='username' value='";
     if (isset($_POST['username'])) {
-        $ret .= $_POST['username'];
+        $ret .= utf8entities($_POST['username']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -233,7 +233,7 @@ function SearchPlayer($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Team") . "</td><td>";
     $ret .= "<input type='text' name='teamname' value='";
     if (isset($_POST['teamname'])) {
-        $ret .= $_POST['teamname'];
+        $ret .= utf8entities($_POST['teamname']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -241,7 +241,7 @@ function SearchPlayer($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= _("Email") . "</td><td>";
     $ret .= "<input type='text' name='email' value='";
     if (isset($_POST['email'])) {
-        $ret .= $_POST['email'];
+        $ret .= utf8entities($_POST['email']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -276,7 +276,7 @@ function SearchReservation($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "<input type='text' id='searchstart' name='searchstart' value='";
 
     if (isset($_POST['searchstart'])) {
-        $ret .= $_POST['searchstart'];
+        $ret .= utf8entities($_POST['searchstart']);
     } else {
         $ret .= date('d.m.Y');
     }
@@ -287,7 +287,7 @@ function SearchReservation($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "<tr><td>" . _("End time") . " (" . _("dd.mm.yyyy") . "):</td><td>";
     $ret .= "<input type='text' id='searchend' name='searchend' value='";
     if (isset($_POST['searchend'])) {
-        $ret .= $_POST['searchend'];
+        $ret .= utf8entities($_POST['searchend']);
     }
     $ret .= "'/>\n";
     $ret .= "&nbsp;<button type='button' class='button' id='showcal2'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button>\n";
@@ -296,21 +296,21 @@ function SearchReservation($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "<tr><td>" . _("Grouping name") . ":</td><td>";
     $ret .= "<input type='text' name='searchgroup' value='";
     if (isset($_POST['searchgroup'])) {
-        $ret .= $_POST['searchgroup'];
+        $ret .= utf8entities($_POST['searchgroup']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
     $ret .= "<tr><td>" . _("Field") . ":</td><td>";
     $ret .= "<input type='text' name='searchfield' value='";
     if (isset($_POST['searchfield'])) {
-        $ret .= $_POST['searchfield'];
+        $ret .= utf8entities($_POST['searchfield']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
     $ret .= "<tr><td>" . _("Location") . ":</td><td>";
     $ret .= "<input type='text' name='searchlocation' value='";
     if (isset($_POST['searchlocation'])) {
-        $ret .= $_POST['searchlocation'];
+        $ret .= utf8entities($_POST['searchlocation']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -348,7 +348,7 @@ function SearchGame($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "<input type='text' id='searchstart' name='searchstart' value='";
 
     if (isset($_POST['searchstart'])) {
-        $ret .= $_POST['searchstart'];
+        $ret .= utf8entities($_POST['searchstart']);
     } else {
         $ret .= date('d.m.Y');
         ;
@@ -360,7 +360,7 @@ function SearchGame($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "<tr><td>" . _("End time") . " (" . _("dd.mm.yyyy") . "):</td><td>";
     $ret .= "<input type='text' id='searchend' name='searchend' value='";
     if (isset($_POST['searchend'])) {
-        $ret .= $_POST['searchend'];
+        $ret .= utf8entities($_POST['searchend']);
     }
 
     $ret .= "'/>\n";
@@ -370,28 +370,28 @@ function SearchGame($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "<tr><td>" . _("Tournament") . ":</td><td>";
     $ret .= "<input type='text' name='searchgroup' value='";
     if (isset($_POST['searchgroup'])) {
-        $ret .= $_POST['searchgroup'];
+        $ret .= utf8entities($_POST['searchgroup']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
     $ret .= "<tr><td>" . _("Field") . ":</td><td>";
     $ret .= "<input type='text' name='searchfield' value='";
     if (isset($_POST['searchfield'])) {
-        $ret .= $_POST['searchfield'];
+        $ret .= utf8entities($_POST['searchfield']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
     $ret .= "<tr><td>" . _("Location") . ":</td><td>";
     $ret .= "<input type='text' name='searchlocation' value='";
     if (isset($_POST['searchlocation'])) {
-        $ret .= $_POST['searchlocation'];
+        $ret .= utf8entities($_POST['searchlocation']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
     $ret .= "<tr><td>" . _("Team") . " (" . _("separate with a comma") . "):</td><td>";
     $ret .= "<input type='text' name='searchteams' value='";
     if (isset($_POST['searchteams'])) {
-        $ret .= $_POST['searchteams'];
+        $ret .= utf8entities($_POST['searchteams']);
     }
     $ret .= "'/>\n";
     $ret .= "</td></tr>\n";
@@ -657,8 +657,8 @@ function PlayerResults()
     if (empty($_POST['searchplayer'])) {
         return "";
     } else {
-        $query = "SELECT DISTINCT MAX(player_id) as player_id, CONCAT(firstname, ' ', lastname) as user_name, ";
-        $query .= "GROUP_CONCAT(DISTINCT email SEPARATOR ', ') as email, accreditation_id, GROUP_CONCAT(DISTINCT t.name ORDER BY t.team_id DESC SEPARATOR ', ') as teamname ";
+        $query = "SELECT DISTINCT MAX(player_id) as player_id, MAX(p.profile_id) as profile_id, CONCAT(firstname, ' ', lastname) as user_name, ";
+        $query .= "GROUP_CONCAT(DISTINCT email SEPARATOR ', ') as email, GROUP_CONCAT(DISTINCT t.name ORDER BY t.team_id DESC SEPARATOR ', ') as teamname ";
         $query .= "FROM uo_player p join uo_team t ON (p.team = t.team_id) ";
 
         if (!empty($_POST['searchseasons'])) {
@@ -712,7 +712,7 @@ function PlayerResults()
         if (strlen($criteria) > 0) {
             $query .= " WHERE " . $criteria;
         }
-        $query .= " GROUP BY CONCAT(firstname, ' ', lastname), accreditation_id";
+        $query .= " GROUP BY p.profile_id, CONCAT(firstname, ' ', lastname)";
         $query .= " ORDER BY lastname, firstname, t.name";
         $result = DBQuery($query);
 
@@ -720,7 +720,11 @@ function PlayerResults()
         $ret .= "<th>" . _("Name") . "</th><th>" . _("Team") . "</th><th>" . _("Email") . "</th></tr>\n";
         while ($row = mysqli_fetch_assoc($result)) {
             $ret .= "<tr><td>";
-            $ret .= "<input type='checkbox' name='players[]' value='" . urlencode($row['accreditation_id']) . "'/>";
+            if (!empty($row['profile_id'])) {
+                $ret .= "<input type='checkbox' name='players[]' value='" . urlencode($row['profile_id']) . "'/>";
+            } else {
+                $ret .= "&nbsp;";
+            }
             $ret .= "</td>";
             $ret .= "<td><a href='?view=playercard&amp;player=" . urlencode($row['player_id']) . "'>" . utf8entities($row['user_name']) . "</a></td>";
             $ret .= "<td>" . utf8entities($row['teamname']) . "</td>";

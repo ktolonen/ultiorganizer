@@ -8,7 +8,7 @@ OpenConnection();
 header("Content-type: text/plain; charset=UTF-8");
 header("Cache-Control: no-cache, must-revalidate");
 header("Expires: -1");
-$result = GetSearchLocationsArray();
+$result = GetSearchLocationsArray(false);
 // Iterate through the rows, adding XML nodes for each
 foreach ($result as $row) {
     echo U_($row['name']) . "\t" . $row['address'] . "\t" . $row['id'] . "\n";

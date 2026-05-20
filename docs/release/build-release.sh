@@ -100,7 +100,7 @@ fi
 
 APP_VERSION="$(
     php -r '$version = include "version.php"; if (!is_string($version) || trim($version) === "") { exit(1); } echo trim($version);' 2>/dev/null \
-        || sed -n "s/^return ['\"]\\([^'\"]\\+\\)['\"];$/\\1/p" version.php
+        || sed -n "s/^[[:space:]]*\\(<?php[[:space:]]*\\)\\?return[[:space:]]*['\"]\\([^'\"]\\+\\)['\"][[:space:]]*;[[:space:]]*$/\\2/p" version.php | head -n 1
 )"
 
 if [[ -z "${APP_VERSION}" ]]; then

@@ -1064,9 +1064,10 @@ function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $num
 {
     if (hasEditGamePlayersRight($gameId)) {
         $query = sprintf(
-            "INSERT INTO uo_player (firstname, lastname, team) VALUES ('%s', '%s', %d)",
+            "INSERT INTO uo_player (firstname, lastname, accreditation_id, team) VALUES ('%s', '%s', '%s', %d)",
             DBEscapeString($firstname),
             DBEscapeString($lastname),
+            DBEscapeString($accrid),
             (int) $teamId,
         );
         $playerId = DBQueryInsert($query);
@@ -1518,8 +1519,15 @@ function AddGame($params)
 
 function SetGame($gameId, $params)
 {
-    $poolinfo = PoolInfo($params['pool']);
-    if (hasEditGamesRight($poolinfo['series'])) {
+    $series = GameSeries($gameId);
+    if (hasEditGamesRight($series)) {
+        if (!empty($params['pool'])) {
+            $poolinfo = PoolInfo($params['pool']);
+            if (!$poolinfo || !hasEditGamesRight($poolinfo['series'])) {
+                die('Insufficient rights to edit game');
+            }
+        }
+
         $result = null;
         $allowedKeys = array_flip([
             "hometeam",
@@ -1627,27 +1635,36 @@ function GameChangeHome($gameId)
         );
         $game = DBQueryToRow($query);
 
+        $homeTeamSql = $game['visitorteam'] === null ? "NULL" : (string) (int) $game['visitorteam'];
+        $visitorTeamSql = $game['hometeam'] === null ? "NULL" : (string) (int) $game['hometeam'];
+        $homeScoreSql = $game['visitorscore'] === null ? "NULL" : (string) (int) $game['visitorscore'];
+        $visitorScoreSql = $game['homescore'] === null ? "NULL" : (string) (int) $game['homescore'];
+        $homeSchedulingSql = $game['scheduling_name_visitor'] === null ? "NULL" : (string) (int) $game['scheduling_name_visitor'];
+        $visitorSchedulingSql = $game['scheduling_name_home'] === null ? "NULL" : (string) (int) $game['scheduling_name_home'];
+        if ($game['respteam'] === null) {
+            $respTeamSql = "NULL";
+        } elseif ($game['hometeam'] == $game['respteam']) {
+            $respTeamSql = $homeTeamSql;
+        } elseif ($game['visitorteam'] == $game['respteam']) {
+            $respTeamSql = $visitorTeamSql;
+        } else {
+            $respTeamSql = (string) (int) $game['respteam'];
+        }
+
         $query = sprintf(
-            "UPDATE uo_game SET hometeam=%d,visitorteam=%d,homescore=%d,visitorscore=%d, scheduling_name_home=%d, scheduling_name_visitor=%d
+            "UPDATE uo_game SET hometeam=%s,visitorteam=%s,homescore=%s,visitorscore=%s, scheduling_name_home=%s, scheduling_name_visitor=%s, respteam=%s
 					WHERE game_id=%d",
-            (int) $game['visitorteam'],
-            (int) $game['hometeam'],
-            (int) $game['visitorscore'],
-            (int) $game['homescore'],
-            (int) $game['scheduling_name_visitor'],
-            (int) $game['scheduling_name_home'],
+            $homeTeamSql,
+            $visitorTeamSql,
+            $homeScoreSql,
+            $visitorScoreSql,
+            $homeSchedulingSql,
+            $visitorSchedulingSql,
+            $respTeamSql,
             (int) $gameId,
         );
 
         DBQuery($query);
-        if ($game['hometeam'] == $game['respteam']) {
-            $query = sprintf(
-                "UPDATE uo_game SET respteam=%d	WHERE game_id=%d",
-                (int) $game['visitorteam'],
-                (int) $gameId,
-            );
-            DBQuery($query);
-        }
     } else {
         die('Insufficient rights to delete game');
     }
@@ -1673,7 +1690,7 @@ function GameChangeName($gameId, $name)
             $result = DBQuery($query);
         } else {
             $query = sprintf(
-                "UPADATE uo_scheduling_name SET 
+                "UPDATE uo_scheduling_name SET
 				name='%s' WHERE scheduling_id=%d",
                 DBEscapeString($name),
                 (int) $gameinfo['name'],
