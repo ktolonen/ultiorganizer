@@ -19,7 +19,7 @@ jobs:
     name: PHP format + PHPStan
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -39,7 +39,7 @@ jobs:
     name: Composer audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -59,7 +59,7 @@ jobs:
     name: ESLint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
@@ -80,7 +80,7 @@ jobs:
     name: In-repo checker scripts
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.3'
@@ -94,7 +94,7 @@ jobs:
     name: Release package build
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           # The release script uses `git describe` and `git ls-files`; full
           # history avoids shallow-clone surprises.
@@ -114,11 +114,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout SUT (this PR)
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           path: ultiorganizer
       - name: Checkout test harness
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: ktolonen/ultiorganizer-tests
           ref: main
@@ -159,7 +159,7 @@ jobs:
         run: ./report:html
       - name: Upload reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: harness-reports
           path: ultiorganizer-tests/reports/
