@@ -449,7 +449,7 @@ class EventDataXMLHandler
                 if (!empty($row["SCHEDULING_NAME_HOME"]) && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]])) {
                     $row["SCHEDULING_NAME_HOME"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_HOME"]];
                 }
-                if (!empty($row["SCHEDULING_NAME_VISITOR"] && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]]))) {
+                if (!empty($row["SCHEDULING_NAME_VISITOR"]) && isset($this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]])) {
                     $row["SCHEDULING_NAME_VISITOR"] = $this->uo_scheduling_name[$row["SCHEDULING_NAME_VISITOR"]];
                 }
 
@@ -566,7 +566,7 @@ class EventDataXMLHandler
                 $query = "SELECT season_id FROM uo_season WHERE " . $cond;
                 $exist = DBQueryRowCount($query);
                 if ($exist) {
-                    if ("'$this->eventId'" == $row["SEASON_ID"]) {
+                    if ($this->eventId == $row["SEASON_ID"]) {
                         $this->SetRow($name, $row, $cond);
                         $this->uo_season[$row["SEASON_ID"]] = $row["SEASON_ID"];
                     } else {
