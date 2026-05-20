@@ -146,7 +146,23 @@ function EventCount($categoryfilter, $userfilter)
 function ClearEventList($ids)
 {
     if (isSuperAdmin()) {
-        $query = sprintf("DELETE FROM uo_event_log WHERE event_id IN (%s)", DBEscapeString($ids));
+        if (!is_array($ids)) {
+            $ids = explode(',', (string) $ids);
+        }
+
+        $eventIds = [];
+        foreach ($ids as $id) {
+            $id = (int) $id;
+            if ($id > 0) {
+                $eventIds[$id] = $id;
+            }
+        }
+        $eventIds = implode(',', $eventIds);
+        if ($eventIds === '') {
+            return false;
+        }
+
+        $query = sprintf("DELETE FROM uo_event_log WHERE event_id IN (%s)", $eventIds);
 
         $result = DBQuery($query);
 
@@ -293,29 +309,40 @@ function LogPageLoad($page)
         return;
     }
 
-    // Must bypass the persistent cache: read-then-write counter pattern.
+    DBQuery('LOCK TABLES uo_pageload_counter WRITE');
+
     $query = sprintf(
-        "SELECT loads FROM uo_pageload_counter WHERE page='%s'",
+        "SELECT id, loads FROM uo_pageload_counter WHERE page='%s' ORDER BY id ASC",
         DBEscapeString($page),
     );
-    $loads = DBQueryToValueUncached($query);
+    $rows = DBQueryToArrayUncached($query);
 
-    if ($loads === null) {
-        $query = sprintf(
-            "INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s',%d)",
+    if (empty($rows)) {
+        DBQuery(sprintf(
+            "INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s', 1)",
             DBEscapeString($page),
-            1,
-        );
-        DBQuery($query);
+        ));
     } else {
-        $loads++;
-        $query = sprintf(
-            "UPDATE uo_pageload_counter SET loads=%d WHERE page='%s'",
+        $keepId = (int) $rows[0]['id'];
+        $loads = 1;
+        $deleteIds = [];
+        foreach ($rows as $row) {
+            $loads += (int) $row['loads'];
+            if ((int) $row['id'] !== $keepId) {
+                $deleteIds[] = (int) $row['id'];
+            }
+        }
+        DBQuery(sprintf(
+            "UPDATE uo_pageload_counter SET loads=%d WHERE id=%d",
             $loads,
-            DBEscapeString($page),
-        );
-        DBQuery($query);
+            $keepId,
+        ));
+        if (!empty($deleteIds)) {
+            DBQuery("DELETE FROM uo_pageload_counter WHERE id IN (" . implode(',', $deleteIds) . ")");
+        }
     }
+
+    DBQuery('UNLOCK TABLES');
 }
 
 function IsVisitorLoggingDisabled()
@@ -348,29 +375,40 @@ function LogVisitor($ip)
         return;
     }
 
-    // Must bypass the persistent cache: read-then-write counter pattern.
+    DBQuery('LOCK TABLES uo_visitor_counter WRITE');
+
     $query = sprintf(
-        "SELECT visits FROM uo_visitor_counter WHERE ip='%s'",
+        "SELECT id, visits FROM uo_visitor_counter WHERE ip='%s' ORDER BY id ASC",
         DBEscapeString($ip),
     );
-    $visits = DBQueryToValueUncached($query);
+    $rows = DBQueryToArrayUncached($query);
 
-    if ($visits === null) {
-        $query = sprintf(
-            "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s',%d)",
+    if (empty($rows)) {
+        DBQuery(sprintf(
+            "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s', 1)",
             DBEscapeString($ip),
-            1,
-        );
-        DBQuery($query);
+        ));
     } else {
-        $visits++;
-        $query = sprintf(
-            "UPDATE uo_visitor_counter SET visits=%d WHERE ip='%s'",
+        $keepId = (int) $rows[0]['id'];
+        $visits = 1;
+        $deleteIds = [];
+        foreach ($rows as $row) {
+            $visits += (int) $row['visits'];
+            if ((int) $row['id'] !== $keepId) {
+                $deleteIds[] = (int) $row['id'];
+            }
+        }
+        DBQuery(sprintf(
+            "UPDATE uo_visitor_counter SET visits=%d WHERE id=%d",
             $visits,
-            DBEscapeString($ip),
-        );
-        DBQuery($query);
+            $keepId,
+        ));
+        if (!empty($deleteIds)) {
+            DBQuery("DELETE FROM uo_visitor_counter WHERE id IN (" . implode(',', $deleteIds) . ")");
+        }
     }
+
+    DBQuery('UNLOCK TABLES');
 }
 
 /**

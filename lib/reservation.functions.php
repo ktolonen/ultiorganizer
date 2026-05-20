@@ -168,9 +168,20 @@ function ReservationFields($seasonId)
 
 function ResponsibleReservationGames($placeId, $gameResponsibilities)
 {
+    $responsibilityIds = [];
+    foreach ($gameResponsibilities as $gameId) {
+        $gameId = (int) $gameId;
+        if ($gameId > 0) {
+            $responsibilityIds[$gameId] = $gameId;
+        }
+    }
+    if (empty($responsibilityIds)) {
+        return [];
+    }
+
     $query = "SELECT pp.game_id, hometeam, kj.name as hometeamname, visitorteam,
-			vj.name as visitorteamname, gp.pool as pool, time, homescore, visitorscore,
-			pool.timecap, pool.timeslot, pool.series,
+				vj.name as visitorteamname, gp.pool as pool, time, homescore, visitorscore,
+				pool.timecap, pool.timeslot, pool.series,
 			ser.name as seriesname, pool.name as poolname,
 			loc.name as placename, res.fieldname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename
@@ -190,8 +201,8 @@ function ResponsibleReservationGames($placeId, $gameResponsibilities)
     } else {
         $query .= "WHERE res.id IS NULL";
     }
-    $query .= " AND pp.game_id IN (" . implode(",", $gameResponsibilities) . ")
-		ORDER BY pp.time ASC";
+    $query .= " AND pp.game_id IN (" . implode(",", $responsibilityIds) . ")
+			ORDER BY pp.time ASC";
 
     return DBQueryToArray($query);
 }
