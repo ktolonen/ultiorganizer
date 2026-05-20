@@ -51,16 +51,17 @@ function SetPlayer($playerId, $number, $fname, $lname, $accrId, $profileId)
     if (hasEditPlayersRight($playerInfo['team'])) {
         $numberSql = NormalizedPlayerNumberSql($number);
         $defaultNumber = $numberSql === "NULL" ? 0 : (int) $numberSql;
+        $profileIdSql = !empty($profileId) ? (string) (int) $profileId : "NULL";
         //echo "<p>".$profileId."</p>";
         $query = sprintf(
             "UPDATE uo_player SET num=%s, firstname='%s', lastname='%s', accreditation_id='%s',
-    		profile_id='%s'
+            profile_id=%s
 			WHERE player_id=%d",
             $numberSql,
             DBEscapeString($fname),
             DBEscapeString($lname),
             DBEscapeString($accrId),
-            DBEscapeString($profileId),
+            $profileIdSql,
             (int) $playerId,
         );
         $result = DBQuery($query);

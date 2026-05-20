@@ -1486,7 +1486,16 @@ function AddTeam($params)
 
 function SetTeam($params)
 {
-    if (hasEditTeamsRight($params['series'])) {
+    $teamInfo = TeamInfo($params['team_id']);
+    if (!$teamInfo) {
+        return false;
+    }
+
+    if (hasEditTeamsRight($teamInfo['series'])) {
+        if ((int) $params['series'] !== (int) $teamInfo['series'] && !hasEditTeamsRight($params['series'])) {
+            die('Insufficient rights to edit team');
+        }
+
         $poolValue = !empty($params['pool']) ? (int) $params['pool'] : "NULL";
         $query = sprintf(
             "
