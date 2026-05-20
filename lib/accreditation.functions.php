@@ -85,10 +85,15 @@ function SearchLicenseData($firstname = "", $lastname = "")
 
 function checkUserAdmin($playerInfo)
 {
+    $profileId = (int) ($playerInfo['profile_id'] ?? 0);
+    if ($profileId <= 0) {
+        return false;
+    }
+
     // Check for existing user for player
     $query = sprintf(
-        "SELECT userid FROM uo_userproperties WHERE name='userrole' AND value='playeradmin:%s'",
-        DBEscapeString($playerInfo['profile_id']),
+        "SELECT userid FROM uo_userproperties WHERE name='userrole' AND value='playeradmin:%d'",
+        $profileId,
     );
     $result = DBQueryToValue($query);
     if ($result > 0) {
@@ -104,9 +109,9 @@ function checkUserAdmin($playerInfo)
             $id = DBQueryToValue($query);
             if ($id > 0) {
                 $query = sprintf(
-                    "INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', 'playeradmin:%s')",
+                    "INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', 'playeradmin:%d')",
                     DBEscapeString($id),
-                    DBEscapeString($playerInfo['profile_id']),
+                    $profileId,
                 );
                 $result = DBQuery($query);
                 return true;

@@ -46,26 +46,16 @@ function ApiRateLimitCheck($rateKey, $limit, $windowSeconds)
 
     $upsert = sprintf(
         "INSERT INTO uo_api_rate_limit (rate_key, window_start, request_count)
-        VALUES ('%s', %d, 1)
+        VALUES ('%s', %d, LAST_INSERT_ID(1))
         ON DUPLICATE KEY UPDATE
-            request_count=IF(window_start=VALUES(window_start), request_count + 1, 1),
+            request_count=LAST_INSERT_ID(IF(window_start=VALUES(window_start), request_count + 1, 1)),
             window_start=VALUES(window_start)",
         DBEscapeString($rateKey),
         (int) $windowStart,
     );
     DBQuery($upsert);
 
-    // Must bypass the persistent cache: this row was just updated and the
-    // response headers need the current post-increment count.
-    $query = sprintf(
-        "SELECT request_count
-        FROM uo_api_rate_limit
-        WHERE rate_key='%s'
-        LIMIT 1",
-        DBEscapeString($rateKey),
-    );
-    $row = DBQueryToRowUncached($query);
-    $count = empty($row) ? $limit + 1 : (int) $row['request_count'];
+    $count = (int) DBQueryToValueUncached("SELECT LAST_INSERT_ID()", true);
 
     return [
         'allowed' => ($count <= $limit),
