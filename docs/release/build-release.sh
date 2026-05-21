@@ -100,7 +100,7 @@ fi
 
 APP_VERSION="$(
     php -r '$version = include "version.php"; if (!is_string($version) || trim($version) === "") { exit(1); } echo trim($version);' 2>/dev/null \
-        || sed -n "s/^[[:space:]]*\\(<?php[[:space:]]*\\)\\?return[[:space:]]*['\"]\\([^'\"]\\+\\)['\"][[:space:]]*;[[:space:]]*$/\\2/p" version.php | head -n 1
+        || sed -n "s/^[[:space:]]*return[[:space:]]*['\"]\\([^'\"]\\+\\)['\"][[:space:]]*;[[:space:]]*$/\\1/p" version.php | head -n 1
 )"
 
 if [[ -z "${APP_VERSION}" ]]; then
@@ -207,6 +207,9 @@ trap 'rm -rf "${WORK_DIR}"' EXIT
 PACKAGE_DIR="${WORK_DIR}/${PACKAGE_NAME}"
 mkdir -p "${PACKAGE_DIR}" "${DIST_DIR}"
 
+TRACKED_FILES_LIST="${WORK_DIR}/tracked-files.zlist"
+git ls-files -z > "${TRACKED_FILES_LIST}"
+
 while IFS= read -r -d '' path; do
     if [[ -d "${path}" ]]; then
         continue
@@ -223,7 +226,7 @@ while IFS= read -r -d '' path; do
 
     mkdir -p "${PACKAGE_DIR}/$(dirname "${path}")"
     cp -p "${path}" "${PACKAGE_DIR}/${path}"
-done < <(git ls-files -z)
+done < "${TRACKED_FILES_LIST}"
 
 required_paths=(
     "README.md"
@@ -316,13 +319,16 @@ if [[ "${PACKAGE_TYPE}" == "update" ]]; then
 fi
 
 if [[ "${ALL_CUSTOMIZATIONS}" -eq 0 ]]; then
+    CUSTOMIZATION_DIRS_LIST="${WORK_DIR}/customization-dirs.list"
+    find "${PACKAGE_DIR}/cust" -mindepth 1 -maxdepth 1 -type d > "${CUSTOMIZATION_DIRS_LIST}"
+
     while IFS= read -r customization_path; do
         customization="$(basename "${customization_path}")"
         if [[ "${customization}" != "default" ]] && ! contains_customization "${customization}"; then
             echo "error: package contains unselected customization: cust/${customization}" >&2
             exit 1
         fi
-    done < <(find "${PACKAGE_DIR}/cust" -mindepth 1 -maxdepth 1 -type d)
+    done < "${CUSTOMIZATION_DIRS_LIST}"
 fi
 
 rm -f "${ARCHIVE_PATH}"
