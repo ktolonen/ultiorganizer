@@ -60,6 +60,28 @@
                      'name' => $season['name']
 --- a/api/GameManager.php
 +++ b/api/GameManager.php
+@@ -43,7 +43,8 @@
+ 		// First, let's the the game IDs that we're looking for
+ 		$query = sprintf(
+ 			"SELECT game_id FROM uo_game game
+-			JOIN uo_pool pool ON pool.pool_id = game.pool
++			JOIN uo_game_pool gp ON gp.game = game.game_id AND gp.timetable = 1
++			JOIN uo_pool pool ON pool.pool_id = gp.pool
+ 			JOIN uo_series ser ON ser.series_id = pool.series
+ 			WHERE ser.season = '%s' " . ($activeGameWindow ? "AND ( ( game.time >= '%s' AND game.time <= '%s' ) OR game.isongoing = 1 )" : '') . " ORDER BY game.game_id",
+ 			$seasonId,
+@@ -63,9 +64,10 @@
+ 
+ 		// Get the data for the games
+ 		$query = sprintf(
+-			"SELECT game.*, gameschedulingname.name AS gameschedulingname, homeschedulingname.name AS homeschedulingname,
++			"SELECT game.*, gp.pool AS pool, gameschedulingname.name AS gameschedulingname, homeschedulingname.name AS homeschedulingname,
+ 									visitorschedulingname.name AS visitorschedulingname, setgamename.name AS gamename
+              FROM uo_game game
++             JOIN uo_game_pool gp ON gp.game = game.game_id AND gp.timetable = 1
+              LEFT JOIN uo_scheduling_name gameschedulingname ON game.name = gameschedulingname.scheduling_id
+              LEFT JOIN uo_scheduling_name homeschedulingname ON game.scheduling_name_home = homeschedulingname.scheduling_id
+              LEFT JOIN uo_scheduling_name visitorschedulingname ON game.scheduling_name_visitor = visitorschedulingname.scheduling_id
 @@ -205,14 +205,14 @@
  			'seasoninfo'             => $seasonInfo,
  
