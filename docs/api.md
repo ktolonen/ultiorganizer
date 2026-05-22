@@ -14,13 +14,14 @@ This page mirrors the current API guidance from `AGENTS.md`.
 - Use consistent `status`, `data`, and `error` payloads with HTTP status codes.
 - Keep normalization and filtering in `/api`.
 - Keep SQL and shared data access in `lib/` as the single source of truth.
-- Require rate limiting keyed by token and IP, with `429` and `Retry-After` on limit responses.
+- Require rate limiting keyed by token and IP, with `429` and `X-RateLimit-*` headers on limit responses.
 
-## Initial scope
+## Public v1 scope
 
-- Public data first.
+- Public API endpoints expose event lists, divisions, teams, games, gameplay, and version metadata.
 - Token authentication can be installation, event, or user scoped.
-- Early endpoints mirror `teams.php`, `games.php`, and `gameplay.php`, excluding historical data.
+- Event-scoped endpoints require the event to be marked visible in the public API.
+- Historical data outside those endpoint shapes is not part of the current v1 surface.
 
 ## Documentation
 
@@ -31,7 +32,8 @@ OpenAPI documentation lives alongside the API in `api/openapi.json`.
 API documentation is available at:
 
 - `https://your-host/api/v1/openapi` for production with rewrite rules enabled.
-- `http://localhost:8000/api/index.php/v1/openapi` when using PHP's built-in server.
+- `http://localhost:8080/api/v1/openapi` in the documented Docker development stack.
+- `http://localhost:8000/api/index.php/v1/openapi` when using PHP's built-in server without rewrite rules.
 
 Tokens are managed through the admin UI at `?view=admin/apitokens`.
 
@@ -42,6 +44,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/events"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/version"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?event=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?event=2025"
+curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/games?event=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
 ```
 

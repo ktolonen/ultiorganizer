@@ -56,6 +56,7 @@ PHP-CS-Fixer and PHPStan exclude these third-party or runtime paths:
 
 - `vendor/`
 - `live/`
+- `dist/`
 - `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/`, `lib/hsvclass/`
 
 ## Local installation

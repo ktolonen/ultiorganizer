@@ -16,6 +16,7 @@ parameters:
     excludePaths:
         - vendor/*
         - live/*
+        - dist/*
         - conf/*
         - lib/tfpdf/*
         - lib/yuiloader/*
@@ -24,6 +25,10 @@ parameters:
         - lib/hsvclass/*
     fileExtensions:
         - php
+    dynamicConstantNames:
+        - CUSTOMIZATIONS
+        - ALLOW_INSTALL
+        - ANONYMOUS_RESULT_INPUT
     bootstrapFiles:
         - lib/tfpdf/tfpdf.php
         - lib/tfpdf/cellfit.php
@@ -55,6 +60,12 @@ parameters:
             message: '#^Path in include_once\(\) "conf/config\.inc\.php" is not a file or it does not exist\.$#'
             paths:
                 - index.php
+                - install.php
+        -
+            # Keep the installer prerequisite screen explicit even though static analysis
+            # runs on the supported PHP platform and sees the comparison as always true.
+            message: '#^Comparison operation ">=" between int<80300, 80599> and 80300 is always true\.$#'
+            paths:
                 - install.php
     parallel:
         maximumNumberOfProcesses: 4

@@ -5,6 +5,7 @@ $finder = (new PhpCsFixer\Finder())
     ->exclude([
         'vendor',
         'live',
+        'dist',
         'lib/tfpdf',
         'lib/yuiloader',
         'lib/phpqrcode',

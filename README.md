@@ -18,11 +18,13 @@ The repository is organized as follows:
 * **script** Client-side JavaScript assets.
 * **conf**, **sql** Configuration and database assets that should not be exposed by the web server.
 
-Additional documentation lives under:
+In a repository checkout, additional documentation lives under:
 
 * **docs/** General project documentation and repo-local AI review/fix skills
 
-Current markdown documentation lives under `docs/`. Repo-local AI assets and skills live under `docs/ai/`.
+Release packages include this README and the runtime application files, but leave out
+the repository-only `docs/` tree. Current markdown documentation is indexed in
+`docs/README.md`; repo-local AI assets and skills live under `docs/ai/`.
 
 ## Installation
 
@@ -31,7 +33,10 @@ To run Ultiorganizer you need a web server, PHP 8.3+ and a MariaDB 10.11+ databa
 For a local Debian/Ubuntu setup, install the required packages with:
 
 ```bash
-sudo apt-get update && sudo apt-get install -y apache2 mariadb-server gettext locales php8.3 php8.3-mysql php8.3-intl php8.3-mbstring php8.3-xml
+sudo apt-get update
+sudo apt-get install -y \
+    apache2 mariadb-server gettext locales \
+    php8.3 php8.3-curl php8.3-gd php8.3-intl php8.3-mbstring php8.3-mysql php8.3-xml
 ```
 
 Ensure the host has native gettext and locales available so PHP translations work, then generate the locales you need. For example:
@@ -40,17 +45,43 @@ Ensure the host has native gettext and locales available so PHP translations wor
 sudo locale-gen en_US.UTF-8
 ```
 
+For Apache installs, enable `mod_rewrite` so API routes under `/api/v1/...` can use the bundled `.htaccess` rewrite rules:
+
+```bash
+sudo a2enmod rewrite
+sudo systemctl reload apache2
+```
+
 For production installation, use a release package instead of uploading a full repository checkout. Extract the release ZIP, upload the extracted contents to your web server, open <http://yourpage.com/install.php>, and follow the instructions.
 
 Maintainers can build release packages with `docs/release/build-release.sh`. Deployment notes are in `docs/deployment.md`.
 
 ## Development
 
-Project documentation is indexed in `docs/README.md`.
+For local development, use the Docker Compose stack documented in
+`docs/local-development.md`. The app runs at <http://localhost:8080/> and the
+installer at <http://localhost:8080/install.php>.
+
+Common checks are run from the optional `dev` workspace:
+
+```bash
+docker compose -f docs/dev/compose.yaml --profile devtools up --build dev
+docker compose -f docs/dev/compose.yaml exec -T dev composer check
+docker compose -f docs/dev/compose.yaml exec -T dev eslint script
+```
+
+The documentation index is `docs/README.md`; coding conventions are in
+`docs/code-style.md`.
 
 ## HTTP API
 
-Project documentation, including API notes, is indexed in `docs/README.md`.
+The read-only JSON API is served under `/api/v1/...`. OpenAPI metadata is
+available at `/api/v1/openapi`, or at
+<http://localhost:8080/api/v1/openapi> in the Docker development stack.
+
+API tokens are managed in the admin UI at `?view=admin/apitokens`.
+Event-scoped endpoints require the event to be marked visible in the public
+API. See `docs/api.md` for endpoint examples and current constraints.
 
 ## Credits
 
