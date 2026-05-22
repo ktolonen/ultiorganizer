@@ -39,6 +39,10 @@ versions), so the Live! skin works across both.
 
 ### `api/GameManager.php`
 
+- `getGames()`: replaced the legacy `uo_game.pool` join with
+  `uo_game_pool` using `timetable = 1`, which is the scheduled/original pool
+  that `uo_game.pool` used to represent. The game list query still exposes
+  this value as `pool` for the live frontend.
 - `getGameDetail()`: replaced `mysqli_fetch_all(GameTeamScoreBorad(...), MYSQLI_ASSOC)`
   with `DBFetchAllAssoc(GameTeamScoreBorad(...))` for both home and visitor scoreboards.
 - `getGameDetail()`: replaced `mysqli_fetch_all(GameGoals(...), MYSQLI_ASSOC)` with
