@@ -67,30 +67,6 @@ function CountryList($onlyvalid = true, $onlyplayed = false)
     return  DBQueryToArray($query);
 }
 
-function CountriesByIds($countryIds)
-{
-    $ids = [];
-    foreach ($countryIds as $countryId) {
-        $countryId = (int) $countryId;
-        if ($countryId > 0) {
-            $ids[$countryId] = true;
-        }
-    }
-
-    if (empty($ids)) {
-        return [];
-    }
-
-    $query = sprintf(
-        "SELECT c.* FROM uo_country c
-        WHERE c.country_id IN (%s)
-        ORDER BY c.name",
-        implode(',', array_keys($ids)),
-    );
-
-    return DBQueryToArray($query);
-}
-
 function HasPlayableCountries()
 {
     $query = "SELECT 1

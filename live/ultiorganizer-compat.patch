@@ -161,28 +161,6 @@
  		if ($game['game_result']['status'] === 'ongoing') {
 --- a/api/ReferenceData.php
 +++ b/api/ReferenceData.php
-@@ -19,6 +19,7 @@
- 
- 		$seasonPools = DBResourceToArray(DBQuery(trim($query)));
- 		$seasonInfo = SeasonInfo($seasonId);
-+		$seasonTeams = SeasonTeams($seasonId);
- 
- 		$seasonInfo['timeslots'] = array_values(array_unique(array_filter(array_map(function($pool) {
- 			return $pool['timeslot'];
-@@ -56,11 +57,11 @@
- 				}
- 				return array_diff_key($arr, array_flip(['pool', 'valid', 'sotg_token', 'seriesname']));
--			}, SeasonTeams($seasonId)),
-+			}, $seasonTeams),
- 
- 			// Countries, minus some stuff
- 			'countries' => array_map(function ($arr) {
- 				return array_diff_key($arr, array_flip(['valid']));
--			}, CountryList(true, true)),
-+			}, $this->countriesForSeasonTeams($seasonTeams)),
- 
- 			// Reservations, minus some stuff
- 			'reservations' => array_map(function ($arr) {
 @@ -76,7 +76,7 @@
  		$ref['season']['utcOffset'] = TimeHelper::getTimezoneOffset($ref['season']['timezone']);
  		// Spirit is active and visible
@@ -192,54 +170,6 @@
  		$ref['season']['gameTimesByDay'] = $this->calculateGameTimesByDay( (new GameManager())->getGames() );
  
  		// Determine current time in local time
-@@ -110,6 +111,47 @@
- 
- 		return $ref;
- 	}
-+
-+	private function countriesForSeasonTeams(array $seasonTeams): array
-+	{
-+		$countriesById = [];
-+		foreach (CountryList(true, true) as $country) {
-+			$countriesById[(int) $country['country_id']] = $country;
-+		}
-+
-+		$missingCountryIds = [];
-+		foreach ($seasonTeams as $team) {
-+			$countryId = (int) ($team['country'] ?? 0);
-+			if ($countryId > 0 && !isset($countriesById[$countryId])) {
-+				$missingCountryIds[] = $countryId;
-+			}
-+		}
-+
-+		$loadedMissingCountryIds = [];
-+		foreach (CountriesByIds($missingCountryIds) as $country) {
-+			$loadedMissingCountryIds[(int) $country['country_id']] = true;
-+			$countriesById[(int) $country['country_id']] = $country;
-+		}
-+
-+		foreach (array_unique($missingCountryIds) as $countryId) {
-+			if (isset($loadedMissingCountryIds[$countryId])) {
-+				continue;
-+			}
-+
-+			$countriesById[$countryId] = [
-+				'country_id' => $countryId,
-+				'name' => '',
-+				'abbreviation' => '',
-+				'flagfile' => '',
-+			];
-+		}
-+
-+		uasort($countriesById, function ($countryA, $countryB) {
-+			return strcmp($countryA['name'], $countryB['name']);
-+		});
-+
-+		return array_values($countriesById);
-+	}
- 
- 	// Calculate game times by day
- 	private function calculateGameTimesByDay(array $games): array
 --- a/api/StandingsManager.php
 +++ b/api/StandingsManager.php
 @@ -161,7 +161,7 @@
