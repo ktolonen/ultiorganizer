@@ -528,14 +528,9 @@ if (!function_exists('str_split')) {
 
 /**
  * Portable wrapper for parsing a time/date generated with strftime().
- * Falls back to a PHP implementation to avoid calling the deprecated
- * native strptime() on PHP 8.2+.
  */
 function uo_strptime($sDate, $sFormat)
 {
-    if (function_exists('strptime') && PHP_VERSION_ID < 80200) {
-        return strptime($sDate, $sFormat);
-    }
     return uo_strptime_fallback($sDate, $sFormat);
 }
 

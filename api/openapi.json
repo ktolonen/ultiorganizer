@@ -3,7 +3,7 @@
   "info": {
     "title": "Ultiorganizer API",
     "version": "1.0.0",
-    "description": "Public read-only API for teams, games, and gameplay data."
+    "description": "Public read-only API for events, divisions, teams, games, gameplay, and version metadata."
   },
   "servers": [
     {
@@ -71,7 +71,7 @@
                       "version": "v1"
                     },
                     "database": {
-                      "version": 90
+                      "version": 92
                     },
                     "customization": {
                       "id": "slkl",

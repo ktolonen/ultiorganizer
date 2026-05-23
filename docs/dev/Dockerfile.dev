@@ -22,6 +22,7 @@ RUN apt-get update && apt-get install -y \
  && docker-php-ext-enable xdebug \
  && docker-php-ext-configure gd --with-jpeg \
  && docker-php-ext-install mysqli gettext gd mbstring \
+ && a2enmod rewrite \
  && curl -sSf https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
  && rm -rf /var/lib/apt/lists/*
 

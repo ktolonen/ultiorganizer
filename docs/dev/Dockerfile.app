@@ -15,7 +15,9 @@ RUN apt-get update && apt-get install -y \
  && docker-php-ext-configure gd --with-jpeg \
  && docker-php-ext-install mysqli gettext gd mbstring \
  && printf "ServerName localhost\n" > /etc/apache2/conf-available/servername.conf \
+ && sed -i '/<Directory \/var\/www\/>/,/<\/Directory>/ s/AllowOverride None/AllowOverride All/' /etc/apache2/apache2.conf \
  && a2enconf servername \
+ && a2enmod rewrite \
  && rm -rf /var/lib/apt/lists/*
 
 ENV LANG=en_US.UTF-8
