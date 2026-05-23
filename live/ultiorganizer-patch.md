@@ -64,6 +64,10 @@ versions), so the Live! skin works across both.
 
 - `getReferenceData()`: `ShowSpiritComments()` now requires a `$seasoninfo` argument.
   Changed to `ShowSpiritComments($seasonInfo)`.
+- `getReferenceData()`: reuse the season team list when building reference data and
+  include any country IDs used by those teams, even if the country is not currently
+  marked valid. Missing country rows are represented by an empty placeholder so the
+  live frontend does not crash while rendering country abbreviations.
 
 ### `api/StandingsManager.php`
 
@@ -105,3 +109,6 @@ The following changes were made in the ultiorganizer codebase that triggered the
 - `TeamSpiritPointsGiven()`, `TeamSpiritPointsReceived()`, `SeriesSpiritBoardAlt2()`:
   these have always returned plain PHP arrays; if your code wrapped them in
   `mysqli_fetch_all()`, remove the wrapper.
+- `CountriesByIds()`: shared country lookup helper for Live! compatibility code that
+  needs to include country rows referenced by season teams even when those countries
+  are not in the public valid-country list.
