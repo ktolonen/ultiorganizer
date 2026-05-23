@@ -1,5 +1,6 @@
 <script type="text/javascript">
 <!--
+/* exported checkAll, clearAll, setId, changeseason, confirmLeave, menu_toggle */
 function checkAll(field)
 {
   var form = document.getElementById(field);
