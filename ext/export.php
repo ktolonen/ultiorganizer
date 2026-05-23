@@ -16,6 +16,7 @@ $html = "";
 $encoding = "UTF-8";
 $separator = ",";
 $season = CurrentSeason();
+$seasons = PublicExternalSeasons();
 
 if (isset($_POST['change'])) {
     $separator = $_POST['separator'];
@@ -23,27 +24,38 @@ if (isset($_POST['change'])) {
     $season = $_POST['season'];
 }
 
+foreach ($seasons as $row) {
+    if ((string) $row['season_id'] === (string) $season) {
+        $season = $row['season_id'];
+        break;
+    }
+}
+
+if (!IsSeasonPublicExternal($season)) {
+    $season = isset($seasons[0]) ? $seasons[0]['season_id'] : "";
+}
+
 $html .= "<h2>" . _("CSV files") . "</h2>\n";
 $html .= "<p>" . _("Get comma-separated UTF-8 encoded files by clicking the links below.");
 $html .= " " . _("You can also change encoding and separator.") . "</p>\n";
-$html .= "<p>" . SeasonName($season) . "<br/>";
-$html .= "<a href='ext/gamescsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("All scheduled games") . "</a><br/>";
-$html .= "<a href='ext/resultscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("All results") . "</a><br/>";
-$html .= "<a href='ext/playerscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Player statistics") . "</a><br/>";
-$html .= "<a href='ext/teamscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Team statistics") . "</a><br/>";
-$html .= "<a href='ext/poolscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Pool standings") . "</a><br/>";
+if (!empty($season)) {
+    $html .= "<p>" . SeasonName($season) . "<br/>";
+    $html .= "<a href='ext/gamescsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("All scheduled games") . "</a><br/>";
+    $html .= "<a href='ext/resultscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("All results") . "</a><br/>";
+    $html .= "<a href='ext/playerscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Player statistics") . "</a><br/>";
+    $html .= "<a href='ext/teamscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Team statistics") . "</a><br/>";
+    $html .= "<a href='ext/poolscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Pool standings") . "</a><br/>";
 
-$seasoninfo = SeasonInfo($season);
+    $seasoninfo = SeasonInfo($season);
 
-if (ShowSpiritScoresForSeason($seasoninfo)) {
-    $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Spirit scores") . "</a><br/>";
+    if (ShowSpiritScoresForSeason($seasoninfo)) {
+        $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Spirit scores") . "</a><br/>";
+    }
+    $html .= "</p>";
 }
-$html .= "</p>";
 
 $html .= "<form method='post' action='?view=ext/export'>\n";
 $html .= "<p>" . _("Select event") . ":	<select class='dropdown' name='season'>\n";
-
-$seasons = Seasons();
 
 foreach ($seasons as $row) {
     if ($row['season_id'] == $season) {

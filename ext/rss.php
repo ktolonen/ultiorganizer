@@ -44,12 +44,15 @@ switch ($feedtype) {
 
         //series
         if (!empty($id2)) {
+            $id1 = SeriesSeasonId($id2);
+            RequireSeasonPublicExternal($id1);
             $feed->setTitle(_("Ultimate results") . ": " . SeasonName($id1) . " " . SeriesName($id2));
             $feed->setLink($baseurl . "/?view=played");
             $feed->setDescription(SeasonName($id1) . " " . SeriesName($id2));
             $games = TimetableGames($id2, "series", "past", "timedesc");
             //season
         } else {
+            RequireSeasonPublicExternal($id1);
             $feed->setTitle(_("Ultimate results") . ": " . SeasonName($id1));
             $feed->setLink($baseurl . "/?view=played");
             $feed->setDescription(SeasonName($id1));
@@ -93,7 +96,9 @@ switch ($feedtype) {
         //$path = substr($baseurl,0,$cutpos); //remove ext
 
         $game = GameInfo($id1);
-        $seasoninfo = SeasonInfo(GameSeason($id1));
+        $seasonId = GameSeason($id1);
+        RequireSeasonPublicExternal($seasonId);
+        $seasoninfo = SeasonInfo($seasonId);
         $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
         $goals = GameGoals($id1);
         $gameevents = GameEvents($id1);
@@ -225,7 +230,7 @@ switch ($feedtype) {
         $feed->setTitle(_("Ultimate results"));
         $feed->setLink($baseurl . "/?view=played");
         $feed->setDescription(_("Ultimate results"));
-        $games = GameAllArray(20);
+        $games = GameAllArray(20, true);
 
         foreach ($games as $game) {
 

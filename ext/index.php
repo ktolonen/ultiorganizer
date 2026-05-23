@@ -27,6 +27,21 @@ $defaultcss = CUSTOMIZATIONS ?: "default";
 $styles = [urlencode("$baseurl/ext/$defaultcss.css"), urlencode("$baseurl/ext/black.css"), urlencode("$baseurl/ext/noborder.css")];
 $stylenames = [_("default"), _("black and white"), _("no borders")];
 
+function ExtValidSelectedValue($selected, $rows, $key)
+{
+    foreach ($rows as $row) {
+        if (array_key_exists($key, $row) && (string) $row[$key] === (string) $selected) {
+            return $selected;
+        }
+    }
+
+    if (isset($rows[0]) && array_key_exists($key, $rows[0])) {
+        return $rows[0][$key];
+    }
+
+    return "";
+}
+
 
 if (!empty($_POST['update'])) {
     $selstyle = $_POST['ownstyle'];
@@ -62,6 +77,8 @@ if (!empty($_POST['update'])) {
 if (empty($season)) {
     $season = CurrentSeason();
 }
+$seasons = PublicExternalSeasons();
+$season = ExtValidSelectedValue($season, $seasons, 'season_id');
 
 $html .= "<h1>" . _("Embedding Ultiorganizer into other pages") . "</h1>";
 
@@ -72,8 +89,6 @@ $html .= "<h2>" . _("Select") . "</h2>";
 
 //season selection
 $selector = "<p>" . _("Select event") . ":	<select class='dropdown' name='season'>\n";
-
-$seasons = Seasons();
 
 foreach ($seasons as $row) {
 
@@ -90,12 +105,9 @@ if (!empty($season)) {
     $selector .= "<p>" . _("Select grouping") . ":	<select class='dropdown' name='tournamentname'>\n";
 
     $tours = SeasonReservationgroups($season);
+    $seltournament = ExtValidSelectedValue($seltournament, $tours, 'reservationgroup');
 
     foreach ($tours as $row) {
-        if (empty($seltournament)) {
-            $seltournament = $row['reservationgroup'];
-        }
-
         if ($row['reservationgroup'] == $seltournament) {
             $selector .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['reservationgroup']) . "'>" . utf8entities($row['reservationgroup']) . "</option>";
         } else {
@@ -110,12 +122,9 @@ if (!empty($season)) {
     $selector .= "<p>" . _("Select division") . ":	<select class='dropdown' name='seriesid'>\n";
 
     $series = SeasonSeries($season, true);
+    $selseries = ExtValidSelectedValue($selseries, $series, 'series_id');
 
     foreach ($series as $row) {
-        if (empty($selseries)) {
-            $selseries = $row['series_id'];
-        }
-
         if ($row['series_id'] == $selseries) {
             $selector .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['series_id']) . "'>" . utf8entities($row['name']) . "</option>";
         } else {
@@ -132,12 +141,9 @@ if (!empty($season)) {
 if (!empty($selseries)) {
     $selector .= "<p>" . _("Select pool") . ": <select class='dropdown' name='poolid'>\n";
     $pools = SeriesPools($selseries, true);
+    $selpool = ExtValidSelectedValue($selpool, $pools, 'pool_id');
 
     foreach ($pools as $row) {
-        if (empty($selpool)) {
-            $selpool = $row['pool_id'];
-        }
-
         if ($row['pool_id'] == $selpool) {
             $selector .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['pool_id']) . "'>" . utf8entities($row['name']) . "</option>";
         } else {
@@ -151,12 +157,9 @@ if (!empty($selseries)) {
     $selector .= "<p>" . _("Select team") . ": <select class='dropdown' name='teamid'>\n";
 
     $teams = SeriesTeams($selseries);
+    $selteam = ExtValidSelectedValue($selteam, $teams, 'team_id');
 
     foreach ($teams as $row) {
-        if (empty($selteam)) {
-            $selteam = $row['team_id'];
-        }
-
         if ($row['team_id'] == $selteam) {
             $selector .= "<option class='dropdown' selected='selected' value='" . utf8entities($row['team_id']) . "'>" . utf8entities($row['name']) . "</option>";
         } else {

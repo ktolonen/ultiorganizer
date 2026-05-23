@@ -435,9 +435,10 @@ function GameSetSpiritCaptains($gameId, $teamId, $playerIds)
     return GameSetRolePlayers($gameId, $teamId, 'spirit_captain', $playerIds);
 }
 
-function GameAll($limit = 50)
+function GameAll($limit = 50, $onlyPublicExternal = false)
 {
     $limit = intval($limit);
+    $publicExternalFilter = $onlyPublicExternal ? " AND s.api_public=1" : "";
     //common game query
     $query = "SELECT pp.game_id, pp.time, pp.hometeam, pp.visitorteam, pp.homescore,
 			pp.visitorscore, gp.pool AS pool, pool.name AS poolname, pool.timeslot,
@@ -461,14 +462,14 @@ function GameAll($limit = 50)
 			LEFT JOIN uo_scheduling_name AS pgame ON (pp.name=pgame.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS phome ON (pp.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name AS pvisitor ON (pp.scheduling_name_visitor=pvisitor.scheduling_id)
-			WHERE pp.valid=true AND pp.hasstarted>0 AND pp.isongoing=0  ORDER BY pp.time DESC, ps.ordering, pool.ordering, pp.game_id
+			WHERE pp.valid=true AND pp.hasstarted>0 AND pp.isongoing=0 $publicExternalFilter ORDER BY pp.time DESC, ps.ordering, pool.ordering, pp.game_id
 			LIMIT $limit";
     return DBQuery($query);
 }
 
-function GameAllArray($limit = 50)
+function GameAllArray($limit = 50, $onlyPublicExternal = false)
 {
-    return DBFetchAllAssoc(GameAll($limit));
+    return DBFetchAllAssoc(GameAll($limit, $onlyPublicExternal));
 }
 
 function GamePlayerFromNumber($gameId, $teamId, $number)

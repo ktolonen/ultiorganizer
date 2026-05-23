@@ -1,9 +1,11 @@
 <?php
 
 include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/season.functions.php';
 include_once __DIR__ . '/../lib/pool.functions.php';
 
 $season = iget("season");
+RequireSeasonPublicExternal($season);
 $encoding = 'UTF-8';
 $separator = ',';
 

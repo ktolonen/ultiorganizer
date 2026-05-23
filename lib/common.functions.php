@@ -343,15 +343,41 @@ function GetScriptName()
     }
 }
 
+/**
+ * Builds the absolute URL for the directory that contains the current routed script.
+ *
+ * Prefers the configured BASEURL because generated links are usually consumed by
+ * browsers, RSS readers, emails, or embedded pages outside the current request.
+ * When BASEURL is missing or empty, falls back to the request scheme, server name,
+ * optional non-standard port, and script path. If a view is included from a
+ * subdirectory, $include_prefix can contain "../" segments; each such segment
+ * trims one directory level so generated links point back to the application root
+ * instead of the included file's directory.
+ */
 function GetURLBase()
 {
-    $url = "http";
-    if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
-        $url .= "s";
+    if (defined('BASEURL')) {
+        $baseUrl = rtrim(BASEURL, '/');
+        if ($baseUrl !== '') {
+            return $baseUrl;
+        }
     }
-    $url .= "://";
-    $url .= GetServerName();
-    $url .= GetScriptName();
+
+    $scheme = "http";
+    if (isset($_SERVER["HTTPS"]) && $_SERVER["HTTPS"] == "on") {
+        $scheme .= "s";
+    }
+
+    $serverName = GetServerName();
+    $serverPort = $_SERVER["SERVER_PORT"] ?? "";
+    $isDefaultPort = ($scheme === "http" && $serverPort === "80")
+        || ($scheme === "https" && $serverPort === "443");
+
+    if ($serverPort !== "" && !$isDefaultPort && strpos($serverName, ':') === false) {
+        $serverName .= ":" . $serverPort;
+    }
+
+    $url = $scheme . "://" . $serverName . GetScriptName();
 
     $cutpos = strrpos($url, "/");
     $url = substr($url, 0, $cutpos);
@@ -368,6 +394,13 @@ function GetURLBase()
     }
     return $url;
 }
+
+/**
+ * Builds the absolute URL for the current request, including path and query string.
+ *
+ * Non-default ports are included so local development URLs such as :8080 continue
+ * to point at the active server. The default HTTP port 80 is omitted from the URL.
+ */
 function GetPageURL()
 {
     $pageURL = 'http';

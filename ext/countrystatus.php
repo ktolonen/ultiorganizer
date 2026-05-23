@@ -1,5 +1,18 @@
 <?php
 include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/season.functions.php';
+include_once __DIR__ . '/../lib/series.functions.php';
+include_once __DIR__ . '/../lib/team.functions.php';
+include_once __DIR__ . '/../lib/game.functions.php';
+include_once __DIR__ . '/../lib/timetable.functions.php';
+
+$season = iget("season");
+RequireSeasonPublicExternal($season);
+
+$style = iget("style");
+if (empty($style)) {
+    $style = 'pelikone.css';
+}
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
@@ -10,11 +23,6 @@ include_once __DIR__ . '/localization.php';
 	<meta http-equiv="Expires" content="-1" />
 	<?php
 
-    $style = iget("style");
-if (empty($style)) {
-    $style = 'pelikone.css';
-}
-
 echo "<link rel='stylesheet' href='$style' type='text/css' />";
 echo "<title>" . _("Ultiorganizer") . "</title>";
 ?>
@@ -22,14 +30,6 @@ echo "<title>" . _("Ultiorganizer") . "</title>";
 
 <body>
 	<?php
-include_once __DIR__ . '/../lib/season.functions.php';
-include_once __DIR__ . '/../lib/series.functions.php';
-include_once __DIR__ . '/../lib/team.functions.php';
-include_once __DIR__ . '/../lib/game.functions.php';
-include_once __DIR__ . '/../lib/timetable.functions.php';
-
-
-$season = iget("season");
 $seasoninfo = SeasonInfo($season);
 $isInternational = !empty($seasoninfo) && !empty($seasoninfo['isinternational']);
 
@@ -119,7 +119,10 @@ foreach ($allpools as $pool) {
         $pools[] = $poolinfo['pool_id'];
 
         //find out total rounds played
-        $followers = PoolFollowersArray($poolinfo['pool_id']);
+        $followers = PoolPlayoffFollowersArray($poolinfo['pool_id']);
+        if (count($followers) == 0) {
+            $followers = PoolFollowersArray($poolinfo['pool_id']);
+        }
         $pools = array_merge($pools, $followers);
         $rounds = count($pools);
 
@@ -168,13 +171,19 @@ foreach ($allpools as $pool) {
             $losers = 0;
             $games = 0;
             for ($i = 1; $i <= $totalteams; $i++) {
-                $team = $teams[$i - 1];
+                $team = $teams[$i - 1] ?? ['name' => '', 'team_id' => -1, 'flagfile' => null];
                 $name = "";
                 if ($isInternational && !empty($team['flagfile'])) {
                     $name .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
                 }
                 $name .= $team['name'];
-                $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
+                $movefrom = null;
+                if ($round > 0) {
+                    $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
+                    if (empty($movefrom)) {
+                        continue;
+                    }
+                }
                 if ($pseudoteams && $round > 0) {
                     $realteam = PoolTeamFromStandings($movefrom['frompool'], $movefrom['fromplacing']);
                     if ($realteam['team_id']) {

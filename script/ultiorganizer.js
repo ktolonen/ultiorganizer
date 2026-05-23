@@ -1,3 +1,4 @@
+/* exported checkAll, setId, changeseason */
 function checkAll(field)
 {
   var form = document.getElementById(field);

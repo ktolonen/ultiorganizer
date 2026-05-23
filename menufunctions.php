@@ -115,6 +115,15 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
         $query_string = $_SERVER['QUERY_STRING'];
     }
 
+    $userinfo = null;
+    if ($user != 'anonymous') {
+        $userinfo = UserInfo($user);
+        if (empty($userinfo)) {
+            SetUserSessionData('anonymous');
+            $user = 'anonymous';
+        }
+    }
+
     global $serverConf;
     global $styles_prefix;
     global $include_prefix;
@@ -161,7 +170,6 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
                 echo "<input class='button' type='submit' name='login' value='" . utf8entities(_("Log in")) . "' style='border:1px solid #000000'/>";
             }
         } else {
-            $userinfo = UserInfo($user);
             echo "<span class='topheadertext'>" . utf8entities(_("User")) . ": <a class='topheaderlink' href='?view=user/userinfo'>" . utf8entities($userinfo['name']) . "</a></span>";
         }
 

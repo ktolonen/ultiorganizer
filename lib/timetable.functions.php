@@ -336,13 +336,13 @@ function ExtTournamentView($games)
 			<td style='width:100px' class='pk_tournament_td2'>" . utf8entities($game['visitorteamname']) . "</td>";
 
             if (GameHasStarted($game)) {
-                $ret .= "<td style='text-align: center;width:8px' class='pk_tournament_td2'>?</td>
-					<td style='text-align: center;width:5px' class='pk_tournament_td2'>-</td>
-					<td style='text-align: center;width:8px' class='pk_tournament_td2'>?</td>";
-            } else {
                 $ret .= "<td style='text-align: center;width:8px' class='pk_tournament_td2'>" . intval($game['homescore']) . "</td>
-					<td style='text-align: center;width:5px' class='pk_tournament_td2'>-</td>
-					<td style='text-align: center;width:8px' class='pk_tournament_td2'>" . intval($game['visitorscore']) . "</td>";
+						<td style='text-align: center;width:5px' class='pk_tournament_td2'>-</td>
+						<td style='text-align: center;width:8px' class='pk_tournament_td2'>" . intval($game['visitorscore']) . "</td>";
+            } else {
+                $ret .= "<td style='text-align: center;width:8px' class='pk_tournament_td2'>?</td>
+						<td style='text-align: center;width:5px' class='pk_tournament_td2'>-</td>
+						<td style='text-align: center;width:8px' class='pk_tournament_td2'>?</td>";
             }
         } else {
             $ret .= "<td style='width:100px' class='pk_tournament_td2'>" . utf8entities($game['phometeamname']) . "</td>
@@ -423,13 +423,13 @@ function ExtGameView($games)
 			<td style='width:3%' class='pk_teamgames_td'>-</td>
 			<td style='width:36%' class='pk_teamgames_td'>" . utf8entities($game['visitorteamname']) . "</td>";
             if (GameHasStarted($game)) {
-                $ret .= "<td style='text-align: center;width:4%' class='pk_teamgames_td'>?</td>
-					<td style='text-align: center;width:2%' class='pk_teamgames_td'>-</td>
-					<td style='text-align: center;width:4%' class='pk_teamgames_td'>?</td>";
-            } else {
                 $ret .= "<td style='text-align: center;width:4%' class='pk_teamgames_td'>" . intval($game['homescore']) . "</td>
-					<td style='text-align: center;width:2%' class='pk_teamgames_td'>-</td>
-					<td style='text-align: center;width:4%' class='pk_teamgames_td'>" . intval($game['visitorscore']) . "</td>";
+						<td style='text-align: center;width:2%' class='pk_teamgames_td'>-</td>
+						<td style='text-align: center;width:4%' class='pk_teamgames_td'>" . intval($game['visitorscore']) . "</td>";
+            } else {
+                $ret .= "<td style='text-align: center;width:4%' class='pk_teamgames_td'>?</td>
+						<td style='text-align: center;width:2%' class='pk_teamgames_td'>-</td>
+						<td style='text-align: center;width:4%' class='pk_teamgames_td'>?</td>";
             }
         } else {
             $ret .= "<td style='width:36%' class='pk_teamgames_td'>" . utf8entities($game['phometeamname']) . "</td>

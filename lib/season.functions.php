@@ -136,7 +136,7 @@ function CurrentSeasonName()
 
 /**
  * Returns name for given season.
- * @param string $seasonId uo_season.season_id
+ * @param string|null $seasonId uo_season.season_id
  * @return String uo_season.name
  */
 function SeasonName($seasonId)
@@ -151,7 +151,7 @@ function SeasonName($seasonId)
 
 /**
  * Returns type for given season.
- * @param string $seasonId uo_season.season_id
+ * @param string|null $seasonId uo_season.season_id
  * @return String uo_season.type
  */
 function Seasontype($seasonId)
@@ -184,6 +184,43 @@ function SeasonInfo($seasonId)
         }
         return $row;
     });
+}
+
+/**
+ * Returns true when the event exists and is published for external outputs.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return bool
+ */
+function IsSeasonPublicExternal($seasonId)
+{
+    if ($seasonId === null || $seasonId === '') {
+        return false;
+    }
+
+    $seasonInfo = SeasonInfo($seasonId);
+    return is_array($seasonInfo) && !empty($seasonInfo['api_public']);
+}
+
+/**
+ * Stops direct external requests for events that are not published externally.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return void
+ */
+function RequireSeasonPublicExternal($seasonId)
+{
+    if (IsSeasonPublicExternal($seasonId)) {
+        return;
+    }
+
+    if (!headers_sent()) {
+        http_response_code(403);
+        header('Content-Type: text/plain; charset=UTF-8');
+    }
+    echo "Event is not available for external access.";
+    CloseConnection();
+    exit();
 }
 
 /**
@@ -397,7 +434,7 @@ function SeasonNameExists($seasonName)
  * Returns all seasons.
  *
  * @param array $filter sql conditions
- * @param array $ordering sql ordering
+ * @param array|null $ordering sql ordering
  * @return array
  */
 function Seasons($filter = null, $ordering = null)
@@ -408,6 +445,22 @@ function Seasons($filter = null, $ordering = null)
     $orderby = CreateOrdering(["uo_season" => "season"], $ordering);
     $where = CreateFilter(["uo_season" => "season"], $filter);
     $query = sprintf("SELECT season_id, name FROM uo_season season $where $orderby");
+    return DBQueryToArray(trim($query));
+}
+
+/**
+ * Returns seasons published for public external outputs.
+ *
+ * @param array|null $ordering sql ordering
+ * @return array
+ */
+function PublicExternalSeasons($ordering = null)
+{
+    if (!isset($ordering)) {
+        $ordering = ["season.starttime" => "DESC"];
+    }
+    $orderby = CreateOrdering(["uo_season" => "season"], $ordering);
+    $query = sprintf("SELECT season_id, name FROM uo_season season WHERE season.api_public=1 $orderby");
     return DBQueryToArray(trim($query));
 }
 
