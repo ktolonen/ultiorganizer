@@ -76,7 +76,10 @@ if ($poolinfo['type'] == 1) {
     $pools[] = $poolinfo['pool_id'];
 
     //find out total rounds played
-    $followers = PoolFollowersArray($poolinfo['pool_id']);
+    $followers = PoolPlayoffFollowersArray($poolinfo['pool_id']);
+    if (count($followers) == 0) {
+        $followers = PoolFollowersArray($poolinfo['pool_id']);
+    }
     $pools = array_merge($pools, $followers);
     $rounds = count($pools);
 
@@ -122,13 +125,19 @@ if ($poolinfo['type'] == 1) {
         $losers = 0;
         $games = 0;
         for ($i = 1; $i <= $totalteams; $i++) {
-            $team = isset($teams[$i - 1]) ? $teams[$i - 1] : [];
+            $team = $teams[$i - 1] ?? ['name' => '', 'team_id' => -1, 'flagfile' => null];
             $name = "";
             if ($isInternational && !empty($team['flagfile'])) {
                 $name .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
             }
             $name .= $team['name'];
-            $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
+            $movefrom = null;
+            if ($round > 0) {
+                $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
+                if (empty($movefrom)) {
+                    continue;
+                }
+            }
             if ($pseudoteams && $round > 0) {
                 $realteam = PoolTeamFromStandings($movefrom['frompool'], $movefrom['fromplacing']);
                 if ($realteam['team_id']) {

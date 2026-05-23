@@ -78,7 +78,10 @@ foreach ($allpools as $pool) {
         $pools[] = $poolinfo['pool_id'];
 
         //find out total rounds played
-        $followers = PoolFollowersArray($poolinfo['pool_id']);
+        $followers = PoolPlayoffFollowersArray($poolinfo['pool_id']);
+        if (count($followers) == 0) {
+            $followers = PoolFollowersArray($poolinfo['pool_id']);
+        }
         $pools = array_merge($pools, $followers);
         $rounds = count($pools);
 
@@ -136,7 +139,13 @@ foreach ($allpools as $pool) {
                     $name .= "<img height='10' src='../images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
                 }
                 $name .= $team['name'];
-                $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
+                $movefrom = null;
+                if ($round > 0) {
+                    $movefrom = PoolGetMoveFrom($pool['pool_id'], $i);
+                    if (empty($movefrom)) {
+                        continue;
+                    }
+                }
                 if ($pseudoteams && $round > 0) {
                     $realteam = PoolTeamFromStandings($movefrom['frompool'], $movefrom['fromplacing']);
                     if ($realteam['team_id']) {
