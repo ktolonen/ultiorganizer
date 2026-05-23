@@ -1,7 +1,21 @@
 <?php
 
 include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/season.functions.php';
 include_once __DIR__ . '/../lib/team.functions.php';
+
+$teamId = 0;
+if (isset($_GET['search'])) {
+    $teamId = (int) $_GET['search'];
+} elseif (isset($_GET['query'])) {
+    $teamId = (int) $_GET['query'];
+} elseif (isset($_GET['q'])) {
+    $teamId = (int) $_GET['q'];
+}
+if ($teamId > 0) {
+    $teamInfo = TeamInfo($teamId);
+    RequireSeasonPublicExternal($teamInfo['season'] ?? "");
+}
 
 header("Content-type: text/xml");
 header("Cache-Control: no-cache, must-revalidate");

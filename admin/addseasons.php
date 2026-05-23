@@ -450,12 +450,12 @@ if ($sp['event_readonly']) {
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, only superadmin can edit this event.") . "</span></td></tr>";
 
-$html .= "<tr><td class='infocell'>" . _("Visible in public API") . ": </td><td><input class='input' type='checkbox' name='api_public' ";
+$html .= "<tr><td class='infocell'>" . _("Visible in public API and external links") . ": </td><td><input class='input' type='checkbox' name='api_public' ";
 if ($sp['api_public']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Exposes this event in API responses; does not grant write access.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Exposes this event in API responses, external links, widgets, feeds, and CSV exports; does not grant write access.") . "</span></td></tr>";
 
 $html .= "</table>\n";
 if (empty($seasonId)) {

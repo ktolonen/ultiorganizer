@@ -77,6 +77,8 @@ if (!empty($_POST['update'])) {
 if (empty($season)) {
     $season = CurrentSeason();
 }
+$seasons = PublicExternalSeasons();
+$season = ExtValidSelectedValue($season, $seasons, 'season_id');
 
 $html .= "<h1>" . _("Embedding Ultiorganizer into other pages") . "</h1>";
 
@@ -87,9 +89,6 @@ $html .= "<h2>" . _("Select") . "</h2>";
 
 //season selection
 $selector = "<p>" . _("Select event") . ":	<select class='dropdown' name='season'>\n";
-
-$seasons = Seasons();
-$season = ExtValidSelectedValue($season, $seasons, 'season_id');
 
 foreach ($seasons as $row) {
 

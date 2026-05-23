@@ -20,7 +20,7 @@ This page mirrors the current API guidance from `AGENTS.md`.
 
 - Public API endpoints expose event lists, divisions, teams, games, gameplay, and version metadata.
 - Token authentication can be installation, event, or user scoped.
-- Event-scoped endpoints require the event to be marked visible in the public API.
+- Event-scoped endpoints require the event to be marked visible in the public API. The same event flag also gates public `ext/` outputs, including generated external links, widgets, RSS feeds, XML helpers, and CSV exports.
 - Historical data outside those endpoint shapes is not part of the current v1 surface.
 
 ## Documentation
