@@ -679,7 +679,7 @@ function PrevGameDay($id, $gamefilter, $order)
 }
 
 
-function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = "")
+function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = "", $onlypublic = false)
 {
     $fieldOrder = "CAST(pr.fieldname AS UNSIGNED) ASC, pr.fieldname ASC";
     $placeOrder = "CASE WHEN pl.id IS NULL THEN 1 ELSE 0 END, COALESCE(pl.id, pr.id) ASC";
@@ -735,6 +735,10 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
         case "game":
             $query .= " WHERE pp.game_id=" . (int) $id;
             break;
+    }
+
+    if ($onlypublic) {
+        $query .= " AND pool.visible=1 AND ps.valid=1";
     }
 
     switch ($timefilter) {
@@ -832,7 +836,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
     return DBQueryToArray($query);
 }
 
-function TimetableGrouping($id, $gamefilter, $timefilter)
+function TimetableGrouping($id, $gamefilter, $timefilter, $onlypublic = false)
 {
     //common game query
     $query = "SELECT pr.reservationgroup, MAX(pp.time)
@@ -868,6 +872,10 @@ function TimetableGrouping($id, $gamefilter, $timefilter)
         case "team":
             $query .= " WHERE pp.valid=true AND (pp.visitorteam='" . (int) $id . "' OR pp.hometeam='" . (int) $id . "')";
             break;
+    }
+
+    if ($onlypublic) {
+        $query .= " AND pool.visible=1 AND ps.valid=1";
     }
 
     switch ($timefilter) {

@@ -205,8 +205,8 @@ switch ($filter) {
         break;
 }
 
-$games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
-$groups = TimetableGrouping($id, $gamefilter, $timefilter);
+$games = TimetableGames($id, $gamefilter, $timefilter, $order, $group, true);
+$groups = TimetableGrouping($id, $gamefilter, $timefilter, true);
 
 if ($format == "pdf") {
     $nameLabel = "";
