@@ -3,6 +3,10 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/pool.functions.php';
+require_once __DIR__ . '/seasonpoints.functions.php';
+require_once __DIR__ . '/series.functions.php';
+
 function ResolvePoolStandings($poolId)
 {
     $poolinfo = PoolInfo($poolId);
@@ -723,4 +727,551 @@ function TeamSeriesStanding($teamId)
     }
 
     return intval($standing);
+}
+
+function ManualFinalStandings($seriesId)
+{
+    $query = sprintf(
+        "SELECT fs.season, fs.series, fs.team_id, fs.standing, fs.disqualified, fs.updated_at,
+            t.name, t.abbreviation, t.club, cl.name AS clubname, t.valid,
+            t.country, c.name AS countryname, t.rank, c.flagfile, tp.poolname
+        FROM uo_team_final_standing fs
+        LEFT JOIN uo_team t ON (t.team_id=fs.team_id)
+        LEFT JOIN (
+            SELECT tp.team, GROUP_CONCAT(DISTINCT p.name ORDER BY p.ordering ASC, p.name SEPARATOR ', ') AS poolname
+            FROM uo_team_pool tp
+            LEFT JOIN uo_pool p ON (tp.pool=p.pool_id)
+            GROUP BY tp.team
+        ) AS tp ON (t.team_id=tp.team)
+        LEFT JOIN uo_club cl ON (cl.club_id=t.club)
+        LEFT JOIN uo_country c ON (c.country_id=t.country)
+        WHERE fs.series=%d AND t.series=%d
+        ORDER BY fs.disqualified ASC, fs.standing IS NULL, fs.standing, t.name, t.team_id",
+        (int) $seriesId,
+        (int) $seriesId,
+    );
+    return DBQueryToArray($query);
+}
+
+function ManualFinalStandingsMap($seriesId)
+{
+    $standings = [];
+    foreach (ManualFinalStandings($seriesId) as $row) {
+        $standings[(int) $row['team_id']] = ((int) $row['disqualified'] === 1) ? 0 : (int) $row['standing'];
+    }
+    return $standings;
+}
+
+function HasCompleteManualFinalStandings($seriesId)
+{
+    $teamCount = count(SeriesTeams($seriesId));
+    if ($teamCount === 0) {
+        return false;
+    }
+
+    $standingCount = (int) DBQueryToValue(sprintf(
+        "SELECT COUNT(*)
+        FROM uo_team_final_standing fs
+        LEFT JOIN uo_team t ON (t.team_id=fs.team_id)
+        WHERE fs.series=%d AND t.series=%d",
+        (int) $seriesId,
+        (int) $seriesId,
+    ));
+    return $standingCount === $teamCount;
+}
+
+function ClearFinalStandingsOrder($seasonId, $seriesId)
+{
+    if (!isSeasonAdmin($seasonId)) {
+        die('Insufficient rights to edit final standings');
+    }
+    if (SeriesSeasonId($seriesId) !== $seasonId) {
+        return false;
+    }
+
+    return DBExecute(sprintf(
+        "DELETE FROM uo_team_final_standing WHERE season='%s' AND series=%d",
+        DBEscapeString($seasonId),
+        (int) $seriesId,
+    ));
+}
+
+function ArchivedFinalStandings($seriesId)
+{
+    $query = sprintf(
+        "SELECT ts.season, ts.series, ts.team_id, ts.standing, 0 AS disqualified,
+            t.name, t.abbreviation, t.club, cl.name AS clubname, t.valid,
+            t.country, c.name AS countryname, t.rank, c.flagfile, tp.poolname
+        FROM uo_team_stats ts
+        LEFT JOIN uo_team t ON (t.team_id=ts.team_id)
+        LEFT JOIN (
+            SELECT tp.team, GROUP_CONCAT(DISTINCT p.name ORDER BY p.ordering ASC, p.name SEPARATOR ', ') AS poolname
+            FROM uo_team_pool tp
+            LEFT JOIN uo_pool p ON (tp.pool=p.pool_id)
+            GROUP BY tp.team
+        ) AS tp ON (t.team_id=tp.team)
+        LEFT JOIN uo_club cl ON (cl.club_id=t.club)
+        LEFT JOIN uo_country c ON (c.country_id=t.country)
+        WHERE ts.series=%d AND t.series=%d
+        ORDER BY ts.standing, t.name, t.team_id",
+        (int) $seriesId,
+        (int) $seriesId,
+    );
+    return DBQueryToArray($query);
+}
+
+function HasCompleteArchivedFinalStandings($seriesId)
+{
+    $teamCount = count(SeriesTeams($seriesId));
+    if ($teamCount === 0) {
+        return false;
+    }
+
+    $standingCount = (int) DBQueryToValue(sprintf(
+        "SELECT COUNT(*)
+        FROM uo_team_stats ts
+        LEFT JOIN uo_team t ON (t.team_id=ts.team_id)
+        WHERE ts.series=%d AND t.series=%d",
+        (int) $seriesId,
+        (int) $seriesId,
+    ));
+    return $standingCount === $teamCount;
+}
+
+function SeriesUnplayedGamesCount($seriesId)
+{
+    return (int) DBQueryToValue(sprintf(
+        "SELECT COUNT(*)
+        FROM uo_game g
+        LEFT JOIN uo_game_pool gp ON (gp.game=g.game_id)
+        LEFT JOIN uo_pool p ON (p.pool_id=gp.pool)
+        WHERE p.series=%d
+            AND gp.timetable=1
+            AND g.valid=1
+            AND (g.hasstarted=0 OR g.isongoing=1 OR g.homescore IS NULL OR g.visitorscore IS NULL)",
+        (int) $seriesId,
+    ));
+}
+
+function FinalStandingsSeasonStatus($seasonId)
+{
+    $status = [
+        'published' => 0,
+        'unpublished' => 0,
+        'incomplete' => 0,
+        'archived' => 0,
+        'live' => 0,
+    ];
+
+    foreach (SeasonSeries($seasonId) as $series) {
+        $seriesId = (int) $series['series_id'];
+        $manualCount = count(ManualFinalStandings($seriesId));
+        if ($manualCount > 0) {
+            $status['published']++;
+            if (!HasCompleteManualFinalStandings($seriesId)) {
+                $status['incomplete']++;
+            }
+        } else {
+            $status['unpublished']++;
+            if (HasCompleteArchivedFinalStandings($seriesId)) {
+                $status['archived']++;
+            } else {
+                $status['live']++;
+            }
+        }
+    }
+
+    return $status;
+}
+
+function SeriesFinalStandings($seriesId)
+{
+    if (count(ManualFinalStandings($seriesId)) > 0) {
+        return MergedManualFinalStandings($seriesId);
+    }
+    if (HasCompleteArchivedFinalStandings($seriesId)) {
+        return ArchivedFinalStandings($seriesId);
+    }
+    return SeriesRanking($seriesId);
+}
+
+function SeriesFinalStandingsMap($seriesId)
+{
+    $standings = [];
+    foreach (SeriesFinalStandings($seriesId) as $index => $row) {
+        if (isset($row['team_id'])) {
+            if (isset($row['disqualified']) && (int) $row['disqualified'] === 1) {
+                $standings[(int) $row['team_id']] = 0;
+            } elseif (isset($row['standing']) && (int) $row['standing'] > 0) {
+                $standings[(int) $row['team_id']] = (int) $row['standing'];
+            } else {
+                $standings[(int) $row['team_id']] = $index + 1;
+            }
+        }
+    }
+    return $standings;
+}
+
+function MergedManualFinalStandings($seriesId)
+{
+    $teams = SeriesTeams($seriesId);
+    $teamCount = count($teams);
+    $teamsById = [];
+    foreach ($teams as $team) {
+        $teamsById[(int) $team['team_id']] = $team;
+    }
+
+    $manualByStanding = [];
+    $disqualified = [];
+    $used = [];
+    foreach (ManualFinalStandings($seriesId) as $row) {
+        $teamId = (int) $row['team_id'];
+        if (!isset($teamsById[$teamId]) || isset($used[$teamId])) {
+            continue;
+        }
+        if ((int) $row['disqualified'] === 1) {
+            $row['standing'] = null;
+            $disqualified[] = $row;
+            $used[$teamId] = true;
+            continue;
+        }
+
+        $standing = (int) $row['standing'];
+        if ($standing < 1 || $standing > $teamCount) {
+            continue;
+        }
+        $row['standing'] = $standing;
+        $row['disqualified'] = 0;
+        if (!isset($manualByStanding[$standing])) {
+            $manualByStanding[$standing] = [];
+        }
+        $manualByStanding[$standing][] = $row;
+        $used[$teamId] = true;
+    }
+
+    $standings = [];
+    $fallback = HasCompleteArchivedFinalStandings($seriesId) ? ArchivedFinalStandings($seriesId) : SeriesRanking($seriesId);
+    for ($standing = 1; $standing <= $teamCount; $standing++) {
+        if (isset($manualByStanding[$standing])) {
+            foreach ($manualByStanding[$standing] as $row) {
+                $standings[] = $row;
+            }
+            continue;
+        }
+
+        if (!isset($fallback[$standing - 1]) || !isset($fallback[$standing - 1]['team_id'])) {
+            $standings[] = null;
+            continue;
+        }
+        $row = $fallback[$standing - 1];
+        $teamId = (int) $row['team_id'];
+        if (isset($used[$teamId]) || !isset($teamsById[$teamId])) {
+            $standings[] = null;
+            continue;
+        }
+        $row['standing'] = $standing;
+        $row['disqualified'] = 0;
+        $standings[] = $row;
+        $used[$teamId] = true;
+    }
+
+    while (count($standings) > 0 && $standings[count($standings) - 1] === null) {
+        array_pop($standings);
+    }
+    foreach ($disqualified as $row) {
+        $standings[] = $row;
+    }
+
+    return $standings;
+}
+
+function FinalStandingLabel($standing, $disqualified = false)
+{
+    if ($disqualified) {
+        return _("Disqualified");
+    }
+    $standing = (int) $standing;
+    if ($standing === 1) {
+        return _("Gold");
+    }
+    if ($standing === 2) {
+        return _("Silver");
+    }
+    if ($standing === 3) {
+        return _("Bronze");
+    }
+    if ($standing > 3) {
+        return ordinal($standing);
+    }
+    return _("Undecided");
+}
+
+function FinalStandingsAdminOrder($seasonId, $seriesId)
+{
+    $teams = SeriesTeams($seriesId);
+    $teamsById = [];
+    foreach ($teams as $team) {
+        $teamsById[(int) $team['team_id']] = $team;
+    }
+
+    $source = 'teams';
+    $manual = ManualFinalStandings($seriesId);
+    $manualByStanding = [];
+    foreach ($manual as $team) {
+        $manualByStanding[(int) $team['standing']] = (int) $team['team_id'];
+    }
+
+    if (count($manualByStanding) > 0) {
+        $source = 'manual';
+    } else {
+        $pointsOrder = FinalStandingsSeasonPointsOrder($seasonId, $seriesId, $teams);
+        if (count($pointsOrder) > 0) {
+            foreach ($pointsOrder as $standing => $teamId) {
+                $manualByStanding[$standing + 1] = $teamId;
+            }
+            $source = 'seasonpoints';
+        } else {
+            $liveOrder = FinalStandingsLiveOrder($seriesId);
+            if (count($liveOrder) > 0) {
+                foreach ($liveOrder as $standing => $teamId) {
+                    $manualByStanding[$standing + 1] = $teamId;
+                }
+                $source = 'live';
+            }
+        }
+    }
+
+    $ordered = [];
+    $seen = [];
+    if (count($manualByStanding) === 0) {
+        return [
+            'teams' => $teams,
+            'source' => $source,
+        ];
+    }
+
+    $teamCount = count($teams);
+    for ($standing = 1; $standing <= $teamCount; $standing++) {
+        $teamId = isset($manualByStanding[$standing]) ? (int) $manualByStanding[$standing] : 0;
+        if ($teamId > 0 && isset($teamsById[$teamId]) && !isset($seen[$teamId])) {
+            $ordered[] = $teamsById[$teamId];
+            $seen[$teamId] = true;
+        } else {
+            $ordered[] = null;
+        }
+    }
+
+    return [
+        'teams' => $ordered,
+        'source' => $source,
+    ];
+}
+
+function SaveFinalStandingsOrder($seasonId, $seriesId, $teamIds)
+{
+    if (!isSeasonAdmin($seasonId)) {
+        die('Insufficient rights to edit final standings');
+    }
+    if (SeriesSeasonId($seriesId) !== $seasonId) {
+        return false;
+    }
+
+    $expectedIds = [];
+    foreach (SeriesTeams($seriesId) as $team) {
+        $expectedIds[] = (int) $team['team_id'];
+    }
+    $expectedSet = array_flip($expectedIds);
+    $cleanIds = [];
+    foreach ($teamIds as $teamId) {
+        $teamId = (int) $teamId;
+        if ($teamId <= 0) {
+            $cleanIds[] = 0;
+            continue;
+        }
+        if (!isset($expectedSet[$teamId])) {
+            return false;
+        }
+        $cleanIds[] = $teamId;
+    }
+
+    if (count($cleanIds) !== count($expectedIds)) {
+        return false;
+    }
+
+    $selectedIds = array_values(array_filter($cleanIds));
+    if (count($selectedIds) !== count(array_unique($selectedIds))) {
+        return false;
+    }
+
+    DBQuery('START TRANSACTION');
+    try {
+        DBQuery(sprintf(
+            "DELETE FROM uo_team_final_standing WHERE series=%d",
+            (int) $seriesId,
+        ));
+        foreach ($cleanIds as $index => $teamId) {
+            if ($teamId <= 0) {
+                continue;
+            }
+            $standing = $index + 1;
+            DBQuery(sprintf(
+                "INSERT INTO uo_team_final_standing (season, series, team_id, standing, disqualified)
+                VALUES ('%s', %d, %d, %d, 0)",
+                DBEscapeString($seasonId),
+                (int) $seriesId,
+                (int) $teamId,
+                (int) $standing,
+            ));
+        }
+        foreach (SeriesFinalStandingsMap($seriesId) as $teamId => $standing) {
+            DBQuery(sprintf(
+                "UPDATE uo_team_stats SET standing=%d WHERE team_id=%d",
+                (int) $standing,
+                (int) $teamId,
+            ));
+        }
+        DBQuery('COMMIT');
+    } catch (Throwable $e) {
+        DBQuery('ROLLBACK');
+        throw $e;
+    }
+
+    return true;
+}
+
+function SaveFinalStandingsAssignments($seasonId, $seriesId, $assignments)
+{
+    if (!isSeasonAdmin($seasonId)) {
+        die('Insufficient rights to edit final standings');
+    }
+    if (SeriesSeasonId($seriesId) !== $seasonId) {
+        return false;
+    }
+
+    $teams = SeriesTeams($seriesId);
+    $teamCount = count($teams);
+    $expectedIds = [];
+    foreach ($teams as $team) {
+        $expectedIds[] = (int) $team['team_id'];
+    }
+
+    $cleanAssignments = [];
+    foreach ($expectedIds as $teamId) {
+        $value = isset($assignments[$teamId]) ? $assignments[$teamId] : 0;
+        if ($value === 'dq') {
+            $cleanAssignments[$teamId] = [
+                'standing' => null,
+                'disqualified' => 1,
+            ];
+            continue;
+        }
+
+        $standing = (int) $value;
+        if ($standing < 1) {
+            continue;
+        }
+        if ($standing > $teamCount) {
+            return false;
+        }
+        $cleanAssignments[$teamId] = [
+            'standing' => $standing,
+            'disqualified' => 0,
+        ];
+    }
+
+    DBQuery('START TRANSACTION');
+    try {
+        DBQuery(sprintf(
+            "DELETE FROM uo_team_final_standing WHERE series=%d",
+            (int) $seriesId,
+        ));
+        foreach ($cleanAssignments as $teamId => $assignment) {
+            $standingValue = is_null($assignment['standing']) ? 'NULL' : (string) ((int) $assignment['standing']);
+            DBQuery(sprintf(
+                "INSERT INTO uo_team_final_standing (season, series, team_id, standing, disqualified)
+                VALUES ('%s', %d, %d, %s, %d)",
+                DBEscapeString($seasonId),
+                (int) $seriesId,
+                (int) $teamId,
+                $standingValue,
+                (int) $assignment['disqualified'],
+            ));
+        }
+        foreach (SeriesFinalStandingsMap($seriesId) as $teamId => $standing) {
+            DBQuery(sprintf(
+                "UPDATE uo_team_stats SET standing=%d WHERE team_id=%d",
+                (int) $standing,
+                (int) $teamId,
+            ));
+        }
+        DBQuery('COMMIT');
+    } catch (Throwable $e) {
+        DBQuery('ROLLBACK');
+        throw $e;
+    }
+
+    return true;
+}
+
+function SaveFinalStandingsOrderByTeamIds($teamIds)
+{
+    $firstTeamId = 0;
+    foreach ($teamIds as $teamId) {
+        if ((int) $teamId > 0) {
+            $firstTeamId = (int) $teamId;
+            break;
+        }
+    }
+    if ($firstTeamId === 0) {
+        return false;
+    }
+
+    $team = TeamInfo($firstTeamId);
+    if (!$team) {
+        return false;
+    }
+    return SaveFinalStandingsOrder($team['season'], (int) $team['series'], $teamIds);
+}
+
+function FinalStandingsSeasonPointsOrder($seasonId, $seriesId, $teams)
+{
+    $rounds = SeasonPointsRounds($seasonId, $seriesId);
+    if (!count($rounds)) {
+        return [];
+    }
+
+    $totals = SeasonPointsSeriesTotals($seasonId, $seriesId);
+    $lastRoundId = $rounds[count($rounds) - 1]['round_id'];
+    $lastRoundPoints = SeasonPointsRoundPoints($lastRoundId);
+    usort($teams, function ($a, $b) use ($totals, $lastRoundPoints) {
+        $left = isset($totals[$a['team_id']]) ? (int) $totals[$a['team_id']] : 0;
+        $right = isset($totals[$b['team_id']]) ? (int) $totals[$b['team_id']] : 0;
+        if ($left !== $right) {
+            return $right <=> $left;
+        }
+
+        $leftLast = isset($lastRoundPoints[$a['team_id']]) ? (int) $lastRoundPoints[$a['team_id']] : 0;
+        $rightLast = isset($lastRoundPoints[$b['team_id']]) ? (int) $lastRoundPoints[$b['team_id']] : 0;
+        if ($leftLast !== $rightLast) {
+            return $rightLast <=> $leftLast;
+        }
+        return strcasecmp($a['name'], $b['name']);
+    });
+
+    $orderedIds = [];
+    foreach ($teams as $team) {
+        $orderedIds[] = (int) $team['team_id'];
+    }
+    return $orderedIds;
+}
+
+function FinalStandingsLiveOrder($seriesId)
+{
+    $orderedIds = [];
+    foreach (SeriesRanking($seriesId) as $team) {
+        if (isset($team['team_id'])) {
+            $orderedIds[] = (int) $team['team_id'];
+        }
+    }
+    return $orderedIds;
 }

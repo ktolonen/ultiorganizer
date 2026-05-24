@@ -110,7 +110,7 @@ function SeasonTeamStatistics($season)
 		LEFT JOIN uo_season s ON(s.season_id=ts.season)
 		LEFT JOIN uo_team t ON(t.team_id=ts.team_id)
 		WHERE ts.season='%s'
-		ORDER BY ts.series,ts.standing",
+		ORDER BY ts.series,(ts.standing=0),ts.standing",
         DBEscapeString($season),
     );
     return DBQueryToArray($query);
@@ -126,7 +126,7 @@ function TeamStatistics($team)
 		LEFT JOIN uo_season s ON(s.season_id=ts.season)
 		LEFT JOIN uo_team t ON(t.team_id=ts.team_id)
 		WHERE ts.team_id='%s'
-		ORDER BY ts.series,ts.standing",
+		ORDER BY ts.series,(ts.standing=0),ts.standing",
         DBEscapeString($team),
     );
     return DBQueryToArray($query);
@@ -144,7 +144,7 @@ function TeamStandings($season, $seriestype)
 		LEFT JOIN uo_team t ON(t.team_id=ts.team_id)
 		LEFT JOIN uo_country c ON(t.country=c.country_id)
 		WHERE ts.season='%s' AND ser.type='%s'
-		ORDER BY ts.series,ts.standing",
+		ORDER BY ts.series,(ts.standing=0),ts.standing",
         DBEscapeString($season),
         DBEscapeString($seriestype),
     );
@@ -161,7 +161,7 @@ function TeamStatisticsByName($teamname, $seriestype)
 		LEFT JOIN uo_season s ON(s.season_id=ts.season)
 		LEFT JOIN uo_team t ON(t.team_id=ts.team_id)
 		WHERE t.name='%s' AND ser.type='%s'
-		ORDER BY s.starttime DESC, ts.series,ts.standing",
+		ORDER BY s.starttime DESC, ts.series,(ts.standing=0),ts.standing",
         DBEscapeString($teamname),
         DBEscapeString($seriestype),
     );
@@ -513,6 +513,7 @@ function CalcTeamStats($season)
 
         foreach ($series_info as $series) {
             $teams = SeriesTeams($series['series_id']);
+            $finalStandings = SeriesFinalStandingsMap($series['series_id']);
 
             foreach ($teams as $team) {
                 $team_info = TeamFullInfo($team['team_id']);
@@ -521,7 +522,11 @@ function CalcTeamStats($season)
                 $wins = 0;
                 $losses = 0;
                 $defenses_total = 0;
-                $standing = TeamSeriesStanding($team['team_id']);
+                if (isset($finalStandings[(int) $team['team_id']])) {
+                    $standing = $finalStandings[(int) $team['team_id']];
+                } else {
+                    $standing = TeamSeriesStanding($team['team_id']);
+                }
                 $allgames = TeamGames($team['team_id']);
 
                 while ($game = mysqli_fetch_assoc($allgames)) {

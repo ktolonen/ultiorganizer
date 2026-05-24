@@ -774,6 +774,7 @@ function getEditSeasonLinks()
                     $links['?view=admin/spirit&amp;season=' . $season] = _("Spirit");
                 }
                 $links['?view=admin/seasonstandings&amp;season=' . $season] = _("Standings");
+                $links['?view=admin/finalstandings&amp;season=' . $season] = _("Placements");
                 if (!empty($seasonInfo['use_season_points'])) {
                     $links['?view=admin/seasonpoints&amp;season=' . $season] = _("Season points");
                 }

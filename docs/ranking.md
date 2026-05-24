@@ -103,7 +103,7 @@ Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions
 
 The "Standings" tab in `teams.php` (`?view=teams&list=bystandings`) renders a single table with one column per series.
 
-For each series, the view calls `SeriesRanking($series_id)` from `lib/series.functions.php` to retrieve teams in final placement order. It then composes a placement column on the left and one team column per series:
+For each series, the view calls `SeriesFinalStandings($series_id)` from `lib/standings.functions.php`. Saved manual placements are used as the source of truth for their exact placement rows, even when only part of the division has been saved. Multiple teams may share the same saved placement and are rendered together in the same placement cell. Disqualified teams have no numeric standing and are rendered last in a separate disqualified row only when at least one team is disqualified. Unsaved placements use the fallback order without duplicating saved teams. Complete archived statistics standings are trusted first, followed by `SeriesRanking($series_id)` and the live placement-pool order. The view then composes a placement column on the left and one team column per series:
 
 - Row 1: `Gold`
 - Row 2: `Silver`
@@ -112,7 +112,9 @@ For each series, the view calls `SeriesRanking($series_id)` from `lib/series.fun
 
 The top three rows render in bold. Empty cells are rendered for series that have fewer placements than the longest column. If the season is marked international, each team name is preceded by a country flag.
 
-`SeriesRanking` is the authoritative source for placement order across a series. It aggregates results across the series' pools so that final placements reflect both the round-robin phase and any playoff or placement rounds. Pool-level `activerank` values written by the resolvers above feed into this aggregation through the placement-pool walk used by `TeamSeriesStanding` and the series-level helpers in `lib/series.functions.php`.
+Manual final standings are stored in `uo_team_final_standing` and managed through `admin/finalstandings.php`. The database upgrade seeds this table from existing `uo_team_stats` rows for events that already have archived statistics. The admin page uses the same division-tab menu as pool standings and saves or clears the selected division only. Existing saved placements are shown first; otherwise season points are used as the suggested order when available, then the live placement-pool order, and finally the plain team list. Each team can be assigned a placement, left undecided, or marked disqualified. Shared placements are valid. Saved placements are published immediately, and undecided placements use available fallback standings until saved.
+
+When a division has no saved manual placements, or when saved manual placements leave undecided rows, `SeriesRanking` remains the live source for placement fallback across a series unless archived statistics already provide a complete fallback. It aggregates results across the series' pools so that final placements reflect both the round-robin phase and any playoff or placement rounds. Pool-level `activerank` values written by the resolvers above feed into this aggregation through the placement-pool walk used by `TeamSeriesStanding` and the series-level helpers in `lib/series.functions.php`.
 
 ## Event statistics
 
@@ -126,7 +128,7 @@ Pressing **Calculate** (`calc` POST) runs the following helpers from `lib/statis
 
 1. `CalcSeasonStats($season)`: aggregate season totals (teams, players, games).
 2. `CalcSeriesStats($season)`: per-series aggregates.
-3. `CalcTeamStats($season)`: per-team final standings within each series.
+3. `CalcTeamStats($season)`: per-team final standings within each series. Saved manual placements are used when available; undecided placements are filled from archived or live fallback standings.
 4. `CalcTeamSpiritStats($season)`: per-team spirit aggregates.
 5. `CalcPlayerStats($season)`: per-player scoring stats.
 6. `SetEventReadonly($season)`: marks the event read-only so live results no longer change.
@@ -137,11 +139,11 @@ If the season has players without a profile id, the page shows the count and ask
 
 #### Manual reorder of final standings
 
-Once stats are calculated, the page renders a draggable list per series under the **Final Standings** heading. The list source is `SeasonTeamStatistics($season)`, grouped by series with one column per series, using YUI drag-and-drop.
+Manual final standings can be published before statistics are calculated through `admin/finalstandings.php`. That page shows whether the selected division has saved placements, warns when scheduled games are not complete, and can clear an accidentally saved order. `admin/stats.php` reports how many divisions have saved final standings, warns when saved standings are partial, and warns when divisions without saved standings will be calculated from fallback standings. Once stats are calculated, `admin/stats.php` still renders a draggable list per series under the **Final Standings** heading. The list source is `SeasonTeamStatistics($season)`, grouped by series with one column per series, using YUI drag-and-drop.
 
-When the admin presses **Save standings**, the page builds a request string of the form `team1:team2:…:|team4:team5:…:|` — colon-separated team ids per series, pipe-separated between series — and POSTs it asynchronously to `?view=admin/saveteamstandings`. The handler persists the new order back into the precomputed team-stats rows. The save indicator is rendered into `#responseStatus`.
+When the admin presses **Save standings**, the page builds a request string of the form `team1:team2:…:|team4:team5:…:|` — colon-separated team ids per series, pipe-separated between series — and POSTs it asynchronously to `?view=admin/saveteamstandings`. The handler persists the new order into manual final standings and updates existing precomputed team-stats rows. The save indicator is rendered into `#responseStatus`.
 
-This is the only path that lets an admin override the resolver-derived order, for example to encode a placement decision the resolvers cannot express on their own.
+Both final-standings admin surfaces let an admin override the resolver-derived order, for example to encode a placement decision the resolvers cannot express on their own.
 
 ### Cross-event reports: `statistics.php`
 
