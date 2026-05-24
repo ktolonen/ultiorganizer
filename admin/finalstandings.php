@@ -147,6 +147,14 @@ if ($unplayedGames > 0) {
     $confirmMessage = sprintf(_("There are %d games in this division that are not completed. Save final standings anyway?"), $unplayedGames);
     $saveConfirm = " onclick='return confirm(\"" . addslashes($confirmMessage) . "\")'";
 }
+if ($manualCount > 0) {
+    $html .= "<form method='post' action='?view=admin/finalstandings&amp;season=" . utf8entities($season) . "&amp;series=" . (int) $seriesId . "'>\n";
+    $html .= "<input type='hidden' name='season' value='" . utf8entities($season) . "'/>\n";
+    $html .= "<input type='hidden' name='series' value='" . (int) $seriesId . "'/>\n";
+    $clearConfirm = _("Clear saved final standings for this division?");
+    $html .= "<p><input class='button' type='submit' name='clear_final_standings' value='" . _("Clear standings") . "' onclick='return confirm(\"" . addslashes($clearConfirm) . "\")'/></p>\n";
+    $html .= "</form>\n";
+}
 $html .= "<form method='post' action='?view=admin/finalstandings&amp;season=" . utf8entities($season) . "&amp;series=" . (int) $seriesId . "'>\n";
 $html .= "<input type='hidden' name='season' value='" . utf8entities($season) . "'/>\n";
 $html .= "<input type='hidden' name='series' value='" . (int) $seriesId . "'/>\n";
@@ -229,14 +237,6 @@ foreach ($displayTeams as $team) {
 $html .= "</table>\n";
 $html .= "<p><input class='button' type='submit' name='save_final_standings' value='" . _("Save standings") . "'$saveConfirm/></p>\n";
 $html .= "</form>\n";
-if ($manualCount > 0) {
-    $html .= "<form method='post' action='?view=admin/finalstandings&amp;season=" . utf8entities($season) . "&amp;series=" . (int) $seriesId . "'>\n";
-    $html .= "<input type='hidden' name='season' value='" . utf8entities($season) . "'/>\n";
-    $html .= "<input type='hidden' name='series' value='" . (int) $seriesId . "'/>\n";
-    $clearConfirm = _("Clear saved final standings for this division?");
-    $html .= "<p><input class='button' type='submit' name='clear_final_standings' value='" . _("Clear standings") . "' onclick='return confirm(\"" . addslashes($clearConfirm) . "\")'/></p>\n";
-    $html .= "</form>\n";
-}
 
 echo $html;
 contentEnd();
