@@ -201,6 +201,14 @@ td {
 	display: none;
 }
 
+.topheader_auth_mobile {
+	display: none;
+}
+
+.menu_close_button {
+	display: none;
+}
+
 @media only screen and (max-width: 768px) {
 	.menu_left {
 		display: none;
@@ -220,10 +228,41 @@ td {
 		display: block;
 	}
 
+	.menu_close_button {
+		display: block;
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		width: 16px;
+		height: 16px;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		color: #ffffff;
+		font-size: 14px;
+		line-height: 16px;
+		text-align: center;
+		z-index: 1;
+	}
+
+	.menu_left .seasondropdown {
+		position: relative;
+		z-index: 2;
+	}
+
 	.menu_button {
 		display: inline-block;
 		width: 30px;
 		padding: 5px 20px 0px 25px;
+	}
+
+	.topheader_auth_inline {
+		display: none;
+	}
+
+	.topheader_auth_mobile {
+		display: inline;
 	}
 
 	.navigation_bar {

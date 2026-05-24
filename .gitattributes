@@ -2,6 +2,7 @@
 /.agents/** export-ignore
 /.claude/** export-ignore
 /.codex/** export-ignore
+/.editorconfig export-ignore
 /.git* export-ignore
 /.githooks/** export-ignore
 /.github/** export-ignore
@@ -17,5 +18,6 @@
 /eslint.config.js export-ignore
 /live/** export-ignore
 /phpstan* export-ignore
+/README.md export-ignore
 /reports/** export-ignore
 /vendor/** export-ignore
