@@ -158,7 +158,7 @@ should_skip_package_path() {
     local cust_id
 
     if [[ "${PACKAGE_TYPE}" == "update" ]]; then
-        if [[ "${path}" == "install.php" || "${path}" == *.sql ]]; then
+        if [[ "${path}" == "install.php" || "${path}" == "conf/config.inc.example.php" || "${path}" == *.sql ]]; then
             return 0
         fi
     fi
@@ -229,14 +229,12 @@ while IFS= read -r -d '' path; do
 done < "${TRACKED_FILES_LIST}"
 
 required_paths=(
-    "README.md"
     "LICENSE"
     "COPYING.txt"
     "version.php"
     "index.php"
     "admin"
     "api"
-    "conf/config.inc.example.php"
     "cust/default"
     "ext"
     "images"
@@ -254,6 +252,7 @@ required_paths=(
 
 if [[ "${PACKAGE_TYPE}" == "install" ]]; then
     required_paths+=(
+        "conf/config.inc.example.php"
         "install.php"
         "sql/ultiorganizer.sql"
     )
@@ -278,6 +277,7 @@ forbidden_paths=(
     ".agents"
     ".claude"
     ".codex"
+    ".editorconfig"
     ".git"
     ".gitattributes"
     ".githooks"
@@ -296,6 +296,7 @@ forbidden_paths=(
     "phpstan-baseline.neon"
     "phpstan-stubs.php"
     "phpstan.neon.dist"
+    "README.md"
     "reports"
     "vendor"
 )
@@ -314,6 +315,10 @@ if [[ "${PACKAGE_TYPE}" == "update" ]]; then
     fi
     if find "${PACKAGE_DIR}" -name '*.sql' -print -quit | grep -q .; then
         echo "error: update package contains .sql files" >&2
+        exit 1
+    fi
+    if [[ -e "${PACKAGE_DIR}/conf/config.inc.example.php" ]]; then
+        echo "error: update package contains forbidden path: conf/config.inc.example.php" >&2
         exit 1
     fi
 fi

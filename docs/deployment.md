@@ -5,7 +5,7 @@ Ultiorganizer has two different working layouts:
 - the full repository checkout for development
 - the release package for production installation
 
-Production installations should use the release package. The package contains the runtime application, installer, default configuration example, SQL schema, skins, translations, and static assets. It leaves out documentation, AI review assets, Docker development files, IDE settings, Composer tooling, PHPStan configuration, Git hooks, and repository metadata.
+Production installations should use the release package. The install package contains the runtime application, installer, default configuration example, SQL schema, skins, translations, and static assets. Update packages omit installer-only files such as the default configuration example. Release packages leave out documentation, AI review assets, Docker development files, IDE settings, Composer tooling, PHPStan configuration, Git hooks, and repository metadata.
 
 ## Build a release package
 
@@ -52,7 +52,7 @@ To install Ultiorganizer on a server:
 6. After installation, make sure `conf/` and `conf/config.inc.php` are not writable by the web server user.
 7. Remove `install.php` from the server, or block access to it at the web-server level.
 
-The installer needs `sql/ultiorganizer.sql` and `conf/config.inc.example.php`, so both files are included in the release package. They should not be exposed for browsing by the web server after installation.
+The installer needs `sql/ultiorganizer.sql` and `conf/config.inc.example.php`, so both files are included in install packages. Update packages omit both files. They should not be exposed for browsing by the web server after installation.
 
 ## Development checkout deployments
 
