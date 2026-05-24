@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-24 08:08+0300\n"
+"POT-Creation-Date: 2026-05-24 10:49+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -86,7 +86,7 @@ msgstr "* nur Mixed"
 msgid "-> %d"
 msgstr "-> %d"
 
-#: admin/finalstandings.php:130 admin/seasongames.php:119
+#: admin/finalstandings.php:126 admin/seasongames.php:119
 #: admin/seasonpools.php:104 admin/seasonstandings.php:172
 #: admin/seasonteams.php:160 admin/seasonteams.php:232
 #: admin/seriesseeding.php:37 user/respgames.php:71
@@ -550,16 +550,6 @@ msgstr "Spielerdaten anonymisieren"
 msgid "Archive statistics"
 msgstr "Spielstatistik erzeugen"
 
-#: admin/stats.php:83
-#, php-format
-msgid ""
-"Archived statistics currently provide final standings for %d divisions. "
-"Saving final standings makes them independent of archived statistics."
-msgstr ""
-"Archivierte Statistiken liefern derzeit Endplatzierungen für %d Divisionen. "
-"Durch das Speichern von Endplatzierungen werden sie unabhängig von "
-"archivierten Statistiken."
-
 #: admin/privacyplayer.php:59
 msgid ""
 "Are you sure you want to anonymize the selected player? This removes "
@@ -619,6 +609,21 @@ msgid ""
 msgstr ""
 "Als Trennzeichen im Zeitfeld kannst du '.', ',', ':' oder ';' verwenden"
 
+#: admin/finalstandings.php:79
+msgid "Assign a placement or disqualification to every team before saving."
+msgstr ""
+"Weisen Sie jedem Team eine Platzierung oder Disqualifikation zu, bevor Sie "
+"speichern."
+
+#: admin/finalstandings.php:138
+msgid ""
+"Assign a placement or disqualification to every team. Saved placements "
+"replace the automatic live standings for this division."
+msgstr ""
+"Weisen Sie jedem Team eine Platzierung oder Disqualifikation zu. "
+"Gespeicherte Platzierungen ersetzen die automatischen Live-Platzierungen für "
+"diese Division."
+
 #: gameplay.php:210 cust/bula/pdfscoresheet.php:595
 #: cust/default/pdfscoresheet.php:601 cust/gummis/pdfscoresheet.php:664
 #: cust/slkl/pdfscoresheet.php:578 cust/wfdf/pdfscoresheet.php:1234
@@ -668,6 +673,10 @@ msgstr "Auto-Inkrement"
 #: admin/accreditation.php:66
 msgid "Automatic Accreditation"
 msgstr "Automatische Akkreditierung"
+
+#: teams.php:357
+msgid "Automatic standings, not confirmed"
+msgstr "Automatische Platzierungen, nicht bestätigt"
 
 #: teamcard.php:278
 msgid "Average"
@@ -786,7 +795,7 @@ msgid "Blogger"
 msgstr "Blogger"
 
 #: statistics.php:49 statistics.php:225 lib/pool.functions.php:303
-#: lib/standings.functions.php:1001
+#: lib/standings.functions.php:898
 msgid "Bronze"
 msgstr "Bronze"
 
@@ -827,7 +836,7 @@ msgstr "Cache-Größe"
 msgid "Calc. stats"
 msgstr "Statistik berechnen"
 
-#: admin/stats.php:95
+#: admin/stats.php:89
 msgid "Calculate"
 msgstr "Bererchnen"
 
@@ -1035,13 +1044,18 @@ msgstr "Cache leeren"
 msgid "Clear cache?"
 msgstr ""
 
-#: admin/finalstandings.php:245
+#: admin/finalstandings.php:236
 msgid "Clear saved final standings for this division?"
 msgstr "Gespeicherte Endplatzierungen für diese Division löschen?"
 
-#: admin/finalstandings.php:246
+#: admin/finalstandings.php:237
 msgid "Clear standings"
 msgstr "Platzierungen löschen"
+
+#: admin/finalstandings.php:140
+msgid "Clearing reverts this division to automatic live standings."
+msgstr ""
+"Das Löschen setzt diese Division auf automatische Live-Platzierungen zurück."
 
 #: user/respgames.php:28
 msgid "Click Mass input to enter multiple results at once, then click Save"
@@ -1216,6 +1230,11 @@ msgstr ""
 #: user/enrollteam.php:116
 msgid "Confirmed"
 msgstr "Bestätigt"
+
+#: admin/stats.php:74
+#, php-format
+msgid "Confirmed final standings will be used for %d divisions."
+msgstr "Bestätigte Endplatzierungen werden für %d Divisionen verwendet."
 
 #: user/addextraemail.php:59
 msgid "Confirming extra email address failed"
@@ -1606,7 +1625,7 @@ msgstr ""
 msgid "Disable visitor logging"
 msgstr "Besucherprotokollierung deaktivieren"
 
-#: teams.php:287 admin/finalstandings.php:234 lib/standings.functions.php:991
+#: teams.php:343 admin/finalstandings.php:225 lib/standings.functions.php:888
 msgid "Disqualified"
 msgstr "Disqualifiziert"
 
@@ -1620,7 +1639,7 @@ msgstr "Disqualifiziert"
 #: admin/editgame.php:236 admin/privacyplayer.php:86 admin/seasonpoints.php:181
 #: admin/seasonstats.php:33 admin/spirit.php:44 admin/spirit.php:103
 #: admin/spirit.php:152 admin/spirit.php:231 admin/spirit.php:279
-#: admin/spirit.php:334 admin/spirit.php:541 admin/stats.php:112
+#: admin/spirit.php:334 admin/spirit.php:541 admin/stats.php:106
 #: admin/tdtools.php:24 admin/tdtools.php:60 cust/bula/pdfscoresheet.php:73
 #: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
 #: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:281
@@ -2083,7 +2102,7 @@ msgstr "Endplatzierungen konnten nicht gelöscht werden."
 msgid "Failed to delete round."
 msgstr "Runde konnte nicht geloescht werden."
 
-#: admin/finalstandings.php:90
+#: admin/finalstandings.php:86
 msgid "Failed to save final standings."
 msgstr "Endplatzierungen konnten nicht gespeichert werden."
 
@@ -2199,7 +2218,7 @@ msgstr "Fuellen Sie den Spielbericht aus"
 msgid "Filling instructions:"
 msgstr "Anleitung:"
 
-#: admin/stats.php:126
+#: admin/stats.php:120
 msgid "Final Standings"
 msgstr "Endergebnis"
 
@@ -2225,12 +2244,27 @@ msgid "Final scores"
 msgstr "Endergebnisse"
 
 #: seasonlist.php:33 admin/finalstandings.php:15 admin/finalstandings.php:21
-#: admin/finalstandings.php:42 admin/finalstandings.php:111
-#: admin/finalstandings.php:124
+#: admin/finalstandings.php:42 admin/finalstandings.php:107
+#: admin/finalstandings.php:120
 msgid "Final standings"
 msgstr "Endergebnis"
 
-#: admin/finalstandings.php:134
+#: admin/stats.php:77
+#, php-format
+msgid ""
+"Final standings are not defined for %d divisions; live standings will be "
+"used."
+msgstr ""
+"Für %d Divisionen sind keine Endplatzierungen festgelegt; es werden Live-"
+"Platzierungen verwendet."
+
+#: admin/finalstandings.php:132
+msgid "Final standings are not defined; automatic live standings are shown."
+msgstr ""
+"Endplatzierungen sind nicht festgelegt; automatische Live-Platzierungen "
+"werden angezeigt."
+
+#: admin/finalstandings.php:130
 msgid "Final standings are published for this division."
 msgstr "Endplatzierungen sind für diese Division veröffentlicht."
 
@@ -2238,21 +2272,7 @@ msgstr "Endplatzierungen sind für diese Division veröffentlicht."
 msgid "Final standings cleared."
 msgstr "Endplatzierungen gelöscht."
 
-#: admin/stats.php:80
-#, php-format
-msgid ""
-"Final standings have not been saved for %d divisions. Statistics calculation "
-"will use archived or live standings for those divisions."
-msgstr ""
-"Für %d Divisionen wurden keine Endplatzierungen gespeichert. Die "
-"Statistikberechnung verwendet für diese Divisionen archivierte oder Live-"
-"Platzierungen."
-
-#: admin/finalstandings.php:138
-msgid "Final standings have not been saved for this division."
-msgstr "Endplatzierungen wurden für diese Division noch nicht gespeichert."
-
-#: admin/finalstandings.php:82
+#: admin/finalstandings.php:81
 msgid "Final standings saved."
 msgstr "Endplatzierungen gespeichert."
 
@@ -2655,14 +2675,14 @@ msgstr "Zusammenfassung des Spielverlaufs"
 #: seriesstatus.php:337 spiritstatus.php:101 spiritstatus.php:103
 #: statistics.php:126 statistics.php:168 teamcard.php:123 teamcard.php:168
 #: teamcard.php:277 teamcard.php:404 teamcard.php:493 teamcard.php:601
-#: teamcard.php:686 teams.php:125 teams.php:177 teams.php:368
+#: teamcard.php:686 teams.php:125 teams.php:177 teams.php:385
 #: admin/accreditation.php:193 admin/accreditation.php:256
 #: admin/editstanding.php:61 admin/poolgames.php:17 admin/reservations.php:119
 #: admin/seasonadmin.php:94 admin/seasongames.php:21 admin/seasonseries.php:124
 #: admin/seasonstandings.php:305 admin/seasonstandings.php:362
 #: admin/seasonstandings.php:410 admin/seasonstats.php:21
 #: admin/seasonstats.php:35 admin/seriesgames.php:31 admin/seriesgames.php:41
-#: admin/stats.php:111 ext/countrystatus.php:51 ext/eventpools.php:47
+#: admin/stats.php:105 ext/countrystatus.php:51 ext/eventpools.php:47
 #: ext/poolscoreboard.php:42 ext/poolstatus.php:50 ext/teamscoreboard.php:57
 #: lib/search.functions.php:785
 msgid "Games"
@@ -2843,7 +2863,7 @@ msgid "Goals scored"
 msgstr "Erzielte Punkte"
 
 #: statistics.php:49 statistics.php:225 lib/pool.functions.php:299
-#: lib/standings.functions.php:995
+#: lib/standings.functions.php:892
 msgid "Gold"
 msgstr "Gold"
 
@@ -3058,7 +3078,7 @@ msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren:"
 msgid "If game ongoing:"
 msgstr "Wenn das Spiel noch läuft:"
 
-#: admin/stats.php:127
+#: admin/stats.php:121
 msgid ""
 "If the standings are not correct, use the mouse to drag teams into the "
 "correct order and press Save standings."
@@ -3369,15 +3389,6 @@ msgstr ""
 "Lasse den Spirit-Modus leer, wenn dieses Ereignis keine Spirit-Wertungen "
 "erfasst."
 
-#: admin/finalstandings.php:144
-msgid ""
-"Leave undecided placements blank. Saved placements are published "
-"immediately; undecided placements use archived or live standings until saved."
-msgstr ""
-"Nicht entschiedene Platzierungen leer lassen. Gespeicherte Platzierungen "
-"werden sofort veröffentlicht; nicht entschiedene Platzierungen verwenden "
-"archivierte oder Live-Platzierungen, bis sie gespeichert werden."
-
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:197
 #: user/teamplayers.php:170
 msgid "License"
@@ -3655,7 +3666,7 @@ msgstr ""
 msgid "Missing spirit score for %s. "
 msgstr "Spirit-Bewertung für %s fehlt. "
 
-#: teams.php:421
+#: teams.php:438
 msgid "Missing spirit submissions"
 msgstr "Fehlende Spirit-Einreichungen"
 
@@ -3708,7 +3719,7 @@ msgstr "Transf. von"
 msgid "Moves to"
 msgstr "Transf. nach"
 
-#: admin/finalstandings.php:145
+#: admin/finalstandings.php:139
 msgid ""
 "Multiple teams may share the same placement. Disqualified teams are shown "
 "last without a placement."
@@ -4110,12 +4121,6 @@ msgstr "Eine einfache Bewertung"
 msgid "Ongoing"
 msgstr "Spiel läuft"
 
-#: admin/finalstandings.php:146
-msgid "Only checked rows with a placement or disqualification are saved."
-msgstr ""
-"Nur markierte Zeilen mit einer Platzierung oder Disqualifikation werden "
-"gespeichert."
-
 #: admin/eventviewer.php:105
 msgid "Only user"
 msgstr "Nur Benutzer"
@@ -4224,14 +4229,7 @@ msgstr "Seitentitel"
 msgid "Pair"
 msgstr "Paar"
 
-#: admin/finalstandings.php:84
-msgid ""
-"Partial final standings saved. Saved placements are published immediately."
-msgstr ""
-"Teilweise Endplatzierungen gespeichert. Gespeicherte Platzierungen werden "
-"sofort veröffentlicht."
-
-#: admin/finalstandings.php:104
+#: admin/finalstandings.php:100
 msgid "Partially saved final standings"
 msgstr "Teilweise gespeicherte Endplatzierungen"
 
@@ -4330,8 +4328,8 @@ msgstr "Picasa"
 msgid "Place of birth"
 msgstr "Geburtsort"
 
-#: poolstatus.php:702 poolstatus.php:705 teams.php:308
-#: admin/finalstandings.php:162 admin/seasonpools.php:117
+#: poolstatus.php:702 poolstatus.php:705 teams.php:310
+#: admin/finalstandings.php:154 admin/seasonpools.php:117
 #: ext/countrystatus.php:232 ext/eventpools.php:193 ext/poolstatus.php:190
 msgid "Placement"
 msgstr "Platzierung"
@@ -4456,7 +4454,7 @@ msgstr "Spieler-Statistiken"
 
 #: clubcard.php:156 clubcard.php:183 countrycard.php:42 countrycard.php:67
 #: menufunctions.php:690 admin/seasonadmin.php:84 admin/seasongames.php:245
-#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:110
+#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:104
 #: admin/tdtools.php:184 mobile/respgames.php:178 user/adddefensesheet.php:64
 #: user/addplayerlists.php:238 user/addresult.php:66 user/addscoresheet.php:215
 #: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
@@ -4712,7 +4710,7 @@ msgstr "Profile"
 msgid "Protocol version"
 msgstr "Protokollversion"
 
-#: admin/finalstandings.php:104
+#: admin/finalstandings.php:100
 msgid "Published final standings"
 msgstr "Veröffentlichte Endplatzierungen"
 
@@ -4760,7 +4758,7 @@ msgstr "Schreibgeschuetztes Ereignis"
 msgid "Read-only spirit review"
 msgstr "Schreibgeschuetzte Spirit-Bewertung"
 
-#: admin/stats.php:122
+#: admin/stats.php:116
 msgid "Recalculate"
 msgstr "Neu berechnen"
 
@@ -5133,25 +5131,24 @@ msgstr "Samstag"
 #: admin/addseasons.php:464 admin/addseasonseries.php:135
 #: admin/addseasonteams.php:216 admin/addserieformats.php:192
 #: admin/clubs.php:83 admin/clubs.php:120 admin/editgame.php:285
-#: admin/editstanding.php:59 admin/finalstandings.php:162
-#: admin/schedule.php:573 admin/seasongames.php:272 admin/seasonmoves.php:216
-#: admin/seasonpoints.php:271 admin/seasonpools.php:307
-#: admin/seasonseries.php:180 admin/seasonstandings.php:544
-#: admin/seasonteams.php:268 admin/select_teams.php:153
-#: admin/seriesseeding.php:74 admin/serieteams.php:184 admin/serverconf.php:429
-#: admin/translations.php:137 mobile/addcomment.php:42
-#: mobile/addfirstoffence.php:47 mobile/addhalftime.php:37
-#: mobile/addofficial.php:27 mobile/addplayerlists.php:132
-#: mobile/addspirittimeouts.php:85 mobile/addtimeouts.php:105
-#: mobile/respgames.php:134 plugins/lisence_modifier.php:186
-#: scorekeeper/addcomment.php:42 scorekeeper/addfirstoffence.php:47
-#: scorekeeper/addhalftime.php:85 scorekeeper/addofficial.php:25
-#: scorekeeper/addplayerlists.php:218 scorekeeper/addspirittimeouts.php:185
-#: scorekeeper/addtimeouts.php:162 scorekeeper/result.php:101
-#: spiritkeeper/editgame.php:125 user/addmedialink.php:219
-#: user/addplayerlists.php:389 user/addspirit.php:314 user/clubprofile.php:251
-#: user/playerprofile.php:389 user/respgames.php:229 user/teamplayers.php:279
-#: user/teamprofile.php:191 user/userinfo.php:291
+#: admin/editstanding.php:59 admin/schedule.php:573 admin/seasongames.php:272
+#: admin/seasonmoves.php:216 admin/seasonpoints.php:271
+#: admin/seasonpools.php:307 admin/seasonseries.php:180
+#: admin/seasonstandings.php:544 admin/seasonteams.php:268
+#: admin/select_teams.php:153 admin/seriesseeding.php:74
+#: admin/serieteams.php:184 admin/serverconf.php:429 admin/translations.php:137
+#: mobile/addcomment.php:42 mobile/addfirstoffence.php:47
+#: mobile/addhalftime.php:37 mobile/addofficial.php:27
+#: mobile/addplayerlists.php:132 mobile/addspirittimeouts.php:85
+#: mobile/addtimeouts.php:105 mobile/respgames.php:134
+#: plugins/lisence_modifier.php:186 scorekeeper/addcomment.php:42
+#: scorekeeper/addfirstoffence.php:47 scorekeeper/addhalftime.php:85
+#: scorekeeper/addofficial.php:25 scorekeeper/addplayerlists.php:218
+#: scorekeeper/addspirittimeouts.php:185 scorekeeper/addtimeouts.php:162
+#: scorekeeper/result.php:101 spiritkeeper/editgame.php:125
+#: user/addmedialink.php:219 user/addplayerlists.php:389 user/addspirit.php:314
+#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:229
+#: user/teamplayers.php:279 user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
 msgstr "Speichern"
 
@@ -5196,7 +5193,7 @@ msgstr "Punkt mit Fehlern speichern"
 msgid "Save scores"
 msgstr "Ergebnis speichern"
 
-#: admin/finalstandings.php:239 admin/stats.php:128
+#: admin/finalstandings.php:230 admin/stats.php:122
 msgid "Save standings"
 msgstr "Ergebnisse speichern"
 
@@ -5204,30 +5201,7 @@ msgstr "Ergebnisse speichern"
 msgid "Save times"
 msgstr "Zeiten speichern"
 
-#: admin/stats.php:77
-#, php-format
-msgid ""
-"Saved final standings are partial for %d divisions. Remaining placements "
-"will use archived or live standings."
-msgstr ""
-"Gespeicherte Endplatzierungen sind für %d Divisionen unvollständig. "
-"Verbleibende Platzierungen verwenden archivierte oder Live-Platzierungen."
-
-#: admin/stats.php:74
-#, php-format
-msgid "Saved final standings will be used for %d divisions."
-msgstr "Gespeicherte Endplatzierungen werden für %d Divisionen verwendet."
-
-#: admin/finalstandings.php:136
-msgid ""
-"Saved placements are published for this division. Undecided placements use "
-"archived or live standings until saved."
-msgstr ""
-"Gespeicherte Platzierungen sind für diese Division veröffentlicht. Nicht "
-"entschiedene Platzierungen verwenden archivierte oder Live-Platzierungen, "
-"bis sie gespeichert werden."
-
-#: admin/finalstandings.php:143
+#: admin/finalstandings.php:137
 msgid "Saving affects only the selected division."
 msgstr "Speichern betrifft nur die ausgewählte Division."
 
@@ -5495,10 +5469,6 @@ msgstr "Wähle"
 msgid "Select a valid location from the list or add it first."
 msgstr "Waehle einen gueltigen Ort aus der Liste oder fuege ihn zuerst hinzu."
 
-#: admin/finalstandings.php:159
-msgid "Select all"
-msgstr "Alle auswählen"
-
 #: ext/index.php:190
 msgid "Select and Update"
 msgstr "Auswahl und Update"
@@ -5644,7 +5614,7 @@ msgstr "Serverkonfiguration"
 msgid "Server version"
 msgstr "Serverversion"
 
-#: admin/finalstandings.php:162 admin/poolmoves.php:396
+#: admin/finalstandings.php:154 admin/poolmoves.php:396
 msgid "Set"
 msgstr "Setzen"
 
@@ -5777,7 +5747,7 @@ msgstr ""
 "Administratoren weiterhin Zugriff behalten."
 
 #: statistics.php:49 statistics.php:225 lib/pool.functions.php:301
-#: lib/standings.functions.php:998
+#: lib/standings.functions.php:895
 msgid "Silver"
 msgstr "Silber"
 
@@ -5790,7 +5760,7 @@ msgid "Some games"
 msgstr "Einige Spiele"
 
 #: admin/accreditation.php:138 admin/eventviewer.php:142
-#: admin/finalstandings.php:150
+#: admin/finalstandings.php:144
 msgid "Source"
 msgstr "Quelle"
 
@@ -6075,9 +6045,9 @@ msgstr "Statistik"
 msgid "Stats refs"
 msgstr "Statistikreferenzen"
 
-#: admin/apitokens.php:168 admin/finalstandings.php:134
-#: admin/finalstandings.php:136 admin/finalstandings.php:138
-#: scorekeeper/addscoresheet.php:258 scorekeeper/addscoresheet.php:309
+#: admin/apitokens.php:168 admin/finalstandings.php:130
+#: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:258
+#: scorekeeper/addscoresheet.php:309
 msgid "Status"
 msgstr "Zustand"
 
@@ -6085,11 +6055,11 @@ msgstr "Zustand"
 msgid "Submit Spirit Score"
 msgstr "Spirit-Bewertung einreichen"
 
-#: admin/finalstandings.php:108
+#: admin/finalstandings.php:104
 msgid "Suggested by placement standings"
 msgstr "Nach Platzierungsständen vorgeschlagen"
 
-#: admin/finalstandings.php:106
+#: admin/finalstandings.php:102
 msgid "Suggested by season points"
 msgstr "Nach Saisonpunkten vorgeschlagen"
 
@@ -6145,7 +6115,7 @@ msgstr "Aufgaben"
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/accreditation.php:193
 #: admin/accreditation.php:256 admin/dbequalize.php:246
-#: admin/finalstandings.php:162 admin/privacyplayer.php:86
+#: admin/finalstandings.php:154 admin/privacyplayer.php:86
 #: admin/seasonpoints.php:256 admin/seasonstandings.php:361
 #: admin/seasonstandings.php:409 admin/seasonstandings.php:471
 #: admin/serieteams.php:191 admin/spirit.php:232 admin/tdtools.php:23
@@ -6189,7 +6159,7 @@ msgstr "Teamdaten"
 msgid "Team has already moved."
 msgstr "Team wurde schon transferiert"
 
-#: admin/finalstandings.php:102
+#: admin/finalstandings.php:98
 msgid "Team list"
 msgstr "Teamliste"
 
@@ -6241,7 +6211,7 @@ msgstr "Team, das das Timeout nimmt"
 #: admin/clubs.php:93 admin/dbequalize.php:201 admin/dbequalize.php:268
 #: admin/poolmoves.php:395 admin/seasonadmin.php:79 admin/seasonpools.php:229
 #: admin/seasonseries.php:122 admin/seasonstats.php:21 admin/seasonstats.php:35
-#: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:109
+#: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:103
 msgid "Teams"
 msgstr "Teams"
 
@@ -6329,7 +6299,7 @@ msgstr "Der Benutzername ist schon vergeben."
 msgid "The username is already in use."
 msgstr "Der Benutzername ist schon vergeben."
 
-#: admin/finalstandings.php:153
+#: admin/finalstandings.php:147
 #, php-format
 msgid ""
 "There are %d games in this division that are not completed. Save final "
@@ -6338,7 +6308,7 @@ msgstr ""
 "In dieser Division sind %d Spiele noch nicht abgeschlossen. Endplatzierungen "
 "trotzdem speichern?"
 
-#: admin/stats.php:88 admin/stats.php:115
+#: admin/stats.php:82 admin/stats.php:109
 #, php-format
 msgid ""
 "There are %d players without a profile id. Player statistics will be skipped "
@@ -6347,7 +6317,7 @@ msgstr ""
 "Es gibt %d Spieler ohne Profil-ID. Die Spielerstatistiken werden fuer sie "
 "uebersprungen."
 
-#: admin/stats.php:92 admin/stats.php:119
+#: admin/stats.php:86 admin/stats.php:113
 #, php-format
 msgid "There are %d players without a profile id. Run statistics anyway?"
 msgstr "Es gibt %d Spieler ohne Profil-ID. Statistiken trotzdem berechnen?"
@@ -6591,7 +6561,7 @@ msgstr "Morgen"
 #: playercard.php:467 playerlist.php:38 poolstatus.php:159 poolstatus.php:185
 #: scorestatus.php:108 scorestatus.php:110 scorestatus.php:113
 #: scorestatus.php:115 seriesstatus.php:296 seriesstatus.php:343
-#: spiritstatus.php:114 spiritstatus.php:116 teamcard.php:126 teams.php:374
+#: spiritstatus.php:114 spiritstatus.php:116 teamcard.php:126 teams.php:391
 #: ext/poolscoreboard.php:45 ext/teamscoreboard.php:60
 msgid "Tot."
 msgstr "Tot."
@@ -6761,13 +6731,13 @@ msgstr ""
 msgid "Unconfirmed"
 msgstr "Unbestätigt"
 
-#: admin/finalstandings.php:218 admin/finalstandings.php:228
-#: lib/standings.functions.php:1006
+#: admin/finalstandings.php:210 admin/finalstandings.php:219
+#: lib/standings.functions.php:903
 msgid "Undecided"
 msgstr "Nicht entschieden"
 
 #: admin/seasonmoves.php:165 admin/seasonmoves.php:198
-#: admin/seasonstandings.php:588 admin/stats.php:123
+#: admin/seasonstandings.php:588 admin/stats.php:117
 msgid "Undo"
 msgstr "Rückgängig"
 
@@ -6786,10 +6756,6 @@ msgstr "Unbenannter Spieler"
 #: admin/schedule.php:379
 msgid "Unscheduled"
 msgstr "Nicht im Spielplan"
-
-#: admin/finalstandings.php:160
-msgid "Unselect all"
-msgstr "Alle abwählen"
 
 #: admin/dbrestore.php:26
 msgid "Unsupported backup format. Please upload a .gz or .sql file."
@@ -6973,7 +6939,7 @@ msgstr "WFDF (vier Kategorien plus Vergleich)"
 msgid "WFDF official (five categories)"
 msgstr "WFDF offiziell (fünf Kategorien)"
 
-#: admin/finalstandings.php:87 admin/finalstandings.php:141
+#: admin/finalstandings.php:83 admin/finalstandings.php:135
 #, php-format
 msgid "Warning: %d games in this division are not completed."
 msgstr "Warnung: In dieser Division sind %d Spiele nicht abgeschlossen."
@@ -7616,7 +7582,7 @@ msgstr "update"
 msgid "view"
 msgstr "anzeigen"
 
-#: teams.php:406 admin/poolmoves.php:319
+#: teams.php:423 admin/poolmoves.php:319
 msgid "vs."
 msgstr "gg."
 
@@ -7636,12 +7602,64 @@ msgstr "ja"
 #~ msgid "Archived statistics"
 #~ msgstr "Spielstatistik erzeugen"
 
+#, php-format
+#~ msgid ""
+#~ "Archived statistics currently provide final standings for %d divisions. "
+#~ "Saving final standings makes them independent of archived statistics."
+#~ msgstr ""
+#~ "Archivierte Statistiken liefern derzeit Endplatzierungen für %d "
+#~ "Divisionen. Durch das Speichern von Endplatzierungen werden sie "
+#~ "unabhängig von archivierten Statistiken."
+
 #~ msgid "Delete token"
 #~ msgstr "Token löschen"
+
+#, php-format
+#~ msgid ""
+#~ "Final standings have not been saved for %d divisions. Statistics "
+#~ "calculation will use archived or live standings for those divisions."
+#~ msgstr ""
+#~ "Für %d Divisionen wurden keine Endplatzierungen gespeichert. Die "
+#~ "Statistikberechnung verwendet für diese Divisionen archivierte oder Live-"
+#~ "Platzierungen."
+
+#~ msgid ""
+#~ "Leave undecided placements blank. Saved placements are published "
+#~ "immediately; undecided placements use archived or live standings until "
+#~ "saved."
+#~ msgstr ""
+#~ "Nicht entschiedene Platzierungen leer lassen. Gespeicherte Platzierungen "
+#~ "werden sofort veröffentlicht; nicht entschiedene Platzierungen verwenden "
+#~ "archivierte oder Live-Platzierungen, bis sie gespeichert werden."
 
 #, fuzzy
 #~ msgid "Partial final standings saved."
 #~ msgstr "Endergebnis"
+
+#~ msgid ""
+#~ "Partial final standings saved. Saved placements are published immediately."
+#~ msgstr ""
+#~ "Teilweise Endplatzierungen gespeichert. Gespeicherte Platzierungen werden "
+#~ "sofort veröffentlicht."
+
+#, php-format
+#~ msgid ""
+#~ "Saved final standings are partial for %d divisions. Remaining placements "
+#~ "will use archived or live standings."
+#~ msgstr ""
+#~ "Gespeicherte Endplatzierungen sind für %d Divisionen unvollständig. "
+#~ "Verbleibende Platzierungen verwenden archivierte oder Live-Platzierungen."
+
+#~ msgid ""
+#~ "Saved placements are published for this division. Undecided placements "
+#~ "use archived or live standings until saved."
+#~ msgstr ""
+#~ "Gespeicherte Platzierungen sind für diese Division veröffentlicht. Nicht "
+#~ "entschiedene Platzierungen verwenden archivierte oder Live-Platzierungen, "
+#~ "bis sie gespeichert werden."
+
+#~ msgid "Select all"
+#~ msgstr "Alle auswählen"
 
 #~ msgid ""
 #~ "This operation updates and adds event data in database with one from "
@@ -7656,3 +7674,6 @@ msgstr "ja"
 
 #~ msgid "Ultiorganizer minor version"
 #~ msgstr "Ultiorganizer-Nebenversion"
+
+#~ msgid "Unselect all"
+#~ msgstr "Alle abwählen"

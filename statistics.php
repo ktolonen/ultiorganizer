@@ -50,6 +50,9 @@ if ($list == "teamstandings") {
 
             foreach ($seasons as $season) {
                 $standings = TeamStandings($season['season_id'], $seriestype);
+                $standings = array_values(array_filter($standings, function ($row) {
+                    return (int) $row['standing'] !== 0;
+                }));
                 if (!count($standings)) {
                     continue;
                 }
@@ -58,12 +61,15 @@ if ($list == "teamstandings") {
                 $html .= "<td style='width:16%'><a href='?view=teams&amp;season=" . urlencode($season['season_id']) .
                   "&amp;list=bystandings'>" . utf8entities(U_($season['name'])) . "</a></td>";
 
-                for ($i = 0; $i < count($standings) && $i < 3; $i++) {
+                for ($i = 0; $i < 3; $i++) {
                     $html .= "<td style='width:28%'>";
-                    if (intval($standings[$i]['country']) > 0) {
-                        $html .= "&nbsp;<img height='10' src='images/flags/tiny/" . $standings[$i]['flagfile'] . "' alt=''/>&nbsp;";
+                    if (isset($standings[$i])) {
+                        if (intval($standings[$i]['country']) > 0) {
+                            $html .= "&nbsp;<img height='10' src='images/flags/tiny/" . $standings[$i]['flagfile'] . "' alt=''/>&nbsp;";
+                        }
+                        $html .= "<a href='?view=teamcard&amp;team=" . $standings[$i]['team_id'] . "'>" . utf8entities($standings[$i]['teamname']) . "</a>";
                     }
-                    $html .= "<a href='?view=teamcard&amp;team=" . $standings[$i]['team_id'] . "'>" . utf8entities($standings[$i]['teamname']) . "</a></td>";
+                    $html .= "</td>";
                 }
                 $html .= "</tr>\n";
             }

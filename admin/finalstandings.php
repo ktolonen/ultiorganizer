@@ -67,22 +67,18 @@ if (!empty($_POST['clear_final_standings'])) {
 
 if (!empty($_POST['save_final_standings'])) {
     $postedAssignments = isset($_POST['team_standing']) ? $_POST['team_standing'] : [];
-    $selectedTeamIds = isset($_POST['save_team']) ? array_map('intval', $_POST['save_team']) : [];
-    $selectedTeamIdMap = array_flip($selectedTeamIds);
-    foreach ($postedAssignments as $teamId => $value) {
-        if (!isset($selectedTeamIdMap[(int) $teamId])) {
-            unset($postedAssignments[$teamId]);
+    $incomplete = false;
+    foreach (SeriesTeams($seriesId) as $team) {
+        $value = isset($postedAssignments[$team['team_id']]) ? $postedAssignments[$team['team_id']] : 0;
+        if ($value !== 'dq' && (int) $value < 1) {
+            $incomplete = true;
+            break;
         }
     }
-    if (SaveFinalStandingsAssignments($season, $seriesId, $postedAssignments)) {
-        $postedSelected = array_filter($postedAssignments, function ($value) {
-            return $value === 'dq' || (int) $value > 0;
-        });
-        if (count($postedSelected) === count(SeriesTeams($seriesId))) {
-            $message .= "<p>" . _("Final standings saved.") . "</p>";
-        } else {
-            $message .= "<p>" . _("Partial final standings saved. Saved placements are published immediately.") . "</p>";
-        }
+    if ($incomplete) {
+        $message .= "<p class='warning'>" . _("Assign a placement or disqualification to every team before saving.") . "</p>";
+    } elseif (SaveFinalStandingsAssignments($season, $seriesId, $postedAssignments)) {
+        $message .= "<p>" . _("Final standings saved.") . "</p>";
         if ($unplayedGames > 0) {
             $message .= "<p class='warning'>" . sprintf(_("Warning: %d games in this division are not completed."), $unplayedGames) . "</p>";
         }
@@ -132,18 +128,16 @@ $html .= pageMenu($menutabs, "?view=admin/finalstandings&season=" . $season . "&
 
 if ($isPublished) {
     $html .= "<p><strong>" . _("Status") . ":</strong> " . _("Final standings are published for this division.") . "</p>\n";
-} elseif ($manualCount > 0) {
-    $html .= "<p><strong>" . _("Status") . ":</strong> " . _("Saved placements are published for this division. Undecided placements use archived or live standings until saved.") . "</p>\n";
 } else {
-    $html .= "<p><strong>" . _("Status") . ":</strong> " . _("Final standings have not been saved for this division.") . "</p>\n";
+    $html .= "<p><strong>" . _("Status") . ":</strong> " . _("Final standings are not defined; automatic live standings are shown.") . "</p>\n";
 }
 if ($unplayedGames > 0) {
     $html .= "<p class='warning'>" . sprintf(_("Warning: %d games in this division are not completed."), $unplayedGames) . "</p>\n";
 }
 $html .= "<p>" . _("Saving affects only the selected division.") . "</p>\n";
-$html .= "<p>" . _("Leave undecided placements blank. Saved placements are published immediately; undecided placements use archived or live standings until saved.") . "</p>\n";
+$html .= "<p>" . _("Assign a placement or disqualification to every team. Saved placements replace the automatic live standings for this division.") . "</p>\n";
 $html .= "<p>" . _("Multiple teams may share the same placement. Disqualified teams are shown last without a placement.") . "</p>\n";
-$html .= "<p>" . _("Only checked rows with a placement or disqualification are saved.") . "</p>\n";
+$html .= "<p>" . _("Clearing reverts this division to automatic live standings.") . "</p>\n";
 
 $allTeams = SeriesTeams($seriesId);
 
@@ -153,13 +147,11 @@ if ($unplayedGames > 0) {
     $confirmMessage = sprintf(_("There are %d games in this division that are not completed. Save final standings anyway?"), $unplayedGames);
     $saveConfirm = " onclick='return confirm(\"" . addslashes($confirmMessage) . "\")'";
 }
-$html .= "<form method='post' id='finalStandingsForm' action='?view=admin/finalstandings&amp;season=" . utf8entities($season) . "&amp;series=" . (int) $seriesId . "'>\n";
+$html .= "<form method='post' action='?view=admin/finalstandings&amp;season=" . utf8entities($season) . "&amp;series=" . (int) $seriesId . "'>\n";
 $html .= "<input type='hidden' name='season' value='" . utf8entities($season) . "'/>\n";
 $html .= "<input type='hidden' name='series' value='" . (int) $seriesId . "'/>\n";
-$html .= "<p><input class='button' type='button' value='" . _("Select all") . "' onclick='setFinalStandingChecks(true)'/> ";
-$html .= "<input class='button' type='button' value='" . _("Unselect all") . "' onclick='setFinalStandingChecks(false)'/></p>\n";
 $html .= "<table class='list finalstandings-table' border='0' cellspacing='0' cellpadding='4'>\n";
-$html .= "<tr><th>" . _("Save") . "</th><th>" . _("Placement") . "</th><th>" . _("Team") . "</th><th>" . _("Set") . "</th></tr>\n";
+$html .= "<tr><th>" . _("Placement") . "</th><th>" . _("Team") . "</th><th>" . _("Set") . "</th></tr>\n";
 $manualByTeam = [];
 foreach (ManualFinalStandings($seriesId) as $team) {
     $manualByTeam[(int) $team['team_id']] = $team;
@@ -220,7 +212,6 @@ foreach ($displayTeams as $team) {
         $placement = FinalStandingLabel((int) $manual['standing'], (int) $manual['disqualified'] === 1);
     }
     $html .= "<tr>";
-    $html .= "<td class='center'><input class='finalstandings-save' type='checkbox' name='save_team[]' value='" . $teamId . "' checked='checked'/></td>";
     $html .= "<td>" . utf8entities($placement) . "</td>";
     $html .= "<td>" . utf8entities($team['name']) . "</td>";
     $html .= "<td><select class='dropdown finalstandings-team' name='team_standing[" . $teamId . "]'>\n";
@@ -248,23 +239,5 @@ if ($manualCount > 0) {
 }
 
 echo $html;
-?>
-<script type="text/javascript">
-    function setFinalStandingChecks(checked) {
-        var form = document.getElementById('finalStandingsForm');
-        var inputs;
-        var i;
-        if (!form) {
-            return;
-        }
-        inputs = form.getElementsByTagName('input');
-        for (i = 0; i < inputs.length; i = i + 1) {
-            if (inputs[i].className.indexOf('finalstandings-save') !== -1) {
-                inputs[i].checked = checked;
-            }
-        }
-    }
-</script>
-<?php
 contentEnd();
 pageEnd();

@@ -271,11 +271,13 @@ if ($list == "allteams" || $list == "byseeding") {
 } elseif ($list == "bystandings") {
     $htmlseries = [];
     $placements = [];
+    $seriesConfirmed = [];
     $hasDisqualified = false;
 
     $series = SeasonSeries($seasonInfo['season_id'], true);
     foreach ($series as $ser) {
         $seriesPlacements = [];
+        $seriesConfirmed[] = SeriesFinalStandingsConfirmed($ser['series_id']);
         $teams  = SeriesFinalStandings($ser['series_id']);
         foreach ($teams as $index => $team) {
             if (isset($team['team_id'])) {
@@ -306,9 +308,13 @@ if ($list == "allteams" || $list == "byseeding") {
     $html .= "<table class='teams-table placements-table' cellpadding='2' style='width:100%;'>\n";
     $html .= "<tr>";
     $html .= "<th style='width:20%;'>" . _("Placement") . "</th>";
-    foreach ($series as $ser) {
+    foreach ($series as $sidx => $ser) {
         $html .= "<th style='width:" . (80 / count($series)) . "%;'><a href='?view=seriesstatus&amp;series=" .
-          $ser['series_id'] . "'>" . utf8entities(U_($ser['name'])) . "</a></th>";
+          $ser['series_id'] . "'>" . utf8entities(U_($ser['name'])) . "</a>";
+        if (empty($seriesConfirmed[$sidx])) {
+            $html .= " <span class='unconfirmed'>*</span>";
+        }
+        $html .= "</th>";
     }
     $html .= "</tr>\n";
     foreach ($placements as $placementNumber) {
@@ -347,6 +353,9 @@ if ($list == "allteams" || $list == "byseeding") {
         $html .= "</tr>\n";
     }
     $html .= "</table>\n";
+    if (count($seriesConfirmed) !== count(array_filter($seriesConfirmed))) {
+        $html .= "<p class='unconfirmed'>* " . _("Automatic standings, not confirmed") . "</p>\n";
+    }
 } elseif ($list == "byspirit") {
 
     if (ShowSpiritScoresForSeason($seasonInfo)) {

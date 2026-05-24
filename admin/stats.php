@@ -71,16 +71,10 @@ $html .= "<form method='post' action='?view=admin/stats&amp;season=$season'>\n";
 $html .= "<p>" . _("Calculation of statistics takes some time; please wait without closing the browser.") . "</p>\n";
 $finalStandingsStatus = FinalStandingsSeasonStatus($season);
 if ($finalStandingsStatus['published'] > 0) {
-    $html .= "<p>" . sprintf(_("Saved final standings will be used for %d divisions."), $finalStandingsStatus['published']) . "</p>\n";
-}
-if ($finalStandingsStatus['incomplete'] > 0) {
-    $html .= "<p class='warning'>" . sprintf(_("Saved final standings are partial for %d divisions. Remaining placements will use archived or live standings."), $finalStandingsStatus['incomplete']) . "</p>\n";
+    $html .= "<p>" . sprintf(_("Confirmed final standings will be used for %d divisions."), $finalStandingsStatus['published']) . "</p>\n";
 }
 if ($finalStandingsStatus['unpublished'] > 0) {
-    $html .= "<p class='warning'>" . sprintf(_("Final standings have not been saved for %d divisions. Statistics calculation will use archived or live standings for those divisions."), $finalStandingsStatus['unpublished']) . "</p>\n";
-}
-if ($finalStandingsStatus['archived'] > 0) {
-    $html .= "<p class='warning'>" . sprintf(_("Archived statistics currently provide final standings for %d divisions. Saving final standings makes them independent of archived statistics."), $finalStandingsStatus['archived']) . "</p>\n";
+    $html .= "<p class='warning'>" . sprintf(_("Final standings are not defined for %d divisions; live standings will be used."), $finalStandingsStatus['unpublished']) . "</p>\n";
 }
 
 if (!IsSeasonStatsCalculated($season)) {

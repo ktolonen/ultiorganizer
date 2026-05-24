@@ -881,6 +881,12 @@ tr.admintablerow:nth-of-type(even) {
 	font-style: italic;
 }
 
+.unconfirmed {
+	color: #a0a0a0;
+	font-style: italic;
+	font-weight: normal;
+}
+
 .guides {
 	font-style: italic;
 	font-size: 8pt;
