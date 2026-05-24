@@ -1000,15 +1000,63 @@ function SaveFinalStandingsOrder($seasonId, $seriesId, $teamIds)
         return false;
     }
 
-    // Preserve disqualifications: the drag-reorder list cannot express a
-    // disqualification, so teams already marked disqualified keep that status
-    // instead of being reassigned a numeric placement.
+    // Preserve placements the drag-reorder list cannot express: disqualifications
+    // and already shared placements.
     $disqualified = [];
+    $standingGroups = [];
     foreach (DBQueryToArray(sprintf(
-        "SELECT team_id FROM uo_team_final_standing WHERE series=%d AND disqualified=1",
+        "SELECT team_id, standing, disqualified FROM uo_team_final_standing WHERE series=%d",
         (int) $seriesId,
     )) as $row) {
-        $disqualified[(int) $row['team_id']] = true;
+        $teamId = (int) $row['team_id'];
+        if ((int) $row['disqualified'] === 1) {
+            $disqualified[$teamId] = true;
+            continue;
+        }
+        $standing = (int) $row['standing'];
+        if ($standing > 0) {
+            if (!isset($standingGroups[$standing])) {
+                $standingGroups[$standing] = [];
+            }
+            $standingGroups[$standing][] = $teamId;
+        }
+    }
+
+    $positionsByTeam = [];
+    foreach ($cleanIds as $position => $teamId) {
+        if ($teamId > 0) {
+            $positionsByTeam[$teamId] = $position;
+        }
+    }
+
+    $preservedSharedGroups = [];
+    $preservedSharedGroupByTeam = [];
+    foreach ($standingGroups as $groupTeamIds) {
+        if (count($groupTeamIds) <= 1) {
+            continue;
+        }
+
+        $positions = [];
+        foreach ($groupTeamIds as $teamId) {
+            if (!isset($positionsByTeam[$teamId])) {
+                continue 2;
+            }
+            $positions[] = $positionsByTeam[$teamId];
+        }
+        sort($positions);
+        $firstPosition = $positions[0];
+        $lastPosition = $positions[count($positions) - 1];
+        if ($lastPosition - $firstPosition + 1 !== count($positions)) {
+            continue;
+        }
+
+        $groupId = count($preservedSharedGroups);
+        $preservedSharedGroups[$groupId] = [];
+        for ($position = $firstPosition; $position <= $lastPosition; $position++) {
+            $teamId = (int) $cleanIds[$position];
+            $preservedSharedGroups[$groupId][] = $teamId;
+            $preservedSharedGroupByTeam[$teamId] = $groupId;
+        }
     }
 
     $hasArchived = SeriesHasArchivedStats($seriesId);
@@ -1020,8 +1068,36 @@ function SaveFinalStandingsOrder($seasonId, $seriesId, $teamIds)
             (int) $seriesId,
         ));
         $standing = 0;
+        $processedSharedGroups = [];
         foreach ($cleanIds as $teamId) {
             if ($teamId <= 0) {
+                continue;
+            }
+            if (isset($preservedSharedGroupByTeam[$teamId])) {
+                $groupId = $preservedSharedGroupByTeam[$teamId];
+                if (isset($processedSharedGroups[$groupId])) {
+                    continue;
+                }
+                $standing++;
+                foreach ($preservedSharedGroups[$groupId] as $sharedTeamId) {
+                    DBQuery(sprintf(
+                        "INSERT INTO uo_team_final_standing (season, series, team_id, standing, disqualified)
+                        VALUES ('%s', %d, %d, %d, 0)",
+                        DBEscapeString($seasonId),
+                        (int) $seriesId,
+                        (int) $sharedTeamId,
+                        (int) $standing,
+                    ));
+                    if ($hasArchived) {
+                        DBQuery(sprintf(
+                            "UPDATE uo_team_stats SET standing=%d WHERE team_id=%d",
+                            (int) $standing,
+                            (int) $sharedTeamId,
+                        ));
+                    }
+                }
+                $standing += count($preservedSharedGroups[$groupId]) - 1;
+                $processedSharedGroups[$groupId] = true;
                 continue;
             }
             if (isset($disqualified[$teamId])) {
