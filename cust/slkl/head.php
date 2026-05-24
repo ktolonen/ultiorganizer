@@ -21,6 +21,7 @@ function pageHeader()
 
     $ret = "<a href='" . GetURLBase() . "' class='header_text'>" . _("Ultimate Pelikone") . "</a>";
     $ret .= "<span style='color: #0bc5e0;font-size: 14pt;'> " . _("Finnish Flying Disc Association") . "</span>\n";
+    $ret .= "<span class='menu_button_row'><img class='menu_button' onclick='menu_toggle()' src='" . $include_prefix . "images/menu-bars.svg' alt='menu'></span>";
 
     return $ret;
 }

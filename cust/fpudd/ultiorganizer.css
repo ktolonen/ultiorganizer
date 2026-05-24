@@ -519,6 +519,14 @@ table#pagemenu a.current {
 	text-decoration: none;
 }
 
+.topheader_auth_mobile {
+	display: none;
+}
+
+.menu_close_button {
+	display: none;
+}
+
 .history-table {
 	white-space: nowrap;
 	border-collapse: collapse;

@@ -244,6 +244,146 @@ td {
 	margin: 0 0 5px 0;
 }
 
+.menu_button {
+	display: none;
+}
+
+.menu_button_row {
+	display: none;
+}
+
+.topheader_auth_mobile {
+	display: none;
+}
+
+.menu_close_button {
+	display: none;
+}
+
+@media only screen and (max-width: 768px) {
+	.page {
+		border-left: 0;
+		border-right: 0;
+		border-radius: 0;
+		box-shadow: none;
+	}
+
+	.page_top {
+		height: auto;
+		min-height: 50px;
+	}
+
+	.page_top table {
+		white-space: normal !important;
+	}
+
+	.page_middle > table {
+		width: 100%;
+		margin: 0;
+	}
+
+	.menu_left {
+		display: none;
+		position: fixed;
+		top: 50px;
+		left: 0;
+		bottom: 0;
+		width: 220px;
+		max-width: 85vw;
+		padding: 8px;
+		background-color: rgba(0, 0, 0, 0.8);
+		overflow-y: auto;
+		z-index: 1000;
+	}
+
+	.menu_left.menu_open {
+		display: block;
+	}
+
+	.menu_close_button {
+		display: block;
+		position: absolute;
+		top: 4px;
+		right: 4px;
+		width: 16px;
+		height: 16px;
+		margin: 0;
+		padding: 0;
+		border: 0;
+		background-color: transparent;
+		color: #ffffff;
+		font-size: 14px;
+		line-height: 16px;
+		text-align: center;
+		z-index: 1;
+	}
+
+	.menu_left .seasondropdown {
+		position: relative;
+		z-index: 2;
+	}
+
+	.menu_button {
+		display: block;
+		width: 30px;
+		padding: 4px 0 0 0;
+	}
+
+	.menu_button_row {
+		display: block;
+		margin-left: 16px;
+	}
+
+	.header_text:link,
+	.header_text:visited,
+	.header_text:active,
+	.header_text:hover,
+	.header_text:focus {
+		font-size: 16pt;
+		margin-left: 4px;
+		white-space: nowrap;
+	}
+
+	.page_top .topheader_left {
+		width: 1%;
+		white-space: nowrap;
+	}
+
+	.topheader_left span {
+		display: none;
+	}
+
+	.topheader_left .menu_button_row {
+		display: block;
+	}
+
+	.topheader_auth_inline {
+		display: none;
+	}
+
+	.topheader_auth_mobile {
+		display: inline;
+		white-space: nowrap;
+	}
+
+	.page_top .topheader_right {
+		width: 100%;
+		padding-right: 8px;
+		text-align: right;
+		vertical-align: top;
+	}
+
+	.page_top .topheader_right table {
+		width: auto !important;
+		margin-left: auto;
+		margin-right: 0;
+	}
+
+	.navigation_bar {
+		display: none;
+	}
+}
+
 .leftmenulinks {
 	float: left;
 	text-align: left;

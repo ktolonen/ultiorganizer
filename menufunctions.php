@@ -165,9 +165,12 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
 
         if ($user == 'anonymous') {
             if (!$hideInlineLogin) {
+                echo "<span class='topheader_auth_inline'>";
                 echo "<input class='input' type='text' id='myusername' name='myusername' size='10' style='border:1px solid #555555'/>&nbsp;";
                 echo "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
                 echo "<input class='button' type='submit' name='login' value='" . utf8entities(_("Log in")) . "' style='border:1px solid #000000'/>";
+                echo "</span>";
+                echo "<span class='topheader_auth_mobile'><a class='topheaderlink' href='?view=login'>" . utf8entities(_("Log in")) . "</a></span>";
             }
         } else {
             echo "<span class='topheadertext'>" . utf8entities(_("User")) . ": <a class='topheaderlink' href='?view=user/userinfo'>" . utf8entities($userinfo['name']) . "</a></span>";
@@ -476,6 +479,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         return;
     }
     echo "<td id='menu_left' class='menu_left'>";
+    echo "<button type='button' class='menu_close_button' onclick='menu_toggle()' aria-label='" . utf8entities(_("Close")) . "'>x</button>";
 
     // Administration menu
     if (hasScheduleRights() || isSuperAdmin() || hasTranslationRight()) {
