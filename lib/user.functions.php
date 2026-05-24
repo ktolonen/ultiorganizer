@@ -438,7 +438,7 @@ function getViewPools($selSeasonId)
     $query .= "FROM uo_pool pool
 		left outer join uo_series ser on (pool.series = ser.series_id)
 		left outer join uo_season seas on (ser.season = seas.season_id) ";
-    $query .= "WHERE pool.visible=1";
+    $query .= "WHERE pool.visible=1 AND ser.valid=1";
     if (isset($_SESSION['userproperties']['poolselector'])) {
         foreach ($_SESSION['userproperties']['poolselector'] as $selector => $param) {
             if ($numselectors == 0) {

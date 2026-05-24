@@ -107,7 +107,7 @@ if (iget("time")) {
     $timefilter  = iget("time");
 }
 
-$games = TimetableGames($id, $gamefilter, $timefilter, $order);
+$games = TimetableGames($id, $gamefilter, $timefilter, $order, "", true);
 
 IcalPrintLine('BEGIN', 'VCALENDAR');
 IcalPrintLine('VERSION', '2.0');

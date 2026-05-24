@@ -1332,6 +1332,38 @@ function upgrade92()
     runQuery("ALTER TABLE `uo_game` DROP COLUMN `pool`");
 }
 
+function upgrade93()
+{
+    if (!hasTable("uo_team_final_standing")) {
+        runQuery("CREATE TABLE `uo_team_final_standing` (
+            `season` varchar(10) NOT NULL,
+            `series` int(10) NOT NULL,
+            `team_id` int(10) NOT NULL,
+            `standing` int(5) DEFAULT NULL,
+            `disqualified` tinyint(1) NOT NULL DEFAULT 0,
+            `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+            PRIMARY KEY (`team_id`),
+            KEY `idx_team_final_standing_series_standing` (`series`,`standing`),
+            KEY `idx_team_final_standing_series_disqualified` (`series`,`disqualified`),
+            KEY `idx_team_final_standing_season` (`season`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+
+    runQuery("INSERT IGNORE INTO uo_team_final_standing (season, series, team_id, standing, disqualified)
+        SELECT ts.season, ts.series, ts.team_id, ts.standing, 0
+        FROM uo_team_stats ts
+        LEFT JOIN uo_team t ON (t.team_id=ts.team_id)
+        LEFT JOIN uo_series ser ON (ser.series_id=ts.series)
+        LEFT JOIN uo_season_stats ss ON (ss.season=ts.season)
+        WHERE ts.season IS NOT NULL
+            AND ts.series IS NOT NULL
+            AND ts.standing IS NOT NULL
+            AND ts.standing > 0
+            AND t.series=ts.series
+            AND ser.season=ts.season
+            AND ss.season IS NOT NULL");
+}
+
 function upgradeEngineToInnoDb()
 {
     $charset = 'utf8mb4';
@@ -1620,6 +1652,14 @@ function cleanupNullableOrphans()
     foreach ($cleanup as $q) {
         runQuery($q);
     }
+
+    if (hasTable('uo_team_final_standing')) {
+        runQuery("DELETE fs FROM uo_team_final_standing fs
+            LEFT JOIN uo_season se ON se.season_id = fs.season
+            LEFT JOIN uo_series s ON s.series_id = fs.series
+            LEFT JOIN uo_team t ON t.team_id = fs.team_id
+            WHERE se.season_id IS NULL OR s.series_id IS NULL OR t.team_id IS NULL");
+    }
 }
 
 /**
@@ -1669,6 +1709,17 @@ function findOrphanErrors()
             $errors[] = "Orphaned rows for " . $label . ".\n";
         }
     }
+    if (hasTable('uo_team_final_standing')) {
+        $res = runQuery("SELECT 1 FROM uo_team_final_standing fs
+            LEFT JOIN uo_season se ON se.season_id = fs.season
+            LEFT JOIN uo_series s ON s.series_id = fs.series
+            LEFT JOIN uo_team t ON t.team_id = fs.team_id
+            WHERE se.season_id IS NULL OR s.series_id IS NULL OR t.team_id IS NULL
+            LIMIT 1");
+        if ($res && mysqli_num_rows($res) > 0) {
+            $errors[] = "Orphaned rows for uo_team_final_standing season/series/team.\n";
+        }
+    }
     return $errors;
 }
 
@@ -1690,6 +1741,12 @@ function addInnoDbForeignKeys()
     addForeignKey('uo_team_stats', 'fk_team_stats_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
     addForeignKey('uo_team_stats', 'fk_team_stats_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE");
     addForeignKey('uo_team_stats', 'fk_team_stats_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE SET NULL ON UPDATE CASCADE");
+
+    if (hasTable('uo_team_final_standing')) {
+        addForeignKey('uo_team_final_standing', 'fk_team_final_standing_season', "FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+        addForeignKey('uo_team_final_standing', 'fk_team_final_standing_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+        addForeignKey('uo_team_final_standing', 'fk_team_final_standing_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
+    }
 
     addForeignKey('uo_team_spirit_stats', 'fk_team_spirit_stats_team', "FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE");
     addForeignKey('uo_team_spirit_stats', 'fk_team_spirit_stats_series', "FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE");

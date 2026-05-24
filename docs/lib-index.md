@@ -34,7 +34,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/series.functions.php`: series CRUD, team enrollment, series scoreboards, related games/pools, and team copy helpers.
 - `lib/session.functions.php`: secure session start/regenerate/destroy helpers and HTTPS detection.
 - `lib/spirit.functions.php`: spirit mode/category config, submission/token flows, visibility rules, Spiritkeeper helpers, aggregates, rebuilds, and CSV export.
-- `lib/standings.functions.php`: pool standings resolution, tie-breakers, swiss ranking, and standings lookup helpers.
+- `lib/standings.functions.php`: pool standings resolution, tie-breakers, swiss ranking, manual final standings, and standings lookup helpers.
 - `lib/statistical.functions.php`: precomputed season/series/team/player stats reads and stat rebuild routines.
 - `lib/swissdraw.functions.php`: swissdraw move resolution, duplicate-game avoidance, tie handling, and playoff/BYE checks.
 - `lib/team.functions.php`: team/roster CRUD, team stats, team profile/media, standings/move views, and CSV export.

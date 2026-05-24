@@ -69,6 +69,13 @@ leftMenu($LAYOUT_ID);
 contentStart();
 $html .= "<form method='post' action='?view=admin/stats&amp;season=$season'>\n";
 $html .= "<p>" . _("Calculation of statistics takes some time; please wait without closing the browser.") . "</p>\n";
+$finalStandingsStatus = FinalStandingsSeasonStatus($season);
+if ($finalStandingsStatus['published'] > 0) {
+    $html .= "<p>" . sprintf(_("Confirmed final standings will be used for %d divisions."), $finalStandingsStatus['published']) . "</p>\n";
+}
+if ($finalStandingsStatus['unpublished'] > 0) {
+    $html .= "<p class='warning'>" . sprintf(_("Final standings are not defined for %d divisions; live standings will be used."), $finalStandingsStatus['unpublished']) . "</p>\n";
+}
 
 if (!IsSeasonStatsCalculated($season)) {
     if ($missing_profiles_count > 0) {

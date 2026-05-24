@@ -16,7 +16,7 @@ This page mirrors the database-change guidance from `AGENTS.md`.
 1. Pick the next version number from the latest `upgradeXX()` in `sql/upgrade_db.php`.
 2. Add `upgradeXX()` with the required `ALTER`, `CREATE`, or related statements.
 3. Update `define('DB_VERSION', XX);` in `lib/database.php`.
-4. Update `sql/ultiorganizer.sql` so fresh installs include the final structure.
+4. Update `sql/ultiorganizer.sql` so fresh installs include the final structure and the matching `uo_database` version row.
 5. Update related SQL and data access in `lib/` if PHP reads or writes the changed fields.
 6. Verify both the upgrade path and clean install path.
 

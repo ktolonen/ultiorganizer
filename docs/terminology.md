@@ -107,6 +107,7 @@ Use these only when space is constrained, such as statistics tables, standings t
 | Defence average | `Defence avg.` | Prefer this over `Def. avg.` in new narrow-table labels. |
 | Spirit score average | `Spirit score avg.` | Prefer this over `Spirit avg` in new narrow-table labels. |
 | Spirit of the Game | `SOTG` | Existing standard abbreviation. |
+| Disqualified | `DQ` | Use in compact standings or rank cells; prefer the full term in explanatory text. |
 | Team captain | `C` | Use only in constrained roster or gameplay views where the captain context is explicit. |
 | Spirit captain | `SC` | Use only in constrained roster or gameplay views where the captain context is explicit. |
 

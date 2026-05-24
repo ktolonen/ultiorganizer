@@ -6,6 +6,7 @@ requireRoutedView('seriesstatus');
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
+include_once 'lib/standings.functions.php';
 include_once 'lib/team.functions.php';
 
 $LAYOUT_ID = SERIESTATUS;
@@ -76,11 +77,12 @@ foreach ($teams as $team) {
 
     $teamstats['winavg'] = number_format(SafeDivide(intval($statsRow['wins']), intval($statsRow['games'])) * 100, 1);
 
-    $teamstats['ranking'] = 0;
+    $teamstats['ranking'] = null;
+    $teamstats['disqualified'] = false;
     $allteams[] = $teamstats;
 }
 
-$rankedteams  = SeriesRanking($seriesinfo['series_id']);
+$rankedteams = SeriesFinalStandings($seriesinfo['series_id']);
 $hasRanking = false;
 foreach ($rankedteams as $rteam) {
     if (isset($rteam['team_id'])) {
@@ -96,7 +98,13 @@ foreach ($rankedteams as $rteam) {
     $rank++;
     foreach ($allteams as &$ateam) {
         if (isset($rteam['team_id']) && $ateam['team_id'] == $rteam['team_id']) {
-            $ateam['ranking'] = $rank;
+            if (isset($rteam['disqualified']) && (int) $rteam['disqualified'] === 1) {
+                $ateam['disqualified'] = true;
+            } elseif (isset($rteam['standing']) && (int) $rteam['standing'] > 0) {
+                $ateam['ranking'] = (int) $rteam['standing'];
+            } else {
+                $ateam['ranking'] = $rank;
+            }
             break;
         }
     }
@@ -229,7 +237,9 @@ foreach ($allteams as $stats) {
         $html .= "<td class='center'>" . intval($stats['seed']) . ".</td>";
     } {
         $rank = $stats['ranking'];
-        if ($rank == null) {
+        if (!empty($stats['disqualified'])) {
+            $rank = _("DQ");
+        } elseif ($rank == null) {
             $rank = "-";
         } else {
             $rank = intval($rank);

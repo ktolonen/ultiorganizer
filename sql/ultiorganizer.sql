@@ -335,7 +335,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(89, '2026-04-30 00:00:00'),
 	(90, '2026-05-22 00:00:00'),
 	(91, '2026-05-22 00:00:00'),
-	(92, '2026-05-22 00:00:00');
+	(92, '2026-05-22 00:00:00'),
+	(93, '2026-05-24 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -1025,6 +1026,23 @@ CREATE TABLE IF NOT EXISTS `uo_team` (
   CONSTRAINT `fk_team_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE SET NULL ON UPDATE CASCADE,
   CONSTRAINT `fk_team_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE SET NULL ON UPDATE CASCADE
 ) ENGINE=InnoDB AUTO_INCREMENT=1000 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `uo_team_final_standing` (
+  `season` varchar(10) NOT NULL,
+  `series` int(10) NOT NULL,
+  `team_id` int(10) NOT NULL,
+  `standing` int(5) DEFAULT NULL,
+  `disqualified` tinyint(1) NOT NULL DEFAULT 0,
+  `updated_at` timestamp NOT NULL DEFAULT current_timestamp() ON UPDATE current_timestamp(),
+  PRIMARY KEY (`team_id`),
+  KEY `idx_team_final_standing_series_standing` (`series`,`standing`),
+  KEY `idx_team_final_standing_series_disqualified` (`series`,`disqualified`),
+  KEY `idx_team_final_standing_season` (`season`),
+  CONSTRAINT `fk_team_final_standing_season` FOREIGN KEY (`season`) REFERENCES `uo_season` (`season_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_final_standing_series` FOREIGN KEY (`series`) REFERENCES `uo_series` (`series_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT `fk_team_final_standing_team` FOREIGN KEY (`team_id`) REFERENCES `uo_team` (`team_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
 CREATE TABLE IF NOT EXISTS `uo_team_pool` (

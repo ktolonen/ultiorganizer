@@ -8,6 +8,7 @@ include_once $include_prefix . 'lib/series.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/statistical.functions.php';
 include_once $include_prefix . 'lib/seasonpoints.functions.php';
+include_once $include_prefix . 'lib/standings.functions.php';
 
 $title = _("Teams");
 $html = "";
@@ -269,57 +270,81 @@ if ($list == "allteams" || $list == "byseeding") {
     }
 } elseif ($list == "bystandings") {
     $htmlseries = [];
-    $maxplacements = 0;
+    $placements = [];
+    $seriesConfirmed = [];
+    $hasDisqualified = false;
 
     $series = SeasonSeries($seasonInfo['season_id'], true);
     foreach ($series as $ser) {
-        $htmlteams = [];
-        $teams  = SeriesRanking($ser['series_id']);
-        foreach ($teams as $team) {
+        $seriesPlacements = [];
+        $seriesConfirmed[] = SeriesFinalStandingsConfirmed($ser['series_id']);
+        $teams  = SeriesFinalStandings($ser['series_id']);
+        foreach ($teams as $index => $team) {
             if (isset($team['team_id'])) {
                 $htmltmp = "";
                 if (intval($seasonInfo['isinternational'])) {
                     $htmltmp .= "<img height='10' src='images/flags/tiny/" . $team['flagfile'] . "' alt=''/> ";
                 }
                 $htmltmp .= "<a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a>";
-                $htmlteams[] = $htmltmp;
-            } else {
-                $htmlteams[] = "&nbsp;";
+                $disqualified = isset($team['disqualified']) && (int) $team['disqualified'] === 1;
+                if ($disqualified) {
+                    $seriesPlacements['dq'][] = $htmltmp;
+                    $hasDisqualified = true;
+                    continue;
+                }
+                $standing = isset($team['standing']) ? (int) $team['standing'] : 0;
+                if ($standing < 1) {
+                    $standing = $index + 1;
+                }
+                $seriesPlacements[$standing][] = $htmltmp;
+                $placements[$standing] = true;
             }
         }
-        $htmlseries[] = $htmlteams;
+        $htmlseries[] = $seriesPlacements;
     }
+    $placements = array_keys($placements);
+    sort($placements, SORT_NUMERIC);
 
-    $html .= "<table class='teams-table' cellpadding='2' style='width:100%;'>\n";
+    $html .= "<table class='teams-table placements-table' cellpadding='2' style='width:100%;'>\n";
     $html .= "<tr>";
     $html .= "<th style='width:20%;'>" . _("Placement") . "</th>";
-    foreach ($series as $ser) {
-        $html .= "<th style='width:" . (80 / count($series)) . "%;'><a href='?view=seriesstatus&series=" .
-          $ser['series_id'] . "'>" . utf8entities(U_($ser['name'])) . "</a></th>";
-        $maxplacements = max(count(SeriesTeams($ser['series_id'])), $maxplacements);
+    foreach ($series as $sidx => $ser) {
+        $html .= "<th style='width:" . (80 / count($series)) . "%;'><a href='?view=seriesstatus&amp;series=" .
+          $ser['series_id'] . "'>" . utf8entities(U_($ser['name'])) . "</a>";
+        if (empty($seriesConfirmed[$sidx])) {
+            $html .= " <span class='unconfirmed'>*</span>";
+        }
+        $html .= "</th>";
     }
     $html .= "</tr>\n";
-    for ($i = 0; $i < $maxplacements; $i++) {
+    foreach ($placements as $placementNumber) {
 
-        if ($i < 3) {
+        if ($placementNumber <= 3) {
             $html .= "<tr style='font-weight:bold;border-bottom-style:dashed;border-bottom-width:1px;border-bottom-color:#E0E0E0;'>";
         } else {
             $html .= "<tr style='border-bottom-style:dashed;border-bottom-width:1px;border-bottom-color:#E0E0E0;'>";
         }
-        if ($i == 0) {
-            $html .= "<td>" . _("Gold") . "</td>";
-        } elseif ($i == 1) {
-            $html .= "<td>" . _("Silver") . "</td>";
-        } elseif ($i == 2) {
-            $html .= "<td>" . _("Bronze") . "</td>";
-        } else {
-            $html .= "<td>" . ordinal($i + 1) . "</td>";
-        }
+        $placement = FinalStandingLabel($placementNumber);
+        $html .= "<td>" . utf8entities($placement) . "</td>";
 
         for ($j = 0; $j < count($series); $j++) {
             $html .= "<td>";
-            if (!empty($htmlseries[$j][$i])) {
-                $html .= $htmlseries[$j][$i];
+            if (!empty($htmlseries[$j][$placementNumber])) {
+                $html .= implode("<br/>", $htmlseries[$j][$placementNumber]);
+            } else {
+                $html .= "&nbsp;";
+            }
+            $html .= "</td>";
+        }
+        $html .= "</tr>\n";
+    }
+    if ($hasDisqualified) {
+        $html .= "<tr style='border-bottom-style:dashed;border-bottom-width:1px;border-bottom-color:#E0E0E0;'>";
+        $html .= "<td>" . _("Disqualified") . "</td>";
+        for ($j = 0; $j < count($series); $j++) {
+            $html .= "<td>";
+            if (!empty($htmlseries[$j]['dq'])) {
+                $html .= implode("<br/>", $htmlseries[$j]['dq']);
             } else {
                 $html .= "&nbsp;";
             }
@@ -328,6 +353,9 @@ if ($list == "allteams" || $list == "byseeding") {
         $html .= "</tr>\n";
     }
     $html .= "</table>\n";
+    if (count($seriesConfirmed) !== count(array_filter($seriesConfirmed))) {
+        $html .= "<p class='unconfirmed'>* " . _("Automatic standings, not confirmed") . "</p>\n";
+    }
 } elseif ($list == "byspirit") {
 
     if (ShowSpiritScoresForSeason($seasonInfo)) {

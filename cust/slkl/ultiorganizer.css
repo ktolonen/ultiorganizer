@@ -610,6 +610,14 @@ table#pagemenu a.current {
 	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
+.placements-table th a:link,
+.placements-table th a:visited,
+.placements-table th a:active,
+.placements-table th a:hover,
+.placements-table th a:focus {
+	color: #ffffff;
+}
+
 .teams-table tr:first-child td {
 	border-top: 1px solid #cfcfcf;
 }
@@ -912,6 +920,12 @@ tr.admintablerow>td {
 .timezone {
 	color: #a0a0a0;
 	font-style: italic;
+}
+
+.unconfirmed {
+	color: #a0a0a0;
+	font-style: italic;
+	font-weight: normal;
 }
 
 .guides {
