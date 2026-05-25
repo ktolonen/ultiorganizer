@@ -6,7 +6,7 @@ denyDirectCustomizationAccess(__FILE__);
 	<div id="selectaccreditation_id" class="yui-pre-content">
 		<div class="hd"><?php echo _("Choose best match"); ?></div>
 		<div class="bd">
-			<form method='post' action='?view=user/teamplayers&amp;team=<?php echo $_GET['team']; ?>'>
+			<form method='post' action='?view=user/teamplayers&amp;team=<?php echo (int) iget('team'); ?>'>
 				<div>
 					<input type='hidden' name='playerId' id='dialogPlayerId' value='' />
 					<input type='hidden' name='firstname' id='dialogFirstName' value='' />
