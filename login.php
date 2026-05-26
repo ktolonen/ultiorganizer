@@ -23,6 +23,9 @@ if ($user == 'anonymous') {
         $html .= "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
         $html .= "<input class='button' type='submit' name='login' value='" . _("Log in") . "' style='border:1px solid #000000'/>";
         $html .= "</form>";
+        if (!IsPublicRegistrationDisabled()) {
+            $html .= "<p><a href='?view=register'>" . _("New user?") . "</a></p>";
+        }
     }
 } else {
     $userinfo = UserInfo($user);

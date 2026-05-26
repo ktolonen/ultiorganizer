@@ -169,6 +169,9 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
                 echo "<input class='input' type='text' id='myusername' name='myusername' size='10' style='border:1px solid #555555'/>&nbsp;";
                 echo "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
                 echo "<input class='button' type='submit' name='login' value='" . utf8entities(_("Log in")) . "' style='border:1px solid #000000'/>";
+                if (!$hideRegistration) {
+                    echo "&nbsp;<span class='topheadertext'><a class='topheaderlink' href='?view=register'>" . utf8entities(_("New user?")) . "</a></span>";
+                }
                 echo "</span>";
                 echo "<span class='topheader_auth_mobile'><a class='topheaderlink' href='?view=login'>" . utf8entities(_("Log in")) . "</a></span>";
             }
@@ -176,13 +179,8 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
             echo "<span class='topheadertext'>" . utf8entities(_("User")) . ": <a class='topheaderlink' href='?view=user/userinfo'>" . utf8entities($userinfo['name']) . "</a></span>";
         }
 
-        echo "&nbsp;";
-
-        if ($user == 'anonymous') {
-            if (!$hideRegistration) {
-                echo "<span class='topheadertext'><a class='topheaderlink' href='?view=register'>" . utf8entities(_("New user?")) . "</a></span>";
-            }
-        } else {
+        if ($user != 'anonymous') {
+            echo "&nbsp;";
             echo "<span class='topheadertext'><a class='topheaderlink' href='?view=logout'>&raquo; " . utf8entities(_("Log out")) . "</a></span>";
         }
         echo "</td></tr>\n";
