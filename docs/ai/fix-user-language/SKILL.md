@@ -52,9 +52,8 @@ If the caller is not explicit, default to `page sweep`.
 
 ## Gettext and locale handling
 
-- When fixing gettext-backed source strings, update the tracked translation catalogs by default:
-  - `locale/de_DE.utf8/LC_MESSAGES/messages.po`
-  - `locale/fi_FI.utf8/LC_MESSAGES/messages.po`
+- When fixing gettext-backed source strings, update all existing tracked translation catalogs by default:
+  - `locale/*/LC_MESSAGES/messages.po`
 - Prefer the helper script `docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh` for catalog refreshes instead of ad hoc gettext commands.
 - If the environment supports rebuilding compiled catalogs, update the corresponding `messages.mo` files too.
 - If `.mo` rebuild tooling is unavailable, complete the source and `.po` changes and state that `.mo` regeneration could not be performed.

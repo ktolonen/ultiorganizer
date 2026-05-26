@@ -15,11 +15,10 @@ For gettext-backed PHP strings, refresh the tracked catalogs with:
 
 This updates:
 
-- `locale/de_DE.utf8/LC_MESSAGES/messages.po`
-- `locale/fi_FI.utf8/LC_MESSAGES/messages.po`
-- the corresponding `messages.mo` files when `msgfmt` is available
+- all `locale/*/LC_MESSAGES/messages.po` files
+- the corresponding `messages.mo` files
 
-If you need to edit the translations manually after the catalog refresh, open the `.po` files in Poedit:
+If you need to edit translations manually after the catalog refresh, open the relevant `.po` files in Poedit. For example:
 
 ```sh
 poedit locale/de_DE.utf8/LC_MESSAGES/messages.po

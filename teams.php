@@ -200,23 +200,29 @@ if ($list == "allteams" || $list == "byseeding") {
             $roundPoints[$round['round_id']] = SeasonPointsRoundPoints($round['round_id']);
         }
         $lastRoundId = count($rounds) ? $rounds[count($rounds) - 1]['round_id'] : null;
-        usort($teams, function ($a, $b) use ($totals, $roundPoints, $lastRoundId) {
-            $left = isset($totals[$a['team_id']]) ? (int) $totals[$a['team_id']] : 0;
-            $right = isset($totals[$b['team_id']]) ? (int) $totals[$b['team_id']] : 0;
-            if ($left !== $right) {
-                return $right <=> $left;
-            }
-            if ($lastRoundId) {
-                $leftLast = isset($roundPoints[$lastRoundId][$a['team_id']]) ? (int) $roundPoints[$lastRoundId][$a['team_id']] : 0;
-                $rightLast = isset($roundPoints[$lastRoundId][$b['team_id']]) ? (int) $roundPoints[$lastRoundId][$b['team_id']] : 0;
-                if ($leftLast !== $rightLast) {
-                    return $rightLast <=> $leftLast;
+        $hasAnyPoints = !empty(array_filter($totals));
+        if ($hasAnyPoints) {
+            usort($teams, function ($a, $b) use ($totals, $roundPoints, $lastRoundId) {
+                $left = isset($totals[$a['team_id']]) ? (int) $totals[$a['team_id']] : 0;
+                $right = isset($totals[$b['team_id']]) ? (int) $totals[$b['team_id']] : 0;
+                if ($left !== $right) {
+                    return $right <=> $left;
                 }
-            }
-            return strcasecmp($a['name'], $b['name']);
-        });
+                if ($lastRoundId) {
+                    $leftLast = isset($roundPoints[$lastRoundId][$a['team_id']]) ? (int) $roundPoints[$lastRoundId][$a['team_id']] : 0;
+                    $rightLast = isset($roundPoints[$lastRoundId][$b['team_id']]) ? (int) $roundPoints[$lastRoundId][$b['team_id']] : 0;
+                    if ($leftLast !== $rightLast) {
+                        return $rightLast <=> $leftLast;
+                    }
+                }
+                return strcasecmp($a['name'], $b['name']);
+            });
+        }
 
-        $pointsCols = 3;
+        $pointsCols = 2;
+        if ($hasAnyPoints) {
+            $pointsCols++;
+        }
         if (!intval($seasonInfo['isnationalteams'])) {
             $pointsCols++;
         }
@@ -246,7 +252,9 @@ if ($list == "allteams" || $list == "byseeding") {
                 $pointsText = (string) $total;
             }
             $html .= "<tr>";
-            $html .= "<td class='left' style='width:2px'>" . $placement . ".</td>";
+            if ($hasAnyPoints) {
+                $html .= "<td class='left' style='width:2px'>" . $placement . ".</td>";
+            }
             if (intval($seasonInfo['isnationalteams'])) {
                 $html .= "<td style='width:200px'><a href='?view=teamcard&amp;team=" . $team['team_id'] . "'>" . utf8entities($team['name']) . "</a></td>";
             } else {

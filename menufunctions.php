@@ -169,6 +169,9 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
                 echo "<input class='input' type='text' id='myusername' name='myusername' size='10' style='border:1px solid #555555'/>&nbsp;";
                 echo "<input class='input' type='password' id='mypassword' name='mypassword' size='10' style='border:1px solid #555555'/>&nbsp;";
                 echo "<input class='button' type='submit' name='login' value='" . utf8entities(_("Log in")) . "' style='border:1px solid #000000'/>";
+                if (!$hideRegistration) {
+                    echo "&nbsp;<span class='topheadertext'><a class='topheaderlink' href='?view=register'>" . utf8entities(_("New user?")) . "</a></span>";
+                }
                 echo "</span>";
                 echo "<span class='topheader_auth_mobile'><a class='topheaderlink' href='?view=login'>" . utf8entities(_("Log in")) . "</a></span>";
             }
@@ -176,13 +179,8 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
             echo "<span class='topheadertext'>" . utf8entities(_("User")) . ": <a class='topheaderlink' href='?view=user/userinfo'>" . utf8entities($userinfo['name']) . "</a></span>";
         }
 
-        echo "&nbsp;";
-
-        if ($user == 'anonymous') {
-            if (!$hideRegistration) {
-                echo "<span class='topheadertext'><a class='topheaderlink' href='?view=register'>" . utf8entities(_("New user?")) . "</a></span>";
-            }
-        } else {
+        if ($user != 'anonymous') {
+            echo "&nbsp;";
             echo "<span class='topheadertext'><a class='topheaderlink' href='?view=logout'>&raquo; " . utf8entities(_("Log out")) . "</a></span>";
         }
         echo "</td></tr>\n";
@@ -192,8 +190,10 @@ function pageTopHeadClose($title, $printable = false, $bodyfunctions = "")
         echo "</div><!--page_top-->\n";
 
         //navigation bar
-        echo "<div class='navigation_bar'><p class='navigation_bar_text'><span style='color: grey;'>Nav. History: </span>";
-        echo navigationBar($title) . "</p></div>";
+        $navigation = navigationBar($title);
+        if ($navigation !== "") {
+            echo "<div class='navigation_bar'><p class='navigation_bar_text'>" . $navigation . "</p></div>";
+        }
     }
 
     echo "<div class='page_middle'>\n";
@@ -355,27 +355,21 @@ function localeSelection()
  */
 function navigationBar($title)
 {
-    $ret = "";
-    $ptitle = "";
     if (isset($_SERVER['QUERY_STRING'])) {
         $query_string = $_SERVER['QUERY_STRING'];
     } else {
         $query_string = "";
     }
 
-    if (isset($_GET['goindex']) && $_GET['goindex'] > 1 && isset($_SESSION['navigation'])) {
-        $goindex = $_GET['goindex'];
-        $count = count($_SESSION['navigation']);
+    if (isset($_GET['goindex']) && isset($_SESSION['navigation'])) {
+        $goindex = max(1, (int) $_GET['goindex']);
         $i = 0;
-        foreach ($_SESSION['navigation'] as $pview => $ptitle) {
-
+        foreach ($_SESSION['navigation'] as $pview => $unusedTitle) {
             if ($i >= $goindex) {
                 unset($_SESSION['navigation'][$pview]);
             }
             $i++;
         }
-    } elseif (isset($_GET['goindex']) && $_GET['goindex'] <= 1) {
-        $_SESSION['navigation'] = ["view=frontpage" => _("Homepage")];
     } else {
         if (!isset($_SESSION['navigation'])) {
             if (strlen($query_string) == 0 || (isset($_GET['view']) && $_GET['view'] == 'logout')) {
@@ -404,29 +398,21 @@ function navigationBar($title)
         }
     }
 
-    $i = 1;
-    $needsdots = false;
-    if (isset($_SESSION['navigation'])) {
-
-        foreach ($_SESSION['navigation'] as $view => $ptitle) {
-
-            if ($i < count($_SESSION['navigation'])) {
-                if ($i > 1 && $i < (count($_SESSION['navigation']) - 3)) {
-                    $needsdots = true;
-                } else {
-                    if ($needsdots) {
-                        $ret .= "... &raquo; ";
-                        $needsdots = false;
-                    }
-                    $ret .= "<a href='?" . utf8entities($view) . "&amp;goindex=" . $i . "'>" . $ptitle . "</a> &raquo; ";
-                }
-            }
-            $i++;
-        }
+    if (empty($_SESSION['navigation']) || count($_SESSION['navigation']) < 2) {
+        return "";
     }
-    $ret = $ret . " " . $ptitle;
 
-    return $ret;
+    $views = array_keys($_SESSION['navigation']);
+    $titles = array_values($_SESSION['navigation']);
+    $previousIndex = count($_SESSION['navigation']) - 1;
+    $previousView = $views[$previousIndex - 1];
+    $previousTitle = $titles[$previousIndex - 1];
+
+    return "<a class='navigation_back_link' href='?" . utf8entities($previousView) .
+        "&amp;goindex=" . $previousIndex .
+        "' title='" . utf8entities($previousTitle) .
+        "'><span class='navigation_back_label'>&lsaquo; " . utf8entities(_("Back to")) .
+        "</span><span class='navigation_back_target'>" . utf8entities($previousTitle) . "</span></a>";
 }
 
 /**

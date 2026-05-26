@@ -364,6 +364,10 @@ td {
 }
 
 .navigation_bar_text {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	overflow: hidden;
 	padding: 0px;
 	margin: 0px;
 	margin-top: 2px;
@@ -371,7 +375,29 @@ td {
 	margin-left: 5px;
 	margin-right: 5px;
 	font-size: 10px;
+	line-height: 18px;
+	white-space: nowrap;
 	/*vertical-align: center;*/
+}
+
+.navigation_back_link {
+	display: flex;
+	flex: 1 1 auto;
+	gap: 4px;
+	overflow: hidden;
+	font-weight: bold;
+}
+
+.navigation_back_label {
+	flex: 0 0 auto;
+}
+
+.navigation_back_target {
+	color: #666666;
+	flex: 1 1 auto;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 }
 
 .menuseasonlevel {
