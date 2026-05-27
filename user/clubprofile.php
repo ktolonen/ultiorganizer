@@ -194,9 +194,9 @@ foreach ($urls as $url) {
     $html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
     $html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
     if (!empty($url['name'])) {
-        $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a> (" . $url['url'] . ")";
+        $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a> (" . utf8entities($url['url']) . ")";
     } else {
-        $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+        $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['url']) . "</a>";
     }
 
     $html .= "</td>";

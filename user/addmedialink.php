@@ -139,12 +139,12 @@ if (count($urls)) {
         $html .= "<td><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/></td>";
         $html .= "<td>";
         if (!empty($url['name'])) {
-            $html .= "<a href='" . $url['url'] . "'>" . utf8entities($url['name']) . "</a> (" . utf8entities($url['url']) . ")";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a> (" . utf8entities($url['url']) . ")";
         } else {
-            $html .= "<a href='" . $url['url'] . "'>" . utf8entities($url['url']) . "</a>";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['url']) . "</a>";
         }
         $html .= "</td>";
-        $html .= "<td>" . $url['mediaowner'] . "</td>";
+        $html .= "<td>" . utf8entities($url['mediaowner']) . "</td>";
         $html .= "<td>" . $url['publisher'] . "</td>";
 
         if ($url['publisher_id'] == $userinfo['id']) {
@@ -178,7 +178,7 @@ if ($owner == "game") {
             $html .= "<tr>";
             $html .= "<td>" . SecToMin($event['time']) . "</td>";
             $html .= "<td><img width='16' height='16' src='images/linkicons/" . $event['type'] . ".png' alt='" . $event['type'] . "'/></td>";
-            $html .= "<td>" . $event['url'] . "</td>";
+            $html .= "<td>" . utf8entities($event['url']) . "</td>";
             $html .= "</tr>";
         }
         $html .= "</table>";

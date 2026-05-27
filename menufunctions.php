@@ -660,9 +660,9 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     $urls = GetUrlListByTypeArray(["menulink", "menumail"], $curseason);
     foreach ($urls as $url) {
         if ($url['type'] == "menulink") {
-            echo "<a class='subnav' href='" . $url['url'] . "'>&raquo; " . U_($url['name']) . "</a>\n";
+            echo "<a class='subnav' href='" . utf8entities($url['url']) . "'>&raquo; " . U_($url['name']) . "</a>\n";
         } elseif ($url['type'] == "menumail") {
-            echo "<a class='subnav' href='mailto:" . $url['url'] . "'>@ " . U_($url['name']) . "</a>\n";
+            echo "<a class='subnav' href='mailto:" . utf8entities($url['url']) . "'>@ " . U_($url['name']) . "</a>\n";
         }
     }
     echo "</td></tr>\n";
