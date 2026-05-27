@@ -164,8 +164,8 @@ function gamerow($gameId, $game, $mass)
 
         if ($mass == "1") {
             $ret .= "<input type='hidden' id='scoreId" . $gameId . "' name='scoreId[]' value='$gameId'/>
-			<input type='text' size='3' maxlength='3' style='width:4ex' value='" . (is_null($game['homescore']) ? "" : intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' oninput='confirmLeave(this, true, null);' /> -
-			<input type='text' size='3' maxlength='3' style='width:4ex' value='" . (is_null($game['visitorscore']) ? "" : intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' oninput='confirmLeave(this, true, null);' />";
+			<input type='text' inputmode='numeric' pattern='[0-9]*' size='3' maxlength='3' style='width:4ex' value='" . (is_null($game['homescore']) ? "" : intval($game['homescore'])) . "' id='homescore$gameId' name='homescore[]' oninput='confirmLeave(this, true, null);' /> -
+			<input type='text' inputmode='numeric' pattern='[0-9]*' size='3' maxlength='3' style='width:4ex' value='" . (is_null($game['visitorscore']) ? "" : intval($game['visitorscore'])) . "' id='visitorscore$gameId' name='visitorscore[]' oninput='confirmLeave(this, true, null);' />";
             // $ret .= "<input class='button' name='saveOne' type='submit' value='" . _("Save") . "' onPress='setSaved(".$gameID.")'/></td></tr><tr><td>\n";
         } elseif (GameHasStarted($game)) {
             $ret .=  "<a style='white-space: nowrap' href='?view=mobile/gameplay&amp;game=" . $gameId . "'>" . intval($game['homescore']) . " - " . intval($game['visitorscore']) . "</a>";

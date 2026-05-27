@@ -2111,7 +2111,7 @@ function SpiritTable($gameinfo, $points, $categories, $home, $wide = true)
             $html .= "<input type='hidden' id='" . $home . "valueId$id' name='" . $home . "valueId[]' value='$id'/></td>";
             $value = isset($points[$id]) ? $points[$id] : '';
             $html .= "<td class='center'>
-      <input type='text' id='" . $home . "cat" . $id . "_0' name='" . $home . "cat$id' value='" . $value . "'/></td>";
+      <input type='text' inputmode='numeric' pattern='[0-9]*' id='" . $home . "cat" . $id . "_0' name='" . $home . "cat$id' value='" . $value . "'/></td>";
             $html .= "</tr>\n";
         }
     }

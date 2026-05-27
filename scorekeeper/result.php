@@ -89,13 +89,13 @@ if ($showConfirmation) {
     $html .=  "</p>";
 } else {
     $html .= "<label for='game'>" . _("Game number from scoresheet") . ":</label>";
-    $html .= "<input type='number' id='game' name='game' size='6' maxlength='5' value='" . ($game ?: '') . "' onkeyup='validNumber(this);'/> ";
+    $html .= "<input type='number' inputmode='numeric' id='game' name='game' size='6' maxlength='5' value='" . ($game ?: '') . "' onkeyup='validNumber(this);'/> ";
 
     $html .= "<label for='home'>" . _("Home team score") . ":</label>";
-    $html .= "<input type='number' id='home' name='home' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
+    $html .= "<input type='number' inputmode='numeric' id='home' name='home' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
 
     $html .= "<label for='away'>" . _("Away team score") . ":</label>";
-    $html .= "<input type='number' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
+    $html .= "<input type='number' inputmode='numeric' id='away' name='away' size='3' maxlength='3' onkeyup='validNumber(this);'/> ";
 
     $html .= "<div class='form-actions'>";
     $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";

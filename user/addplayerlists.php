@@ -292,7 +292,7 @@ foreach ($home_playerlist as $player) {
         $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
         $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-        $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
+        $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "'>";
         $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
         $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
@@ -303,7 +303,7 @@ foreach ($home_playerlist as $player) {
         $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "'/></td>";
         $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-        $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
+        $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
         $html .= "<option value='' selected='selected'></option>";
         $html .= "<option value='captain'>" . _("C") . "</option>";
@@ -356,7 +356,7 @@ foreach ($away_playerlist as $player) {
         $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
         $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-        $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
+        $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "'>";
         $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
         $html .= "<option value='captain'" . ($selectedRole === "captain" ? " selected='selected'" : "") . ">" . _("C") . "</option>";
@@ -367,7 +367,7 @@ foreach ($away_playerlist as $player) {
         $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "'/></td>";
         $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
-        $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
+        $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
         $html .= "<option value='' selected='selected'></option>";
         $html .= "<option value='captain'>" . _("C") . "</option>";
