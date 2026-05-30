@@ -57,6 +57,10 @@ If the caller is not explicit, default to `page sweep`.
 - Prefer the helper script `docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh` for catalog refreshes instead of ad hoc gettext commands.
 - If the environment supports rebuilding compiled catalogs, update the corresponding `messages.mo` files too.
 - If `.mo` rebuild tooling is unavailable, complete the source and `.po` changes and state that `.mo` regeneration could not be performed.
+- After catalog refreshes, inspect active `#, fuzzy` entries in changed `.po` files.
+- Do not trust fuzzy translations as correct. Replace the `msgstr` and remove `fuzzy` only when you can confidently translate the string for that language.
+- If you cannot confidently translate a fuzzy entry, leave it fuzzy and report it. Do not remove `fuzzy` merely to make the catalog look clean.
+- Obsolete fuzzy entries marked with `#~` are historical and do not need cleanup unless the user explicitly asks for obsolete catalog maintenance.
 - Do not add new locale trees or broaden locale coverage.
 
 ## Terminology rules
@@ -75,8 +79,9 @@ If the caller is not explicit, default to `page sweep`.
 4. Apply terminology and project spelling fixes across the full page or requested term scope.
 5. Fix obvious local rendering mistakes that directly affect user-facing text when they are safe and tightly coupled to the wording change.
 6. Update `.po` catalogs when gettext-backed strings changed.
-7. Rebuild `.mo` files if tooling is available.
-8. Report what was changed and any translation build steps that could not be completed.
+7. Review and resolve active fuzzy catalog entries when you can translate them confidently.
+8. Rebuild `.mo` files if tooling is available.
+9. Report what was changed, any fuzzy entries left for human translators, and any translation build steps that could not be completed.
 
 ## Boundaries
 

@@ -33,9 +33,9 @@ msgid "#"
 msgstr "#"
 
 #: admin/translations.php:341
-#, fuzzy, php-format
+#, php-format
 msgid "%d bulk translation values applied."
-msgstr "Muuta käännöksiä"
+msgstr "Otettiin käyttöön %d massakäännösarvoa."
 
 #: admin/serverconf.php:435
 #, php-format
@@ -48,9 +48,9 @@ msgid "%d files, %s"
 msgstr ""
 
 #: admin/translations.php:515
-#, fuzzy, php-format
+#, php-format
 msgid "%d translation keys available."
-msgstr "Muuta käännöksiä"
+msgstr "%d käännösavainta saatavilla."
 
 #: admin/schedule.php:306
 #, php-format
@@ -379,9 +379,8 @@ msgid "Add teams from:"
 msgstr "Lisää joukkueita:"
 
 #: admin/translations.php:517
-#, fuzzy
 msgid "Add translation key"
-msgstr "Muuta käännöksiä"
+msgstr "Lisää käännösavain"
 
 #: user/addmedialink.php:101
 msgid "Added media links"
@@ -555,14 +554,12 @@ msgid "Anonymize player data"
 msgstr "Anonymisoi pelaajan tiedot"
 
 #: admin/translations.php:589
-#, fuzzy
 msgid "Apply bulk translations"
-msgstr "Muuta käännöksiä"
+msgstr "Ota massakäännökset käyttöön"
 
 #: admin/translations.php:504
-#, fuzzy
 msgid "Apply the bulk translations from the text area?"
-msgstr "Muuta käännöksiä"
+msgstr "Otetaanko tekstialueen massakäännökset käyttöön?"
 
 #: admin/seasonadmin.php:113
 msgid "Archive statistics"
@@ -821,9 +818,8 @@ msgid "Bulk preview"
 msgstr ""
 
 #: admin/translations.php:558
-#, fuzzy
 msgid "Bulk translation"
-msgstr "Käännökset"
+msgstr "Massakäännös"
 
 #: admin/translations.php:562
 msgid "Bulk translation block"
@@ -1430,9 +1426,8 @@ msgid "Current score"
 msgstr "Tilanne"
 
 #: admin/translations.php:568
-#, fuzzy
 msgid "Current translation"
-msgstr "Käännökset"
+msgstr "Nykyinen käännös"
 
 #: admin/serverconf.php:228
 msgid "Customization"
@@ -1619,9 +1614,8 @@ msgid "Delete this token permanently?"
 msgstr "Poista tämä token pysyvästi?"
 
 #: admin/translations.php:503
-#, fuzzy
 msgid "Delete this translation key?"
-msgstr "Poista tämä kierros?"
+msgstr "Poista tämä käännösavain?"
 
 #: admin/dbequalize.php:42
 #, php-format
@@ -1856,9 +1850,8 @@ msgid "Edit team"
 msgstr "Muokkaa joukkuetta"
 
 #: admin/translations.php:517
-#, fuzzy
 msgid "Edit translation key"
-msgstr "Muuta käännöksiä"
+msgstr "Muokkaa käännösavainta"
 
 #: lib/comment.functions.php:155
 #, php-format
@@ -3511,9 +3504,8 @@ msgid "Local time"
 msgstr "Paikallisaika"
 
 #: admin/translations.php:537
-#, fuzzy
 msgid "Locale"
-msgstr "Paikallisaika"
+msgstr "Lokaali"
 
 #: admin/addreservation.php:206 admin/editgame.php:210
 #: admin/reservations.php:118 lib/search.functions.php:310
@@ -3901,9 +3893,8 @@ msgid "New tournament added"
 msgstr "Uusi turnaus lisätty"
 
 #: admin/translations.php:568
-#, fuzzy
 msgid "New translation"
-msgstr "Käännökset"
+msgstr "Uusi käännös"
 
 #: login.php:27 menufunctions.php:173
 msgid "New user?"
@@ -4681,9 +4672,8 @@ msgid "Prev. Team"
 msgstr "Edel. Joukkue"
 
 #: admin/translations.php:563
-#, fuzzy
 msgid "Preview bulk translations"
-msgstr "Muuta käännöksiä"
+msgstr "Esikatsele massakäännökset"
 
 #: admin/eventviewer.php:124
 msgid "Previous"
@@ -6655,33 +6645,28 @@ msgid "Transfer times"
 msgstr "Siirrä ajat"
 
 #: admin/translations.php:537
-#, fuzzy
 msgid "Translation"
-msgstr "Käännökset"
+msgstr "Käännös"
 
 #: admin/translations.php:300
-#, fuzzy
 msgid "Translation added."
-msgstr "Käännökset"
+msgstr "Käännös lisätty."
 
 #: user/userinfo.php:400
 msgid "Translation administrator"
 msgstr "Käännösten ylläpitäjä"
 
 #: admin/translations.php:508
-#, fuzzy
 msgid "Translation key"
-msgstr "Käännökset"
+msgstr "Käännösavain"
 
 #: admin/translations.php:295
-#, fuzzy
 msgid "Translation key already exists."
-msgstr "Siirto on jo olemassa"
+msgstr "Käännösavain on jo olemassa."
 
 #: admin/translations.php:93
-#, fuzzy
 msgid "Translation key is required."
-msgstr "Käännösten ylläpitäjä"
+msgstr "Käännösavain on pakollinen."
 
 #: admin/translations.php:97
 #, php-format
@@ -6689,9 +6674,8 @@ msgid "Translation key is too long: %s"
 msgstr ""
 
 #: admin/translations.php:282
-#, fuzzy
 msgid "Translation removed."
-msgstr "Käännökset"
+msgstr "Käännös poistettu."
 
 #: admin/translations.php:107
 #, php-format
@@ -6703,9 +6687,8 @@ msgid "Translations"
 msgstr "Käännökset"
 
 #: admin/translations.php:303
-#, fuzzy
 msgid "Translations saved."
-msgstr "Muuta käännöksiä"
+msgstr "Käännökset tallennettu."
 
 #: lib/common.functions.php:125
 msgid "Tue"
@@ -7670,128 +7653,3 @@ msgstr "ja"
 #: admin/seasons.php:135 admin/seasons.php:138
 msgid "yes"
 msgstr "kyllä"
-
-#, fuzzy, php-format
-#~ msgid "%d missing in selected language."
-#~ msgstr "Valitun turnauksen kaikki pelit"
-
-#~ msgid "Actions"
-#~ msgstr "Toiminnot"
-
-#, fuzzy
-#~ msgid "Archived statistics"
-#~ msgstr "Arkistoi tilastot"
-
-#, php-format
-#~ msgid ""
-#~ "Archived statistics currently provide final standings for %d divisions. "
-#~ "Saving final standings makes them independent of archived statistics."
-#~ msgstr ""
-#~ "Arkistoidut tilastot tarjoavat tällä hetkellä lopulliset sijoitukset %d "
-#~ "sarjalle. Sijoitusten tallentaminen tekee niistä riippumattomia "
-#~ "arkistoiduista tilastoista."
-
-#~ msgid "Delete token"
-#~ msgstr "Poista token"
-
-#, fuzzy
-#~ msgid "Editing language"
-#~ msgstr "Muokkaa peliä"
-
-#, php-format
-#~ msgid ""
-#~ "Final standings have not been saved for %d divisions. Statistics "
-#~ "calculation will use archived or live standings for those divisions."
-#~ msgstr ""
-#~ "Lopullisia sijoituksia ei ole tallennettu %d sarjalle. Tilastojen "
-#~ "laskenta käyttää näille sarjoille arkistoituja tai live-sijoituksia."
-
-#~ msgid ""
-#~ "Leave undecided placements blank. Saved placements are published "
-#~ "immediately; undecided placements use archived or live standings until "
-#~ "saved."
-#~ msgstr ""
-#~ "Jätä ratkaisemattomat sijoitukset tyhjiksi. Tallennetut sijoitukset "
-#~ "julkaistaan heti; ratkaisemattomat sijoitukset käyttävät arkistoituja tai "
-#~ "live-sijoituksia, kunnes ne tallennetaan."
-
-#, fuzzy
-#~ msgid "Missing selected language"
-#~ msgstr "Ei tuettu kieli:"
-
-#, fuzzy
-#~ msgid "No source text"
-#~ msgstr "Pisteitä ei ole syötetty"
-
-#, fuzzy
-#~ msgid "No translations have been added yet."
-#~ msgstr "Muuta käännöksiä"
-
-#, fuzzy
-#~ msgid "Partial final standings saved."
-#~ msgstr "Lopulliset sijoitukset"
-
-#~ msgid ""
-#~ "Partial final standings saved. Saved placements are published immediately."
-#~ msgstr ""
-#~ "Osittaiset lopulliset sijoitukset tallennettu. Tallennetut sijoitukset "
-#~ "julkaistaan heti."
-
-#, fuzzy
-#~ msgid "Save changed rows"
-#~ msgstr "Tallenna muutokset?"
-
-#, fuzzy
-#~ msgid "Save row"
-#~ msgstr "Tallenna maali"
-
-#, php-format
-#~ msgid ""
-#~ "Saved final standings are partial for %d divisions. Remaining placements "
-#~ "will use archived or live standings."
-#~ msgstr ""
-#~ "Tallennetut lopulliset sijoitukset ovat osittaiset %d sarjassa. Jäljellä "
-#~ "olevat sijoitukset käyttävät arkistoituja tai live-sijoituksia."
-
-#~ msgid ""
-#~ "Saved placements are published for this division. Undecided placements "
-#~ "use archived or live standings until saved."
-#~ msgstr ""
-#~ "Tallennetut sijoitukset on julkaistu tälle sarjalle. Ratkaisemattomat "
-#~ "sijoitukset käyttävät arkistoituja tai live-sijoituksia, kunnes ne "
-#~ "tallennetaan."
-
-#~ msgid "Select all"
-#~ msgstr "Valitse kaikki"
-
-#~ msgid "The key is replaced with the text in the user-selected locale."
-#~ msgstr "Avain korvataan tekstillä käyttäjän valitsemalla kielellä."
-
-#~ msgid ""
-#~ "This operation updates and adds event data in database with one from "
-#~ "file. It will not delete any data or change user rights."
-#~ msgstr ""
-#~ "Tämä toiminto päivittää ja lisää tapahtuman tiedot tietokantaan annetusta "
-#~ "tiedostosta. Tietokannassa olevia tietoja ei poisteta eikä "
-#~ "käyttöoikeuksia muuteta."
-
-#, fuzzy, php-format
-#~ msgid "Translation (%s)"
-#~ msgstr "Käännökset"
-
-#~ msgid "Ultiorganizer major version"
-#~ msgstr "Ultiorganizerin pääversio"
-
-#~ msgid "Ultiorganizer minor version"
-#~ msgstr "Ultiorganizerin aliversio"
-
-#, fuzzy
-#~ msgid "Unchanged"
-#~ msgstr "Muuta"
-
-#, fuzzy
-#~ msgid "Unknown key"
-#~ msgstr "Tuntematon seura"
-
-#~ msgid "Unselect all"
-#~ msgstr "Poista kaikki valinnat"

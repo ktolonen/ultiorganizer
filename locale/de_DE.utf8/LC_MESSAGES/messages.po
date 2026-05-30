@@ -34,9 +34,9 @@ msgid "#"
 msgstr "#"
 
 #: admin/translations.php:341
-#, fuzzy, php-format
+#, php-format
 msgid "%d bulk translation values applied."
-msgstr "Übersetzungen ändern"
+msgstr "%d Massenübersetzungswerte angewendet."
 
 #: admin/serverconf.php:435
 #, php-format
@@ -49,9 +49,9 @@ msgid "%d files, %s"
 msgstr ""
 
 #: admin/translations.php:515
-#, fuzzy, php-format
+#, php-format
 msgid "%d translation keys available."
-msgstr "Übersetzungen ändern"
+msgstr "%d Übersetzungsschlüssel verfügbar."
 
 #: admin/schedule.php:306
 #, php-format
@@ -384,9 +384,8 @@ msgid "Add teams from:"
 msgstr "Teams hinzufügen von:"
 
 #: admin/translations.php:517
-#, fuzzy
 msgid "Add translation key"
-msgstr "Übersetzungen ändern"
+msgstr "Übersetzungsschlüssel hinzufügen"
 
 #: user/addmedialink.php:101
 msgid "Added media links"
@@ -562,14 +561,12 @@ msgid "Anonymize player data"
 msgstr "Spielerdaten anonymisieren"
 
 #: admin/translations.php:589
-#, fuzzy
 msgid "Apply bulk translations"
-msgstr "Übersetzungen ändern"
+msgstr "Massenübersetzungen anwenden"
 
 #: admin/translations.php:504
-#, fuzzy
 msgid "Apply the bulk translations from the text area?"
-msgstr "Übersetzungen ändern"
+msgstr "Massenübersetzungen aus dem Textbereich anwenden?"
 
 #: admin/seasonadmin.php:113
 msgid "Archive statistics"
@@ -833,9 +830,8 @@ msgid "Bulk preview"
 msgstr ""
 
 #: admin/translations.php:558
-#, fuzzy
 msgid "Bulk translation"
-msgstr "Übersetzungen"
+msgstr "Massenübersetzung"
 
 #: admin/translations.php:562
 msgid "Bulk translation block"
@@ -1448,9 +1444,8 @@ msgid "Current score"
 msgstr "Aktueller Spielstand"
 
 #: admin/translations.php:568
-#, fuzzy
 msgid "Current translation"
-msgstr "Übersetzungen"
+msgstr "Aktuelle Übersetzung"
 
 #: admin/serverconf.php:228
 msgid "Customization"
@@ -1637,9 +1632,8 @@ msgid "Delete this token permanently?"
 msgstr "Dieses Token dauerhaft loeschen?"
 
 #: admin/translations.php:503
-#, fuzzy
 msgid "Delete this translation key?"
-msgstr "Diese Runde loeschen?"
+msgstr "Diesen Übersetzungsschlüssel löschen?"
 
 #: admin/dbequalize.php:42
 #, php-format
@@ -1876,9 +1870,8 @@ msgid "Edit team"
 msgstr "Team ändern"
 
 #: admin/translations.php:517
-#, fuzzy
 msgid "Edit translation key"
-msgstr "Übersetzungen ändern"
+msgstr "Übersetzungsschlüssel bearbeiten"
 
 #: lib/comment.functions.php:155
 #, php-format
@@ -3538,9 +3531,8 @@ msgid "Local time"
 msgstr "Ortszeit"
 
 #: admin/translations.php:537
-#, fuzzy
 msgid "Locale"
-msgstr "Ortszeit"
+msgstr "Gebietsschema"
 
 #: admin/addreservation.php:206 admin/editgame.php:210
 #: admin/reservations.php:118 lib/search.functions.php:310
@@ -3929,9 +3921,8 @@ msgid "New tournament added"
 msgstr "Neues Turnier hinzugefügt"
 
 #: admin/translations.php:568
-#, fuzzy
 msgid "New translation"
-msgstr "Übersetzungen"
+msgstr "Neue Übersetzung"
 
 #: login.php:27 menufunctions.php:173
 msgid "New user?"
@@ -4718,9 +4709,8 @@ msgid "Prev. Team"
 msgstr "Vorheriges Team"
 
 #: admin/translations.php:563
-#, fuzzy
 msgid "Preview bulk translations"
-msgstr "Übersetzungen ändern"
+msgstr "Vorschau der Massenübersetzungen"
 
 #: admin/eventviewer.php:124
 msgid "Previous"
@@ -6705,33 +6695,28 @@ msgid "Transfer times"
 msgstr "Transferzeiten"
 
 #: admin/translations.php:537
-#, fuzzy
 msgid "Translation"
-msgstr "Übersetzungen"
+msgstr "Übersetzung"
 
 #: admin/translations.php:300
-#, fuzzy
 msgid "Translation added."
-msgstr "Übersetzungen"
+msgstr "Übersetzung hinzugefügt."
 
 #: user/userinfo.php:400
 msgid "Translation administrator"
 msgstr "Übersetzungsadministrator"
 
 #: admin/translations.php:508
-#, fuzzy
 msgid "Translation key"
-msgstr "Übersetzungen"
+msgstr "Übersetzungsschlüssel"
 
 #: admin/translations.php:295
-#, fuzzy
 msgid "Translation key already exists."
-msgstr "Transfer existiert schon"
+msgstr "Übersetzungsschlüssel existiert bereits."
 
 #: admin/translations.php:93
-#, fuzzy
 msgid "Translation key is required."
-msgstr "Übersetzungsadministrator"
+msgstr "Übersetzungsschlüssel ist erforderlich."
 
 #: admin/translations.php:97
 #, php-format
@@ -6739,9 +6724,8 @@ msgid "Translation key is too long: %s"
 msgstr ""
 
 #: admin/translations.php:282
-#, fuzzy
 msgid "Translation removed."
-msgstr "Übersetzungen"
+msgstr "Übersetzung entfernt."
 
 #: admin/translations.php:107
 #, php-format
@@ -6753,9 +6737,8 @@ msgid "Translations"
 msgstr "Übersetzungen"
 
 #: admin/translations.php:303
-#, fuzzy
 msgid "Translations saved."
-msgstr "Übersetzungen ändern"
+msgstr "Übersetzungen gespeichert."
 
 #: lib/common.functions.php:125
 msgid "Tue"
@@ -7726,131 +7709,3 @@ msgstr "mit"
 #: admin/seasons.php:135 admin/seasons.php:138
 msgid "yes"
 msgstr "ja"
-
-#, fuzzy, php-format
-#~ msgid "%d missing in selected language."
-#~ msgstr "Alle Spiele in gewählter Gruppierung"
-
-#~ msgid "Actions"
-#~ msgstr "Aktionen"
-
-#, fuzzy
-#~ msgid "Archived statistics"
-#~ msgstr "Spielstatistik erzeugen"
-
-#, php-format
-#~ msgid ""
-#~ "Archived statistics currently provide final standings for %d divisions. "
-#~ "Saving final standings makes them independent of archived statistics."
-#~ msgstr ""
-#~ "Archivierte Statistiken liefern derzeit Endplatzierungen für %d "
-#~ "Divisionen. Durch das Speichern von Endplatzierungen werden sie "
-#~ "unabhängig von archivierten Statistiken."
-
-#~ msgid "Delete token"
-#~ msgstr "Token löschen"
-
-#, fuzzy
-#~ msgid "Editing language"
-#~ msgstr "Spiel ändern"
-
-#, php-format
-#~ msgid ""
-#~ "Final standings have not been saved for %d divisions. Statistics "
-#~ "calculation will use archived or live standings for those divisions."
-#~ msgstr ""
-#~ "Für %d Divisionen wurden keine Endplatzierungen gespeichert. Die "
-#~ "Statistikberechnung verwendet für diese Divisionen archivierte oder Live-"
-#~ "Platzierungen."
-
-#~ msgid ""
-#~ "Leave undecided placements blank. Saved placements are published "
-#~ "immediately; undecided placements use archived or live standings until "
-#~ "saved."
-#~ msgstr ""
-#~ "Nicht entschiedene Platzierungen leer lassen. Gespeicherte Platzierungen "
-#~ "werden sofort veröffentlicht; nicht entschiedene Platzierungen verwenden "
-#~ "archivierte oder Live-Platzierungen, bis sie gespeichert werden."
-
-#, fuzzy
-#~ msgid "Missing selected language"
-#~ msgstr "Nicht-unterstützte Sprachei:"
-
-#, fuzzy
-#~ msgid "No source text"
-#~ msgstr "Keine Punkte eingetragen"
-
-#, fuzzy
-#~ msgid "No translations have been added yet."
-#~ msgstr "Übersetzungen ändern"
-
-#, fuzzy
-#~ msgid "Partial final standings saved."
-#~ msgstr "Endergebnis"
-
-#~ msgid ""
-#~ "Partial final standings saved. Saved placements are published immediately."
-#~ msgstr ""
-#~ "Teilweise Endplatzierungen gespeichert. Gespeicherte Platzierungen werden "
-#~ "sofort veröffentlicht."
-
-#, fuzzy
-#~ msgid "Save changed rows"
-#~ msgstr "Änderungen speichern?"
-
-#, fuzzy
-#~ msgid "Save row"
-#~ msgstr "Punkt speichern"
-
-#, php-format
-#~ msgid ""
-#~ "Saved final standings are partial for %d divisions. Remaining placements "
-#~ "will use archived or live standings."
-#~ msgstr ""
-#~ "Gespeicherte Endplatzierungen sind für %d Divisionen unvollständig. "
-#~ "Verbleibende Platzierungen verwenden archivierte oder Live-Platzierungen."
-
-#~ msgid ""
-#~ "Saved placements are published for this division. Undecided placements "
-#~ "use archived or live standings until saved."
-#~ msgstr ""
-#~ "Gespeicherte Platzierungen sind für diese Division veröffentlicht. Nicht "
-#~ "entschiedene Platzierungen verwenden archivierte oder Live-Platzierungen, "
-#~ "bis sie gespeichert werden."
-
-#~ msgid "Select all"
-#~ msgstr "Alle auswählen"
-
-#~ msgid "The key is replaced with the text in the user-selected locale."
-#~ msgstr ""
-#~ "Der Schluessel wird durch den Text in der vom Benutzer ausgewaehlten "
-#~ "Sprache ersetzt."
-
-#~ msgid ""
-#~ "This operation updates and adds event data in database with one from "
-#~ "file. It will not delete any data or change user rights."
-#~ msgstr ""
-#~ "Diese Operation aktualisiert die Turnierdaten in der Datenbank mit denen "
-#~ "aus der Datei oder fügt sie hinzu. Es wird nichts gelöscht oder "
-#~ "Benutzerrechte verändert."
-
-#, fuzzy, php-format
-#~ msgid "Translation (%s)"
-#~ msgstr "Übersetzungen"
-
-#~ msgid "Ultiorganizer major version"
-#~ msgstr "Ultiorganizer-Hauptversion"
-
-#~ msgid "Ultiorganizer minor version"
-#~ msgstr "Ultiorganizer-Nebenversion"
-
-#, fuzzy
-#~ msgid "Unchanged"
-#~ msgstr "Aendern"
-
-#, fuzzy
-#~ msgid "Unknown key"
-#~ msgstr "Unbekannter Club"
-
-#~ msgid "Unselect all"
-#~ msgstr "Alle abwählen"

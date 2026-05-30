@@ -35,9 +35,9 @@ msgid "#"
 msgstr "#"
 
 #: admin/translations.php:341
-#, fuzzy, php-format
+#, php-format
 msgid "%d bulk translation values applied."
-msgstr "Modificar traducciones"
+msgstr "Se aplicaron %d valores de traducción masiva."
 
 #: admin/serverconf.php:435
 #, php-format
@@ -50,9 +50,9 @@ msgid "%d files, %s"
 msgstr "Archivos %d, %s"
 
 #: admin/translations.php:515
-#, fuzzy, php-format
+#, php-format
 msgid "%d translation keys available."
-msgstr "Modificar traducciones"
+msgstr "%d claves de traducción disponibles."
 
 #: admin/schedule.php:306
 #, php-format
@@ -389,9 +389,8 @@ msgid "Add teams from:"
 msgstr "Agregar equipos desde:"
 
 #: admin/translations.php:517
-#, fuzzy
 msgid "Add translation key"
-msgstr "Modificar traducciones"
+msgstr "Añadir clave de traducción"
 
 #: user/addmedialink.php:101
 msgid "Added media links"
@@ -571,14 +570,12 @@ msgid "Anonymize player data"
 msgstr "Anonimizar los datos del jugador"
 
 #: admin/translations.php:589
-#, fuzzy
 msgid "Apply bulk translations"
-msgstr "Modificar traducciones"
+msgstr "Aplicar traducciones masivas"
 
 #: admin/translations.php:504
-#, fuzzy
 msgid "Apply the bulk translations from the text area?"
-msgstr "Modificar traducciones"
+msgstr "¿Aplicar las traducciones masivas del área de texto?"
 
 #: admin/seasonadmin.php:113
 msgid "Archive statistics"
@@ -842,9 +839,8 @@ msgid "Bulk preview"
 msgstr ""
 
 #: admin/translations.php:558
-#, fuzzy
 msgid "Bulk translation"
-msgstr "Traducciones"
+msgstr "Traducción masiva"
 
 #: admin/translations.php:562
 msgid "Bulk translation block"
@@ -1461,9 +1457,8 @@ msgid "Current score"
 msgstr "Puntuación actual"
 
 #: admin/translations.php:568
-#, fuzzy
 msgid "Current translation"
-msgstr "Traducciones"
+msgstr "Traducción actual"
 
 #: admin/serverconf.php:228
 msgid "Customization"
@@ -1650,9 +1645,8 @@ msgid "Delete this token permanently?"
 msgstr "¿Eliminar este token permanentemente?"
 
 #: admin/translations.php:503
-#, fuzzy
 msgid "Delete this translation key?"
-msgstr "¿Eliminar esta ronda?"
+msgstr "¿Eliminar esta clave de traducción?"
 
 #: admin/dbequalize.php:42
 #, php-format
@@ -1886,9 +1880,8 @@ msgid "Edit team"
 msgstr "Editar equipo"
 
 #: admin/translations.php:517
-#, fuzzy
 msgid "Edit translation key"
-msgstr "Modificar traducciones"
+msgstr "Editar clave de traducción"
 
 #: lib/comment.functions.php:155
 #, php-format
@@ -3549,9 +3542,8 @@ msgid "Local time"
 msgstr "Hora local"
 
 #: admin/translations.php:537
-#, fuzzy
 msgid "Locale"
-msgstr "Hora local"
+msgstr "Configuración regional"
 
 #: admin/addreservation.php:206 admin/editgame.php:210
 #: admin/reservations.php:118 lib/search.functions.php:310
@@ -3940,9 +3932,8 @@ msgid "New tournament added"
 msgstr "Nuevo torneo agregado"
 
 #: admin/translations.php:568
-#, fuzzy
 msgid "New translation"
-msgstr "Traducciones"
+msgstr "Nueva traducción"
 
 #: login.php:27 menufunctions.php:173
 msgid "New user?"
@@ -4727,9 +4718,8 @@ msgid "Prev. Team"
 msgstr "Equipo Previo"
 
 #: admin/translations.php:563
-#, fuzzy
 msgid "Preview bulk translations"
-msgstr "Modificar traducciones"
+msgstr "Previsualizar traducciones masivas"
 
 #: admin/eventviewer.php:124
 msgid "Previous"
@@ -6722,33 +6712,28 @@ msgid "Transfer times"
 msgstr "Tiempos de transferencia"
 
 #: admin/translations.php:537
-#, fuzzy
 msgid "Translation"
-msgstr "Traducciones"
+msgstr "Traducción"
 
 #: admin/translations.php:300
-#, fuzzy
 msgid "Translation added."
-msgstr "Traducciones"
+msgstr "Traducción añadida."
 
 #: user/userinfo.php:400
 msgid "Translation administrator"
 msgstr "Administrador de traducción"
 
 #: admin/translations.php:508
-#, fuzzy
 msgid "Translation key"
-msgstr "Traducciones"
+msgstr "Clave de traducción"
 
 #: admin/translations.php:295
-#, fuzzy
 msgid "Translation key already exists."
-msgstr "La transferencia ya existe"
+msgstr "La clave de traducción ya existe."
 
 #: admin/translations.php:93
-#, fuzzy
 msgid "Translation key is required."
-msgstr "Administrador de traducción"
+msgstr "La clave de traducción es obligatoria."
 
 #: admin/translations.php:97
 #, php-format
@@ -6756,9 +6741,8 @@ msgid "Translation key is too long: %s"
 msgstr ""
 
 #: admin/translations.php:282
-#, fuzzy
 msgid "Translation removed."
-msgstr "Traducciones"
+msgstr "Traducción eliminada."
 
 #: admin/translations.php:107
 #, php-format
@@ -6770,9 +6754,8 @@ msgid "Translations"
 msgstr "Traducciones"
 
 #: admin/translations.php:303
-#, fuzzy
 msgid "Translations saved."
-msgstr "Modificar traducciones"
+msgstr "Traducciones guardadas."
 
 #: lib/common.functions.php:125
 msgid "Tue"
@@ -7750,48 +7733,3 @@ msgstr "con"
 #: admin/seasons.php:135 admin/seasons.php:138
 msgid "yes"
 msgstr "si"
-
-#, fuzzy, php-format
-#~ msgid "%d missing in selected language."
-#~ msgstr "Todos los juegos en el grupo seleccionado"
-
-#, fuzzy
-#~ msgid "Editing language"
-#~ msgstr "Editar juego"
-
-#, fuzzy
-#~ msgid "Missing selected language"
-#~ msgstr "Idioma no admitido:"
-
-#, fuzzy
-#~ msgid "No source text"
-#~ msgstr "No se ingresaron puntajes"
-
-#, fuzzy
-#~ msgid "No translations have been added yet."
-#~ msgstr "Modificar traducciones"
-
-#, fuzzy
-#~ msgid "Save changed rows"
-#~ msgstr "¿Guardar cambios?"
-
-#, fuzzy
-#~ msgid "Save row"
-#~ msgstr "Guardar gol"
-
-#~ msgid "The key is replaced with the text in the user-selected locale."
-#~ msgstr ""
-#~ "La clave se reemplaza con el texto en la configuración regional "
-#~ "seleccionada por el usuario."
-
-#, fuzzy, php-format
-#~ msgid "Translation (%s)"
-#~ msgstr "Traducciones"
-
-#, fuzzy
-#~ msgid "Unchanged"
-#~ msgstr "Cambiar"
-
-#, fuzzy
-#~ msgid "Unknown key"
-#~ msgstr "Club desconocido"
