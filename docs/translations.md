@@ -2,6 +2,11 @@
 
 Translations live under `locale/`.
 
+Each language uses a directory named after the system locale, such as
+`locale/es_ES.utf8/LC_MESSAGES/`. The app only offers a translation when the
+matching locale is installed on the server, because gettext needs the OS locale
+to be available.
+
 ## Updating translations
 
 - For HTML files, edit the relevant files directly.
@@ -22,6 +27,7 @@ If you need to edit translations manually after the catalog refresh, open the re
 
 ```sh
 poedit locale/de_DE.utf8/LC_MESSAGES/messages.po
+poedit locale/es_ES.utf8/LC_MESSAGES/messages.po
 poedit locale/fi_FI.utf8/LC_MESSAGES/messages.po
 ```
 

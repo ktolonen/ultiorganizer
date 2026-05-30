@@ -1,0 +1,5 @@
+Este correo electrónico le fue enviado en respuesta a una solicitud para registrarse en $ultiorganizer.
+Por favor, siga el enlace a continuación, o cópielo y péguelo en la barra de direcciones de su navegador, para confirmar su
+registro.
+
+$url
