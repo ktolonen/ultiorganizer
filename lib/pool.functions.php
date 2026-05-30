@@ -2971,6 +2971,9 @@ function PlayoffTemplate($teams, $rounds, $id = "")
     if (empty($id)) {
         $id = $teams . "_teams_" . $rounds . "_rounds";
     }
+    // Layout ids are plain filenames; strip anything that could escape the layouts
+    // directory (path traversal) before using $id in a filesystem path.
+    $id = preg_replace('/[^a-zA-Z0-9_-]/', '', (string) $id);
     if (is_file($include_prefix . "cust/" . CUSTOMIZATIONS . "/layouts/" . $id . ".html")) {
         $ret2 = file_get_contents($include_prefix . "cust/" . CUSTOMIZATIONS . "/layouts/" . $id . ".html");
     } elseif (is_file($include_prefix . "cust/default/layouts/" . $id . ".html")) {
