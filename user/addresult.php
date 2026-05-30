@@ -91,9 +91,9 @@ if ($game_result['isongoing']) {
 $html .= "<tr><td>";
 
 $html .= "<tr>
-<td><input class='input' name='home' value='" . utf8entities($game_result['homescore']) . "' maxlength='4' size='5'/></td>
+<td><input class='input' name='home' value='" . utf8entities($game_result['homescore']) . "' inputmode='numeric' pattern='[0-9]*' maxlength='4' size='5'/></td>
 <td> - </td>
-<td><input class='input' name='away' value='" . utf8entities($game_result['visitorscore']) . "' maxlength='4' size='5'/></td></tr>
+<td><input class='input' name='away' value='" . utf8entities($game_result['visitorscore']) . "' inputmode='numeric' pattern='[0-9]*' maxlength='4' size='5'/></td></tr>
 </table>";
 
 if ($game_result['homevalid'] == 2) {

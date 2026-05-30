@@ -128,7 +128,7 @@ if (isSuperAdmin()) {
     $html .= "</table>";
     $html .= "<p><span class='profileheader'>" . _("Database size") . ": </span>" . $total_size . " " . _("bytes") . "</p>\n";
     $html .= "<p><input class='button' type='submit' name='backup' value='" . _("Backup") . "'/>";
-    $html .= "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
+    $html .= "<input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
     $html .= "</form>";
 } else {
     $html .= "<p>" . _("User credentials do not match") . "</p>\n";

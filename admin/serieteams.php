@@ -257,7 +257,7 @@ if ($continuation && $SwissOK == -1) {
     echo "<p><input class='button' name='move' type='submit' value='" . _("Confirm moves") . "'/>";
 }
 
-echo "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/></p>";
+echo "<input class='button' type='button' name='return'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/></p>";
 echo "<div><input type='hidden' name='backurl' value='$backurl'/></div>";
 echo "</form>\n";
 

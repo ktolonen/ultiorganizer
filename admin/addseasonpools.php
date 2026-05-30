@@ -261,7 +261,7 @@ if (!$poolId || $addmore) {
 
     echo "</table>
 		  <p><input class='button' name='add' type='submit' value='" . _("Add") . "'/>
-		  <input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonpools&amp;season=$season'\"/></p>
+		  <input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonpools&amp;season=$season'\"/></p>
 		  </form>";
 } else {
     echo "<h2>" . _("Edit pool") . ":</h2>\n";

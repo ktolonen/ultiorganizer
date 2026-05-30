@@ -32,7 +32,7 @@ $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
 $html .= _("Halftime") . ":";
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' maxlength='8' type='text' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/>";
+$html .= "<input class='input' maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/>";
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
 $html .= "</td></tr><tr><td>\n";

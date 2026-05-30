@@ -7,7 +7,7 @@ include_once 'lib/series.functions.php';
 include_once 'lib/common.functions.php';
 
 $LAYOUT_ID = EDITGAME;
-$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
+$backurl = empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER'];
 $gameId = $_GET["game"];
 $info = GameResult($gameId);
 $season = "";
@@ -281,10 +281,10 @@ echo "<tr><td class='infocell'>" . _("Live Stream URL") . ":</td>
 
 echo "</table>";
 
-echo "<div><input type='hidden' name='backurl' value='$backurl'/></div>";
+echo "<div><input type='hidden' name='backurl' value='" . utf8entities($backurl) . "'/></div>";
 echo "<p><input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
 if (!empty($backurl)) {
-    echo "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/>";
+    echo "<input class='button' type='button' name='return'  value='" . _("Return") . "' data-href='" . utf8entities($backurl) . "' onclick='navigateBack(this)'/>";
 }
 echo "</p></form>\n";
 

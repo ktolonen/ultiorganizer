@@ -406,7 +406,7 @@ function navigationBar($title)
     $titles = array_values($_SESSION['navigation']);
     $previousIndex = count($_SESSION['navigation']) - 1;
     $previousView = $views[$previousIndex - 1];
-    $previousTitle = $titles[$previousIndex - 1];
+    $previousTitle = html_entity_decode((string) $titles[$previousIndex - 1], ENT_QUOTES, "UTF-8");
 
     return "<a class='navigation_back_link' href='?" . utf8entities($previousView) .
         "&amp;goindex=" . $previousIndex .
@@ -660,9 +660,9 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     $urls = GetUrlListByTypeArray(["menulink", "menumail"], $curseason);
     foreach ($urls as $url) {
         if ($url['type'] == "menulink") {
-            echo "<a class='subnav' href='" . $url['url'] . "'>&raquo; " . U_($url['name']) . "</a>\n";
+            echo "<a class='subnav' href='" . utf8entities($url['url']) . "'>&raquo; " . U_($url['name']) . "</a>\n";
         } elseif ($url['type'] == "menumail") {
-            echo "<a class='subnav' href='mailto:" . $url['url'] . "'>@ " . U_($url['name']) . "</a>\n";
+            echo "<a class='subnav' href='mailto:" . utf8entities($url['url']) . "'>@ " . U_($url['name']) . "</a>\n";
         }
     }
     echo "</td></tr>\n";

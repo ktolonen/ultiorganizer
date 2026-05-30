@@ -70,7 +70,7 @@ $html .= "<b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("spiri
 $html .= "</td></tr><tr><td>\n";
 
 foreach (MobileSpiritTimeoutValues($gameId, 1, $maxSpiritTimeouts) as $i => $timeValue) {
-    $html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . utf8entities($timeValue) . "' /> ";
+    $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . utf8entities($timeValue) . "' /> ";
 }
 
 $html .= "</td></tr><tr><td>\n";
@@ -78,7 +78,7 @@ $html .= "<b>" . utf8entities($game_result['visitorteamname']) . "</b> " . _("sp
 $html .= "</td></tr><tr><td>\n";
 
 foreach (MobileSpiritTimeoutValues($gameId, 0, $maxSpiritTimeouts) as $i => $timeValue) {
-    $html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . utf8entities($timeValue) . "' /> ";
+    $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . utf8entities($timeValue) . "' /> ";
 }
 
 $html .= "</td></tr><tr><td>\n";

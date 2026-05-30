@@ -136,15 +136,15 @@ if (count($urls)) {
 
     foreach ($urls as $url) {
         $html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
-        $html .= "<td><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/></td>";
+        $html .= "<td><img width='16' height='16' src='images/linkicons/" . utf8entities($url['type']) . ".png' alt='" . utf8entities($url['type']) . "'/></td>";
         $html .= "<td>";
         if (!empty($url['name'])) {
-            $html .= "<a href='" . $url['url'] . "'>" . utf8entities($url['name']) . "</a> (" . utf8entities($url['url']) . ")";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a> (" . utf8entities($url['url']) . ")";
         } else {
-            $html .= "<a href='" . $url['url'] . "'>" . utf8entities($url['url']) . "</a>";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['url']) . "</a>";
         }
         $html .= "</td>";
-        $html .= "<td>" . $url['mediaowner'] . "</td>";
+        $html .= "<td>" . utf8entities($url['mediaowner']) . "</td>";
         $html .= "<td>" . $url['publisher'] . "</td>";
 
         if ($url['publisher_id'] == $userinfo['id']) {
@@ -177,8 +177,8 @@ if ($owner == "game") {
         foreach ($events as $event) {
             $html .= "<tr>";
             $html .= "<td>" . SecToMin($event['time']) . "</td>";
-            $html .= "<td><img width='16' height='16' src='images/linkicons/" . $event['type'] . ".png' alt='" . $event['type'] . "'/></td>";
-            $html .= "<td>" . $event['url'] . "</td>";
+            $html .= "<td><img width='16' height='16' src='images/linkicons/" . utf8entities($event['type']) . ".png' alt='" . utf8entities($event['type']) . "'/></td>";
+            $html .= "<td>" . utf8entities($event['url']) . "</td>";
             $html .= "</tr>";
         }
         $html .= "</table>";
@@ -217,7 +217,7 @@ for ($i = 0; $i < $max_new_links; $i++) {
 $html .= "</table>";
 $html .=  "<p>
 	  <input class='button' type='submit' name='save' value='" . _("Save") . "' />
-	  <input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/>
+	  <input class='button' type='button' name='back'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/>
 	  <input type='hidden' name='backurl' value='$backurl'/>
 	  <input type='hidden' name='MAX_FILE_SIZE' value='$max_file_size'/>
 	  </p>\n";

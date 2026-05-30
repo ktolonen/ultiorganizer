@@ -118,7 +118,7 @@ foreach ($playerlist as $player) {
     }
 
     $html .= "</td></tr><tr><td>\n";
-    $html .= "<input class='input' name='p" . $player['player_id'] . "' id='p" . $player['player_id'] . "' maxlength='3' size='2' value='$number'/> ";
+    $html .= "<input class='input' name='p" . $player['player_id'] . "' id='p" . $player['player_id'] . "' inputmode='numeric' pattern='[0-9]*' maxlength='3' size='2' value='$number'/> ";
 
     if ($found || count($played_players) == 0) {
         $html .= "<input class='center' type='checkbox' name='check[]' value='" . utf8entities($player['player_id']) . "' checked='checked'/>";

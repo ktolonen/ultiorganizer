@@ -194,11 +194,11 @@ $html .= "<input id='ateam' name='team' type='radio' $vgoal value='A' />" . utf8
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='input' id='pass' name='pass' maxlength='3' size='3' value='" . utf8entities($pass) . "'/> " . _("Assist");
 $html .= "</td></tr><tr><td>\n";
-$html .= "<input class='input' id='goal' name='goal' maxlength='3' size='3' value='" . utf8entities($goal) . "'/> " . _("Goal");
+$html .= "<input class='input' id='goal' name='goal' inputmode='numeric' pattern='[0-9]*' maxlength='3' size='3' value='" . utf8entities($goal) . "'/> " . _("Goal");
 if (!$hideTimeOnScoresheet) {
     $html .= "</td></tr><tr><td>\n";
-    $html .= "<input class='input' id='timemm' name='timemm' maxlength='3' size='3' value='" . utf8entities($timemm) . "'/>:";
-    $html .= "<input class='input' id='timess' name='timess' maxlength='2' size='2' value='" . utf8entities($timess) . "'/> " . _("Time") . " " . _("min") . ":" . _("sec");
+    $html .= "<input class='input' id='timemm' name='timemm' inputmode='numeric' pattern='[0-9]*' maxlength='3' size='3' value='" . utf8entities($timemm) . "'/>:";
+    $html .= "<input class='input' id='timess' name='timess' inputmode='numeric' pattern='[0-9]*' maxlength='2' size='2' value='" . utf8entities($timess) . "'/> " . _("Time") . " " . _("min") . ":" . _("sec");
 }
 $html .= "</td></tr><tr><td>\n";
 if (!$errors) {

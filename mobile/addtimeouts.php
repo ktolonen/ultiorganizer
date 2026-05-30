@@ -60,7 +60,7 @@ $i = 0;
 $timeouts = GameTimeouts($gameId);
 foreach ($timeouts as $timeout) {
     if (intval($timeout['ishome'])) {
-        $html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /> ";
+        $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /> ";
         $i++;
     }
 }
@@ -69,9 +69,9 @@ foreach ($timeouts as $timeout) {
 for ($i; $i < $maxtimeouts; $i++) {
     //two last slot are smaller for visual reasons
     if ($i > ($maxtimeouts - 3)) {
-        $html .= "<input class='input' type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
+        $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='1' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
     } else {
-        $html .= "<input class='input' type='text' size='5' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
+        $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='5' maxlength='8' id='hto$i' name='hto$i' value=''/> ";
     }
 }
 $html .= "</td></tr><tr><td>\n";
@@ -82,7 +82,7 @@ $html .= "</td></tr><tr><td>\n";
 $i = 0;
 foreach ($timeouts as $timeout) {
     if (intval(!$timeout['ishome'])) {
-        $html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /> ";
+        $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='5' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /> ";
         $i++;
     }
 }
@@ -91,9 +91,9 @@ foreach ($timeouts as $timeout) {
 for ($i; $i < $maxtimeouts; $i++) {
     //two last slot are smaller for visual reasons
     if ($i > ($maxtimeouts - 3)) {
-        $html .= "<input class='input' type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
+        $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='1' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
     } else {
-        $html .= "<input class='input' type='text' size='5' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
+        $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='5' maxlength='8' id='ato$i' name='ato$i' value=''/> ";
     }
 }
 

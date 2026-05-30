@@ -120,12 +120,12 @@ if (count($urls)) {
     $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Player pages") . ":</td></tr>";
     foreach ($urls as $url) {
         $html .= "<tr>";
-        $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+        $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . utf8entities($url['type']) . ".png' alt='" . utf8entities($url['type']) . "'/> ";
         $html .= "</td><td>";
         if (!empty($url['name'])) {
-            $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a>";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a>";
         } else {
-            $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['url']) . "</a>";
         }
         $html .= "</td>";
         $html .= "</tr>";
@@ -139,15 +139,15 @@ if (count($urls)) {
     $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Photos and Videos") . ":</td></tr>";
     foreach ($urls as $url) {
         $html .= "<tr>";
-        $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+        $html .= "<td style='width:18px'><img width='16' height='16' src='images/linkicons/" . utf8entities($url['type']) . ".png' alt='" . utf8entities($url['type']) . "'/> ";
         $html .= "</td><td>";
         if (!empty($url['name'])) {
-            $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a>";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a>";
         } else {
-            $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+            $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['url']) . "</a>";
         }
         if (!empty($url['mediaowner'])) {
-            $html .= " " . _("from") . " " . $url['mediaowner'];
+            $html .= " " . _("from") . " " . utf8entities($url['mediaowner']);
         }
         $html .= "</td>";
         $html .= "</tr>";

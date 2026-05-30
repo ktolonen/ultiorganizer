@@ -234,7 +234,7 @@ if ($filter != 'profiles') {
     $html .= "<input class='button' type='submit' name='remove' value='" . _("Delete selected") . "'/>";
 }
 $html .= "<input class='button' type='reset' value='" . _("Clear") . "'/>";
-$html .= "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
+$html .= "<input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
 
 $html .= "<table><tr><th><input type='checkbox' onclick='checkAll(\"ids\");'/></th>";
 $prevname = "";

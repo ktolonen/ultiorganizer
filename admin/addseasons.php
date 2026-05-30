@@ -464,7 +464,7 @@ if (empty($seasonId)) {
     $html .= "<p><input class='button' type='submit' name='save' value='" . _("Save") . "' />";
 }
 $html .= "<input type='hidden' name='backurl' value='$backurl'/>";
-$html .= "<input class='button' type='button' value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\" /></p>";
+$html .= "<input class='button' type='button' value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)' /></p>";
 $html .= "</form>\n";
 
 echo $html;

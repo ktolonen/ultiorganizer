@@ -520,7 +520,7 @@ if (!$hideTimeOnScoresheet) {
     $timeouts = GameTimeouts($gameId);
     foreach ($timeouts as $timeout) {
         if (intval($timeout['ishome'])) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
             $i++;
         }
     }
@@ -529,9 +529,9 @@ if (!$hideTimeOnScoresheet) {
     for ($i; $i < $maxtimeouts; $i++) {
         //two last slot are smaller for visual reasons
         if ($i > ($maxtimeouts - 3)) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
         } else {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
         }
     }
     echo "</tr>\n";
@@ -542,7 +542,7 @@ if (!$hideTimeOnScoresheet) {
     $i = 0;
     foreach ($timeouts as $timeout) {
         if (!intval($timeout['ishome'])) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
             $i++;
         }
     }
@@ -551,9 +551,9 @@ if (!$hideTimeOnScoresheet) {
     for ($i; $i < $maxtimeouts; $i++) {
         //two last slot are smaller for visual reasons
         if ($i > ($maxtimeouts - 3)) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
         } else {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
         }
     }
 
@@ -564,7 +564,7 @@ if (!$hideTimeOnScoresheet) {
     echo "<table cellspacing='0' width='100%' border='1'>\n";
     echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
     echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
-	maxlength='8' type='text' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
+	maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;]*' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
     echo "</table>\n";
 }
 
@@ -588,9 +588,9 @@ if (!$hideTimeOnScoresheet && !empty($seasoninfo['spiritmode'])) {
     echo "<tr><th>" . $homeshortname . "</th>\n";
     for ($i = 0; $i < $maxspirittimeouts; $i++) {
         if ($i > ($maxspirittimeouts - 3)) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='shto$i' name='shto$i' value='" . utf8entities($homeSpiritTimeouts[$i]) . "' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='shto$i' name='shto$i' value='" . utf8entities($homeSpiritTimeouts[$i]) . "' /></td>\n";
         } else {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='8' maxlength='8' id='shto$i' name='shto$i' value='" . utf8entities($homeSpiritTimeouts[$i]) . "' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='8' maxlength='8' id='shto$i' name='shto$i' value='" . utf8entities($homeSpiritTimeouts[$i]) . "' /></td>\n";
         }
     }
     echo "</tr>\n";
@@ -598,9 +598,9 @@ if (!$hideTimeOnScoresheet && !empty($seasoninfo['spiritmode'])) {
     echo "<tr><th>" . $visitorshortname . "</th>\n";
     for ($i = 0; $i < $maxspirittimeouts; $i++) {
         if ($i > ($maxspirittimeouts - 3)) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='4' maxlength='8' id='sato$i' name='sato$i' value='" . utf8entities($awaySpiritTimeouts[$i]) . "' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='sato$i' name='sato$i' value='" . utf8entities($awaySpiritTimeouts[$i]) . "' /></td>\n";
         } else {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' size='8' maxlength='8' id='sato$i' name='sato$i' value='" . utf8entities($awaySpiritTimeouts[$i]) . "' /></td>\n";
+            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='8' maxlength='8' id='sato$i' name='sato$i' value='" . utf8entities($awaySpiritTimeouts[$i]) . "' /></td>\n";
         }
     }
     echo "</tr>\n";
@@ -689,9 +689,9 @@ foreach ($scores as $row) {
         $n = "";
     }
 
-    echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' maxlength='2' size='3' value='$n'/></td>";
+    echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" inputmode='numeric' pattern='[0-9]*' id='goal$i' name='goal$i' maxlength='2' size='3' value='$n'/></td>";
     if (!$hideTimeOnScoresheet) {
-        echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8' value='" . SecToMin($row['time']) . "'/></td>";
+        echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" inputmode='decimal' pattern='[0-9.,:;]*' id='time$i' name='time$i' maxlength='8' size='8' value='" . SecToMin($row['time']) . "'/></td>";
     }
     echo "<td class='center' style='width:60px;$style_right'><input class='fakeinput center' id='sit$i' name='sit$i' size='7' disabled='disabled'
 	value='" . utf8entities($row['homescore']) . " - " . $row['visitorscore'] . "'/></td>";
@@ -706,9 +706,9 @@ for ($i; $i < $maxscores; $i++) {
     echo "<td class='center' style='width:40px;$style_left' onclick=\"clickButton('hteam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
     echo "<td class='center' style='width:40px;$style_mid' onclick=\"clickButton('ateam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='ateam$i' name='team$i' type='radio' value='A' /></td>";
     echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' size='3' maxlength='2'/></td>";
-    echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" id='goal$i' name='goal$i' size='3' maxlength='2'/></td>";
+    echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" inputmode='numeric' pattern='[0-9]*' id='goal$i' name='goal$i' size='3' maxlength='2'/></td>";
     if (!$hideTimeOnScoresheet) {
-        echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" id='time$i' name='time$i' maxlength='8' size='8'/></td>";
+        echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" inputmode='decimal' pattern='[0-9.,:;]*' id='time$i' name='time$i' maxlength='8' size='8'/></td>";
     }
     echo "<td class='center' style='width:60px;$style_right'><input class='fakeinput center' id='sit$i' name='sit$i' size='7' disabled='disabled'/></td>";
     echo "</tr>\n";

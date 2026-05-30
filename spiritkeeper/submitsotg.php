@@ -82,7 +82,7 @@ if (empty($orderedCategories)) {
             }
             $pageHtml .= "</fieldset>";
         } else {
-            $pageHtml .= "<input class='sotg-score-input' type='number' name='cat[" . $categoryId . "]' value='" . $value . "' min='" . (int) $category['min'] . "' max='" . (int) $category['max'] . "' step='1' data-factor='" . (int) $category['factor'] . "' data-min='" . (int) $category['min'] . "' data-max='" . (int) $category['max'] . "'/>";
+            $pageHtml .= "<input class='sotg-score-input' type='number' inputmode='numeric' name='cat[" . $categoryId . "]' value='" . $value . "' min='" . (int) $category['min'] . "' max='" . (int) $category['max'] . "' step='1' data-factor='" . (int) $category['factor'] . "' data-min='" . (int) $category['min'] . "' data-max='" . (int) $category['max'] . "'/>";
         }
         $pageHtml .= "</div>";
     }

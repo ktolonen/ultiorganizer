@@ -192,11 +192,11 @@ $urls = GetUrlList("club", $clubId);
 
 foreach ($urls as $url) {
     $html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
-    $html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+    $html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . utf8entities($url['type']) . ".png' alt='" . utf8entities($url['type']) . "'/> ";
     if (!empty($url['name'])) {
-        $html .= "<a href='" . $url['url'] . "'>" . $url['name'] . "</a> (" . $url['url'] . ")";
+        $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a> (" . utf8entities($url['url']) . ")";
     } else {
-        $html .= "<a href='" . $url['url'] . "'>" . $url['url'] . "</a>";
+        $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['url']) . "</a>";
     }
 
     $html .= "</td>";
@@ -249,7 +249,7 @@ $html .= "<td><input class='input' type='file' size='50' name='picture'/></td></
 
 $html .=  "<tr><td colspan = '2' align='right'><br/>
 	  <input class='button' type='submit' name='save' value='" . _("Save") . "'/>
-	  <input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/>
+	  <input class='button' type='button' name='back'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/>
 	  <input type='hidden' name='backurl' value='$backurl'/>
 	  <input type='hidden' name='MAX_FILE_SIZE' value='$max_file_size'/>
 	  </td></tr>\n";

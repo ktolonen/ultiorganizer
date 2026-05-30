@@ -25,7 +25,7 @@ for ($i = 0; isset($_SESSION["var$i"]); $i++) {
 $html .= "</p>";
 
 if (isset($_SESSION['backurl'])) {
-    $html .= "<p><input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='" . $_SESSION['backurl'] . "'\"/></p>";
+    $html .= "<p><input class='button' type='button' name='back'  value='" . _("Return") . "' data-href='" . $_SESSION['backurl'] . "' onclick='navigateBack(this)'/></p>";
     unset($_SESSION['title']);
 }
 
