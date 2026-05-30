@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 15:53+0300\n"
+"POT-Creation-Date: 2026-05-30 18:27+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -34,7 +34,7 @@ msgstr " (ingrese '0' si no está activo)"
 msgid "#"
 msgstr "#"
 
-#: admin/translations.php:311
+#: admin/translations.php:341
 #, fuzzy, php-format
 msgid "%d bulk translation values applied."
 msgstr "Modificar traducciones"
@@ -49,7 +49,7 @@ msgstr "Se borraron los archivos de caché %d."
 msgid "%d files, %s"
 msgstr "Archivos %d, %s"
 
-#: admin/translations.php:461
+#: admin/translations.php:515
 #, fuzzy, php-format
 msgid "%d translation keys available."
 msgstr "Modificar traducciones"
@@ -287,7 +287,7 @@ msgstr "Activo"
 #: admin/clubs.php:90 admin/locations.php:73 admin/poolmoves.php:398
 #: admin/seasonpools.php:303 admin/seasons.php:162 admin/seasonseries.php:173
 #: admin/seasonteams.php:263 admin/serieformats.php:52
-#: admin/translations.php:473 user/addextraemail.php:95 user/enrollteam.php:140
+#: admin/translations.php:526 user/addextraemail.php:95 user/enrollteam.php:140
 #: user/teamplayers.php:269 user/userinfo.php:378 user/userinfo.php:514
 msgid "Add"
 msgstr "Agregar"
@@ -336,7 +336,7 @@ msgstr "Agregar más"
 msgid "Add more ..."
 msgstr "Agregar más..."
 
-#: admin/clubs.php:53 admin/clubs.php:86 admin/translations.php:458
+#: admin/clubs.php:53 admin/clubs.php:86 admin/translations.php:512
 msgid "Add new"
 msgstr "Agregar nuevo"
 
@@ -388,7 +388,7 @@ msgstr "Agregar equipo"
 msgid "Add teams from:"
 msgstr "Agregar equipos desde:"
 
-#: admin/translations.php:463
+#: admin/translations.php:517
 #, fuzzy
 msgid "Add translation key"
 msgstr "Modificar traducciones"
@@ -570,12 +570,12 @@ msgstr ""
 msgid "Anonymize player data"
 msgstr "Anonimizar los datos del jugador"
 
-#: admin/translations.php:522
+#: admin/translations.php:589
 #, fuzzy
 msgid "Apply bulk translations"
 msgstr "Modificar traducciones"
 
-#: admin/translations.php:450
+#: admin/translations.php:504
 #, fuzzy
 msgid "Apply the bulk translations from the text area?"
 msgstr "Modificar traducciones"
@@ -837,16 +837,16 @@ msgstr "Blogger"
 msgid "Bronze"
 msgstr "Bronce"
 
-#: admin/translations.php:509
+#: admin/translations.php:566
 msgid "Bulk preview"
 msgstr ""
 
-#: admin/translations.php:501
+#: admin/translations.php:558
 #, fuzzy
 msgid "Bulk translation"
 msgstr "Traducciones"
 
-#: admin/translations.php:505
+#: admin/translations.php:562
 msgid "Bulk translation block"
 msgstr ""
 
@@ -925,8 +925,8 @@ msgstr "Gol de Callahan"
 #: admin/select_userrole.php:41 admin/select_userrole.php:44
 #: admin/select_userrole.php:47 admin/select_userrole.php:50
 #: admin/select_userrole.php:53 admin/select_userrole.php:56
-#: admin/select_userrole.php:59 admin/translations.php:494
-#: admin/translations.php:496 mobile/addscoresheet.php:227
+#: admin/select_userrole.php:59 admin/translations.php:551
+#: admin/translations.php:553 mobile/addscoresheet.php:227
 #: scorekeeper/addscoresheet.php:411 scorekeeper/result.php:88
 #: user/adddefensesheet.php:317 user/addscoresheet.php:619
 #: user/select_poolselector.php:26 user/select_poolselector.php:29
@@ -1083,7 +1083,7 @@ msgstr ""
 "Limpie los datos huérfanos estableciendo claves externas que aceptan valores "
 "en NULL o eliminando/reasignando filas secundarias."
 
-#: admin/dbequalize.php:236 admin/translations.php:231 user/addresult.php:119
+#: admin/dbequalize.php:236 user/addresult.php:119
 msgid "Clear"
 msgstr "Borrar"
 
@@ -1368,7 +1368,7 @@ msgstr "Copiar"
 msgid "Copy team roster from:"
 msgstr "Copiar la lista de jugadores del equipo desde:"
 
-#: admin/translations.php:504
+#: admin/translations.php:561
 msgid ""
 "Copy the block below to an AI assistant, update the language values, then "
 "paste the result back here for preview."
@@ -1460,7 +1460,7 @@ msgstr "Imagen actual"
 msgid "Current score"
 msgstr "Puntuación actual"
 
-#: admin/translations.php:511
+#: admin/translations.php:568
 #, fuzzy
 msgid "Current translation"
 msgstr "Traducciones"
@@ -1585,7 +1585,7 @@ msgid "Defensive plays"
 msgstr "Jugadas defensivas"
 
 #: admin/poolmoves.php:233 admin/poolmoves.php:305 admin/seasonpoints.php:204
-#: admin/spirit.php:403 admin/translations.php:497 admin/users.php:74
+#: admin/spirit.php:403 admin/translations.php:554 admin/users.php:74
 #: admin/users.php:76 mobile/deletescore.php:22 mobile/deletescore.php:46
 #: scorekeeper/deletescore.php:43 user/teamplayers.php:175
 msgid "Delete"
@@ -1649,7 +1649,7 @@ msgstr "¿Eliminar esta puntuación de Espíritu?"
 msgid "Delete this token permanently?"
 msgstr "¿Eliminar este token permanentemente?"
 
-#: admin/translations.php:449
+#: admin/translations.php:503
 #, fuzzy
 msgid "Delete this translation key?"
 msgstr "¿Eliminar esta ronda?"
@@ -1834,7 +1834,7 @@ msgstr ""
 #: admin/addseasonteams.php:104 admin/addserieformats.php:10
 #: admin/editstanding.php:17 admin/locations.php:64 admin/locations.php:108
 #: admin/seasonstandings.php:122 admin/seasonstandings.php:540
-#: admin/tdtools.php:93 admin/tdtools.php:101 admin/translations.php:457
+#: admin/tdtools.php:93 admin/tdtools.php:101 admin/translations.php:511
 #: user/respgames.php:218
 msgid "Edit"
 msgstr "Editar"
@@ -1885,7 +1885,7 @@ msgstr "Editar enlaces del menú lateral"
 msgid "Edit team"
 msgstr "Editar equipo"
 
-#: admin/translations.php:463
+#: admin/translations.php:517
 #, fuzzy
 msgid "Edit translation key"
 msgstr "Modificar traducciones"
@@ -3288,7 +3288,7 @@ msgstr "Derechos insuficientes."
 #: admin/reservations.php:26 admin/seasonadmin.php:17 admin/seasongames.php:24
 #: admin/seasonpools.php:17 admin/seasonseries.php:16
 #: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:689
-#: admin/spiritsettings.php:12 admin/tdtools.php:237 admin/translations.php:435
+#: admin/spiritsettings.php:12 admin/tdtools.php:237 admin/translations.php:489
 #: spiritkeeper/editgame.php:24 spiritkeeper/editgame.php:43
 #: user/addspirit.php:76 user/addspirit.php:91
 msgid "Insufficient user rights"
@@ -3419,7 +3419,8 @@ msgstr "Mantener"
 msgid "Keep (most referred)"
 msgstr "Mantener (más referido)"
 
-#: admin/translations.php:478 admin/translations.php:511
+#: admin/translations.php:532 admin/translations.php:534
+#: admin/translations.php:568
 msgid "Key"
 msgstr "Llave"
 
@@ -3427,7 +3428,7 @@ msgstr "Llave"
 msgid "Label"
 msgstr "Etiqueta"
 
-#: admin/translations.php:480 admin/translations.php:511 user/userinfo.php:271
+#: admin/translations.php:537 admin/translations.php:568 user/userinfo.php:271
 msgid "Language"
 msgstr "Idioma"
 
@@ -3547,7 +3548,7 @@ msgstr "Vídeo en vivo"
 msgid "Local time"
 msgstr "Hora local"
 
-#: admin/translations.php:480
+#: admin/translations.php:537
 #, fuzzy
 msgid "Locale"
 msgstr "Hora local"
@@ -3729,10 +3730,6 @@ msgstr "Identificaciones faltantes"
 msgid "Missing and duplicate shirt numbers"
 msgstr "Números de camiseta faltantes y duplicados"
 
-#: admin/translations.php:221
-msgid "Missing from block"
-msgstr ""
-
 #: lib/club.functions.php:214 lib/player.functions.php:1002
 #: lib/team.functions.php:1367
 msgid "Missing image processing support on the server."
@@ -3758,7 +3755,7 @@ msgstr "Falta puntuación de espíritu para %s. "
 msgid "Missing spirit submissions"
 msgstr "Envíos de Espíritus faltantes"
 
-#: admin/translations.php:424
+#: admin/translations.php:477
 msgid "Modify translations"
 msgstr "Modificar traducciones"
 
@@ -3942,7 +3939,7 @@ msgstr "Nueva temporada agregada"
 msgid "New tournament added"
 msgstr "Nuevo torneo agregado"
 
-#: admin/translations.php:511
+#: admin/translations.php:568
 #, fuzzy
 msgid "New translation"
 msgstr "Traducciones"
@@ -4729,7 +4726,7 @@ msgstr "Evento Previo"
 msgid "Prev. Team"
 msgstr "Equipo Previo"
 
-#: admin/translations.php:506
+#: admin/translations.php:563
 #, fuzzy
 msgid "Preview bulk translations"
 msgstr "Modificar traducciones"
@@ -5234,7 +5231,7 @@ msgstr "Sábado"
 #: admin/seasonpools.php:307 admin/seasonseries.php:180
 #: admin/seasonstandings.php:544 admin/seasonteams.php:268
 #: admin/select_teams.php:153 admin/seriesseeding.php:74
-#: admin/serieteams.php:184 admin/serverconf.php:429 admin/translations.php:473
+#: admin/serieteams.php:184 admin/serverconf.php:429 admin/translations.php:526
 #: mobile/addcomment.php:42 mobile/addfirstoffence.php:47
 #: mobile/addhalftime.php:37 mobile/addofficial.php:27
 #: mobile/addplayerlists.php:132 mobile/addspirittimeouts.php:85
@@ -5563,7 +5560,7 @@ msgstr "Sembrados"
 msgid "Select"
 msgstr "Seleccionar"
 
-#: admin/translations.php:427
+#: admin/translations.php:480
 msgid "Select a key and edit each supported language on its own row."
 msgstr ""
 
@@ -6149,8 +6146,8 @@ msgid "Stats refs"
 msgstr "Stats refs"
 
 #: admin/apitokens.php:168 admin/finalstandings.php:130
-#: admin/finalstandings.php:132 admin/translations.php:511
-#: scorekeeper/addscoresheet.php:258 scorekeeper/addscoresheet.php:309
+#: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:258
+#: scorekeeper/addscoresheet.php:309
 msgid "Status"
 msgstr "Estado"
 
@@ -6350,6 +6347,10 @@ msgstr ""
 "El equipo local es el equipo BYE. Debe utilizar el resultado sugerido: %s - "
 "%s"
 
+#: admin/translations.php:481
+msgid "The key is case insensitive"
+msgstr "La clave no distingue entre mayúsculas y minúsculas"
+
 #: menufunctions.php:258
 msgid "The legacy mobile administration interface is deprecated."
 msgstr "La interfaz de administración móvil heredada está obsoleta."
@@ -6380,7 +6381,7 @@ msgstr ""
 "El equipo es responsable de la acreditación de <u>todos</u> los jugadores de "
 "la lista."
 
-#: admin/translations.php:426
+#: admin/translations.php:479
 msgid "The translations are used to localize all user-provided text fields."
 msgstr ""
 "Las traducciones se utilizan para localizar todos los campos de texto "
@@ -6720,12 +6721,12 @@ msgstr "La transferencia ya existe"
 msgid "Transfer times"
 msgstr "Tiempos de transferencia"
 
-#: admin/translations.php:480
+#: admin/translations.php:537
 #, fuzzy
 msgid "Translation"
 msgstr "Traducciones"
 
-#: admin/translations.php:281
+#: admin/translations.php:300
 #, fuzzy
 msgid "Translation added."
 msgstr "Traducciones"
@@ -6734,41 +6735,41 @@ msgstr "Traducciones"
 msgid "Translation administrator"
 msgstr "Administrador de traducción"
 
-#: admin/translations.php:454
+#: admin/translations.php:508
 #, fuzzy
 msgid "Translation key"
 msgstr "Traducciones"
 
-#: admin/translations.php:276
+#: admin/translations.php:295
 #, fuzzy
 msgid "Translation key already exists."
 msgstr "La transferencia ya existe"
 
-#: admin/translations.php:85
+#: admin/translations.php:93
 #, fuzzy
 msgid "Translation key is required."
 msgstr "Administrador de traducción"
 
-#: admin/translations.php:89
+#: admin/translations.php:97
 #, php-format
 msgid "Translation key is too long: %s"
 msgstr ""
 
-#: admin/translations.php:263
+#: admin/translations.php:282
 #, fuzzy
 msgid "Translation removed."
 msgstr "Traducciones"
 
-#: admin/translations.php:99
+#: admin/translations.php:107
 #, php-format
 msgid "Translation text is too long for key: %s"
 msgstr ""
 
-#: menufunctions.php:488 admin/translations.php:8 admin/translations.php:432
+#: menufunctions.php:488 admin/translations.php:8 admin/translations.php:486
 msgid "Translations"
 msgstr "Traducciones"
 
-#: admin/translations.php:284
+#: admin/translations.php:303
 #, fuzzy
 msgid "Translations saved."
 msgstr "Modificar traducciones"
@@ -6871,11 +6872,6 @@ msgstr ""
 "No se puede agregar el equipo. Verifique los detalles del equipo y la "
 "configuración del grupo."
 
-#: admin/translations.php:229
-#, fuzzy
-msgid "Unchanged"
-msgstr "Cambiar"
-
 #: lib/search.functions.php:183 user/enrollteam.php:113 user/enrollteam.php:139
 msgid "Unconfirmed"
 msgstr "No confirmado"
@@ -6898,11 +6894,6 @@ msgstr "Deshacer todo"
 msgid "Unknown club"
 msgstr "Club desconocido"
 
-#: admin/translations.php:207
-#, fuzzy
-msgid "Unknown key"
-msgstr "Club desconocido"
-
 #: menufunctions.php:573 user/userinfo.php:478
 msgid "Unnamed player"
 msgstr "Jugador sin nombre"
@@ -6920,7 +6911,7 @@ msgstr ""
 msgid "Unsupported language:"
 msgstr "Idioma no admitido:"
 
-#: admin/eventdataimport.php:71 admin/translations.php:233
+#: admin/eventdataimport.php:71
 msgid "Update"
 msgstr "Actualizar"
 
@@ -6952,7 +6943,7 @@ msgstr "Usar"
 msgid "Use game clock"
 msgstr "Usar el reloj del juego"
 
-#: admin/translations.php:428
+#: admin/translations.php:482
 msgid ""
 "Use the bulk translation area to copy all keys and all languages to an AI "
 "assistant and preview the pasted result before applying it."
@@ -7788,9 +7779,6 @@ msgstr "si"
 #~ msgid "Save row"
 #~ msgstr "Guardar gol"
 
-#~ msgid "The key is case insensitive"
-#~ msgstr "La clave no distingue entre mayúsculas y minúsculas"
-
 #~ msgid "The key is replaced with the text in the user-selected locale."
 #~ msgstr ""
 #~ "La clave se reemplaza con el texto en la configuración regional "
@@ -7799,3 +7787,11 @@ msgstr "si"
 #, fuzzy, php-format
 #~ msgid "Translation (%s)"
 #~ msgstr "Traducciones"
+
+#, fuzzy
+#~ msgid "Unchanged"
+#~ msgstr "Cambiar"
+
+#, fuzzy
+#~ msgid "Unknown key"
+#~ msgstr "Club desconocido"

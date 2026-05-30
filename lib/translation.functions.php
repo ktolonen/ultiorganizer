@@ -131,6 +131,24 @@ function Translations()
     }
 }
 
+function ExistingTranslationKey($key)
+{
+    if (hasTranslationRight()) {
+        $query = sprintf(
+            "SELECT translation_key FROM uo_translation WHERE translation_key='%s' ORDER BY translation_key ASC LIMIT 1",
+            DBEscapeString($key),
+        );
+        $existingKey = DBQueryToValue($query);
+        if ($existingKey !== false && $existingKey !== null) {
+            return $existingKey;
+        }
+
+        return null;
+    } else {
+        die('Insufficient rights to get translation key');
+    }
+}
+
 function SetTranslation($key, $translations)
 {
     if (hasTranslationRight()) {

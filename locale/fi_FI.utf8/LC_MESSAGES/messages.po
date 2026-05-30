@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-30 15:53+0300\n"
+"POT-Creation-Date: 2026-05-30 18:27+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -32,7 +32,7 @@ msgstr " (syötä '0', jos ei ole live)"
 msgid "#"
 msgstr "#"
 
-#: admin/translations.php:311
+#: admin/translations.php:341
 #, fuzzy, php-format
 msgid "%d bulk translation values applied."
 msgstr "Muuta käännöksiä"
@@ -47,7 +47,7 @@ msgstr ""
 msgid "%d files, %s"
 msgstr ""
 
-#: admin/translations.php:461
+#: admin/translations.php:515
 #, fuzzy, php-format
 msgid "%d translation keys available."
 msgstr "Muuta käännöksiä"
@@ -277,7 +277,7 @@ msgstr "Aktiivinen"
 #: admin/clubs.php:90 admin/locations.php:73 admin/poolmoves.php:398
 #: admin/seasonpools.php:303 admin/seasons.php:162 admin/seasonseries.php:173
 #: admin/seasonteams.php:263 admin/serieformats.php:52
-#: admin/translations.php:473 user/addextraemail.php:95 user/enrollteam.php:140
+#: admin/translations.php:526 user/addextraemail.php:95 user/enrollteam.php:140
 #: user/teamplayers.php:269 user/userinfo.php:378 user/userinfo.php:514
 msgid "Add"
 msgstr "Lisää"
@@ -326,7 +326,7 @@ msgstr "Lisää"
 msgid "Add more ..."
 msgstr "Lisää..."
 
-#: admin/clubs.php:53 admin/clubs.php:86 admin/translations.php:458
+#: admin/clubs.php:53 admin/clubs.php:86 admin/translations.php:512
 msgid "Add new"
 msgstr "Lisää uusi"
 
@@ -378,7 +378,7 @@ msgstr "Lisää joukkue"
 msgid "Add teams from:"
 msgstr "Lisää joukkueita:"
 
-#: admin/translations.php:463
+#: admin/translations.php:517
 #, fuzzy
 msgid "Add translation key"
 msgstr "Muuta käännöksiä"
@@ -554,12 +554,12 @@ msgstr "Ota aina täydellinen varmuuskopio ennen konvertoinnin aloittamista."
 msgid "Anonymize player data"
 msgstr "Anonymisoi pelaajan tiedot"
 
-#: admin/translations.php:522
+#: admin/translations.php:589
 #, fuzzy
 msgid "Apply bulk translations"
 msgstr "Muuta käännöksiä"
 
-#: admin/translations.php:450
+#: admin/translations.php:504
 #, fuzzy
 msgid "Apply the bulk translations from the text area?"
 msgstr "Muuta käännöksiä"
@@ -816,16 +816,16 @@ msgstr "Blogger"
 msgid "Bronze"
 msgstr "Pronssi"
 
-#: admin/translations.php:509
+#: admin/translations.php:566
 msgid "Bulk preview"
 msgstr ""
 
-#: admin/translations.php:501
+#: admin/translations.php:558
 #, fuzzy
 msgid "Bulk translation"
 msgstr "Käännökset"
 
-#: admin/translations.php:505
+#: admin/translations.php:562
 msgid "Bulk translation block"
 msgstr ""
 
@@ -902,8 +902,8 @@ msgstr "Callahan-maali"
 #: admin/select_userrole.php:41 admin/select_userrole.php:44
 #: admin/select_userrole.php:47 admin/select_userrole.php:50
 #: admin/select_userrole.php:53 admin/select_userrole.php:56
-#: admin/select_userrole.php:59 admin/translations.php:494
-#: admin/translations.php:496 mobile/addscoresheet.php:227
+#: admin/select_userrole.php:59 admin/translations.php:551
+#: admin/translations.php:553 mobile/addscoresheet.php:227
 #: scorekeeper/addscoresheet.php:411 scorekeeper/result.php:88
 #: user/adddefensesheet.php:317 user/addscoresheet.php:619
 #: user/select_poolselector.php:26 user/select_poolselector.php:29
@@ -1059,7 +1059,7 @@ msgstr ""
 "Siivoa orvot rivit asettamalla tyhjät vierasavaimet arvoon NULL tai poista/"
 "siirrä alirivit toiseen kohteeseen."
 
-#: admin/dbequalize.php:236 admin/translations.php:231 user/addresult.php:119
+#: admin/dbequalize.php:236 user/addresult.php:119
 msgid "Clear"
 msgstr "Tyhjennä"
 
@@ -1337,7 +1337,7 @@ msgstr "Kopioi"
 msgid "Copy team roster from:"
 msgstr "Kopioi pelaajalista:"
 
-#: admin/translations.php:504
+#: admin/translations.php:561
 msgid ""
 "Copy the block below to an AI assistant, update the language values, then "
 "paste the result back here for preview."
@@ -1429,7 +1429,7 @@ msgstr "Nykyinen kuva"
 msgid "Current score"
 msgstr "Tilanne"
 
-#: admin/translations.php:511
+#: admin/translations.php:568
 #, fuzzy
 msgid "Current translation"
 msgstr "Käännökset"
@@ -1554,7 +1554,7 @@ msgid "Defensive plays"
 msgstr "Puolustuspisteet"
 
 #: admin/poolmoves.php:233 admin/poolmoves.php:305 admin/seasonpoints.php:204
-#: admin/spirit.php:403 admin/translations.php:497 admin/users.php:74
+#: admin/spirit.php:403 admin/translations.php:554 admin/users.php:74
 #: admin/users.php:76 mobile/deletescore.php:22 mobile/deletescore.php:46
 #: scorekeeper/deletescore.php:43 user/teamplayers.php:175
 msgid "Delete"
@@ -1618,7 +1618,7 @@ msgstr "Poistetaanko nämä spirit-pisteet?"
 msgid "Delete this token permanently?"
 msgstr "Poista tämä token pysyvästi?"
 
-#: admin/translations.php:449
+#: admin/translations.php:503
 #, fuzzy
 msgid "Delete this translation key?"
 msgstr "Poista tämä kierros?"
@@ -1804,7 +1804,7 @@ msgstr ""
 #: admin/addseasonteams.php:104 admin/addserieformats.php:10
 #: admin/editstanding.php:17 admin/locations.php:64 admin/locations.php:108
 #: admin/seasonstandings.php:122 admin/seasonstandings.php:540
-#: admin/tdtools.php:93 admin/tdtools.php:101 admin/translations.php:457
+#: admin/tdtools.php:93 admin/tdtools.php:101 admin/translations.php:511
 #: user/respgames.php:218
 msgid "Edit"
 msgstr "Muokkaa"
@@ -1855,7 +1855,7 @@ msgstr "Muokka sivuvalikko linkkejä"
 msgid "Edit team"
 msgstr "Muokkaa joukkuetta"
 
-#: admin/translations.php:463
+#: admin/translations.php:517
 #, fuzzy
 msgid "Edit translation key"
 msgstr "Muuta käännöksiä"
@@ -3251,7 +3251,7 @@ msgstr "Ei oikeuksia."
 #: admin/reservations.php:26 admin/seasonadmin.php:17 admin/seasongames.php:24
 #: admin/seasonpools.php:17 admin/seasonseries.php:16
 #: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:689
-#: admin/spiritsettings.php:12 admin/tdtools.php:237 admin/translations.php:435
+#: admin/spiritsettings.php:12 admin/tdtools.php:237 admin/translations.php:489
 #: spiritkeeper/editgame.php:24 spiritkeeper/editgame.php:43
 #: user/addspirit.php:76 user/addspirit.php:91
 msgid "Insufficient user rights"
@@ -3382,7 +3382,8 @@ msgstr "Pidä"
 msgid "Keep (most referred)"
 msgstr "Pidä (eniten viitattu)"
 
-#: admin/translations.php:478 admin/translations.php:511
+#: admin/translations.php:532 admin/translations.php:534
+#: admin/translations.php:568
 msgid "Key"
 msgstr "Avain"
 
@@ -3390,7 +3391,7 @@ msgstr "Avain"
 msgid "Label"
 msgstr "Nimike"
 
-#: admin/translations.php:480 admin/translations.php:511 user/userinfo.php:271
+#: admin/translations.php:537 admin/translations.php:568 user/userinfo.php:271
 msgid "Language"
 msgstr "Kieli"
 
@@ -3509,7 +3510,7 @@ msgstr "Live video"
 msgid "Local time"
 msgstr "Paikallisaika"
 
-#: admin/translations.php:480
+#: admin/translations.php:537
 #, fuzzy
 msgid "Locale"
 msgstr "Paikallisaika"
@@ -3690,10 +3691,6 @@ msgstr "Puuttuvat ID:t"
 msgid "Missing and duplicate shirt numbers"
 msgstr "Puuttuvat ja päällekkäiset pelinumerot"
 
-#: admin/translations.php:221
-msgid "Missing from block"
-msgstr ""
-
 #: lib/club.functions.php:214 lib/player.functions.php:1002
 #: lib/team.functions.php:1367
 msgid "Missing image processing support on the server."
@@ -3719,7 +3716,7 @@ msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
 msgid "Missing spirit submissions"
 msgstr "Puuttuvat spirit-arvioinnit"
 
-#: admin/translations.php:424
+#: admin/translations.php:477
 msgid "Modify translations"
 msgstr "Muuta käännöksiä"
 
@@ -3903,7 +3900,7 @@ msgstr "Uusi kausi lisätty"
 msgid "New tournament added"
 msgstr "Uusi turnaus lisätty"
 
-#: admin/translations.php:511
+#: admin/translations.php:568
 #, fuzzy
 msgid "New translation"
 msgstr "Käännökset"
@@ -4683,7 +4680,7 @@ msgstr "Edel. Tapahtuma"
 msgid "Prev. Team"
 msgstr "Edel. Joukkue"
 
-#: admin/translations.php:506
+#: admin/translations.php:563
 #, fuzzy
 msgid "Preview bulk translations"
 msgstr "Muuta käännöksiä"
@@ -5185,7 +5182,7 @@ msgstr "Lauantai"
 #: admin/seasonpools.php:307 admin/seasonseries.php:180
 #: admin/seasonstandings.php:544 admin/seasonteams.php:268
 #: admin/select_teams.php:153 admin/seriesseeding.php:74
-#: admin/serieteams.php:184 admin/serverconf.php:429 admin/translations.php:473
+#: admin/serieteams.php:184 admin/serverconf.php:429 admin/translations.php:526
 #: mobile/addcomment.php:42 mobile/addfirstoffence.php:47
 #: mobile/addhalftime.php:37 mobile/addofficial.php:27
 #: mobile/addplayerlists.php:132 mobile/addspirittimeouts.php:85
@@ -5514,7 +5511,7 @@ msgstr "Rankkaus"
 msgid "Select"
 msgstr "Valitse"
 
-#: admin/translations.php:427
+#: admin/translations.php:480
 msgid "Select a key and edit each supported language on its own row."
 msgstr ""
 
@@ -6097,8 +6094,8 @@ msgid "Stats refs"
 msgstr "Tilastoviitteitä"
 
 #: admin/apitokens.php:168 admin/finalstandings.php:130
-#: admin/finalstandings.php:132 admin/translations.php:511
-#: scorekeeper/addscoresheet.php:258 scorekeeper/addscoresheet.php:309
+#: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:258
+#: scorekeeper/addscoresheet.php:309
 msgid "Status"
 msgstr "Tila"
 
@@ -6294,6 +6291,10 @@ msgid ""
 "The home team is the BYE team. You should use the suggested result: %s - %s"
 msgstr "Kotijoukkue on BYE-joukkue. Kayta ehdotettua tulosta: %s - %s"
 
+#: admin/translations.php:481
+msgid "The key is case insensitive"
+msgstr "Avain ei riipu kirjainkoosta"
+
 #: menufunctions.php:258
 msgid "The legacy mobile administration interface is deprecated."
 msgstr "Vanha mobiilihallinnan käyttöliittymä on poistumassa käytöstä."
@@ -6322,7 +6323,7 @@ msgid ""
 msgstr ""
 "Joukkue vastaa <u>kaikkien</u> listalla olevien pelaajien pelikelpoisuudesta."
 
-#: admin/translations.php:426
+#: admin/translations.php:479
 msgid "The translations are used to localize all user-provided text fields."
 msgstr ""
 "Käännöksiä käytetään lokalisoimaan kaikki käyttäjän syöttämät tekstikentät."
@@ -6653,12 +6654,12 @@ msgstr "Siirto on jo olemassa"
 msgid "Transfer times"
 msgstr "Siirrä ajat"
 
-#: admin/translations.php:480
+#: admin/translations.php:537
 #, fuzzy
 msgid "Translation"
 msgstr "Käännökset"
 
-#: admin/translations.php:281
+#: admin/translations.php:300
 #, fuzzy
 msgid "Translation added."
 msgstr "Käännökset"
@@ -6667,41 +6668,41 @@ msgstr "Käännökset"
 msgid "Translation administrator"
 msgstr "Käännösten ylläpitäjä"
 
-#: admin/translations.php:454
+#: admin/translations.php:508
 #, fuzzy
 msgid "Translation key"
 msgstr "Käännökset"
 
-#: admin/translations.php:276
+#: admin/translations.php:295
 #, fuzzy
 msgid "Translation key already exists."
 msgstr "Siirto on jo olemassa"
 
-#: admin/translations.php:85
+#: admin/translations.php:93
 #, fuzzy
 msgid "Translation key is required."
 msgstr "Käännösten ylläpitäjä"
 
-#: admin/translations.php:89
+#: admin/translations.php:97
 #, php-format
 msgid "Translation key is too long: %s"
 msgstr ""
 
-#: admin/translations.php:263
+#: admin/translations.php:282
 #, fuzzy
 msgid "Translation removed."
 msgstr "Käännökset"
 
-#: admin/translations.php:99
+#: admin/translations.php:107
 #, php-format
 msgid "Translation text is too long for key: %s"
 msgstr ""
 
-#: menufunctions.php:488 admin/translations.php:8 admin/translations.php:432
+#: menufunctions.php:488 admin/translations.php:8 admin/translations.php:486
 msgid "Translations"
 msgstr "Käännökset"
 
-#: admin/translations.php:284
+#: admin/translations.php:303
 #, fuzzy
 msgid "Translations saved."
 msgstr "Muuta käännöksiä"
@@ -6802,11 +6803,6 @@ msgstr "Ultiorganizerin versio"
 msgid "Unable to add team. Please check the team details and pool setup."
 msgstr "Joukkueen lisääminen epäonnistui. Tarkista joukkueen ja lohkon tiedot."
 
-#: admin/translations.php:229
-#, fuzzy
-msgid "Unchanged"
-msgstr "Muuta"
-
 #: lib/search.functions.php:183 user/enrollteam.php:113 user/enrollteam.php:139
 msgid "Unconfirmed"
 msgstr "Vahvistamattomat"
@@ -6829,11 +6825,6 @@ msgstr "Kumoa kaikki"
 msgid "Unknown club"
 msgstr "Tuntematon seura"
 
-#: admin/translations.php:207
-#, fuzzy
-msgid "Unknown key"
-msgstr "Tuntematon seura"
-
 #: menufunctions.php:573 user/userinfo.php:478
 msgid "Unnamed player"
 msgstr "Nimeämätön pelaaja"
@@ -6850,7 +6841,7 @@ msgstr "Varmuuskopio formaatti ei ole tuettu. Lattaa .qz tai .sql file."
 msgid "Unsupported language:"
 msgstr "Ei tuettu kieli:"
 
-#: admin/eventdataimport.php:71 admin/translations.php:233
+#: admin/eventdataimport.php:71
 msgid "Update"
 msgstr "Päivitä"
 
@@ -6882,7 +6873,7 @@ msgstr "Käytä"
 msgid "Use game clock"
 msgstr "Käytä pelikelloa"
 
-#: admin/translations.php:428
+#: admin/translations.php:482
 msgid ""
 "Use the bulk translation area to copy all keys and all languages to an AI "
 "assistant and preview the pasted result before applying it."
@@ -7773,9 +7764,6 @@ msgstr "kyllä"
 #~ msgid "Select all"
 #~ msgstr "Valitse kaikki"
 
-#~ msgid "The key is case insensitive"
-#~ msgstr "Avain ei riipu kirjainkoosta"
-
 #~ msgid "The key is replaced with the text in the user-selected locale."
 #~ msgstr "Avain korvataan tekstillä käyttäjän valitsemalla kielellä."
 
@@ -7796,6 +7784,14 @@ msgstr "kyllä"
 
 #~ msgid "Ultiorganizer minor version"
 #~ msgstr "Ultiorganizerin aliversio"
+
+#, fuzzy
+#~ msgid "Unchanged"
+#~ msgstr "Muuta"
+
+#, fuzzy
+#~ msgid "Unknown key"
+#~ msgstr "Tuntematon seura"
 
 #~ msgid "Unselect all"
 #~ msgstr "Poista kaikki valinnat"

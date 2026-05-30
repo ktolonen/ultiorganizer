@@ -12,15 +12,6 @@ function translationLocaleKey($locale)
     return str_replace(".", "_", $locale);
 }
 
-function translationTextLength($text)
-{
-    if (function_exists('mb_strlen')) {
-        return mb_strlen((string) $text);
-    }
-
-    return strlen((string) $text);
-}
-
 function translationRowsByKey($translationRows)
 {
     $rows = [];
@@ -36,6 +27,17 @@ function translationRowsByKey($translationRows)
     }
 
     return $rows;
+}
+
+// Resolve with the database collation so collisions match the uo_translation
+// primary key rules exactly.
+function translationFindExistingKey($rows, $key)
+{
+    if (isset($rows[$key])) {
+        return $key;
+    }
+
+    return ExistingTranslationKey($key);
 }
 
 function translationSelectedKey($rows)
@@ -85,7 +87,7 @@ function translationValidateKey($key, &$errors)
         $errors[] = _("Translation key is required.");
         return false;
     }
-    if (translationTextLength($key) > 50) {
+    if (mb_strlen($key) > 50) {
         $errors[] = sprintf(_("Translation key is too long: %s"), $key);
         return false;
     }
@@ -95,7 +97,7 @@ function translationValidateKey($key, &$errors)
 
 function translationValidateValue($value, $key, &$errors)
 {
-    if (translationTextLength($value) > 100) {
+    if (mb_strlen((string) $value) > 100) {
         $errors[] = sprintf(_("Translation text is too long for key: %s"), $key);
         return false;
     }
@@ -187,7 +189,13 @@ function translationParseBulkText($text, $locales)
             continue;
         }
 
-        $items[$currentKey][$localeMap[$locale]] = ltrim(substr($line, $separator + 1));
+        // Strip only the single space the block inserts after the colon, so
+        // values with significant leading whitespace round-trip unchanged.
+        $value = substr($line, $separator + 1);
+        if ($value !== '' && $value[0] === ' ') {
+            $value = substr($value, 1);
+        }
+        $items[$currentKey][$localeMap[$locale]] = $value;
     }
 
     return $items;
@@ -199,7 +207,9 @@ function translationPreviewBulkItems($items, $rows, $locales)
     $group = 0;
     foreach ($items as $key => $translations) {
         $group++;
-        if (!isset($rows[$key])) {
+        // Resolve with the same database collation that apply uses.
+        $existingKey = translationFindExistingKey($rows, $key);
+        if ($existingKey === null) {
             $preview[] = [
                 'key' => $key,
                 'group' => $group,
@@ -207,7 +217,7 @@ function translationPreviewBulkItems($items, $rows, $locales)
                 'language' => '',
                 'current' => '',
                 'translation' => '',
-                'status' => _("Unknown key"),
+                'status' => 'unknown',
             ];
             continue;
         }
@@ -216,29 +226,29 @@ function translationPreviewBulkItems($items, $rows, $locales)
             $localeKey = translationLocaleKey($locale);
             if (!array_key_exists($localeKey, $translations)) {
                 $preview[] = [
-                    'key' => $key,
+                    'key' => $existingKey,
                     'group' => $group,
                     'locale' => $locale,
                     'language' => $language,
-                    'current' => $rows[$key]['values'][$localeKey] ?? '',
+                    'current' => $rows[$existingKey]['values'][$localeKey] ?? '',
                     'translation' => '',
-                    'status' => _("Missing from block"),
+                    'status' => 'missing',
                 ];
                 continue;
             }
 
-            $current = $rows[$key]['values'][$localeKey] ?? '';
+            $current = $rows[$existingKey]['values'][$localeKey] ?? '';
             $translation = $translations[$localeKey];
             if ($current === $translation) {
-                $status = _("Unchanged");
+                $status = 'unchanged';
             } elseif ($translation === '') {
-                $status = _("Clear");
+                $status = 'clear';
             } else {
-                $status = _("Update");
+                $status = 'update';
             }
 
             $preview[] = [
-                'key' => $key,
+                'key' => $existingKey,
                 'group' => $group,
                 'locale' => $locale,
                 'language' => $language,
@@ -276,7 +286,7 @@ if (hasTranslationRight()) {
         $originalKey = (string) ($_POST['original_key'] ?? '');
         $key = $originalKey === '' ? trim((string) ($_POST['edit_key'] ?? '')) : $originalKey;
         $translations = translationReadLocaleValues($locales, 'translation_');
-        $keyAvailable = !($originalKey === '' && isset($translationRows[$key]));
+        $keyAvailable = !($originalKey === '' && translationFindExistingKey($translationRows, $key) !== null);
         if (!$keyAvailable) {
             $errors[] = _("Translation key already exists.");
         }
@@ -300,15 +310,26 @@ if (hasTranslationRight() && isset($_POST['bulk_apply'])) {
     $items = translationParseBulkText($bulkText, $locales);
     $applied = 0;
     foreach ($items as $key => $translations) {
-        if (!isset($translationRows[$key])) {
+        $existingKey = translationFindExistingKey($translationRows, $key);
+        if ($existingKey === null) {
             continue;
         }
-        if (!translationValidateKey($key, $errors) || !translationValidateValues($translations, $key, $errors)) {
+        if (!translationValidateKey($existingKey, $errors) || !translationValidateValues($translations, $existingKey, $errors)) {
             continue;
         }
 
-        SetTranslation($key, $translations);
-        $applied += count($translations);
+        // Only write and count values that differ from the current translation.
+        $changed = [];
+        foreach ($translations as $localeKey => $value) {
+            $current = $translationRows[$existingKey]['values'][$localeKey] ?? '';
+            if ($current !== $value) {
+                $changed[$localeKey] = $value;
+            }
+        }
+        if ($changed) {
+            SetTranslation($existingKey, $changed);
+            $applied += count($changed);
+        }
     }
 
     if ($applied > 0) {
@@ -453,6 +474,7 @@ $help = "<p>" . _("Modify translations") . ":</p>
 	<ol>
 		<li> " . _("The translations are used to localize all user-provided text fields.") . " </li>
 		<li> " . _("Select a key and edit each supported language on its own row.") . " </li>
+		<li> " . _("The key is case insensitive") . " </li>
 		<li> " . _("Use the bulk translation area to copy all keys and all languages to an AI assistant and preview the pasted result before applying it.") . " </li>
 	</ol>";
 
@@ -542,17 +564,15 @@ if (!empty($bulkPreview)) {
     echo "<tr><th class='translation-preview-key'>" . _("Key") . "</th><th>" . _("New translation") . "</th><th>" . _("Current translation") . "</th><th>" . _("Language") . "</th></tr>\n";
     foreach ($bulkPreview as $preview) {
         $groupClass = $preview['group'] % 2 === 0 ? 'translation-group-even' : 'translation-group-odd';
-        $statusClass = 'translation-row-unchanged';
-        if ($preview['status'] === _("Update")) {
-            $statusClass = 'translation-row-update';
-        } elseif ($preview['status'] === _("Clear")) {
-            $statusClass = 'translation-row-clear';
-        } elseif ($preview['status'] === _("Missing from block")) {
-            $statusClass = 'translation-row-missing';
-        } elseif ($preview['status'] === _("Unknown key")) {
-            $statusClass = 'translation-row-unknown';
-        }
-        $valueClass = $statusClass === 'translation-row-unchanged' ? '' : " class='translation-changed-value'";
+        $statusClasses = [
+            'update' => 'translation-row-update',
+            'clear' => 'translation-row-clear',
+            'missing' => 'translation-row-missing',
+            'unknown' => 'translation-row-unknown',
+            'unchanged' => 'translation-row-unchanged',
+        ];
+        $statusClass = $statusClasses[$preview['status']] ?? 'translation-row-unchanged';
+        $valueClass = $preview['status'] === 'unchanged' ? '' : " class='translation-changed-value'";
 
         echo "<tr class='" . $groupClass . " " . $statusClass . "'>";
         echo "<td>" . utf8entities($preview['key']) . "</td>";
