@@ -241,12 +241,15 @@ function getAvailableCustomizations()
 }
 
 /**
- * Return list of localizations available under /locale that the system can serve.
+ * Return list of configured localizations available under /locale that the system can serve.
  * Filters out locales not installed on the system and always includes English.
  */
 function getAvailableLocalizations()
 {
     global $include_prefix;
+    global $locales;
+
+    $configuredLocalizations = isset($locales) && is_array($locales) ? $locales : [];
     $localizations = [];
     $temp = scandir($include_prefix . "locale/");
     $currentLocale = setlocale(LC_MESSAGES, "0");
@@ -256,13 +259,13 @@ function getAvailableLocalizations()
         if (is_dir($include_prefix . "locale/$fh") && $fh != '.' && $fh != '..') {
             // Only list locales that are available on the system so gettext works.
             if (setlocale(LC_MESSAGES, $fh) !== false) {
-                $localizations[$fh] = $fh;
+                $localizations[$fh] = $configuredLocalizations[$fh] ?? $fh;
             }
         }
     }
     // English does not require translations, so keep it available even if the locale is missing.
     if (!isset($localizations[$fallbackEnglishLocale])) {
-        $localizations[$fallbackEnglishLocale] = $fallbackEnglishLocale;
+        $localizations[$fallbackEnglishLocale] = $configuredLocalizations[$fallbackEnglishLocale] ?? 'English';
     }
     if ($currentLocale !== false) {
         setlocale(LC_MESSAGES, $currentLocale);

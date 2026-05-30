@@ -9,8 +9,9 @@ This page contains the current Docker Compose-based local setup guidance. The ca
 - MariaDB 10.11 compatibility
 - Host locales and gettext support for translations
 
-The bundled Docker images generate the `en_US.UTF-8`, `es_ES.UTF-8`, and
-`fi_FI.UTF-8` locales so those translations can be selected in the local app.
+The bundled Docker images generate the `en_US.UTF-8`, `de_DE.UTF-8`,
+`es_ES.UTF-8`, and `fi_FI.UTF-8` locales so those translations can be selected
+in the local app.
 
 ## Install Docker
 

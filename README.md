@@ -43,6 +43,7 @@ Ensure the host has native gettext and locales available so PHP translations wor
 
 ```bash
 sudo locale-gen en_US.UTF-8
+sudo locale-gen de_DE.UTF-8
 sudo locale-gen es_ES.UTF-8
 ```
 

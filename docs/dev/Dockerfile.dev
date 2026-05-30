@@ -16,9 +16,10 @@ RUN apt-get update && apt-get install -y \
     unzip \
     zlib1g-dev \
  && sed -i '/^# *en_US.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
+ && sed -i '/^# *de_DE.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
  && sed -i '/^# *es_ES.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
  && sed -i '/^# *fi_FI.UTF-8 UTF-8/s/^# *//' /etc/locale.gen \
- && locale-gen en_US.UTF-8 es_ES.UTF-8 fi_FI.UTF-8 \
+ && locale-gen en_US.UTF-8 de_DE.UTF-8 es_ES.UTF-8 fi_FI.UTF-8 \
  && pecl install xdebug \
  && docker-php-ext-enable xdebug \
  && docker-php-ext-configure gd --with-jpeg \

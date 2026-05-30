@@ -16,6 +16,10 @@ $localeMap = ["en" => "en_GB.utf8",
     "en-au" => "en_GB.utf8",
     "en-ca" => "en_GB.utf8",
     "en-us" => "en_GB.utf8",
+    "de" => "de_DE.utf8",
+    "de-de" => "de_DE.utf8",
+    "es" => "es_ES.utf8",
+    "es-es" => "es_ES.utf8",
     "fi" => "fi_FI.utf8",
     "fi-fi" => "fi_FI.utf8"];
 
