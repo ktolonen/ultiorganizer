@@ -42,7 +42,7 @@ $gp = [
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-    $backurl = $_POST['backurl'];
+    $backurl = utf8entities($_POST['backurl']);
     $ok = true;
     if (empty($_POST['pseudo'])) {
         $gp['hometeam'] = $_POST['home'];
@@ -284,7 +284,7 @@ echo "</table>";
 echo "<div><input type='hidden' name='backurl' value='$backurl'/></div>";
 echo "<p><input class='button' name='save' type='submit' value='" . _("Save") . "'/>";
 if (!empty($backurl)) {
-    echo "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/>";
+    echo "<input class='button' type='button' name='return'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/>";
 }
 echo "</p></form>\n";
 

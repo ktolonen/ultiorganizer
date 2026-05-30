@@ -49,7 +49,7 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
         $html .= "<p><input class='input' type='file' size='80' name='restorefile'/>";
         $html .= "<input type='hidden' name='MAX_FILE_SIZE' value='100000000'/></p>";
         $html .= "<p><input class='button' type='submit' name='restore' value='" . _("Restore") . "'/>";
-        $html .= "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
+        $html .= "<input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
         $html .= "</form>";
     } else {
         $html .= "<p>" . _("User credentials do not match") . "</p>\n";

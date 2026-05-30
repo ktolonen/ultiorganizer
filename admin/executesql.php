@@ -135,7 +135,7 @@ if (!defined('ENABLE_ADMIN_DB_ACCESS') || constant('ENABLE_ADMIN_DB_ACCESS') != 
     } else {
         $html .= "<p>" . _("Column information") . "<input type='checkbox' name='extracolumninfo'/> <input class='button' type='submit' name='save' value='" . _("Run") . "' />";
     }
-    $html .= "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
+    $html .= "<input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/dbadmin'\"/></p>";
     $html .= "</form>\n";
 }
 

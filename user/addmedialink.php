@@ -217,7 +217,7 @@ for ($i = 0; $i < $max_new_links; $i++) {
 $html .= "</table>";
 $html .=  "<p>
 	  <input class='button' type='submit' name='save' value='" . _("Save") . "' />
-	  <input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/>
+	  <input class='button' type='button' name='back'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/>
 	  <input type='hidden' name='backurl' value='$backurl'/>
 	  <input type='hidden' name='MAX_FILE_SIZE' value='$max_file_size'/>
 	  </p>\n";

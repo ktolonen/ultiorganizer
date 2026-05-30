@@ -87,7 +87,7 @@ $html .= "</table>";
 $html .= "<p><a href='?view=admin/adduser&amp;season=" . $seriesinfo['season'] . "'>" . _("Add new user") . "</a></p>";
 $html .= "<p>";
 $html .= "<input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/>";
-$html .= "<input class='button' type='button' value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\" /></p>";
+$html .= "<input class='button' type='button' value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)' /></p>";
 $html .= "</p>";
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "<div><input type='hidden' name='teamId'/></div>";

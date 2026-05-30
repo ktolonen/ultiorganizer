@@ -184,7 +184,7 @@ if ($accId > 0) {
     $html .= "</p>";
 
     $html .= "<input class='button' type='submit' name='save' value='" . _("Save") . "' />";
-    $html .= "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=plugins/lisence_modifier'\"/>";
+    $html .= "<input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='?view=plugins/lisence_modifier'\"/>";
 } else {
     $html .= "<form method='post' id='tables' action='?view=plugins/lisence_modifier'>\n";
     if (!empty($cleanupMessage)) {

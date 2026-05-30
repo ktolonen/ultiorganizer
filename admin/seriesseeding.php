@@ -72,7 +72,7 @@ foreach ($teams as $team) {
 }
 $html .= "</table>";
 $html .= "<p><input class='button' type='submit' name='save' value='" . _("Save") . "'/>";
-$html .= "<input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/></p>";
+$html .= "<input class='button' type='button' name='back'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/></p>";
 $html .= "<div><input type='hidden' name='backurl' value='$backurl'/></div>";
 $html .= "</form>\n";
 

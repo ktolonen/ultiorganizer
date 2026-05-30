@@ -76,7 +76,7 @@ if (!empty($games)) {
     echo "</table>";
 }
 echo "<p><input type='hidden' name='backurl' value='$backurl'/>";
-echo "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/></p>";
+echo "<input class='button' type='button' name='back'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/></p>";
 echo "</form>\n";
 
 contentEnd();

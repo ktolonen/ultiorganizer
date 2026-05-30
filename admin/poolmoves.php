@@ -397,7 +397,7 @@ echo "<input class='button' type='button' value='" . _("Set") . "' onclick=\"win
 
 echo "<p><input class='button' name='add' type='submit' value='" . _("Add") . "'/>";
 echo "<input type='hidden' name='backurl' value='$backurl'/>";
-echo "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='$backurl'\"/></p>";
+echo "<input class='button' type='button' name='back'  value='" . _("Return") . "' data-href='$backurl' onclick='navigateBack(this)'/></p>";
 echo "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p>";
 echo "</form>\n";
 contentEnd();

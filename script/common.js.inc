@@ -1,6 +1,6 @@
 <script type="text/javascript">
 <!--
-/* exported checkAll, clearAll, setId, changeseason, confirmLeave, menu_toggle */
+/* exported checkAll, clearAll, setId, changeseason, confirmLeave, menu_toggle, navigateBack */
 function checkAll(field)
 {
   var form = document.getElementById(field);
@@ -30,6 +30,20 @@ function setId(id)
 function changeseason(id){
   var sid = encodeURIComponent(id);
   window.location.href = "index.php?view=games&season=" + sid + "&selseason=" + sid;
+}
+
+/* Navigate to the URL held in the element's data-href attribute. The URL is read
+   via getAttribute (already HTML-decoded by the browser) and is never parsed as
+   JavaScript, so it cannot inject script. Block non-http(s) schemes (e.g.
+   javascript:) so a crafted return URL cannot execute. */
+function navigateBack(el)
+{
+  var url = el.getAttribute("data-href") || "";
+  var scheme = url.match(/^\s*([a-z][a-z0-9+.-]*):/i);
+  if (scheme && !/^https?$/i.test(scheme[1])) {
+    return;
+  }
+  window.location.href = url;
 }
 
 function confirmLeave(element, confirm, text) {

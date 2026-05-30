@@ -137,7 +137,7 @@ if ($seriesId) {
     echo "<input class='button' name='add' type='submit' value='" . _("Add") . "'/>";
 }
 
-echo "<input class='button' type='button' name='takaisin'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonseries&amp;season=$season'\"/>
+echo "<input class='button' type='button' name='back'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonseries&amp;season=$season'\"/>
 		  </p></form>";
 
 echo TranslationScript("name");
