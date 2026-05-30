@@ -81,4 +81,9 @@ define('API_RATE_WINDOW', 60);
  * human-readable language name shown to admins and users.
  */
 global $locales;
-$locales = ["en_GB.utf8" => "English", "fi_FI.utf8" => "Suomi"];
+$locales = [
+    "de_DE.utf8" => "Deutsch",
+    "en_GB.utf8" => "English",
+    "es_ES.utf8" => "Español",
+    "fi_FI.utf8" => "Suomi",
+];
