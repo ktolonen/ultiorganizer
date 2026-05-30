@@ -368,12 +368,9 @@ foreach ($settings as $setting) {
         $htmltmp2 .= "<td class='infocell'>" . _("Default Locale") . ": </td><td>";
         $alllocales = getAvailableLocalizations();
         $htmltmp2 .= "<select class='dropdown' id='DefaultLocale' name='DefaultLocale'>\n";
-        foreach ($alllocales as $loc) {
-            if ($setting['value'] == $loc) {
-                $htmltmp2 .= "<option selected='selected' value='$loc'>" . utf8entities($loc) . "</option>\n";
-            } else {
-                $htmltmp2 .= "<option value='$loc'>" . utf8entities($loc) . "</option>\n";
-            }
+        foreach ($alllocales as $localeId => $localeName) {
+            $selected = $setting['value'] == $localeId ? " selected='selected'" : "";
+            $htmltmp2 .= "<option" . $selected . " value='" . utf8entities($localeId) . "'>" . utf8entities($localeName) . "</option>\n";
         }
         $htmltmp2 .= "</select>\n";
         $htmltmp2 .= "</td></tr>\n";
