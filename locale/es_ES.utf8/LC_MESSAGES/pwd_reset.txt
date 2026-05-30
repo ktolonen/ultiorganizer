@@ -1,0 +1,7 @@
+Se ha solicitado un restablecimiento de contraseña para su cuenta en Ultiorganizer.
+Nombre de usuario: $username
+
+Para establecer una nueva contraseña, abra este enlace:
+$url
+
+Si no solicitó esto, puede ignorar este correo electrónico.
