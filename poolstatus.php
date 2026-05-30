@@ -703,23 +703,24 @@ function printPlayoffTree($seasoninfo, $poolinfo)
     $notemplate .= "<table width='100%'>\n";
 
     $template = str_replace("[placement]", _("Placement"), $template);
-    $movedPlacings = PoolMovedPlacings($pool['pool_id']);
+    $placementPoolId = $pool['pool_id'] ?? null;
+    $movedPlacings = $placementPoolId === null ? [] : PoolMovedPlacings($placementPoolId);
     for ($i = 1; $i <= $totalteams; $i++) {
         $placementname = "";
-        if (!isset($pool['pool_id'])) {
+        if ($placementPoolId === null) {
             continue;
         }
         $gamesleft = -1;
-        $team = PoolTeamFromStandings($pool['pool_id'], $i);
+        $team = PoolTeamFromStandings($placementPoolId, $i);
         $hasPlacedTeam = isset($team['team_id']);
         if ($hasPlacedTeam) {
-            $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $pool['pool_id']));
+            $gamesleft = count(TeamPoolGamesLeft($team['team_id'], $placementPoolId));
         }
         $teampart = "";
         $unknown = "";
 
         if (!isset($movedPlacings[$i])) {
-            $placement = PoolPlacementString($pool['pool_id'], $i);
+            $placement = PoolPlacementString($placementPoolId, $i);
             $placementname = "<b>" . U_($placement) . "</b> ";
             if ($gamesleft == 0 && $hasPlacedTeam) {
                 if (intval($seasoninfo['isinternational']) && !empty($team['flagfile'])) {
@@ -730,7 +731,7 @@ function printPlayoffTree($seasoninfo, $poolinfo)
                 $unknown = "<i>" . _("???") . "</i>";
             }
         } else {
-            $movetopool = PoolGetMoveToPool($pool['pool_id'], $i);
+            $movetopool = PoolGetMoveToPool($placementPoolId, $i);
             $placementname .= "<a href='?view=poolstatus&amp;pool=" . $movetopool['topool'] . "'>&raquo; " . utf8entities(U_($movetopool['name'])) . "</a>&nbsp; ";
 
             if ($gamesleft == 0 && $hasPlacedTeam) {
