@@ -99,7 +99,7 @@ if (count($urls)) {
     $html .= "<tr><td colspan='2'><table>";
     foreach ($urls as $url) {
         $html .= "<tr>";
-        $html .= "<td colspan='2'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+        $html .= "<td colspan='2'><img width='16' height='16' src='images/linkicons/" . utf8entities($url['type']) . ".png' alt='" . utf8entities($url['type']) . "'/> ";
         $html .= "</td><td>";
         if (!empty($url['name'])) {
             $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a>";
@@ -119,7 +119,7 @@ if (count($urls)) {
     $html .= "<tr><td colspan='2'><table>";
     foreach ($urls as $url) {
         $html .= "<tr>";
-        $html .= "<td colspan='2'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+        $html .= "<td colspan='2'><img width='16' height='16' src='images/linkicons/" . utf8entities($url['type']) . ".png' alt='" . utf8entities($url['type']) . "'/> ";
         $html .= "</td><td>";
         if (!empty($url['name'])) {
             $html .= "<a href='" . utf8entities($url['url']) . "'>" . utf8entities($url['name']) . "</a>";

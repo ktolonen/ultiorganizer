@@ -131,7 +131,7 @@ foreach ($urls as $url) {
     $urlHref = utf8entities($url['url']);
     $urlName = utf8entities($url['name']);
     $html .= "<tr style='border-bottom-style:solid;border-bottom-width:1px;'>";
-    $html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . $url['type'] . ".png' alt='" . $url['type'] . "'/> ";
+    $html .= "<td colspan='3'><img width='16' height='16' src='images/linkicons/" . utf8entities($url['type']) . ".png' alt='" . utf8entities($url['type']) . "'/> ";
     if (!empty($url['name'])) {
         $html .= "<a href='" . $urlHref . "'>" . $urlName . "</a> (" . $urlHref . ")";
     } else {
