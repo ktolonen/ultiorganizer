@@ -703,7 +703,7 @@ function SeasonAllGames($season)
 function SeasonTeamAdmins($seasonId, $group = false)
 {
     $seasonrights = getEditSeasons($_SESSION['uid']);
-    if (isset($seasonrights[$seasonId])) {
+    if (isSuperAdmin() || isset($seasonrights[$seasonId])) {
         if ($group) {
             $query = sprintf(
                 "SELECT u.userid, u.name, u.email, j.team_id, GROUP_CONCAT(j.name SEPARATOR ',') as teamname FROM uo_users u
@@ -741,7 +741,7 @@ function SeasonTeamAdmins($seasonId, $group = false)
 function SeasonAccreditationAdmins($seasonId, $group = false)
 {
     $seasonrights = getEditSeasons($_SESSION['uid']);
-    if (isset($seasonrights[$seasonId])) {
+    if (isSuperAdmin() || isset($seasonrights[$seasonId])) {
         if ($group) {
             $query = sprintf(
                 "SELECT u.userid, u.name, u.email, j.team_id, GROUP_CONCAT(j.name SEPARATOR ',') as teamname FROM uo_users u
@@ -778,7 +778,7 @@ function SeasonAccreditationAdmins($seasonId, $group = false)
 function SeasonGameAdmins($seasonId)
 {
     $seasonrights = getEditSeasons($_SESSION['uid']);
-    if (isset($seasonrights[$seasonId])) {
+    if (isSuperAdmin() || isset($seasonrights[$seasonId])) {
         $query = sprintf(
             "SELECT u.userid, u.name, u.email, COUNT(*) AS games FROM uo_users u
   			LEFT JOIN uo_userproperties up ON (u.userid=up.userid)
@@ -809,7 +809,7 @@ function SeasonGameAdmins($seasonId)
 function SeasonSpiritAdmins($seasonId)
 {
     $seasonrights = getEditSeasons($_SESSION['uid']);
-    if (isset($seasonrights[$seasonId])) {
+    if (isSuperAdmin() || isset($seasonrights[$seasonId])) {
         $query = sprintf(
             "SELECT u.userid, u.name, u.email
 			FROM uo_users u
@@ -837,7 +837,7 @@ function SeasonSpiritAdmins($seasonId)
 function SeasonAdmins($seasonId)
 {
     $seasonrights = getEditSeasons($_SESSION['uid']);
-    if (isset($seasonrights[$seasonId])) {
+    if (isSuperAdmin() || isset($seasonrights[$seasonId])) {
         $query = sprintf(
             "SELECT u.userid, u.name, u.email
 			FROM uo_users u

@@ -91,7 +91,6 @@ $html .=  "<tr>
 	<th>" . _("Name") . "</th>
 	<th>" . _("Type") . "</th>
 	<th>" . _("Starts") . "</th>
-	<th>" . _("Ends") . "</th>
 	<th>" . _("Enrollment") . "</th>
 	<th>" . _("Visible") . "</th>
 	<th>" . _("Maintenance") . "</th>
@@ -120,12 +119,6 @@ foreach ($seasons as $row) {
         $html .=  "<td>-</td>";
     }
 
-    if (!empty($info['endtime'])) {
-        $html .=  "<td>" . ShortDate($info['endtime']) . "</td>";
-    } else {
-        $html .=  "<td>-</td>";
-    }
-
     $enrollment = intval($info['enrollopen']) ? _("open") : _("closed");
     $html .=  "<td>" . $enrollment . "</td>";
 
@@ -146,6 +139,7 @@ foreach ($seasons as $row) {
             $html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'><b>" . _("Calc. stats") . "</b></a>";
         }
     }
+    $html .= " | <a href='?view=admin/addseasonusers&amp;season=" . $info['season_id'] . "'>" . _("Users") . "</a>";
     $html .= " | <a href='?view=admin/eventdataexport&amp;season=" . $info['season_id'] . "'>" . _("Export") . "</a>";
     $html .=  "</td>";
 
