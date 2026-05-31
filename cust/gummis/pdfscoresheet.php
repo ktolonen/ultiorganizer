@@ -139,7 +139,7 @@ class PDF extends tFPDF implements ScoreSheetPdf
 
     public function PrintPlayerList($homeplayers, $visitorplayers)
     {
-        if (!isset($homeplayers[0]['name']) && !$visitorplayers[0]['name']) {
+        if (!isset($homeplayers[0]['name']) && !isset($visitorplayers[0]['name'])) {
             return;
         }
 
