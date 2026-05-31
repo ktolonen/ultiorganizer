@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-31 13:28+0300\n"
+"POT-Creation-Date: 2026-05-31 18:22+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -706,8 +706,8 @@ msgid "Automatic Accreditation"
 msgstr "Acreditación Automática"
 
 #: teams.php:365
-msgid "Automatic standings, not confirmed"
-msgstr "Tabla de Posiciones automática, no confirmada"
+msgid "Automatic final standings, not confirmed"
+msgstr "Clasificación final automática, no confirmada"
 
 #: teamcard.php:278
 msgid "Average"
@@ -883,7 +883,7 @@ msgstr "Tamaño de caché"
 msgid "Calc. stats"
 msgstr "Calc. estadísticas"
 
-#: admin/stats.php:101
+#: admin/stats.php:104
 msgid "Calculate"
 msgstr "Calcular"
 
@@ -1095,13 +1095,13 @@ msgstr "¿Borrar caché?"
 msgid "Clear event access rights"
 msgstr "Eliminar derechos de acceso del evento"
 
+#: admin/finalstandings.php:155
+msgid "Clear final standings"
+msgstr "Borrar clasificación final"
+
 #: admin/finalstandings.php:154
 msgid "Clear saved final standings for this division?"
 msgstr "¿Borrar la clasificación final guardada para esta división?"
-
-#: admin/finalstandings.php:155
-msgid "Clear standings"
-msgstr "Borrar Clasificaciones"
 
 #: admin/finalstandings.php:140
 msgid "Clearing reverts this division to automatic live standings."
@@ -1247,7 +1247,7 @@ msgstr "Comunicación (de ellos)"
 msgid "Confirm"
 msgstr "Confirmar"
 
-#: lib/user.functions.php:1594
+#: lib/user.functions.php:1566
 msgid "Confirm extra email address for ultiorganizer"
 msgstr "Confirmar dirección de correo electrónico adicional para ultiorganizer"
 
@@ -1264,7 +1264,7 @@ msgstr "Confirme los movimientos al grupo %s."
 msgid "Confirm result and end game"
 msgstr "Confirmar resultado y finalizar el juego"
 
-#: lib/user.functions.php:1533
+#: lib/user.functions.php:1505
 msgid "Confirm your account to ultiorganizer"
 msgstr "Confirma tu cuenta en ultiorganizer"
 
@@ -1600,7 +1600,7 @@ msgstr "Eliminar comentario"
 msgid "Delete event access rights"
 msgstr "Eliminar derechos de acceso del evento"
 
-#: admin/stats.php:98 admin/stats.php:129
+#: admin/stats.php:90
 msgid "Delete event access rights after archiving statistics"
 msgstr ""
 "Eliminar derechos de acceso del evento después de archivar estadísticas"
@@ -1747,7 +1747,7 @@ msgstr "Descalificado"
 #: admin/editgame.php:236 admin/privacyplayer.php:86 admin/seasonpoints.php:181
 #: admin/seasonstats.php:33 admin/spirit.php:44 admin/spirit.php:103
 #: admin/spirit.php:152 admin/spirit.php:231 admin/spirit.php:279
-#: admin/spirit.php:334 admin/spirit.php:541 admin/stats.php:118
+#: admin/spirit.php:334 admin/spirit.php:541 admin/stats.php:121
 #: admin/tdtools.php:24 admin/tdtools.php:60 cust/bula/pdfscoresheet.php:73
 #: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
 #: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:281
@@ -2329,10 +2329,6 @@ msgstr "Completa en la hoja de puntuación"
 msgid "Filling instructions:"
 msgstr "Instrucciones de llenado:"
 
-#: admin/stats.php:136
-msgid "Final Standings"
-msgstr "Clasificación Final"
-
 #: scorekeeper/endgame.php:47
 msgid "Final result"
 msgstr "Resultado final"
@@ -2354,9 +2350,10 @@ msgstr "Puntuación final"
 msgid "Final scores"
 msgstr "Puntajes finales"
 
-#: seasonlist.php:33 admin/finalstandings.php:15 admin/finalstandings.php:21
+#: menufunctions.php:601 menufunctions.php:767 seasonlist.php:33 teams.php:47
+#: admin/finalstandings.php:15 admin/finalstandings.php:21
 #: admin/finalstandings.php:42 admin/finalstandings.php:107
-#: admin/finalstandings.php:120
+#: admin/finalstandings.php:120 admin/seasonadmin.php:108 admin/stats.php:136
 msgid "Final standings"
 msgstr "Clasificación final"
 
@@ -2383,7 +2380,7 @@ msgstr "Se publican las clasificaciones finales para esta división."
 msgid "Final standings cleared."
 msgstr "Clasificación final borrada."
 
-#: admin/finalstandings.php:81
+#: admin/finalstandings.php:81 admin/saveteamstandings.php:26
 msgid "Final standings saved."
 msgstr "Clasificación final guardada."
 
@@ -2794,7 +2791,7 @@ msgstr "Resumen del juego"
 #: admin/seasonstandings.php:305 admin/seasonstandings.php:362
 #: admin/seasonstandings.php:410 admin/seasonstats.php:21
 #: admin/seasonstats.php:35 admin/seriesgames.php:31 admin/seriesgames.php:41
-#: admin/stats.php:117 ext/countrystatus.php:51 ext/eventpools.php:47
+#: admin/stats.php:120 ext/countrystatus.php:51 ext/eventpools.php:47
 #: ext/poolscoreboard.php:42 ext/poolstatus.php:50 ext/teamscoreboard.php:57
 #: lib/search.functions.php:785
 msgid "Games"
@@ -3193,11 +3190,11 @@ msgstr "Si el juego está en curso:"
 
 #: admin/stats.php:137
 msgid ""
-"If the standings are not correct, use the mouse to drag teams into the "
-"correct order and press Save standings."
+"If the final standings are not correct, use the mouse to drag teams into the "
+"correct order and press Save final standings."
 msgstr ""
-"Si las clasificaciones no son correctas, use el mouse para arrastrar los "
-"equipos al orden correcto y presione Guardar clasificación."
+"Si la clasificación final no es correcta, use el mouse para arrastrar los "
+"equipos al orden correcto y presione Guardar clasificación final."
 
 #: user/addresult.php:118
 msgid "If this is all wrong, clear the result: "
@@ -4390,7 +4387,7 @@ msgstr ""
 msgid "Password reset link sent."
 msgstr "Se envió el enlace para restablecer la contraseña."
 
-#: lib/user.functions.php:2001
+#: lib/user.functions.php:1973
 msgid "Password reset request for Ultiorganizer"
 msgstr "Solicitud de restablecimiento de contraseña para Ultiorganizer"
 
@@ -4460,10 +4457,6 @@ msgstr "Clasificación"
 #: admin/addseasonpools.php:382
 msgid "Placement pool"
 msgstr "Grupo de Clasificación"
-
-#: menufunctions.php:767 admin/seasonadmin.php:108
-msgid "Placements"
-msgstr "Clasificaciones"
 
 #: cust/bula/pdfscoresheet.php:262 cust/default/pdfscoresheet.php:179
 #: cust/default/pdfscoresheet.php:189 cust/default/pdfscoresheet.php:287
@@ -4577,7 +4570,7 @@ msgstr "Estadísticas del jugador"
 
 #: clubcard.php:156 clubcard.php:183 countrycard.php:42 countrycard.php:67
 #: menufunctions.php:680 admin/seasonadmin.php:84 admin/seasongames.php:245
-#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:116
+#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:119
 #: admin/tdtools.php:184 mobile/respgames.php:178 user/adddefensesheet.php:64
 #: user/addplayerlists.php:238 user/addresult.php:66 user/addscoresheet.php:215
 #: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
@@ -4708,9 +4701,11 @@ msgstr "¡El nombre del Grupo es obligatorio!"
 msgid "Pool not found"
 msgstr "Grupo no encontrado"
 
-#: menufunctions.php:785 admin/seasonstandings.php:16 ext/export.php:47
+#: menufunctions.php:766 menufunctions.php:785 poolstatus.php:13
+#: poolstatus.php:24 poolstatus.php:36 poolstatus.php:50 poolstatus.php:73
+#: admin/seasonstandings.php:16 ext/export.php:47
 msgid "Pool standings"
-msgstr "Clasificación de Grupo"
+msgstr "Clasificación de grupo"
 
 #: menufunctions.php:759 admin/dbequalize.php:205 admin/seasonadmin.php:74
 #: admin/seasonpools.php:14 admin/seasonseries.php:123
@@ -5308,6 +5303,10 @@ msgstr "Salvar defensas"
 msgid "Save final result"
 msgstr "Guardar resultado final"
 
+#: admin/finalstandings.php:238 admin/stats.php:138
+msgid "Save final standings"
+msgstr "Guardar clasificación final"
+
 #: mobile/addscoresheet.php:205 mobile/addscoresheet.php:225
 #: scorekeeper/addscoresheet.php:406
 msgid "Save goal"
@@ -5320,10 +5319,6 @@ msgstr "Guardar gol con errores"
 #: user/addscoresheet.php:618
 msgid "Save scores"
 msgstr "Guardar puntuaciones"
-
-#: admin/finalstandings.php:238 admin/stats.php:138
-msgid "Save standings"
-msgstr "Guardar clasificación"
 
 #: admin/reservations.php:188
 msgid "Save times"
@@ -6122,15 +6117,9 @@ msgstr ""
 msgid "Standing"
 msgstr "Tabla de Posiciones"
 
-#: menufunctions.php:601 menufunctions.php:766 poolstatus.php:13
-#: poolstatus.php:24 poolstatus.php:36 poolstatus.php:50 poolstatus.php:73
-#: statistics.php:23 teams.php:47
+#: statistics.php:23
 msgid "Standings"
 msgstr "Tabla de Posiciones"
-
-#: admin/saveteamstandings.php:26
-msgid "Standings saved"
-msgstr "Clasificación guardada"
 
 #: scorekeeper/addscoresheet.php:295 scorekeeper/addscoresheet.php:574
 msgid "Start game clock"
@@ -6344,7 +6333,7 @@ msgstr "Equipo tomando tiempo fuera"
 #: admin/clubs.php:93 admin/dbequalize.php:201 admin/dbequalize.php:268
 #: admin/poolmoves.php:395 admin/seasonadmin.php:79 admin/seasonpools.php:229
 #: admin/seasonseries.php:122 admin/seasonstats.php:21 admin/seasonstats.php:35
-#: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:115
+#: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:118
 msgid "Teams"
 msgstr "Equipos"
 
@@ -6437,7 +6426,7 @@ msgstr ""
 "Hay juegos %d en esta división que no están completos. ¿Salvar la "
 "clasificación final de todos modos?"
 
-#: admin/stats.php:90 admin/stats.php:121
+#: admin/stats.php:96 admin/stats.php:124
 #, php-format
 msgid ""
 "There are %d players without a profile id. Player statistics will be skipped "
@@ -6446,7 +6435,7 @@ msgstr ""
 "Hay reproductores %d sin identificación de perfil. Se omitirán las "
 "estadísticas de los jugadores."
 
-#: admin/stats.php:94 admin/stats.php:125
+#: admin/stats.php:100 admin/stats.php:128
 #, php-format
 msgid "There are %d players without a profile id. Run statistics anyway?"
 msgstr ""
@@ -6497,7 +6486,7 @@ msgstr ""
 msgid "This password reset link is invalid or has expired."
 msgstr "Este enlace para restablecer contraseña no es válido o ha caducado."
 
-#: admin/stats.php:99 admin/stats.php:130
+#: admin/stats.php:91
 msgid ""
 "This prevents accidental changes after the event is archived. User accounts, "
 "global administrator rights, player profile rights, pool visibility, and "
@@ -6885,8 +6874,8 @@ msgstr "Ultimate.fi"
 #: cust/default/pdfscoresheet.php:123 cust/default/pdfscoresheet.php:151
 #: ext/countrystatus.php:27 ext/eventpools.php:26 ext/poolscoreboard.php:29
 #: ext/poolstatus.php:31 ext/teamcoming.php:32 ext/teamplayed.php:33
-#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1526
-#: lib/user.functions.php:1587 scorekeeper/index.php:83
+#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1498
+#: lib/user.functions.php:1559 scorekeeper/index.php:83
 #: spiritkeeper/index.php:103
 msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
@@ -7788,13 +7777,20 @@ msgstr "con"
 msgid "yes"
 msgstr "si"
 
-#, fuzzy
 #~ msgid "Count"
 #~ msgstr "País"
 
-#, fuzzy
 #~ msgid "Delete listed access rights"
 #~ msgstr "Editar derechos de acceso de usuario"
 
 #~ msgid "Delete selected users' event access rights"
 #~ msgstr "Eliminar derechos de acceso a eventos de usuarios seleccionados"
+
+#~ msgid "Final Standings"
+#~ msgstr "Clasificación Final"
+
+#~ msgid "Placements"
+#~ msgstr "Clasificaciones"
+
+#~ msgid "Standings saved"
+#~ msgstr "Clasificación guardada"

@@ -150,7 +150,7 @@ The main left menu is built in [menufunctions.php](../menufunctions.php).
 Within each such season:
 
 - `seasonadmin` adds:
-  `Event`, `Divisions`, `Teams`, `Pools`, `Scheduling`, `Games`, `Standings`, `Accreditation`
+  `Event`, `Divisions`, `Teams`, `Pools`, `Scheduling`, `Games`, `Pool standings`, `Final standings`, `Accreditation`
   `Spirit` when the season has `spiritmode`
   `Season points` when `use_season_points` is enabled
 - `seriesadmin` adds:

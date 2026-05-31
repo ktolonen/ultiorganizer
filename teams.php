@@ -44,7 +44,7 @@ $menutabs[_("Seeding")] = "?view=teams&season=$season&list=byseeding";
 if ($seasonPointsAvailable) {
     $menutabs[_("Points")] = "?view=teams&season=$season&list=seasonpoints";
 }
-$menutabs[_("Standings")] = "?view=teams&season=$season&list=bystandings";
+$menutabs[_("Final standings")] = "?view=teams&season=$season&list=bystandings";
 if (ShowSpiritScoresForSeason($seasonInfo)) {
     $menutabs[_("Spirit")] = "?view=teams&season=$season&list=byspirit";
 }
@@ -362,7 +362,7 @@ if ($list == "allteams" || $list == "byseeding") {
     }
     $html .= "</table>\n";
     if (count($seriesConfirmed) !== count(array_filter($seriesConfirmed))) {
-        $html .= "<p class='unconfirmed'>* " . _("Automatic standings, not confirmed") . "</p>\n";
+        $html .= "<p class='unconfirmed'>* " . _("Automatic final standings, not confirmed") . "</p>\n";
     }
 } elseif ($list == "byspirit") {
 

@@ -101,7 +101,7 @@ Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions
 
 ## Event final standings (`teams.php` `bystandings`)
 
-The "Standings" tab in `teams.php` (`?view=teams&list=bystandings`) renders a single table with one column per series.
+The "Final standings" tab in `teams.php` (`?view=teams&list=bystandings`) renders a single table with one column per series.
 
 For each series, the view calls `SeriesFinalStandings($series_id)` from `lib/standings.functions.php`. Placements are all-or-nothing per division: when confirmed manual placements cover every team (`HasCompleteManualFinalStandings`), those rows are the source of truth; otherwise the division falls back to the automatic live order from `SeriesRanking($series_id)`. Multiple teams may share the same saved placement and are rendered together in the same placement cell. Disqualified teams have no numeric standing and are rendered last in a separate disqualified row only when at least one team is disqualified. The view then composes a placement column on the left and one team column per series:
 
@@ -110,7 +110,7 @@ For each series, the view calls `SeriesFinalStandings($series_id)` from `lib/sta
 - Row 3: `Bronze`
 - Rows 4+: ordinal placement (`4th`, `5th`, ...)
 
-The top three rows render in bold. Empty cells are rendered for series that have fewer placements than the longest column. If the season is marked international, each team name is preceded by a country flag. When a division falls back to automatic live standings, its column header shows an "Automatic standings, not confirmed" note.
+The top three rows render in bold. Empty cells are rendered for series that have fewer placements than the longest column. If the season is marked international, each team name is preceded by a country flag. When a division falls back to automatic live standings, its column header shows an "Automatic final standings, not confirmed" note.
 
 Manual final standings are stored in `uo_team_final_standing` and managed through `admin/finalstandings.php`. The database upgrade seeds this table from existing `uo_team_stats` rows for events that already have archived statistics. The admin page uses the same division-tab menu as pool standings and saves or clears the selected division only. The suggested pre-fill order is the existing saved placements when present; otherwise season points when available, then the live placement-pool order, and finally the plain team list. Each team must be assigned a placement or marked disqualified; shared placements are valid. Saving requires every team to be assigned (all-or-nothing) and replaces the automatic live standings for that division. Clearing reverts the division to automatic live standings.
 
@@ -139,9 +139,9 @@ If the season has players without a profile id, the page shows the count and ask
 
 #### Manual reorder of final standings
 
-Manual final standings can be published before statistics are calculated through `admin/finalstandings.php`. That page shows whether the selected division has confirmed placements, warns when scheduled games are not complete, and can clear placements back to live standings. Saving requires every team in the division to be assigned a placement or disqualification (all-or-nothing); an incomplete assignment is rejected. `admin/stats.php` reports how many divisions have confirmed final standings and warns when divisions without confirmed standings will be calculated from live standings. Once stats are calculated, `admin/stats.php` still renders a draggable list per series under the **Final Standings** heading. The list source is `SeasonTeamStatistics($season)`, grouped by series with one column per series, using YUI drag-and-drop.
+Manual final standings can be published before statistics are calculated through `admin/finalstandings.php`. That page shows whether the selected division has confirmed placements, warns when scheduled games are not complete, and can clear placements back to live standings. Saving requires every team in the division to be assigned a placement or disqualification (all-or-nothing); an incomplete assignment is rejected. `admin/stats.php` reports how many divisions have confirmed final standings and warns when divisions without confirmed standings will be calculated from live standings. Once stats are calculated, `admin/stats.php` still renders a draggable list per series under the **Final standings** heading. The list source is `SeasonTeamStatistics($season)`, grouped by series with one column per series, using YUI drag-and-drop.
 
-When the admin presses **Save standings**, the page builds a request string of the form `team1:team2:…:|team4:team5:…:|` — colon-separated team ids per series, pipe-separated between series — and POSTs it asynchronously to `?view=admin/saveteamstandings`. The handler persists the new order into manual final standings and updates existing precomputed team-stats rows. The save indicator is rendered into `#responseStatus`.
+When the admin presses **Save final standings**, the page builds a request string of the form `team1:team2:…:|team4:team5:…:|` — colon-separated team ids per series, pipe-separated between series — and POSTs it asynchronously to `?view=admin/saveteamstandings`. The handler persists the new order into manual final standings and updates existing precomputed team-stats rows. The save indicator is rendered into `#responseStatus`.
 
 Both final-standings admin surfaces let an admin override the resolver-derived order, for example to encode a placement decision the resolvers cannot express on their own.
 
@@ -156,7 +156,7 @@ Both final-standings admin surfaces let an admin override the resolver-derived o
 
 Events without precomputed stats are skipped silently. If no event in any group has stats yet, the page shows "Event statistics have not yet been computed."
 
-The team-standings columns link back to the live placement table (`?view=teams&season=…&list=bystandings`), and the spirit-standings columns link to the live spirit list (`?view=teams&season=…&list=byspirit`).
+The team-standings columns link back to the final standings table (`?view=teams&season=…&list=bystandings`), and the spirit-standings columns link to the live spirit list (`?view=teams&season=…&list=byspirit`).
 
 ## Season points administration
 

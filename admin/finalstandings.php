@@ -152,7 +152,7 @@ if ($manualCount > 0) {
     $html .= "<input type='hidden' name='season' value='" . utf8entities($season) . "'/>\n";
     $html .= "<input type='hidden' name='series' value='" . (int) $seriesId . "'/>\n";
     $clearConfirm = _("Clear saved final standings for this division?");
-    $html .= "<p><input class='button' type='submit' name='clear_final_standings' value='" . _("Clear standings") . "' onclick='return confirm(\"" . addslashes($clearConfirm) . "\")'/></p>\n";
+    $html .= "<p><input class='button' type='submit' name='clear_final_standings' value='" . _("Clear final standings") . "' onclick='return confirm(\"" . addslashes($clearConfirm) . "\")'/></p>\n";
     $html .= "</form>\n";
 }
 $html .= "<form method='post' action='?view=admin/finalstandings&amp;season=" . utf8entities($season) . "&amp;series=" . (int) $seriesId . "'>\n";
@@ -235,7 +235,7 @@ foreach ($displayTeams as $team) {
     $html .= "</tr>\n";
 }
 $html .= "</table>\n";
-$html .= "<p><input class='button' type='submit' name='save_final_standings' value='" . _("Save standings") . "'$saveConfirm/></p>\n";
+$html .= "<p><input class='button' type='submit' name='save_final_standings' value='" . _("Save final standings") . "'$saveConfirm/></p>\n";
 $html .= "</form>\n";
 
 echo $html;

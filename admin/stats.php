@@ -133,9 +133,9 @@ if (!IsSeasonStatsCalculated($season)) {
     $html .= "<p><input class='button' name='undo' type='submit' value='" . _("Undo") . "'/></p>\n";
 
     $prevseries = -1;
-    $html .= "<h1>" . _("Final Standings") . "</h1>";
-    $html .= "<p>" . _("If the standings are not correct, use the mouse to drag teams into the correct order and press Save standings.") . "\n";
-    $html .= "<input type='button' id='saveButton' value='" . _("Save standings") . "'/></p>\n";
+    $html .= "<h1>" . _("Final standings") . "</h1>";
+    $html .= "<p>" . _("If the final standings are not correct, use the mouse to drag teams into the correct order and press Save final standings.") . "\n";
+    $html .= "<input type='button' id='saveButton' value='" . _("Save final standings") . "'/></p>\n";
     $html .= "<div id='responseStatus'></div>\n";
 
     foreach ($teams as $team) {
