@@ -6855,7 +6855,7 @@ msgstr ""
 
 #: cust/slkl/head.php:22
 msgid "Ultimate Pelikone"
-msgstr "Pelikone definitivo"
+msgstr "Ultimate Pelikone"
 
 #: ext/rss.php:107
 msgid "Ultimate game"
