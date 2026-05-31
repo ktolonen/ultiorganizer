@@ -1206,6 +1206,9 @@ function UserHasSeasonScopedRole($userid, $seasonId)
             case 'resadmin':
             case 'resgameadmin':
                 if (!empty($roleValue)) {
+                    if (ReservationSeason((int) $roleValue) === (string) $seasonId) {
+                        return true;
+                    }
                     foreach (ReservationSeasons((int) $roleValue) as $resSeason) {
                         if ($resSeason === $seasonId) {
                             return true;

@@ -227,6 +227,24 @@ function ReservationSeasons($reservationId)
 }
 
 /**
+ * Season (event) a reservation is declared in.
+ *
+ * Unlike ReservationSeasons(), which derives seasons from the reservation's
+ * scheduled timetable games, this returns the reservation's own season column,
+ * so it resolves even when the reservation has no games yet.
+ *
+ * @param int $reservationId uo_reservation.id
+ * @return string|null uo_reservation.season, or null when the reservation is missing
+ */
+function ReservationSeason($reservationId)
+{
+    return DBQueryToValue(sprintf(
+        "SELECT season FROM uo_reservation WHERE id=%d",
+        (int) $reservationId,
+    ));
+}
+
+/**
  * Set reservation data.
  *
  * Access level: eventadmin
