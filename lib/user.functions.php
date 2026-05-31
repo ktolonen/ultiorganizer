@@ -1270,15 +1270,26 @@ function EventUserRoleCleanupPreview($seasonId)
 			)
 			OR (
 				SUBSTRING_INDEX(up.value, ':', 1) IN ('resadmin', 'resgameadmin')
-				AND EXISTS (
-					SELECT 1 FROM uo_reservation res
-					WHERE res.id=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
-					AND res.season='%s'
+				AND (
+					EXISTS (
+						SELECT 1 FROM uo_reservation res
+						WHERE res.id=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
+						AND res.season='%s'
+					)
+					OR EXISTS (
+						SELECT 1 FROM uo_game g
+						INNER JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+						LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+						LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+						WHERE g.reservation=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
+						AND ser.season='%s'
+					)
 				)
 			)
 		)",
         $seasonAdminRole,
         $spiritAdminRole,
+        $escapedSeasonId,
         $escapedSeasonId,
         $escapedSeasonId,
         $escapedSeasonId,
