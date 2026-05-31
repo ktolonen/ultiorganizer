@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
+require_once __DIR__ . '/locale.functions.php';
 
 $serverConf = GetSimpleServerConf();
 $locales = getAvailableLocalizations();
@@ -242,7 +243,7 @@ function getAvailableCustomizations()
 
 /**
  * Return list of configured localizations available under /locale that the system can serve.
- * Filters out locales not installed on the system and always includes English.
+ * Includes bundled locales when gettext can reach them through a carrier OS locale.
  */
 function getAvailableLocalizations()
 {
@@ -254,11 +255,11 @@ function getAvailableLocalizations()
     $temp = scandir($include_prefix . "locale/");
     $currentLocale = setlocale(LC_MESSAGES, "0");
     $fallbackEnglishLocale = 'en_GB.utf8';
+    $candidateLocales = array_keys($configuredLocalizations);
 
     foreach ($temp as $fh) {
         if (is_dir($include_prefix . "locale/$fh") && $fh != '.' && $fh != '..') {
-            // Only list locales that are available on the system so gettext works.
-            if (setlocale(LC_MESSAGES, $fh) !== false) {
+            if (CanServeGettextLocale($fh, $candidateLocales)) {
                 $localizations[$fh] = $configuredLocalizations[$fh] ?? $fh;
             }
         }

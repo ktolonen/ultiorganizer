@@ -39,13 +39,17 @@ sudo apt-get install -y \
     php8.3 php8.3-curl php8.3-gd php8.3-intl php8.3-mbstring php8.3-mysql php8.3-xml
 ```
 
-Ensure the host has native gettext and locales available so PHP translations work, then generate the locales you need. For example:
+Ensure the host has native gettext and at least one UTF-8 OS locale available so PHP translations work. On servers you control, generate the locales you expect to serve. For example:
 
 ```bash
 sudo locale-gen en_US.UTF-8
 sudo locale-gen de_DE.UTF-8
 sudo locale-gen es_ES.UTF-8
 ```
+
+On shared hosting without `sudo`, Ultiorganizer can still serve the bundled
+German, Spanish, and Finnish translations when PHP gettext is enabled and the
+host provides at least one non-`C` UTF-8 locale such as English or Finnish.
 
 For Apache installs, enable `mod_rewrite` so API routes under `/api/v1/...` can use the bundled `.htaccess` rewrite rules:
 

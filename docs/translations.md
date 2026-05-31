@@ -10,10 +10,12 @@ Available languages come from `getAvailableLocalizations()` in
 `lib/configuration.functions.php`. A locale must be configured in `$locales`,
 which is normally defined in `conf/config.inc.php` from
 `conf/config.inc.example.php`, have a matching directory under `locale/`, and
-be available to PHP through `setlocale()`. The OS locale also has to be
-generated or installed on the server, for example with `locale-gen` on
-Debian-based systems. English is kept as a fallback even when the OS locale is
-not installed.
+either be available to PHP through `setlocale()` or be reachable through a
+gettext carrier locale. A carrier locale is any generated non-`C` UTF-8 OS
+locale that lets GNU gettext honor the `LANGUAGE` environment variable for the
+bundled catalogs. On shared hosts, this allows German, Spanish, or Finnish to
+work even when only English or Finnish is installed by the provider. English is
+kept as a fallback even when the OS locale is not installed.
 
 The active request locale is selected in `localization.php`. `setSessionLocale()`
 stores the locale in the session, binds gettext to `locale/`, calls
