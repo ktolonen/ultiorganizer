@@ -486,10 +486,13 @@ function AddFont($family, $style='', $file='', $uni=false)
 		$name = '';
 		$originalsize = 0;
 		$ttfstat = stat($ttffilename);
-		if (file_exists($unifilename.'.mtx.php')) {
-			include($unifilename.'.mtx.php');
-		}
-		if (!isset($type) ||  !isset($name) || $originalsize != $ttfstat['size']) {
+		// Ultiorganizer local modification: font metrics caching is disabled.
+		// The cached .mtx.php baked in an absolute font path, which broke PDF
+		// generation whenever the app was deployed to a different directory
+		// than the one where the cache was generated. Always regenerate the
+		// metrics in memory (cheap; PDFs are generated rarely) so the font
+		// path is resolved from the current install location every time.
+		if (true) {
 			$ttffile = $ttffilename;
 			require_once($this->fontpath.'unifont/ttfonts.php');
 			$ttf = new TTFontFile();
@@ -509,30 +512,10 @@ function AddFont($family, $style='', $file='', $uni=false)
 			$ut = round($ttf->underlineThickness);
 			$originalsize = $ttfstat['size']+0;
 			$type = 'TTF';
-			// Generate metrics .php file
-			$s='<?php'."\n";
-			$s.='$name=\''.$name."';\n";
-			$s.='$type=\''.$type."';\n";
-			$s.='$desc='.var_export($desc,true).";\n";
-			$s.='$up='.$up.";\n";
-			$s.='$ut='.$ut.";\n";
-			$s.='$ttffile=\''.$ttffile."';\n";
-			$s.='$originalsize='.$originalsize.";\n";
-			$s.='$fontkey=\''.$fontkey."';\n";
-			$s.="?>";
-			if (is_writable(dirname($this->fontpath.'unifont/'.'x'))) {
-				$fh = fopen($unifilename.'.mtx.php',"w");
-				fwrite($fh,$s,strlen($s));
-				fclose($fh);
-				$fh = fopen($unifilename.'.cw.dat',"wb");
-				fwrite($fh,$cw,strlen($cw));
-				fclose($fh);
-				@unlink($unifilename.'.cw127.php');
-			}
+			// Ultiorganizer local modification: the metrics cache (.mtx.php /
+			// .cw.dat) is intentionally not written; see the note above. This
+			// also removes the need for a writable font directory.
 			unset($ttf);
-		}
-		else {
-			$cw = @file_get_contents($unifilename.'.cw.dat'); 
 		}
 		$i = count($this->fonts)+1;
 		if(!empty($this->AliasNbPages))
@@ -2015,38 +1998,20 @@ protected function _putfonts()
 }
 
 protected function _putTTfontwidths($font, $maxUni) {
-	if (file_exists($font['unifilename'].'.cw127.php')) {
-		include($font['unifilename'].'.cw127.php') ;
-		$startcid = 128;
-	}
-	else {
-		$rangeid = 0;
-		$range = array();
-		$prevcid = -2;
-		$prevwidth = -1;
-		$interval = false;
-		$startcid = 1;
-	}
-	$cwlen = $maxUni + 1; 
+	// Ultiorganizer local modification: width-range caching (.cw127.php) is
+	// disabled (see AddFont). Always compute the ranges from scratch so no
+	// writable font directory is required; the result is identical.
+	$rangeid = 0;
+	$range = array();
+	$prevcid = -2;
+	$prevwidth = -1;
+	$interval = false;
+	$startcid = 1;
+	$cwlen = $maxUni + 1;
 
 	// for each character
 	for ($cid=$startcid; $cid<$cwlen; $cid++) {
-		if ($cid==128 && (!file_exists($font['unifilename'].'.cw127.php'))) {
-			if (is_writable(dirname($this->fontpath.'unifont/x'))) {
-				$fh = fopen($font['unifilename'].'.cw127.php',"wb");
-				$cw127='<?php'."\n";
-				$cw127.='$rangeid='.$rangeid.";\n";
-				$cw127.='$prevcid='.$prevcid.";\n";
-				$cw127.='$prevwidth='.$prevwidth.";\n";
-				if ($interval) { $cw127.='$interval=true'.";\n"; }
-				else { $cw127.='$interval=false'.";\n"; }
-				$cw127.='$range='.var_export($range,true).";\n";
-				$cw127.="?>";
-				fwrite($fh,$cw127,strlen($cw127));
-				fclose($fh);
-			}
-		}
-		if ((!isset($font['cw'][$cid*2]) || !isset($font['cw'][$cid*2+1])) || 
+		if ((!isset($font['cw'][$cid*2]) || !isset($font['cw'][$cid*2+1])) ||
                     ($font['cw'][$cid*2] == "\00" && $font['cw'][$cid*2+1] == "\00")) { continue; }
 
 		$width = (ord($font['cw'][$cid*2]) << 8) + ord($font['cw'][$cid*2+1]);
