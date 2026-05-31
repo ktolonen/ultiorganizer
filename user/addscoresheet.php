@@ -674,14 +674,14 @@ foreach ($scores as $row) {
     }
 
     if (intval($row['iscallahan'])) {
-        echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' maxlength='3' size='4' value='XX'/></td>";
+        echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" inputmode='numeric' pattern='[0-9]*' id='pass$i' name='pass$i' maxlength='3' size='4' value='XX'/></td>";
     } else {
         $n = PlayerNumber($row['assist'], $gameId);
         if ($n < 0) {
             $n = "";
         }
 
-        echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' maxlength='3' size='4' value='$n'/></td>";
+        echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" inputmode='numeric' pattern='[0-9]*' id='pass$i' name='pass$i' maxlength='3' size='4' value='$n'/></td>";
     }
 
     $n = PlayerNumber($row['scorer'], $gameId);
@@ -705,7 +705,7 @@ for ($i; $i < $maxscores; $i++) {
     echo "<td class='center' style='width:25px;color:#B0B0B0;'>", $i + 1, "</td>\n";
     echo "<td class='center' style='width:40px;$style_left' onclick=\"clickButton('hteam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='hteam$i' name='team$i' type='radio' value='H' /></td>";
     echo "<td class='center' style='width:40px;$style_mid' onclick=\"clickButton('ateam$i');\"><input onclick=\"updateScores($i);\" onkeyup=\"moveNext($i,event);\" id='ateam$i' name='team$i' type='radio' value='A' /></td>";
-    echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" id='pass$i' name='pass$i' size='3' maxlength='2'/></td>";
+    echo "<td class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumberX(this);\" inputmode='numeric' pattern='[0-9]*' id='pass$i' name='pass$i' size='3' maxlength='2'/></td>";
     echo "<td  class='center' style='width:50px;$style_mid'><input class='input' onkeyup=\"validNumber(this);\" inputmode='numeric' pattern='[0-9]*' id='goal$i' name='goal$i' size='3' maxlength='2'/></td>";
     if (!$hideTimeOnScoresheet) {
         echo "<td style='width:60px;$style_mid'><input class='input' onkeyup=\"validTime(this);\" inputmode='decimal' pattern='[0-9.,:;]*' id='time$i' name='time$i' maxlength='8' size='8'/></td>";
