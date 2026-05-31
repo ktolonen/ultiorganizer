@@ -27,12 +27,65 @@ function GettextLanguageSpec($locale)
     return implode(':', array_values(array_unique(array_filter($languages))));
 }
 
-/**
- * Native gettext can load LANGUAGE catalogs when LC_MESSAGES is any real
- * non-C locale. This lets shared hosts serve bundled translations even when
- * they have not generated every application locale.
- */
-function GettextCarrierLocale($candidateLocales = [])
+function GettextLocaleVariants($locale)
+{
+    $variants = [$locale];
+
+    $utf8Locale = preg_replace('/\.utf8$/i', '.UTF-8', $locale);
+    if ($utf8Locale !== null) {
+        $variants[] = $utf8Locale;
+    }
+
+    $utf8Locale = preg_replace('/\.UTF-8$/', '.utf8', $locale);
+    if ($utf8Locale !== null) {
+        $variants[] = $utf8Locale;
+    }
+
+    return array_values(array_unique(array_filter($variants)));
+}
+
+function GettextEnvironmentLocales()
+{
+    $locales = [];
+    foreach (['LC_ALL', 'LC_MESSAGES', 'LANG'] as $name) {
+        $locale = getenv($name);
+        if ($locale !== false && $locale !== '') {
+            $locales[] = $locale;
+        }
+    }
+
+    return $locales;
+}
+
+function GettextInstalledLocales()
+{
+    static $installedLocales = null;
+
+    if ($installedLocales !== null) {
+        return $installedLocales;
+    }
+
+    $installedLocales = [];
+    if (!function_exists('shell_exec')) {
+        return $installedLocales;
+    }
+
+    $output = @shell_exec('locale -a 2>/dev/null');
+    if (!is_string($output) || $output === '') {
+        return $installedLocales;
+    }
+
+    foreach (preg_split('/\R/', $output) ?: [] as $locale) {
+        $locale = trim($locale);
+        if ($locale !== '') {
+            $installedLocales[] = $locale;
+        }
+    }
+
+    return $installedLocales;
+}
+
+function GettextCarrierLocaleCandidates($candidateLocales = [])
 {
     $currentLocale = setlocale(LC_MESSAGES, "0");
     $candidates = [];
@@ -43,7 +96,9 @@ function GettextCarrierLocale($candidateLocales = [])
 
     $candidates = array_merge(
         $candidates,
+        GettextEnvironmentLocales(),
         $candidateLocales,
+        GettextInstalledLocales(),
         [
             'en_US.UTF-8',
             'en_US.utf8',
@@ -54,9 +109,31 @@ function GettextCarrierLocale($candidateLocales = [])
         ],
     );
 
-    foreach (array_unique(array_filter($candidates)) as $candidateLocale) {
+    $variants = [];
+    foreach ($candidates as $candidateLocale) {
+        $variants = array_merge($variants, GettextLocaleVariants($candidateLocale));
+    }
+
+    return array_values(array_unique(array_filter($variants)));
+}
+
+function IsGettextCarrierLocale($locale)
+{
+    return !preg_match('/^(?:C|POSIX)(?:$|[._-])/', $locale);
+}
+
+/**
+ * Native gettext can load LANGUAGE catalogs when LC_MESSAGES is any real
+ * non-C locale. This lets shared hosts serve bundled translations even when
+ * they have not generated every application locale.
+ */
+function GettextCarrierLocale($candidateLocales = [])
+{
+    $currentLocale = setlocale(LC_MESSAGES, "0");
+
+    foreach (GettextCarrierLocaleCandidates($candidateLocales) as $candidateLocale) {
         $activeLocale = setlocale(LC_MESSAGES, $candidateLocale);
-        if ($activeLocale !== false && !preg_match('/^C(?:$|[._-])/', $activeLocale)) {
+        if ($activeLocale !== false && IsGettextCarrierLocale($activeLocale)) {
             if ($currentLocale !== false) {
                 setlocale(LC_MESSAGES, $currentLocale);
             }
