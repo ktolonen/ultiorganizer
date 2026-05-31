@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-31 12:59+0300\n"
+"POT-Creation-Date: 2026-05-31 13:28+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -330,7 +330,7 @@ msgstr "Lisää..."
 msgid "Add new"
 msgstr "Lisää uusi"
 
-#: admin/addteamadmins.php:87 admin/adduser.php:100 admin/users.php:70
+#: admin/addteamadmins.php:87 admin/adduser.php:100 admin/users.php:89
 msgid "Add new user"
 msgstr "Lisää uusi käyttäjä"
 
@@ -594,11 +594,11 @@ msgstr ""
 "liittyvät tietosuojatiedot, mukaan lukien vastaavat lokit? Tätä toimintoa ei "
 "voi perua."
 
-#: admin/users.php:55
+#: admin/users.php:64
 msgid "Are you sure you want to delete the selected registration requests?"
 msgstr "Haluatko varmasti poistaa valitut rekisteröitymispyynnöt?"
 
-#: admin/users.php:57
+#: admin/users.php:66
 msgid "Are you sure you want to delete the selected users?"
 msgstr "Haluatko varmasti poistaa valitut käyttäjät?"
 
@@ -1222,7 +1222,7 @@ msgstr "Kommunikaatio (heidän)"
 msgid "Confirm"
 msgstr "Vahvista"
 
-#: lib/user.functions.php:1528
+#: lib/user.functions.php:1594
 msgid "Confirm extra email address for ultiorganizer"
 msgstr "Vahvista sähköpostiosoite Pelikoneeseen"
 
@@ -1239,7 +1239,7 @@ msgstr "Vahvista siirrot lohkoon: %s."
 msgid "Confirm result and end game"
 msgstr "Vahvista tulos ja päätä peli"
 
-#: lib/user.functions.php:1467
+#: lib/user.functions.php:1533
 msgid "Confirm your account to ultiorganizer"
 msgstr "Vahvista tunnuksesi Pelikoneeseen"
 
@@ -1553,8 +1553,8 @@ msgid "Defensive plays"
 msgstr "Puolustuspisteet"
 
 #: admin/poolmoves.php:233 admin/poolmoves.php:305 admin/seasonpoints.php:204
-#: admin/spirit.php:403 admin/translations.php:550 admin/users.php:74
-#: admin/users.php:76 mobile/deletescore.php:22 mobile/deletescore.php:46
+#: admin/spirit.php:403 admin/translations.php:550 admin/users.php:93
+#: admin/users.php:95 mobile/deletescore.php:22 mobile/deletescore.php:46
 #: scorekeeper/deletescore.php:43 user/teamplayers.php:175
 msgid "Delete"
 msgstr "Poista"
@@ -1565,7 +1565,7 @@ msgstr "Poista"
 msgid "Delete comment"
 msgstr "Poista kommentti"
 
-#: admin/addseasonusers.php:287
+#: admin/addseasonusers.php:287 admin/users.php:93 admin/users.php:95
 msgid "Delete event access rights"
 msgstr "Poista tapahtuman käyttöoikeudet"
 
@@ -1576,6 +1576,10 @@ msgstr "Poista tapahtuman käyttöoikeudet tilastojen arkistoinnin jälkeen"
 #: admin/addseasonusers.php:78
 msgid "Delete event access rights for this event?"
 msgstr "Poistetaanko tämän tapahtuman käyttöoikeudet?"
+
+#: admin/users.php:79
+msgid "Delete event access rights from the selected users?"
+msgstr "Poistetaanko valittujen käyttäjien tapahtumien käyttöoikeudet?"
 
 #: admin/eventviewer.php:216
 msgid "Delete events"
@@ -1633,7 +1637,7 @@ msgstr "Poista tämä token pysyvästi?"
 msgid "Delete this translation key?"
 msgstr "Poista tämä käännösavain?"
 
-#: admin/addseasonusers.php:66 admin/stats.php:27
+#: admin/addseasonusers.php:66 admin/stats.php:27 admin/users.php:25
 #, php-format
 msgid "Deleted %d event access rights."
 msgstr "Poistettiin %d tapahtuman käyttöoikeutta."
@@ -1652,8 +1656,8 @@ msgid ""
 msgstr ""
 "Poistaa tämän tapahtuman käyttöoikeudet, jotta vahinkomuutokset estetään "
 "tapahtuman arkistoinnin jälkeen. Käyttäjätilejä, globaaleja ylläpitäjän "
-"oikeuksia, pelaajaprofiilin oikeuksia, lohkojen näkyvyyttä ja hallintavalikon "
-"näkyvyyttä ei muuteta."
+"oikeuksia, pelaajaprofiilin oikeuksia, lohkojen näkyvyyttä ja "
+"hallintavalikon näkyvyyttä ei muuteta."
 
 #: admin/adduser.php:112
 msgid "Deliver the password to the user manually."
@@ -3984,7 +3988,7 @@ msgstr "Päällekkäisä profiileja ei löytynyt"
 msgid "No duplicates found."
 msgstr "Päällekkäisyyksiä ei löytynyt."
 
-#: admin/addseasonusers.php:68 admin/stats.php:29
+#: admin/addseasonusers.php:68 admin/stats.php:29 admin/users.php:27
 msgid "No event access rights found."
 msgstr "Tapahtuman käyttöoikeuksia ei löytynyt."
 
@@ -4327,7 +4331,7 @@ msgstr ""
 msgid "Password is too short (min. 5 letters)."
 msgstr "Salasana liian lyhyt (min. 5 merkkiä)."
 
-#: admin/users.php:23
+#: admin/users.php:32
 msgid ""
 "Password reset email is unavailable. Open the user information page to set a "
 "new password manually."
@@ -4339,7 +4343,7 @@ msgstr ""
 msgid "Password reset link sent."
 msgstr "Salasanan nollauslinkki lähetetty."
 
-#: lib/user.functions.php:1935
+#: lib/user.functions.php:2001
 msgid "Password reset request for Ultiorganizer"
 msgstr "Ultiorganizerin salasanan nollauspyyntö"
 
@@ -4954,7 +4958,7 @@ msgstr "Nollaa pelikello"
 msgid "Reset page load counter"
 msgstr "Nolla sivun latauslaskurit"
 
-#: admin/users.php:76 login/login_failed.php:36 login/password_reset.php:6
+#: admin/users.php:95 login/login_failed.php:36 login/password_reset.php:6
 #: login/password_reset.php:80 mobile/login_failed.php:36
 msgid "Reset password"
 msgstr "Nollaa salasana"
@@ -6811,8 +6815,8 @@ msgstr "Ultimate.fi"
 #: cust/default/pdfscoresheet.php:123 cust/default/pdfscoresheet.php:151
 #: ext/countrystatus.php:27 ext/eventpools.php:26 ext/poolscoreboard.php:29
 #: ext/poolstatus.php:31 ext/teamcoming.php:32 ext/teamplayed.php:33
-#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1460
-#: lib/user.functions.php:1521 scorekeeper/index.php:83
+#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1526
+#: lib/user.functions.php:1587 scorekeeper/index.php:83
 #: spiritkeeper/index.php:103
 msgid "Ultiorganizer"
 msgstr "Pelikone"
@@ -7708,3 +7712,6 @@ msgstr "kyllä"
 #, fuzzy
 #~ msgid "Delete listed access rights"
 #~ msgstr "Muokkaa käyttöoikeuksia"
+
+#~ msgid "Delete selected users' event access rights"
+#~ msgstr "Poista valittujen käyttäjien tapahtumien käyttöoikeudet"

@@ -38,6 +38,10 @@ function LogEvent($event)
         $event['id2'] = substr($event['id2'], 0, 20);
     }
 
+    if (strlen($event['source']) > 20) {
+        $event['source'] = substr($event['source'], 0, 20);
+    }
+
     if (empty($event['user_id'])) {
         if (!empty($_SESSION['uid'])) {
             $event['user_id'] = $_SESSION['uid'];

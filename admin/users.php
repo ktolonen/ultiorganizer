@@ -18,6 +18,15 @@ if (hasEditUsersRight()) {
                 }
             }
         }
+    } elseif (isset($_POST['deleteeventroles'])) {
+        if (isset($_POST['users'])) {
+            $deletedRoles = DeleteSelectedUsersEventRoles($_POST['users']);
+            if ($deletedRoles > 0) {
+                $message = "<p>" . sprintf(_("Deleted %d event access rights."), $deletedRoles) . "</p>";
+            } else {
+                $message = "<p>" . _("No event access rights found.") . "</p>";
+            }
+        }
     } elseif (isset($_POST['resetpassword'])) {
         if (IsEmailDisabled()) {
             $message = "<p class='warning'>" . _("Password reset email is unavailable. Open the user information page to set a new password manually.") . "</p>";
@@ -59,6 +68,16 @@ pageTopHeadOpen($title);
 
 		return confirm(confirmMessage);
 	}
+
+	function confirmDeleteEventAccessRights() {
+		var form = document.getElementById('users');
+
+		if (!form || form.querySelectorAll('input[name="users[]"]:checked').length === 0) {
+			return true;
+		}
+
+		return confirm('<?php echo addslashes(_("Delete event access rights from the selected users?")); ?>');
+	}
 </script>
 <?php
 pageTopHeadClose($title);
@@ -71,17 +90,21 @@ echo "<p><a href='?view=admin/adduser'>" . _("Add new user") . "</a></p>";
 echo "<h2>" . $title . "</h2>";
 echo $message;
 if (hasEditUsersRight()) {
-    $actions = ['deleteuser' => _("Delete")];
+    $actions = ['deleteeventroles' => _("Delete event access rights"), 'deleteuser' => _("Delete")];
     if (!IsEmailDisabled()) {
-        $actions = ['resetpassword' => _("Reset password"), 'deleteuser' => _("Delete")];
+        $actions = ['resetpassword' => _("Reset password"), 'deleteeventroles' => _("Delete event access rights"), 'deleteuser' => _("Delete")];
     }
     echo SearchUser($target, [], $actions);
     echo "<script type='text/javascript'>
 		(function() {
 			var deleteButton = document.querySelector(\"#users input[name='deleteuser']\");
+			var deleteEventRolesButton = document.querySelector(\"#users input[name='deleteeventroles']\");
 
 			if (deleteButton) {
 				deleteButton.onclick = confirmDeleteUsers;
+			}
+			if (deleteEventRolesButton) {
+				deleteEventRolesButton.onclick = confirmDeleteEventAccessRights;
 			}
 		})();
 	</script>";

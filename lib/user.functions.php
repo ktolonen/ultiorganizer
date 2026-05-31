@@ -1342,6 +1342,72 @@ function DeleteEventUserRoles($seasonId, $confirmedPropIds = null)
     return $deleted;
 }
 
+function DeleteSelectedUsersEventRoles($userids)
+{
+    if (!isSuperAdmin()) {
+        die('Insufficient rights to change user info');
+    }
+
+    $cleanUserIds = [];
+    foreach ((array) $userids as $userid) {
+        $userid = urldecode((string) $userid);
+        if ($userid !== '') {
+            $cleanUserIds[$userid] = true;
+        }
+    }
+
+    if (count($cleanUserIds) === 0) {
+        return 0;
+    }
+
+    $userCriteria = [];
+    foreach (array_keys($cleanUserIds) as $userid) {
+        $userCriteria[] = "'" . DBEscapeString($userid) . "'";
+    }
+
+    $query = sprintf(
+        "SELECT prop_id, userid, value
+		FROM uo_userproperties
+		WHERE name='userrole'
+		AND userid IN (%s)
+		AND (
+			value LIKE 'seasonadmin:%%'
+			OR value LIKE 'spiritadmin:%%'
+			OR value LIKE 'seriesadmin:%%'
+			OR value LIKE 'teamadmin:%%'
+			OR value LIKE 'accradmin:%%'
+			OR value LIKE 'gameadmin:%%'
+			OR value LIKE 'resgameadmin:%%'
+		)",
+        implode(",", $userCriteria),
+    );
+    $rows = DBQueryToArray($query);
+    $deleted = 0;
+    $currentUserAffected = false;
+
+    foreach ($rows as $row) {
+        DBExecute(sprintf(
+            "DELETE FROM uo_userproperties WHERE prop_id=%d AND userid='%s' AND name='userrole' AND value='%s'",
+            (int) $row['prop_id'],
+            DBEscapeString($row['userid']),
+            DBEscapeString($row['value']),
+        ));
+
+        Log1("security", "delete", $row['userid'], $row['prop_id'], $row['value'], "user-access-cleanup");
+        $deleted++;
+
+        if ($row['userid'] === $_SESSION['uid']) {
+            $currentUserAffected = true;
+        }
+    }
+
+    if ($currentUserAffected) {
+        SetUserSessionData($_SESSION['uid']);
+    }
+
+    return $deleted;
+}
+
 function GetTeamAdmins($teamId)
 {
     $seasonrights = getEditSeasons($_SESSION['uid']);
