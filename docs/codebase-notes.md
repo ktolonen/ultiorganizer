@@ -13,6 +13,7 @@ This page collects implementation details that are useful during coding work but
 - Register Unicode fonts with `AddFont(..., true)`. DejaVu TTFs are under `lib/tfpdf/font/unifont/`.
 - Keep PDF text in UTF-8. Do not use `utf8_decode` or ISO-8859 transcoding helpers.
 - After registering DejaVu under family `Arial`, continue using `SetFont('Arial', ...)`.
+- Local tFPDF modification: the Unicode-font metrics cache (`*.mtx.php`, `*.cw.dat`, `*.cw127.php` under `lib/tfpdf/font/unifont/`) is disabled in `tfpdf.php` (`AddFont()` and `_putTTfontwidths()`). The upstream cache stored the font's absolute path, which broke PDF generation when the app was deployed to a different directory than where the cache was generated. Metrics are now regenerated in memory on each run (negligible cost; PDFs are rare) and no writable font directory is required. Re-apply this change after any tFPDF upgrade; the modified sections are marked with `Ultiorganizer local modification` comments.
 
 ## Plugins
 
