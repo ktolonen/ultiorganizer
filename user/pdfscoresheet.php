@@ -73,12 +73,24 @@ if (!empty($_GET["time"])) {
     }
 }
 if (!empty($_GET["reservation"])) {
+    $reservationId = $_GET["reservation"] == "none" ? null : $_GET["reservation"];
+    // A reservation can belong to a different season than the user's currently
+    // selected one. Compute game responsibilities in the reservation's own
+    // season (unless an explicit ?season= override was given) so that
+    // season-scoped roles resolve against the correct season; otherwise no
+    // games match and only a blank page is produced.
+    if ($reservationId !== null && empty($_GET["season"])) {
+        $reservationSeason = ReservationSeason($reservationId);
+        if (!empty($reservationSeason)) {
+            $season = $reservationSeason;
+        }
+    }
     $gameResponsibilities = GameResponsibilities($season);
     $responsibilities = [];
     foreach ($gameResponsibilities as $row) {
         $responsibilities[] = $row['game_id'];
     }
-    $games = ResponsibleReservationGames($_GET["reservation"] == "none" ? null : $_GET["reservation"], $responsibilities);
+    $games = ResponsibleReservationGames($reservationId, $responsibilities);
     $resSlug = $_GET["reservation"] == "none" ? "none" : pdf_slug($_GET["reservation"]);
     $filename = "scoresheets-reservation-" . $resSlug . ".pdf";
 }
@@ -104,9 +116,10 @@ $pdf = new PDF();
 if (!$pdf instanceof ScoreSheetPdf) {
     throw new UnexpectedValueException('Scoresheet PDF customization must implement ScoreSheetPdf.');
 }
-// @phpstan-ignore deadCode.unreachable
-$printScoreSheet = new ReflectionMethod($pdf, 'PrintScoreSheet');
-$scoreSheetAcceptsPlayerLists = $printScoreSheet->getNumberOfParameters() >= 9;
+// Customizations that bundle the player lists into the scoresheet page declare
+// it via the marker interface; all others get a separate PrintPlayerList() page.
+// @phpstan-ignore instanceof.alwaysTrue, instanceof.alwaysFalse (PDF resolves through runtime customization includes)
+$scoreSheetBundlesPlayerLists = $pdf instanceof BundledPlayerListScoreSheet;
 
 if ($teamId) {
     $seasonSlug = pdf_slug(TeamSeason($teamId));
@@ -139,11 +152,7 @@ if ($teamId) {
 } elseif (isset($_GET['blank'])) {
 
     $seasonname = SeasonName($season);
-    if ($scoreSheetAcceptsPlayerLists) {
-        $pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "", [], []);
-    } else {
-        $pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "");
-    }
+    $pdf->PrintScoreSheet(U_($seasonname), "", "", "", "", "", "", [], []);
 
 } else {
     $seasonname = SeasonName($season);
@@ -187,28 +196,22 @@ if ($teamId) {
         $visitor = empty($gameRow["visitorteamname"]) ? U_($gameRow["pvisitorteamname"]) : $gameRow["visitorteamname"];
         $placeLabel = ReservationPlaceText(U_($gameRow["placename"]), U_($gameRow['fieldname']));
 
-        if ($scoreSheetAcceptsPlayerLists) {
-            $pdf->PrintScoreSheet(
-                U_($seasonname),
-                $sGid,
-                $home,
-                $visitor,
-                U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
-                $gameRow["time"],
-                $placeLabel,
-                $homeplayers,
-                $visitorplayers,
-            );
-        } else {
-            $pdf->PrintScoreSheet(
-                U_($seasonname),
-                $sGid,
-                $home,
-                $visitor,
-                U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
-                $gameRow["time"],
-                $placeLabel,
-            );
+        $pdf->PrintScoreSheet(
+            U_($seasonname),
+            $sGid,
+            $home,
+            $visitor,
+            U_($gameRow['seriesname']) . ", " . U_($gameRow['poolname']),
+            $gameRow["time"],
+            $placeLabel,
+            $homeplayers,
+            $visitorplayers,
+        );
+
+        // Customizations that don't bundle the rosters into the scoresheet
+        // page need a separate roster page per game.
+        // @phpstan-ignore booleanNot.alwaysTrue, booleanNot.alwaysFalse (PDF resolves through runtime customization includes)
+        if (!$scoreSheetBundlesPlayerLists) {
             $pdf->PrintPlayerList($homeplayers, $visitorplayers);
         }
     }
