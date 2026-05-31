@@ -60,11 +60,25 @@ if (!empty($_POST['add'])) {
         RemoveSeasonUserRole($_POST['delId'], "accradmin:" . $_POST['teamId'], $seasonId);
     }
     $_GET["access"] = "";
+} elseif (!empty($_POST['deleteeventroles'])) {
+    $deletedRoles = DeleteEventUserRoles($seasonId);
+    if ($deletedRoles > 0) {
+        $html .= "<p>" . sprintf(_("Deleted %d event access rights."), $deletedRoles) . "</p>";
+    } else {
+        $html .= "<p>" . _("No event access rights found.") . "</p>";
+    }
 }
 
 //common page
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
+?>
+<script type="text/javascript">
+	function confirmClearEventAccessRights() {
+		return confirm('<?php echo addslashes(_("Delete event access rights for this event?")); ?>');
+	}
+</script>
+<?php
 pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
@@ -264,6 +278,15 @@ if (!empty($_GET["access"]) && $_GET["access"] == "accradmin") {
 $html .= "<div><input type='hidden' name='delId'/></div>";
 $html .= "<div><input type='hidden' name='teamId'/></div>";
 $html .= "</form>";
+
+if (isSuperAdmin()) {
+    $html .= "<hr/>";
+    $html .= "<h3>" . _("Clear event access rights") . "</h3>";
+    $html .= "<p>" . _("Deletes access rights for this event to prevent accidental changes after the event is archived. User accounts, global administrator rights, player profile rights, pool visibility, and administration menu visibility are not changed.") . "</p>";
+    $html .= "<form method='post' action='?view=admin/addseasonusers&amp;season=" . $seasonId . "'>";
+    $html .= "<p><input class='button' name='deleteeventroles' type='submit' value='" . _("Delete event access rights") . "' onclick='return confirmClearEventAccessRights();'/></p>";
+    $html .= "</form>";
+}
 
 echo $html;
 contentEnd();

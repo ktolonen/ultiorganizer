@@ -1192,6 +1192,156 @@ function UserHasSeasonScopedRole($userid, $seasonId)
     return false;
 }
 
+function EventUserRoleCleanupPreview($seasonId)
+{
+    if (!isSuperAdmin()) {
+        die('Insufficient rights to change user info');
+    }
+
+    $escapedSeasonId = DBEscapeString($seasonId);
+    $seasonAdminRole = DBEscapeString('seasonadmin:' . $seasonId);
+    $spiritAdminRole = DBEscapeString('spiritadmin:' . $seasonId);
+
+    $query = sprintf(
+        "SELECT up.prop_id, up.userid, u.name AS username, u.email,
+			SUBSTRING_INDEX(up.value, ':', 1) AS role,
+			SUBSTRING_INDEX(up.value, ':', -1) AS role_id,
+			up.value
+		FROM uo_userproperties up
+		LEFT JOIN uo_users u ON (u.userid=up.userid)
+		WHERE up.name='userrole'
+		AND (
+			up.value='%s'
+			OR up.value='%s'
+			OR (
+				SUBSTRING_INDEX(up.value, ':', 1)='seriesadmin'
+				AND EXISTS (
+					SELECT 1 FROM uo_series ser
+					WHERE ser.series_id=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
+					AND ser.season='%s'
+				)
+			)
+			OR (
+				SUBSTRING_INDEX(up.value, ':', 1) IN ('teamadmin', 'accradmin')
+				AND EXISTS (
+					SELECT 1 FROM uo_team team
+					LEFT JOIN uo_series ser ON (team.series=ser.series_id)
+					WHERE team.team_id=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
+					AND ser.season='%s'
+				)
+			)
+			OR (
+				SUBSTRING_INDEX(up.value, ':', 1)='gameadmin'
+				AND EXISTS (
+					SELECT 1 FROM uo_game_pool gp
+					LEFT JOIN uo_pool pool ON (gp.pool=pool.pool_id)
+					LEFT JOIN uo_series ser ON (pool.series=ser.series_id)
+					WHERE gp.game=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
+					AND gp.timetable=1
+					AND ser.season='%s'
+				)
+			)
+			OR (
+				SUBSTRING_INDEX(up.value, ':', 1)='resgameadmin'
+				AND EXISTS (
+					SELECT 1 FROM uo_reservation res
+					WHERE res.id=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
+					AND res.season='%s'
+				)
+			)
+		)
+		ORDER BY role, u.name, up.userid, up.value",
+        $seasonAdminRole,
+        $spiritAdminRole,
+        $escapedSeasonId,
+        $escapedSeasonId,
+        $escapedSeasonId,
+        $escapedSeasonId,
+    );
+
+    $rows = DBQueryToArray($query);
+    $preview = [
+        'rows' => [],
+        'counts' => [],
+        'users' => [],
+    ];
+
+    foreach ($rows as $row) {
+        $row['prop_id'] = (int) $row['prop_id'];
+        $preview['rows'][] = $row;
+
+        if (!isset($preview['counts'][$row['role']])) {
+            $preview['counts'][$row['role']] = 0;
+        }
+        $preview['counts'][$row['role']]++;
+
+        if (!isset($preview['users'][$row['userid']])) {
+            $preview['users'][$row['userid']] = [
+                'userid' => $row['userid'],
+                'name' => $row['username'],
+                'email' => $row['email'],
+                'count' => 0,
+            ];
+        }
+        $preview['users'][$row['userid']]['count']++;
+    }
+
+    return $preview;
+}
+
+function DeleteEventUserRoles($seasonId, $confirmedPropIds = null)
+{
+    if (!isSuperAdmin()) {
+        die('Insufficient rights to change user info');
+    }
+
+    $preview = EventUserRoleCleanupPreview($seasonId);
+    $confirmed = [];
+
+    if ($confirmedPropIds === null) {
+        foreach ($preview['rows'] as $row) {
+            $confirmed[$row['prop_id']] = true;
+        }
+    } else {
+        foreach ((array) $confirmedPropIds as $propId) {
+            $confirmed[(int) $propId] = true;
+        }
+    }
+
+    if (count($confirmed) === 0) {
+        return 0;
+    }
+
+    $deleted = 0;
+    $currentUserAffected = false;
+
+    foreach ($preview['rows'] as $row) {
+        if (!isset($confirmed[$row['prop_id']])) {
+            continue;
+        }
+
+        DBExecute(sprintf(
+            "DELETE FROM uo_userproperties WHERE prop_id=%d AND userid='%s' AND name='userrole' AND value='%s'",
+            (int) $row['prop_id'],
+            DBEscapeString($row['userid']),
+            DBEscapeString($row['value']),
+        ));
+
+        Log1("security", "delete", $row['userid'], $row['prop_id'], $row['value'], "event-access-cleanup");
+        $deleted++;
+
+        if ($row['userid'] === $_SESSION['uid']) {
+            $currentUserAffected = true;
+        }
+    }
+
+    if ($currentUserAffected) {
+        SetUserSessionData($_SESSION['uid']);
+    }
+
+    return $deleted;
+}
+
 function GetTeamAdmins($teamId)
 {
     $seasonrights = getEditSeasons($_SESSION['uid']);
