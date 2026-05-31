@@ -26,6 +26,7 @@ $localeMap = ["en" => "en_GB.utf8",
 function setSessionLocale()
 {
     global $include_prefix;
+    global $locales;
 
     if (isset($_SESSION['userproperties']['locale'])) {
         $tmparr = array_keys($_SESSION['userproperties']['locale']);
@@ -50,12 +51,11 @@ function setSessionLocale()
     }
     $encoding = 'UTF-8';
 
-    putenv("LC_MESSAGES=$locale");
     $domain = 'messages';
     textdomain($domain);
     bindtextdomain($domain, $include_prefix . "locale");
     bind_textdomain_codeset($domain, $encoding);
-    setlocale(LC_MESSAGES, $locale);
+    ActivateGettextLocale($locale, is_array($locales) ? array_keys($locales) : []);
 
     if (!headers_sent()) {
         header("Content-type: text/html; charset=$encoding");

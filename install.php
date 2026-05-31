@@ -521,15 +521,18 @@ function installHashPassword($password)
 
     function installGetAvailableLocales()
     {
+        require_once 'lib/locale.functions.php';
+
         $localizations = [];
         $temp = @scandir("locale/");
         $currentLocale = setlocale(LC_MESSAGES, "0");
         $fallbackEnglishLocale = 'en_GB.utf8';
+        $candidateLocales = $temp === false ? [] : $temp;
 
         if ($temp !== false) {
             foreach ($temp as $fh) {
                 if (is_dir("locale/$fh") && $fh != '.' && $fh != '..') {
-                    if (setlocale(LC_MESSAGES, $fh) !== false) {
+                    if (CanServeGettextLocale($fh, $candidateLocales)) {
                         $localizations[$fh] = $fh;
                     }
                 }
