@@ -8,7 +8,7 @@ include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/tfpdf/cellfit.php';
 include_once 'lib/hsvclass/HSVClass.php';
 
-class PDF extends tFPDF_CellFit implements ScoreSheetPdf
+class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
 {
     public $B;
     public $I;

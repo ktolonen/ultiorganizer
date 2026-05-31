@@ -23,4 +23,4 @@ foreach ($series as $seriesStr) {
     }
 }
 
-echo _("Standings saved");
+echo _("Final standings saved.");

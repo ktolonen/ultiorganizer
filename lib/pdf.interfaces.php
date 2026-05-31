@@ -28,3 +28,13 @@ interface ScoreSheetPdf
 
     public function PrintRoster($teamname, $seriesname, $poolname, $players);
 }
+
+/**
+ * Marker interface for scoresheet customizations whose PrintScoreSheet()
+ * renders the player lists itself (bundled onto the scoresheet page).
+ *
+ * Customizations that do NOT implement this interface ignore the player-list
+ * arguments to PrintScoreSheet(), so the caller must emit a separate roster
+ * page via PrintPlayerList().
+ */
+interface BundledPlayerListScoreSheet extends ScoreSheetPdf {}

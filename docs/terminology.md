@@ -21,6 +21,9 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 | Division | Competition category within an event. | In code and database context, this is usually a `series`. |
 | Pool | Group or stage inside a division. | Pools are used for scheduling, standings, and game grouping. |
 | Team | Competitive team in a game, pool, or division. | |
+| Standings | Generic team order or standings report when the scope is clear from context. | Prefer a more specific term in navigation when the page is pool-scoped or final-order scoped. |
+| Pool standings | Current or resolved team order inside one or more pools. | Use for pool tables, pool-status pages, and admin pool-standing review. |
+| Final standings | Event or division finishing order after the competition path is complete. | Use for public final-order views and admin final-standing overrides. |
 | Roster | List of players for a team or for a game-specific played roster. | The detailed scoresheet uses a game-specific played roster. |
 | Game | Scheduled contest between two teams. | Main aggregate state lives on `uo_game`. |
 | Result | Aggregate game state expressed as the home and away score. | Use for current or final game result. |
@@ -64,6 +67,7 @@ These terms are recognized in the current repository. They are not the preferred
 | --- | --- | --- |
 | Event | `season`, `Current event`, `Select event` | Use `event` in user-facing docs; expect `season` in code and DB context. |
 | Division | `series`, `series_id`, `seriesname` | This is the main legacy/internal naming mismatch in the repo. |
+| Final standings | `Placements`, `Final placements` | `Placements` remains a valid technical concept for individual positions, placement games, placement brackets, and placement pools. |
 | Result | `homescore`, `visitorscore`, `final score`, `current score` | Use `result` for the aggregate state of a game. |
 | Goal | `done`, `goals`, `ishomegoal` | `done` appears in stat queries and internal result rows. |
 | Assist | `fedin`, `pass` | `pass` appears in legacy score-entry forms; `fedin` appears in stats helpers and API normalization. |

@@ -10,7 +10,7 @@ include_once 'lib/team.functions.php';
 include_once 'lib/timetable.functions.php';
 include_once 'lib/game.functions.php';
 
-$title = _("Standings") . " ";
+$title = _("Pool standings") . " ";
 $seriesScoreboard = false;
 $print = 0;
 $html = "";
@@ -21,7 +21,7 @@ $seasoninfo = null;
 if (iget("season")) {
     $seasoninfo = SeasonInfo(iget("season"));
     if (!$seasoninfo) {
-        $title = _("Standings");
+        $title = _("Pool standings");
         $html .= "<h1>" . _("Event not found") . "</h1>";
         showPage($title, $html);
         return;
@@ -33,7 +33,7 @@ if (iget("season")) {
 } elseif (iget("series")) {
     $seriesinfo = SeriesInfo(iget("series"));
     if (!$seriesinfo) {
-        $title = _("Standings");
+        $title = _("Pool standings");
         $html .= "<h1>" . _("Division not found") . "</h1>";
         showPage($title, $html);
         return;
@@ -47,7 +47,7 @@ if (iget("season")) {
 
     $poolinfo = PoolInfo(iget("pool"));
     if (!$poolinfo) {
-        $title = _("Standings");
+        $title = _("Pool standings");
         $html .= "<h1>" . _("Pool not found") . "</h1>";
         showPage($title, $html);
         return;
@@ -70,7 +70,7 @@ if (iget("season")) {
     $seasoninfo = SeasonInfo($poolinfo['season']);
     $title .= utf8entities(U_($poolinfo['seriesname']) . ", " . U_($poolinfo['name']));
 } else {
-    $title = _("Standings");
+    $title = _("Pool standings");
     $html .= "<h1>" . _("Pool not found") . "</h1>";
     showPage($title, $html);
     return;

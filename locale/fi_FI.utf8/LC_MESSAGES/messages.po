@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-31 13:28+0300\n"
+"POT-Creation-Date: 2026-05-31 18:22+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -685,8 +685,8 @@ msgid "Automatic Accreditation"
 msgstr "Automaattinen akkreditointi"
 
 #: teams.php:365
-msgid "Automatic standings, not confirmed"
-msgstr "Automaattiset sijoitukset, ei vahvistettu"
+msgid "Automatic final standings, not confirmed"
+msgstr "Automaattiset lopulliset sijoitukset, ei vahvistettu"
 
 #: teamcard.php:278
 msgid "Average"
@@ -862,7 +862,7 @@ msgstr "Välimuistin koko"
 msgid "Calc. stats"
 msgstr "Laske tilastot"
 
-#: admin/stats.php:101
+#: admin/stats.php:104
 msgid "Calculate"
 msgstr "Laske"
 
@@ -1071,13 +1071,13 @@ msgstr ""
 msgid "Clear event access rights"
 msgstr "Poista tapahtuman käyttöoikeudet"
 
+#: admin/finalstandings.php:155
+msgid "Clear final standings"
+msgstr "Tyhjennä lopulliset sijoitukset"
+
 #: admin/finalstandings.php:154
 msgid "Clear saved final standings for this division?"
 msgstr "Tyhjennetäänkö tämän sarjan tallennetut lopulliset sijoitukset?"
-
-#: admin/finalstandings.php:155
-msgid "Clear standings"
-msgstr "Tyhjennä sijoitukset"
 
 #: admin/finalstandings.php:140
 msgid "Clearing reverts this division to automatic live standings."
@@ -1222,7 +1222,7 @@ msgstr "Kommunikaatio (heidän)"
 msgid "Confirm"
 msgstr "Vahvista"
 
-#: lib/user.functions.php:1594
+#: lib/user.functions.php:1566
 msgid "Confirm extra email address for ultiorganizer"
 msgstr "Vahvista sähköpostiosoite Pelikoneeseen"
 
@@ -1239,7 +1239,7 @@ msgstr "Vahvista siirrot lohkoon: %s."
 msgid "Confirm result and end game"
 msgstr "Vahvista tulos ja päätä peli"
 
-#: lib/user.functions.php:1533
+#: lib/user.functions.php:1505
 msgid "Confirm your account to ultiorganizer"
 msgstr "Vahvista tunnuksesi Pelikoneeseen"
 
@@ -1569,7 +1569,7 @@ msgstr "Poista kommentti"
 msgid "Delete event access rights"
 msgstr "Poista tapahtuman käyttöoikeudet"
 
-#: admin/stats.php:98 admin/stats.php:129
+#: admin/stats.php:90
 msgid "Delete event access rights after archiving statistics"
 msgstr "Poista tapahtuman käyttöoikeudet tilastojen arkistoinnin jälkeen"
 
@@ -1714,7 +1714,7 @@ msgstr "Hylätty"
 #: admin/editgame.php:236 admin/privacyplayer.php:86 admin/seasonpoints.php:181
 #: admin/seasonstats.php:33 admin/spirit.php:44 admin/spirit.php:103
 #: admin/spirit.php:152 admin/spirit.php:231 admin/spirit.php:279
-#: admin/spirit.php:334 admin/spirit.php:541 admin/stats.php:118
+#: admin/spirit.php:334 admin/spirit.php:541 admin/stats.php:121
 #: admin/tdtools.php:24 admin/tdtools.php:60 cust/bula/pdfscoresheet.php:73
 #: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
 #: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:281
@@ -2290,10 +2290,6 @@ msgstr "Syötä pelin pöytäkirja"
 msgid "Filling instructions:"
 msgstr "Täyttöohjeet:"
 
-#: admin/stats.php:136
-msgid "Final Standings"
-msgstr "Lopulliset sijoitukset"
-
 #: scorekeeper/endgame.php:47
 msgid "Final result"
 msgstr "Lopputulos"
@@ -2315,9 +2311,10 @@ msgstr "Pelin tulos"
 msgid "Final scores"
 msgstr "Pelin tulos"
 
-#: seasonlist.php:33 admin/finalstandings.php:15 admin/finalstandings.php:21
+#: menufunctions.php:601 menufunctions.php:767 seasonlist.php:33 teams.php:47
+#: admin/finalstandings.php:15 admin/finalstandings.php:21
 #: admin/finalstandings.php:42 admin/finalstandings.php:107
-#: admin/finalstandings.php:120
+#: admin/finalstandings.php:120 admin/seasonadmin.php:108 admin/stats.php:136
 msgid "Final standings"
 msgstr "Lopulliset sijoitukset"
 
@@ -2344,7 +2341,7 @@ msgstr "Lopulliset sijoitukset on julkaistu tälle sarjalle."
 msgid "Final standings cleared."
 msgstr "Lopulliset sijoitukset tyhjennetty."
 
-#: admin/finalstandings.php:81
+#: admin/finalstandings.php:81 admin/saveteamstandings.php:26
 msgid "Final standings saved."
 msgstr "Lopulliset sijoitukset tallennettu."
 
@@ -2757,7 +2754,7 @@ msgstr "Yhteenveto pelin kulusta"
 #: admin/seasonstandings.php:305 admin/seasonstandings.php:362
 #: admin/seasonstandings.php:410 admin/seasonstats.php:21
 #: admin/seasonstats.php:35 admin/seriesgames.php:31 admin/seriesgames.php:41
-#: admin/stats.php:117 ext/countrystatus.php:51 ext/eventpools.php:47
+#: admin/stats.php:120 ext/countrystatus.php:51 ext/eventpools.php:47
 #: ext/poolscoreboard.php:42 ext/poolstatus.php:50 ext/teamscoreboard.php:57
 #: lib/search.functions.php:785
 msgid "Games"
@@ -3155,11 +3152,11 @@ msgstr "Jos peli kesken:"
 
 #: admin/stats.php:137
 msgid ""
-"If the standings are not correct, use the mouse to drag teams into the "
-"correct order and press Save standings."
+"If the final standings are not correct, use the mouse to drag teams into the "
+"correct order and press Save final standings."
 msgstr ""
-"Jos sijoitukset eivät ole oikein, voit hiirellä raahata joukkueet oikeaan "
-"järjestykseen. Paina Tallenna sijoitukset tallentaaksesi sijoitukset."
+"Jos lopulliset sijoitukset eivät ole oikein, raahaa joukkueet hiirellä "
+"oikeaan järjestykseen ja paina Tallenna lopulliset sijoitukset."
 
 #: user/addresult.php:118
 msgid "If this is all wrong, clear the result: "
@@ -4343,7 +4340,7 @@ msgstr ""
 msgid "Password reset link sent."
 msgstr "Salasanan nollauslinkki lähetetty."
 
-#: lib/user.functions.php:2001
+#: lib/user.functions.php:1973
 msgid "Password reset request for Ultiorganizer"
 msgstr "Ultiorganizerin salasanan nollauspyyntö"
 
@@ -4412,10 +4409,6 @@ msgstr "Sijoitus"
 #: admin/addseasonpools.php:382
 msgid "Placement pool"
 msgstr "Sijoituslohko"
-
-#: menufunctions.php:767 admin/seasonadmin.php:108
-msgid "Placements"
-msgstr "Sijoitukset"
 
 #: cust/bula/pdfscoresheet.php:262 cust/default/pdfscoresheet.php:179
 #: cust/default/pdfscoresheet.php:189 cust/default/pdfscoresheet.php:287
@@ -4529,7 +4522,7 @@ msgstr "Pelaajatilastot"
 
 #: clubcard.php:156 clubcard.php:183 countrycard.php:42 countrycard.php:67
 #: menufunctions.php:680 admin/seasonadmin.php:84 admin/seasongames.php:245
-#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:116
+#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:119
 #: admin/tdtools.php:184 mobile/respgames.php:178 user/adddefensesheet.php:64
 #: user/addplayerlists.php:238 user/addresult.php:66 user/addscoresheet.php:215
 #: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
@@ -4660,9 +4653,11 @@ msgstr "Lohkon nimi on pakollinen tieto!"
 msgid "Pool not found"
 msgstr "Lohkoa ei löydy"
 
-#: menufunctions.php:785 admin/seasonstandings.php:16 ext/export.php:47
+#: menufunctions.php:766 menufunctions.php:785 poolstatus.php:13
+#: poolstatus.php:24 poolstatus.php:36 poolstatus.php:50 poolstatus.php:73
+#: admin/seasonstandings.php:16 ext/export.php:47
 msgid "Pool standings"
-msgstr "Sarjataulukot"
+msgstr "Lohkotilanne"
 
 #: menufunctions.php:759 admin/dbequalize.php:205 admin/seasonadmin.php:74
 #: admin/seasonpools.php:14 admin/seasonseries.php:123
@@ -5257,6 +5252,10 @@ msgstr "Tallenna pisteet"
 msgid "Save final result"
 msgstr "Tallenna lopputulos"
 
+#: admin/finalstandings.php:238 admin/stats.php:138
+msgid "Save final standings"
+msgstr "Tallenna lopulliset sijoitukset"
+
 #: mobile/addscoresheet.php:205 mobile/addscoresheet.php:225
 #: scorekeeper/addscoresheet.php:406
 msgid "Save goal"
@@ -5269,10 +5268,6 @@ msgstr "Tallenna maali virheineen"
 #: user/addscoresheet.php:618
 msgid "Save scores"
 msgstr "Tallenna pisteet"
-
-#: admin/finalstandings.php:238 admin/stats.php:138
-msgid "Save standings"
-msgstr "Tallenna sijoitukset"
 
 #: admin/reservations.php:188
 msgid "Save times"
@@ -6068,15 +6063,9 @@ msgstr ""
 msgid "Standing"
 msgstr "Sijoitus"
 
-#: menufunctions.php:601 menufunctions.php:766 poolstatus.php:13
-#: poolstatus.php:24 poolstatus.php:36 poolstatus.php:50 poolstatus.php:73
-#: statistics.php:23 teams.php:47
+#: statistics.php:23
 msgid "Standings"
 msgstr "Sijoitukset"
-
-#: admin/saveteamstandings.php:26
-msgid "Standings saved"
-msgstr "Sijoitukset tallennettu"
 
 #: scorekeeper/addscoresheet.php:295 scorekeeper/addscoresheet.php:574
 msgid "Start game clock"
@@ -6290,7 +6279,7 @@ msgstr "Aikalisän ottava joukkue"
 #: admin/clubs.php:93 admin/dbequalize.php:201 admin/dbequalize.php:268
 #: admin/poolmoves.php:395 admin/seasonadmin.php:79 admin/seasonpools.php:229
 #: admin/seasonseries.php:122 admin/seasonstats.php:21 admin/seasonstats.php:35
-#: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:115
+#: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:118
 msgid "Teams"
 msgstr "Joukkueet"
 
@@ -6376,14 +6365,14 @@ msgstr ""
 "Tässä sarjassa on %d keskeneräistä ottelua. Tallennetaanko lopulliset "
 "sijoitukset silti?"
 
-#: admin/stats.php:90 admin/stats.php:121
+#: admin/stats.php:96 admin/stats.php:124
 #, php-format
 msgid ""
 "There are %d players without a profile id. Player statistics will be skipped "
 "for them."
 msgstr "%d pelaajalta puuttuu profiili. Pelaajatilastoja ei luoda heille."
 
-#: admin/stats.php:94 admin/stats.php:125
+#: admin/stats.php:100 admin/stats.php:128
 #, php-format
 msgid "There are %d players without a profile id. Run statistics anyway?"
 msgstr "%d pelaajalta puuttuu profiili. Tee tilastointi silti?"
@@ -6430,7 +6419,7 @@ msgstr ""
 msgid "This password reset link is invalid or has expired."
 msgstr "Tämä salasanan nollauslinkki on virheellinen tai vanhentunut."
 
-#: admin/stats.php:99 admin/stats.php:130
+#: admin/stats.php:91
 msgid ""
 "This prevents accidental changes after the event is archived. User accounts, "
 "global administrator rights, player profile rights, pool visibility, and "
@@ -6815,8 +6804,8 @@ msgstr "Ultimate.fi"
 #: cust/default/pdfscoresheet.php:123 cust/default/pdfscoresheet.php:151
 #: ext/countrystatus.php:27 ext/eventpools.php:26 ext/poolscoreboard.php:29
 #: ext/poolstatus.php:31 ext/teamcoming.php:32 ext/teamplayed.php:33
-#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1526
-#: lib/user.functions.php:1587 scorekeeper/index.php:83
+#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1498
+#: lib/user.functions.php:1559 scorekeeper/index.php:83
 #: spiritkeeper/index.php:103
 msgid "Ultiorganizer"
 msgstr "Pelikone"
@@ -7705,13 +7694,20 @@ msgstr "ja"
 msgid "yes"
 msgstr "kyllä"
 
-#, fuzzy
 #~ msgid "Count"
 #~ msgstr "Kotimaa"
 
-#, fuzzy
 #~ msgid "Delete listed access rights"
 #~ msgstr "Muokkaa käyttöoikeuksia"
 
 #~ msgid "Delete selected users' event access rights"
 #~ msgstr "Poista valittujen käyttäjien tapahtumien käyttöoikeudet"
+
+#~ msgid "Final Standings"
+#~ msgstr "Lopulliset sijoitukset"
+
+#~ msgid "Placements"
+#~ msgstr "Sijoitukset"
+
+#~ msgid "Standings saved"
+#~ msgstr "Sijoitukset tallennettu"
