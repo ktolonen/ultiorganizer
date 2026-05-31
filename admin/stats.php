@@ -85,6 +85,12 @@ if ($finalStandingsStatus['unpublished'] > 0) {
     $html .= "<p class='warning'>" . sprintf(_("Final standings are not defined for %d divisions; live standings will be used."), $finalStandingsStatus['unpublished']) . "</p>\n";
 }
 
+$deleteRolesOption = "";
+if (isSuperAdmin()) {
+    $deleteRolesOption = "<p><label><input type='checkbox' name='deleteeventroles' value='1' checked='checked'/> " . _("Delete event access rights after archiving statistics") . "</label></p>\n";
+    $deleteRolesOption .= "<p>" . _("This prevents accidental changes after the event is archived. User accounts, global administrator rights, player profile rights, pool visibility, and administration menu visibility are not changed.") . "</p>\n";
+}
+
 if (!IsSeasonStatsCalculated($season)) {
     if ($missing_profiles_count > 0) {
         $html .= "<p><strong>" . sprintf(_("There are %d players without a profile id. Player statistics will be skipped for them."), $missing_profiles_count) . "</strong></p>\n";
@@ -94,10 +100,7 @@ if (!IsSeasonStatsCalculated($season)) {
         $confirm_msg = sprintf(_("There are %d players without a profile id. Run statistics anyway?"), $missing_profiles_count);
         $confirm_attr = " onclick='return confirm(\"" . addslashes($confirm_msg) . "\")'";
     }
-    if (isSuperAdmin()) {
-        $html .= "<p><label><input type='checkbox' name='deleteeventroles' value='1' checked='checked'/> " . _("Delete event access rights after archiving statistics") . "</label></p>\n";
-        $html .= "<p>" . _("This prevents accidental changes after the event is archived. User accounts, global administrator rights, player profile rights, pool visibility, and administration menu visibility are not changed.") . "</p>\n";
-    }
+    $html .= $deleteRolesOption;
     $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Calculate") . "'" . $confirm_attr . "/></p>\n";
 } else {
     $seasons = SeasonStatistics($season);
@@ -125,10 +128,7 @@ if (!IsSeasonStatsCalculated($season)) {
         $confirm_msg = sprintf(_("There are %d players without a profile id. Run statistics anyway?"), $missing_profiles_count);
         $confirm_attr = " onclick='return confirm(\"" . addslashes($confirm_msg) . "\")'";
     }
-    if (isSuperAdmin()) {
-        $html .= "<p><label><input type='checkbox' name='deleteeventroles' value='1' checked='checked'/> " . _("Delete event access rights after archiving statistics") . "</label></p>\n";
-        $html .= "<p>" . _("This prevents accidental changes after the event is archived. User accounts, global administrator rights, player profile rights, pool visibility, and administration menu visibility are not changed.") . "</p>\n";
-    }
+    $html .= $deleteRolesOption;
     $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Recalculate") . "'" . $confirm_attr . "/></p>\n";
     $html .= "<p><input class='button' name='undo' type='submit' value='" . _("Undo") . "'/></p>\n";
 

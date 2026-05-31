@@ -1141,6 +1141,31 @@ function RemoveSeasonUserRole($userid, $role, $seasonId)
     }
 }
 
+/**
+ * Canonical list of event-scoped user role prefixes.
+ *
+ * A "userrole" property stored as "<prefix>:<id>" grants access tied to a
+ * single event (season). This is the single source of truth for which role
+ * prefixes are event-scoped. The per-prefix season resolution in
+ * UserHasSeasonScopedRole() and the season-scoped SQL in
+ * EventUserRoleCleanupPreview() must cover every prefix listed here.
+ *
+ * @return string[]
+ */
+function EventScopedRolePrefixes()
+{
+    return [
+        'seasonadmin',
+        'spiritadmin',
+        'seriesadmin',
+        'teamadmin',
+        'accradmin',
+        'gameadmin',
+        'resadmin',
+        'resgameadmin',
+    ];
+}
+
 function UserHasSeasonScopedRole($userid, $seasonId)
 {
     $query = sprintf(
@@ -1154,6 +1179,7 @@ function UserHasSeasonScopedRole($userid, $seasonId)
         $roleName = $value[0];
         $roleValue = isset($value[1]) ? $value[1] : '';
 
+        // Season resolution per prefix listed in EventScopedRolePrefixes().
         switch ($roleName) {
             case 'seasonadmin':
             case 'spiritadmin':
@@ -1177,6 +1203,7 @@ function UserHasSeasonScopedRole($userid, $seasonId)
                     return true;
                 }
                 break;
+            case 'resadmin':
             case 'resgameadmin':
                 if (!empty($roleValue)) {
                     foreach (ReservationSeasons((int) $roleValue) as $resSeason) {
@@ -1202,13 +1229,10 @@ function EventUserRoleCleanupPreview($seasonId)
     $seasonAdminRole = DBEscapeString('seasonadmin:' . $seasonId);
     $spiritAdminRole = DBEscapeString('spiritadmin:' . $seasonId);
 
+    // Resolves each event-scoped prefix in EventScopedRolePrefixes() to $seasonId.
     $query = sprintf(
-        "SELECT up.prop_id, up.userid, u.name AS username, u.email,
-			SUBSTRING_INDEX(up.value, ':', 1) AS role,
-			SUBSTRING_INDEX(up.value, ':', -1) AS role_id,
-			up.value
+        "SELECT up.prop_id, up.userid, up.value
 		FROM uo_userproperties up
-		LEFT JOIN uo_users u ON (u.userid=up.userid)
 		WHERE up.name='userrole'
 		AND (
 			up.value='%s'
@@ -1242,15 +1266,14 @@ function EventUserRoleCleanupPreview($seasonId)
 				)
 			)
 			OR (
-				SUBSTRING_INDEX(up.value, ':', 1)='resgameadmin'
+				SUBSTRING_INDEX(up.value, ':', 1) IN ('resadmin', 'resgameadmin')
 				AND EXISTS (
 					SELECT 1 FROM uo_reservation res
 					WHERE res.id=CAST(SUBSTRING_INDEX(up.value, ':', -1) AS UNSIGNED)
 					AND res.season='%s'
 				)
 			)
-		)
-		ORDER BY role, u.name, up.userid, up.value",
+		)",
         $seasonAdminRole,
         $spiritAdminRole,
         $escapedSeasonId,
@@ -1259,87 +1282,16 @@ function EventUserRoleCleanupPreview($seasonId)
         $escapedSeasonId,
     );
 
-    $rows = DBQueryToArray($query);
-    $preview = [
-        'rows' => [],
-        'counts' => [],
-        'users' => [],
-    ];
-
-    foreach ($rows as $row) {
-        $row['prop_id'] = (int) $row['prop_id'];
-        $preview['rows'][] = $row;
-
-        if (!isset($preview['counts'][$row['role']])) {
-            $preview['counts'][$row['role']] = 0;
-        }
-        $preview['counts'][$row['role']]++;
-
-        if (!isset($preview['users'][$row['userid']])) {
-            $preview['users'][$row['userid']] = [
-                'userid' => $row['userid'],
-                'name' => $row['username'],
-                'email' => $row['email'],
-                'count' => 0,
-            ];
-        }
-        $preview['users'][$row['userid']]['count']++;
-    }
-
-    return $preview;
+    return DBQueryToArray($query);
 }
 
-function DeleteEventUserRoles($seasonId, $confirmedPropIds = null)
+function DeleteEventUserRoles($seasonId)
 {
     if (!isSuperAdmin()) {
         die('Insufficient rights to change user info');
     }
 
-    $preview = EventUserRoleCleanupPreview($seasonId);
-    $confirmed = [];
-
-    if ($confirmedPropIds === null) {
-        foreach ($preview['rows'] as $row) {
-            $confirmed[$row['prop_id']] = true;
-        }
-    } else {
-        foreach ((array) $confirmedPropIds as $propId) {
-            $confirmed[(int) $propId] = true;
-        }
-    }
-
-    if (count($confirmed) === 0) {
-        return 0;
-    }
-
-    $deleted = 0;
-    $currentUserAffected = false;
-
-    foreach ($preview['rows'] as $row) {
-        if (!isset($confirmed[$row['prop_id']])) {
-            continue;
-        }
-
-        DBExecute(sprintf(
-            "DELETE FROM uo_userproperties WHERE prop_id=%d AND userid='%s' AND name='userrole' AND value='%s'",
-            (int) $row['prop_id'],
-            DBEscapeString($row['userid']),
-            DBEscapeString($row['value']),
-        ));
-
-        Log1("security", "delete", $row['userid'], $row['prop_id'], $row['value'], "event-access-cleanup");
-        $deleted++;
-
-        if ($row['userid'] === $_SESSION['uid']) {
-            $currentUserAffected = true;
-        }
-    }
-
-    if ($currentUserAffected) {
-        SetUserSessionData($_SESSION['uid']);
-    }
-
-    return $deleted;
+    return DeleteUserRoleRows(EventUserRoleCleanupPreview($seasonId), "event-access-cleanup");
 }
 
 function DeleteSelectedUsersEventRoles($userids)
@@ -1365,47 +1317,53 @@ function DeleteSelectedUsersEventRoles($userids)
         $userCriteria[] = "'" . DBEscapeString($userid) . "'";
     }
 
-    $query = sprintf(
-        "SELECT prop_id, userid, value
+    $roleCriteria = [];
+    foreach (EventScopedRolePrefixes() as $prefix) {
+        $roleCriteria[] = "value LIKE '" . DBEscapeString($prefix) . ":%'";
+    }
+
+    $query = "SELECT prop_id, userid, value
 		FROM uo_userproperties
 		WHERE name='userrole'
-		AND userid IN (%s)
-		AND (
-			value LIKE 'seasonadmin:%%'
-			OR value LIKE 'spiritadmin:%%'
-			OR value LIKE 'seriesadmin:%%'
-			OR value LIKE 'teamadmin:%%'
-			OR value LIKE 'accradmin:%%'
-			OR value LIKE 'gameadmin:%%'
-			OR value LIKE 'resgameadmin:%%'
-		)",
-        implode(",", $userCriteria),
-    );
-    $rows = DBQueryToArray($query);
-    $deleted = 0;
+		AND userid IN (" . implode(",", $userCriteria) . ")
+		AND (" . implode(" OR ", $roleCriteria) . ")";
+
+    return DeleteUserRoleRows(DBQueryToArray($query), "user-access-cleanup");
+}
+
+function DeleteUserRoleRows($rows, $source)
+{
+    if (!isSuperAdmin()) {
+        die('Insufficient rights to change user info');
+    }
+
+    if (count($rows) === 0) {
+        return 0;
+    }
+
+    $propIds = [];
     $currentUserAffected = false;
-
     foreach ($rows as $row) {
-        DBExecute(sprintf(
-            "DELETE FROM uo_userproperties WHERE prop_id=%d AND userid='%s' AND name='userrole' AND value='%s'",
-            (int) $row['prop_id'],
-            DBEscapeString($row['userid']),
-            DBEscapeString($row['value']),
-        ));
-
-        Log1("security", "delete", $row['userid'], $row['prop_id'], $row['value'], "user-access-cleanup");
-        $deleted++;
-
+        $propIds[] = (int) $row['prop_id'];
         if ($row['userid'] === $_SESSION['uid']) {
             $currentUserAffected = true;
         }
+    }
+
+    DBExecute(sprintf(
+        "DELETE FROM uo_userproperties WHERE name='userrole' AND prop_id IN (%s)",
+        implode(",", $propIds),
+    ));
+
+    foreach ($rows as $row) {
+        Log1("security", "delete", $row['userid'], $row['prop_id'], $row['value'], $source);
     }
 
     if ($currentUserAffected) {
         SetUserSessionData($_SESSION['uid']);
     }
 
-    return $deleted;
+    return count($rows);
 }
 
 function GetTeamAdmins($teamId)

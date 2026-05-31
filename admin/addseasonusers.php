@@ -60,7 +60,7 @@ if (!empty($_POST['add'])) {
         RemoveSeasonUserRole($_POST['delId'], "accradmin:" . $_POST['teamId'], $seasonId);
     }
     $_GET["access"] = "";
-} elseif (!empty($_POST['deleteeventroles'])) {
+} elseif (!empty($_POST['deleteeventroles']) && isSuperAdmin()) {
     $deletedRoles = DeleteEventUserRoles($seasonId);
     if ($deletedRoles > 0) {
         $html .= "<p>" . sprintf(_("Deleted %d event access rights."), $deletedRoles) . "</p>";
