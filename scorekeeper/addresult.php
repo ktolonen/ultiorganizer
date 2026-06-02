@@ -12,7 +12,9 @@ $_SESSION['game'] = $gameId;
 if (isset($_POST['save'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
-    $info = CheckGameResultScores($home, $away);
+    if ($home < 0 || $away < 0) {
+        $info = "<p class='warning'>Invalid score.</p>";
+    }
     if (empty($info)) {
         $ok = GameSetResult($gameId, $home, $away);
         if ($ok) {
@@ -26,7 +28,9 @@ if (isset($_POST['save'])) {
 } elseif (isset($_POST['update'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
-    $info = CheckGameResultScores($home, $away);
+    if ($home < 0 || $away < 0) {
+        $info = "<p class='warning'>Invalid score.</p>";
+    }
     if (empty($info)) {
         GameUpdateResult($gameId, $home, $away);
         $info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";

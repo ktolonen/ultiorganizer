@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 07:39+0300\n"
+"POT-Creation-Date: 2026-06-02 07:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -762,7 +762,7 @@ msgstr "Takaisin pelilistaan"
 
 #: mobile/addplayerlists.php:134 mobile/addresult.php:54
 #: mobile/addscoresheet.php:230 mobile/gameplay.php:101
-#: scorekeeper/addplayerlists.php:227 scorekeeper/addresult.php:84
+#: scorekeeper/addplayerlists.php:227 scorekeeper/addresult.php:88
 #: scorekeeper/addscoresheet.php:477 scorekeeper/gameplay.php:106
 #: user/adddefensesheet.php:333 user/addscoresheet.php:631
 msgid "Back to game responsibilities"
@@ -2001,11 +2001,11 @@ msgstr "Syötä uusi salasanasi alle."
 msgid "Equalization"
 msgstr "Yhdenmukaistaminen"
 
-#: lib/game.functions.php:890
+#: lib/game.functions.php:892
 msgid "Erroneous scoresheet number:"
 msgstr "Virheellinen pöytäkirjan numero:"
 
-#: scorekeeper/addresult.php:23 scorekeeper/result.php:27
+#: scorekeeper/addresult.php:25 scorekeeper/result.php:27
 msgid "Error: Could not save result."
 msgstr "Virhe: Tuloksia ei voitu tallentaa."
 
@@ -2013,7 +2013,7 @@ msgstr "Virhe: Tuloksia ei voitu tallentaa."
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:1768
+#: lib/game.functions.php:1761
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -2083,7 +2083,7 @@ msgstr "Tapahtuman määrittely pakollista"
 msgid "Event not found"
 msgstr "Tapahtumaa ei löydy"
 
-#: lib/game.functions.php:902
+#: lib/game.functions.php:904
 msgid "Event played."
 msgstr "Tapahtuma pelattu."
 
@@ -2590,7 +2590,7 @@ msgstr "Peli on jo pelattu. Nykyinen tulos:"
 msgid "Game has ended"
 msgstr "Peli on päättynyt"
 
-#: lib/game.functions.php:894
+#: lib/game.functions.php:896
 msgid "Game has no pool."
 msgstr "Pelillä ei ole lohkoa."
 
@@ -2655,7 +2655,7 @@ msgstr "Toimitsija(t)"
 msgid "Game ongoing"
 msgstr "Peli kesken"
 
-#: scorekeeper/addresult.php:80
+#: scorekeeper/addresult.php:84
 msgid "Game ongoing, update scores"
 msgstr "Peli on menossa, päivitä tilanne"
 
@@ -2684,12 +2684,12 @@ msgstr "Vastuupelit"
 msgid "Game result"
 msgstr "Pelin tulos"
 
-#: scorekeeper/addresult.php:21
+#: scorekeeper/addresult.php:23
 #, php-format
 msgid "Game result %s - %s saved!"
 msgstr "Tulos tallennettu: %s - %s!"
 
-#: scorekeeper/addresult.php:32
+#: scorekeeper/addresult.php:36
 #, php-format
 msgid "Game result %s - %s updated!"
 msgstr "Ottelun tulos %s - %s päivitetty!"
@@ -4010,7 +4010,7 @@ msgstr "Ei pelejä"
 msgid "No games to move"
 msgstr "Ei siirrettäviä pelejä"
 
-#: lib/game.functions.php:905
+#: lib/game.functions.php:907
 msgid "No goals."
 msgstr "Ei maaleja."
 
@@ -4641,7 +4641,7 @@ msgstr "Lohkon pelejä ei olla pelattu:"
 msgid "Pool is completed:"
 msgstr "Lohko on pelattu:"
 
-#: lib/game.functions.php:897
+#: lib/game.functions.php:899
 msgid "Pool is locked."
 msgstr "Lohko on lukittu."
 
@@ -4997,7 +4997,7 @@ msgstr "Palauta varmuuskopio"
 
 #: gamecard.php:137 teamcard.php:795 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183 mobile/respgames.php:177
-#: scorekeeper/addresult.php:37 scorekeeper/respgames.php:194
+#: scorekeeper/addresult.php:41 scorekeeper/respgames.php:194
 #: user/adddefensesheet.php:63 user/addplayerlists.php:237
 #: user/addresult.php:13 user/addresult.php:27 user/addresult.php:65
 #: user/addscoresheet.php:214 user/addspirit.php:223 user/respgames.php:24
@@ -5017,12 +5017,12 @@ msgstr "Tulosta ei tallennettu!"
 msgid "Result saved!"
 msgstr "Tulos tallennettu!"
 
-#: lib/game.functions.php:1765
+#: lib/game.functions.php:1758
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:1762
+#: lib/game.functions.php:1755
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -5228,11 +5228,11 @@ msgstr "Tallenna"
 msgid "Save Spirit Settings"
 msgstr "Tallenna spirit-asetukset"
 
-#: scorekeeper/addresult.php:76
+#: scorekeeper/addresult.php:80
 msgid "Save again"
 msgstr "Tallenna uudestaan"
 
-#: mobile/addresult.php:52 scorekeeper/addresult.php:81 user/addresult.php:124
+#: mobile/addresult.php:52 scorekeeper/addresult.php:85 user/addresult.php:124
 msgid "Save as final result"
 msgstr "Tallenna lopputulos"
 
@@ -5413,10 +5413,6 @@ msgstr "Maalintekijällä ja syöttäjällä on sama numero!"
 #: cust/slkl/pdfscoresheet.php:581 cust/windmill/pdfscoresheet.php:599
 msgid "Scores"
 msgstr "Pisteet"
-
-#: lib/game.functions.php:913
-msgid "Scores cannot be negative."
-msgstr "Pisteet eivät voi olla negatiivisia."
 
 #: admin/seasongames.php:246 admin/tdtools.php:185
 #: cust/default/pdfscoresheet.php:56 cust/slkl/pdfscoresheet.php:56
@@ -5708,7 +5704,7 @@ msgstr "Aseta pelikello"
 msgid "Set game clock to"
 msgstr "Aseta pelikelloksi"
 
-#: scorekeeper/addresult.php:77
+#: scorekeeper/addresult.php:81
 msgid "Set rosters"
 msgstr "Aseta pelaajalistat"
 
@@ -6658,7 +6654,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2131
+#: admin/seasonpoints.php:258 lib/game.functions.php:2124
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 
