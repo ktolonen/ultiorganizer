@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 07:45+0300\n"
+"POT-Creation-Date: 2026-06-02 16:27+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -774,7 +774,7 @@ msgstr "Zurück zur Spieleliste"
 
 #: mobile/addplayerlists.php:134 mobile/addresult.php:54
 #: mobile/addscoresheet.php:230 mobile/gameplay.php:101
-#: scorekeeper/addplayerlists.php:227 scorekeeper/addresult.php:88
+#: scorekeeper/addplayerlists.php:227 scorekeeper/addresult.php:91
 #: scorekeeper/addscoresheet.php:477 scorekeeper/gameplay.php:106
 #: user/adddefensesheet.php:333 user/addscoresheet.php:631
 msgid "Back to game responsibilities"
@@ -2030,7 +2030,8 @@ msgstr "Vereinheitlichung"
 msgid "Erroneous scoresheet number:"
 msgstr "Falsche Spielberichtsnummer:"
 
-#: scorekeeper/addresult.php:25 scorekeeper/result.php:27
+#: scorekeeper/addresult.php:25 scorekeeper/addresult.php:38
+#: scorekeeper/result.php:27
 msgid "Error: Could not save result."
 msgstr "Fehler: Konnte Ergebnis nicht speichern"
 
@@ -2678,7 +2679,7 @@ msgstr "Spiel-Offizielle(r)"
 msgid "Game ongoing"
 msgstr "Spiel läuft"
 
-#: scorekeeper/addresult.php:84
+#: scorekeeper/addresult.php:87
 msgid "Game ongoing, update scores"
 msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren"
 
@@ -4226,7 +4227,7 @@ msgstr "Eine einfache Bewertung"
 
 #: poolstatus.php:866 poolstatus.php:868 admin/seasongames.php:190
 #: lib/timetable.functions.php:631 lib/timetable.functions.php:633
-#: scorekeeper/respgames.php:188
+#: scorekeeper/respgames.php:193
 msgid "Ongoing"
 msgstr "Spiel läuft"
 
@@ -4638,7 +4639,8 @@ msgstr "Punkte"
 msgid "Points for %s must be 0-1000."
 msgstr "Punkte fuer %s muessen zwischen 0 und 1000 liegen."
 
-#: admin/seasonpoints.php:231
+#: admin/seasonpoints.php:231 lib/game.functions.php:889
+#: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
 msgid "Points must be between 0 and 1000."
 msgstr "Punkte muessen zwischen 0 und 1000 liegen."
 
@@ -5036,7 +5038,7 @@ msgstr "Wiederherstellen"
 
 #: gamecard.php:137 teamcard.php:795 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183 mobile/respgames.php:177
-#: scorekeeper/addresult.php:41 scorekeeper/respgames.php:194
+#: scorekeeper/addresult.php:44 scorekeeper/respgames.php:199
 #: user/adddefensesheet.php:63 user/addplayerlists.php:237
 #: user/addresult.php:13 user/addresult.php:27 user/addresult.php:65
 #: user/addscoresheet.php:214 user/addspirit.php:223 user/respgames.php:24
@@ -5123,7 +5125,7 @@ msgstr "Rechte"
 #: cust/windmill/pdfscoresheet.php:117 cust/windmill/pdfscoresheet.php:238
 #: scorekeeper/addplayerlists.php:119 scorekeeper/addplayerlists.php:221
 #: scorekeeper/addplayerlists.php:223 scorekeeper/addscoresheet.php:464
-#: scorekeeper/addscoresheet.php:473 scorekeeper/respgames.php:195
+#: scorekeeper/addscoresheet.php:473 scorekeeper/respgames.php:200
 #: user/clubprofile.php:139 user/respteams.php:24 user/teamplayers.php:11
 #: user/teamplayers.php:136 user/teamprofile.php:98
 msgid "Roster"
@@ -5267,11 +5269,11 @@ msgstr "Speichern"
 msgid "Save Spirit Settings"
 msgstr "Spirit-Einstellungen speichern"
 
-#: scorekeeper/addresult.php:80
+#: scorekeeper/addresult.php:83
 msgid "Save again"
 msgstr "Erneut speichern"
 
-#: mobile/addresult.php:52 scorekeeper/addresult.php:85 user/addresult.php:124
+#: mobile/addresult.php:52 scorekeeper/addresult.php:88 user/addresult.php:124
 msgid "Save as final result"
 msgstr "Endergebnis speichern"
 
@@ -5456,7 +5458,7 @@ msgstr "Spielstände"
 #: admin/seasongames.php:246 admin/tdtools.php:185
 #: cust/default/pdfscoresheet.php:56 cust/slkl/pdfscoresheet.php:56
 #: cust/wfdf/pdfscoresheet.php:287 mobile/respgames.php:179
-#: scorekeeper/addscoresheet.php:271 scorekeeper/respgames.php:196
+#: scorekeeper/addscoresheet.php:271 scorekeeper/respgames.php:201
 #: user/adddefensesheet.php:65 user/addplayerlists.php:239
 #: user/addresult.php:67 user/addscoresheet.php:216 user/addspirit.php:225
 #: user/respgames.php:207
@@ -5745,7 +5747,7 @@ msgstr "Spieluhr setzen"
 msgid "Set game clock to"
 msgstr "Spieluhr setzen auf"
 
-#: scorekeeper/addresult.php:81
+#: scorekeeper/addresult.php:84
 msgid "Set rosters"
 msgstr "Kader festlegen"
 

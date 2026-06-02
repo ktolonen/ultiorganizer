@@ -13,7 +13,7 @@ if (isset($_POST['save'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
     if ($home < 0 || $away < 0) {
-        $info = "<p class='warning'>Invalid score.</p>";
+        $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
     if (empty($info)) {
         $ok = GameSetResult($gameId, $home, $away);
@@ -29,11 +29,14 @@ if (isset($_POST['save'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
     if ($home < 0 || $away < 0) {
-        $info = "<p class='warning'>Invalid score.</p>";
+        $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
     if (empty($info)) {
-        GameUpdateResult($gameId, $home, $away);
-        $info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";
+        if (GameUpdateResult($gameId, $home, $away)) {
+            $info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";
+        } else {
+            $info = "<p class='warning'>" . _("Error: Could not save result.") . "</p>";
+        }
     }
 }
 
