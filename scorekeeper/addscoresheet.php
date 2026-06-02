@@ -1,6 +1,26 @@
 <?php
 include_once __DIR__ . '/auth.php';
 
+function ScorekeeperPlayedPlayerIdMap($gameId, $teamId)
+{
+    $playerIds = [];
+    foreach (GamePlayers($gameId, $teamId) as $player) {
+        $playerIds[(int) $player['player_id']] = true;
+    }
+
+    return $playerIds;
+}
+
+function ScorekeeperRosterPlayerId($playerId, $playedPlayerIds)
+{
+    $playerId = (int) $playerId;
+    if ($playerId > 0 && !empty($playedPlayerIds[$playerId])) {
+        return $playerId;
+    }
+
+    return 0;
+}
+
 $html = "";
 $errors = "";
 $gameId = scorekeeperRequestGameId();
@@ -145,6 +165,23 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         if (strcasecmp($uo_goal['scorer'], 'xx') == 0 || strcasecmp($uo_goal['scorer'], 'x') == 0) {
             $uo_goal['iscallahan'] = 1;
             $uo_goal['scorer'] = -1;
+        }
+
+        $scoringTeamId = 0;
+        if ($team == 'H') {
+            $scoringTeamId = (int) $game_result['hometeam'];
+        } elseif ($team == 'A') {
+            $scoringTeamId = (int) $game_result['visitorteam'];
+        }
+
+        if ($scoringTeamId > 0) {
+            $playedPlayerIds = ScorekeeperPlayedPlayerIdMap($gameId, $scoringTeamId);
+            if ($uo_goal['assist'] !== -1) {
+                $uo_goal['assist'] = ScorekeeperRosterPlayerId($uo_goal['assist'], $playedPlayerIds);
+            }
+            if ($uo_goal['scorer'] !== -1) {
+                $uo_goal['scorer'] = ScorekeeperRosterPlayerId($uo_goal['scorer'], $playedPlayerIds);
+            }
         }
 
         if (!empty($team) && $team == 'H') {
