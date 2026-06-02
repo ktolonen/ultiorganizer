@@ -85,6 +85,11 @@ $html .= "<label><input type='checkbox' id='showToday' name='showToday' value='1
 $html .= "<label><input type='checkbox' id='hidePlayed' name='hidePlayed' value='1' $hidePlayedChecked onchange=\"toggleRespFilters();\"/>" . _("Hide played games") . "</label>";
 $html .= "</div>";
 $html .= "<script type='text/javascript'>
+  function changeseason(id) {
+    var sid = encodeURIComponent(id);
+    window.location = '?view=respgames&selseason=' + sid;
+  }
+
   function toggleRespFilters() {
     var hidePlayed = document.getElementById('hidePlayed');
     var showToday = document.getElementById('showToday');
