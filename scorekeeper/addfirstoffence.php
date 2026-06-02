@@ -3,7 +3,7 @@
 include_once __DIR__ . '/auth.php';
 $html = "";
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $game_result = GameResult($gameId);
@@ -37,7 +37,7 @@ $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 
 
-$html .= "<form action='?view=addfirstoffence' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addfirstoffence&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 $html .= "<fieldset data-role='controlgroup' id='teamselection'>";
 $html .= "<input type='radio' name='team' id='hstart' value='H' $hoffence />";
 $html .= "<label for='hstart'>" . utf8entities($game_result['hometeamname']) . "</label>";

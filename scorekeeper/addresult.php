@@ -6,7 +6,7 @@ $info = "";
 $game_result = [];
 $saveSucceeded = false;
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 if (isset($_POST['save'])) {
@@ -35,7 +35,7 @@ $html .= "<div data-role='content'>\n";
 
 $result = GameResult($gameId);
 
-$html .= "<form action='?view=addresult' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 $html .= "<label for='home'>" . utf8entities($result['hometeamname']) . ":</label>";
 

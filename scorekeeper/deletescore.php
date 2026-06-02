@@ -3,7 +3,7 @@
 include_once __DIR__ . '/auth.php';
 $html = "";
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $game_result = GameResult($gameId);
@@ -24,7 +24,7 @@ $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
 
-$html .= "<form action='?view=deletescore' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=deletescore&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 //last score
 if (count($scores) > 0) {

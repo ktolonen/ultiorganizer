@@ -3,7 +3,7 @@
 include_once __DIR__ . '/auth.php';
 $html = "";
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $game_result = GameResult($gameId);
@@ -18,7 +18,7 @@ $html .= "<h1>" . _("Game official") . ": " . utf8entities($game_result['hometea
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
-$html .= "<form action='?view=addofficial' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addofficial&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 $html .= "<label for='official'>" . _("Game official") . ":</label>";
 $html .= "<input type='text' name='official' id='official' value='" . utf8entities($game_result['official']) . "'/>";
 $html .= "<div class='form-actions'>";

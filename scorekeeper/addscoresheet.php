@@ -3,7 +3,7 @@ include_once __DIR__ . '/auth.php';
 
 $html = "";
 $errors = "";
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $seasoninfo = SeasonInfo(GameSeason($gameId));
@@ -235,7 +235,7 @@ $html .= "<h1>" . _("Scoresheet") . ": " . utf8entities($game_result['hometeamna
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
-$html .= "<form action='?view=addscoresheet' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addscoresheet&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 if ($lastscore) {
     $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";

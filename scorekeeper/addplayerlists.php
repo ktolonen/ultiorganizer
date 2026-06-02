@@ -32,8 +32,8 @@ function ScorekeeperPlayerRoleSelectedIds($postedRoles, $selectedValue)
 $html = "";
 
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
-$teamId = isset($_GET['team']) ? $_GET['team'] : $_SESSION['team'];
+$gameId = scorekeeperRequestGameId();
+$teamId = scorekeeperRequestTeamId();
 
 $_SESSION['game'] = $gameId;
 $_SESSION['team'] = $teamId;
@@ -126,7 +126,7 @@ $playerlist = TeamPlayerList($teamId);
 $captains = array_flip(GameCaptains($gameId, $teamId));
 $spiritCaptains = array_flip(GameSpiritCaptains($gameId, $teamId));
 
-$html .= "<form action='?view=addplayerlists' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $teamId . "' method='post' data-ajax='false'>\n";
 
 $played_players = GamePlayers($gameId, $teamId);
 

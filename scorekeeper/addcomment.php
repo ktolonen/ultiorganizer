@@ -3,7 +3,7 @@
 include_once __DIR__ . '/auth.php';
 $html = "";
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $game_result = GameResult($gameId);
@@ -29,7 +29,7 @@ $html .= "<h1>" . _("Game note") . ": " . utf8entities($game_result['hometeamnam
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
-$html .= "<form action='?view=addcomment' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addcomment&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 if ($show_comment_form) {
     if (!empty($game_comment_meta_html)) {
         $html .= "<div>" . $game_comment_meta_html . "</div>";
