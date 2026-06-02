@@ -87,7 +87,7 @@ if (isset($_POST['save'])) {
                         $playerinfo1 = PlayerInfo($playerId);
                         $playerinfo2 = PlayerInfo($player['player_id']);
                         $html .= "<p  class='warning'><i>" . utf8entities($playerinfo1['firstname'] . " " . $playerinfo1['lastname']) . "</i> " . _("and")
-                          . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("have the same jersey number") . " '$number'.</p>";
+                          . " <i>" . utf8entities($playerinfo2['firstname'] . " " . $playerinfo2['lastname']) . "</i> " . _("have the same jersey number") . " '" . utf8entities($number) . "'.</p>";
                         $found = true;
                         break;
                     }
@@ -98,7 +98,7 @@ if (isset($_POST['save'])) {
                 }
             } else {
                 $playerinfo = PlayerInfo($playerId);
-                $html .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("has an invalid jersey number") . " '$number'.</p>";
+                $html .= "<p  class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> " . _("has an invalid jersey number") . " '" . utf8entities($number) . "'.</p>";
             }
         }
     }

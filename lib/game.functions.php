@@ -885,6 +885,7 @@ function CheckGameResult($game, $home, $away)
 {
     $gameId = (int) substr($game, 0, -1);
     $errors = "";
+    $errors .= CheckGameResultScores($home, $away);
     if ($gameId == 0 || !checkChkNum($game)) {
         $errors .= "<p class='warning'>" . _("Erroneous scoresheet number:") . " " . $game . "</p>";
     } else {
@@ -904,6 +905,15 @@ function CheckGameResult($game, $home, $away)
         $errors .= "<p class='warning'>" . _("No goals.") . "</p>";
     }
     return $errors;
+}
+
+function CheckGameResultScores($home, $away)
+{
+    if ($home < 0 || $away < 0) {
+        return "<p class='warning'>" . _("Scores cannot be negative.") . "</p>";
+    }
+
+    return "";
 }
 
 function GameUpdateResult($gameId, $home, $away)

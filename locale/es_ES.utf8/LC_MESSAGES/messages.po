@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-05-31 18:22+0300\n"
+"POT-Creation-Date: 2026-06-02 07:39+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -413,7 +413,7 @@ msgid "Adding the user failed. Please contact the system administrator."
 msgstr ""
 "Error al agregar el usuario. Comuníquese con el administrador del sistema."
 
-#: scorekeeper/addscoresheet.php:415
+#: scorekeeper/addscoresheet.php:452
 msgid "Additional game data"
 msgstr "Datos adicionales del juego"
 
@@ -659,11 +659,11 @@ msgstr ""
 #: cust/default/pdfscoresheet.php:601 cust/gummis/pdfscoresheet.php:664
 #: cust/slkl/pdfscoresheet.php:578 cust/wfdf/pdfscoresheet.php:1234
 #: cust/windmill/pdfscoresheet.php:596 mobile/addscoresheet.php:195
-#: scorekeeper/addscoresheet.php:352 user/addscoresheet.php:654
+#: scorekeeper/addscoresheet.php:389 user/addscoresheet.php:654
 msgid "Assist"
 msgstr "Asistencia"
 
-#: scorekeeper/addscoresheet.php:155 scorekeeper/addscoresheet.php:166
+#: scorekeeper/addscoresheet.php:192 scorekeeper/addscoresheet.php:203
 msgid "Assisting player not on the roster"
 msgstr "Jugador asistente no está en la lista de jugadores"
 
@@ -783,8 +783,8 @@ msgstr "Volver a la lista de juegos"
 
 #: mobile/addplayerlists.php:134 mobile/addresult.php:54
 #: mobile/addscoresheet.php:230 mobile/gameplay.php:101
-#: scorekeeper/addplayerlists.php:227 scorekeeper/addresult.php:78
-#: scorekeeper/addscoresheet.php:440 scorekeeper/gameplay.php:106
+#: scorekeeper/addplayerlists.php:227 scorekeeper/addresult.php:84
+#: scorekeeper/addscoresheet.php:477 scorekeeper/gameplay.php:106
 #: user/adddefensesheet.php:333 user/addscoresheet.php:631
 msgid "Back to game responsibilities"
 msgstr "Volver a las responsabilidades del juego"
@@ -910,8 +910,8 @@ msgid "Callahan defence"
 msgstr "Defensa Callahan"
 
 #: gameplay.php:242 playercard.php:569 lib/game.functions.php:637
-#: mobile/gameplay.php:88 scorekeeper/addscoresheet.php:362
-#: scorekeeper/addscoresheet.php:453 scorekeeper/addscoresheet.php:463
+#: mobile/gameplay.php:88 scorekeeper/addscoresheet.php:399
+#: scorekeeper/addscoresheet.php:490 scorekeeper/addscoresheet.php:500
 msgid "Callahan goal"
 msgstr "Gol de Callahan"
 
@@ -923,7 +923,7 @@ msgstr "Gol de Callahan"
 #: admin/select_userrole.php:53 admin/select_userrole.php:56
 #: admin/select_userrole.php:59 admin/translations.php:547
 #: admin/translations.php:549 mobile/addscoresheet.php:227
-#: scorekeeper/addscoresheet.php:411 scorekeeper/result.php:88
+#: scorekeeper/addscoresheet.php:448 scorekeeper/result.php:88
 #: user/adddefensesheet.php:317 user/addscoresheet.php:619
 #: user/select_poolselector.php:26 user/select_poolselector.php:29
 #: user/select_poolselector.php:32 user/select_poolselector.php:35
@@ -1122,7 +1122,7 @@ msgstr "Versión de la biblioteca del cliente"
 msgid "Client access"
 msgstr "Acceso de cliente"
 
-#: scorekeeper/addscoresheet.php:260
+#: scorekeeper/addscoresheet.php:297
 msgid "Clock not running"
 msgstr "El reloj no está corriendo"
 
@@ -1382,7 +1382,7 @@ msgstr "Corrige los errores y vuelve a intentarlo"
 msgid "Correct the errors or save goal with errors"
 msgstr "Corregir los errores o guardar gol con errores"
 
-#: scorekeeper/addscoresheet.php:409
+#: scorekeeper/addscoresheet.php:446
 msgid "Correct the errors or save the goal with errors."
 msgstr "Corregir los errores o salvar el gol con errores."
 
@@ -1618,7 +1618,7 @@ msgstr ""
 msgid "Delete events"
 msgstr "Eliminar eventos"
 
-#: scorekeeper/addscoresheet.php:249 scorekeeper/deletescore.php:32
+#: scorekeeper/addscoresheet.php:286 scorekeeper/deletescore.php:32
 msgid "Delete goal"
 msgstr "Eliminar objetivo"
 
@@ -1956,7 +1956,7 @@ msgstr ""
 "Habilita ‘puntos de nivel de temporada’/'funciones de clasificación para "
 "este evento."
 
-#: scorekeeper/addscoresheet.php:305 scorekeeper/endgame.php:43
+#: scorekeeper/addscoresheet.php:342 scorekeeper/endgame.php:43
 msgid "End game"
 msgstr "Fin del juego"
 
@@ -2039,11 +2039,11 @@ msgstr "Ingrese su nueva contraseña a continuación."
 msgid "Equalization"
 msgstr "Igualdad"
 
-#: lib/game.functions.php:889
+#: lib/game.functions.php:890
 msgid "Erroneous scoresheet number:"
 msgstr "Número de hoja de puntuación erróneo:"
 
-#: scorekeeper/addresult.php:21 scorekeeper/result.php:27
+#: scorekeeper/addresult.php:23 scorekeeper/result.php:27
 msgid "Error: Could not save result."
 msgstr "Error: No se pudo guardar el resultado."
 
@@ -2051,7 +2051,7 @@ msgstr "Error: No se pudo guardar el resultado."
 msgid "Error: unknown event."
 msgstr "Error: evento desconocido."
 
-#: lib/game.functions.php:1758
+#: lib/game.functions.php:1768
 #, php-format
 msgid "Errors: %s."
 msgstr "Errores: %s."
@@ -2121,7 +2121,7 @@ msgstr "Evento obligatorio"
 msgid "Event not found"
 msgstr "Evento no encontrado"
 
-#: lib/game.functions.php:901
+#: lib/game.functions.php:902
 msgid "Event played."
 msgstr "Evento jugado."
 
@@ -2410,7 +2410,7 @@ msgid "First name"
 msgstr "Primer nombre"
 
 #: mobile/addscoresheet.php:215 scorekeeper/addfirstoffence.php:34
-#: scorekeeper/addscoresheet.php:424
+#: scorekeeper/addscoresheet.php:461
 msgid "First offence"
 msgstr "Primera la ofensiva"
 
@@ -2602,7 +2602,7 @@ msgstr "Reconocimiento del juego"
 msgid "Game card"
 msgstr "Ficha de juego"
 
-#: scorekeeper/addscoresheet.php:255 scorekeeper/addscoresheet.php:308
+#: scorekeeper/addscoresheet.php:292 scorekeeper/addscoresheet.php:345
 msgid "Game clock"
 msgstr "Reloj de juego"
 
@@ -2623,11 +2623,11 @@ msgstr "El juego tiene"
 msgid "Game has already been played. Current result:"
 msgstr "El juego ya se ha jugado. Resultado actual:"
 
-#: scorekeeper/addscoresheet.php:431
+#: scorekeeper/addscoresheet.php:468
 msgid "Game has ended"
 msgstr "El juego ha terminado"
 
-#: lib/game.functions.php:893
+#: lib/game.functions.php:894
 msgid "Game has no pool."
 msgstr "El juego no tiene grupo."
 
@@ -2665,7 +2665,7 @@ msgid "Game not started yet."
 msgstr "El juego aún no ha comenzado."
 
 #: gameplay.php:614 mobile/addcomment.php:10 mobile/addscoresheet.php:217
-#: scorekeeper/addcomment.php:28 scorekeeper/addscoresheet.php:426
+#: scorekeeper/addcomment.php:28 scorekeeper/addscoresheet.php:463
 #: user/addscoresheet.php:480
 msgid "Game note"
 msgstr "Nota del juego"
@@ -2679,7 +2679,7 @@ msgstr "Número de juego en la hoja de anotación"
 #: cust/slkl/pdfscoresheet.php:73 cust/windmill/pdfscoresheet.php:76
 #: mobile/addofficial.php:23 mobile/addscoresheet.php:216
 #: mobile/gameplay.php:98 scorekeeper/addofficial.php:17
-#: scorekeeper/addofficial.php:22 scorekeeper/addscoresheet.php:425
+#: scorekeeper/addofficial.php:22 scorekeeper/addscoresheet.php:462
 #: scorekeeper/gameplay.php:98
 msgid "Game official"
 msgstr "Oficial del juego"
@@ -2692,7 +2692,7 @@ msgstr "Oficial(es) del juego"
 msgid "Game ongoing"
 msgstr "Juego en curso"
 
-#: scorekeeper/addresult.php:74
+#: scorekeeper/addresult.php:80
 msgid "Game ongoing, update scores"
 msgstr "Juego en curso, actualizar puntuaciones"
 
@@ -2721,12 +2721,12 @@ msgstr "Responsabilidades del juego"
 msgid "Game result"
 msgstr "Resultado del juego"
 
-#: scorekeeper/addresult.php:19
+#: scorekeeper/addresult.php:21
 #, php-format
 msgid "Game result %s - %s saved!"
 msgstr "Resultado del juego %s - ¡%s guardado!"
 
-#: scorekeeper/addresult.php:27
+#: scorekeeper/addresult.php:32
 #, php-format
 msgid "Game result %s - %s updated!"
 msgstr "Resultado del juego %s - ¡%s actualizado!"
@@ -2902,7 +2902,7 @@ msgstr "Goal"
 msgid "Goal diff"
 msgstr "Gol diff"
 
-#: scorekeeper/addscoresheet.php:378
+#: scorekeeper/addscoresheet.php:415
 msgid "Goal time"
 msgstr "Tiempo de gol"
 
@@ -3012,7 +3012,7 @@ msgstr "Gomitas"
 
 #: gameplay.php:228 admin/addseasonpools.php:435 admin/addserieformats.php:125
 #: mobile/addhalftime.php:33 mobile/addscoresheet.php:212
-#: mobile/gameplay.php:39 scorekeeper/addscoresheet.php:422
+#: mobile/gameplay.php:39 scorekeeper/addscoresheet.php:459
 #: scorekeeper/endgame.php:66 scorekeeper/gameplay.php:38
 msgid "Halftime"
 msgstr "Medio tiempo"
@@ -3347,7 +3347,7 @@ msgstr "Juego no válido."
 msgid "Invalid link target."
 msgstr "Destino de enlace no válido."
 
-#: install.php:704
+#: install.php:708
 msgid "Invalid password (min. 5, max. 20 characters)."
 msgstr "Contraseña no válida (mínimo 5, máximo 20 caracteres)."
 
@@ -3684,7 +3684,7 @@ msgstr ""
 msgid "Manage moves"
 msgstr "Gestionar movimientos"
 
-#: scorekeeper/addscoresheet.php:309
+#: scorekeeper/addscoresheet.php:346
 msgid "Manual time entry"
 msgstr "Entrada manual de tiempo"
 
@@ -3935,7 +3935,7 @@ msgstr "Nunca"
 msgid "New  password"
 msgstr "Nueva contraseña"
 
-#: scorekeeper/addscoresheet.php:331
+#: scorekeeper/addscoresheet.php:368
 msgid "New goal"
 msgstr "Nuevo gol"
 
@@ -4034,7 +4034,7 @@ msgstr "No se encontraron derechos de acceso del evento."
 msgid "No forfeit games found."
 msgstr "No se encontraron juegos forfait."
 
-#: scorekeeper/addscoresheet.php:298
+#: scorekeeper/addscoresheet.php:335
 msgid "No game clock"
 msgstr "Sin reloj de juego"
 
@@ -4051,7 +4051,7 @@ msgstr "Sin juegos"
 msgid "No games to move"
 msgstr "No hay juegos para mover"
 
-#: lib/game.functions.php:904
+#: lib/game.functions.php:905
 msgid "No goals."
 msgstr "Sin goles."
 
@@ -4399,7 +4399,7 @@ msgstr "Las contraseñas no coinciden"
 msgid "Passwords do not match."
 msgstr "Las contraseñas no coinciden."
 
-#: scorekeeper/addscoresheet.php:292 scorekeeper/addspirittimeouts.php:111
+#: scorekeeper/addscoresheet.php:329 scorekeeper/addspirittimeouts.php:111
 msgid "Pause game clock"
 msgstr "Pausar el reloj del juego"
 
@@ -4411,7 +4411,7 @@ msgstr "Pausa el reloj del juego durante una interrupción de espíritu."
 msgid "Pause the game clock for this spirit stoppage?"
 msgstr "¿Pausar el reloj del juego por esta interrupción de espíritu?"
 
-#: scorekeeper/addscoresheet.php:567
+#: scorekeeper/addscoresheet.php:604
 msgid "Pause the game clock? Use this only for exceptional stoppages."
 msgstr ""
 "¿Pausar el reloj del juego? Utilice esto sólo para interrupciones "
@@ -4422,8 +4422,8 @@ msgstr ""
 msgid "Pause: %s&thinsp;min."
 msgstr "Pausa: %s&thinsp;min."
 
-#: scorekeeper/addhalftime.php:96 scorekeeper/addscoresheet.php:257
-#: scorekeeper/addscoresheet.php:534 scorekeeper/addspirittimeouts.php:199
+#: scorekeeper/addhalftime.php:96 scorekeeper/addscoresheet.php:294
+#: scorekeeper/addscoresheet.php:571 scorekeeper/addspirittimeouts.php:199
 #: scorekeeper/addtimeouts.php:176 scorekeeper/endgame.php:132
 msgid "Paused"
 msgstr "En pausa"
@@ -4689,7 +4689,7 @@ msgstr "Juegos de grupo no completados:"
 msgid "Pool is completed:"
 msgstr "El Grupo está completo:"
 
-#: lib/game.functions.php:896
+#: lib/game.functions.php:897
 msgid "Pool is locked."
 msgstr "El Grupo está cerrada."
 
@@ -4995,7 +4995,7 @@ msgstr "Reservas agregadas"
 msgid "Reset"
 msgstr "Reiniciar"
 
-#: scorekeeper/addscoresheet.php:302
+#: scorekeeper/addscoresheet.php:339
 msgid "Reset game clock"
 msgstr "Reiniciar el reloj del juego"
 
@@ -5028,15 +5028,15 @@ msgstr "Persona responsable"
 msgid "Responsible team"
 msgstr "Equipo responsable"
 
-#: scorekeeper/addscoresheet.php:295
+#: scorekeeper/addscoresheet.php:332
 msgid "Restart game clock"
 msgstr "Reiniciar el reloj del juego"
 
-#: scorekeeper/addscoresheet.php:576
+#: scorekeeper/addscoresheet.php:613
 msgid "Restart the game clock from 00:00?"
 msgstr "¿Reiniciar el reloj del juego desde las 00:00?"
 
-#: scorekeeper/addscoresheet.php:314
+#: scorekeeper/addscoresheet.php:351
 msgid "Restart the game clock to continue timed scoring."
 msgstr ""
 "Reinicie el reloj del juego para continuar con la puntuación cronometrada."
@@ -5048,7 +5048,7 @@ msgstr "Restaurar"
 
 #: gamecard.php:137 teamcard.php:795 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183 mobile/respgames.php:177
-#: scorekeeper/addresult.php:31 scorekeeper/respgames.php:194
+#: scorekeeper/addresult.php:37 scorekeeper/respgames.php:194
 #: user/adddefensesheet.php:63 user/addplayerlists.php:237
 #: user/addresult.php:13 user/addresult.php:27 user/addresult.php:65
 #: user/addscoresheet.php:214 user/addspirit.php:223 user/respgames.php:24
@@ -5068,17 +5068,17 @@ msgstr "¡Resultado no guardado!"
 msgid "Result saved!"
 msgstr "¡Resultado guardado!"
 
-#: lib/game.functions.php:1755
+#: lib/game.functions.php:1765
 #, php-format
 msgid "Results changed: %s."
 msgstr "Resultados cambiados: %s."
 
-#: lib/game.functions.php:1752
+#: lib/game.functions.php:1762
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Resultados borrados: %s."
 
-#: scorekeeper/addscoresheet.php:264 scorekeeper/addspirittimeouts.php:109
+#: scorekeeper/addscoresheet.php:301 scorekeeper/addspirittimeouts.php:109
 msgid "Resume game clock"
 msgstr "Reanudar el reloj del juego"
 
@@ -5134,8 +5134,8 @@ msgstr "Derechos"
 #: cust/slkl/pdfscoresheet.php:227 cust/wfdf/pdfscoresheet.php:648
 #: cust/windmill/pdfscoresheet.php:117 cust/windmill/pdfscoresheet.php:238
 #: scorekeeper/addplayerlists.php:119 scorekeeper/addplayerlists.php:221
-#: scorekeeper/addplayerlists.php:223 scorekeeper/addscoresheet.php:427
-#: scorekeeper/addscoresheet.php:436 scorekeeper/respgames.php:195
+#: scorekeeper/addplayerlists.php:223 scorekeeper/addscoresheet.php:464
+#: scorekeeper/addscoresheet.php:473 scorekeeper/respgames.php:195
 #: user/clubprofile.php:139 user/respteams.php:24 user/teamplayers.php:11
 #: user/teamplayers.php:136 user/teamprofile.php:98
 msgid "Roster"
@@ -5231,7 +5231,7 @@ msgstr "Ejecutar"
 msgid "Run SQL"
 msgstr "Ejecutar SQL"
 
-#: scorekeeper/addscoresheet.php:257
+#: scorekeeper/addscoresheet.php:294
 msgid "Running"
 msgstr "Ejecutando"
 
@@ -5279,11 +5279,11 @@ msgstr "Guardar"
 msgid "Save Spirit Settings"
 msgstr "Guardar Configuración de Espíritu"
 
-#: scorekeeper/addresult.php:70
+#: scorekeeper/addresult.php:76
 msgid "Save again"
 msgstr "Guardar de nuevo"
 
-#: mobile/addresult.php:52 scorekeeper/addresult.php:75 user/addresult.php:124
+#: mobile/addresult.php:52 scorekeeper/addresult.php:81 user/addresult.php:124
 msgid "Save as final result"
 msgstr "Guardar como resultado final"
 
@@ -5299,7 +5299,7 @@ msgstr "¿Guardar cambios?"
 msgid "Save defenses"
 msgstr "Salvar defensas"
 
-#: scorekeeper/addscoresheet.php:435
+#: scorekeeper/addscoresheet.php:472
 msgid "Save final result"
 msgstr "Guardar resultado final"
 
@@ -5308,11 +5308,11 @@ msgid "Save final standings"
 msgstr "Guardar clasificación final"
 
 #: mobile/addscoresheet.php:205 mobile/addscoresheet.php:225
-#: scorekeeper/addscoresheet.php:406
+#: scorekeeper/addscoresheet.php:443
 msgid "Save goal"
 msgstr "Guardar gol"
 
-#: scorekeeper/addscoresheet.php:410
+#: scorekeeper/addscoresheet.php:447
 msgid "Save goal with errors"
 msgstr "Guardar gol con errores"
 
@@ -5392,7 +5392,7 @@ msgstr "Tipo de alcance"
 #: admin/spirit.php:337 cust/wfdf/pdfscoresheet.php:1228
 #: mobile/addscoresheet.php:160 mobile/addscoresheet.php:180
 #: mobile/deletescore.php:27 mobile/deletescore.php:43
-#: scorekeeper/addscoresheet.php:241 scorekeeper/addscoresheet.php:251
+#: scorekeeper/addscoresheet.php:278 scorekeeper/addscoresheet.php:288
 #: scorekeeper/deletescore.php:40 spiritkeeper/editgame.php:102
 #: spiritkeeper/teamgames.php:36 user/addscoresheet.php:658
 msgid "Score"
@@ -5446,11 +5446,11 @@ msgstr "Anotadores"
 msgid "Scorekeepers fill in their names."
 msgstr "Los anotadores escriben sus nombres."
 
-#: scorekeeper/addscoresheet.php:365
+#: scorekeeper/addscoresheet.php:402
 msgid "Scorer"
 msgstr "Goleador"
 
-#: mobile/addscoresheet.php:117 scorekeeper/addscoresheet.php:175
+#: mobile/addscoresheet.php:117 scorekeeper/addscoresheet.php:212
 msgid "Scorer and assist are the same player!"
 msgstr "¡El goleador y la asistencia son el mismo jugador!"
 
@@ -5465,10 +5465,14 @@ msgstr "Goleador y asistencia tienen el mismo número"
 msgid "Scores"
 msgstr "Puntajes"
 
+#: lib/game.functions.php:913
+msgid "Scores cannot be negative."
+msgstr "Los puntajes no pueden ser negativos."
+
 #: admin/seasongames.php:246 admin/tdtools.php:185
 #: cust/default/pdfscoresheet.php:56 cust/slkl/pdfscoresheet.php:56
 #: cust/wfdf/pdfscoresheet.php:287 mobile/respgames.php:179
-#: scorekeeper/addscoresheet.php:234 scorekeeper/respgames.php:196
+#: scorekeeper/addscoresheet.php:271 scorekeeper/respgames.php:196
 #: user/adddefensesheet.php:65 user/addplayerlists.php:239
 #: user/addresult.php:67 user/addscoresheet.php:216 user/addspirit.php:225
 #: user/respgames.php:207
@@ -5492,7 +5496,7 @@ msgstr "Hoja de anotación guardada"
 msgid "Scoresheets"
 msgstr "Hojas de anotación"
 
-#: scorekeeper/addscoresheet.php:159 scorekeeper/addscoresheet.php:170
+#: scorekeeper/addscoresheet.php:196 scorekeeper/addscoresheet.php:207
 msgid "Scoring player not on the roster."
 msgstr "Jugador goleador no incluido en la plantilla."
 
@@ -5687,7 +5691,7 @@ msgstr "Seleccionar equipo"
 msgid "Select teams"
 msgstr "Seleccionar equipos"
 
-#: scorekeeper/addscoresheet.php:178
+#: scorekeeper/addscoresheet.php:215
 msgid "Select the team that scored."
 msgstr "Seleccione el equipo que marcó."
 
@@ -5748,15 +5752,15 @@ msgstr "Colocar"
 msgid "Set as primary"
 msgstr "Establecer como principal"
 
-#: scorekeeper/addscoresheet.php:290
+#: scorekeeper/addscoresheet.php:327
 msgid "Set game clock"
 msgstr "Estableces el reloj del juego"
 
-#: scorekeeper/addscoresheet.php:265
+#: scorekeeper/addscoresheet.php:302
 msgid "Set game clock to"
 msgstr "Establecer el reloj del juego en"
 
-#: scorekeeper/addresult.php:71
+#: scorekeeper/addresult.php:77
 msgid "Set rosters"
 msgstr "Establecer listas de jugadores"
 
@@ -6068,7 +6072,7 @@ msgstr "Interrupción de Espíritu"
 #: cust/fpudd/pdfscoresheet.php:485 cust/gummis/pdfscoresheet.php:562
 #: cust/wfdf/pdfscoresheet.php:1006 cust/windmill/pdfscoresheet.php:477
 #: mobile/addscoresheet.php:210 mobile/addspirittimeouts.php:64
-#: mobile/addtimeouts.php:102 scorekeeper/addscoresheet.php:420
+#: mobile/addtimeouts.php:102 scorekeeper/addscoresheet.php:457
 #: scorekeeper/addspirittimeouts.php:100 user/addscoresheet.php:586
 msgid "Spirit stoppages"
 msgstr "Interrupciones de espíritu"
@@ -6121,11 +6125,11 @@ msgstr "Tabla de Posiciones"
 msgid "Standings"
 msgstr "Tabla de Posiciones"
 
-#: scorekeeper/addscoresheet.php:295 scorekeeper/addscoresheet.php:574
+#: scorekeeper/addscoresheet.php:332 scorekeeper/addscoresheet.php:611
 msgid "Start game clock"
 msgstr "Iniciar reloj de juego"
 
-#: scorekeeper/addscoresheet.php:98 scorekeeper/addscoresheet.php:314
+#: scorekeeper/addscoresheet.php:118 scorekeeper/addscoresheet.php:351
 msgid "Start the game clock before adding goals."
 msgstr "Inicia el cronómetro del partido antes de sumar goles."
 
@@ -6168,8 +6172,8 @@ msgid "Stats refs"
 msgstr "Stats refs"
 
 #: admin/apitokens.php:168 admin/finalstandings.php:130
-#: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:258
-#: scorekeeper/addscoresheet.php:309
+#: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:295
+#: scorekeeper/addscoresheet.php:346
 msgid "Status"
 msgstr "Estado"
 
@@ -6534,7 +6538,7 @@ msgstr "Hora por determinar"
 msgid "Time between points"
 msgstr "Tiempo entre puntos"
 
-#: scorekeeper/addscoresheet.php:136
+#: scorekeeper/addscoresheet.php:156
 msgid "Time cannot be the same as or earlier than the previous point."
 msgstr "El tiempo no puede ser igual ni anterior al punto anterior."
 
@@ -6577,7 +6581,7 @@ msgstr "Duración del tiempo fuera"
 #: cust/gummis/pdfscoresheet.php:533 cust/wfdf/pdfscoresheet.php:932
 #: cust/wfdf/pdfscoresheet.php:952 cust/wfdf/pdfscoresheet.php:1002
 #: cust/windmill/pdfscoresheet.php:446 mobile/addscoresheet.php:208
-#: scorekeeper/addscoresheet.php:418 scorekeeper/addtimeouts.php:86
+#: scorekeeper/addscoresheet.php:455 scorekeeper/addtimeouts.php:86
 #: user/adddefensesheet.php:241 user/addscoresheet.php:514
 msgid "Timeouts"
 msgstr "Tiempos fuera"
@@ -6724,7 +6728,7 @@ msgstr "Defensas totales"
 msgid "Total number of players:"
 msgstr "Número total de jugadores:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2121
+#: admin/seasonpoints.php:258 lib/game.functions.php:2131
 msgid "Total points"
 msgstr "Puntos totales"
 
@@ -6965,7 +6969,7 @@ msgstr "Subir"
 msgid "Use"
 msgstr "Usar"
 
-#: scorekeeper/addscoresheet.php:310
+#: scorekeeper/addscoresheet.php:347
 msgid "Use game clock"
 msgstr "Usar el reloj del juego"
 
@@ -7536,7 +7540,7 @@ msgid "matches"
 msgstr "partidos"
 
 #: mobile/addscoresheet.php:201 scorekeeper/addhalftime.php:59
-#: scorekeeper/addscoresheet.php:265 scorekeeper/addscoresheet.php:378
+#: scorekeeper/addscoresheet.php:302 scorekeeper/addscoresheet.php:415
 #: scorekeeper/addspirittimeouts.php:123 scorekeeper/addspirittimeouts.php:154
 #: scorekeeper/addtimeouts.php:100 scorekeeper/addtimeouts.php:131
 msgid "min"
@@ -7704,7 +7708,7 @@ msgid "scores visible"
 msgstr "puntuaciones visibles"
 
 #: mobile/addscoresheet.php:201 scorekeeper/addhalftime.php:59
-#: scorekeeper/addscoresheet.php:265 scorekeeper/addscoresheet.php:378
+#: scorekeeper/addscoresheet.php:302 scorekeeper/addscoresheet.php:415
 #: scorekeeper/addspirittimeouts.php:123 scorekeeper/addspirittimeouts.php:154
 #: scorekeeper/addtimeouts.php:100 scorekeeper/addtimeouts.php:131
 msgid "sec"
