@@ -2,7 +2,7 @@
 include_once __DIR__ . '/auth.php';
 $html = "";
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $game_result = GameResult($gameId);
@@ -55,7 +55,7 @@ $html .= "<h1>" . _("Halftime ends") . ": " . utf8entities($game_result['hometea
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
-$html .= "<form action='?view=addhalftime' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addhalftime&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 $html .= "<label for='timemm' class='select'>" . _("Halftime ends at") . " " . _("min") . ":" . _("sec") . "</label>";
 $html .= "<div class='ui-grid-b'>";
 $html .= "<div class='ui-block-a'>\n";

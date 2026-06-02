@@ -68,10 +68,10 @@ $saveSuccess = false;
 if (!empty($_POST['save'])) {
     $points = [];
     $fieldPrefix = $ratesHomeTeam ? 'homecat' : 'viscat';
-    $valueField = $ratesHomeTeam ? 'homevalueId' : 'visvalueId';
-    foreach ((array) ($_POST[$valueField] ?? []) as $cat) {
-        if (isset($_POST[$fieldPrefix . $cat])) {
-            $points[$cat] = $_POST[$fieldPrefix . $cat];
+    foreach (SpiritOrderedCategories($categories) as $category) {
+        $categoryId = (int) $category['category_id'];
+        if (isset($_POST[$fieldPrefix . $categoryId])) {
+            $points[$categoryId] = $_POST[$fieldPrefix . $categoryId];
         } else {
             $saveFeedback = sprintf(_("Missing spirit score for %s. "), $ratedTeamName);
         }
@@ -82,7 +82,7 @@ if (!empty($_POST['save'])) {
 
     $deleteComment = !empty($_POST['delete_spirit_comment']);
     if (isset($_POST['spiritcomment']) || $deleteComment) {
-        $saved = SetSpiritComment($game_result, $ratedTeamId, $_POST['spiritcomment'], $deleteComment);
+        $saved = SetSpiritComment($game_result, $ratedTeamId, $_POST['spiritcomment'] ?? '', $deleteComment);
         if (!$saved) {
             $commentFeedback = "<p class='warning'>" . _("Comment not saved.") . "</p>\n";
         }
@@ -124,7 +124,7 @@ $pageHtml .= "<div class='mobile-actions'>";
 if ($canSaveSpirit) {
     $pageHtml .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";
     if (!empty($saveFeedback)) {
-        $pageHtml .= "<p class='mobile-status'>" . $saveFeedback . "</p>";
+        $pageHtml .= "<p class='mobile-status'>" . utf8entities($saveFeedback) . "</p>";
     }
 } else {
     $pageHtml .= "<span class='warning'>" . _("Read-only spirit review") . "</span>";

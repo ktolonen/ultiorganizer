@@ -29,7 +29,7 @@ function ScorekeeperTimeoutData($gameId, $home, $maxslots)
 $html = "";
 $maxtimeouts = 4;
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $game_result = GameResult($gameId);
@@ -87,7 +87,7 @@ $html .= "<h1>" . _("Timeouts") . ": " . utf8entities($game_result['hometeamname
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
-$html .= "<form action='?view=addtimeouts' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addtimeouts&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 $html .= "<fieldset data-role='controlgroup' id='timeout-team-selection'>";
 $html .= "<legend>" . _("Team taking timeout") . "</legend>";

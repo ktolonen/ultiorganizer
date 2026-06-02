@@ -885,6 +885,9 @@ function CheckGameResult($game, $home, $away)
 {
     $gameId = (int) substr($game, 0, -1);
     $errors = "";
+    if ($home < 0 || $away < 0) {
+        $errors .= "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
+    }
     if ($gameId == 0 || !checkChkNum($game)) {
         $errors .= "<p class='warning'>" . _("Erroneous scoresheet number:") . " " . $game . "</p>";
     } else {

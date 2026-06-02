@@ -28,7 +28,7 @@ function ScorekeeperSpiritTimeoutData($gameId, $home, $maxslots)
 $html = "";
 $maxSpiritTimeouts = 4;
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $seasoninfo = SeasonInfo(GameSeason($gameId));
@@ -102,7 +102,7 @@ $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
 $html .= "<p class='warning'><strong>" . _("Pause the game clock during a spirit stoppage.") . "</strong> " . _("Resume it when play continues.") . "</p>";
-$html .= "<form action='?view=addspirittimeouts' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addspirittimeouts&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 if ($useGameClock && $timerState['ongoing']) {
     if ($timerState['paused']) {

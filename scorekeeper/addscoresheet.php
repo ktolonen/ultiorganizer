@@ -1,9 +1,29 @@
 <?php
 include_once __DIR__ . '/auth.php';
 
+function ScorekeeperPlayedPlayerIdMap($gameId, $teamId)
+{
+    $playerIds = [];
+    foreach (GamePlayers($gameId, $teamId) as $player) {
+        $playerIds[(int) $player['player_id']] = true;
+    }
+
+    return $playerIds;
+}
+
+function ScorekeeperRosterPlayerId($playerId, $playedPlayerIds)
+{
+    $playerId = (int) $playerId;
+    if ($playerId > 0 && !empty($playedPlayerIds[$playerId])) {
+        return $playerId;
+    }
+
+    return 0;
+}
+
 $html = "";
 $errors = "";
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 $seasoninfo = SeasonInfo(GameSeason($gameId));
@@ -147,6 +167,23 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
             $uo_goal['scorer'] = -1;
         }
 
+        $scoringTeamId = 0;
+        if ($team == 'H') {
+            $scoringTeamId = (int) $game_result['hometeam'];
+        } elseif ($team == 'A') {
+            $scoringTeamId = (int) $game_result['visitorteam'];
+        }
+
+        if ($scoringTeamId > 0) {
+            $playedPlayerIds = ScorekeeperPlayedPlayerIdMap($gameId, $scoringTeamId);
+            if ($uo_goal['assist'] !== -1) {
+                $uo_goal['assist'] = ScorekeeperRosterPlayerId($uo_goal['assist'], $playedPlayerIds);
+            }
+            if ($uo_goal['scorer'] !== -1) {
+                $uo_goal['scorer'] = ScorekeeperRosterPlayerId($uo_goal['scorer'], $playedPlayerIds);
+            }
+        }
+
         if (!empty($team) && $team == 'H') {
             $uo_goal['homescore']++;
             $uo_goal['ishomegoal'] = 1;
@@ -235,7 +272,7 @@ $html .= "<h1>" . _("Scoresheet") . ": " . utf8entities($game_result['hometeamna
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
-$html .= "<form action='?view=addscoresheet' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addscoresheet&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 if ($lastscore) {
     $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";

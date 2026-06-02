@@ -6,25 +6,38 @@ $info = "";
 $game_result = [];
 $saveSucceeded = false;
 
-$gameId = isset($_GET['game']) ? $_GET['game'] : $_SESSION['game'];
+$gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
 if (isset($_POST['save'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
-    $ok = GameSetResult($gameId, $home, $away);
-    if ($ok) {
-        $game_result = GameResult($gameId);
-        $saveSucceeded = true;
-        $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
-    } else {
-        $info = "<p class='warning'>" . _("Error: Could not save result.") . "</p>";
+    if ($home < 0 || $away < 0) {
+        $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
+    }
+    if (empty($info)) {
+        $ok = GameSetResult($gameId, $home, $away);
+        if ($ok) {
+            $game_result = GameResult($gameId);
+            $saveSucceeded = true;
+            $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
+        } else {
+            $info = "<p class='warning'>" . _("Error: Could not save result.") . "</p>";
+        }
     }
 } elseif (isset($_POST['update'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
-    $ok = GameUpdateResult($gameId, $home, $away);
-    $info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";
+    if ($home < 0 || $away < 0) {
+        $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
+    }
+    if (empty($info)) {
+        if (GameUpdateResult($gameId, $home, $away)) {
+            $info = "<p>" . sprintf(_("Game result %s - %s updated!"), $home, $away) . "</p>";
+        } else {
+            $info = "<p class='warning'>" . _("Error: Could not save result.") . "</p>";
+        }
+    }
 }
 
 $html .= "<div data-role='header'>\n";
@@ -35,13 +48,13 @@ $html .= "<div data-role='content'>\n";
 
 $result = GameResult($gameId);
 
-$html .= "<form action='?view=addresult' method='post' data-ajax='false'>\n";
+$html .= "<form action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 $html .= "<label for='home'>" . utf8entities($result['hometeamname']) . ":</label>";
 
 $html .= "<div class='ui-grid-b'>";
 $html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' inputmode='numeric' id='home' name='home' value='" . intval($result['homescore']) . "' maxlength='4' size='5'/>";
+$html .= "<input type='number' inputmode='numeric' id='home' name='home' value='" . intval($result['homescore']) . "' min='0' maxlength='4' size='5'/>";
 $html .= "</div>";
 $html .= "<div class='ui-block-b'>\n";
 $html .= "<a href='#' data-role='button' id='homeplus' data-icon='plus'>+1</a>";
@@ -54,7 +67,7 @@ $html .= "</div>";
 $html .= "<label for='away'>" . utf8entities($result['visitorteamname']) . ":</label>";
 $html .= "<div class='ui-grid-b'>";
 $html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' inputmode='numeric' id='away' name='away' value='" . intval($result['visitorscore']) . "' maxlength='4' size='5'/>";
+$html .= "<input type='number' inputmode='numeric' id='away' name='away' value='" . intval($result['visitorscore']) . "' min='0' maxlength='4' size='5'/>";
 $html .= "</div>";
 $html .= "<div class='ui-block-b'>\n";
 $html .= "<a href='#' data-role='button' id='awayplus' data-icon='plus'>+1</a>";
