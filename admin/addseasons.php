@@ -31,6 +31,7 @@ $sp = [
     "hometeammode" => 0,
     "event_readonly" => 0,
     "maintenance_mode" => 0,
+    "public_event" => 0,
     "api_public" => 0,
     "iscurrent" => 0,
     "enrollopen" => 0,
@@ -66,6 +67,7 @@ if (!empty($_POST['add'])) {
     $sp['hometeammode'] = isset($_POST['hometeammode']) ? (int) $_POST['hometeammode'] : 0;
     $sp['event_readonly'] = !empty($_POST['event_readonly']);
     $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
+    $sp['public_event'] = !empty($_POST['public_event']);
     $comment = $_POST['comment'];
 
     if (empty($_POST['season_id'])) {
@@ -128,6 +130,7 @@ if (!empty($_POST['add'])) {
         $sp['hometeammode'] = isset($_POST['hometeammode']) ? (int) $_POST['hometeammode'] : 0;
         $sp['event_readonly'] = !empty($_POST['event_readonly']);
         $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
+        $sp['public_event'] = !empty($_POST['public_event']);
         $sp['timezone'] = $_POST['timezone'];
         $comment = $_POST['comment'];
         SetSeason($sp['season_id'], $sp, $comment);
@@ -165,6 +168,7 @@ if ($seasonId) {
     $sp['hometeammode'] = isset($info['hometeammode']) ? $info['hometeammode'] : 0;
     $sp['event_readonly'] = isset($info['event_readonly']) ? $info['event_readonly'] : 0;
     $sp['maintenance_mode'] = isset($info['maintenance_mode']) ? $info['maintenance_mode'] : 0;
+    $sp['public_event'] = isset($info['public_event']) ? $info['public_event'] : 0;
     $sp['timezone'] = $info['timezone'];
     $comment = CommentRaw(1, $info['season_id']);
 } else {
@@ -429,13 +433,6 @@ $html .= "<td><input class='input' size='12' maxlength='10' id='enrollendtime' n
 $html .= "<button type='button' class='button' id='showcal3'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
 $html .= "<tr><td></td><td><div id='calContainer3'></div></td></tr>";
 
-$html .= "<tr><td class='infocell'>" . _("Shown in main menu") . ": </td><td><input class='input' type='checkbox' name='iscurrent' ";
-if ($sp['iscurrent']) {
-    $html .= "checked='checked'";
-}
-$html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls visibility in navigation; does not change edit rights or API visibility.") . "</span></td></tr>";
-
 $html .= "<tr><td class='infocell'>" . _("Soft maintenance mode") . ": </td><td><input class='input' type='checkbox' name='maintenance_mode' ";
 if ($sp['maintenance_mode']) {
     $html .= "checked='checked'";
@@ -449,6 +446,20 @@ if ($sp['event_readonly']) {
 }
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, only superadmin can edit this event.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Public event") . ": </td><td><input class='input' type='checkbox' name='public_event' ";
+if ($sp['public_event']) {
+    $html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows users without event responsibilities to open this event's public pages.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Shown in main menu") . ": </td><td><input class='input' type='checkbox' name='iscurrent' ";
+if ($sp['iscurrent']) {
+    $html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls visibility in navigation; does not change edit rights or API visibility.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Visible in public API and external links") . ": </td><td><input class='input' type='checkbox' name='api_public' ";
 if ($sp['api_public']) {

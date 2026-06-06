@@ -315,7 +315,7 @@ if ($_SESSION['uid'] != "anonymous") {
 	      <input class='button' type='submit' name='addeditseasons' value='&laquo; " . _("Show") . "' /></td><td>\n";
 
     $html .= "<select multiple='multiple' name='addeditseasonslist[]' id='addeditseasonslist' style='height:200px;width:250px'>\n";
-    $seasons = Seasons();
+    $seasons = hasEditUsersRight() ? Seasons() : FilterAccessibleSeasons(Seasons());
     foreach ($seasons as $season) {
         if (empty($editseasons[$season['season_id']])) {
             $html .= "<option value='" . urlencode($season['season_id']) . "'>" . utf8entities($season['name']) . "</option>";

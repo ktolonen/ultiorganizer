@@ -919,6 +919,7 @@ function upgrade81()
 
     if (!hasColumn('uo_season', 'api_public')) {
         addColumn('uo_season', 'api_public', "tinyint(1) DEFAULT 0");
+        runQuery("UPDATE uo_season SET api_public=1");
     }
 }
 
@@ -1364,6 +1365,17 @@ function upgrade93()
             AND t.series=ts.series
             AND ser.season=ts.season
             AND ss.season IS NOT NULL");
+}
+
+function upgrade94()
+{
+    if (!hasColumn("uo_season", "public_event")) {
+        addColumn("uo_season", "public_event", "tinyint(1) NOT NULL DEFAULT 0");
+        // Existing events stay visible on public pages; their existing
+        // api_public setting is preserved, so external visibility is
+        // unchanged. New events default to private (public_event=0).
+        runQuery("UPDATE uo_season SET public_event=1");
+    }
 }
 
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)

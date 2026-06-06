@@ -13,7 +13,7 @@ $maxcols = 3;
 
 $html .= "\n<h1>" . $title . "</h1>\n";
 
-$seasons = Seasons();
+$seasons = FilterAccessibleSeasons(Seasons());
 
 $html .= "<table width='100%' border='0' cellspacing='0' cellpadding='2'>\n";
 foreach ($seasons as $season) {

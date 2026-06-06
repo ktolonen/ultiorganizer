@@ -336,7 +336,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(90, '2026-05-22 00:00:00'),
 	(91, '2026-05-22 00:00:00'),
 	(92, '2026-05-22 00:00:00'),
-	(93, '2026-05-24 00:00:00');
+	(93, '2026-05-24 00:00:00'),
+	(94, '2026-06-06 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -827,6 +828,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `hometeammode` tinyint(1) DEFAULT 0,
   `event_readonly` tinyint(1) DEFAULT 0,
   `maintenance_mode` tinyint(1) DEFAULT 0,
+  `public_event` tinyint(1) NOT NULL DEFAULT 0,
   `api_public` tinyint(1) DEFAULT 0,
   `reg_id` int(10) unsigned DEFAULT NULL,
   `timezone` varchar(50) DEFAULT NULL,

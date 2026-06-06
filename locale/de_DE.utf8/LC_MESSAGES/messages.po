@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-02 16:27+0300\n"
+"POT-Creation-Date: 2026-06-06 14:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -178,10 +178,6 @@ msgstr ""
 msgid "ALL"
 msgstr "ALLES"
 
-#: admin/seasons.php:97
-msgid "API"
-msgstr "API"
-
 #: menufunctions.php:492 admin/apitokens.php:8
 msgid "API Tokens"
 msgstr "API-Tokens"
@@ -280,7 +276,7 @@ msgstr "Aktiv"
 #: admin/addseasonseries.php:137 admin/addseasonteams.php:218
 #: admin/addserieformats.php:194 admin/adduser.php:153 admin/clubs.php:55
 #: admin/clubs.php:90 admin/locations.php:73 admin/poolmoves.php:398
-#: admin/seasonpools.php:303 admin/seasons.php:156 admin/seasonseries.php:173
+#: admin/seasonpools.php:303 admin/seasons.php:153 admin/seasonseries.php:173
 #: admin/seasonteams.php:263 admin/serieformats.php:52
 #: admin/translations.php:522 user/addextraemail.php:95 user/enrollteam.php:140
 #: user/teamplayers.php:269 user/userinfo.php:378 user/userinfo.php:514
@@ -477,7 +473,7 @@ msgstr "Alle Vereine"
 msgid "All divisions"
 msgstr "Alle Klassen"
 
-#: admin/seasons.php:155
+#: admin/seasons.php:152
 msgid "All event statistics"
 msgstr "Alle Turnierstatistiken"
 
@@ -870,7 +866,7 @@ msgstr "Cache-Einstellungen"
 msgid "Cache size"
 msgstr "Cache-Größe"
 
-#: admin/seasons.php:139
+#: admin/seasons.php:136
 msgid "Calc. stats"
 msgstr "Statistik berechnen"
 
@@ -2150,7 +2146,7 @@ msgstr "Ausführen"
 msgid "Existing tokens"
 msgstr "Vorhandene Tokens"
 
-#: admin/seasons.php:143
+#: admin/seasons.php:140
 msgid "Export"
 msgstr "Export"
 
@@ -2165,6 +2161,10 @@ msgid ""
 msgstr ""
 "Zeigt dieses Ereignis in API-Antworten, externen Links, Widgets, Feeds und "
 "CSV-Exporten an; gewährt keinen Schreibzugriff."
+
+#: admin/seasons.php:126
+msgid "External"
+msgstr "Extern"
 
 #: admin/accreditation.php:259 admin/accreditation.php:261
 msgid "External accreditation"
@@ -3219,7 +3219,7 @@ msgstr ""
 msgid "Import"
 msgstr "Import"
 
-#: admin/seasons.php:154
+#: admin/seasons.php:151
 msgid "Import event"
 msgstr "Turnier importieren"
 
@@ -3709,6 +3709,10 @@ msgstr "Mitgliedschaft"
 #: cust/slkl/mass-accreditation.php:94
 msgid "Membership database (a file with .csv suffix)"
 msgstr "Mitgliederdatenbank (eine Datei mit der Endung .csv)"
+
+#: admin/seasons.php:126
+msgid "Menu"
+msgstr "Menü"
 
 #: admin/addseasonlinks.php:79 admin/serverconf.php:399
 msgid "Menu link"
@@ -4248,7 +4252,7 @@ msgid "Open for enrollment"
 msgstr "Anmeldung offen"
 
 #: admin/apitokens.php:169 admin/locations.php:55 admin/seasonpools.php:119
-#: admin/seasons.php:98 admin/seasonseries.php:77 admin/spirit.php:386
+#: admin/seasons.php:97 admin/seasonseries.php:77 admin/spirit.php:386
 msgid "Operations"
 msgstr "Operationen"
 
@@ -4639,8 +4643,7 @@ msgstr "Punkte"
 msgid "Points for %s must be 0-1000."
 msgstr "Punkte fuer %s muessen zwischen 0 und 1000 liegen."
 
-#: admin/seasonpoints.php:231 lib/game.functions.php:889
-#: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
+#: admin/seasonpoints.php:231
 msgid "Points must be between 0 and 1000."
 msgstr "Punkte muessen zwischen 0 und 1000 liegen."
 
@@ -4851,7 +4854,7 @@ msgstr "Rang"
 msgid "Re-archive statistics"
 msgstr "Spielstatistik neu erzeugen"
 
-#: admin/seasons.php:137
+#: admin/seasons.php:134
 msgid "Re-calc. stats"
 msgstr "Statistik neu berechn."
 
@@ -7024,7 +7027,7 @@ msgstr "Benutzername"
 msgid "Username is too short (min. 3 letters)"
 msgstr "Benutzername ist zu kurz (min. 3 Buchstaben)"
 
-#: menufunctions.php:491 admin/seasons.php:142 admin/users.php:7
+#: menufunctions.php:491 admin/seasons.php:139 admin/users.php:7
 msgid "Users"
 msgstr "Benutzer"
 
@@ -7053,8 +7056,12 @@ msgstr "Siegpunkte"
 msgid "Video"
 msgstr "Video"
 
+#: admin/seasons.php:95
+msgid "Visibility"
+msgstr "Sichtbarkeit"
+
 #: admin/addseasonpools.php:343 admin/seasonadmin.php:62
-#: admin/seasonpools.php:115 admin/seasons.php:95 admin/seasonseries.php:76
+#: admin/seasonpools.php:115 admin/seasonseries.php:76
 msgid "Visible"
 msgstr "Sichtbar"
 
@@ -7247,7 +7254,7 @@ msgstr "World Flying Disc Federation"
 #: admin/poolgames.php:292 admin/poolgames.php:331 admin/poolgames.php:332
 #: admin/poolgames.php:355 admin/poolgames.php:356 admin/poolmoves.php:251
 #: admin/poolmoves.php:329 admin/reservations.php:133 admin/seasongames.php:262
-#: admin/seasonmoves.php:166 admin/seasonpools.php:264 admin/seasons.php:147
+#: admin/seasonmoves.php:166 admin/seasonpools.php:264 admin/seasons.php:144
 #: admin/seasonseries.php:130 admin/seasonstandings.php:396
 #: admin/seasonstandings.php:453 admin/seasonteams.php:240
 #: admin/serieformats.php:48 admin/serverconf.php:393
@@ -7374,7 +7381,7 @@ msgstr "Zeichen"
 msgid "clone"
 msgstr "klonen"
 
-#: admin/seasonadmin.php:51 admin/seasons.php:122
+#: admin/seasonadmin.php:51 admin/seasons.php:121
 msgid "closed"
 msgstr "geschlossen"
 
@@ -7543,8 +7550,8 @@ msgstr "gegenseitig"
 msgid "new accreditations."
 msgstr "neue Akkreditierungen."
 
-#: admin/addseasons.php:96 admin/seasonadmin.php:61 admin/seasons.php:125
-#: admin/seasons.php:128 admin/seasons.php:131
+#: admin/addseasons.php:96 admin/seasonadmin.php:61 admin/seasons.php:124
+#: admin/seasons.php:125 admin/seasons.php:128
 msgid "no"
 msgstr "nein"
 
@@ -7581,7 +7588,7 @@ msgstr "nur zur Information"
 msgid "only missing"
 msgstr "nur fehlende"
 
-#: admin/seasonadmin.php:51 admin/seasons.php:122
+#: admin/seasonadmin.php:51 admin/seasons.php:121
 msgid "open"
 msgstr "offen"
 
@@ -7749,10 +7756,13 @@ msgstr "gg."
 msgid "with"
 msgstr "mit"
 
-#: admin/addseasons.php:96 admin/seasonadmin.php:61 admin/seasons.php:125
-#: admin/seasons.php:128 admin/seasons.php:131
+#: admin/addseasons.php:96 admin/seasonadmin.php:61 admin/seasons.php:124
+#: admin/seasons.php:125 admin/seasons.php:128
 msgid "yes"
 msgstr "ja"
+
+#~ msgid "API"
+#~ msgstr "API"
 
 #~ msgid "Count"
 #~ msgstr "Land"
