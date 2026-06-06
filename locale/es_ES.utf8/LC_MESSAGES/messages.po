@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 23:54+0300\n"
+"POT-Creation-Date: 2026-06-07 00:07+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -181,10 +181,6 @@ msgstr ""
 #: allteams.php:32 allteams.php:34
 msgid "ALL"
 msgstr "TODO"
-
-#: admin/seasonadmin.php:66 admin/seasons.php:96
-msgid "API"
-msgstr "API"
 
 #: menufunctions.php:492 admin/apitokens.php:8
 msgid "API Tokens"
@@ -1339,8 +1335,9 @@ msgstr ""
 "modifican."
 
 #: admin/addseasons.php:467
+#, fuzzy
 msgid ""
-"Controls visibility in navigation; does not change edit rights or API "
+"Controls visibility in navigation; does not change edit rights or external "
 "visibility."
 msgstr ""
 "Controla la visibilidad en la navegación; no cambia los derechos de edición "
@@ -3732,10 +3729,6 @@ msgstr "Afiliación"
 #: cust/slkl/mass-accreditation.php:94
 msgid "Membership database (a file with .csv suffix)"
 msgstr "Base de datos de membresía (un archivo con sufijo .csv)"
-
-#: admin/seasonadmin.php:66 admin/seasons.php:96
-msgid "Menu"
-msgstr "Menú"
 
 #: admin/addseasonlinks.php:79 admin/serverconf.php:399
 msgid "Menu link"
@@ -7810,6 +7803,9 @@ msgstr "con"
 msgid "yes"
 msgstr "si"
 
+#~ msgid "API"
+#~ msgstr "API"
+
 #~ msgid "Count"
 #~ msgstr "País"
 
@@ -7824,6 +7820,9 @@ msgstr "si"
 
 #~ msgid "Final Standings"
 #~ msgstr "Clasificación Final"
+
+#~ msgid "Menu"
+#~ msgstr "Menú"
 
 #~ msgid "Placements"
 #~ msgstr "Clasificaciones"

@@ -93,7 +93,7 @@ $html .=  "<tr>
 	<th>" . _("Starts") . "</th>
 	<th>" . _("Enrollment") . "</th>
 	<th>" . _("Public") . "</th>
-	<th>" . _("Visibility") . " (" . _("Menu") . "/" . _("API") . ")</th>
+	<th>" . _("Visibility") . "</th>
 	<th>" . _("Maintenance") . "</th>
 	<th>" . _("Operations") . "</th>
 	<th></th>

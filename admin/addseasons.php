@@ -464,7 +464,7 @@ if ($sp['iscurrent']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls visibility in navigation; does not change edit rights or API visibility.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Controls visibility in navigation; does not change edit rights or external visibility.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Visible in public API and external links") . ": </td><td><input class='input' type='checkbox' name='api_public' ";
 if ($sp['api_public']) {

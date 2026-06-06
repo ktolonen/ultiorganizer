@@ -63,7 +63,7 @@ $html .=  "<tr><td><b>" . _("Public") . "</b></td><td>" . $public . "</td></tr>\
 
 $visible = intval($info['iscurrent']) ? _("yes") : "<span class='warning'>" . _("no") . "</span>";
 $apiVisible = !empty($info['api_public']) ? _("yes") : "<span class='warning'>" . _("no") . "</span>";
-$html .=  "<tr><td><b>" . _("Visibility") . "</b></td><td>" . _("Menu") . ": " . $visible . " / " . _("API") . ": " . $apiVisible . "</td></tr>\n";
+$html .=  "<tr><td><b>" . _("Visibility") . "</b></td><td>" . $visible . "/" . $apiVisible . "</td></tr>\n";
 $html .=  "</table>";
 
 $html .=  "</td><td style='width:300px; vertical-align:text-top;'>";
