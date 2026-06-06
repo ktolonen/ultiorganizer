@@ -661,11 +661,13 @@ function upgrade75()
 
         $lastSeason = null;
 
+        $poolJoin = upgradeGamePoolSeasonJoinSql('g', 'p');
+
         $query =
             "SELECT st.*, sn.season_id
        FROM uo_spirit st
        LEFT JOIN uo_game g on (g.game_id = st.game_id)
-       LEFT JOIN uo_pool p on (g.pool = p.pool_id)
+       " . $poolJoin . "
        LEFT JOIN uo_series ss on (p.series = ss.series_id)
        LEFT JOIN uo_season sn on (ss.season = sn.season_id)";
         $results = runQuery($query);
@@ -702,7 +704,7 @@ function upgrade75()
         $query =
             "SELECT g.game_id, g.hometeam, g.visitorteam, g.homesotg, g.visitorsotg
     FROM uo_game g
-    LEFT JOIN uo_pool p on (g.pool = p.pool_id)
+    " . $poolJoin . "
     LEFT JOIN uo_series ss on (p.series = ss.series_id)
     LEFT JOIN uo_season sn on (ss.season = sn.season_id)
     WHERE
@@ -1147,7 +1149,7 @@ function upgrade86()
 
     runQuery(
         "UPDATE uo_game g
-		LEFT JOIN uo_pool p ON (p.pool_id = g.pool)
+		" . upgradeGamePoolSeasonJoinSql('g', 'p') . "
 		LEFT JOIN uo_series s ON (s.series_id = p.series)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		SET g.show_spirit =
@@ -1362,6 +1364,21 @@ function upgrade93()
             AND t.series=ts.series
             AND ser.season=ts.season
             AND ss.season IS NOT NULL");
+}
+
+function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
+{
+    if (hasColumn('uo_game', 'pool')) {
+        return sprintf('LEFT JOIN uo_pool %s ON (%s.pool = %s.pool_id)', $poolAlias, $gameAlias, $poolAlias);
+    }
+
+    return sprintf(
+        'LEFT JOIN uo_game_pool gp_%1$s ON (gp_%1$s.game = %2$s.game_id AND gp_%1$s.timetable = 1)
+       LEFT JOIN uo_pool %3$s ON (gp_%1$s.pool = %3$s.pool_id)',
+        $poolAlias,
+        $gameAlias,
+        $poolAlias,
+    );
 }
 
 function upgradeEngineToInnoDb()
