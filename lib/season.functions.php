@@ -444,6 +444,22 @@ function EnforcePrivateEventAccessForView($rawView)
         return;
     }
 
+    // Two-team pages (e.g. gamecard) must be accessible for every team's
+    // event. MaintenanceSeasonFromView() returns only one representative
+    // season here (tuned for maintenance), so check each team directly.
+    if (iget("team1")) {
+        foreach ([iget("team1"), iget("team2")] as $teamId) {
+            if (empty($teamId)) {
+                continue;
+            }
+            $teamSeason = MaintenanceSeasonFromTeam($teamId);
+            if (!empty($teamSeason) && !CanAccessSeason($teamSeason)) {
+                header("location:?view=frontpage");
+                exit();
+            }
+        }
+    }
+
     $seasonId = MaintenanceSeasonFromView($rawView);
     if (empty($seasonId) || CanAccessSeason($seasonId)) {
         return;

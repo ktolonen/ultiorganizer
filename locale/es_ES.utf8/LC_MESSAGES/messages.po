@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-06 23:46+0300\n"
+"POT-Creation-Date: 2026-06-06 23:54+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -181,6 +181,10 @@ msgstr ""
 #: allteams.php:32 allteams.php:34
 msgid "ALL"
 msgstr "TODO"
+
+#: admin/seasonadmin.php:66 admin/seasons.php:96
+msgid "API"
+msgstr "API"
 
 #: menufunctions.php:492 admin/apitokens.php:8
 msgid "API Tokens"
@@ -3729,6 +3733,10 @@ msgstr "Afiliación"
 msgid "Membership database (a file with .csv suffix)"
 msgstr "Base de datos de membresía (un archivo con sufijo .csv)"
 
+#: admin/seasonadmin.php:66 admin/seasons.php:96
+msgid "Menu"
+msgstr "Menú"
+
 #: admin/addseasonlinks.php:79 admin/serverconf.php:399
 msgid "Menu link"
 msgstr "Enlace en el menú"
@@ -3942,6 +3950,11 @@ msgstr "Nunca"
 msgid "New  password"
 msgstr "Nueva contraseña"
 
+#: admin/addseasons.php:93
+#, fuzzy
+msgid "New event added"
+msgstr "Nueva temporada agregada"
+
 #: scorekeeper/addscoresheet.php:368
 msgid "New goal"
 msgstr "Nuevo gol"
@@ -3965,10 +3978,6 @@ msgid ""
 msgstr ""
 "Nuevos jugadores: ingrese el número de camiseta, nombre y apellido. Presione "
 "el botón Agregar."
-
-#: admin/addseasons.php:93
-msgid "New season added"
-msgstr "Nueva temporada agregada"
 
 #: admin/addseasons.php:91
 msgid "New tournament added"
@@ -7801,9 +7810,6 @@ msgstr "con"
 msgid "yes"
 msgstr "si"
 
-#~ msgid "API"
-#~ msgstr "API"
-
 #~ msgid "Count"
 #~ msgstr "País"
 
@@ -7818,9 +7824,6 @@ msgstr "si"
 
 #~ msgid "Final Standings"
 #~ msgstr "Clasificación Final"
-
-#~ msgid "Menu"
-#~ msgstr "Menú"
 
 #~ msgid "Placements"
 #~ msgstr "Clasificaciones"

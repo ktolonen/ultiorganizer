@@ -90,7 +90,7 @@ if (!empty($_POST['add'])) {
             if ($sp['istournament']) {
                 $_SESSION['title'] = _("New tournament added") . ":";
             } else {
-                $_SESSION['title'] = _("New season added") . ":";
+                $_SESSION['title'] = _("New event added") . ":";
             }
             /* FIXME Does anybody need this? I don't get it ... */
             $_SESSION["var0"] = _("Name") . ": " . utf8entities($sp['name']);
