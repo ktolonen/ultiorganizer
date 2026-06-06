@@ -1017,6 +1017,10 @@ function upgrade83()
 
 function upgrade84()
 {
+    // Databases from parallel fork histories may have recorded upgrade83
+    // without applying the upstream catch-up changes.
+    upgrade83();
+
     // Canonical upstream changes introduced in old upgrade69-73.
     // Might be missing from Bruno's fork used by many
     $missingCanonical =
@@ -1095,6 +1099,10 @@ function upgrade84()
 
 function upgrade85()
 {
+    // Databases from parallel fork histories may have recorded upgrade84
+    // without applying the upstream catch-up changes.
+    upgrade84();
+
     if (!hasRow("uo_setting", "name", "DisableVisitorLogging")) {
         runQuery('INSERT INTO uo_setting (name, value) VALUES ("DisableVisitorLogging", "false")');
     }
