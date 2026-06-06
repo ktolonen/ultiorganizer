@@ -74,31 +74,36 @@ if (!empty($_POST['add'])) {
         $html .= "<p class='warning'>" . _("Event ID cannot be empty") . ".</p>";
     } elseif (preg_match('/[ ]/', $_POST['season_id']) || !preg_match('/[a-z0-9.]/i', $_POST['season_id'])) {
         $html .= "<p class='warning'>" . _("Event ID may not have spaces or special characters") . ".</p>";
+    } elseif (SeasonExists($sp['season_id'])) {
+        $html .= "<p class='warning'>" . _("Event ID already exists") . ".</p>";
     } elseif (empty($_POST['seasonname'])) {
         $html .= "<p class='warning'>" . _("Name cannot be empty") . ".</p>";
     } elseif (empty($_POST['type'])) {
         $html .= "<p class='warning'>" . _("Type cannot be empty") . ".</p>";
     } else {
-        AddSeason($sp['season_id'], $sp, $comment);
-        $seasonId = $sp['season_id'];
-        //add rights for season creator
-        AddEditSeason($_SESSION['uid'], $sp['season_id']);
-        AddUserRole($_SESSION['uid'], 'seasonadmin:' . $sp['season_id']);
+        if (AddSeason($sp['season_id'], $sp, $comment)) {
+            $seasonId = $sp['season_id'];
+            //add rights for season creator
+            AddEditSeason($_SESSION['uid'], $sp['season_id']);
+            AddUserRole($_SESSION['uid'], 'seasonadmin:' . $sp['season_id']);
 
-        if ($sp['istournament']) {
-            $_SESSION['title'] = _("New tournament added") . ":";
+            if ($sp['istournament']) {
+                $_SESSION['title'] = _("New tournament added") . ":";
+            } else {
+                $_SESSION['title'] = _("New season added") . ":";
+            }
+            /* FIXME Does anybody need this? I don't get it ... */
+            $_SESSION["var0"] = _("Name") . ": " . utf8entities($sp['name']);
+            $_SESSION["var1"] = _("Type") . ": " . utf8entities($sp['type']);
+            $_SESSION["var2"] = _("Starts") . ": " . ShortDate($sp['starttime']);
+            $_SESSION["var3"] = _("Ends") . ": " . ShortDate($sp['endtime']);
+            $_SESSION["var4"] = _("Enrollment open") . ": " . (intval($sp['enrollopen']) ? _("yes") : _("no"));
+            $_SESSION['backurl'] = "?view=admin/seasons";
+            session_write_close();
+            header("location:?view=admin/seasonadmin&season=$seasonId");
         } else {
-            $_SESSION['title'] = _("New season added") . ":";
+            $html .= "<p class='warning'>" . _("Event ID already exists") . ".</p>";
         }
-        /* FIXME Does anybody need this? I don't get it ... */
-        $_SESSION["var0"] = _("Name") . ": " . utf8entities($sp['name']);
-        $_SESSION["var1"] = _("Type") . ": " . utf8entities($sp['type']);
-        $_SESSION["var2"] = _("Starts") . ": " . ShortDate($sp['starttime']);
-        $_SESSION["var3"] = _("Ends") . ": " . ShortDate($sp['endtime']);
-        $_SESSION["var4"] = _("Enrollment open") . ": " . (intval($sp['enrollopen']) ? _("yes") : _("no"));
-        $_SESSION['backurl'] = "?view=admin/seasons";
-        session_write_close();
-        header("location:?view=admin/seasonadmin&season=$seasonId");
     }
 } elseif (!empty($_POST['save'])) {
     $backurl = utf8entities($_POST['backurl']);

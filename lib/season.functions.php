@@ -1000,6 +1000,10 @@ function DeleteSeason($seasonId)
 function AddSeason($seasonId, $params, $comment = null)
 {
     if (isSuperAdmin()) {
+        if (SeasonExists($seasonId)) {
+            return false;
+        }
+
         $query = sprintf(
             "
 			INSERT INTO uo_season 
@@ -1037,7 +1041,14 @@ function AddSeason($seasonId, $params, $comment = null)
 
         Log1("season", "add", $seasonId);
 
-        $result = DBExecute($query);
+        try {
+            $result = DBExecute($query);
+        } catch (mysqli_sql_exception $e) {
+            if ($e->getCode() === 1062) {
+                return false;
+            }
+            throw $e;
+        }
 
         if ($result && isset($comment)) {
             SetComment(1, $seasonId, $comment);
