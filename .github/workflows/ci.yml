@@ -103,7 +103,7 @@ jobs:
           # history avoids shallow-clone surprises.
           fetch-depth: 0
       - name: Build release package
-        run: bash docs/release/build-release.sh
+        run: bash docs/release/build-release.sh --yes
       - name: Verify archive contents
         run: |
           set -euo pipefail
