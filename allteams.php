@@ -43,6 +43,9 @@ $listletter = " ";
 $counter = 0;
 
 foreach ($teams as $team) {
+    if (!CanAccessSeason($team['season'])) {
+        continue;
+    }
 
     if ($filter == "ALL") {
         $teamName = isset($team['name']) ? (string) $team['name'] : '';

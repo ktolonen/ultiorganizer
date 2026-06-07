@@ -67,6 +67,7 @@ global $serverConf;
 $user = $_SESSION['uid'];
 
 setSelectedSeason();
+EnforcePrivateEventAccessForView($rawView);
 EnforceSoftMaintenanceForView($rawView);
 
 $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', ['index', 'localization', 'install']);

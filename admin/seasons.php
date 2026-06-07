@@ -92,9 +92,9 @@ $html .=  "<tr>
 	<th>" . _("Type") . "</th>
 	<th>" . _("Starts") . "</th>
 	<th>" . _("Enrollment") . "</th>
-	<th>" . _("Visible") . "</th>
+	<th>" . _("Public") . "</th>
+	<th>" . _("Visibility") . "</th>
 	<th>" . _("Maintenance") . "</th>
-	<th>" . _("API") . "</th>
 	<th>" . _("Operations") . "</th>
 	<th></th>
 	</tr>\n";
@@ -122,14 +122,15 @@ foreach ($seasons as $row) {
     $enrollment = intval($info['enrollopen']) ? _("open") : _("closed");
     $html .=  "<td>" . $enrollment . "</td>";
 
-    $visible = intval($info['iscurrent']) ? _("yes") : _("no");
-    $html .=  "<td>" . $visible . "</td>";
+    $public = !empty($info['public_event']) ? _("yes") : "<span class='warning'>" . _("no") . "</span>";
+    $html .=  "<td>" . $public . "</td>";
+
+    $visible = intval($info['iscurrent']) ? _("yes") : "<span class='warning'>" . _("no") . "</span>";
+    $apiVisible = !empty($info['api_public']) ? _("yes") : "<span class='warning'>" . _("no") . "</span>";
+    $html .=  "<td>" . $visible . "/" . $apiVisible . "</td>";
 
     $maintenance = !empty($info['maintenance_mode']) ? _("yes") : _("no");
     $html .=  "<td>" . $maintenance . "</td>";
-
-    $apiVisible = !empty($info['api_public']) ? _("yes") : _("no");
-    $html .=  "<td>" . $apiVisible . "</td>";
 
     $html .=  "<td>";
     if (!CanDeleteSeason($row['season_id'])) {

@@ -919,6 +919,7 @@ function upgrade81()
 
     if (!hasColumn('uo_season', 'api_public')) {
         addColumn('uo_season', 'api_public', "tinyint(1) DEFAULT 0");
+        runQuery("UPDATE uo_season SET api_public=1");
     }
 }
 
@@ -1016,6 +1017,10 @@ function upgrade83()
 
 function upgrade84()
 {
+    // Databases from parallel fork histories may have recorded upgrade83
+    // without applying the upstream catch-up changes.
+    upgrade83();
+
     // Canonical upstream changes introduced in old upgrade69-73.
     // Might be missing from Bruno's fork used by many
     $missingCanonical =
@@ -1094,6 +1099,10 @@ function upgrade84()
 
 function upgrade85()
 {
+    // Databases from parallel fork histories may have recorded upgrade84
+    // without applying the upstream catch-up changes.
+    upgrade84();
+
     if (!hasRow("uo_setting", "name", "DisableVisitorLogging")) {
         runQuery('INSERT INTO uo_setting (name, value) VALUES ("DisableVisitorLogging", "false")');
     }
@@ -1364,6 +1373,17 @@ function upgrade93()
             AND t.series=ts.series
             AND ser.season=ts.season
             AND ss.season IS NOT NULL");
+}
+
+function upgrade94()
+{
+    if (!hasColumn("uo_season", "public_event")) {
+        addColumn("uo_season", "public_event", "tinyint(1) NOT NULL DEFAULT 0");
+        // Existing events stay visible on public pages; their existing
+        // api_public setting is preserved, so external visibility is
+        // unchanged. New events default to private (public_event=0).
+        runQuery("UPDATE uo_season SET public_event=1");
+    }
 }
 
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)

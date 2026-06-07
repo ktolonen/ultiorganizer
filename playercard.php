@@ -213,7 +213,9 @@ if (ShowDefenseStats()) {
         $prevseason = "";
         $seasoncounter = 0;
 
-        $playedSeasons = PlayerStatistics($player['profile_id']);
+        $playedSeasons = array_values(array_filter(PlayerStatistics($player['profile_id']), function ($playerStat) {
+            return CanAccessSeason($playerStat['season']);
+        }));
 
         if (count($playedSeasons)) {
             $html .= "<h2>" . _("History") . ":</h2>\n";
@@ -388,7 +390,9 @@ if (ShowDefenseStats()) {
         $prevseason = "";
         $seasoncounter = 0;
 
-        $playedSeasons = PlayerStatistics($player['profile_id']);
+        $playedSeasons = array_values(array_filter(PlayerStatistics($player['profile_id']), function ($playerStat) {
+            return CanAccessSeason($playerStat['season']);
+        }));
 
         if (count($playedSeasons)) {
             $html .= "<h2>" . _("History") . ":</h2>\n";

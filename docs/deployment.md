@@ -23,6 +23,8 @@ ultiorganizer-install-4.0-abc1234.zip
 
 The first part comes from `version.php`; the second part is the current Git commit hash. If the current commit has an exact Git tag and that tag does not match `version.php`, the build prints a warning but still creates the package.
 
+Before building, the script prints the source branch or ref, clean/dirty working tree state, package type, selected customizations, version, commit, and output archive path, then asks for confirmation. For automated builds, pass `--yes` to accept this confirmation.
+
 The default package type is `install`. To build an update package for an existing installation, use:
 
 ```sh

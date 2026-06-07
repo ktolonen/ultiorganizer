@@ -7,6 +7,7 @@ DIST_DIR="${ROOT_DIR}/dist"
 PACKAGE_TYPE="install"
 ALL_CUSTOMIZATIONS=1
 SELECTED_CUSTOMIZATIONS=()
+ASSUME_YES=0
 
 usage() {
     cat <<'EOF'
@@ -20,6 +21,7 @@ Options:
   --cust ID              Include only cust/default and cust/ID. Can be repeated
                          or given as a comma-separated list.
   --all-cust             Include all customizations. Default behavior.
+  -y, --yes              Answer yes to confirmation prompts for automation.
   -h, --help             Show this help.
 
 Update packages exclude install.php and *.sql files. cust/default is always
@@ -64,6 +66,10 @@ while [[ $# -gt 0 ]]; do
         --all-cust)
             ALL_CUSTOMIZATIONS=1
             SELECTED_CUSTOMIZATIONS=()
+            shift
+            ;;
+        -y|--yes)
+            ASSUME_YES=1
             shift
             ;;
         -h|--help)
@@ -152,6 +158,90 @@ customization_package_suffix() {
     echo "-cust-${suffix}"
 }
 
+customization_summary() {
+    local summary=""
+    local customization
+
+    if [[ "${ALL_CUSTOMIZATIONS}" -eq 1 ]]; then
+        echo "all"
+        return
+    fi
+
+    summary="default"
+    for customization in "${SELECTED_CUSTOMIZATIONS[@]}"; do
+        if [[ "${customization}" != "default" ]]; then
+            summary="${summary},${customization}"
+        fi
+    done
+
+    echo "${summary}"
+}
+
+working_tree_state() {
+    if git diff --quiet && git diff --cached --quiet && [[ -z "$(git ls-files --others --exclude-standard)" ]]; then
+        echo "clean"
+    else
+        echo "not clean"
+    fi
+}
+
+current_git_source() {
+    local branch
+
+    branch="$(git branch --show-current)"
+    if [[ -n "${branch}" ]]; then
+        echo "${branch}"
+        return
+    fi
+
+    echo "detached HEAD"
+}
+
+confirm_release_build() {
+    local answer=""
+
+    cat <<EOF
+Release package source:
+  Branch/ref: ${GIT_SOURCE}
+  Working tree: ${WORKING_TREE_STATE}
+  Version: ${APP_VERSION}
+  Commit: ${COMMIT_HASH}
+  Type: ${PACKAGE_TYPE}
+  Customizations: ${CUSTOMIZATION_SUMMARY}
+  Archive: ${ARCHIVE_PATH}
+EOF
+
+    if [[ "${WORKING_TREE_STATE}" != "clean" ]]; then
+        echo "warning: working tree has uncommitted changes; package name still uses commit ${COMMIT_HASH}" >&2
+    fi
+
+    if [[ "${GIT_SOURCE}" == "detached HEAD" ]]; then
+        echo "warning: release package is being built from detached HEAD" >&2
+    elif [[ "${GIT_SOURCE}" != "master" ]]; then
+        echo "warning: release package is being built from branch '${GIT_SOURCE}', not master" >&2
+    fi
+
+    if [[ "${ASSUME_YES}" -eq 1 ]]; then
+        echo "Confirmation: yes (--yes)"
+        return
+    fi
+
+    if [[ ! -t 0 ]]; then
+        echo "error: release confirmation requires an interactive terminal; pass --yes to approve in automation" >&2
+        exit 1
+    fi
+
+    read -r -p "Build this release package? [y/N] " answer
+    case "${answer}" in
+        y|Y|yes|YES|Yes)
+            ;;
+        *)
+            echo "Aborted."
+            exit 1
+            ;;
+    esac
+}
+
 should_skip_package_path() {
     local path="$1"
     local cust_path
@@ -183,13 +273,14 @@ validate_customizations
 
 COMMIT_HASH="$(git rev-parse --short HEAD)"
 CUSTOMIZATION_SUFFIX="$(customization_package_suffix)"
+CUSTOMIZATION_SUMMARY="$(customization_summary)"
 PACKAGE_VERSION="${APP_VERSION}-${COMMIT_HASH}"
 PACKAGE_NAME="ultiorganizer-${PACKAGE_TYPE}${CUSTOMIZATION_SUFFIX}-${PACKAGE_VERSION}"
 ARCHIVE_PATH="${DIST_DIR}/${PACKAGE_NAME}.zip"
+GIT_SOURCE="$(current_git_source)"
+WORKING_TREE_STATE="$(working_tree_state)"
 
-if ! git diff --quiet || ! git diff --cached --quiet || [[ -n "$(git ls-files --others --exclude-standard)" ]]; then
-    echo "warning: working tree has uncommitted changes; package name still uses commit ${COMMIT_HASH}" >&2
-fi
+confirm_release_build
 
 EXACT_TAG="$(git describe --exact-match --tags HEAD 2>/dev/null || true)"
 if [[ -n "${EXACT_TAG}" ]]; then
@@ -346,10 +437,4 @@ echo "Built ${ARCHIVE_PATH}"
 echo "Version: ${APP_VERSION}"
 echo "Commit: ${COMMIT_HASH}"
 echo "Type: ${PACKAGE_TYPE}"
-if [[ "${ALL_CUSTOMIZATIONS}" -eq 1 ]]; then
-    echo "Customizations: all"
-elif [[ "${#SELECTED_CUSTOMIZATIONS[@]}" -eq 0 ]]; then
-    echo "Customizations: default"
-else
-    echo "Customizations: default,${SELECTED_CUSTOMIZATIONS[*]}"
-fi
+echo "Customizations: ${CUSTOMIZATION_SUMMARY}"

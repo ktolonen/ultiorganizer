@@ -221,7 +221,7 @@ function api_require_public_season($seasonId)
     if (!$seasonInfo) {
         api_error(404, 'event_not_found', 'Event not found.');
     }
-    if (empty($seasonInfo['api_public'])) {
+    if (empty($seasonInfo['public_event']) || empty($seasonInfo['api_public'])) {
         api_error(403, 'event_not_public', 'Event is not available on public API.');
     }
     if (IsSeasonInMaintenance($seasonId)) {
@@ -441,7 +441,7 @@ function api_handle_events()
     $rows = SeasonsAllInfo();
     $events = [];
     foreach ($rows as $row) {
-        if (empty($row['api_public'])) {
+        if (empty($row['public_event']) || empty($row['api_public'])) {
             continue;
         }
         if (!empty($row['maintenance_mode'])) {
