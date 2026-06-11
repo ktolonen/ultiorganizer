@@ -825,3 +825,190 @@ fieldset {
     padding: 24px;
   }
 }
+
+/* Timekeeper -------------------------------------------------------------- */
+
+.tk-hidden {
+  display: none;
+}
+
+.tk-language-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+  align-items: center;
+}
+
+.tk-language-flags img {
+  width: 64px;
+  height: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.tk-config-group {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin: 0 0 14px;
+  padding: 8px 12px 12px;
+}
+
+.tk-config-group legend {
+  font-weight: 700;
+  padding: 0 6px;
+}
+
+.tk-config-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.tk-config-row label {
+  flex: 1;
+  margin: 8px 0;
+}
+
+.tk-config-row input {
+  width: 5rem;
+  flex: 0 0 auto;
+  text-align: right;
+}
+
+.tk-unit {
+  flex: 0 0 auto;
+  color: var(--muted);
+  font-weight: 600;
+}
+
+.tk-display,
+.tk-matchclock-body {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+
+.tk-display-main,
+.tk-matchclock-main {
+  flex: 1 1 auto;
+  min-width: 0;
+  text-align: center;
+}
+
+/* Light-grey side information inside a clock area (limits, marks). */
+.tk-side {
+  flex: 0 0 38%;
+  max-width: 42%;
+  text-align: left;
+  color: #9ca3af;
+  font-size: 0.85rem;
+  line-height: 1.5;
+}
+
+.tk-side:empty {
+  display: none;
+}
+
+.tk-side-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.tk-side-row--done {
+  opacity: 0.55;
+  text-decoration: line-through;
+}
+
+.tk-side-time {
+  font-variant-numeric: tabular-nums;
+}
+
+.tk-display-scenario {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--muted);
+  min-height: 1.2em;
+}
+
+.tk-display-time {
+  font-size: 3.6rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  margin: 6px 0;
+}
+
+.tk-display-signal {
+  font-size: 1.3rem;
+  font-weight: 700;
+  min-height: 1.4em;
+  margin-bottom: 8px;
+}
+
+.tk-display-actions {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tk-state-ready .tk-display-time {
+  color: var(--muted);
+}
+
+.tk-state-warn {
+  background: #fff4d6;
+}
+
+.tk-state-warn .tk-display-signal {
+  color: #8a5a00;
+}
+
+.tk-state-zero {
+  background: #fde0e0;
+}
+
+.tk-state-zero .tk-display-time,
+.tk-state-zero .tk-display-signal {
+  color: #b00020;
+}
+
+.tk-actions {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.tk-actions .tk-action {
+  margin: 0;
+  width: 100%;
+}
+
+.tk-matchclock {
+  font-size: 2.4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  text-align: center;
+  margin: 4px 0 10px;
+}
+
+.tk-matchclock-actions {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+@media (max-width: 480px) {
+  .tk-display,
+  .tk-matchclock-body {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .tk-side {
+    flex-basis: auto;
+    max-width: none;
+  }
+}

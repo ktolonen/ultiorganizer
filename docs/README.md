@@ -37,6 +37,7 @@ This directory collects general project documentation.
 - `scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and current behavior.
+- `timekeeper.md`: standalone Timekeeper app, configurable WFDF-style time limits, signal timers, and the game clock.
 
 ### Language and output
 

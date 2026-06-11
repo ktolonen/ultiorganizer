@@ -116,6 +116,7 @@ Pre-commit hooks remain the fast local gate; CI is the source of truth for what 
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `docs/spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and visibility rules.
+- `docs/timekeeper.md`: standalone Timekeeper app, configurable time limits, signal timers, and the game clock.
 
 ### Language and output
 

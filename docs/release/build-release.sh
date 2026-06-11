@@ -337,6 +337,7 @@ required_paths=(
     "scorekeeper"
     "script"
     "spiritkeeper"
+    "timekeeper"
     "sql/upgrade_db.php"
     "user"
 )

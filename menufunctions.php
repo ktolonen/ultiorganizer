@@ -699,6 +699,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         $spiritkeeperUrl = SpiritkeeperHomeUrl();
     }
     echo "<a class='subnav' href='" . $spiritkeeperUrl . "'>&raquo; " . utf8entities(_("Spiritkeeper")) . "</a>\n";
+    echo "<a class='subnav' href='./timekeeper/'>&raquo; " . utf8entities(_("Timekeeper")) . "</a>\n";
     echo "</td></tr>\n";
     echo "</table>";
 
