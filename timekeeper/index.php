@@ -21,6 +21,10 @@ setSessionLocale();
 
 $styles_prefix = '../';
 $pageTitle = _("Timekeeper");
+$favicon = $styles_prefix . "cust/" . CUSTOMIZATIONS . "/favicon.png";
+if (!is_file($include_prefix . "cust/" . CUSTOMIZATIONS . "/favicon.png")) {
+    $favicon = $styles_prefix . "cust/default/favicon.png";
+}
 
 $sessionLocale = getSessionLocale();
 $lang = explode('_', $sessionLocale);
@@ -121,6 +125,7 @@ echo "<html lang='" . utf8entities($lang) . "'>\n";
 echo "<head>\n";
 echo "<meta charset='UTF-8'/>\n";
 echo "<meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover'/>\n";
+echo "<link rel='icon' type='image/png' href='" . utf8entities($favicon) . "'/>\n";
 echo "<title>" . utf8entities($pageTitle) . "</title>\n";
 echo mobileStyles();
 echo "</head>\n";
