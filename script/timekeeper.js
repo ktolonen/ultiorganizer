@@ -26,6 +26,7 @@
     running: false,
     startTs: 0,
     accumMs: 0,
+    markCounts: {},
     marks: []
   };
   var clockInterval = null;
@@ -372,17 +373,29 @@
       }
     }
 
-    if (scenario.repeat && elapsed >= scenario.nextRepeat) {
-      while (elapsed >= scenario.nextRepeat) {
+    if (scenario.repeat && elapsed >= scenario.repeat.from + scenario.repeat.every) {
+      var repeatCount = Math.floor((elapsed - scenario.repeat.from) / scenario.repeat.every);
+      if (repeatCount > scenario.repeat.lastCount) {
+        scenario.repeat.lastCount = repeatCount;
         el("tk-display-signal").textContent = t(scenario.repeat.key);
         setDisplayState(scenario.repeat.kind === "go" ? "zero" : "warn");
         beep(scenario.repeat.kind);
-        scenario.nextRepeat += scenario.repeat.every;
       }
     }
 
-    // The action clock always counts down to zero; at zero it turns red.
+    // Repeat-enabled scenarios keep showing the countdown to the next repeat
+    // signal after the first "play must restart" point has passed.
     var remaining = scenario.total - elapsed;
+    if (remaining <= 0 && scenario.repeat) {
+      var repeatElapsed = elapsed - scenario.repeat.from;
+      if (repeatElapsed > 0) {
+        var repeatRemainder = repeatElapsed % scenario.repeat.every;
+        remaining = repeatRemainder === 0 ? 0 : scenario.repeat.every - repeatRemainder;
+      }
+      setDisplayState("zero");
+    }
+
+    // Non-repeating action clocks count down to zero and stay red there.
     if (remaining <= 0) {
       remaining = 0;
       setDisplayState("zero");
@@ -418,7 +431,7 @@
     scenario.paused = false;
     scenario.pauseTs = 0;
     if (scenario.repeat) {
-      scenario.nextRepeat = scenario.repeat.from + scenario.repeat.every;
+      scenario.repeat.lastCount = 0;
     }
 
     el("tk-display-scenario").textContent = t("sc_" + id);
@@ -428,6 +441,9 @@
     setPauseLabel(false);
     el("tk-timer-stop").disabled = false;
     renderActionLimits(built);
+
+    // Log this action in the game-clock mark list with its generic label.
+    addMark("sc_" + id, t("sc_" + id));
 
     requestWakeLock();
     if (scenarioInterval) {
@@ -505,7 +521,7 @@
     }
   }
 
-  // Newest mark on top, keeping each mark's chronological number.
+  // Newest mark on top. Each mark is { label, labelNumber, time }.
   function renderMarks() {
     var box = el("tk-clock-marks");
     box.innerHTML = "";
@@ -514,22 +530,36 @@
       var row = document.createElement("div");
       row.className = "tk-side-row";
       var label = document.createElement("span");
-      label.textContent = (i + 1) + ".";
+      label.textContent = clock.marks[i].label + " " + clock.marks[i].labelNumber;
       var time = document.createElement("span");
       time.className = "tk-side-time";
-      time.textContent = clock.marks[i];
+      time.textContent = clock.marks[i].time;
       row.appendChild(label);
       row.appendChild(time);
       box.appendChild(row);
     }
   }
 
+  // Log a labelled snapshot of the current game-clock time. Used by the manual
+  // Mark button (generic label) and by every action when it starts.
+  function addMark(key, label) {
+    if (!Object.prototype.hasOwnProperty.call(clock.markCounts, key)) {
+      clock.markCounts[key] = 0;
+    }
+    clock.markCounts[key]++;
+    clock.marks.push({
+      label: label,
+      labelNumber: clock.markCounts[key],
+      time: formatTime(clockElapsed())
+    });
+    renderMarks();
+  }
+
   function markClock() {
     if (!clock.running) {
       return;
     }
-    clock.marks.push(formatTime(clockElapsed()));
-    renderMarks();
+    addMark("ui_mark", t("ui_mark"));
   }
 
   function startClock() {
@@ -549,6 +579,7 @@
     if (!clock.running) {
       return;
     }
+    addMark("ui_pause", t("ui_pause"));
     clock.accumMs += Date.now() - clock.startTs;
     clock.running = false;
     setClockButton();
@@ -568,6 +599,7 @@
     clock.running = false;
     clock.startTs = 0;
     clock.accumMs = 0;
+    clock.markCounts = {};
     clock.marks = [];
     if (clockInterval) {
       window.clearInterval(clockInterval);

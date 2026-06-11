@@ -30,7 +30,7 @@ $lang = !empty($lang[0]) ? $lang[0] : 'en';
 // editable by the user; only the offsets are configurable, labels are fixed.
 $timekeeperGroups = [
     'betweenpoints' => [
-        'label' => _("Between points"),
+        'label' => _("Start of point"),
         'fields' => [
             'bp_off' => ['label' => _("Offence warning"), 'default' => 45],
             'bp_def' => ['label' => _("Defence warning"), 'default' => 60],
@@ -39,7 +39,7 @@ $timekeeperGroups = [
     ],
     // Timeout. After the pull (WFDF A5.6), timed from the call: 45 (offence
     // 30 s warning) / 60 (offence 15 s warning) / 75 (defence 15 s warning) /
-    // 90 (play). Before the pull (A5.5), pressed while Between points runs:
+    // 90 (play). Before the pull (A5.5), pressed while Start of point runs:
     // "Added time before pull" is added to the point-start timeline.
     'timeout' => [
         'label' => _("Timeout"),
@@ -66,7 +66,7 @@ $timekeeperGroups = [
         ],
     ],
     'dispute' => [
-        'label' => _("Dispute"),
+        'label' => _("Call or discussion"),
         'fields' => [
             'dp_first' => ['label' => _("First signal"), 'default' => 45],
             'dp_restart' => ['label' => _("Play must restart"), 'default' => 60],
@@ -83,13 +83,20 @@ foreach ($timekeeperGroups as $group) {
     }
 }
 
+$timekeeperLocaleFlagFiles = [
+    'de_DE.utf8' => 'Germany.png',
+    'en_GB.utf8' => 'United_Kingdom.png',
+    'es_ES.utf8' => 'Spain.png',
+    'fi_FI.utf8' => 'Finland.png',
+];
+
 // Translated strings consumed by script/timekeeper.js.
 $timekeeperI18n = [
     'sc_halfstart' => _("Start of game"),
-    'sc_betweenpoints' => _("Between points"),
+    'sc_betweenpoints' => _("Start of point"),
     'sc_timeout' => _("Timeout"),
     'sc_halftime' => _("Halftime"),
-    'sc_dispute' => _("Dispute"),
+    'sc_dispute' => _("Call or discussion"),
     'sig_off_warn' => _("Offence warning"),
     'sig_def_warn' => _("Defence warning"),
     'sig_play' => _("Play"),
@@ -98,13 +105,13 @@ $timekeeperI18n = [
     'sig_half_end' => _("Halftime over"),
     'sig_start_warn' => _("Approaching start"),
     'sig_start_go' => _("Start of play"),
-    'sig_dispute' => _("Resolve dispute"),
+    'sig_dispute' => _("Resolve call or discussion"),
     'sig_restart' => _("Play must restart"),
     'ui_pause' => _("Pause"),
     'ui_resume' => _("Resume"),
     'ui_mark' => _("Mark"),
     'ui_start_clock' => _("Start"),
-    'ui_resume_clock' => _("Resume game clock"),
+    'ui_resume_clock' => _("Resume"),
     'ui_sound_on' => _("Sound on"),
     'ui_sound_off' => _("Sound off"),
 ];
@@ -138,9 +145,18 @@ echo "<div class='card'><h2>" . utf8entities(_("Select language")) . "</h2>\n";
 echo "<div class='tk-language-flags'>\n";
 if (isset($locales) && is_array($locales)) {
     foreach ($locales as $localestr => $localename) {
+        $flagSrc = $styles_prefix . "locale/" . $localestr . "/flag.png";
+        $flagClass = "localeselection tk-language-flag-native";
+        if (isset($timekeeperLocaleFlagFiles[$localestr])) {
+            $smallFlagFile = $timekeeperLocaleFlagFiles[$localestr];
+            if (is_file($include_prefix . "images/flags/small/" . $smallFlagFile)) {
+                $flagSrc = $styles_prefix . "images/flags/small/" . $smallFlagFile;
+                $flagClass = "localeselection tk-language-flag-small";
+            }
+        }
         echo "<a href='?locale=" . urlencode($localestr) . "'>";
-        echo "<img class='localeselection' src='" . $styles_prefix . "locale/" . utf8entities($localestr)
-            . "/flag.png' alt='" . utf8entities($localename) . "'/>";
+        echo "<img class='" . utf8entities($flagClass) . "' src='" . utf8entities($flagSrc)
+            . "' alt='" . utf8entities($localename) . "'/>";
         echo "</a>\n";
     }
 }
@@ -195,8 +211,8 @@ echo "</div>\n";
 echo "<div class='card'>\n";
 echo "<h2>" . utf8entities(_("Actions")) . "</h2>\n";
 echo "<div class='tk-actions'>\n";
-// Between points is the most-used action, so it leads.
-$scenarioOrder = ['betweenpoints', 'timeout', 'halftime', 'halfstart', 'dispute'];
+// Start of point is the most-used action, so it leads.
+$scenarioOrder = ['betweenpoints', 'timeout', 'halfstart', 'halftime', 'dispute'];
 foreach ($scenarioOrder as $scenarioId) {
     echo "<button type='button' class='tk-action' data-scenario='" . utf8entities($scenarioId)
         . "' data-role='button'>" . utf8entities($timekeeperGroups[$scenarioId]['label']) . "</button>\n";

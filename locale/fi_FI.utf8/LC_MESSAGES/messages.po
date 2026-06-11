@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-11 19:07+0300\n"
+"POT-Creation-Date: 2026-06-11 22:31+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -262,7 +262,7 @@ msgstr "Kuittaa"
 msgid "Acknowledged"
 msgstr "Kuitattu"
 
-#: timekeeper/index.php:196
+#: timekeeper/index.php:212
 #, fuzzy
 msgid "Actions"
 msgstr "Paikka"
@@ -572,7 +572,7 @@ msgstr "Ota massakäännökset käyttöön"
 msgid "Apply the bulk translations from the text area?"
 msgstr "Otetaanko tekstialueen massakäännökset käyttöön?"
 
-#: timekeeper/index.php:99
+#: timekeeper/index.php:106
 msgid "Approaching start"
 msgstr ""
 
@@ -819,11 +819,6 @@ msgstr "Tasapainota kotijoukkue tasaisesti"
 msgid "Beach Ultimate Lovers Association"
 msgstr "Beach Ultimate Lovers Association"
 
-#: timekeeper/index.php:33 timekeeper/index.php:89
-#, fuzzy
-msgid "Between points"
-msgstr "Pisteiden välinen aika"
-
 #: lib/url.functions.php:127
 msgid "Blogger"
 msgstr "Blogger"
@@ -891,6 +886,10 @@ msgid ""
 "Calculation of statistics takes some time; please wait without closing the "
 "browser."
 msgstr "Tilastojen laskeminen kestää jonkin aikaa. Odota sulkematta selainta."
+
+#: timekeeper/index.php:69 timekeeper/index.php:99
+msgid "Call or discussion"
+msgstr ""
 
 #: playercard.php:225 playercard.php:302 playercard.php:403 playercard.php:471
 #: scorestatus.php:102 scorestatus.php:104
@@ -989,7 +988,7 @@ msgstr "Muuta pelin pelaajalista"
 msgid "Change game scoresheet"
 msgstr "Muuta pelin pöytäkirja"
 
-#: timekeeper/index.php:231
+#: timekeeper/index.php:247
 #, fuzzy
 msgid "Change language"
 msgstr "Muutokset tallennettu"
@@ -1564,7 +1563,7 @@ msgstr "Puolustuspöytäkirja"
 msgid "Defence sheet saved"
 msgstr "Puolustuspöytäkirja tallennettu"
 
-#: timekeeper/index.php:36 timekeeper/index.php:49 timekeeper/index.php:94
+#: timekeeper/index.php:36 timekeeper/index.php:49 timekeeper/index.php:101
 #, fuzzy
 msgid "Defence warning"
 msgstr "Puolustuspörssi"
@@ -1731,10 +1730,6 @@ msgstr ""
 msgid "Disable visitor logging"
 msgstr "Poista kävijäloki käytöstä"
 
-#: timekeeper/index.php:69 timekeeper/index.php:92
-msgid "Dispute"
-msgstr ""
-
 #: teams.php:351 admin/finalstandings.php:233 lib/standings.functions.php:888
 msgid "Disqualified"
 msgstr "Hylätty"
@@ -1822,7 +1817,7 @@ msgid ""
 msgstr ""
 "Haluatko varmasti poistua? Jos valitset kyllä, menetät kaikki muutokset."
 
-#: timekeeper/index.php:173
+#: timekeeper/index.php:189
 msgid "Done"
 msgstr ""
 
@@ -2625,7 +2620,7 @@ msgid "Game card"
 msgstr "Pelikortti"
 
 #: scorekeeper/addscoresheet.php:292 scorekeeper/addscoresheet.php:345
-#: timekeeper/index.php:208
+#: timekeeper/index.php:224
 msgid "Game clock"
 msgstr "Pelikello"
 
@@ -3036,7 +3031,7 @@ msgstr "Gummis"
 #: mobile/addhalftime.php:33 mobile/addscoresheet.php:212
 #: mobile/gameplay.php:39 scorekeeper/addscoresheet.php:459
 #: scorekeeper/endgame.php:66 scorekeeper/gameplay.php:38
-#: timekeeper/index.php:55 timekeeper/index.php:91
+#: timekeeper/index.php:55 timekeeper/index.php:98
 msgid "Halftime"
 msgstr "Puoliaika"
 
@@ -3053,7 +3048,7 @@ msgstr "Puoliaika pisteessä"
 msgid "Halftime ended at"
 msgstr "Puoliaika päättyi ajassa"
 
-#: timekeeper/index.php:97
+#: timekeeper/index.php:104
 #, fuzzy
 msgid "Halftime ending"
 msgstr "Puoliaika päättyi"
@@ -3071,7 +3066,7 @@ msgstr "Puoliaika päättyy (aika)"
 msgid "Halftime ends at"
 msgstr "Puoliaika päättyi ajassa"
 
-#: timekeeper/index.php:98
+#: timekeeper/index.php:105
 #, fuzzy
 msgid "Halftime over"
 msgstr "Puoliaikatulos"
@@ -3726,7 +3721,7 @@ msgstr "Ajan manuaalinen syöttö"
 msgid "Margin"
 msgstr "Marginaali"
 
-#: timekeeper/index.php:105
+#: timekeeper/index.php:112
 msgid "Mark"
 msgstr ""
 
@@ -4254,7 +4249,7 @@ msgstr "Luotavien joukkueiden määrän pitää olla positiivinen kokonaisluku."
 msgid "Offence"
 msgstr "Hyökkäys"
 
-#: timekeeper/index.php:35 timekeeper/index.php:93
+#: timekeeper/index.php:35 timekeeper/index.php:100
 #, fuzzy
 msgid "Offence warning"
 msgstr "Hyökkäys"
@@ -4437,7 +4432,7 @@ msgstr "Salasanat eivät täsmää"
 msgid "Passwords do not match."
 msgstr "Salasanat eivät täsmää."
 
-#: timekeeper/index.php:103 timekeeper/index.php:187 timekeeper/index.php:215
+#: timekeeper/index.php:110 timekeeper/index.php:203 timekeeper/index.php:231
 #, fuzzy
 msgid "Pause"
 msgstr "Keskeytetty"
@@ -4506,11 +4501,11 @@ msgstr "Sijoituslohko"
 #: cust/slkl/pdfscoresheet.php:144 cust/slkl/pdfscoresheet.php:154
 #: cust/slkl/pdfscoresheet.php:252 cust/wfdf/pdfscoresheet.php:673
 #: cust/windmill/pdfscoresheet.php:263 timekeeper/index.php:37
-#: timekeeper/index.php:50 timekeeper/index.php:95
+#: timekeeper/index.php:50 timekeeper/index.php:102
 msgid "Play"
 msgstr "Pelaa"
 
-#: timekeeper/index.php:72 timekeeper/index.php:102
+#: timekeeper/index.php:72 timekeeper/index.php:109
 #, fuzzy
 msgid "Play must restart"
 msgstr "Pelaajan tietoraportti"
@@ -5052,8 +5047,8 @@ msgstr "Varaukset"
 msgid "Reservations added"
 msgstr "Varaukset lisätty"
 
-#: admin/seasonstandings.php:281 timekeeper/index.php:172
-#: timekeeper/index.php:216
+#: admin/seasonstandings.php:281 timekeeper/index.php:188
+#: timekeeper/index.php:232
 msgid "Reset"
 msgstr "Nollaa"
 
@@ -5082,10 +5077,9 @@ msgstr "Selvitä id:t"
 msgid "Resolve Ties"
 msgstr "Selvitä tasapelit"
 
-#: timekeeper/index.php:101
-#, fuzzy
-msgid "Resolve dispute"
-msgstr "Selvitä tasapelit"
+#: timekeeper/index.php:108
+msgid "Resolve call or discussion"
+msgstr ""
 
 #: admin/editgame.php:252
 msgid "Responsible person"
@@ -5144,13 +5138,11 @@ msgstr "Uusi tulos: %s."
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
 
-#: timekeeper/index.php:104
-#, fuzzy
+#: timekeeper/index.php:111 timekeeper/index.php:114
 msgid "Resume"
-msgstr "Tulokset"
+msgstr "Jatka"
 
 #: scorekeeper/addscoresheet.php:301 scorekeeper/addspirittimeouts.php:109
-#: timekeeper/index.php:107
 msgid "Resume game clock"
 msgstr "Jatka pelikelloa"
 
@@ -5719,7 +5711,7 @@ msgstr "Valitse tiedosto, josta tiedot tuodaan"
 msgid "Select grouping"
 msgstr "Valitse ryhmitys"
 
-#: timekeeper/index.php:137
+#: timekeeper/index.php:144
 #, fuzzy
 msgid "Select language"
 msgstr "Valitse ja Päivitä"
@@ -5970,12 +5962,12 @@ msgstr "Pehmeä ylläpitotila"
 msgid "Some games"
 msgstr "Joitain pelejä"
 
-#: timekeeper/index.php:109
+#: timekeeper/index.php:116
 #, fuzzy
 msgid "Sound off"
 msgstr "Round Robin"
 
-#: timekeeper/index.php:108 timekeeper/index.php:233
+#: timekeeper/index.php:115 timekeeper/index.php:249
 #, fuzzy
 msgid "Sound on"
 msgstr "Round Robin"
@@ -6214,7 +6206,7 @@ msgstr "Sijoitus"
 msgid "Standings"
 msgstr "Sijoitukset"
 
-#: timekeeper/index.php:106 timekeeper/index.php:214
+#: timekeeper/index.php:113 timekeeper/index.php:230
 #, fuzzy
 msgid "Start"
 msgstr "Alkaa"
@@ -6223,15 +6215,19 @@ msgstr "Alkaa"
 msgid "Start game clock"
 msgstr "Käynnistä pelikello"
 
-#: timekeeper/index.php:62 timekeeper/index.php:88
+#: timekeeper/index.php:62 timekeeper/index.php:95
 #, fuzzy
 msgid "Start of game"
 msgstr "Alkulohko"
 
-#: timekeeper/index.php:100
+#: timekeeper/index.php:107
 #, fuzzy
 msgid "Start of play"
 msgstr "Alkulohko"
+
+#: timekeeper/index.php:33 timekeeper/index.php:96
+msgid "Start of point"
+msgstr "Pisteen alku"
 
 #: scorekeeper/addscoresheet.php:118 scorekeeper/addscoresheet.php:351
 msgid "Start the game clock before adding goals."
@@ -6281,7 +6277,7 @@ msgstr "Tilastoviitteitä"
 msgid "Status"
 msgstr "Tila"
 
-#: timekeeper/index.php:188
+#: timekeeper/index.php:204
 msgid "Stop"
 msgstr ""
 
@@ -6641,7 +6637,7 @@ msgstr "Aika ei voi olla sama tai aiempi kuin edellisessä pisteessä."
 msgid "Time cap"
 msgstr "Aikakatto"
 
-#: timekeeper/index.php:154 timekeeper/index.php:232
+#: timekeeper/index.php:170 timekeeper/index.php:248
 #, fuzzy
 msgid "Time limits"
 msgstr "Aikavaraus"
@@ -6668,7 +6664,7 @@ msgid "Timekeeper"
 msgstr "Tulostallennus"
 
 #: gameplay.php:270 ext/rss.php:149 ext/rss.php:188 timekeeper/index.php:45
-#: timekeeper/index.php:90
+#: timekeeper/index.php:97
 msgid "Timeout"
 msgstr "Aikalisä"
 
@@ -6680,7 +6676,7 @@ msgstr "Aikalisätilastot"
 msgid "Timeout duration"
 msgstr "Aikalisän kesto"
 
-#: timekeeper/index.php:96
+#: timekeeper/index.php:103
 #, fuzzy
 msgid "Timeout over"
 msgstr "Aikalisiä lisäajalla"
@@ -6988,7 +6984,7 @@ msgstr "Ultimate.fi"
 #: ext/poolstatus.php:31 ext/teamcoming.php:32 ext/teamplayed.php:33
 #: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1498
 #: lib/user.functions.php:1559 scorekeeper/index.php:83
-#: spiritkeeper/index.php:103 timekeeper/index.php:230
+#: spiritkeeper/index.php:103 timekeeper/index.php:246
 msgid "Ultiorganizer"
 msgstr "Pelikone"
 
@@ -7166,7 +7162,7 @@ msgstr "Voimassa"
 msgid "Value"
 msgstr "Arvo"
 
-#: timekeeper/index.php:155
+#: timekeeper/index.php:171
 msgid "Values are in seconds. Defaults follow the WFDF rules."
 msgstr ""
 
@@ -7893,6 +7889,10 @@ msgstr "kyllä"
 #~ msgid "API"
 #~ msgstr "API"
 
+#, fuzzy
+#~ msgid "Between points"
+#~ msgstr "Pisteiden välinen aika"
+
 #~ msgid "Count"
 #~ msgstr "Kotimaa"
 
@@ -7913,6 +7913,10 @@ msgstr "kyllä"
 
 #~ msgid "Placements"
 #~ msgstr "Sijoitukset"
+
+#, fuzzy
+#~ msgid "Resolve dispute"
+#~ msgstr "Selvitä tasapelit"
 
 #~ msgid "Standings saved"
 #~ msgstr "Sijoitukset tallennettu"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-11 19:07+0300\n"
+"POT-Creation-Date: 2026-06-11 22:31+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -267,7 +267,7 @@ msgstr "Bestätigen"
 msgid "Acknowledged"
 msgstr "Bestätigt"
 
-#: timekeeper/index.php:196
+#: timekeeper/index.php:212
 #, fuzzy
 msgid "Actions"
 msgstr "Ort"
@@ -579,7 +579,7 @@ msgstr "Massenübersetzungen anwenden"
 msgid "Apply the bulk translations from the text area?"
 msgstr "Massenübersetzungen aus dem Textbereich anwenden?"
 
-#: timekeeper/index.php:99
+#: timekeeper/index.php:106
 msgid "Approaching start"
 msgstr ""
 
@@ -831,11 +831,6 @@ msgstr "Heimteam gleichmaessig ausgleichen"
 msgid "Beach Ultimate Lovers Association"
 msgstr "Beach Ultimate Lovers Association"
 
-#: timekeeper/index.php:33 timekeeper/index.php:89
-#, fuzzy
-msgid "Between points"
-msgstr "Zeit zwischen Punkten"
-
 #: lib/url.functions.php:127
 msgid "Blogger"
 msgstr "Blogger"
@@ -905,6 +900,10 @@ msgid ""
 msgstr ""
 "Die Berechnung der Statistiken dauert eine Weile; bitte warte, ohne den "
 "Browser zu schliessen."
+
+#: timekeeper/index.php:69 timekeeper/index.php:99
+msgid "Call or discussion"
+msgstr ""
 
 #: playercard.php:225 playercard.php:302 playercard.php:403 playercard.php:471
 #: scorestatus.php:102 scorestatus.php:104
@@ -1003,7 +1002,7 @@ msgstr "Spielerliste des Spiels ändern"
 msgid "Change game scoresheet"
 msgstr "Spielbericht ändern"
 
-#: timekeeper/index.php:231
+#: timekeeper/index.php:247
 #, fuzzy
 msgid "Change language"
 msgstr "Änderungen gespeichert"
@@ -1582,7 +1581,7 @@ msgstr "Defensebogen"
 msgid "Defence sheet saved"
 msgstr "Defensebogen gespeichert"
 
-#: timekeeper/index.php:36 timekeeper/index.php:49 timekeeper/index.php:94
+#: timekeeper/index.php:36 timekeeper/index.php:49 timekeeper/index.php:101
 #, fuzzy
 msgid "Defence warning"
 msgstr "Defense-Rangliste"
@@ -1749,10 +1748,6 @@ msgstr ""
 msgid "Disable visitor logging"
 msgstr "Besucherprotokollierung deaktivieren"
 
-#: timekeeper/index.php:69 timekeeper/index.php:92
-msgid "Dispute"
-msgstr ""
-
 #: teams.php:351 admin/finalstandings.php:233 lib/standings.functions.php:888
 msgid "Disqualified"
 msgstr "Disqualifiziert"
@@ -1842,7 +1837,7 @@ msgstr ""
 "Wollen Sie trotzdem die Seite verlassen? Wenn Sie Ja auswählen, gehen Ihre "
 "Änderungen verloren."
 
-#: timekeeper/index.php:173
+#: timekeeper/index.php:189
 msgid "Done"
 msgstr ""
 
@@ -2647,7 +2642,7 @@ msgid "Game card"
 msgstr "Spielbogen"
 
 #: scorekeeper/addscoresheet.php:292 scorekeeper/addscoresheet.php:345
-#: timekeeper/index.php:208
+#: timekeeper/index.php:224
 msgid "Game clock"
 msgstr "Spieluhr"
 
@@ -3059,7 +3054,7 @@ msgstr "Gummis"
 #: mobile/addhalftime.php:33 mobile/addscoresheet.php:212
 #: mobile/gameplay.php:39 scorekeeper/addscoresheet.php:459
 #: scorekeeper/endgame.php:66 scorekeeper/gameplay.php:38
-#: timekeeper/index.php:55 timekeeper/index.php:91
+#: timekeeper/index.php:55 timekeeper/index.php:98
 msgid "Halftime"
 msgstr "Halbzeit"
 
@@ -3076,7 +3071,7 @@ msgstr "Halbzeit bei Punkt"
 msgid "Halftime ended at"
 msgstr "Halbzeit endete bei"
 
-#: timekeeper/index.php:97
+#: timekeeper/index.php:104
 #, fuzzy
 msgid "Halftime ending"
 msgstr "Halbzeit endet"
@@ -3094,7 +3089,7 @@ msgstr "Halbzeit endet (Zeit)"
 msgid "Halftime ends at"
 msgstr "Halbzeit endet bei"
 
-#: timekeeper/index.php:98
+#: timekeeper/index.php:105
 #, fuzzy
 msgid "Halftime over"
 msgstr "Halbzeitstand"
@@ -3754,7 +3749,7 @@ msgstr "Manuelle Zeiteingabe"
 msgid "Margin"
 msgstr "Abstand"
 
-#: timekeeper/index.php:105
+#: timekeeper/index.php:112
 msgid "Mark"
 msgstr ""
 
@@ -4286,7 +4281,7 @@ msgstr ""
 msgid "Offence"
 msgstr "Offence"
 
-#: timekeeper/index.php:35 timekeeper/index.php:93
+#: timekeeper/index.php:35 timekeeper/index.php:100
 #, fuzzy
 msgid "Offence warning"
 msgstr "Offence"
@@ -4474,7 +4469,7 @@ msgstr "Passwörter stimmen nicht überein"
 msgid "Passwords do not match."
 msgstr "Passwörter stimmen nicht überein"
 
-#: timekeeper/index.php:103 timekeeper/index.php:187 timekeeper/index.php:215
+#: timekeeper/index.php:110 timekeeper/index.php:203 timekeeper/index.php:231
 #, fuzzy
 msgid "Pause"
 msgstr "Pausiert"
@@ -4543,11 +4538,11 @@ msgstr "Platzierungsgruppe"
 #: cust/slkl/pdfscoresheet.php:144 cust/slkl/pdfscoresheet.php:154
 #: cust/slkl/pdfscoresheet.php:252 cust/wfdf/pdfscoresheet.php:673
 #: cust/windmill/pdfscoresheet.php:263 timekeeper/index.php:37
-#: timekeeper/index.php:50 timekeeper/index.php:95
+#: timekeeper/index.php:50 timekeeper/index.php:102
 msgid "Play"
 msgstr "Plays"
 
-#: timekeeper/index.php:72 timekeeper/index.php:102
+#: timekeeper/index.php:72 timekeeper/index.php:109
 #, fuzzy
 msgid "Play must restart"
 msgstr "Spielerdatenbericht"
@@ -5091,8 +5086,8 @@ msgstr "Reservierungen"
 msgid "Reservations added"
 msgstr "Reservierung hinzugefügt"
 
-#: admin/seasonstandings.php:281 timekeeper/index.php:172
-#: timekeeper/index.php:216
+#: admin/seasonstandings.php:281 timekeeper/index.php:188
+#: timekeeper/index.php:232
 msgid "Reset"
 msgstr "Zurücksetzen"
 
@@ -5121,10 +5116,9 @@ msgstr "IDs auflösen"
 msgid "Resolve Ties"
 msgstr "Gleichstände auflösen"
 
-#: timekeeper/index.php:101
-#, fuzzy
-msgid "Resolve dispute"
-msgstr "Gleichstände auflösen"
+#: timekeeper/index.php:108
+msgid "Resolve call or discussion"
+msgstr ""
 
 #: admin/editgame.php:252
 msgid "Responsible person"
@@ -5183,13 +5177,11 @@ msgstr "Ergebnisse geändert: %s."
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
 
-#: timekeeper/index.php:104
-#, fuzzy
+#: timekeeper/index.php:111 timekeeper/index.php:114
 msgid "Resume"
-msgstr "Ergebnis"
+msgstr "Fortsetzen"
 
 #: scorekeeper/addscoresheet.php:301 scorekeeper/addspirittimeouts.php:109
-#: timekeeper/index.php:107
 msgid "Resume game clock"
 msgstr "Spieluhr fortsetzen"
 
@@ -5758,7 +5750,7 @@ msgstr "Datei zum Import wählen"
 msgid "Select grouping"
 msgstr "Gruppe"
 
-#: timekeeper/index.php:137
+#: timekeeper/index.php:144
 #, fuzzy
 msgid "Select language"
 msgstr "Auswahl und Update"
@@ -6011,12 +6003,12 @@ msgstr "Weicher Wartungsmodus"
 msgid "Some games"
 msgstr "Einige Spiele"
 
-#: timekeeper/index.php:109
+#: timekeeper/index.php:116
 #, fuzzy
 msgid "Sound off"
 msgstr "Jeder gegen Jeden"
 
-#: timekeeper/index.php:108 timekeeper/index.php:233
+#: timekeeper/index.php:115 timekeeper/index.php:249
 #, fuzzy
 msgid "Sound on"
 msgstr "Jeder gegen Jeden"
@@ -6255,7 +6247,7 @@ msgstr "Ergebnisse"
 msgid "Standings"
 msgstr "Tabellenstände"
 
-#: timekeeper/index.php:106 timekeeper/index.php:214
+#: timekeeper/index.php:113 timekeeper/index.php:230
 #, fuzzy
 msgid "Start"
 msgstr "Beginnt"
@@ -6264,15 +6256,19 @@ msgstr "Beginnt"
 msgid "Start game clock"
 msgstr "Spieluhr starten"
 
-#: timekeeper/index.php:62 timekeeper/index.php:88
+#: timekeeper/index.php:62 timekeeper/index.php:95
 #, fuzzy
 msgid "Start of game"
 msgstr "Startgruppe"
 
-#: timekeeper/index.php:100
+#: timekeeper/index.php:107
 #, fuzzy
 msgid "Start of play"
 msgstr "Startgruppe"
+
+#: timekeeper/index.php:33 timekeeper/index.php:96
+msgid "Start of point"
+msgstr "Start eines Punktes"
 
 #: scorekeeper/addscoresheet.php:118 scorekeeper/addscoresheet.php:351
 msgid "Start the game clock before adding goals."
@@ -6322,7 +6318,7 @@ msgstr "Statistikreferenzen"
 msgid "Status"
 msgstr "Zustand"
 
-#: timekeeper/index.php:188
+#: timekeeper/index.php:204
 msgid "Stop"
 msgstr ""
 
@@ -6692,7 +6688,7 @@ msgstr ""
 msgid "Time cap"
 msgstr "Zeitobergrenze"
 
-#: timekeeper/index.php:154 timekeeper/index.php:232
+#: timekeeper/index.php:170 timekeeper/index.php:248
 #, fuzzy
 msgid "Time limits"
 msgstr "Zeitslot"
@@ -6719,7 +6715,7 @@ msgid "Timekeeper"
 msgstr "Scorekeeper"
 
 #: gameplay.php:270 ext/rss.php:149 ext/rss.php:188 timekeeper/index.php:45
-#: timekeeper/index.php:90
+#: timekeeper/index.php:97
 msgid "Timeout"
 msgstr "Auszeit"
 
@@ -6731,7 +6727,7 @@ msgstr "Timeout-Statistiken"
 msgid "Timeout duration"
 msgstr "Auszeitdauer"
 
-#: timekeeper/index.php:96
+#: timekeeper/index.php:103
 #, fuzzy
 msgid "Timeout over"
 msgstr "Auszeiten in der Verlaengerung"
@@ -7039,7 +7035,7 @@ msgstr "Ultimate.fi"
 #: ext/poolstatus.php:31 ext/teamcoming.php:32 ext/teamplayed.php:33
 #: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1498
 #: lib/user.functions.php:1559 scorekeeper/index.php:83
-#: spiritkeeper/index.php:103 timekeeper/index.php:230
+#: spiritkeeper/index.php:103 timekeeper/index.php:246
 msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
 
@@ -7221,7 +7217,7 @@ msgstr "Gültig"
 msgid "Value"
 msgstr "Wert"
 
-#: timekeeper/index.php:155
+#: timekeeper/index.php:171
 msgid "Values are in seconds. Defaults follow the WFDF rules."
 msgstr ""
 
@@ -7951,6 +7947,10 @@ msgstr "ja"
 #~ msgid "API"
 #~ msgstr "API"
 
+#, fuzzy
+#~ msgid "Between points"
+#~ msgstr "Zeit zwischen Punkten"
+
 #~ msgid "Count"
 #~ msgstr "Land"
 
@@ -7971,6 +7971,10 @@ msgstr "ja"
 
 #~ msgid "Placements"
 #~ msgstr "Platzierungen"
+
+#, fuzzy
+#~ msgid "Resolve dispute"
+#~ msgstr "Gleichstände auflösen"
 
 #~ msgid "Standings saved"
 #~ msgstr "Rangfolge gespeichert"
