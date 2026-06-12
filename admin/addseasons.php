@@ -387,7 +387,7 @@ if ($sp['hide_time_on_scoresheet']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defence time input fields from scorekeeper sheets.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defence time input fields from Scorekeeper sheets.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Home team assignment") . ": </td><td>";
 $html .= "<select class='dropdown' id='hometeammode' name='hometeammode'>\n";

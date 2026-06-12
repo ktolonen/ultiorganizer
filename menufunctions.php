@@ -258,9 +258,9 @@ function mobilePageTop($title)
     echo utf8entities(_("The legacy mobile administration interface is deprecated."));
     echo " ";
     echo utf8entities(_("Use"));
-    echo " <a href='./scorekeeper/'>" . utf8entities(_("Scorekeeper")) . "</a> ";
+    echo " <a href='./scorekeeper/'>Scorekeeper</a> ";
     echo utf8entities(_("for score entry and"));
-    echo " <a href='" . $spiritkeeperUrl . "'>" . utf8entities(_("Spiritkeeper")) . "</a> ";
+    echo " <a href='" . $spiritkeeperUrl . "'>Spiritkeeper</a> ";
     echo utf8entities(_("for spirit entry."));
     echo "</p>\n";
 }
@@ -694,13 +694,13 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     echo "<tr><td>";
     echo "<a class='subnav' href='?view=ext/index'>&raquo; " . utf8entities(_("Ultiorganizer links")) . "</a>\n";
     echo "<a class='subnav' href='?view=ext/export'>&raquo; " . utf8entities(_("Data export")) . "</a>\n";
-    echo "<a class='subnav' href='./scorekeeper/'>&raquo; " . utf8entities(_("Scorekeeper")) . "</a>\n";
+    echo "<a class='subnav' href='./scorekeeper/'>&raquo; Scorekeeper</a>\n";
     $spiritkeeperUrl = './spiritkeeper/';
     if (function_exists('SpiritkeeperHomeUrl')) {
         $spiritkeeperUrl = SpiritkeeperHomeUrl();
     }
-    echo "<a class='subnav' href='" . $spiritkeeperUrl . "'>&raquo; " . utf8entities(_("Spiritkeeper")) . "</a>\n";
-    echo "<a class='subnav' href='./timekeeper/'>&raquo; " . utf8entities(_("Timekeeper")) . "</a>\n";
+    echo "<a class='subnav' href='" . $spiritkeeperUrl . "'>&raquo; Spiritkeeper</a>\n";
+    echo "<a class='subnav' href='./timekeeper/'>&raquo; Timekeeper</a>\n";
     echo "</td></tr>\n";
     echo "</table>";
 

@@ -7,7 +7,7 @@ Scorekeeper is the mobile-style officiating surface for game-day result and scor
 ## Core entrypoints
 
 - `scorekeeper/index.php`: bootstrap, session setup, routed page shell, and footer.
-- `scorekeeper/login.php`: scorekeeper login page.
+- `scorekeeper/login.php`: Scorekeeper login page with interface language selection.
 - `scorekeeper/respgames.php`: list of games the current user is responsible for.
 - `scorekeeper/addplayerlists.php`: game-specific player list editor.
 - `scorekeeper/addscoresheet.php`: incremental scoresheet entry and live game-clock control page.

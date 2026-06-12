@@ -89,6 +89,7 @@ Authenticated Spiritkeeper is a focused team-and-game spirit workflow.
 
 - `spiritkeeper/index.php` accepts login POSTs when no token is present.
 - `spiritkeeper/home.php` is the authenticated event and team selection page.
+- the login page provides language selection using the shared mobile flag control.
 - `spiritkeeper/teamgames.php` shows only the selected team's game list in authenticated mode.
 - `spiritkeeper/login.php` is the dedicated login page for direct authenticated links.
 - `spiritkeeper/editgame.php` is the mobile game-level editor for logged-in users.

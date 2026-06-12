@@ -3,7 +3,7 @@
 include_once __DIR__ . '/auth.php';
 spiritkeeperRequireAuth(__FILE__, 'home');
 
-$pageTitle = _("Spiritkeeper");
+$pageTitle = "Spiritkeeper";
 $pageHtml = "";
 $teams = SpiritkeeperCurrentAccessibleTeams();
 $currentSeasons = SpiritkeeperCurrentSeasons();

@@ -6,7 +6,7 @@ spiritkeeperRequireAuth(__FILE__, 'editgame');
 $pageHtml = "";
 $gameId = GetInt('game');
 $teamId = GetInt('team');
-$pageTitle = _("Spiritkeeper");
+$pageTitle = "Spiritkeeper";
 
 if ($gameId <= 0) {
     $pageHtml .= "<div class='mobile-notice mobile-notice--error'><p>" . _("Invalid game.") . "</p></div>";
@@ -49,7 +49,7 @@ if ($season['spiritmode'] <= 0) {
     return;
 }
 
-$pageTitle = _("Spiritkeeper") . " - " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']);
+$pageTitle = "Spiritkeeper - " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']);
 $responsibleTeamId = (int) $teamId;
 $ratedTeamId = ($responsibleTeamId === $homeTeamId) ? $visitorTeamId : $homeTeamId;
 $ratesHomeTeam = ($ratedTeamId === $homeTeamId);

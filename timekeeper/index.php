@@ -21,7 +21,7 @@ if (!isset($_SESSION['uid'])) {
 setSessionLocale();
 
 $styles_prefix = '../';
-$pageTitle = _("Timekeeper");
+$pageTitle = "Timekeeper";
 $favicon = $styles_prefix . "cust/" . CUSTOMIZATIONS . "/favicon.png";
 if (!is_file($include_prefix . "cust/" . CUSTOMIZATIONS . "/favicon.png")) {
     $favicon = $styles_prefix . "cust/default/favicon.png";
@@ -35,13 +35,6 @@ $timekeeperActions = TimekeeperActionDefinitions();
 $timekeeperCapFields = TimekeeperTemplateCapFields();
 $timekeeperCapDefaults = TimekeeperTemplateCapDefaults();
 $timekeeperClientTemplates = TimekeeperTemplatesForClient();
-
-$timekeeperLocaleFlagFiles = [
-    'de_DE.utf8' => 'Germany.png',
-    'en_GB.utf8' => 'United_Kingdom.png',
-    'es_ES.utf8' => 'Spain.png',
-    'fi_FI.utf8' => 'Finland.png',
-];
 
 // Translated strings consumed by script/timekeeper.js.
 $timekeeperI18n = [
@@ -91,33 +84,12 @@ echo "</div>\n";
 echo "<div data-role='content'>\n";
 
 // --- Language screen -----------------------------------------------------
-// Reusable "change language" pattern: a footer button (#tk-nav-language) reveals
-// this flag list; each flag reloads the page with ?locale=... and the chosen
-// locale is inherited from the session afterwards. This block plus the footer
-// button are self-contained so the same control can be copied into the
-// Scorekeeper and Spiritkeeper apps (use the app's own path prefix for the flag
-// image src). Hidden by default; the timer view is the first screen.
+// The footer language button reveals the shared mobile flag selector. Each flag
+// reloads the page with ?locale=..., and the session remembers the selection.
+// Hidden by default; the timer view is the first screen.
 echo "<div id='tk-screen-language' class='tk-screen tk-hidden'>\n";
 echo "<div class='card'><h2>" . utf8entities(_("Select language")) . "</h2>\n";
-echo "<div class='tk-language-flags'>\n";
-if (isset($locales) && is_array($locales)) {
-    foreach ($locales as $localestr => $localename) {
-        $flagSrc = $styles_prefix . "locale/" . $localestr . "/flag.png";
-        $flagClass = "localeselection tk-language-flag-native";
-        if (isset($timekeeperLocaleFlagFiles[$localestr])) {
-            $smallFlagFile = $timekeeperLocaleFlagFiles[$localestr];
-            if (is_file($include_prefix . "images/flags/small/" . $smallFlagFile)) {
-                $flagSrc = $styles_prefix . "images/flags/small/" . $smallFlagFile;
-                $flagClass = "localeselection tk-language-flag-small";
-            }
-        }
-        echo "<a href='?locale=" . urlencode($localestr) . "'>";
-        echo "<img class='" . utf8entities($flagClass) . "' src='" . utf8entities($flagSrc)
-            . "' alt='" . utf8entities($localename) . "'/>";
-        echo "</a>\n";
-    }
-}
-echo "</div>\n";
+echo MobileLanguageSelection();
 echo "</div>\n";
 echo "</div>\n";
 

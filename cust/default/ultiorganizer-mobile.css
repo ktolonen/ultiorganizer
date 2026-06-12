@@ -826,33 +826,28 @@ fieldset {
   }
 }
 
+/* Mobile language selection ---------------------------------------------- */
+
+.mobile-language-flags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+
+.mobile-language-flags img {
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  display: block;
+  width: 48px;
+  height: 30px;
+  object-fit: cover;
+}
+
 /* Timekeeper -------------------------------------------------------------- */
 
 .tk-hidden {
   display: none;
-}
-
-.tk-language-flags {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 14px;
-  align-items: center;
-}
-
-.tk-language-flags img {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-}
-
-.tk-language-flags .tk-language-flag-small {
-  width: 64px;
-  height: auto;
-}
-
-.tk-language-flags .tk-language-flag-native {
-  width: auto;
-  max-width: 64px;
-  height: auto;
 }
 
 .tk-config-group {

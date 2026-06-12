@@ -25,14 +25,14 @@ $styles_prefix = '../';
 $token = SpiritkeeperGetToken();
 $teamId = 0;
 $teamInfo = [];
-$pageTitle = _("Spiritkeeper");
+$pageTitle = "Spiritkeeper";
 $pageHtml = '';
 $showLogout = false;
 
 if ($token !== '') {
     $teamId = SpiritTeamIdByToken($token);
     $teamInfo = $teamId > 0 ? TeamInfo($teamId) : [];
-    $pageTitle = !empty($teamInfo['seasonname']) ? $teamInfo['seasonname'] . " - " . _("Spiritkeeper") : _("Spiritkeeper");
+    $pageTitle = !empty($teamInfo['seasonname']) ? $teamInfo['seasonname'] . " - Spiritkeeper" : "Spiritkeeper";
     $view = iget('view');
     if (!in_array($view, ['teamgames', 'submitsotg'], true)) {
         $view = 'teamgames';

@@ -163,7 +163,7 @@ function TimekeeperTemplatesForClient()
 function TimekeeperRequireSuperAdmin($action)
 {
     if (!isSuperAdmin()) {
-        die('Insufficient rights to ' . $action . ' timekeeper template.');
+        die('Insufficient rights to ' . $action . ' Timekeeper template.');
     }
 }
 

@@ -108,7 +108,7 @@ if (empty($selectedTeam) || $selectedTeamId <= 0) {
     return;
 }
 
-$pageTitle = _("Spiritkeeper") . " - " . $selectedTeam['name'];
+$pageTitle = "Spiritkeeper - " . $selectedTeam['name'];
 $games = SpiritTokenGameRows($selectedTeamId);
 
 $pageHtml .= "<div class='card spiritkeeper-team-card'>";

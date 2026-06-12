@@ -29,6 +29,10 @@ if ($allowAnonResult) {
 }
 $html .= "</div>";
 $html .= "</form>";
+$html .= "<div class='card mobile-language-selection'>";
+$html .= "<h2>" . utf8entities(_("Select language")) . "</h2>";
+$html .= MobileLanguageSelection(['view' => 'login']);
+$html .= "</div>";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;

@@ -4,7 +4,7 @@ include_once __DIR__ . '/auth.php';
 include_once 'lib/timekeeper.functions.php';
 
 if (!isSuperAdmin()) {
-    die('Insufficient rights to manage timekeeper templates.');
+    die('Insufficient rights to manage Timekeeper templates.');
 }
 
 $LAYOUT_ID = TIMEKEEPERTEMPLATES;

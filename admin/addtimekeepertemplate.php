@@ -4,7 +4,7 @@ include_once __DIR__ . '/auth.php';
 include_once 'lib/timekeeper.functions.php';
 
 if (!isSuperAdmin()) {
-    die('Insufficient rights to manage timekeeper templates.');
+    die('Insufficient rights to manage Timekeeper templates.');
 }
 
 $LAYOUT_ID = ADDTIMEKEEPERTEMPLATE;
@@ -88,10 +88,10 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 if ($templateId) {
-    $html .= "<h2>" . _("Edit timekeeper template") . "</h2>\n";
+    $html .= "<h2>" . _("Edit Timekeeper template") . "</h2>\n";
     $html .= "<form method='post' action='?view=admin/addtimekeepertemplate&amp;template=$templateId'>";
 } else {
-    $html .= "<h2>" . _("Add timekeeper template") . "</h2>\n";
+    $html .= "<h2>" . _("Add Timekeeper template") . "</h2>\n";
     $html .= "<form method='post' action='?view=admin/addtimekeepertemplate'>";
 }
 
@@ -109,6 +109,7 @@ $html .= "</table>\n";
 
 $html .= "<h3>" . _("Signals") . "</h3>\n";
 $html .= "<p>" . utf8entities(_("Each signal has a time (seconds from the start of the action) and an instruction to call out. The timer counts down from the highest signal time. Clear the instruction to remove a signal; fill a blank row to add one.")) . "</p>\n";
+$html .= "<p>" . utf8entities(_("After saving, translate signal instructions under Administration > Translations.")) . "</p>\n";
 $rowNumber = 0;
 $translationFields = ["name"];
 $blankRowsPerAction = 1;

@@ -18,6 +18,8 @@ or event data; the session only carries the inherited interface language.
 - `timekeeper/index.php`: bootstrap, locale handling, and the full single-page shell (language,
   configuration, and timer screens). It emits the available templates (`TIMEKEEPER_TEMPLATES`), the
   default template id, and translated labels consumed by the client script.
+- The language screen uses the shared mobile flag control also shown on the Scorekeeper and
+  Spiritkeeper front pages.
 - `script/timekeeper.js`: all client logic (screen switching, configuration persistence, the timer
   engine, the game clock, audio, and optional screen wake lock). Written as ES5 to match the
   project ESLint configuration.
