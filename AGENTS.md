@@ -42,6 +42,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Use the existing `?view=...` routing pattern for new pages.
 - Prefer small, focused changes and avoid large refactors unless explicitly requested.
 - When adding a schema change: add `upgradeXX()` in `sql/upgrade_db.php`, bump `DB_VERSION` in `lib/database.php`, and update `sql/ultiorganizer.sql` for fresh installs. See `docs/database-upgrades.md`.
+- If the current branch already introduces the latest unmerged database upgrade, fold further schema changes into that upgrade instead of adding another one. Ask the developer to reset or clean the local database so the amended upgrade runs again.
 - Avoid touching `conf/` unless required.
 - Keep edits ASCII unless the file already uses Unicode.
 - If making UI changes, verify both desktop and mobile layouts.

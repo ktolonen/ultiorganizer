@@ -91,6 +91,10 @@ yellow and shows a dismissible cap notice. If it reaches time cap, the game cloc
 shows a dismissible time-cap notice. Each cap is also logged once in the game-clock event log. Cap
 timing uses the running game-clock time, excluding pauses.
 
+If any action other than Start of game is started while the game clock is stopped, the game-clock
+area turns red until the clock is started or resumed. This highlights a likely missed game-clock
+start without interrupting the action timer.
+
 ## Out of scope
 
 Timekeeper deliberately does not track score, derive the cap target, or count team timeouts — that

@@ -1453,6 +1453,11 @@ function upgrade95()
         ) seed
         WHERE t.name='WFDF'
         AND NOT EXISTS (SELECT 1 FROM uo_timekeeper_template_signal s WHERE s.template_id=t.template_id)");
+    runQuery("INSERT IGNORE INTO uo_translation (translation_key, locale, translation)
+        SELECT DISTINCT signal_text, 'en_GB_utf8', signal_text
+        FROM uo_timekeeper_template_signal
+        WHERE signal_text <> ''
+        AND CHAR_LENGTH(signal_text) <= 50");
 }
 
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)

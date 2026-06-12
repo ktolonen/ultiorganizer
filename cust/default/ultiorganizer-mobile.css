@@ -1037,6 +1037,14 @@ fieldset {
   color: #b00020;
 }
 
+.tk-clock-start-warning {
+  background: #fde0e0;
+}
+
+.tk-clock-start-warning .tk-matchclock {
+  color: #b00020;
+}
+
 .tk-matchclock-actions {
   display: flex;
   justify-content: center;

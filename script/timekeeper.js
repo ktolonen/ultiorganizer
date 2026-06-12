@@ -38,7 +38,8 @@
     halfTimeStarted: false,
     dismissedCap: "",
     activeCap: "",
-    loggedCaps: {}
+    loggedCaps: {},
+    startWarning: false
   };
   var clockInterval = null;
 
@@ -665,6 +666,10 @@
         renderCapAlert();
       }
     }
+    if (id !== "halfstart" && !clock.running) {
+      clock.startWarning = true;
+      renderCapAlert();
+    }
 
     el("tk-display-scenario").textContent = t("sc_" + id);
     el("tk-display-signal").innerHTML = "&nbsp;";
@@ -772,7 +777,8 @@
     }
 
     clock.activeCap = active;
-    body.className = "tk-matchclock-body tk-cap-" + (active || "none");
+    body.className = "tk-matchclock-body tk-cap-" + (active || "none")
+      + (clock.startWarning ? " tk-clock-start-warning" : "");
     if (active === "time") {
       alert.className = "tk-cap-alert";
       text.textContent = t("cap_time");
@@ -855,6 +861,7 @@
     if (!clock.capConfig) {
       clock.capConfig = copyObject(config);
     }
+    clock.startWarning = false;
     clock.running = true;
     clock.startTs = Date.now();
     requestWakeLock();
@@ -862,6 +869,7 @@
       clockInterval = window.setInterval(renderClock, 250);
     }
     setClockButton();
+    renderClock();
   }
 
   function pauseClock() {
@@ -895,6 +903,7 @@
     clock.dismissedCap = "";
     clock.activeCap = "";
     clock.loggedCaps = {};
+    clock.startWarning = false;
     if (clockInterval) {
       window.clearInterval(clockInterval);
       clockInterval = null;

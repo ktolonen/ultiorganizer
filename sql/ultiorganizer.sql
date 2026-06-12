@@ -1174,6 +1174,12 @@ CREATE TABLE IF NOT EXISTS `uo_translation` (
   PRIMARY KEY (`translation_key`,`locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+INSERT IGNORE INTO `uo_translation` (`translation_key`, `locale`, `translation`)
+  SELECT DISTINCT `signal_text`, 'en_GB_utf8', `signal_text`
+  FROM `uo_timekeeper_template_signal`
+  WHERE `signal_text` <> ''
+  AND CHAR_LENGTH(`signal_text`) <= 50;
+
 
 CREATE TABLE IF NOT EXISTS `uo_urls` (
   `url_id` int(10) NOT NULL AUTO_INCREMENT,

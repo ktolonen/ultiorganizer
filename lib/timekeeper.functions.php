@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
+require_once __DIR__ . '/translation.functions.php';
 
 function TimekeeperActionDefinitions()
 {
@@ -192,6 +193,7 @@ function SetTimekeeperTemplateSignals($templateId, $signals)
     TimekeeperRequireSuperAdmin('edit');
     DBQuery(sprintf("DELETE FROM uo_timekeeper_template_signal WHERE template_id=%d", (int) $templateId));
     foreach (TimekeeperNormalizeTemplateSignals($signals) as $signal) {
+        RegisterTranslationKey($signal['signal_text']);
         DBQuery(sprintf(
             "INSERT INTO uo_timekeeper_template_signal (template_id, action_key, signal_time, signal_text)
             VALUES (%d, '%s', %d, '%s')",
