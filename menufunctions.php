@@ -476,6 +476,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         echo "<tr><td>\n";
         echo "<a class='subnav' href='?view=admin/seasons'>&raquo; " . utf8entities(_("Events")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/serieformats'>&raquo; " . utf8entities(_("Rule templates")) . "</a>\n";
+        echo "<a class='subnav' href='?view=admin/timekeepertemplates'>&raquo; " . utf8entities(_("Timekeeper templates")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/clubs'>&raquo; " . utf8entities(_("Clubs & Countries")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/locations'>&raquo; " . utf8entities(_("Field locations")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/reservations'>&raquo; " . utf8entities(_("Field reservations")) . "</a>\n";

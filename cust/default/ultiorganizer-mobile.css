@@ -884,6 +884,11 @@ fieldset {
   text-align: right;
 }
 
+.tk-config-row select {
+  width: 10rem;
+  flex: 0 0 auto;
+}
+
 .tk-unit {
   flex: 0 0 auto;
   color: var(--muted);
@@ -1002,6 +1007,36 @@ fieldset {
   margin: 4px 0 10px;
 }
 
+.tk-cap-alert {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+  margin: 0 0 10px;
+}
+
+.tk-cap-alert.tk-hidden {
+  display: none;
+}
+
+.tk-cap-half {
+  background: #fff4d6;
+}
+
+.tk-cap-half .tk-cap-alert {
+  color: #8a5a00;
+}
+
+.tk-cap-time {
+  background: #fde0e0;
+}
+
+.tk-cap-time .tk-cap-alert,
+.tk-cap-time .tk-matchclock {
+  color: #b00020;
+}
+
 .tk-matchclock-actions {
   display: flex;
   justify-content: center;
@@ -1019,5 +1054,9 @@ fieldset {
   .tk-side {
     flex-basis: auto;
     max-width: none;
+  }
+
+  .tk-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

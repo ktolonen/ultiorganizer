@@ -1,18 +1,24 @@
 /*
  * Timekeeper: a configurable WFDF time-limit assistant for game officials.
  * Standalone client logic for /timekeeper/. Written as ES5 to match the
- * project ESLint configuration. Reads TIMEKEEPER_DEFAULTS and TIMEKEEPER_I18N
+ * project ESLint configuration. Reads TIMEKEEPER_TEMPLATES and TIMEKEEPER_I18N
  * emitted by timekeeper/index.php.
  */
 (function () {
   "use strict";
 
-  var DEFAULTS = window.TIMEKEEPER_DEFAULTS || {};
+  var DEFAULTS = window.TIMEKEEPER_CAP_DEFAULTS || {};
+  var TEMPLATES = window.TIMEKEEPER_TEMPLATES || {};
+  var DEFAULT_TEMPLATE_ID = window.TIMEKEEPER_DEFAULT_TEMPLATE_ID || "";
   var I18N = window.TIMEKEEPER_I18N || {};
   var CONFIG_KEY = "timekeeper.config";
+  var CONFIGS_KEY = "timekeeper.configs";
+  var TEMPLATE_KEY = "timekeeper.template";
   var SOUND_KEY = "timekeeper.sound";
 
   var config = {};
+  var signalConfig = {};
+  var activeTemplateId = "";
   var soundOn = true;
   var audioCtx = null;
   var wakeLock = null;
@@ -27,7 +33,12 @@
     startTs: 0,
     accumMs: 0,
     markCounts: {},
-    marks: []
+    marks: [],
+    capConfig: null,
+    halfTimeStarted: false,
+    dismissedCap: "",
+    activeCap: "",
+    loggedCaps: {}
   };
   var clockInterval = null;
 
@@ -35,7 +46,10 @@
     return document.getElementById(id);
   }
 
-  function t(key) {
+  function t(key, overrides) {
+    if (overrides && Object.prototype.hasOwnProperty.call(overrides, key)) {
+      return overrides[key];
+    }
     return Object.prototype.hasOwnProperty.call(I18N, key) ? I18N[key] : key;
   }
 
@@ -70,35 +84,171 @@
     }
   }
 
+  function objectKeys(obj) {
+    var keys = [];
+    var key;
+    for (key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        keys.push(key);
+      }
+    }
+    return keys;
+  }
+
+  function copyObject(obj) {
+    var copy = {};
+    var key;
+    for (key in obj) {
+      if (Object.prototype.hasOwnProperty.call(obj, key)) {
+        copy[key] = obj[key];
+      }
+    }
+    return copy;
+  }
+
   /* ------------------------------------------------------------------ */
   /* Configuration                                                       */
   /* ------------------------------------------------------------------ */
 
-  function loadConfig() {
-    config = {};
-    var field;
-    for (field in DEFAULTS) {
-      if (Object.prototype.hasOwnProperty.call(DEFAULTS, field)) {
-        config[field] = DEFAULTS[field];
-      }
+  function templateExists(id) {
+    return Object.prototype.hasOwnProperty.call(TEMPLATES, id);
+  }
+
+  function firstTemplateId() {
+    var keys = objectKeys(TEMPLATES);
+    return keys.length ? keys[0] : "";
+  }
+
+  function currentTemplate() {
+    if (templateExists(activeTemplateId)) {
+      return TEMPLATES[activeTemplateId];
     }
-    var stored = storageGet(CONFIG_KEY);
+    return null;
+  }
+
+  function currentDefaults() {
+    var template = currentTemplate();
+    if (template && template.caps) {
+      var defaults = copyObject(DEFAULTS);
+      var field;
+      for (field in template.caps) {
+        if (Object.prototype.hasOwnProperty.call(template.caps, field)) {
+          defaults[field] = num(template.caps[field]);
+        }
+      }
+      return defaults;
+    }
+    return DEFAULTS;
+  }
+
+  function currentTemplateSignals() {
+    var template = currentTemplate();
+    if (template && template.signals) {
+      return template.signals;
+    }
+    return {};
+  }
+
+  function loadStoredConfigs() {
+    var stored = storageGet(CONFIGS_KEY);
     if (stored) {
       try {
-        var parsed = JSON.parse(stored);
-        for (field in parsed) {
-          if (Object.prototype.hasOwnProperty.call(config, field)) {
-            config[field] = num(parsed[field]);
-          }
-        }
+        return JSON.parse(stored) || {};
       } catch (e) {
         void e;
       }
     }
+    return {};
+  }
+
+  function migrateLegacyConfig() {
+    if (storageGet(CONFIGS_KEY)) {
+      return;
+    }
+    var stored = storageGet(CONFIG_KEY);
+    if (!stored) {
+      return;
+    }
+    try {
+      var parsed = JSON.parse(stored);
+      var configs = {};
+      configs[String(DEFAULT_TEMPLATE_ID)] = { caps: {} };
+      if (Object.prototype.hasOwnProperty.call(parsed, "half_time_cap")) {
+        configs[String(DEFAULT_TEMPLATE_ID)].caps.half_time_cap = parsed.half_time_cap;
+      }
+      if (Object.prototype.hasOwnProperty.call(parsed, "time_cap")) {
+        configs[String(DEFAULT_TEMPLATE_ID)].caps.time_cap = parsed.time_cap;
+      }
+      storageSet(CONFIGS_KEY, JSON.stringify(configs));
+    } catch (e) {
+      void e;
+    }
+  }
+
+  function resolveTemplateId(id) {
+    id = String(id || "");
+    if (templateExists(id)) {
+      return id;
+    }
+    id = String(DEFAULT_TEMPLATE_ID || "");
+    if (templateExists(id)) {
+      return id;
+    }
+    return firstTemplateId();
+  }
+
+  function setActiveTemplate(id) {
+    activeTemplateId = resolveTemplateId(id);
+    if (activeTemplateId) {
+      storageSet(TEMPLATE_KEY, activeTemplateId);
+    }
+    loadConfig();
+    populateTemplateSelector();
+    populateInputs();
+  }
+
+  function loadConfig() {
+    config = {};
+    var defaults = currentDefaults();
+    var field;
+    for (field in defaults) {
+      if (Object.prototype.hasOwnProperty.call(defaults, field)) {
+        config[field] = defaults[field];
+      }
+    }
+    var configs = loadStoredConfigs();
+    var stored = configs[activeTemplateId] || {};
+    var parsed = stored.caps || stored || {};
+    for (field in parsed) {
+      if (Object.prototype.hasOwnProperty.call(config, field)) {
+        config[field] = num(parsed[field]);
+      }
+    }
+    signalConfig = stored.signals || {};
+  }
+
+  function populateTemplateSelector() {
+    var select = el("tk-template-select");
+    if (select) {
+      select.value = activeTemplateId;
+    }
   }
 
   function saveConfig() {
-    storageSet(CONFIG_KEY, JSON.stringify(config));
+    var configs = loadStoredConfigs();
+    configs[activeTemplateId] = { caps: {}, signals: {} };
+    var field;
+    for (field in config) {
+      if (Object.prototype.hasOwnProperty.call(config, field)) {
+        configs[activeTemplateId].caps[field] = config[field];
+      }
+    }
+    for (field in signalConfig) {
+      if (Object.prototype.hasOwnProperty.call(signalConfig, field)) {
+        configs[activeTemplateId].signals[field] = signalConfig[field];
+      }
+    }
+    storageSet(CONFIGS_KEY, JSON.stringify(configs));
   }
 
   function populateInputs() {
@@ -111,6 +261,7 @@
         }
       }
     }
+    renderSignalInputs();
   }
 
   function readInputs() {
@@ -120,115 +271,189 @@
       var field = inputs[i].getAttribute("data-field");
       config[field] = num(inputs[i].value);
     }
+    inputs = document.querySelectorAll("#tk-config-form input[data-signal-id]");
+    for (i = 0; i < inputs.length; i++) {
+      var signalId = inputs[i].getAttribute("data-signal-id");
+      signalConfig[signalId] = num(inputs[i].value);
+    }
     saveConfig();
   }
 
   function resetConfig() {
+    var defaults = currentDefaults();
     var field;
-    for (field in DEFAULTS) {
-      if (Object.prototype.hasOwnProperty.call(DEFAULTS, field)) {
-        config[field] = DEFAULTS[field];
+    for (field in defaults) {
+      if (Object.prototype.hasOwnProperty.call(defaults, field)) {
+        config[field] = defaults[field];
       }
     }
+    signalConfig = {};
     populateInputs();
     saveConfig();
+  }
+
+  function rowTime(row) {
+    var id = String(row.id);
+    if (Object.prototype.hasOwnProperty.call(signalConfig, id)) {
+      return num(signalConfig[id]);
+    }
+    return num(row.time);
+  }
+
+  function signalRowsForAction(actionId) {
+    var signals = currentTemplateSignals();
+    var rows = signals[actionId] || [];
+    var copy = [];
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      copy.push({
+        id: rows[i].id,
+        time: rowTime(rows[i]),
+        text: rows[i].text
+      });
+    }
+    copy.sort(function (a, b) {
+      if (a.time === b.time) {
+        return a.id - b.id;
+      }
+      return a.time - b.time;
+    });
+    return copy;
+  }
+
+  function renderSignalInputs() {
+    var box = el("tk-signal-config");
+    if (!box) {
+      return;
+    }
+    box.innerHTML = "";
+    var actionOrder = ["betweenpoints", "timeout", "timeoutbeforepull", "halfstart", "halftime", "dispute", "discretrieval"];
+    var actionIndex;
+    for (actionIndex = 0; actionIndex < actionOrder.length; actionIndex++) {
+      var actionId = actionOrder[actionIndex];
+      var rows = signalRowsForAction(actionId);
+      if (!rows.length) {
+        continue;
+      }
+      var fieldset = document.createElement("fieldset");
+      fieldset.className = "tk-config-group";
+      var legend = document.createElement("legend");
+      legend.textContent = t("sc_" + actionId);
+      fieldset.appendChild(legend);
+      var i;
+      for (i = 0; i < rows.length; i++) {
+        var row = document.createElement("div");
+        row.className = "tk-config-row";
+        var label = document.createElement("label");
+        label.setAttribute("for", "cfg_signal_" + rows[i].id);
+        label.textContent = rows[i].text;
+        var input = document.createElement("input");
+        input.type = "number";
+        input.inputMode = "numeric";
+        input.min = "0";
+        input.step = "1";
+        input.id = "cfg_signal_" + rows[i].id;
+        input.setAttribute("data-signal-id", rows[i].id);
+        input.value = rows[i].time;
+        var unit = document.createElement("span");
+        unit.className = "tk-unit";
+        unit.textContent = t("ui_seconds");
+        row.appendChild(label);
+        row.appendChild(input);
+        row.appendChild(unit);
+        fieldset.appendChild(row);
+      }
+      box.appendChild(fieldset);
+    }
   }
 
   /* ------------------------------------------------------------------ */
   /* Scenario definitions                                                */
   /* ------------------------------------------------------------------ */
 
-  // Each builder returns { total, signals, repeat }. The display counts down
-  // from total to zero; signals fire by elapsed time from the button press.
-  // A signal is { at, key, kind: "warn"|"go", final?, startsClock? }.
+  // A signal is just a time and a textual instruction. The highest-time signal
+  // is the "play" the countdown ends on (red); earlier ones are warnings. Each
+  // builder returns { total, signals, repeat }. Special behaviour is keyed off
+  // the action: "halfstart" starts the game clock on its final signal, and
+  // "dispute" repeats its final signal.
   function buildScenario(id) {
-    var c = config;
-    if (id === "halfstart") {
-      var lead1 = num(c.hs_lead1);
-      var lead2 = num(c.hs_lead2);
-      var signals = [{ at: 0, key: "sig_start_warn", kind: "warn" }];
-      if (lead2 > 0 && lead2 < lead1) {
-        signals.push({ at: lead1 - lead2, key: "sig_start_warn", kind: "warn" });
-      }
-      signals.push({ at: lead1, key: "sig_start_go", kind: "go", final: true, startsClock: true });
-      return { total: lead1, signals: signals };
+    if (id === "timeout" && scenario && scenario.id === "betweenpoints") {
+      return buildTimeoutBeforePull();
     }
-    if (id === "betweenpoints") {
-      return {
-        total: num(c.bp_play),
-        signals: [
-          { at: num(c.bp_off), key: "sig_off_warn", kind: "warn" },
-          { at: num(c.bp_def), key: "sig_def_warn", kind: "warn" },
-          { at: num(c.bp_play), key: "sig_play", kind: "go", final: true }
-        ]
-      };
+    var rows = signalRowsForAction(id);
+    if (!rows.length) {
+      return null;
     }
-    if (id === "timeout") {
-      // Before the pull (A5.5): pressed while the between-points timer runs, the
-      // timeout adds to_add seconds to the ongoing point-start timeline. It
-      // signals "Timeout over" at to_add seconds from the start of the point
-      // (A5.5.2), then the A5.4 between-points sequence commences. The "anchor"
-      // flag tells startScenario to keep the point's elapsed time.
-      if (scenario && scenario.id === "betweenpoints") {
-        var add = num(c.to_add);
-        return {
-          total: add + num(c.bp_play),
-          anchor: "point",
-          signals: [
-            { at: add, key: "sig_end_timeout", kind: "warn" },
-            { at: add + num(c.bp_off), key: "sig_off_warn", kind: "warn" },
-            { at: add + num(c.bp_def), key: "sig_def_warn", kind: "warn" },
-            { at: add + num(c.bp_play), key: "sig_play", kind: "go", final: true }
-          ]
+    var last = rows.length - 1;
+    var total = rows[last].time;
+    var built = {
+      total: total,
+      signals: []
+    };
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      var isFinal = i === last;
+      built.signals.push({
+        at: rows[i].time,
+        text: rows[i].text,
+        kind: isFinal ? "go" : "warn",
+        final: isFinal,
+        startsClock: id === "halfstart" && isFinal
+      });
+    }
+    // Only "Call or discussion" repeats its final signal -- every gap between the
+    // last two signals -- until the operator stops. Behaviour is fixed to the
+    // action and does not depend on the signal text.
+    if (id === "dispute" && rows.length >= 2) {
+      var every = total - rows[last - 1].time;
+      if (every > 0) {
+        built.repeat = {
+          from: total,
+          every: every,
+          text: rows[last].text,
+          kind: "go"
         };
       }
-      // Normal in-game timeout after the pull (A5.6), timed from the call.
-      return {
-        total: num(c.to_play),
-        signals: [
-          { at: num(c.to_off1), key: "sig_off_warn", kind: "warn" },
-          { at: num(c.to_off2), key: "sig_off_warn", kind: "warn" },
-          { at: num(c.to_def), key: "sig_def_warn", kind: "warn" },
-          { at: num(c.to_play), key: "sig_play", kind: "go", final: true }
-        ]
-      };
     }
-    if (id === "halftime") {
-      var htLen = num(c.ht_len);
-      var warnAt = htLen - num(c.ht_warn);
-      if (warnAt < 0) {
-        warnAt = 0;
-      }
-      return {
-        total: htLen + num(c.bp_play),
-        signals: [
-          { at: warnAt, key: "sig_half_warn", kind: "warn" },
-          { at: htLen, key: "sig_half_end", kind: "warn" },
-          { at: htLen + num(c.bp_off), key: "sig_off_warn", kind: "warn" },
-          { at: htLen + num(c.bp_def), key: "sig_def_warn", kind: "warn" },
-          { at: htLen + num(c.bp_play), key: "sig_play", kind: "go", final: true }
-        ]
-      };
+    return built;
+  }
+
+  function timeoutEndSignal() {
+    var rows = signalRowsForAction("timeoutbeforepull");
+    if (rows.length) {
+      return rows[rows.length - 1];
     }
-    if (id === "dispute") {
-      var first = num(c.dp_first);
-      var restart = num(c.dp_restart);
-      var rep = num(c.dp_repeat);
-      var built = {
-        total: restart,
-        signals: [
-          { at: first, key: "sig_dispute", kind: "warn" },
-          { at: restart, key: "sig_restart", kind: "go", final: true }
-        ]
-      };
-      // After play must restart, repeat that signal every dp_repeat seconds
-      // until play resumes (A5.7.3).
-      if (rep > 0) {
-        built.repeat = { from: restart, every: rep, key: "sig_restart", kind: "go" };
-      }
-      return built;
+    return { time: 75, text: t("sig_end_timeout") };
+  }
+
+  function buildTimeoutBeforePull() {
+    var timeoutEnd = timeoutEndSignal();
+    var addedTime = num(timeoutEnd.time);
+    var rows = signalRowsForAction("betweenpoints");
+    var pullTime = rows.length ? rows[rows.length - 1].time : 0;
+
+    // A5.5.2: the end-of-timeout is signalled `addedTime` seconds from the START
+    // of the point (not from the call), then a fresh A5.4 sequence commences.
+    // The timer keeps the point-start timeline (anchor), so every offset below
+    // is measured from the start of the point.
+    var built = {
+      total: addedTime + pullTime,
+      anchor: "point",
+      signals: [
+        { at: addedTime, text: timeoutEnd.text, kind: "warn" }
+      ]
+    };
+
+    var i;
+    for (i = 0; i < rows.length; i++) {
+      built.signals.push({
+        at: addedTime + rows[i].time,
+        text: rows[i].text,
+        kind: i === rows.length - 1 ? "go" : "warn",
+        final: i === rows.length - 1
+      });
     }
-    return null;
+    return built;
   }
 
   /* ------------------------------------------------------------------ */
@@ -339,7 +564,7 @@
       var row = document.createElement("div");
       row.className = "tk-side-row";
       var label = document.createElement("span");
-      label.textContent = t(sig.key);
+      label.textContent = sig.text;
       var time = document.createElement("span");
       time.className = "tk-side-time";
       time.textContent = formatTime(built.total - sig.at);
@@ -361,7 +586,7 @@
       var sig = scenario.signals[i];
       if (!sig.fired && elapsed >= sig.at) {
         sig.fired = true;
-        el("tk-display-signal").textContent = t(sig.key);
+        el("tk-display-signal").textContent = sig.text;
         setDisplayState(sig.kind === "go" ? "zero" : "warn");
         beep(sig.kind);
         if (sig.row) {
@@ -377,7 +602,7 @@
       var repeatCount = Math.floor((elapsed - scenario.repeat.from) / scenario.repeat.every);
       if (repeatCount > scenario.repeat.lastCount) {
         scenario.repeat.lastCount = repeatCount;
-        el("tk-display-signal").textContent = t(scenario.repeat.key);
+        el("tk-display-signal").textContent = scenario.repeat.text;
         setDisplayState(scenario.repeat.kind === "go" ? "zero" : "warn");
         beep(scenario.repeat.kind);
       }
@@ -432,6 +657,13 @@
     scenario.pauseTs = 0;
     if (scenario.repeat) {
       scenario.repeat.lastCount = 0;
+    }
+    if (id === "halftime") {
+      clock.halfTimeStarted = true;
+      if (clock.activeCap === "half") {
+        clock.dismissedCap = "half";
+        renderCapAlert();
+      }
     }
 
     el("tk-display-scenario").textContent = t("sc_" + id);
@@ -500,8 +732,62 @@
     return (Date.now() - clock.startTs + clock.accumMs) / 1000;
   }
 
+  function capConfig() {
+    return clock.capConfig || config;
+  }
+
+  function capMinutesToSeconds(value) {
+    return num(value) * 60;
+  }
+
+  function renderCapAlert() {
+    var body = el("tk-matchclock-body");
+    var alert = el("tk-cap-alert");
+    var text = el("tk-cap-text");
+    if (!body || !alert || !text) {
+      return;
+    }
+
+    var c = capConfig();
+    var elapsed = clockElapsed();
+    var active = "";
+    var timeCap = capMinutesToSeconds(c.time_cap);
+    var halfTimeCap = capMinutesToSeconds(c.half_time_cap);
+    var timeCapReached = timeCap > 0 && elapsed >= timeCap;
+    var halfTimeCapReached = !clock.halfTimeStarted && halfTimeCap > 0 && elapsed >= halfTimeCap;
+
+    if (halfTimeCapReached && !clock.loggedCaps.half) {
+      clock.loggedCaps.half = true;
+      addMark("cap_half_time", t("cap_half_time_mark"));
+    }
+    if (timeCapReached && !clock.loggedCaps.time) {
+      clock.loggedCaps.time = true;
+      addMark("cap_time", t("cap_time_mark"));
+    }
+
+    if (timeCapReached && clock.dismissedCap !== "time") {
+      active = "time";
+    } else if (!timeCapReached && halfTimeCapReached && clock.dismissedCap !== "half") {
+      active = "half";
+    }
+
+    clock.activeCap = active;
+    body.className = "tk-matchclock-body tk-cap-" + (active || "none");
+    if (active === "time") {
+      alert.className = "tk-cap-alert";
+      text.textContent = t("cap_time");
+    } else if (active === "half") {
+      alert.className = "tk-cap-alert";
+      text.textContent = t("cap_half_time");
+    } else {
+      alert.className = "tk-cap-alert tk-hidden";
+      text.innerHTML = "&nbsp;";
+    }
+  }
+
   function renderClock() {
     el("tk-matchclock-time").textContent = formatTime(clockElapsed());
+    renderCapAlert();
   }
 
   // Once running, the primary button marks the current time; the secondary
@@ -566,6 +852,9 @@
     if (clock.running) {
       return;
     }
+    if (!clock.capConfig) {
+      clock.capConfig = copyObject(config);
+    }
     clock.running = true;
     clock.startTs = Date.now();
     requestWakeLock();
@@ -601,6 +890,11 @@
     clock.accumMs = 0;
     clock.markCounts = {};
     clock.marks = [];
+    clock.capConfig = null;
+    clock.halfTimeStarted = false;
+    clock.dismissedCap = "";
+    clock.activeCap = "";
+    clock.loggedCaps = {};
     if (clockInterval) {
       window.clearInterval(clockInterval);
       clockInterval = null;
@@ -609,6 +903,13 @@
     renderMarks();
     setClockButton();
     releaseWakeLock();
+  }
+
+  function dismissCapAlert() {
+    if (clock.activeCap) {
+      clock.dismissedCap = clock.activeCap;
+      renderCapAlert();
+    }
   }
 
   /* ------------------------------------------------------------------ */
@@ -671,11 +972,15 @@
     el("tk-clock-primary").addEventListener("click", primaryClock);
     el("tk-clock-pause").addEventListener("click", pauseClock);
     el("tk-clock-reset").addEventListener("click", resetClock);
+    el("tk-cap-dismiss").addEventListener("click", dismissCapAlert);
 
     el("tk-config-reset").addEventListener("click", resetConfig);
     el("tk-config-done").addEventListener("click", function () {
       readInputs();
       showScreen("timer");
+    });
+    el("tk-template-select").addEventListener("change", function () {
+      setActiveTemplate(this.value);
     });
 
     el("tk-nav-language").addEventListener("click", function () {
@@ -689,7 +994,10 @@
   }
 
   function init() {
+    migrateLegacyConfig();
+    activeTemplateId = resolveTemplateId(storageGet(TEMPLATE_KEY));
     loadConfig();
+    populateTemplateSelector();
     populateInputs();
     loadSound();
     bind();

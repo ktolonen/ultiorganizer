@@ -1386,6 +1386,75 @@ function upgrade94()
     }
 }
 
+function upgrade95()
+{
+    if (!hasTable("uo_timekeeper_template")) {
+        runQuery("CREATE TABLE `uo_timekeeper_template` (
+            `template_id` int(10) NOT NULL AUTO_INCREMENT,
+            `name` varchar(50) NOT NULL,
+            `is_default` tinyint(1) NOT NULL DEFAULT 0,
+            `is_system` tinyint(1) NOT NULL DEFAULT 0,
+            `half_time_cap` int(10) NOT NULL DEFAULT 55,
+            `time_cap` int(10) NOT NULL DEFAULT 100,
+            PRIMARY KEY (`template_id`),
+            KEY `idx_timekeeper_template_default` (`is_default`)
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+
+    if (!hasColumn('uo_timekeeper_template', 'half_time_cap')) {
+        runQuery("ALTER TABLE `uo_timekeeper_template` ADD COLUMN `half_time_cap` int(10) NOT NULL DEFAULT 55");
+    }
+    if (!hasColumn('uo_timekeeper_template', 'time_cap')) {
+        runQuery("ALTER TABLE `uo_timekeeper_template` ADD COLUMN `time_cap` int(10) NOT NULL DEFAULT 100");
+    }
+
+    if (!hasTable("uo_timekeeper_template_signal")) {
+        runQuery("CREATE TABLE `uo_timekeeper_template_signal` (
+            `signal_id` int(10) NOT NULL AUTO_INCREMENT,
+            `template_id` int(10) NOT NULL,
+            `action_key` varchar(40) NOT NULL,
+            `signal_time` int(10) NOT NULL DEFAULT 0,
+            `signal_text` varchar(100) NOT NULL,
+            PRIMARY KEY (`signal_id`),
+            KEY `idx_timekeeper_template_signal_template` (`template_id`),
+            KEY `idx_timekeeper_template_signal_action` (`template_id`, `action_key`, `signal_time`),
+            CONSTRAINT `fk_timekeeper_template_signal_template` FOREIGN KEY (`template_id`) REFERENCES `uo_timekeeper_template` (`template_id`) ON DELETE CASCADE ON UPDATE CASCADE
+        ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+    }
+
+    if (hasColumn('uo_timekeeper_template_signal', 'signal_key')) {
+        runQuery("ALTER TABLE `uo_timekeeper_template_signal` DROP COLUMN `signal_key`");
+    }
+
+    runQuery("INSERT INTO uo_timekeeper_template
+        (name, is_default, is_system)
+        SELECT 'WFDF', 1, 1
+        FROM DUAL
+        WHERE NOT EXISTS (SELECT 1 FROM uo_timekeeper_template)");
+    runQuery("INSERT INTO uo_timekeeper_template_signal (template_id, action_key, signal_time, signal_text)
+        SELECT t.template_id, seed.action_key, seed.signal_time, seed.signal_text
+        FROM uo_timekeeper_template t
+        JOIN (
+            SELECT 'betweenpoints' AS action_key, 45 AS signal_time, 'Offence warning' AS signal_text
+            UNION ALL SELECT 'betweenpoints', 60, 'Defence warning'
+            UNION ALL SELECT 'betweenpoints', 75, 'Play'
+            UNION ALL SELECT 'timeout', 45, 'Offence warning'
+            UNION ALL SELECT 'timeout', 60, 'Offence warning'
+            UNION ALL SELECT 'timeout', 75, 'Defence warning'
+            UNION ALL SELECT 'timeout', 90, 'Play'
+            UNION ALL SELECT 'timeoutbeforepull', 75, 'Timeout over'
+            UNION ALL SELECT 'halftime', 390, 'Halftime ending'
+            UNION ALL SELECT 'halftime', 420, 'Halftime over'
+            UNION ALL SELECT 'halfstart', 0, 'Approaching start'
+            UNION ALL SELECT 'halfstart', 60, 'Start of play'
+            UNION ALL SELECT 'dispute', 45, 'Resolve call or discussion'
+            UNION ALL SELECT 'dispute', 60, 'Play must restart'
+            UNION ALL SELECT 'discretrieval', 20, 'Play'
+        ) seed
+        WHERE t.name='WFDF'
+        AND NOT EXISTS (SELECT 1 FROM uo_timekeeper_template_signal s WHERE s.template_id=t.template_id)");
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {

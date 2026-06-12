@@ -9,6 +9,13 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - Shared utilities and SQL-backed data access live in `lib/`.
 - Access-controlled areas live in `admin/` and `user/`.
 
+## Tech Stack
+
+- **PHP** is the primary language (PHP 8.3 in CI) — `index.php`, `lib/`, `admin/`, `user/`, the standalone apps, and the repo checker scripts are all PHP.
+- **Client-side JavaScript** under `script/` is hand-written **ES5** (linted with ESLint 9 via the `dev` Docker image); page styling is plain **CSS**, primarily under `cust/`.
+- **Shell** scripts under `docs/` handle release packaging and gettext catalogs; one **Python** helper lives at `docs/ai/analyze-lib-functions/`.
+- **Markdown** docs under `docs/` are heavily maintained — keep documentation in sync with code changes.
+
 ## Repository layout
 
 - `admin/`: admin-only pages.
@@ -116,7 +123,7 @@ Pre-commit hooks remain the fast local gate; CI is the source of truth for what 
 - `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `docs/spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and visibility rules.
-- `docs/timekeeper.md`: standalone Timekeeper app, configurable time limits, signal timers, and the game clock.
+- `docs/timekeeper.md`: standalone Timekeeper app, template-based time limits, signal timers, and the game clock.
 
 ### Language and output
 

@@ -9,6 +9,7 @@ OpenConnection();
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/session.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
+include_once $include_prefix . 'lib/timekeeper.functions.php';
 include_once $include_prefix . 'localization.php';
 
 //Public tool: a session is used only to remember the chosen language.
@@ -30,62 +31,10 @@ $sessionLocale = getSessionLocale();
 $lang = explode('_', $sessionLocale);
 $lang = !empty($lang[0]) ? $lang[0] : 'en';
 
-// Configuration groups. Each field has a WFDF default (seconds) and is fully
-// editable by the user; only the offsets are configurable, labels are fixed.
-$timekeeperGroups = [
-    'betweenpoints' => [
-        'label' => _("Start of point"),
-        'fields' => [
-            'bp_off' => ['label' => _("Offence warning"), 'default' => 45],
-            'bp_def' => ['label' => _("Defence warning"), 'default' => 60],
-            'bp_play' => ['label' => _("Play"), 'default' => 75],
-        ],
-    ],
-    // Timeout. After the pull (WFDF A5.6), timed from the call: 45 (offence
-    // 30 s warning) / 60 (offence 15 s warning) / 75 (defence 15 s warning) /
-    // 90 (play). Before the pull (A5.5), pressed while Start of point runs:
-    // "Added time before pull" is added to the point-start timeline.
-    'timeout' => [
-        'label' => _("Timeout"),
-        'fields' => [
-            'to_off1' => ['label' => _("First offence warning"), 'default' => 45],
-            'to_off2' => ['label' => _("Second offence warning"), 'default' => 60],
-            'to_def' => ['label' => _("Defence warning"), 'default' => 75],
-            'to_play' => ['label' => _("Play"), 'default' => 90],
-            'to_add' => ['label' => _("Added time before pull"), 'default' => 75],
-        ],
-    ],
-    'halftime' => [
-        'label' => _("Halftime"),
-        'fields' => [
-            'ht_len' => ['label' => _("Halftime duration"), 'default' => 60],
-            'ht_warn' => ['label' => _("Warning before end"), 'default' => 30],
-        ],
-    ],
-    'halfstart' => [
-        'label' => _("Start of game"),
-        'fields' => [
-            'hs_lead1' => ['label' => _("First warning before start"), 'default' => 60],
-            'hs_lead2' => ['label' => _("Second warning before start"), 'default' => 0],
-        ],
-    ],
-    'dispute' => [
-        'label' => _("Call or discussion"),
-        'fields' => [
-            'dp_first' => ['label' => _("First signal"), 'default' => 45],
-            'dp_restart' => ['label' => _("Play must restart"), 'default' => 60],
-            'dp_repeat' => ['label' => _("Repeat interval"), 'default' => 15],
-        ],
-    ],
-];
-
-// Flatten the defaults for the client.
-$timekeeperDefaults = [];
-foreach ($timekeeperGroups as $group) {
-    foreach ($group['fields'] as $fieldId => $field) {
-        $timekeeperDefaults[$fieldId] = $field['default'];
-    }
-}
+$timekeeperActions = TimekeeperActionDefinitions();
+$timekeeperCapFields = TimekeeperTemplateCapFields();
+$timekeeperCapDefaults = TimekeeperTemplateCapDefaults();
+$timekeeperClientTemplates = TimekeeperTemplatesForClient();
 
 $timekeeperLocaleFlagFiles = [
     'de_DE.utf8' => 'Germany.png',
@@ -99,18 +48,14 @@ $timekeeperI18n = [
     'sc_halfstart' => _("Start of game"),
     'sc_betweenpoints' => _("Start of point"),
     'sc_timeout' => _("Timeout"),
+    'sc_timeoutbeforepull' => _("Timeout before pull"),
     'sc_halftime' => _("Halftime"),
     'sc_dispute' => _("Call or discussion"),
-    'sig_off_warn' => _("Offence warning"),
-    'sig_def_warn' => _("Defence warning"),
-    'sig_play' => _("Play"),
+    'sc_discretrieval' => _("Disc retrieval"),
+    // Fallback only: a "Timeout before pull" template with no signal still needs
+    // a label for the end-of-timeout signal. Signal text otherwise comes from
+    // the template rows.
     'sig_end_timeout' => _("Timeout over"),
-    'sig_half_warn' => _("Halftime ending"),
-    'sig_half_end' => _("Halftime over"),
-    'sig_start_warn' => _("Approaching start"),
-    'sig_start_go' => _("Start of play"),
-    'sig_dispute' => _("Resolve call or discussion"),
-    'sig_restart' => _("Play must restart"),
     'ui_pause' => _("Pause"),
     'ui_resume' => _("Resume"),
     'ui_mark' => _("Mark"),
@@ -118,6 +63,13 @@ $timekeeperI18n = [
     'ui_resume_clock' => _("Resume"),
     'ui_sound_on' => _("Sound on"),
     'ui_sound_off' => _("Sound off"),
+    'ui_template' => _("Template"),
+    'ui_dismiss' => _("Dismiss"),
+    'ui_seconds' => _("seconds"),
+    'cap_half_time' => _("Halftime cap reached"),
+    'cap_time' => _("Time cap reached"),
+    'cap_half_time_mark' => _("Halftime cap"),
+    'cap_time_mark' => _("Time cap"),
 ];
 
 echo "<!DOCTYPE html>\n";
@@ -173,21 +125,29 @@ echo "</div>\n";
 echo "<div id='tk-screen-config' class='tk-screen tk-hidden'>\n";
 echo "<div class='card'>\n";
 echo "<h2>" . utf8entities(_("Time limits")) . "</h2>\n";
-echo "<p class='mobile-meta'>" . utf8entities(_("Values are in seconds. Defaults follow the WFDF rules.")) . "</p>\n";
-echo "<form id='tk-config-form' onsubmit='return false;'>\n";
-foreach ($timekeeperGroups as $group) {
-    echo "<fieldset class='tk-config-group'>\n";
-    echo "<legend>" . utf8entities($group['label']) . "</legend>\n";
-    foreach ($group['fields'] as $fieldId => $field) {
-        echo "<div class='tk-config-row'>\n";
-        echo "<label for='cfg_" . utf8entities($fieldId) . "'>" . utf8entities($field['label']) . "</label>\n";
-        echo "<input type='number' inputmode='numeric' min='0' step='1' id='cfg_" . utf8entities($fieldId)
-            . "' data-field='" . utf8entities($fieldId) . "' value='" . (int) $field['default'] . "'/>\n";
-        echo "<span class='tk-unit'>s</span>\n";
-        echo "</div>\n";
-    }
-    echo "</fieldset>\n";
+echo "<p class='mobile-meta'>" . utf8entities(_("Values are in seconds unless another unit is shown. Defaults follow the WFDF rules.")) . "</p>\n";
+echo "<div class='tk-config-row'>\n";
+echo "<label for='tk-template-select'>" . utf8entities(_("Template")) . "</label>\n";
+echo "<select id='tk-template-select'>\n";
+foreach ($timekeeperClientTemplates['templates'] as $template) {
+    echo "<option value='" . (int) $template['id'] . "'>" . utf8entities($template['name']) . "</option>\n";
 }
+echo "</select>\n";
+echo "<span class='tk-unit'></span>\n";
+echo "</div>\n";
+echo "<form id='tk-config-form' onsubmit='return false;'>\n";
+echo "<fieldset class='tk-config-group'>\n";
+echo "<legend>" . utf8entities(_("Game clock caps")) . "</legend>\n";
+foreach ($timekeeperCapFields as $fieldId => $field) {
+    echo "<div class='tk-config-row'>\n";
+    echo "<label for='cfg_" . utf8entities($fieldId) . "'>" . utf8entities($field['label']) . "</label>\n";
+    echo "<input type='number' inputmode='numeric' min='0' step='1' id='cfg_" . utf8entities($fieldId)
+        . "' data-field='" . utf8entities($fieldId) . "' value='" . (int) $field['default'] . "'/>\n";
+    echo "<span class='tk-unit'>" . utf8entities($field['unit']) . "</span>\n";
+    echo "</div>\n";
+}
+echo "</fieldset>\n";
+echo "<div id='tk-signal-config'></div>\n";
 echo "</form>\n";
 echo "<div class='form-actions'>\n";
 echo "<button type='button' id='tk-config-reset' class='button-secondary' data-role='button'>" . utf8entities(_("Reset")) . "</button>\n";
@@ -217,19 +177,21 @@ echo "<div class='card'>\n";
 echo "<h2>" . utf8entities(_("Actions")) . "</h2>\n";
 echo "<div class='tk-actions'>\n";
 // Start of point is the most-used action, so it leads.
-$scenarioOrder = ['betweenpoints', 'timeout', 'halfstart', 'halftime', 'dispute'];
+$scenarioOrder = ['betweenpoints', 'timeout', 'halfstart', 'halftime', 'dispute', 'discretrieval'];
 foreach ($scenarioOrder as $scenarioId) {
     echo "<button type='button' class='tk-action' data-scenario='" . utf8entities($scenarioId)
-        . "' data-role='button'>" . utf8entities($timekeeperGroups[$scenarioId]['label']) . "</button>\n";
+        . "' data-role='button'>" . utf8entities($timekeeperActions[$scenarioId]['label']) . "</button>\n";
 }
 echo "</div>\n";
 echo "</div>\n";
 
 echo "<div class='card'>\n";
 echo "<h2>" . utf8entities(_("Game clock")) . "</h2>\n";
-echo "<div class='tk-matchclock-body'>\n";
+echo "<div class='tk-matchclock-body tk-cap-none' id='tk-matchclock-body'>\n";
 echo "<div class='tk-matchclock-main'>\n";
 echo "<div class='tk-matchclock' id='tk-matchclock-time'>0:00</div>\n";
+echo "<div class='tk-cap-alert tk-hidden' id='tk-cap-alert'><span id='tk-cap-text'></span> ";
+echo "<button type='button' id='tk-cap-dismiss' class='button-secondary' data-role='button'>" . utf8entities(_("Dismiss")) . "</button></div>\n";
 echo "<div class='tk-matchclock-actions'>\n";
 // Primary button becomes "Mark" once running, snapshotting the current time.
 echo "<button type='button' id='tk-clock-primary' data-role='button'>" . utf8entities(_("Start")) . "</button>\n";
@@ -257,7 +219,9 @@ echo "</div>\n";
 echo "</div>\n"; // /page
 
 echo "<script>\n";
-echo "var TIMEKEEPER_DEFAULTS = " . json_encode($timekeeperDefaults) . ";\n";
+echo "var TIMEKEEPER_CAP_DEFAULTS = " . json_encode($timekeeperCapDefaults) . ";\n";
+echo "var TIMEKEEPER_DEFAULT_TEMPLATE_ID = " . json_encode($timekeeperClientTemplates['defaultTemplateId']) . ";\n";
+echo "var TIMEKEEPER_TEMPLATES = " . json_encode($timekeeperClientTemplates['templates']) . ";\n";
 echo "var TIMEKEEPER_I18N = " . json_encode($timekeeperI18n) . ";\n";
 echo "</script>\n";
 echo "<script src='" . $styles_prefix . "script/timekeeper.js'></script>\n";
