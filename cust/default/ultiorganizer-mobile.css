@@ -111,6 +111,7 @@ input[type="checkbox"] {
   position: sticky;
   bottom: 0;
   display: flex;
+  flex-wrap: wrap;
   gap: 8px;
   justify-content: center;
 }
@@ -121,12 +122,14 @@ input[type="checkbox"] {
   text-align: center;
 }
 
-.ui-bar a.footer-compact,
-[data-role="footer"] a.footer-compact {
+.ui-bar .footer-compact,
+[data-role="footer"] .footer-compact {
   flex: 0 0 auto;
+  margin: 0;
   padding: 4px 8px;
   min-height: 30px;
   font-size: 0.85rem;
+  letter-spacing: 0;
   min-width: 0;
 }
 

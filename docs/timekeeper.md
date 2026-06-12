@@ -52,7 +52,8 @@ configured elapsed times from the press. Elapsed time is computed from a stored 
 timestamp on every render tick — never by accumulating interval counts — so timers stay accurate
 when a mobile browser throttles or suspends background timers. An optional Screen Wake Lock keeps the
 phone awake while a timer or the game clock runs. At each signal point the display changes
-state/colour and, unless muted, a short Web Audio beep sounds (no audio asset files).
+state/colour, a short Web Audio beep sounds unless muted, and browsers with Vibration API support
+vibrate once for a warning or twice for a final signal. No audio asset files are used.
 
 ### Scenarios and WFDF defaults
 

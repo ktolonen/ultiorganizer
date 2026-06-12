@@ -458,7 +458,7 @@
   }
 
   /* ------------------------------------------------------------------ */
-  /* Audio + wake lock                                                   */
+  /* Audio + vibration + wake lock                                       */
   /* ------------------------------------------------------------------ */
 
   function ensureAudio() {
@@ -508,6 +508,22 @@
     } else {
       tone(880, 160, 0);
     }
+  }
+
+  function vibrate(kind) {
+    if (typeof navigator.vibrate !== "function") {
+      return;
+    }
+    try {
+      navigator.vibrate(kind === "go" ? [140, 80, 140] : 140);
+    } catch (e) {
+      void e;
+    }
+  }
+
+  function alertSignal(kind) {
+    beep(kind);
+    vibrate(kind);
   }
 
   function requestWakeLock() {
@@ -589,7 +605,7 @@
         sig.fired = true;
         el("tk-display-signal").textContent = sig.text;
         setDisplayState(sig.kind === "go" ? "zero" : "warn");
-        beep(sig.kind);
+        alertSignal(sig.kind);
         if (sig.row) {
           sig.row.className = "tk-side-row tk-side-row--done";
         }
@@ -605,7 +621,7 @@
         scenario.repeat.lastCount = repeatCount;
         el("tk-display-signal").textContent = scenario.repeat.text;
         setDisplayState(scenario.repeat.kind === "go" ? "zero" : "warn");
-        beep(scenario.repeat.kind);
+        alertSignal(scenario.repeat.kind);
       }
     }
 
@@ -931,7 +947,8 @@
   }
 
   function updateSoundButton() {
-    el("tk-sound-toggle").textContent = soundOn ? t("ui_sound_on") : t("ui_sound_off");
+    // Action label: the button says what tapping does, like the other controls.
+    el("tk-sound-toggle").textContent = soundOn ? t("ui_sound_off") : t("ui_sound_on");
   }
 
   function toggleSound() {
