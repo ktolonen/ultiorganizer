@@ -9,6 +9,7 @@ OpenConnection();
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/session.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
+include_once $include_prefix . 'lib/user.functions.php';
 include_once $include_prefix . 'lib/timekeeper.functions.php';
 include_once $include_prefix . 'localization.php';
 
