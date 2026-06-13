@@ -56,6 +56,9 @@ state/colour, a short Web Audio beep sounds unless muted, and browsers with Vibr
 vibrate once for a warning or twice for a final signal. No audio asset files are used.
 If the user tries to leave or reload the page while the game clock is running, the browser shows
 its standard confirmation prompt. Pausing or resetting the game clock removes that warning.
+The footer clock icon returns to the timer view without reloading the page. The language and time
+limit screens can therefore be inspected while the game clock continues running; changes apply to
+future timers and do not reset the running clock.
 
 ### Scenarios and WFDF defaults
 
@@ -63,10 +66,13 @@ its standard confirmation prompt. Pausing or resetting the game clock removes th
 - **Start of point**: offence warning 45 / defence warning 60 / play 75.
 - **Timeout**: after the pull (WFDF A5.6), timed from the call: 45 (offence 30 s warning) / 60
   (offence 15 s warning) / 75 (defence 15 s warning) / 90 (play). A template-only **Timeout before
-  pull** group stores the "Timeout over" signal at 75 seconds. If Timeout is pressed while the
-  **Start of point** timer is running, that value is added to the current point-start timeline:
-  Timeout over fires after the added duration, and any remaining Start of point signals are shifted
-  by that duration.
+  pull** group stores the "Timeout over" signal at 75 seconds (its fixed duration). If Timeout is
+  pressed while the **Start of point** timer is still running, it is a timeout before the pull: the
+  timer is set to *remaining point time + the timeout duration* (e.g. 18 s left + 60 s = 78 s),
+  Timeout over fires once the duration has elapsed (leaving the original remaining time), and only
+  the Start of point signals that had **not yet been given** continue — shifted by the duration;
+  already-signalled ones are not repeated. If the Start of point timer has already reached zero, a
+  regular (after-pull) timeout is used instead.
 - **Halftime**: a configurable duration (420 seconds) with a warning before the end (30), then the
   halftime-over signal.
 - **Call or discussion**: a first signal (45) and a "play must restart" point (60); after that, the

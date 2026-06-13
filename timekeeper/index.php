@@ -184,6 +184,7 @@ echo "</div>\n"; // /content
 // --- Footer --------------------------------------------------------------
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
 echo "<a class='footer-compact' href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . utf8entities(_("Ultiorganizer")) . "</a>";
+echo "<button type='button' id='tk-nav-timer' class='footer-compact footer-icon' data-role='button' aria-label='" . utf8entities(_("Game clock")) . "' title='" . utf8entities(_("Game clock")) . "'><span class='tk-clock-icon' aria-hidden='true'></span></button>";
 echo "<button type='button' id='tk-nav-language' class='footer-compact' data-role='button'>" . utf8entities(_("Change language")) . "</button>";
 echo "<button type='button' id='tk-nav-config' class='footer-compact' data-role='button'>" . utf8entities(_("Time limits")) . "</button>";
 echo "<button type='button' id='tk-sound-toggle' class='footer-compact' data-role='button'>" . utf8entities(_("Sound off")) . "</button>";

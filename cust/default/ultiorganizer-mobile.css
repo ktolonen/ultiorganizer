@@ -133,6 +133,48 @@ input[type="checkbox"] {
   min-width: 0;
 }
 
+.ui-bar .footer-icon,
+[data-role="footer"] .footer-icon {
+  width: 34px;
+  padding-inline: 8px;
+}
+
+.ui-bar .footer-compact[aria-pressed="true"],
+[data-role="footer"] .footer-compact[aria-pressed="true"] {
+  background: var(--accent-strong);
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+}
+
+.tk-clock-icon {
+  position: relative;
+  display: block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.tk-clock-icon::before,
+.tk-clock-icon::after {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  width: 2px;
+  background: currentColor;
+  border-radius: 1px;
+  content: "";
+  transform-origin: 50% 100%;
+}
+
+.tk-clock-icon::before {
+  height: 5px;
+}
+
+.tk-clock-icon::after {
+  height: 4px;
+  transform: rotate(120deg);
+}
+
 [data-role="button"],
 button,
 input[type="submit"],

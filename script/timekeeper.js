@@ -379,7 +379,11 @@
   // "dispute" repeats its final signal.
   function buildScenario(id) {
     if (id === "timeout" && scenario && scenario.id === "betweenpoints") {
-      return buildTimeoutBeforePull();
+      var beforePull = buildTimeoutBeforePull();
+      if (beforePull) {
+        return beforePull;
+      }
+      // Start-of-point timer has already ended: fall through to a regular timeout.
     }
     var rows = signalRowsForAction(id);
     if (!rows.length) {
@@ -428,27 +432,37 @@
   }
 
   function buildTimeoutBeforePull() {
-    var timeoutEnd = timeoutEndSignal();
-    var addedTime = num(timeoutEnd.time);
     var rows = signalRowsForAction("betweenpoints");
-    var pullTime = rows.length ? rows[rows.length - 1].time : 0;
+    var pointTotal = rows.length ? rows[rows.length - 1].time : 0;
+    var pointElapsed = scenarioElapsed();
+    var remaining = pointTotal - pointElapsed;
+    if (remaining <= 0) {
+      // Start-of-point timer has reached zero: caller falls back to a regular
+      // (after-pull) timeout.
+      return null;
+    }
+    var timeoutEnd = timeoutEndSignal();
+    var duration = num(timeoutEnd.time);
 
-    // A5.5.2: the end-of-timeout is signalled `addedTime` seconds from the START
-    // of the point (not from the call), then a fresh A5.4 sequence commences.
-    // The timer keeps the point-start timeline (anchor), so every offset below
-    // is measured from the start of the point.
+    // Press-anchored: the timeout's (fixed) duration is inserted at the moment
+    // it is called, so the timer runs for remaining-point-time + duration. The
+    // end-of-timeout fires after the duration, then the still-pending
+    // start-of-point signals continue with their original remaining time.
+    // Signals already consumed before the timeout are not re-signalled.
     var built = {
-      total: addedTime + pullTime,
-      anchor: "point",
+      total: remaining + duration,
       signals: [
-        { at: addedTime, text: timeoutEnd.text, kind: "warn" }
+        { at: duration, text: timeoutEnd.text, kind: "warn" }
       ]
     };
 
     var i;
     for (i = 0; i < rows.length; i++) {
+      if (rows[i].time <= pointElapsed) {
+        continue;
+      }
       built.signals.push({
-        at: addedTime + rows[i].time,
+        at: duration + (rows[i].time - pointElapsed),
         text: rows[i].text,
         kind: i === rows.length - 1 ? "go" : "warn",
         final: i === rows.length - 1
@@ -646,7 +660,6 @@
   }
 
   function startScenario(id) {
-    var prev = scenario;
     var built = buildScenario(id);
     if (!built) {
       return;
@@ -661,14 +674,7 @@
     });
     scenario = built;
     scenario.id = id;
-    if (built.anchor === "point" && prev) {
-      // Before-pull timeout: keep the previous (between-points) elapsed time so
-      // signals are measured from the start of the point, not the timeout call.
-      var prevEnd = prev.paused ? prev.pauseTs : Date.now();
-      scenario.startTs = Date.now() - (prevEnd - prev.startTs - prev.accumMs);
-    } else {
-      scenario.startTs = Date.now();
-    }
+    scenario.startTs = Date.now();
     scenario.accumMs = 0;
     scenario.paused = false;
     scenario.pauseTs = 0;
@@ -975,6 +981,11 @@
 
   function showScreen(name) {
     var screens = ["language", "config", "timer"];
+    var navButtons = {
+      language: el("tk-nav-language"),
+      config: el("tk-nav-config"),
+      timer: el("tk-nav-timer")
+    };
     var i;
     for (i = 0; i < screens.length; i++) {
       var node = el("tk-screen-" + screens[i]);
@@ -984,6 +995,9 @@
         } else {
           node.className = "tk-screen tk-hidden";
         }
+      }
+      if (navButtons[screens[i]]) {
+        navButtons[screens[i]].setAttribute("aria-pressed", screens[i] === name ? "true" : "false");
       }
     }
   }
@@ -1017,6 +1031,9 @@
       setActiveTemplate(this.value);
     });
 
+    el("tk-nav-timer").addEventListener("click", function () {
+      showScreen("timer");
+    });
     el("tk-nav-language").addEventListener("click", function () {
       showScreen("language");
     });
