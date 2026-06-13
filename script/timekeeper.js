@@ -1057,7 +1057,7 @@
     setClockButton();
 
     // The game (timer) view is the default. The interface language is inherited
-    // from Ultiorganizer and changed from the footer "Change language" control,
+    // from Ultiorganizer and changed from the footer "Language" control,
     // whose links reload the page with ?locale=... and return here.
     showScreen("timer");
   }
