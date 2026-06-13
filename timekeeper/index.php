@@ -98,7 +98,7 @@ echo "</div>\n";
 echo "<div id='tk-screen-config' class='tk-screen tk-hidden'>\n";
 echo "<div class='card'>\n";
 echo "<h2>" . utf8entities(_("Time limits")) . "</h2>\n";
-echo "<p class='mobile-meta'>" . utf8entities(_("Values are in seconds unless another unit is shown. Defaults follow the WFDF rules.")) . "</p>\n";
+echo "<p class='mobile-meta'>" . utf8entities(_("Signals come from the selected template. You can adjust the time limits here.")) . "</p>\n";
 echo "<div class='tk-config-row'>\n";
 echo "<label for='tk-template-select'>" . utf8entities(_("Template")) . "</label>\n";
 echo "<select id='tk-template-select'>\n";

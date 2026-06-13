@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-13 08:22+0300\n"
+"POT-Creation-Date: 2026-06-13 09:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -5976,6 +5976,13 @@ msgstr ""
 msgid "Signals"
 msgstr "Signale"
 
+#: timekeeper/index.php:101
+msgid ""
+"Signals come from the selected template. You can adjust the time limits here."
+msgstr ""
+"Die Signale stammen aus der ausgewählten Vorlage. Die Zeitlimits können hier "
+"angepasst werden."
+
 #: statistics.php:49 statistics.php:231 lib/pool.functions.php:301
 #: lib/standings.functions.php:895
 msgid "Silver"
@@ -7198,14 +7205,6 @@ msgstr "Gültig"
 #: admin/accreditation.php:137
 msgid "Value"
 msgstr "Wert"
-
-#: timekeeper/index.php:101
-msgid ""
-"Values are in seconds unless another unit is shown. Defaults follow the WFDF "
-"rules."
-msgstr ""
-"Werte sind in Sekunden angegeben, sofern keine andere Einheit angezeigt "
-"wird. Die Standardwerte entsprechen den WFDF-Regeln."
 
 #: admin/serverconf.php:224
 msgid "Version information"
