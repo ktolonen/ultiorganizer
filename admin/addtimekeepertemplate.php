@@ -138,7 +138,7 @@ foreach ($actionDefinitions as $actionKey => $actionDefinition) {
         $html .= "<input type='hidden' name='signal_action_" . utf8entities($rowId) . "' value='" . utf8entities($actionKey) . "'/>";
         $html .= "<input class='input' size='5' name='signal_time_" . utf8entities($rowId) . "' value='" . utf8entities((string) $signal['signal_time']) . "'/> s";
         $html .= "</td><td>";
-        $html .= TranslatedField($translationField, $signal['signal_text'], "220", "100");
+        $html .= TranslatedField($translationField, $signal['signal_text'], "220", "50");
         $html .= "</td>";
         $html .= "</tr>\n";
     }

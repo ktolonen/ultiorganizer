@@ -16,7 +16,7 @@ include_once $include_prefix . 'localization.php';
 //Public tool: a session is used only to remember the chosen language.
 startSecureSession();
 if (!isset($_SESSION['uid'])) {
-    $_SESSION['uid'] = "anonymous";
+    SetUserSessionData("anonymous");
 }
 
 setSessionLocale();
