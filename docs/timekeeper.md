@@ -54,6 +54,8 @@ when a mobile browser throttles or suspends background timers. An optional Scree
 phone awake while a timer or the game clock runs. At each signal point the display changes
 state/colour, a short Web Audio beep sounds unless muted, and browsers with Vibration API support
 vibrate once for a warning or twice for a final signal. No audio asset files are used.
+If the user tries to leave or reload the page while the game clock is running, the browser shows
+its standard confirmation prompt. Pausing or resetting the game clock removes that warning.
 
 ### Scenarios and WFDF defaults
 

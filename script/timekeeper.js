@@ -930,6 +930,14 @@
     releaseWakeLock();
   }
 
+  function warnBeforeLeaving(event) {
+    if (!clock.running) {
+      return;
+    }
+    event.preventDefault();
+    event.returnValue = "";
+  }
+
   function dismissCapAlert() {
     if (clock.activeCap) {
       clock.dismissedCap = clock.activeCap;
@@ -1017,6 +1025,7 @@
       showScreen("config");
     });
     el("tk-sound-toggle").addEventListener("click", toggleSound);
+    window.addEventListener("beforeunload", warnBeforeLeaving);
   }
 
   function init() {
