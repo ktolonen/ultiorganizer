@@ -39,9 +39,8 @@ or event data; the session only carries the inherited interface language.
    Reachable from the footer.
 3. **Language** — flag links that reload with `?locale=...` to set the gettext locale server-side.
    The language is inherited from Ultiorganizer; this screen is reachable from the footer "Change
-   language" control. The footer button plus this flag block are a self-contained pattern intended
-   to be copied into Scorekeeper and Spiritkeeper later (using each app's own path prefix for the
-   flag image `src`).
+   language" control. The flag list is the shared `MobileLanguageSelection()` control (defined in
+   `localization.php`), also used by the Scorekeeper and Spiritkeeper login pages.
 
 ## Timing model
 
