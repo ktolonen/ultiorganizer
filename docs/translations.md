@@ -30,6 +30,11 @@ PHP interface strings use gettext:
 _("Save")
 ```
 
+Scorekeeper, Spiritkeeper, and Timekeeper are brand names. Do not pass a
+standalone brand name through gettext. When a brand name appears within a
+translatable sentence or label, translate the surrounding text but preserve
+the brand name exactly.
+
 The source strings are extracted into
 `locale/<locale>/LC_MESSAGES/messages.po`, and runtime gettext reads the
 compiled `messages.mo` file for the active locale.

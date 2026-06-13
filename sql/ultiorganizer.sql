@@ -337,7 +337,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(91, '2026-05-22 00:00:00'),
 	(92, '2026-05-22 00:00:00'),
 	(93, '2026-05-24 00:00:00'),
-	(94, '2026-06-06 00:00:00');
+	(94, '2026-06-06 00:00:00'),
+	(95, '2026-06-11 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -770,6 +771,50 @@ CREATE TABLE IF NOT EXISTS `uo_pooltemplate` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
+CREATE TABLE IF NOT EXISTS `uo_timekeeper_template` (
+  `template_id` int(10) NOT NULL AUTO_INCREMENT,
+  `name` varchar(50) NOT NULL,
+  `is_default` tinyint(1) NOT NULL DEFAULT 0,
+  `is_system` tinyint(1) NOT NULL DEFAULT 0,
+  `half_time_cap` int(10) NOT NULL DEFAULT 55,
+  `time_cap` int(10) NOT NULL DEFAULT 100,
+  PRIMARY KEY (`template_id`),
+  KEY `idx_timekeeper_template_default` (`is_default`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `uo_timekeeper_template` (`template_id`, `name`, `is_default`, `is_system`, `half_time_cap`, `time_cap`) VALUES
+  (1, 'WFDF', 1, 1, 55, 100);
+
+CREATE TABLE IF NOT EXISTS `uo_timekeeper_template_signal` (
+  `signal_id` int(10) NOT NULL AUTO_INCREMENT,
+  `template_id` int(10) NOT NULL,
+  `action_key` varchar(40) NOT NULL,
+  `signal_time` int(10) NOT NULL DEFAULT 0,
+  `signal_text` varchar(100) NOT NULL,
+  PRIMARY KEY (`signal_id`),
+  KEY `idx_timekeeper_template_signal_template` (`template_id`),
+  KEY `idx_timekeeper_template_signal_action` (`template_id`,`action_key`,`signal_time`),
+  CONSTRAINT `fk_timekeeper_template_signal_template` FOREIGN KEY (`template_id`) REFERENCES `uo_timekeeper_template` (`template_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `uo_timekeeper_template_signal` (`signal_id`, `template_id`, `action_key`, `signal_time`, `signal_text`) VALUES
+  (1, 1, 'betweenpoints', 45, 'Offence warning'),
+  (2, 1, 'betweenpoints', 60, 'Defence warning'),
+  (3, 1, 'betweenpoints', 75, 'Play'),
+  (4, 1, 'timeout', 45, 'Offence warning'),
+  (5, 1, 'timeout', 60, 'Offence warning'),
+  (6, 1, 'timeout', 75, 'Defence warning'),
+  (7, 1, 'timeout', 90, 'Play'),
+  (8, 1, 'timeoutbeforepull', 75, 'Timeout over'),
+  (9, 1, 'halftime', 390, 'Halftime ending'),
+  (10, 1, 'halftime', 420, 'Halftime over'),
+  (11, 1, 'halfstart', 0, 'Approaching start'),
+  (12, 1, 'halfstart', 60, 'Start of play'),
+  (13, 1, 'dispute', 45, 'Resolve call or discussion'),
+  (14, 1, 'dispute', 60, 'Play must restart'),
+  (15, 1, 'discretrieval', 20, 'Play');
+
+
 CREATE TABLE IF NOT EXISTS `uo_registerrequest` (
   `userid` varchar(50) NOT NULL,
   `password` varchar(255) DEFAULT NULL,
@@ -1128,6 +1173,12 @@ CREATE TABLE IF NOT EXISTS `uo_translation` (
   `translation` varchar(100) NOT NULL,
   PRIMARY KEY (`translation_key`,`locale`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+INSERT IGNORE INTO `uo_translation` (`translation_key`, `locale`, `translation`)
+  SELECT DISTINCT `signal_text`, 'en_GB_utf8', `signal_text`
+  FROM `uo_timekeeper_template_signal`
+  WHERE `signal_text` <> ''
+  AND CHAR_LENGTH(`signal_text`) <= 50;
 
 
 CREATE TABLE IF NOT EXISTS `uo_urls` (

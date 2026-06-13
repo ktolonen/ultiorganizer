@@ -149,6 +149,26 @@ function ExistingTranslationKey($key)
     }
 }
 
+function RegisterTranslationKey($key, $locale = null)
+{
+    $key = trim((string) $key);
+    if ($key === '' || mb_strlen($key) > 50) {
+        return;
+    }
+
+    if ($locale === null || $locale === '') {
+        $locale = getSessionLocale();
+    }
+    $locale = str_replace(".", "_", (string) $locale);
+    DBQuery(sprintf(
+        "INSERT IGNORE INTO uo_translation (translation_key, locale, translation)
+        VALUES ('%s', '%s', '%s')",
+        DBEscapeString($key),
+        DBEscapeString($locale),
+        DBEscapeString($key),
+    ));
+}
+
 function SetTranslation($key, $translations)
 {
     if (hasTranslationRight()) {

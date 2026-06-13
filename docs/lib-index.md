@@ -38,6 +38,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/statistical.functions.php`: precomputed season/series/team/player stats reads and stat rebuild routines.
 - `lib/swissdraw.functions.php`: swissdraw move resolution, duplicate-game avoidance, tie handling, and playoff/BYE checks.
 - `lib/team.functions.php`: team/roster CRUD, team stats, team profile/media, standings/move views, and CSV export.
+- `lib/timekeeper.functions.php`: Timekeeper template definitions (actions, signals, caps), superadmin template CRUD and signal storage, and the client template payload (`TimekeeperTemplatesForClient`).
 - `lib/timetable.functions.php`: timetable grouping/render helpers, conflict detection, move-time management, and timetable CSV export.
 - `lib/translation.functions.php`: DB-backed translation loading, CRUD, autocomplete translation helpers, and translated field widgets.
 - `lib/url.functions.php`: generic URL/media/mail CRUD for owners and game media lookups.

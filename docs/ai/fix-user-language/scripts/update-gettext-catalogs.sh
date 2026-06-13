@@ -31,7 +31,7 @@ while IFS= read -r file; do
 done < <(
   {
     find . -maxdepth 1 -type f -name '*.php'
-    find admin api cust ext lib login mobile plugins scorekeeper spiritkeeper sql user -type f -name '*.php'
+    find admin api cust ext lib login mobile plugins scorekeeper spiritkeeper sql timekeeper user -type f -name '*.php'
   } | LC_ALL=C sort
 )
 

@@ -107,6 +107,43 @@ function mobileStyles()
     return $ret;
 }
 
+function MobileLanguageSelection($queryParams = [])
+{
+    global $include_prefix;
+    global $locales;
+    global $styles_prefix;
+
+    $localeFlagFiles = [
+        'de_DE.utf8' => 'Germany.png',
+        'en_GB.utf8' => 'United_Kingdom.png',
+        'es_ES.utf8' => 'Spain.png',
+        'fi_FI.utf8' => 'Finland.png',
+    ];
+    $html = "<div class='mobile-language-flags'>\n";
+    if (isset($locales) && is_array($locales)) {
+        foreach ($locales as $localestr => $localename) {
+            $flagSrc = $styles_prefix . "locale/" . $localestr . "/flag.png";
+            $flagClass = "localeselection mobile-language-flag-native";
+            if (isset($localeFlagFiles[$localestr])) {
+                $smallFlagFile = $localeFlagFiles[$localestr];
+                if (is_file($include_prefix . "images/flags/small/" . $smallFlagFile)) {
+                    $flagSrc = $styles_prefix . "images/flags/small/" . $smallFlagFile;
+                    $flagClass = "localeselection mobile-language-flag-small";
+                }
+            }
+            $localeParams = $queryParams;
+            $localeParams['locale'] = $localestr;
+            $html .= "<a href='?" . utf8entities(http_build_query($localeParams)) . "'>";
+            $html .= "<img class='" . utf8entities($flagClass) . "' src='" . utf8entities($flagSrc)
+                . "' alt='" . utf8entities($localename) . "'/>";
+            $html .= "</a>\n";
+        }
+    }
+    $html .= "</div>\n";
+
+    return $html;
+}
+
 function MapLocale($ext_locale)
 {
     global $localeMap;

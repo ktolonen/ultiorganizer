@@ -3,7 +3,7 @@
 include_once __DIR__ . '/auth.php';
 spiritkeeperRequireAuth(__FILE__, 'login', 'public');
 
-$pageTitle = _("Spiritkeeper");
+$pageTitle = "Spiritkeeper";
 $pageHtml = "";
 $errors = "";
 $nextView = GetString('nextview');
@@ -67,4 +67,18 @@ $pageHtml .= "<div class='mobile-actions'>";
 $pageHtml .= "<input type='submit' name='login' value='" . _("Log in") . "'/>";
 $pageHtml .= "</div>";
 $pageHtml .= "</form>";
+$pageHtml .= "</div>";
+$languageQuery = ['view' => 'login'];
+if (!empty($nextView)) {
+    $languageQuery['nextview'] = $nextView;
+}
+if ($gameId > 0) {
+    $languageQuery['game'] = $gameId;
+}
+if ($teamId > 0) {
+    $languageQuery['team'] = $teamId;
+}
+$pageHtml .= "<div class='card mobile-language-selection'>";
+$pageHtml .= "<h2>" . utf8entities(_("Select language")) . "</h2>";
+$pageHtml .= MobileLanguageSelection($languageQuery);
 $pageHtml .= "</div>";
