@@ -161,7 +161,7 @@ if (!empty($_POST['save'])) {
             $h++;
 
             $defense = GamePlayerFromNumber($gameId, $game_result['hometeam'], $defense);
-            if ($defense == -1) {
+            if ($defense === null) {
                 echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
                 $errIds[] = "defense$i";
             }
@@ -170,7 +170,7 @@ if (!empty($_POST['save'])) {
         } elseif (!empty($team) && $team == 'A') {
             $a++;
             $defense = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $defense);
-            if ($defense == -1) {
+            if ($defense === null) {
                 echo "<p class='warning'>" . _("Defence") . " ", $i + 1, ": " . _("player's number") . " '" . $_POST['defense' . $i] . "' " . _("Not on the roster") . "!</p>";
                 $errIds[] = "defense$i";
             }

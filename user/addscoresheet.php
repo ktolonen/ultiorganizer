@@ -379,7 +379,7 @@ if (!empty($_POST['save'])) {
             $h++;
             if (!$iscallahan) {
                 $pass = GamePlayerFromNumber($gameId, $game_result['hometeam'], $pass);
-                if ($pass == -1) {
+                if ($pass === null) {
                     echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("assisting player's number") . " '" . $_POST['pass' . $i] . "' " . _("Not on the roster") . "!</p>";
                     $errIds[] = "pass$i";
                 }
@@ -388,7 +388,7 @@ if (!empty($_POST['save'])) {
             }
 
             $goal = GamePlayerFromNumber($gameId, $game_result['hometeam'], $goal);
-            if ($goal == -1) {
+            if ($goal === null) {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $_POST['goal' . $i] . "' " . _("Not on the roster") . "!</p>";
                 $errIds[] = "goal$i";
             }
@@ -404,7 +404,7 @@ if (!empty($_POST['save'])) {
             $a++;
             if (!$iscallahan) {
                 $pass = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $pass);
-                if ($pass == -1) {
+                if ($pass === null) {
                     echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("assisting player's number") . " '" . $_POST['pass' . $i] . "' " . _("Not on the roster") . "!</p>";
                     $errIds[] = "pass$i";
                 }
@@ -413,7 +413,7 @@ if (!empty($_POST['save'])) {
             }
 
             $goal = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $goal);
-            if ($goal == -1) {
+            if ($goal === null) {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $_POST['goal' . $i] . "' " . _("Not on the roster") . "!</p>";
                 $errIds[] = "goal$i";
             }

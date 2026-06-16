@@ -472,6 +472,11 @@ function GameAllArray($limit = 50, $onlyPublicExternal = false)
     return DBFetchAllAssoc(GameAll($limit, $onlyPublicExternal));
 }
 
+/**
+ * Return the played player's id for a game roster number.
+ *
+ * Returns null when the number is not on the team's roster for the game.
+ */
 function GamePlayerFromNumber($gameId, $teamId, $number)
 {
     $query = sprintf(
