@@ -116,6 +116,7 @@ td {
 .page {
 	max-width: 860px;
 	width: 100%;
+	min-width: max-content;
 	border: 1px solid #333;
 	margin-left: auto;
 	margin-right: auto;
