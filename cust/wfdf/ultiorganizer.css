@@ -114,7 +114,8 @@ td {
 }
 
 .page {
-	width: 860px;
+	max-width: 860px;
+	width: 100%;
 	border: 1px solid #333;
 	margin-left: auto;
 	margin-right: auto;
@@ -210,6 +211,25 @@ td {
 }
 
 @media only screen and (max-width: 768px) {
+	.page {
+		border-left: 0;
+		border-right: 0;
+	}
+
+	.page_top {
+		height: auto;
+		min-height: 60px;
+	}
+
+	.page_top table {
+		white-space: normal !important;
+	}
+
+	.page_middle > table {
+		width: 100%;
+		margin: 0;
+	}
+
 	.menu_left {
 		display: none;
 		position: fixed;
@@ -257,12 +277,31 @@ td {
 		padding: 5px 20px 0px 25px;
 	}
 
+	.page_top .topheader_left {
+		width: 1%;
+		white-space: nowrap;
+	}
+
 	.topheader_auth_inline {
 		display: none;
 	}
 
 	.topheader_auth_mobile {
 		display: inline;
+		white-space: nowrap;
+	}
+
+	.page_top .topheader_right {
+		width: 100%;
+		padding-right: 8px;
+		text-align: right;
+		vertical-align: top;
+	}
+
+	.page_top .topheader_right table {
+		width: auto !important;
+		margin-left: auto;
+		margin-right: 0;
 	}
 
 }
@@ -310,7 +349,7 @@ td {
 }
 
 .content {
-	width: 635px;
+	width: 95%;
 	height: 100%;
 	margin: 0px;
 	margin-left: 5px;
