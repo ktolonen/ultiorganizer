@@ -1,6 +1,7 @@
 FROM php:8.3-apache
 
 RUN apt-get update && apt-get install -y \
+    chromium \
     curl \
     gettext \
     git \
@@ -38,6 +39,7 @@ RUN mkdir -p /opt/eslint \
       @eslint/js@9.16.0 \
       eslint-plugin-html@8.1.2 \
       globals@15.13.0 \
+      ws@8 \
  && npm cache clean --force
 ENV NODE_PATH=/opt/eslint/node_modules
 ENV PATH=/opt/eslint/node_modules/.bin:$PATH
