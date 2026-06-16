@@ -160,7 +160,6 @@ td {
 .page {
 	max-width: 920px;
 	width: 100%;
-	min-width: max-content;
 	margin: 0 auto;
 	overflow: visible;
 	clear: both;
@@ -267,6 +266,7 @@ td {
 		border-right: 0;
 		border-radius: 0;
 		box-shadow: none;
+		min-width: max-content;
 	}
 
 	.page_top {
