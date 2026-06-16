@@ -2583,6 +2583,9 @@ function GeneratePlayoffPools($poolId, $generate = true)
                 //create pool
                 $name = $poolname . " " . $name;
                 $id = PoolFromAnotherPool($poolInfo['series'], $name, $poolInfo['ordering'] . $i, $prevpoolId, true);
+                if (!empty($poolInfo['visible'])) {
+                    SetPoolVisibility($id, 1);
+                }
                 if ($rounds - $i == 1) {
                     DBQuery("UPDATE uo_pool SET placementpool=1 WHERE pool_id=$id");
                 }
