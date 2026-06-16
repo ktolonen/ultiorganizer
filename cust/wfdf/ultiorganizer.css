@@ -214,7 +214,6 @@ td {
 	.page {
 		border-left: 0;
 		border-right: 0;
-		min-width: max-content;
 	}
 
 	.page_top {
