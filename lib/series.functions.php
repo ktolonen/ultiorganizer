@@ -54,7 +54,7 @@ function SeriesPools($seriesId, $onlyvisible = false, $nocontinuingpools = false
     $query = sprintf("SELECT pool_id, name, type FROM uo_pool WHERE series=%d", (int) $seriesId);
 
     if ($onlyvisible) {
-        $query .= " AND visible=1";
+        $query .= " AND visible=1 AND NOT EXISTS (SELECT 1 FROM uo_pool p2 WHERE p2.follower = uo_pool.pool_id)";
     }
     if ($nocontinuingpools) {
         $query .= " AND continuingpool=0";

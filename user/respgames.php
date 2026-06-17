@@ -197,7 +197,7 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
                 $html .= "<td>" . intval($game['homescore']) . "</td><td>-</td><td>" . intval($game['visitorscore']) . "</td>";
             }
             if (intval($game['hasstarted']) > 0) {
-                $html .= "<td><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . _("Gameplay") . "</a></td>";
+                $html .= "<td style='white-space: nowrap'><a href='?view=gameplay&amp;game=" . $game['game_id'] . "'>" . _("Gameplay") . "</a></td>";
             } else {
                 $html .= "<td></td>";
             }

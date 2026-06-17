@@ -1717,6 +1717,24 @@ function SetPoolVisibility($poolId, $visible)
 }
 
 /**
+ * Cascade a playoff root pool's visibility to all of its followers.
+ *
+ * Follower pools (Quarterfinals, Semifinals, Finals, ...) are hidden from the
+ * public pool menus but their games must follow the root pool's visibility so
+ * they appear in the public GAMES/ical schedules. Existing follower trees are
+ * not updated when the root visibility is toggled, so cascade it explicitly.
+ *
+ * @param int $poolId root pool id
+ * @param bool|int $visible 0/false hidden, 1/true visible
+ */
+function SetPoolFollowersVisibility($poolId, $visible)
+{
+    foreach (PoolPlayoffFollowersArray($poolId) as $followerId) {
+        SetPoolVisibility($followerId, $visible);
+    }
+}
+
+/**
  * Set pool name.
  *
  * @param int $poolId
@@ -2583,6 +2601,9 @@ function GeneratePlayoffPools($poolId, $generate = true)
                 //create pool
                 $name = $poolname . " " . $name;
                 $id = PoolFromAnotherPool($poolInfo['series'], $name, $poolInfo['ordering'] . $i, $prevpoolId, true);
+                if (!empty($poolInfo['visible'])) {
+                    SetPoolVisibility($id, 1);
+                }
                 if ($rounds - $i == 1) {
                     DBQuery("UPDATE uo_pool SET placementpool=1 WHERE pool_id=$id");
                 }

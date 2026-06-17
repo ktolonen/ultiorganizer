@@ -55,7 +55,7 @@ function SeasonPools($seasonId, $onlyvisible = false, $onlyvalid = true)
     );
 
     if ($onlyvisible) {
-        $query .= " AND pool.visible=1";
+        $query .= " AND pool.visible=1 AND NOT EXISTS (SELECT 1 FROM uo_pool p2 WHERE p2.follower = pool.pool_id)";
     }
 
     if ($onlyvalid) {

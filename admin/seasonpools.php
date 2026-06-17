@@ -74,7 +74,8 @@ if (!empty($_POST['save'])) {
         $pp['ordering'] = !empty($_POST["ordering$pool_id"]) ? $_POST["ordering$pool_id"] : "A";
         // Disabled checkboxes are not submitted; for non-root playoff pools these fields
         // are disabled in the form and controlled by the root pool, so preserve existing values.
-        if ($pool_info['type'] == 2 && PoolPlayoffRoot($pool_id) != $pool_id) {
+        $isPlayoffFollower = $pool_info['type'] == 2 && PoolPlayoffRoot($pool_id) != $pool_id;
+        if ($isPlayoffFollower) {
             $pp['visible'] = intval($pool_info['visible']);
             $pp['continuingpool'] = intval($pool_info['continuingpool']);
             $pp['placementpool'] = intval($pool_info['placementpool']);
@@ -84,6 +85,11 @@ if (!empty($_POST['save'])) {
             $pp['placementpool'] = isset($_POST["placement$pool_id"]) ? 1 : 0;
         }
         SetPoolDetails($pool_id, $pp);
+        // Cascade a playoff root pool's visibility to its (hidden-from-menu) followers
+        // so their games follow the root in the public GAMES/ical schedules.
+        if ($pool_info['type'] == 2 && !$isPlayoffFollower) {
+            SetPoolFollowersVisibility($pool_id, $pp['visible']);
+        }
     }
 }
 
