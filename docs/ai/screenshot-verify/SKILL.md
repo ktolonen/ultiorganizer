@@ -62,7 +62,7 @@ For layout debugging — "does `.page` actually grow?", "is `.page_top` the same
 
 ```bash
 docker compose -f docs/dev/compose.yaml exec -T dev \
-  node /workspace/.claude/skills/screenshot-verify/scripts/measure.js \
+  node /workspace/docs/ai/screenshot-verify/scripts/measure.js \
   "http://host.docker.internal:8080/?view=<view>" <WIDTH> <HEIGHT> \
   ".page,.page_top,.games-table"
 ```
