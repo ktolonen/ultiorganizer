@@ -346,6 +346,7 @@ td {
 
 .tdcontent {
 	/*border-left: solid #598788 4px;*/
+	width: 100%;
 }
 
 .content {
