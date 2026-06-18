@@ -23,18 +23,6 @@ a:focus {
 	text-transform: uppercase;
 }
 
-.header_text_small:link,
-.header_text_small:visited,
-.header_text_small:active,
-.header_text_small:hover,
-.header_text_small:focus {
-	color: #0bc5e0;
-	font-size: 12pt;
-	padding-left: 10px;
-	font-weight: normal;
-	text-decoration: none;
-}
-
 .seasondropdown {
 	width: 175px;
 	background-color: #54cfe6;

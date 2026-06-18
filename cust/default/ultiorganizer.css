@@ -461,18 +461,6 @@ td {
 	height: 40px;
 }
 
-.header_text_small:link,
-.header_text_small:visited,
-.header_text_small:active,
-.header_text_small:hover,
-.header_text_small:focus {
-	color: #3f5f94;
-	font-size: 12pt;
-	padding-left: 10px;
-	font-weight: normal;
-	text-decoration: none;
-}
-
 .seasondropdown {
 	width: 175px;
 	background-color: #7f97bf;
@@ -1115,23 +1103,6 @@ yuicalendar.table {
 
 .tablelowlight {
 	background-color: #E0E0E0;
-}
-
-.twitter-list {
-	margin: 0 0 15px 15px;
-	padding: 0;
-	list-style-type: none;
-}
-
-.twitter-list li {
-	margin: 0 0 10px 0;
-	padding: 0;
-	list-style-type: none;
-}
-
-.twitter-list li a {
-	padding: 0 0 0 19px;
-	background: url("../../images/linkicons/twitter_14x14.png") no-repeat 0 50%;
 }
 
 .feed {
