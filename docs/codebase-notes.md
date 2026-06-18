@@ -26,6 +26,7 @@ This page collects implementation details that are useful during coding work but
 - `cust/` contains skins and installation-specific customizations.
 - `cust/default` is the default skin.
 - `cust/slkl` is actively maintained and used in production at <https://www.ultimate.fi/pelikone>.
+- Skin CSS cascades: `styles()` and `mobileStyles()` in `localization.php` always load `cust/default/ultiorganizer.css` first, then layer the active skin's `cust/<id>/ultiorganizer.css` on top when it exists and is not `default`. A skin file therefore only needs the rules that differ from default; anything it omits is inherited from default (a skin can no longer disable a default rule by omitting it — override the property explicitly, e.g. `border-radius: 0`). `cust/slkl` and `cust/wfdf` are kept as override-only files; the other skins still carry full copies, which keep working because a full copy overrides every default rule.
 - External license database integration is customization-specific. There is no single default external service.
 - Most `cust/*.php` files are include-only fragments. They are blocked by `cust/.htaccess` on Apache and by `cust/include_only.guard.php` in PHP for cross-server portability.
 - The current allowed customization HTTP endpoints are `players.php` and `jasenet.php`; if a new public endpoint is added under `cust/`, update `cust/.htaccess` at the same time.
