@@ -188,7 +188,6 @@ td {
 .page_top {
 	width: 100%;
 	padding: 0px;
-	padding-right: 0px;
 	height: 50px;
 	border-bottom: 1px dashed #444;
 	background: linear-gradient(#f8f8f8, #ececec);
@@ -557,7 +556,6 @@ td {
 	gap: 8px;
 	overflow: hidden;
 	padding: 0px;
-	margin: 0px;
 	margin-top: 2px;
 	margin-bottom: 2px;
 	margin-left: 5px;
@@ -605,7 +603,6 @@ td {
 .menupoollevel {
 	font-size: 10px;
 	/*padding-left:10px*/
-	;
 }
 
 .pagemenu_container {
