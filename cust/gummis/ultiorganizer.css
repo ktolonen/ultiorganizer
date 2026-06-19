@@ -22,7 +22,6 @@ th {
 	font-size: 10px;
 	text-align: left;
 	text-decoration: none;
-	background-color: #000000;
 	background: black url(nav.png) no-repeat center;
 }
 
@@ -173,7 +172,6 @@ th a:visited {
 	font-weight: bold;
 	text-align: center;
 	text-transform: uppercase;
-	background-color: #2d2d2d;
 	background: black url(nav.png) no-repeat center;
 }
 

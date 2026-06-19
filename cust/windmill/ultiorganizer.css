@@ -361,7 +361,6 @@ td {
 	font-weight: bold;
 	vertical-align: bottom;
 	font-variant: small-caps;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
 .groupinglink:hover,
@@ -374,7 +373,6 @@ td {
 	font-weight: bold;
 	vertical-align: bottom;
 	font-variant: small-caps;
-	font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
 .selgroupinglink {
