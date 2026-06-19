@@ -26,13 +26,9 @@ a:focus {
 .seasondropdown {
 	width: 175px;
 	background-color: #54cfe6;
-	background-image: linear-gradient(#7cdaee, #3fc6e0);
 	color: #000000;
 	font-size: 11px;
-	border-top: solid #f0f0ea 1px;
-	border-bottom: solid #6b6b6b 1px;
-	border-left: solid #f0f0ea 1px;
-	border-right: solid #6b6b6b 1px;
+	border: 1px solid #6b6b6b;
 	border-radius: 6px;
 	padding: 1px 5px;
 }
@@ -73,7 +69,7 @@ ul#pagemenu li a:hover,
 table#pagemenu a:hover {
 	color: #0a7f93;
 	text-decoration: none;
-	background: linear-gradient(#ffffff, #ededed);
+	background-color: #f7f7f7;
 	border-color: #7aa9b1;
 }
 
@@ -81,11 +77,10 @@ ul#pagemenu li a.current,
 table#pagemenu a.current {
 	color: #00323a;
 	text-decoration: none;
-	background: linear-gradient(#1ed0e8, #0bc5e0);
+	background-color: #0bc5e0;
 	border-color: #0799ad;
 	position: relative;
 	top: 1px;
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45);
 }
 
 .thsort:active,

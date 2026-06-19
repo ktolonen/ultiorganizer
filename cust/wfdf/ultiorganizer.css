@@ -107,10 +107,7 @@ th a:visited {
 	background-color: #eeeeee;
 	color: #004466;
 	font-size: 12px;
-	border-top: solid #EEEEDD 1px;
-	border-bottom: solid #464646 1px;
-	border-left: solid #EEEEDD 1px;
-	border-right: solid #464646 1px;
+	border: 1px solid #464646;
 }
 
 .seasonnav:link,
@@ -248,7 +245,6 @@ table#pagemenu a.current {
 
 .teams-table th {
 	background-color: #006699;
-	box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .teams-table tr:nth-of-type(even) td {
