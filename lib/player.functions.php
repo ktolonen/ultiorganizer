@@ -346,18 +346,26 @@ function PlayerInfo($playerId)
 }
 
 /**
- * Gets latest playerId for given profile id.
+ * Gets latest playerId for given profile id, optionally limited to an event.
+ *
  * @param int $profileId
+ * @param string|null $seasonId
  */
-function PlayerLatestId($profileId)
+function PlayerLatestId($profileId, $seasonId = null)
 {
     if (!empty($profileId)) {
+        $seasonFilter = "";
+        if ($seasonId !== null && $seasonId !== "") {
+            $seasonFilter = sprintf(" AND ser.season='%s'", DBEscapeString($seasonId));
+        }
+
         $query = sprintf(
             "SELECT MAX(p.player_id) FROM uo_player p
 			LEFT JOIN uo_team t ON (p.team=t.team_id) 
 			LEFT JOIN uo_series ser ON (ser.series_id=t.series)
-			WHERE p.profile_id=%d",
+			WHERE p.profile_id=%d%s",
             (int) $profileId,
+            $seasonFilter,
         );
 
         return DBQueryToValue($query);
