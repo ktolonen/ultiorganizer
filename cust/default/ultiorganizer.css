@@ -53,7 +53,7 @@
 	--status-warning: #cc0000;
 	--status-positive: #2f5721;
 	--status-negative: #6b1a1a;
-	--status-attention: #ffb6c1;
+	--status-warning-bg: #ffb6c1;
 	--highlight: #b7c8e6;
 	--played-bg: #e0e0e0;
 	--halftime-bg: #cccccc;
@@ -1002,7 +1002,7 @@ tr.admintablerow>td {
 }
 
 .attention {
-	background-color: var(--status-attention);
+	background-color: var(--status-warning-bg);
 }
 
 .lowlight {

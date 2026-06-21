@@ -1,155 +1,97 @@
 /*
  * SLKL skin overrides.
  * Loaded on top of cust/default/ultiorganizer.css (see styles() in localization.php).
- * Only rules that differ from the default skin belong here.
+ * The palette is driven by token overrides in :root; only genuine exceptions
+ * that do not map to a default token remain as rules below.
  */
 
-a:hover,
-a:focus {
-	text-decoration: none;
-	color: #2dc1dd;
+:root {
+	/*
+	 * Full color palette mirrored from the default skin so the whole set is
+	 * visible in one place. Lines tagged "slkl" are this skin's overrides;
+	 * the rest repeat the default values for reference.
+	 */
+
+	/* Surfaces */
+	--canvas: #f5f6f8;
+	--surface: #ffffff;
+	--surface-muted: #f0f0f0;
+
+	/* Text */
+	--text: #2d2d2d;
+	--text-muted: #666666;
+	--text-faint: #a0a0a0;
+	--text-inverse: #ffffff;
+
+	/* Links */
+	--link: #2d2d2d;
+	--link-hover: #2dc1dd; /* slkl */
+
+	/* Accent (teal) */
+	--accent: #0bc5e0; /* slkl */
+	--accent-strong: #0bc5e0; /* slkl */
+	--accent-deep: #00323a; /* slkl */
+
+	/* Borders */
+	--menu-border: #7a7a7a;
+	--border-strong: #444444;
+	--border: #cfcfcf;
+
+	/* Tables */
+	--table-header-bg: #2d2d2d;
+	--table-header-text: #ffffff;
+	--table-row-odd: #ffffff;
+	--table-row-even: #f7f7f7;
+	--table-row-hover: #eef7f9;
+	--admin-row-alt: #eef2f7;
+
+	/* Menu & navigation */
+	--menu-section-bg: #afafaf;
+	--menu-highlight: #d3d3d3;
+	--menu-dropdown-bg: #54cfe6; /* slkl */
+	--menu-dropdown-border: #6b6b6b;
+
+	/* Page-menu tabs */
+	--tab-border: #b9b9b9;
+	--tab-hover-bg: #f7f7f7;
+	--tab-hover-border: #9bb0cf;
+	--tab-active-bg: #0bc5e0; /* slkl */
+	--tab-active-border: #0799ad; /* slkl */
+
+	/* Teams */
+	--team-home: #0bc5e0; /* slkl */
+	--team-away: #ff7f02; /* slkl */
+
+	/* Status / semantic */
+	--status-warning: #cc0000;
+	--status-positive: #2f5721;
+	--status-negative: #6b1a1a;
+	--status-warning-bg: #ffb6c1;
+	--highlight: #0bc5e0; /* slkl */
+	--played-bg: #e0e0e0;
+	--halftime-bg: #cccccc;
 }
 
-.header_text:link,
-.header_text:visited,
-.header_text:active,
-.header_text:hover,
-.header_text:focus {
-	color: #0bc5e0;
-	font-size: 20pt;
-	margin-left: 8px;
-	font-weight: normal;
-	text-decoration: none;
-	text-transform: uppercase;
-}
-
-.seasondropdown {
-	width: 175px;
-	background-color: #54cfe6;
-	color: #000000;
-	font-size: 11px;
-	border: 1px solid #6b6b6b;
-	border-radius: 6px;
-	padding: 1px 5px;
-}
-
-.seasonnav:active,
-.seasonnav:hover,
-.seasonnav:focus {
-	color: #0bc5e0;
-	text-decoration: none;
-	font-weight: normal;
-}
-
-.nav:active,
-.nav:hover,
-.nav:focus {
-	color: #0bc5e0;
-	text-decoration: none;
-	background-color: #d3d3d3;
-}
-
-.subnav:active,
-.subnav:hover,
-.subnav:focus {
-	color: #0bc5e0;
-	text-decoration: underline;
-	background-color: #d3d3d3;
-}
-
-.navpoollink:active,
-.navpoollink:hover,
-.navpoollink:focus {
-	color: #0bc5e0;
-	text-decoration: underline;
-	background-color: #d3d3d3;
-}
-
+/* Page-menu hover uses a darker teal for legibility on the light hover fill. */
 ul#pagemenu li a:hover,
 table#pagemenu a:hover {
 	color: #0a7f93;
-	text-decoration: none;
-	background-color: #f7f7f7;
 	border-color: #7aa9b1;
 }
 
-ul#pagemenu li a.current,
-table#pagemenu a.current {
-	color: #00323a;
-	text-decoration: none;
-	background-color: #0bc5e0;
-	border-color: #0799ad;
-	position: relative;
-	top: 1px;
-}
-
-.thsort:active,
-.thsort:hover,
-.thsort:focus {
-	color: #0bc5e0;
-	text-decoration: none;
-}
-
-.thlink:active,
-.thlink:hover,
-.thlink:focus {
-	color: #0bc5e0;
-	text-decoration: none;
-}
-
-.topheaderlink:active,
-.topheaderlink:hover,
-.topheaderlink:focus {
-	color: #0bc5e0;
-	text-decoration: none;
-}
-
+/* White header links on the dark placements-table header. */
 .placements-table th a:link,
 .placements-table th a:visited,
 .placements-table th a:active,
 .placements-table th a:hover,
 .placements-table th a:focus {
-	color: #ffffff;
+	color: var(--table-header-text);
 }
 
-.deletebutton:hover {
-	background-color: #0bc5e0;
-}
-
-.highlight {
-	background-color: #0bc5e0;
-}
-
-.home {
-	background-color: #0bc5e0;
-	color: white;
-}
-
-.guest {
-	background-color: #ff7f02;
-	color: white;
-}
-
-.homefontcolor {
-	color: #0bc5e0;
-}
-
-.guestfontcolor {
-	color: #ff7f02;
-}
-
+/* Grouping-link hover keeps its own blue. */
 .groupinglink:hover,
 .groupinglink:focus {
 	color: #3366ff;
-	text-decoration: none;
-	font-weight: bold;
-}
-
-.selgroupinglink {
-	color: #0bc5e0;
-	text-decoration: none;
-	font-weight: bold;
-	font-variant: small-caps;
 }
 
 @media only screen and (max-width: 768px) {

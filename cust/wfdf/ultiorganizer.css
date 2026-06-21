@@ -1,14 +1,81 @@
 /*
  * WFDF skin overrides.
  * Loaded on top of cust/default/ultiorganizer.css (see styles() in localization.php).
- * Only rules that differ from the default skin belong here.
+ * Palette via token overrides in :root. WFDF is a distinct design (blue table
+ * headers, light-blue tabs, custom menu), so structural and design-specific
+ * rules remain below.
  */
 
+:root {
+	/*
+	 * Full color palette mirrored from the default skin so the whole set is
+	 * visible in one place. Lines tagged "wfdf" are this skin's overrides;
+	 * the rest repeat the default values for reference.
+	 */
+
+	/* Surfaces */
+	--canvas: #f5f6f8;
+	--surface: #ffffff;
+	--surface-muted: #f0f0f0;
+
+	/* Text */
+	--text: #2d2d2d;
+	--text-muted: #666666;
+	--text-faint: #a0a0a0;
+	--text-inverse: #ffffff;
+
+	/* Links */
+	--link: #004466; /* wfdf */
+	--link-hover: #5b7db4;
+
+	/* Accent (blue) */
+	--accent: #006699; /* wfdf */
+	--accent-strong: #4f6fa8;
+	--accent-deep: #2b3f65;
+
+	/* Borders */
+	--menu-border: #7a7a7a;
+	--border-strong: #444444;
+	--border: #cfcfcf;
+
+	/* Tables */
+	--table-header-bg: #006699; /* wfdf */
+	--table-header-text: #ffffff;
+	--table-row-odd: #ffffff;
+	--table-row-even: #f7f7f7;
+	--table-row-hover: #eef7f9;
+	--admin-row-alt: #eef2f7;
+
+	/* Menu & navigation */
+	--menu-section-bg: #006699; /* wfdf */
+	--menu-highlight: #d3d3d3;
+	--menu-dropdown-bg: #7f97bf;
+	--menu-dropdown-border: #6b6b6b;
+
+	/* Page-menu tabs */
+	--tab-border: #b9b9b9;
+	--tab-hover-bg: #f7f7f7;
+	--tab-hover-border: #9bb0cf;
+	--tab-active-bg: #5e7fb3;
+	--tab-active-border: #4b6796;
+
+	/* Teams */
+	--team-home: #986598; /* wfdf */
+	--team-away: #339798; /* wfdf */
+
+	/* Status / semantic */
+	--status-warning: #cc0000;
+	--status-positive: #2f5721;
+	--status-negative: #6b1a1a;
+	--status-warning-bg: #ffb6c1;
+	--highlight: #d7c2ee; /* wfdf */
+	--played-bg: #e0e0e0;
+	--halftime-bg: #cccccc;
+}
+
+/* Links: no underline at rest, underline on hover (opposite of default). */
 a:link,
 a:visited {
-	color: #004466;
-	font-size: 10px;
-	text-align: left;
 	text-decoration: none;
 }
 
@@ -17,21 +84,99 @@ a:focus {
 	text-decoration: underline;
 }
 
-th {
-	color: #ffffff;
-	font-size: 10px;
-	text-align: left;
-	text-decoration: none;
-	background-color: #006699;
-}
-
+/* White links/text on WFDF's dark-blue table and menu headers. */
 th a:link,
 th a:visited {
-	color: #ffffff;
-	font-size: 10px;
-	text-align: left;
-	text-decoration: underline;
+	color: var(--text-inverse);
 }
+
+.menuseasonlevel {
+	color: var(--text-inverse);
+}
+
+.seasonnav:link,
+.seasonnav:visited {
+	font-size: 10pt;
+	color: var(--text-inverse);
+}
+
+/* Nav hover uses plain dark text rather than the accent tint. */
+.nav:active,
+.nav:hover,
+.nav:focus,
+.subnav:active,
+.subnav:hover,
+.subnav:focus,
+.navpoollink:active,
+.navpoollink:hover,
+.navpoollink:focus {
+	color: var(--text);
+}
+
+.header_text:link,
+.header_text:visited,
+.header_text:active,
+.header_text:hover,
+.header_text:focus {
+	font-size: 18pt;
+}
+
+.seasondropdown {
+	background-color: #eeeeee;
+	color: var(--link);
+	font-size: 12px;
+	border: 1px solid #464646;
+}
+
+.topheadertext {
+	background-color: var(--surface);
+}
+
+.thsort:active,
+.thsort:hover,
+.thsort:focus {
+	color: #996699;
+}
+
+.thlink:active,
+.thlink:hover,
+.thlink:focus {
+	color: #0bc5e0;
+}
+
+.topheaderlink:active,
+.topheaderlink:hover,
+.topheaderlink:focus {
+	color: #986598;
+}
+
+/* Home/away font colors intentionally differ from the row background colors. */
+.homefontcolor {
+	color: #99ccff;
+}
+
+.guestfontcolor {
+	color: #ef7a7a;
+}
+
+.groupinglink:link,
+.groupinglink:visited {
+	font-size: 10pt;
+}
+
+.groupinglink:hover,
+.groupinglink:focus {
+	color: #986598;
+}
+
+.selgroupinglink {
+	color: #986598;
+	font-size: 10pt;
+	text-align: left;
+	vertical-align: bottom;
+}
+
+/* --- Structural / layout (not palette) --- */
 
 .page {
 	max-width: 860px;
@@ -43,13 +188,12 @@ th a:visited {
 	padding-right: 25px;
 	padding-top: 0px;
 	padding-bottom: 25px;
-	background-color: #FFFFFF;
+	background-color: var(--surface);
 }
 
 .page_top {
 	width: 100%;
 	padding: 0px;
-	padding-right: 0px;
 	height: 60px;
 	border-bottom: 1px dashed #333;
 }
@@ -82,83 +226,12 @@ th a:visited {
 	float: left;
 	text-align: left;
 	vertical-align: top;
-	background-color: #ACD1E9;
+	background-color: #acd1e9;
 	width: 175px;
-	border-top: solid #EEEEDD 1px;
+	border-top: solid #eeeedd 1px;
 	border-bottom: solid #464646 1px;
-	border-left: solid #EEEEDD 1px;
+	border-left: solid #eeeedd 1px;
 	border-right: solid #464646 1px;
-}
-
-.header_text:link,
-.header_text:visited,
-.header_text:active,
-.header_text:hover,
-.header_text:focus {
-	color: #006699;
-	font-size: 18pt;
-	font-weight: normal;
-	text-decoration: none;
-	text-transform: uppercase;
-}
-
-.seasondropdown {
-	width: 175px;
-	background-color: #eeeeee;
-	color: #004466;
-	font-size: 12px;
-	border: 1px solid #464646;
-}
-
-.seasonnav:link,
-.seasonnav:visited {
-	font-size: 10pt;
-	font-weight: bold;
-	text-align: center;
-	color: #ffffff;
-	text-decoration: underline;
-	text-transform: uppercase;
-	display: block;
-}
-
-.seasonnav:active,
-.seasonnav:hover,
-.seasonnav:focus {
-	text-decoration: none;
-	font-weight: normal;
-}
-
-.nav:active,
-.nav:hover,
-.nav:focus {
-	color: #000000;
-	text-decoration: none;
-	background-color: #d3d3d3;
-}
-
-.subnav:active,
-.subnav:hover,
-.subnav:focus {
-	color: #000000;
-	text-decoration: underline;
-	background-color: #d3d3d3;
-}
-
-.navpoollink:active,
-.navpoollink:hover,
-.navpoollink:focus {
-	color: #000000;
-	text-decoration: underline;
-	background-color: #d3d3d3;
-}
-
-.menuseasonlevel {
-	font-size: 10px;
-	color: #ffffff;
-	font-weight: bold;
-	text-align: center;
-	text-transform: uppercase;
-	background-color: #006699;
 }
 
 .pagemenu_container {
@@ -183,15 +256,20 @@ ul#pagemenu li {
 	margin: 0 0 0 4px;
 }
 
+table#pagemenu {
+	font-size: 10px;
+	margin: 0px;
+}
+
 table#pagemenu th {
-	background: #ffffff;
+	background: var(--surface);
 }
 
 ul#pagemenu li a,
 table#pagemenu a {
 	display: block;
 	float: left;
-	color: #2d2d2d;
+	color: var(--text);
 	background: #acd1e9;
 	text-decoration: none;
 	padding: 3px 17px 0 18px;
@@ -200,7 +278,7 @@ table#pagemenu a {
 ul#pagemenu li a:hover,
 table#pagemenu a:hover {
 	text-decoration: underline;
-	background-color: #d3d3d3;
+	background-color: var(--menu-highlight);
 	border-left: 1px solid #333;
 	border-right: 1px solid #333;
 	border-top: 1px solid #333;
@@ -208,43 +286,12 @@ table#pagemenu a:hover {
 
 ul#pagemenu li a.current,
 table#pagemenu a.current {
-	color: #2d2d2d;
+	color: var(--text);
 	text-decoration: underline;
-	background: #fff;
+	background: var(--surface);
 	border-left: 1px solid #333;
 	border-right: 1px solid #333;
 	border-top: 1px solid #333;
-}
-
-.thsort:active,
-.thsort:hover,
-.thsort:focus {
-	color: #996699;
-	text-decoration: none;
-}
-
-.thlink:active,
-.thlink:hover,
-.thlink:focus {
-	color: #0bc5e0;
-	text-decoration: none;
-}
-
-.topheadertext {
-	color: #000000;
-	background-color: #ffffff;
-	padding: 1px;
-}
-
-.topheaderlink:active,
-.topheaderlink:hover,
-.topheaderlink:focus {
-	color: #986598;
-	text-decoration: none;
-}
-
-.teams-table th {
-	background-color: #006699;
 }
 
 .teams-table tr:nth-of-type(even) td {
@@ -259,73 +306,11 @@ table#pagemenu a.current {
 	cursor: pointer;
 	padding: 0;
 	margin: 0;
-	border: 1px solid #ffffff;
+	border: 1px solid var(--surface);
 }
 
 .deletebutton:hover {
 	border: 1px solid #006;
-}
-
-.highlight {
-	background-color: #d7c2ee;
-}
-
-.home {
-	background-color: #986598;
-	color: white;
-}
-
-.guest {
-	background-color: #339798;
-	color: white;
-}
-
-.homefontcolor {
-	color: #99ccff;
-}
-
-.guestfontcolor {
-	color: #ef7a7a;
-}
-
-.groupinglink:link,
-.groupinglink:visited {
-	color: #2d2d2d;
-	font-size: 10pt;
-	text-align: left;
-	text-decoration: underline;
-	font-weight: bold;
-	vertical-align: bottom;
-	font-variant: small-caps;
-}
-
-.groupinglink:hover,
-.groupinglink:focus {
-	color: #986598;
-	text-decoration: none;
-	font-weight: bold;
-}
-
-.selgroupinglink {
-	color: #986598;
-	font-size: 10pt;
-	text-align: left;
-	text-decoration: none;
-	font-weight: bold;
-	vertical-align: bottom;
-	font-variant: small-caps;
-}
-
-.guides {
-	font-style: italic;
-	font-size: 8pt;
-	text-align: center;
-	vertical-align: middle;
-}
-
-table#pagemenu {
-	font-size: 10px;
-	margin: 0px;
 }
 
 @media only screen and (max-width: 768px) {
