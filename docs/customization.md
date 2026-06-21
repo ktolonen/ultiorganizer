@@ -118,6 +118,9 @@ Timekeeper, has a separate complete palette because `mobileStyles()` does not
 load the desktop stylesheet. Shared concepts use the desktop token names, such
 as `--canvas`, `--surface`, `--text-muted`, `--text-inverse`, `--link`,
 `--accent`, `--border`, and the `--table-row-*` tokens.
+Only the default mobile primary colors (`--link`, `--accent`, and
+`--accent-strong`) mirror desktop values; its neutral and semantic colors remain
+mobile-specific.
 
 Mobile-only concepts extend that vocabulary with semantic tokens for gameplay,
 secondary actions, notices, and Timekeeper states. Keep literal color values in

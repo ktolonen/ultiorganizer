@@ -11,9 +11,9 @@
   --text-inverse: #ffffff;
 
   /* Links and accents */
-  --link: #0a5160;
-  --accent: #0f7a8a;
-  --accent-strong: #0a5160;
+  --link: #2d2d2d;
+  --accent: #3f5f94;
+  --accent-strong: #4f6fa8;
   --accent-soft: #e9f0ff;
   --accent-soft-hover: #dbe7ff;
   --accent-surface: #eef7f8;
