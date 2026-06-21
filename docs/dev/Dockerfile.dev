@@ -29,8 +29,8 @@ RUN apt-get update && apt-get install -y \
  && curl -sSf https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer \
  && rm -rf /var/lib/apt/lists/*
 
-# JS linting toolchain. Installed into a self-contained prefix so the repo
-# doesn't need a package.json, and exposed via NODE_PATH + PATH so the
+# JS and CSS linting toolchain. Installed into a self-contained prefix so the
+# repo doesn't need a package.json, and exposed via NODE_PATH + PATH so the
 # eslint.config.js can require() these packages from anywhere in the tree.
 RUN mkdir -p /opt/eslint \
  && cd /opt/eslint \
@@ -40,6 +40,8 @@ RUN mkdir -p /opt/eslint \
       eslint-plugin-html@8.1.2 \
       globals@15.13.0 \
       ws@8 \
+      stylelint@17.13.0 \
+      stylelint-config-standard@40.0.0 \
  && npm cache clean --force
 ENV NODE_PATH=/opt/eslint/node_modules
 ENV PATH=/opt/eslint/node_modules/.bin:$PATH

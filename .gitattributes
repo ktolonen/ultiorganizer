@@ -20,4 +20,5 @@
 /phpstan* export-ignore
 /README.md export-ignore
 /reports/** export-ignore
+/stylelint.config.cjs export-ignore
 /vendor/** export-ignore

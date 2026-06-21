@@ -8,6 +8,7 @@ This directory collects general project documentation.
 
 - `api.md`: API structure, constraints, and examples.
 - `codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
+- `customization.md`: skin color token system, recoloring a skin with tokens, the dark-mode approach, and customization verification.
 - `lib-index.md`: file-by-file map of shared helpers and third-party libraries under `lib/`.
 - `routing.md`: request entry points and view resolution.
 - `runtime-cache.md`: request-local helper caching guidance and database-log recapture commands.
@@ -51,6 +52,7 @@ This directory collects general project documentation.
 - `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
 - `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.
 - `ai/review-playoff-layouts/SKILL.md`: read-only review skill for playoff bracket layout placeholders, CSS widths, and the move-comment block.
+- `ai/css-style-and-lint/SKILL.md`: fix skill for CSS style consistency analysis, Stylelint checks, and safe stylesheet fixes.
 - `ai/format-and-lint/SKILL.md`: fix skill that runs PHP-CS-Fixer and PHPStan on changed PHP files and applies safe fixes.
 - `ai/analyze-lib-functions/SKILL.md`: analysis skill for lib PHP function usage counts and dead-code candidate triage.
 - `ai/screenshot-verify/SKILL.md`: verification skill that takes Chromium screenshots and measures element layout inside the dev container.

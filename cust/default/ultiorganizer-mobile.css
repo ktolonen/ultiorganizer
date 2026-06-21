@@ -1,11 +1,68 @@
 :root {
-  --bg: #f6f8fb;
+  /* Surfaces */
+  --canvas: #f6f8fb;
   --surface: #ffffff;
-  --border: #d9dde5;
+  --surface-muted: #f5f7fb;
+
+  /* Text */
   --text: #0f172a;
-  --muted: #5f6b7a;
-  --accent: #0f7a8a;
-  --accent-strong: #0a5160;
+  --text-muted: #5f6b7a;
+  --text-faint: #9ca3af;
+  --text-inverse: #ffffff;
+
+  /* Links and accents */
+  --link: #2d2d2d;
+  --accent: #3f5f94;
+  --accent-strong: #4f6fa8;
+  --accent-soft: #e9f0ff;
+  --accent-soft-hover: #dbe7ff;
+  --accent-surface: #eef7f8;
+  --accent-border: #b9dbe1;
+
+  /* Borders and shadows */
+  --border: #d9dde5;
+  --pressed-ring-color: rgba(255, 255, 255, 0.35);
+  --raised-shadow-color: rgba(0, 0, 0, 0.08);
+  --card-shadow-color: rgba(0, 0, 0, 0.04);
+
+  /* Tables and lists */
+  --table-row-odd: #f5f7fb;
+  --table-row-even: #ffffff;
+  --table-row-hover: #eef3f7;
+
+  /* Gameplay */
+  --team-home-bg: #e9f7f0;
+  --team-away-bg: #eef2ff;
+  --game-event-bg: #fff7e6;
+  --halftime-bg: #fdecea;
+  --game-card-bg: #f9fbff;
+  --game-pending-bg: #f1f6ff;
+  --game-ongoing-bg: #ffe7e7;
+  --game-played-bg: #eef8f2;
+
+  /* Secondary actions */
+  --button-secondary-bg: #eef3f7;
+  --button-secondary-hover-bg: #dde6ee;
+
+  /* Notices */
+  --status-error-bg: #fde8e8;
+  --status-error-border: #f8b4b4;
+  --status-error-text: #9b1c1c;
+  --status-success-bg: #e3fcec;
+  --status-success-border: #84e1bc;
+  --status-success-text: #0f5132;
+  --status-info-bg: #eef4ff;
+  --status-info-border: #c3dafe;
+  --status-info-text: #1f3a8a;
+  --status-warning-bg: #fff7e6;
+  --status-warning-border: #f7c566;
+  --status-warning-text: #b54708;
+
+  /* Timekeeper */
+  --timer-warning-bg: #fff4d6;
+  --timer-warning-text: #8a5a00;
+  --timer-critical-bg: #fde0e0;
+  --timer-critical-text: #b00020;
 }
 
 * {
@@ -19,7 +76,7 @@ html {
 body {
   margin: 0;
   font-family: "Helvetica Neue", Arial, sans-serif;
-  background: var(--bg);
+  background: var(--canvas);
   color: var(--text);
   line-height: 1.5;
   font-size: 1rem;
@@ -31,7 +88,7 @@ p {
 
 
 a {
-  color: var(--accent-strong);
+  color: var(--link);
 }
 
 h1,
@@ -57,7 +114,7 @@ label {
   display: block;
   font-weight: 600;
   margin: 12px 0 6px;
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
 input,
@@ -69,7 +126,7 @@ textarea {
   border: 1px solid var(--border);
   border-radius: 8px;
   font-size: 0.95rem;
-  background: #fff;
+  background: var(--surface);
 }
 
 input[type="radio"],
@@ -80,7 +137,7 @@ input[type="checkbox"] {
 
 [data-role="page"] {
   min-height: 100vh;
-  background: var(--bg);
+  background: var(--canvas);
   display: flex;
   flex-direction: column;
   padding-top: env(safe-area-inset-top);
@@ -142,7 +199,7 @@ input[type="checkbox"] {
 .ui-bar .footer-compact[aria-pressed="true"],
 [data-role="footer"] .footer-compact[aria-pressed="true"] {
   background: var(--accent-strong);
-  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.35);
+  box-shadow: inset 0 0 0 2px var(--pressed-ring-color);
 }
 
 .tk-clock-icon {
@@ -189,7 +246,7 @@ input[type="reset"] {
   border-radius: 10px;
   border: 1px solid var(--accent);
   background: var(--accent);
-  color: #fff;
+  color: var(--text-inverse);
   text-decoration: none;
   font-weight: 700;
   font-size: 0.95rem;
@@ -221,7 +278,7 @@ input[type="button"]:hover,
 input[type="reset"]:hover {
   background: var(--accent-strong);
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 6px 18px var(--raised-shadow-color);
 }
 
 [data-role="button"]:active,
@@ -327,11 +384,11 @@ input[type="reset"]:active {
 }
 
 .scoreboard-table tr:nth-child(odd) {
-  background: #f5f7fb;
+  background: var(--table-row-odd);
 }
 
 .scoreboard-table tr:nth-child(even) {
-  background: #ffffff;
+  background: var(--table-row-even);
 }
 
 .gameplay-table {
@@ -344,19 +401,19 @@ input[type="reset"]:active {
 }
 
 .gameplay-row--goal.gameplay-row--home {
-  background: #e9f7f0;
+  background: var(--team-home-bg);
 }
 
 .gameplay-row--goal.gameplay-row--away {
-  background: #eef2ff;
+  background: var(--team-away-bg);
 }
 
 .gameplay-row--event {
-  background: #fff7e6;
+  background: var(--game-event-bg);
 }
 
 .gameplay-row--halftime {
-  background: #fdecea;
+  background: var(--halftime-bg);
   font-weight: 700;
 }
 
@@ -386,7 +443,7 @@ input[type="reset"]:active {
 }
 
 [data-role="listview"] a:hover {
-  background: #eef3f7;
+  background: var(--table-row-hover);
 }
 
 .resp-list {
@@ -409,7 +466,7 @@ input[type="reset"]:active {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 8px 10px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6px 18px var(--card-shadow-color);
 }
 
 .resp-group-toggle,
@@ -436,7 +493,7 @@ input[type="reset"]:active {
   position: absolute;
   right: 0;
   top: 0;
-  color: var(--muted);
+  color: var(--text-muted);
   transition: transform 0.15s ease;
 }
 
@@ -453,7 +510,7 @@ input[type="reset"]:active {
 
 .resp-location-title {
   font-weight: 600;
-  color: var(--muted);
+  color: var(--text-muted);
   margin: 6px 0;
 }
 
@@ -481,19 +538,19 @@ input[type="reset"]:active {
   border: 1px solid var(--border);
   border-radius: 10px;
   padding: 8px 10px 6px;
-  background: #f9fbff;
+  background: var(--game-card-bg);
 }
 
 .resp-game.resp-game--pending {
-  background: #f1f6ff;
+  background: var(--game-pending-bg);
 }
 
 .resp-game.resp-game--ongoing {
-  background: #ffe7e7;
+  background: var(--game-ongoing-bg);
 }
 
 .resp-game.resp-game--played {
-  background: #eef8f2;
+  background: var(--game-played-bg);
 }
 
 .resp-game-meta {
@@ -524,14 +581,14 @@ input[type="reset"]:active {
   display: inline-block;
   padding: 2px 6px;
   border-radius: 8px;
-  background: #e9f0ff;
+  background: var(--accent-soft);
   color: var(--accent-strong);
   text-decoration: none;
   transition: background 0.15s ease, transform 0.15s ease;
 }
 
 .resp-score a:hover {
-  background: #dbe7ff;
+  background: var(--accent-soft-hover);
   transform: translateY(-1px);
 }
 
@@ -636,11 +693,11 @@ input[type="reset"]:active {
 }
 
 .player-row:not(.player-row--header):nth-child(odd) {
-  background: #f5f7fb;
+  background: var(--table-row-odd);
 }
 
 .player-row:not(.player-row--header):nth-child(even) {
-  background: #ffffff;
+  background: var(--table-row-even);
 }
 
 .player-row--header {
@@ -714,23 +771,23 @@ input[type="reset"]:active {
   border: 1px solid var(--border);
   border-radius: 12px;
   padding: 14px 16px;
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 6px 18px var(--card-shadow-color);
   margin: 0 0 14px;
 }
 
 .spiritkeeper-team-card {
-  background: #eef7f8;
-  border-color: #b9dbe1;
+  background: var(--accent-surface);
+  border-color: var(--accent-border);
 }
 
 .mobile-header-subtitle {
   margin-top: 4px;
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
 .mobile-meta,
 .mobile-status {
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
 .mobile-summary {
@@ -764,7 +821,7 @@ button.button-secondary,
 input.button-secondary[type="submit"],
 input.button-secondary[type="button"],
 input.button-secondary[type="reset"] {
-  background: #eef3f7;
+  background: var(--button-secondary-bg);
   border-color: var(--border);
   color: var(--text);
 }
@@ -775,7 +832,7 @@ button.button-secondary:hover,
 input.button-secondary[type="submit"]:hover,
 input.button-secondary[type="button"]:hover,
 input.button-secondary[type="reset"]:hover {
-  background: #dde6ee;
+  background: var(--button-secondary-hover-bg);
 }
 
 .mobile-notice {
@@ -790,27 +847,27 @@ input.button-secondary[type="reset"]:hover {
 }
 
 .mobile-notice--error {
-  background: #fde8e8;
-  border-color: #f8b4b4;
-  color: #9b1c1c;
+  background: var(--status-error-bg);
+  border-color: var(--status-error-border);
+  color: var(--status-error-text);
 }
 
 .mobile-notice--success {
-  background: #e3fcec;
-  border-color: #84e1bc;
-  color: #0f5132;
+  background: var(--status-success-bg);
+  border-color: var(--status-success-border);
+  color: var(--status-success-text);
 }
 
 .mobile-notice--info {
-  background: #eef4ff;
-  border-color: #c3dafe;
-  color: #1f3a8a;
+  background: var(--status-info-bg);
+  border-color: var(--status-info-border);
+  color: var(--status-info-text);
 }
 
 .warning {
-  color: #b54708;
-  background: #fff7e6;
-  border: 1px solid #f7c566;
+  color: var(--status-warning-text);
+  background: var(--status-warning-bg);
+  border: 1px solid var(--status-warning-border);
   padding: 10px 12px;
   border-radius: 8px;
 }
@@ -862,7 +919,7 @@ fieldset {
 
 .timeout-separator {
   font-weight: 700;
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
 @media (min-width: 900px) {
@@ -931,7 +988,7 @@ fieldset {
 
 .tk-unit {
   flex: 0 0 auto;
-  color: var(--muted);
+  color: var(--text-muted);
   font-weight: 600;
 }
 
@@ -954,7 +1011,7 @@ fieldset {
   flex: 0 0 38%;
   max-width: 42%;
   text-align: left;
-  color: #9ca3af;
+  color: var(--text-faint);
   font-size: 0.85rem;
   line-height: 1.5;
 }
@@ -982,7 +1039,7 @@ fieldset {
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.5px;
-  color: var(--muted);
+  color: var(--text-muted);
   min-height: 1.2em;
 }
 
@@ -1008,24 +1065,24 @@ fieldset {
 }
 
 .tk-state-ready .tk-display-time {
-  color: var(--muted);
+  color: var(--text-muted);
 }
 
 .tk-state-warn {
-  background: #fff4d6;
+  background: var(--timer-warning-bg);
 }
 
 .tk-state-warn .tk-display-signal {
-  color: #8a5a00;
+  color: var(--timer-warning-text);
 }
 
 .tk-state-zero {
-  background: #fde0e0;
+  background: var(--timer-critical-bg);
 }
 
 .tk-state-zero .tk-display-time,
 .tk-state-zero .tk-display-signal {
-  color: #b00020;
+  color: var(--timer-critical-text);
 }
 
 .tk-actions {
@@ -1061,28 +1118,28 @@ fieldset {
 }
 
 .tk-cap-half {
-  background: #fff4d6;
+  background: var(--timer-warning-bg);
 }
 
 .tk-cap-half .tk-cap-alert {
-  color: #8a5a00;
+  color: var(--timer-warning-text);
 }
 
 .tk-cap-time {
-  background: #fde0e0;
+  background: var(--timer-critical-bg);
 }
 
 .tk-cap-time .tk-cap-alert,
 .tk-cap-time .tk-matchclock {
-  color: #b00020;
+  color: var(--timer-critical-text);
 }
 
 .tk-clock-start-warning {
-  background: #fde0e0;
+  background: var(--timer-critical-bg);
 }
 
 .tk-clock-start-warning .tk-matchclock {
-  color: #b00020;
+  color: var(--timer-critical-text);
 }
 
 .tk-matchclock-actions {

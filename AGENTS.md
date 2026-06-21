@@ -12,7 +12,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 ## Tech Stack
 
 - **PHP** is the primary language (PHP 8.3 in CI) — `index.php`, `lib/`, `admin/`, `user/`, the standalone apps, and the repo checker scripts are all PHP.
-- **Client-side JavaScript** under `script/` is hand-written **ES5** (linted with ESLint 9 via the `dev` Docker image); page styling is plain **CSS**, primarily under `cust/`.
+- **Client-side JavaScript** under `script/` is hand-written **ES5** (linted with ESLint 9 via the `dev` Docker image); page styling is plain **CSS**, primarily under `cust/` (linted with Stylelint via the `dev` Docker image).
 - **Shell** scripts under `docs/` handle release packaging and gettext catalogs; one **Python** helper lives at `docs/ai/analyze-lib-functions/`.
 - **Markdown** docs under `docs/` are heavily maintained — keep documentation in sync with code changes.
 
@@ -46,6 +46,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Avoid touching `conf/` unless required.
 - Keep edits ASCII unless the file already uses Unicode.
 - If making UI changes, verify both desktop and mobile layouts.
+- After adding or changing CSS, run `docs/ai/css-style-and-lint/SKILL.md` to analyze style consistency and run Stylelint on the changed files.
 - After adding or changing user-facing text, run `docs/ai/review-user-language/SKILL.md` as a final review step on your changes.
 - Reuse existing translated strings when feasible instead of adding synonyms, capitalization-only variants, or comma/punctuation-only variants.
 - After adding or changing database-related functionality, run `docs/ai/review-database-access/SKILL.md` as a final review step on your changes.
@@ -66,6 +67,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Static analysis: `composer lint` (uses `phpstan-baseline.neon` for legacy findings)
 - Combined format-check + lint: `composer check`
 - Lint JavaScript in `script/` (run via the `dev` container; ESLint is not installed on the host): `docker compose -f docs/dev/compose.yaml exec -T dev eslint script` (apply autofixes with `--fix`).
+- Lint CSS (run via the `dev` container; Stylelint is not installed on the host): `docker compose -f docs/dev/compose.yaml exec -T dev stylelint "cust/**/*.css"` (apply autofixes on changed files with `--fix`).
 - DB access boundary check (changed files): `php docs/ai/review-database-access/scripts/check-db-access.php --changed`
 - DB access boundary check (full repo): `php docs/ai/review-database-access/scripts/check-db-access.php --all`
 - Playoff layout templates (all): `php docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php`
@@ -95,6 +97,7 @@ Pre-commit hooks remain the fast local gate; CI is the source of truth for what 
 
 - `docs/api.md`: API structure, constraints, and examples.
 - `docs/codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
+- `docs/customization.md`: skin color token system, recoloring a skin with tokens, the dark-mode approach, and customization verification.
 - `docs/lib-index.md`: file-by-file map of shared helpers and third-party libraries under `lib/`.
 - `docs/routing.md`: request entry points and view resolution.
 - `docs/runtime-cache.md`: request-local helper caching guidance and database-log recapture commands.
@@ -138,6 +141,7 @@ Pre-commit hooks remain the fast local gate; CI is the source of truth for what 
 - `docs/ai/fix-user-language/SKILL.md`: fix skill for page-level or term-level user-facing wording and gettext updates.
 - `docs/ai/review-database-access/SKILL.md`: read-only skill for reviewing database access boundary violations and legacy cursor-style DB helper usage.
 - `docs/ai/review-playoff-layouts/SKILL.md`: read-only skill for reviewing playoff bracket layout placeholders, widths, and the move-comment block.
+- `docs/ai/css-style-and-lint/SKILL.md`: fix skill for CSS style consistency analysis, Stylelint checks, and safe stylesheet fixes.
 - `docs/ai/format-and-lint/SKILL.md`: fix skill that runs PHP-CS-Fixer and PHPStan on changed PHP files and applies safe fixes.
 - `docs/ai/analyze-lib-functions/SKILL.md`: analysis skill for lib PHP function usage counts and dead-code candidate triage.
 - `docs/ai/screenshot-verify/SKILL.md`: verification skill that takes Chromium screenshots and measures element layout inside the dev container.

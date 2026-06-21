@@ -1,0 +1,4 @@
+interface:
+  display_name: "CSS Style and Lint"
+  short_description: "Analyze, lint, and safely fix Ultiorganizer CSS changes."
+  default_prompt: "Analyze and fix the changed CSS files using the project Stylelint setup."
