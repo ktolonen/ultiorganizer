@@ -8,11 +8,11 @@ layouts, PDF hooks) can be added here over time.
 
 ## Skin CSS cascade
 
-`styles()` and `mobileStyles()` in `localization.php` always emit
-`cust/default/ultiorganizer.css` first, then the active skin's
-`cust/<id>/ultiorganizer.css` on top when it exists and is not `default`. A skin
-file therefore only needs the rules (and tokens) that differ from default;
-anything it omits is inherited from default.
+`styles()` in `localization.php` emits `cust/default/ultiorganizer.css` first,
+then the active skin's `cust/<id>/ultiorganizer.css` on top when it exists and
+is not `default`. `mobileStyles()` uses the same cascade with
+`ultiorganizer-mobile.css`. A skin file therefore only needs the rules (and
+tokens) that differ from default; anything it omits is inherited from default.
 
 Because the skin stylesheet loads **after** default, anything it redefines wins
 on equal specificity — including CSS custom properties on `:root`.
@@ -111,6 +111,20 @@ hover color that must stay darker than the skin's accent. Structural overrides
 (widths, fonts, logos, custom layout) also remain as normal rules; tokens are
 for color only.
 
+### Mobile app palette
+
+`cust/default/ultiorganizer-mobile.css`, used by Scorekeeper, Spiritkeeper, and
+Timekeeper, has a separate complete palette because `mobileStyles()` does not
+load the desktop stylesheet. Shared concepts use the desktop token names, such
+as `--canvas`, `--surface`, `--text-muted`, `--text-inverse`, `--link`,
+`--accent`, `--border`, and the `--table-row-*` tokens.
+
+Mobile-only concepts extend that vocabulary with semantic tokens for gameplay,
+secondary actions, notices, and Timekeeper states. Keep literal color values in
+the `:root` palette and use `var(--token)` in component rules. An installation
+can recolor the mobile apps independently by adding
+`cust/<id>/ultiorganizer-mobile.css` and redefining the relevant tokens.
+
 ## Dark mode
 
 Because the default skin is fully tokenized, a dark theme is a block that
@@ -132,9 +146,10 @@ system, with no markup or server changes:
 Notes:
 - Design the dark relationships deliberately (light text on dark surfaces);
   it is not a value inversion.
-- Only `cust/default` is fully tokenized. A skin that still hardcodes colors, or
-  redefines `:root` without a media query, will override these dark values — put
-  a skin's dark overrides inside the skin (and inside the media query).
+- The default desktop and mobile stylesheets are both fully tokenized but load
+  independently. A skin that still hardcodes colors, or redefines `:root`
+  without a media query, will override these dark values — put a skin's dark
+  overrides inside the skin (and inside the media query).
 - Non-color assets (logos, icons) do not follow tokens and may need dark
   variants.
 
