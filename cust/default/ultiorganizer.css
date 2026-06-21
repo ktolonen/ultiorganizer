@@ -824,6 +824,14 @@ table#pagemenu a.current {
 	background-color: var(--table-header-bg);
 }
 
+.placements-table th a:link,
+.placements-table th a:visited,
+.placements-table th a:active,
+.placements-table th a:hover,
+.placements-table th a:focus {
+	color: var(--table-header-text);
+}
+
 .teams-table tr:first-child td {
 	border-top: 1px solid var(--border);
 }

@@ -85,7 +85,7 @@ per-selector overrides needed, because default's rules already read the tokens:
 }
 ```
 
-### Two layout styles
+### Two declaration styles
 
 Both render identically; pick per skin:
 
@@ -94,10 +94,13 @@ Both render identically; pick per skin:
   list.
 - **Full palette listed** — list every token (default values for the ones the
   skin keeps, overrides for the rest), so the complete palette is visible in one
-  place. `cust/slkl` and `cust/wfdf` use this style and tag each override with a
-  trailing `/* <skin> */` comment. Trade-off: the skin re-declares the whole
-  palette, so later changes to default's base values do **not** propagate to the
-  non-overridden tokens — update the skin lists too.
+  place. Trade-off: the skin re-declares the whole palette, so later changes to
+  default's base values do **not** propagate to the non-overridden tokens.
+
+The maintained `slkl` and `wfdf` skins list the full palette for easier human
+editing and tag their changed values with `/* slkl */` or `/* wfdf */`.
+Their non-color rules remain minimal so layout and behavior stay aligned with
+`default`.
 
 ### Exceptions that are not tokens
 

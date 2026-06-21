@@ -1,18 +1,11 @@
 /*
  * WFDF skin overrides.
  * Loaded on top of cust/default/ultiorganizer.css (see styles() in localization.php).
- * Palette via token overrides in :root. WFDF is a distinct design (blue table
- * headers, light-blue tabs, custom menu), so structural and design-specific
- * rules remain below.
+ * The full palette is listed for human editing; WFDF values are tagged below.
+ * Layout and interaction behavior come from the default skin.
  */
 
 :root {
-	/*
-	 * Full color palette mirrored from the default skin so the whole set is
-	 * visible in one place. Lines tagged "wfdf" are this skin's overrides;
-	 * the rest repeat the default values for reference.
-	 */
-
 	/* Surfaces */
 	--canvas: #f5f6f8;
 	--surface: #ffffff;
@@ -35,29 +28,29 @@
 
 	/* Borders */
 	--menu-border: #7a7a7a;
-	--border-strong: #444444;
+	--border-strong: #333333; /* wfdf */
 	--border: #cfcfcf;
 
 	/* Tables */
 	--table-header-bg: #006699; /* wfdf */
 	--table-header-text: #ffffff;
 	--table-row-odd: #ffffff;
-	--table-row-even: #f7f7f7;
-	--table-row-hover: #eef7f9;
+	--table-row-even: #eef7f9; /* wfdf */
+	--table-row-hover: #d9edf3; /* wfdf */
 	--admin-row-alt: #eef2f7;
 
 	/* Menu & navigation */
 	--menu-section-bg: #006699; /* wfdf */
 	--menu-highlight: #d3d3d3;
-	--menu-dropdown-bg: #7f97bf;
-	--menu-dropdown-border: #6b6b6b;
+	--menu-dropdown-bg: #eeeeee; /* wfdf */
+	--menu-dropdown-border: #464646; /* wfdf */
 
 	/* Page-menu tabs */
 	--tab-border: #b9b9b9;
-	--tab-hover-bg: #f7f7f7;
-	--tab-hover-border: #9bb0cf;
-	--tab-active-bg: #5e7fb3;
-	--tab-active-border: #4b6796;
+	--tab-hover-bg: #d3d3d3; /* wfdf */
+	--tab-hover-border: #333333; /* wfdf */
+	--tab-active-bg: #ffffff; /* wfdf */
+	--tab-active-border: #333333; /* wfdf */
 
 	/* Teams */
 	--team-home: #986598; /* wfdf */
@@ -73,34 +66,21 @@
 	--halftime-bg: #cccccc;
 }
 
-/* Links: no underline at rest, underline on hover (opposite of default). */
-a:link,
-a:visited {
-	text-decoration: none;
-}
-
-a:hover,
-a:focus {
-	text-decoration: underline;
-}
-
-/* White links/text on WFDF's dark-blue table and menu headers. */
+/* White text on WFDF's dark-blue table and menu headers. */
 th a:link,
-th a:visited {
-	color: var(--text-inverse);
-}
-
-.menuseasonlevel {
-	color: var(--text-inverse);
-}
-
+th a:visited,
+th a:active,
+th a:hover,
+th a:focus,
+.menuseasonlevel,
 .seasonnav:link,
-.seasonnav:visited {
-	font-size: 10pt;
+.seasonnav:visited,
+.seasonnav:active,
+.seasonnav:hover,
+.seasonnav:focus {
 	color: var(--text-inverse);
 }
 
-/* Nav hover uses plain dark text rather than the accent tint. */
 .nav:active,
 .nav:hover,
 .nav:focus,
@@ -113,19 +93,8 @@ th a:visited {
 	color: var(--text);
 }
 
-.header_text:link,
-.header_text:visited,
-.header_text:active,
-.header_text:hover,
-.header_text:focus {
-	font-size: 18pt;
-}
-
 .seasondropdown {
-	background-color: #eeeeee;
 	color: var(--link);
-	font-size: 12px;
-	border: 1px solid #464646;
 }
 
 .topheadertext {
@@ -159,11 +128,6 @@ th a:visited {
 	color: #ef7a7a;
 }
 
-.groupinglink:link,
-.groupinglink:visited {
-	font-size: 10pt;
-}
-
 .groupinglink:hover,
 .groupinglink:focus {
 	color: #986598;
@@ -171,176 +135,24 @@ th a:visited {
 
 .selgroupinglink {
 	color: #986598;
-	font-size: 10pt;
-	text-align: left;
-	vertical-align: bottom;
-}
-
-/* --- Structural / layout (not palette) --- */
-
-.page {
-	max-width: 860px;
-	width: 100%;
-	border: 1px solid #333;
-	margin-left: auto;
-	margin-right: auto;
-	overflow: visible;
-	padding-right: 25px;
-	padding-top: 0px;
-	padding-bottom: 25px;
-	background-color: var(--surface);
-}
-
-.page_top {
-	width: 100%;
-	padding: 0px;
-	height: 60px;
-	border-bottom: 1px dashed #333;
-}
-
-.navigation_bar {
-	width: 95%;
-	height: 16px;
-	margin-top: 0px;
-	margin-left: 5px;
-	margin-right: 0px;
-	padding-top: 0px;
-	padding-bottom: 0px;
-	padding-right: 0px;
-	padding-left: 0px;
-}
-
-.logo {
-	border: 0;
-	vertical-align: middle;
-	text-align: center;
-	margin: 5px;
-}
-
-.menu_left {
-	vertical-align: top;
-	width: 175px;
 }
 
 .leftmenulinks {
-	float: left;
-	text-align: left;
-	vertical-align: top;
 	background-color: #acd1e9;
-	width: 175px;
-	border-top: solid #eeeedd 1px;
-	border-bottom: solid #464646 1px;
-	border-left: solid #eeeedd 1px;
-	border-right: solid #464646 1px;
-}
-
-.pagemenu_container {
-	width: 100%;
-	margin: 0px;
-	padding: 0px;
-}
-
-ul#pagemenu {
-	list-style-type: none;
-	position: relative;
-	width: 100%;
-	font-weight: bold;
-	font-size: 10px;
-	margin: 0px;
-	padding: 0px;
-}
-
-ul#pagemenu li {
-	display: block;
-	float: left;
-	margin: 0 0 0 4px;
-}
-
-table#pagemenu {
-	font-size: 10px;
-	margin: 0px;
-}
-
-table#pagemenu th {
-	background: var(--surface);
 }
 
 ul#pagemenu li a,
 table#pagemenu a {
-	display: block;
-	float: left;
 	color: var(--text);
-	background: #acd1e9;
-	text-decoration: none;
-	padding: 3px 17px 0 18px;
+	background-color: #acd1e9;
 }
 
 ul#pagemenu li a:hover,
 table#pagemenu a:hover {
-	text-decoration: underline;
-	background-color: var(--menu-highlight);
-	border-left: 1px solid #333;
-	border-right: 1px solid #333;
-	border-top: 1px solid #333;
+	color: var(--text);
 }
 
 ul#pagemenu li a.current,
 table#pagemenu a.current {
 	color: var(--text);
-	text-decoration: underline;
-	background: var(--surface);
-	border-left: 1px solid #333;
-	border-right: 1px solid #333;
-	border-top: 1px solid #333;
-}
-
-.teams-table tr:nth-of-type(even) td {
-	background-color: #eef7f9;
-}
-
-.teams-table tr:hover td {
-	background-color: #d9edf3;
-}
-
-.deletebutton {
-	cursor: pointer;
-	padding: 0;
-	margin: 0;
-	border: 1px solid var(--surface);
-}
-
-.deletebutton:hover {
-	border: 1px solid #006;
-}
-
-@media only screen and (max-width: 768px) {
-	.page {
-		border-left: 0;
-		border-right: 0;
-	}
-
-	.page_top {
-		height: auto;
-		min-height: 60px;
-	}
-
-	.menu_left {
-		display: none;
-		position: fixed;
-		top: 60px;
-		left: 0;
-		bottom: 0;
-		width: 220px;
-		max-width: 85vw;
-		padding: 8px;
-		background-color: rgba(0, 0, 0, 0.8);
-		overflow-y: auto;
-		z-index: 1000;
-	}
-
-	.menu_button {
-		display: inline-block;
-		width: 30px;
-		padding: 5px 20px 0px 25px;
-	}
 }

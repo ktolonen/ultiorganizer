@@ -1,17 +1,11 @@
 /*
  * SLKL skin overrides.
  * Loaded on top of cust/default/ultiorganizer.css (see styles() in localization.php).
- * The palette is driven by token overrides in :root; only genuine exceptions
- * that do not map to a default token remain as rules below.
+ * The full palette is listed for human editing; SLKL values are tagged below.
+ * Non-color rules are limited to adjustments required by SLKL's header markup.
  */
 
 :root {
-	/*
-	 * Full color palette mirrored from the default skin so the whole set is
-	 * visible in one place. Lines tagged "slkl" are this skin's overrides;
-	 * the rest repeat the default values for reference.
-	 */
-
 	/* Surfaces */
 	--canvas: #f5f6f8;
 	--surface: #ffffff;
@@ -77,21 +71,6 @@ ul#pagemenu li a:hover,
 table#pagemenu a:hover {
 	color: #0a7f93;
 	border-color: #7aa9b1;
-}
-
-/* White header links on the dark placements-table header. */
-.placements-table th a:link,
-.placements-table th a:visited,
-.placements-table th a:active,
-.placements-table th a:hover,
-.placements-table th a:focus {
-	color: var(--table-header-text);
-}
-
-/* Grouping-link hover keeps its own blue. */
-.groupinglink:hover,
-.groupinglink:focus {
-	color: #3366ff;
 }
 
 @media only screen and (max-width: 768px) {
