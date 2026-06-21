@@ -124,6 +124,9 @@ secondary actions, notices, and Timekeeper states. Keep literal color values in
 the `:root` palette and use `var(--token)` in component rules. An installation
 can recolor the mobile apps independently by adding
 `cust/<id>/ultiorganizer-mobile.css` and redefining the relevant tokens.
+The maintained SLKL and WFDF skins include full mobile palettes in their
+customization directories. Their changed values are tagged with `/* slkl */`
+or `/* wfdf */`, matching the desktop palette convention.
 
 ## Dark mode
 

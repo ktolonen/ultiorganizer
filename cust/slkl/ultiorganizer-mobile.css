@@ -1,0 +1,72 @@
+/*
+ * SLKL mobile palette overrides.
+ * Loaded on top of cust/default/ultiorganizer-mobile.css by mobileStyles().
+ * The full palette is listed for human editing; SLKL values are tagged below.
+ */
+
+:root {
+  /* Surfaces */
+  --canvas: #f5f6f8; /* slkl */
+  --surface: #ffffff;
+  --surface-muted: #f0f0f0; /* slkl */
+
+  /* Text */
+  --text: #2d2d2d; /* slkl */
+  --text-muted: #666666; /* slkl */
+  --text-faint: #a0a0a0; /* slkl */
+  --text-inverse: #ffffff;
+
+  /* Links and accents */
+  --link: #2d2d2d; /* slkl */
+  --accent: #0a7f93; /* slkl */
+  --accent-strong: #00323a; /* slkl */
+  --accent-soft: #e4f8fb; /* slkl */
+  --accent-soft-hover: #c5f0f6; /* slkl */
+  --accent-surface: #effbfd; /* slkl */
+  --accent-border: #7aa9b1; /* slkl */
+
+  /* Borders and shadows */
+  --border: #cfcfcf; /* slkl */
+  --pressed-ring-color: rgba(255, 255, 255, 0.35);
+  --raised-shadow-color: rgba(0, 0, 0, 0.08);
+  --card-shadow-color: rgba(0, 0, 0, 0.04);
+
+  /* Tables and lists */
+  --table-row-odd: #ffffff; /* slkl */
+  --table-row-even: #f7f7f7; /* slkl */
+  --table-row-hover: #eef7f9; /* slkl */
+
+  /* Gameplay */
+  --team-home-bg: #e4f8fb; /* slkl */
+  --team-away-bg: #fff1e3; /* slkl */
+  --game-event-bg: #fff7e6;
+  --halftime-bg: #fdecea;
+  --game-card-bg: #f9fbff;
+  --game-pending-bg: #e4f8fb; /* slkl */
+  --game-ongoing-bg: #ffe7e7;
+  --game-played-bg: #eef8f2;
+
+  /* Secondary actions */
+  --button-secondary-bg: #f0f0f0; /* slkl */
+  --button-secondary-hover-bg: #d3d3d3; /* slkl */
+
+  /* Notices */
+  --status-error-bg: #fde8e8;
+  --status-error-border: #f8b4b4;
+  --status-error-text: #9b1c1c;
+  --status-success-bg: #e3fcec;
+  --status-success-border: #84e1bc;
+  --status-success-text: #0f5132;
+  --status-info-bg: #eef4ff;
+  --status-info-border: #c3dafe;
+  --status-info-text: #1f3a8a;
+  --status-warning-bg: #fff7e6;
+  --status-warning-border: #f7c566;
+  --status-warning-text: #b54708;
+
+  /* Timekeeper */
+  --timer-warning-bg: #fff4d6;
+  --timer-warning-text: #8a5a00;
+  --timer-critical-bg: #fde0e0;
+  --timer-critical-text: #b00020;
+}
