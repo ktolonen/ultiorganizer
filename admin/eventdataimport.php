@@ -7,41 +7,52 @@ include_once 'lib/series.functions.php';
 include_once 'lib/data.functions.php';
 
 $html = "";
-$title = ("Event data import");
+$title = _("Event data import");
 $seasonId = "";
 $imported = false;
+$error = "";
 
 //check access rights before user can upload data into server
 if (!empty($_GET['season'])) {
     $seasonId = $_GET["season"];
     if (!isSeasonAdmin($seasonId)) {
-        die('Insufficient rights to import data');
+        die(_("Insufficient rights to import data"));
     }
 } else {
     if (!isSuperAdmin()) {
-        die('Insufficient rights to import data');
+        die(_("Insufficient rights to import data"));
     }
 }
 
 if (isset($_POST['add']) && isSuperAdmin()) {
     if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
 
-        $templine = '';
-        set_time_limit(300);
-        $eventdatahandler = new EventDataXMLHandler();
-        $eventdatahandler->XMLToEvent($_FILES['restorefile']['tmp_name'], $seasonId, "new");
-        unlink($_FILES['restorefile']['tmp_name']);
-        $imported = true;
+        try {
+            set_time_limit(300);
+            $result = EventSnapshotImportJson($_FILES['restorefile']['tmp_name'], $seasonId, "new");
+            $seasonId = $result['season_id'];
+            unlink($_FILES['restorefile']['tmp_name']);
+            $imported = true;
+        } catch (EventSnapshotException $e) {
+            $error = $e->getMessage();
+        }
+    } else {
+        $error = _("Select file to import");
     }
 } elseif (isset($_POST['replace'])) {
     if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
 
-        $templine = '';
-        set_time_limit(300);
-        $eventdatahandler = new EventDataXMLHandler();
-        $eventdatahandler->XMLToEvent($_FILES['restorefile']['tmp_name'], $seasonId, "replace");
-        unlink($_FILES['restorefile']['tmp_name']);
-        $imported = true;
+        try {
+            set_time_limit(300);
+            $result = EventSnapshotImportJson($_FILES['restorefile']['tmp_name'], $seasonId, "replace");
+            $seasonId = $result['season_id'];
+            unlink($_FILES['restorefile']['tmp_name']);
+            $imported = true;
+        } catch (EventSnapshotException $e) {
+            $error = $e->getMessage();
+        }
+    } else {
+        $error = _("Select file to import");
     }
 }
 
@@ -55,21 +66,26 @@ if ($imported) {
     unset($_POST['restore']);
     unset($_POST['replace']);
 }
+if (!empty($error)) {
+    $html .= "<p class='warning'>" . utf8entities($error) . "</p>";
+}
 
-$html .= "<form method='post' enctype='multipart/form-data' action='?view=admin/eventdataimport&amp;season=" . $seasonId . "'>\n";
+$seasonUrl = utf8entities(urlencode($seasonId));
+$html .= "<form method='post' enctype='multipart/form-data' action='?view=admin/eventdataimport&amp;season=" . $seasonUrl . "'>\n";
 
 $html .= "<p><span class='profileheader'>" . _("Select file to import") . ": </span></p>\n";
 
-$html .= "<p><input class='input' type='file' size='80' name='restorefile'/>";
+$html .= "<p>" . _("Only JSON event snapshots are supported. Legacy XML exports cannot be imported.") . "</p>";
+$html .= "<p><input class='input' type='file' size='80' name='restorefile' accept='application/json,.json'/>";
 $html .= "<input type='hidden' name='MAX_FILE_SIZE' value='100000000'/></p>";
 
 if (empty($seasonId)) {
     $html .= "<p><input class='button' type='submit' name='add' value='" . _("Import") . "'/>";
     $html .= "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasons'\"/></p>";
 } else {
-    $html .= "<p>" . _("This operation updates and adds event data in the database with the content of the file. It will not delete any data or change user rights.") . "</p>";
+    $html .= "<p>" . _("This operation replaces event-owned data in the selected event with the JSON snapshot. Event-owned rows missing from the snapshot will be deleted, but user rights and matched existing player profiles are left unchanged.") . "</p>";
     $html .= "<p><input class='button' type='submit' name='replace' value='" . _("Update") . "'/>";
-    $html .= "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonadmin&amp;season=" . $seasonId . "'\"/></p>";
+    $html .= "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonadmin&amp;season=" . $seasonUrl . "'\"/></p>";
 }
 
 $html .= "</form>";

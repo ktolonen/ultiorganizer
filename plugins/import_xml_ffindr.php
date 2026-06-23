@@ -272,7 +272,7 @@ class XMLHandler
      * @param string $name Name of the table to insert
      * @param array $row Data to insert: key=>field, value=>data
      *
-     * @see EventDataXMLHandler::InsertRow()
+     * @see XMLHandler::InsertRow()
      */
     public function InsertToDatabase($name, $row)
     {
