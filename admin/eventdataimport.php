@@ -11,6 +11,7 @@ $title = _("Event data import");
 $seasonId = "";
 $imported = false;
 $error = "";
+$warnings = [];
 
 //check access rights before user can upload data into server
 if (!empty($_GET['season'])) {
@@ -31,6 +32,7 @@ if (isset($_POST['add']) && isSuperAdmin()) {
             set_time_limit(300);
             $result = EventSnapshotImportJson($_FILES['restorefile']['tmp_name'], $seasonId, "new");
             $seasonId = $result['season_id'];
+            $warnings = $result['warnings'];
             unlink($_FILES['restorefile']['tmp_name']);
             $imported = true;
         } catch (EventSnapshotException $e) {
@@ -46,6 +48,7 @@ if (isset($_POST['add']) && isSuperAdmin()) {
             set_time_limit(300);
             $result = EventSnapshotImportJson($_FILES['restorefile']['tmp_name'], $seasonId, "replace");
             $seasonId = $result['season_id'];
+            $warnings = $result['warnings'];
             unlink($_FILES['restorefile']['tmp_name']);
             $imported = true;
         } catch (EventSnapshotException $e) {
@@ -63,6 +66,13 @@ ini_set("memory_limit", -1);
 
 if ($imported) {
     $html .= "<p>" . _("Data imported!") . "</p>";
+    if (!empty($warnings)) {
+        $html .= "<p class='warning'>" . _("Import completed with warnings:") . "</p><ul>";
+        foreach ($warnings as $warning) {
+            $html .= "<li>" . utf8entities($warning) . "</li>";
+        }
+        $html .= "</ul>";
+    }
     unset($_POST['restore']);
     unset($_POST['replace']);
 }

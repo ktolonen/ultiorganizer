@@ -112,9 +112,17 @@ class EventSnapshotService
         }
         $this->snapshot = $snapshot;
 
-        $this->validateSnapshot();
+        try {
+            $this->validateSnapshot();
+        } catch (EventSnapshotException $e) {
+            throw new EventSnapshotException($this->withSnapshotVersionDetails($e->getMessage()));
+        }
         $target = $this->prepareTargetSeason();
-        $this->validateReferences($target);
+        try {
+            $this->validateReferences($target);
+        } catch (EventSnapshotException $e) {
+            throw new EventSnapshotException($this->withSnapshotVersionDetails($e->getMessage()));
+        }
 
         try {
             DBSetExceptionMode(true);
@@ -394,6 +402,7 @@ class EventSnapshotService
         if ((int) ($this->snapshot['version'] ?? 0) !== EVENT_SNAPSHOT_VERSION) {
             throw new EventSnapshotException(_("Unsupported event snapshot version."));
         }
+        $this->warnSchemaVersionMismatch();
         if (!isset($this->snapshot['tables']) || !is_array($this->snapshot['tables'])) {
             throw new EventSnapshotException(_("The event snapshot does not contain table data."));
         }
@@ -411,6 +420,7 @@ class EventSnapshotService
                 throw new EventSnapshotException(sprintf(_("Invalid event snapshot table: %s"), $table));
             }
         }
+        $this->dropObsoleteSnapshotColumns($manifest);
 
         if (count($this->snapshot['tables']['uo_season']) !== 1) {
             throw new EventSnapshotException(_("The event snapshot must contain exactly one event row."));
@@ -431,11 +441,11 @@ class EventSnapshotService
                 }
                 foreach ($row as $field => $_) {
                     $fieldName = strtolower((string) $field);
-                    if (!isset($columns[$fieldName])) {
-                        throw new EventSnapshotException(sprintf(_("Invalid event snapshot column %s.%s."), $table, $fieldName));
-                    }
                     if (isset($disallowedFields[$table][$fieldName])) {
                         throw new EventSnapshotException(sprintf(_("Private field %s.%s cannot be imported from an event snapshot."), $table, $fieldName));
+                    }
+                    if (!isset($columns[$fieldName])) {
+                        throw new EventSnapshotException(sprintf(_("Invalid event snapshot column %s.%s."), $table, $fieldName));
                     }
                 }
                 $key = $this->rowKey($row, $rule['pk']);
@@ -444,6 +454,71 @@ class EventSnapshotService
                         throw new EventSnapshotException(sprintf(_("Duplicate event snapshot key in %s."), $table));
                     }
                     $seen[$key] = true;
+                }
+            }
+        }
+    }
+
+    private function warnSchemaVersionMismatch()
+    {
+        $sourceDbVersion = $this->snapshot['source_db_version'] ?? null;
+        if ((string) $sourceDbVersion === (string) DB_VERSION) {
+            return;
+        }
+        $this->warnings[] = $this->snapshotVersionDetails();
+    }
+
+    private function withSnapshotVersionDetails($message)
+    {
+        return $message . " " . $this->snapshotVersionDetails();
+    }
+
+    private function snapshotVersionDetails()
+    {
+        return sprintf(
+            _("Import file snapshot version: %s; supported snapshot version: %d; import file database schema version: %s; current database schema version: %d."),
+            $this->versionValue($this->snapshot['version'] ?? null),
+            EVENT_SNAPSHOT_VERSION,
+            $this->versionValue($this->snapshot['source_db_version'] ?? null),
+            DB_VERSION,
+        );
+    }
+
+    private function versionValue($value)
+    {
+        if ($value === null || $value === '') {
+            return _("unknown");
+        }
+        return (string) $value;
+    }
+
+    private function dropObsoleteSnapshotColumns($manifest)
+    {
+        $disallowedFields = $this->disallowedSnapshotFields();
+        $warned = [];
+        foreach (array_keys($manifest) as $table) {
+            $columns = GetTableColumns($table);
+            foreach ($this->snapshot['tables'][$table] as $idx => $row) {
+                if (!is_array($row)) {
+                    continue;
+                }
+                foreach ($row as $field => $_) {
+                    $fieldName = strtolower((string) $field);
+                    if (isset($columns[$fieldName]) || isset($disallowedFields[$table][$fieldName])) {
+                        continue;
+                    }
+                    unset($this->snapshot['tables'][$table][$idx][$field]);
+
+                    $warningKey = $table . '.' . $fieldName;
+                    if (isset($warned[$warningKey])) {
+                        continue;
+                    }
+                    $this->warnings[] = sprintf(
+                        _("Snapshot column %s.%s is not used by this Ultiorganizer version and was skipped."),
+                        $table,
+                        $fieldName,
+                    );
+                    $warned[$warningKey] = true;
                 }
             }
         }
@@ -1340,7 +1415,7 @@ class EventSnapshotService
         if ($exists) {
             return (int) $countryId;
         }
-        $this->warnings[] = sprintf("Country %d is not present in the target installation and was cleared.", (int) $countryId);
+        $this->warnings[] = sprintf(_("Country %d is not present in the target installation and was cleared."), (int) $countryId);
         return null;
     }
 
