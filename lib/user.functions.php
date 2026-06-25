@@ -1228,6 +1228,18 @@ function EventUserRoleCleanupPreview($seasonId)
         die('Insufficient rights to change user info');
     }
 
+    return EventScopedUserRoleRows($seasonId);
+}
+
+/**
+ * Resolve every event-scoped user-role row for a season without a rights gate.
+ *
+ * Returns prop_id, userid, and value for season-, division-, team-, game-, and
+ * reservation-scoped admin roles whose target currently belongs to $seasonId.
+ * Callers must enforce their own access control before using the result.
+ */
+function EventScopedUserRoleRows($seasonId)
+{
     $escapedSeasonId = DBEscapeString($seasonId);
     $seasonAdminRole = DBEscapeString('seasonadmin:' . $seasonId);
     $spiritAdminRole = DBEscapeString('spiritadmin:' . $seasonId);

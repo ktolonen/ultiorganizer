@@ -97,7 +97,7 @@ if (empty($seasonId)) {
     $html .= "<p><input class='button' type='submit' name='add' value='" . _("Import") . "'/>";
     $html .= "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasons'\"/></p>";
 } else {
-    $html .= "<p>" . _("This operation replaces event-owned data in the selected event with the JSON snapshot. Event-owned rows missing from the snapshot will be deleted, but user rights and matched existing player profiles are left unchanged.") . "</p>";
+    $html .= "<p>" . _("This operation replaces event-owned data in the selected event with the JSON snapshot. Event-owned rows missing from the snapshot will be deleted. Event-level admin rights and matched existing player profiles are left unchanged, but admin rights delegated to specific divisions, teams, games, or reservations must be re-granted after the import.") . "</p>";
     $html .= "<p><input class='button' type='submit' name='replace' value='" . _("Update") . "'/>";
     $html .= "<input class='button' type='button' name='return'  value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonadmin&amp;season=" . $seasonUrl . "'\"/></p>";
 }

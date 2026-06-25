@@ -125,12 +125,20 @@ class EventSnapshotService
             throw new EventSnapshotException($this->withSnapshotVersionDetails($e->getMessage()));
         }
 
+        $delegatedAdminsLosingAccess = [];
+
         try {
             DBSetExceptionMode(true);
             DBQuery('START TRANSACTION');
             $this->transactionStarted = true;
 
             if ($mode === 'replace') {
+                // A replace deletes the event's series, teams, games, and
+                // reservations and reinserts them with new IDs, but it does not
+                // touch user-role rows. Roles delegated to those entities keep
+                // pointing at the deleted IDs, so capture the affected users
+                // before deletion to warn that their access must be re-granted.
+                $delegatedAdminsLosingAccess = $this->delegatedAdminsLosingAccess($target['season_id']);
                 $this->deleteEventOwnedRows($target['season_id']);
             }
 
@@ -153,6 +161,13 @@ class EventSnapshotService
         DBSetExceptionMode(false);
 
         $this->clearImportCaches();
+
+        if (!empty($delegatedAdminsLosingAccess)) {
+            $this->warnings[] = sprintf(
+                _("Admin rights delegated to specific divisions, teams, games, or reservations are not migrated by a replace import. Re-grant access for: %s."),
+                implode(', ', $delegatedAdminsLosingAccess),
+            );
+        }
 
         return [
             'season_id' => $target['season_id'],
@@ -1127,6 +1142,25 @@ class EventSnapshotService
             $row['id'] = $this->mapCommentOwnerId($row['type'], $row['id']);
             $this->insertRow('uo_comment', $row);
         }
+    }
+
+    /**
+     * Distinct users whose delegated, entity-scoped admin roles will be orphaned
+     * by a replace import. Season-scoped roles (seasonadmin, spiritadmin) survive
+     * because the season id is preserved, so they are excluded.
+     */
+    private function delegatedAdminsLosingAccess($seasonId)
+    {
+        $preserved = ['seasonadmin', 'spiritadmin'];
+        $users = [];
+        foreach (EventScopedUserRoleRows($seasonId) as $row) {
+            $prefix = explode(':', (string) ($row['value'] ?? ''))[0];
+            if (in_array($prefix, $preserved, true)) {
+                continue;
+            }
+            $users[(string) $row['userid']] = true;
+        }
+        return array_keys($users);
     }
 
     private function deleteEventOwnedRows($seasonId)
