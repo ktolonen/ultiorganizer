@@ -8,7 +8,7 @@ include_once 'lib/data.functions.php';
 
 $html = "";
 $title = _("Event data export");
-$seasonId = "";
+$seasonId = isset($_GET['season']) ? $_GET['season'] : "";
 
 if (!empty($_POST['season'])) {
     $seasonId = $_POST['season'];
@@ -43,7 +43,8 @@ $html .= "<p>" . _("Select event") . ": <select class='dropdown' name='season'>\
 $seasons = Seasons();
 
 foreach ($seasons as $row) {
-    $html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+    $selected = $row['season_id'] === $seasonId ? " selected='selected'" : "";
+    $html .= "<option class='dropdown'" . $selected . " value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
 }
 
 $html .= "</select></p>\n";
