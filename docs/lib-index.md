@@ -14,7 +14,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/common.functions.php`: shared low-level helpers for dates, locale/time formatting, colors, CSV export, SQL filter/order builders, view resolution, and generic comment helpers.
 - `lib/configuration.functions.php`: server config reads/writes, feature flags, customization discovery, and localization discovery.
 - `lib/country.functions.php`: country CRUD, dropdown helpers, team/country relations, and timezone list helpers.
-- `lib/data.functions.php`: `EventDataXMLHandler` for season XML export/import and XML-to-database mapping.
+- `lib/data.functions.php`: JSON event snapshot export/import, whole-snapshot validation, FK-safe remapping, and player-profile matching.
 - `lib/database.php`: mysqli connection lifecycle, query/prepared-statement wrappers, result casting, and DB metadata helpers.
 - `lib/database.maintenance.php`: maintenance flag parsing, runtime-state locks, blocked maintenance responses, and controlled automatic DB-upgrade coordination.
 - `lib/debug.functions.php`: lightweight debug print helpers.

@@ -8,6 +8,13 @@ This document summarizes the current privacy-related admin tools in Ultiorganize
 - `?view=admin/privacyuser`: registered user privacy tools
 - `?view=admin/dbadmin`: links to the privacy tools under the `Privacy` section
 
+## Event snapshots
+
+Admin event snapshots are portable competition packages, not full privacy exports or database backups.
+The JSON event snapshot export includes event-local competition data and the limited `uo_player_profile` fields needed to keep imported players linked to profiles: name, number, accreditation ID, birthdate, gender, and public competition display fields.
+It excludes registered user accounts, user roles, registration ownership records, emails, API tokens, player profile URLs, uploaded profile media, and private profile identifiers such as `national_id`.
+On import, matching existing player profiles are linked but not overwritten.
+
 ## Player privacy tools
 
 The player privacy tools support two operations:

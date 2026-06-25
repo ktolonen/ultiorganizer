@@ -12,7 +12,9 @@ include_once 'lib/game.functions.php';
 include_once 'lib/statistical.functions.php';
 
 $html = "";
+$isProfileLookup = false;
 if (iget("profile")) {
+    $isProfileLookup = true;
     $playerId = PlayerLatestId(intval(iget("profile")));
 } else {
     $playerId = intval(iget("player"));
@@ -28,8 +30,8 @@ if (!$player) {
     return;
 }
 
-$profileId = !empty($player['profile_id']) ? $player['profile_id'] : $playerId;
-$profile = PlayerProfile($profileId);
+$profileId = !empty($player['profile_id']) ? (int) $player['profile_id'] : 0;
+$profile = $profileId > 0 ? PlayerProfile($profileId) : false;
 if (!$profile) {
     $profile = [
         "firstname" => $player['firstname'],
@@ -40,6 +42,27 @@ if (!$profile) {
 }
 
 $curseason = CurrentSeason();
+$showDefenseStats = ShowDefenseStats();
+$currentPlayerId = $playerId;
+// Only a ?profile= lookup should be resolved to the current-season row. An
+// explicit ?player= request (e.g. a teamcard roster link) names a specific
+// player row and must be honoured, since a profile can have several
+// current-season rows when the same person plays on more than one team.
+if ($isProfileLookup && $profileId > 0) {
+    $seasonPlayerId = PlayerLatestId($profileId, $curseason);
+    if (!empty($seasonPlayerId)) {
+        $currentPlayerId = (int) $seasonPlayerId;
+        if ($currentPlayerId !== $playerId) {
+            $currentPlayer = PlayerInfo($currentPlayerId);
+            if ($currentPlayer) {
+                // Display the current-season row so the team link and event
+                // names stay consistent with the current-season stats below.
+                $player = $currentPlayer;
+            }
+        }
+    }
+}
+$currentPlayerTeamId = (int) $player['team'];
 
 if (is_numeric($profile['num'])) {
     $title = "#" . $profile['num'] . " " . utf8entities($profile['firstname'] . " " . $profile['lastname']);
@@ -84,7 +107,7 @@ if (!empty($profile['nationality']) && in_array("nationality", $publicfields)) {
 }
 if (!empty($profile['throwing_hand']) && in_array("throwing_hand", $publicfields)) {
     $html .= "<tr><td class='profileheader'>" . _("Hand") . ":</td>";
-    $html .= "<td>" . U_($profile['throwing_hand']) . "</td></tr>\n";
+    $html .= "<td>" . utf8entities(U_($profile['throwing_hand'])) . "</td></tr>\n";
 }
 if (!empty($profile['height']) && in_array("height", $publicfields)) {
     $html .= "<tr><td class='profileheader'>" . _("Height") . ":</td>";
@@ -155,25 +178,24 @@ if (count($urls)) {
     $html .= "</table>";
 }
 
-$games = PlayerSeasonPlayedGames($playerId, $curseason);
+$games = PlayerSeasonPlayedGames($currentPlayerId, $curseason);
 if ($games) {
-    $goals = PlayerSeasonGoals($playerId, $curseason);
-    $passes = PlayerSeasonPasses($playerId, $curseason);
-    $callahans = PlayerSeasonCallahanGoals($playerId, $curseason);
-    $wins = PlayerSeasonWins($playerId, $player['team'], $curseason);
-    if (ShowDefenseStats()) {
-        $defenses = PlayerSeasonDefenses($playerId, $curseason);
+    $goals = PlayerSeasonGoals($currentPlayerId, $curseason);
+    $passes = PlayerSeasonPasses($currentPlayerId, $curseason);
+    $wins = PlayerSeasonWins($currentPlayerId, $currentPlayerTeamId, $curseason);
+    if ($showDefenseStats) {
+        $defenses = PlayerSeasonDefenses($currentPlayerId, $curseason);
     }
 
     $html .= "<h2>" . U_(CurrentSeasonName()) . ":</h2>\n";
     $html .= "<table border='1' width='100%'><tr>";
     $html .= "<th>" . _("Games") . "</th><th>" . _("Assists") . "</th><th>" . _("Goals") . "</th><th>" . _("Tot.") . "</th>";
-    if (ShowDefenseStats()) {
+    if ($showDefenseStats) {
         $html .= "<th>" . _("Defences") . "</th>";
     }
     $html .= "<th>" . _("Assists avg.") . "</th>";
     $html .= "<th>" . _("Goals avg.") . "</th><th>" . _("Tot. avg.") . "</th>";
-    if (ShowDefenseStats()) {
+    if ($showDefenseStats) {
         $html .= "<th>" . _("Defences avg.") . "</th>";
     }
     $html .= "<th>" . _("Wins") . "</th><th>" . _("Win-%") . "</th></tr>\n";
@@ -183,7 +205,7 @@ if ($games) {
     $dblGoalAvg = SafeDivide($goals, $games);
     $dblScoreAvg = SafeDivide($total, $games);
     $dblWinsAvg = SafeDivide($wins, $games);
-    if (ShowDefenseStats()) {
+    if ($showDefenseStats) {
         $dblDefenAvg = SafeDivide($defenses, $games);
     }
     $html .= "<tr>
@@ -191,13 +213,13 @@ if ($games) {
 	<td>" . $passes . "</td>
 	<td>" . $goals . "</td>
 	<td>" . $total . "</td>";
-    if (ShowDefenseStats()) {
+    if ($showDefenseStats) {
         $html .= "<td>" . $defenses . "</td>";
     }
     $html .= "<td>" . number_format($dblPassAvg, 2) . "</td>
 	<td>" . number_format($dblGoalAvg, 2) . "</td>
 	<td>" . number_format($dblScoreAvg, 2) . "</td>";
-    if (ShowDefenseStats()) {
+    if ($showDefenseStats) {
         $html .= "<td>" . number_format($dblDefenAvg, 2) . "</td>";
     }
     $html .= "<td>" . $wins . "</td>
@@ -207,7 +229,7 @@ if ($games) {
 
 $html_tmp = "";
 $stats = [];
-if (ShowDefenseStats()) {
+if ($showDefenseStats) {
     if (!empty($player['profile_id'])) {
 
         $prevseason = "";
@@ -548,7 +570,7 @@ $html .= "<p></p>\n";
 
 //Current season stats
 
-$games = PlayerSeasonGames($playerId, $curseason);
+$games = PlayerSeasonGames($currentPlayerId, $curseason);
 
 if (count($games)) {
     $html .= "<h2>" . utf8entities(CurrentSeasonName()) . " " . _("game events") . ":</h2>\n";
@@ -561,12 +583,12 @@ if (count($games)) {
         $html .= "<tr><th colspan='4'><b>" . ShortDate($result['time']) . "&nbsp;&nbsp;" . utf8entities($result['hometeamname']) . " - " . utf8entities($result['visitorteamname']) . "&nbsp;
 			&nbsp;" . $result['homescore'] . " - " . $result['visitorscore'] . "</b></th></tr>\n";
 
-        $events = PlayerGameEvents($playerId, $game['game_id']);
+        $events = PlayerGameEvents($currentPlayerId, $game['game_id']);
 
         foreach ($events as $event) {
             $html .= "<tr><td style='width:10%'>" . SecToMin($event['time']) . "</td><td style='width:10%'>" . $event['homescore'] . " - " . $event['visitorscore'] . "</td>";
 
-            if ($event['assist'] == $playerId) {
+            if ($event['assist'] == $currentPlayerId) {
                 $html .= "<td class='highlight' style='width:40%'>" . utf8entities($player['firstname'] . " " . $player['lastname']) . "</td>\n";
             } else {
                 if (intval($event['iscallahan'])) {
@@ -581,7 +603,7 @@ if (count($games)) {
                 }
             }
 
-            if ($event['scorer'] == $playerId) {
+            if ($event['scorer'] == $currentPlayerId) {
                 $html .= "<td class='highlight' style='width:40%'>" . utf8entities($player['firstname'] . " " . $player['lastname']) . "</td>\n";
             } else {
                 $p = PlayerInfo($event['scorer']);
@@ -597,7 +619,7 @@ if (count($games)) {
         $html .= "</table>";
     }
 }
-if ($_SESSION['uid'] != 'anonymous') {
+if ($profileId > 0 && $_SESSION['uid'] != 'anonymous') {
     $html .= "<div style='float:left;'><hr/><a href='?view=user/addmedialink&amp;player=" . $profileId . "'>" . _("Add media") . "</a></div>";
 }
 

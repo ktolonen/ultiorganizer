@@ -31,6 +31,12 @@ Keep those separate when planning changes. The repository does not yet implement
 - `COMMENT_TYPE_SPIRIT_VISITOR` is `6`.
 - Main comment helpers are `SpiritCommentTypeForTeam()`, `CanCreateSpiritComment()`, `CanManageSpiritComment()`, and `SetSpiritComment()`.
 
+### Spirit modes and event snapshot import
+
+- `uo_spirit_category` rows are grouped by `mode`, and `uo_season.spiritmode` selects the group. Helpers such as `SpiritRequiredCategoryCount()` and `SpiritCategoryRows()` load every category for a mode, so a mode is effectively a shared, installation-wide taxonomy.
+- Event snapshot import (`lib/data.functions.php`) reuses spirit categories that already exist on the installation and copies the snapshot's `spiritmode` onto the imported event. This assumes the snapshot was produced by the **same installation** (backup/restore or moving an event within one installation).
+- Importing a snapshot from a different installation whose mode holds different categories would append the snapshot's categories into that mode, making the imported event see a mixed category set. The importer does not remap modes; it detects this case and adds an import warning instead. Cross-installation spirit-mode remapping is intentionally out of scope.
+
 ## WFDF-Oriented Principles
 
 These are the operating principles Bruno described from WFDF events and Spirit Director workflows.

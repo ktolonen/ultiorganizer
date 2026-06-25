@@ -6,10 +6,10 @@ if (is_readable('conf/config.inc.php')) {
     http_response_code(500);
     die("Missing configuration. Run install.php or setup conf/config.inc.php manually.");
 }
-
+//  ALLOW_INSTALL is for local development only; never enable it on a production server.
 if (is_file('install.php') && (!defined('ALLOW_INSTALL') || !ALLOW_INSTALL)) {
     http_response_code(500);
-    die("install.php must be removed or ALLOW_INSTALL=true for local setup.");
+    die("Security warning: remove install.php from the server.");
 }
 
 include_once 'lib/database.php';

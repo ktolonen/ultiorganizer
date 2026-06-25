@@ -56,6 +56,19 @@ To install Ultiorganizer on a server:
 
 The installer needs `sql/ultiorganizer.sql` and `conf/config.inc.example.php`, so both files are included in install packages. Update packages omit both files. They should not be exposed for browsing by the web server after installation.
 
+## PHP upload limits
+
+The event data import (`admin/eventdataimport.php`) and database restore (`admin/dbrestore.php`) accept file uploads that can exceed PHP's defaults. A JSON event snapshot for a large event can be tens of megabytes. PHP's `post_max_size` and `upload_max_filesize` are `PHP_INI_PERDIR` directives, so they cannot be raised from application code at runtime — they must be configured on the server.
+
+Set both limits comfortably above the largest snapshot you expect to import, keeping `post_max_size` above `upload_max_filesize` because the POST body wraps the file plus the form fields. For example, in `php.ini` (or an FPM pool / `.user.ini`):
+
+```ini
+upload_max_filesize = 64M
+post_max_size = 66M
+```
+
+With Apache mod_php you may instead set `php_value upload_max_filesize 64M` in a vhost or directory `.htaccess`, but do not ship `php_value` directives in the release package: they cause a 500 error under PHP-FPM. If the limits are too low, the importer reports that the uploaded file is too large instead of failing silently. The local development environment configures these limits in `docs/dev/php.dev.ini`.
+
 ## Development checkout deployments
 
 Developers can continue to run Ultiorganizer directly from the repository checkout. That layout is useful for local work because it includes documentation, development tooling, and review assets.

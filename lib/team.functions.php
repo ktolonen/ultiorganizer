@@ -1151,12 +1151,13 @@ function TeamCopyRoster($copyfrom, $copyto)
 {
     if (hasEditPlayersRight($copyto)) {
         foreach (TeamPlayerList($copyfrom) as $player) {
+            $profileIdSql = !empty($player["profile_id"]) ? (string) (int) $player["profile_id"] : "NULL";
             $query = sprintf(
                 "INSERT INTO uo_player(firstname, lastname, profile_id, accreditation_id, team, num)
-      			VALUES ('%s','%s',%d,'%s',%d,%d)",
+      			VALUES ('%s','%s',%s,'%s',%d,%d)",
                 DBEscapeString($player["firstname"]),
                 DBEscapeString($player["lastname"]),
-                (int) $player["profile_id"],
+                $profileIdSql,
                 DBEscapeString($player["accreditation_id"]),
                 (int) $copyto,
                 (int) $player["num"],
