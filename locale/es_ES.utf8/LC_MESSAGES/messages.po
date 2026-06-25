@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-25 08:49+0300\n"
+"POT-Creation-Date: 2026-06-25 17:11+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -589,7 +589,7 @@ msgstr ""
 "Realice siempre una copia de seguridad completa de la base de datos antes de "
 "ejecutar la conversión."
 
-#: lib/data.functions.php:1406
+#: lib/data.functions.php:1455
 #, php-format
 msgid "Ambiguous player profile match for %s %s."
 msgstr ""
@@ -1137,7 +1137,7 @@ msgstr "Borrar clasificación final"
 msgid "Clear saved final standings for this division?"
 msgstr "¿Borrar la clasificación final guardada para esta división?"
 
-#: lib/data.functions.php:631
+#: lib/data.functions.php:633
 #, php-format
 msgid "Cleared %1$d %2$s reference(s) pointing outside the event."
 msgstr ""
@@ -1336,7 +1336,7 @@ msgstr "Error al confirmar la dirección de correo electrónico adicional"
 msgid "Confirming registration failed"
 msgstr "Error al confirmar el registro"
 
-#: lib/data.functions.php:1358 lib/data.functions.php:1369
+#: lib/data.functions.php:1407 lib/data.functions.php:1418
 msgid "Conflicting player profile identities in the event snapshot."
 msgstr ""
 
@@ -1454,7 +1454,7 @@ msgstr "Países"
 msgid "Country"
 msgstr "País"
 
-#: lib/data.functions.php:1535
+#: lib/data.functions.php:1584
 #, php-format
 msgid "Country %d is not present in the target installation and was cleared."
 msgstr ""
@@ -1907,7 +1907,7 @@ msgstr "Empates"
 msgid "Draws allowed"
 msgstr "Empates permitidos"
 
-#: lib/data.functions.php:653
+#: lib/data.functions.php:662
 #, php-format
 msgid "Dropped %1$d %2$s row(s) referencing data outside the event."
 msgstr ""
@@ -2270,7 +2270,7 @@ msgstr "Usuarios del evento"
 msgid "Events"
 msgstr "Eventos"
 
-#: lib/data.functions.php:717 lib/data.functions.php:1252
+#: lib/data.functions.php:726 lib/data.functions.php:1301
 msgid "Every imported player must have a player profile in the event snapshot."
 msgstr ""
 
@@ -3944,29 +3944,29 @@ msgstr "Números de camiseta faltantes y duplicados"
 msgid "Missing image processing support on the server."
 msgstr "Falta soporte de procesamiento de imágenes en el servidor."
 
-#: lib/data.functions.php:1456
+#: lib/data.functions.php:1505
 #, fuzzy, php-format
 msgid "Missing required imported row in %s."
 msgstr "Falta puntuación de espíritu para %s. "
 
-#: lib/data.functions.php:1428
+#: lib/data.functions.php:1477
 #, fuzzy, php-format
 msgid "Missing required parent row for %s.%s."
 msgstr "Falta puntuación de espíritu para %s. "
 
-#: lib/data.functions.php:1323 lib/data.functions.php:1345
+#: lib/data.functions.php:1372 lib/data.functions.php:1394
 msgid "Missing required parent row for uo_comment.id."
 msgstr ""
 
-#: lib/data.functions.php:735
+#: lib/data.functions.php:744
 msgid "Missing required parent row for uo_game.respteam."
 msgstr ""
 
-#: lib/data.functions.php:1288 lib/data.functions.php:1312
+#: lib/data.functions.php:1337 lib/data.functions.php:1361
 msgid "Missing required parent row for uo_urls.owner_id."
 msgstr ""
 
-#: lib/data.functions.php:1425
+#: lib/data.functions.php:1474
 #, fuzzy, php-format
 msgid "Missing required reference %s.%s."
 msgstr "Falta puntuación para %s. "
@@ -4269,7 +4269,7 @@ msgstr "Sin goles."
 msgid "No image"
 msgstr "Sin imagen"
 
-#: lib/data.functions.php:1582
+#: lib/data.functions.php:1631
 #, php-format
 msgid "No importable columns for %s."
 msgstr ""
@@ -6650,7 +6650,7 @@ msgstr ""
 msgid "The event snapshot does not contain table data."
 msgstr ""
 
-#: lib/data.functions.php:729
+#: lib/data.functions.php:738
 msgid "The event snapshot has a media event without its media link."
 msgstr ""
 
@@ -6661,6 +6661,14 @@ msgstr ""
 
 #: lib/data.functions.php:444
 msgid "The event snapshot must contain exactly one event row."
+msgstr ""
+
+#: lib/data.functions.php:856
+msgid ""
+"The event's spirit categories did not match the spirit mode already "
+"configured on this installation, so extra categories were added to that "
+"mode. Spirit scoring may show mismatched categories; this import flow "
+"expects snapshots from the same installation."
 msgstr ""
 
 #: user/addresult.php:102
@@ -7278,11 +7286,11 @@ msgid "Unsupported backup format. Please upload a .gz or .sql file."
 msgstr ""
 "Formato de copia de seguridad no compatible. Cargue un archivo .gz o .sql."
 
-#: lib/data.functions.php:1341 lib/data.functions.php:1519
+#: lib/data.functions.php:1390 lib/data.functions.php:1568
 msgid "Unsupported event snapshot comment type."
 msgstr ""
 
-#: lib/data.functions.php:1308 lib/data.functions.php:1501
+#: lib/data.functions.php:1357 lib/data.functions.php:1550
 msgid "Unsupported event snapshot link owner."
 msgstr ""
 
@@ -8118,7 +8126,7 @@ msgstr "seleccionar"
 msgid "separate with a comma"
 msgstr "separar con una coma"
 
-#: lib/data.functions.php:610
+#: lib/data.functions.php:612
 #, fuzzy
 msgid "spirit score"
 msgstr "Puntuación de espíritu"
@@ -8136,7 +8144,7 @@ msgstr "comenzando en ofensiva"
 msgid "team current-pool"
 msgstr ""
 
-#: lib/data.functions.php:609
+#: lib/data.functions.php:611
 msgid "team pool placement"
 msgstr ""
 

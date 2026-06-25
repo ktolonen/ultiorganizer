@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-25 08:49+0300\n"
+"POT-Creation-Date: 2026-06-25 17:11+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -573,7 +573,7 @@ msgstr ""
 msgid "Always take a full database backup before running the conversion."
 msgstr "Ota aina täydellinen varmuuskopio ennen konvertoinnin aloittamista."
 
-#: lib/data.functions.php:1406
+#: lib/data.functions.php:1455
 #, php-format
 msgid "Ambiguous player profile match for %s %s."
 msgstr ""
@@ -1113,7 +1113,7 @@ msgstr "Tyhjennä lopulliset sijoitukset"
 msgid "Clear saved final standings for this division?"
 msgstr "Tyhjennetäänkö tämän sarjan tallennetut lopulliset sijoitukset?"
 
-#: lib/data.functions.php:631
+#: lib/data.functions.php:633
 #, php-format
 msgid "Cleared %1$d %2$s reference(s) pointing outside the event."
 msgstr ""
@@ -1306,7 +1306,7 @@ msgstr "Sähköpostiosoitteen vahvistaminen epäonnistui"
 msgid "Confirming registration failed"
 msgstr "Rekisteröitymisen vahvistaminen ei onnistunut"
 
-#: lib/data.functions.php:1358 lib/data.functions.php:1369
+#: lib/data.functions.php:1407 lib/data.functions.php:1418
 msgid "Conflicting player profile identities in the event snapshot."
 msgstr ""
 
@@ -1423,7 +1423,7 @@ msgstr "Maat"
 msgid "Country"
 msgstr "Kotimaa"
 
-#: lib/data.functions.php:1535
+#: lib/data.functions.php:1584
 #, php-format
 msgid "Country %d is not present in the target installation and was cleared."
 msgstr ""
@@ -1875,7 +1875,7 @@ msgstr "Tasapelit"
 msgid "Draws allowed"
 msgstr "Tasapelit sallittu"
 
-#: lib/data.functions.php:653
+#: lib/data.functions.php:662
 #, php-format
 msgid "Dropped %1$d %2$s row(s) referencing data outside the event."
 msgstr ""
@@ -2231,7 +2231,7 @@ msgstr "Tapahtuman käyttäjät"
 msgid "Events"
 msgstr "Tapahtumat"
 
-#: lib/data.functions.php:717 lib/data.functions.php:1252
+#: lib/data.functions.php:726 lib/data.functions.php:1301
 msgid "Every imported player must have a player profile in the event snapshot."
 msgstr ""
 
@@ -3902,29 +3902,29 @@ msgstr "Puuttuvat ja päällekkäiset pelinumerot"
 msgid "Missing image processing support on the server."
 msgstr "Palvelimelta puuttuu kuvankäsittelyn tuki."
 
-#: lib/data.functions.php:1456
+#: lib/data.functions.php:1505
 #, fuzzy, php-format
 msgid "Missing required imported row in %s."
 msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
 
-#: lib/data.functions.php:1428
+#: lib/data.functions.php:1477
 #, fuzzy, php-format
 msgid "Missing required parent row for %s.%s."
 msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
 
-#: lib/data.functions.php:1323 lib/data.functions.php:1345
+#: lib/data.functions.php:1372 lib/data.functions.php:1394
 msgid "Missing required parent row for uo_comment.id."
 msgstr ""
 
-#: lib/data.functions.php:735
+#: lib/data.functions.php:744
 msgid "Missing required parent row for uo_game.respteam."
 msgstr ""
 
-#: lib/data.functions.php:1288 lib/data.functions.php:1312
+#: lib/data.functions.php:1337 lib/data.functions.php:1361
 msgid "Missing required parent row for uo_urls.owner_id."
 msgstr ""
 
-#: lib/data.functions.php:1425
+#: lib/data.functions.php:1474
 #, fuzzy, php-format
 msgid "Missing required reference %s.%s."
 msgstr "Piste puuttuu %s. "
@@ -4227,7 +4227,7 @@ msgstr "Ei maaleja."
 msgid "No image"
 msgstr "Ei Kuvaa"
 
-#: lib/data.functions.php:1582
+#: lib/data.functions.php:1631
 #, php-format
 msgid "No importable columns for %s."
 msgstr ""
@@ -6590,7 +6590,7 @@ msgstr "Vierasjoukkue on BYE-joukkue. Kayta ehdotettua tulosta: %s - %s"
 msgid "The event snapshot does not contain table data."
 msgstr ""
 
-#: lib/data.functions.php:729
+#: lib/data.functions.php:738
 msgid "The event snapshot has a media event without its media link."
 msgstr ""
 
@@ -6601,6 +6601,14 @@ msgstr ""
 
 #: lib/data.functions.php:444
 msgid "The event snapshot must contain exactly one event row."
+msgstr ""
+
+#: lib/data.functions.php:856
+msgid ""
+"The event's spirit categories did not match the spirit mode already "
+"configured on this installation, so extra categories were added to that "
+"mode. Spirit scoring may show mismatched categories; this import flow "
+"expects snapshots from the same installation."
 msgstr ""
 
 #: user/addresult.php:102
@@ -7201,11 +7209,11 @@ msgstr "Varaamatta"
 msgid "Unsupported backup format. Please upload a .gz or .sql file."
 msgstr "Varmuuskopio formaatti ei ole tuettu. Lattaa .qz tai .sql file."
 
-#: lib/data.functions.php:1341 lib/data.functions.php:1519
+#: lib/data.functions.php:1390 lib/data.functions.php:1568
 msgid "Unsupported event snapshot comment type."
 msgstr ""
 
-#: lib/data.functions.php:1308 lib/data.functions.php:1501
+#: lib/data.functions.php:1357 lib/data.functions.php:1550
 msgid "Unsupported event snapshot link owner."
 msgstr ""
 
@@ -8031,7 +8039,7 @@ msgstr "valitse"
 msgid "separate with a comma"
 msgstr "erota pilkulla"
 
-#: lib/data.functions.php:610
+#: lib/data.functions.php:612
 #, fuzzy
 msgid "spirit score"
 msgstr "Spirit-piste"
@@ -8049,7 +8057,7 @@ msgstr "Ensimmäinen hyökkäysvuoro"
 msgid "team current-pool"
 msgstr ""
 
-#: lib/data.functions.php:609
+#: lib/data.functions.php:611
 msgid "team pool placement"
 msgstr ""
 

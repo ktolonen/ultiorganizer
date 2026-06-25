@@ -764,7 +764,7 @@ class EventSnapshotService
         }
 
         $this->importGlobalRows('uo_pooltemplate');
-        $this->importGlobalRows('uo_spirit_category');
+        $this->importSpiritCategories();
         $this->importLocations();
         $this->importSeason($target);
         $this->importSeries();
@@ -814,6 +814,46 @@ class EventSnapshotService
             unset($newRow[$pk]);
             $newId = $this->insertRow($table, $newRow);
             $this->idMap[$table][$oldId] = $newId;
+        }
+    }
+
+    /**
+     * Import spirit categories, reusing matching installation rows.
+     *
+     * Spirit categories are grouped by uo_spirit_category.mode, and helpers load
+     * every category for the season's spiritmode. The supported flow is a
+     * same-installation restore, where the snapshot's categories already exist
+     * and are reused. Importing from an installation whose mode holds different
+     * categories would append rows into that mode and make the imported event see
+     * a mixed set, so detect that case and warn rather than silently corrupting
+     * the mode. See docs/spirit-scoring.md.
+     */
+    private function importSpiritCategories()
+    {
+        $sourceMode = (int) ($this->snapshot['tables']['uo_season'][0]['spiritmode'] ?? 0);
+        $preexistingInMode = $sourceMode > 0
+            ? (int) DBQueryToValue("SELECT COUNT(*) FROM uo_spirit_category WHERE mode=" . $sourceMode)
+            : 0;
+        $insertedIntoSourceMode = 0;
+
+        foreach ($this->snapshot['tables']['uo_spirit_category'] as $row) {
+            $oldId = $row['category_id'];
+            $existingId = $this->globalExistingId('uo_spirit_category', $row);
+            if ($existingId !== null) {
+                $this->idMap['uo_spirit_category'][$oldId] = $existingId;
+                continue;
+            }
+            if ((int) ($row['mode'] ?? 0) === $sourceMode) {
+                $insertedIntoSourceMode++;
+            }
+            $newRow = $row;
+            unset($newRow['category_id']);
+            $newId = $this->insertRow('uo_spirit_category', $newRow);
+            $this->idMap['uo_spirit_category'][$oldId] = $newId;
+        }
+
+        if ($preexistingInMode > 0 && $insertedIntoSourceMode > 0) {
+            $this->warnings[] = _("The event's spirit categories did not match the spirit mode already configured on this installation, so extra categories were added to that mode. Spirit scoring may show mismatched categories; this import flow expects snapshots from the same installation.");
         }
     }
 
