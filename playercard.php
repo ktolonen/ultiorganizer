@@ -42,7 +42,6 @@ if (!$profile) {
 $curseason = CurrentSeason();
 $showDefenseStats = ShowDefenseStats();
 $currentPlayerId = $playerId;
-$currentPlayerTeamId = (int) $player['team'];
 if ($profileId > 0) {
     $seasonPlayerId = PlayerLatestId($profileId, $curseason);
     if (!empty($seasonPlayerId)) {
@@ -50,11 +49,14 @@ if ($profileId > 0) {
         if ($currentPlayerId !== $playerId) {
             $currentPlayer = PlayerInfo($currentPlayerId);
             if ($currentPlayer) {
-                $currentPlayerTeamId = (int) $currentPlayer['team'];
+                // Display the current-season row so the team link and event
+                // names stay consistent with the current-season stats below.
+                $player = $currentPlayer;
             }
         }
     }
 }
+$currentPlayerTeamId = (int) $player['team'];
 
 if (is_numeric($profile['num'])) {
     $title = "#" . $profile['num'] . " " . utf8entities($profile['firstname'] . " " . $profile['lastname']);

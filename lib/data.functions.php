@@ -254,6 +254,8 @@ class EventSnapshotService
         if (!empty($pools)) {
             $moveScheduling = DBQueryToArray("SELECT scheduling_id FROM uo_moveteams WHERE (frompool IN ($poolSql) OR topool IN ($poolSql)) AND scheduling_id IS NOT NULL", true);
             $scheduling = array_merge($scheduling, $this->columnValues($moveScheduling, 'scheduling_id'));
+            $specialScheduling = DBQueryToArray("SELECT scheduling_id FROM uo_specialranking WHERE frompool IN ($poolSql) AND scheduling_id IS NOT NULL", true);
+            $scheduling = array_merge($scheduling, $this->columnValues($specialScheduling, 'scheduling_id'));
         }
         $scheduling = $this->uniqueInts($scheduling);
 
