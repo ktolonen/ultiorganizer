@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-25 20:50+0300\n"
+"POT-Creation-Date: 2026-06-25 21:33+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -589,7 +589,7 @@ msgstr ""
 "Realice siempre una copia de seguridad completa de la base de datos antes de "
 "ejecutar la conversión."
 
-#: lib/data.functions.php:1530 lib/data.functions.php:1553
+#: lib/data.functions.php:1531 lib/data.functions.php:1554
 #, php-format
 msgid "Ambiguous player profile match for %s %s."
 msgstr ""
@@ -1144,7 +1144,7 @@ msgstr "Borrar clasificación final"
 msgid "Clear saved final standings for this division?"
 msgstr "¿Borrar la clasificación final guardada para esta división?"
 
-#: lib/data.functions.php:689
+#: lib/data.functions.php:690
 #, php-format
 msgid "Cleared %1$d %2$s reference(s) pointing outside the event."
 msgstr ""
@@ -1343,7 +1343,7 @@ msgstr "Error al confirmar la dirección de correo electrónico adicional"
 msgid "Confirming registration failed"
 msgstr "Error al confirmar el registro"
 
-#: lib/data.functions.php:1495 lib/data.functions.php:1506
+#: lib/data.functions.php:1496 lib/data.functions.php:1507
 msgid "Conflicting player profile identities in the event snapshot."
 msgstr ""
 
@@ -1468,7 +1468,7 @@ msgstr "Países"
 msgid "Country"
 msgstr "País"
 
-#: lib/data.functions.php:1691
+#: lib/data.functions.php:1692
 #, php-format
 msgid "Country %d is not present in the target installation and was cleared."
 msgstr ""
@@ -1921,7 +1921,7 @@ msgstr "Empates"
 msgid "Draws allowed"
 msgstr "Empates permitidos"
 
-#: lib/data.functions.php:718
+#: lib/data.functions.php:719
 #, php-format
 msgid "Dropped %1$d %2$s row(s) referencing data outside the event."
 msgstr ""
@@ -2284,7 +2284,7 @@ msgstr "Usuarios del evento"
 msgid "Events"
 msgstr "Eventos"
 
-#: lib/data.functions.php:782 lib/data.functions.php:1389
+#: lib/data.functions.php:783 lib/data.functions.php:1390
 msgid "Every imported player must have a player profile in the event snapshot."
 msgstr ""
 
@@ -3963,29 +3963,29 @@ msgstr "Números de camiseta faltantes y duplicados"
 msgid "Missing image processing support on the server."
 msgstr "Falta soporte de procesamiento de imágenes en el servidor."
 
-#: lib/data.functions.php:1612
+#: lib/data.functions.php:1613
 #, fuzzy, php-format
 msgid "Missing required imported row in %s."
 msgstr "Falta puntuación de espíritu para %s. "
 
-#: lib/data.functions.php:1584
+#: lib/data.functions.php:1585
 #, fuzzy, php-format
 msgid "Missing required parent row for %s.%s."
 msgstr "Falta puntuación de espíritu para %s. "
 
-#: lib/data.functions.php:1460 lib/data.functions.php:1482
+#: lib/data.functions.php:1461 lib/data.functions.php:1483
 msgid "Missing required parent row for uo_comment.id."
 msgstr ""
 
-#: lib/data.functions.php:800
+#: lib/data.functions.php:801
 msgid "Missing required parent row for uo_game.respteam."
 msgstr ""
 
-#: lib/data.functions.php:1425 lib/data.functions.php:1449
+#: lib/data.functions.php:1426 lib/data.functions.php:1450
 msgid "Missing required parent row for uo_urls.owner_id."
 msgstr ""
 
-#: lib/data.functions.php:1581
+#: lib/data.functions.php:1582
 #, fuzzy, php-format
 msgid "Missing required reference %s.%s."
 msgstr "Falta puntuación para %s. "
@@ -4288,7 +4288,7 @@ msgstr "Sin goles."
 msgid "No image"
 msgstr "Sin imagen"
 
-#: lib/data.functions.php:1738
+#: lib/data.functions.php:1739
 #, php-format
 msgid "No importable columns for %s."
 msgstr ""
@@ -6675,7 +6675,7 @@ msgstr ""
 msgid "The event snapshot does not contain table data."
 msgstr ""
 
-#: lib/data.functions.php:794
+#: lib/data.functions.php:795
 msgid "The event snapshot has a media event without its media link."
 msgstr ""
 
@@ -6688,7 +6688,7 @@ msgstr ""
 msgid "The event snapshot must contain exactly one event row."
 msgstr ""
 
-#: lib/data.functions.php:912
+#: lib/data.functions.php:913
 msgid ""
 "The event's spirit categories did not match the spirit mode already "
 "configured on this installation, so extra categories were added to that "
@@ -7322,11 +7322,11 @@ msgid "Unsupported backup format. Please upload a .gz or .sql file."
 msgstr ""
 "Formato de copia de seguridad no compatible. Cargue un archivo .gz o .sql."
 
-#: lib/data.functions.php:1478 lib/data.functions.php:1675
+#: lib/data.functions.php:1479 lib/data.functions.php:1676
 msgid "Unsupported event snapshot comment type."
 msgstr ""
 
-#: lib/data.functions.php:1445 lib/data.functions.php:1657
+#: lib/data.functions.php:1446 lib/data.functions.php:1658
 msgid "Unsupported event snapshot link owner."
 msgstr ""
 
@@ -7894,17 +7894,17 @@ msgstr "de"
 msgid "game events"
 msgstr "eventos del juego"
 
-#: lib/data.functions.php:653
+#: lib/data.functions.php:654
 #, fuzzy
 msgid "game home team"
 msgstr "equipo local"
 
-#: lib/data.functions.php:655
+#: lib/data.functions.php:656
 #, fuzzy
 msgid "game reservation"
 msgstr "Agregar reserva"
 
-#: lib/data.functions.php:654
+#: lib/data.functions.php:655
 #, fuzzy
 msgid "game visiting team"
 msgstr "Advertencia: falta equipo"
@@ -7917,12 +7917,12 @@ msgstr "juegos"
 msgid "goal"
 msgstr "gol"
 
-#: lib/data.functions.php:656
+#: lib/data.functions.php:657
 #, fuzzy
 msgid "goal assist"
 msgstr "goles"
 
-#: lib/data.functions.php:657
+#: lib/data.functions.php:658
 #, fuzzy
 msgid "goal scorer"
 msgstr "Goles marcados"
@@ -8098,6 +8098,10 @@ msgstr "puntos para el equipo que se rinde / BYE"
 msgid "points for their remaining opponent"
 msgstr "puntos para su oponente restante"
 
+#: lib/data.functions.php:653
+msgid "pool follower"
+msgstr ""
+
 #: admin/seasonpools.php:270
 msgid "remove"
 msgstr "eliminar"
@@ -8162,7 +8166,7 @@ msgstr "seleccionar"
 msgid "separate with a comma"
 msgstr "separar con una coma"
 
-#: lib/data.functions.php:668
+#: lib/data.functions.php:669
 #, fuzzy
 msgid "spirit score"
 msgstr "Puntuación de espíritu"
@@ -8180,7 +8184,7 @@ msgstr "comenzando en ofensiva"
 msgid "team current-pool"
 msgstr ""
 
-#: lib/data.functions.php:667
+#: lib/data.functions.php:668
 msgid "team pool placement"
 msgstr ""
 

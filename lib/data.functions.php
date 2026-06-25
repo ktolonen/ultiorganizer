@@ -650,6 +650,7 @@ class EventSnapshotService
         // Soft pointers: keep the row, clear the value (importer maps it to null).
         $softReferences = [
             ['uo_team', 'pool', 'uo_pool', 'pool_id', _("team current-pool")],
+            ['uo_pool', 'follower', 'uo_pool', 'pool_id', _("pool follower")],
             ['uo_game', 'hometeam', 'uo_team', 'team_id', _("game home team")],
             ['uo_game', 'visitorteam', 'uo_team', 'team_id', _("game visiting team")],
             ['uo_game', 'reservation', 'uo_reservation', 'id', _("game reservation")],
