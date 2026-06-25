@@ -39,6 +39,18 @@ function EventSnapshotImportJson($filename, $eventId = "", $mode = "new")
     return $service->importFile($filename, $eventId, $mode);
 }
 
+/**
+ * Read event identity from a JSON v2 event snapshot without importing it.
+ *
+ * @param string $filename Uploaded JSON snapshot file
+ * @return array snapshot event info
+ */
+function EventSnapshotImportInfo($filename)
+{
+    $service = new EventSnapshotService();
+    return $service->importInfo($filename);
+}
+
 class EventSnapshotService
 {
     private $warnings = [];
@@ -86,31 +98,39 @@ class EventSnapshotService
         return $json . "\n";
     }
 
+    public function importInfo($filename)
+    {
+        $this->warnings = [];
+        $this->idMap = [];
+        $this->targetSeasonId = '';
+        $this->mode = 'inspect';
+        $this->loadSnapshotFile($filename);
+
+        try {
+            $this->validateSnapshot();
+        } catch (EventSnapshotException $e) {
+            throw new EventSnapshotException($this->withSnapshotVersionDetails($e->getMessage()));
+        }
+
+        $season = $this->snapshot['tables']['uo_season'][0];
+        $seasonId = (string) ($season['season_id'] ?? '');
+        $seasonName = (string) ($season['name'] ?? $seasonId);
+
+        return [
+            'season_id' => $seasonId,
+            'name' => $seasonName,
+            'exists' => SeasonExists($seasonId),
+            'warnings' => $this->warnings,
+        ];
+    }
+
     public function importFile($filename, $eventId = "", $mode = "new")
     {
         $this->mode = $mode;
         $this->targetSeasonId = $eventId;
         $this->warnings = [];
         $this->idMap = [];
-
-        $contents = file_get_contents($filename);
-        if ($contents === false) {
-            throw new EventSnapshotException(_("Could not read import file."));
-        }
-        $typeCheckContents = $contents;
-        if (strncmp($typeCheckContents, "\xEF\xBB\xBF", 3) === 0) {
-            $typeCheckContents = substr($typeCheckContents, 3);
-        }
-        $typeCheckContents = ltrim($typeCheckContents);
-        if ($typeCheckContents !== '' && $typeCheckContents[0] === '<') {
-            throw new EventSnapshotException(_("Legacy XML event exports are no longer supported. Export a JSON event snapshot from a current Ultiorganizer installation and import that file."));
-        }
-
-        $snapshot = json_decode($contents, true);
-        if (!is_array($snapshot)) {
-            throw new EventSnapshotException(_("The import file is not a valid JSON event snapshot."));
-        }
-        $this->snapshot = $snapshot;
+        $this->loadSnapshotFile($filename);
 
         try {
             $this->validateSnapshot();
@@ -126,12 +146,14 @@ class EventSnapshotService
         }
 
         $delegatedAdminsLosingAccess = [];
+        $orphanedProfilesRemoved = 0;
 
         try {
             DBSetExceptionMode(true);
             DBQuery('START TRANSACTION');
             $this->transactionStarted = true;
 
+            $replacedProfileIds = [];
             if ($mode === 'replace') {
                 // A replace deletes the event's series, teams, games, and
                 // reservations and reinserts them with new IDs, but it does not
@@ -139,11 +161,16 @@ class EventSnapshotService
                 // pointing at the deleted IDs, so capture the affected users
                 // before deletion to warn that their access must be re-granted.
                 $delegatedAdminsLosingAccess = $this->delegatedAdminsLosingAccess($target['season_id']);
+                // Capture the event's player profiles before deletion so the
+                // synthetic profiles created for profile-less players can be
+                // cleaned up if the re-import does not reference them again.
+                $replacedProfileIds = $this->collectEventIds($target['season_id'])['profiles'];
                 $this->deleteEventOwnedRows($target['season_id']);
             }
 
             $this->importSnapshotRows($target);
             $this->refreshDerivedData($target['season_id']);
+            $orphanedProfilesRemoved = $this->removeOrphanedProfiles($replacedProfileIds);
 
             DBQuery('COMMIT');
             $this->transactionStarted = false;
@@ -169,10 +196,39 @@ class EventSnapshotService
             );
         }
 
+        if ($orphanedProfilesRemoved > 0) {
+            $this->warnings[] = sprintf(
+                _("Removed %d player profile(s) the replace import left without any player."),
+                $orphanedProfilesRemoved,
+            );
+        }
+
         return [
             'season_id' => $target['season_id'],
             'warnings' => $this->warnings,
         ];
+    }
+
+    private function loadSnapshotFile($filename)
+    {
+        $contents = file_get_contents($filename);
+        if ($contents === false) {
+            throw new EventSnapshotException(_("Could not read import file."));
+        }
+        $typeCheckContents = $contents;
+        if (strncmp($typeCheckContents, "\xEF\xBB\xBF", 3) === 0) {
+            $typeCheckContents = substr($typeCheckContents, 3);
+        }
+        $typeCheckContents = ltrim($typeCheckContents);
+        if ($typeCheckContents !== '' && $typeCheckContents[0] === '<') {
+            throw new EventSnapshotException(_("Legacy XML event exports are no longer supported. Export a JSON event snapshot from a current Ultiorganizer installation and import that file."));
+        }
+
+        $snapshot = json_decode($contents, true);
+        if (!is_array($snapshot)) {
+            throw new EventSnapshotException(_("The import file is not a valid JSON event snapshot."));
+        }
+        $this->snapshot = $snapshot;
     }
 
     private function manifest()
@@ -1212,6 +1268,38 @@ class EventSnapshotService
         return array_keys($users);
     }
 
+    /**
+     * Remove player profiles a replace import left without any player.
+     *
+     * Players without a profile are exported with a synthetic profile, and on a
+     * later replace those synthetics are unmatchable (no accreditation, no
+     * birthdate), so the re-import inserts fresh ones and the previous event's
+     * synthetic profiles become orphaned. Only profiles that belonged to the
+     * replaced event and are now referenced by no player are deleted, so shared
+     * profiles still used elsewhere are left untouched.
+     */
+    private function removeOrphanedProfiles($profileIds)
+    {
+        if (empty($profileIds)) {
+            return 0;
+        }
+        $profileSql = $this->intList($profileIds);
+        if ($profileSql === '') {
+            return 0;
+        }
+        $orphans = $this->columnValues(DBQueryToArray(
+            "SELECT profile_id FROM uo_player_profile
+            WHERE profile_id IN ($profileSql)
+            AND profile_id NOT IN (SELECT profile_id FROM uo_player WHERE profile_id IS NOT NULL)",
+            true,
+        ), 'profile_id');
+        if (empty($orphans)) {
+            return 0;
+        }
+        DBQuery("DELETE FROM uo_player_profile WHERE profile_id IN (" . $this->intList($orphans) . ")");
+        return count($orphans);
+    }
+
     private function deleteEventOwnedRows($seasonId)
     {
         $ids = $this->collectEventIds($seasonId);
@@ -1424,43 +1512,62 @@ class EventSnapshotService
 
     private function profileMatchId($profile, $strict)
     {
-        $conditions = [];
-        $accreditationId = trim((string) ($profile['accreditation_id'] ?? ''));
-        if ($accreditationId !== '') {
-            $conditions[] = sprintf("accreditation_id='%s'", DBEscapeString($accreditationId));
-        }
-
         $firstname = trim((string) ($profile['firstname'] ?? ''));
         $lastname = trim((string) ($profile['lastname'] ?? ''));
+
+        // Accreditation id is the strongest identity signal, so prefer it: when it
+        // resolves to exactly one profile, use it without letting a coincidental
+        // name+birthdate collision turn the match ambiguous and abort the import.
+        $accreditationId = trim((string) ($profile['accreditation_id'] ?? ''));
+        if ($accreditationId !== '') {
+            $matches = $this->matchProfiles(sprintf("accreditation_id='%s'", DBEscapeString($accreditationId)));
+            if (count($matches) === 1) {
+                return (int) array_key_first($matches);
+            }
+            if (count($matches) > 1) {
+                if ($strict) {
+                    throw new EventSnapshotException(sprintf(
+                        _("Ambiguous player profile match for %s %s."),
+                        $firstname,
+                        $lastname,
+                    ));
+                }
+                return 0;
+            }
+            // No accreditation match: fall back to name and birthdate.
+        }
+
         $birthdate = $this->datePart($profile['birthdate'] ?? '');
         if ($firstname !== '' && $lastname !== '' && $birthdate !== '') {
-            $conditions[] = sprintf(
+            $matches = $this->matchProfiles(sprintf(
                 "firstname='%s' AND lastname='%s' AND DATE(birthdate)='%s'",
                 DBEscapeString($firstname),
                 DBEscapeString($lastname),
                 DBEscapeString($birthdate),
-            );
-        }
-
-        $matches = [];
-        foreach ($conditions as $condition) {
-            $rows = DBQueryToArray("SELECT profile_id FROM uo_player_profile WHERE $condition ORDER BY profile_id", true);
-            foreach ($rows as $row) {
-                $matches[(int) $row['profile_id']] = true;
+            ));
+            if (count($matches) === 1) {
+                return (int) array_key_first($matches);
+            }
+            if (count($matches) > 1 && $strict) {
+                throw new EventSnapshotException(sprintf(
+                    _("Ambiguous player profile match for %s %s."),
+                    $firstname,
+                    $lastname,
+                ));
             }
         }
 
-        if (count($matches) > 1 && $strict) {
-            throw new EventSnapshotException(sprintf(
-                _("Ambiguous player profile match for %s %s."),
-                $firstname,
-                $lastname,
-            ));
-        }
-        if (count($matches) === 1) {
-            return (int) array_key_first($matches);
-        }
         return 0;
+    }
+
+    private function matchProfiles($condition)
+    {
+        $matches = [];
+        $rows = DBQueryToArray("SELECT profile_id FROM uo_player_profile WHERE $condition ORDER BY profile_id", true);
+        foreach ($rows as $row) {
+            $matches[(int) $row['profile_id']] = true;
+        }
+        return $matches;
     }
 
     private function validateFkSet($table, $column, $parentTable, $parentColumn, $nullable = false)
