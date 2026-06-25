@@ -25,11 +25,18 @@ if (!empty($_GET['season'])) {
     }
 }
 
-if (isset($_POST['add']) && isSuperAdmin()) {
+// post_max_size and upload_max_filesize are PHP_INI_PERDIR directives and
+// cannot be raised here; they must be configured on the server (see
+// docs/deployment.md). When an upload exceeds them, PHP discards the body,
+// leaving $_POST and $_FILES empty, so detect that case and report it.
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && empty($_POST) && empty($_FILES) && (int) ($_SERVER['CONTENT_LENGTH'] ?? 0) > 0) {
+    $error = _("The uploaded file is too large for the server. Please contact the system administrator to raise the allowed upload size.");
+} elseif (isset($_POST['add']) && isSuperAdmin()) {
     if (is_uploaded_file($_FILES['restorefile']['tmp_name'])) {
 
         try {
             set_time_limit(300);
+            ini_set("memory_limit", "512M");
             $result = EventSnapshotImportJson($_FILES['restorefile']['tmp_name'], $seasonId, "new");
             $seasonId = $result['season_id'];
             $warnings = $result['warnings'];
@@ -46,6 +53,7 @@ if (isset($_POST['add']) && isSuperAdmin()) {
 
         try {
             set_time_limit(300);
+            ini_set("memory_limit", "512M");
             $result = EventSnapshotImportJson($_FILES['restorefile']['tmp_name'], $seasonId, "replace");
             $seasonId = $result['season_id'];
             $warnings = $result['warnings'];
@@ -60,10 +68,6 @@ if (isset($_POST['add']) && isSuperAdmin()) {
 }
 
 //common page
-ini_set("post_max_size", "30M");
-ini_set("upload_max_filesize", "30M");
-ini_set("memory_limit", -1);
-
 if ($imported) {
     $html .= "<p>" . _("Data imported!") . "</p>";
     if (!empty($warnings)) {
