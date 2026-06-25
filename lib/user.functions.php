@@ -433,7 +433,7 @@ function setSelectedSeason()
 
 function getViewPools($selSeasonId)
 {
-    $numselectors = 0;
+    $selectorConditions = [];
     $query = "SELECT seas.season_id as season, seas.name as season_name, ser.series_id as series, ser.name as series_name, pool.pool_id as pool, pool.name as pool_name ";
     $query .= "FROM uo_pool pool
 		left outer join uo_series ser on (pool.series = ser.series_id)
@@ -441,36 +441,49 @@ function getViewPools($selSeasonId)
     $query .= "WHERE pool.visible=1 AND ser.valid=1 AND NOT EXISTS (SELECT 1 FROM uo_pool p2 WHERE p2.follower = pool.pool_id)";
     if (isset($_SESSION['userproperties']['poolselector'])) {
         foreach ($_SESSION['userproperties']['poolselector'] as $selector => $param) {
-            if ($numselectors == 0) {
-                $query .= " AND (";
+            if ($selector === 'currentseason') {
+                $selectorConditions[] = sprintf("seas.season_id='%s'", DBEscapeString($selSeasonId));
+            } elseif ($selector === 'team') {
+                $team = is_array($param) ? (int) array_key_first($param) : 0;
+                if ($team > 0) {
+                    $selectorConditions[] = sprintf(
+                        "(pool.pool_id in (SELECT pool FROM uo_team WHERE team_id=%d) " .
+                        "OR pool.pool_id in (SELECT pool FROM uo_team_pool WHERE team=%d))",
+                        $team,
+                        $team,
+                    );
+                }
+            } elseif ($selector === 'season') {
+                $season = is_array($param) ? array_key_first($param) : null;
+                if ($season !== null && $season !== "") {
+                    $selectorConditions[] = sprintf("seas.season_id='%s'", DBEscapeString($season));
+                }
+            } elseif ($selector === 'series') {
+                $series = is_array($param) ? (int) array_key_first($param) : 0;
+                if ($series > 0) {
+                    $selectorConditions[] = sprintf("ser.series_id=%d", $series);
+                }
+            } elseif ($selector === 'pool') {
+                $pool = is_array($param) ? (int) array_key_first($param) : 0;
+                if ($pool > 0) {
+                    $selectorConditions[] = sprintf("pool.pool_id=%d", $pool);
+                }
             }
-            if ($numselectors > 0) {
-                $query .= "OR ";
-            }
-            if ($selector == 'currentseason') {
-                $query .= sprintf("seas.season_id='%s' ", DBEscapeString($selSeasonId));
-            } elseif ($selector == 'team') {
-                $query .= sprintf("pool.pool_id in (SELECT pool FROM uo_team WHERE team_id=%d) ", (int) key($param));
-                $query .= sprintf("OR pool.pool_id in (SELECT pool FROM uo_team_pool WHERE team=%d) ", (int) key($param));
-            } elseif ($selector == 'season') {
-                $query .= sprintf("seas.season_id='%s' ", DBEscapeString(key($param)));
-            } elseif ($selector == 'series') {
-                $query .= sprintf("ser.series_id=%d ", (int) key($param));
-            } elseif ($selector == 'pool') {
-                $query .= sprintf("pool.pool_id=%d ", (int) key($param));
-            }
-            $numselectors++;
         }
     }
 
-
-    if ($numselectors > 0) {
-        $query .= ")";
+    // Existing users may not have a poolselector row; default their menu to the selected event.
+    if (count($selectorConditions) === 0) {
+        if ($selSeasonId === null || $selSeasonId === "") {
+            return [];
+        }
+        $selectorConditions[] = sprintf("seas.season_id='%s'", DBEscapeString($selSeasonId));
     }
+
+    $query .= " AND (" . implode(" OR ", $selectorConditions) . ")";
     $query .= " ORDER BY seas.endtime > NOW() DESC, seas.starttime DESC, ser.season ASC, ser.ordering ASC, pool.ordering ASC";
 
     return DBQueryToArray($query);
-    ;
 }
 
 
