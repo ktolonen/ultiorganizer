@@ -118,6 +118,7 @@ class EventSnapshotService
             throw new EventSnapshotException($this->withSnapshotVersionDetails($e->getMessage()));
         }
         $target = $this->prepareTargetSeason();
+        $this->sanitizeSnapshotReferences();
         try {
             $this->validateReferences($target);
         } catch (EventSnapshotException $e) {
@@ -559,6 +560,86 @@ class EventSnapshotService
         }
 
         throw new EventSnapshotException(_("Unknown event import mode."));
+    }
+
+    /**
+     * Drop or clear references that point outside the event before validation.
+     *
+     * Some event-owned rows carry denormalized pointers (a team's current pool,
+     * a game's resolved teams) or stray child rows (team-pool memberships, spirit
+     * scores) that can reference pools, teams, or reservations that are not part
+     * of the exported event - for example a deleted team or a pool from another
+     * event. These do not represent corruption of the event being imported, so
+     * clear the soft pointers and drop the orphaned rows with a warning instead
+     * of rejecting the whole snapshot. Anything not listed here stays strict.
+     */
+    private function sanitizeSnapshotReferences()
+    {
+        // [table, column, parent table, parent key, human description].
+        // Soft pointers: keep the row, clear the value (importer maps it to null).
+        $softReferences = [
+            ['uo_team', 'pool', 'uo_pool', 'pool_id', _("team current-pool")],
+            ['uo_game', 'hometeam', 'uo_team', 'team_id', _("game home team")],
+            ['uo_game', 'visitorteam', 'uo_team', 'team_id', _("game visiting team")],
+            ['uo_game', 'reservation', 'uo_reservation', 'id', _("game reservation")],
+            ['uo_goal', 'assist', 'uo_player', 'player_id', _("goal assist")],
+            ['uo_goal', 'scorer', 'uo_player', 'player_id', _("goal scorer")],
+        ];
+        foreach ($softReferences as [$table, $column, $parentTable, $parentColumn, $label]) {
+            $this->clearDanglingReferences($table, $column, $parentTable, $parentColumn, $label);
+        }
+
+        // Orphan rows: only meaningful with a parent in the event, so drop them.
+        $orphanRows = [
+            ['uo_team_pool', 'pool', 'uo_pool', 'pool_id', _("team pool placement")],
+            ['uo_spirit_score', 'team_id', 'uo_team', 'team_id', _("spirit score")],
+        ];
+        foreach ($orphanRows as [$table, $column, $parentTable, $parentColumn, $label]) {
+            $this->dropOrphanRows($table, $column, $parentTable, $parentColumn, $label);
+        }
+    }
+
+    private function clearDanglingReferences($table, $column, $parentTable, $parentColumn, $label)
+    {
+        $cleared = 0;
+        foreach ($this->snapshot['tables'][$table] as &$row) {
+            $value = $row[$column] ?? null;
+            if ($this->isEmptyValue($value) || $this->snapshotContains($parentTable, $parentColumn, $value)) {
+                continue;
+            }
+            $row[$column] = null;
+            $cleared++;
+        }
+        unset($row);
+        if ($cleared > 0) {
+            $this->warnings[] = sprintf(
+                _("Cleared %1\$d %2\$s reference(s) pointing outside the event."),
+                $cleared,
+                $label,
+            );
+        }
+    }
+
+    private function dropOrphanRows($table, $column, $parentTable, $parentColumn, $label)
+    {
+        $kept = [];
+        $dropped = 0;
+        foreach ($this->snapshot['tables'][$table] as $row) {
+            $value = $row[$column] ?? null;
+            if (!$this->isEmptyValue($value) && $this->snapshotContains($parentTable, $parentColumn, $value)) {
+                $kept[] = $row;
+            } else {
+                $dropped++;
+            }
+        }
+        if ($dropped > 0) {
+            $this->snapshot['tables'][$table] = $kept;
+            $this->warnings[] = sprintf(
+                _("Dropped %1\$d %2\$s row(s) referencing data outside the event."),
+                $dropped,
+                $label,
+            );
+        }
     }
 
     private function validateReferences($target)

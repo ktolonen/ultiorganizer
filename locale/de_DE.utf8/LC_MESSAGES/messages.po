@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-25 07:12+0300\n"
+"POT-Creation-Date: 2026-06-25 08:10+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -573,7 +573,7 @@ msgstr ""
 "Erstelle immer eine vollstaendige Datenbanksicherung, bevor du die "
 "Umwandlung startest."
 
-#: lib/data.functions.php:1291
+#: lib/data.functions.php:1372
 #, php-format
 msgid "Ambiguous player profile match for %s %s."
 msgstr ""
@@ -1121,6 +1121,11 @@ msgstr "Endplatzierungen löschen"
 msgid "Clear saved final standings for this division?"
 msgstr "Gespeicherte Endplatzierungen für diese Division löschen?"
 
+#: lib/data.functions.php:616
+#, php-format
+msgid "Cleared %1$d %2$s reference(s) pointing outside the event."
+msgstr ""
+
 #: admin/finalstandings.php:140
 msgid "Clearing reverts this division to automatic live standings."
 msgstr ""
@@ -1312,7 +1317,7 @@ msgstr "Die Bestätigung der Extra-Email-Adresse ist fehlgeschlagen "
 msgid "Confirming registration failed"
 msgstr "Die Bestätigung der Registrierung ist fehlgeschlagen"
 
-#: lib/data.functions.php:1243 lib/data.functions.php:1254
+#: lib/data.functions.php:1324 lib/data.functions.php:1335
 msgid "Conflicting player profile identities in the event snapshot."
 msgstr ""
 
@@ -1429,7 +1434,7 @@ msgstr "Länder"
 msgid "Country"
 msgstr "Land"
 
-#: lib/data.functions.php:1420
+#: lib/data.functions.php:1501
 #, php-format
 msgid "Country %d is not present in the target installation and was cleared."
 msgstr ""
@@ -1883,7 +1888,12 @@ msgstr "Unentschieden"
 msgid "Draws allowed"
 msgstr "Unentschieden zugelassen"
 
-#: lib/data.functions.php:456
+#: lib/data.functions.php:638
+#, php-format
+msgid "Dropped %1$d %2$s row(s) referencing data outside the event."
+msgstr ""
+
+#: lib/data.functions.php:457
 #, php-format
 msgid "Duplicate event snapshot key in %s."
 msgstr ""
@@ -2223,7 +2233,7 @@ msgstr "Ereignisstatistiken wurden noch nicht berechnet"
 msgid "Event to export doesn't exist"
 msgstr "Zu ersetzendes Turnier existiert nicht"
 
-#: lib/data.functions.php:552
+#: lib/data.functions.php:553
 msgid "Event to replace doesn't exist"
 msgstr "Zu ersetzendes Turnier existiert nicht"
 
@@ -2240,7 +2250,7 @@ msgstr "Turnierbenutzer"
 msgid "Events"
 msgstr "Turniere"
 
-#: lib/data.functions.php:621 lib/data.functions.php:1137
+#: lib/data.functions.php:702 lib/data.functions.php:1218
 msgid "Every imported player must have a player profile in the event snapshot."
 msgstr ""
 
@@ -3343,7 +3353,7 @@ msgstr "Turnier importieren"
 msgid "Import event data"
 msgstr "Turnierdaten importieren"
 
-#: lib/data.functions.php:481
+#: lib/data.functions.php:482
 #, php-format
 msgid ""
 "Import file snapshot version: %s; supported snapshot version: %d; import "
@@ -3430,7 +3440,7 @@ msgid "Insufficient rights to export data"
 msgstr "Unzureichende Rechte zum Bearbeiten des Kommentars."
 
 #: admin/eventdataimport.php:20 admin/eventdataimport.php:24
-#: lib/data.functions.php:537 lib/data.functions.php:549
+#: lib/data.functions.php:538 lib/data.functions.php:550
 #, fuzzy
 msgid "Insufficient rights to import data"
 msgstr "Unzureichende Rechte zum Bearbeiten des Kommentars."
@@ -3461,17 +3471,17 @@ msgstr "International"
 msgid "Invalid email address"
 msgstr "Ungültige Email-Adresse"
 
-#: lib/data.functions.php:450
+#: lib/data.functions.php:451
 #, php-format
 msgid "Invalid event snapshot column %s.%s."
 msgstr ""
 
-#: lib/data.functions.php:437 lib/data.functions.php:441
+#: lib/data.functions.php:438 lib/data.functions.php:442
 #, fuzzy, php-format
 msgid "Invalid event snapshot row in %s."
 msgstr "Ungueltige Punkte fuer %s."
 
-#: lib/data.functions.php:422
+#: lib/data.functions.php:423
 #, php-format
 msgid "Invalid event snapshot table: %s"
 msgstr ""
@@ -3915,29 +3925,29 @@ msgstr "Fehlende und doppelte Trikotnummern"
 msgid "Missing image processing support on the server."
 msgstr "Auf dem Server fehlt die Unterstuetzung fuer Bildverarbeitung."
 
-#: lib/data.functions.php:1341
+#: lib/data.functions.php:1422
 #, fuzzy, php-format
 msgid "Missing required imported row in %s."
 msgstr "Spirit-Bewertung für %s fehlt. "
 
-#: lib/data.functions.php:1313
+#: lib/data.functions.php:1394
 #, fuzzy, php-format
 msgid "Missing required parent row for %s.%s."
 msgstr "Spirit-Bewertung für %s fehlt. "
 
-#: lib/data.functions.php:1208 lib/data.functions.php:1230
+#: lib/data.functions.php:1289 lib/data.functions.php:1311
 msgid "Missing required parent row for uo_comment.id."
 msgstr ""
 
-#: lib/data.functions.php:639
+#: lib/data.functions.php:720
 msgid "Missing required parent row for uo_game.respteam."
 msgstr ""
 
-#: lib/data.functions.php:1173 lib/data.functions.php:1197
+#: lib/data.functions.php:1254 lib/data.functions.php:1278
 msgid "Missing required parent row for uo_urls.owner_id."
 msgstr ""
 
-#: lib/data.functions.php:1310
+#: lib/data.functions.php:1391
 #, fuzzy, php-format
 msgid "Missing required reference %s.%s."
 msgstr "Fehlendes Ergebnis für %s."
@@ -4240,7 +4250,7 @@ msgstr "Keine Punkte."
 msgid "No image"
 msgstr "Kein Bild"
 
-#: lib/data.functions.php:1467
+#: lib/data.functions.php:1548
 #, php-format
 msgid "No importable columns for %s."
 msgstr ""
@@ -5004,7 +5014,7 @@ msgstr "Datenschutz"
 msgid "Privacy Policy"
 msgstr "Datenschutzerklärung"
 
-#: lib/data.functions.php:447
+#: lib/data.functions.php:448
 #, php-format
 msgid "Private field %s.%s cannot be imported from an event snapshot."
 msgstr ""
@@ -6106,7 +6116,7 @@ msgstr ""
 msgid "Silver"
 msgstr "Silber"
 
-#: lib/data.functions.php:519
+#: lib/data.functions.php:520
 #, php-format
 msgid ""
 "Snapshot column %s.%s is not used by this Ultiorganizer version and was "
@@ -6615,20 +6625,20 @@ msgstr ""
 "Das Auswaertsteam ist das BYE-Team. Verwende das vorgeschlagene Resultat: %s "
 "- %s"
 
-#: lib/data.functions.php:409
+#: lib/data.functions.php:410
 msgid "The event snapshot does not contain table data."
 msgstr ""
 
-#: lib/data.functions.php:633
+#: lib/data.functions.php:714
 msgid "The event snapshot has a media event without its media link."
 msgstr ""
 
-#: lib/data.functions.php:419
+#: lib/data.functions.php:420
 #, php-format
 msgid "The event snapshot is missing required table data: %s"
 msgstr ""
 
-#: lib/data.functions.php:428
+#: lib/data.functions.php:429
 msgid "The event snapshot must contain exactly one event row."
 msgstr ""
 
@@ -6643,7 +6653,7 @@ msgstr ""
 msgid "The import file is not a valid JSON event snapshot."
 msgstr ""
 
-#: lib/data.functions.php:402
+#: lib/data.functions.php:403
 msgid "The import file is not an Ultiorganizer event snapshot."
 msgstr ""
 
@@ -7222,7 +7232,7 @@ msgstr "Alles rückgängig"
 msgid "Unknown club"
 msgstr "Unbekannter Club"
 
-#: lib/data.functions.php:561
+#: lib/data.functions.php:562
 msgid "Unknown event import mode."
 msgstr ""
 
@@ -7240,20 +7250,20 @@ msgstr ""
 "Nicht unterstuetztes Backup-Format. Bitte eine .gz- oder .sql-Datei "
 "hochladen."
 
-#: lib/data.functions.php:1226 lib/data.functions.php:1404
+#: lib/data.functions.php:1307 lib/data.functions.php:1485
 msgid "Unsupported event snapshot comment type."
 msgstr ""
 
-#: lib/data.functions.php:1193 lib/data.functions.php:1386
+#: lib/data.functions.php:1274 lib/data.functions.php:1467
 msgid "Unsupported event snapshot link owner."
 msgstr ""
 
-#: lib/data.functions.php:414
+#: lib/data.functions.php:415
 #, php-format
 msgid "Unsupported event snapshot table: %s"
 msgstr ""
 
-#: lib/data.functions.php:405
+#: lib/data.functions.php:406
 msgid "Unsupported event snapshot version."
 msgstr ""
 
@@ -7805,6 +7815,21 @@ msgstr "von"
 msgid "game events"
 msgstr "Spielereignisse"
 
+#: lib/data.functions.php:582
+#, fuzzy
+msgid "game home team"
+msgstr "Heimteam"
+
+#: lib/data.functions.php:584
+#, fuzzy
+msgid "game reservation"
+msgstr "Reservierung hinzufügen"
+
+#: lib/data.functions.php:583
+#, fuzzy
+msgid "game visiting team"
+msgstr "Warnung: fehlendes Team"
+
 #: admin/poolgames.php:94
 msgid "games"
 msgstr "Spiele"
@@ -7812,6 +7837,16 @@ msgstr "Spiele"
 #: gameplay.php:521 gameplay.php:525
 msgid "goal"
 msgstr "Punkt"
+
+#: lib/data.functions.php:585
+#, fuzzy
+msgid "goal assist"
+msgstr "Punkte"
+
+#: lib/data.functions.php:586
+#, fuzzy
+msgid "goal scorer"
+msgstr "Erzielte Punkte"
 
 #: admin/poolgames.php:47 admin/seasongames.php:74
 msgid "goals"
@@ -8048,6 +8083,11 @@ msgstr "Wählen"
 msgid "separate with a comma"
 msgstr "durch Komma trennen"
 
+#: lib/data.functions.php:595
+#, fuzzy
+msgid "spirit score"
+msgstr "Spirit-Punktzahl"
+
 #: mobile/addspirittimeouts.php:69 mobile/addspirittimeouts.php:77
 #: scorekeeper/addspirittimeouts.php:123 scorekeeper/addspirittimeouts.php:154
 msgid "spirit stoppages"
@@ -8056,6 +8096,14 @@ msgstr "Spirit-Unterbrechungen"
 #: mobile/addfirstoffence.php:40
 msgid "starting on offence"
 msgstr "Erste Offence"
+
+#: lib/data.functions.php:581
+msgid "team current-pool"
+msgstr ""
+
+#: lib/data.functions.php:594
+msgid "team pool placement"
+msgstr ""
 
 #: user/adddefensesheet.php:134 user/addscoresheet.php:309
 msgid "time cannot be the same as halftime ending"
@@ -8081,7 +8129,7 @@ msgstr "Auszeiten"
 msgid "turnover"
 msgstr "Turnover"
 
-#: lib/data.functions.php:492
+#: lib/data.functions.php:493
 #, fuzzy
 msgid "unknown"
 msgstr "Unbekannter Club"

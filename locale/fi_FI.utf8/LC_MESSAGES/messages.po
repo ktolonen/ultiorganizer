@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-25 07:12+0300\n"
+"POT-Creation-Date: 2026-06-25 08:10+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -566,7 +566,7 @@ msgstr ""
 msgid "Always take a full database backup before running the conversion."
 msgstr "Ota aina täydellinen varmuuskopio ennen konvertoinnin aloittamista."
 
-#: lib/data.functions.php:1291
+#: lib/data.functions.php:1372
 #, php-format
 msgid "Ambiguous player profile match for %s %s."
 msgstr ""
@@ -1106,6 +1106,11 @@ msgstr "Tyhjennä lopulliset sijoitukset"
 msgid "Clear saved final standings for this division?"
 msgstr "Tyhjennetäänkö tämän sarjan tallennetut lopulliset sijoitukset?"
 
+#: lib/data.functions.php:616
+#, php-format
+msgid "Cleared %1$d %2$s reference(s) pointing outside the event."
+msgstr ""
+
 #: admin/finalstandings.php:140
 msgid "Clearing reverts this division to automatic live standings."
 msgstr "Tyhjennys palauttaa tämän sarjan automaattisiin sijoituksiin."
@@ -1294,7 +1299,7 @@ msgstr "Sähköpostiosoitteen vahvistaminen epäonnistui"
 msgid "Confirming registration failed"
 msgstr "Rekisteröitymisen vahvistaminen ei onnistunut"
 
-#: lib/data.functions.php:1243 lib/data.functions.php:1254
+#: lib/data.functions.php:1324 lib/data.functions.php:1335
 msgid "Conflicting player profile identities in the event snapshot."
 msgstr ""
 
@@ -1411,7 +1416,7 @@ msgstr "Maat"
 msgid "Country"
 msgstr "Kotimaa"
 
-#: lib/data.functions.php:1420
+#: lib/data.functions.php:1501
 #, php-format
 msgid "Country %d is not present in the target installation and was cleared."
 msgstr ""
@@ -1863,7 +1868,12 @@ msgstr "Tasapelit"
 msgid "Draws allowed"
 msgstr "Tasapelit sallittu"
 
-#: lib/data.functions.php:456
+#: lib/data.functions.php:638
+#, php-format
+msgid "Dropped %1$d %2$s row(s) referencing data outside the event."
+msgstr ""
+
+#: lib/data.functions.php:457
 #, php-format
 msgid "Duplicate event snapshot key in %s."
 msgstr ""
@@ -2197,7 +2207,7 @@ msgstr "Tapahtuman tilastoja ei ole vielä laskettu"
 msgid "Event to export doesn't exist"
 msgstr "Päivitettävää tapahtumaa ei löydy"
 
-#: lib/data.functions.php:552
+#: lib/data.functions.php:553
 msgid "Event to replace doesn't exist"
 msgstr "Päivitettävää tapahtumaa ei löydy"
 
@@ -2214,7 +2224,7 @@ msgstr "Tapahtuman käyttäjät"
 msgid "Events"
 msgstr "Tapahtumat"
 
-#: lib/data.functions.php:621 lib/data.functions.php:1137
+#: lib/data.functions.php:702 lib/data.functions.php:1218
 msgid "Every imported player must have a player profile in the event snapshot."
 msgstr ""
 
@@ -3316,7 +3326,7 @@ msgstr "Tuo tapahtuma"
 msgid "Import event data"
 msgstr "Tuo tapahtuman tiedot"
 
-#: lib/data.functions.php:481
+#: lib/data.functions.php:482
 #, php-format
 msgid ""
 "Import file snapshot version: %s; supported snapshot version: %d; import "
@@ -3403,7 +3413,7 @@ msgid "Insufficient rights to export data"
 msgstr "Ei oikeuksia muuttaa kommenttia."
 
 #: admin/eventdataimport.php:20 admin/eventdataimport.php:24
-#: lib/data.functions.php:537 lib/data.functions.php:549
+#: lib/data.functions.php:538 lib/data.functions.php:550
 #, fuzzy
 msgid "Insufficient rights to import data"
 msgstr "Ei oikeuksia muuttaa kommenttia."
@@ -3434,17 +3444,17 @@ msgstr "Kansainvälinen"
 msgid "Invalid email address"
 msgstr "Sähköposti ei ole kelvollinen"
 
-#: lib/data.functions.php:450
+#: lib/data.functions.php:451
 #, php-format
 msgid "Invalid event snapshot column %s.%s."
 msgstr ""
 
-#: lib/data.functions.php:437 lib/data.functions.php:441
+#: lib/data.functions.php:438 lib/data.functions.php:442
 #, fuzzy, php-format
 msgid "Invalid event snapshot row in %s."
 msgstr "Virheelliset pisteet: %s."
 
-#: lib/data.functions.php:422
+#: lib/data.functions.php:423
 #, php-format
 msgid "Invalid event snapshot table: %s"
 msgstr ""
@@ -3885,29 +3895,29 @@ msgstr "Puuttuvat ja päällekkäiset pelinumerot"
 msgid "Missing image processing support on the server."
 msgstr "Palvelimelta puuttuu kuvankäsittelyn tuki."
 
-#: lib/data.functions.php:1341
+#: lib/data.functions.php:1422
 #, fuzzy, php-format
 msgid "Missing required imported row in %s."
 msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
 
-#: lib/data.functions.php:1313
+#: lib/data.functions.php:1394
 #, fuzzy, php-format
 msgid "Missing required parent row for %s.%s."
 msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
 
-#: lib/data.functions.php:1208 lib/data.functions.php:1230
+#: lib/data.functions.php:1289 lib/data.functions.php:1311
 msgid "Missing required parent row for uo_comment.id."
 msgstr ""
 
-#: lib/data.functions.php:639
+#: lib/data.functions.php:720
 msgid "Missing required parent row for uo_game.respteam."
 msgstr ""
 
-#: lib/data.functions.php:1173 lib/data.functions.php:1197
+#: lib/data.functions.php:1254 lib/data.functions.php:1278
 msgid "Missing required parent row for uo_urls.owner_id."
 msgstr ""
 
-#: lib/data.functions.php:1310
+#: lib/data.functions.php:1391
 #, fuzzy, php-format
 msgid "Missing required reference %s.%s."
 msgstr "Piste puuttuu %s. "
@@ -4210,7 +4220,7 @@ msgstr "Ei maaleja."
 msgid "No image"
 msgstr "Ei Kuvaa"
 
-#: lib/data.functions.php:1467
+#: lib/data.functions.php:1548
 #, php-format
 msgid "No importable columns for %s."
 msgstr ""
@@ -4965,7 +4975,7 @@ msgstr "Tietosuoja"
 msgid "Privacy Policy"
 msgstr "Yksityisyydensuoja"
 
-#: lib/data.functions.php:447
+#: lib/data.functions.php:448
 #, php-format
 msgid "Private field %s.%s cannot be imported from an event snapshot."
 msgstr ""
@@ -6062,7 +6072,7 @@ msgstr "Signaalit tulevat valitusta mallista. Voit muuttaa aikarajoja tässä."
 msgid "Silver"
 msgstr "Hopea"
 
-#: lib/data.functions.php:519
+#: lib/data.functions.php:520
 #, php-format
 msgid ""
 "Snapshot column %s.%s is not used by this Ultiorganizer version and was "
@@ -6569,20 +6579,20 @@ msgid ""
 "The away team is the BYE team. You should use the suggested result: %s - %s"
 msgstr "Vierasjoukkue on BYE-joukkue. Kayta ehdotettua tulosta: %s - %s"
 
-#: lib/data.functions.php:409
+#: lib/data.functions.php:410
 msgid "The event snapshot does not contain table data."
 msgstr ""
 
-#: lib/data.functions.php:633
+#: lib/data.functions.php:714
 msgid "The event snapshot has a media event without its media link."
 msgstr ""
 
-#: lib/data.functions.php:419
+#: lib/data.functions.php:420
 #, php-format
 msgid "The event snapshot is missing required table data: %s"
 msgstr ""
 
-#: lib/data.functions.php:428
+#: lib/data.functions.php:429
 msgid "The event snapshot must contain exactly one event row."
 msgstr ""
 
@@ -6596,7 +6606,7 @@ msgstr "Kotijoukkue on BYE-joukkue. Kayta ehdotettua tulosta: %s - %s"
 msgid "The import file is not a valid JSON event snapshot."
 msgstr ""
 
-#: lib/data.functions.php:402
+#: lib/data.functions.php:403
 msgid "The import file is not an Ultiorganizer event snapshot."
 msgstr ""
 
@@ -7166,7 +7176,7 @@ msgstr "Kumoa kaikki"
 msgid "Unknown club"
 msgstr "Tuntematon seura"
 
-#: lib/data.functions.php:561
+#: lib/data.functions.php:562
 msgid "Unknown event import mode."
 msgstr ""
 
@@ -7182,20 +7192,20 @@ msgstr "Varaamatta"
 msgid "Unsupported backup format. Please upload a .gz or .sql file."
 msgstr "Varmuuskopio formaatti ei ole tuettu. Lattaa .qz tai .sql file."
 
-#: lib/data.functions.php:1226 lib/data.functions.php:1404
+#: lib/data.functions.php:1307 lib/data.functions.php:1485
 msgid "Unsupported event snapshot comment type."
 msgstr ""
 
-#: lib/data.functions.php:1193 lib/data.functions.php:1386
+#: lib/data.functions.php:1274 lib/data.functions.php:1467
 msgid "Unsupported event snapshot link owner."
 msgstr ""
 
-#: lib/data.functions.php:414
+#: lib/data.functions.php:415
 #, php-format
 msgid "Unsupported event snapshot table: %s"
 msgstr ""
 
-#: lib/data.functions.php:405
+#: lib/data.functions.php:406
 msgid "Unsupported event snapshot version."
 msgstr ""
 
@@ -7744,6 +7754,21 @@ msgstr "kuvaaja"
 msgid "game events"
 msgstr "pelitapahtumat"
 
+#: lib/data.functions.php:582
+#, fuzzy
+msgid "game home team"
+msgstr "kotijoukkue"
+
+#: lib/data.functions.php:584
+#, fuzzy
+msgid "game reservation"
+msgstr "Lisää varaus"
+
+#: lib/data.functions.php:583
+#, fuzzy
+msgid "game visiting team"
+msgstr "Varoitus: joukkue puuttuu"
+
 #: admin/poolgames.php:94
 msgid "games"
 msgstr "pelit"
@@ -7751,6 +7776,16 @@ msgstr "pelit"
 #: gameplay.php:521 gameplay.php:525
 msgid "goal"
 msgstr "maali"
+
+#: lib/data.functions.php:585
+#, fuzzy
+msgid "goal assist"
+msgstr "maalia"
+
+#: lib/data.functions.php:586
+#, fuzzy
+msgid "goal scorer"
+msgstr "Tehdyt maalit"
 
 #: admin/poolgames.php:47 admin/seasongames.php:74
 msgid "goals"
@@ -7987,6 +8022,11 @@ msgstr "valitse"
 msgid "separate with a comma"
 msgstr "erota pilkulla"
 
+#: lib/data.functions.php:595
+#, fuzzy
+msgid "spirit score"
+msgstr "Spirit-piste"
+
 #: mobile/addspirittimeouts.php:69 mobile/addspirittimeouts.php:77
 #: scorekeeper/addspirittimeouts.php:123 scorekeeper/addspirittimeouts.php:154
 msgid "spirit stoppages"
@@ -7995,6 +8035,14 @@ msgstr "spirit-keskeytykset"
 #: mobile/addfirstoffence.php:40
 msgid "starting on offence"
 msgstr "Ensimmäinen hyökkäysvuoro"
+
+#: lib/data.functions.php:581
+msgid "team current-pool"
+msgstr ""
+
+#: lib/data.functions.php:594
+msgid "team pool placement"
+msgstr ""
 
 #: user/adddefensesheet.php:134 user/addscoresheet.php:309
 msgid "time cannot be the same as halftime ending"
@@ -8020,7 +8068,7 @@ msgstr "aikalisät"
 msgid "turnover"
 msgstr "kiekonmenetys"
 
-#: lib/data.functions.php:492
+#: lib/data.functions.php:493
 #, fuzzy
 msgid "unknown"
 msgstr "Tuntematon seura"
