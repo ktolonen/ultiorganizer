@@ -12,7 +12,9 @@ include_once 'lib/game.functions.php';
 include_once 'lib/statistical.functions.php';
 
 $html = "";
+$isProfileLookup = false;
 if (iget("profile")) {
+    $isProfileLookup = true;
     $playerId = PlayerLatestId(intval(iget("profile")));
 } else {
     $playerId = intval(iget("player"));
@@ -42,7 +44,11 @@ if (!$profile) {
 $curseason = CurrentSeason();
 $showDefenseStats = ShowDefenseStats();
 $currentPlayerId = $playerId;
-if ($profileId > 0) {
+// Only a ?profile= lookup should be resolved to the current-season row. An
+// explicit ?player= request (e.g. a teamcard roster link) names a specific
+// player row and must be honoured, since a profile can have several
+// current-season rows when the same person plays on more than one team.
+if ($isProfileLookup && $profileId > 0) {
     $seasonPlayerId = PlayerLatestId($profileId, $curseason);
     if (!empty($seasonPlayerId)) {
         $currentPlayerId = (int) $seasonPlayerId;
