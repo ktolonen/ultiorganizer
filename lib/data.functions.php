@@ -604,13 +604,15 @@ class EventSnapshotService
             $this->clearDanglingReferences($table, $column, $parentTable, $parentColumn, $label);
         }
 
-        // Orphan rows: only meaningful with a parent in the event, so drop them.
+        // Orphan rows: only meaningful when every listed parent is in the event,
+        // so drop them when any required parent is missing. uo_team_pool has no
+        // foreign keys, so a stale row can name a present pool but a deleted team.
         $orphanRows = [
-            ['uo_team_pool', 'pool', 'uo_pool', 'pool_id', _("team pool placement")],
-            ['uo_spirit_score', 'team_id', 'uo_team', 'team_id', _("spirit score")],
+            ['uo_team_pool', [['pool', 'uo_pool', 'pool_id'], ['team', 'uo_team', 'team_id']], _("team pool placement")],
+            ['uo_spirit_score', [['team_id', 'uo_team', 'team_id']], _("spirit score")],
         ];
-        foreach ($orphanRows as [$table, $column, $parentTable, $parentColumn, $label]) {
-            $this->dropOrphanRows($table, $column, $parentTable, $parentColumn, $label);
+        foreach ($orphanRows as [$table, $requirements, $label]) {
+            $this->dropOrphanRows($table, $requirements, $label);
         }
     }
 
@@ -635,13 +637,20 @@ class EventSnapshotService
         }
     }
 
-    private function dropOrphanRows($table, $column, $parentTable, $parentColumn, $label)
+    private function dropOrphanRows($table, $requirements, $label)
     {
         $kept = [];
         $dropped = 0;
         foreach ($this->snapshot['tables'][$table] as $row) {
-            $value = $row[$column] ?? null;
-            if (!$this->isEmptyValue($value) && $this->snapshotContains($parentTable, $parentColumn, $value)) {
+            $keep = true;
+            foreach ($requirements as [$column, $parentTable, $parentColumn]) {
+                $value = $row[$column] ?? null;
+                if ($this->isEmptyValue($value) || !$this->snapshotContains($parentTable, $parentColumn, $value)) {
+                    $keep = false;
+                    break;
+                }
+            }
+            if ($keep) {
                 $kept[] = $row;
             } else {
                 $dropped++;
@@ -1800,7 +1809,10 @@ class EventSnapshotService
 
     private function sqlValue($value)
     {
-        if ($value === null || $value === "NULL") {
+        // JSON snapshots encode SQL nulls as JSON null (decoded to PHP null), so
+        // only a real null is a null here. Do not treat the literal string "NULL"
+        // as a null, or text values that are exactly "NULL" would be corrupted.
+        if ($value === null) {
             return "NULL";
         }
         return "'" . DBEscapeString($value) . "'";
