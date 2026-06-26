@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-06-25 21:33+0300\n"
+"POT-Creation-Date: 2026-06-26 19:38+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -96,7 +96,7 @@ msgid "-> %d"
 msgstr "-> %d"
 
 #: admin/finalstandings.php:126 admin/seasongames.php:119
-#: admin/seasonpools.php:110 admin/seasonstandings.php:172
+#: admin/seasonpools.php:110 admin/seasonstandings.php:173
 #: admin/seasonteams.php:160 admin/seasonteams.php:232
 #: admin/seriesseeding.php:37 user/respgames.php:71
 msgid "..."
@@ -147,7 +147,7 @@ msgstr ""
 msgid "<b>more than once</b>, in this category"
 msgstr "<b>mehr als einmal</b> in dieser Kategorie"
 
-#: poolstatus.php:614 poolstatus.php:731 poolstatus.php:744
+#: poolstatus.php:615 poolstatus.php:732 poolstatus.php:745
 msgid "???"
 msgstr "???"
 
@@ -251,7 +251,7 @@ msgstr "Akkreditierungsverantwortlicher"
 msgid "Accredited"
 msgstr "Akkreditiert"
 
-#: clubcard.php:90 playercard.php:127 teamcard.php:66 user/clubprofile.php:184
+#: clubcard.php:90 playercard.php:133 teamcard.php:66 user/clubprofile.php:184
 #: user/playerprofile.php:319 user/teamprofile.php:121
 msgid "Achievements"
 msgstr "Erfolge"
@@ -319,7 +319,7 @@ msgstr "Link hinzufügen"
 msgid "Add location"
 msgstr "Ort hinzufügen"
 
-#: clubcard.php:226 gameplay.php:629 playercard.php:617 teamcard.php:829
+#: clubcard.php:226 gameplay.php:629 playercard.php:637 teamcard.php:850
 #: admin/editgame.php:193
 msgid "Add media"
 msgstr "Medien hinzufügen"
@@ -354,7 +354,7 @@ msgstr "Füge Spieler zur Spielerliste hinzu:"
 msgid "Add pool"
 msgstr "Pool hinzufügen"
 
-#: admin/seasonstandings.php:187
+#: admin/seasonstandings.php:188
 msgid "Add pools first"
 msgstr "Zuerst Gruppen anlegen"
 
@@ -688,22 +688,12 @@ msgid "Assisting player not on the roster"
 msgstr "Vorlagengeber nicht auf der Spielerliste"
 
 #: clubcard.php:204 gamecard.php:232 gamecard.php:238 gameplay.php:86
-#: gameplay.php:111 playercard.php:186 playercard.php:241 playercard.php:318
-#: playercard.php:418 playercard.php:487 playerlist.php:36 poolstatus.php:159
-#: poolstatus.php:185 scorestatus.php:81 scorestatus.php:83
-#: seriesstatus.php:306 statistics.php:133 statistics.php:175 teamcard.php:124
+#: gameplay.php:111 playerlist.php:36 poolstatus.php:159 poolstatus.php:185
+#: seriesstatus.php:307 statistics.php:133 statistics.php:175 teamcard.php:124
 #: teamcard.php:169 ext/poolscoreboard.php:43 ext/teamscoreboard.php:58
+#: lib/common.functions.php:1595
 msgid "Assists"
 msgstr "Assists"
-
-#: playercard.php:190 playercard.php:243 playercard.php:319 playercard.php:419
-#: playercard.php:487
-msgid "Assists avg."
-msgstr "Assists im Schnitt"
-
-#: scorestatus.php:86 scorestatus.php:88
-msgid "Ast"
-msgstr "Ast"
 
 #: cust/wfdf/pdfscoresheet.php:1348
 msgid ""
@@ -729,11 +719,11 @@ msgstr "Automatische Akkreditierung"
 msgid "Automatic final standings, not confirmed"
 msgstr "Automatische Endplatzierungen, nicht bestätigt"
 
-#: teamcard.php:278
+#: teamcard.php:278 lib/common.functions.php:1606
 msgid "Average"
 msgstr "Durchschnitt"
 
-#: spiritstatus.php:141
+#: spiritstatus.php:150
 msgid "Average of all games"
 msgstr "Durchschnitt aller Spiele"
 
@@ -921,13 +911,9 @@ msgstr ""
 msgid "Call or discussion"
 msgstr "Call oder Diskussion"
 
-#: playercard.php:241 playercard.php:318 playercard.php:419 playercard.php:487
-#: scorestatus.php:102 scorestatus.php:104
-msgid "Call."
-msgstr "Call."
-
 #: cust/default/pdfscoresheet.php:638 cust/gummis/pdfscoresheet.php:698
-#: cust/wfdf/pdfscoresheet.php:1273 user/adddefensesheet.php:358
+#: cust/wfdf/pdfscoresheet.php:1273 lib/common.functions.php:1598
+#: user/adddefensesheet.php:358
 msgid "Callahan"
 msgstr "Callahan"
 
@@ -935,7 +921,7 @@ msgstr "Callahan"
 msgid "Callahan defence"
 msgstr "Callahan-Defense"
 
-#: gameplay.php:242 playercard.php:589 lib/game.functions.php:642
+#: gameplay.php:242 playercard.php:609 lib/game.functions.php:642
 #: mobile/gameplay.php:88 scorekeeper/addscoresheet.php:399
 #: scorekeeper/addscoresheet.php:490 scorekeeper/addscoresheet.php:500
 msgid "Callahan goal"
@@ -1067,7 +1053,7 @@ msgstr ""
 "Pruefe die Kader mit den Teamkapitaenen. Streiche Spieler, die in diesem "
 "Spiel nicht spielen, durch und korrigiere falsche Trikotnummern."
 
-#: admin/seasonstandings.php:225
+#: admin/seasonstandings.php:226
 #, php-format
 msgid "Check standings of %s. Then: %s"
 msgstr "Tabellenstände von %s prüfen. Dann: %s"
@@ -1261,7 +1247,7 @@ msgstr "Kommentar von %s um %s"
 msgid "Comment not saved."
 msgstr "Kommentar nicht gespeichert."
 
-#: gameplay.php:612 teamcard.php:311 teamcard.php:352
+#: gameplay.php:612 teamcard.php:321 teamcard.php:365
 msgid "Comments"
 msgstr "Kommentare"
 
@@ -1283,15 +1269,15 @@ msgstr "Kommunikation (ihre)"
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: lib/user.functions.php:1578
+#: lib/user.functions.php:1591
 msgid "Confirm extra email address for ultiorganizer"
 msgstr "Extra-Email-Adresse für Ultiorganizer bestätigen"
 
-#: admin/seasonstandings.php:512 admin/serieteams.php:257
+#: admin/seasonstandings.php:521 admin/serieteams.php:257
 msgid "Confirm moves"
 msgstr "Transfers bestätigen"
 
-#: admin/seasonstandings.php:223
+#: admin/seasonstandings.php:224
 #, php-format
 msgid "Confirm moves to pool %s."
 msgstr "Transfers zu Pool %s bestätigen."
@@ -1300,7 +1286,7 @@ msgstr "Transfers zu Pool %s bestätigen."
 msgid "Confirm result and end game"
 msgstr "Ergebnis bestaetigen und Spiel beenden"
 
-#: lib/user.functions.php:1517
+#: lib/user.functions.php:1530
 msgid "Confirm your account to ultiorganizer"
 msgstr "Bestätigen Sie Ihren Ultiorganizer-Account"
 
@@ -1528,7 +1514,7 @@ msgstr "Anpassung"
 msgid "Customization version"
 msgstr "Anpassungsversion"
 
-#: seriesstatus.php:241
+#: seriesstatus.php:242
 msgid "DQ"
 msgstr "DQ"
 
@@ -1573,7 +1559,7 @@ msgstr "Datenbankversion"
 msgid "Date"
 msgstr "Datum"
 
-#: playercard.php:91 cust/default/teamplayers.functions.php:154
+#: playercard.php:97 cust/default/teamplayers.functions.php:154
 #: cust/slkl/teamplayers.functions.php:137 user/playerprofile.php:271
 msgid "Date of birth"
 msgstr "Geburtstag"
@@ -1601,11 +1587,11 @@ msgid "Defence"
 msgstr "Defense"
 
 #: defensestatus.php:18 defensestatus.php:41 poolstatus.php:247
-#: poolstatus.php:275 poolstatus.php:277 seriesstatus.php:338
+#: poolstatus.php:275 poolstatus.php:277 seriesstatus.php:339
 msgid "Defence board"
 msgstr "Defense-Rangliste"
 
-#: poolstatus.php:233 poolstatus.php:249 seriesstatus.php:323
+#: poolstatus.php:233 poolstatus.php:249 seriesstatus.php:324
 msgid "Defence board leaders"
 msgstr "Fuehrende der Defense-Rangliste"
 
@@ -1629,14 +1615,10 @@ msgid "Defence sheet saved"
 msgstr "Defensebogen gespeichert"
 
 #: defensestatus.php:80 defensestatus.php:82 gameplay.php:646 gameplay.php:669
-#: playercard.php:188 playercard.php:242 playercard.php:319 teamcard.php:127
-#: teamcard.php:414 teamcard.php:503 cust/wfdf/pdfscoresheet.php:252
+#: teamcard.php:127 teamcard.php:429 teamcard.php:520
+#: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1600
 msgid "Defences"
 msgstr "Defenses"
-
-#: playercard.php:193 playercard.php:244 playercard.php:321
-msgid "Defences avg."
-msgstr "Defenses im Schnitt"
 
 #: gameplay.php:636
 msgid "Defensive plays"
@@ -1804,9 +1786,9 @@ msgid "Disqualified"
 msgstr "Disqualifiziert"
 
 #: clubcard.php:146 clubcard.php:172 countrycard.php:32 countrycard.php:86
-#: countrycard.php:94 games.php:252 playercard.php:241 playercard.php:318
-#: playercard.php:418 playercard.php:487 teamcard.php:200 teamcard.php:402
-#: teamcard.php:599 teamcard.php:796 teams.php:187 admin/accreditation.php:193
+#: countrycard.php:94 games.php:252 playercard.php:256 playercard.php:335
+#: playercard.php:436 playercard.php:507 teamcard.php:200 teamcard.php:417
+#: teamcard.php:618 teamcard.php:817 teams.php:187 admin/accreditation.php:193
 #: admin/accreditation.php:256 admin/addseasonpools.php:277
 #: admin/addseasonpools.php:295 admin/addseasonteams.php:168
 #: admin/dbequalize.php:207 admin/dbequalize.php:246 admin/dbequalize.php:287
@@ -1828,7 +1810,7 @@ msgstr "Disqualifiziert"
 msgid "Division"
 msgstr "Klasse"
 
-#: admin/seasonstandings.php:233
+#: admin/seasonstandings.php:234
 msgid "Division completed."
 msgstr "Klasse/Liga abgeschlossen."
 
@@ -1900,7 +1882,7 @@ msgstr "Datenschutzbericht des Spielers herunterladen"
 msgid "Download registered user privacy report"
 msgstr "Datenschutzbericht des registrierten Benutzers herunterladen"
 
-#: poolstatus.php:372 admin/seasonstandings.php:413
+#: lib/common.functions.php:1582
 msgid "Draws"
 msgstr "Unentschieden"
 
@@ -1960,8 +1942,8 @@ msgstr ""
 #: admin/addseasonpools.php:161 admin/addseasonseries.php:20
 #: admin/addseasonteams.php:104 admin/addserieformats.php:10
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
-#: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
-#: admin/seasonstandings.php:540 admin/tdtools.php:93 admin/tdtools.php:101
+#: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:123
+#: admin/seasonstandings.php:549 admin/tdtools.php:93 admin/tdtools.php:101
 #: admin/translations.php:507 user/respgames.php:218
 msgid "Edit"
 msgstr "Ändern"
@@ -2155,8 +2137,8 @@ msgid "Errors: %s."
 msgstr "Fehler: %s."
 
 #: clubcard.php:172 countrycard.php:86 countrycard.php:94 menufunctions.php:758
-#: playercard.php:241 playercard.php:418 statistics.php:49 statistics.php:101
-#: statistics.php:231 teamcard.php:401 teamcard.php:598
+#: playercard.php:256 playercard.php:436 statistics.php:49 statistics.php:101
+#: statistics.php:231 teamcard.php:416 teamcard.php:617
 #: admin/accreditation.php:136 admin/addreservation.php:210
 #: admin/apitokens.php:145 admin/dbequalize.php:246 admin/dbequalize.php:287
 #: admin/dbequalize.php:307 admin/privacyplayer.php:86 admin/seasonadmin.php:13
@@ -2258,7 +2240,7 @@ msgstr "Zu ersetzendes Turnier existiert nicht"
 msgid "Event to replace doesn't exist"
 msgstr "Zu ersetzendes Turnier existiert nicht"
 
-#: playercard.php:318 playercard.php:487 teamcard.php:492 teamcard.php:685
+#: playercard.php:335 playercard.php:507 teamcard.php:509 teamcard.php:706
 msgid "Event type"
 msgstr "Turniertyp"
 
@@ -2630,13 +2612,13 @@ msgstr "Fr"
 msgid "Friday"
 msgstr "Freitag"
 
-#: admin/seasonstandings.php:469
+#: admin/seasonstandings.php:478
 msgid "From"
 msgstr "Von"
 
 #: admin/poolmoves.php:227 admin/poolmoves.php:268 admin/poolmoves.php:298
 #: admin/poolmoves.php:304 admin/poolmoves.php:347 admin/seasonmoves.php:159
-#: admin/seasonstandings.php:466 admin/serieteams.php:189
+#: admin/seasonstandings.php:475 admin/serieteams.php:189
 #: lib/swissdraw.functions.php:206 plugins/reassign_playoffpools.php:53
 msgid "From pool"
 msgstr "Von Gruppe"
@@ -2659,17 +2641,17 @@ msgstr "Von/bis"
 msgid "Frontpage"
 msgstr "Titelseite"
 
-#: gamecard.php:101 teamcard.php:411 teamcard.php:500 teamcard.php:608
-#: teamcard.php:693
+#: gamecard.php:101 teamcard.php:426 teamcard.php:517 teamcard.php:627
+#: teamcard.php:714
 msgid "GA Avg."
 msgstr "GT im Schnitt"
 
-#: gamecard.php:101 teamcard.php:409 teamcard.php:498 teamcard.php:606
-#: teamcard.php:691
+#: gamecard.php:101 teamcard.php:424 teamcard.php:515 teamcard.php:625
+#: teamcard.php:712
 msgid "GF Avg."
 msgstr "GP im Schnitt"
 
-#: gamecard.php:136 poolstatus.php:690 poolstatus.php:806
+#: gamecard.php:136 poolstatus.php:691 poolstatus.php:807
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/editgame.php:24 admin/spirit.php:366
 #: admin/tdtools.php:90 cust/bula/pdfscoresheet.php:248
@@ -2751,7 +2733,7 @@ msgstr "Spiel beendet"
 msgid "Game has no pool."
 msgstr "Spiel ohne Gruppe."
 
-#: gameplay.php:627 teamcard.php:788 lib/timetable.functions.php:613
+#: gameplay.php:627 teamcard.php:809 lib/timetable.functions.php:613
 msgid "Game history"
 msgstr "Frühere Spiele"
 
@@ -2881,7 +2863,7 @@ msgstr "Starteinstellungen des Spiels"
 msgid "Game statistics"
 msgstr "Spielstatistik"
 
-#: gameplay.php:34 gameplay.php:46 poolstatus.php:859
+#: gameplay.php:34 gameplay.php:46 poolstatus.php:860
 #: lib/timetable.functions.php:624 mobile/gameplay.php:15
 #: scorekeeper/gameplay.php:14 user/addscoresheet.php:511
 #: user/respgames.php:200
@@ -2896,23 +2878,18 @@ msgstr "Zusammenfassung des Spielverlaufs"
 #: countrycard.php:71 defensestatus.php:74 defensestatus.php:76
 #: gamecard.php:100 gamecard.php:222 gamecard.php:228 menufunctions.php:603
 #: menufunctions.php:641 menufunctions.php:763 menufunctions.php:786
-#: playercard.php:186 playercard.php:241 playercard.php:318 playercard.php:418
-#: playercard.php:487 playerlist.php:35 poolstatus.php:158 poolstatus.php:184
-#: poolstatus.php:235 poolstatus.php:251 poolstatus.php:296 poolstatus.php:369
-#: scorestatus.php:76 scorestatus.php:78 seriesstatus.php:166
-#: seriesstatus.php:168 seriesstatus.php:305 seriesstatus.php:325
-#: seriesstatus.php:347 spiritstatus.php:101 spiritstatus.php:103
-#: statistics.php:132 statistics.php:174 teamcard.php:123 teamcard.php:168
-#: teamcard.php:277 teamcard.php:404 teamcard.php:493 teamcard.php:601
-#: teamcard.php:686 teams.php:125 teams.php:177 teams.php:393
+#: playerlist.php:35 poolstatus.php:158 poolstatus.php:184 poolstatus.php:235
+#: poolstatus.php:251 poolstatus.php:296 seriesstatus.php:306
+#: seriesstatus.php:326 seriesstatus.php:348 spiritstatus.php:108
+#: spiritstatus.php:110 statistics.php:132 statistics.php:174 teamcard.php:123
+#: teamcard.php:168 teamcard.php:277 teams.php:125 teams.php:177 teams.php:393
 #: admin/accreditation.php:193 admin/accreditation.php:256
 #: admin/editstanding.php:61 admin/poolgames.php:17 admin/reservations.php:119
 #: admin/seasonadmin.php:98 admin/seasongames.php:21 admin/seasonseries.php:124
-#: admin/seasonstandings.php:305 admin/seasonstandings.php:362
-#: admin/seasonstandings.php:410 admin/seasonstats.php:21
-#: admin/seasonstats.php:35 admin/seriesgames.php:31 admin/seriesgames.php:41
-#: admin/stats.php:120 ext/countrystatus.php:51 ext/eventpools.php:47
-#: ext/poolscoreboard.php:42 ext/poolstatus.php:50 ext/teamscoreboard.php:57
+#: admin/seasonstandings.php:314 admin/seasonstandings.php:371
+#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seriesgames.php:31
+#: admin/seriesgames.php:41 admin/stats.php:120 ext/poolscoreboard.php:42
+#: ext/teamscoreboard.php:57 lib/common.functions.php:1578
 #: lib/search.functions.php:785
 msgid "Games"
 msgstr "Spiele"
@@ -2937,7 +2914,7 @@ msgstr "Im Team gespielt:"
 msgid "Games played without accreditation"
 msgstr "Spiele ohne Zulassung"
 
-#: admin/seasonstandings.php:231
+#: admin/seasonstandings.php:232
 msgid "Games results missing for"
 msgstr "Ergebnisse fehlen für"
 
@@ -2983,19 +2960,15 @@ msgstr ""
 msgid "Give XX as the assist in Callahan goals"
 msgstr "Trage bei Callahan-Punkten XX als Assist ein"
 
-#: teamcard.php:305 admin/spirit.php:49 admin/spirit.php:108
+#: teamcard.php:313 admin/spirit.php:49 admin/spirit.php:108
 #: admin/spirit.php:157 admin/spirit.php:285
 msgid "Given by"
 msgstr "Vergeben von"
 
-#: teamcard.php:346 admin/spirit.php:48 admin/spirit.php:107
+#: teamcard.php:357 admin/spirit.php:48 admin/spirit.php:107
 #: admin/spirit.php:156 admin/spirit.php:284 user/addspirit.php:244
 msgid "Given for"
 msgstr "Vergeben an"
-
-#: scorestatus.php:96 scorestatus.php:98
-msgid "Gls"
-msgstr "Pkt."
 
 #: menufunctions.php:437 admin/eventviewer.php:131
 msgid "Go"
@@ -3005,7 +2978,7 @@ msgstr "Los"
 msgid "Go to"
 msgstr "Gehe zu"
 
-#: admin/seasonstandings.php:250
+#: admin/seasonstandings.php:251
 msgid "Go to top"
 msgstr "Nach oben"
 
@@ -3016,57 +2989,38 @@ msgstr "Nach oben"
 msgid "Goal"
 msgstr "Punkt"
 
-#: admin/seasonstandings.php:418 ext/countrystatus.php:56 ext/eventpools.php:52
-#: ext/poolstatus.php:55
-msgid "Goal diff"
-msgstr "Punktedifferenz"
-
 #: scorekeeper/addscoresheet.php:415
 msgid "Goal time"
 msgstr "Zeit des Punktes"
 
 #: clubcard.php:204 gamecard.php:242 gamecard.php:248 gameplay.php:86
-#: gameplay.php:111 gameplay.php:507 playercard.php:186 playercard.php:241
-#: playercard.php:318 playercard.php:418 playercard.php:487 playerlist.php:37
-#: poolstatus.php:159 poolstatus.php:185 poolstatus.php:300 scorestatus.php:91
-#: scorestatus.php:93 seriesstatus.php:306 statistics.php:133
-#: statistics.php:175 teamcard.php:125 teamcard.php:170
+#: gameplay.php:111 gameplay.php:507 playerlist.php:37 poolstatus.php:159
+#: poolstatus.php:185 poolstatus.php:300 seriesstatus.php:307
+#: statistics.php:133 statistics.php:175 teamcard.php:125 teamcard.php:170
 #: ext/poolscoreboard.php:44 ext/teamscoreboard.php:59
+#: lib/common.functions.php:1593
 msgid "Goals"
 msgstr "Punkte"
 
-#: gamecard.php:101 poolstatus.php:376 seriesstatus.php:190
-#: seriesstatus.php:192 teamcard.php:410 teamcard.php:499 teamcard.php:607
-#: teamcard.php:692 admin/seasonstandings.php:417 ext/countrystatus.php:55
-#: ext/eventpools.php:51 ext/poolstatus.php:54
+#: gamecard.php:101 lib/common.functions.php:1588
 msgid "Goals against"
 msgstr "Gegenpunkte"
 
-#: gamecard.php:101 teamcard.php:411 teamcard.php:500 teamcard.php:608
-#: teamcard.php:693
+#: gamecard.php:101 teamcard.php:426 teamcard.php:517 teamcard.php:627
+#: teamcard.php:714
 msgid "Goals against avg."
 msgstr "Gegenpunkte im Schnitt"
 
-#: playercard.php:191 playercard.php:243 playercard.php:320 playercard.php:419
-#: playercard.php:488
-msgid "Goals avg."
-msgstr "Punkte durchschnittl."
-
-#: gamecard.php:101 poolstatus.php:377 seriesstatus.php:196
-#: seriesstatus.php:198 teamcard.php:412 teamcard.php:501 teamcard.php:609
-#: teamcard.php:694
+#: gamecard.php:101 lib/common.functions.php:1590
 msgid "Goals diff"
 msgstr "Punktedifferenz"
 
-#: gamecard.php:100 poolstatus.php:375 seriesstatus.php:184
-#: seriesstatus.php:186 teamcard.php:408 teamcard.php:497 teamcard.php:605
-#: teamcard.php:690 admin/seasonstandings.php:416 ext/countrystatus.php:54
-#: ext/eventpools.php:50 ext/poolstatus.php:53
+#: gamecard.php:100 lib/common.functions.php:1586
 msgid "Goals for"
 msgstr "Punkte"
 
-#: gamecard.php:101 teamcard.php:409 teamcard.php:498 teamcard.php:606
-#: teamcard.php:691
+#: gamecard.php:101 teamcard.php:424 teamcard.php:515 teamcard.php:625
+#: teamcard.php:712
 msgid "Goals for avg."
 msgstr "Punkte im Schnitt"
 
@@ -3086,7 +3040,7 @@ msgstr "Punkte nach Turnovers"
 msgid "Goals must be removed before removing the team"
 msgstr "Punkte müssen entfernt werden bevor ein Team gelöscht werden kann"
 
-#: admin/seasonstandings.php:366
+#: admin/seasonstandings.php:375
 msgid "Goals scored"
 msgstr "Erzielte Punkte"
 
@@ -3171,11 +3125,11 @@ msgstr "Halbzeit endet bei"
 msgid "Halftime score"
 msgstr "Halbzeitstand"
 
-#: playercard.php:103 user/playerprofile.php:283
+#: playercard.php:109 user/playerprofile.php:283
 msgid "Hand"
 msgstr "Hand"
 
-#: playercard.php:107 user/playerprofile.php:303
+#: playercard.php:113 user/playerprofile.php:303
 msgid "Height"
 msgstr "Größe"
 
@@ -3196,7 +3150,7 @@ msgstr "Zukünftige Spiele verbergen"
 msgid "Hide played games"
 msgstr "Beendete Spiele verstecken"
 
-#: admin/seasongames.php:129 admin/seasonstandings.php:179
+#: admin/seasongames.php:129 admin/seasonstandings.php:180
 msgid "Hide played pools"
 msgstr "Gespielte Gruppen verstecken"
 
@@ -3204,7 +3158,7 @@ msgstr "Gespielte Gruppen verstecken"
 msgid "Hide players without games"
 msgstr "Spieler ohne Spiele ausblenden"
 
-#: admin/seasonstandings.php:516
+#: admin/seasonstandings.php:525
 msgid "Hide pool"
 msgstr "Pool verstecken"
 
@@ -3228,8 +3182,8 @@ msgstr "Hoeher als"
 msgid "Historical avg"
 msgstr "Historischer Schnitt"
 
-#: clubcard.php:170 countrycard.php:84 playercard.php:237 playercard.php:414
-#: teamcard.php:396 teamcard.php:593
+#: clubcard.php:170 countrycard.php:84 playercard.php:251 playercard.php:431
+#: teamcard.php:409 teamcard.php:610
 msgid "History"
 msgstr "Historie"
 
@@ -3478,7 +3432,7 @@ msgstr "Unzureichende Rechte."
 #: admin/accreditation.php:24 admin/addlocations.php:20 admin/locations.php:13
 #: admin/reservations.php:26 admin/seasonadmin.php:17 admin/seasongames.php:24
 #: admin/seasonpools.php:17 admin/seasonseries.php:16
-#: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:689
+#: admin/seasonstandings.php:20 admin/seasonteams.php:19 admin/spirit.php:689
 #: admin/spiritsettings.php:12 admin/tdtools.php:237 admin/translations.php:485
 #: spiritkeeper/editgame.php:24 spiritkeeper/editgame.php:43
 #: user/addspirit.php:76 user/addspirit.php:91
@@ -3815,14 +3769,11 @@ msgstr "Logs"
 msgid "Longitude"
 msgstr "Länge"
 
-#: poolstatus.php:901
+#: poolstatus.php:902
 msgid "Losers continue in:"
 msgstr "Verlierer macht weiter in:"
 
-#: gamecard.php:100 poolstatus.php:374 seriesstatus.php:178
-#: seriesstatus.php:180 teamcard.php:406 teamcard.php:495 teamcard.php:603
-#: teamcard.php:688 admin/seasonstandings.php:415 ext/countrystatus.php:53
-#: ext/eventpools.php:49 ext/poolstatus.php:52
+#: gamecard.php:100 lib/common.functions.php:1584
 msgid "Losses"
 msgstr "Niederlagen"
 
@@ -3862,7 +3813,7 @@ msgstr ""
 "Verwalte Spirit-Sichtbarkeit, Kommentare, Absende-Sperren und "
 "Bewertungsmodus auf Ereignisebene in einer eigenen Einstellungsansicht."
 
-#: admin/seasonpools.php:244 admin/seasonstandings.php:524
+#: admin/seasonpools.php:244 admin/seasonstandings.php:533
 #: admin/serieteams.php:232
 msgid "Manage moves"
 msgstr "Transfers verwalten"
@@ -3871,7 +3822,7 @@ msgstr "Transfers verwalten"
 msgid "Manual time entry"
 msgstr "Manuelle Zeiteingabe"
 
-#: poolstatus.php:299 admin/seasonstandings.php:365
+#: poolstatus.php:299 admin/seasonstandings.php:374
 msgid "Margin"
 msgstr "Abstand"
 
@@ -4039,11 +3990,11 @@ msgstr "Transferierte Spiele"
 msgid "Moved teams"
 msgstr "Transferierte Teams"
 
-#: admin/seasonstandings.php:468
+#: admin/seasonstandings.php:477
 msgid "Moves from"
 msgstr "Transf. von"
 
-#: admin/seasonstandings.php:465
+#: admin/seasonstandings.php:474
 msgid "Moves to"
 msgstr "Transf. nach"
 
@@ -4139,7 +4090,7 @@ msgstr "Nationalteams"
 msgid "National membership number"
 msgstr "Nationale Mitgliedsnummer"
 
-#: playercard.php:99 user/playerprofile.php:279
+#: playercard.php:105 user/playerprofile.php:279
 msgid "Nationality"
 msgstr "Nationalität"
 
@@ -4195,7 +4146,7 @@ msgstr "Neuer Benutzer?"
 msgid "Next"
 msgstr "Weiter"
 
-#: playercard.php:87 user/playerprofile.php:230
+#: playercard.php:93 user/playerprofile.php:230
 msgid "Nickname"
 msgstr "Spitzname"
 
@@ -4221,7 +4172,7 @@ msgstr "Keine Division"
 
 #: admin/finalstandings.php:43 admin/seasongames.php:29
 #: admin/seasonpoints.php:47 admin/seasonpools.php:22
-#: admin/seasonstandings.php:24 admin/seasonteams.php:24
+#: admin/seasonstandings.php:25 admin/seasonteams.php:24
 #: admin/seriesgames.php:31
 msgid "No divisions defined. Define at least one division first."
 msgstr "Keine Klassen definiert. Erzeugen Sie zunächst mindestens eine Klasse."
@@ -4311,8 +4262,8 @@ msgstr "Keine Spieler angegeben für Spiel %s."
 msgid "No players matched the search."
 msgstr "Die Suche ergab keine Spieler."
 
-#: poolstatus.php:528 ext/countrystatus.php:140 ext/eventpools.php:97
-#: ext/poolstatus.php:99
+#: poolstatus.php:529 ext/countrystatus.php:139 ext/eventpools.php:96
+#: ext/poolstatus.php:98
 msgid "No playoff tree template found."
 msgstr "Keine Playoff-Baum-Vorlage gefunden."
 
@@ -4345,7 +4296,7 @@ msgstr "Kein Spielplanname gegeben"
 msgid "No scores entered"
 msgstr "Keine Punkte eingetragen"
 
-#: spiritstatus.php:121
+#: spiritstatus.php:130
 msgid "No spirit scores yet."
 msgstr "Noch keine Spirit-Wertungen."
 
@@ -4457,7 +4408,7 @@ msgstr "Alte Turniere"
 msgid "One simple score"
 msgstr "Eine einfache Bewertung"
 
-#: poolstatus.php:866 poolstatus.php:868 admin/seasongames.php:190
+#: poolstatus.php:867 poolstatus.php:869 admin/seasongames.php:190
 #: lib/timetable.functions.php:631 lib/timetable.functions.php:633
 #: scorekeeper/respgames.php:193
 msgid "Ongoing"
@@ -4490,7 +4441,7 @@ msgstr "Anmeldung offen"
 msgid "Operations"
 msgstr "Operationen"
 
-#: poolstatus.php:298 admin/seasonstandings.php:364
+#: poolstatus.php:298 admin/seasonstandings.php:373
 msgid "Opponent VPs"
 msgstr "Siegpunkte Gegner"
 
@@ -4616,7 +4567,7 @@ msgstr ""
 msgid "Password reset link sent."
 msgstr "Link zum Zuruecksetzen des Passworts gesendet."
 
-#: lib/user.functions.php:1985
+#: lib/user.functions.php:1998
 msgid "Password reset request for Ultiorganizer"
 msgstr "Anfrage zum Zuruecksetzen des Passworts fuer Ultiorganizer"
 
@@ -4668,7 +4619,7 @@ msgstr ""
 msgid "Photo"
 msgstr "Foto"
 
-#: clubcard.php:118 gameplay.php:332 playercard.php:156 teamcard.php:97
+#: clubcard.php:118 gameplay.php:332 playercard.php:162 teamcard.php:97
 msgid "Photos and Videos"
 msgstr "Fotos und Videos"
 
@@ -4676,13 +4627,13 @@ msgstr "Fotos und Videos"
 msgid "Picasa"
 msgstr "Picasa"
 
-#: playercard.php:95 user/playerprofile.php:275
+#: playercard.php:101 user/playerprofile.php:275
 msgid "Place of birth"
 msgstr "Geburtsort"
 
-#: poolstatus.php:702 poolstatus.php:705 teams.php:318
+#: poolstatus.php:703 poolstatus.php:706 teams.php:318
 #: admin/finalstandings.php:162 admin/seasonpools.php:123
-#: ext/countrystatus.php:232 ext/eventpools.php:193 ext/poolstatus.php:190
+#: ext/countrystatus.php:231 ext/eventpools.php:192 ext/poolstatus.php:189
 msgid "Placement"
 msgstr "Platzierung"
 
@@ -4721,8 +4672,8 @@ msgstr "Ergebnisse"
 
 #: defensestatus.php:62 defensestatus.php:64 gamecard.php:202 gamecard.php:208
 #: gameplay.php:689 gameplay.php:691 poolstatus.php:158 poolstatus.php:184
-#: poolstatus.php:235 poolstatus.php:251 scorestatus.php:66 scorestatus.php:68
-#: seriesstatus.php:305 seriesstatus.php:325 admin/accreditation.php:96
+#: poolstatus.php:235 poolstatus.php:251 scorestatus.php:67 scorestatus.php:69
+#: seriesstatus.php:306 seriesstatus.php:326 admin/accreditation.php:96
 #: admin/accreditation.php:117 admin/accreditation.php:136
 #: admin/accreditation.php:193 admin/accreditation.php:256
 #: cust/default/pdfscoresheet.php:635 cust/gummis/pdfscoresheet.php:695
@@ -4735,7 +4686,7 @@ msgstr "Spieler"
 msgid "Player anonymization"
 msgstr "Spieleranonymisierung"
 
-#: playercard.php:25
+#: playercard.php:27
 msgid "Player card"
 msgstr "Spielerkarte"
 
@@ -4768,11 +4719,11 @@ msgstr "Spielerlisten gespeichert!"
 msgid "Player name"
 msgstr "Spielername"
 
-#: playercard.php:26 user/playerprofile.php:24 user/playerprofile.php:31
+#: playercard.php:28 user/playerprofile.php:24 user/playerprofile.php:31
 msgid "Player not found"
 msgstr "Spieler nicht gefunden"
 
-#: playercard.php:137
+#: playercard.php:143
 msgid "Player pages"
 msgstr "Spielerseiten"
 
@@ -4915,11 +4866,11 @@ msgstr "Pool / Turnierbaum"
 msgid "Pool added"
 msgstr "Gruppe hinzugefügt"
 
-#: admin/seasonstandings.php:303
+#: admin/seasonstandings.php:312
 msgid "Pool games not completed:"
 msgstr "Poolspiele nicht beendet:"
 
-#: admin/seasonstandings.php:301
+#: admin/seasonstandings.php:310
 msgid "Pool is completed:"
 msgstr "Pool ist komplett:"
 
@@ -4937,7 +4888,7 @@ msgstr "Gruppe nicht gefunden"
 
 #: menufunctions.php:768 menufunctions.php:787 poolstatus.php:13
 #: poolstatus.php:24 poolstatus.php:36 poolstatus.php:50 poolstatus.php:73
-#: admin/seasonstandings.php:16 ext/export.php:47
+#: admin/seasonstandings.php:17 ext/export.php:47
 msgid "Pool standings"
 msgstr "Gruppentabellen"
 
@@ -4950,16 +4901,16 @@ msgstr "Gruppen"
 msgid "Pools not yet created"
 msgstr "Gruppen noch nicht erzeugt"
 
-#: admin/seasonstandings.php:466 admin/seasonstandings.php:469
+#: admin/seasonstandings.php:475 admin/seasonstandings.php:478
 msgid "Pos"
 msgstr "Pos."
 
-#: teamcard.php:403 teamcard.php:600 admin/seasonstandings.php:360
-#: admin/seasonstandings.php:408
+#: teamcard.php:418 teamcard.php:619 admin/seasonstandings.php:369
+#: admin/seasonstandings.php:417
 msgid "Pos."
 msgstr "Pos."
 
-#: playercard.php:115
+#: playercard.php:121
 msgid "Position"
 msgstr "Position"
 
@@ -5054,7 +5005,7 @@ msgstr "Profil"
 msgid "Profile ID"
 msgstr "Profil-ID"
 
-#: clubcard.php:38 playercard.php:79 teamcard.php:43 user/clubprofile.php:239
+#: clubcard.php:38 playercard.php:85 teamcard.php:43 user/clubprofile.php:239
 #: user/playerprofile.php:377 user/teamprofile.php:179
 msgid "Profile image"
 msgstr "Profilbild"
@@ -5095,7 +5046,7 @@ msgstr "Schnelle Dateneingabe:"
 msgid "RSS"
 msgstr "RSS"
 
-#: seriesstatus.php:160 seriesstatus.php:162
+#: seriesstatus.php:161 seriesstatus.php:163
 msgid "Rank"
 msgstr "Rang"
 
@@ -5240,7 +5191,7 @@ msgstr "Reservierungen"
 msgid "Reservations added"
 msgstr "Reservierung hinzugefügt"
 
-#: admin/seasonstandings.php:281 timekeeper/index.php:126
+#: admin/seasonstandings.php:290 timekeeper/index.php:126
 #: timekeeper/index.php:172
 msgid "Reset"
 msgstr "Zurücksetzen"
@@ -5295,7 +5246,7 @@ msgstr "Spieluhr neu starten, um die Zeitwertung fortzusetzen."
 msgid "Restore"
 msgstr "Wiederherstellen"
 
-#: gamecard.php:137 teamcard.php:795 admin/seasongames.php:244
+#: gamecard.php:137 teamcard.php:816 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183 mobile/respgames.php:177
 #: scorekeeper/addresult.php:44 scorekeeper/respgames.php:199
 #: user/adddefensesheet.php:63 user/addplayerlists.php:237
@@ -5403,7 +5354,7 @@ msgstr "Rechte zur Akkreditierung"
 msgid "Rosters"
 msgstr "Spielerlisten"
 
-#: poolstatus.php:554 admin/seasonpoints.php:194 admin/seasonpoints.php:237
+#: poolstatus.php:555 admin/seasonpoints.php:194 admin/seasonpoints.php:237
 msgid "Round"
 msgstr "Runde"
 
@@ -5510,7 +5461,7 @@ msgstr "Samstag"
 #: admin/editgame.php:285 admin/editstanding.php:59 admin/schedule.php:573
 #: admin/seasongames.php:272 admin/seasonmoves.php:216
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
-#: admin/seasonseries.php:180 admin/seasonstandings.php:544
+#: admin/seasonseries.php:180 admin/seasonstandings.php:553
 #: admin/seasonteams.php:268 admin/select_teams.php:153
 #: admin/seriesseeding.php:74 admin/serieteams.php:184 admin/serverconf.php:426
 #: admin/translations.php:522 mobile/addcomment.php:42
@@ -5584,7 +5535,7 @@ msgstr "Speichern betrifft nur die ausgewählte Division."
 
 #: games.php:49 games.php:60 games.php:84 games.php:89 games.php:104
 #: games.php:111 games.php:116 games.php:122 poolstatus.php:353
-#: poolstatus.php:494 poolstatus.php:760 poolstatus.php:920
+#: poolstatus.php:495 poolstatus.php:761 poolstatus.php:921
 msgid "Schedule"
 msgstr "Spielplan"
 
@@ -5664,7 +5615,7 @@ msgstr "Spielbericht"
 
 #: clubcard.php:154 clubcard.php:183 countrycard.php:40 countrycard.php:67
 #: gamecard.php:196 poolstatus.php:180 poolstatus.php:218 poolstatus.php:220
-#: scorestatus.php:10 scorestatus.php:46 seriesstatus.php:319 teams.php:122
+#: scorestatus.php:10 scorestatus.php:46 seriesstatus.php:320 teams.php:122
 #: teams.php:145 scorekeeper/gameplay.php:103 scorekeeper/gameplay.php:104
 #: scorekeeper/scoreboard.php:12
 msgid "Scoreboard"
@@ -5674,7 +5625,7 @@ msgstr "Scorerliste"
 msgid "Scoreboard TOP 3"
 msgstr "Scorerliste TOP 3"
 
-#: poolstatus.php:156 poolstatus.php:182 seriesstatus.php:303
+#: poolstatus.php:156 poolstatus.php:182 seriesstatus.php:304
 msgid "Scoreboard leaders"
 msgstr "Topscorer"
 
@@ -5812,9 +5763,9 @@ msgstr "2."
 msgid "Second half started at"
 msgstr "Zweite Halbzeit begann um"
 
-#: seriesstatus.php:154 seriesstatus.php:156 admin/addseasonteams.php:196
-#: admin/editstanding.php:52 admin/seasonstandings.php:359
-#: admin/seasonstandings.php:407 admin/seasonteams.php:173
+#: seriesstatus.php:155 seriesstatus.php:157 admin/addseasonteams.php:196
+#: admin/editstanding.php:52 admin/seasonstandings.php:368
+#: admin/seasonstandings.php:416 admin/seasonteams.php:173
 #: admin/seriesseeding.php:45 admin/serieteams.php:149
 msgid "Seed"
 msgstr "Setzliste"
@@ -6065,7 +6016,7 @@ msgstr "Alle Spiele anzeigen"
 msgid "Show all moves"
 msgstr "Alle Transfers anzeigen"
 
-#: menufunctions.php:621 seriesstatus.php:302
+#: menufunctions.php:621 seriesstatus.php:303
 msgid "Show all pools"
 msgstr "Zeige alle Gruppen"
 
@@ -6093,7 +6044,7 @@ msgstr "phpinfo() anzeigen"
 msgid "Show played games"
 msgstr "Beendete Spiele anzeigen"
 
-#: admin/seasongames.php:126 admin/seasonstandings.php:177
+#: admin/seasongames.php:126 admin/seasonstandings.php:178
 msgid "Show played pools"
 msgstr "Zeige gespielte Gruppen"
 
@@ -6101,7 +6052,7 @@ msgstr "Zeige gespielte Gruppen"
 msgid "Show players without games"
 msgstr "Spieler ohne Spiele anzeigen"
 
-#: admin/seasonstandings.php:519
+#: admin/seasonstandings.php:528
 msgid "Show pool"
 msgstr "Pool zeigen"
 
@@ -6235,7 +6186,7 @@ msgstr ""
 "Spirit-Notizen können auf der Token-Einreichungsseite hinzugefügt und "
 "bearbeitet werden."
 
-#: gameplay.php:559 seriesstatus.php:208 seriesstatus.php:210
+#: gameplay.php:559 seriesstatus.php:209 seriesstatus.php:211
 #: admin/seasonadmin.php:47 admin/seasongames.php:248
 #: cust/bula/pdfscoresheet.php:529 cust/default/pdfscoresheet.php:536
 #: cust/gummis/pdfscoresheet.php:609 cust/slkl/pdfscoresheet.php:512
@@ -6246,12 +6197,12 @@ msgstr ""
 msgid "Spirit score"
 msgstr "Spirit-Punktzahl"
 
-#: seriesstatus.php:343
+#: seriesstatus.php:344
 msgid "Spirit score average per category"
 msgstr "Durchschnittliche Spirit-Punktzahl pro Kategorie"
 
-#: teamcard.php:413 teamcard.php:502 teamcard.php:610 teamcard.php:695
-#: admin/seasonstandings.php:368 admin/seasonstandings.php:420
+#: teamcard.php:428 teamcard.php:519 teamcard.php:629 teamcard.php:716
+#: admin/seasonstandings.php:377 admin/seasonstandings.php:429
 msgid "Spirit score avg."
 msgstr "Spirit-Punktzahl im Schnitt"
 
@@ -6311,11 +6262,11 @@ msgstr "Spirit-Punktzahlen"
 msgid "Spirit scores are not visible."
 msgstr "Spirit-Punktzahlen sind nicht sichtbar."
 
-#: teamcard.php:344
+#: teamcard.php:354
 msgid "Spirit scores given to the other teams:"
 msgstr "An die anderen Teams vergebene Spirit-Punktzahlen:"
 
-#: teamcard.php:303
+#: teamcard.php:310
 msgid "Spirit scores received:"
 msgstr "Erhaltene Spirit-Punktzahlen:"
 
@@ -6516,29 +6467,29 @@ msgstr "TD-Werkzeuge"
 msgid "Tables"
 msgstr "Tabellen"
 
-#: admin/seasonstandings.php:190
+#: admin/seasonstandings.php:191
 msgid "Tasks"
 msgstr "Aufgaben"
 
 #: clubcard.php:146 clubcard.php:172 countrycard.php:32 countrycard.php:86
 #: countrycard.php:94 defensestatus.php:68 defensestatus.php:70
 #: gamecard.php:100 gamecard.php:212 gamecard.php:218 menufunctions.php:822
-#: menufunctions.php:844 playercard.php:72 playercard.php:241
-#: playercard.php:418 poolstatus.php:158 poolstatus.php:184 poolstatus.php:235
-#: poolstatus.php:251 poolstatus.php:295 poolstatus.php:368 scorestatus.php:71
-#: scorestatus.php:73 seriesstatus.php:140 seriesstatus.php:142
-#: seriesstatus.php:305 seriesstatus.php:325 seriesstatus.php:346
-#: spiritstatus.php:96 spiritstatus.php:98 teamcard.php:794
+#: menufunctions.php:844 playercard.php:78 playercard.php:256
+#: playercard.php:436 poolstatus.php:158 poolstatus.php:184 poolstatus.php:235
+#: poolstatus.php:251 poolstatus.php:295 poolstatus.php:375 scorestatus.php:72
+#: scorestatus.php:74 seriesstatus.php:141 seriesstatus.php:143
+#: seriesstatus.php:306 seriesstatus.php:326 seriesstatus.php:347
+#: spiritstatus.php:103 spiritstatus.php:105 teamcard.php:815
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/accreditation.php:193
 #: admin/accreditation.php:256 admin/dbequalize.php:246
 #: admin/finalstandings.php:162 admin/privacyplayer.php:86
-#: admin/seasonpoints.php:256 admin/seasonstandings.php:361
-#: admin/seasonstandings.php:409 admin/seasonstandings.php:471
+#: admin/seasonpoints.php:256 admin/seasonstandings.php:370
+#: admin/seasonstandings.php:418 admin/seasonstandings.php:480
 #: admin/serieteams.php:191 admin/spirit.php:232 admin/tdtools.php:23
 #: admin/tdtools.php:59 cust/wfdf/pdfscoresheet.php:1185
-#: ext/countrystatus.php:50 ext/eventpools.php:46 ext/poolscoreboard.php:41
-#: ext/poolstatus.php:49 lib/search.functions.php:120
+#: ext/countrystatus.php:52 ext/eventpools.php:48 ext/poolscoreboard.php:41
+#: ext/poolstatus.php:51 lib/search.functions.php:120
 #: lib/search.functions.php:167 lib/search.functions.php:233
 #: lib/search.functions.php:391 lib/search.functions.php:555
 #: lib/search.functions.php:720 lib/swissdraw.functions.php:208
@@ -6978,12 +6929,12 @@ msgstr ""
 msgid "Timezone"
 msgstr "Zeitzone"
 
-#: admin/seasonstandings.php:466
+#: admin/seasonstandings.php:475
 msgid "To"
 msgstr "Nach"
 
 #: admin/poolmoves.php:229 admin/seasonmoves.php:161
-#: admin/seasonstandings.php:469 admin/serieteams.php:193
+#: admin/seasonstandings.php:478 admin/serieteams.php:193
 #: lib/swissdraw.functions.php:210 plugins/reassign_playoffpools.php:57
 msgid "To pool"
 msgstr "Nach Gruppe"
@@ -7055,30 +7006,24 @@ msgid "Tomorrow"
 msgstr "Morgen"
 
 #: gamecard.php:252 gamecard.php:257 gameplay.php:87 gameplay.php:112
-#: playercard.php:186 playercard.php:241 playercard.php:318 playercard.php:419
-#: playercard.php:487 playerlist.php:38 poolstatus.php:159 poolstatus.php:185
-#: scorestatus.php:108 scorestatus.php:110 scorestatus.php:113
-#: scorestatus.php:115 seriesstatus.php:306 seriesstatus.php:353
-#: spiritstatus.php:114 spiritstatus.php:116 teamcard.php:126 teams.php:399
-#: ext/poolscoreboard.php:45 ext/teamscoreboard.php:60
+#: playerlist.php:38 poolstatus.php:159 poolstatus.php:185 seriesstatus.php:307
+#: seriesstatus.php:354 spiritstatus.php:123 spiritstatus.php:125
+#: teamcard.php:126 teams.php:399 ext/poolscoreboard.php:45
+#: ext/teamscoreboard.php:60
 msgid "Tot."
 msgstr "Tot."
 
-#: playercard.php:191 playercard.php:243 playercard.php:320 playercard.php:419
-#: playercard.php:488
-msgid "Tot. avg."
-msgstr "Ges.-Schnitt"
-
-#: clubcard.php:205 playercard.php:386 playercard.php:545 statistics.php:134
-#: statistics.php:175 teamcard.php:171 teamcard.php:268 teamcard.php:309
-#: teamcard.php:350 teamcard.php:568 teamcard.php:755 admin/spirit.php:47
+#: clubcard.php:205 playercard.php:403 playercard.php:565 statistics.php:134
+#: statistics.php:175 teamcard.php:171 teamcard.php:268 teamcard.php:319
+#: teamcard.php:363 teamcard.php:585 teamcard.php:776 admin/spirit.php:47
 #: admin/spirit.php:106 admin/spirit.php:155 admin/spirit.php:238
 #: admin/spirit.php:282 admin/spirit.php:342
-#: cust/slkl/mass-accreditation.php:84 spiritkeeper/submitsotg.php:90
+#: cust/slkl/mass-accreditation.php:84 lib/common.functions.php:1602
+#: spiritkeeper/submitsotg.php:90
 msgid "Total"
 msgstr "Total"
 
-#: poolstatus.php:236 poolstatus.php:252 seriesstatus.php:326
+#: poolstatus.php:236 poolstatus.php:252 seriesstatus.php:327
 msgid "Total defences"
 msgstr "Defenses gesamt"
 
@@ -7239,8 +7184,8 @@ msgstr "Ultimate.fi"
 #: cust/default/pdfscoresheet.php:123 cust/default/pdfscoresheet.php:151
 #: ext/countrystatus.php:27 ext/eventpools.php:26 ext/poolscoreboard.php:29
 #: ext/poolstatus.php:31 ext/teamcoming.php:32 ext/teamplayed.php:33
-#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1510
-#: lib/user.functions.php:1571 scorekeeper/index.php:83
+#: ext/teamscoreboard.php:45 ext/tournament.php:30 lib/user.functions.php:1523
+#: lib/user.functions.php:1584 scorekeeper/index.php:83
 #: spiritkeeper/index.php:103 timekeeper/index.php:190
 msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
@@ -7273,11 +7218,11 @@ msgid "Undecided"
 msgstr "Nicht entschieden"
 
 #: admin/seasonmoves.php:165 admin/seasonmoves.php:198
-#: admin/seasonstandings.php:588 admin/stats.php:133
+#: admin/seasonstandings.php:597 admin/stats.php:133
 msgid "Undo"
 msgstr "Rückgängig"
 
-#: admin/seasonstandings.php:594
+#: admin/seasonstandings.php:603
 msgid "Undo all"
 msgstr "Alles rückgängig"
 
@@ -7448,7 +7393,7 @@ msgstr "Wert"
 msgid "Version information"
 msgstr "Versionsinformationen"
 
-#: poolstatus.php:297 admin/seasonstandings.php:363
+#: poolstatus.php:297 admin/seasonstandings.php:372
 msgid "Victory Points"
 msgstr "Siegpunkte"
 
@@ -7539,7 +7484,7 @@ msgstr ""
 "InnoDB/utf8mb4 in Betracht, um Zuverlaessigkeit, Leistung und "
 "Zukunftssicherheit zu verbessern."
 
-#: ext/eventpools.php:134
+#: ext/eventpools.php:133
 msgid "Warning: missing team"
 msgstr "Warnung: fehlendes Team"
 
@@ -7555,7 +7500,7 @@ msgstr "Mi"
 msgid "Wednesday"
 msgstr "Mittwoch"
 
-#: playercard.php:111 user/playerprofile.php:307
+#: playercard.php:117 user/playerprofile.php:307
 msgid "Weight"
 msgstr "Gewicht"
 
@@ -7606,10 +7551,10 @@ msgstr "Welches Team hat auf welcher Seite begonnen?"
 msgid "Who started on offence?"
 msgstr "Wer begann in der Offence?"
 
-#: gamecard.php:100 playercard.php:195 playercard.php:245 playercard.php:321
-#: playercard.php:419 playercard.php:488 seriesstatus.php:202
-#: seriesstatus.php:204 teamcard.php:407 teamcard.php:496 teamcard.php:604
-#: teamcard.php:689
+#: gamecard.php:100 playercard.php:209 playercard.php:260 playercard.php:338
+#: playercard.php:437 playercard.php:508 seriesstatus.php:203
+#: seriesstatus.php:205 teamcard.php:422 teamcard.php:513 teamcard.php:623
+#: teamcard.php:710
 msgid "Win-%"
 msgstr "Sieg-%"
 
@@ -7622,7 +7567,7 @@ msgstr "Sieger ist"
 msgid "Winner is <span style='font-weight:bold'>%s</span>."
 msgstr "Der Gewinner ist <span style='font-weight:bold'>%s</span>."
 
-#: poolstatus.php:883
+#: poolstatus.php:884
 msgid "Winners continue in:"
 msgstr "Sieger macht weiter in:"
 
@@ -7630,11 +7575,7 @@ msgstr "Sieger macht weiter in:"
 msgid "Winning points"
 msgstr "Gewinnpunkte"
 
-#: gamecard.php:100 playercard.php:195 playercard.php:245 playercard.php:321
-#: playercard.php:419 playercard.php:488 poolstatus.php:370
-#: seriesstatus.php:172 seriesstatus.php:174 teamcard.php:405 teamcard.php:494
-#: teamcard.php:602 teamcard.php:687 admin/seasonstandings.php:411
-#: ext/countrystatus.php:52 ext/eventpools.php:48 ext/poolstatus.php:51
+#: gamecard.php:100 lib/common.functions.php:1580
 msgid "Wins"
 msgstr "Siege"
 
@@ -7655,8 +7596,8 @@ msgstr "World Flying Disc Federation"
 #: admin/poolgames.php:355 admin/poolgames.php:356 admin/poolmoves.php:251
 #: admin/poolmoves.php:329 admin/reservations.php:133 admin/seasongames.php:262
 #: admin/seasonmoves.php:166 admin/seasonpools.php:270 admin/seasons.php:148
-#: admin/seasonseries.php:130 admin/seasonstandings.php:396
-#: admin/seasonstandings.php:453 admin/seasonteams.php:240
+#: admin/seasonseries.php:130 admin/seasonstandings.php:405
+#: admin/seasonstandings.php:462 admin/seasonteams.php:240
 #: admin/serieformats.php:48 admin/serverconf.php:393
 #: admin/timekeepertemplates.php:53 lib/search.functions.php:798
 #: plugins/simulate_games.php:264
@@ -7766,11 +7707,11 @@ msgstr "kann nicht aus dem Kader entfernt werden"
 msgid "cannot delete"
 msgstr "kann nicht löschen"
 
-#: admin/seasonstandings.php:538
+#: admin/seasonstandings.php:547
 msgid "change final pool ranking"
 msgstr "Endstand bearbeiten"
 
-#: admin/seasonstandings.php:538
+#: admin/seasonstandings.php:547
 msgid "change initial pool ranking"
 msgstr "ursprüngliche Reihenfolge bearbeiten"
 
@@ -7786,7 +7727,7 @@ msgstr "klonen"
 msgid "closed"
 msgstr "geschlossen"
 
-#: playercard.php:108 user/playerprofile.php:304
+#: playercard.php:114 user/playerprofile.php:304
 msgid "cm"
 msgstr "cm"
 
@@ -7809,7 +7750,7 @@ msgstr "TT.MM.JJJJ"
 msgid "default"
 msgstr "standard"
 
-#: admin/seasonstandings.php:395 admin/seasonstandings.php:452
+#: admin/seasonstandings.php:404 admin/seasonstandings.php:461
 msgid "delete team from pool"
 msgstr "Team aus der Gruppe entfernen"
 
@@ -7828,7 +7769,7 @@ msgstr "bearbeiten"
 msgid "edit details"
 msgstr "Detail ändern"
 
-#: admin/seasonstandings.php:253
+#: admin/seasonstandings.php:254
 msgid "edit pool"
 msgstr "Gruppe ändern"
 
@@ -7854,17 +7795,17 @@ msgstr "fuer die Ergebniseingabe und"
 msgid "for spirit entry."
 msgstr "fuer die Spirit-Eingabe."
 
-#: gamecard.php:158 gameplay.php:69 poolstatus.php:669 poolstatus.php:673
-#: poolstatus.php:852 result.php:71 admin/seasongames.php:234
+#: gamecard.php:158 gameplay.php:69 poolstatus.php:670 poolstatus.php:674
+#: poolstatus.php:853 result.php:71 admin/seasongames.php:234
 #: lib/timetable.functions.php:566
 msgid "forfeit"
 msgstr "kampflos"
 
-#: clubcard.php:130 gameplay.php:349 playercard.php:167 teamcard.php:108
+#: clubcard.php:130 gameplay.php:349 playercard.php:173 teamcard.php:108
 msgid "from"
 msgstr "von"
 
-#: playercard.php:570
+#: playercard.php:590
 msgid "game events"
 msgstr "Spielereignisse"
 
@@ -7929,7 +7870,7 @@ msgstr "Heimteam"
 msgid "iCalendar (.ical)"
 msgstr "iCalendar-Format"
 
-#: playercard.php:112 user/playerprofile.php:308
+#: playercard.php:118 user/playerprofile.php:308
 msgid "kg"
 msgstr "kg"
 
@@ -8102,7 +8043,7 @@ msgstr "Runden"
 msgid "same number"
 msgstr "selbe Nummer"
 
-#: admin/seasonstandings.php:543
+#: admin/seasonstandings.php:552
 msgid "save ranking"
 msgstr "Rangfolge speichern"
 
@@ -8227,9 +8168,18 @@ msgstr "ja"
 #~ msgid "Are you sure you want to delete last score?"
 #~ msgstr "Sind Sie sicher, dass der letzte Score gelöscht werden soll?"
 
+#~ msgid "Assists avg."
+#~ msgstr "Assists im Schnitt"
+
+#~ msgid "Ast"
+#~ msgstr "Ast"
+
 #, fuzzy
 #~ msgid "Between points"
 #~ msgstr "Zeit zwischen Punkten"
+
+#~ msgid "Call."
+#~ msgstr "Call."
 
 #~ msgid "Change language"
 #~ msgstr "Sprache ändern"
@@ -8240,6 +8190,9 @@ msgstr "ja"
 #, fuzzy
 #~ msgid "Defence warning"
 #~ msgstr "Defense-Rangliste"
+
+#~ msgid "Defences avg."
+#~ msgstr "Defenses im Schnitt"
 
 #~ msgid "Delete listed access rights"
 #~ msgstr "User Zugriffsrechte"
@@ -8264,6 +8217,15 @@ msgstr "ja"
 #, fuzzy
 #~ msgid "Game target"
 #~ msgstr "Spiel zurückgesetzt"
+
+#~ msgid "Gls"
+#~ msgstr "Pkt."
+
+#~ msgid "Goal diff"
+#~ msgstr "Punktedifferenz"
+
+#~ msgid "Goals avg."
+#~ msgstr "Punkte durchschnittl."
 
 #, fuzzy
 #~ msgid "Halftime duration"
@@ -8324,3 +8286,6 @@ msgstr "ja"
 #~ "Diese Operation aktualisiert die Turnierdaten in der Datenbank mit denen "
 #~ "aus der Datei oder fügt sie hinzu. Es wird nichts gelöscht oder "
 #~ "Benutzerrechte verändert."
+
+#~ msgid "Tot. avg."
+#~ msgstr "Ges.-Schnitt"

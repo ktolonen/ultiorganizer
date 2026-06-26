@@ -102,18 +102,26 @@ Use these only when space is constrained, such as statistics tables, standings t
 | Assists | `A` | Use only when the table context is clearly player stats. |
 | Callahans | `Call.` | Prefer this over a single-letter shorthand. |
 | Games played | `GP` | Prefer `GP` over `G` to avoid confusion with goals. |
+| Wins | `W` | Standings and results tables. |
+| Losses | `L` | Standings and results tables. |
+| Draws | `D` | Standings tables only; the `W`/`D`/`L` sequence disambiguates it from Defence. |
+| Goals for | `GF` | Standings and results tables. |
+| Goals against | `GA` | Standings and results tables. |
+| Goals diff | `GD` | Goal difference (goals for minus goals against) in standings tables. |
 | Average | `Avg.` | |
 | Goals for average | `GF Avg.` | Prefer this over `GF/game` in new narrow-table labels. |
 | Goals against average | `GA Avg.` | Prefer this over `GA/game` in new narrow-table labels. |
 | Timeouts | `TO` | Use in compact stat or summary tables only. |
 | Spirit stoppage | `STO` | Existing repo shorthand; prefer the full term when space allows. |
-| Defence | `D` | Use only when the table is explicitly about defensive stats. |
+| Defence | `D` | Use only when the table is explicitly about defensive stats. In standings tables `D` instead means Draws (see above); rely on column context to disambiguate. |
 | Defence average | `Defence avg.` | Prefer this over `Def. avg.` in new narrow-table labels. |
 | Spirit score average | `Spirit score avg.` | Prefer this over `Spirit avg` in new narrow-table labels. |
 | Spirit of the Game | `SOTG` | Existing standard abbreviation. |
 | Disqualified | `DQ` | Use in compact standings or rank cells; prefer the full term in explanatory text. |
 | Team captain | `C` | Use only in constrained roster or gameplay views where the captain context is explicit. |
 | Spirit captain | `SC` | Use only in constrained roster or gameplay views where the captain context is explicit. |
+
+These abbreviations are language-neutral literals: they are **not** translated and read the same in every locale. When a table uses them, explain them with a localized legend rather than translating the column headers. Standings and statistics tables build that legend from the shared `ColumnAbbr()` registry and `ColumnLegend()` helper in `lib/common.functions.php`, which reuse the existing full-term translations for the explanation. For abbreviations that are not column-registry entries (for example spirit categories), pass explicit `[abbreviation => explanation]` pairs to `TableLegend()`.
 
 ## Review Rules
 

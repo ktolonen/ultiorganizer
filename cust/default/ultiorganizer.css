@@ -176,6 +176,14 @@ td {
 	text-decoration: none;
 }
 
+.table-legend {
+	caption-side: bottom;
+	margin-top: 4px;
+	color: var(--text-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
 .spirit-table td,
 .spirit-table th {
 	vertical-align: top;

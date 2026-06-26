@@ -49,6 +49,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - After adding or changing CSS, run `docs/ai/css-style-and-lint/SKILL.md` to analyze style consistency and run Stylelint on the changed files.
 - After adding or changing user-facing text, run `docs/ai/review-user-language/SKILL.md` as a final review step on your changes.
 - Reuse existing translated strings when feasible instead of adding synonyms, capitalization-only variants, or comma/punctuation-only variants.
+- For compact standings or statistics tables, reuse the column-abbreviation and legend API in `lib/common.functions.php` (`ColumnAbbr`/`ColumnAbbrCell`/`ColumnAbbrLabel`/`ColumnLegend`/`TableLegend`) instead of inlining headers; register a new column by adding a `case` to `ColumnAbbr()`. Abbreviations are language-neutral literals explained by a localized legend — see `docs/lib-index.md` and the abbreviation note in `docs/terminology.md`.
 - After adding or changing database-related functionality, run `docs/ai/review-database-access/SKILL.md` as a final review step on your changes.
 - After adding or changing a playoff bracket layout under `cust/*/layouts/`, or the placeholder contract in `lib/pool.functions.php`, run `docs/ai/review-playoff-layouts/SKILL.md` as a final review step on your changes.
 - After adding or changing PHP code, run `docs/ai/format-and-lint/SKILL.md` to apply PER-CS 2.0 formatting and surface PHPStan findings on the changed files.

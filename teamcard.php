@@ -297,14 +297,24 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
         }
     }
 
+    $spiritCategoryLegend = [];
+    $spiritCategoryNumber = 0;
+    foreach ($scoreCategories as $category) {
+        $spiritCategoryNumber++;
+        $spiritCategoryLegend[$spiritCategoryNumber] = utf8entities(_($category['text']));
+    }
+
     if (!empty($scoreCategories)) {
         $spiritReceivedRows = TeamSpiritPointsReceived($seasoninfo['season_id'], $teamId);
         if (!empty($spiritReceivedRows)) {
             $html .= "<h3>" . _("Spirit scores received:") . "</h3>\n";
             $html .= "<table width='100%' border='1'>\n";
+            $html .= TableLegend($spiritCategoryLegend);
             $html .= "<tr><th style='width: 18%'>" . _("Given by") . "</th>";
+            $spiritCategoryNumber = 0;
             foreach ($scoreCategories as $category) {
-                $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
+                $spiritCategoryNumber++;
+                $html .= "<th class='center' style='width: 7%'>" . $spiritCategoryNumber . "</th>";
             }
             $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
             if ($showSpiritComments) {
@@ -343,9 +353,12 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
         if (!empty($spiritGivenRows)) {
             $html .= "<h3>" . _("Spirit scores given to the other teams:") . "</h3>\n";
             $html .= "<table width='100%' border='1'>\n";
+            $html .= TableLegend($spiritCategoryLegend);
             $html .= "<tr><th style='width: 18%'>" . _("Given for") . "</th>";
+            $spiritCategoryNumber = 0;
             foreach ($scoreCategories as $category) {
-                $html .= "<th class='center' style='width: 7%'>" . utf8entities(_($category['text'])) . "</th>";
+                $spiritCategoryNumber++;
+                $html .= "<th class='center' style='width: 7%'>" . $spiritCategoryNumber . "</th>";
             }
             $html .= "<th class='center' style='width: 7%'>" . _("Total") . "</th>";
             if ($showSpiritComments) {
@@ -397,19 +410,21 @@ if (ShowDefenseStats()) {
 
         $tmphtml = "";
 
-        $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>
+        $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'>"
+            . ColumnLegend(['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff'])
+            . "<tr>
 		<th>" . _("Event") . "</th>
 		<th>" . _("Division") . "</th>
 		<th>" . _("Pos.") . "</th>
-		<th>" . _("Games") . "</th>
-		<th>" . _("Wins") . "</th>
-		<th>" . _("Losses") . "</th>
+		<th>" . ColumnAbbrLabel('games') . "</th>
+		<th>" . ColumnAbbrLabel('wins') . "</th>
+		<th>" . ColumnAbbrLabel('losses') . "</th>
 		<th>" . _("Win-%") . "</th>
-		<th>" . _("Goals for") . "</th>
+		<th>" . ColumnAbbrLabel('goalsfor') . "</th>
 		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-		<th>" . _("Goals against") . "</th>
+		<th>" . ColumnAbbrLabel('goalsagainst') . "</th>
 		<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-		<th>" . _("Goals diff") . "</th>
+		<th>" . ColumnAbbrLabel('goalsdiff') . "</th>
 		<th>" . _("Spirit score avg.") . "</th>
 		<th>" . _("Defences") . "</th>
 		</tr>";
@@ -488,17 +503,19 @@ if (ShowDefenseStats()) {
             return strcmp($b['season_type'], $a['season_type']);
         });
 
-        $html .= "<table class='history-table' border='1' width='100%'><tr>
+        $html .= "<table class='history-table' border='1' width='100%'>"
+            . ColumnLegend(['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff'])
+            . "<tr>
 	<th>" . _("Event type") . "</th>
-	<th>" . _("Games") . "</th>
-	<th>" . _("Wins") . "</th>
-	<th>" . _("Losses") . "</th>
+	<th>" . ColumnAbbrLabel('games') . "</th>
+	<th>" . ColumnAbbrLabel('wins') . "</th>
+	<th>" . ColumnAbbrLabel('losses') . "</th>
 	<th>" . _("Win-%") . "</th>
-	<th>" . _("Goals for") . "</th>
+	<th>" . ColumnAbbrLabel('goalsfor') . "</th>
 	<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-	<th>" . _("Goals against") . "</th>
+	<th>" . ColumnAbbrLabel('goalsagainst') . "</th>
 	<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-	<th>" . _("Goals diff") . "</th>
+	<th>" . ColumnAbbrLabel('goalsdiff') . "</th>
 	<th>" . _("Spirit score avg.") . "</th>
 	<th>" . _("Defences") . "</th>
 	</tr>";
@@ -594,19 +611,21 @@ if (ShowDefenseStats()) {
 
         $tmphtml = "";
 
-        $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'><tr>
+        $tmphtml .= "<table class='history-table' border='1' cellspacing='0' width='100%'>"
+            . ColumnLegend(['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff'])
+            . "<tr>
 		<th>" . _("Event") . "</th>
 		<th>" . _("Division") . "</th>
 		<th>" . _("Pos.") . "</th>
-		<th>" . _("Games") . "</th>
-		<th>" . _("Wins") . "</th>
-		<th>" . _("Losses") . "</th>
+		<th>" . ColumnAbbrLabel('games') . "</th>
+		<th>" . ColumnAbbrLabel('wins') . "</th>
+		<th>" . ColumnAbbrLabel('losses') . "</th>
 		<th>" . _("Win-%") . "</th>
-		<th>" . _("Goals for") . "</th>
+		<th>" . ColumnAbbrLabel('goalsfor') . "</th>
 		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-		<th>" . _("Goals against") . "</th>
+		<th>" . ColumnAbbrLabel('goalsagainst') . "</th>
 		<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-		<th>" . _("Goals diff") . "</th>
+		<th>" . ColumnAbbrLabel('goalsdiff') . "</th>
 		<th>" . _("Spirit score avg.") . "</th>
 		</tr>";
 
@@ -681,17 +700,19 @@ if (ShowDefenseStats()) {
             return strcmp($b['season_type'], $a['season_type']);
         });
 
-        $html .= "<table class='history-table' border='1' width='100%'><tr>
+        $html .= "<table class='history-table' border='1' width='100%'>"
+            . ColumnLegend(['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff'])
+            . "<tr>
 	<th>" . _("Event type") . "</th>
-	<th>" . _("Games") . "</th>
-	<th>" . _("Wins") . "</th>
-	<th>" . _("Losses") . "</th>
+	<th>" . ColumnAbbrLabel('games') . "</th>
+	<th>" . ColumnAbbrLabel('wins') . "</th>
+	<th>" . ColumnAbbrLabel('losses') . "</th>
 	<th>" . _("Win-%") . "</th>
-	<th>" . _("Goals for") . "</th>
+	<th>" . ColumnAbbrLabel('goalsfor') . "</th>
 	<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th>
-	<th>" . _("Goals against") . "</th>
+	<th>" . ColumnAbbrLabel('goalsagainst') . "</th>
 	<th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th>
-	<th>" . _("Goals diff") . "</th>
+	<th>" . ColumnAbbrLabel('goalsdiff') . "</th>
 	<th>" . _("Spirit score avg.") . "</th>
 	</tr>";
 

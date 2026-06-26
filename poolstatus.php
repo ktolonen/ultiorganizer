@@ -364,17 +364,18 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
     if ($poolinfo['played']) {
         $style = "style='font-weight: bold;'";
     }
-    $ret .= "<table $style border='2' width='100%'>\n";
-    $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
-    $ret .= "<th class='center'>" . _("Games") . "</th>";
-    $ret .= "<th class='center'>" . _("Wins") . "</th>";
+    $columns = ['games', 'wins'];
     if ($poolinfo['drawsallowed']) {
-        $ret .= "<th class='center'>" . _("Draws") . "</th>";
+        $columns[] = 'draws';
     }
-    $ret .= "<th class='center'>" . _("Losses") . "</th>";
-    $ret .= "<th class='center'>" . _("Goals for") . "</th>";
-    $ret .= "<th class='center'>" . _("Goals against") . "</th>";
-    $ret .= "<th class='center'>" . _("Goals diff") . "</th>";
+    $columns = array_merge($columns, ['losses', 'goalsfor', 'goalsagainst', 'goalsdiff']);
+
+    $ret .= "<table $style border='2' width='100%'>\n";
+    $ret .= ColumnLegend($columns);
+    $ret .= "<tr><th>#</th><th style='width:200px'>" . _("Team") . "</th>";
+    foreach ($columns as $column) {
+        $ret .= ColumnAbbrCell($column);
+    }
     $ret .= "</tr>\n";
 
     $standings = PoolTeams($poolinfo['pool_id'], "rank");

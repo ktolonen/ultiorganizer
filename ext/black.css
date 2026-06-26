@@ -157,7 +157,14 @@ border-style: solid;
 padding: 1px; 
 }
 
-.timezone{  
+.timezone{
 color: #a0a0a0;
-font-style:italic; 
+font-style:italic;
+}
+
+.table-legend{
+caption-side: bottom;
+color: #666666;
+font-size: 11px;
+text-align: center;
 }
