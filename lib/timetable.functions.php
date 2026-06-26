@@ -519,14 +519,33 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
 
     if ($field) {
         if (!empty($game['fieldname'])) {
-            $ret .= "<td style='$fieldw'><span>" . _("Field") . " " . utf8entities($game['fieldname']) . "</span></td>\n";
+            $ret .= "<td style='$fieldw'><span>" . _("Field") . " " . utf8entities(U_($game['fieldname'])) . "</span></td>\n";
         } else {
             $ret .= "<td style='$fieldw'></td>\n";
         }
     }
 
+    $isinternational = isset($game['isinternational']) && intval($game['isinternational']);
+
+    $homeresult = "";
+    $visitorresult = "";
+    if (GameHasStarted($game) && !$game['isongoing']) {
+        if (intval($game['homescore']) > intval($game['visitorscore'])) {
+            $homeresult = "game-winner";
+            $visitorresult = "game-loser";
+        } elseif (intval($game['visitorscore']) > intval($game['homescore'])) {
+            $homeresult = "game-loser";
+            $visitorresult = "game-winner";
+        }
+    }
+
     if ($game['hometeam']) {
-        $ret .= "<td style='$teamw'><span>" . utf8entities($game['hometeamname']) . "</span></td>\n";
+        $homeflag = "";
+        if ($isinternational && !empty($game['homeflag'])) {
+            $homeflag = "<img height='10' src='images/flags/tiny/" . utf8entities($game['homeflag']) . "' alt=''/> ";
+        }
+        $homeclass = $homeresult !== "" ? " class='$homeresult'" : "";
+        $ret .= "<td style='$teamw'><span$homeclass>" . $homeflag . utf8entities($game['hometeamname']) . "</span></td>\n";
     } else {
         $ret .= "<td style='$teamw'><span class='schedulingname'>" . utf8entities(U_($game['phometeamname'])) . "</span></td>\n";
     }
@@ -534,7 +553,12 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
     $ret .= "<td style='$againstmarkw'>-</td>\n";
 
     if ($game['visitorteam']) {
-        $ret .= "<td style='$teamw'><span>" . utf8entities($game['visitorteamname']) . "</span></td>\n";
+        $visitorflag = "";
+        if ($isinternational && !empty($game['visitorflag'])) {
+            $visitorflag = "<img height='10' src='images/flags/tiny/" . utf8entities($game['visitorflag']) . "' alt=''/> ";
+        }
+        $visitorclass = $visitorresult !== "" ? " class='$visitorresult'" : "";
+        $ret .= "<td style='$teamw'><span$visitorclass>" . $visitorflag . utf8entities($game['visitorteamname']) . "</span></td>\n";
     } else {
         $ret .= "<td style='$teamw'><span class='schedulingname'>" . utf8entities(U_($game['pvisitorteamname'])) . "</span></td>\n";
     }
@@ -693,7 +717,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid,
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry,
-			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone
+			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone, s.isinternational
 			FROM uo_game pp
 			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)

@@ -1029,6 +1029,14 @@ tr.admintablerow>td {
 	font-style: italic;
 }
 
+.game-winner {
+	font-weight: normal;
+}
+
+.game-loser {
+	font-weight: normal;
+}
+
 .list_letter {
 	color: var(--text);
 	font-size: 10pt;
