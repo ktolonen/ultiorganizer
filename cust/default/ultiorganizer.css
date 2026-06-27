@@ -272,6 +272,20 @@ td {
 	clear: both;
 }
 
+/*
+ * Pin the content layout table to the page width so a wide child table cannot
+ * stretch the cell (and thus the whole .page) past the viewport. Combined with
+ * overflow-x on .tdcontent, wide tables scroll inside the content cell instead,
+ * keeping .page and .page_top aligned at the page width.
+ */
+.page_middle > table {
+	width: 100%;
+	table-layout: fixed;
+	/* Override the global table margin: at width:100% a margin would push this
+	   structural table past the page's right border. */
+	margin: 0;
+}
+
 .page_bottom {
 	width: 100%;
 }
@@ -488,6 +502,8 @@ td {
 .tdcontent {
 	/*border-left: solid #598788 4px;*/
 	width: 100%;
+	/* Scroll over-wide tables within the content cell (see .page_middle > table). */
+	overflow-x: auto;
 }
 
 .content {
@@ -1209,4 +1225,20 @@ yuicalendar.table {
 	padding: 0 0 0 19px;
 	background: url("../../images/linkicons/feed_14x14.png") no-repeat 0 50%;
 	list-style-type: none;
+}
+
+/*
+ * Print overrides (kept last so they win the cascade). On screen, the content
+ * table is pinned (table-layout: fixed) and .tdcontent scrolls over-wide tables;
+ * when printing, restore natural flow so wide tables print in full instead of
+ * being clipped to the on-screen scroll region.
+ */
+@media print {
+	.page_middle > table {
+		table-layout: auto;
+	}
+
+	.tdcontent {
+		overflow-x: visible;
+	}
 }
