@@ -128,12 +128,7 @@ function CurrentSeasons()
  */
 function CurrentSeasonName()
 {
-    if (isset($_SESSION['userproperties']['selseason'])) {
-        return SeasonName($_SESSION['userproperties']['selseason']);
-    }
-
-    $seasonId = CurrentSeason();
-    return $seasonId === "" ? "" : SeasonName($seasonId);
+    return SeasonName(CurrentSeason());
 }
 
 /**
