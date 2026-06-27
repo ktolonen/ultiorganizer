@@ -825,6 +825,17 @@ table#pagemenu a.current {
 	white-space: normal;
 }
 
+.statistics-table th,
+.statistics-table td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.statistics-table th.left,
+.statistics-table td.left {
+	text-align: left;
+}
+
 .teams-table {
 	width: 100%;
 	border-collapse: separate;
