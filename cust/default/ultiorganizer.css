@@ -761,6 +761,54 @@ table#pagemenu a.current {
 	top: 1px;
 }
 
+@media only screen and (max-width: 768px) {
+	.pagemenu_container {
+		padding-bottom: 2px;
+		border-bottom: 0;
+	}
+
+	.pagemenu_container ul#pagemenu,
+	.pagemenu_container table#pagemenu tr {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		align-items: stretch;
+	}
+
+	.pagemenu_container table#pagemenu,
+	.pagemenu_container table#pagemenu tbody {
+		display: block;
+		width: 100%;
+	}
+
+	.pagemenu_container ul#pagemenu li,
+	.pagemenu_container table#pagemenu th {
+		display: block;
+		float: none;
+		margin: 0;
+	}
+
+	.pagemenu_container table#pagemenu td {
+		display: none;
+	}
+
+	.pagemenu_container ul#pagemenu li a,
+	.pagemenu_container table#pagemenu a {
+		box-sizing: border-box;
+		float: none;
+		height: 100%;
+		margin-bottom: 0;
+		padding: 5px 9px;
+		border: 1px solid var(--tab-border);
+		border-radius: 6px;
+	}
+
+	.pagemenu_container ul#pagemenu li a.current,
+	.pagemenu_container table#pagemenu a.current {
+		top: 0;
+	}
+}
+
 .thsort,
 .thsort:link,
 .thsort:visited {
