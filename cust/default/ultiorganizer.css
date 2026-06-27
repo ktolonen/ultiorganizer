@@ -342,6 +342,29 @@ td {
 	display: none;
 }
 
+.gameplay-scoreboards {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px;
+	width: 100%;
+}
+
+.gameplay-scoreboard {
+	min-width: 0;
+	overflow-x: auto;
+}
+
+.gameplay-scoreboard table {
+	width: 100%;
+	margin: 5px 0;
+}
+
+.gameplay-scoreboard caption {
+	padding: 2px 3px;
+	font-weight: bold;
+	text-align: center;
+}
+
 @media only screen and (max-width: 768px) {
 	.page {
 		border-left: 0;
@@ -362,6 +385,11 @@ td {
 	.page_middle > table {
 		width: 100%;
 		margin: 0;
+	}
+
+	.gameplay-scoreboards {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 12px;
 	}
 
 	.menu_left {

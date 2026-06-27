@@ -77,12 +77,10 @@ if (GameHasStarted($game_result) > 0) {
 
         //score board
 
-        $html .= "<table style='width:100%'><tr><td valign='top' style='width:45%'>\n";
-
-        $html .= "<table width='100%' cellspacing='0' cellpadding='0' border='0'>\n";
-        $html .= "<tr style='height=20'><td align='center'><b>";
-        $html .= utf8entities($game_result['hometeamname']) . "</b></td></tr>\n";
-        $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
+        $html .= "<div class='gameplay-scoreboards'>\n";
+        $html .= "<div class='gameplay-scoreboard'>\n";
+        $html .= "<table cellspacing='0' cellpadding='3' border='0'>";
+        $html .= "<caption>" . utf8entities($game_result['hometeamname']) . "</caption>\n";
         $html .= "<tr><th class='home'>#</th><th class='home'>" . _("Name") . "</th><th class='home center'>" . _("Assists") . "</th><th class='home center'>" . _("Goals") . "</th>
 		 <th class='home center'>" . _("Tot.") . "</th></tr>\n";
 
@@ -99,19 +97,13 @@ if (GameHasStarted($game_result) > 0) {
             $html .= "<td class='center'>" . $row['total'] . "</td>";
             $html .= "</tr>";
         }
-
-
-        $html .= "</table></td>\n<td style='width:10%'>&nbsp;</td><td valign='top' style='width:45%'>";
-
-        $html .= "<table width='100%' cellspacing='0' cellpadding='0' border='0'>";
-        $html .= "<tr><td><b>";
-        $html .= utf8entities($game_result['visitorteamname']) . "</b></td></tr>\n";
-        $html .= "</table><table width='100%' cellspacing='0' cellpadding='3' border='0'>";
+        $html .= "</table>\n</div>\n";
+        $html .= "<div class='gameplay-scoreboard'>\n";
+        $html .= "<table cellspacing='0' cellpadding='3' border='0'>";
+        $html .= "<caption>" . utf8entities($game_result['visitorteamname']) . "</caption>\n";
         $html .= "<tr><th class='guest'>#</th><th class='guest'>" . _("Name") . "</th><th class='guest center'>";
         $html .= _("Assists") . "</th><th class='guest center'>" . _("Goals");
         $html .= "</th><th class='guest center'>" . _("Tot.") . "</th></tr>\n";
-
-
         foreach ($guest_team_score_board as $row) {
             $html .= "<tr>";
             $html .= "<td style='text-align:right'>" . $row['num'] . "</td>";
@@ -125,8 +117,7 @@ if (GameHasStarted($game_result) > 0) {
             $html .= "<td class='center'>" . $row['total'] . "</td>";
             $html .= "</tr>";
         }
-
-        $html .= "</table></td></tr></table>\n";
+        $html .= "</table>\n</div>\n</div>\n";
 
         //timeline
         //$points[50][7];
