@@ -1556,3 +1556,116 @@ function mergesort(&$array, $cmp_function = 'strcmp')
     }
     return;
 }
+
+/**
+ * Compact-table column abbreviations.
+ *
+ * Wide statistics and standings tables use short, language-neutral
+ * abbreviations in their headers (GP, W, GF, ...). The abbreviation is never
+ * translated and reads the same in every locale; the explanation is, and is
+ * shown in a legend below the table (see TableLegend()). Each label reuses an
+ * existing gettext string, so no new translatable strings are introduced. See
+ * docs/terminology.md for the approved abbreviations.
+ *
+ * Returns ['abbr' => string, 'label' => string] for a known column key, or null
+ * for an unregistered key (callers then fall back to the full label).
+ */
+function ColumnAbbr($key)
+{
+    switch ($key) {
+        // Standings / results columns.
+        case 'games':
+            return ['abbr' => 'GP', 'label' => _("Games")];
+        case 'wins':
+            return ['abbr' => 'W', 'label' => _("Wins")];
+        case 'draws':
+            return ['abbr' => 'D', 'label' => _("Draws")];
+        case 'losses':
+            return ['abbr' => 'L', 'label' => _("Losses")];
+        case 'goalsfor':
+            return ['abbr' => 'GF', 'label' => _("Goals for")];
+        case 'goalsagainst':
+            return ['abbr' => 'GA', 'label' => _("Goals against")];
+        case 'goalsdiff':
+            return ['abbr' => 'GD', 'label' => _("Goals diff")];
+            // Player-statistics columns.
+        case 'goals':
+            return ['abbr' => 'G', 'label' => _("Goals")];
+        case 'assists':
+            return ['abbr' => 'A', 'label' => _("Assists")];
+        case 'callahans':
+            // Reuse the existing singular msgid rather than mint a plural variant.
+            return ['abbr' => 'Call.', 'label' => _("Callahan")];
+        case 'defences':
+            return ['abbr' => 'D', 'label' => _("Defences")];
+        case 'total':
+            return ['abbr' => 'Tot.', 'label' => _("Total")];
+            // Generic per-game-average marker; combine with a stat letter for the
+            // header (e.g. "A Avg.") and explain it once in the legend.
+        case 'avg':
+            return ['abbr' => 'Avg.', 'label' => _("Average")];
+        default:
+            return null;
+    }
+}
+
+/**
+ * Inner header text for a column: the abbreviation when registered, otherwise
+ * $fallback (typically the full translated label). Use this when the caller
+ * builds its own <th>, e.g. sortable headers wrapped in <a class='thsort'>.
+ */
+function ColumnAbbrLabel($key, $fallback = null)
+{
+    $abbr = ColumnAbbr($key);
+    if ($abbr !== null) {
+        return $abbr['abbr'];
+    }
+    return $fallback !== null ? $fallback : $key;
+}
+
+/**
+ * Complete <th> cell for a column header. Renders the abbreviation when
+ * registered, otherwise the full translated $fallback label. $class keeps the
+ * caller's existing cell styling (defaults to 'center').
+ */
+function ColumnAbbrCell($key, $fallback = null, $class = 'center')
+{
+    $text = ColumnAbbrLabel($key, $fallback);
+    $classAttr = $class !== '' ? " class='" . $class . "'" : '';
+    return "<th" . $classAttr . ">" . $text . "</th>";
+}
+
+/**
+ * Localized legend caption for a set of abbreviated columns, built from the
+ * ColumnAbbr() registry. Only registered keys appear; order follows $keys.
+ */
+function ColumnLegend(array $keys)
+{
+    $pairs = [];
+    foreach ($keys as $key) {
+        $abbr = ColumnAbbr($key);
+        if ($abbr !== null) {
+            $pairs[$abbr['abbr']] = $abbr['label'];
+        }
+    }
+    return TableLegend($pairs);
+}
+
+/**
+ * Generic localized legend caption from ordered [abbreviation => explanation]
+ * pairs. Emitted as the first child of the table; CSS .table-legend renders it
+ * below. Returns an empty string when there are no pairs. Use this directly
+ * when the abbreviations are not part of the ColumnAbbr() registry, e.g. spirit
+ * categories listed under a table.
+ */
+function TableLegend(array $pairs)
+{
+    $parts = [];
+    foreach ($pairs as $abbr => $label) {
+        $parts[] = $abbr . ": " . $label;
+    }
+    if (count($parts) == 0) {
+        return "";
+    }
+    return "<caption class='table-legend'>" . implode(" | ", $parts) . "</caption>";
+}

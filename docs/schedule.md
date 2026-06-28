@@ -90,8 +90,8 @@ The output row contains the data needed by HTML, PDF, and API consumers: game id
 
 Important current detail:
 
-- the HTML row renderer does not use abbreviation or country / flag fields
-- the API and some other outputs do use them
+- the HTML row renderer shows the country flag before each real team name when the event is international (`uo_season.isinternational`), mirroring the pool-standings flag; it does not use the abbreviation fields
+- the API and some other outputs use the abbreviation and country fields as well
 
 The timetable views also preload live-media links through `GetMediaUrlListForGames(..., "live")` and RSS enablement through `IsGameRSSEnabled()`, so `GameRow()` renders from both the timetable query and preloaded media / RSS state.
 

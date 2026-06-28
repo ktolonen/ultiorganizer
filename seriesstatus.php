@@ -118,6 +118,7 @@ $html .= "<h2>" . _("Division statistics:") . " " . utf8entities($seriesinfo['na
 $style = "";
 
 $html .= "<table border='1' style='width:100%'>\n";
+$html .= ColumnLegend(['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff']);
 $html .= "<tr>";
 
 if ($sort == "ranking") {
@@ -163,39 +164,39 @@ if ($sort == "ranking") {
 }
 
 if ($sort == "games") {
-    $html .= "<th class='center'>" . _("Games") . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('games') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=games'>" . _("Games") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=games'>" . ColumnAbbrLabel('games') . "</a></th>";
 }
 
 if ($sort == "wins") {
-    $html .= "<th class='center'>" . _("Wins") . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('wins') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=wins'>" . _("Wins") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=wins'>" . ColumnAbbrLabel('wins') . "</a></th>";
 }
 
 if ($sort == "losses") {
-    $html .= "<th class='center'>" . _("Losses") . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('losses') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=losses'>" . _("Losses") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=losses'>" . ColumnAbbrLabel('losses') . "</a></th>";
 }
 
 if ($sort == "for") {
-    $html .= "<th class='center'>" . _("Goals for") . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('goalsfor') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=for'>" . _("Goals for") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=for'>" . ColumnAbbrLabel('goalsfor') . "</a></th>";
 }
 
 if ($sort == "against") {
-    $html .= "<th class='center'>" . _("Goals against") . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('goalsagainst') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=against'>" . _("Goals against") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=against'>" . ColumnAbbrLabel('goalsagainst') . "</a></th>";
 }
 
 if ($sort == "diff") {
-    $html .= "<th class='center'>" . _("Goals diff") . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('goalsdiff') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=diff'>" . _("Goals diff") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=diff'>" . ColumnAbbrLabel('goalsdiff') . "</a></th>";
 }
 
 if ($sort == "winavg") {

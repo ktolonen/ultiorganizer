@@ -42,14 +42,13 @@ foreach ($allpools as $pool) {
     }
     echo "<p><b>" . utf8entities($poolinfo['name']) . "</b></p>";
     if ($poolinfo['type'] == 1) {
+        $columns = ['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff'];
         echo "<table width='95%' class='pk_table'>\n";
+        echo ColumnLegend($columns);
         echo "<tr><th style='width:5%' class='pk_ser_th'>#</th><th class='pk_ser_th'>" . _("Team") . "</th>";
-        echo "<th style='width:8%' class='pk_ser_th'>" . _("Games") . "</th>";
-        echo "<th style='width:8%' class='pk_ser_th'>" . _("Wins") . "</th>";
-        echo "<th style='width:8%' class='pk_ser_th'>" . _("Losses") . "</th>";
-        echo "<th style='width:8%' class='pk_ser_th'>" . _("Goals for") . "</th>";
-        echo "<th style='width:8%' class='pk_ser_th'>" . _("Goals against") . "</th>";
-        echo "<th style='width:8%' class='pk_ser_th'>" . _("Goal diff") . "</th>";
+        foreach ($columns as $column) {
+            echo "<th style='width:8%' class='pk_ser_th'>" . ColumnAbbrLabel($column) . "</th>";
+        }
         echo "</tr>\n";
 
         $standings = PoolTeams($poolinfo['pool_id'], "rank");

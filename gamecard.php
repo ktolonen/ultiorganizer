@@ -96,34 +96,43 @@ foreach ($games as $game) {
 
 $html .= "<h2>" . utf8entities($team1['name']) . " vs. " . utf8entities($team2['name']) . "</h2>\n";
 
-$html .= "<table border='1' width='100%'><tr>\n
-		<th>" . _("Team") . "</th><th>" . _("Games") . "</th><th>" . _("Wins") . "</th><th>" . _("Losses") . "</th><th>" . _("Win-%") . "</th><th>" . _("Goals for") . "</th>
-		<th title='" . _("Goals for avg.") . "'>" . _("GF Avg.") . "</th><th>" . _("Goals against") . "</th><th title='" . _("Goals against avg.") . "'>" . _("GA Avg.") . "</th><th>" . _("Goals diff") . "</th>
-		</tr>\n";
+$html .= "<table class='statistics-table' border='1' width='100%'>\n";
+$html .= ColumnLegend(['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff', 'avg']);
+$html .= "<tr><th class='left'>" . _("Team") . "</th>";
+$html .= ColumnAbbrCell('games');
+$html .= ColumnAbbrCell('wins');
+$html .= ColumnAbbrCell('losses');
+$html .= "<th class='center'>" . _("Win-%") . "</th>";
+$html .= ColumnAbbrCell('goalsfor');
+$html .= "<th class='center'>" . ColumnAbbrLabel('goalsfor') . " " . ColumnAbbrLabel('avg') . "</th>";
+$html .= ColumnAbbrCell('goalsagainst');
+$html .= "<th class='center'>" . ColumnAbbrLabel('goalsagainst') . " " . ColumnAbbrLabel('avg') . "</th>";
+$html .= ColumnAbbrCell('goalsdiff');
+$html .= "</tr>\n";
 
 $html .= "<tr>
-	 <td><a href='?view=teamcard&amp;team=$teamId1'>" . utf8entities($team1['name']) . "</a></td>
-	 <td>$nGames</td>
-	 <td>$nT1Wins</td>
-	 <td>$nT1Loses</td>
-	 <td>" . number_format((SafeDivide($nT1Wins, $nGames) * 100), 1) . " %</td>
-	 <td>$nT1GoalsMade</td>
-	 <td>" . number_format(SafeDivide($nT1GoalsMade, $nGames), 1) . "</td>
-	 <td>$nT1GoalsAgainst</td>
-	 <td>" . number_format(SafeDivide($nT1GoalsAgainst, $nGames), 1) . "</td>
-	 <td>" . ($nT1GoalsMade - $nT1GoalsAgainst) . "</td></tr>\n";
+	 <td class='left'><a href='?view=teamcard&amp;team=$teamId1'>" . utf8entities($team1['name']) . "</a></td>
+	 <td class='center'>$nGames</td>
+	 <td class='center'>$nT1Wins</td>
+	 <td class='center'>$nT1Loses</td>
+	 <td class='center'>" . number_format((SafeDivide($nT1Wins, $nGames) * 100), 1) . " %</td>
+	 <td class='center'>$nT1GoalsMade</td>
+	 <td class='center'>" . number_format(SafeDivide($nT1GoalsMade, $nGames), 1) . "</td>
+	 <td class='center'>$nT1GoalsAgainst</td>
+	 <td class='center'>" . number_format(SafeDivide($nT1GoalsAgainst, $nGames), 1) . "</td>
+	 <td class='center'>" . ($nT1GoalsMade - $nT1GoalsAgainst) . "</td></tr>\n";
 
 $html .= "<tr>
-	 <td><a href='?view=teamcard&amp;team=$teamId2'>" . utf8entities($team2['name']) . "</a></td>
-	 <td>$nGames</td>
-	 <td>$nT2Wins</td>
-	 <td>$nT2Loses</td>
-	 <td>" . number_format((SafeDivide($nT2Wins, $nGames) * 100), 1) . " %</td>
-	 <td>$nT2GoalsMade</td>
-	 <td>" . number_format(SafeDivide($nT2GoalsMade, $nGames), 1) . "</td>
-	 <td>$nT2GoalsAgainst</td>
-	 <td>" . number_format(SafeDivide($nT2GoalsAgainst, $nGames), 1) . "</td>
-	 <td>" . ($nT2GoalsMade - $nT2GoalsAgainst) . "</td></tr>\n";
+	 <td class='left'><a href='?view=teamcard&amp;team=$teamId2'>" . utf8entities($team2['name']) . "</a></td>
+	 <td class='center'>$nGames</td>
+	 <td class='center'>$nT2Wins</td>
+	 <td class='center'>$nT2Loses</td>
+	 <td class='center'>" . number_format((SafeDivide($nT2Wins, $nGames) * 100), 1) . " %</td>
+	 <td class='center'>$nT2GoalsMade</td>
+	 <td class='center'>" . number_format(SafeDivide($nT2GoalsMade, $nGames), 1) . "</td>
+	 <td class='center'>$nT2GoalsAgainst</td>
+	 <td class='center'>" . number_format(SafeDivide($nT2GoalsAgainst, $nGames), 1) . "</td>
+	 <td class='center'>" . ($nT2GoalsMade - $nT2GoalsAgainst) . "</td></tr>\n";
 
 $html .= "</table>\n";
 
@@ -194,28 +203,28 @@ if ($nGames) {
     $html .= "</table>\n";
 
     $html .= "<h2>" . _("Scoreboard") . "</h2>\n";
-    $html .= "<table border='1' width='80%'><tr><th>#</th>";
+    $html .= "<table class='statistics-table' border='1' width='80%'><tr><th>#</th>";
 
     $sorted = false;
 
     if ($sorting == "pname") {
-        $html .= "<th><b>" . _("Player") . "</b></th>";
+        $html .= "<th class='left'><b>" . _("Player") . "</b></th>";
         mergesort($points, function ($b, $a) {
             return strcmp($b[1], $a[1]);
         });
         $sorted = true;
     } else {
-        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pname'>" . _("Player") . "</a></th>";
+        $html .= "<th class='left'><a class='thsort' href='" . $viewUrl . "sort=pname'>" . _("Player") . "</a></th>";
     }
 
     if ($sorting == "pteam") {
-        $html .= "<th><b>" . _("Team") . "</b></th>";
+        $html .= "<th class='left'><b>" . _("Team") . "</b></th>";
         mergesort($points, function ($b, $a) {
             return strcmp($b[2], $a[2]);
         });
         $sorted = true;
     } else {
-        $html .= "<th><a class='thsort' href='" . $viewUrl . "sort=pteam'>" . _("Team") . "</a></th>";
+        $html .= "<th class='left'><a class='thsort' href='" . $viewUrl . "sort=pteam'>" . _("Team") . "</a></th>";
     }
 
     if ($sorting == "pgames") {
@@ -262,35 +271,35 @@ if ($nGames) {
         $html .= "<tr> <td>" . ($i + 1) . "</td>";
 
         if ($sorting == "pname") {
-            $html .= "<td class='highlight'><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
+            $html .= "<td class='highlight left'><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
         } else {
-            $html .= "<td><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
+            $html .= "<td class='left'><a href='?view=playercard&amp;player=" . $points[$i][7] . "'>" . utf8entities($points[$i][1]) . "</a></td>";
         }
 
         if ($sorting == "pteam") {
-            $html .= "<td class='highlight'>" . utf8entities($points[$i][2]) . "</td>";
+            $html .= "<td class='highlight left'>" . utf8entities($points[$i][2]) . "</td>";
         } else {
-            $html .= "<td>" . utf8entities($points[$i][2]) . "</td>";
+            $html .= "<td class='left'>" . utf8entities($points[$i][2]) . "</td>";
         }
         if ($sorting == "pgames") {
-            $html .= "<td class='highlight cntr'>" . $points[$i][3] . "</td>";
+            $html .= "<td class='highlight'>" . $points[$i][3] . "</td>";
         } else {
-            $html .= "<td class='cntr'>" . $points[$i][3] . "</td>";
+            $html .= "<td>" . $points[$i][3] . "</td>";
         }
         if ($sorting == "ppasses") {
-            $html .= "<td class='highlight cntr'>" . $points[$i][4] . "</td>";
+            $html .= "<td class='highlight'>" . $points[$i][4] . "</td>";
         } else {
-            $html .= "<td class='cntr'>" . $points[$i][4] . "</td>";
+            $html .= "<td>" . $points[$i][4] . "</td>";
         }
         if ($sorting == "pgoals") {
-            $html .= "<td class='highlight cntr'>" . $points[$i][5] . "</td>";
+            $html .= "<td class='highlight'>" . $points[$i][5] . "</td>";
         } else {
-            $html .= "<td class='cntr'>" . $points[$i][5] . "</td>";
+            $html .= "<td>" . $points[$i][5] . "</td>";
         }
         if (($sorting == "ptotal") || (!$sorted)) {
-            $html .= "<td class='highlight cntr'>" . $points[$i][6] . "</td>";
+            $html .= "<td class='highlight'>" . $points[$i][6] . "</td>";
         } else {
-            $html .= "<td class='cntr'>" . $points[$i][6] . "</td>";
+            $html .= "<td>" . $points[$i][6] . "</td>";
         }
         $html .= "</tr>";
     }

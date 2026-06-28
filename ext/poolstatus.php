@@ -45,14 +45,13 @@ $seasoninfo = SeasonInfo($seasonId);
 $isInternational = !empty($seasoninfo) && !empty($seasoninfo['isinternational']);
 
 if ($poolinfo['type'] == 1) {
+    $columns = ['games', 'wins', 'losses', 'goalsfor', 'goalsagainst', 'goalsdiff'];
     echo "<table class='pk_table'>\n";
+    echo ColumnLegend($columns);
     echo "<tr><th class='pk_ser_th'>#</th><th class='pk_ser_th'>" . _("Team") . "</th>";
-    echo "<th class='pk_ser_th'>" . _("Games") . "</th>";
-    echo "<th class='pk_ser_th'>" . _("Wins") . "</th>";
-    echo "<th class='pk_ser_th'>" . _("Losses") . "</th>";
-    echo "<th class='pk_ser_th'>" . _("Goals for") . "</th>";
-    echo "<th class='pk_ser_th'>" . _("Goals against") . "</th>";
-    echo "<th class='pk_ser_th'>" . _("Goal diff") . "</th>";
+    foreach ($columns as $column) {
+        echo ColumnAbbrCell($column, null, 'pk_ser_th');
+    }
     echo "</tr>\n";
 
     $standings = PoolTeams($poolinfo['pool_id'], "rank");

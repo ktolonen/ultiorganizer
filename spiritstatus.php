@@ -91,6 +91,13 @@ usort($spiritAvg, function ($a, $b) use ($spsort) {
 });
 
 $html .= "<table class='teams-table' cellspacing='0' border='0' width='100%'>\n";
+$categoryLegend = [];
+$categoryNumber = 0;
+foreach ($scoreCategories as $cat) {
+    $categoryNumber++;
+    $categoryLegend[$categoryNumber] = utf8entities(_($cat['text']));
+}
+$html .= TableLegend($categoryLegend);
 $html .= "<tr>";
 if ($spsort === "team") {
     $html .= "<th style='width:35%'>" . _("Team") . "</th>";
@@ -102,12 +109,14 @@ if ($spsort === "games") {
 } else {
     $html .= "<th class='center' style='width:8%'><a class='thsort' href='" . $viewUrl . "&amp;spsort=games'>" . _("Games") . "</a></th>";
 }
+$categoryNumber = 0;
 foreach ($scoreCategories as $cat) {
+    $categoryNumber++;
     $sortKey = "cat_" . (int) $cat['category_id'];
     if ($spsort === $sortKey) {
-        $html .= "<th class='center'>" . utf8entities(_($cat['text'])) . "</th>";
+        $html .= "<th class='center'>" . $categoryNumber . "</th>";
     } else {
-        $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;spsort=" . urlencode($sortKey) . "'>" . utf8entities(_($cat['text'])) . "</a></th>";
+        $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;spsort=" . urlencode($sortKey) . "'>" . $categoryNumber . "</a></th>";
     }
 }
 if ($spsort === "total") {

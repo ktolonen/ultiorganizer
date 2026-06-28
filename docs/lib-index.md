@@ -11,7 +11,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/persistent-cache.functions.php`: cross-request TTL cache helpers (`CacheRememberFor`, `CacheForgetPersistent`, `CacheWipePersistent`) backed by files under `PERSISTENT_CACHE_DIR`.
 - `lib/club.functions.php`: club CRUD, club-team links, profiles, images, and external URLs.
 - `lib/comment.functions.php`: game and spirit comment storage, permission checks, metadata, HTML rendering, and logging hooks.
-- `lib/common.functions.php`: shared low-level helpers for dates, locale/time formatting, colors, CSV export, SQL filter/order builders, view resolution, and generic comment helpers.
+- `lib/common.functions.php`: shared low-level helpers for dates, locale/time formatting, colors, CSV export, SQL filter/order builders, view resolution, and generic comment helpers. Also the compact-table abbreviation/legend API: `ColumnAbbr()` is the column registry (extend it with a new `case` to register a column), and `ColumnAbbrCell()`/`ColumnAbbrLabel()`/`ColumnLegend()` render language-neutral abbreviated headers with a localized legend; `TableLegend()` builds a legend from explicit `[abbreviation => explanation]` pairs (e.g. spirit categories). Reuse these for any narrow standings or statistics table instead of inlining headers.
 - `lib/configuration.functions.php`: server config reads/writes, feature flags, customization discovery, and localization discovery.
 - `lib/country.functions.php`: country CRUD, dropdown helpers, team/country relations, and timezone list helpers.
 - `lib/data.functions.php`: JSON event snapshot export/import, whole-snapshot validation, FK-safe remapping, and player-profile matching.

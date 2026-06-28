@@ -176,6 +176,14 @@ td {
 	text-decoration: none;
 }
 
+.table-legend {
+	caption-side: bottom;
+	margin-top: 4px;
+	color: var(--text-muted);
+	font-size: 11px;
+	text-align: center;
+}
+
 .spirit-table td,
 .spirit-table th {
 	vertical-align: top;
@@ -264,6 +272,20 @@ td {
 	clear: both;
 }
 
+/*
+ * Pin the content layout table to the page width so a wide child table cannot
+ * stretch the cell (and thus the whole .page) past the viewport. Combined with
+ * overflow-x on .tdcontent, wide tables scroll inside the content cell instead,
+ * keeping .page and .page_top aligned at the page width.
+ */
+.page_middle > table {
+	width: 100%;
+	table-layout: fixed;
+	/* Override the global table margin: at width:100% a margin would push this
+	   structural table past the page's right border. */
+	margin: 0;
+}
+
 .page_bottom {
 	width: 100%;
 }
@@ -320,6 +342,29 @@ td {
 	display: none;
 }
 
+.gameplay-scoreboards {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 24px;
+	width: 100%;
+}
+
+.gameplay-scoreboard {
+	min-width: 0;
+	overflow-x: auto;
+}
+
+.gameplay-scoreboard table {
+	width: 100%;
+	margin: 5px 0;
+}
+
+.gameplay-scoreboard caption {
+	padding: 2px 3px;
+	font-weight: bold;
+	text-align: center;
+}
+
 @media only screen and (max-width: 768px) {
 	.page {
 		border-left: 0;
@@ -340,6 +385,11 @@ td {
 	.page_middle > table {
 		width: 100%;
 		margin: 0;
+	}
+
+	.gameplay-scoreboards {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 12px;
 	}
 
 	.menu_left {
@@ -480,6 +530,8 @@ td {
 .tdcontent {
 	/*border-left: solid #598788 4px;*/
 	width: 100%;
+	/* Scroll over-wide tables within the content cell (see .page_middle > table). */
+	overflow-x: auto;
 }
 
 .content {
@@ -737,6 +789,54 @@ table#pagemenu a.current {
 	top: 1px;
 }
 
+@media only screen and (max-width: 768px) {
+	.pagemenu_container {
+		padding-bottom: 2px;
+		border-bottom: 0;
+	}
+
+	.pagemenu_container ul#pagemenu,
+	.pagemenu_container table#pagemenu tr {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 4px;
+		align-items: stretch;
+	}
+
+	.pagemenu_container table#pagemenu,
+	.pagemenu_container table#pagemenu tbody {
+		display: block;
+		width: 100%;
+	}
+
+	.pagemenu_container ul#pagemenu li,
+	.pagemenu_container table#pagemenu th {
+		display: block;
+		float: none;
+		margin: 0;
+	}
+
+	.pagemenu_container table#pagemenu td {
+		display: none;
+	}
+
+	.pagemenu_container ul#pagemenu li a,
+	.pagemenu_container table#pagemenu a {
+		box-sizing: border-box;
+		float: none;
+		height: 100%;
+		margin-bottom: 0;
+		padding: 5px 9px;
+		border: 1px solid var(--tab-border);
+		border-radius: 6px;
+	}
+
+	.pagemenu_container ul#pagemenu li a.current,
+	.pagemenu_container table#pagemenu a.current {
+		top: 0;
+	}
+}
+
 .thsort,
 .thsort:link,
 .thsort:visited {
@@ -799,6 +899,17 @@ table#pagemenu a.current {
 
 .history-table th {
 	white-space: normal;
+}
+
+.statistics-table th,
+.statistics-table td {
+	text-align: center;
+	vertical-align: middle;
+}
+
+.statistics-table th.left,
+.statistics-table td.left {
+	text-align: left;
 }
 
 .teams-table {
@@ -1021,6 +1132,14 @@ tr.admintablerow>td {
 	font-style: italic;
 }
 
+.game-winner {
+	font-weight: normal;
+}
+
+.game-loser {
+	font-weight: normal;
+}
+
 .list_letter {
 	color: var(--text);
 	font-size: 10pt;
@@ -1193,4 +1312,20 @@ yuicalendar.table {
 	padding: 0 0 0 19px;
 	background: url("../../images/linkicons/feed_14x14.png") no-repeat 0 50%;
 	list-style-type: none;
+}
+
+/*
+ * Print overrides (kept last so they win the cascade). On screen, the content
+ * table is pinned (table-layout: fixed) and .tdcontent scrolls over-wide tables;
+ * when printing, restore natural flow so wide tables print in full instead of
+ * being clipped to the on-screen scroll region.
+ */
+@media print {
+	.page_middle > table {
+		table-layout: auto;
+	}
+
+	.tdcontent {
+		overflow-x: visible;
+	}
 }

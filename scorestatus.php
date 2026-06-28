@@ -45,6 +45,7 @@ if (iget("sort")) {
 
 $html .= "<h1>" . _("Scoreboard") . "</h1>\n";
 $html .= "<table style='width:100%' cellpadding='1' border='1'>";
+$html .= ColumnLegend(['games', 'assists', 'goals', 'callahans', 'total', 'avg']);
 
 $viewUrl = "?view=scorestatus&amp;";
 if ($teamId) {
@@ -73,46 +74,46 @@ if ($sort == "team") {
     $html .= "<th style='width:" . $teamColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=team'>" . _("Team") . "</a></th>";
 }
 if ($sort == "games") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Games") . "</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('games') . "</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=games'>" . _("Games") . "</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=games'>" . ColumnAbbrLabel('games') . "</a></th>";
 }
 if ($sort == "pass") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Assists") . "</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('assists') . "</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . ColumnAbbrLabel('assists') . "</a></th>";
 }
 if ($sort == "passavg") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Ast") . " Avg.</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('assists') . " Avg.</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=passavg'>" . _("Ast") . " Avg.</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=passavg'>" . ColumnAbbrLabel('assists') . " Avg.</a></th>";
 }
 if ($sort == "goal") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Goals") . "</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('goals') . "</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . ColumnAbbrLabel('goals') . "</a></th>";
 }
 if ($sort == "goalavg") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Gls") . " Avg.</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('goals') . " Avg.</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=goalavg'>" . _("Gls") . " Avg.</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=goalavg'>" . ColumnAbbrLabel('goals') . " Avg.</a></th>";
 }
 
 if ($sort == "callahan") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Call.") . "</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('callahans') . "</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=callahan'>" . _("Call.") . "</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=callahan'>" . ColumnAbbrLabel('callahans') . "</a></th>";
 }
 
 if ($sort == "total") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Tot.") . "</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('total') . "</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Tot.") . "</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=total'>" . ColumnAbbrLabel('total') . "</a></th>";
 }
 if ($sort == "totalavg") {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . _("Tot.") . " Avg.</b></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><b>" . ColumnAbbrLabel('total') . " Avg.</b></th>";
 } else {
-    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=totalavg'>" . _("Tot.") . " Avg.</a></th>";
+    $html .= "<th class='center' style='width:" . $numericColumnWidth . "'><a class='thsort' href='" . $viewUrl . "sort=totalavg'>" . ColumnAbbrLabel('total') . " Avg.</a></th>";
 }
 $html .= "</tr>";
 

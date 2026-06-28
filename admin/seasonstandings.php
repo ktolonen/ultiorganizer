@@ -269,6 +269,14 @@ foreach ($pools as $spool) {
         $columns = 10;
     }
     $html .= "<table $style border='0' width='100%' id='poolstanding_" . $poolId . "'>\n";
+    if ($poolinfo['type'] != 3) {
+        $legendColumns = ['games', 'wins'];
+        if ($poolinfo['drawsallowed']) {
+            $legendColumns[] = 'draws';
+        }
+        $legendColumns = array_merge($legendColumns, ['losses', 'goalsfor', 'goalsagainst', 'goalsdiff']);
+        $html .= ColumnLegend($legendColumns);
+    }
     $html .= $getHeading($poolId, $poolinfo, count($standings) > 0);
 
     if (count($standings)) {
@@ -407,15 +415,15 @@ function regularHeading($poolId, $poolinfo, $editbuttons)
     $html .= "<tr><th>" . _("Seed") . "&nbsp;" . ($editbuttons ? editButton("seed", $poolId) : "") . "</th>
             <th>" . _("Pos.") . "&nbsp;" . ($editbuttons ? editButton("rank", $poolId) : "") . "</th>
             <th>" . _("Team") . "</th>";
-    $html .= "<th class='center'>" . _("Games") . "</th>";
-    $html .= "<th class='center'>" . _("Wins") . "</th>";
+    $html .= ColumnAbbrCell('games');
+    $html .= ColumnAbbrCell('wins');
     if ($poolinfo['drawsallowed']) {
-        $html .= "<th class='center'>" . _("Draws") . "</th>";
+        $html .= ColumnAbbrCell('draws');
     }
-    $html .= "<th class='center'>" . _("Losses") . "</th>";
-    $html .= "<th class='center'>" . _("Goals for") . "</th>";
-    $html .= "<th class='center'>" . _("Goals against") . "</th>";
-    $html .= "<th class='center'>" . _("Goal diff") . "</th>";
+    $html .= ColumnAbbrCell('losses');
+    $html .= ColumnAbbrCell('goalsfor');
+    $html .= ColumnAbbrCell('goalsagainst');
+    $html .= ColumnAbbrCell('goalsdiff');
     if (showSpiritAverageColumn()) {
         $html .= "<th class='center'>" . _("Spirit score avg.") . "</th>";
     }
