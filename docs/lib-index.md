@@ -21,8 +21,10 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/game.functions.php`: game CRUD, results, scoresheet events, media links, player assignments, scheduling, live timing, and spirit table output.
 - `lib/image.functions.php`: uploaded image lookup/removal plus JPEG conversion and thumbnail generation.
 - `lib/include_only.guard.php`: include-time guard for files that must not be invoked directly.
+- `lib/locale.functions.php`: gettext locale resolution, installed/carrier-locale discovery, and locale activation.
 - `lib/location.functions.php`: location CRUD, search payloads, and localized location info text.
 - `lib/logging.functions.php`: audit/event logs, visitor/page-load logs, and helper log writers per domain action.
+- `lib/pdf.interfaces.php`: PDF purpose-file interfaces (`SchedulePdf`, `ScoreSheetPdf`, `BundledPlayerListScoreSheet`) implemented by `cust/*/pdfschedule.php` and `pdfscoresheet.php`.
 - `lib/player.functions.php`: player/profile CRUD, roster/profile sync, player stats, profile media, and CSV export.
 - `lib/plugin.functions.php`: plugin manifest lookup by category/type/format.
 - `lib/pool.functions.php`: pool/template CRUD, pool teams and games, standings-derived moves, playoff generation, swiss helpers, and CSV export.

@@ -13,7 +13,7 @@ The repository is organized as follows:
 * **api** JSON API entry points and versioned routing.
 * **cust** Skins and installation-specific customizations.
 * **login** Authentication and password reset entry points.
-* **mobile**, **scorekeeper**, **spiritkeeper**, **ext** Specialized entry points. `mobile/` is legacy and deprecated; `scorekeeper/` and `spiritkeeper/` are the supported replacements for the old mobile administration UI.
+* **mobile**, **scorekeeper**, **spiritkeeper**, **timekeeper**, **ext** Specialized entry points. `mobile/` is legacy and deprecated; `scorekeeper/` and `spiritkeeper/` are the supported replacements for the old mobile administration UI, and `timekeeper/` is a standalone, public WFDF time-limit signalling aid.
 * **images**, **locale**, **plugins** Static assets, translations, and plugin code.
 * **script** Client-side JavaScript assets.
 * **conf**, **sql** Configuration and database assets that should not be exposed by the web server.
@@ -93,6 +93,8 @@ API. See `docs/api.md` for endpoint examples and current constraints.
 
 Ultiorganizer was first introduced at the 2002 World Championships in Turku, after already being used by the Finnish Flying Disc Association from 1999. Even though the codebase has since been fully rewritten on a modern technology stack, the original vision has remained the same: a free, open, and reliable live-scoring system for Ultimate. This journey has only been possible because of the many people who use the system in real events and continuously improve it through feedback, testing, and patches.
 
+Ultiorganizer's current PHP codebase is mostly authored by **Kari Hulkko** (**ktolonen**), who also maintains the system in the Finnish Flying Disc Association (SLKL) context.
+
 Special thanks to **Pasi Niemi**, whose early and significant contributions helped launch the rewrite of the scoring system in PHP.
 
 Special thanks to **Bruno Gravato** for years of practical development work on a long-running fork used by major Ultimate organizations, including BULA, WFDF, EUF, and national federations. Bruno’s contributions include substantial maintenance and feature work beyond the 2014 upstream baseline.
@@ -100,15 +102,16 @@ Special thanks to **Bruno Gravato** for years of practical development work on a
 Thanks as well to **Justin Palmer** and **Patrick** for the [Live by BULA](https://github.com/layoutd/live-by-bula) collaboration.
 
 Contributors:
+- Alejandro Molina
+- Artsa
 - Asmo Soinio
 - Bruno Gravato
-- Hartti Suomela
-- Juha Jalovaara
-- Kari
-- Artsa
-- Pasi Niemi
 - cschaffner
-- Les
-- Plinio Moreno
+- Hartti Suomela
 - Jonathan Potts
+- Juha Jalovaara
+- Kari Hulkko
+- Les
+- Pasi Niemi
+- Plinio Moreno
 - Steffen Mecke

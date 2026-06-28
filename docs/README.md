@@ -6,6 +6,7 @@ This directory collects general project documentation.
 
 ### Core architecture
 
+- `architecture.md`: bird's-eye orientation — the core/surfaces shape, request lifecycle, domain model, and cross-cutting layers. Start here.
 - `api.md`: API structure, constraints, and examples.
 - `codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
 - `customization.md`: skin color token system, recoloring a skin with tokens, the dark-mode approach, and customization verification.

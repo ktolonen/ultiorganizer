@@ -14,6 +14,7 @@
 - `mobile/index.php`: deprecated legacy mobile administration entry point kept for compatibility.
 - `scorekeeper/index.php`: touchscreen scorekeeper entry point.
 - `spiritkeeper/index.php`: standalone Spiritkeeper entry point.
+- `timekeeper/index.php`: standalone, public Timekeeper entry point (no login).
 - `login/index.php` and `ext/index.php`: specialized entry points for those areas.
 
 `mobile/` is no longer the recommended operator surface. Use `scorekeeper/` for scorekeeping workflows and `spiritkeeper/` for spirit-entry workflows.
@@ -21,7 +22,7 @@
 ## Standalone vs include-only files
 
 - Not every `.php` file in the repository is a valid public endpoint.
-- Supported standalone entry points are the app index files such as `index.php`, `scorekeeper/index.php`, `spiritkeeper/index.php`, `mobile/index.php`, `login/index.php`, `ext/index.php`, and API entry points under `api/`.
+- Supported standalone entry points are the app index files such as `index.php`, `scorekeeper/index.php`, `spiritkeeper/index.php`, `timekeeper/index.php`, `mobile/index.php`, `login/index.php`, `ext/index.php`, and API entry points under `api/`.
 - Many subdirectory files are include-only views or helpers and should not bootstrap themselves when hit directly.
 - Include-only PHP files are guarded in code where cross-server portability matters:
   - `lib/` uses `lib/include_only.guard.php`
