@@ -9,7 +9,7 @@ keeping, standings, spirit scoring, and public results.
 
 ## The shape: one core, many surfaces
 
-There is a single shared core — `index.php`, the `lib/` helpers, and the database —
+There is a single shared core (`index.php`, the `lib/` helpers, and the database)
 and several thin entry points layered on top of it:
 
 - `index.php`: the main web app (admin and logged-in user pages).
@@ -34,7 +34,7 @@ A typical main-app request flows like this:
 5. All SQL and data access live in `lib/*.functions.php`, which call the wrappers in
    `lib/database.php`.
 6. `lib/database.php` serves reads through two caches when applicable (see below).
-7. Output is rendered with `localization.php` — gettext strings, `U_()` translations,
+7. Output is rendered with `localization.php`: gettext strings, `U_()` translations,
    and the skin's CSS token cascade.
 
 The page-layer-must-not-touch-SQL rule is enforced; see [database-access.md](database-access.md).
@@ -62,12 +62,12 @@ A file-by-file map of the helpers lives in [lib-index.md](lib-index.md).
 
 Concerns that run through most requests, each with its own doc:
 
-- **Auth & permissions** — roles and enforcement helpers: [permissions.md](permissions.md).
-- **Configuration** — the SYSTEM / INSTALLATION / EVENT taxonomy: [configuration-flags.md](configuration-flags.md).
-- **Translations** — gettext, static localized files, and DB-backed `U_()`: [translations.md](translations.md).
-- **Caching** — request-local ([runtime-cache.md](runtime-cache.md)) and cross-request TTL ([persistent-cache.md](persistent-cache.md)).
-- **Customization** — skins and the CSS color-token cascade: [customization.md](customization.md).
-- **Database changes** — versioned upgrades and migrations: [database-upgrades.md](database-upgrades.md).
+- **Auth & permissions** - roles and enforcement helpers: [permissions.md](permissions.md).
+- **Configuration** - the SYSTEM / INSTALLATION / EVENT taxonomy: [configuration-flags.md](configuration-flags.md).
+- **Translations** - gettext, static localized files, and DB-backed `U_()`: [translations.md](translations.md).
+- **Caching** - request-local ([runtime-cache.md](runtime-cache.md)) and cross-request TTL ([persistent-cache.md](persistent-cache.md)).
+- **Customization** - skins and the CSS color-token cascade: [customization.md](customization.md).
+- **Database changes** - versioned upgrades and migrations: [database-upgrades.md](database-upgrades.md).
 
 ## Where to go next
 
