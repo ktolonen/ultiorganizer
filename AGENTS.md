@@ -96,6 +96,7 @@ Pre-commit hooks remain the fast local gate; CI is the source of truth for what 
 
 ### Core architecture
 
+- `docs/architecture.md`: bird's-eye orientation — the core/surfaces shape, request lifecycle, domain model, and cross-cutting layers. Start here.
 - `docs/api.md`: API structure, constraints, and examples.
 - `docs/codebase-notes.md`: third-party components, PDF generation, plugins, and customization notes.
 - `docs/customization.md`: skin color token system, recoloring a skin with tokens, the dark-mode approach, and customization verification.

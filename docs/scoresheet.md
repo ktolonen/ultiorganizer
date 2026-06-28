@@ -229,7 +229,6 @@ Relevant columns:
 - `visitorscore`
 - `reservation`
 - `time`
-- `pool`
 - `halftime`
 - `official`
 - `isongoing`
