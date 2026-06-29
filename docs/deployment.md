@@ -42,6 +42,28 @@ docs/release/build-release.sh --cust wfdf
 `cust/default` is always included. Repeat `--cust` or pass a comma-separated list to include more than one non-default customization.
 When customizations are selected, the package filename includes the selected customization set, such as `ultiorganizer-update-cust-default-wfdf-4.0-abc1234.zip`.
 
+## Publish a GitHub release
+
+The Release workflow (`.github/workflows/release.yml`) runs when a tag whose name starts with `v` is pushed to GitHub. It checks that the tag version matches `version.php`, calls the release script to build both the install and update packages, and creates a GitHub Release with generated release notes.
+
+To publish a release after the `master` branch has passed CI:
+
+```sh
+git switch master
+git pull --ff-only
+git tag -a v.4.0 -m "Ultiorganizer 4.0"
+git push origin v.4.0
+```
+
+The repository's existing tags use `v.<version>`, as in `v.4.0`; `v4.0` is also accepted. The version after either prefix must exactly match the value in `version.php`.
+
+The workflow stores the following files in two places:
+
+- the install ZIP, update ZIP, and `SHA256SUMS` are permanent assets on the GitHub Release
+- the same files are retained for 30 days as an artifact of the workflow run
+
+Do not create the GitHub Release manually before pushing the tag because the workflow creates it. If the workflow fails before publishing, fix the problem, delete the tag locally and on GitHub, and then create and push the corrected tag.
+
 ## Install from a release package
 
 To install Ultiorganizer on a server:

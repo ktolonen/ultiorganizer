@@ -1,0 +1,62 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
+jobs:
+  publish:
+    name: Build and publish release packages
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          # The release script uses Git metadata and the release must be built
+          # from the exact tag that triggered this workflow.
+          fetch-depth: 0
+      - uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.3'
+          coverage: none
+      - name: Verify tag and application version
+        shell: bash
+        run: |
+          set -euo pipefail
+          tag_version="${GITHUB_REF_NAME#v}"
+          tag_version="${tag_version#.}"
+          app_version="$(php -r '$version = include "version.php"; echo $version;')"
+          if [[ "$tag_version" != "$app_version" ]]; then
+            echo "Tag version '$tag_version' does not match version.php '$app_version'." >&2
+            exit 1
+          fi
+      - name: Build install and update packages
+        run: |
+          bash docs/release/build-release.sh --install --yes
+          bash docs/release/build-release.sh --update --yes
+      - name: Create checksums
+        working-directory: dist
+        run: sha256sum ./*.zip > SHA256SUMS
+      - name: Store workflow artifacts
+        uses: actions/upload-artifact@v7
+        with:
+          name: ultiorganizer-${{ github.ref_name }}
+          path: dist/
+          if-no-files-found: error
+          retention-days: 30
+      - name: Publish GitHub release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "$GITHUB_REF_NAME" \
+            dist/*.zip \
+            dist/SHA256SUMS \
+            --verify-tag \
+            --generate-notes \
+            --title "Ultiorganizer $GITHUB_REF_NAME"
