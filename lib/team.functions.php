@@ -22,7 +22,7 @@ function TeamPlayerAccreditationArray($teamId)
 {
     $ret = [];
     foreach (TeamPlayerList($teamId) as $row) {
-        $ret["" . $row['accreditation_id']] = $row['firstname'] . " " . $row['lastname'];
+        $ret["" . $row['player_id']] = $row['firstname'] . " " . $row['lastname'];
     }
     return $ret;
 }
