@@ -180,7 +180,10 @@ function AdjustForDuplicateGames(&$moves, $games, $forward)
     }
 
     //	print "Loop from ".$startPos." until ".$stopPos." with steps ".($sign*2)."<br>";
-    for ($i = $startPos; $i != $stopPos; $i = $i + $sign * 2) {
+    // The loop steps by 2 and compares $moves[$i] with its partner $moves[$i + $sign].
+    // Guard the partner index so an odd number of moves stops on overshoot instead of
+    // skipping past $stopPos forever (which previously hung on out-of-bounds access).
+    for ($i = $startPos; $i != $stopPos && $i + $sign >= 0 && $i + $sign < count($moves); $i = $i + $sign * 2) {
         if (TeamsHavePlayed($moves[$i]['team_id'], $moves[$i + $sign]['team_id'], $games)) {
             // Find the first team in the rest of the list that hasn't played
             $j = FindUnplayedTeam($moves[$i]['team_id'], $i + 2 * $sign, $moves, $games, $forward);
