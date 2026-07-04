@@ -46,13 +46,13 @@ function ReservationPlaceText($locationName, $fieldName)
 function ReservationInfo($id)
 {
     $locale = str_replace(".", "_", getSessionLocale());
-    $query = sprintf("SELECT res.id, res.location, res.fieldname, res.reservationgroup, 
+    $query = sprintf("SELECT res.id, res.location, res.fieldname, res.reservationgroup,
 		res.date, res.starttime, res.endtime, loc.name, loc.lat, loc.lng,
-		inf.info as info, loc.address, res.season, count(game_id) as games  
-		FROM uo_reservation as res 
+		inf.info as info, loc.address, res.season,
+		(SELECT count(*) FROM uo_game as game WHERE game.reservation = res.id) as games
+		FROM uo_reservation as res
 	    left join uo_location as loc on (res.location=loc.id)
-	    LEFT JOIN uo_location_info inf on (loc.id = inf.location_id AND inf.locale='%s' ) 
-		left join uo_game as game on (res.id = game.reservation)
+	    LEFT JOIN uo_location_info inf on (loc.id = inf.location_id AND inf.locale='%s' )
 		WHERE res.id=%d", DBEscapeString($locale), (int) $id);
     return DBQueryToRow($query);
 }
