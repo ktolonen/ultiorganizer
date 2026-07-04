@@ -127,7 +127,7 @@ function TournamentView($games, $grouping = true)
     return $ret;
 }
 
-function SeriesView($games, $date = true, $time = false)
+function SeriesView($games, $date = true, $time = true)
 {
     $ret = "";
     $prevTournament = "";
@@ -165,7 +165,7 @@ function SeriesView($games, $date = true, $time = false)
         }
 
         //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-        $ret .= GameRow($game, true, true, true, false, false, true, $rss, true, $mediaUrlsByGame);
+        $ret .= GameRow($game, $date, $time, true, false, false, true, $rss, true, $mediaUrlsByGame);
 
         $prevTournament = $game['reservationgroup'];
         $prevPlace = $game['place_id'];
