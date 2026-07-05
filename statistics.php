@@ -106,7 +106,7 @@ if ($list == "teamstandings") {
                     continue;
                 }
                 $html .= "<tr>";
-                $html .= "<td style='width:16%%'><a href='?view=scorestatus&Series=" . $scores[0]['series'] . "'>" . utf8entities(U_($season['name'])) . "</a></td>";
+                $html .= "<td style='width:16%%'><a href='?view=scorestatus&series=" . $scores[0]['series'] . "'>" . utf8entities(U_($season['name'])) . "</a></td>";
 
                 for ($i = 0; $i < count($scores) && $i < 3; $i++) {
                     $html .= "<td style='width:28%'>";

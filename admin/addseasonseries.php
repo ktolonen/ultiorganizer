@@ -44,7 +44,7 @@ if (!empty($_POST['add'])) {
 
         $seriesId = AddSeries($sp);
         session_write_close();
-        header("location:?view=admin/seasonseries&Season=$season");
+        header("location:?view=admin/seasonseries&season=$season");
     } else {
         $html .= "<p class='warning'>" . _("Division name is mandatory!") . "</p>";
     }
@@ -63,7 +63,7 @@ if (!empty($_POST['add'])) {
 
         SetSeries($sp);
         session_write_close();
-        header("location:?view=admin/seasonseries&Season=$season");
+        header("location:?view=admin/seasonseries&season=$season");
     } else {
         $html .= "<p class='warning'>" . _("Division name is mandatory!") . "</p>";
     }
