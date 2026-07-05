@@ -176,6 +176,18 @@ td {
 	text-decoration: none;
 }
 
+/*
+ * Many data tables opt into cell borders with the legacy HTML border="1"
+ * attribute rather than CSS. Chromium drops that presentational hint at
+ * fractional display scaling (e.g. Windows at 125%/150%), so the thin grid
+ * lines disappear while Linux at 100% renders them. Declaring the borders
+ * explicitly makes them paint reliably as 1px lines across platforms.
+ */
+table[border="1"] th,
+table[border="1"] td {
+	border: 1px solid var(--border);
+}
+
 .table-legend {
 	caption-side: bottom;
 	margin-top: 4px;
