@@ -22,7 +22,7 @@ function TeamPlayerAccreditationArray($teamId)
 {
     $ret = [];
     foreach (TeamPlayerList($teamId) as $row) {
-        $ret["" . $row['accreditation_id']] = $row['firstname'] . " " . $row['lastname'];
+        $ret["" . $row['player_id']] = $row['firstname'] . " " . $row['lastname'];
     }
     return $ret;
 }
@@ -950,7 +950,7 @@ function TeamScoreBoardWithDefenses($teamId, $pools, $sorting, $limit)
         $query = sprintf(
             "
 			SELECT p.player_id, p.firstname, p.lastname, j.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, COALESCE(d.deftotal) AS deftotal   
+				COALESCE(t1.callahan,0) AS callahan, (COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, COALESCE(pel.games,0) AS games, COALESCE(d.deftotal,0) AS deftotal
 			FROM uo_player AS p 
 				LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done FROM uo_goal AS m 
 					LEFT JOIN uo_game_pool AS ps ON (m.game=ps.game) 

@@ -336,8 +336,8 @@ function GetScriptName()
         return $_SERVER['SCRIPT_NAME'];
     } elseif (isset($_SERVER['PHP_SELF'])) {
         return htmlspecialchars($_SERVER['PHP_SELF']);
-    } elseif (isset($_SERVER['PATH_INFO '])) {
-        return $_SERVER['PATH_INFO '];
+    } elseif (isset($_SERVER['PATH_INFO'])) {
+        return $_SERVER['PATH_INFO'];
     } else {
         die("Cannot find page address");
     }

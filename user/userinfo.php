@@ -443,8 +443,9 @@ if (hasEditUsersRight() || $_SESSION['uid'] == $userid) {
                     $html .= "<tr><td>";
                     $html .= _("Scheduling right");
                     $reservationInfo = ReservationInfo($akey);
-                    $resName = ReservationName($reservationInfo);
-                    $html .= " (" . $resName . ")";
+                    if ($reservationInfo !== null) {
+                        $html .= " (" . ReservationName($reservationInfo) . ")";
+                    }
                     $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
                 }
             } elseif ($role == 'resgameadmin') {
@@ -452,8 +453,9 @@ if (hasEditUsersRight() || $_SESSION['uid'] == $userid) {
                     $html .= "<tr><td>";
                     $html .= _("Reservation game input responsible");
                     $reservationInfo = ReservationInfo($akey);
-                    $resName = ReservationName($reservationInfo);
-                    $html .= " (" . $resName . ")";
+                    if ($reservationInfo !== null) {
+                        $html .= " (" . ReservationName($reservationInfo) . ")";
+                    }
                     $html .= "</td><td><input class='deletebutton' type='image' src='images/remove.png' name='remuserrole' value='X' alt='X' onclick='setId(" . $prop_id . ", \"deleteRoleId\");'/></td></tr>\n";
                 }
             } elseif ($role == 'gameadmin') {

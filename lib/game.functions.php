@@ -59,7 +59,8 @@ function PoolGameSetResults($pool, $games)
 		LEFT JOIN uo_team As k ON (p.hometeam=k.team_id) 
 		LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
 		LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
-		WHERE p.game_id IN (%s) AND pool=%d",
+		LEFT JOIN uo_game_pool gp ON (gp.game=p.game_id AND gp.timetable=1)
+		WHERE p.game_id IN (%s) AND gp.pool=%d",
         implode(",", $gameIds),
         (int) $pool,
     );

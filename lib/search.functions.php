@@ -657,9 +657,10 @@ function PlayerResults()
     if (empty($_POST['searchplayer'])) {
         return "";
     } else {
-        $query = "SELECT DISTINCT MAX(player_id) as player_id, MAX(p.profile_id) as profile_id, CONCAT(firstname, ' ', lastname) as user_name, ";
-        $query .= "GROUP_CONCAT(DISTINCT email SEPARATOR ', ') as email, GROUP_CONCAT(DISTINCT t.name ORDER BY t.team_id DESC SEPARATOR ', ') as teamname ";
+        $query = "SELECT DISTINCT MAX(player_id) as player_id, MAX(p.profile_id) as profile_id, CONCAT(p.firstname, ' ', p.lastname) as user_name, ";
+        $query .= "GROUP_CONCAT(DISTINCT pp.email SEPARATOR ', ') as email, GROUP_CONCAT(DISTINCT t.name ORDER BY t.team_id DESC SEPARATOR ', ') as teamname ";
         $query .= "FROM uo_player p join uo_team t ON (p.team = t.team_id) ";
+        $query .= "left join uo_player_profile pp ON (p.profile_id = pp.profile_id) ";
 
         if (!empty($_POST['searchseasons'])) {
             $selected = array_flip($_POST['searchseasons']);
@@ -697,23 +698,23 @@ function PlayerResults()
             if (strlen($criteria) > 0) {
                 $criteria .= " and ";
             }
-            $criteria .= "(firstname like '%" . DBEscapeString($_POST['username']) . "%'";
-            $criteria .= " or lastname like '%" . DBEscapeString($_POST['username']) . "%'";
-            $criteria .= " or CONCAT(firstname, ' ', lastname) like '%" . DBEscapeString($_POST['username']) . "%')";
+            $criteria .= "(p.firstname like '%" . DBEscapeString($_POST['username']) . "%'";
+            $criteria .= " or p.lastname like '%" . DBEscapeString($_POST['username']) . "%'";
+            $criteria .= " or CONCAT(p.firstname, ' ', p.lastname) like '%" . DBEscapeString($_POST['username']) . "%')";
         }
 
         if (!empty($_POST['email'])) {
             if (strlen($criteria) > 0) {
                 $criteria .= " and ";
             }
-            $criteria .= "(email like '%" . DBEscapeString($_POST['email']) . "%')";
+            $criteria .= "(pp.email like '%" . DBEscapeString($_POST['email']) . "%')";
         }
 
         if (strlen($criteria) > 0) {
             $query .= " WHERE " . $criteria;
         }
-        $query .= " GROUP BY p.profile_id, CONCAT(firstname, ' ', lastname)";
-        $query .= " ORDER BY lastname, firstname, t.name";
+        $query .= " GROUP BY p.profile_id, CONCAT(p.firstname, ' ', p.lastname)";
+        $query .= " ORDER BY p.lastname, p.firstname, t.name";
         $result = DBQuery($query);
 
         $ret = "<table><tr><th><input type='checkbox' onclick='checkAll(\"players[]\");'/></th>";

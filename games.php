@@ -288,13 +288,13 @@ if (count($games) == 0) {
 } elseif ($filter == 'series') {
     $html .= SeriesView($games);
 } elseif ($filter == 'today') {
-    $html .= SeriesView($games, false);
+    $html .= SeriesView($games, false, true);
 } elseif ($filter == 'yesterday') {
-    $html .= SeriesView($games, false);
+    $html .= SeriesView($games, false, true);
 } elseif ($filter == 'next') {
     $html .= TournamentView($games, $groupheader);
 } elseif ($filter == 'tomorrow') {
-    $html .= SeriesView($games, false);
+    $html .= SeriesView($games, false, true);
 } elseif ($filter == 'places') {
     $html .= PlaceView($games, $groupheader);
 } elseif ($filter == 'all') {
