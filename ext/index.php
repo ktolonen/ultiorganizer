@@ -206,81 +206,81 @@ $html .= "</ul>\n";
 if (!empty($season)) {
     $html .= "<h2>" . _("Score counter") . "</h2>\n";
     $html .= "<p class='highlight' ><code>
-			&lt;object data='$baseurl/ext/scorecounter.php?Season=$season&amp;Numbers=6' <br/>
+			&lt;object data='$baseurl/ext/scorecounter.php?season=$season&amp;numbers=6' <br/>
 			type='text/html' width='100px' height='60px'&gt;&lt;/object&gt;
 			</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/scorecounter.php?Season=$season&amp;Numbers=6' type='text/html' width='100px' height='60px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/scorecounter.php?season=$season&amp;numbers=6' type='text/html' width='100px' height='60px'></object></p>\n";
 
     $html .= "<h2>" . _("All pools") . "</h2>\n";
     $html .= "<p class='highlight' ><code>
-			&lt;object data='$baseurl/ext/eventpools.php?Season=$season&amp;Style=$selstyle' <br/>
+			&lt;object data='$baseurl/ext/eventpools.php?season=$season&amp;style=$selstyle' <br/>
 			type='text/html' width='600px' height='400px'&gt;&lt;/object&gt;
 			</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/eventpools.php?Season=$season&amp;Style=$selstyle' type='text/html' width='600px' height='400px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/eventpools.php?season=$season&amp;style=$selstyle' type='text/html' width='600px' height='400px'></object></p>\n";
 }
 
 if (!empty($seltournament)) {
     $html .= "<h2>" . _("All games in selected grouping") . "</h2>\n";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/tournament.php?Tournament=$seltournament&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/tournament.php?tournament=$seltournament&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='600px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/tournament.php?Tournament=$seltournament&amp;season=$season&amp;Style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/tournament.php?tournament=$seltournament&amp;season=$season&amp;style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
 }
 
 if (!empty($selpool)) {
     $html .= "<h2>" . _("Selected pool standings and scoreboard") . "</h2>";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/poolstatus.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/poolstatus.php?pool=$selpool&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='500px' height='200px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/poolstatus.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' type='text/html' width='500px' height='200px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/poolstatus.php?pool=$selpool&amp;season=$season&amp;style=$selstyle' type='text/html' width='500px' height='200px'></object></p>\n";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/poolscoreboard.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/poolscoreboard.php?pool=$selpool&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='300px' height='200px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/poolscoreboard.php?Pool=$selpool&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='200px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/poolscoreboard.php?pool=$selpool&amp;season=$season&amp;style=$selstyle' type='text/html' width='400px' height='200px'></object></p>\n";
 }
 if (!empty($selcountry)) {
     $html .= "<h2>" . _("Selected country's team standings and game results") . "</h2>\n";
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/countrystatus.php?Country=$selcountry&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/countrystatus.php?country=$selcountry&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='500px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
-    $html .= "<p><object data='$baseurl/ext/countrystatus.php?Country=$selcountry&amp;season=$season&amp;Style=$selstyle' type='text/html' width='500px' height='300px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/countrystatus.php?country=$selcountry&amp;season=$season&amp;style=$selstyle' type='text/html' width='500px' height='300px'></object></p>\n";
 }
 
 if (!empty($selteam)) {
     $html .= "<h2>" . _("Selected team's games and scoreboard") . "</h2>\n";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/teamplayed.php?team=$selteam&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='400px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/teamplayed.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/teamplayed.php?team=$selteam&amp;season=$season&amp;style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/teamcoming.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/teamcoming.php?team=$selteam&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='400px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/teamcoming.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/teamcoming.php?team=$selteam&amp;season=$season&amp;style=$selstyle' type='text/html' width='400px' height='300px'></object></p>\n";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/teamscoreboard.php?team=$selteam&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='300px' height='200px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/teamscoreboard.php?Team=$selteam&amp;season=$season&amp;Style=$selstyle' type='text/html' width='300px' height='200px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/teamscoreboard.php?team=$selteam&amp;season=$season&amp;style=$selstyle' type='text/html' width='300px' height='200px'></object></p>\n";
 }
 $html .= "</form>\n";
 

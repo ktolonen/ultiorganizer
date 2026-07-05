@@ -2427,7 +2427,7 @@ msgstr "Pelin tulos"
 #: admin/finalstandings.php:42 admin/finalstandings.php:107
 #: admin/finalstandings.php:120 admin/seasonadmin.php:112 admin/stats.php:136
 msgid "Final standings"
-msgstr "Lopulliset sijoitukset"
+msgstr "Sijoitukset"
 
 #: admin/stats.php:85
 #, php-format

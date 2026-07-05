@@ -40,16 +40,16 @@ $html .= "<p>" . _("Get comma-separated UTF-8 encoded files by clicking the link
 $html .= " " . _("You can also change encoding and separator.") . "</p>\n";
 if (!empty($season)) {
     $html .= "<p>" . SeasonName($season) . "<br/>";
-    $html .= "<a href='ext/gamescsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("All scheduled games") . "</a><br/>";
-    $html .= "<a href='ext/resultscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("All results") . "</a><br/>";
-    $html .= "<a href='ext/playerscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Player statistics") . "</a><br/>";
-    $html .= "<a href='ext/teamscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Team statistics") . "</a><br/>";
-    $html .= "<a href='ext/poolscsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Pool standings") . "</a><br/>";
+    $html .= "<a href='ext/gamescsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("All scheduled games") . "</a><br/>";
+    $html .= "<a href='ext/resultscsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("All results") . "</a><br/>";
+    $html .= "<a href='ext/playerscsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("Player statistics") . "</a><br/>";
+    $html .= "<a href='ext/teamscsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("Team statistics") . "</a><br/>";
+    $html .= "<a href='ext/poolscsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("Pool standings") . "</a><br/>";
 
     $seasoninfo = SeasonInfo($season);
 
     if (ShowSpiritScoresForSeason($seasoninfo)) {
-        $html .= "<a href='ext/spiritcsv.php?Season=$season&amp;Enc=$encoding&amp;Sep=$separator'>&raquo; " . _("Spirit scores") . "</a><br/>";
+        $html .= "<a href='ext/spiritcsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("Spirit scores") . "</a><br/>";
     }
     $html .= "</p>";
 }

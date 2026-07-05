@@ -140,75 +140,75 @@ if ($sort == "ranking") {
 if ($sort == "name") {
     $html .= "<th style='width:180px'>" . _("Team") . "</th>";
 } else {
-    $html .= "<th style='width:180px'><a class='thsort' href='" . $viewUrl . "&amp;Sort=name'>" . _("Team") . "</a></th>";
+    $html .= "<th style='width:180px'><a class='thsort' href='" . $viewUrl . "&amp;sort=name'>" . _("Team") . "</a></th>";
 }
 
 /*
  if($sort == "pool") {
  $html .= "<th style='width:200px'>"._("Pool")."</th>";
  }else{
- $html .= "<th style='width:200px'><a href='".$viewUrl."&amp;Sort=pool'>"._("Pool")."</a></th>";
+ $html .= "<th style='width:200px'><a href='".$viewUrl."&amp;sort=pool'>"._("Pool")."</a></th>";
  }
  */
 
 if ($sort == "seed") {
     $html .= "<th class='center'>" . _("Seed") . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=seed'>" . _("Seed") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=seed'>" . _("Seed") . "</a></th>";
 }
 
 if ($sort == "ranking") {
     $html .= "<th class='center'>" . _("Rank") . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=ranking'>" . _("Rank") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=ranking'>" . _("Rank") . "</a></th>";
 }
 
 if ($sort == "games") {
     $html .= "<th class='center'>" . ColumnAbbrLabel('games') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=games'>" . ColumnAbbrLabel('games') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=games'>" . ColumnAbbrLabel('games') . "</a></th>";
 }
 
 if ($sort == "wins") {
     $html .= "<th class='center'>" . ColumnAbbrLabel('wins') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=wins'>" . ColumnAbbrLabel('wins') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=wins'>" . ColumnAbbrLabel('wins') . "</a></th>";
 }
 
 if ($sort == "losses") {
     $html .= "<th class='center'>" . ColumnAbbrLabel('losses') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=losses'>" . ColumnAbbrLabel('losses') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=losses'>" . ColumnAbbrLabel('losses') . "</a></th>";
 }
 
 if ($sort == "for") {
     $html .= "<th class='center'>" . ColumnAbbrLabel('goalsfor') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=for'>" . ColumnAbbrLabel('goalsfor') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=for'>" . ColumnAbbrLabel('goalsfor') . "</a></th>";
 }
 
 if ($sort == "against") {
     $html .= "<th class='center'>" . ColumnAbbrLabel('goalsagainst') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=against'>" . ColumnAbbrLabel('goalsagainst') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=against'>" . ColumnAbbrLabel('goalsagainst') . "</a></th>";
 }
 
 if ($sort == "diff") {
     $html .= "<th class='center'>" . ColumnAbbrLabel('goalsdiff') . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=diff'>" . ColumnAbbrLabel('goalsdiff') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=diff'>" . ColumnAbbrLabel('goalsdiff') . "</a></th>";
 }
 
 if ($sort == "winavg") {
     $html .= "<th class='center'>" . _("Win-%") . "</th>";
 } else {
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=winavg'>" . _("Win-%") . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=winavg'>" . _("Win-%") . "</a></th>";
 }
 if (ShowSpiritScoresForSeason($seasoninfo)) {
     if ($sort == "spirit") {
         $html .= "<th class='center'>" . _("Spirit score") . "</th>";
     } else {
-        $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;Sort=spirit'>" . _("Spirit score") . "</a></th>";
+        $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "&amp;sort=spirit'>" . _("Spirit score") . "</a></th>";
     }
 }
 
