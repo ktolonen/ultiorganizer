@@ -1,5 +1,10 @@
 --- a/admin.php
 +++ b/admin.php
+@@ -27,2 +27,2 @@
+-        // Validate input - season ID should be alphanumeric only
+-        if (!is_string($seasonId) || !preg_match('/^[a-zA-Z0-9_-]+$/', $seasonId)) {
++        // Validate input - season ID may contain letters, numbers, dots, underscores, and hyphens
++        if (!is_string($seasonId) || !preg_match('/^[a-zA-Z0-9._-]+$/', $seasonId)) {
 @@ -40,38 +40,11 @@
          // Open database connection
          OpenConnection();
@@ -44,6 +49,11 @@
  
          return $count > 0;
      } catch (Exception $e) {
+--- a/api.php
++++ b/api.php
+@@ -81 +81 @@
+-	$seasonId = preg_replace('/[^a-zA-Z0-9]/', '', LIVE_SEASON_ID);
++	$seasonId = preg_replace('/[^a-zA-Z0-9.]/', '', LIVE_SEASON_ID);
 --- a/api/AdminManager.php
 +++ b/api/AdminManager.php
 @@ -158,10 +158,9 @@
@@ -58,8 +68,16 @@
                  $allSeasons[] = [
                      'season_id' => $season['season_id'],
                      'name' => $season['name']
+--- a/api/CacheManager.php
++++ b/api/CacheManager.php
+@@ -23 +23 @@
+-		$seasonId = preg_replace('/[^a-zA-Z0-9]/', '', LIVE_SEASON_ID);
++		$seasonId = preg_replace('/[^a-zA-Z0-9.]/', '', LIVE_SEASON_ID);
 --- a/api/GameManager.php
 +++ b/api/GameManager.php
+@@ -23 +23 @@
+-		$seasonId = preg_replace('/[^a-zA-Z0-9]/', '', LIVE_SEASON_ID);
++		$seasonId = preg_replace('/[^a-zA-Z0-9.]/', '', LIVE_SEASON_ID);
 @@ -43,7 +43,8 @@
  		// First, let's the the game IDs that we're looking for
  		$query = sprintf(
@@ -161,7 +179,24 @@
  		if ($game['game_result']['status'] === 'ongoing') {
 --- a/api/ReferenceData.php
 +++ b/api/ReferenceData.php
-@@ -76,7 +76,7 @@
+@@ -9 +9 @@
+-		$seasonId = preg_replace('/[^a-zA-Z0-9]/', '', LIVE_SEASON_ID);
++		$seasonId = preg_replace('/[^a-zA-Z0-9.]/', '', LIVE_SEASON_ID);
+@@ -21,0 +22,7 @@
++		$seasonTeams = TeamManager::normalizeTeamCountries(SeasonTeams($seasonId));
++		$countries = CountryList(true, true);
++
++		if (in_array(TeamManager::UNKNOWN_COUNTRY['country_id'], array_column($seasonTeams, 'country'), true)) {
++			$countries[] = TeamManager::UNKNOWN_COUNTRY;
++		}
++
+@@ -57 +64 @@
+-			}, SeasonTeams($seasonId)),
++			}, $seasonTeams),
+@@ -62 +69 @@
+-			}, CountryList(true, true)),
++			}, $countries),
+@@ -76,7 +83,7 @@
  		$ref['season']['utcOffset'] = TimeHelper::getTimezoneOffset($ref['season']['timezone']);
  		// Spirit is active and visible
  		$ref['season']['spirit'] = intval($seasonInfo['spiritpoints'] && $seasonInfo['showspiritpoints']);
@@ -183,7 +218,41 @@
  		];
 --- a/api/TeamManager.php
 +++ b/api/TeamManager.php
-@@ -112,12 +112,12 @@
+@@ -6,0 +7,25 @@
++	public const UNKNOWN_COUNTRY = [
++		'country_id' => -1,
++		'name' => 'Unknown',
++		'abbreviation' => 'UNK',
++		'flagfile' => null,
++	];
++
++	public static function normalizeTeamCountries(array $teams): array
++	{
++		$clubCountries = array_column(ClubList(), 'country', 'club_id');
++
++		foreach ($teams as &$team) {
++			if (!empty($team['country'])) {
++				continue;
++			}
++
++			$clubId = isset($team['club']) ? (int) $team['club'] : 0;
++			$team['country'] = !empty($clubCountries[$clubId])
++				? (int) $clubCountries[$clubId]
++				: self::UNKNOWN_COUNTRY['country_id'];
++		}
++		unset($team);
++
++		return $teams;
++	}
++
+@@ -19 +44,2 @@
+-		foreach (SeasonTeams($seasonId) as $team) {
++		$seasonTeams = self::normalizeTeamCountries(SeasonTeams($seasonId));
++		foreach ($seasonTeams as $team) {
+@@ -91 +117 @@
+-		$team = TeamInfo($id);
++		$team = self::normalizeTeamCountries([TeamInfo($id)])[0];
+@@ -112,12 +138,12 @@
  		if ($includeSpiritStats) {
  			$team['spiritstats'] = TeamSpiritStats2($id, false);
  			$team['spirittotal'] = TeamSpiritTotal($id, false);
@@ -199,7 +268,7 @@
  			if ( ! $showSpiritComments ) {
  				foreach($team['spiritgiven'] as &$spirit) {
  					$spirit['comments'] = null;
-@@ -128,7 +128,7 @@
+@@ -128,7 +154,7 @@
  			}
  		}
  

@@ -31,6 +31,15 @@ versions), so the Live! skin works across both.
 
 ## Changes by file
 
+### `api.php`
+
+- Preserved dots in the season ID used for cache lock keys, allowing Live! to
+  operate with dotted Ultiorganizer season IDs.
+
+### `api/CacheManager.php`
+
+- Preserved dots in the season ID used for cache filenames.
+
 ### `api/AdminManager.php`
 
 - `getAvailableSeasons()`: replaced `while ($season = DBFetchAssoc(Seasons()))` cursor
@@ -39,6 +48,7 @@ versions), so the Live! skin works across both.
 
 ### `api/GameManager.php`
 
+- Preserved dots when sanitizing the season ID used by game queries.
 - `getGames()`: replaced the legacy `uo_game.pool` join with
   `uo_game_pool` using `timetable = 1`, which is the scheduled/original pool
   that `uo_game.pool` used to represent. The game list query still exposes
@@ -62,6 +72,10 @@ versions), so the Live! skin works across both.
 
 ### `api/ReferenceData.php`
 
+- Preserved dots when sanitizing the season ID used by reference-data queries.
+- Normalized team country IDs before building reference data and added an
+  explicit `Unknown` country entry when neither a team nor its club has a
+  country. This keeps the frontend's team and country maps consistent.
 - `getReferenceData()`: `ShowSpiritComments()` now requires a `$seasoninfo` argument.
   Changed to `ShowSpiritComments($seasonInfo)`.
 
@@ -73,6 +87,8 @@ versions), so the Live! skin works across both.
 
 ### `api/TeamManager.php`
 
+- Team list and detail responses now inherit a missing country from the team's
+  club, falling back to the shared `Unknown` country entry when necessary.
 - `getTeamDetail()`: replaced `mysqli_fetch_all(TeamSpiritPointsGiven(...), MYSQLI_ASSOC)`
   with `DBFetchAllAssoc(TeamSpiritPointsGiven(...))`.
 - `getTeamDetail()`: replaced `mysqli_fetch_all(TeamSpiritPointsReceived(...), MYSQLI_ASSOC)`
@@ -87,8 +103,8 @@ versions), so the Live! skin works across both.
 
 - `checkSeasonExists()`: replaced direct `mysqli_prepare` / `mysqli_stmt_bind_param` /
   `mysqli_stmt_execute` / `mysqli_fetch_assoc` block with `DBEscapeString()` +
-  `DBQueryToValue()`. Input is already validated to alphanumeric-only by the regex
-  guard above, so the escaping is sufficient.
+  `DBQueryToValue()`. The validation now accepts dots in addition to letters,
+  numbers, underscores, and hyphens.
 
 ## Changes made in ultiorganizer (your patch notes for the other side)
 
