@@ -29,7 +29,7 @@ For an official release — `HEAD` sits on an exact Git tag whose version matche
 ultiorganizer-install-4.0.0.zip
 ```
 
-The version part comes from `version.php`. If the current commit has an exact Git tag and that tag does not match `version.php`, the build prints a warning, keeps the commit hash in the name, and still creates the package.
+The version part comes from `version.php`. Any tag on the current commit whose version matches `version.php` marks an official release; a matching tag is recognized even when the commit also carries other tags, such as a pre-release tag. If the commit has tags but none match `version.php`, the build prints a warning, keeps the commit hash in the name, and still creates the package.
 
 Before building, the script prints the source branch or ref, clean/dirty working tree state, package type, selected customizations, version, commit, and output archive path, then asks for confirmation. For automated builds, pass `--yes` to accept this confirmation.
 

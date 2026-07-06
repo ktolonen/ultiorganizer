@@ -277,23 +277,36 @@ CUSTOMIZATION_SUMMARY="$(customization_summary)"
 GIT_SOURCE="$(current_git_source)"
 WORKING_TREE_STATE="$(working_tree_state)"
 
-# Decide whether this is an official tagged release. HEAD must sit on an exact
-# tag whose normalized version matches version.php, with a clean working tree.
+# Decide whether this is an official tagged release. HEAD must carry a tag whose
+# normalized version matches version.php, with a clean working tree. Any tag at
+# HEAD qualifies, so a matching release tag is still recognized when the commit
+# also carries other tags (for example a pre-release tag on the same commit).
 # Official releases use a plain version string (e.g. 4.0.0); development builds
 # append the commit hash so an untagged package can be traced to its commit.
-EXACT_TAG="$(git describe --exact-match --tags HEAD 2>/dev/null || true)"
+HEAD_TAGS="$(git tag --points-at HEAD)"
 IS_TAGGED_RELEASE=0
-if [[ -n "${EXACT_TAG}" ]]; then
-    NORMALIZED_TAG="${EXACT_TAG#v}"
-    NORMALIZED_TAG="${NORMALIZED_TAG#V}"
-    NORMALIZED_TAG="${NORMALIZED_TAG#.}"
-    if [[ "${NORMALIZED_TAG}" != "${APP_VERSION}" ]]; then
-        echo "warning: exact tag '${EXACT_TAG}' does not match version.php '${APP_VERSION}'" >&2
-    elif [[ "${WORKING_TREE_STATE}" == "clean" ]]; then
+MATCHING_TAG=""
+while IFS= read -r head_tag; do
+    if [[ -z "${head_tag}" ]]; then
+        continue
+    fi
+    normalized_tag="${head_tag#v}"
+    normalized_tag="${normalized_tag#V}"
+    normalized_tag="${normalized_tag#.}"
+    if [[ "${normalized_tag}" == "${APP_VERSION}" ]]; then
+        MATCHING_TAG="${head_tag}"
+        break
+    fi
+done <<< "${HEAD_TAGS}"
+
+if [[ -n "${MATCHING_TAG}" ]]; then
+    if [[ "${WORKING_TREE_STATE}" == "clean" ]]; then
         IS_TAGGED_RELEASE=1
     else
-        echo "warning: exact tag '${EXACT_TAG}' matches version.php but the working tree is not clean; including commit hash in package name" >&2
+        echo "warning: tag '${MATCHING_TAG}' matches version.php but the working tree is not clean; including commit hash in package name" >&2
     fi
+elif [[ -n "${HEAD_TAGS}" ]]; then
+    echo "warning: HEAD tags ($(echo ${HEAD_TAGS})) do not match version.php '${APP_VERSION}'; including commit hash in package name" >&2
 fi
 
 if [[ "${IS_TAGGED_RELEASE}" -eq 1 ]]; then
