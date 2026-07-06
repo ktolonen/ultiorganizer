@@ -5,7 +5,7 @@ database access refactoring (removal of direct `mysqli_*` usage from library fun
 
 ## Baseline
 
-These changes apply on top of **Live! by BULA v1.9.16**, available at:
+These changes apply on top of **Live! by BULA v1.9.17**, available at:
 https://github.com/layoutd/live-by-bula
 
 The patch file `ultiorganizer-compat.patch` in this directory contains all changes
@@ -22,6 +22,12 @@ To verify the patch applies cleanly without making changes:
 patch -p1 --dry-run < ultiorganizer-compat.patch
 ```
 
+> **Frontend limitation:** The public Live! release contains hashed, minified
+> JavaScript assets but not the frontend source or build toolchain. Frontend-only
+> fixes, such as changes to team-name rendering, must therefore be made and
+> rebuilt by the Live! maintainer. This compatibility patch intentionally avoids
+> modifying generated JavaScript bundles.
+
 ## Compat strategy
 
 All `mysqli_fetch_all(fn(), MYSQLI_ASSOC)` calls have been replaced with
@@ -31,14 +37,32 @@ versions), so the Live! skin works across both.
 
 ## Changes by file
 
+### `api.php`
+
+- Preserved dots in the season ID used for cache lock keys, allowing Live! to
+  operate with dotted Ultiorganizer season IDs.
+
+### `api/CacheManager.php`
+
+- Preserved dots in the season ID used for cache filenames.
+
+### `api/ConfigManager.php`
+
+- Restricted the maintenance-page setting documentation to the bundled
+  `/conf/comingsoon.php` page; arbitrary paths are rejected at runtime.
+
 ### `api/AdminManager.php`
 
+- `authenticate()` now validates a server-issued, one-time challenge and compares
+  the submitted credentials against the stored admin password with
+  `hash_equals()`. Challenges expire after five minutes and cannot be replayed.
 - `getAvailableSeasons()`: replaced `while ($season = DBFetchAssoc(Seasons()))` cursor
   loop with `foreach (DBFetchAllAssoc(Seasons()) as $season)`. `Seasons()` now returns
   an array in current ultiorganizer; `DBFetchAllAssoc` handles both old and new.
 
 ### `api/GameManager.php`
 
+- Preserved dots when sanitizing the season ID used by game queries.
 - `getGames()`: replaced the legacy `uo_game.pool` join with
   `uo_game_pool` using `timetable = 1`, which is the scheduled/original pool
   that `uo_game.pool` used to represent. The game list query still exposes
@@ -62,6 +86,10 @@ versions), so the Live! skin works across both.
 
 ### `api/ReferenceData.php`
 
+- Preserved dots when sanitizing the season ID used by reference-data queries.
+- Normalized team country IDs before building reference data and added an
+  explicit `Unknown` country entry when neither a team nor its club has a
+  country. This keeps the frontend's team and country maps consistent.
 - `getReferenceData()`: `ShowSpiritComments()` now requires a `$seasoninfo` argument.
   Changed to `ShowSpiritComments($seasonInfo)`.
 
@@ -73,6 +101,8 @@ versions), so the Live! skin works across both.
 
 ### `api/TeamManager.php`
 
+- Team list and detail responses now inherit a missing country from the team's
+  club, falling back to the shared `Unknown` country entry when necessary.
 - `getTeamDetail()`: replaced `mysqli_fetch_all(TeamSpiritPointsGiven(...), MYSQLI_ASSOC)`
   with `DBFetchAllAssoc(TeamSpiritPointsGiven(...))`.
 - `getTeamDetail()`: replaced `mysqli_fetch_all(TeamSpiritPointsReceived(...), MYSQLI_ASSOC)`
@@ -83,12 +113,18 @@ versions), so the Live! skin works across both.
   `DBFetchAllAssoc($players)`. `$players` may be a `mysqli_result` or an array
   depending on which code path runs; `DBFetchAllAssoc` handles both.
 
+### `enable-live.php`
+
+- Replaced the configurable file include with an allow-list containing only the
+  bundled maintenance page. Invalid paths fail closed with HTTP 503, preventing
+  path traversal and execution of writable configuration files.
+
 ### `admin.php`
 
 - `checkSeasonExists()`: replaced direct `mysqli_prepare` / `mysqli_stmt_bind_param` /
   `mysqli_stmt_execute` / `mysqli_fetch_assoc` block with `DBEscapeString()` +
-  `DBQueryToValue()`. Input is already validated to alphanumeric-only by the regex
-  guard above, so the escaping is sufficient.
+  `DBQueryToValue()`. The validation now accepts dots in addition to letters,
+  numbers, underscores, and hyphens.
 
 ## Changes made in ultiorganizer (your patch notes for the other side)
 
