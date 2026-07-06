@@ -63,7 +63,7 @@
                   "status": "ok",
                   "data": {
                     "ultiorganizer": {
-                      "version": "4.0",
+                      "version": "4.0.0",
                       "major": 4,
                       "minor": 0
                     },

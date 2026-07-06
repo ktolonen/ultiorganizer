@@ -15,13 +15,21 @@ Maintainers can build a package from the repository root:
 docs/release/build-release.sh
 ```
 
-The package is written to `dist/` with a name like:
+The package is written to `dist/`. The name depends on whether the build is an official tagged release.
+
+For a development build (any commit that is not an exact release tag, or a tagged commit with an unclean working tree), the name appends the short Git commit hash so the package can be traced to its commit:
 
 ```text
-ultiorganizer-install-4.0-abc1234.zip
+ultiorganizer-install-4.0.0-abc1234.zip
 ```
 
-The first part comes from `version.php`; the second part is the current Git commit hash. If the current commit has an exact Git tag and that tag does not match `version.php`, the build prints a warning but still creates the package.
+For an official release — `HEAD` sits on an exact Git tag whose version matches `version.php` and the working tree is clean — the commit hash is omitted, because the tag already identifies the commit:
+
+```text
+ultiorganizer-install-4.0.0.zip
+```
+
+The version part comes from `version.php`. Any tag on the current commit whose version matches `version.php` marks an official release; a matching tag is recognized even when the commit also carries other tags, such as a pre-release tag. If the commit has tags but none match `version.php`, the build prints a warning, keeps the commit hash in the name, and still creates the package.
 
 Before building, the script prints the source branch or ref, clean/dirty working tree state, package type, selected customizations, version, commit, and output archive path, then asks for confirmation. For automated builds, pass `--yes` to accept this confirmation.
 
@@ -40,7 +48,7 @@ docs/release/build-release.sh --cust wfdf
 ```
 
 `cust/default` is always included. Repeat `--cust` or pass a comma-separated list to include more than one non-default customization.
-When customizations are selected, the package filename includes the selected customization set, such as `ultiorganizer-update-cust-default-wfdf-4.0-abc1234.zip`.
+When customizations are selected, the package filename includes the selected customization set, such as `ultiorganizer-update-cust-default-wfdf-4.0.0-abc1234.zip`.
 
 ## Publish a GitHub release
 
@@ -51,11 +59,11 @@ To publish a release after the `master` branch has passed CI:
 ```sh
 git switch master
 git pull --ff-only
-git tag -a v.4.0 -m "Ultiorganizer 4.0"
-git push origin v.4.0
+git tag -a v.4.0.0 -m "Ultiorganizer 4.0.0"
+git push origin v.4.0.0
 ```
 
-The repository's existing tags use `v.<version>`, as in `v.4.0`; `v4.0` is also accepted. The version after either prefix must exactly match the value in `version.php`.
+The repository's existing tags use `v.<version>`, as in `v.4.0.0`; `v4.0.0` is also accepted. The version after either prefix must exactly match the value in `version.php`.
 
 The workflow stores the following files in two places:
 
