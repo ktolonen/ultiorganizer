@@ -274,23 +274,37 @@ validate_customizations
 COMMIT_HASH="$(git rev-parse --short HEAD)"
 CUSTOMIZATION_SUFFIX="$(customization_package_suffix)"
 CUSTOMIZATION_SUMMARY="$(customization_summary)"
-PACKAGE_VERSION="${APP_VERSION}-${COMMIT_HASH}"
-PACKAGE_NAME="ultiorganizer-${PACKAGE_TYPE}${CUSTOMIZATION_SUFFIX}-${PACKAGE_VERSION}"
-ARCHIVE_PATH="${DIST_DIR}/${PACKAGE_NAME}.zip"
 GIT_SOURCE="$(current_git_source)"
 WORKING_TREE_STATE="$(working_tree_state)"
 
-confirm_release_build
-
+# Decide whether this is an official tagged release. HEAD must sit on an exact
+# tag whose normalized version matches version.php, with a clean working tree.
+# Official releases use a plain version string (e.g. 4.0.0); development builds
+# append the commit hash so an untagged package can be traced to its commit.
 EXACT_TAG="$(git describe --exact-match --tags HEAD 2>/dev/null || true)"
+IS_TAGGED_RELEASE=0
 if [[ -n "${EXACT_TAG}" ]]; then
     NORMALIZED_TAG="${EXACT_TAG#v}"
     NORMALIZED_TAG="${NORMALIZED_TAG#V}"
     NORMALIZED_TAG="${NORMALIZED_TAG#.}"
     if [[ "${NORMALIZED_TAG}" != "${APP_VERSION}" ]]; then
         echo "warning: exact tag '${EXACT_TAG}' does not match version.php '${APP_VERSION}'" >&2
+    elif [[ "${WORKING_TREE_STATE}" == "clean" ]]; then
+        IS_TAGGED_RELEASE=1
+    else
+        echo "warning: exact tag '${EXACT_TAG}' matches version.php but the working tree is not clean; including commit hash in package name" >&2
     fi
 fi
+
+if [[ "${IS_TAGGED_RELEASE}" -eq 1 ]]; then
+    PACKAGE_VERSION="${APP_VERSION}"
+else
+    PACKAGE_VERSION="${APP_VERSION}-${COMMIT_HASH}"
+fi
+PACKAGE_NAME="ultiorganizer-${PACKAGE_TYPE}${CUSTOMIZATION_SUFFIX}-${PACKAGE_VERSION}"
+ARCHIVE_PATH="${DIST_DIR}/${PACKAGE_NAME}.zip"
+
+confirm_release_build
 
 WORK_DIR="$(mktemp -d)"
 trap 'rm -rf "${WORK_DIR}"' EXIT
