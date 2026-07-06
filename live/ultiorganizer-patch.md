@@ -5,7 +5,7 @@ database access refactoring (removal of direct `mysqli_*` usage from library fun
 
 ## Baseline
 
-These changes apply on top of **Live! by BULA v1.9.16**, available at:
+These changes apply on top of **Live! by BULA v1.9.17**, available at:
 https://github.com/layoutd/live-by-bula
 
 The patch file `ultiorganizer-compat.patch` in this directory contains all changes
@@ -21,6 +21,12 @@ To verify the patch applies cleanly without making changes:
 ```sh
 patch -p1 --dry-run < ultiorganizer-compat.patch
 ```
+
+> **Frontend limitation:** The public Live! release contains hashed, minified
+> JavaScript assets but not the frontend source or build toolchain. Frontend-only
+> fixes, such as changes to team-name rendering, must therefore be made and
+> rebuilt by the Live! maintainer. This compatibility patch intentionally avoids
+> modifying generated JavaScript bundles.
 
 ## Compat strategy
 
@@ -40,8 +46,16 @@ versions), so the Live! skin works across both.
 
 - Preserved dots in the season ID used for cache filenames.
 
+### `api/ConfigManager.php`
+
+- Restricted the maintenance-page setting documentation to the bundled
+  `/conf/comingsoon.php` page; arbitrary paths are rejected at runtime.
+
 ### `api/AdminManager.php`
 
+- `authenticate()` now validates a server-issued, one-time challenge and compares
+  the submitted credentials against the stored admin password with
+  `hash_equals()`. Challenges expire after five minutes and cannot be replayed.
 - `getAvailableSeasons()`: replaced `while ($season = DBFetchAssoc(Seasons()))` cursor
   loop with `foreach (DBFetchAllAssoc(Seasons()) as $season)`. `Seasons()` now returns
   an array in current ultiorganizer; `DBFetchAllAssoc` handles both old and new.
@@ -98,6 +112,12 @@ versions), so the Live! skin works across both.
 - `getTeamDetail()`: replaced `mysqli_fetch_all($players, MYSQLI_ASSOC)` with
   `DBFetchAllAssoc($players)`. `$players` may be a `mysqli_result` or an array
   depending on which code path runs; `DBFetchAllAssoc` handles both.
+
+### `enable-live.php`
+
+- Replaced the configurable file include with an allow-list containing only the
+  bundled maintenance page. Invalid paths fail closed with HTTP 503, preventing
+  path traversal and execution of writable configuration files.
 
 ### `admin.php`
 

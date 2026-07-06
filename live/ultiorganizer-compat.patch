@@ -56,7 +56,47 @@
 +	$seasonId = preg_replace('/[^a-zA-Z0-9.]/', '', LIVE_SEASON_ID);
 --- a/api/AdminManager.php
 +++ b/api/AdminManager.php
-@@ -158,10 +158,9 @@
+@@ -125,3 +125,19 @@
+-        // The response should be the hash of the password and challenge
+-        $expectedResponse = hash('sha256', $password . $challenge);
+-        return $expectedResponse === $response;
++        $issuedChallenge = $_SESSION['live_admin_challenge'] ?? null;
++        unset($_SESSION['live_admin_challenge']);
++
++        if (
++            !defined('CONFIG_ADMIN_PASSWORD') ||
++            !is_string($password) ||
++            !is_string($challenge) ||
++            !is_string($response) ||
++            !is_array($issuedChallenge) ||
++            !isset($issuedChallenge['value'], $issuedChallenge['expires']) ||
++            (int) $issuedChallenge['expires'] < time() ||
++            !hash_equals((string) $issuedChallenge['value'], $challenge) ||
++            !hash_equals((string) CONFIG_ADMIN_PASSWORD, $password)
++        ) {
++            return false;
++        }
++
++        $expectedResponse = hash('sha256', CONFIG_ADMIN_PASSWORD . $challenge);
++        return hash_equals($expectedResponse, $response);
+@@ -131 +147 @@
+-     * Generate a time-based challenge for authentication
++     * Generate a one-time challenge for authentication
+@@ -136,6 +152,7 @@
+-        // Use the current minute as part of the challenge
+-        $minute = floor(time() / 60);
+-        // Use a server-specific salt (the config password itself)
+-        $salt = defined('CONFIG_ADMIN_PASSWORD') ? CONFIG_ADMIN_PASSWORD : '';
+-        // Generate a challenge based on the minute and salt
+-        return hash('sha256', $minute . $salt);
++        $challenge = bin2hex(random_bytes(32));
++        $_SESSION['live_admin_challenge'] = [
++            'value' => $challenge,
++            'expires' => time() + 300,
++        ];
++
++        return $challenge;
+@@ -158,10 +175,9 @@
      public function getAvailableSeasons() {
          try {
              // Get all seasons
@@ -73,6 +113,13 @@
 @@ -23 +23 @@
 -		$seasonId = preg_replace('/[^a-zA-Z0-9]/', '', LIVE_SEASON_ID);
 +		$seasonId = preg_replace('/[^a-zA-Z0-9.]/', '', LIVE_SEASON_ID);
+--- a/api/ConfigManager.php
++++ b/api/ConfigManager.php
+@@ -407,2 +407,2 @@
+-                                                   "- Or, set to a PHP file relative to the /live/ directory to restrict access and show that page instead\n" .
+-                                                   "- Example: If set to '/conf/comingsoon.php', visitors will always see /live/conf/comingsoon.php instead of the main site\n" .
++                                                   "- Set to <strong>/conf/comingsoon.php</strong> to restrict access and show the bundled maintenance page\n" .
++                                                   "- Other paths are rejected\n" .
 --- a/api/GameManager.php
 +++ b/api/GameManager.php
 @@ -23 +23 @@
@@ -218,7 +265,7 @@
  		];
 --- a/api/TeamManager.php
 +++ b/api/TeamManager.php
-@@ -6,0 +7,25 @@
+@@ -6,0 +7,26 @@
 +	public const UNKNOWN_COUNTRY = [
 +		'country_id' => -1,
 +		'name' => 'Unknown',
@@ -245,14 +292,14 @@
 +		return $teams;
 +	}
 +
-@@ -19 +44,2 @@
+@@ -19 +45,2 @@
 -		foreach (SeasonTeams($seasonId) as $team) {
 +		$seasonTeams = self::normalizeTeamCountries(SeasonTeams($seasonId));
 +		foreach ($seasonTeams as $team) {
-@@ -91 +117 @@
+@@ -91 +118 @@
 -		$team = TeamInfo($id);
 +		$team = self::normalizeTeamCountries([TeamInfo($id)])[0];
-@@ -112,12 +138,12 @@
+@@ -112,12 +139,12 @@
  		if ($includeSpiritStats) {
  			$team['spiritstats'] = TeamSpiritStats2($id, false);
  			$team['spirittotal'] = TeamSpiritTotal($id, false);
@@ -268,7 +315,7 @@
  			if ( ! $showSpiritComments ) {
  				foreach($team['spiritgiven'] as &$spirit) {
  					$spirit['comments'] = null;
-@@ -128,7 +154,7 @@
+@@ -128,7 +155,7 @@
  			}
  		}
  
@@ -277,3 +324,21 @@
  
  		foreach ($team['players'] as &$player) {
  			$info = PlayerInfo($player['player_id']);
+--- a/enable-live.php
++++ b/enable-live.php
+@@ -19,7 +19,12 @@
+-  if (!isset($_GET['unlock']) || $_GET['unlock'] != 1) {
+-      include __DIR__ . $config['MAINTENANCE_PAGE_PATH'];
+-      die();
++  if (!isset($_GET['unlock']) || $_GET['unlock'] !== '1') {
++      if ($config['MAINTENANCE_PAGE_PATH'] !== '/conf/comingsoon.php') {
++        http_response_code(503);
++        exit('Maintenance mode is misconfigured.');
++      }
++
++      include __DIR__ . '/conf/comingsoon.php';
++      exit;
+   } else {
+       $_SESSION['unlocked'] = true; // Set unlocked to true
+   }
+ }
