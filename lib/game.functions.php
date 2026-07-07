@@ -948,10 +948,6 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         );
         $result = DBQuery($query);
 
-        if ($result && function_exists('RefreshGameSpiritData')) {
-            RefreshGameSpiritData($gameId);
-        }
-
         if ($updatePools) {
             $poolId = GamePool($gameId);
             ResolvePoolStandings($poolId);
@@ -1017,7 +1013,7 @@ function GameClearResult($gameId, $updatepools = true)
     if (hasEditGameEventsRight($gameId)) {
         LogGameUpdate($gameId, "result cleared");
         $query = sprintf(
-            "UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', forfeit='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
+            "UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
