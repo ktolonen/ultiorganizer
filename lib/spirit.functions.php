@@ -107,6 +107,7 @@ function SpiritGameRow($gameId)
 			g.hometeam,
 			g.visitorteam,
 			g.show_spirit,
+			g.forfeit,
 			se.season_id,
 			se.spiritmode,
 			se.showspiritpoints,
@@ -305,6 +306,7 @@ function SpiritTokenGameRows($teamId)
 			g.homescore,
 			g.visitorscore,
 			g.show_spirit,
+			g.forfeit,
 			th.name AS hometeamname,
 			tv.name AS visitorteamname,
 			p.name AS poolname,
@@ -367,6 +369,7 @@ function SpiritTokenGame($gameId, $teamId)
 			g.homescore,
 			g.visitorscore,
 			g.show_spirit,
+			g.forfeit,
 			th.name AS hometeamname,
 			tv.name AS visitorteamname,
 			p.name AS poolname,
@@ -488,6 +491,9 @@ function SpiritTokenCanSubmit($gameId, $tokenTeamId, $game = null)
         return false;
     }
     if (!empty($game['event_readonly'])) {
+        return false;
+    }
+    if (!empty($game['forfeit'])) {
         return false;
     }
 
@@ -905,6 +911,9 @@ function CanEditSpiritSubmission($gameId, $teamId)
     }
     if (HasFullGameSpiritEditRight($gameId, $game)) {
         return true;
+    }
+    if (!empty($game['forfeit'])) {
+        return false;
     }
     if (!function_exists('hasEditPlayersRight')) {
         return false;

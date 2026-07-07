@@ -136,6 +136,9 @@ if (empty($orderedCategories)) {
 		updateTotal();
 	})();
 	</script>";
+} elseif (!empty($game['forfeit'])) {
+    $pageHtml .= "<div class='mobile-notice mobile-notice--info'><p>" . _("This game was forfeited. No spirit scores are submitted for forfeited games.") . "</p></div>";
+    $pageHtml .= "<p><a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a></p>";
 } elseif ((int) $game['hasstarted'] <= 0) {
     $pageHtml .= "<div class='mobile-notice mobile-notice--info'><p>" . _("This game has not started yet. Return after the game begins.") . "</p></div>";
     $pageHtml .= "<p><a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a></p>";

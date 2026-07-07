@@ -44,6 +44,8 @@ $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $st
         } else {
             $html .= "<p class='mobile-status'>" . _("The opponent has not submitted a spirit score for this game yet.") . "</p>";
         }
+    } elseif (!empty($game['forfeit'])) {
+        $html .= "<p class='mobile-status'>" . _("This game was forfeited. No spirit scores are submitted for forfeited games.") . "</p>";
     } elseif ((int) $game['hasstarted'] <= 0) {
         $html .= "<p class='mobile-status'>" . _("Game not started yet.") . "</p>";
     } else {
