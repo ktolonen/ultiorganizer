@@ -1129,8 +1129,9 @@ function SpiritScoreRowsByGameTeam($gameId, $teamId)
     return DBQueryToArray($query);
 }
 
-function SpiritToolRowsBySeason($season)
+function SpiritToolRowsBySeason($season, $includeForfeits = true)
 {
+    $forfeitFilter = $includeForfeits ? "" : "AND g.forfeit=0";
     $query = sprintf(
         "SELECT
 			g.game_id,
@@ -1167,9 +1168,11 @@ function SpiritToolRowsBySeason($season)
 					AND g.isongoing=0
 					AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 					AND sct.`index` > 0
+					%s
 				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
 			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
         DBEscapeString($season),
+        $forfeitFilter,
     );
     return DBQueryToArray($query);
 }
@@ -1298,7 +1301,7 @@ function SpiritToCsv($season, $separator)
         die(_("Spirit scores are not visible."));
     }
     $showSpiritComments = ShowSpiritComments($seasoninfo);
-    $rows = SpiritToolRowsBySeason($season);
+    $rows = SpiritToolRowsBySeason($season, false);
     $result = [];
 
     foreach ($rows as $row) {
@@ -2023,7 +2026,11 @@ function SpiritSeriesMissingPointRows($seriesId)
 		LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
 		LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
 		LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
-		WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0
+		WHERE ser.series_id=%d
+			AND gp.timetable=1
+			AND g.isongoing=0
+			AND g.hasstarted>0
+			AND g.forfeit=0
 		ORDER BY g.time, g.game_id",
         (int) $seriesId,
     );
