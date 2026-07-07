@@ -1003,6 +1003,7 @@ function DeleteSeason($seasonId)
  *     maintenance_mode: mixed,
  *     public_event: mixed,
  *     api_public: mixed,
+ *     showgamecomments: mixed,
  *     timezone: mixed
  * } $params uo_season fields
  * @param string $comment uo_comment for the season
@@ -1020,8 +1021,8 @@ function AddSeason($seasonId, $params, $comment = null)
 			INSERT INTO uo_season 
 			(season_id, name, type, istournament, isinternational, organizer, category, isnationalteams,
 			starttime, endtime, iscurrent, enrollopen, enroll_deadline, spiritmode, showspiritpoints, showspiritcomments,
-			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, maintenance_mode, public_event, api_public, timezone)
-			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
+			showspiritpointsonlyoncomplete, lockteamspiritonsubmit, use_season_points, hide_time_on_scoresheet, hometeammode, event_readonly, maintenance_mode, public_event, api_public, showgamecomments, timezone)
+			VALUES ('%s', '%s', '%s', %d, %d, '%s', '%s', '%d', '%s', '%s', %d, %d, '%s', %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, %d, '%s')",
             DBEscapeString($seasonId),
             DBEscapeString($params['name']),
             DBEscapeString($params['type']),
@@ -1047,6 +1048,7 @@ function AddSeason($seasonId, $params, $comment = null)
             (int) $params['maintenance_mode'],
             (int) $params['public_event'],
             (int) $params['api_public'],
+            (int) $params['showgamecomments'],
             DBEscapeString($params['timezone']),
         );
 
@@ -1107,6 +1109,7 @@ function AddSeason($seasonId, $params, $comment = null)
  *     maintenance_mode: mixed,
  *     public_event: mixed,
  *     api_public: mixed,
+ *     showgamecomments: mixed,
  *     timezone: mixed
  * } $params uo_season fields
  * @param string $comment uo_comment for the season
@@ -1122,7 +1125,7 @@ function SetSeason($seasonId, $params, $comment = null)
 			organizer='%s', category='%s', isnationalteams='%d',
 			starttime='%s', endtime='%s', iscurrent=%d, enrollopen=%d, enroll_deadline='%s',
 			spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d,
-			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, maintenance_mode=%d, public_event=%d, api_public=%d, timezone='%s'
+			use_season_points=%d, hide_time_on_scoresheet=%d, hometeammode=%d, event_readonly=%d, maintenance_mode=%d, public_event=%d, api_public=%d, showgamecomments=%d, timezone='%s'
 			WHERE season_id='%s'",
             DBEscapeString($seasonId),
             DBEscapeString($params['name']),
@@ -1149,6 +1152,7 @@ function SetSeason($seasonId, $params, $comment = null)
             (int) $params['maintenance_mode'],
             (int) $params['public_event'],
             (int) $params['api_public'],
+            (int) $params['showgamecomments'],
             DBEscapeString($params['timezone']),
             DBEscapeString($seasonId),
         );
@@ -1187,11 +1191,12 @@ function SetSeasonSpiritSettings($seasonId, $params)
     $query = sprintf(
         "
 		UPDATE uo_season SET
-		spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d
+		spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritcommentstoteams=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d
 		WHERE season_id='%s'",
         (int) $params['spiritmode'],
         (int) $params['showspiritpoints'],
         (int) $params['showspiritcomments'],
+        (int) $params['showspiritcommentstoteams'],
         (int) $params['showspiritpointsonlyoncomplete'],
         (int) $params['lockteamspiritonsubmit'],
         DBEscapeString($seasonId),

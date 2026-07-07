@@ -107,10 +107,12 @@ function SpiritGameRow($gameId)
 			g.hometeam,
 			g.visitorteam,
 			g.show_spirit,
+			g.forfeit,
 			se.season_id,
 			se.spiritmode,
 			se.showspiritpoints,
 			se.showspiritcomments,
+			se.showspiritcommentstoteams,
 			se.showspiritpointsonlyoncomplete,
 			se.lockteamspiritonsubmit,
 			se.event_readonly
@@ -305,6 +307,7 @@ function SpiritTokenGameRows($teamId)
 			g.homescore,
 			g.visitorscore,
 			g.show_spirit,
+			g.forfeit,
 			th.name AS hometeamname,
 			tv.name AS visitorteamname,
 			p.name AS poolname,
@@ -314,6 +317,7 @@ function SpiritTokenGameRows($teamId)
 			se.spiritmode,
 			se.showspiritpoints,
 			se.showspiritcomments,
+			se.showspiritcommentstoteams,
 			se.showspiritpointsonlyoncomplete,
 			se.lockteamspiritonsubmit,
 			se.event_readonly
@@ -367,6 +371,7 @@ function SpiritTokenGame($gameId, $teamId)
 			g.homescore,
 			g.visitorscore,
 			g.show_spirit,
+			g.forfeit,
 			th.name AS hometeamname,
 			tv.name AS visitorteamname,
 			p.name AS poolname,
@@ -376,6 +381,7 @@ function SpiritTokenGame($gameId, $teamId)
 			se.spiritmode,
 			se.showspiritpoints,
 			se.showspiritcomments,
+			se.showspiritcommentstoteams,
 			se.showspiritpointsonlyoncomplete,
 			se.lockteamspiritonsubmit,
 			se.event_readonly
@@ -488,6 +494,9 @@ function SpiritTokenCanSubmit($gameId, $tokenTeamId, $game = null)
         return false;
     }
     if (!empty($game['event_readonly'])) {
+        return false;
+    }
+    if (!empty($game['forfeit'])) {
         return false;
     }
 
@@ -906,6 +915,9 @@ function CanEditSpiritSubmission($gameId, $teamId)
     if (HasFullGameSpiritEditRight($gameId, $game)) {
         return true;
     }
+    if (!empty($game['forfeit'])) {
+        return false;
+    }
     if (!function_exists('hasEditPlayersRight')) {
         return false;
     }
@@ -938,6 +950,9 @@ function GameSpiritVisibilityValue($gameId, $game = null)
         return 0;
     }
     if (empty($game['spiritmode']) || empty($game['showspiritpoints'])) {
+        return 0;
+    }
+    if (!empty($game['forfeit'])) {
         return 0;
     }
     if (!empty($game['showspiritpointsonlyoncomplete'])) {
@@ -1152,6 +1167,7 @@ function SpiritToolRowsBySeason($season)
 					AND g.isongoing=0
 					AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 					AND sct.`index` > 0
+					AND g.forfeit=0
 				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
 			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
         DBEscapeString($season),
@@ -1371,6 +1387,7 @@ function SpiritMissingGamesByPool($poolId)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE gp.pool=%d
 			AND g.isongoing=0
+			AND g.forfeit=0
 			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 		ORDER BY g.time ASC",
         (int) $poolId,
@@ -1401,6 +1418,7 @@ function SpiritMissingGamesBySeries($seriesId)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE p.series=%d
 			AND g.isongoing=0
+			AND g.forfeit=0
 			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 		ORDER BY g.time ASC",
         (int) $seriesId,
@@ -2006,7 +2024,11 @@ function SpiritSeriesMissingPointRows($seriesId)
 		LEFT JOIN uo_team ht ON (g.hometeam=ht.team_id)
 		LEFT JOIN uo_team vt ON (g.visitorteam=vt.team_id)
 		LEFT JOIN uo_scheduling_name sn ON (g.name=sn.scheduling_id)
-		WHERE ser.series_id=%d AND gp.timetable=1 AND g.isongoing=0 AND g.hasstarted>0
+		WHERE ser.series_id=%d
+			AND gp.timetable=1
+			AND g.isongoing=0
+			AND g.hasstarted>0
+			AND g.forfeit=0
 		ORDER BY g.time, g.game_id",
         (int) $seriesId,
     );

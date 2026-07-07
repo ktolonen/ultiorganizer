@@ -177,6 +177,24 @@ function GameCommentHtml($gameId, $type)
     return $html;
 }
 
+function CanViewGameComment($gameId, $seasoninfo = null)
+{
+    if (!is_array($seasoninfo)) {
+        if (!function_exists('GameSeason') || !function_exists('SeasonInfo')) {
+            return false;
+        }
+        $seasoninfo = SeasonInfo(GameSeason($gameId));
+    }
+    $seasonId = is_array($seasoninfo) && isset($seasoninfo['season_id']) ? $seasoninfo['season_id'] : null;
+
+    // Event admins (season admins / superadmin) and the spirit director always
+    // see game notes; everyone else only when the event publishes them.
+    if ($seasonId !== null && function_exists('hasSpiritToolsRight') && hasSpiritToolsRight($seasonId)) {
+        return true;
+    }
+    return is_array($seasoninfo) && !empty($seasoninfo['showgamecomments']);
+}
+
 function CanCreateGameComment($gameId)
 {
     if (!function_exists('hasEditGameEventsRight') || !function_exists('isLoggedIn')) {

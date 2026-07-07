@@ -33,6 +33,7 @@ $sp = [
     "maintenance_mode" => 0,
     "public_event" => 0,
     "api_public" => 0,
+    "showgamecomments" => 0,
     "iscurrent" => 0,
     "enrollopen" => 0,
     "enroll_deadline" => "",
@@ -68,6 +69,7 @@ if (!empty($_POST['add'])) {
     $sp['event_readonly'] = !empty($_POST['event_readonly']);
     $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
     $sp['public_event'] = !empty($_POST['public_event']);
+    $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
     $comment = $_POST['comment'];
 
     if (empty($_POST['season_id'])) {
@@ -136,6 +138,7 @@ if (!empty($_POST['add'])) {
         $sp['event_readonly'] = !empty($_POST['event_readonly']);
         $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
         $sp['public_event'] = !empty($_POST['public_event']);
+        $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
         $sp['timezone'] = $_POST['timezone'];
         $comment = $_POST['comment'];
         SetSeason($sp['season_id'], $sp, $comment);
@@ -174,6 +177,7 @@ if ($seasonId) {
     $sp['event_readonly'] = isset($info['event_readonly']) ? $info['event_readonly'] : 0;
     $sp['maintenance_mode'] = isset($info['maintenance_mode']) ? $info['maintenance_mode'] : 0;
     $sp['public_event'] = isset($info['public_event']) ? $info['public_event'] : 0;
+    $sp['showgamecomments'] = isset($info['showgamecomments']) ? $info['showgamecomments'] : 0;
     $sp['timezone'] = $info['timezone'];
     $comment = CommentRaw(1, $info['season_id']);
 } else {
@@ -472,6 +476,13 @@ if ($sp['api_public']) {
 }
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Exposes this event in API responses, external links, widgets, feeds, and CSV exports; does not grant write access.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Show game notes on public pages") . ": </td><td><input class='input' type='checkbox' name='showgamecomments' ";
+if ($sp['showgamecomments']) {
+    $html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see game notes on public pages. Season admins and the spirit director can still see them regardless of this flag.") . "</span></td></tr>";
 
 $html .= "</table>\n";
 if (empty($seasonId)) {

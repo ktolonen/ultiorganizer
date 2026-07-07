@@ -47,10 +47,11 @@ function ResolvePlayoffPoolStandings($poolId)
         $teamId2 = $teams[$i + 1]['team_id'];
         $query = sprintf(
             "SELECT 
-				COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS team1wins, 
-				COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS team2wins 
+				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team1wins,
+				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team2wins
 				FROM uo_game 
-				WHERE (homescore != visitorscore) AND ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d)) 
+				WHERE (homescore != visitorscore OR forfeit != 0) AND ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
+					AND hasstarted>0
 					AND isongoing=0
 					AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
             (int) $teamId1,
@@ -138,10 +139,11 @@ function ResolveCrossMatchPoolStandings($poolId)
         $teamId2 = $teams[$i + 1]['team_id'];
         $query = sprintf(
             "SELECT 
-				COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS team1wins, 
-				COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS team2wins 
+				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team1wins,
+				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team2wins
 				FROM uo_game 
-				WHERE (homescore != visitorscore) AND ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d)) 
+				WHERE (homescore != visitorscore OR forfeit != 0) AND ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
+					AND hasstarted>0
 					AND isongoing=0
 					AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
             (int) $teamId1,
@@ -609,8 +611,8 @@ function getMatchesWins($points, $poolId, $shared = false)
         $query = sprintf(
             "
 		SELECT COUNT(*) AS games,
-    		COUNT((hometeam='%s' AND (homescore>visitorscore)) OR (visitorteam='%s' AND (homescore<visitorscore)) OR NULL) AS wins,
-    		COUNT((hometeam='%s' AND (homescore<visitorscore)) OR (visitorteam='%s' AND (homescore>visitorscore)) OR NULL) AS losses
+		COUNT((hometeam='%s' AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam='%s' AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS wins,
+		COUNT((hometeam='%s' AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1 OR forfeit=3)) OR (visitorteam='%s' AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2 OR forfeit=3)) OR NULL) AS losses
 		FROM uo_game
 		WHERE (hasStarted) AND (hometeam='%s' OR visitorteam='%s') AND isongoing=0
 			AND game_id IN (SELECT game FROM uo_game_pool WHERE pool='%s')",

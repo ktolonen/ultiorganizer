@@ -1460,6 +1460,16 @@ function upgrade95()
         AND CHAR_LENGTH(signal_text) <= 50");
 }
 
+function upgrade96()
+{
+    if (!hasColumn('uo_season', 'showgamecomments')) {
+        addColumn('uo_season', 'showgamecomments', "tinyint(1) NOT NULL DEFAULT 0");
+    }
+    if (!hasColumn('uo_season', 'showspiritcommentstoteams')) {
+        addColumn('uo_season', 'showspiritcommentstoteams', "tinyint(1) NOT NULL DEFAULT 0");
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {

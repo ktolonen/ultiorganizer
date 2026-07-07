@@ -90,7 +90,7 @@ if (!empty($_POST['save'])) {
 
     $info = GameResult($gameId);
     if (intval($info['hasstarted']) == 2 && !empty($_POST['forfeit_shown'])) {
-        GameSetForfeit($gameId, !empty($_POST['forfeit']) ? 1 : 0);
+        GameSetForfeit($gameId, intval($_POST['forfeit']));
     }
 
     $userid = $_POST['userid'];
@@ -267,9 +267,21 @@ $validChecked = intval($info['valid']) ? " checked='checked'" : "";
 echo "<tr><td class='infocell'>" . _("Valid") . ":</td>
 	<td><input class='input' type='checkbox' id='valid' name='valid' value='1'" . $validChecked . "/></td></tr>";
 if (intval($info['hasstarted']) == 2) {
-    $checked = !empty($info['forfeit']) ? " checked='checked'" : "";
+    $forfeit = intval($info['forfeit']);
+    $forfeitOptions = [
+        0 => _("None"),
+        1 => _("Home team forfeited"),
+        2 => _("Away team forfeited"),
+        3 => _("Both teams forfeited"),
+    ];
+    $forfeitSelect = "<select class='input' name='forfeit'>";
+    foreach ($forfeitOptions as $value => $label) {
+        $selected = $value === $forfeit ? " selected='selected'" : "";
+        $forfeitSelect .= "<option value='" . $value . "'" . $selected . ">" . $label . "</option>";
+    }
+    $forfeitSelect .= "</select>";
     echo "<tr><td class='infocell'>" . _("Forfeit") . ":</td>
-		<td><input class='input' type='checkbox' name='forfeit' value='1'" . $checked . "/>
+		<td>" . $forfeitSelect . "
 		<input type='hidden' name='forfeit_shown' value='1'/></td></tr>";
 }
 

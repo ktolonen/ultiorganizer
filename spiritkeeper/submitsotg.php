@@ -136,6 +136,9 @@ if (empty($orderedCategories)) {
 		updateTotal();
 	})();
 	</script>";
+} elseif (!empty($game['forfeit'])) {
+    $pageHtml .= "<div class='mobile-notice mobile-notice--info'><p>" . _("This game was forfeited. No spirit scores are submitted for forfeited games.") . "</p></div>";
+    $pageHtml .= "<p><a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a></p>";
 } elseif ((int) $game['hasstarted'] <= 0) {
     $pageHtml .= "<div class='mobile-notice mobile-notice--info'><p>" . _("This game has not started yet. Return after the game begins.") . "</p></div>";
     $pageHtml .= "<p><a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a></p>";
@@ -143,8 +146,17 @@ if (empty($orderedCategories)) {
     $pageHtml .= "<div class='mobile-notice mobile-notice--info'><p>" . _("You already submitted the spirit score for this game.") . "</p></div>";
     $pageHtml .= "<p><strong>" . _("Spirit score given") . ":</strong> " . utf8entities(SpiritPointsSummary($existingPoints, $categories)) . "</p>";
     if (!empty($spiritComment)) {
-        $pageHtml .= "<p><strong>" . _("Spirit note") . ":</strong></p>";
+        $pageHtml .= "<p><strong>" . _("Spirit note given") . ":</strong></p>";
         $pageHtml .= "<div class='comment'>" . someHTML($spiritComment) . "</div>";
+    }
+    if (!empty($game['showspiritcommentstoteams']) && SpiritTokenCanViewReceivedPoints($gameId, $teamId, $game)) {
+        $receivedPoints = GameGetSpiritPoints($gameId, $teamId);
+        $pageHtml .= "<p><strong>" . _("Spirit score received") . ":</strong> " . utf8entities(SpiritPointsSummary($receivedPoints, $categories)) . "</p>";
+        $receivedComment = CommentRaw(SpiritCommentTypeForTeam($game, $teamId), $gameId);
+        if ($receivedComment !== "") {
+            $pageHtml .= "<p><strong>" . _("Spirit note received") . ":</strong></p>";
+            $pageHtml .= "<div class='comment'>" . someHTML($receivedComment) . "</div>";
+        }
     }
     $pageHtml .= "<p><a class='button-secondary' href='?view=teamgames&amp;token=" . urlencode($token) . "' data-role='button'>" . _("Back to game list") . "</a></p>";
 } else {

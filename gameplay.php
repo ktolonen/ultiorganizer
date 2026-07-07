@@ -595,7 +595,7 @@ if (GameHasStarted($game_result) > 0) {
             }
             $html .= "</table>";
         }
-        $game_comment_html = GameCommentHtml($gameId, COMMENT_TYPE_GAME);
+        $game_comment_html = CanViewGameComment($gameId, $seasoninfo) ? GameCommentHtml($gameId, COMMENT_TYPE_GAME) : "";
         $showSpiritComments = CanViewSpiritCommentsForGame($gameId, $seasoninfo);
         $home_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_HOME) : "";
         $visitor_spirit_comment_html = $showSpiritComments ? GameCommentHtml($gameId, COMMENT_TYPE_SPIRIT_VISITOR) : "";

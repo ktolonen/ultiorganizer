@@ -67,6 +67,8 @@ Use the exact type names from [configuration-flags.md](configuration-flags.md).
   Enables spirit score visibility for the event. Admins bypass it via `ShowSpiritScoresForSeason()`.
 - `EVENT_SETTING`: `showspiritcomments`
   Controls per-event visibility of spirit comments.
+- `EVENT_SETTING`: `showspiritcommentstoteams`
+  When enabled, a team can see the spirit note it gave and, once both teams have submitted, the note it received in the Spiritkeeper token flow. It does not make comments public and is independent of `showspiritcomments`. Defaults to off.
 - `EVENT_SETTING`: `showspiritpointsonlyoncomplete`
   When enabled, non-admin users only see spirit scores and spirit-based averages after both teams have submitted complete scores for the game.
 - `EVENT_SETTING`: `lockteamspiritonsubmit`
@@ -91,6 +93,7 @@ This section describes what the repository does today.
 - `admin/spirit.php` contains spirit review tools, missing-score searches, comment search, and Spiritkeeper token utilities.
 - Spirit stoppage recording is enabled only when `spiritmode > 0`.
 - Spirit stoppage entry is additionally blocked when `hide_time_on_scoresheet` is enabled for the season.
+- Forfeited games (`uo_game.forfeit`) do not accept team spirit submissions. `SpiritTokenCanSubmit()` and the team path of `CanEditSpiritSubmission()` reject them, and Spiritkeeper shows a forfeit note instead of the entry form. Spirit admins bypass this.
 
 ### Spirit stoppage behavior
 
@@ -136,14 +139,12 @@ This section describes what the repository does today.
 
 ### Important current gaps
 
-- The repository does not contain an event-level setting for "opponent can see received scores/comments after submitting own score".
-- The current token-based self-service flow hardcodes a narrow version of that reveal rule: received scores are shown only after the team has submitted its own score and the opponent has also submitted.
-- The current token-based self-service flow allows editing only the submitting team's own outbound spirit note. It does not expose opponent spirit notes.
+- There is still no event-level setting for whether opponent received *scores* are shown; the token flow hardcodes this via `SpiritTokenCanViewReceivedPoints()` (received scores appear only after the team has submitted its own score and the opponent has also submitted).
+- Opponent received *comments* are now gated by the `showspiritcommentstoteams` event setting (default off), reusing the same both-teams-complete reveal condition. When off, the token flow does not expose opponent spirit notes.
 
 ## Remaining implementation gaps
 
 ### 1. Token and reveal workflow
 
-- Add an `EVENT_SETTING` for whether teams may see received spirit scores/comments only after they submit their own score.
-- Centralize that rule in shared spirit/comment visibility helpers so browser views, exports, and APIs follow the same behavior.
-- Decide whether token flows should ever expose received spirit notes, and if so under what event-level setting and moderation rules.
+- Consider an event-level setting for whether teams may see received spirit *scores* after they submit their own score (comments are already covered by `showspiritcommentstoteams`).
+- Centralize the reveal rule in shared spirit/comment visibility helpers so browser views, exports, and APIs follow the same behavior.

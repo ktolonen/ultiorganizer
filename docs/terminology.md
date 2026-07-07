@@ -27,7 +27,7 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 | Roster | List of players for a team or for a game-specific played roster. | The detailed scoresheet uses a game-specific played roster. |
 | Game | Scheduled contest between two teams. | Main aggregate state lives on `uo_game`. |
 | Result | Aggregate game state expressed as the home and away score. | Use for current or final game result. |
-| Forfeit | A completed game where one team did not play, flagged via `uo_game.forfeit`. | Scores are entered manually (e.g. 15-0). Treated identically to a played game in all ranking calculations. |
+| Forfeit | A completed game where one or both teams did not play, recorded in `uo_game.forfeit` (`1` home forfeited, `2` away forfeited, `3` both forfeited). | Keep the score at `0-0`; the forfeit awards the win/loss (both lose on a double forfeit) without affecting goal difference, except in Swiss-draw pools. See `docs/ranking.md`. |
 | Score | Numeric side of a result. | Use for aggregate score values such as home score and away score. |
 | Point | One scoring sequence in the detailed scoresheet flow. | In practice, detailed point data is stored as goal rows. |
 | Goal | Recorded scoring event in a game. | Detailed goal rows live in `uo_goal`. |
