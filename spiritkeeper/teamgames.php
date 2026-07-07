@@ -36,7 +36,9 @@ $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $st
     $html .= "<p><strong>" . _("Score") . ":</strong> " . utf8entities(SpiritkeeperGameScoreLabel($game)) . "</p>";
 
     $showCommentsToTeams = !empty($game['showspiritcommentstoteams']);
-    if ($ownSubmitted) {
+    if (!empty($game['forfeit'])) {
+        $html .= "<p class='mobile-status'>" . _("This game was forfeited. No spirit scores are submitted for forfeited games.") . "</p>";
+    } elseif ($ownSubmitted) {
         $html .= "<p class='mobile-summary'><strong>" . _("Spirit score given for") . " " . utf8entities($opponentName) . ":</strong> " . utf8entities(SpiritPointsSummary($givenPoints, $categories)) . "</p>";
         if ($showCommentsToTeams) {
             $givenComment = CommentRaw(SpiritCommentTypeForTeam($game, $ratedTeamId), $gameId);
@@ -57,8 +59,6 @@ $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $st
         } else {
             $html .= "<p class='mobile-status'>" . _("The opponent has not submitted a spirit score for this game yet.") . "</p>";
         }
-    } elseif (!empty($game['forfeit'])) {
-        $html .= "<p class='mobile-status'>" . _("This game was forfeited. No spirit scores are submitted for forfeited games.") . "</p>";
     } elseif ((int) $game['hasstarted'] <= 0) {
         $html .= "<p class='mobile-status'>" . _("Game not started yet.") . "</p>";
     } else {

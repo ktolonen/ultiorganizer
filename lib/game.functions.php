@@ -999,7 +999,13 @@ function GameSetForfeit($gameId, $isForfeit)
         $isForfeit ? 1 : 0,
         DBEscapeString($gameId),
     );
-    return DBQuery($query);
+    $result = DBQuery($query);
+    // Forfeited games carry no spirit; recompute show_spirit so their spirit
+    // data is dropped from public views and averages (and restored on undo).
+    if (function_exists('RefreshGameSpiritVisibility')) {
+        RefreshGameSpiritVisibility($gameId);
+    }
+    return $result;
 }
 
 function GameClearResult($gameId, $updatepools = true)

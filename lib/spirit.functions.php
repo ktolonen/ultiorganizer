@@ -952,6 +952,9 @@ function GameSpiritVisibilityValue($gameId, $game = null)
     if (empty($game['spiritmode']) || empty($game['showspiritpoints'])) {
         return 0;
     }
+    if (!empty($game['forfeit'])) {
+        return 0;
+    }
     if (!empty($game['showspiritpointsonlyoncomplete'])) {
         return GameSpiritComplete($gameId, (int) $game['spiritmode']) ? 1 : 0;
     }
