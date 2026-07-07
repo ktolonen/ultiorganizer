@@ -177,6 +177,25 @@ function GameCommentHtml($gameId, $type)
     return $html;
 }
 
+function CanViewGameComment($gameId, $seasoninfo = null)
+{
+    if (!is_array($seasoninfo)) {
+        if (!function_exists('GameSeason') || !function_exists('SeasonInfo')) {
+            return function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId);
+        }
+        $seasoninfo = SeasonInfo(GameSeason($gameId));
+    }
+    $seasonId = is_array($seasoninfo) && isset($seasoninfo['season_id']) ? $seasoninfo['season_id'] : null;
+
+    if (function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId)) {
+        return true;
+    }
+    if ($seasonId !== null && function_exists('hasSpiritToolsRight') && hasSpiritToolsRight($seasonId)) {
+        return true;
+    }
+    return is_array($seasoninfo) && !empty($seasoninfo['showgamecomments']);
+}
+
 function CanCreateGameComment($gameId)
 {
     if (!function_exists('hasEditGameEventsRight') || !function_exists('isLoggedIn')) {
