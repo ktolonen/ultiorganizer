@@ -181,15 +181,14 @@ function CanViewGameComment($gameId, $seasoninfo = null)
 {
     if (!is_array($seasoninfo)) {
         if (!function_exists('GameSeason') || !function_exists('SeasonInfo')) {
-            return function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId);
+            return false;
         }
         $seasoninfo = SeasonInfo(GameSeason($gameId));
     }
     $seasonId = is_array($seasoninfo) && isset($seasoninfo['season_id']) ? $seasoninfo['season_id'] : null;
 
-    if (function_exists('hasEditGameEventsRight') && hasEditGameEventsRight($gameId)) {
-        return true;
-    }
+    // Event admins (season admins / superadmin) and the spirit director always
+    // see game notes; everyone else only when the event publishes them.
     if ($seasonId !== null && function_exists('hasSpiritToolsRight') && hasSpiritToolsRight($seasonId)) {
         return true;
     }
