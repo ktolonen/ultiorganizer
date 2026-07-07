@@ -548,14 +548,10 @@ msgid "All-time Scoreboards"
 msgstr "Allzeit-Scorerliste"
 
 #: admin/addseasons.php:485
-#, fuzzy
 msgid ""
 "Allows non-admin users to see game notes on public pages. Season admins and "
 "the spirit director can still see them regardless of this flag."
-msgstr ""
-"Erlaubt Benutzern ohne Admin-Rechte, die Spirit-Wertungen fuer dieses "
-"Ereignis zu sehen. Veranstaltungsadministratoren koennen die Spirit-Daten "
-"unabhaengig von dieser Einstellung weiterhin einsehen."
+msgstr "Erlaubt Benutzern ohne Admin-Rechte, Spielnotizen auf öffentlichen Seiten zu sehen. Veranstaltungsadministratoren und der Spirit-Admin können sie unabhängig von dieser Einstellung weiterhin sehen."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -3647,7 +3643,7 @@ msgstr ""
 msgid ""
 "Lets a team see the spirit comment it gave and received in Spiritkeeper once "
 "both teams have submitted, without making comments public."
-msgstr ""
+msgstr "Lässt ein Team den in Spiritkeeper abgegebenen und erhaltenen Spirit-Kommentar sehen, sobald beide Teams abgegeben haben, ohne die Kommentare öffentlich zu machen."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:197
 #: user/teamplayers.php:170
@@ -4421,7 +4417,7 @@ msgstr "Alte Turniere"
 msgid ""
 "Once both teams have submitted, you can see the spirit notes you gave and "
 "received here."
-msgstr ""
+msgstr "Sobald beide Teams abgegeben haben, sehen Sie hier die von Ihnen vergebenen und erhaltenen Spirit-Notizen."
 
 #: sql/upgrade_db.php:556
 msgid "One simple score"
@@ -6044,9 +6040,8 @@ msgid "Show forfeit games"
 msgstr "Kampflos-Spiele anzeigen"
 
 #: admin/addseasons.php:480
-#, fuzzy
 msgid "Show game notes on public pages"
-msgstr "Im öfftl. Profil anzeigen"
+msgstr "Spielnotizen auf öffentlichen Seiten anzeigen"
 
 #: admin/poolgames.php:218
 msgid "Show games"
@@ -6085,9 +6080,8 @@ msgid "Show pools"
 msgstr "Zeige Gruppen"
 
 #: admin/spiritsettings.php:87
-#, fuzzy
 msgid "Show spirit comments to teams"
-msgstr "Spirit-Unterbrechungen anzeigen"
+msgstr "Spirit-Kommentare den Teams anzeigen"
 
 #: admin/spirit.php:560
 msgid "Show spirit stoppages"
@@ -6209,14 +6203,12 @@ msgid "Spirit note for"
 msgstr "Spirit-Notiz fuer"
 
 #: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:46
-#, fuzzy
 msgid "Spirit note given"
-msgstr "Vergebene Spirit-Bewertung"
+msgstr "Vergebene Spirit-Notiz"
 
 #: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:54
-#, fuzzy
 msgid "Spirit note received"
-msgstr "Erhaltene Spirit-Bewertung"
+msgstr "Erhaltene Spirit-Notiz"
 
 #: spiritkeeper/teamgames.php:103
 msgid "Spirit notes can be added and edited on the token submission page."
@@ -6804,7 +6796,7 @@ msgstr "Dieses Spiel hat noch nicht begonnen. Kehre nach Spielbeginn zurück."
 #: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
-msgstr ""
+msgstr "Dieses Spiel wurde kampflos gewertet. Für kampflos gewertete Spiele werden keine Spirit-Wertungen abgegeben."
 
 #: admin/eventdataimport.php:14
 msgid ""

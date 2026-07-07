@@ -556,14 +556,10 @@ msgid "All-time Scoreboards"
 msgstr "Marcadores históricos"
 
 #: admin/addseasons.php:485
-#, fuzzy
 msgid ""
 "Allows non-admin users to see game notes on public pages. Season admins and "
 "the spirit director can still see them regardless of this flag."
-msgstr ""
-"Permite a los usuarios no administradores ver las puntuaciones de Espíritu "
-"de este evento. Los administradores de temporada aún pueden revisar los "
-"datos de Espíritu independientemente de esta bandera."
+msgstr "Permite a los usuarios no administradores ver las notas del juego en páginas públicas. Los administradores de temporada y el administrador de Espíritu pueden verlas independientemente de esta opción."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -3659,7 +3655,7 @@ msgstr ""
 msgid ""
 "Lets a team see the spirit comment it gave and received in Spiritkeeper once "
 "both teams have submitted, without making comments public."
-msgstr ""
+msgstr "Permite a un equipo ver el comentario de Espíritu que dio y recibió en Spiritkeeper una vez que ambos equipos lo han enviado, sin hacer públicos los comentarios."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:197
 #: user/teamplayers.php:170
@@ -4431,7 +4427,7 @@ msgstr "Eventos antiguos"
 msgid ""
 "Once both teams have submitted, you can see the spirit notes you gave and "
 "received here."
-msgstr ""
+msgstr "Una vez que ambos equipos hayan enviado, aquí podrás ver las notas de Espíritu que diste y recibiste."
 
 #: sql/upgrade_db.php:556
 msgid "One simple score"
@@ -6056,9 +6052,8 @@ msgid "Show forfeit games"
 msgstr "Mostrar juegos forfaits"
 
 #: admin/addseasons.php:480
-#, fuzzy
 msgid "Show game notes on public pages"
-msgstr "Mostrar en perfil público"
+msgstr "Mostrar notas del juego en páginas públicas"
 
 #: admin/poolgames.php:218
 msgid "Show games"
@@ -6097,9 +6092,8 @@ msgid "Show pools"
 msgstr "Mostrar grupos"
 
 #: admin/spiritsettings.php:87
-#, fuzzy
 msgid "Show spirit comments to teams"
-msgstr "Mostrar pausas de espíritu"
+msgstr "Mostrar comentarios de Espíritu a los equipos"
 
 #: admin/spirit.php:560
 msgid "Show spirit stoppages"
@@ -6221,14 +6215,12 @@ msgid "Spirit note for"
 msgstr "Nota de Espíritu para"
 
 #: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:46
-#, fuzzy
 msgid "Spirit note given"
-msgstr "Puntuación de espíritu otorgada"
+msgstr "Nota de Espíritu otorgada"
 
 #: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:54
-#, fuzzy
 msgid "Spirit note received"
-msgstr "Puntuación de espíritu recibida"
+msgstr "Nota de Espíritu recibida"
 
 #: spiritkeeper/teamgames.php:103
 msgid "Spirit notes can be added and edited on the token submission page."
@@ -6824,7 +6816,7 @@ msgstr ""
 #: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
-msgstr ""
+msgstr "Este partido se decidió por forfeit. No se registran puntuaciones de Espíritu en los partidos por forfeit."
 
 #: admin/eventdataimport.php:14
 msgid ""

@@ -543,14 +543,10 @@ msgid "All-time Scoreboards"
 msgstr "Kaikkienaikojen pistepörssi"
 
 #: admin/addseasons.php:485
-#, fuzzy
 msgid ""
 "Allows non-admin users to see game notes on public pages. Season admins and "
 "the spirit director can still see them regardless of this flag."
-msgstr ""
-"Sallii muiden kuin ylläpitäjien nähdä tämän tapahtuman spirit-pisteet. "
-"Tapahtumavastaavat voivat silti tarkastella spirit-tietoja tästä asetuksesta "
-"riippumatta."
+msgstr "Sallii muiden kuin ylläpitäjien nähdä peli-kommentit julkisilla sivuilla. Tapahtumavastaavat ja spirit-ylläpitäjä näkevät ne silti tästä asetuksesta riippumatta."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -3618,7 +3614,7 @@ msgstr ""
 msgid ""
 "Lets a team see the spirit comment it gave and received in Spiritkeeper once "
 "both teams have submitted, without making comments public."
-msgstr ""
+msgstr "Antaa joukkueen nähdä Spiritkeeperissä antamansa ja saamansa spirit-kommentin, kun molemmat joukkueet ovat lähettäneet arvionsa, tekemättä kommenteista julkisia."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:197
 #: user/teamplayers.php:170
@@ -4388,7 +4384,7 @@ msgstr "Vanhat tapahtumat"
 msgid ""
 "Once both teams have submitted, you can see the spirit notes you gave and "
 "received here."
-msgstr ""
+msgstr "Kun molemmat joukkueet ovat lähettäneet arvionsa, näet tässä antamasi ja saamasi spirit-kommentit."
 
 #: sql/upgrade_db.php:556
 msgid "One simple score"
@@ -6002,9 +5998,8 @@ msgid "Show forfeit games"
 msgstr "Näytä luovutuspelit"
 
 #: admin/addseasons.php:480
-#, fuzzy
 msgid "Show game notes on public pages"
-msgstr "Näytä julkisessa profiilissa"
+msgstr "Näytä peli-kommentit julkisilla sivuilla"
 
 #: admin/poolgames.php:218
 msgid "Show games"
@@ -6043,9 +6038,8 @@ msgid "Show pools"
 msgstr "Näytä sarjat"
 
 #: admin/spiritsettings.php:87
-#, fuzzy
 msgid "Show spirit comments to teams"
-msgstr "Näytä spirit-keskeytykset"
+msgstr "Näytä spirit-kommentit joukkueille"
 
 #: admin/spirit.php:560
 msgid "Show spirit stoppages"
@@ -6165,14 +6159,12 @@ msgid "Spirit note for"
 msgstr "Spirit-kommentti joukkueelle"
 
 #: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:46
-#, fuzzy
 msgid "Spirit note given"
-msgstr "Annetut spirit-pisteet"
+msgstr "Annettu spirit-kommentti"
 
 #: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:54
-#, fuzzy
 msgid "Spirit note received"
-msgstr "Saadut spirit-pisteet"
+msgstr "Saatu spirit-kommentti"
 
 #: spiritkeeper/teamgames.php:103
 msgid "Spirit notes can be added and edited on the token submission page."
@@ -6753,7 +6745,7 @@ msgstr "Tämä peli ei ole vielä alkanut. Palaa pelin alkamisen jälkeen."
 #: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
-msgstr ""
+msgstr "Tämä peli on luovutettu. Luovutetuista peleistä ei anneta spirit-pisteitä."
 
 #: admin/eventdataimport.php:14
 msgid ""
