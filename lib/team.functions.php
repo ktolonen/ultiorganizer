@@ -659,9 +659,9 @@ function TeamStatsByPool($poolId, $teamId)
     $query = sprintf(
         "
 		SELECT COUNT(*) AS games,
-  		COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins, 
-  		COUNT((hometeam=%d AND (homescore=visitorscore)) OR (visitorteam=%d AND (homescore=visitorscore)) OR NULL) AS draws, 
-  		COUNT((hometeam=%d AND (homescore<visitorscore)) OR (visitorteam=%d AND (homescore>visitorscore)) OR NULL) AS losses 
+		COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS wins,
+		COUNT((hometeam=%d AND (forfeit=0 AND homescore=visitorscore)) OR (visitorteam=%d AND (forfeit=0 AND homescore=visitorscore)) OR NULL) AS draws,
+		COUNT((hometeam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1 OR forfeit=3)) OR (visitorteam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2 OR forfeit=3)) OR NULL) AS losses
 		FROM uo_game 
 		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
 		WHERE (hometeam=%d OR visitorteam=%d) AND isongoing=0 AND hasstarted>0
@@ -684,9 +684,9 @@ function TeamStats($teamId)
     $query = sprintf(
         "
 		SELECT COUNT(*) AS games, 
-  		COUNT((hometeam=%d AND (homescore>visitorscore)) OR (visitorteam=%d AND (homescore<visitorscore)) OR NULL) AS wins, 
-  		COUNT((hometeam=%d AND (homescore=visitorscore)) OR (visitorteam=%d AND (homescore=visitorscore)) OR NULL) AS draws,
-  		COUNT((hometeam=%d AND (homescore<visitorscore)) OR (visitorteam=%d AND (homescore>visitorscore)) OR NULL) AS losses 
+		COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS wins,
+		COUNT((hometeam=%d AND (forfeit=0 AND homescore=visitorscore)) OR (visitorteam=%d AND (forfeit=0 AND homescore=visitorscore)) OR NULL) AS draws,
+		COUNT((hometeam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1 OR forfeit=3)) OR (visitorteam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2 OR forfeit=3)) OR NULL) AS losses
   		FROM uo_game 
 		LEFT JOIN uo_game_pool gp ON(game_id=gp.game)
 		WHERE (hasstarted>0) AND (hometeam=%d OR visitorteam=%d) AND isongoing=0 AND gp.timetable=1",

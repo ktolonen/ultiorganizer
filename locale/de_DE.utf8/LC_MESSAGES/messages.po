@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 13:09+0000\n"
+"POT-Creation-Date: 2026-07-07 21:14+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -22,7 +22,7 @@ msgstr ""
 "X-Poedit-SearchPath-6: scorekeeper\n"
 "X-Poedit-SearchPath-7: mobile\n"
 
-#: admin/editgame.php:278
+#: admin/editgame.php:290
 msgid " (enter '0' if not live)"
 msgstr " (gib '0' ein, wenn nicht live)"
 
@@ -551,7 +551,10 @@ msgstr "Allzeit-Scorerliste"
 msgid ""
 "Allows non-admin users to see game notes on public pages. Season admins and "
 "the spirit director can still see them regardless of this flag."
-msgstr "Erlaubt Benutzern ohne Admin-Rechte, Spielnotizen auf öffentlichen Seiten zu sehen. Veranstaltungsadministratoren und der Spirit-Admin können sie unabhängig von dieser Einstellung weiterhin sehen."
+msgstr ""
+"Erlaubt Benutzern ohne Admin-Rechte, Spielnotizen auf öffentlichen Seiten zu "
+"sehen. Veranstaltungsadministratoren und der Spirit-Admin können sie "
+"unabhängig von dieser Einstellung weiterhin sehen."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -766,6 +769,10 @@ msgstr "Spirit-Unterbrechungen Gastteam"
 msgid "Away team"
 msgstr "Gastteam"
 
+#: admin/editgame.php:274
+msgid "Away team forfeited"
+msgstr "Gastteam kampflos"
+
 #: scorekeeper/result.php:97
 msgid "Away team score"
 msgstr "Punkte Auswaertsteam"
@@ -846,6 +853,10 @@ msgstr "Beach Ultimate Lovers Association"
 #: lib/url.functions.php:127
 msgid "Blogger"
 msgstr "Blogger"
+
+#: admin/editgame.php:275
+msgid "Both teams forfeited"
+msgstr "Beide Teams kampflos"
 
 #: statistics.php:49 statistics.php:231 lib/pool.functions.php:303
 #: lib/standings.functions.php:898
@@ -2138,7 +2149,7 @@ msgstr "Fehler: Konnte Ergebnis nicht speichern"
 msgid "Error: unknown event."
 msgstr "Fehler: unbekanntes Ereignis."
 
-#: lib/game.functions.php:1773
+#: lib/game.functions.php:1777
 #, php-format
 msgid "Errors: %s."
 msgstr "Fehler: %s."
@@ -2563,7 +2574,7 @@ msgstr ""
 "Falls neue Spieler hinzugefügt werden, muss die Akkreditierungs-ID oder das "
 "Geburtsdatum aufgeschrieben werden"
 
-#: admin/editgame.php:271
+#: admin/editgame.php:283
 msgid "Forfeit"
 msgstr "Kampflos"
 
@@ -3227,6 +3238,10 @@ msgstr "Heimteam"
 msgid "Home team assignment"
 msgstr "Zuordnung Heimteam"
 
+#: admin/editgame.php:273
+msgid "Home team forfeited"
+msgstr "Heimteam kampflos"
+
 #: admin/poolgames.php:178 admin/poolgames.php:194 admin/poolgames.php:202
 #: admin/poolgames.php:210 admin/poolgames.php:369 admin/seriesgames.php:105
 msgid "Home team has rights to edit game scoresheet"
@@ -3643,7 +3658,10 @@ msgstr ""
 msgid ""
 "Lets a team see the spirit comment it gave and received in Spiritkeeper once "
 "both teams have submitted, without making comments public."
-msgstr "Lässt ein Team den in Spiritkeeper abgegebenen und erhaltenen Spirit-Kommentar sehen, sobald beide Teams abgegeben haben, ohne die Kommentare öffentlich zu machen."
+msgstr ""
+"Lässt ein Team den in Spiritkeeper abgegebenen und erhaltenen Spirit-"
+"Kommentar sehen, sobald beide Teams abgegeben haben, ohne die Kommentare "
+"öffentlich zu machen."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:197
 #: user/teamplayers.php:170
@@ -3708,11 +3726,11 @@ msgstr "Live"
 msgid "Live Broadcasting"
 msgstr "Live-Übertragung"
 
-#: admin/editgame.php:277
+#: admin/editgame.php:289
 msgid "Live Stream Number"
 msgstr "Livestream-Nummer"
 
-#: admin/editgame.php:279
+#: admin/editgame.php:291
 msgid "Live Stream URL"
 msgstr "Livestream-URL"
 
@@ -4350,7 +4368,7 @@ msgstr "Kein Token gelöscht."
 msgid "No tokens created."
 msgstr "Keine Tokens erstellt."
 
-#: lib/translation.functions.php:119
+#: admin/editgame.php:272 lib/translation.functions.php:119
 msgid "None"
 msgstr "Keine"
 
@@ -4417,7 +4435,9 @@ msgstr "Alte Turniere"
 msgid ""
 "Once both teams have submitted, you can see the spirit notes you gave and "
 "received here."
-msgstr "Sobald beide Teams abgegeben haben, sehen Sie hier die von Ihnen vergebenen und erhaltenen Spirit-Notizen."
+msgstr ""
+"Sobald beide Teams abgegeben haben, sehen Sie hier die von Ihnen vergebenen "
+"und erhaltenen Spirit-Notizen."
 
 #: sql/upgrade_db.php:556
 msgid "One simple score"
@@ -5283,12 +5303,12 @@ msgstr "Ergebnis nicht gespeichert!"
 msgid "Result saved!"
 msgstr "Ergebnis gespeichert!"
 
-#: lib/game.functions.php:1770
+#: lib/game.functions.php:1774
 #, php-format
 msgid "Results changed: %s."
 msgstr "Ergebnisse geändert: %s."
 
-#: lib/game.functions.php:1767
+#: lib/game.functions.php:1771
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
@@ -5311,7 +5331,7 @@ msgstr "Fortsetzen, wenn das Spiel weitergeht."
 #: admin/addseasonpools.php:519 admin/addseasons.php:494
 #: admin/addseasonseries.php:140 admin/addseasonteams.php:223
 #: admin/addteamadmins.php:90 admin/dbbackup.php:131 admin/dbequalize.php:237
-#: admin/dbrestore.php:52 admin/editgame.php:287 admin/editstanding.php:79
+#: admin/dbrestore.php:52 admin/editgame.php:299 admin/editstanding.php:79
 #: admin/eventdataimport.php:231 admin/eventdataimport.php:235
 #: admin/executesql.php:138 admin/failed.php:28 admin/help.php:23
 #: admin/poolmoves.php:400 admin/schedule.php:255 admin/schedule.php:582
@@ -5473,7 +5493,7 @@ msgstr "Samstag"
 #: admin/addseasons.php:491 admin/addseasonseries.php:135
 #: admin/addseasonteams.php:216 admin/addserieformats.php:192
 #: admin/addtimekeepertemplate.php:149 admin/clubs.php:83 admin/clubs.php:120
-#: admin/editgame.php:285 admin/editstanding.php:59 admin/schedule.php:573
+#: admin/editgame.php:297 admin/editstanding.php:59 admin/schedule.php:573
 #: admin/seasongames.php:272 admin/seasonmoves.php:216
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
 #: admin/seasonseries.php:180 admin/seasonstandings.php:552
@@ -6288,7 +6308,7 @@ msgstr "Spirit-Bewertung eingereicht."
 msgid "Spirit scores"
 msgstr "Spirit-Punktzahlen"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1298
+#: spiritstatus.php:47 lib/spirit.functions.php:1301
 msgid "Spirit scores are not visible."
 msgstr "Spirit-Punktzahlen sind nicht sichtbar."
 
@@ -6796,7 +6816,9 @@ msgstr "Dieses Spiel hat noch nicht begonnen. Kehre nach Spielbeginn zurück."
 #: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
-msgstr "Dieses Spiel wurde kampflos gewertet. Für kampflos gewertete Spiele werden keine Spirit-Wertungen abgegeben."
+msgstr ""
+"Dieses Spiel wurde kampflos gewertet. Für kampflos gewertete Spiele werden "
+"keine Spirit-Wertungen abgegeben."
 
 #: admin/eventdataimport.php:14
 msgid ""
@@ -7070,7 +7092,7 @@ msgstr "Defenses gesamt"
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2136
+#: admin/seasonpoints.php:258 lib/game.functions.php:2140
 msgid "Total points"
 msgstr "Gesamtpunkte"
 

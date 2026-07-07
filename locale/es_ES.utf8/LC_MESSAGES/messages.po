@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 13:09+0000\n"
+"POT-Creation-Date: 2026-07-07 21:14+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -23,7 +23,7 @@ msgstr ""
 "X-Poedit-SearchPath-6: scorekeeper\n"
 "X-Poedit-SearchPath-7: login\n"
 
-#: admin/editgame.php:278
+#: admin/editgame.php:290
 msgid " (enter '0' if not live)"
 msgstr " (ingrese '0' si no está activo)"
 
@@ -559,7 +559,10 @@ msgstr "Marcadores históricos"
 msgid ""
 "Allows non-admin users to see game notes on public pages. Season admins and "
 "the spirit director can still see them regardless of this flag."
-msgstr "Permite a los usuarios no administradores ver las notas del juego en páginas públicas. Los administradores de temporada y el administrador de Espíritu pueden verlas independientemente de esta opción."
+msgstr ""
+"Permite a los usuarios no administradores ver las notas del juego en páginas "
+"públicas. Los administradores de temporada y el administrador de Espíritu "
+"pueden verlas independientemente de esta opción."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -775,6 +778,10 @@ msgstr "Pausas de espíritu visitante"
 msgid "Away team"
 msgstr "Equipo visitante"
 
+#: admin/editgame.php:274
+msgid "Away team forfeited"
+msgstr "Equipo visitante forfeit"
+
 #: scorekeeper/result.php:97
 msgid "Away team score"
 msgstr "Puntuación del equipo visitante"
@@ -855,6 +862,10 @@ msgstr "Asociación de Amantes Ultimate de Playa"
 #: lib/url.functions.php:127
 msgid "Blogger"
 msgstr "Blogger"
+
+#: admin/editgame.php:275
+msgid "Both teams forfeited"
+msgstr "Ambos equipos forfeit"
 
 #: statistics.php:49 statistics.php:231 lib/pool.functions.php:303
 #: lib/standings.functions.php:898
@@ -2151,7 +2162,7 @@ msgstr "Error: No se pudo guardar el resultado."
 msgid "Error: unknown event."
 msgstr "Error: evento desconocido."
 
-#: lib/game.functions.php:1773
+#: lib/game.functions.php:1777
 #, php-format
 msgid "Errors: %s."
 msgstr "Errores: %s."
@@ -2576,7 +2587,7 @@ msgstr ""
 "Para los nuevos jugadores agregados, se debe anotar la identificación de "
 "acreditación o la fecha de nacimiento."
 
-#: admin/editgame.php:271
+#: admin/editgame.php:283
 msgid "Forfeit"
 msgstr "Forfeit"
 
@@ -3241,6 +3252,10 @@ msgstr "Equipo local"
 msgid "Home team assignment"
 msgstr "Asignación del equipo local"
 
+#: admin/editgame.php:273
+msgid "Home team forfeited"
+msgstr "Equipo local forfeit"
+
 #: admin/poolgames.php:178 admin/poolgames.php:194 admin/poolgames.php:202
 #: admin/poolgames.php:210 admin/poolgames.php:369 admin/seriesgames.php:105
 msgid "Home team has rights to edit game scoresheet"
@@ -3655,7 +3670,10 @@ msgstr ""
 msgid ""
 "Lets a team see the spirit comment it gave and received in Spiritkeeper once "
 "both teams have submitted, without making comments public."
-msgstr "Permite a un equipo ver el comentario de Espíritu que dio y recibió en Spiritkeeper una vez que ambos equipos lo han enviado, sin hacer públicos los comentarios."
+msgstr ""
+"Permite a un equipo ver el comentario de Espíritu que dio y recibió en "
+"Spiritkeeper una vez que ambos equipos lo han enviado, sin hacer públicos "
+"los comentarios."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:197
 #: user/teamplayers.php:170
@@ -3720,11 +3738,11 @@ msgstr "En Vivo"
 msgid "Live Broadcasting"
 msgstr "Transmisión en vivo"
 
-#: admin/editgame.php:277
+#: admin/editgame.php:289
 msgid "Live Stream Number"
 msgstr "Número de transmisión en vivo"
 
-#: admin/editgame.php:279
+#: admin/editgame.php:291
 msgid "Live Stream URL"
 msgstr "URL de transmisión en vivo"
 
@@ -4361,7 +4379,7 @@ msgstr "No se eliminó ningún token."
 msgid "No tokens created."
 msgstr "No se crearon tokens."
 
-#: lib/translation.functions.php:119
+#: admin/editgame.php:272 lib/translation.functions.php:119
 msgid "None"
 msgstr "Ninguno"
 
@@ -4427,7 +4445,9 @@ msgstr "Eventos antiguos"
 msgid ""
 "Once both teams have submitted, you can see the spirit notes you gave and "
 "received here."
-msgstr "Una vez que ambos equipos hayan enviado, aquí podrás ver las notas de Espíritu que diste y recibiste."
+msgstr ""
+"Una vez que ambos equipos hayan enviado, aquí podrás ver las notas de "
+"Espíritu que diste y recibiste."
 
 #: sql/upgrade_db.php:556
 msgid "One simple score"
@@ -5296,12 +5316,12 @@ msgstr "¡Resultado no guardado!"
 msgid "Result saved!"
 msgstr "¡Resultado guardado!"
 
-#: lib/game.functions.php:1770
+#: lib/game.functions.php:1774
 #, php-format
 msgid "Results changed: %s."
 msgstr "Resultados cambiados: %s."
 
-#: lib/game.functions.php:1767
+#: lib/game.functions.php:1771
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Resultados borrados: %s."
@@ -5324,7 +5344,7 @@ msgstr "Reanúdalo cuando el juego continúe."
 #: admin/addseasonpools.php:519 admin/addseasons.php:494
 #: admin/addseasonseries.php:140 admin/addseasonteams.php:223
 #: admin/addteamadmins.php:90 admin/dbbackup.php:131 admin/dbequalize.php:237
-#: admin/dbrestore.php:52 admin/editgame.php:287 admin/editstanding.php:79
+#: admin/dbrestore.php:52 admin/editgame.php:299 admin/editstanding.php:79
 #: admin/eventdataimport.php:231 admin/eventdataimport.php:235
 #: admin/executesql.php:138 admin/failed.php:28 admin/help.php:23
 #: admin/poolmoves.php:400 admin/schedule.php:255 admin/schedule.php:582
@@ -5486,7 +5506,7 @@ msgstr "Sábado"
 #: admin/addseasons.php:491 admin/addseasonseries.php:135
 #: admin/addseasonteams.php:216 admin/addserieformats.php:192
 #: admin/addtimekeepertemplate.php:149 admin/clubs.php:83 admin/clubs.php:120
-#: admin/editgame.php:285 admin/editstanding.php:59 admin/schedule.php:573
+#: admin/editgame.php:297 admin/editstanding.php:59 admin/schedule.php:573
 #: admin/seasongames.php:272 admin/seasonmoves.php:216
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
 #: admin/seasonseries.php:180 admin/seasonstandings.php:552
@@ -6300,7 +6320,7 @@ msgstr "Puntuación de espíritu enviada."
 msgid "Spirit scores"
 msgstr "Puntuaciones de espíritu"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1298
+#: spiritstatus.php:47 lib/spirit.functions.php:1301
 msgid "Spirit scores are not visible."
 msgstr "Las puntuaciones de espíritu no son visibles."
 
@@ -6816,7 +6836,9 @@ msgstr ""
 #: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
-msgstr "Este partido se decidió por forfeit. No se registran puntuaciones de Espíritu en los partidos por forfeit."
+msgstr ""
+"Este partido se decidió por forfeit. No se registran puntuaciones de "
+"Espíritu en los partidos por forfeit."
 
 #: admin/eventdataimport.php:14
 msgid ""
@@ -7089,7 +7111,7 @@ msgstr "Defensas totales"
 msgid "Total number of players:"
 msgstr "Número total de jugadores:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2136
+#: admin/seasonpoints.php:258 lib/game.functions.php:2140
 msgid "Total points"
 msgstr "Puntos totales"
 

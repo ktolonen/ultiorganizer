@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 13:09+0000\n"
+"POT-Creation-Date: 2026-07-07 21:14+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -21,7 +21,7 @@ msgstr ""
 "X-Poedit-SearchPath-6: scorekeeper\n"
 "X-Poedit-SearchPath-7: mobile\n"
 
-#: admin/editgame.php:278
+#: admin/editgame.php:290
 msgid " (enter '0' if not live)"
 msgstr " (syötä '0', jos ei ole live)"
 
@@ -546,7 +546,10 @@ msgstr "Kaikkienaikojen pistepörssi"
 msgid ""
 "Allows non-admin users to see game notes on public pages. Season admins and "
 "the spirit director can still see them regardless of this flag."
-msgstr "Sallii muiden kuin ylläpitäjien nähdä peli-kommentit julkisilla sivuilla. Tapahtumavastaavat ja spirit-ylläpitäjä näkevät ne silti tästä asetuksesta riippumatta."
+msgstr ""
+"Sallii muiden kuin ylläpitäjien nähdä peli-kommentit julkisilla sivuilla. "
+"Tapahtumavastaavat ja spirit-ylläpitäjä näkevät ne silti tästä asetuksesta "
+"riippumatta."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -754,6 +757,10 @@ msgstr "Vierasjoukkueen spirit-keskeytykset"
 msgid "Away team"
 msgstr "Vierasjoukkue"
 
+#: admin/editgame.php:274
+msgid "Away team forfeited"
+msgstr "Vierasjoukkue luovutti"
+
 #: scorekeeper/result.php:97
 msgid "Away team score"
 msgstr "Vierasjoukkueen pisteet"
@@ -834,6 +841,10 @@ msgstr "Beach Ultimate Lovers Association"
 #: lib/url.functions.php:127
 msgid "Blogger"
 msgstr "Blogger"
+
+#: admin/editgame.php:275
+msgid "Both teams forfeited"
+msgstr "Molemmat joukkueet luovuttivat"
 
 #: statistics.php:49 statistics.php:231 lib/pool.functions.php:303
 #: lib/standings.functions.php:898
@@ -2112,7 +2123,7 @@ msgstr "Virhe: Tuloksia ei voitu tallentaa."
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:1773
+#: lib/game.functions.php:1777
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -2536,7 +2547,7 @@ msgstr ""
 "Listaa lisättäville pelaajille on ilmoitettava joko jäsennumero tai "
 "syntymäaika."
 
-#: admin/editgame.php:271
+#: admin/editgame.php:283
 msgid "Forfeit"
 msgstr "Luovutus"
 
@@ -3203,6 +3214,10 @@ msgstr "Kotijoukkue"
 msgid "Home team assignment"
 msgstr "Kotijoukkueen määritys"
 
+#: admin/editgame.php:273
+msgid "Home team forfeited"
+msgstr "Kotijoukkue luovutti"
+
 #: admin/poolgames.php:178 admin/poolgames.php:194 admin/poolgames.php:202
 #: admin/poolgames.php:210 admin/poolgames.php:369 admin/seriesgames.php:105
 msgid "Home team has rights to edit game scoresheet"
@@ -3614,7 +3629,10 @@ msgstr ""
 msgid ""
 "Lets a team see the spirit comment it gave and received in Spiritkeeper once "
 "both teams have submitted, without making comments public."
-msgstr "Antaa joukkueen nähdä Spiritkeeperissä antamansa ja saamansa spirit-kommentin, kun molemmat joukkueet ovat lähettäneet arvionsa, tekemättä kommenteista julkisia."
+msgstr ""
+"Antaa joukkueen nähdä Spiritkeeperissä antamansa ja saamansa spirit-"
+"kommentin, kun molemmat joukkueet ovat lähettäneet arvionsa, tekemättä "
+"kommenteista julkisia."
 
 #: cust/slkl/teamplayers.functions.php:132 user/playerprofile.php:197
 #: user/teamplayers.php:170
@@ -3679,11 +3697,11 @@ msgstr "Live"
 msgid "Live Broadcasting"
 msgstr "Suoralähetys"
 
-#: admin/editgame.php:277
+#: admin/editgame.php:289
 msgid "Live Stream Number"
 msgstr "Livestriimin numero"
 
-#: admin/editgame.php:279
+#: admin/editgame.php:291
 msgid "Live Stream URL"
 msgstr "Livestriimin URL"
 
@@ -4318,7 +4336,7 @@ msgstr "Yhtään tokenia ei poistettu."
 msgid "No tokens created."
 msgstr "Tokeneita ei ole luotu."
 
-#: lib/translation.functions.php:119
+#: admin/editgame.php:272 lib/translation.functions.php:119
 msgid "None"
 msgstr "Ei mitään"
 
@@ -4384,7 +4402,9 @@ msgstr "Vanhat tapahtumat"
 msgid ""
 "Once both teams have submitted, you can see the spirit notes you gave and "
 "received here."
-msgstr "Kun molemmat joukkueet ovat lähettäneet arvionsa, näet tässä antamasi ja saamasi spirit-kommentit."
+msgstr ""
+"Kun molemmat joukkueet ovat lähettäneet arvionsa, näet tässä antamasi ja "
+"saamasi spirit-kommentit."
 
 #: sql/upgrade_db.php:556
 msgid "One simple score"
@@ -5243,12 +5263,12 @@ msgstr "Tulosta ei tallennettu!"
 msgid "Result saved!"
 msgstr "Tulos tallennettu!"
 
-#: lib/game.functions.php:1770
+#: lib/game.functions.php:1774
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:1767
+#: lib/game.functions.php:1771
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -5271,7 +5291,7 @@ msgstr "Jatka sitä, kun peli jatkuu."
 #: admin/addseasonpools.php:519 admin/addseasons.php:494
 #: admin/addseasonseries.php:140 admin/addseasonteams.php:223
 #: admin/addteamadmins.php:90 admin/dbbackup.php:131 admin/dbequalize.php:237
-#: admin/dbrestore.php:52 admin/editgame.php:287 admin/editstanding.php:79
+#: admin/dbrestore.php:52 admin/editgame.php:299 admin/editstanding.php:79
 #: admin/eventdataimport.php:231 admin/eventdataimport.php:235
 #: admin/executesql.php:138 admin/failed.php:28 admin/help.php:23
 #: admin/poolmoves.php:400 admin/schedule.php:255 admin/schedule.php:582
@@ -5433,7 +5453,7 @@ msgstr "Lauantai"
 #: admin/addseasons.php:491 admin/addseasonseries.php:135
 #: admin/addseasonteams.php:216 admin/addserieformats.php:192
 #: admin/addtimekeepertemplate.php:149 admin/clubs.php:83 admin/clubs.php:120
-#: admin/editgame.php:285 admin/editstanding.php:59 admin/schedule.php:573
+#: admin/editgame.php:297 admin/editstanding.php:59 admin/schedule.php:573
 #: admin/seasongames.php:272 admin/seasonmoves.php:216
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
 #: admin/seasonseries.php:180 admin/seasonstandings.php:552
@@ -6243,7 +6263,7 @@ msgstr "Spirit-pisteet lähetetty."
 msgid "Spirit scores"
 msgstr "Spirit-pisteet"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1298
+#: spiritstatus.php:47 lib/spirit.functions.php:1301
 msgid "Spirit scores are not visible."
 msgstr "Spirit-pisteet eivät ole näkyvissä."
 
@@ -6745,7 +6765,8 @@ msgstr "Tämä peli ei ole vielä alkanut. Palaa pelin alkamisen jälkeen."
 #: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
-msgstr "Tämä peli on luovutettu. Luovutetuista peleistä ei anneta spirit-pisteitä."
+msgstr ""
+"Tämä peli on luovutettu. Luovutetuista peleistä ei anneta spirit-pisteitä."
 
 #: admin/eventdataimport.php:14
 msgid ""
@@ -7015,7 +7036,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2136
+#: admin/seasonpoints.php:258 lib/game.functions.php:2140
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 

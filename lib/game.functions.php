@@ -972,7 +972,7 @@ function SeasonForfeitGames($seasonId)
 		 LEFT JOIN uo_team vt ON g.visitorteam = vt.team_id
 		 LEFT JOIN uo_pool po ON po.pool_id = gp.pool
 		 LEFT JOIN uo_series se ON po.series = se.series_id
-		 WHERE se.season = '%s' AND g.forfeit = 1
+		 WHERE se.season = '%s' AND g.forfeit > 0
 		 ORDER BY g.time",
         DBEscapeString($seasonId),
     );
@@ -984,7 +984,9 @@ function SeasonForfeitGames($seasonId)
     return $games;
 }
 
-function GameSetForfeit($gameId, $isForfeit)
+// Forfeit codes: 0 = not a forfeit, 1 = home team forfeited (away wins),
+// 2 = away team forfeited (home wins), 3 = both teams forfeited (both lose).
+function GameSetForfeit($gameId, $forfeit)
 {
     $seasonId = GameSeason($gameId);
     if (isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
@@ -993,10 +995,12 @@ function GameSetForfeit($gameId, $isForfeit)
     if (!hasEditGameEventsRight($gameId)) {
         die('Insufficient rights to edit game');
     }
-    LogGameUpdate($gameId, "forfeit: " . ($isForfeit ? "yes" : "no"));
+    $forfeit = max(0, min(3, intval($forfeit)));
+    $labels = [0 => "none", 1 => "home", 2 => "away", 3 => "both"];
+    LogGameUpdate($gameId, "forfeit: " . $labels[$forfeit]);
     $query = sprintf(
         "UPDATE uo_game SET forfeit='%d' WHERE game_id='%s'",
-        $isForfeit ? 1 : 0,
+        $forfeit,
         DBEscapeString($gameId),
     );
     $result = DBQuery($query);
@@ -1005,6 +1009,11 @@ function GameSetForfeit($gameId, $isForfeit)
     if (function_exists('RefreshGameSpiritData')) {
         RefreshGameSpiritData($gameId);
     }
+    // The forfeit direction changes the win/loss a game contributes, so
+    // recompute the cached pool standings the same way GameSetResult() does.
+    $poolId = GamePool($gameId);
+    ResolvePoolStandings($poolId);
+    PoolResolvePlayed($poolId);
     return $result;
 }
 
