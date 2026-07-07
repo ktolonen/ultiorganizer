@@ -1000,10 +1000,10 @@ function GameSetForfeit($gameId, $isForfeit)
         DBEscapeString($gameId),
     );
     $result = DBQuery($query);
-    // Forfeited games carry no spirit; recompute show_spirit so their spirit
-    // data is dropped from public views and averages (and restored on undo).
-    if (function_exists('RefreshGameSpiritVisibility')) {
-        RefreshGameSpiritVisibility($gameId);
+    // Forfeited games carry no spirit; recompute visibility and cached team
+    // statistics so their data is dropped from averages (and restored on undo).
+    if (function_exists('RefreshGameSpiritData')) {
+        RefreshGameSpiritData($gameId);
     }
     return $result;
 }

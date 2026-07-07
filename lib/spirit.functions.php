@@ -1386,6 +1386,7 @@ function SpiritMissingGamesByPool($poolId)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE gp.pool=%d
 			AND g.isongoing=0
+			AND g.forfeit=0
 			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 		ORDER BY g.time ASC",
         (int) $poolId,
@@ -1416,6 +1417,7 @@ function SpiritMissingGamesBySeries($seriesId)
 		LEFT JOIN uo_season se ON (se.season_id = s.season)
 		WHERE p.series=%d
 			AND g.isongoing=0
+			AND g.forfeit=0
 			AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 		ORDER BY g.time ASC",
         (int) $seriesId,
