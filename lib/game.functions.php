@@ -948,6 +948,10 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         );
         $result = DBQuery($query);
 
+        if ($result && function_exists('RefreshGameSpiritData')) {
+            RefreshGameSpiritData($gameId);
+        }
+
         if ($updatePools) {
             $poolId = GamePool($gameId);
             ResolvePoolStandings($poolId);
