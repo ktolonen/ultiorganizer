@@ -79,9 +79,10 @@ Current behavior:
 - the token holder can see the score they received only when both conditions are true:
   `SpiritTokenHasOwnSubmission()` is true and `SpiritTokenHasReceivedSubmission()` is true,
 - the token holder can add, update, or delete their own spirit note while the token submission is still open,
-- opponent spirit notes are not shown in the public token flow.
+- opponent spirit notes are not shown in the public token flow unless the `showspiritcommentstoteams` event setting is enabled, in which case the token holder also sees the note it gave and the note it received once both teams have submitted,
+- forfeited games (`uo_game.forfeit`) do not accept spirit submissions; Spiritkeeper shows a forfeit note instead of the entry form.
 
-This reveal behavior is implemented by `SpiritTokenCanViewReceivedPoints()`. It is currently hardcoded for the token flow and is not yet an event-level setting.
+The received-score reveal is implemented by `SpiritTokenCanViewReceivedPoints()` and is still hardcoded for the token flow. The received-comment reveal reuses that condition but is additionally gated by the `showspiritcommentstoteams` event setting.
 
 ## Authenticated Spiritkeeper behavior
 
@@ -127,13 +128,12 @@ This means:
 - admin edits or deletions made in the logged-in UI affect what the token flow later shows,
 - token submissions affect `show_spirit` and spirit averages the same way as logged-in submissions,
 - token users can edit only their own outbound spirit note on the token submit page while submission is open,
-- opponent spirit-note visibility remains limited to authenticated Spiritkeeper and the main logged-in spirit UI,
+- opponent spirit-note visibility in the token flow is off by default and enabled per event by `showspiritcommentstoteams`; otherwise it remains limited to authenticated Spiritkeeper and the main logged-in spirit UI,
 - spirit stoppages remain on score-entry surfaces because they are recorded during the game by officials,
 - scorekeeper no longer exposes spirit entry pages,
 - the deprecated `mobile/` interface is not the supported entry surface for spirit workflows anymore.
 
 ## Current gaps
 
-- There is no event-level configuration flag for token-specific reveal policy.
-- The token flow does not expose opponent spirit notes.
+- The received-score reveal policy is still hardcoded; only the received-comment reveal is configurable, via `showspiritcommentstoteams`.
 - The token flow is still a separate standalone entrypoint rather than a routed `?view=...` page.
