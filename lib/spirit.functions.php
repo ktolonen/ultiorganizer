@@ -112,6 +112,7 @@ function SpiritGameRow($gameId)
 			se.spiritmode,
 			se.showspiritpoints,
 			se.showspiritcomments,
+			se.showspiritcommentstoteams,
 			se.showspiritpointsonlyoncomplete,
 			se.lockteamspiritonsubmit,
 			se.event_readonly
@@ -316,6 +317,7 @@ function SpiritTokenGameRows($teamId)
 			se.spiritmode,
 			se.showspiritpoints,
 			se.showspiritcomments,
+			se.showspiritcommentstoteams,
 			se.showspiritpointsonlyoncomplete,
 			se.lockteamspiritonsubmit,
 			se.event_readonly
@@ -379,6 +381,7 @@ function SpiritTokenGame($gameId, $teamId)
 			se.spiritmode,
 			se.showspiritpoints,
 			se.showspiritcomments,
+			se.showspiritcommentstoteams,
 			se.showspiritpointsonlyoncomplete,
 			se.lockteamspiritonsubmit,
 			se.event_readonly

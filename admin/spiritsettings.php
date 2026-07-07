@@ -26,6 +26,7 @@ $spiritSettings = [
     'spiritmode' => isset($seasonInfo['spiritmode']) ? (int) $seasonInfo['spiritmode'] : 0,
     'showspiritpoints' => !empty($seasonInfo['showspiritpoints']) ? 1 : 0,
     'showspiritcomments' => !empty($seasonInfo['showspiritcomments']) ? 1 : 0,
+    'showspiritcommentstoteams' => !empty($seasonInfo['showspiritcommentstoteams']) ? 1 : 0,
     'showspiritpointsonlyoncomplete' => isset($seasonInfo['showspiritpointsonlyoncomplete']) ? (int) !empty($seasonInfo['showspiritpointsonlyoncomplete']) : 1,
     'lockteamspiritonsubmit' => isset($seasonInfo['lockteamspiritonsubmit']) ? (int) !empty($seasonInfo['lockteamspiritonsubmit']) : 1,
 ];
@@ -34,6 +35,7 @@ if (!empty($_POST['save'])) {
     $seasonInfo['spiritmode'] = isset($_POST['spiritmode']) ? (int) $_POST['spiritmode'] : 0;
     $seasonInfo['showspiritpoints'] = !empty($_POST['showspiritpoints']) ? 1 : 0;
     $seasonInfo['showspiritcomments'] = !empty($_POST['showspiritcomments']) ? 1 : 0;
+    $seasonInfo['showspiritcommentstoteams'] = !empty($_POST['showspiritcommentstoteams']) ? 1 : 0;
     $seasonInfo['showspiritpointsonlyoncomplete'] = !empty($_POST['showspiritpointsonlyoncomplete']) ? 1 : 0;
     $seasonInfo['lockteamspiritonsubmit'] = !empty($_POST['lockteamspiritonsubmit']) ? 1 : 0;
 
@@ -43,6 +45,7 @@ if (!empty($_POST['save'])) {
             'spiritmode' => (int) $seasonInfo['spiritmode'],
             'showspiritpoints' => (int) $seasonInfo['showspiritpoints'],
             'showspiritcomments' => (int) $seasonInfo['showspiritcomments'],
+            'showspiritcommentstoteams' => (int) $seasonInfo['showspiritcommentstoteams'],
             'showspiritpointsonlyoncomplete' => (int) $seasonInfo['showspiritpointsonlyoncomplete'],
             'lockteamspiritonsubmit' => (int) $seasonInfo['lockteamspiritonsubmit'],
         ];
@@ -79,6 +82,11 @@ $html .= "<tr>";
 $html .= "<td class='infocell'>" . _("Spirit comments visible") . ": </td>";
 $html .= "<td><input class='input' type='checkbox' name='showspiritcomments' value='1'" . ($spiritSettings['showspiritcomments'] ? " checked='checked'" : "") . "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see spirit comments when spirit scores themselves are visible for the game.") . "</span></td></tr>";
+
+$html .= "<tr>";
+$html .= "<td class='infocell'>" . _("Show spirit comments to teams") . ": </td>";
+$html .= "<td><input class='input' type='checkbox' name='showspiritcommentstoteams' value='1'" . ($spiritSettings['showspiritcommentstoteams'] ? " checked='checked'" : "") . "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Lets a team see the spirit comment it gave and received in Spiritkeeper once both teams have submitted, without making comments public.") . "</span></td></tr>";
 
 $html .= "<tr>";
 $html .= "<td class='infocell'>" . _("Hide spirit until complete") . ": </td>";

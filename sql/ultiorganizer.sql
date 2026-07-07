@@ -866,6 +866,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `category` varchar(50) DEFAULT NULL,
   `showspiritpoints` tinyint(1) DEFAULT 0,
   `showspiritcomments` tinyint(1) DEFAULT 0,
+  `showspiritcommentstoteams` tinyint(1) NOT NULL DEFAULT 0,
   `showspiritpointsonlyoncomplete` tinyint(1) DEFAULT 1,
   `lockteamspiritonsubmit` tinyint(1) DEFAULT 1,
   `use_season_points` tinyint(1) DEFAULT 0,

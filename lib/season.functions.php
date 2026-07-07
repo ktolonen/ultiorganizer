@@ -1191,11 +1191,12 @@ function SetSeasonSpiritSettings($seasonId, $params)
     $query = sprintf(
         "
 		UPDATE uo_season SET
-		spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d
+		spiritmode=%d, showspiritpoints=%d, showspiritcomments=%d, showspiritcommentstoteams=%d, showspiritpointsonlyoncomplete=%d, lockteamspiritonsubmit=%d
 		WHERE season_id='%s'",
         (int) $params['spiritmode'],
         (int) $params['showspiritpoints'],
         (int) $params['showspiritcomments'],
+        (int) $params['showspiritcommentstoteams'],
         (int) $params['showspiritpointsonlyoncomplete'],
         (int) $params['lockteamspiritonsubmit'],
         DBEscapeString($seasonId),

@@ -35,10 +35,23 @@ $renderGameCard = function ($game, $contextTeamId, $actionUrl, $buttonLabel, $st
     $html .= "</p>";
     $html .= "<p><strong>" . _("Score") . ":</strong> " . utf8entities(SpiritkeeperGameScoreLabel($game)) . "</p>";
 
+    $showCommentsToTeams = !empty($game['showspiritcommentstoteams']);
     if ($ownSubmitted) {
         $html .= "<p class='mobile-summary'><strong>" . _("Spirit score given for") . " " . utf8entities($opponentName) . ":</strong> " . utf8entities(SpiritPointsSummary($givenPoints, $categories)) . "</p>";
+        if ($showCommentsToTeams) {
+            $givenComment = CommentRaw(SpiritCommentTypeForTeam($game, $ratedTeamId), $gameId);
+            if ($givenComment !== "") {
+                $html .= "<p class='mobile-summary'><strong>" . _("Spirit note given") . ":</strong></p><div class='comment'>" . someHTML($givenComment) . "</div>";
+            }
+        }
         if ($canViewReceived) {
             $html .= "<p class='mobile-summary'><strong>" . _("Spirit score received") . ":</strong> " . utf8entities(SpiritPointsSummary($receivedPoints, $categories)) . "</p>";
+            if ($showCommentsToTeams) {
+                $receivedComment = CommentRaw(SpiritCommentTypeForTeam($game, $contextTeamId), $gameId);
+                if ($receivedComment !== "") {
+                    $html .= "<p class='mobile-summary'><strong>" . _("Spirit note received") . ":</strong></p><div class='comment'>" . someHTML($receivedComment) . "</div>";
+                }
+            }
         } elseif ($receivedSubmitted) {
             $html .= "<p class='mobile-status'>" . _("The opponent spirit score is available, but not visible through this page.") . "</p>";
         } else {
@@ -85,9 +98,14 @@ if ($token !== '') {
         $pageHtml .= $renderGameCard($game, $teamId, $actionUrl, $buttonLabel, $statusNote);
     }
 
+    $commentsToTeams = !empty($games[0]['showspiritcommentstoteams']);
     $pageHtml .= "<div class='card'>";
     $pageHtml .= "<p>" . _("Spirit notes can be added and edited on the token submission page.") . "</p>";
-    $pageHtml .= "<p>" . _("Opponent spirit notes are not shown in the public token flow.") . "</p>";
+    if ($commentsToTeams) {
+        $pageHtml .= "<p>" . _("Once both teams have submitted, you can see the spirit notes you gave and received here.") . "</p>";
+    } else {
+        $pageHtml .= "<p>" . _("Opponent spirit notes are not shown in the public token flow.") . "</p>";
+    }
     $pageHtml .= "</div>";
     return;
 }
