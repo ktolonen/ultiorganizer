@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 11:36+0000\n"
+"POT-Creation-Date: 2026-07-07 13:09+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -554,6 +554,16 @@ msgstr "Marcador histórico TOP 100"
 #: statistics.php:26
 msgid "All-time Scoreboards"
 msgstr "Marcadores históricos"
+
+#: admin/addseasons.php:485
+#, fuzzy
+msgid ""
+"Allows non-admin users to see game notes on public pages. Season admins and "
+"the spirit director can still see them regardless of this flag."
+msgstr ""
+"Permite a los usuarios no administradores ver las puntuaciones de Espíritu "
+"de este evento. Los administradores de temporada aún pueden revisar los "
+"datos de Espíritu independientemente de esta bandera."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -2145,7 +2155,7 @@ msgstr "Error: No se pudo guardar el resultado."
 msgid "Error: unknown event."
 msgstr "Error: evento desconocido."
 
-#: lib/game.functions.php:1767
+#: lib/game.functions.php:1773
 #, php-format
 msgid "Errors: %s."
 msgstr "Errores: %s."
@@ -5290,12 +5300,12 @@ msgstr "¡Resultado no guardado!"
 msgid "Result saved!"
 msgstr "¡Resultado guardado!"
 
-#: lib/game.functions.php:1764
+#: lib/game.functions.php:1770
 #, php-format
 msgid "Results changed: %s."
 msgstr "Resultados cambiados: %s."
 
-#: lib/game.functions.php:1761
+#: lib/game.functions.php:1767
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Resultados borrados: %s."
@@ -6210,12 +6220,12 @@ msgstr "Nota de Espíritu"
 msgid "Spirit note for"
 msgstr "Nota de Espíritu para"
 
-#: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:44
+#: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:46
 #, fuzzy
 msgid "Spirit note given"
 msgstr "Puntuación de espíritu otorgada"
 
-#: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:52
+#: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:54
 #, fuzzy
 msgid "Spirit note received"
 msgstr "Puntuación de espíritu recibida"
@@ -6259,7 +6269,7 @@ msgstr "Puntuación de espíritu para"
 msgid "Spirit score given"
 msgstr "Puntuación de espíritu otorgada"
 
-#: spiritkeeper/teamgames.php:40 user/addspirit.php:283 user/addspirit.php:291
+#: spiritkeeper/teamgames.php:42 user/addspirit.php:283 user/addspirit.php:291
 #: user/addspirit.php:299 user/addspirit.php:305
 msgid "Spirit score given for"
 msgstr "Puntuación de espíritu otorgada para"
@@ -6281,7 +6291,7 @@ msgstr ""
 "Puntuación de espíritu no guardada. Verifique que todos los valores sean "
 "válidos y que el envío aún esté abierto."
 
-#: spiritkeeper/submitsotg.php:154 spiritkeeper/teamgames.php:48
+#: spiritkeeper/submitsotg.php:154 spiritkeeper/teamgames.php:50
 msgid "Spirit score received"
 msgstr "Puntuación de espíritu recibida"
 
@@ -6298,7 +6308,7 @@ msgstr "Puntuación de espíritu enviada."
 msgid "Spirit scores"
 msgstr "Puntuaciones de espíritu"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1295
+#: spiritstatus.php:47 lib/spirit.functions.php:1298
 msgid "Spirit scores are not visible."
 msgstr "Las puntuaciones de espíritu no son visibles."
 
@@ -6704,12 +6714,12 @@ msgstr "La clave no distingue entre mayúsculas y minúsculas"
 msgid "The legacy mobile administration interface is deprecated."
 msgstr "La interfaz de administración móvil heredada está obsoleta."
 
-#: spiritkeeper/teamgames.php:58
+#: spiritkeeper/teamgames.php:60
 msgid "The opponent has not submitted a spirit score for this game yet."
 msgstr ""
 "El oponente aún no ha presentado una puntuación de espíritu para este juego."
 
-#: spiritkeeper/teamgames.php:56
+#: spiritkeeper/teamgames.php:58
 msgid ""
 "The opponent spirit score is available, but not visible through this page."
 msgstr ""
@@ -6811,7 +6821,7 @@ msgid "This game has not started yet. Return after the game begins."
 msgstr ""
 "Este juego aún no ha comenzado. Regrese después de que comience el juego."
 
-#: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:61
+#: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
 msgstr ""
@@ -7087,7 +7097,7 @@ msgstr "Defensas totales"
 msgid "Total number of players:"
 msgstr "Número total de jugadores:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2130
+#: admin/seasonpoints.php:258 lib/game.functions.php:2136
 msgid "Total points"
 msgstr "Puntos totales"
 
@@ -7599,12 +7609,6 @@ msgid ""
 msgstr ""
 "Cuando comience el mediotiempo, complete la hora en que termina (la hora de "
 "inicio del segundo tiempo)."
-
-#: admin/addseasons.php:485
-msgid ""
-"When off, game notes are visible only to event admins and the spirit "
-"director."
-msgstr ""
 
 #: cust/wfdf/pdfscoresheet.php:523
 msgid "Which team started on which side?"

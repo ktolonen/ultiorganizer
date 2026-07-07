@@ -482,7 +482,7 @@ if ($sp['showgamecomments']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When off, game notes are visible only to event admins and the spirit director.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see game notes on public pages. Season admins and the spirit director can still see them regardless of this flag.") . "</span></td></tr>";
 
 $html .= "</table>\n";
 if (empty($seasonId)) {

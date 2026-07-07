@@ -130,7 +130,7 @@ Spirit comment permissions in [lib/comment.functions.php](../lib/comment.functio
 
 ### Game note visibility
 
-`CanViewGameComment($gameId, $seasoninfo)` in [lib/comment.functions.php](../lib/comment.functions.php) gates the game note (`COMMENT_TYPE_GAME`) rendered on the public game page. Event admins and the spirit director — the `hasSpiritToolsRight()` set (`seasonadmin`, `spiritadmin`, `superadmin`) — always see it; everyone else, including team-, series-, and game-scoped admins and scorekeepers, sees it only when the season's `showgamecomments` setting is enabled. It defaults to off, so scorekeeper-entered game notes stay private unless an admin publishes them per event.
+`CanViewGameComment($gameId, $seasoninfo)` in [lib/comment.functions.php](../lib/comment.functions.php) gates the game note (`COMMENT_TYPE_GAME`) rendered on the public game page. Season admins and the spirit director — the `hasSpiritToolsRight()` set (`seasonadmin`, `spiritadmin`, `superadmin`) — always see it; everyone else, including team-, series-, and game-scoped admins and scorekeepers, sees it only when the season's `showgamecomments` setting is enabled. It defaults to off, so scorekeeper-entered game notes stay private unless an admin publishes them per event.
 
 ## Menu visibility
 

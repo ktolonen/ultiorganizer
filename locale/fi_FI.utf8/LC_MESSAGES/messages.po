@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 11:36+0000\n"
+"POT-Creation-Date: 2026-07-07 13:09+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -541,6 +541,16 @@ msgstr "Kaikkienaikojen pistepörssi TOP 100"
 #: statistics.php:26
 msgid "All-time Scoreboards"
 msgstr "Kaikkienaikojen pistepörssi"
+
+#: admin/addseasons.php:485
+#, fuzzy
+msgid ""
+"Allows non-admin users to see game notes on public pages. Season admins and "
+"the spirit director can still see them regardless of this flag."
+msgstr ""
+"Sallii muiden kuin ylläpitäjien nähdä tämän tapahtuman spirit-pisteet. "
+"Tapahtumavastaavat voivat silti tarkastella spirit-tietoja tästä asetuksesta "
+"riippumatta."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -2106,7 +2116,7 @@ msgstr "Virhe: Tuloksia ei voitu tallentaa."
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:1767
+#: lib/game.functions.php:1773
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -5237,12 +5247,12 @@ msgstr "Tulosta ei tallennettu!"
 msgid "Result saved!"
 msgstr "Tulos tallennettu!"
 
-#: lib/game.functions.php:1764
+#: lib/game.functions.php:1770
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:1761
+#: lib/game.functions.php:1767
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -6154,12 +6164,12 @@ msgstr "Spirit-kommentti"
 msgid "Spirit note for"
 msgstr "Spirit-kommentti joukkueelle"
 
-#: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:44
+#: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:46
 #, fuzzy
 msgid "Spirit note given"
 msgstr "Annetut spirit-pisteet"
 
-#: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:52
+#: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:54
 #, fuzzy
 msgid "Spirit note received"
 msgstr "Saadut spirit-pisteet"
@@ -6202,7 +6212,7 @@ msgstr "Spirit-pisteet joukkueelle"
 msgid "Spirit score given"
 msgstr "Annetut spirit-pisteet"
 
-#: spiritkeeper/teamgames.php:40 user/addspirit.php:283 user/addspirit.php:291
+#: spiritkeeper/teamgames.php:42 user/addspirit.php:283 user/addspirit.php:291
 #: user/addspirit.php:299 user/addspirit.php:305
 msgid "Spirit score given for"
 msgstr "Spirit-piste annettu joukkueelle"
@@ -6224,7 +6234,7 @@ msgstr ""
 "Spirit-pisteitä ei tallennettu. Tarkista, että kaikki arvot ovat kelvollisia "
 "ja kirjaus on yhä avoinna."
 
-#: spiritkeeper/submitsotg.php:154 spiritkeeper/teamgames.php:48
+#: spiritkeeper/submitsotg.php:154 spiritkeeper/teamgames.php:50
 msgid "Spirit score received"
 msgstr "Saadut spirit-pisteet"
 
@@ -6241,7 +6251,7 @@ msgstr "Spirit-pisteet lähetetty."
 msgid "Spirit scores"
 msgstr "Spirit-pisteet"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1295
+#: spiritstatus.php:47 lib/spirit.functions.php:1298
 msgid "Spirit scores are not visible."
 msgstr "Spirit-pisteet eivät ole näkyvissä."
 
@@ -6642,11 +6652,11 @@ msgstr "Avain ei riipu kirjainkoosta"
 msgid "The legacy mobile administration interface is deprecated."
 msgstr "Vanha mobiilihallinnan käyttöliittymä on poistumassa käytöstä."
 
-#: spiritkeeper/teamgames.php:58
+#: spiritkeeper/teamgames.php:60
 msgid "The opponent has not submitted a spirit score for this game yet."
 msgstr "Vastustaja ei ole vielä lähettänyt spirit-pisteitä tästä pelistä."
 
-#: spiritkeeper/teamgames.php:56
+#: spiritkeeper/teamgames.php:58
 msgid ""
 "The opponent spirit score is available, but not visible through this page."
 msgstr ""
@@ -6740,7 +6750,7 @@ msgstr "Tämä peli on jo pelattu. Nykyinen tulos:"
 msgid "This game has not started yet. Return after the game begins."
 msgstr "Tämä peli ei ole vielä alkanut. Palaa pelin alkamisen jälkeen."
 
-#: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:61
+#: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
 msgstr ""
@@ -7013,7 +7023,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2130
+#: admin/seasonpoints.php:258 lib/game.functions.php:2136
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 
@@ -7515,12 +7525,6 @@ msgid ""
 msgstr ""
 "Puoliajan alettua merkitse sen loppumisaika (eli toisen pelipuoliskon "
 "alkamisaika)."
-
-#: admin/addseasons.php:485
-msgid ""
-"When off, game notes are visible only to event admins and the spirit "
-"director."
-msgstr ""
 
 #: cust/wfdf/pdfscoresheet.php:523
 msgid "Which team started on which side?"

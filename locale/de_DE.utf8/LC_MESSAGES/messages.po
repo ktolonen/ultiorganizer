@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-07 11:36+0000\n"
+"POT-Creation-Date: 2026-07-07 13:09+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -546,6 +546,16 @@ msgstr "Ewige Top 100"
 #: statistics.php:26
 msgid "All-time Scoreboards"
 msgstr "Allzeit-Scorerliste"
+
+#: admin/addseasons.php:485
+#, fuzzy
+msgid ""
+"Allows non-admin users to see game notes on public pages. Season admins and "
+"the spirit director can still see them regardless of this flag."
+msgstr ""
+"Erlaubt Benutzern ohne Admin-Rechte, die Spirit-Wertungen fuer dieses "
+"Ereignis zu sehen. Veranstaltungsadministratoren koennen die Spirit-Daten "
+"unabhaengig von dieser Einstellung weiterhin einsehen."
 
 #: admin/spiritsettings.php:84
 msgid ""
@@ -2132,7 +2142,7 @@ msgstr "Fehler: Konnte Ergebnis nicht speichern"
 msgid "Error: unknown event."
 msgstr "Fehler: unbekanntes Ereignis."
 
-#: lib/game.functions.php:1767
+#: lib/game.functions.php:1773
 #, php-format
 msgid "Errors: %s."
 msgstr "Fehler: %s."
@@ -5277,12 +5287,12 @@ msgstr "Ergebnis nicht gespeichert!"
 msgid "Result saved!"
 msgstr "Ergebnis gespeichert!"
 
-#: lib/game.functions.php:1764
+#: lib/game.functions.php:1770
 #, php-format
 msgid "Results changed: %s."
 msgstr "Ergebnisse geändert: %s."
 
-#: lib/game.functions.php:1761
+#: lib/game.functions.php:1767
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
@@ -6198,12 +6208,12 @@ msgstr "Spirit-Notiz"
 msgid "Spirit note for"
 msgstr "Spirit-Notiz fuer"
 
-#: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:44
+#: spiritkeeper/submitsotg.php:149 spiritkeeper/teamgames.php:46
 #, fuzzy
 msgid "Spirit note given"
 msgstr "Vergebene Spirit-Bewertung"
 
-#: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:52
+#: spiritkeeper/submitsotg.php:157 spiritkeeper/teamgames.php:54
 #, fuzzy
 msgid "Spirit note received"
 msgstr "Erhaltene Spirit-Bewertung"
@@ -6247,7 +6257,7 @@ msgstr "Spirit-Bewertung für"
 msgid "Spirit score given"
 msgstr "Vergebene Spirit-Bewertung"
 
-#: spiritkeeper/teamgames.php:40 user/addspirit.php:283 user/addspirit.php:291
+#: spiritkeeper/teamgames.php:42 user/addspirit.php:283 user/addspirit.php:291
 #: user/addspirit.php:299 user/addspirit.php:305
 msgid "Spirit score given for"
 msgstr "Spirit-Punktzahl vergeben fuer"
@@ -6269,7 +6279,7 @@ msgstr ""
 "Spirit-Bewertung wurde nicht gespeichert. Prüfe, ob alle Werte gültig sind "
 "und die Einreichung noch offen ist."
 
-#: spiritkeeper/submitsotg.php:154 spiritkeeper/teamgames.php:48
+#: spiritkeeper/submitsotg.php:154 spiritkeeper/teamgames.php:50
 msgid "Spirit score received"
 msgstr "Erhaltene Spirit-Bewertung"
 
@@ -6286,7 +6296,7 @@ msgstr "Spirit-Bewertung eingereicht."
 msgid "Spirit scores"
 msgstr "Spirit-Punktzahlen"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1295
+#: spiritstatus.php:47 lib/spirit.functions.php:1298
 msgid "Spirit scores are not visible."
 msgstr "Spirit-Punktzahlen sind nicht sichtbar."
 
@@ -6689,12 +6699,12 @@ msgstr "Die Groß-/Kleinschreibung des Schlüssels spielt keine Rolle"
 msgid "The legacy mobile administration interface is deprecated."
 msgstr "Die alte mobile Administrationsoberflaeche ist veraltet."
 
-#: spiritkeeper/teamgames.php:58
+#: spiritkeeper/teamgames.php:60
 msgid "The opponent has not submitted a spirit score for this game yet."
 msgstr ""
 "Der Gegner hat für dieses Spiel noch keine Spirit-Bewertung eingereicht."
 
-#: spiritkeeper/teamgames.php:56
+#: spiritkeeper/teamgames.php:58
 msgid ""
 "The opponent spirit score is available, but not visible through this page."
 msgstr ""
@@ -6791,7 +6801,7 @@ msgstr "Dieses Spiel wurde bereits gespielt. Aktuelles Ergebnis:"
 msgid "This game has not started yet. Return after the game begins."
 msgstr "Dieses Spiel hat noch nicht begonnen. Kehre nach Spielbeginn zurück."
 
-#: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:61
+#: spiritkeeper/submitsotg.php:140 spiritkeeper/teamgames.php:40
 msgid ""
 "This game was forfeited. No spirit scores are submitted for forfeited games."
 msgstr ""
@@ -7068,7 +7078,7 @@ msgstr "Defenses gesamt"
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2130
+#: admin/seasonpoints.php:258 lib/game.functions.php:2136
 msgid "Total points"
 msgstr "Gesamtpunkte"
 
@@ -7575,12 +7585,6 @@ msgid ""
 msgstr ""
 "Wenn die Halbzeit beginnt, trage die Zeit ein, zu der sie endet (die "
 "Startzeit der zweiten Halbzeit)."
-
-#: admin/addseasons.php:485
-msgid ""
-"When off, game notes are visible only to event admins and the spirit "
-"director."
-msgstr ""
 
 #: cust/wfdf/pdfscoresheet.php:523
 msgid "Which team started on which side?"
