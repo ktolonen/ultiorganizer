@@ -1129,9 +1129,8 @@ function SpiritScoreRowsByGameTeam($gameId, $teamId)
     return DBQueryToArray($query);
 }
 
-function SpiritToolRowsBySeason($season, $includeForfeits = true)
+function SpiritToolRowsBySeason($season)
 {
-    $forfeitFilter = $includeForfeits ? "" : "AND g.forfeit=0";
     $query = sprintf(
         "SELECT
 			g.game_id,
@@ -1168,11 +1167,10 @@ function SpiritToolRowsBySeason($season, $includeForfeits = true)
 					AND g.isongoing=0
 					AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 					AND sct.`index` > 0
-					%s
+					AND g.forfeit=0
 				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
 			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
         DBEscapeString($season),
-        $forfeitFilter,
     );
     return DBQueryToArray($query);
 }
@@ -1301,7 +1299,7 @@ function SpiritToCsv($season, $separator)
         die(_("Spirit scores are not visible."));
     }
     $showSpiritComments = ShowSpiritComments($seasoninfo);
-    $rows = SpiritToolRowsBySeason($season, false);
+    $rows = SpiritToolRowsBySeason($season);
     $result = [];
 
     foreach ($rows as $row) {

@@ -51,6 +51,7 @@ function ResolvePlayoffPoolStandings($poolId)
 				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team2wins
 				FROM uo_game 
 				WHERE (homescore != visitorscore OR forfeit != 0) AND ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
+					AND hasstarted>0
 					AND isongoing=0
 					AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
             (int) $teamId1,
@@ -142,6 +143,7 @@ function ResolveCrossMatchPoolStandings($poolId)
 				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team2wins
 				FROM uo_game 
 				WHERE (homescore != visitorscore OR forfeit != 0) AND ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
+					AND hasstarted>0
 					AND isongoing=0
 					AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
             (int) $teamId1,
