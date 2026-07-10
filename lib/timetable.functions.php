@@ -1019,18 +1019,41 @@ function TimetableInterPoolConflicts($season)
       res1.location location1, res1.fieldname as field1, res2.location as location2, res2.fieldname as field2
       FROM uo_moveteams as mv
       LEFT JOIN uo_game_pool as gp1 ON (gp1.pool = mv.frompool AND gp1.timetable = 1)
-      LEFT JOIN uo_game as g1 ON (g1.game_id = gp1.game)
-      LEFT JOIN uo_game_pool as gp2 ON (gp2.pool = mv.topool AND gp2.timetable = 1 AND gp1.game != gp2.game)
-      LEFT JOIN uo_game as g2 ON (g2.game_id = gp2.game)
       LEFT JOIN uo_pool as p1 ON (p1.pool_id = gp1.pool)
+      LEFT JOIN uo_game as g1 ON (g1.game_id = gp1.game
+        AND (
+          p1.type NOT IN (2, 4)
+          OR EXISTS (
+            SELECT 1
+            FROM uo_moveteams source_move
+            WHERE source_move.topool = mv.frompool
+              AND source_move.torank = mv.fromplacing
+              AND source_move.scheduling_id IN (g1.scheduling_name_home, g1.scheduling_name_visitor)
+          )
+          OR EXISTS (
+            SELECT 1
+            FROM uo_team_pool source_team
+            WHERE source_team.pool = mv.frompool
+              AND source_team.rank = mv.fromplacing
+              AND source_team.team IN (g1.hometeam, g1.visitorteam)
+          )
+        ))
+      LEFT JOIN uo_game_pool as gp2 ON (gp2.pool = mv.topool AND gp2.timetable = 1 AND gp1.game != gp2.game)
+      LEFT JOIN uo_game as g2 ON (g2.game_id = gp2.game
+        AND (
+          (mv.scheduling_id IS NOT NULL AND mv.scheduling_id IN (g2.scheduling_name_home, g2.scheduling_name_visitor))
+          OR g1.hometeam = g2.hometeam
+          OR g1.visitorteam = g2.visitorteam
+          OR g1.hometeam = g2.visitorteam
+          OR g1.visitorteam = g2.hometeam
+        ))
       LEFT JOIN uo_pool as p2 ON (p2.pool_id = gp2.pool)
       LEFT JOIN uo_reservation as res1 ON (res1.id = g1.reservation)
       LEFT JOIN uo_reservation as res2 ON (res2.id = g2.reservation)
       LEFT JOIN uo_series as ser1 ON (ser1.series_id = p1.series)
       LEFT JOIN uo_series as ser2 ON (ser2.series_id = p2.series)
       WHERE ser1.season = '" . $season . "' AND ser2.season = '" . $season . "'
-        AND (g1.hometeam IS NULL OR g1.visitorteam IS NULL OR g2.hometeam IS NULL OR g2.visitorteam IS NULL OR
-          (g1.hometeam=g2.hometeam OR g1.visitorteam = g2.visitorteam OR g1.hometeam=g2.visitorteam OR g1.visitorteam = g2.hometeam))
+        AND g1.game_id IS NOT NULL AND g2.game_id IS NOT NULL
       ORDER BY time2 ASC, time1 ASC";
     return DBQueryToArray($query);
 }
