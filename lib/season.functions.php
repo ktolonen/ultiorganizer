@@ -698,10 +698,11 @@ function SeasonReservationgroups($seasonId)
 {
     $query = sprintf(
         "
-		SELECT DISTINCT pr.reservationgroup
+		SELECT pr.reservationgroup
 		FROM uo_reservation pr
 		WHERE pr.season='%s'
-		ORDER BY pr.reservationgroup ASC",
+		GROUP BY pr.reservationgroup
+		ORDER BY MIN(pr.starttime), pr.reservationgroup ASC",
         DBEscapeString($seasonId),
     );
 
