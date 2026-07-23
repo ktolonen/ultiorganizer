@@ -1,15 +1,15 @@
 ---
 name: query-database
-description: Run read-only, ad-hoc SQL queries against the local Ultiorganizer dev database to investigate data-driven behavior — for example, why a specific page shows or hides a group, pool, or game for a given season, or what flags a row actually has. Use when the question depends on live data state and reading `lib/` code alone cannot answer it. Reads connection details from `conf/config.inc.php` and queries the `db` Docker Compose service. SELECT only; never use this skill to mutate data.
+description: Run read-only, ad-hoc SQL queries against the local Ultiorganizer dev database to investigate data-driven behavior, such as why a specific page shows or hides a group, pool, or game for a given season, or what flags a row actually has. Use when the question depends on live data state and reading `lib/` code alone cannot answer it. Reads connection details from `conf/config.inc.php` and queries the `db` Docker Compose service. SELECT only; never use this skill to mutate data.
 metadata:
   short-description: Run ad-hoc read-only SQL queries against the local dev database
 ---
 
 # Query Database
 
-Investigate live data state in the local Ultiorganizer database when a question can't be answered from code alone — e.g. a page's grouping tabs, visibility, or a specific record's flags depend on what's actually stored, not just on the query logic in `lib/`.
+Investigate live data state in the local Ultiorganizer database when a question can't be answered from code alone. For example, a page's grouping tabs, visibility, or a specific record's flags depend on what's actually stored, not just on the query logic in `lib/`.
 
-This skill is for **reading**, not fixing. If the investigation turns up a data problem that needs correcting, do that through the app's normal admin flows (or a proper `sql/upgrade_db.php` migration for schema/systemic fixes — see `docs/database-upgrades.md`), not by running `UPDATE`/`DELETE` through this skill.
+This skill is for **reading**, not fixing. If the investigation turns up a data problem that needs correcting, do that through the app's normal admin flows (or a proper `sql/upgrade_db.php` migration for schema/systemic fixes; see `docs/database-upgrades.md`), not by running `UPDATE`/`DELETE` through this skill.
 
 ## Prerequisites
 
@@ -21,9 +21,9 @@ docker compose -f docs/dev/compose.yaml up -d app db
 
 ## Getting connection details
 
-You don't need to read or type the password. The `db` container already exposes the credentials as its own environment variables — `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE` — and by default these match `DB_USER`, `DB_PASSWORD`, and `DB_DATABASE` in `conf/config.inc.php` (both are seeded from `docs/dev/.env`; see `docs/local-development.md`). The commands below expand those variables *inside* the container, so the secret is never placed on the host command line.
+You don't need to read or type the password. The `db` container already exposes the credentials as its own environment variables: `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE`. By default, these match `DB_USER`, `DB_PASSWORD`, and `DB_DATABASE` in `conf/config.inc.php` (both are seeded from `docs/dev/.env`; see `docs/local-development.md`). The commands below expand those variables *inside* the container, so the secret is never placed on the host command line.
 
-`DB_HOST` is `db`, the Compose service name — reachable only from inside the Compose network, so run queries through `docker compose exec`, not a host-installed client.
+`DB_HOST` is `db`, the Compose service name. It is reachable only from inside the Compose network, so run queries through `docker compose exec`, not a host-installed client.
 
 ## Running a query
 
@@ -47,7 +47,7 @@ WHERE ...;
 
 Add `--table` for aligned column output on wide result sets, or `-E`/`--vertical` when a single row has many columns and horizontal output would wrap unreadably.
 
-If you need root (e.g. toggling `general_log`, cross-database introspection), use `MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mariadb -uroot ...` — same pattern, the container's root password variable. See the query-logging workflow in `docs/runtime-cache.md`.
+If you need root (e.g. toggling `general_log`, cross-database introspection), use `MYSQL_PWD="$MYSQL_ROOT_PASSWORD" mariadb -uroot ...`, using the same pattern with the container's root password variable. See the query-logging workflow in `docs/runtime-cache.md`.
 
 ## Example: why doesn't a schedule group/game show up publicly?
 
@@ -74,9 +74,9 @@ LEFT JOIN uo_series ser ON ser.series_id = p.series
 WHERE g.reservation = <reservation id>;
 ```
 
-Public schedule queries (see `TimetableGrouping()` and `TimetableGames()` in `lib/timetable.functions.php`) require `g.valid=1`, a `uo_game_pool` row with `timetable=1` (the game's *current* owning pool — playoff progression can leave stale `timetable=0` carryover rows), `ser.valid=1` for the requested season, and the pool's **playoff-root visibility** (`root_visible=1`), not the pool's own `visible`. Playoff follower pools (Quarterfinals, Semifinals, Finals) are created hidden (`visible=0`) and stay out of the pool menus by a structural check, but their games follow the root at read time via `TimetablePublicVisibilityCondition()`. So a follower with `own_visible=0` still shows publicly when `root_visible=1` — check `root_visible`, not `own_visible`, when diagnosing a missing playoff game or group. Admin list queries (e.g. `ReservationInfo()` in `lib/reservation.functions.php`) are often much looser, which is why the two views can disagree.
+Public schedule queries (see `TimetableGrouping()` and `TimetableGames()` in `lib/timetable.functions.php`) require `g.valid=1`, a `uo_game_pool` row with `timetable=1` (the game's *current* owning pool, since playoff progression can leave stale `timetable=0` carryover rows), `ser.valid=1` for the requested season, and the pool's **playoff-root visibility** (`root_visible=1`), not the pool's own `visible`. Playoff follower pools (Quarterfinals, Semifinals, Finals) are created hidden (`visible=0`) and stay out of the pool menus by a structural check, but their games follow the root at read time via `TimetablePublicVisibilityCondition()`. So a follower with `own_visible=0` still shows publicly when `root_visible=1`. Check `root_visible`, not `own_visible`, when diagnosing a missing playoff game or group. Admin list queries (e.g. `ReservationInfo()` in `lib/reservation.functions.php`) are often much looser, which is why the two views can disagree.
 
 ## Safety
 
-- SELECT only, unconditionally. This skill never runs `INSERT`/`UPDATE`/`DELETE`/`ALTER`/`DROP` — not even when asked. Raw writes bypass the permission checks and cache invalidation that the app's write paths enforce (see `docs/database-access.md`), so a data change belongs in an admin flow or an `sql/upgrade_db.php` migration (`docs/database-upgrades.md`), never here. If a mutation is genuinely needed, stop and hand it to one of those paths.
+- SELECT only, unconditionally. This skill never runs `INSERT`/`UPDATE`/`DELETE`/`ALTER`/`DROP`, even when asked. Raw writes bypass the permission checks and cache invalidation that the app's write paths enforce (see `docs/database-access.md`), so a data change belongs in an admin flow or an `sql/upgrade_db.php` migration (`docs/database-upgrades.md`), never here. If a mutation is genuinely needed, stop and hand it to one of those paths.
 - Only target the local dev database reached through `docs/dev/compose.yaml`. Never point this workflow at a production connection string.
