@@ -61,9 +61,14 @@ if (count($goals) <= 0) {
                         $gameevent = _("turnover");
                     } elseif ($event['type'] == "offence") {
                         $gameevent = _("offence");
+                    } elseif (GameIsCapEventType($event['type'])) {
+                        $gameevent = GameCapEventText($event);
                     }
 
-                    if (intval($event['ishome']) > 0) {
+                    if (GameIsCapEventType($event['type'])) {
+                        $team = "";
+                        $style = "";
+                    } elseif (intval($event['ishome']) > 0) {
                         $team = utf8entities($game_result['hometeamname']);
                         $style = "class='homefontcolor'";
                     } else {
@@ -74,7 +79,7 @@ if (count($goals) <= 0) {
                     if (!$hideTimeOnScoresheet) {
                         $html .= SecToMin($event['time']) . " ";
                     }
-                    $html .= $team . " " . $gameevent;
+                    $html .= trim($team . " " . $gameevent);
                     $html .= "</td></tr><tr><td  $style>\n";
                 }
             }

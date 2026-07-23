@@ -265,13 +265,21 @@ if (GameHasStarted($game_result) > 0) {
                             $gameevent = _("Turnover");
                         } elseif ($event['type'] == "offence") {
                             $gameevent = _("Offence");
+                        } elseif (GameIsCapEventType($event['type'])) {
+                            $gameevent = GameCapEventText($event);
                         }
                         //hack to not show timeouts not correctly marked into scoresheet
                         if ($event['type'] == "timeout" && ($event['time'] == 0 || $event['time'] == 60)) {
                             continue;
                         }
 
-                        if (intval($event['ishome']) > 0) {
+                        if (GameIsCapEventType($event['type'])) {
+                            $html .= "<div>" . $gameevent;
+                            if (!$hideTimeOnScoresheet) {
+                                $html .= "&nbsp;" . SecToMin($event['time']);
+                            }
+                            $html .= "</div>";
+                        } elseif (intval($event['ishome']) > 0) {
                             $html .= "<div class='home'>" . $gameevent;
                             if (!$hideTimeOnScoresheet) {
                                 $html .= "&nbsp;" . SecToMin($event['time']);

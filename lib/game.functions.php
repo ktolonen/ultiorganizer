@@ -688,15 +688,15 @@ function GameAllGoals($gameId)
 function GameEvents($gameId)
 {
     $query = sprintf(
-        "SELECT time,ishome,type 
+        "SELECT time,ishome,type,info
 		FROM (
-			SELECT time,ishome,'timeout' AS type FROM `uo_timeout`
+			SELECT time,ishome,'timeout' AS type,NULL AS info FROM `uo_timeout`
 				WHERE game='%s'
 			UNION ALL
-			SELECT time,ishome,'spirit_timeout' AS type FROM `uo_spirit_timeout`
+			SELECT time,ishome,'spirit_timeout' AS type,NULL AS info FROM `uo_spirit_timeout`
 				WHERE game='%s'
 			UNION ALL
-			SELECT time,ishome,type FROM uo_gameevent WHERE game='%s'
+			SELECT time,ishome,type,info FROM uo_gameevent WHERE game='%s'
 		) AS tapahtuma 
 		WHERE type!='media'
 		ORDER BY time ",
@@ -706,6 +706,129 @@ function GameEvents($gameId)
     );
 
     return DBQueryToArray($query);
+}
+
+function GameCapEventTypes()
+{
+    return ['half_cap', 'time_cap'];
+}
+
+function GameIsCapEventType($type)
+{
+    return in_array($type, GameCapEventTypes(), true);
+}
+
+function GameCapEvent($gameId, $type)
+{
+    if (!GameIsCapEventType($type)) {
+        return null;
+    }
+
+    $query = sprintf(
+        "SELECT time,type,info FROM uo_gameevent
+		WHERE game=%d AND type='%s'
+		LIMIT 1",
+        (int) $gameId,
+        DBEscapeString($type),
+    );
+
+    return DBQueryToRow($query);
+}
+
+function GameCapEventName($type)
+{
+    if ($type === 'half_cap') {
+        return _("Halftime cap");
+    }
+    if ($type === 'time_cap') {
+        return _("Time cap");
+    }
+
+    return '';
+}
+
+function GameCapEventText($event)
+{
+    $target = (int) ($event['info'] ?? 0);
+    if (($event['type'] ?? '') === 'half_cap') {
+        return sprintf(_("Halftime cap target: %d"), $target);
+    }
+    if (($event['type'] ?? '') === 'time_cap') {
+        return sprintf(_("Time cap target: %d"), $target);
+    }
+
+    return '';
+}
+
+function GameSetCapEvent($gameId, $type, $time, $target)
+{
+    $gameId = (int) $gameId;
+    $time = max(0, (int) $time);
+    $target = (int) $target;
+
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game events');
+    }
+    if (!GameIsCapEventType($type) || $target < 1 || $target > 255) {
+        return false;
+    }
+
+    $eventNum = DBQueryToValue(
+        sprintf(
+            "SELECT num FROM uo_gameevent WHERE game=%d AND type='%s' LIMIT 1",
+            $gameId,
+            DBEscapeString($type),
+        ),
+    );
+
+    if ($eventNum !== null && $eventNum !== false) {
+        $query = sprintf(
+            "UPDATE uo_gameevent
+			SET time=%d,info='%d'
+			WHERE game=%d AND num=%d",
+            $time,
+            $target,
+            $gameId,
+            (int) $eventNum,
+        );
+
+        return DBQuery($query);
+    }
+
+    $lastNum = (int) DBQueryToValue(
+        sprintf("SELECT MAX(num) FROM uo_gameevent WHERE game=%d", $gameId),
+    );
+    $query = sprintf(
+        "INSERT INTO uo_gameevent (game,num,ishome,time,type,info)
+		VALUES(%d,%d,0,%d,'%s','%d')",
+        $gameId,
+        $lastNum + 1,
+        $time,
+        DBEscapeString($type),
+        $target,
+    );
+
+    return DBQuery($query);
+}
+
+function GameRemoveCapEvent($gameId, $type)
+{
+    $gameId = (int) $gameId;
+
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game events');
+    }
+    if (!GameIsCapEventType($type)) {
+        return false;
+    }
+
+    $query = sprintf(
+        "DELETE FROM uo_gameevent WHERE game=%d AND type='%s'",
+        $gameId,
+        DBEscapeString($type),
+    );
+
+    return DBQuery($query);
 }
 
 function GameMediaEvents($gameId)
