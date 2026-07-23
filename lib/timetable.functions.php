@@ -703,10 +703,54 @@ function PrevGameDay($id, $gamefilter, $order)
 }
 
 
+/**
+ * Recursive CTE that maps every pool to its playoff root's visibility.
+ *
+ * Playoff follower pools (Quarterfinals, Semifinals, Finals, ...) are hidden
+ * from the public pool menus by a structural check, so their own uo_pool.visible
+ * flag is not a reliable source of truth for public game listings. This CTE walks
+ * each follower chain down from its root (the pool no other pool follows) and
+ * carries the root's visible flag onto every follower, so public schedule queries
+ * can gate games on the root's visibility at read time instead of relying on a
+ * denormalized follower visible column.
+ *
+ * Prepend the returned string to the statement, then use
+ * TimetablePublicVisibilityCondition() in the WHERE clause.
+ */
+function TimetablePublicVisibilityCte()
+{
+    return "WITH RECURSIVE pool_root_visibility AS (
+			SELECT pool_id, follower, visible AS root_visible
+			FROM uo_pool
+			WHERE NOT EXISTS (SELECT 1 FROM uo_pool anc WHERE anc.follower = uo_pool.pool_id)
+			UNION ALL
+			SELECT child.pool_id, child.follower, parent.root_visible
+			FROM uo_pool child
+			INNER JOIN pool_root_visibility parent ON parent.follower = child.pool_id
+		) ";
+}
+
+/**
+ * WHERE fragment gating public game rows on their pool's playoff-root visibility.
+ *
+ * Requires the statement to be prefixed with TimetablePublicVisibilityCte().
+ * Assumes the game's owning pool id is available as gp.pool.
+ *
+ * MAX() aggregates the root-visibility lookup so the scalar subquery yields a
+ * single row even if a pool were ever reached from more than one root (e.g. a
+ * corrupted/imported follower graph); without it such data would make the whole
+ * public schedule query fail with "Subquery returns more than 1 row".
+ */
+function TimetablePublicVisibilityCondition()
+{
+    return " AND ps.valid=1 AND (SELECT MAX(rv.root_visible) FROM pool_root_visibility rv WHERE rv.pool_id = gp.pool) = 1";
+}
+
 function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = "", $onlypublic = false)
 {
     $fieldOrder = "CAST(pr.fieldname AS UNSIGNED) ASC, pr.fieldname ASC";
     $placeOrder = "CASE WHEN pl.id IS NULL THEN 1 ELSE 0 END, COALESCE(pl.id, pr.id) ASC";
+    $withClause = "";
 
     //common game query
     $query = "SELECT pp.game_id, pp.time, pp.hometeam, pp.visitorteam, pp.homescore,
@@ -762,7 +806,8 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
     }
 
     if ($onlypublic) {
-        $query .= " AND pool.visible=1 AND ps.valid=1";
+        $query .= TimetablePublicVisibilityCondition();
+        $withClause = TimetablePublicVisibilityCte();
     }
 
     switch ($timefilter) {
@@ -857,11 +902,12 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
             break;
     }
 
-    return DBQueryToArray($query);
+    return DBQueryToArray($withClause . $query);
 }
 
 function TimetableGrouping($id, $gamefilter, $timefilter, $onlypublic = false)
 {
+    $withClause = "";
     //common game query
     $query = "SELECT pr.reservationgroup, MAX(pp.time)
 			FROM uo_game pp
@@ -899,7 +945,8 @@ function TimetableGrouping($id, $gamefilter, $timefilter, $onlypublic = false)
     }
 
     if ($onlypublic) {
-        $query .= " AND pool.visible=1 AND ps.valid=1";
+        $query .= TimetablePublicVisibilityCondition();
+        $withClause = TimetablePublicVisibilityCte();
     }
 
     switch ($timefilter) {
@@ -949,7 +996,7 @@ function TimetableGrouping($id, $gamefilter, $timefilter, $onlypublic = false)
 
     $query .= " GROUP BY pr.reservationgroup ORDER BY MAX(pp.time) ASC, ps.ordering, pr.reservationgroup";
 
-    return DBQueryToArray($query);
+    return DBQueryToArray($withClause . $query);
 }
 
 function TimetableFields($reservationgroup, $season)
