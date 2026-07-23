@@ -58,7 +58,7 @@ WITH RECURSIVE pool_root_visibility AS (
     SELECT pool_id, follower, visible AS root_visible
     FROM uo_pool
     WHERE NOT EXISTS (SELECT 1 FROM uo_pool anc WHERE anc.follower = uo_pool.pool_id)
-    UNION ALL
+    UNION
     SELECT child.pool_id, child.follower, parent.root_visible
     FROM uo_pool child
     INNER JOIN pool_root_visibility parent ON parent.follower = child.pool_id

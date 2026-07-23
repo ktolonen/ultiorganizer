@@ -710,6 +710,9 @@ function PrevGameDay($id, $gamefilter, $order)
  * inside the predicate so the top-level timetable query remains a SELECT and is
  * eligible for the persistent query cache.
  *
+ * UNION de-duplicates rows across recursive iterations, preventing a corrupted
+ * follower cycle from continuing until MariaDB's recursion limit.
+ *
  * MAX() collapses duplicate root-visibility rows if a pool is ever reached from
  * more than one root (e.g. a corrupted/imported follower graph).
  *
@@ -722,7 +725,7 @@ function TimetablePublicVisibilityCondition()
 				SELECT pool_id, follower, visible AS root_visible
 				FROM uo_pool
 				WHERE NOT EXISTS (SELECT 1 FROM uo_pool anc WHERE anc.follower = uo_pool.pool_id)
-				UNION ALL
+				UNION
 				SELECT child.pool_id, child.follower, parent.root_visible
 				FROM uo_pool child
 				INNER JOIN pool_root_visibility parent ON parent.follower = child.pool_id
