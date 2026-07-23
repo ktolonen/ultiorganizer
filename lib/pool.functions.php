@@ -1727,8 +1727,8 @@ function SetPoolVisibility($poolId, $visible)
  * that reads a follower's visible column directly. The public GAMES/ical
  * schedule no longer depends on it: TimetableGames() and TimetableGrouping()
  * derive follower visibility from the playoff root at read time (see
- * TimetablePublicVisibilityCte()), which is authoritative even when a follower
- * tree's own visible flags are stale.
+ * TimetablePublicVisibilityCondition()), which is authoritative even when a
+ * follower tree's own visible flags are stale.
  *
  * @param int $poolId root pool id
  * @param bool|int $visible 0/false hidden, 1/true visible
