@@ -703,6 +703,40 @@ function PrevGameDay($id, $gamefilter, $order)
 }
 
 
+/**
+ * WHERE fragment gating public game rows on their pool's playoff-root visibility.
+ *
+ * The recursive CTE maps every pool to its playoff root's visibility. It stays
+ * inside the predicate so the top-level timetable query remains a SELECT and is
+ * eligible for the persistent query cache.
+ *
+ * UNION de-duplicates rows across recursive iterations, preventing a corrupted
+ * follower cycle from continuing until MariaDB's recursion limit.
+ *
+ * MAX() collapses duplicate root-visibility rows if a pool is ever reached from
+ * more than one root (e.g. a corrupted/imported follower graph).
+ *
+ * Assumes the game's owning pool id is available as gp.pool.
+ */
+function TimetablePublicVisibilityCondition()
+{
+    return " AND ps.valid=1 AND gp.pool IN (
+			WITH RECURSIVE pool_root_visibility AS (
+				SELECT pool_id, follower, visible AS root_visible
+				FROM uo_pool
+				WHERE NOT EXISTS (SELECT 1 FROM uo_pool anc WHERE anc.follower = uo_pool.pool_id)
+				UNION
+				SELECT child.pool_id, child.follower, parent.root_visible
+				FROM uo_pool child
+				INNER JOIN pool_root_visibility parent ON parent.follower = child.pool_id
+			)
+			SELECT rv.pool_id
+			FROM pool_root_visibility rv
+			GROUP BY rv.pool_id
+			HAVING MAX(rv.root_visible) = 1
+		)";
+}
+
 function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = "", $onlypublic = false)
 {
     $fieldOrder = "CAST(pr.fieldname AS UNSIGNED) ASC, pr.fieldname ASC";
@@ -762,7 +796,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
     }
 
     if ($onlypublic) {
-        $query .= " AND pool.visible=1 AND ps.valid=1";
+        $query .= TimetablePublicVisibilityCondition();
     }
 
     switch ($timefilter) {
@@ -899,7 +933,7 @@ function TimetableGrouping($id, $gamefilter, $timefilter, $onlypublic = false)
     }
 
     if ($onlypublic) {
-        $query .= " AND pool.visible=1 AND ps.valid=1";
+        $query .= TimetablePublicVisibilityCondition();
     }
 
     switch ($timefilter) {

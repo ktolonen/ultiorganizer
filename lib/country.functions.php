@@ -228,7 +228,8 @@ function CountryPools($seasonId, $countryId)
 		LEFT JOIN uo_series ser ON(ser.series_id=pool.series)
 		LEFT JOIN uo_team_pool tp ON(tp.pool=pool.pool_id)
 		LEFT JOIN uo_team team ON(tp.team=team.team_id)
-		WHERE pool.visible=1 AND ser.season='%s' AND team.country=%d
+		WHERE pool.visible=1 AND NOT EXISTS (SELECT 1 FROM uo_pool p2 WHERE p2.follower = pool.pool_id)
+			AND ser.season='%s' AND team.country=%d
 		ORDER BY ser.ordering ASC, pool.ordering ASC, pool.pool_id ASC",
         DBEscapeString($seasonId),
         (int) $countryId,
