@@ -139,6 +139,36 @@ Current persistence behavior:
 
 Assist and scorer selections are drawn from the game-specific played roster in `uo_played`, not directly from the full team roster.
 
+`addscoresheet.php` warns when either team's played roster is empty, because empty assist and scorer
+dropdowns are otherwise a confusing symptom of players never having been checked in.
+
+## Roster accreditation
+
+`uo_season.require_accreditation` is an `EVENT_SETTING`, off by default, set in
+`admin/addseasons.php`.
+
+When it is on, `scorekeeper/addplayerlists.php` will not let a scorekeeper add a player whose
+`uo_player.accredited` is 0. This is how WFDF events keep a banned player, or one withdrawn for
+medical reasons, off the scoresheet: the tournament desk clears the accredited flag, and the
+scorekeeper then sees the player marked and cannot select them.
+
+The rules are:
+
+- unaccredited and **not** on the roster: checkbox, jersey and role controls are disabled, and the
+  save handler refuses the addition even if the disabled control is bypassed
+- unaccredited but **already** on the roster: controls stay enabled so the scorekeeper can
+  deliberately remove the player, since silently dropping someone who already has goals recorded in
+  `uo_goal` would corrupt the scoresheet
+- either way, the row is marked `Not accredited`
+
+The setting is off by default because `uo_player.accredited` is `NOT NULL DEFAULT 0`, so in an
+installation that never accredits anyone, enforcing it would make every roster unfillable.
+
+Enforcement lives in the scorekeeper page, not in `GameAddPlayer()`. That helper writes the
+`uo_played.accredited` snapshot which `SeasonUnaccredited()` and `admin/accreditation.php` read, so
+tournament desks can still record unaccredited players and acknowledge them afterwards. The desktop
+`user/addplayerlists.php` is unaffected for the same reason.
+
 ## Related game-data pages
 
 Scorekeeper stores related game metadata through separate pages:
