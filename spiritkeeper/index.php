@@ -3,6 +3,11 @@
 include_once '../lib/database.php';
 OpenConnection();
 
+// Live spirit entry must always read fresh state; opt this app out of the
+// cross-request query cache so a submit-then-view flow never returns a
+// pre-write snapshot.
+DisablePersistentCacheForRequest();
+
 include_once $include_prefix . 'lib/session.functions.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';

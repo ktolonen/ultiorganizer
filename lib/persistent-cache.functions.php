@@ -6,6 +6,30 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/cache.functions.php';
 
 /**
+ * Disable the persistent (cross-request) cache for the remainder of this request.
+ *
+ * Intended for live-entry apps (scorekeeper, spiritkeeper) where any staleness is
+ * unacceptable and read volume is negligible. Call it once at request startup,
+ * before the first cacheable read. Honored by DBQueryCacheable() in database.php.
+ *
+ * @return void
+ */
+function DisablePersistentCacheForRequest()
+{
+    $GLOBALS['uo_persistent_cache_bypass'] = true;
+}
+
+/**
+ * Whether the persistent cache has been bypassed for this request.
+ *
+ * @return bool
+ */
+function IsPersistentCacheBypassed()
+{
+    return !empty($GLOBALS['uo_persistent_cache_bypass']);
+}
+
+/**
  * Return a cross-request cached value, recomputing when missing or expired.
  *
  * Writes are atomic (temp-file + rename). A non-blocking exclusive lock prevents

@@ -31,6 +31,25 @@ This cache complements the request-local cache in `lib/cache.functions.php`:
 CLI scripts and background jobs have no `REQUEST_METHOD` and therefore bypass
 the cache.
 
+## Request-scoped bypass
+
+A request can opt out of the persistent cache entirely by calling
+`DisablePersistentCacheForRequest()` once at startup, before the first cacheable
+read. `DBQueryCacheable()` then returns false for every read in that request, so
+all SELECTs go straight to the database.
+
+This exists for **live-entry apps** where any staleness is unacceptable and read
+volume is negligible. `scorekeeper/index.php` and `spiritkeeper/index.php` call
+it immediately after `OpenConnection()`. Both use the Post/Redirect/Get pattern:
+an official submits a score (POST, writes the DB), then the browser follows a
+redirect to a GET that re-renders the same screen. Without the bypass, that GET
+can hit a still-valid cache entry populated by the *previous* GET on the same
+screen (within the TTL window) and show pre-write state — prompting the official
+to re-enter the score. The bypass keeps these reads live; the cache stays active
+for public spectator pages, which is the traffic it was built to offload.
+
+Query with `IsPersistentCacheBypassed()`.
+
 ## Configuration
 
 **SYSTEM_FLAG** (`conf/config.inc.php`):
@@ -75,6 +94,12 @@ CacheForgetPersistent(string $namespace, mixed $key = null): void
 
 // Remove all cache files. Returns file count removed.
 CacheWipePersistent(): int
+
+// Disable the persistent cache for the rest of this request (live-entry apps).
+DisablePersistentCacheForRequest(): void
+
+// Whether the persistent cache has been bypassed for this request.
+IsPersistentCacheBypassed(): bool
 ```
 
 ## Trade-offs

@@ -159,6 +159,9 @@ function DBQueryCacheable($query)
     if (!function_exists('CacheRememberFor') || !function_exists('IsPersistentCacheEnabled')) {
         return false;
     }
+    if (!empty($GLOBALS['uo_persistent_cache_bypass'])) {
+        return false;
+    }
     if (!IsPersistentCacheEnabled()) {
         return false;
     }
