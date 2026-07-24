@@ -6,6 +6,11 @@ $include_prefix = "../";
 include_once '../lib/database.php';
 OpenConnection();
 
+// Live scorekeeping must always read fresh state; opt this app out of the
+// cross-request query cache so the post-redirect GET after logging a goal
+// never returns a pre-write snapshot (which would prompt a duplicate entry).
+DisablePersistentCacheForRequest();
+
 include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/user.functions.php';
 include_once $include_prefix . 'lib/logging.functions.php';
