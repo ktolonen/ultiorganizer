@@ -25,6 +25,18 @@ Related scorekeeper pages split metadata into smaller task-oriented views:
 - `scorekeeper/deletescore.php`
 - `scorekeeper/scoreboard.php`
 
+## Client script
+
+`scorekeeper/index.php` loads `script/scorekeeper.js` into every Scorekeeper page. It holds two
+independent pieces:
+
+- the shared game clock (see [Live game clock](#live-game-clock) below)
+- a double-submit guard on every form in the app: a second submit while one is in flight is blocked
+  and the submit controls are disabled until the page navigates. The disable is deferred by one
+  tick on purpose, because a disabled submit button is left out of the POST body and the
+  Scorekeeper pages branch on which button was pressed (`add` vs `forceadd`, `startgame` vs
+  `pausegame`). Forms restored from the back/forward cache are re-enabled on `pageshow`.
+
 ## Routing and shell
 
 Scorekeeper uses the query-string view pattern under its own entrypoint:

@@ -301,6 +301,17 @@ input[type="reset"]:active {
   box-shadow: none;
 }
 
+/* Submitting: the double-submit guard disables the buttons until the page
+   navigates, so make that state read as "working" rather than as broken. */
+button:disabled,
+input[type="submit"]:disabled,
+input[type="button"]:disabled {
+  opacity: 0.55;
+  cursor: progress;
+  transform: none;
+  box-shadow: none;
+}
+
 [data-role="controlgroup"] {
   display: flex;
   flex-wrap: wrap;

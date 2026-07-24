@@ -120,3 +120,65 @@
     render: render
   };
 })();
+
+/*
+ * Double-submit guard. On a slow network a scorekeeper who taps Save twice can
+ * post the same goal or timeout twice, so block the second submit and disable
+ * the buttons for the duration of the request.
+ */
+(function () {
+  "use strict";
+
+  var BUSY_ATTR = "data-scorekeeper-submitting";
+
+  function submitControls(form) {
+    return form.querySelectorAll("input[type=submit], button[type=submit], button:not([type])");
+  }
+
+  function setBusy(form, busy) {
+    var controls = submitControls(form);
+    for (var i = 0; i < controls.length; i++) {
+      controls[i].disabled = busy;
+    }
+    if (busy) {
+      form.setAttribute(BUSY_ATTR, "1");
+    } else {
+      form.removeAttribute(BUSY_ATTR);
+    }
+  }
+
+  document.addEventListener("submit", function (event) {
+    var form = event.target;
+    if (!form || form.nodeName !== "FORM") {
+      return;
+    }
+
+    if (form.getAttribute(BUSY_ATTR)) {
+      event.preventDefault();
+      return;
+    }
+
+    /*
+     * Disable on the next tick, never synchronously: a disabled submit button
+     * is left out of the POST body, and the scorekeeper pages branch on which
+     * button was pressed (add vs forceadd, startgame vs pausegame, ...).
+     */
+    window.setTimeout(function () {
+      setBusy(form, true);
+    }, 0);
+  });
+
+  /*
+   * Restoring from the back/forward cache reuses the old DOM, which would
+   * otherwise come back with a dead Save button.
+   */
+  window.addEventListener("pageshow", function (event) {
+    if (!event.persisted) {
+      return;
+    }
+    var forms = document.querySelectorAll("form[" + BUSY_ATTR + "]");
+    for (var i = 0; i < forms.length; i++) {
+      setBusy(forms[i], false);
+    }
+  });
+})();
