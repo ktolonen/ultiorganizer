@@ -847,6 +847,7 @@ function GameTimerState($gameId)
         "started" => false,
         "ongoing" => false,
         "paused" => false,
+        "elapsed" => 0,
         "mm" => 0,
         "ss" => 0,
         "rss" => 0,
@@ -875,6 +876,7 @@ function GameTimerState($gameId)
     }
     $elapsed = max(0, $elapsed);
 
+    $state['elapsed'] = $elapsed;
     $state['mm'] = (int) floor($elapsed / 60);
     $state['ss'] = $elapsed % 60;
     $state['rss'] = (int) (round($state['ss'] / 5) * 5);

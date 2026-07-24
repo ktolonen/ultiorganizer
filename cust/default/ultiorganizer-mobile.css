@@ -39,6 +39,7 @@
   --game-pending-bg: #f1f6ff;
   --game-ongoing-bg: #ffe7e7;
   --game-played-bg: #eef8f2;
+  --gameclock-bg: #e6eef2;
 
   /* Secondary actions */
   --button-secondary-bg: #eef3f7;
@@ -151,6 +152,16 @@ input[type="checkbox"] {
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+.sk-gameclock {
+  float: left;
+  margin: 0.2em 1.1em 0.25em 0.5ex;
+  padding: 0.15em 0.4em;
+  border-radius: 0.35em;
+  background: var(--gameclock-bg);
+  line-height: 1.3;
+  font-size: 1.8em;
 }
 
 [data-role="content"] {

@@ -84,14 +84,7 @@ if ($useGameClock) {
 $game_result = GameResult($gameId);
 $scores = GameGoals($gameId);
 $lastscore = count($scores) ? $scores[count($scores) - 1] : null;
-$timerState = $useGameClock ? GameTimerState($gameId) : [
-    "started" => false,
-    "ongoing" => false,
-    "paused" => false,
-    "mm" => 0,
-    "ss" => 0,
-    "rss" => 0,
-];
+$timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
 
 $uo_goal = [
@@ -266,7 +259,7 @@ $settimess = $useGameClock ? $timerState['ss'] : 0;
 
 $html .= "<div data-role='header'>\n";
 if ($showClock) {
-    $html .= "<span id='gametime' style='float: left; margin: 0.2em 1.1em 0.25em 0.5ex; padding: 0.15em 0.4em; border-radius: 0.35em; background: #e6eef2; line-height: 1.3; font-size: 1.8em;'>" . sprintf("%02d", $timerState['mm']) . ":" . sprintf("%02d", $timerState['ss']) . "</span>";
+    $html .= ScorekeeperClockHeader($timerState);
 }
 $html .= "<h1>" . _("Scoresheet") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
@@ -479,6 +472,9 @@ $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;
+if ($showClock) {
+    echo ScorekeeperClockScript($timerState);
+}
 ?>
 <script type="text/javascript">
   var homeAssistList = <?php
@@ -537,19 +533,13 @@ echo json_encode($awayOptions);
   function setGoalTimeFromClock() {
     var minuteSelect = document.getElementById('timemm');
     var secondSelect = document.getElementById('timess');
-    if (!minuteSelect || !secondSelect || typeof window.scorekeeperClockMinutes === 'undefined' || typeof window.scorekeeperClockSeconds === 'undefined') {
+    if (!minuteSelect || !secondSelect || !window.scorekeeperClock || !window.scorekeeperClock.isActive()) {
       return;
     }
 
-    var roundedMinutes = window.scorekeeperClockMinutes;
-    var roundedSeconds = Math.round(window.scorekeeperClockSeconds / 5) * 5;
-    if (roundedSeconds === 60) {
-      roundedMinutes++;
-      roundedSeconds = 0;
-    }
-
-    minuteSelect.value = String(roundedMinutes);
-    secondSelect.value = String(roundedSeconds);
+    var rounded = window.scorekeeperClock.roundedTime();
+    minuteSelect.value = String(rounded.mm);
+    secondSelect.value = String(rounded.ss);
   }
 
   var teamRadios = document.querySelectorAll('input[name="team"]');
@@ -564,39 +554,6 @@ echo json_encode($awayOptions);
   if (checkedTeam) {
     swapTeamLists(checkedTeam.value);
   }
-
-<?php if ($showClock) { ?>
-  (function() {
-    var clock = document.getElementById('gametime');
-    var pausedSuffix = <?php echo json_encode(" (" . _("Paused") . ")"); ?>;
-    window.scorekeeperClockMinutes = <?php echo (int) $timerState['mm']; ?>;
-    window.scorekeeperClockSeconds = <?php echo (int) $timerState['ss']; ?>;
-
-    function renderClock(paused) {
-      if (!clock) {
-        return;
-      }
-      var text = String(window.scorekeeperClockMinutes).padStart(2, '0') + ':' + String(window.scorekeeperClockSeconds).padStart(2, '0');
-      if (paused) {
-        text += pausedSuffix;
-      }
-      clock.textContent = text;
-    }
-
-    renderClock(<?php echo $timerState['paused'] ? 'true' : 'false'; ?>);
-
-<?php if ($timerState['ongoing'] && !$timerState['paused']) { ?>
-    window.setInterval(function() {
-      window.scorekeeperClockSeconds++;
-      if (window.scorekeeperClockSeconds > 59) {
-        window.scorekeeperClockMinutes++;
-        window.scorekeeperClockSeconds = 0;
-      }
-      renderClock(false);
-    }, 1000);
-<?php } ?>
-  })();
-<?php } ?>
 
   var pauseButton = document.getElementById('pausegame');
   if (pauseButton) {

@@ -78,6 +78,7 @@ echo "<title>Scorekeeper</title>\n";
 echo mobileStyles();
 
 echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
+echo "<script src='" . BASEURL . "/script/scorekeeper.js'></script>\n";
 
 echo "</head>\n";
 echo "<body>\n";

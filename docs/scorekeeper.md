@@ -83,6 +83,31 @@ Current behavior in `scorekeeper/addscoresheet.php`:
 - selecting the team radio for a new goal stamps the current rounded clock time into the goal time fields
 - the header clock updates client-side once per second while the game is running
 
+### Shared clock module
+
+Every page that shows the clock (`addscoresheet.php`, `addtimeouts.php`, `addspirittimeouts.php`,
+`addhalftime.php`, `endgame.php`) renders it through the same three helpers, so the timing rules
+live in one place:
+
+- `ScorekeeperTimerStateDefaults()` in `scorekeeper/auth.php`: the timer state shape used when the
+  game clock is not in play
+- `ScorekeeperClockHeader()` in `scorekeeper/auth.php`: the `#gametime` header element, styled by
+  `.sk-gameclock`
+- `ScorekeeperClockScript()` in `scorekeeper/auth.php`: hands `GameTimerState()` to
+  `window.scorekeeperClock.init()` in `script/scorekeeper.js`
+
+`script/scorekeeper.js` anchors on the `elapsed` second count from `GameTimerState()` plus a
+`Date.now()` reading taken at page load, and derives every value from the difference on demand.
+Counting seconds in a `setInterval` drifts badly on phones, because browsers throttle or suspend
+timers while the screen is off. Because only *differences* of `Date.now()` are used, a device with
+a wrong absolute clock still shows the correct game time.
+
+Callers that prefill a time field (goal time, timeout time) call
+`window.scorekeeperClock.roundedTime()`, which recomputes on each call rather than reading a
+cached tick value. Reading a cached value is what previously stamped a stale time into a goal
+added right after the screen woke up. `window.scorekeeperClock.isActive()` is false on pages where
+the clock is not shown, so those callers leave the field alone instead of filling in `00:00`.
+
 Timer lifecycle normalization currently resets timer state when:
 
 - a game clock is started,
