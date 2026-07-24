@@ -890,6 +890,37 @@ function GameTimerState($gameId)
     return $state;
 }
 
+/**
+ * Timeouts one team is allowed in a game, from the game's pool format.
+ *
+ * `timeoutsper` says whether `timeouts` counts per game or per half. Falls back
+ * to 4 when the pool does not define a limit, which is what the scorekeeper
+ * offered before pool formats were consulted.
+ *
+ * @param int $gameId uo_game.game_id
+ * @return int allowed timeouts per team
+ */
+function GameTimeoutsPerTeam($gameId)
+{
+    $default = 4;
+    $poolId = GamePool($gameId);
+    if (!$poolId) {
+        return $default;
+    }
+
+    $pool = PoolInfo($poolId);
+    if (!$pool || empty($pool['timeouts'])) {
+        return $default;
+    }
+
+    $timeouts = (int) $pool['timeouts'];
+    if (($pool['timeoutsper'] ?? '') === 'half') {
+        $timeouts *= 2;
+    }
+
+    return max(1, $timeouts);
+}
+
 function CheckGameResult($game, $home, $away)
 {
     $gameId = (int) substr($game, 0, -1);

@@ -1,10 +1,9 @@
 <?php
 include_once __DIR__ . '/auth.php';
 
-function ScorekeeperTimeoutData($gameId, $home, $maxslots)
+function ScorekeeperTimeoutData($timeouts, $home, $maxslots)
 {
     $values = [];
-    $timeouts = GameTimeouts($gameId);
     foreach ($timeouts as $timeout) {
         if ((int) $timeout['ishome'] === (int) $home && count($values) < $maxslots) {
             $time = explode(".", SecToMin($timeout['time']));
@@ -26,8 +25,25 @@ function ScorekeeperTimeoutData($gameId, $home, $maxslots)
     ];
 }
 
+/**
+ * Highest number of timeouts already recorded for either team.
+ */
+function ScorekeeperRecordedTimeoutCount($timeouts)
+{
+    $home = 0;
+    $away = 0;
+    foreach ($timeouts as $timeout) {
+        if ((int) $timeout['ishome'] === 1) {
+            $home++;
+        } else {
+            $away++;
+        }
+    }
+
+    return max($home, $away);
+}
+
 $html = "";
-$maxtimeouts = 4;
 
 $gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
@@ -38,16 +54,23 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $useGameClock = !$hideTimeOnScoresheet && !scorekeeperHasManualNoGameClock($gameId);
 $timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
-$homeTimeoutData = ScorekeeperTimeoutData($gameId, 1, $maxtimeouts);
-$awayTimeoutData = ScorekeeperTimeoutData($gameId, 0, $maxtimeouts);
+
+$timeouts = GameTimeouts($gameId);
+// Saving clears every timeout and rewrites only the rendered slots, so showing
+// fewer slots than there are recorded timeouts would silently delete them.
+$maxtimeouts = max(GameTimeoutsPerTeam($gameId), ScorekeeperRecordedTimeoutCount($timeouts));
+$homeTimeoutData = ScorekeeperTimeoutData($timeouts, 1, $maxtimeouts);
+$awayTimeoutData = ScorekeeperTimeoutData($timeouts, 0, $maxtimeouts);
 
 if (isset($_POST['save'])) {
     GameRemoveAllTimeouts($gameId);
 
+    // Read exactly the slots the submitted form had, since the rendered slot
+    // count now depends on the pool format and on already recorded timeouts.
     $j = 0;
-    for ($i = 0; $i < $maxtimeouts; $i++) {
+    for ($i = 0; isset($_POST['htomm' . $i]); $i++) {
         $timemm = $_POST['htomm' . $i];
-        $timess = $_POST['htoss' . $i];
+        $timess = $_POST['htoss' . $i] ?? 0;
         $time = $timemm . "." . $timess;
 
         if (($timemm + $timess) > 0) {
@@ -57,9 +80,9 @@ if (isset($_POST['save'])) {
     }
 
     $j = 0;
-    for ($i = 0; $i < $maxtimeouts; $i++) {
+    for ($i = 0; isset($_POST['atomm' . $i]); $i++) {
         $timemm = $_POST['atomm' . $i];
-        $timess = $_POST['atoss' . $i];
+        $timess = $_POST['atoss' . $i] ?? 0;
         $time = $timemm . "." . $timess;
 
         if (($timemm + $timess) > 0) {
