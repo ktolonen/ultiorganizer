@@ -877,6 +877,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `public_event` tinyint(1) NOT NULL DEFAULT 0,
   `api_public` tinyint(1) DEFAULT 0,
   `showgamecomments` tinyint(1) NOT NULL DEFAULT 0,
+  `require_accreditation` tinyint(1) NOT NULL DEFAULT 0,
   `reg_id` int(10) unsigned DEFAULT NULL,
   `timezone` varchar(50) DEFAULT NULL,
   `spiritmode` int(10) DEFAULT NULL,
