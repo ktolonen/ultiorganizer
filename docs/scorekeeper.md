@@ -20,6 +20,7 @@ Related scorekeeper pages split metadata into smaller task-oriented views:
 - `scorekeeper/addcomment.php`
 - `scorekeeper/addfirstoffence.php`
 - `scorekeeper/addhalftime.php`
+- `scorekeeper/addscorecap.php`
 - `scorekeeper/addtimeouts.php`
 - `scorekeeper/addspirittimeouts.php`
 - `scorekeeper/deletescore.php`
@@ -122,6 +123,7 @@ Scorekeeper stores related game metadata through separate pages:
 - `addcomment.php`: game note
 - `addfirstoffence.php`: starting offence
 - `addhalftime.php`: halftime end time
+- `addscorecap.php`: halftime-cap and time-cap targets
 - `addtimeouts.php`: ordinary timeouts
 - `addspirittimeouts.php`: spirit stoppages when spirit mode is enabled and timed scoresheets are visible
 
@@ -133,6 +135,19 @@ Timeout-related pages now follow the same incremental pattern:
 - changing the selection before saving moves the pending stamped timeout to the newly selected team
 
 `addspirittimeouts.php` also exposes local pause/resume controls for the game clock because spirit stoppages often require the clock to be paused.
+
+## Cap targets
+
+The additional game-data actions in `addscoresheet.php` include `Halftime cap` and `Time cap` when timed actions are available.
+
+Selecting either action:
+
+- captures the current rounded game-clock time,
+- suggests a cap target one goal above the current leading score,
+- lets the scorekeeper save a different cap target,
+- lets the scorekeeper update or remove an existing cap.
+
+Caps are stored in `uo_gameevent` with type `half_cap` or `time_cap`. The event time is stored in `time`, and the cap target is stored in `info`. Gameplay replays show caps as neutral game events rather than assigning them to the home or away team.
 
 ## Ending the game
 
@@ -165,7 +180,7 @@ Scorekeeper uses the same core scoresheet tables as the rest of the application:
 - `uo_goal`: detailed scoring sequence
 - `uo_timeout`: ordinary timeouts
 - `uo_spirit_timeout`: spirit stoppages
-- `uo_gameevent`: game events such as starting offence and other event markers
+- `uo_gameevent`: game events such as starting offence and cap-target markers
 - `uo_comment`: game notes
 
 The live clock additionally uses these `uo_game` columns:

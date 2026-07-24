@@ -358,8 +358,10 @@ Relevant columns:
 
 Role in the scoresheet:
 
-- stores starting offence and other event rows used in gameplay displays,
+- stores starting offence, halftime-cap and time-cap targets, and other event rows used in gameplay displays,
 - is combined with timeout information in `GameEvents()`.
+
+Cap-target rows use type `half_cap` or `time_cap`, store the target in `info`, and are displayed without a home or away team.
 
 #### `uo_comment`
 
@@ -436,6 +438,7 @@ It combines:
 - the chronological goal list from `uo_goal` via `GameGoals()`,
 - timeouts and other game events from `uo_timeout` and `uo_gameevent` via `GameEvents()`,
 - spirit stoppages from `uo_spirit_timeout` via `GameEvents()`,
+- neutral halftime-cap and time-cap markers with their saved targets,
 - optional game note from `uo_comment` via `GameCommentHtml(COMMENT_TYPE_GAME)`.
 
 It also renders:

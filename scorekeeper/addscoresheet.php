@@ -93,6 +93,11 @@ $timerState = $useGameClock ? GameTimerState($gameId) : [
     "rss" => 0,
 ];
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
+$capEventTime = $useGameClock
+    ? ((int) $timerState['mm'] * 60) + (int) $timerState['rss']
+    : (int) ($lastscore['time'] ?? 0);
+$halfCapEvent = GameCapEvent($gameId, 'half_cap');
+$timeCapEvent = GameCapEvent($gameId, 'time_cap');
 
 $uo_goal = [
     "game" => $gameId,
@@ -457,12 +462,24 @@ if ($canShowTimedActions) {
         $html .= "<a href='?view=addspirittimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Spirit stoppages") . "</a>";
     }
     $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Halftime") . "</a>";
+    $html .= "<a class='score-cap-button' href='?view=addscorecap&amp;game=" . $gameId . "&amp;cap=half_cap&amp;time=" . $capEventTime . "' data-role='button' data-ajax='false'>" . _("Halftime cap") . "</a>";
+    $html .= "<a class='score-cap-button' href='?view=addscorecap&amp;game=" . $gameId . "&amp;cap=time_cap&amp;time=" . $capEventTime . "' data-role='button' data-ajax='false'>" . _("Time cap") . "</a>";
 }
 $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
 $html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game official") . "</a>";
 $html .= "<a href='?view=addcomment&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game note") . "</a>";
 $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Roster") . "</a>";
 $html .= "</div>\n";
+if ($halfCapEvent || $timeCapEvent) {
+    $html .= "<ul>\n";
+    if ($halfCapEvent) {
+        $html .= "<li>" . GameCapEventText($halfCapEvent) . " (" . SecToMin($halfCapEvent['time']) . ")</li>\n";
+    }
+    if ($timeCapEvent) {
+        $html .= "<li>" . GameCapEventText($timeCapEvent) . " (" . SecToMin($timeCapEvent['time']) . ")</li>\n";
+    }
+    $html .= "</ul>\n";
+}
 
 if (!$useGameClock) {
     $html .= "<h3>" . _("Game has ended") . "</h3>";
@@ -564,6 +581,23 @@ echo json_encode($awayOptions);
   if (checkedTeam) {
     swapTeamLists(checkedTeam.value);
   }
+
+  var capButtons = document.querySelectorAll('.score-cap-button');
+  capButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      if (typeof window.scorekeeperClockMinutes === 'undefined' || typeof window.scorekeeperClockSeconds === 'undefined') {
+        return;
+      }
+
+      var roundedMinutes = window.scorekeeperClockMinutes;
+      var roundedSeconds = Math.round(window.scorekeeperClockSeconds / 5) * 5;
+      if (roundedSeconds === 60) {
+        roundedMinutes++;
+        roundedSeconds = 0;
+      }
+      this.href = this.href.replace(/([?&])time=\d+/, '$1time=' + ((roundedMinutes * 60) + roundedSeconds));
+    });
+  });
 
 <?php if ($showClock) { ?>
   (function() {

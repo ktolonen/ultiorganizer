@@ -48,6 +48,8 @@ curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/games?event
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
 ```
 
+Gameplay events include `time`, `team`, and `type`. Halftime-cap and time-cap events use type `half_cap` and `time_cap`, set `team` to `null`, and include the saved cap target in `target`.
+
 `/api/v1/version` returns the Ultiorganizer application compatibility version,
 the API route version, the installed database version recorded in the database,
 and the active customization id and version. The Ultiorganizer application

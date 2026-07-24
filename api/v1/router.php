@@ -1075,11 +1075,16 @@ function api_handle_gameplay($tokenRow)
 
     $eventRows = [];
     foreach ($events as $event) {
-        $eventRows[] = [
+        $isCapEvent = GameIsCapEventType($event['type']);
+        $eventRow = [
             'time' => (int) $event['time'],
-            'team' => intval($event['ishome']) ? 'home' : 'away',
+            'team' => $isCapEvent ? null : (intval($event['ishome']) ? 'home' : 'away'),
             'type' => $event['type'],
         ];
+        if ($isCapEvent) {
+            $eventRow['target'] = (int) $event['info'];
+        }
+        $eventRows[] = $eventRow;
     }
 
     $mediaEventRows = [];
