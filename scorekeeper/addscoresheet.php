@@ -1,14 +1,32 @@
 <?php
 include_once __DIR__ . '/auth.php';
 
-function ScorekeeperPlayedPlayerIdMap($gameId, $teamId)
+function ScorekeeperPlayedPlayerIdMap($players)
 {
     $playerIds = [];
-    foreach (GamePlayers($gameId, $teamId) as $player) {
+    foreach ($players as $player) {
         $playerIds[(int) $player['player_id']] = true;
     }
 
     return $playerIds;
+}
+
+/**
+ * Option markup for the assist and scorer dropdowns, swapped in client side
+ * when the scoring team changes.
+ */
+function ScorekeeperPlayerOptions($players, $withCallahan)
+{
+    $options = "<option value='0'>-</option>";
+    foreach ($players as $player) {
+        $options .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num']
+            . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
+    }
+    if ($withCallahan) {
+        $options .= "<option value='xx'>XX " . _("Callahan goal") . "</option>";
+    }
+
+    return $options;
 }
 
 function ScorekeeperRosterPlayerId($playerId, $playedPlayerIds)
@@ -82,6 +100,8 @@ if ($useGameClock) {
 }
 
 $game_result = GameResult($gameId);
+$homePlayers = GamePlayers($gameId, $game_result['hometeam']);
+$awayPlayers = GamePlayers($gameId, $game_result['visitorteam']);
 $scores = GameGoals($gameId);
 $lastscore = count($scores) ? $scores[count($scores) - 1] : null;
 $timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
@@ -160,15 +180,15 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
             $uo_goal['scorer'] = -1;
         }
 
-        $scoringTeamId = 0;
+        $scoringPlayers = null;
         if ($team == 'H') {
-            $scoringTeamId = (int) $game_result['hometeam'];
+            $scoringPlayers = $homePlayers;
         } elseif ($team == 'A') {
-            $scoringTeamId = (int) $game_result['visitorteam'];
+            $scoringPlayers = $awayPlayers;
         }
 
-        if ($scoringTeamId > 0) {
-            $playedPlayerIds = ScorekeeperPlayedPlayerIdMap($gameId, $scoringTeamId);
+        if ($scoringPlayers !== null) {
+            $playedPlayerIds = ScorekeeperPlayedPlayerIdMap($scoringPlayers);
             if ($uo_goal['assist'] !== -1) {
                 $uo_goal['assist'] = ScorekeeperRosterPlayerId($uo_goal['assist'], $playedPlayerIds);
             }
@@ -345,6 +365,20 @@ if (!$showGoalForm && $useGameClock) {
     $html .= "<p class='warning'>" . $message . "</p>";
 }
 
+// An empty roster leaves the assist and scorer dropdowns empty, which is a
+// common surprise for scorekeepers who did not check the players in.
+$rosters = [
+    [$game_result['hometeam'], $game_result['hometeamname'], $homePlayers],
+    [$game_result['visitorteam'], $game_result['visitorteamname'], $awayPlayers],
+];
+foreach ($rosters as $roster) {
+    if (count($roster[2]) > 0) {
+        continue;
+    }
+    $html .= "<p class='warning'>" . sprintf(_("No players given for team %s."), utf8entities($roster[1]))
+        . " <a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $roster[0] . "' data-ajax='false'>" . _("Enter the players for this game.") . "</a></p>\n";
+}
+
 if ($errors && !$showGoalForm) {
     $html .= $errors;
 }
@@ -374,9 +408,9 @@ if ($showGoalForm) {
 
     $played_players = [];
     if ($team == 'H') {
-        $played_players = GamePlayers($gameId, $game_result['hometeam']);
+        $played_players = $homePlayers;
     } elseif ($team == 'A') {
-        $played_players = GamePlayers($gameId, $game_result['visitorteam']);
+        $played_players = $awayPlayers;
     }
 
     $html .= "<label for='pass' class='select'>" . _("Assist") . "</label>";
@@ -477,43 +511,13 @@ if ($showClock) {
 }
 ?>
 <script type="text/javascript">
-  var homeAssistList = <?php
-                  $homeOptions = "<option value='0'>-</option>";
-$played_players = GamePlayers($gameId, $game_result['hometeam']);
-foreach ($played_players as $player) {
-    $homeOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
-}
-$homeOptions .= "<option value='xx'>XX " . _("Callahan goal") . "</option>";
-echo json_encode($homeOptions);
-?>;
+  var homeAssistList = <?php echo json_encode(ScorekeeperPlayerOptions($homePlayers, true)); ?>;
 
-  var awayAssistList = <?php
-$awayOptions = "<option value='0'>-</option>";
-$played_players = GamePlayers($gameId, $game_result['visitorteam']);
-foreach ($played_players as $player) {
-    $awayOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
-}
-$awayOptions .= "<option value='xx'>XX " . _("Callahan goal") . "</option>";
-echo json_encode($awayOptions);
-?>;
+  var awayAssistList = <?php echo json_encode(ScorekeeperPlayerOptions($awayPlayers, true)); ?>;
 
-  var homeScorerList = <?php
-$homeOptions = "<option value='0'>-</option>";
-$played_players = GamePlayers($gameId, $game_result['hometeam']);
-foreach ($played_players as $player) {
-    $homeOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
-}
-echo json_encode($homeOptions);
-?>;
+  var homeScorerList = <?php echo json_encode(ScorekeeperPlayerOptions($homePlayers, false)); ?>;
 
-  var awayScorerList = <?php
-$awayOptions = "<option value='0'>-</option>";
-$played_players = GamePlayers($gameId, $game_result['visitorteam']);
-foreach ($played_players as $player) {
-    $awayOptions .= "<option value='" . utf8entities($player['player_id']) . "'>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
-}
-echo json_encode($awayOptions);
-?>;
+  var awayScorerList = <?php echo json_encode(ScorekeeperPlayerOptions($awayPlayers, false)); ?>;
 
   function swapTeamLists(teamValue) {
     var passSelect = document.getElementById('pass');
