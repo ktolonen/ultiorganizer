@@ -744,6 +744,11 @@ input[type="button"]:disabled {
   text-overflow: ellipsis;
 }
 
+.goal-players-hint {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
 .player-not-accredited {
   display: block;
   color: var(--status-warning-text);

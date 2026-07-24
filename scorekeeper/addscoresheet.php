@@ -413,6 +413,13 @@ if ($showGoalForm) {
         $played_players = $awayPlayers;
     }
 
+    // Hidden until the scoring team is picked, because the player lists are
+    // empty until then and an empty dropdown confuses new scorekeepers. The
+    // hint and the toggling are applied client side, so the page still works
+    // without JavaScript.
+    $html .= "<p id='teamfirsthint' class='goal-players-hint'>" . _("Select the team that scored.") . "</p>";
+    $html .= "<div id='goalplayers'>";
+
     $html .= "<label for='pass' class='select'>" . _("Assist") . "</label>";
     $html .= "<select id='pass' name='pass' >";
     $html .= "<option value='0' selected='selected'>-</option>";
@@ -437,6 +444,7 @@ if ($showGoalForm) {
         $html .= "<option value='" . utf8entities($player['player_id']) . "' $selected>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
     }
     $html .= "</select>";
+    $html .= "</div>";
 
     if (!$hideTimeOnScoresheet) {
         $html .= "<label for='timemm' class='select'>" . _("Goal time") . " " . _("min") . ":" . _("sec") . "</label>";
@@ -519,6 +527,17 @@ if ($showClock) {
 
   var awayScorerList = <?php echo json_encode(ScorekeeperPlayerOptions($awayPlayers, false)); ?>;
 
+  function showPlayerSelects(visible) {
+    var players = document.getElementById('goalplayers');
+    var hint = document.getElementById('teamfirsthint');
+    if (players) {
+      players.style.display = visible ? '' : 'none';
+    }
+    if (hint) {
+      hint.style.display = visible ? 'none' : '';
+    }
+  }
+
   function swapTeamLists(teamValue) {
     var passSelect = document.getElementById('pass');
     var goalSelect = document.getElementById('goal');
@@ -532,6 +551,7 @@ if ($showClock) {
       passSelect.innerHTML = awayAssistList;
       goalSelect.innerHTML = awayScorerList;
     }
+    showPlayerSelects(true);
   }
 
   function setGoalTimeFromClock() {
@@ -556,7 +576,11 @@ if ($showClock) {
 
   var checkedTeam = document.querySelector('input[name="team"]:checked');
   if (checkedTeam) {
+    // swapTeamLists() reveals them, which matters on the error re-render where
+    // a team is already selected.
     swapTeamLists(checkedTeam.value);
+  } else {
+    showPlayerSelects(false);
   }
 
   var pauseButton = document.getElementById('pausegame');
