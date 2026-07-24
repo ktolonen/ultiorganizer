@@ -14,12 +14,12 @@ if (isset($_POST['save'])) {
 }
 
 $html .= "<div data-role='header'>\n";
-$html .= "<h1>" . _("Game official") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
+$html .= "<h1>" . _("Scorekeeper(s)") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
 $html .= "<form action='?view=addofficial&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
-$html .= "<label for='official'>" . _("Game official") . ":</label>";
+$html .= "<label for='official'>" . _("Scorekeeper(s)") . ":</label>";
 $html .= "<input type='text' name='official' id='official' value='" . utf8entities($game_result['official']) . "'/>";
 $html .= "<div class='form-actions'>";
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>";

@@ -95,7 +95,7 @@ if (count($goals) <= 0) {
     }
 
     $html .= "</td></tr><tr><td>\n";
-    $html .= _("Game official") . ": " . utf8entities($game_result['official']);
+    $html .= _("Scorekeeper(s)") . ": " . utf8entities($game_result['official']);
 }
 $html .= "</td></tr>\n";
 $html .= "</table>\n";

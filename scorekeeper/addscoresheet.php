@@ -494,7 +494,7 @@ if ($canShowTimedActions) {
     $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Halftime") . "</a>";
 }
 $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
-$html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game official") . "</a>";
+$html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Scorekeeper(s)") . "</a>";
 $html .= "<a href='?view=addcomment&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game note") . "</a>";
 $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Roster") . "</a>";
 $html .= "</div>\n";

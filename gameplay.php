@@ -314,7 +314,7 @@ if (GameHasStarted($game_result) > 0) {
         $html .= "</table>\n";
 
         if (!empty($game_result['official'])) {
-            $html .= "<p>" . _("Game official") . ": " . utf8entities($game_result['official']) . "</p>";
+            $html .= "<p>" . _("Scorekeeper(s)") . ": " . utf8entities($game_result['official']) . "</p>";
         }
 
         $urls = GetMediaUrlList("game", $gameId);

@@ -70,7 +70,7 @@ class PDF extends tFPDF implements ScoreSheetPdf
         $this->OneCellTable($this->pdfText(_("Division") . ", " . _("Pool")), $this->game['poolname']);
         $this->OneCellTable($this->pdfText(_("Field")), $this->game['placename']);
         $this->OneCellTable($this->pdfText(_("Scheduled start date and time")), $this->game['time']);
-        $this->OneCellTable($this->pdfText(_("Game official")), "");
+        $this->OneCellTable($this->pdfText(_("Scorekeeper(s)")), "");
         $this->Ln();
 
         $this->FirstOffence();

@@ -185,7 +185,8 @@ tournament desks can still record unaccredited players and acknowledge them afte
 
 Scorekeeper stores related game metadata through separate pages:
 
-- `addofficial.php`: game official name
+- `addofficial.php`: scorekeeper name (the `official` column; the label was renamed because
+  scorekeepers track score and time, they do not make rulings)
 - `addcomment.php`: game note
 - `addfirstoffence.php`: starting offence
 - `addhalftime.php`: halftime end time

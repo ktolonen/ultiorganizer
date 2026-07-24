@@ -95,7 +95,7 @@ if (count($goals) <= 0) {
     }
 
     $html .= "</td></tr><tr><td>\n";
-    $html .= _("Game official") . ": " . utf8entities($game_result['official']);
+    $html .= _("Scorekeeper(s)") . ": " . utf8entities($game_result['official']);
 }
 $html .= "</td></tr><tr><td>\n";
 $html .= "<a href='?view=mobile/respgames'>" . _("Back to game responsibilities") . "</a>";
