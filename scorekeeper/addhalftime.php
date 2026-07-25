@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 $html = "";
 
@@ -9,14 +10,7 @@ $game_result = GameResult($gameId);
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $useGameClock = !$hideTimeOnScoresheet && !scorekeeperHasManualNoGameClock($gameId);
-$timerState = $useGameClock ? GameTimerState($gameId) : [
-    "started" => false,
-    "ongoing" => false,
-    "paused" => false,
-    "mm" => 0,
-    "ss" => 0,
-    "rss" => 0,
-];
+$timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
 $timemm = "";
 $timess = "";
@@ -49,7 +43,7 @@ if (!empty($game_result['halftime'])) {
 
 $html .= "<div data-role='header'>\n";
 if ($showClock) {
-    $html .= "<span id='gametime' style='float: left; margin: 0.2em 1.1em 0.25em 0.5ex; padding: 0.15em 0.4em; border-radius: 0.35em; background: #e6eef2; line-height: 1.3; font-size: 1.8em;'>" . sprintf("%02d", $timerState['mm']) . ":" . sprintf("%02d", $timerState['ss']) . "</span>";
+    $html .= ScorekeeperClockHeader($timerState);
 }
 $html .= "<h1>" . _("Halftime ends") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
@@ -88,38 +82,6 @@ $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;
-?>
-<script type="text/javascript">
-<?php if ($showClock) { ?>
-  (function() {
-    var clock = document.getElementById('gametime');
-    var pausedSuffix = <?php echo json_encode(" (" . _("Paused") . ")"); ?>;
-    var minutes = <?php echo (int) $timerState['mm']; ?>;
-    var seconds = <?php echo (int) $timerState['ss']; ?>;
-
-    function renderClock(paused) {
-      if (!clock) {
-        return;
-      }
-      var text = String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
-      if (paused) {
-        text += pausedSuffix;
-      }
-      clock.textContent = text;
-    }
-
-    renderClock(<?php echo $timerState['paused'] ? 'true' : 'false'; ?>);
-
-<?php if ($timerState['ongoing'] && !$timerState['paused']) { ?>
-    window.setInterval(function() {
-      seconds++;
-      if (seconds > 59) {
-        minutes++;
-        seconds = 0;
-      }
-      renderClock(false);
-    }, 1000);
-<?php } ?>
-  })();
-<?php } ?>
-</script>
+if ($showClock) {
+    echo ScorekeeperClockScript($timerState);
+}

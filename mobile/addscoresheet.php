@@ -213,7 +213,7 @@ if (!$errors) {
         $html .= "</td></tr><tr><td>\n";
     }
     $html .=  "<a href='?view=mobile/addfirstoffence&amp;game=" . $gameId . "'>" . _("First offence") . "</a> | ";
-    $html .=  "<a href='?view=mobile/addofficial&amp;game=" . $gameId . "'>" . _("Game official") . "</a>";
+    $html .=  "<a href='?view=mobile/addofficial&amp;game=" . $gameId . "'>" . _("Scorekeeper(s)") . "</a>";
     $html .= " | <a href='?view=mobile/addcomment&amp;game=" . $gameId . "'>" . _("Game note") . "</a>";
     $html .= "</td></tr><tr><td>\n";
     $html .=  "<a href='?view=mobile/deletescore&amp;game=" . $gameId . "'>" . _("Delete the last goal") . "</a>";

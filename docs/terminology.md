@@ -42,11 +42,11 @@ Current runtime names and legacy identifiers are documented as aliases where nee
 | Turnover | Recorded possession change in gameplay data. | |
 | Defence | Recorded defensive play/stat tracked through the defence sheet and defence stats. | Prefer `defence`, not `defense`, in new docs. |
 | Defence board | User-facing leaderboard or summary view for defensive stats. | Prefer the spaced form `Defence board`, not `Defenseboard`, in new UI text and docs. |
-| Scoresheet | Detailed game record combining roster, goals, timeouts, note, official, and related metadata. | In Ultiorganizer this is a concept, not a single table. |
+| Scoresheet | Detailed game record combining roster, goals, timeouts, note, scorekeeper, and related metadata. | In Ultiorganizer this is a concept, not a single table. |
 | Gameplay | Replay or view of saved game goals and events. | Used by gameplay pages and API responses. |
 | Game event | Recorded non-goal gameplay marker. | Includes turnovers, offence markers, timeouts, spirit stoppages, and media-linked events. |
 | Game note | Free-text note attached to a game. | Stored through comment helpers. |
-| Game official | Official name stored with a game. | |
+| Scorekeeper | Name of the person keeping the scoresheet for a game, stored with the game. | Renamed from `Game official`: scorekeepers track score and time, they do not make rulings. |
 | Team captain | Player marked as team captain in a game-specific played roster. | Prefer this user-facing label when team-captain and spirit-captain roles appear together. |
 | Captain | Player marked as team captain in a game-specific played roster. | Use this as the compatibility term for existing `captain` fields and helpers. |
 | Spirit captain | Player marked as spirit captain in a game-specific played roster. | |
@@ -81,7 +81,7 @@ These terms are recognized in the current repository. They are not the preferred
 | Gameplay | `gameplay.php`, `gameplay` endpoint | Refers to saved game replay, not general game theory. |
 | Game event | `uo_gameevent`, `GameEvents()` | Also used indirectly through replay views and API event arrays. |
 | Game note | `comment`, `COMMENT_TYPE_GAME`, `Game comment` | Comment storage names are broader than the preferred user-facing term. |
-| Game official | `official`, `Game official(s)` | Storage field is `official`; UI labels vary slightly. |
+| Scorekeeper | `official`, `Game official`, `Game official(s)` | Storage field is still `official`; the user-facing label is `Scorekeeper(s)`. |
 | Team captain | `captain`, `Captain` | Existing runtime names and helpers often shorten this to `captain`. |
 | Spirit captain | `spirit_captain` | `spirit_captain` is the stored flag and API role name. |
 | Spirit score | `Spirit points` | Current UI often says `Spirit points`; use `Spirit score` in new docs when discussing the concept. |

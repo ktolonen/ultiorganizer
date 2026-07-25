@@ -1470,6 +1470,13 @@ function upgrade96()
     }
 }
 
+function upgrade97()
+{
+    if (!hasColumn('uo_season', 'require_accreditation')) {
+        addColumn('uo_season', 'require_accreditation', "tinyint(1) NOT NULL DEFAULT 0");
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {

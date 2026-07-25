@@ -39,6 +39,7 @@
   --game-pending-bg: #f1f6ff;
   --game-ongoing-bg: #ffe7e7;
   --game-played-bg: #eef8f2;
+  --gameclock-bg: #e6eef2;
 
   /* Secondary actions */
   --button-secondary-bg: #eef3f7;
@@ -151,6 +152,16 @@ input[type="checkbox"] {
   position: sticky;
   top: 0;
   z-index: 10;
+}
+
+.sk-gameclock {
+  float: left;
+  margin: 0.2em 1.1em 0.25em 0.5ex;
+  padding: 0.15em 0.4em;
+  border-radius: 0.35em;
+  background: var(--gameclock-bg);
+  line-height: 1.3;
+  font-size: 1.8em;
 }
 
 [data-role="content"] {
@@ -287,6 +298,17 @@ input[type="submit"]:active,
 input[type="button"]:active,
 input[type="reset"]:active {
   transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Submitting: the double-submit guard disables the buttons until the page
+   navigates, so make that state read as "working" rather than as broken. */
+button:disabled,
+input[type="submit"]:disabled,
+input[type="button"]:disabled {
+  opacity: 0.55;
+  cursor: progress;
+  transform: none;
   box-shadow: none;
 }
 
@@ -722,6 +744,17 @@ input[type="reset"]:active {
   text-overflow: ellipsis;
 }
 
+.goal-players-hint {
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.player-not-accredited {
+  display: block;
+  color: var(--status-warning-text);
+  font-size: 0.8rem;
+}
+
 .player-number select {
   width: 100%;
 }
@@ -746,8 +779,12 @@ input[type="reset"]:active {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* 8.5rem, not less: the longest single-word button label has to fit on one
+   line, and translations run longer than the English ones (the Finnish
+   "Pisteenpitäjä(t)" needs 134px). A narrower minimum clips labels that have
+   no space to wrap at. */
 .action-row--even {
-  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
 }
 
 .action-row--stacked {

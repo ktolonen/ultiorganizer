@@ -316,7 +316,8 @@ function GamePlayers($gameId, $teamId)
         "SELECT p.player_id, pg.num, p.firstname, p.lastname, pg.captain, pg.spirit_captain
 		FROM uo_played AS pg 
 		LEFT JOIN uo_player AS p ON(pg.player=p.player_id)
-		WHERE pg.game=%d AND p.team=%d",
+		WHERE pg.game=%d AND p.team=%d
+		ORDER BY pg.num ASC, p.lastname ASC, p.firstname ASC",
         (int) $gameId,
         (int) $teamId,
     );
@@ -847,6 +848,7 @@ function GameTimerState($gameId)
         "started" => false,
         "ongoing" => false,
         "paused" => false,
+        "elapsed" => 0,
         "mm" => 0,
         "ss" => 0,
         "rss" => 0,
@@ -875,6 +877,7 @@ function GameTimerState($gameId)
     }
     $elapsed = max(0, $elapsed);
 
+    $state['elapsed'] = $elapsed;
     $state['mm'] = (int) floor($elapsed / 60);
     $state['ss'] = $elapsed % 60;
     $state['rss'] = (int) (round($state['ss'] / 5) * 5);
@@ -885,6 +888,39 @@ function GameTimerState($gameId)
     }
 
     return $state;
+}
+
+/**
+ * Timeouts one team is allowed in a game, from the game's pool format.
+ *
+ * `timeoutsper` says whether `timeouts` counts per game or per half.
+ * `timeoutsovertime` adds recordable overtime timeout slots. Falls back to 4
+ * regulation slots when the pool does not define a limit, which is what the
+ * scorekeeper offered before pool formats were consulted.
+ *
+ * @param int $gameId uo_game.game_id
+ * @return int allowed timeouts per team
+ */
+function GameTimeoutsPerTeam($gameId)
+{
+    $default = 4;
+    $poolId = GamePool($gameId);
+    if (!$poolId) {
+        return $default;
+    }
+
+    $pool = PoolInfo($poolId);
+    if (!$pool) {
+        return $default;
+    }
+
+    $timeouts = empty($pool['timeouts']) ? $default : (int) $pool['timeouts'];
+    if (!empty($pool['timeouts']) && ($pool['timeoutsper'] ?? '') === 'half') {
+        $timeouts *= 2;
+    }
+    $timeouts += max(0, (int) ($pool['timeoutsovertime'] ?? 0));
+
+    return max(1, $timeouts);
 }
 
 function CheckGameResult($game, $home, $away)

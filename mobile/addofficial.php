@@ -20,7 +20,7 @@ mobilePageTop(_("Score&nbsp;sheet"));
 $html .= "<form action='?" . utf8entities($_SERVER['QUERY_STRING']) . "' method='post'>\n";
 $html .= "<table cellpadding='2'>\n";
 $html .= "<tr><td>\n";
-$html .= _("Game official") . ":";
+$html .= _("Scorekeeper(s)") . ":";
 $html .= "</td></tr><tr><td>\n";
 $html .= "<input class='input' style='width: 90%' type='text' name='official' id='official' value='" . utf8entities($game_result['official']) . "'/>";
 $html .= "</td></tr><tr><td>\n";

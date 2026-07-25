@@ -34,6 +34,7 @@ $sp = [
     "public_event" => 0,
     "api_public" => 0,
     "showgamecomments" => 0,
+    "require_accreditation" => 0,
     "iscurrent" => 0,
     "enrollopen" => 0,
     "enroll_deadline" => "",
@@ -70,6 +71,7 @@ if (!empty($_POST['add'])) {
     $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
     $sp['public_event'] = !empty($_POST['public_event']);
     $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
+    $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
     $comment = $_POST['comment'];
 
     if (empty($_POST['season_id'])) {
@@ -139,6 +141,7 @@ if (!empty($_POST['add'])) {
         $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
         $sp['public_event'] = !empty($_POST['public_event']);
         $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
+        $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
         $sp['timezone'] = $_POST['timezone'];
         $comment = $_POST['comment'];
         SetSeason($sp['season_id'], $sp, $comment);
@@ -178,6 +181,7 @@ if ($seasonId) {
     $sp['maintenance_mode'] = isset($info['maintenance_mode']) ? $info['maintenance_mode'] : 0;
     $sp['public_event'] = isset($info['public_event']) ? $info['public_event'] : 0;
     $sp['showgamecomments'] = isset($info['showgamecomments']) ? $info['showgamecomments'] : 0;
+    $sp['require_accreditation'] = isset($info['require_accreditation']) ? $info['require_accreditation'] : 0;
     $sp['timezone'] = $info['timezone'];
     $comment = CommentRaw(1, $info['season_id']);
 } else {
@@ -392,6 +396,13 @@ if ($sp['hide_time_on_scoresheet']) {
 }
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Removes point/defence time input fields from Scorekeeper sheets.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Require accreditation") . ": </td><td><input class='input' type='checkbox' name='require_accreditation' ";
+if ($sp['require_accreditation']) {
+    $html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Prevents adding players who are not accredited to a game roster.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Home team assignment") . ": </td><td>";
 $html .= "<select class='dropdown' id='hometeammode' name='hometeammode'>\n";

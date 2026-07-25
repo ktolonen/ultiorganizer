@@ -14,6 +14,59 @@ if (!function_exists('scorekeeperHasManualNoGameClock')) {
     }
 }
 
+if (!function_exists('ScorekeeperTimerStateDefaults')) {
+    /**
+     * Timer state shape used when the game clock is not in play, matching the
+     * keys returned by GameTimerState().
+     */
+    function ScorekeeperTimerStateDefaults()
+    {
+        return [
+            "started" => false,
+            "ongoing" => false,
+            "paused" => false,
+            "elapsed" => 0,
+            "mm" => 0,
+            "ss" => 0,
+            "rss" => 0,
+        ];
+    }
+}
+
+if (!function_exists('ScorekeeperClockHeader')) {
+    /**
+     * Live game clock element for the page header. Rendered server side so the
+     * clock is readable before script/scorekeeper.js takes over.
+     */
+    function ScorekeeperClockHeader($timerState)
+    {
+        return "<span id='gametime' class='sk-gameclock'>"
+            . sprintf("%02d", $timerState['mm']) . ":" . sprintf("%02d", $timerState['ss'])
+            . "</span>";
+    }
+}
+
+if (!function_exists('ScorekeeperClockScript')) {
+    /**
+     * Hands the server-side timer state to the shared clock in
+     * script/scorekeeper.js. Every scorekeeper page that shows the clock uses
+     * this so the drift-free timing rules live in one place.
+     */
+    function ScorekeeperClockScript($timerState)
+    {
+        $options = [
+            "elapsed" => (int) $timerState['elapsed'],
+            "ongoing" => (bool) $timerState['ongoing'],
+            "paused" => (bool) $timerState['paused'],
+            "pausedSuffix" => " (" . _("Paused") . ")",
+        ];
+
+        return "<script type='text/javascript'>\n"
+            . "  window.scorekeeperClock.init(" . json_encode($options) . ");\n"
+            . "</script>\n";
+    }
+}
+
 if (!function_exists('scorekeeperRequestGameId')) {
     function scorekeeperRequestGameId()
     {

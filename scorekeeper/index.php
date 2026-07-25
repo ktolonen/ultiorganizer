@@ -1,6 +1,7 @@
 <?php
 
 $include_prefix = "../";
+$styles_prefix = "../";
 
 //Open database connection
 include_once '../lib/database.php';
@@ -77,7 +78,13 @@ echo "<meta name='viewport' content='width=device-width, initial-scale=1, viewpo
 echo "<title>Scorekeeper</title>\n";
 echo mobileStyles();
 
-echo "<script src='" . BASEURL . "/script/ultiorganizer.js'></script>\n";
+// Relative, like the stylesheets above and like timekeeper/index.php. An
+// absolute BASEURL only resolves for clients that reach the installation by
+// exactly that host and scheme, so a phone on the venue network would silently
+// load no script at all and the game clock would stop updating between page
+// loads.
+echo "<script src='" . $styles_prefix . "script/ultiorganizer.js'></script>\n";
+echo "<script src='" . $styles_prefix . "script/scorekeeper.js'></script>\n";
 
 echo "</head>\n";
 echo "<body>\n";

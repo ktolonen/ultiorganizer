@@ -1,10 +1,9 @@
 <?php
 include_once __DIR__ . '/auth.php';
 
-function ScorekeeperTimeoutData($gameId, $home, $maxslots)
+function ScorekeeperTimeoutData($timeouts, $home, $maxslots)
 {
     $values = [];
-    $timeouts = GameTimeouts($gameId);
     foreach ($timeouts as $timeout) {
         if ((int) $timeout['ishome'] === (int) $home && count($values) < $maxslots) {
             $time = explode(".", SecToMin($timeout['time']));
@@ -26,8 +25,25 @@ function ScorekeeperTimeoutData($gameId, $home, $maxslots)
     ];
 }
 
+/**
+ * Highest number of timeouts already recorded for either team.
+ */
+function ScorekeeperRecordedTimeoutCount($timeouts)
+{
+    $home = 0;
+    $away = 0;
+    foreach ($timeouts as $timeout) {
+        if ((int) $timeout['ishome'] === 1) {
+            $home++;
+        } else {
+            $away++;
+        }
+    }
+
+    return max($home, $away);
+}
+
 $html = "";
-$maxtimeouts = 4;
 
 $gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
@@ -36,25 +52,27 @@ $game_result = GameResult($gameId);
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $useGameClock = !$hideTimeOnScoresheet && !scorekeeperHasManualNoGameClock($gameId);
-$timerState = $useGameClock ? GameTimerState($gameId) : [
-    "started" => false,
-    "ongoing" => false,
-    "paused" => false,
-    "mm" => 0,
-    "ss" => 0,
-    "rss" => 0,
-];
+$timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
-$homeTimeoutData = ScorekeeperTimeoutData($gameId, 1, $maxtimeouts);
-$awayTimeoutData = ScorekeeperTimeoutData($gameId, 0, $maxtimeouts);
+
+$timeouts = GameTimeouts($gameId);
+// Saving clears every timeout and rewrites only the rendered slots, so showing
+// fewer slots than there are recorded timeouts would silently delete them.
+$maxtimeouts = max(GameTimeoutsPerTeam($gameId), ScorekeeperRecordedTimeoutCount($timeouts));
+$homeTimeoutData = ScorekeeperTimeoutData($timeouts, 1, $maxtimeouts);
+$awayTimeoutData = ScorekeeperTimeoutData($timeouts, 0, $maxtimeouts);
 
 if (isset($_POST['save'])) {
     GameRemoveAllTimeouts($gameId);
 
+    // Bounded by the slot count this page would render, so a hand-built request
+    // cannot store more timeouts than the pool format allows. The slot count is
+    // computed above from the same inputs the rendered form used, and the
+    // missing-key default covers a form that offered fewer slots.
     $j = 0;
     for ($i = 0; $i < $maxtimeouts; $i++) {
-        $timemm = $_POST['htomm' . $i];
-        $timess = $_POST['htoss' . $i];
+        $timemm = $_POST['htomm' . $i] ?? 0;
+        $timess = $_POST['htoss' . $i] ?? 0;
         $time = $timemm . "." . $timess;
 
         if (($timemm + $timess) > 0) {
@@ -65,8 +83,8 @@ if (isset($_POST['save'])) {
 
     $j = 0;
     for ($i = 0; $i < $maxtimeouts; $i++) {
-        $timemm = $_POST['atomm' . $i];
-        $timess = $_POST['atoss' . $i];
+        $timemm = $_POST['atomm' . $i] ?? 0;
+        $timess = $_POST['atoss' . $i] ?? 0;
         $time = $timemm . "." . $timess;
 
         if (($timemm + $timess) > 0) {
@@ -81,7 +99,7 @@ if (isset($_POST['save'])) {
 
 $html .= "<div data-role='header'>\n";
 if ($showClock) {
-    $html .= "<span id='gametime' style='float: left; margin: 0.2em 1.1em 0.25em 0.5ex; padding: 0.15em 0.4em; border-radius: 0.35em; background: #e6eef2; line-height: 1.3; font-size: 1.8em;'>" . sprintf("%02d", $timerState['mm']) . ":" . sprintf("%02d", $timerState['ss']) . "</span>";
+    $html .= ScorekeeperClockHeader($timerState);
 }
 $html .= "<h1>" . _("Timeouts") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
@@ -165,60 +183,22 @@ $html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;
+if ($showClock) {
+    echo ScorekeeperClockScript($timerState);
+}
 ?>
 <script type="text/javascript">
-<?php if ($showClock) { ?>
-  window.scorekeeperClockMinutes = <?php echo (int) $timerState['mm']; ?>;
-  window.scorekeeperClockSeconds = <?php echo (int) $timerState['ss']; ?>;
-
-  (function() {
-    var clock = document.getElementById('gametime');
-    var pausedSuffix = <?php echo json_encode(" (" . _("Paused") . ")"); ?>;
-
-    function renderClock(paused) {
-      if (!clock) {
-        return;
-      }
-      var text = String(window.scorekeeperClockMinutes).padStart(2, '0') + ':' + String(window.scorekeeperClockSeconds).padStart(2, '0');
-      if (paused) {
-        text += pausedSuffix;
-      }
-      clock.textContent = text;
-    }
-
-    renderClock(<?php echo $timerState['paused'] ? 'true' : 'false'; ?>);
-
-<?php if ($timerState['ongoing'] && !$timerState['paused']) { ?>
-    window.setInterval(function() {
-      window.scorekeeperClockSeconds++;
-      if (window.scorekeeperClockSeconds > 59) {
-        window.scorekeeperClockMinutes++;
-        window.scorekeeperClockSeconds = 0;
-      }
-      renderClock(false);
-    }, 1000);
-<?php } ?>
-  })();
-<?php } ?>
-
   (function() {
     var pendingTimeoutSlot = null;
     var homeFilled = <?php echo (int) $homeTimeoutData['filled']; ?>;
     var awayFilled = <?php echo (int) $awayTimeoutData['filled']; ?>;
 
     function roundedClockTime() {
-      if (typeof window.scorekeeperClockMinutes === 'undefined' || typeof window.scorekeeperClockSeconds === 'undefined') {
+      if (!window.scorekeeperClock || !window.scorekeeperClock.isActive()) {
         return null;
       }
 
-      var minutes = window.scorekeeperClockMinutes;
-      var seconds = Math.round(window.scorekeeperClockSeconds / 5) * 5;
-      if (seconds === 60) {
-        minutes++;
-        seconds = 0;
-      }
-
-      return { mm: minutes, ss: seconds };
+      return window.scorekeeperClock.roundedTime();
     }
 
     function selectElements(team, index) {

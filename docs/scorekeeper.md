@@ -25,6 +25,24 @@ Related scorekeeper pages split metadata into smaller task-oriented views:
 - `scorekeeper/deletescore.php`
 - `scorekeeper/scoreboard.php`
 
+## Client script
+
+`scorekeeper/index.php` loads `script/scorekeeper.js` into every Scorekeeper page. The `src` is
+relative (`$styles_prefix`), like the stylesheets and like `timekeeper/index.php`, not `BASEURL`.
+An absolute `BASEURL` only resolves for clients that reach the installation by exactly that host
+and scheme, so a phone on the venue network loads no script at all and the clock freezes between
+page loads while the desktop that matches `BASEURL` works.
+
+It holds two independent pieces:
+
+- the shared game clock (see [Live game clock](#live-game-clock) below)
+- a double-submit guard on every form in the app: a second submit while one is in flight is blocked
+  and the submit controls are disabled until the page navigates. The form is *marked* busy
+  synchronously, so a second submit is rejected immediately, but the buttons are only *disabled* one
+  tick later — a disabled submit button is left out of the POST body, and the Scorekeeper pages
+  branch on which button was pressed (`add` vs `forceadd`, `startgame` vs `pausegame`). Forms
+  restored from the back/forward cache are re-enabled on `pageshow`.
+
 ## Routing and shell
 
 Scorekeeper uses the query-string view pattern under its own entrypoint:
@@ -83,6 +101,39 @@ Current behavior in `scorekeeper/addscoresheet.php`:
 - selecting the team radio for a new goal stamps the current rounded clock time into the goal time fields
 - the header clock updates client-side once per second while the game is running
 
+### Shared clock module
+
+Every page that shows the clock (`addscoresheet.php`, `addtimeouts.php`, `addspirittimeouts.php`,
+`addhalftime.php`, `endgame.php`) renders it through the same three helpers, so the timing rules
+live in one place:
+
+- `ScorekeeperTimerStateDefaults()` in `scorekeeper/auth.php`: the timer state shape used when the
+  game clock is not in play
+- `ScorekeeperClockHeader()` in `scorekeeper/auth.php`: the `#gametime` header element, styled by
+  `.sk-gameclock`
+- `ScorekeeperClockScript()` in `scorekeeper/auth.php`: hands `GameTimerState()` to
+  `window.scorekeeperClock.init()` in `script/scorekeeper.js`
+
+`script/scorekeeper.js` anchors on the `elapsed` second count from `GameTimerState()` plus a
+client-side timestamp for the moment the server took that reading, and derives every value from the
+difference on demand. Counting seconds in a `setInterval` drifts badly on phones, because browsers
+throttle or suspend timers while the screen is off. Because only *differences* of `Date.now()` are
+used, a device with a wrong absolute clock still shows the correct game time.
+
+The anchor is the Navigation Timing `responseStart`, not `Date.now()` at script execution. The
+server reads the clock while generating the response, so anchoring on script start would fold the
+transfer and parse time into the clock and leave it permanently that far behind — on a slow venue
+connection that means goals and timeouts stamped early. `responseStart` is the closest observable
+moment to the server's reading, since `scorekeeper/index.php` buffers the whole page and flushes it
+at the end. Implausible values (an anchor in the future, or more than five minutes old) fall back to
+`Date.now()`, as do browsers without Navigation Timing.
+
+Callers that prefill a time field (goal time, timeout time) call
+`window.scorekeeperClock.roundedTime()`, which recomputes on each call rather than reading a
+cached tick value. Reading a cached value is what previously stamped a stale time into a goal
+added right after the screen woke up. `window.scorekeeperClock.isActive()` is false on pages where
+the clock is not shown, so those callers leave the field alone instead of filling in `00:00`.
+
 Timer lifecycle normalization currently resets timer state when:
 
 - a game clock is started,
@@ -114,11 +165,48 @@ Current persistence behavior:
 
 Assist and scorer selections are drawn from the game-specific played roster in `uo_played`, not directly from the full team roster.
 
+`addscoresheet.php` warns when either team's played roster is empty, because empty assist and scorer
+dropdowns are otherwise a confusing symptom of players never having been checked in.
+
+## Roster accreditation
+
+`uo_season.require_accreditation` is an `EVENT_SETTING`, off by default, set in
+`admin/addseasons.php`.
+
+When it is on, `scorekeeper/addplayerlists.php` and the desktop `user/addplayerlists.php` will not
+let a player whose `uo_player.accredited` is 0 be added to a game roster. This is how WFDF events
+keep a banned player, or one withdrawn for medical reasons, off the scoresheet: the tournament desk
+clears the accredited flag, and whoever fills the roster then sees the player marked and cannot
+select them.
+
+The rules are:
+
+- unaccredited and **not** on the roster: checkbox, jersey and role controls are disabled, and the
+  save handler refuses the addition even if the disabled control is bypassed
+- unaccredited but **already** on the roster: controls stay enabled so the scorekeeper can
+  deliberately remove the player, since silently dropping someone who already has goals recorded in
+  `uo_goal` would corrupt the scoresheet
+- either way, the row is marked `Not accredited`
+
+The setting is off by default because `uo_player.accredited` is `NOT NULL DEFAULT 0`, so in an
+installation that never accredits anyone, enforcing it would make every roster unfillable.
+
+Enforcement lives in the two roster page handlers, not in `GameAddPlayer()`. That helper writes the
+`uo_played.accredited` snapshot which `SeasonUnaccredited()` and `admin/accreditation.php` read, so
+blocking there would break the workflow where an unaccredited player is recorded and acknowledged
+afterwards. `scorekeeper/addplayerlists.php` and `user/addplayerlists.php` therefore repeat the same
+predicate; both are reached with the same `hasEditGameEventsRight()` permission.
+
+The deprecated `mobile/addplayerlists.php` also adds players through `GameAddPlayer()` and is not
+gated. That is a known boundary of this setting, not a supported bypass: the page is legacy and
+kept only for compatibility.
+
 ## Related game-data pages
 
 Scorekeeper stores related game metadata through separate pages:
 
-- `addofficial.php`: game official name
+- `addofficial.php`: scorekeeper name (the `official` column; the label was renamed because
+  scorekeepers track score and time, they do not make rulings)
 - `addcomment.php`: game note
 - `addfirstoffence.php`: starting offence
 - `addhalftime.php`: halftime end time
@@ -133,6 +221,13 @@ Timeout-related pages now follow the same incremental pattern:
 - changing the selection before saving moves the pending stamped timeout to the newly selected team
 
 `addspirittimeouts.php` also exposes local pause/resume controls for the game clock because spirit stoppages often require the clock to be paused.
+
+The number of timeout slots `addtimeouts.php` renders per team comes from the game's pool format
+through `GameTimeoutsPerTeam()`: `uo_pool.timeouts`, doubled when `uo_pool.timeoutsper` is `half`,
+plus `uo_pool.timeoutsovertime`, falling back to 4 regulation slots when the pool defines no limit.
+The page never renders fewer slots than there are timeouts already recorded for a team, because
+saving clears all timeouts and rewrites only the submitted slots, so a lowered pool limit would
+otherwise delete existing entries.
 
 ## Ending the game
 
