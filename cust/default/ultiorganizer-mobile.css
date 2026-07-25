@@ -779,8 +779,12 @@ input[type="button"]:disabled {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* 8.5rem, not less: the longest single-word button label has to fit on one
+   line, and translations run longer than the English ones (the Finnish
+   "Pisteenpitäjä(t)" needs 134px). A narrower minimum clips labels that have
+   no space to wrap at. */
 .action-row--even {
-  grid-template-columns: repeat(auto-fit, minmax(7.5rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(8.5rem, 1fr));
 }
 
 .action-row--stacked {
