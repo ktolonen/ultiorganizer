@@ -38,15 +38,27 @@ A request can opt out of the persistent cache entirely by calling
 read. `DBQueryCacheable()` then returns false for every read in that request, so
 all SELECTs go straight to the database.
 
-This exists for **live-entry apps** where any staleness is unacceptable and read
-volume is negligible. `scorekeeper/index.php` and `spiritkeeper/index.php` call
-it immediately after `OpenConnection()`. Both use the Post/Redirect/Get pattern:
-an official submits a score (POST, writes the DB), then the browser follows a
-redirect to a GET that re-renders the same screen. Without the bypass, that GET
-can hit a still-valid cache entry populated by the *previous* GET on the same
-screen (within the TTL window) and show pre-write state — prompting the official
-to re-enter the score. The bypass keeps these reads live; the cache stays active
-for public spectator pages, which is the traffic it was built to offload.
+**All login-gated surfaces bypass the cache.** `lib/auth.guard.php` calls
+`DisablePersistentCacheForRequest()` before it does anything else, so every page
+behind that guard reads live: `admin/`, `user/`, `mobile/`, `scorekeeper/`,
+`spiritkeeper/`, `result.php`, and the `cust/*` member pages. The guard requires
+`lib/persistent-cache.functions.php` directly because a few callers include it
+before `lib/database.php`.
+
+The reason is the Post/Redirect/Get pattern these pages use: an editor submits a
+form (POST, writes the DB), then the browser follows a redirect to a GET that
+re-renders the same screen. The POST itself is never cached, but that following
+GET can hit a still-valid cache entry populated by the *previous* GET on the same
+screen (within the TTL window) and show pre-write state — prompting the editor to
+re-enter the change. Editing traffic is negligible in volume, so nothing is lost
+by reading live.
+
+`scorekeeper/index.php` and `spiritkeeper/index.php` additionally call the bypass
+right after `OpenConnection()`. Keep those calls: they fire before their auth
+include and so also cover each app's own bootstrap reads.
+
+Public spectator pages do not include the auth guard and keep the cache — that is
+the traffic it was built to offload.
 
 Query with `IsPersistentCacheBypassed()`.
 
