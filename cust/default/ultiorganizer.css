@@ -1182,6 +1182,12 @@ tr.admintablerow>td {
 	color: var(--status-warning);
 }
 
+.player-not-accredited {
+	display: block;
+	color: var(--status-warning);
+	font-size: 0.85em;
+}
+
 .home {
 	background-color: var(--team-home);
 	color: var(--text-inverse);

@@ -168,10 +168,11 @@ dropdowns are otherwise a confusing symptom of players never having been checked
 `uo_season.require_accreditation` is an `EVENT_SETTING`, off by default, set in
 `admin/addseasons.php`.
 
-When it is on, `scorekeeper/addplayerlists.php` will not let a scorekeeper add a player whose
-`uo_player.accredited` is 0. This is how WFDF events keep a banned player, or one withdrawn for
-medical reasons, off the scoresheet: the tournament desk clears the accredited flag, and the
-scorekeeper then sees the player marked and cannot select them.
+When it is on, `scorekeeper/addplayerlists.php` and the desktop `user/addplayerlists.php` will not
+let a player whose `uo_player.accredited` is 0 be added to a game roster. This is how WFDF events
+keep a banned player, or one withdrawn for medical reasons, off the scoresheet: the tournament desk
+clears the accredited flag, and whoever fills the roster then sees the player marked and cannot
+select them.
 
 The rules are:
 
@@ -185,10 +186,14 @@ The rules are:
 The setting is off by default because `uo_player.accredited` is `NOT NULL DEFAULT 0`, so in an
 installation that never accredits anyone, enforcing it would make every roster unfillable.
 
-Enforcement lives in the scorekeeper page, not in `GameAddPlayer()`. That helper writes the
+Enforcement lives in the two roster page handlers, not in `GameAddPlayer()`. That helper writes the
 `uo_played.accredited` snapshot which `SeasonUnaccredited()` and `admin/accreditation.php` read, so
-tournament desks can still record unaccredited players and acknowledge them afterwards. The desktop
-`user/addplayerlists.php` is unaffected for the same reason.
+blocking there would break the workflow where an unaccredited player is recorded and acknowledged
+afterwards. `scorekeeper/addplayerlists.php` and `user/addplayerlists.php` therefore repeat the same
+predicate; both are reached with the same `hasEditGameEventsRight()` permission.
+
+The deprecated `mobile/addplayerlists.php` is deliberately left ungated, so it remains the way to
+record an unaccredited player for later acknowledgement in an event that has the setting on.
 
 ## Related game-data pages
 

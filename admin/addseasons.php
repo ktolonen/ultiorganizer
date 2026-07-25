@@ -402,7 +402,7 @@ if ($sp['require_accreditation']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Prevents scorekeepers from adding players who are not accredited to a game roster.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Prevents adding players who are not accredited to a game roster.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Home team assignment") . ": </td><td>";
 $html .= "<select class='dropdown' id='hometeammode' name='hometeammode'>\n";

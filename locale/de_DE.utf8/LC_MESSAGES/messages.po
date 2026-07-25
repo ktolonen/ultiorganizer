@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-07-24 23:13+0300\n"
+"POT-Creation-Date: 2026-07-25 10:21+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -824,7 +824,7 @@ msgstr "Zurueck zum Spielverlauf"
 #: mobile/deletescore.php:48 scorekeeper/addcomment.php:48
 #: scorekeeper/addfirstoffence.php:48 scorekeeper/addhalftime.php:80
 #: scorekeeper/addofficial.php:26 scorekeeper/addplayerlists.php:260
-#: scorekeeper/addspirittimeouts.php:179 scorekeeper/addtimeouts.php:179
+#: scorekeeper/addspirittimeouts.php:179 scorekeeper/addtimeouts.php:181
 #: scorekeeper/deletescore.php:44
 msgid "Back to scoresheet"
 msgstr "Zurueck zum Spielbericht"
@@ -877,14 +877,14 @@ msgstr ""
 
 #: admin/seasonpools.php:122 admin/seasonpools.php:268
 #: scorekeeper/addplayerlists.php:236 scorekeeper/addplayerlists.php:243
-#: user/addplayerlists.php:298 user/addplayerlists.php:309
-#: user/addplayerlists.php:362 user/addplayerlists.php:373
+#: user/addplayerlists.php:346 user/addplayerlists.php:362
+#: user/addplayerlists.php:421 user/addplayerlists.php:437
 msgid "C"
 msgstr "F"
 
 #: scorekeeper/addplayerlists.php:238 scorekeeper/addplayerlists.php:245
-#: user/addplayerlists.php:300 user/addplayerlists.php:311
-#: user/addplayerlists.php:364 user/addplayerlists.php:375
+#: user/addplayerlists.php:348 user/addplayerlists.php:364
+#: user/addplayerlists.php:423 user/addplayerlists.php:439
 msgid "C&SC"
 msgstr "C&SC"
 
@@ -1622,7 +1622,7 @@ msgid "Defence scoresheet"
 msgstr "Defense-Spielbericht"
 
 #: admin/seasongames.php:251 user/adddefensesheet.php:11
-#: user/adddefensesheet.php:73 user/addplayerlists.php:247
+#: user/adddefensesheet.php:73 user/addplayerlists.php:285
 #: user/addresult.php:75 user/addscoresheet.php:245 user/addspirit.php:228
 #: user/respgames.php:215
 msgid "Defence sheet"
@@ -3350,7 +3350,7 @@ msgid ""
 "file database schema version: %s; current database schema version: %d."
 msgstr ""
 
-#: user/addplayerlists.php:262 user/addplayerlists.php:326
+#: user/addplayerlists.php:300 user/addplayerlists.php:379
 msgid "In"
 msgstr "In"
 
@@ -3387,8 +3387,8 @@ msgstr "Hallenfeld"
 #: cust/slkl/pdfscoresheet.php:156 cust/slkl/pdfscoresheet.php:254
 #: cust/wfdf/pdfscoresheet.php:675 cust/windmill/pdfscoresheet.php:144
 #: cust/windmill/pdfscoresheet.php:154 cust/windmill/pdfscoresheet.php:265
-#: scorekeeper/addplayerlists.php:171 user/addplayerlists.php:262
-#: user/addplayerlists.php:326
+#: scorekeeper/addplayerlists.php:171 user/addplayerlists.php:300
+#: user/addplayerlists.php:379
 msgid "Info"
 msgstr "Info"
 
@@ -3553,8 +3553,8 @@ msgstr ""
 "Systemadministrator, wenn du dein Passwort zuruecksetzen musst."
 
 #: cust/default/pdfscoresheet.php:288 cust/slkl/pdfscoresheet.php:253
-#: scorekeeper/addplayerlists.php:170 user/addplayerlists.php:262
-#: user/addplayerlists.php:326
+#: scorekeeper/addplayerlists.php:170 user/addplayerlists.php:300
+#: user/addplayerlists.php:379
 msgid "Jersey"
 msgstr "Trikot"
 
@@ -4070,8 +4070,8 @@ msgstr "HINWEIS"
 #: cust/windmill/pdfscoresheet.php:262 lib/search.functions.php:159
 #: lib/search.functions.php:225 lib/search.functions.php:632
 #: lib/search.functions.php:721 scorekeeper/addplayerlists.php:169
-#: user/addmedialink.php:195 user/addplayerlists.php:262
-#: user/addplayerlists.php:326 user/clubprofile.php:161
+#: user/addmedialink.php:195 user/addplayerlists.php:300
+#: user/addplayerlists.php:379 user/clubprofile.php:161
 #: user/clubprofile.php:216 user/playerprofile.php:354 user/teamprofile.php:156
 #: user/userinfo.php:240
 msgid "Name"
@@ -4365,7 +4365,8 @@ msgstr "Keine Tokens erstellt."
 msgid "None"
 msgstr "Keine"
 
-#: scorekeeper/addplayerlists.php:214
+#: scorekeeper/addplayerlists.php:214 user/addplayerlists.php:336
+#: user/addplayerlists.php:411
 msgid "Not accredited"
 msgstr "Nicht akkreditiert"
 
@@ -4741,7 +4742,7 @@ msgstr "Spieler-Details"
 msgid "Player information"
 msgstr "Spielerdaten"
 
-#: user/addplayerlists.php:195
+#: user/addplayerlists.php:230
 msgid "Player lists saved!"
 msgstr "Spielerlisten gespeichert!"
 
@@ -4785,7 +4786,7 @@ msgstr "Spieler-Statistiken"
 #: menufunctions.php:681 admin/seasonadmin.php:88 admin/seasongames.php:245
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:119
 #: admin/tdtools.php:184 mobile/respgames.php:178 user/adddefensesheet.php:64
-#: user/addplayerlists.php:238 user/addresult.php:66 user/addscoresheet.php:236
+#: user/addplayerlists.php:276 user/addresult.php:66 user/addscoresheet.php:236
 #: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
 msgid "Players"
 msgstr "Spieler"
@@ -4969,10 +4970,10 @@ msgid "Prev. Team"
 msgstr "Vorheriges Team"
 
 #: admin/addseasons.php:405
-msgid ""
-"Prevents scorekeepers from adding players who are not accredited to a game "
-"roster."
-msgstr "Verhindert, dass Scorekeeper nicht akkreditierte Spieler zur Spielerliste eines Spiels hinzufügen."
+msgid "Prevents adding players who are not accredited to a game roster."
+msgstr ""
+"Verhindert, dass nicht akkreditierte Spieler zur Spielerliste eines Spiels "
+"hinzugefügt werden."
 
 #: admin/translations.php:559
 msgid "Preview bulk translations"
@@ -5289,7 +5290,7 @@ msgstr "Wiederherstellen"
 #: gamecard.php:146 teamcard.php:816 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183 mobile/respgames.php:177
 #: scorekeeper/addresult.php:44 scorekeeper/respgames.php:199
-#: user/adddefensesheet.php:63 user/addplayerlists.php:237
+#: user/adddefensesheet.php:63 user/addplayerlists.php:275
 #: user/addresult.php:13 user/addresult.php:27 user/addresult.php:65
 #: user/addscoresheet.php:235 user/addspirit.php:223 user/respgames.php:24
 #: user/respgames.php:205
@@ -5480,8 +5481,8 @@ msgid "Running"
 msgstr "Laeuft"
 
 #: scorekeeper/addplayerlists.php:237 scorekeeper/addplayerlists.php:244
-#: user/addplayerlists.php:299 user/addplayerlists.php:310
-#: user/addplayerlists.php:363 user/addplayerlists.php:374
+#: user/addplayerlists.php:347 user/addplayerlists.php:363
+#: user/addplayerlists.php:422 user/addplayerlists.php:438
 msgid "SC"
 msgstr "SC"
 
@@ -5512,9 +5513,9 @@ msgstr "Samstag"
 #: scorekeeper/addcomment.php:42 scorekeeper/addfirstoffence.php:47
 #: scorekeeper/addhalftime.php:79 scorekeeper/addofficial.php:25
 #: scorekeeper/addplayerlists.php:253 scorekeeper/addspirittimeouts.php:178
-#: scorekeeper/addtimeouts.php:178 scorekeeper/result.php:101
+#: scorekeeper/addtimeouts.php:180 scorekeeper/result.php:101
 #: spiritkeeper/editgame.php:125 user/addmedialink.php:219
-#: user/addplayerlists.php:389 user/addspirit.php:314 user/clubprofile.php:251
+#: user/addplayerlists.php:453 user/addspirit.php:314 user/clubprofile.php:251
 #: user/playerprofile.php:389 user/respgames.php:229 user/teamplayers.php:279
 #: user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
@@ -5716,7 +5717,7 @@ msgstr "Spielstände"
 #: cust/default/pdfscoresheet.php:56 cust/slkl/pdfscoresheet.php:56
 #: cust/wfdf/pdfscoresheet.php:287 mobile/respgames.php:179
 #: scorekeeper/addscoresheet.php:284 scorekeeper/respgames.php:201
-#: user/adddefensesheet.php:65 user/addplayerlists.php:239
+#: user/adddefensesheet.php:65 user/addplayerlists.php:277
 #: user/addresult.php:67 user/addscoresheet.php:237 user/addspirit.php:225
 #: user/respgames.php:207
 msgid "Scoresheet"
@@ -6253,7 +6254,7 @@ msgstr ""
 #: cust/gummis/pdfscoresheet.php:609 cust/slkl/pdfscoresheet.php:512
 #: cust/wfdf/pdfscoresheet.php:1121 cust/windmill/pdfscoresheet.php:530
 #: sql/upgrade_db.php:560 user/adddefensesheet.php:69
-#: user/addplayerlists.php:243 user/addresult.php:71 user/addscoresheet.php:241
+#: user/addplayerlists.php:281 user/addresult.php:71 user/addscoresheet.php:241
 #: user/addspirit.php:226 user/respgames.php:211
 msgid "Spirit score"
 msgstr "Spirit-Punktzahl"
@@ -6630,7 +6631,7 @@ msgstr "Team-Statistiken"
 msgid "Team taking the spirit stoppage"
 msgstr "Team, das die Spirit-Unterbrechung nimmt"
 
-#: scorekeeper/addtimeouts.php:109
+#: scorekeeper/addtimeouts.php:111
 msgid "Team taking timeout"
 msgstr "Team, das das Timeout nimmt"
 
@@ -6963,7 +6964,7 @@ msgstr "Auszeit beendet"
 #: cust/gummis/pdfscoresheet.php:533 cust/wfdf/pdfscoresheet.php:932
 #: cust/wfdf/pdfscoresheet.php:952 cust/wfdf/pdfscoresheet.php:1002
 #: cust/windmill/pdfscoresheet.php:446 mobile/addscoresheet.php:208
-#: scorekeeper/addscoresheet.php:490 scorekeeper/addtimeouts.php:102
+#: scorekeeper/addscoresheet.php:490 scorekeeper/addtimeouts.php:104
 #: user/adddefensesheet.php:241 user/addscoresheet.php:590
 msgid "Timeouts"
 msgstr "Auszeiten"
@@ -7099,7 +7100,7 @@ msgstr "Defenses gesamt"
 #: cust/gummis/pdfscoresheet.php:233 cust/gummis/pdfscoresheet.php:237
 #: cust/wfdf/pdfscoresheet.php:633 cust/wfdf/pdfscoresheet.php:636
 #: cust/windmill/pdfscoresheet.php:205 cust/windmill/pdfscoresheet.php:209
-#: user/addplayerlists.php:317 user/addplayerlists.php:381
+#: user/addplayerlists.php:370 user/addplayerlists.php:445
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
@@ -7729,7 +7730,7 @@ msgid "all"
 msgstr "alles"
 
 #: mobile/addplayerlists.php:65 scorekeeper/addplayerlists.php:110
-#: user/addplayerlists.php:113 user/addplayerlists.php:175
+#: user/addplayerlists.php:133 user/addplayerlists.php:210
 msgid "and"
 msgstr "und"
 
@@ -7841,8 +7842,8 @@ msgstr "Detail ändern"
 msgid "edit pool"
 msgstr "Gruppe ändern"
 
-#: mobile/addplayerlists.php:77 user/addplayerlists.php:125
-#: user/addplayerlists.php:187
+#: mobile/addplayerlists.php:77 user/addplayerlists.php:145
+#: user/addplayerlists.php:222
 msgid "erroneous number"
 msgstr "falsche Nummer"
 
@@ -7938,9 +7939,11 @@ msgstr "Heimteam"
 msgid "iCalendar (.ical)"
 msgstr "iCalendar-Format"
 
-#: scorekeeper/addplayerlists.php:83
+#: scorekeeper/addplayerlists.php:83 user/addplayerlists.php:105
+#: user/addplayerlists.php:182
 msgid "is not accredited and cannot be added to the roster."
-msgstr "ist nicht akkreditiert und kann nicht zur Spielerliste hinzugefügt werden."
+msgstr ""
+"ist nicht akkreditiert und kann nicht zur Spielerliste hinzugefügt werden."
 
 #: playercard.php:118 user/playerprofile.php:308
 msgid "kg"
@@ -7961,7 +7964,7 @@ msgstr "Spiele"
 #: mobile/addscoresheet.php:201 scorekeeper/addhalftime.php:53
 #: scorekeeper/addscoresheet.php:315 scorekeeper/addscoresheet.php:450
 #: scorekeeper/addspirittimeouts.php:116 scorekeeper/addspirittimeouts.php:147
-#: scorekeeper/addtimeouts.php:116 scorekeeper/addtimeouts.php:147
+#: scorekeeper/addtimeouts.php:118 scorekeeper/addtimeouts.php:149
 msgid "min"
 msgstr "min."
 
@@ -8110,8 +8113,8 @@ msgstr "Spielerliste"
 msgid "rounds"
 msgstr "Runden"
 
-#: mobile/addplayerlists.php:66 user/addplayerlists.php:114
-#: user/addplayerlists.php:176
+#: mobile/addplayerlists.php:66 user/addplayerlists.php:134
+#: user/addplayerlists.php:211
 msgid "same number"
 msgstr "selbe Nummer"
 
@@ -8135,7 +8138,7 @@ msgstr "Punktzahlen sichtbar"
 #: mobile/addscoresheet.php:201 scorekeeper/addhalftime.php:53
 #: scorekeeper/addscoresheet.php:315 scorekeeper/addscoresheet.php:450
 #: scorekeeper/addspirittimeouts.php:116 scorekeeper/addspirittimeouts.php:147
-#: scorekeeper/addtimeouts.php:116 scorekeeper/addtimeouts.php:147
+#: scorekeeper/addtimeouts.php:118 scorekeeper/addtimeouts.php:149
 msgid "sec"
 msgstr "sec."
 
@@ -8190,7 +8193,7 @@ msgid "timeout"
 msgstr "Auszeit"
 
 #: mobile/addtimeouts.php:56 mobile/addtimeouts.php:78
-#: scorekeeper/addtimeouts.php:116 scorekeeper/addtimeouts.php:147
+#: scorekeeper/addtimeouts.php:118 scorekeeper/addtimeouts.php:149
 msgid "timeouts"
 msgstr "Auszeiten"
 

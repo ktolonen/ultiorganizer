@@ -54,6 +54,7 @@ if (isset($_SERVER['HTTP_REFERER'])) {
     $backurl = "?view=user/respgames&season=$season";
 }
 $seasoninfo = SeasonInfo($season);
+$requireAccreditation = !empty($seasoninfo['require_accreditation']);
 $home_playerlist = TeamPlayerList($game_result['hometeam']);
 $away_playerlist = TeamPlayerList($game_result['visitorteam']);
 
@@ -83,10 +84,29 @@ if (!empty($_POST['save'])) {
         }
     }
 
+    // Roster as it stood before this save, used to tell an attempted addition
+    // apart from a player who is already on the roster.
+    $homeRosteredPlayerIds = [];
+    foreach ($played_players as $player) {
+        $homeRosteredPlayerIds[(int) $player['player_id']] = true;
+    }
+
     //handle checked players
     if (!empty($_POST["homecheck"])) {
         foreach ($_POST["homecheck"] as $playerId) {
             $number = $_POST["p$playerId"];
+
+            // The form disables unaccredited players, but a disabled checkbox
+            // is trivially bypassed, so enforce it here as well.
+            if ($requireAccreditation && empty($homeRosteredPlayerIds[(int) $playerId])) {
+                $playerinfo = PlayerInfo($playerId);
+                if (empty($playerinfo['accredited'])) {
+                    $html2 .= "<p class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> "
+                      . _("is not accredited and cannot be added to the roster.") . "</p>";
+                    continue;
+                }
+            }
+
             //if number
             if (is_numeric($number)) {
                 //check if already in list with correct number
@@ -145,10 +165,25 @@ if (!empty($_POST['save'])) {
         }
     }
 
+    $awayRosteredPlayerIds = [];
+    foreach ($played_players as $player) {
+        $awayRosteredPlayerIds[(int) $player['player_id']] = true;
+    }
+
     if (!empty($_POST["awaycheck"])) {
         //handle checked players
         foreach ($_POST["awaycheck"] as $playerId) {
             $number = $_POST["p$playerId"];
+
+            if ($requireAccreditation && empty($awayRosteredPlayerIds[(int) $playerId])) {
+                $playerinfo = PlayerInfo($playerId);
+                if (empty($playerinfo['accredited'])) {
+                    $html2 .= "<p class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> "
+                      . _("is not accredited and cannot be added to the roster.") . "</p>";
+                    continue;
+                }
+            }
+
             //if number
             if (is_numeric($number)) {
                 //check if already in list with correct number
@@ -218,7 +253,10 @@ include_once 'script/disable_enter.js.inc';
     var elems = div.getElementsByTagName("input");
     var playedCheckboxes = [];
     for (var i = 0; i < elems.length; i++) {
-      if (elems[i].className.indexOf("played-toggle") !== -1) {
+      // Skip disabled rows: an unaccredited player cannot be added, and their
+      // checkbox is not submitted, so flipping it would only enable the jersey
+      // and role controls of a row that never saves.
+      if (elems[i].className.indexOf("played-toggle") !== -1 && !elems[i].disabled) {
         playedCheckboxes.push(elems[i]);
       }
     }
@@ -288,10 +326,20 @@ foreach ($home_playerlist as $player) {
         }
     }
 
+    // An unaccredited player who is not on the roster yet cannot be added. One
+    // who is already on it keeps working controls, so the player can be removed
+    // deliberately instead of the next save silently dropping someone who may
+    // already have recorded goals.
+    $blocked = $requireAccreditation && empty($player['accredited']) && !$found;
+    $accreditationNote = "";
+    if ($requireAccreditation && empty($player['accredited'])) {
+        $accreditationNote = "<span class='player-not-accredited'>" . _("Not accredited") . "</span>";
+    }
+
     if ($found) {
         $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
-        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . $accreditationNote . "</td>";
         $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "'>";
         $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
@@ -300,9 +348,14 @@ foreach ($home_playerlist as $player) {
         $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
         $html .= "</select></td>";
     } else {
-        $html .= "<td class='center' style='width:32px'>
+        if ($blocked) {
+            $html .= "<td class='center' style='width:32px'>
+			<input class='played-toggle' data-fields='" . $fieldIds . "' type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "' disabled='disabled'/></td>";
+        } else {
+            $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='homecheck[]' value='" . utf8entities($playerId) . "'/></td>";
-        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        }
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . $accreditationNote . "</td>";
         $html .= "<td class='left' style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='homerole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
         $html .= "<option value='' selected='selected'></option>";
@@ -352,10 +405,16 @@ foreach ($away_playerlist as $player) {
         }
     }
 
+    $blocked = $requireAccreditation && empty($player['accredited']) && !$found;
+    $accreditationNote = "";
+    if ($requireAccreditation && empty($player['accredited'])) {
+        $accreditationNote = "<span class='player-not-accredited'>" . _("Not accredited") . "</span>";
+    }
+
     if ($found) {
         $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "' checked='checked'/></td>";
-        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . $accreditationNote . "</td>";
         $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "'>";
         $html .= "<option value=''" . ($selectedRole === "" ? " selected='selected'" : "") . "></option>";
@@ -364,9 +423,14 @@ foreach ($away_playerlist as $player) {
         $html .= "<option value='both'" . ($selectedRole === "both" ? " selected='selected'" : "") . ">" . _("C&SC") . "</option>";
         $html .= "</select></td>";
     } else {
-        $html .= "<td class='center' style='width:32px'>
+        if ($blocked) {
+            $html .= "<td class='center' style='width:32px'>
+			<input class='played-toggle' data-fields='" . $fieldIds . "' type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "' disabled='disabled'/></td>";
+        } else {
+            $html .= "<td class='center' style='width:32px'>
 			<input class='played-toggle' data-fields='" . $fieldIds . "' onchange=\"toggleField(this,'" . $fieldIds . "');\" type='checkbox' name='awaycheck[]' value='" . utf8entities($playerId) . "'/></td>";
-        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</td>";
+        }
+        $html .= "<td>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . $accreditationNote . "</td>";
         $html .= "<td style='width:44px'><input onkeyup=\"javascript:this.value=this.value.replace(/[^0-9]/g, '');\" class='input' name='p" . $playerId . "' id='" . $numberFieldId . "' inputmode='numeric' pattern='[0-9]*' style='width: 24px' maxlength='3' size='2' value='$number' disabled='disabled'/></td>";
         $html .= "<td class='center' style='width:50px'><select class='dropdown' style='width: 46px' name='awayrole[" . $playerId . "]' id='" . $roleFieldId . "' disabled='disabled'>";
         $html .= "<option value='' selected='selected'></option>";
