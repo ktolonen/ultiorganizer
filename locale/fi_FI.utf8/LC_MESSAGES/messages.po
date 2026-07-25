@@ -4335,7 +4335,7 @@ msgstr "Ei mitään"
 
 #: scorekeeper/addplayerlists.php:214
 msgid "Not accredited"
-msgstr ""
+msgstr "Ei akkreditoitu"
 
 #: user/adddefensesheet.php:359
 msgid "Not callahan"
@@ -4933,7 +4933,7 @@ msgstr "Edel. Joukkue"
 msgid ""
 "Prevents scorekeepers from adding players who are not accredited to a game "
 "roster."
-msgstr ""
+msgstr "Estää pisteenpitäjiä lisäämästä akkreditoimattomia pelaajia pelin pelaajalistaan."
 
 #: admin/translations.php:559
 msgid "Preview bulk translations"
@@ -5160,7 +5160,7 @@ msgstr "Toista salasana"
 
 #: admin/addseasons.php:400
 msgid "Require accreditation"
-msgstr ""
+msgstr "Vaadi akkreditointi"
 
 #: admin/dbadmin.php:37
 msgid "Rerun the conversion after cleanup."
@@ -7878,7 +7878,7 @@ msgstr "iCalendar (.ical)"
 
 #: scorekeeper/addplayerlists.php:83
 msgid "is not accredited and cannot be added to the roster."
-msgstr ""
+msgstr "ei ole akkreditoitu, joten häntä ei voi lisätä pelaajalistaan."
 
 #: playercard.php:118 user/playerprofile.php:308
 msgid "kg"

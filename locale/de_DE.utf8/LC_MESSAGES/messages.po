@@ -4367,7 +4367,7 @@ msgstr "Keine"
 
 #: scorekeeper/addplayerlists.php:214
 msgid "Not accredited"
-msgstr ""
+msgstr "Nicht akkreditiert"
 
 #: user/adddefensesheet.php:359
 msgid "Not callahan"
@@ -4972,7 +4972,7 @@ msgstr "Vorheriges Team"
 msgid ""
 "Prevents scorekeepers from adding players who are not accredited to a game "
 "roster."
-msgstr ""
+msgstr "Verhindert, dass Scorekeeper nicht akkreditierte Spieler zur Spielerliste eines Spiels hinzufügen."
 
 #: admin/translations.php:559
 msgid "Preview bulk translations"
@@ -5200,7 +5200,7 @@ msgstr "Passwort (Wdh.)"
 
 #: admin/addseasons.php:400
 msgid "Require accreditation"
-msgstr ""
+msgstr "Akkreditierung erforderlich"
 
 #: admin/dbadmin.php:37
 msgid "Rerun the conversion after cleanup."
@@ -7940,7 +7940,7 @@ msgstr "iCalendar-Format"
 
 #: scorekeeper/addplayerlists.php:83
 msgid "is not accredited and cannot be added to the roster."
-msgstr ""
+msgstr "ist nicht akkreditiert und kann nicht zur Spielerliste hinzugefügt werden."
 
 #: playercard.php:118 user/playerprofile.php:308
 msgid "kg"
