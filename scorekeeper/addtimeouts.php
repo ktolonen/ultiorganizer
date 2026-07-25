@@ -65,11 +65,13 @@ $awayTimeoutData = ScorekeeperTimeoutData($timeouts, 0, $maxtimeouts);
 if (isset($_POST['save'])) {
     GameRemoveAllTimeouts($gameId);
 
-    // Read exactly the slots the submitted form had, since the rendered slot
-    // count now depends on the pool format and on already recorded timeouts.
+    // Bounded by the slot count this page would render, so a hand-built request
+    // cannot store more timeouts than the pool format allows. The slot count is
+    // computed above from the same inputs the rendered form used, and the
+    // missing-key default covers a form that offered fewer slots.
     $j = 0;
-    for ($i = 0; isset($_POST['htomm' . $i]); $i++) {
-        $timemm = $_POST['htomm' . $i];
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        $timemm = $_POST['htomm' . $i] ?? 0;
         $timess = $_POST['htoss' . $i] ?? 0;
         $time = $timemm . "." . $timess;
 
@@ -80,8 +82,8 @@ if (isset($_POST['save'])) {
     }
 
     $j = 0;
-    for ($i = 0; isset($_POST['atomm' . $i]); $i++) {
-        $timemm = $_POST['atomm' . $i];
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        $timemm = $_POST['atomm' . $i] ?? 0;
         $timess = $_POST['atoss' . $i] ?? 0;
         $time = $timemm . "." . $timess;
 

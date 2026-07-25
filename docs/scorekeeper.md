@@ -32,10 +32,11 @@ independent pieces:
 
 - the shared game clock (see [Live game clock](#live-game-clock) below)
 - a double-submit guard on every form in the app: a second submit while one is in flight is blocked
-  and the submit controls are disabled until the page navigates. The disable is deferred by one
-  tick on purpose, because a disabled submit button is left out of the POST body and the
-  Scorekeeper pages branch on which button was pressed (`add` vs `forceadd`, `startgame` vs
-  `pausegame`). Forms restored from the back/forward cache are re-enabled on `pageshow`.
+  and the submit controls are disabled until the page navigates. The form is *marked* busy
+  synchronously, so a second submit is rejected immediately, but the buttons are only *disabled* one
+  tick later — a disabled submit button is left out of the POST body, and the Scorekeeper pages
+  branch on which button was pressed (`add` vs `forceadd`, `startgame` vs `pausegame`). Forms
+  restored from the back/forward cache are re-enabled on `pageshow`.
 
 ## Routing and shell
 
@@ -109,10 +110,18 @@ live in one place:
   `window.scorekeeperClock.init()` in `script/scorekeeper.js`
 
 `script/scorekeeper.js` anchors on the `elapsed` second count from `GameTimerState()` plus a
-`Date.now()` reading taken at page load, and derives every value from the difference on demand.
-Counting seconds in a `setInterval` drifts badly on phones, because browsers throttle or suspend
-timers while the screen is off. Because only *differences* of `Date.now()` are used, a device with
-a wrong absolute clock still shows the correct game time.
+client-side timestamp for the moment the server took that reading, and derives every value from the
+difference on demand. Counting seconds in a `setInterval` drifts badly on phones, because browsers
+throttle or suspend timers while the screen is off. Because only *differences* of `Date.now()` are
+used, a device with a wrong absolute clock still shows the correct game time.
+
+The anchor is the Navigation Timing `responseStart`, not `Date.now()` at script execution. The
+server reads the clock while generating the response, so anchoring on script start would fold the
+transfer and parse time into the clock and leave it permanently that far behind — on a slow venue
+connection that means goals and timeouts stamped early. `responseStart` is the closest observable
+moment to the server's reading, since `scorekeeper/index.php` buffers the whole page and flushes it
+at the end. Implausible values (an anchor in the future, or more than five minutes old) fall back to
+`Date.now()`, as do browsers without Navigation Timing.
 
 Callers that prefill a time field (goal time, timeout time) call
 `window.scorekeeperClock.roundedTime()`, which recomputes on each call rather than reading a

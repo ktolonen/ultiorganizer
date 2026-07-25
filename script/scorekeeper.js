@@ -75,10 +75,43 @@
     clock.textContent = text;
   }
 
+  /*
+   * When the server sampled the elapsed count, in client time.
+   *
+   * The server reads the clock while generating the response, but this script
+   * only runs once the response has arrived and parsed. Anchoring on Date.now()
+   * here would fold the transfer and parse time into the clock and leave it
+   * permanently that far behind -- noticeable on a slow venue connection, where
+   * it would stamp goals and timeouts early. responseStart is when the first
+   * byte arrived, which is the closest observable moment to the server's
+   * reading, since index.php buffers the whole page and flushes it at the end.
+   */
+  function serverSampleClientMs() {
+    var now = Date.now();
+    if (!window.performance || !window.performance.getEntriesByType) {
+      return now;
+    }
+
+    var entries = window.performance.getEntriesByType("navigation");
+    var origin = window.performance.timeOrigin;
+    if (!entries || !entries.length || !origin || !entries[0].responseStart) {
+      return now;
+    }
+
+    var anchor = origin + entries[0].responseStart;
+    // Ignore nonsense values: a restored or prerendered page can report timings
+    // unrelated to this render, and a mid-session clock change breaks the sum.
+    if (anchor > now || now - anchor > 300000) {
+      return now;
+    }
+
+    return anchor;
+  }
+
   function init(options) {
     var settings = options || {};
     anchorElapsed = Math.max(0, parseInt(settings.elapsed, 10) || 0);
-    anchorClientMs = Date.now();
+    anchorClientMs = serverSampleClientMs();
     paused = !!settings.paused;
     ongoing = !!settings.ongoing;
     pausedSuffix = settings.pausedSuffix || "";
@@ -135,15 +168,10 @@
     return form.querySelectorAll("input[type=submit], button[type=submit], button:not([type])");
   }
 
-  function setBusy(form, busy) {
+  function disableSubmitControls(form, disabled) {
     var controls = submitControls(form);
     for (var i = 0; i < controls.length; i++) {
-      controls[i].disabled = busy;
-    }
-    if (busy) {
-      form.setAttribute(BUSY_ATTR, "1");
-    } else {
-      form.removeAttribute(BUSY_ATTR);
+      controls[i].disabled = disabled;
     }
   }
 
@@ -158,13 +186,17 @@
       return;
     }
 
+    // Mark synchronously, so a second submit arriving before the deferred
+    // disable runs is still rejected by the check above.
+    form.setAttribute(BUSY_ATTR, "1");
+
     /*
      * Disable on the next tick, never synchronously: a disabled submit button
      * is left out of the POST body, and the scorekeeper pages branch on which
      * button was pressed (add vs forceadd, startgame vs pausegame, ...).
      */
     window.setTimeout(function () {
-      setBusy(form, true);
+      disableSubmitControls(form, true);
     }, 0);
   });
 
@@ -178,7 +210,8 @@
     }
     var forms = document.querySelectorAll("form[" + BUSY_ATTR + "]");
     for (var i = 0; i < forms.length; i++) {
-      setBusy(forms[i], false);
+      forms[i].removeAttribute(BUSY_ATTR);
+      disableSubmitControls(forms[i], false);
     }
   });
 })();
