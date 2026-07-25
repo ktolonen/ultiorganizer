@@ -893,9 +893,10 @@ function GameTimerState($gameId)
 /**
  * Timeouts one team is allowed in a game, from the game's pool format.
  *
- * `timeoutsper` says whether `timeouts` counts per game or per half. Falls back
- * to 4 when the pool does not define a limit, which is what the scorekeeper
- * offered before pool formats were consulted.
+ * `timeoutsper` says whether `timeouts` counts per game or per half.
+ * `timeoutsovertime` adds recordable overtime timeout slots. Falls back to 4
+ * regulation slots when the pool does not define a limit, which is what the
+ * scorekeeper offered before pool formats were consulted.
  *
  * @param int $gameId uo_game.game_id
  * @return int allowed timeouts per team
@@ -909,14 +910,15 @@ function GameTimeoutsPerTeam($gameId)
     }
 
     $pool = PoolInfo($poolId);
-    if (!$pool || empty($pool['timeouts'])) {
+    if (!$pool) {
         return $default;
     }
 
-    $timeouts = (int) $pool['timeouts'];
-    if (($pool['timeoutsper'] ?? '') === 'half') {
+    $timeouts = empty($pool['timeouts']) ? $default : (int) $pool['timeouts'];
+    if (!empty($pool['timeouts']) && ($pool['timeoutsper'] ?? '') === 'half') {
         $timeouts *= 2;
     }
+    $timeouts += max(0, (int) ($pool['timeoutsovertime'] ?? 0));
 
     return max(1, $timeouts);
 }

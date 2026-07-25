@@ -224,9 +224,10 @@ Timeout-related pages now follow the same incremental pattern:
 
 The number of timeout slots `addtimeouts.php` renders per team comes from the game's pool format
 through `GameTimeoutsPerTeam()`: `uo_pool.timeouts`, doubled when `uo_pool.timeoutsper` is `half`,
-falling back to 4 when the pool defines no limit. The page never renders fewer slots than there are
-timeouts already recorded for a team, because saving clears all timeouts and rewrites only the
-submitted slots, so a lowered pool limit would otherwise delete existing entries.
+plus `uo_pool.timeoutsovertime`, falling back to 4 regulation slots when the pool defines no limit.
+The page never renders fewer slots than there are timeouts already recorded for a team, because
+saving clears all timeouts and rewrites only the submitted slots, so a lowered pool limit would
+otherwise delete existing entries.
 
 ## Ending the game
 
