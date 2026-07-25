@@ -192,8 +192,9 @@ blocking there would break the workflow where an unaccredited player is recorded
 afterwards. `scorekeeper/addplayerlists.php` and `user/addplayerlists.php` therefore repeat the same
 predicate; both are reached with the same `hasEditGameEventsRight()` permission.
 
-The deprecated `mobile/addplayerlists.php` is deliberately left ungated, so it remains the way to
-record an unaccredited player for later acknowledgement in an event that has the setting on.
+The deprecated `mobile/addplayerlists.php` also adds players through `GameAddPlayer()` and is not
+gated. That is a known boundary of this setting, not a supported bypass: the page is legacy and
+kept only for compatibility.
 
 ## Related game-data pages
 
