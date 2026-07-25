@@ -27,8 +27,13 @@ Related scorekeeper pages split metadata into smaller task-oriented views:
 
 ## Client script
 
-`scorekeeper/index.php` loads `script/scorekeeper.js` into every Scorekeeper page. It holds two
-independent pieces:
+`scorekeeper/index.php` loads `script/scorekeeper.js` into every Scorekeeper page. The `src` is
+relative (`$styles_prefix`), like the stylesheets and like `timekeeper/index.php`, not `BASEURL`.
+An absolute `BASEURL` only resolves for clients that reach the installation by exactly that host
+and scheme, so a phone on the venue network loads no script at all and the clock freezes between
+page loads while the desktop that matches `BASEURL` works.
+
+It holds two independent pieces:
 
 - the shared game clock (see [Live game clock](#live-game-clock) below)
 - a double-submit guard on every form in the app: a second submit while one is in flight is blocked
