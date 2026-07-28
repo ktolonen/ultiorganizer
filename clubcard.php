@@ -201,13 +201,13 @@ if (!empty($sqlClubTeams)) {
     $scores = ScoreboardAllTime(1000, "", "", $sqlClubTeams, $sort);
 
     $html .= "<table border='1' width='100%'>";
-    $html .= ColumnLegend(['games', 'assists', 'goals', 'callahans', 'total']);
+    $html .= ColumnLegend(['games', 'assists', 'goals', 'total', 'callahans']);
     $html .= "<tr><th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th>";
     $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=games'>" . ColumnAbbrLabel('games') . "</a></th>";
     $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . ColumnAbbrLabel('assists') . "</a></th>";
     $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . ColumnAbbrLabel('goals') . "</a></th>";
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=callahan'>" . ColumnAbbrLabel('callahans') . "</a></th>";
-    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=total'>" . ColumnAbbrLabel('total') . "</a></th></tr>\n";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=total'>" . ColumnAbbrLabel('total') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=callahan'>" . ColumnAbbrLabel('callahans') . "</a></th></tr>\n";
     $i = 1;
     foreach ($scores as $row) {
         $html .= "<tr>\n";
@@ -221,8 +221,8 @@ if (!empty($sqlClubTeams)) {
         $html .= "<td class='center'>" . $row['gamestotal'] . "</td>";
         $html .= "<td class='center'>" . $row['passestotal'] . "</td>";
         $html .= "<td class='center'>" . $row['goalstotal'] . "</td>";
-        $html .= "<td class='center'>" . $row['callahanstotal'] . "</td>";
         $html .= "<td class='center'>" . $row['total'] . "</td>";
+        $html .= "<td class='center'>" . $row['callahanstotal'] . "</td>";
         $html .= "</tr>\n";
     }
 

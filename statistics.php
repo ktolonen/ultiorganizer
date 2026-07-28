@@ -159,7 +159,7 @@ if ($list == "teamstandings") {
 
     $html .= "</table>\n";
 
-    $html .= "<h1 id='callahan-top-20'>" . _("Callahan") . " TOP 20</h1>\n";
+    $html .= "<h1 id='callahan-top-20'>" . _("Callahan TOP 20") . "</h1>\n";
     $callahanScores = ScoreboardAllTime(20, "", "", "", "callahan");
     $html .= "<table border='1' width='100%'>";
     $html .= ColumnLegend(['games', 'callahans']);
