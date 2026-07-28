@@ -48,9 +48,11 @@ function IsPersistentCacheBypassed()
  * @param mixed    $key        Namespace-specific cache key (scalar or array)
  * @param int      $ttlSeconds Seconds until expiry; 0 = use PersistentCacheTtlSeconds setting
  * @param callable $resolver   Computes and returns the fresh value on cache miss
+ * @param callable|null $shouldStore Optional admission callback; receives the resolved value and returns whether
+ *                                   it should be persisted
  * @return mixed
  */
-function CacheRememberFor($namespace, $key, $ttlSeconds, $resolver)
+function CacheRememberFor($namespace, $key, $ttlSeconds, $resolver, $shouldStore = null)
 {
     if (!IsPersistentCacheEnabled()) {
         return $resolver();
@@ -86,7 +88,14 @@ function CacheRememberFor($namespace, $key, $ttlSeconds, $resolver)
         }
 
         $value = $resolver();
-        PersistentCacheWrite($filePath, $value, $ttl);
+        if ($shouldStore === null || $shouldStore($value)) {
+            PersistentCacheWrite($filePath, $value, $ttl);
+        } else {
+            // A previously populated query can become empty. Remove its expired
+            // entry and the per-key lock so empty misses leave no files behind.
+            @unlink($filePath);
+            @unlink($lockFile);
+        }
         flock($lock, LOCK_UN);
         fclose($lock);
         return $value;

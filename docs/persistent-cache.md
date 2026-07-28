@@ -99,7 +99,13 @@ sufficient for the live-scoring read paths and should be preferred.
 
 ```php
 // Return cached value or compute and store it.
-CacheRememberFor(string $namespace, mixed $key, int $ttlSeconds, callable $resolver): mixed
+CacheRememberFor(
+    string $namespace,
+    mixed $key,
+    int $ttlSeconds,
+    callable $resolver,
+    ?callable $shouldStore = null,
+): mixed
 
 // Delete one cached entry. Pass $key = null to clear the whole namespace.
 CacheForgetPersistent(string $namespace, mixed $key = null): void
@@ -122,9 +128,29 @@ IsPersistentCacheBypassed(): bool
 - **Con:** within a single GET request, a `read → write → read` pattern on the
   same row could return the cached pre-write value. This is rare in GET handlers
   and bounded to the TTL window in any case.
-- **Con:** every distinct SELECT becomes a cache file. Under heavy use the
-  cache directory grows; clean it periodically with `CacheWipePersistent()` or
-  filesystem TTL tooling.
+- **Con:** every distinct SELECT whose result is admitted becomes a cache file.
+  Under heavy use the cache directory grows; clean it periodically with
+  `CacheWipePersistent()` or filesystem TTL tooling.
+
+## Cache admission
+
+The database wrappers that return row data pass a cache-admission callback to
+`CacheRememberFor()`. If one of these queries returns no rows, neither a cache
+file nor a lock file is retained. The value that represents no rows depends on
+the wrapper:
+
+| Wrapper | No-row value |
+| --- | --- |
+| `DBQueryToValue()` | `null` |
+| `DBQueryToRow()` | `null` or `false` |
+| `DBQueryToArray()` | `[]` |
+
+The distinction is based on result rows rather than PHP truthiness. For
+example, a scalar `0`, `"0"`, or empty string returned by an existing row
+remains cacheable. `DBQueryRowCount()` does not use this admission rule: it
+caches the integer `0` as a valid row-count result. For the three row-data
+wrappers, if a previously populated cache entry expires and the same query then
+returns no rows, the stale cache file is removed.
 
 ## Cache key derivation
 

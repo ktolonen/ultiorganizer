@@ -489,6 +489,7 @@ function DBQueryToValue($query, $docasting = false)
             [$query, $docasting],
             0,
             fn() => DBQueryToValueUncached($query, $docasting),
+            static fn($value) => $value !== null,
         );
     }
     return DBQueryToValueUncached($query, $docasting);
@@ -557,6 +558,7 @@ function DBQueryToArray($query, $docasting = false)
             [$query, $docasting],
             0,
             fn() => DBQueryToArrayUncached($query, $docasting),
+            static fn($value) => $value !== [],
         );
     }
     return DBQueryToArrayUncached($query, $docasting);
@@ -683,6 +685,7 @@ function DBQueryToRow($query, $docasting = false)
             [$query, $docasting],
             0,
             fn() => DBQueryToRowUncached($query, $docasting),
+            static fn($value) => $value !== null && $value !== false,
         );
     }
     return DBQueryToRowUncached($query, $docasting);
