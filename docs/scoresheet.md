@@ -438,6 +438,8 @@ It combines:
 - spirit stoppages from `uo_spirit_timeout` via `GameEvents()`,
 - optional game note from `uo_comment` via `GameCommentHtml(COMMENT_TYPE_GAME)`.
 
+Player scoreboard totals award one point for each assist and goal. Callahans are included in the goal count and are not added to totals again.
+
 It also renders:
 
 - a point-by-point timeline,

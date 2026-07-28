@@ -154,7 +154,9 @@ Both final-standings admin surfaces let an admin override the resolver-derived o
 - `teamstandings` (default): per-event Gold / Silver / Bronze teams via `TeamStandings($season_id, $seriestype)`.
 - `spiritstandings`: per-event Gold / Silver / Bronze by spirit via `SeasonSpiritTopTeamsBySeriesType($season_id, $seriestype, 3)`.
 - `playerscoreboard`: per-event top 3 player scoreboard via `AlltimeScoreboard($season_id, $seriestype)`.
-- `playerscoresall`: all-time top 100 plus per-(season type, series type) top 30 via `ScoreboardAllTime(...)`. Sortable by games, assists (`pass`), goals, or total via the `sort` query parameter.
+- `playerscoresall`: all-time top 100, a separate all-time Callahan top 20, and per-(season type, series type) top 30 via `ScoreboardAllTime(...)`. The main scoreboards are sortable by games, assists (`pass`), goals, or total via the `sort` query parameter; the Callahan list is always ordered by Callahans.
+
+Player totals and total-per-game averages are calculated as assists + goals. Callahans are a subset of goals, appear only in the dedicated all-time Callahan top 20 on this page, and are not added to totals again.
 
 Events without precomputed stats are skipped silently. If no event in any group has stats yet, the page shows "Event statistics have not yet been computed."
 

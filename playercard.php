@@ -182,13 +182,14 @@ $games = PlayerSeasonPlayedGames($currentPlayerId, $curseason);
 if ($games) {
     $goals = PlayerSeasonGoals($currentPlayerId, $curseason);
     $passes = PlayerSeasonPasses($currentPlayerId, $curseason);
+    $callahans = PlayerSeasonCallahanGoals($currentPlayerId, $curseason);
     $wins = PlayerSeasonWins($currentPlayerId, $currentPlayerTeamId, $curseason);
     if ($showDefenseStats) {
         $defenses = PlayerSeasonDefenses($currentPlayerId, $curseason);
     }
 
     $html .= "<h2>" . U_(CurrentSeasonName()) . ":</h2>\n";
-    $legendKeys = ['games', 'assists', 'goals', 'total'];
+    $legendKeys = ['games', 'assists', 'goals', 'callahans', 'total'];
     if ($showDefenseStats) {
         $legendKeys[] = 'defences';
     }
@@ -197,7 +198,9 @@ if ($games) {
     $html .= "<table class='statistics-table' border='1' width='100%'>";
     $html .= ColumnLegend($legendKeys);
     $html .= "<tr>";
-    $html .= "<th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('total') . "</th>";
+    $html .= "<th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th>";
+    $html .= "<th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('callahans') . "</th>";
+    $html .= "<th>" . ColumnAbbrLabel('total') . "</th>";
     if ($showDefenseStats) {
         $html .= "<th>" . ColumnAbbrLabel('defences') . "</th>";
     }
@@ -220,6 +223,7 @@ if ($games) {
 	<td>" . $games . "</td>
 	<td>" . $passes . "</td>
 	<td>" . $goals . "</td>
+	<td>" . $callahans . "</td>
 	<td>" . $total . "</td>";
     if ($showDefenseStats) {
         $html .= "<td>" . $defenses . "</td>";
