@@ -209,7 +209,7 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
 
     //SELECT SUM(ps.goals) as goalstotal, SUM(passes) as passestotal, SUM(ps.games) as gamestotal, MAX(ser.series_id) as last_series, MAX(t.team_id) as last_team, SUM(COALESCE(ps.goals,0) + COALESCE(ps.passes,0)) AS total FROM uo_player_stats ps LEFT JOIN uo_series ser ON(ser.series_id=ps.series) LEFT JOIN uo_season s ON(s.season_id=ps.season) LEFT JOIN uo_team t ON(t.team_id=ps.team) LEFT JOIN uo_player p ON(p.player_id=ps.player_id) LEFT JOIN uo_player_profile pp ON(pp.profile_id=ps.profile_id) GROUP BY ps.profile_id ORDER BY total DESC, SUM(ps.games) ASC LIMIT 100
     $query = "SELECT ps.profile_id,
-			SUM(ps.goals) as goalstotal, SUM(passes) as passestotal,
+			SUM(ps.goals) as goalstotal, SUM(passes) as passestotal, SUM(ps.callahans) as callahanstotal,
 			SUM(ps.games) as gamestotal, MAX(ser.series_id) as last_series,
 			 MAX(t.team_id) as last_team,
 			SUM(COALESCE(ps.goals,0) + COALESCE(ps.passes,0)) AS total,
@@ -258,6 +258,10 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
 
         case "pass":
             $query .= "ORDER BY passestotal DESC, gamestotal ASC, ps.profile_id ASC ";
+            break;
+
+        case "callahan":
+            $query .= "ORDER BY callahanstotal DESC, gamestotal ASC, ps.profile_id ASC ";
             break;
 
         case "games":

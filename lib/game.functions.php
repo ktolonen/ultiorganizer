@@ -501,14 +501,19 @@ function GameTeamScoreBorad($gameId, $teamId)
 {
     $query = sprintf(
         "SELECT p.player_id, p.firstname, p.lastname, p.profile_id, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-		(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.num AS num FROM uo_player AS p 
+		COALESCE(c.callahan,0) AS callahan,
+		(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total, pel.num AS num FROM uo_player AS p
 		LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done 
 			FROM uo_goal AS m WHERE m.game='%s' AND m.scorer IS NOT NULL GROUP BY scorer) AS t ON (p.player_id=t.scorer) 
+		LEFT JOIN (SELECT m1.scorer AS scorer, COUNT(*) AS callahan
+			FROM uo_goal AS m1 WHERE m1.game='%s' AND m1.scorer IS NOT NULL AND m1.iscallahan=1
+			GROUP BY scorer) AS c ON (p.player_id=c.scorer)
 		LEFT JOIN (SELECT m2.assist AS assist, COUNT(*) AS fedin FROM uo_goal AS m2 
 			WHERE m2.game='%s' AND m2.assist IS NOT NULL GROUP BY assist) AS s ON (p.player_id=s.assist) 
 		RIGHT JOIN (SELECT player, num FROM uo_played WHERE game='%s') as pel ON (p.player_id=pel.player) 
 			WHERE p.team='%s' 
 		ORDER BY total DESC, done DESC, fedin DESC, lastname ASC, firstname ASC",
+        DBEscapeString($gameId),
         DBEscapeString($gameId),
         DBEscapeString($gameId),
         DBEscapeString($gameId),
@@ -551,8 +556,8 @@ function GameTeamDefenseBoardArray($gameId, $teamId)
 function GameScoreBoard($gameId)
 {
     $query = sprintf(
-        "SELECT p.profile_id, p.player_id, p.firstname, p.lastname, pj.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin, 
-			(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total 
+        "SELECT p.profile_id, p.player_id, p.firstname, p.lastname, pj.name AS teamname, COALESCE(t.done,0) AS done, COALESCE(s.fedin,0) AS fedin,
+			(COALESCE(t.done,0) + COALESCE(s.fedin,0)) AS total
 		FROM uo_player AS p LEFT JOIN (SELECT m.scorer AS scorer, COUNT(*) AS done 
 		FROM uo_goal AS m WHERE m.game='%s' AND m.scorer IS NOT NULL
 			GROUP BY scorer) AS t ON (p.player_id=t.scorer) 

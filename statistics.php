@@ -3,6 +3,7 @@
 require_once __DIR__ . '/lib/view.guard.php';
 requireRoutedView('statistics');
 
+include_once 'lib/common.functions.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/statistical.functions.php';
@@ -97,8 +98,10 @@ if ($list == "teamstandings") {
                 continue;
             }
             $html .= "<h3>" . U_($seriestype) . "</h3>\n";
-            $html .= "<table border='1' width='100%'><tr>
-				<th>" . _("Event") . "</th><th>" . _("First") . "</th><th>" . _("Second") . "</th><th>" . _("Third") . "</th></tr>\n";
+            $html .= "<table border='1' width='100%'>";
+            $html .= ColumnLegend(['assists', 'goals', 'total']);
+            $html .= "<tr><th>" . _("Event") . "</th><th>" . _("First") . "</th>";
+            $html .= "<th>" . _("Second") . "</th><th>" . _("Third") . "</th></tr>\n";
 
             foreach ($seasons as $season) {
                 $scores = AlltimeScoreboard($season['season_id'], $seriestype);
@@ -116,7 +119,9 @@ if ($list == "teamstandings") {
                     //$html .= "<a href='?view=teamcard&amp;team=".$scores[$i]['team']."'>".utf8entities($scores[$i]['teamname'])."</a>";
                     $html .= utf8entities($scores[$i]['teamname']);
                     $html .= "<br/>";
-                    $html .= $scores[$i]['passes'] . "+" . $scores[$i]['goals'] . "=" . $scores[$i]['total'];
+                    $html .= ColumnAbbrLabel('assists') . " " . $scores[$i]['passes'];
+                    $html .= " + " . ColumnAbbrLabel('goals') . " " . $scores[$i]['goals'];
+                    $html .= " = " . ColumnAbbrLabel('total') . " " . $scores[$i]['total'];
                     $html .= "</td>";
                 }
                 $html .= "</tr>\n";
@@ -128,10 +133,13 @@ if ($list == "teamstandings") {
     $viewUrl = "?view=statistics&list=playerscoresall&amp;";
     $html .= "<h1>" . _("All time scoreboard TOP 100") . "</h1>\n";
     $scores = ScoreboardAllTime(100, "", "", "", $sort);
-    $html .= "<table border='1' width='100%'><tr>
-				<th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=games'>" . _("Games") . "</a></th>
-				<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . _("Assists") . "</a></th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . _("Goals") . "</a>
-				</th><th class='center'><a class='thsort' href='" . $viewUrl . "sort=total'>" . _("Total") . "</a></th></tr>\n";
+    $html .= "<table border='1' width='100%'>";
+    $html .= ColumnLegend(['games', 'assists', 'goals', 'total']);
+    $html .= "<tr><th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=games'>" . ColumnAbbrLabel('games') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=pass'>" . ColumnAbbrLabel('assists') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=goal'>" . ColumnAbbrLabel('goals') . "</a></th>";
+    $html .= "<th class='center'><a class='thsort' href='" . $viewUrl . "sort=total'>" . ColumnAbbrLabel('total') . "</a></th></tr>\n";
     $i = 1;
     foreach ($scores as $row) {
         $html .= "<tr>\n";
@@ -149,6 +157,32 @@ if ($list == "teamstandings") {
         $html .= "</tr>\n";
     }
 
+    $html .= "</table>\n";
+
+    $html .= "<h1 id='callahan-top-20'>" . _("Callahan TOP 20") . "</h1>\n";
+    $callahanScores = ScoreboardAllTime(20, "", "", "", "callahan");
+    $html .= "<table border='1' width='100%'>";
+    $html .= ColumnLegend(['games', 'callahans']);
+    $html .= "<tr><th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('games') . "</th>";
+    $html .= "<th class='center'>" . ColumnAbbrLabel('callahans') . "</th></tr>\n";
+    $i = 1;
+    foreach ($callahanScores as $row) {
+        if (intval($row['callahanstotal']) <= 0) {
+            continue;
+        }
+        $html .= "<tr>\n";
+        $html .= "<td>" . $i++ . ".</td>";
+        $html .= "<td>";
+        $html .= "<a href='?view=playercard&amp;profile=" . $row['profile_id'] . "'>";
+        $player = PlayerProfile($row['profile_id']);
+        $html .= utf8entities($player['firstname'] . " " . $player['lastname']) . "</a>";
+        $html .= "</td>";
+        $html .= "<td>" . utf8entities(SeriesSeasonName($row['last_series'])) . " / " . utf8entities(TeamName($row['last_team'])) . "</td>";
+        $html .= "<td class='center'>" . $row['gamestotal'] . "</td>";
+        $html .= "<td class='center'>" . $row['callahanstotal'] . "</td>";
+        $html .= "</tr>\n";
+    }
     $html .= "</table>\n";
 
     $seasontypes = SeasonTypes();
@@ -170,9 +204,13 @@ if ($list == "teamstandings") {
             $html .= "<h3>" . U_($seriestype) . "</h3>\n";
 
             $scores = ScoreboardAllTime(30, $seasontype, $seriestype, "", $sort);
-            $html .= "<table border='1' width='100%'><tr>
-						<th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th><th class='center'>" . _("Games") . "</th>
-						<th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Total") . "</th></tr>\n";
+            $html .= "<table border='1' width='100%'>";
+            $html .= ColumnLegend(['games', 'assists', 'goals', 'total']);
+            $html .= "<tr><th>#</th><th>" . _("Name") . "</th><th>" . _("Latest event / team") . "</th>";
+            $html .= "<th class='center'>" . ColumnAbbrLabel('games') . "</th>";
+            $html .= "<th class='center'>" . ColumnAbbrLabel('assists') . "</th>";
+            $html .= "<th class='center'>" . ColumnAbbrLabel('goals') . "</th>";
+            $html .= "<th class='center'>" . ColumnAbbrLabel('total') . "</th></tr>\n";
             $i = 1;
             foreach ($scores as $row) {
                 $html .= "<tr>\n";

@@ -182,28 +182,28 @@ $games = PlayerSeasonPlayedGames($currentPlayerId, $curseason);
 if ($games) {
     $goals = PlayerSeasonGoals($currentPlayerId, $curseason);
     $passes = PlayerSeasonPasses($currentPlayerId, $curseason);
+    $callahans = PlayerSeasonCallahanGoals($currentPlayerId, $curseason);
     $wins = PlayerSeasonWins($currentPlayerId, $currentPlayerTeamId, $curseason);
     if ($showDefenseStats) {
         $defenses = PlayerSeasonDefenses($currentPlayerId, $curseason);
     }
 
     $html .= "<h2>" . U_(CurrentSeasonName()) . ":</h2>\n";
-    $legendKeys = ['games', 'assists', 'goals', 'total'];
+    $legendKeys = ['games', 'assists', 'goals', 'total', 'avg', 'callahans'];
     if ($showDefenseStats) {
         $legendKeys[] = 'defences';
     }
-    $legendKeys[] = 'avg';
     $legendKeys[] = 'wins';
     $html .= "<table class='statistics-table' border='1' width='100%'>";
     $html .= ColumnLegend($legendKeys);
     $html .= "<tr>";
-    $html .= "<th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('total') . "</th>";
-    if ($showDefenseStats) {
-        $html .= "<th>" . ColumnAbbrLabel('defences') . "</th>";
-    }
+    $html .= "<th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th>";
+    $html .= "<th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('total') . "</th>";
     $html .= "<th>" . ColumnAbbrLabel('assists') . " Avg." . "</th>";
     $html .= "<th>" . ColumnAbbrLabel('goals') . " Avg." . "</th><th>" . ColumnAbbrLabel('total') . " Avg." . "</th>";
+    $html .= "<th>" . ColumnAbbrLabel('callahans') . "</th>";
     if ($showDefenseStats) {
+        $html .= "<th>" . ColumnAbbrLabel('defences') . "</th>";
         $html .= "<th>" . ColumnAbbrLabel('defences') . " Avg." . "</th>";
     }
     $html .= "<th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
@@ -220,14 +220,13 @@ if ($games) {
 	<td>" . $games . "</td>
 	<td>" . $passes . "</td>
 	<td>" . $goals . "</td>
-	<td>" . $total . "</td>";
+	<td>" . $total . "</td>
+	<td>" . number_format($dblPassAvg, 2) . "</td>
+	<td>" . number_format($dblGoalAvg, 2) . "</td>
+	<td>" . number_format($dblScoreAvg, 2) . "</td>
+	<td>" . $callahans . "</td>";
     if ($showDefenseStats) {
         $html .= "<td>" . $defenses . "</td>";
-    }
-    $html .= "<td>" . number_format($dblPassAvg, 2) . "</td>
-	<td>" . number_format($dblGoalAvg, 2) . "</td>
-	<td>" . number_format($dblScoreAvg, 2) . "</td>";
-    if ($showDefenseStats) {
         $html .= "<td>" . number_format($dblDefenAvg, 2) . "</td>";
     }
     $html .= "<td>" . $wins . "</td>
@@ -252,10 +251,10 @@ if ($showDefenseStats) {
 
 
             $html_tmp .= "<table class='statistics-table' style='white-space: nowrap;' border='1' cellspacing='0' width='100%'>";
-            $html_tmp .= ColumnLegend(['games', 'assists', 'goals', 'callahans', 'total', 'defences', 'avg', 'wins']);
-            $html_tmp .= "<tr><th class='left'>" . _("Event") . "</th><th class='left'>" . _("Division") . "</th><th class='left'>" . _("Team") . "</th><th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('total') . "</th>";
-            $html_tmp .= "<th>" . ColumnAbbrLabel('defences') . "</th>";
+            $html_tmp .= ColumnLegend(['games', 'assists', 'goals', 'total', 'avg', 'callahans', 'defences', 'wins']);
+            $html_tmp .= "<tr><th class='left'>" . _("Event") . "</th><th class='left'>" . _("Division") . "</th><th class='left'>" . _("Team") . "</th><th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('total') . "</th>";
             $html_tmp .= "<th>" . ColumnAbbrLabel('assists') . " Avg." . "</th><th>" . ColumnAbbrLabel('goals') . " Avg." . "</th><th>" . ColumnAbbrLabel('total') . " Avg." . "</th>";
+            $html_tmp .= "<th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('defences') . "</th>";
             $html_tmp .= "<th>" . ColumnAbbrLabel('defences') . " Avg." . "</th>";
             $html_tmp .= "<th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
@@ -307,12 +306,12 @@ if ($showDefenseStats) {
 						<td>" . $pp['games'] . "</td>
 						<td>" . $pp['passes'] . "</td>
 						<td>" . $pp['goals'] . "</td>
-						<td>" . $pp['callahans'] . "</td>
-						<td>" . $total . "</td>";
-                $html_tmp .= "<td>" . $pp['defenses'] . "</td>";
-                $html_tmp .= "<td>" . number_format($dblPassAvg, 2) . "</td>
+						<td>" . $total . "</td>
+						<td>" . number_format($dblPassAvg, 2) . "</td>
 						<td>" . number_format($dblGoalAvg, 2) . "</td>
-						<td>" . number_format($dblScoreAvg, 2) . "</td>";
+						<td>" . number_format($dblScoreAvg, 2) . "</td>
+						<td>" . $pp['callahans'] . "</td>";
+                $html_tmp .= "<td>" . $pp['defenses'] . "</td>";
                 $html_tmp .= "<td>" . number_format($dblDefAvg, 2) . "</td>";
                 $html_tmp .= "<td>" . $pp['wins'] . "</td>
 						<td>" . number_format($dblWinAvg * 100, 1) . "%</td></tr>\n";
@@ -330,12 +329,12 @@ if ($showDefenseStats) {
 
         //seasons total
         $html .= "<table class='statistics-table' border='1' width='100%'>";
-        $html .= ColumnLegend(['games', 'assists', 'goals', 'callahans', 'total', 'defences', 'avg', 'wins']);
+        $html .= ColumnLegend(['games', 'assists', 'goals', 'total', 'avg', 'callahans', 'defences', 'wins']);
         $html .= "<tr>
-		<th class='left'>" . _("Event type") . "</th><th class='left'>" . _("Division") . "</th><th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('total') . "</th>";
-        $html .= "<th>" . ColumnAbbrLabel('defences') . "</th><th>" . ColumnAbbrLabel('assists') . " Avg." . "</th>
+		<th class='left'>" . _("Event type") . "</th><th class='left'>" . _("Division") . "</th><th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('total') . "</th>";
+        $html .= "<th>" . ColumnAbbrLabel('assists') . " Avg." . "</th>
 		<th>" . ColumnAbbrLabel('goals') . " Avg." . "</th><th>" . ColumnAbbrLabel('total') . " Avg." . "</th>";
-        $html .= "<th>" . ColumnAbbrLabel('defences') . " Avg." . "</th><th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
+        $html .= "<th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('defences') . "</th><th>" . ColumnAbbrLabel('defences') . " Avg." . "</th><th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
         $total_games = 0;
         $total_goals = 0;
@@ -381,12 +380,12 @@ if ($showDefenseStats) {
 		<td>" . $games . "</td>
 		<td>" . $passes . "</td>
 		<td>" . $goals . "</td>
-		<td>" . $cal . "</td>
 		<td>" . $total . "</td>
-		<td>" . $defenses . "</td>
 		<td>" . number_format($dblPassAvg, 2) . "</td>
 		<td>" . number_format($dblGoalAvg, 2) . "</td>
 		<td>" . number_format($dblScoreAvg, 2) . "</td>
+		<td>" . $cal . "</td>
+		<td>" . $defenses . "</td>
 		<td>" . number_format($dblDefsAvg, 2) . "</td>
 		<td>" . $wins . "</td>
 		<td>" . number_format($dblWinsAvg * 100, 1) . "%</td></tr>\n";
@@ -404,12 +403,12 @@ if ($showDefenseStats) {
 		<td>" . $total_games . "</td>
 		<td>" . $total_passes . "</td>
 		<td>" . $total_goals . "</td>
-		<td>" . $total_cal . "</td>
 		<td>" . $total . "</td>
-		<td>" . $total_defenses . "</td>
 		<td>" . number_format($dblPassAvg, 2) . "</td>
 		<td>" . number_format($dblGoalAvg, 2) . "</td>
 		<td>" . number_format($dblScoreAvg, 2) . "</td>
+		<td>" . $total_cal . "</td>
+		<td>" . $total_defenses . "</td>
 		<td>" . number_format($dblDefsAvg, 2) . "</td>
 		<td>" . $total_wins . "</td>
 		<td>" . number_format($dblWinsAvg * 100, 1) . "%</td></tr>\n";
@@ -432,9 +431,9 @@ if ($showDefenseStats) {
 
 
             $html_tmp .= "<table class='statistics-table' style='white-space: nowrap;' border='1' cellspacing='0' width='100%'>";
-            $html_tmp .= ColumnLegend(['games', 'assists', 'goals', 'callahans', 'total', 'avg', 'wins']);
+            $html_tmp .= ColumnLegend(['games', 'assists', 'goals', 'total', 'avg', 'callahans', 'wins']);
             $html_tmp .= "<tr><th class='left'>" . _("Event") . "</th><th class='left'>" . _("Division") . "</th><th class='left'>" . _("Team") . "</th><th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th>
-			<th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('total') . "</th><th>" . ColumnAbbrLabel('assists') . " Avg." . "</th><th>" . ColumnAbbrLabel('goals') . " Avg." . "</th><th>" . ColumnAbbrLabel('total') . " Avg." . "</th><th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
+			<th>" . ColumnAbbrLabel('total') . "</th><th>" . ColumnAbbrLabel('assists') . " Avg." . "</th><th>" . ColumnAbbrLabel('goals') . " Avg." . "</th><th>" . ColumnAbbrLabel('total') . " Avg." . "</th><th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
 
             foreach ($playedSeasons as $season) {
@@ -481,11 +480,11 @@ if ($showDefenseStats) {
 						<td>" . $pp['games'] . "</td>
 						<td>" . $pp['passes'] . "</td>
 						<td>" . $pp['goals'] . "</td>
-						<td>" . $pp['callahans'] . "</td>
 						<td>" . $total . "</td>
 						<td>" . number_format($dblPassAvg, 2) . "</td>
 						<td>" . number_format($dblGoalAvg, 2) . "</td>
 						<td>" . number_format($dblScoreAvg, 2) . "</td>
+						<td>" . $pp['callahans'] . "</td>
 						<td>" . $pp['wins'] . "</td>
 						<td>" . number_format($dblWinAvg * 100, 1) . "%</td></tr>\n";
             }
@@ -502,10 +501,10 @@ if ($showDefenseStats) {
 
         //seasons total
         $html .= "<table class='statistics-table' border='1' width='100%'>";
-        $html .= ColumnLegend(['games', 'assists', 'goals', 'callahans', 'total', 'avg', 'wins']);
+        $html .= ColumnLegend(['games', 'assists', 'goals', 'total', 'avg', 'callahans', 'wins']);
         $html .= "<tr>
-		<th class='left'>" . _("Event type") . "</th><th class='left'>" . _("Division") . "</th><th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('total') . "</th><th>" . ColumnAbbrLabel('assists') . " Avg." . "</th>
-		<th>" . ColumnAbbrLabel('goals') . " Avg." . "</th><th>" . ColumnAbbrLabel('total') . " Avg." . "</th><th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
+		<th class='left'>" . _("Event type") . "</th><th class='left'>" . _("Division") . "</th><th>" . ColumnAbbrLabel('games') . "</th><th>" . ColumnAbbrLabel('assists') . "</th><th>" . ColumnAbbrLabel('goals') . "</th><th>" . ColumnAbbrLabel('total') . "</th><th>" . ColumnAbbrLabel('assists') . " Avg." . "</th>
+		<th>" . ColumnAbbrLabel('goals') . " Avg." . "</th><th>" . ColumnAbbrLabel('total') . " Avg." . "</th><th>" . ColumnAbbrLabel('callahans') . "</th><th>" . ColumnAbbrLabel('wins') . "</th><th>" . _("Win-%") . "</th></tr>\n";
 
         $total_games = 0;
         $total_goals = 0;
@@ -546,11 +545,11 @@ if ($showDefenseStats) {
 		<td>" . $games . "</td>
 		<td>" . $passes . "</td>
 		<td>" . $goals . "</td>
-		<td>" . $cal . "</td>
 		<td>" . $total . "</td>
 		<td>" . number_format($dblPassAvg, 2) . "</td>
 		<td>" . number_format($dblGoalAvg, 2) . "</td>
 		<td>" . number_format($dblScoreAvg, 2) . "</td>
+		<td>" . $cal . "</td>
 		<td>" . $wins . "</td>
 		<td>" . number_format($dblWinsAvg * 100, 1) . "%</td></tr>\n";
         }
@@ -566,11 +565,11 @@ if ($showDefenseStats) {
 		<td>" . $total_games . "</td>
 		<td>" . $total_passes . "</td>
 		<td>" . $total_goals . "</td>
-		<td>" . $total_cal . "</td>
 		<td>" . $total . "</td>
 		<td>" . number_format($dblPassAvg, 2) . "</td>
 		<td>" . number_format($dblGoalAvg, 2) . "</td>
 		<td>" . number_format($dblScoreAvg, 2) . "</td>
+		<td>" . $total_cal . "</td>
 		<td>" . $total_wins . "</td>
 		<td>" . number_format($dblWinsAvg * 100, 1) . "%</td></tr>\n";
 
