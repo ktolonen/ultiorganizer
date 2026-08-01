@@ -16,13 +16,19 @@ const APP_SCOPE_PREFIXES = [
     'ext/',
     'login/',
     'api/',
-    'plugins/',
 ];
 
 const INFRASTRUCTURE_EXEMPTIONS = [
     'install.php',
     'lib/database.php',
     'sql/upgrade_db.php',
+];
+
+// Optional, self-contained admin tools. A plugin ships as a single file that is
+// dropped in or removed as a unit, so it carries its own SQL instead of pushing
+// one-off analysis queries into the shared lib/ layer.
+const TOOL_SCOPE_PREFIXES = [
+    'plugins/',
 ];
 
 if (PHP_SAPI === 'cli') {
@@ -247,6 +253,12 @@ function classifyPath(string $path): ?string
 {
     if (in_array($path, INFRASTRUCTURE_EXEMPTIONS, true)) {
         return null;
+    }
+
+    foreach (TOOL_SCOPE_PREFIXES as $prefix) {
+        if (str_starts_with($path, $prefix)) {
+            return null;
+        }
     }
 
     if (str_starts_with($path, 'lib/')) {

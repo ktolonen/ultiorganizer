@@ -13,9 +13,3 @@ admin/executesql.php
 
 # Customization-specific pages
 cust/slkl/mass-accreditation.php
-
-# Legacy plugin admin views
-plugins/add_field_accounts.php
-plugins/import_xml_ffindr.php
-plugins/lisence_modifier.php
-plugins/reassign_playoffpools.php
