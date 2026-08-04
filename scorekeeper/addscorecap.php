@@ -66,7 +66,7 @@ $html .= "<input type='number' id='target' name='target' min='" . ($currentScore
 $html .= "<input type='hidden' name='eventtime' value='" . $eventTime . "'/>\n";
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>\n";
 if ($existingEvent) {
-    $html .= "<input type='submit' name='remove' data-ajax='false' value='" . _("Remove cap") . "'/>\n";
+    $html .= "<input type='submit' name='remove' formnovalidate='formnovalidate' data-ajax='false' value='" . _("Remove cap") . "'/>\n";
 }
 $html .= "<a class='back-score-button' href='?view=addscoresheet&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Back to scoresheet") . "</a>\n";
 $html .= "</form>\n";
