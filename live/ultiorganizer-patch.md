@@ -141,3 +141,13 @@ The following changes were made in the ultiorganizer codebase that triggered the
 - `TeamSpiritPointsGiven()`, `TeamSpiritPointsReceived()`, `SeriesSpiritBoardAlt2()`:
   these have always returned plain PHP arrays; if your code wrapped them in
   `mysqli_fetch_all()`, remove the wrapper.
+- `uo_gameevent` gains neutral cap-target rows (`type` = `half_cap` or `time_cap`,
+  cap target in `info`, `ishome` = 0), and `GameEvents()` now also returns an
+  `info` column. The Live! frontend ignores unknown event types in the
+  game-detail `gameevents` array, so game pages are unaffected. However, the
+  scoreboard last-play query (`getLastGameEventMultipleGames()`) picks the
+  newest `uo_gameevent` row of any non-media type, and the frontend's generic
+  label renders the raw type, e.g. `[25:00] Half_cap` (verified against the
+  Live! 2.0.0 bundle). A Live! frontend update should either label cap events
+  with their target (select `info` in the last-event queries) or exclude cap
+  types from last-play selection.
