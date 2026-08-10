@@ -214,7 +214,12 @@ if (GameHasStarted($game_result) > 0) {
         $bHt = false;
 
         $prevgoal = 0;
-        foreach ($goals as $goal) {
+        // Events are listed in the cell of the goal that ends their window, so
+        // the last goal's window has to stay open: an event recorded after it
+        // (a cap called once the game was over, for instance) would otherwise
+        // fall outside every window and never be rendered.
+        $lastgoalindex = count($goals) - 1;
+        foreach ($goals as $goalindex => $goal) {
             if (!$bHt && $game_result['halftime'] > 0 && $goal['time'] > $game_result['halftime']) {
                 $html .= "<tr><td colspan='" . $goalTableColspan . "' class='halftime'>" . _("Halftime") . "</td></tr>";
                 $bHt = 1;
@@ -254,7 +259,8 @@ if (GameHasStarted($game_result) > 0) {
                 //gameevents
                 foreach ($gameevents as $event) {
                     if ((intval($event['time']) >= $prevgoal) &&
-                      (intval($event['time']) < intval($goal['time']))
+                      ((intval($event['time']) < intval($goal['time'])) ||
+                        ($goalindex === $lastgoalindex))
                     ) {
                         $gameevent = '';
                         if ($event['type'] == "timeout") {
@@ -274,24 +280,19 @@ if (GameHasStarted($game_result) > 0) {
                         }
 
                         if (GameIsCapEventType($event['type'])) {
-                            $html .= "<div>" . $gameevent;
-                            if (!$hideTimeOnScoresheet) {
-                                $html .= "&nbsp;" . SecToMin($event['time']);
-                            }
-                            $html .= "</div>";
+                            //caps belong to neither team, so they carry no team class
+                            $eventClass = "";
                         } elseif (intval($event['ishome']) > 0) {
-                            $html .= "<div class='home'>" . $gameevent;
-                            if (!$hideTimeOnScoresheet) {
-                                $html .= "&nbsp;" . SecToMin($event['time']);
-                            }
-                            $html .= "</div>";
+                            $eventClass = " class='home'";
                         } else {
-                            $html .= "<div class='guest'>" . $gameevent;
-                            if (!$hideTimeOnScoresheet) {
-                                $html .= "&nbsp;" . SecToMin($event['time']);
-                            }
-                            $html .= "</div>";
+                            $eventClass = " class='guest'";
                         }
+
+                        $html .= "<div" . $eventClass . ">" . $gameevent;
+                        if (!$hideTimeOnScoresheet) {
+                            $html .= "&nbsp;" . SecToMin($event['time']);
+                        }
+                        $html .= "</div>";
                     }
                 }
                 //mediaevents

@@ -271,9 +271,9 @@ function GamePool($gameId)
 function GameIsFirstOffenceHome($gameId)
 {
     $query = sprintf(
-        "SELECT ishome 
-		FROM uo_gameevent  
-		WHERE game=%d ORDER BY time",
+        "SELECT ishome
+		FROM uo_gameevent
+		WHERE game=%d AND type='offence' ORDER BY time",
         (int) $gameId,
     );
     $result = DBQueryToValue($query);
@@ -735,6 +735,27 @@ function GameCapEvent($gameId, $type)
     return DBQueryToRow($query);
 }
 
+/**
+ * Every cap event of a game, keyed by cap type. One query instead of one per
+ * cap type, because the scoresheet renders both on every page load.
+ */
+function GameCapEvents($gameId)
+{
+    $query = sprintf(
+        "SELECT time,type,info FROM uo_gameevent
+		WHERE game=%d AND type IN ('%s')",
+        (int) $gameId,
+        implode("','", array_map('DBEscapeString', GameCapEventTypes())),
+    );
+
+    $events = [];
+    foreach (DBQueryToArray($query) as $event) {
+        $events[$event['type']] = $event;
+    }
+
+    return $events;
+}
+
 function GameCapEventName($type)
 {
     if ($type === 'half_cap') {
@@ -869,7 +890,7 @@ function RemoveGameMediaEvent($gameId, $urlId)
 {
     if (hasAddMediaRight()) {
         $query = sprintf(
-            "DELETE FROM uo_gameevent WHERE game=%d AND info=%d",
+            "DELETE FROM uo_gameevent WHERE game=%d AND type='media' AND info=%d",
             (int) $gameId,
             (int) $urlId,
         );

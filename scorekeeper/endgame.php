@@ -10,6 +10,46 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $useGameClock = !$hideTimeOnScoresheet && !scorekeeperHasManualNoGameClock($gameId);
 $goalRows = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
+
+/**
+ * One game event as a table row. Shared by the per-goal pass and the trailing
+ * pass, so an event recorded after the last goal is rendered the same way.
+ */
+$renderGameEventRow = function ($event) use ($game_result, $hideTimeOnScoresheet) {
+    if ($event['type'] == "timeout") {
+        $gameevent = _("timeout");
+    } elseif ($event['type'] == "spirit_timeout") {
+        $gameevent = _("Spirit stoppage");
+    } elseif ($event['type'] == "turnover") {
+        $gameevent = _("turnover");
+    } elseif ($event['type'] == "offence") {
+        $gameevent = _("offence");
+    } elseif (GameIsCapEventType($event['type'])) {
+        $gameevent = GameCapEventText($event);
+    } else {
+        $gameevent = $event['type'];
+    }
+
+    if (GameIsCapEventType($event['type'])) {
+        $team = "";
+        $rowClass = "gameplay-row gameplay-row--event";
+    } elseif (intval($event['ishome']) > 0) {
+        $team = utf8entities($game_result['hometeamname']);
+        $rowClass = "gameplay-row gameplay-row--event gameplay-row--home";
+    } else {
+        $team = utf8entities($game_result['visitorteamname']);
+        $rowClass = "gameplay-row gameplay-row--event gameplay-row--away";
+    }
+
+    $row = "<tr class='" . $rowClass . "'><td>\n";
+    if (!$hideTimeOnScoresheet) {
+        $row .= SecToMin($event['time']) . " ";
+    }
+    $row .= trim($team . " " . $gameevent);
+    $row .= "</td></tr>\n";
+
+    return $row;
+};
 $timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
 
@@ -63,37 +103,7 @@ if (!count($goalRows)) {
         if (count($gameevents)) {
             foreach ($gameevents as $event) {
                 if ((intval($event['time']) >= $prevgoal) && (intval($event['time']) < intval($goal['time']))) {
-                    if ($event['type'] == "timeout") {
-                        $gameevent = _("timeout");
-                    } elseif ($event['type'] == "spirit_timeout") {
-                        $gameevent = _("Spirit stoppage");
-                    } elseif ($event['type'] == "turnover") {
-                        $gameevent = _("turnover");
-                    } elseif ($event['type'] == "offence") {
-                        $gameevent = _("offence");
-                    } elseif (GameIsCapEventType($event['type'])) {
-                        $gameevent = GameCapEventText($event);
-                    } else {
-                        $gameevent = $event['type'];
-                    }
-
-                    if (GameIsCapEventType($event['type'])) {
-                        $team = "";
-                        $rowClass = "gameplay-row gameplay-row--event";
-                    } elseif (intval($event['ishome']) > 0) {
-                        $team = utf8entities($game_result['hometeamname']);
-                        $rowClass = "gameplay-row gameplay-row--event gameplay-row--home";
-                    } else {
-                        $team = utf8entities($game_result['visitorteamname']);
-                        $rowClass = "gameplay-row gameplay-row--event gameplay-row--away";
-                    }
-
-                    $html .= "<tr class='" . $rowClass . "'><td>\n";
-                    if (!$hideTimeOnScoresheet) {
-                        $html .= SecToMin($event['time']) . " ";
-                    }
-                    $html .= trim($team . " " . $gameevent);
-                    $html .= "</td></tr>\n";
+                    $html .= $renderGameEventRow($event);
                 }
             }
         }
@@ -116,6 +126,13 @@ if (!count($goalRows)) {
         $html .= "</td></tr>\n";
 
         $prevgoal = intval($goal['time']);
+    }
+
+    //gameevents after the last goal
+    foreach ($gameevents as $event) {
+        if (intval($event['time']) >= $prevgoal) {
+            $html .= $renderGameEventRow($event);
+        }
     }
 }
 $html .= "</td></tr>\n";

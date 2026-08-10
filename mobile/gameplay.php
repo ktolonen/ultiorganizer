@@ -66,8 +66,10 @@ if (count($goals) <= 0) {
                     }
 
                     if (GameIsCapEventType($event['type'])) {
+                        // $style paints the *next* cell, so leave it alone: a
+                        // cap belongs to neither team, but clearing it here
+                        // would strip the following goal of its team colour.
                         $team = "";
-                        $style = "";
                     } elseif (intval($event['ishome']) > 0) {
                         $team = utf8entities($game_result['hometeamname']);
                         $style = "class='homefontcolor'";

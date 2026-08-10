@@ -10,6 +10,45 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 
+/**
+ * One game event as a table row. Shared by the per-goal pass and the trailing
+ * pass, so an event recorded after the last goal is rendered the same way.
+ */
+$renderGameEventRow = function ($event) use ($game_result, $hideTimeOnScoresheet) {
+    $gameevent = '';
+    if ($event['type'] == "timeout") {
+        $gameevent = _("timeout");
+    } elseif ($event['type'] == "spirit_timeout") {
+        $gameevent = _("Spirit stoppage");
+    } elseif ($event['type'] == "turnover") {
+        $gameevent = _("turnover");
+    } elseif ($event['type'] == "offence") {
+        $gameevent = _("offence");
+    } elseif (GameIsCapEventType($event['type'])) {
+        $gameevent = GameCapEventText($event);
+    }
+
+    if (GameIsCapEventType($event['type'])) {
+        $team = "";
+        $rowClass = "gameplay-row gameplay-row--event";
+    } elseif (intval($event['ishome']) > 0) {
+        $team = utf8entities($game_result['hometeamname']);
+        $rowClass = "gameplay-row gameplay-row--event gameplay-row--home";
+    } else {
+        $team = utf8entities($game_result['visitorteamname']);
+        $rowClass = "gameplay-row gameplay-row--event gameplay-row--away";
+    }
+
+    $row = "<tr class='" . $rowClass . "'><td>\n";
+    if (!$hideTimeOnScoresheet) {
+        $row .= SecToMin($event['time']) . " ";
+    }
+    $row .= trim($team . " " . $gameevent);
+    $row .= "</td></tr>\n";
+
+    return $row;
+};
+
 $html .= "<div data-role='header'>\n";
 $html .= "<h1>" . _("Gameplay") . ": " . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
@@ -43,36 +82,7 @@ if (count($goals) <= 0) {
                 if ((intval($event['time']) >= $prevgoal) &&
                     (intval($event['time']) < intval($goal['time']))
                 ) {
-                    $gameevent = '';
-                    if ($event['type'] == "timeout") {
-                        $gameevent = _("timeout");
-                    } elseif ($event['type'] == "spirit_timeout") {
-                        $gameevent = _("Spirit stoppage");
-                    } elseif ($event['type'] == "turnover") {
-                        $gameevent = _("turnover");
-                    } elseif ($event['type'] == "offence") {
-                        $gameevent = _("offence");
-                    } elseif (GameIsCapEventType($event['type'])) {
-                        $gameevent = GameCapEventText($event);
-                    }
-
-                    if (GameIsCapEventType($event['type'])) {
-                        $team = "";
-                        $rowClass = "gameplay-row gameplay-row--event";
-                    } elseif (intval($event['ishome']) > 0) {
-                        $team = utf8entities($game_result['hometeamname']);
-                        $rowClass = "gameplay-row gameplay-row--event gameplay-row--home";
-                    } else {
-                        $team = utf8entities($game_result['visitorteamname']);
-                        $rowClass = "gameplay-row gameplay-row--event gameplay-row--away";
-                    }
-
-                    $html .= "<tr class='" . $rowClass . "'><td>\n";
-                    if (!$hideTimeOnScoresheet) {
-                        $html .= SecToMin($event['time']) . " ";
-                    }
-                    $html .= trim($team . " " . $gameevent);
-                    $html .= "</td></tr>\n";
+                    $html .= $renderGameEventRow($event);
                 }
             }
         }
@@ -97,6 +107,13 @@ if (count($goals) <= 0) {
         $html .= "</td></tr>\n";
 
         $prevgoal = intval($goal['time']);
+    }
+
+    //gameevents after the last goal
+    foreach ($gameevents as $event) {
+        if (intval($event['time']) >= $prevgoal) {
+            $html .= $renderGameEventRow($event);
+        }
     }
 
     $html .= "</td></tr><tr><td>\n";

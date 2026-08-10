@@ -109,8 +109,9 @@ $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 |
 $capEventTime = $useGameClock
     ? ((int) $timerState['mm'] * 60) + (int) $timerState['rss']
     : (int) ($lastscore['time'] ?? 0);
-$halfCapEvent = GameCapEvent($gameId, 'half_cap');
-$timeCapEvent = GameCapEvent($gameId, 'time_cap');
+$capEvents = GameCapEvents($gameId);
+$halfCapEvent = $capEvents['half_cap'] ?? null;
+$timeCapEvent = $capEvents['time_cap'] ?? null;
 
 $uo_goal = [
     "game" => $gameId,
@@ -507,11 +508,15 @@ $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $g
 $html .= "</div>\n";
 if ($halfCapEvent || $timeCapEvent) {
     $html .= "<ul>\n";
-    if ($halfCapEvent) {
-        $html .= "<li>" . GameCapEventText($halfCapEvent) . " (" . SecToMin($halfCapEvent['time']) . ")</li>\n";
-    }
-    if ($timeCapEvent) {
-        $html .= "<li>" . GameCapEventText($timeCapEvent) . " (" . SecToMin($timeCapEvent['time']) . ")</li>\n";
+    foreach ([$halfCapEvent, $timeCapEvent] as $capEvent) {
+        if (!$capEvent) {
+            continue;
+        }
+        $html .= "<li>" . GameCapEventText($capEvent);
+        if (!$hideTimeOnScoresheet) {
+            $html .= " (" . SecToMin($capEvent['time']) . ")";
+        }
+        $html .= "</li>\n";
     }
     $html .= "</ul>\n";
 }
