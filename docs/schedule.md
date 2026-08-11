@@ -147,6 +147,8 @@ Validation after save checks:
 - inter-pool conflicts
 - move-time constraints from `uo_movingtime`
 
+Conflict warnings are limited to pairs that include at least one game assigned on the scheduling board being saved. The other game may be scheduled outside the selected reservations when it creates a real conflict, but pre-existing conflicts unrelated to the current board are not reported. Conflict candidates are ordered chronologically before game duration and field-to-field transfer time are applied.
+
 `admin/editgame.php` is the direct edit path for one game row. It can change teams, placeholders, reservation, time, pool, validity, responsible team, translated game name, and live-stream fields.
 
 ## Settings and Flags

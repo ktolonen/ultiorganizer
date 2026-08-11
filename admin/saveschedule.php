@@ -49,6 +49,34 @@ function ConflictMessage($game1Context, $game2Context)
     );
 }
 
+function OrderConflictChronologically($conflict)
+{
+    if (strtotime($conflict['time1']) <= strtotime($conflict['time2'])) {
+        return $conflict;
+    }
+
+    $pairedFields = [
+        'game',
+        'pool',
+        'home',
+        'visitor',
+        'scheduling_home',
+        'scheduling_visitor',
+        'reservation',
+        'time',
+        'slot',
+        'location',
+        'field',
+    ];
+    foreach ($pairedFields as $field) {
+        $firstValue = $conflict[$field . '1'];
+        $conflict[$field . '1'] = $conflict[$field . '2'];
+        $conflict[$field . '2'] = $firstValue;
+    }
+
+    return $conflict;
+}
+
 
 $body = file_get_contents('php://input');
 if ($body === false) {
@@ -58,6 +86,7 @@ if ($body === false) {
 $season = "";
 $warningResponse = "";
 $errorResponse = "";
+$scheduledGameIds = [];
 
 $places = explode("|", $body);
 foreach ($places as $placeGameStr) {
@@ -82,6 +111,7 @@ foreach ($places as $placeGameStr) {
                 $warningResponse .= "<p>" . sprintf(_("Game %s exceeds the reserved end time %s."), GameName($gameInfo), ShortTimeFormat($resInfo['endtime'])) . "</p>";
             }
             ScheduleGame($gameArr[0], $time, $games[0]);
+            $scheduledGameIds[(int) $gameArr[0]] = true;
         }
     } else {
         for ($i = 1; $i < count($games); $i++) {
@@ -102,7 +132,11 @@ if ($season) {
     $conflicts = TimetableIntraPoolConflicts($season);
 
     foreach ($conflicts as $conflict) {
+        if (!isset($scheduledGameIds[(int) $conflict['game1']]) && !isset($scheduledGameIds[(int) $conflict['game2']])) {
+            continue;
+        }
         if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
+            $conflict = OrderConflictChronologically($conflict);
             $game1End = strtotime($conflict['time1']) + $conflict['slot1'] * 60;
             $travelEnd = $game1End + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']);
             $game2Start = strtotime($conflict['time2']);
@@ -127,7 +161,11 @@ if ($season) {
     $conflicts = TimetableInterPoolConflicts($season);
 
     foreach ($conflicts as $conflict) {
+        if (!isset($scheduledGameIds[(int) $conflict['game1']]) && !isset($scheduledGameIds[(int) $conflict['game2']])) {
+            continue;
+        }
         if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
+            $conflict = OrderConflictChronologically($conflict);
             $game1End = strtotime($conflict['time1']) + $conflict['slot1'] * 60;
             $travelEnd = $game1End + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']);
             $game2Start = strtotime($conflict['time2']);
