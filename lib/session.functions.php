@@ -4,6 +4,92 @@ require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
 /**
+ * Session key holding the fingerprint of the installation that created the session.
+ */
+define('SESSION_INSTANCE_KEY', '__uo_instance');
+
+/**
+ * Resolve the session cookie name for this installation.
+ *
+ * Installations sharing a domain must not share a session cookie name, or a login
+ * on one instance is picked up by the other. `UO_SESSION_NAME` is written per
+ * installation by `install.php`; the legacy `UO_SESSID` name stays the default so
+ * installations upgraded from earlier versions keep their existing sessions.
+ *
+ * @return string
+ */
+function sessionCookieName()
+{
+    $default = 'UO_SESSID';
+
+    if (!defined('UO_SESSION_NAME')) {
+        return $default;
+    }
+
+    $configured = (string) constant('UO_SESSION_NAME');
+
+    // session_name() only raises a warning for invalid values and then silently
+    // falls back to PHPSESSID, so reject anything PHP would not accept.
+    if ($configured === '' || ctype_digit($configured) || preg_match('/[^A-Za-z0-9_-]/', $configured)) {
+        return $default;
+    }
+
+    return $configured;
+}
+
+/**
+ * Build a stable fingerprint identifying this installation.
+ *
+ * Session payloads are stored under the session id alone, so two installations
+ * sharing a `session.save_path` can read each other's session data even when their
+ * cookie names differ. Two genuinely separate installations differ in at least one
+ * of these values.
+ *
+ * @return string
+ */
+function sessionInstanceFingerprint()
+{
+    $parts = [
+        defined('DB_HOST') ? (string) DB_HOST : '',
+        defined('DB_DATABASE') ? (string) DB_DATABASE : '',
+        defined('BASEURL') ? (string) BASEURL : '',
+        sessionCookieName(),
+    ];
+
+    return substr(hash('sha256', implode('|', $parts)), 0, 32);
+}
+
+/**
+ * Reject session data created by another installation.
+ *
+ * Sessions without a fingerprint are adopted rather than discarded, so deploying
+ * this check does not log out everyone who is currently signed in.
+ *
+ * @return void
+ */
+function enforceSessionInstanceBinding()
+{
+    $fingerprint = sessionInstanceFingerprint();
+    $stored = isset($_SESSION[SESSION_INSTANCE_KEY]) ? $_SESSION[SESSION_INSTANCE_KEY] : null;
+
+    if ($stored === null) {
+        $_SESSION[SESSION_INSTANCE_KEY] = $fingerprint;
+        return;
+    }
+
+    if (is_string($stored) && hash_equals($stored, $fingerprint)) {
+        return;
+    }
+
+    // Abort instead of clearing and writing, so the installation that owns this
+    // session keeps its stored data.
+    session_abort();
+    session_id(session_create_id());
+    session_start();
+    $_SESSION[SESSION_INSTANCE_KEY] = $fingerprint;
+}
+
+/**
  * Start a hardened PHP session with consistent cookie settings.
  */
 function startSecureSession()
@@ -29,8 +115,12 @@ function startSecureSession()
         'samesite' => $samesite,
     ]);
 
-    session_name('UO_SESSID');
+    // Reject attacker-supplied session ids that no session has ever used.
+    ini_set('session.use_strict_mode', '1');
+
+    session_name(sessionCookieName());
     session_start();
+    enforceSessionInstanceBinding();
 }
 
 /**
