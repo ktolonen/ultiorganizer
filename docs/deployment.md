@@ -111,6 +111,8 @@ It does not, however, isolate the stored session data. PHP's `files` session han
 
 Ultiorganizer therefore stamps each session with a fingerprint of the installation that created it, derived from `DB_HOST`, `DB_DATABASE`, `BASEURL` and `UO_SESSION_NAME` (see `startSecureSession()` in `lib/session.functions.php`). A session presented to a different installation is discarded and replaced with a new empty one, so no application code sees the foreign session. This works without any server configuration, which matters on shared hosting where `php.ini` is not available.
 
+Because those four values make up the fingerprint, changing any of them on a running installation invalidates existing sessions and signs everyone out. Moving an installation to a new address by editing `BASEURL` is the usual case. This is a one-time re-login, not an error.
+
 ### Separating session storage
 
 Where you do control the PHP configuration, give each installation its own session directory as well. In a PHP-FPM pool:

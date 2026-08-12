@@ -4,11 +4,6 @@ require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
 /**
- * Session key holding the fingerprint of the installation that created the session.
- */
-define('SESSION_INSTANCE_KEY', '__uo_instance');
-
-/**
  * Resolve the session cookie name for this installation.
  *
  * Installations sharing a domain must not share a session cookie name, or a login
@@ -70,10 +65,10 @@ function sessionInstanceFingerprint()
 function enforceSessionInstanceBinding()
 {
     $fingerprint = sessionInstanceFingerprint();
-    $stored = isset($_SESSION[SESSION_INSTANCE_KEY]) ? $_SESSION[SESSION_INSTANCE_KEY] : null;
+    $stored = isset($_SESSION['__uo_instance']) ? $_SESSION['__uo_instance'] : null;
 
     if ($stored === null) {
-        $_SESSION[SESSION_INSTANCE_KEY] = $fingerprint;
+        $_SESSION['__uo_instance'] = $fingerprint;
         return;
     }
 
@@ -86,7 +81,7 @@ function enforceSessionInstanceBinding()
     session_abort();
     session_id(session_create_id());
     session_start();
-    $_SESSION[SESSION_INSTANCE_KEY] = $fingerprint;
+    $_SESSION['__uo_instance'] = $fingerprint;
 }
 
 /**

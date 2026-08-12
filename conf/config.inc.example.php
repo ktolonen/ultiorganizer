@@ -46,8 +46,11 @@ define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
  * This is one of several settings that must differ between installations sharing
  * a server, together with MAINTENANCE_RUNTIME_DIR and PERSISTENT_CACHE_DIR. See
  * docs/deployment.md for isolating co-hosted installations.
+ *
+ * When configuring by hand instead of running install.php, replace the suffix
+ * below with a value unique to this installation before enabling the line.
  */
-define('UO_SESSION_NAME', 'UO_SESSID_example1');
+// define('UO_SESSION_NAME', 'UO_SESSID_CHANGE_ME');
 
 /**
  * Site customization and localization defaults.
