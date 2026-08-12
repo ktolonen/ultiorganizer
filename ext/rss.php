@@ -154,7 +154,8 @@ switch ($feedtype) {
                     } elseif ($event['type'] == "offence") {
                         $gameevent = _("Offence");
                     } elseif (GameIsCapEventType($event['type'])) {
-                        $gameevent = GameCapEventText($event);
+                        // The [mm.ss] prefix carries the time, so omit it here.
+                        $gameevent = GameCapEventText($event, false);
                     }
 
                     $desc .= "<br/>";
@@ -197,7 +198,8 @@ switch ($feedtype) {
                 } elseif ($event['type'] == "offence") {
                     $gameevent = _("Offence");
                 } elseif (GameIsCapEventType($event['type'])) {
-                    $gameevent = GameCapEventText($event);
+                    // The [mm.ss] prefix carries the time, so omit it here.
+                    $gameevent = GameCapEventText($event, false);
                 }
 
                 if (!empty($desc)) {

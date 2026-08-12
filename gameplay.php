@@ -54,6 +54,54 @@ $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
 $mediaevents = GameMediaEvents($gameId);
 
+$renderGameEvent = function ($event) use ($hideTimeOnScoresheet) {
+    $gameevent = '';
+    if ($event['type'] == "timeout") {
+        $gameevent = _("Timeout");
+    } elseif ($event['type'] == "spirit_timeout") {
+        $gameevent = _("Spirit stoppage");
+    } elseif ($event['type'] == "turnover") {
+        $gameevent = _("Turnover");
+    } elseif ($event['type'] == "offence") {
+        $gameevent = _("Offence");
+    } elseif (GameIsCapEventType($event['type'])) {
+        // Caps carry their own time, so this renderer must not append one.
+        $gameevent = GameCapEventText($event, !$hideTimeOnScoresheet);
+    }
+
+    /*
+     * Timeouts stored at 0 carry no usable time: the free-text field in
+     * user/addscoresheet.php accepts "0.0" for "a timeout was taken, time not
+     * recorded", and TimeToSec() turns that into 0. Hide those rather than
+     * claim they happened on the first pull.
+     *
+     * 60 used to be hidden here too, because the same free-text field reads a
+     * bare "1" as one minute. The select-based scorekeeper page cannot produce
+     * that mistake and 1:00 is an ordinary timeout time, so hiding it lost real
+     * events instead of junk.
+     */
+    if ($event['type'] == "timeout" && $event['time'] == 0) {
+        return '';
+    }
+
+    if (GameIsCapEventType($event['type'])) {
+        //caps belong to neither team, so they carry no team class
+        $eventClass = "";
+    } elseif (intval($event['ishome']) > 0) {
+        $eventClass = " class='home'";
+    } else {
+        $eventClass = " class='guest'";
+    }
+
+    $eventHtml = "<div" . $eventClass . ">" . $gameevent;
+    if (!$hideTimeOnScoresheet && !GameIsCapEventType($event['type'])) {
+        $eventHtml .= "&nbsp;" . SecToMin($event['time']);
+    }
+    $eventHtml .= "</div>";
+
+    return $eventHtml;
+};
+
 if (GameHasStarted($game_result) > 0) {
     $html .= "<h1>" . utf8entities($game_result['hometeamname']);
     $html .= " - ";
@@ -73,6 +121,9 @@ if (GameHasStarted($game_result) > 0) {
     if (count($goals) <= 0) {
         $html .= "<h2>" . _("No scores entered") . "</h2>
 			  <p>" . _("Please check the status again later.") . "</p>";
+        foreach ($gameevents as $event) {
+            $html .= $renderGameEvent($event);
+        }
     } else {
 
         //score board
@@ -262,37 +313,7 @@ if (GameHasStarted($game_result) > 0) {
                       ((intval($event['time']) < intval($goal['time'])) ||
                         ($goalindex === $lastgoalindex))
                     ) {
-                        $gameevent = '';
-                        if ($event['type'] == "timeout") {
-                            $gameevent = _("Timeout");
-                        } elseif ($event['type'] == "spirit_timeout") {
-                            $gameevent = _("Spirit stoppage");
-                        } elseif ($event['type'] == "turnover") {
-                            $gameevent = _("Turnover");
-                        } elseif ($event['type'] == "offence") {
-                            $gameevent = _("Offence");
-                        } elseif (GameIsCapEventType($event['type'])) {
-                            $gameevent = GameCapEventText($event);
-                        }
-                        //hack to not show timeouts not correctly marked into scoresheet
-                        if ($event['type'] == "timeout" && ($event['time'] == 0 || $event['time'] == 60)) {
-                            continue;
-                        }
-
-                        if (GameIsCapEventType($event['type'])) {
-                            //caps belong to neither team, so they carry no team class
-                            $eventClass = "";
-                        } elseif (intval($event['ishome']) > 0) {
-                            $eventClass = " class='home'";
-                        } else {
-                            $eventClass = " class='guest'";
-                        }
-
-                        $html .= "<div" . $eventClass . ">" . $gameevent;
-                        if (!$hideTimeOnScoresheet) {
-                            $html .= "&nbsp;" . SecToMin($event['time']);
-                        }
-                        $html .= "</div>";
+                        $html .= $renderGameEvent($event);
                     }
                 }
                 //mediaevents

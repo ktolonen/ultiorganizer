@@ -25,7 +25,8 @@ $renderGameEventRow = function ($event) use ($game_result, $hideTimeOnScoresheet
     } elseif ($event['type'] == "offence") {
         $gameevent = _("offence");
     } elseif (GameIsCapEventType($event['type'])) {
-        $gameevent = GameCapEventText($event);
+        // This row prints the time in front, so the cap text omits its own.
+        $gameevent = GameCapEventText($event, false);
     }
 
     if (GameIsCapEventType($event['type'])) {
@@ -61,13 +62,12 @@ $html .= "<b>" . utf8entities($game_result['hometeamname']);
 $html .= " - ";
 $html .= utf8entities($game_result['visitorteamname']);
 $html .= " " . intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']) . "</b>";
-$html .= "</td></tr><tr><td>\n";
+$html .= "</td></tr>\n";
+$prevgoal = 0;
 if (count($goals) <= 0) {
-    $html .= _("No scores entered");
-    $html .= "</td></tr><tr><td>\n";
-    $html .=  "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a>";
+    $html .= "<tr><td>" . _("No scores entered") . "</td></tr>\n";
+    $html .= "<tr><td><a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a></td></tr>\n";
 } else {
-    $prevgoal = 0;
     foreach ($goals as $goal) {
 
         if ((intval($game_result['halftime']) >= $prevgoal) &&
@@ -108,18 +108,16 @@ if (count($goals) <= 0) {
 
         $prevgoal = intval($goal['time']);
     }
-
-    //gameevents after the last goal
-    foreach ($gameevents as $event) {
-        if (intval($event['time']) >= $prevgoal) {
-            $html .= $renderGameEventRow($event);
-        }
-    }
-
-    $html .= "</td></tr><tr><td>\n";
-    $html .= _("Scorekeeper(s)") . ": " . utf8entities($game_result['official']);
 }
-$html .= "</td></tr>\n";
+// Game events after the last goal, or every event when no goal has been recorded.
+foreach ($gameevents as $event) {
+    if (intval($event['time']) >= $prevgoal) {
+        $html .= $renderGameEventRow($event);
+    }
+}
+if (count($goals) > 0) {
+    $html .= "<tr><td>" . _("Scorekeeper(s)") . ": " . utf8entities($game_result['official']) . "</td></tr>\n";
+}
 $html .= "</table>\n";
 $html .= "<div class='action-row action-row--half'>\n";
 $html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("Scoreboard") . "</a>";

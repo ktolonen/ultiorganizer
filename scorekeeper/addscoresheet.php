@@ -512,11 +512,7 @@ if ($halfCapEvent || $timeCapEvent) {
         if (!$capEvent) {
             continue;
         }
-        $html .= "<li>" . GameCapEventText($capEvent);
-        if (!$hideTimeOnScoresheet) {
-            $html .= " (" . SecToMin($capEvent['time']) . ")";
-        }
-        $html .= "</li>\n";
+        $html .= "<li>" . GameCapEventText($capEvent, !$hideTimeOnScoresheet) . "</li>\n";
     }
     $html .= "</ul>\n";
 }

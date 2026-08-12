@@ -21,6 +21,7 @@ $html .= " - ";
 $html .= utf8entities($game_result['visitorteamname']);
 $html .= " " . intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']) . "</b>";
 $html .= "</td></tr><tr><td>\n";
+$prevgoal = 0;
 if (count($goals) <= 0) {
     $html .= _("No scores entered");
     $html .= "</td></tr><tr><td>\n";
@@ -29,7 +30,6 @@ if (count($goals) <= 0) {
     $html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "'>" . _("home team") . "</a> | ";
     $html .= "<a href='?view=mobile/scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "'>" . _("away team") . "</a>";
 
-    $prevgoal = 0;
     foreach ($goals as $goal) {
 
         if ((intval($game_result['halftime']) >= $prevgoal) &&
@@ -62,7 +62,8 @@ if (count($goals) <= 0) {
                     } elseif ($event['type'] == "offence") {
                         $gameevent = _("offence");
                     } elseif (GameIsCapEventType($event['type'])) {
-                        $gameevent = GameCapEventText($event);
+                        // The time is printed in front, so omit it from the text.
+                        $gameevent = GameCapEventText($event, false);
                     }
 
                     if (GameIsCapEventType($event['type'])) {
@@ -100,7 +101,47 @@ if (count($goals) <= 0) {
 
         $prevgoal = intval($goal['time']);
     }
+}
 
+// Game events after the last goal, or every event when no goal has been recorded.
+foreach ($gameevents as $event) {
+    if (intval($event['time']) < $prevgoal) {
+        continue;
+    }
+
+    $gameevent = '';
+    if ($event['type'] == "timeout") {
+        $gameevent = _("timeout");
+    } elseif ($event['type'] == "spirit_timeout") {
+        $gameevent = _("Spirit stoppage");
+    } elseif ($event['type'] == "turnover") {
+        $gameevent = _("turnover");
+    } elseif ($event['type'] == "offence") {
+        $gameevent = _("offence");
+    } elseif (GameIsCapEventType($event['type'])) {
+        // The time is printed in front, so omit it from the text.
+        $gameevent = GameCapEventText($event, false);
+    }
+
+    if (GameIsCapEventType($event['type'])) {
+        $team = "";
+        $eventStyle = "";
+    } elseif (intval($event['ishome']) > 0) {
+        $team = utf8entities($game_result['hometeamname']);
+        $eventStyle = "class='homefontcolor'";
+    } else {
+        $team = utf8entities($game_result['visitorteamname']);
+        $eventStyle = "class='guestfontcolor'";
+    }
+
+    $html .= "</td></tr><tr><td $eventStyle>\n";
+    if (!$hideTimeOnScoresheet) {
+        $html .= SecToMin($event['time']) . " ";
+    }
+    $html .= trim($team . " " . $gameevent);
+}
+
+if (count($goals) > 0) {
     $html .= "</td></tr><tr><td>\n";
     $html .= _("Scorekeeper(s)") . ": " . utf8entities($game_result['official']);
 }

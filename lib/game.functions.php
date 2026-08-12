@@ -5,6 +5,7 @@ denyDirectLibAccess(__FILE__);
 
 require_once __DIR__ . '/accreditation.functions.php';
 require_once __DIR__ . '/configuration.functions.php';
+require_once __DIR__ . '/common.functions.php';
 
 function SeasonScoreCounter($seasonId = "")
 {
@@ -768,17 +769,35 @@ function GameCapEventName($type)
     return '';
 }
 
-function GameCapEventText($event)
+/**
+ * Cap event as replay text: which cap was called, when, and the point cap it
+ * set -- "Time cap 6.45 - new point cap 4". "Point cap" is the project term for
+ * a score cap, see docs/terminology.md.
+ *
+ * $showTime decides who prints the time, and depends on where the caller puts
+ * it. Renderers that lead with the time (the scorekeeper pages, mobile, the
+ * [mm.ss] prefix in ext/rss.php) already read correctly and pass false, keeping
+ * their own stamp: "6.45 Time cap - new point cap 4". Renderers that would
+ * append it after the label instead pass !$hideTimeOnScoresheet and print no
+ * time of their own, because a trailing stamp would leave two unlabelled
+ * numbers side by side: "Time cap - new point cap 4 6.45".
+ *
+ * @param array $event Game event row
+ * @param bool $showTime Whether this text should carry the event time
+ * @return string
+ */
+function GameCapEventText($event, $showTime = true)
 {
-    $target = (int) ($event['info'] ?? 0);
-    if (($event['type'] ?? '') === 'half_cap') {
-        return sprintf(_("Halftime cap target: %d"), $target);
-    }
-    if (($event['type'] ?? '') === 'time_cap') {
-        return sprintf(_("Time cap target: %d"), $target);
+    $name = GameCapEventName($event['type'] ?? '');
+    if ($name === '') {
+        return '';
     }
 
-    return '';
+    if ($showTime) {
+        $name .= " " . SecToMin((int) ($event['time'] ?? 0));
+    }
+
+    return sprintf(_("%s - new point cap %d"), $name, (int) ($event['info'] ?? 0));
 }
 
 function GameSetCapEvent($gameId, $type, $time, $target)
@@ -813,7 +832,7 @@ function GameSetCapEvent($gameId, $type, $time, $target)
             (int) $eventNum,
         );
 
-        return DBQuery($query);
+        return DBExecute($query);
     }
 
     $lastNum = (int) DBQueryToValue(
@@ -829,7 +848,7 @@ function GameSetCapEvent($gameId, $type, $time, $target)
         $target,
     );
 
-    return DBQuery($query);
+    return DBExecute($query);
 }
 
 function GameRemoveCapEvent($gameId, $type)
@@ -849,7 +868,7 @@ function GameRemoveCapEvent($gameId, $type)
         DBEscapeString($type),
     );
 
-    return DBQuery($query);
+    return DBExecute($query);
 }
 
 function GameMediaEvents($gameId)

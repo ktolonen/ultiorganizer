@@ -25,7 +25,8 @@ $renderGameEventRow = function ($event) use ($game_result, $hideTimeOnScoresheet
     } elseif ($event['type'] == "offence") {
         $gameevent = _("offence");
     } elseif (GameIsCapEventType($event['type'])) {
-        $gameevent = GameCapEventText($event);
+        // This row prints the time in front, so the cap text omits its own.
+        $gameevent = GameCapEventText($event, false);
     } else {
         $gameevent = $event['type'];
     }
@@ -89,11 +90,11 @@ $html .= "<h3>" . _("Gameplay summary") . "</h3>";
 $html .= "<table class='gameplay-table'>\n";
 $html .= "<tr><td>\n";
 $html .= "<b>" . utf8entities($game_result['hometeamname']) . " - " . utf8entities($game_result['visitorteamname']) . " " . $home . " - " . $away . "</b>";
-$html .= "</td></tr><tr><td>\n";
+$html .= "</td></tr>\n";
+$prevgoal = 0;
 if (!count($goalRows)) {
-    $html .= _("No scores entered");
+    $html .= "<tr><td>" . _("No scores entered") . "</td></tr>\n";
 } else {
-    $prevgoal = 0;
     foreach ($goalRows as $goal) {
         if ((intval($game_result['halftime']) >= $prevgoal) && (intval($game_result['halftime']) < intval($goal['time']))) {
             $html .= "<tr class='gameplay-row gameplay-row--halftime'><td>";
@@ -127,15 +128,13 @@ if (!count($goalRows)) {
 
         $prevgoal = intval($goal['time']);
     }
-
-    //gameevents after the last goal
-    foreach ($gameevents as $event) {
-        if (intval($event['time']) >= $prevgoal) {
-            $html .= $renderGameEventRow($event);
-        }
+}
+// Game events after the last goal, or every event when no goal has been recorded.
+foreach ($gameevents as $event) {
+    if (intval($event['time']) >= $prevgoal) {
+        $html .= $renderGameEventRow($event);
     }
 }
-$html .= "</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</div><!-- /content -->\n\n";
 

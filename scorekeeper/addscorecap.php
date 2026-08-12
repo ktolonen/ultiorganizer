@@ -43,9 +43,9 @@ if (isset($_POST['save'])) {
     }
 
     if ($target > 255) {
-        $error = _("The cap target must be 255 or less.");
+        $error = _("The new point cap must be 255 or less.");
     } elseif ($target < 1 || (!$existingEvent && $target <= $currentScore)) {
-        $error = _("The cap target must be greater than the current score.");
+        $error = _("The new point cap must be greater than the current score.");
     } else {
         GameSetCapEvent($gameId, $capType, $eventTime, $target);
         header("location:?view=addscoresheet&game=" . $gameId);
@@ -80,7 +80,7 @@ if (!$hideTimeOnScoresheet) {
         $capss = 0;
     }
 
-    $html .= "<label for='timemm' class='select'>" . _("Cap time") . " " . _("min") . ":" . _("sec") . "</label>";
+    $html .= "<label for='timemm' class='select'>" . sprintf(_("%s called at"), $capName) . " " . _("min") . ":" . _("sec") . "</label>";
     $html .= "<div class='ui-grid-b'>";
     $html .= "<div class='ui-block-a'>\n";
     $html .= "<select id='timemm' name='timemm' >";
@@ -100,7 +100,7 @@ if (!$hideTimeOnScoresheet) {
     $html .= "</div>";
     $html .= "</div>";
 }
-$html .= "<label for='target'>" . _("Cap target") . "</label>\n";
+$html .= "<label for='target'>" . _("New point cap") . "</label>\n";
 $html .= "<input type='number' id='target' name='target' min='" . $minTarget . "' max='255' value='" . $target . "' required='required'/>\n";
 $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save") . "'/>\n";
 if ($existingEvent) {
