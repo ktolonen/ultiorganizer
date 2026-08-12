@@ -99,6 +99,28 @@ post_max_size = 66M
 
 With Apache mod_php you may instead set `php_value upload_max_filesize 64M` in a vhost or directory `.htaccess`, but do not ship `php_value` directives in the release package: they cause a 500 error under PHP-FPM. If the limits are too low, the importer reports that the uploaded file is too large instead of failing silently. The local development environment configures these limits in `docs/dev/php.dev.ini`.
 
+## Co-hosted installations
+
+Running more than one installation on the same server, such as a test instance next to a production one, needs a few settings to differ between them. `MAINTENANCE_RUNTIME_DIR` and `PERSISTENT_CACHE_DIR` must be distinct so the instances do not share upgrade locks or serve each other's cached pages. `UO_SESSION_NAME` must be distinct so they do not share a session cookie.
+
+### Why the session cookie name is not enough
+
+Session cookie names are scoped per domain, not per directory, so two installations on one domain both receive the cookie named `UO_SESSID`. That is what makes a login on one instance appear on the other. Giving each installation its own `UO_SESSION_NAME` stops that.
+
+It does not, however, isolate the stored session data. PHP's `files` session handler stores each session as `sess_<id>` inside `session.save_path`, and the session name is not part of that key. When two installations share a `save_path`, a session id issued by one can be presented to the other under the other's cookie name, and the second installation reads the first installation's session payload. `session.use_strict_mode` does not prevent this: it only rejects session ids that no session has ever used, and here the id is genuinely present in the shared directory.
+
+Ultiorganizer therefore stamps each session with a fingerprint of the installation that created it, derived from `DB_HOST`, `DB_DATABASE`, `BASEURL` and `UO_SESSION_NAME` (see `startSecureSession()` in `lib/session.functions.php`). A session presented to a different installation is discarded and replaced with a new empty one, so no application code sees the foreign session. This works without any server configuration, which matters on shared hosting where `php.ini` is not available.
+
+### Separating session storage
+
+Where you do control the PHP configuration, give each installation its own session directory as well. In a PHP-FPM pool:
+
+```ini
+php_admin_value[session.save_path] = /var/lib/php/sessions/ultiorganizer-prod
+```
+
+One caveat: on Debian and Ubuntu, PHP ships with `session.gc_probability = 0` and expired sessions are removed by a system cron job or systemd timer that only cleans the *default* session directory. A custom `session.save_path` is not swept by it, so session files accumulate indefinitely unless you either add your own cleanup for that directory or re-enable PHP's probabilistic collector with `session.gc_probability = 1`.
+
 ## Development checkout deployments
 
 Developers can continue to run Ultiorganizer directly from the repository checkout. That layout is useful for local work because it includes documentation, development tooling, and review assets.

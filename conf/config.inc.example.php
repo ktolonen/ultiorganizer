@@ -34,6 +34,22 @@ define('MAINTENANCE_RUNTIME_DIR', '/tmp/ultiorganizer-maintenance');
 define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
 
 /**
+ * Session cookie name.
+ *
+ * UO_SESSION_NAME must be unique per installation. Installations sharing a
+ * domain otherwise share one session cookie, so a login on one is picked up by
+ * the other. install.php generates a unique value; installations upgraded from
+ * earlier releases fall back to the legacy 'UO_SESSID' name when the constant is
+ * absent. Only letters, digits, '-' and '_' are accepted, and the value must not
+ * be all digits.
+ *
+ * This is one of several settings that must differ between installations sharing
+ * a server, together with MAINTENANCE_RUNTIME_DIR and PERSISTENT_CACHE_DIR. See
+ * docs/deployment.md for isolating co-hosted installations.
+ */
+define('UO_SESSION_NAME', 'UO_SESSID_example1');
+
+/**
  * Site customization and localization defaults.
  *
  * CUSTOMIZATIONS selects the cust/<id>/ skin and override files. DATE_FORMAT
