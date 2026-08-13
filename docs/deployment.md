@@ -101,15 +101,29 @@ With Apache mod_php you may instead set `php_value upload_max_filesize 64M` in a
 
 ## Co-hosted installations
 
-Running more than one installation on the same server, such as a test instance next to a production one, needs a few settings to differ between them. `MAINTENANCE_RUNTIME_DIR` and `PERSISTENT_CACHE_DIR` must be distinct so the instances do not share upgrade locks or serve each other's cached pages. `UO_SESSION_NAME` must be distinct so they do not share a session cookie.
+Running more than one installation on the same server, such as a test instance next to a production one, needs the maintenance runtime directory and the session cookie name to differ between them, so the instances share neither upgrade state nor a session cookie.
+
+Neither normally has to be configured. `MAINTENANCE_RUNTIME_DIR` and `UO_SESSION_NAME` are both optional, and while they are undefined, `DBMaintenanceRuntimeDir()` and `sessionCookieName()` derive their values from the installation's own directory — different directories, different values. That is why `conf/config.inc.example.php` ships both settings commented out: a shipped value is the one nobody changes. Define them only when you need specific values, and then keep them unique per installation.
+
+`PERSISTENT_CACHE_DIR` does not have to be distinct. The cache helper already isolates installations from each other by storing its files in a per-install subdirectory keyed on the database connection, so two installations pointed at different databases cannot read each other's entries even when the configured directory is the same. See [`persistent-cache.md`](persistent-cache.md) for the derivation. Installations pointed at the *same* database do share cache entries; keep the directories distinct if you want them separated anyway.
+
+### Why the maintenance runtime directory must be distinct
+
+`MAINTENANCE_RUNTIME_DIR` is used verbatim, without the per-install subdirectory the cache adds, because `maintenance.flag` is a documented file that admins create by hand for manual maintenance mode (see [`database-upgrades.md`](database-upgrades.md)). Two installations sharing the directory therefore share one flag and one lock: an automatic upgrade started by the test instance puts production into maintenance mode until it finishes, and a failed upgrade leaves both instances there.
+
+Set `MAINTENANCE_RUNTIME_DIR` explicitly only when the system temporary directory is unsuitable, and then give each installation its own path. `install.php` asks for the directory and prefills the derived path, so an admin who wants a specific location can enter it during installation.
+
+The one case that defeats the derived defaults is cloning an existing installation directory *together with its `conf/config.inc.php`*: the copied file carries whatever the original defined, and re-running `install.php` keeps values that are already defined rather than deriving fresh ones. After cloning, remove `MAINTENANCE_RUNTIME_DIR` and `UO_SESSION_NAME` from the copied configuration, or replace them with values of the new installation's own.
 
 ### Why the session cookie name is not enough
 
-Session cookie names are scoped per domain, not per directory, so two installations on one domain both receive the cookie named `UO_SESSID`. That is what makes a login on one instance appear on the other. Giving each installation its own `UO_SESSION_NAME` stops that.
+Session cookie names are scoped per domain, not per directory. Releases before the derived default named every installation's cookie `UO_SESSID`, so two installations on one domain both received it, and a login on one appeared on the other. A cookie name of its own stops that.
+
+Because the derived name is part of what identifies a session, installations upgrading from those releases get a new cookie name and sign their users out once. That is a single re-login, not an error.
 
 It does not, however, isolate the stored session data. PHP's `files` session handler stores each session as `sess_<id>` inside `session.save_path`, and the session name is not part of that key. When two installations share a `save_path`, a session id issued by one can be presented to the other under the other's cookie name, and the second installation reads the first installation's session payload. `session.use_strict_mode` does not prevent this: it only rejects session ids that no session has ever used, and here the id is genuinely present in the shared directory.
 
-Ultiorganizer therefore stamps each session with a fingerprint of the installation that created it, derived from `DB_HOST`, `DB_DATABASE`, `BASEURL` and `UO_SESSION_NAME` (see `startSecureSession()` in `lib/session.functions.php`). A session presented to a different installation is discarded and replaced with a new empty one, so no application code sees the foreign session. This works without any server configuration, which matters on shared hosting where `php.ini` is not available.
+Ultiorganizer therefore stamps each session with a fingerprint of the installation that created it, derived from `DB_HOST`, `DB_DATABASE`, `BASEURL` and the session cookie name (see `startSecureSession()` in `lib/session.functions.php`). A session presented to a different installation is discarded and replaced with a new empty one, so no application code sees the foreign session. This works without any server configuration, which matters on shared hosting where `php.ini` is not available.
 
 Because those four values make up the fingerprint, changing any of them on a running installation invalidates existing sessions and signs everyone out. Moving an installation to a new address by editing `BASEURL` is the usual case. This is a one-time re-login, not an error.
 

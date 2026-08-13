@@ -147,6 +147,10 @@ Validation after save checks:
 - inter-pool conflicts
 - move-time constraints from `uo_movingtime`
 
+Conflict warnings are limited to pairs that include at least one game assigned on the scheduling board being saved. The other game may be scheduled outside the selected reservations when it creates a real conflict, but pre-existing conflicts unrelated to the current board are not reported.
+
+The two conflict queries return their pairs in the order the check needs, and the pairs are not reordered. `TimetableIntraPoolConflicts()` constrains `g1.time <= g2.time`, so those pairs are chronological. `TimetableInterPoolConflicts()` returns the source-pool game as `game1` and the game in the pool the team moves to as `game2`; that pair is a dependency, so a destination game scheduled before its source game is reported even when the two do not overlap.
+
 `admin/editgame.php` is the direct edit path for one game row. It can change teams, placeholders, reservation, time, pool, validity, responsible team, translated game name, and live-stream fields.
 
 ## Settings and Flags

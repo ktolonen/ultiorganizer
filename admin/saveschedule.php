@@ -58,6 +58,7 @@ if ($body === false) {
 $season = "";
 $warningResponse = "";
 $errorResponse = "";
+$scheduledGameIds = [];
 
 $places = explode("|", $body);
 foreach ($places as $placeGameStr) {
@@ -82,6 +83,7 @@ foreach ($places as $placeGameStr) {
                 $warningResponse .= "<p>" . sprintf(_("Game %s exceeds the reserved end time %s."), GameName($gameInfo), ShortTimeFormat($resInfo['endtime'])) . "</p>";
             }
             ScheduleGame($gameArr[0], $time, $games[0]);
+            $scheduledGameIds[(int) $gameArr[0]] = true;
         }
     } else {
         for ($i = 1; $i < count($games); $i++) {
@@ -102,6 +104,11 @@ if ($season) {
     $conflicts = TimetableIntraPoolConflicts($season);
 
     foreach ($conflicts as $conflict) {
+        if (!isset($scheduledGameIds[(int) $conflict['game1']]) && !isset($scheduledGameIds[(int) $conflict['game2']])) {
+            continue;
+        }
+        // The query constrains g1.time <= g2.time, so the pair is already in
+        // chronological order.
         if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
             $game1End = strtotime($conflict['time1']) + $conflict['slot1'] * 60;
             $travelEnd = $game1End + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']);
@@ -127,6 +134,12 @@ if ($season) {
     $conflicts = TimetableInterPoolConflicts($season);
 
     foreach ($conflicts as $conflict) {
+        if (!isset($scheduledGameIds[(int) $conflict['game1']]) && !isset($scheduledGameIds[(int) $conflict['game2']])) {
+            continue;
+        }
+        // game1 is the game in the source pool and game2 the game in the pool the
+        // team moves to, so this pair is a dependency and must not be reordered:
+        // game1 has to finish before game2 starts even when they do not overlap.
         if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
             $game1End = strtotime($conflict['time1']) + $conflict['slot1'] * 60;
             $travelEnd = $game1End + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']);

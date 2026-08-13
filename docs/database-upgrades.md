@@ -10,6 +10,7 @@ This page mirrors the database-change guidance from `AGENTS.md`.
 - `upgradeXX()` means "upgrade the schema to version `XX`".
 - Bump `DB_VERSION` whenever a new upgrade step is added.
 - Automatic update maintenance uses `MAINTENANCE_RUNTIME_DIR/maintenance.flag` plus the transient lock file `MAINTENANCE_RUNTIME_DIR/maintenance.lock`.
+- `MAINTENANCE_RUNTIME_DIR` is usually not defined in `conf/config.inc.php`. `DBMaintenanceRuntimeDir()` then derives it as `<system temporary directory>/ultiorganizer-maintenance-<hash of the installation directory>`, which keeps co-hosted installations apart. The installer's status page shows the resolved path, so run `install.php` to read it off rather than computing the hash by hand. Anything creating `maintenance.flag` by hand needs that resolved path.
 
 ## Required workflow
 

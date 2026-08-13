@@ -23,34 +23,34 @@ define('BASEURL', 'http://localhost/ultiorganizer');
 define('UPLOAD_DIR', 'images/uploads/');
 
 /**
- * Writable runtime directories.
+ * Writable directory for automatic database-upgrade state and locks.
  *
- * MAINTENANCE_RUNTIME_DIR stores automatic database-upgrade state and locks.
- * PERSISTENT_CACHE_DIR stores short-lived cross-request cache files. Both must
- * be writable by the web server. Set PERSISTENT_CACHE_DIR to '' to disable the
- * filesystem cache even when the admin cache toggle is enabled.
+ * Left undefined on purpose: the path is then derived from this installation's
+ * own directory. Installations sharing the directory share one maintenance flag
+ * and one upgrade lock, so define it only if you need to, and give each
+ * installation on the server a unique path.
  */
-define('MAINTENANCE_RUNTIME_DIR', '/tmp/ultiorganizer-maintenance');
+// define('MAINTENANCE_RUNTIME_DIR', '/tmp/ultiorganizer-maintenance');
+
+/**
+ * Writable directory for short-lived cross-request cache files.
+ *
+ * Installations may share it: cache files go into a per-install subdirectory
+ * keyed on the database connection. Set to '' to disable the filesystem cache
+ * even when the admin cache toggle is enabled.
+ */
 define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
 
 /**
  * Session cookie name.
  *
- * UO_SESSION_NAME must be unique per installation. Installations sharing a
- * domain otherwise share one session cookie, so a login on one is picked up by
- * the other. install.php generates a unique value; installations upgraded from
- * earlier releases fall back to the legacy 'UO_SESSID' name when the constant is
- * absent. Only letters, digits, '-' and '_' are accepted, and the value must not
- * be all digits.
- *
- * This is one of several settings that must differ between installations sharing
- * a server, together with MAINTENANCE_RUNTIME_DIR and PERSISTENT_CACHE_DIR. See
- * docs/deployment.md for isolating co-hosted installations.
- *
- * When configuring by hand instead of running install.php, replace the suffix
- * below with a value unique to this installation before enabling the line.
+ * Left undefined on purpose: the name is then derived from this installation's
+ * own directory. Installations sharing a domain must not share a cookie name, or
+ * a login on one is picked up by the other, so define it only if you need to, and
+ * give each installation on the domain a unique name. Only letters, digits, '-'
+ * and '_' are accepted, and the name must not be all digits.
  */
-// define('UO_SESSION_NAME', 'UO_SESSID_CHANGE_ME');
+// define('UO_SESSION_NAME', 'UO_SESSID');
 
 /**
  * Site customization and localization defaults.
