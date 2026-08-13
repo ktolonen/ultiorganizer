@@ -201,24 +201,25 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
             } else {
                 $html .= "<td></td>";
             }
+            $gamelinks = [];
             if ($game['hometeam'] && $game['visitorteam']) {
-                $html .= "<td class='right nowrap'><a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Result") . "</a> | ";
-                $html .= "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Players") . "</a> | ";
-                $html .= "<a href='?view=user/addscoresheet&amp;game=$gameId'>" . _("Scoresheet") . "</a>";
+                $gamelinks[] = "<a href='?view=user/addresult&amp;game=" . $gameId . "'>" . _("Result") . "</a>";
+                $gamelinks[] = "<a href='?view=user/addplayerlists&amp;game=" . $gameId . "'>" . _("Players") . "</a>";
+                $gamelinks[] = "<a href='?view=user/addscoresheet&amp;game=$gameId'>" . _("Scoresheet") . "</a>";
                 if (!empty($seasoninfo['spiritmode'])) {
                     $spiritUrl = SpiritEntryUrl($gameId);
                     if (!empty($spiritUrl)) {
-                        $html .= " | <a href='" . $spiritUrl . "'>" . _("Spirit score") . "</a>";
+                        $gamelinks[] = "<a href='" . $spiritUrl . "'>" . _("Spirit score") . "</a>";
                     }
                 }
                 if (ShowDefenseStats()) {
-                    $html .= " | <a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defence sheet") . "</a>";
+                    $gamelinks[] = "<a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defence sheet") . "</a>";
                 }
-                if (isSeasonAdmin($seasoninfo['season_id'])) {
-                    $html .= " | <a href='?view=admin/editgame&amp;season=" . $season . "&amp;game=" . $gameId . "'>" . _("Edit") . "</a>";
-                }
-                $html .= "</td>";
             }
+            if (isSeasonAdmin($seasoninfo['season_id'])) {
+                $gamelinks[] = "<a href='?view=admin/editgame&amp;season=" . $season . "&amp;game=" . $gameId . "'>" . _("Edit") . "</a>";
+            }
+            $html .= "<td class='right nowrap'>" . implode(" | ", $gamelinks) . "</td>";
             $html .= "</tr>";
         }
         $html .= "</table>";
