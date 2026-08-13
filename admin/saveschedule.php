@@ -49,34 +49,6 @@ function ConflictMessage($game1Context, $game2Context)
     );
 }
 
-function OrderConflictChronologically($conflict)
-{
-    if (strtotime($conflict['time1']) <= strtotime($conflict['time2'])) {
-        return $conflict;
-    }
-
-    $pairedFields = [
-        'game',
-        'pool',
-        'home',
-        'visitor',
-        'scheduling_home',
-        'scheduling_visitor',
-        'reservation',
-        'time',
-        'slot',
-        'location',
-        'field',
-    ];
-    foreach ($pairedFields as $field) {
-        $firstValue = $conflict[$field . '1'];
-        $conflict[$field . '1'] = $conflict[$field . '2'];
-        $conflict[$field . '2'] = $firstValue;
-    }
-
-    return $conflict;
-}
-
 
 $body = file_get_contents('php://input');
 if ($body === false) {
@@ -135,8 +107,9 @@ if ($season) {
         if (!isset($scheduledGameIds[(int) $conflict['game1']]) && !isset($scheduledGameIds[(int) $conflict['game2']])) {
             continue;
         }
+        // The query constrains g1.time <= g2.time, so the pair is already in
+        // chronological order.
         if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
-            $conflict = OrderConflictChronologically($conflict);
             $game1End = strtotime($conflict['time1']) + $conflict['slot1'] * 60;
             $travelEnd = $game1End + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']);
             $game2Start = strtotime($conflict['time2']);
@@ -164,8 +137,10 @@ if ($season) {
         if (!isset($scheduledGameIds[(int) $conflict['game1']]) && !isset($scheduledGameIds[(int) $conflict['game2']])) {
             continue;
         }
+        // game1 is the game in the source pool and game2 the game in the pool the
+        // team moves to, so this pair is a dependency and must not be reordered:
+        // game1 has to finish before game2 starts even when they do not overlap.
         if (!empty($conflict['time2']) && !empty($conflict['time1'])) {
-            $conflict = OrderConflictChronologically($conflict);
             $game1End = strtotime($conflict['time1']) + $conflict['slot1'] * 60;
             $travelEnd = $game1End + TimetableMoveTime($movetimes, $conflict['location1'], $conflict['field1'], $conflict['location2'], $conflict['field2']);
             $game2Start = strtotime($conflict['time2']);
