@@ -20,6 +20,7 @@ Related scorekeeper pages split metadata into smaller task-oriented views:
 - `scorekeeper/addcomment.php`
 - `scorekeeper/addfirstoffence.php`
 - `scorekeeper/addhalftime.php`
+- `scorekeeper/addscorecap.php`
 - `scorekeeper/addtimeouts.php`
 - `scorekeeper/addspirittimeouts.php`
 - `scorekeeper/deletescore.php`
@@ -210,6 +211,7 @@ Scorekeeper stores related game metadata through separate pages:
 - `addcomment.php`: game note
 - `addfirstoffence.php`: starting offence
 - `addhalftime.php`: halftime end time
+- `addscorecap.php`: halftime-cap and time-cap point caps
 - `addtimeouts.php`: ordinary timeouts
 - `addspirittimeouts.php`: spirit stoppages when spirit mode is enabled and timed scoresheets are visible
 
@@ -228,6 +230,27 @@ plus `uo_pool.timeoutsovertime`, falling back to 4 regulation slots when the poo
 The page never renders fewer slots than there are timeouts already recorded for a team, because
 saving clears all timeouts and rewrites only the submitted slots, so a lowered pool limit would
 otherwise delete existing entries.
+
+## Caps
+
+The additional game-data actions in `addscoresheet.php` include `Halftime cap` and `Time cap` when
+timed actions are available. A cap records when it was called and the new point cap it set for the
+rest of the game. `Point cap` is the project term for a score cap, see `docs/terminology.md`.
+
+Selecting either action:
+
+- suggests the current rounded game-clock time, or the latest point time when the game clock is not in use,
+- suggests a point cap one goal above the current leading score,
+- lets the scorekeeper adjust both values, or update and remove an existing cap.
+
+An existing cap stays editable after the score has reached its point cap, which is the normal end
+state of a capped game; only a new cap has to name a point cap the teams can still play to.
+
+Caps are stored in `uo_gameevent` with type `half_cap` or `time_cap`: the event time in `time`, the
+point cap in `info`, exposed as `target` in the v1 gameplay API. Replays render them through
+`GameCapEventText()` as neutral game events rather than assigning them to the home or away team.
+When `hide_time_on_scoresheet` is enabled, cap actions are hidden and saved cap times are omitted
+from scoresheet summaries and replays.
 
 ## Ending the game
 
@@ -260,7 +283,7 @@ Scorekeeper uses the same core scoresheet tables as the rest of the application:
 - `uo_goal`: detailed scoring sequence
 - `uo_timeout`: ordinary timeouts
 - `uo_spirit_timeout`: spirit stoppages
-- `uo_gameevent`: game events such as starting offence and other event markers
+- `uo_gameevent`: game events such as starting offence and cap markers
 - `uo_comment`: game notes
 
 The live clock additionally uses these `uo_game` columns:

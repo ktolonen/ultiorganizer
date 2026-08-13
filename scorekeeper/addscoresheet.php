@@ -106,6 +106,12 @@ $scores = GameGoals($gameId);
 $lastscore = count($scores) ? $scores[count($scores) - 1] : null;
 $timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
+$capEventTime = $useGameClock
+    ? ((int) $timerState['mm'] * 60) + (int) $timerState['rss']
+    : (int) ($lastscore['time'] ?? 0);
+$capEvents = GameCapEvents($gameId);
+$halfCapEvent = $capEvents['half_cap'] ?? null;
+$timeCapEvent = $capEvents['time_cap'] ?? null;
 
 $uo_goal = [
     "game" => $gameId,
@@ -492,12 +498,24 @@ if ($canShowTimedActions) {
         $html .= "<a href='?view=addspirittimeouts&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Spirit stoppages") . "</a>";
     }
     $html .= "<a href='?view=addhalftime&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Halftime") . "</a>";
+    $html .= "<a class='score-cap-button' href='?view=addscorecap&amp;game=" . $gameId . "&amp;cap=half_cap&amp;time=" . $capEventTime . "' data-role='button' data-ajax='false'>" . _("Halftime cap") . "</a>";
+    $html .= "<a class='score-cap-button' href='?view=addscorecap&amp;game=" . $gameId . "&amp;cap=time_cap&amp;time=" . $capEventTime . "' data-role='button' data-ajax='false'>" . _("Time cap") . "</a>";
 }
 $html .= "<a href='?view=addfirstoffence&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("First offence") . "</a>";
 $html .= "<a href='?view=addofficial&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Scorekeeper(s)") . "</a>";
 $html .= "<a href='?view=addcomment&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Game note") . "</a>";
 $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Roster") . "</a>";
 $html .= "</div>\n";
+if ($halfCapEvent || $timeCapEvent) {
+    $html .= "<ul>\n";
+    foreach ([$halfCapEvent, $timeCapEvent] as $capEvent) {
+        if (!$capEvent) {
+            continue;
+        }
+        $html .= "<li>" . GameCapEventText($capEvent, !$hideTimeOnScoresheet) . "</li>\n";
+    }
+    $html .= "</ul>\n";
+}
 
 if (!$useGameClock) {
     $html .= "<h3>" . _("Game has ended") . "</h3>";
@@ -582,6 +600,20 @@ if ($showClock) {
   } else {
     showPlayerSelects(false);
   }
+
+  // The cap pages stamp the time carried in the link, so refresh it from the
+  // live clock at click time instead of the value rendered with the page.
+  var capButtons = document.querySelectorAll('.score-cap-button');
+  capButtons.forEach(function(button) {
+    button.addEventListener('click', function() {
+      if (!window.scorekeeperClock || !window.scorekeeperClock.isActive()) {
+        return;
+      }
+
+      var rounded = window.scorekeeperClock.roundedTime();
+      this.href = this.href.replace(/([?&])time=\d+/, '$1time=' + ((rounded.mm * 60) + rounded.ss));
+    });
+  });
 
   var pauseButton = document.getElementById('pausegame');
   if (pauseButton) {

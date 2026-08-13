@@ -153,6 +153,9 @@ switch ($feedtype) {
                         $gameevent = _("Turnover");
                     } elseif ($event['type'] == "offence") {
                         $gameevent = _("Offence");
+                    } elseif (GameIsCapEventType($event['type'])) {
+                        // The [mm.ss] prefix carries the time, so omit it here.
+                        $gameevent = GameCapEventText($event, false);
                     }
 
                     $desc .= "<br/>";
@@ -160,7 +163,9 @@ switch ($feedtype) {
                         $desc .= "[" . SecToMin($event['time']) . "] ";
                     }
 
-                    if (intval($event['ishome']) > 0) {
+                    if (GameIsCapEventType($event['type'])) {
+                        $desc .= $gameevent;
+                    } elseif (intval($event['ishome']) > 0) {
                         $desc .=  $gameevent . " " . $game['hometeamname'];
                     } else {
                         $desc .= $gameevent . " " . $game['visitorteamname'];
@@ -192,6 +197,9 @@ switch ($feedtype) {
                     $gameevent = _("Turnover");
                 } elseif ($event['type'] == "offence") {
                     $gameevent = _("Offence");
+                } elseif (GameIsCapEventType($event['type'])) {
+                    // The [mm.ss] prefix carries the time, so omit it here.
+                    $gameevent = GameCapEventText($event, false);
                 }
 
                 if (!empty($desc)) {
@@ -201,7 +209,9 @@ switch ($feedtype) {
                     $desc .= "[" . SecToMin($event['time']) . "] ";
                 }
 
-                if (intval($event['ishome']) > 0) {
+                if (GameIsCapEventType($event['type'])) {
+                    $desc .= $gameevent;
+                } elseif (intval($event['ishome']) > 0) {
                     $desc .=  $gameevent . " " . $game['hometeamname'];
                 } else {
                     $desc .= $gameevent . " " . $game['visitorteamname'];
