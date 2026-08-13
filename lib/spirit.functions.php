@@ -206,12 +206,12 @@ function HasFullGameSpiritEditRight($gameId, $game = null)
         return false;
     }
 
+    // Spirit scores stay with the event's spirit and division admins. Per-game
+    // and per-reservation admins run the scoring desk, which is deliberately
+    // kept separate from spirit reporting.
     $seriesId = GameSeries($gameId);
-    $reservationId = GameReservation($gameId);
 
-    return isset($_SESSION['userproperties']['userrole']['seriesadmin'][$seriesId]) ||
-        isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservationId]) ||
-        isset($_SESSION['userproperties']['userrole']['gameadmin'][$gameId]);
+    return isset($_SESSION['userproperties']['userrole']['seriesadmin'][$seriesId]);
 }
 
 function HasFullGameSpiritViewRight($gameId, $game = null)
