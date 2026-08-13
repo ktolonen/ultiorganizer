@@ -206,12 +206,12 @@ function HasFullGameSpiritEditRight($gameId, $game = null)
         return false;
     }
 
+    // Spirit scores stay with the event's spirit and division admins. Per-game
+    // and per-reservation admins run the scoring desk, which is deliberately
+    // kept separate from spirit reporting.
     $seriesId = GameSeries($gameId);
-    $reservationId = GameReservation($gameId);
 
-    return isset($_SESSION['userproperties']['userrole']['seriesadmin'][$seriesId]) ||
-        isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservationId]) ||
-        isset($_SESSION['userproperties']['userrole']['gameadmin'][$gameId]);
+    return isset($_SESSION['userproperties']['userrole']['seriesadmin'][$seriesId]);
 }
 
 function HasFullGameSpiritViewRight($gameId, $game = null)
@@ -1129,8 +1129,18 @@ function SpiritScoreRowsByGameTeam($gameId, $teamId)
     return DBQueryToArray($query);
 }
 
-function SpiritToolRowsBySeason($season)
+/**
+ * Spirit score rows for a whole season.
+ *
+ * @param string $season
+ * @param bool $onlyVisible Restrict to games whose spirit scores are publicly
+ *        visible, honouring the event's "show only on complete" setting. Spirit
+ *        tools run unfiltered so admins can find incomplete submissions.
+ * @return array
+ */
+function SpiritToolRowsBySeason($season, $onlyVisible = false)
 {
+    $visibilityCondition = $onlyVisible ? " AND g.show_spirit=1" : "";
     $query = sprintf(
         "SELECT
 			g.game_id,
@@ -1139,6 +1149,8 @@ function SpiritToolRowsBySeason($season)
 			s.name AS division,
 			p.name AS pool,
 			g.time,
+			r.reservationgroup,
+			r.fieldname AS field,
 			IF(ssc.team_id = g.hometeam, th.name, tv.name) AS givenfor,
 			IF(ssc.team_id = g.hometeam, tv.name, th.name) AS givenby,
 			MAX(CASE WHEN sct.`index` = 1 THEN ssc.value END) AS cat1,
@@ -1163,16 +1175,62 @@ function SpiritToolRowsBySeason($season)
 				(ssc.team_id = g.visitorteam AND uc.type = 6)
 			)
 		)
+		LEFT JOIN uo_reservation r ON (r.id = g.reservation)
 				WHERE s.season='%s'
 					AND g.isongoing=0
 					AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 					AND sct.`index` > 0
 					AND g.forfeit=0
-				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time, givenfor, givenby
+					%s
+				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time,
+					r.reservationgroup, r.fieldname, givenfor, givenby
 			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
         DBEscapeString($season),
+        $visibilityCondition,
     );
     return DBQueryToArray($query);
+}
+
+/**
+ * Spirit totals for a set of games, keyed by game id.
+ *
+ * Batched counterpart of the per-game totals in GameResult(), for schedule
+ * listings that would otherwise run one spirit query per row. Each entry holds
+ * `home` and `visitor` totals, null when that team has not submitted.
+ *
+ * @param array $gameIds
+ * @return array
+ */
+function GameSpiritTotalsForGames($gameIds)
+{
+    $ids = [];
+    foreach ($gameIds as $gameId) {
+        $gameId = (int) $gameId;
+        if ($gameId > 0) {
+            $ids[] = $gameId;
+        }
+    }
+    if (empty($ids)) {
+        return [];
+    }
+
+    $query = "SELECT g.game_id,
+			SUM(CASE WHEN ssc.team_id = g.hometeam THEN ssc.value * sct.factor END) AS homesotg,
+			SUM(CASE WHEN ssc.team_id = g.visitorteam THEN ssc.value * sct.factor END) AS visitorsotg
+		FROM uo_game g
+		LEFT JOIN uo_spirit_score ssc ON (ssc.game_id = g.game_id)
+		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
+		WHERE g.game_id IN (" . implode(",", array_unique($ids)) . ")
+		GROUP BY g.game_id";
+
+    $totals = [];
+    foreach (DBQueryToArray($query) as $row) {
+        $totals[(string) $row['game_id']] = [
+            'home' => isset($row['homesotg']) ? $row['homesotg'] : null,
+            'visitor' => isset($row['visitorsotg']) ? $row['visitorsotg'] : null,
+        ];
+    }
+    return $totals;
 }
 
 function SpiritTimeoutSummaryBySeason($season)
@@ -1299,13 +1357,14 @@ function SpiritToCsv($season, $separator)
         die(_("Spirit scores are not visible."));
     }
     $showSpiritComments = ShowSpiritComments($seasoninfo);
-    $rows = SpiritToolRowsBySeason($season);
+    $rows = SpiritToolRowsBySeason($season, !hasSpiritToolsRight($season));
     $result = [];
 
     foreach ($rows as $row) {
         $exportRow = [
             "Division" => $row['division'],
-            "Day" => isset($row['day']) ? $row['day'] : "",
+            "FieldGroup" => isset($row['reservationgroup']) ? $row['reservationgroup'] : "",
+            "Date" => !empty($row['time']) ? substr($row['time'], 0, 10) : "",
             "Field" => isset($row['field']) ? $row['field'] : "",
             "Time" => !empty($row['time']) ? substr($row['time'], 11, 5) : "",
             "Pool" => $row['pool'],

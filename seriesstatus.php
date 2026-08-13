@@ -371,16 +371,22 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
         });
     }
 
-    foreach ($spiritAvg as $teamAvg) {
-        $html .= "<td>" . utf8entities($teamAvg['teamname']) . "</td>";
+    foreach ($spiritAvg as $teamId => $teamAvg) {
+        $html .= "<tr>";
+        $html .= "<td><a href='?view=teamcard&amp;team=" . (int) $teamId . "'>" . utf8entities($teamAvg['teamname']) . "</a></td>";
         $html .= "<td>" . $teamAvg['games'] . "</td>";
         foreach ($categories as $cat) {
-            if ($cat['index'] > 0 && isset($teamAvg[$cat['category_id']])) {
-                if ($cat['factor'] != 0) {
-                    $html .= "<td class='center'><b>" . number_format($teamAvg[$cat['category_id']], 2) . "</b></td>";
-                } else {
-                    $html .= "<td class='center'>" . number_format($teamAvg[$cat['category_id']], 2) . "</td>";
-                }
+            if ($cat['index'] <= 0) {
+                continue;
+            }
+            // One cell per scored category, so a team missing a category does
+            // not shift the remaining cells out from under their headers.
+            if (!isset($teamAvg[$cat['category_id']])) {
+                $html .= "<td class='center'>-</td>";
+            } elseif ($cat['factor'] != 0) {
+                $html .= "<td class='center'><b>" . number_format($teamAvg[$cat['category_id']], 2) . "</b></td>";
+            } else {
+                $html .= "<td class='center'>" . number_format($teamAvg[$cat['category_id']], 2) . "</td>";
             }
         }
         $html .= "<td class='center'><b>" . number_format($teamAvg['total'], 2) . "</b></td>";

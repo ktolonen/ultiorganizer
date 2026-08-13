@@ -6,6 +6,7 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/configuration.functions.php';
 require_once __DIR__ . '/game.functions.php';
 require_once __DIR__ . '/reservation.functions.php';
+require_once __DIR__ . '/spirit.functions.php';
 
 function CollectGameIdsFromResult($games)
 {
@@ -58,6 +59,7 @@ function TournamentView($games, $grouping = true)
     $isTableOpen = false;
     $rss = IsGameRSSEnabled();
     $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
+    $spiritTotals = ScheduleSpiritTotals($games);
 
     foreach ($games as $game) {
         $placeLabel = ReservationPlaceText(U_($game['placename']), U_($game['fieldname']));
@@ -109,7 +111,7 @@ function TournamentView($games, $grouping = true)
 
         if ($isTableOpen) {
             //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-            $ret .= GameRow($game, false, true, true, false, false, true, $rss, true, $mediaUrlsByGame);
+            $ret .= GameRow($game, false, true, true, false, false, true, $rss, true, $mediaUrlsByGame, $spiritTotals);
         }
 
         $prevTournament = $game['reservationgroup'];
@@ -140,6 +142,7 @@ function SeriesView($games, $date = true, $time = true)
     $isTableOpen = false;
     $rss = IsGameRSSEnabled();
     $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
+    $spiritTotals = ScheduleSpiritTotals($games);
 
     foreach ($games as $game) {
         if (
@@ -165,7 +168,7 @@ function SeriesView($games, $date = true, $time = true)
         }
 
         //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-        $ret .= GameRow($game, $date, $time, true, false, false, true, $rss, true, $mediaUrlsByGame);
+        $ret .= GameRow($game, $date, $time, true, false, false, true, $rss, true, $mediaUrlsByGame, $spiritTotals);
 
         $prevTournament = $game['reservationgroup'];
         $prevPlace = $game['place_id'];
@@ -196,6 +199,7 @@ function PlaceView($games, $grouping = true)
     $isTableOpen = false;
     $rss = IsGameRSSEnabled();
     $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
+    $spiritTotals = ScheduleSpiritTotals($games);
 
     foreach ($games as $game) {
         if (
@@ -235,7 +239,7 @@ function PlaceView($games, $grouping = true)
 
         if ($isTableOpen) {
             //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-            $ret .= GameRow($game, false, true, false, true, true, true, $rss, true, $mediaUrlsByGame);
+            $ret .= GameRow($game, false, true, false, true, true, true, $rss, true, $mediaUrlsByGame, $spiritTotals);
         }
 
         $prevTournament = $game['reservationgroup'];
@@ -263,6 +267,7 @@ function TimeView($games, $grouping = true)
     $isTableOpen = false;
     $rss = IsGameRSSEnabled();
     $mediaUrlsByGame = GetMediaUrlListForGames(CollectGameIdsFromResult($games), "live");
+    $spiritTotals = ScheduleSpiritTotals($games);
 
     foreach ($games as $game) {
         if ($game['time'] != $prevTime) {
@@ -278,7 +283,7 @@ function TimeView($games, $grouping = true)
 
         if ($isTableOpen) {
             //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-            $ret .= GameRow($game, false, false, true, true, true, true, $rss, true, $mediaUrlsByGame);
+            $ret .= GameRow($game, false, false, true, true, true, true, $rss, true, $mediaUrlsByGame, $spiritTotals);
         }
 
         $prevTime = $game['time'];
@@ -493,7 +498,54 @@ function SeriesAndPoolHeaders($info)
     return $ret;
 }
 
-function GameRow($game, $date = false, $time = true, $field = true, $series = false, $pool = false, $info = true, $rss = false, $media = true, $mediaUrlsByGame = null)
+/**
+ * Spirit totals for every game in a schedule result, but only for viewers who
+ * administer spirit for the season those games belong to. Returns an empty
+ * array for everyone else, which keeps the spirit column out of public views.
+ *
+ * @param array $games
+ * @return array
+ */
+function ScheduleSpiritTotals($games)
+{
+    if (!$games) {
+        return [];
+    }
+
+    $gameIds = [];
+    foreach ($games as $game) {
+        if (empty($game['game_id']) || empty($game['season'])) {
+            continue;
+        }
+        if (!empty($game['spiritmode']) && hasSpiritToolsRight($game['season'])) {
+            $gameIds[] = (int) $game['game_id'];
+        }
+    }
+
+    return GameSpiritTotalsForGames($gameIds);
+}
+
+/**
+ * Spirit score pair for the schedule, e.g. `[13 - 11]`. A team that has not
+ * been scored yet is marked as missing rather than left blank, so a spirit
+ * admin can spot the gaps while scanning the schedule.
+ */
+function GameSpiritView($gameId, $spiritTotals)
+{
+    $gameId = (string) $gameId;
+    if (!isset($spiritTotals[$gameId])) {
+        return "";
+    }
+
+    $missing = "<abbr class='spirit-missing' title='" . _("Missing spirit score") . "'>M</abbr>";
+    $totals = $spiritTotals[$gameId];
+    $home = is_null($totals['home']) ? $missing : (string) (float) $totals['home'];
+    $visitor = is_null($totals['visitor']) ? $missing : (string) (float) $totals['visitor'];
+
+    return "<span class='game-spirit'>[" . $home . " - " . $visitor . "]</span>";
+}
+
+function GameRow($game, $date = false, $time = true, $field = true, $series = false, $pool = false, $info = true, $rss = false, $media = true, $mediaUrlsByGame = null, $spiritTotals = null)
 {
     $datew = 'width:60px';
     $timew = 'width:40px';
@@ -589,7 +641,11 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
             if (!empty($game['forfeit'])) {
                 $ret .= "<td><span class='forfeit-mark'>(" . _("forfeit") . ")</span></td>\n";
             } else {
-                $ret .= "<td></td>\n";
+                // Forfeited games carry no spirit scores, so the cell is free
+                // to show them for spirit admins. Callers prefetch the totals
+                // for the whole listing; without them the cell stays empty
+                // rather than falling back to a query per row.
+                $ret .= "<td>" . GameSpiritView($game['game_id'], is_array($spiritTotals) ? $spiritTotals : []) . "</td>\n";
             }
         }
     }
@@ -751,7 +807,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid,
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry,
-			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone, s.isinternational
+			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone, s.isinternational, s.spiritmode
 			FROM uo_game pp
 			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)

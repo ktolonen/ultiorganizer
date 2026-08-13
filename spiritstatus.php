@@ -57,7 +57,7 @@ foreach ($categories as $cat) {
     }
 }
 
-$spiritAvg = array_values(SeriesSpiritBoard($seriesinfo['series_id']));
+$spiritAvg = SeriesSpiritBoard($seriesinfo['series_id']);
 $spiritTotAvg = SeriesSpiritBoardTotalAverages($seriesinfo['series_id'], false);
 $allowedSorts = ["team", "games", "total"];
 foreach ($scoreCategories as $cat) {
@@ -67,7 +67,7 @@ if (!in_array($spsort, $allowedSorts, true)) {
     $spsort = "total";
 }
 
-usort($spiritAvg, function ($a, $b) use ($spsort) {
+uasort($spiritAvg, function ($a, $b) use ($spsort) {
     if ($spsort === "team") {
         return strcasecmp((string) $a['teamname'], (string) $b['teamname']);
     }
@@ -129,9 +129,9 @@ $html .= "</tr>\n";
 if (empty($spiritAvg)) {
     $html .= "<tr><td colspan='" . (3 + count($scoreCategories)) . "'>" . _("No spirit scores yet.") . "</td></tr>\n";
 } else {
-    foreach ($spiritAvg as $teamAvg) {
+    foreach ($spiritAvg as $teamId => $teamAvg) {
         $html .= "<tr>";
-        $html .= "<td>" . utf8entities($teamAvg['teamname']) . "</td>";
+        $html .= "<td><a href='?view=teamcard&amp;team=" . (int) $teamId . "'>" . utf8entities($teamAvg['teamname']) . "</a></td>";
         $html .= "<td class='center'>" . (isset($teamAvg['games']) ? (int) $teamAvg['games'] : 0) . "</td>";
         foreach ($scoreCategories as $cat) {
             $categoryId = $cat['category_id'];

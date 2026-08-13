@@ -213,6 +213,18 @@ table[border="2"] {
 	padding-left: 10px;
 }
 
+/* Spirit score pair shown on the schedule for spirit admins. */
+.game-spirit {
+	color: var(--text-muted);
+	font-weight: bold;
+	white-space: nowrap;
+}
+
+.spirit-missing {
+	color: var(--status-warning);
+	text-decoration: none;
+}
+
 .spirit-controlgroup {
 	display: flex;
 	flex-wrap: nowrap;
