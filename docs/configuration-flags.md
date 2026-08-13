@@ -13,7 +13,7 @@ Use these exact type names when discussing configuration work:
 - Use when the value is deployment-specific, security-sensitive, or infrastructure-specific.
 - Example: `NO_EMAIL` disables outbound mail at the installation level and makes public self-registration unavailable.
 - Example: `MAINTENANCE_RUNTIME_DIR` points to the writable runtime-state directory used for automatic database-upgrade maintenance files and locks.
-- Example: `UO_SESSION_NAME` sets the session cookie name. It must be unique per installation, because installations sharing a domain otherwise share one session cookie. `install.php` generates a unique value; see `docs/deployment.md` for isolating co-hosted installations.
+- Example: `UO_SESSION_NAME` sets the session cookie name. It must be unique per installation, because installations sharing a domain otherwise share one session cookie. Like `MAINTENANCE_RUNTIME_DIR`, it is optional and derived from the installation directory while undefined, so both are shipped commented out; see `docs/deployment.md` for isolating co-hosted installations.
 
 ## INSTALLATION_SETTING
 

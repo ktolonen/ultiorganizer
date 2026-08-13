@@ -7,15 +7,17 @@ denyDirectLibAccess(__FILE__);
  * Resolve the session cookie name for this installation.
  *
  * Installations sharing a domain must not share a session cookie name, or a login
- * on one instance is picked up by the other. `UO_SESSION_NAME` is written per
- * installation by `install.php`; the legacy `UO_SESSID` name stays the default so
- * installations upgraded from earlier versions keep their existing sessions.
+ * on one instance is picked up by the other. `UO_SESSION_NAME` is therefore
+ * optional: when it is undefined, the name is derived from the installation
+ * directory and is already unique, the same way `DBMaintenanceRuntimeDir()`
+ * derives its default path. Setting the constant is for installations that want a
+ * specific name, and each one on a domain must then keep its own.
  *
  * @return string
  */
 function sessionCookieName()
 {
-    $default = 'UO_SESSID';
+    $default = 'UO_SESSID_' . substr(md5(dirname(__DIR__)), 0, 12);
 
     if (!defined('UO_SESSION_NAME')) {
         return $default;

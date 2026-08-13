@@ -393,9 +393,11 @@ function configurations()
     $upload_dir = isset($_POST['upload_dir']) ? trim($_POST['upload_dir']) : "images/uploads/";
     $maintenance_runtime_dir = isset($_POST['maintenance_runtime_dir']) ? trim($_POST['maintenance_runtime_dir']) : (defined('MAINTENANCE_RUNTIME_DIR') ? MAINTENANCE_RUNTIME_DIR : installSuggestedMaintenanceRuntimeDir());
     $customization = isset($_POST['customization']) ? trim($_POST['customization']) : "default";
-    // Not asked from the installing user: the value only has to be unique, and an
-    // existing name is kept so re-running the installer does not drop live sessions.
-    $session_name = defined('UO_SESSION_NAME') ? UO_SESSION_NAME : installGeneratedSessionName();
+    // Both of these are written only when they differ from what the code derives
+    // on its own, so a configuration file carries a value only when someone chose
+    // it. Left out, DBMaintenanceRuntimeDir() and sessionCookieName() derive
+    // values from the installation directory that are unique per installation.
+    $session_name = defined('UO_SESSION_NAME') ? UO_SESSION_NAME : '';
     $baseurl = isset($_POST['baseurl']) ? trim($_POST['baseurl']) : GetURLBase();
     $disable_self_registration = !empty($_POST['disable_self_registration']);
     $disable_email = !empty($_POST['disable_email']);
@@ -484,8 +486,12 @@ function configurations()
             fwrite($fh, "*/\n");
             fwrite($fh, "define('BASEURL', '$baseurl');\n");
             fwrite($fh, "define('UPLOAD_DIR', '$upload_dir');\n");
-            fwrite($fh, "define('MAINTENANCE_RUNTIME_DIR', '" . addslashes($maintenance_runtime_dir) . "');\n");
-            fwrite($fh, "define('UO_SESSION_NAME', '$session_name');\n");
+            if ($maintenance_runtime_dir !== installSuggestedMaintenanceRuntimeDir()) {
+                fwrite($fh, "define('MAINTENANCE_RUNTIME_DIR', '" . addslashes($maintenance_runtime_dir) . "');\n");
+            }
+            if ($session_name !== '') {
+                fwrite($fh, "define('UO_SESSION_NAME', '" . addslashes($session_name) . "');\n");
+            }
             fwrite($fh, "define('CUSTOMIZATIONS', '$customization');\n");
             fwrite($fh, "define('DATE_FORMAT', _(\"%d.%m.%Y %H:%M\"));\n");
             fwrite($fh, "define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');\n");
@@ -905,19 +911,6 @@ function GetURLBase()
         }
     }
     return $url;
-}
-
-/**
- * Generate a session cookie name unique to this installation.
- *
- * Installations sharing a domain must not share a session cookie name, or a login
- * on one is picked up by the other.
- *
- * @return string
- */
-function installGeneratedSessionName()
-{
-    return 'UO_SESSID_' . bin2hex(random_bytes(4));
 }
 
 function installSuggestedMaintenanceRuntimeDir()
