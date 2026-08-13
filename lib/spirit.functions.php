@@ -1218,7 +1218,7 @@ function GameSpiritTotalsForGames($gameIds)
 			SUM(CASE WHEN ssc.team_id = g.hometeam THEN ssc.value * sct.factor END) AS homesotg,
 			SUM(CASE WHEN ssc.team_id = g.visitorteam THEN ssc.value * sct.factor END) AS visitorsotg
 		FROM uo_game g
-		INNER JOIN uo_spirit_score ssc ON (ssc.game_id = g.game_id)
+		LEFT JOIN uo_spirit_score ssc ON (ssc.game_id = g.game_id)
 		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
 		WHERE g.game_id IN (" . implode(",", array_unique($ids)) . ")
 		GROUP BY g.game_id";

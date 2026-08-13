@@ -1287,7 +1287,7 @@ function PoolMovedGames($poolId)
             phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
             home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid,
             homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry,
-            homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.isinternational
+            homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.isinternational, s.spiritmode
             FROM uo_game_pool gp
             LEFT JOIN uo_game pp ON (gp.game=pp.game_id)
             LEFT JOIN uo_game_pool gpo ON (gpo.game=pp.game_id AND gpo.timetable=1)

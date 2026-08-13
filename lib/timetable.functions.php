@@ -517,7 +517,7 @@ function ScheduleSpiritTotals($games)
         if (empty($game['game_id']) || empty($game['season'])) {
             continue;
         }
-        if (hasSpiritToolsRight($game['season'])) {
+        if (!empty($game['spiritmode']) && hasSpiritToolsRight($game['season'])) {
             $gameIds[] = (int) $game['game_id'];
         }
     }
@@ -807,7 +807,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid,
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry,
-			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone, s.isinternational
+			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone, s.isinternational, s.spiritmode
 			FROM uo_game pp
 			INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
 			LEFT JOIN (SELECT COUNT(*) AS goals, game FROM uo_goal GROUP BY game) AS pm ON (pp.game_id=pm.game)
