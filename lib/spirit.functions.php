@@ -1191,6 +1191,48 @@ function SpiritToolRowsBySeason($season, $onlyVisible = false)
     return DBQueryToArray($query);
 }
 
+/**
+ * Spirit totals for a set of games, keyed by game id.
+ *
+ * Batched counterpart of the per-game totals in GameResult(), for schedule
+ * listings that would otherwise run one spirit query per row. Each entry holds
+ * `home` and `visitor` totals, null when that team has not submitted.
+ *
+ * @param array $gameIds
+ * @return array
+ */
+function GameSpiritTotalsForGames($gameIds)
+{
+    $ids = [];
+    foreach ($gameIds as $gameId) {
+        $gameId = (int) $gameId;
+        if ($gameId > 0) {
+            $ids[] = $gameId;
+        }
+    }
+    if (empty($ids)) {
+        return [];
+    }
+
+    $query = "SELECT g.game_id,
+			SUM(CASE WHEN ssc.team_id = g.hometeam THEN ssc.value * sct.factor END) AS homesotg,
+			SUM(CASE WHEN ssc.team_id = g.visitorteam THEN ssc.value * sct.factor END) AS visitorsotg
+		FROM uo_game g
+		INNER JOIN uo_spirit_score ssc ON (ssc.game_id = g.game_id)
+		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ssc.category_id)
+		WHERE g.game_id IN (" . implode(",", array_unique($ids)) . ")
+		GROUP BY g.game_id";
+
+    $totals = [];
+    foreach (DBQueryToArray($query) as $row) {
+        $totals[(string) $row['game_id']] = [
+            'home' => isset($row['homesotg']) ? $row['homesotg'] : null,
+            'visitor' => isset($row['visitorsotg']) ? $row['visitorsotg'] : null,
+        ];
+    }
+    return $totals;
+}
+
 function SpiritTimeoutSummaryBySeason($season)
 {
     $query = sprintf(
