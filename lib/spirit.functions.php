@@ -1129,8 +1129,18 @@ function SpiritScoreRowsByGameTeam($gameId, $teamId)
     return DBQueryToArray($query);
 }
 
-function SpiritToolRowsBySeason($season)
+/**
+ * Spirit score rows for a whole season.
+ *
+ * @param string $season
+ * @param bool $onlyVisible Restrict to games whose spirit scores are publicly
+ *        visible, honouring the event's "show only on complete" setting. Spirit
+ *        tools run unfiltered so admins can find incomplete submissions.
+ * @return array
+ */
+function SpiritToolRowsBySeason($season, $onlyVisible = false)
 {
+    $visibilityCondition = $onlyVisible ? " AND g.show_spirit=1" : "";
     $query = sprintf(
         "SELECT
 			g.game_id,
@@ -1170,10 +1180,12 @@ function SpiritToolRowsBySeason($season)
 					AND (COALESCE(g.homescore,0)+COALESCE(g.visitorscore,0))>0
 					AND sct.`index` > 0
 					AND g.forfeit=0
+					%s
 				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time,
 					r.fieldname, givenfor, givenby
 			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
         DBEscapeString($season),
+        $visibilityCondition,
     );
     return DBQueryToArray($query);
 }
@@ -1302,7 +1314,7 @@ function SpiritToCsv($season, $separator)
         die(_("Spirit scores are not visible."));
     }
     $showSpiritComments = ShowSpiritComments($seasoninfo);
-    $rows = SpiritToolRowsBySeason($season);
+    $rows = SpiritToolRowsBySeason($season, !hasSpiritToolsRight($season));
     $result = [];
 
     foreach ($rows as $row) {
