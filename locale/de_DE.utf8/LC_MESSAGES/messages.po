@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-11 23:06+0300\n"
+"POT-Creation-Date: 2026-08-13 20:14+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -57,7 +57,7 @@ msgstr "%d Übersetzungsschlüssel verfügbar."
 msgid "%d&nbsp;min."
 msgstr "%d&nsbp;min."
 
-#: lib/game.functions.php:798
+#: lib/game.functions.php:800
 #, php-format
 msgid "%s - new point cap %d"
 msgstr "%s - neue Punkteobergrenze %d"
@@ -1638,7 +1638,7 @@ msgstr "Defense-Spielbericht"
 #: admin/seasongames.php:251 user/adddefensesheet.php:11
 #: user/adddefensesheet.php:73 user/addplayerlists.php:285
 #: user/addresult.php:75 user/addscoresheet.php:245 user/addspirit.php:228
-#: user/respgames.php:215
+#: user/respgames.php:216
 msgid "Defence sheet"
 msgstr "Defensebogen"
 
@@ -1976,7 +1976,7 @@ msgstr ""
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
 #: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
-#: admin/translations.php:507 user/respgames.php:218
+#: admin/translations.php:507 user/respgames.php:220
 msgid "Edit"
 msgstr "Ändern"
 
@@ -2151,7 +2151,7 @@ msgstr "Gib unten dein neues Passwort ein."
 msgid "Equalization"
 msgstr "Vereinheitlichung"
 
-#: lib/game.functions.php:1100
+#: lib/game.functions.php:1102
 msgid "Erroneous scoresheet number:"
 msgstr "Falsche Spielberichtsnummer:"
 
@@ -2160,11 +2160,11 @@ msgstr "Falsche Spielberichtsnummer:"
 msgid "Error: Could not save result."
 msgstr "Fehler: Konnte Ergebnis nicht speichern"
 
-#: admin/saveschedule.php:168
+#: admin/saveschedule.php:181
 msgid "Error: unknown event."
 msgstr "Fehler: unbekanntes Ereignis."
 
-#: lib/game.functions.php:1984
+#: lib/game.functions.php:1986
 #, php-format
 msgid "Errors: %s."
 msgstr "Fehler: %s."
@@ -2248,7 +2248,7 @@ msgstr "Turnier/Saison erforderlich"
 msgid "Event not found"
 msgstr "Ereignis nicht gefunden"
 
-#: lib/game.functions.php:1112
+#: lib/game.functions.php:1114
 msgid "Event played."
 msgstr "Turnier/Saison beendet."
 
@@ -2404,7 +2404,7 @@ msgstr "Suche Koordinaten"
 #: cust/wfdf/pdfscoresheet.php:280 cust/windmill/pdfscoresheet.php:74
 #: lib/reservation.functions.php:30 lib/reservation.functions.php:36
 #: lib/search.functions.php:303 lib/search.functions.php:377
-#: lib/timetable.functions.php:522 user/adddefensesheet.php:211
+#: lib/timetable.functions.php:574 user/adddefensesheet.php:211
 #: user/addscoresheet.php:546
 msgid "Field"
 msgstr "Feld"
@@ -2712,7 +2712,7 @@ msgstr "Spiel %1$s um %2$s (%3$s) kollidiert mit %4$s um %5$s (%6$s)."
 msgid "Game %1$s at %2$s conflicts with %3$s at %4$s in %5$s."
 msgstr "Spiel %1$s um %2$s kollidiert mit %3$s um %4$s in %5$s."
 
-#: admin/saveschedule.php:82
+#: admin/saveschedule.php:83
 #, php-format
 msgid "Game %s exceeds the reserved end time %s."
 msgstr "Spiel %s ueberschreitet die reservierte Endzeit %s."
@@ -2760,11 +2760,11 @@ msgstr "Das Spiel wurde bereits gespielt. Aktuelles Ergebnis:"
 msgid "Game has ended"
 msgstr "Spiel beendet"
 
-#: lib/game.functions.php:1104
+#: lib/game.functions.php:1106
 msgid "Game has no pool."
 msgstr "Spiel ohne Gruppe."
 
-#: gameplay.php:648 teamcard.php:809 lib/timetable.functions.php:637
+#: gameplay.php:648 teamcard.php:809 lib/timetable.functions.php:694
 msgid "Game history"
 msgstr "Frühere Spiele"
 
@@ -2886,7 +2886,7 @@ msgid "Game statistics"
 msgstr "Spielstatistik"
 
 #: gameplay.php:34 gameplay.php:46 poolstatus.php:860
-#: lib/timetable.functions.php:648 mobile/gameplay.php:15
+#: lib/timetable.functions.php:705 mobile/gameplay.php:15
 #: scorekeeper/gameplay.php:54 user/addscoresheet.php:511
 #: user/respgames.php:200
 msgid "Gameplay"
@@ -3501,7 +3501,7 @@ msgstr "Ungültiges Spiel."
 msgid "Invalid link target."
 msgstr "Ungueltiges Linkziel."
 
-#: install.php:708
+#: install.php:718
 msgid "Invalid password (min. 5, max. 20 characters)."
 msgstr "Ungueltiges Passwort (min. 5, max. 20 Zeichen)."
 
@@ -3727,7 +3727,7 @@ msgstr "Liste der Teams, die einen Durchschnitt von '"
 msgid "Live"
 msgstr "Live"
 
-#: lib/timetable.functions.php:617
+#: lib/timetable.functions.php:674
 msgid "Live Broadcasting"
 msgstr "Live-Übertragung"
 
@@ -3743,7 +3743,7 @@ msgstr "Livestream-URL"
 msgid "Live video"
 msgstr "Live-Video"
 
-#: lib/timetable.functions.php:675
+#: lib/timetable.functions.php:732
 msgid "Local time"
 msgstr "Ortszeit"
 
@@ -3972,12 +3972,17 @@ msgstr ""
 "Fehlende Trikotnummern gefunden! (Klicke auf den Teamnamen, um den Kader zu "
 "bearbeiten)"
 
+#: lib/timetable.functions.php:540
+#, fuzzy
+msgid "Missing spirit score"
+msgstr "Spirit-Bewertung für %s fehlt. "
+
 #: spiritkeeper/editgame.php:76
 #, php-format
 msgid "Missing spirit score for %s. "
 msgstr "Spirit-Bewertung für %s fehlt. "
 
-#: teams.php:446
+#: teams.php:447
 msgid "Missing spirit submissions"
 msgstr "Fehlende Spirit-Einreichungen"
 
@@ -4254,7 +4259,7 @@ msgstr "Keine Spiele"
 msgid "No games to move"
 msgstr "Keine Spiele zum Mitnehmen"
 
-#: lib/game.functions.php:1115
+#: lib/game.functions.php:1117
 msgid "No goals."
 msgstr "Keine Punkte."
 
@@ -4459,7 +4464,7 @@ msgid "One simple score"
 msgstr "Eine einfache Bewertung"
 
 #: poolstatus.php:867 poolstatus.php:869 admin/seasongames.php:190
-#: lib/timetable.functions.php:655 lib/timetable.functions.php:657
+#: lib/timetable.functions.php:712 lib/timetable.functions.php:714
 #: scorekeeper/respgames.php:193
 msgid "Ongoing"
 msgstr "Spiel läuft"
@@ -4804,7 +4809,7 @@ msgstr "Spieler-Statistiken"
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:119
 #: admin/tdtools.php:184 mobile/respgames.php:178 user/adddefensesheet.php:64
 #: user/addplayerlists.php:276 user/addresult.php:66 user/addscoresheet.php:236
-#: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
+#: user/addspirit.php:224 user/respgames.php:207 user/respteams.php:43
 msgid "Players"
 msgstr "Spieler"
 
@@ -4880,7 +4885,7 @@ msgstr "Punkte"
 msgid "Points for %s must be 0-1000."
 msgstr "Punkte fuer %s muessen zwischen 0 und 1000 liegen."
 
-#: admin/seasonpoints.php:231 lib/game.functions.php:1097
+#: admin/seasonpoints.php:231 lib/game.functions.php:1099
 #: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
 msgid "Points must be between 0 and 1000."
 msgstr "Punkte muessen zwischen 0 und 1000 liegen."
@@ -4922,7 +4927,7 @@ msgstr "Poolspiele nicht beendet:"
 msgid "Pool is completed:"
 msgstr "Pool ist komplett:"
 
-#: lib/game.functions.php:1107
+#: lib/game.functions.php:1109
 msgid "Pool is locked."
 msgstr "Pool ist gesperrt."
 
@@ -5314,7 +5319,7 @@ msgstr "Wiederherstellen"
 #: user/adddefensesheet.php:63 user/addplayerlists.php:275
 #: user/addresult.php:13 user/addresult.php:27 user/addresult.php:65
 #: user/addscoresheet.php:235 user/addspirit.php:223 user/respgames.php:24
-#: user/respgames.php:205
+#: user/respgames.php:206
 msgid "Result"
 msgstr "Ergebnis"
 
@@ -5330,12 +5335,12 @@ msgstr "Ergebnis nicht gespeichert!"
 msgid "Result saved!"
 msgstr "Ergebnis gespeichert!"
 
-#: lib/game.functions.php:1981
+#: lib/game.functions.php:1983
 #, php-format
 msgid "Results changed: %s."
 msgstr "Ergebnisse geändert: %s."
 
-#: lib/game.functions.php:1978
+#: lib/game.functions.php:1980
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
@@ -5537,7 +5542,7 @@ msgstr "Samstag"
 #: scorekeeper/addspirittimeouts.php:178 scorekeeper/addtimeouts.php:180
 #: scorekeeper/result.php:101 spiritkeeper/editgame.php:125
 #: user/addmedialink.php:219 user/addplayerlists.php:453 user/addspirit.php:314
-#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:229
+#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:230
 #: user/teamplayers.php:279 user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
 msgstr "Speichern"
@@ -5601,15 +5606,15 @@ msgstr "Speichern betrifft nur die ausgewählte Division."
 msgid "Schedule"
 msgstr "Spielplan"
 
-#: admin/saveschedule.php:176
+#: admin/saveschedule.php:189
 msgid "Schedule saved and validated."
 msgstr "Spielplan gespeichert und geprüft."
 
-#: admin/saveschedule.php:172
+#: admin/saveschedule.php:185
 msgid "Schedule saved with errors:"
 msgstr "Gespeicherter Zeitplan hat Fehler:"
 
-#: admin/saveschedule.php:174
+#: admin/saveschedule.php:187
 msgid "Schedule saved with warnings:"
 msgstr "Spielplan mit Warnungen gespeichert:"
 
@@ -5740,7 +5745,7 @@ msgstr "Spielstände"
 #: scorekeeper/addscoresheet.php:290 scorekeeper/respgames.php:201
 #: user/adddefensesheet.php:65 user/addplayerlists.php:277
 #: user/addresult.php:67 user/addscoresheet.php:237 user/addspirit.php:225
-#: user/respgames.php:207
+#: user/respgames.php:208
 msgid "Scoresheet"
 msgstr "Spielbericht"
 
@@ -6276,7 +6281,7 @@ msgstr ""
 #: cust/wfdf/pdfscoresheet.php:1121 cust/windmill/pdfscoresheet.php:530
 #: sql/upgrade_db.php:560 user/adddefensesheet.php:69
 #: user/addplayerlists.php:281 user/addresult.php:71 user/addscoresheet.php:241
-#: user/addspirit.php:226 user/respgames.php:211
+#: user/addspirit.php:226 user/respgames.php:212
 msgid "Spirit score"
 msgstr "Spirit-Punktzahl"
 
@@ -6341,7 +6346,7 @@ msgstr "Spirit-Bewertung eingereicht."
 msgid "Spirit scores"
 msgstr "Spirit-Punktzahlen"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1299
+#: spiritstatus.php:47 lib/spirit.functions.php:1357
 msgid "Spirit scores are not visible."
 msgstr "Spirit-Punktzahlen sind nicht sichtbar."
 
@@ -7025,7 +7030,7 @@ msgstr ""
 "laeuft waehrend Auszeiten nicht an."
 
 #: admin/addseasons.php:423 admin/seasonadmin.php:54
-#: lib/timetable.functions.php:672
+#: lib/timetable.functions.php:729
 msgid "Timezone"
 msgstr "Zeitzone"
 
@@ -7134,7 +7139,7 @@ msgstr "Defenses gesamt"
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2347
+#: admin/seasonpoints.php:258 lib/game.functions.php:2349
 msgid "Total points"
 msgstr "Gesamtpunkte"
 
@@ -7565,11 +7570,11 @@ msgstr ""
 "koennen nicht eingeplant werden. Bearbeite die Spieldauer oder die Laenge "
 "des Zeitfensters in %s."
 
-#: admin/saveschedule.php:161
+#: admin/saveschedule.php:174
 msgid "Warning: Scheduling conflicts detected based on transfer times."
 msgstr "Warnung: Planungs-Konflikte auf Basis von Wechselzeiten erkannt."
 
-#: admin/saveschedule.php:153
+#: admin/saveschedule.php:166
 msgid "Warning: Scheduling conflicts detected due to overlapping game times."
 msgstr ""
 "Warnung: Planungs-Konflikte aufgrund ueberlappender Spielzeiten erkannt."
@@ -7896,7 +7901,7 @@ msgstr "fuer die Spirit-Eingabe."
 
 #: gamecard.php:167 gameplay.php:117 poolstatus.php:670 poolstatus.php:674
 #: poolstatus.php:853 result.php:71 admin/seasongames.php:234
-#: lib/timetable.functions.php:590
+#: lib/timetable.functions.php:642
 msgid "forfeit"
 msgstr "kampflos"
 
@@ -8247,7 +8252,7 @@ msgstr "update"
 msgid "view"
 msgstr "anzeigen"
 
-#: teams.php:431 admin/poolmoves.php:319
+#: teams.php:432 admin/poolmoves.php:319
 msgid "vs."
 msgstr "gg."
 

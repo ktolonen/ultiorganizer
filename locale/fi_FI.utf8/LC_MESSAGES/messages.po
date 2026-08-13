@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-11 23:06+0300\n"
+"POT-Creation-Date: 2026-08-13 20:14+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -56,7 +56,7 @@ msgstr "%d käännösavainta saatavilla."
 msgid "%d&nbsp;min."
 msgstr "%d&nbsp;min."
 
-#: lib/game.functions.php:798
+#: lib/game.functions.php:800
 #, php-format
 msgid "%s - new point cap %d"
 msgstr "%s - uusi pistekatto %d"
@@ -1620,7 +1620,7 @@ msgstr "Puolustuspöytäkirja"
 #: admin/seasongames.php:251 user/adddefensesheet.php:11
 #: user/adddefensesheet.php:73 user/addplayerlists.php:285
 #: user/addresult.php:75 user/addscoresheet.php:245 user/addspirit.php:228
-#: user/respgames.php:215
+#: user/respgames.php:216
 msgid "Defence sheet"
 msgstr "Puolustuspöytäkirja"
 
@@ -1955,7 +1955,7 @@ msgstr ""
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
 #: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
-#: admin/translations.php:507 user/respgames.php:218
+#: admin/translations.php:507 user/respgames.php:220
 msgid "Edit"
 msgstr "Muokkaa"
 
@@ -2125,7 +2125,7 @@ msgstr "Syötä uusi salasanasi alle."
 msgid "Equalization"
 msgstr "Yhdenmukaistaminen"
 
-#: lib/game.functions.php:1100
+#: lib/game.functions.php:1102
 msgid "Erroneous scoresheet number:"
 msgstr "Virheellinen pöytäkirjan numero:"
 
@@ -2134,11 +2134,11 @@ msgstr "Virheellinen pöytäkirjan numero:"
 msgid "Error: Could not save result."
 msgstr "Virhe: Tuloksia ei voitu tallentaa."
 
-#: admin/saveschedule.php:168
+#: admin/saveschedule.php:181
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:1984
+#: lib/game.functions.php:1986
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -2222,7 +2222,7 @@ msgstr "Tapahtuman määrittely pakollista"
 msgid "Event not found"
 msgstr "Tapahtumaa ei löydy"
 
-#: lib/game.functions.php:1112
+#: lib/game.functions.php:1114
 msgid "Event played."
 msgstr "Tapahtuma pelattu."
 
@@ -2377,7 +2377,7 @@ msgstr "Hae koordinaatit"
 #: cust/wfdf/pdfscoresheet.php:280 cust/windmill/pdfscoresheet.php:74
 #: lib/reservation.functions.php:30 lib/reservation.functions.php:36
 #: lib/search.functions.php:303 lib/search.functions.php:377
-#: lib/timetable.functions.php:522 user/adddefensesheet.php:211
+#: lib/timetable.functions.php:574 user/adddefensesheet.php:211
 #: user/addscoresheet.php:546
 msgid "Field"
 msgstr "Kenttä"
@@ -2689,7 +2689,7 @@ msgstr ""
 "Ottelu %1$s ajassa %2$s on ristiriidassa ottelun %3$s kanssa ajassa %4$s "
 "paikassa %5$s."
 
-#: admin/saveschedule.php:82
+#: admin/saveschedule.php:83
 #, php-format
 msgid "Game %s exceeds the reserved end time %s."
 msgstr "Ottelu %s ylittää varatun päättymisajan %s."
@@ -2736,11 +2736,11 @@ msgstr "Peli on jo pelattu. Nykyinen tulos:"
 msgid "Game has ended"
 msgstr "Peli on päättynyt"
 
-#: lib/game.functions.php:1104
+#: lib/game.functions.php:1106
 msgid "Game has no pool."
 msgstr "Pelillä ei ole lohkoa."
 
-#: gameplay.php:648 teamcard.php:809 lib/timetable.functions.php:637
+#: gameplay.php:648 teamcard.php:809 lib/timetable.functions.php:694
 msgid "Game history"
 msgstr "Otteluhistoria"
 
@@ -2862,7 +2862,7 @@ msgid "Game statistics"
 msgstr "Pelin tilastot"
 
 #: gameplay.php:34 gameplay.php:46 poolstatus.php:860
-#: lib/timetable.functions.php:648 mobile/gameplay.php:15
+#: lib/timetable.functions.php:705 mobile/gameplay.php:15
 #: scorekeeper/gameplay.php:54 user/addscoresheet.php:511
 #: user/respgames.php:200
 msgid "Gameplay"
@@ -3474,7 +3474,7 @@ msgstr "Virheellinen peli."
 msgid "Invalid link target."
 msgstr "Virheellinen linkkikohde."
 
-#: install.php:708
+#: install.php:718
 msgid "Invalid password (min. 5, max. 20 characters)."
 msgstr "Virheellinen salasana (vähintään 5 ja enintään 20 merkkiä)."
 
@@ -3698,7 +3698,7 @@ msgstr "Luettelo joukkueista, jotka saivat keskiarvon '"
 msgid "Live"
 msgstr "Live"
 
-#: lib/timetable.functions.php:617
+#: lib/timetable.functions.php:674
 msgid "Live Broadcasting"
 msgstr "Suoralähetys"
 
@@ -3714,7 +3714,7 @@ msgstr "Livestriimin URL"
 msgid "Live video"
 msgstr "Live video"
 
-#: lib/timetable.functions.php:675
+#: lib/timetable.functions.php:732
 msgid "Local time"
 msgstr "Paikallisaika"
 
@@ -3942,12 +3942,17 @@ msgstr ""
 "Puuttuvia pelinumeroita löytyi! (muokkaa pelaajalistaa napsauttamalla "
 "joukkueen nimeä)"
 
+#: lib/timetable.functions.php:540
+#, fuzzy
+msgid "Missing spirit score"
+msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
+
 #: spiritkeeper/editgame.php:76
 #, php-format
 msgid "Missing spirit score for %s. "
 msgstr "Spirit-pisteet puuttuvat joukkueelta %s. "
 
-#: teams.php:446
+#: teams.php:447
 msgid "Missing spirit submissions"
 msgstr "Puuttuvat spirit-arvioinnit"
 
@@ -4224,7 +4229,7 @@ msgstr "Ei pelejä"
 msgid "No games to move"
 msgstr "Ei siirrettäviä pelejä"
 
-#: lib/game.functions.php:1115
+#: lib/game.functions.php:1117
 msgid "No goals."
 msgstr "Ei maaleja."
 
@@ -4426,7 +4431,7 @@ msgid "One simple score"
 msgstr "Yksi yksinkertainen pisteytys"
 
 #: poolstatus.php:867 poolstatus.php:869 admin/seasongames.php:190
-#: lib/timetable.functions.php:655 lib/timetable.functions.php:657
+#: lib/timetable.functions.php:712 lib/timetable.functions.php:714
 #: scorekeeper/respgames.php:193
 msgid "Ongoing"
 msgstr "Kesken"
@@ -4766,7 +4771,7 @@ msgstr "Pelaajatilastot"
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:119
 #: admin/tdtools.php:184 mobile/respgames.php:178 user/adddefensesheet.php:64
 #: user/addplayerlists.php:276 user/addresult.php:66 user/addscoresheet.php:236
-#: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
+#: user/addspirit.php:224 user/respgames.php:207 user/respteams.php:43
 msgid "Players"
 msgstr "Pelaajat"
 
@@ -4841,7 +4846,7 @@ msgstr "Pisteet"
 msgid "Points for %s must be 0-1000."
 msgstr "Pisteet %s pitää olla väliltä 0-1000."
 
-#: admin/seasonpoints.php:231 lib/game.functions.php:1097
+#: admin/seasonpoints.php:231 lib/game.functions.php:1099
 #: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
 msgid "Points must be between 0 and 1000."
 msgstr "Pisteet pitää olla väliltä 0 ja 1000."
@@ -4883,7 +4888,7 @@ msgstr "Lohkon pelejä ei olla pelattu:"
 msgid "Pool is completed:"
 msgstr "Lohko on pelattu:"
 
-#: lib/game.functions.php:1107
+#: lib/game.functions.php:1109
 msgid "Pool is locked."
 msgstr "Lohko on lukittu."
 
@@ -5272,7 +5277,7 @@ msgstr "Palauta varmuuskopio"
 #: user/adddefensesheet.php:63 user/addplayerlists.php:275
 #: user/addresult.php:13 user/addresult.php:27 user/addresult.php:65
 #: user/addscoresheet.php:235 user/addspirit.php:223 user/respgames.php:24
-#: user/respgames.php:205
+#: user/respgames.php:206
 msgid "Result"
 msgstr "Tulokset"
 
@@ -5288,12 +5293,12 @@ msgstr "Tulosta ei tallennettu!"
 msgid "Result saved!"
 msgstr "Tulos tallennettu!"
 
-#: lib/game.functions.php:1981
+#: lib/game.functions.php:1983
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:1978
+#: lib/game.functions.php:1980
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -5495,7 +5500,7 @@ msgstr "Lauantai"
 #: scorekeeper/addspirittimeouts.php:178 scorekeeper/addtimeouts.php:180
 #: scorekeeper/result.php:101 spiritkeeper/editgame.php:125
 #: user/addmedialink.php:219 user/addplayerlists.php:453 user/addspirit.php:314
-#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:229
+#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:230
 #: user/teamplayers.php:279 user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
 msgstr "Tallenna"
@@ -5559,15 +5564,15 @@ msgstr "Tallennus vaikuttaa vain valittuun sarjaan."
 msgid "Schedule"
 msgstr "Aikataulu"
 
-#: admin/saveschedule.php:176
+#: admin/saveschedule.php:189
 msgid "Schedule saved and validated."
 msgstr "Aikataulu tallennettu ja tarkistettu."
 
-#: admin/saveschedule.php:172
+#: admin/saveschedule.php:185
 msgid "Schedule saved with errors:"
 msgstr "Aikataulu tallennettu virheineen:"
 
-#: admin/saveschedule.php:174
+#: admin/saveschedule.php:187
 msgid "Schedule saved with warnings:"
 msgstr "Aikataulu tallennettu varoitusten kanssa:"
 
@@ -5698,7 +5703,7 @@ msgstr "Pisteet"
 #: scorekeeper/addscoresheet.php:290 scorekeeper/respgames.php:201
 #: user/adddefensesheet.php:65 user/addplayerlists.php:277
 #: user/addresult.php:67 user/addscoresheet.php:237 user/addspirit.php:225
-#: user/respgames.php:207
+#: user/respgames.php:208
 msgid "Scoresheet"
 msgstr "Pöytäkirja"
 
@@ -6229,7 +6234,7 @@ msgstr ""
 #: cust/wfdf/pdfscoresheet.php:1121 cust/windmill/pdfscoresheet.php:530
 #: sql/upgrade_db.php:560 user/adddefensesheet.php:69
 #: user/addplayerlists.php:281 user/addresult.php:71 user/addscoresheet.php:241
-#: user/addspirit.php:226 user/respgames.php:211
+#: user/addspirit.php:226 user/respgames.php:212
 msgid "Spirit score"
 msgstr "Spirit-piste"
 
@@ -6294,7 +6299,7 @@ msgstr "Spirit-pisteet lähetetty."
 msgid "Spirit scores"
 msgstr "Spirit-pisteet"
 
-#: spiritstatus.php:47 lib/spirit.functions.php:1299
+#: spiritstatus.php:47 lib/spirit.functions.php:1357
 msgid "Spirit scores are not visible."
 msgstr "Spirit-pisteet eivät ole näkyvissä."
 
@@ -6968,7 +6973,7 @@ msgstr ""
 "aikalisien aikana."
 
 #: admin/addseasons.php:423 admin/seasonadmin.php:54
-#: lib/timetable.functions.php:672
+#: lib/timetable.functions.php:729
 msgid "Timezone"
 msgstr "Aikavyöhyke"
 
@@ -7076,7 +7081,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2347
+#: admin/seasonpoints.php:258 lib/game.functions.php:2349
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 
@@ -7503,11 +7508,11 @@ msgstr ""
 "Varoitus: Löytyi otteluita, joiden kesto on 0 minuuttia. Niitä ei voida "
 "aikatauluttaa. Muokkaa ottelun kestoa tai aikavarauksen pituutta kohdassa %s."
 
-#: admin/saveschedule.php:161
+#: admin/saveschedule.php:174
 msgid "Warning: Scheduling conflicts detected based on transfer times."
 msgstr "Varoitus: Siirtymäaikoihin perustuvia aikatauluristiriitoja havaittu."
 
-#: admin/saveschedule.php:153
+#: admin/saveschedule.php:166
 msgid "Warning: Scheduling conflicts detected due to overlapping game times."
 msgstr ""
 "Varoitus: Päällekkäisistä otteluajoista johtuvia aikatauluristiriitoja "
@@ -7832,7 +7837,7 @@ msgstr "spiritin syöttöä varten."
 
 #: gamecard.php:167 gameplay.php:117 poolstatus.php:670 poolstatus.php:674
 #: poolstatus.php:853 result.php:71 admin/seasongames.php:234
-#: lib/timetable.functions.php:590
+#: lib/timetable.functions.php:642
 msgid "forfeit"
 msgstr "luovutus"
 
@@ -8182,7 +8187,7 @@ msgstr "päivitä"
 msgid "view"
 msgstr "katso"
 
-#: teams.php:431 admin/poolmoves.php:319
+#: teams.php:432 admin/poolmoves.php:319
 msgid "vs."
 msgstr "vs."
 

@@ -537,7 +537,7 @@ function GameSpiritView($gameId, $spiritTotals)
         return "";
     }
 
-    $missing = "<abbr class='spirit-missing' title='" . _("Spirit score missing") . "'>M</abbr>";
+    $missing = "<abbr class='spirit-missing' title='" . _("Missing spirit score") . "'>M</abbr>";
     $totals = $spiritTotals[$gameId];
     $home = is_null($totals['home']) ? $missing : (string) (float) $totals['home'];
     $visitor = is_null($totals['visitor']) ? $missing : (string) (float) $totals['visitor'];
