@@ -517,7 +517,7 @@ function ScheduleSpiritTotals($games)
         if (empty($game['game_id']) || empty($game['season'])) {
             continue;
         }
-        if (isSpiritAdmin($game['season'])) {
+        if (hasSpiritToolsRight($game['season'])) {
             $gameIds[] = (int) $game['game_id'];
         }
     }
@@ -642,11 +642,10 @@ function GameRow($game, $date = false, $time = true, $field = true, $series = fa
                 $ret .= "<td><span class='forfeit-mark'>(" . _("forfeit") . ")</span></td>\n";
             } else {
                 // Forfeited games carry no spirit scores, so the cell is free
-                // to show them for spirit admins.
-                if (is_null($spiritTotals)) {
-                    $spiritTotals = ScheduleSpiritTotals([$game]);
-                }
-                $ret .= "<td>" . GameSpiritView($game['game_id'], $spiritTotals) . "</td>\n";
+                // to show them for spirit admins. Callers prefetch the totals
+                // for the whole listing; without them the cell stays empty
+                // rather than falling back to a query per row.
+                $ret .= "<td>" . GameSpiritView($game['game_id'], is_array($spiritTotals) ? $spiritTotals : []) . "</td>\n";
             }
         }
     }

@@ -199,9 +199,10 @@ if ($allgames) {
     $html .= "<h2>" . U_(SeasonName($teaminfo['season'])) . ":</h2>\n";
     $html .=  "<p>" . _("Division") . ": <a href='?view=poolstatus&amp;series=" . $teaminfo['series'] . "'>" . utf8entities(U_($teaminfo['seriesname'])) . "</a></p>";
     $html .= "<table style='width:80%'>\n";
+    $spiritTotals = ScheduleSpiritTotals($allgames);
     foreach ($allgames as $game) {
         //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-        $html .= GameRow($game, false, false, false, false, false, true);
+        $html .= GameRow($game, false, false, false, false, false, true, false, true, null, $spiritTotals);
     }
 
     $html .= "</table>\n";

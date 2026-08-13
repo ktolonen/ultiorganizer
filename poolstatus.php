@@ -339,14 +339,16 @@ function printSwissdraw($seasoninfo, $poolinfo)
     $ret .= "<table width='100%'>\n";
     if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
         $mvgames = PoolMovedGames($poolinfo['pool_id']);
+        $mvspirit = ScheduleSpiritTotals($mvgames);
         foreach ($mvgames as $game) {
-            $ret .= GameRow($game, false, false, false, false, false, true);
+            $ret .= GameRow($game, false, false, false, false, false, true, false, true, null, $mvspirit);
         }
     }
     $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
+    $spiritTotals = ScheduleSpiritTotals($games);
     foreach ($games as $game) {
         //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-        $ret .= GameRow($game, false, false, false, false, false, true);
+        $ret .= GameRow($game, false, false, false, false, false, true, false, true, null, $spiritTotals);
     }
     $ret .= "</table>\n";
 
@@ -481,14 +483,16 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
     $ret .= "<table width='100%'>\n";
     if ($poolinfo['mvgames'] == 0 || $poolinfo['mvgames'] == 2) {
         $mvgames = PoolMovedGames($poolinfo['pool_id']);
+        $mvspirit = ScheduleSpiritTotals($mvgames);
         foreach ($mvgames as $game) {
-            $ret .= GameRow($game, false, false, false, false, false, true);
+            $ret .= GameRow($game, false, false, false, false, false, true, false, true, null, $mvspirit);
         }
     }
     $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "series");
+    $spiritTotals = ScheduleSpiritTotals($games);
     foreach ($games as $game) {
         //function GameRow($game, $date=false, $time=true, $field=true, $series=false,$pool=false,$info=true)
-        $ret .= GameRow($game, false, false, false, false, false, true);
+        $ret .= GameRow($game, false, false, false, false, false, true, false, true, null, $spiritTotals);
     }
     $ret .= "</table>\n";
 
@@ -559,8 +563,9 @@ function printPlayoffTree($seasoninfo, $poolinfo)
             } else {
                 $notemplate .= "<table width='100%'>\n";
                 $games = TimetableGames($pool['pool_id'], "pool", "all", "series");
+                $spiritTotals = ScheduleSpiritTotals($games);
                 foreach ($games as $game) {
-                    $notemplate .= GameRow($game, false, false, false, false, false, true);
+                    $notemplate .= GameRow($game, false, false, false, false, false, true, false, true, null, $spiritTotals);
                 }
                 $notemplate .= "</table>\n";
             }
