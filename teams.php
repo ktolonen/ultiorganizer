@@ -383,7 +383,7 @@ if ($list == "allteams" || $list == "byseeding") {
         foreach ($series as $row) {
             $spiritAvg = SeriesSpiritBoard($row['series_id']);
 
-            usort($spiritAvg, function ($a, $b) {
+            uasort($spiritAvg, function ($a, $b) {
                 // Sort teams by total spirit points in descending order.
                 return $b['total'] <=> $a['total'];
             });
@@ -400,8 +400,9 @@ if ($list == "allteams" || $list == "byseeding") {
             $html .= "</tr>\n";
 
 
-            foreach ($spiritAvg as $teamAvg) {
-                $html .= "<td>" . utf8entities($teamAvg['teamname']) . "</td>";
+            foreach ($spiritAvg as $teamId => $teamAvg) {
+                $html .= "<tr>";
+                $html .= "<td><a href='?view=teamcard&amp;team=" . (int) $teamId . "'>" . utf8entities($teamAvg['teamname']) . "</a></td>";
                 $html .= "<td>" . $teamAvg['games'] . "</td>";
                 foreach ($categories as $cat) {
                     if ($cat['index'] > 0 && isset($teamAvg[$cat['category_id']])) {

@@ -371,8 +371,9 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
         });
     }
 
-    foreach ($spiritAvg as $teamAvg) {
-        $html .= "<td>" . utf8entities($teamAvg['teamname']) . "</td>";
+    foreach ($spiritAvg as $teamId => $teamAvg) {
+        $html .= "<tr>";
+        $html .= "<td><a href='?view=teamcard&amp;team=" . (int) $teamId . "'>" . utf8entities($teamAvg['teamname']) . "</a></td>";
         $html .= "<td>" . $teamAvg['games'] . "</td>";
         foreach ($categories as $cat) {
             if ($cat['index'] > 0 && isset($teamAvg[$cat['category_id']])) {
