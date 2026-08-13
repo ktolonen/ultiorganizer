@@ -1149,6 +1149,7 @@ function SpiritToolRowsBySeason($season, $onlyVisible = false)
 			s.name AS division,
 			p.name AS pool,
 			g.time,
+			r.reservationgroup,
 			r.fieldname AS field,
 			IF(ssc.team_id = g.hometeam, th.name, tv.name) AS givenfor,
 			IF(ssc.team_id = g.hometeam, tv.name, th.name) AS givenby,
@@ -1182,7 +1183,7 @@ function SpiritToolRowsBySeason($season, $onlyVisible = false)
 					AND g.forfeit=0
 					%s
 				GROUP BY g.game_id, ssc.team_id, s.series_id, s.name, p.name, g.time,
-					r.fieldname, givenfor, givenby
+					r.reservationgroup, r.fieldname, givenfor, givenby
 			ORDER BY s.series_id ASC, givenfor ASC, g.time ASC",
         DBEscapeString($season),
         $visibilityCondition,
@@ -1320,7 +1321,8 @@ function SpiritToCsv($season, $separator)
     foreach ($rows as $row) {
         $exportRow = [
             "Division" => $row['division'],
-            "Day" => !empty($row['time']) ? substr($row['time'], 0, 10) : "",
+            "FieldGroup" => isset($row['reservationgroup']) ? $row['reservationgroup'] : "",
+            "Date" => !empty($row['time']) ? substr($row['time'], 0, 10) : "",
             "Field" => isset($row['field']) ? $row['field'] : "",
             "Time" => !empty($row['time']) ? substr($row['time'], 11, 5) : "",
             "Pool" => $row['pool'],
