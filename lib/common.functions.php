@@ -741,24 +741,42 @@ function SafeRedirectUrl($url, $default = "index.php")
         return $default;
     }
 
-    // Checked before the host, so a schemed-but-hostless target such as
-    // "javascript:alert(1)" cannot be mistaken for a relative path.
-    $scheme = parse_url($url, PHP_URL_SCHEME);
-    if ($scheme !== null && $scheme !== false) {
-        $scheme = strtolower((string) $scheme);
-        if ($scheme !== "http" && $scheme !== "https") {
-            return $default;
-        }
+    // A backslash is never valid in a path here and browsers may normalise it
+    // into a slash, turning "/\host" into "//host".
+    if (strpos($url, "\\") !== false) {
+        return $default;
     }
 
-    $host = parse_url($url, PHP_URL_HOST);
-    if ($host === null || $host === false) {
-        // A relative target. Reject protocol-relative "//host/path" and any
-        // backslash form browsers may normalise into one.
-        if (strpos($url, "//") === 0 || strpos($url, "\\") !== false) {
-            return $default;
-        }
+    // Protocol-relative "//host/path" inherits the current scheme and points
+    // off-site, so it is rejected before anything else looks at it.
+    if (strpos($url, "//") === 0) {
+        return $default;
+    }
+
+    $parts = parse_url($url);
+    if ($parts === false) {
+        // parse_url() rejects malformed input such as "https:///host/path" that
+        // browsers still normalise to an absolute off-site URL, so a parsing
+        // failure must never be read as "this is a relative path".
+        return $default;
+    }
+
+    $scheme = isset($parts['scheme']) ? strtolower($parts['scheme']) : null;
+    $host = isset($parts['host']) ? $parts['host'] : null;
+
+    // Only a target with neither scheme nor host is genuinely relative.
+    if ($scheme === null && $host === null) {
         return $url;
+    }
+
+    if ($scheme !== "http" && $scheme !== "https") {
+        return $default;
+    }
+
+    // A scheme without a host is malformed - "https:/host" and "https:///host"
+    // both parse this way - and browsers resolve it off-site, so require one.
+    if (!is_string($host) || $host === "") {
+        return $default;
     }
 
     $baseHost = parse_url(GetURLBase(), PHP_URL_HOST);
