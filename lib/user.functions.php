@@ -1504,6 +1504,7 @@ function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $me
     }
 
     Log1("user", "add", $newUsername, "", "register request");
+    DeleteExpiredAccountTokens();
     $token = uuidSecure();
     $query = sprintf(
         "INSERT INTO uo_registerrequest (userid, password, name, email, token) VALUES ('%s', '%s', '%s', '%s', '%s')",
@@ -1601,11 +1602,46 @@ function AddExtraEmailRequest($userid, $extraEmail, $message = 'verify_email.txt
     }
 }
 
+/**
+ * Lifetime of an emailed account token, in hours.
+ *
+ * A password reset link is a full account-takeover credential for as long as it
+ * works, so it expires quickly. A registration confirmation only completes a
+ * signup the recipient asked for, so it is allowed to live longer.
+ *
+ * Both tables carry their issue time already: uo_passwordresetrequest.requested
+ * and uo_registerrequest.last_login both default to the insert timestamp and
+ * are never updated, so no schema change is needed. ("last_login" is a
+ * misleading name for an issue timestamp on a registration request.)
+ */
+const PASSWORD_RESET_TOKEN_TTL_HOURS = 24;
+const REGISTER_TOKEN_TTL_HOURS = 168;
+
+/**
+ * Removes account tokens that are past their lifetime.
+ *
+ * Called whenever a new token is issued, so expired rows do not accumulate
+ * without needing a scheduled job.
+ */
+function DeleteExpiredAccountTokens()
+{
+    DBQuery(sprintf(
+        "DELETE FROM uo_registerrequest WHERE last_login < (NOW() - INTERVAL %d HOUR)",
+        REGISTER_TOKEN_TTL_HOURS,
+    ));
+    DBQuery(sprintf(
+        "DELETE FROM uo_passwordresetrequest WHERE requested < (NOW() - INTERVAL %d HOUR)",
+        PASSWORD_RESET_TOKEN_TTL_HOURS,
+    ));
+}
+
 function RegisterUIDByToken($token)
 {
     $query = sprintf(
-        "SELECT userid FROM uo_registerrequest WHERE token='%s'",
+        "SELECT userid FROM uo_registerrequest
+        WHERE token='%s' AND last_login >= (NOW() - INTERVAL %d HOUR)",
         DBEscapeString($token),
+        REGISTER_TOKEN_TTL_HOURS,
     );
     $result = DBQuery($query);
 
@@ -1618,8 +1654,10 @@ function RegisterUIDByToken($token)
 function ConfirmRegister($token)
 {
     $query = sprintf(
-        "SELECT userid, password, name, email FROM uo_registerrequest WHERE token='%s'",
+        "SELECT userid, password, name, email FROM uo_registerrequest
+        WHERE token='%s' AND last_login >= (NOW() - INTERVAL %d HOUR)",
         DBEscapeString($token),
+        REGISTER_TOKEN_TTL_HOURS,
     );
     $result = DBQuery($query);
 
@@ -1965,6 +2003,7 @@ function UserResetPassword($userId)
 
     $email = $row ? $row['email'] : null;
     if (!empty($email)) {
+        DeleteExpiredAccountTokens();
         $token = uuidSecure();
         $query = sprintf(
             "DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
@@ -2013,8 +2052,10 @@ function UserResetPassword($userId)
 function PasswordResetUIDByToken($token)
 {
     $query = sprintf(
-        "SELECT userid FROM uo_passwordresetrequest WHERE token='%s'",
+        "SELECT userid FROM uo_passwordresetrequest
+        WHERE token='%s' AND requested >= (NOW() - INTERVAL %d HOUR)",
         DBEscapeString($token),
+        PASSWORD_RESET_TOKEN_TTL_HOURS,
     );
     $result = DBQuery($query);
 
