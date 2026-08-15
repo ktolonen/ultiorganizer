@@ -30,6 +30,12 @@ That re-run is harmless while the upgrade is guarded (`hasColumn()`, `hasTable()
 `IF NOT EXISTS`) and a failure when it is not. Guards are a convention in this
 codebase, not a rule the runner enforces — several upgrades have none.
 
+Agreeing version numbers are not sufficient on their own. Seeding a version tells a
+fresh install "already applied", so the schema change behind that version must be in
+`sql/ultiorganizer.sql` or it is never applied at all. The checker therefore also
+replays the upgrade chain in order and verifies that everything it leaves behind
+exists in the fresh-install schema.
+
 This skill reports findings only. It must not apply fixes.
 
 ## Review Scope
@@ -55,8 +61,27 @@ The checker reports:
 - `ERROR` — the seeded maximum does not equal `DB_VERSION`, so fresh installs re-run upgrades
 - `ERROR` — a gap in the seeded version range
 - `ERROR` — an unguarded upgrade sits above the seeded version, which can fail a fresh install
+- `ERROR` — an upgrade creates a table, column, or index that the fresh-install schema lacks
+- `ERROR` — an entry in `expected-divergences.txt` has no reason note
 - `WARNING` — a guarded upgrade re-runs on fresh installs (currently harmless)
 - `WARNING` — `DB_VERSION` is above the highest upgrade function
+
+## Replay and Divergences
+
+The replay tracks creates against drops in version order, because order decides the
+final state: `uo_spirit_score` is dropped and re-created by later upgrades, and
+dropping a column also removes any index over it — `upgrade92()` drops `uo_game.pool`,
+which removes the index `upgrade78()` had added over that column.
+
+When an upgrade deliberately creates something the fresh-install schema should not
+have, record it in `docs/ai/db-upgrade-consistency/expected-divergences.txt` with a
+reason:
+
+```
+table  <name>            # reason
+column <table>.<column>  # reason
+index  <table>.<index>   # reason
+```
 
 ## Manual Review Rules
 
@@ -67,6 +92,17 @@ After the checker output, inspect the change for issues the parser cannot see:
 - column definitions should match between the upgrade and the fresh-install schema, including type, nullability, and default
 - if the branch already introduces the latest unmerged upgrade, further schema changes belong in that upgrade rather than a new one, per `AGENTS.md`
 - data migrations that are not idempotent need an explicit guard, since the runner offers none
+
+The replay covers `addColumn()`, `addIndex()`, literal `CREATE TABLE`, `DROP TABLE`, and
+literal `ALTER TABLE ... DROP COLUMN`. It cannot cover:
+
+- raw `ALTER TABLE` statements that modify or rename rather than drop
+- `UPDATE`, `INSERT`, and `DELETE` data migrations, which have no schema footprint
+- calls built from variables, such as the dynamic drop in `upgrade97()`
+
+Column type, nullability, and default are also outside the replay: it verifies a column
+exists, not that its definition matches the upgrade. Compare those by hand for any
+schema change you are reviewing.
 
 ## Output
 

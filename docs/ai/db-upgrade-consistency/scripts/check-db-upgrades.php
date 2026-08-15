@@ -17,15 +17,23 @@ declare(strict_types=1);
 // sql/ultiorganizer.sql already contains those schema changes. That is harmless
 // while the upgrade is guarded (hasColumn/hasTable/...) and an error when it is not.
 //
+// Agreeing version numbers are not enough on their own: a seeded version tells a
+// fresh install "already applied", so any schema change behind it must be present
+// in sql/ultiorganizer.sql or it is never applied at all. The checker therefore
+// also replays the upgrades in order - tracking creates against drops - and
+// verifies every surviving table, column, and index exists in the schema file.
+// Intentional divergences live in ../expected-divergences.txt.
+//
 // Usage:
 //   php docs/ai/db-upgrade-consistency/scripts/check-db-upgrades.php [options]
 //
 // Options:
 //   --root=<path>    Repository root (default: auto-detect)
-//   -v|--verbose     Print the parsed version declarations
+//   -v|--verbose     Print the parsed version declarations and replay totals
 //   --help           Show this help
 
 const FIRST_TRACKED_VERSION = 46; // CheckDB() never starts below this
+const DIVERGENCES_RELATIVE = 'docs/ai/db-upgrade-consistency/expected-divergences.txt';
 
 function main(array $argv): int
 {
@@ -130,6 +138,86 @@ function main(array $argv): int
         }
     }
 
+    // Replay the upgrade chain and confirm what it leaves behind is in the schema.
+    $expected = replayUpgrades($upgrades);
+    $divergences = parseDivergences($repo . '/' . DIVERGENCES_RELATIVE);
+    $schema = (string) file_get_contents($repo . '/sql/ultiorganizer.sql');
+
+    foreach ($divergences as $kind => $entries) {
+        foreach ($entries as $name => $note) {
+            if ($note === '') {
+                $errors[] = sprintf(
+                    '%s %s is listed in %s without a reason note. Append "# <reason>" explaining why the fresh-install schema omits it.',
+                    $kind,
+                    $name,
+                    DIVERGENCES_RELATIVE,
+                );
+            }
+        }
+    }
+
+    if (!empty($opts['verbose'])) {
+        printf(
+            "replayed %d table(s), %d column(s), %d index(es) from %d upgrade(s)\n\n",
+            count($expected['tables']),
+            count($expected['columns']),
+            count($expected['indexes']),
+            count($upgrades),
+        );
+    }
+
+    foreach ($expected['tables'] as $table => $version) {
+        if (isset($divergences['table'][$table])) {
+            continue;
+        }
+        if (schemaTableBody($schema, $table) === null) {
+            $errors[] = sprintf(
+                'upgrade%d() creates table %s but sql/ultiorganizer.sql does not, so a fresh install never gets it. Add the table to the schema, or record it in %s.',
+                $version,
+                $table,
+                DIVERGENCES_RELATIVE,
+            );
+        }
+    }
+
+    foreach ($expected['columns'] as $key => $version) {
+        if (isset($divergences['column'][$key])) {
+            continue;
+        }
+        [$table, $column] = explode('.', $key, 2);
+        $body = schemaTableBody($schema, $table);
+        if ($body === null) {
+            continue; // The table itself is reported above or intentionally absent.
+        }
+        if (preg_match('/^\s+`' . preg_quote($column, '/') . '`\s/mi', $body) !== 1) {
+            $errors[] = sprintf(
+                'upgrade%d() adds column %s.%s but it is missing from sql/ultiorganizer.sql, so a fresh install never gets it.',
+                $version,
+                $table,
+                $column,
+            );
+        }
+    }
+
+    foreach ($expected['indexes'] as $key => $index) {
+        if (isset($divergences['index'][$key])) {
+            continue;
+        }
+        [$table, $name] = explode('.', $key, 2);
+        $body = schemaTableBody($schema, $table);
+        if ($body === null) {
+            continue;
+        }
+        if (stripos($body, '`' . $name . '`') === false) {
+            $errors[] = sprintf(
+                'upgrade%d() adds index %s on %s but it is missing from sql/ultiorganizer.sql, so a fresh install runs without it.',
+                $index['version'],
+                $name,
+                $table,
+            );
+        }
+    }
+
     foreach ($errors as $message) {
         echo "ERROR: $message\n";
     }
@@ -199,7 +287,9 @@ function parseDbVersion(string $file): ?int
  */
 function parseUpgradeFunctions(string $file): array
 {
-    $contents = (string) file_get_contents($file);
+    // Comments are stripped first so a commented-out migration is not replayed:
+    // upgrade58() carries a disabled "drop column accreditation_id" line.
+    $contents = stripComments((string) file_get_contents($file));
     $upgrades = [];
     if (preg_match_all('/^function\s+upgrade(\d+)\s*\(/m', $contents, $matches, PREG_OFFSET_CAPTURE) === false) {
         return [];
@@ -248,6 +338,151 @@ function rangeLabel(int $from, int $to): string
         return "upgrade$from()";
     }
     return "upgrade$from()..upgrade$to()";
+}
+
+/**
+ * Remove PHP comments while preserving line count.
+ */
+function stripComments(string $php): string
+{
+    $out = '';
+    foreach (token_get_all($php) as $token) {
+        if (is_array($token)) {
+            if ($token[0] === T_COMMENT || $token[0] === T_DOC_COMMENT) {
+                $out .= str_repeat("\n", substr_count($token[1], "\n"));
+                continue;
+            }
+            $out .= $token[1];
+            continue;
+        }
+        $out .= $token;
+    }
+    return $out;
+}
+
+/**
+ * Replay the upgrade chain in version order and return the objects it leaves behind.
+ *
+ * Order matters: uo_spirit_score is dropped and re-created by later upgrades, and
+ * dropping a column also removes any index built over it, as upgrade92() does to
+ * uo_game.pool and the index upgrade78() added over it. Only literal calls are
+ * replayed; a dynamic "drop column $column" cannot be resolved statically.
+ *
+ * @param array<int, string> $upgrades version => body
+ * @return array{tables: array<string, int>, columns: array<string, int>, indexes: array<string, array{version: int, table: string, columns: list<string>}>}
+ */
+function replayUpgrades(array $upgrades): array
+{
+    $tables = [];
+    $columns = [];
+    $indexes = [];
+
+    foreach ($upgrades as $version => $body) {
+        if (preg_match_all('/CREATE\s+TABLE\s+(?:IF\s+NOT\s+EXISTS\s+)?`?([a-z0-9_]+)`?/i', $body, $m) > 0) {
+            foreach ($m[1] as $table) {
+                $tables[strtolower($table)] = $version;
+            }
+        }
+
+        if (preg_match_all('/addColumn\(\s*[\'"]([a-z0-9_]+)[\'"]\s*,\s*[\'"]([a-z0-9_]+)[\'"]/i', $body, $m, PREG_SET_ORDER) > 0) {
+            foreach ($m as $match) {
+                $columns[strtolower($match[1] . '.' . $match[2])] = $version;
+            }
+        }
+
+        if (preg_match_all('/addIndex\(\s*[\'"]([a-z0-9_]+)[\'"]\s*,\s*[\'"]([a-z0-9_]+)[\'"]\s*,\s*[\'"]\(([^)]*)\)[\'"]/i', $body, $m, PREG_SET_ORDER) > 0) {
+            foreach ($m as $match) {
+                $table = strtolower($match[1]);
+                $indexColumns = array_map(
+                    static fn(string $c): string => strtolower(trim($c)),
+                    explode(',', $match[3]),
+                );
+                $indexes[$table . '.' . strtolower($match[2])] = [
+                    'version' => $version,
+                    'table' => $table,
+                    'columns' => $indexColumns,
+                ];
+            }
+        }
+
+        if (preg_match_all('/DROP\s+TABLE\s+(?:IF\s+EXISTS\s+)?`?([a-z0-9_]+)`?/i', $body, $m) > 0) {
+            foreach ($m[1] as $dropped) {
+                $table = strtolower($dropped);
+                unset($tables[$table]);
+                foreach (array_keys($columns) as $key) {
+                    if (str_starts_with($key, $table . '.')) {
+                        unset($columns[$key]);
+                    }
+                }
+                foreach (array_keys($indexes) as $key) {
+                    if (str_starts_with($key, $table . '.')) {
+                        unset($indexes[$key]);
+                    }
+                }
+            }
+        }
+
+        if (preg_match_all('/ALTER\s+TABLE\s+`?([a-z0-9_]+)`?\s+DROP\s+COLUMN\s+`?([a-z0-9_]+)`?/i', $body, $m, PREG_SET_ORDER) > 0) {
+            foreach ($m as $match) {
+                $table = strtolower($match[1]);
+                $column = strtolower($match[2]);
+                unset($columns[$table . '.' . $column]);
+                foreach ($indexes as $key => $index) {
+                    if ($index['table'] === $table && in_array($column, $index['columns'], true)) {
+                        unset($indexes[$key]);
+                    }
+                }
+            }
+        }
+    }
+
+    ksort($tables);
+    ksort($columns);
+    ksort($indexes);
+
+    return ['tables' => $tables, 'columns' => $columns, 'indexes' => $indexes];
+}
+
+/**
+ * @return array{table: array<string, string>, column: array<string, string>, index: array<string, string>}
+ */
+function parseDivergences(string $file): array
+{
+    $result = ['table' => [], 'column' => [], 'index' => []];
+    if (!is_file($file)) {
+        return $result;
+    }
+    foreach (file($file, FILE_IGNORE_NEW_LINES) ?: [] as $line) {
+        $line = trim($line);
+        if ($line === '' || str_starts_with($line, '#')) {
+            continue;
+        }
+        $note = '';
+        $hash = strpos($line, '#');
+        if ($hash !== false) {
+            $note = trim(substr($line, $hash + 1));
+            $line = trim(substr($line, 0, $hash));
+        }
+        $parts = preg_split('/\s+/', $line, 2);
+        if ($parts === false || count($parts) !== 2) {
+            continue;
+        }
+        $kind = strtolower($parts[0]);
+        if (!array_key_exists($kind, $result)) {
+            continue;
+        }
+        $result[$kind][strtolower(trim($parts[1]))] = $note;
+    }
+    return $result;
+}
+
+function schemaTableBody(string $schema, string $table): ?string
+{
+    $pattern = '/CREATE TABLE(?:\s+IF NOT EXISTS)?\s+`' . preg_quote($table, '/') . '`\s*\((.*?)^\)\s*ENGINE/msi';
+    if (preg_match($pattern, $schema, $m) === 1) {
+        return $m[1];
+    }
+    return null;
 }
 
 exit(main($argv));
