@@ -133,8 +133,13 @@ Current deletion behavior:
 - delete matching rows from `uo_event_log`
 - delete matching rows from `uo_accreditationlog`
 - delete matching rows from `uo_registerrequest`
+- delete matching rows from `uo_passwordresetrequest`
 - delete matching rows from `uo_userproperties`
 - delete the row from `uo_users`
 - rely on existing foreign-key cascades from `uo_users` for `uo_extraemail`, `uo_extraemailrequest`, and `uo_enrolledteam`
+
+`uo_passwordresetrequest` has no foreign key to `uo_users`, so it needs an explicit delete.
+It is deliberately left out of the report scope: a pending row holds a live reset token, and the
+export is a plain text file.
 
 After deletion, the system writes one non-identifying audit entry for the privacy operation itself.
