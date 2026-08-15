@@ -18,7 +18,9 @@ $updated = false;
 
 if (isset($_POST['upload'])) {
 
-    if ($_FILES['uploadedfile']['type'] == "text/x-csv" || $_FILES['uploadedfile']['type'] == "text/csv") {
+    if (!isSuperAdmin()) {
+        echo "<p class='warning'>" . _("Insufficient user rights") . "</p>";
+    } elseif ($_FILES['uploadedfile']['type'] == "text/x-csv" || $_FILES['uploadedfile']['type'] == "text/csv") {
         if (is_uploaded_file($_FILES['uploadedfile']['tmp_name'])) {
             if (($handle = fopen($_FILES['uploadedfile']['tmp_name'], "r")) !== false) {
                 $new_players = slklUpdateLicensesFromCSV($handle, $season);
@@ -86,7 +88,10 @@ if (isset($_POST['upload'])) {
     }
 }
 
-if ($view == "acc") {
+// The license database is installation-wide, so the import is offered only to
+// installation administrators. hasAccreditationPageAccess() lets a single-team
+// accreditation admin reach this page for the event-scoped views.
+if ($view == "acc" && isSuperAdmin()) {
     echo "<h3>" . _("Update ultiorganizer license database") . "</h3>";
     echo "<form enctype='multipart/form-data' method='post' action='$url'>\n";
     echo "<div><input type='hidden' name='MAX_FILE_SIZE' value='50000000' /></div>\n";
@@ -155,6 +160,14 @@ if ($view == "autoacc") {
 
 function slklUpdateLicensesFromCSV($handle, $season)
 {
+    // Rows in uo_license and uo_player_profile are keyed by the global external
+    // ID, so this import rewrites membership, licence, birthdate, gender and
+    // email across the whole installation regardless of $season. The check is
+    // repeated here so a future caller cannot reach the writes without it.
+    if (!isSuperAdmin()) {
+        return "";
+    }
+
     $html = "";
     $length = 1000; //row length in file
     $delimiter = ';';
