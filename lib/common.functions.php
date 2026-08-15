@@ -724,6 +724,52 @@ function SafeUrl($url)
 }
 
 /**
+ * Validate a caller-supplied redirect target.
+ *
+ * Pages seed their "back" link from HTTP_REFERER, so the value legitimately
+ * carries an absolute URL on this installation and cannot simply be required
+ * to be a relative path. Absolute URLs are accepted only when the host matches
+ * the installation host; anything else falls back to $default.
+ *
+ * Values containing a CR or LF are rejected outright: they would otherwise
+ * inject additional response headers through header("location:...").
+ */
+function SafeRedirectUrl($url, $default = "index.php")
+{
+    $url = trim((string) $url);
+    if ($url === "" || preg_match('/[\x00-\x1f\x7f]/', $url)) {
+        return $default;
+    }
+
+    // Checked before the host, so a schemed-but-hostless target such as
+    // "javascript:alert(1)" cannot be mistaken for a relative path.
+    $scheme = parse_url($url, PHP_URL_SCHEME);
+    if ($scheme !== null && $scheme !== false) {
+        $scheme = strtolower((string) $scheme);
+        if ($scheme !== "http" && $scheme !== "https") {
+            return $default;
+        }
+    }
+
+    $host = parse_url($url, PHP_URL_HOST);
+    if ($host === null || $host === false) {
+        // A relative target. Reject protocol-relative "//host/path" and any
+        // backslash form browsers may normalise into one.
+        if (strpos($url, "//") === 0 || strpos($url, "\\") !== false) {
+            return $default;
+        }
+        return $url;
+    }
+
+    $baseHost = parse_url(GetURLBase(), PHP_URL_HOST);
+    if (!is_string($baseHost) || strcasecmp($host, $baseHost) !== 0) {
+        return $default;
+    }
+
+    return $url;
+}
+
+/**
  * Validate a stylesheet reference supplied through a query parameter.
  *
  * The external display pages let the caller point at any stylesheet, including
