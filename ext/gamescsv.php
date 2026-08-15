@@ -1,6 +1,7 @@
 <?php
 
 include_once __DIR__ . '/localization.php';
+include_once __DIR__ . '/../lib/common.functions.php';
 include_once __DIR__ . '/../lib/season.functions.php';
 include_once __DIR__ . '/../lib/timetable.functions.php';
 
@@ -10,10 +11,17 @@ $encoding = 'UTF-8';
 $separator = ',';
 
 if (iget('enc')) {
-    $encoding = iget('enc');
+    $encoding = ValidCsvEncoding(iget('enc'));
 }
 if (iget('sep')) {
-    $separator = iget('sep');
+    $separator = ValidCsvSeparator(iget('sep'));
+}
+if ($encoding === false || $separator === false) {
+    CloseConnection();
+    header("HTTP/1.1 400 Bad Request");
+    header("Content-type: text/plain; charset=UTF-8");
+    echo _("Unsupported encoding or separator.");
+    exit;
 }
 
 $data = TimetableToCsv($season, $separator);

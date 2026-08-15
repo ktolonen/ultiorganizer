@@ -838,6 +838,50 @@ if (!function_exists('array_combine')) {
     }
 }
 
+/**
+ * Check that a caller-supplied character encoding is one mbstring can produce.
+ *
+ * mb_convert_encoding() throws a ValueError on an unknown encoding name, so an
+ * ordinary typo in a hand-written export link surfaces as an uncaught error
+ * page. The name is probed against a short string instead of being matched
+ * against a fixed list: mbstring accepts common aliases such as UTF8, latin1
+ * and CP1252 that mb_list_encodings() does not report, and existing export
+ * links may well use them.
+ */
+function ValidCsvEncoding($encoding)
+{
+    $encoding = (string) $encoding;
+    if ($encoding === "") {
+        return false;
+    }
+
+    try {
+        $probe = mb_convert_encoding("0", $encoding, "UTF-8");
+    } catch (\ValueError $e) {
+        return false;
+    }
+
+    return $probe === false ? false : $encoding;
+}
+
+/**
+ * A CSV delimiter must be exactly one byte. fputcsv() rejects anything else,
+ * so the value is constrained here rather than at each serializer.
+ */
+function ValidCsvSeparator($separator)
+{
+    $separator = (string) $separator;
+    if (strlen($separator) !== 1) {
+        return false;
+    }
+    // A quote or a newline as the delimiter would produce unparseable output.
+    if (strpos("\"\r\n", $separator) !== false) {
+        return false;
+    }
+
+    return $separator;
+}
+
 function ResultsetToCsv($result, $separator)
 {
     $csv_terminated = "\n";
