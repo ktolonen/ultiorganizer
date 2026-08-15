@@ -928,105 +928,95 @@ function ValidCsvSeparator($separator)
     return $separator;
 }
 
+/**
+ * Opens an in-memory stream for building CSV output.
+ *
+ * @return resource|false
+ */
+function OpenCsvBuffer()
+{
+    return fopen("php://temp", "r+");
+}
+
+/**
+ * Writes one CSV record.
+ *
+ * The escape argument is deliberately empty. PHP's default escape character is
+ * a backslash, which makes fputcsv() emit \" for an embedded quote; RFC 4180
+ * requires the quote to be doubled ("") instead, and common spreadsheet
+ * readers parse only the latter correctly.
+ */
+function WriteCsvRecord($handle, $fields, $separator)
+{
+    fputcsv($handle, $fields, $separator, '"', "");
+}
+
+/**
+ * Reads back and closes a CSV buffer opened with OpenCsvBuffer().
+ */
+function CloseCsvBuffer($handle)
+{
+    rewind($handle);
+    $out = stream_get_contents($handle);
+    fclose($handle);
+
+    return $out === false ? "" : $out;
+}
+
 function ResultsetToCsv($result, $separator)
 {
-    $csv_terminated = "\n";
-    $csv_separator = $separator;
-    $csv_enclosed = '"';
-    $csv_escaped = "\\";
+    $handle = OpenCsvBuffer();
+    if ($handle === false) {
+        return "";
+    }
 
     $fields_cnt = mysqli_num_fields($result);
 
-    $schema_insert = '';
-
+    $header = [];
     for ($i = 0; $i < $fields_cnt; $i++) {
-        $l = $csv_enclosed . str_replace(
-            $csv_enclosed,
-            $csv_escaped . $csv_enclosed,
-            stripslashes(mysqli_fetch_field_direct($result, $i)->name),
-        ) . $csv_enclosed;
-        $schema_insert .= $l;
-        $schema_insert .= $csv_separator;
-    } // end for
+        $header[] = stripslashes(mysqli_fetch_field_direct($result, $i)->name);
+    }
+    WriteCsvRecord($handle, $header, $separator);
 
-    $out = trim(substr($schema_insert, 0, -1));
-    $out .= $csv_terminated;
-
-    // Format the data
+    // Rows are written as they are fetched so a large export does not have to
+    // be held in memory twice.
     while ($row = mysqli_fetch_array($result)) {
-        $schema_insert = '';
+        $fields = [];
         for ($j = 0; $j < $fields_cnt; $j++) {
-            if ($row[$j] == '0' || $row[$j] != '') {
+            $fields[] = $row[$j] === null ? '' : $row[$j];
+        }
+        WriteCsvRecord($handle, $fields, $separator);
+    }
 
-                $schema_insert .= $csv_enclosed .
-                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $row[$j]) . $csv_enclosed;
-            } else {
-                $schema_insert .= '';
-            }
-
-            if ($j < $fields_cnt - 1) {
-                $schema_insert .= $csv_separator;
-            }
-        } // end for
-
-        $out .= $schema_insert;
-        $out .= $csv_terminated;
-    } // end while
-    return $out;
+    return CloseCsvBuffer($handle);
 }
 
 function ArrayToCsv($result, $separator)
 {
-    $csv_terminated = "\n";
-    $csv_separator = $separator;
-    $csv_enclosed = '"';
-    $csv_escaped = "\\";
-
     if (count($result) == 0) {
         return "";
     }
-    $fields_cnt = count($result[0]);
 
-    $schema_insert = '';
-    $keys = array_keys($result[0]);
+    $handle = OpenCsvBuffer();
+    if ($handle === false) {
+        return "";
+    }
 
-    foreach ($keys as $fieldname) {
-        $l = $csv_enclosed . str_replace(
-            $csv_enclosed,
-            $csv_escaped . $csv_enclosed,
-            stripslashes($fieldname),
-        ) . $csv_enclosed;
-        $schema_insert .= $l;
-        $schema_insert .= $csv_separator;
-        //echo $fieldname;
-    } // end for
+    $header = [];
+    foreach (array_keys($result[0]) as $fieldname) {
+        $header[] = stripslashes($fieldname);
+    }
+    WriteCsvRecord($handle, $header, $separator);
 
-    $out = trim(substr($schema_insert, 0, -1));
-    $out .= $csv_terminated;
-
-    // Format the data
     foreach ($result as $row) {
-        $schema_insert = '';
-        $j = 0;
+        $fields = [];
         foreach ($row as $value) {
-            if ($value == '0' || $value != '') {
+            $fields[] = $value === null ? '' : $value;
+        }
+        WriteCsvRecord($handle, $fields, $separator);
+    }
 
-                $schema_insert .= $csv_enclosed .
-                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $value) . $csv_enclosed;
-            } else {
-                $schema_insert .= '';
-            }
-
-            if ($j < $fields_cnt - 1) {
-                $schema_insert .= $csv_separator;
-            }
-            $j++;
-        } // end for
-
-        $out .= $schema_insert;
-        $out .= $csv_terminated;
-    } // end while
-    return $out;
+    return CloseCsvBuffer($handle);
 }
 
 function CreateOrdering($tables, $orderby)
