@@ -112,6 +112,27 @@ docker compose -f docs/dev/compose.yaml exec dev bash
 
 The `dev` image includes CLI tools useful for local development work such as `git`, `curl`, `less`, `mariadb-client`, and `ripgrep`.
 
+## Test harness
+
+The project's test suite is not part of this repository. It lives in the public [`ktolonen/ultiorganizer-tests`](https://github.com/ktolonen/ultiorganizer-tests) repository and runs against a copy of this source tree, so it never modifies your checkout.
+
+Clone it once as a sibling of this checkout — the layout both CI and the harness default to:
+
+```sh
+git clone https://github.com/ktolonen/ultiorganizer-tests.git ../ultiorganizer-tests
+```
+
+Then run it from that directory:
+
+```sh
+cd ../ultiorganizer-tests
+./doctor       # check Docker and the environment
+./test:quick   # day-to-day run
+./test:matrix  # the full matrix CI runs
+```
+
+The harness defaults to the sibling source checkout at `../ultiorganizer`; pass `--sut-path <path>` to test a different checkout or worktree. Keep it on `main`, which is the ref CI uses. See the harness README for the suite definitions and reporting commands.
+
 ## Connect with HeidiSQL or another host database client
 
 The local MariaDB container is published to the host so you can connect with HeidiSQL, DBeaver, or another desktop client.

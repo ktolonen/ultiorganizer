@@ -15,7 +15,7 @@ This directory collects general project documentation.
 - `runtime-cache.md`: request-local helper caching guidance and database-log recapture commands.
 - `persistent-cache.md`: cross-request TTL cache helper API, configuration, stampede control, and invalidation guidance.
 - `deployment.md`: production release package and installation guidance.
-- `local-development.md`: local Docker-based setup.
+- `local-development.md`: local Docker-based setup and test harness setup.
 - `dev/`: Docker Compose assets and image definitions used by the local development guide.
 - `code-style.md`: PHP code style conventions, formatter and linter setup, and pre-commit hook.
 
@@ -52,6 +52,9 @@ This directory collects general project documentation.
 - `ai/review-user-language/SKILL.md`: read-only review skill for project spelling, grammar, and terminology consistency in user-facing content.
 - `ai/fix-user-language/SKILL.md`: fix skill for user-facing wording, terminology normalization, and gettext-backed copy updates.
 - `ai/review-database-access/SKILL.md`: read-only review skill for database access boundaries, page-layer DB usage, and legacy cursor-style APIs.
+- `ai/db-upgrade-consistency/SKILL.md`: read-only review skill for agreement between `DB_VERSION`, the `upgradeNN()` migration steps, and the fresh-install schema seed.
+- `ai/release-package-coverage/SKILL.md`: read-only review skill for release packaging classification and registration of new top-level paths.
+- `ai/privacy-coverage/SKILL.md`: read-only review skill for privacy export, anonymization, and deletion coverage of schema tables.
 - `ai/review-playoff-layouts/SKILL.md`: read-only review skill for playoff bracket layout placeholders, CSS widths, and the move-comment block.
 - `ai/css-style-and-lint/SKILL.md`: fix skill for CSS style consistency analysis, Stylelint checks, and safe stylesheet fixes.
 - `ai/format-and-lint/SKILL.md`: fix skill that runs PHP-CS-Fixer and PHPStan on changed PHP files and applies safe fixes.

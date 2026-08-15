@@ -1,0 +1,73 @@
+# Personal-data classification for every table in sql/ultiorganizer.sql.
+#
+# kind             meaning
+# ---------------- -------------------------------------------------------------
+# personal         holds personal data reachable from a data subject; MUST be
+#                  referenced by lib/privacy.functions.php so export, anonymization,
+#                  or deletion covers it
+# personal-exempt  holds personal data but is intentionally out of automated scope;
+#                  requires a trailing '# reason' note
+# none             holds no personal data
+#
+# Add a line whenever a table is added to the schema. See docs/privacy.md.
+
+personal         uo_accreditationlog
+none             uo_api_rate_limit
+none             uo_api_token
+personal         uo_club
+personal-exempt  uo_comment                       # free-text field keyed to an entity, not to a data subject; handled by manual review during a request
+none             uo_country
+none             uo_database
+personal         uo_defense
+personal         uo_enrolledteam
+personal         uo_event_log
+personal         uo_extraemail
+personal         uo_extraemailrequest
+none             uo_game
+none             uo_gameevent
+none             uo_game_pool
+personal         uo_goal
+none             uo_image
+none             uo_keys
+personal         uo_license
+none             uo_location
+none             uo_location_info
+none             uo_moveteams
+none             uo_movingtime
+none             uo_pageload_counter
+personal         uo_passwordresetrequest
+personal         uo_played
+personal         uo_player
+personal         uo_player_profile
+personal         uo_player_stats
+none             uo_pool
+none             uo_pooltemplate
+personal         uo_registerrequest
+none             uo_reservation
+none             uo_scheduling_name
+none             uo_season
+none             uo_season_points
+none             uo_season_round
+none             uo_season_stats
+none             uo_series
+none             uo_series_stats
+none             uo_setting
+none             uo_specialranking
+none             uo_spirit_category
+none             uo_spirit_score
+none             uo_spirit_timeout
+none             uo_team
+none             uo_team_final_standing
+none             uo_team_pool
+personal         uo_team_profile
+none             uo_team_spirit_stats
+none             uo_team_stats
+none             uo_timekeeper_template
+none             uo_timekeeper_template_signal
+none             uo_timeout
+none             uo_translation
+personal         uo_urls
+personal         uo_userproperties
+personal         uo_users
+none             uo_victorypoints
+personal         uo_visitor_counter
