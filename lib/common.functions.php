@@ -723,6 +723,43 @@ function SafeUrl($url)
     return $url;
 }
 
+/**
+ * Validate a stylesheet reference supplied through a query parameter.
+ *
+ * The external display pages let the caller point at any stylesheet, including
+ * one hosted elsewhere (ext/index.php offers "a link to your own style
+ * definition"), so the host cannot be constrained. Only the shape is checked:
+ * an http/https URL or a relative path, ending in .css. Anything else - most
+ * importantly a javascript: or data: scheme - falls back to the default.
+ *
+ * The return value is still untrusted text and must be HTML-escaped on output.
+ */
+function ValidStyleSheet($style, $default)
+{
+    $style = trim((string) $style);
+    if ($style === "") {
+        return $default;
+    }
+
+    // Reject control characters, whitespace and anything that could break out
+    // of the attribute before the shape is examined.
+    if (preg_match('/[\x00-\x20\x7f"\'<>\\\\]/', $style)) {
+        return $default;
+    }
+
+    $scheme = parse_url($style, PHP_URL_SCHEME);
+    if ($scheme !== null && !in_array(strtolower($scheme), ["http", "https"], true)) {
+        return $default;
+    }
+
+    $path = parse_url($style, PHP_URL_PATH);
+    if (!is_string($path) || strtolower(substr($path, -4)) !== ".css") {
+        return $default;
+    }
+
+    return $style;
+}
+
 function colorstring2rgb($color)
 {
     if (!is_string($color) || $color === '') {
