@@ -32,17 +32,27 @@ if (isset($_POST['import'])) {
 
     $utf8 = !empty($_POST['utf8']);
     $season = $_POST['season'];
-    $separator = $_POST['separator'];
+    $separator = ValidCsvSeparator($_POST['separator'] ?? ',');
     $series = SeasonSeries($season);
     $ser = [];
     foreach ($series as $row) {
         $ser[] = ['id' => $row['series_id'], 'name' => $row['seriesname']];
     }
 
-    if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-        $row = 1;
+    if ($separator === false) {
+        $html .= "<p>" . ("The CSV separator must be a single character.") . "</p>";
+    } elseif (is_uploaded_file($_FILES['file']['tmp_name'])) {
+        $row = 0;
+        $imported = 0;
+        $skipped = [];
         if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== false) {
-            while (($data = fgetcsv($handle, 0, ";")) !== false) {
+            while (($data = fgetcsv($handle, 0, $separator)) !== false) {
+                $row++;
+                // Four columns are required: team, club, country, division.
+                if (count($data) < 4) {
+                    $skipped[] = $row;
+                    continue;
+                }
                 $team = $utf8 ? $data[0] : convertToUtf8($data[0]);
                 $club = $utf8 ? $data[1] : convertToUtf8($data[1]);
                 $country = $utf8 ? $data[2] : convertToUtf8($data[2]);
@@ -74,8 +84,13 @@ if (isset($_POST['import'])) {
                 }
                 $id = AddSeriesEnrolledTeam($series, $_SESSION['uid'], $team, $club, $country);
                 ConfirmEnrolledTeam($series, $id);
+                $imported++;
             }
             fclose($handle);
+        }
+        $html .= "<p>" . sprintf(("Imported %d team(s) from %d row(s)."), $imported, $row) . "</p>";
+        if (!empty($skipped)) {
+            $html .= "<p>" . sprintf(("Skipped row(s): %s"), implode(", ", $skipped)) . "</p>";
         }
     } else {
         $html .= "<p>" . ("There was an error uploading the file, please try again!") . "</p>";
