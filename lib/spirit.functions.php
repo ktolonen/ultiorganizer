@@ -1707,9 +1707,26 @@ function GameSetSpiritPoints($gameId, $teamId, $home, $points, $categories)
     // authenticated paths passed $categories in but never used it, so
     // out-of-range and non-numeric category values were stored unchecked.
     // Validating here covers both authenticated callers at once.
-    $validatedPoints = SpiritValidateSubmittedPoints($points, $categories);
-    if ($validatedPoints === false) {
-        return false;
+    $hasScorableCategories = false;
+    foreach ($categories as $category) {
+        if ((int) $category['index'] > 0) {
+            $hasScorableCategories = true;
+            break;
+        }
+    }
+
+    if (!$hasScorableCategories) {
+        // No categories to score against, so there is nothing to validate and
+        // nothing worth storing. Replacing with an empty set clears the
+        // submission, which is what this call did before validation was added.
+        // $categories comes from SpiritCategories() rather than the request, so
+        // this cannot be forced by a caller to skip validation.
+        $validatedPoints = [];
+    } else {
+        $validatedPoints = SpiritValidateSubmittedPoints($points, $categories);
+        if ($validatedPoints === false) {
+            return false;
+        }
     }
 
     if (CanEditSpiritSubmission($gameId, $teamId)) {
