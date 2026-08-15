@@ -70,4 +70,4 @@ personal         uo_urls
 personal         uo_userproperties
 personal         uo_users
 none             uo_victorypoints
-personal         uo_visitor_counter
+personal-exempt  uo_visitor_counter               # raw IP kept only to count unique visitors; no link to a data subject, so no per-subject query can reach it. Opt out with the DisableVisitorLogging setting; purge with LogResetVisitorCounter().

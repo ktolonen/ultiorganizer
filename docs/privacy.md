@@ -104,6 +104,17 @@ Current table-level behavior:
   No row deletion or scrubbing is done.
   Historical defense links remain.
 
+## Visitor counter
+
+`uo_visitor_counter` stores one raw IP address per unique visitor, used only to count
+visitors: `LogGetVisitorCount()` reads aggregates, and no page displays an individual row.
+
+The table has no link to a player or registered user, so the per-subject privacy tools cannot
+reach it. Two controls apply instead:
+
+- set the `DisableVisitorLogging` setting to stop recording IPs entirely
+- a super admin can purge every row from the visitor admin page, which calls `LogResetVisitorCounter()`
+
 ## Registered user privacy tools
 
 The registered user privacy tools support two operations:
