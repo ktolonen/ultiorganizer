@@ -104,6 +104,21 @@ Current table-level behavior:
   No row deletion or scrubbing is done.
   Historical defense links remain.
 
+## Free-text fields naming other people
+
+Anonymization clears free text on the data subject's own row: `PrivacyAnonymizePlayer()`
+nulls `story` and `achievements` on the player's `uo_player_profile` row.
+
+Free text stored on another entity's row is not reachable that way. A person can be named in:
+
+- `uo_team_profile` — `coach`, `captain`, `story`, `achievements`
+- `uo_club` — `contacts`, `story`, `achievements`
+- `uo_comment` — the comment body
+
+No per-subject query can find those mentions, because the row belongs to a team, club, or game
+rather than to the person. Removing them is a manual admin edit, and a privacy request that
+concerns a coach, captain, or club contact should include a check of these fields.
+
 ## Visitor counter
 
 `uo_visitor_counter` stores one raw IP address per unique visitor, used only to count

@@ -14,7 +14,7 @@
 personal         uo_accreditationlog
 none             uo_api_rate_limit
 none             uo_api_token
-personal         uo_club
+personal-exempt  uo_club                          # contacts, story, and achievements are free text on a club row, not on a data subject's own row; a name mentioned there needs manual admin editing during a request
 personal-exempt  uo_comment                       # free-text field keyed to an entity, not to a data subject; handled by manual review during a request
 none             uo_country
 none             uo_database
@@ -59,7 +59,7 @@ none             uo_spirit_timeout
 none             uo_team
 none             uo_team_final_standing
 none             uo_team_pool
-personal         uo_team_profile
+personal-exempt  uo_team_profile                  # coach, captain, story, and achievements are free text on a team row, not on a data subject's own row; a name mentioned there needs manual admin editing during a request
 none             uo_team_spirit_stats
 none             uo_team_stats
 none             uo_timekeeper_template
