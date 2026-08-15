@@ -1294,11 +1294,45 @@ function GameSetDefenses($gameId, $home, $away)
     }
 }
 
+/**
+ * Returns true when a player may be put on a game roster.
+ *
+ * When the event requires accreditation, only accredited players may be added.
+ * A player already on the roster stays allowed so that renumbering and
+ * re-saving an existing roster keeps working.
+ */
+function GameAllowsPlayerOnRoster($gameId, $playerId)
+{
+    $seasonInfo = SeasonInfo(GameSeason($gameId));
+    if (empty($seasonInfo['require_accreditation'])) {
+        return true;
+    }
+
+    if (isAccredited($playerId)) {
+        return true;
+    }
+
+    $query = sprintf(
+        "SELECT COUNT(*) FROM uo_played WHERE game='%s' AND player='%s'",
+        DBEscapeString($gameId),
+        DBEscapeString($playerId),
+    );
+
+    return (int) DBQueryToValue($query) > 0;
+}
+
 function GameAddPlayer($gameId, $playerId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        // Enforced here so every roster path inherits it: the modern handlers
+        // check accreditation themselves, but mobile/addplayerlists.php reached
+        // this mutation directly and bypassed the event rule.
+        if (!GameAllowsPlayerOnRoster($gameId, $playerId)) {
+            return false;
+        }
+
         $query = sprintf(
-            "INSERT INTO uo_played 
+            "INSERT INTO uo_played
 			(game, player, num, accredited) 
 			VALUES ('%s', '%s', '%s', %d)
 			ON DUPLICATE KEY UPDATE num=%d",
