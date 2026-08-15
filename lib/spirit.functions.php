@@ -1703,8 +1703,17 @@ function CanDeleteSpiritSubmission($gameId, $teamId)
 
 function GameSetSpiritPoints($gameId, $teamId, $home, $points, $categories)
 {
+    // The token path validates through SpiritTokenSaveSubmission(); the
+    // authenticated paths passed $categories in but never used it, so
+    // out-of-range and non-numeric category values were stored unchecked.
+    // Validating here covers both authenticated callers at once.
+    $validatedPoints = SpiritValidateSubmittedPoints($points, $categories);
+    if ($validatedPoints === false) {
+        return false;
+    }
+
     if (CanEditSpiritSubmission($gameId, $teamId)) {
-        SpiritScoreReplaceByGameTeam($gameId, $teamId, $points);
+        SpiritScoreReplaceByGameTeam($gameId, $teamId, $validatedPoints);
         RefreshGameSpiritData($gameId);
         return true;
     } else {
