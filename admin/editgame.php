@@ -98,7 +98,11 @@ if (!empty($_POST['save'])) {
         $userid = UserIdForMail($_POST['email']);
     }
     if (IsRegistered($userid)) {
-        AddSeasonUserRole($userid, 'gameadmin:' . $gameId, $season);
+        // Scope the role to the event that actually owns the game rather than
+        // the season carried in the query string, which is only the page's
+        // browsing context and need not match.
+        $gameSeason = GameSeason($gameId);
+        AddSeasonUserRole($userid, 'gameadmin:' . $gameId, empty($gameSeason) ? $season : $gameSeason);
     }
     if (!empty($backurl)) {
         session_write_close();
