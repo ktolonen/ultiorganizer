@@ -1506,21 +1506,32 @@ function DeletePool($poolId)
 /**
  * Deletes pool template.
  *
- * @param int $poolId
+ * @param int $templateId uo_pooltemplate.template_id
+ * @return bool true when a template was deleted.
  */
-function DeletePoolTemplate($poolId)
+function DeletePoolTemplate($templateId)
 {
-    $poolInfo = PoolInfo($poolId);
-    if (hasEditSeasonSeriesRight($poolInfo['season'])) {
-        $query = sprintf(
-            "DELETE FROM uo_pooltemplate WHERE template_id=%d",
-            (int) $poolId,
-        );
+    $template = PoolTemplateInfo($templateId);
+    if (!$template) {
+        return false;
+    }
 
-        DBQuery($query);
-    } else {
+    // Pool templates are installation-wide - uo_pooltemplate has no event
+    // column, so there is no owning event to authorise against. Require the
+    // same permission AddPoolTemplate() does. The previous code passed this
+    // template id to PoolInfo(), which reads uo_pool, and authorised against
+    // whichever unrelated pool happened to share the id.
+    if (!hasCurrentSeasonsEditRight()) {
         die('Insufficient rights to delete pool template');
     }
+
+    $query = sprintf(
+        "DELETE FROM uo_pooltemplate WHERE template_id=%d",
+        (int) $templateId,
+    );
+
+    DBQuery($query);
+    return true;
 }
 
 function PoolColors()
