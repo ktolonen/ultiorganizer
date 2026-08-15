@@ -12,7 +12,7 @@ $_SESSION['game'] = $gameId;
 if (isset($_POST['save'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
-    if ($home < 0 || $away < 0) {
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
     if (empty($info)) {
@@ -28,7 +28,7 @@ if (isset($_POST['save'])) {
 } elseif (isset($_POST['update'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
-    if ($home < 0 || $away < 0) {
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
     if (empty($info)) {

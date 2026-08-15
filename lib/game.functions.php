@@ -1091,11 +1091,38 @@ function GameTimeoutsPerTeam($gameId)
     return max(1, $timeouts);
 }
 
+/**
+ * Highest score a game result may carry.
+ *
+ * The bound is what CheckGameResult() has always promised in its warning text.
+ * Its purpose is to keep a mistyped score out of standings and statistics, so
+ * it is deliberately far above any real Ultimate score.
+ */
+const MAX_GAME_SCORE = 1000;
+
+/**
+ * Returns true when a value is a whole number within the allowed score range.
+ *
+ * Accepts integers and digit strings, since callers pass both.
+ */
+function IsValidGameScore($score)
+{
+    if (is_int($score)) {
+        return $score >= 0 && $score <= MAX_GAME_SCORE;
+    }
+
+    if (is_string($score) && ctype_digit(trim($score))) {
+        return (int) trim($score) <= MAX_GAME_SCORE;
+    }
+
+    return false;
+}
+
 function CheckGameResult($game, $home, $away)
 {
     $gameId = (int) substr($game, 0, -1);
     $errors = "";
-    if ($home < 0 || $away < 0) {
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         $errors .= "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
     if ($gameId == 0 || !checkChkNum($game)) {
@@ -1121,6 +1148,11 @@ function CheckGameResult($game, $home, $away)
 
 function GameUpdateResult($gameId, $home, $away)
 {
+    // Enforced here rather than per entry point: user/addresult.php and
+    // mobile/addresult.php never call CheckGameResult().
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
+        return false;
+    }
     if (hasEditGameEventsRight($gameId)) {
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1', hasstarted='1' WHERE game_id='%s'",
@@ -1138,6 +1170,9 @@ function GameUpdateResult($gameId, $home, $away)
 
 function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights = true)
 {
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
+        return false;
+    }
     $seasonId = GameSeason($gameId);
     if (!$checkRights && isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
         die('Insufficient rights to edit game');
