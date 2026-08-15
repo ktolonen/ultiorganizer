@@ -1,8 +1,8 @@
 # Ultiorganizer
 
 Ultiorganizer is a free, self-hosted web application for organizing and scoring
-Ultimate tournaments. It keeps event setup, schedules, live scores, standings,
-player statistics, and Spirit of the Game results in one system.
+Ultimate tournaments. It runs the whole event in one system, from the first
+draft of the schedule to the published final standings.
 
 Organizers use the main application to manage the tournament. Mobile-friendly
 tools help scorekeepers and teams record game information on the field, while
@@ -13,23 +13,45 @@ public pages keep players and spectators up to date.
 ### Plan the event
 
 - Manage events, divisions, teams, player rosters, and team enrollment.
-- Create round-robin, playoff, Swiss-draw, and cross-match pools.
-- Generate games and move teams between pools based on standings.
+- Keep club, country, and player profiles that carry across events.
+- Build pools in several formats and generate their games.
+- Seed teams and move them between pools as standings are resolved.
+- Lay out playoff brackets from reusable templates.
+- Define venues, fields, and reservation windows.
 - Assign games to fields and times with scheduling conflict checks.
+- Handle team accreditation, including automatic rules and an audit log.
+- Track which teams are responsible for which games.
 
 ### Run game day
 
-- Record results, goals, assists, timeouts, and game events.
+- Record only a result, or a full scoresheet with the point-by-point sequence.
+- Log goals, assists, timeouts, scorekeepers, game events, and game notes.
+- Collect spirit scores, spirit comments, and spirit stoppages.
 - Use **Scorekeeper** for mobile score entry and live game timing.
-- Use **Spiritkeeper** for team Spirit of the Game submissions.
-- Use **Timekeeper** for time-limit signals and game timing.
+- Use **Spiritkeeper** for Spirit of the Game submissions using a logged-in account or a token link.
+- Use **Timekeeper** for WFDF time-limit signals and the game clock.
 
-### Publish results
 
-- Show public schedules, live scores, standings, team pages, and statistics.
-- Produce printable schedules, scoresheets, player lists, and rosters.
-- Export event data through PDF, CSV, XML, RSS, iCalendar, and a JSON API.
-- Support multiple languages, user roles, permissions, and custom skins.
+### Manage the event
+
+- Publish a front page, schedules, and live scores.
+- Show pool standings with automatic tie-breakers and event final standings.
+- Give every team, player, club, and country its own public page.
+- Provide tools for tournament and spirit directors.
+- Present cross-event scoreboards, spirit standings, and medal tables.
+- Attach media links to games, teams, players, and clubs.
+- Print schedules, scoresheets, player lists for games, and team rosters as PDFs.
+- Offer CSV, XML, RSS, and iCalendar outputs for external use.
+- Embed scoreboards and other widgets on an external site.
+- Serve a read-only JSON API with scoped access tokens.
+
+### Administer the installation
+
+- Grant scoped roles, from installation-wide down to a single game.
+- Run the interface in several languages and translate installation-defined names.
+- Restyle the interface with skins built on CSS color tokens.
+- Export, anonymize, or delete personal data with dedicated privacy tools.
+- Extend the installation with plugins for site-specific tools.
 
 ## Live! by BULA
 
