@@ -65,9 +65,20 @@ if (!empty($_POST['create'])) {
 
         $games = ReservationGamesByField($field['fieldname'], $season);
         while ($game = mysqli_fetch_assoc($games)) {
-            $exist = DBQueryToValue("SELECT COUNT(*) FROM uo_userproperties WHERE userid='$name' AND value='gameadmin:" . $game['game_id'] . "'");
-            if ($user < 1) {
-                DBQuery("INSERT INTO uo_userproperties(userid, name, value) VALUES ('$name', 'userrole', 'gameadmin:" . $game['game_id'] . "')");
+            // Keyed on whether this game role exists, not on whether the field
+            // user was just created, so re-running after adding games to an
+            // existing field grants the missing roles.
+            $exist = DBQueryToValue(sprintf(
+                "SELECT COUNT(*) FROM uo_userproperties WHERE userid='%s' AND value='gameadmin:%d'",
+                DBEscapeString($name),
+                (int) $game['game_id'],
+            ));
+            if ($exist < 1) {
+                DBQuery(sprintf(
+                    "INSERT INTO uo_userproperties(userid, name, value) VALUES ('%s', 'userrole', 'gameadmin:%d')",
+                    DBEscapeString($name),
+                    (int) $game['game_id'],
+                ));
             }
         }
     }
