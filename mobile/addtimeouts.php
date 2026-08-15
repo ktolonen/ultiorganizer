@@ -7,12 +7,17 @@ include_once 'lib/team.functions.php';
 include_once 'lib/player.functions.php';
 include_once 'lib/season.functions.php';
 $html = "";
-$maxtimeouts = 6;
 
 $gameId = intval(iget("game"));
 $game_result = GameResult($gameId);
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $allowSpiritTimeouts = !empty($seasoninfo['spiritmode']) && empty($seasoninfo['hide_time_on_scoresheet']);
+
+$timeouts = GameTimeouts($gameId);
+// Follows the pool format rather than a fixed six slots. Saving clears every
+// timeout and rewrites only the rendered slots, so never offer fewer slots
+// than there are recorded timeouts or saving would delete them.
+$maxtimeouts = max(GameTimeoutsPerTeam($gameId), GameRecordedTimeoutCount($timeouts));
 
 if (isset($_POST['save'])) {
     $time = "0.0";
@@ -24,7 +29,7 @@ if (isset($_POST['save'])) {
     //insert home timeouts
     $j = 0;
     for ($i = 0; $i < $maxtimeouts; $i++) {
-        $time = $_POST['hto' . $i];
+        $time = $_POST['hto' . $i] ?? '';
         $time = str_replace($time_delim, ".", $time);
 
         if (!empty($time)) {
@@ -36,7 +41,7 @@ if (isset($_POST['save'])) {
     //insert away timeouts
     $j = 0;
     for ($i = 0; $i < $maxtimeouts; $i++) {
-        $time = $_POST['ato' . $i];
+        $time = $_POST['ato' . $i] ?? '';
         $time = str_replace($time_delim, ".", $time);
 
         if (!empty($time)) {
@@ -46,6 +51,7 @@ if (isset($_POST['save'])) {
     }
 
     header("location:?view=mobile/addscoresheet&game=" . $gameId);
+    exit;
 }
 
 mobilePageTop(_("Score&nbsp;sheet"));
@@ -57,7 +63,6 @@ $html .= "<b>" . utf8entities($game_result['hometeamname']) . "</b> " . _("timeo
 $html .= "</td></tr><tr><td>\n";
 //used timeouts
 $i = 0;
-$timeouts = GameTimeouts($gameId);
 foreach ($timeouts as $timeout) {
     if (intval($timeout['ishome'])) {
         $html .= "<input class='input' type='text' inputmode='decimal' pattern='[0-9.,:;#*]*' size='5' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /> ";

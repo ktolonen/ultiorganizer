@@ -1092,6 +1092,28 @@ function GameTimeoutsPerTeam($gameId)
 }
 
 /**
+ * Highest number of timeouts recorded for either team in a game.
+ *
+ * Saving a timeout form clears every timeout and rewrites only the rendered
+ * slots, so a page must never offer fewer slots than this or it silently
+ * deletes what it did not show.
+ */
+function GameRecordedTimeoutCount($timeouts)
+{
+    $home = 0;
+    $away = 0;
+    foreach ($timeouts as $timeout) {
+        if ((int) $timeout['ishome'] === 1) {
+            $home++;
+        } else {
+            $away++;
+        }
+    }
+
+    return max($home, $away);
+}
+
+/**
  * Highest score a game result may carry.
  *
  * The bound is what CheckGameResult() has always promised in its warning text.
