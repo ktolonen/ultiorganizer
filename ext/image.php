@@ -4,6 +4,13 @@ include_once __DIR__ . '/../lib/database.php';
 include_once __DIR__ . '/../lib/image.functions.php';
 
 OpenConnection();
+
+// Upper bounds for a caller-requested resize. This endpoint is public, and
+// imagecreatetruecolor() allocates roughly four bytes per pixel before any
+// image data is touched, so an unbounded w/h pair exhausts a worker's memory.
+const MAX_RESIZE_DIMENSION = 4000;
+const MAX_RESIZE_PIXELS = 4000000;
+
 $resize = false;
 $thumb = false;
 $width = 0;
@@ -12,8 +19,16 @@ $height = 0;
 if (!empty($_GET["w"]) && !empty($_GET["h"])) {
     $width = intval($_GET["w"]);
     $height = intval($_GET["h"]);
-    if ($width > 0 && $height > 0) {
+    if (
+        $width > 0 && $height > 0
+        && $width <= MAX_RESIZE_DIMENSION && $height <= MAX_RESIZE_DIMENSION
+        && $width * $height <= MAX_RESIZE_PIXELS
+    ) {
         $resize = true;
+    } else {
+        // Out of range: serve the stored image unresized rather than allocating.
+        $width = 0;
+        $height = 0;
     }
 }
 
