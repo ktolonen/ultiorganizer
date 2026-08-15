@@ -46,7 +46,7 @@ if (!empty($place['address'])) {
     echo "<p>" . utf8entities($place['address']) . "</p>\n";
 }
 if (!empty($place['info'])) {
-    echo "<p>" . $place['info'] . "</p>\n";
+    echo "<p>" . utf8entities($place['info']) . "</p>\n";
 }
 if ($hasCoordinates) {
     echo "<p>&nbsp;</p>";
