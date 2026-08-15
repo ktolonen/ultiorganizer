@@ -1,74 +1,81 @@
-# ultiorganizer
+# Ultiorganizer
 
-This is the **Ultimate Organizer**, a web application for online score keeping of Ultimate tournaments. To find out more, visit project homepage: <https://github.com/ktolonen/ultiorganizer>. To read more about Ultimate sport visit <http://www.wfdf.org>.
+Ultiorganizer is a free, self-hosted web application for organizing and scoring
+Ultimate tournaments. It keeps event setup, schedules, live scores, standings,
+player statistics, and Spirit of the Game results in one system.
 
-## What is here
+Organizers use the main application to manage the tournament. Mobile-friendly
+tools help scorekeepers and teams record game information on the field, while
+public pages keep players and spectators up to date.
 
-The repository is organized as follows:
+## Key features
 
-* **Repo root PHP pages** Public pages are routed through `index.php` with the `view` parameter.
-* **user** Logged-in user pages such as teams, results, and related tools.
-* **admin** Administrator pages for division and event management.
-* **lib** Shared utilities and SQL-backed data access.
-* **api** JSON API entry points and versioned routing.
-* **cust** Skins and installation-specific customizations.
-* **login** Authentication and password reset entry points.
-* **mobile**, **scorekeeper**, **spiritkeeper**, **timekeeper**, **ext** Specialized entry points. `mobile/` is legacy and deprecated; `scorekeeper/` and `spiritkeeper/` are the supported replacements for the old mobile administration UI, and `timekeeper/` is a standalone, public WFDF time-limit signalling aid.
-* **images**, **locale**, **plugins** Static assets, translations, and plugin code.
-* **script** Client-side JavaScript assets.
-* **conf**, **sql** Configuration and database assets that should not be exposed by the web server.
+### Plan the event
 
-In a repository checkout, additional documentation lives under:
+- Manage events, divisions, teams, player rosters, and team enrollment.
+- Create round-robin, playoff, Swiss-draw, and cross-match pools.
+- Generate games and move teams between pools based on standings.
+- Assign games to fields and times with scheduling conflict checks.
 
-* **docs/** General project documentation and repo-local AI review/fix skills
+### Run game day
 
-Release packages include this README and the runtime application files, but leave out
-the repository-only `docs/` tree. Current markdown documentation is indexed in
-`docs/README.md`; repo-local AI assets and skills live under `docs/ai/`.
+- Record results, goals, assists, timeouts, and game events.
+- Use **Scorekeeper** for mobile score entry and live game timing.
+- Use **Spiritkeeper** for team Spirit of the Game submissions.
+- Use **Timekeeper** for time-limit signals and game timing.
+
+### Publish results
+
+- Show public schedules, live scores, standings, team pages, and statistics.
+- Produce printable schedules, scoresheets, player lists, and rosters.
+- Export event data through PDF, CSV, XML, RSS, iCalendar, and a JSON API.
+- Support multiple languages, user roles, permissions, and custom skins.
+
+## Live! by BULA
+
+Ultiorganizer supports integration with
+[Live! by BULA](https://github.com/layoutd/live-by-bula), an optional public
+interface. It presents live games, schedules, standings, team information,
+Spirit scores, and player statistics in a modern, mobile-friendly view. Live!
+is developed and released separately; follow its project instructions to
+install a tested version.
+
+## Requirements
+
+- A web server
+- PHP 8.3 or newer with cURL, GD, gettext, intl, mbstring, MySQL, and XML support
+- MariaDB 10.11 or newer
+- At least one non-`C` UTF-8 system locale for translations
 
 ## Installation
 
-To run Ultiorganizer you need a web server, PHP 8.3+ and a MariaDB 10.11+ database.
+Use a release package for a production installation:
 
-For a local Debian/Ubuntu setup, install the required packages with:
+1. Download an installation ZIP from
+   [GitHub Releases](https://github.com/ktolonen/ultiorganizer/releases).
+2. Extract the package and upload its contents to your web server.
+3. Open `https://your-host/install.php` and follow the installer.
+4. After installation, make `conf/` read-only for the web server and remove or
+   block access to `install.php`.
 
-```bash
-sudo apt-get update
-sudo apt-get install -y \
-    apache2 mariadb-server gettext locales \
-    php8.3 php8.3-curl php8.3-gd php8.3-intl php8.3-mbstring php8.3-mysql php8.3-xml
-```
+Apache installations should enable `mod_rewrite` for API routes under
+`/api/v1/`. More deployment information is available in
+[docs/deployment.md](docs/deployment.md).
 
-Ensure the host has native gettext and at least one UTF-8 OS locale available so PHP translations work. On servers you control, generate the locales you expect to serve. For example:
+## Local development
 
-```bash
-sudo locale-gen en_US.UTF-8
-sudo locale-gen de_DE.UTF-8
-sudo locale-gen es_ES.UTF-8
-```
-
-On shared hosting without `sudo`, Ultiorganizer can still serve the bundled
-German, Spanish, and Finnish translations when PHP gettext is enabled and the
-host provides at least one non-`C` UTF-8 locale such as English or Finnish.
-
-For Apache installs, enable `mod_rewrite` so API routes under `/api/v1/...` can use the bundled `.htaccess` rewrite rules:
+The development environment uses Docker Compose. Start the application and
+database with:
 
 ```bash
-sudo a2enmod rewrite
-sudo systemctl reload apache2
+docker compose -f docs/dev/compose.yaml up --build app db
 ```
 
-For production installation, use a release package instead of uploading a full repository checkout. Extract the release ZIP, upload the extracted contents to your web server, open <http://yourpage.com/install.php>, and follow the instructions.
+The application will be available at <http://localhost:8080/> and the installer
+at <http://localhost:8080/install.php>. See
+[docs/local-development.md](docs/local-development.md) for setup details.
 
-Maintainers can build release packages with `docs/release/build-release.sh`. Deployment notes are in `docs/deployment.md`.
-
-## Development
-
-For local development, use the Docker Compose stack documented in
-`docs/local-development.md`. The app runs at <http://localhost:8080/> and the
-installer at <http://localhost:8080/install.php>.
-
-Common checks are run from the optional `dev` workspace:
+Common checks run in the optional development workspace:
 
 ```bash
 docker compose -f docs/dev/compose.yaml --profile devtools up --build dev
@@ -76,20 +83,27 @@ docker compose -f docs/dev/compose.yaml exec -T dev composer check
 docker compose -f docs/dev/compose.yaml exec -T dev eslint script
 ```
 
-The documentation index is `docs/README.md`; coding conventions are in
-`docs/code-style.md`.
+## API
 
-## HTTP API
+The read-only JSON API is served under `/api/v1/`. OpenAPI metadata is available
+at `/api/v1/openapi`, and API tokens are managed in the administration UI. See
+[docs/api.md](docs/api.md) for examples and current constraints.
 
-The read-only JSON API is served under `/api/v1/...`. OpenAPI metadata is
-available at `/api/v1/openapi`, or at
-<http://localhost:8080/api/v1/openapi> in the Docker development stack.
+## Project documentation
 
-API tokens are managed in the admin UI at `?view=admin/apitokens`.
-Event-scoped endpoints require the event to be marked visible in the public
-API. See `docs/api.md` for endpoint examples and current constraints.
+The complete documentation index is [docs/README.md](docs/README.md). Good
+starting points for contributors are:
 
-## Credits
+- [Architecture](docs/architecture.md)
+- [Local development](docs/local-development.md)
+- [Code style](docs/code-style.md)
+- [Routing](docs/routing.md)
+
+The main application starts at `index.php`. Shared application and database
+code lives in `lib/`, access-controlled pages in `admin/` and `user/`, and the
+standalone game-day tools in `scorekeeper/`, `spiritkeeper/`, and `timekeeper/`.
+
+## History and Credits
 
 Ultiorganizer was first introduced at the 2002 World Championships in Turku, after already being used by the Finnish Flying Disc Association from 1999. Even though the codebase has since been fully rewritten on a modern technology stack, the original vision has remained the same: a free, open, and reliable live-scoring system for Ultimate. This journey has only been possible because of the many people who use the system in real events and continuously improve it through feedback, testing, and patches.
 
@@ -102,6 +116,7 @@ Special thanks to **Bruno Gravato** for years of practical development work on a
 Thanks as well to **Justin Palmer** and **Patrick** for the [Live by BULA](https://github.com/layoutd/live-by-bula) collaboration.
 
 Contributors:
+
 - Alejandro Molina
 - Artsa
 - Asmo Soinio
@@ -115,3 +130,7 @@ Contributors:
 - Pasi Niemi
 - Plinio Moreno
 - Steffen Mecke
+
+## License
+
+Ultiorganizer is released under the [GNU General Public License v3](LICENSE).

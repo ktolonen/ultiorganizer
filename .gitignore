@@ -6,8 +6,7 @@
 !/conf/config.inc.example.php
 /images/uploads/
 /live/*
-!/live/ultiorganizer-compat.patch
-!/live/ultiorganizer-patch.md
+!/live/README-ultiorganizer.md
 /dist/
 /reports/
 lib/tfpdf/font/unifont/*.mtx.php
