@@ -929,66 +929,58 @@ function ValidCsvSeparator($separator)
 }
 
 /**
- * Opens an in-memory stream for building CSV output.
+ * Formats one CSV field.
  *
- * @return resource|false
+ * Every value that is written is enclosed in quotes and an embedded quote is
+ * doubled ("") as RFC 4180 requires. The previous code escaped it as a
+ * backslash followed by a quote, which common spreadsheet readers parse wrongly.
+ *
+ * fputcsv() is deliberately not used here. It encloses a field only when it has
+ * to, which would change the shape of every exported file; this project has
+ * always emitted fully enclosed fields and consumers depend on it.
  */
-function OpenCsvBuffer()
+function CsvField($value)
 {
-    return fopen("php://temp", "r+");
+    if ($value === null) {
+        return '';
+    }
+    // Preserves the long-standing behaviour that an empty value is written as
+    // an empty field rather than an empty pair of quotes, while a literal "0"
+    // is still written normally.
+    if ($value != '0' && $value == '') {
+        return '';
+    }
+
+    return '"' . str_replace('"', '""', $value) . '"';
 }
 
 /**
- * Writes one CSV record.
- *
- * The escape argument is deliberately empty. PHP's default escape character is
- * a backslash, which makes fputcsv() emit \" for an embedded quote; RFC 4180
- * requires the quote to be doubled ("") instead, and common spreadsheet
- * readers parse only the latter correctly.
+ * Formats one CSV header field. Headers are always enclosed.
  */
-function WriteCsvRecord($handle, $fields, $separator)
+function CsvHeaderField($value)
 {
-    fputcsv($handle, $fields, $separator, '"', "");
-}
-
-/**
- * Reads back and closes a CSV buffer opened with OpenCsvBuffer().
- */
-function CloseCsvBuffer($handle)
-{
-    rewind($handle);
-    $out = stream_get_contents($handle);
-    fclose($handle);
-
-    return $out === false ? "" : $out;
+    return '"' . str_replace('"', '""', stripslashes((string) $value)) . '"';
 }
 
 function ResultsetToCsv($result, $separator)
 {
-    $handle = OpenCsvBuffer();
-    if ($handle === false) {
-        return "";
-    }
-
     $fields_cnt = mysqli_num_fields($result);
 
     $header = [];
     for ($i = 0; $i < $fields_cnt; $i++) {
-        $header[] = stripslashes(mysqli_fetch_field_direct($result, $i)->name);
+        $header[] = CsvHeaderField(mysqli_fetch_field_direct($result, $i)->name);
     }
-    WriteCsvRecord($handle, $header, $separator);
+    $out = implode($separator, $header) . "\n";
 
-    // Rows are written as they are fetched so a large export does not have to
-    // be held in memory twice.
     while ($row = mysqli_fetch_array($result)) {
         $fields = [];
         for ($j = 0; $j < $fields_cnt; $j++) {
-            $fields[] = $row[$j] === null ? '' : $row[$j];
+            $fields[] = CsvField($row[$j]);
         }
-        WriteCsvRecord($handle, $fields, $separator);
+        $out .= implode($separator, $fields) . "\n";
     }
 
-    return CloseCsvBuffer($handle);
+    return $out;
 }
 
 function ArrayToCsv($result, $separator)
@@ -997,26 +989,21 @@ function ArrayToCsv($result, $separator)
         return "";
     }
 
-    $handle = OpenCsvBuffer();
-    if ($handle === false) {
-        return "";
-    }
-
     $header = [];
     foreach (array_keys($result[0]) as $fieldname) {
-        $header[] = stripslashes($fieldname);
+        $header[] = CsvHeaderField($fieldname);
     }
-    WriteCsvRecord($handle, $header, $separator);
+    $out = implode($separator, $header) . "\n";
 
     foreach ($result as $row) {
         $fields = [];
         foreach ($row as $value) {
-            $fields[] = $value === null ? '' : $value;
+            $fields[] = CsvField($value);
         }
-        WriteCsvRecord($handle, $fields, $separator);
+        $out .= implode($separator, $fields) . "\n";
     }
 
-    return CloseCsvBuffer($handle);
+    return $out;
 }
 
 function CreateOrdering($tables, $orderby)
