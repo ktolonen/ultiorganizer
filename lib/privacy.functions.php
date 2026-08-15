@@ -652,6 +652,9 @@ function PrivacyDeleteUserData($userId, $adminUserId)
         DBQuery("DELETE FROM uo_event_log WHERE $eventLogWhere");
         DBQuery(sprintf("DELETE FROM uo_accreditationlog WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_registerrequest WHERE userid='%s'", DBEscapeString($userId)));
+        // No foreign key ties this table to uo_users, so a pending reset row
+        // would otherwise outlive the account it belongs to.
+        DBQuery(sprintf("DELETE FROM uo_passwordresetrequest WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_userproperties WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_users WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery('COMMIT');

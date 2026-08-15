@@ -1,0 +1,12 @@
+# Objects an upgrade creates that sql/ultiorganizer.sql deliberately does not contain.
+#
+# The checker replays every upgradeNN() in order and expects each surviving table,
+# column, and index to exist in the fresh-install schema. Anything listed here is
+# accepted as an intentional divergence and needs a trailing '# reason' note.
+#
+# Syntax:
+#   table  <name>                  # reason
+#   column <table>.<column>        # reason
+#   index  <table>.<index>         # reason
+
+table  uo_sms                      # created by upgrade53 for an SMS feature that was never completed; referenced nowhere in the codebase and intentionally left out of fresh installs

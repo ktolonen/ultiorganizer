@@ -104,6 +104,32 @@ Current table-level behavior:
   No row deletion or scrubbing is done.
   Historical defense links remain.
 
+## Free-text fields naming other people
+
+Anonymization clears free text on the data subject's own row: `PrivacyAnonymizePlayer()`
+nulls `story` and `achievements` on the player's `uo_player_profile` row.
+
+Free text stored on another entity's row is not reachable that way. A person can be named in:
+
+- `uo_team_profile` — `coach`, `captain`, `story`, `achievements`
+- `uo_club` — `contacts`, `story`, `achievements`
+- `uo_comment` — the comment body
+
+No per-subject query can find those mentions, because the row belongs to a team, club, or game
+rather than to the person. Removing them is a manual admin edit, and a privacy request that
+concerns a coach, captain, or club contact should include a check of these fields.
+
+## Visitor counter
+
+`uo_visitor_counter` stores one raw IP address per unique visitor, used only to count
+visitors: `LogGetVisitorCount()` reads aggregates, and no page displays an individual row.
+
+The table has no link to a player or registered user, so the per-subject privacy tools cannot
+reach it. Two controls apply instead:
+
+- set the `DisableVisitorLogging` setting to stop recording IPs entirely
+- a super admin can purge every row from the visitor admin page, which calls `LogResetVisitorCounter()`
+
 ## Registered user privacy tools
 
 The registered user privacy tools support two operations:
@@ -133,8 +159,13 @@ Current deletion behavior:
 - delete matching rows from `uo_event_log`
 - delete matching rows from `uo_accreditationlog`
 - delete matching rows from `uo_registerrequest`
+- delete matching rows from `uo_passwordresetrequest`
 - delete matching rows from `uo_userproperties`
 - delete the row from `uo_users`
 - rely on existing foreign-key cascades from `uo_users` for `uo_extraemail`, `uo_extraemailrequest`, and `uo_enrolledteam`
+
+`uo_passwordresetrequest` has no foreign key to `uo_users`, so it needs an explicit delete.
+It is deliberately left out of the report scope: a pending row holds a live reset token, and the
+export is a plain text file.
 
 After deletion, the system writes one non-identifying audit entry for the privacy operation itself.

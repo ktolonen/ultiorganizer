@@ -1,0 +1,89 @@
+# Release package classification for every tracked top-level path.
+#
+# kind        meaning
+# ----------- ------------------------------------------------------------------
+# runtime     ships in the release package; no tracked file under it is export-ignored
+# runtime-app ships, and its PHP is scanned for translatable strings; must appear in
+#             the find list in docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh
+# dev         development-only; every tracked file under it MUST be export-ignored
+#
+# Add a line whenever a new top-level file or directory is introduced.
+
+runtime-app  admin
+dev          AGENTS.md
+runtime      allclubs.php
+runtime      allcountries.php
+runtime      allplayers.php
+runtime      allteams.php
+runtime-app  api
+dev          CLAUDE.md
+runtime      clubcard.php
+dev          composer.json
+dev          composer.lock
+runtime      conf
+runtime      COPYING.txt
+runtime      countrycard.php
+runtime-app  cust
+runtime      defensestatus.php
+dev          docs
+dev          .editorconfig
+dev          eslint.config.js
+runtime-app  ext
+runtime      frontpage.php
+runtime      gamecard.php
+runtime      gameplay.php
+runtime      games.php
+dev          .gitattributes
+dev          .git-blame-ignore-revs
+dev          .githooks
+dev          .github
+dev          .gitignore
+runtime      .htaccess
+runtime      ical.php
+runtime      images
+runtime      index.php
+runtime      install.php
+runtime-app  lib
+runtime      LICENSE
+dev          live
+runtime      locale
+runtime      localization.php
+runtime-app  login
+runtime      login.php
+runtime      logout.php
+runtime      menufunctions.php
+runtime-app  mobile
+dev          .php-cs-fixer.dist.php
+dev          phpstan-baseline.neon
+dev          phpstan.neon.dist
+dev          phpstan-stubs.php
+runtime      played.php
+runtime      playercard.php
+runtime      playerlist.php
+runtime-app  plugins
+runtime      poolstatus.php
+runtime      privacy.php
+dev          README.md
+runtime      register.php
+runtime      reservationinfo.php
+runtime      result.php
+runtime-app  scorekeeper
+runtime      scorestatus.php
+runtime      script
+runtime      seasonlist.php
+runtime      seriesstatus.php
+dev          .settings
+runtime-app  spiritkeeper
+runtime      spiritstatus.php
+runtime-app  sql
+runtime      statistics.php
+dev          stylelint.config.cjs
+runtime      teamcard.php
+runtime      teams.php
+runtime-app  timekeeper
+runtime      timetables.php
+runtime-app  user
+runtime      user_guide.php
+runtime      version.php
+runtime      view_ids.inc.php
+dev          .vscode
