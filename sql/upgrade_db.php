@@ -1499,6 +1499,16 @@ function upgrade98()
         );
         addUniqueIndex('uo_visitor_counter', 'idx_visitor_counter_ip', '(`ip`)');
     }
+
+    // uo_event_log had no secondary indexes, so every filtered or newest-first
+    // read scanned and sorted the whole append-only log.
+    addIndex('uo_event_log', 'idx_event_log_category_user_time', '(`category`, `user_id`, `time`)');
+    addIndex(
+        'uo_event_log',
+        'idx_event_log_comment_meta',
+        '(`category`, `source`, `type`, `id1`, `id2`, `time`)',
+    );
+    addIndex('uo_event_log', 'idx_event_log_id1_source_time', '(`id1`, `source`, `time`)');
 }
 
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)

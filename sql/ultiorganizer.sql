@@ -387,7 +387,10 @@ CREATE TABLE IF NOT EXISTS `uo_event_log` (
   `id2` varchar(20) DEFAULT NULL,
   `source` varchar(20) DEFAULT NULL,
   `description` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`event_id`)
+  PRIMARY KEY (`event_id`),
+  KEY `idx_event_log_category_user_time` (`category`,`user_id`,`time`),
+  KEY `idx_event_log_comment_meta` (`category`,`source`,`type`,`id1`,`id2`,`time`),
+  KEY `idx_event_log_id1_source_time` (`id1`,`source`,`time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
