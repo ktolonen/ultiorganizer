@@ -356,17 +356,13 @@ function LogVisitor($ip)
         return;
     }
 
+    // ip is unique, so one atomic statement replaces the previous
+    // update, row-count check and conditional insert sequence.
     DBQuery(sprintf(
-        "UPDATE uo_visitor_counter SET visits=COALESCE(visits, 0) + 1 WHERE ip='%s'",
+        "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s', 1)
+		ON DUPLICATE KEY UPDATE visits=COALESCE(visits, 0) + 1",
         DBEscapeString($ip),
     ));
-
-    if ((int) DBQueryToValueUncached("SELECT ROW_COUNT()", true) === 0) {
-        DBQuery(sprintf(
-            "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s', 1)",
-            DBEscapeString($ip),
-        ));
-    }
 }
 
 /**

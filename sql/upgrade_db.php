@@ -1477,6 +1477,30 @@ function upgrade97()
     }
 }
 
+function upgrade98()
+{
+    // Visitor logging looks rows up by ip, which had no index at all. Existing
+    // installations can hold duplicate addresses because the previous
+    // update-then-insert sequence was not atomic, so collapse them into the
+    // oldest row before the unique index is added.
+    if (!hasIndex('uo_visitor_counter', 'idx_visitor_counter_ip')) {
+        runQuery(
+            "UPDATE uo_visitor_counter c
+			INNER JOIN (SELECT MIN(id) AS keep_id, ip, SUM(COALESCE(visits, 0)) AS total
+				FROM uo_visitor_counter GROUP BY ip HAVING COUNT(*) > 1) d
+				ON (c.id = d.keep_id)
+			SET c.visits = d.total",
+        );
+        runQuery(
+            "DELETE c FROM uo_visitor_counter c
+			INNER JOIN (SELECT MIN(id) AS keep_id, ip
+				FROM uo_visitor_counter GROUP BY ip HAVING COUNT(*) > 1) d
+				ON (c.ip = d.ip AND c.id <> d.keep_id)",
+        );
+        addUniqueIndex('uo_visitor_counter', 'idx_visitor_counter_ip', '(`ip`)');
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {
@@ -1712,6 +1736,19 @@ function addIndex($table, $index, $definition)
         return;
     }
     runQuery(sprintf("ALTER TABLE `%s` ADD INDEX `%s` %s", $table, $index, $definition));
+}
+
+/**
+ * Add a unique index if it does not already exist.
+ *
+ * The caller is responsible for removing duplicate values first.
+ */
+function addUniqueIndex($table, $index, $definition)
+{
+    if (hasIndex($table, $index)) {
+        return;
+    }
+    runQuery(sprintf("ALTER TABLE `%s` ADD UNIQUE INDEX `%s` %s", $table, $index, $definition));
 }
 
 /**

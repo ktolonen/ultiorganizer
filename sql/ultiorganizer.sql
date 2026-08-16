@@ -340,7 +340,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(94, '2026-06-06 00:00:00'),
 	(95, '2026-06-11 00:00:00'),
 	(96, '2026-07-07 00:00:00'),
-	(97, '2026-07-25 00:00:00');
+	(97, '2026-07-25 00:00:00'),
+	(98, '2026-08-16 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -1274,7 +1275,8 @@ CREATE TABLE IF NOT EXISTS `uo_visitor_counter` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(15) NOT NULL DEFAULT '',
   `visits` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_visitor_counter_ip` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
