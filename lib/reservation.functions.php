@@ -330,6 +330,9 @@ function ReservationInfoArray($reservations)
     foreach ($reservations as $reservation) {
         $fetch[] = (int) $reservation;
     }
+    if (empty($fetch)) {
+        return [];
+    }
     $fetchStr = implode(",", $fetch);
     $query = "SELECT DATE_FORMAT(starttime, '%Y%m%d') as gameday, id FROM uo_reservation WHERE id IN (" . $fetchStr . ") 
 		ORDER BY starttime ASC, location, fieldname +0, id";
