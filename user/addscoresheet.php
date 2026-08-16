@@ -261,6 +261,7 @@ $can_create_comment = CanCreateGameComment($gameId);
 $can_manage_comment = CanManageGameComment($gameId, COMMENT_TYPE_GAME);
 $show_comment_form = ($can_create_comment || $can_manage_comment);
 $scoreRows = [];
+$scoresheetSaved = false;
 //process itself if submit was pressed
 if (!empty($_POST['save'])) {
     $time_delim = [",", ";", ":"];
@@ -326,18 +327,16 @@ if (!empty($_POST['save'])) {
             $h++;
             if (!$iscallahan) {
                 $pass = GamePlayerFromNumber($gameId, $game_result['hometeam'], $pass);
-                if ($pass === null) {
+                if ($pass === null && $postedPass !== "") {
                     echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("assisting player's number") . " '" . $postedPassHtml . "' " . _("Not on the roster") . "!</p>";
-                    $errIds[] = "pass$i";
                 }
             } else {
                 $pass = -1;
             }
 
             $goal = GamePlayerFromNumber($gameId, $game_result['hometeam'], $goal);
-            if ($goal === null) {
+            if ($goal === null && $postedGoal !== "") {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $postedGoalHtml . "' " . _("Not on the roster") . "!</p>";
-                $errIds[] = "goal$i";
             }
 
             if ($pass !== -1 && $pass !== null && $goal !== null && $pass === $goal) {
@@ -362,18 +361,16 @@ if (!empty($_POST['save'])) {
             $a++;
             if (!$iscallahan) {
                 $pass = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $pass);
-                if ($pass === null) {
+                if ($pass === null && $postedPass !== "") {
                     echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("assisting player's number") . " '" . $postedPassHtml . "' " . _("Not on the roster") . "!</p>";
-                    $errIds[] = "pass$i";
                 }
             } else {
                 $pass = -1;
             }
 
             $goal = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $goal);
-            if ($goal === null) {
+            if ($goal === null && $postedGoal !== "") {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $postedGoalHtml . "' " . _("Not on the roster") . "!</p>";
-                $errIds[] = "goal$i";
             }
 
             if ($pass !== -1 && $pass !== null && $goal !== null && $pass === $goal) {
@@ -397,10 +394,8 @@ if (!empty($_POST['save'])) {
         }
     }
 
-    // Nothing is written until the whole payload has passed validation.
-    // Saving previously removed every stored score and inserted the invalid
-    // rows anyway, so a single mistyped roster number destroyed a correct
-    // scoresheet and still reported success.
+    // Validate the whole payload before replacing stored data. Unknown roster
+    // numbers are non-blocking warnings and are stored as empty player fields.
     if (!empty($errIds)) {
         echo "<p class='warning'>" . _("Scoresheet not saved. Correct the highlighted points and save again.") . "</p>";
     } else {
@@ -516,6 +511,7 @@ if (!empty($_POST['save'])) {
 
         echo "<p>" . _("Scoresheet saved") . " (" . _("at") . " " . DefTimestamp() . ")!</p>";
         echo "<a href='?view=gameplay&amp;game=$gameId'>" . _("Gameplay") . "</a>";
+        $scoresheetSaved = true;
     }
 }
 $game_result = GameResult($gameId);
@@ -742,7 +738,7 @@ if (!$hideTimeOnScoresheet) {
 echo "<th style='$style_right'>" . _("Score") . "</th></tr>\n";
 
 $scores = GameGoals($gameId);
-if (!empty($_POST['save'])) {
+if (!empty($_POST['save']) && !$scoresheetSaved) {
     $scores = $scoreRows;
 }
 
