@@ -76,26 +76,23 @@ function GameResult($gameId)
     $query = sprintf(
         "SELECT time, k.name As hometeamname, v.name As visitorteamname,
         k.valid as homevalid, v.valid as visitorvalid,
-        p.*, gp.pool AS pool, hspirit.mode AS spiritmode, hspirit.sotg AS homesotg, vspirit.sotg AS visitorsotg, s.name AS gamename
+        p.*, gp.pool AS pool, spirit.spiritmode AS spiritmode, spirit.homesotg AS homesotg, spirit.visitorsotg AS visitorsotg, s.name AS gamename
     FROM uo_game AS p
     LEFT JOIN uo_game_pool gp ON (gp.game=p.game_id AND gp.timetable=1)
-    LEFT JOIN (SELECT ssc.game_id, ssc.team_id, sct.mode, SUM(value*factor) AS sotg
+    LEFT JOIN (SELECT ssc.game_id,
+                      MAX(CASE WHEN ssc.team_id = g.hometeam THEN sct.mode END) AS spiritmode,
+                      SUM(CASE WHEN ssc.team_id = g.hometeam THEN ssc.value * sct.factor END) AS homesotg,
+                      SUM(CASE WHEN ssc.team_id = g.visitorteam THEN ssc.value * sct.factor END) AS visitorsotg
                FROM uo_spirit_score ssc
+               INNER JOIN uo_game g ON (g.game_id = ssc.game_id)
                LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
                WHERE ssc.game_id=%d
-               GROUP BY game_id, team_id, sct.mode) AS hspirit
-       ON (p.game_id = hspirit.game_id AND hspirit.team_id = p.hometeam)
-    LEFT JOIN (SELECT ssc.game_id, ssc.team_id, sct.mode, SUM(value*factor) AS sotg
-               FROM uo_spirit_score ssc
-               LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-               WHERE ssc.game_id=%d
-               GROUP BY game_id, team_id, sct.mode ) AS vspirit
-       ON (p.game_id = vspirit.game_id AND vspirit.team_id = p.visitorteam)
+               GROUP BY ssc.game_id, sct.mode) AS spirit
+       ON (p.game_id = spirit.game_id)
     LEFT JOIN uo_team As k ON (p.hometeam=k.team_id)
     LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
     LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
     WHERE p.game_id=%d",
-        $gameId,
         $gameId,
         $gameId,
     );
