@@ -1484,12 +1484,17 @@ function upgrade98()
     // update-then-insert sequence was not atomic, so collapse them into the
     // oldest row before the unique index is added.
     if (!hasIndex('uo_visitor_counter', 'idx_visitor_counter_ip')) {
+        // The merge and the delete are separate statements, so the same
+        // statement that gives the kept row the group total also empties the
+        // rows it is about to replace. Re-running after an interrupted upgrade,
+        // or after the index creation failed on an address inserted meanwhile,
+        // then recomputes the same total instead of adding the survivors again.
         runQuery(
             "UPDATE uo_visitor_counter c
 			INNER JOIN (SELECT MIN(id) AS keep_id, ip, SUM(COALESCE(visits, 0)) AS total
 				FROM uo_visitor_counter GROUP BY ip HAVING COUNT(*) > 1) d
-				ON (c.id = d.keep_id)
-			SET c.visits = d.total",
+				ON (c.ip = d.ip)
+			SET c.visits = CASE WHEN c.id = d.keep_id THEN d.total ELSE 0 END",
         );
         runQuery(
             "DELETE c FROM uo_visitor_counter c
