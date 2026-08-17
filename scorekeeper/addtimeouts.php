@@ -25,9 +25,6 @@ function ScorekeeperTimeoutData($timeouts, $home, $maxslots)
     ];
 }
 
-/**
- * Highest number of timeouts already recorded for either team.
- */
 $html = "";
 
 $gameId = scorekeeperRequestGameId();
