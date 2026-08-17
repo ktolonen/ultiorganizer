@@ -1006,6 +1006,24 @@ function GameHasStarted($gameInfo)
     return $gameInfo['hasstarted'] > 0;
 }
 
+/**
+ * Recorded halftime of a game in seconds, or null when none was recorded.
+ *
+ * "Not recorded" is stored as either NULL or 0 depending on which input path
+ * wrote the row, and both mean the same thing: no game breaks for half at
+ * 0:00. Callers must not intval() the raw column, because that turns a missing
+ * halftime into one at second 0, which then sorts ahead of the first goal.
+ *
+ * @param array $gameInfo game row as returned by GameResult()
+ * @return int|null halftime in seconds, or null when not recorded
+ */
+function GameHalftimeSeconds($gameInfo)
+{
+    $halftime = intval($gameInfo['halftime'] ?? 0);
+
+    return $halftime > 0 ? $halftime : null;
+}
+
 function GameTimerState($gameId)
 {
     $gameId = (int) $gameId;
