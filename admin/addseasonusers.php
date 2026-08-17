@@ -14,7 +14,14 @@ if (!isSeasonAdmin($seasonId)) {
     die('Insufficient rights');
 }
 
-if (!empty($_POST['add'])) {
+// Role changes go through hasEditSeasonSeriesRight() inside the shared helpers,
+// which denies writes on an event closed for editing. Do not offer the controls
+// there, so the page does not post a change the helper will reject.
+$canEditRoles = hasEditSeasonSeriesRight($seasonId);
+
+if (!$canEditRoles) {
+    $html .= "<p class='warning'>" . _("The event is read-only. Access rights cannot be changed.") . "</p>";
+} elseif (!empty($_POST['add'])) {
     $userid = $_POST['userid'];
     if (empty($userid)) {
         $userid = UserIdForMail($_POST['email']);
@@ -90,17 +97,19 @@ $html .= "<table>";
 foreach ($admins as $user) {
     $html .= "<tr>";
     $html .= "<td style='width:75px'>" . $user['userid'] . "</td><td>" . utf8entities($user['name']) . " (<a href='mailto:" . utf8entities($user['email']) . "'>" . utf8entities($user['email']) . "</a>)</td>";
-    $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.eventadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
+    if ($canEditRoles) {
+        $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.eventadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
+    }
     $html .= "</tr>\n";
 }
 $html .= "</table>";
-if (!empty($_GET["access"]) && $_GET["access"] == "eventadmin") {
+if ($canEditRoles && !empty($_GET["access"]) && $_GET["access"] == "eventadmin") {
     $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
     $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
     $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
     $html .= "</table>";
     $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
-} else {
+} elseif ($canEditRoles) {
     $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=eventadmin'>" . _("Add more ...") . "</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
@@ -113,17 +122,19 @@ $html .= "<table>";
 foreach ($directors as $user) {
     $html .= "<tr>";
     $html .= "<td style='width:75px'>" . $user['userid'] . "</td><td>" . utf8entities($user['name']) . " (<a href='mailto:" . utf8entities($user['email']) . "'>" . utf8entities($user['email']) . "</a>)</td>";
-    $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.spiritadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
+    if ($canEditRoles) {
+        $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.spiritadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
+    }
     $html .= "</tr>\n";
 }
 $html .= "</table>";
-if (!empty($_GET["access"]) && $_GET["access"] == "spiritadmin") {
+if ($canEditRoles && !empty($_GET["access"]) && $_GET["access"] == "spiritadmin") {
     $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
     $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
     $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
     $html .= "</table>";
     $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
-} else {
+} elseif ($canEditRoles) {
     $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=spiritadmin'>" . _("Add more ...") . "</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
@@ -138,12 +149,14 @@ foreach ($admins as $user) {
     $teaminfo = TeamInfo($user['team_id']);
     $html .= "<td style='width:175px'>" . utf8entities(U_($teaminfo['seriesname'])) . ", " . utf8entities(U_($teaminfo['name'])) . "</td>\n";
     $html .= "<td style='width:75px'>" . $user['userid'] . "</td><td>" . utf8entities($user['name']) . " (<a href='mailto:" . utf8entities($user['email']) . "'>" . utf8entities($user['email']) . "</a>)</td>";
-    $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.teamadmin.delId.value='" . utf8entities($user['userid']) . "';document.teamadmin.teamId.value='" . utf8entities($user['team_id']) . "';\"/></td>";
+    if ($canEditRoles) {
+        $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.teamadmin.delId.value='" . utf8entities($user['userid']) . "';document.teamadmin.teamId.value='" . utf8entities($user['team_id']) . "';\"/></td>";
+    }
     $html .= "</tr>\n";
     ;
 }
 $html .= "</table>";
-if (!empty($_GET["access"]) && $_GET["access"] == "teamadmin") {
+if ($canEditRoles && !empty($_GET["access"]) && $_GET["access"] == "teamadmin") {
     $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
     $html .= "<tr><td>";
     $teams = SeasonTeams($seasonId);
@@ -157,7 +170,7 @@ if (!empty($_GET["access"]) && $_GET["access"] == "teamadmin") {
     $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
     $html .= "</table>";
     $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
-} else {
+} elseif ($canEditRoles) {
     $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=teamadmin'>" . _("Add more ...") . "</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
@@ -190,7 +203,9 @@ foreach ($admins as $user) {
     } else {
         $html .= "<td>" . _("Some games") . "</td>";
     }
-    $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.gameadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
+    if ($canEditRoles) {
+        $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.gameadmin.delId.value='" . utf8entities($user['userid']) . "';\"/></td>";
+    }
     $html .= "</tr>\n";
     ;
 }
@@ -210,7 +225,7 @@ if ($teamresp) {
 }
 
 $html .= "</table>";
-if (!empty($_GET["access"]) && $_GET["access"] == "gameadmin") {
+if ($canEditRoles && !empty($_GET["access"]) && $_GET["access"] == "gameadmin") {
     $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
     $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
     $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
@@ -226,7 +241,7 @@ if (!empty($_GET["access"]) && $_GET["access"] == "gameadmin") {
     $html .= "</select></td></tr>";
     $html .= "</table>";
     $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
-} else {
+} elseif ($canEditRoles) {
     $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=gameadmin'>" . _("Add more ...") . "</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
@@ -252,12 +267,14 @@ foreach ($admins as $user) {
     $teaminfo = TeamInfo($user['team_id']);
     $html .= "<td style='width:175px'>" . utf8entities(U_($teaminfo['seriesname'])) . ", " . utf8entities(U_($teaminfo['name'])) . "</td>\n";
     $html .= "<td style='width:75px'>" . $user['userid'] . "</td><td>" . utf8entities($user['name']) . " (<a href='mailto:" . utf8entities($user['email']) . "'>" . utf8entities($user['email']) . "</a>)</td>";
-    $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.accradmin.delId.value='" . utf8entities($user['userid']) . "';document.accradmin.teamId.value='" . utf8entities($user['team_id']) . "';\"/></td>";
+    if ($canEditRoles) {
+        $html .= "<td class='center'><input class='deletebutton' type='image' src='images/remove.png' alt='X' name='remove' value='" . _("X") . "' onclick=\"document.accradmin.delId.value='" . utf8entities($user['userid']) . "';document.accradmin.teamId.value='" . utf8entities($user['team_id']) . "';\"/></td>";
+    }
     $html .= "</tr>\n";
     ;
 }
 $html .= "</table>";
-if (!empty($_GET["access"]) && $_GET["access"] == "accradmin") {
+if ($canEditRoles && !empty($_GET["access"]) && $_GET["access"] == "accradmin") {
     $html .= "<table style='white-space: nowrap' cellpadding='2px'>\n";
     $html .= "<tr><td>" . _("User ID") . "</td><td><input class='input' size='20' name='userid'/></td><td>" . _("or") . "</td>\n";
     $html .= "<td>" . _("Email") . "</td><td><input class='input' size='20' name='email'/</td></tr>\n";
@@ -272,7 +289,7 @@ if (!empty($_GET["access"]) && $_GET["access"] == "accradmin") {
     $html .= "</select></td></tr>";
     $html .= "</table>";
     $html .= "<p><input class='button' name='add' type='submit' value='" . _("Grant rights") . "'/></p>";
-} else {
+} elseif ($canEditRoles) {
     $html .= "<p><a href='?view=admin/addseasonusers&amp;season=" . $seasonId . "&amp;access=accradmin'>" . _("Add more ...") . "</a></p>";
 }
 $html .= "<div><input type='hidden' name='delId'/></div>";
