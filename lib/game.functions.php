@@ -1034,6 +1034,22 @@ function GameHalftimeSeconds($gameInfo)
     return $halftime > 0 ? $halftime : null;
 }
 
+/**
+ * State of a game's clock, for the scorekeeper pages that display it.
+ *
+ * `ongoing` means the clock is running, which is narrower than the isongoing
+ * column it is read from. That column marks the game as in progress and is
+ * also set by the result entry paths in GameUpdateResult(), which never start
+ * a clock. Reporting those games as running handed the client a clock with no
+ * start time, so it counted up from zero and fell back to zero again on the
+ * next request. The clock is only meaningful once timer_start is set.
+ *
+ * `started` stays broader on purpose: a game in progress can have its clock
+ * started, so the page offers that.
+ *
+ * @param int $gameId uo_game.game_id
+ * @return array timer state, matching ScorekeeperTimerStateDefaults()
+ */
 function GameTimerState($gameId)
 {
     $gameId = (int) $gameId;
@@ -1057,7 +1073,7 @@ function GameTimerState($gameId)
     }
 
     $state['started'] = ((int) $row['hasstarted'] > 0) || !empty($row['timer_start']);
-    $state['ongoing'] = (int) $row['isongoing'] === 1;
+    $state['ongoing'] = (int) $row['isongoing'] === 1 && !empty($row['timer_start']);
     $state['paused'] = $state['ongoing'] && !empty($row['timer_pause_start']);
 
     if (empty($row['timer_start'])) {
