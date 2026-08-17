@@ -32,7 +32,6 @@ if (!function_exists('PoolColors')) {
 $html = "";
 $title = ("Pool color updater");
 $seasonId = "";
-$colors = PoolColors();
 
 if (!empty($_POST['season'])) {
     $seasonId = $_POST['season'];
@@ -43,9 +42,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
     $pools = $_POST["pools"];
 
     foreach ($pools as $poolId) {
-        $color = $colors[array_rand($colors)];
-        $query = "UPDATE uo_pool SET color='" . $color . "' WHERE pool_id=" . $poolId;
-        DBQuery($query);
+        PoolRecolor(intval($poolId));
     }
 }
 
@@ -58,7 +55,7 @@ if (empty($seasonId)) {
     $seasons = Seasons();
 
     foreach ($seasons as $row) {
-        $html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities($row['name']) . "</option>";
+        $html .= "<option class='dropdown' value='" . utf8entities($row['season_id']) . "'>" . utf8entities(U_($row['name'])) . "</option>";
     }
 
     $html .= "</select></p>\n";
@@ -66,26 +63,45 @@ if (empty($seasonId)) {
 } else {
 
     $html .= "<p>" . ("Select pools to change color") . ":</p>\n";
+    $html .= "<p>" . ("Pools that cannot be told apart from another pool of the same division are preselected."
+        . " Colors are shown the way the pool standings pages draw them.") . "</p>\n";
     $html .= "<table>";
     $html .= "<tr><th><input type='checkbox' onclick='checkAll(\"tables\");'/></th>";
     $html .= "<th>" . ("Pool") . "</th>";
-    $html .= "<th>" . ("Series") . "</th>";
+    $html .= "<th>" . ("Division") . "</th>";
+    $html .= "<th>" . ("Too similar to") . "</th>";
     $html .= "</tr>\n";
 
+    $conflictCount = 0;
     $series = SeasonSeries($seasonId);
     foreach ($series as $row) {
 
         $pools = SeriesPools($row['series_id']);
         foreach ($pools as $pool) {
             $poolinfo = PoolInfo($pool['pool_id']);
-            $html .= "<tr style='background-color:#" . $poolinfo['color'] . "'>";
-            $html .= "<td class='center'><input type='checkbox' name='pools[]' value='" . utf8entities($pool['pool_id']) . "' /></td>";
-            $html .= "<td>" . $pool['name'] . "</td>";
-            $html .= "<td>" . $row['name'] . "</td>";
+            $conflicts = PoolColorConflicts($pool['pool_id']);
+
+            $similar = [];
+            foreach ($conflicts as $conflict) {
+                $similar[] = utf8entities(U_($conflict['name']));
+            }
+            if (!empty($similar)) {
+                $conflictCount++;
+            }
+
+            $html .= "<tr style='" . PoolColorStyle($poolinfo['color']) . "'>";
+            $html .= "<td class='center'><input type='checkbox' name='pools[]' value='" . utf8entities($pool['pool_id']) . "'"
+                . (empty($similar) ? "" : " checked='checked'") . " /></td>";
+            $html .= "<td>" . utf8entities(U_($pool['name'])) . "</td>";
+            $html .= "<td>" . utf8entities(U_($row['name'])) . "</td>";
+            $html .= "<td>" . implode(", ", $similar) . "</td>";
             $html .= "</tr>\n";
         }
     }
     $html .= "</table>\n";
+    $html .= "<p>" . ($conflictCount > 0
+        ? sprintf(("Pools that share their color with another pool of the same division: %d"), $conflictCount)
+        : ("Every pool has a color of its own.")) . "</p>\n";
     $html .= "<p><input class='button' type='submit' name='simulate' value='" . ("Update") . "'/></p>";
     $html .= "<div>";
     $html .= "<input type='hidden' name='season' value='$seasonId' />\n";

@@ -396,7 +396,7 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
             $colorcoding = "";
             if ($movetopool) {
                 //$iebackground="filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF,endColorstr=#".$movetopool['color'].");";
-                $colorcoding = "background-color:#" . $movetopool['color'] . ";background-color:" . RGBtoRGBa($movetopool['color'], 0.3) . ";color:#" . textColor($movetopool['color']);
+                $colorcoding = PoolColorStyle($movetopool['color']);
                 $ret .= "<tr>";
                 $continuationpools[] = $movetopool;
             } else {
@@ -430,7 +430,7 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
             $colorcoding = "";
             if ($movetopool) {
                 //$iebackground="background:transparent;filter:progid:DXImageTransform.Microsoft.gradient(startColorstr=#FFFFFF,endColorstr=#".$movetopool['color'].");zoom: 1;";
-                $colorcoding = "background-color:#" . $movetopool['color'] . ";background-color:" . RGBtoRGBa($movetopool['color'], 0.3) . ";color:#" . textColor($movetopool['color']);
+                $colorcoding = PoolColorStyle($movetopool['color']);
                 $ret .= "<tr>";
                 $continuationpools[] = $movetopool;
             } else {
@@ -465,7 +465,7 @@ function printRoundRobinPool($seasoninfo, $poolinfo)
         $width = 100 / count($continuationpools);
         foreach ($continuationpools as $cpool) {
             if ($cpool['topool'] != $prev) {
-                $ret .= "<td style='background-color:#" . $cpool['color'] . ";background-color:" . RGBtoRGBa($cpool['color'], 0.3) . ";color:#" . textColor($cpool['color']) . ";width:" . $width . "%'>";
+                $ret .= "<td style='" . PoolColorStyle($cpool['color']) . ";width:" . $width . "%'>";
                 if ($cpool['visible']) {
                     $ret .= "<a href='?view=poolstatus&amp;pool=" . $cpool['topool'] . "'>" . utf8entities(U_($cpool['name'])) . "</a>";
                 } else {
@@ -785,14 +785,14 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
         $i++;
         $winnerspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos);
         $winnercolor = isset($winnerspool['color']) ? $winnerspool['color'] : "ffffff";
-        $winnerpoolstyle = "background-color:#" . $winnercolor . ";background-color:" . RGBtoRGBa($winnercolor, 0.3) . ";color:#" . textColor($winnercolor);
+        $winnerpoolstyle = PoolColorStyle($winnercolor);
         if (isset($winnerspool['topool'])) {
             $winnerpools[$winnerspool['topool']] = $winnercolor;
         }
 
         $loserspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos + 1);
         $losercolor = isset($loserspool['color']) ? $loserspool['color'] : "ffffff";
-        $loserpoolstyle = "background-color:#" . $losercolor . ";background-color:" . RGBtoRGBa($losercolor, 0.3) . ";color:#" . textColor($losercolor);
+        $loserpoolstyle = PoolColorStyle($losercolor);
         if (isset($loserspool['topool'])) {
             $loserspools[$loserspool['topool']] = $losercolor;
         }
@@ -888,7 +888,7 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
                 }
                 $winnerInfo = $poolInfoCache[$winnerId];
                 $winnerWidth = 80 / $winnerCount;
-                $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . $winnerWidth . "%'>";
+                $ret .= "<td style='" . PoolColorStyle($color) . ";width:" . $winnerWidth . "%'>";
                 if (!empty($winnerInfo['visible'])) {
                     $ret .= "<a href='?view=poolstatus&amp;pool=" . $winnerId . "'>" . utf8entities(U_(PoolName($winnerId))) . "</a>";
                 } else {
@@ -907,7 +907,7 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
                 }
                 $loserInfo = $poolInfoCache[$loserId];
                 $loserWidth = 80 / $loserCount;
-                $ret .= "<td style='background-color:#" . $color . ";background-color:" . RGBtoRGBa($color, 0.3) . ";color:#" . textColor($color) . ";width:" . $loserWidth . "%'>";
+                $ret .= "<td style='" . PoolColorStyle($color) . ";width:" . $loserWidth . "%'>";
                 if (!empty($loserInfo['visible'])) {
                     $ret .= "<a href='?view=poolstatus&amp;pool=" . $loserId . "'>" . utf8entities(PoolName($loserId)) . "</a>";
                 } else {

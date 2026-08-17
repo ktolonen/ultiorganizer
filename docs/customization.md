@@ -131,6 +131,53 @@ The maintained SLKL and WFDF skins include full mobile palettes in their
 customization directories. Their changed values are tagged with `/* slkl */`
 or `/* wfdf */`, matching the desktop palette convention.
 
+## Pool colors
+
+Pool color coding is not part of the token palette. Each pool carries its own
+color in `uo_pool.color`, and the pool standings, schedule, and admin pages
+paint cells with it to show which pool a team advances to. The candidate colors
+come from `cust/default/pool_colors.php`, overridable per installation with
+`cust/<id>/pool_colors.php` returning an array of 6-digit hex colors without
+`#`; `PoolColors()` in `lib/pool.functions.php` reads and validates the list.
+
+Pool colors are drawn at 30% opacity (`PoolColorAlpha()`), so the stored color
+is not the color the reader sees: transparency pulls every entry towards the
+page background and squeezes the palette together. Two pools whose stored
+colors look unrelated can end up indistinguishable on the page, which makes
+two advancement paths read as one. Pools created back to back also used to
+land on neighboring palette entries, and a third of the neighboring pairs in
+the default palette are indistinguishable once drawn.
+
+![Pool standings with two advancement paths in near-identical colors](images/pool-colors-before.png)
+
+![The same pools with colors picked for distinctness](images/pool-colors-after.png)
+
+`PoolPickColor()` therefore chooses a color instead of taking the palette entry
+a pool id happens to land on. It compares candidates as they are rendered —
+composited over the page background at the display opacity — using the
+CIEDE2000 color difference from `lib/common.functions.php`
+(`ColorToLab()`, `LabDifference()`, `ColorDifference()`, `ColorMinDifference()`,
+`ColorsLookAlike()`, `PickDistinctColor()`). Rules:
+
+- The palette is still scanned from the pool id onwards, so the spread of
+  colors across an event is unchanged.
+- A candidate is accepted when it stays `ColorDifferenceThreshold()` (10.0
+  CIEDE2000) away from every color already used in the division, from the
+  colors used elsewhere in the event, and from the plain page background.
+- Distinctness inside the division wins when the palette cannot satisfy both.
+- When no candidate satisfies the threshold, the most distinct one is used.
+
+A custom palette is compared the same way, so a palette of near-identical
+tints simply leaves fewer usable colors. Comparisons assume the light page
+background; a skin with a dark surface changes which entries wash out, so a
+dark skin needs its own palette review.
+
+Existing events are not migrated automatically. The superadmin plugin at
+`?view=plugins/update_pool_colors` lists an event's pools with the color coding
+as readers see it, names the pools that cannot be told apart, preselects them,
+and recolors the selected pools through `PoolRecolor()`. Colors set by hand in
+`admin/addseasonpools.php` are left alone.
+
 ## Dark mode
 
 Because the default skin is fully tokenized, a dark theme is a block that

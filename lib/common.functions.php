@@ -523,6 +523,326 @@ function RGBtoRGBa($rgbstring, $alpha)
     return "rgba($r,$g,$b,$alpha)";
 }
 
+/**
+ * Parses a hex color into an sRGB triplet.
+ *
+ * @param mixed $color 'RRGGBB' or '#RRGGBB', anything else is rejected
+ * @return array|null [r, g, b] with 0-255 components, null when not a hex color
+ */
+function ColorToRGB($color)
+{
+    if (!is_string($color)) {
+        return null;
+    }
+    $color = trim($color);
+    if (strlen($color) > 0 && $color[0] === '#') {
+        $color = substr($color, 1);
+    }
+    if (!preg_match('/^[0-9A-Fa-f]{6}$/', $color)) {
+        return null;
+    }
+
+    return [
+        (float) hexdec(substr($color, 0, 2)),
+        (float) hexdec(substr($color, 2, 2)),
+        (float) hexdec(substr($color, 4, 2)),
+    ];
+}
+
+/**
+ * Converts a color to CIE L*a*b* (D65) as it is seen by the reader.
+ *
+ * Color coding is usually drawn semi-transparently on top of the page
+ * background, which pulls every color towards the backdrop and makes
+ * distinct palette entries look alike. Comparisons must therefore be made
+ * on the composited result, not on the stored color.
+ *
+ * @param mixed $color 'RRGGBB' or '#RRGGBB'
+ * @param float $alpha opacity the color is drawn with, 0.0-1.0
+ * @param string $backdrop color drawn behind it
+ * @return array|null [L, a, b], null when $color is not a hex color
+ */
+function ColorToLab($color, $alpha = 1.0, $backdrop = "FFFFFF")
+{
+    $rgb = ColorToRGB($color);
+    if ($rgb === null) {
+        return null;
+    }
+
+    $alpha = max(0.0, min(1.0, (float) $alpha));
+    if ($alpha < 1.0) {
+        $back = ColorToRGB($backdrop);
+        if ($back === null) {
+            $back = [255.0, 255.0, 255.0];
+        }
+        for ($i = 0; $i < 3; $i++) {
+            $rgb[$i] = $alpha * $rgb[$i] + (1.0 - $alpha) * $back[$i];
+        }
+    }
+
+    // sRGB -> linear RGB
+    $linear = [];
+    for ($i = 0; $i < 3; $i++) {
+        $channel = $rgb[$i] / 255.0;
+        $linear[$i] = $channel <= 0.04045
+            ? $channel / 12.92
+            : pow(($channel + 0.055) / 1.055, 2.4);
+    }
+
+    // linear RGB -> CIE XYZ, normalized to the D65 white point
+    $x = (0.4124564 * $linear[0] + 0.3575761 * $linear[1] + 0.1804375 * $linear[2]) / 0.95047;
+    $y = (0.2126729 * $linear[0] + 0.7151522 * $linear[1] + 0.0721750 * $linear[2]) / 1.00000;
+    $z = (0.0193339 * $linear[0] + 0.1191920 * $linear[1] + 0.9503041 * $linear[2]) / 1.08883;
+
+    // CIE XYZ -> CIE L*a*b*
+    $f = [];
+    foreach ([$x, $y, $z] as $index => $value) {
+        $f[$index] = $value > 0.008856
+            ? pow($value, 1.0 / 3.0)
+            : (7.787 * $value) + (16.0 / 116.0);
+    }
+
+    return [
+        (116.0 * $f[1]) - 16.0,
+        500.0 * ($f[0] - $f[1]),
+        200.0 * ($f[1] - $f[2]),
+    ];
+}
+
+/**
+ * CIEDE2000 color difference between two CIE L*a*b* colors.
+ *
+ * The result is a perceptual distance: about 1 is the smallest difference
+ * a trained eye can see side by side, and values below roughly 10 read as
+ * shades of the same color when they are used as area fills.
+ *
+ * @param array $lab1 [L, a, b]
+ * @param array $lab2 [L, a, b]
+ * @return float
+ */
+function LabDifference(array $lab1, array $lab2)
+{
+    $deg = M_PI / 180.0;
+
+    $c1 = sqrt(($lab1[1] * $lab1[1]) + ($lab1[2] * $lab1[2]));
+    $c2 = sqrt(($lab2[1] * $lab2[1]) + ($lab2[2] * $lab2[2]));
+    $cmean = ($c1 + $c2) / 2.0;
+
+    $g = 0.5 * (1.0 - sqrt(pow($cmean, 7) / (pow($cmean, 7) + pow(25.0, 7))));
+    $a1 = (1.0 + $g) * $lab1[1];
+    $a2 = (1.0 + $g) * $lab2[1];
+
+    $cp1 = sqrt(($a1 * $a1) + ($lab1[2] * $lab1[2]));
+    $cp2 = sqrt(($a2 * $a2) + ($lab2[2] * $lab2[2]));
+
+    $hp1 = ($a1 == 0.0 && $lab1[2] == 0.0) ? 0.0 : fmod(atan2($lab1[2], $a1) / $deg + 360.0, 360.0);
+    $hp2 = ($a2 == 0.0 && $lab2[2] == 0.0) ? 0.0 : fmod(atan2($lab2[2], $a2) / $deg + 360.0, 360.0);
+
+    $dl = $lab2[0] - $lab1[0];
+    $dc = $cp2 - $cp1;
+
+    if ($cp1 * $cp2 == 0.0) {
+        $dh = 0.0;
+    } elseif (abs($hp2 - $hp1) <= 180.0) {
+        $dh = $hp2 - $hp1;
+    } elseif ($hp2 - $hp1 > 180.0) {
+        $dh = $hp2 - $hp1 - 360.0;
+    } else {
+        $dh = $hp2 - $hp1 + 360.0;
+    }
+    $dhp = 2.0 * sqrt($cp1 * $cp2) * sin(($dh * $deg) / 2.0);
+
+    $lmean = ($lab1[0] + $lab2[0]) / 2.0;
+    $cpmean = ($cp1 + $cp2) / 2.0;
+
+    if ($cp1 * $cp2 == 0.0) {
+        $hpmean = $hp1 + $hp2;
+    } elseif (abs($hp1 - $hp2) <= 180.0) {
+        $hpmean = ($hp1 + $hp2) / 2.0;
+    } elseif ($hp1 + $hp2 < 360.0) {
+        $hpmean = ($hp1 + $hp2 + 360.0) / 2.0;
+    } else {
+        $hpmean = ($hp1 + $hp2 - 360.0) / 2.0;
+    }
+
+    $t = 1.0
+        - 0.17 * cos(($hpmean - 30.0) * $deg)
+        + 0.24 * cos((2.0 * $hpmean) * $deg)
+        + 0.32 * cos((3.0 * $hpmean + 6.0) * $deg)
+        - 0.20 * cos((4.0 * $hpmean - 63.0) * $deg);
+
+    $sl = 1.0 + ((0.015 * pow($lmean - 50.0, 2)) / sqrt(20.0 + pow($lmean - 50.0, 2)));
+    $sc = 1.0 + 0.045 * $cpmean;
+    $sh = 1.0 + 0.015 * $cpmean * $t;
+
+    $dtheta = 30.0 * exp(-pow(($hpmean - 275.0) / 25.0, 2));
+    $rc = 2.0 * sqrt(pow($cpmean, 7) / (pow($cpmean, 7) + pow(25.0, 7)));
+    $rt = -$rc * sin((2.0 * $dtheta) * $deg);
+
+    return sqrt(
+        pow($dl / $sl, 2)
+        + pow($dc / $sc, 2)
+        + pow($dhp / $sh, 2)
+        + $rt * ($dc / $sc) * ($dhp / $sh),
+    );
+}
+
+/**
+ * Perceptual difference between two colors as they are rendered.
+ *
+ * @param mixed $color1 'RRGGBB' or '#RRGGBB'
+ * @param mixed $color2 'RRGGBB' or '#RRGGBB'
+ * @param float $alpha opacity both colors are drawn with, 0.0-1.0
+ * @param string $backdrop color drawn behind them
+ * @return float|null CIEDE2000 difference, null when either color is invalid
+ */
+function ColorDifference($color1, $color2, $alpha = 1.0, $backdrop = "FFFFFF")
+{
+    $lab1 = ColorToLab($color1, $alpha, $backdrop);
+    $lab2 = ColorToLab($color2, $alpha, $backdrop);
+    if ($lab1 === null || $lab2 === null) {
+        return null;
+    }
+
+    return LabDifference($lab1, $lab2);
+}
+
+/**
+ * Smallest CIEDE2000 difference two color-coded areas may have before they
+ * stop reading as different colors.
+ *
+ * Area fills are easier to compare than small samples, so this sits well
+ * above the just-noticeable difference. It also has to stay low enough that
+ * a palette drawn at low opacity still offers a usable number of choices:
+ * the default pool palette yields 15 mutually distinct colors at this limit
+ * when drawn at 30% opacity, but only 10 at a limit of 12.
+ */
+function ColorDifferenceThreshold()
+{
+    return 10.0;
+}
+
+/**
+ * Tells whether two colors are too close to be told apart when rendered.
+ *
+ * @param mixed $color1 'RRGGBB' or '#RRGGBB'
+ * @param mixed $color2 'RRGGBB' or '#RRGGBB'
+ * @param float $alpha opacity both colors are drawn with, 0.0-1.0
+ * @param float|null $threshold CIEDE2000 limit, defaults to ColorDifferenceThreshold()
+ * @return bool false when either color is invalid
+ */
+function ColorsLookAlike($color1, $color2, $alpha = 1.0, $threshold = null)
+{
+    $difference = ColorDifference($color1, $color2, $alpha);
+    if ($difference === null) {
+        return false;
+    }
+    if ($threshold === null) {
+        $threshold = ColorDifferenceThreshold();
+    }
+
+    return $difference < $threshold;
+}
+
+/**
+ * Difference between a color and the nearest color of a set, as rendered.
+ *
+ * @param mixed $color 'RRGGBB' or '#RRGGBB'
+ * @param array $others colors to compare against
+ * @param float $alpha opacity the colors are drawn with, 0.0-1.0
+ * @return float|null null when $color or every compared color is invalid
+ */
+function ColorMinDifference($color, array $others, $alpha = 1.0)
+{
+    $lab = ColorToLab($color, $alpha);
+    if ($lab === null) {
+        return null;
+    }
+
+    $minimum = null;
+    foreach ($others as $other) {
+        $otherLab = ColorToLab($other, $alpha);
+        if ($otherLab === null) {
+            continue;
+        }
+        $difference = LabDifference($lab, $otherLab);
+        if ($minimum === null || $difference < $minimum) {
+            $minimum = $difference;
+        }
+    }
+
+    return $minimum;
+}
+
+/**
+ * Picks the palette color that is easiest to tell apart from colors already in use.
+ *
+ * The palette is scanned from $preferredIndex onwards so callers keep their
+ * existing color rotation, and the first candidate that stays $threshold away
+ * from every used color wins. When the palette cannot satisfy the threshold,
+ * the candidate with the largest distance to its nearest used color is
+ * returned instead.
+ *
+ * @param array $palette candidate colors, 'RRGGBB'
+ * @param array $usedColors colors shown next to the picked one
+ * @param int $preferredIndex palette index to start scanning from
+ * @param float $alpha opacity the colors are drawn with, 0.0-1.0
+ * @param float|null $threshold CIEDE2000 limit, defaults to ColorDifferenceThreshold()
+ * @return string|null picked color, null when the palette is empty
+ */
+function PickDistinctColor(array $palette, array $usedColors, $preferredIndex = 0, $alpha = 1.0, $threshold = null)
+{
+    $candidates = [];
+    foreach (array_values($palette) as $color) {
+        $lab = ColorToLab($color, $alpha);
+        if ($lab !== null) {
+            $candidates[] = ["color" => (string) $color, "lab" => $lab];
+        }
+    }
+    if (empty($candidates)) {
+        return null;
+    }
+    if ($threshold === null) {
+        $threshold = ColorDifferenceThreshold();
+    }
+
+    $usedLabs = [];
+    foreach ($usedColors as $color) {
+        $lab = ColorToLab($color, $alpha);
+        if ($lab !== null) {
+            $usedLabs[] = $lab;
+        }
+    }
+
+    $count = count($candidates);
+    $offset = (((int) $preferredIndex % $count) + $count) % $count;
+    if (empty($usedLabs)) {
+        return $candidates[$offset]["color"];
+    }
+
+    $best = null;
+    $bestDistance = -1.0;
+
+    for ($i = 0; $i < $count; $i++) {
+        $candidate = $candidates[($offset + $i) % $count];
+
+        $distance = INF;
+        foreach ($usedLabs as $usedLab) {
+            $distance = min($distance, LabDifference($candidate["lab"], $usedLab));
+        }
+
+        if ($distance >= $threshold) {
+            return $candidate["color"];
+        }
+        if ($distance > $bestDistance) {
+            $bestDistance = $distance;
+            $best = $candidate["color"];
+        }
+    }
+
+    return $best;
+}
+
 function getChkNum($sNum)
 {
     $multipliers = [7, 3, 1];

@@ -1565,6 +1565,186 @@ function PoolColors()
 }
 
 /**
+ * Opacity pool colors are drawn with in the color-coded views.
+ *
+ * Pool color coding is painted semi-transparently so that text stays
+ * readable on top of it. Colors have to be compared as they are drawn,
+ * because the transparency pulls every color towards the page background.
+ */
+function PoolColorAlpha()
+{
+    return 0.3;
+}
+
+/**
+ * Inline style for a pool color coded cell.
+ *
+ * @param string $color uo_pool.color
+ * @return string CSS declarations, without a trailing semicolon
+ */
+function PoolColorStyle($color)
+{
+    return "background-color:#" . $color
+        . ";background-color:" . RGBtoRGBa($color, PoolColorAlpha())
+        . ";color:#" . textColor($color);
+}
+
+/**
+ * Colors used by the pools of a division.
+ *
+ * Read uncached: playoff and Swiss-draw generation creates a chain of pools
+ * in one request, and every pool has to see the colors given to the pools
+ * created just before it.
+ *
+ * @param int $seriesId uo_series.series_id
+ * @param int $excludePoolId pool left out of the result
+ * @return array colors, 'RRGGBB'
+ */
+function SeriesPoolColors($seriesId, $excludePoolId = 0)
+{
+    $query = sprintf(
+        "SELECT color FROM uo_pool WHERE series=%d AND pool_id<>%d AND color IS NOT NULL AND color<>''",
+        (int) $seriesId,
+        (int) $excludePoolId,
+    );
+
+    return array_column(DBQueryToArrayUncached($query), 'color');
+}
+
+/**
+ * Colors used by the pools of an event.
+ *
+ * Read uncached for the same reason as SeriesPoolColors().
+ *
+ * @param int $seasonId uo_season.season_id
+ * @param int $excludePoolId pool left out of the result
+ * @return array colors, 'RRGGBB'
+ */
+function SeasonPoolColors($seasonId, $excludePoolId = 0)
+{
+    $query = sprintf(
+        "SELECT pool.color FROM uo_pool pool
+            INNER JOIN uo_series series ON(pool.series=series.series_id)
+            WHERE series.season=%d AND pool.pool_id<>%d AND pool.color IS NOT NULL AND pool.color<>''",
+        (int) $seasonId,
+        (int) $excludePoolId,
+    );
+
+    return array_column(DBQueryToArrayUncached($query), 'color');
+}
+
+/**
+ * Picks a pool color that can be told apart from the pools it is shown with.
+ *
+ * Pool colors are the only thing separating one advancement path from
+ * another on the pool standings and schedule pages, so two pools of the
+ * same event must not end up with colors that look the same. Distinctness
+ * inside the division is what matters most, because that is where pools are
+ * listed side by side; event-wide distinctness is honored as long as the
+ * palette can afford it.
+ *
+ * The palette is scanned from $preferredIndex onwards, which keeps the
+ * spread of colors the plain palette rotation used to give.
+ *
+ * @param int $seriesId uo_series.series_id the pool belongs to
+ * @param int $preferredIndex palette index to start looking from
+ * @param int $excludePoolId pool that is being colored, left out of the comparison
+ * @return string picked color, 'RRGGBB'
+ */
+function PoolPickColor($seriesId, $preferredIndex = 0, $excludePoolId = 0)
+{
+    $palette = PoolColors();
+    $alpha = PoolColorAlpha();
+
+    // Cells without color coding show the plain page background, so a pool
+    // color that washes out to white is no color coding at all.
+    $reserved = ["FFFFFF"];
+
+    $seriesColors = array_merge($reserved, SeriesPoolColors($seriesId, $excludePoolId));
+
+    $seriesInfo = SeriesInfo($seriesId);
+    $seasonColors = $seriesColors;
+    if (!empty($seriesInfo['season'])) {
+        $seasonColors = array_merge($reserved, SeasonPoolColors($seriesInfo['season'], $excludePoolId));
+    }
+
+    $picked = PickDistinctColor($palette, $seasonColors, $preferredIndex, $alpha);
+    if ($picked === null) {
+        return (string) $palette[(((int) $preferredIndex % count($palette)) + count($palette)) % count($palette)];
+    }
+
+    // A pick that had to compromise event wide may still clash inside the
+    // division. Division distinctness wins in that case.
+    $difference = ColorMinDifference($picked, $seriesColors, $alpha);
+    if ($difference !== null && $difference < ColorDifferenceThreshold()) {
+        $divisionPick = PickDistinctColor($palette, $seriesColors, $preferredIndex, $alpha);
+        if ($divisionPick !== null) {
+            $picked = $divisionPick;
+        }
+    }
+
+    return $picked;
+}
+
+/**
+ * Pools of the same division that a pool cannot be told apart from by color.
+ *
+ * @param int $poolId uo_pool.pool_id
+ * @return array rows with pool_id, name, color and the CIEDE2000 difference
+ */
+function PoolColorConflicts($poolId)
+{
+    $poolInfo = PoolInfo($poolId);
+    if (empty($poolInfo) || empty($poolInfo['color'])) {
+        return [];
+    }
+
+    $query = sprintf(
+        "SELECT pool_id, name, color FROM uo_pool
+            WHERE series=%d AND pool_id<>%d AND color IS NOT NULL AND color<>''
+            ORDER BY ordering ASC, name, pool_id",
+        (int) $poolInfo['series'],
+        (int) $poolId,
+    );
+
+    $alpha = PoolColorAlpha();
+    $threshold = ColorDifferenceThreshold();
+    $conflicts = [];
+
+    foreach (DBQueryToArray($query) as $other) {
+        $difference = ColorDifference($poolInfo['color'], $other['color'], $alpha);
+        if ($difference !== null && $difference < $threshold) {
+            $other['difference'] = $difference;
+            $conflicts[] = $other;
+        }
+    }
+
+    return $conflicts;
+}
+
+/**
+ * Gives an existing pool a color that stands apart from the pools it is shown with.
+ *
+ * @param int $poolId uo_pool.pool_id
+ * @return string|null stored color, null when the pool does not exist
+ */
+function PoolRecolor($poolId)
+{
+    $poolInfo = PoolInfo($poolId);
+    if (empty($poolInfo)) {
+        return null;
+    }
+    if (!hasEditSeasonSeriesRight($poolInfo['season'])) {
+        die('Insufficient rights to edit pool');
+    }
+
+    $color = PoolPickColor($poolInfo['series'], $poolId, $poolId);
+    SetPoolDetails($poolId, ["color" => $color]);
+
+    return $color;
+}
+
+/**
  * Creates a pool based on given template.
  *
  * @param int $seriesId - Series where pool is created
@@ -1577,7 +1757,6 @@ function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
 {
     $seriesinfo = SeriesInfo($seriesId);
     if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
-        $colors = PoolColors();
         $query = sprintf(
             "INSERT INTO uo_pool
             (type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts,
@@ -1594,7 +1773,7 @@ function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
         );
 
         $newId = DBQueryInsert($query);
-        $color = $colors[$newId % count($colors)];
+        $color = PoolPickColor($seriesId, $newId, $newId);
         $query = "UPDATE uo_pool SET color='" . $color . "' WHERE pool_id=" . $newId;
 
         DBQuery($query);
@@ -1619,7 +1798,6 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
 {
     $seriesinfo = SeriesInfo($seriesId);
     if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
-        $colors = PoolColors();
         $query = sprintf(
             "INSERT INTO uo_pool
             (type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts,
@@ -1637,7 +1815,7 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
 
         $newId = DBQueryInsert($query);
 
-        $color = $colors[$newId % count($colors)];
+        $color = PoolPickColor($seriesId, $newId, $newId);
         $query = "UPDATE uo_pool SET color='" . $color . "' WHERE pool_id=" . $newId;
         DBQuery($query);
 
