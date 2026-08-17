@@ -407,9 +407,9 @@ if (GameHasStarted($game_result) > 0) {
 
             //who start the game?
             $ishome = GameIsFirstOffenceHome($gameId);
-            if ($ishome == 1) {
+            if ($ishome === 1) {
                 $bHStartTheGame = true;
-            } elseif ($ishome == 0) {
+            } elseif ($ishome === 0) {
                 $bHStartTheGame = false;
             } else {
                 //make some wild guess

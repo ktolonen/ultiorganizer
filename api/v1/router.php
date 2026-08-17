@@ -772,9 +772,9 @@ function api_gameplay_statistics($gameId, $gameResult)
     $turnover = !empty($turnovers) ? $turnovers[0] : null;
 
     $ishome = GameIsFirstOffenceHome($gameId);
-    if ($ishome == 1) {
+    if ($ishome === 1) {
         $homeStarts = true;
-    } elseif ($ishome == 0) {
+    } elseif ($ishome === 0) {
         $homeStarts = false;
     } else {
         if ($turnover) {

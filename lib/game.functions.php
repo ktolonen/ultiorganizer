@@ -266,6 +266,16 @@ function GamePool($gameId)
     return $result;
 }
 
+/**
+ * Which team took the first offence, or null when it was never recorded.
+ *
+ * Callers must separate the null from the 0 before comparing, because a loose
+ * `== 0` also matches null and so reports the visiting team for every game
+ * that carries no offence event at all.
+ *
+ * @param int $gameId uo_game.game_id
+ * @return int|null 1 for the home team, 0 for the visitors, null when unrecorded
+ */
 function GameIsFirstOffenceHome($gameId)
 {
     $query = sprintf(
@@ -276,7 +286,7 @@ function GameIsFirstOffenceHome($gameId)
     );
     $result = DBQueryToValue($query);
 
-    return $result;
+    return $result === null ? null : (int) $result;
 }
 
 function GameReservation($gameId)

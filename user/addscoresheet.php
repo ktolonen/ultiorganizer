@@ -582,9 +582,9 @@ if ($show_comment_form) {
 $hoffence = "";
 $voffence = "";
 $ishome = GameIsFirstOffenceHome($gameId);
-if ($ishome == 1) {
+if ($ishome === 1) {
     $hoffence = "checked='checked'";
-} elseif ($ishome == 0) {
+} elseif ($ishome === 0) {
     $voffence = "checked='checked'";
 }
 
