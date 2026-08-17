@@ -1557,6 +1557,13 @@ function GameRemoveScore($gameId, $num)
  * corrected in favour of the other team leaves the published result wrong
  * until the game is finalized. Callers that delete a goal must call this.
  *
+ * The result is only lowered when it was actually tracking the goals, which is
+ * true exactly when it still shows the score the removed goal carried. A game
+ * whose scoresheet was never completed can be finalized at its real score
+ * through result.php while only a handful of goals were typed in, and deleting
+ * one of those goals must not drop the published result to the scoresheet's
+ * partial total.
+ *
  * Only the score is touched. Whether the game is running or finished is not
  * this function's business, so isongoing, hasstarted and the timer columns are
  * left as they are, unlike GameSetResult() and GameClearResult(). The cached
@@ -1564,12 +1571,25 @@ function GameRemoveScore($gameId, $num)
  * deleted from a game that was already finalized.
  *
  * @param int $gameId uo_game.game_id
- * @return bool result of the update
+ * @param int $removedHome home score the removed goal carried
+ * @param int $removedAway visitor score the removed goal carried
+ * @return bool result of the update, or false when the result was left alone
  */
-function GameSyncResultFromGoals($gameId)
+function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
 {
     if (!hasEditGameEventsRight($gameId)) {
         die('Insufficient rights to edit game');
+    }
+
+    $stored = DBQueryToRow(sprintf(
+        "SELECT homescore, visitorscore FROM uo_game WHERE game_id=%d LIMIT 1",
+        (int) $gameId,
+    ));
+    if (!$stored
+        || (int) $stored['homescore'] !== (int) $removedHome
+        || (int) $stored['visitorscore'] !== (int) $removedAway
+    ) {
+        return false;
     }
 
     $query = sprintf(
