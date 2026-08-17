@@ -32,7 +32,7 @@ if (isset($_POST['import'])) {
 
     $utf8 = !empty($_POST['utf8']);
     $season = $_POST['season'];
-    $separator = ValidCsvSeparator($_POST['separator'] ?? ',');
+    $separator = ValidCsvSeparator($_POST['separator'] ?? ';');
     $series = SeasonSeries($season);
     $ser = [];
     foreach ($series as $row) {
@@ -108,7 +108,7 @@ foreach ($seasons as $row) {
 }
 
 $html .= "</select></p>\n";
-$html .= "<p>" . ("CSV separator") . ": <input class='input' maxlength='1' size='1' name='separator' value=','/></p>\n";
+$html .= "<p>" . ("CSV separator") . ": <input class='input' maxlength='1' size='1' name='separator' value=';'/></p>\n";
 
 $html .= "<p>" . ("Select file to import") . ":<br/>\n";
 $html .= "<input class='input' type='file' size='100' name='file'/><br/>\n";
