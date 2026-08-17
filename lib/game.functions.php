@@ -1518,7 +1518,7 @@ function GameRemoveScore($gameId, $num)
 {
     if (hasEditGameEventsRight($gameId)) {
         $query = sprintf(
-            "DELETE FROM uo_goal 
+            "DELETE FROM uo_goal
 			WHERE game='%s' AND num=%d",
             DBEscapeString($gameId),
             (int) $num,
@@ -1530,6 +1530,58 @@ function GameRemoveScore($gameId, $num)
     } else {
         die('Insufficient rights to edit game');
     }
+}
+
+/**
+ * Lowers the game's aggregate result back onto its remaining goals.
+ *
+ * Removing a goal only deletes the uo_goal row, so the score on uo_game keeps
+ * counting it. Nothing brings that total back down on its own: the scoresheet
+ * raises the aggregate only when a new goal beats the stored total, so a goal
+ * corrected in favour of the other team leaves the published result wrong
+ * until the game is finalized. Callers that delete a goal must call this.
+ *
+ * Only the score is touched. Whether the game is running or finished is not
+ * this function's business, so isongoing, hasstarted and the timer columns are
+ * left as they are, unlike GameSetResult() and GameClearResult(). The cached
+ * pool standings are refreshed the way those two do, because a goal can be
+ * deleted from a game that was already finalized.
+ *
+ * @param int $gameId uo_game.game_id
+ * @return bool result of the update
+ */
+function GameSyncResultFromGoals($gameId)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game');
+    }
+
+    $query = sprintf(
+        "SELECT homescore, visitorscore
+		FROM uo_goal
+		WHERE game=%d
+		ORDER BY num DESC
+		LIMIT 1",
+        (int) $gameId,
+    );
+    $lastgoal = DBQueryToRow($query);
+
+    $home = $lastgoal ? (int) $lastgoal['homescore'] : 0;
+    $away = $lastgoal ? (int) $lastgoal['visitorscore'] : 0;
+
+    LogGameUpdate($gameId, "result from goals: $home - $away");
+    $result = DBQuery(sprintf(
+        "UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
+        DBEscapeString($home),
+        DBEscapeString($away),
+        (int) $gameId,
+    ));
+
+    $poolId = GamePool($gameId);
+    ResolvePoolStandings($poolId);
+    PoolResolvePlayed($poolId);
+
+    return $result;
 }
 
 /**
