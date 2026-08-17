@@ -119,7 +119,7 @@ function ImageSizeError($file_src)
     }
 
     return sprintf(
-        _("Image resolution is too large. Scale it down to %1\$d x %2\$d pixels and %3\$d megapixels at most."),
+        _("Image resolution is too large. The maximum is %1\$d x %2\$d pixels and %3\$d megapixels."),
         MAX_IMAGE_DIMENSION,
         MAX_IMAGE_DIMENSION,
         (int) (MAX_IMAGE_PIXELS / 1000000),

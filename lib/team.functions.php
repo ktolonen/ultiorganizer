@@ -1369,6 +1369,11 @@ function UploadTeamImage($teamId)
         }
 
         $file_tmp_name = $_FILES['picture']['tmp_name'];
+        $sizeError = ImageSizeError($file_tmp_name);
+        if ($sizeError !== "") {
+            return "<p class='warning'>" . $sizeError . "</p>";
+        }
+
         $imgname = time() . $teamId . ".jpg";
         $basedir = "" . UPLOAD_DIR . "teams/$teamId/";
         if (!is_dir($basedir)) {
