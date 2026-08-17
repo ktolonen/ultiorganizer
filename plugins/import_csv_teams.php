@@ -48,6 +48,11 @@ if (isset($_POST['import'])) {
         if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== false) {
             while (($data = fgetcsv($handle, 0, $separator)) !== false) {
                 $row++;
+                // fgetcsv() returns a single null field for a blank line. Those
+                // carry no data, so pass over them without reporting them.
+                if ($data === [null]) {
+                    continue;
+                }
                 // Four columns are required: team, club, country, division.
                 if (count($data) < 4) {
                     $skipped[] = $row;
