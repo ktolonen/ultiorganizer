@@ -100,6 +100,32 @@ function CanDecodeImageSize($width, $height)
     return ($width * $height) <= MAX_IMAGE_PIXELS;
 }
 
+/**
+ * Returns the reason an uploaded image cannot be decoded, or "" when it can.
+ *
+ * The decode helpers only report failure as a boolean, so an image that is
+ * merely too large would otherwise reach the caller as a generic processing
+ * error with no hint that scaling it down is the fix.
+ */
+function ImageSizeError($file_src)
+{
+    $imageInfo = getimagesize($file_src);
+    if ($imageInfo === false) {
+        return "";
+    }
+
+    if (CanDecodeImageSize($imageInfo[0], $imageInfo[1])) {
+        return "";
+    }
+
+    return sprintf(
+        _("Image resolution is too large. Scale it down to %1\$d x %2\$d pixels and %3\$d megapixels at most."),
+        MAX_IMAGE_DIMENSION,
+        MAX_IMAGE_DIMENSION,
+        (int) (MAX_IMAGE_PIXELS / 1000000),
+    );
+}
+
 function CanReadImageType($type)
 {
     switch ((int) $type) {

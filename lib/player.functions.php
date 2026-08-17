@@ -1114,6 +1114,10 @@ function UploadPlayerImage($playerId)
         }
 
         $file_tmp_name = $_FILES['picture']['tmp_name'];
+        $sizeError = ImageSizeError($file_tmp_name);
+        if ($sizeError !== "") {
+            return "<p class='warning'>" . $sizeError . "</p>";
+        }
         $imgname = time() . $playerInfo['profile_id'] . ".jpg";
         $basedir = "" . UPLOAD_DIR . "players/" . $playerInfo['profile_id'] . "/";
         if (!is_dir($basedir)) {
