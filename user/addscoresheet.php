@@ -306,14 +306,19 @@ if (!empty($_POST['save'])) {
 
             $time = str_replace($time_delim, ".", $time);
             $time = TimeToSec($time);
-            if ($time == $htime) {
-                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
-                $errIds[] = "time$i";
-            }
+            // Point times are optional, and so is the halftime, so a missing
+            // one is stored as zero rather than reported. Only points that
+            // carry a time can conflict with each other.
+            if ($time > 0) {
+                if ($htime > 0 && $time == $htime) {
+                    echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
+                    $errIds[] = "time$i";
+                }
 
-            if ($time <= $prevtime) {
-                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same or earlier than the previous point") . "!</p>";
-                $errIds[] = "time$i";
+                if ($time <= $prevtime) {
+                    echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same or earlier than the previous point") . "!</p>";
+                    $errIds[] = "time$i";
+                }
             }
         }
 
@@ -321,7 +326,11 @@ if (!empty($_POST['save'])) {
             $iscallahan = 1;
         }
 
-        $prevtime = $time;
+        // A point without a time must not reset the running comparison, or a
+        // later point could go backwards unnoticed.
+        if ($time > 0) {
+            $prevtime = $time;
+        }
 
         if ($team == 'H') {
             $h++;
