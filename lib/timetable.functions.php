@@ -708,6 +708,14 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
     $fieldOrder = "CAST(pr.fieldname AS UNSIGNED) ASC, pr.fieldname ASC";
     $placeOrder = "CASE WHEN pl.id IS NULL THEN 1 ELSE 0 END, COALESCE(pl.id, pr.id) ASC";
 
+    // Crossmatch rows are read as ranked pairs (pool slot 1 vs 2, 3 vs 4, ...), so they
+    // are ordered by the home participant's slot in the pool. A home side that is still
+    // an unresolved placeholder has no uo_team_pool row, so fall back to the target rank
+    // of the placeholder's move into this pool.
+    $crossmatchSlot = "COALESCE(homepool.rank,
+			(SELECT MIN(mvhome.torank) FROM uo_moveteams mvhome
+				WHERE mvhome.topool=gp.pool AND mvhome.scheduling_id=pp.scheduling_name_home))";
+
     //common game query
     $query = "SELECT pp.game_id, pp.time, pp.hometeam, pp.visitorteam, pp.homescore,
 			pp.visitorscore, gp.pool AS pool, pool.name AS poolname, pool.timeslot,
@@ -853,7 +861,10 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
             break;
 
         case "crossmatch":
-            $query .= " ORDER BY homepool.rank ASC, game_id ASC";
+            // Rows whose pool slot cannot be resolved at all are listed last so that they
+            // do not shift the pairing of the rows that do have a known slot.
+            $query .= " ORDER BY CASE WHEN " . $crossmatchSlot . " IS NULL THEN 1 ELSE 0 END, "
+                . $crossmatchSlot . " ASC, game_id ASC";
             break;
     }
 
