@@ -798,6 +798,14 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
     $fieldOrder = "CAST(pr.fieldname AS UNSIGNED) ASC, pr.fieldname ASC";
     $placeOrder = "CASE WHEN pl.id IS NULL THEN 1 ELSE 0 END, COALESCE(pl.id, pr.id) ASC";
 
+    // Crossmatch rows are listed in pool slot order, so that the games of a pair (slots
+    // 1 and 2, 3 and 4, ...) stay together. A home side that is still an unresolved
+    // placeholder has no uo_team_pool row, so fall back to the target rank of the
+    // placeholder's move into this pool.
+    $crossmatchSlot = "COALESCE(homepool.rank,
+			(SELECT MIN(mvhome.torank) FROM uo_moveteams mvhome
+				WHERE mvhome.topool=gp.pool AND mvhome.scheduling_id=pp.scheduling_name_home))";
+
     //common game query
     $query = "SELECT pp.game_id, pp.time, pp.hometeam, pp.visitorteam, pp.homescore,
 			pp.visitorscore, gp.pool AS pool, pool.name AS poolname, pool.timeslot,
@@ -805,6 +813,7 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
 			pr.id AS reservation_id, pr.starttime, pr.endtime, pl.id AS place_id, COALESCE(pm.goals,0) AS scoresheet,
 			pl.name AS placename, pl.address, pp.isongoing, pp.hasstarted, pp.islive, pp.forfeit, home.name AS hometeamname, visitor.name AS visitorteamname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname, pool.color, pgame.name AS gamename,
+			pp.scheduling_name_home, pp.scheduling_name_visitor,
 			home.abbreviation AS homeshortname, visitor.abbreviation AS visitorshortname, homec.country_id AS homecountryid,
 			homec.name AS homecountry, visitorc.country_id AS visitorcountryid, visitorc.name AS visitorcountry,
 			homec.flagfile AS homeflag, visitorc.flagfile AS visitorflag, s.timezone, s.isinternational, s.spiritmode
@@ -943,7 +952,10 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
             break;
 
         case "crossmatch":
-            $query .= " ORDER BY homepool.rank ASC, game_id ASC";
+            // Rows whose pool slot cannot be resolved at all are listed last so that they
+            // do not shift the pairing of the rows that do have a known slot.
+            $query .= " ORDER BY CASE WHEN " . $crossmatchSlot . " IS NULL THEN 1 ELSE 0 END, "
+                . $crossmatchSlot . " ASC, game_id ASC";
             break;
     }
 

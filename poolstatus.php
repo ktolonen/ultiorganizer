@@ -781,21 +781,60 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
 
 
     $games = TimetableGames($poolinfo['pool_id'], "pool", "all", "crossmatch");
+
+    // A crossmatch pool pairs its slots (1 vs 2, 3 vs 4, ...) and the winner and loser of
+    // a pair continue in the pools that the pair's two slots move to. Resolve the pair
+    // from the participants of each row instead of the row number, because a "best of N"
+    // pool has several rows per pair.
+    $teamslots = [];
+    foreach (PoolTeams($poolinfo['pool_id']) as $poolteam) {
+        $teamslots[intval($poolteam['team_id'])] = intval($poolteam['Rank']);
+    }
+    $placeholderslots = [];
+    foreach (PoolMovingsToPool($poolinfo['pool_id']) as $move) {
+        $placeholderslots[intval($move['scheduling_id'])] = intval($move['torank']);
+    }
+    // GenerateGames() and ResolveCrossMatchPoolStandings() both pair participants by their
+    // position in the slot order, and a move out of the pool records that position as its
+    // fromplacing. Map each slot number to its position so that a pool whose slots do not
+    // start at 1 or skip a number still resolves to the placing the moves were stored with.
+    $placings = array_unique(array_filter(array_merge(array_values($teamslots), array_values($placeholderslots))));
+    sort($placings);
+    $placings = array_flip($placings);
+
     $i = 0;
-    $pos = 1;
     $winnerpools = [];
     $loserspools = [];
 
     foreach ($games as $game) {
         $i++;
-        $winnerspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos);
+
+        $slot = 0;
+        $slotcandidates = [
+            $teamslots[intval($game['hometeam'])] ?? 0,
+            $placeholderslots[intval($game['scheduling_name_home'])] ?? 0,
+            $teamslots[intval($game['visitorteam'])] ?? 0,
+            $placeholderslots[intval($game['scheduling_name_visitor'])] ?? 0,
+        ];
+        foreach ($slotcandidates as $candidate) {
+            if ($candidate) {
+                $slot = $candidate;
+                break;
+            }
+        }
+        // Placing of the first participant of the pair: placings 1 and 2 both map to 1,
+        // 3 and 4 to 3, and so on.
+        $placing = isset($placings[$slot]) ? $placings[$slot] + 1 : 0;
+        $pos = $placing ? $placing - (($placing - 1) % 2) : 0;
+
+        $winnerspool = $pos ? PoolGetMoveToPool($poolinfo['pool_id'], $pos) : null;
         $winnercolor = isset($winnerspool['color']) ? $winnerspool['color'] : "ffffff";
         $winnerpoolstyle = "background-color:#" . $winnercolor . ";background-color:" . RGBtoRGBa($winnercolor, 0.3) . ";color:#" . textColor($winnercolor);
         if (isset($winnerspool['topool'])) {
             $winnerpools[$winnerspool['topool']] = $winnercolor;
         }
 
-        $loserspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos + 1);
+        $loserspool = $pos ? PoolGetMoveToPool($poolinfo['pool_id'], $pos + 1) : null;
         $losercolor = isset($loserspool['color']) ? $loserspool['color'] : "ffffff";
         $loserpoolstyle = "background-color:#" . $losercolor . ";background-color:" . RGBtoRGBa($losercolor, 0.3) . ";color:#" . textColor($losercolor);
         if (isset($loserspool['topool'])) {
@@ -875,7 +914,6 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
             }
         }
         $ret .= "</tr>\n";
-        $pos += 2;
     }
     $ret .= "</table>\n";
 
