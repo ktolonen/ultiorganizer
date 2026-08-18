@@ -44,6 +44,10 @@ if (isset($_POST['import'])) {
         $html .= "<p>" . ("The CSV separator must be a single character.") . "</p>";
     } elseif (is_uploaded_file($_FILES['file']['tmp_name'])) {
         $row = 0;
+        // $row stays the physical line number, because the skipped list reports
+        // it back to the user. Blank lines are not rows of the file's data, so
+        // the summary counts those separately.
+        $datarows = 0;
         $imported = 0;
         $skipped = [];
         if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== false) {
@@ -54,6 +58,7 @@ if (isset($_POST['import'])) {
                 if ($data === [null]) {
                     continue;
                 }
+                $datarows++;
                 // Four columns are required: firstname, lastname, number, team.
                 if (count($data) < 4) {
                     $skipped[] = $row;
@@ -79,7 +84,7 @@ if (isset($_POST['import'])) {
             }
             fclose($handle);
         }
-        $html .= "<p>" . sprintf(("Imported %d player(s) from %d row(s)."), $imported, $row) . "</p>";
+        $html .= "<p>" . sprintf(("Imported %d player(s) from %d row(s)."), $imported, $datarows) . "</p>";
         if (!empty($skipped)) {
             $html .= "<p>" . sprintf(("Skipped row(s): %s"), implode(", ", $skipped)) . "</p>";
         }
