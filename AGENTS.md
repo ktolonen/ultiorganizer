@@ -22,7 +22,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `user/`: logged-in user pages.
 - `lib/`: shared utilities; SQL belongs here.
 - `api/`: JSON API entry points and routing.
-- `cust/`: skins and installation-specific customizations.
+- `cust/`: skins and installation-specific customizations. `default`, `slkl` and `wfdf` are maintained; `bula`, `fpudd`, `gummis` and `windmill` are unmaintained legacy kept for compatibility — see `docs/customization.md`.
 - `mobile/`, `scorekeeper/`, `spiritkeeper/`, `timekeeper/`, `login/`, `ext/`: specialized entry points. `mobile/` is a deprecated legacy interface kept for compatibility; `scorekeeper/` and `spiritkeeper/` are its supported replacements, and `timekeeper/` is a standalone, public WFDF time-limit signalling aid (see `docs/timekeeper.md`).
 - `images/`, `locale/`, `plugins/`: static assets, translations, and plugin code.
 - `script/`: client-side JavaScript assets.
@@ -66,6 +66,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 
 - The production test suite is the harness in the separate [`ktolonen/ultiorganizer-tests`](https://github.com/ktolonen/ultiorganizer-tests) repository, not part of this repo. Clone it once as a sibling of this checkout, which is the layout CI uses and the harness defaults to (`--sut-path ../ultiorganizer`): `git clone https://github.com/ktolonen/ultiorganizer-tests.git ../ultiorganizer-tests`
 - Run harness commands from that checkout: `./doctor` (environment check, needs Docker), `./test:quick` (day-to-day), `./test:matrix` (the full matrix CI runs). Pass `--sut-path <path>` to test a worktree or PR checkout instead of the sibling default.
+- The harness pins shared `lib/` behaviour exactly, including export byte output, so run `./test:integration` after changing anything in `lib/`, not only the suite for the topic you touched.
 - Keep the harness on its `main` branch and pull before a run — CI checks out `ref: main`, so a stale local copy can disagree with CI. Run `./test:matrix` before declaring branch work done. See the harness README for suite definitions and reporting commands.
 - PHP syntax check a single file: `php -l <file.php>`
 - Format changed PHP: `composer format` (check-only: `composer format:check`)

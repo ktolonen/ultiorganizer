@@ -6,6 +6,24 @@ the base skin; the active skin is selected by the `CUSTOMIZATIONS` constant in
 system** and how a skin recolors the UI; more customization topics (logos,
 layouts, PDF hooks) can be added here over time.
 
+## Maintained and unmaintained skins
+
+`cust/` carries seven skins, and they are not equally alive:
+
+| Skin | Status |
+| --- | --- |
+| `default` | Base skin. Every other skin cascades on top of it. |
+| `slkl`, `wfdf` | Maintained. Verify changes against these. |
+| `bula`, `fpudd`, `gummis`, `windmill` | Unmaintained legacy, kept for compatibility. |
+
+Treat the unmaintained skins as frozen. A visual regression that appears only
+there is not worth chasing, and reworking them is not part of a change to the
+shared stylesheets. When a change touches `cust/default/`, check it against
+`default`, `slkl` and `wfdf`; the rest only need to keep loading.
+
+Their age does not show in the file dates — a repo-wide reformat touched every
+skin at once — so this list, not `git log`, is what says which is which.
+
 ## Skin CSS cascade
 
 `styles()` in `localization.php` emits `cust/default/ultiorganizer.css` first,
