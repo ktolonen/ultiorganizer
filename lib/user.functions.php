@@ -1016,9 +1016,19 @@ function RemoveEditSeason($userid, $propid)
 }
 
 
-function AddEditSeason($userid, $season)
+/**
+ * Records that $userid has something to edit in $season.
+ *
+ * $checkRights is for callers that have already authorized the change they are
+ * bookkeeping here. AddSeasonUserRole() is one: it has established that the
+ * caller may grant the role, and the editseason row is only a derived record
+ * of that grant, so re-deriving rights from the event alone would refuse a
+ * division administrator granting a role to somebody else and leave the
+ * userrole row already written.
+ */
+function AddEditSeason($userid, $season, $checkRights = true)
 {
-    if ($userid == $_SESSION['uid'] || hasEditUsersRight() || isSeasonAdmin($season)) {
+    if (!$checkRights || $userid == $_SESSION['uid'] || hasEditUsersRight() || isSeasonAdmin($season)) {
         $query = sprintf(
             "SELECT COUNT(*) FROM uo_userproperties 
 			WHERE userid='%s' AND name='editseason' AND value='%s'",
@@ -1223,7 +1233,7 @@ function AddSeasonUserRole($userid, $role, $seasonId)
     );
     DBQuery($query);
     Log1("security", "add", $userid, $seasonId, $role);
-    AddEditSeason($userid, $seasonId);
+    AddEditSeason($userid, $seasonId, false);
 
     if ($userid == $_SESSION['uid']) {
         SetUserSessionData($userid);
