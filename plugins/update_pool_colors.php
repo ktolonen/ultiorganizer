@@ -39,26 +39,28 @@ if (!empty($_POST['season'])) {
 
 if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
-    // Written one at a time so each pick sees the colors written before it.
     $pools = array_values(array_unique(array_map('intval', (array) $_POST["pools"])));
     sort($pools);
 
-    $poolCount = 0;
-    foreach (SeasonSeries($seasonId) as $series) {
-        $poolCount += count(SeriesPools($series['series_id']));
-    }
-
-    $pickRandomColor = count($pools) < $poolCount;
-
+    $selected = [];
     foreach ($pools as $poolId) {
         $poolinfo = PoolInfo($poolId);
-        if (empty($poolinfo)) {
-            continue;
+        if (!empty($poolinfo)) {
+            $selected[(int) $poolinfo['series']][] = $poolId;
         }
+    }
 
-        SetPoolDetails($poolId, [
-            "color" => PoolPickColor($poolinfo['series'], $poolId, $pickRandomColor),
-        ]);
+    foreach ($selected as $seriesId => $seriesPools) {
+        // Part of a division re-rolls, because the deterministic pick would hand
+        // each pool back the color it already has.
+        $pickRandomColor = count($seriesPools) < count(SeriesPools($seriesId));
+
+        // Written one at a time so each pick sees the colors written before it.
+        foreach ($seriesPools as $poolId) {
+            SetPoolDetails($poolId, [
+                "color" => PoolPickColor($seriesId, $poolId, $pickRandomColor),
+            ]);
+        }
     }
 }
 
