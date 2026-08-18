@@ -40,8 +40,15 @@ if (!empty($_POST['season'])) {
 if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
     // Written one at a time so each pick sees the colors written before it.
-    $pools = array_map('intval', (array) $_POST["pools"]);
+    $pools = array_values(array_unique(array_map('intval', (array) $_POST["pools"])));
     sort($pools);
+
+    $poolCount = 0;
+    foreach (SeasonSeries($seasonId) as $series) {
+        $poolCount += count(SeriesPools($series['series_id']));
+    }
+
+    $pickRandomColor = count($pools) < $poolCount;
 
     foreach ($pools as $poolId) {
         $poolinfo = PoolInfo($poolId);
@@ -49,7 +56,9 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
             continue;
         }
 
-        SetPoolDetails($poolId, ["color" => PoolPickColor($poolinfo['series'], $poolId)]);
+        SetPoolDetails($poolId, [
+            "color" => PoolPickColor($poolinfo['series'], $poolId, $pickRandomColor),
+        ]);
     }
 }
 

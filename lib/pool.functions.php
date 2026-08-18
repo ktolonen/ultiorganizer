@@ -1569,19 +1569,26 @@ function PoolColors()
  *
  * @param int $seriesId
  * @param int $poolId
+ * @param bool $randomize Randomize the palette and count the current color as used.
  * @return string 6-digit hex color without '#'
  */
-function PoolPickColor($seriesId, $poolId)
+function PoolPickColor($seriesId, $poolId, $randomize = false)
 {
     $colors = PoolColors();
     $count = count($colors);
-    $start = (int) $poolId % $count;
+    if ($randomize) {
+        shuffle($colors);
+    }
+
+    $start = $randomize ? 0 : (int) $poolId % $count;
 
     $query = sprintf(
-        "SELECT DISTINCT color FROM uo_pool WHERE series=%d AND pool_id<>%d",
+        "SELECT DISTINCT color FROM uo_pool WHERE series=%d",
         (int) $seriesId,
-        (int) $poolId,
     );
+    if (!$randomize) {
+        $query .= sprintf(" AND pool_id<>%d", (int) $poolId);
+    }
 
     $used = [];
     foreach (DBQueryToArray($query) as $row) {
