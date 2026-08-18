@@ -1148,44 +1148,6 @@ function SeasonRoleTargetSeason($role)
 }
 
 /**
- * Returns true when the caller administers whatever $role grants power over.
- *
- * A team or game role is checked against the division owning its target, not
- * against the event as a whole. Division administrators create the teams and
- * games in their own division, and the flows that do so grant the matching
- * role on the way, so demanding event-wide rights here locks them out of
- * their own pages. Event-wide roles stay with the event administrators.
- *
- * Every helper used here folds in the read-only check, so a closed event still
- * refuses role changes.
- */
-function CanAdministerSeasonRoleTarget($role, $seasonId)
-{
-    $parts = explode(":", (string) $role, 2);
-    $name = $parts[0];
-    $target = isset($parts[1]) ? $parts[1] : "";
-
-    switch ($name) {
-        case "teamadmin":
-        case "accradmin":
-            if (!function_exists("TeamSeries")) {
-                require_once __DIR__ . '/team.functions.php';
-            }
-            $series = TeamSeries((int) $target);
-            return empty($series) ? false : hasEditTeamsRight($series);
-        case "gameadmin":
-            // See the note in SeasonRoleTargetSeason() on the lazy require.
-            if (!function_exists("GameSeries")) {
-                require_once __DIR__ . '/game.functions.php';
-            }
-            $series = GameSeries($target);
-            return empty($series) ? false : hasEditGamesRight($series);
-        default:
-            return hasEditSeasonSeriesRight($seasonId);
-    }
-}
-
-/**
  * Returns true when $role may be granted or revoked while administering
  * $seasonId.
  *
@@ -1206,7 +1168,23 @@ function CanChangeSeasonUserRole($role, $seasonId)
         return false;
     }
 
-    return CanAdministerSeasonRoleTarget($role, $targetSeason);
+    list($name, $target) = explode(":", (string) $role, 2);
+
+    switch ($name) {
+        case "teamadmin":
+        case "accradmin":
+            $series = getTeamSeries($target);
+            return empty($series) ? false : hasEditTeamsRight($series);
+        case "gameadmin":
+            // See the note in SeasonRoleTargetSeason() on the lazy require.
+            if (!function_exists("GameSeries")) {
+                require_once __DIR__ . '/game.functions.php';
+            }
+            $series = GameSeries($target);
+            return empty($series) ? false : hasEditGamesRight($series);
+        default:
+            return hasEditSeasonSeriesRight($targetSeason);
+    }
 }
 
 function AddSeasonUserRole($userid, $role, $seasonId)
