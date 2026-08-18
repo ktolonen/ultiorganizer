@@ -827,14 +827,14 @@ function printCrossmatchPool($seasoninfo, $poolinfo)
         $placing = isset($placings[$slot]) ? $placings[$slot] + 1 : 0;
         $pos = $placing ? $placing - (($placing - 1) % 2) : 0;
 
-        $winnerspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos);
+        $winnerspool = $pos ? PoolGetMoveToPool($poolinfo['pool_id'], $pos) : null;
         $winnercolor = isset($winnerspool['color']) ? $winnerspool['color'] : "ffffff";
         $winnerpoolstyle = "background-color:#" . $winnercolor . ";background-color:" . RGBtoRGBa($winnercolor, 0.3) . ";color:#" . textColor($winnercolor);
         if (isset($winnerspool['topool'])) {
             $winnerpools[$winnerspool['topool']] = $winnercolor;
         }
 
-        $loserspool = PoolGetMoveToPool($poolinfo['pool_id'], $pos + 1);
+        $loserspool = $pos ? PoolGetMoveToPool($poolinfo['pool_id'], $pos + 1) : null;
         $losercolor = isset($loserspool['color']) ? $loserspool['color'] : "ffffff";
         $loserpoolstyle = "background-color:#" . $losercolor . ";background-color:" . RGBtoRGBa($losercolor, 0.3) . ";color:#" . textColor($losercolor);
         if (isset($loserspool['topool'])) {
