@@ -230,6 +230,25 @@ function TeamSeason($teamId)
     return DBQueryToValue($query);
 }
 
+/**
+ * Division a team belongs to.
+ *
+ * Role checks need the division rather than the event, because a division
+ * administrator administers teams and games inside their own division only.
+ *
+ * @param int $teamId uo_team.team_id
+ * @return string|null uo_team.series, or null when the team does not exist
+ */
+function TeamSeries($teamId)
+{
+    $query = sprintf(
+        "SELECT series FROM uo_team WHERE team_id=%d",
+        (int) $teamId,
+    );
+
+    return DBQueryToValue($query);
+}
+
 function TeamComingGames($teamId, $placeId)
 {
     $query = sprintf(

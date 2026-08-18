@@ -1138,12 +1138,52 @@ function SeasonRoleTargetSeason($role)
 }
 
 /**
+ * Returns true when the caller administers whatever $role grants power over.
+ *
+ * A team or game role is checked against the division owning its target, not
+ * against the event as a whole. Division administrators create the teams and
+ * games in their own division, and the flows that do so grant the matching
+ * role on the way, so demanding event-wide rights here locks them out of
+ * their own pages. Event-wide roles stay with the event administrators.
+ *
+ * Every helper used here folds in the read-only check, so a closed event still
+ * refuses role changes.
+ */
+function CanAdministerSeasonRoleTarget($role, $seasonId)
+{
+    $parts = explode(":", (string) $role, 2);
+    $name = $parts[0];
+    $target = isset($parts[1]) ? $parts[1] : "";
+
+    switch ($name) {
+        case "teamadmin":
+        case "accradmin":
+            if (!function_exists("TeamSeries")) {
+                require_once __DIR__ . '/team.functions.php';
+            }
+            $series = TeamSeries((int) $target);
+            return empty($series) ? false : hasEditTeamsRight($series);
+        case "gameadmin":
+            // See the note in SeasonRoleTargetSeason() on the lazy require.
+            if (!function_exists("GameSeries")) {
+                require_once __DIR__ . '/game.functions.php';
+            }
+            $series = GameSeries($target);
+            return empty($series) ? false : hasEditGamesRight($series);
+        default:
+            return hasEditSeasonSeriesRight($seasonId);
+    }
+}
+
+/**
  * Returns true when $role may be granted or revoked while administering
  * $seasonId.
  *
- * Rejects a role whose target belongs to a different event, and authorizes the
- * owning event with the write-aware helper so roles cannot be changed after
- * that event has been closed for editing.
+ * Rejects a role whose target belongs to a different event, then authorizes
+ * the caller against the target itself. This is the only gate the season role
+ * mutations need: it is strictly narrower than the isSeasonAdmin() test it
+ * replaced, which trusted the caller-supplied event and so neither bound the
+ * role to it nor honoured read-only events.
  */
 function CanChangeSeasonUserRole($role, $seasonId)
 {
@@ -1156,7 +1196,7 @@ function CanChangeSeasonUserRole($role, $seasonId)
         return false;
     }
 
-    return hasEditSeasonSeriesRight($targetSeason);
+    return CanAdministerSeasonRoleTarget($role, $targetSeason);
 }
 
 function AddSeasonUserRole($userid, $role, $seasonId)
@@ -1165,35 +1205,31 @@ function AddSeasonUserRole($userid, $role, $seasonId)
         die('Insufficient rights to change user info');
     }
 
-    if (hasEditUsersRight() || isSeasonAdmin($seasonId)) {
+    $query = sprintf(
+        "SELECT COUNT(*) FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
+        DBEscapeString($userid),
+        DBEscapeString($role),
+    );
+    $result = DBQueryToValue($query);
 
-        $query = sprintf(
-            "SELECT COUNT(*) FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
-            DBEscapeString($userid),
-            DBEscapeString($role),
-        );
-        $result = DBQueryToValue($query);
-
-        if ($result <= 0) {
-            $query = sprintf(
-                "INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', '%s')",
-                DBEscapeString($userid),
-                DBEscapeString($role),
-            );
-            $result = DBQuery($query);
-            Log1("security", "add", $userid, $seasonId, $role);
-            AddEditSeason($userid, $seasonId);
-
-            if ($userid == $_SESSION['uid']) {
-                SetUserSessionData($userid);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    } else {
-        die('Insufficient rights to change user info');
+    if ($result > 0) {
+        return false;
     }
+
+    $query = sprintf(
+        "INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', '%s')",
+        DBEscapeString($userid),
+        DBEscapeString($role),
+    );
+    DBQuery($query);
+    Log1("security", "add", $userid, $seasonId, $role);
+    AddEditSeason($userid, $seasonId);
+
+    if ($userid == $_SESSION['uid']) {
+        SetUserSessionData($userid);
+    }
+
+    return true;
 }
 
 function RemoveSeasonUserRole($userid, $role, $seasonId)
@@ -1202,27 +1238,23 @@ function RemoveSeasonUserRole($userid, $role, $seasonId)
         die('Insufficient rights to change user info');
     }
 
-    if (hasEditUsersRight() || isSeasonAdmin($seasonId)) {
-        $query = sprintf(
-            "DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
+    $query = sprintf(
+        "DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
+        DBEscapeString($userid),
+        DBEscapeString($role),
+    );
+    DBQuery($query);
+
+    if (!UserHasSeasonScopedRole($userid, $seasonId)) {
+        DBQuery(sprintf(
+            "DELETE FROM uo_userproperties WHERE userid='%s' AND name='editseason' AND value='%s'",
             DBEscapeString($userid),
-            DBEscapeString($role),
-        );
-        $result = DBQuery($query);
+            DBEscapeString($seasonId),
+        ));
+    }
 
-        if (!UserHasSeasonScopedRole($userid, $seasonId)) {
-            DBQuery(sprintf(
-                "DELETE FROM uo_userproperties WHERE userid='%s' AND name='editseason' AND value='%s'",
-                DBEscapeString($userid),
-                DBEscapeString($seasonId),
-            ));
-        }
-
-        if ($userid == $_SESSION['uid']) {
-            SetUserSessionData($userid);
-        }
-    } else {
-        die('Insufficient rights to change user info');
+    if ($userid == $_SESSION['uid']) {
+        SetUserSessionData($userid);
     }
 }
 
