@@ -1565,6 +1565,40 @@ function PoolColors()
 }
 
 /**
+ * Picks a palette color that no other pool of the division uses.
+ *
+ * @param int $seriesId
+ * @param int $poolId
+ * @return string 6-digit hex color without '#'
+ */
+function PoolPickColor($seriesId, $poolId)
+{
+    $colors = PoolColors();
+    $count = count($colors);
+    $start = (int) $poolId % $count;
+
+    $query = sprintf(
+        "SELECT DISTINCT color FROM uo_pool WHERE series=%d AND pool_id<>%d",
+        (int) $seriesId,
+        (int) $poolId,
+    );
+
+    $used = [];
+    foreach (DBQueryToArray($query) as $row) {
+        $used[strtoupper(trim((string) $row['color']))] = true;
+    }
+
+    for ($i = 0; $i < $count; $i++) {
+        $color = $colors[($start + $i) % $count];
+        if (!isset($used[$color])) {
+            return $color;
+        }
+    }
+
+    return $colors[$start];
+}
+
+/**
  * Creates a pool based on given template.
  *
  * @param int $seriesId - Series where pool is created
@@ -1577,7 +1611,6 @@ function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
 {
     $seriesinfo = SeriesInfo($seriesId);
     if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
-        $colors = PoolColors();
         $query = sprintf(
             "INSERT INTO uo_pool
             (type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts,
@@ -1594,7 +1627,7 @@ function PoolFromPoolTemplate($seriesId, $name, $ordering, $poolTemplateId)
         );
 
         $newId = DBQueryInsert($query);
-        $color = $colors[$newId % count($colors)];
+        $color = PoolPickColor($seriesId, $newId);
         $query = "UPDATE uo_pool SET color='" . $color . "' WHERE pool_id=" . $newId;
 
         DBQuery($query);
@@ -1619,7 +1652,6 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
 {
     $seriesinfo = SeriesInfo($seriesId);
     if (hasEditSeasonSeriesRight($seriesinfo['season'])) {
-        $colors = PoolColors();
         $query = sprintf(
             "INSERT INTO uo_pool
             (type, timeoutlen, halftime, winningscore, drawsallowed, timecap, scorecap, addscore, halftimescore, timeouts,
@@ -1637,7 +1669,7 @@ function PoolFromAnotherPool($seriesId, $name, $ordering, $poolId, $follower = f
 
         $newId = DBQueryInsert($query);
 
-        $color = $colors[$newId % count($colors)];
+        $color = PoolPickColor($seriesId, $newId);
         $query = "UPDATE uo_pool SET color='" . $color . "' WHERE pool_id=" . $newId;
         DBQuery($query);
 
