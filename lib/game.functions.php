@@ -79,6 +79,10 @@ function GameResult($gameId)
         p.*, gp.pool AS pool, spirit.spiritmode AS spiritmode, spirit.homesotg AS homesotg, spirit.visitorsotg AS visitorsotg, s.name AS gamename
     FROM uo_game AS p
     LEFT JOIN uo_game_pool gp ON (gp.game=p.game_id AND gp.timetable=1)
+    -- Grouped by game alone so this yields exactly one row: grouping by mode as
+    -- well splits a game whose two teams were scored under different spirit
+    -- modes into two rows, which multiplies the game row and leaves one team's
+    -- total unread.
     LEFT JOIN (SELECT ssc.game_id,
                       MAX(CASE WHEN ssc.team_id = g.hometeam THEN sct.mode END) AS spiritmode,
                       SUM(CASE WHEN ssc.team_id = g.hometeam THEN ssc.value * sct.factor END) AS homesotg,
@@ -87,7 +91,7 @@ function GameResult($gameId)
                INNER JOIN uo_game g ON (g.game_id = ssc.game_id)
                LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
                WHERE ssc.game_id=%d
-               GROUP BY ssc.game_id, sct.mode) AS spirit
+               GROUP BY ssc.game_id) AS spirit
        ON (p.game_id = spirit.game_id)
     LEFT JOIN uo_team As k ON (p.hometeam=k.team_id)
     LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
