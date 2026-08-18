@@ -20,6 +20,7 @@ This document summarizes the rules that apply to this repository, lists project-
 - **Booleans, null**: lowercase (`true`, `false`, `null`).
 - **Type keywords**: lowercase (`int`, `string`, `bool`).
 - **Comparison**: prefer strict comparison (`===`, `!==`) when types are known.
+- **Comments**: match the sparse density of the surrounding code. A small edit to existing code needs none — the reasoning belongs in the commit message. Reserve docblocks for genuinely new shared helpers, and keep them short.
 - **No trailing whitespace**, **no whitespace on blank lines**, **single newline at end of file**.
 
 ## Tools
