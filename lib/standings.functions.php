@@ -74,7 +74,23 @@ function ResolvePlayoffPoolStandings($poolId)
             DBQuery("UPDATE uo_team_pool SET activerank=" . ($i + 2) . " WHERE pool=" . intval($poolId) . " AND team=$teamId1");
         } else {
             //keep current positions
-            LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2);
+            $anomalyQuery = sprintf(
+                "SELECT COUNT(*) AS total, SUM(isongoing=1) AS ongoing
+					FROM uo_game
+					WHERE ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
+						AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
+                (int) $teamId1,
+                (int) $teamId2,
+                (int) $teamId2,
+                (int) $teamId1,
+                (int) $poolId,
+            );
+            $anomalyInfo = DBQueryToRow($anomalyQuery);
+            if ((int) ($anomalyInfo['total'] ?? 0) === 0) {
+                error_log("Pool standings: pool $poolId compared teams $teamId1 and $teamId2 by seed order but found no game between them in this pool; activerank left at its previous value. Check uo_team_pool.rank for duplicate or incorrect values.");
+            } elseif ((int) ($anomalyInfo['ongoing'] ?? 0) > 0) {
+                error_log("Pool standings: pool $poolId teams $teamId1 and $teamId2 have a game still marked ongoing; activerank left at its previous value until the game is finalized.");
+            }
         }
         //check if teams can be moved to next round
         $gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
@@ -95,32 +111,6 @@ function ResolvePlayoffPoolStandings($poolId)
 
     //check if there are special ranking rules and apply them
     CheckSpecialRanking($poolId);
-}
-
-/**
- * Log why a compared pair's activerank was left at its previous value:
- * no game between them at all, or a game still marked ongoing.
- */
-function LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2)
-{
-    // Deliberately no hasstarted filter: an unplayed pair still counts as "a game exists".
-    $query = sprintf(
-        "SELECT COUNT(*) AS total, SUM(isongoing=1) AS ongoing
-			FROM uo_game
-			WHERE ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
-				AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
-        (int) $teamId1,
-        (int) $teamId2,
-        (int) $teamId2,
-        (int) $teamId1,
-        (int) $poolId,
-    );
-    $info = DBQueryToRow($query);
-    if ((int) ($info['total'] ?? 0) === 0) {
-        error_log("Pool standings: pool $poolId compared teams $teamId1 and $teamId2 by seed order but found no game between them in this pool; activerank left at its previous value. Check uo_team_pool.rank for duplicate or incorrect values.");
-    } elseif ((int) ($info['ongoing'] ?? 0) > 0) {
-        error_log("Pool standings: pool $poolId teams $teamId1 and $teamId2 have a game still marked ongoing; activerank left at its previous value until the game is finalized.");
-    }
 }
 
 function CheckSpecialRanking($poolId)
@@ -193,7 +183,23 @@ function ResolveCrossMatchPoolStandings($poolId)
             DBQuery("UPDATE uo_team_pool SET activerank=" . ($i + 2) . " WHERE pool=" . intval($poolId) . " AND team=$teamId1");
         } else {
             //keep current positions
-            LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2);
+            $anomalyQuery = sprintf(
+                "SELECT COUNT(*) AS total, SUM(isongoing=1) AS ongoing
+					FROM uo_game
+					WHERE ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
+						AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
+                (int) $teamId1,
+                (int) $teamId2,
+                (int) $teamId2,
+                (int) $teamId1,
+                (int) $poolId,
+            );
+            $anomalyInfo = DBQueryToRow($anomalyQuery);
+            if ((int) ($anomalyInfo['total'] ?? 0) === 0) {
+                error_log("Pool standings: pool $poolId compared teams $teamId1 and $teamId2 by seed order but found no game between them in this pool; activerank left at its previous value. Check uo_team_pool.rank for duplicate or incorrect values.");
+            } elseif ((int) ($anomalyInfo['ongoing'] ?? 0) > 0) {
+                error_log("Pool standings: pool $poolId teams $teamId1 and $teamId2 have a game still marked ongoing; activerank left at its previous value until the game is finalized.");
+            }
         }
         //check if teams can be moved to next round
         $gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
