@@ -2636,10 +2636,10 @@ function GeneratePlayoffPools($poolId, $generate = true)
                 $prevname = "QF";
             } elseif ($rounds - $i == 3) {
                 $name = "Quarterfinals";
-                $prevname = "R1";
+                $prevname = "R" . $i;
             } else {
-                $name = "Round " . ($i);
-                $prevname = "R" . ($i + 1);
+                $name = "Round " . ($i + 1);
+                $prevname = "R" . $i;
             }
 
             if ($generate) {
