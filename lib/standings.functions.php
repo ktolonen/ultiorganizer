@@ -116,11 +116,14 @@ function ResolvePlayoffPoolStandings($poolId)
  */
 function LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2)
 {
+    // No hasstarted filter here: a scheduled-but-not-yet-played sibling
+    // pair is a normal, frequent state (every other pair in a multi-match
+    // pool hits this same branch each time one pair's game is resolved),
+    // so it must count as "a game exists" and stay unlogged.
     $query = sprintf(
         "SELECT COUNT(*) AS total, SUM(isongoing=1) AS ongoing
 			FROM uo_game
 			WHERE ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
-				AND hasstarted>0
 				AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
         (int) $teamId1,
         (int) $teamId2,
