@@ -1309,19 +1309,23 @@ function ordinal($number)
     if (startsWith(GetSessionLocale(), 'en')) {
         // check if we can handle the size of the number
         $ordinal = $number;
-        switch ($number % 10) {
-            case 1:
-                $ordinal .= "st";
-                break;
-            case 2:
-                $ordinal .= "nd";
-                break;
-            case 3:
-                $ordinal .= "rd";
-                break;
-            default:
-                $ordinal .= "th";
-                break;
+        if ($number % 100 >= 11 && $number % 100 <= 13) {
+            $ordinal .= "th";
+        } else {
+            switch ($number % 10) {
+                case 1:
+                    $ordinal .= "st";
+                    break;
+                case 2:
+                    $ordinal .= "nd";
+                    break;
+                case 3:
+                    $ordinal .= "rd";
+                    break;
+                default:
+                    $ordinal .= "th";
+                    break;
+            }
         }
         return $ordinal;
     } else {
