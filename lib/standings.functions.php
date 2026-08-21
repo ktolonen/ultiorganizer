@@ -98,28 +98,12 @@ function ResolvePlayoffPoolStandings($poolId)
 }
 
 /**
- * Diagnose why a playoff/cross-match pair's activerank was left unchanged.
- *
- * The pair-by-pair resolvers keep the current position whenever the two
- * compared teams have no net decisive wins between them. That is correct
- * for a genuine tied score, but the same code path is silently hit when
- * the two teams paired by seed order never actually played each other
- * (e.g. a duplicate or otherwise incorrect uo_team_pool.rank), in which
- * case the displayed standing is left at the pre-game seed instead of
- * reflecting the real result. Log the two anomalous cases so they show
- * up in the PHP error log instead of only as a silently wrong bracket.
- *
- * @param int $poolId
- * @param int $teamId1
- * @param int $teamId2
- * @return void
+ * Log why a compared pair's activerank was left at its previous value:
+ * no game between them at all, or a game still marked ongoing.
  */
 function LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2)
 {
-    // No hasstarted filter here: a scheduled-but-not-yet-played sibling
-    // pair is a normal, frequent state (every other pair in a multi-match
-    // pool hits this same branch each time one pair's game is resolved),
-    // so it must count as "a game exists" and stay unlogged.
+    // Deliberately no hasstarted filter: an unplayed pair still counts as "a game exists".
     $query = sprintf(
         "SELECT COUNT(*) AS total, SUM(isongoing=1) AS ongoing
 			FROM uo_game
