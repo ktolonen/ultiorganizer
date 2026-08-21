@@ -27,10 +27,10 @@ function ResolvePlayoffPoolStandings($poolId)
     //query pool teams
     $query = sprintf(
         "
-		SELECT j.team_id, js.activerank 
-		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team) 
-		WHERE js.pool=%d 
-		ORDER BY js.rank ASC",
+		SELECT j.team_id, js.activerank
+		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team)
+		WHERE js.pool=%d
+		ORDER BY js.rank ASC, j.team_id ASC",
         (int) $poolId,
     );
 
@@ -74,6 +74,7 @@ function ResolvePlayoffPoolStandings($poolId)
             DBQuery("UPDATE uo_team_pool SET activerank=" . ($i + 2) . " WHERE pool=" . intval($poolId) . " AND team=$teamId1");
         } else {
             //keep current positions
+            LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2);
         }
         //check if teams can be moved to next round
         $gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
@@ -94,6 +95,45 @@ function ResolvePlayoffPoolStandings($poolId)
 
     //check if there are special ranking rules and apply them
     CheckSpecialRanking($poolId);
+}
+
+/**
+ * Diagnose why a playoff/cross-match pair's activerank was left unchanged.
+ *
+ * The pair-by-pair resolvers keep the current position whenever the two
+ * compared teams have no net decisive wins between them. That is correct
+ * for a genuine tied score, but the same code path is silently hit when
+ * the two teams paired by seed order never actually played each other
+ * (e.g. a duplicate or otherwise incorrect uo_team_pool.rank), in which
+ * case the displayed standing is left at the pre-game seed instead of
+ * reflecting the real result. Log the two anomalous cases so they show
+ * up in the PHP error log instead of only as a silently wrong bracket.
+ *
+ * @param int $poolId
+ * @param int $teamId1
+ * @param int $teamId2
+ * @return void
+ */
+function LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2)
+{
+    $query = sprintf(
+        "SELECT COUNT(*) AS total, SUM(isongoing=1) AS ongoing
+			FROM uo_game
+			WHERE ((hometeam=%d AND visitorteam=%d) OR (hometeam=%d AND visitorteam=%d))
+				AND hasstarted>0
+				AND game_id IN (SELECT game FROM uo_game_pool WHERE pool=%d)",
+        (int) $teamId1,
+        (int) $teamId2,
+        (int) $teamId2,
+        (int) $teamId1,
+        (int) $poolId,
+    );
+    $info = DBQueryToRow($query);
+    if ((int) ($info['total'] ?? 0) === 0) {
+        error_log("Pool standings: pool $poolId compared teams $teamId1 and $teamId2 by seed order but found no game between them in this pool; activerank left at its previous value. Check uo_team_pool.rank for duplicate or incorrect values.");
+    } elseif ((int) ($info['ongoing'] ?? 0) > 0) {
+        error_log("Pool standings: pool $poolId teams $teamId1 and $teamId2 have a game still marked ongoing; activerank left at its previous value until the game is finalized.");
+    }
 }
 
 function CheckSpecialRanking($poolId)
@@ -120,10 +160,10 @@ function ResolveCrossMatchPoolStandings($poolId)
     //query pool teams
     $query = sprintf(
         "
-		SELECT j.team_id, js.activerank 
-		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team) 
-		WHERE js.pool=%d 
-		ORDER BY js.activerank ASC, js.rank ASC",
+		SELECT j.team_id, js.activerank
+		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team)
+		WHERE js.pool=%d
+		ORDER BY js.activerank ASC, js.rank ASC, j.team_id ASC",
         (int) $poolId,
     );
 
@@ -166,6 +206,7 @@ function ResolveCrossMatchPoolStandings($poolId)
             DBQuery("UPDATE uo_team_pool SET activerank=" . ($i + 2) . " WHERE pool=" . intval($poolId) . " AND team=$teamId1");
         } else {
             //keep current positions
+            LogUnresolvedPoolPairAnomaly($poolId, $teamId1, $teamId2);
         }
         //check if teams can be moved to next round
         $gamesleft1 = TeamPoolGamesLeft($teamId1, $poolId);
