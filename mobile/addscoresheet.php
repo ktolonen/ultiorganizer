@@ -86,14 +86,14 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         $uo_goal['ishomegoal'] = 1;
         if (!$uo_goal['iscallahan']) {
             $uo_goal['assist'] = GamePlayerFromNumber($gameId, $game_result['hometeam'], $uo_goal['assist']);
-            if ($uo_goal['assist'] == -1) {
+            if ($uo_goal['assist'] === null) {
                 $html .= "<p class='warning'>" . _("assisting player's number") . " '" . $_POST['pass'] . "' " . _("Not on the roster") . "!</p>\n";
             }
         } else {
             $uo_goal['assist'] = -1;
         }
         $uo_goal['scorer'] = GamePlayerFromNumber($gameId, $game_result['hometeam'], $uo_goal['scorer']);
-        if ($uo_goal['scorer'] == -1) {
+        if ($uo_goal['scorer'] === null) {
             $html .= "<p class='warning'>" . _("scorer's number") . " '" . $_POST['goal'] . "' " . _("Not on the roster") . "!</p>\n";
         }
     } elseif (!empty($team) && $team == 'A') {
@@ -101,7 +101,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         $uo_goal['ishomegoal'] = 0;
         if (!$uo_goal['iscallahan']) {
             $uo_goal['assist'] = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $uo_goal['assist']);
-            if ($uo_goal['assist'] == -1) {
+            if ($uo_goal['assist'] === null) {
                 $html .= "<p class='warning'>" . _("assisting player's number") . " '" . $_POST['pass'] . "' " . _("Not on the roster") . "!</p>\n";
             }
         } else {
@@ -109,11 +109,17 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         }
 
         $uo_goal['scorer'] = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $uo_goal['scorer']);
-        if ($uo_goal['scorer'] == -1) {
+        if ($uo_goal['scorer'] === null) {
             $html .= "<p class='warning'>" . _("scorer's number") . " '" . $_POST['goal'] . "' " . _("Not on the roster") . "!</p>\n";
         }
     }
-    if (($uo_goal['assist'] != -1 || $uo_goal['scorer'] != -1) && $uo_goal['assist'] == $uo_goal['scorer']) {
+    // A null on either side means the number was not on the roster, which is
+    // already reported above; -1 is the callahan sentinel for the assist.
+    if (
+        $uo_goal['assist'] !== null && $uo_goal['scorer'] !== null
+        && ($uo_goal['assist'] != -1 || $uo_goal['scorer'] != -1)
+        && $uo_goal['assist'] == $uo_goal['scorer']
+    ) {
         $html .= "<p class='warning'>" . _("Scorer and assist are the same player!") . " '" . $_POST['goal'] . "'!</p>\n";
     }
     if (empty($team)) {

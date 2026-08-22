@@ -67,6 +67,65 @@ function CanProcessImages()
         && function_exists('imagecopyresampled');
 }
 
+/**
+ * Upper bounds for decoding an uploaded image.
+ *
+ * The upload cap applies to the compressed file, but imagecreatefrom*()
+ * allocates roughly four bytes per pixel of the decoded image, so a small file
+ * can advertise dimensions large enough to exhaust a worker. These bounds allow
+ * any ordinary camera or phone photo (typically 12 megapixels) while keeping
+ * the decoded allocation comfortably inside a 128 MB memory limit.
+ */
+const MAX_IMAGE_DIMENSION = 8000;
+const MAX_IMAGE_PIXELS = 16000000;
+
+/**
+ * Returns true when an image of these dimensions is safe to decode.
+ *
+ * Call it with the dimensions getimagesize() reports, which are read from the
+ * header without decoding the pixel data.
+ */
+function CanDecodeImageSize($width, $height)
+{
+    $width = (int) $width;
+    $height = (int) $height;
+
+    if ($width <= 0 || $height <= 0) {
+        return false;
+    }
+    if ($width > MAX_IMAGE_DIMENSION || $height > MAX_IMAGE_DIMENSION) {
+        return false;
+    }
+
+    return ($width * $height) <= MAX_IMAGE_PIXELS;
+}
+
+/**
+ * Returns the reason an uploaded image cannot be decoded, or "" when it can.
+ *
+ * The decode helpers only report failure as a boolean, so an image that is
+ * merely too large would otherwise reach the caller as a generic processing
+ * error with no hint that scaling it down is the fix.
+ */
+function ImageSizeError($file_src)
+{
+    $imageInfo = getimagesize($file_src);
+    if ($imageInfo === false) {
+        return "";
+    }
+
+    if (CanDecodeImageSize($imageInfo[0], $imageInfo[1])) {
+        return "";
+    }
+
+    return sprintf(
+        _("Image resolution is too large. The maximum is %1\$d x %2\$d pixels and %3\$d megapixels."),
+        MAX_IMAGE_DIMENSION,
+        MAX_IMAGE_DIMENSION,
+        (int) (MAX_IMAGE_PIXELS / 1000000),
+    );
+}
+
 function CanReadImageType($type)
 {
     switch ((int) $type) {
@@ -120,6 +179,11 @@ function ConvertToJpeg($file_src, $file_dst)
     if (!CanReadImageType($type)) {
         return false;
     }
+    // Bounded before the decode: getimagesize() reads the header only, while
+    // imagecreatefrom*() below allocates the whole decoded bitmap.
+    if (!CanDecodeImageSize($w_src, $h_src)) {
+        return false;
+    }
 
     $img_src = false;
     switch ($type) {
@@ -165,6 +229,12 @@ function CreateThumb($file_src, $file_dst, $w_dst, $h_dst)
         return false;
     }
     if (!CanReadImageType($type)) {
+        return false;
+    }
+    // Bounded before the decode: getimagesize() reads the header only, while
+    // imagecreatefrom*() below allocates the whole decoded bitmap. The 5 MB
+    // upload cap constrains the compressed file, not this.
+    if (!CanDecodeImageSize($w_src, $h_src)) {
         return false;
     }
 

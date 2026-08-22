@@ -772,9 +772,9 @@ function api_gameplay_statistics($gameId, $gameResult)
     $turnover = !empty($turnovers) ? $turnovers[0] : null;
 
     $ishome = GameIsFirstOffenceHome($gameId);
-    if ($ishome == 1) {
+    if ($ishome === 1) {
         $homeStarts = true;
-    } elseif ($ishome == 0) {
+    } elseif ($ishome === 0) {
         $homeStarts = false;
     } else {
         if ($turnover) {
@@ -801,9 +801,14 @@ function api_gameplay_statistics($gameId, $gameResult)
     $homeTurnovers = 0;
     $awayTurnovers = 0;
 
+    // An unrecorded halftime is stored as zero. Comparing against it flipped the
+    // offence on the very first goal, before the game had been played, so the
+    // opening offence went to the wrong team and the first goal read as a break.
+    $halftime = GameHalftimeSeconds($gameResult);
+
     foreach ($allgoals as $goal) {
-        if (($clockTime <= intval($gameResult['halftime'])) && (intval($goal['time']) >= intval($gameResult['halftime']))) {
-            $clockTime = intval($gameResult['halftime']);
+        if ($halftime !== null && ($clockTime <= $halftime) && (intval($goal['time']) >= $halftime)) {
+            $clockTime = $halftime;
             $homeOffence = !$homeStarts;
         }
 
@@ -831,8 +836,15 @@ function api_gameplay_statistics($gameId, $gameResult)
             $awayBreaks++;
         }
 
-        $duration = intval($goal['time']) - $clockTime;
-        $clockTime = intval($goal['time']);
+        // Count a point only when its time advances the clock; see the same guard
+        // in gameplay.php.
+        $goalTime = intval($goal['time']);
+        if ($goalTime > $clockTime) {
+            $duration = $goalTime - $clockTime;
+            $clockTime = $goalTime;
+        } else {
+            $duration = 0;
+        }
 
         if ($homeOffence) {
             $homeTime += $duration;

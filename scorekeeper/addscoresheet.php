@@ -426,28 +426,30 @@ if ($showGoalForm) {
     $html .= "<p id='teamfirsthint' class='goal-players-hint'>" . _("Select the team that scored.") . "</p>";
     $html .= "<div id='goalplayers'>";
 
+    // A Callahan is picked in the assist dropdown but stored as assist -1, so
+    // the marker has to be mapped back onto its option or the re-render below
+    // silently drops it.
+    $assistValue = ($uo_goal['iscallahan'] && (int) $uo_goal['assist'] === -1)
+        ? "xx"
+        : (string) $uo_goal['assist'];
+    $scorerValue = (string) $uo_goal['scorer'];
+
     $html .= "<label for='pass' class='select'>" . _("Assist") . "</label>";
     $html .= "<select id='pass' name='pass' >";
-    $html .= "<option value='0' selected='selected'>-</option>";
+    $html .= "<option value='0'" . ($assistValue === "0" ? " selected='selected'" : "") . ">-</option>";
     foreach ($played_players as $player) {
-        $selected = "";
-        if ($uo_goal['assist'] == $player['player_id']) {
-            $selected = "selected='selected'";
-        }
-        $html .= "<option value='" . utf8entities($player['player_id']) . "' $selected>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
+        $selected = ((string) $player['player_id'] === $assistValue) ? " selected='selected'" : "";
+        $html .= "<option value='" . utf8entities($player['player_id']) . "'$selected>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
     }
-    $html .= "<option value='xx'>XX " . _("Callahan goal") . "</option>";
+    $html .= "<option value='xx'" . ($assistValue === "xx" ? " selected='selected'" : "") . ">XX " . _("Callahan goal") . "</option>";
     $html .= "</select>";
 
     $html .= "<label for='goal' class='select'>" . _("Scorer") . "</label>";
     $html .= "<select id='goal' name='goal' >";
-    $html .= "<option value='0' selected='selected'>-</option>";
+    $html .= "<option value='0'" . ($scorerValue === "0" ? " selected='selected'" : "") . ">-</option>";
     foreach ($played_players as $player) {
-        $selected = "";
-        if ($uo_goal['scorer'] == $player['player_id']) {
-            $selected = "selected='selected'";
-        }
-        $html .= "<option value='" . utf8entities($player['player_id']) . "' $selected>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
+        $selected = ((string) $player['player_id'] === $scorerValue) ? " selected='selected'" : "";
+        $html .= "<option value='" . utf8entities($player['player_id']) . "'$selected>#" . $player['num'] . " " . utf8entities($player['firstname'] . " " . $player['lastname']) . "</option>";
     }
     $html .= "</select>";
     $html .= "</div>";
@@ -594,9 +596,10 @@ if ($showClock) {
 
   var checkedTeam = document.querySelector('input[name="team"]:checked');
   if (checkedTeam) {
-    // swapTeamLists() reveals them, which matters on the error re-render where
-    // a team is already selected.
-    swapTeamLists(checkedTeam.value);
+    // Only reveal them. A team is already selected here on the error
+    // re-render, and PHP has rendered that team's players with the submitted
+    // assist and scorer marked; rebuilding the lists would drop that choice.
+    showPlayerSelects(true);
   } else {
     showPlayerSelects(false);
   }

@@ -30,7 +30,7 @@ This page collects implementation details that are useful during coding work but
 - The default skin's colors are CSS custom-property tokens (`:root` in `cust/default/ultiorganizer.css`); a skin recolors the UI by redefining those tokens. See `docs/customization.md` for the token list, override styles, and the dark-mode approach.
 - External license database integration is customization-specific. There is no single default external service.
 - Most `cust/*.php` files are include-only fragments. They are blocked by `cust/.htaccess` on Apache and by `cust/include_only.guard.php` in PHP for cross-server portability.
-- The current allowed customization HTTP endpoints are `players.php` and `jasenet.php`; if a new public endpoint is added under `cust/`, update `cust/.htaccess` at the same time.
+- The only allowed customization HTTP endpoint is `players.php`; if a new public endpoint is added under `cust/`, update `cust/.htaccess` at the same time.
 - Files such as `head.php`, `pdfschedule.php`, `pdfscoresheet.php`, `mass-accreditation.php`, `teamplayers.functions.php`, `teamplayers.inc.php`, and `pool_colors.php` are customization hooks loaded by the main app, not public entry points.
 
 ## Standalone Rendering And Guards

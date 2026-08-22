@@ -474,6 +474,42 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
         return;
     }
 
+    $query = sprintf(
+        "SELECT rank FROM uo_team_pool WHERE pool=%d AND team=%d",
+        (int) $move['topool'],
+        (int) $teamId,
+    );
+    $current_row = DBQueryToRow($query);
+    $current_rank = isset($current_row['rank']) ? (int) $current_row['rank'] : 0;
+
+    //a corrected result can send a team to a slot other than the one it already
+    //holds in the destination pool. Leaving a slot strands the game played
+    //there, and entering one rewrites the participants of the game bound to it,
+    //so refuse before anything is deleted or moved.
+    if ($current_rank != (int) $move['torank']) {
+        $vacating = $current_rank
+            ? sprintf(" OR g.hometeam=%d OR g.visitorteam=%d", (int) $teamId, (int) $teamId)
+            : "";
+        $query = sprintf(
+            "SELECT g.game_id FROM uo_game g
+                INNER JOIN uo_game_pool gp ON(gp.game=g.game_id)
+                WHERE gp.pool=%d AND g.hasstarted>0
+                    AND ((g.scheduling_name_home=%d AND g.hometeam!=%d)
+                        OR (g.scheduling_name_visitor=%d AND g.visitorteam!=%d)%s)",
+            (int) $move['topool'],
+            (int) $move['scheduling_id'],
+            (int) $teamId,
+            (int) $move['scheduling_id'],
+            (int) $teamId,
+            $vacating,
+        );
+        if (DBQueryRowCount($query)) {
+            echo "<p>" . _("Move not allowed. Game already played!") . "</p>";
+            return;
+        }
+    }
+
+    $evict = false;
     if ($move['ismoved']) {
 
         $query = sprintf(
@@ -507,29 +543,45 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
             if ($games) {
                 echo "<p>" . _("Move not allowed. Game already played!") . "</p>";
                 return;
-            } else {
-                $query = sprintf(
-                    "DELETE FROM uo_team_pool WHERE pool=%d AND rank=%d",
-                    (int) $move['topool'],
-                    (int) $move['torank'],
-                );
-                DBQuery($query);
             }
+            $evict = true;
         }
     }
 
-    //insert team to next pool
-    $query = sprintf(
-        "INSERT IGNORE INTO uo_team_pool
-				(team, pool, rank, activerank) 
-				VALUES	('%s','%s','%s','%s')",
-        (int) $teamId,
-        (int) $move['topool'],
-        (int) $move['torank'],
-        (int) $move['torank'],
-    );
-
-    $result = DBQuery($query);
+    //evict the previous holder and take the slot as one unit, so a failure
+    //cannot leave the pool one team short
+    $previousExceptionMode = DBShouldThrowExceptions();
+    DBSetExceptionMode(true);
+    try {
+        DBQuery('START TRANSACTION');
+        if ($evict) {
+            DBQuery(sprintf(
+                "DELETE FROM uo_team_pool WHERE pool=%d AND rank=%d",
+                (int) $move['topool'],
+                (int) $move['torank'],
+            ));
+        }
+        //insert team to next pool, or relocate it when a corrected result moves
+        //it to a different slot in a pool it already entered
+        DBQuery(sprintf(
+            "INSERT INTO uo_team_pool
+				(team, pool, rank, activerank)
+				VALUES	('%s','%s','%s','%s')
+				ON DUPLICATE KEY UPDATE rank='%s', activerank='%s'",
+            (int) $teamId,
+            (int) $move['topool'],
+            (int) $move['torank'],
+            (int) $move['torank'],
+            (int) $move['torank'],
+            (int) $move['torank'],
+        ));
+        DBQuery('COMMIT');
+    } catch (Throwable $e) {
+        DBQuery('ROLLBACK');
+        DBSetExceptionMode($previousExceptionMode);
+        throw $e;
+    }
+    DBSetExceptionMode($previousExceptionMode);
 
     //update team pool
     $query = sprintf(
@@ -1369,6 +1421,11 @@ function UploadTeamImage($teamId)
         }
 
         $file_tmp_name = $_FILES['picture']['tmp_name'];
+        $sizeError = ImageSizeError($file_tmp_name);
+        if ($sizeError !== "") {
+            return "<p class='warning'>" . $sizeError . "</p>";
+        }
+
         $imgname = time() . $teamId . ".jpg";
         $basedir = "" . UPLOAD_DIR . "teams/$teamId/";
         if (!is_dir($basedir)) {

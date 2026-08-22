@@ -37,13 +37,33 @@ if (isset($_POST['import'])) {
 
     $utf8 = !empty($_POST['utf8']);
     $seriesId = $_POST['seriesid'];
-    $separator = $_POST['separator'];
+    $separator = ValidCsvSeparator($_POST['separator'] ?? ';');
     $teams = SeriesTeams($seriesId);
 
-    if (is_uploaded_file($_FILES['file']['tmp_name'])) {
-        $row = 1;
+    if ($separator === false) {
+        $html .= "<p>" . ("The CSV separator must be a single character.") . "</p>";
+    } elseif (is_uploaded_file($_FILES['file']['tmp_name'])) {
+        $row = 0;
+        // $row stays the physical line number, because the skipped list reports
+        // it back to the user. Blank lines are not rows of the file's data, so
+        // the summary counts those separately.
+        $datarows = 0;
+        $imported = 0;
+        $skipped = [];
         if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== false) {
-            while (($data = fgetcsv($handle, 0, ";")) !== false) {
+            while (($data = fgetcsv($handle, 0, $separator)) !== false) {
+                $row++;
+                // fgetcsv() returns a single null field for a blank line. Those
+                // carry no data, so pass over them without reporting them.
+                if ($data === [null]) {
+                    continue;
+                }
+                $datarows++;
+                // Four columns are required: firstname, lastname, number, team.
+                if (count($data) < 4) {
+                    $skipped[] = $row;
+                    continue;
+                }
                 $first = $utf8 ? $data[0] : convertToUtf8($data[0]);
                 $last = $utf8 ? $data[1] : convertToUtf8($data[1]);
                 $number = $utf8 ? $data[2] : convertToUtf8($data[2]);
@@ -57,9 +77,16 @@ if (isset($_POST['import'])) {
                 }
                 if ($teamId != -1) {
                     $id = AddPlayer($teamId, $first, $last, "", $number);
+                    $imported++;
+                } else {
+                    $skipped[] = $row;
                 }
             }
             fclose($handle);
+        }
+        $html .= "<p>" . sprintf(("Imported %d player(s) from %d row(s)."), $imported, $datarows) . "</p>";
+        if (!empty($skipped)) {
+            $html .= "<p>" . sprintf(("Skipped row(s): %s"), implode(", ", $skipped)) . "</p>";
         }
     } else {
         $html .= "<p>" . ("There was an error uploading the file, please try again!") . "</p>";
@@ -89,7 +116,7 @@ if (empty($seasonId)) {
     }
     $html .= "</select></p>\n";
 
-    $html .= "<p>" . ("CSV separator") . ": <input class='input' maxlength='1' size='1' name='separator' value=','/></p>\n";
+    $html .= "<p>" . ("CSV separator") . ": <input class='input' maxlength='1' size='1' name='separator' value=';'/></p>\n";
 
     $html .= "<p>" . ("Select file to import") . ":<br/>\n";
     $html .= "<input class='input' type='file' size='100' name='file'/><br/>\n";

@@ -70,7 +70,13 @@ if (isset($_POST['save'])) {
                 }
 
                 if (!$found) {
-                    GameAddPlayer($gameId, $playerId, $number);
+                    if (GameAllowsPlayerOnRoster($gameId, $playerId)) {
+                        GameAddPlayer($gameId, $playerId, $number);
+                    } else {
+                        $playerinfo = PlayerInfo($playerId);
+                        $html .= "<p class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> "
+                            . _("is not accredited and cannot be added to the roster.") . "</p>";
+                    }
                 }
             } else {
                 $playerinfo = PlayerInfo($playerId);

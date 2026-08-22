@@ -53,6 +53,7 @@ $renderGameEventRow = function ($event) use ($game_result, $hideTimeOnScoresheet
 };
 $timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
 $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
+$halftime = GameHalftimeSeconds($game_result);
 
 $home = 0;
 $away = 0;
@@ -96,7 +97,7 @@ if (!count($goalRows)) {
     $html .= "<tr><td>" . _("No scores entered") . "</td></tr>\n";
 } else {
     foreach ($goalRows as $goal) {
-        if ((intval($game_result['halftime']) >= $prevgoal) && (intval($game_result['halftime']) < intval($goal['time']))) {
+        if ($halftime !== null && ($halftime >= $prevgoal) && ($halftime < intval($goal['time']))) {
             $html .= "<tr class='gameplay-row gameplay-row--halftime'><td>";
             $html .= _("Halftime");
             $html .= "</td></tr>\n";

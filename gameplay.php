@@ -38,6 +38,7 @@ if (!$game_result) {
 }
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
+$halftime = GameHalftimeSeconds($game_result);
 $homecaptains = array_flip(GameCaptains($gameId, $game_result['hometeam']));
 $awaycaptains = array_flip(GameCaptains($gameId, $game_result['visitorteam']));
 $homeSpiritCaptains = array_flip(GameSpiritCaptains($gameId, $game_result['hometeam']));
@@ -182,10 +183,10 @@ if (GameHasStarted($game_result) > 0) {
 
         foreach ($goals as $goal) {
 
-            if (!$bHt && $goal['time'] > $game_result['halftime']) {
-                $points[$i][0] = (intval($game_result['halftime']) - $lprev);
-                $points[$i][4] = intval($game_result['halftime']);
-                $lprev = intval($game_result['halftime']);
+            if (!$bHt && $halftime !== null && $goal['time'] > $halftime) {
+                $points[$i][0] = ($halftime - $lprev);
+                $points[$i][4] = $halftime;
+                $lprev = $halftime;
                 $points[$i][1] = -2;
                 $total += $points[$i][0];
                 $bHt = 1;
@@ -271,10 +272,10 @@ if (GameHasStarted($game_result) > 0) {
         // fall outside every window and never be rendered.
         $lastgoalindex = count($goals) - 1;
         foreach ($goals as $goalindex => $goal) {
-            if (!$bHt && $game_result['halftime'] > 0 && $goal['time'] > $game_result['halftime']) {
+            if (!$bHt && $halftime !== null && $goal['time'] > $halftime) {
                 $html .= "<tr><td colspan='" . $goalTableColspan . "' class='halftime'>" . _("Halftime") . "</td></tr>";
                 $bHt = 1;
-                $prevgoal = intval($game_result['halftime']);
+                $prevgoal = $halftime;
             }
 
             $html .= "<tr><td style='width:45px;white-space: nowrap'";
@@ -406,9 +407,9 @@ if (GameHasStarted($game_result) > 0) {
 
             //who start the game?
             $ishome = GameIsFirstOffenceHome($gameId);
-            if ($ishome == 1) {
+            if ($ishome === 1) {
                 $bHStartTheGame = true;
-            } elseif ($ishome == 0) {
+            } elseif ($ishome === 0) {
                 $bHStartTheGame = false;
             } else {
                 //make some wild guess
@@ -446,8 +447,8 @@ if (GameHasStarted($game_result) > 0) {
             //loop all goals
             foreach ($allgoals as $goal) {
                 //halftime passed
-                if (($nClockTime <= intval($game_result['halftime'])) && (intval($goal['time']) >= intval($game_result['halftime']))) {
-                    $nClockTime = intval($game_result['halftime']);
+                if ($halftime !== null && ($nClockTime <= $halftime) && (intval($goal['time']) >= $halftime)) {
+                    $nClockTime = $halftime;
 
                     if ($bHStartTheGame) {
                         $bHOffence = false;
@@ -489,9 +490,20 @@ if (GameHasStarted($game_result) > 0) {
                     $nVBreaks++;
                 }
 
-                //point duration
-                $nDuration = intval($goal['time']) - $nClockTime;
-                $nClockTime = intval($goal['time']);
+                // Count a point only when its time advances the running clock. The
+                // goals are ordered by point number, so the time is whatever was
+                // recorded: it can be missing, stored as zero, or force-saved out of
+                // sequence. Anything that does not move the clock forward is an
+                // unusable reading, and subtracting it would charge the team a
+                // negative duration. Such a point contributes nothing and leaves the
+                // clock where the last usable reading put it.
+                $nGoalTime = intval($goal['time']);
+                if ($nGoalTime > $nClockTime) {
+                    $nDuration = $nGoalTime - $nClockTime;
+                    $nClockTime = $nGoalTime;
+                } else {
+                    $nDuration = 0;
+                }
 
                 if ($bHOffence) {
                     $nHTotalTime += $nDuration;

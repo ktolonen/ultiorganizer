@@ -9,6 +9,7 @@ $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $goals = GameGoals($gameId);
 $gameevents = GameEvents($gameId);
+$halftime = GameHalftimeSeconds($game_result);
 
 /**
  * One game event as a table row. Shared by the per-goal pass and the trailing
@@ -70,8 +71,9 @@ if (count($goals) <= 0) {
 } else {
     foreach ($goals as $goal) {
 
-        if ((intval($game_result['halftime']) >= $prevgoal) &&
-            (intval($game_result['halftime']) < intval($goal['time']))
+        if ($halftime !== null &&
+            ($halftime >= $prevgoal) &&
+            ($halftime < intval($goal['time']))
         ) {
             $html .= "<tr class='gameplay-row gameplay-row--halftime'><td>";
             $html .= _("Halftime");

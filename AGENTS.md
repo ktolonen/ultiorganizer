@@ -22,7 +22,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `user/`: logged-in user pages.
 - `lib/`: shared utilities; SQL belongs here.
 - `api/`: JSON API entry points and routing.
-- `cust/`: skins and installation-specific customizations.
+- `cust/`: skins and installation-specific customizations. `default`, `slkl` and `wfdf` are maintained; `bula`, `fpudd`, `gummis` and `windmill` are unmaintained legacy kept for compatibility — see `docs/customization.md`.
 - `mobile/`, `scorekeeper/`, `spiritkeeper/`, `timekeeper/`, `login/`, `ext/`: specialized entry points. `mobile/` is a deprecated legacy interface kept for compatibility; `scorekeeper/` and `spiritkeeper/` are its supported replacements, and `timekeeper/` is a standalone, public WFDF time-limit signalling aid (see `docs/timekeeper.md`).
 - `images/`, `locale/`, `plugins/`: static assets, translations, and plugin code.
 - `script/`: client-side JavaScript assets.
@@ -38,9 +38,11 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - Follow the PHP code style described in `docs/code-style.md` (PER-CS 2.0). Run `composer format` and `composer lint` on changed files before handing back work; the pre-commit hook at `.githooks/pre-commit` enforces this on commit.
 - Hand-written client JavaScript under `script/` (including the `script/*.inc` `<script>` snippets) is linted with ESLint (`docker compose -f docs/dev/compose.yaml exec -T dev eslint script`). The config lives at `eslint.config.js` in the repo root; the toolchain itself is installed inside the `dev` Docker image, not at the repo root.
 - Keep SQL and shared data access in `lib/`.
+- `lib/*.functions.php` files are a shared interface, not a scratchpad. Add a helper there only when more than one file calls it; inline anything that serves a single call site or only its neighbour in the same file. Search for an existing helper by behavior and table name before adding one — the same query already exists under more than one naming convention (`getTeamSeries()` and `TeamSeason()`).
 - Put permission checks inside reusable `lib/` mutation helpers, not only in routed page handlers, so future callers cannot accidentally bypass access control.
 - Use the existing `?view=...` routing pattern for new pages.
 - Prefer small, focused changes and avoid large refactors unless explicitly requested.
+- Keep comments proportionate to the change. A small edit to existing code — a guard, a strict comparison, a cast, an extra counter — needs no comment; the reasoning belongs in the commit message. Add one only for what the code cannot say, such as a non-obvious invariant or a deliberate deviation that will later look like a mistake. Reserve docblocks for genuinely new shared helpers, and keep them short.
 - When adding a schema change: add `upgradeXX()` in `sql/upgrade_db.php`, bump `DB_VERSION` in `lib/database.php`, and update `sql/ultiorganizer.sql` for fresh installs, including a `uo_database` seed row for the new version. Guard every structural change so re-running the upgrade is safe. Run `docs/ai/db-upgrade-consistency/SKILL.md` afterwards. See `docs/database-upgrades.md`.
 - If the current branch already introduces the latest unmerged database upgrade, fold further schema changes into that upgrade instead of adding another one. Ask the developer to reset or clean the local database so the amended upgrade runs again.
 - Avoid touching `conf/` unless required.
@@ -64,6 +66,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 
 - The production test suite is the harness in the separate [`ktolonen/ultiorganizer-tests`](https://github.com/ktolonen/ultiorganizer-tests) repository, not part of this repo. Clone it once as a sibling of this checkout, which is the layout CI uses and the harness defaults to (`--sut-path ../ultiorganizer`): `git clone https://github.com/ktolonen/ultiorganizer-tests.git ../ultiorganizer-tests`
 - Run harness commands from that checkout: `./doctor` (environment check, needs Docker), `./test:quick` (day-to-day), `./test:matrix` (the full matrix CI runs). Pass `--sut-path <path>` to test a worktree or PR checkout instead of the sibling default.
+- The harness pins shared `lib/` behaviour exactly, including export byte output, so run `./test:integration` after changing anything in `lib/`, not only the suite for the topic you touched.
 - Keep the harness on its `main` branch and pull before a run — CI checks out `ref: main`, so a stale local copy can disagree with CI. Run `./test:matrix` before declaring branch work done. See the harness README for suite definitions and reporting commands.
 - PHP syntax check a single file: `php -l <file.php>`
 - Format changed PHP: `composer format` (check-only: `composer format:check`)

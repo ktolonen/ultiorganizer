@@ -27,7 +27,7 @@ $title = _("Roster") . ": " . utf8entities($teaminfo['name']);
 $players = TeamPlayerList($teamId);
 
 $html .= "<h1>" . _("Roster") . "</h1>\n";
-$html .= "<h2>" . $teaminfo['name'] . " (" . U_($teaminfo['seriesname']) . ")</h2>\n";
+$html .= "<h2>" . utf8entities($teaminfo['name']) . " (" . utf8entities(U_($teaminfo['seriesname'])) . ")</h2>\n";
 
 $html .= "<table style='width:60%' cellpadding='2'>\n";
 $html .= "<tr><th>" . _("Name") . "</th>

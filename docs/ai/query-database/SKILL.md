@@ -21,7 +21,13 @@ docker compose -f docs/dev/compose.yaml up -d app db
 
 ## Getting connection details
 
-You don't need to read or type the password. The `db` container already exposes the credentials as its own environment variables: `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE`. By default, these match `DB_USER`, `DB_PASSWORD`, and `DB_DATABASE` in `conf/config.inc.php` (both are seeded from `docs/dev/.env`; see `docs/local-development.md`). The commands below expand those variables *inside* the container, so the secret is never placed on the host command line.
+You don't need to read or type the password. The `db` container already exposes the credentials as its own environment variables: `MYSQL_USER`, `MYSQL_PASSWORD`, and `MYSQL_DATABASE`. The commands below expand those variables *inside* the container, so the secret is never placed on the host command line.
+
+Do not assume the schema name. `$MYSQL_DATABASE` is the container's own default and is not necessarily the schema the app reads: the installation under test is whatever `DB_DATABASE` in `conf/config.inc.php` names, and the two can differ, in which case querying the default silently answers from the wrong data. Read it and pass it in:
+
+```sh
+UO_DB=$(sed -n "s/.*define('DB_DATABASE', *'\([^']*\)').*/\1/p" conf/config.inc.php)
+```
 
 `DB_HOST` is `db`, the Compose service name. It is reachable only from inside the Compose network, so run queries through `docker compose exec`, not a host-installed client.
 
@@ -30,15 +36,15 @@ You don't need to read or type the password. The `db` container already exposes 
 Run the query inside the `db` service (which bundles the `mariadb` client) through `sh -lc`, and pass the password via `MYSQL_PWD` from the container's environment rather than a `-p` argument. This keeps the credential out of the process argument list and avoids shell-quoting breakage from special characters:
 
 ```sh
-docker compose -f docs/dev/compose.yaml exec -T db sh -lc \
-'MYSQL_PWD="$MYSQL_PASSWORD" mariadb -u"$MYSQL_USER" "$MYSQL_DATABASE" -e "SELECT ...;"'
+docker compose -f docs/dev/compose.yaml exec -T -e UO_DB="$UO_DB" db sh -lc \
+'MYSQL_PWD="$MYSQL_PASSWORD" mariadb -u"$MYSQL_USER" "$UO_DB" -e "SELECT ...;"'
 ```
 
 The same form handles multi-line or quote-heavy SQL:
 
 ```sh
-docker compose -f docs/dev/compose.yaml exec -T db sh -lc \
-'MYSQL_PWD="$MYSQL_PASSWORD" mariadb -u"$MYSQL_USER" "$MYSQL_DATABASE" -e "
+docker compose -f docs/dev/compose.yaml exec -T -e UO_DB="$UO_DB" db sh -lc \
+'MYSQL_PWD="$MYSQL_PASSWORD" mariadb -u"$MYSQL_USER" "$UO_DB" -e "
 SELECT ...
 FROM ...
 WHERE ...;

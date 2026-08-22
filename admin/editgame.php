@@ -7,7 +7,7 @@ include_once 'lib/series.functions.php';
 include_once 'lib/common.functions.php';
 
 $LAYOUT_ID = EDITGAME;
-$backurl = empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER'];
+$backurl = SafeRedirectUrl($_SERVER['HTTP_REFERER'] ?? "", "");
 $gameId = $_GET["game"];
 $info = GameResult($gameId);
 $season = "";
@@ -42,7 +42,7 @@ $gp = [
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-    $backurl = $_POST['backurl'];
+    $backurl = SafeRedirectUrl($_POST['backurl'], "");
     $ok = true;
     if (empty($_POST['pseudo'])) {
         $gp['hometeam'] = $_POST['home'];
@@ -98,7 +98,11 @@ if (!empty($_POST['save'])) {
         $userid = UserIdForMail($_POST['email']);
     }
     if (IsRegistered($userid)) {
-        AddSeasonUserRole($userid, 'gameadmin:' . $gameId, $season);
+        // Scope the role to the event that actually owns the game rather than
+        // the season carried in the query string, which is only the page's
+        // browsing context and need not match.
+        $gameSeason = GameSeason($gameId);
+        AddSeasonUserRole($userid, 'gameadmin:' . $gameId, empty($gameSeason) ? $season : $gameSeason);
     }
     if (!empty($backurl)) {
         session_write_close();

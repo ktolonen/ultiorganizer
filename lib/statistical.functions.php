@@ -447,62 +447,70 @@ function CalcPlayerStats($season)
 {
     if (isSeasonAdmin($season)) {
         $season_info = SeasonInfo($season);
-        $players = SeasonAllPlayers($season);
+        $seasonId = $season_info['season_id'];
+        $withDefenses = ShowDefenseStats();
 
-        foreach ($players as $player) {
-            $player_info = PlayerInfo($player['player_id']);
-            $allgames = PlayerSeasonPlayedGames($player['player_id'], $season_info['season_id']);
-
-            if ($allgames) {
-                if (empty($player_info['profile_id'])) {
-                    continue;
-                }
-                $games = $allgames;
-                $goals = PlayerSeasonGoals($player['player_id'], $season_info['season_id']);
-                $passes = PlayerSeasonPasses($player['player_id'], $season_info['season_id']);
-                $wins = PlayerSeasonWins($player['player_id'], $player_info['team'], $season_info['season_id']);
-                if (ShowDefenseStats()) {
-                    $defenses = PlayerSeasonDefenses($player['player_id'], $season_info['season_id']);
-                }
-                $callahans = PlayerSeasonCallahanGoals($player['player_id'], $season_info['season_id']);
-                $breaks = 0;
-                $offence_turns = 0;
-                $defence_turns = 0;
-                $offence_time = 0;
-                $defence_time = 0;
-
-                //save player stats
-                $query = "INSERT INTO uo_player_stats (player_id, profile_id, team, season, series)
-						VALUES (" . (int) $player['player_id'] . ", " . (int) $player_info['profile_id'] . ", " . (int) $player_info['team'] . ", '" . DBEscapeString($season_info['season_id']) . "', " . (int) $player_info['series'] . ")
-						ON DUPLICATE KEY UPDATE
-							profile_id=VALUES(profile_id),
-							team=VALUES(team),
-							season=VALUES(season),
-							series=VALUES(series)";
-
-                DBQuery($query);
-                $defense_str = " ";
-                if (ShowDefenseStats()) {
-                    $defense_str = ",defenses=$defenses ";
-                }
-                $query = "UPDATE uo_player_stats SET
-						profile_id=" . intval($player_info['profile_id']) . ", 
-						team=" . $player_info['team'] . ", 
-						season='" . $season_info['season_id'] . "', 
-						series=" . $player_info['series'] . ", 
-						games=$games, 
-						wins=$wins,
-						goals=$goals, 
-						passes=$passes, 
-						callahans=$callahans, 
-						breaks=$breaks, 
-						offence_turns=$offence_turns,
-						defence_turns=$defence_turns,
-						offence_time=$offence_time,
-						defence_time=$defence_time" . $defense_str .
-                    "WHERE player_id=" . $player['player_id'];
-                DBQuery($query);
+        // The whole season is aggregated in a handful of grouped statements
+        // instead of several reads per player.
+        $rows = [];
+        foreach (SeasonPlayerStatRows($seasonId, $withDefenses) as $playerId => $player) {
+            // Players without completed games or without a profile keep
+            // whatever was stored for them earlier.
+            if (empty($player['games']) || empty($player['profile_id'])) {
+                continue;
             }
+
+            $values = [
+                $playerId,
+                (int) $player['profile_id'],
+                (int) $player['team'],
+                "'" . DBEscapeString($seasonId) . "'",
+                (int) $player['series'],
+                $player['games'],
+                $player['wins'],
+                $player['goals'],
+                $player['passes'],
+                $player['callahans'],
+                0, // breaks
+                0, // offence_turns
+                0, // defence_turns
+                0, // offence_time
+                0, // defence_time
+            ];
+            if ($withDefenses) {
+                $values[] = $player['defenses'];
+            }
+            $rows[] = "(" . implode(",", $values) . ")";
+        }
+
+        if (empty($rows)) {
+            return;
+        }
+
+        $columns = "player_id, profile_id, team, season, series, games, wins, goals, passes,
+					callahans, breaks, offence_turns, defence_turns, offence_time, defence_time";
+        $updates = ["profile_id", "team", "season", "series", "games", "wins", "goals", "passes",
+            "callahans", "breaks", "offence_turns", "defence_turns", "offence_time", "defence_time"];
+        // Defense counts are only maintained when the installation shows them,
+        // so the stored value is left alone otherwise.
+        if ($withDefenses) {
+            $columns .= ", defenses";
+            $updates[] = "defenses";
+        }
+
+        $assignments = [];
+        foreach ($updates as $column) {
+            $assignments[] = $column . "=VALUES(" . $column . ")";
+        }
+
+        // No transaction is started here: the event snapshot import calls this
+        // through refreshDerivedData() while its own transaction is open, and
+        // MySQL would implicitly commit that work on a nested START TRANSACTION.
+        foreach (array_chunk($rows, 200) as $chunk) {
+            DBQuery(
+                "INSERT INTO uo_player_stats (" . $columns . ") VALUES " . implode(",", $chunk) .
+                " ON DUPLICATE KEY UPDATE " . implode(",", $assignments),
+            );
         }
     } else {
         die('Insufficient rights to archive season');

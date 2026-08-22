@@ -340,7 +340,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(94, '2026-06-06 00:00:00'),
 	(95, '2026-06-11 00:00:00'),
 	(96, '2026-07-07 00:00:00'),
-	(97, '2026-07-25 00:00:00');
+	(97, '2026-07-25 00:00:00'),
+	(98, '2026-08-16 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -386,7 +387,10 @@ CREATE TABLE IF NOT EXISTS `uo_event_log` (
   `id2` varchar(20) DEFAULT NULL,
   `source` varchar(20) DEFAULT NULL,
   `description` varchar(50) DEFAULT NULL,
-  PRIMARY KEY (`event_id`)
+  PRIMARY KEY (`event_id`),
+  KEY `idx_event_log_category_user_time` (`category`,`user_id`,`time`),
+  KEY `idx_event_log_comment_meta` (`category`,`source`,`type`,`id1`,`id2`,`time`),
+  KEY `idx_event_log_id1_source_time` (`id1`,`source`,`time`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
@@ -1274,7 +1278,8 @@ CREATE TABLE IF NOT EXISTS `uo_visitor_counter` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `ip` varchar(15) NOT NULL DEFAULT '',
   `visits` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `idx_visitor_counter_ip` (`ip`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;

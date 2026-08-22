@@ -266,8 +266,12 @@ function LogDefenseUpdate($gameId, $details, $source = "")
 
 function GetLastGameUpdateEntry($gameId, $source)
 {
+    // id1 is a varchar, so the game id is compared as a string. An unquoted
+    // number would make MariaDB cast the column instead of using the index,
+    // and would also match rows of other categories that store non-numeric
+    // ids such as season identifiers.
     $query = sprintf(
-        "SELECT * FROM uo_event_log WHERE id1=%d AND source='%s' ORDER BY TIME DESC",
+        "SELECT * FROM uo_event_log WHERE id1='%d' AND source='%s' ORDER BY time DESC, event_id DESC LIMIT 1",
         (int) $gameId,
         DBEscapeString($source),
     );
@@ -356,17 +360,13 @@ function LogVisitor($ip)
         return;
     }
 
+    // ip is unique, so one atomic statement replaces the previous
+    // update, row-count check and conditional insert sequence.
     DBQuery(sprintf(
-        "UPDATE uo_visitor_counter SET visits=COALESCE(visits, 0) + 1 WHERE ip='%s'",
+        "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s', 1)
+		ON DUPLICATE KEY UPDATE visits=COALESCE(visits, 0) + 1",
         DBEscapeString($ip),
     ));
-
-    if ((int) DBQueryToValueUncached("SELECT ROW_COUNT()", true) === 0) {
-        DBQuery(sprintf(
-            "INSERT INTO uo_visitor_counter (ip, visits) VALUES ('%s', 1)",
-            DBEscapeString($ip),
-        ));
-    }
 }
 
 /**

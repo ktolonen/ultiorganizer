@@ -213,10 +213,13 @@ table[border="2"] {
 	padding-left: 10px;
 }
 
-/* Spirit score pair shown on the schedule for spirit admins. */
+/*
+ * Spirit score pair shown on the schedule for spirit admins. It is secondary
+ * information next to the game score, so it stays dimmer and unemphasized
+ * while the actual scores keep the normal cell color.
+ */
 .game-spirit {
-	color: var(--text-muted);
-	font-weight: bold;
+	color: var(--text-faint);
 	white-space: nowrap;
 }
 

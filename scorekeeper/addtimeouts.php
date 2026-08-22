@@ -25,24 +25,6 @@ function ScorekeeperTimeoutData($timeouts, $home, $maxslots)
     ];
 }
 
-/**
- * Highest number of timeouts already recorded for either team.
- */
-function ScorekeeperRecordedTimeoutCount($timeouts)
-{
-    $home = 0;
-    $away = 0;
-    foreach ($timeouts as $timeout) {
-        if ((int) $timeout['ishome'] === 1) {
-            $home++;
-        } else {
-            $away++;
-        }
-    }
-
-    return max($home, $away);
-}
-
 $html = "";
 
 $gameId = scorekeeperRequestGameId();
@@ -58,7 +40,7 @@ $showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 |
 $timeouts = GameTimeouts($gameId);
 // Saving clears every timeout and rewrites only the rendered slots, so showing
 // fewer slots than there are recorded timeouts would silently delete them.
-$maxtimeouts = max(GameTimeoutsPerTeam($gameId), ScorekeeperRecordedTimeoutCount($timeouts));
+$maxtimeouts = max(GameTimeoutsPerTeam($gameId), GameRecordedTimeoutCount($timeouts));
 $homeTimeoutData = ScorekeeperTimeoutData($timeouts, 1, $maxtimeouts);
 $awayTimeoutData = ScorekeeperTimeoutData($timeouts, 0, $maxtimeouts);
 

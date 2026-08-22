@@ -596,6 +596,114 @@ function PlayerSeasonGames($playerId, $seasonId)
 }
 
 /**
+ * Subquery listing the completed timetable games of a season.
+ *
+ * The per-player statistics helpers all restrict their counts to this set of
+ * games, so they share one definition of what counts as a played season game.
+ *
+ * @param string $seasonId
+ * @return string
+ */
+function SeasonCompletedGamesSql($seasonId)
+{
+    return sprintf(
+        "SELECT gp.game FROM uo_game_pool gp
+			INNER JOIN uo_game ug ON (ug.game_id = gp.game)
+			INNER JOIN uo_pool pool ON (pool.pool_id = gp.pool)
+			INNER JOIN uo_series ser ON (ser.series_id = pool.series)
+			WHERE ser.season='%s' AND gp.timetable=1 AND ug.isongoing=0",
+        DBEscapeString($seasonId),
+    );
+}
+
+/**
+ * Season statistics rows for every player of a season, keyed by player.
+ *
+ * Calculating the whole season in a handful of grouped statements replaces the
+ * per-player reads that CalcPlayerStats() used to issue for each player. The
+ * player set matches SeasonAllPlayers(); players without completed games keep
+ * their zero counts.
+ *
+ * @param string $seasonId
+ * @param bool $withDefenses Include defense counts.
+ * @return array player_id => [profile_id, team, series, games, wins, goals, passes, callahans, defenses]
+ */
+function SeasonPlayerStatRows($seasonId, $withDefenses = false)
+{
+    $rows = [];
+    foreach (DBQueryToArray(sprintf(
+        "SELECT p.player_id, p.profile_id, p.team, t.series
+			FROM uo_player p
+			INNER JOIN uo_team t ON (p.team = t.team_id)
+			INNER JOIN uo_series ser ON (t.series = ser.series_id)
+			WHERE ser.season='%s'",
+        DBEscapeString($seasonId),
+    )) as $row) {
+        $rows[(int) $row['player_id']] = $row + [
+            'games' => 0,
+            'wins' => 0,
+            'goals' => 0,
+            'passes' => 0,
+            'callahans' => 0,
+            'defenses' => 0,
+        ];
+    }
+
+    $seasonGames = SeasonCompletedGamesSql($seasonId);
+    $aggregates = [
+        // Games played.
+        ['games', "SELECT p.player AS player, COUNT(*) AS games
+			FROM uo_played p
+			WHERE p.game IN (%s)
+			GROUP BY p.player"],
+        // Games the player's own team won.
+        ['wins', "SELECT p.player AS player, COUNT(*) AS wins
+			FROM uo_played p
+			INNER JOIN uo_player pl ON (pl.player_id = p.player)
+			INNER JOIN uo_game g ON (g.game_id = p.game)
+			WHERE p.game IN (%s)
+			AND ((g.homescore > g.visitorscore AND g.hometeam = pl.team)
+				OR (g.homescore < g.visitorscore AND g.visitorteam = pl.team))
+			GROUP BY p.player"],
+        // Goals and Callahan goals come from the same rows, so one pass covers both.
+        ['goals', "SELECT g.scorer AS player, COUNT(*) AS goals,
+				SUM(CASE WHEN g.iscallahan=1 THEN 1 ELSE 0 END) AS callahans
+			FROM uo_goal g
+			WHERE g.game IN (%s)
+			AND EXISTS (SELECT 1 FROM uo_played pp WHERE pp.game = g.game AND pp.player = g.scorer)
+			GROUP BY g.scorer"],
+        ['passes', "SELECT g.assist AS player, COUNT(*) AS passes
+			FROM uo_goal g
+			WHERE g.game IN (%s)
+			AND EXISTS (SELECT 1 FROM uo_played pp WHERE pp.game = g.game AND pp.player = g.assist)
+			GROUP BY g.assist"],
+    ];
+    if ($withDefenses) {
+        $aggregates[] = ['defenses', "SELECT d.author AS player, COUNT(*) AS defenses
+			FROM uo_defense d
+			WHERE d.game IN (%s)
+			AND EXISTS (SELECT 1 FROM uo_played pp WHERE pp.game = d.game AND pp.player = d.author)
+			GROUP BY d.author"];
+    }
+
+    foreach ($aggregates as $aggregate) {
+        list($field, $sql) = $aggregate;
+        foreach (DBQueryToArray(sprintf($sql, $seasonGames)) as $row) {
+            $playerId = (int) $row['player'];
+            if (!isset($rows[$playerId])) {
+                continue;
+            }
+            $rows[$playerId][$field] = (int) $row[$field];
+            if (isset($row['callahans'])) {
+                $rows[$playerId]['callahans'] = (int) $row['callahans'];
+            }
+        }
+    }
+
+    return $rows;
+}
+
+/**
  * Total number of played games on given season by given player.
  *
  * @param int $playerId
@@ -603,19 +711,14 @@ function PlayerSeasonGames($playerId, $seasonId)
  */
 function PlayerSeasonPlayedGames($playerId, $seasonId)
 {
+    // The season game list does not need its own uo_played lookup: the outer
+    // player condition already limits the count to games this player played.
     $query = sprintf(
-        "
-		SELECT COUNT(*) AS games 
-		FROM uo_played 
-		WHERE game IN (SELECT gp.game FROM uo_game_pool gp 
-			LEFT JOIN uo_played AS pp ON (pp.game=gp.game) 
-			LEFT JOIN uo_game AS ug ON (pp.game=ug.game_id) 
-			LEFT JOIN uo_pool AS pool ON (pool.pool_id=gp.pool)
-			LEFT JOIN uo_series AS ser ON (pool.series=ser.series_id)
-			WHERE ser.season='%s' AND pp.player='%s' AND timetable=1 AND ug.isongoing=0) 
+        "SELECT COUNT(*) AS games
+		FROM uo_played
+		WHERE game IN (%s)
 		AND player='%s'", // FIXME ug.hasstarted>0??
-        DBEscapeString($seasonId),
-        DBEscapeString($playerId),
+        SeasonCompletedGamesSql($seasonId),
         DBEscapeString($playerId),
     );
 
@@ -1011,6 +1114,10 @@ function UploadPlayerImage($playerId)
         }
 
         $file_tmp_name = $_FILES['picture']['tmp_name'];
+        $sizeError = ImageSizeError($file_tmp_name);
+        if ($sizeError !== "") {
+            return "<p class='warning'>" . $sizeError . "</p>";
+        }
         $imgname = time() . $playerInfo['profile_id'] . ".jpg";
         $basedir = "" . UPLOAD_DIR . "players/" . $playerInfo['profile_id'] . "/";
         if (!is_dir($basedir)) {

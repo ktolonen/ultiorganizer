@@ -147,6 +147,24 @@ Use these connection settings:
 
 If you want full administrative access for local development, you can also connect as `root` with the password from `MYSQL_ROOT_PASSWORD`.
 
+## Compiled PHP is cached for two seconds
+
+The `app` image runs with `opcache.enable=On` and `opcache.revalidate_freq=2`,
+so a changed file can keep serving its previous compile for up to two seconds.
+Editing normally, this is invisible. It matters when a file is swapped under a
+live request to compare behaviour — `git checkout <ref> -- <file>`, request,
+restore, request — because the second request can silently answer from the code
+you just replaced, and the two runs then look identical when they are not.
+
+Wait it out between the swap and the request:
+
+```sh
+docker compose -f docs/dev/compose.yaml exec -T app sh -c 'sleep 4'
+```
+
+Then confirm the swap took, for instance by grepping the file for a line only
+one version contains, before trusting the comparison.
+
 ## PHP error logging
 
 The local Docker setup enables development-oriented PHP error reporting through `docs/dev/php.dev.ini`.

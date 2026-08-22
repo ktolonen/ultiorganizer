@@ -28,7 +28,11 @@ if ($placeLabel !== '') {
     $title .= ": " . utf8entities($placeLabel);
     $headingText .= ": " . $placeLabel;
 }
-$hasCoordinates = $place['lat'] !== null && $place['lat'] !== '' && $place['lng'] !== null && $place['lng'] !== '';
+// Interpolated into a JavaScript object literal below, so anything that is not
+// a plain finite number - a comma decimal separator, say - would break the map
+// for every visitor. Treat such a value as "no coordinates" instead.
+$hasCoordinates = is_numeric($place['lat']) && is_numeric($place['lng'])
+    && is_finite((float) $place['lat']) && is_finite((float) $place['lng']);
 
 //common page
 pageTopHeadOpen($title);
@@ -42,7 +46,7 @@ if (!empty($place['address'])) {
     echo "<p>" . utf8entities($place['address']) . "</p>\n";
 }
 if (!empty($place['info'])) {
-    echo "<p>" . $place['info'] . "</p>\n";
+    echo "<p>" . utf8entities($place['info']) . "</p>\n";
 }
 if ($hasCoordinates) {
     echo "<p>&nbsp;</p>";
@@ -51,9 +55,10 @@ if ($hasCoordinates) {
 <script>
   function myMap() {
 
-    const field = {
-      lat: <?php echo $place['lat'] . ", lng: " . $place['lng']; ?>
-    };
+    const field = <?php echo json_encode([
+        "lat" => (float) $place['lat'],
+        "lng" => (float) $place['lng'],
+    ]); ?>;
 
     const map = new google.maps.Map(document.getElementById("googleMap"), {
       zoom: 15,

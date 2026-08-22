@@ -76,26 +76,27 @@ function GameResult($gameId)
     $query = sprintf(
         "SELECT time, k.name As hometeamname, v.name As visitorteamname,
         k.valid as homevalid, v.valid as visitorvalid,
-        p.*, gp.pool AS pool, hspirit.mode AS spiritmode, hspirit.sotg AS homesotg, vspirit.sotg AS visitorsotg, s.name AS gamename
+        p.*, gp.pool AS pool, spirit.spiritmode AS spiritmode, spirit.homesotg AS homesotg, spirit.visitorsotg AS visitorsotg, s.name AS gamename
     FROM uo_game AS p
     LEFT JOIN uo_game_pool gp ON (gp.game=p.game_id AND gp.timetable=1)
-    LEFT JOIN (SELECT ssc.game_id, ssc.team_id, sct.mode, SUM(value*factor) AS sotg
+    -- Grouped by game alone so this yields exactly one row: grouping by mode as
+    -- well splits a game whose two teams were scored under different spirit
+    -- modes into two rows, which multiplies the game row and leaves one team's
+    -- total unread.
+    LEFT JOIN (SELECT ssc.game_id,
+                      MAX(CASE WHEN ssc.team_id = g.hometeam THEN sct.mode END) AS spiritmode,
+                      SUM(CASE WHEN ssc.team_id = g.hometeam THEN ssc.value * sct.factor END) AS homesotg,
+                      SUM(CASE WHEN ssc.team_id = g.visitorteam THEN ssc.value * sct.factor END) AS visitorsotg
                FROM uo_spirit_score ssc
+               INNER JOIN uo_game g ON (g.game_id = ssc.game_id)
                LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
                WHERE ssc.game_id=%d
-               GROUP BY game_id, team_id, sct.mode) AS hspirit
-       ON (p.game_id = hspirit.game_id AND hspirit.team_id = p.hometeam)
-    LEFT JOIN (SELECT ssc.game_id, ssc.team_id, sct.mode, SUM(value*factor) AS sotg
-               FROM uo_spirit_score ssc
-               LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
-               WHERE ssc.game_id=%d
-               GROUP BY game_id, team_id, sct.mode ) AS vspirit
-       ON (p.game_id = vspirit.game_id AND vspirit.team_id = p.visitorteam)
+               GROUP BY ssc.game_id) AS spirit
+       ON (p.game_id = spirit.game_id)
     LEFT JOIN uo_team As k ON (p.hometeam=k.team_id)
     LEFT JOIN uo_team AS v ON (p.visitorteam=v.team_id)
     LEFT JOIN uo_scheduling_name s ON(s.scheduling_id=p.name)
     WHERE p.game_id=%d",
-        $gameId,
         $gameId,
         $gameId,
     );
@@ -269,6 +270,16 @@ function GamePool($gameId)
     return $result;
 }
 
+/**
+ * Which team took the first offence, or null when it was never recorded.
+ *
+ * Callers must separate the null from the 0 before comparing, because a loose
+ * `== 0` also matches null and so reports the visiting team for every game
+ * that carries no offence event at all.
+ *
+ * @param int $gameId uo_game.game_id
+ * @return int|null 1 for the home team, 0 for the visitors, null when unrecorded
+ */
 function GameIsFirstOffenceHome($gameId)
 {
     $query = sprintf(
@@ -279,7 +290,7 @@ function GameIsFirstOffenceHome($gameId)
     );
     $result = DBQueryToValue($query);
 
-    return $result;
+    return $result === null ? null : (int) $result;
 }
 
 function GameReservation($gameId)
@@ -675,11 +686,14 @@ function GoalDisplayText($goal, $gameId, $withNumbers = false)
 
 function GameAllGoals($gameId)
 {
+    // Order by the point number, not the clock. A point time is optional and a
+    // recorded one is sometimes out of sequence, so ordering by time puts goals
+    // in the wrong order and the offence and break counts follow it.
     $query = sprintf(
         "SELECT num,time,ishomegoal 
 		FROM uo_goal 
 		WHERE game='%s' 
-		ORDER BY time",
+		ORDER BY num",
         DBEscapeString($gameId),
     );
 
@@ -1009,6 +1023,40 @@ function GameHasStarted($gameInfo)
     return $gameInfo['hasstarted'] > 0;
 }
 
+/**
+ * Recorded halftime of a game in seconds, or null when none was recorded.
+ *
+ * "Not recorded" is stored as either NULL or 0 depending on which input path
+ * wrote the row, and both mean the same thing: no game breaks for half at
+ * 0:00. Callers must not intval() the raw column, because that turns a missing
+ * halftime into one at second 0, which then sorts ahead of the first goal.
+ *
+ * @param array $gameInfo game row as returned by GameResult()
+ * @return int|null halftime in seconds, or null when not recorded
+ */
+function GameHalftimeSeconds($gameInfo)
+{
+    $halftime = intval($gameInfo['halftime'] ?? 0);
+
+    return $halftime > 0 ? $halftime : null;
+}
+
+/**
+ * State of a game's clock, for the scorekeeper pages that display it.
+ *
+ * `ongoing` means the clock is running, which is narrower than the isongoing
+ * column it is read from. That column marks the game as in progress and is
+ * also set by the result entry paths in GameUpdateResult(), which never start
+ * a clock. Reporting those games as running handed the client a clock with no
+ * start time, so it counted up from zero and fell back to zero again on the
+ * next request. The clock is only meaningful once timer_start is set.
+ *
+ * `started` stays broader on purpose: a game in progress can have its clock
+ * started, so the page offers that.
+ *
+ * @param int $gameId uo_game.game_id
+ * @return array timer state, matching ScorekeeperTimerStateDefaults()
+ */
 function GameTimerState($gameId)
 {
     $gameId = (int) $gameId;
@@ -1032,7 +1080,7 @@ function GameTimerState($gameId)
     }
 
     $state['started'] = ((int) $row['hasstarted'] > 0) || !empty($row['timer_start']);
-    $state['ongoing'] = (int) $row['isongoing'] === 1;
+    $state['ongoing'] = (int) $row['isongoing'] === 1 && !empty($row['timer_start']);
     $state['paused'] = $state['ongoing'] && !empty($row['timer_pause_start']);
 
     if (empty($row['timer_start'])) {
@@ -1091,11 +1139,60 @@ function GameTimeoutsPerTeam($gameId)
     return max(1, $timeouts);
 }
 
+/**
+ * Highest number of timeouts recorded for either team in a game.
+ *
+ * Saving a timeout form clears every timeout and rewrites only the rendered
+ * slots, so a page must never offer fewer slots than this or it silently
+ * deletes what it did not show.
+ */
+function GameRecordedTimeoutCount($timeouts)
+{
+    $home = 0;
+    $away = 0;
+    foreach ($timeouts as $timeout) {
+        if ((int) $timeout['ishome'] === 1) {
+            $home++;
+        } else {
+            $away++;
+        }
+    }
+
+    return max($home, $away);
+}
+
+/**
+ * Highest score a game result may carry.
+ *
+ * The bound is what CheckGameResult() has always promised in its warning text.
+ * Its purpose is to keep a mistyped score out of standings and statistics, so
+ * it is deliberately far above any real Ultimate score.
+ */
+const MAX_GAME_SCORE = 1000;
+
+/**
+ * Returns true when a value is a whole number within the allowed score range.
+ *
+ * Accepts integers and digit strings, since callers pass both.
+ */
+function IsValidGameScore($score)
+{
+    if (is_int($score)) {
+        return $score >= 0 && $score <= MAX_GAME_SCORE;
+    }
+
+    if (is_string($score) && ctype_digit(trim($score))) {
+        return (int) trim($score) <= MAX_GAME_SCORE;
+    }
+
+    return false;
+}
+
 function CheckGameResult($game, $home, $away)
 {
     $gameId = (int) substr($game, 0, -1);
     $errors = "";
-    if ($home < 0 || $away < 0) {
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         $errors .= "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
     if ($gameId == 0 || !checkChkNum($game)) {
@@ -1121,6 +1218,11 @@ function CheckGameResult($game, $home, $away)
 
 function GameUpdateResult($gameId, $home, $away)
 {
+    // Enforced here rather than per entry point: user/addresult.php and
+    // mobile/addresult.php never call CheckGameResult().
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
+        return false;
+    }
     if (hasEditGameEventsRight($gameId)) {
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1', hasstarted='1' WHERE game_id='%s'",
@@ -1138,6 +1240,9 @@ function GameUpdateResult($gameId, $home, $away)
 
 function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights = true)
 {
+    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
+        return false;
+    }
     $seasonId = GameSeason($gameId);
     if (!$checkRights && isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
         die('Insufficient rights to edit game');
@@ -1259,11 +1364,45 @@ function GameSetDefenses($gameId, $home, $away)
     }
 }
 
+/**
+ * Returns true when a player may be put on a game roster.
+ *
+ * When the event requires accreditation, only accredited players may be added.
+ * A player already on the roster stays allowed so that renumbering and
+ * re-saving an existing roster keeps working.
+ */
+function GameAllowsPlayerOnRoster($gameId, $playerId)
+{
+    $seasonInfo = SeasonInfo(GameSeason($gameId));
+    if (empty($seasonInfo['require_accreditation'])) {
+        return true;
+    }
+
+    if (isAccredited($playerId)) {
+        return true;
+    }
+
+    $query = sprintf(
+        "SELECT COUNT(*) FROM uo_played WHERE game='%s' AND player='%s'",
+        DBEscapeString($gameId),
+        DBEscapeString($playerId),
+    );
+
+    return (int) DBQueryToValue($query) > 0;
+}
+
 function GameAddPlayer($gameId, $playerId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        // Enforced here so every roster path inherits it: the modern handlers
+        // check accreditation themselves, but mobile/addplayerlists.php reached
+        // this mutation directly and bypassed the event rule.
+        if (!GameAllowsPlayerOnRoster($gameId, $playerId)) {
+            return false;
+        }
+
         $query = sprintf(
-            "INSERT INTO uo_played 
+            "INSERT INTO uo_played
 			(game, player, num, accredited) 
 			VALUES ('%s', '%s', '%s', %d)
 			ON DUPLICATE KEY UPDATE num=%d",
@@ -1402,7 +1541,7 @@ function GameRemoveScore($gameId, $num)
 {
     if (hasEditGameEventsRight($gameId)) {
         $query = sprintf(
-            "DELETE FROM uo_goal 
+            "DELETE FROM uo_goal
 			WHERE game='%s' AND num=%d",
             DBEscapeString($gameId),
             (int) $num,
@@ -1414,6 +1553,78 @@ function GameRemoveScore($gameId, $num)
     } else {
         die('Insufficient rights to edit game');
     }
+}
+
+/**
+ * Lowers the game's aggregate result back onto its remaining goals.
+ *
+ * Removing a goal only deletes the uo_goal row, so the score on uo_game keeps
+ * counting it. Nothing brings that total back down on its own: the scoresheet
+ * raises the aggregate only when a new goal beats the stored total, so a goal
+ * corrected in favour of the other team leaves the published result wrong
+ * until the game is finalized. Callers that delete a goal must call this.
+ *
+ * The result is only lowered when it was actually tracking the goals, which is
+ * true exactly when it still shows the score the removed goal carried. A game
+ * whose scoresheet was never completed can be finalized at its real score
+ * through result.php while only a handful of goals were typed in, and deleting
+ * one of those goals must not drop the published result to the scoresheet's
+ * partial total.
+ *
+ * Only the score is touched. Whether the game is running or finished is not
+ * this function's business, so isongoing, hasstarted and the timer columns are
+ * left as they are, unlike GameSetResult() and GameClearResult(). The cached
+ * pool standings are refreshed the way those two do, because a goal can be
+ * deleted from a game that was already finalized.
+ *
+ * @param int $gameId uo_game.game_id
+ * @param int $removedHome home score the removed goal carried
+ * @param int $removedAway visitor score the removed goal carried
+ * @return bool result of the update, or false when the result was left alone
+ */
+function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game');
+    }
+
+    $stored = DBQueryToRow(sprintf(
+        "SELECT homescore, visitorscore FROM uo_game WHERE game_id=%d LIMIT 1",
+        (int) $gameId,
+    ));
+    if (!$stored
+        || (int) $stored['homescore'] !== (int) $removedHome
+        || (int) $stored['visitorscore'] !== (int) $removedAway
+    ) {
+        return false;
+    }
+
+    $query = sprintf(
+        "SELECT homescore, visitorscore
+		FROM uo_goal
+		WHERE game=%d
+		ORDER BY num DESC
+		LIMIT 1",
+        (int) $gameId,
+    );
+    $lastgoal = DBQueryToRow($query);
+
+    $home = $lastgoal ? (int) $lastgoal['homescore'] : 0;
+    $away = $lastgoal ? (int) $lastgoal['visitorscore'] : 0;
+
+    LogGameUpdate($gameId, "result from goals: $home - $away");
+    $result = DBQuery(sprintf(
+        "UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
+        DBEscapeString($home),
+        DBEscapeString($away),
+        (int) $gameId,
+    ));
+
+    $poolId = GamePool($gameId);
+    ResolvePoolStandings($poolId);
+    PoolResolvePlayed($poolId);
+
+    return $result;
 }
 
 /**

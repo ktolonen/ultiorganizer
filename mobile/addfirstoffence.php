@@ -28,9 +28,9 @@ mobilePageTop(_("Score&nbsp;sheet"));
 $hoffence = "";
 $voffence = "";
 $ishome = GameIsFirstOffenceHome($gameId);
-if ($ishome == 1) {
+if ($ishome === 1) {
     $hoffence = "checked='checked'";
-} elseif ($ishome == 0) {
+} elseif ($ishome === 0) {
     $voffence = "checked='checked'";
 }
 

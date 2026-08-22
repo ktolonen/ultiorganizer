@@ -8,7 +8,7 @@ include_once 'lib/team.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/common.functions.php';
 $LAYOUT_ID = SERIETEAMS;
-$backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
+$backurl = utf8entities(SafeRedirectUrl($_SERVER['HTTP_REFERER'] ?? "", ""));
 
 $seriesId = 0;
 $poolId = 0;
@@ -30,7 +30,7 @@ $title = _("Teams");
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-    $backurl = utf8entities($_POST['backurl']);
+    $backurl = utf8entities(SafeRedirectUrl($_POST['backurl'], ""));
     $teams = PoolTeams($poolId);
 
     //Remove un-checked teams
@@ -74,7 +74,7 @@ if (!empty($_POST['save'])) {
 } elseif (!empty($_POST['move'])) {
     PoolConfirmMoves($poolId, $_POST['visible'] == "on");
 
-    $backurl = $_POST['backurl'];
+    $backurl = SafeRedirectUrl($_POST['backurl'], "index.php");
     session_write_close();
     header("location:$backurl");
 } elseif (!empty($_POST['ties'])) {

@@ -1477,6 +1477,45 @@ function upgrade97()
     }
 }
 
+function upgrade98()
+{
+    // Visitor logging looks rows up by ip, which had no index at all. Existing
+    // installations can hold duplicate addresses because the previous
+    // update-then-insert sequence was not atomic, so collapse them into the
+    // oldest row before the unique index is added.
+    if (!hasIndex('uo_visitor_counter', 'idx_visitor_counter_ip')) {
+        // The merge and the delete are separate statements, so the same
+        // statement that gives the kept row the group total also empties the
+        // rows it is about to replace. Re-running after an interrupted upgrade,
+        // or after the index creation failed on an address inserted meanwhile,
+        // then recomputes the same total instead of adding the survivors again.
+        runQuery(
+            "UPDATE uo_visitor_counter c
+			INNER JOIN (SELECT MIN(id) AS keep_id, ip, SUM(COALESCE(visits, 0)) AS total
+				FROM uo_visitor_counter GROUP BY ip HAVING COUNT(*) > 1) d
+				ON (c.ip = d.ip)
+			SET c.visits = CASE WHEN c.id = d.keep_id THEN d.total ELSE 0 END",
+        );
+        runQuery(
+            "DELETE c FROM uo_visitor_counter c
+			INNER JOIN (SELECT MIN(id) AS keep_id, ip
+				FROM uo_visitor_counter GROUP BY ip HAVING COUNT(*) > 1) d
+				ON (c.ip = d.ip AND c.id <> d.keep_id)",
+        );
+        addUniqueIndex('uo_visitor_counter', 'idx_visitor_counter_ip', '(`ip`)');
+    }
+
+    // uo_event_log had no secondary indexes, so every filtered or newest-first
+    // read scanned and sorted the whole append-only log.
+    addIndex('uo_event_log', 'idx_event_log_category_user_time', '(`category`, `user_id`, `time`)');
+    addIndex(
+        'uo_event_log',
+        'idx_event_log_comment_meta',
+        '(`category`, `source`, `type`, `id1`, `id2`, `time`)',
+    );
+    addIndex('uo_event_log', 'idx_event_log_id1_source_time', '(`id1`, `source`, `time`)');
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {
@@ -1712,6 +1751,19 @@ function addIndex($table, $index, $definition)
         return;
     }
     runQuery(sprintf("ALTER TABLE `%s` ADD INDEX `%s` %s", $table, $index, $definition));
+}
+
+/**
+ * Add a unique index if it does not already exist.
+ *
+ * The caller is responsible for removing duplicate values first.
+ */
+function addUniqueIndex($table, $index, $definition)
+{
+    if (hasIndex($table, $index)) {
+        return;
+    }
+    runQuery(sprintf("ALTER TABLE `%s` ADD UNIQUE INDEX `%s` %s", $table, $index, $definition));
 }
 
 /**

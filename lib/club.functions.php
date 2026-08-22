@@ -2,6 +2,7 @@
 
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
+require_once __DIR__ . '/image.functions.php';
 
 function ClubName($clubId)
 {
@@ -215,6 +216,10 @@ function UploadClubImage($teamId, $clubId)
         }
 
         $file_tmp_name = $_FILES['picture']['tmp_name'];
+        $sizeError = ImageSizeError($file_tmp_name);
+        if ($sizeError !== "") {
+            return "<p class='warning'>" . $sizeError . "</p>";
+        }
         $imgname = time() . $clubId . ".jpg";
         $basedir = UPLOAD_DIR . "clubs/$clubId/";
         if (!is_dir($basedir)) {

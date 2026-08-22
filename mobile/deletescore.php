@@ -12,6 +12,7 @@ if (isset($_POST['delete'])) {
     if (count($scores) > 0) {
         $lastscore = $scores[count($scores) - 1];
         GameRemoveScore($gameId, $lastscore['num']);
+        GameSyncResultFromGoals($gameId, $lastscore['homescore'], $lastscore['visitorscore']);
         header("location:?view=mobile/addscoresheet&game=" . $gameId);
     }
 }

@@ -1016,9 +1016,19 @@ function RemoveEditSeason($userid, $propid)
 }
 
 
-function AddEditSeason($userid, $season)
+/**
+ * Records that $userid has something to edit in $season.
+ *
+ * $checkRights is for callers that have already authorized the change they are
+ * bookkeeping here. AddSeasonUserRole() is one: it has established that the
+ * caller may grant the role, and the editseason row is only a derived record
+ * of that grant, so re-deriving rights from the event alone would refuse a
+ * division administrator granting a role to somebody else and leave the
+ * userrole row already written.
+ */
+function AddEditSeason($userid, $season, $checkRights = true)
 {
-    if ($userid == $_SESSION['uid'] || hasEditUsersRight() || isSeasonAdmin($season)) {
+    if (!$checkRights || $userid == $_SESSION['uid'] || hasEditUsersRight() || isSeasonAdmin($season)) {
         $query = sprintf(
             "SELECT COUNT(*) FROM uo_userproperties 
 			WHERE userid='%s' AND name='editseason' AND value='%s'",
@@ -1095,62 +1105,132 @@ function AddUserRole($userid, $role)
     }
 }
 
+/**
+ * Returns true when $role may be granted or revoked while administering
+ * $seasonId.
+ *
+ * Rejects a role whose target belongs to a different event, then authorizes
+ * the caller against the target itself. This is the only gate the season role
+ * mutations need: it is strictly narrower than the isSeasonAdmin() test it
+ * replaced, which trusted the caller-supplied event and so neither bound the
+ * role to it nor honoured read-only events.
+ */
+function CanChangeSeasonUserRole($role, $seasonId)
+{
+    if (hasEditUsersRight()) {
+        return true;
+    }
+
+    $parts = explode(":", (string) $role, 2);
+    if (count($parts) !== 2 || $parts[1] === "") {
+        return false;
+    }
+
+    list($name, $target) = $parts;
+
+    // Resolve the event the role actually grants power over. The target is not
+    // always an event: teamadmin and accradmin name a team and gameadmin names a
+    // game, so the event the caller claims to be administering is no proof that
+    // the role belongs to it.
+    //
+    // game.functions.php is loaded on demand rather than at the top of this
+    // file: it pulls in configuration.functions.php, which queries at include
+    // time, and user.functions.php is itself loaded during database.php's
+    // bootstrap before a connection exists.
+    switch ($name) {
+        case "seasonadmin":
+        case "spiritadmin":
+            $targetSeason = $target;
+            break;
+        case "teamadmin":
+        case "accradmin":
+            $season = TeamSeason($target);
+            $targetSeason = empty($season) ? null : $season;
+            break;
+        case "gameadmin":
+            if (!function_exists("GameSeason")) {
+                require_once __DIR__ . '/game.functions.php';
+            }
+            $season = GameSeason($target);
+            $targetSeason = empty($season) ? null : $season;
+            break;
+        default:
+            return false;
+    }
+
+    if ($targetSeason === null || (string) $targetSeason !== (string) $seasonId) {
+        return false;
+    }
+
+    switch ($name) {
+        case "teamadmin":
+        case "accradmin":
+            $series = getTeamSeries($target);
+            return empty($series) ? false : hasEditTeamsRight($series);
+        case "gameadmin":
+            $series = GameSeries($target);
+            return empty($series) ? false : hasEditGamesRight($series);
+        default:
+            return hasEditSeasonSeriesRight($targetSeason);
+    }
+}
+
 function AddSeasonUserRole($userid, $role, $seasonId)
 {
-    if (hasEditUsersRight() || isSeasonAdmin($seasonId)) {
-
-        $query = sprintf(
-            "SELECT COUNT(*) FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
-            DBEscapeString($userid),
-            DBEscapeString($role),
-        );
-        $result = DBQueryToValue($query);
-
-        if ($result <= 0) {
-            $query = sprintf(
-                "INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', '%s')",
-                DBEscapeString($userid),
-                DBEscapeString($role),
-            );
-            $result = DBQuery($query);
-            Log1("security", "add", $userid, $seasonId, $role);
-            AddEditSeason($userid, $seasonId);
-
-            if ($userid == $_SESSION['uid']) {
-                SetUserSessionData($userid);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    } else {
+    if (!CanChangeSeasonUserRole($role, $seasonId)) {
         die('Insufficient rights to change user info');
     }
+
+    $query = sprintf(
+        "SELECT COUNT(*) FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
+        DBEscapeString($userid),
+        DBEscapeString($role),
+    );
+    $result = DBQueryToValue($query);
+
+    if ($result > 0) {
+        return false;
+    }
+
+    $query = sprintf(
+        "INSERT INTO uo_userproperties (userid, name, value) VALUES ('%s', 'userrole', '%s')",
+        DBEscapeString($userid),
+        DBEscapeString($role),
+    );
+    DBQuery($query);
+    Log1("security", "add", $userid, $seasonId, $role);
+    AddEditSeason($userid, $seasonId, false);
+
+    if ($userid == $_SESSION['uid']) {
+        SetUserSessionData($userid);
+    }
+
+    return true;
 }
 
 function RemoveSeasonUserRole($userid, $role, $seasonId)
 {
-    if (hasEditUsersRight() || isSeasonAdmin($seasonId)) {
-        $query = sprintf(
-            "DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
-            DBEscapeString($userid),
-            DBEscapeString($role),
-        );
-        $result = DBQuery($query);
-
-        if (!UserHasSeasonScopedRole($userid, $seasonId)) {
-            DBQuery(sprintf(
-                "DELETE FROM uo_userproperties WHERE userid='%s' AND name='editseason' AND value='%s'",
-                DBEscapeString($userid),
-                DBEscapeString($seasonId),
-            ));
-        }
-
-        if ($userid == $_SESSION['uid']) {
-            SetUserSessionData($userid);
-        }
-    } else {
+    if (!CanChangeSeasonUserRole($role, $seasonId)) {
         die('Insufficient rights to change user info');
+    }
+
+    $query = sprintf(
+        "DELETE FROM uo_userproperties WHERE userid='%s' AND name='userrole' AND value='%s'",
+        DBEscapeString($userid),
+        DBEscapeString($role),
+    );
+    DBQuery($query);
+
+    if (!UserHasSeasonScopedRole($userid, $seasonId)) {
+        DBQuery(sprintf(
+            "DELETE FROM uo_userproperties WHERE userid='%s' AND name='editseason' AND value='%s'",
+            DBEscapeString($userid),
+            DBEscapeString($seasonId),
+        ));
+    }
+
+    if ($userid == $_SESSION['uid']) {
+        SetUserSessionData($userid);
     }
 }
 
@@ -1504,6 +1584,7 @@ function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $me
     }
 
     Log1("user", "add", $newUsername, "", "register request");
+    DeleteExpiredAccountTokens();
     $token = uuidSecure();
     $query = sprintf(
         "INSERT INTO uo_registerrequest (userid, password, name, email, token) VALUES ('%s', '%s', '%s', '%s', '%s')",
@@ -1601,11 +1682,46 @@ function AddExtraEmailRequest($userid, $extraEmail, $message = 'verify_email.txt
     }
 }
 
+/**
+ * Lifetime of an emailed account token, in hours.
+ *
+ * A password reset link is a full account-takeover credential for as long as it
+ * works, so it expires quickly. A registration confirmation only completes a
+ * signup the recipient asked for, so it is allowed to live longer.
+ *
+ * Both tables carry their issue time already: uo_passwordresetrequest.requested
+ * and uo_registerrequest.last_login both default to the insert timestamp and
+ * are never updated, so no schema change is needed. ("last_login" is a
+ * misleading name for an issue timestamp on a registration request.)
+ */
+const PASSWORD_RESET_TOKEN_TTL_HOURS = 24;
+const REGISTER_TOKEN_TTL_HOURS = 168;
+
+/**
+ * Removes account tokens that are past their lifetime.
+ *
+ * Called whenever a new token is issued, so expired rows do not accumulate
+ * without needing a scheduled job.
+ */
+function DeleteExpiredAccountTokens()
+{
+    DBQuery(sprintf(
+        "DELETE FROM uo_registerrequest WHERE last_login < (NOW() - INTERVAL %d HOUR)",
+        REGISTER_TOKEN_TTL_HOURS,
+    ));
+    DBQuery(sprintf(
+        "DELETE FROM uo_passwordresetrequest WHERE requested < (NOW() - INTERVAL %d HOUR)",
+        PASSWORD_RESET_TOKEN_TTL_HOURS,
+    ));
+}
+
 function RegisterUIDByToken($token)
 {
     $query = sprintf(
-        "SELECT userid FROM uo_registerrequest WHERE token='%s'",
+        "SELECT userid FROM uo_registerrequest
+        WHERE token='%s' AND last_login >= (NOW() - INTERVAL %d HOUR)",
         DBEscapeString($token),
+        REGISTER_TOKEN_TTL_HOURS,
     );
     $result = DBQuery($query);
 
@@ -1618,8 +1734,10 @@ function RegisterUIDByToken($token)
 function ConfirmRegister($token)
 {
     $query = sprintf(
-        "SELECT userid, password, name, email FROM uo_registerrequest WHERE token='%s'",
+        "SELECT userid, password, name, email FROM uo_registerrequest
+        WHERE token='%s' AND last_login >= (NOW() - INTERVAL %d HOUR)",
         DBEscapeString($token),
+        REGISTER_TOKEN_TTL_HOURS,
     );
     $result = DBQuery($query);
 
@@ -1965,6 +2083,7 @@ function UserResetPassword($userId)
 
     $email = $row ? $row['email'] : null;
     if (!empty($email)) {
+        DeleteExpiredAccountTokens();
         $token = uuidSecure();
         $query = sprintf(
             "DELETE FROM uo_passwordresetrequest WHERE userid='%s'",
@@ -2013,8 +2132,10 @@ function UserResetPassword($userId)
 function PasswordResetUIDByToken($token)
 {
     $query = sprintf(
-        "SELECT userid FROM uo_passwordresetrequest WHERE token='%s'",
+        "SELECT userid FROM uo_passwordresetrequest
+        WHERE token='%s' AND requested >= (NOW() - INTERVAL %d HOUR)",
         DBEscapeString($token),
+        PASSWORD_RESET_TOKEN_TTL_HOURS,
     );
     $result = DBQuery($query);
 

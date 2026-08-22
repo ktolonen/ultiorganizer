@@ -14,10 +14,7 @@ if ($teamId) {
     RequireSeasonPublicExternal($season);
 }
 
-$style = iget("style");
-if (empty($style)) {
-    $style = 'pelikone.css';
-}
+$style = ValidStyleSheet(iget("style"), 'default.css');
 ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
 <html xmlns='http://www.w3.org/1999/xhtml' xml:lang='fi' lang='fi'>
@@ -28,7 +25,7 @@ if (empty($style)) {
 	<meta http-equiv="Expires" content="-1" />
 	<?php
 
-echo "<link rel='stylesheet' href='$style' type='text/css' />";
+echo "<link rel='stylesheet' href='" . utf8entities($style) . "' type='text/css' />";
 echo "<title>" . _("Ultiorganizer") . "</title>";
 ?>
 </head>

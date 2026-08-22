@@ -793,6 +793,58 @@ function TimetablePublicVisibilityCondition()
 		)";
 }
 
+/**
+ * Half-open day range condition for a game time column.
+ *
+ * DATE_FORMAT(pp.time,'%Y-%m-%d') = <day> hides the column from the optimizer,
+ * so only the leading valid part of idx_game_valid_time can be used. The
+ * half-open range below selects the same rows while keeping the time part
+ * usable. The boundaries are calculated by the database server so the previous
+ * timezone semantics are preserved.
+ *
+ * @param string $column SQL expression for the time column.
+ * @param string $day today, tomorrow, yesterday, or a requested date.
+ * @param int $days Length of the range in days.
+ * @return string
+ */
+function TimetableDayRangeCondition($column, $day, $days = 1)
+{
+    switch ($day) {
+        case "today":
+            $start = "CURRENT_DATE()";
+            break;
+
+        case "tomorrow":
+            $start = "DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)";
+            break;
+
+        case "yesterday":
+            $start = "DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)";
+            break;
+
+        default:
+            // Only the zero-padded calendar dates that the previous
+            // DATE_FORMAT(time,'%Y-%m-%d') comparison could have matched select
+            // games. Anything else keeps matching nothing instead of becoming
+            // an invalid range boundary.
+            if (
+                !preg_match('/^(\d{4})-(\d{2})-(\d{2})$/', (string) $day, $parts)
+                || !checkdate((int) $parts[2], (int) $parts[3], (int) $parts[1])
+            ) {
+                return " AND 1=0";
+            }
+            $start = "DATE('" . DBEscapeString($day) . "')";
+            break;
+    }
+
+    return sprintf(
+        " AND %1\$s >= %2\$s AND %1\$s < DATE_ADD(%2\$s, INTERVAL %3\$d DAY)",
+        $column,
+        $start,
+        (int) $days,
+    );
+}
+
 function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = "", $onlypublic = false)
 {
     $fieldOrder = "CAST(pr.fieldname AS UNSIGNED) ASC, pr.fieldname ASC";
@@ -889,28 +941,17 @@ function TimetableGames($id, $gamefilter, $timefilter, $order, $groupfilter = ""
             $query .= " AND pp.time <= Now()";
             break;
 
-        case "today":
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = DATE_SUB(CURRENT_DATE(), INTERVAL 0 DAY)";
-            break;
-
-        case "tomorrow":
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)";
-            break;
-
-        case "yesterday":
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)";
-            break;
-
         case "comingTodayAndTomorrow":
             $query .= " AND pp.time IS NOT NULL AND ((pp.homescore IS NULL AND pp.visitorscore IS NULL) OR (pp.homescore = 0 AND pp.visitorscore = 0) OR pp.isongoing=1)";
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') IN(CURRENT_DATE(),DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY))";
+            $query .= TimetableDayRangeCondition("pp.time", "today", 2);
             break;
 
         case "all":
             break;
 
         default:
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = '" . DBEscapeString($timefilter) . "'";
+            // today, tomorrow, yesterday and explicit dates.
+            $query .= TimetableDayRangeCondition("pp.time", $timefilter);
             break;
     }
 
@@ -1029,23 +1070,12 @@ function TimetableGrouping($id, $gamefilter, $timefilter, $onlypublic = false)
             $query .= " AND pp.time <= Now()";
             break;
 
-        case "today":
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = DATE_SUB(CURRENT_DATE(), INTERVAL 0 DAY)";
-            break;
-
-        case "tomorrow":
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = DATE_ADD(CURRENT_DATE(), INTERVAL 1 DAY)";
-            break;
-
-        case "yesterday":
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = DATE_SUB(CURRENT_DATE(), INTERVAL 1 DAY)";
-            break;
-
         case "all":
             break;
 
         default:
-            $query .= " AND DATE_FORMAT(pp.time,'%Y-%m-%d') = '" . DBEscapeString($timefilter) . "'";
+            // today, tomorrow, yesterday and explicit dates.
+            $query .= TimetableDayRangeCondition("pp.time", $timefilter);
             break;
     }
 

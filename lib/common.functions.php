@@ -723,6 +723,107 @@ function SafeUrl($url)
     return $url;
 }
 
+/**
+ * Validate a caller-supplied redirect target.
+ *
+ * Pages seed their "back" link from HTTP_REFERER, so the value legitimately
+ * carries an absolute URL on this installation and cannot simply be required
+ * to be a relative path. Absolute URLs are accepted only when the host matches
+ * the installation host; anything else falls back to $default.
+ *
+ * Values containing a CR or LF are rejected outright: they would otherwise
+ * inject additional response headers through header("location:...").
+ */
+function SafeRedirectUrl($url, $default = "index.php")
+{
+    $url = trim((string) $url);
+    if ($url === "" || preg_match('/[\x00-\x1f\x7f]/', $url)) {
+        return $default;
+    }
+
+    // A backslash is never valid in a path here and browsers may normalise it
+    // into a slash, turning "/\host" into "//host".
+    if (strpos($url, "\\") !== false) {
+        return $default;
+    }
+
+    // Protocol-relative "//host/path" inherits the current scheme and points
+    // off-site, so it is rejected before anything else looks at it.
+    if (strpos($url, "//") === 0) {
+        return $default;
+    }
+
+    $parts = parse_url($url);
+    if ($parts === false) {
+        // parse_url() rejects malformed input such as "https:///host/path" that
+        // browsers still normalise to an absolute off-site URL, so a parsing
+        // failure must never be read as "this is a relative path".
+        return $default;
+    }
+
+    $scheme = isset($parts['scheme']) ? strtolower($parts['scheme']) : null;
+    $host = isset($parts['host']) ? $parts['host'] : null;
+
+    // Only a target with neither scheme nor host is genuinely relative.
+    if ($scheme === null && $host === null) {
+        return $url;
+    }
+
+    if ($scheme !== "http" && $scheme !== "https") {
+        return $default;
+    }
+
+    // A scheme without a host is malformed - "https:/host" and "https:///host"
+    // both parse this way - and browsers resolve it off-site, so require one.
+    if (!is_string($host) || $host === "") {
+        return $default;
+    }
+
+    $baseHost = parse_url(GetURLBase(), PHP_URL_HOST);
+    if (!is_string($baseHost) || strcasecmp($host, $baseHost) !== 0) {
+        return $default;
+    }
+
+    return $url;
+}
+
+/**
+ * Validate a stylesheet reference supplied through a query parameter.
+ *
+ * The external display pages let the caller point at any stylesheet, including
+ * one hosted elsewhere (ext/index.php offers "a link to your own style
+ * definition"), so the host cannot be constrained. Only the shape is checked:
+ * an http/https URL or a relative path, ending in .css. Anything else - most
+ * importantly a javascript: or data: scheme - falls back to the default.
+ *
+ * The return value is still untrusted text and must be HTML-escaped on output.
+ */
+function ValidStyleSheet($style, $default)
+{
+    $style = trim((string) $style);
+    if ($style === "") {
+        return $default;
+    }
+
+    // Reject control characters, whitespace and anything that could break out
+    // of the attribute before the shape is examined.
+    if (preg_match('/[\x00-\x20\x7f"\'<>\\\\]/', $style)) {
+        return $default;
+    }
+
+    $scheme = parse_url($style, PHP_URL_SCHEME);
+    if ($scheme !== null && !in_array(strtolower($scheme), ["http", "https"], true)) {
+        return $default;
+    }
+
+    $path = parse_url($style, PHP_URL_PATH);
+    if (!is_string($path) || strtolower(substr($path, -4)) !== ".css") {
+        return $default;
+    }
+
+    return $style;
+}
+
 function colorstring2rgb($color)
 {
     if (!is_string($color) || $color === '') {
@@ -801,104 +902,125 @@ if (!function_exists('array_combine')) {
     }
 }
 
+/**
+ * Check that a caller-supplied character encoding is one mbstring can produce.
+ *
+ * mb_convert_encoding() throws a ValueError on an unknown encoding name, so an
+ * ordinary typo in a hand-written export link surfaces as an uncaught error
+ * page. The name is probed against a short string instead of being matched
+ * against a fixed list: mbstring accepts common aliases such as UTF8, latin1
+ * and CP1252 that mb_list_encodings() does not report, and existing export
+ * links may well use them.
+ */
+function ValidCsvEncoding($encoding)
+{
+    $encoding = (string) $encoding;
+    if ($encoding === "") {
+        return false;
+    }
+
+    try {
+        $probe = mb_convert_encoding("0", $encoding, "UTF-8");
+    } catch (\ValueError $e) {
+        return false;
+    }
+
+    return $probe === false ? false : $encoding;
+}
+
+/**
+ * A CSV delimiter must be exactly one byte. fputcsv() rejects anything else,
+ * so the value is constrained here rather than at each serializer.
+ */
+function ValidCsvSeparator($separator)
+{
+    $separator = (string) $separator;
+    if (strlen($separator) !== 1) {
+        return false;
+    }
+    // A quote or a newline as the delimiter would produce unparseable output.
+    if (strpos("\"\r\n", $separator) !== false) {
+        return false;
+    }
+
+    return $separator;
+}
+
+/**
+ * Formats one CSV field.
+ *
+ * Every value that is written is enclosed in quotes and an embedded quote is
+ * doubled ("") as RFC 4180 requires. The previous code escaped it as a
+ * backslash followed by a quote, which common spreadsheet readers parse wrongly.
+ *
+ * fputcsv() is deliberately not used here. It encloses a field only when it has
+ * to, which would change the shape of every exported file; this project has
+ * always emitted fully enclosed fields and consumers depend on it.
+ */
+function CsvField($value)
+{
+    if ($value === null) {
+        return '';
+    }
+    // Preserves the long-standing behaviour that an empty value is written as
+    // an empty field rather than an empty pair of quotes, while a literal "0"
+    // is still written normally.
+    if ($value != '0' && $value == '') {
+        return '';
+    }
+
+    return '"' . str_replace('"', '""', $value) . '"';
+}
+
+/**
+ * Formats one CSV header field. Headers are always enclosed.
+ */
+function CsvHeaderField($value)
+{
+    return '"' . str_replace('"', '""', stripslashes((string) $value)) . '"';
+}
+
 function ResultsetToCsv($result, $separator)
 {
-    $csv_terminated = "\n";
-    $csv_separator = $separator;
-    $csv_enclosed = '"';
-    $csv_escaped = "\\";
-
     $fields_cnt = mysqli_num_fields($result);
 
-    $schema_insert = '';
-
+    $header = [];
     for ($i = 0; $i < $fields_cnt; $i++) {
-        $l = $csv_enclosed . str_replace(
-            $csv_enclosed,
-            $csv_escaped . $csv_enclosed,
-            stripslashes(mysqli_fetch_field_direct($result, $i)->name),
-        ) . $csv_enclosed;
-        $schema_insert .= $l;
-        $schema_insert .= $csv_separator;
-    } // end for
+        $header[] = CsvHeaderField(mysqli_fetch_field_direct($result, $i)->name);
+    }
+    $out = implode($separator, $header) . "\n";
 
-    $out = trim(substr($schema_insert, 0, -1));
-    $out .= $csv_terminated;
-
-    // Format the data
     while ($row = mysqli_fetch_array($result)) {
-        $schema_insert = '';
+        $fields = [];
         for ($j = 0; $j < $fields_cnt; $j++) {
-            if ($row[$j] == '0' || $row[$j] != '') {
+            $fields[] = CsvField($row[$j]);
+        }
+        $out .= implode($separator, $fields) . "\n";
+    }
 
-                $schema_insert .= $csv_enclosed .
-                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $row[$j]) . $csv_enclosed;
-            } else {
-                $schema_insert .= '';
-            }
-
-            if ($j < $fields_cnt - 1) {
-                $schema_insert .= $csv_separator;
-            }
-        } // end for
-
-        $out .= $schema_insert;
-        $out .= $csv_terminated;
-    } // end while
     return $out;
 }
 
 function ArrayToCsv($result, $separator)
 {
-    $csv_terminated = "\n";
-    $csv_separator = $separator;
-    $csv_enclosed = '"';
-    $csv_escaped = "\\";
-
     if (count($result) == 0) {
         return "";
     }
-    $fields_cnt = count($result[0]);
 
-    $schema_insert = '';
-    $keys = array_keys($result[0]);
+    $header = [];
+    foreach (array_keys($result[0]) as $fieldname) {
+        $header[] = CsvHeaderField($fieldname);
+    }
+    $out = implode($separator, $header) . "\n";
 
-    foreach ($keys as $fieldname) {
-        $l = $csv_enclosed . str_replace(
-            $csv_enclosed,
-            $csv_escaped . $csv_enclosed,
-            stripslashes($fieldname),
-        ) . $csv_enclosed;
-        $schema_insert .= $l;
-        $schema_insert .= $csv_separator;
-        //echo $fieldname;
-    } // end for
-
-    $out = trim(substr($schema_insert, 0, -1));
-    $out .= $csv_terminated;
-
-    // Format the data
     foreach ($result as $row) {
-        $schema_insert = '';
-        $j = 0;
+        $fields = [];
         foreach ($row as $value) {
-            if ($value == '0' || $value != '') {
+            $fields[] = CsvField($value);
+        }
+        $out .= implode($separator, $fields) . "\n";
+    }
 
-                $schema_insert .= $csv_enclosed .
-                    str_replace($csv_enclosed, $csv_escaped . $csv_enclosed, $value) . $csv_enclosed;
-            } else {
-                $schema_insert .= '';
-            }
-
-            if ($j < $fields_cnt - 1) {
-                $schema_insert .= $csv_separator;
-            }
-            $j++;
-        } // end for
-
-        $out .= $schema_insert;
-        $out .= $csv_terminated;
-    } // end while
     return $out;
 }
 
