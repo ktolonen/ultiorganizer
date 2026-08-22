@@ -27,24 +27,41 @@ function ResolvePlayoffPoolStandings($poolId)
     //query pool teams
     $query = sprintf(
         "
-		SELECT j.team_id, js.activerank 
-		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team) 
-		WHERE js.pool=%d 
+		SELECT j.team_id, js.rank
+		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team)
+		WHERE js.pool=%d
 		ORDER BY js.rank ASC",
         (int) $poolId,
     );
 
     $teams = DBQueryToArray($query);
-    $steams = PoolSchedulingTeams($poolId);
 
-    if (count($teams) <= 1 || count($teams) < count($steams)) {
+    if (count($teams) <= 1) {
         return;
     }
 
-    for ($i = 0; $i < (count($teams) - 1); $i = $i + 2) {
+    $byRank = [];
+    foreach ($teams as $team) {
+        $byRank[(int) $team['rank']] = (int) $team['team_id'];
+    }
+
+    //pair on the pool's slots, so that a slot still waiting for its team keeps
+    //its place in the order. Slot numbers are not always consecutive: the odd
+    //team of a bye bracket sits in the slot past the last pair.
+    $slots = array_keys($byRank);
+    foreach (PoolMovingsToPool($poolId) as $move) {
+        $slots[] = (int) $move['torank'];
+    }
+    $slots = array_unique($slots);
+    sort($slots);
+
+    for ($i = 0; $i + 1 < count($slots); $i = $i + 2) {
         //loop team in pairs, but also be aware if there is odd number of teams
-        $teamId1 = $teams[$i]['team_id'];
-        $teamId2 = $teams[$i + 1]['team_id'];
+        if (!isset($byRank[$slots[$i]]) || !isset($byRank[$slots[$i + 1]])) {
+            continue;
+        }
+        $teamId1 = $byRank[$slots[$i]];
+        $teamId2 = $byRank[$slots[$i + 1]];
         $query = sprintf(
             "SELECT 
 				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team1wins,
@@ -84,10 +101,10 @@ function ResolvePlayoffPoolStandings($poolId)
         }
     }
     // if odd number of teams
-    if (count($teams) % 2 == 1) {
-        $byeTeamId = $teams[count($teams) - 1]['team_id'];
+    if (count($slots) % 2 == 1 && isset($byRank[$slots[count($slots) - 1]])) {
+        $byeTeamId = $byRank[$slots[count($slots) - 1]];
         // set activerank to the last position in pool
-        DBQuery("UPDATE uo_team_pool SET activerank=" . (count($teams)) . " WHERE pool=" . intval($poolId) . " AND team=$byeTeamId");
+        DBQuery("UPDATE uo_team_pool SET activerank=" . count($slots) . " WHERE pool=" . intval($poolId) . " AND team=$byeTeamId");
         // and attempt to move
         TeamMove($byeTeamId, $poolId, true);
     }
