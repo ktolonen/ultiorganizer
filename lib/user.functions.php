@@ -1106,48 +1106,6 @@ function AddUserRole($userid, $role)
 }
 
 /**
- * Resolves the event a season-scoped role actually grants power over.
- *
- * A role is stored as "<name>:<target id>", and the target is not always an
- * event: teamadmin and accradmin name a team, gameadmin names a game. The
- * event a caller claims to be administering is therefore not proof that the
- * role belongs to it.
- *
- * @return string|null the owning event id, or null when it cannot be resolved.
- */
-function SeasonRoleTargetSeason($role)
-{
-    $parts = explode(":", (string) $role, 2);
-    if (count($parts) !== 2 || $parts[1] === "") {
-        return null;
-    }
-
-    list($name, $target) = $parts;
-
-    switch ($name) {
-        case "seasonadmin":
-        case "spiritadmin":
-            return $target;
-        case "teamadmin":
-        case "accradmin":
-            $season = TeamSeason($target);
-            return empty($season) ? null : $season;
-        case "gameadmin":
-            // Loaded on demand rather than at the top of this file:
-            // game.functions.php pulls in configuration.functions.php, which
-            // queries at include time, and user.functions.php is itself loaded
-            // during database.php's bootstrap before a connection exists.
-            if (!function_exists("GameSeason")) {
-                require_once __DIR__ . '/game.functions.php';
-            }
-            $season = GameSeason($target);
-            return empty($season) ? null : $season;
-        default:
-            return null;
-    }
-}
-
-/**
  * Returns true when $role may be granted or revoked while administering
  * $seasonId.
  *
@@ -1163,12 +1121,46 @@ function CanChangeSeasonUserRole($role, $seasonId)
         return true;
     }
 
-    $targetSeason = SeasonRoleTargetSeason($role);
-    if ($targetSeason === null || (string) $targetSeason !== (string) $seasonId) {
+    $parts = explode(":", (string) $role, 2);
+    if (count($parts) !== 2 || $parts[1] === "") {
         return false;
     }
 
-    list($name, $target) = explode(":", (string) $role, 2);
+    list($name, $target) = $parts;
+
+    // Resolve the event the role actually grants power over. The target is not
+    // always an event: teamadmin and accradmin name a team and gameadmin names a
+    // game, so the event the caller claims to be administering is no proof that
+    // the role belongs to it.
+    //
+    // game.functions.php is loaded on demand rather than at the top of this
+    // file: it pulls in configuration.functions.php, which queries at include
+    // time, and user.functions.php is itself loaded during database.php's
+    // bootstrap before a connection exists.
+    switch ($name) {
+        case "seasonadmin":
+        case "spiritadmin":
+            $targetSeason = $target;
+            break;
+        case "teamadmin":
+        case "accradmin":
+            $season = TeamSeason($target);
+            $targetSeason = empty($season) ? null : $season;
+            break;
+        case "gameadmin":
+            if (!function_exists("GameSeason")) {
+                require_once __DIR__ . '/game.functions.php';
+            }
+            $season = GameSeason($target);
+            $targetSeason = empty($season) ? null : $season;
+            break;
+        default:
+            return false;
+    }
+
+    if ($targetSeason === null || (string) $targetSeason !== (string) $seasonId) {
+        return false;
+    }
 
     switch ($name) {
         case "teamadmin":
@@ -1176,10 +1168,6 @@ function CanChangeSeasonUserRole($role, $seasonId)
             $series = getTeamSeries($target);
             return empty($series) ? false : hasEditTeamsRight($series);
         case "gameadmin":
-            // See the note in SeasonRoleTargetSeason() on the lazy require.
-            if (!function_exists("GameSeries")) {
-                require_once __DIR__ . '/game.functions.php';
-            }
             $series = GameSeries($target);
             return empty($series) ? false : hasEditGamesRight($series);
         default:
