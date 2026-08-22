@@ -8,7 +8,7 @@
     <FilesMatch "\.php$">
         Require all denied
     </FilesMatch>
-    <FilesMatch "^(players|jasenet)\.php$">
+    <FilesMatch "^players\.php$">
         Require all granted
     </FilesMatch>
 </IfModule>
@@ -16,7 +16,7 @@
     <FilesMatch "\.php$">
         Deny from all
     </FilesMatch>
-    <FilesMatch "^(players|jasenet)\.php$">
+    <FilesMatch "^players\.php$">
         Allow from all
     </FilesMatch>
 </IfModule>
