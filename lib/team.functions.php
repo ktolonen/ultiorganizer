@@ -518,13 +518,17 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
         }
     }
 
-    //insert team to next pool
+    //insert team to next pool, or relocate it when a corrected result moves it
+    //to a different slot in a pool it already entered
     $query = sprintf(
-        "INSERT IGNORE INTO uo_team_pool
-				(team, pool, rank, activerank) 
-				VALUES	('%s','%s','%s','%s')",
+        "INSERT INTO uo_team_pool
+				(team, pool, rank, activerank)
+				VALUES	('%s','%s','%s','%s')
+				ON DUPLICATE KEY UPDATE rank='%s', activerank='%s'",
         (int) $teamId,
         (int) $move['topool'],
+        (int) $move['torank'],
+        (int) $move['torank'],
         (int) $move['torank'],
         (int) $move['torank'],
     );
