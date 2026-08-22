@@ -490,9 +490,17 @@ if (GameHasStarted($game_result) > 0) {
                     $nVBreaks++;
                 }
 
-                //point duration
-                $nDuration = intval($goal['time']) - $nClockTime;
-                $nClockTime = intval($goal['time']);
+                // A point can be saved without a time. Treat the missing value as
+                // unknown rather than as a clock reading of zero: it contributes no
+                // duration and leaves the running clock where the last timed point
+                // put it, so the next timed point still measures from a real reading.
+                $nGoalTime = intval($goal['time']);
+                if ($nGoalTime > 0) {
+                    $nDuration = $nGoalTime - $nClockTime;
+                    $nClockTime = $nGoalTime;
+                } else {
+                    $nDuration = 0;
+                }
 
                 if ($bHOffence) {
                     $nHTotalTime += $nDuration;

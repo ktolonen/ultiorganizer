@@ -831,8 +831,14 @@ function api_gameplay_statistics($gameId, $gameResult)
             $awayBreaks++;
         }
 
-        $duration = intval($goal['time']) - $clockTime;
-        $clockTime = intval($goal['time']);
+        // A point can be saved without a time; see the same guard in gameplay.php.
+        $goalTime = intval($goal['time']);
+        if ($goalTime > 0) {
+            $duration = $goalTime - $clockTime;
+            $clockTime = $goalTime;
+        } else {
+            $duration = 0;
+        }
 
         if ($homeOffence) {
             $homeTime += $duration;
