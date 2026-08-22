@@ -177,6 +177,68 @@ Notes:
 - Non-color assets (logos, icons) do not follow tokens and may need dark
   variants.
 
+## Pool colors
+
+Pool colors are data, not CSS. `cust/default/pool_colors.php` contains several
+named lists and returns one of them through a hardcoded key at the bottom of the
+file. An installation can instead add `cust/<CUSTOMIZATIONS>/pool_colors.php`
+that returns an array of 6-digit hex colors. `PoolColors()` in
+`lib/pool.functions.php` loads the returned list and drops entries that are not
+6-digit hex.
+
+| Shipped palette | Entries | Intended use |
+| --- | ---: | --- |
+| `ultiorganizer` | 48 | The original replacement palette, tuned for the 30% tint over white |
+| `glasbey-light-background` | 256 | Light page backgrounds |
+| `glasbey-dark-background` | 256 | Dark page backgrounds |
+| `okabe-ito` | 8 | A compact color-vision-deficiency-aware option |
+
+The Glasbey lists are Colorcet's complete 256-entry precomputed palettes. They
+maximize separation from colors that appear earlier in each list while
+constraining lightness for the intended background. Palette selection is not
+yet an installation setting: change the final return key in
+`cust/default/pool_colors.php`, then use the pool color updater if existing
+pools should receive the newly selected colors.
+
+The same stored color is drawn on three surfaces, which is what constrains the
+palette:
+
+| Surface | How the color is drawn |
+| --- | --- |
+| Pool status pages | Tinted to 30% opacity over the white table row, text in `textColor()` |
+| PDF schedule and scoresheet | Full-opacity cell fill, text in `textColor()` |
+| Pool admin pages | Full-opacity swatch |
+
+The 30% tint pulls every color towards the page background, so a palette that
+looks varied at full opacity can still contain pairs that are hard to
+distinguish on a pool status page. The precomputed palettes are deliberately a
+simple improvement rather than a guarantee: pool names remain the primary cue,
+and the updater can repair problematic assignments found in an existing event.
+
+`PoolPickColor()` starts at the palette position matching the pool id and takes
+the first color no other pool in the same division uses. A division only starts
+repeating a color once it has more pools than the selected palette has entries.
+The two 256-color Glasbey options therefore cover the largest divisions seen
+in practice; the eight-color Okabe-Ito option deliberately trades capacity for
+a smaller, more accessible set.
+
+Two caveats when replacing the list:
+
+- **Order is part of the contract.** Pools created in one request get
+  consecutive pool ids, so they get consecutive palette entries. Glasbey's
+  greedy order is useful here because each new entry was selected to differ
+  from the entries before it.
+- **Existing pools keep their stored color.** Changing the palette only affects
+  pools created afterwards. Recolor existing ones from the superadmin plugin at
+  `?view=plugins/update_pool_colors`, which picks through `PoolPickColor()` as
+  well and writes one pool at a time, so recoloring several pools of a division
+  in one go cannot give two of them the same color.
+
+No large categorical palette can make dozens of colors reliably identifiable
+for every reader. The Okabe-Ito option is available when support for color
+vision deficiency matters more than the number of unique pool colors. In every
+palette, color stays a secondary cue and pool names remain the primary one.
+
 ## Verification
 
 The CSS lint/review skill is `docs/ai/css-style-and-lint/SKILL.md`. Run

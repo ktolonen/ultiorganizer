@@ -19,4 +19,3 @@ plugins/add_field_accounts.php
 plugins/import_xml_ffindr.php
 plugins/lisence_modifier.php
 plugins/reassign_playoffpools.php
-plugins/update_pool_colors.php
