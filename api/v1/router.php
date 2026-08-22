@@ -801,9 +801,14 @@ function api_gameplay_statistics($gameId, $gameResult)
     $homeTurnovers = 0;
     $awayTurnovers = 0;
 
+    // An unrecorded halftime is stored as zero. Comparing against it flipped the
+    // offence on the very first goal, before the game had been played, so the
+    // opening offence went to the wrong team and the first goal read as a break.
+    $halftime = GameHalftimeSeconds($gameResult);
+
     foreach ($allgoals as $goal) {
-        if (($clockTime <= intval($gameResult['halftime'])) && (intval($goal['time']) >= intval($gameResult['halftime']))) {
-            $clockTime = intval($gameResult['halftime']);
+        if ($halftime !== null && ($clockTime <= $halftime) && (intval($goal['time']) >= $halftime)) {
+            $clockTime = $halftime;
             $homeOffence = !$homeStarts;
         }
 
