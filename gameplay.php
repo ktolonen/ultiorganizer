@@ -490,12 +490,15 @@ if (GameHasStarted($game_result) > 0) {
                     $nVBreaks++;
                 }
 
-                // A point can be saved without a time. Treat the missing value as
-                // unknown rather than as a clock reading of zero: it contributes no
-                // duration and leaves the running clock where the last timed point
-                // put it, so the next timed point still measures from a real reading.
+                // Count a point only when its time advances the running clock. The
+                // goals are ordered by point number, so the time is whatever was
+                // recorded: it can be missing, stored as zero, or force-saved out of
+                // sequence. Anything that does not move the clock forward is an
+                // unusable reading, and subtracting it would charge the team a
+                // negative duration. Such a point contributes nothing and leaves the
+                // clock where the last usable reading put it.
                 $nGoalTime = intval($goal['time']);
-                if ($nGoalTime > 0) {
+                if ($nGoalTime > $nClockTime) {
                     $nDuration = $nGoalTime - $nClockTime;
                     $nClockTime = $nGoalTime;
                 } else {

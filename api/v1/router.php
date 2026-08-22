@@ -836,9 +836,10 @@ function api_gameplay_statistics($gameId, $gameResult)
             $awayBreaks++;
         }
 
-        // A point can be saved without a time; see the same guard in gameplay.php.
+        // Count a point only when its time advances the clock; see the same guard
+        // in gameplay.php.
         $goalTime = intval($goal['time']);
-        if ($goalTime > 0) {
+        if ($goalTime > $clockTime) {
             $duration = $goalTime - $clockTime;
             $clockTime = $goalTime;
         } else {
