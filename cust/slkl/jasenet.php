@@ -4,9 +4,14 @@ if (!isset($include_prefix)) {
     $include_prefix = __DIR__ . '/../../';
 }
 
+// conf/config.inc.php must be loaded before the session starts: the session
+// instance fingerprint is built from DB_HOST, DB_DATABASE and BASEURL, and a
+// fingerprint computed without them does not match the one index.php stored,
+// so the caller's login session would be discarded as another installation's.
+include_once $include_prefix . 'lib/database.php';
+
 include_once $include_prefix . 'lib/auth.guard.php';
 
-include_once '../../lib/database.php';
 include_once '../../lib/accreditation.functions.php';
 include_once '../../lib/common.functions.php';
 include_once '../../lib/user.functions.php';
