@@ -686,11 +686,14 @@ function GoalDisplayText($goal, $gameId, $withNumbers = false)
 
 function GameAllGoals($gameId)
 {
+    // Order by the point number, not the clock. A point time is optional and a
+    // recorded one is sometimes out of sequence, so ordering by time puts goals
+    // in the wrong order and the offence and break counts follow it.
     $query = sprintf(
         "SELECT num,time,ishomegoal 
 		FROM uo_goal 
 		WHERE game='%s' 
-		ORDER BY time",
+		ORDER BY num",
         DBEscapeString($gameId),
     );
 
