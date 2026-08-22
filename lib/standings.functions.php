@@ -109,8 +109,12 @@ function ResolvePlayoffPoolStandings($poolId)
         TeamMove($byeTeamId, $poolId, true);
     }
 
-    //check if there are special ranking rules and apply them
-    CheckSpecialRanking($poolId);
+    //check if there are special ranking rules and apply them. A rule reads one
+    //activerank and writes another, so applying it to a standing it has already
+    //permuted moves that team again: only run it once every slot is filled.
+    if (count($byRank) == count($slots)) {
+        CheckSpecialRanking($poolId);
+    }
 }
 
 function CheckSpecialRanking($poolId)
