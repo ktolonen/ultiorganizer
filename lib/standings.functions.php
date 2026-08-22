@@ -141,10 +141,10 @@ function ResolveCrossMatchPoolStandings($poolId)
     //query pool teams
     $query = sprintf(
         "
-		SELECT j.team_id, js.activerank 
-		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team) 
-		WHERE js.pool=%d 
-		ORDER BY js.activerank ASC, js.rank ASC",
+		SELECT j.team_id, js.rank
+		FROM uo_team AS j INNER JOIN uo_team_pool AS js ON (j.team_id = js.team)
+		WHERE js.pool=%d
+		ORDER BY js.rank ASC",
         (int) $poolId,
     );
 
@@ -154,10 +154,28 @@ function ResolveCrossMatchPoolStandings($poolId)
         return;
     }
 
-    for ($i = 0; $i < (count($teams) - 1); $i = $i + 2) {
+    $byRank = [];
+    foreach ($teams as $team) {
+        $byRank[(int) $team['rank']] = (int) $team['team_id'];
+    }
+
+    //pair on the pool's slots. A participant can still be an unresolved
+    //placeholder with no uo_team_pool row of its own, and pairing on the teams
+    //present would then put every later pair against the wrong opponent.
+    $slots = array_keys($byRank);
+    foreach (PoolMovingsToPool($poolId) as $move) {
+        $slots[] = (int) $move['torank'];
+    }
+    $slots = array_unique($slots);
+    sort($slots);
+
+    for ($i = 0; $i + 1 < count($slots); $i = $i + 2) {
         //loop team in pairs, but also be aware if there is odd number of teams
-        $teamId1 = $teams[$i]['team_id'];
-        $teamId2 = $teams[$i + 1]['team_id'];
+        if (!isset($byRank[$slots[$i]]) || !isset($byRank[$slots[$i + 1]])) {
+            continue;
+        }
+        $teamId1 = $byRank[$slots[$i]];
+        $teamId2 = $byRank[$slots[$i + 1]];
         $query = sprintf(
             "SELECT 
 				COUNT((hometeam=%d AND ((forfeit=0 AND homescore>visitorscore) OR forfeit=2)) OR (visitorteam=%d AND ((forfeit=0 AND homescore<visitorscore) OR forfeit=1)) OR NULL) AS team1wins,
