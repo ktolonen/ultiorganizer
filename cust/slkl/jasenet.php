@@ -25,13 +25,15 @@ header("Expires: -1");
 startSecureSession();
 OpenConnection();
 
+$dom = new DOMDocument("1.0");
+$node = $dom->createElement("MemberSet");
+$parnode = $dom->appendChild($node);
+
+// An empty body is not a parseable XML document, so the datasource would
+// report a denied request as a data error. Always emit the document and
+// leave it without members instead.
 if (hasEditPlayersRight($teamId)) {
-
     $licenses = SearchLicenseData($firstname, $lastname);
-
-    $dom = new DOMDocument("1.0");
-    $node = $dom->createElement("MemberSet");
-    $parnode = $dom->appendChild($node);
 
     foreach ($licenses as $row) {
         $node = $dom->createElement("Member");
@@ -67,6 +69,7 @@ if (hasEditPlayersRight($teamId)) {
         $nextText = $dom->createTextNode(DefBirthdayFormat($row['birthdate']));
         $nextText = $nextNode->appendChild($nextText);
     }
-    echo $dom->saveXML();
 }
+
+echo $dom->saveXML();
 CloseConnection();
