@@ -341,7 +341,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(95, '2026-06-11 00:00:00'),
 	(96, '2026-07-07 00:00:00'),
 	(97, '2026-07-25 00:00:00'),
-	(98, '2026-08-16 00:00:00');
+	(98, '2026-08-16 00:00:00'),
+	(99, '2026-08-23 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -887,6 +888,7 @@ CREATE TABLE IF NOT EXISTS `uo_season` (
   `reg_id` int(10) unsigned DEFAULT NULL,
   `timezone` varchar(50) DEFAULT NULL,
   `spiritmode` int(10) DEFAULT NULL,
+  `banner_image` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`season_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

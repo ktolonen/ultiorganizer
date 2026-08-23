@@ -1516,6 +1516,13 @@ function upgrade98()
     addIndex('uo_event_log', 'idx_event_log_id1_source_time', '(`id1`, `source`, `time`)');
 }
 
+function upgrade99()
+{
+    if (!hasColumn('uo_season', 'banner_image')) {
+        addColumn('uo_season', 'banner_image', "varchar(255) DEFAULT NULL");
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {
