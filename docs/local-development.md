@@ -105,7 +105,7 @@ mkdir -p images/uploads
 chmod 777 images/uploads
 ```
 
-For non-local deployments, create the directory owned by the web server user instead of making it world-writable.
+For non-local deployments, give the directory to the user the PHP process runs as — the pool user under PHP-FPM, or the web server user under mod_php — instead of making it world-writable.
 
 ## Optional developer workspace
 
