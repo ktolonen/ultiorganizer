@@ -711,6 +711,10 @@ function recur_mkdirs($path, $mode = 0775)
         if (!file_exists($thispath)) {
             //print "$thispath<br>";
             mkdir($thispath, $mode);
+            // mkdir() masks its mode with the umask, so a restrictive umask
+            // would leave the directory untraversable by a web server running
+            // as another user, and every file below it unreachable.
+            chmod($thispath, $mode);
         }
     }
 }

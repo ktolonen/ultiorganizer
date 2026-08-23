@@ -447,9 +447,14 @@ function configurations()
     //write configuration file
     if (!empty($_POST['saveconf'])) {
         $passed = true;
-        if (!is_writable($upload_dir)) {
+        if (!is_dir($upload_dir) && !@mkdir($upload_dir, 0775, true)) {
+            $html .= "<p style='color:red'>Cannot create upload directory $upload_dir.</p>";
+            $passed = false;
+        } elseif (!is_writable($upload_dir)) {
             $html .= "<p style='color:red'>Upload directory $upload_dir is not writable.</p>";
             $passed = false;
+        } else {
+            @chmod($upload_dir, 0775);
         }
         if (empty($maintenance_runtime_dir)) {
             $html .= "<p style='color:red'>Maintenance runtime directory must not be empty.</p>";
