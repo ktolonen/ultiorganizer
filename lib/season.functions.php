@@ -1321,7 +1321,16 @@ function UploadSeasonBanner($seasonId, $file)
         recur_mkdirs($basedir, 0775);
     }
 
-    $imgname = time() . abs(crc32($seasonId)) . ".jpg";
+    // Random rather than derived from the event id and clock: two uploads for
+    // the same event within one second would otherwise generate the same name,
+    // and the second upload's cleanup would delete the file the first just
+    // wrote, leaving the row pointing at nothing.
+    try {
+        $imgname = bin2hex(random_bytes(16)) . ".jpg";
+    } catch (Exception $e) {
+        return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
+    }
+
     if (!is_dir($basedir) || !ConvertToJpeg($file['tmp_name'], $basedir . $imgname)) {
         return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
     }
