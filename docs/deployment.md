@@ -79,10 +79,11 @@ To install Ultiorganizer on a server:
 1. Download or build the release ZIP.
 2. Extract it locally or on the server.
 3. Upload the extracted package contents to the web server document root or application directory.
-4. Open `https://your-host/install.php` in a browser.
-5. Follow the installer steps.
-6. After installation, make sure `conf/` and `conf/config.inc.php` are not writable by the web server user.
-7. Remove `install.php` from the server, or block access to it at the web-server level.
+4. Create the upload directory `images/uploads/` and make it writable by the web server user. Release packages do not ship it, and the installer will not let you continue past the configuration step while it is missing or read-only.
+5. Open `https://your-host/install.php` in a browser.
+6. Follow the installer steps.
+7. After installation, make sure `conf/` and `conf/config.inc.php` are not writable by the web server user.
+8. Remove `install.php` from the server, or block access to it at the web-server level.
 
 The installer needs `sql/ultiorganizer.sql` and `conf/config.inc.example.php`, so both files are included in install packages. Update packages omit both files. They should not be exposed for browsing by the web server after installation.
 

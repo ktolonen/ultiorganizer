@@ -94,6 +94,19 @@ chmod 664 conf/config.inc.php
 
 For non-local deployments, do not leave `conf/` world-writable.
 
+## Allow uploads to write `images/uploads/`
+
+The upload directory is not tracked in git, so a fresh checkout does not have it. The installer checks that it is writable and disables its Continue button while it is missing, and afterwards team, club, player and event banner uploads fail with a generic processing error.
+
+Create it and let `www-data` write to it:
+
+```sh
+mkdir -p images/uploads
+chmod 777 images/uploads
+```
+
+For non-local deployments, create the directory owned by the web server user instead of making it world-writable.
+
 ## Optional developer workspace
 
 The stack also includes an optional `dev` service for AI agents, shell work, and repo tooling. It shares the same source tree as the running app but does not serve web traffic.
