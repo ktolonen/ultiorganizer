@@ -959,6 +959,9 @@ function DeleteSeason($seasonId)
 {
     if (isSuperAdmin()) {
         Log2("season", "delete", SeasonName($seasonId));
+        // Deleting the row loses the filename, so the banner has to go first
+        // or its file is orphaned with no way to reach it from the app.
+        RemoveSeasonBanner($seasonId);
         $query = sprintf(
             "DELETE FROM uo_season WHERE season_id='%s'",
             DBEscapeString($seasonId),
