@@ -162,6 +162,10 @@ function WriteJpegImage($image, $fileDst)
         return false;
     }
 
+    // tempnam() creates the file 0600 and rename() keeps that mode, which
+    // hides the image from a web server running as another user.
+    chmod($fileDst, 0644);
+
     return true;
 }
 

@@ -84,6 +84,12 @@ To install Ultiorganizer on a server:
 6. After installation, make sure `conf/` and `conf/config.inc.php` are not writable by the web server user.
 7. Remove `install.php` from the server, or block access to it at the web-server level.
 
+Release packages do not ship the upload directory `images/uploads/`. The installer creates it, and the application creates the per-entity directories below it on first upload. Both act as the user the PHP process runs as: the pool user under PHP-FPM, or the web server user under mod_php.
+
+Grant that user write access to the narrowest path that works. The installer needs to write `images/` only in order to create `images/uploads/` inside it, and nothing afterwards needs write access above `images/uploads/` itself. To avoid making `images/` writable at all, create `images/uploads/` yourself and give it to that user before running the installer, which will not let you continue past the configuration step until the directory exists and can be written. Do not grant the PHP process write access to the application root: step 6 above depends on `conf/` staying beyond its reach, and a writable root would also let uploaded code replace the application.
+
+Uploaded images are stored `0644` inside `0775` directories, so an HTTP server running as a different user than PHP can read and traverse them. A directory that already exists keeps the mode it has, so if you pre-create `images/uploads/` give it a mode that server can traverse. Do not tighten these to owner-only, or the images will be stored correctly but served as 403.
+
 The installer needs `sql/ultiorganizer.sql` and `conf/config.inc.example.php`, so both files are included in install packages. Update packages omit both files. They should not be exposed for browsing by the web server after installation.
 
 ## PHP upload limits

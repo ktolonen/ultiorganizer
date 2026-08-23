@@ -447,7 +447,28 @@ function configurations()
     //write configuration file
     if (!empty($_POST['saveconf'])) {
         $passed = true;
-        if (!is_writable($upload_dir)) {
+        // mkdir()'s recursive mode applies the umask to every component it
+        // creates, which would leave an intermediate directory untraversable
+        // by a web server running as another user. Create one component at a
+        // time so each gets its mode set, and leave directories that already
+        // exist alone.
+        $uploadPath = substr($upload_dir, 0, 1) === '/' ? '/' : '';
+        $uploadCreated = true;
+        foreach (array_filter(explode('/', $upload_dir), static fn($part) => $part !== '') as $uploadPart) {
+            $uploadPath .= $uploadPart . '/';
+            if (is_dir($uploadPath)) {
+                continue;
+            }
+            if (!@mkdir($uploadPath, 0775)) {
+                $uploadCreated = false;
+                break;
+            }
+            @chmod($uploadPath, 0775);
+        }
+        if (!$uploadCreated) {
+            $html .= "<p style='color:red'>Cannot create upload directory $upload_dir.</p>";
+            $passed = false;
+        } elseif (!is_writable($upload_dir)) {
             $html .= "<p style='color:red'>Upload directory $upload_dir is not writable.</p>";
             $passed = false;
         }

@@ -94,6 +94,19 @@ chmod 664 conf/config.inc.php
 
 For non-local deployments, do not leave `conf/` world-writable.
 
+## Allow uploads to write `images/uploads/`
+
+The upload directory is not tracked in git, so a fresh checkout does not have it. The installer creates it, and image uploads create the per-entity directories below it. Both run as `www-data` in the `app` container while the checkout is bind-mounted from the host, so the host `images/` directory has to allow that write, exactly like `conf/` above.
+
+If the installer reports that it cannot create the directory, or uploads fail with a generic processing error, create it yourself:
+
+```sh
+mkdir -p images/uploads
+chmod 777 images/uploads
+```
+
+For non-local deployments, give the directory to the user the PHP process runs as — the pool user under PHP-FPM, or the web server user under mod_php — instead of making it world-writable.
+
 ## Optional developer workspace
 
 The stack also includes an optional `dev` service for AI agents, shell work, and repo tooling. It shares the same source tree as the running app but does not serve web traffic.
