@@ -96,7 +96,7 @@ For non-local deployments, do not leave `conf/` world-writable.
 
 ## Allow uploads to write `images/uploads/`
 
-The upload directory is not tracked in git, so a fresh checkout does not have it. The installer checks that it is writable and disables its Continue button while it is missing, and afterwards team, club, player and event banner uploads fail with a generic processing error.
+The upload directory is not tracked in git, so a fresh checkout does not have it. The installer checks that it is writable and disables its Continue button while it is missing, and afterwards team, club and player image uploads fail with a generic processing error.
 
 Create it and let `www-data` write to it:
 
