@@ -19,6 +19,11 @@ if (iget("hideseason")) {
 
 $htmlfile = 'locale/' . getSessionLocale() . '/LC_MESSAGES/welcome.html';
 
+// CurrentSeason() returns the visitor's selected event only when they may see
+// it, and otherwise falls back to an accessible current event, so this cannot
+// expose a private event's banner on a page that skips the access guard.
+$html .= SeasonBannerHTML(CurrentSeason());
+
 if (is_file('cust/' . CUSTOMIZATIONS . '/' . $htmlfile)) {
     $html .= file_get_contents('cust/' . CUSTOMIZATIONS . '/' . $htmlfile);
 } else {
