@@ -86,7 +86,7 @@ To install Ultiorganizer on a server:
 
 Release packages do not ship the upload directory `images/uploads/`. The installer creates it, and the application creates the per-entity directories below it on first upload. Both need the application directory to be writable by the user the PHP process runs as: the pool user under PHP-FPM, or the web server user under mod_php. If the installer reports that it cannot create the directory, create it yourself and give it to that user; the installer will not let you continue past the configuration step until it can be written.
 
-Uploaded images are stored `0644` inside `0775` directories, so an HTTP server running as a different user than PHP can read and traverse them. Do not tighten either to owner-only, or the images will be stored correctly but served as 403.
+Uploaded images are stored `0644` inside `0775` directories, so an HTTP server running as a different user than PHP can read and traverse them. Directories that already exist are left as they are, so the application directory itself must also be traversable by that server. Do not tighten any of them to owner-only, or the images will be stored correctly but served as 403.
 
 The installer needs `sql/ultiorganizer.sql` and `conf/config.inc.example.php`, so both files are included in install packages. Update packages omit both files. They should not be exposed for browsing by the web server after installation.
 
