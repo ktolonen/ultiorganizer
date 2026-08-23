@@ -247,7 +247,8 @@ if ($format == "pdf") {
 }
 
 // MaintenanceSeasonFromView() is a general request-to-event resolver; the name
-// predates that use. It covers every scope parameter this page accepts.
+// predates that use. With no scope parameter it falls back to the current
+// event, which matches this page's own fallback.
 $html .= SeasonBannerHTML(MaintenanceSeasonFromView('games'));
 
 if (!$print && !$singleview) {
