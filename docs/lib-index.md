@@ -31,7 +31,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/privacy.functions.php`: privacy export, anonymization, deletion, and audit helpers for registered-user and player data.
 - `lib/reservation.functions.php`: reservation/field CRUD, scheduled-game lookups, unscheduled-team helpers, and delete checks.
 - `lib/search.functions.php`: reusable search form builders and result renderers for seasons, series, pools, teams, users, players, reservations, and games.
-- `lib/season.functions.php`: season CRUD, season relations, reservations, admins/roles, readonly mode, and deletion checks.
+- `lib/season.functions.php`: season CRUD, season relations, reservations, admins/roles, readonly mode, deletion checks, and event banner storage and rendering (`SeasonBannerHTML`, `UploadSeasonBanner`, `RemoveSeasonBanner`).
 - `lib/seasonpoints.functions.php`: season-points round CRUD, round scoring, and per-series totals.
 - `lib/series.functions.php`: series CRUD, team enrollment, series scoreboards, related games/pools, and team copy helpers.
 - `lib/session.functions.php`: secure session start/regenerate/destroy helpers and HTTPS detection.

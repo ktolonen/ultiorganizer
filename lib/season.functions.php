@@ -959,6 +959,9 @@ function DeleteSeason($seasonId)
 {
     if (isSuperAdmin()) {
         Log2("season", "delete", SeasonName($seasonId));
+        // Deleting the row loses the filename, so the banner has to go first
+        // or its file is orphaned with no way to reach it from the app.
+        RemoveSeasonBanner($seasonId);
         $query = sprintf(
             "DELETE FROM uo_season WHERE season_id='%s'",
             DBEscapeString($seasonId),
@@ -1242,4 +1245,141 @@ function CanDeleteSeason($seasonId)
     } else {
         return false;
     }
+}
+
+/**
+ * Returns the html for an event's banner, or "" when the event has none.
+ *
+ * The filename is read from uo_season, never from the request, so an unknown
+ * event id cannot reach the markup.
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return string html or empty string
+ */
+function SeasonBannerHTML($seasonId)
+{
+    if (empty($seasonId)) {
+        return "";
+    }
+
+    $seasonInfo = SeasonInfo($seasonId);
+    if (empty($seasonInfo['banner_image'])) {
+        return "";
+    }
+
+    $file = UPLOAD_DIR . "banners/" . $seasonInfo['banner_image'];
+    if (!is_file($file)) {
+        return "";
+    }
+
+    return "<img class='eventbanner' src='" . utf8entities($file)
+        . "' alt='" . utf8entities(U_($seasonInfo['name'])) . "'/>\n";
+}
+
+/**
+ * Stores an uploaded banner image for an event.
+ *
+ * Access level: seasonadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @param array $file one entry of $_FILES
+ * @return string warning html on failure, "" on success
+ */
+function UploadSeasonBanner($seasonId, $file)
+{
+    if (!isSeasonAdmin($seasonId)) {
+        die('Insufficient rights to edit event banner');
+    }
+
+    $max_file_size = 5 * 1024 * 1024; //5 MB
+
+    if (empty($file['tmp_name']) || !is_uploaded_file($file['tmp_name'])) {
+        return "<p class='warning'>" . _("No image selected.") . "</p>";
+    }
+
+    if ($file['size'] > $max_file_size) {
+        return "<p class='warning'>" . _("File is too large") . "</p>";
+    }
+
+    $type = explode("/", (string) $file['type']);
+    if ($type[0] != "image") {
+        return "<p class='warning'>" . _("File is not supported image format") . "</p>";
+    }
+
+    if (!CanProcessImages()) {
+        return "<p class='warning'>" . _("Missing image processing support on the server.") . "</p>";
+    }
+
+    $sizeError = ImageSizeError($file['tmp_name']);
+    if ($sizeError !== "") {
+        return "<p class='warning'>" . $sizeError . "</p>";
+    }
+
+    // Banners are stored flat under a generated name rather than in a
+    // per-event directory: season_id is admin-chosen text that the create
+    // form does not anchor-validate, so keeping it out of the path stops an
+    // event id from becoming a directory traversal.
+    $basedir = UPLOAD_DIR . "banners/";
+    if (!is_dir($basedir)) {
+        recur_mkdirs($basedir, 0775);
+    }
+
+    // Random rather than derived from the event id and clock: two uploads for
+    // the same event within one second would otherwise generate the same name,
+    // and the second upload's cleanup would delete the file the first just
+    // wrote, leaving the row pointing at nothing.
+    try {
+        $imgname = bin2hex(random_bytes(16)) . ".jpg";
+    } catch (Exception $e) {
+        return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
+    }
+
+    if (!is_dir($basedir) || !ConvertToJpeg($file['tmp_name'], $basedir . $imgname)) {
+        return "<p class='warning'>" . _("Image upload failed because the server could not process the image.") . "</p>";
+    }
+
+    RemoveSeasonBanner($seasonId);
+
+    $query = sprintf(
+        "UPDATE uo_season SET banner_image='%s' WHERE season_id='%s'",
+        DBEscapeString($imgname),
+        DBEscapeString($seasonId),
+    );
+    DBQuery($query);
+    ClearSeasonRuntimeCache();
+    Log2("season", "banner", SeasonName($seasonId));
+
+    return "";
+}
+
+/**
+ * Removes an event's banner image and clears the stored filename.
+ *
+ * Access level: seasonadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return void
+ */
+function RemoveSeasonBanner($seasonId)
+{
+    if (!isSeasonAdmin($seasonId)) {
+        die('Insufficient rights to edit event banner');
+    }
+
+    $seasonInfo = SeasonInfo($seasonId);
+    if (empty($seasonInfo['banner_image'])) {
+        return;
+    }
+
+    $file = UPLOAD_DIR . "banners/" . $seasonInfo['banner_image'];
+    if (is_file($file)) {
+        unlink($file);
+    }
+
+    $query = sprintf(
+        "UPDATE uo_season SET banner_image=NULL WHERE season_id='%s'",
+        DBEscapeString($seasonId),
+    );
+    DBQuery($query);
+    ClearSeasonRuntimeCache();
 }

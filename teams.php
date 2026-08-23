@@ -37,6 +37,8 @@ if (!$seasonInfo) {
 $series = SeasonSeries($season, true);
 $seasonPointsAvailable = !empty($seasonInfo['use_season_points']);
 
+$html .= SeasonBannerHTML($seasonInfo['season_id']);
+
 $menutabs[_("Divisions")] = "?view=teams&season=$season&list=allteams";
 // not a useful view
 // $menutabs[_("By pool")] = "?view=teams&season=$season&list=bypool";

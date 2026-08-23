@@ -246,6 +246,11 @@ if ($format == "pdf") {
     $pdf->Output('I', $filename);
 }
 
+// MaintenanceSeasonFromView() is a general request-to-event resolver; the name
+// predates that use. With no scope parameter it falls back to the current
+// event, which matches this page's own fallback.
+$html .= SeasonBannerHTML(MaintenanceSeasonFromView('games'));
+
 if (!$print && !$singleview) {
     $menutabs[_("Day")] = ($baseurl) . "&filter=tournaments&group=$group";
     $menutabs[_("Time slot")] = ($baseurl) . "&filter=timeslot&group=$group";

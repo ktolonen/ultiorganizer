@@ -379,7 +379,7 @@ class EventSnapshotService
             $tables[$table] = [];
         }
 
-        $tables['uo_season'] = $this->selectRows("SELECT * FROM uo_season WHERE season_id='$seasonSafe'", ['reg_id']);
+        $tables['uo_season'] = $this->selectRows("SELECT * FROM uo_season WHERE season_id='$seasonSafe'", ['reg_id', 'banner_image']);
         $tables['uo_pooltemplate'] = empty($ids['pooltemplates']) ? [] : $this->selectRows("SELECT * FROM uo_pooltemplate WHERE template_id IN (" . $this->intList($ids['pooltemplates']) . ") ORDER BY template_id");
         $tables['uo_spirit_category'] = empty($ids['spirit_categories']) ? [] : $this->selectRows("SELECT * FROM uo_spirit_category WHERE category_id IN (" . $this->intList($ids['spirit_categories']) . ") ORDER BY category_id");
         $tables['uo_location'] = empty($ids['locations']) ? [] : $this->selectRows("SELECT * FROM uo_location WHERE id IN (" . $this->intList($ids['locations']) . ") ORDER BY id");
