@@ -48,7 +48,7 @@ $html .= "<p><input class='input' type='file' size='60' name='bannerfile' accept
 $html .= "<input type='hidden' name='MAX_FILE_SIZE' value='5242880'/></p>\n";
 $html .= "<p><input class='button' type='submit' name='upload' value='" . _("Upload") . "'/>";
 if ($banner !== "") {
-    $html .= "<input class='button' type='submit' name='remove' value='" . _("Remove") . "'/>";
+    $html .= "<input class='button' type='submit' name='remove' value='" . _("Delete image") . "'/>";
 }
 $html .= "<input class='button' type='button' name='return' value='" . _("Return") . "' onclick=\"window.location.href='?view=admin/seasonadmin&amp;season=" . $seasonUrl . "'\"/></p>\n";
 $html .= "</form>\n";

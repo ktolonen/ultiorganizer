@@ -106,6 +106,7 @@ $html .= "<b>" . _("Comment") . ":</b> " . CommentHTML(1, $info['season_id']);
 
 $html .=  "<p>";
 $html .=  "<a href='?view=admin/addseasons&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Change event properties") . "</a><br/>";
+$html .=  "<a href='?view=admin/seasonbanner&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit event banner") . "</a><br/>";
 $html .=  "<a href='?view=admin/addseasonusers&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit User access rights") . "</a><br/>";
 $html .=  "<a href='?view=admin/addseasonlinks&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit side menu links") . "</a><br/>";
 $html .=  "<a href='?view=admin/tdtools&amp;season=" . $info['season_id'] . "'>&raquo; " . _("TD Tools") . "</a><br/>";

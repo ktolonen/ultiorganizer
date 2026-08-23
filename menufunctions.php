@@ -756,7 +756,6 @@ function getEditSeasonLinks()
         foreach ($ret as $season => $links) {
             if (isSeasonAdmin($season)) {
                 $links['?view=admin/seasonadmin&amp;season=' . $season] = _("Event");
-                $links['?view=admin/seasonbanner&amp;season=' . $season] = _("Banner");
                 $links['?view=admin/seasonseries&amp;season=' . $season] = _("Divisions");
                 $links['?view=admin/seasonteams&amp;season=' . $season] = _("Teams");
                 $links['?view=admin/seasonpools&amp;season=' . $season] = _("Pools");
