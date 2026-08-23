@@ -582,6 +582,13 @@ table[border="2"] {
 	/*border:1px solid #333;*/
 }
 
+.eventbanner {
+	display: block;
+	width: 100%;
+	height: auto;
+	margin-bottom: 8px;
+}
+
 .header_text {
 	display: inline-flex;
 	align-items: center;

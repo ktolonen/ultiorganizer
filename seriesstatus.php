@@ -112,6 +112,8 @@ foreach ($rankedteams as $rteam) {
 unset($ateam);
 
 
+$html .= SeasonBannerHTML($seasoninfo['season_id']);
+
 $html .= CommentHTML(2, $seriesinfo['series_id']);
 
 $html .= "<h2>" . _("Division statistics:") . " " . utf8entities($seriesinfo['name']) . "</h2>";

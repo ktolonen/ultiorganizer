@@ -82,6 +82,8 @@ if (iget("print")) {
 
 $html .= $comment;
 
+$html .= SeasonBannerHTML($seasoninfo['season_id']);
+
 $prevseries = 0;
 if (!empty($pools) && is_array($pools)) {
     foreach ($pools as $pool) {

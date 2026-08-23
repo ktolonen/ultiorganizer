@@ -41,6 +41,7 @@ if (iget("spsort")) {
 } elseif (iget("sort")) {
     $spsort = iget("sort");
 }
+$html .= SeasonBannerHTML($seasoninfo['season_id']);
 $html .= "<h2>" . _("Spirit scores") . " " . utf8entities($seriesinfo['name']) . "</h2>";
 
 if (!ShowSpiritScoresForSeason($seasoninfo)) {
