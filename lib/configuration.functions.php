@@ -22,7 +22,7 @@ function GetDefaultLocale()
 function GetDefTimeZone()
 {
     global $serverConf;
-    return $serverConf['DefaultTimezone'];
+    return $serverConf['DefaultTimezone'] ?? 'Europe/Helsinki';
 }
 
 
