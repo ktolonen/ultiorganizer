@@ -3,6 +3,11 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+// Windows PHP doesn't define LC_MESSAGES; alias it to LC_ALL there.
+if (!defined('LC_MESSAGES')) {
+    define('LC_MESSAGES', LC_ALL);
+}
+
 /**
  * Return the locale identifiers gettext should try for LANGUAGE fallback.
  */

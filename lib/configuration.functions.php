@@ -16,7 +16,7 @@ function GetPageTitle()
 function GetDefaultLocale()
 {
     global $serverConf;
-    return $serverConf['DefaultLocale'];
+    return $serverConf['DefaultLocale'] ?? 'en_GB.utf8';
 }
 
 function GetDefTimeZone()
