@@ -9,6 +9,24 @@ if (!defined('LC_MESSAGES')) {
 }
 
 /**
+ * setlocale() wrapper for the message category. On Windows, LC_MESSAGES is
+ * aliased to LC_ALL above, so setting it also changes LC_NUMERIC and
+ * LC_COLLATE; restore those after every real change so number formatting and
+ * string sorting stay locale-independent there.
+ */
+function SetMessageLocale($locale)
+{
+    $result = setlocale(LC_MESSAGES, $locale);
+
+    if ($locale !== '0' && PHP_OS_FAMILY === 'Windows') {
+        setlocale(LC_NUMERIC, 'C');
+        setlocale(LC_COLLATE, 'C');
+    }
+
+    return $result;
+}
+
+/**
  * Return the locale identifiers gettext should try for LANGUAGE fallback.
  */
 function GettextLanguageSpec($locale)
@@ -92,7 +110,7 @@ function GettextInstalledLocales()
 
 function GettextCarrierLocaleCandidates($candidateLocales = [])
 {
-    $currentLocale = setlocale(LC_MESSAGES, "0");
+    $currentLocale = SetMessageLocale("0");
     $candidates = [];
 
     if ($currentLocale !== false) {
@@ -134,33 +152,33 @@ function IsGettextCarrierLocale($locale)
  */
 function GettextCarrierLocale($candidateLocales = [])
 {
-    $currentLocale = setlocale(LC_MESSAGES, "0");
+    $currentLocale = SetMessageLocale("0");
 
     foreach (GettextCarrierLocaleCandidates($candidateLocales) as $candidateLocale) {
-        $activeLocale = setlocale(LC_MESSAGES, $candidateLocale);
+        $activeLocale = SetMessageLocale($candidateLocale);
         if ($activeLocale !== false && IsGettextCarrierLocale($activeLocale)) {
             if ($currentLocale !== false) {
-                setlocale(LC_MESSAGES, $currentLocale);
+                SetMessageLocale($currentLocale);
             }
             return $activeLocale;
         }
     }
 
     if ($currentLocale !== false) {
-        setlocale(LC_MESSAGES, $currentLocale);
+        SetMessageLocale($currentLocale);
     }
     return false;
 }
 
 function CanServeGettextLocale($locale, $candidateLocales = [])
 {
-    $currentLocale = setlocale(LC_MESSAGES, "0");
-    $available = setlocale(LC_MESSAGES, $locale) !== false
+    $currentLocale = SetMessageLocale("0");
+    $available = SetMessageLocale($locale) !== false
         || GettextCarrierLocale($candidateLocales) !== false
         || str_starts_with($locale, 'en_');
 
     if ($currentLocale !== false) {
-        setlocale(LC_MESSAGES, $currentLocale);
+        SetMessageLocale($currentLocale);
     }
 
     return $available;
@@ -172,8 +190,8 @@ function ActivateGettextLocale($locale, $candidateLocales = [])
     putenv("LC_MESSAGES=$locale");
 
     // Reset first so GNU gettext notices LANGUAGE changes in long-lived PHP workers.
-    setlocale(LC_MESSAGES, 'C');
-    if (setlocale(LC_MESSAGES, $locale) !== false) {
+    SetMessageLocale('C');
+    if (SetMessageLocale($locale) !== false) {
         return true;
     }
 
@@ -183,6 +201,6 @@ function ActivateGettextLocale($locale, $candidateLocales = [])
     }
 
     putenv("LC_MESSAGES=$carrierLocale");
-    setlocale(LC_MESSAGES, 'C');
-    return setlocale(LC_MESSAGES, $carrierLocale) !== false;
+    SetMessageLocale('C');
+    return SetMessageLocale($carrierLocale) !== false;
 }
