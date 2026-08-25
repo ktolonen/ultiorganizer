@@ -24,8 +24,9 @@ if (!isSuperAdmin()) {
     die('Insufficient user rights');
 }
 
-define('PLAYER_NETWORK_DEFAULT_MIN_SHARED', 3);
+define('PLAYER_NETWORK_DEFAULT_MIN_SHARED', 1);
 define('PLAYER_NETWORK_THRESHOLDS', '1,2,3,4,5,6,8,10');
+define('PLAYER_NETWORK_EXPORT_FILE', 'player-network.html');
 
 /**
  * Database-wide counts shown on the analyze screen.
@@ -1272,6 +1273,10 @@ if (isset($_POST['group_mode']) && in_array($_POST['group_mode'], ["gender", "di
     $groupMode = $_POST['group_mode'];
 }
 
+$exportPath = UPLOAD_DIR . PLAYER_NETWORK_EXPORT_FILE;
+$buildError = "";
+$justBuilt = false;
+
 if (!empty($_POST['build'])) {
     set_time_limit(600);
 
@@ -1292,18 +1297,15 @@ if (!empty($_POST['build'])) {
     ];
 
     $document = PlayerNetworkPluginExportHtml($graph, $meta);
-    $filename = "player-network-" . date("Y-m-d") . ".html";
 
-    header("Pragma: public");
-    header("Expires: -1");
-    header("Cache-Control: must-revalidate, post-check=0, pre-check=0");
-    header("Content-Type: text/html; charset=UTF-8");
-    header("Content-Description: File Transfer");
-    header("Content-Disposition: attachment; filename=\"$filename\";");
-    header("Content-Transfer-Encoding: binary");
-    header("Content-Length: " . strlen($document));
-    echo $document;
-    exit;
+    // Uploads are stored 0644 so a web server running as a different user
+    // than PHP can still serve them; matches WriteJpegImage()'s reasoning.
+    if (!is_dir(UPLOAD_DIR) || file_put_contents($exportPath, $document) === false) {
+        $buildError = "Could not write the export file. Check that " . UPLOAD_DIR . " is writable.";
+    } else {
+        chmod($exportPath, 0644);
+        $justBuilt = true;
+    }
 }
 
 set_time_limit(300);
@@ -1371,8 +1373,18 @@ $html .= "<small>They are not drawn, but a search still finds them and reports t
 $html .= "<div class='warning'>The exported file lists every player by name together with who they played alongside. ";
 $html .= "It is personal data. Store and share it accordingly.</div>\n";
 $html .= "<p><input class='button' type='submit' name='preview' value='Update'/> ";
-$html .= "<input class='button' type='submit' name='build' value='Build and download'/></p>\n";
+$html .= "<input class='button' type='submit' name='build' value='Build'/></p>\n";
 $html .= "</form>\n";
+
+if ($buildError !== "") {
+    $html .= "<p class='warning'>" . htmlspecialchars($buildError, ENT_QUOTES, 'UTF-8') . "</p>\n";
+} elseif (is_file($exportPath)) {
+    $builtOn = date("Y-m-d H:i", filemtime($exportPath));
+    $html .= "<p class='notice'>";
+    $html .= $justBuilt ? "Export updated. " : "";
+    $html .= "<a href='" . UPLOAD_DIR . PLAYER_NETWORK_EXPORT_FILE . "'>View the exported player network</a>";
+    $html .= " (built " . $builtOn . ")</p>\n";
+}
 
 $topConnected = PlayerNetworkPluginTopConnected($pairs, $minShared, 20);
 if (!empty($topConnected)) {
