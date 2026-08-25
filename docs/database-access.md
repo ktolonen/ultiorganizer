@@ -25,7 +25,6 @@ The following locations are treated as public or app entrypoints:
 - `ext/`
 - `login/`
 - `api/`
-- `plugins/`
 
 Files in these locations must not:
 
@@ -54,6 +53,10 @@ These files are exempt from page-layer enforcement because they are DB infrastru
 - `lib/database.php`
 - `install.php`
 - `sql/upgrade_db.php`
+
+`plugins/` is exempt as well, for a different reason. A plugin is an optional, self-contained admin tool: it ships as a single file that an installation drops in or removes as a unit, and its queries are one-off analysis or maintenance work with exactly one caller. Pushing that SQL into `lib/` would grow the shared layer with helpers no other code uses and split each tool across two files. Plugins therefore keep their own SQL and call `DBQueryTo*` directly.
+
+This exemption is not a licence to move application logic into `plugins/`. Anything a routed page needs still belongs in `lib/`.
 
 Some existing public/app files still violate the rule. Those are tracked in `docs/ai/review-database-access/references/db-access-allowlist.txt` until they are migrated. New files must not be added to that allowlist.
 
