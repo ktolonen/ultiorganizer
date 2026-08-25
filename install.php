@@ -560,7 +560,7 @@ function installGetAvailableLocales()
 
     $localizations = [];
     $temp = @scandir("locale/");
-    $currentLocale = setlocale(LC_MESSAGES, "0");
+    $currentLocale = SetMessageLocale("0");
     $fallbackEnglishLocale = 'en_GB.utf8';
     $candidateLocales = $temp === false ? [] : $temp;
 
@@ -578,7 +578,7 @@ function installGetAvailableLocales()
         $localizations[$fallbackEnglishLocale] = $fallbackEnglishLocale;
     }
     if ($currentLocale !== false) {
-        setlocale(LC_MESSAGES, $currentLocale);
+        SetMessageLocale($currentLocale);
     }
 
     return $localizations;

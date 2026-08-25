@@ -16,13 +16,13 @@ function GetPageTitle()
 function GetDefaultLocale()
 {
     global $serverConf;
-    return $serverConf['DefaultLocale'];
+    return $serverConf['DefaultLocale'] ?? 'en_GB.utf8';
 }
 
 function GetDefTimeZone()
 {
     global $serverConf;
-    return $serverConf['DefaultTimezone'];
+    return $serverConf['DefaultTimezone'] ?? 'Europe/Helsinki';
 }
 
 
@@ -253,7 +253,7 @@ function getAvailableLocalizations()
     $configuredLocalizations = isset($locales) && is_array($locales) ? $locales : [];
     $localizations = [];
     $temp = scandir($include_prefix . "locale/");
-    $currentLocale = setlocale(LC_MESSAGES, "0");
+    $currentLocale = SetMessageLocale("0");
     $fallbackEnglishLocale = 'en_GB.utf8';
     $candidateLocales = array_keys($configuredLocalizations);
 
@@ -269,7 +269,7 @@ function getAvailableLocalizations()
         $localizations[$fallbackEnglishLocale] = $configuredLocalizations[$fallbackEnglishLocale] ?? 'English';
     }
     if ($currentLocale !== false) {
-        setlocale(LC_MESSAGES, $currentLocale);
+        SetMessageLocale($currentLocale);
     }
 
     return $localizations;
