@@ -35,7 +35,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 
 ## Working rules
 
-- Follow the PHP code style described in `docs/code-style.md` (PER-CS 2.0). Run `composer format` and `composer lint` on changed files before handing back work; the pre-commit hook at `.githooks/pre-commit` enforces this on commit.
+- Follow the PHP code style described in `docs/code-style.md` (PER-CS 2.0). Run `composer format` and `composer lint` on changed files before handing back work; the repo ships a pre-commit hook at `.githooks/pre-commit` for this, but it only runs once enabled per clone with `git config core.hooksPath .githooks` — don't assume it's active.
 - Hand-written client JavaScript under `script/` (including the `script/*.inc` `<script>` snippets) is linted with ESLint (`docker compose -f docs/dev/compose.yaml exec -T dev eslint script`). The config lives at `eslint.config.js` in the repo root; the toolchain itself is installed inside the `dev` Docker image, not at the repo root.
 - This is a PHP project, not an npm project: when adding Node-based dev tooling (linters, formatters, etc.), install it inside the `dev` Docker image and ship only the tool's own config file at the repo root (e.g. `eslint.config.js`). Do not add a root `package.json` — it signals an npm project to humans and tooling.
 - Keep SQL and shared data access in `lib/`.
@@ -133,7 +133,7 @@ Pre-commit hooks remain the fast local gate; CI is the source of truth for what 
 - `docs/database-upgrades.md`: schema and migration workflow.
 - `docs/database-access.md`: database access boundaries, allowed helper layers, migration guidance, and checker behavior.
 - `docs/configuration-flags.md`: configuration taxonomy and migration rules. Use the exact type names `SYSTEM_FLAG`, `INSTALLATION_SETTING`, and `EVENT_SETTING`.
-- `docs/permissions.md`: permission storage, roles, and enforcement helpers.
+- `docs/permissions.md`: permission storage, roles, enforcement helpers, and spirit-director behavior.
 - `docs/privacy.md`: privacy admin tools, export scope, and anonymization or deletion behavior by table.
 
 ### Competition workflow

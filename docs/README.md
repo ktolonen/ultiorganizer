@@ -23,7 +23,7 @@ This directory collects general project documentation.
 
 - `database-upgrades.md`: schema and migration workflow.
 - `database-access.md`: database access boundaries, allowed helper layers, migration guidance, and checker behavior.
-- `configuration-flags.md`: configuration taxonomy and migration rules.
+- `configuration-flags.md`: configuration taxonomy and migration rules. Use the exact type names `SYSTEM_FLAG`, `INSTALLATION_SETTING`, and `EVENT_SETTING`.
 - `permissions.md`: permission storage, roles, enforcement helpers, and spirit-director behavior.
 - `privacy.md`: privacy admin tools, export scope, and anonymization or deletion behavior by table.
 
@@ -35,10 +35,10 @@ This directory collects general project documentation.
 
 ### Scorekeeping and spirit
 
-- `scorekeeper.md`: Scorekeeper app routing, live clock workflow, and related pages.
+- `scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
 - `scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
-- `spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and current behavior.
+- `spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and visibility rules.
 - `timekeeper.md`: standalone Timekeeper app, template-based time limits, signal timers, and the game clock.
 
 ### Language and output
