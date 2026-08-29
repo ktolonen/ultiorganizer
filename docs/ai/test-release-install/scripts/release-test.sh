@@ -245,9 +245,10 @@ cmd_smoke() {
     echo "Installed configuration:"
     grep -v "DB_PASSWORD" "${package_dir}/conf/config.inc.php" | grep "^define" | sed 's/^/  /'
 
-    local body asset_list
+    local body asset_list redirect_apps
     body="$(mktemp)"
     asset_list="$(mktemp)"
+    redirect_apps="$(mktemp)"
 
     echo
     echo "Page checks (302 means a login redirect):"
@@ -260,6 +261,10 @@ cmd_smoke() {
         # /api/ answers 404 by design; its body is asserted separately below.
         if [[ "${code}" -ge 400 ]] && [[ "${path}" != "/api/" || "${code}" != "404" ]]; then
             failures=$((failures + 1))
+        fi
+
+        if [[ "${code}" -ge 300 && "${code}" -lt 400 && "${path}" != "/" && "${path}" == */ ]]; then
+            echo "${path//\//}" >> "${redirect_apps}"
         fi
 
         [[ "${code}" == "200" ]] || continue
@@ -338,6 +343,30 @@ cmd_smoke() {
     echo "  ${asset_count} checked, ${asset_failures} failed"
     failures=$((failures + asset_failures))
 
+    # An app that redirects to login never renders, so a crawl cannot reach its
+    # own scripts without credentials — and smoke has none, since the developer
+    # creates the admin account in the wizard. Take the references from the
+    # app's source in the package instead: they are plain literals that a
+    # runtime prefix resolves to the document root.
+    echo
+    echo "Assets of redirecting apps (read from the package source):"
+    local app ref static_count=0 static_failures=0
+    while read -r app; do
+        [[ -n "${app}" && -d "${package_dir}/${app}" ]] || continue
+        while read -r ref; do
+            [[ -n "${ref}" ]] || continue
+            code="$(curl -s -o /dev/null -w '%{http_code}' "${BASE_URL}/${ref}")"
+            static_count=$((static_count + 1))
+            if [[ "${code}" != "200" ]]; then
+                printf '  %-64s %s\n' "${app}: ${ref}" "${code}"
+                static_failures=$((static_failures + 1))
+            fi
+        done < <(grep -rhoE "['\"](script|images)/[A-Za-z0-9_./-]+\.(js|css|png|jpg|jpeg|gif|svg|ico)" \
+            "${package_dir}/${app}" | sed "s/^['\"]//" | sort -u)
+    done < <(sort -u "${redirect_apps}")
+    echo "  ${static_count} checked, ${static_failures} failed"
+    failures=$((failures + static_failures))
+
     # A missing API router would produce Apache's own HTML 404, which is
     # indistinguishable from the router's 404 by status code alone.
     echo
@@ -363,7 +392,7 @@ cmd_smoke() {
     log="$(compose exec -T app sh -lc "tail -10 ${PHP_ERROR_LOG} 2>/dev/null" || true)"
     echo "${log:-  none}"
 
-    rm -f "${body}" "${asset_list}"
+    rm -f "${body}" "${asset_list}" "${redirect_apps}"
 
     # Exit status is the verdict: automation calling smoke must not read a
     # broken release as verified just because the command printed something.

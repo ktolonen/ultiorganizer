@@ -52,11 +52,13 @@ The stack runs under its own compose project with its own database volume. It ne
 
 ## Values the wizard must not be left at their defaults
 
+`setup` prints these with the port the stack actually started on; pass those on rather than the table's defaults, which assume no `UO_TEST_PORT` override.
+
 | Step | Field | Value |
 | --- | --- | --- |
 | 2 — Database connection | Host address | `db` — **not** `localhost`, which is the app container itself |
 | 2 | User / password / database | `ultiorganizer` / `ultiorganizer` / `ultiorganizer` |
-| 4 — Site settings | Base URL | `http://localhost:8081` — **not** `http://localhost/ultiorganizer`, or the post-install redirect breaks |
+| 4 — Site settings | Base URL | the app's own URL, `http://localhost:8081` by default — **not** `http://localhost/ultiorganizer`, and not the default port when the stack runs on another one, or the post-install redirects and generated links point at the wrong place |
 
 ## What the results mean
 
