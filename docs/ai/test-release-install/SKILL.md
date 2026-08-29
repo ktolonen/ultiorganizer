@@ -13,7 +13,9 @@ Complements `docs/ai/release-package-coverage/SKILL.md`, which checks packaging 
 
 ## Prerequisites
 
-Docker, `zip`/`unzip`, and a git working tree you are willing to package. The package is built from `HEAD`; uncommitted changes are not included, and the build script warns when the branch is not `master`.
+Docker, `zip`/`unzip`, and a git working tree you are willing to package.
+
+`docs/release/build-release.sh` takes the *file list* from `git ls-files` but copies each file from the **working tree**, so uncommitted edits to tracked files land in the package while untracked files do not. The archive name still identifies `HEAD`. Build from a clean tree whenever the run is meant to validate a commit — otherwise a pass can come from an uncommitted fix and be reported as validating the commit. The build script prints the working-tree state and warns when the branch is not `master`; read that banner rather than assuming.
 
 ## Workflow
 

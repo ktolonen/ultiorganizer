@@ -183,6 +183,9 @@ cmd_setup() {
     write_compose_file
 
     compose up -d --force-recreate
+    # --force-recreate replaces the containers but keeps the named volume, so a
+    # setup following an earlier run would install over the previous database.
+    reset_database
     wait_for_install_page
     verify_prerequisites
     print_handoff
