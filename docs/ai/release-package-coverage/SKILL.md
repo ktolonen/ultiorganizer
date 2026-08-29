@@ -28,7 +28,8 @@ produces an error at build time.
 A new top-level app directory has more than one registration point, and the
 release package is only the first:
 
-- `.gitattributes` / `docs/release/build-release.sh` — whether it ships
+- `.gitattributes` — whether it ships
+- `docs/release/build-release.sh` `required_paths` — whether a missing app directory fails the release build's own smoke check
 - `docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh` — whether its strings reach the translation catalogs
 - `menufunctions.php` — whether users can navigate to it
 - `AGENTS.md` and `docs/README.md` — whether it is documented
@@ -59,6 +60,7 @@ The checker reports:
 - `ERROR` — a path classified `runtime` or `runtime-app` that is export-ignored, so it is missing from the package
 - `ERROR` — a path that mixes export-ignored and shipped files
 - `ERROR` — a `runtime-app` directory absent from the gettext scan list
+- `ERROR` — a `runtime-app` directory absent from `build-release.sh`'s `required_paths` smoke check
 - `WARNING` — a stale inventory line for a path that is no longer tracked
 
 ## Classification Kinds
@@ -66,7 +68,7 @@ The checker reports:
 When a new path appears, add one line to `inventory.txt`:
 
 - `runtime` — ships; no tracked file under it is export-ignored
-- `runtime-app` — ships, and its PHP contains translatable strings, so it must also appear in the gettext scan list
+- `runtime-app` — ships, and its PHP contains translatable strings, so it must also appear in the gettext scan list and in `build-release.sh`'s `required_paths`
 - `dev` — development-only; every tracked file under it must be export-ignored
 
 ## Manual Review Rules
