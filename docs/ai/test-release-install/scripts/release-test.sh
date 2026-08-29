@@ -18,6 +18,11 @@ TEST_ROOT="${UO_TEST_ROOT:-${DEFAULT_TEST_ROOT}}"
 PROJECT="${UO_TEST_PROJECT:-uo-release-test}"
 PORT="${UO_TEST_PORT:-8081}"
 STATE_FILE="${TEST_ROOT}/.release-test-env"
+# teardown deletes the test root recursively, so it must only ever run against a
+# directory this script created. UO_TEST_ROOT can name anything, including a home
+# or shared directory, and without this marker a mistyped override would take
+# unrelated files with it.
+MARKER_FILE="${TEST_ROOT}/.release-test-root"
 COMPOSE_FILE="${TEST_ROOT}/compose.yaml"
 BASE_URL="http://localhost:${PORT}"
 
@@ -181,7 +186,16 @@ EOF
 }
 
 cmd_setup() {
+    if [[ -e "${TEST_ROOT}" && ! -f "${MARKER_FILE}" ]]; then
+        if [[ -n "$(ls -A "${TEST_ROOT}" 2>/dev/null)" ]]; then
+            echo "error: ${TEST_ROOT} already exists and is not a release-test directory." >&2
+            echo "Point UO_TEST_ROOT at a new or empty directory; this one is left alone." >&2
+            exit 1
+        fi
+    fi
+
     mkdir -p "${TEST_ROOT}"
+    touch "${MARKER_FILE}"
 
     if [[ -n "${UO_TEST_ARCHIVE:-}" ]]; then
         ARCHIVE="${UO_TEST_ARCHIVE}"
@@ -272,20 +286,21 @@ cmd_smoke() {
             failures=$((failures + 1))
         fi
 
+        # display_errors is On in php.dev.ini, so diagnostics land in the
+        # response body. Scan every body, not only the rendered ones: a
+        # login-gated app keeps executing after it sets its redirect, so a
+        # warning it emits arrives with a 302. php.dev.ini also sends error_log
+        # to a file inside the container, which `compose logs app` never shows.
+        if grep -iqE "<b>(fatal error|parse error|warning|notice|deprecated)</b>|(fatal|parse) error:" "${body}"; then
+            echo "  ^ PHP diagnostics in the body of ${path}" >&2
+            failures=$((failures + 1))
+        fi
+
         if [[ "${code}" -ge 300 && "${code}" -lt 400 && "${path}" != "/" && "${path}" == */ ]]; then
             echo "${path//\//}" >> "${redirect_apps}"
         fi
 
         [[ "${code}" == "200" ]] || continue
-
-        # display_errors is On in php.dev.ini, so diagnostics land in the page
-        # body. Scan every page that renders: php.dev.ini also sends error_log
-        # to a file inside the container, so `compose logs app` shows none of
-        # them, and a broken standalone page would otherwise pass unnoticed.
-        if grep -iqE "<b>(fatal error|parse error|warning|notice|deprecated)</b>|(fatal|parse) error:" "${body}"; then
-            echo "  ^ PHP diagnostics in the body of ${path}" >&2
-            failures=$((failures + 1))
-        fi
 
         # Collect assets from every app that renders, not only the front page:
         # the standalone apps pull their own scripts, so a front-page-only crawl
@@ -422,11 +437,18 @@ cmd_teardown() {
         compose down -v
     fi
     if [[ -d "${TEST_ROOT}" ]]; then
+        if [[ ! -f "${MARKER_FILE}" ]]; then
+            echo "error: ${TEST_ROOT} has no ${MARKER_FILE##*/} marker, so this script did not create it." >&2
+            echo "Refusing to delete it. The ${PROJECT} stack, if any, was stopped." >&2
+            exit 1
+        fi
         chown_test_root "$(id -u):$(id -g)"
         chmod -R u+rwX "${TEST_ROOT}"
         rm -rf "${TEST_ROOT:?}"
+        echo "Removed ${TEST_ROOT} and the ${PROJECT} stack."
+    else
+        echo "Removed the ${PROJECT} stack."
     fi
-    echo "Removed ${TEST_ROOT} and the ${PROJECT} stack."
 }
 
 case "${1:-}" in
