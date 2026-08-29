@@ -13,7 +13,8 @@ set -euo pipefail
 
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 ROOT_DIR="$(cd "${SCRIPT_DIR}/../../../.." && pwd)"
-TEST_ROOT="${UO_TEST_ROOT:-$(dirname "${ROOT_DIR}")/ultiorganizer-release-test}"
+DEFAULT_TEST_ROOT="$(dirname "${ROOT_DIR}")/ultiorganizer-release-test"
+TEST_ROOT="${UO_TEST_ROOT:-${DEFAULT_TEST_ROOT}}"
 PROJECT="${UO_TEST_PROJECT:-uo-release-test}"
 PORT="${UO_TEST_PORT:-8081}"
 STATE_FILE="${TEST_ROOT}/.release-test-env"
@@ -154,6 +155,13 @@ verify_prerequisites() {
 }
 
 print_handoff() {
+    # The state file lives inside the test root, so a custom root cannot be
+    # recovered from it — every follow-up command has to carry it explicitly.
+    local prefix=""
+    if [[ "${TEST_ROOT}" != "${DEFAULT_TEST_ROOT}" ]]; then
+        prefix="UO_TEST_ROOT=$(printf '%q' "${TEST_ROOT}") "
+    fi
+
     cat <<EOF
 
 Open ${BASE_URL}/install.php and run the wizard by hand.
@@ -163,7 +171,7 @@ Open ${BASE_URL}/install.php and run the wizard by hand.
   Step 4  Base URL            ${BASE_URL}  (not http://localhost/ultiorganizer)
 
 All three checks on step 6 should be green. Afterwards run:
-  ${SCRIPT_DIR}/release-test.sh smoke
+  ${prefix}${SCRIPT_DIR}/release-test.sh smoke
 EOF
 }
 
