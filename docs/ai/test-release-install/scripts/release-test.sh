@@ -225,6 +225,7 @@ cmd_reset() {
 cmd_smoke() {
     load_state
     local package_dir="${TEST_ROOT}/${PACKAGE_NAME}"
+    local failures=0
 
     if [[ ! -f "${package_dir}/conf/config.inc.php" ]]; then
         echo "error: conf/config.inc.php is missing; run install.php first" >&2
@@ -239,37 +240,59 @@ cmd_smoke() {
     echo "Installed configuration:"
     grep -v "DB_PASSWORD" "${package_dir}/conf/config.inc.php" | grep "^define" | sed 's/^/  /'
 
+    local body asset_list
+    body="$(mktemp)"
+    asset_list="$(mktemp)"
+
     echo
     echo "Page checks (302 means a login redirect):"
-    local path code
+    local path code page_dir asset url
     for path in "/" "/?view=frontpage" "/?view=allteams" "/?view=allplayers" "/?view=games" \
         "/login/" "/scorekeeper/" "/spiritkeeper/" "/timekeeper/" "/mobile/" "/api/"; do
-        code="$(curl -s -o /dev/null -w '%{http_code}' "${BASE_URL}${path}")"
+        code="$(curl -s -o "${body}" -w '%{http_code}' "${BASE_URL}${path}")"
         printf '  %-24s %s\n' "${path}" "${code}"
+
+        # /api/ answers 404 by design; its body is asserted separately below.
+        if [[ "${code}" -ge 400 ]] && [[ "${path}" != "/api/" || "${code}" != "404" ]]; then
+            failures=$((failures + 1))
+        fi
+
+        [[ "${code}" == "200" ]] || continue
+
+        # Collect assets from every app that renders, not only the front page:
+        # the standalone apps pull their own scripts, so a front-page-only crawl
+        # would never request script/timekeeper.js. Relative references resolve
+        # against the page's own directory; curl normalizes the ../ segments.
+        page_dir="${path%%\?*}"
+        page_dir="${page_dir%/}"
+        while read -r asset; do
+            [[ -n "${asset}" ]] || continue
+            case "${asset}" in
+                http*) url="${asset}" ;;
+                /*) url="${BASE_URL}${asset}" ;;
+                *) url="${BASE_URL}${page_dir}/${asset}" ;;
+            esac
+            echo "${url}" >> "${asset_list}"
+        done < <(grep -oE "(href|src)=['\"][^'\"]+\.(css|js|png|jpg|jpeg|gif|svg|ico)([?][^'\"]*)?['\"]" "${body}" |
+            sed "s/^[a-z]*=['\"]//;s/['\"]$//")
     done
 
     # curl fetches the HTML only, so a stylesheet, script or image missing from
     # the package leaves the page a healthy 200. Follow the references.
     echo
-    echo "Assets referenced by the front page:"
-    local asset url asset_failures=0 asset_count=0
-    while read -r asset; do
-        [[ -n "${asset}" ]] || continue
-        case "${asset}" in
-            http*) url="${asset}" ;;
-            /*) url="${BASE_URL}${asset}" ;;
-            *) url="${BASE_URL}/${asset}" ;;
-        esac
+    echo "Assets referenced by those pages:"
+    local asset_count=0 asset_failures=0
+    while read -r url; do
+        [[ -n "${url}" ]] || continue
         code="$(curl -s -o /dev/null -w '%{http_code}' "${url}")"
         asset_count=$((asset_count + 1))
         if [[ "${code}" != "200" ]]; then
-            printf '  %-60s %s\n' "${asset}" "${code}"
+            printf '  %-64s %s\n' "${url#"${BASE_URL}"}" "${code}"
             asset_failures=$((asset_failures + 1))
         fi
-    done < <(curl -s "${BASE_URL}/?view=frontpage" |
-        grep -oE "(href|src)=['\"][^'\"]+\.(css|js|png|jpg|jpeg|gif|svg|ico)([?][^'\"]*)?['\"]" |
-        sed "s/^[a-z]*=['\"]//;s/['\"]$//" | sort -u)
+    done < <(sort -u "${asset_list}")
     echo "  ${asset_count} checked, ${asset_failures} failed"
+    failures=$((failures + asset_failures))
 
     # A missing API router would produce Apache's own HTML 404, which is
     # indistinguishable from the router's 404 by status code alone.
@@ -279,12 +302,14 @@ cmd_smoke() {
         echo "  ok (router answered with JSON)"
     else
         echo "  FAILED: /api/ did not return the router's JSON error body" >&2
+        failures=$((failures + 1))
     fi
 
     echo
     echo "PHP diagnostics on the front page:"
     if curl -s "${BASE_URL}/?view=frontpage" | grep -iE "fatal error|warning:|notice:|deprecated:"; then
         echo "  ^ investigate the above" >&2
+        failures=$((failures + 1))
     else
         echo "  none"
     fi
@@ -294,6 +319,18 @@ cmd_smoke() {
     local log
     log="$(compose logs app --since 10m 2>&1 | grep -iE "error|warn|fatal" | tail -10 || true)"
     echo "${log:-  none}"
+
+    rm -f "${body}" "${asset_list}"
+
+    # Exit status is the verdict: automation calling smoke must not read a
+    # broken release as verified just because the command printed something.
+    echo
+    if [[ "${failures}" -eq 0 ]]; then
+        echo "Smoke test passed."
+    else
+        echo "Smoke test FAILED: ${failures} check(s)." >&2
+        return 1
+    fi
 }
 
 cmd_teardown() {
