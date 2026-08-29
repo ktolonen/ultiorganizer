@@ -241,7 +241,16 @@ cmd_setup() {
         exit 1
     fi
 
-    PACKAGE_NAME="$(basename "${ARCHIVE}" .zip)"
+    # Read the package directory out of the archive rather than off its
+    # filename: a downloaded or renamed copy still carries the directory
+    # build-release.sh put inside it, and mounting a name derived from the file
+    # would serve an empty directory.
+    PACKAGE_NAME="$(unzip -Z1 "${ARCHIVE}" | sed 's#/.*##' | sort -u)"
+    if [[ -z "${PACKAGE_NAME}" || "$(wc -l <<< "${PACKAGE_NAME}")" -ne 1 ]]; then
+        echo "error: ${ARCHIVE} does not hold exactly one top-level directory:" >&2
+        echo "${PACKAGE_NAME}" >&2
+        exit 1
+    fi
     printf 'ARCHIVE=%q\nPACKAGE_NAME=%q\nSTATE_PROJECT=%q\nSTATE_PORT=%q\n' \
         "${ARCHIVE}" "${PACKAGE_NAME}" "${PROJECT}" "${PORT}" > "${STATE_FILE}"
 
