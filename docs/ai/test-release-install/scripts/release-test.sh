@@ -24,6 +24,11 @@ BASE_URL="http://localhost:${PORT}"
 # Any image with coreutils works; mariadb is already pulled by this stack.
 HELPER_IMAGE="mariadb:10.11"
 
+# Read the log destination from the ini the stack actually mounts rather than
+# assuming it.
+PHP_ERROR_LOG="$(sed -n 's/^error_log *= *//p' "${ROOT_DIR}/docs/dev/php.dev.ini" | head -1)"
+PHP_ERROR_LOG="${PHP_ERROR_LOG:-/tmp/ultiorganizer-php-error.log}"
+
 usage() {
     sed -n '2,11p' "${BASH_SOURCE[0]}" | sed 's/^# \{0,1\}//'
 }
@@ -259,6 +264,15 @@ cmd_smoke() {
 
         [[ "${code}" == "200" ]] || continue
 
+        # display_errors is On in php.dev.ini, so diagnostics land in the page
+        # body. Scan every page that renders: php.dev.ini also sends error_log
+        # to a file inside the container, so `compose logs app` shows none of
+        # them, and a broken standalone page would otherwise pass unnoticed.
+        if grep -iqE "<b>(fatal error|parse error|warning|notice|deprecated)</b>|(fatal|parse) error:" "${body}"; then
+            echo "  ^ PHP diagnostics in the body of ${path}" >&2
+            failures=$((failures + 1))
+        fi
+
         # Collect assets from every app that renders, not only the front page:
         # the standalone apps pull their own scripts, so a front-page-only crawl
         # would never request script/timekeeper.js. Relative references resolve
@@ -281,16 +295,46 @@ cmd_smoke() {
     # the package leaves the page a healthy 200. Follow the references.
     echo
     echo "Assets referenced by those pages:"
-    local asset_count=0 asset_failures=0
-    while read -r url; do
-        [[ -n "${url}" ]] || continue
-        code="$(curl -s -o /dev/null -w '%{http_code}' "${url}")"
-        asset_count=$((asset_count + 1))
-        if [[ "${code}" != "200" ]]; then
-            printf '  %-64s %s\n' "${url#"${BASE_URL}"}" "${code}"
-            asset_failures=$((asset_failures + 1))
-        fi
-    done < <(sort -u "${asset_list}")
+    local asset_count=0 asset_failures=0 css_list
+    css_list="$(mktemp)"
+
+    # A stylesheet that loads fine can still point at an image the package
+    # omits, and nothing on the page requests it. Collect url() targets from
+    # every stylesheet fetched, resolved against the stylesheet's own directory,
+    # and check those too.
+    check_asset_list() {
+        local list="$1" derive="$2" css_dir ref
+        while read -r url; do
+            [[ -n "${url}" ]] || continue
+            code="$(curl -s -o "${body}" -w '%{http_code}' "${url}")"
+            asset_count=$((asset_count + 1))
+            if [[ "${code}" != "200" ]]; then
+                printf '  %-64s %s\n' "${url#"${BASE_URL}"}" "${code}"
+                asset_failures=$((asset_failures + 1))
+                continue
+            fi
+
+            [[ "${derive}" == "derive" && "${url}" == *.css ]] || continue
+            css_dir="${url%/*}"
+            while read -r ref; do
+                [[ -n "${ref}" ]] || continue
+                case "${ref}" in
+                    data:* | http*) continue ;;
+                    /*) echo "${BASE_URL}${ref}" >> "${css_list}" ;;
+                    *) echo "${css_dir}/${ref}" >> "${css_list}" ;;
+                esac
+            done < <(perl -0777 -pe 's{/\*.*?\*/}{}gs' "${body}" |
+                grep -oE "url\(['\"]?[^)'\"]+['\"]?\)" |
+                sed -E "s/^url\(['\"]?//;s/['\"]?\)$//")
+        done < <(sort -u "${list}")
+    }
+
+    check_asset_list "${asset_list}" derive
+    if [[ -s "${css_list}" ]]; then
+        check_asset_list "${css_list}" no-derive
+    fi
+    rm -f "${css_list}"
+
     echo "  ${asset_count} checked, ${asset_failures} failed"
     failures=$((failures + asset_failures))
 
@@ -306,18 +350,17 @@ cmd_smoke() {
     fi
 
     echo
-    echo "PHP diagnostics on the front page:"
-    if curl -s "${BASE_URL}/?view=frontpage" | grep -iE "fatal error|warning:|notice:|deprecated:"; then
-        echo "  ^ investigate the above" >&2
-        failures=$((failures + 1))
-    else
-        echo "  none"
-    fi
-
-    echo
     echo "Apache error log:"
     local log
     log="$(compose logs app --since 10m 2>&1 | grep -iE "error|warn|fatal" | tail -10 || true)"
+    echo "${log:-  none}"
+
+    # php.dev.ini routes error_log to a file inside the container, so this is
+    # the only place PHP's own log is visible. Shown as evidence rather than
+    # counted: it accumulates across the whole life of the container.
+    echo
+    echo "PHP error log (${PHP_ERROR_LOG}, last 10 lines):"
+    log="$(compose exec -T app sh -lc "tail -10 ${PHP_ERROR_LOG} 2>/dev/null" || true)"
     echo "${log:-  none}"
 
     rm -f "${body}" "${asset_list}"
