@@ -64,7 +64,8 @@ The stack runs under its own compose project with its own database volume. It ne
 
 - **Step 6 should be all green.** The wizard hardens `conf/` to `0555` and `conf/config.inc.php` to `0444` itself, and the test environment gives `www-data` ownership of both, so the chmod succeeds. A red row there is a real finding, not an artifact of the setup.
 - **`Security warning: remove install.php from the server.`** is `index.php`'s post-install guard, not a failure. `smoke` clears it. It has to be removed from the host side: the package root is owned by the host user, so the Apache user cannot delete it.
-- **302 on `/login/`, `/scorekeeper/`, `/mobile/`** is a login redirect. **404 on `/api/`** is the API router answering `{"status":"error",...,"Endpoint not found."}` — check the body, not just the code.
+- **302 on `/login/`, `/scorekeeper/`, `/mobile/`** is a login redirect. **404 on `/api/`** is the API router answering `{"status":"error",...,"Endpoint not found."}` — the body is asserted, not just the code.
+- Each route is pinned to the status its contract requires, so an app that stops redirecting to login — or starts — fails the run. Those expectations assume an install with the default settings; an install configured differently (anonymous result input, for one) can legitimately disagree, and then the expectation is what needs updating.
 - A **missing file** shows up as a 404 on an asset or a PHP `require` fatal on a real page, which is why `smoke` loads pages instead of only diffing the archive listing.
 
 ## Common mistakes

@@ -250,16 +250,25 @@ cmd_smoke() {
     asset_list="$(mktemp)"
     redirect_apps="$(mktemp)"
 
+    # Each route carries the status its contract says it must answer, so an
+    # access or routing regression fails the run rather than passing as merely
+    # "not an error": a scorekeeper that stops redirecting to login, or a
+    # timekeeper that starts, is exactly what this should catch. The
+    # expectations assume an install with the default settings.
     echo
     echo "Page checks (302 means a login redirect):"
-    local path code page_dir asset url
-    for path in "/" "/?view=frontpage" "/?view=allteams" "/?view=allplayers" "/?view=games" \
-        "/login/" "/scorekeeper/" "/spiritkeeper/" "/timekeeper/" "/mobile/" "/api/"; do
+    local entry path expected code page_dir asset url
+    for entry in "/|302" "/?view=frontpage|200" "/?view=allteams|200" "/?view=allplayers|200" \
+        "/?view=games|200" "/login/|302" "/scorekeeper/|302" "/spiritkeeper/|200" \
+        "/timekeeper/|200" "/mobile/|302" "/api/|404"; do
+        path="${entry%|*}"
+        expected="${entry##*|}"
         code="$(curl -s -o "${body}" -w '%{http_code}' "${BASE_URL}${path}")"
-        printf '  %-24s %s\n' "${path}" "${code}"
 
-        # /api/ answers 404 by design; its body is asserted separately below.
-        if [[ "${code}" -ge 400 ]] && [[ "${path}" != "/api/" || "${code}" != "404" ]]; then
+        if [[ "${code}" == "${expected}" ]]; then
+            printf '  %-24s %s\n' "${path}" "${code}"
+        else
+            printf '  %-24s %s (expected %s)\n' "${path}" "${code}" "${expected}"
             failures=$((failures + 1))
         fi
 
