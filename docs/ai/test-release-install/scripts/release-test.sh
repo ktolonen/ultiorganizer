@@ -226,7 +226,9 @@ cmd_setup() {
     touch "${MARKER_FILE}"
 
     if [[ -n "${UO_TEST_ARCHIVE:-}" ]]; then
-        ARCHIVE="${UO_TEST_ARCHIVE}"
+        # Recorded for reset, which runs from wherever the developer happens to
+        # be, so a path relative to this invocation's directory will not do.
+        ARCHIVE="$(cd "$(dirname "${UO_TEST_ARCHIVE}")" 2>/dev/null && pwd)/$(basename "${UO_TEST_ARCHIVE}")"
     else
         local build_output
         build_output="$("${ROOT_DIR}/docs/release/build-release.sh" --install -y)"
@@ -246,9 +248,12 @@ cmd_setup() {
     extract_package
     write_compose_file
 
-    compose up -d --force-recreate
-    # --force-recreate replaces the containers but keeps the named volume, so a
-    # setup following an earlier run would install over the previous database.
+    # --build because --force-recreate replaces containers from the cached
+    # image, so a changed Dockerfile.app would leave the release tested against
+    # stale PHP extensions or Apache configuration.
+    compose up -d --build --force-recreate
+    # --force-recreate also keeps the named volume, so a setup following an
+    # earlier run would install over the previous database.
     reset_database
     clear_php_error_log
     wait_for_install_page
