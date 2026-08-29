@@ -38,6 +38,11 @@ chown_test_root() {
     docker run --rm -v "${TEST_ROOT}:/work" "${HELPER_IMAGE}" chown -R "$1" /work
 }
 
+# The instance's port and project name are recorded by setup, so follow-up
+# commands address the instance they belong to. Without that, a `smoke` after a
+# `setup` on a non-default port would silently inspect whatever else is serving
+# on 8081 and report plausible-looking results for the wrong stack. An explicit
+# environment override still wins.
 load_state() {
     if [[ ! -f "${STATE_FILE}" ]]; then
         echo "error: ${STATE_FILE} not found; run 'release-test.sh setup' first" >&2
@@ -45,6 +50,9 @@ load_state() {
     fi
     # shellcheck source=/dev/null
     source "${STATE_FILE}"
+    PROJECT="${UO_TEST_PROJECT:-${STATE_PROJECT:-${PROJECT}}}"
+    PORT="${UO_TEST_PORT:-${STATE_PORT:-${PORT}}}"
+    BASE_URL="http://localhost:${PORT}"
 }
 
 write_compose_file() {
@@ -177,7 +185,8 @@ cmd_setup() {
     fi
 
     PACKAGE_NAME="$(basename "${ARCHIVE}" .zip)"
-    printf 'ARCHIVE=%q\nPACKAGE_NAME=%q\n' "${ARCHIVE}" "${PACKAGE_NAME}" > "${STATE_FILE}"
+    printf 'ARCHIVE=%q\nPACKAGE_NAME=%q\nSTATE_PROJECT=%q\nSTATE_PORT=%q\n' \
+        "${ARCHIVE}" "${PACKAGE_NAME}" "${PROJECT}" "${PORT}" > "${STATE_FILE}"
 
     extract_package
     write_compose_file
@@ -231,6 +240,39 @@ cmd_smoke() {
         printf '  %-24s %s\n' "${path}" "${code}"
     done
 
+    # curl fetches the HTML only, so a stylesheet, script or image missing from
+    # the package leaves the page a healthy 200. Follow the references.
+    echo
+    echo "Assets referenced by the front page:"
+    local asset url asset_failures=0 asset_count=0
+    while read -r asset; do
+        [[ -n "${asset}" ]] || continue
+        case "${asset}" in
+            http*) url="${asset}" ;;
+            /*) url="${BASE_URL}${asset}" ;;
+            *) url="${BASE_URL}/${asset}" ;;
+        esac
+        code="$(curl -s -o /dev/null -w '%{http_code}' "${url}")"
+        asset_count=$((asset_count + 1))
+        if [[ "${code}" != "200" ]]; then
+            printf '  %-60s %s\n' "${asset}" "${code}"
+            asset_failures=$((asset_failures + 1))
+        fi
+    done < <(curl -s "${BASE_URL}/?view=frontpage" |
+        grep -oE "(href|src)=['\"][^'\"]+\.(css|js|png|jpg|jpeg|gif|svg|ico)([?][^'\"]*)?['\"]" |
+        sed "s/^[a-z]*=['\"]//;s/['\"]$//" | sort -u)
+    echo "  ${asset_count} checked, ${asset_failures} failed"
+
+    # A missing API router would produce Apache's own HTML 404, which is
+    # indistinguishable from the router's 404 by status code alone.
+    echo
+    echo "API router:"
+    if curl -s "${BASE_URL}/api/" | grep -q '"status":"error"'; then
+        echo "  ok (router answered with JSON)"
+    else
+        echo "  FAILED: /api/ did not return the router's JSON error body" >&2
+    fi
+
     echo
     echo "PHP diagnostics on the front page:"
     if curl -s "${BASE_URL}/?view=frontpage" | grep -iE "fatal error|warning:|notice:|deprecated:"; then
@@ -247,6 +289,9 @@ cmd_smoke() {
 }
 
 cmd_teardown() {
+    if [[ -f "${STATE_FILE}" ]]; then
+        load_state
+    fi
     if [[ -f "${COMPOSE_FILE}" ]]; then
         compose down -v
     fi
