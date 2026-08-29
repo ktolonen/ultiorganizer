@@ -46,7 +46,9 @@ docs/ai/test-release-install/scripts/release-test.sh smoke
 | `smoke` | Post-install: remove `install.php`, check pages and logs |
 | `teardown` | Stop the stack, delete its volume and the whole test directory |
 
-Overrides: `UO_TEST_ROOT`, `UO_TEST_PROJECT`, `UO_TEST_PORT`, `UO_TEST_ARCHIVE` (skip the build and use an existing package).
+Overrides: `UO_TEST_ROOT`, `UO_TEST_PROJECT`, `UO_TEST_PORT`, `UO_TEST_ARCHIVE` (skip the build and use an existing package). `setup` fixes the port and project for the life of the instance and records them, so a follow-up command needs only `UO_TEST_ROOT` — which it does need, since that is where the record lives. Moving an instance to another port means `teardown` then `setup`.
+
+`setup` marks the directory it creates, and `reset`, `smoke` and `teardown` refuse to read or delete a directory without that marker, so a mistyped `UO_TEST_ROOT` cannot take unrelated files with it.
 
 The stack runs under its own compose project with its own database volume. It never touches `docs/dev/compose.yaml` or its data — but for that reason, never run `down -v` against the dev stack while cleaning up this one.
 

@@ -55,14 +55,35 @@ chown_test_root() {
 # on 8081 and report plausible-looking results for the wrong stack. An explicit
 # environment override still wins.
 load_state() {
+    # The marker is checked before the state file is read, not after: reading it
+    # means sourcing it, which executes whatever it contains. A mistyped
+    # UO_TEST_ROOT must not run shell code out of a directory this script never
+    # created.
+    if [[ ! -f "${MARKER_FILE}" ]]; then
+        echo "error: ${TEST_ROOT} has no ${MARKER_FILE##*/} marker, so this script did not create it." >&2
+        echo "Refusing to read anything from it." >&2
+        exit 1
+    fi
     if [[ ! -f "${STATE_FILE}" ]]; then
         echo "error: ${STATE_FILE} not found; run 'release-test.sh setup' first" >&2
         exit 1
     fi
     # shellcheck source=/dev/null
     source "${STATE_FILE}"
-    PROJECT="${UO_TEST_PROJECT:-${STATE_PROJECT:-${PROJECT}}}"
-    PORT="${UO_TEST_PORT:-${STATE_PORT:-${PORT}}}"
+
+    # The running stack publishes the port and carries the project name chosen at
+    # setup, so the recorded values win here. Honouring an override would address
+    # a port the compose file does not publish.
+    if [[ -n "${UO_TEST_PORT:-}" && "${UO_TEST_PORT}" != "${STATE_PORT:-}" ]]; then
+        echo "note: ignoring UO_TEST_PORT=${UO_TEST_PORT}; this instance publishes ${STATE_PORT}." >&2
+        echo "      Tear down and set up again to move it." >&2
+    fi
+    if [[ -n "${UO_TEST_PROJECT:-}" && "${UO_TEST_PROJECT}" != "${STATE_PROJECT:-}" ]]; then
+        echo "note: ignoring UO_TEST_PROJECT=${UO_TEST_PROJECT}; this instance is ${STATE_PROJECT}." >&2
+    fi
+
+    PROJECT="${STATE_PROJECT:-${PROJECT}}"
+    PORT="${STATE_PORT:-${PORT}}"
     BASE_URL="http://localhost:${PORT}"
 }
 
