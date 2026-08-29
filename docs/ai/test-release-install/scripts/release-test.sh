@@ -136,6 +136,13 @@ CREATE DATABASE ultiorganizer;
 GRANT ALL ON ultiorganizer.* TO '"'"'ultiorganizer'"'"'@'"'"'%'"'"';"'
 }
 
+# Cleared at the start of each run so smoke's verdict covers this installation
+# only, the wizard's own requests included. PHP recreates the file as the Apache
+# user on first write.
+clear_php_error_log() {
+    compose exec -T app sh -lc "rm -f ${PHP_ERROR_LOG}" || true
+}
+
 wait_for_install_page() {
     local i
     for ((i = 0; i < 60; i++)); do
@@ -222,6 +229,7 @@ cmd_setup() {
     # --force-recreate replaces the containers but keeps the named volume, so a
     # setup following an earlier run would install over the previous database.
     reset_database
+    clear_php_error_log
     wait_for_install_page
     verify_prerequisites
     print_handoff
@@ -234,6 +242,7 @@ cmd_reset() {
     # to pass before `compose exec db` can work on a stopped stack.
     compose up -d --force-recreate app
     reset_database
+    clear_php_error_log
     wait_for_install_page
     verify_prerequisites
     print_handoff
@@ -409,12 +418,18 @@ cmd_smoke() {
     echo "${log:-  none}"
 
     # php.dev.ini routes error_log to a file inside the container, so this is
-    # the only place PHP's own log is visible. Shown as evidence rather than
-    # counted: it accumulates across the whole life of the container.
+    # the only place PHP's own log is visible. setup and reset clear it, so
+    # what it holds belongs to this installation run — including the wizard's
+    # own POSTs, whose diagnostics appear on no route smoke can fetch.
     echo
-    echo "PHP error log (${PHP_ERROR_LOG}, last 10 lines):"
-    log="$(compose exec -T app sh -lc "tail -10 ${PHP_ERROR_LOG} 2>/dev/null" || true)"
-    echo "${log:-  none}"
+    echo "PHP error log (${PHP_ERROR_LOG}):"
+    log="$(compose exec -T app sh -lc "grep -E 'PHP (Warning|Notice|Deprecated|Fatal error|Parse error)' ${PHP_ERROR_LOG} 2>/dev/null | tail -20" || true)"
+    if [[ -n "${log}" ]]; then
+        echo "${log}"
+        failures=$((failures + 1))
+    else
+        echo "  none"
+    fi
 
     rm -f "${body}" "${asset_list}" "${redirect_apps}"
 

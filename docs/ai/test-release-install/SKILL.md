@@ -67,6 +67,8 @@ The stack runs under its own compose project with its own database volume. It ne
 - **302 on `/login/`, `/scorekeeper/`, `/mobile/`** is a login redirect. **404 on `/api/`** is the API router answering `{"status":"error",...,"Endpoint not found."}` — the body is asserted, not just the code.
 - Each route is pinned to the status its contract requires, so an app that stops redirecting to login — or starts — fails the run. Those expectations assume an install with the default settings; an install configured differently (anonymous result input, for one) can legitimately disagree, and then the expectation is what needs updating.
 - A **missing file** shows up as a 404 on an asset or a PHP `require` fatal on a real page, which is why `smoke` loads pages instead of only diffing the archive listing.
+- `setup` and `reset` clear PHP's error log inside the container, so anything in it at `smoke` time belongs to this installation run — the wizard's own requests included, whose diagnostics appear on no page `smoke` can fetch. Any entry fails the run. A clean wizard run leaves it empty.
+- `smoke` **exits nonzero** when any check fails, so it can gate automation; the printed output is the detail, the status is the verdict.
 
 ## Common mistakes
 
