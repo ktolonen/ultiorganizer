@@ -61,5 +61,6 @@ This directory collects general project documentation.
 - `ai/analyze-lib-functions/SKILL.md`: analysis skill for lib PHP function usage counts and dead-code candidate triage.
 - `ai/screenshot-verify/SKILL.md`: verification skill that takes Chromium screenshots and measures element layout inside the dev container.
 - `ai/query-database/SKILL.md`: read-only skill for running ad-hoc SQL against the local dev database to investigate data-driven behavior.
+- `ai/test-release-install/SKILL.md`: verification skill that builds a release package and installs it with `install.php` in an isolated Docker stack.
 
 The `docs/ai/` directory contains repo-local AI assets and skills, including local review/fix skills and the database-access review skill with its bundled checker.
