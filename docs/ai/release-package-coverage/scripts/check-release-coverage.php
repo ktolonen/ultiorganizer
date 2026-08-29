@@ -15,8 +15,10 @@ declare(strict_types=1);
 //
 //   dev         -> every tracked file under it is export-ignored
 //   runtime     -> no tracked file under it is export-ignored
-//   runtime-app -> same as runtime, and the directory appears in the gettext
-//                  scan list so its translatable strings reach the catalogs
+//   runtime-app -> same as runtime, the directory appears in the gettext
+//                  scan list so its translatable strings reach the catalogs,
+//                  and it appears in build-release.sh's required_paths smoke
+//                  check so a missing app is caught even without gettext strings
 //
 // Usage:
 //   php docs/ai/release-package-coverage/scripts/check-release-coverage.php [options]
@@ -28,6 +30,7 @@ declare(strict_types=1);
 
 const INVENTORY_RELATIVE = 'docs/ai/release-package-coverage/inventory.txt';
 const GETTEXT_SCRIPT_RELATIVE = 'docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh';
+const BUILD_RELEASE_SCRIPT_RELATIVE = 'docs/release/build-release.sh';
 
 function main(array $argv): int
 {
@@ -56,6 +59,7 @@ function main(array $argv): int
     }
 
     $gettextDirs = parseGettextScanList($repo . '/' . GETTEXT_SCRIPT_RELATIVE);
+    $requiredPaths = parseRequiredPaths($repo . '/' . BUILD_RELEASE_SCRIPT_RELATIVE);
 
     $errors = [];
     $warnings = [];
@@ -108,6 +112,14 @@ function main(array $argv): int
             );
         }
 
+        if ($kind === 'runtime-app' && $requiredPaths !== null && !in_array($path, $requiredPaths, true)) {
+            $errors[] = sprintf(
+                '%s is classified "runtime-app" but does not appear in the required_paths smoke check in %s, so a missing app directory would not fail the release build.',
+                $path,
+                BUILD_RELEASE_SCRIPT_RELATIVE,
+            );
+        }
+
         if (!empty($opts['verbose'])) {
             printf("%-12s %s\n", $kind, $path);
         }
@@ -121,6 +133,10 @@ function main(array $argv): int
 
     if ($gettextDirs === null) {
         $warnings[] = 'Could not parse the scan list from ' . GETTEXT_SCRIPT_RELATIVE . '; runtime-app coverage was not verified.';
+    }
+
+    if ($requiredPaths === null) {
+        $warnings[] = 'Could not parse required_paths from ' . BUILD_RELEASE_SCRIPT_RELATIVE . '; runtime-app coverage was not verified.';
     }
 
     if (!empty($opts['verbose'])) {
@@ -266,6 +282,32 @@ function parseGettextScanList(string $file): ?array
         return null;
     }
     return array_values(array_filter($dirs, static fn(string $d): bool => $d !== '' && $d !== '.'));
+}
+
+/**
+ * Extract the base required_paths=(...) array from build-release.sh.
+ *
+ * Only the unconditional array is read; the "install"-only and per-customization
+ * paths appended later in the script are not top-level app directories.
+ *
+ * @return list<string>|null
+ */
+function parseRequiredPaths(string $file): ?array
+{
+    if (!is_file($file)) {
+        return null;
+    }
+    $contents = (string) file_get_contents($file);
+    if (preg_match('/required_paths=\(([^)]*)\)/', $contents, $m) !== 1) {
+        return null;
+    }
+    if (preg_match_all('/"([^"]+)"/', $m[1], $pm) === false) {
+        return null;
+    }
+    return array_map(
+        static fn(string $p): string => explode('/', $p)[0],
+        $pm[1],
+    );
 }
 
 exit(main($argv));

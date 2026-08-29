@@ -59,6 +59,24 @@ This page mirrors the database-change guidance from `AGENTS.md`.
 - Manual maintenance never runs `CheckDB()` and is never cleared automatically.
 - The transient lock file `MAINTENANCE_RUNTIME_DIR/maintenance.lock` is used only to serialize the updater; stale locks are recoverable after the fixed timeout in `lib/database.php`.
 
+## Local development: database ahead of the checked-out branch
+
+The automatic maintenance flow (`CheckDB()` via `lib/database.maintenance.php`)
+only runs upgrades forward and then requires `getDBVersion() === DB_VERSION`
+exactly. Switching to a branch whose `DB_VERSION` is *lower* than what is
+already installed — for example, going from a feature branch that bumped the
+schema back to `master` — leaves the installed version higher than
+`DB_VERSION`, which the maintenance gate treats the same as a failed upgrade:
+it writes an `automatic/failed` `maintenance.flag`, and every page shows
+"Database upgrade failed" until it is cleared.
+
+Recover by checking out the branch that owns the newest upgrade (cherry-pick
+it onto the branch you need to run) rather than by editing `uo_database` or
+deleting the flag by hand — a deleted flag alone does not help, since the next
+request recreates it as soon as it sees the version mismatch again. Compare
+`SELECT MAX(version) FROM uo_database` against `DB_VERSION` in
+`lib/database.php` to confirm this is the cause before investigating further.
+
 ## Rules of thumb
 
 - Prefer additive, backward-compatible changes.

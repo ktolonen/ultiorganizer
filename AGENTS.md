@@ -37,6 +37,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 
 - Follow the PHP code style described in `docs/code-style.md` (PER-CS 2.0). Run `composer format` and `composer lint` on changed files before handing back work; the pre-commit hook at `.githooks/pre-commit` enforces this on commit.
 - Hand-written client JavaScript under `script/` (including the `script/*.inc` `<script>` snippets) is linted with ESLint (`docker compose -f docs/dev/compose.yaml exec -T dev eslint script`). The config lives at `eslint.config.js` in the repo root; the toolchain itself is installed inside the `dev` Docker image, not at the repo root.
+- This is a PHP project, not an npm project: when adding Node-based dev tooling (linters, formatters, etc.), install it inside the `dev` Docker image and ship only the tool's own config file at the repo root (e.g. `eslint.config.js`). Do not add a root `package.json` — it signals an npm project to humans and tooling.
 - Keep SQL and shared data access in `lib/`.
 - `lib/*.functions.php` files are a shared interface, not a scratchpad. A function called from outside `lib/` belongs there even when only one page calls it — that is what the interface is for, and for a mutation it is where the permission check has to live (see the next rule). What does not belong is an internal step split out for the convenience of its neighbours: inline anything whose callers are all in the same file. Search for an existing helper by behavior and table name before adding one — the same query already exists under more than one naming convention (`getTeamSeries()` and `TeamSeason()`).
 - Put permission checks inside reusable `lib/` mutation helpers, not only in routed page handlers, so future callers cannot accidentally bypass access control.
@@ -46,6 +47,7 @@ Prefer reusing shared helpers in `lib/` before adding new utility code or direct
 - When adding a schema change: add `upgradeXX()` in `sql/upgrade_db.php`, bump `DB_VERSION` in `lib/database.php`, and update `sql/ultiorganizer.sql` for fresh installs, including a `uo_database` seed row for the new version. Guard every structural change so re-running the upgrade is safe. Run `docs/ai/db-upgrade-consistency/SKILL.md` afterwards. See `docs/database-upgrades.md`.
 - If the current branch already introduces the latest unmerged database upgrade, fold further schema changes into that upgrade instead of adding another one. Ask the developer to reset or clean the local database so the amended upgrade runs again.
 - Avoid touching `conf/` unless required.
+- Values in `conf/config.inc.php` (`DB_DATABASE`, `CUSTOMIZATIONS`, `BASEURL`, upload paths, etc.) describe one installation, not the project. Read them at the point of use in scripts and checks instead of hardcoding or remembering them — a stale assumed value still returns plausible-looking results, so nothing announces the mistake.
 - Keep edits ASCII unless the file already uses Unicode.
 - If making UI changes, verify both desktop and mobile layouts.
 - After adding or changing CSS, run `docs/ai/css-style-and-lint/SKILL.md` to analyze style consistency and run Stylelint on the changed files.
