@@ -465,26 +465,33 @@ cmd_smoke() {
     fi
 }
 
+# The marker gates everything here, before the compose file is read as well as
+# before the directory is deleted: `down -v` destroys the volumes an arbitrary
+# compose file names, so pointing this at someone else's directory must not get
+# as far as running Compose.
 cmd_teardown() {
+    if [[ ! -d "${TEST_ROOT}" ]]; then
+        echo "Nothing to remove: ${TEST_ROOT} does not exist."
+        return 0
+    fi
+
+    if [[ ! -f "${MARKER_FILE}" ]]; then
+        echo "error: ${TEST_ROOT} has no ${MARKER_FILE##*/} marker, so this script did not create it." >&2
+        echo "Refusing to touch it. Nothing was stopped or deleted." >&2
+        exit 1
+    fi
+
     if [[ -f "${STATE_FILE}" ]]; then
         load_state
     fi
     if [[ -f "${COMPOSE_FILE}" ]]; then
         compose down -v
     fi
-    if [[ -d "${TEST_ROOT}" ]]; then
-        if [[ ! -f "${MARKER_FILE}" ]]; then
-            echo "error: ${TEST_ROOT} has no ${MARKER_FILE##*/} marker, so this script did not create it." >&2
-            echo "Refusing to delete it. The ${PROJECT} stack, if any, was stopped." >&2
-            exit 1
-        fi
-        chown_test_root "$(id -u):$(id -g)"
-        chmod -R u+rwX "${TEST_ROOT}"
-        rm -rf "${TEST_ROOT:?}"
-        echo "Removed ${TEST_ROOT} and the ${PROJECT} stack."
-    else
-        echo "Removed the ${PROJECT} stack."
-    fi
+
+    chown_test_root "$(id -u):$(id -g)"
+    chmod -R u+rwX "${TEST_ROOT}"
+    rm -rf "${TEST_ROOT:?}"
+    echo "Removed ${TEST_ROOT} and the ${PROJECT} stack."
 }
 
 case "${1:-}" in
