@@ -187,6 +187,10 @@ final class GamehistoryFunctionsLibTest extends TestCase
         }
         $_SESSION['uid'] = 'testuser';
         $_SERVER['REMOTE_ADDR'] = '203.0.113.7';
+
+        // The snapshot memo lives in the request-local cache, which PHPUnit
+        // does not reset between tests in the same process.
+        CacheForgetNamespace('game_history_snapshot');
     }
 
     protected function tearDown(): void
@@ -274,8 +278,9 @@ final class GamehistoryFunctionsLibTest extends TestCase
         $first = (int) GameHistorySnapshotIfNeeded(700);
         $this->assertGreaterThan(0, $first);
 
-        // Second call in the same request is memoized and writes nothing.
-        $this->assertFalse(GameHistorySnapshotIfNeeded(700));
+        // The second call is memoized: it returns the same id and writes no
+        // second row.
+        $this->assertSame($first, (int) GameHistorySnapshotIfNeeded(700));
 
         $rows = DBQueryToArray(
             "SELECT target, action, has_snapshot, snapshot FROM uo_game_history WHERE game=700"
@@ -319,6 +324,7 @@ Create `lib/gamehistory.functions.php`:
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/cache.functions.php';
 require_once __DIR__ . '/comment.functions.php';
 
 function IsGameHistoryDisabled()
@@ -507,19 +513,33 @@ function GameHistoryIntRows($rows, $fields)
     return $rows;
 }
 
+/**
+ * Capture the current scoresheet once per game per request.
+ *
+ * A desktop save calls three destructive helpers in sequence, and all three
+ * must share one restore point. The request-local cache from
+ * cache.functions.php is the memo, so the second and third calls return the
+ * first call's history id without writing a second row.
+ */
 function GameHistorySnapshotIfNeeded($gameId)
 {
-    static $done = [];
-
     if (IsGameHistoryDisabled() || GameHistorySuppressed()) {
         return false;
     }
 
     $gameId = (int) $gameId;
-    if ($gameId <= 0 || isset($done[$gameId])) {
+    if ($gameId <= 0) {
         return false;
     }
-    $done[$gameId] = true;
+
+    return CacheRemember("game_history_snapshot", $gameId, function () use ($gameId) {
+        return GameHistoryWriteSnapshot($gameId);
+    });
+}
+
+function GameHistoryWriteSnapshot($gameId)
+{
+    $gameId = (int) $gameId;
 
     $json = json_encode(GameHistoryBuildSnapshot($gameId), JSON_UNESCAPED_UNICODE);
     if ($json === false) {
@@ -1543,8 +1563,6 @@ In `lib/gamehistory.functions.php`, change the signature and the memo check:
 ```php
 function GameHistorySnapshotIfNeeded($gameId, $force = false)
 {
-    static $done = [];
-
     if (IsGameHistoryDisabled()) {
         return false;
     }
@@ -1555,13 +1573,21 @@ function GameHistorySnapshotIfNeeded($gameId, $force = false)
     }
 
     $gameId = (int) $gameId;
-    if ($gameId <= 0 || (isset($done[$gameId]) && !$force)) {
+    if ($gameId <= 0) {
         return false;
     }
-    $done[$gameId] = true;
+
+    if ($force) {
+        CacheForgetNamespace("game_history_snapshot");
+    }
+
+    return CacheRemember("game_history_snapshot", $gameId, function () use ($gameId) {
+        return GameHistoryWriteSnapshot($gameId);
+    });
+}
 ```
 
-The rest of the function is unchanged.
+`GameHistoryWriteSnapshot()` is unchanged.
 
 - [ ] **Step 4: Write the restore implementation**
 
