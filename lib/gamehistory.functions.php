@@ -1,0 +1,241 @@
+<?php
+
+require_once __DIR__ . '/include_only.guard.php';
+denyDirectLibAccess(__FILE__);
+
+require_once __DIR__ . '/cache.functions.php';
+require_once __DIR__ . '/comment.functions.php';
+
+function IsGameHistoryDisabled()
+{
+    static $disabled = null;
+
+    if ($disabled !== null) {
+        return $disabled;
+    }
+
+    $value = DBQueryToValue("SELECT value FROM uo_setting WHERE name='DisableGameHistory'");
+    if ($value === null || $value === false) {
+        $disabled = false;
+        return $disabled;
+    }
+
+    $normalized = strtolower(trim((string) $value));
+    $disabled = in_array($normalized, ["1", "true", "yes", "on", "enabled"], true);
+    return $disabled;
+}
+
+/**
+ * Resolve the entry point that is performing the change.
+ *
+ * Each app entry point defines UO_APP_SOURCE. Deriving the value here rather
+ * than passing it from every call site is what keeps api/ and future callers
+ * attributed correctly without touching them.
+ */
+function GameHistorySource()
+{
+    if (defined('UO_APP_SOURCE')) {
+        return substr((string) UO_APP_SOURCE, 0, 20);
+    }
+
+    $script = $_SERVER['SCRIPT_NAME'] ?? "";
+    foreach (["api", "scorekeeper", "spiritkeeper", "mobile", "admin"] as $app) {
+        if (strpos($script, '/' . $app . '/') !== false) {
+            return $app;
+        }
+    }
+    return "user";
+}
+
+function GameHistorySuppressed($set = null)
+{
+    static $suppressed = false;
+
+    if ($set !== null) {
+        $suppressed = (bool) $set;
+    }
+    return $suppressed;
+}
+
+function GameHistoryRecord($gameId, $target, $action, $detail = [])
+{
+    if (IsGameHistoryDisabled() || GameHistorySuppressed()) {
+        return false;
+    }
+
+    $gameId = (int) $gameId;
+    if ($gameId <= 0) {
+        return false;
+    }
+
+    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
+    $ip = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "";
+    $json = json_encode($detail, JSON_UNESCAPED_UNICODE);
+    if ($json === false) {
+        $json = "";
+    }
+
+    $query = sprintf(
+        "INSERT INTO uo_game_history (game, user_id, ip, source, target, action, detail)
+			VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
+        $gameId,
+        DBEscapeString(substr((string) $userId, 0, 50)),
+        DBEscapeString(substr($ip, 0, 45)),
+        DBEscapeString(GameHistorySource()),
+        DBEscapeString(substr((string) $target, 0, 20)),
+        DBEscapeString(substr((string) $action, 0, 10)),
+        DBEscapeString($json),
+    );
+    return DBQueryInsert($query);
+}
+
+function GameHistoryBuildSnapshot($gameId)
+{
+    $gameId = (int) $gameId;
+
+    $game = DBQueryToRow(sprintf(
+        "SELECT homescore, visitorscore, isongoing, hasstarted, forfeit, official, halftime
+			FROM uo_game WHERE game_id=%d",
+        $gameId,
+    ));
+
+    $goals = DBQueryToArray(sprintf(
+        "SELECT g.num, g.assist, g.scorer, g.time, g.homescore, g.visitorscore,
+			g.ishomegoal, g.iscallahan,
+			pla.num AS assist_num, CONCAT_WS(' ', pa.firstname, pa.lastname) AS assist_name,
+			pls.num AS scorer_num, CONCAT_WS(' ', ps.firstname, ps.lastname) AS scorer_name
+		FROM uo_goal g
+		LEFT JOIN uo_player pa ON pa.player_id=g.assist
+		LEFT JOIN uo_played pla ON pla.player=g.assist AND pla.game=g.game
+		LEFT JOIN uo_player ps ON ps.player_id=g.scorer
+		LEFT JOIN uo_played pls ON pls.player=g.scorer AND pls.game=g.game
+		WHERE g.game=%d ORDER BY g.num",
+        $gameId,
+    ));
+
+    $played = DBQueryToArray(sprintf(
+        "SELECT pd.player, p.team, pd.num, CONCAT_WS(' ', p.firstname, p.lastname) AS name,
+			pd.captain, pd.spirit_captain, pd.accredited, pd.acknowledged
+		FROM uo_played pd
+		INNER JOIN uo_player p ON p.player_id=pd.player
+		WHERE pd.game=%d ORDER BY p.team, pd.num",
+        $gameId,
+    ));
+
+    $defenses = DBQueryToArray(sprintf(
+        "SELECT num, author, time, iscallahan, iscaught, ishomedefense
+			FROM uo_defense WHERE game=%d ORDER BY num",
+        $gameId,
+    ));
+
+    $timeouts = DBQueryToArray(sprintf(
+        "SELECT num, time, ishome FROM uo_timeout WHERE game=%d ORDER BY num",
+        $gameId,
+    ));
+
+    $spiritTimeouts = DBQueryToArray(sprintf(
+        "SELECT num, time, ishome FROM uo_spirit_timeout WHERE game=%d ORDER BY num",
+        $gameId,
+    ));
+
+    // Media links live in uo_gameevent too, but are guarded by hasAddMediaRight()
+    // rather than hasEditGameEventsRight(), so a restore must never rewrite them.
+    $events = DBQueryToArray(sprintf(
+        "SELECT num, time, type, ishome, info FROM uo_gameevent
+			WHERE game=%d AND type<>'media' ORDER BY num",
+        $gameId,
+    ));
+
+    return [
+        'v' => 1,
+        'game' => GameHistoryIntFields($game, ['homescore', 'visitorscore', 'isongoing',
+            'hasstarted', 'forfeit', 'halftime']),
+        'goals' => GameHistoryIntRows($goals, ['num', 'assist', 'scorer', 'time', 'homescore',
+            'visitorscore', 'ishomegoal', 'iscallahan', 'assist_num', 'scorer_num']),
+        'played' => GameHistoryIntRows($played, ['player', 'team', 'num', 'captain',
+            'spirit_captain', 'accredited', 'acknowledged']),
+        'defenses' => GameHistoryIntRows($defenses, ['num', 'author', 'time', 'iscallahan',
+            'iscaught', 'ishomedefense']),
+        'timeouts' => GameHistoryIntRows($timeouts, ['num', 'time', 'ishome']),
+        'spirit_timeouts' => GameHistoryIntRows($spiritTimeouts, ['num', 'time', 'ishome']),
+        'events' => GameHistoryIntRows($events, ['num', 'time', 'ishome']),
+        'comment' => CommentRaw(COMMENT_TYPE_GAME, $gameId),
+    ];
+}
+
+/**
+ * MySQL returns every column as a string. Snapshots are compared and restored
+ * field by field, so the numeric columns are cast once here instead of at each
+ * later reader.
+ */
+function GameHistoryIntFields($row, $fields)
+{
+    if (!is_array($row)) {
+        return [];
+    }
+    foreach ($fields as $field) {
+        if (array_key_exists($field, $row)) {
+            $row[$field] = $row[$field] === null ? null : (int) $row[$field];
+        }
+    }
+    return $row;
+}
+
+function GameHistoryIntRows($rows, $fields)
+{
+    if (!is_array($rows)) {
+        return [];
+    }
+    foreach ($rows as $i => $row) {
+        $rows[$i] = GameHistoryIntFields($row, $fields);
+    }
+    return $rows;
+}
+
+/**
+ * Capture the current scoresheet once per game per request.
+ *
+ * A desktop save calls three destructive helpers in sequence, and all three
+ * must share one restore point. The request-local cache from
+ * cache.functions.php is the memo, so the second and third calls return the
+ * first call's history id without writing a second row.
+ */
+function GameHistorySnapshotIfNeeded($gameId)
+{
+    if (IsGameHistoryDisabled() || GameHistorySuppressed()) {
+        return false;
+    }
+
+    $gameId = (int) $gameId;
+    if ($gameId <= 0) {
+        return false;
+    }
+
+    return CacheRemember("game_history_snapshot", $gameId, function () use ($gameId) {
+        return GameHistoryWriteSnapshot($gameId);
+    });
+}
+
+function GameHistoryWriteSnapshot($gameId)
+{
+    $gameId = (int) $gameId;
+
+    $json = json_encode(GameHistoryBuildSnapshot($gameId), JSON_UNESCAPED_UNICODE);
+    if ($json === false) {
+        return false;
+    }
+
+    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
+    $ip = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "";
+
+    $query = sprintf(
+        "INSERT INTO uo_game_history (game, user_id, ip, source, target, action, has_snapshot, snapshot)
+			VALUES (%d, '%s', '%s', '%s', 'snapshot', 'capture', 1, '%s')",
+        $gameId,
+        DBEscapeString(substr((string) $userId, 0, 50)),
+        DBEscapeString(substr($ip, 0, 45)),
+        DBEscapeString(GameHistorySource()),
+        DBEscapeString($json),
+    );
+    return DBQueryInsert($query);
+}
