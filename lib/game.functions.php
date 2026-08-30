@@ -1990,7 +1990,7 @@ function GameSetStartingTeam($gameId, $home)
             );
 
             $result = DBQuery($query);
-            GameHistoryRecord($gameId, "gameevent", "update", ['type' => "start", 'home' => 0]);
+            GameHistoryRecord($gameId, "gameevent", "remove", ['type' => "start"]);
 
             return $result;
         } else {
