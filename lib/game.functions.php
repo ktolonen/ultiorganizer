@@ -421,20 +421,27 @@ function GameSetRolePlayers($gameId, $teamId, $roleColumn, $playerIds)
         );
         DBQuery($query);
 
-        if (count($playerIds) === 0) {
-            return true;
-        }
-
-        $query = sprintf(
-            "UPDATE uo_played
+        $result = true;
+        if (count($playerIds) > 0) {
+            $query = sprintf(
+                "UPDATE uo_played
 			SET %s=1
 			WHERE game=%d AND player IN (%s)",
-            $roleColumn,
-            (int) $gameId,
-            implode(',', $playerIds),
-        );
+                $roleColumn,
+                (int) $gameId,
+                implode(',', $playerIds),
+            );
 
-        return DBQuery($query);
+            $result = DBQuery($query);
+        }
+
+        GameHistoryRecord($gameId, "played", "update", [
+            'team' => (int) $teamId,
+            'role' => $roleColumn,
+            'players' => array_map('intval', $playerIds),
+        ]);
+
+        return $result;
     } else {
         die('Insufficient rights to edit game');
     }
@@ -847,7 +854,10 @@ function GameSetCapEvent($gameId, $type, $time, $target)
             (int) $eventNum,
         );
 
-        return DBExecute($query);
+        $result = DBExecute($query);
+        GameHistoryRecord($gameId, "gameevent", "update", ['type' => (string) $type, 'time' => (int) $time]);
+
+        return $result;
     }
 
     $lastNum = (int) DBQueryToValue(
@@ -863,7 +873,10 @@ function GameSetCapEvent($gameId, $type, $time, $target)
         $target,
     );
 
-    return DBExecute($query);
+    $result = DBExecute($query);
+    GameHistoryRecord($gameId, "gameevent", "update", ['type' => (string) $type, 'time' => (int) $time]);
+
+    return $result;
 }
 
 function GameRemoveCapEvent($gameId, $type)
@@ -883,7 +896,10 @@ function GameRemoveCapEvent($gameId, $type)
         DBEscapeString($type),
     );
 
-    return DBExecute($query);
+    $result = DBExecute($query);
+    GameHistoryRecord($gameId, "gameevent", "remove", ['type' => (string) $type]);
+
+    return $result;
 }
 
 function GameMediaEvents($gameId)
@@ -914,7 +930,10 @@ function AddGameMediaEvent($gameId, $time, $urlId)
             (int) $urlId,
         );
 
-        return DBQueryInsert($query);
+        $result = DBQueryInsert($query);
+        GameHistoryRecord($gameId, "mediaevent", "add", ['url' => (int) $urlId, 'time' => (int) $time]);
+
+        return $result;
     } else {
         die('Insufficient rights to add media');
     }
@@ -928,7 +947,10 @@ function RemoveGameMediaEvent($gameId, $urlId)
             (int) $gameId,
             (int) $urlId,
         );
-        return DBQuery($query);
+        $result = DBQuery($query);
+        GameHistoryRecord($gameId, "mediaevent", "remove", ['url' => (int) $urlId]);
+
+        return $result;
     } else {
         die('Insufficient rights to remove media');
     }
@@ -1440,6 +1462,7 @@ function GameAddPlayer($gameId, $playerId, $number)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "played", "add", ['player' => (int) $playerId, 'num' => (int) $number]);
 
         return $result;
     } else {
@@ -1459,7 +1482,14 @@ function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $num
         );
         $playerId = DBQueryInsert($query);
 
-        GameAddPlayer($gameId, $playerId, $number);
+        $added = GameAddPlayer($gameId, $playerId, $number);
+        if ($added) {
+            GameHistoryRecord($gameId, "played", "add", [
+                'player' => (int) $playerId,
+                'num' => (int) $number,
+                'created' => 1,
+            ]);
+        }
     } else {
         die('Insufficient rights to edit game');
     }
@@ -1469,13 +1499,14 @@ function GameRemovePlayer($gameId, $playerId)
 {
     if (hasEditGamePlayersRight($gameId)) {
         $query = sprintf(
-            "DELETE FROM uo_played 
+            "DELETE FROM uo_played
 			WHERE game='%s' AND player='%s'",
             DBEscapeString($gameId),
             DBEscapeString($playerId),
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "played", "remove", ['player' => (int) $playerId]);
 
         return $result;
     } else {
@@ -1486,6 +1517,8 @@ function GameRemovePlayer($gameId, $playerId)
 function GameRemoveAllPlayers($gameId)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_played WHERE game=%d", (int) $gameId));
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_played
 			WHERE game='%s'",
@@ -1493,6 +1526,7 @@ function GameRemoveAllPlayers($gameId)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "played", "clear", ['removed' => $removed]);
 
         return $result;
     } else {
@@ -1514,6 +1548,7 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "played", "update", ['player' => (int) $playerId, 'num' => (int) $number]);
 
         return $result;
     } else {
@@ -1797,13 +1832,16 @@ function GameAddScoreEntry($uo_goal)
 function GameRemoveAllTimeouts($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_timeout WHERE game=%d", (int) $gameId));
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "DELETE FROM uo_timeout 
+            "DELETE FROM uo_timeout
 			WHERE game='%s'",
             DBEscapeString($gameId),
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "timeout", "clear", ['removed' => $removed]);
 
         return $result;
     } else {
@@ -1815,8 +1853,8 @@ function GameAddTimeout($gameId, $number, $time, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
         $query = sprintf(
-            "INSERT INTO uo_timeout 
-			(game, num, time, ishome) 
+            "INSERT INTO uo_timeout
+			(game, num, time, ishome)
 			VALUES ('%s', '%s', '%s', '%s')",
             DBEscapeString($gameId),
             DBEscapeString($number),
@@ -1825,6 +1863,11 @@ function GameAddTimeout($gameId, $number, $time, $home)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "timeout", "add", [
+            'num' => (int) $number,
+            'time' => (int) $time,
+            'home' => $home ? 1 : 0,
+        ]);
 
         return $result;
     } else {
@@ -1835,6 +1878,8 @@ function GameAddTimeout($gameId, $number, $time, $home)
 function GameRemoveAllSpiritTimeouts($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_spirit_timeout WHERE game=%d", (int) $gameId));
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_spirit_timeout
 			WHERE game='%s'",
@@ -1842,6 +1887,7 @@ function GameRemoveAllSpiritTimeouts($gameId)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "spirit_timeout", "clear", ['removed' => $removed]);
 
         return $result;
     } else {
@@ -1863,6 +1909,11 @@ function GameAddSpiritTimeout($gameId, $number, $time, $home)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "spirit_timeout", "add", [
+            'num' => (int) $number,
+            'time' => (int) $time,
+            'home' => $home ? 1 : 0,
+        ]);
 
         return $result;
     } else {
@@ -1885,6 +1936,7 @@ function GameSetScoreSheetKeeper($gameId, $name)
 		WHERE game_id='%s'", DBEscapeString($gameId));
         }
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "official", "update", ['name' => (string) $name]);
 
         return $result;
     } else {
@@ -1908,6 +1960,7 @@ function GameSetHalftime($gameId, $time)
 			WHERE game_id='%s'", DBEscapeString($gameId));
         }
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "halftime", "update", ['time' => (int) $time]);
 
         return $result;
     } else {
@@ -1934,6 +1987,7 @@ function GameSetStartingTeam($gameId, $home)
             );
 
             $result = DBQuery($query);
+            GameHistoryRecord($gameId, "gameevent", "update", ['type' => "start", 'home' => 0]);
 
             return $result;
         } else {
@@ -1946,6 +2000,7 @@ function GameSetStartingTeam($gameId, $home)
             );
 
             $result = DBQuery($query);
+            GameHistoryRecord($gameId, "gameevent", "update", ['type' => "start", 'home' => $home ? 1 : 0]);
 
             return $result;
         }
