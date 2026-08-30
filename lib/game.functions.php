@@ -1565,6 +1565,12 @@ function GameRemoveAllDefenses($gameId)
 function GameRemoveScore($gameId, $num)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removedGoal = DBQueryToRow(sprintf(
+            "SELECT assist, scorer, homescore, visitorscore FROM uo_goal WHERE game=%d AND num=%d",
+            (int) $gameId,
+            (int) $num,
+        ));
+
         $query = sprintf(
             "DELETE FROM uo_goal
 			WHERE game='%s' AND num=%d",
@@ -1573,7 +1579,12 @@ function GameRemoveScore($gameId, $num)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "goal", "remove", ['num' => (int) $num]);
+        GameHistoryRecord($gameId, "goal", "remove", [
+            'num' => (int) $num,
+            'scorer' => !empty($removedGoal['scorer']) ? (int) $removedGoal['scorer'] : null,
+            'assist' => !empty($removedGoal['assist']) ? (int) $removedGoal['assist'] : null,
+            'score' => $removedGoal ? (int) $removedGoal['homescore'] . "-" . (int) $removedGoal['visitorscore'] : null,
+        ]);
 
         return $result;
     } else {
@@ -1639,17 +1650,17 @@ function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
     $away = $lastgoal ? (int) $lastgoal['visitorscore'] : 0;
 
     LogGameUpdate($gameId, "result from goals: $home - $away");
-    GameHistoryRecord($gameId, "result", "update", [
-        'home' => (int) $home,
-        'away' => (int) $away,
-        'state' => "from_goals",
-    ]);
     $result = DBQuery(sprintf(
         "UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
         DBEscapeString($home),
         DBEscapeString($away),
         (int) $gameId,
     ));
+    GameHistoryRecord($gameId, "result", "update", [
+        'home' => (int) $home,
+        'away' => (int) $away,
+        'state' => "from_goals",
+    ]);
 
     $poolId = GamePool($gameId);
     ResolvePoolStandings($poolId);

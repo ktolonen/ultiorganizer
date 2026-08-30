@@ -1,7 +1,5 @@
 <?php
 
-define('UO_APP_SOURCE', 'user');
-
 if (is_readable('conf/config.inc.php')) {
     include_once 'conf/config.inc.php';
 } else {
@@ -75,6 +73,15 @@ EnforceSoftMaintenanceForView($rawView);
 $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', ['index', 'localization', 'install']);
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
 LogPageLoad($viewToLog);
+
+// source is varchar(20) in uo_game_history; whitelist the leading view
+// segment instead of storing an unbounded path, and fall back to "user"
+// for root-level views (e.g. frontpage) that carry no segment at all.
+$viewSource = strtok($viewToLog, '/');
+if (!in_array($viewSource, ['admin', 'user', 'mobile'], true)) {
+    $viewSource = 'user';
+}
+define('UO_APP_SOURCE', $viewSource);
 
 if (!defined('UO_ROUTED_VIEW')) {
     define('UO_ROUTED_VIEW', true);
