@@ -61,9 +61,12 @@ CREATE TABLE IF NOT EXISTS `uo_game_history` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 ```
 
-- [ ] **Step 2: Update the fresh-install version seed**
+- [ ] **Step 2: Append the fresh-install version seed row**
 
-Find the `uo_database` seed row in `sql/ultiorganizer.sql` and change the seeded version from `99` to `100`. Search for it with:
+`uo_database` holds a full per-version history — one `INSERT IGNORE` row per
+version from 46 to 99 — not a single current-version row. **Append** a new
+`(100, '<today> 00:00:00')` row, the way every prior version bump did. Editing
+row 99 in place would silently drop version 99 from the upgrade-path history.
 
 ```bash
 grep -n "uo_database" sql/ultiorganizer.sql
