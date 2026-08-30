@@ -18,6 +18,7 @@
 - New pages use the `?view=...` routing pattern and `requireRoutedView()`.
 - Keep edits ASCII. Keep comments proportionate — a guard or a cast needs no comment.
 - Reuse existing translated strings where one fits rather than adding a near-duplicate.
+- **Never change a mutator's observable behaviour when adding recording.** Capture the existing return value in a local, record, then return that original value. Do not alter a mutator's return value, its `die()` paths, or its early returns. `GameAddScore()`, `GameAddScoreEntry()` and `GameAddDefense()` already end in `$result = DBQuery($query); return $result;`, so the record call goes between those two lines. The harness pins shared `lib/` behaviour exactly, so a changed return value fails `./test:integration`.
 - **Two repositories.** SUT changes are committed in `/home/kari/dev/ultiorganizer` on branch `scoresheet-change-history`. Test changes are committed in `/home/kari/dev/ultiorganizer-tests` on `main`. Each task's commit step names which repo.
 - The harness builds its database from the SUT's `sql/ultiorganizer.sql` (see `scripts/container_runner.py:331`), so Task 1 must land before any later test can pass.
 - Harness fixture facts used throughout: game `700` (hometeam `300`, visitorteam `301`, season `HRN2026`, result 15-11, halftime 35) has 4 `uo_goal` rows and 4 `uo_played` rows. Players: `800` "Ari Ace" (team 300, num 8), `801` "Bea Blade" (team 300, num 12), `802` "Timo Twist" (team 301, num 7), `803` "Nia North" (team 301, num 14). Game `701` has no result.
@@ -547,7 +548,7 @@ function GameHistorySnapshotIfNeeded($gameId)
 cd ../ultiorganizer-tests && ./libtest:run --lib-file gamehistory.functions.php
 ```
 
-Expected: PASS, 7 tests.
+Expected: PASS, no failures.
 
 - [ ] **Step 6: Format and lint**
 
@@ -744,7 +745,16 @@ In `GameSetResult()`, replace the existing `LogGameUpdate($gameId, "result: $hom
             'away' => (int) $away,
             'state' => "final",
         ]);
+
+        if ($updatePools) {
+            $poolId = GamePool($gameId);
+            ResolvePoolStandings($poolId);
+            PoolResolvePlayed($poolId);
+        }
+        return $result;
 ```
+
+The `if ($updatePools)` tail and the `return $result;` are the function's existing code, reproduced here so a literal paste does not drop pool resolution.
 
 In `GameClearResult()`, after `LogGameUpdate($gameId, "result cleared");` add `GameHistorySnapshotIfNeeded($gameId);`, and after `$result = DBQuery($query);` add:
 
@@ -841,7 +851,7 @@ define('UO_APP_SOURCE', 'spiritkeeper');// spiritkeeper/index.php
 cd ../ultiorganizer-tests && ./libtest:run --lib-file gamehistory.functions.php
 ```
 
-Expected: PASS, 12 tests.
+Expected: PASS, no failures.
 
 - [ ] **Step 9: Run the integration suite**
 
@@ -1017,7 +1027,7 @@ The `function_exists()` guard is required here and nowhere else: `comment.functi
 cd ../ultiorganizer-tests && ./libtest:run --lib-file gamehistory.functions.php
 ```
 
-Expected: PASS, 17 tests.
+Expected: PASS, no failures.
 
 - [ ] **Step 8: Run the integration suite**
 
@@ -1374,7 +1384,7 @@ function GameHistoryFormatDetail($row)
 cd ../ultiorganizer-tests && ./libtest:run --lib-file gamehistory.functions.php
 ```
 
-Expected: PASS, 24 tests.
+Expected: PASS, no failures.
 
 - [ ] **Step 5: Run the database access boundary checker**
 
@@ -1430,9 +1440,15 @@ Append to `GamehistoryFunctionsLibTest`:
         $this->assertSame([], $result['warnings']);
         $this->assertSame(4, (int) DBQueryToValue("SELECT COUNT(*) FROM uo_goal WHERE game=700"));
 
-        $game = DBQueryToRow("SELECT homescore, visitorscore FROM uo_game WHERE game_id=700");
+        $game = DBQueryToRow(
+            "SELECT homescore, visitorscore, hasstarted, isongoing FROM uo_game WHERE game_id=700"
+        );
         $this->assertSame('15', (string) $game['homescore']);
         $this->assertSame('11', (string) $game['visitorscore']);
+        // The fixture is hasstarted=1. GameSetResult() forces 2, so this pins
+        // that the snapshot's own flags win.
+        $this->assertSame('1', (string) $game['hasstarted']);
+        $this->assertSame('0', (string) $game['isongoing']);
 
         $goal = DBQueryToRow("SELECT assist, scorer, iscallahan FROM uo_goal WHERE game=700 AND num=3");
         $this->assertSame('800', (string) $goal['assist']);
@@ -1574,7 +1590,12 @@ function GameHistoryRestore($historyId)
     $gameId = (int) $entry['game'];
     $snapshot = $entry['snapshot'];
 
-    if (!hasEditGameEventsRight($gameId)) {
+    // The replay calls mutators guarded by two different rights, and a die()
+    // inside one of them would abort mid-rebuild past the finally below. The
+    // guard set here must stay a superset of every replayed mutator's own
+    // check: GameAddPlayer()/GameAddNewPlayer() use hasEditGamePlayersRight(),
+    // everything else uses hasEditGameEventsRight().
+    if (!hasEditGameEventsRight($gameId) || !hasEditGamePlayersRight($gameId)) {
         return $failed;
     }
     $seasonId = GameSeason($gameId);
@@ -1687,7 +1708,18 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
             $playerId = (int) $rematched;
         }
 
-        GameAddPlayer($gameId, $playerId, (int) $row['num']);
+        // GameAddPlayer() returns false without dying when
+        // GameAllowsPlayerOnRoster() refuses. That matters here: the roster was
+        // just emptied, so the "already on this game's roster" fallback inside
+        // GameAllowsPlayerOnRoster() can no longer rescue an unaccredited
+        // player in a season with require_accreditation set.
+        if (GameAddPlayer($gameId, $playerId, (int) $row['num']) === false) {
+            $warnings[] = sprintf(
+                _("Player %s could not be restored."),
+                $row['name'] ?? $playerId,
+            );
+            continue;
+        }
 
         if (!empty($row['captain'])) {
             $roles[(int) $row['team']]['captain'][] = $playerId;
@@ -1715,6 +1747,13 @@ function GameHistoryMapPlayer($playerId, $idMap)
     return $idMap[$playerId] ?? $playerId;
 }
 
+/**
+ * The three result mutators each force their own hasstarted value (0, 1 and 2),
+ * so none of them can reproduce an arbitrary snapshot. Fixture game 700, for
+ * example, is hasstarted=1 with a non-null final score, which GameSetResult()
+ * would silently promote to 2. The stored flags are therefore written back
+ * after the mutator has done the pool and standings work.
+ */
 function GameHistoryRestoreResult($gameId, $gameFields)
 {
     $home = $gameFields['homescore'] ?? null;
@@ -1722,27 +1761,57 @@ function GameHistoryRestoreResult($gameId, $gameFields)
 
     if ($home === null || $away === null) {
         GameClearResult($gameId);
-        return;
-    }
-    if (!empty($gameFields['isongoing'])) {
+    } elseif (!empty($gameFields['isongoing'])) {
         GameUpdateResult($gameId, (int) $home, (int) $away);
-        return;
+    } else {
+        GameSetResult($gameId, (int) $home, (int) $away);
     }
-    GameSetResult($gameId, (int) $home, (int) $away);
+
+    DBQuery(sprintf(
+        "UPDATE uo_game SET hasstarted=%d, isongoing=%d WHERE game_id=%d",
+        (int) ($gameFields['hasstarted'] ?? 0),
+        (int) ($gameFields['isongoing'] ?? 0),
+        (int) $gameId,
+    ));
 }
 ```
 
 `GameHistoryRestorePlayers()`, `GameHistoryMapPlayer()` and `GameHistoryRestoreResult()` exist because `GameHistoryRestore()` would otherwise be far too long to read, and all three are called only from it.
 
-- [ ] **Step 5: Run the test to verify it passes**
+- [ ] **Step 5: Verify the guard set is a strict superset**
+
+`lib/database.php` exposes no transaction helpers, so the replay cannot be rolled
+back. A `die()` inside any replayed mutator would abort past the `finally`,
+leaving the suppression flag set and the game half-rebuilt. The only thing making
+the "restore is never destructive" claim true is that `GameHistoryRestore()`
+checks every right its replay will need, up front.
+
+Enumerate the guard in each function the replay calls and confirm none is
+stricter than what `GameHistoryRestore()` already checked:
+
+```bash
+cd /home/kari/dev/ultiorganizer
+grep -n "function GameRemoveAllScores\|function GameAddScoreEntry\|function GameRemoveAllTimeouts\|function GameAddTimeout\|function GameRemoveAllSpiritTimeouts\|function GameAddSpiritTimeout\|function GameRemoveAllPlayers\|function GameAddPlayer\|function GameSetRolePlayers\|function GameSetStartingTeam\|function GameSetCapEvent\|function GameSetScoreSheetKeeper\|function GameSetHalftime\|function GameSetResult\|function GameUpdateResult\|function GameClearResult" -A 3 lib/game.functions.php | grep -n "hasEdit\|isSuperAdmin\|isEventReadonly\|die("
+```
+
+Expected: every hit is `hasEditGameEventsRight` or `hasEditGamePlayersRight`, both
+already checked. If any function guards on something else, add that check to
+`GameHistoryRestore()` before continuing — do not rely on the `finally`.
+
+Note one side effect that is not a defect to fix here but must be in the docs:
+`GameAddPlayer()` also runs `UPDATE uo_player SET num=...`, so restoring a
+snapshot rewrites each player's current team roster number to the number they
+wore in that game. Record this in `docs/game-history.md` in Task 10.
+
+- [ ] **Step 6: Run the test to verify it passes**
 
 ```bash
 cd ../ultiorganizer-tests && ./libtest:run --lib-file gamehistory.functions.php
 ```
 
-Expected: PASS, 29 tests.
+Expected: PASS, no failures.
 
-- [ ] **Step 6: Run the integration suite**
+- [ ] **Step 7: Run the integration suite**
 
 ```bash
 cd ../ultiorganizer-tests && ./test:integration
@@ -1750,7 +1819,7 @@ cd ../ultiorganizer-tests && ./test:integration
 
 Expected: PASS.
 
-- [ ] **Step 7: Format, lint, and commit (both repos)**
+- [ ] **Step 8: Format, lint, and commit (both repos)**
 
 ```bash
 cd /home/kari/dev/ultiorganizer
@@ -2083,6 +2152,15 @@ git commit -m "Cover game history in privacy export and anonymization"
 - [ ] **Step 1: Write the topic document**
 
 Create `docs/game-history.md` covering: what `uo_game_history` stores; the two row kinds (change rows and snapshot rows) and why snapshots are sparse; the recording points table from the spec; how `UO_APP_SOURCE` attributes a change; the restore contract including the guards, the player rematching rule, and the media-event exclusion; the two views and who can read them; and the retention decision (cascade only, no age-based pruning).
+
+Two caveats must appear explicitly, because both are surprising and neither is
+visible from the code:
+
+- restoring a snapshot rewrites each restored player's `uo_player.num`, because
+  `GameAddPlayer()` updates the team roster number as well as the game one;
+- a restore is not transactional. `lib/database.php` has no transaction helpers,
+  so the guarantee rests on `GameHistoryRestore()` checking every right its
+  replay needs before it starts.
 
 - [ ] **Step 2: Register it in both topic lists**
 
