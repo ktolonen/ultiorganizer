@@ -26,20 +26,29 @@ $html = "";
 $feedback = "";
 
 if (!empty($_POST['restore']) && !empty($_POST['history_id'])) {
-    $outcome = GameHistoryRestore(intval($_POST['history_id']));
-    if ($outcome['restored']) {
-        $feedback .= "<p>" . _("Restored") . ".</p>";
-        foreach ($outcome['warnings'] as $warning) {
-            $feedback .= "<p class='warning'>" . utf8entities($warning) . "</p>";
-        }
-    } else {
+    $historyId = intval($_POST['history_id']);
+    $restoreEntry = GameHistoryEntry($historyId);
+    if ($restoreEntry === null || (int) $restoreEntry['game'] !== $gameId) {
         $feedback .= "<p class='warning'>" . _("Restore failed") . ".</p>";
+    } else {
+        $outcome = GameHistoryRestore($historyId);
+        if ($outcome['restored']) {
+            $feedback .= "<p>" . _("Restored") . ".</p>";
+            foreach ($outcome['warnings'] as $warning) {
+                $feedback .= "<p class='warning'>" . utf8entities($warning) . "</p>";
+            }
+        } else {
+            $feedback .= "<p class='warning'>" . _("Restore failed") . ".</p>";
+        }
     }
 }
 
 $viewEntry = null;
 if (!empty($_GET['entry'])) {
-    $viewEntry = GameHistoryEntry(intval($_GET['entry']));
+    $entryCandidate = GameHistoryEntry(intval($_GET['entry']));
+    if ($entryCandidate !== null && (int) $entryCandidate['game'] === $gameId) {
+        $viewEntry = $entryCandidate;
+    }
 }
 
 pageTopHeadOpen($title);
@@ -78,6 +87,8 @@ if ($count === 0) {
     $html .= "<th></th>";
     $html .= "</tr>\n";
 
+    $confirmText = htmlspecialchars(addslashes(_("This overwrites the current scoresheet with this saved version.")), ENT_QUOTES);
+
     foreach ($rows as $row) {
         $html .= "<tr>";
         $html .= "<td>" . utf8entities(DefTimeFormat($row['time'])) . "</td>";
@@ -90,12 +101,17 @@ if ($count === 0) {
                 . intval($row['history_id']) . "'>" . _("Show") . "</a> ";
             $html .= "<form method='post' style='display:inline'>";
             $html .= "<input type='hidden' name='history_id' value='" . intval($row['history_id']) . "'/>";
-            $html .= "<input type='submit' name='restore' value='" . _("Restore this version") . "'/>";
+            $html .= "<input type='submit' name='restore' value='" . _("Restore this version")
+                . "' onclick='return confirm(\"" . $confirmText . "\");'/>";
             $html .= "</form>";
         }
         $html .= "</td></tr>\n";
     }
     $html .= "</table>\n";
+
+    if ($count > count($rows)) {
+        $html .= "<p>" . sprintf(_("Showing the most recent %d of %d changes."), count($rows), $count) . "</p>";
+    }
 }
 
 if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
