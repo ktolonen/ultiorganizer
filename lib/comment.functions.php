@@ -355,7 +355,15 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
         return false;
     }
 
-    return ApplyCommentChange($type, $gameId, $change);
+    $result = ApplyCommentChange($type, $gameId, $change);
+
+    if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop" && function_exists('GameHistoryRecord')) {
+        GameHistoryRecord($gameId, "comment", $change['action'] === "delete" ? "remove" : "update", [
+            'length' => strlen((string) $comment),
+        ]);
+    }
+
+    return $result;
 }
 
 function SetSpiritComment($gameResult, $spiritTeamId, $comment, $delete = false)
