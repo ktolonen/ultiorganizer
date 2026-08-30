@@ -521,9 +521,10 @@ function GameHistoryRestore($historyId)
     // inside one of them would abort mid-rebuild past the finally below. The
     // guard set here must stay a superset of every replayed mutator's own
     // check: GameAddPlayer()/GameAddNewPlayer() use hasEditGamePlayersRight(),
-    // everything else uses hasEditGameEventsRight(). Both of those already
-    // fold in isEventReadonly()/canBypassEventReadonly() internally, so that
-    // is not repeated here as an independent check.
+    // everything else -- including GameSetForfeit(), called at the end of the
+    // replay -- uses hasEditGameEventsRight(). All three of those functions
+    // already fold in isEventReadonly()/canBypassEventReadonly() internally,
+    // so that is not repeated here as an independent check.
     if (!hasEditGameEventsRight($gameId) || !hasEditGamePlayersRight($gameId)) {
         return $failed;
     }
