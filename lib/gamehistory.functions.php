@@ -239,3 +239,177 @@ function GameHistoryWriteSnapshot($gameId)
     );
     return DBQueryInsert($query);
 }
+
+function GameHistoryList($gameId, $limit = null, $offset = null)
+{
+    $gameId = (int) $gameId;
+    if (!hasEditGameEventsRight($gameId)) {
+        return [];
+    }
+
+    $query = sprintf(
+        "SELECT history_id, game, time, user_id, ip, source, target, action, detail, has_snapshot
+			FROM uo_game_history WHERE game=%d ORDER BY time DESC, history_id DESC",
+        $gameId,
+    );
+    if ($limit !== null) {
+        $query .= sprintf(" LIMIT %d", (int) $limit);
+        if ($offset !== null) {
+            $query .= sprintf(" OFFSET %d", (int) $offset);
+        }
+    }
+    return DBQueryToArray($query);
+}
+
+function GameHistoryCount($gameId)
+{
+    $gameId = (int) $gameId;
+    if (!hasEditGameEventsRight($gameId)) {
+        return 0;
+    }
+    return (int) DBQueryToValue(sprintf(
+        "SELECT COUNT(*) FROM uo_game_history WHERE game=%d",
+        $gameId,
+    ));
+}
+
+function GameHistoryWhere($filters)
+{
+    $where = ["1=1"];
+
+    if (!empty($filters['game'])) {
+        $where[] = sprintf("h.game=%d", (int) $filters['game']);
+    }
+    if (!empty($filters['user'])) {
+        $where[] = sprintf("h.user_id='%s'", DBEscapeString($filters['user']));
+    }
+    if (!empty($filters['from'])) {
+        $where[] = sprintf("h.time >= '%s'", DBEscapeString($filters['from']));
+    }
+    if (!empty($filters['to'])) {
+        $where[] = sprintf("h.time <= '%s'", DBEscapeString($filters['to']));
+    }
+    if (!empty($filters['season'])) {
+        $where[] = sprintf(
+            "h.game IN (SELECT gp.game FROM uo_game_pool gp
+				INNER JOIN uo_pool po ON po.pool_id=gp.pool
+				INNER JOIN uo_series se ON se.series_id=po.series
+				WHERE se.season='%s')",
+            DBEscapeString($filters['season']),
+        );
+    }
+    return implode(" AND ", $where);
+}
+
+function GameHistoryAll($filters, $limit = null, $offset = null)
+{
+    if (!isSuperAdmin()) {
+        return [];
+    }
+
+    $query = sprintf(
+        "SELECT h.history_id, h.game, h.time, h.user_id, h.ip, h.source, h.target,
+			h.action, h.detail, h.has_snapshot
+		FROM uo_game_history h WHERE %s ORDER BY h.time DESC, h.history_id DESC",
+        GameHistoryWhere($filters),
+    );
+    if ($limit !== null) {
+        $query .= sprintf(" LIMIT %d", (int) $limit);
+        if ($offset !== null) {
+            $query .= sprintf(" OFFSET %d", (int) $offset);
+        }
+    }
+    return DBQueryToArray($query);
+}
+
+function GameHistoryAllCount($filters)
+{
+    if (!isSuperAdmin()) {
+        return 0;
+    }
+    return (int) DBQueryToValue(sprintf(
+        "SELECT COUNT(*) FROM uo_game_history h WHERE %s",
+        GameHistoryWhere($filters),
+    ));
+}
+
+function GameHistoryEntry($historyId)
+{
+    $historyId = (int) $historyId;
+    $row = DBQueryToRow(sprintf(
+        "SELECT history_id, game, time, user_id, ip, source, target, action, detail,
+			has_snapshot, snapshot FROM uo_game_history WHERE history_id=%d",
+        $historyId,
+    ));
+    if (!$row) {
+        return null;
+    }
+    if (!hasEditGameEventsRight($row['game'])) {
+        return null;
+    }
+
+    $row['detail'] = $row['detail'] === null ? [] : json_decode($row['detail'], true);
+    $row['snapshot'] = $row['snapshot'] === null ? null : json_decode($row['snapshot'], true);
+    return $row;
+}
+
+function GameHistoryFormatDetail($row)
+{
+    $detail = $row['detail'] ?? [];
+    if (is_string($detail)) {
+        $detail = json_decode($detail, true);
+    }
+    if (!is_array($detail)) {
+        $detail = [];
+    }
+
+    $target = $row['target'] ?? "";
+    $action = $row['action'] ?? "";
+
+    if ($target == "result" && $action == "clear") {
+        return _("Result cleared");
+    }
+    if ($target == "result") {
+        return sprintf(
+            "%s %d-%d (%s)",
+            _("Result"),
+            (int) ($detail['home'] ?? 0),
+            (int) ($detail['away'] ?? 0),
+            $detail['state'] ?? "",
+        );
+    }
+    if ($target == "goal" && $action == "clear") {
+        return sprintf("%s: %d", _("Points removed"), (int) ($detail['removed'] ?? 0));
+    }
+    if ($target == "goal" && $action == "remove") {
+        return sprintf("%s %d", _("Point"), (int) ($detail['num'] ?? 0));
+    }
+    if ($target == "goal") {
+        return sprintf(
+            "%s %d: %s",
+            _("Point"),
+            (int) ($detail['num'] ?? 0),
+            $detail['score'] ?? "",
+        );
+    }
+    if ($target == "played" && $action == "clear") {
+        return sprintf("%s: %d", _("Players removed"), (int) ($detail['removed'] ?? 0));
+    }
+    if ($target == "played") {
+        return sprintf("%s %d", _("Player"), (int) ($detail['player'] ?? 0));
+    }
+    if ($target == "snapshot") {
+        return _("Saved state");
+    }
+    if ($target == "restore") {
+        return _("Restored");
+    }
+    if ($target == "halftime") {
+        return sprintf("%s %d", _("Halftime"), (int) ($detail['time'] ?? 0));
+    }
+    if ($target == "official") {
+        return sprintf("%s %s", _("Official"), $detail['name'] ?? "");
+    }
+
+    return $target;
+}
