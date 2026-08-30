@@ -370,12 +370,18 @@ function GameHistoryFormatDetail($row)
         return _("Result cleared");
     }
     if ($target == "result") {
+        $states = [
+            'ongoing' => _("Ongoing"),
+            'final' => _("Final"),
+            'from_goals' => _("Recalculated"),
+        ];
+        $state = (string) ($detail['state'] ?? "");
         return sprintf(
             "%s %d-%d (%s)",
             _("Result"),
             (int) ($detail['home'] ?? 0),
             (int) ($detail['away'] ?? 0),
-            $detail['state'] ?? "",
+            $states[$state] ?? $state,
         );
     }
     if ($target == "goal" && $action == "clear") {
@@ -409,6 +415,69 @@ function GameHistoryFormatDetail($row)
     }
     if ($target == "official") {
         return sprintf("%s %s", _("Official"), $detail['name'] ?? "");
+    }
+    if ($target == "forfeit") {
+        $labels = [
+            'none' => _("None"),
+            'home' => _("Home team forfeited"),
+            'away' => _("Away team forfeited"),
+            'both' => _("Both teams forfeited"),
+        ];
+        $forfeit = (string) ($detail['forfeit'] ?? "");
+        return sprintf("%s: %s", _("Forfeit"), $labels[$forfeit] ?? $forfeit);
+    }
+    if ($target == "defense" && $action == "clear") {
+        return sprintf("%s %s: %d", _("Defences"), _("removed"), (int) ($detail['removed'] ?? 0));
+    }
+    if ($target == "defense" && $action == "update") {
+        return sprintf(
+            "%s: %d-%d",
+            _("Defences"),
+            (int) ($detail['home'] ?? 0),
+            (int) ($detail['away'] ?? 0),
+        );
+    }
+    if ($target == "defense") {
+        return sprintf("%s %d", _("Defence"), (int) ($detail['num'] ?? 0));
+    }
+    if ($target == "timeout" && $action == "clear") {
+        return sprintf("%s %s: %d", _("Timeouts"), _("removed"), (int) ($detail['removed'] ?? 0));
+    }
+    if ($target == "timeout") {
+        return sprintf("%s %d", _("Timeout"), (int) ($detail['num'] ?? 0));
+    }
+    if ($target == "spirit_timeout" && $action == "clear") {
+        return sprintf("%s %s: %d", _("Spirit timeouts"), _("removed"), (int) ($detail['removed'] ?? 0));
+    }
+    if ($target == "spirit_timeout") {
+        return sprintf("%s %d", _("Spirit timeout"), (int) ($detail['num'] ?? 0));
+    }
+    if ($target == "comment" && $action == "remove") {
+        return sprintf("%s %s", _("Game note"), _("removed"));
+    }
+    if ($target == "comment") {
+        return _("Game note");
+    }
+    if ($target == "mediaevent") {
+        return sprintf("%s %s", _("Media"), $action == "remove" ? _("removed") : _("added"));
+    }
+    if ($target == "gameevent") {
+        $type = (string) ($detail['type'] ?? "");
+        if ($type == "start") {
+            return sprintf(
+                "%s: %s",
+                _("Starting offence"),
+                !empty($detail['home']) ? _("Home team") : _("Away team"),
+            );
+        }
+        $capName = function_exists('GameCapEventName') ? GameCapEventName($type) : "";
+        if ($capName === "") {
+            $capName = _("Cap event");
+        }
+        if ($action == "remove") {
+            return sprintf("%s %s", $capName, _("removed"));
+        }
+        return $capName;
     }
 
     return $target;
