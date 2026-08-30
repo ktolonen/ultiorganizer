@@ -1,5 +1,7 @@
 <?php
 
+define('UO_APP_SOURCE', 'spiritkeeper');
+
 include_once '../lib/database.php';
 OpenConnection();
 
