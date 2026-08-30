@@ -1482,7 +1482,10 @@ function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $num
         );
         $playerId = DBQueryInsert($query);
 
+        $suppressedBefore = GameHistorySuppressed();
+        GameHistorySuppressed(true);
         $added = GameAddPlayer($gameId, $playerId, $number);
+        GameHistorySuppressed($suppressedBefore);
         if ($added) {
             GameHistoryRecord($gameId, "played", "add", [
                 'player' => (int) $playerId,
