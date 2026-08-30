@@ -108,8 +108,13 @@ Column values:
 
 - `target`: `result`, `goal`, `defense`, `played`, `timeout`, `spirit_timeout`,
   `gameevent`, `mediaevent`, `comment`, `official`, `halftime`, `forfeit`,
-  `restore`.
-- `action`: `add`, `update`, `remove`, `clear`, `restore`.
+  `snapshot`, `restore`.
+- `action`: `add`, `update`, `remove`, `clear`, `capture`, `restore`.
+
+A snapshot is written *before* the change it protects against, so it cannot name
+that change's target. It therefore gets its own row with target `snapshot` and
+action `capture`. That row is the restorable one; the change rows that follow it
+in the same request describe what was then done.
 - `source`: `user`, `admin`, `scorekeeper`, `mobile`, `spiritkeeper`, `api`.
 
 Three deliberate differences from `uo_event_log`:
