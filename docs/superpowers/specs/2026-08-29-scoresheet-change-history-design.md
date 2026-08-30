@@ -173,7 +173,16 @@ pass, which is why `api/` passes nothing. Instead:
   script path when the constant is absent.
 
 Recording inside a `lib/` mutator then attributes the right surface automatically,
-whoever the caller is. This is the property that makes full coverage achievable
+whoever the caller is.
+
+**Identity on `api/` is a known limit.** `GameHistoryRecord()` takes the user from
+`$_SESSION['uid']`, and API tokens carry no user: `uo_api_token` stores
+`token_id`, `scope_type` and `scope_id` only. An API-driven change would therefore
+record the correct `source` and a `user_id` of `unknown`. This costs nothing
+today, because `api/` performs no scoresheet writes at all — it has no call to
+`GameSetResult()`, `GameAddScore()`, `GameAddScoreEntry()` or `GameAddPlayer()`.
+If write endpoints are added later, `GameHistoryRecord()` should record the token
+id as the identity rather than `unknown`. This is the property that makes full coverage achievable
 at all, and it is the reason recording belongs in `lib/` next to the permission
 check rather than in the routed page handlers.
 
@@ -276,6 +285,29 @@ recording only; the snapshot in step 1 is taken before the flag is set.
 
 Restore is therefore never destructive: the state it replaces is always captured
 first, and appears in the timeline as another restorable row.
+
+Three limits are deliberate and belong in the documentation rather than in a fix:
+
+- **The replay is not transactional.** `lib/database.php` exposes no transaction
+  helpers, and the replayed mutators `die()` rather than return on a failed rights
+  check, which would abort past any `finally`. The non-destructive guarantee
+  therefore rests on `GameHistoryRestore()` checking every right its replay needs
+  *before* it starts — `hasEditGameEventsRight()` **and**
+  `hasEditGamePlayersRight()`, since `GameAddPlayer()` guards on the latter.
+- **The result mutators cannot express every state.** `GameSetResult()`,
+  `GameUpdateResult()` and `GameClearResult()` each force their own `hasstarted`
+  value (2, 1 and 0). A game that was `hasstarted=1` with a final score cannot be
+  reproduced by calling one of them, so `GameHistoryRestore()` writes the stored
+  `hasstarted` and `isongoing` back after the mutator has done its pool work.
+- **Restoring a roster rewrites current jersey numbers.** `GameAddPlayer()` also
+  runs `UPDATE uo_player SET num=...`, so a restore resets each restored player's
+  team roster number to the number they wore in that game.
+
+`GameAddPlayer()` also returns `false` without dying when
+`GameAllowsPlayerOnRoster()` refuses. Because the restore empties the roster
+first, that helper's "already on this game's roster" fallback can no longer
+rescue an unaccredited player in a season with `require_accreditation` set. Those
+players are reported in the warning list rather than dropped silently.
 
 ## Views
 
