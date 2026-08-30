@@ -1,5 +1,7 @@
 <?php
 
+define('UO_APP_SOURCE', 'user');
+
 if (is_readable('conf/config.inc.php')) {
     include_once 'conf/config.inc.php';
 } else {

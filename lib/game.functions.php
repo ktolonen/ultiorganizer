@@ -6,6 +6,7 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/accreditation.functions.php';
 require_once __DIR__ . '/configuration.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/gamehistory.functions.php';
 
 function SeasonScoreCounter($seasonId = "")
 {
@@ -1231,6 +1232,11 @@ function GameUpdateResult($gameId, $home, $away)
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "result", "update", [
+            'home' => (int) $home,
+            'away' => (int) $away,
+            'state' => "ongoing",
+        ]);
 
         return $result;
     } else {
@@ -1249,6 +1255,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
     }
     if (!$checkRights || hasEditGameEventsRight($gameId)) {
         LogGameUpdate($gameId, "result: $home - $away");
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($home),
@@ -1256,6 +1263,11 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "result", "update", [
+            'home' => (int) $home,
+            'away' => (int) $away,
+            'state' => "final",
+        ]);
 
         if ($updatePools) {
             $poolId = GamePool($gameId);
@@ -1313,6 +1325,7 @@ function GameSetForfeit($gameId, $forfeit)
         DBEscapeString($gameId),
     );
     $result = DBQuery($query);
+    GameHistoryRecord($gameId, "forfeit", "update", ['forfeit' => $labels[$forfeit]]);
     // Forfeited games carry no spirit; recompute visibility and cached team
     // statistics so their data is dropped from averages (and restored on undo).
     if (function_exists('RefreshGameSpiritData')) {
@@ -1330,11 +1343,13 @@ function GameClearResult($gameId, $updatepools = true)
 {
     if (hasEditGameEventsRight($gameId)) {
         LogGameUpdate($gameId, "result cleared");
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "result", "clear", []);
 
         if ($updatepools) {
             $poolId = GamePool($gameId);
@@ -1357,6 +1372,10 @@ function GameSetDefenses($gameId, $home, $away)
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "defense", "update", [
+            'home' => (int) $home,
+            'away' => (int) $away,
+        ]);
 
         return $result;
     } else {
@@ -1505,6 +1524,8 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
 function GameRemoveAllScores($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_goal WHERE game=%d", (int) $gameId));
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_goal 
 			WHERE game='%s'",
@@ -1512,6 +1533,7 @@ function GameRemoveAllScores($gameId)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "goal", "clear", ['removed' => $removed]);
 
         return $result;
     } else {
@@ -1522,6 +1544,8 @@ function GameRemoveAllScores($gameId)
 function GameRemoveAllDefenses($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_defense WHERE game=%d", (int) $gameId));
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_defense 
 			WHERE game='%s'",
@@ -1529,6 +1553,7 @@ function GameRemoveAllDefenses($gameId)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "defense", "clear", ['removed' => $removed]);
 
         return $result;
     } else {
@@ -1548,6 +1573,7 @@ function GameRemoveScore($gameId, $num)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "goal", "remove", ['num' => (int) $num]);
 
         return $result;
     } else {
@@ -1613,6 +1639,11 @@ function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
     $away = $lastgoal ? (int) $lastgoal['visitorscore'] : 0;
 
     LogGameUpdate($gameId, "result from goals: $home - $away");
+    GameHistoryRecord($gameId, "result", "update", [
+        'home' => (int) $home,
+        'away' => (int) $away,
+        'state' => "from_goals",
+    ]);
     $result = DBQuery(sprintf(
         "UPDATE uo_game SET homescore='%s', visitorscore='%s' WHERE game_id=%d",
         DBEscapeString($home),
@@ -1661,6 +1692,15 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "goal", "add", [
+            'num' => (int) $number,
+            'scorer' => $goal === null ? null : (int) $goal,
+            'assist' => $pass === null ? null : (int) $pass,
+            'time' => (int) $time,
+            'score' => (int) $hscores . "-" . (int) $ascores,
+            'home' => $home ? 1 : 0,
+            'callahan' => $iscallahan ? 1 : 0,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to edit game');
@@ -1691,6 +1731,13 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($gameId, "defense", "add", [
+            'num' => (int) $number,
+            'player' => (int) $player,
+            'time' => (int) $time,
+            'caught' => $caught ? 1 : 0,
+            'callahan' => $iscallahan ? 1 : 0,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to edit game');
@@ -1721,6 +1768,15 @@ function GameAddScoreEntry($uo_goal)
         );
 
         $result = DBQuery($query);
+        GameHistoryRecord($uo_goal['game'], "goal", "add", [
+            'num' => (int) $uo_goal['num'],
+            'scorer' => isset($uo_goal['scorer']) ? (int) $uo_goal['scorer'] : null,
+            'assist' => isset($uo_goal['assist']) ? (int) $uo_goal['assist'] : null,
+            'time' => (int) ($uo_goal['time'] ?? 0),
+            'score' => (int) $uo_goal['homescore'] . "-" . (int) $uo_goal['visitorscore'],
+            'home' => !empty($uo_goal['ishomegoal']) ? 1 : 0,
+            'callahan' => !empty($uo_goal['iscallahan']) ? 1 : 0,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to edit game');
