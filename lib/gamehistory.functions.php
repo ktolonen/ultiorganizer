@@ -463,6 +463,9 @@ function GameHistoryFormatDetail($row)
     }
     if ($target == "gameevent") {
         $type = (string) ($detail['type'] ?? "");
+        if ($type == "start" && $action == "remove") {
+            return sprintf("%s %s", _("Starting offence"), _("removed"));
+        }
         if ($type == "start") {
             return sprintf(
                 "%s: %s",
