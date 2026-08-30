@@ -342,7 +342,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(96, '2026-07-07 00:00:00'),
 	(97, '2026-07-25 00:00:00'),
 	(98, '2026-08-16 00:00:00'),
-	(99, '2026-08-23 00:00:00');
+	(99, '2026-08-23 00:00:00'),
+	(100, '2026-08-30 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -467,6 +468,26 @@ CREATE TABLE IF NOT EXISTS `uo_game_pool` (
   KEY `idx_pool_timetable_game` (`pool`,`timetable`,`game`),
   CONSTRAINT `fk_game_pool_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
   CONSTRAINT `fk_game_pool_pool` FOREIGN KEY (`pool`) REFERENCES `uo_pool` (`pool_id`) ON DELETE CASCADE ON UPDATE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+
+CREATE TABLE IF NOT EXISTS `uo_game_history` (
+  `history_id` int(10) NOT NULL AUTO_INCREMENT,
+  `game` int(10) NOT NULL,
+  `time` datetime NOT NULL DEFAULT current_timestamp(),
+  `user_id` varchar(50) NOT NULL,
+  `ip` varchar(45) DEFAULT NULL,
+  `source` varchar(20) DEFAULT NULL,
+  `target` varchar(20) NOT NULL,
+  `action` varchar(10) NOT NULL,
+  `detail` text DEFAULT NULL,
+  `has_snapshot` tinyint(1) NOT NULL DEFAULT 0,
+  `snapshot` mediumtext DEFAULT NULL,
+  PRIMARY KEY (`history_id`),
+  KEY `idx_game_history_game_time` (`game`,`time`),
+  KEY `idx_game_history_restorable` (`game`,`has_snapshot`,`time`),
+  KEY `idx_game_history_user_time` (`user_id`,`time`),
+  CONSTRAINT `fk_game_history_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 
