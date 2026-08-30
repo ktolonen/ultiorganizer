@@ -63,6 +63,7 @@ $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
+$menutabs[_("History")] = "?view=user/gamehistory&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
     $spiritUrl = SpiritEntryUrl($gameId);
     if (!empty($spiritUrl)) {
