@@ -527,6 +527,7 @@ function GameHistoryRestore($historyId)
     if (!hasEditGameEventsRight($gameId) || !hasEditGamePlayersRight($gameId)) {
         return $failed;
     }
+    $seasonId = GameSeason($gameId);
 
     // Restoring an "acknowledged" flag (see GameHistoryRestorePlayers()) goes
     // through AcknowledgeUnaccredited(), guarded by hasAccredidationRight() --
@@ -547,7 +548,21 @@ function GameHistoryRestore($historyId)
 
     GameHistorySnapshotIfNeeded($gameId, true);
 
+    // Neither of these blocks: CheckGameResult() only ever turns them into
+    // warning HTML on the routed result-entry pages, and the lib mutators
+    // themselves (GameSetResult() included) never enforce them. Blocking
+    // restore here would make it stricter than an ordinary result edit. The
+    // operator still needs to know, so they become warnings instead -- reusing
+    // the exact wording CheckGameResult() already uses for the same two
+    // conditions rather than coining new msgids.
     $warnings = [];
+    if (IsPoolLocked(GamePool($gameId))) {
+        $warnings[] = _("Pool is locked.");
+    }
+    if (IsSeasonStatsCalculated($seasonId)) {
+        $warnings[] = _("Event played.");
+    }
+
     // Save/restore rather than a bare false: a caller further up the stack
     // (e.g. a bulk-restore loop) may already have suppression on, and this
     // must not clear it out from under that caller.
@@ -609,6 +624,16 @@ function GameHistoryRestore($historyId)
         SetGameComment(COMMENT_TYPE_GAME, $gameId, $snapshot['comment'] ?? "", empty($snapshot['comment']));
 
         GameHistoryRestoreResult($gameId, $snapshot['game'] ?? []);
+
+        // Must run after GameHistoryRestoreResult(), not before: standings are
+        // recomputed by reading uo_game directly (see ResolvePoolStandings()'s
+        // SQL), so whichever of these two runs last is the one whose recompute
+        // sticks. GameUpdateResult() -- the isongoing branch -- does not
+        // recompute standings at all, so if forfeit were restored first and
+        // the game turns out to be ongoing, no call in this replay would ever
+        // recompute standings against the correct score; restoring forfeit
+        // last guarantees GameSetForfeit()'s own recompute is that call.
+        GameSetForfeit($gameId, (int) ($snapshot['game']['forfeit'] ?? 0));
     } finally {
         GameHistorySuppressed($previousSuppressed);
     }
