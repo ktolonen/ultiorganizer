@@ -106,7 +106,13 @@ Current table-level behavior:
 
 - `uo_game_history`
   No row deletion is done; rows are removed only by the foreign-key cascade when the linked game is deleted.
-  Every historical `firstname`/`lastname` combination linked to the anonymized player or profile is rewritten to `- -` inside the `snapshot` column, because `assist_name`, `scorer_name`, and `played[].name` are embedded free text, not foreign keys, and are not reached by anonymizing `uo_player`.
+  `assist_name`, `scorer_name`, and `played[].name` inside the `snapshot` column are embedded free
+  text, not foreign keys, so anonymizing `uo_player` does not reach them. Every `has_snapshot=1`
+  row is decoded, and any `played[].player`, `goals[].scorer`, or `goals[].assist` entry that
+  matches one of the anonymized player's linked `player_id` values has its paired name field
+  rewritten to `- -`; the row is then re-encoded and saved. Matching is by player id, not by the
+  name text stored at capture time, so a name recorded before a later correction in `uo_player`
+  is still reached.
 
 ## Free-text fields naming other people
 
@@ -118,7 +124,7 @@ Free text stored on another entity's row is not reachable that way. A person can
 - `uo_team_profile` — `coach`, `captain`, `story`, `achievements`
 - `uo_club` — `contacts`, `story`, `achievements`
 - `uo_comment` — the comment body
-- `uo_game_history.snapshot` — `game.official`, `comment`, and `events[].info`; the embedded `assist_name`, `scorer_name`, and `played[].name` fields are the one exception, rewritten by player anonymization as described above
+- `uo_game_history.snapshot` — `game.official`, `comment`, and `events[].info`; the embedded `assist_name`, `scorer_name`, and `played[].name` fields are the one exception, rewritten by player anonymization by player id as described above
 
 No per-subject query can find those mentions, because the row belongs to a team, club, or game
 rather than to the person. Removing them is a manual admin edit, and a privacy request that
