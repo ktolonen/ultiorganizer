@@ -1543,6 +1543,10 @@ function upgrade100()
 	  KEY `idx_game_history_user_time` (`user_id`,`time`),
 	  CONSTRAINT `fk_game_history_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    if (!hasRow("uo_setting", "name", "DisableGameHistory")) {
+        runQuery('INSERT INTO uo_setting (name, value) VALUES ("DisableGameHistory", "false")');
+    }
 }
 
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
