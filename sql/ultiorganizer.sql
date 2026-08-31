@@ -988,7 +988,7 @@ CREATE TABLE IF NOT EXISTS `uo_setting` (
   `value` varchar(200) DEFAULT '',
   `setting_id` int(10) NOT NULL AUTO_INCREMENT,
   PRIMARY KEY (`setting_id`)
-) ENGINE=InnoDB AUTO_INCREMENT=16 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+) ENGINE=InnoDB AUTO_INCREMENT=17 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('CurrentSeason', NULL, 1),
@@ -1005,7 +1005,8 @@ INSERT IGNORE INTO `uo_setting` (`name`, `value`, `setting_id`) VALUES
 	('DisableVisitorLogging', 'false', 12),
 	('SoftMaintenanceMode', 'false', 13),
 	('PersistentCacheEnabled', 'true', 14),
-	('PersistentCacheTtlSeconds', '5', 15);
+	('PersistentCacheTtlSeconds', '5', 15),
+	('DisableGameHistory', 'false', 16);
 
 CREATE TABLE IF NOT EXISTS `uo_specialranking` (
   `frompool` int(10) NOT NULL,
