@@ -566,18 +566,6 @@ function PrivacyAnonymizePlayer($playerId, $adminUserId)
     }
     $licenseIdList = PrivacyQuotedList(array_unique(array_filter($accreditationIds)));
 
-    // uo_game_history.snapshot embeds player names as free text (assist_name,
-    // scorer_name, and played[].name), so anonymizing the uo_player rows does
-    // not reach them; every historical name variant is captured here, before
-    // the UPDATE below overwrites it, and rewritten separately.
-    $playerNames = [];
-    foreach ($subject['players'] as $playerRow) {
-        $playerName = trim(trim((string) $playerRow['firstname']) . ' ' . trim((string) $playerRow['lastname']));
-        if ($playerName !== '') {
-            $playerNames[$playerName] = true;
-        }
-    }
-
     DBSetExceptionMode(true);
     try {
         DBQuery('START TRANSACTION');
@@ -641,24 +629,59 @@ function PrivacyAnonymizePlayer($playerId, $adminUserId)
         DBQuery("DELETE FROM uo_accreditationlog WHERE player IN ($playerIdList)");
         DBQuery("DELETE FROM uo_event_log WHERE category='player' AND id1 IN ($playerIdList)");
 
-        // Matched as a JSON "key":"value" pair, not a bare substring: the
-        // snapshot also carries other free-text names (game.official,
-        // comment, events[].info) that must not be touched here, and a bare
-        // substring match could also mangle a longer name that contains this
-        // one (e.g. "Jan Ek" inside "Jan Ekstrom").
-        foreach (array_keys($playerNames) as $oldName) {
-            foreach (['name', 'scorer_name', 'assist_name'] as $field) {
-                $old = sprintf('"%s":"%s"', $field, $oldName);
-                $new = sprintf('"%s":"- -"', $field);
-                $query = sprintf(
-                    "UPDATE uo_game_history SET snapshot = REPLACE(snapshot, '%s', '%s')
-						WHERE has_snapshot=1 AND snapshot LIKE '%%%s%%'",
-                    DBEscapeString($old),
-                    DBEscapeString($new),
-                    DBEscapeString($old),
-                );
-                DBQuery($query);
+        // uo_game_history.snapshot embeds player names as free text
+        // (played[].name, goals[].scorer_name, goals[].assist_name), keyed
+        // by player id rather than a foreign key, so anonymizing uo_player
+        // does not reach them. Each snapshot is decoded, the matching player
+        // id's name fields are rewritten, and it is re-encoded with the same
+        // flags it was stored with. Byte-level string replacement on the raw
+        // JSON was tried and rejected: it cannot reliably tell a player's
+        // name apart from unrelated free text (game.official, comment,
+        // events[].info), a name that is a substring of another player's
+        // name, two players sharing a name, or the JSON string escaping
+        // json_encode() applies to quotes, backslashes, and slashes.
+        // Anonymization is a rare admin-triggered action, so scanning every
+        // snapshot row is acceptable; correctness matters more than speed
+        // here.
+        $snapshotRows = DBQueryToArray(
+            "SELECT history_id, snapshot FROM uo_game_history WHERE has_snapshot=1 AND snapshot IS NOT NULL",
+        );
+        foreach ($snapshotRows as $snapshotRow) {
+            $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+            if (!is_array($snapshot)) {
+                continue;
             }
+
+            $changed = false;
+            foreach ((array) ($snapshot['played'] ?? []) as $i => $playedRow) {
+                if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                    $snapshot['played'][$i]['name'] = '- -';
+                    $changed = true;
+                }
+            }
+            foreach ((array) ($snapshot['goals'] ?? []) as $i => $goalRow) {
+                if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
+                    $snapshot['goals'][$i]['scorer_name'] = '- -';
+                    $changed = true;
+                }
+                if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
+                    $snapshot['goals'][$i]['assist_name'] = '- -';
+                    $changed = true;
+                }
+            }
+
+            if (!$changed) {
+                continue;
+            }
+            $json = json_encode($snapshot, JSON_UNESCAPED_UNICODE);
+            if ($json === false) {
+                continue;
+            }
+            DBQuery(sprintf(
+                "UPDATE uo_game_history SET snapshot='%s' WHERE history_id=%d",
+                DBEscapeString($json),
+                (int) $snapshotRow['history_id'],
+            ));
         }
 
         DBQuery('COMMIT');
