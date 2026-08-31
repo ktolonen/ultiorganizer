@@ -82,7 +82,7 @@ Because every one of the scoresheet input paths documented in `docs/scoresheet.m
 ## Viewing history
 
 - `user/gamehistory.php` shows the change history for one game. It requires `hasEditGameEventsRight($gameId)` -- the same right needed to edit that game's scoresheet, so a team's own game admins can review their game's history without needing broader access. Rows with `has_snapshot=1` get a "Show" link (renders the point sequence from the snapshot) and a "Restore this version" action.
-- `admin/gamehistory.php`, titled "Score sheet history" in the UI, is an installation-wide log across all games, with filters by season, game, user, and date range. It is restricted to `isSuperAdmin()` in both its data queries (`GameHistoryAll()`, `GameHistoryAllCount()`) and its menu link, so a season or team admin who can reach the per-game page cannot browse other teams' history through this one.
+- `admin/gamehistory.php`, titled "Scoresheet history" in the UI, is an installation-wide log across all games, with filters by season, game, user, and date range. It is restricted to `isSuperAdmin()` in both its data queries (`GameHistoryAll()`, `GameHistoryAllCount()`) and its menu link, so a season or team admin who can reach the per-game page cannot browse other teams' history through this one.
 
 ## Restoring a snapshot
 

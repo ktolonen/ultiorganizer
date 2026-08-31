@@ -6,7 +6,7 @@ include_once 'lib/gamehistory.functions.php';
 include_once 'lib/game.functions.php';
 
 $LAYOUT_ID = GAMEHISTORYADMIN;
-$title = _("Score sheet history");
+$title = _("Scoresheet history");
 $html = "";
 
 $filterKeys = ['season', 'game', 'user', 'from', 'to'];
