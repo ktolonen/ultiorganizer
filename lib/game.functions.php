@@ -408,6 +408,7 @@ function GameSetRolePlayers($gameId, $teamId, $roleColumn, $playerIds)
     }
 
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         $playerIds = GameFilterRolePlayers($gameId, $teamId, $playerIds);
 
         $query = sprintf(
@@ -834,6 +835,7 @@ function GameSetCapEvent($gameId, $type, $time, $target)
     if (!GameIsCapEventType($type) || $target < 1 || $target > 255) {
         return false;
     }
+    GameHistorySnapshotIfNeeded($gameId);
 
     $eventNum = DBQueryToValue(
         sprintf(
@@ -889,6 +891,7 @@ function GameRemoveCapEvent($gameId, $type)
     if (!GameIsCapEventType($type)) {
         return false;
     }
+    GameHistorySnapshotIfNeeded($gameId);
 
     $query = sprintf(
         "DELETE FROM uo_gameevent WHERE game=%d AND type='%s'",
@@ -900,6 +903,37 @@ function GameRemoveCapEvent($gameId, $type)
     GameHistoryRecord($gameId, "gameevent", "remove", ['type' => (string) $type]);
 
     return $result;
+}
+
+/**
+ * Remove the uo_gameevent rows GameHistoryRestore()'s replay loop can
+ * actually reinstate (starting offence and cap events), so the restored set
+ * matches the snapshot exactly for those types. Deliberately narrower than
+ * "every non-media row": other event types (e.g. 'turnover') are captured by
+ * the snapshot but have no replay branch, so deleting them here would destroy
+ * data the replay could never put back. Media rows are guarded by
+ * hasAddMediaRight() rather than hasEditGameEventsRight() and are excluded
+ * from snapshots entirely (see GameHistoryBuildSnapshot()), so they must
+ * never be touched here either. The only caller runs under
+ * GameHistorySuppressed(), so this does not write its own audit row.
+ */
+function GameRemoveAllGameEvents($gameId)
+{
+    if (hasEditGameEventsRight($gameId)) {
+        $gameId = (int) $gameId;
+        GameHistorySnapshotIfNeeded($gameId);
+        $types = array_merge(['offence'], GameCapEventTypes());
+        $typeList = "'" . implode("','", array_map('DBEscapeString', $types)) . "'";
+        $query = sprintf(
+            "DELETE FROM uo_gameevent WHERE game=%d AND type IN (%s)",
+            $gameId,
+            $typeList,
+        );
+
+        return DBQuery($query);
+    } else {
+        die('Insufficient rights to edit game');
+    }
 }
 
 function GameMediaEvents($gameId)
@@ -1338,6 +1372,7 @@ function GameSetForfeit($gameId, $forfeit)
     if (!hasEditGameEventsRight($gameId)) {
         die('Insufficient rights to edit game');
     }
+    GameHistorySnapshotIfNeeded($gameId);
     $forfeit = max(0, min(3, intval($forfeit)));
     $labels = [0 => "none", 1 => "home", 2 => "away", 3 => "both"];
     LogGameUpdate($gameId, "forfeit: " . $labels[$forfeit]);
@@ -1387,6 +1422,7 @@ function GameClearResult($gameId, $updatepools = true)
 function GameSetDefenses($gameId, $home, $away)
 {
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_game SET homedefenses='%s', visitordefenses='%s' WHERE game_id='%s'",
             DBEscapeString($home),
@@ -1441,6 +1477,7 @@ function GameAddPlayer($gameId, $playerId, $number)
         if (!GameAllowsPlayerOnRoster($gameId, $playerId)) {
             return false;
         }
+        GameHistorySnapshotIfNeeded($gameId);
 
         $query = sprintf(
             "INSERT INTO uo_played
@@ -1473,6 +1510,10 @@ function GameAddPlayer($gameId, $playerId, $number)
 function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        // Taken here, not left to the nested GameAddPlayer() call below: that
+        // call runs with history suppressed, so its own snapshot attempt would
+        // be a no-op.
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "INSERT INTO uo_player (firstname, lastname, accreditation_id, team) VALUES ('%s', '%s', '%s', %d)",
             DBEscapeString($firstname),
@@ -1501,6 +1542,7 @@ function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $num
 function GameRemovePlayer($gameId, $playerId)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_played
 			WHERE game='%s' AND player='%s'",
@@ -1540,8 +1582,9 @@ function GameRemoveAllPlayers($gameId)
 function GameSetPlayerNumber($gameId, $playerId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "UPDATE uo_played 
+            "UPDATE uo_played
 			SET num='%s', accredited=%d 
 			WHERE game=%d AND player=%d",
             DBEscapeString($number),
@@ -1600,6 +1643,11 @@ function GameRemoveAllDefenses($gameId)
 }
 
 
+// GameRemoveScore(), GameAddScore() and GameAddScoreEntry() deliberately do
+// NOT call GameHistorySnapshotIfNeeded(): the scorekeeper saves one goal per
+// HTTP request, so snapshotting per goal would produce roughly one snapshot
+// per point (~30 per game). GameRemoveAllScores()'s snapshot on the bulk
+// desktop save already covers this path.
 function GameRemoveScore($gameId, $num)
 {
     if (hasEditGameEventsRight($gameId)) {
@@ -1711,6 +1759,8 @@ function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
  * Add goal to game. Does not update game result!
  *
  */
+// No GameHistorySnapshotIfNeeded() here either -- see the comment on
+// GameRemoveScore().
 function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home, $iscallahan)
 {
     if (hasEditGameEventsRight($gameId)) {
@@ -1759,20 +1809,28 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
 function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $number)
 {
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
+        // uo_defense.author is nullable (an unresolvable player on restore, see
+        // GameHistoryMapPlayer()); emit a real SQL NULL instead of the empty
+        // string DBEscapeString(null) would produce, which would violate the
+        // FK. Mirrors GameAddScoreEntry()'s scorer/assist handling.
+        $authorValue = ($player === -1 || $player === 0 || $player === "0" || $player === "" || $player === null
+            || strcasecmp((string) $player, "x") == 0 || strcasecmp((string) $player, "xx") == 0)
+            ? "NULL" : "'" . DBEscapeString($player) . "'";
         $query = sprintf(
-            "INSERT INTO uo_defense 
-			(game, num, author, time, iscallahan, iscaught, ishomedefense) 
-			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s') 
-			ON DUPLICATE KEY UPDATE 
-			author='%s', time='%s', iscallahan='%s', iscaught='%s', ishomedefense='%s'",
+            "INSERT INTO uo_defense
+			(game, num, author, time, iscallahan, iscaught, ishomedefense)
+			VALUES ('%s', '%s', %s, '%s', '%s', '%s', '%s')
+			ON DUPLICATE KEY UPDATE
+			author=%s, time='%s', iscallahan='%s', iscaught='%s', ishomedefense='%s'",
             DBEscapeString($gameId),
             DBEscapeString($number),
-            DBEscapeString($player),
+            $authorValue,
             DBEscapeString($time),
             DBEscapeString($iscallahan),
             DBEscapeString($caught),
             DBEscapeString($home),
-            DBEscapeString($player),
+            $authorValue,
             DBEscapeString($time),
             DBEscapeString($iscallahan),
             DBEscapeString($caught),
@@ -1793,6 +1851,10 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
     }
 }
 
+// No GameHistorySnapshotIfNeeded() here either -- see the comment on
+// GameRemoveScore(). This is also the replay target for a restored goal, and
+// replay always runs under GameHistorySuppressed(), so the memo would be a
+// no-op there regardless.
 function GameAddScoreEntry($uo_goal)
 {
     if (hasEditGameEventsRight($uo_goal['game'])) {
@@ -1855,6 +1917,7 @@ function GameRemoveAllTimeouts($gameId)
 function GameAddTimeout($gameId, $number, $time, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "INSERT INTO uo_timeout
 			(game, num, time, ishome)
@@ -1901,6 +1964,7 @@ function GameRemoveAllSpiritTimeouts($gameId)
 function GameAddSpiritTimeout($gameId, $number, $time, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "INSERT INTO uo_spirit_timeout
 			(game, num, time, ishome)
@@ -1927,6 +1991,7 @@ function GameAddSpiritTimeout($gameId, $number, $time, $home)
 function GameSetScoreSheetKeeper($gameId, $name)
 {
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         if (isset($name)) {
             $query = sprintf("
 		UPDATE uo_game 
@@ -1951,6 +2016,7 @@ function GameSetScoreSheetKeeper($gameId, $name)
 function GameSetHalftime($gameId, $time)
 {
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         if (isset($time)) {
             $query = sprintf("
 			UPDATE uo_game 
@@ -1983,6 +2049,7 @@ function GameSetCaptain($gameId, $teamId, $playerId)
 function GameSetStartingTeam($gameId, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
+        GameHistorySnapshotIfNeeded($gameId);
         if ($home === null) {
             $query = sprintf(
                 "DELETE FROM uo_gameevent WHERE game=%d AND type='offence'",

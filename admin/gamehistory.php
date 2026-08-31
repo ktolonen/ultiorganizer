@@ -91,7 +91,9 @@ if ($totalRows > 0 && $totalPages > 1) {
     $pagination .= _("Go to") . ": ";
     $pagination .= "<input class='input' type='number' min='1' max='" . $totalPages . "' name='page_input' size='4' value='" . $page . "'/>";
     $pagination .= "</label> ";
-    $pagination .= "<button class='button' type='submit' name='page_nav' value='$page'>" . _("Go") . "</button>";
+    // No name/value here: a named "page_nav" button would submit the OLD
+    // $page and shadow the typed page_input value in the elseif chain above.
+    $pagination .= "<button class='button' type='submit'>" . _("Go") . "</button>";
     if ($page < $totalPages) {
         $pagination .= " <button class='button' type='submit' name='page_nav' value='" . ($page + 1) . "'>" . _("Next") . " &raquo;</button>";
     }
