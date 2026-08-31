@@ -423,7 +423,7 @@ function GameHistoryFormatDetail($row)
         return sprintf("%s %d", _("Halftime"), (int) ($detail['time'] ?? 0));
     }
     if ($target == "official") {
-        return sprintf("%s %s", _("Official"), $detail['name'] ?? "");
+        return sprintf("%s %s", _("Scorekeeper"), $detail['name'] ?? "");
     }
     if ($target == "forfeit") {
         $labels = [
