@@ -29,6 +29,7 @@ This directory collects general project documentation.
 
 ### Competition workflow
 
+- `game-history.md`: scoresheet change history, snapshot boundaries, and the restore contract.
 - `playoff-templates.md`: playoff bracket template grammar, lookup, move-comment block, BYE handling, and pool generation.
 - `ranking.md`: pool ranking resolvers per pool type, tie-break order, special-ranking overrides, and event final-standings rendering.
 - `schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
