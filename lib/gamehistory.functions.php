@@ -296,7 +296,10 @@ function GameHistoryWhere($filters)
         $where[] = sprintf("h.time >= '%s'", DBEscapeString($filters['from']));
     }
     if (!empty($filters['to'])) {
-        $where[] = sprintf("h.time <= '%s'", DBEscapeString($filters['to']));
+        // admin/gamehistory.php feeds a bare YYYY-MM-DD from <input type='date'>,
+        // which MySQL widens to 00:00:00 -- so a plain <= would exclude every
+        // row recorded on the chosen end date.
+        $where[] = sprintf("h.time < DATE_ADD('%s', INTERVAL 1 DAY)", DBEscapeString($filters['to']));
     }
     if (!empty($filters['season'])) {
         $where[] = sprintf(
@@ -619,8 +622,17 @@ function GameHistoryRestore($historyId)
             GameAddSpiritTimeout($gameId, (int) $timeout['num'], (int) $timeout['time'], (int) $timeout['ishome']);
         }
 
+        // uo_gameevent gets no explicit RemoveAll* before replay like goals,
+        // defences and timeouts do, and GameSetCapEvent() is upsert-only, so an
+        // event set after the snapshot (e.g. a time cap) would otherwise
+        // survive a restore. Media rows are excluded -- see the comment on
+        // GameRemoveAllGameEvents().
+        GameRemoveAllGameEvents($gameId);
         foreach ($snapshot['events'] ?? [] as $event) {
-            if ($event['type'] == "start") {
+            // The snapshot stores the raw uo_gameevent.type column value
+            // ('offence'), not the "start" label GameHistoryFormatDetail() uses
+            // for its rendered text -- those are two different vocabularies.
+            if ($event['type'] == "offence") {
                 GameSetStartingTeam($gameId, (int) $event['ishome']);
             } elseif (GameIsCapEventType($event['type'])) {
                 // The cap target lives in info, not ishome -- caps carry no
@@ -630,7 +642,8 @@ function GameHistoryRestore($historyId)
         }
 
         GameSetScoreSheetKeeper($gameId, $snapshot['game']['official'] ?? null);
-        GameSetHalftime($gameId, (int) ($snapshot['game']['halftime'] ?? 0));
+        $halftime = $snapshot['game']['halftime'] ?? null;
+        GameSetHalftime($gameId, $halftime === null ? null : (int) $halftime);
         SetGameComment(COMMENT_TYPE_GAME, $gameId, $snapshot['comment'] ?? "", empty($snapshot['comment']));
 
         GameHistoryRestoreResult($gameId, $snapshot['game'] ?? []);
@@ -713,10 +726,23 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
             continue;
         }
 
-        // GameAddPlayer() always inserts acknowledged=0; the caller already
-        // confirmed hasAccredidationRight() for every team that needs this.
+        // GameAddPlayer() always inserts acknowledged=0. The caller already
+        // confirmed hasAccredidationRight() for every team the SNAPSHOT
+        // assigns this player to, but AcknowledgeUnaccredited() re-reads the
+        // player's CURRENT team and die()s on mismatch -- a player moved
+        // between teams since the snapshot would otherwise abort the replay
+        // partway through. Re-check the current team here and turn that case
+        // into a warning instead of letting it die mid-restore.
         if (!empty($row['acknowledged'])) {
-            AcknowledgeUnaccredited($playerId, $gameId, "restore");
+            $currentTeam = PlayerInfo($playerId)['team'] ?? null;
+            if ($currentTeam !== null && hasAccredidationRight($currentTeam)) {
+                AcknowledgeUnaccredited($playerId, $gameId, "restore");
+            } else {
+                $warnings[] = sprintf(
+                    _("Player %s's accreditation could not be restored."),
+                    $row['name'] ?? $playerId,
+                );
+            }
         }
 
         if (!empty($row['captain'])) {
