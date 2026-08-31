@@ -47,6 +47,7 @@ Current persistence behavior:
 - `GameUpdateResult()` updates `uo_game.homescore`, `uo_game.visitorscore`, `uo_game.isongoing=1`, and `uo_game.hasstarted=1`.
 - `GameSetResult()` updates `uo_game.homescore`, `uo_game.visitorscore`, `uo_game.isongoing=0`, and `uo_game.hasstarted=2`.
 - `GameClearResult()` clears the result on `uo_game` and resets the started flags.
+- each of these also records the change in `uo_game_history`; see `docs/game-history.md`.
 
 Important limitation:
 
@@ -77,6 +78,7 @@ Current persistence behavior:
 - `GameSetPlayerNumber()` updates the jersey number stored on the `uo_played` row,
 - `GameSetCaptains()` updates the `captain` flag on `uo_played`,
 - `GameSetSpiritCaptains()` updates the `spirit_captain` flag on `uo_played`.
+- each of these also records the change in `uo_game_history`; see `docs/game-history.md`.
 
 Important distinction:
 
@@ -124,6 +126,7 @@ Current persistence behavior on save:
 - `GameRemoveAllTimeouts()` deletes existing `uo_timeout` rows for the game and `GameAddTimeout()` re-inserts the submitted timeout rows,
 - when `spiritmode > 0` and `hide_time_on_scoresheet` is false, `GameRemoveAllSpiritTimeouts()` deletes existing `uo_spirit_timeout` rows for the game and `GameAddSpiritTimeout()` re-inserts the submitted spirit-timeout rows,
 - `GameRemoveAllScores()` deletes existing `uo_goal` rows for the game and the page then rebuilds the entire point sequence with repeated `GameAddScore()` calls.
+- each of these also records the change in `uo_game_history`, and the bulk-clearing calls (`GameRemoveAllTimeouts()`, `GameRemoveAllSpiritTimeouts()`, `GameRemoveAllScores()`) collectively capture a single restorable snapshot of the pre-save state before clearing, not one snapshot per call; see `docs/game-history.md`.
 
 This is a full-sheet rewrite model, not an incremental point-entry model.
 
@@ -163,6 +166,7 @@ Current persistence behavior:
 - each saved point is inserted immediately with `GameAddScoreEntry()` into `uo_goal`,
 - the current aggregate result is advanced with `GameUpdateResult()` when a new point increases the stored total score,
 - a later "Save as result" action finalizes the game through `GameSetResult()`.
+- each of these also records the change in `uo_game_history`; see `docs/game-history.md`.
 
 Related mobile actions are broken into separate pages:
 
@@ -196,6 +200,7 @@ Current persistence behavior:
 - `scorekeeper/addscoresheet.php` inserts each point through `GameAddScoreEntry()` into `uo_goal`,
 - the page advances the aggregate score through `GameUpdateResult()`,
 - the final save writes the final result through `GameSetResult()`.
+- each of these also records the change in `uo_game_history`; see `docs/game-history.md`.
 
 Related metadata is handled in separate scorekeeper pages such as:
 
@@ -209,6 +214,10 @@ Related metadata is handled in separate scorekeeper pages such as:
 Compared with the desktop editor, scorekeeper entry is incremental and segmented rather than bulk.
 
 Spirit score submission is intentionally not part of the scorekeeper surface. Spirit score workflows now live in `spiritkeeper/` or the main logged-in user pages.
+
+## Change History
+
+Every mutation described above, from every input path, is also recorded as a row in `uo_game_history`, and destructive bulk rewrites additionally capture a restorable snapshot of the state they are about to replace. See `docs/game-history.md` for the row kinds, the restore contract, and the retention and privacy behavior of that history.
 
 ## Database Model
 
