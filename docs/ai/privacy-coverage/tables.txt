@@ -25,6 +25,7 @@ personal         uo_extraemail
 personal         uo_extraemailrequest
 none             uo_game
 none             uo_gameevent
+personal         uo_game_history
 none             uo_game_pool
 personal         uo_goal
 none             uo_image
