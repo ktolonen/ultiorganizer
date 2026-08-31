@@ -410,6 +410,15 @@ function GameHistoryFormatDetail($row)
     if ($target == "played" && $action == "clear") {
         return sprintf("%s: %d", _("Players removed"), (int) ($detail['removed'] ?? 0));
     }
+    if ($target == "played" && isset($detail['role'])) {
+        $roleLabels = [
+            'captain' => _("Captain"),
+            'spirit_captain' => _("Spirit captain"),
+        ];
+        $role = (string) $detail['role'];
+        $players = is_array($detail['players'] ?? null) ? $detail['players'] : [];
+        return sprintf("%s: %d", $roleLabels[$role] ?? $role, count($players));
+    }
     if ($target == "played") {
         return sprintf("%s %d", _("Player"), (int) ($detail['player'] ?? 0));
     }
@@ -683,6 +692,7 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
                     _("Player %s could not be restored."),
                     $row['name'] ?? $playerId,
                 );
+                $idMap[$playerId] = null;
                 continue;
             }
             $idMap[$playerId] = (int) $rematched;
@@ -699,6 +709,7 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
                 _("Player %s could not be restored."),
                 $row['name'] ?? $playerId,
             );
+            $idMap[(int) $row['player']] = null;
             continue;
         }
 
@@ -731,7 +742,10 @@ function GameHistoryMapPlayer($playerId, $idMap)
         return null;
     }
     $playerId = (int) $playerId;
-    return $idMap[$playerId] ?? $playerId;
+    if (array_key_exists($playerId, $idMap)) {
+        return $idMap[$playerId];
+    }
+    return $playerId;
 }
 
 /**
