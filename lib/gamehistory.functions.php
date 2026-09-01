@@ -5,6 +5,15 @@ denyDirectLibAccess(__FILE__);
 
 require_once __DIR__ . '/cache.functions.php';
 require_once __DIR__ . '/comment.functions.php';
+// Safe to require directly, unlike comment.functions.php/accreditation.functions.php
+// (which game.functions.php loads before this file, so requiring this file back
+// from either of them would cycle -- see their function_exists() guards).
+// user.functions.php's own top-level requires never reach back to
+// game.functions.php or this file, only a lazy require inside a function body,
+// so there is no cycle here. GameHistoryList()/Count() below already assumed
+// this file's rights functions were available; this makes that assumption
+// explicit instead of relying on some other caller having loaded it first.
+require_once __DIR__ . '/user.functions.php';
 
 function IsGameHistoryDisabled()
 {
@@ -57,6 +66,33 @@ function GameHistorySuppressed($set = null)
     return $suppressed;
 }
 
+/**
+ * Every legitimate caller has already authorized its own write; this is the
+ * backstop for a future caller that has not. It accepts the union of the
+ * four rights actually held by today's callers -- hasEditGameEventsRight()
+ * (most mutators), hasEditGamePlayersRight() (GameAddPlayer()/
+ * GameAddNewPlayer()), hasAccredidationRight() against either of the game's
+ * two teams (AcknowledgeUnaccredited()/UnAcknowledgeUnaccredited()), and
+ * hasAddMediaRight() (AddGameMediaEvent()/RemoveGameMediaEvent()). Narrowing
+ * this to only the first right would silently stop recording for
+ * accreditation-only or media-only admins.
+ */
+function GameHistoryAuthorized($gameId)
+{
+    if (hasEditGameEventsRight($gameId) || hasEditGamePlayersRight($gameId) || hasAddMediaRight()) {
+        return true;
+    }
+
+    $teams = DBQueryToRow(sprintf(
+        "SELECT hometeam, visitorteam FROM uo_game WHERE game_id=%d",
+        $gameId,
+    ));
+    if (!is_array($teams)) {
+        return false;
+    }
+    return hasAccredidationRight((int) $teams['hometeam']) || hasAccredidationRight((int) $teams['visitorteam']);
+}
+
 function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false)
 {
     // $force exists solely for GameHistoryRestore()'s own restore-audit row:
@@ -70,6 +106,10 @@ function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = fal
 
     $gameId = (int) $gameId;
     if ($gameId <= 0) {
+        return false;
+    }
+
+    if (!GameHistoryAuthorized($gameId)) {
         return false;
     }
 
@@ -239,6 +279,10 @@ function GameHistorySnapshotIfNeeded($gameId, $force = false)
 
     $gameId = (int) $gameId;
     if ($gameId <= 0) {
+        return false;
+    }
+
+    if (!GameHistoryAuthorized($gameId)) {
         return false;
     }
 
@@ -701,7 +745,9 @@ function GameHistoryRestore($historyId)
             GameSetDefenses($gameId, (int) $gameFields['homedefenses'], (int) $gameFields['visitordefenses']);
         }
 
-        SetGameComment(COMMENT_TYPE_GAME, $gameId, $snapshot['comment'] ?? "", empty($snapshot['comment']));
+        // empty() would treat a comment of "0" as a delete: match
+        // CommentRequestedChange()'s own === "" test instead.
+        SetGameComment(COMMENT_TYPE_GAME, $gameId, $snapshot['comment'] ?? "", ($snapshot['comment'] ?? "") === "");
 
         GameHistoryRestoreResult($gameId, $snapshot['game'] ?? []);
 
@@ -764,21 +810,33 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
         ));
 
         if (!$exists) {
-            $rematched = DBQueryToValue(sprintf(
-                "SELECT player_id FROM uo_player WHERE team=%d AND num=%d LIMIT 1",
+            // uo_player has no unique constraint on (team, num), so a naive
+            // LIMIT 1 could attribute this row's goals, assists and defences
+            // to an arbitrary teammate wearing the same number. Fetch up to
+            // two candidates instead: a match is only trusted when exactly
+            // one exists.
+            $rematches = DBQueryToArray(sprintf(
+                "SELECT player_id FROM uo_player WHERE team=%d AND num=%d LIMIT 2",
                 (int) $row['team'],
                 (int) $row['num'],
             ));
-            if ($rematched === null || $rematched === false) {
-                $warnings[] = sprintf(
-                    _("Player %s could not be restored."),
-                    $row['name'] ?? $originalId,
-                );
+            if (count($rematches) !== 1) {
+                $warnings[] = count($rematches) > 1
+                    ? sprintf(
+                        _("Player %s could not be restored: jersey number %d is not unique on team %s."),
+                        $row['name'] ?? $originalId,
+                        (int) $row['num'],
+                        TeamName((int) $row['team']),
+                    )
+                    : sprintf(
+                        _("Player %s could not be restored."),
+                        $row['name'] ?? $originalId,
+                    );
                 $idMap[$originalId] = null;
                 continue;
             }
-            $idMap[$originalId] = (int) $rematched;
-            $playerId = (int) $rematched;
+            $idMap[$originalId] = (int) $rematches[0]['player_id'];
+            $playerId = (int) $rematches[0]['player_id'];
         }
 
         GameHistoryRestorePlayerRow($gameId, $playerId, $row, $warnings);
