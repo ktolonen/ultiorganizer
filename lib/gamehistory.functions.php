@@ -69,17 +69,29 @@ function GameHistorySuppressed($set = null)
 /**
  * Every legitimate caller has already authorized its own write; this is the
  * backstop for a future caller that has not. It accepts the union of the
- * four rights actually held by today's callers -- hasEditGameEventsRight()
- * (most mutators), hasEditGamePlayersRight() (GameAddPlayer()/
- * GameAddNewPlayer()), hasAccredidationRight() against either of the game's
- * two teams (AcknowledgeUnaccredited()/UnAcknowledgeUnaccredited()), and
- * hasAddMediaRight() (AddGameMediaEvent()/RemoveGameMediaEvent()). Narrowing
- * this to only the first right would silently stop recording for
+ * rights actually held by today's callers -- hasEditGameEventsRight() (most
+ * mutators), hasEditGamePlayersRight() (GameAddPlayer()/GameAddNewPlayer()),
+ * hasAccredidationRight() against either of the game's two teams
+ * (AcknowledgeUnaccredited()/UnAcknowledgeUnaccredited()), and
+ * hasAddMediaRight() (AddGameMediaEvent()/RemoveGameMediaEvent()).
+ * Narrowing this to only the first right would silently stop recording for
  * accreditation-only or media-only admins.
+ *
+ * hasAddMediaRight() carries no game or team scope at all -- unlike the
+ * other three, it is true for any logged-in session -- so it is accepted
+ * only when $target is 'mediaevent', the one target the media-only path
+ * ever writes. AddGameMediaEvent()/RemoveGameMediaEvent() never call
+ * GameHistorySnapshotIfNeeded() (media links are excluded from snapshots,
+ * see GameHistoryBuildSnapshot()), so a caller passing no $target -- as
+ * GameHistorySnapshotIfNeeded() does -- never reaches the media branch.
  */
-function GameHistoryAuthorized($gameId)
+function GameHistoryAuthorized($gameId, $target = null)
 {
-    if (hasEditGameEventsRight($gameId) || hasEditGamePlayersRight($gameId) || hasAddMediaRight()) {
+    if (hasEditGameEventsRight($gameId) || hasEditGamePlayersRight($gameId)) {
+        return true;
+    }
+
+    if ($target === 'mediaevent' && hasAddMediaRight()) {
         return true;
     }
 
@@ -109,7 +121,7 @@ function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = fal
         return false;
     }
 
-    if (!GameHistoryAuthorized($gameId)) {
+    if (!GameHistoryAuthorized($gameId, $target)) {
         return false;
     }
 
