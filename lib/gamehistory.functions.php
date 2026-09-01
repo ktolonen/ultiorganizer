@@ -823,12 +823,16 @@ function GameHistoryRestoreResult($gameId, $gameFields)
     ];
 
     // Guarded by key presence, not just ?? default: a v1 snapshot (see
-    // GameHistoryBuildSnapshot()) never captured the timer columns, and
-    // GameSetResult()/GameClearResult() above always NULL them -- restoring
-    // one must not silently clear a clock the snapshot never recorded. None
-    // of the three result mutators has a timer setter, so this writes the
-    // columns directly, in the same write-back as hasstarted/isongoing so
-    // ordering against the mutators above is already correct.
+    // GameHistoryBuildSnapshot()) never captured the timer columns. Of the
+    // three branches above, GameClearResult() and GameSetResult() both NULL
+    // the timer columns unconditionally as part of their own write, so a v1
+    // restore into either state loses the clock regardless of this guard;
+    // GameUpdateResult() (the isongoing branch) never touches them at all,
+    // so a v1 restore into the ongoing state leaves the clock as-is. None of
+    // the three has a timer setter for a v2 snapshot's captured value, so
+    // this writes the columns directly, in the same write-back as
+    // hasstarted/isongoing so ordering against the mutators above is already
+    // correct.
     if (array_key_exists('timer_start', $gameFields)) {
         $set[] = "timer_start=" . ($gameFields['timer_start'] === null ? "NULL" : (int) $gameFields['timer_start']);
         $set[] = "timer_pause_start=" . ($gameFields['timer_pause_start'] === null ? "NULL" : (int) $gameFields['timer_pause_start']);
