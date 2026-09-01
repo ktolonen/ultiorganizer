@@ -31,6 +31,8 @@ Excluded from this: `GameAddScore()`, `GameAddScoreEntry()` and `GameRemoveScore
 
 `SetGameComment()` (`lib/comment.functions.php`, game-type comments only) snapshots before applying the change, not after, so a standalone comment edit has its own restore point and a bulk save's later mutators do not snapshot an already-updated comment.
 
+The five `GameTime*()` clock mutators (`lib/game.functions.php`) are the deliberate exception: they record a `timer` change row (see the table below) but never call `GameHistorySnapshotIfNeeded()`. Restore is whole-sheet, so a snapshot taken on a clock edit would create a restore point whose only differing field is the timer -- using it to undo a mistaken clock reset would also roll back the game's goals, roster and result, which is a footgun rather than a recovery path. The live-clock columns are still captured by every *other* mutator's snapshot (see above), so an unrelated restore does not destroy them; they are just not independently restorable. An operator who needs to correct the clock uses `GameTimeSetElapsed()` instead.
+
 `GameHistoryRestore()` (`lib/gamehistory.functions.php`) force-captures the state it is about to replace as its own snapshot, even while history recording is otherwise suppressed for the duration of its own replay, so a restore can itself be undone. This force-capture, and the restore's own audit row, both bypass the `DisableGameHistory` setting as well as suppression: the setting governs routine recording volume, not the safety of an explicit destructive admin action, so restoring while recording is disabled must not become unrecoverable. Every other call site stays subject to the setting.
 
 ## Recording points
@@ -43,7 +45,7 @@ The full set of `target`/`action` combinations, and the mutator that writes each
 | `result` | `clear` | `GameClearResult()` |
 | `forfeit` | `update` | `GameSetForfeit()` |
 | `played` | `add` | `GameAddPlayer()`, `GameAddNewPlayer()` |
-| `played` | `update` | `GameSetPlayerNumber()`, `GameSetRolePlayers()` (captain / spirit captain, called from `GameSetCaptains()` / `GameSetSpiritCaptains()`) |
+| `played` | `update` | `GameSetPlayerNumber()`, `GameSetRolePlayers()` (captain / spirit captain, called from `GameSetCaptains()` / `GameSetSpiritCaptains()`), `AcknowledgeUnaccredited()` / `UnAcknowledgeUnaccredited()` (`lib/accreditation.functions.php`, accreditation acknowledgment) |
 | `played` | `remove` | `GameRemovePlayer()` |
 | `played` | `clear` | `GameRemoveAllPlayers()` |
 | `goal` | `add` | `GameAddScore()`, `GameAddScoreEntry()` |
@@ -63,6 +65,7 @@ The full set of `target`/`action` combinations, and the mutator that writes each
 | `official` | `update` | `GameSetScoreSheetKeeper()` |
 | `halftime` | `update` | `GameSetHalftime()` |
 | `comment` | `update` / `remove` | `SetGameComment()` (`lib/comment.functions.php`, game-type comments only) |
+| `timer` | `start` / `pause` / `resume` / `reset` / `update` | `GameTimeStart()`, `GameTimePause()`, `GameTimeResume()`, `GameTimeReset()`, `GameTimeSetElapsed()` |
 | `snapshot` | `capture` | `GameHistoryWriteSnapshot()` |
 | `restore` | `restore` | `GameHistoryRestore()` |
 

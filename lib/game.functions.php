@@ -2823,6 +2823,15 @@ function isGamePaused($gameId)
     return (int) DBQueryToValue($query);
 }
 
+// The five GameTime*() mutators below record a "timer" history row but
+// deliberately never call GameHistorySnapshotIfNeeded(): restore is
+// whole-sheet, so a snapshot taken here would create a restore point whose
+// only differing field is the clock, and using it to undo a mistaken reset
+// would also roll back goals, roster and result. The timer columns are
+// still captured by every *other* mutator's snapshot so an unrelated
+// restore does not destroy them -- they are just not independently
+// restorable. The operator's actual remedy for a clock mistake is
+// GameTimeSetElapsed().
 function GameTimeReset($gameId)
 {
     $gameId = (int) $gameId;
@@ -2835,7 +2844,9 @@ function GameTimeReset($gameId)
         $gameId,
     );
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    GameHistoryRecord($gameId, "timer", "reset");
+    return $result;
 }
 
 function GameTimeStart($gameId)
@@ -2851,7 +2862,9 @@ function GameTimeStart($gameId)
         $gameId,
     );
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    GameHistoryRecord($gameId, "timer", "start");
+    return $result;
 }
 
 function GameTimePause($gameId)
@@ -2861,10 +2874,12 @@ function GameTimePause($gameId)
         die('Insufficient rights to edit game events');
     }
 
-    $query = sprintf("UPDATE uo_game SET timer_pause_start = %d 
+    $query = sprintf("UPDATE uo_game SET timer_pause_start = %d
     WHERE game_id = %d AND isongoing = 1 AND timer_pause_start IS NULL", time(), $gameId);
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    GameHistoryRecord($gameId, "timer", "pause");
+    return $result;
 }
 
 function GameTimeResume($gameId)
@@ -2881,10 +2896,12 @@ function GameTimeResume($gameId)
         $pausedTime = time() - (int) $row['timer_pause_start'];
         $totalPaused = (int) $row['timer_paused_duration'] + $pausedTime;
 
-        $updateQuery = sprintf("UPDATE uo_game SET timer_paused_duration = %d, timer_pause_start = NULL 
+        $updateQuery = sprintf("UPDATE uo_game SET timer_paused_duration = %d, timer_pause_start = NULL
       WHERE game_id = %d", $totalPaused, $gameId);
 
-        return DBQuery($updateQuery);
+        $result = DBQuery($updateQuery);
+        GameHistoryRecord($gameId, "timer", "resume");
+        return $result;
     }
 
     return false; // Not paused or invalid
@@ -2915,7 +2932,9 @@ function GameTimeSetElapsed($gameId, $elapsedSeconds)
         $gameId,
     );
 
-    return DBQuery($updateQuery);
+    $result = DBQuery($updateQuery);
+    GameHistoryRecord($gameId, "timer", "update", ['elapsed' => $elapsedSeconds]);
+    return $result;
 }
 
 function GameElapsedTime($gameId)
