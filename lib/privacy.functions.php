@@ -381,9 +381,10 @@ function PrivacyCollectUserReportData($userId)
             DBEscapeString($userId),
         ), true),
         // snapshot is excluded: it is game data, not this user's data, and
-        // dumping it would leak other players' names into this export.
+        // dumping it would leak other players' names into this export. The
+        // other columns, including ip and user_id, are this user's own data.
         'game_history_rows' => DBQueryToArray(sprintf(
-            "SELECT history_id, game, time, source, target, action, detail
+            "SELECT history_id, game, time, source, target, action, detail, ip, user_id
 				FROM uo_game_history WHERE user_id='%s' ORDER BY time DESC",
             DBEscapeString($userId),
         ), true),
