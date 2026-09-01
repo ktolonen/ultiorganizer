@@ -242,6 +242,7 @@ function PrivacyCollectPlayerReportData($playerId)
     $licenseRows = [];
     $accreditationLog = [];
     $eventLog = [];
+    $gameHistoryNameRows = [];
     $imageInfo = null;
     $accreditationIds = [];
     $playerLogTargets = [];
@@ -295,6 +296,7 @@ function PrivacyCollectPlayerReportData($playerId)
             "SELECT * FROM uo_event_log WHERE " . implode(' OR ', $eventLogWhere) . " ORDER BY time DESC",
             true,
         );
+        $gameHistoryNameRows = PrivacyPlayerGameHistoryNameRows($playerIds);
     }
 
     foreach ($subject['players'] as $playerRow) {
@@ -330,7 +332,76 @@ function PrivacyCollectPlayerReportData($playerId)
         'accreditation_log_rows' => $accreditationLog,
         'event_log_rows' => $eventLog,
         'url_rows' => $urls,
+        'game_history_name_rows' => $gameHistoryNameRows,
     ];
+}
+
+/**
+ * Extract this player's own name values embedded in game-history snapshots.
+ *
+ * uo_game_history.snapshot stores the full scoresheet state as JSON,
+ * including every player on the roster at capture time, not only this one --
+ * exporting the whole blob into one player's report would leak the others.
+ * This walks the same played[]/goals[] shape PrivacyAnonymizePlayer()
+ * rewrites and keeps only the name values keyed to $playerIds, each tagged
+ * with enough context (game, snapshot time, which field) to be meaningful on
+ * its own, including a prior spelling no longer present in uo_player.
+ *
+ * Every has_snapshot=1 row is scanned and decoded, the same as
+ * PrivacyAnonymizePlayer() does: a player export is a rare admin-triggered
+ * action, so correctness (id-keyed matching, not name-text matching) matters
+ * more than the scan cost here.
+ */
+function PrivacyPlayerGameHistoryNameRows($playerIds)
+{
+    if (empty($playerIds)) {
+        return [];
+    }
+
+    $rows = [];
+    $snapshotRows = DBQueryToArray(
+        "SELECT history_id, game, time, snapshot FROM uo_game_history WHERE has_snapshot=1 AND snapshot IS NOT NULL",
+    );
+    foreach ($snapshotRows as $snapshotRow) {
+        $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+        if (!is_array($snapshot)) {
+            continue;
+        }
+
+        foreach ((array) ($snapshot['played'] ?? []) as $playedRow) {
+            if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                $rows[] = [
+                    'history_id' => $snapshotRow['history_id'],
+                    'game' => $snapshotRow['game'],
+                    'time' => $snapshotRow['time'],
+                    'field' => 'played.name',
+                    'name' => $playedRow['name'] ?? null,
+                ];
+            }
+        }
+        foreach ((array) ($snapshot['goals'] ?? []) as $goalRow) {
+            if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
+                $rows[] = [
+                    'history_id' => $snapshotRow['history_id'],
+                    'game' => $snapshotRow['game'],
+                    'time' => $snapshotRow['time'],
+                    'field' => 'goals.scorer_name',
+                    'name' => $goalRow['scorer_name'] ?? null,
+                ];
+            }
+            if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
+                $rows[] = [
+                    'history_id' => $snapshotRow['history_id'],
+                    'game' => $snapshotRow['game'],
+                    'time' => $snapshotRow['time'],
+                    'field' => 'goals.assist_name',
+                    'name' => $goalRow['assist_name'] ?? null,
+                ];
+            }
+        }
+    }
+
+    return $rows;
 }
 
 function PrivacyCollectUserReportData($userId)
@@ -431,6 +502,7 @@ function PrivacyRenderPlayerReportText($playerId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'Player stats rows', $data['player_stats_rows']);
     PrivacyAppendRowsSection($lines, 'Played rows', $data['played_rows']);
     PrivacyAppendRowsSection($lines, 'Goal rows', $data['goal_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history snapshot name rows', $data['game_history_name_rows']);
     PrivacyAppendRowsSection($lines, 'Defense rows', $data['defense_rows']);
     PrivacyAppendRowsSection($lines, 'License rows', $data['license_rows']);
     PrivacyAppendRowsSection($lines, 'Accreditation log rows', PrivacySanitizePlayerPrivacyRows($data['accreditation_log_rows']));

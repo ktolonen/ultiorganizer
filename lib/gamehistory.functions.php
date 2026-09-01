@@ -96,6 +96,11 @@ function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = fal
 
 function GameHistoryBuildSnapshot($gameId)
 {
+    // game.functions.php requires this file (see the comment on
+    // GameHistoryRestore()), so GameTimerState() below is required lazily
+    // here to break the same include cycle.
+    require_once __DIR__ . '/game.functions.php';
+
     $gameId = (int) $gameId;
 
     $game = DBQueryToRow(sprintf(
@@ -152,15 +157,20 @@ function GameHistoryBuildSnapshot($gameId)
         $gameId,
     ));
 
+    $gameFields = GameHistoryIntFields($game, ['homescore', 'visitorscore', 'isongoing',
+        'hasstarted', 'forfeit', 'halftime', 'homedefenses', 'visitordefenses',
+        'timer_start', 'timer_pause_start', 'timer_paused_duration']);
+    // v3 adds timer_elapsed: the game time GameTimerState() computes as
+    // already elapsed at capture time, reusing its own arithmetic rather
+    // than reimplementing it. GameHistoryRestoreResult() uses this to derive
+    // a fresh timer_start at restore time instead of replaying the stale
+    // absolute epoch -- see the comment there. A v1/v2 snapshot lacks this
+    // key and falls back to the old (documented) verbatim-epoch restore.
+    $gameFields['timer_elapsed'] = (int) GameTimerState($gameId)['elapsed'];
+
     return [
-        // v2 adds homedefenses/visitordefenses/timer_start/timer_pause_start/
-        // timer_paused_duration -- see GameHistoryRestoreResult() and the
-        // GameSetDefenses() call in GameHistoryRestore() for how a v1
-        // snapshot (missing these keys) still restores, just without them.
-        'v' => 2,
-        'game' => GameHistoryIntFields($game, ['homescore', 'visitorscore', 'isongoing',
-            'hasstarted', 'forfeit', 'halftime', 'homedefenses', 'visitordefenses',
-            'timer_start', 'timer_pause_start', 'timer_paused_duration']),
+        'v' => 3,
+        'game' => $gameFields,
         'goals' => GameHistoryIntRows($goals, ['num', 'assist', 'scorer', 'time', 'homescore',
             'visitorscore', 'ishomegoal', 'iscallahan', 'assist_num', 'scorer_num']),
         'played' => GameHistoryIntRows($played, ['player', 'team', 'num', 'captain',
@@ -751,7 +761,7 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
             $playerId = (int) $rematched;
         }
 
-        GameHistoryRestorePlayerRow($gameId, $playerId, $row);
+        GameHistoryRestorePlayerRow($gameId, $playerId, $row, $warnings);
     }
 
     return $idMap;
@@ -763,9 +773,32 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
  * Also syncs uo_player.num, matching GameAddPlayer()'s existing side effect
  * (see "Restoring a roster rewrites uo_player.num" in docs/game-history.md).
  */
-function GameHistoryRestorePlayerRow($gameId, $playerId, $row)
+function GameHistoryRestorePlayerRow($gameId, $playerId, $row, &$warnings)
 {
     $num = (int) ($row['num'] ?? 0);
+
+    // The up-front guard in GameHistoryRestore() only checks
+    // hasAccredidationRight() for the teams recorded in the SNAPSHOT. A
+    // player who has since moved teams needs the right rechecked against
+    // their CURRENT team before writing acknowledged=1, or an admin holding
+    // the right only on the old team could grant an acknowledgment on the
+    // new one. Missing the right does not abort the restore -- as with an
+    // unresolvable player above, this row is downgraded and warned about
+    // instead, so the rest of the restore still completes.
+    $acknowledged = !empty($row['acknowledged']) ? 1 : 0;
+    if ($acknowledged) {
+        $currentTeam = (int) DBQueryToValue(sprintf(
+            "SELECT team FROM uo_player WHERE player_id=%d",
+            $playerId,
+        ));
+        if (!hasAccredidationRight($currentTeam)) {
+            $acknowledged = 0;
+            $warnings[] = sprintf(
+                _("Acknowledgement not restored for player %s: accreditation right missing for their current team."),
+                $row['name'] ?? $playerId,
+            );
+        }
+    }
 
     $query = sprintf(
         "INSERT INTO uo_played (game, player, num, accredited, acknowledged, captain, spirit_captain)
@@ -776,7 +809,7 @@ function GameHistoryRestorePlayerRow($gameId, $playerId, $row)
         (int) $playerId,
         $num,
         !empty($row['accredited']) ? 1 : 0,
-        !empty($row['acknowledged']) ? 1 : 0,
+        $acknowledged,
         !empty($row['captain']) ? 1 : 0,
         !empty($row['spirit_captain']) ? 1 : 0,
     );
@@ -829,14 +862,33 @@ function GameHistoryRestoreResult($gameId, $gameFields)
     // restore into either state loses the clock regardless of this guard;
     // GameUpdateResult() (the isongoing branch) never touches them at all,
     // so a v1 restore into the ongoing state leaves the clock as-is. None of
-    // the three has a timer setter for a v2 snapshot's captured value, so
+    // the three has a timer setter for a v1/v2 snapshot's captured value, so
     // this writes the columns directly, in the same write-back as
     // hasstarted/isongoing so ordering against the mutators above is already
     // correct.
     if (array_key_exists('timer_start', $gameFields)) {
-        $set[] = "timer_start=" . ($gameFields['timer_start'] === null ? "NULL" : (int) $gameFields['timer_start']);
-        $set[] = "timer_pause_start=" . ($gameFields['timer_pause_start'] === null ? "NULL" : (int) $gameFields['timer_pause_start']);
-        $set[] = sprintf("timer_paused_duration=%d", (int) ($gameFields['timer_paused_duration'] ?? 0));
+        if (array_key_exists('timer_elapsed', $gameFields) && $gameFields['timer_start'] !== null) {
+            // v3: timer_start is an absolute Unix epoch (see GameTimerState()),
+            // so replaying it verbatim would count every second between
+            // capture and restore as game time. Instead, derive a fresh epoch
+            // from the elapsed game time GameHistoryBuildSnapshot() captured
+            // via GameTimerState() itself, reusing that function's own
+            // elapsed formula rather than a second implementation of it.
+            // `timer_start = now - elapsed, timer_paused_duration = 0` and
+            // running the clock forward from `elapsed` reproduces exactly
+            // `elapsed` if the snapshot was paused (freeze immediately, by
+            // also setting timer_pause_start = now) or keeps counting up
+            // from `elapsed` if it was running -- see docs/game-history.md.
+            $elapsed = max(0, (int) $gameFields['timer_elapsed']);
+            $now = time();
+            $set[] = sprintf("timer_start=%d", $now - $elapsed);
+            $set[] = "timer_pause_start=" . ($gameFields['timer_pause_start'] === null ? "NULL" : $now);
+            $set[] = "timer_paused_duration=0";
+        } else {
+            $set[] = "timer_start=" . ($gameFields['timer_start'] === null ? "NULL" : (int) $gameFields['timer_start']);
+            $set[] = "timer_pause_start=" . ($gameFields['timer_pause_start'] === null ? "NULL" : (int) $gameFields['timer_pause_start']);
+            $set[] = sprintf("timer_paused_duration=%d", (int) ($gameFields['timer_paused_duration'] ?? 0));
+        }
     }
 
     DBQuery(sprintf(

@@ -45,6 +45,13 @@ The player export currently includes rows from:
 - `uo_event_log` privacy audit rows where `source='privacy'` and `id1` matches the selected internal `player:<id>` or `profile:<id>` target
 - `uo_urls` for player profile links
 - player profile image metadata from `uo_player_profile` and `uo_image`
+- `uo_game_history` name values: not the raw rows or the `snapshot` column, but an ID-filtered
+  projection of this player's own `played[].name`, `goals[].scorer_name`, and `goals[].assist_name`
+  entries out of every `has_snapshot=1` snapshot, tagged with the game and snapshot time. This
+  reuses the same decode-and-match-by-player-id traversal `PrivacyAnonymizePlayer()` uses below,
+  and is why a prior spelling of the player's name retained in an old snapshot, but no longer
+  present in `uo_player`, still reaches their report -- without exporting the rest of that
+  snapshot, which would also expose other players' names.
 
 To avoid exposing other members' account identifiers in the player export, `user_id` and `userid` values are hidden in log-derived sections.
 Current player log writers use `uo_event_log.id2` for the team reference, not for player identity, so player privacy tools do not match `id2` in order to avoid deleting unrelated team-linked history.
