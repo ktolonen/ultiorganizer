@@ -448,8 +448,28 @@ function GameHistoryFormatDetail($row)
         $players = is_array($detail['players'] ?? null) ? $detail['players'] : [];
         return sprintf("%s: %d", $roleLabels[$role] ?? $role, count($players));
     }
+    if ($target == "played" && isset($detail['acknowledged'])) {
+        return sprintf(
+            "%s %d: %s",
+            _("Player"),
+            (int) ($detail['player'] ?? 0),
+            !empty($detail['acknowledged']) ? _("Acknowledged") : _("Not acknowledged"),
+        );
+    }
     if ($target == "played") {
         return sprintf("%s %d", _("Player"), (int) ($detail['player'] ?? 0));
+    }
+    if ($target == "timer" && $action == "update") {
+        return sprintf("%s: %d", _("Set game clock"), (int) ($detail['elapsed'] ?? 0));
+    }
+    if ($target == "timer") {
+        $labels = [
+            'start' => _("Start game clock"),
+            'pause' => _("Pause game clock"),
+            'resume' => _("Resume game clock"),
+            'reset' => _("Reset game clock"),
+        ];
+        return $labels[$action] ?? _("Game clock");
     }
     if ($target == "snapshot") {
         return _("Saved state");

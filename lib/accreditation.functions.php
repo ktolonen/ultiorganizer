@@ -171,6 +171,13 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source)
 {
     $playerInfo = PlayerInfo($playerId);
     if (hasAccredidationRight($playerInfo['team'])) {
+        // accreditation.functions.php loads before gamehistory.functions.php
+        // (see game.functions.php's require order), so guard both calls the
+        // same way comment.functions.php's SetGameComment() does.
+        if (function_exists('GameHistorySnapshotIfNeeded')) {
+            GameHistorySnapshotIfNeeded($gameId);
+        }
+
         $query = sprintf(
             "UPDATE uo_played SET acknowledged=1 WHERE player=%d AND game=%d",
             (int) $playerId,
@@ -179,6 +186,12 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source)
         $result = DBQuery($query);
 
         AccreditationLogEntry($playerId, $playerInfo['team'], $source, 1, $gameId);
+        if (function_exists('GameHistoryRecord')) {
+            GameHistoryRecord($gameId, "played", "update", [
+                'player' => (int) $playerId,
+                'acknowledged' => 1,
+            ]);
+        }
         return $result;
     } else {
         die('Insufficient rights to accredit player');
@@ -189,6 +202,10 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source)
 {
     $playerInfo = PlayerInfo($playerId);
     if (hasAccredidationRight($playerInfo['team'])) {
+        if (function_exists('GameHistorySnapshotIfNeeded')) {
+            GameHistorySnapshotIfNeeded($gameId);
+        }
+
         $query = sprintf(
             "UPDATE uo_played SET acknowledged=0 WHERE player=%d AND game=%d",
             (int) $playerId,
@@ -197,6 +214,12 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source)
         $result = DBQuery($query);
 
         AccreditationLogEntry($playerId, $playerInfo['team'], $source, 0, $gameId);
+        if (function_exists('GameHistoryRecord')) {
+            GameHistoryRecord($gameId, "played", "update", [
+                'player' => (int) $playerId,
+                'acknowledged' => 0,
+            ]);
+        }
         return $result;
     } else {
         die('Insufficient rights to accredit player');
