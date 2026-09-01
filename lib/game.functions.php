@@ -1273,7 +1273,14 @@ function CheckGameResult($game, $home, $away)
     return $errors;
 }
 
-function GameUpdateResult($gameId, $home, $away)
+/**
+ * $snapshot defaults true so a caller that forgets to think about it still
+ * gets a restore point rather than silently losing one. The per-point
+ * callers in mobile/addscoresheet.php and scorekeeper/addscoresheet.php pass
+ * false explicitly -- snapshotting once per point would produce roughly one
+ * snapshot per goal (see docs/game-history.md).
+ */
+function GameUpdateResult($gameId, $home, $away, $snapshot = true)
 {
     // Enforced here rather than per entry point: user/addresult.php and
     // mobile/addresult.php never call CheckGameResult().
@@ -1281,6 +1288,9 @@ function GameUpdateResult($gameId, $home, $away)
         return false;
     }
     if (hasEditGameEventsRight($gameId)) {
+        if ($snapshot) {
+            GameHistorySnapshotIfNeeded($gameId);
+        }
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1', hasstarted='1' WHERE game_id='%s'",
             DBEscapeString($home),

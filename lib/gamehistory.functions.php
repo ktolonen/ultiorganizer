@@ -57,9 +57,14 @@ function GameHistorySuppressed($set = null)
     return $suppressed;
 }
 
-function GameHistoryRecord($gameId, $target, $action, $detail = [])
+function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false)
 {
-    if (IsGameHistoryDisabled() || GameHistorySuppressed()) {
+    // $force exists solely for GameHistoryRestore()'s own restore-audit row:
+    // the setting governs routine recording volume, not the safety of an
+    // explicit destructive admin action, so that row must not be suppressed
+    // by DisableGameHistory. Suppression (mid-replay change rows) is not
+    // affected by $force.
+    if ((IsGameHistoryDisabled() && !$force) || GameHistorySuppressed()) {
         return false;
     }
 
@@ -94,7 +99,8 @@ function GameHistoryBuildSnapshot($gameId)
     $gameId = (int) $gameId;
 
     $game = DBQueryToRow(sprintf(
-        "SELECT homescore, visitorscore, isongoing, hasstarted, forfeit, official, halftime
+        "SELECT homescore, visitorscore, isongoing, hasstarted, forfeit, official, halftime,
+			homedefenses, visitordefenses, timer_start, timer_pause_start, timer_paused_duration
 			FROM uo_game WHERE game_id=%d",
         $gameId,
     ));
@@ -147,9 +153,14 @@ function GameHistoryBuildSnapshot($gameId)
     ));
 
     return [
-        'v' => 1,
+        // v2 adds homedefenses/visitordefenses/timer_start/timer_pause_start/
+        // timer_paused_duration -- see GameHistoryRestoreResult() and the
+        // GameSetDefenses() call in GameHistoryRestore() for how a v1
+        // snapshot (missing these keys) still restores, just without them.
+        'v' => 2,
         'game' => GameHistoryIntFields($game, ['homescore', 'visitorscore', 'isongoing',
-            'hasstarted', 'forfeit', 'halftime']),
+            'hasstarted', 'forfeit', 'halftime', 'homedefenses', 'visitordefenses',
+            'timer_start', 'timer_pause_start', 'timer_paused_duration']),
         'goals' => GameHistoryIntRows($goals, ['num', 'assist', 'scorer', 'time', 'homescore',
             'visitorscore', 'ishomegoal', 'iscallahan', 'assist_num', 'scorer_num']),
         'played' => GameHistoryIntRows($played, ['player', 'team', 'num', 'captain',
@@ -202,7 +213,12 @@ function GameHistoryIntRows($rows, $fields)
  */
 function GameHistorySnapshotIfNeeded($gameId, $force = false)
 {
-    if (IsGameHistoryDisabled()) {
+    // $force is GameHistoryRestore()'s pre-restore capture: the setting
+    // governs routine recording volume, not the safety of an explicit
+    // destructive admin action, so a forced capture must still write even
+    // while recording is disabled -- otherwise a restore under
+    // DisableGameHistory would be unrecoverable.
+    if (IsGameHistoryDisabled() && !$force) {
         return false;
     }
     // The suppression flag silences change rows during a restore replay, but a
@@ -542,8 +558,9 @@ function GameHistoryRestore($historyId)
     }
     $seasonId = GameSeason($gameId);
 
-    // Restoring an "acknowledged" flag (see GameHistoryRestorePlayers()) goes
-    // through AcknowledgeUnaccredited(), guarded by hasAccredidationRight() --
+    // Restoring an "acknowledged" flag (see GameHistoryRestorePlayers()) writes
+    // uo_played directly rather than calling AcknowledgeUnaccredited(), but it
+    // is still an accreditation mutation and needs hasAccredidationRight() --
     // a third right, distinct from the two above. Only the teams that actually
     // have an acknowledged player in the snapshot need it, checked up front
     // for the same die()-before-finally reason.
@@ -644,6 +661,16 @@ function GameHistoryRestore($historyId)
         GameSetScoreSheetKeeper($gameId, $snapshot['game']['official'] ?? null);
         $halftime = $snapshot['game']['halftime'] ?? null;
         GameSetHalftime($gameId, $halftime === null ? null : (int) $halftime);
+
+        // Guarded by key presence, not just ?? 0: a v1 snapshot (see
+        // GameHistoryBuildSnapshot()) never captured these, and a restore of
+        // one must leave the current defence totals alone rather than zero
+        // them.
+        $gameFields = $snapshot['game'] ?? [];
+        if (array_key_exists('homedefenses', $gameFields) && array_key_exists('visitordefenses', $gameFields)) {
+            GameSetDefenses($gameId, (int) $gameFields['homedefenses'], (int) $gameFields['visitordefenses']);
+        }
+
         SetGameComment(COMMENT_TYPE_GAME, $gameId, $snapshot['comment'] ?? "", empty($snapshot['comment']));
 
         GameHistoryRestoreResult($gameId, $snapshot['game'] ?? []);
@@ -661,10 +688,13 @@ function GameHistoryRestore($historyId)
         GameHistorySuppressed($previousSuppressed);
     }
 
+    // Unconditional (force=true): a restore's own audit row must survive even
+    // while DisableGameHistory is set, the same as its pre-restore capture
+    // above -- see the comment on GameHistoryRecord()'s $force parameter.
     GameHistoryRecord($gameId, "restore", "restore", [
         'from' => (int) $historyId,
         'warnings' => count($warnings),
-    ]);
+    ], true);
 
     if (function_exists('RefreshGameSpiritData')) {
         RefreshGameSpiritData($gameId);
@@ -680,15 +710,24 @@ function GameHistoryRestore($historyId)
  * since the snapshot cannot be resolved by id. The stored jersey number and
  * team are the fallback, and anything still unmatched is reported rather than
  * silently dropped.
+ *
+ * Rows are written directly rather than through GameAddPlayer(): that
+ * mutator's GameAllowsPlayerOnRoster() gate rejects an unaccredited player in
+ * a require_accreditation season, including one the snapshot recorded as
+ * acknowledged -- the roster was just emptied above, so the gate's own
+ * "already on this game's roster" exception can no longer rescue them. The
+ * snapshot is evidence the player was legitimately on this roster, so restore
+ * must not re-litigate that gate; the accreditation right for every
+ * acknowledged team is already checked up front in GameHistoryRestore().
  */
 function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
 {
     $idMap = [];
 
     GameRemoveAllPlayers($gameId);
-    $roles = [];
     foreach ($playedRows as $row) {
-        $playerId = (int) $row['player'];
+        $originalId = (int) $row['player'];
+        $playerId = $originalId;
         $exists = (int) DBQueryToValue(sprintf(
             "SELECT COUNT(*) FROM uo_player WHERE player_id=%d",
             $playerId,
@@ -703,63 +742,47 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
             if ($rematched === null || $rematched === false) {
                 $warnings[] = sprintf(
                     _("Player %s could not be restored."),
-                    $row['name'] ?? $playerId,
+                    $row['name'] ?? $originalId,
                 );
-                $idMap[$playerId] = null;
+                $idMap[$originalId] = null;
                 continue;
             }
-            $idMap[$playerId] = (int) $rematched;
+            $idMap[$originalId] = (int) $rematched;
             $playerId = (int) $rematched;
         }
 
-        // GameAddPlayer() returns false without dying when
-        // GameAllowsPlayerOnRoster() refuses. That matters here: the roster was
-        // just emptied, so the "already on this game's roster" fallback inside
-        // GameAllowsPlayerOnRoster() can no longer rescue an unaccredited
-        // player in a season with require_accreditation set.
-        if (GameAddPlayer($gameId, $playerId, (int) $row['num']) === false) {
-            $warnings[] = sprintf(
-                _("Player %s could not be restored."),
-                $row['name'] ?? $playerId,
-            );
-            $idMap[(int) $row['player']] = null;
-            continue;
-        }
-
-        // GameAddPlayer() always inserts acknowledged=0. The caller already
-        // confirmed hasAccredidationRight() for every team the SNAPSHOT
-        // assigns this player to, but AcknowledgeUnaccredited() re-reads the
-        // player's CURRENT team and die()s on mismatch -- a player moved
-        // between teams since the snapshot would otherwise abort the replay
-        // partway through. Re-check the current team here and turn that case
-        // into a warning instead of letting it die mid-restore.
-        if (!empty($row['acknowledged'])) {
-            $currentTeam = PlayerInfo($playerId)['team'] ?? null;
-            if ($currentTeam !== null && hasAccredidationRight($currentTeam)) {
-                AcknowledgeUnaccredited($playerId, $gameId, "restore");
-            } else {
-                $warnings[] = sprintf(
-                    _("Player %s's accreditation could not be restored."),
-                    $row['name'] ?? $playerId,
-                );
-            }
-        }
-
-        if (!empty($row['captain'])) {
-            $roles[(int) $row['team']]['captain'][] = $playerId;
-        }
-        if (!empty($row['spirit_captain'])) {
-            $roles[(int) $row['team']]['spirit_captain'][] = $playerId;
-        }
-    }
-
-    foreach ($roles as $teamId => $columns) {
-        foreach ($columns as $column => $playerIds) {
-            GameSetRolePlayers($gameId, $teamId, $column, $playerIds);
-        }
+        GameHistoryRestorePlayerRow($gameId, $playerId, $row);
     }
 
     return $idMap;
+}
+
+/**
+ * Write one restored uo_played row directly, bypassing GameAddPlayer()'s
+ * accreditation gate -- see the comment on GameHistoryRestorePlayers().
+ * Also syncs uo_player.num, matching GameAddPlayer()'s existing side effect
+ * (see "Restoring a roster rewrites uo_player.num" in docs/game-history.md).
+ */
+function GameHistoryRestorePlayerRow($gameId, $playerId, $row)
+{
+    $num = (int) ($row['num'] ?? 0);
+
+    $query = sprintf(
+        "INSERT INTO uo_played (game, player, num, accredited, acknowledged, captain, spirit_captain)
+			VALUES (%d, %d, %d, %d, %d, %d, %d)
+			ON DUPLICATE KEY UPDATE num=VALUES(num), accredited=VALUES(accredited),
+				acknowledged=VALUES(acknowledged), captain=VALUES(captain), spirit_captain=VALUES(spirit_captain)",
+        (int) $gameId,
+        (int) $playerId,
+        $num,
+        !empty($row['accredited']) ? 1 : 0,
+        !empty($row['acknowledged']) ? 1 : 0,
+        !empty($row['captain']) ? 1 : 0,
+        !empty($row['spirit_captain']) ? 1 : 0,
+    );
+    DBQuery($query);
+
+    DBQuery(sprintf("UPDATE uo_player SET num=%d WHERE player_id=%d", $num, (int) $playerId));
 }
 
 function GameHistoryMapPlayer($playerId, $idMap)
@@ -794,10 +817,27 @@ function GameHistoryRestoreResult($gameId, $gameFields)
         GameSetResult($gameId, (int) $home, (int) $away);
     }
 
+    $set = [
+        sprintf("hasstarted=%d", (int) ($gameFields['hasstarted'] ?? 0)),
+        sprintf("isongoing=%d", (int) ($gameFields['isongoing'] ?? 0)),
+    ];
+
+    // Guarded by key presence, not just ?? default: a v1 snapshot (see
+    // GameHistoryBuildSnapshot()) never captured the timer columns, and
+    // GameSetResult()/GameClearResult() above always NULL them -- restoring
+    // one must not silently clear a clock the snapshot never recorded. None
+    // of the three result mutators has a timer setter, so this writes the
+    // columns directly, in the same write-back as hasstarted/isongoing so
+    // ordering against the mutators above is already correct.
+    if (array_key_exists('timer_start', $gameFields)) {
+        $set[] = "timer_start=" . ($gameFields['timer_start'] === null ? "NULL" : (int) $gameFields['timer_start']);
+        $set[] = "timer_pause_start=" . ($gameFields['timer_pause_start'] === null ? "NULL" : (int) $gameFields['timer_pause_start']);
+        $set[] = sprintf("timer_paused_duration=%d", (int) ($gameFields['timer_paused_duration'] ?? 0));
+    }
+
     DBQuery(sprintf(
-        "UPDATE uo_game SET hasstarted=%d, isongoing=%d WHERE game_id=%d",
-        (int) ($gameFields['hasstarted'] ?? 0),
-        (int) ($gameFields['isongoing'] ?? 0),
+        "UPDATE uo_game SET %s WHERE game_id=%d",
+        implode(', ', $set),
         (int) $gameId,
     ));
 }

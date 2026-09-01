@@ -37,7 +37,11 @@ if (!isset($_POST['update'])) {
         }
     }
 }
-if (isset($_POST['page']) && !isset($_POST['page_nav'])) {
+// Every submission carries this hidden field from the previous render, so it
+// must be consumed only when nothing else already set $page this request --
+// otherwise it overwrites the Go-to value and the update-triggered reset to
+// page 1 with a stale number.
+if (isset($_POST['page']) && !isset($_POST['page_nav']) && !isset($_POST['update']) && !isset($_POST['page_input'])) {
     $page = intval($_POST['page']);
     if ($page < 1) {
         $page = 1;
