@@ -355,6 +355,15 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
         return false;
     }
 
+    // Captured before the write, not after: comment.functions.php loads
+    // before gamehistory.functions.php (see the function_exists() guard
+    // below), so a standalone comment edit would otherwise overwrite the old
+    // text with no restore point, and a desktop bulk save would snapshot the
+    // already-updated comment via whichever mutator runs next.
+    if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop" && function_exists('GameHistorySnapshotIfNeeded')) {
+        GameHistorySnapshotIfNeeded($gameId);
+    }
+
     $result = ApplyCommentChange($type, $gameId, $change);
 
     if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop" && function_exists('GameHistoryRecord')) {
