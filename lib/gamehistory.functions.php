@@ -84,14 +84,28 @@ function GameHistorySuppressed($set = null)
  * GameHistorySnapshotIfNeeded() (media links are excluded from snapshots,
  * see GameHistoryBuildSnapshot()), so a caller passing no $target -- as
  * GameHistorySnapshotIfNeeded() does -- never reaches the media branch.
+ *
+ * $allowAnonymousResult is a separate signal from the four rights above: it
+ * is set only by GameSetResult() when it was itself called with
+ * $checkRights=false, the ANONYMOUS_RESULT_INPUT self-report route (see
+ * result.php/scorekeeper/result.php) where the caller never held any
+ * session-scoped game right to begin with. The flag alone grants nothing --
+ * it is re-validated here against the installation's own
+ * ANONYMOUS_RESULT_INPUT constant, so a future $checkRights=false caller on
+ * an installation where that setting is off still hits the ordinary rights
+ * checks above and is refused.
  */
-function GameHistoryAuthorized($gameId, $target = null)
+function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = false)
 {
     if (hasEditGameEventsRight($gameId) || hasEditGamePlayersRight($gameId)) {
         return true;
     }
 
     if ($target === 'mediaevent' && hasAddMediaRight()) {
+        return true;
+    }
+
+    if ($allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT) {
         return true;
     }
 
@@ -105,7 +119,7 @@ function GameHistoryAuthorized($gameId, $target = null)
     return hasAccredidationRight((int) $teams['hometeam']) || hasAccredidationRight((int) $teams['visitorteam']);
 }
 
-function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false)
+function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false)
 {
     // $force exists solely for GameHistoryRestore()'s own restore-audit row:
     // the setting governs routine recording volume, not the safety of an
@@ -121,11 +135,19 @@ function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = fal
         return false;
     }
 
-    if (!GameHistoryAuthorized($gameId, $target)) {
+    if (!GameHistoryAuthorized($gameId, $target, $allowAnonymousResult)) {
         return false;
     }
 
-    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
+    // result.php/scorekeeper/result.php skip their own auth guard (which
+    // would otherwise stamp $_SESSION['uid']='anonymous' for a guest, see
+    // auth.guard.php) precisely when ANONYMOUS_RESULT_INPUT is enabled, so a
+    // truly session-less submission through that route leaves 'uid' unset.
+    // "anonymous" marks that origin distinctly from "unknown", which stays
+    // reserved for a missing session on every other, non-validated path.
+    $anonymous = empty($_SESSION['uid'])
+        && $allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
+    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : ($anonymous ? "anonymous" : "unknown");
     $ip = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "";
     $json = json_encode($detail, JSON_UNESCAPED_UNICODE);
     if ($json === false) {
@@ -273,7 +295,7 @@ function GameHistoryIntRows($rows, $fields)
  * cache.functions.php is the memo, so the second and third calls return the
  * first call's history id without writing a second row.
  */
-function GameHistorySnapshotIfNeeded($gameId, $force = false)
+function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousResult = false)
 {
     // $force is GameHistoryRestore()'s pre-restore capture: the setting
     // governs routine recording volume, not the safety of an explicit
@@ -294,7 +316,7 @@ function GameHistorySnapshotIfNeeded($gameId, $force = false)
         return false;
     }
 
-    if (!GameHistoryAuthorized($gameId)) {
+    if (!GameHistoryAuthorized($gameId, null, $allowAnonymousResult)) {
         return false;
     }
 
@@ -302,33 +324,34 @@ function GameHistorySnapshotIfNeeded($gameId, $force = false)
         CacheForgetNamespace("game_history_snapshot");
     }
 
-    return CacheRemember("game_history_snapshot", $gameId, function () use ($gameId) {
-        return GameHistoryWriteSnapshot($gameId);
+    // Inlined rather than kept as a standalone GameHistoryWriteSnapshot()
+    // function: that function performed the uo_game_history insert with none
+    // of the guards above applied, and its only caller was this closure, so
+    // it was an ungated public entry point in practice. Folding it in here
+    // removes that entry point instead of guarding it.
+    return CacheRemember("game_history_snapshot", $gameId, function () use ($gameId, $allowAnonymousResult) {
+        $json = json_encode(GameHistoryBuildSnapshot($gameId), JSON_UNESCAPED_UNICODE);
+        if ($json === false) {
+            return false;
+        }
+
+        // See GameHistoryRecord()'s identical "anonymous" derivation.
+        $anonymous = empty($_SESSION['uid'])
+            && $allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
+        $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : ($anonymous ? "anonymous" : "unknown");
+        $ip = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "";
+
+        $query = sprintf(
+            "INSERT INTO uo_game_history (game, user_id, ip, source, target, action, has_snapshot, snapshot)
+				VALUES (%d, '%s', '%s', '%s', 'snapshot', 'capture', 1, '%s')",
+            $gameId,
+            DBEscapeString(substr((string) $userId, 0, 50)),
+            DBEscapeString(substr($ip, 0, 45)),
+            DBEscapeString(GameHistorySource()),
+            DBEscapeString($json),
+        );
+        return DBQueryInsert($query);
     });
-}
-
-function GameHistoryWriteSnapshot($gameId)
-{
-    $gameId = (int) $gameId;
-
-    $json = json_encode(GameHistoryBuildSnapshot($gameId), JSON_UNESCAPED_UNICODE);
-    if ($json === false) {
-        return false;
-    }
-
-    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
-    $ip = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "";
-
-    $query = sprintf(
-        "INSERT INTO uo_game_history (game, user_id, ip, source, target, action, has_snapshot, snapshot)
-			VALUES (%d, '%s', '%s', '%s', 'snapshot', 'capture', 1, '%s')",
-        $gameId,
-        DBEscapeString(substr((string) $userId, 0, 50)),
-        DBEscapeString(substr($ip, 0, 45)),
-        DBEscapeString(GameHistorySource()),
-        DBEscapeString($json),
-    );
-    return DBQueryInsert($query);
 }
 
 function GameHistoryList($gameId, $limit = null, $offset = null)
