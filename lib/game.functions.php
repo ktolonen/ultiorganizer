@@ -1320,8 +1320,16 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         die('Insufficient rights to edit game');
     }
     if (!$checkRights || hasEditGameEventsRight($gameId)) {
+        // $checkRights=false is the ANONYMOUS_RESULT_INPUT self-report route
+        // (result.php/scorekeeper/result.php): the caller was never checked
+        // against this game's session rights, so GameHistoryAuthorized()
+        // would otherwise silently drop both the snapshot and the result
+        // row. $allowAnonymousResult=true only takes effect when
+        // GameHistoryAuthorized() itself confirms ANONYMOUS_RESULT_INPUT is
+        // enabled -- see its docblock.
+        $allowAnonymousResult = !$checkRights;
         LogGameUpdate($gameId, "result: $home - $away");
-        GameHistorySnapshotIfNeeded($gameId);
+        GameHistorySnapshotIfNeeded($gameId, false, $allowAnonymousResult);
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($home),
@@ -1333,7 +1341,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
             'home' => (int) $home,
             'away' => (int) $away,
             'state' => "final",
-        ]);
+        ], false, $allowAnonymousResult);
 
         if ($updatePools) {
             $poolId = GamePool($gameId);
