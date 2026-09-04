@@ -176,7 +176,16 @@ function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = fal
     $anonymous = empty($_SESSION['uid'])
         && $allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
     $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : ($anonymous ? "anonymous" : "unknown");
-    $ip = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "";
+    // DisableVisitorLogging is documented as stopping IP recording entirely
+    // (docs/privacy.md), so it suppresses the address here too. Applied to
+    // every row rather than only anonymous ones: an anonymous row is the
+    // sharpest case, since registered-user deletion cannot reach it and the
+    // row lives until the game is deleted, but the promise is unconditional.
+    // user.functions.php (required at the top of this file) pulls in
+    // logging.functions.php, so this is never an undefined call that would
+    // silently fall back to recording.
+    $ip = (!empty($_SERVER['REMOTE_ADDR']) && !IsVisitorLoggingDisabled())
+        ? $_SERVER['REMOTE_ADDR'] : "";
     $json = json_encode($detail, JSON_UNESCAPED_UNICODE);
     if ($json === false) {
         $json = "";
@@ -371,7 +380,9 @@ function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousRes
         $anonymous = empty($_SESSION['uid'])
             && $allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
         $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : ($anonymous ? "anonymous" : "unknown");
-        $ip = !empty($_SERVER['REMOTE_ADDR']) ? $_SERVER['REMOTE_ADDR'] : "";
+        // See GameHistoryRecord()'s identical address suppression.
+        $ip = (!empty($_SERVER['REMOTE_ADDR']) && !IsVisitorLoggingDisabled())
+            ? $_SERVER['REMOTE_ADDR'] : "";
 
         $query = sprintf(
             "INSERT INTO uo_game_history (game, user_id, ip, source, target, action, has_snapshot, snapshot)
@@ -482,7 +493,18 @@ function GameHistoryAllCount($filters)
     ));
 }
 
-function GameHistoryEntry($historyId)
+/**
+ * Load one history row.
+ *
+ * $allowMismatchedFixture defaults to false so that reads withhold a snapshot
+ * whose recorded teams are no longer the game's teams. SetGame() can move a
+ * game to another pool or change its responsible team, and hasEditGameEventsRight()
+ * resolves through both, so an admin who gains rights that way would otherwise
+ * read a snapshot describing teams they have no rights over. Only
+ * GameHistoryRestore() opts in, because it reports the mismatch as a specific
+ * refusal rather than silently showing nothing.
+ */
+function GameHistoryEntry($historyId, $allowMismatchedFixture = false)
 {
     $historyId = (int) $historyId;
     $row = DBQueryToRow(sprintf(
@@ -499,6 +521,29 @@ function GameHistoryEntry($historyId)
 
     $row['detail'] = $row['detail'] === null ? [] : json_decode($row['detail'], true);
     $row['snapshot'] = $row['snapshot'] === null ? null : json_decode($row['snapshot'], true);
+
+    // Computed here so restore and reads share one comparison. Positional
+    // (home-to-home, visitor-to-visitor): a set comparison would pass
+    // GameChangeHome()'s swap. Pre-v4 snapshots carry neither key and are
+    // treated as matching, the same fallback the restore guard documents.
+    $row['fixture_mismatch'] = false;
+    $snapshotGame = is_array($row['snapshot']) ? ($row['snapshot']['game'] ?? []) : [];
+    if (array_key_exists('hometeam', $snapshotGame) && array_key_exists('visitorteam', $snapshotGame)) {
+        $currentTeams = DBQueryToRow(sprintf(
+            "SELECT hometeam, visitorteam FROM uo_game WHERE game_id=%d",
+            (int) $row['game'],
+        ));
+        $currentHome = ($currentTeams['hometeam'] ?? null) === null ? null : (int) $currentTeams['hometeam'];
+        $currentVisitor = ($currentTeams['visitorteam'] ?? null) === null ? null : (int) $currentTeams['visitorteam'];
+        $row['fixture_mismatch'] = $snapshotGame['hometeam'] !== $currentHome
+            || $snapshotGame['visitorteam'] !== $currentVisitor;
+    }
+
+    if ($row['fixture_mismatch'] && !$allowMismatchedFixture) {
+        $row['snapshot'] = null;
+        $row['has_snapshot'] = 0;
+    }
+
     return $row;
 }
 
@@ -678,7 +723,7 @@ function GameHistoryRestore($historyId)
 
     $failed = ['restored' => false, 'warnings' => []];
 
-    $entry = GameHistoryEntry($historyId);
+    $entry = GameHistoryEntry($historyId, true);
     if (!$entry || empty($entry['has_snapshot']) || !is_array($entry['snapshot'])) {
         return $failed;
     }
@@ -717,32 +762,21 @@ function GameHistoryRestore($historyId)
         }
     }
 
-    // v4 snapshots also carry hometeam/visitorteam. SetGame() (reassignment)
-    // and GameChangeHome() (swap) are not scoresheet mutators and never
-    // snapshot, so a snapshot taken before either change replays the OLD
-    // teams' roster, goals and defenses onto whatever fixture now sits at
-    // this game_id. Unlike IsPoolLocked()/IsSeasonStatsCalculated() below,
-    // which are policy conditions no stricter than an ordinary result edit,
-    // a team mismatch here means the replay would write data for teams that
-    // are not in the fixture -- corruption, not policy -- so this rejects
-    // instead of warning. Compared positionally (home-to-home,
-    // visitor-to-visitor), not as a set: a set comparison would silently
-    // pass GameChangeHome()'s swap. A pre-v4 snapshot has neither key and
-    // the mismatch cannot be detected, so restore proceeds as before.
-    $snapshotGame = $snapshot['game'] ?? [];
-    if (array_key_exists('hometeam', $snapshotGame) && array_key_exists('visitorteam', $snapshotGame)) {
-        $currentTeams = DBQueryToRow(sprintf(
-            "SELECT hometeam, visitorteam FROM uo_game WHERE game_id=%d",
-            $gameId,
-        ));
-        $currentHome = $currentTeams['hometeam'] === null ? null : (int) $currentTeams['hometeam'];
-        $currentVisitor = $currentTeams['visitorteam'] === null ? null : (int) $currentTeams['visitorteam'];
-        if ($snapshotGame['hometeam'] !== $currentHome || $snapshotGame['visitorteam'] !== $currentVisitor) {
-            return [
-                'restored' => false,
-                'warnings' => [_("Restore refused: the home and visitor teams have changed since this snapshot was taken.")],
-            ];
-        }
+    // GameHistoryEntry() computed this: SetGame() (reassignment) and
+    // GameChangeHome() (swap) are not scoresheet mutators and never snapshot,
+    // so a snapshot taken before either change would replay the OLD teams'
+    // roster, goals and defenses onto whatever fixture now sits at this
+    // game_id. Unlike IsPoolLocked()/IsSeasonStatsCalculated() below, which
+    // are policy conditions no stricter than an ordinary result edit, that is
+    // corruption rather than policy -- so this rejects instead of warning.
+    // Checked here rather than at load so an unauthorized caller cannot learn
+    // the fixture changed. A pre-v4 snapshot has neither team key and the
+    // mismatch cannot be detected, so restore proceeds as before.
+    if (!empty($entry['fixture_mismatch'])) {
+        return [
+            'restored' => false,
+            'warnings' => [_("Restore refused: the home and visitor teams have changed since this snapshot was taken.")],
+        ];
     }
 
     GameHistorySnapshotIfNeeded($gameId, true);
@@ -999,61 +1033,55 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
             $playerId = $candidateId;
         }
 
-        GameHistoryRestorePlayerRow($gameId, $playerId, $row, $warnings);
-    }
+        // Written directly rather than through GameAddPlayer(), whose
+        // GameAllowsPlayerOnRoster() gate would reject an unaccredited player
+        // in a require_accreditation season -- see this function's docblock.
+        $num = (int) ($row['num'] ?? 0);
 
-    return $idMap;
-}
-
-/**
- * Write one restored uo_played row directly, bypassing GameAddPlayer()'s
- * accreditation gate -- see the comment on GameHistoryRestorePlayers().
- * Also syncs uo_player.num, matching GameAddPlayer()'s existing side effect
- * (see "Restoring a roster rewrites uo_player.num" in docs/game-history.md).
- */
-function GameHistoryRestorePlayerRow($gameId, $playerId, $row, &$warnings)
-{
-    $num = (int) ($row['num'] ?? 0);
-
-    // The up-front guard in GameHistoryRestore() only checks
-    // hasAccredidationRight() for the teams recorded in the SNAPSHOT. A
-    // player who has since moved teams needs the right rechecked against
-    // their CURRENT team before writing acknowledged=1, or an admin holding
-    // the right only on the old team could grant an acknowledgment on the
-    // new one. Missing the right does not abort the restore -- as with an
-    // unresolvable player above, this row is downgraded and warned about
-    // instead, so the rest of the restore still completes.
-    $acknowledged = !empty($row['acknowledged']) ? 1 : 0;
-    if ($acknowledged) {
-        $currentTeam = (int) DBQueryToValue(sprintf(
-            "SELECT team FROM uo_player WHERE player_id=%d",
-            $playerId,
-        ));
-        if (!hasAccredidationRight($currentTeam)) {
-            $acknowledged = 0;
-            $warnings[] = sprintf(
-                _("Acknowledgement not restored for player %s: accreditation right missing for their current team."),
-                $row['name'] ?? $playerId,
-            );
+        // The up-front guard in GameHistoryRestore() only checks
+        // hasAccredidationRight() for the teams recorded in the SNAPSHOT. A
+        // player who has since moved teams needs the right rechecked against
+        // their CURRENT team before writing acknowledged=1, or an admin
+        // holding the right only on the old team could grant an
+        // acknowledgment on the new one. Missing the right does not abort the
+        // restore -- as with an unresolvable player above, this row is
+        // downgraded and warned about instead, so the rest of the restore
+        // still completes.
+        $acknowledged = !empty($row['acknowledged']) ? 1 : 0;
+        if ($acknowledged) {
+            $currentTeam = (int) DBQueryToValue(sprintf(
+                "SELECT team FROM uo_player WHERE player_id=%d",
+                $playerId,
+            ));
+            if (!hasAccredidationRight($currentTeam)) {
+                $acknowledged = 0;
+                $warnings[] = sprintf(
+                    _("Acknowledgement not restored for player %s: accreditation right missing for their current team."),
+                    $row['name'] ?? $playerId,
+                );
+            }
         }
-    }
 
-    $query = sprintf(
-        "INSERT INTO uo_played (game, player, num, accredited, acknowledged, captain, spirit_captain)
+        DBQuery(sprintf(
+            "INSERT INTO uo_played (game, player, num, accredited, acknowledged, captain, spirit_captain)
 			VALUES (%d, %d, %d, %d, %d, %d, %d)
 			ON DUPLICATE KEY UPDATE num=VALUES(num), accredited=VALUES(accredited),
 				acknowledged=VALUES(acknowledged), captain=VALUES(captain), spirit_captain=VALUES(spirit_captain)",
-        (int) $gameId,
-        (int) $playerId,
-        $num,
-        !empty($row['accredited']) ? 1 : 0,
-        $acknowledged,
-        !empty($row['captain']) ? 1 : 0,
-        !empty($row['spirit_captain']) ? 1 : 0,
-    );
-    DBQuery($query);
+            (int) $gameId,
+            (int) $playerId,
+            $num,
+            !empty($row['accredited']) ? 1 : 0,
+            $acknowledged,
+            !empty($row['captain']) ? 1 : 0,
+            !empty($row['spirit_captain']) ? 1 : 0,
+        ));
 
-    DBQuery(sprintf("UPDATE uo_player SET num=%d WHERE player_id=%d", $num, (int) $playerId));
+        // Matches GameAddPlayer()'s existing side effect (see "Restoring a
+        // roster rewrites uo_player.num" in docs/game-history.md).
+        DBQuery(sprintf("UPDATE uo_player SET num=%d WHERE player_id=%d", $num, (int) $playerId));
+    }
+
+    return $idMap;
 }
 
 function GameHistoryMapPlayer($playerId, $idMap)
