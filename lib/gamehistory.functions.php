@@ -179,7 +179,8 @@ function GameHistoryBuildSnapshot($gameId)
 
     $game = DBQueryToRow(sprintf(
         "SELECT homescore, visitorscore, isongoing, hasstarted, forfeit, official, halftime,
-			homedefenses, visitordefenses, timer_start, timer_pause_start, timer_paused_duration
+			homedefenses, visitordefenses, timer_start, timer_pause_start, timer_paused_duration,
+			hometeam, visitorteam
 			FROM uo_game WHERE game_id=%d",
         $gameId,
     ));
@@ -233,7 +234,8 @@ function GameHistoryBuildSnapshot($gameId)
 
     $gameFields = GameHistoryIntFields($game, ['homescore', 'visitorscore', 'isongoing',
         'hasstarted', 'forfeit', 'halftime', 'homedefenses', 'visitordefenses',
-        'timer_start', 'timer_pause_start', 'timer_paused_duration']);
+        'timer_start', 'timer_pause_start', 'timer_paused_duration',
+        'hometeam', 'visitorteam']);
     // v3 adds timer_elapsed: the game time GameTimerState() computes as
     // already elapsed at capture time, reusing its own arithmetic rather
     // than reimplementing it. GameHistoryRestoreResult() uses this to derive
@@ -243,7 +245,7 @@ function GameHistoryBuildSnapshot($gameId)
     $gameFields['timer_elapsed'] = (int) GameTimerState($gameId)['elapsed'];
 
     return [
-        'v' => 3,
+        'v' => 4,
         'game' => $gameFields,
         'goals' => GameHistoryIntRows($goals, ['num', 'assist', 'scorer', 'time', 'homescore',
             'visitorscore', 'ishomegoal', 'iscallahan', 'assist_num', 'scorer_num']),
@@ -685,6 +687,34 @@ function GameHistoryRestore($historyId)
         }
     }
 
+    // v4 snapshots also carry hometeam/visitorteam. SetGame() (reassignment)
+    // and GameChangeHome() (swap) are not scoresheet mutators and never
+    // snapshot, so a snapshot taken before either change replays the OLD
+    // teams' roster, goals and defenses onto whatever fixture now sits at
+    // this game_id. Unlike IsPoolLocked()/IsSeasonStatsCalculated() below,
+    // which are policy conditions no stricter than an ordinary result edit,
+    // a team mismatch here means the replay would write data for teams that
+    // are not in the fixture -- corruption, not policy -- so this rejects
+    // instead of warning. Compared positionally (home-to-home,
+    // visitor-to-visitor), not as a set: a set comparison would silently
+    // pass GameChangeHome()'s swap. A pre-v4 snapshot has neither key and
+    // the mismatch cannot be detected, so restore proceeds as before.
+    $snapshotGame = $snapshot['game'] ?? [];
+    if (array_key_exists('hometeam', $snapshotGame) && array_key_exists('visitorteam', $snapshotGame)) {
+        $currentTeams = DBQueryToRow(sprintf(
+            "SELECT hometeam, visitorteam FROM uo_game WHERE game_id=%d",
+            $gameId,
+        ));
+        $currentHome = $currentTeams['hometeam'] === null ? null : (int) $currentTeams['hometeam'];
+        $currentVisitor = $currentTeams['visitorteam'] === null ? null : (int) $currentTeams['visitorteam'];
+        if ($snapshotGame['hometeam'] !== $currentHome || $snapshotGame['visitorteam'] !== $currentVisitor) {
+            return [
+                'restored' => false,
+                'warnings' => [_("Restore refused: the home and visitor teams have changed since this snapshot was taken.")],
+            ];
+        }
+    }
+
     GameHistorySnapshotIfNeeded($gameId, true);
 
     // Neither of these blocks: CheckGameResult() only ever turns them into
@@ -835,16 +865,64 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
 {
     $idMap = [];
 
-    GameRemoveAllPlayers($gameId);
-    foreach ($playedRows as $row) {
-        $originalId = (int) $row['player'];
-        $playerId = $originalId;
-        $exists = (int) DBQueryToValue(sprintf(
+    // Snapshot-side ambiguity pre-scan, keyed on the same (team, num) the
+    // rematch query below uses. If two snapshot rows whose ids no longer
+    // exist share a jersey number, the rematch below can only ever return
+    // one candidate for that number -- both rows would silently collapse
+    // onto it, merging one player's goals/assists/defences onto another's.
+    // This has to be caught before the loop below picks a match, because
+    // loop order would otherwise let whichever row is processed first win
+    // arbitrarily; a resolved-looking restore that quietly merged two
+    // players is worse than warning about both.
+    // $consumedCandidates is pre-seeded with every row whose id still
+    // exists: that row will write directly to its own id (see the loop
+    // below), so a rematch below that resolves to the same id has to be
+    // refused too, not just a second rematch. It stays order-independent
+    // this way: uo_player itself is not modified until a row actually
+    // writes, so which row the loop reaches first cannot change what a
+    // rematch query finds.
+    $exists = [];
+    $deletedGroups = [];
+    $consumedCandidates = [];
+    foreach ($playedRows as $i => $row) {
+        $playerId = (int) $row['player'];
+        $exists[$i] = (int) DBQueryToValue(sprintf(
             "SELECT COUNT(*) FROM uo_player WHERE player_id=%d",
             $playerId,
-        ));
+        )) > 0;
+        if ($exists[$i]) {
+            $consumedCandidates[$playerId] = true;
+        } else {
+            $key = (int) $row['team'] . ':' . (int) $row['num'];
+            $deletedGroups[$key][] = $i;
+        }
+    }
+    $ambiguousRows = [];
+    foreach ($deletedGroups as $rowIndexes) {
+        if (count($rowIndexes) > 1) {
+            foreach ($rowIndexes as $i) {
+                $ambiguousRows[$i] = true;
+            }
+        }
+    }
 
-        if (!$exists) {
+    GameRemoveAllPlayers($gameId);
+    foreach ($playedRows as $i => $row) {
+        $originalId = (int) $row['player'];
+        $playerId = $originalId;
+
+        if (!$exists[$i]) {
+            if (isset($ambiguousRows[$i])) {
+                $warnings[] = sprintf(
+                    _("Player %s could not be restored: jersey number %d is not unique on team %s."),
+                    $row['name'] ?? $originalId,
+                    (int) $row['num'],
+                    TeamName((int) $row['team']),
+                );
+                $idMap[$originalId] = null;
+                continue;
+            }
+
             // uo_player has no unique constraint on (team, num), so a naive
             // LIMIT 1 could attribute this row's goals, assists and defences
             // to an arbitrary teammate wearing the same number. Fetch up to
@@ -870,8 +948,20 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
                 $idMap[$originalId] = null;
                 continue;
             }
-            $idMap[$originalId] = (int) $rematches[0]['player_id'];
-            $playerId = (int) $rematches[0]['player_id'];
+            $candidateId = (int) $rematches[0]['player_id'];
+            if (isset($consumedCandidates[$candidateId])) {
+                $warnings[] = sprintf(
+                    _("Player %s could not be restored: jersey number %d is not unique on team %s."),
+                    $row['name'] ?? $originalId,
+                    (int) $row['num'],
+                    TeamName((int) $row['team']),
+                );
+                $idMap[$originalId] = null;
+                continue;
+            }
+            $consumedCandidates[$candidateId] = true;
+            $idMap[$originalId] = $candidateId;
+            $playerId = $candidateId;
         }
 
         GameHistoryRestorePlayerRow($gameId, $playerId, $row, $warnings);
