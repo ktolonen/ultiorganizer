@@ -892,7 +892,12 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
         )) > 0;
         if ($exists[$i]) {
             $consumedCandidates[$playerId] = true;
-        } else {
+        } elseif (($row['num'] ?? null) !== null) {
+            // A snapshot row with no jersey number cannot rematch on one, so
+            // it is left out of the grouping: it falls through to the plain
+            // "could not be restored" warning below rather than being
+            // reported as a conflict over jersey 0, which is a real number
+            // some player may actually wear.
             $key = (int) $row['team'] . ':' . (int) $row['num'];
             $deletedGroups[$key][] = $i;
         }
