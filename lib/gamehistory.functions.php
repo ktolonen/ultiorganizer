@@ -95,7 +95,7 @@ function GameHistorySuppressed($set = null)
  * an installation where that setting is off still hits the ordinary rights
  * checks above and is refused.
  */
-function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = false)
+function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = false, $commentAuthor = null)
 {
     if (hasEditGameEventsRight($gameId) || hasEditGamePlayersRight($gameId)) {
         return true;
@@ -103,6 +103,34 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
 
     if ($target === 'mediaevent' && hasAddMediaRight()) {
         return true;
+    }
+
+    // CanManageGameComment() lets a note's original author edit or delete it
+    // after losing hasEditGameEventsRight(), so that write is legitimate but
+    // reaches none of the checks above -- without this branch it would change
+    // the note with neither a restore point nor an audit row.
+    //
+    // Preferred source is CanManageGameComment() itself, which derives
+    // authorship server-side. It cannot answer after a delete: ApplyCommentChange()
+    // logs comment_delete, and GameCommentMeta() then treats that as a cutoff
+    // and finds no comment_create after it, so created_by comes back empty.
+    // The post-write record call therefore passes the authorship captured
+    // before the write. Only the identity being claimed crosses the boundary;
+    // that it is the CURRENT session's identity is still checked here.
+    if ($target === 'comment') {
+        if (
+            function_exists('CanManageGameComment') && defined('COMMENT_TYPE_GAME')
+            && CanManageGameComment($gameId, COMMENT_TYPE_GAME)
+        ) {
+            return true;
+        }
+        if (
+            is_string($commentAuthor) && $commentAuthor !== ""
+            && function_exists('isLoggedIn') && isLoggedIn()
+            && !empty($_SESSION['uid']) && $_SESSION['uid'] === $commentAuthor
+        ) {
+            return true;
+        }
     }
 
     if ($allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT) {
@@ -119,7 +147,7 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
     return hasAccredidationRight((int) $teams['hometeam']) || hasAccredidationRight((int) $teams['visitorteam']);
 }
 
-function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false)
+function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false, $commentAuthor = null)
 {
     // $force exists solely for GameHistoryRestore()'s own restore-audit row:
     // the setting governs routine recording volume, not the safety of an
@@ -135,7 +163,7 @@ function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = fal
         return false;
     }
 
-    if (!GameHistoryAuthorized($gameId, $target, $allowAnonymousResult)) {
+    if (!GameHistoryAuthorized($gameId, $target, $allowAnonymousResult, $commentAuthor)) {
         return false;
     }
 
@@ -297,7 +325,7 @@ function GameHistoryIntRows($rows, $fields)
  * cache.functions.php is the memo, so the second and third calls return the
  * first call's history id without writing a second row.
  */
-function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousResult = false)
+function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousResult = false, $commentAuthor = null)
 {
     // $force is GameHistoryRestore()'s pre-restore capture: the setting
     // governs routine recording volume, not the safety of an explicit
@@ -318,7 +346,9 @@ function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousRes
         return false;
     }
 
-    if (!GameHistoryAuthorized($gameId, null, $allowAnonymousResult)) {
+    // A non-null $commentAuthor marks this as a game-note mutation, which is
+    // the only target whose authorization differs from the default here.
+    if (!GameHistoryAuthorized($gameId, $commentAuthor === null ? null : 'comment', $allowAnonymousResult, $commentAuthor)) {
         return false;
     }
 

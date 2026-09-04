@@ -79,6 +79,14 @@ Every mutator above has already checked its own permission before calling into `
 
 `GameHistorySource()` resolves the app that made the change from the `UO_APP_SOURCE` constant. `api/`, `scorekeeper/`, `spiritkeeper/`, and `mobile/index.php` (when reached directly) each define this constant themselves at their own entry point. The root `index.php`, which serves `user/` and `admin/` pages -- and `mobile/` pages when routed through it -- derives the value instead of hardcoding it: it takes the leading path segment of the resolved `?view=...` value, keeps it only if it is one of `admin`, `user`, or `mobile`, and otherwise falls back to `user`. This is why a forfeit set from `admin/editgame.php` (which calls the same `GameSetForfeit()` used everywhere else) is attributed to `admin`, and a point entered from `mobile/addscoresheet.php` is attributed to `mobile`, without either page passing that information itself. `GameHistorySource()` also falls back to matching `$_SERVER['SCRIPT_NAME']` against a fixed app list when `UO_APP_SOURCE` is undefined at all, a defensive path that is effectively unreachable since every entry point defines the constant.
 
+### Game notes edited by their author
+
+`CanManageGameComment()` deliberately lets the original author of a game note update or delete it after they have lost `hasEditGameEventsRight()`. That write is legitimate, so it must be recorded, but it passes none of the rights `GameHistoryAuthorized()` normally checks. The `comment` target therefore has its own authorization branch.
+
+It prefers `CanManageGameComment()`, which derives authorship server-side. That call cannot answer after a delete: `ApplyCommentChange()` logs a `comment_delete` event, `GameCommentMeta()` treats the newest such event as a cutoff and looks for a `comment_create` after it, and so `created_by` comes back empty. The post-write record call therefore receives the authorship that `SetGameComment()` read before the write. Only the claimed identity crosses that boundary -- that it matches the current session's `uid` is still checked in `GameHistoryAuthorized()`, so claiming someone else's authorship does not authorize anything.
+
+The create path needs none of this: `CanCreateGameComment()` still requires `hasEditGameEventsRight()`, so only `update` and `delete` pass an author through.
+
 ## Viewing history
 
 - `user/gamehistory.php` shows the change history for one game. It requires `hasEditGameEventsRight($gameId)` -- the same right needed to edit that game's scoresheet, so a team's own game admins can review their game's history without needing broader access. Rows with `has_snapshot=1` get a "Show" link (renders the point sequence from the snapshot) and a "Restore this version" action.
