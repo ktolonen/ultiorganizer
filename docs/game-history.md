@@ -81,11 +81,21 @@ Every mutator above has already checked its own permission before calling into `
 
 ### Game notes edited by their author
 
-`CanManageGameComment()` deliberately lets the original author of a game note update or delete it after they have lost `hasEditGameEventsRight()`. That write is legitimate, so it must be recorded, but it passes none of the rights `GameHistoryAuthorized()` normally checks. The `comment` target therefore has its own authorization branch.
+`CanManageGameComment()` deliberately lets the original author of a game note update or delete it after they have lost `hasEditGameEventsRight()`. That write is legitimate, so it must be recorded, but it passes none of the rights `GameHistoryAuthorized()` normally checks. The `comment` target therefore has its own authorization branch, which calls `CanManageGameComment()` and resolves authorship server-side.
 
-It prefers `CanManageGameComment()`, which derives authorship server-side. That call cannot answer after a delete: `ApplyCommentChange()` logs a `comment_delete` event, `GameCommentMeta()` treats the newest such event as a cutoff and looks for a `comment_create` after it, and so `created_by` comes back empty. The post-write record call therefore receives the authorship that `SetGameComment()` read before the write. Only the claimed identity crosses that boundary -- that it matches the current session's `uid` is still checked in `GameHistoryAuthorized()`, so claiming someone else's authorship does not authorize anything.
+Authorship is never accepted as an argument. An earlier version of this feature passed the author identity down from `SetGameComment()` and compared it against the session's `uid`; that verified nothing, because any logged-in caller satisfies such a check by naming themselves, and it left the reusable helpers open to forged audit rows and snapshot capture for any game.
 
-The create path needs none of this: `CanCreateGameComment()` still requires `hasEditGameEventsRight()`, so only `update` and `delete` pass an author through.
+What made the server-side check awkward is the delete path: `ApplyCommentChange()` logs a `comment_delete` event, `GameCommentMeta()` treats the newest such event as a cutoff and looks for a `comment_create` after it, so once the delete is applied `created_by` comes back empty and the author who was just authorized is no longer recognisable. `SetGameComment()` therefore performs **both** history calls before `ApplyCommentChange()`, which keeps `CanManageGameComment()` authoritative without anything forgeable crossing the boundary. Recording before the write changes nothing observable: `ApplyCommentChange()` returns `true` in every branch, and its result was never gated on.
+
+The create path needs none of this: `CanCreateGameComment()` still requires `hasEditGameEventsRight()`.
+
+### Accreditation-only callers
+
+`GameHistoryAuthorized()`'s accreditation fallback is scoped to the `played` target, like the media and comment branches. `hasAccredidationRight()` grants acknowledgement changes on a team's roster and nothing else, so an unscoped fallback would let such a caller reach the reusable helpers directly and forge result, goal or forfeit rows -- or capture a whole snapshot -- for a fixture they cannot otherwise edit. `AcknowledgeUnaccredited()` and `UnAcknowledgeUnaccredited()` are the callers it exists for, and both pass `played`.
+
+### Players with no jersey number
+
+Both `uo_player.num` and `uo_played.num` are nullable, and 0 is a jersey a player may actually wear, so restore keeps the two states distinct. A snapshot row with a null number is written back as SQL `NULL` rather than 0, on the `uo_played` row and on the player's global `uo_player` row. It is also never rematched: a deleted player with no number has nothing to match on, and casting null to 0 in the lookup would resolve them onto whoever wears number 0 on that team and hand that person their goals, assists and defences. Such a row gets the ordinary "could not be restored" warning instead.
 
 ### Addresses and disabled visitor logging
 

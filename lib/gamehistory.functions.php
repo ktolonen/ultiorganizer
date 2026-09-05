@@ -141,6 +141,18 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
         return true;
     }
 
+    // Scoped to the played target, like the media and comment branches above.
+    // hasAccredidationRight() grants acknowledgement changes on a team's
+    // roster and nothing else, so leaving this unscoped would let an
+    // accreditation-only caller reach the reusable helpers directly and forge
+    // result, goal or forfeit rows -- or capture a whole snapshot -- for a
+    // fixture they cannot otherwise edit. AcknowledgeUnaccredited() and
+    // UnAcknowledgeUnaccredited() are the callers this exists for, and both
+    // record against "played".
+    if ($target !== 'played') {
+        return false;
+    }
+
     $teams = DBQueryToRow(sprintf(
         "SELECT hometeam, visitorteam FROM uo_game WHERE game_id=%d",
         $gameId,
@@ -1074,6 +1086,21 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
                 continue;
             }
 
+            // A snapshot row with no jersey number has nothing to rematch on.
+            // The pre-scan already leaves it out of the ambiguity grouping,
+            // but the query below casts null to 0, and 0 is a real jersey
+            // (uo_player.num is tinyint unsigned) -- so without this the row
+            // would silently resolve onto whoever wears number 0 and inherit
+            // this player's goals, assists and defences.
+            if (($row['num'] ?? null) === null) {
+                $warnings[] = sprintf(
+                    _("Player %s could not be restored."),
+                    $row['name'] ?? $originalId,
+                );
+                $idMap[$originalId] = null;
+                continue;
+            }
+
             // uo_player has no unique constraint on (team, num), so a naive
             // LIMIT 1 could attribute this row's goals, assists and defences
             // to an arbitrary teammate wearing the same number. Fetch up to
@@ -1118,7 +1145,11 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
         // Written directly rather than through GameAddPlayer(), whose
         // GameAllowsPlayerOnRoster() gate would reject an unaccredited player
         // in a require_accreditation season -- see this function's docblock.
-        $num = (int) ($row['num'] ?? 0);
+        // Preserved as SQL NULL rather than coerced to 0: the schema makes
+        // both num columns nullable, and 0 is a jersey a player may actually
+        // wear, so collapsing "unnumbered" onto it would invent a number here
+        // and on the player's global uo_player row.
+        $num = ($row['num'] ?? null) === null ? "NULL" : (string) (int) $row['num'];
 
         // The up-front guard in GameHistoryRestore() only checks
         // hasAccredidationRight() for the teams recorded in the SNAPSHOT. A
@@ -1146,7 +1177,7 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
 
         DBQuery(sprintf(
             "INSERT INTO uo_played (game, player, num, accredited, acknowledged, captain, spirit_captain)
-			VALUES (%d, %d, %d, %d, %d, %d, %d)
+			VALUES (%d, %d, %s, %d, %d, %d, %d)
 			ON DUPLICATE KEY UPDATE num=VALUES(num), accredited=VALUES(accredited),
 				acknowledged=VALUES(acknowledged), captain=VALUES(captain), spirit_captain=VALUES(spirit_captain)",
             (int) $gameId,
@@ -1160,7 +1191,7 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
 
         // Matches GameAddPlayer()'s existing side effect (see "Restoring a
         // roster rewrites uo_player.num" in docs/game-history.md).
-        DBQuery(sprintf("UPDATE uo_player SET num=%d WHERE player_id=%d", $num, (int) $playerId));
+        DBQuery(sprintf("UPDATE uo_player SET num=%s WHERE player_id=%d", $num, (int) $playerId));
     }
 
     return $idMap;
