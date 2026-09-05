@@ -864,8 +864,9 @@ function GameHistoryRestore($historyId)
         ];
 
         // A v1 snapshot never captured the timer columns; leave whatever the
-        // result branch above did to them. No mutator sets them, so they are
-        // written directly, in the same write-back as hasstarted/isongoing.
+        // result branch above did to them. None of those three takes a
+        // captured timer value, so it is written directly here, in the same
+        // write-back as hasstarted/isongoing.
         if (array_key_exists('timer_start', $resultFields)) {
             if (array_key_exists('timer_elapsed', $resultFields) && $resultFields['timer_start'] !== null) {
                 // timer_start is an absolute Unix epoch, so replaying it
