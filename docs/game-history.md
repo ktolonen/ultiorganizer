@@ -29,7 +29,7 @@ Recording can be turned off installation-wide with the `DisableGameHistory` sett
 |---|---|---|
 | `v1` | the base scoresheet: result, roster, goals, defenses, timeouts, events, comment | -- |
 | `v2` | `homedefenses`, `visitordefenses`, and the live-clock columns `timer_start`, `timer_pause_start`, `timer_paused_duration` | a `v1` restore leaves the defense counts alone, and leaves the clock to whatever the replayed result call did to it |
-| `v3` | `timer_elapsed`, the game time `GameTimerState()` reports as already elapsed at capture | a `v1`/`v2` restore writes `timer_start` back verbatim, and since it is an absolute Unix epoch, a clock that was running counts the time since capture as game time |
+| `v3` | `timer_elapsed`, the game time `GameTimerState()` reports as already elapsed at capture | a `v2` restore writes `timer_start` back verbatim, and since it is an absolute Unix epoch, a clock that was running counts the time since capture as game time. A `v1` restore is unaffected: with no `timer_start` key at all, the whole timer write-back is skipped |
 | `v4` | `hometeam`, `visitorteam` (`NULL`-preserving, since a fixture side can be unassigned) | a pre-`v4` mismatch cannot be detected, so the restore guard under "Restoring a snapshot" does not apply |
 
 From `v3` on, the result replay derives a fresh `timer_start` of `now - timer_elapsed` instead of replaying the captured epoch, freezing it immediately via `timer_pause_start = now` when the snapshot was paused.
@@ -97,7 +97,7 @@ It accepts the union of the rights the callers in the table above actually hold.
 | `CanManageGameComment()` | `comment` | `SetGameComment()` |
 | `ANONYMOUS_RESULT_INPUT` | `result` | `GameSetResult()` |
 
-`hasAddMediaRight()` needs the scope most: unlike the others it carries no game or team scope at all, and any logged-in session holds it. `GameHistorySnapshotIfNeeded()` passes no `$target`, so none of the scoped branches applies to a snapshot capture -- which matches that none of those callers snapshots.
+`hasAddMediaRight()` needs the scope most: unlike the others it carries no game or team scope at all, and any logged-in session holds it. It is also the only one of the four whose callers never snapshot, and correspondingly the only target `GameHistorySnapshotIfNeeded()` is never called with -- `SetGameComment()` passes `comment`, the accreditation helpers pass `played`, and the anonymous `GameSetResult()` route passes `result`, so those three branches do apply to a snapshot capture.
 
 The accreditation branch also accepts the right against the current team of any player on the game's roster, not only the game's own two teams. `AcknowledgeUnaccredited()` authorizes against the player's current team, so an admin of the new team legitimately acknowledges a player who has since transferred, and checking only the fixture's teams would let that acknowledgement succeed while silently refusing to record it.
 
