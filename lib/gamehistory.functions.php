@@ -160,7 +160,35 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
     if (!is_array($teams)) {
         return false;
     }
-    return hasAccredidationRight((int) $teams['hometeam']) || hasAccredidationRight((int) $teams['visitorteam']);
+    if (hasAccredidationRight((int) $teams['hometeam']) || hasAccredidationRight((int) $teams['visitorteam'])) {
+        return true;
+    }
+
+    // AcknowledgeUnaccredited() authorizes against the player's CURRENT team,
+    // so a player who transferred away since this game is legitimately
+    // acknowledged by an admin of their new team -- while the fixture's own
+    // two teams say nothing about that right. Checking only those would let
+    // the acknowledgement succeed and silently refuse both its snapshot and
+    // its audit row, which is the one outcome this feature exists to prevent.
+    //
+    // Derived from the roster rather than taken as an argument: the caller
+    // supplies nothing, so there is no identity to forge. It is marginally
+    // broader than the transferred player alone -- an admin holding the right
+    // on any rostered player's current team can record "played" history for
+    // this game -- which is the deliberate cost of having no such argument.
+    $rosterTeams = DBQueryToArray(sprintf(
+        "SELECT DISTINCT p.team FROM uo_played pd
+			INNER JOIN uo_player p ON p.player_id=pd.player
+			WHERE pd.game=%d",
+        $gameId,
+    ));
+    foreach ($rosterTeams as $rosterTeam) {
+        if ($rosterTeam['team'] !== null && hasAccredidationRight((int) $rosterTeam['team'])) {
+            return true;
+        }
+    }
+
+    return false;
 }
 
 function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false)
@@ -817,7 +845,7 @@ function GameHistoryRestore($historyId)
     $previousSuppressed = GameHistorySuppressed();
     GameHistorySuppressed(true);
     try {
-        $idMap = GameHistoryRestorePlayers($gameId, $snapshot['played'] ?? [], $warnings);
+        $idMap = GameHistoryRestorePlayers($historyId, $warnings);
 
         GameRemoveAllScores($gameId);
         foreach ($snapshot['goals'] ?? [] as $goal) {
@@ -1002,9 +1030,38 @@ function GameHistoryRestore($historyId)
  * must not re-litigate that gate; the accreditation right for every
  * acknowledged team is already checked up front in GameHistoryRestore().
  */
-function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
+function GameHistoryRestorePlayers($historyId, &$warnings)
 {
+    // Takes a history id, not a caller-supplied row set. The rows below are
+    // written straight into uo_played, deliberately bypassing
+    // GameAllowsPlayerOnRoster() (see this function's docblock), so accepting
+    // rows as an argument would let any caller holding the ordinary player
+    // rights add an unaccredited player to a require_accreditation season
+    // through here. Deriving them from a stored snapshot removes the input
+    // rather than validating it.
+    //
+    // The guard is re-run here rather than assumed from GameHistoryRestore():
+    // this function has to be safe standing alone, since it sits in the
+    // shared lib interface. It is the same superset that function computes --
+    // both editing rights, plus the accreditation right for every team with
+    // an acknowledged row.
     $idMap = [];
+
+    $entry = GameHistoryEntry($historyId, true);
+    if (!$entry || !is_array($entry['snapshot'])) {
+        return $idMap;
+    }
+    $gameId = (int) $entry['game'];
+    if (!hasEditGameEventsRight($gameId) || !hasEditGamePlayersRight($gameId)) {
+        return $idMap;
+    }
+
+    $playedRows = $entry['snapshot']['played'] ?? [];
+    foreach ($playedRows as $row) {
+        if (!empty($row['acknowledged']) && !hasAccredidationRight((int) $row['team'])) {
+            return $idMap;
+        }
+    }
 
     // Snapshot-side ambiguity pre-scan, keyed on the same (team, num) the
     // rematch query below uses. If two snapshot rows whose ids no longer
@@ -1190,8 +1247,16 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
         ));
 
         // Matches GameAddPlayer()'s existing side effect (see "Restoring a
-        // roster rewrites uo_player.num" in docs/game-history.md).
-        DBQuery(sprintf("UPDATE uo_player SET num=%s WHERE player_id=%d", $num, (int) $playerId));
+        // roster rewrites uo_player.num" in docs/game-history.md), but only
+        // while the player is still on the team the snapshot recorded. For a
+        // player who has since transferred, this global column belongs to
+        // their CURRENT team, which the restoring admin may hold no rights
+        // over at all -- restore's authority is over this game's roster
+        // (uo_played.num, written above), not over another team's squad
+        // numbering. The game record is still reproduced either way.
+        if ($currentTeams[$i] === null || $currentTeams[$i] === (int) $row['team']) {
+            DBQuery(sprintf("UPDATE uo_player SET num=%s WHERE player_id=%d", $num, (int) $playerId));
+        }
     }
 
     return $idMap;
