@@ -1621,8 +1621,7 @@ function CommentHTML($type, $id)
  */
 function SetComment($type, $id, $comment)
 {
-    // Not empty(): that would also delete a comment whose text is the
-    // literal string "0" (see the docblock above for the actual contract).
+    // Not empty(), which would also delete a comment of "0".
     if ($comment === null || $comment === "") {
         $query = sprintf(
             "DELETE FROM uo_comment WHERE type='%d' AND id='%s'",

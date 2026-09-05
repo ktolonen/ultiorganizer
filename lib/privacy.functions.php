@@ -339,18 +339,10 @@ function PrivacyCollectPlayerReportData($playerId)
 /**
  * Extract this player's own name values embedded in game-history snapshots.
  *
- * uo_game_history.snapshot stores the full scoresheet state as JSON,
- * including every player on the roster at capture time, not only this one --
- * exporting the whole blob into one player's report would leak the others.
- * This walks the same played[]/goals[] shape PrivacyAnonymizePlayer()
- * rewrites and keeps only the name values keyed to $playerIds, each tagged
- * with enough context (game, snapshot time, which field) to be meaningful on
- * its own, including a prior spelling no longer present in uo_player.
- *
- * Every has_snapshot=1 row is scanned and decoded, the same as
- * PrivacyAnonymizePlayer() does: a player export is a rare admin-triggered
- * action, so correctness (id-keyed matching, not name-text matching) matters
- * more than the scan cost here.
+ * A snapshot holds the whole roster, so exporting the blob would leak other
+ * players. This walks the same played[]/goals[] shape PrivacyAnonymizePlayer()
+ * rewrites and keeps only the names keyed to $playerIds -- including a prior
+ * spelling no longer present in uo_player.
  */
 function PrivacyPlayerGameHistoryNameRows($playerIds)
 {
@@ -702,20 +694,12 @@ function PrivacyAnonymizePlayer($playerId, $adminUserId)
         DBQuery("DELETE FROM uo_accreditationlog WHERE player IN ($playerIdList)");
         DBQuery("DELETE FROM uo_event_log WHERE category='player' AND id1 IN ($playerIdList)");
 
-        // uo_game_history.snapshot embeds player names as free text
-        // (played[].name, goals[].scorer_name, goals[].assist_name), keyed
-        // by player id rather than a foreign key, so anonymizing uo_player
-        // does not reach them. Each snapshot is decoded, the matching player
-        // id's name fields are rewritten, and it is re-encoded with the same
-        // flags it was stored with. Byte-level string replacement on the raw
-        // JSON was tried and rejected: it cannot reliably tell a player's
-        // name apart from unrelated free text (game.official, comment,
-        // events[].info), a name that is a substring of another player's
-        // name, two players sharing a name, or the JSON string escaping
-        // json_encode() applies to quotes, backslashes, and slashes.
-        // Anonymization is a rare admin-triggered action, so scanning every
-        // snapshot row is acceptable; correctness matters more than speed
-        // here.
+        // uo_game_history.snapshot embeds player names as free text, keyed by
+        // player id rather than a foreign key, so anonymizing uo_player does
+        // not reach them. Each snapshot is decoded and re-encoded rather than
+        // string-replaced, since the raw JSON cannot tell a player's name
+        // apart from an unrelated field, a substring of another name, or a
+        // second player sharing the name.
         $snapshotRows = DBQueryToArray(
             "SELECT history_id, snapshot FROM uo_game_history WHERE has_snapshot=1 AND snapshot IS NOT NULL",
         );

@@ -355,21 +355,11 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
         return false;
     }
 
-    // Both history calls run BEFORE the write. The snapshot has to, or a
-    // standalone edit would overwrite the old text with no restore point and
-    // a desktop bulk save would capture the already-updated comment via
-    // whichever mutator runs next. The record call has to for a different
-    // reason: GameHistoryAuthorized() resolves a note author's right through
-    // CanManageGameComment(), and ApplyCommentChange() logs comment_delete,
-    // which GameCommentMeta() treats as a cutoff -- so afterwards the author
-    // who was just authorized above is no longer recognisable and their
-    // deletion would go unrecorded. Recording first keeps that check
-    // answerable without passing an author down, which would be forgeable by
-    // any caller willing to name themselves.
-    //
-    // ApplyCommentChange() returns true in every branch and its result was
-    // never gated on here, so ordering the record before it does not change
-    // what a failed write would leave behind.
+    // Both history calls run before the write. The snapshot has to, or the
+    // old text would be gone with no restore point. The record call has to
+    // because GameHistoryAuthorized() resolves a note author's right through
+    // CanManageGameComment(), which can no longer recognise the author once
+    // ApplyCommentChange() has logged the comment_delete.
     if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop") {
         if (function_exists('GameHistorySnapshotIfNeeded')) {
             GameHistorySnapshotIfNeeded($gameId, false, false, "comment");
