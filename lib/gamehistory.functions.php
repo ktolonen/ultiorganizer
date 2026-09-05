@@ -137,7 +137,16 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
         return true;
     }
 
-    if ($allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT) {
+    // Scoped to the result target like every other branch here. The flag is
+    // caller-controlled, and confirming ANONYMOUS_RESULT_INPUT only proves the
+    // installation allows anonymous SCORE reporting -- it says nothing about
+    // the caller. Unscoped, a direct caller could pass true and forge goal,
+    // played or restore rows, or capture a whole snapshot, without any game
+    // right. GameSetResult() is the only mutator the exception exists for.
+    if (
+        $target === 'result' && $allowAnonymousResult
+        && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT
+    ) {
         return true;
     }
 
@@ -847,6 +856,51 @@ function GameHistoryRestore($historyId)
     try {
         $idMap = GameHistoryRestorePlayers($historyId, $warnings);
 
+        // A scorer, assist or defender who had already been taken off the
+        // roster when the snapshot was captured has no uo_played row, so
+        // GameHistoryRestorePlayers() never sees them and $idMap has no entry.
+        // GameHistoryMapPlayer() would then pass their id straight through --
+        // and if they have since been deleted from uo_player, the replayed
+        // INSERT violates uo_goal/uo_defense's foreign key. DBQuery() aborts on
+        // that, and the restore is not transactional, so it would stop partway
+        // with the scoresheet already cleared. Map them to NULL instead, which
+        // is the same state ON DELETE SET NULL would have left behind.
+        // Keyed by id, valued by the name the snapshot recorded for them, so
+        // the warning can name the player. uo_defense captures no name, so a
+        // defender who appears nowhere in the goals falls back to their id.
+        $referenced = [];
+        foreach ($snapshot['goals'] ?? [] as $goal) {
+            foreach (['assist', 'scorer'] as $key) {
+                $id = (int) ($goal[$key] ?? 0);
+                if ($id > 0 && !array_key_exists($id, $idMap)) {
+                    $name = trim((string) ($goal[$key . '_name'] ?? ""));
+                    $referenced[$id] = $name !== "" ? $name : ($referenced[$id] ?? (string) $id);
+                }
+            }
+        }
+        foreach ($snapshot['defenses'] ?? [] as $defense) {
+            $id = (int) ($defense['author'] ?? 0);
+            if ($id > 0 && !array_key_exists($id, $idMap)) {
+                $referenced[$id] = $referenced[$id] ?? (string) $id;
+            }
+        }
+        if ($referenced !== []) {
+            $existing = DBQueryToArray(sprintf(
+                "SELECT player_id FROM uo_player WHERE player_id IN (%s)",
+                implode(',', array_map('intval', array_keys($referenced))),
+            ));
+            $alive = [];
+            foreach ($existing as $existingRow) {
+                $alive[(int) $existingRow['player_id']] = true;
+            }
+            foreach ($referenced as $id => $name) {
+                if (!isset($alive[$id])) {
+                    $idMap[$id] = null;
+                    $warnings[] = sprintf(_("Player %s could not be restored."), $name);
+                }
+            }
+        }
+
         GameRemoveAllScores($gameId);
         foreach ($snapshot['goals'] ?? [] as $goal) {
             GameAddScoreEntry([
@@ -1053,6 +1107,14 @@ function GameHistoryRestorePlayers($historyId, &$warnings)
     }
     $gameId = (int) $entry['game'];
     if (!hasEditGameEventsRight($gameId) || !hasEditGamePlayersRight($gameId)) {
+        return $idMap;
+    }
+    // The entry is loaded with $allowMismatchedFixture=true, which is what lets
+    // GameHistoryRestore() report a mismatch as a specific refusal -- so this
+    // has to repeat that check rather than inherit it. Without it, calling this
+    // helper directly with such a history id would reach GameRemoveAllPlayers()
+    // below and rebuild a previous fixture's roster onto the reassigned game.
+    if (!empty($entry['fixture_mismatch'])) {
         return $idMap;
     }
 

@@ -1329,7 +1329,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         // enabled -- see its docblock.
         $allowAnonymousResult = !$checkRights;
         LogGameUpdate($gameId, "result: $home - $away");
-        GameHistorySnapshotIfNeeded($gameId, false, $allowAnonymousResult);
+        GameHistorySnapshotIfNeeded($gameId, false, $allowAnonymousResult, "result");
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($home),
