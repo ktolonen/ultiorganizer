@@ -95,7 +95,7 @@ function GameHistorySuppressed($set = null)
  * an installation where that setting is off still hits the ordinary rights
  * checks above and is refused.
  */
-function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = false, $commentAuthor = null)
+function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = false)
 {
     if (hasEditGameEventsRight($gameId) || hasEditGamePlayersRight($gameId)) {
         return true;
@@ -117,20 +117,24 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
     // The post-write record call therefore passes the authorship captured
     // before the write. Only the identity being claimed crosses the boundary;
     // that it is the CURRENT session's identity is still checked here.
-    if ($target === 'comment') {
-        if (
-            function_exists('CanManageGameComment') && defined('COMMENT_TYPE_GAME')
-            && CanManageGameComment($gameId, COMMENT_TYPE_GAME)
-        ) {
-            return true;
-        }
-        if (
-            is_string($commentAuthor) && $commentAuthor !== ""
-            && function_exists('isLoggedIn') && isLoggedIn()
-            && !empty($_SESSION['uid']) && $_SESSION['uid'] === $commentAuthor
-        ) {
-            return true;
-        }
+    // CanManageGameComment() lets a note's original author edit or delete it
+    // after losing hasEditGameEventsRight(), so that write is legitimate but
+    // reaches none of the checks above. Authorship is resolved here, server
+    // side, and never accepted as an argument: a caller-supplied identity
+    // compared against the caller's own session proves nothing, since
+    // $_SESSION['uid'] is exactly what such a caller would pass.
+    //
+    // This is why SetGameComment() records BEFORE ApplyCommentChange():
+    // that call logs comment_delete, GameCommentMeta() then treats it as a
+    // cutoff and finds no comment_create after it, so afterwards
+    // CanManageGameComment() can no longer recognise the author. Recording
+    // first keeps the check answerable without trusting the caller.
+    if (
+        $target === 'comment'
+        && function_exists('CanManageGameComment') && defined('COMMENT_TYPE_GAME')
+        && CanManageGameComment($gameId, COMMENT_TYPE_GAME)
+    ) {
+        return true;
     }
 
     if ($allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT) {
@@ -147,7 +151,7 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
     return hasAccredidationRight((int) $teams['hometeam']) || hasAccredidationRight((int) $teams['visitorteam']);
 }
 
-function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false, $commentAuthor = null)
+function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false)
 {
     // $force exists solely for GameHistoryRestore()'s own restore-audit row:
     // the setting governs routine recording volume, not the safety of an
@@ -163,7 +167,7 @@ function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = fal
         return false;
     }
 
-    if (!GameHistoryAuthorized($gameId, $target, $allowAnonymousResult, $commentAuthor)) {
+    if (!GameHistoryAuthorized($gameId, $target, $allowAnonymousResult)) {
         return false;
     }
 
@@ -275,7 +279,8 @@ function GameHistoryBuildSnapshot($gameId)
         'hometeam', 'visitorteam']);
     // v3 adds timer_elapsed: the game time GameTimerState() computes as
     // already elapsed at capture time, reusing its own arithmetic rather
-    // than reimplementing it. GameHistoryRestoreResult() uses this to derive
+    // than reimplementing it. The result replay in GameHistoryRestore() uses
+    // this to derive
     // a fresh timer_start at restore time instead of replaying the stale
     // absolute epoch -- see the comment there. A v1/v2 snapshot lacks this
     // key and falls back to the old (documented) verbatim-epoch restore.
@@ -334,7 +339,7 @@ function GameHistoryIntRows($rows, $fields)
  * cache.functions.php is the memo, so the second and third calls return the
  * first call's history id without writing a second row.
  */
-function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousResult = false, $commentAuthor = null)
+function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousResult = false, $target = null)
 {
     // $force is GameHistoryRestore()'s pre-restore capture: the setting
     // governs routine recording volume, not the safety of an explicit
@@ -355,9 +360,7 @@ function GameHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousRes
         return false;
     }
 
-    // A non-null $commentAuthor marks this as a game-note mutation, which is
-    // the only target whose authorization differs from the default here.
-    if (!GameHistoryAuthorized($gameId, $commentAuthor === null ? null : 'comment', $allowAnonymousResult, $commentAuthor)) {
+    if (!GameHistoryAuthorized($gameId, $target, $allowAnonymousResult)) {
         return false;
     }
 
@@ -775,7 +778,7 @@ function GameHistoryRestore($historyId)
     if (!empty($entry['fixture_mismatch'])) {
         return [
             'restored' => false,
-            'warnings' => [_("Restore refused: the home and visitor teams have changed since this snapshot was taken.")],
+            'warnings' => [_("Restore refused: the home and away teams have changed since this snapshot was taken.")],
         ];
     }
 
@@ -878,9 +881,71 @@ function GameHistoryRestore($historyId)
         // CommentRequestedChange()'s own === "" test instead.
         SetGameComment(COMMENT_TYPE_GAME, $gameId, $snapshot['comment'] ?? "", ($snapshot['comment'] ?? "") === "");
 
-        GameHistoryRestoreResult($gameId, $snapshot['game'] ?? []);
+        // Inlined rather than a GameHistoryRestoreResult() helper: its only
+        // caller was here, and as a public lib function it performed the raw
+        // uo_game write below with no rights check of its own -- the mutators
+        // it delegates to check rights, but their return value is discarded,
+        // so a caller could reach the write past a refusal.
+        $resultFields = $snapshot['game'] ?? [];
+        $home = $resultFields['homescore'] ?? null;
+        $away = $resultFields['visitorscore'] ?? null;
 
-        // Must run after GameHistoryRestoreResult(), not before: standings are
+        if ($home === null || $away === null) {
+            GameClearResult($gameId);
+        } elseif (!empty($resultFields['isongoing'])) {
+            GameUpdateResult($gameId, (int) $home, (int) $away);
+        } else {
+            GameSetResult($gameId, (int) $home, (int) $away);
+        }
+
+        $set = [
+            sprintf("hasstarted=%d", (int) ($resultFields['hasstarted'] ?? 0)),
+            sprintf("isongoing=%d", (int) ($resultFields['isongoing'] ?? 0)),
+        ];
+
+        // Guarded by key presence, not just ?? default: a v1 snapshot (see
+        // GameHistoryBuildSnapshot()) never captured the timer columns. Of the
+        // three branches above, GameClearResult() and GameSetResult() both NULL
+        // the timer columns unconditionally as part of their own write, so a v1
+        // restore into either state loses the clock regardless of this guard;
+        // GameUpdateResult() (the isongoing branch) never touches them at all,
+        // so a v1 restore into the ongoing state leaves the clock as-is. None of
+        // the three has a timer setter for a v1/v2 snapshot's captured value, so
+        // this writes the columns directly, in the same write-back as
+        // hasstarted/isongoing so ordering against the mutators above is already
+        // correct.
+        if (array_key_exists('timer_start', $resultFields)) {
+            if (array_key_exists('timer_elapsed', $resultFields) && $resultFields['timer_start'] !== null) {
+                // v3: timer_start is an absolute Unix epoch (see GameTimerState()),
+                // so replaying it verbatim would count every second between
+                // capture and restore as game time. Instead, derive a fresh epoch
+                // from the elapsed game time GameHistoryBuildSnapshot() captured
+                // via GameTimerState() itself, reusing that function's own
+                // elapsed formula rather than a second implementation of it.
+                // `timer_start = now - elapsed, timer_paused_duration = 0` and
+                // running the clock forward from `elapsed` reproduces exactly
+                // `elapsed` if the snapshot was paused (freeze immediately, by
+                // also setting timer_pause_start = now) or keeps counting up
+                // from `elapsed` if it was running -- see docs/game-history.md.
+                $elapsed = max(0, (int) $resultFields['timer_elapsed']);
+                $now = time();
+                $set[] = sprintf("timer_start=%d", $now - $elapsed);
+                $set[] = "timer_pause_start=" . ($resultFields['timer_pause_start'] === null ? "NULL" : $now);
+                $set[] = "timer_paused_duration=0";
+            } else {
+                $set[] = "timer_start=" . ($resultFields['timer_start'] === null ? "NULL" : (int) $resultFields['timer_start']);
+                $set[] = "timer_pause_start=" . ($resultFields['timer_pause_start'] === null ? "NULL" : (int) $resultFields['timer_pause_start']);
+                $set[] = sprintf("timer_paused_duration=%d", (int) ($resultFields['timer_paused_duration'] ?? 0));
+            }
+        }
+
+        DBQuery(sprintf(
+            "UPDATE uo_game SET %s WHERE game_id=%d",
+            implode(', ', $set),
+            (int) $gameId,
+        ));
+
+        // Must run after the result replay above, not before: standings are
         // recomputed by reading uo_game directly (see ResolvePoolStandings()'s
         // SQL), so whichever of these two runs last is the one whose recompute
         // sticks. GameUpdateResult() -- the isongoing branch -- does not
@@ -946,14 +1011,17 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
     // writes, so which row the loop reaches first cannot change what a
     // rematch query finds.
     $exists = [];
+    $currentTeams = [];
     $deletedGroups = [];
     $consumedCandidates = [];
     foreach ($playedRows as $i => $row) {
         $playerId = (int) $row['player'];
-        $exists[$i] = (int) DBQueryToValue(sprintf(
-            "SELECT COUNT(*) FROM uo_player WHERE player_id=%d",
+        $playerRow = DBQueryToRow(sprintf(
+            "SELECT team FROM uo_player WHERE player_id=%d",
             $playerId,
-        )) > 0;
+        ));
+        $exists[$i] = is_array($playerRow);
+        $currentTeams[$i] = $exists[$i] ? (int) $playerRow['team'] : null;
         if ($exists[$i]) {
             $consumedCandidates[$playerId] = true;
         } elseif (($row['num'] ?? null) !== null) {
@@ -979,6 +1047,20 @@ function GameHistoryRestorePlayers($gameId, $playedRows, &$warnings)
     foreach ($playedRows as $i => $row) {
         $originalId = (int) $row['player'];
         $playerId = $originalId;
+
+        // The row is still restored: GamePlayers() joins uo_played against the
+        // player's CURRENT uo_player.team, so a player who changes teams
+        // already lists under the new team for every past game they played --
+        // restore reproduces the recorded roster rather than causing that.
+        // Dropping them instead would make restore lossier than the state it
+        // is reproducing, so this warns and continues.
+        if ($exists[$i] && $currentTeams[$i] !== (int) $row['team']) {
+            $warnings[] = sprintf(
+                _("Player %s now plays for %s, so their restored roster entry lists under that team."),
+                $row['name'] ?? $originalId,
+                TeamName((int) $currentTeams[$i]),
+            );
+        }
 
         if (!$exists[$i]) {
             if (isset($ambiguousRows[$i])) {
@@ -1094,72 +1176,4 @@ function GameHistoryMapPlayer($playerId, $idMap)
         return $idMap[$playerId];
     }
     return $playerId;
-}
-
-/**
- * The three result mutators each force their own hasstarted value (0, 1 and 2),
- * so none of them can reproduce an arbitrary snapshot. Fixture game 700, for
- * example, is hasstarted=1 with a non-null final score, which GameSetResult()
- * would silently promote to 2. The stored flags are therefore written back
- * after the mutator has done the pool and standings work.
- */
-function GameHistoryRestoreResult($gameId, $gameFields)
-{
-    $home = $gameFields['homescore'] ?? null;
-    $away = $gameFields['visitorscore'] ?? null;
-
-    if ($home === null || $away === null) {
-        GameClearResult($gameId);
-    } elseif (!empty($gameFields['isongoing'])) {
-        GameUpdateResult($gameId, (int) $home, (int) $away);
-    } else {
-        GameSetResult($gameId, (int) $home, (int) $away);
-    }
-
-    $set = [
-        sprintf("hasstarted=%d", (int) ($gameFields['hasstarted'] ?? 0)),
-        sprintf("isongoing=%d", (int) ($gameFields['isongoing'] ?? 0)),
-    ];
-
-    // Guarded by key presence, not just ?? default: a v1 snapshot (see
-    // GameHistoryBuildSnapshot()) never captured the timer columns. Of the
-    // three branches above, GameClearResult() and GameSetResult() both NULL
-    // the timer columns unconditionally as part of their own write, so a v1
-    // restore into either state loses the clock regardless of this guard;
-    // GameUpdateResult() (the isongoing branch) never touches them at all,
-    // so a v1 restore into the ongoing state leaves the clock as-is. None of
-    // the three has a timer setter for a v1/v2 snapshot's captured value, so
-    // this writes the columns directly, in the same write-back as
-    // hasstarted/isongoing so ordering against the mutators above is already
-    // correct.
-    if (array_key_exists('timer_start', $gameFields)) {
-        if (array_key_exists('timer_elapsed', $gameFields) && $gameFields['timer_start'] !== null) {
-            // v3: timer_start is an absolute Unix epoch (see GameTimerState()),
-            // so replaying it verbatim would count every second between
-            // capture and restore as game time. Instead, derive a fresh epoch
-            // from the elapsed game time GameHistoryBuildSnapshot() captured
-            // via GameTimerState() itself, reusing that function's own
-            // elapsed formula rather than a second implementation of it.
-            // `timer_start = now - elapsed, timer_paused_duration = 0` and
-            // running the clock forward from `elapsed` reproduces exactly
-            // `elapsed` if the snapshot was paused (freeze immediately, by
-            // also setting timer_pause_start = now) or keeps counting up
-            // from `elapsed` if it was running -- see docs/game-history.md.
-            $elapsed = max(0, (int) $gameFields['timer_elapsed']);
-            $now = time();
-            $set[] = sprintf("timer_start=%d", $now - $elapsed);
-            $set[] = "timer_pause_start=" . ($gameFields['timer_pause_start'] === null ? "NULL" : $now);
-            $set[] = "timer_paused_duration=0";
-        } else {
-            $set[] = "timer_start=" . ($gameFields['timer_start'] === null ? "NULL" : (int) $gameFields['timer_start']);
-            $set[] = "timer_pause_start=" . ($gameFields['timer_pause_start'] === null ? "NULL" : (int) $gameFields['timer_pause_start']);
-            $set[] = sprintf("timer_paused_duration=%d", (int) ($gameFields['timer_paused_duration'] ?? 0));
-        }
-    }
-
-    DBQuery(sprintf(
-        "UPDATE uo_game SET %s WHERE game_id=%d",
-        implode(', ', $set),
-        (int) $gameId,
-    ));
 }
