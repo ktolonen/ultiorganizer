@@ -37,10 +37,8 @@ if (!isset($_POST['update'])) {
         }
     }
 }
-// Every submission carries this hidden field from the previous render, so it
-// must be consumed only when nothing else already set $page this request --
-// otherwise it overwrites the Go-to value and the update-triggered reset to
-// page 1 with a stale number.
+// Every submission carries this hidden field, so it must only apply when
+// nothing above has already set $page this request.
 if (isset($_POST['page']) && !isset($_POST['page_nav']) && !isset($_POST['update']) && !isset($_POST['page_input'])) {
     $page = intval($_POST['page']);
     if ($page < 1) {
@@ -95,8 +93,8 @@ if ($totalRows > 0 && $totalPages > 1) {
     $pagination .= _("Go to") . ": ";
     $pagination .= "<input class='input' type='number' min='1' max='" . $totalPages . "' name='page_input' size='4' value='" . $page . "'/>";
     $pagination .= "</label> ";
-    // No name/value here: a named "page_nav" button would submit the OLD
-    // $page and shadow the typed page_input value in the elseif chain above.
+    // Unnamed: a named button would submit the old $page and shadow the
+    // typed page_input above.
     $pagination .= "<button class='button' type='submit'>" . _("Go") . "</button>";
     if ($page < $totalPages) {
         $pagination .= " <button class='button' type='submit' name='page_nav' value='" . ($page + 1) . "'>" . _("Next") . " &raquo;</button>";

@@ -37,9 +37,8 @@ if (!empty($_POST['restore']) && !empty($_POST['history_id'])) {
         } else {
             $feedback .= "<p class='warning'>" . _("Restore failed") . ".</p>";
         }
-        // Rendered for a refusal too, not only a success: a refused restore is
-        // the normal outcome once the fixture has changed, and its warning is
-        // the only thing saying why.
+        // Also rendered for a refusal, whose warning is the only thing saying
+        // why the restore did not happen.
         foreach ($outcome['warnings'] as $warning) {
             $feedback .= "<p class='warning'>" . utf8entities($warning) . "</p>";
         }

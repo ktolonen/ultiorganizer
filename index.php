@@ -74,9 +74,8 @@ $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', ['index', 'localizat
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
 LogPageLoad($viewToLog);
 
-// source is varchar(20) in uo_game_history; whitelist the leading view
-// segment instead of storing an unbounded path, and fall back to "user"
-// for root-level views (e.g. frontpage) that carry no segment at all.
+// Whitelisted rather than stored as-is: uo_game_history.source is
+// varchar(20), and a root-level view carries no segment at all.
 $viewSource = strtok($viewToLog, '/');
 if (!in_array($viewSource, ['admin', 'user', 'mobile'], true)) {
     $viewSource = 'user';
