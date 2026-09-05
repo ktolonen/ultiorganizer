@@ -1,5 +1,7 @@
 <?php
 
+define('UO_APP_SOURCE', 'api');
+
 require_once __DIR__ . '/../lib/database.php';
 OpenConnection();
 

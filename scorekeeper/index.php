@@ -1,5 +1,7 @@
 <?php
 
+define('UO_APP_SOURCE', 'scorekeeper');
+
 $include_prefix = "../";
 $styles_prefix = "../";
 

@@ -242,6 +242,7 @@ function PrivacyCollectPlayerReportData($playerId)
     $licenseRows = [];
     $accreditationLog = [];
     $eventLog = [];
+    $gameHistoryNameRows = [];
     $imageInfo = null;
     $accreditationIds = [];
     $playerLogTargets = [];
@@ -295,6 +296,7 @@ function PrivacyCollectPlayerReportData($playerId)
             "SELECT * FROM uo_event_log WHERE " . implode(' OR ', $eventLogWhere) . " ORDER BY time DESC",
             true,
         );
+        $gameHistoryNameRows = PrivacyPlayerGameHistoryNameRows($playerIds);
     }
 
     foreach ($subject['players'] as $playerRow) {
@@ -330,7 +332,68 @@ function PrivacyCollectPlayerReportData($playerId)
         'accreditation_log_rows' => $accreditationLog,
         'event_log_rows' => $eventLog,
         'url_rows' => $urls,
+        'game_history_name_rows' => $gameHistoryNameRows,
     ];
+}
+
+/**
+ * Extract this player's own name values embedded in game-history snapshots.
+ *
+ * A snapshot holds the whole roster, so exporting the blob would leak other
+ * players. This walks the same played[]/goals[] shape PrivacyAnonymizePlayer()
+ * rewrites and keeps only the names keyed to $playerIds -- including a prior
+ * spelling no longer present in uo_player.
+ */
+function PrivacyPlayerGameHistoryNameRows($playerIds)
+{
+    if (empty($playerIds)) {
+        return [];
+    }
+
+    $rows = [];
+    $snapshotRows = DBQueryToArray(
+        "SELECT history_id, game, time, snapshot FROM uo_game_history WHERE has_snapshot=1 AND snapshot IS NOT NULL",
+    );
+    foreach ($snapshotRows as $snapshotRow) {
+        $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+        if (!is_array($snapshot)) {
+            continue;
+        }
+
+        foreach ((array) ($snapshot['played'] ?? []) as $playedRow) {
+            if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                $rows[] = [
+                    'history_id' => $snapshotRow['history_id'],
+                    'game' => $snapshotRow['game'],
+                    'time' => $snapshotRow['time'],
+                    'field' => 'played.name',
+                    'name' => $playedRow['name'] ?? null,
+                ];
+            }
+        }
+        foreach ((array) ($snapshot['goals'] ?? []) as $goalRow) {
+            if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
+                $rows[] = [
+                    'history_id' => $snapshotRow['history_id'],
+                    'game' => $snapshotRow['game'],
+                    'time' => $snapshotRow['time'],
+                    'field' => 'goals.scorer_name',
+                    'name' => $goalRow['scorer_name'] ?? null,
+                ];
+            }
+            if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
+                $rows[] = [
+                    'history_id' => $snapshotRow['history_id'],
+                    'game' => $snapshotRow['game'],
+                    'time' => $snapshotRow['time'],
+                    'field' => 'goals.assist_name',
+                    'name' => $goalRow['assist_name'] ?? null,
+                ];
+            }
+        }
+    }
+
+    return $rows;
 }
 
 function PrivacyCollectUserReportData($userId)
@@ -380,6 +443,14 @@ function PrivacyCollectUserReportData($userId)
             "SELECT * FROM uo_accreditationlog WHERE userid='%s' ORDER BY time DESC",
             DBEscapeString($userId),
         ), true),
+        // snapshot is excluded: it is game data, not this user's data, and
+        // dumping it would leak other players' names into this export. The
+        // other columns, including ip and user_id, are this user's own data.
+        'game_history_rows' => DBQueryToArray(sprintf(
+            "SELECT history_id, game, time, source, target, action, detail, ip, user_id
+				FROM uo_game_history WHERE user_id='%s' ORDER BY time DESC",
+            DBEscapeString($userId),
+        ), true),
     ];
 }
 
@@ -423,6 +494,7 @@ function PrivacyRenderPlayerReportText($playerId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'Player stats rows', $data['player_stats_rows']);
     PrivacyAppendRowsSection($lines, 'Played rows', $data['played_rows']);
     PrivacyAppendRowsSection($lines, 'Goal rows', $data['goal_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history snapshot name rows', $data['game_history_name_rows']);
     PrivacyAppendRowsSection($lines, 'Defense rows', $data['defense_rows']);
     PrivacyAppendRowsSection($lines, 'License rows', $data['license_rows']);
     PrivacyAppendRowsSection($lines, 'Accreditation log rows', PrivacySanitizePlayerPrivacyRows($data['accreditation_log_rows']));
@@ -461,6 +533,7 @@ function PrivacyRenderUserReportText($userId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'Register request rows', $data['registerrequest_rows']);
     PrivacyAppendRowsSection($lines, 'Event log rows', $data['event_log_rows']);
     PrivacyAppendRowsSection($lines, 'Accreditation log rows', $data['accreditation_log_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history rows', $data['game_history_rows']);
 
     return implode("\n", $lines) . "\n";
 }
@@ -621,6 +694,53 @@ function PrivacyAnonymizePlayer($playerId, $adminUserId)
         DBQuery("DELETE FROM uo_accreditationlog WHERE player IN ($playerIdList)");
         DBQuery("DELETE FROM uo_event_log WHERE category='player' AND id1 IN ($playerIdList)");
 
+        // uo_game_history.snapshot embeds player names as free text, keyed by
+        // player id rather than a foreign key, so anonymizing uo_player does
+        // not reach them. Each snapshot is decoded and re-encoded rather than
+        // string-replaced, since the raw JSON cannot tell a player's name
+        // apart from an unrelated field, a substring of another name, or a
+        // second player sharing the name.
+        $snapshotRows = DBQueryToArray(
+            "SELECT history_id, snapshot FROM uo_game_history WHERE has_snapshot=1 AND snapshot IS NOT NULL",
+        );
+        foreach ($snapshotRows as $snapshotRow) {
+            $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+            if (!is_array($snapshot)) {
+                continue;
+            }
+
+            $changed = false;
+            foreach ((array) ($snapshot['played'] ?? []) as $i => $playedRow) {
+                if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                    $snapshot['played'][$i]['name'] = '- -';
+                    $changed = true;
+                }
+            }
+            foreach ((array) ($snapshot['goals'] ?? []) as $i => $goalRow) {
+                if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
+                    $snapshot['goals'][$i]['scorer_name'] = '- -';
+                    $changed = true;
+                }
+                if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
+                    $snapshot['goals'][$i]['assist_name'] = '- -';
+                    $changed = true;
+                }
+            }
+
+            if (!$changed) {
+                continue;
+            }
+            $json = json_encode($snapshot, JSON_UNESCAPED_UNICODE);
+            if ($json === false) {
+                continue;
+            }
+            DBQuery(sprintf(
+                "UPDATE uo_game_history SET snapshot='%s' WHERE history_id=%d",
+                DBEscapeString($json),
+                (int) $snapshotRow['history_id'],
+            ));
+        }
+
         DBQuery('COMMIT');
     } catch (Exception $e) {
         DBSetExceptionMode(false);
@@ -650,6 +770,12 @@ function PrivacyDeleteUserData($userId, $adminUserId)
     try {
         DBQuery('START TRANSACTION');
         DBQuery("DELETE FROM uo_event_log WHERE $eventLogWhere");
+        // Rows are kept, not deleted: they are the game's change history, not
+        // just this user's data, and cascade away only when the game does.
+        DBQuery(sprintf(
+            "UPDATE uo_game_history SET user_id='-', ip=NULL WHERE user_id='%s'",
+            DBEscapeString($userId),
+        ));
         DBQuery(sprintf("DELETE FROM uo_accreditationlog WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_registerrequest WHERE userid='%s'", DBEscapeString($userId)));
         // No foreign key ties this table to uo_users, so a pending reset row

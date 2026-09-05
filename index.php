@@ -74,6 +74,14 @@ $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', ['index', 'localizat
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
 LogPageLoad($viewToLog);
 
+// Whitelisted rather than stored as-is: uo_game_history.source is
+// varchar(20), and a root-level view carries no segment at all.
+$viewSource = strtok($viewToLog, '/');
+if (!in_array($viewSource, ['admin', 'user', 'mobile'], true)) {
+    $viewSource = 'user';
+}
+define('UO_APP_SOURCE', $viewSource);
+
 if (!defined('UO_ROUTED_VIEW')) {
     define('UO_ROUTED_VIEW', true);
 }

@@ -492,6 +492,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         echo "<a class='subnav' href='?view=admin/users'>&raquo; " . utf8entities(_("Users")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/apitokens'>&raquo; " . utf8entities(_("API Tokens")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/eventviewer'>&raquo; " . utf8entities(_("Logs")) . "</a>\n";
+        echo "<a class='subnav' href='?view=admin/gamehistory'>&raquo; " . utf8entities(_("Scoresheet history")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/dbadmin'>&raquo; " . utf8entities(_("Database")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/serverconf'>&raquo; " . utf8entities(_("Settings")) . "</a>\n";
     }
