@@ -906,16 +906,10 @@ function GameRemoveCapEvent($gameId, $type)
 }
 
 /**
- * Remove the uo_gameevent rows GameHistoryRestore()'s replay loop can
- * actually reinstate (starting offence and cap events), so the restored set
- * matches the snapshot exactly for those types. Deliberately narrower than
- * "every non-media row": other event types (e.g. 'turnover') are captured by
- * the snapshot but have no replay branch, so deleting them here would destroy
- * data the replay could never put back. Media rows are guarded by
- * hasAddMediaRight() rather than hasEditGameEventsRight() and are excluded
- * from snapshots entirely (see GameHistoryBuildSnapshot()), so they must
- * never be touched here either. The only caller runs under
- * GameHistorySuppressed(), so this does not write its own audit row.
+ * Remove the uo_gameevent rows GameHistoryRestore()'s replay can reinstate:
+ * starting offence and cap events. Narrower than "every non-media row",
+ * because other types are captured by a snapshot but have no replay branch,
+ * and media rows are never restored at all.
  */
 function GameRemoveAllGameEvents($gameId)
 {
@@ -1274,11 +1268,9 @@ function CheckGameResult($game, $home, $away)
 }
 
 /**
- * $snapshot defaults true so a caller that forgets to think about it still
- * gets a restore point rather than silently losing one. The per-point
- * callers in mobile/addscoresheet.php and scorekeeper/addscoresheet.php pass
- * false explicitly -- snapshotting once per point would produce roughly one
- * snapshot per goal (see docs/game-history.md).
+ * $snapshot defaults true, so a caller gets a restore point unless it opts
+ * out. The per-point callers in mobile/ and scorekeeper/ do, since a snapshot
+ * per point would mean roughly one per goal (see docs/game-history.md).
  */
 function GameUpdateResult($gameId, $home, $away, $snapshot = true)
 {
@@ -1320,13 +1312,9 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         die('Insufficient rights to edit game');
     }
     if (!$checkRights || hasEditGameEventsRight($gameId)) {
-        // $checkRights=false is the ANONYMOUS_RESULT_INPUT self-report route
-        // (result.php/scorekeeper/result.php): the caller was never checked
-        // against this game's session rights, so GameHistoryAuthorized()
-        // would otherwise silently drop both the snapshot and the result
-        // row. $allowAnonymousResult=true only takes effect when
-        // GameHistoryAuthorized() itself confirms ANONYMOUS_RESULT_INPUT is
-        // enabled -- see its docblock.
+        // $checkRights=false is the ANONYMOUS_RESULT_INPUT self-report route,
+        // which holds none of the game rights GameHistoryAuthorized() checks.
+        // The flag only takes effect once that function confirms the setting.
         $allowAnonymousResult = !$checkRights;
         LogGameUpdate($gameId, "result: $home - $away");
         GameHistorySnapshotIfNeeded($gameId, false, $allowAnonymousResult, "result");
@@ -1528,9 +1516,8 @@ function GameAddPlayer($gameId, $playerId, $number)
 function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
-        // Taken here, not left to the nested GameAddPlayer() call below: that
-        // call runs with history suppressed, so its own snapshot attempt would
-        // be a no-op.
+        // The nested GameAddPlayer() below runs with history suppressed, so
+        // its own snapshot attempt would be a no-op.
         GameHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "INSERT INTO uo_player (firstname, lastname, accreditation_id, team) VALUES ('%s', '%s', '%s', %d)",
@@ -1661,11 +1648,10 @@ function GameRemoveAllDefenses($gameId)
 }
 
 
-// GameRemoveScore(), GameAddScore() and GameAddScoreEntry() deliberately do
-// NOT call GameHistorySnapshotIfNeeded(): the scorekeeper saves one goal per
-// HTTP request, so snapshotting per goal would produce roughly one snapshot
-// per point (~30 per game). GameRemoveAllScores()'s snapshot on the bulk
-// desktop save already covers this path.
+// The three per-goal mutators -- this one, GameAddScore() and
+// GameAddScoreEntry() -- do not call GameHistorySnapshotIfNeeded(): the
+// scorekeeper saves one goal per request, so that would mean roughly one
+// snapshot per point. GameRemoveAllScores() covers the bulk desktop save.
 function GameRemoveScore($gameId, $num)
 {
     if (hasEditGameEventsRight($gameId)) {
@@ -1777,8 +1763,7 @@ function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
  * Add goal to game. Does not update game result!
  *
  */
-// No GameHistorySnapshotIfNeeded() here either -- see the comment on
-// GameRemoveScore().
+// No snapshot here either -- see GameRemoveScore().
 function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home, $iscallahan)
 {
     if (hasEditGameEventsRight($gameId)) {
@@ -1828,10 +1813,9 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
 {
     if (hasEditGameEventsRight($gameId)) {
         GameHistorySnapshotIfNeeded($gameId);
-        // uo_defense.author is nullable (an unresolvable player on restore, see
-        // GameHistoryMapPlayer()); emit a real SQL NULL instead of the empty
-        // string DBEscapeString(null) would produce, which would violate the
-        // FK. Mirrors GameAddScoreEntry()'s scorer/assist handling.
+        // uo_defense.author is nullable (an unresolvable player on restore),
+        // so emit a real SQL NULL rather than the empty string
+        // DBEscapeString(null) produces, which would violate the FK.
         $authorValue = ($player === -1 || $player === 0 || $player === "0" || $player === "" || $player === null
             || strcasecmp((string) $player, "x") == 0 || strcasecmp((string) $player, "xx") == 0)
             ? "NULL" : "'" . DBEscapeString($player) . "'";
@@ -1869,10 +1853,7 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
     }
 }
 
-// No GameHistorySnapshotIfNeeded() here either -- see the comment on
-// GameRemoveScore(). This is also the replay target for a restored goal, and
-// replay always runs under GameHistorySuppressed(), so the memo would be a
-// no-op there regardless.
+// No snapshot here either -- see GameRemoveScore().
 function GameAddScoreEntry($uo_goal)
 {
     if (hasEditGameEventsRight($uo_goal['game'])) {
@@ -2831,15 +2812,11 @@ function isGamePaused($gameId)
     return (int) DBQueryToValue($query);
 }
 
-// The five GameTime*() mutators below record a "timer" history row but
-// deliberately never call GameHistorySnapshotIfNeeded(): restore is
-// whole-sheet, so a snapshot taken here would create a restore point whose
-// only differing field is the clock, and using it to undo a mistaken reset
-// would also roll back goals, roster and result. The timer columns are
-// still captured by every *other* mutator's snapshot so an unrelated
-// restore does not destroy them -- they are just not independently
-// restorable. The operator's actual remedy for a clock mistake is
-// GameTimeSetElapsed().
+// The five GameTime*() mutators below record a "timer" history row but take
+// no snapshot: restore is whole-sheet, so undoing a mistaken clock edit that
+// way would also roll back goals, roster and result. The timer columns are
+// still captured by every other mutator's snapshot, just not independently
+// restorable; the remedy for a clock mistake is GameTimeSetElapsed().
 function GameTimeReset($gameId)
 {
     $gameId = (int) $gameId;

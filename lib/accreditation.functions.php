@@ -171,12 +171,9 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source)
 {
     $playerInfo = PlayerInfo($playerId);
     if (hasAccredidationRight($playerInfo['team'])) {
-        // accreditation.functions.php loads before gamehistory.functions.php
-        // (see game.functions.php's require order), so guard both calls the
-        // same way comment.functions.php's SetGameComment() does.
-        // "played" target: GameHistoryAuthorized()'s accreditation branch is
-        // scoped to it, and hasAccredidationRight() above is the only right
-        // this caller is guaranteed to hold.
+        // This file loads before gamehistory.functions.php, hence the
+        // function_exists() guards. The "played" target is what
+        // GameHistoryAuthorized() scopes its accreditation branch to.
         if (function_exists('GameHistorySnapshotIfNeeded')) {
             GameHistorySnapshotIfNeeded($gameId, false, false, "played");
         }
@@ -205,9 +202,6 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source)
 {
     $playerInfo = PlayerInfo($playerId);
     if (hasAccredidationRight($playerInfo['team'])) {
-        // "played" target: GameHistoryAuthorized()'s accreditation branch is
-        // scoped to it, and hasAccredidationRight() above is the only right
-        // this caller is guaranteed to hold.
         if (function_exists('GameHistorySnapshotIfNeeded')) {
             GameHistorySnapshotIfNeeded($gameId, false, false, "played");
         }
