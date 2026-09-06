@@ -459,12 +459,6 @@ function DBStmtClose($stmt)
 }
 
 /**
- * Execute SQL and return the connection's last inserted auto-increment id.
- *
- * @param string $query Database query
- * @return int
- */
-/**
  * Number of rows the last mutating statement actually changed.
  *
  * DBQuery() reports SQL success, not whether a guarded UPDATE won, so a
@@ -478,6 +472,12 @@ function DBAffectedRows()
     return mysqli_affected_rows($mysqlconnectionref);
 }
 
+/**
+ * Execute SQL and return the connection's last inserted auto-increment id.
+ *
+ * @param string $query Database query
+ * @return int
+ */
 function DBQueryInsert($query)
 {
     global $mysqlconnectionref;
