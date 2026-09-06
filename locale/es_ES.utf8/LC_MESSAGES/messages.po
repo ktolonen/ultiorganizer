@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 08:53+0300\n"
+"POT-Creation-Date: 2026-09-06 13:03+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -68,7 +68,7 @@ msgstr "%s - nuevo límite de puntos %d"
 msgid "%s called at"
 msgstr "%s anunciado en"
 
-#: lib/gamehistory.functions.php:658
+#: lib/gamehistory.functions.php:661
 #, fuzzy, php-format
 msgid "%s removed"
 msgstr "eliminado"
@@ -281,7 +281,7 @@ msgstr "Reconocer"
 msgid "Acknowledged"
 msgstr "Admitido"
 
-#: lib/gamehistory.functions.php:1069
+#: lib/gamehistory.functions.php:1072
 #, php-format
 msgid ""
 "Acknowledgement not restored for player %s: accreditation right missing for "
@@ -791,7 +791,7 @@ msgstr "Pausas de espíritu visitante"
 
 #: cust/bula/pdfscoresheet.php:72 cust/default/pdfscoresheet.php:69
 #: cust/gummis/pdfscoresheet.php:70 cust/slkl/pdfscoresheet.php:69
-#: cust/windmill/pdfscoresheet.php:72 lib/gamehistory.functions.php:650
+#: cust/windmill/pdfscoresheet.php:72 lib/gamehistory.functions.php:653
 #: user/adddefensesheet.php:210 user/addscoresheet.php:558
 msgid "Away team"
 msgstr "Equipo visitante"
@@ -1001,7 +1001,7 @@ msgstr "Cancelar"
 msgid "Cancel and return to scoresheet"
 msgstr "Cancelar y volver a la hoja de anotación"
 
-#: lib/gamehistory.functions.php:655
+#: lib/gamehistory.functions.php:658
 msgid "Cap event"
 msgstr ""
 
@@ -2196,7 +2196,7 @@ msgstr "Ingrese su nueva contraseña a continuación."
 msgid "Equalization"
 msgstr "Igualdad"
 
-#: lib/game.functions.php:1250
+#: lib/game.functions.php:1260
 msgid "Erroneous scoresheet number:"
 msgstr "Número de hoja de puntuación erróneo:"
 
@@ -2209,7 +2209,7 @@ msgstr "Error: No se pudo guardar el resultado."
 msgid "Error: unknown event."
 msgstr "Error: evento desconocido."
 
-#: lib/game.functions.php:2388
+#: lib/game.functions.php:2398
 #, php-format
 msgid "Errors: %s."
 msgstr "Errores: %s."
@@ -2293,7 +2293,7 @@ msgstr "Evento obligatorio"
 msgid "Event not found"
 msgstr "Evento no encontrado"
 
-#: lib/game.functions.php:1262 lib/gamehistory.functions.php:718
+#: lib/game.functions.php:1272 lib/gamehistory.functions.php:721
 msgid "Event played."
 msgstr "Evento jugado."
 
@@ -2794,6 +2794,11 @@ msgstr "Límites del reloj de juego"
 msgid "Game events"
 msgstr "Eventos del juego"
 
+#: lib/gamehistory.functions.php:642
+#, fuzzy, php-format
+msgid "Game events removed: %d"
+msgstr "Juegos para mover"
+
 #: cust/wfdf/pdfscoresheet.php:1363
 msgid "Game finished: write final score and get captain's signature."
 msgstr ""
@@ -2811,7 +2816,7 @@ msgstr "El juego ya se ha jugado. Resultado actual:"
 msgid "Game has ended"
 msgstr "El juego ha terminado"
 
-#: lib/game.functions.php:1254
+#: lib/game.functions.php:1264
 msgid "Game has no pool."
 msgstr "El juego no tiene grupo."
 
@@ -3294,7 +3299,7 @@ msgstr "Pausas de espíritu local"
 #: admin/editgame.php:203 cust/bula/pdfscoresheet.php:71
 #: cust/default/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:69
 #: cust/slkl/pdfscoresheet.php:68 cust/windmill/pdfscoresheet.php:71
-#: lib/gamehistory.functions.php:650 user/adddefensesheet.php:208
+#: lib/gamehistory.functions.php:653 user/adddefensesheet.php:208
 #: user/addscoresheet.php:556
 msgid "Home team"
 msgstr "Equipo local"
@@ -4341,7 +4346,7 @@ msgstr "Sin juegos"
 msgid "No games to move"
 msgstr "No hay juegos para mover"
 
-#: lib/game.functions.php:1265
+#: lib/game.functions.php:1275
 msgid "No goals."
 msgstr "Sin goles."
 
@@ -4829,20 +4834,20 @@ msgstr "Juegos jugados"
 msgid "Player"
 msgstr "Jugador"
 
-#: lib/gamehistory.functions.php:762 lib/gamehistory.functions.php:1007
-#: lib/gamehistory.functions.php:1030
+#: lib/gamehistory.functions.php:765 lib/gamehistory.functions.php:1010
+#: lib/gamehistory.functions.php:1033
 #, php-format
 msgid "Player %s could not be restored."
 msgstr ""
 
-#: lib/gamehistory.functions.php:994 lib/gamehistory.functions.php:1024
-#: lib/gamehistory.functions.php:1039
+#: lib/gamehistory.functions.php:997 lib/gamehistory.functions.php:1027
+#: lib/gamehistory.functions.php:1042
 #, php-format
 msgid ""
 "Player %s could not be restored: jersey number %d is not unique on team %s."
 msgstr ""
 
-#: lib/gamehistory.functions.php:985
+#: lib/gamehistory.functions.php:988
 #, php-format
 msgid ""
 "Player %s now plays for %s, so their restored roster entry lists under that "
@@ -5005,7 +5010,7 @@ msgstr "Puntos"
 msgid "Points for %s must be 0-1000."
 msgstr "Los puntos para %s deben ser 0-1000."
 
-#: admin/seasonpoints.php:231 lib/game.functions.php:1247
+#: admin/seasonpoints.php:231 lib/game.functions.php:1257
 #: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
 msgid "Points must be between 0 and 1000."
 msgstr "Los puntos deben estar entre 0 y 1000."
@@ -5051,7 +5056,7 @@ msgstr "Juegos de grupo no completados:"
 msgid "Pool is completed:"
 msgstr "El Grupo está completo:"
 
-#: lib/game.functions.php:1257 lib/gamehistory.functions.php:715
+#: lib/game.functions.php:1267 lib/gamehistory.functions.php:718
 msgid "Pool is locked."
 msgstr "El Grupo está cerrada."
 
@@ -5445,7 +5450,7 @@ msgstr "Restaurar"
 msgid "Restore failed"
 msgstr ""
 
-#: lib/gamehistory.functions.php:704
+#: lib/gamehistory.functions.php:707
 msgid ""
 "Restore refused: the home and away teams have changed since this snapshot "
 "was taken."
@@ -5485,12 +5490,12 @@ msgstr "¡Resultado no guardado!"
 msgid "Result saved!"
 msgstr "¡Resultado guardado!"
 
-#: lib/game.functions.php:2385
+#: lib/game.functions.php:2395
 #, php-format
 msgid "Results changed: %s."
 msgstr "Resultados cambiados: %s."
 
-#: lib/game.functions.php:2382
+#: lib/game.functions.php:2392
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Resultados borrados: %s."
@@ -6651,11 +6656,11 @@ msgstr "Inicia el cronómetro del partido antes de sumar goles."
 msgid "Start time"
 msgstr "Hora de inicio"
 
-#: lib/gamehistory.functions.php:649
+#: lib/gamehistory.functions.php:652
 msgid "Starting offence"
 msgstr ""
 
-#: lib/gamehistory.functions.php:644
+#: lib/gamehistory.functions.php:647
 #, fuzzy
 msgid "Starting offence removed"
 msgstr "Equipo ofensivo inicial"
@@ -7364,7 +7369,7 @@ msgstr "Defensas totales"
 msgid "Total number of players:"
 msgstr "Número total de jugadores:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2751
+#: admin/seasonpoints.php:258 lib/game.functions.php:2761
 msgid "Total points"
 msgstr "Puntos totales"
 
