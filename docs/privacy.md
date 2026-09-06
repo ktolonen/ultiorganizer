@@ -50,10 +50,12 @@ The player export currently includes rows from:
   game and snapshot time -- not the raw rows or the `snapshot` column, which describe the whole
   roster. A prior spelling no longer present in `uo_player` therefore still reaches the report.
 - `uo_game_history` change rows: the ordinary (non-snapshot) rows whose `detail` names this player
-  -- `played.player`, `goal.scorer`, `goal.assist` and `defense.player` -- projected to the history
-  id, game, time, target, action, matched field and this player's own jersey number. The rest of
-  `detail` is withheld, since a goal row names both the scorer and the assist and only one of them
-  is the data subject.
+  -- `played.player`, the `played.players` captain and spirit-captain lists, `goal.scorer`,
+  `goal.assist` and `defense.player` -- projected to the history id, game, time, target, action and
+  matched field. The rest of `detail` is withheld, since a goal row names both the scorer and the
+  assist and only one of them is the data subject. Each row carries the one context value its
+  target actually has: `num` is the player's own jersey number on a roster row, `sequence` is the
+  point or defence ordinal on a scoring row, and `role` names which captaincy a role row set.
 
 To avoid exposing other members' account identifiers in the player export, `user_id` and `userid` values are hidden in log-derived sections.
 Current player log writers use `uo_event_log.id2` for the team reference, not for player identity, so player privacy tools do not match `id2` in order to avoid deleting unrelated team-linked history.

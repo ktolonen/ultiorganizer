@@ -421,11 +421,15 @@ function PrivacyPlayerGameHistoryNameRows($playerIds)
  * Project this player's own references out of the ordinary change rows.
  *
  * uo_game_history.detail keys a change to the player it is about -- the roster
- * row added or removed, the goal scored or assisted, the defense recorded --
- * so those rows are the player's data even though the column also describes
- * the game. Only the matched field and the player's own jersey number are
- * projected: a goal row names both scorer and assist, and the other one of
- * those is somebody else.
+ * row added or removed, the captain assignment, the goal scored or assisted,
+ * the defense recorded -- so those rows are the player's data even though the
+ * column also describes the game. Only the matched field and its own context
+ * value are projected: a goal row names both scorer and assist, and the other
+ * one of those is somebody else.
+ *
+ * detail.num means different things per target -- a jersey number on a roster
+ * row, a point or defense ordinal on the others -- so it is projected under
+ * two different keys rather than one.
  */
 function PrivacyPlayerGameHistoryDetailRows($playerIds)
 {
@@ -433,7 +437,8 @@ function PrivacyPlayerGameHistoryDetailRows($playerIds)
         return [];
     }
 
-    // Which detail key carries a player id, per target.
+    // Which detail key carries a player id, per target. GameSetRolePlayers()
+    // is the one writer that records a list rather than a scalar.
     $fields = [
         'played' => ['player'],
         'goal' => ['scorer', 'assist'],
@@ -467,19 +472,40 @@ function PrivacyPlayerGameHistoryDetailRows($playerIds)
                 continue;
             }
 
+            $base = [
+                'history_id' => $historyRow['history_id'],
+                'game' => $historyRow['game'],
+                'time' => $historyRow['time'],
+                'target' => $target,
+                'action' => $historyRow['action'],
+            ];
+
             foreach ($fields[$target] as $key) {
                 if (!in_array((int) ($detail[$key] ?? 0), $playerIds, true)) {
                     continue;
                 }
-                $rows[] = [
-                    'history_id' => $historyRow['history_id'],
-                    'game' => $historyRow['game'],
-                    'time' => $historyRow['time'],
-                    'target' => $target,
-                    'action' => $historyRow['action'],
-                    'field' => $target . '.' . $key,
-                    'num' => $detail['num'] ?? null,
-                ];
+                $row = $base + ['field' => $target . '.' . $key];
+                if ($target === 'played') {
+                    $row['num'] = $detail['num'] ?? null;
+                } else {
+                    // The point or defense ordinal, not a jersey number.
+                    $row['sequence'] = $detail['num'] ?? null;
+                }
+                $rows[] = $row;
+            }
+
+            // A captain or spirit captain assignment names the whole role
+            // list, so only the subject's own ids are projected out of it.
+            if ($target === 'played' && is_array($detail['players'] ?? null)) {
+                foreach ($detail['players'] as $rolePlayer) {
+                    if (!in_array((int) $rolePlayer, $playerIds, true)) {
+                        continue;
+                    }
+                    $rows[] = $base + [
+                        'field' => 'played.players',
+                        'role' => $detail['role'] ?? null,
+                    ];
+                }
             }
         }
     }

@@ -74,7 +74,7 @@ The full set of `target`/`action` combinations, and the mutator that writes each
 | `gameevent` | `update` | `GameSetCapEvent()`, `GameSetStartingTeam()` |
 | `gameevent` | `remove` | `GameRemoveCapEvent()`, `GameSetStartingTeam()` (unsetting) |
 | `mediaevent` | `add` | `AddGameMediaEvent()` |
-| `mediaevent` | `remove` | `RemoveGameMediaEvent()` |
+| `mediaevent` | `remove` | `RemoveGameMediaEvent()`, `RemoveMediaUrl()` |
 | `official` | `update` | `GameSetScoreSheetKeeper()` |
 | `halftime` | `update` | `GameSetHalftime()` |
 | `comment` | `update` / `remove` | `SetGameComment()` (`lib/comment.functions.php`, game-type comments only) |
@@ -92,7 +92,7 @@ It accepts the union of the rights the callers in the table above actually hold.
 
 | Right | Scoped to | Callers |
 |---|---|---|
-| `hasAddMediaRight()` | `mediaevent` | `AddGameMediaEvent()`, `RemoveGameMediaEvent()` |
+| `hasAddMediaRight()` | `mediaevent` | `AddGameMediaEvent()`, `RemoveGameMediaEvent()`, `RemoveMediaUrl()` |
 | `hasAccredidationRight()` | `played` | `AcknowledgeUnaccredited()`, `UnAcknowledgeUnaccredited()` |
 | `CanManageGameComment()` | `comment` | `SetGameComment()` |
 | `ANONYMOUS_RESULT_INPUT` | `result` | `GameSetResult()` |
