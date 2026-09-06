@@ -183,7 +183,7 @@ Current report scope includes:
 - `uo_registerrequest`
 - `uo_event_log`
 - `uo_accreditationlog`
-- `uo_game_history` for rows where `user_id` matches the selected `userid`, excluding the `snapshot` column, which is game data rather than that user's data
+- `uo_game_history` for rows where `user_id` matches the selected `userid`, excluding the `snapshot` column, which is game data rather than that user's data. `UserUpdateInfo()` rewrites `user_id` in `uo_game_history` and `uo_event_log` when a login is renamed, so an account's own history follows it rather than being stranded under the old name -- and cannot be inherited by whoever is given that name next
 
 For registered users, `uo_event_log` coverage includes rows where `user_id`, `id1`, or `id2` matches the selected `userid`.
 
