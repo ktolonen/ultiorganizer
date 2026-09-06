@@ -83,23 +83,31 @@ if ($page > $totalPages) {
 $offset = ($page - 1) * $pageSize;
 
 $pagination = "";
+$paginationBottom = "";
 if ($totalRows > 0 && $totalPages > 1) {
-    $pagination .= "<p>";
+    $nav = "";
     if ($page > 1) {
-        $pagination .= "<button class='button' type='submit' name='page_nav' value='" . ($page - 1) . "'>&laquo; " . _("Previous") . "</button> ";
+        $nav .= "<button class='button' type='submit' name='page_nav' value='" . ($page - 1) . "'>&laquo; " . _("Previous") . "</button> ";
     }
-    $pagination .= sprintf("%s %d/%d (%d) ", _("Page"), $page, $totalPages, $totalRows);
-    $pagination .= "<label>";
-    $pagination .= _("Go to") . ": ";
-    $pagination .= "<input class='input' type='number' min='1' max='" . $totalPages . "' name='page_input' size='4' value='" . $page . "'/>";
-    $pagination .= "</label> ";
+    $nav .= sprintf("%s %d/%d (%d) ", _("Page"), $page, $totalPages, $totalRows);
+
+    $goto = "<label>";
+    $goto .= _("Go to") . ": ";
+    $goto .= "<input class='input' type='number' min='1' max='" . $totalPages . "' name='page_input' size='4' value='" . $page . "'/>";
+    $goto .= "</label> ";
     // Unnamed: a named button would submit the old $page and shadow the
     // typed page_input above.
-    $pagination .= "<button class='button' type='submit'>" . _("Go") . "</button>";
+    $goto .= "<button class='button' type='submit'>" . _("Go") . "</button>";
+
+    $next = "";
     if ($page < $totalPages) {
-        $pagination .= " <button class='button' type='submit' name='page_nav' value='" . ($page + 1) . "'>" . _("Next") . " &raquo;</button>";
+        $next .= " <button class='button' type='submit' name='page_nav' value='" . ($page + 1) . "'>" . _("Next") . " &raquo;</button>";
     }
-    $pagination .= "</p>\n";
+
+    // The whole table is one form, so the page_input field is rendered once:
+    // a second copy submits a duplicate value that shadows the typed one.
+    $pagination = "<p>" . $nav . $goto . $next . "</p>\n";
+    $paginationBottom = "<p>" . $nav . $next . "</p>\n";
 }
 
 $html .= $pagination;
@@ -132,7 +140,7 @@ if ($totalRows === 0) {
     $html .= "</table>\n";
 }
 
-$html .= $pagination;
+$html .= $paginationBottom;
 $html .= "<input type='hidden' name='page' value='" . $page . "'/>";
 $html .= "</form>\n";
 
