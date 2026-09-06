@@ -456,6 +456,48 @@ function GameHistoryAllCount($filters)
 }
 
 /**
+ * Delete every history row belonging to an event's games.
+ *
+ * Offered when statistics are archived, where the event is over and the record
+ * has served its purpose. The game rows themselves are untouched: this drops
+ * the audit trail and the restore points, not any result. Irreversible -- the
+ * history is the only copy of what it holds.
+ *
+ * The game set matches GameHistoryWhere()'s season filter exactly, so what an
+ * admin sees under a season on admin/gamehistory.php is what this removes.
+ */
+function DeleteEventGameHistory($seasonId)
+{
+    if (!isSuperAdmin()) {
+        die('Insufficient rights to delete game history');
+    }
+
+    DBQuery(sprintf(
+        "DELETE FROM uo_game_history WHERE game IN (
+			SELECT gp.game FROM uo_game_pool gp
+			INNER JOIN uo_pool po ON po.pool_id=gp.pool
+			INNER JOIN uo_series se ON se.series_id=po.series
+			WHERE se.season='%s'
+		)",
+        DBEscapeString($seasonId),
+    ));
+    $deleted = DBAffectedRows();
+
+    // Logged where it will outlive what it deletes, rather than into the table
+    // being emptied.
+    Log1(
+        "game",
+        "delete",
+        $seasonId,
+        "",
+        sprintf("game history rows: %d", $deleted),
+        "history-cleanup",
+    );
+
+    return $deleted;
+}
+
+/**
  * Load one history row.
  *
  * A snapshot whose recorded teams are no longer the game's teams is withheld:

@@ -159,7 +159,15 @@ One effect is easy to miss: **restoring a roster rewrites `uo_player.num`**, the
 
 ## Retention
 
-Rows are removed only by cascade: deleting the `uo_game` row a history row belongs to deletes that row too, through the `fk_game_history_game` foreign key (`ON DELETE CASCADE`). This fires whenever a game is deleted, whether through the single-game `DeleteGame()` or the bulk event-data cleanup in `lib/data.functions.php`. There is no age-based pruning job and no delete control in either history-viewing page.
+Rows are removed two ways.
+
+By cascade: deleting the `uo_game` row a history row belongs to deletes that row too, through the `fk_game_history_game` foreign key (`ON DELETE CASCADE`). This fires whenever a game is deleted, whether through the single-game `DeleteGame()` or the bulk event-data cleanup in `lib/data.functions.php`.
+
+By an explicit event cleanup: `DeleteEventGameHistory($seasonId)` drops every history row belonging to an event's games. `admin/stats.php` offers it as a superadmin checkbox alongside the existing "Delete event access rights after archiving statistics" one, applied after statistics are archived -- the point at which the event is finished, the results are settled, and the record has done its job. It is left unchecked by default, where the access-rights option is checked: rights deleted in error can be granted again, and this cannot be undone. The game set matches `GameHistoryWhere()`'s season filter, so what a superadmin sees under a season on `admin/gamehistory.php` is exactly what the cleanup removes. Results, rosters and scoresheets are untouched; what goes is the audit trail and every restore point. The deletion itself is recorded in `uo_event_log` (`category='game'`, `source='history-cleanup'`) with the row count, since a record of it cannot live in the table it empties.
+
+InnoDB reuses the freed pages rather than returning them to the filesystem, so a cleanup run to reclaim disk needs an `OPTIMIZE TABLE uo_game_history` afterwards.
+
+There is still no age-based pruning job and no delete control in either history-viewing page.
 
 ## Privacy
 
