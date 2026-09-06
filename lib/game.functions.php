@@ -2205,6 +2205,20 @@ function SetGame($gameId, $params)
         ]);
 
         $nullableFKs = ['reservation', 'hometeam', 'visitorteam'];
+        // Read back rather than derived from $params: the loop below resolves
+        // a team column from several shapes, and only an actual change is
+        // worth an audit row on a page that saves time and reservation too.
+        $readFixtureTeams = function () use ($gameId) {
+            $row = DBQueryToRow(sprintf(
+                "SELECT hometeam, visitorteam FROM uo_game WHERE game_id=%d",
+                (int) $gameId,
+            ));
+            return [
+                'home' => ($row['hometeam'] ?? null) === null ? null : (int) $row['hometeam'],
+                'away' => ($row['visitorteam'] ?? null) === null ? null : (int) $row['visitorteam'],
+            ];
+        };
+        $teamsBefore = $readFixtureTeams();
         foreach ($params as $key => $param) {
             if (!isset($allowedKeys[$key]) || $param === null || $param === false) {
                 continue;
@@ -2227,6 +2241,17 @@ function SetGame($gameId, $params)
                 );
             }
             $result = DBQuery($query);
+        }
+
+        // Recorded before SetGamePool() below, which can move the game to
+        // another series and so change the rights the history helper resolves.
+        // No snapshot, for the reason GameChangeHome() gives.
+        $teamsAfter = $readFixtureTeams();
+        if ($teamsAfter !== $teamsBefore) {
+            GameHistoryRecord($gameId, "fixture", "update", [
+                'home' => $teamsAfter['home'],
+                'away' => $teamsAfter['away'],
+            ]);
         }
 
         if (!empty($params['pool'])) {
@@ -2328,6 +2353,15 @@ function GameChangeHome($gameId)
         );
 
         DBQuery($query);
+
+        // No snapshot: the state captured before a swap records the old
+        // hometeam/visitorteam, so GameHistoryEntry() would withhold it as a
+        // fixture mismatch the moment this write lands. A swap is its own
+        // inverse anyway, so the audit row is the whole point.
+        GameHistoryRecord($gameId, "fixture", "swap", [
+            'home' => $game['visitorteam'] === null ? null : (int) $game['visitorteam'],
+            'away' => $game['hometeam'] === null ? null : (int) $game['hometeam'],
+        ]);
     } else {
         die('Insufficient rights to delete game');
     }
