@@ -141,10 +141,11 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
 
 function GameHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false)
 {
-    // $force is GameHistoryRestore()'s own audit row: DisableGameHistory
-    // governs routine recording volume, not the recoverability of an explicit
-    // destructive action. Suppression is not affected by it.
-    if ((IsGameHistoryDisabled() && !$force) || GameHistorySuppressed()) {
+    // $force is GameHistoryRestore()'s own audit row, which must be written
+    // even while recording is disabled or suppressed, the same way its
+    // pre-restore capture is: DisableGameHistory governs routine recording
+    // volume, not whether an explicit destructive action is recorded.
+    if (!$force && (IsGameHistoryDisabled() || GameHistorySuppressed())) {
         return false;
     }
 
