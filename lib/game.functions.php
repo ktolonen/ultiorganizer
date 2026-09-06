@@ -2869,18 +2869,16 @@ function GameTimePause($gameId)
         die('Insufficient rights to edit game events');
     }
 
-    $row = DBQueryToRow(sprintf(
-        "SELECT isongoing, timer_pause_start FROM uo_game WHERE game_id = %d LIMIT 1",
-        $gameId,
-    ));
-    if (!$row || empty($row['isongoing']) || $row['timer_pause_start'] !== null) {
-        return false; // Not running, or already paused
-    }
-
+    // The WHERE clause is the whole test -- a game that is not running, an
+    // already paused clock and a second request that lost the race all fail
+    // it, and only the winner records.
     $query = sprintf("UPDATE uo_game SET timer_pause_start = %d
     WHERE game_id = %d AND isongoing = 1 AND timer_pause_start IS NULL", time(), $gameId);
 
     $result = DBQuery($query);
+    if (DBAffectedRows() < 1) {
+        return false;
+    }
     GameHistoryRecord($gameId, "timer", "pause");
     return $result;
 }
@@ -2899,10 +2897,15 @@ function GameTimeResume($gameId)
         $pausedTime = time() - (int) $row['timer_pause_start'];
         $totalPaused = (int) $row['timer_paused_duration'] + $pausedTime;
 
+        // Guarded on the pause this call read, so two concurrent resumes
+        // cannot both add their own paused duration or both record.
         $updateQuery = sprintf("UPDATE uo_game SET timer_paused_duration = %d, timer_pause_start = NULL
-      WHERE game_id = %d", $totalPaused, $gameId);
+      WHERE game_id = %d AND timer_pause_start = %d", $totalPaused, $gameId, (int) $row['timer_pause_start']);
 
         $result = DBQuery($updateQuery);
+        if (DBAffectedRows() < 1) {
+            return false;
+        }
         GameHistoryRecord($gameId, "timer", "resume");
         return $result;
     }
