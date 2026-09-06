@@ -900,7 +900,9 @@ function GameRemoveCapEvent($gameId, $type)
     );
 
     $result = DBExecute($query);
-    GameHistoryRecord($gameId, "gameevent", "remove", ['type' => (string) $type]);
+    if (DBAffectedRows() > 0) {
+        GameHistoryRecord($gameId, "gameevent", "remove", ['type' => (string) $type]);
+    }
 
     return $result;
 }
@@ -986,7 +988,9 @@ function RemoveGameMediaEvent($gameId, $urlId)
             (int) $urlId,
         );
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "mediaevent", "remove", ['url' => (int) $urlId]);
+        if (DBAffectedRows() > 0) {
+            GameHistoryRecord($gameId, "mediaevent", "remove", ['url' => (int) $urlId]);
+        }
 
         return $result;
     } else {
@@ -1566,7 +1570,9 @@ function GameRemovePlayer($gameId, $playerId)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "played", "remove", ['player' => (int) $playerId]);
+        if (DBAffectedRows() > 0) {
+            GameHistoryRecord($gameId, "played", "remove", ['player' => (int) $playerId]);
+        }
 
         return $result;
     } else {
@@ -1609,7 +1615,9 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "played", "update", ['player' => (int) $playerId, 'num' => (int) $number]);
+        if (DBAffectedRows() > 0) {
+            GameHistoryRecord($gameId, "played", "update", ['player' => (int) $playerId, 'num' => (int) $number]);
+        }
 
         return $result;
     } else {
@@ -2017,7 +2025,9 @@ function GameSetScoreSheetKeeper($gameId, $name)
 		WHERE game_id='%s'", DBEscapeString($gameId));
         }
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "official", "update", ['name' => (string) $name]);
+        if (DBAffectedRows() > 0) {
+            GameHistoryRecord($gameId, "official", "update", ['name' => (string) $name]);
+        }
 
         return $result;
     } else {
@@ -2042,7 +2052,9 @@ function GameSetHalftime($gameId, $time)
 			WHERE game_id='%s'", DBEscapeString($gameId));
         }
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "halftime", "update", ['time' => (int) $time]);
+        if (DBAffectedRows() > 0) {
+            GameHistoryRecord($gameId, "halftime", "update", ['time' => (int) $time]);
+        }
 
         return $result;
     } else {
@@ -2070,7 +2082,9 @@ function GameSetStartingTeam($gameId, $home)
             );
 
             $result = DBQuery($query);
-            GameHistoryRecord($gameId, "gameevent", "remove", ['type' => "start"]);
+            if (DBAffectedRows() > 0) {
+                GameHistoryRecord($gameId, "gameevent", "remove", ['type' => "start"]);
+            }
 
             return $result;
         } else {
@@ -2083,7 +2097,11 @@ function GameSetStartingTeam($gameId, $home)
             );
 
             $result = DBQuery($query);
-            GameHistoryRecord($gameId, "gameevent", "update", ['type' => "start", 'home' => $home ? 1 : 0]);
+            // 1 for the insert, 2 for a changed side, 0 when the recorded side
+            // is already the one being set.
+            if (DBAffectedRows() > 0) {
+                GameHistoryRecord($gameId, "gameevent", "update", ['type' => "start", 'home' => $home ? 1 : 0]);
+            }
 
             return $result;
         }

@@ -235,6 +235,21 @@ function UserUpdateInfo($user_id, $olduser, $user, $name)
             );
 
             DBQuery($query);
+
+            // Both audit tables attribute a row by login name, so a rename
+            // that stopped here would strand the account's own history under
+            // the old name -- out of its privacy export and its deletion, and
+            // onto whoever is given that name next.
+            DBQuery(sprintf(
+                "UPDATE uo_game_history SET user_id='%s' WHERE user_id='%s'",
+                DBEscapeString($user),
+                DBEscapeString($olduser),
+            ));
+            DBQuery(sprintf(
+                "UPDATE uo_event_log SET user_id='%s' WHERE user_id='%s'",
+                DBEscapeString($user),
+                DBEscapeString($olduser),
+            ));
         }
         //update session data only if user is current use
         if ($olduser == $_SESSION['uid']) {
