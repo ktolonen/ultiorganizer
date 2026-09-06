@@ -246,6 +246,7 @@ function PrivacyCollectPlayerReportData($playerId)
     $accreditationLog = [];
     $eventLog = [];
     $gameHistoryNameRows = [];
+    $gameHistoryDetailRows = [];
     $imageInfo = null;
     $accreditationIds = [];
     $playerLogTargets = [];
@@ -300,6 +301,7 @@ function PrivacyCollectPlayerReportData($playerId)
             true,
         );
         $gameHistoryNameRows = PrivacyPlayerGameHistoryNameRows($playerIds);
+        $gameHistoryDetailRows = PrivacyPlayerGameHistoryDetailRows($playerIds);
     }
 
     foreach ($subject['players'] as $playerRow) {
@@ -336,6 +338,7 @@ function PrivacyCollectPlayerReportData($playerId)
         'event_log_rows' => $eventLog,
         'url_rows' => $urls,
         'game_history_name_rows' => $gameHistoryNameRows,
+        'game_history_detail_rows' => $gameHistoryDetailRows,
     ];
 }
 
@@ -407,6 +410,76 @@ function PrivacyPlayerGameHistoryNameRows($playerIds)
                         'name' => $goalRow['assist_name'] ?? null,
                     ];
                 }
+            }
+        }
+    }
+
+    return $rows;
+}
+
+/**
+ * Project this player's own references out of the ordinary change rows.
+ *
+ * uo_game_history.detail keys a change to the player it is about -- the roster
+ * row added or removed, the goal scored or assisted, the defense recorded --
+ * so those rows are the player's data even though the column also describes
+ * the game. Only the matched field and the player's own jersey number are
+ * projected: a goal row names both scorer and assist, and the other one of
+ * those is somebody else.
+ */
+function PrivacyPlayerGameHistoryDetailRows($playerIds)
+{
+    if (empty($playerIds)) {
+        return [];
+    }
+
+    // Which detail key carries a player id, per target.
+    $fields = [
+        'played' => ['player'],
+        'goal' => ['scorer', 'assist'],
+        'defense' => ['player'],
+    ];
+
+    $rows = [];
+    // Batched like the snapshot walk above, for the same reason: nothing
+    // prunes this table.
+    $lastHistoryId = 0;
+    while (true) {
+        $historyRows = DBQueryToArray(sprintf(
+            "SELECT history_id, game, time, target, action, detail FROM uo_game_history
+				WHERE snapshot IS NULL AND detail IS NOT NULL AND history_id > %d
+				ORDER BY history_id LIMIT %d",
+            $lastHistoryId,
+            PRIVACY_SNAPSHOT_BATCH,
+        ));
+        if (empty($historyRows)) {
+            break;
+        }
+
+        foreach ($historyRows as $historyRow) {
+            $lastHistoryId = (int) $historyRow['history_id'];
+            $target = (string) $historyRow['target'];
+            if (!isset($fields[$target])) {
+                continue;
+            }
+            $detail = json_decode((string) $historyRow['detail'], true);
+            if (!is_array($detail)) {
+                continue;
+            }
+
+            foreach ($fields[$target] as $key) {
+                if (!in_array((int) ($detail[$key] ?? 0), $playerIds, true)) {
+                    continue;
+                }
+                $rows[] = [
+                    'history_id' => $historyRow['history_id'],
+                    'game' => $historyRow['game'],
+                    'time' => $historyRow['time'],
+                    'target' => $target,
+                    'action' => $historyRow['action'],
+                    'field' => $target . '.' . $key,
+                    'num' => $detail['num'] ?? null,
+                ];
             }
         }
     }
@@ -513,6 +586,7 @@ function PrivacyRenderPlayerReportText($playerId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'Played rows', $data['played_rows']);
     PrivacyAppendRowsSection($lines, 'Goal rows', $data['goal_rows']);
     PrivacyAppendRowsSection($lines, 'Game history snapshot name rows', $data['game_history_name_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history change rows', $data['game_history_detail_rows']);
     PrivacyAppendRowsSection($lines, 'Defense rows', $data['defense_rows']);
     PrivacyAppendRowsSection($lines, 'License rows', $data['license_rows']);
     PrivacyAppendRowsSection($lines, 'Accreditation log rows', PrivacySanitizePlayerPrivacyRows($data['accreditation_log_rows']));
