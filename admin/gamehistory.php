@@ -14,43 +14,27 @@ $filters = array_fill_keys($filterKeys, "");
 $page = 1;
 $pageSize = 100;
 
-if (isset($_POST['update'])) {
-    foreach ($filterKeys as $key) {
-        $filters[$key] = trim((string) ($_POST[$key] ?? ""));
+foreach ($filterKeys as $key) {
+    if (isset($_POST[$key])) {
+        $filters[$key] = trim((string) $_POST[$key]);
     }
+}
+
+// The filters, the page_input field and the hidden page all belong to the one
+// form, so every submission carries them whichever button was pressed. Order
+// the sources most specific first and take the first one that is present.
+if (isset($_POST['update'])) {
     $page = 1;
 } elseif (isset($_POST['page_nav'])) {
     $page = intval($_POST['page_nav']);
-    if ($page < 1) {
-        $page = 1;
-    }
 } elseif (isset($_POST['page_input'])) {
     $page = intval($_POST['page_input']);
-    if ($page < 1) {
-        $page = 1;
-    }
-}
-if (!isset($_POST['update'])) {
-    foreach ($filterKeys as $key) {
-        if (isset($_POST[$key])) {
-            $filters[$key] = trim((string) $_POST[$key]);
-        }
-    }
-}
-// Every submission carries this hidden field, so it must only apply when
-// nothing above has already set $page this request.
-if (isset($_POST['page']) && !isset($_POST['page_nav']) && !isset($_POST['update']) && !isset($_POST['page_input'])) {
+} elseif (isset($_POST['page'])) {
     $page = intval($_POST['page']);
-    if ($page < 1) {
-        $page = 1;
-    }
-}
-if (isset($_GET['page']) && !isset($_POST['page'])) {
+} elseif (isset($_GET['page'])) {
     $page = intval($_GET['page']);
-    if ($page < 1) {
-        $page = 1;
-    }
 }
+$page = max(1, $page);
 
 //common page
 pageTopHeadOpen($title);
