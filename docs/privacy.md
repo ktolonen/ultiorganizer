@@ -45,10 +45,17 @@ The player export currently includes rows from:
 - `uo_event_log` privacy audit rows where `source='privacy'` and `id1` matches the selected internal `player:<id>` or `profile:<id>` target
 - `uo_urls` for player profile links
 - player profile image metadata from `uo_player_profile` and `uo_image`
-- `uo_game_history` name values: this player's own `played[].name`, `goals[].scorer_name`, and
-  `goals[].assist_name` entries projected out of every snapshot by player id and tagged with the
-  game and snapshot time -- not the raw rows or the `snapshot` column, which describe the whole
-  roster. A prior spelling no longer present in `uo_player` therefore still reaches the report.
+- `uo_game_history` snapshot values: this player's own `played[]`, `goals[]` and `defenses[]`
+  entries projected out of every snapshot by player id and tagged with the game and snapshot time
+  -- not the raw rows or the `snapshot` column, which describe the whole scoresheet. Each entry
+  comes out with the fields belonging to it: the roster row's name, team, jersey number, captain,
+  spirit captain, accredited and acknowledged values; the subject's own side of a goal, with the
+  jersey and name it recorded for them, the point number, time, score and flags; and the defence's
+  sequence, time and flags.
+  A snapshot predating a jersey, captaincy or accreditation change is the only remaining record of
+  what those values were, and a prior name spelling no longer present in `uo_player` reaches the
+  report the same way. The other side of a goal -- the assist when the subject scored, or the
+  reverse -- is left out.
 - `uo_game_history` change rows: the ordinary (non-snapshot) rows whose `detail` names this player
   -- `played.player`, the `played.players` captain and spirit-captain lists, `goal.scorer`,
   `goal.assist` and `defense.player` -- projected to the history id, game, time, target, action and
