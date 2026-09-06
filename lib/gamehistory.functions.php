@@ -624,10 +624,10 @@ function GameHistoryFormatDetail($row)
         return sprintf("%s %d", _("Timeout"), (int) ($detail['num'] ?? 0));
     }
     if ($target == "spirit_timeout" && $action == "clear") {
-        return sprintf(_("Spirit timeouts removed: %d"), (int) ($detail['removed'] ?? 0));
+        return sprintf(_("Spirit stoppages removed: %d"), (int) ($detail['removed'] ?? 0));
     }
     if ($target == "spirit_timeout") {
-        return sprintf("%s %d", _("Spirit timeout"), (int) ($detail['num'] ?? 0));
+        return sprintf("%s %d", _("Spirit stoppage"), (int) ($detail['num'] ?? 0));
     }
     if ($target == "comment" && $action == "remove") {
         return _("Game note removed");
