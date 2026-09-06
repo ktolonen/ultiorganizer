@@ -607,6 +607,14 @@ function GameHistoryFormatDetail($row)
         $forfeit = (string) ($detail['forfeit'] ?? "");
         return sprintf("%s: %s", _("Forfeit"), $labels[$forfeit] ?? $forfeit);
     }
+    if ($target == "fixture") {
+        return sprintf(
+            "%s: %s - %s",
+            $action == "swap" ? _("Home and away teams swapped") : _("Teams"),
+            TeamName((int) ($detail['home'] ?? 0)),
+            TeamName((int) ($detail['away'] ?? 0)),
+        );
+    }
     if ($target == "defense" && $action == "clear") {
         return sprintf(_("Defences removed: %d"), (int) ($detail['removed'] ?? 0));
     }
