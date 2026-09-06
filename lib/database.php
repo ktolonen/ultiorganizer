@@ -464,6 +464,20 @@ function DBStmtClose($stmt)
  * @param string $query Database query
  * @return int
  */
+/**
+ * Number of rows the last mutating statement actually changed.
+ *
+ * DBQuery() reports SQL success, not whether a guarded UPDATE won, so a
+ * caller that must not act on a no-op asks here instead.
+ *
+ * @return int
+ */
+function DBAffectedRows()
+{
+    global $mysqlconnectionref;
+    return mysqli_affected_rows($mysqlconnectionref);
+}
+
 function DBQueryInsert($query)
 {
     global $mysqlconnectionref;
