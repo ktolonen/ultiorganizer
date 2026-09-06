@@ -371,9 +371,7 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
         }
     }
 
-    $result = ApplyCommentChange($type, $gameId, $change);
-
-    return $result;
+    return ApplyCommentChange($type, $gameId, $change);
 }
 
 function SetSpiritComment($gameResult, $spiritTeamId, $comment, $delete = false)
