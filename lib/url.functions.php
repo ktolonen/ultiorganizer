@@ -279,10 +279,24 @@ function RemoveMediaUrl($urlId)
         die('Insufficient rights to remove url');
     }
 
+    // Url-scoped, so it can span games. RemoveGameMediaEvent() records the
+    // per-game path; this one is reached from user/addmedialink.php and needs
+    // a row for each game the link is being taken off.
+    $mediaGames = DBQueryToArray(sprintf(
+        "SELECT DISTINCT game FROM uo_gameevent WHERE type='media' AND info=%d",
+        (int) $urlId,
+    ));
+
     DBQuery(sprintf(
         "DELETE FROM uo_gameevent WHERE type='media' AND info=%d",
         (int) $urlId,
     ));
+
+    if (function_exists('GameHistoryRecord')) {
+        foreach ($mediaGames as $mediaGame) {
+            GameHistoryRecord((int) $mediaGame['game'], "mediaevent", "remove", ['url' => (int) $urlId]);
+        }
+    }
 
     $query = sprintf(
         "DELETE FROM uo_urls WHERE url_id=%d AND ismedialink=1",
