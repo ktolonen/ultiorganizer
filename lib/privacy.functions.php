@@ -10,6 +10,9 @@ require_once __DIR__ . '/image.functions.php';
 require_once __DIR__ . '/url.functions.php';
 require_once __DIR__ . '/logging.functions.php';
 
+// How many uo_game_history snapshots the privacy scans hold in memory at once.
+define('PRIVACY_SNAPSHOT_BATCH', 100);
+
 function PrivacyPlayerMatches($search)
 {
     PrivacyRequireSuperAdmin();
@@ -351,44 +354,59 @@ function PrivacyPlayerGameHistoryNameRows($playerIds)
     }
 
     $rows = [];
-    $snapshotRows = DBQueryToArray(
-        "SELECT history_id, game, time, snapshot FROM uo_game_history WHERE has_snapshot=1 AND snapshot IS NOT NULL",
-    );
-    foreach ($snapshotRows as $snapshotRow) {
-        $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
-        if (!is_array($snapshot)) {
-            continue;
+    // snapshot is a mediumtext holding a whole scoresheet and nothing prunes
+    // the table, so the scan is walked in primary-key batches instead of
+    // buffering every snapshot in the installation at once.
+    $lastHistoryId = 0;
+    while (true) {
+        $snapshotRows = DBQueryToArray(sprintf(
+            "SELECT history_id, game, time, snapshot FROM uo_game_history
+				WHERE has_snapshot=1 AND snapshot IS NOT NULL AND history_id > %d
+				ORDER BY history_id LIMIT %d",
+            $lastHistoryId,
+            PRIVACY_SNAPSHOT_BATCH,
+        ));
+        if (empty($snapshotRows)) {
+            break;
         }
 
-        foreach ((array) ($snapshot['played'] ?? []) as $playedRow) {
-            if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
-                $rows[] = [
-                    'history_id' => $snapshotRow['history_id'],
-                    'game' => $snapshotRow['game'],
-                    'time' => $snapshotRow['time'],
-                    'field' => 'played.name',
-                    'name' => $playedRow['name'] ?? null,
-                ];
+        foreach ($snapshotRows as $snapshotRow) {
+            $lastHistoryId = (int) $snapshotRow['history_id'];
+            $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+            if (!is_array($snapshot)) {
+                continue;
             }
-        }
-        foreach ((array) ($snapshot['goals'] ?? []) as $goalRow) {
-            if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
-                $rows[] = [
-                    'history_id' => $snapshotRow['history_id'],
-                    'game' => $snapshotRow['game'],
-                    'time' => $snapshotRow['time'],
-                    'field' => 'goals.scorer_name',
-                    'name' => $goalRow['scorer_name'] ?? null,
-                ];
+
+            foreach ((array) ($snapshot['played'] ?? []) as $playedRow) {
+                if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                    $rows[] = [
+                        'history_id' => $snapshotRow['history_id'],
+                        'game' => $snapshotRow['game'],
+                        'time' => $snapshotRow['time'],
+                        'field' => 'played.name',
+                        'name' => $playedRow['name'] ?? null,
+                    ];
+                }
             }
-            if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
-                $rows[] = [
-                    'history_id' => $snapshotRow['history_id'],
-                    'game' => $snapshotRow['game'],
-                    'time' => $snapshotRow['time'],
-                    'field' => 'goals.assist_name',
-                    'name' => $goalRow['assist_name'] ?? null,
-                ];
+            foreach ((array) ($snapshot['goals'] ?? []) as $goalRow) {
+                if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
+                    $rows[] = [
+                        'history_id' => $snapshotRow['history_id'],
+                        'game' => $snapshotRow['game'],
+                        'time' => $snapshotRow['time'],
+                        'field' => 'goals.scorer_name',
+                        'name' => $goalRow['scorer_name'] ?? null,
+                    ];
+                }
+                if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
+                    $rows[] = [
+                        'history_id' => $snapshotRow['history_id'],
+                        'game' => $snapshotRow['game'],
+                        'time' => $snapshotRow['time'],
+                        'field' => 'goals.assist_name',
+                        'name' => $goalRow['assist_name'] ?? null,
+                    ];
+                }
             }
         }
     }
@@ -700,45 +718,61 @@ function PrivacyAnonymizePlayer($playerId, $adminUserId)
         // string-replaced, since the raw JSON cannot tell a player's name
         // apart from an unrelated field, a substring of another name, or a
         // second player sharing the name.
-        $snapshotRows = DBQueryToArray(
-            "SELECT history_id, snapshot FROM uo_game_history WHERE has_snapshot=1 AND snapshot IS NOT NULL",
-        );
-        foreach ($snapshotRows as $snapshotRow) {
-            $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
-            if (!is_array($snapshot)) {
-                continue;
-            }
-
-            $changed = false;
-            foreach ((array) ($snapshot['played'] ?? []) as $i => $playedRow) {
-                if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
-                    $snapshot['played'][$i]['name'] = '- -';
-                    $changed = true;
-                }
-            }
-            foreach ((array) ($snapshot['goals'] ?? []) as $i => $goalRow) {
-                if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
-                    $snapshot['goals'][$i]['scorer_name'] = '- -';
-                    $changed = true;
-                }
-                if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
-                    $snapshot['goals'][$i]['assist_name'] = '- -';
-                    $changed = true;
-                }
-            }
-
-            if (!$changed) {
-                continue;
-            }
-            $json = json_encode($snapshot, JSON_UNESCAPED_UNICODE);
-            if ($json === false) {
-                continue;
-            }
-            DBQuery(sprintf(
-                "UPDATE uo_game_history SET snapshot='%s' WHERE history_id=%d",
-                DBEscapeString($json),
-                (int) $snapshotRow['history_id'],
+        // Batched by primary key for the same reason as the export path, and
+        // still inside this transaction: an anonymization that leaves some
+        // snapshots rewritten and others not is worse than one that fails.
+        // The UPDATEs do not move a row's history_id, so the walk is stable.
+        $lastHistoryId = 0;
+        while (true) {
+            $snapshotRows = DBQueryToArray(sprintf(
+                "SELECT history_id, snapshot FROM uo_game_history
+					WHERE has_snapshot=1 AND snapshot IS NOT NULL AND history_id > %d
+					ORDER BY history_id LIMIT %d",
+                $lastHistoryId,
+                PRIVACY_SNAPSHOT_BATCH,
             ));
+            if (empty($snapshotRows)) {
+                break;
+            }
+
+            foreach ($snapshotRows as $snapshotRow) {
+                $lastHistoryId = (int) $snapshotRow['history_id'];
+                $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+                if (!is_array($snapshot)) {
+                    continue;
+                }
+
+                $changed = false;
+                foreach ((array) ($snapshot['played'] ?? []) as $i => $playedRow) {
+                    if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                        $snapshot['played'][$i]['name'] = '- -';
+                        $changed = true;
+                    }
+                }
+                foreach ((array) ($snapshot['goals'] ?? []) as $i => $goalRow) {
+                    if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
+                        $snapshot['goals'][$i]['scorer_name'] = '- -';
+                        $changed = true;
+                    }
+                    if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
+                        $snapshot['goals'][$i]['assist_name'] = '- -';
+                        $changed = true;
+                    }
+                }
+
+                if (!$changed) {
+                    continue;
+                }
+                $json = json_encode($snapshot, JSON_UNESCAPED_UNICODE);
+                if ($json === false) {
+                    continue;
+                }
+                DBQuery(sprintf(
+                    "UPDATE uo_game_history SET snapshot='%s' WHERE history_id=%d",
+                    DBEscapeString($json),
+                    (int) $snapshotRow['history_id'],
+                ));
+            }
         }
 
         DBQuery('COMMIT');
