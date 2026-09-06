@@ -245,7 +245,7 @@ function PrivacyCollectPlayerReportData($playerId)
     $licenseRows = [];
     $accreditationLog = [];
     $eventLog = [];
-    $gameHistoryNameRows = [];
+    $gameHistorySnapshotRows = [];
     $gameHistoryDetailRows = [];
     $imageInfo = null;
     $accreditationIds = [];
@@ -300,7 +300,7 @@ function PrivacyCollectPlayerReportData($playerId)
             "SELECT * FROM uo_event_log WHERE " . implode(' OR ', $eventLogWhere) . " ORDER BY time DESC",
             true,
         );
-        $gameHistoryNameRows = PrivacyPlayerGameHistoryNameRows($playerIds);
+        $gameHistorySnapshotRows = PrivacyPlayerGameHistorySnapshotRows($playerIds);
         $gameHistoryDetailRows = PrivacyPlayerGameHistoryDetailRows($playerIds);
     }
 
@@ -337,20 +337,23 @@ function PrivacyCollectPlayerReportData($playerId)
         'accreditation_log_rows' => $accreditationLog,
         'event_log_rows' => $eventLog,
         'url_rows' => $urls,
-        'game_history_name_rows' => $gameHistoryNameRows,
+        'game_history_snapshot_rows' => $gameHistorySnapshotRows,
         'game_history_detail_rows' => $gameHistoryDetailRows,
     ];
 }
 
 /**
- * Extract this player's own name values embedded in game-history snapshots.
+ * Extract this player's own values embedded in game-history snapshots.
  *
- * A snapshot holds the whole roster, so exporting the blob would leak other
- * players. This walks the same played[]/goals[] shape PrivacyAnonymizePlayer()
- * rewrites and keeps only the names keyed to $playerIds -- including a prior
- * spelling no longer present in uo_player.
+ * A snapshot holds the whole scoresheet, so exporting the blob would leak the
+ * other players. This walks played[]/goals[]/defenses[] and keeps only the
+ * entries keyed to $playerIds, with the fields belonging to that entry: a
+ * snapshot predating a jersey, captaincy or accreditation change is the only
+ * remaining record of what those values were, and a name spelling no longer in
+ * uo_player reaches the report the same way. The other side of a goal -- the
+ * assist when the subject scored, or the reverse -- is left out.
  */
-function PrivacyPlayerGameHistoryNameRows($playerIds)
+function PrivacyPlayerGameHistorySnapshotRows($playerIds)
 {
     if (empty($playerIds)) {
         return [];
@@ -380,36 +383,59 @@ function PrivacyPlayerGameHistoryNameRows($playerIds)
                 continue;
             }
 
+            $base = [
+                'history_id' => $snapshotRow['history_id'],
+                'game' => $snapshotRow['game'],
+                'time' => $snapshotRow['time'],
+            ];
+
             foreach ((array) ($snapshot['played'] ?? []) as $playedRow) {
-                if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
-                    $rows[] = [
-                        'history_id' => $snapshotRow['history_id'],
-                        'game' => $snapshotRow['game'],
-                        'time' => $snapshotRow['time'],
-                        'field' => 'played.name',
-                        'name' => $playedRow['name'] ?? null,
+                if (!in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                    continue;
+                }
+                $rows[] = $base + [
+                    'field' => 'played',
+                    'name' => $playedRow['name'] ?? null,
+                    'team' => $playedRow['team'] ?? null,
+                    'num' => $playedRow['num'] ?? null,
+                    'captain' => $playedRow['captain'] ?? null,
+                    'spirit_captain' => $playedRow['spirit_captain'] ?? null,
+                    'accredited' => $playedRow['accredited'] ?? null,
+                    'acknowledged' => $playedRow['acknowledged'] ?? null,
+                ];
+            }
+            foreach ((array) ($snapshot['goals'] ?? []) as $goalRow) {
+                // Keyed per side, so the subject's own jersey and name come
+                // from the side they were on and the other side stays out.
+                foreach (['scorer', 'assist'] as $side) {
+                    if (!in_array((int) ($goalRow[$side] ?? 0), $playerIds, true)) {
+                        continue;
+                    }
+                    $rows[] = $base + [
+                        'field' => 'goals.' . $side,
+                        'name' => $goalRow[$side . '_name'] ?? null,
+                        'num' => $goalRow[$side . '_num'] ?? null,
+                        'point' => $goalRow['num'] ?? null,
+                        'point_time' => $goalRow['time'] ?? null,
+                        'score' => isset($goalRow['homescore'], $goalRow['visitorscore'])
+                            ? $goalRow['homescore'] . '-' . $goalRow['visitorscore'] : null,
+                        'home_goal' => $goalRow['ishomegoal'] ?? null,
+                        'callahan' => $goalRow['iscallahan'] ?? null,
                     ];
                 }
             }
-            foreach ((array) ($snapshot['goals'] ?? []) as $goalRow) {
-                if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
-                    $rows[] = [
-                        'history_id' => $snapshotRow['history_id'],
-                        'game' => $snapshotRow['game'],
-                        'time' => $snapshotRow['time'],
-                        'field' => 'goals.scorer_name',
-                        'name' => $goalRow['scorer_name'] ?? null,
-                    ];
+            foreach ((array) ($snapshot['defenses'] ?? []) as $defenseRow) {
+                if (!in_array((int) ($defenseRow['author'] ?? 0), $playerIds, true)) {
+                    continue;
                 }
-                if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
-                    $rows[] = [
-                        'history_id' => $snapshotRow['history_id'],
-                        'game' => $snapshotRow['game'],
-                        'time' => $snapshotRow['time'],
-                        'field' => 'goals.assist_name',
-                        'name' => $goalRow['assist_name'] ?? null,
-                    ];
-                }
+                $rows[] = $base + [
+                    'field' => 'defenses.author',
+                    'sequence' => $defenseRow['num'] ?? null,
+                    'defense_time' => $defenseRow['time'] ?? null,
+                    'caught' => $defenseRow['iscaught'] ?? null,
+                    'callahan' => $defenseRow['iscallahan'] ?? null,
+                    'home_defense' => $defenseRow['ishomedefense'] ?? null,
+                ];
             }
         }
     }
@@ -611,7 +637,7 @@ function PrivacyRenderPlayerReportText($playerId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'Player stats rows', $data['player_stats_rows']);
     PrivacyAppendRowsSection($lines, 'Played rows', $data['played_rows']);
     PrivacyAppendRowsSection($lines, 'Goal rows', $data['goal_rows']);
-    PrivacyAppendRowsSection($lines, 'Game history snapshot name rows', $data['game_history_name_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history snapshot rows', $data['game_history_snapshot_rows']);
     PrivacyAppendRowsSection($lines, 'Game history change rows', $data['game_history_detail_rows']);
     PrivacyAppendRowsSection($lines, 'Defense rows', $data['defense_rows']);
     PrivacyAppendRowsSection($lines, 'License rows', $data['license_rows']);
