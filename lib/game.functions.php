@@ -1679,12 +1679,16 @@ function GameRemoveScore($gameId, $num)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "goal", "remove", [
-            'num' => (int) $num,
-            'scorer' => !empty($removedGoal['scorer']) ? (int) $removedGoal['scorer'] : null,
-            'assist' => !empty($removedGoal['assist']) ? (int) $removedGoal['assist'] : null,
-            'score' => $removedGoal ? (int) $removedGoal['homescore'] . "-" . (int) $removedGoal['visitorscore'] : null,
-        ]);
+        // A point already gone -- a resubmitted delete, or a $num this caller
+        // never held -- deletes nothing, and must not be recorded as a removal.
+        if (DBAffectedRows() > 0) {
+            GameHistoryRecord($gameId, "goal", "remove", [
+                'num' => (int) $num,
+                'scorer' => !empty($removedGoal['scorer']) ? (int) $removedGoal['scorer'] : null,
+                'assist' => !empty($removedGoal['assist']) ? (int) $removedGoal['assist'] : null,
+                'score' => $removedGoal ? (int) $removedGoal['homescore'] . "-" . (int) $removedGoal['visitorscore'] : null,
+            ]);
+        }
 
         return $result;
     } else {
