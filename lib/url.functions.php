@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/include_only.guard.php';
+require_once __DIR__ . '/gamehistory.functions.php';
 denyDirectLibAccess(__FILE__);
 
 function GetUrlById($urlId)
@@ -292,10 +293,8 @@ function RemoveMediaUrl($urlId)
         (int) $urlId,
     ));
 
-    if (function_exists('GameHistoryRecord')) {
-        foreach ($mediaGames as $mediaGame) {
-            GameHistoryRecord((int) $mediaGame['game'], "mediaevent", "remove", ['url' => (int) $urlId]);
-        }
+    foreach ($mediaGames as $mediaGame) {
+        GameHistoryRecord((int) $mediaGame['game'], "mediaevent", "remove", ['url' => (int) $urlId]);
     }
 
     $query = sprintf(

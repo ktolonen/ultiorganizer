@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/include_only.guard.php';
+require_once __DIR__ . '/gamehistory.functions.php';
 denyDirectLibAccess(__FILE__);
 
 /**
@@ -361,14 +362,10 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
     // CanManageGameComment(), which can no longer recognise the author once
     // ApplyCommentChange() has logged the comment_delete.
     if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop") {
-        if (function_exists('GameHistorySnapshotIfNeeded')) {
-            GameHistorySnapshotIfNeeded($gameId, false, false, "comment");
-        }
-        if (function_exists('GameHistoryRecord')) {
-            GameHistoryRecord($gameId, "comment", $change['action'] === "delete" ? "remove" : "update", [
-                'length' => strlen((string) $comment),
-            ]);
-        }
+        GameHistorySnapshotIfNeeded($gameId, false, false, "comment");
+        GameHistoryRecord($gameId, "comment", $change['action'] === "delete" ? "remove" : "update", [
+            'length' => strlen((string) $comment),
+        ]);
     }
 
     return ApplyCommentChange($type, $gameId, $change);

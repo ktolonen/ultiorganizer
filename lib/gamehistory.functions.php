@@ -69,6 +69,11 @@ function GameHistorySuppressed($set = null)
  */
 function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = false)
 {
+    // Lazy require: game.functions.php requires this file. Needed because
+    // hasEditGameEventsRight() reaches GameRespTeam(), and this is the gate
+    // every recording entry point goes through.
+    require_once __DIR__ . '/game.functions.php';
+
     if (hasEditGameEventsRight($gameId) || hasEditGamePlayersRight($gameId)) {
         return true;
     }
@@ -86,7 +91,6 @@ function GameHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = 
     // longer recognisable.
     if (
         $target === 'comment'
-        && function_exists('CanManageGameComment') && defined('COMMENT_TYPE_GAME')
         && CanManageGameComment($gameId, COMMENT_TYPE_GAME)
     ) {
         return true;
