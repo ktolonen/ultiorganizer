@@ -59,10 +59,14 @@ The player export currently includes rows from:
 - `uo_game_history` change rows: the ordinary (non-snapshot) rows whose `detail` names this player
   -- `played.player`, the `played.players` captain and spirit-captain lists, `goal.scorer`,
   `goal.assist` and `defense.player` -- projected to the history id, game, time, target, action and
-  matched field. The rest of `detail` is withheld, since a goal row names both the scorer and the
-  assist and only one of them is the data subject. Each row carries the one context value its
-  target actually has: `num` is the player's own jersey number on a roster row, `sequence` is the
-  point or defence ordinal on a scoring row, and `role` names which captaincy a role row set.
+  matched field. The keys naming the other people are withheld, since a goal row names both the
+  scorer and the assist and only one of them is the data subject. Everything else the row recorded
+  about the change comes out, under the key its target actually means: `num` is the player's own
+  jersey number on a roster row and `sequence` the point or defence ordinal on a scoring row, and
+  the rest is the row's own context -- `acknowledged` on an accreditation change, the point's time,
+  score and home/callahan flags, the defence's time and caught/callahan flags, and the `role` and
+  `team` a captaincy row set. Once the goal or defence itself is edited away, that is the only
+  record of it left.
 
 To avoid exposing other members' account identifiers in the player export, `user_id` and `userid` values are hidden in log-derived sections.
 Current player log writers use `uo_event_log.id2` for the team reference, not for player identity, so player privacy tools do not match `id2` in order to avoid deleting unrelated team-linked history.

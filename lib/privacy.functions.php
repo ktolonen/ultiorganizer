@@ -471,6 +471,14 @@ function PrivacyPlayerGameHistoryDetailRows($playerIds)
         'defense' => ['player'],
     ];
 
+    // What else the row recorded about the change, per target. Deliberately
+    // excludes scorer/assist/player/players, which name people.
+    $context = [
+        'played' => ['acknowledged', 'created'],
+        'goal' => ['time', 'score', 'home', 'callahan'],
+        'defense' => ['time', 'caught', 'callahan'],
+    ];
+
     $rows = [];
     // Batched like the snapshot walk above, for the same reason: nothing
     // prunes this table.
@@ -517,6 +525,14 @@ function PrivacyPlayerGameHistoryDetailRows($playerIds)
                     // The point or defense ordinal, not a jersey number.
                     $row['sequence'] = $detail['num'] ?? null;
                 }
+                // The rest of what the row recorded about the event, which is
+                // the only record of it once the goal or defense is gone. The
+                // keys naming the other players are not among them.
+                foreach ($context[$target] as $contextKey) {
+                    if (array_key_exists($contextKey, $detail)) {
+                        $row[$contextKey] = $detail[$contextKey];
+                    }
+                }
                 $rows[] = $row;
             }
 
@@ -530,6 +546,7 @@ function PrivacyPlayerGameHistoryDetailRows($playerIds)
                     $rows[] = $base + [
                         'field' => 'played.players',
                         'role' => $detail['role'] ?? null,
+                        'team' => $detail['team'] ?? null,
                     ];
                 }
             }
