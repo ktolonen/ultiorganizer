@@ -604,7 +604,7 @@ function GameHistoryFormatDetail($row)
         return sprintf("%s: %s", _("Forfeit"), $labels[$forfeit] ?? $forfeit);
     }
     if ($target == "defense" && $action == "clear") {
-        return sprintf("%s %s: %d", _("Defences"), _("removed"), (int) ($detail['removed'] ?? 0));
+        return sprintf(_("Defences removed: %d"), (int) ($detail['removed'] ?? 0));
     }
     if ($target == "defense" && $action == "update") {
         return sprintf(
@@ -618,30 +618,30 @@ function GameHistoryFormatDetail($row)
         return sprintf("%s %d", _("Defence"), (int) ($detail['num'] ?? 0));
     }
     if ($target == "timeout" && $action == "clear") {
-        return sprintf("%s %s: %d", _("Timeouts"), _("removed"), (int) ($detail['removed'] ?? 0));
+        return sprintf(_("Timeouts removed: %d"), (int) ($detail['removed'] ?? 0));
     }
     if ($target == "timeout") {
         return sprintf("%s %d", _("Timeout"), (int) ($detail['num'] ?? 0));
     }
     if ($target == "spirit_timeout" && $action == "clear") {
-        return sprintf("%s %s: %d", _("Spirit timeouts"), _("removed"), (int) ($detail['removed'] ?? 0));
+        return sprintf(_("Spirit timeouts removed: %d"), (int) ($detail['removed'] ?? 0));
     }
     if ($target == "spirit_timeout") {
         return sprintf("%s %d", _("Spirit timeout"), (int) ($detail['num'] ?? 0));
     }
     if ($target == "comment" && $action == "remove") {
-        return sprintf("%s %s", _("Game note"), _("removed"));
+        return _("Game note removed");
     }
     if ($target == "comment") {
         return _("Game note");
     }
     if ($target == "mediaevent") {
-        return sprintf("%s %s", _("Media"), $action == "remove" ? _("removed") : _("added"));
+        return $action == "remove" ? _("Media removed") : _("Media added");
     }
     if ($target == "gameevent") {
         $type = (string) ($detail['type'] ?? "");
         if ($type == "start" && $action == "remove") {
-            return sprintf("%s %s", _("Starting offence"), _("removed"));
+            return _("Starting offence removed");
         }
         if ($type == "start") {
             return sprintf(
@@ -655,7 +655,7 @@ function GameHistoryFormatDetail($row)
             $capName = _("Cap event");
         }
         if ($action == "remove") {
-            return sprintf("%s %s", $capName, _("removed"));
+            return sprintf(_("%s removed"), $capName);
         }
         return $capName;
     }
