@@ -2890,27 +2890,27 @@ function GameTimeResume($gameId)
         die('Insufficient rights to edit game events');
     }
 
-    $query = sprintf("SELECT timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id = %d LIMIT 1", $gameId);
-    $row = DBQueryToRow($query);
+    // The elapsed pause is added from the row's own timer_pause_start rather
+    // than from a value read first: a read-then-write pair has no guard value
+    // that cannot repeat, since time() has one-second resolution and a pause
+    // in the same second as the previous one reuses the timestamp. The clock
+    // source stays PHP's, so a separate database host's clock cannot skew the
+    // duration.
+    $updateQuery = sprintf(
+        "UPDATE uo_game
+      SET timer_paused_duration = timer_paused_duration + GREATEST(0, %d - timer_pause_start),
+          timer_pause_start = NULL
+      WHERE game_id = %d AND timer_pause_start IS NOT NULL",
+        time(),
+        $gameId,
+    );
 
-    if ($row && $row['timer_pause_start']) {
-        $pausedTime = time() - (int) $row['timer_pause_start'];
-        $totalPaused = (int) $row['timer_paused_duration'] + $pausedTime;
-
-        // Guarded on the pause this call read, so two concurrent resumes
-        // cannot both add their own paused duration or both record.
-        $updateQuery = sprintf("UPDATE uo_game SET timer_paused_duration = %d, timer_pause_start = NULL
-      WHERE game_id = %d AND timer_pause_start = %d", $totalPaused, $gameId, (int) $row['timer_pause_start']);
-
-        $result = DBQuery($updateQuery);
-        if (DBAffectedRows() < 1) {
-            return false;
-        }
-        GameHistoryRecord($gameId, "timer", "resume");
-        return $result;
+    $result = DBQuery($updateQuery);
+    if (DBAffectedRows() < 1) {
+        return false; // Not paused, or another request resumed first
     }
-
-    return false; // Not paused or invalid
+    GameHistoryRecord($gameId, "timer", "resume");
+    return $result;
 }
 
 function GameTimeSetElapsed($gameId, $elapsedSeconds)
