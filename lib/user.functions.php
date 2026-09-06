@@ -791,6 +791,19 @@ function hasEditGameEventsRight($game)
     }
     return true;
 }
+
+function hasRestoreGameHistoryRight($game)
+{
+    $season = SeriesSeasonId(GameSeries($game));
+    if (!isSeasonAdmin($season)) {
+        return false;
+    }
+    if (isEventReadonly($season) && !canBypassEventReadonly($season)) {
+        return false;
+    }
+    return true;
+}
+
 function hasAccredidationRight($team)
 {
     $series = getTeamSeries($team);

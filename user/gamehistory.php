@@ -25,10 +25,14 @@ $title = _("History");
 $html = "";
 $feedback = "";
 
+$canRestore = hasRestoreGameHistoryRight($gameId);
+
 if (!empty($_POST['restore']) && !empty($_POST['history_id'])) {
     $historyId = intval($_POST['history_id']);
     $restoreEntry = GameHistoryEntry($historyId);
-    if ($restoreEntry === null || (int) $restoreEntry['game'] !== $gameId) {
+    if (!$canRestore) {
+        $feedback .= "<p class='warning'>" . _("Insufficient rights.") . "</p>";
+    } elseif ($restoreEntry === null || (int) $restoreEntry['game'] !== $gameId) {
         $feedback .= "<p class='warning'>" . _("Restore failed") . ".</p>";
     } else {
         $outcome = GameHistoryRestore($historyId);
@@ -101,11 +105,13 @@ if ($count === 0) {
         if (!empty($row['has_snapshot'])) {
             $html .= "<a href='?view=user/gamehistory&amp;game=$gameId&amp;entry="
                 . intval($row['history_id']) . "'>" . _("Show") . "</a> ";
-            $html .= "<form method='post' style='display:inline'>";
-            $html .= "<input type='hidden' name='history_id' value='" . intval($row['history_id']) . "'/>";
-            $html .= "<input type='submit' name='restore' value='" . _("Restore this version")
-                . "' onclick='return confirm(\"" . $confirmText . "\");'/>";
-            $html .= "</form>";
+            if ($canRestore) {
+                $html .= "<form method='post' style='display:inline'>";
+                $html .= "<input type='hidden' name='history_id' value='" . intval($row['history_id']) . "'/>";
+                $html .= "<input type='submit' name='restore' value='" . _("Restore this version")
+                    . "' onclick='return confirm(\"" . $confirmText . "\");'/>";
+                $html .= "</form>";
+            }
         }
         $html .= "</td></tr>\n";
     }

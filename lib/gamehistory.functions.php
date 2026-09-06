@@ -684,35 +684,19 @@ function GameHistoryRestore($historyId)
     $snapshot = $entry['snapshot'];
 
     // The replay is not transactional and a die() inside a mutator would abort
-    // mid-rebuild, so every right the replay needs is checked up front. This
-    // set must stay a superset of the replayed mutators' own checks:
-    // hasEditGamePlayersRight() for GameAddPlayer()/GameAddNewPlayer(),
-    // hasEditGameEventsRight() for everything else.
-    if (!hasEditGameEventsRight($gameId) || !hasEditGamePlayersRight($gameId)) {
+    // mid-rebuild, so the right is checked up front. Restoring is an event
+    // admin action, so this is stricter than every right the replayed mutators
+    // check for themselves.
+    if (!hasRestoreGameHistoryRight($gameId)) {
         return $failed;
     }
     $seasonId = GameSeason($gameId);
-
-    // Restoring an "acknowledged" flag is an accreditation mutation even
-    // though GameHistoryRestorePlayers() writes uo_played directly, so it
-    // needs a third right, for each team with an acknowledged player.
-    $acknowledgedTeams = [];
-    foreach ($snapshot['played'] ?? [] as $row) {
-        if (!empty($row['acknowledged'])) {
-            $acknowledgedTeams[(int) $row['team']] = true;
-        }
-    }
-    foreach (array_keys($acknowledgedTeams) as $teamId) {
-        if (!hasAccredidationRight($teamId)) {
-            return $failed;
-        }
-    }
 
     // SetGame() and GameChangeHome() never snapshot, so a snapshot taken
     // before either is a scoresheet for a fixture this game no longer
     // represents. Replaying it would write rows for teams that are not in the
     // game, so unlike the two warnings below this rejects. Checked after the
-    // rights above so an unauthorized caller cannot learn the fixture changed.
+    // right above so an unauthorized caller cannot learn the fixture changed.
     if (!empty($entry['fixture_mismatch'])) {
         return [
             'restored' => false,
@@ -925,7 +909,7 @@ function GameHistoryRestore($historyId)
  * "already on this game's roster" exception can no longer rescue a player the
  * snapshot recorded as acknowledged. That is why this takes a history id
  * rather than a caller-supplied row set, and repeats GameHistoryRestore()'s
- * full guard rather than inheriting it.
+ * guard rather than inheriting it.
  */
 function GameHistoryRestorePlayers($historyId, &$warnings)
 {
@@ -936,7 +920,7 @@ function GameHistoryRestorePlayers($historyId, &$warnings)
         return $idMap;
     }
     $gameId = (int) $entry['game'];
-    if (!hasEditGameEventsRight($gameId) || !hasEditGamePlayersRight($gameId)) {
+    if (!hasRestoreGameHistoryRight($gameId)) {
         return $idMap;
     }
     // The entry above is loaded with the mismatch allowed, so the fixture
@@ -946,11 +930,6 @@ function GameHistoryRestorePlayers($historyId, &$warnings)
     }
 
     $playedRows = $entry['snapshot']['played'] ?? [];
-    foreach ($playedRows as $row) {
-        if (!empty($row['acknowledged']) && !hasAccredidationRight((int) $row['team'])) {
-            return $idMap;
-        }
-    }
 
     // Ambiguity pre-scan on the same (team, num) the rematch query uses. Two
     // deleted snapshot rows sharing a jersey number would both collapse onto
@@ -1073,10 +1052,10 @@ function GameHistoryRestorePlayers($historyId, &$warnings)
         // unnumbered player stays SQL NULL rather than becoming a 0.
         $num = ($row['num'] ?? null) === null ? "NULL" : (string) (int) $row['num'];
 
-        // The up-front guard only covers the teams the snapshot recorded, so a
-        // player who has since moved teams needs the right rechecked against
-        // their current one. A missing right downgrades this row rather than
-        // aborting the restore.
+        // Writing an acknowledged flag is an accreditation mutation, checked
+        // against the player's current team the way AcknowledgeUnaccredited()
+        // does. A missing right downgrades this row rather than aborting the
+        // restore.
         $acknowledged = !empty($row['acknowledged']) ? 1 : 0;
         if ($acknowledged) {
             $currentTeam = (int) DBQueryToValue(sprintf(
