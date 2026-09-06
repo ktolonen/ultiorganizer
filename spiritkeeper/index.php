@@ -1,6 +1,9 @@
 <?php
 
-define('UO_APP_SOURCE', 'spiritkeeper');
+// Guard: index.php may already have defined this while routing here.
+if (!defined('UO_APP_SOURCE')) {
+    define('UO_APP_SOURCE', 'spiritkeeper');
+}
 
 include_once '../lib/database.php';
 OpenConnection();
