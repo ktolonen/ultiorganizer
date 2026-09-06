@@ -918,13 +918,23 @@ function GameRemoveAllGameEvents($gameId)
         GameHistorySnapshotIfNeeded($gameId);
         $types = array_merge(['offence'], GameCapEventTypes());
         $typeList = "'" . implode("','", array_map('DBEscapeString', $types)) . "'";
+        $removed = (int) DBQueryToValue(sprintf(
+            "SELECT COUNT(*) FROM uo_gameevent WHERE game=%d AND type IN (%s)",
+            $gameId,
+            $typeList,
+        ));
         $query = sprintf(
             "DELETE FROM uo_gameevent WHERE game=%d AND type IN (%s)",
             $gameId,
             $typeList,
         );
+        $result = DBQuery($query);
 
-        return DBQuery($query);
+        // Suppressed while GameHistoryRestore() replays, so this row appears
+        // only for a caller that deletes outside a restore.
+        GameHistoryRecord($gameId, "gameevent", "clear", ['removed' => $removed]);
+
+        return $result;
     } else {
         die('Insufficient rights to edit game');
     }
@@ -2857,6 +2867,14 @@ function GameTimePause($gameId)
     $gameId = (int) $gameId;
     if (!hasEditGameEventsRight($gameId)) {
         die('Insufficient rights to edit game events');
+    }
+
+    $row = DBQueryToRow(sprintf(
+        "SELECT isongoing, timer_pause_start FROM uo_game WHERE game_id = %d LIMIT 1",
+        $gameId,
+    ));
+    if (!$row || empty($row['isongoing']) || $row['timer_pause_start'] !== null) {
+        return false; // Not running, or already paused
     }
 
     $query = sprintf("UPDATE uo_game SET timer_pause_start = %d

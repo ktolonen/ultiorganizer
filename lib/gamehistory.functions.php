@@ -638,6 +638,9 @@ function GameHistoryFormatDetail($row)
     if ($target == "mediaevent") {
         return $action == "remove" ? _("Media removed") : _("Media added");
     }
+    if ($target == "gameevent" && $action == "clear") {
+        return sprintf(_("Game events removed: %d"), (int) ($detail['removed'] ?? 0));
+    }
     if ($target == "gameevent") {
         $type = (string) ($detail['type'] ?? "");
         if ($type == "start" && $action == "remove") {
