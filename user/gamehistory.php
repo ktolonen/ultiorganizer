@@ -135,6 +135,12 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
         $html .= "</tr>\n";
     }
     $html .= "</table>\n";
+} elseif ($viewEntry !== null && !empty($viewEntry['fixture_mismatch'])) {
+    // GameHistoryEntry() withholds the snapshot itself, so without this the
+    // "Show" link would render an empty page with no explanation.
+    $html .= "<p class='warning'>"
+        . _("This saved state is not shown: the home and away teams have changed since it was taken.")
+        . "</p>\n";
 }
 
 echo $html;
