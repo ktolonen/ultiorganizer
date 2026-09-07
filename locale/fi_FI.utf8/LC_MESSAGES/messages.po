@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 20:31+0300\n"
+"POT-Creation-Date: 2026-09-07 07:19+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -66,7 +66,7 @@ msgstr "%s - uusi pistekatto %d"
 msgid "%s called at"
 msgstr "%s ilmoitettu ajassa"
 
-#: lib/gamehistory.functions.php:715
+#: lib/gamehistory.functions.php:723
 #, php-format
 msgid "%s removed"
 msgstr "%s poistettu"
@@ -271,12 +271,14 @@ msgstr "Kuittaa"
 msgid "Acknowledged"
 msgstr "Kuitattu"
 
-#: lib/gamehistory.functions.php:1126
+#: lib/gamehistory.functions.php:1134
 #, php-format
 msgid ""
 "Acknowledgement not restored for player %s: accreditation right missing for "
 "their current team."
-msgstr "Kuittausta ei palautettu pelaajalle %s: akkreditointioikeus puuttuu hänen nykyiseen joukkueeseensa."
+msgstr ""
+"Kuittausta ei palautettu pelaajalle %s: akkreditointioikeus puuttuu hänen "
+"nykyiseen joukkueeseensa."
 
 #: timekeeper/index.php:150
 msgid "Actions"
@@ -448,7 +450,10 @@ msgstr "Ylläpitäjän ohje"
 msgid ""
 "Admin rights delegated to specific divisions, teams, games, or reservations "
 "are not migrated by a replace import. Re-grant access for: %s."
-msgstr "Korvaava tuonti ei siirrä yksittäisille sarjoille, joukkueille, peleille tai varauksille annettuja ylläpito-oikeuksia. Myönnä käyttöoikeudet uudelleen: %s."
+msgstr ""
+"Korvaava tuonti ei siirrä yksittäisille sarjoille, joukkueille, peleille tai "
+"varauksille annettuja ylläpito-oikeuksia. Myönnä käyttöoikeudet uudelleen: "
+"%s."
 
 #: menufunctions.php:473 menufunctions.php:525
 msgid "Administration"
@@ -594,7 +599,9 @@ msgstr "Sallii joukkueiden lähettää osallistumispyyntöjä tähän tapahtumaa
 msgid ""
 "Allows users without event responsibilities to open this event's public "
 "pages."
-msgstr "Sallii tapahtumaan kuulumattomien käyttäjien avata tämän tapahtuman julkiset sivut."
+msgstr ""
+"Sallii tapahtumaan kuulumattomien käyttäjien avata tämän tapahtuman julkiset "
+"sivut."
 
 #: admin/dbadmin.php:56
 msgid "Always take a full database backup before running the conversion."
@@ -770,7 +777,7 @@ msgstr "Vierasjoukkueen spirit-keskeytykset"
 
 #: cust/bula/pdfscoresheet.php:72 cust/default/pdfscoresheet.php:69
 #: cust/gummis/pdfscoresheet.php:70 cust/slkl/pdfscoresheet.php:69
-#: cust/windmill/pdfscoresheet.php:72 lib/gamehistory.functions.php:707
+#: cust/windmill/pdfscoresheet.php:72 lib/gamehistory.functions.php:715
 #: user/adddefensesheet.php:210 user/addscoresheet.php:558
 msgid "Away team"
 msgstr "Vierasjoukkue"
@@ -978,7 +985,7 @@ msgstr "Peruuta"
 msgid "Cancel and return to scoresheet"
 msgstr "Peruuta ja palaa pöytäkirjaan"
 
-#: lib/gamehistory.functions.php:712
+#: lib/gamehistory.functions.php:720
 msgid "Cap event"
 msgstr "Cap-tapahtuma"
 
@@ -1116,7 +1123,9 @@ msgstr "Valitse näytettävät sarjat"
 msgid ""
 "Choose whether to update the existing event or import the snapshot as a new "
 "event."
-msgstr "Valitse, päivitetäänkö olemassa oleva tapahtuma vai tuodaanko tilannevedos uutena tapahtumana."
+msgstr ""
+"Valitse, päivitetäänkö olemassa oleva tapahtuma vai tuodaanko tilannevedos "
+"uutena tapahtumana."
 
 #: clubcard.php:57 user/clubprofile.php:171
 msgid "City"
@@ -1422,7 +1431,9 @@ msgstr "Kopioi pelaajalista:"
 msgid ""
 "Copy the block below to an AI assistant, update the language values, then "
 "paste the result back here for preview."
-msgstr "Kopioi alla oleva lohko tekoälyavustajalle, päivitä kieliarvot ja liitä tulos takaisin tähän esikatselua varten."
+msgstr ""
+"Kopioi alla oleva lohko tekoälyavustajalle, päivitä kieliarvot ja liitä "
+"tulos takaisin tähän esikatselua varten."
 
 #: register.php:79 admin/adduser.php:95 user/addextraemail.php:49
 msgid "Correct the errors and try again"
@@ -1445,7 +1456,9 @@ msgstr "Tapahtuman tilannevedoksen luonti epäonnistui."
 msgid ""
 "Could not keep the import file for confirmation. Select the file again to "
 "import it."
-msgstr "Tuontitiedostoa ei voitu säilyttää vahvistusta varten. Valitse tiedosto uudelleen."
+msgstr ""
+"Tuontitiedostoa ei voitu säilyttää vahvistusta varten. Valitse tiedosto "
+"uudelleen."
 
 #: lib/data.functions.php:216
 msgid "Could not read import file."
@@ -1610,7 +1623,7 @@ msgstr "Oletuskieli"
 msgid "Default Timezone"
 msgstr "Oletusaikavyöhyke"
 
-#: lib/gamehistory.functions.php:672 user/adddefensesheet.php:135
+#: lib/gamehistory.functions.php:680 user/adddefensesheet.php:135
 #: user/adddefensesheet.php:140 user/adddefensesheet.php:166
 #: user/adddefensesheet.php:175
 msgid "Defence"
@@ -1647,11 +1660,11 @@ msgstr "Puolustuspöytäkirja tallennettu"
 #: defensestatus.php:80 defensestatus.php:82 gameplay.php:679 gameplay.php:702
 #: teamcard.php:127 teamcard.php:430 teamcard.php:521
 #: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1731
-#: lib/gamehistory.functions.php:666
+#: lib/gamehistory.functions.php:674
 msgid "Defences"
 msgstr "Puolustukset"
 
-#: lib/gamehistory.functions.php:661
+#: lib/gamehistory.functions.php:669
 #, php-format
 msgid "Defences removed: %d"
 msgstr "Puolustuksia poistettu: %d"
@@ -1942,7 +1955,9 @@ msgstr "Tasapelit sallittu"
 #: lib/data.functions.php:719
 #, php-format
 msgid "Dropped %1$d %2$s row(s) referencing data outside the event."
-msgstr "Pudotettu %1$d riviä (%2$s), jotka viittaavat tapahtuman ulkopuoliseen tietoon."
+msgstr ""
+"Pudotettu %1$d riviä (%2$s), jotka viittaavat tapahtuman ulkopuoliseen "
+"tietoon."
 
 #: lib/data.functions.php:528
 #, php-format
@@ -2178,7 +2193,7 @@ msgstr "Virhe: Tuloksia ei voitu tallentaa."
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:2454
+#: lib/game.functions.php:2466
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -2260,7 +2275,7 @@ msgstr "Tapahtuman määrittely pakollista"
 msgid "Event not found"
 msgstr "Tapahtumaa ei löydy"
 
-#: lib/game.functions.php:1276 lib/gamehistory.functions.php:775
+#: lib/game.functions.php:1276 lib/gamehistory.functions.php:783
 msgid "Event played."
 msgstr "Tapahtuma pelattu."
 
@@ -2299,7 +2314,8 @@ msgstr "Tapahtumat"
 
 #: lib/data.functions.php:783 lib/data.functions.php:1390
 msgid "Every imported player must have a player profile in the event snapshot."
-msgstr "Jokaisella tuotavalla pelaajalla on oltava pelaajaprofiili tilannevedoksessa."
+msgstr ""
+"Jokaisella tuotavalla pelaajalla on oltava pelaajaprofiili tilannevedoksessa."
 
 #: admin/dbadmin.php:124 admin/dbadmin.php:138
 msgid "Execute"
@@ -2762,7 +2778,7 @@ msgstr "Pelikellon aikarajat"
 msgid "Game events"
 msgstr "Pelitapahtumat"
 
-#: lib/gamehistory.functions.php:696
+#: lib/gamehistory.functions.php:704
 #, php-format
 msgid "Game events removed: %d"
 msgstr "Pelitapahtumia poistettu: %d"
@@ -2820,13 +2836,13 @@ msgstr "Peliä ei löydy"
 msgid "Game not started yet."
 msgstr "Peli ei ole vielä alkanut."
 
-#: gameplay.php:647 lib/gamehistory.functions.php:690 mobile/addcomment.php:10
+#: gameplay.php:647 lib/gamehistory.functions.php:698 mobile/addcomment.php:10
 #: mobile/addscoresheet.php:223 scorekeeper/addcomment.php:28
 #: scorekeeper/addscoresheet.php:508 user/addscoresheet.php:570
 msgid "Game note"
 msgstr "Peli-kommentti"
 
-#: lib/gamehistory.functions.php:687
+#: lib/gamehistory.functions.php:695
 msgid "Game note removed"
 msgstr "Peli-kommentti poistettu"
 
@@ -3254,7 +3270,7 @@ msgstr "Historia"
 msgid "Home"
 msgstr "Koti"
 
-#: lib/gamehistory.functions.php:655
+#: lib/gamehistory.functions.php:663
 msgid "Home and away teams swapped"
 msgstr "Koti- ja vierasjoukkue vaihdettu"
 
@@ -3269,7 +3285,7 @@ msgstr "Kotijoukkueen spirit-keskeytykset"
 #: admin/editgame.php:203 cust/bula/pdfscoresheet.php:71
 #: cust/default/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:69
 #: cust/slkl/pdfscoresheet.php:68 cust/windmill/pdfscoresheet.php:71
-#: lib/gamehistory.functions.php:707 user/adddefensesheet.php:208
+#: lib/gamehistory.functions.php:715 user/adddefensesheet.php:208
 #: user/addscoresheet.php:556
 msgid "Home team"
 msgstr "Kotijoukkue"
@@ -3365,7 +3381,9 @@ msgstr "Kuva"
 msgid ""
 "Image resolution is too large. The maximum is %1$d x %2$d pixels and %3$d "
 "megapixels."
-msgstr "Kuvan tarkkuus on liian suuri. Enimmäiskoko on %1$d x %2$d pikseliä ja %3$d megapikseliä."
+msgstr ""
+"Kuvan tarkkuus on liian suuri. Enimmäiskoko on %1$d x %2$d pikseliä ja %3$d "
+"megapikseliä."
 
 #: lib/club.functions.php:234 lib/player.functions.php:1132
 #: lib/season.functions.php:1334 lib/season.functions.php:1338
@@ -3399,7 +3417,10 @@ msgstr "Tuo tapahtuman tiedot"
 msgid ""
 "Import file snapshot version: %s; supported snapshot version: %d; import "
 "file database schema version: %s; current database schema version: %d."
-msgstr "Tuontitiedoston tilannevedoksen versio: %s; tuettu tilannevedoksen versio: %d; tuontitiedoston tietokantaskeeman versio: %s; nykyinen tietokantaskeeman versio: %d."
+msgstr ""
+"Tuontitiedoston tilannevedoksen versio: %s; tuettu tilannevedoksen versio: "
+"%d; tuontitiedoston tietokantaskeeman versio: %s; nykyinen tietokantaskeeman "
+"versio: %d."
 
 #: user/addplayerlists.php:301 user/addplayerlists.php:380
 msgid "In"
@@ -3691,7 +3712,9 @@ msgstr ""
 msgid ""
 "Legacy XML event exports are no longer supported. Export a JSON event "
 "snapshot from a current Ultiorganizer installation and import that file."
-msgstr "Vanhoja XML-vientejä ei enää tueta. Vie JSON-tilannevedos nykyisestä Ultiorganizer-asennuksesta ja tuo se tiedosto."
+msgstr ""
+"Vanhoja XML-vientejä ei enää tueta. Vie JSON-tilannevedos nykyisestä "
+"Ultiorganizer-asennuksesta ja tuo se tiedosto."
 
 #: admin/spiritsettings.php:89
 msgid ""
@@ -3908,7 +3931,7 @@ msgstr "Massa akkreditointi"
 msgid "Mass input"
 msgstr "Joukkosyöttäminen"
 
-#: lib/gamehistory.functions.php:693
+#: lib/gamehistory.functions.php:701
 msgid "Media added"
 msgstr "Media lisätty"
 
@@ -3916,7 +3939,7 @@ msgstr "Media lisätty"
 msgid "Media owner"
 msgstr "Median omistaja"
 
-#: lib/gamehistory.functions.php:693
+#: lib/gamehistory.functions.php:701
 msgid "Media removed"
 msgstr "Media poistettu"
 
@@ -4529,7 +4552,9 @@ msgstr "Kesken"
 msgid ""
 "Only JSON event snapshots are supported. Legacy XML exports cannot be "
 "imported."
-msgstr "Vain JSON-muotoiset tilannevedokset ovat tuettuja. Vanhoja XML-vientejä ei voi tuoda."
+msgstr ""
+"Vain JSON-muotoiset tilannevedokset ovat tuettuja. Vanhoja XML-vientejä ei "
+"voi tuoda."
 
 #: admin/eventviewer.php:105
 msgid "Only user"
@@ -4788,25 +4813,29 @@ msgstr "Pelatut pelit"
 msgid "Player"
 msgstr "Pelaaja"
 
-#: lib/gamehistory.functions.php:819 lib/gamehistory.functions.php:1064
-#: lib/gamehistory.functions.php:1087
+#: lib/gamehistory.functions.php:827 lib/gamehistory.functions.php:1072
+#: lib/gamehistory.functions.php:1095
 #, php-format
 msgid "Player %s could not be restored."
 msgstr "Pelaajaa %s ei voitu palauttaa."
 
-#: lib/gamehistory.functions.php:1051 lib/gamehistory.functions.php:1081
-#: lib/gamehistory.functions.php:1096
+#: lib/gamehistory.functions.php:1059 lib/gamehistory.functions.php:1089
+#: lib/gamehistory.functions.php:1104
 #, php-format
 msgid ""
 "Player %s could not be restored: jersey number %d is not unique on team %s."
-msgstr "Pelaajaa %s ei voitu palauttaa: pelinumero %d ei ole yksilöllinen joukkueessa %s."
+msgstr ""
+"Pelaajaa %s ei voitu palauttaa: pelinumero %d ei ole yksilöllinen "
+"joukkueessa %s."
 
-#: lib/gamehistory.functions.php:1042
+#: lib/gamehistory.functions.php:1050
 #, php-format
 msgid ""
 "Player %s now plays for %s, so their restored roster entry lists under that "
 "team."
-msgstr "Pelaaja %s pelaa nyt joukkueessa %s, joten palautettu pelaajalistamerkintä näkyy sen joukkueen alla."
+msgstr ""
+"Pelaaja %s pelaa nyt joukkueessa %s, joten palautettu pelaajalistamerkintä "
+"näkyy sen joukkueen alla."
 
 #: admin/dbadmin.php:78
 msgid "Player anonymization"
@@ -4990,7 +5019,7 @@ msgstr ""
 #: admin/spirit.php:520 admin/tdtools.php:92 cust/bula/pdfscoresheet.php:73
 #: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
 #: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:1611
-#: cust/windmill/pdfscoresheet.php:73
+#: cust/windmill/pdfscoresheet.php:73 lib/gamehistory.functions.php:658
 msgid "Pool"
 msgstr "Lohko"
 
@@ -5010,7 +5039,7 @@ msgstr "Lohkon pelejä ei olla pelattu:"
 msgid "Pool is completed:"
 msgstr "Lohko on pelattu:"
 
-#: lib/game.functions.php:1271 lib/gamehistory.functions.php:772
+#: lib/game.functions.php:1271 lib/gamehistory.functions.php:780
 msgid "Pool is locked."
 msgstr "Lohko on lukittu."
 
@@ -5294,7 +5323,9 @@ msgstr "Poista raja"
 #, php-format
 msgid ""
 "Removed %d player profile(s) the replace import left without any player."
-msgstr "Poistettu %d pelaajaprofiilia, jotka jäivät korvaavan tuonnin jälkeen ilman pelaajaa."
+msgstr ""
+"Poistettu %d pelaajaprofiilia, jotka jäivät korvaavan tuonnin jälkeen ilman "
+"pelaajaa."
 
 #: admin/addseasons.php:398
 msgid "Removes point/defence time input fields from Scorekeeper sheets."
@@ -5401,11 +5432,13 @@ msgstr "Palauta varmuuskopio"
 msgid "Restore failed"
 msgstr "Palautus epäonnistui"
 
-#: lib/gamehistory.functions.php:761
+#: lib/gamehistory.functions.php:769
 msgid ""
 "Restore refused: the home and away teams have changed since this snapshot "
 "was taken."
-msgstr "Palautus estetty: koti- ja vierasjoukkue ovat vaihtuneet tämän tallennetun tilan jälkeen."
+msgstr ""
+"Palautus estetty: koti- ja vierasjoukkue ovat vaihtuneet tämän tallennetun "
+"tilan jälkeen."
 
 #: user/gamehistory.php:111
 msgid "Restore this version"
@@ -5441,12 +5474,12 @@ msgstr "Tulosta ei tallennettu!"
 msgid "Result saved!"
 msgstr "Tulos tallennettu!"
 
-#: lib/game.functions.php:2451
+#: lib/game.functions.php:2463
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:2448
+#: lib/game.functions.php:2460
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -5881,7 +5914,8 @@ msgstr "Pöytäkirjan historia"
 
 #: user/addscoresheet.php:410
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
-msgstr "Pöytäkirjaa ei tallennettu. Korjaa korostetut pisteet ja tallenna uudelleen."
+msgstr ""
+"Pöytäkirjaa ei tallennettu. Korjaa korostetut pisteet ja tallenna uudelleen."
 
 #: user/addscoresheet.php:522
 msgid "Scoresheet saved"
@@ -6310,7 +6344,9 @@ msgstr "Hopea"
 msgid ""
 "Snapshot column %s.%s is not used by this Ultiorganizer version and was "
 "skipped."
-msgstr "Tilannevedoksen saraketta %s.%s ei käytetä tässä Ultiorganizer-versiossa, joten se ohitettiin."
+msgstr ""
+"Tilannevedoksen saraketta %s.%s ei käytetä tässä Ultiorganizer-versiossa, "
+"joten se ohitettiin."
 
 #: admin/addseasons.php:456 admin/serverconf.php:299
 msgid "Soft maintenance mode"
@@ -6513,7 +6549,7 @@ msgid "Spirit settings were not saved."
 msgstr "Spirit-asetuksia ei tallennettu."
 
 #: gameplay.php:63 ext/rss.php:151 ext/rss.php:195
-#: lib/gamehistory.functions.php:684 mobile/gameplay.php:59
+#: lib/gamehistory.functions.php:692 mobile/gameplay.php:59
 #: mobile/gameplay.php:116 scorekeeper/endgame.php:22
 #: scorekeeper/gameplay.php:23
 msgid "Spirit stoppage"
@@ -6540,7 +6576,7 @@ msgstr "Spirit-keskeytykset (aika)"
 msgid "Spirit stoppages recorded for this event."
 msgstr "Tähän tapahtumaan on kirjattu spirit-keskeytyksiä."
 
-#: lib/gamehistory.functions.php:681
+#: lib/gamehistory.functions.php:689
 #, php-format
 msgid "Spirit stoppages removed: %d"
 msgstr "Spirit-keskeytyksiä poistettu: %d"
@@ -6602,11 +6638,11 @@ msgstr "Käynnistä pelikello ennen maalien lisäämistä."
 msgid "Start time"
 msgstr "Alkuaika"
 
-#: lib/gamehistory.functions.php:706
+#: lib/gamehistory.functions.php:714
 msgid "Starting offence"
 msgstr "Aloittava hyökkäys"
 
-#: lib/gamehistory.functions.php:701
+#: lib/gamehistory.functions.php:709
 msgid "Starting offence removed"
 msgstr "Aloittava hyökkäys poistettu"
 
@@ -6814,7 +6850,7 @@ msgstr "Aikalisän ottava joukkue"
 #: admin/poolmoves.php:395 admin/seasonadmin.php:83 admin/seasonpools.php:235
 #: admin/seasonseries.php:122 admin/seasonstats.php:21 admin/seasonstats.php:35
 #: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:136
-#: lib/gamehistory.functions.php:655
+#: lib/gamehistory.functions.php:663
 msgid "Teams"
 msgstr "Joukkueet"
 
@@ -6845,7 +6881,9 @@ msgstr "Vierasjoukkue on BYE-joukkue. Kayta ehdotettua tulosta: %s - %s"
 msgid ""
 "The banner is shown at the top of the event's public pages. A wide image "
 "works best, for example 1600 x 400 pixels."
-msgstr "Banneri näytetään tapahtuman julkisten sivujen yläreunassa. Leveä kuva toimii parhaiten, esimerkiksi 1600 x 400 pikseliä."
+msgstr ""
+"Banneri näytetään tapahtuman julkisten sivujen yläreunassa. Leveä kuva "
+"toimii parhaiten, esimerkiksi 1600 x 400 pikseliä."
 
 #: admin/addseasonusers.php:23 admin/addteamadmins.php:25
 msgid "The event is read-only. Access rights cannot be changed."
@@ -6874,7 +6912,11 @@ msgid ""
 "configured on this installation, so extra categories were added to that "
 "mode. Spirit scoring may show mismatched categories; this import flow "
 "expects snapshots from the same installation."
-msgstr "Tapahtuman spirit-kategoriat eivät vastanneet tähän asennukseen jo määritettyä spirit-tilaa, joten tilaan lisättiin ylimääräisiä kategorioita. Spirit-pisteytys voi näyttää yhteensopimattomia kategorioita; tämä tuontitapa olettaa tilannevedoksen olevan samasta asennuksesta."
+msgstr ""
+"Tapahtuman spirit-kategoriat eivät vastanneet tähän asennukseen jo "
+"määritettyä spirit-tilaa, joten tilaan lisättiin ylimääräisiä kategorioita. "
+"Spirit-pisteytys voi näyttää yhteensopimattomia kategorioita; tämä "
+"tuontitapa olettaa tilannevedoksen olevan samasta asennuksesta."
 
 #: user/addresult.php:103
 #, php-format
@@ -6944,13 +6986,16 @@ msgstr ""
 msgid ""
 "The uploaded file is too large for the server. Please contact the system "
 "administrator to raise the allowed upload size."
-msgstr "Lähetetty tiedosto on palvelimelle liian suuri. Pyydä järjestelmänvalvojaa nostamaan sallittua tiedostokokoa."
+msgstr ""
+"Lähetetty tiedosto on palvelimelle liian suuri. Pyydä järjestelmänvalvojaa "
+"nostamaan sallittua tiedostokokoa."
 
 #: admin/eventdataimport.php:90
 msgid ""
 "The uploaded import file is no longer available. Select the file again to "
 "import it."
-msgstr "Lähetetty tuontitiedosto ei ole enää saatavilla. Valitse tiedosto uudelleen."
+msgstr ""
+"Lähetetty tuontitiedosto ei ole enää saatavilla. Valitse tiedosto uudelleen."
 
 #: register.php:31 admin/adduser.php:28
 msgid "The username is already in use"
@@ -7006,7 +7051,10 @@ msgid ""
 "This frees the space the change history takes. Results, rosters and "
 "scoresheets are not changed, but the record of who changed them and the "
 "option to restore an earlier version are lost permanently."
-msgstr "Tämä vapauttaa muutoshistorian viemän tilan. Tuloksia, pelaajalistoja tai pöytäkirjoja ei muuteta, mutta tieto siitä kuka niitä on muuttanut ja mahdollisuus palauttaa aiempi versio menetetään pysyvästi."
+msgstr ""
+"Tämä vapauttaa muutoshistorian viemän tilan. Tuloksia, pelaajalistoja tai "
+"pöytäkirjoja ei muuteta, mutta tieto siitä kuka niitä on muuttanut ja "
+"mahdollisuus palauttaa aiempi versio menetetään pysyvästi."
 
 #: result.php:70
 msgid "This game has already been played. Current result:"
@@ -7029,7 +7077,13 @@ msgid ""
 "level admin rights and matched existing player profiles are left unchanged, "
 "but admin rights delegated to specific divisions, teams, games, or "
 "reservations must be re-granted after the import."
-msgstr "Tämä toiminto korvaa valitun tapahtuman tapahtumakohtaiset tiedot JSON-tilannevedoksella. Tilannevedoksesta puuttuvat tapahtuman rivit poistetaan. Tapahtumatason ylläpito-oikeudet ja tunnistetut olemassa olevat pelaajaprofiilit säilyvät ennallaan, mutta yksittäisille sarjoille, joukkueille, peleille tai varauksille annetut ylläpito-oikeudet on myönnettävä uudelleen tuonnin jälkeen."
+msgstr ""
+"Tämä toiminto korvaa valitun tapahtuman tapahtumakohtaiset tiedot JSON-"
+"tilannevedoksella. Tilannevedoksesta puuttuvat tapahtuman rivit poistetaan. "
+"Tapahtumatason ylläpito-oikeudet ja tunnistetut olemassa olevat "
+"pelaajaprofiilit säilyvät ennallaan, mutta yksittäisille sarjoille, "
+"joukkueille, peleille tai varauksille annetut ylläpito-oikeudet on "
+"myönnettävä uudelleen tuonnin jälkeen."
 
 #: user/gamehistory.php:96
 msgid "This overwrites the current scoresheet with this saved version."
@@ -7054,7 +7108,9 @@ msgstr ""
 msgid ""
 "This saved state is not shown: the home and away teams have changed since it "
 "was taken."
-msgstr "Tätä tallennettua tilaa ei näytetä: koti- ja vierasjoukkue ovat vaihtuneet sen tallentamisen jälkeen."
+msgstr ""
+"Tätä tallennettua tilaa ei näytetä: koti- ja vierasjoukkue ovat vaihtuneet "
+"sen tallentamisen jälkeen."
 
 #: spiritkeeper/teamgames.php:162
 msgid "This spirit submission is currently read-only."
@@ -7135,7 +7191,7 @@ msgid "Timekeeper templates"
 msgstr "Timekeeper-pohjat"
 
 #: gameplay.php:61 ext/rss.php:149 ext/rss.php:193
-#: lib/gamehistory.functions.php:678 lib/timekeeper.functions.php:14
+#: lib/gamehistory.functions.php:686 lib/timekeeper.functions.php:14
 #: lib/timekeeper.functions.php:35 timekeeper/index.php:44
 msgid "Timeout"
 msgstr "Aikalisä"
@@ -7183,7 +7239,7 @@ msgstr "Aikalisiä lisäajalla"
 msgid "Timeouts on overtime"
 msgstr "Aikalisiä lisäajalla"
 
-#: lib/gamehistory.functions.php:675
+#: lib/gamehistory.functions.php:683
 #, php-format
 msgid "Timeouts removed: %d"
 msgstr "Aikalisiä poistettu: %d"
@@ -7305,7 +7361,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2817
+#: admin/seasonpoints.php:258 lib/game.functions.php:2829
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 
@@ -7577,7 +7633,9 @@ msgstr "Käytä pelikelloa"
 msgid ""
 "Use the bulk translation area to copy all keys and all languages to an AI "
 "assistant and preview the pasted result before applying it."
-msgstr "Käytä joukkokäännösaluetta kopioidaksesi kaikki avaimet ja kielet tekoälyavustajalle, ja esikatsele liitetty tulos ennen käyttöönottoa."
+msgstr ""
+"Käytä joukkokäännösaluetta kopioidaksesi kaikki avaimet ja kielet "
+"tekoälyavustajalle, ja esikatsele liitetty tulos ennen käyttöönottoa."
 
 #: login.php:32 menufunctions.php:179 admin/accreditation.php:138
 #: admin/apitokens.php:146 admin/eventviewer.php:140 admin/gamehistory.php:53

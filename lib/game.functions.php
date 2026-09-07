@@ -2255,6 +2255,18 @@ function SetGame($gameId, $params)
         }
 
         if (!empty($params['pool'])) {
+            // A pool move can carry the game into another series, which is
+            // what GameSeries() -- and so every right the history helpers
+            // resolve -- is read from. Recorded before the move for the same
+            // reason as the fixture row above, and only when the pool really
+            // changes, since editgame.php posts the current pool on every save.
+            $poolBefore = (int) GamePool($gameId);
+            if ($poolBefore !== (int) $params['pool']) {
+                GameHistoryRecord($gameId, "fixture", "move", [
+                    'pool' => (int) $params['pool'],
+                    'from' => $poolBefore,
+                ]);
+            }
             SetGamePool($gameId, $params['pool']);
             $result = true;
         }

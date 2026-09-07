@@ -649,6 +649,14 @@ function GameHistoryFormatDetail($row)
         $forfeit = (string) ($detail['forfeit'] ?? "");
         return sprintf("%s: %s", _("Forfeit"), $labels[$forfeit] ?? $forfeit);
     }
+    if ($target == "fixture" && $action == "move") {
+        // Lazy require: this file is required from game.functions.php, and
+        // PoolName() needs U_(), which the history pages' own include set does
+        // not otherwise pull in.
+        require_once __DIR__ . '/pool.functions.php';
+        require_once __DIR__ . '/translation.functions.php';
+        return sprintf("%s: %s", _("Pool"), PoolName((int) ($detail['pool'] ?? 0)));
+    }
     if ($target == "fixture") {
         return sprintf(
             "%s: %s - %s",
