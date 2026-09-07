@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-06 20:31+0300\n"
+"POT-Creation-Date: 2026-09-07 07:19+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -67,7 +67,7 @@ msgstr "%s - neue Punkteobergrenze %d"
 msgid "%s called at"
 msgstr "%s angesagt bei"
 
-#: lib/gamehistory.functions.php:715
+#: lib/gamehistory.functions.php:723
 #, php-format
 msgid "%s removed"
 msgstr "%s entfernt"
@@ -276,12 +276,14 @@ msgstr "Bestätigen"
 msgid "Acknowledged"
 msgstr "Bestätigt"
 
-#: lib/gamehistory.functions.php:1126
+#: lib/gamehistory.functions.php:1134
 #, php-format
 msgid ""
 "Acknowledgement not restored for player %s: accreditation right missing for "
 "their current team."
-msgstr "Bestätigung für Spieler %s nicht wiederhergestellt: Akkreditierungsrecht für das aktuelle Team fehlt."
+msgstr ""
+"Bestätigung für Spieler %s nicht wiederhergestellt: Akkreditierungsrecht für "
+"das aktuelle Team fehlt."
 
 #: timekeeper/index.php:150
 msgid "Actions"
@@ -455,7 +457,9 @@ msgstr "Admin-Hilfe"
 msgid ""
 "Admin rights delegated to specific divisions, teams, games, or reservations "
 "are not migrated by a replace import. Re-grant access for: %s."
-msgstr "Adminrechte für einzelne Klassen, Teams, Spiele oder Reservierungen werden bei einem Ersetzen-Import nicht übernommen. Zugriff erneut vergeben für: %s."
+msgstr ""
+"Adminrechte für einzelne Klassen, Teams, Spiele oder Reservierungen werden "
+"bei einem Ersetzen-Import nicht übernommen. Zugriff erneut vergeben für: %s."
 
 #: menufunctions.php:473 menufunctions.php:525
 msgid "Administration"
@@ -599,7 +603,9 @@ msgstr "Erlaubt Teams, Anmeldeanfragen fuer dieses Ereignis einzureichen."
 msgid ""
 "Allows users without event responsibilities to open this event's public "
 "pages."
-msgstr "Erlaubt Benutzern ohne Turnieraufgaben, die öffentlichen Seiten dieses Turniers zu öffnen."
+msgstr ""
+"Erlaubt Benutzern ohne Turnieraufgaben, die öffentlichen Seiten dieses "
+"Turniers zu öffnen."
 
 #: admin/dbadmin.php:56
 msgid "Always take a full database backup before running the conversion."
@@ -782,7 +788,7 @@ msgstr "Spirit-Unterbrechungen Gastteam"
 
 #: cust/bula/pdfscoresheet.php:72 cust/default/pdfscoresheet.php:69
 #: cust/gummis/pdfscoresheet.php:70 cust/slkl/pdfscoresheet.php:69
-#: cust/windmill/pdfscoresheet.php:72 lib/gamehistory.functions.php:707
+#: cust/windmill/pdfscoresheet.php:72 lib/gamehistory.functions.php:715
 #: user/adddefensesheet.php:210 user/addscoresheet.php:558
 msgid "Away team"
 msgstr "Gastteam"
@@ -992,7 +998,7 @@ msgstr "Abbrechen"
 msgid "Cancel and return to scoresheet"
 msgstr "Abbrechen und zum Spielbericht zurueckkehren"
 
-#: lib/gamehistory.functions.php:712
+#: lib/gamehistory.functions.php:720
 msgid "Cap event"
 msgstr "Cap-Ereignis"
 
@@ -1131,7 +1137,9 @@ msgstr "Wählen Sie anzuzeigende Gruppen"
 msgid ""
 "Choose whether to update the existing event or import the snapshot as a new "
 "event."
-msgstr "Wähle, ob das bestehende Turnier aktualisiert oder der Snapshot als neues Turnier importiert wird."
+msgstr ""
+"Wähle, ob das bestehende Turnier aktualisiert oder der Snapshot als neues "
+"Turnier importiert wird."
 
 #: clubcard.php:57 user/clubprofile.php:171
 msgid "City"
@@ -1172,7 +1180,9 @@ msgstr "Gespeicherte Endplatzierungen für diese Division löschen?"
 #: lib/data.functions.php:690
 #, php-format
 msgid "Cleared %1$d %2$s reference(s) pointing outside the event."
-msgstr "%1$d Verweis(e) vom Typ %2$s, die aus dem Turnier hinausführen, wurden geleert."
+msgstr ""
+"%1$d Verweis(e) vom Typ %2$s, die aus dem Turnier hinausführen, wurden "
+"geleert."
 
 #: admin/finalstandings.php:140
 msgid "Clearing reverts this division to automatic live standings."
@@ -1440,7 +1450,9 @@ msgstr "Spielerliste kopieren von:"
 msgid ""
 "Copy the block below to an AI assistant, update the language values, then "
 "paste the result back here for preview."
-msgstr "Kopiere den Block unten in einen KI-Assistenten, aktualisiere die Sprachwerte und füge das Ergebnis hier wieder zur Vorschau ein."
+msgstr ""
+"Kopiere den Block unten in einen KI-Assistenten, aktualisiere die "
+"Sprachwerte und füge das Ergebnis hier wieder zur Vorschau ein."
 
 #: register.php:79 admin/adduser.php:95 user/addextraemail.php:49
 msgid "Correct the errors and try again"
@@ -1463,7 +1475,9 @@ msgstr "Turnier-Snapshot konnte nicht erstellt werden."
 msgid ""
 "Could not keep the import file for confirmation. Select the file again to "
 "import it."
-msgstr "Die Importdatei konnte nicht zur Bestätigung aufbewahrt werden. Wähle die Datei erneut aus."
+msgstr ""
+"Die Importdatei konnte nicht zur Bestätigung aufbewahrt werden. Wähle die "
+"Datei erneut aus."
 
 #: lib/data.functions.php:216
 msgid "Could not read import file."
@@ -1628,7 +1642,7 @@ msgstr "Standardsprache"
 msgid "Default Timezone"
 msgstr "Zeitzonen-Voreinstellung"
 
-#: lib/gamehistory.functions.php:672 user/adddefensesheet.php:135
+#: lib/gamehistory.functions.php:680 user/adddefensesheet.php:135
 #: user/adddefensesheet.php:140 user/adddefensesheet.php:166
 #: user/adddefensesheet.php:175
 msgid "Defence"
@@ -1665,11 +1679,11 @@ msgstr "Defensebogen gespeichert"
 #: defensestatus.php:80 defensestatus.php:82 gameplay.php:679 gameplay.php:702
 #: teamcard.php:127 teamcard.php:430 teamcard.php:521
 #: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1731
-#: lib/gamehistory.functions.php:666
+#: lib/gamehistory.functions.php:674
 msgid "Defences"
 msgstr "Defenses"
 
-#: lib/gamehistory.functions.php:661
+#: lib/gamehistory.functions.php:669
 #, php-format
 msgid "Defences removed: %d"
 msgstr "Entfernte Defenses: %d"
@@ -1738,7 +1752,8 @@ msgstr "Punkt löschen"
 
 #: admin/stats.php:107
 msgid "Delete scoresheet change history after archiving statistics"
-msgstr "Änderungsverlauf des Spielberichts nach dem Archivieren der Statistik löschen"
+msgstr ""
+"Änderungsverlauf des Spielberichts nach dem Archivieren der Statistik löschen"
 
 #: admin/dbequalize.php:234
 msgid "Delete selected"
@@ -1962,7 +1977,9 @@ msgstr "Unentschieden zugelassen"
 #: lib/data.functions.php:719
 #, php-format
 msgid "Dropped %1$d %2$s row(s) referencing data outside the event."
-msgstr "%1$d Zeile(n) vom Typ %2$s mit Verweisen auf Daten außerhalb des Turniers wurden verworfen."
+msgstr ""
+"%1$d Zeile(n) vom Typ %2$s mit Verweisen auf Daten außerhalb des Turniers "
+"wurden verworfen."
 
 #: lib/data.functions.php:528
 #, php-format
@@ -2204,7 +2221,7 @@ msgstr "Fehler: Konnte Ergebnis nicht speichern"
 msgid "Error: unknown event."
 msgstr "Fehler: unbekanntes Ereignis."
 
-#: lib/game.functions.php:2454
+#: lib/game.functions.php:2466
 #, php-format
 msgid "Errors: %s."
 msgstr "Fehler: %s."
@@ -2286,7 +2303,7 @@ msgstr "Turnier/Saison erforderlich"
 msgid "Event not found"
 msgstr "Ereignis nicht gefunden"
 
-#: lib/game.functions.php:1276 lib/gamehistory.functions.php:775
+#: lib/game.functions.php:1276 lib/gamehistory.functions.php:783
 msgid "Event played."
 msgstr "Turnier/Saison beendet."
 
@@ -2325,7 +2342,8 @@ msgstr "Turniere"
 
 #: lib/data.functions.php:783 lib/data.functions.php:1390
 msgid "Every imported player must have a player profile in the event snapshot."
-msgstr "Jeder importierte Spieler muss im Turnier-Snapshot ein Spielerprofil haben."
+msgstr ""
+"Jeder importierte Spieler muss im Turnier-Snapshot ein Spielerprofil haben."
 
 #: admin/dbadmin.php:124 admin/dbadmin.php:138
 msgid "Execute"
@@ -2785,7 +2803,7 @@ msgstr "Zeitgrenzen der Spieluhr"
 msgid "Game events"
 msgstr "Spielereignisse"
 
-#: lib/gamehistory.functions.php:696
+#: lib/gamehistory.functions.php:704
 #, php-format
 msgid "Game events removed: %d"
 msgstr "Entfernte Spielereignisse: %d"
@@ -2844,13 +2862,13 @@ msgstr "Spiel nicht gefunden"
 msgid "Game not started yet."
 msgstr "Spiel hat noch nicht begonnen."
 
-#: gameplay.php:647 lib/gamehistory.functions.php:690 mobile/addcomment.php:10
+#: gameplay.php:647 lib/gamehistory.functions.php:698 mobile/addcomment.php:10
 #: mobile/addscoresheet.php:223 scorekeeper/addcomment.php:28
 #: scorekeeper/addscoresheet.php:508 user/addscoresheet.php:570
 msgid "Game note"
 msgstr "Spielnotiz"
 
-#: lib/gamehistory.functions.php:687
+#: lib/gamehistory.functions.php:695
 msgid "Game note removed"
 msgstr "Spielnotiz entfernt"
 
@@ -3278,7 +3296,7 @@ msgstr "Historie"
 msgid "Home"
 msgstr "Heim"
 
-#: lib/gamehistory.functions.php:655
+#: lib/gamehistory.functions.php:663
 msgid "Home and away teams swapped"
 msgstr "Heim- und Gastteam getauscht"
 
@@ -3293,7 +3311,7 @@ msgstr "Spirit-Unterbrechungen Heimteam"
 #: admin/editgame.php:203 cust/bula/pdfscoresheet.php:71
 #: cust/default/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:69
 #: cust/slkl/pdfscoresheet.php:68 cust/windmill/pdfscoresheet.php:71
-#: lib/gamehistory.functions.php:707 user/adddefensesheet.php:208
+#: lib/gamehistory.functions.php:715 user/adddefensesheet.php:208
 #: user/addscoresheet.php:556
 msgid "Home team"
 msgstr "Heimteam"
@@ -3391,7 +3409,8 @@ msgstr "Bild"
 msgid ""
 "Image resolution is too large. The maximum is %1$d x %2$d pixels and %3$d "
 "megapixels."
-msgstr "Die Bildauflösung ist zu groß. Maximal %1$d x %2$d Pixel und %3$d Megapixel."
+msgstr ""
+"Die Bildauflösung ist zu groß. Maximal %1$d x %2$d Pixel und %3$d Megapixel."
 
 #: lib/club.functions.php:234 lib/player.functions.php:1132
 #: lib/season.functions.php:1334 lib/season.functions.php:1338
@@ -3426,7 +3445,10 @@ msgstr "Turnierdaten importieren"
 msgid ""
 "Import file snapshot version: %s; supported snapshot version: %d; import "
 "file database schema version: %s; current database schema version: %d."
-msgstr "Snapshot-Version der Importdatei: %s; unterstützte Snapshot-Version: %d; Datenbankschema-Version der Importdatei: %s; aktuelle Datenbankschema-Version: %d."
+msgstr ""
+"Snapshot-Version der Importdatei: %s; unterstützte Snapshot-Version: %d; "
+"Datenbankschema-Version der Importdatei: %s; aktuelle Datenbankschema-"
+"Version: %d."
 
 #: user/addplayerlists.php:301 user/addplayerlists.php:380
 msgid "In"
@@ -3720,7 +3742,10 @@ msgstr ""
 msgid ""
 "Legacy XML event exports are no longer supported. Export a JSON event "
 "snapshot from a current Ultiorganizer installation and import that file."
-msgstr "Alte XML-Exporte werden nicht mehr unterstützt. Exportiere einen JSON-Snapshot aus einer aktuellen Ultiorganizer-Installation und importiere diese Datei."
+msgstr ""
+"Alte XML-Exporte werden nicht mehr unterstützt. Exportiere einen JSON-"
+"Snapshot aus einer aktuellen Ultiorganizer-Installation und importiere diese "
+"Datei."
 
 #: admin/spiritsettings.php:89
 msgid ""
@@ -3937,7 +3962,7 @@ msgstr "Massen-Akkreditierung"
 msgid "Mass input"
 msgstr "Masseneingabe"
 
-#: lib/gamehistory.functions.php:693
+#: lib/gamehistory.functions.php:701
 msgid "Media added"
 msgstr "Medien hinzugefügt"
 
@@ -3945,7 +3970,7 @@ msgstr "Medien hinzugefügt"
 msgid "Media owner"
 msgstr "Medienbesitzer"
 
-#: lib/gamehistory.functions.php:693
+#: lib/gamehistory.functions.php:701
 msgid "Media removed"
 msgstr "Medien entfernt"
 
@@ -4562,7 +4587,9 @@ msgstr "Spiel läuft"
 msgid ""
 "Only JSON event snapshots are supported. Legacy XML exports cannot be "
 "imported."
-msgstr "Es werden nur JSON-Snapshots unterstützt. Alte XML-Exporte können nicht importiert werden."
+msgstr ""
+"Es werden nur JSON-Snapshots unterstützt. Alte XML-Exporte können nicht "
+"importiert werden."
 
 #: admin/eventviewer.php:105
 msgid "Only user"
@@ -4826,25 +4853,29 @@ msgstr "Ergebnisse"
 msgid "Player"
 msgstr "Spieler"
 
-#: lib/gamehistory.functions.php:819 lib/gamehistory.functions.php:1064
-#: lib/gamehistory.functions.php:1087
+#: lib/gamehistory.functions.php:827 lib/gamehistory.functions.php:1072
+#: lib/gamehistory.functions.php:1095
 #, php-format
 msgid "Player %s could not be restored."
 msgstr "Spieler %s konnte nicht wiederhergestellt werden."
 
-#: lib/gamehistory.functions.php:1051 lib/gamehistory.functions.php:1081
-#: lib/gamehistory.functions.php:1096
+#: lib/gamehistory.functions.php:1059 lib/gamehistory.functions.php:1089
+#: lib/gamehistory.functions.php:1104
 #, php-format
 msgid ""
 "Player %s could not be restored: jersey number %d is not unique on team %s."
-msgstr "Spieler %s konnte nicht wiederhergestellt werden: Trikotnummer %d ist im Team %s nicht eindeutig."
+msgstr ""
+"Spieler %s konnte nicht wiederhergestellt werden: Trikotnummer %d ist im "
+"Team %s nicht eindeutig."
 
-#: lib/gamehistory.functions.php:1042
+#: lib/gamehistory.functions.php:1050
 #, php-format
 msgid ""
 "Player %s now plays for %s, so their restored roster entry lists under that "
 "team."
-msgstr "Spieler %s spielt jetzt für %s, daher erscheint der wiederhergestellte Eintrag in der Spielerliste unter diesem Team."
+msgstr ""
+"Spieler %s spielt jetzt für %s, daher erscheint der wiederhergestellte "
+"Eintrag in der Spielerliste unter diesem Team."
 
 #: admin/dbadmin.php:78
 msgid "Player anonymization"
@@ -5029,7 +5060,7 @@ msgstr ""
 #: admin/spirit.php:520 admin/tdtools.php:92 cust/bula/pdfscoresheet.php:73
 #: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
 #: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:1611
-#: cust/windmill/pdfscoresheet.php:73
+#: cust/windmill/pdfscoresheet.php:73 lib/gamehistory.functions.php:658
 msgid "Pool"
 msgstr "Gruppe"
 
@@ -5049,7 +5080,7 @@ msgstr "Poolspiele nicht beendet:"
 msgid "Pool is completed:"
 msgstr "Pool ist komplett:"
 
-#: lib/game.functions.php:1271 lib/gamehistory.functions.php:772
+#: lib/game.functions.php:1271 lib/gamehistory.functions.php:780
 msgid "Pool is locked."
 msgstr "Pool ist gesperrt."
 
@@ -5175,7 +5206,8 @@ msgstr "Datenschutzerklärung"
 #: lib/data.functions.php:519
 #, php-format
 msgid "Private field %s.%s cannot be imported from an event snapshot."
-msgstr "Privates Feld %s.%s kann nicht aus einem Turnier-Snapshot importiert werden."
+msgstr ""
+"Privates Feld %s.%s kann nicht aus einem Turnier-Snapshot importiert werden."
 
 #: admin/dbequalize.php:117 user/teamplayers.php:165
 msgid "Profile"
@@ -5336,7 +5368,9 @@ msgstr "Obergrenze entfernen"
 #, php-format
 msgid ""
 "Removed %d player profile(s) the replace import left without any player."
-msgstr "%d Spielerprofil(e) entfernt, die der Ersetzen-Import ohne Spieler zurückgelassen hat."
+msgstr ""
+"%d Spielerprofil(e) entfernt, die der Ersetzen-Import ohne Spieler "
+"zurückgelassen hat."
 
 #: admin/addseasons.php:398
 msgid "Removes point/defence time input fields from Scorekeeper sheets."
@@ -5443,11 +5477,13 @@ msgstr "Wiederherstellen"
 msgid "Restore failed"
 msgstr "Wiederherstellung fehlgeschlagen"
 
-#: lib/gamehistory.functions.php:761
+#: lib/gamehistory.functions.php:769
 msgid ""
 "Restore refused: the home and away teams have changed since this snapshot "
 "was taken."
-msgstr "Wiederherstellung abgelehnt: Heim- und Gastteam haben sich seit diesem gespeicherten Stand geändert."
+msgstr ""
+"Wiederherstellung abgelehnt: Heim- und Gastteam haben sich seit diesem "
+"gespeicherten Stand geändert."
 
 #: user/gamehistory.php:111
 msgid "Restore this version"
@@ -5483,12 +5519,12 @@ msgstr "Ergebnis nicht gespeichert!"
 msgid "Result saved!"
 msgstr "Ergebnis gespeichert!"
 
-#: lib/game.functions.php:2451
+#: lib/game.functions.php:2463
 #, php-format
 msgid "Results changed: %s."
 msgstr "Ergebnisse geändert: %s."
 
-#: lib/game.functions.php:2448
+#: lib/game.functions.php:2460
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
@@ -5923,7 +5959,9 @@ msgstr "Spielbericht-Verlauf"
 
 #: user/addscoresheet.php:410
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
-msgstr "Spielbericht nicht gespeichert. Korrigiere die markierten Punkte und speichere erneut."
+msgstr ""
+"Spielbericht nicht gespeichert. Korrigiere die markierten Punkte und "
+"speichere erneut."
 
 #: user/addscoresheet.php:522
 msgid "Scoresheet saved"
@@ -6030,7 +6068,9 @@ msgstr "Wähle"
 
 #: admin/translations.php:476
 msgid "Select a key and edit each supported language on its own row."
-msgstr "Wähle einen Schlüssel und bearbeite jede unterstützte Sprache in einer eigenen Zeile."
+msgstr ""
+"Wähle einen Schlüssel und bearbeite jede unterstützte Sprache in einer "
+"eigenen Zeile."
 
 #: admin/addreservation.php:48
 msgid "Select a valid location from the list or add it first."
@@ -6356,7 +6396,9 @@ msgstr "Silber"
 msgid ""
 "Snapshot column %s.%s is not used by this Ultiorganizer version and was "
 "skipped."
-msgstr "Snapshot-Spalte %s.%s wird von dieser Ultiorganizer-Version nicht verwendet und wurde übersprungen."
+msgstr ""
+"Snapshot-Spalte %s.%s wird von dieser Ultiorganizer-Version nicht verwendet "
+"und wurde übersprungen."
 
 #: admin/addseasons.php:456 admin/serverconf.php:299
 msgid "Soft maintenance mode"
@@ -6560,7 +6602,7 @@ msgid "Spirit settings were not saved."
 msgstr "Spirit-Einstellungen wurden nicht gespeichert."
 
 #: gameplay.php:63 ext/rss.php:151 ext/rss.php:195
-#: lib/gamehistory.functions.php:684 mobile/gameplay.php:59
+#: lib/gamehistory.functions.php:692 mobile/gameplay.php:59
 #: mobile/gameplay.php:116 scorekeeper/endgame.php:22
 #: scorekeeper/gameplay.php:23
 msgid "Spirit stoppage"
@@ -6587,7 +6629,7 @@ msgstr "Spirit-Unterbrechungen (Zeit)"
 msgid "Spirit stoppages recorded for this event."
 msgstr "Spirit-Unterbrechungen werden fuer dieses Ereignis erfasst."
 
-#: lib/gamehistory.functions.php:681
+#: lib/gamehistory.functions.php:689
 #, php-format
 msgid "Spirit stoppages removed: %d"
 msgstr "Entfernte Spirit-Unterbrechungen: %d"
@@ -6648,11 +6690,11 @@ msgstr "Starte die Spieluhr, bevor du Punkte hinzufuegst."
 msgid "Start time"
 msgstr "Startzeit"
 
-#: lib/gamehistory.functions.php:706
+#: lib/gamehistory.functions.php:714
 msgid "Starting offence"
 msgstr "Startende Offense"
 
-#: lib/gamehistory.functions.php:701
+#: lib/gamehistory.functions.php:709
 msgid "Starting offence removed"
 msgstr "Startende Offense entfernt"
 
@@ -6860,7 +6902,7 @@ msgstr "Team, das das Timeout nimmt"
 #: admin/poolmoves.php:395 admin/seasonadmin.php:83 admin/seasonpools.php:235
 #: admin/seasonseries.php:122 admin/seasonstats.php:21 admin/seasonstats.php:35
 #: admin/seasonteams.php:16 admin/serieteams.php:29 admin/stats.php:136
-#: lib/gamehistory.functions.php:655
+#: lib/gamehistory.functions.php:663
 msgid "Teams"
 msgstr "Teams"
 
@@ -6893,11 +6935,15 @@ msgstr ""
 msgid ""
 "The banner is shown at the top of the event's public pages. A wide image "
 "works best, for example 1600 x 400 pixels."
-msgstr "Das Banner wird oben auf den öffentlichen Seiten des Turniers angezeigt. Ein breites Bild eignet sich am besten, zum Beispiel 1600 x 400 Pixel."
+msgstr ""
+"Das Banner wird oben auf den öffentlichen Seiten des Turniers angezeigt. Ein "
+"breites Bild eignet sich am besten, zum Beispiel 1600 x 400 Pixel."
 
 #: admin/addseasonusers.php:23 admin/addteamadmins.php:25
 msgid "The event is read-only. Access rights cannot be changed."
-msgstr "Das Turnier ist schreibgeschützt. Zugriffsrechte können nicht geändert werden."
+msgstr ""
+"Das Turnier ist schreibgeschützt. Zugriffsrechte können nicht geändert "
+"werden."
 
 #: lib/data.functions.php:481
 msgid "The event snapshot does not contain table data."
@@ -6905,7 +6951,8 @@ msgstr "Der Turnier-Snapshot enthält keine Tabellendaten."
 
 #: lib/data.functions.php:795
 msgid "The event snapshot has a media event without its media link."
-msgstr "Der Turnier-Snapshot enthält ein Medienereignis ohne zugehörigen Medienlink."
+msgstr ""
+"Der Turnier-Snapshot enthält ein Medienereignis ohne zugehörigen Medienlink."
 
 #: lib/data.functions.php:491
 #, php-format
@@ -6922,7 +6969,12 @@ msgid ""
 "configured on this installation, so extra categories were added to that "
 "mode. Spirit scoring may show mismatched categories; this import flow "
 "expects snapshots from the same installation."
-msgstr "Die Spirit-Kategorien des Turniers stimmten nicht mit dem auf dieser Installation konfigurierten Spirit-Modus überein, daher wurden diesem Modus zusätzliche Kategorien hinzugefügt. Die Spirit-Bewertung kann unpassende Kategorien anzeigen; dieser Importweg erwartet Snapshots derselben Installation."
+msgstr ""
+"Die Spirit-Kategorien des Turniers stimmten nicht mit dem auf dieser "
+"Installation konfigurierten Spirit-Modus überein, daher wurden diesem Modus "
+"zusätzliche Kategorien hinzugefügt. Die Spirit-Bewertung kann unpassende "
+"Kategorien anzeigen; dieser Importweg erwartet Snapshots derselben "
+"Installation."
 
 #: user/addresult.php:103
 #, php-format
@@ -6934,7 +6986,8 @@ msgstr ""
 #: admin/eventdataimport.php:210
 #, php-format
 msgid "The import file contains event %1$s (%2$s), which already exists."
-msgstr "Die Importdatei enthält das Turnier %1$s (%2$s), das bereits existiert."
+msgstr ""
+"Die Importdatei enthält das Turnier %1$s (%2$s), das bereits existiert."
 
 #: lib/data.functions.php:229
 msgid "The import file is not a valid JSON event snapshot."
@@ -6995,13 +7048,17 @@ msgstr ""
 msgid ""
 "The uploaded file is too large for the server. Please contact the system "
 "administrator to raise the allowed upload size."
-msgstr "Die hochgeladene Datei ist zu groß für den Server. Bitte wende dich an den Systemadministrator, um die erlaubte Uploadgröße zu erhöhen."
+msgstr ""
+"Die hochgeladene Datei ist zu groß für den Server. Bitte wende dich an den "
+"Systemadministrator, um die erlaubte Uploadgröße zu erhöhen."
 
 #: admin/eventdataimport.php:90
 msgid ""
 "The uploaded import file is no longer available. Select the file again to "
 "import it."
-msgstr "Die hochgeladene Importdatei ist nicht mehr verfügbar. Wähle die Datei erneut aus."
+msgstr ""
+"Die hochgeladene Importdatei ist nicht mehr verfügbar. Wähle die Datei "
+"erneut aus."
 
 #: register.php:31 admin/adduser.php:28
 msgid "The username is already in use"
@@ -7059,7 +7116,11 @@ msgid ""
 "This frees the space the change history takes. Results, rosters and "
 "scoresheets are not changed, but the record of who changed them and the "
 "option to restore an earlier version are lost permanently."
-msgstr "Dies gibt den vom Änderungsverlauf belegten Speicher frei. Ergebnisse, Spielerlisten und Spielberichte werden nicht verändert, aber die Aufzeichnung darüber, wer sie geändert hat, und die Möglichkeit, eine frühere Version wiederherzustellen, gehen dauerhaft verloren."
+msgstr ""
+"Dies gibt den vom Änderungsverlauf belegten Speicher frei. Ergebnisse, "
+"Spielerlisten und Spielberichte werden nicht verändert, aber die "
+"Aufzeichnung darüber, wer sie geändert hat, und die Möglichkeit, eine "
+"frühere Version wiederherzustellen, gehen dauerhaft verloren."
 
 #: result.php:70
 msgid "This game has already been played. Current result:"
@@ -7083,11 +7144,18 @@ msgid ""
 "level admin rights and matched existing player profiles are left unchanged, "
 "but admin rights delegated to specific divisions, teams, games, or "
 "reservations must be re-granted after the import."
-msgstr "Dieser Vorgang ersetzt die turniereigenen Daten im ausgewählten Turnier durch den JSON-Snapshot. Turniereigene Zeilen, die im Snapshot fehlen, werden gelöscht. Adminrechte auf Turnierebene und zugeordnete bestehende Spielerprofile bleiben unverändert, aber Adminrechte für einzelne Klassen, Teams, Spiele oder Reservierungen müssen nach dem Import erneut vergeben werden."
+msgstr ""
+"Dieser Vorgang ersetzt die turniereigenen Daten im ausgewählten Turnier "
+"durch den JSON-Snapshot. Turniereigene Zeilen, die im Snapshot fehlen, "
+"werden gelöscht. Adminrechte auf Turnierebene und zugeordnete bestehende "
+"Spielerprofile bleiben unverändert, aber Adminrechte für einzelne Klassen, "
+"Teams, Spiele oder Reservierungen müssen nach dem Import erneut vergeben "
+"werden."
 
 #: user/gamehistory.php:96
 msgid "This overwrites the current scoresheet with this saved version."
-msgstr "Dies überschreibt den aktuellen Spielbericht mit diesem gespeicherten Stand."
+msgstr ""
+"Dies überschreibt den aktuellen Spielbericht mit diesem gespeicherten Stand."
 
 #: login/password_reset.php:29 login/password_reset.php:54
 #: login/password_reset.php:63
@@ -7110,7 +7178,9 @@ msgstr ""
 msgid ""
 "This saved state is not shown: the home and away teams have changed since it "
 "was taken."
-msgstr "Dieser gespeicherte Stand wird nicht angezeigt: Heim- und Gastteam haben sich seitdem geändert."
+msgstr ""
+"Dieser gespeicherte Stand wird nicht angezeigt: Heim- und Gastteam haben "
+"sich seitdem geändert."
 
 #: spiritkeeper/teamgames.php:162
 msgid "This spirit submission is currently read-only."
@@ -7192,7 +7262,7 @@ msgid "Timekeeper templates"
 msgstr "Timekeeper-Vorlagen"
 
 #: gameplay.php:61 ext/rss.php:149 ext/rss.php:193
-#: lib/gamehistory.functions.php:678 lib/timekeeper.functions.php:14
+#: lib/gamehistory.functions.php:686 lib/timekeeper.functions.php:14
 #: lib/timekeeper.functions.php:35 timekeeper/index.php:44
 msgid "Timeout"
 msgstr "Auszeit"
@@ -7240,7 +7310,7 @@ msgstr "Auszeiten in der Verlaengerung"
 msgid "Timeouts on overtime"
 msgstr "Auszeiten in der Verlaengerung"
 
-#: lib/gamehistory.functions.php:675
+#: lib/gamehistory.functions.php:683
 #, php-format
 msgid "Timeouts removed: %d"
 msgstr "Entfernte Auszeiten: %d"
@@ -7363,7 +7433,7 @@ msgstr "Defenses gesamt"
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2817
+#: admin/seasonpoints.php:258 lib/game.functions.php:2829
 msgid "Total points"
 msgstr "Gesamtpunkte"
 
@@ -7638,7 +7708,10 @@ msgstr "Spieluhr verwenden"
 msgid ""
 "Use the bulk translation area to copy all keys and all languages to an AI "
 "assistant and preview the pasted result before applying it."
-msgstr "Nutze den Massenübersetzungsbereich, um alle Schlüssel und Sprachen in einen KI-Assistenten zu kopieren und das eingefügte Ergebnis vor dem Anwenden in der Vorschau zu prüfen."
+msgstr ""
+"Nutze den Massenübersetzungsbereich, um alle Schlüssel und Sprachen in einen "
+"KI-Assistenten zu kopieren und das eingefügte Ergebnis vor dem Anwenden in "
+"der Vorschau zu prüfen."
 
 #: login.php:32 menufunctions.php:179 admin/accreditation.php:138
 #: admin/apitokens.php:146 admin/eventviewer.php:140 admin/gamehistory.php:53
