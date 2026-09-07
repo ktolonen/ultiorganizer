@@ -45,6 +45,28 @@ The player export currently includes rows from:
 - `uo_event_log` privacy audit rows where `source='privacy'` and `id1` matches the selected internal `player:<id>` or `profile:<id>` target
 - `uo_urls` for player profile links
 - player profile image metadata from `uo_player_profile` and `uo_image`
+- `uo_game_history` snapshot values: this player's own `played[]`, `goals[]` and `defenses[]`
+  entries projected out of every snapshot by player id and tagged with the game and snapshot time
+  -- not the raw rows or the `snapshot` column, which describe the whole scoresheet. Each entry
+  comes out with the fields belonging to it: the roster row's name, team, jersey number, captain,
+  spirit captain, accredited and acknowledged values; the subject's own side of a goal, with the
+  jersey and name it recorded for them, the point number, time, score and flags; and the defence's
+  sequence, time and flags.
+  A snapshot predating a jersey, captaincy or accreditation change is the only remaining record of
+  what those values were, and a prior name spelling no longer present in `uo_player` reaches the
+  report the same way. The other side of a goal -- the assist when the subject scored, or the
+  reverse -- is left out.
+- `uo_game_history` change rows: the ordinary (non-snapshot) rows whose `detail` names this player
+  -- `played.player`, the `played.players` captain and spirit-captain lists, `goal.scorer`,
+  `goal.assist` and `defense.player` -- projected to the history id, game, time, target, action and
+  matched field. The keys naming the other people are withheld, since a goal row names both the
+  scorer and the assist and only one of them is the data subject. Everything else the row recorded
+  about the change comes out, under the key its target actually means: `num` is the player's own
+  jersey number on a roster row and `sequence` the point or defence ordinal on a scoring row, and
+  the rest is the row's own context -- `acknowledged` on an accreditation change, the point's time,
+  score and home/callahan flags, the defence's time and caught/callahan flags, and the `role` and
+  `team` a captaincy row set. Once the goal or defence itself is edited away, that is the only
+  record of it left.
 
 To avoid exposing other members' account identifiers in the player export, `user_id` and `userid` values are hidden in log-derived sections.
 Current player log writers use `uo_event_log.id2` for the team reference, not for player identity, so player privacy tools do not match `id2` in order to avoid deleting unrelated team-linked history.
@@ -104,6 +126,15 @@ Current table-level behavior:
   No row deletion or scrubbing is done.
   Historical defense links remain.
 
+- `uo_game_history`
+  No row deletion is done; rows are removed only by the foreign-key cascade when the linked game is deleted.
+  Player ids in `detail` are left as they are: they are references to a row the player tools already
+  cover, not free text naming the player.
+  `assist_name`, `scorer_name`, and `played[].name` inside the `snapshot` column are embedded free
+  text, not foreign keys, so anonymizing `uo_player` does not reach them. Each snapshot is decoded,
+  every name paired with an anonymized `player_id` is rewritten to `- -`, and the row is re-encoded.
+  Matching is by player id, so a name recorded before a later correction is still reached.
+
 ## Free-text fields naming other people
 
 Anonymization clears free text on the data subject's own row: `PrivacyAnonymizePlayer()`
@@ -114,6 +145,7 @@ Free text stored on another entity's row is not reachable that way. A person can
 - `uo_team_profile` — `coach`, `captain`, `story`, `achievements`
 - `uo_club` — `contacts`, `story`, `achievements`
 - `uo_comment` — the comment body
+- `uo_game_history.snapshot` — `game.official`, `comment`, and `events[].info`; the embedded `assist_name`, `scorer_name`, and `played[].name` fields are the exception, rewritten by player anonymization as described above
 
 No per-subject query can find those mentions, because the row belongs to a team, club, or game
 rather than to the person. Removing them is a manual admin edit, and a privacy request that
@@ -151,6 +183,7 @@ Current report scope includes:
 - `uo_registerrequest`
 - `uo_event_log`
 - `uo_accreditationlog`
+- `uo_game_history` for rows where `user_id` matches the selected `userid`, excluding the `snapshot` column, which is game data rather than that user's data. `UserUpdateInfo()` rewrites `user_id` in `uo_game_history` and `uo_event_log` when a login is renamed, so an account's own history follows it rather than being stranded under the old name -- and cannot be inherited by whoever is given that name next
 
 For registered users, `uo_event_log` coverage includes rows where `user_id`, `id1`, or `id2` matches the selected `userid`.
 
@@ -163,6 +196,7 @@ Current deletion behavior:
 - delete matching rows from `uo_userproperties`
 - delete the row from `uo_users`
 - rely on existing foreign-key cascades from `uo_users` for `uo_extraemail`, `uo_extraemailrequest`, and `uo_enrolledteam`
+- anonymize matching rows in `uo_game_history`: set `user_id` to `-` and clear `ip`. The row is the linked game's change history, not solely this user's data, and is removed only when the game is.
 
 `uo_passwordresetrequest` has no foreign key to `uo_users`, so it needs an explicit delete.
 It is deliberately left out of the report scope: a pending row holds a live reset token, and the

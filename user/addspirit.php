@@ -223,6 +223,7 @@ if ($season['spiritmode'] > 0) {
     $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
     $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
     $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
+    $menutabs[_("History")] = "?view=user/gamehistory&game=$gameId";
     $menutabs[_("Spirit score")] = SpiritEntryUrl($gameId);
     if (ShowDefenseStats()) {
         $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId&amp;team=$teamId";

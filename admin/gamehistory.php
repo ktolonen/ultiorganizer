@@ -1,0 +1,133 @@
+<?php
+
+include_once __DIR__ . '/auth.php';
+include_once 'menufunctions.php';
+include_once 'lib/gamehistory.functions.php';
+include_once 'lib/game.functions.php';
+
+$LAYOUT_ID = GAMEHISTORYADMIN;
+$title = _("Scoresheet history");
+$html = "";
+
+$filterKeys = ['season', 'game', 'user', 'from', 'to'];
+$filters = array_fill_keys($filterKeys, "");
+$page = 1;
+$pageSize = 100;
+
+foreach ($filterKeys as $key) {
+    if (isset($_POST[$key])) {
+        $filters[$key] = trim((string) $_POST[$key]);
+    }
+}
+
+// The filters, the page_input field and the hidden page all belong to the one
+// form, so every submission carries them whichever button was pressed. Order
+// the sources most specific first and take the first one that is present.
+if (isset($_POST['update'])) {
+    $page = 1;
+} elseif (isset($_POST['page_nav'])) {
+    $page = intval($_POST['page_nav']);
+} elseif (isset($_POST['page_input'])) {
+    $page = intval($_POST['page_input']);
+} elseif (isset($_POST['page'])) {
+    $page = intval($_POST['page']);
+} elseif (isset($_GET['page'])) {
+    $page = intval($_GET['page']);
+}
+$page = max(1, $page);
+
+//common page
+pageTopHeadOpen($title);
+include 'script/common.js.inc';
+pageTopHeadClose($title, false);
+leftMenu($LAYOUT_ID);
+contentStart();
+
+$html .= "<form method='post' action='?view=admin/gamehistory'>";
+$html .= "<table border='0'>\n";
+$html .= "<tr><td>" . _("Season") . ": <input class='input' maxlength='10' size='10' name='season' value='"
+    . utf8entities($filters['season']) . "'/></td>";
+$gameValue = intval($filters['game']);
+$html .= "<td>" . _("Game") . ": <input class='input' type='number' min='1' name='game' size='8' value='"
+    . ($gameValue > 0 ? $gameValue : "") . "'/></td>";
+$html .= "<td>" . _("User") . ": <input class='input' maxlength='50' size='20' name='user' value='"
+    . utf8entities($filters['user']) . "'/></td></tr>\n";
+$html .= "<tr><td>" . _("From") . ": <input class='input' type='date' name='from' value='"
+    . utf8entities($filters['from']) . "'/></td>";
+$html .= "<td>" . _("To") . ": <input class='input' type='date' name='to' value='"
+    . utf8entities($filters['to']) . "'/></td>";
+$html .= "<td><input class='button' type='submit' name='update' value='" . _("Refresh") . "'/></td></tr>\n";
+$html .= "</table>\n";
+
+$totalRows = GameHistoryAllCount($filters);
+$totalPages = max(1, ceil($totalRows / $pageSize));
+if ($page > $totalPages) {
+    $page = $totalPages;
+}
+$offset = ($page - 1) * $pageSize;
+
+$pagination = "";
+$paginationBottom = "";
+if ($totalRows > 0 && $totalPages > 1) {
+    $nav = "";
+    if ($page > 1) {
+        $nav .= "<button class='button' type='submit' name='page_nav' value='" . ($page - 1) . "'>&laquo; " . _("Previous") . "</button> ";
+    }
+    $nav .= sprintf("%s %d/%d (%d) ", _("Page"), $page, $totalPages, $totalRows);
+
+    $goto = "<label>";
+    $goto .= _("Go to") . ": ";
+    $goto .= "<input class='input' type='number' min='1' max='" . $totalPages . "' name='page_input' size='4' value='" . $page . "'/>";
+    $goto .= "</label> ";
+    // Unnamed: a named button would submit the old $page and shadow the
+    // typed page_input above.
+    $goto .= "<button class='button' type='submit'>" . _("Go") . "</button>";
+
+    $next = "";
+    if ($page < $totalPages) {
+        $next .= " <button class='button' type='submit' name='page_nav' value='" . ($page + 1) . "'>" . _("Next") . " &raquo;</button>";
+    }
+
+    // The whole table is one form, so the page_input field is rendered once:
+    // a second copy submits a duplicate value that shadows the typed one.
+    $pagination = "<p>" . $nav . $goto . $next . "</p>\n";
+    $paginationBottom = "<p>" . $nav . $next . "</p>\n";
+}
+
+$html .= $pagination;
+
+if ($totalRows === 0) {
+    $html .= "<p>" . _("No changes recorded") . ".</p>";
+} else {
+    $rows = GameHistoryAll($filters, $pageSize, $offset);
+
+    $html .= "<table class='data'>\n<tr>";
+    $html .= "<th>" . _("Time") . "</th>";
+    $html .= "<th>" . _("Game") . "</th>";
+    $html .= "<th>" . _("User") . "</th>";
+    $html .= "<th>" . _("IP Address") . "</th>";
+    $html .= "<th>" . _("Source") . "</th>";
+    $html .= "<th>" . _("Description") . "</th>";
+    $html .= "</tr>\n";
+
+    foreach ($rows as $row) {
+        $gameId = intval($row['game']);
+        $html .= "<tr>";
+        $html .= "<td>" . utf8entities(DefTimeFormat($row['time'])) . "</td>";
+        $html .= "<td><a href='?view=user/gamehistory&amp;game=" . $gameId . "'>" . $gameId . "</a></td>";
+        $html .= "<td>" . utf8entities($row['user_id']) . "</td>";
+        $html .= "<td>" . utf8entities($row['ip']) . "</td>";
+        $html .= "<td>" . utf8entities($row['source']) . "</td>";
+        $html .= "<td>" . utf8entities(GameHistoryFormatDetail($row)) . "</td>";
+        $html .= "</tr>\n";
+    }
+    $html .= "</table>\n";
+}
+
+$html .= $paginationBottom;
+$html .= "<input type='hidden' name='page' value='" . $page . "'/>";
+$html .= "</form>\n";
+
+echo $html;
+contentEnd();
+pageEnd();

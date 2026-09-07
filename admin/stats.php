@@ -2,6 +2,7 @@
 include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/statistical.functions.php';
+include_once 'lib/gamehistory.functions.php';
 
 $title = _("Event statistics");
 $LAYOUT_ID = CALCSEASONSTATISTICS;
@@ -27,6 +28,14 @@ if (!empty($_POST['calc'])) {
             $html .= "<p>" . sprintf(_("Deleted %d event access rights."), $deletedRoles) . "</p>";
         } else {
             $html .= "<p>" . _("No event access rights found.") . "</p>";
+        }
+    }
+    if (isSuperAdmin() && !empty($_POST['deletegamehistory'])) {
+        $deletedHistory = DeleteEventGameHistory($season);
+        if ($deletedHistory > 0) {
+            $html .= "<p>" . sprintf(_("Deleted %d scoresheet change history entries."), $deletedHistory) . "</p>";
+        } else {
+            $html .= "<p>" . _("No scoresheet change history found.") . "</p>";
         }
     }
 }
@@ -91,6 +100,14 @@ if (isSuperAdmin()) {
     $deleteRolesOption .= "<p>" . _("This prevents accidental changes after the event is archived. User accounts, global administrator rights, player profile rights, pool visibility, and administration menu visibility are not changed.") . "</p>\n";
 }
 
+// Left unchecked, unlike the access rights above: deleted rights can be
+// granted again, but the change history is the only copy of what it holds.
+$deleteHistoryOption = "";
+if (isSuperAdmin()) {
+    $deleteHistoryOption = "<p><label><input type='checkbox' name='deletegamehistory' value='1'/> " . _("Delete scoresheet change history after archiving statistics") . "</label></p>\n";
+    $deleteHistoryOption .= "<p>" . _("This frees the space the change history takes. Results, rosters and scoresheets are not changed, but the record of who changed them and the option to restore an earlier version are lost permanently.") . "</p>\n";
+}
+
 if (!IsSeasonStatsCalculated($season)) {
     if ($missing_profiles_count > 0) {
         $html .= "<p><strong>" . sprintf(_("There are %d players without a profile id. Player statistics will be skipped for them."), $missing_profiles_count) . "</strong></p>\n";
@@ -101,6 +118,7 @@ if (!IsSeasonStatsCalculated($season)) {
         $confirm_attr = " onclick='return confirm(\"" . addslashes($confirm_msg) . "\")'";
     }
     $html .= $deleteRolesOption;
+    $html .= $deleteHistoryOption;
     $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Calculate") . "'" . $confirm_attr . "/></p>\n";
 } else {
     $seasons = SeasonStatistics($season);
@@ -129,6 +147,7 @@ if (!IsSeasonStatsCalculated($season)) {
         $confirm_attr = " onclick='return confirm(\"" . addslashes($confirm_msg) . "\")'";
     }
     $html .= $deleteRolesOption;
+    $html .= $deleteHistoryOption;
     $html .= "<p><input class='button' name='calc' type='submit' value='" . _("Recalculate") . "'" . $confirm_attr . "/></p>\n";
     $html .= "<p><input class='button' name='undo' type='submit' value='" . _("Undo") . "'/></p>\n";
 

@@ -210,6 +210,10 @@ Compared with the desktop editor, scorekeeper entry is incremental and segmented
 
 Spirit score submission is intentionally not part of the scorekeeper surface. Spirit score workflows now live in `spiritkeeper/` or the main logged-in user pages.
 
+## Change history
+
+Every mutation described above, from every input path, also records a row in `uo_game_history`. A bulk rewrite additionally captures one restorable snapshot of the state it is about to replace -- one per save, not one per call. See `docs/game-history.md`.
+
 ## Database Model
 
 The detailed scoresheet uses several tables together.

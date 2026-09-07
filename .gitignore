@@ -1,5 +1,7 @@
 .claude
 .codex
+.superpowers
+/docs/superpowers/
 /docs/dev/.env
 /conf/*
 !/conf/.htaccess

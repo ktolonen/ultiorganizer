@@ -1,5 +1,10 @@
 <?php
 
+// Guard: index.php may already have defined this while routing here.
+if (!defined('UO_APP_SOURCE')) {
+    define('UO_APP_SOURCE', 'mobile');
+}
+
 require_once __DIR__ . '/../lib/view.guard.php';
 requireRoutedView('mobile/index', '../index.php');
 

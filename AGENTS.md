@@ -138,6 +138,7 @@ Pre-commit hooks remain the fast local gate; CI is the source of truth for what 
 
 ### Competition workflow
 
+- `docs/game-history.md`: scoresheet change history, snapshot boundaries, and the restore contract.
 - `docs/playoff-templates.md`: playoff bracket template grammar, lookup, move-comment block, BYE handling, and pool generation.
 - `docs/ranking.md`: pool ranking resolvers per pool type, tie-break order, special-ranking overrides, and event final-standings rendering.
 - `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.

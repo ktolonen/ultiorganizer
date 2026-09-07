@@ -10,6 +10,9 @@ require_once __DIR__ . '/image.functions.php';
 require_once __DIR__ . '/url.functions.php';
 require_once __DIR__ . '/logging.functions.php';
 
+// How many uo_game_history snapshots the privacy scans hold in memory at once.
+define('PRIVACY_SNAPSHOT_BATCH', 100);
+
 function PrivacyPlayerMatches($search)
 {
     PrivacyRequireSuperAdmin();
@@ -242,6 +245,8 @@ function PrivacyCollectPlayerReportData($playerId)
     $licenseRows = [];
     $accreditationLog = [];
     $eventLog = [];
+    $gameHistorySnapshotRows = [];
+    $gameHistoryDetailRows = [];
     $imageInfo = null;
     $accreditationIds = [];
     $playerLogTargets = [];
@@ -295,6 +300,8 @@ function PrivacyCollectPlayerReportData($playerId)
             "SELECT * FROM uo_event_log WHERE " . implode(' OR ', $eventLogWhere) . " ORDER BY time DESC",
             true,
         );
+        $gameHistorySnapshotRows = PrivacyPlayerGameHistorySnapshotRows($playerIds);
+        $gameHistoryDetailRows = PrivacyPlayerGameHistoryDetailRows($playerIds);
     }
 
     foreach ($subject['players'] as $playerRow) {
@@ -330,7 +337,223 @@ function PrivacyCollectPlayerReportData($playerId)
         'accreditation_log_rows' => $accreditationLog,
         'event_log_rows' => $eventLog,
         'url_rows' => $urls,
+        'game_history_snapshot_rows' => $gameHistorySnapshotRows,
+        'game_history_detail_rows' => $gameHistoryDetailRows,
     ];
+}
+
+/**
+ * Extract this player's own values embedded in game-history snapshots.
+ *
+ * A snapshot holds the whole scoresheet, so exporting the blob would leak the
+ * other players. This walks played[]/goals[]/defenses[] and keeps only the
+ * entries keyed to $playerIds, with the fields belonging to that entry: a
+ * snapshot predating a jersey, captaincy or accreditation change is the only
+ * remaining record of what those values were, and a name spelling no longer in
+ * uo_player reaches the report the same way. The other side of a goal -- the
+ * assist when the subject scored, or the reverse -- is left out.
+ */
+function PrivacyPlayerGameHistorySnapshotRows($playerIds)
+{
+    if (empty($playerIds)) {
+        return [];
+    }
+
+    $rows = [];
+    // snapshot is a mediumtext holding a whole scoresheet and nothing prunes
+    // the table, so the scan is walked in primary-key batches instead of
+    // buffering every snapshot in the installation at once.
+    $lastHistoryId = 0;
+    while (true) {
+        $snapshotRows = DBQueryToArray(sprintf(
+            "SELECT history_id, game, time, snapshot FROM uo_game_history
+				WHERE has_snapshot=1 AND snapshot IS NOT NULL AND history_id > %d
+				ORDER BY history_id LIMIT %d",
+            $lastHistoryId,
+            PRIVACY_SNAPSHOT_BATCH,
+        ));
+        if (empty($snapshotRows)) {
+            break;
+        }
+
+        foreach ($snapshotRows as $snapshotRow) {
+            $lastHistoryId = (int) $snapshotRow['history_id'];
+            $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+            if (!is_array($snapshot)) {
+                continue;
+            }
+
+            $base = [
+                'history_id' => $snapshotRow['history_id'],
+                'game' => $snapshotRow['game'],
+                'time' => $snapshotRow['time'],
+            ];
+
+            foreach ((array) ($snapshot['played'] ?? []) as $playedRow) {
+                if (!in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                    continue;
+                }
+                $rows[] = $base + [
+                    'field' => 'played',
+                    'name' => $playedRow['name'] ?? null,
+                    'team' => $playedRow['team'] ?? null,
+                    'num' => $playedRow['num'] ?? null,
+                    'captain' => $playedRow['captain'] ?? null,
+                    'spirit_captain' => $playedRow['spirit_captain'] ?? null,
+                    'accredited' => $playedRow['accredited'] ?? null,
+                    'acknowledged' => $playedRow['acknowledged'] ?? null,
+                ];
+            }
+            foreach ((array) ($snapshot['goals'] ?? []) as $goalRow) {
+                // Keyed per side, so the subject's own jersey and name come
+                // from the side they were on and the other side stays out.
+                foreach (['scorer', 'assist'] as $side) {
+                    if (!in_array((int) ($goalRow[$side] ?? 0), $playerIds, true)) {
+                        continue;
+                    }
+                    $rows[] = $base + [
+                        'field' => 'goals.' . $side,
+                        'name' => $goalRow[$side . '_name'] ?? null,
+                        'num' => $goalRow[$side . '_num'] ?? null,
+                        'point' => $goalRow['num'] ?? null,
+                        'point_time' => $goalRow['time'] ?? null,
+                        'score' => isset($goalRow['homescore'], $goalRow['visitorscore'])
+                            ? $goalRow['homescore'] . '-' . $goalRow['visitorscore'] : null,
+                        'home_goal' => $goalRow['ishomegoal'] ?? null,
+                        'callahan' => $goalRow['iscallahan'] ?? null,
+                    ];
+                }
+            }
+            foreach ((array) ($snapshot['defenses'] ?? []) as $defenseRow) {
+                if (!in_array((int) ($defenseRow['author'] ?? 0), $playerIds, true)) {
+                    continue;
+                }
+                $rows[] = $base + [
+                    'field' => 'defenses.author',
+                    'sequence' => $defenseRow['num'] ?? null,
+                    'defense_time' => $defenseRow['time'] ?? null,
+                    'caught' => $defenseRow['iscaught'] ?? null,
+                    'callahan' => $defenseRow['iscallahan'] ?? null,
+                    'home_defense' => $defenseRow['ishomedefense'] ?? null,
+                ];
+            }
+        }
+    }
+
+    return $rows;
+}
+
+/**
+ * Project this player's own references out of the ordinary change rows.
+ *
+ * uo_game_history.detail keys a change to the player it is about -- the roster
+ * row added or removed, the captain assignment, the goal scored or assisted,
+ * the defense recorded -- so those rows are the player's data even though the
+ * column also describes the game. Only the matched field and its own context
+ * value are projected: a goal row names both scorer and assist, and the other
+ * one of those is somebody else.
+ *
+ * detail.num means different things per target -- a jersey number on a roster
+ * row, a point or defense ordinal on the others -- so it is projected under
+ * two different keys rather than one.
+ */
+function PrivacyPlayerGameHistoryDetailRows($playerIds)
+{
+    if (empty($playerIds)) {
+        return [];
+    }
+
+    // Which detail key carries a player id, per target. GameSetRolePlayers()
+    // is the one writer that records a list rather than a scalar.
+    $fields = [
+        'played' => ['player'],
+        'goal' => ['scorer', 'assist'],
+        'defense' => ['player'],
+    ];
+
+    // What else the row recorded about the change, per target. Deliberately
+    // excludes scorer/assist/player/players, which name people.
+    $context = [
+        'played' => ['acknowledged', 'created'],
+        'goal' => ['time', 'score', 'home', 'callahan'],
+        'defense' => ['time', 'caught', 'callahan'],
+    ];
+
+    $rows = [];
+    // Batched like the snapshot walk above, for the same reason: nothing
+    // prunes this table.
+    $lastHistoryId = 0;
+    while (true) {
+        $historyRows = DBQueryToArray(sprintf(
+            "SELECT history_id, game, time, target, action, detail FROM uo_game_history
+				WHERE snapshot IS NULL AND detail IS NOT NULL AND history_id > %d
+				ORDER BY history_id LIMIT %d",
+            $lastHistoryId,
+            PRIVACY_SNAPSHOT_BATCH,
+        ));
+        if (empty($historyRows)) {
+            break;
+        }
+
+        foreach ($historyRows as $historyRow) {
+            $lastHistoryId = (int) $historyRow['history_id'];
+            $target = (string) $historyRow['target'];
+            if (!isset($fields[$target])) {
+                continue;
+            }
+            $detail = json_decode((string) $historyRow['detail'], true);
+            if (!is_array($detail)) {
+                continue;
+            }
+
+            $base = [
+                'history_id' => $historyRow['history_id'],
+                'game' => $historyRow['game'],
+                'time' => $historyRow['time'],
+                'target' => $target,
+                'action' => $historyRow['action'],
+            ];
+
+            foreach ($fields[$target] as $key) {
+                if (!in_array((int) ($detail[$key] ?? 0), $playerIds, true)) {
+                    continue;
+                }
+                $row = $base + ['field' => $target . '.' . $key];
+                if ($target === 'played') {
+                    $row['num'] = $detail['num'] ?? null;
+                } else {
+                    // The point or defense ordinal, not a jersey number.
+                    $row['sequence'] = $detail['num'] ?? null;
+                }
+                // The rest of what the row recorded about the event, which is
+                // the only record of it once the goal or defense is gone. The
+                // keys naming the other players are not among them.
+                foreach ($context[$target] as $contextKey) {
+                    if (array_key_exists($contextKey, $detail)) {
+                        $row[$contextKey] = $detail[$contextKey];
+                    }
+                }
+                $rows[] = $row;
+            }
+
+            // A captain or spirit captain assignment names the whole role
+            // list, so only the subject's own ids are projected out of it.
+            if ($target === 'played' && is_array($detail['players'] ?? null)) {
+                foreach ($detail['players'] as $rolePlayer) {
+                    if (!in_array((int) $rolePlayer, $playerIds, true)) {
+                        continue;
+                    }
+                    $rows[] = $base + [
+                        'field' => 'played.players',
+                        'role' => $detail['role'] ?? null,
+                        'team' => $detail['team'] ?? null,
+                    ];
+                }
+            }
+        }
+    }
+
+    return $rows;
 }
 
 function PrivacyCollectUserReportData($userId)
@@ -380,6 +603,14 @@ function PrivacyCollectUserReportData($userId)
             "SELECT * FROM uo_accreditationlog WHERE userid='%s' ORDER BY time DESC",
             DBEscapeString($userId),
         ), true),
+        // snapshot is excluded: it is game data, not this user's data, and
+        // dumping it would leak other players' names into this export. The
+        // other columns, including ip and user_id, are this user's own data.
+        'game_history_rows' => DBQueryToArray(sprintf(
+            "SELECT history_id, game, time, source, target, action, detail, ip, user_id
+				FROM uo_game_history WHERE user_id='%s' ORDER BY time DESC",
+            DBEscapeString($userId),
+        ), true),
     ];
 }
 
@@ -423,6 +654,8 @@ function PrivacyRenderPlayerReportText($playerId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'Player stats rows', $data['player_stats_rows']);
     PrivacyAppendRowsSection($lines, 'Played rows', $data['played_rows']);
     PrivacyAppendRowsSection($lines, 'Goal rows', $data['goal_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history snapshot rows', $data['game_history_snapshot_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history change rows', $data['game_history_detail_rows']);
     PrivacyAppendRowsSection($lines, 'Defense rows', $data['defense_rows']);
     PrivacyAppendRowsSection($lines, 'License rows', $data['license_rows']);
     PrivacyAppendRowsSection($lines, 'Accreditation log rows', PrivacySanitizePlayerPrivacyRows($data['accreditation_log_rows']));
@@ -461,6 +694,7 @@ function PrivacyRenderUserReportText($userId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'Register request rows', $data['registerrequest_rows']);
     PrivacyAppendRowsSection($lines, 'Event log rows', $data['event_log_rows']);
     PrivacyAppendRowsSection($lines, 'Accreditation log rows', $data['accreditation_log_rows']);
+    PrivacyAppendRowsSection($lines, 'Game history rows', $data['game_history_rows']);
 
     return implode("\n", $lines) . "\n";
 }
@@ -621,6 +855,69 @@ function PrivacyAnonymizePlayer($playerId, $adminUserId)
         DBQuery("DELETE FROM uo_accreditationlog WHERE player IN ($playerIdList)");
         DBQuery("DELETE FROM uo_event_log WHERE category='player' AND id1 IN ($playerIdList)");
 
+        // uo_game_history.snapshot embeds player names as free text, keyed by
+        // player id rather than a foreign key, so anonymizing uo_player does
+        // not reach them. Each snapshot is decoded and re-encoded rather than
+        // string-replaced, since the raw JSON cannot tell a player's name
+        // apart from an unrelated field, a substring of another name, or a
+        // second player sharing the name.
+        // Batched by primary key for the same reason as the export path, and
+        // still inside this transaction: an anonymization that leaves some
+        // snapshots rewritten and others not is worse than one that fails.
+        // The UPDATEs do not move a row's history_id, so the walk is stable.
+        $lastHistoryId = 0;
+        while (true) {
+            $snapshotRows = DBQueryToArray(sprintf(
+                "SELECT history_id, snapshot FROM uo_game_history
+					WHERE has_snapshot=1 AND snapshot IS NOT NULL AND history_id > %d
+					ORDER BY history_id LIMIT %d",
+                $lastHistoryId,
+                PRIVACY_SNAPSHOT_BATCH,
+            ));
+            if (empty($snapshotRows)) {
+                break;
+            }
+
+            foreach ($snapshotRows as $snapshotRow) {
+                $lastHistoryId = (int) $snapshotRow['history_id'];
+                $snapshot = json_decode((string) $snapshotRow['snapshot'], true);
+                if (!is_array($snapshot)) {
+                    continue;
+                }
+
+                $changed = false;
+                foreach ((array) ($snapshot['played'] ?? []) as $i => $playedRow) {
+                    if (in_array((int) ($playedRow['player'] ?? 0), $playerIds, true)) {
+                        $snapshot['played'][$i]['name'] = '- -';
+                        $changed = true;
+                    }
+                }
+                foreach ((array) ($snapshot['goals'] ?? []) as $i => $goalRow) {
+                    if (in_array((int) ($goalRow['scorer'] ?? 0), $playerIds, true)) {
+                        $snapshot['goals'][$i]['scorer_name'] = '- -';
+                        $changed = true;
+                    }
+                    if (in_array((int) ($goalRow['assist'] ?? 0), $playerIds, true)) {
+                        $snapshot['goals'][$i]['assist_name'] = '- -';
+                        $changed = true;
+                    }
+                }
+
+                if (!$changed) {
+                    continue;
+                }
+                $json = json_encode($snapshot, JSON_UNESCAPED_UNICODE);
+                if ($json === false) {
+                    continue;
+                }
+                DBQuery(sprintf(
+                    "UPDATE uo_game_history SET snapshot='%s' WHERE history_id=%d",
+                    DBEscapeString($json),
+                    (int) $snapshotRow['history_id'],
+                ));
+            }
+        }
+
         DBQuery('COMMIT');
     } catch (Exception $e) {
         DBSetExceptionMode(false);
@@ -650,6 +947,12 @@ function PrivacyDeleteUserData($userId, $adminUserId)
     try {
         DBQuery('START TRANSACTION');
         DBQuery("DELETE FROM uo_event_log WHERE $eventLogWhere");
+        // Rows are kept, not deleted: they are the game's change history, not
+        // just this user's data, and cascade away only when the game does.
+        DBQuery(sprintf(
+            "UPDATE uo_game_history SET user_id='-', ip=NULL WHERE user_id='%s'",
+            DBEscapeString($userId),
+        ));
         DBQuery(sprintf("DELETE FROM uo_accreditationlog WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_registerrequest WHERE userid='%s'", DBEscapeString($userId)));
         // No foreign key ties this table to uo_users, so a pending reset row
