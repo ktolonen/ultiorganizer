@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-08-23 10:13+0300\n"
+"POT-Creation-Date: 2026-09-10 23:02+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -28,8 +28,8 @@ msgid " (enter '0' if not live)"
 msgstr " (ingrese '0' si no está activo)"
 
 #: cust/default/pdfscoresheet.php:180 cust/default/pdfscoresheet.php:190
-#: cust/default/teamplayers.functions.php:139 cust/slkl/pdfscoresheet.php:145
-#: cust/slkl/pdfscoresheet.php:155 user/teamplayers.php:162
+#: cust/default/teamplayers.functions.php:146 cust/slkl/pdfscoresheet.php:145
+#: cust/slkl/pdfscoresheet.php:155 user/teamplayers.php:166
 msgid "#"
 msgstr "#"
 
@@ -258,7 +258,7 @@ msgstr "Registro de Acreditación"
 msgid "Accreditation official"
 msgstr "Oficial de Acreditación"
 
-#: user/teamplayers.php:166
+#: user/teamplayers.php:170
 msgid "Accredited"
 msgstr "Autorizado"
 
@@ -293,7 +293,7 @@ msgstr "Activo"
 #: admin/seasons.php:157 admin/seasonseries.php:173 admin/seasonteams.php:263
 #: admin/serieformats.php:52 admin/timekeepertemplates.php:61
 #: admin/translations.php:522 user/addextraemail.php:95 user/enrollteam.php:140
-#: user/teamplayers.php:269 user/userinfo.php:378 user/userinfo.php:516
+#: user/teamplayers.php:273 user/userinfo.php:378 user/userinfo.php:516
 msgid "Add"
 msgstr "Agregar"
 
@@ -357,7 +357,7 @@ msgstr "Agregar nuevo usuario"
 msgid "Add pause"
 msgstr "Agregar pausa"
 
-#: user/teamplayers.php:142
+#: user/teamplayers.php:146
 msgid "Add players to team's roster:"
 msgstr "Agregar jugadores a la plantilla del equipo:"
 
@@ -714,7 +714,7 @@ msgstr "Jugador asistente no está en la lista de jugadores"
 #: gamecard.php:241 gamecard.php:247 gameplay.php:136 gameplay.php:157
 #: playerlist.php:36 poolstatus.php:161 poolstatus.php:187 seriesstatus.php:309
 #: teamcard.php:124 teamcard.php:169 ext/poolscoreboard.php:41
-#: ext/teamscoreboard.php:56 lib/common.functions.php:1721
+#: ext/teamscoreboard.php:56 lib/common.functions.php:1725
 msgid "Assists"
 msgstr "Asistencias"
 
@@ -742,7 +742,7 @@ msgstr "Acreditación Automática"
 msgid "Automatic final standings, not confirmed"
 msgstr "Clasificación final automática, no confirmada"
 
-#: teamcard.php:279 lib/common.functions.php:1732
+#: teamcard.php:279 lib/common.functions.php:1736
 msgid "Average"
 msgstr "Promedio"
 
@@ -809,7 +809,7 @@ msgstr "Volver a"
 msgid "Back to Spirit tools"
 msgstr "Volver a herramientas de Espíritu"
 
-#: user/teamplayers.php:291
+#: user/teamplayers.php:295
 msgid "Back to entering player numbers"
 msgstr "Volver a ingresar números de jugadores"
 
@@ -948,7 +948,7 @@ msgid "Call or discussion"
 msgstr "Llamada o discusión"
 
 #: cust/default/pdfscoresheet.php:638 cust/gummis/pdfscoresheet.php:698
-#: cust/wfdf/pdfscoresheet.php:1273 lib/common.functions.php:1724
+#: cust/wfdf/pdfscoresheet.php:1273 lib/common.functions.php:1728
 #: user/adddefensesheet.php:358
 msgid "Callahan"
 msgstr "Callahan"
@@ -979,7 +979,7 @@ msgstr "Gol de Callahan"
 #: scorekeeper/result.php:88 user/adddefensesheet.php:317
 #: user/addscoresheet.php:708 user/select_poolselector.php:26
 #: user/select_poolselector.php:29 user/select_poolselector.php:32
-#: user/select_poolselector.php:35 user/teamplayers.php:280
+#: user/select_poolselector.php:35 user/teamplayers.php:284
 #: user/userinfo.php:292
 msgid "Cancel"
 msgstr "Cancelar"
@@ -1203,7 +1203,7 @@ msgstr "Club"
 msgid "Club Card"
 msgstr "Ficha del Club"
 
-#: user/clubprofile.php:141 user/teamplayers.php:138 user/teamprofile.php:100
+#: user/clubprofile.php:141 user/teamplayers.php:142 user/teamprofile.php:100
 msgid "Club Profile"
 msgstr "Perfil del Club"
 
@@ -1424,11 +1424,11 @@ msgstr "Convierta a InnoDB/utf8mb4 ahora"
 msgid "Coordinates"
 msgstr "Coordenadas"
 
-#: admin/seasonteams.php:288 user/teamplayers.php:195
+#: admin/seasonteams.php:288 user/teamplayers.php:199
 msgid "Copy"
 msgstr "Copiar"
 
-#: user/teamplayers.php:186
+#: user/teamplayers.php:190
 msgid "Copy team roster from:"
 msgstr "Copiar la lista de jugadores del equipo desde:"
 
@@ -1602,7 +1602,7 @@ msgstr "Versión de la base de datos"
 msgid "Date"
 msgstr "Fecha"
 
-#: playercard.php:97 cust/default/teamplayers.functions.php:154
+#: playercard.php:97 cust/default/teamplayers.functions.php:161
 #: user/playerprofile.php:271
 msgid "Date of birth"
 msgstr "Fecha de nacimiento"
@@ -1659,7 +1659,7 @@ msgstr "Hoja de Defensa guardada"
 
 #: defensestatus.php:80 defensestatus.php:82 gameplay.php:679 gameplay.php:702
 #: teamcard.php:127 teamcard.php:430 teamcard.php:521
-#: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1726
+#: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1730
 msgid "Defences"
 msgstr "Defensas"
 
@@ -1670,7 +1670,7 @@ msgstr "Jugadas defensivas"
 #: admin/poolmoves.php:233 admin/poolmoves.php:305 admin/seasonpoints.php:204
 #: admin/spirit.php:403 admin/translations.php:550 admin/users.php:93
 #: admin/users.php:95 mobile/deletescore.php:23 mobile/deletescore.php:47
-#: scorekeeper/deletescore.php:44 user/teamplayers.php:175
+#: scorekeeper/deletescore.php:44 user/teamplayers.php:179
 msgid "Delete"
 msgstr "Borrar"
 
@@ -1925,7 +1925,7 @@ msgstr "Descargar informe de privacidad del jugador"
 msgid "Download registered user privacy report"
 msgstr "Descargar informe de privacidad de usuario registrado"
 
-#: lib/common.functions.php:1708
+#: lib/common.functions.php:1712
 msgid "Draws"
 msgstr "Empates"
 
@@ -2444,12 +2444,12 @@ msgid "Fields"
 msgstr "Campos"
 
 #: lib/club.functions.php:211 lib/player.functions.php:1109
-#: lib/season.functions.php:1303 lib/team.functions.php:1416
+#: lib/season.functions.php:1306 lib/team.functions.php:1419
 msgid "File is not supported image format"
 msgstr "El archivo no es un formato de imagen compatible"
 
 #: lib/club.functions.php:203 lib/player.functions.php:1101
-#: lib/season.functions.php:1298 lib/team.functions.php:1408
+#: lib/season.functions.php:1301 lib/team.functions.php:1411
 msgid "File is too large"
 msgstr "El archivo es demasiado grande"
 
@@ -2551,8 +2551,8 @@ msgstr "Primer Nombre"
 msgid "First Offence"
 msgstr "Primero a la Ofensiva"
 
-#: cust/default/teamplayers.functions.php:144 user/playerprofile.php:222
-#: user/teamplayers.php:163
+#: cust/default/teamplayers.functions.php:151 user/playerprofile.php:222
+#: user/teamplayers.php:167
 msgid "First name"
 msgstr "Primer nombre"
 
@@ -2586,7 +2586,7 @@ msgstr ""
 msgid "Follow the link in the email to confirm your registration."
 msgstr "Siga el enlace en el correo electrónico para confirmar su registro."
 
-#: frontpage.php:35
+#: frontpage.php:40
 msgid "For feedback, improvement ideas, or any other questions, contact:"
 msgstr ""
 "Para comentarios, ideas de mejora o cualquier otra pregunta, comuníquese con:"
@@ -2927,7 +2927,7 @@ msgstr "Resumen del juego"
 #: admin/seasonstandings.php:313 admin/seasonstandings.php:370
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seriesgames.php:31
 #: admin/seriesgames.php:41 admin/stats.php:120 ext/poolscoreboard.php:40
-#: ext/teamscoreboard.php:55 lib/common.functions.php:1704
+#: ext/teamscoreboard.php:55 lib/common.functions.php:1708
 #: lib/search.functions.php:786
 msgid "Games"
 msgstr "Juegos"
@@ -3035,11 +3035,11 @@ msgstr "Tiempo de gol"
 #: gameplay.php:540 playerlist.php:37 poolstatus.php:161 poolstatus.php:187
 #: poolstatus.php:302 seriesstatus.php:309 teamcard.php:125 teamcard.php:170
 #: ext/poolscoreboard.php:42 ext/teamscoreboard.php:57
-#: lib/common.functions.php:1719
+#: lib/common.functions.php:1723
 msgid "Goals"
 msgstr "Goles"
 
-#: lib/common.functions.php:1714
+#: lib/common.functions.php:1718
 msgid "Goals against"
 msgstr "Goles en contra"
 
@@ -3047,11 +3047,11 @@ msgstr "Goles en contra"
 msgid "Goals against avg."
 msgstr "Goles en contra avg."
 
-#: lib/common.functions.php:1716
+#: lib/common.functions.php:1720
 msgid "Goals diff"
 msgstr "Goles diff"
 
-#: lib/common.functions.php:1712
+#: lib/common.functions.php:1716
 msgid "Goals for"
 msgstr "Goles a favor"
 
@@ -3352,8 +3352,8 @@ msgid ""
 msgstr ""
 
 #: lib/club.functions.php:234 lib/player.functions.php:1132
-#: lib/season.functions.php:1331 lib/season.functions.php:1335
-#: lib/team.functions.php:1440
+#: lib/season.functions.php:1334 lib/season.functions.php:1338
+#: lib/team.functions.php:1443
 msgid "Image upload failed because the server could not process the image."
 msgstr ""
 "La carga de la imagen falló porque el servidor no pudo procesar la imagen."
@@ -3525,7 +3525,7 @@ msgstr "Juego no válido."
 msgid "Invalid link target."
 msgstr "Destino de enlace no válido."
 
-#: install.php:718
+#: install.php:739
 msgid "Invalid password (min. 5, max. 20 characters)."
 msgstr "Contraseña no válida (mínimo 5, máximo 20 caracteres)."
 
@@ -3648,8 +3648,8 @@ msgstr "Apellido"
 msgid "Last login"
 msgstr "Último inicio de sesión"
 
-#: cust/default/teamplayers.functions.php:149 user/playerprofile.php:226
-#: user/teamplayers.php:164
+#: cust/default/teamplayers.functions.php:156 user/playerprofile.php:226
+#: user/teamplayers.php:168
 msgid "Last name"
 msgstr "Apellido"
 
@@ -3690,7 +3690,7 @@ msgstr ""
 "Spiritkeeper una vez que ambos equipos lo han enviado, sin hacer públicos "
 "los comentarios."
 
-#: user/playerprofile.php:197 user/teamplayers.php:170
+#: user/playerprofile.php:197 user/teamplayers.php:174
 msgid "License"
 msgstr "Licencia"
 
@@ -3826,7 +3826,7 @@ msgstr "Longitud"
 msgid "Losers continue in:"
 msgstr "Los perdedores continúan en:"
 
-#: lib/common.functions.php:1710
+#: lib/common.functions.php:1714
 msgid "Losses"
 msgstr "Pérdidas"
 
@@ -3900,12 +3900,12 @@ msgstr "Entrada masiva"
 msgid "Media owner"
 msgstr "Propietario del medio"
 
-#: user/teamplayers.php:168
+#: cust/default/teamplayers.functions.php:140 user/teamplayers.php:172
 msgid "Member ID"
 msgstr "ID de miembro"
 
 #: admin/accreditation.php:259 admin/accreditation.php:261
-#: user/playerprofile.php:207 user/teamplayers.php:169
+#: user/playerprofile.php:207 user/teamplayers.php:173
 msgid "Membership"
 msgstr "Afiliación"
 
@@ -3950,7 +3950,7 @@ msgid "Missing and duplicate shirt numbers"
 msgstr "Números de camiseta faltantes y duplicados"
 
 #: lib/club.functions.php:215 lib/player.functions.php:1113
-#: lib/season.functions.php:1307 lib/team.functions.php:1420
+#: lib/season.functions.php:1310 lib/team.functions.php:1423
 msgid "Missing image processing support on the server."
 msgstr "Falta soporte de procesamiento de imágenes en el servidor."
 
@@ -4126,7 +4126,7 @@ msgstr "El nombre no puede estar vacío"
 msgid "Name in Schedule"
 msgstr "Nombre en el Calendario"
 
-#: admin/addseasonteams.php:40
+#: admin/addseasonteams.php:40 user/teamplayers.php:59
 msgid "Name is mandatory!"
 msgstr "¡El nombre es obligatorio!"
 
@@ -4178,7 +4178,7 @@ msgstr "Se agregaron nuevos jugadores con licencia:"
 msgid "New name"
 msgstr "Nuevo nombre"
 
-#: user/teamplayers.php:145
+#: user/teamplayers.php:149
 msgid ""
 "New players: enter the jersey number, first name, and last name. Press the "
 "Add button."
@@ -4210,7 +4210,7 @@ msgstr "Próximo"
 msgid "Nickname"
 msgstr "Apodo"
 
-#: user/teamplayers.php:229
+#: user/teamplayers.php:233
 msgid "No"
 msgstr "No"
 
@@ -4291,7 +4291,7 @@ msgstr "Sin goles."
 msgid "No image"
 msgstr "Sin imagen"
 
-#: lib/season.functions.php:1294
+#: lib/season.functions.php:1297
 #, fuzzy
 msgid "No image selected."
 msgstr "Unión seleccionada"
@@ -4853,7 +4853,7 @@ msgstr "Jugadores no acreditados"
 msgid "Players of the game"
 msgstr "Jugadores del juego"
 
-#: user/teamplayers.php:144
+#: user/teamplayers.php:148
 msgid ""
 "Players who already have a profile in Ultiorganizer: enter the full player "
 "name or part of it and press the Search button. Select the correct player "
@@ -5010,11 +5010,11 @@ msgstr "Actitud positiva y autocontrol (de ellos)"
 msgid "Press the button to search for spirit comments"
 msgstr "Presione el botón para buscar comentarios espirituales"
 
-#: cust/default/teamplayers.functions.php:165
+#: cust/default/teamplayers.functions.php:172
 msgid "Prev. Event"
 msgstr "Evento Previo"
 
-#: cust/default/teamplayers.functions.php:160
+#: cust/default/teamplayers.functions.php:167
 msgid "Prev. Team"
 msgstr "Equipo Previo"
 
@@ -5047,7 +5047,7 @@ msgstr "Imprimir todas las hojas de anotación"
 msgid "Print blank scoresheet"
 msgstr "Imprimir hoja de anotación en blanco"
 
-#: user/teamplayers.php:301
+#: user/teamplayers.php:305
 msgid "Print roster"
 msgstr "Imprimir lista de jugadores"
 
@@ -5081,12 +5081,12 @@ msgstr "Política de Privacidad"
 msgid "Private field %s.%s cannot be imported from an event snapshot."
 msgstr ""
 
-#: admin/dbequalize.php:117 user/teamplayers.php:165
+#: admin/dbequalize.php:117 user/teamplayers.php:169
 msgid "Profile"
 msgstr "Perfil"
 
 #: admin/dbequalize.php:367 admin/dbequalize.php:370
-#: cust/default/teamplayers.functions.php:134 user/teamplayers.php:173
+#: cust/default/teamplayers.functions.php:134 user/teamplayers.php:177
 msgid "Profile ID"
 msgstr "ID de perfil"
 
@@ -5435,7 +5435,7 @@ msgstr "Derechos"
 #: scorekeeper/addplayerlists.php:258 scorekeeper/addscoresheet.php:509
 #: scorekeeper/addscoresheet.php:528 scorekeeper/respgames.php:200
 #: user/clubprofile.php:139 user/respteams.php:24 user/teamplayers.php:11
-#: user/teamplayers.php:136 user/teamprofile.php:98
+#: user/teamplayers.php:140 user/teamprofile.php:98
 msgid "Roster"
 msgstr "Lista de Jugadores"
 
@@ -5570,7 +5570,7 @@ msgstr "Sábado"
 #: scorekeeper/result.php:101 spiritkeeper/editgame.php:125
 #: user/addmedialink.php:219 user/addplayerlists.php:453 user/addspirit.php:314
 #: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:230
-#: user/teamplayers.php:279 user/teamprofile.php:191 user/userinfo.php:291
+#: user/teamplayers.php:283 user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
 msgstr "Guardar"
 
@@ -5812,7 +5812,7 @@ msgstr "Equipo goleador"
 #: lib/search.functions.php:86 lib/search.functions.php:128
 #: lib/search.functions.php:191 lib/search.functions.php:249
 #: lib/search.functions.php:318 lib/search.functions.php:399
-#: user/teamplayers.php:238 user/teamplayers.php:268
+#: user/teamplayers.php:242 user/teamplayers.php:272
 msgid "Search"
 msgstr "Buscar"
 
@@ -6618,7 +6618,7 @@ msgstr "Tareas"
 msgid "Team"
 msgstr "Equipo"
 
-#: user/clubprofile.php:140 user/teamplayers.php:137 user/teamprofile.php:99
+#: user/clubprofile.php:140 user/teamplayers.php:141 user/teamprofile.php:99
 msgid "Team Profile"
 msgstr "Perfil del equipo"
 
@@ -7168,7 +7168,7 @@ msgstr "Tot."
 #: teamcard.php:320 teamcard.php:364 teamcard.php:586 teamcard.php:777
 #: admin/spirit.php:47 admin/spirit.php:106 admin/spirit.php:155
 #: admin/spirit.php:238 admin/spirit.php:282 admin/spirit.php:342
-#: cust/slkl/mass-accreditation.php:86 lib/common.functions.php:1728
+#: cust/slkl/mass-accreditation.php:86 lib/common.functions.php:1732
 #: spiritkeeper/submitsotg.php:90
 msgid "Total"
 msgstr "Total"
@@ -7468,7 +7468,7 @@ msgstr ""
 msgid "User"
 msgstr "Usuario"
 
-#: frontpage.php:29 menufunctions.php:732 user_guide.php:7
+#: frontpage.php:34 menufunctions.php:732 user_guide.php:7
 msgid "User Guide"
 msgstr "Guía del usuario"
 
@@ -7735,7 +7735,7 @@ msgstr "Los ganadores continúan en:"
 msgid "Winning points"
 msgstr "Puntos ganadores"
 
-#: lib/common.functions.php:1706
+#: lib/common.functions.php:1710
 msgid "Wins"
 msgstr "Ganados"
 
@@ -7764,7 +7764,7 @@ msgstr "Federación Mundial de Disco Volador"
 msgid "X"
 msgstr "X"
 
-#: admin/timekeepertemplates.php:45 user/teamplayers.php:227
+#: admin/timekeepertemplates.php:45 user/teamplayers.php:231
 msgid "Yes"
 msgstr "Sí"
 
@@ -7922,7 +7922,7 @@ msgstr "división"
 
 #: admin/editstanding.php:73 admin/poolgames.php:289 admin/poolgames.php:330
 #: admin/poolgames.php:354 plugins/lisence_modifier.php:240
-#: user/teamplayers.php:210
+#: user/teamplayers.php:214
 msgid "edit"
 msgstr "editar"
 
@@ -8305,7 +8305,7 @@ msgstr "Club desconocido"
 msgid "update"
 msgstr "actualizar"
 
-#: user/teamplayers.php:211
+#: user/teamplayers.php:215
 msgid "view"
 msgstr "vista"
 
