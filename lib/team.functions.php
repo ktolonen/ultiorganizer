@@ -1268,6 +1268,9 @@ function RemovePlayer($playerId)
 function AddPlayer($teamId, $firstname, $lastname, $profileId, $num = -1, $regId = null)
 {
     if (hasEditPlayersRight($teamId)) {
+        if (trim((string) $firstname) === '' && trim((string) $lastname) === '') {
+            return 0;
+        }
 
         if (!empty($profileId)) {
             $profile = PlayerProfile($profileId);

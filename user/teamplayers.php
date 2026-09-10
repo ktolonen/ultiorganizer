@@ -45,7 +45,7 @@ if (!empty($_POST['remove_x'])) {
             $num = intval($_POST["number0"]);
         }
 
-        AddPlayer($teamId, trim($_POST["firstname0"]), trim($_POST["lastname0"]), $_POST["profileId0"], $num);
+        $playerid = AddPlayer($teamId, trim($_POST["firstname0"]), trim($_POST["lastname0"]), $_POST["profileId0"], $num);
         //add new player when accreditation id is NOT known
     } else {
         if (isset($_POST["number0"])) {
@@ -55,7 +55,11 @@ if (!empty($_POST['remove_x'])) {
         }
         $playerid = AddPlayer($teamId, trim($_POST["firstname0"]), trim($_POST["lastname0"]), 0, $num);
     }
-    header("location:?view=user/teamplayers&team=$teamId");
+    if (empty($playerid)) {
+        echo "<p class='warning'>" . _("Name is mandatory!") . "</p>";
+    } else {
+        header("location:?view=user/teamplayers&team=$teamId");
+    }
 } elseif (!empty($_POST['save'])) {
     for ($i = 0; $i < count($_POST['playerEdited']); $i++) {
         if ($_POST['playerEdited'][$i] == "yes") {
