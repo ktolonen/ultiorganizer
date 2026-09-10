@@ -134,6 +134,13 @@ echo yuiLoad(["utilities", "datasource", "datatable", "dragdrop", "container"]);
 					label: "<?php echo _("Profile ID"); ?>",
 					sortable: true
 				},
+<?php if (CUSTOMIZATIONS == "slkl") { ?>
+				{
+					key: "AccreditationId",
+					label: "<?php echo _("Member ID"); ?>",
+					sortable: true
+				},
+<?php } ?>
 				{
 					key: "Jersey",
 					label: "<?php echo _("#"); ?>",
