@@ -61,7 +61,7 @@ if (!empty($_POST['remove_x'])) {
         header("location:?view=user/teamplayers&team=$teamId");
     }
 } elseif (!empty($_POST['save'])) {
-    for ($i = 0; $i < count($_POST['playerEdited']); $i++) {
+    for ($i = 0; $i < count($_POST['playerEdited'] ?? []); $i++) {
         if ($_POST['playerEdited'][$i] == "yes") {
             $id = $_POST['playerId'][$i];
             $playerInfo = PlayerInfo($_POST['playerId'][$i]);
@@ -100,6 +100,16 @@ if (!empty($_POST['remove_x'])) {
                 }
             }
         }
+    }
+    if (!empty($_POST['profileId0'])) {
+        $num = isset($_POST['number0']) && $_POST['number0'] !== '' ? intval($_POST['number0']) : -1;
+        AddPlayer(
+            $teamId,
+            trim($_POST['firstname0'] ?? ''),
+            trim($_POST['lastname0'] ?? ''),
+            $_POST['profileId0'],
+            $num,
+        );
     }
     header("location:?view=user/teamplayers&team=$teamId");
 } elseif (!empty($_POST['copy'])) {
