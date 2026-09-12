@@ -65,6 +65,39 @@ function LicenseData($accreditation_id)
 }
 
 /**
+ * LicenseData() rows for several accreditation ids at once, keyed by id.
+ *
+ * Ids without a license row are absent from the result, which matches the
+ * empty LicenseData() result the single-id lookup returns for them.
+ *
+ * @param array $accreditationIds
+ * @return array accreditation_id => license row
+ */
+function LicenseDataList($accreditationIds)
+{
+    $ids = [];
+    foreach ($accreditationIds as $accreditationId) {
+        if ($accreditationId === null || $accreditationId === "") {
+            continue;
+        }
+        $ids["'" . DBEscapeString($accreditationId) . "'"] = true;
+    }
+    if (empty($ids)) {
+        return [];
+    }
+
+    $rows = [];
+    foreach (DBQueryToArray("SELECT accreditation_id, membership, license, external_id, external_type,
+		external_validity, ultimate
+		FROM uo_license WHERE accreditation_id IN (" . implode(",", array_keys($ids)) . ")") as $row) {
+        if (!isset($rows[$row['accreditation_id']])) {
+            $rows[$row['accreditation_id']] = $row;
+        }
+    }
+    return $rows;
+}
+
+/**
  * Search license records by player name.
  *
  * @param string $firstname
