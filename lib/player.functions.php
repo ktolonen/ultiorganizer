@@ -704,6 +704,68 @@ function SeasonPlayerStatRows($seasonId, $withDefenses = false)
 }
 
 /**
+ * PlayerInfo() rows for every player of a season, keyed by player.
+ *
+ * Same columns and join shape as PlayerInfo(), read in one statement so a
+ * season-wide listing does not issue a read per player. Rows come back in the
+ * SeasonAllPlayers() order, which the keyed array preserves.
+ *
+ * @param string $seasonId
+ * @return array player_id => PlayerInfo() row
+ */
+function SeasonPlayerInfos($seasonId)
+{
+    $query = sprintf(
+        "SELECT p.player_id, p.profile_id, CONCAT(p.firstname, ' ', p.lastname) as name, p.firstname,
+		p.lastname, p.num, p.accreditation_id, p.team, t.name AS teamname, p.accredited,
+		t.series, ser.type, ser.name AS seriesname, pp.profile_image, pp.email, pp.gender,
+		pp.birthdate
+		FROM uo_player p
+		INNER JOIN uo_team t ON (p.team=t.team_id)
+		INNER JOIN uo_series ser ON (ser.series_id=t.series)
+		LEFT JOIN uo_player_profile pp ON (p.profile_id=pp.profile_id)
+		WHERE ser.season='%s'
+		ORDER BY ser.name, t.name, p.lastname, p.firstname",
+        DBEscapeString($seasonId),
+    );
+
+    $rows = [];
+    foreach (DBQueryToArray($query) as $row) {
+        $rows[$row['player_id']] = $row;
+    }
+    return $rows;
+}
+
+/**
+ * Played season games per player on the player's own team, keyed by player.
+ *
+ * Grouped counterpart of PlayerSeasonTeamPlayedGames(). Players without played
+ * games are absent from the result.
+ *
+ * @param string $seasonId
+ * @return array player_id => int
+ */
+function SeasonPlayerTeamPlayedGames($seasonId)
+{
+    $query = sprintf(
+        "SELECT p.player AS player, COUNT(*) AS games
+		FROM uo_played p
+		INNER JOIN uo_player pl ON (pl.player_id=p.player)
+		INNER JOIN uo_game g ON (g.game_id=p.game)
+		WHERE p.game IN (%s)
+		AND (g.hometeam=pl.team OR g.visitorteam=pl.team)
+		GROUP BY p.player",
+        SeasonCompletedGamesSql($seasonId),
+    );
+
+    $games = [];
+    foreach (DBQueryToArray($query) as $row) {
+        $games[$row['player']] = (int) $row['games'];
+    }
+    return $games;
+}
+
+/**
  * Total number of played games on given season by given player.
  *
  * @param int $playerId

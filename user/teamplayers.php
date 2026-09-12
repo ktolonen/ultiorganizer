@@ -33,31 +33,27 @@ if (!empty($_POST['remove_x'])) {
         RemovePlayer($id);
     }
 } elseif (!empty($_POST['add'])) {
+    // An empty field means no jersey number. 0 is a number of its own, so it
+    // must not collapse to either the empty case or vice versa.
+    $num = isset($_POST["number0"]) && trim($_POST["number0"]) !== '' ? intval($_POST["number0"]) : -1;
     //add new player when accreditation id is known
     if (
         isset($_POST["firstname0"]) && isset($_POST["lastname0"])
         && (strlen($_POST["firstname0"]) > 0 || strlen($_POST["lastname0"]) > 0)
         && !empty($_POST["profileId0"])
     ) {
-
-        $num = -1;
-        if (isset($_POST["number0"]) && intval($_POST["number0"]) > 0) {
-            $num = intval($_POST["number0"]);
-        }
-
-        AddPlayer($teamId, trim($_POST["firstname0"]), trim($_POST["lastname0"]), $_POST["profileId0"], $num);
+        $playerid = AddPlayer($teamId, trim($_POST["firstname0"]), trim($_POST["lastname0"]), $_POST["profileId0"], $num);
         //add new player when accreditation id is NOT known
     } else {
-        if (isset($_POST["number0"])) {
-            $num = intval($_POST["number0"]);
-        } else {
-            $num = -1;
-        }
         $playerid = AddPlayer($teamId, trim($_POST["firstname0"]), trim($_POST["lastname0"]), 0, $num);
     }
-    header("location:?view=user/teamplayers&team=$teamId");
+    if (empty($playerid)) {
+        echo "<p class='warning'>" . _("Name is mandatory!") . "</p>";
+    } else {
+        header("location:?view=user/teamplayers&team=$teamId");
+    }
 } elseif (!empty($_POST['save'])) {
-    for ($i = 0; $i < count($_POST['playerEdited']); $i++) {
+    for ($i = 0; $i < count($_POST['playerEdited'] ?? []); $i++) {
         if ($_POST['playerEdited'][$i] == "yes") {
             $id = $_POST['playerId'][$i];
             $playerInfo = PlayerInfo($_POST['playerId'][$i]);
@@ -96,6 +92,16 @@ if (!empty($_POST['remove_x'])) {
                 }
             }
         }
+    }
+    if (!empty($_POST['profileId0'])) {
+        $num = isset($_POST['number0']) && trim($_POST['number0']) !== '' ? intval($_POST['number0']) : -1;
+        AddPlayer(
+            $teamId,
+            trim($_POST['firstname0'] ?? ''),
+            trim($_POST['lastname0'] ?? ''),
+            $_POST['profileId0'],
+            $num,
+        );
     }
     header("location:?view=user/teamplayers&team=$teamId");
 } elseif (!empty($_POST['copy'])) {

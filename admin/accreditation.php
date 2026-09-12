@@ -188,13 +188,14 @@ if ($view == "accId") {
         echo "<p><a href='" . $accIdBaseUrl . "&amp;hide_no_games=1'>" . _("Hide players without games") . "</a></p>";
     }
 
+    $players = SeasonPlayerInfos($season);
+    $seasonGames = SeasonPlayerTeamPlayedGames($season);
+
     echo "<h3>" . _("Players without membership Id") . "</h3>";
-    $players = SeasonAllPlayers($season);
     echo "<table class='infotable'><tr><th>" . _("Division") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th></tr>";
-    foreach ($players as $player) {
-        $playerinfo = PlayerInfo($player['player_id']);
+    foreach ($players as $playerId => $playerinfo) {
         if (empty($playerinfo['accreditation_id'])) {
-            $gamesPlayed = PlayerSeasonTeamPlayedGames($player['player_id'], $playerinfo['team'], $season);
+            $gamesPlayed = isset($seasonGames[$playerId]) ? $seasonGames[$playerId] : 0;
             if ($hideNoGames && empty($gamesPlayed)) {
                 continue;
             }
@@ -212,27 +213,27 @@ if ($view == "accId") {
     echo "</table>";
 
     echo "<h3>" . _("Players not accredited") . "</h3>";
-    $players = SeasonAllPlayers($season);
     $accRows = [];
-    foreach ($players as $player) {
-        $playerinfo = PlayerInfo($player['player_id']);
+    foreach ($players as $playerId => $playerinfo) {
         if (empty($playerinfo['accredited'])) {
-            $gamesPlayed = PlayerSeasonTeamPlayedGames($player['player_id'], $playerinfo['team'], $season);
+            $gamesPlayed = isset($seasonGames[$playerId]) ? $seasonGames[$playerId] : 0;
             if ($hideNoGames && empty($gamesPlayed)) {
                 continue;
             }
-            $row = [
+            $accRows[] = [
                 'playerinfo' => $playerinfo,
                 'games' => $gamesPlayed,
                 'membership' => '',
                 'external_type' => '',
             ];
-            if (CUSTOMIZATIONS == "slkl") {
-                $licenseRow = LicenseData($playerinfo['accreditation_id']);
-                $row['membership'] = !empty($licenseRow['membership']) ? $licenseRow['membership'] : '';
-                $row['external_type'] = !empty($licenseRow['external_type']) ? $licenseRow['external_type'] : '';
-            }
-            $accRows[] = $row;
+        }
+    }
+    if (CUSTOMIZATIONS == "slkl") {
+        $licenses = LicenseDataList(array_column(array_column($accRows, 'playerinfo'), 'accreditation_id'));
+        foreach ($accRows as $index => $row) {
+            $licenseRow = $licenses[$row['playerinfo']['accreditation_id']] ?? [];
+            $accRows[$index]['membership'] = !empty($licenseRow['membership']) ? $licenseRow['membership'] : '';
+            $accRows[$index]['external_type'] = !empty($licenseRow['external_type']) ? $licenseRow['external_type'] : '';
         }
     }
     if ($sort == "external" && CUSTOMIZATIONS == "slkl") {

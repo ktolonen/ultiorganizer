@@ -77,11 +77,17 @@ echo yuiLoad(["utilities", "datasource", "datatable", "dragdrop", "container"]);
 
 		if (playerId == 0) {
 			YAHOO.util.Dom.get("add").value = "<?php echo _("Confirm"); ?>";
+			YAHOO.util.Dom.get("save").disabled = false;
 			YAHOO.util.Dom.get("cancel").disabled = false;
 		} else {
 			YAHOO.util.Dom.get('showAccrId' + playerId).innerHTML = accrId;
 		}
 		dialog.hide();
+		// After hiding: a viewer without edit rights has no playerEdited field,
+		// so this throws, and it must not leave the dialog stuck open.
+		if (playerId != 0) {
+			ChgPlayer(playerId);
+		}
 		return false;
 	}
 
@@ -134,6 +140,13 @@ echo yuiLoad(["utilities", "datasource", "datatable", "dragdrop", "container"]);
 					label: "<?php echo _("Profile ID"); ?>",
 					sortable: true
 				},
+<?php if (CUSTOMIZATIONS == "slkl") { ?>
+				{
+					key: "AccreditationId",
+					label: "<?php echo _("Member ID"); ?>",
+					sortable: true
+				},
+<?php } ?>
 				{
 					key: "Jersey",
 					label: "<?php echo _("#"); ?>",
