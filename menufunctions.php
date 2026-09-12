@@ -440,14 +440,18 @@ function seasonSelection()
     }
 }
 
-function pageMainStart($printable = false)
+function pageMainStart($printable = false, $withMenu = false)
 {
     if ($printable) {
         echo "<table style='width:100%;'><tr>";
         return;
     }
 
-    echo "<table style='border:1px solid #fff;background-color: #ffffff;'><tr>\n";
+    echo "<table style='border:1px solid #fff;background-color: #ffffff;'>\n";
+    if ($withMenu) {
+        echo "<colgroup><col class='menu_column'/><col/></colgroup>\n";
+    }
+    echo "<tr>\n";
 }
 /**
  * Creates menus on left side of page.
@@ -459,7 +463,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
 {
 
     if ($pagestart) {
-        pageMainStart($printable);
+        pageMainStart($printable, true);
     }
     if ($printable) {
         return;

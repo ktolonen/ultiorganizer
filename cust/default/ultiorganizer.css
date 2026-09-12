@@ -320,6 +320,11 @@ table[border="2"] {
 	margin: 0;
 }
 
+/* Reserve both columns before streamed HTML reaches the content cell. */
+.menu_column {
+	width: 200px;
+}
+
 .page_bottom {
 	width: 100%;
 }
@@ -419,6 +424,14 @@ table[border="2"] {
 	.page_middle > table {
 		width: 100%;
 		margin: 0;
+	}
+
+	.menu_column {
+		display: none;
+	}
+
+	.tdcontent {
+		width: 100%;
 	}
 
 	.gameplay-scoreboards {
@@ -521,7 +534,6 @@ table[border="2"] {
 }
 
 .leftmenulinks {
-	float: left;
 	text-align: left;
 	vertical-align: top;
 	background-color: var(--surface-muted);
@@ -536,7 +548,6 @@ table[border="2"] {
 }
 
 .leftmenulinks_plain {
-	float: left;
 	text-align: left;
 	vertical-align: top;
 	background-color: transparent;
@@ -563,7 +574,6 @@ table[border="2"] {
 
 .tdcontent {
 	/*border-left: solid #598788 4px;*/
-	width: 100%;
 	/* Scroll over-wide tables within the content cell (see .page_middle > table). */
 	overflow-x: auto;
 }
