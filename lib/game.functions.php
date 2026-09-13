@@ -1927,7 +1927,9 @@ function GameRemoveAllTimeouts($gameId)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "timeout", "clear", ['removed' => $removed]);
+        if ($removed > 0) {
+            GameHistoryRecord($gameId, "timeout", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1974,7 +1976,9 @@ function GameRemoveAllSpiritTimeouts($gameId)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "spirit_timeout", "clear", ['removed' => $removed]);
+        if ($removed > 0) {
+            GameHistoryRecord($gameId, "spirit_timeout", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
