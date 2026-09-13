@@ -101,18 +101,18 @@ if ($totalRows === 0) {
 } else {
     $rows = GameHistoryAll($filters, $pageSize, $offset);
 
-    $html .= "<table class='data'>\n<tr>";
-    $html .= "<th>" . _("Time") . "</th>";
-    $html .= "<th>" . _("Game") . "</th>";
-    $html .= "<th>" . _("User") . "</th>";
-    $html .= "<th>" . _("IP Address") . "</th>";
-    $html .= "<th>" . _("Source") . "</th>";
-    $html .= "<th>" . _("Description") . "</th>";
+    $html .= "<table class='admintable'>\n<tr>";
+    $html .= "<th style='width:15%'>" . _("Time") . "</th>";
+    $html .= "<th style='width:8%'>" . _("Game") . "</th>";
+    $html .= "<th style='width:15%'>" . _("User") . "</th>";
+    $html .= "<th style='width:12%'>" . _("IP Address") . "</th>";
+    $html .= "<th style='width:10%'>" . _("Source") . "</th>";
+    $html .= "<th style='width:40%'>" . _("Description") . "</th>";
     $html .= "</tr>\n";
 
     foreach ($rows as $row) {
         $gameId = intval($row['game']);
-        $html .= "<tr>";
+        $html .= "<tr class='admintablerow'>";
         $html .= "<td>" . utf8entities(DefTimeFormat($row['time'])) . "</td>";
         $html .= "<td><a href='?view=user/gamehistory&amp;game=" . $gameId . "'>" . $gameId . "</a></td>";
         $html .= "<td>" . utf8entities($row['user_id']) . "</td>";

@@ -85,18 +85,18 @@ $rows = GameHistoryList($gameId, 200);
 if ($count === 0) {
     $html .= "<p>" . _("No changes recorded") . ".</p>";
 } else {
-    $html .= "<table class='data'>\n<tr>";
-    $html .= "<th>" . _("Time") . "</th>";
-    $html .= "<th>" . _("User") . "</th>";
-    $html .= "<th>" . _("Source") . "</th>";
-    $html .= "<th>" . _("Description") . "</th>";
-    $html .= "<th></th>";
+    $html .= "<table class='admintable'>\n<tr>";
+    $html .= "<th style='width:15%'>" . _("Time") . "</th>";
+    $html .= "<th style='width:15%'>" . _("User") . "</th>";
+    $html .= "<th style='width:10%'>" . _("Source") . "</th>";
+    $html .= "<th style='width:40%'>" . _("Description") . "</th>";
+    $html .= "<th style='width:20%'></th>";
     $html .= "</tr>\n";
 
     $confirmText = htmlspecialchars(addslashes(_("This overwrites the current scoresheet with this saved version.")), ENT_QUOTES);
 
     foreach ($rows as $row) {
-        $html .= "<tr>";
+        $html .= "<tr class='admintablerow'>";
         $html .= "<td>" . utf8entities(DefTimeFormat($row['time'])) . "</td>";
         $html .= "<td>" . utf8entities($row['user_id']) . "</td>";
         $html .= "<td>" . utf8entities($row['source']) . "</td>";
@@ -124,10 +124,11 @@ if ($count === 0) {
 
 if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
     $html .= "<h2>" . _("Saved state") . "</h2>\n";
-    $html .= "<table class='data'>\n<tr><th>" . _("Point") . "</th><th>"
-        . _("Score") . "</th><th>" . _("Assist") . "</th><th>" . _("Scorer") . "</th></tr>\n";
+    $html .= "<table class='admintable'>\n<tr><th style='width:10%'>" . _("Point") . "</th><th style='width:10%'>"
+        . _("Score") . "</th><th style='width:40%'>" . _("Assist") . "</th><th style='width:40%'>"
+        . _("Scorer") . "</th></tr>\n";
     foreach ($viewEntry['snapshot']['goals'] ?? [] as $goal) {
-        $html .= "<tr>";
+        $html .= "<tr class='admintablerow'>";
         $html .= "<td>" . intval($goal['num']) . "</td>";
         $html .= "<td>" . intval($goal['homescore']) . "-" . intval($goal['visitorscore']) . "</td>";
         $html .= "<td>" . utf8entities($goal['assist_name'] ?? "") . "</td>";
