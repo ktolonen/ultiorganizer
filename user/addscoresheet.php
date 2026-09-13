@@ -12,6 +12,22 @@ if (empty($_GET["game"])) {
     return;
 }
 
+function IsCanonicalScoresheetTime($value)
+{
+    $parts = explode(".", $value);
+    if (count($parts) > 3) {
+        return false;
+    }
+    $seconds = (int) end($parts);
+    if (count($parts) > 1 && $seconds >= 60) {
+        return false;
+    }
+    if (count($parts) === 3 && (int) $parts[1] >= 60) {
+        return false;
+    }
+    return true;
+}
+
 function ScoreSheetSpiritTimeoutValues($gameId, $home, $maxslots)
 {
     $values = [];
@@ -266,11 +282,13 @@ $scoresheetSaved = false;
 //process itself if submit was pressed
 if (!empty($_POST['save'])) {
     $time_delim = [",", ";", ":"];
-    $htime = 0;
+    $htime = null;
     if (!$hideTimeOnScoresheet) {
-        $htime = $_POST['halftime'] ?? "";
-        $htime = str_replace($time_delim, ".", $htime);
-        $htime = TimeToSec($htime);
+        $postedHalftime = $_POST['halftime'] ?? "";
+        $postedHalftime = str_replace($time_delim, ".", $postedHalftime);
+        if ($postedHalftime !== "") {
+            $htime = TimeToSec($postedHalftime);
+        }
     }
 
     $h = 0;
@@ -301,17 +319,22 @@ if (!empty($_POST['save'])) {
         if ($hideTimeOnScoresheet) {
             $time = $prevtime + 1;
         } else {
-            if (!empty($_POST['time' . $i])) {
-                $time = $_POST['time' . $i];
+            $postedTime = $_POST['time' . $i] ?? "";
+            $time = str_replace($time_delim, ".", $postedTime);
+
+            if ($postedTime === "") {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time is missing") . "!</p>";
+            } elseif (!IsCanonicalScoresheetTime($time)) {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time is not in a valid format") . "!</p>";
+                $errIds[] = "time$i";
             }
 
-            $time = str_replace($time_delim, ".", $time);
             $time = TimeToSec($time);
-            // Point times are optional, and so is the halftime, so a missing
-            // one is stored as zero rather than reported. Only points that
-            // carry a time can conflict with each other.
+            // A missing point time parses to zero, so only compare points
+            // that actually carry a time - otherwise every point without
+            // one would falsely collide with the others.
             if ($time > 0) {
-                if ($htime > 0 && $time == $htime) {
+                if ($htime !== null && $time == $htime) {
                     echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
                     $errIds[] = "time$i";
                 }
@@ -347,6 +370,8 @@ if (!empty($_POST['save'])) {
             $goal = GamePlayerFromNumber($gameId, $game_result['hometeam'], $goal);
             if ($goal === null && $postedGoal !== "") {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $postedGoalHtml . "' " . _("Not on the roster") . "!</p>";
+            } elseif ($postedGoal === "") {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number is missing") . "!</p>";
             }
 
             if ($pass !== -1 && $pass !== null && $goal !== null && $pass === $goal) {
@@ -381,6 +406,8 @@ if (!empty($_POST['save'])) {
             $goal = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $goal);
             if ($goal === null && $postedGoal !== "") {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $postedGoalHtml . "' " . _("Not on the roster") . "!</p>";
+            } elseif ($postedGoal === "") {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number is missing") . "!</p>";
             }
 
             if ($pass !== -1 && $pass !== null && $goal !== null && $pass === $goal) {
@@ -653,8 +680,9 @@ if (!$hideTimeOnScoresheet) {
     //halftime
     echo "<table cellspacing='0' width='100%' border='1'>\n";
     echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
+    $halftimeDisplay = $game_result['halftime'] !== null ? SecToMin($game_result['halftime']) : "";
     echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
-	maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;]*' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
+	maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;]*' name='halftime' id='halftime' value='" . $halftimeDisplay . "'/></td></tr>";
     echo "</table>\n";
 }
 
