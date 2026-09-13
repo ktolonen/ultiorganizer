@@ -934,7 +934,9 @@ function GameRemoveAllGameEvents($gameId)
 
         // Suppressed while GameHistoryRestore() replays, so this row appears
         // only for a caller that deletes outside a restore.
-        GameHistoryRecord($gameId, "gameevent", "clear", ['removed' => $removed]);
+        if ($removed > 0) {
+            GameHistoryRecord($gameId, "gameevent", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1592,7 +1594,9 @@ function GameRemoveAllPlayers($gameId)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "played", "clear", ['removed' => $removed]);
+        if ($removed > 0) {
+            GameHistoryRecord($gameId, "played", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1637,7 +1641,9 @@ function GameRemoveAllScores($gameId)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "goal", "clear", ['removed' => $removed]);
+        if ($removed > 0) {
+            GameHistoryRecord($gameId, "goal", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1657,7 +1663,9 @@ function GameRemoveAllDefenses($gameId)
         );
 
         $result = DBQuery($query);
-        GameHistoryRecord($gameId, "defense", "clear", ['removed' => $removed]);
+        if ($removed > 0) {
+            GameHistoryRecord($gameId, "defense", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
