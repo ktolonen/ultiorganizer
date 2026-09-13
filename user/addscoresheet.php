@@ -5,6 +5,7 @@ include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'lib/location.functions.php';
+include_once $include_prefix . 'lib/gamehistory.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 
 if (empty($_GET["game"])) {
@@ -251,7 +252,6 @@ contentStart();
 $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
 $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
 $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
-$menutabs[_("History")] = "?view=user/gamehistory&game=$gameId";
 if (!empty($seasoninfo['spiritmode'])) {
     $spiritUrl = SpiritEntryUrl($gameId);
     if (!empty($spiritUrl)) {
@@ -747,6 +747,11 @@ echo "<tr><td colspan='2'>
 <li>" . _("Give XX as the assist in Callahan goals") . ".</li>
 <li>" . _("You can save the scoresheet at any time while entering it") . "</li></ul></td></tr>";
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>" . _("Back to game responsibilities") . "</a></p></td></tr>";
+$lasthistory = GameHistoryList($gameId, 1);
+if (!empty($lasthistory)) {
+    echo "<tr><td colspan='2'><p><a href='?view=user/gamehistory&amp;game=$gameId'>" . _("History") . "</a> <em>"
+        . sprintf(_("Last changed: %s"), utf8entities(DefTimeFormat($lasthistory[0]['time']))) . "</em></p></td></tr>";
+}
 echo "</table>\n";
 
 //scores
