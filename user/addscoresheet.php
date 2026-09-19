@@ -279,6 +279,7 @@ $can_manage_comment = CanManageGameComment($gameId, COMMENT_TYPE_GAME);
 $show_comment_form = ($can_create_comment || $can_manage_comment);
 $scoreRows = [];
 $scoresheetSaved = false;
+$revisionConflict = false;
 //process itself if submit was pressed
 if (!empty($_POST['save'])) {
     $time_delim = [",", ";", ":"];
@@ -433,8 +434,21 @@ if (!empty($_POST['save'])) {
 
     // Validate the whole payload before replacing stored data. Unknown roster
     // numbers are non-blocking warnings and are stored as empty player fields.
+    // This page rewrites the whole sheet, so a scorekeeper's points entered
+    // since it was opened would be deleted without the revision check. Only
+    // checked once the payload validates, so that a rejected sheet carries its
+    // own revision back and stays locked on the state it was entered against.
+    if (empty($errIds) && isset($_POST['revision']) && empty($_POST['overwrite'])) {
+        $revisionConflict = (int) $_POST['revision'] !== GameRevision($gameId);
+    }
+
     if (!empty($errIds)) {
         echo "<p class='warning'>" . _("Scoresheet not saved. Correct the highlighted points and save again.") . "</p>";
+    } elseif ($revisionConflict) {
+        echo "<p class='warning'>" . _("Scoresheet not saved: the game has changed since this page was opened.") . "</p>";
+        echo "<p>" . _("Your entries are kept below. Save again to overwrite the other changes, or reload to discard yours.") . "</p>";
+        echo "<p><a href='?view=user/gamehistory&amp;game=$gameId'>" . _("Scoresheet history") . "</a>"
+            . " | <a href='?view=user/addscoresheet&amp;game=$gameId'>" . _("Reload the scoresheet") . "</a></p>";
     } else {
         $delete_comment = !empty($_POST['delete_game_comment']);
         if (isset($_POST['gamecomment']) || $delete_comment) {
@@ -573,6 +587,19 @@ if (count($away_playerlist) == 0) {
 
 
 echo "<form id='scoresheet' action='?view=user/addscoresheet&amp;game=$gameId' method='post'>";
+// A save refused over its points keeps the revision it was entered against, so
+// the correction is still checked against that state. A save refused over the
+// conflict carries the fresh one, making the next save the deliberate
+// overwrite the message offers.
+if (!empty($_POST['save']) && !$scoresheetSaved && !$revisionConflict && isset($_POST['revision'])) {
+    $formRevision = (int) $_POST['revision'];
+} else {
+    $formRevision = GameRevision($gameId);
+}
+echo "<input type='hidden' name='revision' value='" . $formRevision . "'/>";
+if ($revisionConflict) {
+    echo "<input type='hidden' name='overwrite' value='1'/>";
+}
 echo "<table cellspacing='5' cellpadding='5'>";
 
 echo "<tr><td colspan='2'><h1>" . _("Game scoresheet") . " #$gameId</h1></td></tr>";
