@@ -1284,6 +1284,38 @@ function CheckGameResult($game, $home, $away)
 }
 
 /**
+ * Returns the scoresheet revision, the token the bulk desktop sheet locks on.
+ *
+ * Every mutator whose rows user/addscoresheet.php rewrites bumps it, so a
+ * sheet loaded before a scorekeeper entered a point saves against a revision
+ * that no longer matches. Rows the bulk sheet leaves alone -- the timer,
+ * spirit scores, player lists, the defense sheet -- deliberately do not bump
+ * it, or the scorekeeper would collide with itself (see docs/scoresheet.md).
+ */
+function GameRevision($gameId)
+{
+    return (int) DBQueryToValue(sprintf(
+        "SELECT revision FROM uo_game WHERE game_id=%d",
+        (int) $gameId,
+    ));
+}
+
+/**
+ * Bumps the scoresheet revision.
+ *
+ * Carries no right of its own: it only ever accompanies a write the calling
+ * mutator has already authorized, and one of those callers is the
+ * ANONYMOUS_RESULT_INPUT route, which holds no game right to check.
+ */
+function GameRevisionBump($gameId)
+{
+    return DBQuery(sprintf(
+        "UPDATE uo_game SET revision=revision+1 WHERE game_id=%d",
+        (int) $gameId,
+    ));
+}
+
+/**
  * $snapshot defaults true, so a caller gets a restore point unless it opts
  * out. The per-point callers in mobile/ and scorekeeper/ do, since a snapshot
  * per point would mean roughly one per goal (see docs/game-history.md).
@@ -1306,6 +1338,7 @@ function GameUpdateResult($gameId, $home, $away, $snapshot = true)
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
         GameHistoryRecord($gameId, "result", "update", [
             'home' => (int) $home,
             'away' => (int) $away,
@@ -1341,6 +1374,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
         GameHistoryRecord($gameId, "result", "update", [
             'home' => (int) $home,
             'away' => (int) $away,
@@ -1404,6 +1438,7 @@ function GameSetForfeit($gameId, $forfeit)
         DBEscapeString($gameId),
     );
     $result = DBQuery($query);
+    GameRevisionBump($gameId);
     GameHistoryRecord($gameId, "forfeit", "update", ['forfeit' => $labels[$forfeit]]);
     // Forfeited games carry no spirit; recompute visibility and cached team
     // statistics so their data is dropped from averages (and restored on undo).
@@ -1428,6 +1463,7 @@ function GameClearResult($gameId, $updatepools = true)
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
         GameHistoryRecord($gameId, "result", "clear", []);
 
         if ($updatepools) {
@@ -1642,6 +1678,7 @@ function GameRemoveAllScores($gameId)
 
         $result = DBQuery($query);
         if ($removed > 0) {
+            GameRevisionBump($gameId);
             GameHistoryRecord($gameId, "goal", "clear", ['removed' => $removed]);
         }
 
@@ -1698,6 +1735,7 @@ function GameRemoveScore($gameId, $num)
         // A point already gone -- a resubmitted delete, or a $num this caller
         // never held -- deletes nothing, and must not be recorded as a removal.
         if (DBAffectedRows() > 0) {
+            GameRevisionBump($gameId);
             GameHistoryRecord($gameId, "goal", "remove", [
                 'num' => (int) $num,
                 'scorer' => !empty($removedGoal['scorer']) ? (int) $removedGoal['scorer'] : null,
@@ -1824,6 +1862,7 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
         GameHistoryRecord($gameId, "goal", "add", [
             'num' => (int) $number,
             'scorer' => $goal === null ? null : (int) $goal,
@@ -1908,6 +1947,7 @@ function GameAddScoreEntry($uo_goal)
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($uo_goal['game']);
         GameHistoryRecord($uo_goal['game'], "goal", "add", [
             'num' => (int) $uo_goal['num'],
             'scorer' => isset($uo_goal['scorer']) ? (int) $uo_goal['scorer'] : null,
@@ -1936,6 +1976,7 @@ function GameRemoveAllTimeouts($gameId)
 
         $result = DBQuery($query);
         if ($removed > 0) {
+            GameRevisionBump($gameId);
             GameHistoryRecord($gameId, "timeout", "clear", ['removed' => $removed]);
         }
 
@@ -1960,6 +2001,7 @@ function GameAddTimeout($gameId, $number, $time, $home)
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
         GameHistoryRecord($gameId, "timeout", "add", [
             'num' => (int) $number,
             'time' => (int) $time,
@@ -1985,6 +2027,7 @@ function GameRemoveAllSpiritTimeouts($gameId)
 
         $result = DBQuery($query);
         if ($removed > 0) {
+            GameRevisionBump($gameId);
             GameHistoryRecord($gameId, "spirit_timeout", "clear", ['removed' => $removed]);
         }
 
@@ -2009,6 +2052,7 @@ function GameAddSpiritTimeout($gameId, $number, $time, $home)
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
         GameHistoryRecord($gameId, "spirit_timeout", "add", [
             'num' => (int) $number,
             'time' => (int) $time,
@@ -2038,6 +2082,7 @@ function GameSetScoreSheetKeeper($gameId, $name)
         }
         $result = DBQuery($query);
         if (DBAffectedRows() > 0) {
+            GameRevisionBump($gameId);
             GameHistoryRecord($gameId, "official", "update", ['name' => (string) $name]);
         }
 
@@ -2065,6 +2110,7 @@ function GameSetHalftime($gameId, $time)
         }
         $result = DBQuery($query);
         if (DBAffectedRows() > 0) {
+            GameRevisionBump($gameId);
             GameHistoryRecord($gameId, "halftime", "update", ['time' => (int) $time]);
         }
 
@@ -2095,6 +2141,7 @@ function GameSetStartingTeam($gameId, $home)
 
             $result = DBQuery($query);
             if (DBAffectedRows() > 0) {
+                GameRevisionBump($gameId);
                 GameHistoryRecord($gameId, "gameevent", "remove", ['type' => "start"]);
             }
 
@@ -2112,6 +2159,7 @@ function GameSetStartingTeam($gameId, $home)
             // 1 for the insert, 2 for a changed side, 0 when the recorded side
             // is already the one being set.
             if (DBAffectedRows() > 0) {
+                GameRevisionBump($gameId);
                 GameHistoryRecord($gameId, "gameevent", "update", ['type' => "start", 'home' => $home ? 1 : 0]);
             }
 

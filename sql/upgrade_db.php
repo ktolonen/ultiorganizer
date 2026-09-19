@@ -1547,6 +1547,10 @@ function upgrade100()
     if (!hasRow("uo_setting", "name", "DisableGameHistory")) {
         runQuery('INSERT INTO uo_setting (name, value) VALUES ("DisableGameHistory", "false")');
     }
+
+    if (!hasColumn('uo_game', 'revision')) {
+        runQuery("ALTER TABLE `uo_game` ADD COLUMN `revision` int(10) NOT NULL DEFAULT 0");
+    }
 }
 
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)

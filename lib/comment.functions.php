@@ -362,7 +362,12 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
     // CanManageGameComment(), which can no longer recognise the author once
     // ApplyCommentChange() has logged the comment_delete.
     if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop") {
+        // Lazy require: game.functions.php requires gamehistory.functions.php,
+        // which this file requires in turn.
+        require_once __DIR__ . '/game.functions.php';
+
         GameHistorySnapshotIfNeeded($gameId, false, false, "comment");
+        GameRevisionBump($gameId);
         GameHistoryRecord($gameId, "comment", $change['action'] === "delete" ? "remove" : "update", [
             'length' => strlen((string) $comment),
         ]);
