@@ -170,7 +170,7 @@ function GameHistoryStateEvents($state)
 }
 
 if (empty($_GET["game"])) {
-    showPage(_("History"), "<p class='warning'>" . _("Game not found") . ".</p>");
+    showPage(_("Scoresheet history"), "<p class='warning'>" . _("Game not found") . ".</p>");
     return;
 }
 
@@ -184,7 +184,7 @@ $game_result = GameInfo($gameId);
 $seasoninfo = SeasonInfo($game_result['season']);
 
 $LAYOUT_ID = GAMEHISTORY;
-$title = _("History");
+$title = _("Scoresheet history");
 $html = "";
 $feedback = "";
 

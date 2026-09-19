@@ -749,8 +749,8 @@ echo "<tr><td colspan='2'>
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>" . _("Back to game responsibilities") . "</a></p></td></tr>";
 $lasthistory = GameHistoryList($gameId, 1);
 if (!empty($lasthistory)) {
-    echo "<tr><td colspan='2'><p><a href='?view=user/gamehistory&amp;game=$gameId'>" . _("History") . "</a> <em>"
-        . sprintf(_("Last changed: %s"), utf8entities(DefTimeFormat($lasthistory[0]['time']))) . "</em></p></td></tr>";
+    echo "<tr><td colspan='2'><p><a href='?view=user/gamehistory&amp;game=$gameId'>" . _("Scoresheet history") . "</a></p>"
+        . "<p><em>" . sprintf(_("Last changed: %s"), utf8entities(DefTimeFormat($lasthistory[0]['time']))) . "</em></p></td></tr>";
 }
 echo "</table>\n";
 

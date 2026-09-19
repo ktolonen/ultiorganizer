@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-19 23:21+0300\n"
+"POT-Creation-Date: 2026-09-19 23:27+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -3320,8 +3320,7 @@ msgid "Historical avg"
 msgstr "Promedio histórico"
 
 #: clubcard.php:171 countrycard.php:84 playercard.php:250 playercard.php:430
-#: teamcard.php:410 teamcard.php:611 user/addscoresheet.php:752
-#: user/gamehistory.php:173 user/gamehistory.php:187
+#: teamcard.php:410 teamcard.php:611
 msgid "History"
 msgstr "Histórico"
 
@@ -6025,6 +6024,7 @@ msgid "Scoresheet filling instructions:"
 msgstr "Instrucciones para completar la hoja de anotación:"
 
 #: admin/seasonadmin.php:114 admin/seasongamehistory.php:11
+#: user/addscoresheet.php:752 user/gamehistory.php:173 user/gamehistory.php:187
 msgid "Scoresheet history"
 msgstr "Historial de la hoja de anotación"
 
