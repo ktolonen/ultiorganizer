@@ -393,6 +393,70 @@ function GameHistoryCount($gameId)
     ));
 }
 
+/**
+ * One row per game of an event that has history, carrying the latest change.
+ *
+ * The event administrator's view of the table: the flat change log answers
+ * "who touched this", this answers "which scoresheets were touched, and when".
+ * A game is marked off-day when its last change falls outside its scheduled
+ * date -- uo_game.time is the scheduled time as entered and uo_game_history.time
+ * is the database clock, neither of which is timezone-converted anywhere, so
+ * the comparison is exact only while the event runs on the server's clock.
+ *
+ * $filters accepts 'from' and 'to' (dates, on the last change) and 'offday'.
+ */
+function SeasonGameHistorySummary($seasonId, $filters = [])
+{
+    if (!isSeasonAdmin($seasonId)) {
+        return [];
+    }
+
+    $where = ["ser.season='" . DBEscapeString($seasonId) . "'"];
+    if (!empty($filters['from'])) {
+        $where[] = sprintf("h.time >= '%s'", DBEscapeString($filters['from']));
+    }
+    if (!empty($filters['to'])) {
+        // A bare YYYY-MM-DD widens to 00:00:00, so a plain <= would exclude the
+        // whole end date.
+        $where[] = sprintf("h.time < DATE_ADD('%s', INTERVAL 1 DAY)", DBEscapeString($filters['to']));
+    }
+    if (!empty($filters['offday'])) {
+        $where[] = "g.time IS NOT NULL AND DATE(h.time) <> DATE(g.time)";
+    }
+
+    $query = sprintf(
+        "SELECT g.game_id, g.time AS scheduled, g.hometeam, g.visitorteam,
+			home.name AS hometeamname, visitor.name AS visitorteamname,
+			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
+			ser.name AS seriesname, po.name AS poolname,
+			h.time AS lastmodified, h.user_id, h.source, agg.changes,
+			(g.time IS NOT NULL AND DATE(h.time) <> DATE(g.time)) AS offday
+		FROM uo_game g
+		INNER JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+		INNER JOIN uo_pool po ON (po.pool_id=gp.pool)
+		INNER JOIN uo_series ser ON (ser.series_id=po.series)
+		INNER JOIN (
+			SELECT game, MAX(history_id) AS last_id, COUNT(*) AS changes
+			FROM uo_game_history
+			WHERE game IN (SELECT gp2.game FROM uo_game_pool gp2
+				INNER JOIN uo_pool po2 ON po2.pool_id=gp2.pool
+				INNER JOIN uo_series se2 ON se2.series_id=po2.series
+				WHERE se2.season='%s')
+			GROUP BY game
+		) agg ON (agg.game=g.game_id)
+		INNER JOIN uo_game_history h ON (h.history_id=agg.last_id)
+		LEFT JOIN uo_team home ON (g.hometeam=home.team_id)
+		LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
+		LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
+		LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
+		WHERE %s
+		ORDER BY h.time DESC, g.game_id DESC",
+        DBEscapeString($seasonId),
+        implode(" AND ", $where),
+    );
+    return DBQueryToArray($query);
+}
+
 function GameHistoryWhere($filters)
 {
     $where = ["1=1"];

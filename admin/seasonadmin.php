@@ -111,6 +111,7 @@ $html .=  "<a href='?view=admin/addseasonusers&amp;season=" . $info['season_id']
 $html .=  "<a href='?view=admin/addseasonlinks&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit side menu links") . "</a><br/>";
 $html .=  "<a href='?view=admin/tdtools&amp;season=" . $info['season_id'] . "'>&raquo; " . _("TD Tools") . "</a><br/>";
 $html .=  "<a href='?view=admin/finalstandings&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Final standings") . "</a><br/>";
+$html .=  "<a href='?view=admin/seasongamehistory&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Scoresheet history") . "</a><br/>";
 
 if (IsSeasonStatsCalculated($info['season_id'])) {
     $html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Re-archive statistics") . "</a><br/>";
