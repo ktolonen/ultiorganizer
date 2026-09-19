@@ -30,10 +30,15 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
+$html .= "<h2>" . $title . "</h2>\n";
+
 $html .= "<form method='post' action='?view=admin/seasongamehistory&amp;season=" . utf8entities($season) . "'>";
 $html .= "<p>";
-$html .= _("From") . ": <input class='input' type='date' name='from' value='" . utf8entities($filters['from']) . "'/> ";
-$html .= _("To") . ": <input class='input' type='date' name='to' value='" . utf8entities($filters['to']) . "'/> ";
+// One label for the pair: the "From" and "To" msgids are translated as a bare
+// colon in some catalogs, which renders the range as "::".
+$html .= _("Last modified") . ": ";
+$html .= "<input class='input' type='date' name='from' value='" . utf8entities($filters['from']) . "'/> ";
+$html .= "&ndash; <input class='input' type='date' name='to' value='" . utf8entities($filters['to']) . "'/> ";
 $html .= "<label><input type='checkbox' name='offday' value='1'" . ($filters['offday'] ? " checked='checked'" : "") . "/> "
     . _("Changed outside the scheduled day") . "</label> ";
 $html .= "<input class='button' type='submit' name='update' value='" . _("Refresh") . "'/>";
@@ -71,7 +76,7 @@ if (empty($rows)) {
         $html .= "<tr class='admintablerow'>";
         $html .= "<td><a href='?view=user/gamehistory&amp;game=" . $gameId . "'>" . $gameId . "</a></td>";
         $html .= "<td>" . utf8entities(U_($row['seriesname'])) . "</td>";
-        $html .= "<td>" . utf8entities(U_($home)) . " - " . utf8entities(U_($visitor)) . "</td>";
+        $html .= "<td>" . $home . " - " . $visitor . "</td>";
         $html .= "<td>" . utf8entities($scheduled) . "</td>";
         $html .= "<td" . (!empty($row['offday']) ? " class='warning'" : "") . ">"
             . utf8entities(DefTimeFormat($row['lastmodified'])) . "</td>";
