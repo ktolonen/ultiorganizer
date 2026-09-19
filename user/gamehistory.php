@@ -241,6 +241,11 @@ pageMenu($menutabs);
 
 $html .= $feedback;
 
+if (!empty($game_result['season']) && isSeasonAdmin($game_result['season'])) {
+    $html .= "<p><a href='?view=admin/seasongamehistory&amp;season="
+        . urlencode($game_result['season']) . "'>&laquo; " . _("Scoresheet history") . "</a></p>\n";
+}
+
 $count = GameHistoryCount($gameId);
 $rows = GameHistoryList($gameId, 200);
 
