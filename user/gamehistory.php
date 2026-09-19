@@ -62,7 +62,8 @@ function GameHistoryStateRow($mark, $cells, $marked)
  * Cell contents for a compared value: the saved one, noting the current one
  * when the two differ. A row present on one side only shows that side's value.
  * $placeholder stands in for an empty value where a blank cell would read as a
- * rendering fault rather than as an unset field.
+ * rendering fault rather than as an unset field. It is a word rather than a
+ * dash, which the legend above already gives a meaning of its own.
  */
 function GameHistoryStateCell($savedText, $currentText, $hasSaved = true, $hasCurrent = true, $placeholder = "")
 {
@@ -71,7 +72,8 @@ function GameHistoryStateCell($savedText, $currentText, $hasSaved = true, $hasCu
     }
     $text = utf8entities($savedText === "" ? $placeholder : $savedText);
     if ($hasCurrent && $savedText !== $currentText) {
-        $text .= " <em>(" . sprintf(_("now %s"), utf8entities($currentText === "" ? "-" : $currentText)) . ")</em>";
+        $current = $currentText === "" ? _("None") : $currentText;
+        $text .= " <em>(" . sprintf(_("now %s"), utf8entities($current)) . ")</em>";
     }
     return $text;
 }
@@ -358,7 +360,7 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
     $state .= "<table class='admintable'>\n";
     foreach ($fields as $field) {
         $cells = "<td style='width:30%'>" . $field[0] . "</td>";
-        $cells .= "<td>" . nl2br(GameHistoryStateCell($field[1], $field[2], true, true, "-")) . "</td>";
+        $cells .= "<td>" . nl2br(GameHistoryStateCell($field[1], $field[2], true, true, _("None"))) . "</td>";
         $state .= GameHistoryStateRow($field[1] === $field[2] ? "" : "*", $cells, $fieldMarks > 0);
     }
     $state .= "</table>\n";
@@ -529,7 +531,7 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
         $state .= "<tr><th colspan='" . ($marked ? 3 : 2) . "'>" . $label . "</th></tr>\n";
         foreach ($sides as $side) {
             $cells = "<td style='width:30%'>" . utf8entities($side[0]) . "</td>";
-            $cells .= "<td>" . GameHistoryStateCell($side[1], $side[2], true, true, "-") . "</td>";
+            $cells .= "<td>" . GameHistoryStateCell($side[1], $side[2], true, true, _("None")) . "</td>";
             $state .= GameHistoryStateRow($side[1] === $side[2] ? "" : "*", $cells, $marked);
         }
         $state .= "</table>\n";
