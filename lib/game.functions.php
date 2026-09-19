@@ -1309,7 +1309,7 @@ function GameRevision($gameId)
  */
 function GameRevisionBump($gameId)
 {
-    return DBQuery(sprintf(
+    DBQuery(sprintf(
         "UPDATE uo_game SET revision=revision+1 WHERE game_id=%d",
         (int) $gameId,
     ));

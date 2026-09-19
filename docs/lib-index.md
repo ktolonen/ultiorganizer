@@ -18,7 +18,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/database.php`: mysqli connection lifecycle, query/prepared-statement wrappers, result casting, and DB metadata helpers.
 - `lib/database.maintenance.php`: maintenance flag parsing, runtime-state locks, blocked maintenance responses, and controlled automatic DB-upgrade coordination.
 - `lib/debug.functions.php`: lightweight debug print helpers.
-- `lib/game.functions.php`: game CRUD, results, scoresheet events, media links, player assignments, scheduling, live timing, and spirit table output.
+- `lib/game.functions.php`: game CRUD, results, scoresheet events and revision, media links, player assignments, scheduling, live timing, and spirit table output.
 - `lib/image.functions.php`: uploaded image lookup/removal plus JPEG conversion and thumbnail generation.
 - `lib/include_only.guard.php`: include-time guard for files that must not be invoked directly.
 - `lib/locale.functions.php`: gettext locale resolution, installed/carrier-locale discovery, and locale activation.

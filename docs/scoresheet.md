@@ -214,6 +214,20 @@ Spirit score submission is intentionally not part of the scorekeeper surface. Sp
 
 Every mutation described above, from every input path, also records a row in `uo_game_history`. A bulk rewrite additionally captures one restorable snapshot of the state it is about to replace -- one per save, not one per call. See `docs/game-history.md`.
 
+## Parallel editing
+
+The desktop editor rewrites the whole sheet, so a sheet loaded before a scorekeeper entered a point would delete that point on save. `uo_game.revision` guards against that:
+
+- every mutator whose rows the desktop editor rewrites calls `GameRevisionBump()` after a write that changed something -- goals, result, forfeit, official, halftime, starting offence, timeouts, spirit stoppages, and the game note,
+- rows the desktop editor leaves alone deliberately do not bump it. The timer, spirit scores, player lists and the defense sheet would otherwise make the scorekeeper collide with itself on every point,
+- `user/addscoresheet.php` carries the revision it was rendered against in a hidden field and compares it through `GameRevision()` before `GameRemoveAllScores()`.
+
+On a mismatch the save is refused with the operator's entries still on the page, and the refused save carries the fresh revision back, so saving again is a deliberate overwrite. A save refused over its own points instead keeps the older revision, so the correction is still checked against the state it was entered against.
+
+The incremental paths in `scorekeeper/` and `mobile/` bump the revision but do not check it. They append points rather than replacing the sequence, so they cannot destroy another operator's work.
+
+`GameHistoryRestore()` also rewrites the sheet, and bumps the revision rather than checking it. It is a deliberate, snapshot-backed action restricted to event admins.
+
 ## Database Model
 
 The detailed scoresheet uses several tables together.
@@ -238,13 +252,15 @@ Relevant columns:
 - `isongoing`
 - `hasstarted`
 - `show_spirit`
+- `revision`
 
 Role in the scoresheet:
 
 - stores the current or final result,
 - stores scheduling and field context,
 - stores halftime and official metadata,
-- stores game lifecycle flags that control whether the game is not started, ongoing, or finished.
+- stores game lifecycle flags that control whether the game is not started, ongoing, or finished,
+- stores the scoresheet revision the desktop editor locks on.
 
 #### `uo_goal`
 
