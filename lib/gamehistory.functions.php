@@ -465,8 +465,10 @@ function SeasonGameHistorySummary($seasonId, $filters = [])
  * the audit trail and the restore points, not any result. Irreversible -- the
  * history is the only copy of what it holds.
  *
- * The game set is the one SeasonGameHistorySummary() lists, so what an event
- * admin sees on admin/seasongamehistory.php is what this removes.
+ * The game set is every game of the event, reached through any of its pool
+ * rows, where SeasonGameHistorySummary() lists a game through its timetable
+ * pool row. The two agree for every game that has one, which is every game the
+ * scheduling code produces.
  */
 function DeleteEventGameHistory($seasonId)
 {
