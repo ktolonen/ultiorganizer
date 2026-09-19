@@ -457,68 +457,6 @@ function SeasonGameHistorySummary($seasonId, $filters = [])
     return DBQueryToArray($query);
 }
 
-function GameHistoryWhere($filters)
-{
-    $where = ["1=1"];
-
-    if (!empty($filters['game'])) {
-        $where[] = sprintf("h.game=%d", (int) $filters['game']);
-    }
-    if (!empty($filters['user'])) {
-        $where[] = sprintf("h.user_id='%s'", DBEscapeString($filters['user']));
-    }
-    if (!empty($filters['from'])) {
-        $where[] = sprintf("h.time >= '%s'", DBEscapeString($filters['from']));
-    }
-    if (!empty($filters['to'])) {
-        // The filter is a bare YYYY-MM-DD, which MySQL widens to 00:00:00, so
-        // a plain <= would exclude the whole end date.
-        $where[] = sprintf("h.time < DATE_ADD('%s', INTERVAL 1 DAY)", DBEscapeString($filters['to']));
-    }
-    if (!empty($filters['season'])) {
-        $where[] = sprintf(
-            "h.game IN (SELECT gp.game FROM uo_game_pool gp
-				INNER JOIN uo_pool po ON po.pool_id=gp.pool
-				INNER JOIN uo_series se ON se.series_id=po.series
-				WHERE se.season='%s')",
-            DBEscapeString($filters['season']),
-        );
-    }
-    return implode(" AND ", $where);
-}
-
-function GameHistoryAll($filters, $limit = null, $offset = null)
-{
-    if (!isSuperAdmin()) {
-        return [];
-    }
-
-    $query = sprintf(
-        "SELECT h.history_id, h.game, h.time, h.user_id, h.ip, h.source, h.target,
-			h.action, h.detail, h.has_snapshot
-		FROM uo_game_history h WHERE %s ORDER BY h.time DESC, h.history_id DESC",
-        GameHistoryWhere($filters),
-    );
-    if ($limit !== null) {
-        $query .= sprintf(" LIMIT %d", (int) $limit);
-        if ($offset !== null) {
-            $query .= sprintf(" OFFSET %d", (int) $offset);
-        }
-    }
-    return DBQueryToArray($query);
-}
-
-function GameHistoryAllCount($filters)
-{
-    if (!isSuperAdmin()) {
-        return 0;
-    }
-    return (int) DBQueryToValue(sprintf(
-        "SELECT COUNT(*) FROM uo_game_history h WHERE %s",
-        GameHistoryWhere($filters),
-    ));
-}
-
 /**
  * Delete every history row belonging to an event's games.
  *
@@ -527,8 +465,8 @@ function GameHistoryAllCount($filters)
  * the audit trail and the restore points, not any result. Irreversible -- the
  * history is the only copy of what it holds.
  *
- * The game set matches GameHistoryWhere()'s season filter exactly, so what an
- * admin sees under a season on admin/gamehistory.php is what this removes.
+ * The game set is the one SeasonGameHistorySummary() lists, so what an event
+ * admin sees on admin/seasongamehistory.php is what this removes.
  */
 function DeleteEventGameHistory($seasonId)
 {
