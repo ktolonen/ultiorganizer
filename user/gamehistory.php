@@ -243,7 +243,7 @@ $html .= $feedback;
 
 if (!empty($game_result['season']) && isSeasonAdmin($game_result['season'])) {
     $html .= "<p><a href='?view=admin/seasongamehistory&amp;season="
-        . urlencode($game_result['season']) . "'>&laquo; " . _("Scoresheet history") . "</a></p>\n";
+        . urlencode($game_result['season']) . "'>&laquo; " . _("Back to scoresheet history") . "</a></p>\n";
 }
 
 $count = GameHistoryCount($gameId);
