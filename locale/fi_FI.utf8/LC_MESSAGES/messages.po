@@ -8058,7 +8058,7 @@ msgstr "Et ole vielä lähettänyt spirit-pisteitä tästä pelistä."
 msgid ""
 "Your entries are kept below. Save again to overwrite the other changes, or "
 "reload to discard yours."
-msgstr "Syöttämäsi tiedot ovat alla. Tallenna uudelleen korvataksesi muut muutokset tai lataa pöytäkirja uudelleen hylkäämällä omat muutoksesi."
+msgstr "Syöttämäsi tiedot ovat alla. Tallenna uudelleen korvataksesi muut muutokset tai lataa pöytäkirja uudelleen hylätäksesi omat muutoksesi."
 
 #: spiritkeeper/teamgames.php:97
 msgid "Your spirit submission is locked."
