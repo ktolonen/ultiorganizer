@@ -1798,7 +1798,8 @@ function GameRemoveScore($gameId, $num)
 {
     if (hasEditGameEventsRight($gameId)) {
         $removedGoal = DBQueryToRow(sprintf(
-            "SELECT assist, scorer, homescore, visitorscore FROM uo_goal WHERE game=%d AND num=%d",
+            "SELECT assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan
+			FROM uo_goal WHERE game=%d AND num=%d",
             (int) $gameId,
             (int) $num,
         ));
@@ -1819,7 +1820,10 @@ function GameRemoveScore($gameId, $num)
                 'num' => (int) $num,
                 'scorer' => !empty($removedGoal['scorer']) ? (int) $removedGoal['scorer'] : null,
                 'assist' => !empty($removedGoal['assist']) ? (int) $removedGoal['assist'] : null,
+                'time' => $removedGoal ? (int) $removedGoal['time'] : null,
                 'score' => $removedGoal ? (int) $removedGoal['homescore'] . "-" . (int) $removedGoal['visitorscore'] : null,
+                'home' => $removedGoal ? (!empty($removedGoal['ishomegoal']) ? 1 : 0) : null,
+                'callahan' => $removedGoal ? (!empty($removedGoal['iscallahan']) ? 1 : 0) : null,
             ]);
         }
 
