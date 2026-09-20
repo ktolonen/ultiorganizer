@@ -472,8 +472,14 @@ if (!empty($_POST['save'])) {
     // so it overwrites the changes the user was shown and conflicts again on
     // anything saved since. A flag that skipped the claim would hand out an
     // overwrite good for the rest of the session.
-    if (empty($errIds) && isset($_POST['revision'])) {
-        $revisionConflict = !GameRevisionClaim($gameId, (int) $_POST['revision']);
+    //
+    // A payload without the field at all is a conflict too, not a bypass: it
+    // is a form opened before the token existed, which is exactly the stale
+    // sheet the check is here to stop. The re-render below then carries the
+    // current revision, so the retry is the same deliberate overwrite.
+    if (empty($errIds)) {
+        $revisionConflict = !isset($_POST['revision'])
+            || !GameRevisionClaim($gameId, (int) $_POST['revision']);
     }
 
     if (!empty($errIds)) {
@@ -664,7 +670,8 @@ if ($show_comment_form) {
     }
     echo "<tr><td><textarea class='input' style='width: 98%' rows='5' name='gamecomment' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interruptions.") . "'>" . htmlentities($repopulate ? (string) ($_POST['gamecomment'] ?? "") : $game_comment) . "</textarea></td></tr>";
     if ($can_manage_comment && !empty($game_comment)) {
-        echo "<tr><td><label><input type='checkbox' name='delete_game_comment' value='1'/> " . _("Delete comment") . "</label></td></tr>";
+        $deleteChecked = ($repopulate && !empty($_POST['delete_game_comment'])) ? " checked='checked'" : "";
+        echo "<tr><td><label><input type='checkbox' name='delete_game_comment' value='1'$deleteChecked/> " . _("Delete comment") . "</label></td></tr>";
     }
     echo "</table>\n";
     echo $comment_feedback;

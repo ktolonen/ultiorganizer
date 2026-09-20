@@ -745,8 +745,10 @@ function ScoresheetHistoryFormatDetail($row)
  * Restore a game's scoresheet to a previously captured state.
  *
  * The replay goes through the ordinary game mutators rather than raw SQL so
- * that ResolvePoolStandings(), PoolResolvePlayed() and RefreshGameSpiritData()
- * still run. See docs/scoresheet-history.md for the full restore contract.
+ * that RefreshGameSpiritData() and the mutators' own bookkeeping still run.
+ * The cached pool standings are recomputed here rather than left to a mutator:
+ * the replay can end on a path that skips them. See
+ * docs/scoresheet-history.md for the full restore contract.
  */
 function ScoresheetHistoryRestore($historyId)
 {
@@ -954,10 +956,16 @@ function ScoresheetHistoryRestore($historyId)
             (int) $gameId,
         ));
 
-        // Must run after the result replay: standings are recomputed from
-        // uo_game, so whichever runs last is the recompute that sticks, and
-        // the isongoing branch above does not recompute at all.
         GameSetForfeit($gameId, (int) ($snapshot['game']['forfeit'] ?? 0));
+
+        // Last, and unconditional: standings are recomputed from uo_game, so
+        // whichever recompute runs last is the one that sticks. Neither of the
+        // two calls above can be relied on for it -- GameUpdateResult() never
+        // recomputes, and GameSetForfeit() returns early when the snapshot's
+        // forfeit already matches the game's, which is the ordinary case.
+        $poolId = GamePool($gameId);
+        ResolvePoolStandings($poolId);
+        PoolResolvePlayed($poolId);
     } finally {
         ScoresheetHistorySuppressed($previousSuppressed);
     }
