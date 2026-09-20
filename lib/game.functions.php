@@ -408,8 +408,30 @@ function GameSetRolePlayers($gameId, $teamId, $roleColumn, $playerIds)
     }
 
     if (hasEditGameEventsRight($gameId)) {
-        GameHistorySnapshotIfNeeded($gameId);
         $playerIds = GameFilterRolePlayers($gameId, $teamId, $playerIds);
+
+        // user/addplayerlists.php calls this four times per save whether or
+        // not the selections changed, and the clear-and-reapply below leaves
+        // no trace of its own, so an unchanged assignment would add four
+        // misleading played/update rows to the audit view.
+        $assigned = DBQueryToArray(sprintf(
+            "SELECT pg.player
+			FROM uo_played AS pg
+			LEFT JOIN uo_player AS p ON (pg.player=p.player_id)
+			WHERE pg.game=%d AND p.team=%d AND pg.%s=1",
+            (int) $gameId,
+            (int) $teamId,
+            $roleColumn,
+        ));
+        $current = array_map('intval', array_column($assigned, 'player'));
+        $wanted = array_map('intval', $playerIds);
+        sort($current);
+        sort($wanted);
+        if ($current === $wanted) {
+            return true;
+        }
+
+        GameHistorySnapshotIfNeeded($gameId);
 
         $query = sprintf(
             "UPDATE uo_played AS pg
