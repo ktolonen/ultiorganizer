@@ -931,6 +931,22 @@ function GameRemoveCapEvent($gameId, $type)
     if (!GameIsCapEventType($type)) {
         return false;
     }
+
+    // Read before snapshotting for the same reason as GameSetCapEvent(): the
+    // DBAffectedRows() gate below keeps the audit row honest, but the snapshot
+    // is taken first, so removing a cap that is not set would still leave a
+    // restore point.
+    $eventNum = DBQueryToValue(
+        sprintf(
+            "SELECT num FROM uo_gameevent WHERE game=%d AND type='%s' LIMIT 1",
+            $gameId,
+            DBEscapeString($type),
+        ),
+    );
+    if ($eventNum === null || $eventNum === false) {
+        return true;
+    }
+
     GameHistorySnapshotIfNeeded($gameId);
 
     $query = sprintf(

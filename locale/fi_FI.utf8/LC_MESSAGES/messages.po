@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-20 10:15+0300\n"
+"POT-Creation-Date: 2026-09-20 10:22+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -2210,7 +2210,7 @@ msgstr "Syötä uusi salasanasi alle."
 msgid "Equalization"
 msgstr "Yhdenmukaistaminen"
 
-#: lib/game.functions.php:1306
+#: lib/game.functions.php:1322
 msgid "Erroneous scoresheet number:"
 msgstr "Virheellinen pöytäkirjan numero:"
 
@@ -2223,7 +2223,7 @@ msgstr "Virhe: Tuloksia ei voitu tallentaa."
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:2589
+#: lib/game.functions.php:2605
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -2305,7 +2305,7 @@ msgstr "Tapahtuman määrittely pakollista"
 msgid "Event not found"
 msgstr "Tapahtumaa ei löydy"
 
-#: lib/game.functions.php:1318 lib/gamehistory.functions.php:796
+#: lib/game.functions.php:1334 lib/gamehistory.functions.php:796
 msgid "Event played."
 msgstr "Tapahtuma pelattu."
 
@@ -2830,7 +2830,7 @@ msgstr "Peli on jo pelattu. Nykyinen tulos:"
 msgid "Game has ended"
 msgstr "Peli on päättynyt"
 
-#: lib/game.functions.php:1310
+#: lib/game.functions.php:1326
 msgid "Game has no pool."
 msgstr "Pelillä ei ole lohkoa."
 
@@ -4378,7 +4378,7 @@ msgstr "Ei pelejä"
 msgid "No games to move"
 msgstr "Ei siirrettäviä pelejä"
 
-#: lib/game.functions.php:1321
+#: lib/game.functions.php:1337
 msgid "No goals."
 msgstr "Ei maaleja."
 
@@ -5057,7 +5057,7 @@ msgstr "Pisteet"
 msgid "Points for %s must be 0-1000."
 msgstr "Pisteet %s pitää olla väliltä 0-1000."
 
-#: admin/seasonpoints.php:231 lib/game.functions.php:1303
+#: admin/seasonpoints.php:231 lib/game.functions.php:1319
 #: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
 msgid "Points must be between 0 and 1000."
 msgstr "Pisteet pitää olla väliltä 0 ja 1000."
@@ -5103,7 +5103,7 @@ msgstr "Lohkon pelejä ei olla pelattu:"
 msgid "Pool is completed:"
 msgstr "Lohko on pelattu:"
 
-#: lib/game.functions.php:1313 lib/gamehistory.functions.php:793
+#: lib/game.functions.php:1329 lib/gamehistory.functions.php:793
 msgid "Pool is locked."
 msgstr "Lohko on lukittu."
 
@@ -5543,12 +5543,12 @@ msgstr "Tulosta ei tallennettu!"
 msgid "Result saved!"
 msgstr "Tulos tallennettu!"
 
-#: lib/game.functions.php:2586
+#: lib/game.functions.php:2602
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:2583
+#: lib/game.functions.php:2599
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -7449,7 +7449,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:2952
+#: admin/seasonpoints.php:258 lib/game.functions.php:2968
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 
