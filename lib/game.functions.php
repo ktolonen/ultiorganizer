@@ -2416,6 +2416,12 @@ function SetGame($gameId, $params)
         // No snapshot, for the reason GameChangeHome() gives.
         $teamsAfter = $readFixtureTeams();
         if ($teamsAfter !== $teamsBefore) {
+            // The desktop editor does not rewrite these columns, but it writes
+            // goals against them -- ishomegoal and the two rosters are read
+            // from the fixture. A sheet opened before the change would attach
+            // its points to the replacement teams, so this bumps for identity
+            // rather than for column overlap.
+            GameRevisionBump($gameId);
             ScoresheetHistoryRecord($gameId, "fixture", "update", [
                 'home' => $teamsAfter['home'],
                 'away' => $teamsAfter['away'],
@@ -2533,6 +2539,10 @@ function GameChangeHome($gameId)
         );
 
         DBQuery($query);
+
+        // Swapping the sides is a fixture identity change, for the reason
+        // SetGame() gives.
+        GameRevisionBump($gameId);
 
         // No snapshot: the state captured before a swap records the old
         // hometeam/visitorteam, so ScoresheetHistoryEntry() would withhold it as a
@@ -3076,6 +3086,10 @@ function GameTimeReset($gameId)
     );
 
     $result = DBQuery($query);
+    // Unlike the rest of the clock, this writes isongoing and hasstarted,
+    // which the desktop editor rewrites: without the bump a sheet opened
+    // before the reset could restart the game from its stale checkbox.
+    GameRevisionBump($gameId);
     ScoresheetHistoryRecord($gameId, "timer", "reset");
     return $result;
 }
@@ -3094,6 +3108,8 @@ function GameTimeStart($gameId)
     );
 
     $result = DBQuery($query);
+    // Writes isongoing and hasstarted, for the reason GameTimeReset() gives.
+    GameRevisionBump($gameId);
     ScoresheetHistoryRecord($gameId, "timer", "start");
     return $result;
 }
