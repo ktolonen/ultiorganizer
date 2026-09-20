@@ -887,7 +887,12 @@ function GameSetCapEvent($gameId, $type, $time, $target)
         );
 
         $result = DBExecute($query);
-        GameHistoryRecord($gameId, "gameevent", "update", ['type' => (string) $type, 'time' => (int) $time]);
+        GameHistoryRecord(
+            $gameId,
+            "gameevent",
+            "update",
+            ['type' => (string) $type, 'time' => (int) $time, 'info' => $target],
+        );
 
         return $result;
     }
@@ -906,7 +911,12 @@ function GameSetCapEvent($gameId, $type, $time, $target)
     );
 
     $result = DBExecute($query);
-    GameHistoryRecord($gameId, "gameevent", "update", ['type' => (string) $type, 'time' => (int) $time]);
+    GameHistoryRecord(
+        $gameId,
+        "gameevent",
+        "update",
+        ['type' => (string) $type, 'time' => (int) $time, 'info' => $target],
+    );
 
     return $result;
 }

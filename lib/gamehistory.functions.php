@@ -727,6 +727,14 @@ function GameHistoryFormatDetail($row)
         if ($action == "remove") {
             return sprintf(_("%s removed"), $capName);
         }
+        if (function_exists('SecToMin')) {
+            $capName .= " " . SecToMin((int) ($detail['time'] ?? 0));
+        }
+        // Rows recorded before the cap target was part of the payload keep the
+        // bare label rather than claiming a point cap of zero.
+        if (isset($detail['info'])) {
+            return sprintf(_("%s - new point cap %d"), $capName, (int) $detail['info']);
+        }
         return $capName;
     }
 

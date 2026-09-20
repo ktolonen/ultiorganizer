@@ -11,7 +11,7 @@ Every mutation to a game's scoresheet -- result, roster, points, defenses, timeo
 - `user_id`, `ip`: who made it,
 - `source`: which app made it (see "Attribution" below),
 - `target`, `action`: what was changed and how, e.g. `goal`/`add`, `played`/`clear`, `result`/`update`,
-- `detail`: a small JSON payload describing the change (an added player id, a removed-count, a new result), used to render a human-readable description via `GameHistoryFormatDetail()`,
+- `detail`: a small JSON payload describing the change (an added player id, a removed-count, a new result), used to render a human-readable description via `GameHistoryFormatDetail()`. A payload carries the values that describe the change itself, not only the row it names: a cap event records its time and its point-cap target, so a corrected target is visible in the log rather than reading as an unexplained `Time cap`. The row's own snapshot cannot supply them, because it is captured before the change,
 - `has_snapshot`, `snapshot`: present only on the second row kind, described next.
 
 There are two kinds of rows in the same table:
@@ -60,8 +60,6 @@ The full set of `target`/`action` combinations, and the mutator that writes each
 | `forfeit` | `update` | `GameSetForfeit()` |
 | `played` | `add` | `GameAddPlayer()`, `GameAddNewPlayer()` |
 | `played` | `update` | `GameSetPlayerNumber()`, `GameSetRolePlayers()` (captain / spirit captain, called from `GameSetCaptains()` / `GameSetSpiritCaptains()`), `AcknowledgeUnaccredited()` / `UnAcknowledgeUnaccredited()` (`lib/accreditation.functions.php`, accreditation acknowledgment) |
-
-`GameSetRolePlayers()` clears and reapplies the whole role, so the write itself cannot tell a changed assignment from an unchanged one. It compares the filtered selection against the players already holding the role on that team and returns without snapshotting or recording when the two agree -- `user/addplayerlists.php` calls it four times per save regardless of what the user touched.
 | `played` | `remove` | `GameRemovePlayer()` |
 | `played` | `clear` | `GameRemoveAllPlayers()` |
 | `goal` | `add` | `GameAddScore()`, `GameAddScoreEntry()` |
@@ -88,6 +86,8 @@ The full set of `target`/`action` combinations, and the mutator that writes each
 | `timer` | `start` / `pause` / `resume` / `reset` / `update` | `GameTimeStart()`, `GameTimePause()`, `GameTimeResume()`, `GameTimeReset()`, `GameTimeSetElapsed()` |
 | `snapshot` | `capture` | `GameHistorySnapshotIfNeeded()` |
 | `restore` | `restore` | `GameHistoryRestore()` |
+
+Two of these mutators cannot let the statement decide whether anything changed, and read the current state first instead. `GameSetRolePlayers()` clears and reapplies the whole role, so the write itself cannot tell a changed assignment from an unchanged one; it compares the filtered selection against the players already holding the role on that team -- `user/addplayerlists.php` calls it four times per save regardless of what the user touched. `GameSetCapEvent()` upserts, so a cap resubmitted with its pre-populated time and target would update no columns; it compares the existing row's time and target against the submitted pair. Both return without snapshotting or recording when the two agree, which the `DBAffectedRows()` gate used elsewhere cannot do, because the snapshot is taken before the statement runs.
 
 Because every scoresheet input path documented in `docs/scoresheet.md` (result-only entry, player-list entry, the detailed desktop scoresheet, mobile entry, scorekeeper entry) is built out of these same shared mutators, every one of those flows is covered.
 
