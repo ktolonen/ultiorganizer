@@ -169,6 +169,29 @@ function GameHistoryStateEvents($state)
     return $events;
 }
 
+/**
+ * Score and lifecycle state as one compared value. A restore replays isongoing
+ * and hasstarted alongside the score, so an ongoing 5-3 and a final 5-3 are
+ * different states, and an unset result is no score at all rather than 0-0.
+ */
+function GameHistoryStateResult($game)
+{
+    $home = $game['homescore'] ?? null;
+    $away = $game['visitorscore'] ?? null;
+    if ($home === null || $away === null) {
+        return "";
+    }
+    $status = [];
+    if (!empty($game['isongoing'])) {
+        $status[] = _("Ongoing");
+    }
+    if ((int) ($game['hasstarted'] ?? 0) === 2) {
+        $status[] = _("Final");
+    }
+    return (int) $home . " - " . (int) $away
+        . (count($status) > 0 ? " (" . implode(", ", $status) . ")" : "");
+}
+
 if (empty($_GET["game"])) {
     showPage(_("Scoresheet history"), "<p class='warning'>" . _("Game not found") . ".</p>");
     return;
@@ -304,8 +327,8 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
     $fields = [];
     $fields[] = [
         _("Result"),
-        ($savedGame['homescore'] ?? 0) . " - " . ($savedGame['visitorscore'] ?? 0),
-        ($currentGame['homescore'] ?? 0) . " - " . ($currentGame['visitorscore'] ?? 0),
+        GameHistoryStateResult($savedGame),
+        GameHistoryStateResult($currentGame),
     ];
     $fields[] = [
         _("Halftime ended at"),
