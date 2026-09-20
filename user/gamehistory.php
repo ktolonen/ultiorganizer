@@ -170,6 +170,22 @@ function GameHistoryStateEvents($state)
 }
 
 /**
+ * Which team forfeited, not just whether one did: a restore passes the stored
+ * code to GameSetForfeit(), so home-forfeit and away-forfeit reverse the
+ * winner between them.
+ */
+function GameHistoryStateForfeit($forfeit)
+{
+    $labels = [
+        0 => _("None"),
+        1 => _("Home team forfeited"),
+        2 => _("Away team forfeited"),
+        3 => _("Both teams forfeited"),
+    ];
+    return $labels[(int) $forfeit] ?? (string) (int) $forfeit;
+}
+
+/**
  * Score and lifecycle state as one compared value. A restore replays isongoing
  * and hasstarted alongside the score, so an ongoing 5-3 and a final 5-3 are
  * different states, and an unset result is no score at all rather than 0-0.
@@ -352,8 +368,8 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
     if (!empty($savedGame['forfeit']) || !empty($currentGame['forfeit'])) {
         $fields[] = [
             _("Forfeit"),
-            empty($savedGame['forfeit']) ? _("No") : _("Yes"),
-            empty($currentGame['forfeit']) ? _("No") : _("Yes"),
+            GameHistoryStateForfeit($savedGame['forfeit'] ?? 0),
+            GameHistoryStateForfeit($currentGame['forfeit'] ?? 0),
         ];
     }
     // The defense counts arrived in snapshot format v2; an older snapshot has
