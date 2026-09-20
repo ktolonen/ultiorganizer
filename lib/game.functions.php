@@ -857,17 +857,25 @@ function GameSetCapEvent($gameId, $type, $time, $target)
     if (!GameIsCapEventType($type) || $target < 1 || $target > 255) {
         return false;
     }
-    GameHistorySnapshotIfNeeded($gameId);
 
-    $eventNum = DBQueryToValue(
+    // Read before snapshotting: a resubmitted cap that changes nothing would
+    // otherwise leave a restore point as well as an audit row. uo_gameevent.info
+    // is a varchar, so the comparison casts.
+    $event = DBQueryToRow(
         sprintf(
-            "SELECT num FROM uo_gameevent WHERE game=%d AND type='%s' LIMIT 1",
+            "SELECT num, time, info FROM uo_gameevent WHERE game=%d AND type='%s' LIMIT 1",
             $gameId,
             DBEscapeString($type),
         ),
     );
 
-    if ($eventNum !== null && $eventNum !== false) {
+    if (!empty($event) && (int) $event['time'] === $time && (int) $event['info'] === $target) {
+        return true;
+    }
+
+    GameHistorySnapshotIfNeeded($gameId);
+
+    if (!empty($event)) {
         $query = sprintf(
             "UPDATE uo_gameevent
 			SET time=%d,info='%d'
@@ -875,7 +883,7 @@ function GameSetCapEvent($gameId, $type, $time, $target)
             $time,
             $target,
             $gameId,
-            (int) $eventNum,
+            (int) $event['num'],
         );
 
         $result = DBExecute($query);
