@@ -43,6 +43,31 @@ function ScoreSheetSpiritTimeoutValues($gameId, $home, $maxslots)
     return $values;
 }
 
+function ScoreSheetTimeoutValues($gameId, $home, $maxslots)
+{
+    $values = [];
+    foreach (GameTimeouts($gameId) as $timeout) {
+        if ((int) $timeout['ishome'] === (int) $home && count($values) < $maxslots) {
+            $values[] = SecToMin($timeout['time']);
+        }
+    }
+    for ($i = count($values); $i < $maxslots; $i++) {
+        $values[] = "";
+    }
+    return $values;
+}
+
+// Slot fields keep the position they were typed in, unlike the stored rows,
+// which are compacted to the front.
+function ScoreSheetPostedSlotValues($prefix, $maxslots)
+{
+    $values = [];
+    for ($i = 0; $i < $maxslots; $i++) {
+        $values[] = (string) ($_POST[$prefix . $i] ?? "");
+    }
+    return $values;
+}
+
 $gameId = intval($_GET["game"]);
 
 if (!hasEditGameEventsRight($gameId)) {
@@ -590,6 +615,11 @@ if (count($away_playerlist) == 0) {
 
 
 echo "<form id='scoresheet' action='?view=user/addscoresheet&amp;game=$gameId' method='post'>";
+// A refused save re-renders every field from what was posted, not from the
+// stored game: the point rows below already do this, and the refusal messages
+// promise the whole sheet is kept. On a conflict the stored values are the
+// other scorekeeper's, so reading them here would silently adopt them.
+$repopulate = !empty($_POST['save']) && !$scoresheetSaved;
 // A save refused over its points keeps the revision it was entered against, so
 // the correction is still checked against that state. A save refused over the
 // conflict carries the fresh one, making the next save the deliberate
@@ -619,7 +649,8 @@ echo "<tr><td>" . ($place !== null ? utf8entities(ReservationPlaceText($place['n
 echo "<tr><th>" . _("Scheduled start date and time") . "</th></tr>";
 echo "<tr><td>" . ShortDate($game_result['time']) . " " . DefHourFormat($game_result['time']) . "</td></tr>";
 echo "<tr><th>" . _("Scorekeeper(s)") . "</th></tr>";
-echo "<tr><td><input class='input' style='width: 97%' type='text' name='secretary' id='secretary' value='" . utf8entities($game_result['official']) . "'/></td></tr>";
+$secretaryValue = $repopulate ? (string) ($_POST['secretary'] ?? "") : (string) $game_result['official'];
+echo "<tr><td><input class='input' style='width: 97%' type='text' name='secretary' id='secretary' value='" . utf8entities($secretaryValue) . "'/></td></tr>";
 echo "</table>\n";
 
 if ($show_comment_form) {
@@ -628,7 +659,7 @@ if ($show_comment_form) {
     if (!empty($game_comment_meta_html)) {
         echo "<tr><td>" . $game_comment_meta_html . "</td></tr>";
     }
-    echo "<tr><td><textarea class='input' style='width: 98%' rows='5' name='gamecomment' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interruptions.") . "'>" . htmlentities($game_comment) . "</textarea></td></tr>";
+    echo "<tr><td><textarea class='input' style='width: 98%' rows='5' name='gamecomment' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interruptions.") . "'>" . htmlentities($repopulate ? (string) ($_POST['gamecomment'] ?? "") : $game_comment) . "</textarea></td></tr>";
     if ($can_manage_comment && !empty($game_comment)) {
         echo "<tr><td><label><input type='checkbox' name='delete_game_comment' value='1'/> " . _("Delete comment") . "</label></td></tr>";
     }
@@ -640,6 +671,10 @@ if ($show_comment_form) {
 $hoffence = "";
 $voffence = "";
 $ishome = GameIsFirstOffenceHome($gameId);
+if ($repopulate) {
+    $postedStarting = (string) ($_POST['starting'] ?? "");
+    $ishome = $postedStarting === "H" ? 1 : ($postedStarting === "V" ? 0 : null);
+}
 if ($ishome === 1) {
     $hoffence = "checked='checked'";
 } elseif ($ishome === 0) {
@@ -660,48 +695,27 @@ if (!$hideTimeOnScoresheet) {
     echo "<table cellspacing='0' width='100%' border='1'>";
     echo "<tr><th colspan='", $maxtimeouts + 1, "'>" . _("Timeouts") . "</th></tr>\n";
 
+    $homeTimeouts = $repopulate
+        ? ScoreSheetPostedSlotValues('hto', $maxtimeouts)
+        : ScoreSheetTimeoutValues($gameId, 1, $maxtimeouts);
+    $awayTimeouts = $repopulate
+        ? ScoreSheetPostedSlotValues('ato', $maxtimeouts)
+        : ScoreSheetTimeoutValues($gameId, 0, $maxtimeouts);
+
     echo "<tr><th>" . $homeshortname . "</th>\n";
 
-    //home team used timeouts
-    $i = 0;
-    $timeouts = GameTimeouts($gameId);
-    foreach ($timeouts as $timeout) {
-        if (intval($timeout['ishome'])) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='hto$i' name='hto$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
-            $i++;
-        }
-    }
-
-    //empty slots
-    for ($i; $i < $maxtimeouts; $i++) {
-        //two last slot are smaller for visual reasons
-        if ($i > ($maxtimeouts - 3)) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='1' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
-        } else {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='hto$i' name='hto$i' value='' /></td>\n";
-        }
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        //two last empty slots are smaller for visual reasons
+        $size = ($homeTimeouts[$i] === "" && $i > ($maxtimeouts - 3)) ? "1" : "4";
+        echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='$size' maxlength='8' id='hto$i' name='hto$i' value='" . utf8entities($homeTimeouts[$i]) . "' /></td>\n";
     }
     echo "</tr>\n";
 
     echo "<tr><th>" . $visitorshortname . "</th>\n";
 
-    //away team used timeouts
-    $i = 0;
-    foreach ($timeouts as $timeout) {
-        if (!intval($timeout['ishome'])) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='ato$i' name='ato$i' value='" . SecToMin($timeout['time']) . "' /></td>\n";
-            $i++;
-        }
-    }
-
-    //empty slots
-    for ($i; $i < $maxtimeouts; $i++) {
-        //two last slot are smaller for visual reasons
-        if ($i > ($maxtimeouts - 3)) {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='1' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
-        } else {
-            echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='4' maxlength='8' id='ato$i' name='ato$i' value='' /></td>\n";
-        }
+    for ($i = 0; $i < $maxtimeouts; $i++) {
+        $size = ($awayTimeouts[$i] === "" && $i > ($maxtimeouts - 3)) ? "1" : "4";
+        echo "<td><input class='input' onkeyup=\"validTime(this);\" type='text' inputmode='decimal' pattern='[0-9.,:;]*' size='$size' maxlength='8' id='ato$i' name='ato$i' value='" . utf8entities($awayTimeouts[$i]) . "' /></td>\n";
     }
 
     echo "</tr>";
@@ -710,9 +724,11 @@ if (!$hideTimeOnScoresheet) {
     //halftime
     echo "<table cellspacing='0' width='100%' border='1'>\n";
     echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
-    $halftimeDisplay = $game_result['halftime'] !== null ? SecToMin($game_result['halftime']) : "";
+    $halftimeDisplay = $repopulate
+        ? (string) ($_POST['halftime'] ?? "")
+        : ($game_result['halftime'] !== null ? SecToMin($game_result['halftime']) : "");
     echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
-	maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;]*' name='halftime' id='halftime' value='" . $halftimeDisplay . "'/></td></tr>";
+	maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;]*' name='halftime' id='halftime' value='" . utf8entities($halftimeDisplay) . "'/></td></tr>";
     echo "</table>\n";
 }
 
@@ -727,8 +743,12 @@ echo "<tr><td>" . $game_result['homescore'] . " - " . $game_result['visitorscore
 echo "</table>\n";
 
 if (!$hideTimeOnScoresheet && !empty($seasoninfo['spiritmode'])) {
-    $homeSpiritTimeouts = ScoreSheetSpiritTimeoutValues($gameId, 1, $maxspirittimeouts);
-    $awaySpiritTimeouts = ScoreSheetSpiritTimeoutValues($gameId, 0, $maxspirittimeouts);
+    $homeSpiritTimeouts = $repopulate
+        ? ScoreSheetPostedSlotValues('shto', $maxspirittimeouts)
+        : ScoreSheetSpiritTimeoutValues($gameId, 1, $maxspirittimeouts);
+    $awaySpiritTimeouts = $repopulate
+        ? ScoreSheetPostedSlotValues('sato', $maxspirittimeouts)
+        : ScoreSheetSpiritTimeoutValues($gameId, 0, $maxspirittimeouts);
 
     echo "<table cellspacing='0' width='100%' border='1'>";
     echo "<tr><th colspan='" . ($maxspirittimeouts + 1) . "'>" . _("Spirit stoppages") . "</th></tr>\n";
@@ -758,7 +778,7 @@ if (!$hideTimeOnScoresheet && !empty($seasoninfo['spiritmode'])) {
 //buttons
 echo "<table cellspacing='0' cellpadding='10' width='100%'>\n";
 echo "<tr><td><input class='input' type='checkbox' name='isongoing' ";
-if ($game_result['isongoing']) {
+if ($repopulate ? isset($_POST['isongoing']) : $game_result['isongoing']) {
     echo "checked='checked'";
 }
 echo "/> " . _("Game ongoing") . "</td><td></td></tr>";
