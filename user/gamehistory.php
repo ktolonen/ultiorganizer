@@ -453,8 +453,11 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
 
     $goalPairs = GameHistoryStatePairs($saved['goals'] ?? [], $current['goals'] ?? [], 'num');
     if (count($goalPairs) > 0) {
-        $goalFields = ['time', 'homescore', 'visitorscore', 'assist_num', 'assist_name',
-            'scorer_num', 'scorer_name', 'iscallahan'];
+        // scorer and assist are the player ids the restore replays. Two player
+        // rows can carry the same name and number, so comparing only the
+        // rendered text would call such a point unchanged.
+        $goalFields = ['time', 'homescore', 'visitorscore', 'assist', 'assist_num', 'assist_name',
+            'scorer', 'scorer_num', 'scorer_name', 'iscallahan'];
         $marks = [];
         $marked = false;
         foreach ($goalPairs as $i => $pair) {
