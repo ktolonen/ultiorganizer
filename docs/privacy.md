@@ -129,7 +129,9 @@ Current table-level behavior:
 - `uo_scoresheet_history`
   No row deletion is done; rows are removed only by the foreign-key cascade when the linked game is deleted.
   Player ids in `detail` are left as they are: they are references to a row the player tools already
-  cover, not free text naming the player.
+  cover, not free text naming the player. The one `detail` payload that does hold free text naming a
+  person is the `name` on an `official`/`update` row, the scorekeeper name a save set; it is not
+  reached here and is listed with the other manual-removal fields below.
   `assist_name`, `scorer_name`, and `played[].name` inside the `snapshot` column are embedded free
   text, not foreign keys, so anonymizing `uo_player` does not reach them. Each snapshot is decoded,
   every name paired with an anonymized `player_id` is rewritten to `- -`, and the row is re-encoded.
@@ -151,6 +153,7 @@ Free text stored on another entity's row is not reachable that way. A person can
 - `uo_club` — `contacts`, `story`, `achievements`
 - `uo_comment` — the comment body
 - `uo_scoresheet_history.snapshot` — `game.official`, `comment`, and `events[].info`; the embedded `assist_name`, `scorer_name`, and `played[].name` fields are the exception, rewritten by player anonymization as described above
+- `uo_scoresheet_history.detail` — the `name` of an `official`/`update` row, which records the scorekeeper name a save set. It is the only `detail` payload holding free text that names a person: every other one carries ids, counts, labels or times. Player anonymization does not reach it, for the same reason it does not reach `snapshot.game.official` -- the name is not keyed to a `uo_player` row and nothing says whose it is
 
 No per-subject query can find those mentions, because the row belongs to a team, club, or game
 rather than to the person. Removing them is a manual admin edit, and a privacy request that

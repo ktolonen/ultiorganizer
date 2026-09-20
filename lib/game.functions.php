@@ -3211,9 +3211,13 @@ function GameTimeReset($gameId)
     $result = DBQuery($query);
     // Unlike the rest of the clock, this writes isongoing and hasstarted,
     // which the desktop editor rewrites: without the bump a sheet opened
-    // before the reset could restart the game from its stale checkbox.
-    GameRevisionBump($gameId);
-    ScoresheetHistoryRecord($gameId, "timer", "reset");
+    // before the reset could restart the game from its stale checkbox. Gated
+    // on the write having changed something, because resetting an already
+    // reset clock is a replay away and must not cost an open sheet its save.
+    if (DBAffectedRows() > 0) {
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "timer", "reset");
+    }
     return $result;
 }
 
@@ -3231,9 +3235,13 @@ function GameTimeStart($gameId)
     );
 
     $result = DBQuery($query);
-    // Writes isongoing and hasstarted, for the reason GameTimeReset() gives.
-    GameRevisionBump($gameId);
-    ScoresheetHistoryRecord($gameId, "timer", "start");
+    // Writes isongoing and hasstarted, for the reason GameTimeReset() gives,
+    // and gated the same way: timer_start carries the current epoch, so a
+    // double submit inside the same second changes nothing.
+    if (DBAffectedRows() > 0) {
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "timer", "start");
+    }
     return $result;
 }
 
