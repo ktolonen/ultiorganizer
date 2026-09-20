@@ -60,6 +60,8 @@ The full set of `target`/`action` combinations, and the mutator that writes each
 | `forfeit` | `update` | `GameSetForfeit()` |
 | `played` | `add` | `GameAddPlayer()`, `GameAddNewPlayer()` |
 | `played` | `update` | `GameSetPlayerNumber()`, `GameSetRolePlayers()` (captain / spirit captain, called from `GameSetCaptains()` / `GameSetSpiritCaptains()`), `AcknowledgeUnaccredited()` / `UnAcknowledgeUnaccredited()` (`lib/accreditation.functions.php`, accreditation acknowledgment) |
+
+`GameSetRolePlayers()` clears and reapplies the whole role, so the write itself cannot tell a changed assignment from an unchanged one. It compares the filtered selection against the players already holding the role on that team and returns without snapshotting or recording when the two agree -- `user/addplayerlists.php` calls it four times per save regardless of what the user touched.
 | `played` | `remove` | `GameRemovePlayer()` |
 | `played` | `clear` | `GameRemoveAllPlayers()` |
 | `goal` | `add` | `GameAddScore()`, `GameAddScoreEntry()` |
@@ -141,6 +143,8 @@ The create path needs none of this -- `CanCreateGameComment()` still requires `h
 The "Show" link opens the snapshot below the change table, section by section: the result, halftime, starting offensive team, cap events, forfeit, defence counts, scorekeeper and game comment, then the points, each team's roster, the defences, the timeouts and the spirit stoppages. A section empty on both sides is left out, so a capture taken before the first point shows its roster and result rather than a header-only table.
 
 Every section is compared against the current scoresheet, which the page builds by calling `GameHistoryBuildSnapshot()` for the game -- the same builder that wrote the stored snapshot, so both sides have the same shape and the comparison is an array walk rather than a second set of queries. Rows pair by their own key (`num` for points, defences and stoppages, `player` for roster rows) and are marked `*` when a displayed field differs, `-` when the row exists only in the saved state, and `+` when it exists only in the current scoresheet. A marked row is tinted, and a changed single value is shown with the current one beside it. The heading counts the differences, or states that the two are identical.
+
+Values a restore replays are rendered in the form the restore uses, not in a shorter one that would compare equal across states it can distinguish: the result carries `Ongoing` or `Final` beside the score and renders an unset result as `None` rather than `0 - 0`, a forfeit names the team that forfeited instead of reading `Yes`, a cap event carries its point-cap target beside its time, and a roster row lists the `accredited` and `acknowledged` flags beside the captaincies.
 
 Only displayed fields are compared, so a mark always has something visible behind it. Two kinds of field are deliberately excluded. The live-clock columns differ on nearly every capture and would mark everything, and are left to the restore, which still replays them. A key an older snapshot format never carried is not a difference either: a snapshot without the v2 defence counts says so in a note instead of comparing against zero.
 
