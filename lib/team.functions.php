@@ -600,7 +600,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
     if (isRespTeamHomeTeam()) {
         $query = sprintf(
             "UPDATE uo_game SET
-    		hometeam=%d, respteam=%d, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+    		hometeam=%1\$d, respteam=%2\$d, revision=revision+1 WHERE scheduling_name_home=%3\$d AND scheduling_name_home!=0 AND NOT (hometeam <=> %1\$d AND respteam <=> %2\$d)",
             (int) $teamId,
             (int) $teamId,
             (int) $move['scheduling_id'],
@@ -608,7 +608,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
     } else {
         $query = sprintf(
             "UPDATE uo_game SET
-    		hometeam=%d, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+    		hometeam=%1\$d, revision=revision+1 WHERE scheduling_name_home=%2\$d AND scheduling_name_home!=0 AND NOT (hometeam <=> %1\$d)",
             (int) $teamId,
             (int) $move['scheduling_id'],
         );
@@ -617,7 +617,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
 
     $query = sprintf(
         "UPDATE uo_game SET
-		visitorteam=%d, revision=revision+1 WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+		visitorteam=%1\$d, revision=revision+1 WHERE scheduling_name_visitor=%2\$d AND scheduling_name_visitor!=0 AND NOT (visitorteam <=> %1\$d)",
         (int) $teamId,
         (int) $move['scheduling_id'],
     );

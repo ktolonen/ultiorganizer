@@ -2108,7 +2108,7 @@ function PoolMakeMoves($poolId)
             if (isRespTeamHomeTeam()) {
                 $query = sprintf(
                     "UPDATE uo_game SET
-                    hometeam=%s, respteam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%1\$s, respteam=%2\$s, revision=revision+1 WHERE scheduling_name_home=%3\$d AND scheduling_name_home!=0 AND NOT (hometeam <=> %1\$s AND respteam <=> %2\$s)",
                     $teamSql,
                     $teamSql,
                     (int) $row['scheduling_id'],
@@ -2116,7 +2116,7 @@ function PoolMakeMoves($poolId)
             } else {
                 $query = sprintf(
                     "UPDATE uo_game SET
-                    hometeam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%1\$s, revision=revision+1 WHERE scheduling_name_home=%2\$d AND scheduling_name_home!=0 AND NOT (hometeam <=> %1\$s)",
                     $teamSql,
                     (int) $row['scheduling_id'],
                 );
@@ -2125,7 +2125,7 @@ function PoolMakeMoves($poolId)
             DBQuery($query);
 
             $query = sprintf(
-                "UPDATE uo_game SET visitorteam=%s, revision=revision+1 WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+                "UPDATE uo_game SET visitorteam=%1\$s, revision=revision+1 WHERE scheduling_name_visitor=%2\$d AND scheduling_name_visitor!=0 AND NOT (visitorteam <=> %1\$s)",
                 $teamSql,
                 (int) $row['scheduling_id'],
             );
@@ -2218,7 +2218,7 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
         if (isRespTeamHomeTeam()) {
             $query = sprintf(
                 "UPDATE uo_game SET
-                    hometeam=%s, respteam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%1\$s, respteam=%2\$s, revision=revision+1 WHERE scheduling_name_home=%3\$d AND scheduling_name_home!=0 AND NOT (hometeam <=> %1\$s AND respteam <=> %2\$s)",
                 $teamSql,
                 $teamSql,
                 (int) $row['scheduling_id'],
@@ -2226,7 +2226,7 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
         } else {
             $query = sprintf(
                 "UPDATE uo_game SET
-                    hometeam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%1\$s, revision=revision+1 WHERE scheduling_name_home=%2\$d AND scheduling_name_home!=0 AND NOT (hometeam <=> %1\$s)",
                 $teamSql,
                 (int) $row['scheduling_id'],
             );
@@ -2235,7 +2235,7 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
         DBQuery($query);
 
         $query = sprintf(
-            "UPDATE uo_game SET visitorteam=%s, revision=revision+1 WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+            "UPDATE uo_game SET visitorteam=%1\$s, revision=revision+1 WHERE scheduling_name_visitor=%2\$d AND scheduling_name_visitor!=0 AND NOT (visitorteam <=> %1\$s)",
             $teamSql,
             (int) $row['scheduling_id'],
         );
@@ -2321,7 +2321,7 @@ function PoolUndoMove($frompool, $fromplacing, $topool)
         //replace real team with pseudo team in games
         $query = sprintf(
             "UPDATE uo_game SET
-            hometeam=NULL, revision=revision+1 WHERE scheduling_name_home=%d",
+            hometeam=NULL, revision=revision+1 WHERE scheduling_name_home=%d AND hometeam IS NOT NULL",
             (int) $result['scheduling_id'],
         ); // FIXME set respteam to scheduling_team
 
@@ -2330,7 +2330,7 @@ function PoolUndoMove($frompool, $fromplacing, $topool)
 
         $query = sprintf(
             "UPDATE uo_game SET
-            visitorteam=NULL, revision=revision+1 WHERE scheduling_name_visitor=%d",
+            visitorteam=NULL, revision=revision+1 WHERE scheduling_name_visitor=%d AND visitorteam IS NOT NULL",
             (int) $result['scheduling_id'],
         );
 

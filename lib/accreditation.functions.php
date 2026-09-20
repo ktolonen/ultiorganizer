@@ -207,7 +207,21 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source)
     if (hasAccredidationRight($playerInfo['team'])) {
         // "played" is the target ScoresheetHistoryAuthorized() scopes its
         // accreditation branch to.
-        ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "played");
+        // Read before snapshotting, for the reason GameSetScoreSheetKeeper()
+        // gives: the accreditation form can be resubmitted with the flag
+        // already at this value. Only the scoresheet history is
+        // skipped: uo_accreditationlog is this function's own audit trail and
+        // predates it, so a repeated click still logs there as it always did.
+        $stored = DBQueryToValue(sprintf(
+            "SELECT acknowledged FROM uo_played WHERE player=%d AND game=%d",
+            (int) $playerId,
+            (int) $gameId,
+        ));
+        $unchanged = $stored !== null && $stored !== false && (int) $stored === 1;
+
+        if (!$unchanged) {
+            ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "played");
+        }
 
         $query = sprintf(
             "UPDATE uo_played SET acknowledged=1 WHERE player=%d AND game=%d",
@@ -217,10 +231,12 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source)
         $result = DBQuery($query);
 
         AccreditationLogEntry($playerId, $playerInfo['team'], $source, 1, $gameId);
-        ScoresheetHistoryRecord($gameId, "played", "update", [
-            'player' => (int) $playerId,
-            'acknowledged' => 1,
-        ]);
+        if (!$unchanged) {
+            ScoresheetHistoryRecord($gameId, "played", "update", [
+                'player' => (int) $playerId,
+                'acknowledged' => 1,
+            ]);
+        }
         return $result;
     } else {
         die('Insufficient rights to accredit player');
@@ -231,7 +247,19 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source)
 {
     $playerInfo = PlayerInfo($playerId);
     if (hasAccredidationRight($playerInfo['team'])) {
-        ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "played");
+        // Read before snapshotting, for the reason GameSetScoreSheetKeeper()
+        // gives: the accreditation form can be resubmitted with the flag
+        // already at this value.
+        $stored = DBQueryToValue(sprintf(
+            "SELECT acknowledged FROM uo_played WHERE player=%d AND game=%d",
+            (int) $playerId,
+            (int) $gameId,
+        ));
+        $unchanged = $stored !== null && $stored !== false && (int) $stored === 0;
+
+        if (!$unchanged) {
+            ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "played");
+        }
 
         $query = sprintf(
             "UPDATE uo_played SET acknowledged=0 WHERE player=%d AND game=%d",
@@ -241,10 +269,12 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source)
         $result = DBQuery($query);
 
         AccreditationLogEntry($playerId, $playerInfo['team'], $source, 0, $gameId);
-        ScoresheetHistoryRecord($gameId, "played", "update", [
-            'player' => (int) $playerId,
-            'acknowledged' => 0,
-        ]);
+        if (!$unchanged) {
+            ScoresheetHistoryRecord($gameId, "played", "update", [
+                'player' => (int) $playerId,
+                'acknowledged' => 0,
+            ]);
+        }
         return $result;
     } else {
         die('Insufficient rights to accredit player');
