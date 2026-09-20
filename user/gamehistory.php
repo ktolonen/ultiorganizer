@@ -111,6 +111,12 @@ function GameHistoryStatePlayerCells($row)
     if (!empty($row['spirit_captain'])) {
         $roles[] = _("Spirit captain");
     }
+    if (!empty($row['accredited'])) {
+        $roles[] = _("Accredited");
+    }
+    if (!empty($row['acknowledged'])) {
+        $roles[] = _("Acknowledged");
+    }
     return [
         'num' => (string) ($row['num'] ?? ""),
         'name' => (string) ($row['name'] ?? ""),
@@ -466,7 +472,7 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
 
     $playedPairs = GameHistoryStatePairs($saved['played'] ?? [], $current['played'] ?? [], 'player');
     if (count($playedPairs) > 0) {
-        $playedFields = ['num', 'name', 'captain', 'spirit_captain'];
+        $playedFields = ['num', 'name', 'captain', 'spirit_captain', 'accredited', 'acknowledged'];
         $teams = [];
         foreach ($playedPairs as $pair) {
             $row = $pair['saved'] ?? $pair['current'];
