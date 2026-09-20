@@ -436,10 +436,13 @@ if (!empty($_POST['save'])) {
     // numbers are non-blocking warnings and are stored as empty player fields.
     // This page rewrites the whole sheet, so a scorekeeper's points entered
     // since it was opened would be deleted without the revision check. Only
-    // checked once the payload validates, so that a rejected sheet carries its
+    // claimed once the payload validates, so that a rejected sheet carries its
     // own revision back and stays locked on the state it was entered against.
+    // The claim has to happen here rather than at the rewrite below: the
+    // mutators in between bump the revision themselves, so a later comparison
+    // would reject the save against its own writes.
     if (empty($errIds) && isset($_POST['revision']) && empty($_POST['overwrite'])) {
-        $revisionConflict = (int) $_POST['revision'] !== GameRevision($gameId);
+        $revisionConflict = !GameRevisionClaim($gameId, (int) $_POST['revision']);
     }
 
     if (!empty($errIds)) {

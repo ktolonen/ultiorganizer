@@ -1338,6 +1338,29 @@ function GameRevisionBump($gameId)
 }
 
 /**
+ * Claims $expected as the current revision, bumping it in the same statement.
+ *
+ * The bulk sheet cannot read the revision and then rewrite the game: a
+ * scorekeeper point landing between the two passes the comparison and is
+ * deleted by the rewrite. Claiming instead of comparing closes that gap for
+ * every point entered before the save; one entered while the rewrite itself
+ * runs is still lost, which the sheet's history snapshot makes recoverable.
+ */
+function GameRevisionClaim($gameId, $expected)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        return false;
+    }
+    DBQuery(sprintf(
+        "UPDATE uo_game SET revision=revision+1 WHERE game_id=%d AND revision=%d",
+        (int) $gameId,
+        (int) $expected,
+    ));
+
+    return DBAffectedRows() > 0;
+}
+
+/**
  * $snapshot defaults true, so a caller gets a restore point unless it opts
  * out. The per-point callers in mobile/ and scorekeeper/ do, since a snapshot
  * per point would mean roughly one per goal (see docs/game-history.md).

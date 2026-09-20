@@ -220,7 +220,9 @@ The desktop editor rewrites the whole sheet, so a sheet loaded before a scorekee
 
 - every mutator whose rows the desktop editor rewrites calls `GameRevisionBump()` after a write that changed something -- goals, result, forfeit, official, halftime, starting offence, timeouts, spirit stoppages, and the game note,
 - rows the desktop editor leaves alone deliberately do not bump it. The timer, spirit scores, player lists and the defense sheet would otherwise make the scorekeeper collide with itself on every point,
-- `user/addscoresheet.php` carries the revision it was rendered against in a hidden field and compares it through `GameRevision()` before `GameRemoveAllScores()`.
+- `user/addscoresheet.php` carries the revision it was rendered against in a hidden field and claims it through `GameRevisionClaim()` once the payload validates, before any of the save's own writes.
+
+`GameRevisionClaim()` compares and bumps in one `UPDATE ... WHERE revision=`, so a point entered between the check and the rewrite can no longer pass a stale comparison. It runs at the top of the save rather than next to `GameRemoveAllScores()` because the mutators in between bump the revision themselves, which a later comparison would read as a conflict with the save's own writes. A point entered while the rewrite is still running is not covered; the snapshot the rewrite takes makes it recoverable through the scoresheet history.
 
 On a mismatch the save is refused with the operator's entries still on the page, and the refused save carries the fresh revision back, so saving again is a deliberate overwrite. A save refused over its own points instead keeps the older revision, so the correction is still checked against the state it was entered against.
 
