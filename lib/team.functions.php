@@ -593,11 +593,14 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
 
     DBQuery($query);
 
+    // revision=revision+1 rides along, the set-based form of
+    // GameRevisionBump(): a scoresheet opened against the old fixture must
+    // not still satisfy GameRevisionClaim() once these teams change.
     //replace pseudo team with real team in games
     if (isRespTeamHomeTeam()) {
         $query = sprintf(
             "UPDATE uo_game SET
-    		hometeam=%d, respteam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+    		hometeam=%d, respteam=%d, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
             (int) $teamId,
             (int) $teamId,
             (int) $move['scheduling_id'],
@@ -605,7 +608,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
     } else {
         $query = sprintf(
             "UPDATE uo_game SET
-    		hometeam=%d WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+    		hometeam=%d, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
             (int) $teamId,
             (int) $move['scheduling_id'],
         );
@@ -614,7 +617,7 @@ function TeamMove($teamId, $frompool, $inplayofftree = false)
 
     $query = sprintf(
         "UPDATE uo_game SET
-		visitorteam=%d WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+		visitorteam=%d, revision=revision+1 WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
         (int) $teamId,
         (int) $move['scheduling_id'],
     );

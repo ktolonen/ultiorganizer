@@ -2100,12 +2100,15 @@ function PoolMakeMoves($poolId)
 
             PoolAddTeam($row['topool'], $teamId, $row['torank'], true);
 
+            // revision=revision+1 rides along, the set-based form of
+            // GameRevisionBump(): a scoresheet opened against the old fixture must
+            // not still satisfy GameRevisionClaim() once these teams change.
             //replace pseudo team with real team in games
             $teamSql = (string) $teamId;
             if (isRespTeamHomeTeam()) {
                 $query = sprintf(
                     "UPDATE uo_game SET
-                    hometeam=%s, respteam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%s, respteam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
                     $teamSql,
                     $teamSql,
                     (int) $row['scheduling_id'],
@@ -2113,7 +2116,7 @@ function PoolMakeMoves($poolId)
             } else {
                 $query = sprintf(
                     "UPDATE uo_game SET
-                    hometeam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
                     $teamSql,
                     (int) $row['scheduling_id'],
                 );
@@ -2122,7 +2125,7 @@ function PoolMakeMoves($poolId)
             DBQuery($query);
 
             $query = sprintf(
-                "UPDATE uo_game SET visitorteam=%s WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+                "UPDATE uo_game SET visitorteam=%s, revision=revision+1 WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
                 $teamSql,
                 (int) $row['scheduling_id'],
             );
@@ -2207,12 +2210,15 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
 
         PoolAddTeam($row['topool'], $teamId, $row['torank'], true, $checkrights);
 
+        // revision=revision+1 rides along, the set-based form of
+        // GameRevisionBump(): a scoresheet opened against the old fixture must
+        // not still satisfy GameRevisionClaim() once these teams change.
         // replace pseudo team with real team in games
         $teamSql = (string) $teamId;
         if (isRespTeamHomeTeam()) {
             $query = sprintf(
                 "UPDATE uo_game SET
-                    hometeam=%s, respteam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%s, respteam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
                 $teamSql,
                 $teamSql,
                 (int) $row['scheduling_id'],
@@ -2220,7 +2226,7 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
         } else {
             $query = sprintf(
                 "UPDATE uo_game SET
-                    hometeam=%s WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
+                    hometeam=%s, revision=revision+1 WHERE scheduling_name_home=%d AND scheduling_name_home!=0",
                 $teamSql,
                 (int) $row['scheduling_id'],
             );
@@ -2229,7 +2235,7 @@ function PoolMakeMove($frompool, $fromplacing, $checkrights = true)
         DBQuery($query);
 
         $query = sprintf(
-            "UPDATE uo_game SET visitorteam=%s WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
+            "UPDATE uo_game SET visitorteam=%s, revision=revision+1 WHERE scheduling_name_visitor=%d AND scheduling_name_visitor!=0",
             $teamSql,
             (int) $row['scheduling_id'],
         );
@@ -2309,10 +2315,13 @@ function PoolUndoMove($frompool, $fromplacing, $topool)
         $result = DBQueryToRow($query);
         $homesched = $result['scheduling_id'];
 
+        // revision=revision+1 rides along, as when the move was made: a
+        // scoresheet opened against the real teams must not still satisfy
+        // GameRevisionClaim() once this clears them.
         //replace real team with pseudo team in games
         $query = sprintf(
             "UPDATE uo_game SET
-            hometeam=NULL WHERE scheduling_name_home=%d",
+            hometeam=NULL, revision=revision+1 WHERE scheduling_name_home=%d",
             (int) $result['scheduling_id'],
         ); // FIXME set respteam to scheduling_team
 
@@ -2321,7 +2330,7 @@ function PoolUndoMove($frompool, $fromplacing, $topool)
 
         $query = sprintf(
             "UPDATE uo_game SET
-            visitorteam=NULL WHERE scheduling_name_visitor=%d",
+            visitorteam=NULL, revision=revision+1 WHERE scheduling_name_visitor=%d",
             (int) $result['scheduling_id'],
         );
 
