@@ -1511,9 +1511,22 @@ function GameSetForfeit($gameId, $forfeit)
     if (!hasEditGameEventsRight($gameId)) {
         die('Insufficient rights to edit game');
     }
-    GameHistorySnapshotIfNeeded($gameId);
     $forfeit = max(0, min(3, intval($forfeit)));
     $labels = [0 => "none", 1 => "home", 2 => "away", 3 => "both"];
+
+    // admin/editgame.php posts the forfeit select with every save of a
+    // finalized game, so the value arrives unchanged on edits that are about
+    // something else. Read before snapshotting for the same reason as
+    // GameSetCapEvent(): the snapshot precedes the write, so a DBAffectedRows()
+    // gate alone would still leave a restore point.
+    $stored = DBQueryToValue(
+        sprintf("SELECT forfeit FROM uo_game WHERE game_id=%d", (int) $gameId),
+    );
+    if ($stored !== null && $stored !== false && (int) $stored === $forfeit) {
+        return true;
+    }
+
+    GameHistorySnapshotIfNeeded($gameId);
     LogGameUpdate($gameId, "forfeit: " . $labels[$forfeit]);
     $query = sprintf(
         "UPDATE uo_game SET forfeit='%d' WHERE game_id='%s'",
