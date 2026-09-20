@@ -4,7 +4,7 @@ This document describes the `uo_game_history` table: what it records, how a chan
 
 ## What is stored
 
-Every mutation to a game's scoresheet -- result, roster, points, defenses, timeouts, spirit stoppages, metadata, comments, cap events, and media links -- is recorded as a row in `uo_game_history`, in addition to the ordinary write to `uo_game`, `uo_played`, `uo_goal`, and the other scoresheet tables. The row carries:
+Every mutation made through the scoresheet mutators -- result, roster, points, defenses, timeouts, spirit stoppages, metadata, comments, cap events, and media links -- is recorded as a row in `uo_game_history`, in addition to the ordinary write to `uo_game`, `uo_played`, `uo_goal`, and the other scoresheet tables. The row carries:
 
 - `game`: the game the change belongs to (foreign key to `uo_game`, cascades on delete),
 - `time`: when the change happened,
@@ -18,6 +18,8 @@ There are two kinds of rows in the same table:
 
 - **Change rows** -- one per mutation, written by `GameHistoryRecord()`. These exist purely as an audit trail: who changed what, when, from where. They are not restorable on their own.
 - **Snapshot rows** -- `target='snapshot'`, `action='capture'`, `has_snapshot=1`, with the full scoresheet state serialized into `snapshot` as JSON by `GameHistoryBuildSnapshot()`. These are the rows the admin and per-game history pages offer to restore.
+
+Tournament administration writes outside those mutators are not recorded. Swiss pool generation and move confirmation assign the standard BYE result with two bulk `UPDATE`s in `CheckBYE()` (`lib/swissdraw.functions.php`), and pool moves fill the real teams into scheduled fixtures with bulk updates in `lib/pool.functions.php` and `lib/team.functions.php`; none of them produces a history row. Those results and fixtures follow from the pool's own settings and move table rather than from someone editing a game, so the pool is the record of them.
 
 Recording can be turned off installation-wide with the `DisableGameHistory` setting; see `docs/configuration-flags.md`.
 
