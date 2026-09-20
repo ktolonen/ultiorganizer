@@ -1171,13 +1171,12 @@ function ScoresheetHistoryRestorePlayers($historyId, &$warnings)
             !empty($row['spirit_captain']) ? 1 : 0,
         ));
 
-        // Matches GameAddPlayer()'s side effect on the team roster number, but
-        // only while the player is still on the recorded team: after a
-        // transfer that column belongs to a team the restoring admin may hold
-        // no rights over.
-        if ($currentTeams[$i] === null || $currentTeams[$i] === (int) $row['team']) {
-            DBQuery(sprintf("UPDATE uo_player SET num=%s WHERE player_id=%d", $num, (int) $playerId));
-        }
+        // uo_player.num, the player's current squad number, is deliberately
+        // left alone even though GameAddPlayer() writes it: it is present
+        // state on whatever team the player is on now, not this game's roster,
+        // and no snapshot captures it, so a restore that overwrote it could
+        // not be undone by restoring the snapshot taken just before.
+        // uo_played.num above is this game's roster and is restored.
     }
 
     return $idMap;
