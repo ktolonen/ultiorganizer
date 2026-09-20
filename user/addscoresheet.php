@@ -641,7 +641,17 @@ if (!empty($_POST['save']) && !$scoresheetSaved && !$revisionConflict && isset($
 } else {
     $formRevision = GameRevision($gameId);
 }
-echo "<input type='hidden' name='revision' value='" . $formRevision . "'/>";
+// A payload that arrived without the field goes back without it while its
+// points are still invalid. The claim is skipped for an invalid payload, so
+// the conflict a missing token raises has not been reached yet -- handing the
+// correction the current revision here would let it claim successfully
+// without that warning ever being shown. Once the points validate, the
+// token-less save meets the conflict above, and the response to that carries
+// a fresh revision like any other conflict.
+$withholdRevision = !empty($errIds) && !isset($_POST['revision']);
+if (!$withholdRevision) {
+    echo "<input type='hidden' name='revision' value='" . $formRevision . "'/>";
+}
 echo "<table cellspacing='5' cellpadding='5'>";
 
 echo "<tr><td colspan='2'><h1>" . _("Game scoresheet") . " #$gameId</h1></td></tr>";
