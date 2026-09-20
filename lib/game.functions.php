@@ -2274,6 +2274,23 @@ function GameSetCaptain($gameId, $teamId, $playerId)
 function GameSetStartingTeam($gameId, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
+        // Read before snapshotting, for the reason GameSetScoreSheetKeeper()
+        // gives: the pre-filled first-offence forms in scorekeeper/ and
+        // mobile/ post the recorded side on every save, and the
+        // DBAffectedRows() gates below suppress only the audit row.
+        // uo_gameevent.ishome is NOT NULL, so the comparison needs no null
+        // case of its own; the absent row is the null case.
+        $offence = DBQueryToRow(sprintf(
+            "SELECT ishome FROM uo_gameevent WHERE game=%d AND type='offence' LIMIT 1",
+            (int) $gameId,
+        ));
+        $unchanged = $home === null
+            ? empty($offence)
+            : (!empty($offence) && (int) $offence['ishome'] === (int) $home);
+        if ($unchanged) {
+            return true;
+        }
+
         ScoresheetHistorySnapshotIfNeeded($gameId);
         if ($home === null) {
             $query = sprintf(
