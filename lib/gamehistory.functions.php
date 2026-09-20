@@ -465,10 +465,11 @@ function SeasonGameHistorySummary($seasonId, $filters = [])
  * the audit trail and the restore points, not any result. Irreversible -- the
  * history is the only copy of what it holds.
  *
- * The game set is every game of the event, reached through any of its pool
- * rows, where SeasonGameHistorySummary() lists a game through its timetable
- * pool row. The two agree for every game that has one, which is every game the
- * scheduling code produces.
+ * The game set is every game the event owns, reached through its timetable
+ * pool row, the same ownership SeasonGameHistorySummary() lists a game by. A
+ * carryover row would not do: SetGamePool() drops only the previous owner and
+ * leaves those behind, so a game moved to another event still links here and
+ * archiving this event would erase the other one's audit trail.
  */
 function DeleteEventGameHistory($seasonId)
 {
@@ -481,7 +482,7 @@ function DeleteEventGameHistory($seasonId)
 			SELECT gp.game FROM uo_game_pool gp
 			INNER JOIN uo_pool po ON po.pool_id=gp.pool
 			INNER JOIN uo_series se ON se.series_id=po.series
-			WHERE se.season='%s'
+			WHERE gp.timetable=1 AND se.season='%s'
 		)",
         DBEscapeString($seasonId),
     ));
