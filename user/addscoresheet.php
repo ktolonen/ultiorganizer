@@ -466,7 +466,13 @@ if (!empty($_POST['save'])) {
     // The claim has to happen here rather than at the rewrite below: the
     // mutators in between bump the revision themselves, so a later comparison
     // would reject the save against its own writes.
-    if (empty($errIds) && isset($_POST['revision']) && empty($_POST['overwrite'])) {
+    //
+    // Every save claims, including the retry the conflict message offers: that
+    // retry carries the revision the conflict response was rendered against,
+    // so it overwrites the changes the user was shown and conflicts again on
+    // anything saved since. A flag that skipped the claim would hand out an
+    // overwrite good for the rest of the session.
+    if (empty($errIds) && isset($_POST['revision'])) {
         $revisionConflict = !GameRevisionClaim($gameId, (int) $_POST['revision']);
     }
 
@@ -630,9 +636,6 @@ if (!empty($_POST['save']) && !$scoresheetSaved && !$revisionConflict && isset($
     $formRevision = GameRevision($gameId);
 }
 echo "<input type='hidden' name='revision' value='" . $formRevision . "'/>";
-if ($revisionConflict) {
-    echo "<input type='hidden' name='overwrite' value='1'/>";
-}
 echo "<table cellspacing='5' cellpadding='5'>";
 
 echo "<tr><td colspan='2'><h1>" . _("Game scoresheet") . " #$gameId</h1></td></tr>";
