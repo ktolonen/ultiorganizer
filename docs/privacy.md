@@ -134,6 +134,11 @@ Current table-level behavior:
   text, not foreign keys, so anonymizing `uo_player` does not reach them. Each snapshot is decoded,
   every name paired with an anonymized `player_id` is rewritten to `- -`, and the row is re-encoded.
   Matching is by player id, so a name recorded before a later correction is still reached.
+  The scrub walks the snapshots inside the anonymization's own transaction, whose read view is fixed
+  when it opens, so a snapshot written by another session while the anonymization runs is invisible
+  to it and keeps the old name. Prefer running an erasure outside live scoring; if one overlapped it,
+  run it again. The tool is idempotent and resolves its subject by player and profile id, neither of
+  which anonymization clears, so a second run reaches the late row.
 
 ## Free-text fields naming other people
 
