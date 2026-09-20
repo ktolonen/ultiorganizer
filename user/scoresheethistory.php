@@ -414,10 +414,12 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
         ];
     }
     // The defense counts arrived in snapshot format v2 and timer_elapsed in
-    // v3; an older snapshot has no value to compare rather than a zero.
-    $partial = !array_key_exists('homedefenses', $savedGame)
-        || !array_key_exists('timer_elapsed', $savedGame);
-    if (!$partial) {
+    // v3; an older snapshot has no value to compare rather than a zero. Gated
+    // on its own key, so a v2 snapshot still compares the counts it does carry
+    // -- the clock row above is already gated separately.
+    $hasDefenses = array_key_exists('homedefenses', $savedGame);
+    $partial = !$hasDefenses || !array_key_exists('timer_elapsed', $savedGame);
+    if ($hasDefenses) {
         $fields[] = [
             _("Defences"),
             ($savedGame['homedefenses'] ?? 0) . " - " . ($savedGame['visitordefenses'] ?? 0),

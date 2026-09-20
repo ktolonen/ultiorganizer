@@ -958,11 +958,10 @@ function ScoresheetHistoryRestore($historyId)
 
         GameSetForfeit($gameId, (int) ($snapshot['game']['forfeit'] ?? 0));
 
-        // Last, and unconditional: standings are recomputed from uo_game, so
-        // whichever recompute runs last is the one that sticks. Neither of the
-        // two calls above can be relied on for it -- GameUpdateResult() never
-        // recomputes, and GameSetForfeit() returns early when the snapshot's
-        // forfeit already matches the game's, which is the ordinary case.
+        // Last, and explicit rather than a side effect of the calls above:
+        // standings are recomputed from uo_game, so whichever recompute runs
+        // last is the one that sticks, and GameUpdateResult() -- the ongoing
+        // branch of the result replay -- does not recompute at all.
         $poolId = GamePool($gameId);
         ResolvePoolStandings($poolId);
         PoolResolvePlayed($poolId);

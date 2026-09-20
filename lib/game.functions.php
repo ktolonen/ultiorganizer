@@ -1522,20 +1522,28 @@ function GameSetForfeit($gameId, $forfeit)
     $stored = DBQueryToValue(
         sprintf("SELECT forfeit FROM uo_game WHERE game_id=%d", (int) $gameId),
     );
-    if ($stored !== null && $stored !== false && (int) $stored === $forfeit) {
-        return true;
+    $unchanged = $stored !== null && $stored !== false && (int) $stored === $forfeit;
+
+    $result = true;
+    if (!$unchanged) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
+        LogGameUpdate($gameId, "forfeit: " . $labels[$forfeit]);
+        $query = sprintf(
+            "UPDATE uo_game SET forfeit='%d' WHERE game_id='%s'",
+            $forfeit,
+            DBEscapeString($gameId),
+        );
+        $result = DBQuery($query);
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "forfeit", "update", ['forfeit' => $labels[$forfeit]]);
     }
 
-    ScoresheetHistorySnapshotIfNeeded($gameId);
-    LogGameUpdate($gameId, "forfeit: " . $labels[$forfeit]);
-    $query = sprintf(
-        "UPDATE uo_game SET forfeit='%d' WHERE game_id='%s'",
-        $forfeit,
-        DBEscapeString($gameId),
-    );
-    $result = DBQuery($query);
-    GameRevisionBump($gameId);
-    ScoresheetHistoryRecord($gameId, "forfeit", "update", ['forfeit' => $labels[$forfeit]]);
+    // Outside the guard, so an unchanged forfeit still recomputes. The same
+    // admin/editgame.php save that posts the value unchanged also applies the
+    // fixture change, and SetGame() recomputes nothing, so this is the only
+    // recompute on that path -- skipping it leaves the cached standings
+    // crediting the previous teams.
+    //
     // Forfeited games carry no spirit; recompute visibility and cached team
     // statistics so their data is dropped from averages (and restored on undo).
     if (function_exists('RefreshGameSpiritData')) {
