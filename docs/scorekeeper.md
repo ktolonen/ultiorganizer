@@ -244,7 +244,9 @@ Selecting either action:
 - lets the scorekeeper adjust both values, or update and remove an existing cap.
 
 An existing cap stays editable after the score has reached its point cap, which is the normal end
-state of a capped game; only a new cap has to name a point cap the teams can still play to.
+state of a capped game; only a new cap has to name a point cap the teams can still play to. Saving
+the pre-populated values unchanged is not a change: `GameSetCapEvent()` compares the stored time and
+target first and leaves both the scoresheet and the game's change history alone.
 
 Caps are stored in `uo_gameevent` with type `half_cap` or `time_cap`: the event time in `time`, the
 point cap in `info`, exposed as `target` in the v1 gameplay API. Replays render them through

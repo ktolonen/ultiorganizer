@@ -238,7 +238,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
             GameAddScoreEntry($uo_goal);
             $result = GameResult($gameId);
             if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
-                GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
+                GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore'], false);
             }
             header("location:?view=addscoresheet&game=" . $gameId);
             exit;

@@ -70,6 +70,15 @@ if (!empty($_POST['save'])) {
     $settings[] = $setting;
 
     $setting = [];
+    $setting['name'] = "DisableScoresheetHistory";
+    if (!empty($_POST['DisableScoresheetHistory'])) {
+        $setting['value'] = "true";
+    } else {
+        $setting['value'] = "false";
+    }
+    $settings[] = $setting;
+
+    $setting = [];
     $setting['name'] = "HomeTeamResponsible";
     if (!empty($_POST['HomeTeamResponsible'])) {
         $setting['value'] = "yes";
@@ -303,6 +312,17 @@ foreach ($settings as $setting) {
             $htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableVisitorLogging' checked='checked'/></td>";
         } else {
             $htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableVisitorLogging'/></td>";
+        }
+        $htmltmp2 .= "</tr>\n";
+    }
+
+    if ($setting['name'] == "DisableScoresheetHistory") {
+        $htmltmp2 .= "<tr>";
+        $htmltmp2 .= "<td class='infocell'>" . _("Disable scoresheet history") . ":</td>";
+        if ($setting['value'] == "true") {
+            $htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableScoresheetHistory' checked='checked'/></td>";
+        } else {
+            $htmltmp2 .= "<td><input class='input' type='checkbox' name='DisableScoresheetHistory'/></td>";
         }
         $htmltmp2 .= "</tr>\n";
     }
