@@ -1,6 +1,7 @@
 <?php
 
 require_once __DIR__ . '/include_only.guard.php';
+require_once __DIR__ . '/scoresheethistory.functions.php';
 denyDirectLibAccess(__FILE__);
 
 /**
@@ -353,6 +354,23 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
     if (($change['action'] === "delete" || $change['action'] === "update") &&
         !CanManageGameComment($gameId, $type)) {
         return false;
+    }
+
+    // Both history calls run before the write. The snapshot has to, or the
+    // old text would be gone with no restore point. The record call has to
+    // because ScoresheetHistoryAuthorized() resolves a note author's right through
+    // CanManageGameComment(), which can no longer recognise the author once
+    // ApplyCommentChange() has logged the comment_delete.
+    if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop") {
+        // Lazy require: game.functions.php requires scoresheethistory.functions.php,
+        // which this file requires in turn.
+        require_once __DIR__ . '/game.functions.php';
+
+        ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "comment");
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "comment", $change['action'] === "delete" ? "remove" : "update", [
+            'length' => strlen((string) $comment),
+        ]);
     }
 
     return ApplyCommentChange($type, $gameId, $change);

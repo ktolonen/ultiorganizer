@@ -6,6 +6,7 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/accreditation.functions.php';
 require_once __DIR__ . '/configuration.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/scoresheethistory.functions.php';
 
 function SeasonScoreCounter($seasonId = "")
 {
@@ -409,6 +410,29 @@ function GameSetRolePlayers($gameId, $teamId, $roleColumn, $playerIds)
     if (hasEditGameEventsRight($gameId)) {
         $playerIds = GameFilterRolePlayers($gameId, $teamId, $playerIds);
 
+        // user/addplayerlists.php calls this four times per save whether or
+        // not the selections changed, and the clear-and-reapply below leaves
+        // no trace of its own, so an unchanged assignment would add four
+        // misleading played/update rows to the audit view.
+        $assigned = DBQueryToArray(sprintf(
+            "SELECT pg.player
+			FROM uo_played AS pg
+			LEFT JOIN uo_player AS p ON (pg.player=p.player_id)
+			WHERE pg.game=%d AND p.team=%d AND pg.%s=1",
+            (int) $gameId,
+            (int) $teamId,
+            $roleColumn,
+        ));
+        $current = array_map('intval', array_column($assigned, 'player'));
+        $wanted = array_map('intval', $playerIds);
+        sort($current);
+        sort($wanted);
+        if ($current === $wanted) {
+            return true;
+        }
+
+        ScoresheetHistorySnapshotIfNeeded($gameId);
+
         $query = sprintf(
             "UPDATE uo_played AS pg
 			LEFT JOIN uo_player AS p ON (pg.player=p.player_id)
@@ -420,20 +444,27 @@ function GameSetRolePlayers($gameId, $teamId, $roleColumn, $playerIds)
         );
         DBQuery($query);
 
-        if (count($playerIds) === 0) {
-            return true;
-        }
-
-        $query = sprintf(
-            "UPDATE uo_played
+        $result = true;
+        if (count($playerIds) > 0) {
+            $query = sprintf(
+                "UPDATE uo_played
 			SET %s=1
 			WHERE game=%d AND player IN (%s)",
-            $roleColumn,
-            (int) $gameId,
-            implode(',', $playerIds),
-        );
+                $roleColumn,
+                (int) $gameId,
+                implode(',', $playerIds),
+            );
 
-        return DBQuery($query);
+            $result = DBQuery($query);
+        }
+
+        ScoresheetHistoryRecord($gameId, "played", "update", [
+            'team' => (int) $teamId,
+            'role' => $roleColumn,
+            'players' => array_map('intval', $playerIds),
+        ]);
+
+        return $result;
     } else {
         die('Insufficient rights to edit game');
     }
@@ -827,15 +858,24 @@ function GameSetCapEvent($gameId, $type, $time, $target)
         return false;
     }
 
-    $eventNum = DBQueryToValue(
+    // Read before snapshotting: a resubmitted cap that changes nothing would
+    // otherwise leave a restore point as well as an audit row. uo_gameevent.info
+    // is a varchar, so the comparison casts.
+    $event = DBQueryToRow(
         sprintf(
-            "SELECT num FROM uo_gameevent WHERE game=%d AND type='%s' LIMIT 1",
+            "SELECT num, time, info FROM uo_gameevent WHERE game=%d AND type='%s' LIMIT 1",
             $gameId,
             DBEscapeString($type),
         ),
     );
 
-    if ($eventNum !== null && $eventNum !== false) {
+    if (!empty($event) && (int) $event['time'] === $time && (int) $event['info'] === $target) {
+        return true;
+    }
+
+    ScoresheetHistorySnapshotIfNeeded($gameId);
+
+    if (!empty($event)) {
         $query = sprintf(
             "UPDATE uo_gameevent
 			SET time=%d,info='%d'
@@ -843,10 +883,22 @@ function GameSetCapEvent($gameId, $type, $time, $target)
             $time,
             $target,
             $gameId,
-            (int) $eventNum,
+            (int) $event['num'],
         );
 
-        return DBExecute($query);
+        $result = DBExecute($query);
+        // A concurrent save that already wrote these exact values changes no
+        // row here, and must not add a second audit line for one change.
+        if (DBAffectedRows() > 0) {
+            ScoresheetHistoryRecord(
+                $gameId,
+                "gameevent",
+                "update",
+                ['type' => (string) $type, 'time' => (int) $time, 'info' => $target],
+            );
+        }
+
+        return $result;
     }
 
     $lastNum = (int) DBQueryToValue(
@@ -862,7 +914,15 @@ function GameSetCapEvent($gameId, $type, $time, $target)
         $target,
     );
 
-    return DBExecute($query);
+    $result = DBExecute($query);
+    ScoresheetHistoryRecord(
+        $gameId,
+        "gameevent",
+        "update",
+        ['type' => (string) $type, 'time' => (int) $time, 'info' => $target],
+    );
+
+    return $result;
 }
 
 function GameRemoveCapEvent($gameId, $type)
@@ -876,13 +936,72 @@ function GameRemoveCapEvent($gameId, $type)
         return false;
     }
 
+    // Read before snapshotting for the same reason as GameSetCapEvent(): the
+    // DBAffectedRows() gate below keeps the audit row honest, but the snapshot
+    // is taken first, so removing a cap that is not set would still leave a
+    // restore point.
+    $eventNum = DBQueryToValue(
+        sprintf(
+            "SELECT num FROM uo_gameevent WHERE game=%d AND type='%s' LIMIT 1",
+            $gameId,
+            DBEscapeString($type),
+        ),
+    );
+    if ($eventNum === null || $eventNum === false) {
+        return true;
+    }
+
+    ScoresheetHistorySnapshotIfNeeded($gameId);
+
     $query = sprintf(
         "DELETE FROM uo_gameevent WHERE game=%d AND type='%s'",
         $gameId,
         DBEscapeString($type),
     );
 
-    return DBExecute($query);
+    $result = DBExecute($query);
+    if (DBAffectedRows() > 0) {
+        ScoresheetHistoryRecord($gameId, "gameevent", "remove", ['type' => (string) $type]);
+    }
+
+    return $result;
+}
+
+/**
+ * Remove the uo_gameevent rows ScoresheetHistoryRestore()'s replay can reinstate:
+ * starting offence and cap events. Narrower than "every non-media row",
+ * because other types are captured by a snapshot but have no replay branch,
+ * and media rows are never restored at all.
+ */
+function GameRemoveAllGameEvents($gameId)
+{
+    if (hasEditGameEventsRight($gameId)) {
+        $gameId = (int) $gameId;
+        ScoresheetHistorySnapshotIfNeeded($gameId);
+        $types = array_merge(['offence'], GameCapEventTypes());
+        $typeList = "'" . implode("','", array_map('DBEscapeString', $types)) . "'";
+        $removed = (int) DBQueryToValue(sprintf(
+            "SELECT COUNT(*) FROM uo_gameevent WHERE game=%d AND type IN (%s)",
+            $gameId,
+            $typeList,
+        ));
+        $query = sprintf(
+            "DELETE FROM uo_gameevent WHERE game=%d AND type IN (%s)",
+            $gameId,
+            $typeList,
+        );
+        $result = DBQuery($query);
+
+        // Suppressed while ScoresheetHistoryRestore() replays, so this row appears
+        // only for a caller that deletes outside a restore.
+        if ($removed > 0) {
+            ScoresheetHistoryRecord($gameId, "gameevent", "clear", ['removed' => $removed]);
+        }
+
+        return $result;
+    } else {
+        die('Insufficient rights to edit game');
+    }
 }
 
 function GameMediaEvents($gameId)
@@ -913,7 +1032,10 @@ function AddGameMediaEvent($gameId, $time, $urlId)
             (int) $urlId,
         );
 
-        return DBQueryInsert($query);
+        $result = DBQueryInsert($query);
+        ScoresheetHistoryRecord($gameId, "mediaevent", "add", ['url' => (int) $urlId, 'time' => (int) $time]);
+
+        return $result;
     } else {
         die('Insufficient rights to add media');
     }
@@ -927,7 +1049,12 @@ function RemoveGameMediaEvent($gameId, $urlId)
             (int) $gameId,
             (int) $urlId,
         );
-        return DBQuery($query);
+        $result = DBQuery($query);
+        if (DBAffectedRows() > 0) {
+            ScoresheetHistoryRecord($gameId, "mediaevent", "remove", ['url' => (int) $urlId]);
+        }
+
+        return $result;
     } else {
         die('Insufficient rights to remove media');
     }
@@ -1216,7 +1343,67 @@ function CheckGameResult($game, $home, $away)
     return $errors;
 }
 
-function GameUpdateResult($gameId, $home, $away)
+/**
+ * Returns the scoresheet revision, the token the bulk desktop sheet locks on.
+ *
+ * Every mutator whose rows user/addscoresheet.php rewrites bumps it, so a
+ * sheet loaded before a scorekeeper entered a point saves against a revision
+ * that no longer matches. Rows the bulk sheet leaves alone -- the timer,
+ * spirit scores, player lists, the defense sheet -- deliberately do not bump
+ * it, or the scorekeeper would collide with itself (see docs/scoresheet.md).
+ */
+function GameRevision($gameId)
+{
+    return (int) DBQueryToValue(sprintf(
+        "SELECT revision FROM uo_game WHERE game_id=%d",
+        (int) $gameId,
+    ));
+}
+
+/**
+ * Bumps the scoresheet revision.
+ *
+ * Carries no right of its own: it only ever accompanies a write the calling
+ * mutator has already authorized, and one of those callers is the
+ * ANONYMOUS_RESULT_INPUT route, which holds no game right to check.
+ */
+function GameRevisionBump($gameId)
+{
+    DBQuery(sprintf(
+        "UPDATE uo_game SET revision=revision+1 WHERE game_id=%d",
+        (int) $gameId,
+    ));
+}
+
+/**
+ * Claims $expected as the current revision, bumping it in the same statement.
+ *
+ * The bulk sheet cannot read the revision and then rewrite the game: a
+ * scorekeeper point landing between the two passes the comparison and is
+ * deleted by the rewrite. Claiming instead of comparing closes that gap for
+ * every point entered before the save; one entered while the rewrite itself
+ * runs is still lost, which the sheet's history snapshot makes recoverable.
+ */
+function GameRevisionClaim($gameId, $expected)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        return false;
+    }
+    DBQuery(sprintf(
+        "UPDATE uo_game SET revision=revision+1 WHERE game_id=%d AND revision=%d",
+        (int) $gameId,
+        (int) $expected,
+    ));
+
+    return DBAffectedRows() > 0;
+}
+
+/**
+ * $snapshot defaults true, so a caller gets a restore point unless it opts
+ * out. The per-point callers in mobile/ and scorekeeper/ do, since a snapshot
+ * per point would mean roughly one per goal (see docs/scoresheet-history.md).
+ */
+function GameUpdateResult($gameId, $home, $away, $snapshot = true)
 {
     // Enforced here rather than per entry point: user/addresult.php and
     // mobile/addresult.php never call CheckGameResult().
@@ -1224,6 +1411,9 @@ function GameUpdateResult($gameId, $home, $away)
         return false;
     }
     if (hasEditGameEventsRight($gameId)) {
+        if ($snapshot) {
+            ScoresheetHistorySnapshotIfNeeded($gameId);
+        }
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='1', hasstarted='1' WHERE game_id='%s'",
             DBEscapeString($home),
@@ -1231,6 +1421,12 @@ function GameUpdateResult($gameId, $home, $away)
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "result", "update", [
+            'home' => (int) $home,
+            'away' => (int) $away,
+            'state' => "ongoing",
+        ]);
 
         return $result;
     } else {
@@ -1248,7 +1444,12 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         die('Insufficient rights to edit game');
     }
     if (!$checkRights || hasEditGameEventsRight($gameId)) {
+        // $checkRights=false is the ANONYMOUS_RESULT_INPUT self-report route,
+        // which holds none of the game rights ScoresheetHistoryAuthorized() checks.
+        // The flag only takes effect once that function confirms the setting.
+        $allowAnonymousResult = !$checkRights;
         LogGameUpdate($gameId, "result: $home - $away");
+        ScoresheetHistorySnapshotIfNeeded($gameId, false, $allowAnonymousResult, "result");
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($home),
@@ -1256,6 +1457,12 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "result", "update", [
+            'home' => (int) $home,
+            'away' => (int) $away,
+            'state' => "final",
+        ], false, $allowAnonymousResult);
 
         if ($updatePools) {
             $poolId = GamePool($gameId);
@@ -1306,6 +1513,20 @@ function GameSetForfeit($gameId, $forfeit)
     }
     $forfeit = max(0, min(3, intval($forfeit)));
     $labels = [0 => "none", 1 => "home", 2 => "away", 3 => "both"];
+
+    // admin/editgame.php posts the forfeit select with every save of a
+    // finalized game, so the value arrives unchanged on edits that are about
+    // something else. Read before snapshotting for the same reason as
+    // GameSetCapEvent(): the snapshot precedes the write, so a DBAffectedRows()
+    // gate alone would still leave a restore point.
+    $stored = DBQueryToValue(
+        sprintf("SELECT forfeit FROM uo_game WHERE game_id=%d", (int) $gameId),
+    );
+    if ($stored !== null && $stored !== false && (int) $stored === $forfeit) {
+        return true;
+    }
+
+    ScoresheetHistorySnapshotIfNeeded($gameId);
     LogGameUpdate($gameId, "forfeit: " . $labels[$forfeit]);
     $query = sprintf(
         "UPDATE uo_game SET forfeit='%d' WHERE game_id='%s'",
@@ -1313,6 +1534,8 @@ function GameSetForfeit($gameId, $forfeit)
         DBEscapeString($gameId),
     );
     $result = DBQuery($query);
+    GameRevisionBump($gameId);
+    ScoresheetHistoryRecord($gameId, "forfeit", "update", ['forfeit' => $labels[$forfeit]]);
     // Forfeited games carry no spirit; recompute visibility and cached team
     // statistics so their data is dropped from averages (and restored on undo).
     if (function_exists('RefreshGameSpiritData')) {
@@ -1330,11 +1553,14 @@ function GameClearResult($gameId, $updatepools = true)
 {
     if (hasEditGameEventsRight($gameId)) {
         LogGameUpdate($gameId, "result cleared");
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing='0', hasstarted='0', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "result", "clear", []);
 
         if ($updatepools) {
             $poolId = GamePool($gameId);
@@ -1350,6 +1576,7 @@ function GameClearResult($gameId, $updatepools = true)
 function GameSetDefenses($gameId, $home, $away)
 {
     if (hasEditGameEventsRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_game SET homedefenses='%s', visitordefenses='%s' WHERE game_id='%s'",
             DBEscapeString($home),
@@ -1357,6 +1584,10 @@ function GameSetDefenses($gameId, $home, $away)
             DBEscapeString($gameId),
         );
         $result = DBQuery($query);
+        ScoresheetHistoryRecord($gameId, "defense", "update", [
+            'home' => (int) $home,
+            'away' => (int) $away,
+        ]);
 
         return $result;
     } else {
@@ -1400,6 +1631,7 @@ function GameAddPlayer($gameId, $playerId, $number)
         if (!GameAllowsPlayerOnRoster($gameId, $playerId)) {
             return false;
         }
+        ScoresheetHistorySnapshotIfNeeded($gameId);
 
         $query = sprintf(
             "INSERT INTO uo_played
@@ -1421,6 +1653,7 @@ function GameAddPlayer($gameId, $playerId, $number)
         );
 
         $result = DBQuery($query);
+        ScoresheetHistoryRecord($gameId, "played", "add", ['player' => (int) $playerId, 'num' => (int) $number]);
 
         return $result;
     } else {
@@ -1431,6 +1664,9 @@ function GameAddPlayer($gameId, $playerId, $number)
 function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        // The nested GameAddPlayer() below runs with history suppressed, so
+        // its own snapshot attempt would be a no-op.
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "INSERT INTO uo_player (firstname, lastname, accreditation_id, team) VALUES ('%s', '%s', '%s', %d)",
             DBEscapeString($firstname),
@@ -1440,7 +1676,17 @@ function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $num
         );
         $playerId = DBQueryInsert($query);
 
-        GameAddPlayer($gameId, $playerId, $number);
+        $suppressedBefore = ScoresheetHistorySuppressed();
+        ScoresheetHistorySuppressed(true);
+        $added = GameAddPlayer($gameId, $playerId, $number);
+        ScoresheetHistorySuppressed($suppressedBefore);
+        if ($added) {
+            ScoresheetHistoryRecord($gameId, "played", "add", [
+                'player' => (int) $playerId,
+                'num' => (int) $number,
+                'created' => 1,
+            ]);
+        }
     } else {
         die('Insufficient rights to edit game');
     }
@@ -1449,14 +1695,18 @@ function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $num
 function GameRemovePlayer($gameId, $playerId)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "DELETE FROM uo_played 
+            "DELETE FROM uo_played
 			WHERE game='%s' AND player='%s'",
             DBEscapeString($gameId),
             DBEscapeString($playerId),
         );
 
         $result = DBQuery($query);
+        if (DBAffectedRows() > 0) {
+            ScoresheetHistoryRecord($gameId, "played", "remove", ['player' => (int) $playerId]);
+        }
 
         return $result;
     } else {
@@ -1467,6 +1717,8 @@ function GameRemovePlayer($gameId, $playerId)
 function GameRemoveAllPlayers($gameId)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_played WHERE game=%d", (int) $gameId));
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_played
 			WHERE game='%s'",
@@ -1474,6 +1726,9 @@ function GameRemoveAllPlayers($gameId)
         );
 
         $result = DBQuery($query);
+        if ($removed > 0) {
+            ScoresheetHistoryRecord($gameId, "played", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1484,8 +1739,9 @@ function GameRemoveAllPlayers($gameId)
 function GameSetPlayerNumber($gameId, $playerId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "UPDATE uo_played 
+            "UPDATE uo_played
 			SET num='%s', accredited=%d 
 			WHERE game=%d AND player=%d",
             DBEscapeString($number),
@@ -1495,6 +1751,9 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
         );
 
         $result = DBQuery($query);
+        if (DBAffectedRows() > 0) {
+            ScoresheetHistoryRecord($gameId, "played", "update", ['player' => (int) $playerId, 'num' => (int) $number]);
+        }
 
         return $result;
     } else {
@@ -1505,6 +1764,8 @@ function GameSetPlayerNumber($gameId, $playerId, $number)
 function GameRemoveAllScores($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_goal WHERE game=%d", (int) $gameId));
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_goal 
 			WHERE game='%s'",
@@ -1512,6 +1773,10 @@ function GameRemoveAllScores($gameId)
         );
 
         $result = DBQuery($query);
+        if ($removed > 0) {
+            GameRevisionBump($gameId);
+            ScoresheetHistoryRecord($gameId, "goal", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1522,6 +1787,8 @@ function GameRemoveAllScores($gameId)
 function GameRemoveAllDefenses($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_defense WHERE game=%d", (int) $gameId));
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_defense 
 			WHERE game='%s'",
@@ -1529,6 +1796,9 @@ function GameRemoveAllDefenses($gameId)
         );
 
         $result = DBQuery($query);
+        if ($removed > 0) {
+            ScoresheetHistoryRecord($gameId, "defense", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1537,9 +1807,20 @@ function GameRemoveAllDefenses($gameId)
 }
 
 
+// The three per-goal mutators -- this one, GameAddScore() and
+// GameAddScoreEntry() -- do not call ScoresheetHistorySnapshotIfNeeded(): the
+// scorekeeper saves one goal per request, so that would mean roughly one
+// snapshot per point. GameRemoveAllScores() covers the bulk desktop save.
 function GameRemoveScore($gameId, $num)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removedGoal = DBQueryToRow(sprintf(
+            "SELECT assist, scorer, time, homescore, visitorscore, ishomegoal, iscallahan
+			FROM uo_goal WHERE game=%d AND num=%d",
+            (int) $gameId,
+            (int) $num,
+        ));
+
         $query = sprintf(
             "DELETE FROM uo_goal
 			WHERE game='%s' AND num=%d",
@@ -1548,6 +1829,20 @@ function GameRemoveScore($gameId, $num)
         );
 
         $result = DBQuery($query);
+        // A point already gone -- a resubmitted delete, or a $num this caller
+        // never held -- deletes nothing, and must not be recorded as a removal.
+        if (DBAffectedRows() > 0) {
+            GameRevisionBump($gameId);
+            ScoresheetHistoryRecord($gameId, "goal", "remove", [
+                'num' => (int) $num,
+                'scorer' => !empty($removedGoal['scorer']) ? (int) $removedGoal['scorer'] : null,
+                'assist' => !empty($removedGoal['assist']) ? (int) $removedGoal['assist'] : null,
+                'time' => $removedGoal ? (int) $removedGoal['time'] : null,
+                'score' => $removedGoal ? (int) $removedGoal['homescore'] . "-" . (int) $removedGoal['visitorscore'] : null,
+                'home' => $removedGoal ? (!empty($removedGoal['ishomegoal']) ? 1 : 0) : null,
+                'callahan' => $removedGoal ? (!empty($removedGoal['iscallahan']) ? 1 : 0) : null,
+            ]);
+        }
 
         return $result;
     } else {
@@ -1619,6 +1914,11 @@ function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
         DBEscapeString($away),
         (int) $gameId,
     ));
+    ScoresheetHistoryRecord($gameId, "result", "update", [
+        'home' => (int) $home,
+        'away' => (int) $away,
+        'state' => "from_goals",
+    ]);
 
     $poolId = GamePool($gameId);
     ResolvePoolStandings($poolId);
@@ -1631,6 +1931,7 @@ function GameSyncResultFromGoals($gameId, $removedHome, $removedAway)
  * Add goal to game. Does not update game result!
  *
  */
+// No snapshot here either -- see GameRemoveScore().
 function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores, $home, $iscallahan)
 {
     if (hasEditGameEventsRight($gameId)) {
@@ -1661,6 +1962,16 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "goal", "add", [
+            'num' => (int) $number,
+            'scorer' => $goal === null ? null : (int) $goal,
+            'assist' => $pass === null ? null : (int) $pass,
+            'time' => (int) $time,
+            'score' => (int) $hscores . "-" . (int) $ascores,
+            'home' => $home ? 1 : 0,
+            'callahan' => $iscallahan ? 1 : 0,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to edit game');
@@ -1670,20 +1981,27 @@ function GameAddScore($gameId, $pass, $goal, $time, $number, $hscores, $ascores,
 function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $number)
 {
     if (hasEditGameEventsRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
+        // uo_defense.author is nullable (an unresolvable player on restore),
+        // so emit a real SQL NULL rather than the empty string
+        // DBEscapeString(null) produces, which would violate the FK.
+        $authorValue = ($player === -1 || $player === 0 || $player === "0" || $player === "" || $player === null
+            || strcasecmp((string) $player, "x") == 0 || strcasecmp((string) $player, "xx") == 0)
+            ? "NULL" : "'" . DBEscapeString($player) . "'";
         $query = sprintf(
-            "INSERT INTO uo_defense 
-			(game, num, author, time, iscallahan, iscaught, ishomedefense) 
-			VALUES ('%s', '%s', '%s', '%s', '%s', '%s', '%s') 
-			ON DUPLICATE KEY UPDATE 
-			author='%s', time='%s', iscallahan='%s', iscaught='%s', ishomedefense='%s'",
+            "INSERT INTO uo_defense
+			(game, num, author, time, iscallahan, iscaught, ishomedefense)
+			VALUES ('%s', '%s', %s, '%s', '%s', '%s', '%s')
+			ON DUPLICATE KEY UPDATE
+			author=%s, time='%s', iscallahan='%s', iscaught='%s', ishomedefense='%s'",
             DBEscapeString($gameId),
             DBEscapeString($number),
-            DBEscapeString($player),
+            $authorValue,
             DBEscapeString($time),
             DBEscapeString($iscallahan),
             DBEscapeString($caught),
             DBEscapeString($home),
-            DBEscapeString($player),
+            $authorValue,
             DBEscapeString($time),
             DBEscapeString($iscallahan),
             DBEscapeString($caught),
@@ -1691,12 +2009,20 @@ function GameAddDefense($gameId, $player, $home, $caught, $time, $iscallahan, $n
         );
 
         $result = DBQuery($query);
+        ScoresheetHistoryRecord($gameId, "defense", "add", [
+            'num' => (int) $number,
+            'player' => (int) $player,
+            'time' => (int) $time,
+            'caught' => $caught ? 1 : 0,
+            'callahan' => $iscallahan ? 1 : 0,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to edit game');
     }
 }
 
+// No snapshot here either -- see GameRemoveScore().
 function GameAddScoreEntry($uo_goal)
 {
     if (hasEditGameEventsRight($uo_goal['game'])) {
@@ -1721,6 +2047,16 @@ function GameAddScoreEntry($uo_goal)
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($uo_goal['game']);
+        ScoresheetHistoryRecord($uo_goal['game'], "goal", "add", [
+            'num' => (int) $uo_goal['num'],
+            'scorer' => isset($uo_goal['scorer']) ? (int) $uo_goal['scorer'] : null,
+            'assist' => isset($uo_goal['assist']) ? (int) $uo_goal['assist'] : null,
+            'time' => (int) ($uo_goal['time'] ?? 0),
+            'score' => (int) $uo_goal['homescore'] . "-" . (int) $uo_goal['visitorscore'],
+            'home' => !empty($uo_goal['ishomegoal']) ? 1 : 0,
+            'callahan' => !empty($uo_goal['iscallahan']) ? 1 : 0,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to edit game');
@@ -1730,13 +2066,19 @@ function GameAddScoreEntry($uo_goal)
 function GameRemoveAllTimeouts($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_timeout WHERE game=%d", (int) $gameId));
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "DELETE FROM uo_timeout 
+            "DELETE FROM uo_timeout
 			WHERE game='%s'",
             DBEscapeString($gameId),
         );
 
         $result = DBQuery($query);
+        if ($removed > 0) {
+            GameRevisionBump($gameId);
+            ScoresheetHistoryRecord($gameId, "timeout", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1747,9 +2089,10 @@ function GameRemoveAllTimeouts($gameId)
 function GameAddTimeout($gameId, $number, $time, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "INSERT INTO uo_timeout 
-			(game, num, time, ishome) 
+            "INSERT INTO uo_timeout
+			(game, num, time, ishome)
 			VALUES ('%s', '%s', '%s', '%s')",
             DBEscapeString($gameId),
             DBEscapeString($number),
@@ -1758,6 +2101,12 @@ function GameAddTimeout($gameId, $number, $time, $home)
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "timeout", "add", [
+            'num' => (int) $number,
+            'time' => (int) $time,
+            'home' => $home ? 1 : 0,
+        ]);
 
         return $result;
     } else {
@@ -1768,6 +2117,8 @@ function GameAddTimeout($gameId, $number, $time, $home)
 function GameRemoveAllSpiritTimeouts($gameId)
 {
     if (hasEditGameEventsRight($gameId)) {
+        $removed = (int) DBQueryToValue(sprintf("SELECT COUNT(*) FROM uo_spirit_timeout WHERE game=%d", (int) $gameId));
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "DELETE FROM uo_spirit_timeout
 			WHERE game='%s'",
@@ -1775,6 +2126,10 @@ function GameRemoveAllSpiritTimeouts($gameId)
         );
 
         $result = DBQuery($query);
+        if ($removed > 0) {
+            GameRevisionBump($gameId);
+            ScoresheetHistoryRecord($gameId, "spirit_timeout", "clear", ['removed' => $removed]);
+        }
 
         return $result;
     } else {
@@ -1785,6 +2140,7 @@ function GameRemoveAllSpiritTimeouts($gameId)
 function GameAddSpiritTimeout($gameId, $number, $time, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "INSERT INTO uo_spirit_timeout
 			(game, num, time, ishome)
@@ -1796,6 +2152,12 @@ function GameAddSpiritTimeout($gameId, $number, $time, $home)
         );
 
         $result = DBQuery($query);
+        GameRevisionBump($gameId);
+        ScoresheetHistoryRecord($gameId, "spirit_timeout", "add", [
+            'num' => (int) $number,
+            'time' => (int) $time,
+            'home' => $home ? 1 : 0,
+        ]);
 
         return $result;
     } else {
@@ -1806,6 +2168,7 @@ function GameAddSpiritTimeout($gameId, $number, $time, $home)
 function GameSetScoreSheetKeeper($gameId, $name)
 {
     if (hasEditGameEventsRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         if (isset($name)) {
             $query = sprintf("
 		UPDATE uo_game 
@@ -1818,6 +2181,10 @@ function GameSetScoreSheetKeeper($gameId, $name)
 		WHERE game_id='%s'", DBEscapeString($gameId));
         }
         $result = DBQuery($query);
+        if (DBAffectedRows() > 0) {
+            GameRevisionBump($gameId);
+            ScoresheetHistoryRecord($gameId, "official", "update", ['name' => (string) $name]);
+        }
 
         return $result;
     } else {
@@ -1829,6 +2196,7 @@ function GameSetScoreSheetKeeper($gameId, $name)
 function GameSetHalftime($gameId, $time)
 {
     if (hasEditGameEventsRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         if (isset($time)) {
             $query = sprintf("
 			UPDATE uo_game 
@@ -1841,6 +2209,10 @@ function GameSetHalftime($gameId, $time)
 			WHERE game_id='%s'", DBEscapeString($gameId));
         }
         $result = DBQuery($query);
+        if (DBAffectedRows() > 0) {
+            GameRevisionBump($gameId);
+            ScoresheetHistoryRecord($gameId, "halftime", "update", ['time' => (int) $time]);
+        }
 
         return $result;
     } else {
@@ -1860,6 +2232,7 @@ function GameSetCaptain($gameId, $teamId, $playerId)
 function GameSetStartingTeam($gameId, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         if ($home === null) {
             $query = sprintf(
                 "DELETE FROM uo_gameevent WHERE game=%d AND type='offence'",
@@ -1867,6 +2240,10 @@ function GameSetStartingTeam($gameId, $home)
             );
 
             $result = DBQuery($query);
+            if (DBAffectedRows() > 0) {
+                GameRevisionBump($gameId);
+                ScoresheetHistoryRecord($gameId, "gameevent", "remove", ['type' => "start"]);
+            }
 
             return $result;
         } else {
@@ -1879,6 +2256,12 @@ function GameSetStartingTeam($gameId, $home)
             );
 
             $result = DBQuery($query);
+            // 1 for the insert, 2 for a changed side, 0 when the recorded side
+            // is already the one being set.
+            if (DBAffectedRows() > 0) {
+                GameRevisionBump($gameId);
+                ScoresheetHistoryRecord($gameId, "gameevent", "update", ['type' => "start", 'home' => $home ? 1 : 0]);
+            }
 
             return $result;
         }
@@ -1982,6 +2365,20 @@ function SetGame($gameId, $params)
         ]);
 
         $nullableFKs = ['reservation', 'hometeam', 'visitorteam'];
+        // Read back rather than derived from $params: the loop below resolves
+        // a team column from several shapes, and only an actual change is
+        // worth an audit row on a page that saves time and reservation too.
+        $readFixtureTeams = function () use ($gameId) {
+            $row = DBQueryToRow(sprintf(
+                "SELECT hometeam, visitorteam FROM uo_game WHERE game_id=%d",
+                (int) $gameId,
+            ));
+            return [
+                'home' => ($row['hometeam'] ?? null) === null ? null : (int) $row['hometeam'],
+                'away' => ($row['visitorteam'] ?? null) === null ? null : (int) $row['visitorteam'],
+            ];
+        };
+        $teamsBefore = $readFixtureTeams();
         foreach ($params as $key => $param) {
             if (!isset($allowedKeys[$key]) || $param === null || $param === false) {
                 continue;
@@ -2006,7 +2403,30 @@ function SetGame($gameId, $params)
             $result = DBQuery($query);
         }
 
+        // Recorded before SetGamePool() below, which can move the game to
+        // another series and so change the rights the history helper resolves.
+        // No snapshot, for the reason GameChangeHome() gives.
+        $teamsAfter = $readFixtureTeams();
+        if ($teamsAfter !== $teamsBefore) {
+            ScoresheetHistoryRecord($gameId, "fixture", "update", [
+                'home' => $teamsAfter['home'],
+                'away' => $teamsAfter['away'],
+            ]);
+        }
+
         if (!empty($params['pool'])) {
+            // A pool move can carry the game into another series, which is
+            // what GameSeries() -- and so every right the history helpers
+            // resolve -- is read from. Recorded before the move for the same
+            // reason as the fixture row above, and only when the pool really
+            // changes, since editgame.php posts the current pool on every save.
+            $poolBefore = (int) GamePool($gameId);
+            if ($poolBefore !== (int) $params['pool']) {
+                ScoresheetHistoryRecord($gameId, "fixture", "move", [
+                    'pool' => (int) $params['pool'],
+                    'from' => $poolBefore,
+                ]);
+            }
             SetGamePool($gameId, $params['pool']);
             $result = true;
         }
@@ -2105,6 +2525,15 @@ function GameChangeHome($gameId)
         );
 
         DBQuery($query);
+
+        // No snapshot: the state captured before a swap records the old
+        // hometeam/visitorteam, so ScoresheetHistoryEntry() would withhold it as a
+        // fixture mismatch the moment this write lands. A swap is its own
+        // inverse anyway, so the audit row is the whole point.
+        ScoresheetHistoryRecord($gameId, "fixture", "swap", [
+            'home' => $game['visitorteam'] === null ? null : (int) $game['visitorteam'],
+            'away' => $game['hometeam'] === null ? null : (int) $game['hometeam'],
+        ]);
     } else {
         die('Insufficient rights to delete game');
     }
@@ -2621,6 +3050,11 @@ function isGamePaused($gameId)
     return (int) DBQueryToValue($query);
 }
 
+// The five GameTime*() mutators below record a "timer" history row but take
+// no snapshot: restore is whole-sheet, so undoing a mistaken clock edit that
+// way would also roll back goals, roster and result. The timer columns are
+// still captured by every other mutator's snapshot, just not independently
+// restorable; the remedy for a clock mistake is GameTimeSetElapsed().
 function GameTimeReset($gameId)
 {
     $gameId = (int) $gameId;
@@ -2633,7 +3067,9 @@ function GameTimeReset($gameId)
         $gameId,
     );
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    ScoresheetHistoryRecord($gameId, "timer", "reset");
+    return $result;
 }
 
 function GameTimeStart($gameId)
@@ -2649,7 +3085,9 @@ function GameTimeStart($gameId)
         $gameId,
     );
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    ScoresheetHistoryRecord($gameId, "timer", "start");
+    return $result;
 }
 
 function GameTimePause($gameId)
@@ -2659,10 +3097,18 @@ function GameTimePause($gameId)
         die('Insufficient rights to edit game events');
     }
 
-    $query = sprintf("UPDATE uo_game SET timer_pause_start = %d 
+    // The WHERE clause is the whole test -- a game that is not running, an
+    // already paused clock and a second request that lost the race all fail
+    // it, and only the winner records.
+    $query = sprintf("UPDATE uo_game SET timer_pause_start = %d
     WHERE game_id = %d AND isongoing = 1 AND timer_pause_start IS NULL", time(), $gameId);
 
-    return DBQuery($query);
+    $result = DBQuery($query);
+    if (DBAffectedRows() < 1) {
+        return false;
+    }
+    ScoresheetHistoryRecord($gameId, "timer", "pause");
+    return $result;
 }
 
 function GameTimeResume($gameId)
@@ -2672,20 +3118,27 @@ function GameTimeResume($gameId)
         die('Insufficient rights to edit game events');
     }
 
-    $query = sprintf("SELECT timer_pause_start, timer_paused_duration FROM uo_game WHERE game_id = %d LIMIT 1", $gameId);
-    $row = DBQueryToRow($query);
+    // The elapsed pause is added from the row's own timer_pause_start rather
+    // than from a value read first: a read-then-write pair has no guard value
+    // that cannot repeat, since time() has one-second resolution and a pause
+    // in the same second as the previous one reuses the timestamp. The clock
+    // source stays PHP's, so a separate database host's clock cannot skew the
+    // duration.
+    $updateQuery = sprintf(
+        "UPDATE uo_game
+      SET timer_paused_duration = timer_paused_duration + GREATEST(0, %d - timer_pause_start),
+          timer_pause_start = NULL
+      WHERE game_id = %d AND timer_pause_start IS NOT NULL",
+        time(),
+        $gameId,
+    );
 
-    if ($row && $row['timer_pause_start']) {
-        $pausedTime = time() - (int) $row['timer_pause_start'];
-        $totalPaused = (int) $row['timer_paused_duration'] + $pausedTime;
-
-        $updateQuery = sprintf("UPDATE uo_game SET timer_paused_duration = %d, timer_pause_start = NULL 
-      WHERE game_id = %d", $totalPaused, $gameId);
-
-        return DBQuery($updateQuery);
+    $result = DBQuery($updateQuery);
+    if (DBAffectedRows() < 1) {
+        return false; // Not paused, or another request resumed first
     }
-
-    return false; // Not paused or invalid
+    ScoresheetHistoryRecord($gameId, "timer", "resume");
+    return $result;
 }
 
 function GameTimeSetElapsed($gameId, $elapsedSeconds)
@@ -2713,7 +3166,9 @@ function GameTimeSetElapsed($gameId, $elapsedSeconds)
         $gameId,
     );
 
-    return DBQuery($updateQuery);
+    $result = DBQuery($updateQuery);
+    ScoresheetHistoryRecord($gameId, "timer", "update", ['elapsed' => $elapsedSeconds]);
+    return $result;
 }
 
 function GameElapsedTime($gameId)

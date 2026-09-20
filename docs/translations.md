@@ -51,6 +51,19 @@ This updates all tracked `messages.po` files and their corresponding
 when manual translation work is needed, then save so the `.mo` files stay in
 sync.
 
+A refreshed catalog does not reach a running server on its own: gettext caches
+the compiled `.mo` per process, so a PHP worker that has already loaded one
+keeps serving the old strings, and a newly added msgid keeps rendering in
+English. Restart the web server after refreshing -- with the local Docker
+setup, `docker compose -f docs/dev/compose.yaml restart app`.
+
+Two notes on what the refresh produces. A msgid whose translation is still
+empty or marked fuzzy is excluded from the `.mo`, so those strings render as
+their English source; and `msgmerge` fills new msgids in from similar existing
+ones as fuzzy guesses, which can be badly wrong (`"Last modified"` was guessed
+from `"Last name"` in all three catalogs). Check the fuzzy entries a refresh
+adds rather than leaving them for the next translator.
+
 ## Static Localized Files
 
 Long-form text is stored as full localized files instead of gettext strings.

@@ -1082,6 +1082,16 @@ tr.admintablerow>td {
 	padding-right: 0.5em;
 }
 
+/* Game history: a saved-state row that differs from the current scoresheet. */
+tr.state-diff>td {
+	background-color: var(--highlight);
+}
+
+.state-mark {
+	width: 1.5em;
+	text-align: center;
+}
+
 .flag {
 	border-collapse: collapse;
 	border: 1px solid var(--border-strong);

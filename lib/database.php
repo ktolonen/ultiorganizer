@@ -9,7 +9,7 @@ denyDirectLibAccess(__FILE__);
  * Update this constant whenever you add a new `upgradeNN()` step in
  * `sql/upgrade_db.php`, and export the current schema from the upgraded database.
  */
-define('DB_VERSION', 99);
+define('DB_VERSION', 100);
 
 /**
  * Maximum age in seconds before an automatic upgrade lock is considered stale.
@@ -456,6 +456,20 @@ function DBStmtError($stmt)
 function DBStmtClose($stmt)
 {
     return mysqli_stmt_close($stmt);
+}
+
+/**
+ * Number of rows the last mutating statement actually changed.
+ *
+ * DBQuery() reports SQL success, not whether a guarded UPDATE won, so a
+ * caller that must not act on a no-op asks here instead.
+ *
+ * @return int
+ */
+function DBAffectedRows()
+{
+    global $mysqlconnectionref;
+    return mysqli_affected_rows($mysqlconnectionref);
 }
 
 /**

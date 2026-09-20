@@ -5,6 +5,7 @@ denyDirectLibAccess(__FILE__);
 
 require_once __DIR__ . '/player.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/scoresheethistory.functions.php';
 
 function SeasonUnaccredited($season)
 {
@@ -204,6 +205,10 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source)
 {
     $playerInfo = PlayerInfo($playerId);
     if (hasAccredidationRight($playerInfo['team'])) {
+        // "played" is the target ScoresheetHistoryAuthorized() scopes its
+        // accreditation branch to.
+        ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "played");
+
         $query = sprintf(
             "UPDATE uo_played SET acknowledged=1 WHERE player=%d AND game=%d",
             (int) $playerId,
@@ -212,6 +217,10 @@ function AcknowledgeUnaccredited($playerId, $gameId, $source)
         $result = DBQuery($query);
 
         AccreditationLogEntry($playerId, $playerInfo['team'], $source, 1, $gameId);
+        ScoresheetHistoryRecord($gameId, "played", "update", [
+            'player' => (int) $playerId,
+            'acknowledged' => 1,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to accredit player');
@@ -222,6 +231,8 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source)
 {
     $playerInfo = PlayerInfo($playerId);
     if (hasAccredidationRight($playerInfo['team'])) {
+        ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "played");
+
         $query = sprintf(
             "UPDATE uo_played SET acknowledged=0 WHERE player=%d AND game=%d",
             (int) $playerId,
@@ -230,6 +241,10 @@ function UnAcknowledgeUnaccredited($playerId, $gameId, $source)
         $result = DBQuery($query);
 
         AccreditationLogEntry($playerId, $playerInfo['team'], $source, 0, $gameId);
+        ScoresheetHistoryRecord($gameId, "played", "update", [
+            'player' => (int) $playerId,
+            'acknowledged' => 0,
+        ]);
         return $result;
     } else {
         die('Insufficient rights to accredit player');

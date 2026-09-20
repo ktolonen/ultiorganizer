@@ -1621,7 +1621,8 @@ function CommentHTML($type, $id)
  */
 function SetComment($type, $id, $comment)
 {
-    if (empty($comment)) {
+    // Not empty(), which would also delete a comment of "0".
+    if ($comment === null || $comment === "") {
         $query = sprintf(
             "DELETE FROM uo_comment WHERE type='%d' AND id='%s'",
             (int) $type,
