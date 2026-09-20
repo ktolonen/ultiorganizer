@@ -2176,6 +2176,25 @@ function GameAddSpiritTimeout($gameId, $number, $time, $home)
 function GameSetScoreSheetKeeper($gameId, $name)
 {
     if (hasEditGameEventsRight($gameId)) {
+        // Read before snapshotting for the reason GameSetCapEvent() gives: the
+        // standalone scorekeeper and mobile forms post their pre-filled name
+        // unchanged, and the DBAffectedRows() gate below suppresses only the
+        // audit row, leaving a restore point for a save that changed nothing.
+        // A name longer than uo_game.official compares unequal against the
+        // truncated column, which errs towards capturing.
+        $stored = DBQueryToRow(sprintf(
+            "SELECT official FROM uo_game WHERE game_id=%d",
+            (int) $gameId,
+        ));
+        if (is_array($stored) && array_key_exists('official', $stored)) {
+            $unchanged = isset($name)
+                ? $stored['official'] === (string) $name
+                : $stored['official'] === null;
+            if ($unchanged) {
+                return true;
+            }
+        }
+
         ScoresheetHistorySnapshotIfNeeded($gameId);
         if (isset($name)) {
             $query = sprintf("
@@ -2204,6 +2223,21 @@ function GameSetScoreSheetKeeper($gameId, $name)
 function GameSetHalftime($gameId, $time)
 {
     if (hasEditGameEventsRight($gameId)) {
+        // Read before snapshotting, for the reason GameSetScoreSheetKeeper()
+        // gives. Compared as an integer, the way the change row records it.
+        $stored = DBQueryToRow(sprintf(
+            "SELECT halftime FROM uo_game WHERE game_id=%d",
+            (int) $gameId,
+        ));
+        if (is_array($stored) && array_key_exists('halftime', $stored)) {
+            $unchanged = isset($time)
+                ? $stored['halftime'] !== null && (int) $stored['halftime'] === (int) $time
+                : $stored['halftime'] === null;
+            if ($unchanged) {
+                return true;
+            }
+        }
+
         ScoresheetHistorySnapshotIfNeeded($gameId);
         if (isset($time)) {
             $query = sprintf("
