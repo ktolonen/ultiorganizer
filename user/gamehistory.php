@@ -213,6 +213,15 @@ function GameHistoryStateForfeit($forfeit)
  * and hasstarted alongside the score, so an ongoing 5-3 and a final 5-3 are
  * different states, and an unset result is no score at all rather than 0-0.
  */
+function GameHistoryStateClock($game)
+{
+    if (empty($game['timer_start'])) {
+        return "";
+    }
+    return SecToMin((int) ($game['timer_elapsed'] ?? 0))
+        . " (" . (empty($game['timer_pause_start']) ? _("Running") : _("Paused")) . ")";
+}
+
 function GameHistoryStateResult($game)
 {
     $home = $game['homescore'] ?? null;
@@ -395,9 +404,19 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
             GameHistoryStateForfeit($currentGame['forfeit'] ?? 0),
         ];
     }
-    // The defense counts arrived in snapshot format v2; an older snapshot has
-    // no value to compare rather than a zero.
-    $partial = !array_key_exists('homedefenses', $savedGame);
+    // GameHistoryRestore() replays the clock columns, so a snapshot that
+    // differs only in the clock is not identical to the current scoresheet.
+    if (array_key_exists('timer_elapsed', $savedGame)) {
+        $fields[] = [
+            _("Game clock"),
+            GameHistoryStateClock($savedGame),
+            GameHistoryStateClock($currentGame),
+        ];
+    }
+    // The defense counts arrived in snapshot format v2 and timer_elapsed in
+    // v3; an older snapshot has no value to compare rather than a zero.
+    $partial = !array_key_exists('homedefenses', $savedGame)
+        || !array_key_exists('timer_elapsed', $savedGame);
     if (!$partial) {
         $fields[] = [
             _("Defences"),
