@@ -104,17 +104,24 @@ It accepts the union of the rights the callers in the table above actually hold.
 | `hasAddMediaRight()` | `mediaevent` | `AddGameMediaEvent()`, `RemoveGameMediaEvent()`, `RemoveMediaUrl()` |
 | `hasAccredidationRight()` | `played` | `AcknowledgeUnaccredited()`, `UnAcknowledgeUnaccredited()` |
 | `CanManageGameComment()` | `comment` | `SetGameComment()` |
-| `ANONYMOUS_RESULT_INPUT` | `result` | `GameSetResult()` |
+| `ANONYMOUS_RESULT_INPUT` or `isLoggedIn()` | `result` | `GameSetResult()` |
 
-`hasAddMediaRight()` needs the scope most: unlike the others it carries no game or team scope at all, and any logged-in session holds it. It is also the only one of the four whose callers never snapshot, and correspondingly the only target `ScoresheetHistorySnapshotIfNeeded()` is never called with -- `SetGameComment()` passes `comment`, the accreditation helpers pass `played`, and the anonymous `GameSetResult()` route passes `result`, so those three branches do apply to a snapshot capture.
+`hasAddMediaRight()` needs the scope most: unlike the others it carries no game or team scope at all, and any logged-in session holds it. It is also the only one of the four whose callers never snapshot, and correspondingly the only target `ScoresheetHistorySnapshotIfNeeded()` is never called with -- `SetGameComment()` passes `comment`, the accreditation helpers pass `played`, and the by-game-ID `GameSetResult()` route passes `result`, so those three branches do apply to a snapshot capture.
 
 The accreditation branch also accepts the right against the current team of any player on the game's roster, not only the game's own two teams. `AcknowledgeUnaccredited()` authorizes against the player's current team, so an admin of the new team legitimately acknowledges a player who has since transferred, and checking only the fixture's teams would let that acknowledgement succeed while silently refusing to record it.
 
-### The anonymous self-report route
+### The by-game-ID self-report route
 
-`result.php` and `scorekeeper/result.php` call `GameSetResult($gameId, $home, $away, true, false)` -- `$checkRights=false` -- for the by-game-ID result entry that `ANONYMOUS_RESULT_INPUT` (see `docs/configuration-flags.md`) exists to support. The submitter holds none of the rights above, so without a separate signal the change would go unrecorded, which is the opposite of what an unattributed change needs. `GameSetResult()` therefore passes `$allowAnonymousResult=true` down whenever it was itself called with `$checkRights=false`, and `ScoresheetHistoryAuthorized()` grants access on that basis only after independently confirming the installation's `ANONYMOUS_RESULT_INPUT` constant -- so the same caller on an installation where the setting is off still hits the ordinary checks and is refused.
+`result.php` and `scorekeeper/result.php` call `GameSetResult($gameId, $home, $away, true, false)` -- `$checkRights=false` -- for the by-game-ID result entry that `ANONYMOUS_RESULT_INPUT` (see `docs/configuration-flags.md`) exists to support. The submitter holds none of the rights above, so without a separate signal the change would go unrecorded, which is the opposite of what a weakly attributed change needs. `GameSetResult()` therefore passes `$allowAnonymousResult=true` down whenever it was itself called with `$checkRights=false`.
 
-A row recorded this way with no session stores `user_id` as the literal string `anonymous` rather than the usual `unknown`, so the history pages show the unattributed origin distinctly.
+`ScoresheetHistoryAuthorized()` never takes that flag on its own, since it is caller-controlled and says nothing about who is submitting. It grants the `result` target on it only together with one of two independent facts about this request:
+
+- the installation's `ANONYMOUS_RESULT_INPUT` constant is on, which is the case the flag was introduced for; or
+- `isLoggedIn()`, which is the case that arises when the constant is **off**. Both pages then include the auth guard and require a login -- but they still pass `$checkRights=false`, so a logged-in submitter holding no game role is admitted by the mutator while reaching none of the rights above. Without this second branch the result would save with neither a snapshot nor an audit row, which is the one combination this table exists to prevent.
+
+An anonymous submitter on an installation with the constant off is refused by both branches, and so is any other target: a caller passing `$allowAnonymousResult` for `played` or `comment` still hits the ordinary checks.
+
+A row recorded this way with no session stores `user_id` as the literal string `anonymous` rather than the usual `unknown`, so the history pages show the unattributed origin distinctly. A logged-in by-ID submission stores that user's id like any other row.
 
 ### Game notes edited by their author
 

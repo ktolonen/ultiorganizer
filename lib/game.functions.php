@@ -1411,6 +1411,23 @@ function GameUpdateResult($gameId, $home, $away, $snapshot = true)
         return false;
     }
     if (hasEditGameEventsRight($gameId)) {
+        // Read before snapshotting, for the reason GameSetScoreSheetKeeper()
+        // gives. The unconditional GameRevisionBump() below is the sharper end
+        // of it here: a pre-filled ongoing score resubmitted unchanged would
+        // push an open desktop scoresheet into the conflict flow for nothing.
+        $stored = DBQueryToRow(sprintf(
+            "SELECT homescore, visitorscore, isongoing, hasstarted FROM uo_game WHERE game_id=%d",
+            (int) $gameId,
+        ));
+        if (
+            is_array($stored)
+            && $stored['homescore'] !== null && (int) $stored['homescore'] === (int) $home
+            && $stored['visitorscore'] !== null && (int) $stored['visitorscore'] === (int) $away
+            && (int) $stored['isongoing'] === 1 && (int) $stored['hasstarted'] === 1
+        ) {
+            return true;
+        }
+
         if ($snapshot) {
             ScoresheetHistorySnapshotIfNeeded($gameId);
         }
@@ -1448,6 +1465,37 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         // which holds none of the game rights ScoresheetHistoryAuthorized() checks.
         // The flag only takes effect once that function confirms the setting.
         $allowAnonymousResult = !$checkRights;
+
+        // Read before snapshotting, the same no-op guard GameUpdateResult()
+        // applies. The timer columns are part of the comparison because this
+        // statement clears them too, and a restore can leave a finalized game
+        // holding them -- so a matching score alone is not a no-op.
+        $stored = DBQueryToRow(sprintf(
+            "SELECT homescore, visitorscore, isongoing, hasstarted,
+				timer_start, timer_pause_start, timer_paused_duration
+				FROM uo_game WHERE game_id=%d",
+            (int) $gameId,
+        ));
+        $unchanged = is_array($stored)
+            && $stored['homescore'] !== null && (int) $stored['homescore'] === (int) $home
+            && $stored['visitorscore'] !== null && (int) $stored['visitorscore'] === (int) $away
+            && (int) $stored['isongoing'] === 0 && (int) $stored['hasstarted'] === 2
+            && $stored['timer_start'] === null && $stored['timer_pause_start'] === null
+            && (int) $stored['timer_paused_duration'] === 0;
+
+        if ($unchanged) {
+            // The recompute stays on this path, where it ran before the
+            // guard existed: the guard is about not leaving a restore point
+            // and an audit row for a save that changed nothing, and dropping
+            // a recompute that used to run is not part of that.
+            if ($updatePools) {
+                $poolId = GamePool($gameId);
+                ResolvePoolStandings($poolId);
+                PoolResolvePlayed($poolId);
+            }
+            return true;
+        }
+
         LogGameUpdate($gameId, "result: $home - $away");
         ScoresheetHistorySnapshotIfNeeded($gameId, false, $allowAnonymousResult, "result");
         $query = sprintf(
@@ -1560,6 +1608,30 @@ function GameSetForfeit($gameId, $forfeit)
 function GameClearResult($gameId, $updatepools = true)
 {
     if (hasEditGameEventsRight($gameId)) {
+        // Read before snapshotting, the same no-op guard GameSetResult()
+        // applies: clearing an already-cleared game is a button press away on
+        // user/addresult.php.
+        $stored = DBQueryToRow(sprintf(
+            "SELECT homescore, visitorscore, isongoing, hasstarted,
+				timer_start, timer_pause_start, timer_paused_duration
+				FROM uo_game WHERE game_id=%d",
+            (int) $gameId,
+        ));
+        if (
+            is_array($stored)
+            && $stored['homescore'] === null && $stored['visitorscore'] === null
+            && (int) $stored['isongoing'] === 0 && (int) $stored['hasstarted'] === 0
+            && $stored['timer_start'] === null && $stored['timer_pause_start'] === null
+            && (int) $stored['timer_paused_duration'] === 0
+        ) {
+            if ($updatepools) {
+                $poolId = GamePool($gameId);
+                ResolvePoolStandings($poolId);
+                PoolResolvePlayed($poolId);
+            }
+            return true;
+        }
+
         LogGameUpdate($gameId, "result cleared");
         ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(

@@ -99,9 +99,17 @@ function ScoresheetHistoryAuthorized($gameId, $target = null, $allowAnonymousRes
     // Scoped to the result target: the flag is caller-controlled, and
     // ANONYMOUS_RESULT_INPUT says the installation allows anonymous score
     // reporting, nothing about the caller.
+    //
+    // isLoggedIn() is the other half of the same route. result.php and
+    // scorekeeper/result.php require a login precisely when that setting is
+    // off, then still call GameSetResult() with $checkRights=false -- so a
+    // logged-in submitter holding no game role is admitted by the mutator and
+    // reaches none of the checks above. Without this the result would save
+    // with neither a snapshot nor an audit row, which is the one combination
+    // this table exists to prevent.
     if (
         $target === 'result' && $allowAnonymousResult
-        && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT
+        && ((defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT) || isLoggedIn())
     ) {
         return true;
     }
