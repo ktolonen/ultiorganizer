@@ -887,12 +887,16 @@ function GameSetCapEvent($gameId, $type, $time, $target)
         );
 
         $result = DBExecute($query);
-        GameHistoryRecord(
-            $gameId,
-            "gameevent",
-            "update",
-            ['type' => (string) $type, 'time' => (int) $time, 'info' => $target],
-        );
+        // A concurrent save that already wrote these exact values changes no
+        // row here, and must not add a second audit line for one change.
+        if (DBAffectedRows() > 0) {
+            GameHistoryRecord(
+                $gameId,
+                "gameevent",
+                "update",
+                ['type' => (string) $type, 'time' => (int) $time, 'info' => $target],
+            );
+        }
 
         return $result;
     }
