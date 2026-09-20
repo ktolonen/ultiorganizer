@@ -170,6 +170,23 @@ function GameHistoryStateEvents($state)
 }
 
 /**
+ * Cap time and the point cap it set. GameHistoryRestore() replays both the
+ * time and the event's info target, so a cap that kept its time while its
+ * target moved is a difference.
+ */
+function GameHistoryStateCap($event)
+{
+    if (!is_array($event)) {
+        return "";
+    }
+    return sprintf(
+        _("%s - new point cap %d"),
+        SecToMin((int) ($event['time'] ?? 0)),
+        (int) ($event['info'] ?? 0),
+    );
+}
+
+/**
  * Which team forfeited, not just whether one did: a restore passes the stored
  * code to GameSetForfeit(), so home-forfeit and away-forfeit reverse the
  * winner between them.
@@ -359,8 +376,8 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
             ? (empty($currentEvents['offence']['ishome']) ? $visitorTeam : $homeTeam) : "",
     ];
     foreach (['half_cap' => _("Halftime cap"), 'time_cap' => _("Time cap")] as $capType => $capLabel) {
-        $savedCap = isset($savedEvents[$capType]) ? SecToMin($savedEvents[$capType]['time'] ?? 0) : "";
-        $currentCap = isset($currentEvents[$capType]) ? SecToMin($currentEvents[$capType]['time'] ?? 0) : "";
+        $savedCap = GameHistoryStateCap($savedEvents[$capType] ?? null);
+        $currentCap = GameHistoryStateCap($currentEvents[$capType] ?? null);
         if ($savedCap !== "" || $currentCap !== "") {
             $fields[] = [$capLabel, $savedCap, $currentCap];
         }
