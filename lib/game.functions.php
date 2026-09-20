@@ -3322,7 +3322,13 @@ function GameTimeSetElapsed($gameId, $elapsedSeconds)
     );
 
     $result = DBQuery($updateQuery);
-    ScoresheetHistoryRecord($gameId, "timer", "update", ['elapsed' => $elapsedSeconds]);
+    // Gated like the other clock actions: the Scorekeeper form pre-populates
+    // the adjustment with the current elapsed time, so submitting it unchanged
+    // derives the same timer_start and must not leave an audit row. No
+    // revision bump here -- this writes only timer_start.
+    if (DBAffectedRows() > 0) {
+        ScoresheetHistoryRecord($gameId, "timer", "update", ['elapsed' => $elapsedSeconds]);
+    }
     return $result;
 }
 
