@@ -287,7 +287,31 @@ if (!empty($_POST['save'])) {
         $postedHalftime = $_POST['halftime'] ?? "";
         $postedHalftime = str_replace($time_delim, ".", $postedHalftime);
         if ($postedHalftime !== "") {
-            $htime = TimeToSec($postedHalftime);
+            if (IsCanonicalScoresheetTime($postedHalftime)) {
+                $htime = TimeToSec($postedHalftime);
+            } else {
+                echo "<p class='warning'>" . _("Halftime") . ": " . _("time is not in a valid format") . "!</p>";
+                $errIds[] = "halftime";
+            }
+        }
+
+        $timeoutFields = ["hto" => [$maxtimeouts, _("Timeouts")], "ato" => [$maxtimeouts, _("Timeouts")]];
+        if (!empty($seasoninfo['spiritmode'])) {
+            $timeoutFields["shto"] = [$maxspirittimeouts, _("Spirit stoppages")];
+            $timeoutFields["sato"] = [$maxspirittimeouts, _("Spirit stoppages")];
+        }
+        $timeoutErrorLabels = [];
+        foreach ($timeoutFields as $prefix => [$slots, $label]) {
+            for ($i = 0; $i < $slots; $i++) {
+                $postedTimeout = str_replace($time_delim, ".", $_POST[$prefix . $i] ?? "");
+                if ($postedTimeout !== "" && !IsCanonicalScoresheetTime($postedTimeout)) {
+                    $timeoutErrorLabels[$label] = true;
+                    $errIds[] = $prefix . $i;
+                }
+            }
+        }
+        foreach (array_keys($timeoutErrorLabels) as $label) {
+            echo "<p class='warning'>" . $label . ": " . _("time is not in a valid format") . "!</p>";
         }
     }
 
