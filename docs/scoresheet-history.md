@@ -78,7 +78,7 @@ The full set of `target`/`action` combinations, and the mutator that writes each
 | `gameevent` | `remove` | `GameRemoveCapEvent()`, `GameSetStartingTeam()` (unsetting) |
 | `gameevent` | `clear` | `GameRemoveAllGameEvents()` |
 | `mediaevent` | `add` | `AddGameMediaEvent()` |
-| `mediaevent` | `remove` | `RemoveGameMediaEvent()` |
+| `mediaevent` | `remove` | `RemoveGameMediaEvent()`, `RemoveMediaUrl()` |
 | `fixture` | `swap` | `GameChangeHome()` |
 | `fixture` | `update` | `SetGame()`, when it changes `hometeam` or `visitorteam` |
 | `fixture` | `move` | `SetGame()`, when it changes the game's pool |
@@ -101,7 +101,7 @@ It accepts the union of the rights the callers in the table above actually hold.
 
 | Right | Scoped to | Callers |
 |---|---|---|
-| `hasAddMediaRight()` | `mediaevent` | `AddGameMediaEvent()`, `RemoveGameMediaEvent()` |
+| `hasAddMediaRight()` | `mediaevent` | `AddGameMediaEvent()`, `RemoveGameMediaEvent()`, `RemoveMediaUrl()` |
 | `CanManageGameComment()` | `comment` | `SetGameComment()` |
 | `ANONYMOUS_RESULT_INPUT` or `isLoggedIn()` | `result` | `GameSetResult()` |
 
