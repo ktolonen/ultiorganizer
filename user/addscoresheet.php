@@ -15,10 +15,10 @@ if (empty($_GET["game"])) {
 
 function IsCanonicalScoresheetTime($value)
 {
-    $parts = explode(".", $value);
-    if (count($parts) > 3) {
+    if (!preg_match('/^\d+(?:\.\d+){0,2}$/', $value)) {
         return false;
     }
+    $parts = explode(".", $value);
     $seconds = (int) end($parts);
     if (count($parts) > 1 && $seconds >= 60) {
         return false;
