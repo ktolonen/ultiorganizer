@@ -330,23 +330,17 @@ function LogPageLoad($page)
     }
 }
 
+// Deliberately not memoised: DBQueryToValue() already caches the lookup where
+// that is safe, and a static here would outlive the setting it answers for.
 function IsVisitorLoggingDisabled()
 {
-    static $disabled = null;
-
-    if ($disabled !== null) {
-        return $disabled;
-    }
-
     $value = DBQueryToValue("SELECT value FROM uo_setting WHERE name='DisableVisitorLogging'");
     if ($value === null || $value === false) {
-        $disabled = false;
-        return $disabled;
+        return false;
     }
 
     $normalized = strtolower(trim((string) $value));
-    $disabled = in_array($normalized, ["1", "true", "yes", "on", "enabled"], true);
-    return $disabled;
+    return in_array($normalized, ["1", "true", "yes", "on", "enabled"], true);
 }
 
 /**
