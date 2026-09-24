@@ -362,14 +362,19 @@ function PrivacyPlayerScoresheetHistorySnapshotRows($playerIds)
     $rows = [];
     // snapshot is a mediumtext holding a whole scoresheet and nothing prunes
     // the table, so the scan is walked in primary-key batches instead of
-    // buffering every snapshot in the installation at once.
+    // buffering every snapshot in the installation at once. The REGEXP keeps
+    // only snapshots mentioning one of the ids as a whole number, a superset
+    // of those the decode below matches, so the rest are never transferred.
+    $idPattern = '(^|[^0-9])(' . implode('|', array_map('intval', $playerIds)) . ')([^0-9]|$)';
     $lastHistoryId = 0;
     while (true) {
         $snapshotRows = DBQueryToArray(sprintf(
             "SELECT history_id, game, time, snapshot FROM uo_scoresheet_history
 				WHERE has_snapshot=1 AND snapshot IS NOT NULL AND history_id > %d
+					AND snapshot REGEXP '%s'
 				ORDER BY history_id LIMIT %d",
             $lastHistoryId,
+            DBEscapeString($idPattern),
             PRIVACY_SNAPSHOT_BATCH,
         ));
         if (empty($snapshotRows)) {
@@ -480,15 +485,20 @@ function PrivacyPlayerScoresheetHistoryDetailRows($playerIds)
     ];
 
     $rows = [];
-    // Batched like the snapshot walk above, for the same reason: nothing
-    // prunes this table.
+    // Batched and prefiltered like the snapshot walk above, for the same
+    // reason: nothing prunes this table.
+    $idPattern = '(^|[^0-9])(' . implode('|', array_map('intval', $playerIds)) . ')([^0-9]|$)';
+    $targetList = "'" . implode("','", array_keys($fields)) . "'";
     $lastHistoryId = 0;
     while (true) {
         $historyRows = DBQueryToArray(sprintf(
             "SELECT history_id, game, time, target, action, detail FROM uo_scoresheet_history
 				WHERE snapshot IS NULL AND detail IS NOT NULL AND history_id > %d
+					AND target IN (%s) AND detail REGEXP '%s'
 				ORDER BY history_id LIMIT %d",
             $lastHistoryId,
+            $targetList,
+            DBEscapeString($idPattern),
             PRIVACY_SNAPSHOT_BATCH,
         ));
         if (empty($historyRows)) {
@@ -865,13 +875,17 @@ function PrivacyAnonymizePlayer($playerId, $adminUserId)
         // still inside this transaction: an anonymization that leaves some
         // snapshots rewritten and others not is worse than one that fails.
         // The UPDATEs do not move a row's history_id, so the walk is stable.
+        // Prefiltered on the ids like the export path.
+        $idPattern = '(^|[^0-9])(' . implode('|', array_map('intval', $playerIds)) . ')([^0-9]|$)';
         $lastHistoryId = 0;
         while (true) {
             $snapshotRows = DBQueryToArray(sprintf(
                 "SELECT history_id, snapshot FROM uo_scoresheet_history
 					WHERE has_snapshot=1 AND snapshot IS NOT NULL AND history_id > %d
+						AND snapshot REGEXP '%s'
 					ORDER BY history_id LIMIT %d",
                 $lastHistoryId,
+                DBEscapeString($idPattern),
                 PRIVACY_SNAPSHOT_BATCH,
             ));
             if (empty($snapshotRows)) {
