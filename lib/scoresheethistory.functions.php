@@ -619,7 +619,10 @@ function ScoresheetHistoryFormatDetail($row)
         return _("Restored");
     }
     if ($target == "halftime") {
-        return sprintf("%s %d", _("Halftime"), (int) ($detail['time'] ?? 0));
+        if (!isset($detail['time'])) {
+            return sprintf(_("%s removed"), _("Halftime"));
+        }
+        return sprintf("%s %s", _("Halftime"), SecToMin((int) $detail['time']));
     }
     if ($target == "official") {
         return sprintf("%s %s", _("Scorekeeper"), $detail['name'] ?? "");

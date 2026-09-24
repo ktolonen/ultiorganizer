@@ -2255,7 +2255,7 @@ function GameSetHalftime($gameId, $time)
         }
         $result = DBQuery($query);
         if (DBAffectedRows() > 0) {
-            ScoresheetHistoryRecord($gameId, "halftime", "update", ['time' => (int) $time]);
+            ScoresheetHistoryRecord($gameId, "halftime", "update", ['time' => isset($time) ? (int) $time : null]);
         }
 
         return $result;
