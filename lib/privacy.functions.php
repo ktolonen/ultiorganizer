@@ -578,6 +578,28 @@ function PrivacyCollectUserReportData($userId)
     $userId = $subject['user']['userid'];
     $eventLogWhere = PrivacyUserEventLogWhere($userId);
 
+    // snapshot is excluded: it is game data, not this user's data, and
+    // dumping it would leak other players' names into this export. The
+    // other columns, including ip and user_id, are this user's own data.
+    $scoresheetHistoryRows = DBQueryToArray(sprintf(
+        "SELECT history_id, game, time, source, target, action, detail, ip, user_id
+			FROM uo_scoresheet_history WHERE user_id='%s' ORDER BY time DESC",
+        DBEscapeString($userId),
+    ), true);
+    // An official row's name is the free text the save set for the
+    // scorekeepers, which names other people, so it stays out like the
+    // snapshot does.
+    foreach ($scoresheetHistoryRows as $i => $historyRow) {
+        if ($historyRow['target'] !== 'official') {
+            continue;
+        }
+        $detail = json_decode((string) $historyRow['detail'], true);
+        if (is_array($detail) && array_key_exists('name', $detail)) {
+            unset($detail['name']);
+            $scoresheetHistoryRows[$i]['detail'] = json_encode($detail, JSON_UNESCAPED_UNICODE);
+        }
+    }
+
     return [
         'subject' => $subject,
         'user_row' => $subject['user'],
@@ -613,14 +635,7 @@ function PrivacyCollectUserReportData($userId)
             "SELECT * FROM uo_accreditationlog WHERE userid='%s' ORDER BY time DESC",
             DBEscapeString($userId),
         ), true),
-        // snapshot is excluded: it is game data, not this user's data, and
-        // dumping it would leak other players' names into this export. The
-        // other columns, including ip and user_id, are this user's own data.
-        'scoresheet_history_rows' => DBQueryToArray(sprintf(
-            "SELECT history_id, game, time, source, target, action, detail, ip, user_id
-				FROM uo_scoresheet_history WHERE user_id='%s' ORDER BY time DESC",
-            DBEscapeString($userId),
-        ), true),
+        'scoresheet_history_rows' => $scoresheetHistoryRows,
     ];
 }
 
