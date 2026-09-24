@@ -593,7 +593,7 @@ function ScoresheetHistoryFormatDetail($row)
         return sprintf("%s %d", _("Player"), (int) ($detail['player'] ?? 0));
     }
     if ($target == "timer" && $action == "update") {
-        return sprintf("%s: %d", _("Set game clock"), (int) ($detail['elapsed'] ?? 0));
+        return sprintf("%s: %s", _("Set game clock"), SecToMin((int) ($detail['elapsed'] ?? 0)));
     }
     if ($target == "timer") {
         $labels = [
