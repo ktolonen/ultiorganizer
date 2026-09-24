@@ -11,21 +11,13 @@ require_once __DIR__ . '/user.functions.php';
 
 function IsScoresheetHistoryDisabled()
 {
-    static $disabled = null;
-
-    if ($disabled !== null) {
-        return $disabled;
-    }
-
     $value = DBQueryToValue("SELECT value FROM uo_setting WHERE name='DisableScoresheetHistory'");
     if ($value === null || $value === false) {
-        $disabled = false;
-        return $disabled;
+        return false;
     }
 
     $normalized = strtolower(trim((string) $value));
-    $disabled = in_array($normalized, ["1", "true", "yes", "on", "enabled"], true);
-    return $disabled;
+    return in_array($normalized, ["1", "true", "yes", "on", "enabled"], true);
 }
 
 /**
