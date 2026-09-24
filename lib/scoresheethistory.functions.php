@@ -218,7 +218,24 @@ function ScoresheetHistoryBuildSnapshot($gameId)
         $gameId,
     ));
 
-    $gameFields = ScoresheetHistoryIntFields($game, ['homescore', 'visitorscore', 'isongoing',
+    // Numeric columns are cast once here, so every later snapshot comparison
+    // and restore sees integers rather than the strings MySQL returns.
+    $intFields = static function ($row, $fields) {
+        if (!is_array($row)) {
+            return [];
+        }
+        foreach ($fields as $field) {
+            if (array_key_exists($field, $row)) {
+                $row[$field] = $row[$field] === null ? null : (int) $row[$field];
+            }
+        }
+        return $row;
+    };
+    $intRows = static function ($rows, $fields) use ($intFields) {
+        return is_array($rows) ? array_map(fn($row) => $intFields($row, $fields), $rows) : [];
+    };
+
+    $gameFields = $intFields($game, ['homescore', 'visitorscore', 'isongoing',
         'hasstarted', 'forfeit', 'halftime', 'homedefenses', 'visitordefenses',
         'timer_start', 'timer_pause_start', 'timer_paused_duration',
         'hometeam', 'visitorteam']);
@@ -229,45 +246,17 @@ function ScoresheetHistoryBuildSnapshot($gameId)
     return [
         'v' => 4,
         'game' => $gameFields,
-        'goals' => ScoresheetHistoryIntRows($goals, ['num', 'assist', 'scorer', 'time', 'homescore',
+        'goals' => $intRows($goals, ['num', 'assist', 'scorer', 'time', 'homescore',
             'visitorscore', 'ishomegoal', 'iscallahan', 'assist_num', 'scorer_num']),
-        'played' => ScoresheetHistoryIntRows($played, ['player', 'team', 'num', 'captain',
+        'played' => $intRows($played, ['player', 'team', 'num', 'captain',
             'spirit_captain', 'accredited', 'acknowledged']),
-        'defenses' => ScoresheetHistoryIntRows($defenses, ['num', 'author', 'time', 'iscallahan',
+        'defenses' => $intRows($defenses, ['num', 'author', 'time', 'iscallahan',
             'iscaught', 'ishomedefense']),
-        'timeouts' => ScoresheetHistoryIntRows($timeouts, ['num', 'time', 'ishome']),
-        'spirit_timeouts' => ScoresheetHistoryIntRows($spiritTimeouts, ['num', 'time', 'ishome']),
-        'events' => ScoresheetHistoryIntRows($events, ['num', 'time', 'ishome']),
+        'timeouts' => $intRows($timeouts, ['num', 'time', 'ishome']),
+        'spirit_timeouts' => $intRows($spiritTimeouts, ['num', 'time', 'ishome']),
+        'events' => $intRows($events, ['num', 'time', 'ishome']),
         'comment' => CommentRaw(COMMENT_TYPE_GAME, $gameId),
     ];
-}
-
-/**
- * Cast a row's numeric columns once, so every later snapshot comparison and
- * restore sees integers rather than the strings MySQL returns.
- */
-function ScoresheetHistoryIntFields($row, $fields)
-{
-    if (!is_array($row)) {
-        return [];
-    }
-    foreach ($fields as $field) {
-        if (array_key_exists($field, $row)) {
-            $row[$field] = $row[$field] === null ? null : (int) $row[$field];
-        }
-    }
-    return $row;
-}
-
-function ScoresheetHistoryIntRows($rows, $fields)
-{
-    if (!is_array($rows)) {
-        return [];
-    }
-    foreach ($rows as $i => $row) {
-        $rows[$i] = ScoresheetHistoryIntFields($row, $fields);
-    }
-    return $rows;
 }
 
 /**
@@ -778,7 +767,182 @@ function ScoresheetHistoryRestore($historyId)
     $previousSuppressed = ScoresheetHistorySuppressed();
     ScoresheetHistorySuppressed(true);
     try {
-        $idMap = ScoresheetHistoryRestorePlayers($historyId, $warnings);
+        // Rebuild uo_played from the snapshot, building a map from snapshot
+        // player ids to current ones.
+        //
+        // uo_goal declares ON DELETE SET NULL on both player keys, so a player
+        // deleted since the snapshot cannot be resolved by id. The stored
+        // jersey number and team are the fallback, and anything still
+        // unmatched is reported rather than silently dropped.
+        //
+        // Rows are written straight into uo_played, bypassing GameAddPlayer()'s
+        // GameAllowsPlayerOnRoster() gate: the roster is emptied first, so the
+        // gate's "already on this game's roster" exception can no longer rescue
+        // a player the snapshot recorded as acknowledged.
+        $idMap = [];
+        $playedRows = $snapshot['played'] ?? [];
+
+        // Ambiguity pre-scan on the same (team, num) the rematch query uses. Two
+        // deleted snapshot rows sharing a jersey number would both collapse onto
+        // the one candidate that number can return, merging one player's goals
+        // onto another's -- so both are warned about rather than letting loop
+        // order pick a winner. $consumedCandidates is pre-seeded with the rows
+        // whose ids still exist, since those write to their own id and a rematch
+        // must not resolve onto them either.
+        $exists = [];
+        $currentTeams = [];
+        $deletedGroups = [];
+        $consumedCandidates = [];
+        foreach ($playedRows as $i => $row) {
+            $playerId = (int) $row['player'];
+            $playerRow = DBQueryToRow(sprintf(
+                "SELECT team FROM uo_player WHERE player_id=%d",
+                $playerId,
+            ));
+            $exists[$i] = is_array($playerRow);
+            $currentTeams[$i] = $exists[$i] ? (int) $playerRow['team'] : null;
+            if ($exists[$i]) {
+                $consumedCandidates[$playerId] = true;
+            } elseif (($row['num'] ?? null) !== null) {
+                // A snapshot row with no jersey number cannot rematch on one, so
+                // it is left out of the grouping: it falls through to the plain
+                // "could not be restored" warning below rather than being
+                // reported as a conflict over jersey 0, which is a real number
+                // some player may actually wear.
+                $key = (int) $row['team'] . ':' . (int) $row['num'];
+                $deletedGroups[$key][] = $i;
+            }
+        }
+        $ambiguousRows = [];
+        foreach ($deletedGroups as $rowIndexes) {
+            if (count($rowIndexes) > 1) {
+                foreach ($rowIndexes as $i) {
+                    $ambiguousRows[$i] = true;
+                }
+            }
+        }
+
+        GameRemoveAllPlayers($gameId);
+        foreach ($playedRows as $i => $row) {
+            $originalId = (int) $row['player'];
+            $playerId = $originalId;
+
+            // The row is still restored: GamePlayers() joins against the player's
+            // current uo_player.team, so a transferred player already lists under
+            // the new team for every past game they played.
+            if ($exists[$i] && $currentTeams[$i] !== (int) $row['team']) {
+                $warnings[] = sprintf(
+                    _("Player %s now plays for %s, so their restored roster entry lists under that team."),
+                    $row['name'] ?? $originalId,
+                    TeamName((int) $currentTeams[$i]),
+                );
+            }
+
+            if (!$exists[$i]) {
+                if (isset($ambiguousRows[$i])) {
+                    $warnings[] = sprintf(
+                        _("Player %s could not be restored: jersey number %d is not unique on team %s."),
+                        $row['name'] ?? $originalId,
+                        (int) $row['num'],
+                        TeamName((int) $row['team']),
+                    );
+                    $idMap[$originalId] = null;
+                    continue;
+                }
+
+                // Nothing to rematch on, and 0 is a real jersey number, so the
+                // query below would resolve this row onto whoever wears it.
+                if (($row['num'] ?? null) === null) {
+                    $warnings[] = sprintf(
+                        _("Player %s could not be restored."),
+                        $row['name'] ?? $originalId,
+                    );
+                    $idMap[$originalId] = null;
+                    continue;
+                }
+
+                // uo_player has no unique constraint on (team, num), so fetch two
+                // candidates: a match is trusted only when exactly one exists.
+                $rematches = DBQueryToArray(sprintf(
+                    "SELECT player_id FROM uo_player WHERE team=%d AND num=%d LIMIT 2",
+                    (int) $row['team'],
+                    (int) $row['num'],
+                ));
+                if (count($rematches) !== 1) {
+                    $warnings[] = count($rematches) > 1
+                        ? sprintf(
+                            _("Player %s could not be restored: jersey number %d is not unique on team %s."),
+                            $row['name'] ?? $originalId,
+                            (int) $row['num'],
+                            TeamName((int) $row['team']),
+                        )
+                        : sprintf(
+                            _("Player %s could not be restored."),
+                            $row['name'] ?? $originalId,
+                        );
+                    $idMap[$originalId] = null;
+                    continue;
+                }
+                $candidateId = (int) $rematches[0]['player_id'];
+                if (isset($consumedCandidates[$candidateId])) {
+                    $warnings[] = sprintf(
+                        _("Player %s could not be restored: jersey number %d is not unique on team %s."),
+                        $row['name'] ?? $originalId,
+                        (int) $row['num'],
+                        TeamName((int) $row['team']),
+                    );
+                    $idMap[$originalId] = null;
+                    continue;
+                }
+                $consumedCandidates[$candidateId] = true;
+                $idMap[$originalId] = $candidateId;
+                $playerId = $candidateId;
+            }
+
+            // Both num columns are nullable and 0 is a real jersey number, so an
+            // unnumbered player stays SQL NULL rather than becoming a 0.
+            $num = ($row['num'] ?? null) === null ? "NULL" : (string) (int) $row['num'];
+
+            // Writing an acknowledged flag is an accreditation mutation, checked
+            // against the player's current team the way AcknowledgeUnaccredited()
+            // does. A missing right downgrades this row rather than aborting the
+            // restore.
+            $acknowledged = !empty($row['acknowledged']) ? 1 : 0;
+            if ($acknowledged) {
+                $currentTeam = (int) DBQueryToValue(sprintf(
+                    "SELECT team FROM uo_player WHERE player_id=%d",
+                    $playerId,
+                ));
+                if (!hasAccredidationRight($currentTeam)) {
+                    $acknowledged = 0;
+                    $warnings[] = sprintf(
+                        _("Acknowledgement not restored for player %s: accreditation right missing for their current team."),
+                        $row['name'] ?? $playerId,
+                    );
+                }
+            }
+
+            DBQuery(sprintf(
+                "INSERT INTO uo_played (game, player, num, accredited, acknowledged, captain, spirit_captain)
+			VALUES (%d, %d, %s, %d, %d, %d, %d)
+			ON DUPLICATE KEY UPDATE num=VALUES(num), accredited=VALUES(accredited),
+				acknowledged=VALUES(acknowledged), captain=VALUES(captain), spirit_captain=VALUES(spirit_captain)",
+                (int) $gameId,
+                (int) $playerId,
+                $num,
+                !empty($row['accredited']) ? 1 : 0,
+                $acknowledged,
+                !empty($row['captain']) ? 1 : 0,
+                !empty($row['spirit_captain']) ? 1 : 0,
+            ));
+
+            // uo_player.num, the player's current squad number, is deliberately
+            // left alone even though GameAddPlayer() writes it: it is present
+            // state on whatever team the player is on now, not this game's roster,
+            // and no snapshot captures it, so a restore that overwrote it could
+            // not be undone by restoring the snapshot taken just before.
+            // uo_played.num above is this game's roster and is restored.
+        }
 
         // A scorer, assist or defender already off the roster at capture time
         // has no uo_played row, so $idMap has no entry for them. If they have
@@ -819,13 +983,22 @@ function ScoresheetHistoryRestore($historyId)
             }
         }
 
+        // A null entry in $idMap is a player that could not be restored.
+        $mapPlayer = static function ($playerId) use (&$idMap) {
+            if ($playerId === null || (int) $playerId <= 0) {
+                return null;
+            }
+            $playerId = (int) $playerId;
+            return array_key_exists($playerId, $idMap) ? $idMap[$playerId] : $playerId;
+        };
+
         GameRemoveAllScores($gameId);
         foreach ($snapshot['goals'] ?? [] as $goal) {
             GameAddScoreEntry([
                 'game' => $gameId,
                 'num' => (int) $goal['num'],
-                'assist' => ScoresheetHistoryMapPlayer($goal['assist'] ?? null, $idMap),
-                'scorer' => ScoresheetHistoryMapPlayer($goal['scorer'] ?? null, $idMap),
+                'assist' => $mapPlayer($goal['assist'] ?? null),
+                'scorer' => $mapPlayer($goal['scorer'] ?? null),
                 'time' => (int) ($goal['time'] ?? 0),
                 'homescore' => (int) $goal['homescore'],
                 'visitorscore' => (int) $goal['visitorscore'],
@@ -838,7 +1011,7 @@ function ScoresheetHistoryRestore($historyId)
         foreach ($snapshot['defenses'] ?? [] as $defense) {
             GameAddDefense(
                 $gameId,
-                ScoresheetHistoryMapPlayer($defense['author'] ?? null, $idMap),
+                $mapPlayer($defense['author'] ?? null),
                 (int) $defense['ishomedefense'],
                 (int) $defense['iscaught'],
                 (int) $defense['time'],
@@ -954,217 +1127,4 @@ function ScoresheetHistoryRestore($historyId)
     }
 
     return ['restored' => true, 'warnings' => $warnings];
-}
-
-/**
- * Rebuild uo_played from a snapshot and return a map from snapshot player ids
- * to current ones.
- *
- * uo_goal declares ON DELETE SET NULL on both player keys, so a player deleted
- * since the snapshot cannot be resolved by id. The stored jersey number and
- * team are the fallback, and anything still unmatched is reported rather than
- * silently dropped.
- *
- * Rows are written straight into uo_played, bypassing GameAddPlayer()'s
- * GameAllowsPlayerOnRoster() gate: the roster was just emptied, so the gate's
- * "already on this game's roster" exception can no longer rescue a player the
- * snapshot recorded as acknowledged. That is why this takes a history id
- * rather than a caller-supplied row set, and repeats ScoresheetHistoryRestore()'s
- * guard rather than inheriting it.
- */
-function ScoresheetHistoryRestorePlayers($historyId, &$warnings)
-{
-    $idMap = [];
-
-    $entry = ScoresheetHistoryEntry($historyId, true);
-    if (!$entry || !is_array($entry['snapshot'])) {
-        return $idMap;
-    }
-    $gameId = (int) $entry['game'];
-    if (!hasRestoreScoresheetHistoryRight($gameId)) {
-        return $idMap;
-    }
-    // The entry above is loaded with the mismatch allowed, so the fixture
-    // check has to be repeated here rather than inherited.
-    if (!empty($entry['fixture_mismatch'])) {
-        return $idMap;
-    }
-
-    $playedRows = $entry['snapshot']['played'] ?? [];
-
-    // Ambiguity pre-scan on the same (team, num) the rematch query uses. Two
-    // deleted snapshot rows sharing a jersey number would both collapse onto
-    // the one candidate that number can return, merging one player's goals
-    // onto another's -- so both are warned about rather than letting loop
-    // order pick a winner. $consumedCandidates is pre-seeded with the rows
-    // whose ids still exist, since those write to their own id and a rematch
-    // must not resolve onto them either.
-    $exists = [];
-    $currentTeams = [];
-    $deletedGroups = [];
-    $consumedCandidates = [];
-    foreach ($playedRows as $i => $row) {
-        $playerId = (int) $row['player'];
-        $playerRow = DBQueryToRow(sprintf(
-            "SELECT team FROM uo_player WHERE player_id=%d",
-            $playerId,
-        ));
-        $exists[$i] = is_array($playerRow);
-        $currentTeams[$i] = $exists[$i] ? (int) $playerRow['team'] : null;
-        if ($exists[$i]) {
-            $consumedCandidates[$playerId] = true;
-        } elseif (($row['num'] ?? null) !== null) {
-            // A snapshot row with no jersey number cannot rematch on one, so
-            // it is left out of the grouping: it falls through to the plain
-            // "could not be restored" warning below rather than being
-            // reported as a conflict over jersey 0, which is a real number
-            // some player may actually wear.
-            $key = (int) $row['team'] . ':' . (int) $row['num'];
-            $deletedGroups[$key][] = $i;
-        }
-    }
-    $ambiguousRows = [];
-    foreach ($deletedGroups as $rowIndexes) {
-        if (count($rowIndexes) > 1) {
-            foreach ($rowIndexes as $i) {
-                $ambiguousRows[$i] = true;
-            }
-        }
-    }
-
-    GameRemoveAllPlayers($gameId);
-    foreach ($playedRows as $i => $row) {
-        $originalId = (int) $row['player'];
-        $playerId = $originalId;
-
-        // The row is still restored: GamePlayers() joins against the player's
-        // current uo_player.team, so a transferred player already lists under
-        // the new team for every past game they played.
-        if ($exists[$i] && $currentTeams[$i] !== (int) $row['team']) {
-            $warnings[] = sprintf(
-                _("Player %s now plays for %s, so their restored roster entry lists under that team."),
-                $row['name'] ?? $originalId,
-                TeamName((int) $currentTeams[$i]),
-            );
-        }
-
-        if (!$exists[$i]) {
-            if (isset($ambiguousRows[$i])) {
-                $warnings[] = sprintf(
-                    _("Player %s could not be restored: jersey number %d is not unique on team %s."),
-                    $row['name'] ?? $originalId,
-                    (int) $row['num'],
-                    TeamName((int) $row['team']),
-                );
-                $idMap[$originalId] = null;
-                continue;
-            }
-
-            // Nothing to rematch on, and 0 is a real jersey number, so the
-            // query below would resolve this row onto whoever wears it.
-            if (($row['num'] ?? null) === null) {
-                $warnings[] = sprintf(
-                    _("Player %s could not be restored."),
-                    $row['name'] ?? $originalId,
-                );
-                $idMap[$originalId] = null;
-                continue;
-            }
-
-            // uo_player has no unique constraint on (team, num), so fetch two
-            // candidates: a match is trusted only when exactly one exists.
-            $rematches = DBQueryToArray(sprintf(
-                "SELECT player_id FROM uo_player WHERE team=%d AND num=%d LIMIT 2",
-                (int) $row['team'],
-                (int) $row['num'],
-            ));
-            if (count($rematches) !== 1) {
-                $warnings[] = count($rematches) > 1
-                    ? sprintf(
-                        _("Player %s could not be restored: jersey number %d is not unique on team %s."),
-                        $row['name'] ?? $originalId,
-                        (int) $row['num'],
-                        TeamName((int) $row['team']),
-                    )
-                    : sprintf(
-                        _("Player %s could not be restored."),
-                        $row['name'] ?? $originalId,
-                    );
-                $idMap[$originalId] = null;
-                continue;
-            }
-            $candidateId = (int) $rematches[0]['player_id'];
-            if (isset($consumedCandidates[$candidateId])) {
-                $warnings[] = sprintf(
-                    _("Player %s could not be restored: jersey number %d is not unique on team %s."),
-                    $row['name'] ?? $originalId,
-                    (int) $row['num'],
-                    TeamName((int) $row['team']),
-                );
-                $idMap[$originalId] = null;
-                continue;
-            }
-            $consumedCandidates[$candidateId] = true;
-            $idMap[$originalId] = $candidateId;
-            $playerId = $candidateId;
-        }
-
-        // Both num columns are nullable and 0 is a real jersey number, so an
-        // unnumbered player stays SQL NULL rather than becoming a 0.
-        $num = ($row['num'] ?? null) === null ? "NULL" : (string) (int) $row['num'];
-
-        // Writing an acknowledged flag is an accreditation mutation, checked
-        // against the player's current team the way AcknowledgeUnaccredited()
-        // does. A missing right downgrades this row rather than aborting the
-        // restore.
-        $acknowledged = !empty($row['acknowledged']) ? 1 : 0;
-        if ($acknowledged) {
-            $currentTeam = (int) DBQueryToValue(sprintf(
-                "SELECT team FROM uo_player WHERE player_id=%d",
-                $playerId,
-            ));
-            if (!hasAccredidationRight($currentTeam)) {
-                $acknowledged = 0;
-                $warnings[] = sprintf(
-                    _("Acknowledgement not restored for player %s: accreditation right missing for their current team."),
-                    $row['name'] ?? $playerId,
-                );
-            }
-        }
-
-        DBQuery(sprintf(
-            "INSERT INTO uo_played (game, player, num, accredited, acknowledged, captain, spirit_captain)
-			VALUES (%d, %d, %s, %d, %d, %d, %d)
-			ON DUPLICATE KEY UPDATE num=VALUES(num), accredited=VALUES(accredited),
-				acknowledged=VALUES(acknowledged), captain=VALUES(captain), spirit_captain=VALUES(spirit_captain)",
-            (int) $gameId,
-            (int) $playerId,
-            $num,
-            !empty($row['accredited']) ? 1 : 0,
-            $acknowledged,
-            !empty($row['captain']) ? 1 : 0,
-            !empty($row['spirit_captain']) ? 1 : 0,
-        ));
-
-        // uo_player.num, the player's current squad number, is deliberately
-        // left alone even though GameAddPlayer() writes it: it is present
-        // state on whatever team the player is on now, not this game's roster,
-        // and no snapshot captures it, so a restore that overwrote it could
-        // not be undone by restoring the snapshot taken just before.
-        // uo_played.num above is this game's roster and is restored.
-    }
-
-    return $idMap;
-}
-
-function ScoresheetHistoryMapPlayer($playerId, $idMap)
-{
-    if ($playerId === null || (int) $playerId <= 0) {
-        return null;
-    }
-    $playerId = (int) $playerId;
-    if (array_key_exists($playerId, $idMap)) {
-        return $idMap[$playerId];
-    }
-    return $playerId;
 }
