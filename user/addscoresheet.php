@@ -284,7 +284,7 @@ if (!empty($_POST['save'])) {
     $time_delim = [",", ";", ":"];
     $htime = null;
     if (!$hideTimeOnScoresheet) {
-        $postedHalftime = $_POST['halftime'] ?? "";
+        $postedHalftime = trim($_POST['halftime'] ?? "");
         $postedHalftime = str_replace($time_delim, ".", $postedHalftime);
         if ($postedHalftime !== "") {
             if (IsCanonicalScoresheetTime($postedHalftime)) {
@@ -303,7 +303,7 @@ if (!empty($_POST['save'])) {
         $timeoutErrorLabels = [];
         foreach ($timeoutFields as $prefix => [$slots, $label]) {
             for ($i = 0; $i < $slots; $i++) {
-                $postedTimeout = str_replace($time_delim, ".", $_POST[$prefix . $i] ?? "");
+                $postedTimeout = str_replace($time_delim, ".", trim($_POST[$prefix . $i] ?? ""));
                 if ($postedTimeout !== "" && !IsCanonicalScoresheetTime($postedTimeout)) {
                     $timeoutErrorLabels[$label] = true;
                     $errIds[] = $prefix . $i;
@@ -343,7 +343,7 @@ if (!empty($_POST['save'])) {
         if ($hideTimeOnScoresheet) {
             $time = $prevtime + 1;
         } else {
-            $postedTime = $_POST['time' . $i] ?? "";
+            $postedTime = trim($_POST['time' . $i] ?? "");
             $time = str_replace($time_delim, ".", $postedTime);
 
             if ($postedTime === "") {
@@ -495,7 +495,7 @@ if (!empty($_POST['save'])) {
             //insert home timeouts
             $j = 0;
             for ($i = 0; $i < $maxtimeouts; $i++) {
-                $time = $_POST['hto' . $i] ?? "";
+                $time = trim($_POST['hto' . $i] ?? "");
                 $time = str_replace($time_delim, ".", $time);
 
                 if (!empty($time)) {
@@ -507,7 +507,7 @@ if (!empty($_POST['save'])) {
             //insert away timeouts
             $j = 0;
             for ($i = 0; $i < $maxtimeouts; $i++) {
-                $time = $_POST['ato' . $i] ?? "";
+                $time = trim($_POST['ato' . $i] ?? "");
                 $time = str_replace($time_delim, ".", $time);
 
                 if (!empty($time)) {
@@ -521,7 +521,7 @@ if (!empty($_POST['save'])) {
 
                 $j = 0;
                 for ($i = 0; $i < $maxspirittimeouts; $i++) {
-                    $time = $_POST['shto' . $i] ?? "";
+                    $time = trim($_POST['shto' . $i] ?? "");
                     $time = str_replace($time_delim, ".", $time);
                     if (!empty($time)) {
                         $j++;
@@ -531,7 +531,7 @@ if (!empty($_POST['save'])) {
 
                 $j = 0;
                 for ($i = 0; $i < $maxspirittimeouts; $i++) {
-                    $time = $_POST['sato' . $i] ?? "";
+                    $time = trim($_POST['sato' . $i] ?? "");
                     $time = str_replace($time_delim, ".", $time);
                     if (!empty($time)) {
                         $j++;
