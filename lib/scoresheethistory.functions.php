@@ -308,10 +308,24 @@ function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonym
         CacheForgetNamespace("scoresheet_history_snapshot");
     }
 
-    return CacheRemember("scoresheet_history_snapshot", $gameId, function () use ($gameId, $allowAnonymousResult) {
+    return CacheRemember("scoresheet_history_snapshot", $gameId, function () use ($gameId, $allowAnonymousResult, $force) {
         $json = json_encode(ScoresheetHistoryBuildSnapshot($gameId), JSON_UNESCAPED_UNICODE);
         if ($json === false) {
             return false;
+        }
+
+        // A save that changes nothing still runs the bulk Remove*() helpers,
+        // so without this every such save would store another copy of the
+        // restore point already on file.
+        if (!$force) {
+            $latest = DBQueryToRowUncached(sprintf(
+                "SELECT history_id, snapshot FROM uo_scoresheet_history
+					WHERE game=%d AND has_snapshot=1 ORDER BY history_id DESC LIMIT 1",
+                $gameId,
+            ));
+            if (is_array($latest) && $latest['snapshot'] === $json) {
+                return (int) $latest['history_id'];
+            }
         }
 
         // Same attribution rules as ScoresheetHistoryRecord().
