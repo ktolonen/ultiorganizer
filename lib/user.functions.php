@@ -807,6 +807,15 @@ function hasEditGameEventsRight($game)
     return true;
 }
 
+/**
+ * Reading the history outlives the right to edit the game: a season admin
+ * keeps it after the event is set read-only, which archiving statistics does.
+ */
+function hasViewScoresheetHistoryRight($game)
+{
+    return hasEditGameEventsRight($game) || isSeasonAdmin(SeriesSeasonId(GameSeries($game)));
+}
+
 function hasRestoreScoresheetHistoryRight($game)
 {
     $season = SeriesSeasonId(GameSeries($game));

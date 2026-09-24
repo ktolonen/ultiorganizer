@@ -247,8 +247,8 @@ if (empty($_GET["game"])) {
 
 $gameId = intval($_GET["game"]);
 
-if (!hasEditGameEventsRight($gameId)) {
-    die('Insufficient rights to edit game');
+if (!hasViewScoresheetHistoryRight($gameId)) {
+    die('Insufficient rights to view game history');
 }
 
 $game_result = GameInfo($gameId);

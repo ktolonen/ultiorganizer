@@ -351,7 +351,7 @@ function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonym
 function ScoresheetHistoryList($gameId, $limit = null, $offset = null)
 {
     $gameId = (int) $gameId;
-    if (!hasEditGameEventsRight($gameId)) {
+    if (!hasViewScoresheetHistoryRight($gameId)) {
         return [];
     }
 
@@ -372,7 +372,7 @@ function ScoresheetHistoryList($gameId, $limit = null, $offset = null)
 function ScoresheetHistoryCount($gameId)
 {
     $gameId = (int) $gameId;
-    if (!hasEditGameEventsRight($gameId)) {
+    if (!hasViewScoresheetHistoryRight($gameId)) {
         return 0;
     }
     return (int) DBQueryToValue(sprintf(
@@ -510,7 +510,7 @@ function ScoresheetHistoryEntry($historyId, $allowMismatchedFixture = false)
     if (!$row) {
         return null;
     }
-    if (!hasEditGameEventsRight($row['game'])) {
+    if (!hasViewScoresheetHistoryRight($row['game'])) {
         return null;
     }
 
