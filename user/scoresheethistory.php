@@ -296,19 +296,23 @@ pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
 
-$menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
-$menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
-$menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
-if (!empty($seasoninfo['spiritmode'])) {
-    $spiritUrl = SpiritEntryUrl($gameId);
-    if (!empty($spiritUrl)) {
-        $menutabs[_("Spirit score")] = $spiritUrl;
+// The tabs lead to the edit pages, which a reader holding only the view
+// right cannot open.
+if (hasEditGameEventsRight($gameId)) {
+    $menutabs[_("Result")] = "?view=user/addresult&game=$gameId";
+    $menutabs[_("Players")] = "?view=user/addplayerlists&game=$gameId";
+    $menutabs[_("Scoresheet")] = "?view=user/addscoresheet&game=$gameId";
+    if (!empty($seasoninfo['spiritmode'])) {
+        $spiritUrl = SpiritEntryUrl($gameId);
+        if (!empty($spiritUrl)) {
+            $menutabs[_("Spirit score")] = $spiritUrl;
+        }
     }
+    if (ShowDefenseStats()) {
+        $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
+    }
+    pageMenu($menutabs);
 }
-if (ShowDefenseStats()) {
-    $menutabs[_("Defence sheet")] = "?view=user/adddefensesheet&game=$gameId";
-}
-pageMenu($menutabs);
 
 $html .= $feedback;
 
