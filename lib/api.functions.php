@@ -57,6 +57,13 @@ function ApiRateLimitCheck($rateKey, $limit, $windowSeconds)
 
     $count = (int) DBQueryToValueUncached("SELECT LAST_INSERT_ID()", true);
 
+    if ($count === 1) {
+        DBQuery(sprintf(
+            "DELETE FROM uo_api_rate_limit WHERE window_start < %d",
+            (int) $windowStart,
+        ));
+    }
+
     return [
         'allowed' => ($count <= $limit),
         'remaining' => max(0, $limit - $count),
