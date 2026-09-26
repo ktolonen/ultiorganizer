@@ -76,7 +76,7 @@ if (empty($rows)) {
         $html .= "<tr class='admintablerow'>";
         $html .= "<td><a href='?view=user/scoresheethistory&amp;game=" . $gameId . "'>" . $gameId . "</a></td>";
         $html .= "<td>" . utf8entities(U_($row['seriesname'])) . "</td>";
-        $html .= "<td>" . $home . " - " . $visitor . "</td>";
+        $html .= "<td><a href='?view=gameplay&amp;game=" . $gameId . "'>" . $home . " - " . $visitor . "</a></td>";
         $html .= "<td>" . utf8entities($scheduled) . "</td>";
         $html .= "<td" . (!empty($row['offday']) ? " class='warning'" : "") . ">"
             . utf8entities(DefTimeFormat($row['lastmodified'])) . "</td>";
