@@ -20,7 +20,6 @@ Use these exact type names when discussing configuration work:
 - Scope: installation-wide and admin-managed.
 - Storage: database-backed server configuration, managed through admin UI such as `admin/serverconf.php`.
 - Use when all events in one installation share the same value.
-- Example: `DisableScoresheetHistory` turns off scoresheet change-history recording (`uo_scoresheet_history`) for the whole installation. Recording is on by default; the setting is not part of `install.php` and is changed afterward in `admin/serverconf.php`. See `docs/scoresheet-history.md`.
 
 ## EVENT_SETTING
 
