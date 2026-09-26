@@ -650,9 +650,10 @@ $repopulate = !empty($_POST['save']) && !$scoresheetSaved;
 // A save refused over its points keeps the token it was entered against, so
 // the correction is still judged against that state. A save refused over a
 // conflict carries the fresh one, which is what makes the retry a deliberate
-// overwrite rather than an endless refusal.
-if ($repopulate && !$tokenConflict && isset($_POST['history_token'])) {
-    $formToken = (int) $_POST['history_token'];
+// overwrite rather than an endless refusal. A tokenless form refused over its
+// points carries 0, so its correction is still treated as the stale sheet.
+if ($repopulate && !$tokenConflict) {
+    $formToken = (int) ($_POST['history_token'] ?? 0);
 } else {
     $formToken = ScoresheetHistoryToken($gameId);
 }

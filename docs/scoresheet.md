@@ -222,7 +222,7 @@ The token counts only the changes the desktop sheet rewrites -- the `result`, `f
 
 The comparison happens once the payload validates and before any of the save's own writes, because each mutator records its own history row and a later comparison would read the save's own writes as somebody else's change. A payload carrying no token is treated as a conflict rather than a bypass: it is a form rendered before the check existed.
 
-On a mismatch the save is refused with the operator's entries still on the page, and the refusal carries the fresh token back, so saving again is a deliberate overwrite. A save refused over its own points instead keeps the older token, so the correction is still judged against the state it was entered against.
+On a mismatch the save is refused with the operator's entries still on the page, and the refusal carries the fresh token back, so saving again is a deliberate overwrite. A save refused over its own points instead keeps the older token -- or none, for a tokenless form -- so the correction is still judged against the state it was entered against.
 
 This is a comparison, not a lock. A point entered between the comparison and the rewrite is still lost; the snapshot the save takes first makes it recoverable through the scoresheet history. The incremental paths in `scorekeeper/` and `mobile/` neither carry nor check a token. Their point entry appends rather than replacing the sequence, so it cannot destroy another operator's points, but their timeout and spirit-stoppage pages still replace that list wholesale without a check.
 
