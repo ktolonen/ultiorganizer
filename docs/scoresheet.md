@@ -210,6 +210,10 @@ Compared with the desktop editor, scorekeeper entry is incremental and segmented
 
 Spirit score submission is intentionally not part of the scorekeeper surface. Spirit score workflows now live in `spiritkeeper/` or the main logged-in user pages.
 
+## Change history
+
+Every mutation described above, from every input path, also records a row in `uo_scoresheet_history`. A bulk rewrite additionally captures one restorable snapshot of the state it is about to replace -- one per save, not one per call. See `docs/scoresheet-history.md`.
+
 ## Database Model
 
 The detailed scoresheet uses several tables together.
@@ -266,7 +270,7 @@ Role in the scoresheet:
 - stores assist/scorer player references when known,
 - stores the point time when time entry is enabled.
 
-`num` is the point order within the game.
+`num` is the point order within the game, starting from 1. Scorekeeper and the mobile interface numbered points from 0 before, so older games can still start at 0; a desktop save renumbers them from 1.
 
 #### `uo_played`
 

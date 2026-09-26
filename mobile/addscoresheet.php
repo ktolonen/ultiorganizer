@@ -18,7 +18,7 @@ $game_result = GameResult($gameId);
 $scores = GameGoals($gameId);
 $uo_goal = [
     "game" => $gameId,
-    "num" => 0,
+    "num" => 1,
     "assist" => -1,
     "scorer" => -1,
     "time" => "",
@@ -132,7 +132,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         //save as result, if result is not already set
         if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
             LogGameUpdate($gameId, "result: " . $uo_goal['homescore'] . " - " . $uo_goal['visitorscore'], "Mobile");
-            GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
+            GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore'], false);
         }
         header("location:?view=mobile/addscoresheet&game=" . $gameId);
     } else {
@@ -163,7 +163,7 @@ $html .= "<tr><td>\n";
 //last score
 if (count($scores) > 0) {
     $lastscore = $scores[count($scores) - 1];
-    $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
+    $html .= "#" . count($scores) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
     if (!$hideTimeOnScoresheet) {
         $html .= " [<i>" . SecToMin($lastscore['time']);
     } else {

@@ -55,9 +55,9 @@ The main helpers live in [lib/user.functions.php](../lib/user.functions.php).
 - Global/scope helpers:
   `isSuperAdmin()`, `isSeasonAdmin()`, `isSpiritAdmin()`, `hasScheduleRights()`, `hasViewUsersRight()`, `hasEditUsersRight()`, `hasTranslationRight()`
 - Season and series page helpers:
-  `hasSeasonSeriesPageAccess()`, `hasAccreditationPageAccess()`, `hasReservationsPageAccess()`
+  `hasSeasonSeriesPageAccess()`, `hasAccreditationPageAccess()`, `hasReservationsPageAccess()`, `hasViewScoresheetHistoryRight()`
 - Write helpers:
-  `hasEditSeasonSeriesRight()`, `hasEditPlacesRight()`, `hasEditTeamsRight()`, `hasEditGamesRight()`, `hasEditPlayerProfileRight()`, `hasEditPlayersRight()`, `hasEditGamePlayersRight()`, `hasEditGameEventsRight()`, `hasAccredidationRight()`
+  `hasEditSeasonSeriesRight()`, `hasEditPlacesRight()`, `hasEditTeamsRight()`, `hasEditGamesRight()`, `hasEditPlayerProfileRight()`, `hasEditPlayersRight()`, `hasEditGamePlayersRight()`, `hasEditGameEventsRight()`, `hasAccredidationRight()`, `hasRestoreScoresheetHistoryRight()`
 - Spirit season helpers:
   `hasSpiritToolsRight()`, `hasSpiritEditRight()`
 
@@ -76,6 +76,7 @@ The following helpers deny writes when the event is read-only and the user is no
 - `hasEditGamePlayersRight()`
 - `hasEditGameEventsRight()`
 - `hasAccredidationRight()`
+- `hasRestoreScoresheetHistoryRight()`
 - `hasSpiritEditRight()`
 
 Read-only status does not block spirit review access by itself.

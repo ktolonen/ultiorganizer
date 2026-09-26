@@ -25,7 +25,7 @@ $html .= "</td></tr><tr><td>\n";
 //last score
 if (count($scores) > 0) {
     $lastscore = $scores[count($scores) - 1];
-    $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
+    $html .= "#" . count($scores) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'];
     $html .= " [<i>" . SecToMin($lastscore['time']);
     if (intval($lastscore['iscallahan'])) {
         $lastpass = "xx";

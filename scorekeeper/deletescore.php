@@ -30,7 +30,7 @@ $html .= "<form action='?view=deletescore&amp;game=" . $gameId . "' method='post
 //last score
 if (count($scores) > 0) {
     $lastscore = $scores[count($scores) - 1];
-    $html .= _("Delete goal") . " " . ($lastscore['num'] + 1) . ": ";
+    $html .= _("Delete goal") . " " . count($scores) . ": ";
     $html .= $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
     $html .= "[" . SecToMin($lastscore['time']) . "] ";
     $goalText = GoalDisplayText($lastscore, $gameId, true);

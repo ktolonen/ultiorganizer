@@ -115,7 +115,7 @@ $timeCapEvent = $capEvents['time_cap'] ?? null;
 
 $uo_goal = [
     "game" => $gameId,
-    "num" => 0,
+    "num" => 1,
     "assist" => 0,
     "scorer" => 0,
     "time" => "",
@@ -238,7 +238,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
             GameAddScoreEntry($uo_goal);
             $result = GameResult($gameId);
             if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
-                GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore']);
+                GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore'], false);
             }
             header("location:?view=addscoresheet&game=" . $gameId);
             exit;
@@ -294,7 +294,7 @@ $html .= "<div data-role='content'>\n";
 $html .= "<form action='?view=addscoresheet&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
 if ($lastscore) {
-    $html .= "#" . ($lastscore['num'] + 1) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
+    $html .= "#" . count($scores) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
     if (!$hideTimeOnScoresheet) {
         $html .= "[" . SecToMin($lastscore['time']) . "] ";
     }

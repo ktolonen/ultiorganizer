@@ -5,11 +5,28 @@ include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/team.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
 include_once $include_prefix . 'lib/location.functions.php';
+include_once $include_prefix . 'lib/scoresheethistory.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 
 if (empty($_GET["game"])) {
     showPage(_("Fill in scoresheet"), "<p class='warning'>" . _("Game not found") . ".</p>");
     return;
+}
+
+function IsCanonicalScoresheetTime($value)
+{
+    if (!preg_match('/^\d+(?:\.\d+){0,2}$/', $value)) {
+        return false;
+    }
+    $parts = explode(".", $value);
+    $seconds = (int) end($parts);
+    if (count($parts) > 1 && $seconds >= 60) {
+        return false;
+    }
+    if (count($parts) === 3 && (int) $parts[1] >= 60) {
+        return false;
+    }
+    return true;
 }
 
 function ScoreSheetSpiritTimeoutValues($gameId, $home, $maxslots)
@@ -265,11 +282,37 @@ $scoresheetSaved = false;
 //process itself if submit was pressed
 if (!empty($_POST['save'])) {
     $time_delim = [",", ";", ":"];
-    $htime = 0;
+    $htime = null;
     if (!$hideTimeOnScoresheet) {
-        $htime = $_POST['halftime'] ?? "";
-        $htime = str_replace($time_delim, ".", $htime);
-        $htime = TimeToSec($htime);
+        $postedHalftime = trim($_POST['halftime'] ?? "");
+        $postedHalftime = str_replace($time_delim, ".", $postedHalftime);
+        if ($postedHalftime !== "") {
+            if (IsCanonicalScoresheetTime($postedHalftime)) {
+                $htime = TimeToSec($postedHalftime);
+            } else {
+                echo "<p class='warning'>" . _("Halftime") . ": " . _("time is not in a valid format") . "!</p>";
+                $errIds[] = "halftime";
+            }
+        }
+
+        $timeoutFields = ["hto" => [$maxtimeouts, _("Timeouts")], "ato" => [$maxtimeouts, _("Timeouts")]];
+        if (!empty($seasoninfo['spiritmode'])) {
+            $timeoutFields["shto"] = [$maxspirittimeouts, _("Spirit stoppages")];
+            $timeoutFields["sato"] = [$maxspirittimeouts, _("Spirit stoppages")];
+        }
+        $timeoutErrorLabels = [];
+        foreach ($timeoutFields as $prefix => [$slots, $label]) {
+            for ($i = 0; $i < $slots; $i++) {
+                $postedTimeout = str_replace($time_delim, ".", trim($_POST[$prefix . $i] ?? ""));
+                if ($postedTimeout !== "" && !IsCanonicalScoresheetTime($postedTimeout)) {
+                    $timeoutErrorLabels[$label] = true;
+                    $errIds[] = $prefix . $i;
+                }
+            }
+        }
+        foreach (array_keys($timeoutErrorLabels) as $label) {
+            echo "<p class='warning'>" . $label . ": " . _("time is not in a valid format") . "!</p>";
+        }
     }
 
     $h = 0;
@@ -300,17 +343,22 @@ if (!empty($_POST['save'])) {
         if ($hideTimeOnScoresheet) {
             $time = $prevtime + 1;
         } else {
-            if (!empty($_POST['time' . $i])) {
-                $time = $_POST['time' . $i];
+            $postedTime = trim($_POST['time' . $i] ?? "");
+            $time = str_replace($time_delim, ".", $postedTime);
+
+            if ($postedTime === "") {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time is missing") . "!</p>";
+            } elseif (!IsCanonicalScoresheetTime($time)) {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time is not in a valid format") . "!</p>";
+                $errIds[] = "time$i";
             }
 
-            $time = str_replace($time_delim, ".", $time);
             $time = TimeToSec($time);
-            // Point times are optional, and so is the halftime, so a missing
-            // one is stored as zero rather than reported. Only points that
-            // carry a time can conflict with each other.
+            // A missing point time parses to zero, so only compare points
+            // that actually carry a time - otherwise every point without
+            // one would falsely collide with the others.
             if ($time > 0) {
-                if ($htime > 0 && $time == $htime) {
+                if ($htime !== null && $time == $htime) {
                     echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("time cannot be the same as halftime ending") . "!</p>";
                     $errIds[] = "time$i";
                 }
@@ -346,6 +394,8 @@ if (!empty($_POST['save'])) {
             $goal = GamePlayerFromNumber($gameId, $game_result['hometeam'], $goal);
             if ($goal === null && $postedGoal !== "") {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $postedGoalHtml . "' " . _("Not on the roster") . "!</p>";
+            } elseif ($postedGoal === "") {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number is missing") . "!</p>";
             }
 
             if ($pass !== -1 && $pass !== null && $goal !== null && $pass === $goal) {
@@ -380,6 +430,8 @@ if (!empty($_POST['save'])) {
             $goal = GamePlayerFromNumber($gameId, $game_result['visitorteam'], $goal);
             if ($goal === null && $postedGoal !== "") {
                 echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number") . " '" . $postedGoalHtml . "' " . _("Not on the roster") . "!</p>";
+            } elseif ($postedGoal === "") {
+                echo "<p class='warning'>" . _("Point") . " ", $i + 1, ": " . _("scorer's number is missing") . "!</p>";
             }
 
             if ($pass !== -1 && $pass !== null && $goal !== null && $pass === $goal) {
@@ -443,7 +495,7 @@ if (!empty($_POST['save'])) {
             //insert home timeouts
             $j = 0;
             for ($i = 0; $i < $maxtimeouts; $i++) {
-                $time = $_POST['hto' . $i] ?? "";
+                $time = trim($_POST['hto' . $i] ?? "");
                 $time = str_replace($time_delim, ".", $time);
 
                 if (!empty($time)) {
@@ -455,7 +507,7 @@ if (!empty($_POST['save'])) {
             //insert away timeouts
             $j = 0;
             for ($i = 0; $i < $maxtimeouts; $i++) {
-                $time = $_POST['ato' . $i] ?? "";
+                $time = trim($_POST['ato' . $i] ?? "");
                 $time = str_replace($time_delim, ".", $time);
 
                 if (!empty($time)) {
@@ -469,7 +521,7 @@ if (!empty($_POST['save'])) {
 
                 $j = 0;
                 for ($i = 0; $i < $maxspirittimeouts; $i++) {
-                    $time = $_POST['shto' . $i] ?? "";
+                    $time = trim($_POST['shto' . $i] ?? "");
                     $time = str_replace($time_delim, ".", $time);
                     if (!empty($time)) {
                         $j++;
@@ -479,7 +531,7 @@ if (!empty($_POST['save'])) {
 
                 $j = 0;
                 for ($i = 0; $i < $maxspirittimeouts; $i++) {
-                    $time = $_POST['sato' . $i] ?? "";
+                    $time = trim($_POST['sato' . $i] ?? "");
                     $time = str_replace($time_delim, ".", $time);
                     if (!empty($time)) {
                         $j++;
@@ -652,8 +704,9 @@ if (!$hideTimeOnScoresheet) {
     //halftime
     echo "<table cellspacing='0' width='100%' border='1'>\n";
     echo "<tr><th>" . _("Halftime ended at") . "</th></tr>";
+    $halftimeDisplay = $game_result['halftime'] !== null ? SecToMin($game_result['halftime']) : "";
     echo "<tr><td><input class='input' onkeyup=\"validTime(this);\"
-	maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;]*' name='halftime' id='halftime' value='" . SecToMin($game_result['halftime']) . "'/></td></tr>";
+	maxlength='8' type='text' inputmode='decimal' pattern='[0-9.,:;]*' name='halftime' id='halftime' value='" . utf8entities($halftimeDisplay) . "'/></td></tr>";
     echo "</table>\n";
 }
 
@@ -718,6 +771,11 @@ echo "<tr><td colspan='2'>
 <li>" . _("Give XX as the assist in Callahan goals") . ".</li>
 <li>" . _("You can save the scoresheet at any time while entering it") . "</li></ul></td></tr>";
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>" . _("Back to game responsibilities") . "</a></p></td></tr>";
+$lasthistory = ScoresheetHistoryList($gameId, 1);
+if (!empty($lasthistory)) {
+    echo "<tr><td colspan='2'><p><a href='?view=user/scoresheethistory&amp;game=$gameId'>" . _("Scoresheet history") . "</a></p>"
+        . "<p><em>" . sprintf(_("Last changed: %s"), utf8entities(DefTimeFormat($lasthistory[0]['time']))) . "</em></p></td></tr>";
+}
 echo "</table>\n";
 
 //scores
