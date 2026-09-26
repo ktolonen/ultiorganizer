@@ -214,6 +214,20 @@ Spirit score submission is intentionally not part of the scorekeeper surface. Sp
 
 Every mutation described above, from every input path, also records a row in `uo_scoresheet_history`. A bulk rewrite additionally captures one restorable snapshot of the state it is about to replace -- one per save, not one per call. See `docs/scoresheet-history.md`.
 
+## Parallel editing
+
+The desktop editor at `user/addscoresheet.php` rewrites the whole sheet, so a sheet loaded before a scorekeeper entered a point would delete that point on save. The change history doubles as the guard against that: it already writes a row at every mutation point, so `ScoresheetHistoryToken()` reads the highest `history_id` for the game and the page carries that value from the render into the save in a hidden field.
+
+The token counts only the changes the desktop sheet rewrites -- the `result`, `forfeit`, `goal`, `timeout`, `spirit_timeout`, `official`, `halftime` and `comment` targets, the starting-offence `gameevent`, plus `fixture` and `restore`, which replace the sheet wholesale. The `played`, `defense`, `timer` and `mediaevent` targets and the cap game events are excluded on purpose: the desktop sheet never writes them, and counting them would make a scorekeeper collide with their own work.
+
+The comparison happens once the payload validates and before any of the save's own writes, because each mutator records its own history row and a later comparison would read the save's own writes as somebody else's change. A payload carrying no token is treated as a conflict rather than a bypass: it is a form rendered before the check existed.
+
+On a mismatch the save is refused with the operator's entries still on the page, and the refusal carries the fresh token back, so saving again is a deliberate overwrite. A save refused over its own points instead keeps the older token, so the correction is still judged against the state it was entered against.
+
+This is a comparison, not a lock. A point entered between the comparison and the rewrite is still lost; the snapshot the save takes first makes it recoverable through the scoresheet history. The incremental paths in `scorekeeper/` and `mobile/` neither carry nor check a token. Their point entry appends rather than replacing the sequence, so it cannot destroy another operator's points, but their timeout and spirit-stoppage pages still replace that list wholesale without a check.
+
+With the `DisableScoresheetHistory` system flag on, no history rows are written, so the token stops moving and saves proceed unchecked.
+
 ## Database Model
 
 The detailed scoresheet uses several tables together.
