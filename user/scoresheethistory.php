@@ -521,7 +521,21 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
     }
     $state .= "</table>\n";
 
-    $goalPairs = ScoresheetHistoryStatePairs($saved['goals'] ?? [], $current['goals'] ?? [], 'num');
+    // Pair points by their order, not by the stored num: Scorekeeper numbered
+    // points from 0 and the desktop scoresheet from 1, so a save through the
+    // other entry path shifts every num without changing any point.
+    $renumber = static function ($goals) {
+        return array_map(
+            static fn($goal, $i) => ['num' => $i + 1] + $goal,
+            array_values($goals),
+            array_keys(array_values($goals)),
+        );
+    };
+    $goalPairs = ScoresheetHistoryStatePairs(
+        $renumber($saved['goals'] ?? []),
+        $renumber($current['goals'] ?? []),
+        'num',
+    );
     if (count($goalPairs) > 0) {
         // scorer and assist are the player ids the restore replays. Two player
         // rows can carry the same name and number, so comparing only the
