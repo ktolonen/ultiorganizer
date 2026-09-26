@@ -368,8 +368,10 @@ function ScoresheetHistoryCount($gameId)
  * user/addscoresheet.php replaces the whole sheet, so it carries this value
  * from the render into the save and refuses when it has moved. Changes the
  * sheet does not own are excluded on purpose -- a scorekeeper's clock,
- * roster, defense, media or cap change must not cost an open sheet its save.
- * Of the game events, the sheet writes only the starting offence.
+ * defense, media or cap change must not cost an open sheet its save.
+ * Of the game events, the sheet writes only the starting offence. Roster
+ * changes count, bar the captain roles: the sheet posts jersey numbers and
+ * the save resolves them against the current roster.
  *
  * @return int 0 when the game has no recorded change yet
  */
@@ -380,6 +382,7 @@ function ScoresheetHistoryToken($gameId)
 			WHERE game=%d AND (target IN
 				('result','forfeit','goal','timeout','spirit_timeout',
 				 'official','halftime','comment','fixture','restore')
+			OR (target='played' AND JSON_EXTRACT(detail, '$.role') IS NULL)
 			OR (target='gameevent'
 				AND JSON_UNQUOTE(JSON_EXTRACT(detail, '$.type'))='start'))",
         (int) $gameId,
