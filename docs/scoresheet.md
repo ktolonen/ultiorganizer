@@ -270,7 +270,7 @@ Role in the scoresheet:
 - stores assist/scorer player references when known,
 - stores the point time when time entry is enabled.
 
-`num` is the point order within the game.
+`num` is the point order within the game, starting from 1. Scorekeeper and the mobile interface numbered points from 0 before, so older games can still start at 0; a desktop save renumbers them from 1.
 
 #### `uo_played`
 
