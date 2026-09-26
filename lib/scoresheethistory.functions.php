@@ -363,6 +363,30 @@ function ScoresheetHistoryCount($gameId)
 }
 
 /**
+ * Highest history id among the changes the desktop scoresheet rewrites.
+ *
+ * user/addscoresheet.php replaces the whole sheet, so it carries this value
+ * from the render into the save and refuses when it has moved. Changes the
+ * sheet does not own are excluded on purpose -- a scorekeeper's clock,
+ * roster, defense, media or cap change must not cost an open sheet its save.
+ * Of the game events, the sheet writes only the starting offence.
+ *
+ * @return int 0 when the game has no recorded change yet
+ */
+function ScoresheetHistoryToken($gameId)
+{
+    return (int) DBQueryToValue(sprintf(
+        "SELECT MAX(history_id) FROM uo_scoresheet_history
+			WHERE game=%d AND (target IN
+				('result','forfeit','goal','timeout','spirit_timeout',
+				 'official','halftime','comment','fixture','restore')
+			OR (target='gameevent'
+				AND JSON_UNQUOTE(JSON_EXTRACT(detail, '$.type'))='start'))",
+        (int) $gameId,
+    ));
+}
+
+/**
  * One row per game of an event that has history, carrying the latest change.
  *
  * The event administrator's view of the table: the flat change log answers
