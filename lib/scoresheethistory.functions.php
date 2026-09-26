@@ -369,6 +369,8 @@ function ScoresheetHistoryCount($gameId)
  * from the render into the save and refuses when it has moved. Changes the
  * sheet does not own are excluded on purpose -- a scorekeeper's clock,
  * defense, media or cap change must not cost an open sheet its save.
+ * The clock start and reset count all the same, because they also write
+ * the ongoing state the sheet rewrites from its checkbox.
  * Of the game events, the sheet writes only the starting offence. Roster
  * changes count, bar the captain roles: the sheet posts jersey numbers and
  * the save resolves them against the current roster.
@@ -383,6 +385,7 @@ function ScoresheetHistoryToken($gameId)
 				('result','forfeit','goal','timeout','spirit_timeout',
 				 'official','halftime','comment','fixture','restore')
 			OR (target='played' AND JSON_EXTRACT(detail, '$.role') IS NULL)
+			OR (target='timer' AND action IN ('start','reset'))
 			OR (target='gameevent'
 				AND JSON_UNQUOTE(JSON_EXTRACT(detail, '$.type'))='start'))",
         (int) $gameId,
