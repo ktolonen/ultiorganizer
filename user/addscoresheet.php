@@ -495,7 +495,11 @@ if (!empty($_POST['save'])) {
     // A payload with no token is a conflict too, not a bypass: it is a form
     // rendered before this check existed, which is exactly the stale sheet
     // it is here to stop.
+    //
+    // Re-read rather than reusing the page-top value, which is older than
+    // the whole payload validation above.
     if (empty($errIds)) {
+        $historyToken = ScoresheetHistoryToken($gameId);
         $tokenConflict = !isset($_POST['history_token'])
             || (int) $_POST['history_token'] !== $historyToken;
     }
