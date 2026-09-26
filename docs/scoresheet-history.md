@@ -2,6 +2,8 @@
 
 This document describes the `uo_scoresheet_history` table: what it records, how a change is attributed, how a recorded state is restored, and how it is covered by privacy tooling. See `docs/scoresheet.md` for the scoresheet concept and the entry flows that write to it.
 
+The history is also what the desktop scoresheet checks for concurrent edits when two operators edit the same game -- see the parallel-editing section of `docs/scoresheet.md`.
+
 ## What is stored
 
 Every mutation made through the scoresheet mutators -- result, roster, points, defenses, timeouts, spirit stoppages, metadata, comments, cap events, and media links -- is recorded as a row in `uo_scoresheet_history`, in addition to the ordinary write to `uo_game`, `uo_played`, `uo_goal`, and the other scoresheet tables. The row carries:
