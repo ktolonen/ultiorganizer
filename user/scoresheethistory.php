@@ -240,6 +240,58 @@ function ScoresheetHistoryStateResult($game)
         . (count($status) > 0 ? " (" . implode(", ", $status) . ")" : "");
 }
 
+/**
+ * History ids of the rows that only repeat an unchanged save. A desktop save
+ * clears each list and adds its rows back, so saving without edits records a
+ * clear row and the same add rows as the previous save. Such a block is a
+ * repeat when nothing else touched that list in between. $rows is newest
+ * first, as ScoresheetHistoryList() returns them.
+ */
+function ScoresheetHistoryRepeatedRows($rows)
+{
+    // Targets whose add rows carry every field the save writes.
+    $listTargets = ['goal', 'defense', 'timeout', 'spirit_timeout', 'played'];
+    $rows = array_values(array_reverse($rows));
+    $previous = [];
+    $hidden = [];
+    for ($i = 0; $i < count($rows); $i++) {
+        $row = $rows[$i];
+        $target = (string) $row['target'];
+        if ($target === 'restore') {
+            $previous = [];
+            continue;
+        }
+        if (!in_array($target, $listTargets, true)) {
+            continue;
+        }
+        if ($row['action'] !== 'clear') {
+            unset($previous[$target]);
+            continue;
+        }
+        $block = [(int) $row['history_id']];
+        $details = [];
+        while (
+            $i + 1 < count($rows)
+            && $rows[$i + 1]['target'] === $target
+            && $rows[$i + 1]['action'] === 'add'
+            && $rows[$i + 1]['user_id'] === $row['user_id']
+            && $rows[$i + 1]['source'] === $row['source']
+        ) {
+            $i++;
+            $block[] = (int) $rows[$i]['history_id'];
+            $details[] = (string) $rows[$i]['detail'];
+        }
+        $removed = (int) (json_decode((string) $row['detail'], true)['removed'] ?? -1);
+        if (isset($previous[$target]) && $previous[$target] === $details && $removed === count($details)) {
+            foreach ($block as $historyId) {
+                $hidden[$historyId] = true;
+            }
+        }
+        $previous[$target] = $details;
+    }
+    return $hidden;
+}
+
 if (empty($_GET["game"])) {
     showPage(_("Scoresheet history"), "<p class='warning'>" . _("Game not found") . ".</p>");
     return;
@@ -323,10 +375,19 @@ if (!empty($game_result['season']) && isSeasonAdmin($game_result['season'])) {
 
 $count = ScoresheetHistoryCount($gameId);
 $rows = ScoresheetHistoryList($gameId, 200);
+$showAll = !empty($_GET['all']);
+$hiddenRows = $showAll ? [] : ScoresheetHistoryRepeatedRows($rows);
+$allParam = $showAll ? "&amp;all=1" : "";
 
 if ($count === 0) {
     $html .= "<p>" . _("No changes recorded") . ".</p>";
 } else {
+    if (count($hiddenRows) > 0) {
+        $html .= "<p>" . sprintf(_("Rows hidden from unchanged saves: %d"), count($hiddenRows))
+            . " <a href='?view=user/scoresheethistory&amp;game=$gameId&amp;all=1"
+            . ($viewEntry !== null ? "&amp;entry=" . intval($viewEntry['history_id']) : "")
+            . "'>" . _("Show all") . "</a></p>\n";
+    }
     $html .= "<table class='admintable'>\n<tr>";
     $html .= "<th style='width:15%'>" . _("Time") . "</th>";
     $html .= "<th style='width:15%'>" . _("User") . "</th>";
@@ -338,6 +399,9 @@ if ($count === 0) {
     $confirmText = htmlspecialchars(addslashes(_("This overwrites the current scoresheet with this saved version.")), ENT_QUOTES);
 
     foreach ($rows as $row) {
+        if (isset($hiddenRows[(int) $row['history_id']])) {
+            continue;
+        }
         $html .= "<tr class='admintablerow'>";
         $html .= "<td>" . utf8entities(DefTimeFormat($row['time'])) . "</td>";
         $html .= "<td>" . utf8entities($row['user_id']) . "</td>";
@@ -346,7 +410,7 @@ if ($count === 0) {
         $html .= "<td>";
         if (!empty($row['has_snapshot'])) {
             $html .= "<a href='?view=user/scoresheethistory&amp;game=$gameId&amp;entry="
-                . intval($row['history_id']) . "'>" . _("Show") . "</a> ";
+                . intval($row['history_id']) . "$allParam'>" . _("Show") . "</a> ";
             if ($canRestore) {
                 $html .= "<form method='post' style='display:inline'>";
                 $html .= "<input type='hidden' name='history_id' value='" . intval($row['history_id']) . "'/>";
