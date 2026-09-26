@@ -292,6 +292,9 @@ pageMenu($menutabs);
 
 
 
+// Read before any of the state the form renders, so a change landing between
+// the two can only make the token older than the page, never newer.
+$historyToken = ScoresheetHistoryToken($gameId);
 $game_result = GameResult($gameId);
 
 $errIds = [];
@@ -494,7 +497,7 @@ if (!empty($_POST['save'])) {
     // it is here to stop.
     if (empty($errIds)) {
         $tokenConflict = !isset($_POST['history_token'])
-            || (int) $_POST['history_token'] !== ScoresheetHistoryToken($gameId);
+            || (int) $_POST['history_token'] !== $historyToken;
     }
 
     // Validate the whole payload before replacing stored data. Unknown roster
@@ -513,9 +516,6 @@ if (!empty($_POST['save'])) {
             if (!$saved) {
                 $comment_feedback = "<p class='warning'>" . _("Comment not saved.") . "</p>\n";
             }
-            $game_comment = CommentRaw(COMMENT_TYPE_GAME, $gameId);
-            $game_comment_meta = GameCommentMeta($gameId, COMMENT_TYPE_GAME);
-            $game_comment_meta_html = CommentMetaHtml($game_comment_meta);
         }
         LogGameUpdate($gameId, "scoresheet saved", "addscoresheet");
         //set scoresheet keeper
@@ -620,6 +620,10 @@ if (!empty($_POST['save'])) {
         echo "<p>" . _("Scoresheet saved") . " (" . _("at") . " " . DefTimestamp() . ")!</p>";
         echo "<a href='?view=gameplay&amp;game=$gameId'>" . _("Gameplay") . "</a>";
         $scoresheetSaved = true;
+        $historyToken = ScoresheetHistoryToken($gameId);
+        $game_comment = CommentRaw(COMMENT_TYPE_GAME, $gameId);
+        $game_comment_meta = GameCommentMeta($gameId, COMMENT_TYPE_GAME);
+        $game_comment_meta_html = CommentMetaHtml($game_comment_meta);
     }
 }
 $game_result = GameResult($gameId);
@@ -649,13 +653,14 @@ echo "<form id='scoresheet' action='?view=user/addscoresheet&amp;game=$gameId' m
 $repopulate = !empty($_POST['save']) && !$scoresheetSaved;
 // A save refused over its points keeps the token it was entered against, so
 // the correction is still judged against that state. A save refused over a
-// conflict carries the fresh one, which is what makes the retry a deliberate
-// overwrite rather than an endless refusal. A tokenless form refused over its
-// points carries 0, so its correction is still treated as the stale sheet.
+// conflict carries the one it was compared against, which is what makes the
+// retry a deliberate overwrite rather than an endless refusal. A tokenless
+// form refused over its points carries 0, so its correction is still treated
+// as the stale sheet.
 if ($repopulate && !$tokenConflict) {
     $formToken = (int) ($_POST['history_token'] ?? 0);
 } else {
-    $formToken = ScoresheetHistoryToken($gameId);
+    $formToken = $historyToken;
 }
 echo "<input type='hidden' name='history_token' value='" . $formToken . "'/>";
 echo "<table cellspacing='5' cellpadding='5'>";
@@ -685,8 +690,8 @@ if ($show_comment_form) {
         echo "<tr><td>" . $game_comment_meta_html . "</td></tr>";
     }
     echo "<tr><td><textarea class='input' style='width: 98%' rows='5' name='gamecomment' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - note unusual events or interruptions.") . "'>" . htmlentities($repopulate ? (string) ($_POST['gamecomment'] ?? "") : $game_comment) . "</textarea></td></tr>";
-    if ($can_manage_comment && !empty($game_comment)) {
-        $deleteChecked = ($repopulate && !empty($_POST['delete_game_comment'])) ? " checked='checked'" : "";
+    $deleteChecked = ($repopulate && !empty($_POST['delete_game_comment'])) ? " checked='checked'" : "";
+    if ($can_manage_comment && (!empty($game_comment) || $deleteChecked !== "")) {
         echo "<tr><td><label><input type='checkbox' name='delete_game_comment' value='1'$deleteChecked/> " . _("Delete comment") . "</label></td></tr>";
     }
     echo "</table>\n";
