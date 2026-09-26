@@ -304,6 +304,7 @@ $can_manage_comment = CanManageGameComment($gameId, COMMENT_TYPE_GAME);
 $show_comment_form = ($can_create_comment || $can_manage_comment);
 $scoreRows = [];
 $scoresheetSaved = false;
+$tokenConflict = false;
 //process itself if submit was pressed
 if (!empty($_POST['save'])) {
     $time_delim = [",", ";", ":"];
@@ -482,10 +483,29 @@ if (!empty($_POST['save'])) {
         }
     }
 
+    // Compared here, before the save's own writes: every mutator below
+    // records its own history row, so a later comparison would read the
+    // save's own writes as somebody else's change. Only checked once the
+    // payload validates, so a sheet refused over its points is not also told
+    // it is stale.
+    //
+    // A payload with no token is a conflict too, not a bypass: it is a form
+    // rendered before this check existed, which is exactly the stale sheet
+    // it is here to stop.
+    if (empty($errIds)) {
+        $tokenConflict = !isset($_POST['history_token'])
+            || (int) $_POST['history_token'] !== ScoresheetHistoryToken($gameId);
+    }
+
     // Validate the whole payload before replacing stored data. Unknown roster
     // numbers are non-blocking warnings and are stored as empty player fields.
     if (!empty($errIds)) {
         echo "<p class='warning'>" . _("Scoresheet not saved. Correct the highlighted points and save again.") . "</p>";
+    } elseif ($tokenConflict) {
+        echo "<p class='warning'>" . _("Scoresheet not saved: the game has changed since this page was opened.") . "</p>";
+        echo "<p>" . _("Your entries are kept below. Save again to overwrite the other changes, or reload to discard yours.") . "</p>";
+        echo "<p><a href='?view=user/scoresheethistory&amp;game=$gameId'>" . _("Scoresheet history") . "</a>"
+            . " | <a href='?view=user/addscoresheet&amp;game=$gameId'>" . _("Reload the scoresheet") . "</a></p>";
     } else {
         $delete_comment = !empty($_POST['delete_game_comment']);
         if (isset($_POST['gamecomment']) || $delete_comment) {
@@ -627,6 +647,16 @@ echo "<form id='scoresheet' action='?view=user/addscoresheet&amp;game=$gameId' m
 // A refused save re-renders every field from what was posted, not from the
 // stored game: the refusal message promises the whole sheet is kept.
 $repopulate = !empty($_POST['save']) && !$scoresheetSaved;
+// A save refused over its points keeps the token it was entered against, so
+// the correction is still judged against that state. A save refused over a
+// conflict carries the fresh one, which is what makes the retry a deliberate
+// overwrite rather than an endless refusal.
+if ($repopulate && !$tokenConflict && isset($_POST['history_token'])) {
+    $formToken = (int) $_POST['history_token'];
+} else {
+    $formToken = ScoresheetHistoryToken($gameId);
+}
+echo "<input type='hidden' name='history_token' value='" . $formToken . "'/>";
 echo "<table cellspacing='5' cellpadding='5'>";
 
 echo "<tr><td colspan='2'><h1>" . _("Game scoresheet") . " #$gameId</h1></td></tr>";
