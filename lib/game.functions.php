@@ -1620,12 +1620,22 @@ function GameSetDefenses($gameId, $home, $away)
 /**
  * Returns true when a player may be put on a game roster.
  *
- * When the event requires accreditation, only accredited players may be added.
- * A player already on the roster stays allowed so that renumbering and
- * re-saving an existing roster keeps working.
+ * Only players of the game's two teams qualify, and when the event requires
+ * accreditation, only accredited ones. A player already on the roster stays
+ * allowed so that renumbering and re-saving an existing roster keeps working,
+ * even after a team change.
  */
 function GameAllowsPlayerOnRoster($gameId, $playerId)
 {
+    $onRoster = DBQueryToValue(sprintf(
+        "SELECT COUNT(*) FROM uo_played WHERE game=%d AND player=%d",
+        (int) $gameId,
+        (int) $playerId,
+    ));
+    if ((int) $onRoster > 0) {
+        return true;
+    }
+
     $playsForGameTeam = DBQueryToValue(sprintf(
         "SELECT COUNT(*) FROM uo_game g
             INNER JOIN uo_player p ON (p.team=g.hometeam OR p.team=g.visitorteam)
@@ -1638,21 +1648,7 @@ function GameAllowsPlayerOnRoster($gameId, $playerId)
     }
 
     $seasonInfo = SeasonInfo(GameSeason($gameId));
-    if (empty($seasonInfo['require_accreditation'])) {
-        return true;
-    }
-
-    if (isAccredited($playerId)) {
-        return true;
-    }
-
-    $query = sprintf(
-        "SELECT COUNT(*) FROM uo_played WHERE game='%s' AND player='%s'",
-        DBEscapeString($gameId),
-        DBEscapeString($playerId),
-    );
-
-    return (int) DBQueryToValue($query) > 0;
+    return empty($seasonInfo['require_accreditation']) || isAccredited($playerId);
 }
 
 function GameAddPlayer($gameId, $playerId, $number)
