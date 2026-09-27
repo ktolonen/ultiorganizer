@@ -76,7 +76,7 @@ if (!empty($_POST['add'])) {
 
     if (empty($_POST['season_id'])) {
         $html .= "<p class='warning'>" . _("Event ID cannot be empty") . ".</p>";
-    } elseif (preg_match('/[ ]/', $_POST['season_id']) || !preg_match('/[a-z0-9.]/i', $_POST['season_id'])) {
+    } elseif (!preg_match('/^[\p{L}\p{N}._-]+$/u', $_POST['season_id'])) {
         $html .= "<p class='warning'>" . _("Event ID may not have spaces or special characters") . ".</p>";
     } elseif (SeasonExists($sp['season_id'])) {
         $html .= "<p class='warning'>" . _("Event ID already exists") . ".</p>";
