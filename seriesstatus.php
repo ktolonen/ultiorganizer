@@ -40,7 +40,7 @@ if (!$seasoninfo) {
 }
 $title .= U_($seriesinfo['name']);
 
-if (iget("sort")) {
+if (in_array(iget("sort"), ["against", "diff", "for", "games", "losses", "name", "ranking", "seed", "spirit", "winavg", "wins"], true)) {
     $sort = iget("sort");
 }
 
@@ -129,7 +129,7 @@ if ($sort == "ranking") {
         $vb = $b[$sort];
         return $va == $vb ? 0 : ($va == null ? 1 : ($vb == null ? -1 : ($a[$sort] < $b[$sort] ? -1 : 1)));
     });
-} elseif ($sort == "name" || $sort == "pool" || $sort == "against" || $sort == "seed") {
+} elseif ($sort == "name" || $sort == "against" || $sort == "seed") {
     mergesort($allteams, function ($a, $b) use ($sort) {
         return $a[$sort] == $b[$sort] ? 0 : ($a[$sort] < $b[$sort] ? -1 : 1);
     });
