@@ -2353,6 +2353,10 @@ function PoolUndoMove($frompool, $fromplacing, $topool)
 
 function PoolConfirmMoves($poolId, $visible = null)
 {
+    $poolInfo = PoolInfo($poolId);
+    if (!$poolInfo || !hasEditTeamsRight($poolInfo['series'])) {
+        die('Insufficient rights to move teams');
+    }
     PoolMakeMoves($poolId);
     // Check if a BYE team has been scheduled. If so, fill in standard result
     $changes = CheckBYE($poolId);

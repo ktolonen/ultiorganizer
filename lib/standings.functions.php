@@ -7,6 +7,20 @@ require_once __DIR__ . '/pool.functions.php';
 require_once __DIR__ . '/seasonpoints.functions.php';
 require_once __DIR__ . '/series.functions.php';
 
+/**
+ * Recompute a pool's standings on an admin's request. Result saves call
+ * ResolvePoolStandings() directly under their own rights.
+ */
+function RecalculatePoolStandings($poolId)
+{
+    $poolinfo = PoolInfo($poolId);
+    if (!$poolinfo || !hasEditTeamsRight($poolinfo['series'])) {
+        return false;
+    }
+    ResolvePoolStandings($poolId);
+    return true;
+}
+
 function ResolvePoolStandings($poolId)
 {
     $poolinfo = PoolInfo($poolId);
