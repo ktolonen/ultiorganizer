@@ -2283,7 +2283,8 @@ function PoolDeleteMove($frompool, $fromplacing)
 function PoolUndoMove($frompool, $fromplacing, $topool)
 {
     $poolInfo = PoolInfo($frompool);
-    if (hasEditTeamsRight($poolInfo['series'])) {
+    $toPoolInfo = PoolInfo($topool);
+    if (hasEditTeamsRight($poolInfo['series']) && $toPoolInfo && hasEditTeamsRight($toPoolInfo['series'])) {
 
         // delete moved games
         $query = sprintf(
