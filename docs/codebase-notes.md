@@ -1,6 +1,6 @@
 # Codebase Notes
 
-This page collects implementation details that are useful during coding work but do not need to stay in the root `AGENTS.md`.
+Implementation notes for third-party code, PDFs, plugins, customizations, guards and auth wrappers.
 
 ## Third-party components
 
@@ -13,7 +13,7 @@ This page collects implementation details that are useful during coding work but
 - Register Unicode fonts with `AddFont(..., true)`. DejaVu TTFs are under `lib/tfpdf/font/unifont/`.
 - Keep PDF text in UTF-8. Do not use `utf8_decode` or ISO-8859 transcoding helpers.
 - After registering DejaVu under family `Arial`, continue using `SetFont('Arial', ...)`.
-- Local tFPDF modification: the Unicode-font metrics cache (`*.mtx.php`, `*.cw.dat`, `*.cw127.php` under `lib/tfpdf/font/unifont/`) is disabled in `tfpdf.php` (`AddFont()` and `_putTTfontwidths()`). The upstream cache stored the font's absolute path, which broke PDF generation when the app was deployed to a different directory than where the cache was generated. Metrics are now regenerated in memory on each run (negligible cost; PDFs are rare) and no writable font directory is required. Re-apply this change after any tFPDF upgrade; the modified sections are marked with `Ultiorganizer local modification` comments.
+- Local tFPDF modification: the Unicode-font metrics cache (`*.mtx.php`, `*.cw.dat`, `*.cw127.php` under `lib/tfpdf/font/unifont/`) is disabled in `tfpdf.php` (`AddFont()` and `_putTTfontwidths()`). The upstream cache stored absolute paths and broke after moving an installation; metrics are computed in memory instead, so no writable font directory is needed. Re-apply after any tFPDF upgrade; the sections are marked `Ultiorganizer local modification`.
 
 ## Plugins
 
@@ -24,10 +24,8 @@ This page collects implementation details that are useful during coding work but
 ## Customizations
 
 - `cust/` contains skins and installation-specific customizations.
-- `cust/default` is the default skin.
-- `cust/slkl` is actively maintained and used in production at <https://www.ultimate.fi/pelikone>.
-- Skin CSS cascades: `styles()` and `mobileStyles()` in `localization.php` always load `cust/default/ultiorganizer.css` first, then layer the active skin's `cust/<id>/ultiorganizer.css` on top when it exists and is not `default`. A skin file therefore only needs the rules that differ from default; anything it omits is inherited from default (a skin can no longer disable a default rule by omitting it — override the property explicitly, e.g. `border-radius: 0`). All non-default skins are now override-only files; a full copy still works (it just overrides every default rule), but the shipped skins carry only their differences so they track default fixes automatically.
-- The default skin's colors are CSS custom-property tokens (`:root` in `cust/default/ultiorganizer.css`); a skin recolors the UI by redefining those tokens. See `docs/customization.md` for the token list, override styles, and the dark-mode approach.
+- `cust/default` is the base skin; `cust/slkl` is used in production at <https://www.ultimate.fi/pelikone>.
+- Skins cascade over default and recolor through CSS tokens; see `docs/customization.md`. A skin cannot disable a default rule by omitting it; override the property explicitly (e.g. `border-radius: 0`).
 - External license database integration is customization-specific. There is no single default external service.
 - Most `cust/*.php` files are include-only fragments. They are blocked by `cust/.htaccess` on Apache and by `cust/include_only.guard.php` in PHP for cross-server portability.
 - The only allowed customization HTTP endpoint is `players.php`; if a new public endpoint is added under `cust/`, update `cust/.htaccess` at the same time.
