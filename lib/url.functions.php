@@ -320,7 +320,19 @@ function CanRemoveMediaUrl($url)
         return true;
     }
 
-    return hasAddMediaRight() && (int) $url['publisher_id'] === CurrentUserDatabaseId();
+    if (!hasAddMediaRight() || (int) $url['publisher_id'] !== CurrentUserDatabaseId()) {
+        return false;
+    }
+
+    $seasonId = null;
+    if ($url['owner'] === 'game') {
+        require_once __DIR__ . '/game.functions.php';
+        $seasonId = GameSeason($url['owner_id']);
+    } elseif ($url['owner'] === 'team') {
+        require_once __DIR__ . '/team.functions.php';
+        $seasonId = TeamSeason($url['owner_id']);
+    }
+    return $seasonId === null || !isEventReadonly($seasonId) || canBypassEventReadonly($seasonId);
 }
 
 function CanEditMediaTarget($owner, $ownerId)
