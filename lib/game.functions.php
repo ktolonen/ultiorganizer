@@ -7,6 +7,7 @@ require_once __DIR__ . '/accreditation.functions.php';
 require_once __DIR__ . '/configuration.functions.php';
 require_once __DIR__ . '/common.functions.php';
 require_once __DIR__ . '/reservation.functions.php';
+require_once __DIR__ . '/team.functions.php';
 require_once __DIR__ . '/scoresheethistory.functions.php';
 
 function SeasonScoreCounter($seasonId = "")
@@ -2404,9 +2405,22 @@ function SetGame($gameId, $params)
 {
     $series = GameSeries($gameId);
     if (hasEditGamesRight($series)) {
+        $gameSeason = GameSeason($gameId);
         if (!empty($params['pool'])) {
             $poolinfo = PoolInfo($params['pool']);
             if (!$poolinfo || !hasEditGamesRight($poolinfo['series'])) {
+                die('Insufficient rights to edit game');
+            }
+            $gameSeason = $poolinfo['season'];
+        }
+        foreach (['hometeam', 'visitorteam', 'respteam'] as $key) {
+            if (!empty($params[$key]) && TeamSeason($params[$key]) !== $gameSeason) {
+                die('Insufficient rights to edit game');
+            }
+        }
+        if (!empty($params['reservation'])) {
+            $reservationSeason = ReservationSeason($params['reservation']);
+            if ($reservationSeason === null ? !isSuperAdmin() : $reservationSeason !== $gameSeason) {
                 die('Insufficient rights to edit game');
             }
         }
