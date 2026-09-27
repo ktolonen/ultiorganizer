@@ -145,7 +145,7 @@ if (count($urls)) {
         }
         $html .= "</td>";
         $html .= "<td>" . utf8entities($url['mediaowner']) . "</td>";
-        $html .= "<td>" . $url['publisher'] . "</td>";
+        $html .= "<td>" . utf8entities($url['publisher']) . "</td>";
 
         if ($url['publisher_id'] == $userinfo['id']) {
             $html .= "<td class='right'><input class='deletebutton' type='image' src='images/remove.png' name='removeurl' value='X' alt='X' onclick='setId(" . $url['url_id'] . ");'/></td>";
@@ -211,7 +211,7 @@ for ($i = 0; $i < $max_new_links; $i++) {
     $html .= "<td><input class='input' maxlength='500' size='30' name='url$i' value=''/></td>";
     $html .= "<td><input class='input' maxlength='500' size='15' name='urlname$i' value=''/></td>";
     $html .= "<td><input class='input' maxlength='100' size='15' name='mediaowner$i' value=''/></td>";
-    $html .= "<td style='white-space: nowrap'>" . $userinfo['name'] . "</td>";
+    $html .= "<td style='white-space: nowrap'>" . utf8entities($userinfo['name']) . "</td>";
     $html .= "</tr>";
 }
 $html .= "</table>";

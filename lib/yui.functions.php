@@ -17,5 +17,20 @@ function yuiLoad($libs)
     foreach ($libs as $lib) {
         $loader->loadSingle($lib);
     }
-    return $loader->tags();
+    $tags = $loader->tags();
+    if (in_array("autocomplete", $libs, true)) {
+        // AutoComplete writes each suggestion into innerHTML, and the stock
+        // formatResult returns the matched name unescaped.
+        $tags .= "<script type=\"text/javascript\">
+YAHOO.widget.AutoComplete.escapeHtml = function (value) {
+  var el = document.createElement(\"div\");
+  el.appendChild(document.createTextNode(value === null || value === undefined ? \"\" : String(value)));
+  return el.innerHTML;
+};
+YAHOO.widget.AutoComplete.prototype.formatResult = function (oResultData, sQuery, sResultMatch) {
+  return YAHOO.widget.AutoComplete.escapeHtml(sResultMatch);
+};
+</script>\n";
+    }
+    return $tags;
 }

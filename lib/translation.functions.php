@@ -394,13 +394,13 @@ var " . $fieldName . "SelectHandler = function(sType, aArgs) {
 		var completed = oResultData[1];
 		var fill = completed.substring(sQuery.length);
 		var aMarkup = [\"<div class='myCustomResult'>\", 
-		sQuery, 
-		\"<span style='font-weight:bold'>\", 
-		fill, 
+		YAHOO.widget.AutoComplete.escapeHtml(sQuery),
+		\"<span style='font-weight:bold'>\",
+		YAHOO.widget.AutoComplete.escapeHtml(fill),
 		\" &raquo; </span>\",
-		sResultMatch,
-		\": \", 
-		translated, 
+		YAHOO.widget.AutoComplete.escapeHtml(sResultMatch),
+		\": \",
+		YAHOO.widget.AutoComplete.escapeHtml(translated),
 		\"</div>\"]; 
 		return (aMarkup.join(\"\"));
 	}; 

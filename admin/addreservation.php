@@ -264,10 +264,10 @@ echo $html;
 
       var aMarkup = ["<div class='myCustomResult'>",
         "<span style='font-weight:bold'>",
-        sResultMatch,
+        YAHOO.widget.AutoComplete.escapeHtml(sResultMatch),
         "</span>",
         " / ",
-        moreData1,
+        YAHOO.widget.AutoComplete.escapeHtml(moreData1),
         "</div>"
       ];
       return (aMarkup.join(""));

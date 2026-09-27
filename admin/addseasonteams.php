@@ -93,12 +93,11 @@ if (!empty($_POST['save']) || !empty($_POST['add'])) {
     }
 }
 
-$orgarray = "";
+$orgarray = [];
 $result = ClubList(true);
 foreach ($result as $row) {
-    $orgarray .= "\"" . $row['name'] . "\",";
+    $orgarray[] = (string) $row['name'];
 }
-$orgarray = trim($orgarray, ',');
 
 //common page
 $title = _("Edit");
@@ -114,11 +113,7 @@ echo yuiLoad(["utilities", "datasource", "autocomplete"]);
 	}
 </style>
 <script type="text/javascript">
-	var clubs = new Array(
-		<?php
-        echo $orgarray;
-?>
-	);
+	var clubs = <?php echo json_encode($orgarray, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
 </script>
 <?php
 pageTopHeadClose($title);

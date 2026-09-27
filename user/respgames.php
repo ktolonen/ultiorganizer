@@ -92,9 +92,9 @@ if (count($groups) > 0) {
     foreach ($groups as $grouptmp) {
         $groupLabel = isset($grouptmp['reservationgroup']) ? (string) $grouptmp['reservationgroup'] : '';
         if ($group == $groupLabel) {
-            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $groupLabel, $hide, $mass) . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
+            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $groupLabel, $hide, $mass) . "'><span class='selgroupinglink'>" . utf8entities(U_($groupLabel)) . "</span></a>";
         } else {
-            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $groupLabel, $hide, $mass) . "'>" . U_($groupLabel) . "</a>";
+            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $groupLabel, $hide, $mass) . "'>" . utf8entities(U_($groupLabel)) . "</a>";
         }
         $html .= "&nbsp;&nbsp;&nbsp; ";
     }
