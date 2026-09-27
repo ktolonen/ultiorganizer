@@ -532,6 +532,21 @@ function FilterAccessibleSeasons($seasons)
 }
 
 /**
+ * SQL list of the event ids the viewer can access, for an IN (...) clause
+ * in cross-event queries. Never empty: no accessible event gives ''.
+ *
+ * @return string
+ */
+function AccessibleSeasonIdListSql()
+{
+    $ids = [];
+    foreach (FilterAccessibleSeasons(Seasons()) as $season) {
+        $ids[] = "'" . DBEscapeString($season['season_id']) . "'";
+    }
+    return empty($ids) ? "''" : implode(",", $ids);
+}
+
+/**
  * Returns seasons published for public external outputs.
  *
  * @param array|null $ordering sql ordering
