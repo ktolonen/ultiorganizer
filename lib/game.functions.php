@@ -2900,11 +2900,19 @@ function UnscheduledSeasonGameInfo($seasonId)
     return $ret;
 }
 
-function ScheduleGame($gameId, $epoc, $reservation)
+/**
+ * True if the game may be scheduled into the reservation: the reservation
+ * must belong to the game's event, and one with no event is superadmin-only.
+ */
+function CanScheduleGameInReservation($gameId, $reservation)
 {
     $reservationSeason = ReservationSeason($reservation);
-    $sameEvent = $reservationSeason === null ? isSuperAdmin() : $reservationSeason === GameSeason($gameId);
-    if (hasEditGamesRight(GameSeries($gameId)) && $sameEvent) {
+    return $reservationSeason === null ? isSuperAdmin() : $reservationSeason === GameSeason($gameId);
+}
+
+function ScheduleGame($gameId, $epoc, $reservation)
+{
+    if (hasEditGamesRight(GameSeries($gameId)) && CanScheduleGameInReservation($gameId, $reservation)) {
         $query = sprintf(
             "UPDATE uo_game SET time='%s', reservation=%d WHERE game_id=%d",
             EpocToMysql($epoc),
@@ -2933,9 +2941,9 @@ function UnScheduleGame($gameId)
 function ClearReservation($reservationId)
 {
     foreach (ReservationGames($reservationId) as $row) {
-        if (hasEditGamesRight(GameSeries($row['game_id']))) {
+        if (hasEditGamesRight(GameSeries($row['game_id'])) && CanScheduleGameInReservation($row['game_id'], $reservationId)) {
             UnScheduleGame($row['game_id']);
-        } // else ignore games not managed by user
+        } // else ignore games not managed by user or scheduled here from another event
     }
 }
 

@@ -72,6 +72,10 @@ foreach ($places as $placeGameStr) {
         for ($i = 1; $i < count($games); $i++) {
             $gameArr = explode("/", $games[$i]);
             $gameInfo = GameInfo($gameArr[0]);
+            if (!CanScheduleGameInReservation($gameArr[0], $games[0])) {
+                $errorResponse .= "<p>" . sprintf(_("Game %s belongs to another event and was left unchanged."), utf8entities(GameName($gameInfo))) . "</p>";
+                continue;
+            }
             $season = $gameInfo['season'];
             $time = $firstStart + (60 * (int) $gameArr[1]);
             if (!empty($gameInfo['gametimeslot'])) {
