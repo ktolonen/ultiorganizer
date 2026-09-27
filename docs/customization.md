@@ -2,13 +2,10 @@
 
 Installation-specific look and feel lives under `cust/<id>/`. `cust/default` is
 the base skin; the active skin is selected by the `CUSTOMIZATIONS` constant in
-`conf/config.inc.php`. This document currently covers the **CSS color token
-system** and how a skin recolors the UI; more customization topics (logos,
-layouts, PDF hooks) can be added here over time.
+`conf/config.inc.php`. This document covers the CSS color tokens, dark mode,
+and pool colors.
 
 ## Maintained and unmaintained skins
-
-`cust/` carries seven skins, and they are not equally alive:
 
 | Skin | Status |
 | --- | --- |
@@ -16,24 +13,18 @@ layouts, PDF hooks) can be added here over time.
 | `slkl`, `wfdf` | Maintained. Verify changes against these. |
 | `bula`, `fpudd`, `gummis`, `windmill` | Unmaintained legacy, kept for compatibility. |
 
-Treat the unmaintained skins as frozen. A visual regression that appears only
-there is not worth chasing, and reworking them is not part of a change to the
-shared stylesheets. When a change touches `cust/default/`, check it against
-`default`, `slkl` and `wfdf`; the rest only need to keep loading.
-
-Their age does not show in the file dates — a repo-wide reformat touched every
-skin at once — so this list, not `git log`, is what says which is which.
+Treat the unmaintained skins as frozen: check `cust/default/` changes against
+`default`, `slkl` and `wfdf`, and the rest only need to keep loading. File dates
+don't show their age (a repo-wide reformat touched every skin), so rely on this
+list.
 
 ## Skin CSS cascade
 
 `styles()` in `localization.php` emits `cust/default/ultiorganizer.css` first,
 then the active skin's `cust/<id>/ultiorganizer.css` on top when it exists and
 is not `default`. `mobileStyles()` uses the same cascade with
-`ultiorganizer-mobile.css`. A skin file therefore only needs the rules (and
-tokens) that differ from default; anything it omits is inherited from default.
-
-Because the skin stylesheet loads **after** default, anything it redefines wins
-on equal specificity — including CSS custom properties on `:root`.
+`ultiorganizer-mobile.css`. A skin only needs the rules and tokens that differ;
+loading after default, it wins on equal specificity, including `:root` tokens.
 
 ## Color tokens
 
@@ -105,55 +96,36 @@ per-selector overrides needed, because default's rules already read the tokens:
 
 ### Two declaration styles
 
-Both render identically; pick per skin:
+- **Overrides only**: list just the changed tokens; the skin inherits future
+  default values for the rest.
+- **Full palette**: list every token so the palette is visible in one place, at
+  the cost of not inheriting later default changes.
 
-- **Overrides only** — list just the tokens that differ from default. Shortest,
-  and the skin keeps inheriting any future default value for tokens it does not
-  list.
-- **Full palette listed** — list every token (default values for the ones the
-  skin keeps, overrides for the rest), so the complete palette is visible in one
-  place. Trade-off: the skin re-declares the whole palette, so later changes to
-  default's base values do **not** propagate to the non-overridden tokens.
-
-The maintained `slkl` and `wfdf` skins list the full palette for easier human
-editing and tag their changed values with `/* slkl */` or `/* wfdf */`.
-Their non-color rules remain minimal so layout and behavior stay aligned with
-`default`.
+`slkl` and `wfdf` list the full palette, tag changed values with `/* slkl */` or
+`/* wfdf */`, and keep non-color rules minimal.
 
 ### Exceptions that are not tokens
 
-Some skin colors do not map to a single default token (a shade used in only one
-place, or a value that would collide with another token's role). Keep those as
-ordinary per-selector rules below the `:root` block — for example a page-menu
-hover color that must stay darker than the skin's accent. Structural overrides
-(widths, fonts, logos, custom layout) also remain as normal rules; tokens are
-for color only.
+A color that fits no single token (a one-off shade, or one that must stay darker
+than the skin's accent) stays an ordinary rule below `:root`. Structural
+overrides (widths, fonts, logos, layout) are normal rules too; tokens are for
+color only.
 
 ### Mobile app palette
 
-`cust/default/ultiorganizer-mobile.css`, used by Scorekeeper, Spiritkeeper, and
-Timekeeper, has a separate complete palette because `mobileStyles()` does not
-load the desktop stylesheet. Shared concepts use the desktop token names, such
-as `--canvas`, `--surface`, `--text-muted`, `--text-inverse`, `--link`,
-`--accent`, `--border`, and the `--table-row-*` tokens.
-Only the default mobile primary colors (`--link`, `--accent`, and
-`--accent-strong`) mirror desktop values; its neutral and semantic colors remain
-mobile-specific.
-
-Mobile-only concepts extend that vocabulary with semantic tokens for gameplay,
-secondary actions, notices, and Timekeeper states. Keep literal color values in
-the `:root` palette and use `var(--token)` in component rules. An installation
-can recolor the mobile apps independently by adding
-`cust/<id>/ultiorganizer-mobile.css` and redefining the relevant tokens.
-The maintained SLKL and WFDF skins include full mobile palettes in their
-customization directories. Their changed values are tagged with `/* slkl */`
-or `/* wfdf */`, matching the desktop palette convention.
+`cust/default/ultiorganizer-mobile.css` (Scorekeeper, Spiritkeeper,
+Timekeeper) has its own complete palette, since `mobileStyles()` does not load
+the desktop stylesheet. Shared concepts reuse desktop token names (`--canvas`,
+`--surface`, `--text-muted`, `--link`, `--accent`, `--border`,
+`--table-row-*`, ...); only `--link`, `--accent` and `--accent-strong` share
+desktop values. Mobile-only tokens cover gameplay, secondary actions, notices
+and Timekeeper states. Keep literals in `:root` and use `var(--token)` in rules.
+A skin recolors the mobile apps with `cust/<id>/ultiorganizer-mobile.css`;
+`slkl` and `wfdf` ship full tagged mobile palettes.
 
 ## Dark mode
 
-Because the default skin is fully tokenized, a dark theme is a block that
-redefines the token values. The lowest-effort form follows the operating
-system, with no markup or server changes:
+A dark theme is a block redefining the tokens, e.g. following the OS setting:
 
 ```css
 @media (prefers-color-scheme: dark) {
@@ -167,15 +139,11 @@ system, with no markup or server changes:
 }
 ```
 
-Notes:
-- Design the dark relationships deliberately (light text on dark surfaces);
-  it is not a value inversion.
-- The default desktop and mobile stylesheets are both fully tokenized but load
-  independently. A skin that still hardcodes colors, or redefines `:root`
-  without a media query, will override these dark values — put a skin's dark
-  overrides inside the skin (and inside the media query).
-- Non-color assets (logos, icons) do not follow tokens and may need dark
-  variants.
+Design the dark relationships deliberately rather than inverting values. Desktop
+and mobile stylesheets need separate dark blocks. A skin that hardcodes colors
+or redefines `:root` outside a media query overrides them, so a skin's dark
+values belong in the skin, inside the media query. Logos and icons may need dark
+variants.
 
 ## Pool colors
 
@@ -193,51 +161,25 @@ that returns an array of 6-digit hex colors. `PoolColors()` in
 | `glasbey-dark-background` | 256 | Dark page backgrounds |
 | `okabe-ito` | 8 | A compact color-vision-deficiency-aware option |
 
-The Glasbey lists are Colorcet's complete 256-entry precomputed palettes. They
-maximize separation from colors that appear earlier in each list while
-constraining lightness for the intended background. Palette selection is not
-yet an installation setting: change the final return key in
-`cust/default/pool_colors.php`, then use the pool color updater if existing
-pools should receive the newly selected colors.
+The Glasbey lists are Colorcet's 256-entry palettes, each entry chosen to differ
+from those before it at a lightness suited to the background. Palette selection
+is not an installation setting: change the return key in
+`cust/default/pool_colors.php`.
 
-The same stored color is drawn on three surfaces, which is what constrains the
-palette:
-
-| Surface | How the color is drawn |
-| --- | --- |
-| Pool status pages | Tinted to 30% opacity over the white table row, text in `textColor()` |
-| PDF schedule and scoresheet | Full-opacity cell fill, text in `textColor()` |
-| Pool admin pages | Full-opacity swatch |
-
-The 30% tint pulls every color towards the page background, so a palette that
-looks varied at full opacity can still contain pairs that are hard to
-distinguish on a pool status page. The precomputed palettes are deliberately a
-simple improvement rather than a guarantee: pool names remain the primary cue,
-and the updater can repair problematic assignments found in an existing event.
+A stored color is drawn tinted to 30% over white on pool status pages, as a
+full fill on PDF schedules and scoresheets, and as a swatch on pool admin pages,
+both with text in `textColor()`. The tint makes some pairs hard to tell apart,
+so pool names remain the primary cue and color a secondary one; Okabe-Ito
+trades capacity for color-vision-deficiency support.
 
 `PoolPickColor()` starts at the palette position matching the pool id and takes
-the first color no other pool in the same division uses. A division only starts
-repeating a color once it has more pools than the selected palette has entries.
-The two 256-color Glasbey options therefore cover the largest divisions seen
-in practice; the eight-color Okabe-Ito option deliberately trades capacity for
-a smaller, more accessible set.
+the first color unused in the division, so colors repeat only once a division
+has more pools than the palette. Order therefore matters: pools created together
+get consecutive ids and consecutive entries.
 
-Two caveats when replacing the list:
-
-- **Order is part of the contract.** Pools created in one request get
-  consecutive pool ids, so they get consecutive palette entries. Glasbey's
-  greedy order is useful here because each new entry was selected to differ
-  from the entries before it.
-- **Existing pools keep their stored color.** Changing the palette only affects
-  pools created afterwards. Recolor existing ones from the superadmin plugin at
-  `?view=plugins/update_pool_colors`, which picks through `PoolPickColor()` as
-  well and writes one pool at a time, so recoloring several pools of a division
-  in one go cannot give two of them the same color.
-
-No large categorical palette can make dozens of colors reliably identifiable
-for every reader. The Okabe-Ito option is available when support for color
-vision deficiency matters more than the number of unique pool colors. In every
-palette, color stays a secondary cue and pool names remain the primary one.
+Changing the palette affects only new pools. Recolor existing ones with the
+superadmin plugin `?view=plugins/update_pool_colors`, which uses
+`PoolPickColor()` one pool at a time so a division gets no duplicates.
 
 ## Verification
 
