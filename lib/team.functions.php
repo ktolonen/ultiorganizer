@@ -1699,9 +1699,10 @@ function SetTeamSeeding($seriesId, $teamId, $seed)
             "
 			UPDATE uo_team SET
 			rank=%d
-			WHERE team_id=%d",
+			WHERE team_id=%d AND series=%d",
             (int) $seed,
             (int) $teamId,
+            (int) $seriesId,
         );
 
         return DBQuery($query);
