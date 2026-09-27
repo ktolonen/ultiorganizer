@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-09-26 17:45+0300\n"
+"POT-Creation-Date: 2026-09-27 15:21+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -57,7 +57,7 @@ msgstr "%d Übersetzungsschlüssel verfügbar."
 msgid "%d&nbsp;min."
 msgstr "%d&nsbp;min."
 
-#: lib/game.functions.php:845 lib/scoresheethistory.functions.php:724
+#: lib/game.functions.php:847 lib/scoresheethistory.functions.php:730
 #: user/scoresheethistory.php:189
 #, php-format
 msgid "%s - new point cap %d"
@@ -68,8 +68,8 @@ msgstr "%s - neue Punkteobergrenze %d"
 msgid "%s called at"
 msgstr "%s angesagt bei"
 
-#: lib/scoresheethistory.functions.php:628
-#: lib/scoresheethistory.functions.php:716
+#: lib/scoresheethistory.functions.php:634
+#: lib/scoresheethistory.functions.php:722
 #, php-format
 msgid "%s removed"
 msgstr "%s entfernt"
@@ -107,7 +107,7 @@ msgstr "(aus der gewählten Vorlage)"
 msgid "* mixed only"
 msgstr "* nur Mixed"
 
-#: admin/dbequalize.php:395
+#: admin/dbequalize.php:398
 #, php-format
 msgid "-> %d"
 msgstr "-> %d"
@@ -202,7 +202,7 @@ msgstr "API-Tokens"
 msgid "Abbrev"
 msgstr "Abkürzung"
 
-#: admin/addseasonteams.php:164 admin/clubs.php:88 admin/clubs.php:93
+#: admin/addseasonteams.php:159 admin/clubs.php:88 admin/clubs.php:93
 #: user/teamprofile.php:109
 msgid "Abbreviation"
 msgstr "Abkürzung"
@@ -278,7 +278,7 @@ msgstr "Bestätigen"
 msgid "Acknowledged"
 msgstr "Bestätigt"
 
-#: lib/scoresheethistory.functions.php:943
+#: lib/scoresheethistory.functions.php:949
 #, php-format
 msgid ""
 "Acknowledgement not restored for player %s: accreditation right missing for "
@@ -297,13 +297,13 @@ msgstr "Aktiv"
 
 #: admin/addlocations.php:196 admin/addreservation.php:234
 #: admin/addseasonpools.php:263 admin/addseasons.php:500
-#: admin/addseasonseries.php:137 admin/addseasonteams.php:218
+#: admin/addseasonseries.php:137 admin/addseasonteams.php:213
 #: admin/addserieformats.php:194 admin/addtimekeepertemplate.php:151
 #: admin/adduser.php:153 admin/clubs.php:55 admin/clubs.php:90
 #: admin/locations.php:73 admin/poolmoves.php:398 admin/seasonpools.php:309
 #: admin/seasons.php:157 admin/seasonseries.php:173 admin/seasonteams.php:263
 #: admin/serieformats.php:52 admin/timekeepertemplates.php:61
-#: admin/translations.php:522 user/addextraemail.php:95 user/enrollteam.php:140
+#: admin/translations.php:522 user/addextraemail.php:95 user/enrollteam.php:135
 #: user/teamplayers.php:275 user/userinfo.php:378 user/userinfo.php:516
 msgid "Add"
 msgstr "Hinzufügen"
@@ -341,7 +341,7 @@ msgstr "Link hinzufügen"
 msgid "Add location"
 msgstr "Ort hinzufügen"
 
-#: clubcard.php:232 gameplay.php:662 playercard.php:636 teamcard.php:851
+#: clubcard.php:232 gameplay.php:662 playercard.php:636 teamcard.php:853
 #: admin/editgame.php:197
 msgid "Add media"
 msgstr "Medien hinzufügen"
@@ -400,7 +400,7 @@ msgstr "Runde hinzufuegen"
 msgid "Add rule template"
 msgstr "Neue Regelschablone"
 
-#: admin/addseasonteams.php:144
+#: admin/addseasonteams.php:139
 msgid "Add team"
 msgstr "Team hinzufügen"
 
@@ -499,7 +499,7 @@ msgstr "Nach dem Flip das Team ankreuzen, das mit dem Angriff startet."
 
 #: games.php:278 games.php:280 admin/addseasonpools.php:324
 #: admin/addseasonpools.php:326 admin/reservations.php:109
-#: admin/reservations.php:111 user/respgames.php:103 user/respgames.php:105
+#: admin/reservations.php:111 user/respgames.php:102 user/respgames.php:104
 msgid "All"
 msgstr "Alles"
 
@@ -684,7 +684,7 @@ msgstr "Bist du sicher, dass du den Seitenladezaehler zuruecksetzen willst?"
 msgid "Are you sure you want to reset the visitor counter?"
 msgstr "Bist du sicher, dass du den Besucherzaehler zuruecksetzen willst?"
 
-#: user/addscoresheet.php:818
+#: user/addscoresheet.php:828
 msgid "As a separator in the time field you can use "
 msgstr "Als Trennzeichen im Zeitfeld kannst du "
 
@@ -714,7 +714,7 @@ msgstr ""
 #: cust/default/pdfscoresheet.php:601 cust/gummis/pdfscoresheet.php:664
 #: cust/slkl/pdfscoresheet.php:578 cust/wfdf/pdfscoresheet.php:1234
 #: cust/windmill/pdfscoresheet.php:596 mobile/addscoresheet.php:201
-#: scorekeeper/addscoresheet.php:437 user/addscoresheet.php:849
+#: scorekeeper/addscoresheet.php:437 user/addscoresheet.php:859
 #: user/scoresheethistory.php:560
 msgid "Assist"
 msgstr "Assist"
@@ -754,7 +754,7 @@ msgstr "Automatische Akkreditierung"
 msgid "Automatic final standings, not confirmed"
 msgstr "Automatische Endplatzierungen, nicht bestätigt"
 
-#: teamcard.php:279 lib/common.functions.php:1738
+#: teamcard.php:281 lib/common.functions.php:1738
 msgid "Average"
 msgstr "Durchschnitt"
 
@@ -776,7 +776,7 @@ msgstr "Durchschnitt aller Spiele"
 #: cust/windmill/pdfscoresheet.php:463 cust/windmill/pdfscoresheet.php:494
 #: cust/windmill/pdfscoresheet.php:577 cust/windmill/pdfscoresheet.php:595
 #: user/adddefensesheet.php:266 user/adddefensesheet.php:356
-#: user/addscoresheet.php:635
+#: user/addscoresheet.php:643
 msgid "Away"
 msgstr "Gast"
 
@@ -790,12 +790,12 @@ msgstr "Spirit-Unterbrechungen Gastteam"
 
 #: cust/bula/pdfscoresheet.php:72 cust/default/pdfscoresheet.php:69
 #: cust/gummis/pdfscoresheet.php:70 cust/slkl/pdfscoresheet.php:69
-#: cust/windmill/pdfscoresheet.php:72 lib/scoresheethistory.functions.php:708
-#: user/adddefensesheet.php:209 user/addscoresheet.php:669
+#: cust/windmill/pdfscoresheet.php:72 lib/scoresheethistory.functions.php:714
+#: user/adddefensesheet.php:209 user/addscoresheet.php:679
 msgid "Away team"
 msgstr "Gastteam"
 
-#: admin/editgame.php:278 lib/scoresheethistory.functions.php:639
+#: admin/editgame.php:278 lib/scoresheethistory.functions.php:645
 #: user/scoresheethistory.php:205
 msgid "Away team forfeited"
 msgstr "Gastteam kampflos"
@@ -833,11 +833,11 @@ msgstr "Zurück zur Spielernummerneingabe"
 msgid "Back to game list"
 msgstr "Zurück zur Spieleliste"
 
-#: mobile/addplayerlists.php:140 mobile/addresult.php:54
+#: mobile/addplayerlists.php:143 mobile/addresult.php:54
 #: mobile/addscoresheet.php:236 mobile/gameplay.php:149
 #: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:91
 #: scorekeeper/addscoresheet.php:532 scorekeeper/gameplay.php:128
-#: user/adddefensesheet.php:333 user/addscoresheet.php:821
+#: user/adddefensesheet.php:333 user/addscoresheet.php:831
 msgid "Back to game responsibilities"
 msgstr "Zurück zur Ergebniseingabe"
 
@@ -889,13 +889,13 @@ msgstr "Beach Ultimate Lovers Association"
 msgid "Blogger"
 msgstr "Blogger"
 
-#: admin/editgame.php:279 lib/scoresheethistory.functions.php:640
+#: admin/editgame.php:279 lib/scoresheethistory.functions.php:646
 #: user/scoresheethistory.php:206
 msgid "Both teams forfeited"
 msgstr "Beide Teams kampflos"
 
 #: statistics.php:50 statistics.php:269 lib/pool.functions.php:303
-#: lib/standings.functions.php:939
+#: lib/standings.functions.php:953
 msgid "Bronze"
 msgstr "Bronze"
 
@@ -980,7 +980,7 @@ msgstr "Callahan TOP 20"
 msgid "Callahan defence"
 msgstr "Callahan-Defense"
 
-#: gameplay.php:290 playercard.php:608 lib/game.functions.php:692
+#: gameplay.php:290 playercard.php:608 lib/game.functions.php:694
 #: mobile/gameplay.php:96 scorekeeper/addscoresheet.php:26
 #: scorekeeper/addscoresheet.php:444
 msgid "Callahan goal"
@@ -996,7 +996,7 @@ msgstr "Callahan-Punkt"
 #: admin/translations.php:547 admin/translations.php:549
 #: mobile/addscoresheet.php:233 scorekeeper/addscoresheet.php:491
 #: scorekeeper/result.php:88 user/adddefensesheet.php:317
-#: user/addscoresheet.php:809 user/select_poolselector.php:26
+#: user/addscoresheet.php:819 user/select_poolselector.php:26
 #: user/select_poolselector.php:29 user/select_poolselector.php:32
 #: user/select_poolselector.php:35 user/teamplayers.php:286
 #: user/userinfo.php:292
@@ -1007,11 +1007,11 @@ msgstr "Abbrechen"
 msgid "Cancel and return to scoresheet"
 msgstr "Abbrechen und zum Spielbericht zurueckkehren"
 
-#: lib/scoresheethistory.functions.php:713
+#: lib/scoresheethistory.functions.php:719
 msgid "Cap event"
 msgstr "Cap-Ereignis"
 
-#: teamcard.php:53 lib/scoresheethistory.functions.php:598
+#: teamcard.php:53 lib/scoresheethistory.functions.php:604
 #: user/scoresheethistory.php:109 user/teamprofile.php:115
 msgid "Captain"
 msgstr "Kapitän"
@@ -1032,7 +1032,7 @@ msgstr ""
 msgid "Captains' signatures"
 msgstr "Unterschriften der Teamcaptains"
 
-#: teamcard.php:277 admin/addseasons.php:418 admin/eventviewer.php:141
+#: teamcard.php:279 admin/addseasons.php:418 admin/eventviewer.php:141
 msgid "Category"
 msgstr "Kategorie"
 
@@ -1172,7 +1172,7 @@ msgstr ""
 "Bereinige verwaiste Eintraege, indem nullable Fremdschluessel auf NULL "
 "gesetzt oder untergeordnete Zeilen geloescht bzw. neu zugewiesen werden."
 
-#: admin/dbequalize.php:236 user/addresult.php:119
+#: admin/dbequalize.php:239 user/addresult.php:119
 msgid "Clear"
 msgstr "Löschen"
 
@@ -1230,9 +1230,9 @@ msgstr "Uhr laeuft nicht"
 msgid "Close"
 msgstr "Schließen"
 
-#: teamcard.php:36 admin/addseasonpools.php:413 admin/addseasonteams.php:151
-#: admin/dbequalize.php:246 admin/seasonteams.php:178
-#: admin/seriesseeding.php:48 admin/serieteams.php:150 user/enrollteam.php:80
+#: teamcard.php:36 admin/addseasonpools.php:413 admin/addseasonteams.php:146
+#: admin/dbequalize.php:249 admin/seasonteams.php:178
+#: admin/seriesseeding.php:48 admin/serieteams.php:156 user/enrollteam.php:75
 msgid "Club"
 msgstr "Verein"
 
@@ -1272,11 +1272,11 @@ msgstr "Vereinsprofil"
 msgid "Club teams"
 msgstr "Clubmannschaften"
 
-#: admin/dbequalize.php:215
+#: admin/dbequalize.php:218
 msgid "Club to keep"
 msgstr "Zu behaltender Verein"
 
-#: menufunctions.php:687 admin/dbequalize.php:203
+#: menufunctions.php:687 admin/dbequalize.php:206
 msgid "Clubs"
 msgstr "Vereine"
 
@@ -1319,12 +1319,12 @@ msgid "Comment by %s at %s"
 msgstr "Kommentar von %s um %s"
 
 #: mobile/addcomment.php:24 scorekeeper/addcomment.php:21
-#: spiritkeeper/editgame.php:87 user/addscoresheet.php:514
+#: spiritkeeper/editgame.php:87 user/addscoresheet.php:521
 #: user/addspirit.php:214
 msgid "Comment not saved."
 msgstr "Kommentar nicht gespeichert."
 
-#: gameplay.php:645 teamcard.php:322 teamcard.php:366
+#: gameplay.php:645 teamcard.php:324 teamcard.php:368
 msgid "Comments"
 msgstr "Kommentare"
 
@@ -1341,15 +1341,15 @@ msgid "Communication (theirs)"
 msgstr "Kommunikation (ihre)"
 
 #: result.php:87 cust/default/teamplayers.functions.php:79
-#: scorekeeper/result.php:87 user/enrollteam.php:111
+#: scorekeeper/result.php:87 user/enrollteam.php:106
 msgid "Confirm"
 msgstr "Bestätigen"
 
-#: lib/user.functions.php:1709
+#: lib/user.functions.php:1713
 msgid "Confirm extra email address for ultiorganizer"
 msgstr "Extra-Email-Adresse für Ultiorganizer bestätigen"
 
-#: admin/seasonstandings.php:520 admin/serieteams.php:257
+#: admin/seasonstandings.php:520 admin/serieteams.php:263
 msgid "Confirm moves"
 msgstr "Transfers bestätigen"
 
@@ -1362,7 +1362,7 @@ msgstr "Transfers zu Pool %s bestätigen."
 msgid "Confirm result and end game"
 msgstr "Ergebnis bestaetigen und Spiel beenden"
 
-#: lib/user.functions.php:1648
+#: lib/user.functions.php:1652
 msgid "Confirm your account to ultiorganizer"
 msgstr "Bestätigen Sie Ihren Ultiorganizer-Account"
 
@@ -1376,7 +1376,7 @@ msgid "Confirmation email will be sent to the email address provided"
 msgstr ""
 "Eine Bestätigungsmail ist an die angegebene Email-Adresse versendet worden"
 
-#: user/enrollteam.php:116
+#: user/enrollteam.php:111
 msgid "Confirmed"
 msgstr "Bestätigt"
 
@@ -1516,8 +1516,8 @@ msgstr ""
 msgid "Countries"
 msgstr "Länder"
 
-#: clubcard.php:49 admin/addseasonteams.php:161 admin/seasonteams.php:181
-#: admin/seriesseeding.php:51 user/clubprofile.php:168 user/enrollteam.php:83
+#: clubcard.php:49 admin/addseasonteams.php:156 admin/seasonteams.php:181
+#: admin/seriesseeding.php:51 user/clubprofile.php:168 user/enrollteam.php:78
 msgid "Country"
 msgstr "Land"
 
@@ -1579,7 +1579,7 @@ msgid "Current image"
 msgstr "Aktuelles Bild"
 
 #: scorekeeper/addscorecap.php:70 user/adddefensesheet.php:301
-#: user/addscoresheet.php:760
+#: user/addscoresheet.php:770
 msgid "Current score"
 msgstr "Aktueller Spielstand"
 
@@ -1662,13 +1662,13 @@ msgstr "Standardsprache"
 msgid "Default Timezone"
 msgstr "Zeitzonen-Voreinstellung"
 
-#: lib/scoresheethistory.functions.php:673 user/adddefensesheet.php:134
+#: lib/scoresheethistory.functions.php:679 user/adddefensesheet.php:134
 #: user/adddefensesheet.php:139 user/adddefensesheet.php:165
 #: user/adddefensesheet.php:174
 msgid "Defence"
 msgstr "Defense"
 
-#: defensestatus.php:18 defensestatus.php:41 poolstatus.php:249
+#: defensestatus.php:18 defensestatus.php:43 poolstatus.php:249
 #: poolstatus.php:277 poolstatus.php:279 seriesstatus.php:341
 msgid "Defence board"
 msgstr "Defense-Rangliste"
@@ -1688,7 +1688,7 @@ msgstr "Defense-Spielbericht"
 #: admin/seasongames.php:251 user/adddefensesheet.php:11
 #: user/adddefensesheet.php:73 user/addplayerlists.php:285
 #: user/addresult.php:75 user/addscoresheet.php:287 user/addspirit.php:228
-#: user/respgames.php:216 user/scoresheethistory.php:364
+#: user/respgames.php:215 user/scoresheethistory.php:364
 msgid "Defence sheet"
 msgstr "Defensebogen"
 
@@ -1696,15 +1696,15 @@ msgstr "Defensebogen"
 msgid "Defence sheet saved"
 msgstr "Defensebogen gespeichert"
 
-#: defensestatus.php:80 defensestatus.php:82 gameplay.php:679 gameplay.php:702
-#: teamcard.php:127 teamcard.php:430 teamcard.php:521
+#: defensestatus.php:82 defensestatus.php:84 gameplay.php:679 gameplay.php:702
+#: teamcard.php:127 teamcard.php:432 teamcard.php:523
 #: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1732
-#: lib/scoresheethistory.functions.php:667 user/scoresheethistory.php:492
+#: lib/scoresheethistory.functions.php:673 user/scoresheethistory.php:492
 #: user/scoresheethistory.php:660
 msgid "Defences"
 msgstr "Defenses"
 
-#: lib/scoresheethistory.functions.php:662
+#: lib/scoresheethistory.functions.php:668
 #, php-format
 msgid "Defences removed: %d"
 msgstr "Entfernte Defenses: %d"
@@ -1722,7 +1722,7 @@ msgstr "Löschen"
 
 #: mobile/addcomment.php:40 scorekeeper/addcomment.php:39
 #: spiritkeeper/editgame.php:117 spiritkeeper/submitsotg.php:94
-#: user/addscoresheet.php:689 user/addspirit.php:28
+#: user/addscoresheet.php:699 user/addspirit.php:28
 msgid "Delete comment"
 msgstr "Kommentar loeschen"
 
@@ -1759,7 +1759,7 @@ msgstr "Bild löschen"
 msgid "Delete last goal"
 msgstr "Letzten Punkt löschen"
 
-#: admin/dbequalize.php:227
+#: admin/dbequalize.php:230
 msgid "Delete orphan profiles"
 msgstr "Verwaiste Profile loeschen"
 
@@ -1776,7 +1776,7 @@ msgid "Delete scoresheet change history after archiving statistics"
 msgstr ""
 "Änderungsverlauf des Spielberichts nach dem Archivieren der Statistik löschen"
 
-#: admin/dbequalize.php:234
+#: admin/dbequalize.php:237
 msgid "Delete selected"
 msgstr "Ausgewähltes löschen"
 
@@ -1784,7 +1784,7 @@ msgstr "Ausgewähltes löschen"
 msgid "Delete spirit score"
 msgstr "Spirit-Wertung loeschen"
 
-#: mobile/addscoresheet.php:225 user/addscoresheet.php:812
+#: mobile/addscoresheet.php:225 user/addscoresheet.php:822
 msgid "Delete the last goal"
 msgstr "Letzten Punkt löschen"
 
@@ -1809,7 +1809,7 @@ msgstr "Diesen Übersetzungsschlüssel löschen?"
 msgid "Deleted %d event access rights."
 msgstr "%d Event-Zugriffsrechte gelöscht."
 
-#: admin/dbequalize.php:42
+#: admin/dbequalize.php:45
 #, php-format
 msgid "Deleted %d orphan profiles"
 msgstr "%d verwaiste Profile geloescht"
@@ -1895,17 +1895,17 @@ msgstr "Scheibe holen"
 msgid "Dismiss"
 msgstr "Ausblenden"
 
-#: teams.php:357 admin/finalstandings.php:233 lib/standings.functions.php:929
+#: teams.php:357 admin/finalstandings.php:233 lib/standings.functions.php:943
 msgid "Disqualified"
 msgstr "Disqualifiziert"
 
 #: clubcard.php:147 clubcard.php:173 countrycard.php:32 countrycard.php:86
 #: countrycard.php:94 games.php:257 playercard.php:255 playercard.php:334
-#: playercard.php:435 playercard.php:506 teamcard.php:200 teamcard.php:418
-#: teamcard.php:619 teamcard.php:818 teams.php:189 admin/accreditation.php:195
+#: playercard.php:435 playercard.php:506 teamcard.php:200 teamcard.php:420
+#: teamcard.php:621 teamcard.php:820 teams.php:189 admin/accreditation.php:195
 #: admin/accreditation.php:257 admin/addseasonpools.php:277
-#: admin/addseasonpools.php:295 admin/addseasonteams.php:168
-#: admin/dbequalize.php:207 admin/dbequalize.php:246 admin/dbequalize.php:287
+#: admin/addseasonpools.php:295 admin/addseasonteams.php:163
+#: admin/dbequalize.php:210 admin/dbequalize.php:249 admin/dbequalize.php:290
 #: admin/editgame.php:240 admin/privacyplayer.php:86 admin/seasonpoints.php:181
 #: admin/seasonscoresheethistory.php:55 admin/seasonstats.php:33
 #: admin/spirit.php:44 admin/spirit.php:103 admin/spirit.php:152
@@ -2057,11 +2057,11 @@ msgstr ""
 "eines hinzuzufügen."
 
 #: admin/addseasonpools.php:161 admin/addseasonseries.php:20
-#: admin/addseasonteams.php:104 admin/addserieformats.php:10
+#: admin/addseasonteams.php:103 admin/addserieformats.php:10
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
 #: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
-#: admin/translations.php:507 user/respgames.php:220
+#: admin/translations.php:507 user/respgames.php:219
 msgid "Edit"
 msgstr "Ändern"
 
@@ -2115,7 +2115,7 @@ msgstr "Regelvorlagen bearbeiten"
 msgid "Edit side menu links"
 msgstr "Links im Menü ändern"
 
-#: admin/addseasonteams.php:141
+#: admin/addseasonteams.php:136
 msgid "Edit team"
 msgstr "Team ändern"
 
@@ -2177,7 +2177,7 @@ msgstr "Endet"
 msgid "Endzone"
 msgstr "Endzone"
 
-#: user/enrollteam.php:85
+#: user/enrollteam.php:80
 msgid "Enrolled"
 msgstr "Angemeldet"
 
@@ -2185,7 +2185,7 @@ msgstr "Angemeldet"
 msgid "Enrolled teams"
 msgstr "Eingetragene Teams"
 
-#: admin/addseasons.php:451 user/enrollteam.php:74
+#: admin/addseasons.php:451 user/enrollteam.php:69
 msgid "Enrolling ends"
 msgstr "Anmeldung endet"
 
@@ -2227,8 +2227,8 @@ msgstr ""
 "Gib die Spiel-Ref.-Nr. auf dem Spirit-Papierbogen fuer einen Direktlink ein: "
 
 #: scorekeeper/addscoresheet.php:385 user/adddefensesheet.php:192
-#: user/adddefensesheet.php:195 user/addscoresheet.php:639
-#: user/addscoresheet.php:642
+#: user/adddefensesheet.php:195 user/addscoresheet.php:647
+#: user/addscoresheet.php:650
 msgid "Enter the players for this game."
 msgstr "Gib die Spieler fuer dieses Spiel ein."
 
@@ -2240,7 +2240,7 @@ msgstr "Gib unten dein neues Passwort ein."
 msgid "Equalization"
 msgstr "Vereinheitlichung"
 
-#: lib/game.functions.php:1326
+#: lib/game.functions.php:1328
 msgid "Erroneous scoresheet number:"
 msgstr "Falsche Spielberichtsnummer:"
 
@@ -2249,21 +2249,21 @@ msgstr "Falsche Spielberichtsnummer:"
 msgid "Error: Could not save result."
 msgstr "Fehler: Konnte Ergebnis nicht speichern"
 
-#: admin/saveschedule.php:181
+#: admin/saveschedule.php:185
 msgid "Error: unknown event."
 msgstr "Fehler: unbekanntes Ereignis."
 
-#: lib/game.functions.php:2693
+#: lib/game.functions.php:2719
 #, php-format
 msgid "Errors: %s."
 msgstr "Fehler: %s."
 
 #: clubcard.php:173 countrycard.php:86 countrycard.php:94 menufunctions.php:762
 #: playercard.php:255 playercard.php:435 statistics.php:50 statistics.php:103
-#: statistics.php:269 teamcard.php:417 teamcard.php:618
+#: statistics.php:269 teamcard.php:419 teamcard.php:620
 #: admin/accreditation.php:136 admin/addreservation.php:210
-#: admin/apitokens.php:145 admin/dbequalize.php:246 admin/dbequalize.php:287
-#: admin/dbequalize.php:307 admin/privacyplayer.php:86 admin/seasonadmin.php:13
+#: admin/apitokens.php:145 admin/dbequalize.php:249 admin/dbequalize.php:290
+#: admin/dbequalize.php:310 admin/privacyplayer.php:86 admin/seasonadmin.php:13
 #: admin/seasonstats.php:35 lib/search.functions.php:12
 #: lib/search.functions.php:32 lib/search.functions.php:66
 #: lib/search.functions.php:108 lib/search.functions.php:150
@@ -2330,12 +2330,12 @@ msgstr "Turnierlog"
 msgid "Event mandatory"
 msgstr "Turnier/Saison erforderlich"
 
-#: poolstatus.php:25 seriesstatus.php:37 spiritstatus.php:32
+#: index.php:84 poolstatus.php:25 seriesstatus.php:37 spiritstatus.php:32
 #: admin/apitokens.php:28 admin/seasonbanner.php:13 admin/spiritsettings.php:19
 msgid "Event not found"
 msgstr "Ereignis nicht gefunden"
 
-#: lib/game.functions.php:1338 lib/scoresheethistory.functions.php:786
+#: lib/game.functions.php:1340 lib/scoresheethistory.functions.php:792
 msgid "Event played."
 msgstr "Turnier/Saison beendet."
 
@@ -2359,7 +2359,7 @@ msgstr "Das zu exportierende Turnier existiert nicht"
 msgid "Event to replace doesn't exist"
 msgstr "Zu ersetzendes Turnier existiert nicht"
 
-#: playercard.php:334 playercard.php:506 teamcard.php:510 teamcard.php:707
+#: playercard.php:334 playercard.php:506 teamcard.php:512 teamcard.php:709
 msgid "Event type"
 msgstr "Turniertyp"
 
@@ -2468,7 +2468,7 @@ msgstr "Fairness (ihre)"
 msgid "Feed in the data for your game responsibilities"
 msgstr "Dateneingabe für Spielverantwortliche:"
 
-#: user/respgames.php:140
+#: user/respgames.php:139
 msgid ""
 "Feeding in the scoresheet requires JavaScript. Please enable JavaScript in "
 "your browser to continue!"
@@ -2492,7 +2492,7 @@ msgstr "Suche Koordinaten"
 #: lib/reservation.functions.php:30 lib/reservation.functions.php:36
 #: lib/search.functions.php:303 lib/search.functions.php:377
 #: lib/timetable.functions.php:574 user/adddefensesheet.php:211
-#: user/addscoresheet.php:671
+#: user/addscoresheet.php:681
 msgid "Field"
 msgstr "Feld"
 
@@ -2513,13 +2513,13 @@ msgstr "Platzreservierungen"
 msgid "Fields"
 msgstr "Felder"
 
-#: lib/club.functions.php:211 lib/player.functions.php:1171
-#: lib/season.functions.php:1306 lib/team.functions.php:1419
+#: lib/club.functions.php:211 lib/player.functions.php:1174
+#: lib/season.functions.php:1345 lib/team.functions.php:1420
 msgid "File is not supported image format"
 msgstr "Dateiformat wird nicht unterstützt"
 
-#: lib/club.functions.php:203 lib/player.functions.php:1163
-#: lib/season.functions.php:1301 lib/team.functions.php:1411
+#: lib/club.functions.php:203 lib/player.functions.php:1166
+#: lib/season.functions.php:1340 lib/team.functions.php:1412
 msgid "File is too large"
 msgstr "Datei ist zu groß"
 
@@ -2540,7 +2540,7 @@ msgstr "Gib die Extra-Email-Adresse unten an"
 msgid "Fill in the registration information in the fields below."
 msgstr "Fülle das Formular mit den Registrierungsdaten aus."
 
-#: user/adddefensesheet.php:323 user/addscoresheet.php:815
+#: user/adddefensesheet.php:323 user/addscoresheet.php:825
 msgid "Fill in the scoresheet"
 msgstr "Fuellen Sie den Spielbericht aus"
 
@@ -2548,7 +2548,7 @@ msgstr "Fuellen Sie den Spielbericht aus"
 msgid "Filling instructions:"
 msgstr "Anleitung:"
 
-#: lib/scoresheethistory.functions.php:567 user/scoresheethistory.php:237
+#: lib/scoresheethistory.functions.php:573 user/scoresheethistory.php:237
 msgid "Final"
 msgstr "Endstand"
 
@@ -2556,7 +2556,7 @@ msgstr "Endstand"
 msgid "Final result"
 msgstr "Endergebnis"
 
-#: user/addresult.php:35 user/addscoresheet.php:616
+#: user/addresult.php:35 user/addscoresheet.php:620
 #, php-format
 msgid "Final result saved: %s - %s."
 msgstr "Endergebnis gespeichert: %s - %s."
@@ -2565,7 +2565,7 @@ msgstr "Endergebnis gespeichert: %s - %s."
 #: cust/gummis/pdfscoresheet.php:721 cust/slkl/pdfscoresheet.php:606
 #: cust/wfdf/pdfscoresheet.php:1079 cust/wfdf/pdfscoresheet.php:1188
 #: cust/wfdf/pdfscoresheet.php:1376 cust/windmill/pdfscoresheet.php:623
-#: user/adddefensesheet.php:303 user/addscoresheet.php:762
+#: user/adddefensesheet.php:303 user/addscoresheet.php:772
 msgid "Final score"
 msgstr "Endergebnis"
 
@@ -2679,7 +2679,7 @@ msgstr ""
 "Falls neue Spieler hinzugefügt werden, muss die Akkreditierungs-ID oder das "
 "Geburtsdatum aufgeschrieben werden"
 
-#: admin/editgame.php:287 lib/scoresheethistory.functions.php:643
+#: admin/editgame.php:287 lib/scoresheethistory.functions.php:649
 #: user/scoresheethistory.php:470
 msgid "Forfeit"
 msgstr "Kampflos"
@@ -2741,19 +2741,19 @@ msgid "From"
 msgstr "Von"
 
 #: admin/poolmoves.php:227 admin/poolmoves.php:268 admin/poolmoves.php:298
-#: admin/poolmoves.php:304 admin/poolmoves.php:347 admin/seasonmoves.php:159
-#: admin/seasonstandings.php:474 admin/serieteams.php:189
-#: lib/swissdraw.functions.php:209 plugins/reassign_playoffpools.php:53
+#: admin/poolmoves.php:304 admin/poolmoves.php:347 admin/seasonmoves.php:164
+#: admin/seasonstandings.php:474 admin/serieteams.php:195
+#: lib/swissdraw.functions.php:213 plugins/reassign_playoffpools.php:53
 msgid "From pool"
 msgstr "Von Gruppe"
 
-#: admin/poolmoves.php:299 admin/poolmoves.php:303 admin/serieteams.php:190
-#: lib/swissdraw.functions.php:210 plugins/reassign_playoffpools.php:54
+#: admin/poolmoves.php:299 admin/poolmoves.php:303 admin/serieteams.php:196
+#: lib/swissdraw.functions.php:214 plugins/reassign_playoffpools.php:54
 msgid "From pos."
 msgstr "Von Pos."
 
 #: admin/poolmoves.php:228 admin/poolmoves.php:269 admin/poolmoves.php:348
-#: admin/seasonmoves.php:160
+#: admin/seasonmoves.php:165
 msgid "From position"
 msgstr "Von Position"
 
@@ -2765,11 +2765,11 @@ msgstr "Von/bis"
 msgid "Frontpage"
 msgstr "Titelseite"
 
-#: teamcard.php:427 teamcard.php:518 teamcard.php:628 teamcard.php:715
+#: teamcard.php:429 teamcard.php:520 teamcard.php:630 teamcard.php:717
 msgid "GA Avg."
 msgstr "GT im Schnitt"
 
-#: teamcard.php:425 teamcard.php:516 teamcard.php:626 teamcard.php:713
+#: teamcard.php:427 teamcard.php:518 teamcard.php:628 teamcard.php:715
 msgid "GF Avg."
 msgstr "GP im Schnitt"
 
@@ -2804,7 +2804,12 @@ msgstr "Spiel %1$s um %2$s (%3$s) kollidiert mit %4$s um %5$s (%6$s)."
 msgid "Game %1$s at %2$s conflicts with %3$s at %4$s in %5$s."
 msgstr "Spiel %1$s um %2$s kollidiert mit %3$s um %4$s in %5$s."
 
-#: admin/saveschedule.php:83
+#: admin/saveschedule.php:76
+#, php-format
+msgid "Game %s belongs to another event and was left unchanged."
+msgstr ""
+
+#: admin/saveschedule.php:87
 #, php-format
 msgid "Game %s exceeds the reserved end time %s."
 msgstr "Spiel %s ueberschreitet die reservierte Endzeit %s."
@@ -2822,7 +2827,7 @@ msgstr "Spielbestaetigung"
 msgid "Game card"
 msgstr "Spielbogen"
 
-#: lib/scoresheethistory.functions.php:618 scorekeeper/addscoresheet.php:311
+#: lib/scoresheethistory.functions.php:624 scorekeeper/addscoresheet.php:311
 #: scorekeeper/addscoresheet.php:364 timekeeper/index.php:162
 #: timekeeper/index.php:186 user/scoresheethistory.php:479
 msgid "Game clock"
@@ -2836,7 +2841,7 @@ msgstr "Zeitgrenzen der Spieluhr"
 msgid "Game events"
 msgstr "Spielereignisse"
 
-#: lib/scoresheethistory.functions.php:697
+#: lib/scoresheethistory.functions.php:703
 #, php-format
 msgid "Game events removed: %d"
 msgstr "Entfernte Spielereignisse: %d"
@@ -2858,11 +2863,11 @@ msgstr "Das Spiel wurde bereits gespielt. Aktuelles Ergebnis:"
 msgid "Game has ended"
 msgstr "Spiel beendet"
 
-#: lib/game.functions.php:1330
+#: lib/game.functions.php:1332
 msgid "Game has no pool."
 msgstr "Spiel ohne Gruppe."
 
-#: gameplay.php:660 teamcard.php:810 lib/timetable.functions.php:693
+#: gameplay.php:660 teamcard.php:812 lib/timetable.functions.php:693
 msgid "Game history"
 msgstr "Frühere Spiele"
 
@@ -2896,14 +2901,14 @@ msgstr "Spiel nicht gefunden"
 msgid "Game not started yet."
 msgstr "Spiel hat noch nicht begonnen."
 
-#: gameplay.php:647 lib/scoresheethistory.functions.php:691
+#: gameplay.php:647 lib/scoresheethistory.functions.php:697
 #: mobile/addcomment.php:10 mobile/addscoresheet.php:223
 #: scorekeeper/addcomment.php:28 scorekeeper/addscoresheet.php:508
-#: user/addscoresheet.php:682
+#: user/addscoresheet.php:692
 msgid "Game note"
 msgstr "Spielnotiz"
 
-#: lib/scoresheethistory.functions.php:688
+#: lib/scoresheethistory.functions.php:694
 msgid "Game note removed"
 msgstr "Spielnotiz entfernt"
 
@@ -2916,7 +2921,7 @@ msgstr "Spielnummer vom Spielbericht"
 msgid "Game official"
 msgstr "Spiel-Offizieller"
 
-#: user/addscoresheet.php:806
+#: user/addscoresheet.php:816
 msgid "Game ongoing"
 msgstr "Spiel läuft"
 
@@ -2924,7 +2929,7 @@ msgstr "Spiel läuft"
 msgid "Game ongoing, update scores"
 msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren"
 
-#: user/addresult.php:48 user/addscoresheet.php:611
+#: user/addresult.php:48 user/addscoresheet.php:615
 #, php-format
 msgid "Game ongoing. Current score: %s - %s."
 msgstr "Spiel läuft, aktueller Spielstand: %s - %s."
@@ -2963,7 +2968,7 @@ msgstr "Spielergebnis zu %s - %s geändert!"
 msgid "Game rounds"
 msgstr "Spielrunden"
 
-#: user/addscoresheet.php:662 user/respgames.php:26
+#: user/addscoresheet.php:672 user/respgames.php:26
 msgid "Game scoresheet"
 msgstr "Spielbericht"
 
@@ -2991,8 +2996,8 @@ msgstr "Spielstatistik"
 
 #: gameplay.php:34 gameplay.php:47 poolstatus.php:906
 #: lib/timetable.functions.php:704 mobile/gameplay.php:15
-#: scorekeeper/gameplay.php:55 user/addscoresheet.php:621
-#: user/respgames.php:200
+#: scorekeeper/gameplay.php:55 user/addscoresheet.php:625
+#: user/respgames.php:199
 msgid "Gameplay"
 msgstr "Spielverlauf"
 
@@ -3001,13 +3006,13 @@ msgid "Gameplay summary"
 msgstr "Zusammenfassung des Spielverlaufs"
 
 #: clubcard.php:159 clubcard.php:188 countrycard.php:44 countrycard.php:71
-#: defensestatus.php:74 defensestatus.php:76 gamecard.php:231 gamecard.php:237
+#: defensestatus.php:76 defensestatus.php:78 gamecard.php:231 gamecard.php:237
 #: menufunctions.php:607 menufunctions.php:645 menufunctions.php:767
 #: menufunctions.php:790 playerlist.php:35 poolstatus.php:160
 #: poolstatus.php:186 poolstatus.php:237 poolstatus.php:253 poolstatus.php:298
 #: seriesstatus.php:308 seriesstatus.php:328 seriesstatus.php:350
 #: spiritstatus.php:109 spiritstatus.php:111 teamcard.php:123 teamcard.php:168
-#: teamcard.php:278 teams.php:127 teams.php:179 teams.php:399
+#: teamcard.php:280 teams.php:127 teams.php:179 teams.php:399
 #: admin/accreditation.php:195 admin/accreditation.php:257
 #: admin/editstanding.php:61 admin/poolgames.php:17 admin/reservations.php:119
 #: admin/seasonadmin.php:98 admin/seasongames.php:21 admin/seasonseries.php:124
@@ -3047,7 +3052,7 @@ msgstr "Ergebnisse fehlen für"
 msgid "Games to generate"
 msgstr "Zu generierende Spiele"
 
-#: admin/serieteams.php:234 plugins/reassign_playoffpools.php:90
+#: admin/serieteams.php:240 plugins/reassign_playoffpools.php:90
 msgid "Games to move"
 msgstr "Mitzunehmende Spiele"
 
@@ -3081,16 +3086,16 @@ msgstr ""
 "Klicke auf die untenstehenden Links, um komma-getrennte UTF-8-codierte "
 "Dateien zu erhalten."
 
-#: user/addscoresheet.php:819
+#: user/addscoresheet.php:829
 msgid "Give XX as the assist in Callahan goals"
 msgstr "Trage bei Callahan-Punkten XX als Assist ein"
 
-#: teamcard.php:314 admin/spirit.php:49 admin/spirit.php:108
+#: teamcard.php:316 admin/spirit.php:49 admin/spirit.php:108
 #: admin/spirit.php:157 admin/spirit.php:285
 msgid "Given by"
 msgstr "Vergeben von"
 
-#: teamcard.php:358 admin/spirit.php:48 admin/spirit.php:107
+#: teamcard.php:360 admin/spirit.php:48 admin/spirit.php:107
 #: admin/spirit.php:156 admin/spirit.php:284 user/addspirit.php:244
 msgid "Given for"
 msgstr "Vergeben an"
@@ -3130,7 +3135,7 @@ msgstr "Punkte"
 msgid "Goals against"
 msgstr "Gegenpunkte"
 
-#: teamcard.php:427 teamcard.php:518 teamcard.php:628 teamcard.php:715
+#: teamcard.php:429 teamcard.php:520 teamcard.php:630 teamcard.php:717
 msgid "Goals against avg."
 msgstr "Gegenpunkte im Schnitt"
 
@@ -3142,7 +3147,7 @@ msgstr "Punktedifferenz"
 msgid "Goals for"
 msgstr "Punkte"
 
-#: teamcard.php:425 teamcard.php:516 teamcard.php:626 teamcard.php:713
+#: teamcard.php:427 teamcard.php:518 teamcard.php:628 teamcard.php:715
 msgid "Goals for avg."
 msgstr "Punkte im Schnitt"
 
@@ -3167,7 +3172,7 @@ msgid "Goals scored"
 msgstr "Erzielte Punkte"
 
 #: statistics.php:50 statistics.php:269 lib/pool.functions.php:299
-#: lib/standings.functions.php:933
+#: lib/standings.functions.php:947
 msgid "Gold"
 msgstr "Gold"
 
@@ -3206,13 +3211,13 @@ msgid "Gummis"
 msgstr "Gummis"
 
 #: gameplay.php:276 admin/addseasonpools.php:435 admin/addserieformats.php:125
-#: lib/scoresheethistory.functions.php:628
-#: lib/scoresheethistory.functions.php:630 lib/timekeeper.functions.php:17
+#: lib/scoresheethistory.functions.php:634
+#: lib/scoresheethistory.functions.php:636 lib/timekeeper.functions.php:17
 #: lib/timekeeper.functions.php:37 mobile/addhalftime.php:33
 #: mobile/addscoresheet.php:218 mobile/gameplay.php:39
 #: scorekeeper/addscoresheet.php:502 scorekeeper/endgame.php:102
 #: scorekeeper/gameplay.php:79 timekeeper/index.php:46
-#: user/addscoresheet.php:319
+#: user/addscoresheet.php:322
 msgid "Halftime"
 msgstr "Halbzeit"
 
@@ -3220,7 +3225,7 @@ msgstr "Halbzeit"
 msgid "Halftime at point"
 msgstr "Halbzeit bei Punkt"
 
-#: lib/game.functions.php:808 lib/timekeeper.functions.php:47
+#: lib/game.functions.php:810 lib/timekeeper.functions.php:47
 #: scorekeeper/addscoresheet.php:503 timekeeper/index.php:65
 #: user/scoresheethistory.php:461
 msgid "Halftime cap"
@@ -3230,7 +3235,7 @@ msgstr "Halbzeit-Zeitgrenze"
 msgid "Halftime cap reached"
 msgstr "Halbzeit-Zeitgrenze erreicht"
 
-#: user/adddefensesheet.php:292 user/addscoresheet.php:748
+#: user/adddefensesheet.php:292 user/addscoresheet.php:758
 #: user/scoresheethistory.php:450
 msgid "Halftime ended at"
 msgstr "Halbzeit endete bei"
@@ -3268,12 +3273,12 @@ msgstr "Hilfe"
 msgid "Hide"
 msgstr "Verstecken"
 
-#: user/respgames.php:118
+#: user/respgames.php:117
 msgid "Hide future games"
 msgstr "Zukünftige Spiele verbergen"
 
 #: admin/seasongames.php:137 scorekeeper/respgames.php:85
-#: user/respgames.php:112
+#: user/respgames.php:111
 msgid "Hide played games"
 msgstr "Beendete Spiele verstecken"
 
@@ -3310,12 +3315,12 @@ msgid "Highlighted: the last change falls outside the scheduled day."
 msgstr ""
 "Hervorgehoben: die letzte Änderung liegt außerhalb des geplanten Tages."
 
-#: teamcard.php:280
+#: teamcard.php:282
 msgid "Historical avg"
 msgstr "Historischer Schnitt"
 
 #: clubcard.php:171 countrycard.php:84 playercard.php:250 playercard.php:430
-#: teamcard.php:410 teamcard.php:611
+#: teamcard.php:412 teamcard.php:613
 msgid "History"
 msgstr "Historie"
 
@@ -3333,11 +3338,11 @@ msgstr "Historie"
 #: cust/windmill/pdfscoresheet.php:452 cust/windmill/pdfscoresheet.php:483
 #: cust/windmill/pdfscoresheet.php:569 cust/windmill/pdfscoresheet.php:594
 #: user/adddefensesheet.php:243 user/adddefensesheet.php:356
-#: user/addscoresheet.php:632
+#: user/addscoresheet.php:640
 msgid "Home"
 msgstr "Heim"
 
-#: lib/scoresheethistory.functions.php:656
+#: lib/scoresheethistory.functions.php:662
 msgid "Home and away teams swapped"
 msgstr "Heim- und Gastteam getauscht"
 
@@ -3352,8 +3357,8 @@ msgstr "Spirit-Unterbrechungen Heimteam"
 #: admin/editgame.php:203 cust/bula/pdfscoresheet.php:71
 #: cust/default/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:69
 #: cust/slkl/pdfscoresheet.php:68 cust/windmill/pdfscoresheet.php:71
-#: lib/scoresheethistory.functions.php:708 user/adddefensesheet.php:207
-#: user/addscoresheet.php:667
+#: lib/scoresheethistory.functions.php:714 user/adddefensesheet.php:207
+#: user/addscoresheet.php:677
 msgid "Home team"
 msgstr "Heimteam"
 
@@ -3361,7 +3366,7 @@ msgstr "Heimteam"
 msgid "Home team assignment"
 msgstr "Zuordnung Heimteam"
 
-#: admin/editgame.php:277 lib/scoresheethistory.functions.php:638
+#: admin/editgame.php:277 lib/scoresheethistory.functions.php:644
 #: user/scoresheethistory.php:204
 msgid "Home team forfeited"
 msgstr "Heimteam kampflos"
@@ -3458,9 +3463,9 @@ msgid ""
 msgstr ""
 "Die Bildauflösung ist zu groß. Maximal %1$d x %2$d Pixel und %3$d Megapixel."
 
-#: lib/club.functions.php:234 lib/player.functions.php:1194
-#: lib/season.functions.php:1334 lib/season.functions.php:1338
-#: lib/team.functions.php:1443
+#: lib/club.functions.php:234 lib/player.functions.php:1197
+#: lib/season.functions.php:1373 lib/season.functions.php:1377
+#: lib/team.functions.php:1444
 msgid "Image upload failed because the server could not process the image."
 msgstr ""
 "Das Hochladen des Bildes ist fehlgeschlagen, weil der Server das Bild nicht "
@@ -3500,7 +3505,7 @@ msgstr ""
 msgid "In"
 msgstr "In"
 
-#: user/adddefensesheet.php:325 user/addscoresheet.php:817
+#: user/adddefensesheet.php:325 user/addscoresheet.php:827
 msgid ""
 "In addition to the Tab key, you can use the + key to move between fields and "
 "the Enter key to select a radio button."
@@ -3586,10 +3591,11 @@ msgstr "Unzureichende Rechte."
 
 #: admin/accreditation.php:24 admin/addlocations.php:20 admin/locations.php:13
 #: admin/reservations.php:26 admin/seasonadmin.php:17 admin/seasonbanner.php:20
-#: admin/seasongames.php:24 admin/seasonpools.php:17
+#: admin/seasongames.php:24 admin/seasonmoves.php:30 admin/seasonpools.php:17
 #: admin/seasonscoresheethistory.php:15 admin/seasonseries.php:16
-#: admin/seasonstandings.php:19 admin/seasonteams.php:19 admin/spirit.php:689
-#: admin/spiritsettings.php:12 admin/tdtools.php:237 admin/translations.php:485
+#: admin/seasonstandings.php:19 admin/seasonteams.php:19
+#: admin/serieteams.php:33 admin/spirit.php:689 admin/spiritsettings.php:12
+#: admin/tdtools.php:237 admin/translations.php:485
 #: cust/slkl/mass-accreditation.php:22 spiritkeeper/editgame.php:24
 #: spiritkeeper/editgame.php:43 user/addspirit.php:76 user/addspirit.php:91
 msgid "Insufficient user rights"
@@ -3720,19 +3726,19 @@ msgstr "Trikotnummer"
 msgid "Jersey#"
 msgstr "Trikot#"
 
-#: admin/dbequalize.php:223
+#: admin/dbequalize.php:226
 msgid "Join selected"
 msgstr "Ausgewähltes zusammenfügen"
 
-#: admin/seasongames.php:142 mobile/respgames.php:72 user/respgames.php:127
+#: admin/seasongames.php:142 mobile/respgames.php:72 user/respgames.php:126
 msgid "Just display values"
 msgstr "Nur Werte anzeigen"
 
-#: admin/dbequalize.php:367 admin/dbequalize.php:370
+#: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Keep"
 msgstr "Behalten"
 
-#: admin/dbequalize.php:393
+#: admin/dbequalize.php:396
 msgid "Keep (most referred)"
 msgstr "Behalten (am haeufigsten referenziert)"
 
@@ -3754,7 +3760,7 @@ msgstr "Sprache"
 msgid "Last Name"
 msgstr "Nachname"
 
-#: user/addscoresheet.php:825
+#: user/addscoresheet.php:835
 #, php-format
 msgid "Last changed: %s"
 msgstr "Zuletzt geändert: %s"
@@ -3842,7 +3848,7 @@ msgstr "Verknüpfte Spielerzeilen: %d"
 msgid "Links"
 msgstr "Links"
 
-#: admin/dbequalize.php:200
+#: admin/dbequalize.php:203
 msgid "List"
 msgstr "Liste"
 
@@ -3969,7 +3975,7 @@ msgstr "Mail an die Teams in"
 msgid "Maintenance"
 msgstr "Wartung"
 
-#: admin/serieteams.php:256
+#: admin/serieteams.php:262
 msgid "Make this pool visible on menu"
 msgstr "Diesen Pool im Menü sichtbar machen"
 
@@ -3990,7 +3996,7 @@ msgstr ""
 "Bewertungsmodus auf Ereignisebene in einer eigenen Einstellungsansicht."
 
 #: admin/seasonpools.php:244 admin/seasonstandings.php:532
-#: admin/serieteams.php:232
+#: admin/serieteams.php:238
 msgid "Manage moves"
 msgstr "Transfers verwalten"
 
@@ -4014,11 +4020,11 @@ msgstr "Markiere, welches Team in der Offense beginnt."
 msgid "Mass accreditation"
 msgstr "Massen-Akkreditierung"
 
-#: admin/seasongames.php:145 mobile/respgames.php:74 user/respgames.php:129
+#: admin/seasongames.php:145 mobile/respgames.php:74 user/respgames.php:128
 msgid "Mass input"
 msgstr "Masseneingabe"
 
-#: lib/scoresheethistory.functions.php:694
+#: lib/scoresheethistory.functions.php:700
 msgid "Media added"
 msgstr "Medien hinzugefügt"
 
@@ -4026,7 +4032,7 @@ msgstr "Medien hinzugefügt"
 msgid "Media owner"
 msgstr "Medienbesitzer"
 
-#: lib/scoresheethistory.functions.php:694
+#: lib/scoresheethistory.functions.php:700
 msgid "Media removed"
 msgstr "Medien entfernt"
 
@@ -4051,7 +4057,7 @@ msgstr "Menü-Link"
 msgid "Menu mail"
 msgstr "Menü-E-Mail"
 
-#: admin/dbequalize.php:225
+#: admin/dbequalize.php:228
 msgid ""
 "Merge selected duplicate profiles into the most referred (stats + players) "
 "profile with the same name."
@@ -4059,7 +4065,7 @@ msgstr ""
 "Fuehre die ausgewaehlten doppelten Profile in das am haeufigsten "
 "referenzierte Profil (Statistiken + Spieler) mit demselben Namen zusammen."
 
-#: admin/dbequalize.php:226
+#: admin/dbequalize.php:229
 msgid "Merge selected profiles to most referred"
 msgstr ""
 "Ausgewaehlte Profile mit dem am haeufigsten referenzierten zusammenfuehren"
@@ -4080,8 +4086,8 @@ msgstr "Fehlende IDs"
 msgid "Missing and duplicate shirt numbers"
 msgstr "Fehlende und doppelte Trikotnummern"
 
-#: lib/club.functions.php:215 lib/player.functions.php:1175
-#: lib/season.functions.php:1310 lib/team.functions.php:1423
+#: lib/club.functions.php:215 lib/player.functions.php:1178
+#: lib/season.functions.php:1349 lib/team.functions.php:1424
 msgid "Missing image processing support on the server."
 msgstr "Auf dem Server fehlt die Unterstuetzung fuer Bildverarbeitung."
 
@@ -4148,16 +4154,16 @@ msgstr "Mo"
 msgid "Monday"
 msgstr "Montag"
 
-#: admin/seasonmoves.php:127
+#: admin/seasonmoves.php:132
 msgid "Move from"
 msgstr "Transfer von"
 
 #: admin/addseasonpools.php:320 admin/poolmoves.php:231
-#: admin/seasonmoves.php:164
+#: admin/seasonmoves.php:169
 msgid "Move games"
 msgstr "Spiele mitnehmen"
 
-#: lib/team.functions.php:507 lib/team.functions.php:544
+#: lib/team.functions.php:508 lib/team.functions.php:545
 msgid "Move not allowed. Game already played!"
 msgstr "Transfer nicht erlaubt. Spiel ist schon gespielt!"
 
@@ -4165,7 +4171,7 @@ msgstr "Transfer nicht erlaubt. Spiel ist schon gespielt!"
 msgid "Move teams"
 msgstr "Teams transferieren"
 
-#: admin/seasonmoves.php:125
+#: admin/seasonmoves.php:130
 msgid "Move to"
 msgstr "Transfer nach"
 
@@ -4215,17 +4221,17 @@ msgstr "HINWEIS"
 #: admin/addseasonpools.php:239 admin/addseasonpools.php:272
 #: admin/addseasonpools.php:413 admin/addseasons.php:100
 #: admin/addseasons.php:329 admin/addseasonseries.php:104
-#: admin/addseasonteams.php:148 admin/addserieformats.php:118
+#: admin/addseasonteams.php:143 admin/addserieformats.php:118
 #: admin/addtimekeepertemplate.php:99 admin/adduser.php:121 admin/clubs.php:58
 #: admin/clubs.php:87 admin/clubs.php:93 admin/dbadmin.php:100
-#: admin/dbbackup.php:103 admin/dbequalize.php:268 admin/dbequalize.php:287
-#: admin/dbequalize.php:307 admin/dbequalize.php:367 admin/dbequalize.php:370
+#: admin/dbbackup.php:103 admin/dbequalize.php:271 admin/dbequalize.php:290
+#: admin/dbequalize.php:310 admin/dbequalize.php:370 admin/dbequalize.php:373
 #: admin/editgame.php:265 admin/locations.php:52 admin/privacyplayer.php:86
 #: admin/privacyuser.php:88 admin/seasonpoints.php:194
 #: admin/seasonpools.php:119 admin/seasons.php:91 admin/seasonseries.php:76
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seasonteams.php:174
 #: admin/serieformats.php:29 admin/seriesseeding.php:46
-#: admin/serieteams.php:150 admin/serverconf.php:404
+#: admin/serieteams.php:156 admin/serverconf.php:404
 #: admin/timekeepertemplates.php:31 cust/bula/pdfscoresheet.php:141
 #: cust/bula/pdfscoresheet.php:151 cust/bula/pdfscoresheet.php:261
 #: cust/default/pdfscoresheet.php:178 cust/default/pdfscoresheet.php:188
@@ -4251,8 +4257,8 @@ msgid "Name cannot be empty"
 msgstr "Name darf nicht leer sein"
 
 #: admin/poolmoves.php:232 admin/poolmoves.php:271 admin/poolmoves.php:300
-#: admin/poolmoves.php:302 admin/poolmoves.php:349 admin/serieteams.php:194
-#: lib/swissdraw.functions.php:214 plugins/reassign_playoffpools.php:58
+#: admin/poolmoves.php:302 admin/poolmoves.php:349 admin/serieteams.php:200
+#: lib/swissdraw.functions.php:218 plugins/reassign_playoffpools.php:58
 msgid "Name in Schedule"
 msgstr "Name im Spielplan"
 
@@ -4304,7 +4310,7 @@ msgstr "Neues Bild"
 msgid "New licensed players added:"
 msgstr "Neue lizenzierte Spieler hinzugefuegt:"
 
-#: admin/dbequalize.php:229
+#: admin/dbequalize.php:232
 msgid "New name"
 msgstr "Neuer Name"
 
@@ -4360,11 +4366,11 @@ msgstr "Für die Teamerstellung sind keine Länder verfügbar."
 msgid "No current events are available."
 msgstr "Keine aktuellen Turniere verfügbar."
 
-#: defensestatus.php:138
+#: defensestatus.php:140
 msgid "No defence data available for the selected filter."
 msgstr "Keine Defense-Daten fuer den ausgewaehlten Filter verfuegbar."
 
-#: lib/spirit.functions.php:827
+#: lib/spirit.functions.php:828
 msgid "No division"
 msgstr "Keine Division"
 
@@ -4379,11 +4385,11 @@ msgstr "Keine Klassen definiert. Erzeugen Sie zunächst mindestens eine Klasse."
 msgid "No divisions selected!"
 msgstr "Keine Klasse/Liga ausgewählt!"
 
-#: user/enrollteam.php:70
+#: user/enrollteam.php:65
 msgid "No divisions."
 msgstr "Keine Klassen/Ligen."
 
-#: admin/dbequalize.php:368
+#: admin/dbequalize.php:371
 msgid "No duplicate profiles found"
 msgstr "Keine doppelten Profile gefunden"
 
@@ -4403,7 +4409,7 @@ msgstr "Keine Kampflos-Spiele gefunden."
 msgid "No game clock"
 msgstr "Keine Spieluhr"
 
-#: mobile/respgames.php:66 user/respgames.php:137
+#: mobile/respgames.php:66 user/respgames.php:136
 msgid "No game responsibilities"
 msgstr "Keine Spielverantwortlichkeiten"
 
@@ -4412,11 +4418,11 @@ msgstr "Keine Spielverantwortlichkeiten"
 msgid "No games"
 msgstr "Keine Spiele"
 
-#: admin/serieteams.php:252 plugins/reassign_playoffpools.php:96
+#: admin/serieteams.php:258 plugins/reassign_playoffpools.php:96
 msgid "No games to move"
 msgstr "Keine Spiele zum Mitnehmen"
 
-#: lib/game.functions.php:1341
+#: lib/game.functions.php:1343
 msgid "No goals."
 msgstr "Keine Punkte."
 
@@ -4425,7 +4431,7 @@ msgstr "Keine Punkte."
 msgid "No image"
 msgstr "Kein Bild"
 
-#: lib/season.functions.php:1297
+#: lib/season.functions.php:1336
 msgid "No image selected."
 msgstr "Kein Bild ausgewählt."
 
@@ -4434,7 +4440,7 @@ msgstr "Kein Bild ausgewählt."
 msgid "No importable columns for %s."
 msgstr "Keine importierbaren Spalten für %s."
 
-#: user/respgames.php:169
+#: user/respgames.php:168
 msgid "No location"
 msgstr "Kein Ort"
 
@@ -4446,7 +4452,7 @@ msgstr "Keine fehlenden Trikotnummern gefunden."
 msgid "No name"
 msgstr "Kein Name"
 
-#: admin/dbequalize.php:44
+#: admin/dbequalize.php:47
 msgid "No orphan profiles found"
 msgstr "Keine verwaisten Profile gefunden"
 
@@ -4507,7 +4513,7 @@ msgstr "Kein Änderungsverlauf des Spielberichts gefunden."
 msgid "No spirit scores yet."
 msgstr "Noch keine Spirit-Wertungen."
 
-#: lib/spirit.functions.php:11
+#: lib/spirit.functions.php:12
 msgid "No spirit scoring"
 msgstr "Keine Spirit-Wertung"
 
@@ -4536,7 +4542,7 @@ msgstr ""
 "Im ausgewählten Turnier sind mit deinen aktuellen Rechten keine Teams für "
 "die Spirit-Eingabe verfügbar."
 
-#: admin/serieteams.php:152
+#: admin/serieteams.php:158
 msgid "No teams without a pool"
 msgstr "Kein Team ohne Gruppe"
 
@@ -4548,7 +4554,7 @@ msgstr "Kein Token gelöscht."
 msgid "No tokens created."
 msgstr "Keine Tokens erstellt."
 
-#: admin/editgame.php:276 lib/scoresheethistory.functions.php:637
+#: admin/editgame.php:276 lib/scoresheethistory.functions.php:643
 #: lib/translation.functions.php:119 user/scoresheethistory.php:75
 #: user/scoresheethistory.php:203 user/scoresheethistory.php:519
 #: user/scoresheethistory.php:707
@@ -4571,8 +4577,8 @@ msgstr "Unbenannt"
 #: mobile/addscoresheet.php:90 mobile/addscoresheet.php:97
 #: mobile/addscoresheet.php:105 mobile/addscoresheet.php:113
 #: user/adddefensesheet.php:165 user/adddefensesheet.php:174
-#: user/addscoresheet.php:414 user/addscoresheet.php:422
-#: user/addscoresheet.php:451 user/addscoresheet.php:459
+#: user/addscoresheet.php:417 user/addscoresheet.php:425
+#: user/addscoresheet.php:454 user/addscoresheet.php:462
 msgid "Not on the roster"
 msgstr "nicht auf dem Spielerliste"
 
@@ -4633,7 +4639,7 @@ msgid "One simple score"
 msgstr "Eine einfache Bewertung"
 
 #: poolstatus.php:913 poolstatus.php:915 admin/seasongames.php:190
-#: lib/scoresheethistory.functions.php:566 lib/timetable.functions.php:711
+#: lib/scoresheethistory.functions.php:572 lib/timetable.functions.php:711
 #: lib/timetable.functions.php:713 scorekeeper/respgames.php:193
 #: user/scoresheethistory.php:234
 msgid "Ongoing"
@@ -4699,7 +4705,7 @@ msgstr ""
 "Schuldzuweisung)."
 
 #: mobile/addcomment.php:38 scorekeeper/addcomment.php:37
-#: user/addscoresheet.php:686
+#: user/addscoresheet.php:696
 msgid "Optional - note unusual events or interruptions."
 msgstr "Optional: Ungewoehnliche Ereignisse oder Unterbrechungen notieren."
 
@@ -4802,7 +4808,7 @@ msgstr ""
 msgid "Password reset link sent."
 msgstr "Link zum Zuruecksetzen des Passworts gesendet."
 
-#: lib/user.functions.php:2154
+#: lib/user.functions.php:2158
 msgid "Password reset request for Ultiorganizer"
 msgstr "Anfrage zum Zuruecksetzen des Passworts fuer Ultiorganizer"
 
@@ -4818,7 +4824,7 @@ msgstr "Passwörter stimmen nicht überein"
 msgid "Pause"
 msgstr "Pause"
 
-#: lib/scoresheethistory.functions.php:614 scorekeeper/addscoresheet.php:348
+#: lib/scoresheethistory.functions.php:620 scorekeeper/addscoresheet.php:348
 #: scorekeeper/addspirittimeouts.php:104
 msgid "Pause game clock"
 msgstr "Spieluhr anhalten"
@@ -4905,7 +4911,7 @@ msgstr "Gespielt"
 msgid "Played games"
 msgstr "Ergebnisse"
 
-#: defensestatus.php:62 defensestatus.php:64 gamecard.php:211 gamecard.php:217
+#: defensestatus.php:64 defensestatus.php:66 gamecard.php:211 gamecard.php:217
 #: gameplay.php:722 gameplay.php:724 poolstatus.php:160 poolstatus.php:186
 #: poolstatus.php:237 poolstatus.php:253 scorestatus.php:68 scorestatus.php:70
 #: seriesstatus.php:308 seriesstatus.php:328 admin/accreditation.php:96
@@ -4913,22 +4919,22 @@ msgstr "Ergebnisse"
 #: admin/accreditation.php:195 admin/accreditation.php:257
 #: cust/default/pdfscoresheet.php:635 cust/gummis/pdfscoresheet.php:695
 #: cust/wfdf/pdfscoresheet.php:1270 ext/poolscoreboard.php:38
-#: ext/teamscoreboard.php:54 lib/scoresheethistory.functions.php:606
+#: ext/teamscoreboard.php:54 lib/scoresheethistory.functions.php:612
 #: user/adddefensesheet.php:357 user/scoresheethistory.php:626
 #: user/scoresheethistory.php:665
 msgid "Player"
 msgstr "Spieler"
 
-#: lib/scoresheethistory.functions.php:881
-#: lib/scoresheethistory.functions.php:904
-#: lib/scoresheethistory.functions.php:1005
+#: lib/scoresheethistory.functions.php:887
+#: lib/scoresheethistory.functions.php:910
+#: lib/scoresheethistory.functions.php:1011
 #, php-format
 msgid "Player %s could not be restored."
 msgstr "Spieler %s konnte nicht wiederhergestellt werden."
 
-#: lib/scoresheethistory.functions.php:868
-#: lib/scoresheethistory.functions.php:898
-#: lib/scoresheethistory.functions.php:913
+#: lib/scoresheethistory.functions.php:874
+#: lib/scoresheethistory.functions.php:904
+#: lib/scoresheethistory.functions.php:919
 #, php-format
 msgid ""
 "Player %s could not be restored: jersey number %d is not unique on team %s."
@@ -4936,7 +4942,7 @@ msgstr ""
 "Spieler %s konnte nicht wiederhergestellt werden: Trikotnummer %d ist im "
 "Team %s nicht eindeutig."
 
-#: lib/scoresheethistory.functions.php:859
+#: lib/scoresheethistory.functions.php:865
 #, php-format
 msgid ""
 "Player %s now plays for %s, so their restored roster entry lists under that "
@@ -5006,7 +5012,7 @@ msgstr "Spielerprofilverwalter"
 msgid "Player profiles"
 msgstr "Spielerprofile"
 
-#: admin/dbequalize.php:367 admin/dbequalize.php:370
+#: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Player refs"
 msgstr "Spielerreferenzen"
 
@@ -5019,7 +5025,7 @@ msgstr "Spieler-Statistiken"
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:137
 #: admin/tdtools.php:184 mobile/respgames.php:178 user/adddefensesheet.php:64
 #: user/addplayerlists.php:276 user/addresult.php:66 user/addscoresheet.php:278
-#: user/addspirit.php:224 user/respgames.php:207 user/respteams.php:43
+#: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
 #: user/scoresheethistory.php:355 user/scoresheethistory.php:611
 msgid "Players"
 msgstr "Spieler"
@@ -5036,7 +5042,7 @@ msgstr "Spieler nicht akkreditiert"
 msgid "Players of the game"
 msgstr "Aktive Spieler"
 
-#: lib/scoresheethistory.functions.php:594
+#: lib/scoresheethistory.functions.php:600
 msgid "Players removed"
 msgstr "Entfernte Spieler"
 
@@ -5059,7 +5065,7 @@ msgstr "Spieler ohne Mitglieds-ID"
 msgid "Playoff -type of pool"
 msgstr "Pool vom Typ Playoff"
 
-#: admin/serieteams.php:149
+#: admin/serieteams.php:155
 msgid "Plays"
 msgstr "Plays"
 
@@ -5079,14 +5085,14 @@ msgstr "Bitte wähle eine gültige Division."
 msgid "Plugins"
 msgstr "Plugins"
 
-#: lib/scoresheethistory.functions.php:583
-#: lib/scoresheethistory.functions.php:588 user/addscoresheet.php:376
-#: user/addscoresheet.php:378 user/addscoresheet.php:388
-#: user/addscoresheet.php:393 user/addscoresheet.php:414
-#: user/addscoresheet.php:422 user/addscoresheet.php:424
-#: user/addscoresheet.php:428 user/addscoresheet.php:451
-#: user/addscoresheet.php:459 user/addscoresheet.php:461
-#: user/addscoresheet.php:465 user/scoresheethistory.php:559
+#: lib/scoresheethistory.functions.php:589
+#: lib/scoresheethistory.functions.php:594 user/addscoresheet.php:379
+#: user/addscoresheet.php:381 user/addscoresheet.php:391
+#: user/addscoresheet.php:396 user/addscoresheet.php:417
+#: user/addscoresheet.php:425 user/addscoresheet.php:427
+#: user/addscoresheet.php:431 user/addscoresheet.php:454
+#: user/addscoresheet.php:462 user/addscoresheet.php:464
+#: user/addscoresheet.php:468 user/scoresheethistory.php:559
 msgid "Point"
 msgstr "Punkt"
 
@@ -5104,12 +5110,12 @@ msgstr "Punkte"
 msgid "Points for %s must be 0-1000."
 msgstr "Punkte fuer %s muessen zwischen 0 und 1000 liegen."
 
-#: admin/seasonpoints.php:231 lib/game.functions.php:1323
+#: admin/seasonpoints.php:231 lib/game.functions.php:1325
 #: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
 msgid "Points must be between 0 and 1000."
 msgstr "Punkte muessen zwischen 0 und 1000 liegen."
 
-#: lib/scoresheethistory.functions.php:580
+#: lib/scoresheethistory.functions.php:586
 msgid "Points removed"
 msgstr "Entfernte Punkte"
 
@@ -5130,7 +5136,7 @@ msgstr ""
 #: admin/spirit.php:520 admin/tdtools.php:92 cust/bula/pdfscoresheet.php:73
 #: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
 #: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:1611
-#: cust/windmill/pdfscoresheet.php:73 lib/scoresheethistory.functions.php:651
+#: cust/windmill/pdfscoresheet.php:73 lib/scoresheethistory.functions.php:657
 msgid "Pool"
 msgstr "Gruppe"
 
@@ -5150,7 +5156,7 @@ msgstr "Poolspiele nicht beendet:"
 msgid "Pool is completed:"
 msgstr "Pool ist komplett:"
 
-#: lib/game.functions.php:1333 lib/scoresheethistory.functions.php:783
+#: lib/game.functions.php:1335 lib/scoresheethistory.functions.php:789
 msgid "Pool is locked."
 msgstr "Pool ist gesperrt."
 
@@ -5168,7 +5174,7 @@ msgstr "Gruppe nicht gefunden"
 msgid "Pool standings"
 msgstr "Gruppentabellen"
 
-#: menufunctions.php:765 admin/dbequalize.php:205 admin/seasonadmin.php:78
+#: menufunctions.php:765 admin/dbequalize.php:208 admin/seasonadmin.php:78
 #: admin/seasonpools.php:14 admin/seasonseries.php:123
 msgid "Pools"
 msgstr "Gruppen"
@@ -5181,7 +5187,7 @@ msgstr "Gruppen noch nicht erzeugt"
 msgid "Pos"
 msgstr "Pos."
 
-#: teamcard.php:419 teamcard.php:620 admin/seasonstandings.php:368
+#: teamcard.php:421 teamcard.php:622 admin/seasonstandings.php:368
 #: admin/seasonstandings.php:416
 msgid "Pos."
 msgstr "Pos."
@@ -5252,7 +5258,7 @@ msgstr "Spielerliste drucken"
 msgid "Print scoresheet"
 msgstr "Spielbericht drucken"
 
-#: admin/seasongames.php:174 user/respgames.php:173
+#: admin/seasongames.php:174 user/respgames.php:172
 msgid "Print scoresheets"
 msgstr "Spielberichte drucken"
 
@@ -5279,11 +5285,11 @@ msgid "Private field %s.%s cannot be imported from an event snapshot."
 msgstr ""
 "Privates Feld %s.%s kann nicht aus einem Turnier-Snapshot importiert werden."
 
-#: admin/dbequalize.php:117 user/teamplayers.php:171
+#: admin/dbequalize.php:120 user/teamplayers.php:171
 msgid "Profile"
 msgstr "Profil"
 
-#: admin/dbequalize.php:367 admin/dbequalize.php:370
+#: admin/dbequalize.php:370 admin/dbequalize.php:373
 #: cust/default/teamplayers.functions.php:140 user/teamplayers.php:179
 msgid "Profile ID"
 msgstr "Profil-ID"
@@ -5293,7 +5299,7 @@ msgstr "Profil-ID"
 msgid "Profile image"
 msgstr "Profilbild"
 
-#: admin/dbequalize.php:209
+#: admin/dbequalize.php:212
 msgid "Profiles"
 msgstr "Profile"
 
@@ -5361,7 +5367,7 @@ msgstr "Schreibgeschuetzte Spirit-Bewertung"
 msgid "Recalculate"
 msgstr "Neu berechnen"
 
-#: lib/scoresheethistory.functions.php:568
+#: lib/scoresheethistory.functions.php:574
 msgid "Recalculated"
 msgstr "Neu berechnet"
 
@@ -5426,7 +5432,7 @@ msgstr "Die Regsitrierung ist erfolgreich bestätigt worden"
 msgid "Rejected"
 msgstr "Abgelehnt"
 
-#: user/addscoresheet.php:508
+#: user/addscoresheet.php:515
 msgid "Reload the scoresheet"
 msgstr "Spielbericht neu laden"
 
@@ -5451,7 +5457,7 @@ msgid "Removes point/defence time input fields from Scorekeeper sheets."
 msgstr ""
 "Entfernt Eingabefelder für Punkt-/Defence-Zeiten aus den Scorekeeper-Bögen."
 
-#: admin/dbequalize.php:231
+#: admin/dbequalize.php:234
 msgid "Rename selected"
 msgstr "Ausgewähltes umbenennen"
 
@@ -5497,7 +5503,7 @@ msgstr "Reservierung hinzugefügt"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: lib/scoresheethistory.functions.php:616 scorekeeper/addscoresheet.php:358
+#: lib/scoresheethistory.functions.php:622 scorekeeper/addscoresheet.php:358
 msgid "Reset game clock"
 msgstr "Spieluhr zurücksetzen"
 
@@ -5518,7 +5524,7 @@ msgstr "Besucherzaehler zuruecksetzen"
 msgid "Resolve IDs"
 msgstr "IDs auflösen"
 
-#: admin/serieteams.php:138
+#: admin/serieteams.php:144
 msgid "Resolve Ties"
 msgstr "Gleichstände auflösen"
 
@@ -5551,7 +5557,7 @@ msgstr "Wiederherstellen"
 msgid "Restore failed"
 msgstr "Wiederherstellung fehlgeschlagen"
 
-#: lib/scoresheethistory.functions.php:772
+#: lib/scoresheethistory.functions.php:778
 msgid ""
 "Restore refused: the home and away teams have changed since this snapshot "
 "was taken."
@@ -5563,18 +5569,18 @@ msgstr ""
 msgid "Restore this version"
 msgstr "Diese Version wiederherstellen"
 
-#: lib/scoresheethistory.functions.php:624 user/scoresheethistory.php:326
+#: lib/scoresheethistory.functions.php:630 user/scoresheethistory.php:326
 msgid "Restored"
 msgstr "Wiederhergestellt"
 
-#: gamecard.php:146 teamcard.php:817 admin/seasongames.php:244
+#: gamecard.php:146 teamcard.php:819 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183
-#: lib/scoresheethistory.functions.php:573 mobile/respgames.php:177
+#: lib/scoresheethistory.functions.php:579 mobile/respgames.php:177
 #: scorekeeper/addresult.php:44 scorekeeper/respgames.php:199
 #: user/adddefensesheet.php:63 user/addplayerlists.php:275
 #: user/addresult.php:13 user/addresult.php:27 user/addresult.php:65
 #: user/addscoresheet.php:277 user/addspirit.php:223 user/respgames.php:24
-#: user/respgames.php:206 user/scoresheethistory.php:354
+#: user/respgames.php:205 user/scoresheethistory.php:354
 #: user/scoresheethistory.php:445
 msgid "Result"
 msgstr "Ergebnis"
@@ -5583,7 +5589,7 @@ msgstr "Ergebnis"
 msgid "Result Feed"
 msgstr "Ergebnis-Feed"
 
-#: lib/scoresheethistory.functions.php:562
+#: lib/scoresheethistory.functions.php:568
 msgid "Result cleared"
 msgstr "Ergebnis gelöscht"
 
@@ -5595,12 +5601,12 @@ msgstr "Ergebnis nicht gespeichert!"
 msgid "Result saved!"
 msgstr "Ergebnis gespeichert!"
 
-#: lib/game.functions.php:2690
+#: lib/game.functions.php:2716
 #, php-format
 msgid "Results changed: %s."
 msgstr "Ergebnisse geändert: %s."
 
-#: lib/game.functions.php:2687
+#: lib/game.functions.php:2713
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
@@ -5609,7 +5615,7 @@ msgstr "Ergebnisse gelöscht: %s."
 msgid "Resume"
 msgstr "Fortsetzen"
 
-#: lib/scoresheethistory.functions.php:615 scorekeeper/addscoresheet.php:320
+#: lib/scoresheethistory.functions.php:621 scorekeeper/addscoresheet.php:320
 #: scorekeeper/addspirittimeouts.php:102
 msgid "Resume game clock"
 msgstr "Spieluhr fortsetzen"
@@ -5622,14 +5628,14 @@ msgstr "Fortsetzen, wenn das Spiel weitergeht."
 #: privacy.php:35 user_guide.php:23 admin/addlocations.php:199
 #: admin/addreservation.php:236 admin/addseasonpools.php:264
 #: admin/addseasonpools.php:519 admin/addseasons.php:505
-#: admin/addseasonseries.php:140 admin/addseasonteams.php:223
-#: admin/addteamadmins.php:102 admin/dbbackup.php:131 admin/dbequalize.php:237
+#: admin/addseasonseries.php:140 admin/addseasonteams.php:218
+#: admin/addteamadmins.php:102 admin/dbbackup.php:131 admin/dbequalize.php:240
 #: admin/dbrestore.php:52 admin/editgame.php:303 admin/editstanding.php:79
 #: admin/eventdataimport.php:231 admin/eventdataimport.php:235
 #: admin/executesql.php:138 admin/failed.php:28 admin/help.php:23
 #: admin/poolmoves.php:400 admin/schedule.php:255 admin/schedule.php:582
-#: admin/seasonbanner.php:53 admin/seasonmoves.php:217
-#: admin/seriesseeding.php:75 admin/serieteams.php:260 admin/success.php:28
+#: admin/seasonbanner.php:53 admin/seasonmoves.php:222
+#: admin/seriesseeding.php:75 admin/serieteams.php:266 admin/success.php:28
 #: plugins/lisence_modifier.php:187 plugins/reassign_playoffpools.php:121
 #: user/addmedialink.php:220 user/clubprofile.php:252
 #: user/playerprofile.php:390 user/teamprofile.php:192
@@ -5677,7 +5683,7 @@ msgstr "Spielerliste"
 msgid "Roster accreditation rights"
 msgstr "Rechte zur Akkreditierung"
 
-#: mobile/addplayerlists.php:98 user/addplayerlists.php:36
+#: mobile/addplayerlists.php:101 user/addplayerlists.php:36
 #: user/addplayerlists.php:41
 msgid "Rosters"
 msgstr "Spielerlisten"
@@ -5789,17 +5795,17 @@ msgstr "Samstag"
 #: result.php:105 admin/addlocations.php:194 admin/addreservation.php:232
 #: admin/addseasonlinks.php:90 admin/addseasonpools.php:518
 #: admin/addseasons.php:502 admin/addseasonseries.php:135
-#: admin/addseasonteams.php:216 admin/addserieformats.php:192
+#: admin/addseasonteams.php:211 admin/addserieformats.php:192
 #: admin/addtimekeepertemplate.php:149 admin/clubs.php:83 admin/clubs.php:120
 #: admin/editgame.php:301 admin/editstanding.php:59 admin/schedule.php:573
-#: admin/seasongames.php:272 admin/seasonmoves.php:216
+#: admin/seasongames.php:272 admin/seasonmoves.php:221
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
 #: admin/seasonseries.php:180 admin/seasonstandings.php:552
 #: admin/seasonteams.php:268 admin/select_teams.php:153
-#: admin/seriesseeding.php:74 admin/serieteams.php:184 admin/serverconf.php:446
+#: admin/seriesseeding.php:74 admin/serieteams.php:190 admin/serverconf.php:446
 #: admin/translations.php:522 mobile/addcomment.php:42
 #: mobile/addfirstoffence.php:47 mobile/addhalftime.php:37
-#: mobile/addofficial.php:27 mobile/addplayerlists.php:138
+#: mobile/addofficial.php:27 mobile/addplayerlists.php:141
 #: mobile/addspirittimeouts.php:85 mobile/addtimeouts.php:110
 #: mobile/respgames.php:134 plugins/lisence_modifier.php:186
 #: scorekeeper/addcomment.php:42 scorekeeper/addfirstoffence.php:47
@@ -5808,7 +5814,7 @@ msgstr "Samstag"
 #: scorekeeper/addspirittimeouts.php:178 scorekeeper/addtimeouts.php:162
 #: scorekeeper/result.php:101 spiritkeeper/editgame.php:125
 #: user/addmedialink.php:219 user/addplayerlists.php:453 user/addspirit.php:314
-#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:230
+#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:229
 #: user/teamplayers.php:285 user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
 msgstr "Speichern"
@@ -5854,7 +5860,7 @@ msgstr "Punkt speichern"
 msgid "Save goal with errors"
 msgstr "Punkt mit Fehlern speichern"
 
-#: user/addscoresheet.php:808
+#: user/addscoresheet.php:818
 msgid "Save scores"
 msgstr "Ergebnis speichern"
 
@@ -5862,7 +5868,7 @@ msgstr "Ergebnis speichern"
 msgid "Save times"
 msgstr "Zeiten speichern"
 
-#: lib/scoresheethistory.functions.php:621 user/scoresheethistory.php:713
+#: lib/scoresheethistory.functions.php:627 user/scoresheethistory.php:713
 msgid "Saved state"
 msgstr "Gespeicherter Stand"
 
@@ -5876,15 +5882,15 @@ msgstr "Speichern betrifft nur die ausgewählte Division."
 msgid "Schedule"
 msgstr "Spielplan"
 
-#: admin/saveschedule.php:189
+#: admin/saveschedule.php:193
 msgid "Schedule saved and validated."
 msgstr "Spielplan gespeichert und geprüft."
 
-#: admin/saveschedule.php:185
+#: admin/saveschedule.php:189
 msgid "Schedule saved with errors:"
 msgstr "Gespeicherter Zeitplan hat Fehler:"
 
-#: admin/saveschedule.php:187
+#: admin/saveschedule.php:191
 msgid "Schedule saved with warnings:"
 msgstr "Spielplan mit Warnungen gespeichert:"
 
@@ -5899,7 +5905,7 @@ msgstr "Geplant"
 #: cust/bula/pdfscoresheet.php:75 cust/default/pdfscoresheet.php:72
 #: cust/gummis/pdfscoresheet.php:73 cust/slkl/pdfscoresheet.php:72
 #: cust/windmill/pdfscoresheet.php:75 user/adddefensesheet.php:213
-#: user/addscoresheet.php:673
+#: user/addscoresheet.php:683
 msgid "Scheduled start date and time"
 msgstr "Spielbeginn"
 
@@ -5911,7 +5917,7 @@ msgstr "Spielplan"
 msgid "Scheduling and Reservation management"
 msgstr "Spielplan- und Feldverwaltung"
 
-#: admin/seasonmoves.php:163
+#: admin/seasonmoves.php:168
 msgid "Scheduling name"
 msgstr "Name im Spielplan"
 
@@ -5936,7 +5942,7 @@ msgstr "Bereichstyp"
 #: mobile/deletescore.php:28 mobile/deletescore.php:44
 #: scorekeeper/addscoresheet.php:297 scorekeeper/addscoresheet.php:307
 #: scorekeeper/deletescore.php:41 spiritkeeper/editgame.php:102
-#: spiritkeeper/teamgames.php:36 user/addscoresheet.php:853
+#: spiritkeeper/teamgames.php:36 user/addscoresheet.php:863
 #: user/scoresheethistory.php:560
 msgid "Score"
 msgstr "Spielstand"
@@ -5971,7 +5977,7 @@ msgstr "Topscorer"
 msgid "Scoreboards"
 msgstr "Ranglisten"
 
-#: lib/scoresheethistory.functions.php:633
+#: lib/scoresheethistory.functions.php:639
 msgid "Scorekeeper"
 msgstr "Protokollführer"
 
@@ -5982,7 +5988,7 @@ msgstr "Protokollführer"
 #: mobile/gameplay.php:146 scorekeeper/addofficial.php:17
 #: scorekeeper/addofficial.php:22 scorekeeper/addscoresheet.php:507
 #: scorekeeper/gameplay.php:121 user/adddefensesheet.php:215
-#: user/addscoresheet.php:675 user/scoresheethistory.php:498
+#: user/addscoresheet.php:685 user/scoresheethistory.php:498
 msgid "Scorekeeper(s)"
 msgstr "Scorekeeper"
 
@@ -5995,7 +6001,7 @@ msgstr "Ergebniseingeber"
 msgid "Scorekeepers fill in their names."
 msgstr "Scorekeeper tragen ihre Namen ein."
 
-#: scorekeeper/addscoresheet.php:447 user/addscoresheet.php:849
+#: scorekeeper/addscoresheet.php:447 user/addscoresheet.php:859
 #: user/scoresheethistory.php:561
 msgid "Scorer"
 msgstr "Punktfänger"
@@ -6004,7 +6010,7 @@ msgstr "Punktfänger"
 msgid "Scorer and assist are the same player!"
 msgstr "Scorer und Assist sind identisch!"
 
-#: user/addscoresheet.php:428 user/addscoresheet.php:465
+#: user/addscoresheet.php:431 user/addscoresheet.php:468
 msgid "Scorer and assist have the same number"
 msgstr "Scorer und Assist haben dieselbe Nummer"
 
@@ -6021,7 +6027,7 @@ msgstr "Spielstände"
 #: scorekeeper/addscoresheet.php:290 scorekeeper/respgames.php:201
 #: user/adddefensesheet.php:65 user/addplayerlists.php:277
 #: user/addresult.php:67 user/addscoresheet.php:279 user/addspirit.php:225
-#: user/respgames.php:208 user/scoresheethistory.php:356
+#: user/respgames.php:207 user/scoresheethistory.php:356
 msgid "Scoresheet"
 msgstr "Spielbericht"
 
@@ -6035,22 +6041,24 @@ msgid "Scoresheet filling instructions:"
 msgstr "Anleitung zum Ausfüllen der Spielberichte"
 
 #: admin/seasonadmin.php:114 admin/seasonscoresheethistory.php:11
-#: user/addscoresheet.php:507 user/addscoresheet.php:824
+#: user/addscoresheet.php:514 user/addscoresheet.php:834
 #: user/scoresheethistory.php:296 user/scoresheethistory.php:310
 msgid "Scoresheet history"
 msgstr "Spielbericht-Verlauf"
 
-#: user/addscoresheet.php:503
+#: user/addscoresheet.php:510
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
 msgstr ""
 "Spielbericht nicht gespeichert. Korrigiere die markierten Punkte und "
 "speichere erneut."
 
-#: user/addscoresheet.php:505
+#: user/addscoresheet.php:512
 msgid "Scoresheet not saved: the game has changed since this page was opened."
-msgstr "Spielbericht nicht gespeichert: Das Spiel hat sich geändert, seit diese Seite geöffnet wurde."
+msgstr ""
+"Spielbericht nicht gespeichert: Das Spiel hat sich geändert, seit diese "
+"Seite geöffnet wurde."
 
-#: user/addscoresheet.php:620
+#: user/addscoresheet.php:624
 msgid "Scoresheet saved"
 msgstr "Spielbericht gespeichert"
 
@@ -6127,10 +6135,10 @@ msgstr "2."
 msgid "Second half started at"
 msgstr "Zweite Halbzeit begann um"
 
-#: seriesstatus.php:157 seriesstatus.php:159 admin/addseasonteams.php:196
+#: seriesstatus.php:157 seriesstatus.php:159 admin/addseasonteams.php:191
 #: admin/editstanding.php:52 admin/seasonstandings.php:367
 #: admin/seasonstandings.php:415 admin/seasonteams.php:173
-#: admin/seriesseeding.php:45 admin/serieteams.php:149
+#: admin/seriesseeding.php:45 admin/serieteams.php:155
 msgid "Seed"
 msgstr "Setzliste"
 
@@ -6171,7 +6179,7 @@ msgstr "Auswahl und Update"
 msgid "Select backup to restore"
 msgstr "Backup zum Wiederherstellen aussuchen"
 
-#: admin/addseasonteams.php:213
+#: admin/addseasonteams.php:208
 msgid "Select contact person"
 msgstr "Kontaktperson wählen"
 
@@ -6257,7 +6265,7 @@ msgstr "Tabellen für Backup wählen"
 msgid "Select team"
 msgstr "Team wählen"
 
-#: admin/seasonpools.php:230 admin/seasonpools.php:232 admin/serieteams.php:142
+#: admin/seasonpools.php:230 admin/seasonpools.php:232 admin/serieteams.php:148
 msgid "Select teams"
 msgstr "Teams auswählen"
 
@@ -6325,7 +6333,7 @@ msgstr "Zu primär ändern"
 msgid "Set default"
 msgstr "Als Standard festlegen"
 
-#: lib/scoresheethistory.functions.php:609 scorekeeper/addscoresheet.php:346
+#: lib/scoresheethistory.functions.php:615 scorekeeper/addscoresheet.php:346
 msgid "Set game clock"
 msgstr "Spieluhr setzen"
 
@@ -6374,7 +6382,7 @@ msgstr "Zeige administrative Rechte"
 msgid "Show all"
 msgstr "Alle anzeigen"
 
-#: user/respgames.php:121
+#: user/respgames.php:120
 msgid "Show all games"
 msgstr "Alle Spiele anzeigen"
 
@@ -6474,7 +6482,7 @@ msgstr ""
 "angepasst werden."
 
 #: statistics.php:50 statistics.php:269 lib/pool.functions.php:301
-#: lib/standings.functions.php:936
+#: lib/standings.functions.php:950
 msgid "Silver"
 msgstr "Silber"
 
@@ -6538,7 +6546,7 @@ msgstr "Spirit-Admin"
 msgid "Spirit admins"
 msgstr "Spirit-Admins"
 
-#: lib/scoresheethistory.functions.php:599 user/scoresheethistory.php:112
+#: lib/scoresheethistory.functions.php:605 user/scoresheethistory.php:112
 msgid "Spirit captain"
 msgstr "Spirit-Kapitän"
 
@@ -6590,7 +6598,7 @@ msgstr ""
 #: cust/wfdf/pdfscoresheet.php:1121 cust/windmill/pdfscoresheet.php:530
 #: sql/upgrade_db.php:560 user/adddefensesheet.php:69
 #: user/addplayerlists.php:281 user/addresult.php:71 user/addscoresheet.php:283
-#: user/addspirit.php:226 user/respgames.php:212 user/scoresheethistory.php:360
+#: user/addspirit.php:226 user/respgames.php:211 user/scoresheethistory.php:360
 msgid "Spirit score"
 msgstr "Spirit-Punktzahl"
 
@@ -6598,7 +6606,7 @@ msgstr "Spirit-Punktzahl"
 msgid "Spirit score average per category"
 msgstr "Durchschnittliche Spirit-Punktzahl pro Kategorie"
 
-#: teamcard.php:429 teamcard.php:520 teamcard.php:630 teamcard.php:717
+#: teamcard.php:431 teamcard.php:522 teamcard.php:632 teamcard.php:719
 #: admin/seasonstandings.php:376 admin/seasonstandings.php:428
 msgid "Spirit score avg."
 msgstr "Spirit-Punktzahl im Schnitt"
@@ -6651,19 +6659,19 @@ msgid "Spirit score submitted."
 msgstr "Spirit-Bewertung eingereicht."
 
 #: gameplay.php:608 menufunctions.php:618 menufunctions.php:632
-#: spiritstatus.php:45 teamcard.php:275 ext/export.php:52
+#: spiritstatus.php:45 teamcard.php:277 ext/export.php:52
 msgid "Spirit scores"
 msgstr "Spirit-Punktzahlen"
 
-#: spiritstatus.php:48 lib/spirit.functions.php:1357
+#: spiritstatus.php:48 lib/spirit.functions.php:1358
 msgid "Spirit scores are not visible."
 msgstr "Spirit-Punktzahlen sind nicht sichtbar."
 
-#: teamcard.php:355
+#: teamcard.php:357
 msgid "Spirit scores given to the other teams:"
 msgstr "An die anderen Teams vergebene Spirit-Punktzahlen:"
 
-#: teamcard.php:311
+#: teamcard.php:313
 msgid "Spirit scores received:"
 msgstr "Erhaltene Spirit-Punktzahlen:"
 
@@ -6693,7 +6701,7 @@ msgid "Spirit settings were not saved."
 msgstr "Spirit-Einstellungen wurden nicht gespeichert."
 
 #: gameplay.php:63 ext/rss.php:151 ext/rss.php:195
-#: lib/scoresheethistory.functions.php:685 mobile/gameplay.php:59
+#: lib/scoresheethistory.functions.php:691 mobile/gameplay.php:59
 #: mobile/gameplay.php:116 scorekeeper/endgame.php:22
 #: scorekeeper/gameplay.php:23
 msgid "Spirit stoppage"
@@ -6704,8 +6712,8 @@ msgstr "Spirit-Unterbrechung"
 #: cust/wfdf/pdfscoresheet.php:1006 cust/windmill/pdfscoresheet.php:477
 #: mobile/addscoresheet.php:216 mobile/addspirittimeouts.php:64
 #: mobile/addtimeouts.php:107 scorekeeper/addscoresheet.php:500
-#: scorekeeper/addspirittimeouts.php:93 user/addscoresheet.php:326
-#: user/addscoresheet.php:327 user/addscoresheet.php:776
+#: scorekeeper/addspirittimeouts.php:93 user/addscoresheet.php:329
+#: user/addscoresheet.php:330 user/addscoresheet.php:786
 #: user/scoresheethistory.php:683
 msgid "Spirit stoppages"
 msgstr "Spirit-Unterbrechungen"
@@ -6722,7 +6730,7 @@ msgstr "Spirit-Unterbrechungen (Zeit)"
 msgid "Spirit stoppages recorded for this event."
 msgstr "Spirit-Unterbrechungen werden fuer dieses Ereignis erfasst."
 
-#: lib/scoresheethistory.functions.php:682
+#: lib/scoresheethistory.functions.php:688
 #, php-format
 msgid "Spirit stoppages removed: %d"
 msgstr "Entfernte Spirit-Unterbrechungen: %d"
@@ -6759,7 +6767,7 @@ msgstr "Tabellenstände"
 msgid "Start"
 msgstr "Start"
 
-#: lib/scoresheethistory.functions.php:613 scorekeeper/addscoresheet.php:351
+#: lib/scoresheethistory.functions.php:619 scorekeeper/addscoresheet.php:351
 #: scorekeeper/addscoresheet.php:631
 msgid "Start game clock"
 msgstr "Spieluhr starten"
@@ -6783,11 +6791,11 @@ msgstr "Starte die Spieluhr, bevor du Punkte hinzufuegst."
 msgid "Start time"
 msgstr "Startzeit"
 
-#: lib/scoresheethistory.functions.php:707
+#: lib/scoresheethistory.functions.php:713
 msgid "Starting offence"
 msgstr "Startende Offense"
 
-#: lib/scoresheethistory.functions.php:702
+#: lib/scoresheethistory.functions.php:708
 msgid "Starting offence removed"
 msgstr "Startende Offense entfernt"
 
@@ -6797,11 +6805,11 @@ msgstr "Startende Offense entfernt"
 msgid "Starting offensive team"
 msgstr "Team mit erster Offence"
 
-#: admin/addseasonteams.php:171
+#: admin/addseasonteams.php:166
 msgid "Starting pool"
 msgstr "Startgruppe"
 
-#: user/addscoresheet.php:710
+#: user/addscoresheet.php:720
 msgid "Starting team on offence"
 msgstr "Startteam in der Offence"
 
@@ -6814,7 +6822,7 @@ msgstr "Startzeit"
 msgid "Starts"
 msgstr "Beginnt"
 
-#: user/enrollteam.php:85
+#: user/enrollteam.php:80
 msgid "State"
 msgstr "Zustand"
 
@@ -6824,7 +6832,7 @@ msgstr "Zustand"
 msgid "Statistics"
 msgstr "Statistik"
 
-#: admin/dbequalize.php:367 admin/dbequalize.php:370
+#: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Stats refs"
 msgstr "Statistikreferenzen"
 
@@ -6887,28 +6895,28 @@ msgid "Tasks"
 msgstr "Aufgaben"
 
 #: clubcard.php:147 clubcard.php:173 countrycard.php:32 countrycard.php:86
-#: countrycard.php:94 defensestatus.php:68 defensestatus.php:70
+#: countrycard.php:94 defensestatus.php:70 defensestatus.php:72
 #: gamecard.php:101 gamecard.php:221 gamecard.php:227 menufunctions.php:826
 #: menufunctions.php:848 playercard.php:78 playercard.php:255
 #: playercard.php:435 poolstatus.php:160 poolstatus.php:186 poolstatus.php:237
 #: poolstatus.php:253 poolstatus.php:297 poolstatus.php:379 scorestatus.php:73
 #: scorestatus.php:75 seriesstatus.php:143 seriesstatus.php:145
 #: seriesstatus.php:308 seriesstatus.php:328 seriesstatus.php:349
-#: spiritstatus.php:104 spiritstatus.php:106 teamcard.php:816
+#: spiritstatus.php:104 spiritstatus.php:106 teamcard.php:818
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/accreditation.php:195
-#: admin/accreditation.php:257 admin/dbequalize.php:246
+#: admin/accreditation.php:257 admin/dbequalize.php:249
 #: admin/finalstandings.php:162 admin/privacyplayer.php:86
 #: admin/seasonpoints.php:256 admin/seasonstandings.php:369
 #: admin/seasonstandings.php:417 admin/seasonstandings.php:479
-#: admin/serieteams.php:191 admin/spirit.php:232 admin/tdtools.php:23
+#: admin/serieteams.php:197 admin/spirit.php:232 admin/tdtools.php:23
 #: admin/tdtools.php:59 cust/wfdf/pdfscoresheet.php:1185
 #: ext/countrystatus.php:50 ext/eventpools.php:45 ext/poolscoreboard.php:39
 #: ext/poolstatus.php:49 lib/search.functions.php:120
 #: lib/search.functions.php:167 lib/search.functions.php:233
 #: lib/search.functions.php:391 lib/search.functions.php:555
-#: lib/search.functions.php:721 lib/swissdraw.functions.php:211
-#: plugins/reassign_playoffpools.php:55 user/enrollteam.php:78
+#: lib/search.functions.php:721 lib/swissdraw.functions.php:215
+#: plugins/reassign_playoffpools.php:55 user/enrollteam.php:73
 #: user/respteams.php:22 user/scoresheethistory.php:664
 msgid "Team"
 msgstr "Team"
@@ -6991,12 +6999,12 @@ msgstr "Team, das das Timeout nimmt"
 #: menufunctions.php:609 menufunctions.php:647 menufunctions.php:686
 #: menufunctions.php:764 menufunctions.php:789 seasonlist.php:31 teams.php:13
 #: teams.php:72 admin/addseasonpools.php:408 admin/clubs.php:58
-#: admin/clubs.php:93 admin/dbequalize.php:201 admin/dbequalize.php:268
+#: admin/clubs.php:93 admin/dbequalize.php:204 admin/dbequalize.php:271
 #: admin/poolmoves.php:395 admin/seasonadmin.php:83 admin/seasonpools.php:235
 #: admin/seasonscoresheethistory.php:56 admin/seasonseries.php:122
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seasonteams.php:16
 #: admin/serieteams.php:29 admin/stats.php:136
-#: lib/scoresheethistory.functions.php:656
+#: lib/scoresheethistory.functions.php:662
 msgid "Teams"
 msgstr "Teams"
 
@@ -7306,12 +7314,12 @@ msgstr "Donnerstag"
 #: cust/windmill/pdfscoresheet.php:598 mobile/addscoresheet.php:207
 #: user/adddefensesheet.php:182 user/adddefensesheet.php:363
 #: user/addmedialink.php:173 user/addmedialink.php:191
-#: user/addscoresheet.php:851 user/scoresheethistory.php:392
+#: user/addscoresheet.php:861 user/scoresheethistory.php:392
 #: user/scoresheethistory.php:559 user/scoresheethistory.php:664
 msgid "Time"
 msgstr "Zeit"
 
-#: lib/spirit.functions.php:644
+#: lib/spirit.functions.php:645
 msgid "Time TBD"
 msgstr "Zeit noch offen"
 
@@ -7325,7 +7333,7 @@ msgstr ""
 "Die Zeit kann nicht gleich oder frueher als beim vorherigen Punkt sein."
 
 #: admin/addseasonpools.php:443 admin/addserieformats.php:133
-#: admin/serieformats.php:29 lib/game.functions.php:811
+#: admin/serieformats.php:29 lib/game.functions.php:813
 #: lib/timekeeper.functions.php:48 scorekeeper/addscoresheet.php:504
 #: timekeeper/index.php:66 user/scoresheethistory.php:461
 msgid "Time cap"
@@ -7361,7 +7369,7 @@ msgid "Timekeeper templates"
 msgstr "Timekeeper-Vorlagen"
 
 #: gameplay.php:61 ext/rss.php:149 ext/rss.php:193
-#: lib/scoresheethistory.functions.php:679 lib/timekeeper.functions.php:14
+#: lib/scoresheethistory.functions.php:685 lib/timekeeper.functions.php:14
 #: lib/timekeeper.functions.php:35 timekeeper/index.php:44
 msgid "Timeout"
 msgstr "Auszeit"
@@ -7389,8 +7397,8 @@ msgstr "Auszeit beendet"
 #: cust/wfdf/pdfscoresheet.php:952 cust/wfdf/pdfscoresheet.php:1002
 #: cust/windmill/pdfscoresheet.php:446 mobile/addscoresheet.php:214
 #: scorekeeper/addscoresheet.php:498 scorekeeper/addtimeouts.php:86
-#: user/adddefensesheet.php:241 user/addscoresheet.php:324
-#: user/addscoresheet.php:721 user/scoresheethistory.php:683
+#: user/adddefensesheet.php:241 user/addscoresheet.php:327
+#: user/addscoresheet.php:731 user/scoresheethistory.php:683
 msgid "Timeouts"
 msgstr "Auszeiten"
 
@@ -7410,7 +7418,7 @@ msgstr "Auszeiten in der Verlaengerung"
 msgid "Timeouts on overtime"
 msgstr "Auszeiten in der Verlaengerung"
 
-#: lib/scoresheethistory.functions.php:676
+#: lib/scoresheethistory.functions.php:682
 #, php-format
 msgid "Timeouts removed: %d"
 msgstr "Entfernte Auszeiten: %d"
@@ -7432,18 +7440,18 @@ msgstr "Zeitzone"
 msgid "To"
 msgstr "Nach"
 
-#: admin/poolmoves.php:229 admin/seasonmoves.php:161
-#: admin/seasonstandings.php:477 admin/serieteams.php:193
-#: lib/swissdraw.functions.php:213 plugins/reassign_playoffpools.php:57
+#: admin/poolmoves.php:229 admin/seasonmoves.php:166
+#: admin/seasonstandings.php:477 admin/serieteams.php:199
+#: lib/swissdraw.functions.php:217 plugins/reassign_playoffpools.php:57
 msgid "To pool"
 msgstr "Nach Gruppe"
 
-#: admin/serieteams.php:192 lib/swissdraw.functions.php:212
+#: admin/serieteams.php:198 lib/swissdraw.functions.php:216
 #: plugins/reassign_playoffpools.php:56
 msgid "To pos."
 msgstr "Nach Pos."
 
-#: admin/poolmoves.php:230 admin/poolmoves.php:270 admin/seasonmoves.php:162
+#: admin/poolmoves.php:230 admin/poolmoves.php:270 admin/seasonmoves.php:167
 msgid "To position"
 msgstr "Nach Position"
 
@@ -7512,8 +7520,8 @@ msgstr "Morgen"
 msgid "Tot."
 msgstr "Tot."
 
-#: playercard.php:402 playercard.php:564 teamcard.php:171 teamcard.php:269
-#: teamcard.php:320 teamcard.php:364 teamcard.php:586 teamcard.php:777
+#: playercard.php:402 playercard.php:564 teamcard.php:171 teamcard.php:271
+#: teamcard.php:322 teamcard.php:366 teamcard.php:588 teamcard.php:779
 #: admin/spirit.php:47 admin/spirit.php:106 admin/spirit.php:155
 #: admin/spirit.php:238 admin/spirit.php:282 admin/spirit.php:342
 #: cust/slkl/mass-accreditation.php:86 lib/common.functions.php:1734
@@ -7533,11 +7541,11 @@ msgstr "Defenses gesamt"
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:3056
+#: admin/seasonpoints.php:258 lib/game.functions.php:3092
 msgid "Total points"
 msgstr "Gesamtpunkte"
 
-#: admin/dbequalize.php:367 admin/dbequalize.php:370
+#: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Total refs"
 msgstr "Referenzen gesamt"
 
@@ -7682,8 +7690,8 @@ msgstr "Ultimate.fi"
 #: cust/default/pdfscoresheet.php:123 cust/default/pdfscoresheet.php:151
 #: ext/countrystatus.php:25 ext/eventpools.php:23 ext/poolscoreboard.php:27
 #: ext/poolstatus.php:29 ext/teamcoming.php:29 ext/teamplayed.php:30
-#: ext/teamscoreboard.php:43 ext/tournament.php:27 lib/user.functions.php:1641
-#: lib/user.functions.php:1702 scorekeeper/index.php:100
+#: ext/teamscoreboard.php:43 ext/tournament.php:27 lib/user.functions.php:1645
+#: lib/user.functions.php:1706 scorekeeper/index.php:100
 #: spiritkeeper/index.php:113 timekeeper/index.php:190
 msgid "Ultiorganizer"
 msgstr "Ultiorganizer"
@@ -7706,16 +7714,16 @@ msgstr ""
 "Team konnte nicht hinzugefuegt werden. Bitte Teamdetails und Pool-"
 "Konfiguration pruefen."
 
-#: lib/search.functions.php:183 user/enrollteam.php:113 user/enrollteam.php:139
+#: lib/search.functions.php:183 user/enrollteam.php:108 user/enrollteam.php:134
 msgid "Unconfirmed"
 msgstr "Unbestätigt"
 
 #: admin/finalstandings.php:218 admin/finalstandings.php:227
-#: lib/standings.functions.php:944
+#: lib/standings.functions.php:958
 msgid "Undecided"
 msgstr "Nicht entschieden"
 
-#: admin/seasonmoves.php:165 admin/seasonmoves.php:198
+#: admin/seasonmoves.php:170 admin/seasonmoves.php:203
 #: admin/seasonstandings.php:596 admin/stats.php:152
 msgid "Undo"
 msgstr "Rückgängig"
@@ -7815,7 +7823,7 @@ msgstr ""
 
 #: login.php:32 menufunctions.php:179 admin/accreditation.php:138
 #: admin/apitokens.php:146 admin/eventviewer.php:140 admin/privacyuser.php:75
-#: admin/seasonscoresheethistory.php:59 user/enrollteam.php:85
+#: admin/seasonscoresheethistory.php:59 user/enrollteam.php:80
 #: user/scoresheethistory.php:393
 msgid "User"
 msgstr "Benutzer"
@@ -7887,7 +7895,7 @@ msgstr "Benutzer"
 msgid "V"
 msgstr "S"
 
-#: admin/addseasonseries.php:126 admin/addseasonteams.php:199
+#: admin/addseasonseries.php:126 admin/addseasonteams.php:194
 #: admin/clubs.php:58 admin/clubs.php:93 admin/editgame.php:271
 msgid "Valid"
 msgstr "Gültig"
@@ -7973,11 +7981,11 @@ msgstr ""
 "koennen nicht eingeplant werden. Bearbeite die Spieldauer oder die Laenge "
 "des Zeitfensters in %s."
 
-#: admin/saveschedule.php:174
+#: admin/saveschedule.php:178
 msgid "Warning: Scheduling conflicts detected based on transfer times."
 msgstr "Warnung: Planungs-Konflikte auf Basis von Wechselzeiten erkannt."
 
-#: admin/saveschedule.php:166
+#: admin/saveschedule.php:170
 msgid "Warning: Scheduling conflicts detected due to overlapping game times."
 msgstr ""
 "Warnung: Planungs-Konflikte aufgrund ueberlappender Spielzeiten erkannt."
@@ -8060,8 +8068,8 @@ msgstr "Wer begann in der Offence?"
 
 #: gamecard.php:105 playercard.php:209 playercard.php:259 playercard.php:337
 #: playercard.php:436 playercard.php:507 seriesstatus.php:205
-#: seriesstatus.php:207 teamcard.php:423 teamcard.php:514 teamcard.php:624
-#: teamcard.php:711
+#: seriesstatus.php:207 teamcard.php:425 teamcard.php:516 teamcard.php:626
+#: teamcard.php:713
 msgid "Win-%"
 msgstr "Sieg-%"
 
@@ -8102,7 +8110,7 @@ msgstr "World Flying Disc Federation"
 #: admin/poolgames.php:292 admin/poolgames.php:331 admin/poolgames.php:332
 #: admin/poolgames.php:355 admin/poolgames.php:356 admin/poolmoves.php:251
 #: admin/poolmoves.php:329 admin/reservations.php:133 admin/seasongames.php:262
-#: admin/seasonmoves.php:166 admin/seasonpools.php:270 admin/seasons.php:148
+#: admin/seasonmoves.php:171 admin/seasonpools.php:270 admin/seasons.php:148
 #: admin/seasonseries.php:130 admin/seasonstandings.php:404
 #: admin/seasonstandings.php:461 admin/seasonteams.php:240
 #: admin/serieformats.php:48 admin/serverconf.php:413
@@ -8135,7 +8143,7 @@ msgstr ""
 "Du kannst die folgenden Statistiken aus Ultiorganizer direkt in deine "
 "eigenen Seiten einbetten"
 
-#: user/adddefensesheet.php:332 user/addscoresheet.php:820
+#: user/adddefensesheet.php:332 user/addscoresheet.php:830
 msgid "You can save the scoresheet at any time while entering it"
 msgstr "Du kannst den Spielbericht jederzeit waehrend der Eingabe speichern"
 
@@ -8151,11 +8159,13 @@ msgstr "Sie sind ausgeloggt"
 msgid "You have not submitted a spirit score for this game yet."
 msgstr "Du hast für dieses Spiel noch keine Spirit-Bewertung eingereicht."
 
-#: user/addscoresheet.php:506
+#: user/addscoresheet.php:513
 msgid ""
 "Your entries are kept below. Save again to overwrite the other changes, or "
 "reload to discard yours."
-msgstr "Deine Eingaben bleiben unten erhalten. Speichere erneut, um die anderen Änderungen zu überschreiben, oder lade neu, um deine zu verwerfen."
+msgstr ""
+"Deine Eingaben bleiben unten erhalten. Speichere erneut, um die anderen "
+"Änderungen zu überschreiben, oder lade neu, um deine zu verwerfen."
 
 #: spiritkeeper/teamgames.php:97
 msgid "Your spirit submission is locked."
@@ -8169,7 +8179,7 @@ msgstr "Dein Team"
 msgid "added"
 msgstr "hinzugefügt"
 
-#: admin/poolmoves.php:244 admin/seasonmoves.php:189
+#: admin/poolmoves.php:244 admin/seasonmoves.php:194
 msgid "all"
 msgstr "alles"
 
@@ -8179,11 +8189,11 @@ msgid "and"
 msgstr "und"
 
 #: mobile/addscoresheet.php:90 mobile/addscoresheet.php:105
-#: user/addscoresheet.php:414 user/addscoresheet.php:451
+#: user/addscoresheet.php:417 user/addscoresheet.php:454
 msgid "assisting player's number"
 msgstr "Nummer des Vorlagengebers"
 
-#: user/addscoresheet.php:620
+#: user/addscoresheet.php:624
 msgid "at"
 msgstr "um"
 
@@ -8215,8 +8225,8 @@ msgstr "Bytes"
 msgid "cannot be removed from the roster"
 msgstr "kann nicht aus dem Kader entfernt werden"
 
-#: admin/dbequalize.php:143 admin/dbequalize.php:165 admin/dbequalize.php:172
-#: admin/dbequalize.php:179 admin/dbequalize.php:186
+#: admin/dbequalize.php:146 admin/dbequalize.php:168 admin/dbequalize.php:175
+#: admin/dbequalize.php:182 admin/dbequalize.php:189
 msgid "cannot delete"
 msgstr "kann nicht löschen"
 
@@ -8228,7 +8238,7 @@ msgstr "Endstand bearbeiten"
 msgid "change initial pool ranking"
 msgstr "ursprüngliche Reihenfolge bearbeiten"
 
-#: user/addscoresheet.php:818
+#: user/addscoresheet.php:828
 msgid "characters"
 msgstr "Zeichen"
 
@@ -8271,6 +8281,11 @@ msgstr "Team aus der Gruppe entfernen"
 msgid "division"
 msgstr "Klasse"
 
+#: mobile/addplayerlists.php:81
+msgid ""
+"does not play for either team in this game and cannot be added to the roster."
+msgstr ""
+
 #: admin/editstanding.php:73 admin/poolgames.php:289 admin/poolgames.php:330
 #: admin/poolgames.php:354 plugins/lisence_modifier.php:240
 #: user/teamplayers.php:216
@@ -8286,7 +8301,7 @@ msgstr "Detail ändern"
 msgid "edit pool"
 msgstr "Gruppe ändern"
 
-#: mobile/addplayerlists.php:83 user/addplayerlists.php:145
+#: mobile/addplayerlists.php:86 user/addplayerlists.php:145
 #: user/addplayerlists.php:222
 msgid "erroneous number"
 msgstr "falsche Nummer"
@@ -8358,7 +8373,7 @@ msgstr "Punkte"
 msgid "has an invalid jersey number"
 msgstr "hat eine ungueltige Trikotnummer"
 
-#: user/addscoresheet.php:639 user/addscoresheet.php:642
+#: user/addscoresheet.php:647 user/addscoresheet.php:650
 msgid "has no played players for this game."
 msgstr "hat fuer dieses Spiel keine eingesetzten Spieler."
 
@@ -8378,7 +8393,7 @@ msgstr "Heimteam"
 msgid "iCalendar (.ical)"
 msgstr "iCalendar-Format"
 
-#: mobile/addplayerlists.php:78 scorekeeper/addplayerlists.php:83
+#: mobile/addplayerlists.php:81 scorekeeper/addplayerlists.php:83
 #: user/addplayerlists.php:105 user/addplayerlists.php:182
 msgid "is not accredited and cannot be added to the roster."
 msgstr ""
@@ -8420,12 +8435,12 @@ msgstr "Min : Sek"
 msgid "minutes"
 msgstr "Minuten"
 
-#: admin/dbequalize.php:117
+#: admin/dbequalize.php:120
 #, php-format
 msgid "moved %d players, %d stats"
 msgstr "%d Spieler, %d Statistiken verschoben"
 
-#: admin/poolmoves.php:248 admin/seasonmoves.php:193
+#: admin/poolmoves.php:248 admin/seasonmoves.php:198
 msgid "mutual"
 msgstr "gegenseitig"
 
@@ -8447,7 +8462,7 @@ msgstr "ohne Ränder"
 msgid "not given"
 msgstr "nicht gegeben"
 
-#: admin/poolmoves.php:246 admin/seasonmoves.php:191
+#: admin/poolmoves.php:246 admin/seasonmoves.php:196
 msgid "nothing"
 msgstr "nichts"
 
@@ -8541,8 +8556,8 @@ msgstr "Nachfolgegruppe"
 msgid "remove"
 msgstr "entfernen"
 
-#: admin/dbequalize.php:140 admin/dbequalize.php:162 admin/dbequalize.php:169
-#: admin/dbequalize.php:176 admin/dbequalize.php:183
+#: admin/dbequalize.php:143 admin/dbequalize.php:165 admin/dbequalize.php:172
+#: admin/dbequalize.php:179 admin/dbequalize.php:186
 msgid "removed"
 msgstr "entfernt"
 
@@ -8550,7 +8565,7 @@ msgstr "entfernt"
 msgid "right"
 msgstr "rechts"
 
-#: teamcard.php:119 teamcard.php:163 mobile/addplayerlists.php:105
+#: teamcard.php:119 teamcard.php:163 mobile/addplayerlists.php:108
 msgid "roster"
 msgstr "Spielerliste"
 
@@ -8568,11 +8583,11 @@ msgid "save ranking"
 msgstr "Rangfolge speichern"
 
 #: mobile/addscoresheet.php:97 mobile/addscoresheet.php:113
-#: user/addscoresheet.php:422 user/addscoresheet.php:459
+#: user/addscoresheet.php:425 user/addscoresheet.php:462
 msgid "scorer's number"
 msgstr "Nummer des scorenden Spielers"
 
-#: user/addscoresheet.php:424 user/addscoresheet.php:461
+#: user/addscoresheet.php:427 user/addscoresheet.php:464
 msgid "scorer's number is missing"
 msgstr "Nummer des scorenden Spielers fehlt"
 
@@ -8627,21 +8642,21 @@ msgstr "aktuelle Gruppe des Teams"
 msgid "team pool placement"
 msgstr "Gruppenzuordnung des Teams"
 
-#: user/adddefensesheet.php:134 user/addscoresheet.php:388
+#: user/adddefensesheet.php:134 user/addscoresheet.php:391
 msgid "time cannot be the same as halftime ending"
 msgstr "Zeit kann nicht gleich dem Halbzeitende sein"
 
 #: mobile/addscoresheet.php:76 user/adddefensesheet.php:139
-#: user/addscoresheet.php:393
+#: user/addscoresheet.php:396
 msgid "time cannot be the same or earlier than the previous point"
 msgstr "Zeit kann nicht gleich oder frueher als beim vorherigen Punkt sein"
 
-#: user/addscoresheet.php:376
+#: user/addscoresheet.php:379
 msgid "time is missing"
 msgstr "Zeit fehlt"
 
-#: user/addscoresheet.php:319 user/addscoresheet.php:340
-#: user/addscoresheet.php:378
+#: user/addscoresheet.php:322 user/addscoresheet.php:343
+#: user/addscoresheet.php:381
 msgid "time is not in a valid format"
 msgstr "Zeit hat kein gültiges Format"
 
