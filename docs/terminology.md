@@ -1,17 +1,6 @@
 # Ultiorganizer Terminology Reference
 
-This document is a terminology guide for Ultiorganizer documentation and review.
-It standardizes preferred wording for docs, specs, commit messages, and review comments.
-
-This document does not require code, API, database, translation, or UI renames.
-Current runtime names and legacy identifiers are documented as aliases where needed.
-
-## Purpose and Scope
-
-- Canonical terms in this document follow WFDF rules spelling where applicable.
-- Only terms relevant to Ultiorganizer as it exists today are included.
-- Alias mappings cover words reviewers will encounter in current code, docs, API payloads, and UI labels.
-- Abbreviations are for narrow table layouts only, not normal prose.
+Preferred wording for Ultiorganizer docs, specs, commit messages, review comments and new UI text. Canonical terms follow WFDF rules spelling. Existing code, API, database and translation names are listed as aliases; this document does not require renaming them. Abbreviations are for narrow tables only, not prose.
 
 ## Canonical Terms
 
@@ -125,11 +114,7 @@ These abbreviations are language-neutral literals: they are **not** translated a
 
 ## Review Rules
 
-- Prefer canonical terms from this document in new documentation, specs, and review comments.
-- Recognize listed aliases in existing code and docs without treating them as automatic errors.
-- Do not interpret this document as a mandate to rename code, API fields, database columns, translations, or UI strings.
-- Distinguish `goal` from `score` carefully:
-  - `goal` is a recorded scoring event
-  - `score` is the numeric state inside a game result
-- Prefer `division` over `series` and `event` over user-facing `season` in new documentation, unless you are describing current code or schema.
-- Use abbreviations only in constrained layouts. Avoid inventing new abbreviations in normal prose.
+- Recognize listed aliases in existing code and docs without treating them as errors.
+- `goal` is a recorded scoring event; `score` is the numeric state inside a result.
+- Prefer `division` over `series` and `event` over user-facing `season`, except when describing code or schema.
+- Do not invent new abbreviations.
