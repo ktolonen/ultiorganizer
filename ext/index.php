@@ -70,7 +70,7 @@ if (!empty($_POST['update'])) {
         $lastown = $_POST['ownstyle'];
     }
     if (isset($_POST['country'])) {
-        $selcountry = $_POST['country'];
+        $selcountry = (int) $_POST['country'];
     }
 }
 //content
@@ -171,7 +171,7 @@ if (!empty($selseries)) {
 
 $selector .= "<p>" . _("Select style") . ": <select class='dropdown' name='style'>\n";
 
-if (empty($selstyle)) {
+if (empty($selstyle) || (!in_array($selstyle, $styles, true) && $selstyle !== urlencode($lastown))) {
     $selstyle = $styles[0];
 }
 
@@ -184,7 +184,7 @@ for ($i = 0; $i < count($styles); $i++) {
 }
 
 $selector .=  "</select><br/>" . _("or a link to your own style definition") . ":\n";
-$selector .= "<input class='input' size='50' name='ownstyle' value='$lastown'/></p>";
+$selector .= "<input class='input' size='50' name='ownstyle' value='" . utf8entities($lastown) . "'/></p>";
 
 
 $selector .= "<p><input class='button' type='submit' name='update' value='" . _("Select and Update") . "' /></p>\n";
