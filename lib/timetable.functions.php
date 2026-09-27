@@ -64,7 +64,7 @@ function TournamentView($games, $grouping = true)
     foreach ($games as $game) {
         $placeLabel = ReservationPlaceText(U_($game['placename']), U_($game['fieldname']));
         $currentPlaceKey = empty($game['placename']) ? "reservation:" . $game['reservation_id'] : (string) $game['place_id'];
-        $ret .= "\n<!-- res:" . $game['reservationgroup'] . " pool:" . $game['pool'] . " date:" . JustDate($game['starttime']) . "-->\n";
+        $ret .= "\n<!-- res:" . utf8entities($game['reservationgroup']) . " pool:" . $game['pool'] . " date:" . JustDate($game['starttime']) . "-->\n";
         if (
             $game['reservationgroup'] != $prevTournament
             || (empty($game['reservationgroup']) && !$isTableOpen)

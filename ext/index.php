@@ -225,11 +225,11 @@ if (!empty($seltournament)) {
     $html .= "<h2>" . _("All games in selected grouping") . "</h2>\n";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/tournament.php?tournament=$seltournament&amp;season=$season&amp;style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/tournament.php?tournament=" . urlencode($seltournament) . "&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='600px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/tournament.php?tournament=$seltournament&amp;season=$season&amp;style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/tournament.php?tournament=" . urlencode($seltournament) . "&amp;season=$season&amp;style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
 }
 
 if (!empty($selpool)) {

@@ -57,7 +57,7 @@ if ($showConfirmation) {
         $html .=  _("on field") . " " . utf8entities($game_result['fieldname']);
     }
     $html .=  "<br/>";
-    $html .=  U_($game_result['seriesname']) . ", " . U_($game_result['poolname']);
+    $html .=  utf8entities(U_($game_result['seriesname'])) . ", " . utf8entities(U_($game_result['poolname']));
     $html .=  "</p>";
     $html .= "<p>";
     $html .= utf8entities($game_result['hometeamname']);

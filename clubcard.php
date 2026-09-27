@@ -142,7 +142,7 @@ $html .= "</table>";
 
 $teams = ClubTeams($clubId, CurrentSeason());
 if ($teams) {
-    $html .= "<h2>" . U_(CurrentSeasonName()) . ":</h2>\n";
+    $html .= "<h2>" . utf8entities(U_(CurrentSeasonName())) . ":</h2>\n";
     $html .= "<table style='white-space: nowrap;' border='0' cellspacing='0' cellpadding='2' width='90%'>\n";
     $html .= "<tr><th>" . _("Team") . "</th><th>" . _("Division") . "</th><th colspan='3'></th></tr>\n";
 

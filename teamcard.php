@@ -25,7 +25,7 @@ if (!$teaminfo) {
 $title = utf8entities($teaminfo['name']);
 
 $html .= "<h1>";
-$html .= utf8entities($teaminfo['name']) . " (" . U_($teaminfo['seriesname']) . ")</h1>";
+$html .= utf8entities($teaminfo['name']) . " (" . utf8entities(U_($teaminfo['seriesname'])) . ")</h1>";
 
 if (intval($teaminfo['country']) > 0) {
     $html .= "<p>";
@@ -196,7 +196,7 @@ if (ShowDefenseStats()) {
 }
 $allgames = TimetableGames($teamId, "team", "all", "time");
 if ($allgames) {
-    $html .= "<h2>" . U_(SeasonName($teaminfo['season'])) . ":</h2>\n";
+    $html .= "<h2>" . utf8entities(U_(SeasonName($teaminfo['season']))) . ":</h2>\n";
     $html .=  "<p>" . _("Division") . ": <a href='?view=poolstatus&amp;series=" . $teaminfo['series'] . "'>" . utf8entities(U_($teaminfo['seriesname'])) . "</a></p>";
     $html .= "<table style='width:80%'>\n";
     $spiritTotals = ScheduleSpiritTotals($allgames);
