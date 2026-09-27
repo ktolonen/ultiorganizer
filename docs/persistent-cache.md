@@ -38,27 +38,16 @@ A request can opt out of the persistent cache entirely by calling
 read. `DBQueryCacheable()` then returns false for every read in that request, so
 all SELECTs go straight to the database.
 
-**All login-gated surfaces bypass the cache.** `lib/auth.guard.php` calls
-`DisablePersistentCacheForRequest()` before it does anything else, so every page
-behind that guard reads live: `admin/`, `user/`, `mobile/`, `scorekeeper/`,
-`spiritkeeper/`, `result.php`, and the `cust/*` member pages. The guard requires
-`lib/persistent-cache.functions.php` directly because a few callers include it
-before `lib/database.php`.
+**All login-gated surfaces bypass the cache.** `lib/auth.guard.php` calls it
+first, so `admin/`, `user/`, `mobile/`, `scorekeeper/`, `spiritkeeper/`,
+`result.php` and the `cust/*` member pages read live. Otherwise the GET after a
+Post/Redirect/Get could hit an entry cached by the previous GET and show
+pre-write state. The guard requires `lib/persistent-cache.functions.php`
+directly, since some callers include it before `lib/database.php`.
 
-The reason is the Post/Redirect/Get pattern these pages use: an editor submits a
-form (POST, writes the DB), then the browser follows a redirect to a GET that
-re-renders the same screen. The POST itself is never cached, but that following
-GET can hit a still-valid cache entry populated by the *previous* GET on the same
-screen (within the TTL window) and show pre-write state — prompting the editor to
-re-enter the change. Editing traffic is negligible in volume, so nothing is lost
-by reading live.
-
-`scorekeeper/index.php` and `spiritkeeper/index.php` additionally call the bypass
-right after `OpenConnection()`. Keep those calls: they fire before their auth
-include and so also cover each app's own bootstrap reads.
-
-Public spectator pages do not include the auth guard and keep the cache — that is
-the traffic it was built to offload.
+`scorekeeper/index.php` and `spiritkeeper/index.php` also call the bypass right
+after `OpenConnection()`, covering bootstrap reads before their auth include;
+keep those calls. Public pages keep the cache, which is the traffic it exists for.
 
 Query with `IsPersistentCacheBypassed()`.
 
@@ -71,18 +60,11 @@ Query with `IsPersistentCacheBypassed()`.
 define('PERSISTENT_CACHE_DIR', '/tmp/ultiorganizer-cache');
 ```
 
-If `PERSISTENT_CACHE_DIR` is undefined, the helper falls back to
-`sys_get_temp_dir() . '/ultiorganizer-cache'` so upgraded installs that have
-not edited `conf/config.inc.php` still benefit from caching. Set it to an
-empty string (`define('PERSISTENT_CACHE_DIR', '')`) to disable the filesystem
-cache explicitly. If the resolved directory cannot be created or written to,
-the helper falls back to running the resolver uncached.
-
-Files live in a per-install subdirectory named after
-`md5(DB_HOST|DB_DATABASE|DB_USER)` so multiple Ultiorganizer deployments that
-share the same `PERSISTENT_CACHE_DIR` do not collide on identical SELECT
-strings — even when two installs use the same schema name on different MySQL
-hosts (e.g. prod and staging both named `ultiorganizer`).
+Undefined falls back to `sys_get_temp_dir() . '/ultiorganizer-cache'`; an empty
+string disables the cache; an unwritable directory runs uncached. Files go in a
+per-install subdirectory `md5(DB_HOST|DB_DATABASE|DB_USER)`, so installations
+sharing the directory do not collide, even with the same schema name on
+different hosts.
 
 **INSTALLATION_SETTING** (editable in `admin/serverconf.php` > Internal settings):
 
@@ -93,9 +75,8 @@ hosts (e.g. prod and staging both named `ultiorganizer`).
 
 ## Direct API
 
-The helper functions remain available for code that needs explicit TTL control
-or namespace-wide invalidation, but the database-layer caching above is
-sufficient for the live-scoring read paths and should be preferred.
+For explicit TTL control or namespace invalidation; prefer the database-layer
+caching above.
 
 ```php
 // Return cached value or compute and store it.
