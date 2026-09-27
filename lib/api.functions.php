@@ -44,20 +44,23 @@ function ApiRateLimitCheck($rateKey, $limit, $windowSeconds)
     $now = time();
     $windowStart = $now - ($now % $windowSeconds);
 
-    $upsert = sprintf(
-        "INSERT INTO uo_api_rate_limit (rate_key, window_start, request_count)
-        VALUES ('%s', %d, LAST_INSERT_ID(1))
-        ON DUPLICATE KEY UPDATE
-            request_count=LAST_INSERT_ID(IF(window_start=VALUES(window_start), request_count + 1, 1)),
-            window_start=VALUES(window_start)",
-        DBEscapeString($rateKey),
-        (int) $windowStart,
-    );
-    DBQuery($upsert);
+    $bump = function ($key) use ($windowStart) {
+        DBQuery(sprintf(
+            "INSERT INTO uo_api_rate_limit (rate_key, window_start, request_count)
+            VALUES ('%s', %d, LAST_INSERT_ID(1))
+            ON DUPLICATE KEY UPDATE
+                request_count=LAST_INSERT_ID(IF(window_start=VALUES(window_start), request_count + 1, 1)),
+                window_start=VALUES(window_start)",
+            DBEscapeString($key),
+            (int) $windowStart,
+        ));
+        return (int) DBQueryToValueUncached("SELECT LAST_INSERT_ID()", true);
+    };
 
-    $count = (int) DBQueryToValueUncached("SELECT LAST_INSERT_ID()", true);
+    $count = $bump($rateKey);
 
-    if ($count === 1) {
+    // The sentinel row lets exactly one request per window prune past windows.
+    if ($count === 1 && $bump('prune') === 1) {
         DBQuery(sprintf(
             "DELETE FROM uo_api_rate_limit WHERE window_start < %d",
             (int) $windowStart,

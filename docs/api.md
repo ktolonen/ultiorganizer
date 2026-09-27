@@ -15,7 +15,7 @@ This page mirrors the current API guidance from `AGENTS.md`.
 - Keep normalization and filtering in `/api`.
 - Keep SQL and shared data access in `lib/` as the single source of truth.
 - Require rate limiting keyed by token and IP, with `429` and `X-RateLimit-*` headers on limit responses.
-- The rate-limit IP is the connecting address (`REMOTE_ADDR`); `X-Forwarded-For` is ignored because clients can set it freely. Behind a reverse proxy, all clients of one token share a bucket. Rows from past windows are pruned when a new window starts.
+- The rate-limit IP is the connecting address (`REMOTE_ADDR`); `X-Forwarded-For` is ignored because clients can set it freely. Behind a reverse proxy, all clients of one token share a bucket. Rows from past windows are pruned once per window, by the first request that opens a new rate key; a `prune` sentinel row in `uo_api_rate_limit` tracks this.
 
 ## Public v1 scope
 
