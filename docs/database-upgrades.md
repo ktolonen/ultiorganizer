@@ -1,21 +1,21 @@
 # Database Upgrades
 
-This page mirrors the database-change guidance from `AGENTS.md`.
+Schema change workflow and the automatic upgrade runtime.
 
 ## Base rules
 
 - Base schema lives in `sql/ultiorganizer.sql`.
 - Production upgrades are handled by versioned functions in `sql/upgrade_db.php`.
-- `CheckDB()` is still the upgrade runner, but it now runs only through the automatic maintenance gate in `lib/database.php`.
+- `CheckDB()` runs the upgrades, only through the automatic maintenance gate in `lib/database.php`.
 - `upgradeXX()` means "upgrade the schema to version `XX`".
 - Bump `DB_VERSION` whenever a new upgrade step is added.
 - Automatic update maintenance uses `MAINTENANCE_RUNTIME_DIR/maintenance.flag` plus the transient lock file `MAINTENANCE_RUNTIME_DIR/maintenance.lock`.
-- `MAINTENANCE_RUNTIME_DIR` is usually not defined in `conf/config.inc.php`. `DBMaintenanceRuntimeDir()` then derives it as `<system temporary directory>/ultiorganizer-maintenance-<hash of the installation directory>`, which keeps co-hosted installations apart. The installer's status page shows the resolved path, so run `install.php` to read it off rather than computing the hash by hand. Anything creating `maintenance.flag` by hand needs that resolved path.
+- When `MAINTENANCE_RUNTIME_DIR` is undefined, `DBMaintenanceRuntimeDir()` derives `<system temp dir>/ultiorganizer-maintenance-<hash of the installation directory>`. The `install.php` status page shows the resolved path, which a hand-made `maintenance.flag` needs.
 
 ## Required workflow
 
 1. Pick the next version number from the latest `upgradeXX()` in `sql/upgrade_db.php`.
-2. Add `upgradeXX()` with the required `ALTER`, `CREATE`, or related statements.
+2. Add `upgradeXX()` with the required statements, guarding each structural change so a rerun is safe.
 3. Update `define('DB_VERSION', XX);` in `lib/database.php`.
 4. Update `sql/ultiorganizer.sql` so fresh installs include the final structure and the matching `uo_database` version row.
 5. Update related SQL and data access in `lib/` if PHP reads or writes the changed fields.
@@ -61,21 +61,9 @@ This page mirrors the database-change guidance from `AGENTS.md`.
 
 ## Local development: database ahead of the checked-out branch
 
-The automatic maintenance flow (`CheckDB()` via `lib/database.maintenance.php`)
-only runs upgrades forward and then requires `getDBVersion() === DB_VERSION`
-exactly. Switching to a branch whose `DB_VERSION` is *lower* than what is
-already installed — for example, going from a feature branch that bumped the
-schema back to `master` — leaves the installed version higher than
-`DB_VERSION`, which the maintenance gate treats the same as a failed upgrade:
-it writes an `automatic/failed` `maintenance.flag`, and every page shows
-"Database upgrade failed" until it is cleared.
+Upgrades only run forward and then require `getDBVersion() === DB_VERSION` exactly. Switching to a branch with a lower `DB_VERSION` than the installed schema (e.g. from a feature branch back to `master`) is treated as a failed upgrade: an `automatic/failed` flag is written and every page shows "Database upgrade failed".
 
-Recover by checking out the branch that owns the newest upgrade (cherry-pick
-it onto the branch you need to run) rather than by editing `uo_database` or
-deleting the flag by hand — a deleted flag alone does not help, since the next
-request recreates it as soon as it sees the version mismatch again. Compare
-`SELECT MAX(version) FROM uo_database` against `DB_VERSION` in
-`lib/database.php` to confirm this is the cause before investigating further.
+Confirm with `SELECT MAX(version) FROM uo_database` against `DB_VERSION`. Recover by running a branch that has the newest upgrade (cherry-pick it if needed), not by editing `uo_database`; deleting the flag alone does not help, since the next request recreates it.
 
 ## Rules of thumb
 
