@@ -221,25 +221,27 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
 			LEFT JOIN uo_player p ON(p.player_id=ps.player_id)
 			LEFT JOIN uo_player_profile pp ON(pp.profile_id=ps.profile_id) ";
 
+    $query .= "WHERE ps.season IN (" . AccessibleSeasonIdListSql() . ") ";
+
     if (!empty($seasontype) && !empty($seriestype)) {
         $query .= sprintf(
-            "WHERE s.type='%s' AND ser.type='%s' ",
+            "AND s.type='%s' AND ser.type='%s' ",
             DBEscapeString($seasontype),
             DBEscapeString($seriestype),
         );
     } elseif (!empty($seasontype)) {
         $query .= sprintf(
-            "WHERE s.type='%s' ",
+            "AND s.type='%s' ",
             DBEscapeString($seasontype),
         );
     } elseif (!empty($seriestype)) {
         $query .= sprintf(
-            "WHERE ser.type='%s' ",
+            "AND ser.type='%s' ",
             DBEscapeString($seriestype),
         );
     } elseif (!empty($club)) {
         $query .= sprintf(
-            "WHERE t.team_id IN %s ",
+            "AND t.team_id IN %s ",
             $club,
         );
         debugMsg($query);
