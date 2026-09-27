@@ -160,10 +160,11 @@ function TeamStatisticsByName($teamname, $seriestype)
 		LEFT JOIN uo_series ser ON(ser.series_id=ts.series)
 		LEFT JOIN uo_season s ON(s.season_id=ts.season)
 		LEFT JOIN uo_team t ON(t.team_id=ts.team_id)
-		WHERE t.name='%s' AND ser.type='%s'
+		WHERE t.name='%s' AND ser.type='%s' AND ts.season IN (%s)
 		ORDER BY s.starttime DESC, ts.series,(ts.standing=0),ts.standing",
         DBEscapeString($teamname),
         DBEscapeString($seriestype),
+        AccessibleSeasonIdListSql(),
     );
     return DBQueryToArray($query);
 }

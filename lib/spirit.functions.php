@@ -4,6 +4,7 @@ require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
 require_once __DIR__ . '/cache.functions.php';
+require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/user.functions.php';
 
 function SpiritModeDisabledName()
@@ -2184,6 +2185,13 @@ function TeamSpiritCategoryStats($teamId, $seasonId, $spiritmode)
 
 function TeamSpiritCategoryHistoryAveragesByName($teamname, $seriestype, $spiritmode)
 {
+    $seasonIds = [];
+    foreach (TeamSpiritAveragesByName($teamname, $seriestype) as $row) {
+        $seasonIds[] = "'" . DBEscapeString($row['season']) . "'";
+    }
+    if (empty($seasonIds)) {
+        return [];
+    }
     $query = sprintf(
         "SELECT ts.category_id,
 			SUM(ts.average * ts.games) / NULLIF(SUM(ts.games), 0) AS average,
@@ -2192,12 +2200,13 @@ function TeamSpiritCategoryHistoryAveragesByName($teamname, $seriestype, $spirit
 		LEFT JOIN uo_spirit_category sct ON (sct.category_id = ts.category_id)
 		LEFT JOIN uo_team t ON (t.team_id = ts.team_id)
 		LEFT JOIN uo_series ser ON (ser.series_id = ts.series)
-		WHERE t.name='%s' AND ser.type='%s' AND sct.mode=%d
+		WHERE t.name='%s' AND ser.type='%s' AND sct.mode=%d AND ts.season IN (%s)
 		GROUP BY ts.category_id
 		ORDER BY sct.`index`",
         DBEscapeString($teamname),
         DBEscapeString($seriestype),
         (int) $spiritmode,
+        implode(",", array_unique($seasonIds)),
     );
     return DBQueryToArray($query);
 }
@@ -2215,7 +2224,9 @@ function TeamSpiritAveragesByName($teamname, $seriestype)
         DBEscapeString($teamname),
         DBEscapeString($seriestype),
     );
-    return DBQueryToArray($query);
+    return array_values(array_filter(DBQueryToArray($query), function ($row) {
+        return CanAccessSeason($row['season']) && ShowSpiritScoresForSeason($row['season']);
+    }));
 }
 
 function SpiritRebuildTeamStatsForSeason($seasonId, $spiritmode)
