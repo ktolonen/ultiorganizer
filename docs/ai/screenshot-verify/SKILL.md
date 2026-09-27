@@ -120,7 +120,7 @@ Points worth knowing before debugging a blank result:
   roles disagree with the stored ones dies with "Insufficient rights". Pick a
   user who genuinely holds the rights instead of editing roles into the session.
 - Screenshots of a real dataset contain personal data. Keep them out of the
-  repo, per the docs-tone rule in AGENTS.md.
+  repo, per the documentation-tone rule in AGENTS.md.
 
 ## Measuring element dimensions
 

@@ -29,7 +29,7 @@ The snapshot's `v` key holds its format version. Older snapshots stay restorable
 | Version | Adds | Restoring an older snapshot |
 |---|---|---|
 | `v1` | result, roster, goals, defenses, timeouts, events, comment | -- |
-| `v2` | `homedefenses`, `visitordefenses`, `timer_start`, `timer_pause_start`, `timer_paused_duration` | `v1` leaves defense counts and the clock alone |
+| `v2` | `homedefenses`, `visitordefenses`, `timer_start`, `timer_pause_start`, `timer_paused_duration` | `v1` leaves defense counts alone, and the clock in whatever state the replayed result call leaves it |
 | `v3` | `timer_elapsed` (elapsed game time from `GameTimerState()`) | `v2` writes back the absolute `timer_start` epoch, so a running clock counts the time since capture |
 | `v4` | `hometeam`, `visitorteam` (nullable) | the fixture-mismatch guard cannot apply before `v4` |
 

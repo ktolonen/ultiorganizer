@@ -10,6 +10,7 @@
 - `script/timekeeper.js`: all client logic (screen switching, configuration persistence, the timer
   engine, the game clock, audio, and optional screen wake lock). Written as ES5 to match the
   project ESLint configuration.
+- `timekeeper/` is a required path in `docs/release/build-release.sh`.
 - `admin/timekeepertemplates.php` and `admin/addtimekeepertemplate.php`: superadmin template list and
   edit screens. Template data access lives in `lib/timekeeper.functions.php`.
 
@@ -96,5 +97,3 @@ start without interrupting the action timer.
 Timekeeper deliberately does not track score, derive the cap target, or count team timeouts — that
 belongs to Scorekeeper and the scoresheet. It also omits WFDF limits that carry no timekeeper signal
 (such as the pre-game toss).
-
-`timekeeper/` is a required path in `docs/release/build-release.sh`.

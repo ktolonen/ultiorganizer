@@ -54,7 +54,7 @@ Enabled when `spiritmode > 0` and `hide_time_on_scoresheet` is off. Each `uo_spi
 
 ## WFDF operating principles
 
-Principles from WFDF events and Spirit Director workflows, which guide changes:
+Targets from WFDF events and Spirit Director workflows. The repository does not implement all of them; "Visibility" and "Submission rules" above describe current behavior.
 
 - Admins and Spirit Directors see all scores and comments immediately and can edit or delete submissions; team submissions are otherwise final.
 - The public sees a game's scores only after both teams submit, and public averages include only those games. Admin averages may include incomplete games so missing submissions can be followed.

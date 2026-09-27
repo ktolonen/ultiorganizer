@@ -61,7 +61,7 @@ Each goal is inserted with `GameAddScoreEntry()`, and `GameUpdateResult()` advan
 
 It is off by default because `accredited` defaults to 0, which would make every roster unfillable in an installation that never accredits.
 
-Enforcement is in the two page handlers, not in `GameAddPlayer()`, which writes the `uo_played.accredited` snapshot read by `SeasonUnaccredited()` and `admin/accreditation.php` for the record-then-acknowledge workflow. The deprecated `mobile/addplayerlists.php` is not gated; that is a known boundary of the legacy page.
+`GameAddPlayer()` enforces the rule through `GameAllowsPlayerOnRoster()`, so every roster path, including the deprecated `mobile/addplayerlists.php`, is covered; the two page handlers also disable the controls. A player already on the game's roster stays allowed. `GameAddPlayer()` also writes the `uo_played.accredited` snapshot read by `SeasonUnaccredited()` and `admin/accreditation.php`.
 
 ## Timeouts
 

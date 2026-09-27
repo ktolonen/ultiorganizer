@@ -1,6 +1,6 @@
 # Ultiorganizer Terminology Reference
 
-Preferred wording for Ultiorganizer docs, specs, commit messages, review comments and new UI text. Canonical terms follow WFDF rules spelling. Existing code, API, database and translation names are listed as aliases; this document does not require renaming them. Abbreviations are for narrow tables only, not prose.
+Preferred wording for Ultiorganizer docs, specs, commit messages, review comments and new UI text. Canonical terms follow WFDF rules spelling. Existing code, API, database, translation and UI names are listed as aliases; this document does not require renaming them. Abbreviations are for narrow tables only, not prose.
 
 ## Canonical Terms
 
@@ -117,4 +117,4 @@ These abbreviations are language-neutral literals: they are **not** translated a
 - Recognize listed aliases in existing code and docs without treating them as errors.
 - `goal` is a recorded scoring event; `score` is the numeric state inside a result.
 - Prefer `division` over `series` and `event` over user-facing `season`, except when describing code or schema.
-- Do not invent new abbreviations.
+- Do not invent new abbreviations in prose.

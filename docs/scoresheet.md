@@ -11,7 +11,7 @@ See `sql/ultiorganizer.sql` for columns.
 
 ## Input paths
 
-All paths write through the shared mutators in `lib/game.functions.php`, which check `hasEditGameEventsRight($gameId)`. That right is false for a read-only event unless the user can bypass it (see `docs/permissions.md`).
+All paths write through shared mutators, mostly in `lib/game.functions.php`, that check their own rights: `hasEditGameEventsRight($gameId)` for most, `hasEditGamePlayersRight($gameId)` for roster changes, and the comment rights in `SetGameComment()`. These rights are false in a read-only event unless the user can bypass it (see `docs/permissions.md`). The by-game-ID result entry is the exception; see "Authorization" in `docs/scoresheet-history.md`.
 
 ### Result only
 

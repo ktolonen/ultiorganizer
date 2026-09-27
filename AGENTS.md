@@ -66,7 +66,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - A plan that changes user-facing text or database access ends with the relevant review-skill steps.
 - When adding a `SYSTEM_FLAG` or `INSTALLATION_SETTING`, ask whether it belongs in the installation process; if so, cover `install.php`.
 - A new markdown document under `docs/` goes in the topic lists of both `AGENTS.md` and `docs/README.md`. The root `README.md` points to `docs/README.md` rather than keeping its own topic list.
-- New files or directories are either runtime (included by `docs/release/build-release.sh`) or development-only (`.gitattributes` `export-ignore`). Classify every new top-level path in `docs/ai/release-package-coverage/inventory.txt` and run `docs/ai/release-package-coverage/SKILL.md`; `docs/ai/test-release-install/SKILL.md` installs the built package end to end.
+- Decide whether each new file or directory belongs in the release package. Runtime files must be included by `docs/release/build-release.sh`; development-only files must be excluded with `.gitattributes` `export-ignore`. When changing release-relevant paths, run `build-release.sh` and inspect the package; `docs/ai/test-release-install/SKILL.md` goes further and installs it. Classify every new top-level path in `docs/ai/release-package-coverage/inventory.txt` and run `docs/ai/release-package-coverage/SKILL.md`.
 - A new top-level app directory also goes in the scan list of `docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh`, and in `menufunctions.php` if it needs a menu entry.
 
 ## Verification
@@ -84,14 +84,14 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - Refresh gettext catalogs after changing translated strings: `./docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh`
 - Without local `php`, use the Docker environment from `docs/local-development.md`: `docker compose -f docs/dev/compose.yaml --profile devtools up --build dev`, then `docker compose -f docs/dev/compose.yaml exec -T dev ...` (or `exec -T app ...` if only `app` runs).
 - Exercise the relevant page flow in the running app.
-- After a change that alters SQL or query results, run the old and new query against the real database and report the row counts (`docs/ai/query-database/SKILL.md`).
+- After a change that alters SQL or query results, verify empirically rather than by reasoning: run the old and new query against the real database, compare the output, and report the row counts (`docs/ai/query-database/SKILL.md`).
 - After UI or report changes, confirm desktop and mobile with `docs/ai/screenshot-verify/SKILL.md` before committing. Screenshots are the evidence.
 
 ## CI
 
 [`.github/workflows/ci.yml`](.github/workflows/ci.yml) runs on pushes to `master` and on pull requests: `composer check`, `composer audit`, ESLint, the DB-access and playoff-layout checkers, a release-package smoke build, and the full harness matrix (report uploaded as the `harness-reports` artifact). CI decides what may merge; pre-commit hooks are the fast local gate.
 
-## Documentation
+## Documentation tone
 
 - README and public docs are generic and product-focused. Author and contributor credits belong in `README.md`.
 - Never put real personal data in docs, examples, or screenshots — no real names, contact details, or rows from a live database. Use placeholders such as `Team A` or `Player 1`.
@@ -128,12 +128,12 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `docs/scoresheet-history.md`: scoresheet change history, snapshot boundaries, and the restore contract.
 - `docs/playoff-templates.md`: playoff bracket template grammar, lookup, move-comment block, BYE handling, and pool generation.
 - `docs/ranking.md`: pool ranking resolvers per pool type, tie-break order, special-ranking overrides, and event final-standings rendering.
-- `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
+- `docs/schedule.md`: schedule concept, scheduling workflow, row compilation, and settings.
 
 ### Scorekeeping and spirit
 
 - `docs/scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
-- `docs/scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
+- `docs/scoresheet.md`: scoresheet concept, input paths, parallel editing, and replay views.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `docs/spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and visibility rules.
 - `docs/timekeeper.md`: standalone Timekeeper app, template-based time limits, signal timers, and the game clock.

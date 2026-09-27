@@ -166,9 +166,9 @@ from those before it at a lightness suited to the background. Palette selection
 is not an installation setting: change the return key in
 `cust/default/pool_colors.php`.
 
-A stored color is drawn tinted to 30% over white on pool status pages, as a
-full fill on PDF schedules and scoresheets, and as a swatch on pool admin pages,
-both with text in `textColor()`. The tint makes some pairs hard to tell apart,
+A stored color is drawn tinted to 30% over white on pool status pages and as a
+full fill on PDF schedules and scoresheets, both with text in `textColor()`, and
+as a swatch on pool admin pages. The tint makes some pairs hard to tell apart,
 so pool names remain the primary cue and color a secondary one; Okabe-Ito
 trades capacity for color-vision-deficiency support.
 

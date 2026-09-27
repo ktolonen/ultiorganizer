@@ -100,9 +100,7 @@ and confirm the swap took before trusting the comparison.
 docker compose -f docs/dev/compose.yaml exec app tail -f /tmp/ultiorganizer-php-error.log
 ```
 
-```sh
-docker compose -f docs/dev/compose.yaml logs -f app
-```
+and `docker compose -f docs/dev/compose.yaml logs -f app` shows the combined container log.
 
 ## Xdebug
 
