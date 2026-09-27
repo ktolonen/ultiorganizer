@@ -1825,7 +1825,7 @@ function TeamsToCsv($season, $separator)
 		FROM uo_team AS j
 		LEFT JOIN (SELECT COUNT(*) AS games,
   			COUNT((g.forfeit=0 AND g.homescore>g.visitorscore) OR g.forfeit=2 OR NULL) as wins,
-  			g.hometeam, FORMAT(SUM(g.homescore),0) AS scores, FORMAT(SUM(IF($spiritShown, COALESCE(hspirit.score,0), 0)),0) AS spirit, FORMAT(SUM(g.visitorscore),0) AS against
+  			g.hometeam, ROUND(SUM(g.homescore)) AS scores, ROUND(SUM(IF($spiritShown, COALESCE(hspirit.score,0), 0))) AS spirit, ROUND(SUM(g.visitorscore)) AS against
 			FROM uo_game g
 			LEFT JOIN uo_game_pool gp1 ON(g.game_id=gp1.game)
 			LEFT JOIN (
@@ -1838,7 +1838,7 @@ function TeamsToCsv($season, $separator)
 		ON (j.team_id=k.hometeam)
 		LEFT JOIN (SELECT COUNT(*) AS games,
   			COUNT((g.forfeit=0 AND g.homescore<g.visitorscore) OR g.forfeit=1 OR NULL) as wins,
-  			g.visitorteam, FORMAT(SUM(g.visitorscore),0) AS scores, FORMAT(SUM(IF($spiritShown, COALESCE(vspirit.score,0), 0)),0) AS spirit, FORMAT(SUM(g.homescore),0) AS against
+  			g.visitorteam, ROUND(SUM(g.visitorscore)) AS scores, ROUND(SUM(IF($spiritShown, COALESCE(vspirit.score,0), 0))) AS spirit, ROUND(SUM(g.homescore)) AS against
 			FROM uo_game g
 			LEFT JOIN uo_game_pool gp2 ON(g.game_id=gp2.game)
 			LEFT JOIN (
