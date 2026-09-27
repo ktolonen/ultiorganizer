@@ -2382,7 +2382,23 @@ function PoolConfirmMoves($poolId, $visible = null)
  */
 function PoolSetSchedulingName($scheduling_id, $name, $season)
 {
-    if (isSeasonAdmin($season)) {
+    $usedBySeason = DBQueryToValue(sprintf(
+        "SELECT 1 FROM uo_moveteams m
+            INNER JOIN uo_pool p ON (p.pool_id=m.topool)
+            INNER JOIN uo_series ser ON (ser.series_id=p.series)
+            WHERE m.scheduling_id=%1\$d AND ser.season='%2\$s'
+        UNION
+        SELECT 1 FROM uo_game g
+            INNER JOIN uo_game_pool gp ON (gp.game=g.game_id)
+            INNER JOIN uo_pool p ON (p.pool_id=gp.pool)
+            INNER JOIN uo_series ser ON (ser.series_id=p.series)
+            WHERE (g.scheduling_name_home=%1\$d OR g.scheduling_name_visitor=%1\$d OR g.name=%1\$d)
+            AND ser.season='%2\$s'
+        LIMIT 1",
+        (int) $scheduling_id,
+        DBEscapeString($season),
+    ));
+    if (isSeasonAdmin($season) && $usedBySeason) {
         $query = sprintf(
             "UPDATE uo_scheduling_name SET name='%s' WHERE scheduling_id=%d",
             DBEscapeString($name),
