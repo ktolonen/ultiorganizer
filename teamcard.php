@@ -194,7 +194,7 @@ if (ShowDefenseStats()) {
         $html .= "</table>\n";
     }
 }
-$allgames = TimetableGames($teamId, "team", "all", "time");
+$allgames = TimetableGames($teamId, "team", "all", "time", "", true);
 if ($allgames) {
     $html .= "<h2>" . utf8entities(U_(SeasonName($teaminfo['season']))) . ":</h2>\n";
     $html .=  "<p>" . _("Division") . ": <a href='?view=poolstatus&amp;series=" . $teaminfo['series'] . "'>" . utf8entities(U_($teaminfo['seriesname'])) . "</a></p>";

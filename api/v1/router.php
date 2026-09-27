@@ -728,7 +728,7 @@ function api_handle_games($tokenRow)
         $group = 'all';
     }
 
-    $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
+    $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group, true);
     $rows = [];
     foreach ($games as $row) {
         $rows[] = api_normalize_game($row);
@@ -736,7 +736,7 @@ function api_handle_games($tokenRow)
 
     $groupings = [];
     if ($group === 'all') {
-        $groups = TimetableGrouping($id, $gamefilter, $timefilter);
+        $groups = TimetableGrouping($id, $gamefilter, $timefilter, true);
         foreach ($groups as $groupRow) {
             $groupings[] = $groupRow['reservationgroup'];
         }
