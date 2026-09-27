@@ -1,6 +1,6 @@
 # Permissions
 
-This document describes the permission model that is implemented in the codebase today.
+The permission model: storage, roles, helpers, and where they are enforced.
 
 ## Storage and session shape
 
@@ -65,21 +65,7 @@ The main helpers live in [lib/user.functions.php](../lib/user.functions.php).
 
 `canBypassEventReadonly()` returns true only for `superadmin`.
 
-The following helpers deny writes when the event is read-only and the user is not `superadmin`:
-
-- `hasEditSeasonSeriesRight()`
-- `hasEditPlacesRight()`
-- `hasEditTeamsRight()`
-- `hasEditGamesRight()`
-- `hasEditPlayerProfileRight()`
-- `hasEditPlayersRight()`
-- `hasEditGamePlayersRight()`
-- `hasEditGameEventsRight()`
-- `hasAccredidationRight()`
-- `hasRestoreScoresheetHistoryRight()`
-- `hasSpiritEditRight()`
-
-Read-only status does not block spirit review access by itself.
+All the write helpers above, and `hasSpiritEditRight()`, deny writes in a read-only event unless the user is `superadmin`. Spirit review access is not blocked.
 
 Permission branches that do not go through these helpers check the flag themselves: the note-author branch of `CanManageGameComment()` (and so `CanManageSpiritComment()`), and the publisher branch of `CanRemoveMediaUrl()` for game, team, division and pool links. Player and club links are not tied to an event.
 
@@ -149,74 +135,18 @@ Spirit comment permissions in [lib/comment.functions.php](../lib/comment.functio
 
 ## Menu visibility
 
-The main left menu is built in [menufunctions.php](../menufunctions.php).
+The left menu is built in [menufunctions.php](../menufunctions.php).
 
-### Administration block
+- The `Administration` block appears for `hasScheduleRights()` (any `resadmin`) and superadmins. `Scheduling` needs `hasScheduleRights()`; `Translations` and all other entries need `superadmin`.
+- `getEditSeasonLinks()` builds a block per season in `editseason`:
+  - `seasonadmin`: `Event`, `Divisions`, `Teams`, `Pools`, `Scheduling`, `Games`, `Pool standings`, `Final standings`, `Accreditation`, plus `Spirit` with `spiritmode` and `Season points` with `use_season_points`
+  - `seriesadmin` (if not `seasonadmin`): per-division `Teams`, `Games`, `Pool standings`, and `Accreditation`
+  - `spiritadmin` (if not `seasonadmin`, with `spiritmode`): `Spirit`
+  - `teamadmin`: `Team: <name>`, or `Team responsibilities` for two or more teams; `accradmin` adds team and accreditation links
+  - `gameadmin` / `resgameadmin`: `Game responsibilities` and `Contacts`
 
-- The `Administration` block is shown when `hasScheduleRights()` or `isSuperAdmin()` or `hasTranslationRight()` is true.
-- In current implementation, `hasTranslationRight()` is the same as `isSuperAdmin()`, so in practice this block is shown for:
-  users with any `resadmin` role
-  superadmins
-- Inside that block:
-  `Scheduling` is shown for users with `hasScheduleRights()`
-  `Translations` is shown for users with `hasTranslationRight()`, which currently means superadmins
-  `Events`, `Rule templates`, `Clubs & Countries`, `Field locations`, `Field reservations`, `Users`, `API Tokens`, `Logs`, `Database`, and `Settings` are shown for `superadmin`
+## Page-level checks
 
-### Season edit blocks
+Admin pages check their scope before rendering, e.g. `isSeasonAdmin($season)` in `admin/seasonadmin.php`, `admin/seasonseries.php` and `admin/seasonpools.php`; `hasSeasonSeriesPageAccess()` in `admin/seasonteams.php`, `admin/seasongames.php`, `admin/seasonstandings.php`, `admin/serieteams.php` and `admin/seasonmoves.php` (which also checks the division belongs to the event); `hasAccreditationPageAccess()`, `hasReservationsPageAccess()` and `hasSpiritToolsRight()` in `admin/accreditation.php`, `admin/reservations.php` and `admin/spirit.php`.
 
-`getEditSeasonLinks()` builds season-specific blocks only for seasons present in `editseason`.
-
-Within each such season:
-
-- `seasonadmin` adds:
-  `Event`, `Divisions`, `Teams`, `Pools`, `Scheduling`, `Games`, `Pool standings`, `Final standings`, `Accreditation`
-  `Spirit` when the season has `spiritmode`
-  `Season points` when `use_season_points` is enabled
-- `seriesadmin` adds:
-  `<Series> Teams`, `<Series> Games`, `<Series> Pool standings`, `Accreditation`
-  These are only added when the user is not already `seasonadmin` for the same season.
-- `spiritadmin` adds:
-  `Spirit`
-  This is only added when the user is not already `seasonadmin` for that season and the season has `spiritmode`.
-- `teamadmin` adds either:
-  a direct `Team: <name>` link when the user has fewer than two team responsibilities in that season
-  or `Team responsibilities` when they have multiple team responsibilities
-- `accradmin` is also handled in `getEditSeasonLinks()` for team and accreditation navigation
-- `gameadmin` and `resgameadmin` mark the season as having game responsibilities
-- Any season marked as having game responsibilities gets:
-  `Game responsibilities` and `Contacts`
-
-## Page-level access checks
-
-Examples of explicit route checks currently in use:
-
-- [admin/seasonadmin.php](../admin/seasonadmin.php) and [admin/seasonseries.php](../admin/seasonseries.php) require `isSeasonAdmin($season)`
-- [admin/seasonpools.php](../admin/seasonpools.php) requires `isSeasonAdmin($season)`
-- [admin/seasonteams.php](../admin/seasonteams.php), [admin/seasongames.php](../admin/seasongames.php), and [admin/seasonstandings.php](../admin/seasonstandings.php) require `hasSeasonSeriesPageAccess($season, $series)`
-- [admin/serieteams.php](../admin/serieteams.php) requires `hasSeasonSeriesPageAccess()` for the pool's own event and division
-- [admin/seasonmoves.php](../admin/seasonmoves.php) requires `hasSeasonSeriesPageAccess($season, $series)` and a division that belongs to the event
-- [admin/accreditation.php](../admin/accreditation.php) requires `hasAccreditationPageAccess($season)`
-- [admin/reservations.php](../admin/reservations.php) requires `hasReservationsPageAccess($season)`
-- [admin/spirit.php](../admin/spirit.php) requires `hasSpiritToolsRight($season)`
-
-Spirit entry pages also perform direct access checks before rendering:
-
-- [user/addspirit.php](../user/addspirit.php)
-- [spiritkeeper/editgame.php](../spiritkeeper/editgame.php)
-
-These pages use `SpiritEntryTeamForUser()` and `HasFullGameSpiritViewRight()` to decide whether the user has no access, team-scoped submit access, or full review access.
-
-## Game-edit tab visibility examples
-
-The spirit tab/link in these pages is shown through `SpiritEntryUrl()`:
-
-- [user/addresult.php](../user/addresult.php)
-- [user/addplayerlists.php](../user/addplayerlists.php)
-- [user/addscoresheet.php](../user/addscoresheet.php)
-- [user/adddefensesheet.php](../user/adddefensesheet.php)
-- [user/respgames.php](../user/respgames.php)
-- [mobile/addscoresheet.php](../mobile/addscoresheet.php)
-
-If `SpiritEntryUrl()` returns an empty string, the spirit link is hidden.
-
-Scorekeeper no longer shows spirit links. Spirit entry has been moved out of `scorekeeper/` and into Spiritkeeper or the main logged-in user pages.
+`user/addspirit.php` and `spiritkeeper/editgame.php` use `SpiritEntryTeamForUser()` and `HasFullGameSpiritViewRight()` to choose between no access, one-team submission and full review. The game-edit pages show the spirit link only when `SpiritEntryUrl()` returns one. Scorekeeper shows no spirit links.
