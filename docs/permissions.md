@@ -81,6 +81,20 @@ The following helpers deny writes when the event is read-only and the user is no
 
 Read-only status does not block spirit review access by itself.
 
+Permission branches that do not go through these helpers check the flag themselves: the note-author branch of `CanManageGameComment()` (and so `CanManageSpiritComment()`), and the publisher branch of `CanRemoveMediaUrl()` for game and team links. Player and club links are not tied to an event.
+
+## Cross-event scoping
+
+A mutation that checks rights on one event, division or pool must not write rows that belong to another. The shared helpers below enforce this, so a page that authorizes the event in its URL cannot be used to change another event's data:
+
+- `RecalculatePoolStandings()` checks `hasEditTeamsRight()` on the pool's own division before resolving its standings. Admin pages use it; `ResolvePoolStandings()` itself stays unguarded because result saves call it under game rights. `PoolConfirmMoves()` and `AutoResolveTiesInSourcePools()` check the same right.
+- `PoolUndoMove()` requires edit rights on both the source and the target pool.
+- `RemoveReservation()` and `SetReservation()` check rights against the reservation's stored event; a reservation with no event is editable by a superadmin only.
+- `PoolSetSchedulingName()` renames only a scheduling name that a move or game of the given event uses.
+- `SetTeamSeeding()` updates only teams of the given division.
+- `ScheduleGame()` and `SetGame()` accept only reservations, teams and the responsible team of the game's own event.
+- `GameAllowsPlayerOnRoster()` admits only players of the game's home or visiting team.
+
 ## Spirit-specific access
 
 The spirit-specific logic is implemented in [lib/spirit.functions.php](../lib/spirit.functions.php).
@@ -179,6 +193,8 @@ Examples of explicit route checks currently in use:
 - [admin/seasonadmin.php](../admin/seasonadmin.php) and [admin/seasonseries.php](../admin/seasonseries.php) require `isSeasonAdmin($season)`
 - [admin/seasonpools.php](../admin/seasonpools.php) requires `isSeasonAdmin($season)`
 - [admin/seasonteams.php](../admin/seasonteams.php), [admin/seasongames.php](../admin/seasongames.php), and [admin/seasonstandings.php](../admin/seasonstandings.php) require `hasSeasonSeriesPageAccess($season, $series)`
+- [admin/serieteams.php](../admin/serieteams.php) requires `hasSeasonSeriesPageAccess()` for the pool's own event and division
+- [admin/seasonmoves.php](../admin/seasonmoves.php) requires `hasSeasonSeriesPageAccess($season, $series)` and a division that belongs to the event
 - [admin/accreditation.php](../admin/accreditation.php) requires `hasAccreditationPageAccess($season)`
 - [admin/reservations.php](../admin/reservations.php) requires `hasReservationsPageAccess($season)`
 - [admin/spirit.php](../admin/spirit.php) requires `hasSpiritToolsRight($season)`

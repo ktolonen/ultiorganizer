@@ -31,12 +31,12 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/privacy.functions.php`: privacy export, anonymization, deletion, and audit helpers for registered-user and player data.
 - `lib/reservation.functions.php`: reservation/field CRUD, scheduled-game lookups, unscheduled-team helpers, and delete checks.
 - `lib/search.functions.php`: reusable search form builders and result renderers for seasons, series, pools, teams, users, players, reservations, and games.
-- `lib/season.functions.php`: season CRUD, season relations, reservations, admins/roles, readonly mode, deletion checks, and event banner storage and rendering (`SeasonBannerHTML`, `UploadSeasonBanner`, `RemoveSeasonBanner`).
+- `lib/season.functions.php`: season CRUD, season relations, reservations, admins/roles, readonly mode, deletion checks, and event banner storage and rendering (`SeasonBannerHTML`, `UploadSeasonBanner`, `RemoveSeasonBanner`). Private-event helpers: `CanAccessSeason`, `FilterAccessibleSeasons`, `AccessibleSeasonIdListSql` (an `IN (...)` list for cross-event queries), and `RequestSeasonsFromView` (every event a request's id parameters name, used by the access and maintenance gates).
 - `lib/seasonpoints.functions.php`: season-points round CRUD, round scoring, and per-series totals.
 - `lib/series.functions.php`: series CRUD, team enrollment, series scoreboards, related games/pools, and team copy helpers.
 - `lib/session.functions.php`: secure session start/regenerate/destroy helpers and HTTPS detection.
 - `lib/spirit.functions.php`: spirit mode/category config, submission/token flows, visibility rules, Spiritkeeper helpers, aggregates, rebuilds, and CSV export.
-- `lib/standings.functions.php`: pool standings resolution, tie-breakers, swiss ranking, manual final standings, and standings lookup helpers.
+- `lib/standings.functions.php`: pool standings resolution, tie-breakers, swiss ranking, manual final standings, and standings lookup helpers. `RecalculatePoolStandings` is the rights-checked entry point for admin-triggered recalculation.
 - `lib/statistical.functions.php`: precomputed season/series/team/player stats reads and stat rebuild routines.
 - `lib/swissdraw.functions.php`: swissdraw move resolution, duplicate-game avoidance, tie handling, and playoff/BYE checks.
 - `lib/team.functions.php`: team/roster CRUD, team stats, team profile/media, standings/move views, and CSV export.
@@ -47,7 +47,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/user.functions.php`: authentication, password hashing/reset, registration/email confirmation, session setup, user roles, permission checks, and responsibility helpers.
 - `lib/version.functions.php`: Ultiorganizer, database, and customization version metadata helpers.
 - `lib/view.guard.php`: include-time view guard for routed pages.
-- `lib/yui.functions.php`: thin wrapper for loading YUI assets.
+- `lib/yui.functions.php`: thin wrapper for loading YUI assets. When AutoComplete is loaded it replaces the stock `formatResult` with an escaping one and provides `YAHOO.widget.AutoComplete.escapeHtml` for custom formatters.
 
 ## Third-party libraries
 

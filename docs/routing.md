@@ -8,6 +8,13 @@
 - Root-level routed page scripts are include-only implementation files. They are expected to run through `index.php`, which defines `UO_ROUTED_VIEW` before including the resolved view.
 - When a routed root page must not run standalone, use `lib/view.guard.php` and `requireRoutedView(...)` instead of duplicating direct-access checks.
 
+## Event gates in `index.php`
+
+Before including the view, `index.php` checks the events the request names:
+
+- `EnforcePrivateEventAccessForView()` redirects to the front page when any event named by the request's id parameters is not accessible to the viewer, and `EnforceSoftMaintenanceForView()` answers 503 when any of them is in maintenance and the viewer cannot bypass it. Both resolve the events through `RequestSeasonsFromView()`, which looks up every id parameter present (`season`, `series`, `pool`, each id in `pools`, `game`, `reservation`, `team`, `team1`, `team2`, `player`, `profile`), not only the first, since pages read different parameters.
+- `admin/` and `user/` views get a 404 "Event not found" page when `season` names an event that does not exist or that the viewer cannot access. These pages print the event id back into links and forms, and event ids are created only by superadmins under a strict character rule, so a known id is safe to print. `season=0` is let through because the pages read it as no event.
+
 ## Sub-app entry points
 
 - `api/index.php`: API entry point.

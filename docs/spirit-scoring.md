@@ -113,6 +113,7 @@ This section describes what the repository does today.
 - `RefreshGameSpiritVisibility()` maintains `uo_game.show_spirit` as the shared visibility flag for public spirit rows and spirit-based calculations.
 - `CanViewSpiritScoresForGame()` and `CanViewSpiritCommentsForGame()` centralize non-admin visibility checks.
 - `spiritstatus.php` hides the full spirit page when `ShowSpiritScoresForSeason()` is false.
+- The same rule applies to the other outputs of archived or aggregated spirit: the spirit standings statistics (`SeasonSpiritTopTeamsBySeriesType()`), the team card's history averages (`TeamSpiritAveragesByName()`, `TeamSpiritCategoryHistoryAveragesByName()`), the team CSV's `SpiritPoints` column (`TeamsToCsv()`, zero when hidden), and the spirit block of `/api/v1/gameplay` (`CanViewSpiritScoresForGame()`).
 
 ### Aggregate calculations
 
