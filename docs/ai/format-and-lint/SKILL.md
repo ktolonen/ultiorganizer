@@ -24,7 +24,7 @@ Limit the run to PHP files changed in the current worktree or index. Use:
 - `git diff --name-only`
 - `git diff --cached --name-only`
 
-Filter to `*.php` and skip the excluded directories listed in `docs/code-style.md`, `.php-cs-fixer.dist.php`, and `phpstan.neon.dist` (`vendor/`, `live/`, `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/`, `lib/hsvclass/`).
+Filter to `*.php` and skip the excluded directories listed in `docs/code-style.md`, `.php-cs-fixer.dist.php`, and `phpstan.neon.dist` (`vendor/`, `live/`, `dist/`, `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/`, `lib/hsvclass/`; PHPStan also skips `conf/`).
 
 If no PHP files changed, report `no PHP changes` and stop.
 

@@ -64,6 +64,9 @@ When one term changes on a page, explicitly check the rest of that page for mixe
 - Give extra attention to strings inside `_()` because they are user-facing and translation-backed.
 - Also inspect adjacent labels, headings, button text, notices, warnings, table headers, and compact stat labels on the same page so wording remains consistent.
 - If a wording pass reveals an obvious adjacent rendering mistake that affects user-facing text, such as a duplicated label cell or a broken heading, report it as an error even if the underlying issue is not purely terminology.
+- Report a new string that duplicates an existing translated one with only a synonym, capitalization or punctuation change.
+- Report a standalone brand name (Scorekeeper, Spiritkeeper, Timekeeper) passed through gettext; brand names stay verbatim.
+- In compact standings or statistics tables, abbreviated headers should come from `ColumnAbbr()` with a `ColumnLegend()` or `TableLegend()` legend, not translated abbreviations (see `docs/terminology.md`).
 - Do not edit `.po` or `.mo` files in this skill.
 
 ## Database-backed translation rules

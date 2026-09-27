@@ -39,9 +39,10 @@ If the caller is not explicit, default to `page sweep`.
 - Normalize the page to one consistent terminology set instead of making a partial fix.
 - Apply project-preferred spelling, using WFDF rules where applicable, unless the user explicitly wants compatibility wording.
 - Use the preferred terms in `docs/terminology.md`, while leaving internal identifiers unchanged.
-- When one term is being fixed on a page, check the rest of that page for mixed variants and finish the page in one consistent user-facing set.
 - When one term is being fixed on a page, check the rest of that page for mixed variants such as `Spirit timeout` and `Spirit stoppage`, and finish the page in one consistent user-facing set.
 - Prefer verb forms such as `Log in` and `Log out` for action buttons, links, and headings.
+- Reuse an existing translated string instead of adding a synonym or a capitalization- or punctuation-only variant.
+- Do not pass the brand names Scorekeeper, Spiritkeeper and Timekeeper through gettext on their own; keep them verbatim inside translated sentences.
 
 ## Term sweep rules
 

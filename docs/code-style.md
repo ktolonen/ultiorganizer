@@ -51,7 +51,7 @@ composer check           # format:check + lint
 
 ## Excluded directories
 
-Both tools skip `vendor/`, `live/`, `dist/`, and the third-party `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/` and `lib/hsvclass/`.
+Both tools skip `vendor/`, `live/`, `dist/`, and the third-party `lib/tfpdf/`, `lib/yuiloader/`, `lib/phpqrcode/`, `lib/feed_generator/` and `lib/hsvclass/`. PHPStan also skips `conf/`.
 
 ## Pre-commit hook
 

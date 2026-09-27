@@ -58,8 +58,8 @@ Common views (use `http://host.docker.internal:8080/` as base):
 
 ## Authenticated pages
 
-Everything under `admin/`, `user/`, `scorekeeper/` and `spiritkeeper/` redirects
-to a login form, so the recipe above only reaches public pages. Dev passwords are
+Everything under `admin/`, `user/`, `scorekeeper/` and the logged-in part of
+`spiritkeeper/` requires a login, so the recipe above only reaches public pages. Dev passwords are
 hashed and are not needed: build a throwaway session through the app's own login
 path instead, and hand its id to Chromium as a cookie.
 
