@@ -550,30 +550,25 @@ function CalcTeamStats($season)
 
                 while ($game = mysqli_fetch_assoc($allgames)) {
                     if (!is_null($game['homescore']) && !is_null($game['visitorscore'])) {
+                        $isHome = $team['team_id'] == $game['hometeam'];
+                        $ownScore = intval($isHome ? $game['homescore'] : $game['visitorscore']);
+                        $opponentScore = intval($isHome ? $game['visitorscore'] : $game['homescore']);
+                        $goals_made += $ownScore;
+                        $goals_against += $opponentScore;
 
-                        if ($team['team_id'] == $game['hometeam']) {
-                            $goals_made += intval($game['homescore']);
-                            $goals_against += intval($game['visitorscore']);
-
-                            if (intval($game['homescore']) > intval($game['visitorscore'])) {
-                                $wins++;
-                            } else {
-                                $losses++;
-                            }
-                            if (ShowDefenseStats()) {
-                                $defenses_total += $game['homedefenses'];
-                            }
-                        } else {
-                            $goals_made += intval($game['visitorscore']);
-                            $goals_against += intval($game['homescore']);
-                            if (intval($game['homescore']) < intval($game['visitorscore'])) {
-                                $wins++;
-                            } elseif (intval($game['homescore']) > intval($game['visitorscore'])) {
-                                $losses++;
-                            }
-                            if (ShowDefenseStats()) {
-                                $defenses_total += $game['visitordefenses'];
-                            }
+                        // forfeit: 1 home forfeited, 2 away forfeited, 3 both lose
+                        $forfeit = intval($game['forfeit']);
+                        if ($forfeit === 3 || $forfeit === ($isHome ? 1 : 2)) {
+                            $losses++;
+                        } elseif ($forfeit === ($isHome ? 2 : 1)) {
+                            $wins++;
+                        } elseif ($ownScore > $opponentScore) {
+                            $wins++;
+                        } elseif ($ownScore < $opponentScore) {
+                            $losses++;
+                        }
+                        if (ShowDefenseStats()) {
+                            $defenses_total += $game[$isHome ? 'homedefenses' : 'visitordefenses'];
                         }
                     }
                 }

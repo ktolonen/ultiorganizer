@@ -275,7 +275,7 @@ function TeamGames($teamId)
         $defense_str = ",pp.homedefenses,pp.visitordefenses ";
     }
     $query = sprintf(
-        "SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, pp.visitorscore,
+        "SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, pp.visitorscore, pp.forfeit,
 					pp.hasstarted, gp.pool AS pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank" . $defense_str .
         "FROM uo_game pp
 				INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)

@@ -165,9 +165,9 @@ function SeriesTeamStatsPoints($seriesId)
     FROM (
       SELECT g.hometeam AS team_id,
         1 AS games,
-        (g.homescore > g.visitorscore) AS wins,
-        (g.homescore = g.visitorscore) AS draws,
-        (g.homescore < g.visitorscore) AS losses,
+        ((g.forfeit=0 AND g.homescore > g.visitorscore) OR g.forfeit=2) AS wins,
+        (g.forfeit=0 AND g.homescore = g.visitorscore) AS draws,
+        ((g.forfeit=0 AND g.homescore < g.visitorscore) OR g.forfeit IN (1, 3)) AS losses,
         g.homescore AS scores,
         g.visitorscore AS against
       FROM uo_game g
@@ -177,9 +177,9 @@ function SeriesTeamStatsPoints($seriesId)
       UNION ALL
       SELECT g.visitorteam AS team_id,
         1 AS games,
-        (g.visitorscore > g.homescore) AS wins,
-        (g.visitorscore = g.homescore) AS draws,
-        (g.visitorscore < g.homescore) AS losses,
+        ((g.forfeit=0 AND g.visitorscore > g.homescore) OR g.forfeit=1) AS wins,
+        (g.forfeit=0 AND g.visitorscore = g.homescore) AS draws,
+        ((g.forfeit=0 AND g.visitorscore < g.homescore) OR g.forfeit IN (2, 3)) AS losses,
         g.visitorscore AS scores,
         g.homescore AS against
       FROM uo_game g
