@@ -88,7 +88,8 @@ define('NO_EMAIL', false);
  * API rate limiting.
  *
  * API_RATE_LIMIT is the maximum number of requests allowed per token and client
- * IP in each API_RATE_WINDOW, measured in seconds.
+ * IP in each API_RATE_WINDOW, measured in seconds. The client IP is the
+ * connecting address; X-Forwarded-For is not trusted.
  */
 define('API_RATE_LIMIT', 120);
 define('API_RATE_WINDOW', 60);

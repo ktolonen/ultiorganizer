@@ -94,6 +94,19 @@ function api_get_headers()
             $headers[$name] = $value;
         }
     }
+    // Apache with mod_php keeps Authorization out of $_SERVER.
+    if (empty($headers['Authorization'])) {
+        if (!empty($_SERVER['REDIRECT_HTTP_AUTHORIZATION'])) {
+            $headers['Authorization'] = $_SERVER['REDIRECT_HTTP_AUTHORIZATION'];
+        } elseif (function_exists('getallheaders')) {
+            foreach (getallheaders() as $name => $value) {
+                if (strcasecmp($name, 'Authorization') === 0) {
+                    $headers['Authorization'] = $value;
+                    break;
+                }
+            }
+        }
+    }
     return $headers;
 }
 
@@ -137,10 +150,6 @@ function api_get_token()
  */
 function api_get_client_ip()
 {
-    if (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
-        $parts = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
-        return trim($parts[0]);
-    }
     return $_SERVER['REMOTE_ADDR'] ?? 'unknown';
 }
 
