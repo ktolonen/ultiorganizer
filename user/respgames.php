@@ -37,7 +37,7 @@ if (isset($_GET['season'])) {
     $season = CurrentSeason();
 }
 if (isset($_GET['series'])) {
-    $series_id = $_GET['series'];
+    $series_id = (int) $_GET['series'];
 } else {
     $series_id = null;
 }
@@ -48,7 +48,7 @@ $hidestarted = -1;
 $hide = "none";
 if (!empty($_GET["hidden"])) {
     $hidestarted = ($_GET["hidden"] == "started") ? 1 : 0;
-    $hide = $_GET['hidden'];
+    $hide = in_array($_GET['hidden'], ['started', 'future'], true) ? $_GET['hidden'] : "none";
 }
 
 if (!empty($_GET["massinput"])) {
@@ -84,18 +84,17 @@ function respgameslink($season, $series_id, $group, $hide, $mass, $htmlentities 
         $hide = "&amp;hidden=" . $hide;
     }
     $ret = "?view=user/respgames&amp;season=$season" . ($series_id ? "&amp;series=$series_id" : "") .
-      "&amp;group=$group$hide&amp;massinput=$mass";
+      "&amp;group=" . urlencode($group) . "$hide&amp;massinput=$mass";
     return $ret;
 }
 
 if (count($groups) > 0) {
     foreach ($groups as $grouptmp) {
         $groupLabel = isset($grouptmp['reservationgroup']) ? (string) $grouptmp['reservationgroup'] : '';
-        $encodedGroup = urlencode($groupLabel);
         if ($group == $groupLabel) {
-            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $encodedGroup, $hide, $mass) . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
+            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $groupLabel, $hide, $mass) . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
         } else {
-            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $encodedGroup, $hide, $mass) . "'>" . U_($groupLabel) . "</a>";
+            $html .= "<a class='groupinglink' tabindex='" . ++$tab . "' href='" . respgameslink($season, $series_id, $groupLabel, $hide, $mass) . "'>" . U_($groupLabel) . "</a>";
         }
         $html .= "&nbsp;&nbsp;&nbsp; ";
     }

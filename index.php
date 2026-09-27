@@ -70,6 +70,16 @@ setSelectedSeason();
 EnforcePrivateEventAccessForView($rawView);
 EnforceSoftMaintenanceForView($rawView);
 
+// Admin and user pages print the event id back into their links and forms.
+// Event ids are created only by superadmins, so refusing unknown ones keeps
+// a crafted season parameter out of every page at once.
+if (preg_match('#^(admin|user)/#', (string) $rawView) && isset($_GET['season']) && $_GET['season'] !== ''
+    && (!is_string($_GET['season']) || !SeasonExists($_GET['season']))) {
+    http_response_code(404);
+    showPage(_("Event not found"), "<h1>" . _("Event not found") . "</h1>");
+    exit();
+}
+
 $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', ['index', 'localization', 'install']);
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
 LogPageLoad($viewToLog);

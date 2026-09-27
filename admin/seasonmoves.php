@@ -16,14 +16,14 @@ if (!empty($_GET["season"])) {
 }
 
 if (!empty($_GET["series"])) {
-    $seriesId = $_GET["series"];
+    $seriesId = (int) $_GET["series"];
     if (empty($season)) {
         $season = SeriesSeasonId($seriesId);
     }
 }
 
 if (!empty($_GET["order"])) {
-    $order = $_GET["order"];
+    $order = $_GET["order"] === "from" ? "from" : "to";
 }
 
 //common page

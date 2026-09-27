@@ -8,7 +8,7 @@ include_once 'lib/common.functions.php';
 
 $LAYOUT_ID = EDITGAME;
 $backurl = SafeRedirectUrl($_SERVER['HTTP_REFERER'] ?? "", "");
-$gameId = $_GET["game"];
+$gameId = (int) $_GET["game"];
 $info = GameResult($gameId);
 $season = "";
 

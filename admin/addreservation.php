@@ -11,7 +11,7 @@ $reservationId = 0;
 $season = "";
 
 if (isset($_GET['reservation'])) {
-    $reservationId = $_GET['reservation'];
+    $reservationId = (int) $_GET['reservation'];
 }
 if (!empty($_GET['season'])) {
     $season = $_GET['season'];

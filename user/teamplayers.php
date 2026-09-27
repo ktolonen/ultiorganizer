@@ -11,8 +11,8 @@ $gameId = 0;
 $title = _("Roster");
 
 
-$teamId = iget("team");
-$gameId = iget("game");
+$teamId = (int) iget("team");
+$gameId = (int) iget("game");
 $teaminfo = TeamInfo($teamId);
 
 // Stop early if the team does not exist to avoid undefined array offsets.
