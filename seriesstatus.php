@@ -70,7 +70,7 @@ foreach ($teams as $team) {
     $teamstats['for'] = intval($statsRow['scores']);
     $teamstats['against'] = intval($statsRow['against']);
 
-    $teamstats['losses'] = $teamstats['games'] - $teamstats['wins'];
+    $teamstats['losses'] = intval($statsRow['losses']);
     $teamstats['diff'] = $teamstats['for'] - $teamstats['against'];
 
     $teamstats['spirit'] = isset($spiritAvg[$team['team_id']]) ? $spiritAvg[$team['team_id']]['total'] : null;
