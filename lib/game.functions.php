@@ -1626,6 +1626,17 @@ function GameSetDefenses($gameId, $home, $away)
  */
 function GameAllowsPlayerOnRoster($gameId, $playerId)
 {
+    $playsForGameTeam = DBQueryToValue(sprintf(
+        "SELECT COUNT(*) FROM uo_game g
+            INNER JOIN uo_player p ON (p.team=g.hometeam OR p.team=g.visitorteam)
+            WHERE g.game_id=%d AND p.player_id=%d",
+        (int) $gameId,
+        (int) $playerId,
+    ));
+    if ((int) $playsForGameTeam === 0) {
+        return false;
+    }
+
     $seasonInfo = SeasonInfo(GameSeason($gameId));
     if (empty($seasonInfo['require_accreditation'])) {
         return true;
@@ -1686,6 +1697,10 @@ function GameAddPlayer($gameId, $playerId, $number)
 function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        $game = GameInfo($gameId);
+        if (!in_array((int) $teamId, [(int) ($game['hometeam'] ?? 0), (int) ($game['visitorteam'] ?? 0)], true)) {
+            return false;
+        }
         // The nested GameAddPlayer() below runs with history suppressed, so
         // its own snapshot attempt would be a no-op.
         ScoresheetHistorySnapshotIfNeeded($gameId);
