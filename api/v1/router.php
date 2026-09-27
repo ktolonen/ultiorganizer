@@ -606,8 +606,7 @@ function api_games_context($tokenRow)
             }
         } else {
             $gamefilter = 'season';
-            $seasonId = CurrentSeason();
-            $id = $seasonId;
+            $id = '';
         }
     } elseif (iget('team')) {
         $id = (int) iget('team');
@@ -618,12 +617,16 @@ function api_games_context($tokenRow)
         $gamefilter = 'season';
         $seasonId = $id;
     } else {
-        $seasonId = CurrentSeason();
         $gamefilter = 'season';
-        $id = $seasonId;
+        $id = '';
     }
 
+    // Resolved here, not above, so an event-scoped token falls back to its
+    // own event instead of the current one.
     $seasonId = api_resolve_season_id($seasonId, $tokenRow);
+    if ($gamefilter === 'season' && $id === '') {
+        $id = $seasonId;
+    }
 
     return [$id, $gamefilter, $seasonId];
 }
