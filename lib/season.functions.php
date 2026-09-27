@@ -435,9 +435,10 @@ function EnforceSoftMaintenanceForView($rawView)
         RenderSoftMaintenanceResponse();
     }
 
-    $seasonId = MaintenanceSeasonFromView($rawView);
-    if (!empty($seasonId) && IsSeasonInMaintenance($seasonId) && !CanBypassEventMaintenance($seasonId)) {
-        RenderSoftMaintenanceResponse($seasonId);
+    foreach (RequestSeasonsFromView($rawView) as $seasonId) {
+        if (IsSeasonInMaintenance($seasonId) && !CanBypassEventMaintenance($seasonId)) {
+            RenderSoftMaintenanceResponse($seasonId);
+        }
     }
 }
 
