@@ -8,6 +8,7 @@ require_once __DIR__ . '/player.functions.php';
 require_once __DIR__ . '/image.functions.php';
 require_once __DIR__ . '/url.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/spirit.functions.php';
 
 function TeamPlayerArray($teamId)
 {
@@ -1812,6 +1813,7 @@ function RemoveTeamProfileUrl($teamId, $urlId)
 function TeamsToCsv($season, $separator)
 { // SELECT ssc.*, SUM(value*factor) FROM uo_spirit_score ssc   LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id) WHERE team_id=1398
 
+    $spiritShown = ShowSpiritScoresForSeason($season) ? "g.show_spirit=1" : "FALSE";
     $query = sprintf(
         "SELECT j.name AS Team, j.abbreviation AS ShortName, club.name AS Club,
 		c.name AS Country, ser.name AS Division, ps.name AS Pool,	
@@ -1823,7 +1825,7 @@ function TeamsToCsv($season, $separator)
 		FROM uo_team AS j
 		LEFT JOIN (SELECT COUNT(*) AS games,
   			COUNT((g.forfeit=0 AND g.homescore>g.visitorscore) OR g.forfeit=2 OR NULL) as wins,
-  			g.hometeam, FORMAT(SUM(g.homescore),0) AS scores, FORMAT(SUM(IF(g.show_spirit=1, COALESCE(hspirit.score,0), 0)),0) AS spirit, FORMAT(SUM(g.visitorscore),0) AS against
+  			g.hometeam, FORMAT(SUM(g.homescore),0) AS scores, FORMAT(SUM(IF($spiritShown, COALESCE(hspirit.score,0), 0)),0) AS spirit, FORMAT(SUM(g.visitorscore),0) AS against
 			FROM uo_game g
 			LEFT JOIN uo_game_pool gp1 ON(g.game_id=gp1.game)
 			LEFT JOIN (
@@ -1836,7 +1838,7 @@ function TeamsToCsv($season, $separator)
 		ON (j.team_id=k.hometeam)
 		LEFT JOIN (SELECT COUNT(*) AS games,
   			COUNT((g.forfeit=0 AND g.homescore<g.visitorscore) OR g.forfeit=1 OR NULL) as wins,
-  			g.visitorteam, FORMAT(SUM(g.visitorscore),0) AS scores, FORMAT(SUM(IF(g.show_spirit=1, COALESCE(vspirit.score,0), 0)),0) AS spirit, FORMAT(SUM(g.homescore),0) AS against
+  			g.visitorteam, FORMAT(SUM(g.visitorscore),0) AS scores, FORMAT(SUM(IF($spiritShown, COALESCE(vspirit.score,0), 0)),0) AS spirit, FORMAT(SUM(g.homescore),0) AS against
 			FROM uo_game g
 			LEFT JOIN uo_game_pool gp2 ON(g.game_id=gp2.game)
 			LEFT JOIN (
