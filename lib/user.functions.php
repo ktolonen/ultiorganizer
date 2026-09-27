@@ -1277,7 +1277,7 @@ function RemoveSeasonUserRole($userid, $role, $seasonId)
  * A "userrole" property stored as "<prefix>:<id>" grants access tied to a
  * single event (season). This is the single source of truth for which role
  * prefixes are event-scoped. The per-prefix season resolution in
- * UserHasSeasonScopedRole() and the season-scoped SQL in
+ * UserScopedSeasonIds() and the season-scoped SQL in
  * EventUserRoleCleanupPreview() must cover every prefix listed here.
  *
  * @return string[]
@@ -1298,12 +1298,23 @@ function EventScopedRolePrefixes()
 
 function UserHasSeasonScopedRole($userid, $seasonId)
 {
+    return in_array((string) $seasonId, UserScopedSeasonIds($userid), true);
+}
+
+/**
+ * Every event the user holds an event-scoped role in.
+ *
+ * @return string[] distinct uo_season.season_id values
+ */
+function UserScopedSeasonIds($userid)
+{
     $query = sprintf(
         "SELECT value FROM uo_userproperties WHERE userid='%s' AND name='userrole'",
         DBEscapeString($userid),
     );
     $roles = DBQueryToArray($query);
 
+    $seasons = [];
     foreach ($roles as $row) {
         $value = explode(':', $row['value'], 2);
         $roleName = $value[0];
@@ -1313,43 +1324,36 @@ function UserHasSeasonScopedRole($userid, $seasonId)
         switch ($roleName) {
             case 'seasonadmin':
             case 'spiritadmin':
-                if ($roleValue === (string) $seasonId) {
-                    return true;
-                }
+                $seasons[] = $roleValue;
                 break;
             case 'seriesadmin':
-                if (!empty($roleValue) && SeriesSeasonId((int) $roleValue) === $seasonId) {
-                    return true;
+                if (!empty($roleValue)) {
+                    $seasons[] = SeriesSeasonId((int) $roleValue);
                 }
                 break;
             case 'teamadmin':
             case 'accradmin':
-                if (!empty($roleValue) && getTeamSeason((int) $roleValue) === $seasonId) {
-                    return true;
+                if (!empty($roleValue)) {
+                    $seasons[] = getTeamSeason((int) $roleValue);
                 }
                 break;
             case 'gameadmin':
-                if (!empty($roleValue) && GameSeason((int) $roleValue) === $seasonId) {
-                    return true;
+                if (!empty($roleValue)) {
+                    $seasons[] = GameSeason((int) $roleValue);
                 }
                 break;
             case 'resadmin':
             case 'resgameadmin':
                 if (!empty($roleValue)) {
-                    if (ReservationSeason((int) $roleValue) === (string) $seasonId) {
-                        return true;
-                    }
-                    foreach (ReservationSeasons((int) $roleValue) as $resSeason) {
-                        if ($resSeason === $seasonId) {
-                            return true;
-                        }
-                    }
+                    $seasons[] = ReservationSeason((int) $roleValue);
+                    $seasons = array_merge($seasons, ReservationSeasons((int) $roleValue));
                 }
                 break;
         }
     }
 
-    return false;
+    $seasons = array_filter($seasons, fn($season) => $season !== null && $season !== '');
+    return array_values(array_unique(array_map('strval', $seasons)));
 }
 
 function EventUserRoleCleanupPreview($seasonId)

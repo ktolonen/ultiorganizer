@@ -526,8 +526,23 @@ function Seasons($filter = null, $ordering = null)
 
 function FilterAccessibleSeasons($seasons)
 {
-    return array_values(array_filter($seasons, function ($season) {
-        return CanAccessSeason($season['season_id']);
+    if (function_exists('isSuperAdmin') && isSuperAdmin()) {
+        return array_values($seasons);
+    }
+
+    // Same rule as CanAccessSeason(), with the user's roles resolved once
+    // rather than once per event.
+    $scopedSeasons = null;
+    return array_values(array_filter($seasons, function ($season) use (&$scopedSeasons) {
+        $seasonId = $season['season_id'];
+        if (empty($seasonId) || IsSeasonPublicEvent($seasonId)) {
+            return true;
+        }
+        if (!isset($_SESSION['uid']) || !function_exists('UserScopedSeasonIds')) {
+            return false;
+        }
+        $scopedSeasons ??= UserScopedSeasonIds($_SESSION['uid']);
+        return in_array((string) $seasonId, $scopedSeasons, true);
     }));
 }
 
@@ -539,9 +554,17 @@ function FilterAccessibleSeasons($seasons)
  */
 function AccessibleSeasonIdListSql()
 {
+    if (function_exists('isSuperAdmin') && isSuperAdmin()) {
+        $seasonIds = array_column(Seasons(), 'season_id');
+    } else {
+        $seasonIds = array_column(DBQueryToArray("SELECT season_id FROM uo_season WHERE public_event=1"), 'season_id');
+        if (isset($_SESSION['uid']) && function_exists('UserScopedSeasonIds')) {
+            $seasonIds = array_merge($seasonIds, UserScopedSeasonIds($_SESSION['uid']));
+        }
+    }
     $ids = [];
-    foreach (FilterAccessibleSeasons(Seasons()) as $season) {
-        $ids[] = "'" . DBEscapeString($season['season_id']) . "'";
+    foreach (array_unique(array_map('strval', $seasonIds)) as $seasonId) {
+        $ids[] = "'" . DBEscapeString($seasonId) . "'";
     }
     return empty($ids) ? "''" : implode(",", $ids);
 }
