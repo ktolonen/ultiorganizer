@@ -138,7 +138,7 @@ Game duration precedence is:
 
 That duration drives row height, offset accumulation, and overflow / conflict checks.
 
-`admin/saveschedule.php` is the save path. Reservation columns are serialized as minute offsets from reservation start, `ClearReservation()` first unschedules all games currently attached to that reservation, `ScheduleGame()` reapplies games with new start time and reservation id, and `UnScheduleGame()` clears rows from the unscheduled column.
+`admin/saveschedule.php` is the save path. Reservation columns are serialized as minute offsets from reservation start, `ClearReservation()` first unschedules the games currently attached to that reservation that the user may schedule there (games of another event stay put and are reported as left unchanged), `ScheduleGame()` reapplies games with new start time and reservation id, and `UnScheduleGame()` clears rows from the unscheduled column.
 
 Validation after save checks:
 
