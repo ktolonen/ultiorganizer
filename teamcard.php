@@ -476,7 +476,7 @@ if (ShowDefenseStats()) {
             $pg['goals_against'] = $season['goals_against'];
             $pg['wins'] = $season['wins'];
             $pg['losses'] = $season['losses'];
-            $pg['games'] = $season['wins'] + $season['losses'];
+            $pg['games'] = $season['games'];
             $pg['defenses'] = $season['defenses_total'];
             $spirit_key = $season['season'] . "_" . $season['series'];
             $pg['spirit_total'] = isset($spiritAverages[$spirit_key]) ? $spiritAverages[$spirit_key] : null;
@@ -675,7 +675,7 @@ if (ShowDefenseStats()) {
             $pg['goals_against'] = $season['goals_against'];
             $pg['wins'] = $season['wins'];
             $pg['losses'] = $season['losses'];
-            $pg['games'] = $season['wins'] + $season['losses'];
+            $pg['games'] = $season['games'];
             $spirit_key = $season['season'] . "_" . $season['series'];
             $pg['spirit_total'] = isset($spiritAverages[$spirit_key]) ? $spiritAverages[$spirit_key] : null;
 

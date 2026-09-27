@@ -538,6 +538,7 @@ function CalcTeamStats($season)
                 $team_info = TeamFullInfo($team['team_id']);
                 $goals_made = 0;
                 $goals_against = 0;
+                $games = 0;
                 $wins = 0;
                 $losses = 0;
                 $defenses_total = 0;
@@ -553,6 +554,7 @@ function CalcTeamStats($season)
                         $isHome = $team['team_id'] == $game['hometeam'];
                         $ownScore = intval($isHome ? $game['homescore'] : $game['visitorscore']);
                         $opponentScore = intval($isHome ? $game['visitorscore'] : $game['homescore']);
+                        $games++;
                         $goals_made += $ownScore;
                         $goals_against += $opponentScore;
 
@@ -587,6 +589,7 @@ function CalcTeamStats($season)
 						goals_made=$goals_made, 
 						goals_against=$goals_against, 
 						standing=$standing, 
+						games=$games, 
 						wins=$wins, 
 						losses=$losses" . $defense_str .
                     "WHERE team_id=" . $team['team_id'];
