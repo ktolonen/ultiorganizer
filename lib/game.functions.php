@@ -6,6 +6,7 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/accreditation.functions.php';
 require_once __DIR__ . '/configuration.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/reservation.functions.php';
 require_once __DIR__ . '/scoresheethistory.functions.php';
 
 function SeasonScoreCounter($seasonId = "")
@@ -2872,7 +2873,9 @@ function UnscheduledSeasonGameInfo($seasonId)
 
 function ScheduleGame($gameId, $epoc, $reservation)
 {
-    if (hasEditGamesRight(GameSeries($gameId))) {
+    $reservationSeason = ReservationSeason($reservation);
+    $sameEvent = $reservationSeason === null ? isSuperAdmin() : $reservationSeason === GameSeason($gameId);
+    if (hasEditGamesRight(GameSeries($gameId)) && $sameEvent) {
         $query = sprintf(
             "UPDATE uo_game SET time='%s', reservation=%d WHERE game_id=%d",
             EpocToMysql($epoc),
