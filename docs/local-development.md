@@ -1,135 +1,67 @@
 # Local Development
 
-This page contains the current Docker Compose-based local setup guidance. The canonical Docker assets live under `docs/dev/`.
-
-## Requirements
-
-- Docker with the Compose plugin
-- PHP 8.3 compatibility
-- MariaDB 10.11 compatibility
-- Host locales and gettext support for translations
-
-The bundled Docker images generate the `en_US.UTF-8`, `de_DE.UTF-8`,
-`es_ES.UTF-8`, and `fi_FI.UTF-8` locales so those translations can be selected
-in the local app.
-
-## Install Docker
-
-Install Docker by following Docker's general guide at <https://docs.docker.com/get-docker/>.
-
-## Stack files
-
-The local stack is defined in:
-
-```sh
-docs/dev/compose.yaml
-docs/dev/Dockerfile.app
-docs/dev/Dockerfile.dev
-docs/dev/.env.example
-docs/dev/php.dev.ini
-```
+Docker Compose setup for local work. The stack lives in `docs/dev/` (`compose.yaml`, `Dockerfile.app`, `Dockerfile.dev`, `.env.example`, `php.dev.ini`) and needs [Docker](https://docs.docker.com/get-docker/) with the Compose plugin. The images run PHP 8.3 and MariaDB 10.11 and generate the `en_US`, `de_DE`, `es_ES` and `fi_FI` UTF-8 locales for translations.
 
 ## Configure the stack
 
-Copy the example environment file and adjust credentials or port mappings as needed:
+Copy the example environment and adjust credentials or ports:
 
 ```sh
 cp docs/dev/.env.example docs/dev/.env
 ```
 
-Change `MYSQL_ROOT_PASSWORD` in `docs/dev/.env` before the first `docker compose up` so the database is not initialized with the default root password.
-
-Xdebug is enabled by default in the local PHP images. If you want to turn it off temporarily, set `XDEBUG_MODE=off` in `docs/dev/.env`.
-
-The defaults create a local MariaDB database named `ultiorganizer` with user `ultiorganizer`.
-
-The database container is also exposed to the host on `127.0.0.1:${DB_PORT}` for local database tools. The default host port is `3306`.
+Change `MYSQL_ROOT_PASSWORD` before the first `up`. The defaults create database and user `ultiorganizer`.
 
 ## Start the app and database
 
-On the first start, or after changing `docs/dev/Dockerfile.app` or other build-time dependencies, run:
-
 ```sh
-docker compose -f docs/dev/compose.yaml up --build app db
+docker compose -f docs/dev/compose.yaml up --build app db   # first start or after Dockerfile changes
+docker compose -f docs/dev/compose.yaml up app db           # normal restarts
 ```
 
-For normal restarts while working on the PHP codebase, start the same services without rebuilding:
-
-```sh
-docker compose -f docs/dev/compose.yaml up app db
-```
-
-Because the repository is bind-mounted into the `app` container, normal PHP, template, and static-asset edits do not require an image rebuild.
-
-This starts:
-
-- `app`: Apache + PHP 8.3 serving Ultiorganizer on <http://localhost:8080/>
-- `db`: MariaDB 10.11 with a named Docker volume for persistent local data
-
-You should then be able to open <http://localhost:8080/install.php>.
-
-When `install.php` asks for database connection details, use the Docker Compose service name as the database host:
-
-- Database host: `db`
-- Database name: `ultiorganizer` by default
-- Database user: `ultiorganizer` by default
-- Database password: the value of `MYSQL_PASSWORD` in `docs/dev/.env`
+The repository is bind-mounted, so code edits need no rebuild. `app` serves <http://localhost:8080/>; `db` keeps its data in a named volume. Open <http://localhost:8080/install.php> and use database host `db`, name and user `ultiorganizer`, and the `MYSQL_PASSWORD` from `docs/dev/.env`.
 
 ## Allow the installer to write `conf/`
 
-The `app` container runs Apache/PHP as `www-data`, but the repository is bind-mounted from the host. On a typical local checkout, the installer may not be able to write `conf/` until you temporarily relax the host directory permissions.
-
-Before running the installer, allow writes to `conf/`:
+PHP runs as `www-data` against the bind-mounted checkout, so allow writes before installing:
 
 ```sh
 chmod 777 conf
 ```
 
-After installation has created `conf/config.inc.php`, tighten permissions again:
+and tighten them afterwards:
 
 ```sh
 chmod 775 conf
 chmod 664 conf/config.inc.php
 ```
 
-For non-local deployments, do not leave `conf/` world-writable.
-
 ## Allow uploads to write `images/uploads/`
 
-The upload directory is not tracked in git, so a fresh checkout does not have it. The installer creates it, and image uploads create the per-entity directories below it. Both run as `www-data` in the `app` container while the checkout is bind-mounted from the host, so the host `images/` directory has to allow that write, exactly like `conf/` above.
-
-If the installer reports that it cannot create the directory, or uploads fail with a generic processing error, create it yourself:
+`images/uploads/` is untracked and created by the installer as `www-data`. If that fails, or uploads fail with a generic processing error, create it:
 
 ```sh
 mkdir -p images/uploads
 chmod 777 images/uploads
 ```
 
-For non-local deployments, give the directory to the user the PHP process runs as — the pool user under PHP-FPM, or the web server user under mod_php — instead of making it world-writable.
+Production permissions are covered in `docs/deployment.md`.
 
 ## Optional developer workspace
 
-The stack also includes an optional `dev` service for AI agents, shell work, and repo tooling. It shares the same source tree as the running app but does not serve web traffic.
-
-Start it only when needed:
+The optional `dev` service (for agents, shell work and repo tooling, including `git`, `curl`, `mariadb-client`, `ripgrep`, ESLint and Stylelint) shares the source tree but serves no traffic:
 
 ```sh
 docker compose -f docs/dev/compose.yaml --profile devtools up --build dev
 ```
 
-Open a shell inside the workspace container:
-
 ```sh
 docker compose -f docs/dev/compose.yaml exec dev bash
 ```
 
-The `dev` image includes CLI tools useful for local development work such as `git`, `curl`, `less`, `mariadb-client`, and `ripgrep`.
-
 ## Test harness
 
-The project's test suite is not part of this repository. It lives in the public [`ktolonen/ultiorganizer-tests`](https://github.com/ktolonen/ultiorganizer-tests) repository and runs against a copy of this source tree, so it never modifies your checkout.
-
-Clone it once as a sibling of this checkout — the layout both CI and the harness default to:
+The test suite lives in [`ktolonen/ultiorganizer-tests`](https://github.com/ktolonen/ultiorganizer-tests) and runs against a copy of this tree. Clone it as a sibling checkout:
 
 ```sh
 git clone https://github.com/ktolonen/ultiorganizer-tests.git ../ultiorganizer-tests
@@ -144,55 +76,29 @@ cd ../ultiorganizer-tests
 ./test:matrix  # the full matrix CI runs
 ```
 
-The harness defaults to the sibling source checkout at `../ultiorganizer`; pass `--sut-path <path>` to test a different checkout or worktree. Keep it on `main`, which is the ref CI uses. See the harness README for the suite definitions and reporting commands.
+`--sut-path <path>` tests another checkout. Keep the harness on an up-to-date `main`, as CI uses. See its README for suites and reports.
 
-## Connect with HeidiSQL or another host database client
+## Host database clients
 
-The local MariaDB container is published to the host so you can connect with HeidiSQL, DBeaver, or another desktop client.
-
-Use these connection settings:
-
-- Hostname: `127.0.0.1`
-- Port: `3306` by default, or the value of `DB_PORT` in `docs/dev/.env`
-- User: `ultiorganizer` by default
-- Password: the value of `MYSQL_PASSWORD` in `docs/dev/.env`
-- Database: `ultiorganizer` by default
-
-If you want full administrative access for local development, you can also connect as `root` with the password from `MYSQL_ROOT_PASSWORD`.
+MariaDB is published on `127.0.0.1:${DB_PORT}` (default `3306`) for HeidiSQL, DBeaver and similar, with the same credentials as above, or `root` with `MYSQL_ROOT_PASSWORD`.
 
 ## Compiled PHP is cached for two seconds
 
-The `app` image runs with `opcache.enable=On` and `opcache.revalidate_freq=2`,
-so a changed file can keep serving its previous compile for up to two seconds.
-Editing normally, this is invisible. It matters when a file is swapped under a
-live request to compare behaviour — `git checkout <ref> -- <file>`, request,
-restore, request — because the second request can silently answer from the code
-you just replaced, and the two runs then look identical when they are not.
-
-Wait it out between the swap and the request:
+`opcache.revalidate_freq=2` means a changed file can serve its old compile for up to two seconds. This matters when swapping a file to compare behaviour (`git checkout <ref> -- <file>`, request, restore, request): the second run can silently use the old code. Wait between swap and request:
 
 ```sh
 docker compose -f docs/dev/compose.yaml exec -T app sh -c 'sleep 4'
 ```
 
-Then confirm the swap took, for instance by grepping the file for a line only
-one version contains, before trusting the comparison.
+and confirm the swap took before trusting the comparison.
 
 ## PHP error logging
 
-The local Docker setup enables development-oriented PHP error reporting through `docs/dev/php.dev.ini`.
-
-- PHP errors are displayed in the browser
-- PHP errors are also written to `/tmp/ultiorganizer-php-error.log` inside the `app` container
-- Apache and PHP stderr output remains visible through `docker compose` logs
-
-To inspect the PHP error log directly:
+`docs/dev/php.dev.ini` displays PHP errors in the browser and writes them to `/tmp/ultiorganizer-php-error.log` in `app`:
 
 ```sh
 docker compose -f docs/dev/compose.yaml exec app tail -f /tmp/ultiorganizer-php-error.log
 ```
-
-To inspect the combined container log stream:
 
 ```sh
 docker compose -f docs/dev/compose.yaml logs -f app
@@ -200,9 +106,7 @@ docker compose -f docs/dev/compose.yaml logs -f app
 
 ## Xdebug
 
-The local `app` and `dev` images include Xdebug for browser and CLI debugging.
-
-Xdebug is controlled through `docs/dev/.env`:
+The `app` and `dev` images include Xdebug, configured in `docs/dev/.env` (`XDEBUG_MODE=off` disables it):
 
 ```sh
 XDEBUG_MODE=debug
@@ -212,36 +116,10 @@ XDEBUG_CLIENT_PORT=9003
 XDEBUG_IDEKEY=VSCODE
 ```
 
-After changing Xdebug-related values in `docs/dev/.env`, restart the services:
+Restart the services after changing it. `XDEBUG_START_WITH_REQUEST=trigger` connects only on an explicit trigger. In the IDE use `localhost:9003` and map the project root to `/var/www/html`; Compose adds `host.docker.internal` on every OS.
 
-```sh
-docker compose -f docs/dev/compose.yaml up app db
-```
+## Stopping
 
-If you changed the Dockerfiles or are starting the stack for the first time, rebuild instead:
+`docker compose -f docs/dev/compose.yaml down` stops the stack; add `-v` to remove the database volume.
 
-```sh
-docker compose -f docs/dev/compose.yaml up --build app db
-```
-
-With `XDEBUG_START_WITH_REQUEST=yes`, Xdebug tries to connect to your IDE on every request. If you want to turn that off temporarily, set `XDEBUG_START_WITH_REQUEST=trigger` and use an explicit trigger only when needed.
-
-Typical IDE settings:
-
-- Host: `localhost`
-- Port: `9003`
-- Path mapping: project root to `/var/www/html`
-
-The Compose file adds `host.docker.internal` for the local containers, so Xdebug can connect back to the IDE on the host machine on Linux, macOS, and Windows.
-
-## Container layout
-
-The documented local setup bind-mounts the repository root directly into Apache's document root in the `app` container. Because of that layout, non-public directories such as `conf/`, `sql/`, and `docs/` must be access-controlled at the web server level in any non-local deployment.
-
-## Runtime notes
-
-- Run installation through `install.php` only for local setup or controlled first-time installs.
-- Restrict write access to `conf/` after installation.
-- Stop the stack with `docker compose -f docs/dev/compose.yaml down`.
-- Remove local database state with `docker compose -f docs/dev/compose.yaml down -v`.
-- Verify changes by running the app and exercising the affected page flow.
+The repository root is the document root, so a deployment built this way must block `conf/`, `sql/` and `docs/` at the web server.
