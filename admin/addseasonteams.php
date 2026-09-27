@@ -113,7 +113,7 @@ echo yuiLoad(["utilities", "datasource", "autocomplete"]);
 	}
 </style>
 <script type="text/javascript">
-	var clubs = <?php echo json_encode($orgarray, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var clubs = <?php echo json_encode($orgarray, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE); ?>;
 </script>
 <?php
 pageTopHeadClose($title);
