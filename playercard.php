@@ -188,7 +188,7 @@ if ($games) {
         $defenses = PlayerSeasonDefenses($currentPlayerId, $curseason);
     }
 
-    $html .= "<h2>" . U_(CurrentSeasonName()) . ":</h2>\n";
+    $html .= "<h2>" . utf8entities(U_(CurrentSeasonName())) . ":</h2>\n";
     $legendKeys = ['games', 'assists', 'goals', 'total', 'avg', 'callahans'];
     if ($showDefenseStats) {
         $legendKeys[] = 'defences';

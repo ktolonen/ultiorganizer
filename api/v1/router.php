@@ -606,8 +606,7 @@ function api_games_context($tokenRow)
             }
         } else {
             $gamefilter = 'season';
-            $seasonId = CurrentSeason();
-            $id = $seasonId;
+            $id = '';
         }
     } elseif (iget('team')) {
         $id = (int) iget('team');
@@ -618,12 +617,16 @@ function api_games_context($tokenRow)
         $gamefilter = 'season';
         $seasonId = $id;
     } else {
-        $seasonId = CurrentSeason();
         $gamefilter = 'season';
-        $id = $seasonId;
+        $id = '';
     }
 
+    // Resolved here, not above, so an event-scoped token falls back to its
+    // own event instead of the current one.
     $seasonId = api_resolve_season_id($seasonId, $tokenRow);
+    if ($gamefilter === 'season' && $id === '') {
+        $id = $seasonId;
+    }
 
     return [$id, $gamefilter, $seasonId];
 }
@@ -728,7 +731,7 @@ function api_handle_games($tokenRow)
         $group = 'all';
     }
 
-    $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group);
+    $games = TimetableGames($id, $gamefilter, $timefilter, $order, $group, true);
     $rows = [];
     foreach ($games as $row) {
         $rows[] = api_normalize_game($row);
@@ -736,7 +739,7 @@ function api_handle_games($tokenRow)
 
     $groupings = [];
     if ($group === 'all') {
-        $groups = TimetableGrouping($id, $gamefilter, $timefilter);
+        $groups = TimetableGrouping($id, $gamefilter, $timefilter, true);
         foreach ($groups as $groupRow) {
             $groupings[] = $groupRow['reservationgroup'];
         }
@@ -975,13 +978,21 @@ function api_handle_gameplay($tokenRow)
     $mediaEvents = GameMediaEvents($gameId);
     $media = GetMediaUrlList('game', $gameId);
 
+    // The scoresheet flows synthesize point times when the event hides them,
+    // so they are not recorded data; gameplay.php leaves them out too.
+    $hideTimes = !empty($seasonInfo['hide_time_on_scoresheet']);
+
     $statistics = null;
     if (GameHasStarted($gameResult)) {
         $statistics = api_gameplay_statistics($gameId, $gameResult);
+        if ($statistics && $hideTimes) {
+            $statistics['time_on_offence'] = null;
+            $statistics['time_on_offence_per_goal'] = null;
+        }
     }
 
     $spirit = null;
-    if (!intval($gameResult['isongoing']) && !empty($seasonInfo['spiritmode'])) {
+    if (!intval($gameResult['isongoing']) && CanViewSpiritScoresForGame($gameId, $seasonInfo)) {
         $categories = SpiritCategories($seasonInfo['spiritmode']);
         $homePoints = GameGetSpiritPoints($gameId, $gameResult['hometeam']);
         $awayPoints = GameGetSpiritPoints($gameId, $gameResult['visitorteam']);
@@ -1076,7 +1087,7 @@ function api_handle_gameplay($tokenRow)
     foreach ($goals as $goal) {
         $goalRows[] = [
             'num' => isset($goal['num']) ? (int) $goal['num'] : null,
-            'time' => isset($goal['time']) ? (int) $goal['time'] : null,
+            'time' => !$hideTimes && isset($goal['time']) ? (int) $goal['time'] : null,
             'scoring_team' => isset($goal['ishomegoal']) ? (intval($goal['ishomegoal']) ? 'home' : 'away') : null,
             'scores' => [
                 'home' => isset($goal['homescore']) ? (int) $goal['homescore'] : null,
@@ -1100,7 +1111,7 @@ function api_handle_gameplay($tokenRow)
     foreach ($events as $event) {
         $isCapEvent = GameIsCapEventType($event['type']);
         $eventRow = [
-            'time' => (int) $event['time'],
+            'time' => $hideTimes ? null : (int) $event['time'],
             'team' => $isCapEvent ? null : (intval($event['ishome']) ? 'home' : 'away'),
             'type' => $event['type'],
         ];
@@ -1145,7 +1156,7 @@ function api_handle_gameplay($tokenRow)
                 'timezone' => $seasonInfo['timezone'],
                 'hasstarted' => (int) $gameResult['hasstarted'],
                 'isongoing' => (int) $gameResult['isongoing'],
-                'halftime' => isset($gameResult['halftime']) ? (int) $gameResult['halftime'] : null,
+                'halftime' => !$hideTimes && isset($gameResult['halftime']) ? (int) $gameResult['halftime'] : null,
                 'official' => $gameResult['official'] ?? null,
                 'scores' => [
                     'home' => is_null($gameResult['homescore']) ? null : (int) $gameResult['homescore'],

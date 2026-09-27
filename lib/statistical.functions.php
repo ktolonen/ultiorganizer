@@ -8,6 +8,7 @@ require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/standings.functions.php';
 require_once __DIR__ . '/player.functions.php';
 require_once __DIR__ . '/series.functions.php';
+require_once __DIR__ . '/spirit.functions.php';
 require_once __DIR__ . '/debug.functions.php';
 
 function IsSeasonStatsCalculated($season)
@@ -160,10 +161,11 @@ function TeamStatisticsByName($teamname, $seriestype)
 		LEFT JOIN uo_series ser ON(ser.series_id=ts.series)
 		LEFT JOIN uo_season s ON(s.season_id=ts.season)
 		LEFT JOIN uo_team t ON(t.team_id=ts.team_id)
-		WHERE t.name='%s' AND ser.type='%s'
+		WHERE t.name='%s' AND ser.type='%s' AND ts.season IN (%s)
 		ORDER BY s.starttime DESC, ts.series,(ts.standing=0),ts.standing",
         DBEscapeString($teamname),
         DBEscapeString($seriestype),
+        AccessibleSeasonIdListSql(),
     );
     return DBQueryToArray($query);
 }
@@ -221,25 +223,27 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
 			LEFT JOIN uo_player p ON(p.player_id=ps.player_id)
 			LEFT JOIN uo_player_profile pp ON(pp.profile_id=ps.profile_id) ";
 
+    $query .= "WHERE ps.season IN (" . AccessibleSeasonIdListSql() . ") ";
+
     if (!empty($seasontype) && !empty($seriestype)) {
         $query .= sprintf(
-            "WHERE s.type='%s' AND ser.type='%s' ",
+            "AND s.type='%s' AND ser.type='%s' ",
             DBEscapeString($seasontype),
             DBEscapeString($seriestype),
         );
     } elseif (!empty($seasontype)) {
         $query .= sprintf(
-            "WHERE s.type='%s' ",
+            "AND s.type='%s' ",
             DBEscapeString($seasontype),
         );
     } elseif (!empty($seriestype)) {
         $query .= sprintf(
-            "WHERE ser.type='%s' ",
+            "AND ser.type='%s' ",
             DBEscapeString($seriestype),
         );
     } elseif (!empty($club)) {
         $query .= sprintf(
-            "WHERE t.team_id IN %s ",
+            "AND t.team_id IN %s ",
             $club,
         );
         debugMsg($query);
@@ -279,6 +283,9 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
 
 function SeasonSpiritTopTeamsBySeriesType($seasonId, $seriesType, $limit = 3)
 {
+    if (!ShowSpiritScoresForSeason($seasonId)) {
+        return [];
+    }
     $query = sprintf(
         "SELECT t.team_id, t.name AS teamname, t.country, c.flagfile,
 			SUM(ts.average * sct.factor) AS spirit_total
@@ -531,6 +538,7 @@ function CalcTeamStats($season)
                 $team_info = TeamFullInfo($team['team_id']);
                 $goals_made = 0;
                 $goals_against = 0;
+                $games = 0;
                 $wins = 0;
                 $losses = 0;
                 $defenses_total = 0;
@@ -543,30 +551,26 @@ function CalcTeamStats($season)
 
                 while ($game = mysqli_fetch_assoc($allgames)) {
                     if (!is_null($game['homescore']) && !is_null($game['visitorscore'])) {
+                        $isHome = $team['team_id'] == $game['hometeam'];
+                        $ownScore = intval($isHome ? $game['homescore'] : $game['visitorscore']);
+                        $opponentScore = intval($isHome ? $game['visitorscore'] : $game['homescore']);
+                        $games++;
+                        $goals_made += $ownScore;
+                        $goals_against += $opponentScore;
 
-                        if ($team['team_id'] == $game['hometeam']) {
-                            $goals_made += intval($game['homescore']);
-                            $goals_against += intval($game['visitorscore']);
-
-                            if (intval($game['homescore']) > intval($game['visitorscore'])) {
-                                $wins++;
-                            } else {
-                                $losses++;
-                            }
-                            if (ShowDefenseStats()) {
-                                $defenses_total += $game['homedefenses'];
-                            }
-                        } else {
-                            $goals_made += intval($game['visitorscore']);
-                            $goals_against += intval($game['homescore']);
-                            if (intval($game['homescore']) < intval($game['visitorscore'])) {
-                                $wins++;
-                            } elseif (intval($game['homescore']) > intval($game['visitorscore'])) {
-                                $losses++;
-                            }
-                            if (ShowDefenseStats()) {
-                                $defenses_total += $game['visitordefenses'];
-                            }
+                        // forfeit: 1 home forfeited, 2 away forfeited, 3 both lose
+                        $forfeit = intval($game['forfeit']);
+                        if ($forfeit === 3 || $forfeit === ($isHome ? 1 : 2)) {
+                            $losses++;
+                        } elseif ($forfeit === ($isHome ? 2 : 1)) {
+                            $wins++;
+                        } elseif ($ownScore > $opponentScore) {
+                            $wins++;
+                        } elseif ($ownScore < $opponentScore) {
+                            $losses++;
+                        }
+                        if (ShowDefenseStats()) {
+                            $defenses_total += $game[$isHome ? 'homedefenses' : 'visitordefenses'];
                         }
                     }
                 }
@@ -585,6 +589,7 @@ function CalcTeamStats($season)
 						goals_made=$goals_made, 
 						goals_against=$goals_against, 
 						standing=$standing, 
+						games=$games, 
 						wins=$wins, 
 						losses=$losses" . $defense_str .
                     "WHERE team_id=" . $team['team_id'];

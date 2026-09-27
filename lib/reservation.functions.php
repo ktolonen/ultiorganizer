@@ -254,7 +254,9 @@ function ReservationSeason($reservationId)
  */
 function SetReservation($reservationId, $data)
 {
-    if (hasEditSeasonSeriesRight($data['season'])) {
+    $reservationSeason = ReservationSeason($reservationId);
+    $canEditCurrent = $reservationSeason === null ? isSuperAdmin() : hasEditSeasonSeriesRight($reservationSeason);
+    if ($canEditCurrent && hasEditSeasonSeriesRight($data['season'])) {
         if (!ReservationLocationValid($data['location'])) {
             die('Invalid reservation location');
         }
@@ -316,7 +318,8 @@ function AddReservation($data)
 
 function RemoveReservation($id, $season)
 {
-    if (isSuperAdmin() || isSeasonAdmin($season)) {
+    $reservationSeason = ReservationSeason($id);
+    if (isSuperAdmin() || (isSeasonAdmin($season) && $reservationSeason === $season)) {
         $query = sprintf("DELETE FROM uo_reservation WHERE id=%d", (int) $id);
         DBQuery($query);
     } else {

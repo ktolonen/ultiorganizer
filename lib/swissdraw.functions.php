@@ -44,6 +44,10 @@ function DetectTiesInPreviousPool($poolId)
 
 function AutoResolveTiesInSourcePools($poolId)
 {
+    $poolInfo = PoolInfo($poolId);
+    if (!$poolInfo || !hasEditTeamsRight($poolInfo['series'])) {
+        die('Insufficient rights to edit pool teams');
+    }
     // retrieve list of pools contributing to this pool
     $query = sprintf(
         "

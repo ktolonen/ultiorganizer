@@ -8,6 +8,7 @@ require_once __DIR__ . '/player.functions.php';
 require_once __DIR__ . '/image.functions.php';
 require_once __DIR__ . '/url.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/spirit.functions.php';
 
 function TeamPlayerArray($teamId)
 {
@@ -274,7 +275,7 @@ function TeamGames($teamId)
         $defense_str = ",pp.homedefenses,pp.visitordefenses ";
     }
     $query = sprintf(
-        "SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, pp.visitorscore,
+        "SELECT pp.game_id, pp.hometeam, pp.visitorteam, pp.homescore, pp.visitorscore, pp.forfeit,
 					pp.hasstarted, gp.pool AS pool, ser.season AS season_id, ps.name, ser.name AS seriesname, pjs.activerank" . $defense_str .
         "FROM uo_game pp
 				INNER JOIN uo_game_pool gp ON (gp.game=pp.game_id AND gp.timetable=1)
@@ -1699,9 +1700,10 @@ function SetTeamSeeding($seriesId, $teamId, $seed)
             "
 			UPDATE uo_team SET
 			rank=%d
-			WHERE team_id=%d",
+			WHERE team_id=%d AND series=%d",
             (int) $seed,
             (int) $teamId,
+            (int) $seriesId,
         );
 
         return DBQuery($query);
@@ -1811,6 +1813,7 @@ function RemoveTeamProfileUrl($teamId, $urlId)
 function TeamsToCsv($season, $separator)
 { // SELECT ssc.*, SUM(value*factor) FROM uo_spirit_score ssc   LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id) WHERE team_id=1398
 
+    $spiritShown = ShowSpiritScoresForSeason($season) ? "g.show_spirit=1" : "FALSE";
     $query = sprintf(
         "SELECT j.name AS Team, j.abbreviation AS ShortName, club.name AS Club,
 		c.name AS Country, ser.name AS Division, ps.name AS Pool,	
@@ -1820,11 +1823,9 @@ function TeamsToCsv($season, $separator)
 		COALESCE(k.against,0) + COALESCE(v.against,0) AS GoalsAgainst,
 		COALESCE(k.spirit,0) + COALESCE(v.spirit,0) AS SpiritPoints
 		FROM uo_team AS j
-		LEFT JOIN (SELECT COUNT(*) AS games, 
-  			COUNT(g.homescore>g.visitorscore OR NULL) as wins, 
-  			COUNT(g.homescore=g.visitorscore OR NULL) as draws, 
-  		  	COUNT(g.homescore<g.visitorscore OR NULL) as losses, 
-  			g.hometeam, FORMAT(SUM(g.homescore),0) AS scores, FORMAT(SUM(COALESCE(hspirit.score,0)),0) AS spirit, FORMAT(SUM(g.visitorscore),0) AS against
+		LEFT JOIN (SELECT COUNT(*) AS games,
+  			COUNT((g.forfeit=0 AND g.homescore>g.visitorscore) OR g.forfeit=2 OR NULL) as wins,
+  			g.hometeam, ROUND(SUM(g.homescore)) AS scores, ROUND(SUM(IF($spiritShown, COALESCE(hspirit.score,0), 0))) AS spirit, ROUND(SUM(g.visitorscore)) AS against
 			FROM uo_game g
 			LEFT JOIN uo_game_pool gp1 ON(g.game_id=gp1.game)
 			LEFT JOIN (
@@ -1833,13 +1834,11 @@ function TeamsToCsv($season, $separator)
         LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
         GROUP BY ssc.game_id, ssc.team_id
       ) AS hspirit ON (g.game_id = hspirit.game_id AND g.hometeam = hspirit.team_id)
-			WHERE g.isongoing=0 AND gp1.timetable=1 AND g.show_spirit=1 GROUP BY hometeam) AS k
+			WHERE g.hasstarted>0 AND g.isongoing=0 AND gp1.timetable=1 GROUP BY hometeam) AS k
 		ON (j.team_id=k.hometeam)
-		LEFT JOIN (SELECT COUNT(*) AS games, 
-  			COUNT(g.homescore<g.visitorscore OR NULL) as wins, 
-  			COUNT(g.homescore=g.visitorscore OR NULL) as draws, 
-  		  	COUNT(g.homescore>g.visitorscore OR NULL) as losses, 
-  			g.visitorteam, FORMAT(SUM(g.visitorscore),0) AS scores, FORMAT(SUM(COALESCE(vspirit.score,0)),0) AS spirit, FORMAT(SUM(g.homescore),0) AS against
+		LEFT JOIN (SELECT COUNT(*) AS games,
+  			COUNT((g.forfeit=0 AND g.homescore<g.visitorscore) OR g.forfeit=1 OR NULL) as wins,
+  			g.visitorteam, ROUND(SUM(g.visitorscore)) AS scores, ROUND(SUM(IF($spiritShown, COALESCE(vspirit.score,0), 0))) AS spirit, ROUND(SUM(g.homescore)) AS against
 			FROM uo_game g
 			LEFT JOIN uo_game_pool gp2 ON(g.game_id=gp2.game)
 			LEFT JOIN (
@@ -1848,7 +1847,7 @@ function TeamsToCsv($season, $separator)
         LEFT JOIN uo_spirit_category sct ON (ssc.category_id = sct.category_id)
         GROUP BY ssc.game_id, ssc.team_id
       ) AS vspirit ON (g.game_id = vspirit.game_id AND g.visitorteam = vspirit.team_id)
-			WHERE g.isongoing=0 AND gp2.timetable=1 AND g.show_spirit=1 GROUP BY visitorteam) AS v
+			WHERE g.hasstarted>0 AND g.isongoing=0 AND gp2.timetable=1 GROUP BY visitorteam) AS v
 			ON (j.team_id=v.visitorteam)
 		LEFT JOIN uo_series ser ON(ser.series_id=j.series)
 		LEFT JOIN uo_pool ps ON (j.pool=ps.pool_id) 		

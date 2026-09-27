@@ -11,8 +11,8 @@ include_once 'lib/series.functions.php';
 $LAYOUT_ID = EDITSTANDING;
 
 $season = $_GET["season"];
-$poolId = $_GET["pool"];
-$teamId = $_GET["team"];
+$poolId = (int) $_GET["pool"];
+$teamId = (int) $_GET["team"];
 
 $title = _("Edit");
 

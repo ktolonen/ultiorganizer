@@ -11,7 +11,7 @@ $reservationId = 0;
 $season = "";
 
 if (isset($_GET['reservation'])) {
-    $reservationId = $_GET['reservation'];
+    $reservationId = (int) $_GET['reservation'];
 }
 if (!empty($_GET['season'])) {
     $season = $_GET['season'];
@@ -264,10 +264,10 @@ echo $html;
 
       var aMarkup = ["<div class='myCustomResult'>",
         "<span style='font-weight:bold'>",
-        sResultMatch,
+        YAHOO.widget.AutoComplete.escapeHtml(sResultMatch),
         "</span>",
         " / ",
-        moreData1,
+        YAHOO.widget.AutoComplete.escapeHtml(moreData1),
         "</div>"
       ];
       return (aMarkup.join(""));

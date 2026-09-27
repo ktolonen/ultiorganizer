@@ -42,6 +42,6 @@ foreach ($pools as $PoolStr) {
     }
 }
 foreach ($poolIds as $PoolId) {
-    ResolvePoolStandings($PoolId);
+    RecalculatePoolStandings($PoolId);
 }
 echo _("Teams saved");

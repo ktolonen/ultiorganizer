@@ -13,12 +13,11 @@ $season = $_GET['season'];
 $seasonInfo = SeasonInfo($season);
 $title = _("Enrolled teams") . ": " . utf8entities($seasonInfo['name']);
 
-$orgarray = "";
+$orgarray = [];
 $result = ClubList(true);
 foreach ($result as $row) {
-    $orgarray .= "\"" . $row['name'] . "\",";
+    $orgarray[] = (string) $row['name'];
 }
-$orgarray = trim($orgarray, ',');
 
 if (!empty($_POST['add'])) {
 
@@ -47,11 +46,7 @@ include_once 'lib/yui.functions.php';
 echo yuiLoad(["utilities", "datasource", "autocomplete"]);
 ?>
 <script type="text/javascript">
-	var clubs = new Array(
-		<?php
-        echo $orgarray;
-?>
-	);
+	var clubs = <?php echo json_encode($orgarray, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE); ?>;
 </script>
 <script type="text/javascript">
 	function setId(id, name) {

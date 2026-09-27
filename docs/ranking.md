@@ -15,7 +15,11 @@ The main source for pool ranking is `lib/standings.functions.php`. Final-standin
 
 Each resolver writes the resulting position into `uo_team_pool.activerank`.
 
+`ResolvePoolStandings()` has no rights check of its own, because result saves call it under game rights. Admin pages that recalculate on request use `RecalculatePoolStandings($poolId)`, which requires `hasEditTeamsRight()` on the pool's division.
+
 Forfeits are encoded in `uo_game.forfeit`: `0` = not a forfeit, `1` = home team forfeited (away team wins), `2` = away team forfeited (home team wins), `3` = both teams forfeited (both lose). The round-robin (`getMatchesWins`), playoff, and cross-match resolvers award the win/loss from the forfeiting side rather than from the score, so a forfeit kept at `0-0` still counts as a win and a loss and, in a bracket, advances the non-forfeiting team. A double forfeit counts as a loss for both (in a bracket it leaves the seeded positions unchanged). Because the score is left untouched, goal-difference tie-breaks are unaffected, and games with `forfeit = 0` are ranked from the score as usual.
+
+The division statistics (`SeriesTeamStatsPoints()`), archived team statistics (`CalcTeamStats()`) and the team CSV (`TeamsToCsv()`) count wins, draws and losses by the same rule.
 
 The Swiss-draw resolver is the exception: it ranks by victory points looked up from the score margin, so a `0-0` forfeit still contributes draw victory points there. Record a Swiss forfeit with a decisive score if it must affect the ranking. The forfeit flag still excludes the game from spirit averages and shows the forfeit mark in every pool type.
 

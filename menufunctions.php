@@ -85,7 +85,7 @@ function pageTopHeadOpen($title)
     echo "<meta http-equiv=\"Expires\" content=\"-1\"/>";
 
     echo  "<link rel='icon' type='image/png' href='$icon' />
-		<title>" . GetPageTitle() . "" . $title . "</title>\n";
+		<title>" . GetPageTitle() . htmlspecialchars((string) $title, ENT_QUOTES, "UTF-8", false) . "</title>\n";
     echo styles();
     include $include_prefix . 'script/common.js.inc';
     global $include_prefix;

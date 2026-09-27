@@ -70,7 +70,7 @@ if (!empty($_POST['update'])) {
         $lastown = $_POST['ownstyle'];
     }
     if (isset($_POST['country'])) {
-        $selcountry = $_POST['country'];
+        $selcountry = (int) $_POST['country'];
     }
 }
 //content
@@ -171,7 +171,7 @@ if (!empty($selseries)) {
 
 $selector .= "<p>" . _("Select style") . ": <select class='dropdown' name='style'>\n";
 
-if (empty($selstyle)) {
+if (empty($selstyle) || (!in_array($selstyle, $styles, true) && $selstyle !== urlencode($lastown))) {
     $selstyle = $styles[0];
 }
 
@@ -184,7 +184,7 @@ for ($i = 0; $i < count($styles); $i++) {
 }
 
 $selector .=  "</select><br/>" . _("or a link to your own style definition") . ":\n";
-$selector .= "<input class='input' size='50' name='ownstyle' value='$lastown'/></p>";
+$selector .= "<input class='input' size='50' name='ownstyle' value='" . utf8entities($lastown) . "'/></p>";
 
 
 $selector .= "<p><input class='button' type='submit' name='update' value='" . _("Select and Update") . "' /></p>\n";
@@ -225,11 +225,11 @@ if (!empty($seltournament)) {
     $html .= "<h2>" . _("All games in selected grouping") . "</h2>\n";
 
     $html .= "<p class='highlight' ><code>
-		&lt;object data='$baseurl/ext/tournament.php?tournament=$seltournament&amp;season=$season&amp;style=$selstyle' <br/>
+		&lt;object data='$baseurl/ext/tournament.php?tournament=" . urlencode($seltournament) . "&amp;season=$season&amp;style=$selstyle' <br/>
 		type='text/html' width='600px' height='300px'&gt;&lt;/object&gt;
 		</code></p>\n";
 
-    $html .= "<p><object data='$baseurl/ext/tournament.php?tournament=$seltournament&amp;season=$season&amp;style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
+    $html .= "<p><object data='$baseurl/ext/tournament.php?tournament=" . urlencode($seltournament) . "&amp;season=$season&amp;style=$selstyle' type='text/html' width='600px' height='300px'></object></p>\n";
 }
 
 if (!empty($selpool)) {

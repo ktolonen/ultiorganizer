@@ -41,7 +41,7 @@ $_SESSION['hide_played_games'] = !empty($_SESSION['hide_played_games']) ? $_SESS
 
 $showpool = null;
 if (!empty($_GET['pool'])) {
-    $showpool = $_GET['pool'];
+    $showpool = (int) $_GET['pool'];
 }
 
 if (!empty($_GET["v"])) {
@@ -152,7 +152,7 @@ $html .= "<a class='scoresheetslink' href='?view=user/pdfscoresheet&amp;group=al
 $html .= "</p>";
 
 
-$html .= "<form method='post' action='?view=admin/seasongames&amp;season=$season&amp;group=$group'>";
+$html .= "<form method='post' action='?view=admin/seasongames&amp;season=$season&amp;group=" . urlencode($group) . "'>";
 
 $pools = SeriesPools($series_id);
 

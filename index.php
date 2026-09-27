@@ -72,6 +72,19 @@ EnforceSoftMaintenanceForView($rawView);
 
 $viewPath = resolveViewPath($rawView, __DIR__, 'frontpage', ['index', 'localization', 'install']);
 $viewToLog = preg_replace('/\\.php$/i', '', ltrim(str_replace(__DIR__, '', $viewPath), DIRECTORY_SEPARATOR));
+
+// Admin and user pages print the event id back into their links and forms.
+// Event ids are created only by superadmins, so refusing unknown ones keeps
+// a crafted season parameter out of every page at once. Inaccessible events
+// get the same answer, so the refusal does not reveal private event ids.
+// "0" is let through because the pages read it as no event.
+if (preg_match('#^(admin|user)/#', $viewToLog) && !empty($_GET['season'])
+    && (!is_string($_GET['season']) || !SeasonExists($_GET['season']) || !CanAccessSeason($_GET['season']))) {
+    http_response_code(404);
+    showPage(_("Event not found"), "<h1>" . _("Event not found") . "</h1>");
+    exit();
+}
+
 LogPageLoad($viewToLog);
 
 // Whitelisted rather than stored as-is: uo_scoresheet_history.source is

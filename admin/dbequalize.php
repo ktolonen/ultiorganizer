@@ -23,6 +23,9 @@ if (!empty($_GET["filter"])) {
 } elseif (!empty($_POST["filter"])) {
     $filter = $_POST["filter"];
 }
+if (!in_array($filter, ['teams', 'clubs', 'pools', 'series', 'profiles'], true)) {
+    $filter = 'teams';
+}
 
 if (isset($_POST['deleteorphan']) && isSuperAdmin() && $filter == 'profiles') {
     $orphanCount = (int) DBQueryToValue("

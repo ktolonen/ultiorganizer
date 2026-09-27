@@ -268,9 +268,9 @@ if (!$print && !$singleview) {
             $groupLabel = isset($grouptmp['reservationgroup']) ? (string) $grouptmp['reservationgroup'] : '';
             $encodedGroup = urlencode($groupLabel);
             if ($group == $groupLabel) {
-                $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
+                $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . utf8entities(U_($groupLabel)) . "</span></a>";
             } else {
-                $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'>" . U_($groupLabel) . "</a>";
+                $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'>" . utf8entities(U_($groupLabel)) . "</a>";
             }
             $html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
         }

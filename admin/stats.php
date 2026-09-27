@@ -164,13 +164,13 @@ if (!IsSeasonStatsCalculated($season)) {
                 $html .= "</div>";
             }
             $html .= "<div class='workarea'>";
-            $html .= "<h3>" . U_($team['seriesname']) . "</h3>";
+            $html .= "<h3>" . utf8entities(U_($team['seriesname'])) . "</h3>";
             $html .= "<ol id='ol" . $team['series'] . "' class='draglist'>\n";
-            $html .= "<li class='list' id='li" . $team['team_id'] . "'>" . $team['teamname'] . "</li>\n";
+            $html .= "<li class='list' id='li" . $team['team_id'] . "'>" . utf8entities($team['teamname']) . "</li>\n";
 
             $prevseries = $team['series'];
         } else {
-            $html .= "<li class='list' id='li" . $team['team_id'] . "'>" . $team['teamname'] . "</li>\n";
+            $html .= "<li class='list' id='li" . $team['team_id'] . "'>" . utf8entities($team['teamname']) . "</li>\n";
         }
     }
 

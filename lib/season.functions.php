@@ -305,100 +305,117 @@ function CanBypassEventMaintenance($seasonId)
     return !empty($seasonId) && function_exists('isSeasonAdmin') && isSeasonAdmin($seasonId);
 }
 
-function MaintenanceSeasonFromView($rawView)
+/**
+ * Every event a public request names through its id parameters, in the
+ * order the parameters are checked. Pages read different parameters, so
+ * access and maintenance gates must check all of them, not just one.
+ *
+ * @param string $rawView requested view
+ * @return array<int, string> distinct event ids; the current event for the
+ *   event-level views when no parameter names one
+ */
+function RequestSeasonsFromView($rawView)
 {
     $view = preg_replace('/\.php$/i', '', (string) $rawView);
 
-    if (iget("season")) {
-        return iget("season");
-    }
-    if (iget("series")) {
-        return DBQueryToValue(sprintf(
-            "SELECT season FROM uo_series WHERE series_id=%d",
-            (int) iget("series"),
-        ));
-    }
-    if (iget("pool")) {
-        return DBQueryToValue(sprintf(
-            "SELECT ser.season
-       FROM uo_pool pool
-       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-       WHERE pool.pool_id=%d",
-            (int) iget("pool"),
-        ));
-    }
-    if (iget("pools")) {
-        $poolIds = array_filter(array_map('intval', explode(",", iget("pools"))));
-        if (!empty($poolIds)) {
-            return DBQueryToValue(sprintf(
-                "SELECT ser.season
-       FROM uo_pool pool
-       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-       WHERE pool.pool_id=%d",
-                (int) reset($poolIds),
+    // Resolved once per request: the access gate, the maintenance gate and
+    // the event banner all ask for the same parameters.
+    $params = ["season", "series", "pool", "pools", "game", "reservation", "team", "team1", "team2", "player", "profile"];
+    $cacheKey = json_encode([array_map('iget', $params), function_exists('ReservationSeason')]);
+    $seasons = CacheRemember('request_seasons', $cacheKey, function () {
+        $seasons = [];
+
+        if (iget("season")) {
+            $seasons[] = iget("season");
+        }
+        if (iget("series")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT season FROM uo_series WHERE series_id=%d",
+                (int) iget("series"),
             ));
         }
-    }
-    if (iget("game")) {
-        return DBQueryToValue(sprintf(
-            "SELECT ser.season
-       FROM uo_game game
-       INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
-       LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
-       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-       WHERE game.game_id=%d",
-            (int) iget("game"),
-        ));
-    }
-    if (iget("reservation") && function_exists('ReservationSeason')) {
-        return ReservationSeason(iget("reservation"));
-    }
-    if (iget("team")) {
-        return MaintenanceSeasonFromTeam(iget("team"));
-    }
-    if (iget("player")) {
-        return DBQueryToValue(sprintf(
-            "SELECT ser.season
-       FROM uo_player player
-       LEFT JOIN uo_team team ON (team.team_id=player.team)
-       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
-       WHERE player.player_id=%d",
-            (int) iget("player"),
-        ));
-    }
-    if (iget("profile")) {
-        return DBQueryToValue(sprintf(
-            "SELECT ser.season
-       FROM uo_player player
-       LEFT JOIN uo_team team ON (team.team_id=player.team)
-       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
-       WHERE player.profile_id=%d
-       ORDER BY player.player_id DESC
-       LIMIT 1",
-            (int) iget("profile"),
-        ));
-    }
-    if (iget("team1")) {
-        $season1 = MaintenanceSeasonFromTeam(iget("team1"));
-        $season2 = iget("team2") ? MaintenanceSeasonFromTeam(iget("team2")) : "";
-        if (!empty($season1) && IsSeasonInMaintenance($season1)) {
-            return $season1;
+        $poolIds = [];
+        if (iget("pool")) {
+            $poolIds[] = (int) iget("pool");
         }
-        if (!empty($season2) && IsSeasonInMaintenance($season2)) {
-            return $season2;
+        if (iget("pools")) {
+            $poolIds = array_merge($poolIds, array_map('intval', explode(",", iget("pools"))));
         }
-        return $season1;
-    }
+        $poolIds = array_filter($poolIds);
+        if (!empty($poolIds)) {
+            $seasons = array_merge($seasons, array_column(DBQueryToArray(sprintf(
+                "SELECT DISTINCT ser.season
+           FROM uo_pool pool
+           LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+           WHERE pool.pool_id IN (%s)",
+                implode(",", $poolIds),
+            )), 'season'));
+        }
+        if (iget("game")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT ser.season
+           FROM uo_game game
+           INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+           LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+           LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+           WHERE game.game_id=%d",
+                (int) iget("game"),
+            ));
+        }
+        if (iget("reservation") && function_exists('ReservationSeason')) {
+            $seasons[] = ReservationSeason(iget("reservation"));
+        }
+        foreach (["team", "team1", "team2"] as $param) {
+            if (iget($param)) {
+                $seasons[] = MaintenanceSeasonFromTeam(iget($param));
+            }
+        }
+        if (iget("player")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT ser.season
+           FROM uo_player player
+           LEFT JOIN uo_team team ON (team.team_id=player.team)
+           LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+           WHERE player.player_id=%d",
+                (int) iget("player"),
+            ));
+        }
+        if (iget("profile")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT ser.season
+           FROM uo_player player
+           LEFT JOIN uo_team team ON (team.team_id=player.team)
+           LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+           WHERE player.profile_id=%d
+           ORDER BY player.player_id DESC
+           LIMIT 1",
+                (int) iget("profile"),
+            ));
+        }
+        return $seasons;
+    });
 
-    $currentSeasonViews = [
-        "teams", "games", "timetables", "played", "scorestatus", "seriesstatus",
-        "poolstatus", "spiritstatus", "gameplay",
-    ];
-    if (in_array($view, $currentSeasonViews, true)) {
-        return CurrentSeason();
+    $seasons = array_values(array_unique(array_filter(array_map('strval', $seasons), fn($season) => $season !== "")));
+    if (empty($seasons)) {
+        $currentSeasonViews = [
+            "teams", "games", "timetables", "played", "scorestatus", "seriesstatus",
+            "poolstatus", "spiritstatus", "gameplay",
+        ];
+        if (in_array($view, $currentSeasonViews, true)) {
+            $current = (string) CurrentSeason();
+            return $current === "" ? [] : [$current];
+        }
     }
+    return $seasons;
+}
 
-    return "";
+/**
+ * The first event a request names, for pages that show one event banner.
+ */
+function MaintenanceSeasonFromView($rawView)
+{
+    $seasons = RequestSeasonsFromView($rawView);
+    return $seasons[0] ?? "";
 }
 
 function MaintenanceSeasonFromTeam($teamId)
@@ -426,9 +443,10 @@ function EnforceSoftMaintenanceForView($rawView)
         RenderSoftMaintenanceResponse();
     }
 
-    $seasonId = MaintenanceSeasonFromView($rawView);
-    if (!empty($seasonId) && IsSeasonInMaintenance($seasonId) && !CanBypassEventMaintenance($seasonId)) {
-        RenderSoftMaintenanceResponse($seasonId);
+    foreach (RequestSeasonsFromView($rawView) as $seasonId) {
+        if (IsSeasonInMaintenance($seasonId) && !CanBypassEventMaintenance($seasonId)) {
+            RenderSoftMaintenanceResponse($seasonId);
+        }
     }
 }
 
@@ -439,29 +457,12 @@ function EnforcePrivateEventAccessForView($rawView)
         return;
     }
 
-    // Two-team pages (e.g. gamecard) must be accessible for every team's
-    // event. MaintenanceSeasonFromView() returns only one representative
-    // season here (tuned for maintenance), so check each team directly.
-    if (iget("team1")) {
-        foreach ([iget("team1"), iget("team2")] as $teamId) {
-            if (empty($teamId)) {
-                continue;
-            }
-            $teamSeason = MaintenanceSeasonFromTeam($teamId);
-            if (!empty($teamSeason) && !CanAccessSeason($teamSeason)) {
-                header("location:?view=frontpage");
-                exit();
-            }
+    foreach (RequestSeasonsFromView($rawView) as $seasonId) {
+        if (!CanAccessSeason($seasonId)) {
+            header("location:?view=frontpage");
+            exit();
         }
     }
-
-    $seasonId = MaintenanceSeasonFromView($rawView);
-    if (empty($seasonId) || CanAccessSeason($seasonId)) {
-        return;
-    }
-
-    header("location:?view=frontpage");
-    exit();
 }
 
 /**
@@ -533,9 +534,47 @@ function Seasons($filter = null, $ordering = null)
 
 function FilterAccessibleSeasons($seasons)
 {
-    return array_values(array_filter($seasons, function ($season) {
-        return CanAccessSeason($season['season_id']);
+    if (function_exists('isSuperAdmin') && isSuperAdmin()) {
+        return array_values($seasons);
+    }
+
+    // Same rule as CanAccessSeason(), with the user's roles resolved once
+    // rather than once per event.
+    $scopedSeasons = null;
+    return array_values(array_filter($seasons, function ($season) use (&$scopedSeasons) {
+        $seasonId = $season['season_id'];
+        if (empty($seasonId) || IsSeasonPublicEvent($seasonId)) {
+            return true;
+        }
+        if (!isset($_SESSION['uid']) || !function_exists('UserScopedSeasonIds')) {
+            return false;
+        }
+        $scopedSeasons ??= UserScopedSeasonIds($_SESSION['uid']);
+        return in_array((string) $seasonId, $scopedSeasons, true);
     }));
+}
+
+/**
+ * SQL list of the event ids the viewer can access, for an IN (...) clause
+ * in cross-event queries. Never empty: no accessible event gives ''.
+ *
+ * @return string
+ */
+function AccessibleSeasonIdListSql()
+{
+    if (function_exists('isSuperAdmin') && isSuperAdmin()) {
+        $seasonIds = array_column(Seasons(), 'season_id');
+    } else {
+        $seasonIds = array_column(DBQueryToArray("SELECT season_id FROM uo_season WHERE public_event=1"), 'season_id');
+        if (isset($_SESSION['uid']) && function_exists('UserScopedSeasonIds')) {
+            $seasonIds = array_merge($seasonIds, UserScopedSeasonIds($_SESSION['uid']));
+        }
+    }
+    $ids = [];
+    foreach (array_unique(array_map('strval', $seasonIds)) as $seasonId) {
+        $ids[] = "'" . DBEscapeString($seasonId) . "'";
+    }
+    return empty($ids) ? "''" : implode(",", $ids);
 }
 
 /**

@@ -254,6 +254,11 @@ function CanManageGameComment($gameId, $type)
     if (hasEditGameEventsRight($gameId)) {
         return true;
     }
+    require_once __DIR__ . '/game.functions.php';
+    $seasonId = GameSeason($gameId);
+    if (isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
+        return false;
+    }
     $meta = GameCommentMeta($gameId, $type);
     return (!empty($meta['created_by']) && isset($_SESSION['uid']) && $_SESSION['uid'] === $meta['created_by']);
 }

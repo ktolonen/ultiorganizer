@@ -6,6 +6,8 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/accreditation.functions.php';
 require_once __DIR__ . '/configuration.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/reservation.functions.php';
+require_once __DIR__ . '/team.functions.php';
 require_once __DIR__ . '/scoresheethistory.functions.php';
 
 function SeasonScoreCounter($seasonId = "")
@@ -1618,28 +1620,35 @@ function GameSetDefenses($gameId, $home, $away)
 /**
  * Returns true when a player may be put on a game roster.
  *
- * When the event requires accreditation, only accredited players may be added.
- * A player already on the roster stays allowed so that renumbering and
- * re-saving an existing roster keeps working.
+ * Only players of the game's two teams qualify, and when the event requires
+ * accreditation, only accredited ones. A player already on the roster stays
+ * allowed so that renumbering and re-saving an existing roster keeps working,
+ * even after a team change.
  */
 function GameAllowsPlayerOnRoster($gameId, $playerId)
 {
+    $onRoster = DBQueryToValue(sprintf(
+        "SELECT COUNT(*) FROM uo_played WHERE game=%d AND player=%d",
+        (int) $gameId,
+        (int) $playerId,
+    ));
+    if ((int) $onRoster > 0) {
+        return true;
+    }
+
+    $playsForGameTeam = DBQueryToValue(sprintf(
+        "SELECT COUNT(*) FROM uo_game g
+            INNER JOIN uo_player p ON (p.team=g.hometeam OR p.team=g.visitorteam)
+            WHERE g.game_id=%d AND p.player_id=%d",
+        (int) $gameId,
+        (int) $playerId,
+    ));
+    if ((int) $playsForGameTeam === 0) {
+        return false;
+    }
+
     $seasonInfo = SeasonInfo(GameSeason($gameId));
-    if (empty($seasonInfo['require_accreditation'])) {
-        return true;
-    }
-
-    if (isAccredited($playerId)) {
-        return true;
-    }
-
-    $query = sprintf(
-        "SELECT COUNT(*) FROM uo_played WHERE game='%s' AND player='%s'",
-        DBEscapeString($gameId),
-        DBEscapeString($playerId),
-    );
-
-    return (int) DBQueryToValue($query) > 0;
+    return empty($seasonInfo['require_accreditation']) || isAccredited($playerId);
 }
 
 function GameAddPlayer($gameId, $playerId, $number)
@@ -1684,6 +1693,10 @@ function GameAddPlayer($gameId, $playerId, $number)
 function GameAddNewPlayer($gameId, $firstname, $lastname, $accrid, $teamId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
+        $game = GameInfo($gameId);
+        if (!in_array((int) $teamId, [(int) ($game['hometeam'] ?? 0), (int) ($game['visitorteam'] ?? 0)], true)) {
+            return false;
+        }
         // The nested GameAddPlayer() below runs with history suppressed, so
         // its own snapshot attempt would be a no-op.
         ScoresheetHistorySnapshotIfNeeded($gameId);
@@ -2403,9 +2416,22 @@ function SetGame($gameId, $params)
 {
     $series = GameSeries($gameId);
     if (hasEditGamesRight($series)) {
+        $gameSeason = GameSeason($gameId);
         if (!empty($params['pool'])) {
             $poolinfo = PoolInfo($params['pool']);
             if (!$poolinfo || !hasEditGamesRight($poolinfo['series'])) {
+                die('Insufficient rights to edit game');
+            }
+            $gameSeason = $poolinfo['season'];
+        }
+        foreach (['hometeam', 'visitorteam', 'respteam'] as $key) {
+            if (!empty($params[$key]) && TeamSeason($params[$key]) !== $gameSeason) {
+                die('Insufficient rights to edit game');
+            }
+        }
+        if (!empty($params['reservation'])) {
+            $reservationSeason = ReservationSeason($params['reservation']);
+            if ($reservationSeason === null ? !isSuperAdmin() : $reservationSeason !== $gameSeason) {
                 die('Insufficient rights to edit game');
             }
         }
@@ -2870,9 +2896,19 @@ function UnscheduledSeasonGameInfo($seasonId)
     return $ret;
 }
 
+/**
+ * True if the game may be scheduled into the reservation: the reservation
+ * must belong to the game's event, and one with no event is superadmin-only.
+ */
+function CanScheduleGameInReservation($gameId, $reservation)
+{
+    $reservationSeason = ReservationSeason($reservation);
+    return $reservationSeason === null ? isSuperAdmin() : $reservationSeason === GameSeason($gameId);
+}
+
 function ScheduleGame($gameId, $epoc, $reservation)
 {
-    if (hasEditGamesRight(GameSeries($gameId))) {
+    if (hasEditGamesRight(GameSeries($gameId)) && CanScheduleGameInReservation($gameId, $reservation)) {
         $query = sprintf(
             "UPDATE uo_game SET time='%s', reservation=%d WHERE game_id=%d",
             EpocToMysql($epoc),
@@ -2901,9 +2937,9 @@ function UnScheduleGame($gameId)
 function ClearReservation($reservationId)
 {
     foreach (ReservationGames($reservationId) as $row) {
-        if (hasEditGamesRight(GameSeries($row['game_id']))) {
+        if (hasEditGamesRight(GameSeries($row['game_id'])) && CanScheduleGameInReservation($row['game_id'], $reservationId)) {
             UnScheduleGame($row['game_id']);
-        } // else ignore games not managed by user
+        } // else ignore games not managed by user or scheduled here from another event
     }
 }
 

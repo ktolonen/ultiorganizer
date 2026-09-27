@@ -52,7 +52,7 @@ if (!empty($_POST['remove_x'])) {
 }
 
 if (!empty($_POST['recalculate'])) {
-    ResolvePoolStandings($_POST['PoolId']);
+    RecalculatePoolStandings($_POST['PoolId']);
 }
 
 if (!empty($_POST['editType'])) {

@@ -28,6 +28,12 @@ if (!empty($_GET["season"])) {
 
 $title = _("Teams");
 
+$poolinfo = PoolInfo($poolId);
+if (!$poolinfo || !hasSeasonSeriesPageAccess($poolinfo['season'], $poolinfo['series'])) {
+    showPage($title, "<p>" . _("Insufficient user rights") . "</p>");
+    return;
+}
+
 //process itself on submit
 if (!empty($_POST['save'])) {
     $backurl = utf8entities(SafeRedirectUrl($_POST['backurl'], ""));
@@ -70,7 +76,7 @@ if (!empty($_POST['save'])) {
             }
         }
     }
-    ResolvePoolStandings($poolId);
+    RecalculatePoolStandings($poolId);
 } elseif (!empty($_POST['move'])) {
     PoolConfirmMoves($poolId, $_POST['visible'] == "on");
 

@@ -1549,6 +1549,16 @@ function upgrade100()
     }
 }
 
+function upgrade101()
+{
+    // Archived team stats counted games as wins + losses, which drops draws.
+    // Existing rows keep that count; archiving an event again stores the real one.
+    if (!hasColumn('uo_team_stats', 'games')) {
+        addColumn('uo_team_stats', 'games', "int(5) NOT NULL DEFAULT 0");
+        runQuery("UPDATE uo_team_stats SET games = COALESCE(wins, 0) + COALESCE(losses, 0)");
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {

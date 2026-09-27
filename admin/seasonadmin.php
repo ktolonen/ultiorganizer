@@ -33,7 +33,7 @@ $inter = intval($info['isinternational']) ? "" : _("National");
 $tour = intval($info['istournament']) ? _("Tournament") : _("Season");
 
 $html .=  "<tr><td  style='width:40%;'><b>" . _("Type") . "</b></td><td>" . U_($info['type']) . "/" . $tour . "/" . $inter . "/" . $club . "</td></tr>\n";
-$html .=  "<tr><td><b>" . _("Organizer") . "</b></td><td>" . U_($info['organizer']) . "/" . U_($info['category']) . "</td></tr>\n";
+$html .=  "<tr><td><b>" . _("Organizer") . "</b></td><td>" . utf8entities(U_($info['organizer'])) . "/" . utf8entities(U_($info['category'])) . "</td></tr>\n";
 
 $spirit = _("not given");
 

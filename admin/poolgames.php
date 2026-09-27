@@ -11,7 +11,7 @@ include_once 'lib/reservation.functions.php';
 
 $LAYOUT_ID = POOLGAMES;
 
-$poolId = $_GET["pool"];
+$poolId = (int) $_GET["pool"];
 $season = $_GET["season"];
 $rounds = 1;
 $title = utf8entities(U_(PoolSeriesName($poolId)) . ", " . U_(PoolName($poolId))) . ": " . _("Games");

@@ -81,7 +81,7 @@ if ($emailDisabled && empty($_GET['token']) && empty($message)) {
 $html .= $message;
 
 if (!$emailDisabled && !$confirmed && !$mailsent) {
-    $html .= "<form method='post' action='?view=user/addextraemail&amp;user=" . $userid;
+    $html .= "<form method='post' action='?view=user/addextraemail&amp;user=" . urlencode($userid);
     $html .= "'>\n";
     $html .= "<table cellpadding='8px'>
 		<tr><td class='infocell'>" . _("Email") . ":</td>

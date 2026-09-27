@@ -343,7 +343,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(97, '2026-07-25 00:00:00'),
 	(98, '2026-08-16 00:00:00'),
 	(99, '2026-08-23 00:00:00'),
-	(100, '2026-08-30 00:00:00');
+	(100, '2026-08-30 00:00:00'),
+	(101, '2026-09-27 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -1179,6 +1180,7 @@ CREATE TABLE IF NOT EXISTS `uo_team_stats` (
   `wins` int(5) DEFAULT 0,
   `losses` int(5) DEFAULT NULL,
   `defenses_total` int(5) DEFAULT 0,
+  `games` int(5) NOT NULL DEFAULT 0,
   PRIMARY KEY (`team_id`),
   KEY `fk_team_stats_series` (`series`),
   KEY `fk_team_stats_season` (`season`),

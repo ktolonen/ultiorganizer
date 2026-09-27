@@ -6,6 +6,7 @@ denyDirectLibAccess(__FILE__);
 require_once __DIR__ . '/image.functions.php';
 require_once __DIR__ . '/url.functions.php';
 require_once __DIR__ . '/common.functions.php';
+require_once __DIR__ . '/season.functions.php';
 
 function NormalizedPlayerNumberSql($number)
 {
@@ -375,19 +376,21 @@ function PlayerLatestId($profileId, $seasonId = null)
 
 function PlayerListAll($lastname = "")
 {
-    $where = "WHERE accredited=1";
+    $where = "WHERE uo_player.accredited=1 AND ser.season IN (" . AccessibleSeasonIdListSql() . ")";
     if (!empty($lastname) && $lastname != "ALL") {
-        $where .= " AND UPPER(lastname) LIKE '" . DBEscapeString($lastname) . "%'";
+        $where .= " AND UPPER(uo_player.lastname) LIKE '" . DBEscapeString($lastname) . "%'";
     }
 
     $query = "SELECT p.player_id, p.firstname, p.lastname, p.num, p.accreditation_id, p.profile_id, p.team,
 		uo_team.name AS teamname
 		FROM uo_player p
 		INNER JOIN (
-			SELECT MAX(player_id) AS player_id
+			SELECT MAX(uo_player.player_id) AS player_id
 			FROM uo_player
+			INNER JOIN uo_team ON (uo_team.team_id=uo_player.team)
+			INNER JOIN uo_series ser ON (ser.series_id=uo_team.series)
 			$where
-			GROUP BY profile_id, firstname, lastname
+			GROUP BY uo_player.profile_id, uo_player.firstname, uo_player.lastname
 		) latest ON (latest.player_id=p.player_id)
 		LEFT JOIN uo_team ON p.team=team_id
 		ORDER BY p.lastname, p.firstname";

@@ -39,7 +39,7 @@ $html .= "<h2>" . _("CSV files") . "</h2>\n";
 $html .= "<p>" . _("Get comma-separated UTF-8 encoded files by clicking the links below.");
 $html .= " " . _("You can also change encoding and separator.") . "</p>\n";
 if (!empty($season)) {
-    $html .= "<p>" . SeasonName($season) . "<br/>";
+    $html .= "<p>" . utf8entities(SeasonName($season)) . "<br/>";
     $html .= "<a href='ext/gamescsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("All scheduled games") . "</a><br/>";
     $html .= "<a href='ext/resultscsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("All results") . "</a><br/>";
     $html .= "<a href='ext/playerscsv.php?season=$season&amp;enc=$encoding&amp;sep=$separator'>&raquo; " . _("Player statistics") . "</a><br/>";

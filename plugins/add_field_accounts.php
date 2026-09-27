@@ -43,8 +43,7 @@ if (!empty($_POST['create'])) {
         } else {
             $name = $field['fieldname'];
         }
-        $user = DBQueryToValue("SELECT COUNT(*) FROM uo_users WHERE userid='$name'");
-        if ($user < 1) {
+        if (!UserExists($name)) {
             $passwordHash = hashUserPassword($name);
             DBQuery(sprintf(
                 "INSERT INTO uo_users(name, userid, password, email) VALUES ('%s', '%s', '%s', '')",
