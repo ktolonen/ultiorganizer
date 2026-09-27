@@ -74,8 +74,11 @@ if (isset($_POST['save'])) {
                         GameAddPlayer($gameId, $playerId, $number);
                     } else {
                         $playerinfo = PlayerInfo($playerId);
-                        $html .= "<p class='warning'><i>" . utf8entities($playerinfo['firstname'] . " " . $playerinfo['lastname']) . "</i> "
-                            . _("is not accredited and cannot be added to the roster.") . "</p>";
+                        $gameTeams = GameResult($gameId);
+                        $onGameTeam = !empty($playerinfo['team'])
+                            && in_array((int) $playerinfo['team'], [(int) $gameTeams['hometeam'], (int) $gameTeams['visitorteam']], true);
+                        $html .= "<p class='warning'><i>" . utf8entities(($playerinfo['firstname'] ?? '') . " " . ($playerinfo['lastname'] ?? '')) . "</i> "
+                            . ($onGameTeam ? _("is not accredited and cannot be added to the roster.") : _("does not play for either team in this game and cannot be added to the roster.")) . "</p>";
                     }
                 }
             } else {
