@@ -981,7 +981,7 @@ function api_handle_gameplay($tokenRow)
     }
 
     $spirit = null;
-    if (!intval($gameResult['isongoing']) && !empty($seasonInfo['spiritmode'])) {
+    if (!intval($gameResult['isongoing']) && CanViewSpiritScoresForGame($gameId, $seasonInfo)) {
         $categories = SpiritCategories($seasonInfo['spiritmode']);
         $homePoints = GameGetSpiritPoints($gameId, $gameResult['hometeam']);
         $awayPoints = GameGetSpiritPoints($gameId, $gameResult['visitorteam']);
