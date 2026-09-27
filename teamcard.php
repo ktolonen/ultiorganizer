@@ -209,10 +209,12 @@ if ($allgames) {
 }
 
 $seasoninfo = SeasonInfo($teaminfo['season']);
+$spiritRows = null;
 if (ShowSpiritScoresForSeason($seasoninfo)) {
     $categories = SpiritCategories($seasoninfo['spiritmode']);
     $categoryStats = TeamSpiritCategoryStats($teamId, $seasoninfo['season_id'], $seasoninfo['spiritmode']);
-    $categoryHistory = TeamSpiritCategoryHistoryAveragesByName($teaminfo['name'], $teaminfo['type'], $seasoninfo['spiritmode']);
+    $spiritRows = TeamSpiritAveragesByName($teaminfo['name'], $teaminfo['type']);
+    $categoryHistory = TeamSpiritCategoryHistoryAveragesByName($teaminfo['name'], $teaminfo['type'], $seasoninfo['spiritmode'], $spiritRows);
     $statsByCategory = [];
     foreach ($categoryStats as $row) {
         $statsByCategory[$row['category_id']] = $row;
@@ -399,7 +401,7 @@ if (ShowSpiritScoresForSeason($seasoninfo)) {
 $seasons = TeamStatisticsByName($teaminfo['name'], $teaminfo['type']);
 $spiritAverages = [];
 if (!empty($seasons)) {
-    $spiritRows = TeamSpiritAveragesByName($teaminfo['name'], $teaminfo['type']);
+    $spiritRows ??= TeamSpiritAveragesByName($teaminfo['name'], $teaminfo['type']);
     foreach ($spiritRows as $row) {
         $key = $row['season'] . "_" . $row['series'];
         $spiritAverages[$key] = $row['spirit_total'];

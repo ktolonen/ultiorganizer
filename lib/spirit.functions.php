@@ -2183,10 +2183,14 @@ function TeamSpiritCategoryStats($teamId, $seasonId, $spiritmode)
     return DBQueryToArray($query);
 }
 
-function TeamSpiritCategoryHistoryAveragesByName($teamname, $seriestype, $spiritmode)
+/**
+ * @param array|null $spiritRows TeamSpiritAveragesByName() result for the
+ *   same team, when the caller already has it
+ */
+function TeamSpiritCategoryHistoryAveragesByName($teamname, $seriestype, $spiritmode, $spiritRows = null)
 {
     $seasonIds = [];
-    foreach (TeamSpiritAveragesByName($teamname, $seriestype) as $row) {
+    foreach ($spiritRows ?? TeamSpiritAveragesByName($teamname, $seriestype) as $row) {
         $seasonIds[] = "'" . DBEscapeString($row['season']) . "'";
     }
     if (empty($seasonIds)) {
