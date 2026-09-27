@@ -8,6 +8,7 @@ require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/standings.functions.php';
 require_once __DIR__ . '/player.functions.php';
 require_once __DIR__ . '/series.functions.php';
+require_once __DIR__ . '/spirit.functions.php';
 require_once __DIR__ . '/debug.functions.php';
 
 function IsSeasonStatsCalculated($season)
@@ -282,6 +283,9 @@ function ScoreboardAllTime($limit, $seasontype = "", $seriestype = "", $club = "
 
 function SeasonSpiritTopTeamsBySeriesType($seasonId, $seriesType, $limit = 3)
 {
+    if (!ShowSpiritScoresForSeason($seasonId)) {
+        return [];
+    }
     $query = sprintf(
         "SELECT t.team_id, t.name AS teamname, t.country, c.flagfile,
 			SUM(ts.average * sct.factor) AS spirit_total
