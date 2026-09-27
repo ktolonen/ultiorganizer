@@ -317,75 +317,83 @@ function CanBypassEventMaintenance($seasonId)
 function RequestSeasonsFromView($rawView)
 {
     $view = preg_replace('/\.php$/i', '', (string) $rawView);
-    $seasons = [];
 
-    if (iget("season")) {
-        $seasons[] = iget("season");
-    }
-    if (iget("series")) {
-        $seasons[] = DBQueryToValue(sprintf(
-            "SELECT season FROM uo_series WHERE series_id=%d",
-            (int) iget("series"),
-        ));
-    }
-    $poolIds = [];
-    if (iget("pool")) {
-        $poolIds[] = (int) iget("pool");
-    }
-    if (iget("pools")) {
-        $poolIds = array_merge($poolIds, array_map('intval', explode(",", iget("pools"))));
-    }
-    $poolIds = array_filter($poolIds);
-    if (!empty($poolIds)) {
-        $seasons = array_merge($seasons, array_column(DBQueryToArray(sprintf(
-            "SELECT DISTINCT ser.season
-       FROM uo_pool pool
-       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-       WHERE pool.pool_id IN (%s)",
-            implode(",", $poolIds),
-        )), 'season'));
-    }
-    if (iget("game")) {
-        $seasons[] = DBQueryToValue(sprintf(
-            "SELECT ser.season
-       FROM uo_game game
-       INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
-       LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
-       LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-       WHERE game.game_id=%d",
-            (int) iget("game"),
-        ));
-    }
-    if (iget("reservation") && function_exists('ReservationSeason')) {
-        $seasons[] = ReservationSeason(iget("reservation"));
-    }
-    foreach (["team", "team1", "team2"] as $param) {
-        if (iget($param)) {
-            $seasons[] = MaintenanceSeasonFromTeam(iget($param));
+    // Resolved once per request: the access gate, the maintenance gate and
+    // the event banner all ask for the same parameters.
+    $params = ["season", "series", "pool", "pools", "game", "reservation", "team", "team1", "team2", "player", "profile"];
+    $cacheKey = json_encode([array_map('iget', $params), function_exists('ReservationSeason')]);
+    $seasons = CacheRemember('request_seasons', $cacheKey, function () {
+        $seasons = [];
+
+        if (iget("season")) {
+            $seasons[] = iget("season");
         }
-    }
-    if (iget("player")) {
-        $seasons[] = DBQueryToValue(sprintf(
-            "SELECT ser.season
-       FROM uo_player player
-       LEFT JOIN uo_team team ON (team.team_id=player.team)
-       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
-       WHERE player.player_id=%d",
-            (int) iget("player"),
-        ));
-    }
-    if (iget("profile")) {
-        $seasons[] = DBQueryToValue(sprintf(
-            "SELECT ser.season
-       FROM uo_player player
-       LEFT JOIN uo_team team ON (team.team_id=player.team)
-       LEFT JOIN uo_series ser ON (ser.series_id=team.series)
-       WHERE player.profile_id=%d
-       ORDER BY player.player_id DESC
-       LIMIT 1",
-            (int) iget("profile"),
-        ));
-    }
+        if (iget("series")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT season FROM uo_series WHERE series_id=%d",
+                (int) iget("series"),
+            ));
+        }
+        $poolIds = [];
+        if (iget("pool")) {
+            $poolIds[] = (int) iget("pool");
+        }
+        if (iget("pools")) {
+            $poolIds = array_merge($poolIds, array_map('intval', explode(",", iget("pools"))));
+        }
+        $poolIds = array_filter($poolIds);
+        if (!empty($poolIds)) {
+            $seasons = array_merge($seasons, array_column(DBQueryToArray(sprintf(
+                "SELECT DISTINCT ser.season
+           FROM uo_pool pool
+           LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+           WHERE pool.pool_id IN (%s)",
+                implode(",", $poolIds),
+            )), 'season'));
+        }
+        if (iget("game")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT ser.season
+           FROM uo_game game
+           INNER JOIN uo_game_pool gp ON (gp.game=game.game_id AND gp.timetable=1)
+           LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+           LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+           WHERE game.game_id=%d",
+                (int) iget("game"),
+            ));
+        }
+        if (iget("reservation") && function_exists('ReservationSeason')) {
+            $seasons[] = ReservationSeason(iget("reservation"));
+        }
+        foreach (["team", "team1", "team2"] as $param) {
+            if (iget($param)) {
+                $seasons[] = MaintenanceSeasonFromTeam(iget($param));
+            }
+        }
+        if (iget("player")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT ser.season
+           FROM uo_player player
+           LEFT JOIN uo_team team ON (team.team_id=player.team)
+           LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+           WHERE player.player_id=%d",
+                (int) iget("player"),
+            ));
+        }
+        if (iget("profile")) {
+            $seasons[] = DBQueryToValue(sprintf(
+                "SELECT ser.season
+           FROM uo_player player
+           LEFT JOIN uo_team team ON (team.team_id=player.team)
+           LEFT JOIN uo_series ser ON (ser.series_id=team.series)
+           WHERE player.profile_id=%d
+           ORDER BY player.player_id DESC
+           LIMIT 1",
+                (int) iget("profile"),
+            ));
+        }
+        return $seasons;
+    });
 
     $seasons = array_values(array_unique(array_filter(array_map('strval', $seasons), fn($season) => $season !== "")));
     if (empty($seasons)) {
