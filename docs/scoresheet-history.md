@@ -167,7 +167,7 @@ The replay is neither transactional nor serialized. A failure midway leaves a mi
 ## Retention
 
 - **Cascade:** deleting a `uo_game` row deletes its history (`fk_scoresheet_history_game`, `ON DELETE CASCADE`), both through `DeleteGame()` and the event-data cleanup in `lib/data.functions.php`.
-- **Event cleanup:** `DeleteEventScoresheetHistory($seasonId)` drops the history of every game the event owns through its timetable pool row. `admin/stats.php` offers it to superadmins as an unchecked-by-default checkbox, applied after statistics are archived. Carryover pool rows are not matched, because a game moved into another event still links back through them. Results and scoresheets are untouched. The deletion is logged in `uo_event_log` (`category='game'`, `source='history-cleanup'`) with the row count. Run `OPTIMIZE TABLE uo_scoresheet_history` afterwards to reclaim disk.
+- **Event cleanup:** `DeleteEventScoresheetHistory($seasonId)` drops the history of every game the event owns through its timetable pool row. `admin/stats.php` offers it to superadmins as an unchecked-by-default checkbox, applied after statistics are archived. It cannot be undone: the audit trail and every restore point go. Carryover pool rows are not matched, because a game moved into another event still links back through them. Results and scoresheets are untouched. The deletion is logged in `uo_event_log` (`category='game'`, `source='history-cleanup'`) with the row count. Run `OPTIMIZE TABLE uo_scoresheet_history` afterwards to reclaim disk.
 
 There is no age-based pruning and no delete control on the history pages.
 

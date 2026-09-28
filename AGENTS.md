@@ -41,7 +41,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - Use the `?view=...` routing pattern for new pages.
 - Prefer small, focused changes; no large refactors unless asked.
 - Keep comments proportionate. A small edit needs no comment; the reasoning belongs in the commit message. Comment only what the code cannot say, such as a non-obvious invariant or a deliberate deviation. Reserve short docblocks for new shared helpers.
-- Avoid touching `conf/`. Values in `conf/config.inc.php` (`DB_DATABASE`, `CUSTOMIZATIONS`, `BASEURL`, upload paths) describe one installation: read them at the point of use, never hardcode or remember them.
+- Avoid touching `conf/` unless required. Values in `conf/config.inc.php` (`DB_DATABASE`, `CUSTOMIZATIONS`, `BASEURL`, upload paths) describe one installation: read them at the point of use, never hardcode or remember them.
 - Keep edits ASCII unless the file already uses Unicode.
 
 ### Database
