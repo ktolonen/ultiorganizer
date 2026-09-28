@@ -16,7 +16,7 @@ JSON event snapshots are portable competition packages, not privacy exports or b
 
 Export one player's data as a text report, or anonymize them while keeping competition history. Operations are logged to `uo_event_log` with `source='privacy'`, with the internal `player_id` or `profile_id` as target.
 
-Selection is by name, but anchored to `uo_player_profile`: every `uo_player` row sharing the `profile_id` is the same person, even after a name change, and is in scope.
+Selection is by name, but anchored to `uo_player_profile` when a profile exists: every `uo_player` row sharing the `profile_id` is the same person, even after a name change, and is in scope. A player without a profile covers only the selected row.
 
 ### Player data export
 
