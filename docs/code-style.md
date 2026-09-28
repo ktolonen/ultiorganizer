@@ -96,7 +96,8 @@ Hand-written client JavaScript lives under `script/`: plain `.js` files and `scr
 JS is ES5 with 2-space indentation, linted by ESLint 9 using [`eslint.config.js`](../eslint.config.js). The toolchain lives in the `dev` image under `/opt/eslint/`; there is deliberately no root `package.json`.
 
 ```sh
-docker compose -f docs/dev/compose.yaml exec -T dev eslint script [--fix]
+docker compose -f docs/dev/compose.yaml exec -T dev eslint script
+docker compose -f docs/dev/compose.yaml exec -T dev eslint --fix script
 ```
 
 Rules: `eslint:recommended`, `indent: 2`, `no-trailing-spaces`, `ecmaVersion: 5` with `sourceType: "script"`, and `no-unused-vars` as a warning with `args: "none"`, because many functions are globals for inline HTML handlers.

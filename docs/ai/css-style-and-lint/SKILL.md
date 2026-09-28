@@ -43,7 +43,7 @@ When auditing style and color consistency:
 
 - Extract the repeated colors and selectors with `rg`.
 - Identify whether a rule belongs in the default skin or a customization override.
-- Both default stylesheets are color-tokenized (see `docs/customization.md`): write colors as `var(--token)` and keep literal values in the `:root` palette. Treat `cust/default/ultiorganizer-mobile.css` as a separate mobile-app surface with its own palette and larger touch targets.
+- Both default stylesheets are color-tokenized (see `docs/customization.md`): write colors as `var(--token)` and keep literal values in the `:root` palette, except a one-off shade that fits no token, which stays an ordinary rule below `:root`. Treat `cust/default/ultiorganizer-mobile.css` as a separate mobile-app surface with its own palette and larger touch targets.
 - Preserve installation-specific brand colors in skin directories unless the user asks for normalization. Only `default`, `slkl` and `wfdf` are maintained; leave the legacy skins alone unless a change breaks them.
 - Flag poor contrast, duplicated table/button/navigation rules, empty rules, and selectors that duplicate another selector with only a different name.
 
