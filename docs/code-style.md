@@ -2,6 +2,8 @@
 
 PHP follows [PER Coding Style 2.0](https://www.php-fig.org/per/coding-style/) (PER-CS 2.0), the PHP-FIG successor to PSR-12, enforced by PHP-CS-Fixer and PHPStan.
 
+When choosing a style or tooling default, pick the current community convention rather than matching legacy code, and reformat the existing files if needed. For example, JS uses 2-space indentation although the older `script/` files used tabs.
+
 ## Conventions at a glance
 
 - **Indentation**: four spaces. No tabs.
