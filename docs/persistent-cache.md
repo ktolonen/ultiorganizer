@@ -47,7 +47,8 @@ directly, since some callers include it before `lib/database.php`.
 
 `scorekeeper/index.php` and `spiritkeeper/index.php` also call the bypass right
 after `OpenConnection()`, covering bootstrap reads before their auth include;
-keep those calls. Public pages keep the cache, which is the traffic it exists for.
+keep those calls. Public spectator pages keep the cache, which is the traffic
+it exists for.
 
 Query with `IsPersistentCacheBypassed()`.
 
