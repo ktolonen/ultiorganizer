@@ -32,12 +32,12 @@ This directory collects general project documentation.
 - `scoresheet-history.md`: scoresheet change history, snapshot boundaries, and the restore contract.
 - `playoff-templates.md`: playoff bracket template grammar, lookup, move-comment block, BYE handling, and pool generation.
 - `ranking.md`: pool ranking resolvers per pool type, tie-break order, special-ranking overrides, and event final-standings rendering.
-- `schedule.md`: schedule concept, scheduling workflow, row compilation, and database tables.
+- `schedule.md`: schedule concept, scheduling workflow, row compilation, and settings.
 
 ### Scorekeeping and spirit
 
 - `scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
-- `scoresheet.md`: scoresheet concept, input paths, visualization, and database tables.
+- `scoresheet.md`: scoresheet concept, input paths, parallel editing, and replay views.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
 - `spiritkeeper.md`: standalone Spiritkeeper app, authenticated and token access modes, and visibility rules.
 - `timekeeper.md`: standalone Timekeeper app, template-based time limits, signal timers, and the game clock.

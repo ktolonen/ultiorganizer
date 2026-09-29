@@ -11,7 +11,7 @@ Review Ultiorganizer playoff bracket layouts without editing files.
 
 Always read this reference first:
 
-- `docs/codebase-notes.md` (customization layout files)
+- `docs/playoff-templates.md` (template grammar, move-comment block, BYE handling)
 - `lib/pool.functions.php` `PlayoffTemplate()` and `GeneratePlayoffPools()`
 - `poolstatus.php`, `ext/poolstatus.php`, `ext/eventpools.php`, `ext/countrystatus.php` for the placeholder substitution contract
 

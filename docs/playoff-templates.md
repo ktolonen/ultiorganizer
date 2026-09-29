@@ -1,19 +1,16 @@
 # Playoff templates
 
-This page describes how the HTML bracket templates under `cust/<id>/layouts/` work. Templates are static scaffolds with placeholder tokens; the renderer fills the tokens with team names, scores, and final placements at request time, and the pool generator uses an optional move-comment block to wire up the bracket flow.
+HTML bracket templates under `cust/<id>/layouts/` are static scaffolds with placeholder tokens. `poolstatus.php` fills them with team names, scores and final placements, and `GeneratePlayoffPools()` in `lib/pool.functions.php` reads an optional move-comment block to wire up the bracket flow.
 
-The main renderer and generator live in `poolstatus.php` and `lib/pool.functions.php`; related entry points are listed below.
+## Adding a template
 
-## Quick recipe
-
-1. Choose the team count `N` and round count `R`.
-2. Copy a similar file from `cust/default/layouts/`.
-3. Keep exactly `R + 1` columns per row.
-4. Fill round 1 with `[team N]` and `[game 1/G]`.
-5. Fill later rounds with `[winner R/G]`, `[loser R/G]`, and `[game R/G]`.
-6. Fill final standings with `[placement P]`.
-7. Add a move-comment block if the bracket is not a plain pair-off bracket.
-8. Run the playoff layout validator.
+1. Sketch the bracket: round-1 pairings, later pairings, and where each placement comes from. Anything beyond a plain knock-out usually needs a move-comment block.
+2. Copy a template with the same column count to `cust/<id>/layouts/<N>_teams_<R>_rounds.html` (or `cust/default/layouts/` for the global default).
+3. Keep `R + 1` cells per row with period-decimal widths summing to 100%.
+4. Fill round 1 with `[team N]` and `[game 1/G]`, later rounds with `[winner R/G]`, `[loser R/G]` and `[game R/G]`, and the last column with `[placement P]`.
+5. Add the move-comment block if needed, and `BYE` markers for an odd team carried forward.
+6. Run `php docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php --file=<path>`.
+7. Check `?view=poolstatus&pool=<id>` on desktop and mobile; the bracket lines are CSS borders and break silently.
 
 ## File location and lookup
 
@@ -24,16 +21,11 @@ Templates live under `cust/<id>/layouts/` and are loaded through `PlayoffTemplat
 3. If that file does not exist, it falls back to `cust/default/layouts/<id>.html`.
 4. If neither is present, the renderer falls back to a plain table per round and a list of placements.
 
-A pool can override the file name with the `playoff_template` field on `uo_pool`. When set, that string is used as `$id` instead of the auto-derived `<N>_teams_<R>_rounds`. Use this to point one bracket at a tournament-specific layout while keeping the default for everything else.
+A pool's `uo_pool.playoff_template` overrides the derived `$id`, pointing one bracket at a tournament-specific layout.
 
 ## File naming
 
-The auto-derived id uses two integers:
-
-- `N` — number of teams in the master pool.
-- `R` — number of rounds played to resolve the bracket.
-
-For example `cust/default/layouts/8_teams_3_rounds.html` covers an 8-team three-round playoff. The number of rounds matches the formula in `GeneratePlayoffPools()`: start with `roundsToWin = (N + 1) / 2` and halve until below one, counting iterations. For `N = 6` the formula uses a hard-coded `roundsToWin = 4`. The validator checks this match and warns if the file name disagrees with the formula.
+`N` is the number of teams in the master pool and `R` the number of rounds. `R` must match `GeneratePlayoffPools()`: start with `roundsToWin = (N + 1) / 2` and halve until below one, counting iterations (`N = 6` is hard-coded to `roundsToWin = 4`). The validator warns on a mismatch.
 
 ## Placeholder grammar
 
@@ -49,9 +41,7 @@ Each cell in the table can carry one placeholder. The renderer recognises the fo
 | `[loser R/G]` | round R+1 column | the team in pool R+1 whose `fromplacing` is even (came from a "loser" position in pool R) |
 | `[placement P]` | placement column | the team that ends up in final position `P` |
 
-Indexes follow the convention `R/G` where `R` is the round number (1-based) and `G` is the game number within that round (1-based). Round numbers must satisfy `1 ≤ R ≤ rounds`. Game numbers within a round must be unique. `[winner R/G]` and `[loser R/G]` reference the corresponding `[game R/G]`.
-
-The header column count is `R + 1` — one column per round plus the placement column.
+In `R/G`, `R` is the 1-based round (at most `rounds`) and `G` the 1-based game within it, unique per round. `[winner R/G]` and `[loser R/G]` refer to the matching `[game R/G]`. The header has `R + 1` columns: one per round plus placement.
 
 ## Bracket lines
 
@@ -62,9 +52,9 @@ There is no SVG, canvas, or extra widget. The bracket lines you see in the rende
 3. Team B cell with `border-right; border-bottom`.
 4. Spacer cell with `border-top` to close the elbow.
 
-The cell to the right of a game uses `border-left` plus a top or bottom border to draw the horizontal line into the next round's slot. Adjacent rounds connect through these per-cell borders only — there is no shared rendering helper, so when a placeholder moves you must update the borders on the same row and on the rows above and below by hand.
+The cell right of a game uses `border-left` plus a top or bottom border to lead into the next round. When a placeholder moves, update the borders on its row and the rows around it by hand.
 
-All cells in a row must declare a width that sums to 100 percent. Use period decimals (`33.3333333333333%`), never commas — comma decimals are invalid CSS and the browser will drop the rule.
+Cell widths in a row sum to 100% and use period decimals (`33.3333333333333%`); comma decimals are invalid CSS and get dropped.
 
 ## The move-comment block
 
@@ -79,18 +69,9 @@ Some templates open with a comment that tells `GeneratePlayoffPools()` how to mo
 -->
 ```
 
-The comment must be the very first thing in the file. Whitespace between `<!--` and `corresponding moves:` is flexible — the parser regex accepts any number of spaces, including none. The body has exactly `R` non-empty lines, each one a permutation of `1..N`:
+The comment must come first in the file (any whitespace between `<!--` and `corresponding moves:`). It has exactly `R` non-empty lines, each a permutation of `1..N`. Line `k` maps round-`k` standings into round-`k+1` slots: its `j`-th entry is the standing position that fills slot `j`. In line 1 above, slot 1 comes from position 1, slot 2 from position 3, slot 9 from position 2. The last line maps the final pool's standings to event placements.
 
-- Line 1 maps round-1 (master pool) standings into round-2 slot positions.
-- Line 2 maps round-2 standings into round-3 slot positions.
-- ... and so on.
-- The last line is the final-ranking permutation: pool standings position → final placement.
-
-Each line's `j`-th entry (1-based) is the source standing position in the previous pool that fills slot `j` in the next pool. Using line 1 from the example above, slot 1 of round 2 is filled from round-1 standings position 1, slot 2 from position 3, slot 9 from position 2, and so on — a winners-on-top, losers-below split that matches the standard pair-off but is now explicit.
-
-When the block is valid for the round count, the parser uses the comment lines for both `PoolAddMove(...)` calls and the `AddSpecialRankingRule(...)` calls on the last line. When the comment is absent or invalid, the generator falls back to the standard pair-off algorithm.
-
-The standard algorithm is sufficient for plain knock-out brackets but cannot express crossings such as 6-team or odd-team placement brackets. Templates that depend on a specific slot mapping must ship the move-comment block, otherwise the renderer's `[winner R/G]` / `[loser R/G]` substitutions land on the wrong teams even though the visual scaffold looks correct.
+A valid block drives the `PoolAddMove(...)` calls and, from its last line, `AddSpecialRankingRule(...)`. Without a valid block the generator uses the standard pair-off, which cannot express crossings such as 6-team or odd-team placement brackets; a template that depends on a specific mapping must ship the block, or its `[winner R/G]` / `[loser R/G]` tokens land on the wrong teams.
 
 ## Rendering pipeline
 
@@ -106,20 +87,11 @@ The external entry points follow the same shape with minor differences such as n
 
 ## Pool generation
 
-`GeneratePlayoffPools($poolId, $generate = true)` in `lib/pool.functions.php` is the single source of truth for materialising a bracket into actual `uo_pool` rows and `uo_moveteams` entries:
-
-1. Read all teams seeded into the master pool, ordered by `uo_team_pool.rank`.
-2. Compute the number of rounds with the `roundsToWin = (N + 1) / 2`, halve-until-below-one formula. `N = 6` is special-cased to `roundsToWin = 4`.
-3. Load the template with `PlayoffTemplate($teams, $rounds, $poolInfo['playoff_template'])`.
-4. Parse the optional move-comment block described above. If it is valid for the round count, use it for pool moves and final ranking; otherwise use the standard pair-off algorithm.
-5. For each subsequent round, create a follower pool and add either the parsed moves or the standard pair-off moves.
-6. Mark the last follower pool with `placementpool = 1` so it shows up in the placement walk used by `lib/series.functions.php` and `TeamSeriesStanding()`.
-
-When `$generate` is false the function returns the pool descriptors without writing to the database — useful for previews.
+`GeneratePlayoffPools($poolId, $generate = true)` materialises a bracket into `uo_pool` rows and `uo_moveteams` entries: it reads the master pool's teams by `uo_team_pool.rank`, computes `R` (see "File naming"), loads the template, creates a follower pool per round with the parsed or standard moves, and marks the last one `placementpool = 1` for the placement walk in `lib/series.functions.php` and `TeamSeriesStanding()`. With `$generate = false` it returns the descriptors without writing, for previews.
 
 ## BYE handling
 
-When a pool has an odd number of teams, the team in the last slot has no opponent in that round. The renderer detects this by querying `TeamPoolGamesArray($team['team_id'], $pool['pool_id'])`: if the team has zero games in the current pool, it is the bye team. The renderer carries that team forward and can substitute it into the next round's bye winner token, such as `[winner 1/3]` in a 5-team bracket.
+With an odd team count, the last slot has no opponent. The renderer treats a team with no games in the pool (`TeamPoolGamesArray()`) as the bye team and carries it into the next round's winner token, such as `[winner 1/3]` in a 5-team bracket.
 
 Templates handle byes in two ways:
 
@@ -128,19 +100,9 @@ Templates handle byes in two ways:
 
 The validator allows `[winner R/⌈N/2⌉]` to exist without a matching `[game R/⌈N/2⌉]` in odd-team templates: the renderer fills these via the bye-pseudo-winner branch rather than from a stored game.
 
-## Adding a new template
-
-1. Decide the bracket layout on paper: round-1 pairings, round-2 pairings, where each placement comes from. Choose whether the bracket needs a move-comment block (anything beyond plain knock-out usually does).
-2. Copy an existing template with the same column count. Save it under `cust/<id>/layouts/<N>_teams_<R>_rounds.html` for installation-specific layouts, or under `cust/default/layouts/` to make it the global default.
-3. Replace the bracket positions with the placeholder tokens from the table above. Keep `<td>` widths in period-decimal percentages that sum to 100 percent.
-4. If the bracket uses crossings or special placement flow, add the move-comment block at the very top of the file with `R` permutation lines (one per round, last line being the final ranking). The parser is whitespace-tolerant — any number of spaces between `<!--` and `corresponding moves:` works.
-5. If the bracket carries an odd team into a later round as a bye, place the explicit `BYE` literal where the missing opponent would sit and remove any `[game R/G]` token from the BYE-paired cell.
-6. Run the validator: `php docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php --file=cust/<id>/layouts/<N>_teams_<R>_rounds.html`.
-7. Smoke-test the page that consumes it (`?view=poolstatus&pool=<id>` for the relevant pool) on both desktop and mobile viewports — the bracket lines are CSS borders and small width or border slips break the visual silently.
-
 ## Validator
 
-The bundled validator at `docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php` enforces the contract above:
+`docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php` checks:
 
 - file name vs declared `[round R]` and `[placement]` headers
 - coverage of `[team 1..N]` and `[placement 1..N]`

@@ -1,6 +1,6 @@
 # API
 
-This page mirrors the current API guidance from `AGENTS.md`.
+API structure, constraints and scope.
 
 ## Current design
 

@@ -1,28 +1,16 @@
 # Timekeeper
 
-This page documents the standalone Timekeeper app under `timekeeper/`.
-
-Timekeeper is a public, no-login officiating aid that helps a game official keep the WFDF-style
-time limits. It opens directly on the game (timer) view; the official taps an action button and a
-timer counts down to zero (turning red at zero), while the screen and an optional beep show what to
-signal and when. A continuous game clock runs alongside the action timers. The time limits come from
-installation-wide templates, remain editable locally in the browser, and the interface language is
-inherited from Ultiorganizer and can be changed from the footer.
-
-Unlike Scorekeeper and Spiritkeeper, Timekeeper is **not tied to a game or event** and requires
-no authentication. It reads installation-level Timekeeper templates but does not read or write game
-or event data; the session only carries the inherited interface language.
+`timekeeper/` is a public, no-login aid for keeping WFDF time limits. The official taps an action and a timer counts down to zero, with on-screen signals and an optional beep, while a continuous game clock runs alongside. Limits come from installation-wide templates and can be adjusted locally in the browser. Unlike Scorekeeper and Spiritkeeper it reads and writes no game or event data; the session carries only the interface language.
 
 ## Entrypoint
 
 - `timekeeper/index.php`: bootstrap, locale handling, and the full single-page shell (language,
   configuration, and timer screens). It emits the available templates (`TIMEKEEPER_TEMPLATES`), the
   default template id, and translated labels consumed by the client script.
-- The language screen uses the shared mobile flag control also shown on the Scorekeeper and
-  Spiritkeeper front pages.
 - `script/timekeeper.js`: all client logic (screen switching, configuration persistence, the timer
   engine, the game clock, audio, and optional screen wake lock). Written as ES5 to match the
   project ESLint configuration.
+- `timekeeper/` is a required path in `docs/release/build-release.sh`.
 - `admin/timekeepertemplates.php` and `admin/addtimekeepertemplate.php`: superadmin template list and
   edit screens. Template data access lives in `lib/timekeeper.functions.php`.
 
@@ -38,9 +26,8 @@ or event data; the session only carries the inherited interface language.
    (`localStorage`). Reset returns the current template's signal times to its database defaults.
    Reachable from the footer.
 3. **Language** — flag links that reload with `?locale=...` to set the gettext locale server-side.
-   The language is inherited from Ultiorganizer; this screen is reachable from the footer "Change
-   language" control. The flag list is the shared `MobileLanguageSelection()` control (defined in
-   `localization.php`), also used by the Scorekeeper and Spiritkeeper login pages.
+   Reachable from the footer "Change language" control; uses the shared `MobileLanguageSelection()`
+   (`localization.php`).
 
 ## Timing model
 
@@ -110,9 +97,3 @@ start without interrupting the action timer.
 Timekeeper deliberately does not track score, derive the cap target, or count team timeouts — that
 belongs to Scorekeeper and the scoresheet. It also omits WFDF limits that carry no timekeeper signal
 (such as the pre-game toss).
-
-## Release packaging
-
-`timekeeper/` and `script/timekeeper.js` are tracked runtime files, so they are included
-automatically by `docs/release/build-release.sh`; `timekeeper` is listed among the package's
-required paths.

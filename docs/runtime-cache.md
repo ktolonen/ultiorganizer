@@ -12,6 +12,8 @@ Example: use runtime caching when one routed page calls `SeasonInfo($seasonId)` 
 
 When a cached helper reads data that can be changed in the same request, clear the relevant namespace from the mutation helper after the write succeeds.
 
+Do not memoize with a raw `static` variable in a `lib/` helper. The harness runs the whole integration suite in one PHP process, so a `static` keeps the first caller's value for every later test class, and nothing can clear it. Use `CacheRemember()`, whose namespace a mutation helper can clear, or read fresh when the layer below already caches (`DBQueryToValue()` caches only cacheable GET requests).
+
 ## Recapture Database Logs
 
 Use the local MariaDB table logs to compare query counts before and after cache changes.

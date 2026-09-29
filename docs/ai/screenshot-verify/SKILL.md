@@ -58,8 +58,8 @@ Common views (use `http://host.docker.internal:8080/` as base):
 
 ## Authenticated pages
 
-Everything under `admin/`, `user/`, `scorekeeper/` and `spiritkeeper/` redirects
-to a login form, so the recipe above only reaches public pages. Dev passwords are
+Everything under `admin/`, `user/`, `scorekeeper/` and the logged-in part of
+`spiritkeeper/` requires a login, so the recipe above only reaches public pages. Dev passwords are
 hashed and are not needed: build a throwaway session through the app's own login
 path instead, and hand its id to Chromium as a cookie.
 
@@ -120,7 +120,7 @@ Points worth knowing before debugging a blank result:
   roles disagree with the stored ones dies with "Insufficient rights". Pick a
   user who genuinely holds the rights instead of editing roles into the session.
 - Screenshots of a real dataset contain personal data. Keep them out of the
-  repo, per the docs-tone rule in AGENTS.md.
+  repo, per the documentation-tone rule in AGENTS.md.
 
 ## Measuring element dimensions
 

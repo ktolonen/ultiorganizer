@@ -1,8 +1,6 @@
 # Ranking
 
-This page describes how Ultiorganizer resolves team order within pools and how event-wide final standings are presented.
-
-The main source for pool ranking is `lib/standings.functions.php`. Final-standings rendering for an event lives in `teams.php` under the `bystandings` list.
+How team order is resolved within pools (`lib/standings.functions.php`) and how event final standings, statistics and season points are presented.
 
 ## Pool ranking entry point
 
@@ -17,11 +15,9 @@ Each resolver writes the resulting position into `uo_team_pool.activerank`.
 
 `ResolvePoolStandings()` has no rights check of its own, because result saves call it under game rights. Admin pages that recalculate on request use `RecalculatePoolStandings($poolId)`, which requires `hasEditTeamsRight()` on the pool's division.
 
-Forfeits are encoded in `uo_game.forfeit`: `0` = not a forfeit, `1` = home team forfeited (away team wins), `2` = away team forfeited (home team wins), `3` = both teams forfeited (both lose). The round-robin (`getMatchesWins`), playoff, and cross-match resolvers award the win/loss from the forfeiting side rather than from the score, so a forfeit kept at `0-0` still counts as a win and a loss and, in a bracket, advances the non-forfeiting team. A double forfeit counts as a loss for both (in a bracket it leaves the seeded positions unchanged). Because the score is left untouched, goal-difference tie-breaks are unaffected, and games with `forfeit = 0` are ranked from the score as usual.
+`uo_game.forfeit`: `0` none, `1` home forfeited, `2` away forfeited, `3` both forfeited (both lose). The round-robin (`getMatchesWins`), playoff and cross-match resolvers take the win and loss from the forfeit flag, not the score, so a `0-0` forfeit still decides the game and advances the other team in a bracket; a double forfeit leaves bracket positions unchanged. The score is untouched, so goal-difference tie-breaks are unaffected. `SeriesTeamStatsPoints()`, `CalcTeamStats()` and `TeamsToCsv()` count wins, draws and losses the same way.
 
-The division statistics (`SeriesTeamStatsPoints()`), archived team statistics (`CalcTeamStats()`) and the team CSV (`TeamsToCsv()`) count wins, draws and losses by the same rule.
-
-The Swiss-draw resolver is the exception: it ranks by victory points looked up from the score margin, so a `0-0` forfeit still contributes draw victory points there. Record a Swiss forfeit with a decisive score if it must affect the ranking. The forfeit flag still excludes the game from spirit averages and shows the forfeit mark in every pool type.
+The Swiss-draw resolver ranks by victory points from the score margin, so a `0-0` forfeit gives both teams draw points there; record a Swiss forfeit with a decisive score if it must affect ranking. In every pool type the flag still excludes the game from spirit averages and shows the forfeit mark.
 
 ## `uo_team_pool` rank fields
 
@@ -45,9 +41,7 @@ For teams that share a rank, the following tie-breakers are applied in order. So
 4. Goals made in matches between the tied teams only.
 5. Goals made across all matches in the pool.
 
-In Ultimate parlance "goals" means points scored. The codebase uses the `goals*` naming throughout (`getMatchesGoals`, `cmp_goalsdiff`, `cmp_goalsmade`).
-
-If teams remain tied after all five conditions, they keep a shared `activerank`. The resolver then continues with any teams still below them.
+"Goals" in the code (`getMatchesGoals`, `cmp_goalsdiff`, `cmp_goalsmade`) means points scored. Teams still tied after all five share an `activerank`.
 
 After ranks are written, the resolver also triggers automatic pool moves:
 
@@ -96,9 +90,9 @@ Move resolution and BYE handling for swiss draw live in `lib/swissdraw.functions
 
 `ResolveCrossMatchPoolStandings` is structurally similar to the playoff resolver but uses the initial ordering `activerank ASC, rank ASC`. Teams are paired and ranked by head-to-head wins, and when both teams in a pair have no remaining games `TeamMove($teamId, $poolId)` is called (without the playoff resolver's `true` flag) to advance them.
 
-`printCrossmatchPool()` in `poolstatus.php` renders one row per game. The winner and loser continuation pools coloured on a row come from `PoolGetMoveToPool()` for the two placings of the pair the row belongs to, so the pair has to be derived from the row's participants: the home side's slot in the pool, falling back to the visitor's when the home side cannot be resolved. `GenerateGames()` and `ResolveCrossMatchPoolStandings()` both pair participants by their position in the slot order and a move out of the pool records that position as its `fromplacing`, so the renderer maps a slot to its position too rather than using the slot number directly. Placings 1 and 2 form the first pair, 3 and 4 the second, and so on. Deriving the pair from the row number instead breaks as soon as a pool is generated as `best N matches`, because such a pool has several rows per pair. A row whose slot cannot be resolved at all is rendered without continuation colours rather than being mapped to a guessed pair.
+`printCrossmatchPool()` in `poolstatus.php` renders one row per game, coloured with the winner and loser continuation pools from `PoolGetMoveToPool()` for the row's pair. The pair is derived from the home side's slot (falling back to the visitor's), mapped to its position in slot order: placings 1-2 are the first pair, 3-4 the second. This matches how `GenerateGames()`, the resolver and move `fromplacing` pair teams; the row number would break for `best N matches` pools, which have several rows per pair. A row with no resolvable slot gets no colours.
 
-A participant may still be an unresolved placeholder (a `uo_scheduling_name` row moved in through `uo_moveteams`) while the pool it comes from is unfinished. Such a game has no `uo_team_pool` row for that side, so the slot lookup falls back to `uo_moveteams.torank` for the placeholder's move into this pool. `TimetableGames($poolId, "pool", "all", "crossmatch")` orders rows by the same slot, with the same fallback, so that the games of a pair stay together and placeholder rows do not sort to the top of the list on a `NULL` rank. Rows whose slot cannot be resolved at either level are listed last.
+An unresolved placeholder (a `uo_scheduling_name` moved in through `uo_moveteams`) has no `uo_team_pool` row, so its slot falls back to `uo_moveteams.torank`. `TimetableGames($poolId, "pool", "all", "crossmatch")` orders rows by the same slot and fallback so a pair's games stay together; unresolvable rows come last.
 
 ## Special ranking overrides
 
@@ -111,96 +105,49 @@ A participant may still be an unresolved placeholder (a `uo_scheduling_name` row
 
 ## Event final standings (`teams.php` `bystandings`)
 
-The "Final standings" tab in `teams.php` (`?view=teams&list=bystandings`) renders a single table with one column per series.
+`?view=teams&list=bystandings` renders one table with a placement column (`Gold`, `Silver`, `Bronze` in bold, then `4th`, `5th`, ...) and one column per series, from `SeriesFinalStandings($series_id)`. Per division it is all-or-nothing: confirmed manual placements are used when they cover every team (`HasCompleteManualFinalStandings`), otherwise the live order from `SeriesRanking($series_id)` with an "Automatic final standings, not confirmed" note in the header. Teams may share a placement cell. Disqualified teams go in a last row, shown only when there are any. International seasons show country flags.
 
-For each series, the view calls `SeriesFinalStandings($series_id)` from `lib/standings.functions.php`. Placements are all-or-nothing per division: when confirmed manual placements cover every team (`HasCompleteManualFinalStandings`), those rows are the source of truth; otherwise the division falls back to the automatic live order from `SeriesRanking($series_id)`. Multiple teams may share the same saved placement and are rendered together in the same placement cell. Disqualified teams have no numeric standing and are rendered last in a separate disqualified row only when at least one team is disqualified. The view then composes a placement column on the left and one team column per series:
+`SeriesRanking` aggregates the series' pools through the placement-pool walk used by `TeamSeriesStanding` and `lib/series.functions.php`, so pool `activerank` values feed it.
 
-- Row 1: `Gold`
-- Row 2: `Silver`
-- Row 3: `Bronze`
-- Rows 4+: ordinal placement (`4th`, `5th`, ...)
-
-The top three rows render in bold. Empty cells are rendered for series that have fewer placements than the longest column. If the season is marked international, each team name is preceded by a country flag. When a division falls back to automatic live standings, its column header shows an "Automatic final standings, not confirmed" note.
-
-Manual final standings are stored in `uo_team_final_standing` and managed through `admin/finalstandings.php`. The database upgrade seeds this table from existing `uo_team_stats` rows for events that already have archived statistics. The admin page uses the same division-tab menu as pool standings and saves or clears the selected division only. The suggested pre-fill order is the existing saved placements when present; otherwise season points when available, then the live placement-pool order, and finally the plain team list. Each team must be assigned a placement or marked disqualified; shared placements are valid. Saving requires every team to be assigned (all-or-nothing) and replaces the automatic live standings for that division. Clearing reverts the division to automatic live standings.
-
-When a division has no confirmed manual placements, `SeriesRanking` is the live source for placement order across a series. It aggregates results across the series' pools so that final placements reflect both the round-robin phase and any playoff or placement rounds. Pool-level `activerank` values written by the resolvers above feed into this aggregation through the placement-pool walk used by `TeamSeriesStanding` and the series-level helpers in `lib/series.functions.php`.
+Manual placements live in `uo_team_final_standing` and are edited per division in `admin/finalstandings.php` (seeded by the upgrade from existing `uo_team_stats`). The pre-fill order is the saved placements, else season points, else the live placement-pool order, else the team list. Every team must get a placement or a disqualification; shared placements are valid. Clearing reverts the division to live standings. The page warns when scheduled games are incomplete.
 
 ## Event statistics
 
-The pool resolvers above and `SeriesRanking()` produce *live* standings that update whenever pool moves and game results change. At the end of an event an admin freezes those standings into precomputed statistics rows so cross-event reports can read a stable answer without recomputing per request.
+At the end of an event an admin freezes the live standings into precomputed rows so cross-event reports read a stable answer.
 
-### Computing and freezing: `admin/stats.php`
+### `admin/stats.php`
 
-The admin entry point is `admin/stats.php`. It is gated by the `CALCSEASONSTATISTICS` layout permission.
+Gated by the `CALCSEASONSTATISTICS` permission. **Calculate** runs, each with `set_time_limit(120)`, from `lib/statistical.functions.php`:
 
-Pressing **Calculate** (`calc` POST) runs the following helpers from `lib/statistical.functions.php` in order, each under a `set_time_limit(120)` budget:
+1. `CalcSeasonStats($season)`: season totals
+2. `CalcSeriesStats($season)`: per-series aggregates
+3. `CalcTeamStats($season)`: final standings per series, from confirmed manual placements when complete, else live standings
+4. `CalcTeamSpiritStats($season)`
+5. `CalcPlayerStats($season)`: players without a profile id are skipped after the admin confirms their count
+6. `SetEventReadonly($season)`
 
-1. `CalcSeasonStats($season)`: aggregate season totals (teams, players, games).
-2. `CalcSeriesStats($season)`: per-series aggregates.
-3. `CalcTeamStats($season)`: per-team final standings within each series. Confirmed manual placements are used when they cover every team; otherwise live standings.
-4. `CalcTeamSpiritStats($season)`: per-team spirit aggregates.
-5. `CalcPlayerStats($season)`: per-player scoring stats.
-6. `SetEventReadonly($season)`: marks the event read-only so live results no longer change.
+`IsSeasonStatsCalculated($season)` switches the page between **Calculate** and the totals with **Recalculate** and **Undo** (`DeleteSeasonStats($season)`, which also re-opens the event). The page reports how many divisions have confirmed final standings and warns about the rest.
 
-If the season has players without a profile id, the page shows the count and asks the admin to confirm before running. Player statistics are skipped for those rows.
-
-`IsSeasonStatsCalculated($season)` controls page state. Before the first calculation only the **Calculate** button is shown. After calculation the page renders the season totals (teams / players / games / divisions) plus **Recalculate** and **Undo** buttons. **Undo** (`undo` POST) calls `DeleteSeasonStats($season)`, which clears the precomputed rows and re-opens the event for live changes.
-
-#### Manual reorder of final standings
-
-Manual final standings can be published before statistics are calculated through `admin/finalstandings.php`. That page shows whether the selected division has confirmed placements, warns when scheduled games are not complete, and can clear placements back to live standings. Saving requires every team in the division to be assigned a placement or disqualification (all-or-nothing); an incomplete assignment is rejected. `admin/stats.php` reports how many divisions have confirmed final standings and warns when divisions without confirmed standings will be calculated from live standings. Once stats are calculated, `admin/stats.php` still renders a draggable list per series under the **Final standings** heading. The list source is `SeasonTeamStatistics($season)`, grouped by series with one column per series, using YUI drag-and-drop.
-
-When the admin presses **Save final standings**, the page builds a request string of the form `team1:team2:…:|team4:team5:…:|` — colon-separated team ids per series, pipe-separated between series — and POSTs it asynchronously to `?view=admin/saveteamstandings`. The handler persists the new order into manual final standings and updates existing precomputed team-stats rows. The save indicator is rendered into `#responseStatus`.
-
-Both final-standings admin surfaces let an admin override the resolver-derived order, for example to encode a placement decision the resolvers cannot express on their own.
+After calculation it shows a drag-and-drop list per series (YUI) from `SeasonTeamStatistics($season)`. **Save final standings** POSTs `team1:team2:...:|team4:...:|` (ids per series, series separated by `|`) to `?view=admin/saveteamstandings`, which updates the manual final standings and the team-stats rows.
 
 ### Cross-event reports: `statistics.php`
 
-`statistics.php` reads the precomputed rows produced by `admin/stats.php` and renders cross-event leaderboards. It is a public routed view (`?view=statistics`) with four lists, all grouped first by season type and then by series type:
+`?view=statistics` reads the precomputed rows, grouped by season type then series type:
 
-- `teamstandings` (default): per-event Gold / Silver / Bronze teams via `TeamStandings($season_id, $seriestype)`.
-- `spiritstandings`: per-event Gold / Silver / Bronze by spirit via `SeasonSpiritTopTeamsBySeriesType($season_id, $seriestype, 3)`.
-- `playerscoreboard`: per-event top 3 player scoreboard via `AlltimeScoreboard($season_id, $seriestype)`.
-- `playerscoresall`: all-time top 100, a separate all-time Callahan top 20, and per-(season type, series type) top 30 via `ScoreboardAllTime(...)`. The main scoreboards are sortable by games, assists (`pass`), goals, or total via the `sort` query parameter; the Callahan list is always ordered by Callahans.
+- `teamstandings` (default): per-event medal teams, `TeamStandings($season_id, $seriestype)`
+- `spiritstandings`: per-event top 3 by spirit, `SeasonSpiritTopTeamsBySeriesType(...)`
+- `playerscoreboard`: per-event top 3 players, `AlltimeScoreboard(...)`
+- `playerscoresall`: all-time top 100, all-time Callahan top 20, and top 30 per group, `ScoreboardAllTime(...)`, sortable by games, assists (`pass`), goals or total
 
-Player totals and total-per-game averages are calculated as assists + goals. Callahans are a subset of goals, appear only in the dedicated all-time Callahan top 20 on this page, and are not added to totals again.
+Totals are assists + goals; Callahans are part of goals and appear only in their own list. Events without stats are skipped; with none at all the page says "Event statistics have not yet been computed." Columns link to `?view=teams&list=bystandings` and `list=byspirit`.
 
-Events without precomputed stats are skipped silently. If no event in any group has stats yet, the page shows "Event statistics have not yet been computed."
+## Season points
 
-The team-standings columns link back to the final standings table (`?view=teams&season=…&list=bystandings`), and the spirit-standings columns link to the live spirit list (`?view=teams&season=…&list=byspirit`).
+An alternative ranking independent of the pool resolvers. When a season sets `use_season_points`, admins enter an integer score per team per round, and `?view=teams&list=seasonpoints` (the `Points` tab) ranks by total, then the latest round's points, then team name, showing `total (r1 + r2 + ...)` when there are several rounds.
 
-## Season points administration
+`admin/seasonpoints.php` requires `isSeasonAdmin($season)`. After choosing the event and division, an admin adds rounds (`round_no` positive, `round_name` non-empty, number pre-filled as max + 1), deletes them, and enters points per team (integers 0-1000, empty = 0; the first invalid entry aborts the whole save). The page works without `use_season_points`, with a warning, so rounds can be prepared in advance.
 
-Season points are an alternative ranking surface independent of the per-pool resolvers above. When an event opts in via `use_season_points` on the season, admins enter a fixed integer score for each team in each round, and the totals across rounds drive the `Points` tab in `teams.php`.
-
-The admin entry point is `admin/seasonpoints.php`. It is restricted by `isSeasonAdmin($season)` and uses the `SEASONADMIN` left menu.
-
-### Workflow
-
-1. Select an event (season). When the page is opened without `season`, only the season picker is rendered.
-2. Select a division (series) within the event. The first available series from `SeasonSeries` is used if the requested one is not valid. If no series exist, the page shows "No divisions defined" and exits.
-3. List existing rounds in a table with a per-row delete button (`delete_round`).
-4. Add a new round with `round_no` (positive integer) and `round_name` (non-empty) via `add_round`. The form pre-fills the next round number as `max(round_no) + 1`.
-5. Select a round and enter points per team (`save_points`). Each entry must be an integer between 0 and 1000; empty entries default to `0`. The first validation error is shown as a warning and the entire save is aborted.
-
-The team table in the round-edit form is sortable by team name, round points, or total points (`sort` and `dir` query parameters). Sort ties fall back to team name.
-
-A warning banner is shown if the selected season does not have `use_season_points` enabled, but the admin can still manage data — useful for preparing rounds before flipping the flag on.
-
-### Storage
-
-Season points data is read and written through `lib/seasonpoints.functions.php`:
-
-- `SeasonPointsRounds($season, $seriesId)`: rounds for a (season, series) pair.
-- `AddSeasonPointsRound($season, $seriesId, $roundNo, $name)` / `DeleteSeasonPointsRound($roundId)`: round CRUD.
-- `SeasonPointsRoundPoints($roundId)`: array of points keyed by `team_id` for one round.
-- `SaveSeasonPointsRoundPoints($roundId, $pointsByTeam)`: persist a full round's points.
-- `SeasonPointsSeriesTotals($season, $seriesId)`: per-team sums across all rounds in the series.
-
-### Public view
-
-`teams.php` exposes a `Points` tab when `seasonInfo.use_season_points` is set (`?view=teams&list=seasonpoints`). The list orders teams by season total descending, with the most recent round's points as the first tie-breaker and team name as the final fallback. Each row shows the running total and, if more than one round exists, a `total (r1 + r2 + …)` breakdown.
+Storage helpers in `lib/seasonpoints.functions.php`: `SeasonPointsRounds()`, `AddSeasonPointsRound()`, `DeleteSeasonPointsRound()`, `SeasonPointsRoundPoints()`, `SaveSeasonPointsRoundPoints()`, `SeasonPointsSeriesTotals()`.
 
 ## Related files
 

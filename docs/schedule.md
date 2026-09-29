@@ -1,29 +1,15 @@
 # Schedule
 
-This document describes schedule behavior as it is implemented today in Ultiorganizer.
+A schedule is the combination of game rows (`uo_game`), their pool membership (`uo_game_pool`), field and time windows (`uo_reservation`, `uo_location`), placeholder participants (`uo_scheduling_name`, `uo_moveteams`), and the pages that render and edit them:
 
-In this codebase, a "schedule" is not a single object or table. It is the combination of game rows in `uo_game`, pool linkage in `uo_game_pool`, reservation windows in `uo_reservation`, placeholder participants in `uo_scheduling_name`, and the public and admin pages that render, assign, or validate time and field placement.
-
-This page focuses on current behavior. It does not propose workflow changes.
-
-## Overview
-
-The schedule implementation has four main layers:
-
-- generation: create game rows from pool structure in `lib/pool.functions.php` and `admin/poolgames.php`
-- reservations: define date, field, and venue windows in `lib/reservation.functions.php` and `admin/addreservation.php`
-- placement: assign games to reservations and start times in `admin/schedule.php` and `admin/saveschedule.php`
-- rendering: expose the result through `games.php`, PDF, iCalendar, API, and related read-only pages
-
-The practical result is that "building the schedule" means creating reservations, generating or manually adding games, assigning them to fields and times, validating conflicts, and rendering the result in several outputs.
+- generation: `lib/pool.functions.php`, `admin/poolgames.php`
+- reservations: `lib/reservation.functions.php`, `admin/addreservation.php`
+- placement: `admin/schedule.php`, `admin/saveschedule.php`
+- rendering: `games.php`, PDF, iCalendar, the API
 
 ## Public View
 
-Main page:
-
-- `games.php`, routed as `index.php?view=games`
-
-`games.php` is mostly a controller. It resolves scope from query parameters, maps `filter` into timetable query parameters, loads rows with `TimetableGames()`, loads reservation-group tabs with `TimetableGrouping()`, renders through timetable view helpers, and switches to printable HTML or PDF when requested.
+`?view=games` (`games.php`) resolves scope from query parameters, maps `filter` into timetable query parameters, loads rows with `TimetableGames()`, loads reservation-group tabs with `TimetableGrouping()`, renders through timetable view helpers, and switches to printable HTML or PDF when requested.
 
 Supported scope selectors are:
 
@@ -52,19 +38,9 @@ Main display controls are `filter`, `group`, `print`, and `singleview`. `group` 
 | `season` | `all` | `places` | pdf |
 | `onepage` | `all` | `onepage` | pdf |
 
-Notes:
+`next` is not in the menu. The footer links iCalendar, printable HTML and both PDF layouts. A reservation is one `uo_reservation` row (field `fieldname`, group `reservationgroup`, start and end time) at a `uo_location`.
 
-- `next` is implemented but not exposed in the visible menu
-- the footer also exposes iCalendar export, printable HTML, and both PDF layouts
-
-Important grouping terms:
-
-- reservation group: `uo_reservation.reservationgroup`
-- location: `uo_location`
-- reservation: one `uo_reservation` row, including start and end time
-- field: `uo_reservation.fieldname`
-
-The main HTML grouping logic lives in `lib/timetable.functions.php`:
+Grouping in `lib/timetable.functions.php`:
 
 - `TournamentView()`: reservation group -> date / location -> pool
 - `SeriesView()`: series -> pool
@@ -73,27 +49,9 @@ The main HTML grouping logic lives in `lib/timetable.functions.php`:
 
 ## How a Game Row Is Built
 
-`TimetableGames()` in `lib/timetable.functions.php` builds the main schedule rowset. It joins:
+`TimetableGames()` in `lib/timetable.functions.php` builds the rowset shared by HTML, PDF and the API, joining the game with its pool, series, season, reservation, location, teams, countries, scheduling names, and a `uo_goal` count (`scoresheet`) for scoresheet presence.
 
-- `uo_game`
-- a derived `uo_goal` count for scoresheet presence
-- `uo_pool`
-- `uo_series`
-- `uo_season`
-- `uo_reservation`
-- `uo_location`
-- home and visitor `uo_team`
-- home and visitor `uo_country`
-- `uo_scheduling_name` for placeholder participants and game name
-
-The output row contains the data needed by HTML, PDF, and API consumers: game id, time, reservation, place, field, timezone, real teams, placeholder names, score state, pool and series names, pool color, derived `scoresheet` count, and abbreviation / country / flag metadata.
-
-Important current detail:
-
-- the HTML row renderer shows the country flag before each real team name when the event is international (`uo_season.isinternational`), mirroring the pool-standings flag; it does not use the abbreviation fields
-- the API and some other outputs use the abbreviation and country fields as well
-
-The timetable views also preload live-media links through `GetMediaUrlListForGames(..., "live")` and RSS enablement through `IsGameRSSEnabled()`, so `GameRow()` renders from both the timetable query and preloaded media / RSS state.
+The HTML row shows a country flag before real team names in international events; the API also uses the abbreviation and country fields. The views preload live-media links (`GetMediaUrlListForGames(..., "live")`) and RSS state (`IsGameRSSEnabled()`).
 
 `GameRow()` renders optional date, time, field, series, and pool columns; either real team names or scheduling-name placeholders; score state; optional translated `gamename`; optional live-media icons; and an info / action cell.
 
@@ -103,10 +61,7 @@ Info-cell logic:
 - `Gameplay` appears for finished games when the derived `scoresheet` count is non-zero
 - `Ongoing` appears for live games, optionally linking to gameplay when scoresheet rows exist
 
-Current quirks:
-
-- `games.php` still fetches a season comment with `CommentHTML(1, $id)`, but does not render it
-- `next` exists in code but is not shown in the menu
+`games.php` fetches a season comment with `CommentHTML(1, $id)` but does not render it.
 
 ## Scheduling Workflow
 
@@ -121,22 +76,16 @@ Home and away assignment for generated games is event-controlled through `uo_sea
 - `0`: balance home team equally using the existing per-pool generation rules
 - `1`: keep the higher-ranked side as home based on generator order / seed order
 
-This setting affects generation previews and newly generated games only. It does not rewrite existing games, and it does not change manually added games.
+It affects previews and newly generated games only.
 
-`uo_game_pool` is the single source of truth for a game's pool membership. Each row associates one game with one pool, and the `timetable` flag distinguishes the two roles:
+`uo_game_pool` is the only record of a game's pool (`uo_game` has no `pool` column):
 
-- `timetable=1`: the owning / scheduled pool. Each game has exactly one such row, created when the game is generated or manually added. Pool, series, and season lookups all join through this row.
-- `timetable=0`: carryover linkage into a continuation pool (for example pool A → upper pool F). Zero or more such rows per game. They let pool- and team-level stats include results from earlier pools without duplicating the game itself.
-
-`uo_game` itself no longer carries a `pool` column.
+- `timetable=1`: the owning pool, exactly one per game. Pool, series and season lookups join through it.
+- `timetable=0`: carryover into continuation pools (e.g. pool A into upper pool F), so their stats include earlier results without duplicating the game.
 
 `admin/schedule.php` builds a drag-and-drop board from unscheduled games loaded through `UnscheduledPoolGameInfo()`, `UnscheduledSeriesGameInfo()`, or `UnscheduledSeasonGameInfo()`, and reservation columns loaded through `ReservationInfoArray()`.
 
-Game duration precedence is:
-
-- `uo_game.timeslot` overrides `uo_pool.timeslot`
-
-That duration drives row height, offset accumulation, and overflow / conflict checks.
+Game duration is `uo_game.timeslot`, else `uo_pool.timeslot`; it drives row height, offsets, and overflow and conflict checks.
 
 `admin/saveschedule.php` is the save path. Reservation columns are serialized as minute offsets from reservation start, `ClearReservation()` first unschedules the games currently attached to that reservation that the user may schedule there (games of another event stay put and are reported as left unchanged), `ScheduleGame()` reapplies games with new start time and reservation id, and `UnScheduleGame()` clears rows from the unscheduled column.
 
@@ -147,80 +96,20 @@ Validation after save checks:
 - inter-pool conflicts
 - move-time constraints from `uo_movingtime`
 
-Conflict warnings are limited to pairs that include at least one game assigned on the scheduling board being saved. The other game may be scheduled outside the selected reservations when it creates a real conflict, but pre-existing conflicts unrelated to the current board are not reported.
-
-The two conflict queries return their pairs in the order the check needs, and the pairs are not reordered. `TimetableIntraPoolConflicts()` constrains `g1.time <= g2.time`, so those pairs are chronological. `TimetableInterPoolConflicts()` returns the source-pool game as `game1` and the game in the pool the team moves to as `game2`; that pair is a dependency, so a destination game scheduled before its source game is reported even when the two do not overlap.
+Only pairs including a game on the saved board are reported; the other game may be outside it, but unrelated pre-existing conflicts are not reported. Pairs are not reordered: `TimetableIntraPoolConflicts()` returns them chronologically (`g1.time <= g2.time`), and `TimetableInterPoolConflicts()` returns source-pool game then destination-pool game as a dependency, so a destination game before its source is reported even without overlap.
 
 `admin/editgame.php` is the direct edit path for one game row. It can change teams, placeholders, reservation, time, pool, validity, responsible team, translated game name, and live-stream fields.
 
-## Settings and Flags
+## Settings
 
-Direct schedule-affecting settings:
+- `uo_setting.CurrentSeason`: default public scope
+- `uo_setting.GameRSSEnabled`: per-row RSS icon
+- `uo_season.timezone`: shown below schedule views by `PrintTimeZone()`
+- `uo_season.hometeammode`: home assignment for generated games
+- `uo_pool.timeslot`, `uo_game.timeslot`: game duration
+- `uo_pool.type`, `ordering`, `color`: generation strategy, order, and PDF colors
+- `uo_movingtime`: field-to-field move times for conflict checks
 
-- `uo_setting.CurrentSeason`: default public schedule scope
-- `uo_season.timezone`: rendered at the bottom of schedule views by `PrintTimeZone()`
-- `uo_season.hometeammode`: controls whether generated games balance home assignment or always keep the higher-ranked side at home
-- `uo_setting.GameRSSEnabled`: enables the per-row RSS icon in `GameRow()`
-- `uo_pool.timeslot` and `uo_game.timeslot`: affect scheduling duration, drag height, and overflow / conflict checks
-- `uo_pool.type`, `uo_pool.ordering`, `uo_pool.color`: affect generation strategy, ordering, and PDF / one-page visual output
-- `uo_movingtime`: affects post-save conflict checking
+## Related outputs
 
-Important contextual flags that do not currently change the public `games.php` row HTML directly:
-
-- `uo_season.istournament`
-- `uo_season.isinternational`
-- `uo_season.isnationalteams`
-
-These matter in admin and enrollment flows, and international-related metadata is already carried in timetable rows for API and other outputs.
-
-Flags that matter elsewhere, but not for the core HTML schedule row layout:
-
-- `uo_season.hide_time_on_scoresheet`
-- `uo_season.event_readonly`
-- `uo_season.api_public`
-- `uo_game.show_spirit`
-
-## Related Outputs
-
-The schedule row and footer link into:
-
-- `reservationinfo`
-- `poolstatus`
-- `gameplay.php`
-- `gamecard.php`
-- iCalendar export
-- printable HTML
-- PDF list and one-page schedule output
-
-The PDF layer in `cust/default/pdfschedule.php` uses the same timetable rowset, but renders it differently from `GameRow()`. The API schedule normalizer in `api/v1/router.php` also uses more of the row than the HTML renderer does, especially abbreviations and country / flag data.
-
-## Database Model
-
-The most important tables for schedule behavior are:
-
-- `uo_game`: the actual game row, including teams or placeholders, reservation, time, score state, duration override, and related flags
-- `uo_game_pool`: single source of truth for the game-to-pool relationship; `timetable=1` is the owning pool, `timetable=0` is carryover membership in a continuation pool
-- `uo_reservation`: reservation group, field, season, and reservation time window
-- `uo_location`: venue identity used by reservations
-- `uo_pool`: pool type, ordering, default timeslot, color, and series linkage
-- `uo_series`: division identity and season linkage
-- `uo_season`: event metadata such as timezone and contextual flags
-- `uo_scheduling_name`: placeholder participant names and translated game names
-- `uo_moveteams`: move rules and placeholder participants for future games
-- `uo_team`: real team identity
-- `uo_country`: country and flag metadata that timetable queries can expose
-- `uo_goal`: used only to derive scoresheet presence for schedule rows
-- `uo_urls`: live-media links
-- `uo_gameevent`: some media lookups and later gameplay views
-- `uo_setting`: server-level schedule-affecting settings such as `CurrentSeason` and `GameRSSEnabled`
-- `uo_movingtime`: field-to-field move-time constraints used in validation
-
-## In Practice
-
-The shortest way to read the schedule implementation is:
-
-1. `uo_game` is the schedule row.
-2. `uo_reservation` is the field / time container.
-3. `uo_game_pool` decides which pool contexts expose the game.
-4. `games.php` renders the public view from `TimetableGames()`.
-5. `admin/schedule.php` and `admin/saveschedule.php` rewrite reservation assignment and validate the result.
+Rows and the footer link to `reservationinfo`, `poolstatus`, `gameplay.php`, `gamecard.php`, iCalendar, printable HTML, and the PDF list and one-page layouts. `cust/default/pdfschedule.php` and the API schedule normalizer in `api/v1/router.php` render the same `TimetableGames()` rows differently.

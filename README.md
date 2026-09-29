@@ -65,7 +65,7 @@ install a tested version.
 ## Requirements
 
 - A web server
-- PHP 8.3 or newer with cURL, GD, gettext, intl, mbstring, MySQL, and XML support
+- PHP 8.3 or newer with cURL, GD, gettext, mbstring, MySQL, and XML support (intl is optional and improves localized ordinals)
 - MariaDB 10.11 or newer
 - At least one non-`C` UTF-8 system locale for translations
 
