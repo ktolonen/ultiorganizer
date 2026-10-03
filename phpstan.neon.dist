@@ -7,7 +7,6 @@ parameters:
         - ext
         - lib
         - login
-        - mobile
         - plugins
         - scorekeeper
         - spiritkeeper

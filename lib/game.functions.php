@@ -822,8 +822,8 @@ function GameCapEventName($type)
  * a score cap, see docs/terminology.md.
  *
  * $showTime decides who prints the time, and depends on where the caller puts
- * it. Renderers that lead with the time (the scorekeeper pages, mobile, the
- * [mm.ss] prefix in ext/rss.php) already read correctly and pass false, keeping
+ * it. Renderers that lead with the time (the scorekeeper pages, the [mm.ss]
+ * prefix in ext/rss.php) already read correctly and pass false, keeping
  * their own stamp: "6.45 Time cap - new point cap 4". Renderers that would
  * append it after the label instead pass !$hideTimeOnScoresheet and print no
  * time of their own, because a trailing stamp would leave two unlabelled
@@ -1348,13 +1348,13 @@ function CheckGameResult($game, $home, $away)
 
 /**
  * $snapshot defaults true, so a caller gets a restore point unless it opts
- * out. The per-point callers in mobile/ and scorekeeper/ do, since a snapshot
- * per point would mean roughly one per goal (see docs/scoresheet-history.md).
+ * out. The per-point caller in scorekeeper/ does, since a snapshot per point
+ * would mean roughly one per goal (see docs/scoresheet-history.md).
  */
 function GameUpdateResult($gameId, $home, $away, $snapshot = true)
 {
-    // Enforced here rather than per entry point: user/addresult.php and
-    // mobile/addresult.php never call CheckGameResult().
+    // Enforced here rather than per entry point: user/addresult.php never
+    // calls CheckGameResult().
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         return false;
     }
@@ -1654,9 +1654,8 @@ function GameAllowsPlayerOnRoster($gameId, $playerId)
 function GameAddPlayer($gameId, $playerId, $number)
 {
     if (hasEditGamePlayersRight($gameId)) {
-        // Enforced here so every roster path inherits it: the modern handlers
-        // check accreditation themselves, but mobile/addplayerlists.php reached
-        // this mutation directly and bypassed the event rule.
+        // Enforced here so every roster path inherits it, not only the page
+        // handlers that check accreditation themselves.
         if (!GameAllowsPlayerOnRoster($gameId, $playerId)) {
             return false;
         }
@@ -2194,7 +2193,7 @@ function GameSetScoreSheetKeeper($gameId, $name)
 {
     if (hasEditGameEventsRight($gameId)) {
         // Read before snapshotting for the reason GameSetCapEvent() gives: the
-        // standalone scorekeeper and mobile forms post their pre-filled name
+        // standalone scorekeeper form posts its pre-filled name
         // unchanged, and the DBAffectedRows() gate below suppresses only the
         // audit row, leaving a restore point for a save that changed nothing.
         // A name longer than uo_game.official compares unequal against the
@@ -2290,9 +2289,9 @@ function GameSetStartingTeam($gameId, $home)
 {
     if (hasEditGameEventsRight($gameId)) {
         // Read before snapshotting, for the reason GameSetScoreSheetKeeper()
-        // gives: the pre-filled first-offence forms in scorekeeper/ and
-        // mobile/ post the recorded side on every save, and the
-        // DBAffectedRows() gates below suppress only the audit row.
+        // gives: the pre-filled first-offence form in scorekeeper/ posts the
+        // recorded side on every save, and the DBAffectedRows() gates below
+        // suppress only the audit row.
         // uo_gameevent.ishome is NOT NULL, so the comparison needs no null
         // case of its own; the absent row is the null case.
         $offence = DBQueryToRow(sprintf(

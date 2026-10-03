@@ -318,7 +318,7 @@ cmd_smoke() {
     local entry path expected code page_dir asset url
     for entry in "/|302" "/?view=frontpage|200" "/?view=allteams|200" "/?view=allplayers|200" \
         "/?view=games|200" "/login/|302" "/scorekeeper/|302" "/spiritkeeper/|200" \
-        "/timekeeper/|200" "/mobile/|302" "/api/|404"; do
+        "/timekeeper/|200" "/api/|404"; do
         path="${entry%|*}"
         expected="${entry##*|}"
         code="$(curl -s -o "${body}" -w '%{http_code}' "${BASE_URL}${path}")"

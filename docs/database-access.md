@@ -19,7 +19,6 @@ The following locations are treated as public or app entrypoints:
 - `admin/`
 - `user/`
 - `cust/`
-- `mobile/`
 - `scorekeeper/`
 - `spiritkeeper/`
 - `ext/`

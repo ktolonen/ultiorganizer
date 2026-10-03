@@ -359,7 +359,6 @@ required_paths=(
     "lib"
     "locale"
     "login"
-    "mobile"
     "plugins"
     "scorekeeper"
     "script"

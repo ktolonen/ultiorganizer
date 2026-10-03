@@ -31,7 +31,7 @@ function ScoresheetHistorySource()
     }
 
     $script = $_SERVER['SCRIPT_NAME'] ?? "";
-    foreach (["api", "scorekeeper", "spiritkeeper", "mobile", "admin"] as $app) {
+    foreach (["api", "scorekeeper", "spiritkeeper", "admin"] as $app) {
         if (strpos($script, '/' . $app . '/') !== false) {
             return $app;
         }

@@ -19,20 +19,14 @@ if (is_file('cust/' . CUSTOMIZATIONS . '/head.php')) {
  * @param string $title page's title
  * @param string $html page's content
  */
-function showPage($title, $html, $mobile = false)
+function showPage($title, $html)
 {
-    if ($mobile) {
-        mobilePageTop($title);
-        echo $html;
-        mobilePageEnd();
-    } else {
-        pageTop($title);
-        leftMenu();
-        contentStart();
-        echo $html;
-        contentEnd();
-        pageEnd();
-    }
+    pageTop($title);
+    leftMenu();
+    contentStart();
+    echo $html;
+    contentEnd();
+    pageEnd();
 }
 
 /**
@@ -237,90 +231,6 @@ function onPageHelpAvailable($html)
 	<div id='helptext' class='yui-pe-content'>$html<hr/></div>";
 }
 
-
-/**
- * Top of Mobile page.
- *
- * @param String $title - page title
- */
-function mobilePageTop($title)
-{
-    pageTopHeadOpen($title);
-
-    $spiritkeeperUrl = './spiritkeeper/';
-    if (function_exists('SpiritkeeperHomeUrl')) {
-        $spiritkeeperUrl = SpiritkeeperHomeUrl();
-    }
-
-    echo "</head><body style='overflow-y:scroll;'>\n";
-    echo "<div class='mobile_page'>\n";
-    echo "<p class='warning'>";
-    echo utf8entities(_("The legacy mobile administration interface is deprecated."));
-    echo " ";
-    echo utf8entities(_("Use"));
-    echo " <a href='./scorekeeper/'>Scorekeeper</a> ";
-    echo utf8entities(_("for score entry and"));
-    echo " <a href='" . $spiritkeeperUrl . "'>Spiritkeeper</a> ";
-    echo utf8entities(_("for spirit entry."));
-    echo "</p>\n";
-}
-
-function mobilePageEnd($query = "")
-{
-    if ($query == "") {
-        $query = $_SERVER['QUERY_STRING'];
-    }
-    if (!isset($_SESSION['uid']) || $_SESSION['uid'] == "anonymous") {
-        $isMobileLoginView = (!empty($_GET['view']) && $_GET['view'] === 'mobile/index');
-        $hidePublicAuth = function_exists('IsSelfRegistrationDisabled') && IsSelfRegistrationDisabled() && !$isMobileLoginView;
-
-        $html = "";
-        if (!$hidePublicAuth) {
-            $html .= "<form action='?" . utf8entities($query) . "' method='post'>\n";
-            $html .= "<table cellpadding='2'>\n";
-            $html .= "<tr><td>\n";
-            $html .= utf8entities(_("Username")) . ":";
-            $html .= "</td></tr><tr><td>\n";
-            $html .= "<input class='input' type='text' id='myusername' name='myusername' size='15'/> ";
-            $html .= "</td></tr><tr><td>\n";
-            $html .= utf8entities(_("Password")) . ":";
-            $html .= "</td></tr><tr><td>\n";
-            $html .= "<input class='input' type='password' id='mypassword' name='mypassword' size='15'/> ";
-            $html .= "</td></tr><tr><td>\n";
-            $html .= "<input class='button' type='submit' name='login' value='" . utf8entities(_("Log in")) . "'/>";
-            $html .= "</td></tr><tr><td>\n";
-            $html .= "<hr/>\n";
-            $html .= "</td></tr>\n";
-            $html .= "<tr><td>\n";
-            $html .= "<a href='?view=frontpage'>" . utf8entities(_("Back to the Ultiorganizer")) . "</a>";
-            $html .= "</td></tr>\n";
-            $html .= "</table>\n";
-            $html .= "</form>";
-        } else {
-            $html .= "<table cellpadding='2'>\n";
-            $html .= "<tr><td>\n";
-            $html .= "<a href='?view=frontpage'>" . utf8entities(_("Back to the Ultiorganizer")) . "</a>";
-            $html .= "</td></tr>\n";
-            $html .= "</table>\n";
-        }
-    } else {
-        if ($query != "") {
-            header($query);
-        }
-        // $user = $_SESSION['uid'];
-        // $userinfo = UserInfo($user);
-        $html = "<table cellpadding='2'>\n";
-        $html .= "<tr><td></td></tr>\n";
-        $html .= "<tr><td><hr /></td></tr><tr><td>\n";
-        $html .= "<a href='?view=frontpage'>" . utf8entities(_("Back to the Ultiorganizer")) . "</a>";
-        $html .= "</td></tr><tr><td>\n";
-        $html .= "<a href='?view=mobile/logout'>" . utf8entities(_("Log out")) . "</a></td></tr></table>";
-    }
-
-    $html .= "<div class='page_bottom'></div>";
-    $html .= "</div></body></html>";
-    echo $html;
-}
 
 /**
  * Creates locale selection html-code.

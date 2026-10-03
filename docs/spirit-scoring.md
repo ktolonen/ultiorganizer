@@ -8,7 +8,7 @@ Spirit score logic, visibility, stoppages and settings. See `docs/permissions.md
 - Entry: `user/addspirit.php` and `spiritkeeper/`
 - Public displays: `teamcard.php`, `seriesstatus.php`, `spiritstatus.php`, `gameplay.php`
 - Admin: `spiritmode` in `admin/addseasons.php`; settings in `admin/spiritsettings.php`; review, missing-score and comment searches, stoppage summaries and Spiritkeeper tokens in `admin/spirit.php`
-- Stoppage entry: `user/addscoresheet.php`, `scorekeeper/addspirittimeouts.php`, `mobile/addspirittimeouts.php`; `user/pdfscoresheet.php` prints a stoppage area
+- Stoppage entry: `user/addscoresheet.php`, `scorekeeper/addspirittimeouts.php`; `user/pdfscoresheet.php` prints a stoppage area
 
 ## Data model
 

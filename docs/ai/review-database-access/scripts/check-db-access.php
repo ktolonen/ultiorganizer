@@ -10,7 +10,6 @@ const APP_SCOPE_PREFIXES = [
     'admin/',
     'user/',
     'cust/',
-    'mobile/',
     'scorekeeper/',
     'spiritkeeper/',
     'ext/',
