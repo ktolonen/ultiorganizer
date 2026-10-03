@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 22:06+0300\n"
+"POT-Creation-Date: 2026-10-03 22:21+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -512,6 +512,7 @@ msgid "All event statistics"
 msgstr "Alle Turnierstatistiken"
 
 #: admin/addseasonusers.php:190 admin/addseasonusers.php:202
+#: admin/scorekeepinglinks.php:111
 msgid "All games"
 msgstr "Alle Spiele"
 
@@ -1508,6 +1509,7 @@ msgid "Country not found"
 msgstr "Land nicht gefunden"
 
 #: admin/apitokens.php:151 admin/poolgames.php:398
+#: admin/scorekeepinglinks.php:72
 msgid "Create"
 msgstr "Erzeugen"
 
@@ -1519,7 +1521,7 @@ msgstr "Neue(s) Turnier/Saison"
 msgid "Create token"
 msgstr "Token erzeugen"
 
-#: admin/apitokens.php:166 admin/scorekeepinglinks.php:78
+#: admin/apitokens.php:166 admin/scorekeepinglinks.php:89
 msgid "Created"
 msgstr "Erzeugt"
 
@@ -2734,8 +2736,8 @@ msgstr "GP im Schnitt"
 #: gamecard.php:145 poolstatus.php:698 poolstatus.php:853
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/editgame.php:24
-#: admin/seasonscoresheethistory.php:54 admin/spirit.php:366
-#: admin/tdtools.php:90 cust/bula/pdfscoresheet.php:248
+#: admin/scorekeepinglinks.php:120 admin/seasonscoresheethistory.php:54
+#: admin/spirit.php:366 admin/tdtools.php:90 cust/bula/pdfscoresheet.php:248
 #: cust/default/pdfscoresheet.php:287 cust/fpudd/pdfscoresheet.php:282
 #: cust/gummis/pdfscoresheet.php:273 cust/slkl/pdfscoresheet.php:251
 #: cust/wfdf/pdfscoresheet.php:659 cust/wfdf/pdfscoresheet.php:1586
@@ -5156,7 +5158,7 @@ msgstr "Alle Spielberichte drucken"
 msgid "Print blank scoresheet"
 msgstr "Leeren Spielbericht drucken"
 
-#: admin/scorekeepinglinks.php:94
+#: admin/scorekeepinglinks.php:105
 msgid "Print field sheets"
 msgstr ""
 
@@ -5555,7 +5557,7 @@ msgstr "Zur Datenbankverwaltung zurückkehren"
 msgid "Review Spirit Score"
 msgstr "Spirit-Bewertung ansehen"
 
-#: admin/apitokens.php:194 admin/scorekeepinglinks.php:68
+#: admin/apitokens.php:194 admin/scorekeepinglinks.php:76
 msgid "Revoke"
 msgstr "Widerrufen"
 
@@ -6249,7 +6251,7 @@ msgid "Shirt numbers"
 msgstr "Trikotnummern"
 
 #: admin/apitokens.php:87 admin/apitokens.php:180
-#: admin/scorekeepinglinks.php:64 spiritkeeper/home.php:56
+#: admin/scorekeepinglinks.php:72 spiritkeeper/home.php:56
 #: user/scoresheethistory.php:418 user/userinfo.php:315
 msgid "Show"
 msgstr "Anzeigen"
@@ -6940,7 +6942,7 @@ msgid ""
 "Continue?"
 msgstr ""
 
-#: admin/scorekeepinglinks.php:82 user/scorekeepinglink.php:28
+#: admin/scorekeepinglinks.php:94 user/scorekeepinglink.php:28
 msgid "The event is read-only."
 msgstr ""
 
@@ -7658,7 +7660,7 @@ msgstr "Unbekannter Turnier-Importmodus."
 msgid "Unnamed player"
 msgstr "Unbenannter Spieler"
 
-#: admin/schedule.php:379 admin/scorekeepinglinks.php:109
+#: admin/schedule.php:379 admin/scorekeepinglinks.php:120
 msgid "Unscheduled"
 msgstr "Nicht im Spielplan"
 
@@ -7793,7 +7795,7 @@ msgstr "Benutzername"
 msgid "Username is too short (min. 3 letters)"
 msgstr "Benutzername ist zu kurz (min. 3 Buchstaben)"
 
-#: menufunctions.php:406 admin/scorekeepinglinks.php:78 admin/seasons.php:143
+#: menufunctions.php:406 admin/scorekeepinglinks.php:89 admin/seasons.php:143
 #: admin/users.php:7
 msgid "Users"
 msgstr "Benutzer"
