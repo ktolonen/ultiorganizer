@@ -7,8 +7,8 @@ if (!isset($include_prefix)) {
     $include_prefix = __DIR__ . '/../';
 }
 
-// Login-gated surfaces (admin, user, scorekeeper, spiritkeeper, result,
-// and the cust/ member pages) mutate data and immediately re-read it, often over
+// Login-gated surfaces (admin, user, scorekeeper, spiritkeeper, and the
+// cust/ member pages) mutate data and immediately re-read it, often over
 // Post/Redirect/Get. A GET landing inside the persistent cache TTL would render
 // pre-write state, so opt these requests out entirely. Public spectator pages do
 // not include this guard and keep the cache. Required directly because some

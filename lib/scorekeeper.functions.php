@@ -345,11 +345,11 @@ function ScorekeeperGrantTokenId($gameId)
     if ($sql === null) {
         return 0;
     }
-    if (!isLoggedIn() && !IsAnonymousScorekeepingAllowed(GameSeason($gameId))) {
-        return 0;
-    }
     $key = ($_SESSION['uid'] ?? '') . ":" . $gameId . ":" . md5($sql['join'] . $sql['where']);
     return (int) CacheRemember("scorekeeper_grant", $key, function () use ($gameId, $sql) {
+        if (!isLoggedIn() && !IsAnonymousScorekeepingAllowed(GameSeason($gameId))) {
+            return 0;
+        }
         return (int) DBQueryToValueUncached(sprintf(
             "SELECT t.token_id FROM uo_scorekeeper_token t
 				%s
