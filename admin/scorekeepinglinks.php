@@ -51,7 +51,15 @@ $tokens = SeasonScorekeeperTokens($season);
 $canIssue = !isEventReadonly($season) || canBypassEventReadonly($season);
 $confirm = htmlspecialchars((string) json_encode(_("The current link stops working and everyone who opened it loses access. Continue?")), ENT_QUOTES);
 
-$linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $selfUrl) {
+// Every action is a button; navigation goes through a GET form.
+$getButton = function ($params, $label, $newTab = false) {
+    $html = "<form method='get' action='index.php' style='display:inline;'" . ($newTab ? " target='_blank'" : "") . ">";
+    foreach ($params as $name => $value) {
+        $html .= "<input type='hidden' name='" . $name . "' value='" . utf8entities((string) $value) . "'/>";
+    }
+    return $html . "<input type='submit' class='button' value='" . utf8entities($label) . "'/></form>";
+};
+$linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $selfUrl, $getButton) {
     $token = $tokens[$scope . ":" . $id] ?? null;
     $users = [];
     foreach ($token['users'] ?? [] as $user) {
@@ -61,7 +69,7 @@ $linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $se
     $html .= "<td>" . ($token ? ShortDate($token['created']) . " " . DefHourFormat($token['created']) : "") . "</td>";
     $html .= "<td>" . implode(", ", $users) . "</td><td class='right'>";
     if ($canIssue) {
-        $html .= "<a href='?view=user/scorekeepinglink&amp;" . $scope . "=" . $id . "'>" . _("Show") . "</a>";
+        $html .= $getButton(['view' => 'user/scorekeepinglink', $scope => $id], $token ? _("Show") : _("Create"));
         if ($token) {
             $html .= "<form method='post' action='" . $selfUrl . "' style='display:inline;' onsubmit='return confirm(" . $confirm . ");'>";
             $html .= "<input type='hidden' name='scope' value='" . $scope . "'/><input type='hidden' name='id' value='" . $id . "'/>";
@@ -73,9 +81,13 @@ $linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $se
 $gameLabel = function ($game) {
     $home = $game['hometeam'] ? $game['hometeamname'] : $game['phometeamname'];
     $away = $game['visitorteam'] ? $game['visitorteamname'] : $game['pvisitorteamname'];
-    return "&nbsp;&nbsp;" . DefHourFormat($game['time']) . " " . utf8entities($home) . " - " . utf8entities($away);
+    return DefHourFormat($game['time']) . " " . utf8entities($home) . " - " . utf8entities($away);
 };
-$tableHead = "<table class='admintable'>\n<tr><th></th><th>" . _("Created") . "</th><th>" . _("Users") . "</th><th></th></tr>\n";
+// One table per field; the shared column widths keep the tables aligned.
+$tableHead = function ($heading) {
+    return "<table class='admintable'>\n<colgroup><col style='width:45%'/><col style='width:15%'/><col style='width:25%'/><col style='width:15%'/></colgroup>\n"
+        . "<tr><th>" . $heading . "</th><th>" . _("Created") . "</th><th>" . _("Users") . "</th><th></th></tr>\n";
+};
 
 $html = "<h2>" . $title . "</h2>\n";
 if (!$canIssue) {
@@ -87,26 +99,25 @@ foreach ($reservations as $reservation) {
     $resId = (int) $reservation['id'];
     $resDay = substr((string) $reservation['starttime'], 0, 10);
     if ($resDay !== $day) {
-        $html .= $day === null ? "" : "</table>\n";
         $day = $resDay;
-        $html .= "<h3>" . DefWeekDateFormat($reservation['starttime']);
+        $html .= "<h3>" . DefWeekDateFormat($reservation['starttime']) . "</h3>\n";
         if ($canIssue) {
-            $html .= " <a href='" . $selfUrl . "&amp;print=1&amp;day=" . $day . "' target='_blank' rel='noopener'>" . _("Print field sheets") . "</a>";
+            $html .= "<p>" . $getButton(['view' => 'admin/scorekeepinglinks', 'season' => $season, 'print' => 1, 'day' => $day], _("Print field sheets"), true) . "</p>\n";
         }
-        $html .= "</h3>\n" . $tableHead;
     }
-    $label = "<b>" . utf8entities(ReservationPlaceText(U_($reservation['name']), U_($reservation['fieldname']))) . "</b> "
-        . DefHourFormat($reservation['starttime']) . "-" . DefHourFormat($reservation['endtime']);
-    $html .= $linkRow('reservation', $resId, $label);
+    $heading = utf8entities(ReservationPlaceText(U_($reservation['name']), U_($reservation['fieldname'])))
+        . " " . DefHourFormat($reservation['starttime']) . "-" . DefHourFormat($reservation['endtime']);
+    $html .= $tableHead($heading);
+    $html .= $linkRow('reservation', $resId, "<b>" . _("All games") . "</b>");
     foreach (ReservationGames($resId, $season) as $game) {
         $html .= $linkRow('game', (int) $game['game_id'], $gameLabel($game));
     }
+    $html .= "</table>\n";
 }
-$html .= $day === null ? "" : "</table>\n";
 
 $unscheduled = array_filter(SeasonAllGames($season), fn($game) => empty($game['reservation']));
 if ($unscheduled !== []) {
-    $html .= "<h3>" . _("Unscheduled") . "</h3>\n" . $tableHead;
+    $html .= "<h3>" . _("Unscheduled") . "</h3>\n" . $tableHead(_("Game"));
     foreach ($unscheduled as $game) {
         $html .= $linkRow('game', (int) $game['game_id'], utf8entities(GameName(GameInfo((int) $game['game_id']))));
     }
