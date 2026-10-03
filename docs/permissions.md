@@ -67,7 +67,7 @@ A scorekeeping link (`docs/scorekeeper.md`) gives game-entry rights without a ro
 
 Logged-in users hold links as rows in `uo_scorekeeper_grant`; an anonymous session holds them in `$_SESSION['scorekeeper_tokens']`, and only while the event's `anonymous_scorekeeping` setting is on. `lib/auth.guard.php` admits such a session through `$auth_allow_anonymous`, which `scorekeeper/auth.php` sets. Game notes stay out of reach for it, because `CanManageGameComment()` requires a login.
 
-`CanIssueGameScorekeeperToken()` and `CanIssueReservationScorekeeperToken()` decide who may see, print and replace a link: `superadmin`, `seasonadmin`, `seriesadmin` for the game's division (for a reservation, a division with a game in it), and `resgameadmin` for the reservation. A link holder cannot see or replace the link itself.
+`CanIssueGameScorekeeperToken()` and `CanIssueReservationScorekeeperToken()` decide who may see, print and replace a link: `superadmin`, `seasonadmin`, `seriesadmin` for the game's division, and `resgameadmin` for the reservation. A reservation link covers every game of the event in the reservation, so a `seriesadmin` may issue it only when all of those games are in their divisions. A link holder cannot see or replace the link itself.
 
 ## Read-only events
 

@@ -35,13 +35,20 @@ function ScorekeeperTokenNormalize($token)
  */
 function CanIssueGameScorekeeperToken($gameId)
 {
-    $gameId = (int) $gameId;
-    $series = GameSeries($gameId);
-    if (empty($series)) {
+    $game = DBQueryToRow(sprintf(
+        "SELECT p.series, s.season, g.reservation FROM uo_game g
+			JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+			JOIN uo_pool p ON (p.pool_id=gp.pool)
+			JOIN uo_series s ON (s.series_id=p.series)
+		WHERE g.game_id=%d",
+        (int) $gameId,
+    ));
+    if (!is_array($game)) {
         return false;
     }
-    $season = SeriesSeasonId($series);
-    $reservation = GameReservation($gameId);
+    $series = $game['series'];
+    $season = $game['season'];
+    $reservation = $game['reservation'];
     $roles = $_SESSION['userproperties']['userrole'] ?? [];
     $hasRight = isset($roles['superadmin'])
         || isset($roles['seasonadmin'][$season])
@@ -55,12 +62,13 @@ function CanIssueGameScorekeeperToken($gameId)
 
 /**
  * Who may print or share a reservation's scorekeeping link: the event admins,
- * the reservation's game admins, and the admins of a division with a game in it.
+ * the reservation's game admins, and a division admin whose divisions hold
+ * every game of the event in it, since the link covers all of them.
  */
 function CanIssueReservationScorekeeperToken($reservationId)
 {
     $reservationId = (int) $reservationId;
-    $season = DBQueryToValue(sprintf("SELECT season FROM uo_reservation WHERE id=%d", $reservationId));
+    $season = ReservationSeason($reservationId);
     if (empty($season)) {
         return false;
     }
@@ -73,12 +81,15 @@ function CanIssueReservationScorekeeperToken($reservationId)
             "SELECT DISTINCT p.series FROM uo_game g
 				JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
 				JOIN uo_pool p ON (p.pool_id=gp.pool)
+				JOIN uo_series s ON (s.series_id=p.series AND s.season='%s')
 			WHERE g.reservation=%d",
+            DBEscapeString((string) $season),
             $reservationId,
         ));
+        $hasRight = $series !== [];
         foreach ($series as $row) {
-            if (isset($roles['seriesadmin'][$row['series']])) {
-                $hasRight = true;
+            if (!isset($roles['seriesadmin'][$row['series']])) {
+                $hasRight = false;
                 break;
             }
         }
@@ -130,7 +141,9 @@ function ScorekeeperToken($scope, $id)
  */
 function ScorekeeperRotateToken($scope, $id)
 {
-    if (ScorekeeperToken($scope, $id) === null) {
+    $allowed = $scope === 'game' ? CanIssueGameScorekeeperToken($id)
+        : ($scope === 'reservation' && CanIssueReservationScorekeeperToken($id));
+    if (!$allowed) {
         return null;
     }
     DBQuery(sprintf("DELETE FROM uo_scorekeeper_token WHERE %s=%d", $scope, (int) $id));
@@ -298,7 +311,7 @@ function ScorekeeperSessionTokenIds()
  */
 function ScorekeeperSessionHasAnonymousAccess()
 {
-    return !isLoggedIn() && ScorekeeperSessionTokenIds() !== [];
+    return IsScorekeeperApp() && !isLoggedIn() && ScorekeeperSessionTokenIds() !== [];
 }
 
 /**
@@ -326,14 +339,59 @@ function ScorekeeperSessionTokenSql()
 }
 
 /**
+ * Hours past midnight that a scorekeeping link still works for the day
+ * before, so a late game keeps its link until it ends.
+ */
+const SCOREKEEPER_LINK_GRACE_HOURS = 4;
+
+/**
+ * The first and last game day (Y-m-d) on which scorekeeping links of an event
+ * work right now: today in the event's timezone, and yesterday during the
+ * first SCOREKEEPER_LINK_GRACE_HOURS. Game and reservation times are stored
+ * as the event's local time.
+ *
+ * @return array{0: string, 1: string}
+ */
+function ScorekeeperOpenDays($season)
+{
+    $info = SeasonInfo($season);
+    $timezone = is_array($info) ? (string) ($info['timezone'] ?? '') : '';
+    try {
+        $zone = new DateTimeZone($timezone !== '' ? $timezone : date_default_timezone_get());
+    } catch (Exception $e) {
+        $zone = new DateTimeZone(date_default_timezone_get());
+    }
+    $now = new DateTimeImmutable('now', $zone);
+    return [$now->modify('-' . SCOREKEEPER_LINK_GRACE_HOURS . ' hours')->format('Y-m-d'), $now->format('Y-m-d')];
+}
+
+/**
+ * SQL condition for a token (alias t) covering a game (alias g) of the event:
+ * a game token on the game's day, or any day when the game has no time yet,
+ * and a reservation token (reservation alias r) of the same event on the
+ * reservation's day.
+ */
+function ScorekeeperCoverageSql($season)
+{
+    [$from, $to] = ScorekeeperOpenDays($season);
+    $days = sprintf("BETWEEN '%s' AND '%s'", DBEscapeString($from), DBEscapeString($to));
+    return sprintf(
+        "((t.game=g.game_id AND (g.time IS NULL OR DATE(g.time) %s))
+			OR (t.reservation=g.reservation AND r.season='%s' AND DATE(r.starttime) %s))",
+        $days,
+        DBEscapeString((string) $season),
+        $days,
+    );
+}
+
+/**
  * Id of a token held by this session that covers the game, or 0.
  *
  * Everything is checked live: a rotated token no longer exists, a game moved
- * out of the reservation is no longer covered, a reservation token covers its
- * games only on the reservation's date (the same date test as the "Show today
- * only" filter in scorekeeper/respgames.php), and an anonymous session needs
- * the event to still allow anonymous scorekeeping. Where the grant counts is
- * decided by ScorekeeperGrantCovers().
+ * out of the reservation is no longer covered, a token works only on its game
+ * day (ScorekeeperOpenDays()), and an anonymous session needs the event to
+ * still allow anonymous scorekeeping. Where the grant counts is decided by
+ * ScorekeeperGrantCovers().
  */
 function ScorekeeperGrantTokenId($gameId)
 {
@@ -347,7 +405,8 @@ function ScorekeeperGrantTokenId($gameId)
     }
     $key = ($_SESSION['uid'] ?? '') . ":" . $gameId . ":" . md5($sql['join'] . $sql['where']);
     return (int) CacheRemember("scorekeeper_grant", $key, function () use ($gameId, $sql) {
-        if (!isLoggedIn() && !IsAnonymousScorekeepingAllowed(GameSeason($gameId))) {
+        $season = GameSeason($gameId);
+        if (empty($season) || (!isLoggedIn() && !IsAnonymousScorekeepingAllowed($season))) {
             return 0;
         }
         return (int) DBQueryToValueUncached(sprintf(
@@ -355,11 +414,11 @@ function ScorekeeperGrantTokenId($gameId)
 				%s
 				JOIN uo_game g ON (g.game_id=%d)
 				LEFT JOIN uo_reservation r ON (r.id=t.reservation)
-			WHERE (t.game=g.game_id OR (t.reservation=g.reservation AND DATE(r.starttime)='%s'))%s
+			WHERE %s%s
 			ORDER BY t.token_id LIMIT 1",
             $sql['join'],
             $gameId,
-            DBEscapeString(date('Y-m-d')),
+            ScorekeeperCoverageSql($season),
             $sql['where'],
         ));
     });
@@ -380,13 +439,13 @@ function ScorekeeperGrantedGameIds($season)
         "SELECT DISTINCT g.game_id FROM uo_scorekeeper_token t
 			%s
 			LEFT JOIN uo_reservation r ON (r.id=t.reservation)
-			JOIN uo_game g ON (g.game_id=t.game OR (g.reservation=t.reservation AND DATE(r.starttime)='%s'))
+			JOIN uo_game g ON %s
 			JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
 			JOIN uo_pool p ON (p.pool_id=gp.pool)
 			JOIN uo_series s ON (s.series_id=p.series)
 		WHERE s.season='%s'%s",
         $sql['join'],
-        DBEscapeString(date('Y-m-d')),
+        ScorekeeperCoverageSql($season),
         DBEscapeString((string) $season),
         $sql['where'],
     ));
@@ -436,11 +495,30 @@ function ScorekeeperTakeNoticeHtml()
     if (($notice['type'] ?? '') === 'invalid') {
         return "<p class='warning'>" . utf8entities(_("This scorekeeping link is no longer valid. Ask the event organizer for a new one.")) . "</p>\n";
     }
-    $description = ScorekeeperTokenDescription((int) ($notice['token'] ?? 0));
+    $tokenId = (int) ($notice['token'] ?? 0);
+    $description = ScorekeeperTokenDescription($tokenId);
     if ($description === "") {
         return "";
     }
-    return "<p>" . utf8entities(sprintf(_("You can keep score for %s."), $description)) . "</p>\n";
+    $html = "<p>" . utf8entities(sprintf(_("You can keep score for %s."), $description)) . "</p>\n";
+
+    // A link opened on another day covers nothing yet, so say when it works.
+    $row = ScorekeeperTokenRow($tokenId);
+    if (!empty($row['game'])) {
+        $game = GameInfo((int) $row['game']);
+        $time = is_array($game) ? (string) ($game['time'] ?? '') : '';
+    } else {
+        $reservation = ReservationInfo((int) $row['reservation']);
+        $time = is_array($reservation) ? (string) ($reservation['starttime'] ?? '') : '';
+    }
+    if ($time !== '') {
+        [$from, $to] = ScorekeeperOpenDays($row['season']);
+        $day = substr($time, 0, 10);
+        if ($day < $from || $day > $to) {
+            $html .= "<p class='warning'>" . utf8entities(sprintf(_("This scorekeeping link works only on %s."), ShortDate($time))) . "</p>\n";
+        }
+    }
+    return $html;
 }
 
 /**

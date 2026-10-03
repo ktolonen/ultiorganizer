@@ -16,12 +16,17 @@ $print = (int) iget("print") === 1;
 $selfUrl = "?view=user/scorekeepinglink&amp;" . $scope . "=" . $scopeId;
 
 $html = "";
-if (!empty($_POST['rotate'])) {
-    ScorekeeperRotateToken($scope, $scopeId);
+header("Cache-Control: no-store");
+if (!empty($_POST['rotate']) && ScorekeeperRotateToken($scope, $scopeId) !== null) {
+    header("Location: " . html_entity_decode($selfUrl));
+    exit();
 }
 $token = ScorekeeperToken($scope, $scopeId);
 if ($token === null) {
-    showPage($title, "<h1>" . utf8entities($title) . "</h1><p>" . utf8entities(_("Insufficient rights.")) . "</p>");
+    $season = $scope === 'game' ? GameSeason($scopeId) : ReservationSeason($scopeId);
+    $reason = !empty($season) && isEventReadonly($season) && !canBypassEventReadonly($season)
+        ? _("The event is read-only.") : _("Insufficient rights.");
+    showPage($title, "<h1>" . utf8entities($title) . "</h1><p>" . utf8entities($reason) . "</p>");
     return;
 }
 $url = ScorekeeperTokenUrl($token);
@@ -80,11 +85,10 @@ $html .= "<p><input type='text' id='scorekeepingurl' class='input' readonly='rea
 $html .= "<button type='button' class='button' onclick='copyScorekeepingUrl()'>" . utf8entities(_("Copy")) . "</button></p>";
 $html .= "<p><a href='https://wa.me/?text=" . rawurlencode($url) . "' target='_blank' rel='noopener noreferrer'>" . utf8entities(_("Share via WhatsApp")) . "</a>";
 $html .= " | <a href='" . $selfUrl . "&amp;print=1' target='_blank' rel='noopener'>" . utf8entities(_("Printable version")) . "</a></p>";
-$html .= "<p>" . utf8entities($who);
-if ($scope === 'reservation') {
-    $html .= " " . utf8entities(_("Field links work only on the day of the field reservation."));
-}
-$html .= "</p>";
+$html .= "<p>" . utf8entities($who) . " ";
+$html .= utf8entities($scope === 'game'
+    ? _("The link works only on the day of the game.")
+    : _("The link works only on the day of the field reservation.")) . "</p>";
 $confirm = htmlspecialchars((string) json_encode(_("The current link stops working and everyone who opened it loses access. Continue?")), ENT_QUOTES);
 $html .= "<form method='post' action='" . $selfUrl . "' onsubmit='return confirm(" . $confirm . ");'>";
 $html .= "<input type='submit' class='button' name='rotate' value='" . utf8entities(_("Replace link")) . "'/></form>";

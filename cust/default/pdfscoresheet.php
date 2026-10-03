@@ -108,9 +108,12 @@ class PDF extends tFPDF implements ScoreSheetPdf
         if ($filename === false) {
             return;
         }
-        QRcode::png(ScorekeeperTokenUrl($token), $filename, QR_ECLEVEL_M, 3, 2);
-        $this->Image($filename, 20, 244, 30, 30, 'PNG');
-        unlink($filename);
+        try {
+            QRcode::png(ScorekeeperTokenUrl($token), $filename, QR_ECLEVEL_M, 3, 2);
+            $this->Image($filename, 20, 244, 30, 30, 'PNG');
+        } finally {
+            unlink($filename);
+        }
 
         // Kept left of x=95, where the score grid starts.
         $this->SetXY(53, 252);

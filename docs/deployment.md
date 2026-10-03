@@ -82,6 +82,10 @@ php_admin_value[session.save_path] = /var/lib/php/sessions/ultiorganizer-prod
 
 On Debian and Ubuntu, `session.gc_probability = 0` and a system timer cleans only the default directory, so a custom path needs its own cleanup or `session.gc_probability = 1`.
 
+## Web server access logs
+
+Scorekeeping links (`/scorekeeper/?t=...`) and Spiritkeeper team links (`/spiritkeeper/?token=...`) carry their secret in the URL, so the web server's access log records it; Ultiorganizer's own logs do not. Restrict who can read the access logs, or strip the query string from them.
+
 ## Development checkout deployments
 
 Don't upload a full repository checkout to production unless the web server blocks private and development-only paths. The Apache `.htaccess` files are defense in depth that other servers may ignore.
