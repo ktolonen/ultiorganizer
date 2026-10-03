@@ -48,10 +48,15 @@ foreach ($games as $row) {
 }
 $gameRows .= "</table>";
 
-if (!empty($seasonInfo['anonymous_scorekeeping'])) {
-    $who = _("Anyone with this link can keep score for these games, without logging in.");
+$anonymous = !empty($seasonInfo['anonymous_scorekeeping']);
+if ($scope === 'game') {
+    $who = $anonymous
+        ? _("Anyone with this link can keep score for this game without logging in.")
+        : _("Anyone with this link can keep score for this game after logging in.");
 } else {
-    $who = _("Anyone with this link can keep score for these games after logging in.");
+    $who = $anonymous
+        ? _("Anyone with this link can keep score for these games without logging in.")
+        : _("Anyone with this link can keep score for these games after logging in.");
 }
 
 if ($print) {

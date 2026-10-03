@@ -504,7 +504,7 @@ if ($sp['anonymous_scorekeeping']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Anyone who opens a game or field scorekeeping link can keep score for those games without an account.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Anyone who opens a game or field scorekeeping link can keep score for those games without logging in.") . "</span></td></tr>";
 
 $html .= "</table>\n";
 if (empty($seasonId)) {
