@@ -172,7 +172,6 @@ if ($teamId) {
         }
 
         $sGid = $gameRow['game_id'];
-        //$sGid .= getChkNum($sGid);
 
         $homeplayers = [];
 
