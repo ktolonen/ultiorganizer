@@ -6,6 +6,7 @@ include_once $include_prefix . 'lib/common.functions.php';
 include_once $include_prefix . 'lib/season.functions.php';
 include_once $include_prefix . 'lib/series.functions.php';
 include_once $include_prefix . 'lib/timetable.functions.php';
+include_once $include_prefix . 'lib/scorekeeper.functions.php';
 
 $title = _("Game responsibilities");
 $group = "all";
@@ -170,6 +171,9 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
         $html .= "</th>\n<th class='right' colspan='2'>";
         $html .= "<a class='thlink' href='?view=user/pdfscoresheet&amp;reservation=" . ($resId ? $resId : "none") . "&amp;season=" . $season .
           "' target='_blank' rel='noopener'>" . _("Print scoresheets") . "</a>";
+        if ($resId && CanIssueReservationScorekeeperToken($resId)) {
+            $html .= " | <a class='thlink' href='?view=user/scorekeepinglink&amp;reservation=" . (int) $resId . "'>" . _("Scorekeeping link") . "</a>";
+        }
         $html .= "</th></tr>\n";
 
         foreach ($gameArray as $gameId => $game) {
@@ -214,6 +218,9 @@ foreach ($respGameArray as $reservationgroup => $resArray) {
                 if (ShowDefenseStats()) {
                     $gamelinks[] = "<a href='?view=user/adddefensesheet&amp;game=$gameId'>" . _("Defence sheet") . "</a>";
                 }
+            }
+            if (CanIssueGameScorekeeperToken($gameId)) {
+                $gamelinks[] = "<a href='?view=user/scorekeepinglink&amp;game=" . (int) $gameId . "'>" . _("Scorekeeping link") . "</a>";
             }
             if (isSeasonAdmin($seasoninfo['season_id'])) {
                 $gamelinks[] = "<a href='?view=admin/editgame&amp;season=" . $season . "&amp;game=" . $gameId . "'>" . _("Edit") . "</a>";

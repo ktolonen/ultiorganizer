@@ -442,3 +442,30 @@ function ScorekeeperTakeNoticeHtml()
     }
     return "<p>" . utf8entities(sprintf(_("You can keep score for %s."), $description)) . "</p>\n";
 }
+
+/**
+ * A QR code as inline SVG, drawn from phpqrcode's module matrix so no image
+ * file or response header is involved.
+ */
+function ScorekeeperQrSvg($text, $moduleSize = 6)
+{
+    include_once __DIR__ . '/phpqrcode/qrlib.php';
+    $margin = 4;
+    $rows = QRcode::text((string) $text, false, QR_ECLEVEL_M, 1, 0);
+    if (!is_array($rows) || $rows === []) {
+        return "";
+    }
+    $count = count($rows);
+    $size = ($count + 2 * $margin) * $moduleSize;
+    $path = "";
+    foreach ($rows as $y => $row) {
+        $length = strlen($row);
+        for ($x = 0; $x < $length; $x++) {
+            if ($row[$x] === '1') {
+                $path .= "M" . (($x + $margin) * $moduleSize) . "," . (($y + $margin) * $moduleSize) . "h$moduleSize" . "v$moduleSize" . "h-$moduleSize" . "z";
+            }
+        }
+    }
+    return "<svg xmlns='http://www.w3.org/2000/svg' width='$size' height='$size' viewBox='0 0 $size $size' role='img'>"
+        . "<rect width='100%' height='100%' fill='#fff'/><path d='$path' fill='#000'/></svg>";
+}

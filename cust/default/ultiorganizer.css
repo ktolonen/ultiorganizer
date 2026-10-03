@@ -1368,6 +1368,42 @@ yuicalendar.table {
 	list-style-type: none;
 }
 
+/* Scorekeeping link page (user/scorekeepinglink.php) */
+.scorekeeping-qr svg {
+	display: block;
+	max-width: 100%;
+	height: auto;
+}
+
+.scorekeeping-link-games td {
+	padding: 1px 8px 1px 0;
+}
+
+.scorekeeping-sheet,
+.scorekeeping-sheet p {
+	text-align: center;
+}
+
+.scorekeeping-sheet .scorekeeping-link-games {
+	margin: 0 auto;
+	text-align: left;
+}
+
+.scorekeeping-sheet .scorekeeping-qr svg {
+	margin: 1em auto;
+}
+
+.scorekeeping-url {
+	font-family: monospace;
+	word-break: break-all;
+}
+
+#scorekeepingurl {
+	box-sizing: border-box;
+	width: 100%;
+	max-width: 36em;
+}
+
 /*
  * Print overrides (kept last so they win the cascade). On screen, the content
  * table is pinned (table-layout: fixed) and .tdcontent scrolls over-wide tables;

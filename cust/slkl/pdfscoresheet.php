@@ -90,6 +90,33 @@ class PDF extends tFPDF implements ScoreSheetPdf
         $this->Ln();
         $this->SetXY(95, 21);
         $this->ScoreGrid();
+
+        $this->ScorekeepingQr($gameId);
+    }
+
+    // The game's scorekeeping link as a QR code, left out when the user
+    // printing the sheet may not issue the link.
+    private function ScorekeepingQr($gameId)
+    {
+        include_once 'lib/scorekeeper.functions.php';
+        include_once 'lib/phpqrcode/qrlib.php';
+        $token = ScorekeeperToken('game', $gameId);
+        if ($token === null) {
+            return;
+        }
+        $filename = tempnam(sys_get_temp_dir(), 'uoqr');
+        if ($filename === false) {
+            return;
+        }
+        QRcode::png(ScorekeeperTokenUrl($token), $filename, QR_ECLEVEL_M, 3, 2);
+        $this->Image($filename, 20, 244, 30, 30, 'PNG');
+        unlink($filename);
+
+        // Kept left of x=95, where the score grid starts.
+        $this->SetXY(53, 252);
+        $this->SetFont('Arial', '', 10);
+        $this->SetTextColor(0);
+        $this->MultiCell(38, 5, $this->pdfText(_("Scan to keep score in Scorekeeper.")), 0, 'L');
     }
 
     public function PrintPlayerList($homeplayers, $visitorplayers)
