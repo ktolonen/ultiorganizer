@@ -367,7 +367,7 @@ function SetGameComment($type, $gameId, $comment, $delete = false)
     // CanManageGameComment(), which can no longer recognise the author once
     // ApplyCommentChange() has logged the comment_delete.
     if ($type == COMMENT_TYPE_GAME && $change['action'] !== "noop") {
-        ScoresheetHistorySnapshotIfNeeded($gameId, false, false, "comment");
+        ScoresheetHistorySnapshotIfNeeded($gameId, false, "comment");
         ScoresheetHistoryRecord($gameId, "comment", $change['action'] === "delete" ? "remove" : "update", [
             'length' => strlen((string) $comment),
         ]);

@@ -68,12 +68,10 @@ define('WORD_DELIMITER', '/([\;\,\-_\s\/\.])/');
  *
  * Keep ENABLE_ADMIN_DB_ACCESS disabled in production; enabling it gives
  * superadmins direct SQL access. ALLOW_INSTALL should be true only while
- * running install.php. ANONYMOUS_RESULT_INPUT allows unauthenticated result
- * entry through the scorekeeper result view.
+ * running install.php.
  */
 define('ENABLE_ADMIN_DB_ACCESS', 'disabled');
 define('ALLOW_INSTALL', false);
-define('ANONYMOUS_RESULT_INPUT', false);
 
 /**
  * Public account and email policy.

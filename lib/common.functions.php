@@ -535,13 +535,6 @@ function getChkNum($sNum)
     return (10 - $chkSum % 10) % 10;
 }
 
-function checkChkNum($sNum)
-{
-    $chk = substr($sNum, -1);
-    $chkStr = substr($sNum, 0, -1);
-    return $chk == getChkNum($chkStr);
-}
-
 if (!function_exists('str_split')) {
     function str_split($string, $split_length = 1)
     {

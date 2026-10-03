@@ -39,8 +39,8 @@ read. `DBQueryCacheable()` then returns false for every read in that request, so
 all SELECTs go straight to the database.
 
 **All login-gated surfaces bypass the cache.** `lib/auth.guard.php` calls it
-first, so `admin/`, `user/`, `scorekeeper/`, `spiritkeeper/`, `result.php`
-and the `cust/*` member pages read live. Otherwise the GET after a
+first, so `admin/`, `user/`, `scorekeeper/`, `spiritkeeper/` and the `cust/*`
+member pages read live. Otherwise the GET after a
 Post/Redirect/Get could hit an entry cached by the previous GET and show
 pre-write state. The guard requires `lib/persistent-cache.functions.php`
 directly, since some callers include it before `lib/database.php`.

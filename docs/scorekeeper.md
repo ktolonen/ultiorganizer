@@ -11,7 +11,7 @@
 - `addscoresheet.php`: goal entry and live clock control.
 - `endgame.php`: confirmation before saving the final result.
 - `gameplay.php`: read-only replay.
-- `addresult.php`, `result.php`: aggregate result only.
+- `addresult.php`: aggregate result only.
 - Metadata pages: `addofficial.php` (scorekeeper name, stored in `official`), `addcomment.php`, `addfirstoffence.php`, `addhalftime.php`, `addscorecap.php`, `addtimeouts.php`, `addspirittimeouts.php`, `deletescore.php` (removes the latest goal), `scoreboard.php`.
 
 Workflow: open the game from `respgames.php`, set player lists, run the clock and enter goals, record metadata, confirm in `endgame.php`, review in `gameplay.php`.

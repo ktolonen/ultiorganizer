@@ -39,7 +39,7 @@ startSecureSession();
 
 
 
-if (!isset($_SESSION['uid']) && iget('view') != "result") {
+if (!isset($_SESSION['uid'])) {
     $_SESSION['uid'] = "anonymous";
     SetUserSessionData("anonymous");
     header("location:?view=login");

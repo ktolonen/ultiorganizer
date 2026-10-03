@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 12:54+0300\n"
+"POT-Creation-Date: 2026-10-03 14:02+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -25,9 +25,9 @@ msgstr ""
 msgid " (enter '0' if not live)"
 msgstr " (syötä '0', jos ei ole live)"
 
-#: cust/default/pdfscoresheet.php:180 cust/default/pdfscoresheet.php:190
-#: cust/default/teamplayers.functions.php:152 cust/slkl/pdfscoresheet.php:145
-#: cust/slkl/pdfscoresheet.php:155 user/teamplayers.php:168
+#: cust/default/pdfscoresheet.php:163 cust/default/pdfscoresheet.php:173
+#: cust/default/teamplayers.functions.php:152 cust/slkl/pdfscoresheet.php:128
+#: cust/slkl/pdfscoresheet.php:138 user/teamplayers.php:168
 msgid "#"
 msgstr "#"
 
@@ -36,12 +36,12 @@ msgstr "#"
 msgid "%d bulk translation values applied."
 msgstr "Otettiin käyttöön %d massakäännösarvoa."
 
-#: admin/serverconf.php:452
+#: admin/serverconf.php:450
 #, php-format
 msgid "%d cache files cleared."
 msgstr "%d välimuistitiedostoa tyhjennetty."
 
-#: admin/serverconf.php:355
+#: admin/serverconf.php:353
 #, php-format
 msgid "%d files, %s"
 msgstr "%d tiedostoa, %s"
@@ -56,7 +56,7 @@ msgstr "%d käännösavainta saatavilla."
 msgid "%d&nbsp;min."
 msgstr "%d&nbsp;min."
 
-#: lib/game.functions.php:847 lib/scoresheethistory.functions.php:730
+#: lib/game.functions.php:847 lib/scoresheethistory.functions.php:702
 #: user/scoresheethistory.php:189
 #, php-format
 msgid "%s - new point cap %d"
@@ -67,8 +67,8 @@ msgstr "%s - uusi pistekatto %d"
 msgid "%s called at"
 msgstr "%s ilmoitettu ajassa"
 
-#: lib/scoresheethistory.functions.php:634
-#: lib/scoresheethistory.functions.php:722
+#: lib/scoresheethistory.functions.php:606
+#: lib/scoresheethistory.functions.php:694
 #, php-format
 msgid "%s removed"
 msgstr "%s poistettu"
@@ -117,7 +117,7 @@ msgstr "-> %d"
 msgid "..."
 msgstr "..."
 
-#: cust/default/pdfscoresheet.php:240 cust/slkl/pdfscoresheet.php:205
+#: cust/default/pdfscoresheet.php:223 cust/slkl/pdfscoresheet.php:188
 msgid "1. Mark the team captain with the letter C into the info grid."
 msgstr "1. Merkitse joukkueen kapteeni kirjaimella C tietoruutuun."
 
@@ -125,7 +125,7 @@ msgstr "1. Merkitse joukkueen kapteeni kirjaimella C tietoruutuun."
 msgid "1st half"
 msgstr "1. puoliaika"
 
-#: cust/default/pdfscoresheet.php:241 cust/slkl/pdfscoresheet.php:206
+#: cust/default/pdfscoresheet.php:224 cust/slkl/pdfscoresheet.php:189
 msgid "2. Mark the spirit captain with the letters SC into the info grid."
 msgstr "2. Merkitse spiritkapteeni kirjaimilla SC tietoruutuun."
 
@@ -133,15 +133,15 @@ msgstr "2. Merkitse spiritkapteeni kirjaimilla SC tietoruutuun."
 msgid "2nd half"
 msgstr "2. puoliaika"
 
-#: cust/default/pdfscoresheet.php:242 cust/slkl/pdfscoresheet.php:207
+#: cust/default/pdfscoresheet.php:225 cust/slkl/pdfscoresheet.php:190
 msgid "3. Mark players who will play with an X in the Play column."
 msgstr "3. Merkitse pelaavat pelaajat X:llä Play-sarakkeeseen."
 
-#: admin/serverconf.php:430
+#: admin/serverconf.php:428
 msgid "3rd party API settings"
 msgstr "Ulkopuolisten palvelujen asennukset"
 
-#: cust/default/pdfscoresheet.php:243 cust/slkl/pdfscoresheet.php:208
+#: cust/default/pdfscoresheet.php:226 cust/slkl/pdfscoresheet.php:191
 msgid "4. Add jersey numbers for players in the # column."
 msgstr "4. Lisää pelaajien pelinumerot #-sarakkeeseen."
 
@@ -273,7 +273,7 @@ msgstr "Kuittaa"
 msgid "Acknowledged"
 msgstr "Kuitattu"
 
-#: lib/scoresheethistory.functions.php:949
+#: lib/scoresheethistory.functions.php:921
 #, php-format
 msgid ""
 "Acknowledgement not restored for player %s: accreditation right missing for "
@@ -379,14 +379,6 @@ msgstr "Lisää ensin sarjoja."
 msgid "Add reservation"
 msgstr "Lisää varaus"
 
-#: result.php:41
-msgid "Add result"
-msgstr "Lisää tulos"
-
-#: scorekeeper/result.php:36
-msgid "Add result by game ID"
-msgstr "Lisää tulos pelin ID:n perusteella"
-
 #: admin/seasonpoints.php:225
 msgid "Add round"
 msgstr "Lisää kierros"
@@ -461,7 +453,7 @@ msgstr ""
 msgid "Administration"
 msgstr "Hallinto"
 
-#: admin/select_userrole.php:25 admin/serverconf.php:421 user/userinfo.php:396
+#: admin/select_userrole.php:25 admin/serverconf.php:419 user/userinfo.php:396
 #: user/userinfo.php:501
 msgid "Administrator"
 msgstr "Ylläpitäjä"
@@ -481,10 +473,6 @@ msgid ""
 msgstr ""
 "Pelin jälkeen joukkueiden kapteenit vahvistavat pöytäkirjan "
 "allekirjoituksellaan."
-
-#: cust/default/pdfscoresheet.php:104 cust/slkl/pdfscoresheet.php:104
-msgid "After the match has ended, update result:"
-msgstr "Ottelun päätyttyä päivitä tulos:"
 
 #: cust/bula/pdfscoresheet.php:218 cust/gummis/pdfscoresheet.php:247
 #: cust/windmill/pdfscoresheet.php:219
@@ -700,8 +688,8 @@ msgstr ""
 "korvaavat tämän sarjan automaattiset sijoitukset."
 
 #: gameplay.php:253 cust/bula/pdfscoresheet.php:595
-#: cust/default/pdfscoresheet.php:601 cust/gummis/pdfscoresheet.php:664
-#: cust/slkl/pdfscoresheet.php:578 cust/wfdf/pdfscoresheet.php:1234
+#: cust/default/pdfscoresheet.php:584 cust/gummis/pdfscoresheet.php:664
+#: cust/slkl/pdfscoresheet.php:561 cust/wfdf/pdfscoresheet.php:1234
 #: cust/windmill/pdfscoresheet.php:596 scorekeeper/addscoresheet.php:437
 #: user/addscoresheet.php:859 user/scoresheethistory.php:560
 msgid "Assist"
@@ -714,7 +702,7 @@ msgstr "Maalin syöttäjä ei ole pelaajalistalla"
 #: gamecard.php:241 gamecard.php:247 gameplay.php:136 gameplay.php:157
 #: playerlist.php:36 poolstatus.php:161 poolstatus.php:187 seriesstatus.php:309
 #: teamcard.php:124 teamcard.php:169 ext/poolscoreboard.php:41
-#: ext/teamscoreboard.php:56 lib/common.functions.php:1727
+#: ext/teamscoreboard.php:56 lib/common.functions.php:1720
 msgid "Assists"
 msgstr "Syötöt"
 
@@ -742,7 +730,7 @@ msgstr "Automaattinen akkreditointi"
 msgid "Automatic final standings, not confirmed"
 msgstr "Automaattiset lopulliset sijoitukset, ei vahvistettu"
 
-#: teamcard.php:281 lib/common.functions.php:1738
+#: teamcard.php:281 lib/common.functions.php:1731
 msgid "Average"
 msgstr "Keskiarvo"
 
@@ -752,14 +740,14 @@ msgstr "Kaikkien pelien keskiarvo"
 
 #: admin/spirit.php:338 cust/bula/pdfscoresheet.php:462
 #: cust/bula/pdfscoresheet.php:493 cust/bula/pdfscoresheet.php:576
-#: cust/bula/pdfscoresheet.php:594 cust/default/pdfscoresheet.php:465
-#: cust/default/pdfscoresheet.php:496 cust/default/pdfscoresheet.php:583
-#: cust/default/pdfscoresheet.php:600 cust/default/pdfscoresheet.php:634
+#: cust/bula/pdfscoresheet.php:594 cust/default/pdfscoresheet.php:448
+#: cust/default/pdfscoresheet.php:479 cust/default/pdfscoresheet.php:566
+#: cust/default/pdfscoresheet.php:583 cust/default/pdfscoresheet.php:617
 #: cust/gummis/pdfscoresheet.php:548 cust/gummis/pdfscoresheet.php:579
 #: cust/gummis/pdfscoresheet.php:648 cust/gummis/pdfscoresheet.php:663
-#: cust/gummis/pdfscoresheet.php:694 cust/slkl/pdfscoresheet.php:439
-#: cust/slkl/pdfscoresheet.php:472 cust/slkl/pdfscoresheet.php:560
-#: cust/slkl/pdfscoresheet.php:577 cust/wfdf/pdfscoresheet.php:99
+#: cust/gummis/pdfscoresheet.php:694 cust/slkl/pdfscoresheet.php:422
+#: cust/slkl/pdfscoresheet.php:455 cust/slkl/pdfscoresheet.php:543
+#: cust/slkl/pdfscoresheet.php:560 cust/wfdf/pdfscoresheet.php:99
 #: cust/wfdf/pdfscoresheet.php:331 cust/wfdf/pdfscoresheet.php:439
 #: cust/windmill/pdfscoresheet.php:463 cust/windmill/pdfscoresheet.php:494
 #: cust/windmill/pdfscoresheet.php:577 cust/windmill/pdfscoresheet.php:595
@@ -768,29 +756,21 @@ msgstr "Kaikkien pelien keskiarvo"
 msgid "Away"
 msgstr "Vieras"
 
-#: result.php:101
-msgid "Away score"
-msgstr "Vierasjoukkueen pisteet"
-
 #: admin/spirit.php:320 admin/spirit.php:341
 msgid "Away spirit stoppages"
 msgstr "Vierasjoukkueen spirit-keskeytykset"
 
-#: cust/bula/pdfscoresheet.php:72 cust/default/pdfscoresheet.php:69
-#: cust/gummis/pdfscoresheet.php:70 cust/slkl/pdfscoresheet.php:69
-#: cust/windmill/pdfscoresheet.php:72 lib/scoresheethistory.functions.php:714
+#: cust/bula/pdfscoresheet.php:72 cust/default/pdfscoresheet.php:68
+#: cust/gummis/pdfscoresheet.php:70 cust/slkl/pdfscoresheet.php:68
+#: cust/windmill/pdfscoresheet.php:72 lib/scoresheethistory.functions.php:686
 #: user/adddefensesheet.php:209 user/addscoresheet.php:679
 msgid "Away team"
 msgstr "Vierasjoukkue"
 
-#: admin/editgame.php:278 lib/scoresheethistory.functions.php:645
+#: admin/editgame.php:278 lib/scoresheethistory.functions.php:617
 #: user/scoresheethistory.php:205
 msgid "Away team forfeited"
 msgstr "Vierasjoukkue luovutti"
-
-#: scorekeeper/result.php:97
-msgid "Away team score"
-msgstr "Vierasjoukkueen pisteet"
 
 #: cust/bula/head.php:12
 msgid "BULA"
@@ -863,7 +843,7 @@ msgstr "Beach Ultimate Lovers Association"
 msgid "Blogger"
 msgstr "Blogger"
 
-#: admin/editgame.php:279 lib/scoresheethistory.functions.php:646
+#: admin/editgame.php:279 lib/scoresheethistory.functions.php:618
 #: user/scoresheethistory.php:206
 msgid "Both teams forfeited"
 msgstr "Molemmat joukkueet luovuttivat"
@@ -906,15 +886,15 @@ msgstr "CSV-tiedostot"
 msgid "CSV separator"
 msgstr "CSV-erotin"
 
-#: admin/serverconf.php:343
+#: admin/serverconf.php:341
 msgid "Cache TTL (seconds)"
 msgstr "Välimuistin voimassaoloaika (sekuntia)"
 
-#: admin/serverconf.php:441
+#: admin/serverconf.php:439
 msgid "Cache settings"
 msgstr "Välimuistin asetukset"
 
-#: admin/serverconf.php:354
+#: admin/serverconf.php:352
 msgid "Cache size"
 msgstr "Välimuistin koko"
 
@@ -937,8 +917,8 @@ msgstr "Tilastojen laskeminen kestää jonkin aikaa. Odota sulkematta selainta."
 msgid "Call or discussion"
 msgstr "Rikehuuto tai keskustelu"
 
-#: cust/default/pdfscoresheet.php:638 cust/gummis/pdfscoresheet.php:698
-#: cust/wfdf/pdfscoresheet.php:1273 lib/common.functions.php:1730
+#: cust/default/pdfscoresheet.php:621 cust/gummis/pdfscoresheet.php:698
+#: cust/wfdf/pdfscoresheet.php:1273 lib/common.functions.php:1723
 #: user/adddefensesheet.php:358 user/scoresheethistory.php:96
 #: user/scoresheethistory.php:134
 msgid "Callahan"
@@ -957,7 +937,7 @@ msgstr "Callahan-puolustus"
 msgid "Callahan goal"
 msgstr "Callahan-maali"
 
-#: result.php:88 admin/eventdataimport.php:218 admin/seasonpools.php:314
+#: admin/eventdataimport.php:218 admin/seasonpools.php:314
 #: admin/seasonseries.php:181 admin/seasonteams.php:269
 #: admin/select_userrole.php:30 admin/select_userrole.php:35
 #: admin/select_userrole.php:38 admin/select_userrole.php:41
@@ -965,11 +945,11 @@ msgstr "Callahan-maali"
 #: admin/select_userrole.php:50 admin/select_userrole.php:53
 #: admin/select_userrole.php:56 admin/select_userrole.php:59
 #: admin/translations.php:547 admin/translations.php:549
-#: scorekeeper/addscoresheet.php:491 scorekeeper/result.php:88
-#: user/adddefensesheet.php:317 user/addscoresheet.php:819
-#: user/select_poolselector.php:26 user/select_poolselector.php:29
-#: user/select_poolselector.php:32 user/select_poolselector.php:35
-#: user/teamplayers.php:286 user/userinfo.php:292
+#: scorekeeper/addscoresheet.php:491 user/adddefensesheet.php:317
+#: user/addscoresheet.php:819 user/select_poolselector.php:26
+#: user/select_poolselector.php:29 user/select_poolselector.php:32
+#: user/select_poolselector.php:35 user/teamplayers.php:286
+#: user/userinfo.php:292
 msgid "Cancel"
 msgstr "Peruuta"
 
@@ -977,11 +957,11 @@ msgstr "Peruuta"
 msgid "Cancel and return to scoresheet"
 msgstr "Peruuta ja palaa pöytäkirjaan"
 
-#: lib/scoresheethistory.functions.php:719
+#: lib/scoresheethistory.functions.php:691
 msgid "Cap event"
 msgstr "Cap-tapahtuma"
 
-#: teamcard.php:53 lib/scoresheethistory.functions.php:604
+#: teamcard.php:53 lib/scoresheethistory.functions.php:576
 #: user/scoresheethistory.php:109 user/teamprofile.php:115
 msgid "Captain"
 msgstr "Kapteeni"
@@ -995,8 +975,8 @@ msgstr ""
 "Kapteenit vahvistavat joukkueen pelaajalistan: pelaajat jotka eivät pelaa "
 "yliviivataan ja tarvittaessa pelinumerot korjataan."
 
-#: cust/bula/pdfscoresheet.php:562 cust/default/pdfscoresheet.php:569
-#: cust/gummis/pdfscoresheet.php:636 cust/slkl/pdfscoresheet.php:544
+#: cust/bula/pdfscoresheet.php:562 cust/default/pdfscoresheet.php:552
+#: cust/gummis/pdfscoresheet.php:636 cust/slkl/pdfscoresheet.php:527
 #: cust/wfdf/pdfscoresheet.php:1155 cust/wfdf/pdfscoresheet.php:1189
 #: cust/windmill/pdfscoresheet.php:563
 msgid "Captains' signatures"
@@ -1006,7 +986,7 @@ msgstr "Kapteenien allekirjoitukset"
 msgid "Category"
 msgstr "Kategoria"
 
-#: cust/default/pdfscoresheet.php:637 cust/gummis/pdfscoresheet.php:697
+#: cust/default/pdfscoresheet.php:620 cust/gummis/pdfscoresheet.php:697
 #: cust/wfdf/pdfscoresheet.php:1271 user/adddefensesheet.php:357
 #: user/scoresheethistory.php:132
 msgid "Caught"
@@ -1040,17 +1020,9 @@ msgstr "Muuta pelin pelaajalista"
 msgid "Change game scoresheet"
 msgstr "Muuta pelin pöytäkirja"
 
-#: scorekeeper/result.php:74
-msgid "Change result to"
-msgstr "Muuta pelin tulos"
-
 #: spiritkeeper/teamgames.php:144
 msgid "Change team"
 msgstr "Vaihda joukkuetta"
-
-#: result.php:74
-msgid "Change the result to"
-msgstr "Muuta tulokseksi"
 
 #: admin/seasonscoresheethistory.php:43
 msgid "Changed outside the scheduled day"
@@ -1145,11 +1117,11 @@ msgstr ""
 msgid "Clear"
 msgstr "Tyhjennä"
 
-#: admin/serverconf.php:455
+#: admin/serverconf.php:453
 msgid "Clear cache"
 msgstr "Tyhjennä välimuisti"
 
-#: admin/serverconf.php:455
+#: admin/serverconf.php:453
 msgid "Clear cache?"
 msgstr "Tyhjennetäänkö välimuisti?"
 
@@ -1305,8 +1277,7 @@ msgstr "Kommunikaatio (meidän)"
 msgid "Communication (theirs)"
 msgstr "Kommunikaatio (heidän)"
 
-#: result.php:87 cust/default/teamplayers.functions.php:79
-#: scorekeeper/result.php:87 user/enrollteam.php:106
+#: cust/default/teamplayers.functions.php:79 user/enrollteam.php:106
 msgid "Confirm"
 msgstr "Vahvista"
 
@@ -1546,11 +1517,11 @@ msgstr "Tilanne"
 msgid "Current translation"
 msgstr "Nykyinen käännös"
 
-#: admin/serverconf.php:237
+#: admin/serverconf.php:235
 msgid "Customization"
 msgstr "Mukautus"
 
-#: admin/serverconf.php:238
+#: admin/serverconf.php:236
 msgid "Customization version"
 msgstr "Mukautuksen versio"
 
@@ -1590,7 +1561,7 @@ msgstr "Tietokannan yhdenmukaistaminen"
 msgid "Database size"
 msgstr "Tietokannan koko"
 
-#: admin/serverconf.php:236
+#: admin/serverconf.php:234
 msgid "Database version"
 msgstr "Tietokannan versio"
 
@@ -1613,15 +1584,15 @@ msgstr "Päivä"
 msgid "Default"
 msgstr "Oletus"
 
-#: admin/serverconf.php:388
+#: admin/serverconf.php:386
 msgid "Default Locale"
 msgstr "Oletuskieli"
 
-#: admin/serverconf.php:372
+#: admin/serverconf.php:370
 msgid "Default Timezone"
 msgstr "Oletusaikavyöhyke"
 
-#: lib/scoresheethistory.functions.php:679 user/adddefensesheet.php:134
+#: lib/scoresheethistory.functions.php:651 user/adddefensesheet.php:134
 #: user/adddefensesheet.php:139 user/adddefensesheet.php:165
 #: user/adddefensesheet.php:174
 msgid "Defence"
@@ -1636,7 +1607,7 @@ msgstr "Puolustuspörssi"
 msgid "Defence board leaders"
 msgstr "Puolustuspörssin kärki"
 
-#: cust/default/pdfscoresheet.php:125 cust/gummis/pdfscoresheet.php:121
+#: cust/default/pdfscoresheet.php:108 cust/gummis/pdfscoresheet.php:121
 msgid "Defence record"
 msgstr "Puolustuspöytäkirja"
 
@@ -1657,13 +1628,13 @@ msgstr "Puolustuspöytäkirja tallennettu"
 
 #: defensestatus.php:82 defensestatus.php:84 gameplay.php:679 gameplay.php:702
 #: teamcard.php:127 teamcard.php:432 teamcard.php:523
-#: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1732
-#: lib/scoresheethistory.functions.php:673 user/scoresheethistory.php:492
+#: cust/wfdf/pdfscoresheet.php:252 lib/common.functions.php:1725
+#: lib/scoresheethistory.functions.php:645 user/scoresheethistory.php:492
 #: user/scoresheethistory.php:660
 msgid "Defences"
 msgstr "Puolustukset"
 
-#: lib/scoresheethistory.functions.php:668
+#: lib/scoresheethistory.functions.php:640
 #, php-format
 msgid "Defences removed: %d"
 msgstr "Puolustuksia poistettu: %d"
@@ -1827,11 +1798,11 @@ msgstr ""
 "Suora tietokantakäyttö on poistettu käytöstä. Ota se käyttöön määrittämällä "
 "config.inc.php-tiedostossa ENABLE_ADMIN_DB_ACCESS arvoksi 'enabled'."
 
-#: admin/serverconf.php:321
+#: admin/serverconf.php:319
 msgid "Disable scoresheet history"
 msgstr "Poista pöytäkirjan historia käytöstä"
 
-#: admin/serverconf.php:310
+#: admin/serverconf.php:308
 msgid "Disable visitor logging"
 msgstr "Poista kävijäloki käytöstä"
 
@@ -1861,8 +1832,8 @@ msgstr "Hylätty"
 #: admin/spirit.php:231 admin/spirit.php:279 admin/spirit.php:334
 #: admin/spirit.php:541 admin/stats.php:139 admin/tdtools.php:24
 #: admin/tdtools.php:60 cust/bula/pdfscoresheet.php:73
-#: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
-#: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:281
+#: cust/default/pdfscoresheet.php:69 cust/gummis/pdfscoresheet.php:71
+#: cust/slkl/pdfscoresheet.php:69 cust/wfdf/pdfscoresheet.php:281
 #: cust/wfdf/pdfscoresheet.php:1604 cust/windmill/pdfscoresheet.php:73
 #: lib/search.functions.php:36 lib/search.functions.php:70
 #: lib/search.functions.php:78 lib/search.functions.php:112
@@ -1944,7 +1915,7 @@ msgstr "Lataa pelaajan tietosuojaraportti"
 msgid "Download registered user privacy report"
 msgstr "Lataa rekisteröidyn käyttäjän tietosuojaraportti"
 
-#: lib/common.functions.php:1714
+#: lib/common.functions.php:1707
 msgid "Draws"
 msgstr "Tasapelit"
 
@@ -2181,12 +2152,7 @@ msgstr "Syötä uusi salasanasi alle."
 msgid "Equalization"
 msgstr "Yhdenmukaistaminen"
 
-#: lib/game.functions.php:1328
-msgid "Erroneous scoresheet number:"
-msgstr "Virheellinen pöytäkirjan numero:"
-
 #: scorekeeper/addresult.php:25 scorekeeper/addresult.php:38
-#: scorekeeper/result.php:27
 msgid "Error: Could not save result."
 msgstr "Virhe: Tuloksia ei voitu tallentaa."
 
@@ -2194,7 +2160,7 @@ msgstr "Virhe: Tuloksia ei voitu tallentaa."
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:2718
+#: lib/game.functions.php:2678
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -2276,7 +2242,7 @@ msgstr "Tapahtuman määrittely pakollista"
 msgid "Event not found"
 msgstr "Tapahtumaa ei löydy"
 
-#: lib/game.functions.php:1340 lib/scoresheethistory.functions.php:792
+#: lib/scoresheethistory.functions.php:764
 msgid "Event played."
 msgstr "Tapahtuma pelattu."
 
@@ -2425,8 +2391,8 @@ msgid "Fetch coordinates"
 msgstr "Hae koordinaatit"
 
 #: games.php:258 cust/bula/pdfscoresheet.php:74 cust/default/pdfschedule.php:87
-#: cust/default/pdfschedule.php:215 cust/default/pdfscoresheet.php:71
-#: cust/gummis/pdfscoresheet.php:72 cust/slkl/pdfscoresheet.php:71
+#: cust/default/pdfschedule.php:215 cust/default/pdfscoresheet.php:70
+#: cust/gummis/pdfscoresheet.php:72 cust/slkl/pdfscoresheet.php:70
 #: cust/wfdf/pdfschedule.php:178 cust/wfdf/pdfschedule.php:312
 #: cust/wfdf/pdfscoresheet.php:280 cust/windmill/pdfscoresheet.php:74
 #: lib/reservation.functions.php:30 lib/reservation.functions.php:36
@@ -2484,11 +2450,11 @@ msgstr "Täytä rekisteröitymistiedot alla oleviin kenttiin."
 msgid "Fill in the scoresheet"
 msgstr "Syötä pelin pöytäkirja"
 
-#: cust/default/pdfscoresheet.php:239 cust/slkl/pdfscoresheet.php:204
+#: cust/default/pdfscoresheet.php:222 cust/slkl/pdfscoresheet.php:187
 msgid "Filling instructions:"
 msgstr "Täyttöohjeet:"
 
-#: lib/scoresheethistory.functions.php:573 user/scoresheethistory.php:237
+#: lib/scoresheethistory.functions.php:545 user/scoresheethistory.php:237
 msgid "Final"
 msgstr "Lopullinen"
 
@@ -2501,8 +2467,8 @@ msgstr "Lopputulos"
 msgid "Final result saved: %s - %s."
 msgstr "Lopputulos tallennettu: %s - %s."
 
-#: cust/bula/pdfscoresheet.php:622 cust/default/pdfscoresheet.php:664
-#: cust/gummis/pdfscoresheet.php:721 cust/slkl/pdfscoresheet.php:606
+#: cust/bula/pdfscoresheet.php:622 cust/default/pdfscoresheet.php:647
+#: cust/gummis/pdfscoresheet.php:721 cust/slkl/pdfscoresheet.php:589
 #: cust/wfdf/pdfscoresheet.php:1079 cust/wfdf/pdfscoresheet.php:1188
 #: cust/wfdf/pdfscoresheet.php:1376 cust/windmill/pdfscoresheet.php:623
 #: user/adddefensesheet.php:303 user/addscoresheet.php:772
@@ -2547,8 +2513,8 @@ msgstr "Lopulliset sijoitukset tyhjennetty."
 msgid "Final standings saved."
 msgstr "Lopulliset sijoitukset tallennettu."
 
-#: cust/slkl/head.php:23 cust/slkl/pdfscoresheet.php:54
-#: cust/slkl/pdfscoresheet.php:116
+#: cust/slkl/head.php:23 cust/slkl/pdfscoresheet.php:53
+#: cust/slkl/pdfscoresheet.php:99
 msgid "Finnish Flying Disc Association"
 msgstr "Suomen Liitokiekkoliitto"
 
@@ -2560,7 +2526,7 @@ msgstr "Ensimmäinen"
 msgid "First Name"
 msgstr "Etunimi"
 
-#: cust/default/pdfscoresheet.php:510 cust/slkl/pdfscoresheet.php:486
+#: cust/default/pdfscoresheet.php:493 cust/slkl/pdfscoresheet.php:469
 #: cust/wfdf/pdfscoresheet.php:401
 msgid "First Offence"
 msgstr "Ensimmäinen hyökkäys"
@@ -2618,7 +2584,7 @@ msgstr ""
 "Listaa lisättäville pelaajille on ilmoitettava joko jäsennumero tai "
 "syntymäaika."
 
-#: admin/editgame.php:287 lib/scoresheethistory.functions.php:649
+#: admin/editgame.php:287 lib/scoresheethistory.functions.php:621
 #: user/scoresheethistory.php:470
 msgid "Forfeit"
 msgstr "Luovutus"
@@ -2717,17 +2683,17 @@ msgstr "TM ka."
 #: admin/accreditation.php:137 admin/editgame.php:24
 #: admin/seasonscoresheethistory.php:54 admin/spirit.php:366
 #: admin/tdtools.php:90 cust/bula/pdfscoresheet.php:248
-#: cust/default/pdfscoresheet.php:273 cust/fpudd/pdfscoresheet.php:282
-#: cust/gummis/pdfscoresheet.php:273 cust/slkl/pdfscoresheet.php:238
+#: cust/default/pdfscoresheet.php:256 cust/fpudd/pdfscoresheet.php:282
+#: cust/gummis/pdfscoresheet.php:273 cust/slkl/pdfscoresheet.php:221
 #: cust/wfdf/pdfscoresheet.php:659 cust/wfdf/pdfscoresheet.php:1586
 #: cust/windmill/pdfscoresheet.php:249 lib/search.functions.php:864
 msgid "Game"
 msgstr "Peli"
 
 #: cust/bula/pdfscoresheet.php:70 cust/bula/pdfscoresheet.php:263
-#: cust/default/pdfscoresheet.php:67 cust/fpudd/pdfscoresheet.php:297
+#: cust/default/pdfscoresheet.php:66 cust/fpudd/pdfscoresheet.php:297
 #: cust/gummis/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:283
-#: cust/slkl/pdfscoresheet.php:67 cust/wfdf/pdfscoresheet.php:283
+#: cust/slkl/pdfscoresheet.php:66 cust/wfdf/pdfscoresheet.php:283
 #: cust/wfdf/pdfscoresheet.php:674 cust/windmill/pdfscoresheet.php:70
 #: cust/windmill/pdfscoresheet.php:264
 msgid "Game #"
@@ -2770,7 +2736,7 @@ msgstr "Pelin kuittaus"
 msgid "Game card"
 msgstr "Pelikortti"
 
-#: lib/scoresheethistory.functions.php:624 scorekeeper/addscoresheet.php:311
+#: lib/scoresheethistory.functions.php:596 scorekeeper/addscoresheet.php:311
 #: scorekeeper/addscoresheet.php:364 timekeeper/index.php:162
 #: timekeeper/index.php:186 user/scoresheethistory.php:479
 msgid "Game clock"
@@ -2784,7 +2750,7 @@ msgstr "Pelikellon aikarajat"
 msgid "Game events"
 msgstr "Pelitapahtumat"
 
-#: lib/scoresheethistory.functions.php:703
+#: lib/scoresheethistory.functions.php:675
 #, php-format
 msgid "Game events removed: %d"
 msgstr "Pelitapahtumia poistettu: %d"
@@ -2797,17 +2763,9 @@ msgstr "Peli päättyi: kirjaa lopputulos ja pyydä kapteenin allekirjoitus."
 msgid "Game has"
 msgstr "Pelissä tehty"
 
-#: scorekeeper/result.php:72
-msgid "Game has already been played. Current result:"
-msgstr "Peli on jo pelattu. Nykyinen tulos:"
-
 #: scorekeeper/addscoresheet.php:523
 msgid "Game has ended"
 msgstr "Peli on päättynyt"
-
-#: lib/game.functions.php:1332
-msgid "Game has no pool."
-msgstr "Pelillä ei ole lohkoa."
 
 #: gameplay.php:660 teamcard.php:812 lib/timetable.functions.php:693
 msgid "Game history"
@@ -2843,19 +2801,15 @@ msgstr "Peliä ei löydy"
 msgid "Game not started yet."
 msgstr "Peli ei ole vielä alkanut."
 
-#: gameplay.php:647 lib/scoresheethistory.functions.php:697
+#: gameplay.php:647 lib/scoresheethistory.functions.php:669
 #: scorekeeper/addcomment.php:28 scorekeeper/addscoresheet.php:508
 #: user/addscoresheet.php:692
 msgid "Game note"
 msgstr "Peli-kommentti"
 
-#: lib/scoresheethistory.functions.php:694
+#: lib/scoresheethistory.functions.php:666
 msgid "Game note removed"
 msgstr "Peli-kommentti poistettu"
-
-#: scorekeeper/result.php:91
-msgid "Game number from scoresheet"
-msgstr "Pelin numero pöytäkirjasta"
 
 #: cust/bula/pdfscoresheet.php:76 cust/gummis/pdfscoresheet.php:74
 #: cust/windmill/pdfscoresheet.php:76
@@ -2955,7 +2909,7 @@ msgstr "Yhteenveto pelin kulusta"
 #: admin/seasonstandings.php:313 admin/seasonstandings.php:370
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seriesgames.php:31
 #: admin/seriesgames.php:41 admin/stats.php:138 ext/poolscoreboard.php:40
-#: ext/teamscoreboard.php:55 lib/common.functions.php:1710
+#: ext/teamscoreboard.php:55 lib/common.functions.php:1703
 #: lib/search.functions.php:786
 msgid "Games"
 msgstr "Pelit"
@@ -2967,10 +2921,6 @@ msgstr "Pelit ovat jo olemassa."
 #: scorekeeper/respgames.php:79
 msgid "Games in selected event"
 msgstr "Vastuupelit valitussa tapahtumassa"
-
-#: scorekeeper/result.php:102
-msgid "Games list"
-msgstr "Ottelut"
 
 #: user/teamplayers.php:31
 msgid "Games played in the team:"
@@ -3049,8 +2999,8 @@ msgid "Go to top"
 msgstr "Mene alkuun"
 
 #: gameplay.php:253 cust/bula/pdfscoresheet.php:596
-#: cust/default/pdfscoresheet.php:602 cust/gummis/pdfscoresheet.php:665
-#: cust/slkl/pdfscoresheet.php:579 cust/wfdf/pdfscoresheet.php:1235
+#: cust/default/pdfscoresheet.php:585 cust/gummis/pdfscoresheet.php:665
+#: cust/slkl/pdfscoresheet.php:562 cust/wfdf/pdfscoresheet.php:1235
 #: cust/windmill/pdfscoresheet.php:597
 msgid "Goal"
 msgstr "Maali"
@@ -3063,11 +3013,11 @@ msgstr "Maalin aika"
 #: gameplay.php:540 playerlist.php:37 poolstatus.php:161 poolstatus.php:187
 #: poolstatus.php:302 seriesstatus.php:309 teamcard.php:125 teamcard.php:170
 #: ext/poolscoreboard.php:42 ext/teamscoreboard.php:57
-#: lib/common.functions.php:1725
+#: lib/common.functions.php:1718
 msgid "Goals"
 msgstr "Maalit"
 
-#: lib/common.functions.php:1720
+#: lib/common.functions.php:1713
 msgid "Goals against"
 msgstr "Päästetyt maalit"
 
@@ -3075,11 +3025,11 @@ msgstr "Päästetyt maalit"
 msgid "Goals against avg."
 msgstr "Päästettyjen maalien ka."
 
-#: lib/common.functions.php:1722
+#: lib/common.functions.php:1715
 msgid "Goals diff"
 msgstr "Maaliero"
 
-#: lib/common.functions.php:1718
+#: lib/common.functions.php:1711
 msgid "Goals for"
 msgstr "Tehdyt maalit"
 
@@ -3112,7 +3062,7 @@ msgstr "Tehdyt maalit"
 msgid "Gold"
 msgstr "Kulta"
 
-#: admin/serverconf.php:263
+#: admin/serverconf.php:261
 msgid "Google Maps key"
 msgstr "Google Maps avain"
 
@@ -3143,8 +3093,8 @@ msgid "Gummis"
 msgstr "Gummis"
 
 #: gameplay.php:276 admin/addseasonpools.php:435 admin/addserieformats.php:125
-#: lib/scoresheethistory.functions.php:634
-#: lib/scoresheethistory.functions.php:636 lib/timekeeper.functions.php:17
+#: lib/scoresheethistory.functions.php:606
+#: lib/scoresheethistory.functions.php:608 lib/timekeeper.functions.php:17
 #: lib/timekeeper.functions.php:37 scorekeeper/addscoresheet.php:502
 #: scorekeeper/endgame.php:102 scorekeeper/gameplay.php:79
 #: timekeeper/index.php:46 user/addscoresheet.php:322
@@ -3175,7 +3125,7 @@ msgstr "Puoliaika päättyi ajassa"
 msgid "Halftime ends"
 msgstr "Puoliaika päättyi"
 
-#: cust/default/pdfscoresheet.php:82 cust/slkl/pdfscoresheet.php:82
+#: cust/default/pdfscoresheet.php:81 cust/slkl/pdfscoresheet.php:81
 msgid "Halftime ends (time)"
 msgstr "Puoliaika päättyy (aika)"
 
@@ -3256,14 +3206,14 @@ msgstr "Historia"
 
 #: admin/spirit.php:336 cust/bula/pdfscoresheet.php:451
 #: cust/bula/pdfscoresheet.php:482 cust/bula/pdfscoresheet.php:568
-#: cust/bula/pdfscoresheet.php:593 cust/default/pdfscoresheet.php:454
-#: cust/default/pdfscoresheet.php:485 cust/default/pdfscoresheet.php:575
-#: cust/default/pdfscoresheet.php:599 cust/default/pdfscoresheet.php:633
+#: cust/bula/pdfscoresheet.php:593 cust/default/pdfscoresheet.php:437
+#: cust/default/pdfscoresheet.php:468 cust/default/pdfscoresheet.php:558
+#: cust/default/pdfscoresheet.php:582 cust/default/pdfscoresheet.php:616
 #: cust/gummis/pdfscoresheet.php:538 cust/gummis/pdfscoresheet.php:568
 #: cust/gummis/pdfscoresheet.php:641 cust/gummis/pdfscoresheet.php:662
-#: cust/gummis/pdfscoresheet.php:693 cust/slkl/pdfscoresheet.php:428
-#: cust/slkl/pdfscoresheet.php:461 cust/slkl/pdfscoresheet.php:552
-#: cust/slkl/pdfscoresheet.php:576 cust/wfdf/pdfscoresheet.php:96
+#: cust/gummis/pdfscoresheet.php:693 cust/slkl/pdfscoresheet.php:411
+#: cust/slkl/pdfscoresheet.php:444 cust/slkl/pdfscoresheet.php:535
+#: cust/slkl/pdfscoresheet.php:559 cust/wfdf/pdfscoresheet.php:96
 #: cust/wfdf/pdfscoresheet.php:320 cust/wfdf/pdfscoresheet.php:428
 #: cust/windmill/pdfscoresheet.php:452 cust/windmill/pdfscoresheet.php:483
 #: cust/windmill/pdfscoresheet.php:569 cust/windmill/pdfscoresheet.php:594
@@ -3272,22 +3222,18 @@ msgstr "Historia"
 msgid "Home"
 msgstr "Koti"
 
-#: lib/scoresheethistory.functions.php:662
+#: lib/scoresheethistory.functions.php:634
 msgid "Home and away teams swapped"
 msgstr "Koti- ja vierasjoukkue vaihdettu"
-
-#: result.php:97
-msgid "Home score"
-msgstr "Kotijoukkueen pisteet"
 
 #: admin/spirit.php:319 admin/spirit.php:340
 msgid "Home spirit stoppages"
 msgstr "Kotijoukkueen spirit-keskeytykset"
 
 #: admin/editgame.php:203 cust/bula/pdfscoresheet.php:71
-#: cust/default/pdfscoresheet.php:68 cust/gummis/pdfscoresheet.php:69
-#: cust/slkl/pdfscoresheet.php:68 cust/windmill/pdfscoresheet.php:71
-#: lib/scoresheethistory.functions.php:714 user/adddefensesheet.php:207
+#: cust/default/pdfscoresheet.php:67 cust/gummis/pdfscoresheet.php:69
+#: cust/slkl/pdfscoresheet.php:67 cust/windmill/pdfscoresheet.php:71
+#: lib/scoresheethistory.functions.php:686 user/adddefensesheet.php:207
 #: user/addscoresheet.php:677
 msgid "Home team"
 msgstr "Kotijoukkue"
@@ -3296,7 +3242,7 @@ msgstr "Kotijoukkue"
 msgid "Home team assignment"
 msgstr "Kotijoukkueen määritys"
 
-#: admin/editgame.php:277 lib/scoresheethistory.functions.php:644
+#: admin/editgame.php:277 lib/scoresheethistory.functions.php:616
 #: user/scoresheethistory.php:204
 msgid "Home team forfeited"
 msgstr "Kotijoukkue luovutti"
@@ -3306,13 +3252,9 @@ msgstr "Kotijoukkue luovutti"
 msgid "Home team has rights to edit game scoresheet"
 msgstr "Kotijoukkueella on oikeus muuttaa pelin pöytäkirjaa"
 
-#: admin/serverconf.php:361
+#: admin/serverconf.php:359
 msgid "Home team is game responsible"
 msgstr "Kotijoukkue on vastuussa pelistä"
-
-#: scorekeeper/result.php:94
-msgid "Home team score"
-msgstr "Kotijoukkueen pisteet"
 
 #: clubcard.php:67 menufunctions.php:286 menufunctions.php:292
 #: lib/url.functions.php:128
@@ -3451,11 +3393,11 @@ msgstr "Sisäkenttä"
 
 #: admin/addlocations.php:160 cust/bula/pdfscoresheet.php:143
 #: cust/bula/pdfscoresheet.php:153 cust/bula/pdfscoresheet.php:264
-#: cust/default/pdfscoresheet.php:181 cust/default/pdfscoresheet.php:191
-#: cust/default/pdfscoresheet.php:289 cust/fpudd/pdfscoresheet.php:298
+#: cust/default/pdfscoresheet.php:164 cust/default/pdfscoresheet.php:174
+#: cust/default/pdfscoresheet.php:272 cust/fpudd/pdfscoresheet.php:298
 #: cust/gummis/pdfscoresheet.php:173 cust/gummis/pdfscoresheet.php:183
-#: cust/gummis/pdfscoresheet.php:284 cust/slkl/pdfscoresheet.php:146
-#: cust/slkl/pdfscoresheet.php:156 cust/slkl/pdfscoresheet.php:254
+#: cust/gummis/pdfscoresheet.php:284 cust/slkl/pdfscoresheet.php:129
+#: cust/slkl/pdfscoresheet.php:139 cust/slkl/pdfscoresheet.php:237
 #: cust/wfdf/pdfscoresheet.php:675 cust/windmill/pdfscoresheet.php:144
 #: cust/windmill/pdfscoresheet.php:154 cust/windmill/pdfscoresheet.php:265
 #: scorekeeper/addplayerlists.php:171 user/addplayerlists.php:300
@@ -3483,7 +3425,7 @@ msgstr ""
 msgid "Installation"
 msgstr "Asennus"
 
-#: admin/serverconf.php:241
+#: admin/serverconf.php:239
 msgid "Installation configuration"
 msgstr "Asennuksen asetukset"
 
@@ -3521,7 +3463,7 @@ msgstr "Ei oikeuksia."
 msgid "Insufficient user rights"
 msgstr "Riittämättömät käyttöoikeudet."
 
-#: admin/serverconf.php:436
+#: admin/serverconf.php:434
 msgid "Internal settings"
 msgstr "Sisäiset asetukset"
 
@@ -3560,7 +3502,7 @@ msgstr "Virheellinen peli."
 msgid "Invalid link target."
 msgstr "Virheellinen linkkikohde."
 
-#: install.php:739
+#: install.php:733
 msgid "Invalid password (min. 5, max. 20 characters)."
 msgstr "Virheellinen salasana (vähintään 5 ja enintään 20 merkkiä)."
 
@@ -3623,7 +3565,7 @@ msgstr ""
 "Virheellinen käyttäjätunnus tai salasana. Ota yhteyttä "
 "järjestelmänvalvojaan, jos sinun täytyy nollata salasanasi."
 
-#: cust/default/pdfscoresheet.php:288 cust/slkl/pdfscoresheet.php:253
+#: cust/default/pdfscoresheet.php:271 cust/slkl/pdfscoresheet.php:236
 #: scorekeeper/addplayerlists.php:170 user/addplayerlists.php:300
 #: user/addplayerlists.php:379
 msgid "Jersey"
@@ -3633,8 +3575,8 @@ msgstr "Pelinumero"
 msgid "Jersey number"
 msgstr "Pelinumero"
 
-#: cust/bula/pdfscoresheet.php:589 cust/default/pdfscoresheet.php:595
-#: cust/gummis/pdfscoresheet.php:658 cust/slkl/pdfscoresheet.php:572
+#: cust/bula/pdfscoresheet.php:589 cust/default/pdfscoresheet.php:578
+#: cust/gummis/pdfscoresheet.php:658 cust/slkl/pdfscoresheet.php:555
 #: cust/windmill/pdfscoresheet.php:590
 msgid "Jersey numbers"
 msgstr "Pelinumerot"
@@ -3870,7 +3812,7 @@ msgstr "Pituusaste"
 msgid "Losers continue in:"
 msgstr "Häviäjä jatkaa:"
 
-#: lib/common.functions.php:1716
+#: lib/common.functions.php:1709
 msgid "Losses"
 msgstr "Tappiot"
 
@@ -3939,7 +3881,7 @@ msgstr "Massa akkreditointi"
 msgid "Mass input"
 msgstr "Joukkosyöttäminen"
 
-#: lib/scoresheethistory.functions.php:700
+#: lib/scoresheethistory.functions.php:672
 msgid "Media added"
 msgstr "Media lisätty"
 
@@ -3947,7 +3889,7 @@ msgstr "Media lisätty"
 msgid "Media owner"
 msgstr "Median omistaja"
 
-#: lib/scoresheethistory.functions.php:700
+#: lib/scoresheethistory.functions.php:672
 msgid "Media removed"
 msgstr "Media poistettu"
 
@@ -3964,11 +3906,11 @@ msgstr "Jäsenmaksu"
 msgid "Membership database (a file with .csv suffix)"
 msgstr "Jäsenrekisterikantatiedosto (.cvs -päätteinen tiedosto)"
 
-#: admin/addseasonlinks.php:79 admin/serverconf.php:419
+#: admin/addseasonlinks.php:79 admin/serverconf.php:417
 msgid "Menu link"
 msgstr "Valikkolinkki"
 
-#: admin/addseasonlinks.php:80 admin/serverconf.php:420
+#: admin/addseasonlinks.php:80 admin/serverconf.php:418
 msgid "Menu mail"
 msgstr "Valikko e-mail"
 
@@ -4145,15 +4087,15 @@ msgstr "HUOM"
 #: admin/seasonpools.php:119 admin/seasons.php:91 admin/seasonseries.php:76
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seasonteams.php:174
 #: admin/serieformats.php:29 admin/seriesseeding.php:46
-#: admin/serieteams.php:156 admin/serverconf.php:404
+#: admin/serieteams.php:156 admin/serverconf.php:402
 #: admin/timekeepertemplates.php:31 cust/bula/pdfscoresheet.php:141
 #: cust/bula/pdfscoresheet.php:151 cust/bula/pdfscoresheet.php:261
-#: cust/default/pdfscoresheet.php:178 cust/default/pdfscoresheet.php:188
-#: cust/default/pdfscoresheet.php:286 cust/fpudd/pdfscoresheet.php:193
+#: cust/default/pdfscoresheet.php:161 cust/default/pdfscoresheet.php:171
+#: cust/default/pdfscoresheet.php:269 cust/fpudd/pdfscoresheet.php:193
 #: cust/fpudd/pdfscoresheet.php:295 cust/gummis/pdfscoresheet.php:171
 #: cust/gummis/pdfscoresheet.php:181 cust/gummis/pdfscoresheet.php:281
-#: cust/slkl/pdfscoresheet.php:143 cust/slkl/pdfscoresheet.php:153
-#: cust/slkl/pdfscoresheet.php:251 cust/wfdf/pdfscoresheet.php:672
+#: cust/slkl/pdfscoresheet.php:126 cust/slkl/pdfscoresheet.php:136
+#: cust/slkl/pdfscoresheet.php:234 cust/wfdf/pdfscoresheet.php:672
 #: cust/windmill/pdfscoresheet.php:142 cust/windmill/pdfscoresheet.php:152
 #: cust/windmill/pdfscoresheet.php:262 lib/search.functions.php:159
 #: lib/search.functions.php:225 lib/search.functions.php:632
@@ -4336,10 +4278,6 @@ msgstr "Ei pelejä"
 msgid "No games to move"
 msgstr "Ei siirrettäviä pelejä"
 
-#: lib/game.functions.php:1343
-msgid "No goals."
-msgstr "Ei maaleja."
-
 #: ext/image.php:64 user/clubprofile.php:244 user/playerprofile.php:383
 #: user/teamprofile.php:183
 msgid "No image"
@@ -4465,7 +4403,7 @@ msgstr "Yhtään tokenia ei poistettu."
 msgid "No tokens created."
 msgstr "Tokeneita ei ole luotu."
 
-#: admin/editgame.php:276 lib/scoresheethistory.functions.php:643
+#: admin/editgame.php:276 lib/scoresheethistory.functions.php:615
 #: lib/translation.functions.php:119 user/scoresheethistory.php:75
 #: user/scoresheethistory.php:203 user/scoresheethistory.php:519
 #: user/scoresheethistory.php:707
@@ -4547,7 +4485,7 @@ msgid "One simple score"
 msgstr "Yksi yksinkertainen pisteytys"
 
 #: poolstatus.php:913 poolstatus.php:915 admin/seasongames.php:190
-#: lib/scoresheethistory.functions.php:572 lib/timetable.functions.php:711
+#: lib/scoresheethistory.functions.php:544 lib/timetable.functions.php:711
 #: lib/timetable.functions.php:713 scorekeeper/respgames.php:193
 #: user/scoresheethistory.php:234
 msgid "Ongoing"
@@ -4617,7 +4555,7 @@ msgstr "Valinnainen, kun sähköposti on poistettu käytöstä."
 
 #: admin/addseasonlinks.php:64 admin/addseasonpools.php:243
 #: admin/addseasonpools.php:281 admin/addseasonseries.php:108
-#: admin/seasonpools.php:120 admin/serverconf.php:404
+#: admin/seasonpools.php:120 admin/serverconf.php:402
 msgid "Order"
 msgstr "Järjestys"
 
@@ -4663,7 +4601,7 @@ msgstr "Sivulataukset"
 msgid "Page loads per page"
 msgstr "Latauksia per sivu"
 
-#: admin/serverconf.php:255
+#: admin/serverconf.php:253
 msgid "Page title"
 msgstr "Sivunotsikko"
 
@@ -4726,7 +4664,7 @@ msgstr "Salasanat eivät täsmää."
 msgid "Pause"
 msgstr "Keskeytä"
 
-#: lib/scoresheethistory.functions.php:620 scorekeeper/addscoresheet.php:348
+#: lib/scoresheethistory.functions.php:592 scorekeeper/addscoresheet.php:348
 #: scorekeeper/addspirittimeouts.php:104
 msgid "Pause game clock"
 msgstr "Keskeytä pelikello"
@@ -4754,7 +4692,7 @@ msgstr "Tauko: %s&thinsp;min."
 msgid "Paused"
 msgstr "Keskeytetty"
 
-#: admin/serverconf.php:332
+#: admin/serverconf.php:330
 msgid "Persistent cache"
 msgstr "Pysyvä välimuisti"
 
@@ -4784,11 +4722,11 @@ msgstr "Sijoitus"
 msgid "Placement pool"
 msgstr "Sijoituslohko"
 
-#: cust/bula/pdfscoresheet.php:262 cust/default/pdfscoresheet.php:179
-#: cust/default/pdfscoresheet.php:189 cust/default/pdfscoresheet.php:287
+#: cust/bula/pdfscoresheet.php:262 cust/default/pdfscoresheet.php:162
+#: cust/default/pdfscoresheet.php:172 cust/default/pdfscoresheet.php:270
 #: cust/fpudd/pdfscoresheet.php:296 cust/gummis/pdfscoresheet.php:282
-#: cust/slkl/pdfscoresheet.php:144 cust/slkl/pdfscoresheet.php:154
-#: cust/slkl/pdfscoresheet.php:252 cust/wfdf/pdfscoresheet.php:673
+#: cust/slkl/pdfscoresheet.php:127 cust/slkl/pdfscoresheet.php:137
+#: cust/slkl/pdfscoresheet.php:235 cust/wfdf/pdfscoresheet.php:673
 #: cust/windmill/pdfscoresheet.php:263
 msgid "Play"
 msgstr "Pelaa"
@@ -4809,7 +4747,7 @@ msgstr "Pudotuspelit"
 msgid "Played"
 msgstr "Pelattu"
 
-#: gamecard.php:140 result.php:110 seasonlist.php:32
+#: gamecard.php:140 seasonlist.php:32
 msgid "Played games"
 msgstr "Pelatut pelit"
 
@@ -4819,24 +4757,24 @@ msgstr "Pelatut pelit"
 #: seriesstatus.php:308 seriesstatus.php:328 admin/accreditation.php:96
 #: admin/accreditation.php:117 admin/accreditation.php:136
 #: admin/accreditation.php:195 admin/accreditation.php:257
-#: cust/default/pdfscoresheet.php:635 cust/gummis/pdfscoresheet.php:695
+#: cust/default/pdfscoresheet.php:618 cust/gummis/pdfscoresheet.php:695
 #: cust/wfdf/pdfscoresheet.php:1270 ext/poolscoreboard.php:38
-#: ext/teamscoreboard.php:54 lib/scoresheethistory.functions.php:612
+#: ext/teamscoreboard.php:54 lib/scoresheethistory.functions.php:584
 #: user/adddefensesheet.php:357 user/scoresheethistory.php:626
 #: user/scoresheethistory.php:665
 msgid "Player"
 msgstr "Pelaaja"
 
-#: lib/scoresheethistory.functions.php:887
-#: lib/scoresheethistory.functions.php:910
-#: lib/scoresheethistory.functions.php:1011
+#: lib/scoresheethistory.functions.php:859
+#: lib/scoresheethistory.functions.php:882
+#: lib/scoresheethistory.functions.php:983
 #, php-format
 msgid "Player %s could not be restored."
 msgstr "Pelaajaa %s ei voitu palauttaa."
 
-#: lib/scoresheethistory.functions.php:874
-#: lib/scoresheethistory.functions.php:904
-#: lib/scoresheethistory.functions.php:919
+#: lib/scoresheethistory.functions.php:846
+#: lib/scoresheethistory.functions.php:876
+#: lib/scoresheethistory.functions.php:891
 #, php-format
 msgid ""
 "Player %s could not be restored: jersey number %d is not unique on team %s."
@@ -4844,7 +4782,7 @@ msgstr ""
 "Pelaajaa %s ei voitu palauttaa: pelinumero %d ei ole yksilöllinen "
 "joukkueessa %s."
 
-#: lib/scoresheethistory.functions.php:865
+#: lib/scoresheethistory.functions.php:837
 #, php-format
 msgid ""
 "Player %s now plays for %s, so their restored roster entry lists under that "
@@ -4940,7 +4878,7 @@ msgstr "Pelissä pelanneet pelaajat"
 msgid "Players not accredited"
 msgstr "Akkreditoimattomat pelaajat"
 
-#: lib/scoresheethistory.functions.php:600
+#: lib/scoresheethistory.functions.php:572
 msgid "Players removed"
 msgstr "Pelaajia poistettu"
 
@@ -4982,8 +4920,8 @@ msgstr "Valitse kelvollinen sarja."
 msgid "Plugins"
 msgstr "Laajennukset"
 
-#: lib/scoresheethistory.functions.php:589
-#: lib/scoresheethistory.functions.php:594 user/addscoresheet.php:379
+#: lib/scoresheethistory.functions.php:561
+#: lib/scoresheethistory.functions.php:566 user/addscoresheet.php:379
 #: user/addscoresheet.php:381 user/addscoresheet.php:391
 #: user/addscoresheet.php:396 user/addscoresheet.php:417
 #: user/addscoresheet.php:425 user/addscoresheet.php:427
@@ -5007,12 +4945,12 @@ msgstr "Pisteet"
 msgid "Points for %s must be 0-1000."
 msgstr "Pisteet %s pitää olla väliltä 0-1000."
 
-#: admin/seasonpoints.php:231 lib/game.functions.php:1325
-#: scorekeeper/addresult.php:16 scorekeeper/addresult.php:32
+#: admin/seasonpoints.php:231 scorekeeper/addresult.php:16
+#: scorekeeper/addresult.php:32
 msgid "Points must be between 0 and 1000."
 msgstr "Pisteet pitää olla väliltä 0 ja 1000."
 
-#: lib/scoresheethistory.functions.php:586
+#: lib/scoresheethistory.functions.php:558
 msgid "Points removed"
 msgstr "Pisteitä poistettu"
 
@@ -5031,9 +4969,9 @@ msgstr ""
 #: teams.php:183 teams.php:185 admin/spirit.php:45 admin/spirit.php:104
 #: admin/spirit.php:153 admin/spirit.php:280 admin/spirit.php:335
 #: admin/spirit.php:520 admin/tdtools.php:92 cust/bula/pdfscoresheet.php:73
-#: cust/default/pdfscoresheet.php:70 cust/gummis/pdfscoresheet.php:71
-#: cust/slkl/pdfscoresheet.php:70 cust/wfdf/pdfscoresheet.php:1611
-#: cust/windmill/pdfscoresheet.php:73 lib/scoresheethistory.functions.php:657
+#: cust/default/pdfscoresheet.php:69 cust/gummis/pdfscoresheet.php:71
+#: cust/slkl/pdfscoresheet.php:69 cust/wfdf/pdfscoresheet.php:1611
+#: cust/windmill/pdfscoresheet.php:73 lib/scoresheethistory.functions.php:629
 msgid "Pool"
 msgstr "Lohko"
 
@@ -5053,7 +4991,7 @@ msgstr "Lohkon pelejä ei olla pelattu:"
 msgid "Pool is completed:"
 msgstr "Lohko on pelattu:"
 
-#: lib/game.functions.php:1335 lib/scoresheethistory.functions.php:789
+#: lib/scoresheethistory.functions.php:761
 msgid "Pool is locked."
 msgstr "Lohko on lukittu."
 
@@ -5217,10 +5155,6 @@ msgstr "Julkaistut lopulliset sijoitukset"
 msgid "Publisher"
 msgstr "Julkaisija"
 
-#: scorekeeper/login.php:28
-msgid "Quick add result"
-msgstr "Tallenna tulos pöytäkirjasta"
-
 #: user/addspirit.php:242
 msgid "Quick data entry:"
 msgstr "Pikasyöttö:"
@@ -5245,7 +5179,7 @@ msgstr "Tilastoi uudelleen"
 msgid "Read-only"
 msgstr "Vain luku"
 
-#: admin/serverconf.php:288
+#: admin/serverconf.php:286
 msgid "Read-only Server"
 msgstr "Vain luku -palvelin"
 
@@ -5261,7 +5195,7 @@ msgstr "Spiritin vain luku -tarkastelu"
 msgid "Recalculate"
 msgstr "Laske uudelleen"
 
-#: lib/scoresheethistory.functions.php:574
+#: lib/scoresheethistory.functions.php:546
 msgid "Recalculated"
 msgstr "Laskettu uudelleen"
 
@@ -5396,7 +5330,7 @@ msgstr "Varaukset lisätty"
 msgid "Reset"
 msgstr "Nollaa"
 
-#: lib/scoresheethistory.functions.php:622 scorekeeper/addscoresheet.php:358
+#: lib/scoresheethistory.functions.php:594 scorekeeper/addscoresheet.php:358
 msgid "Reset game clock"
 msgstr "Nollaa pelikello"
 
@@ -5450,7 +5384,7 @@ msgstr "Palauta varmuuskopio"
 msgid "Restore failed"
 msgstr "Palautus epäonnistui"
 
-#: lib/scoresheethistory.functions.php:778
+#: lib/scoresheethistory.functions.php:750
 msgid ""
 "Restore refused: the home and away teams have changed since this snapshot "
 "was taken."
@@ -5462,13 +5396,13 @@ msgstr ""
 msgid "Restore this version"
 msgstr "Palauta tämä versio"
 
-#: lib/scoresheethistory.functions.php:630 user/scoresheethistory.php:326
+#: lib/scoresheethistory.functions.php:602 user/scoresheethistory.php:326
 msgid "Restored"
 msgstr "Palautettu"
 
 #: gamecard.php:146 teamcard.php:819 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183
-#: lib/scoresheethistory.functions.php:579 scorekeeper/addresult.php:44
+#: lib/scoresheethistory.functions.php:551 scorekeeper/addresult.php:44
 #: scorekeeper/respgames.php:199 user/adddefensesheet.php:63
 #: user/addplayerlists.php:275 user/addresult.php:13 user/addresult.php:27
 #: user/addresult.php:65 user/addscoresheet.php:277 user/addspirit.php:223
@@ -5481,24 +5415,16 @@ msgstr "Tulokset"
 msgid "Result Feed"
 msgstr "Tulossyöte"
 
-#: lib/scoresheethistory.functions.php:568
+#: lib/scoresheethistory.functions.php:540
 msgid "Result cleared"
 msgstr "Tulos tyhjennetty"
 
-#: result.php:39 scorekeeper/result.php:44
-msgid "Result not saved!"
-msgstr "Tulosta ei tallennettu!"
-
-#: scorekeeper/result.php:47
-msgid "Result saved!"
-msgstr "Tulos tallennettu!"
-
-#: lib/game.functions.php:2715
+#: lib/game.functions.php:2675
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:2712
+#: lib/game.functions.php:2672
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -5507,7 +5433,7 @@ msgstr "Tulos poistettu: %s."
 msgid "Resume"
 msgstr "Jatka"
 
-#: lib/scoresheethistory.functions.php:621 scorekeeper/addscoresheet.php:320
+#: lib/scoresheethistory.functions.php:593 scorekeeper/addscoresheet.php:320
 #: scorekeeper/addspirittimeouts.php:102
 msgid "Resume game clock"
 msgstr "Jatka pelikelloa"
@@ -5558,10 +5484,10 @@ msgstr "Oikeudet"
 #: playerlist.php:19 playerlist.php:25 playerlist.php:29 teams.php:121
 #: admin/seasonteams.php:184 admin/seasonteams.php:235
 #: cust/bula/pdfscoresheet.php:116 cust/bula/pdfscoresheet.php:237
-#: cust/default/pdfscoresheet.php:153 cust/default/pdfscoresheet.php:262
+#: cust/default/pdfscoresheet.php:136 cust/default/pdfscoresheet.php:245
 #: cust/fpudd/pdfscoresheet.php:271 cust/gummis/pdfscoresheet.php:150
-#: cust/gummis/pdfscoresheet.php:264 cust/slkl/pdfscoresheet.php:118
-#: cust/slkl/pdfscoresheet.php:227 cust/wfdf/pdfscoresheet.php:648
+#: cust/gummis/pdfscoresheet.php:264 cust/slkl/pdfscoresheet.php:101
+#: cust/slkl/pdfscoresheet.php:210 cust/wfdf/pdfscoresheet.php:648
 #: cust/windmill/pdfscoresheet.php:117 cust/windmill/pdfscoresheet.php:238
 #: scorekeeper/addplayerlists.php:140 scorekeeper/addplayerlists.php:256
 #: scorekeeper/addplayerlists.php:258 scorekeeper/addscoresheet.php:509
@@ -5683,7 +5609,7 @@ msgstr "La"
 msgid "Saturday"
 msgstr "Lauantai"
 
-#: result.php:105 admin/addlocations.php:194 admin/addreservation.php:232
+#: admin/addlocations.php:194 admin/addreservation.php:232
 #: admin/addseasonlinks.php:90 admin/addseasonpools.php:518
 #: admin/addseasons.php:502 admin/addseasonseries.php:135
 #: admin/addseasonteams.php:211 admin/addserieformats.php:192
@@ -5693,16 +5619,16 @@ msgstr "Lauantai"
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
 #: admin/seasonseries.php:180 admin/seasonstandings.php:552
 #: admin/seasonteams.php:268 admin/select_teams.php:153
-#: admin/seriesseeding.php:74 admin/serieteams.php:190 admin/serverconf.php:446
+#: admin/seriesseeding.php:74 admin/serieteams.php:190 admin/serverconf.php:444
 #: admin/translations.php:522 plugins/lisence_modifier.php:186
 #: scorekeeper/addcomment.php:42 scorekeeper/addfirstoffence.php:47
 #: scorekeeper/addhalftime.php:79 scorekeeper/addofficial.php:25
 #: scorekeeper/addplayerlists.php:253 scorekeeper/addscorecap.php:105
 #: scorekeeper/addspirittimeouts.php:178 scorekeeper/addtimeouts.php:162
-#: scorekeeper/result.php:101 spiritkeeper/editgame.php:125
-#: user/addmedialink.php:219 user/addplayerlists.php:453 user/addspirit.php:314
-#: user/clubprofile.php:251 user/playerprofile.php:389 user/respgames.php:229
-#: user/teamplayers.php:285 user/teamprofile.php:191 user/userinfo.php:291
+#: spiritkeeper/editgame.php:125 user/addmedialink.php:219
+#: user/addplayerlists.php:453 user/addspirit.php:314 user/clubprofile.php:251
+#: user/playerprofile.php:389 user/respgames.php:229 user/teamplayers.php:285
+#: user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
 msgstr "Tallenna"
 
@@ -5750,7 +5676,7 @@ msgstr "Tallenna pisteet"
 msgid "Save times"
 msgstr "Tallenna ajat"
 
-#: lib/scoresheethistory.functions.php:627 user/scoresheethistory.php:713
+#: lib/scoresheethistory.functions.php:599 user/scoresheethistory.php:713
 msgid "Saved state"
 msgstr "Tallennettu tila"
 
@@ -5784,8 +5710,8 @@ msgstr "Aikatauluta valitut"
 msgid "Scheduled"
 msgstr "Aikataulutettu"
 
-#: cust/bula/pdfscoresheet.php:75 cust/default/pdfscoresheet.php:72
-#: cust/gummis/pdfscoresheet.php:73 cust/slkl/pdfscoresheet.php:72
+#: cust/bula/pdfscoresheet.php:75 cust/default/pdfscoresheet.php:71
+#: cust/gummis/pdfscoresheet.php:73 cust/slkl/pdfscoresheet.php:71
 #: cust/windmill/pdfscoresheet.php:75 user/adddefensesheet.php:213
 #: user/addscoresheet.php:683
 msgid "Scheduled start date and time"
@@ -5851,12 +5777,12 @@ msgstr "Pistepörssin kärkisijat"
 msgid "Scoreboards"
 msgstr "Pistepörssi"
 
-#: lib/scoresheethistory.functions.php:639
+#: lib/scoresheethistory.functions.php:611
 msgid "Scorekeeper"
 msgstr "Pöytäkirjanpitäjä"
 
-#: gameplay.php:348 cust/default/pdfscoresheet.php:73
-#: cust/slkl/pdfscoresheet.php:73 cust/wfdf/pdfscoresheet.php:352
+#: gameplay.php:348 cust/default/pdfscoresheet.php:72
+#: cust/slkl/pdfscoresheet.php:72 cust/wfdf/pdfscoresheet.php:352
 #: cust/wfdf/pdfscoresheet.php:451 cust/wfdf/pdfscoresheet.php:1412
 #: scorekeeper/addofficial.php:17 scorekeeper/addofficial.php:22
 #: scorekeeper/addscoresheet.php:507 scorekeeper/gameplay.php:121
@@ -5889,23 +5815,19 @@ msgstr "Maalintekijällä ja syöttäjällä on sama numero!"
 
 #: gameplay.php:253 admin/spirit.php:46 admin/spirit.php:105
 #: admin/spirit.php:154 admin/spirit.php:281 cust/bula/pdfscoresheet.php:598
-#: cust/default/pdfscoresheet.php:604 cust/gummis/pdfscoresheet.php:667
-#: cust/slkl/pdfscoresheet.php:581 cust/windmill/pdfscoresheet.php:599
+#: cust/default/pdfscoresheet.php:587 cust/gummis/pdfscoresheet.php:667
+#: cust/slkl/pdfscoresheet.php:564 cust/windmill/pdfscoresheet.php:599
 msgid "Scores"
 msgstr "Pisteet"
 
 #: admin/seasongames.php:246 admin/tdtools.php:185
-#: cust/default/pdfscoresheet.php:56 cust/slkl/pdfscoresheet.php:56
+#: cust/default/pdfscoresheet.php:55 cust/slkl/pdfscoresheet.php:55
 #: cust/wfdf/pdfscoresheet.php:287 scorekeeper/addscoresheet.php:290
 #: scorekeeper/respgames.php:201 user/adddefensesheet.php:65
 #: user/addplayerlists.php:277 user/addresult.php:67 user/addscoresheet.php:279
 #: user/addspirit.php:225 user/respgames.php:207 user/scoresheethistory.php:356
 msgid "Scoresheet"
 msgstr "Pöytäkirja"
-
-#: result.php:93
-msgid "Scoresheet #"
-msgstr "Pöytäkirja #"
 
 #: cust/bula/pdfscoresheet.php:215 cust/gummis/pdfscoresheet.php:244
 #: cust/wfdf/pdfscoresheet.php:1321 cust/windmill/pdfscoresheet.php:216
@@ -5940,8 +5862,8 @@ msgstr "Pöytäkirjat"
 msgid "Scoring player not on the roster."
 msgstr "Maalintekijä ei ole pelaajalistalla."
 
-#: cust/bula/pdfscoresheet.php:588 cust/default/pdfscoresheet.php:594
-#: cust/gummis/pdfscoresheet.php:657 cust/slkl/pdfscoresheet.php:571
+#: cust/bula/pdfscoresheet.php:588 cust/default/pdfscoresheet.php:577
+#: cust/gummis/pdfscoresheet.php:657 cust/slkl/pdfscoresheet.php:554
 #: cust/wfdf/pdfscoresheet.php:1225 cust/windmill/pdfscoresheet.php:589
 msgid "Scoring team"
 msgstr "Joukkue"
@@ -6082,7 +6004,7 @@ msgstr "Valitse tiedosto, josta tiedot tuodaan"
 msgid "Select grouping"
 msgstr "Valitse ryhmitys"
 
-#: scorekeeper/login.php:33 spiritkeeper/login.php:82 timekeeper/index.php:92
+#: scorekeeper/login.php:29 spiritkeeper/login.php:82 timekeeper/index.php:92
 msgid "Select language"
 msgstr "Valitse kieli"
 
@@ -6195,7 +6117,7 @@ msgstr "Aseta ensisijaiseksi"
 msgid "Set default"
 msgstr "Aseta oletukseksi"
 
-#: lib/scoresheethistory.functions.php:615 scorekeeper/addscoresheet.php:346
+#: lib/scoresheethistory.functions.php:587 scorekeeper/addscoresheet.php:346
 msgid "Set game clock"
 msgstr "Aseta pelikello"
 
@@ -6224,7 +6146,7 @@ msgstr "Näytä"
 msgid "Show Comments"
 msgstr "Näytä kommentit"
 
-#: admin/serverconf.php:277
+#: admin/serverconf.php:275
 msgid "Show Defence statistics"
 msgstr "Näytä puolustustilastot"
 
@@ -6276,7 +6198,7 @@ msgstr "Näytä julkisessa profiilissa"
 msgid "Show on club list"
 msgstr "Näytä seuralistauksessa"
 
-#: admin/serverconf.php:226
+#: admin/serverconf.php:224
 msgid "Show phpinfo()"
 msgstr "Näytä phpinfo()"
 
@@ -6355,7 +6277,7 @@ msgstr ""
 "Tilannevedoksen saraketta %s.%s ei käytetä tässä Ultiorganizer-versiossa, "
 "joten se ohitettiin."
 
-#: admin/addseasons.php:456 admin/serverconf.php:299
+#: admin/addseasons.php:456 admin/serverconf.php:297
 msgid "Soft maintenance mode"
 msgstr "Pehmeä ylläpitotila"
 
@@ -6406,7 +6328,7 @@ msgstr "Spirit-ylläpitäjä"
 msgid "Spirit admins"
 msgstr "Spirit-ylläpitäjät"
 
-#: lib/scoresheethistory.functions.php:605 user/scoresheethistory.php:112
+#: lib/scoresheethistory.functions.php:577 user/scoresheethistory.php:112
 msgid "Spirit captain"
 msgstr "Spirit-kapteeni"
 
@@ -6452,8 +6374,8 @@ msgstr ""
 
 #: gameplay.php:592 seriesstatus.php:211 seriesstatus.php:213
 #: admin/seasonadmin.php:47 admin/seasongames.php:248
-#: cust/bula/pdfscoresheet.php:529 cust/default/pdfscoresheet.php:536
-#: cust/gummis/pdfscoresheet.php:609 cust/slkl/pdfscoresheet.php:512
+#: cust/bula/pdfscoresheet.php:529 cust/default/pdfscoresheet.php:519
+#: cust/gummis/pdfscoresheet.php:609 cust/slkl/pdfscoresheet.php:495
 #: cust/wfdf/pdfscoresheet.php:1121 cust/windmill/pdfscoresheet.php:530
 #: sql/upgrade_db.php:560 user/adddefensesheet.php:69
 #: user/addplayerlists.php:281 user/addresult.php:71 user/addscoresheet.php:283
@@ -6560,12 +6482,12 @@ msgid "Spirit settings were not saved."
 msgstr "Spirit-asetuksia ei tallennettu."
 
 #: gameplay.php:63 ext/rss.php:151 ext/rss.php:195
-#: lib/scoresheethistory.functions.php:691 scorekeeper/endgame.php:22
+#: lib/scoresheethistory.functions.php:663 scorekeeper/endgame.php:22
 #: scorekeeper/gameplay.php:23
 msgid "Spirit stoppage"
 msgstr "Spirit-keskeytys"
 
-#: cust/bula/pdfscoresheet.php:476 cust/default/pdfscoresheet.php:479
+#: cust/bula/pdfscoresheet.php:476 cust/default/pdfscoresheet.php:462
 #: cust/fpudd/pdfscoresheet.php:485 cust/gummis/pdfscoresheet.php:562
 #: cust/wfdf/pdfscoresheet.php:1006 cust/windmill/pdfscoresheet.php:477
 #: scorekeeper/addscoresheet.php:500 scorekeeper/addspirittimeouts.php:93
@@ -6578,7 +6500,7 @@ msgstr "Spirit-keskeytykset"
 msgid "Spirit stoppages (min:sec)"
 msgstr "Spirit-keskeytykset (min:sek)"
 
-#: cust/slkl/pdfscoresheet.php:453
+#: cust/slkl/pdfscoresheet.php:436
 msgid "Spirit stoppages (time)"
 msgstr "Spirit-keskeytykset (aika)"
 
@@ -6586,7 +6508,7 @@ msgstr "Spirit-keskeytykset (aika)"
 msgid "Spirit stoppages recorded for this event."
 msgstr "Tähän tapahtumaan on kirjattu spirit-keskeytyksiä."
 
-#: lib/scoresheethistory.functions.php:688
+#: lib/scoresheethistory.functions.php:660
 #, php-format
 msgid "Spirit stoppages removed: %d"
 msgstr "Spirit-keskeytyksiä poistettu: %d"
@@ -6624,7 +6546,7 @@ msgstr "Sijoitukset"
 msgid "Start"
 msgstr "Käynnistä"
 
-#: lib/scoresheethistory.functions.php:619 scorekeeper/addscoresheet.php:351
+#: lib/scoresheethistory.functions.php:591 scorekeeper/addscoresheet.php:351
 #: scorekeeper/addscoresheet.php:631
 msgid "Start game clock"
 msgstr "Käynnistä pelikello"
@@ -6648,11 +6570,11 @@ msgstr "Käynnistä pelikello ennen maalien lisäämistä."
 msgid "Start time"
 msgstr "Alkuaika"
 
-#: lib/scoresheethistory.functions.php:713
+#: lib/scoresheethistory.functions.php:685
 msgid "Starting offence"
 msgstr "Aloittava hyökkäys"
 
-#: lib/scoresheethistory.functions.php:708
+#: lib/scoresheethistory.functions.php:680
 msgid "Starting offence removed"
 msgstr "Aloittava hyökkäys poistettu"
 
@@ -6735,7 +6657,7 @@ msgstr "Swissdraw"
 msgid "Swissdraw pool"
 msgstr "Swissdraw-lohko"
 
-#: admin/serverconf.php:270
+#: admin/serverconf.php:268
 msgid "System email sender address"
 msgstr "Sähköpostin lähettäjänosoite"
 
@@ -6861,7 +6783,7 @@ msgstr "Aikalisän ottava joukkue"
 #: admin/seasonscoresheethistory.php:56 admin/seasonseries.php:122
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seasonteams.php:16
 #: admin/serieteams.php:29 admin/stats.php:136
-#: lib/scoresheethistory.functions.php:662
+#: lib/scoresheethistory.functions.php:634
 msgid "Teams"
 msgstr "Joukkueet"
 
@@ -7063,10 +6985,6 @@ msgstr ""
 "pöytäkirjoja ei muuteta, mutta tieto siitä kuka niitä on muuttanut ja "
 "mahdollisuus palauttaa aiempi versio menetetään pysyvästi."
 
-#: result.php:70
-msgid "This game has already been played. Current result:"
-msgstr "Tämä peli on jo pelattu. Nykyinen tulos:"
-
 #: spiritkeeper/submitsotg.php:143
 msgid "This game has not started yet. Return after the game begins."
 msgstr "Tämä peli ei ole vielä alkanut. Palaa pelin alkamisen jälkeen."
@@ -7142,9 +7060,9 @@ msgstr "Torstai"
 #: gameplay.php:255 admin/accreditation.php:136
 #: admin/addtimekeepertemplate.php:119 admin/eventviewer.php:140
 #: admin/seasonadmin.php:49 cust/bula/pdfscoresheet.php:597
-#: cust/default/pdfscoresheet.php:603 cust/default/pdfscoresheet.php:639
+#: cust/default/pdfscoresheet.php:586 cust/default/pdfscoresheet.php:622
 #: cust/gummis/pdfscoresheet.php:666 cust/gummis/pdfscoresheet.php:699
-#: cust/slkl/pdfscoresheet.php:580 cust/wfdf/pdfscoresheet.php:279
+#: cust/slkl/pdfscoresheet.php:563 cust/wfdf/pdfscoresheet.php:279
 #: cust/wfdf/pdfscoresheet.php:1227 cust/wfdf/pdfscoresheet.php:1275
 #: cust/windmill/pdfscoresheet.php:598 user/adddefensesheet.php:182
 #: user/adddefensesheet.php:363 user/addmedialink.php:173
@@ -7203,7 +7121,7 @@ msgid "Timekeeper templates"
 msgstr "Timekeeper-pohjat"
 
 #: gameplay.php:61 ext/rss.php:149 ext/rss.php:193
-#: lib/scoresheethistory.functions.php:685 lib/timekeeper.functions.php:14
+#: lib/scoresheethistory.functions.php:657 lib/timekeeper.functions.php:14
 #: lib/timekeeper.functions.php:35 timekeeper/index.php:44
 msgid "Timeout"
 msgstr "Aikalisä"
@@ -7226,7 +7144,7 @@ msgstr "Aikalisä päättyi"
 
 #: gameplay.php:587 admin/addseasonpools.php:464 admin/addserieformats.php:154
 #: admin/serieformats.php:29 cust/bula/pdfscoresheet.php:445
-#: cust/default/pdfscoresheet.php:448 cust/fpudd/pdfscoresheet.php:454
+#: cust/default/pdfscoresheet.php:431 cust/fpudd/pdfscoresheet.php:454
 #: cust/gummis/pdfscoresheet.php:533 cust/wfdf/pdfscoresheet.php:932
 #: cust/wfdf/pdfscoresheet.php:952 cust/wfdf/pdfscoresheet.php:1002
 #: cust/windmill/pdfscoresheet.php:446 scorekeeper/addscoresheet.php:498
@@ -7240,7 +7158,7 @@ msgstr "Aikalisät"
 msgid "Timeouts (min:sec)"
 msgstr "Aikalisät (min:sek)"
 
-#: cust/slkl/pdfscoresheet.php:420
+#: cust/slkl/pdfscoresheet.php:403
 msgid "Timeouts (time)"
 msgstr "Aikalisät (aika)"
 
@@ -7252,7 +7170,7 @@ msgstr "Aikalisiä lisäajalla"
 msgid "Timeouts on overtime"
 msgstr "Aikalisiä lisäajalla"
 
-#: lib/scoresheethistory.functions.php:682
+#: lib/scoresheethistory.functions.php:654
 #, php-format
 msgid "Timeouts removed: %d"
 msgstr "Aikalisiä poistettu: %d"
@@ -7357,7 +7275,7 @@ msgstr "Yht."
 #: teamcard.php:322 teamcard.php:366 teamcard.php:588 teamcard.php:779
 #: admin/spirit.php:47 admin/spirit.php:106 admin/spirit.php:155
 #: admin/spirit.php:238 admin/spirit.php:282 admin/spirit.php:342
-#: cust/slkl/mass-accreditation.php:86 lib/common.functions.php:1734
+#: cust/slkl/mass-accreditation.php:86 lib/common.functions.php:1727
 #: spiritkeeper/submitsotg.php:90
 msgid "Total"
 msgstr "Yhteensä"
@@ -7374,7 +7292,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:3091
+#: admin/seasonpoints.php:258 lib/game.functions.php:3051
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 
@@ -7386,7 +7304,7 @@ msgstr "Yhteensä viitteitä"
 msgid "Total spirit stoppages"
 msgstr "Spirit-keskeytyksiä yhteensä"
 
-#: cust/default/pdfscoresheet.php:636 cust/gummis/pdfscoresheet.php:696
+#: cust/default/pdfscoresheet.php:619 cust/gummis/pdfscoresheet.php:696
 #: user/adddefensesheet.php:358 user/scoresheethistory.php:132
 msgid "Touched"
 msgstr "Kosketettu"
@@ -7475,7 +7393,7 @@ msgstr "Twitter"
 #: admin/addseasonseries.php:111 admin/eventviewer.php:141
 #: admin/seasonadmin.php:35 admin/seasonpools.php:124 admin/seasons.php:92
 #: admin/seasonseries.php:76 admin/seasonstats.php:21 admin/seasonstats.php:35
-#: admin/serverconf.php:404 user/addmedialink.php:193 user/clubprofile.php:214
+#: admin/serverconf.php:402 user/addmedialink.php:193 user/clubprofile.php:214
 #: user/playerprofile.php:352 user/teamprofile.php:154
 msgid "Type"
 msgstr "Tyyppi"
@@ -7488,11 +7406,11 @@ msgstr "Tyyppi ei voi olla tyhjä"
 msgid "Type of connection in use"
 msgstr "Type of connection in use"
 
-#: admin/serverconf.php:402
+#: admin/serverconf.php:400
 msgid "UI settings"
 msgstr "UI asetukset"
 
-#: admin/addseasonlinks.php:64 admin/serverconf.php:404
+#: admin/addseasonlinks.php:64 admin/serverconf.php:402
 #: user/addmedialink.php:174 user/addmedialink.php:194 user/clubprofile.php:215
 #: user/playerprofile.php:353 user/teamprofile.php:155
 msgid "URL"
@@ -7520,8 +7438,8 @@ msgstr "Pelin tulos"
 msgid "Ultimate.fi"
 msgstr "Ultimate.fi"
 
-#: cust/default/head.php:16 cust/default/pdfscoresheet.php:54
-#: cust/default/pdfscoresheet.php:123 cust/default/pdfscoresheet.php:151
+#: cust/default/head.php:16 cust/default/pdfscoresheet.php:53
+#: cust/default/pdfscoresheet.php:106 cust/default/pdfscoresheet.php:134
 #: ext/countrystatus.php:25 ext/eventpools.php:23 ext/poolscoreboard.php:27
 #: ext/poolstatus.php:29 ext/teamcoming.php:29 ext/teamplayed.php:30
 #: ext/teamscoreboard.php:43 ext/tournament.php:27 lib/user.functions.php:1638
@@ -7538,7 +7456,7 @@ msgstr "Pelikoneen pistelaskuri"
 msgid "Ultiorganizer links"
 msgstr "Pelikone linkit"
 
-#: admin/serverconf.php:235
+#: admin/serverconf.php:233
 msgid "Ultiorganizer version"
 msgstr "Ultiorganizerin versio"
 
@@ -7725,7 +7643,7 @@ msgstr "Voimassa"
 msgid "Value"
 msgstr "Arvo"
 
-#: admin/serverconf.php:233
+#: admin/serverconf.php:231
 msgid "Version information"
 msgstr "Versiotiedot"
 
@@ -7892,10 +7810,6 @@ msgstr "Kumpi aloitti hyökkäyksessä?"
 msgid "Win-%"
 msgstr "Voitto-%"
 
-#: result.php:80 scorekeeper/result.php:80
-msgid "Winner is"
-msgstr "Voittaja on"
-
 #: user/addresult.php:37 user/addresult.php:39
 #, php-format
 msgid "Winner is <span style='font-weight:bold'>%s</span>."
@@ -7909,7 +7823,7 @@ msgstr "Voittaja jatkaa:"
 msgid "Winning points"
 msgstr "Voittopiste"
 
-#: lib/common.functions.php:1712
+#: lib/common.functions.php:1705
 msgid "Wins"
 msgstr "Voitot"
 
@@ -7932,7 +7846,7 @@ msgstr "Maailman Liitokiekkoliitto"
 #: admin/seasonmoves.php:171 admin/seasonpools.php:270 admin/seasons.php:148
 #: admin/seasonseries.php:130 admin/seasonstandings.php:404
 #: admin/seasonstandings.php:461 admin/seasonteams.php:240
-#: admin/serieformats.php:48 admin/serverconf.php:413
+#: admin/serieformats.php:48 admin/serverconf.php:411
 #: admin/timekeepertemplates.php:53 lib/search.functions.php:799
 #: plugins/simulate_games.php:264
 msgid "X"
@@ -8123,8 +8037,7 @@ msgid "for game"
 msgstr "pelille"
 
 #: gamecard.php:167 gameplay.php:118 poolstatus.php:677 poolstatus.php:681
-#: poolstatus.php:899 result.php:71 admin/seasongames.php:234
-#: lib/timetable.functions.php:642
+#: poolstatus.php:899 admin/seasongames.php:234 lib/timetable.functions.php:642
 msgid "forfeit"
 msgstr "luovutus"
 
@@ -8268,7 +8181,7 @@ msgstr "nyt %s"
 msgid "offence"
 msgstr "hyökkäys"
 
-#: gameplay.php:788 result.php:57 scorekeeper/result.php:59
+#: gameplay.php:788
 msgid "on field"
 msgstr "kentällä"
 
@@ -8491,9 +8404,18 @@ msgstr "kyllä"
 #~ msgid "Action"
 #~ msgstr "Paikka"
 
+#~ msgid "Add result"
+#~ msgstr "Lisää tulos"
+
+#~ msgid "Add result by game ID"
+#~ msgstr "Lisää tulos pelin ID:n perusteella"
+
 #, fuzzy
 #~ msgid "Additional points after cap"
 #~ msgstr "Lisäpisteet aikarajan täytyttyä"
+
+#~ msgid "After the match has ended, update result:"
+#~ msgstr "Ottelun päätyttyä päivitä tulos:"
 
 #~ msgid "Are you sure you want to delete last score?"
 #~ msgstr "Haluatko varmasti poistaa viimeisen pisteen?"
@@ -8503,6 +8425,12 @@ msgstr "kyllä"
 
 #~ msgid "Ast"
 #~ msgstr "Syöt."
+
+#~ msgid "Away score"
+#~ msgstr "Vierasjoukkueen pisteet"
+
+#~ msgid "Away team score"
+#~ msgstr "Vierasjoukkueen pisteet"
 
 #~ msgid "Back to the Ultiorganizer"
 #~ msgstr "Takaisin pelikoneeseen"
@@ -8525,6 +8453,12 @@ msgstr "kyllä"
 
 #~ msgid "Change language"
 #~ msgstr "Vaihda kieli"
+
+#~ msgid "Change result to"
+#~ msgstr "Muuta pelin tulos"
+
+#~ msgid "Change the result to"
+#~ msgstr "Muuta tulokseksi"
 
 #~ msgid "Correct the errors or save goal with errors"
 #~ msgstr "Korjaa virheet tai tallenna maali virheineen"
@@ -8551,6 +8485,9 @@ msgstr "kyllä"
 #~ msgid "Desktop gameplay"
 #~ msgstr "Työpöydän pelin kulku"
 
+#~ msgid "Erroneous scoresheet number:"
+#~ msgstr "Virheellinen pöytäkirjan numero:"
+
 #~ msgid "External"
 #~ msgstr "Ulkoinen"
 
@@ -8565,11 +8502,23 @@ msgstr "kyllä"
 #~ msgid "First signal"
 #~ msgstr "Etunimi"
 
+#~ msgid "Game has already been played. Current result:"
+#~ msgstr "Peli on jo pelattu. Nykyinen tulos:"
+
+#~ msgid "Game has no pool."
+#~ msgstr "Pelillä ei ole lohkoa."
+
+#~ msgid "Game number from scoresheet"
+#~ msgstr "Pelin numero pöytäkirjasta"
+
 #~ msgid "Game official(s)"
 #~ msgstr "Toimitsija(t)"
 
 #~ msgid "Game result"
 #~ msgstr "Pelin tulos"
+
+#~ msgid "Games list"
+#~ msgstr "Ottelut"
 
 #~ msgid "Gls"
 #~ msgstr "Maal."
@@ -8599,6 +8548,12 @@ msgstr "kyllä"
 #~ msgid "Halftime over"
 #~ msgstr "Puoliaikatulos"
 
+#~ msgid "Home score"
+#~ msgstr "Kotijoukkueen pisteet"
+
+#~ msgid "Home team score"
+#~ msgstr "Kotijoukkueen pisteet"
+
 #~ msgid "If game ended:"
 #~ msgstr "Jos peli loppui:"
 
@@ -8607,6 +8562,9 @@ msgstr "kyllä"
 
 #~ msgid "Menu"
 #~ msgstr "Valikko"
+
+#~ msgid "No goals."
+#~ msgstr "Ei maaleja."
 
 #, fuzzy
 #~ msgid "Offence warning"
@@ -8622,6 +8580,9 @@ msgstr "kyllä"
 #~ msgid "Players of the game"
 #~ msgstr "Pelin pelaajat"
 
+#~ msgid "Quick add result"
+#~ msgstr "Tallenna tulos pöytäkirjasta"
+
 #, fuzzy
 #~ msgid "Remove"
 #~ msgstr "poista"
@@ -8630,11 +8591,20 @@ msgstr "kyllä"
 #~ msgid "Resolve dispute"
 #~ msgstr "Selvitä tasapelit"
 
+#~ msgid "Result not saved!"
+#~ msgstr "Tulosta ei tallennettu!"
+
+#~ msgid "Result saved!"
+#~ msgstr "Tulos tallennettu!"
+
 #~ msgid "Save as result"
 #~ msgstr "Tallenna lopputulokseksi"
 
 #~ msgid "Score&nbsp;sheet"
 #~ msgstr "Pöytäkirja"
+
+#~ msgid "Scoresheet #"
+#~ msgstr "Pöytäkirja #"
 
 #, fuzzy
 #~ msgid "Second warning before start"
@@ -8660,6 +8630,9 @@ msgstr "kyllä"
 #~ msgid "The legacy mobile administration interface is deprecated."
 #~ msgstr "Vanha mobiilihallinnan käyttöliittymä on poistumassa käytöstä."
 
+#~ msgid "This game has already been played. Current result:"
+#~ msgstr "Tämä peli on jo pelattu. Nykyinen tulos:"
+
 #~ msgid ""
 #~ "This operation updates and adds event data in the database with the "
 #~ "content of the file. It will not delete any data or change user rights."
@@ -8680,6 +8653,9 @@ msgstr "kyllä"
 
 #~ msgid "Use"
 #~ msgstr "Käytä"
+
+#~ msgid "Winner is"
+#~ msgstr "Voittaja on"
 
 #~ msgid "away team"
 #~ msgstr "vierasjoukkue"

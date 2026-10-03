@@ -6,7 +6,6 @@ denyDirectCustomizationAccess(__FILE__);
 include_once 'lib/pdf.interfaces.php';
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/hsvclass/HSVClass.php';
-include_once 'lib/phpqrcode/qrlib.php';
 
 class PDF extends tFPDF implements ScoreSheetPdf
 {
@@ -91,22 +90,6 @@ class PDF extends tFPDF implements ScoreSheetPdf
         $this->Ln();
         $this->SetXY(95, 21);
         $this->ScoreGrid();
-
-        //print QR-code for result URL
-        $filename = UPLOAD_DIR . $this->game['game_id'] . ".png";
-        $url = BASEURL . "/scorekeeper/?view=result&g=" . $this->game['game_id'];
-        QRcode::png($url, $filename, 'h', 2, 2);
-        $this->Image($filename, 20, 246);
-        unlink($filename);
-
-        $this->SetY(-22);
-
-        $data = _("After the match has ended, update result:") . " " . BASEURL . "/scorekeeper/?view=result";
-        $data = $this->pdfText($data);
-        $this->SetFont('Arial', '', 10);
-        $this->SetTextColor(0);
-        $this->SetFillColor(255);
-        $this->MultiCell(0, 1, $data);
     }
     public function PrintDefenseSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename)
     {

@@ -100,18 +100,8 @@ Every scoresheet input path in `docs/scoresheet.md` is built from these mutators
 |---|---|---|
 | `hasAddMediaRight()` | `mediaevent` | `AddGameMediaEvent()`, `RemoveGameMediaEvent()`, `RemoveMediaUrl()` |
 | `CanManageGameComment()` | `comment` | `SetGameComment()` |
-| `ANONYMOUS_RESULT_INPUT` or `isLoggedIn()` | `result` | `GameSetResult()` |
 
 The scope matters most for `hasAddMediaRight()`, which any logged-in session holds.
-
-### By-game-ID result entry
-
-`result.php` and `scorekeeper/result.php` call `GameSetResult($gameId, $home, $away, true, false)` with `$checkRights=false` for the anonymous by-ID entry that `ANONYMOUS_RESULT_INPUT` supports. `GameSetResult()` then passes `$allowAnonymousResult=true` so the change is still recorded. `ScoresheetHistoryAuthorized()` honours that caller-controlled flag only for the `result` target and only together with either:
-
-- the `ANONYMOUS_RESULT_INPUT` constant being on, or
-- `isLoggedIn()`: with the constant off, both pages require a login but still pass `$checkRights=false`, so a logged-in submitter without a game role would otherwise save with no snapshot and no audit row.
-
-An anonymous row stores `user_id` as `anonymous` instead of `unknown`.
 
 ### Game notes edited by their author
 
@@ -160,7 +150,7 @@ The replay is neither transactional nor serialized. A failure midway leaves a mi
 - **A player without a jersey number is never rematched**, since 0 is a valid number. A null number is restored as `NULL`.
 - **`uo_gameevent` rows the replay can reinstate are rebuilt.** `GameRemoveAllGameEvents()` deletes starting-offence and cap rows first, since `GameSetCapEvent()` only upserts. Other event types (e.g. `turnover`) have no replay branch and are left alone.
 - **Media events are excluded** from snapshots; they are guarded by `hasAddMediaRight()` instead.
-- **`IsPoolLocked()` and `IsSeasonStatsCalculated()` only warn**, with the same wording as `CheckGameResult()`, since ordinary edits are not blocked by them either.
+- **`IsPoolLocked()` and `IsSeasonStatsCalculated()` only warn**, since ordinary edits are not blocked by them either.
 - **A `hometeam`/`visitorteam` mismatch blocks the restore.** Replaying would write rows for teams not in the game, or invert `ishomegoal` after a swap. The comparison is positional, so a swap is caught. Pre-`v4` snapshots restore as before.
 - **`uo_player.num` is not touched**, only `uo_played.num`. The squad number is current state that no snapshot captures, so rewriting it could not be undone.
 

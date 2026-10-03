@@ -1293,7 +1293,6 @@ function GameRecordedTimeoutCount($timeouts)
 /**
  * Highest score a game result may carry.
  *
- * The bound is what CheckGameResult() has always promised in its warning text.
  * Its purpose is to keep a mistyped score out of standings and statistics, so
  * it is deliberately far above any real Ultimate score.
  */
@@ -1317,35 +1316,6 @@ function IsValidGameScore($score)
     return false;
 }
 
-function CheckGameResult($game, $home, $away)
-{
-    $gameId = (int) substr($game, 0, -1);
-    $errors = "";
-    if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
-        $errors .= "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
-    }
-    if ($gameId == 0 || !checkChkNum($game)) {
-        $errors .= "<p class='warning'>" . _("Erroneous scoresheet number:") . " " . $game . "</p>";
-    } else {
-        $pool = GamePool($gameId);
-        if (!$pool) {
-            $errors .= "<p class='warning'>" . _("Game has no pool.") . "</p>";
-        } else {
-            if (IsPoolLocked($pool)) {
-                $errors .= "<p class='warning'>" . _("Pool is locked.") . "</p>";
-            }
-        }
-    }
-    if (IsSeasonStatsCalculated(GameSeason($gameId))) {
-        $errors .= "<p class='warning'>" . _("Event played.") . "</p>";
-    }
-    if (!($home + $away)) {
-        $errors .= "<p class='warning'>" . _("No goals.") . "</p>";
-    }
-    return $errors;
-}
-
-
 /**
  * $snapshot defaults true, so a caller gets a restore point unless it opts
  * out. The per-point caller in scorekeeper/ does, since a snapshot per point
@@ -1353,8 +1323,7 @@ function CheckGameResult($game, $home, $away)
  */
 function GameUpdateResult($gameId, $home, $away, $snapshot = true)
 {
-    // Enforced here rather than per entry point: user/addresult.php never
-    // calls CheckGameResult().
+    // Enforced here rather than per entry point.
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         return false;
     }
@@ -1396,21 +1365,12 @@ function GameUpdateResult($gameId, $home, $away, $snapshot = true)
     }
 }
 
-function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights = true)
+function GameSetResult($gameId, $home, $away, $updatePools = true)
 {
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         return false;
     }
-    $seasonId = GameSeason($gameId);
-    if (!$checkRights && isEventReadonly($seasonId) && !canBypassEventReadonly($seasonId)) {
-        die('Insufficient rights to edit game');
-    }
-    if (!$checkRights || hasEditGameEventsRight($gameId)) {
-        // $checkRights=false is the ANONYMOUS_RESULT_INPUT self-report route,
-        // which holds none of the game rights ScoresheetHistoryAuthorized() checks.
-        // The flag only takes effect once that function confirms the setting.
-        $allowAnonymousResult = !$checkRights;
-
+    if (hasEditGameEventsRight($gameId)) {
         // Read before snapshotting, the same no-op guard GameUpdateResult()
         // applies. The timer columns are part of the comparison because this
         // statement clears them too, and a restore can leave a finalized game
@@ -1442,7 +1402,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
         }
 
         LogGameUpdate($gameId, "result: $home - $away");
-        ScoresheetHistorySnapshotIfNeeded($gameId, false, $allowAnonymousResult, "result");
+        ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
             DBEscapeString($home),
@@ -1454,7 +1414,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $checkRights 
             'home' => (int) $home,
             'away' => (int) $away,
             'state' => "final",
-        ], false, $allowAnonymousResult);
+        ]);
 
         if ($updatePools) {
             $poolId = GamePool($gameId);
@@ -1892,7 +1852,7 @@ function GameRemoveScore($gameId, $num)
  * The result is only lowered when it was actually tracking the goals, which is
  * true exactly when it still shows the score the removed goal carried. A game
  * whose scoresheet was never completed can be finalized at its real score
- * through result.php while only a handful of goals were typed in, and deleting
+ * through user/addresult.php while only a handful of goals were typed in, and deleting
  * one of those goals must not drop the published result to the scoresheet's
  * partial total.
  *
