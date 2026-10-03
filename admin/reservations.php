@@ -118,7 +118,7 @@ if (empty($season)) {
     $html .= "<table class='admintable'><tr><th><input type='checkbox' onclick='checkAll(\"reservations\");'/></th>";
     $html .= "<th>" . _("Group") . "</th><th>" . _("Location") . "</th><th>" . _("Date") . "</th>";
     $html .= "<th>" . _("Starts") . "</th><th>" . _("Ends") . "</th><th>" . _("Games") . "</th>";
-    $html .= "<th>" . _("Scoresheets") . "</th><th>" . _("QR") . "</th><th></th></tr>\n";
+    $html .= "<th>" . _("PDF") . "</th><th></th></tr>\n";
     foreach ($reservations as $reservation) {
         $row = ReservationInfo($reservation['id']);
         $placeLabel = utf8entities(ReservationPlaceText(U_($row['name']), U_($row['fieldname'])));
@@ -129,10 +129,9 @@ if (empty($season)) {
         $html  .= "<td>" . DefHourFormat($row['starttime']) . "</td>";
         $html  .= "<td>" . DefHourFormat($row['endtime']) . "</td>";
         $html  .= "<td class='center'>" . $row['games'] . "</td>";
-        $html  .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['id'] . "' target='_blank' rel='noopener'>" . _("PDF") . "</a></td>";
-        $html  .= "<td class='center'>";
+        $html  .= "<td class='center nowrap'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['id'] . "' target='_blank' rel='noopener'>" . _("Scoresheet") . "</a>";
         if ($canIssueLinks && intval($row['games']) > 0) {
-            $html  .= "<a href='?view=user/scorekeepinglink&amp;reservation=" . $row['id'] . "&amp;print=1' target='_blank' rel='noopener'>" . _("Print") . "</a>";
+            $html  .= " | <a href='?view=user/scorekeepinglink&amp;reservation=" . $row['id'] . "&amp;print=1' target='_blank' rel='noopener'>" . _("QR") . "</a>";
         }
         $html  .= "</td>";
         if (intval($row['games']) == 0) {

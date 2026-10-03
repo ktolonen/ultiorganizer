@@ -785,7 +785,7 @@ function ReservationResults()
         $ret = "<table class='admintable'><tr><th><input type='checkbox' onclick='checkAll(\"reservations\");'/></th>";
         $ret .= "<th>" . _("Group") . "</th><th>" . _("Location") . "</th><th>" . _("Date") . "</th>";
         $ret .= "<th>" . _("Starts") . "</th><th>" . _("Ends") . "</th><th>" . _("Games") . "</th>";
-        $ret .= "<th>" . _("Scoresheets") . "</th><th>" . _("QR") . "</th><th></th></tr>\n";
+        $ret .= "<th>" . _("PDF") . "</th><th></th></tr>\n";
         while ($row = mysqli_fetch_assoc($result)) {
             $placeLabel = utf8entities(ReservationPlaceText(U_($row['name']), U_($row['fieldname'])));
             $ret .= "<tr class='admintablerow'><td><input type='checkbox' name='reservations[]' value='" . utf8entities($row['reservation_id']) . "'/></td>";
@@ -795,10 +795,9 @@ function ReservationResults()
             $ret .= "<td>" . DefHourFormat($row['starttime']) . "</td>";
             $ret .= "<td>" . DefHourFormat($row['endtime']) . "</td>";
             $ret .= "<td class='center'>" . $row['games'] . "</td>";
-            $ret .= "<td class='center'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['reservation_id'] . "' target='_blank' rel='noopener'>" . _("PDF") . "</a></td>";
-            $ret .= "<td class='center'>";
+            $ret .= "<td class='center nowrap'><a href='?view=user/pdfscoresheet&amp;reservation=" . $row['reservation_id'] . "' target='_blank' rel='noopener'>" . _("Scoresheet") . "</a>";
             if (intval($row['games']) > 0 && CanIssueReservationScorekeeperToken($row['reservation_id'])) {
-                $ret .= "<a href='?view=user/scorekeepinglink&amp;reservation=" . $row['reservation_id'] . "&amp;print=1' target='_blank' rel='noopener'>" . _("Print") . "</a>";
+                $ret .= " | <a href='?view=user/scorekeepinglink&amp;reservation=" . $row['reservation_id'] . "&amp;print=1' target='_blank' rel='noopener'>" . _("QR") . "</a>";
             }
             $ret .= "</td>";
             if (intval($row['games']) == 0) {

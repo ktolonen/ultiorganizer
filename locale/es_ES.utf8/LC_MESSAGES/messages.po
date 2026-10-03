@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 20:54+0300\n"
+"POT-Creation-Date: 2026-10-03 22:06+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -115,7 +115,7 @@ msgstr "-> %d"
 #: admin/finalstandings.php:126 admin/seasongames.php:119
 #: admin/seasonpools.php:110 admin/seasonstandings.php:172
 #: admin/seasonteams.php:160 admin/seasonteams.php:232
-#: admin/seriesseeding.php:37 user/respgames.php:72
+#: admin/seriesseeding.php:37 user/respgames.php:71
 msgid "..."
 msgstr "..."
 
@@ -342,7 +342,7 @@ msgid "Add links"
 msgstr "Agregar enlaces"
 
 #: admin/addlocations.php:20 admin/addlocations.php:107
-#: admin/addlocations.php:113 admin/reservations.php:201
+#: admin/addlocations.php:113 admin/reservations.php:200
 msgid "Add location"
 msgstr "Agregar ubicación"
 
@@ -385,7 +385,7 @@ msgstr "Agregar grupo"
 msgid "Add pools first"
 msgstr "Agregar grupos primero"
 
-#: admin/reservations.php:200
+#: admin/reservations.php:199
 msgid "Add reservation"
 msgstr "Agregar reserva"
 
@@ -494,7 +494,7 @@ msgstr ""
 
 #: games.php:278 games.php:280 admin/addseasonpools.php:324
 #: admin/addseasonpools.php:326 admin/reservations.php:109
-#: admin/reservations.php:111 user/respgames.php:103 user/respgames.php:105
+#: admin/reservations.php:111 user/respgames.php:102 user/respgames.php:104
 msgid "All"
 msgstr "Todo"
 
@@ -1120,7 +1120,7 @@ msgstr ""
 msgid "Check standings of %s. Then: %s"
 msgstr "Consulta la clasificación de %s. Entonces: %s"
 
-#: user/respgames.php:30
+#: user/respgames.php:29
 msgid "Check the gameplay after feeding in the scoresheet"
 msgstr "Comprueba el juego después de introducir la hoja de puntuación"
 
@@ -1194,7 +1194,7 @@ msgid "Clearing reverts this division to automatic live standings."
 msgstr ""
 "Al borrar esta división se revierte a la clasificación automática en vivo."
 
-#: user/respgames.php:29
+#: user/respgames.php:28
 msgid "Click Mass input to enter multiple results at once, then click Save"
 msgstr ""
 "Haga clic en Entrada Masiva para ingresar varios resultados a la vez, luego "
@@ -1674,7 +1674,7 @@ msgstr "Hoja de puntuación de Defensa"
 #: admin/seasongames.php:251 user/adddefensesheet.php:11
 #: user/adddefensesheet.php:73 user/addplayerlists.php:285
 #: user/addresult.php:75 user/addscoresheet.php:287 user/addspirit.php:228
-#: user/respgames.php:219 user/scoresheethistory.php:365
+#: user/respgames.php:215 user/scoresheethistory.php:365
 msgid "Defence sheet"
 msgstr "Hoja de defensa"
 
@@ -2038,7 +2038,7 @@ msgstr ""
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
 #: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
-#: admin/translations.php:507 user/respgames.php:226
+#: admin/translations.php:507 user/respgames.php:219
 msgid "Edit"
 msgstr "Editar"
 
@@ -2438,11 +2438,11 @@ msgstr "Imparcialidad (la nuestra)"
 msgid "Fair-Mindedness (theirs)"
 msgstr "Imparcialidad (de ellos)"
 
-#: user/respgames.php:23
+#: user/respgames.php:22
 msgid "Feed in the data for your game responsibilities"
 msgstr "Introduce los datos de tus responsabilidades de juego"
 
-#: user/respgames.php:140
+#: user/respgames.php:139
 msgid ""
 "Feeding in the scoresheet requires JavaScript. Please enable JavaScript in "
 "your browser to continue!"
@@ -2730,7 +2730,7 @@ msgstr "Desde pos."
 msgid "From position"
 msgstr "Desde la posición"
 
-#: admin/reservations.php:165
+#: admin/reservations.php:164
 msgid "From/to"
 msgstr "Desde/hasta"
 
@@ -2754,7 +2754,7 @@ msgstr "GF Avg."
 #: cust/default/pdfscoresheet.php:287 cust/fpudd/pdfscoresheet.php:282
 #: cust/gummis/pdfscoresheet.php:273 cust/slkl/pdfscoresheet.php:251
 #: cust/wfdf/pdfscoresheet.php:659 cust/wfdf/pdfscoresheet.php:1586
-#: cust/windmill/pdfscoresheet.php:249 lib/search.functions.php:870
+#: cust/windmill/pdfscoresheet.php:249 lib/search.functions.php:869
 msgid "Game"
 msgstr "Juego"
 
@@ -2907,7 +2907,7 @@ msgstr "Puntos de juego"
 msgid "Game reset"
 msgstr "Reinicio del juego"
 
-#: menufunctions.php:796 user/respgames.php:11
+#: menufunctions.php:796 user/respgames.php:10
 msgid "Game responsibilities"
 msgstr "Responsabilidades del juego"
 
@@ -2925,7 +2925,7 @@ msgstr "Resultado del juego %s - ¡%s actualizado!"
 msgid "Game rounds"
 msgstr "Rondas de juego"
 
-#: user/addscoresheet.php:672 user/respgames.php:27
+#: user/addscoresheet.php:672 user/respgames.php:26
 msgid "Game scoresheet"
 msgstr "Hoja de puntuación del juego"
 
@@ -2953,7 +2953,7 @@ msgstr "Estadísticas del juego"
 
 #: gameplay.php:34 gameplay.php:47 poolstatus.php:906
 #: lib/timetable.functions.php:704 scorekeeper/gameplay.php:55
-#: user/addscoresheet.php:625 user/respgames.php:203
+#: user/addscoresheet.php:625 user/respgames.php:199
 msgid "Gameplay"
 msgstr "Juego"
 
@@ -3219,12 +3219,12 @@ msgstr "Ayuda"
 msgid "Hide"
 msgstr "Esconder"
 
-#: user/respgames.php:118
+#: user/respgames.php:117
 msgid "Hide future games"
 msgstr "Ocultar juegos futuros"
 
 #: admin/seasongames.php:137 scorekeeper/respgames.php:106
-#: user/respgames.php:112
+#: user/respgames.php:111
 msgid "Hide played games"
 msgstr "Ocultar juegos jugados"
 
@@ -3659,7 +3659,7 @@ msgstr "Camiseta#"
 msgid "Join selected"
 msgstr "Unión seleccionada"
 
-#: admin/seasongames.php:142 user/respgames.php:127
+#: admin/seasongames.php:142 user/respgames.php:126
 msgid "Just display values"
 msgstr "Solo muestra valores"
 
@@ -3831,7 +3831,7 @@ msgstr "Configuración regional"
 #: admin/addreservation.php:206 admin/editgame.php:214
 #: admin/reservations.php:119 lib/search.functions.php:311
 #: lib/search.functions.php:385 lib/search.functions.php:786
-#: lib/search.functions.php:870
+#: lib/search.functions.php:869
 msgid "Location"
 msgstr "Ubicación"
 
@@ -3952,7 +3952,7 @@ msgstr "Marca qué equipo está empezando a la ofensiva."
 msgid "Mass accreditation"
 msgstr "Acreditación masiva"
 
-#: admin/seasongames.php:145 user/respgames.php:129
+#: admin/seasongames.php:145 user/respgames.php:128
 msgid "Mass input"
 msgstr "Entrada masiva"
 
@@ -4001,7 +4001,7 @@ msgstr ""
 msgid "Merge selected profiles to most referred"
 msgstr "Fusionar perfiles seleccionados con los más referidos"
 
-#: admin/reservations.php:155
+#: admin/reservations.php:154
 msgid "Minimum transfer times in minutes between fields"
 msgstr "Tiempos mínimos de transferencia en minutos entre campos"
 
@@ -4340,7 +4340,7 @@ msgstr "No se encontraron juegos forfait."
 msgid "No game clock"
 msgstr "Sin reloj de juego"
 
-#: user/respgames.php:137
+#: user/respgames.php:136
 msgid "No game responsibilities"
 msgstr "Sin responsabilidades de juego"
 
@@ -4367,7 +4367,7 @@ msgstr "No se ha seleccionado ninguna imagen."
 msgid "No importable columns for %s."
 msgstr "No hay columnas importables para %s."
 
-#: user/respgames.php:169
+#: user/respgames.php:168
 msgid "No location"
 msgstr "Sin ubicación"
 
@@ -4661,7 +4661,7 @@ msgstr "Otro"
 msgid "Our Spirit compared to theirs"
 msgstr "Nuestro Espíritu comparado con el de ellos"
 
-#: admin/reservations.php:132 lib/search.functions.php:798
+#: admin/reservations.php:121 lib/search.functions.php:788
 msgid "PDF"
 msgstr "PDF"
 
@@ -4947,12 +4947,12 @@ msgstr "Estadísticas del jugador"
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:137
 #: admin/tdtools.php:184 user/adddefensesheet.php:64
 #: user/addplayerlists.php:276 user/addresult.php:66 user/addscoresheet.php:278
-#: user/addspirit.php:224 user/respgames.php:210 user/respteams.php:43
+#: user/addspirit.php:224 user/respgames.php:206 user/respteams.php:43
 #: user/scoresheethistory.php:356 user/scoresheethistory.php:616
 msgid "Players"
 msgstr "Jugadores"
 
-#: user/respgames.php:26
+#: user/respgames.php:25
 msgid "Players in the game"
 msgstr "Jugadores en el juego"
 
@@ -5158,10 +5158,6 @@ msgstr ""
 msgid "Primary email"
 msgstr "Correo electrónico principal"
 
-#: admin/reservations.php:135 lib/search.functions.php:801
-msgid "Print"
-msgstr "Imprimir"
-
 #: admin/seasongames.php:151
 msgid "Print all scoresheets"
 msgstr "Imprimir todas las hojas de anotación"
@@ -5182,7 +5178,7 @@ msgstr "Imprimir lista de jugadores"
 msgid "Print scoresheet"
 msgstr "Imprimir hoja de anotación"
 
-#: admin/seasongames.php:174 user/respgames.php:173
+#: admin/seasongames.php:174 user/respgames.php:172
 msgid "Print scoresheets"
 msgstr "Imprimir hojas de anotación"
 
@@ -5247,7 +5243,7 @@ msgstr "Clasificación final publicada"
 msgid "Publisher"
 msgstr "Editor"
 
-#: admin/reservations.php:121 lib/search.functions.php:788
+#: admin/reservations.php:134 lib/search.functions.php:800
 msgid "QR"
 msgstr "QR"
 
@@ -5508,7 +5504,7 @@ msgstr "Restaurado"
 #: scorekeeper/respgames.php:220 user/adddefensesheet.php:63
 #: user/addplayerlists.php:275 user/addresult.php:13 user/addresult.php:27
 #: user/addresult.php:65 user/addscoresheet.php:277 user/addspirit.php:223
-#: user/respgames.php:25 user/respgames.php:209 user/scoresheethistory.php:355
+#: user/respgames.php:24 user/respgames.php:205 user/scoresheethistory.php:355
 #: user/scoresheethistory.php:450
 msgid "Result"
 msgstr "Resultado"
@@ -5729,7 +5725,7 @@ msgstr "Sábado"
 #: scorekeeper/addspirittimeouts.php:178 scorekeeper/addtimeouts.php:162
 #: spiritkeeper/editgame.php:125 user/addmedialink.php:219
 #: user/addplayerlists.php:453 user/addspirit.php:314 user/clubprofile.php:251
-#: user/playerprofile.php:389 user/respgames.php:236 user/teamplayers.php:285
+#: user/playerprofile.php:389 user/respgames.php:229 user/teamplayers.php:285
 #: user/teamprofile.php:191 user/userinfo.php:291
 msgid "Save"
 msgstr "Guardar"
@@ -5774,7 +5770,7 @@ msgstr "Guardar gol con errores"
 msgid "Save scores"
 msgstr "Guardar puntuaciones"
 
-#: admin/reservations.php:194
+#: admin/reservations.php:193
 msgid "Save times"
 msgstr "Ahorra tiempos"
 
@@ -5809,7 +5805,7 @@ msgstr "Calendario guardado con errores:"
 msgid "Schedule saved with warnings:"
 msgstr "Calendario guardado con advertencias:"
 
-#: admin/reservations.php:90 admin/reservations.php:148
+#: admin/reservations.php:90 admin/reservations.php:147
 msgid "Schedule selected"
 msgstr "Calendario seleccionado"
 
@@ -5907,8 +5903,7 @@ msgstr "Anotadores"
 msgid "Scorekeepers fill in their names."
 msgstr "Los anotadores escriben sus nombres."
 
-#: user/respgames.php:175 user/respgames.php:223 user/scorekeepinglink.php:10
-#: user/scoresheethistory.php:410
+#: user/scorekeepinglink.php:10 user/scoresheethistory.php:410
 msgid "Scorekeeping link"
 msgstr ""
 
@@ -5940,12 +5935,13 @@ msgstr "Goleador y asistencia tienen el mismo número"
 msgid "Scores"
 msgstr "Puntajes"
 
-#: admin/seasongames.php:246 admin/tdtools.php:185
+#: admin/reservations.php:132 admin/seasongames.php:246 admin/tdtools.php:185
 #: cust/default/pdfscoresheet.php:55 cust/slkl/pdfscoresheet.php:55
-#: cust/wfdf/pdfscoresheet.php:287 scorekeeper/addscoresheet.php:290
-#: scorekeeper/respgames.php:222 user/adddefensesheet.php:65
-#: user/addplayerlists.php:277 user/addresult.php:67 user/addscoresheet.php:279
-#: user/addspirit.php:225 user/respgames.php:211 user/scoresheethistory.php:357
+#: cust/wfdf/pdfscoresheet.php:287 lib/search.functions.php:798
+#: scorekeeper/addscoresheet.php:290 scorekeeper/respgames.php:222
+#: user/adddefensesheet.php:65 user/addplayerlists.php:277
+#: user/addresult.php:67 user/addscoresheet.php:279 user/addspirit.php:225
+#: user/respgames.php:207 user/scoresheethistory.php:357
 msgid "Scoresheet"
 msgstr "Hoja de anotación"
 
@@ -5975,10 +5971,6 @@ msgstr ""
 #: user/addscoresheet.php:624
 msgid "Scoresheet saved"
 msgstr "Hoja de anotación guardada"
-
-#: admin/reservations.php:121 lib/search.functions.php:788
-msgid "Scoresheets"
-msgstr "Hojas de anotación"
 
 #: scorekeeper/addscoresheet.php:215 scorekeeper/addscoresheet.php:226
 msgid "Scoring player not on the roster."
@@ -6294,7 +6286,7 @@ msgstr "Mostrar responsabilidades de administración"
 msgid "Show all"
 msgstr "Mostrar todo"
 
-#: user/respgames.php:121
+#: user/respgames.php:120
 msgid "Show all games"
 msgstr "Mostrar todos los juegos"
 
@@ -6510,7 +6502,7 @@ msgstr ""
 #: cust/wfdf/pdfscoresheet.php:1121 cust/windmill/pdfscoresheet.php:530
 #: sql/upgrade_db.php:560 user/adddefensesheet.php:69
 #: user/addplayerlists.php:281 user/addresult.php:71 user/addscoresheet.php:283
-#: user/addspirit.php:226 user/respgames.php:215 user/scoresheethistory.php:361
+#: user/addspirit.php:226 user/respgames.php:211 user/scoresheethistory.php:361
 msgid "Spirit score"
 msgstr "Puntuación de espíritu"
 
@@ -7131,7 +7123,7 @@ msgstr ""
 "Estas configuraciones controlan cómo se recopilan, muestran y bloquean las "
 "puntuaciones espirituales para este evento."
 
-#: admin/reservations.php:156
+#: admin/reservations.php:155
 msgid ""
 "These transfer times are used during schedule validation to detect conflicts "
 "between consecutive games on different fields."
@@ -7497,7 +7489,7 @@ msgid "Touched"
 msgstr "Tocado"
 
 #: admin/addseasons.php:350 admin/seasonadmin.php:33
-#: lib/search.functions.php:371 lib/search.functions.php:870
+#: lib/search.functions.php:371 lib/search.functions.php:869
 msgid "Tournament"
 msgstr "Torneo"
 
@@ -7505,7 +7497,7 @@ msgstr "Torneo"
 msgid "Transfer already exists"
 msgstr "La transferencia ya existe"
 
-#: admin/reservations.php:154
+#: admin/reservations.php:153
 msgid "Transfer times"
 msgstr "Tiempos de transferencia"
 
@@ -8041,12 +8033,12 @@ msgstr "Federación Mundial de Disco Volador"
 #: admin/clubs.php:112 admin/locations.php:66 admin/poolgames.php:291
 #: admin/poolgames.php:292 admin/poolgames.php:331 admin/poolgames.php:332
 #: admin/poolgames.php:355 admin/poolgames.php:356 admin/poolmoves.php:251
-#: admin/poolmoves.php:329 admin/reservations.php:139 admin/seasongames.php:262
+#: admin/poolmoves.php:329 admin/reservations.php:138 admin/seasongames.php:262
 #: admin/seasonmoves.php:171 admin/seasonpools.php:270 admin/seasons.php:148
 #: admin/seasonseries.php:130 admin/seasonstandings.php:404
 #: admin/seasonstandings.php:461 admin/seasonteams.php:240
 #: admin/serieformats.php:48 admin/serverconf.php:411
-#: admin/timekeepertemplates.php:53 lib/search.functions.php:805
+#: admin/timekeepertemplates.php:53 lib/search.functions.php:804
 #: plugins/simulate_games.php:264
 msgid "X"
 msgstr "X"
@@ -8780,6 +8772,9 @@ msgstr "si"
 #~ msgid "Players of the game"
 #~ msgstr "Jugadores del juego"
 
+#~ msgid "Print"
+#~ msgstr "Imprimir"
+
 #~ msgid "Quick add result"
 #~ msgstr "Agregar resultado rápido"
 
@@ -8803,6 +8798,9 @@ msgstr "si"
 
 #~ msgid "Scoresheet #"
 #~ msgstr "Hoja de anotación #"
+
+#~ msgid "Scoresheets"
+#~ msgstr "Hojas de anotación"
 
 #~ msgid "Second warning before start"
 #~ msgstr "La segunda mitad comenzó en"
