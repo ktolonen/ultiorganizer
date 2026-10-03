@@ -6,7 +6,7 @@
 
 - `index.php`: bootstrap, session, routed shell (`?view=<page>`, resolved by `resolveViewPath()`), guarded by `scorekeeper/auth.php` via `lib/auth.guard.php`. Styles come from `mobileStyles()`.
 - `login.php`: login with interface language selection.
-- `respgames.php`: the user's games from `GameResponsibilityArray()`, filterable by event, "today only" and "hide played games", grouped by reservation group and field, with `Result`, `Players` and `Scoresheet` actions. A game is played when `hasstarted > 0` and `isongoing = 0`.
+- `respgames.php`: the user's games from `GameResponsibilityArray()`, including the games their scorekeeping links cover, filterable by event, "today only" and "hide played games", grouped by reservation group and field, with `Result`, `Players` and `Scoresheet` actions. A game is played when `hasstarted > 0` and `isongoing = 0`.
 - `addplayerlists.php`: per-game roster for one team at a time.
 - `addscoresheet.php`: goal entry and live clock control.
 - `endgame.php`: confirmation before saving the final result.
@@ -15,6 +15,15 @@
 - Metadata pages: `addofficial.php` (scorekeeper name, stored in `official`), `addcomment.php`, `addfirstoffence.php`, `addhalftime.php`, `addscorecap.php`, `addtimeouts.php`, `addspirittimeouts.php`, `deletescore.php` (removes the latest goal), `scoreboard.php`.
 
 Workflow: open the game from `respgames.php`, set player lists, run the clock and enter goals, record metadata, confirm in `endgame.php`, review in `gameplay.php`.
+
+## Scorekeeping links
+
+A scorekeeping link opens Scorekeeper for one game or for every game in one reservation (a field for a block of time), so an official needs no role. It is `scorekeeper/?t=<token>`, where the token is 32 random hex characters in `uo_scorekeeper_token`, unique per game and per reservation. Helpers live in `lib/scorekeeper.functions.php`; see `docs/permissions.md` for how the right is checked and who may issue a link.
+
+- **Issuing.** `ScorekeeperToken()` creates the token on first use and returns null to a user who may not issue it. Tokens are stored as they are, so printing again keeps the sheet already on the field valid. `user/scorekeepinglink.php` (linked per game and per field from Game responsibilities) shows the QR code, the URL to copy, a WhatsApp share link and a printable sheet for the field. Replacing the link (`ScorekeeperRotateToken()`) deletes the row, which revokes every grant it gave. The default and slkl scoresheet PDFs print the game's link as a QR code.
+- **Opening.** `index.php` handles `?t=` before any view and redirects at once with `Referrer-Policy: no-referrer` and `Cache-Control: no-store`, so the token does not stay in the address bar. A logged-in user gets a row in `uo_scorekeeper_grant`. A logged-out user is sent to the login page, which names what the link opens; the token is kept as pending and claimed on the first logged-in request, which is not always the login POST, since `UserAuthenticate()` redirects away on a first login. Tokens used anonymously are claimed the same way when the session logs in. An unknown token shows a generic notice and writes a `security` event without the token.
+- **What a link covers.** Everything is checked live on each edit: a replaced token no longer exists, a game moved out of the reservation is no longer covered, and a reservation link covers its games only on the reservation's date, by the same date test as "Show today only". The game list offers the link's event even when it is not marked current or is private.
+- **Anonymous scorekeeping.** With the event setting `anonymous_scorekeeping` on, opening a link without logging in gives that session the whole scoresheet except game notes. The session keeps its tokens only in the session and gets a new session id. Its history rows carry `user_id` `anonymous` and the token id in `scorekeeper_token` (see `docs/scoresheet-history.md`).
 
 ## Client script
 

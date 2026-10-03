@@ -61,6 +61,14 @@ The main helpers live in [lib/user.functions.php](../lib/user.functions.php).
 - Spirit season helpers:
   `hasSpiritToolsRight()`, `hasSpiritEditRight()`
 
+## Scorekeeping links
+
+A scorekeeping link (`docs/scorekeeper.md`) gives game-entry rights without a role row. `hasEditGameEventsRight()` and `hasEditGamePlayersRight()` end their role check with `ScorekeeperGrantCovers($game)`, which is true only when `IsScorekeeperApp()` holds, so a link works in Scorekeeper and never in the desktop editors or the API. The read-only check after it still applies.
+
+Logged-in users hold links as rows in `uo_scorekeeper_grant`; an anonymous session holds them in `$_SESSION['scorekeeper_tokens']`, and only while the event's `anonymous_scorekeeping` setting is on. `lib/auth.guard.php` admits such a session through `$auth_allow_anonymous`, which `scorekeeper/auth.php` sets. Game notes stay out of reach for it, because `CanManageGameComment()` requires a login.
+
+`CanIssueGameScorekeeperToken()` and `CanIssueReservationScorekeeperToken()` decide who may see, print and replace a link: `superadmin`, `seasonadmin`, `seriesadmin` for the game's division (for a reservation, a division with a game in it), and `resgameadmin` for the reservation. A link holder cannot see or replace the link itself.
+
 ## Read-only events
 
 `canBypassEventReadonly()` returns true only for `superadmin`.
@@ -100,7 +108,7 @@ The spirit-specific logic is implemented in [lib/spirit.functions.php](../lib/sp
 - `hasSpiritEditRight($season)` is `hasSpiritToolsRight($season)` plus the event must not be read-only unless the user is `superadmin`.
 - `HasFullGameSpiritEditRight($gameId)` is true when:
   `hasSpiritEditRight($season)` is true, or
-  the user has `seriesadmin` for the game series, `resgameadmin` for the reservation, or `gameadmin` for the game, and the event is not read-only unless the user is `superadmin`.
+  the user has `seriesadmin` for the game series and the event is not read-only unless the user is `superadmin`. `gameadmin` and `resgameadmin` run the scoring desk and get no spirit rights.
 - `HasFullGameSpiritViewRight($gameId)` is true when:
   `hasSpiritToolsRight($season)` is true, or
   `HasFullGameSpiritEditRight($gameId)` is true.

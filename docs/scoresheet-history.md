@@ -113,6 +113,8 @@ The scope matters most for `hasAddMediaRight()`, which any logged-in session hol
 
 `ip` is empty on every row when `DisableVisitorLogging` is set (see `docs/privacy.md`).
 
+A row written by an anonymous Scorekeeper session through a scorekeeping link stores `user_id` `anonymous` and the link's token id in `scorekeeper_token`, the only attribution such a row has. The column has no foreign key, so the id still tells links apart after one is replaced. The history page shows it as `#<id>` next to the user.
+
 ## Viewing history
 
 - `user/scoresheethistory.php` shows one game's history. It requires `hasViewScoresheetHistoryRight($gameId)`: `hasEditGameEventsRight($gameId)`, so a team's own game admins can review it, or `isSeasonAdmin()` on the event, which still works after the event is read-only. Snapshot rows get a "Show" link. "Restore this version" requires `hasRestoreScoresheetHistoryRight($gameId)`: superadmin or the event's `seasonadmin` only.
