@@ -54,9 +54,9 @@ $html .= "<p><b>" . utf8entities($target['subject']) . "</b></p>";
 $html .= ScorekeeperLinkGamesHtml($target['games']);
 $html .= "<div class='scorekeeping-qr'>" . ScorekeeperQrSvg($url, 5) . "</div>";
 $html .= "<p><input type='text' id='scorekeepingurl' class='input' readonly='readonly' value='" . utf8entities($url) . "'/> ";
-$html .= "<button type='button' class='button' onclick='copyScorekeepingUrl()'>" . utf8entities(_("Copy")) . "</button></p>";
-$html .= "<p><a href='https://wa.me/?text=" . rawurlencode($url) . "' target='_blank' rel='noopener noreferrer'>" . utf8entities(_("Share via WhatsApp")) . "</a>";
-$html .= " | <a href='" . $selfUrl . "&amp;print=1' target='_blank' rel='noopener'>" . utf8entities(_("Printable version")) . "</a></p>";
+$html .= "<button type='button' class='button' onclick='copyScorekeepingUrl()'>" . utf8entities(_("Copy")) . "</button> ";
+$html .= "<button type='button' class='button' id='scorekeepingshare' style='display:none;' onclick='shareScorekeepingUrl()'>" . utf8entities(_("Share")) . "</button></p>";
+$html .= "<p><a href='" . $selfUrl . "&amp;print=1' target='_blank' rel='noopener'>" . utf8entities(_("Printable version")) . "</a></p>";
 $html .= "<p>" . utf8entities($who);
 if ($scope === 'reservation') {
     $html .= " " . utf8entities(_("The link works only on the day of the field reservation."));
@@ -76,6 +76,12 @@ function copyScorekeepingUrl() {
   } else {
     document.execCommand('copy');
   }
+}
+function shareScorekeepingUrl() {
+  navigator.share({ url: document.getElementById('scorekeepingurl').value }).catch(function () {});
+}
+if (navigator.share) {
+  document.getElementById('scorekeepingshare').style.display = '';
 }
 </script>";
 
