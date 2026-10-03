@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 16:20+0300\n"
+"POT-Creation-Date: 2026-10-03 16:29+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -5366,7 +5366,7 @@ msgstr "Ausgewähltes umbenennen"
 msgid "Repeat password"
 msgstr "Passwort (Wdh.)"
 
-#: user/scorekeepinglink.php:94
+#: user/scorekeepinglink.php:97
 msgid "Replace link"
 msgstr ""
 
@@ -6924,7 +6924,7 @@ msgstr ""
 "Das Banner wird oben auf den öffentlichen Seiten des Turniers angezeigt. Ein "
 "breites Bild eignet sich am besten, zum Beispiel 1600 x 400 Pixel."
 
-#: user/scorekeepinglink.php:92
+#: user/scorekeepinglink.php:95
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
@@ -6996,11 +6996,11 @@ msgstr "Die Importdatei ist kein Ultiorganizer-Turnier-Snapshot."
 msgid "The key is case insensitive"
 msgstr "Die Groß-/Kleinschreibung des Schlüssels spielt keine Rolle"
 
-#: user/scorekeepinglink.php:91
+#: user/scorekeepinglink.php:90
 msgid "The link works only on the day of the field reservation."
 msgstr ""
 
-#: user/scorekeepinglink.php:90
+#: user/scorekeepinglink.php:92
 msgid "The link works only on the day of the game."
 msgstr ""
 
@@ -7187,7 +7187,7 @@ msgid ""
 "one."
 msgstr ""
 
-#: lib/scorekeeper.functions.php:518
+#: lib/scorekeeper.functions.php:517
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr ""
@@ -8035,7 +8035,7 @@ msgstr ""
 "Du kannst die folgenden Statistiken aus Ultiorganizer direkt in deine "
 "eigenen Seiten einbetten"
 
-#: lib/scorekeeper.functions.php:503
+#: lib/scorekeeper.functions.php:520
 #, php-format
 msgid "You can keep score for %s."
 msgstr ""

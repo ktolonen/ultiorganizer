@@ -500,9 +500,8 @@ function ScorekeeperTakeNoticeHtml()
     if ($description === "") {
         return "";
     }
-    $html = "<p>" . utf8entities(sprintf(_("You can keep score for %s."), $description)) . "</p>\n";
-
-    // A link opened on another day covers nothing yet, so say when it works.
+    // A link opened on another day covers nothing yet, so say when it works
+    // instead of promising access.
     $row = ScorekeeperTokenRow($tokenId);
     if (!empty($row['game'])) {
         $game = GameInfo((int) $row['game']);
@@ -515,10 +514,10 @@ function ScorekeeperTakeNoticeHtml()
         [$from, $to] = ScorekeeperOpenDays($row['season']);
         $day = substr($time, 0, 10);
         if ($day < $from || $day > $to) {
-            $html .= "<p class='warning'>" . utf8entities(sprintf(_("This scorekeeping link works only on %s."), ShortDate($time))) . "</p>\n";
+            return "<p class='warning'>" . utf8entities(sprintf(_("This scorekeeping link works only on %s."), ShortDate($time))) . "</p>\n";
         }
     }
-    return $html;
+    return "<p>" . utf8entities(sprintf(_("You can keep score for %s."), $description)) . "</p>\n";
 }
 
 /**
