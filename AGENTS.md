@@ -23,7 +23,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - `lib/`: shared utilities; SQL belongs here.
 - `api/`: JSON API entry points and routing.
 - `cust/`: skins and installation-specific customizations. `default`, `slkl` and `wfdf` are maintained; the others are unmaintained legacy — see `docs/customization.md`.
-- `mobile/`, `scorekeeper/`, `spiritkeeper/`, `timekeeper/`, `login/`, `ext/`: specialized entry points. `mobile/` is deprecated legacy; `scorekeeper/` and `spiritkeeper/` replace it. `timekeeper/` is a public WFDF time-limit aid (`docs/timekeeper.md`).
+- `scorekeeper/`, `spiritkeeper/`, `timekeeper/`, `login/`, `ext/`: specialized entry points. `timekeeper/` is a public WFDF time-limit aid (`docs/timekeeper.md`).
 - `images/`, `locale/`, `plugins/`: static assets, translations, and plugin code.
 - `script/`: client-side JavaScript assets.
 - `conf/`: server configuration; keep writable only during install.

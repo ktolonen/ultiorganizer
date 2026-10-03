@@ -45,6 +45,8 @@ Uploads are stored `0644` in `0775` directories so a web server running as anoth
 
 Install packages include `sql/ultiorganizer.sql` and `conf/config.inc.example.php` for the installer; don't expose them for browsing afterwards.
 
+Extracting an update package over an installation does not delete files a release removed. Delete them by hand; for example, the legacy `mobile/` directory is no longer shipped and its leftover pages no longer work.
+
 ## PHP upload limits
 
 The event data import (`admin/eventdataimport.php`) and database restore (`admin/dbrestore.php`) can take uploads of tens of megabytes. `post_max_size` and `upload_max_filesize` are `PHP_INI_PERDIR`, so set them on the server, above the largest expected snapshot, with `post_max_size` slightly larger. For example in `php.ini`, an FPM pool or `.user.ini`:

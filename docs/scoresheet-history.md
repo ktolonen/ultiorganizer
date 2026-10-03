@@ -42,7 +42,7 @@ Snapshots are sparse; one per point would mean one per goal. `ScoresheetHistoryS
 Exceptions:
 
 - **Per-goal paths.** `GameAddScore()`, `GameAddScoreEntry()` and `GameRemoveScore()` never snapshot. The desktop bulk save is covered by `GameRemoveAllScores()`, which does.
-- **`GameUpdateResult()`** takes `$snapshot` (default `true`). The per-point callers `mobile/addscoresheet.php` and `scorekeeper/addscoresheet.php` pass `false`.
+- **`GameUpdateResult()`** takes `$snapshot` (default `true`). The per-point caller `scorekeeper/addscoresheet.php` passes `false`.
 - **Fixture mutators.** `GameChangeHome()` and `SetGame()` record a `fixture` row but never snapshot: the captured state would carry the outgoing teams and be withheld as a fixture mismatch immediately. `SetGame()` records only when a team column actually changed (compared against a read-back of the row), and records a separate `fixture`/`move` row when the pool changes. Both are written before `SetGamePool()` runs, because the history rights are resolved through the game's series, which that call can change.
 - **The five `GameTime*()` clock mutators** record a `timer` row but never snapshot. Restore is whole-sheet, so a clock-only restore point would also roll back goals and roster. Other snapshots still capture the clock. Fix a clock mistake with `GameTimeSetElapsed()`.
 
@@ -119,7 +119,7 @@ An anonymous row stores `user_id` as `anonymous` instead of `unknown`.
 
 ## Attribution
 
-`ScoresheetHistorySource()` reads the `UO_APP_SOURCE` constant. `api/`, `scorekeeper/`, `spiritkeeper/` and `mobile/index.php` define it at their entry point. The root `index.php` derives it from the leading segment of `?view=...`, keeping `admin`, `user` or `mobile` and otherwise using `user`. A final `$_SERVER['SCRIPT_NAME']` match is a defensive fallback.
+`ScoresheetHistorySource()` reads the `UO_APP_SOURCE` constant. `api/`, `scorekeeper/` and `spiritkeeper/` define it at their entry point. The root `index.php` derives it from the leading segment of `?view=...`, keeping `admin` or `user` and otherwise using `user`. A final `$_SERVER['SCRIPT_NAME']` match is a defensive fallback. Older rows may carry `mobile`, written by the removed legacy mobile pages.
 
 `ip` is empty on every row when `DisableVisitorLogging` is set (see `docs/privacy.md`).
 

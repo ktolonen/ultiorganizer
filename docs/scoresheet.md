@@ -23,7 +23,7 @@ All paths write through shared mutators, mostly in `lib/game.functions.php`, tha
 
 ### Player lists
 
-`user/addplayerlists.php` (both teams, plus captains and spirit captains), `scorekeeper/addplayerlists.php` and `mobile/addplayerlists.php` (one team at a time) build `uo_played` from the team roster in `uo_player` with `GameAddPlayer()`, `GameRemovePlayer()`, `GameSetPlayerNumber()`, `GameSetCaptains()` and `GameSetSpiritCaptains()`.
+`user/addplayerlists.php` (both teams, plus captains and spirit captains), `scorekeeper/addplayerlists.php` (one team at a time) build `uo_played` from the team roster in `uo_player` with `GameAddPlayer()`, `GameRemovePlayer()`, `GameSetPlayerNumber()`, `GameSetCaptains()` and `GameSetSpiritCaptains()`.
 
 Detailed entry resolves assist and scorer numbers through `uo_played`, not `uo_player`, so it depends on the player lists.
 
@@ -33,9 +33,9 @@ Detailed entry resolves assist and scorer numbers through `uo_played`, not `uo_p
 
 On save it calls `GameSetScoreSheetKeeper()`, `GameSetHalftime()`, `GameSetStartingTeam()`, `SetGameComment(COMMENT_TYPE_GAME, ...)`, clears and re-adds timeouts and spirit stoppages, and replaces the point sequence with `GameRemoveAllScores()` plus `GameAddScore()` per point. An ongoing game updates the result with `GameUpdateResult()`; clearing the ongoing flag finalizes it with `GameSetResult()`.
 
-### Scorekeeper and mobile
+### Scorekeeper
 
-`scorekeeper/` (see `docs/scorekeeper.md`) and the deprecated `mobile/` enter one point at a time with `GameAddScoreEntry()`, advance the score with `GameUpdateResult()`, and finalize with `GameSetResult()`. Metadata has its own pages (`addofficial.php`, `addcomment.php`, `addhalftime.php`, `addtimeouts.php`, `addspirittimeouts.php`, `addfirstoffence.php`). Spirit scores are submitted in `spiritkeeper/` or the logged-in user pages, not here.
+`scorekeeper/` (see `docs/scorekeeper.md`) enters one point at a time with `GameAddScoreEntry()`, advance the score with `GameUpdateResult()`, and finalize with `GameSetResult()`. Metadata has its own pages (`addofficial.php`, `addcomment.php`, `addhalftime.php`, `addtimeouts.php`, `addspirittimeouts.php`, `addfirstoffence.php`). Spirit scores are submitted in `spiritkeeper/` or the logged-in user pages, not here.
 
 ## Change history
 
@@ -55,11 +55,11 @@ Other clock changes, `defense`, `mediaevent` and cap events are excluded: the sh
 
 The comparison runs after the payload validates and before the save's own writes, which record their own history rows. A payload with no token is a conflict. On a mismatch the save is refused with the entries kept, and the refusal carries the compared token, so saving again deliberately overwrites exactly the changes the operator was warned about. A save refused over its own point validation keeps the older token.
 
-This is a comparison, not a lock: a point entered between the check and the rewrite is lost, but recoverable from the snapshot the save takes first. `scorekeeper/` and `mobile/` carry no token; their point entry appends, but their timeout pages still replace the list unchecked. With `DisableScoresheetHistory` on, the token never moves and saves are unchecked.
+This is a comparison, not a lock: a point entered between the check and the rewrite is lost, but recoverable from the snapshot the save takes first. `scorekeeper/` carries no token; its point entry appends, but its timeout pages still replace the list unchecked. With `DisableScoresheetHistory` on, the token never moves and saves are unchecked.
 
 ## Data notes
 
-- `uo_goal.num` is the point order from 1. Older scorekeeper and mobile games may start at 0; a desktop save renumbers from 1. `uo_goal` also stores the running score after each point.
+- `uo_goal.num` is the point order from 1. Older scorekeeper games, and games from the removed `mobile/` pages, may start at 0; a desktop save renumbers from 1. `uo_goal` also stores the running score after each point.
 - `uo_gameevent` holds the starting offence and cap events. Caps use type `half_cap` or `time_cap` with the point cap in `info`, and are shown without a team.
 - The game note is a `uo_comment` row with `type = COMMENT_TYPE_GAME` (4) and `id` = game id.
 - Pool rules (halftime, point cap, time cap, timeouts) come from `uo_pool`; `hide_time_on_scoresheet` from `uo_season`.
@@ -68,7 +68,7 @@ This is a comparison, not a lock: a point entered between the check and the rewr
 
 `gameplay.php` is the full replay: result (`GameResult()`), team scoreboards (`GameTeamScoreBorad()`), the goal list (`GameGoals()`), timeouts, spirit stoppages and events (`GameEvents()`), neutral cap markers, halftime markers, captain markers, and the game note (`GameCommentHtml(COMMENT_TYPE_GAME)`). Scoreboard totals count one per assist and goal; Callahans are included in goals, not added again.
 
-`mobile/gameplay.php` and `scorekeeper/gameplay.php` show a compact sequential replay of the same data and link to team scoreboards.
+`scorekeeper/gameplay.php` shows a compact sequential replay of the same data and link to team scoreboards.
 
 ## Hidden times
 

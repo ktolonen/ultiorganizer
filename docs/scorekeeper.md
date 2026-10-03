@@ -1,6 +1,6 @@
 # Scorekeeper
 
-`scorekeeper/` is the mobile officiating app for game-day result and scoresheet entry. It uses the shared game, player, standings and spirit helpers, with its own routed entrypoint and an incremental workflow. It replaces the deprecated `mobile/` flow; `user/addscoresheet.php` remains the desktop bulk editor. Spirit scores are submitted in `spiritkeeper/`, not here. See `docs/scoresheet.md` for the shared data model.
+`scorekeeper/` is the mobile officiating app for game-day result and scoresheet entry. It uses the shared game, player, standings and spirit helpers, with its own routed entrypoint and an incremental workflow. `user/addscoresheet.php` remains the desktop bulk editor. Spirit scores are submitted in `spiritkeeper/`, not here. See `docs/scoresheet.md` for the shared data model.
 
 ## Pages
 
@@ -61,7 +61,7 @@ Each goal is inserted with `GameAddScoreEntry()`, and `GameUpdateResult()` advan
 
 It is off by default because `accredited` defaults to 0, which would make every roster unfillable in an installation that never accredits.
 
-`GameAddPlayer()` enforces the rule through `GameAllowsPlayerOnRoster()`, so every roster path, including the deprecated `mobile/addplayerlists.php`, is covered; the two page handlers also disable the controls. A player already on the game's roster stays allowed. `GameAddPlayer()` also writes the `uo_played.accredited` snapshot read by `SeasonUnaccredited()` and `admin/accreditation.php`.
+`GameAddPlayer()` enforces the rule through `GameAllowsPlayerOnRoster()`, so every roster path is covered; the two page handlers also disable the controls. A player already on the game's roster stays allowed. `GameAddPlayer()` also writes the `uo_played.accredited` snapshot read by `SeasonUnaccredited()` and `admin/accreditation.php`.
 
 ## Timeouts
 

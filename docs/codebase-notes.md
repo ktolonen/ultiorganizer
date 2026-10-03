@@ -43,7 +43,6 @@ Implementation notes for third-party code, PDFs, plugins, customizations, guards
 - Area-specific wrappers are preferred over repeating raw `lib/auth.guard.php` includes:
   - `admin/auth.php`
   - `user/auth.php`
-  - `mobile/auth.php`
   - `scorekeeper/auth.php`
   - `spiritkeeper/auth.php`
   - `plugins/auth.php`

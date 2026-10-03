@@ -14,7 +14,6 @@ and several thin entry points layered on top of it:
 
 - `index.php`: the main web app (admin and logged-in user pages).
 - `scorekeeper/`, `spiritkeeper/`, `timekeeper/`: standalone game-day apps.
-- `mobile/`: the deprecated legacy operator interface, kept only for compatibility.
 - `api/`: the JSON API.
 - `ext/`: public external outputs (RSS, CSV, XML, widgets).
 - `login/`: the shared login surface.

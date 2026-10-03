@@ -51,11 +51,7 @@ setSessionLocale();
 
 if (isset($_POST['myusername'])) {
     $password = $_POST['mypassword'] ?? '';
-    if (strpos($rawView, "mobile") === false) {
-        UserAuthenticate($_POST['myusername'], $password, "FailRedirect");
-    } else {
-        UserAuthenticate($_POST['myusername'], $password, "FailRedirectMobile");
-    }
+    UserAuthenticate($_POST['myusername'], $password, "FailRedirect");
 }
 
 if (!$rawView) {
@@ -90,7 +86,7 @@ LogPageLoad($viewToLog);
 // Whitelisted rather than stored as-is: uo_scoresheet_history.source is
 // varchar(20), and a root-level view carries no segment at all.
 $viewSource = strtok($viewToLog, '/');
-if (!in_array($viewSource, ['admin', 'user', 'mobile'], true)) {
+if (!in_array($viewSource, ['admin', 'user'], true)) {
     $viewSource = 'user';
 }
 define('UO_APP_SOURCE', $viewSource);

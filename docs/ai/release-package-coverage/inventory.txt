@@ -52,7 +52,6 @@ runtime-app  login
 runtime      login.php
 runtime      logout.php
 runtime      menufunctions.php
-runtime-app  mobile
 dev          .php-cs-fixer.dist.php
 dev          phpstan-baseline.neon
 dev          phpstan.neon.dist
