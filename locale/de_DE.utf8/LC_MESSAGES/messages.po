@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 19:26+0300\n"
+"POT-Creation-Date: 2026-10-03 20:52+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -337,7 +337,7 @@ msgid "Add links"
 msgstr "Link hinzufügen"
 
 #: admin/addlocations.php:20 admin/addlocations.php:107
-#: admin/addlocations.php:113 admin/reservations.php:195
+#: admin/addlocations.php:113 admin/reservations.php:201
 msgid "Add location"
 msgstr "Ort hinzufügen"
 
@@ -380,7 +380,7 @@ msgstr "Pool hinzufügen"
 msgid "Add pools first"
 msgstr "Zuerst Gruppen anlegen"
 
-#: admin/reservations.php:194
+#: admin/reservations.php:200
 msgid "Add reservation"
 msgstr "Reservierung hinzufügen"
 
@@ -1608,8 +1608,8 @@ msgstr "Datenbankgröße"
 msgid "Database version"
 msgstr "Datenbankversion"
 
-#: admin/addreservation.php:171 admin/reservations.php:118 admin/tdtools.php:89
-#: lib/search.functions.php:785
+#: admin/addreservation.php:171 admin/reservations.php:119 admin/tdtools.php:89
+#: lib/search.functions.php:786
 msgid "Date"
 msgstr "Datum"
 
@@ -1879,10 +1879,10 @@ msgstr "Disqualifiziert"
 #: cust/default/pdfscoresheet.php:69 cust/gummis/pdfscoresheet.php:71
 #: cust/slkl/pdfscoresheet.php:69 cust/wfdf/pdfscoresheet.php:281
 #: cust/wfdf/pdfscoresheet.php:1604 cust/windmill/pdfscoresheet.php:73
-#: lib/search.functions.php:36 lib/search.functions.php:70
-#: lib/search.functions.php:78 lib/search.functions.php:112
-#: lib/search.functions.php:472 lib/search.functions.php:513
-#: lib/search.functions.php:555 user/respteams.php:23
+#: lib/search.functions.php:37 lib/search.functions.php:71
+#: lib/search.functions.php:79 lib/search.functions.php:113
+#: lib/search.functions.php:473 lib/search.functions.php:514
+#: lib/search.functions.php:556 user/respteams.php:23
 #: user/select_poolselector.php:31 user/select_poolselector.php:34
 #: user/userinfo.php:349 user/userinfo.php:353 user/userinfo.php:371
 #: user/userinfo.php:372
@@ -2096,9 +2096,9 @@ msgstr "Bearbeitet von %s um %s"
 #: admin/addseasonusers.php:170 admin/addseasonusers.php:231
 #: admin/addseasonusers.php:280 admin/addteamadmins.php:92
 #: admin/adduser.php:141 admin/editgame.php:262 admin/privacyplayer.php:86
-#: admin/privacyuser.php:88 lib/search.functions.php:175
-#: lib/search.functions.php:241 lib/search.functions.php:632
-#: lib/search.functions.php:721 user/addextraemail.php:87
+#: admin/privacyuser.php:88 lib/search.functions.php:176
+#: lib/search.functions.php:242 lib/search.functions.php:633
+#: lib/search.functions.php:722 user/addextraemail.php:87
 #: user/playerprofile.php:234
 msgid "Email"
 msgstr "Email"
@@ -2125,13 +2125,13 @@ msgstr ""
 msgid "End game"
 msgstr "Spiel beenden"
 
-#: admin/addreservation.php:181 lib/search.functions.php:287
-#: lib/search.functions.php:360
+#: admin/addreservation.php:181 lib/search.functions.php:288
+#: lib/search.functions.php:361
 msgid "End time"
 msgstr "Ende"
 
-#: admin/addseasons.php:105 admin/addseasons.php:446 admin/reservations.php:119
-#: lib/search.functions.php:786
+#: admin/addseasons.php:105 admin/addseasons.php:446 admin/reservations.php:120
+#: lib/search.functions.php:787
 msgid "Ends"
 msgstr "Endet"
 
@@ -2223,11 +2223,11 @@ msgstr "Fehler: %s."
 #: admin/accreditation.php:136 admin/addreservation.php:210
 #: admin/apitokens.php:145 admin/dbequalize.php:249 admin/dbequalize.php:290
 #: admin/dbequalize.php:310 admin/privacyplayer.php:86 admin/seasonadmin.php:13
-#: admin/seasonstats.php:35 lib/search.functions.php:12
-#: lib/search.functions.php:32 lib/search.functions.php:66
-#: lib/search.functions.php:108 lib/search.functions.php:150
-#: lib/search.functions.php:216 lib/search.functions.php:472
-#: lib/search.functions.php:513 lib/search.functions.php:555
+#: admin/seasonstats.php:35 lib/search.functions.php:13
+#: lib/search.functions.php:33 lib/search.functions.php:67
+#: lib/search.functions.php:109 lib/search.functions.php:151
+#: lib/search.functions.php:217 lib/search.functions.php:473
+#: lib/search.functions.php:514 lib/search.functions.php:556
 #: spiritkeeper/home.php:59 spiritkeeper/teamgames.php:137
 #: user/select_poolselector.php:28 user/userinfo.php:345 user/userinfo.php:370
 msgid "Event"
@@ -2449,7 +2449,7 @@ msgstr "Suche Koordinaten"
 #: cust/wfdf/pdfschedule.php:178 cust/wfdf/pdfschedule.php:312
 #: cust/wfdf/pdfscoresheet.php:280 cust/windmill/pdfscoresheet.php:74
 #: lib/reservation.functions.php:30 lib/reservation.functions.php:36
-#: lib/search.functions.php:303 lib/search.functions.php:377
+#: lib/search.functions.php:304 lib/search.functions.php:378
 #: lib/timetable.functions.php:574 user/adddefensesheet.php:211
 #: user/addscoresheet.php:681
 msgid "Field"
@@ -2715,7 +2715,7 @@ msgstr "Von Pos."
 msgid "From position"
 msgstr "Von Position"
 
-#: admin/reservations.php:159
+#: admin/reservations.php:165
 msgid "From/to"
 msgstr "Von/bis"
 
@@ -2739,7 +2739,7 @@ msgstr "GP im Schnitt"
 #: cust/default/pdfscoresheet.php:287 cust/fpudd/pdfscoresheet.php:282
 #: cust/gummis/pdfscoresheet.php:273 cust/slkl/pdfscoresheet.php:251
 #: cust/wfdf/pdfscoresheet.php:659 cust/wfdf/pdfscoresheet.php:1586
-#: cust/windmill/pdfscoresheet.php:249 lib/search.functions.php:864
+#: cust/windmill/pdfscoresheet.php:249 lib/search.functions.php:870
 msgid "Game"
 msgstr "Spiel"
 
@@ -2954,13 +2954,13 @@ msgstr "Zusammenfassung des Spielverlaufs"
 #: spiritstatus.php:109 spiritstatus.php:111 teamcard.php:123 teamcard.php:168
 #: teamcard.php:280 teams.php:127 teams.php:179 teams.php:399
 #: admin/accreditation.php:195 admin/accreditation.php:257
-#: admin/editstanding.php:61 admin/poolgames.php:17 admin/reservations.php:119
+#: admin/editstanding.php:61 admin/poolgames.php:17 admin/reservations.php:120
 #: admin/seasonadmin.php:98 admin/seasongames.php:21 admin/seasonseries.php:124
 #: admin/seasonstandings.php:313 admin/seasonstandings.php:370
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seriesgames.php:31
 #: admin/seriesgames.php:41 admin/stats.php:138 ext/poolscoreboard.php:40
 #: ext/teamscoreboard.php:55 lib/common.functions.php:1691
-#: lib/search.functions.php:786
+#: lib/search.functions.php:787
 msgid "Games"
 msgstr "Spiele"
 
@@ -3126,11 +3126,11 @@ msgstr "Rechte vergeben"
 msgid "Grid (PDF)"
 msgstr "Raster (PDF)"
 
-#: admin/reservations.php:118 lib/search.functions.php:785
+#: admin/reservations.php:119 lib/search.functions.php:786
 msgid "Group"
 msgstr "Gruppe"
 
-#: admin/addreservation.php:185 lib/search.functions.php:296
+#: admin/addreservation.php:185 lib/search.functions.php:297
 msgid "Grouping name"
 msgstr "Gruppierungsname"
 
@@ -3680,7 +3680,7 @@ msgstr "Nachname"
 msgid "Last changed: %s"
 msgstr "Zuletzt geändert: %s"
 
-#: admin/privacyuser.php:88 lib/search.functions.php:632
+#: admin/privacyuser.php:88 lib/search.functions.php:633
 msgid "Last login"
 msgstr "Letztes Login"
 
@@ -3816,9 +3816,9 @@ msgid "Locale"
 msgstr "Gebietsschema"
 
 #: admin/addreservation.php:206 admin/editgame.php:214
-#: admin/reservations.php:118 lib/search.functions.php:310
-#: lib/search.functions.php:384 lib/search.functions.php:785
-#: lib/search.functions.php:864
+#: admin/reservations.php:119 lib/search.functions.php:311
+#: lib/search.functions.php:385 lib/search.functions.php:786
+#: lib/search.functions.php:870
 msgid "Location"
 msgstr "Ort"
 
@@ -3988,7 +3988,7 @@ msgid "Merge selected profiles to most referred"
 msgstr ""
 "Ausgewaehlte Profile mit dem am haeufigsten referenzierten zusammenfuehren"
 
-#: admin/reservations.php:149
+#: admin/reservations.php:155
 msgid "Minimum transfer times in minutes between fields"
 msgstr "Minimale Wechselzeiten in Minuten zwischen den Feldern"
 
@@ -4159,9 +4159,9 @@ msgstr "HINWEIS"
 #: cust/slkl/pdfscoresheet.php:156 cust/slkl/pdfscoresheet.php:166
 #: cust/slkl/pdfscoresheet.php:264 cust/wfdf/pdfscoresheet.php:672
 #: cust/windmill/pdfscoresheet.php:142 cust/windmill/pdfscoresheet.php:152
-#: cust/windmill/pdfscoresheet.php:262 lib/search.functions.php:159
-#: lib/search.functions.php:225 lib/search.functions.php:632
-#: lib/search.functions.php:721 scorekeeper/addplayerlists.php:169
+#: cust/windmill/pdfscoresheet.php:262 lib/search.functions.php:160
+#: lib/search.functions.php:226 lib/search.functions.php:633
+#: lib/search.functions.php:722 scorekeeper/addplayerlists.php:169
 #: user/addmedialink.php:195 user/addplayerlists.php:300
 #: user/addplayerlists.php:379 user/clubprofile.php:161
 #: user/clubprofile.php:216 user/playerprofile.php:354 user/teamprofile.php:156
@@ -4650,7 +4650,7 @@ msgstr "Sonst."
 msgid "Our Spirit compared to theirs"
 msgstr "Unser Spirit im Vergleich zu ihrem"
 
-#: admin/reservations.php:131 lib/search.functions.php:797
+#: admin/reservations.php:132 lib/search.functions.php:798
 msgid "PDF"
 msgstr "PDF"
 
@@ -5148,6 +5148,10 @@ msgstr "Gewinner der vorherigen Runde gegeneinander; Verlierer gegeneinander"
 msgid "Primary email"
 msgstr "Primäre Email-Adresse"
 
+#: admin/reservations.php:135 lib/search.functions.php:801
+msgid "Print"
+msgstr "Drucken"
+
 #: admin/seasongames.php:151
 msgid "Print all scoresheets"
 msgstr "Alle Spielberichte drucken"
@@ -5232,6 +5236,10 @@ msgstr "Veröffentlichte Endplatzierungen"
 #: user/addmedialink.php:197
 msgid "Publisher"
 msgstr "Herausgeber"
+
+#: admin/reservations.php:121 lib/search.functions.php:788
+msgid "QR"
+msgstr "QR"
 
 #: user/addspirit.php:242
 msgid "Quick data entry:"
@@ -5559,7 +5567,7 @@ msgstr "Widerrufen"
 msgid "Revoked"
 msgstr "Widerrufen"
 
-#: lib/search.functions.php:632
+#: lib/search.functions.php:633
 msgid "Rights"
 msgstr "Rechte"
 
@@ -5755,7 +5763,7 @@ msgstr "Punkt mit Fehlern speichern"
 msgid "Save scores"
 msgstr "Ergebnis speichern"
 
-#: admin/reservations.php:188
+#: admin/reservations.php:194
 msgid "Save times"
 msgstr "Zeiten speichern"
 
@@ -5790,7 +5798,7 @@ msgstr "Gespeicherter Zeitplan hat Fehler:"
 msgid "Schedule saved with warnings:"
 msgstr "Spielplan mit Warnungen gespeichert:"
 
-#: admin/reservations.php:90 admin/reservations.php:142
+#: admin/reservations.php:90 admin/reservations.php:148
 msgid "Schedule selected"
 msgstr "Mit Auswahl planen"
 
@@ -5957,7 +5965,7 @@ msgstr ""
 msgid "Scoresheet saved"
 msgstr "Spielbericht gespeichert"
 
-#: admin/reservations.php:120 lib/search.functions.php:787
+#: admin/reservations.php:121 lib/search.functions.php:788
 msgid "Scoresheets"
 msgstr "Spielberichte"
 
@@ -5972,10 +5980,10 @@ msgid "Scoring team"
 msgstr "Scorendes Team"
 
 #: admin/privacyplayer.php:74 admin/privacyuser.php:76
-#: admin/reservations.php:93 lib/search.functions.php:44
-#: lib/search.functions.php:86 lib/search.functions.php:128
-#: lib/search.functions.php:191 lib/search.functions.php:249
-#: lib/search.functions.php:318 lib/search.functions.php:399
+#: admin/reservations.php:93 lib/search.functions.php:45
+#: lib/search.functions.php:87 lib/search.functions.php:129
+#: lib/search.functions.php:192 lib/search.functions.php:250
+#: lib/search.functions.php:319 lib/search.functions.php:400
 #: user/teamplayers.php:244 user/teamplayers.php:274
 msgid "Search"
 msgstr "Suchen"
@@ -6679,8 +6687,8 @@ msgstr "Punktbeginn"
 msgid "Start the game clock before adding goals."
 msgstr "Starte die Spieluhr, bevor du Punkte hinzufuegst."
 
-#: admin/addreservation.php:177 lib/search.functions.php:275
-#: lib/search.functions.php:347
+#: admin/addreservation.php:177 lib/search.functions.php:276
+#: lib/search.functions.php:348
 msgid "Start time"
 msgstr "Startzeit"
 
@@ -6710,8 +6718,8 @@ msgstr "Startteam in der Offence"
 msgid "Starting time"
 msgstr "Startzeit"
 
-#: admin/addseasons.php:104 admin/addseasons.php:443 admin/reservations.php:119
-#: admin/seasons.php:93 lib/search.functions.php:786
+#: admin/addseasons.php:104 admin/addseasons.php:443 admin/reservations.php:120
+#: admin/seasons.php:93 lib/search.functions.php:787
 msgid "Starts"
 msgstr "Beginnt"
 
@@ -6805,10 +6813,10 @@ msgstr "Aufgaben"
 #: admin/serieteams.php:197 admin/spirit.php:232 admin/tdtools.php:23
 #: admin/tdtools.php:59 cust/wfdf/pdfscoresheet.php:1185
 #: ext/countrystatus.php:50 ext/eventpools.php:45 ext/poolscoreboard.php:39
-#: ext/poolstatus.php:49 lib/search.functions.php:120
-#: lib/search.functions.php:167 lib/search.functions.php:233
-#: lib/search.functions.php:391 lib/search.functions.php:555
-#: lib/search.functions.php:721 lib/swissdraw.functions.php:215
+#: ext/poolstatus.php:49 lib/search.functions.php:121
+#: lib/search.functions.php:168 lib/search.functions.php:234
+#: lib/search.functions.php:392 lib/search.functions.php:556
+#: lib/search.functions.php:722 lib/swissdraw.functions.php:215
 #: plugins/reassign_playoffpools.php:55 user/enrollteam.php:73
 #: user/respteams.php:22 user/scoresheethistory.php:669
 msgid "Team"
@@ -7108,7 +7116,7 @@ msgstr ""
 "Diese Einstellungen steuern, wie Spirit-Punktzahlen fuer dieses Ereignis "
 "erfasst, angezeigt und gesperrt werden."
 
-#: admin/reservations.php:150
+#: admin/reservations.php:156
 msgid ""
 "These transfer times are used during schedule validation to detect conflicts "
 "between consecutive games on different fields."
@@ -7473,7 +7481,7 @@ msgid "Touched"
 msgstr "Berührt"
 
 #: admin/addseasons.php:350 admin/seasonadmin.php:33
-#: lib/search.functions.php:370 lib/search.functions.php:864
+#: lib/search.functions.php:371 lib/search.functions.php:870
 msgid "Tournament"
 msgstr "Turnier"
 
@@ -7481,7 +7489,7 @@ msgstr "Turnier"
 msgid "Transfer already exists"
 msgstr "Transfer existiert schon"
 
-#: admin/reservations.php:148
+#: admin/reservations.php:154
 msgid "Transfer times"
 msgstr "Transferzeiten"
 
@@ -7628,7 +7636,7 @@ msgstr ""
 "Team konnte nicht hinzugefuegt werden. Bitte Teamdetails und Pool-"
 "Konfiguration pruefen."
 
-#: lib/search.functions.php:183 user/enrollteam.php:108 user/enrollteam.php:134
+#: lib/search.functions.php:184 user/enrollteam.php:108 user/enrollteam.php:134
 msgid "Unconfirmed"
 msgstr "Unbestätigt"
 
@@ -7784,7 +7792,7 @@ msgid "User roles"
 msgstr "Nutzerrollen"
 
 #: login.php:20 register.php:125 admin/adduser.php:110 admin/adduser.php:127
-#: admin/privacyuser.php:88 lib/search.functions.php:632
+#: admin/privacyuser.php:88 lib/search.functions.php:633
 #: scorekeeper/login.php:27 spiritkeeper/login.php:62 user/userinfo.php:242
 msgid "Username"
 msgstr "Benutzername"
@@ -8012,12 +8020,12 @@ msgstr "World Flying Disc Federation"
 #: admin/clubs.php:112 admin/locations.php:66 admin/poolgames.php:291
 #: admin/poolgames.php:292 admin/poolgames.php:331 admin/poolgames.php:332
 #: admin/poolgames.php:355 admin/poolgames.php:356 admin/poolmoves.php:251
-#: admin/poolmoves.php:329 admin/reservations.php:133 admin/seasongames.php:262
+#: admin/poolmoves.php:329 admin/reservations.php:139 admin/seasongames.php:262
 #: admin/seasonmoves.php:171 admin/seasonpools.php:270 admin/seasons.php:148
 #: admin/seasonseries.php:130 admin/seasonstandings.php:404
 #: admin/seasonstandings.php:461 admin/seasonteams.php:240
 #: admin/serieformats.php:48 admin/serverconf.php:411
-#: admin/timekeepertemplates.php:53 lib/search.functions.php:799
+#: admin/timekeepertemplates.php:53 lib/search.functions.php:805
 #: plugins/simulate_games.php:264
 msgid "X"
 msgstr "X"
@@ -8166,9 +8174,9 @@ msgid "comments visible"
 msgstr "Kommentare sichtbar"
 
 #: admin/addreservation.php:171 admin/addseasons.php:443
-#: admin/addseasons.php:446 lib/search.functions.php:275
-#: lib/search.functions.php:287 lib/search.functions.php:347
-#: lib/search.functions.php:360 user/playerprofile.php:271
+#: admin/addseasons.php:446 lib/search.functions.php:276
+#: lib/search.functions.php:288 lib/search.functions.php:348
+#: lib/search.functions.php:361 user/playerprofile.php:271
 msgid "dd.mm.yyyy"
 msgstr "TT.MM.JJJJ"
 
@@ -8496,7 +8504,7 @@ msgstr "Sekunden"
 msgid "select"
 msgstr "Wählen"
 
-#: lib/search.functions.php:391
+#: lib/search.functions.php:392
 msgid "separate with a comma"
 msgstr "durch Komma trennen"
 
