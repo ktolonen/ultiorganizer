@@ -107,3 +107,14 @@ if (!function_exists('scorekeeperRequestTeamId')) {
         return 0;
     }
 }
+
+// An anonymous session admitted by a scorekeeping link sees only the games
+// that link covers; until then no Scorekeeper page was readable without a
+// login, and a game id from another event must not become one.
+if (!isLoggedIn()) {
+    $anonymousGameId = scorekeeperRequestGameId();
+    if ($anonymousGameId > 0 && ScorekeeperGrantTokenId($anonymousGameId) === 0) {
+        header("location:" . $auth_redirect);
+        exit();
+    }
+}
