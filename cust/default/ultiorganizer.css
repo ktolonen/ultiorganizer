@@ -1393,6 +1393,10 @@ yuicalendar.table {
 	margin: 1em auto;
 }
 
+.scorekeeping-sheet + .scorekeeping-sheet {
+	break-before: page;
+}
+
 .scorekeeping-url {
 	font-family: monospace;
 	word-break: break-all;

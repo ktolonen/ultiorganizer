@@ -7,6 +7,7 @@ require_once __DIR__ . '/common.functions.php';
 require_once __DIR__ . '/user.functions.php';
 require_once __DIR__ . '/game.functions.php';
 require_once __DIR__ . '/reservation.functions.php';
+require_once __DIR__ . '/season.functions.php';
 require_once __DIR__ . '/series.functions.php';
 require_once __DIR__ . '/logging.functions.php';
 
@@ -141,15 +142,65 @@ function ScorekeeperToken($scope, $id)
  */
 function ScorekeeperRotateToken($scope, $id)
 {
+    if (!ScorekeeperRevokeToken($scope, $id)) {
+        return null;
+    }
+    return ScorekeeperToken($scope, $id);
+}
+
+/**
+ * Deletes a game's or reservation's token, which revokes every grant it gave.
+ * A new link is created the next time one is shown or printed.
+ */
+function ScorekeeperRevokeToken($scope, $id)
+{
     $allowed = $scope === 'game' ? CanIssueGameScorekeeperToken($id)
         : ($scope === 'reservation' && CanIssueReservationScorekeeperToken($id));
     if (!$allowed) {
-        return null;
+        return false;
     }
     DBQuery(sprintf("DELETE FROM uo_scorekeeper_token WHERE %s=%d", $scope, (int) $id));
-    Log1("security", "change", (string) (int) $id, $scope, "scorekeeping link rotated");
+    Log1("security", "change", (string) (int) $id, $scope, "scorekeeping link revoked");
     CacheForgetNamespace("scorekeeper_grant");
-    return ScorekeeperToken($scope, $id);
+    return true;
+}
+
+/**
+ * The event's existing scorekeeping links, keyed 'game:<id>' and
+ * 'reservation:<id>', each with its creation time and the users who opened
+ * it. Event admins only; links are not created here.
+ *
+ * @return array<string, array{token_id: int, created: string, users: array<int, array{userid: string, name: ?string}>}>
+ */
+function SeasonScorekeeperTokens($season)
+{
+    if (!isSeasonAdmin($season)) {
+        return [];
+    }
+    $rows = DBQueryToArrayUncached(sprintf(
+        "SELECT t.token_id, t.game, t.reservation, t.created, sg.userid, u.name
+			FROM uo_scorekeeper_token t
+			LEFT JOIN uo_reservation r ON (r.id=t.reservation)
+			LEFT JOIN uo_game_pool gp ON (gp.game=t.game AND gp.timetable=1)
+			LEFT JOIN uo_pool p ON (p.pool_id=gp.pool)
+			LEFT JOIN uo_series s ON (s.series_id=p.series)
+			LEFT JOIN uo_scorekeeper_grant sg ON (sg.token_id=t.token_id)
+			LEFT JOIN uo_users u ON (u.userid=sg.userid)
+		WHERE r.season='%1\$s' OR s.season='%1\$s'
+		ORDER BY t.token_id, sg.created",
+        DBEscapeString((string) $season),
+    ));
+    $tokens = [];
+    foreach ($rows as $row) {
+        $key = !empty($row['game']) ? "game:" . (int) $row['game'] : "reservation:" . (int) $row['reservation'];
+        if (!isset($tokens[$key])) {
+            $tokens[$key] = ['token_id' => (int) $row['token_id'], 'created' => $row['created'], 'users' => []];
+        }
+        if ($row['userid'] !== null) {
+            $tokens[$key]['users'][] = ['userid' => $row['userid'], 'name' => $row['name']];
+        }
+    }
+    return $tokens;
 }
 
 /**
@@ -201,6 +252,71 @@ function ScorekeeperTokenDescription($tokenId)
         return "";
     }
     return ReservationPlaceText(U_($reservation['name']), U_($reservation['fieldname'])) . ", " . ShortDate($reservation['starttime']);
+}
+
+/**
+ * What a game's or reservation's link opens: its event, a heading, and the
+ * games it covers. Returns null for an unknown game or reservation.
+ *
+ * @return array{season: string, subject: string, games: array<int, array<string, mixed>>}|null
+ */
+function ScorekeeperLinkTarget($scope, $id)
+{
+    if ($scope === 'game') {
+        $game = GameInfo((int) $id);
+        if (!is_array($game)) {
+            return null;
+        }
+        return ['season' => $game['season'], 'subject' => GameName($game), 'games' => [$game]];
+    }
+    $reservation = ReservationInfo((int) $id);
+    if (!is_array($reservation)) {
+        return null;
+    }
+    return [
+        'season' => $reservation['season'],
+        'subject' => ReservationPlaceText(U_($reservation['name']), U_($reservation['fieldname'])) . ", " . DefWeekDateFormat($reservation['starttime']),
+        // A field link covers only the games of the reservation's own event.
+        'games' => ReservationGames((int) $id, $reservation['season']),
+    ];
+}
+
+/**
+ * The games a link covers as a small table, as HTML.
+ */
+function ScorekeeperLinkGamesHtml($games)
+{
+    $html = "<table class='scorekeeping-link-games'>";
+    foreach ($games as $row) {
+        $home = $row['hometeam'] ? $row['hometeamname'] : $row['phometeamname'];
+        $away = $row['visitorteam'] ? $row['visitorteamname'] : $row['pvisitorteamname'];
+        $html .= "<tr><td>" . DefHourFormat($row['time']) . "</td><td>" . utf8entities($home) . " - " . utf8entities($away) . "</td>"
+            . "<td>" . utf8entities(U_($row['seriesname'])) . ", " . utf8entities(U_($row['poolname'])) . "</td></tr>";
+    }
+    return $html . "</table>";
+}
+
+/**
+ * The printable sheet for a game's or reservation's link, as HTML. Creates the
+ * link on first use like ScorekeeperToken(), and returns '' when the user may
+ * not issue it.
+ */
+function ScorekeeperLinkSheetHtml($scope, $id)
+{
+    $target = ScorekeeperLinkTarget($scope, $id);
+    $token = $target === null ? null : ScorekeeperToken($scope, $id);
+    if ($token === null) {
+        return "";
+    }
+    $url = ScorekeeperTokenUrl($token);
+    $html = "<div class='scorekeeping-sheet'>";
+    $html .= "<h1>" . utf8entities(SeasonName($target['season'])) . "</h1>";
+    $html .= "<h2>" . utf8entities($target['subject']) . "</h2>";
+    $html .= ScorekeeperLinkGamesHtml($target['games']);
+    $html .= "<div class='scorekeeping-qr'>" . ScorekeeperQrSvg($url, 8) . "</div>";
+    $html .= "<p>" . utf8entities(_("Scan to keep score in Scorekeeper.")) . "</p>";
+    $html .= "<p class='scorekeeping-url'>" . utf8entities($url) . "</p>";
+    return $html . "</div>";
 }
 
 /**

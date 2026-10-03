@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 16:29+0300\n"
+"POT-Creation-Date: 2026-10-03 19:26+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -628,20 +628,20 @@ msgid ""
 "games without logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:64
+#: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:63
+#: user/scorekeepinglink.php:48
 msgid ""
 "Anyone with this link can keep score for these games without logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:60
+#: user/scorekeepinglink.php:45
 msgid "Anyone with this link can keep score for this game after logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:59
+#: user/scorekeepinglink.php:44
 msgid "Anyone with this link can keep score for this game without logging in."
 msgstr ""
 
@@ -653,7 +653,7 @@ msgstr "Aplicar traducciones masivas"
 msgid "Apply the bulk translations from the text area?"
 msgstr "¿Aplicar las traducciones masivas del área de texto?"
 
-#: admin/seasonadmin.php:119
+#: admin/seasonadmin.php:120
 msgid "Archive statistics"
 msgstr "Estadísticas de archivo"
 
@@ -1447,7 +1447,7 @@ msgstr "Convierta a InnoDB/utf8mb4 ahora"
 msgid "Coordinates"
 msgstr "Coordenadas"
 
-#: admin/seasonteams.php:288 user/scorekeepinglink.php:85
+#: admin/seasonteams.php:288 user/scorekeepinglink.php:57
 #: user/teamplayers.php:201
 msgid "Copy"
 msgstr "Copiar"
@@ -1532,7 +1532,7 @@ msgstr "Crear nuevo evento"
 msgid "Create token"
 msgstr "Crear token"
 
-#: admin/apitokens.php:166
+#: admin/apitokens.php:166 admin/scorekeepinglinks.php:78
 msgid "Created"
 msgstr "Creado"
 
@@ -2363,7 +2363,7 @@ msgstr "Tokens existentes"
 msgid "Export"
 msgstr "Exportar"
 
-#: admin/seasonadmin.php:125
+#: admin/seasonadmin.php:126
 msgid "Export event data"
 msgstr "Exportar datos de eventos"
 
@@ -3416,7 +3416,7 @@ msgstr "Importación completada con advertencias:"
 msgid "Import event"
 msgstr "Importar evento"
 
-#: admin/seasonadmin.php:126
+#: admin/seasonadmin.php:127
 msgid "Import event data"
 msgstr "Importar datos de eventos"
 
@@ -3519,8 +3519,9 @@ msgid "Insufficient rights."
 msgstr "Derechos insuficientes."
 
 #: admin/accreditation.php:24 admin/addlocations.php:20 admin/locations.php:13
-#: admin/reservations.php:26 admin/seasonadmin.php:17 admin/seasonbanner.php:20
-#: admin/seasongames.php:24 admin/seasonmoves.php:30 admin/seasonpools.php:17
+#: admin/reservations.php:26 admin/scorekeepinglinks.php:17
+#: admin/seasonadmin.php:17 admin/seasonbanner.php:20 admin/seasongames.php:24
+#: admin/seasonmoves.php:30 admin/seasonpools.php:17
 #: admin/seasonscoresheethistory.php:15 admin/seasonseries.php:16
 #: admin/seasonstandings.php:19 admin/seasonteams.php:19
 #: admin/serieteams.php:33 admin/spirit.php:689 admin/spiritsettings.php:12
@@ -5165,6 +5166,10 @@ msgstr "Imprimir todas las hojas de anotación"
 msgid "Print blank scoresheet"
 msgstr "Imprimir hoja de anotación en blanco"
 
+#: admin/scorekeepinglinks.php:94
+msgid "Print field sheets"
+msgstr ""
+
 #: user/teamplayers.php:307
 msgid "Print roster"
 msgstr "Imprimir lista de jugadores"
@@ -5182,7 +5187,7 @@ msgid "Print team rosters"
 msgstr "Imprimir lista de jugadores de equipos"
 
 #: games.php:323 poolstatus.php:143 privacy.php:37 user_guide.php:25
-#: admin/help.php:25 user/scorekeepinglink.php:87
+#: admin/help.php:25 user/scorekeepinglink.php:59
 msgid "Printable version"
 msgstr "Versión imprimible"
 
@@ -5250,7 +5255,7 @@ msgstr "RSS"
 msgid "Rank"
 msgstr "Ranking"
 
-#: admin/seasonadmin.php:117
+#: admin/seasonadmin.php:118
 msgid "Re-archive statistics"
 msgstr "Volver a archivar estadísticas"
 
@@ -5376,7 +5381,7 @@ msgstr "Renombrar seleccionado"
 msgid "Repeat password"
 msgstr "Repita la contraseña"
 
-#: user/scorekeepinglink.php:97
+#: user/scorekeepinglink.php:69
 msgid "Replace link"
 msgstr ""
 
@@ -5557,7 +5562,7 @@ msgstr "Volver a administración de base de datos"
 msgid "Review Spirit Score"
 msgstr "Revisar la Puntuación de Espíritu"
 
-#: admin/apitokens.php:194
+#: admin/apitokens.php:194 admin/scorekeepinglinks.php:68
 msgid "Revoke"
 msgstr "Revocar"
 
@@ -5774,7 +5779,7 @@ msgid "Saving affects only the selected division."
 msgstr "El guardado afecta sólo a la división seleccionada."
 
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
-#: user/scorekeepinglink.php:73
+#: lib/scorekeeper.functions.php:317
 msgid "Scan to keep score in Scorekeeper."
 msgstr ""
 
@@ -5897,6 +5902,10 @@ msgstr "Los anotadores escriben sus nombres."
 #: user/respgames.php:175 user/respgames.php:223 user/scorekeepinglink.php:10
 #: user/scoresheethistory.php:410
 msgid "Scorekeeping link"
+msgstr ""
+
+#: admin/scorekeepinglinks.php:13 admin/seasonadmin.php:115
+msgid "Scorekeeping links"
 msgstr ""
 
 #: admin/addseasons.php:502
@@ -6239,7 +6248,7 @@ msgstr "Establecer listas de jugadores"
 msgid "Settings"
 msgstr "Ajustes"
 
-#: user/scorekeepinglink.php:86
+#: user/scorekeepinglink.php:58
 msgid "Share via WhatsApp"
 msgstr ""
 
@@ -6247,7 +6256,8 @@ msgstr ""
 msgid "Shirt numbers"
 msgstr "Números de camiseta"
 
-#: admin/apitokens.php:87 admin/apitokens.php:180 spiritkeeper/home.php:56
+#: admin/apitokens.php:87 admin/apitokens.php:180
+#: admin/scorekeepinglinks.php:64 spiritkeeper/home.php:56
 #: user/scoresheethistory.php:418 user/userinfo.php:315
 msgid "Show"
 msgstr "Mostrar"
@@ -6934,13 +6944,13 @@ msgstr ""
 "El banner se muestra en la parte superior de las páginas públicas del "
 "evento. Una imagen ancha funciona mejor, por ejemplo 1600 x 400 píxeles."
 
-#: user/scorekeepinglink.php:95
+#: admin/scorekeepinglinks.php:52 user/scorekeepinglink.php:67
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
 msgstr ""
 
-#: user/scorekeepinglink.php:28
+#: admin/scorekeepinglinks.php:82 user/scorekeepinglink.php:28
 msgid "The event is read-only."
 msgstr ""
 
@@ -7008,11 +7018,11 @@ msgstr ""
 msgid "The key is case insensitive"
 msgstr "La clave no distingue entre mayúsculas y minúsculas"
 
-#: user/scorekeepinglink.php:90
+#: user/scorekeepinglink.php:62
 msgid "The link works only on the day of the field reservation."
 msgstr ""
 
-#: user/scorekeepinglink.php:92
+#: user/scorekeepinglink.php:64
 msgid "The link works only on the day of the game."
 msgstr ""
 
@@ -7197,13 +7207,13 @@ msgstr ""
 "Este estado guardado no se muestra: los equipos local y visitante han "
 "cambiado desde que se guardó."
 
-#: lib/scorekeeper.functions.php:496
+#: lib/scorekeeper.functions.php:612
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
 msgstr ""
 
-#: lib/scorekeeper.functions.php:517
+#: lib/scorekeeper.functions.php:633
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr ""
@@ -7665,7 +7675,7 @@ msgstr "Modo de importación de evento desconocido."
 msgid "Unnamed player"
 msgstr "Jugador sin nombre"
 
-#: admin/schedule.php:379
+#: admin/schedule.php:379 admin/scorekeepinglinks.php:109
 msgid "Unscheduled"
 msgstr "No programado"
 
@@ -7800,7 +7810,8 @@ msgstr "Nombre de usuario"
 msgid "Username is too short (min. 3 letters)"
 msgstr "El nombre de usuario es demasiado corto (mínimo 3 letras)"
 
-#: menufunctions.php:406 admin/seasons.php:143 admin/users.php:7
+#: menufunctions.php:406 admin/scorekeepinglinks.php:78 admin/seasons.php:143
+#: admin/users.php:7
 msgid "Users"
 msgstr "Usuarios"
 
@@ -8056,7 +8067,7 @@ msgstr ""
 "Puede insertar las siguientes estadísticas de Ultiorganizer directamente en "
 "sus propias páginas"
 
-#: lib/scorekeeper.functions.php:520
+#: lib/scorekeeper.functions.php:636
 #, php-format
 msgid "You can keep score for %s."
 msgstr ""

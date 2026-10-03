@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 16:29+0300\n"
+"POT-Creation-Date: 2026-10-03 19:26+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -612,20 +612,20 @@ msgid ""
 "games without logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:64
+#: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:63
+#: user/scorekeepinglink.php:48
 msgid ""
 "Anyone with this link can keep score for these games without logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:60
+#: user/scorekeepinglink.php:45
 msgid "Anyone with this link can keep score for this game after logging in."
 msgstr ""
 
-#: user/scorekeepinglink.php:59
+#: user/scorekeepinglink.php:44
 msgid "Anyone with this link can keep score for this game without logging in."
 msgstr ""
 
@@ -637,7 +637,7 @@ msgstr "Ota massakäännökset käyttöön"
 msgid "Apply the bulk translations from the text area?"
 msgstr "Otetaanko tekstialueen massakäännökset käyttöön?"
 
-#: admin/seasonadmin.php:119
+#: admin/seasonadmin.php:120
 msgid "Archive statistics"
 msgstr "Arkistoi tilastot"
 
@@ -1415,7 +1415,7 @@ msgstr "Muunna InnoDB/utf8mb4-muotoon nyt"
 msgid "Coordinates"
 msgstr "Koordinaatit"
 
-#: admin/seasonteams.php:288 user/scorekeepinglink.php:85
+#: admin/seasonteams.php:288 user/scorekeepinglink.php:57
 #: user/teamplayers.php:201
 msgid "Copy"
 msgstr "Kopioi"
@@ -1500,7 +1500,7 @@ msgstr "Uusi tapahtuma"
 msgid "Create token"
 msgstr "Luo token"
 
-#: admin/apitokens.php:166
+#: admin/apitokens.php:166 admin/scorekeepinglinks.php:78
 msgid "Created"
 msgstr "Luotu"
 
@@ -2320,7 +2320,7 @@ msgstr "Olemassa olevat tokenit"
 msgid "Export"
 msgstr "Vie"
 
-#: admin/seasonadmin.php:125
+#: admin/seasonadmin.php:126
 msgid "Export event data"
 msgstr "Vie tapahtuman tiedot"
 
@@ -3373,7 +3373,7 @@ msgstr "Tuonti valmistui varoituksin:"
 msgid "Import event"
 msgstr "Tuo tapahtuma"
 
-#: admin/seasonadmin.php:126
+#: admin/seasonadmin.php:127
 msgid "Import event data"
 msgstr "Tuo tapahtuman tiedot"
 
@@ -3476,8 +3476,9 @@ msgid "Insufficient rights."
 msgstr "Ei oikeuksia."
 
 #: admin/accreditation.php:24 admin/addlocations.php:20 admin/locations.php:13
-#: admin/reservations.php:26 admin/seasonadmin.php:17 admin/seasonbanner.php:20
-#: admin/seasongames.php:24 admin/seasonmoves.php:30 admin/seasonpools.php:17
+#: admin/reservations.php:26 admin/scorekeepinglinks.php:17
+#: admin/seasonadmin.php:17 admin/seasonbanner.php:20 admin/seasongames.php:24
+#: admin/seasonmoves.php:30 admin/seasonpools.php:17
 #: admin/seasonscoresheethistory.php:15 admin/seasonseries.php:16
 #: admin/seasonstandings.php:19 admin/seasonteams.php:19
 #: admin/serieteams.php:33 admin/spirit.php:689 admin/spiritsettings.php:12
@@ -5112,6 +5113,10 @@ msgstr "Tulosta kaikki pöytäkirjat"
 msgid "Print blank scoresheet"
 msgstr "Tulosta tyhjä pöytäkirja"
 
+#: admin/scorekeepinglinks.php:94
+msgid "Print field sheets"
+msgstr ""
+
 #: user/teamplayers.php:307
 msgid "Print roster"
 msgstr "Tulosta pelaajalista"
@@ -5129,7 +5134,7 @@ msgid "Print team rosters"
 msgstr "Tulosta pelaajalistat"
 
 #: games.php:323 poolstatus.php:143 privacy.php:37 user_guide.php:25
-#: admin/help.php:25 user/scorekeepinglink.php:87
+#: admin/help.php:25 user/scorekeepinglink.php:59
 msgid "Printable version"
 msgstr "Tulostettava versio"
 
@@ -5196,7 +5201,7 @@ msgstr "RSS"
 msgid "Rank"
 msgstr "Sij."
 
-#: admin/seasonadmin.php:117
+#: admin/seasonadmin.php:118
 msgid "Re-archive statistics"
 msgstr "Arkistoi tilastot uudelleen"
 
@@ -5321,7 +5326,7 @@ msgstr "Nimeä valitut"
 msgid "Repeat password"
 msgstr "Toista salasana"
 
-#: user/scorekeepinglink.php:97
+#: user/scorekeepinglink.php:69
 msgid "Replace link"
 msgstr ""
 
@@ -5501,7 +5506,7 @@ msgstr "Palaa tietokannan ylläpitoon"
 msgid "Review Spirit Score"
 msgstr "Tarkastele spirit-pisteitä"
 
-#: admin/apitokens.php:194
+#: admin/apitokens.php:194 admin/scorekeepinglinks.php:68
 msgid "Revoke"
 msgstr "Kumoa"
 
@@ -5718,7 +5723,7 @@ msgid "Saving affects only the selected division."
 msgstr "Tallennus vaikuttaa vain valittuun sarjaan."
 
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
-#: user/scorekeepinglink.php:73
+#: lib/scorekeeper.functions.php:317
 msgid "Scan to keep score in Scorekeeper."
 msgstr ""
 
@@ -5841,6 +5846,10 @@ msgstr "Pisteenpitäjät kirjoittavat nimensä."
 #: user/respgames.php:175 user/respgames.php:223 user/scorekeepinglink.php:10
 #: user/scoresheethistory.php:410
 msgid "Scorekeeping link"
+msgstr ""
+
+#: admin/scorekeepinglinks.php:13 admin/seasonadmin.php:115
+msgid "Scorekeeping links"
 msgstr ""
 
 #: admin/addseasons.php:502
@@ -6180,7 +6189,7 @@ msgstr "Aseta pelaajalistat"
 msgid "Settings"
 msgstr "Asetukset"
 
-#: user/scorekeepinglink.php:86
+#: user/scorekeepinglink.php:58
 msgid "Share via WhatsApp"
 msgstr ""
 
@@ -6188,7 +6197,8 @@ msgstr ""
 msgid "Shirt numbers"
 msgstr "Pelinumerot"
 
-#: admin/apitokens.php:87 admin/apitokens.php:180 spiritkeeper/home.php:56
+#: admin/apitokens.php:87 admin/apitokens.php:180
+#: admin/scorekeepinglinks.php:64 spiritkeeper/home.php:56
 #: user/scoresheethistory.php:418 user/userinfo.php:315
 msgid "Show"
 msgstr "Näytä"
@@ -6869,13 +6879,13 @@ msgstr ""
 "Banneri näytetään tapahtuman julkisten sivujen yläreunassa. Leveä kuva "
 "toimii parhaiten, esimerkiksi 1600 x 400 pikseliä."
 
-#: user/scorekeepinglink.php:95
+#: admin/scorekeepinglinks.php:52 user/scorekeepinglink.php:67
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
 msgstr ""
 
-#: user/scorekeepinglink.php:28
+#: admin/scorekeepinglinks.php:82 user/scorekeepinglink.php:28
 msgid "The event is read-only."
 msgstr ""
 
@@ -6935,11 +6945,11 @@ msgstr "Tuontitiedosto ei ole Ultiorganizerin tapahtuman tilannevedos."
 msgid "The key is case insensitive"
 msgstr "Avain ei riipu kirjainkoosta"
 
-#: user/scorekeepinglink.php:90
+#: user/scorekeepinglink.php:62
 msgid "The link works only on the day of the field reservation."
 msgstr ""
 
-#: user/scorekeepinglink.php:92
+#: user/scorekeepinglink.php:64
 msgid "The link works only on the day of the game."
 msgstr ""
 
@@ -7110,13 +7120,13 @@ msgstr ""
 "Tätä tallennettua tilaa ei näytetä: koti- ja vierasjoukkue ovat vaihtuneet "
 "sen tallentamisen jälkeen."
 
-#: lib/scorekeeper.functions.php:496
+#: lib/scorekeeper.functions.php:612
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
 msgstr ""
 
-#: lib/scorekeeper.functions.php:517
+#: lib/scorekeeper.functions.php:633
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr ""
@@ -7574,7 +7584,7 @@ msgstr "Tuntematon tapahtuman tuontitapa."
 msgid "Unnamed player"
 msgstr "Nimeämätön pelaaja"
 
-#: admin/schedule.php:379
+#: admin/schedule.php:379 admin/scorekeepinglinks.php:109
 msgid "Unscheduled"
 msgstr "Varaamatta"
 
@@ -7706,7 +7716,8 @@ msgstr "Käyttäjätunnus"
 msgid "Username is too short (min. 3 letters)"
 msgstr "Käyttäjätunnus liian lyhyt (min. 3 merkkiä)"
 
-#: menufunctions.php:406 admin/seasons.php:143 admin/users.php:7
+#: menufunctions.php:406 admin/scorekeepinglinks.php:78 admin/seasons.php:143
+#: admin/users.php:7
 msgid "Users"
 msgstr "Käyttäjät"
 
@@ -7955,7 +7966,7 @@ msgid ""
 msgstr ""
 "Voit upottaa seuraavat Ultiorganizerin tilastot suoraan omille sivuillesi"
 
-#: lib/scorekeeper.functions.php:520
+#: lib/scorekeeper.functions.php:636
 #, php-format
 msgid "You can keep score for %s."
 msgstr ""
