@@ -5,6 +5,7 @@ if (!isset($include_prefix)) {
 }
 
 $auth_redirect = '../scorekeeper/index.php?view=login';
+$auth_allow_anonymous = 'ScorekeeperSessionHasAnonymousAccess';
 include_once $include_prefix . 'lib/auth.guard.php';
 
 if (!function_exists('scorekeeperHasManualNoGameClock')) {

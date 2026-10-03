@@ -239,6 +239,11 @@ function UserUpdateInfo($user_id, $olduser, $user, $name)
                 DBEscapeString($olduser),
             ));
             DBQuery(sprintf(
+                "UPDATE uo_scorekeeper_grant SET userid='%s' WHERE userid='%s'",
+                DBEscapeString($user),
+                DBEscapeString($olduser),
+            ));
+            DBQuery(sprintf(
                 "UPDATE uo_event_log SET user_id='%s' WHERE user_id='%s'",
                 DBEscapeString($user),
                 DBEscapeString($olduser),
@@ -769,7 +774,8 @@ function hasEditGamePlayersRight($game)
         isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
         isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]) ||
         isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservation]) ||
-        isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]);
+        isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]) ||
+        ScorekeeperGrantCovers($game);
     if (!$hasEditRight) {
         return false;
     }
@@ -790,7 +796,8 @@ function hasEditGameEventsRight($game)
         isset($_SESSION['userproperties']['userrole']['seriesadmin'][$series]) ||
         isset($_SESSION['userproperties']['userrole']['teamadmin'][$team]) ||
         isset($_SESSION['userproperties']['userrole']['resgameadmin'][$reservation]) ||
-        isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]);
+        isset($_SESSION['userproperties']['userrole']['gameadmin'][$game]) ||
+        ScorekeeperGrantCovers($game);
     if (!$hasEditRight) {
         return false;
     }
@@ -798,6 +805,41 @@ function hasEditGameEventsRight($game)
         return false;
     }
     return true;
+}
+
+/**
+ * Whether this request runs in the Scorekeeper app. constant() rather than the
+ * bare name, which PHPStan pins to whichever entry point defines it first.
+ */
+function IsScorekeeperApp()
+{
+    return defined('UO_APP_SOURCE') && constant('UO_APP_SOURCE') === 'scorekeeper';
+}
+
+/**
+ * Whether a scorekeeping link held by this session covers the game. Links
+ * count only in Scorekeeper; the desktop editors need a real role.
+ */
+function ScorekeeperGrantCovers($game)
+{
+    if (!IsScorekeeperApp()) {
+        return false;
+    }
+    require_once __DIR__ . '/scorekeeper.functions.php';
+    return ScorekeeperGrantTokenId($game) > 0;
+}
+
+/**
+ * The scorekeeping link an anonymous Scorekeeper session is writing through,
+ * or 0. Recorded in the scoresheet history, where it is the only attribution.
+ */
+function ScorekeeperAnonymousTokenId($game)
+{
+    if (isLoggedIn() || !IsScorekeeperApp()) {
+        return 0;
+    }
+    require_once __DIR__ . '/scorekeeper.functions.php';
+    return ScorekeeperGrantTokenId($game);
 }
 
 /**
@@ -1547,6 +1589,11 @@ function DeleteUser($userid)
             );
             $result = DBQuery($query);
 
+            DBQuery(sprintf(
+                "DELETE FROM uo_scorekeeper_grant WHERE userid='%s'",
+                DBEscapeString($userid),
+            ));
+
             $query = sprintf(
                 "DELETE FROM uo_users WHERE userid='%s'",
                 DBEscapeString($userid),
@@ -2035,6 +2082,16 @@ function GameResponsibilities($season)
                 }
                 $criteria .= "(reservation IN (" . implode(",", $seasonResvs) . "))";
             }
+        }
+    }
+    if (IsScorekeeperApp() && !isSeasonAdmin($season)) {
+        require_once __DIR__ . '/scorekeeper.functions.php';
+        $grantedGames = ScorekeeperGrantedGameIds($season);
+        if (count($grantedGames) > 0) {
+            if (strlen($criteria) > 0) {
+                $criteria .= " OR ";
+            }
+            $criteria .= "(game_id IN (" . implode(",", $grantedGames) . "))";
         }
     }
     if (strlen($criteria) == 0) {

@@ -117,8 +117,8 @@ function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force
     }
 
     $query = sprintf(
-        "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, detail)
-			VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
+        "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, detail, scorekeeper_token)
+			VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s', NULLIF(%d, 0))",
         $gameId,
         DBEscapeString(substr((string) $userId, 0, 50)),
         DBEscapeString(substr($ip, 0, 45)),
@@ -126,6 +126,7 @@ function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force
         DBEscapeString(substr((string) $target, 0, 20)),
         DBEscapeString(substr((string) $action, 0, 10)),
         DBEscapeString($json),
+        ScorekeeperAnonymousTokenId($gameId),
     );
     return DBQueryInsert($query);
 }
@@ -289,13 +290,14 @@ function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $target = nu
             ? $_SERVER['REMOTE_ADDR'] : "";
 
         $query = sprintf(
-            "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, has_snapshot, snapshot)
-				VALUES (%d, '%s', '%s', '%s', 'snapshot', 'capture', 1, '%s')",
+            "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, has_snapshot, snapshot, scorekeeper_token)
+				VALUES (%d, '%s', '%s', '%s', 'snapshot', 'capture', 1, '%s', NULLIF(%d, 0))",
             $gameId,
             DBEscapeString(substr((string) $userId, 0, 50)),
             DBEscapeString(substr($ip, 0, 45)),
             DBEscapeString(ScoresheetHistorySource()),
             DBEscapeString($json),
+            ScorekeeperAnonymousTokenId($gameId),
         );
         return DBQueryInsert($query);
     });
@@ -309,7 +311,8 @@ function ScoresheetHistoryList($gameId, $limit = null, $offset = null)
     }
 
     $query = sprintf(
-        "SELECT history_id, game, time, user_id, ip, source, target, action, detail, has_snapshot
+        "SELECT history_id, game, time, user_id, ip, source, target, action, detail, has_snapshot,
+				scorekeeper_token
 			FROM uo_scoresheet_history WHERE game=%d ORDER BY time DESC, history_id DESC",
         $gameId,
     );

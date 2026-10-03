@@ -16,6 +16,13 @@ $html .= "<h1>" . _("Log in") . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 $html .= $errors;
+$html .= ScorekeeperTakeNoticeHtml();
+if (!empty($_SESSION['scorekeeper_pending_token'])) {
+    $pendingDescription = ScorekeeperTokenDescription((int) $_SESSION['scorekeeper_pending_token']);
+    if ($pendingDescription !== "") {
+        $html .= "<p>" . utf8entities(sprintf(_("Log in to keep score for %s."), $pendingDescription)) . "</p>\n";
+    }
+}
 $html .= "<form action='?view=login' method='post' data-ajax='false'>\n";
 $html .= "<label for='myusername'>" . _("Username") . ":</label>";
 $html .= "<input type='text' id='myusername' name='myusername' size='15'/> ";

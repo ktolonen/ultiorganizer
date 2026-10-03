@@ -77,11 +77,11 @@ Removing these is a manual admin edit; a request about a coach, captain or club 
 
 Export one registered user's data as a text report, or delete it including matching logs. Operations are logged with `source='privacy'`; downloads use the internal account row id as target, and deletion logs no identifier.
 
-Report scope: `uo_users`, `uo_userproperties`, `uo_extraemail`, `uo_extraemailrequest`, `uo_enrolledteam`, `uo_registerrequest`, `uo_accreditationlog`, `uo_event_log` (rows where `user_id`, `id1` or `id2` matches), and `uo_scoresheet_history` rows with the user's `user_id`, without the `snapshot` column or the scorekeeper `name` in `official` rows, which describe other people. `UserUpdateInfo()` rewrites `user_id` in `uo_scoresheet_history` and `uo_event_log` when a login is renamed, so history follows the account and cannot be inherited by the next holder of the name.
+Report scope: `uo_users`, `uo_userproperties`, `uo_scorekeeper_grant` (without the token itself), `uo_extraemail`, `uo_extraemailrequest`, `uo_enrolledteam`, `uo_registerrequest`, `uo_accreditationlog`, `uo_event_log` (rows where `user_id`, `id1` or `id2` matches), and `uo_scoresheet_history` rows with the user's `user_id`, without the `snapshot` column or the scorekeeper `name` in `official` rows, which describe other people. `UserUpdateInfo()` rewrites `user_id` in `uo_scoresheet_history` and `uo_event_log` when a login is renamed, so history follows the account and cannot be inherited by the next holder of the name.
 
 Deletion:
 
-- delete matching rows from `uo_event_log`, `uo_accreditationlog`, `uo_registerrequest`, `uo_passwordresetrequest` and `uo_userproperties`, then the `uo_users` row; `uo_extraemail`, `uo_extraemailrequest` and `uo_enrolledteam` cascade
+- delete matching rows from `uo_event_log`, `uo_accreditationlog`, `uo_registerrequest`, `uo_passwordresetrequest`, `uo_userproperties` and `uo_scorekeeper_grant`, then the `uo_users` row; `uo_extraemail`, `uo_extraemailrequest` and `uo_enrolledteam` cascade
 - anonymize `uo_scoresheet_history` rows (`user_id` set to `-`, `ip` cleared); they belong to the game's history and go only with the game
 - write one non-identifying audit entry
 

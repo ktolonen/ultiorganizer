@@ -275,6 +275,7 @@ function ScoresheetHistoryRepeatedRows($rows)
             && $rows[$i + 1]['target'] === $target
             && $rows[$i + 1]['action'] === 'add'
             && $rows[$i + 1]['user_id'] === $row['user_id']
+            && ($rows[$i + 1]['scorekeeper_token'] ?? null) === ($row['scorekeeper_token'] ?? null)
             && $rows[$i + 1]['source'] === $row['source']
         ) {
             $i++;
@@ -404,7 +405,11 @@ if ($count === 0) {
         }
         $html .= "<tr class='admintablerow'>";
         $html .= "<td>" . utf8entities(DefTimeFormat($row['time'])) . "</td>";
-        $html .= "<td>" . utf8entities($row['user_id']) . "</td>";
+        $html .= "<td>" . utf8entities($row['user_id']);
+        if (!empty($row['scorekeeper_token'])) {
+            $html .= " <span title='" . utf8entities(_("Scorekeeping link")) . "'>#" . (int) $row['scorekeeper_token'] . "</span>";
+        }
+        $html .= "</td>";
         $html .= "<td>" . utf8entities($row['source']) . "</td>";
         $html .= "<td>" . utf8entities(ScoresheetHistoryFormatDetail($row)) . "</td>";
         $html .= "<td>";

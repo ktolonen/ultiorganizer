@@ -24,7 +24,11 @@ if (!isset($_SESSION['uid'])) {
     $_SESSION['uid'] = "anonymous";
 }
 
-if (!isLoggedIn()) {
+// $auth_allow_anonymous names a function that may admit a session that is not
+// logged in, such as an anonymous Scorekeeper session holding a link.
+$authAnonymousAllowed = isset($auth_allow_anonymous) && function_exists($auth_allow_anonymous)
+    && $auth_allow_anonymous();
+if (!isLoggedIn() && !$authAnonymousAllowed) {
     $redirect = isset($auth_redirect) ? $auth_redirect : ($include_prefix . "index.php?view=frontpage");
     header("location:" . $redirect);
     exit();
