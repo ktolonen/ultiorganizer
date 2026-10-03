@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 22:21+0300\n"
+"POT-Creation-Date: 2026-10-03 22:32+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -1509,7 +1509,6 @@ msgid "Country not found"
 msgstr "Land nicht gefunden"
 
 #: admin/apitokens.php:151 admin/poolgames.php:398
-#: admin/scorekeepinglinks.php:72
 msgid "Create"
 msgstr "Erzeugen"
 

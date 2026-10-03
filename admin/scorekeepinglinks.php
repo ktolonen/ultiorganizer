@@ -69,7 +69,7 @@ $linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $se
     $html .= "<td>" . ($token ? ShortDate($token['created']) . " " . DefHourFormat($token['created']) : "") . "</td>";
     $html .= "<td>" . implode(", ", $users) . "</td><td class='right'>";
     if ($canIssue) {
-        $html .= $getButton(['view' => 'user/scorekeepinglink', $scope => $id], $token ? _("Show") : _("Create"));
+        $html .= $getButton(['view' => 'user/scorekeepinglink', $scope => $id], _("Show"));
         if ($token) {
             $html .= "<form method='post' action='" . $selfUrl . "' style='display:inline;' onsubmit='return confirm(" . $confirm . ");'>";
             $html .= "<input type='hidden' name='scope' value='" . $scope . "'/><input type='hidden' name='id' value='" . $id . "'/>";
