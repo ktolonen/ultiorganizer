@@ -104,28 +104,36 @@ $html .=  "</td></tr></table>\n\n";
 
 $html .= "<b>" . _("Comment") . ":</b> " . CommentHTML(1, $info['season_id']);
 
-$html .=  "<p>";
-$html .=  "<a href='?view=admin/addseasons&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Change event properties") . "</a><br/>";
-$html .=  "<a href='?view=admin/seasonbanner&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit event banner") . "</a><br/>";
-$html .=  "<a href='?view=admin/addseasonusers&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit User access rights") . "</a><br/>";
-$html .=  "<a href='?view=admin/addseasonlinks&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Edit side menu links") . "</a><br/>";
-$html .=  "<a href='?view=admin/tdtools&amp;season=" . $info['season_id'] . "'>&raquo; " . _("TD Tools") . "</a><br/>";
-$html .=  "<a href='?view=admin/finalstandings&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Final standings") . "</a><br/>";
-$html .=  "<a href='?view=admin/seasonscoresheethistory&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Scoresheet history") . "</a><br/>";
-$html .=  "<a href='?view=admin/scorekeepinglinks&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Scorekeeping links") . "</a><br/>";
-
-if (IsSeasonStatsCalculated($info['season_id'])) {
-    $html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Re-archive statistics") . "</a><br/>";
-} else {
-    $html .=  "<a href='?view=admin/stats&amp;season=" . $info['season_id'] . "'>&raquo; " . _("Archive statistics") . "</a><br/>";
+$seasonId = $info['season_id'];
+$statsLabel = IsSeasonStatsCalculated($seasonId) ? _("Re-archive statistics") : _("Archive statistics");
+$linkGroups = [
+    _("Settings") => [
+        "addseasons" => _("Change event properties"),
+        "seasonbanner" => _("Edit event banner"),
+        "addseasonusers" => _("Edit User access rights"),
+        "addseasonlinks" => _("Edit side menu links"),
+    ],
+    _("Games") => [
+        "tdtools" => _("TD Tools"),
+        "scorekeepinglinks" => _("Scorekeeping links"),
+        "seasonscoresheethistory" => _("Scoresheet history"),
+    ],
+    _("Standings") => [
+        "finalstandings" => _("Final standings"),
+        "stats" => $statsLabel,
+    ],
+    _("Data") => [
+        "eventdataexport" => _("Export event data"),
+        "eventdataimport" => _("Import event data"),
+    ],
+];
+foreach ($linkGroups as $heading => $links) {
+    $html .= "<h3>" . $heading . "</h3>\n<p>";
+    foreach ($links as $view => $label) {
+        $html .= "<a href='?view=admin/" . $view . "&amp;season=" . urlencode($seasonId) . "'>&raquo; " . $label . "</a><br/>";
+    }
+    $html .= "</p>\n";
 }
-$html .= "</p>\n";
-
-$html .= "<hr/>\n";
-$html .=  "<p>";
-$html .= "<a href='?view=admin/eventdataexport&amp;season=" . $info['season_id'] . "'>" . _("Export event data") . "</a> | ";
-$html .= "<a href='?view=admin/eventdataimport&amp;season=" . $info['season_id'] . "'>" . _("Import event data") . "</a>";
-$html .=  "</p>";
 
 echo $html;
 
