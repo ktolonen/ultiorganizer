@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-03 22:32+0300\n"
+"POT-Creation-Date: 2026-10-04 15:39+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -342,7 +342,7 @@ msgid "Add links"
 msgstr "Agregar enlaces"
 
 #: admin/addlocations.php:20 admin/addlocations.php:107
-#: admin/addlocations.php:113 admin/reservations.php:200
+#: admin/addlocations.php:113 admin/reservations.php:206
 msgid "Add location"
 msgstr "Agregar ubicación"
 
@@ -385,7 +385,7 @@ msgstr "Agregar grupo"
 msgid "Add pools first"
 msgstr "Agregar grupos primero"
 
-#: admin/reservations.php:199
+#: admin/reservations.php:205
 msgid "Add reservation"
 msgstr "Agregar reserva"
 
@@ -519,7 +519,7 @@ msgid "All event statistics"
 msgstr "Todas las estadísticas del evento"
 
 #: admin/addseasonusers.php:190 admin/addseasonusers.php:202
-#: admin/scorekeepinglinks.php:111
+#: admin/scorekeepinglinks.php:118
 msgid "All games"
 msgstr "Todos los juegos"
 
@@ -623,6 +623,11 @@ msgstr "Coincidencia ambigua de perfil de jugador para %s %s."
 msgid "Anonymize player data"
 msgstr "Anonimizar los datos del jugador"
 
+#: admin/scorekeepinglinks.php:70
+#, php-format
+msgid "Anonymous changes: %d"
+msgstr ""
+
 #: admin/addseasons.php:507
 msgid ""
 "Anyone who opens a game or field scorekeeping link can keep score for those "
@@ -654,7 +659,7 @@ msgstr "Aplicar traducciones masivas"
 msgid "Apply the bulk translations from the text area?"
 msgstr "¿Aplicar las traducciones masivas del área de texto?"
 
-#: admin/seasonadmin.php:120
+#: admin/seasonadmin.php:111
 msgid "Archive statistics"
 msgstr "Estadísticas de archivo"
 
@@ -1047,7 +1052,7 @@ msgstr "Cambiar"
 msgid "Change Password"
 msgstr "Cambiar la contraseña"
 
-#: admin/seasonadmin.php:108
+#: admin/seasonadmin.php:114
 msgid "Change event properties"
 msgstr "Cambiar propiedades del evento"
 
@@ -1291,7 +1296,7 @@ msgstr "Información de la columna"
 msgid "Comm"
 msgstr "Comm"
 
-#: admin/seasonadmin.php:105 admin/spirit.php:283
+#: admin/seasonadmin.php:107 admin/spirit.php:283
 #: user/scoresheethistory.php:508
 msgid "Comment"
 msgstr "Comentario"
@@ -1533,7 +1538,7 @@ msgstr "Crear nuevo evento"
 msgid "Create token"
 msgstr "Crear token"
 
-#: admin/apitokens.php:166 admin/scorekeepinglinks.php:89
+#: admin/apitokens.php:166 admin/scorekeepinglinks.php:93
 msgid "Created"
 msgstr "Creado"
 
@@ -1586,7 +1591,7 @@ msgstr "Versión de personalización"
 msgid "DQ"
 msgstr "DQ"
 
-#: admin/dbadmin.php:103 admin/dbbackup.php:104
+#: admin/dbadmin.php:103 admin/dbbackup.php:104 admin/seasonadmin.php:128
 msgid "Data"
 msgstr "Datos"
 
@@ -1622,7 +1627,7 @@ msgstr "Tamaño de la base de datos"
 msgid "Database version"
 msgstr "Versión de la base de datos"
 
-#: admin/addreservation.php:171 admin/reservations.php:119 admin/tdtools.php:89
+#: admin/addreservation.php:171 admin/reservations.php:125 admin/tdtools.php:89
 #: lib/search.functions.php:786
 msgid "Date"
 msgstr "Fecha"
@@ -2057,7 +2062,7 @@ msgstr "Editar puntuación de Espíritu"
 msgid "Edit Timekeeper template"
 msgstr "Editar plantilla de Timekeeper"
 
-#: admin/seasonadmin.php:110
+#: admin/seasonadmin.php:116
 msgid "Edit User access rights"
 msgstr "Editar derechos de acceso de usuario"
 
@@ -2069,7 +2074,7 @@ msgstr "Editar división"
 msgid "Edit event"
 msgstr "Editar evento"
 
-#: admin/seasonadmin.php:109
+#: admin/seasonadmin.php:115
 msgid "Edit event banner"
 msgstr "Editar el banner del evento"
 
@@ -2089,7 +2094,7 @@ msgstr "Editar plantilla de regla"
 msgid "Edit rule templates"
 msgstr "Editar plantillas de reglas"
 
-#: admin/seasonadmin.php:111
+#: admin/seasonadmin.php:117
 msgid "Edit side menu links"
 msgstr "Editar enlaces del menú lateral"
 
@@ -2144,7 +2149,7 @@ msgstr "Fin del juego"
 msgid "End time"
 msgstr "Hora de finalización"
 
-#: admin/addseasons.php:105 admin/addseasons.php:446 admin/reservations.php:120
+#: admin/addseasons.php:105 admin/addseasons.php:446 admin/reservations.php:126
 #: lib/search.functions.php:787
 msgid "Ends"
 msgstr "Termina"
@@ -2364,7 +2369,7 @@ msgstr "Tokens existentes"
 msgid "Export"
 msgstr "Exportar"
 
-#: admin/seasonadmin.php:126
+#: admin/seasonadmin.php:129
 msgid "Export event data"
 msgstr "Exportar datos de eventos"
 
@@ -2551,7 +2556,7 @@ msgstr "Puntajes finales"
 #: menufunctions.php:516 menufunctions.php:683 seasonlist.php:33 teams.php:49
 #: admin/finalstandings.php:15 admin/finalstandings.php:21
 #: admin/finalstandings.php:42 admin/finalstandings.php:107
-#: admin/finalstandings.php:120 admin/seasonadmin.php:113 admin/stats.php:155
+#: admin/finalstandings.php:120 admin/seasonadmin.php:125 admin/stats.php:155
 msgid "Final standings"
 msgstr "Clasificación final"
 
@@ -2731,7 +2736,7 @@ msgstr "Desde pos."
 msgid "From position"
 msgstr "Desde la posición"
 
-#: admin/reservations.php:164
+#: admin/reservations.php:170
 msgid "From/to"
 msgstr "Desde/hasta"
 
@@ -2750,7 +2755,7 @@ msgstr "GF Avg."
 #: gamecard.php:145 poolstatus.php:698 poolstatus.php:853
 #: admin/accreditation.php:96 admin/accreditation.php:117
 #: admin/accreditation.php:137 admin/editgame.php:24
-#: admin/scorekeepinglinks.php:120 admin/seasonscoresheethistory.php:54
+#: admin/scorekeepinglinks.php:127 admin/seasonscoresheethistory.php:54
 #: admin/spirit.php:366 admin/tdtools.php:90 cust/bula/pdfscoresheet.php:248
 #: cust/default/pdfscoresheet.php:287 cust/fpudd/pdfscoresheet.php:282
 #: cust/gummis/pdfscoresheet.php:273 cust/slkl/pdfscoresheet.php:251
@@ -2971,13 +2976,13 @@ msgstr "Resumen del juego"
 #: spiritstatus.php:109 spiritstatus.php:111 teamcard.php:123 teamcard.php:168
 #: teamcard.php:280 teams.php:127 teams.php:179 teams.php:399
 #: admin/accreditation.php:195 admin/accreditation.php:257
-#: admin/editstanding.php:61 admin/poolgames.php:17 admin/reservations.php:120
-#: admin/seasonadmin.php:98 admin/seasongames.php:21 admin/seasonseries.php:124
-#: admin/seasonstandings.php:313 admin/seasonstandings.php:370
-#: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/seriesgames.php:31
-#: admin/seriesgames.php:41 admin/stats.php:138 ext/poolscoreboard.php:40
-#: ext/teamscoreboard.php:55 lib/common.functions.php:1691
-#: lib/search.functions.php:787
+#: admin/editstanding.php:61 admin/poolgames.php:17 admin/reservations.php:126
+#: admin/seasonadmin.php:98 admin/seasonadmin.php:119 admin/seasongames.php:21
+#: admin/seasonseries.php:124 admin/seasonstandings.php:313
+#: admin/seasonstandings.php:370 admin/seasonstats.php:21
+#: admin/seasonstats.php:35 admin/seriesgames.php:31 admin/seriesgames.php:41
+#: admin/stats.php:138 ext/poolscoreboard.php:40 ext/teamscoreboard.php:55
+#: lib/common.functions.php:1691 lib/search.functions.php:787
 msgid "Games"
 msgstr "Juegos"
 
@@ -3143,7 +3148,7 @@ msgstr "Otorgar derechos"
 msgid "Grid (PDF)"
 msgstr "Cuadrícula (PDF)"
 
-#: admin/reservations.php:119 lib/search.functions.php:786
+#: admin/reservations.php:125 lib/search.functions.php:786
 msgid "Group"
 msgstr "Grupo"
 
@@ -3417,7 +3422,7 @@ msgstr "Importación completada con advertencias:"
 msgid "Import event"
 msgstr "Importar evento"
 
-#: admin/seasonadmin.php:127
+#: admin/seasonadmin.php:130
 msgid "Import event data"
 msgstr "Importar datos de eventos"
 
@@ -3520,7 +3525,7 @@ msgid "Insufficient rights."
 msgstr "Derechos insuficientes."
 
 #: admin/accreditation.php:24 admin/addlocations.php:20 admin/locations.php:13
-#: admin/reservations.php:26 admin/scorekeepinglinks.php:17
+#: admin/reservations.php:26 admin/scorekeepinglinks.php:18
 #: admin/seasonadmin.php:17 admin/seasonbanner.php:20 admin/seasongames.php:24
 #: admin/seasonmoves.php:30 admin/seasonpools.php:17
 #: admin/seasonscoresheethistory.php:15 admin/seasonseries.php:16
@@ -3830,7 +3835,7 @@ msgid "Locale"
 msgstr "Configuración regional"
 
 #: admin/addreservation.php:206 admin/editgame.php:214
-#: admin/reservations.php:119 lib/search.functions.php:311
+#: admin/reservations.php:125 lib/search.functions.php:311
 #: lib/search.functions.php:385 lib/search.functions.php:786
 #: lib/search.functions.php:869
 msgid "Location"
@@ -4002,7 +4007,7 @@ msgstr ""
 msgid "Merge selected profiles to most referred"
 msgstr "Fusionar perfiles seleccionados con los más referidos"
 
-#: admin/reservations.php:154
+#: admin/reservations.php:160
 msgid "Minimum transfer times in minutes between fields"
 msgstr "Tiempos mínimos de transferencia en minutos entre campos"
 
@@ -4662,7 +4667,7 @@ msgstr "Otro"
 msgid "Our Spirit compared to theirs"
 msgstr "Nuestro Espíritu comparado con el de ellos"
 
-#: admin/reservations.php:121 lib/search.functions.php:788
+#: admin/reservations.php:127 lib/search.functions.php:788
 msgid "PDF"
 msgstr "PDF"
 
@@ -5159,7 +5164,7 @@ msgstr ""
 msgid "Primary email"
 msgstr "Correo electrónico principal"
 
-#: admin/seasongames.php:151
+#: admin/reservations.php:119 admin/seasongames.php:151
 msgid "Print all scoresheets"
 msgstr "Imprimir todas las hojas de anotación"
 
@@ -5167,7 +5172,7 @@ msgstr "Imprimir todas las hojas de anotación"
 msgid "Print blank scoresheet"
 msgstr "Imprimir hoja de anotación en blanco"
 
-#: admin/scorekeepinglinks.php:105
+#: admin/reservations.php:121 admin/scorekeepinglinks.php:112
 msgid "Print field sheets"
 msgstr ""
 
@@ -5244,7 +5249,7 @@ msgstr "Clasificación final publicada"
 msgid "Publisher"
 msgstr "Editor"
 
-#: admin/reservations.php:134 lib/search.functions.php:800
+#: admin/reservations.php:140 lib/search.functions.php:800
 msgid "QR"
 msgstr "QR"
 
@@ -5260,7 +5265,7 @@ msgstr "RSS"
 msgid "Rank"
 msgstr "Ranking"
 
-#: admin/seasonadmin.php:118
+#: admin/seasonadmin.php:111
 msgid "Re-archive statistics"
 msgstr "Volver a archivar estadísticas"
 
@@ -5567,7 +5572,7 @@ msgstr "Volver a administración de base de datos"
 msgid "Review Spirit Score"
 msgstr "Revisar la Puntuación de Espíritu"
 
-#: admin/apitokens.php:194 admin/scorekeepinglinks.php:76
+#: admin/apitokens.php:194 admin/scorekeepinglinks.php:80
 msgid "Revoke"
 msgstr "Revocar"
 
@@ -5771,7 +5776,7 @@ msgstr "Guardar gol con errores"
 msgid "Save scores"
 msgstr "Guardar puntuaciones"
 
-#: admin/reservations.php:193
+#: admin/reservations.php:199
 msgid "Save times"
 msgstr "Ahorra tiempos"
 
@@ -5784,7 +5789,7 @@ msgid "Saving affects only the selected division."
 msgstr "El guardado afecta sólo a la división seleccionada."
 
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
-#: lib/scorekeeper.functions.php:317
+#: lib/scorekeeper.functions.php:292
 msgid "Scan to keep score in Scorekeeper."
 msgstr ""
 
@@ -5806,7 +5811,7 @@ msgstr "Calendario guardado con errores:"
 msgid "Schedule saved with warnings:"
 msgstr "Calendario guardado con advertencias:"
 
-#: admin/reservations.php:90 admin/reservations.php:147
+#: admin/reservations.php:90 admin/reservations.php:153
 msgid "Schedule selected"
 msgstr "Calendario seleccionado"
 
@@ -5908,7 +5913,7 @@ msgstr "Los anotadores escriben sus nombres."
 msgid "Scorekeeping link"
 msgstr ""
 
-#: admin/scorekeepinglinks.php:13 admin/seasonadmin.php:115
+#: admin/scorekeepinglinks.php:14 admin/seasonadmin.php:121
 msgid "Scorekeeping links"
 msgstr ""
 
@@ -5936,7 +5941,7 @@ msgstr "Goleador y asistencia tienen el mismo número"
 msgid "Scores"
 msgstr "Puntajes"
 
-#: admin/reservations.php:132 admin/seasongames.php:246 admin/tdtools.php:185
+#: admin/reservations.php:138 admin/seasongames.php:246 admin/tdtools.php:185
 #: cust/default/pdfscoresheet.php:55 cust/slkl/pdfscoresheet.php:55
 #: cust/wfdf/pdfscoresheet.php:287 lib/search.functions.php:798
 #: scorekeeper/addscoresheet.php:290 scorekeeper/respgames.php:222
@@ -5951,11 +5956,15 @@ msgstr "Hoja de anotación"
 msgid "Scoresheet filling instructions:"
 msgstr "Instrucciones para completar la hoja de anotación:"
 
-#: admin/seasonadmin.php:114 admin/seasonscoresheethistory.php:11
+#: admin/seasonadmin.php:122 admin/seasonscoresheethistory.php:11
 #: user/addscoresheet.php:514 user/addscoresheet.php:834
 #: user/scoresheethistory.php:297 user/scoresheethistory.php:311
 msgid "Scoresheet history"
 msgstr "Historial de la hoja de anotación"
+
+#: admin/scorekeepinglinks.php:101
+msgid "Scoresheet history is disabled; anonymous use is not counted."
+msgstr ""
 
 #: user/addscoresheet.php:510
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
@@ -6245,7 +6254,7 @@ msgstr "Establecer el reloj del juego en"
 msgid "Set rosters"
 msgstr "Establecer listas de jugadores"
 
-#: menufunctions.php:410 admin/spirit.php:458
+#: menufunctions.php:410 admin/seasonadmin.php:113 admin/spirit.php:458
 msgid "Settings"
 msgstr "Ajustes"
 
@@ -6258,7 +6267,7 @@ msgid "Shirt numbers"
 msgstr "Números de camiseta"
 
 #: admin/apitokens.php:87 admin/apitokens.php:180
-#: admin/scorekeepinglinks.php:72 spiritkeeper/home.php:56
+#: admin/scorekeepinglinks.php:76 spiritkeeper/home.php:56
 #: user/scoresheethistory.php:418 user/userinfo.php:315
 msgid "Show"
 msgstr "Mostrar"
@@ -6663,7 +6672,7 @@ msgstr ""
 msgid "Standing"
 msgstr "Tabla de Posiciones"
 
-#: statistics.php:24
+#: statistics.php:24 admin/seasonadmin.php:124
 msgid "Standings"
 msgstr "Tabla de Posiciones"
 
@@ -6721,7 +6730,7 @@ msgstr "Equipo que inicia en ofensiva"
 msgid "Starting time"
 msgstr "Hora de inicio"
 
-#: admin/addseasons.php:104 admin/addseasons.php:443 admin/reservations.php:120
+#: admin/addseasons.php:104 admin/addseasons.php:443 admin/reservations.php:126
 #: admin/seasons.php:93 lib/search.functions.php:787
 msgid "Starts"
 msgstr "Comienza"
@@ -6786,7 +6795,7 @@ msgstr "Grupo Swissdraw"
 msgid "System email sender address"
 msgstr "Dirección del remitente de correo electrónico del sistema"
 
-#: admin/seasonadmin.php:112 admin/tdtools.php:146
+#: admin/seasonadmin.php:120 admin/tdtools.php:146
 msgid "TD Tools"
 msgstr "Herramientas TD"
 
@@ -6945,13 +6954,13 @@ msgstr ""
 "El banner se muestra en la parte superior de las páginas públicas del "
 "evento. Una imagen ancha funciona mejor, por ejemplo 1600 x 400 píxeles."
 
-#: admin/scorekeepinglinks.php:52 user/scorekeepinglink.php:67
+#: admin/scorekeepinglinks.php:53 user/scorekeepinglink.php:67
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
 msgstr ""
 
-#: admin/scorekeepinglinks.php:94 user/scorekeepinglink.php:28
+#: admin/scorekeepinglinks.php:98 user/scorekeepinglink.php:28
 msgid "The event is read-only."
 msgstr ""
 
@@ -7124,7 +7133,7 @@ msgstr ""
 "Estas configuraciones controlan cómo se recopilan, muestran y bloquean las "
 "puntuaciones espirituales para este evento."
 
-#: admin/reservations.php:155
+#: admin/reservations.php:161
 msgid ""
 "These transfer times are used during schedule validation to detect conflicts "
 "between consecutive games on different fields."
@@ -7208,13 +7217,13 @@ msgstr ""
 "Este estado guardado no se muestra: los equipos local y visitante han "
 "cambiado desde que se guardó."
 
-#: lib/scorekeeper.functions.php:612
+#: lib/scorekeeper.functions.php:603
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
 msgstr ""
 
-#: lib/scorekeeper.functions.php:633
+#: lib/scorekeeper.functions.php:624
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr ""
@@ -7498,7 +7507,7 @@ msgstr "Torneo"
 msgid "Transfer already exists"
 msgstr "La transferencia ya existe"
 
-#: admin/reservations.php:153
+#: admin/reservations.php:159
 msgid "Transfer times"
 msgstr "Tiempos de transferencia"
 
@@ -7676,7 +7685,7 @@ msgstr "Modo de importación de evento desconocido."
 msgid "Unnamed player"
 msgstr "Jugador sin nombre"
 
-#: admin/schedule.php:379 admin/scorekeepinglinks.php:120
+#: admin/schedule.php:379 admin/scorekeepinglinks.php:127
 msgid "Unscheduled"
 msgstr "No programado"
 
@@ -7811,7 +7820,7 @@ msgstr "Nombre de usuario"
 msgid "Username is too short (min. 3 letters)"
 msgstr "El nombre de usuario es demasiado corto (mínimo 3 letras)"
 
-#: menufunctions.php:406 admin/scorekeepinglinks.php:89 admin/seasons.php:143
+#: menufunctions.php:406 admin/scorekeepinglinks.php:93 admin/seasons.php:143
 #: admin/users.php:7
 msgid "Users"
 msgstr "Usuarios"
@@ -8034,7 +8043,7 @@ msgstr "Federación Mundial de Disco Volador"
 #: admin/clubs.php:112 admin/locations.php:66 admin/poolgames.php:291
 #: admin/poolgames.php:292 admin/poolgames.php:331 admin/poolgames.php:332
 #: admin/poolgames.php:355 admin/poolgames.php:356 admin/poolmoves.php:251
-#: admin/poolmoves.php:329 admin/reservations.php:138 admin/seasongames.php:262
+#: admin/poolmoves.php:329 admin/reservations.php:144 admin/seasongames.php:262
 #: admin/seasonmoves.php:171 admin/seasonpools.php:270 admin/seasons.php:148
 #: admin/seasonseries.php:130 admin/seasonstandings.php:404
 #: admin/seasonstandings.php:461 admin/seasonteams.php:240
@@ -8068,7 +8077,7 @@ msgstr ""
 "Puede insertar las siguientes estadísticas de Ultiorganizer directamente en "
 "sus propias páginas"
 
-#: lib/scorekeeper.functions.php:636
+#: lib/scorekeeper.functions.php:627
 #, php-format
 msgid "You can keep score for %s."
 msgstr ""

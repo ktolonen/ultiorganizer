@@ -490,6 +490,7 @@ CREATE TABLE IF NOT EXISTS `uo_scoresheet_history` (
   KEY `idx_scoresheet_history_game_time` (`game`,`time`),
   KEY `idx_scoresheet_history_restorable` (`game`,`has_snapshot`,`time`),
   KEY `idx_scoresheet_history_user_time` (`user_id`,`time`),
+  KEY `idx_scoresheet_history_token_user` (`scorekeeper_token`,`user_id`,`has_snapshot`),
   CONSTRAINT `fk_scoresheet_history_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

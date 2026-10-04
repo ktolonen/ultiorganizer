@@ -1599,6 +1599,12 @@ function upgrade102()
     if (!hasColumn('uo_scoresheet_history', 'scorekeeper_token')) {
         addColumn('uo_scoresheet_history', 'scorekeeper_token', "int(10) DEFAULT NULL");
     }
+    // The scorekeeping links page counts the anonymous changes per token.
+    addIndex(
+        'uo_scoresheet_history',
+        'idx_scoresheet_history_token_user',
+        '(`scorekeeper_token`, `user_id`, `has_snapshot`)',
+    );
 }
 
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
