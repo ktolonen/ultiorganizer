@@ -6,7 +6,6 @@ denyDirectCustomizationAccess(__FILE__);
 include_once 'lib/pdf.interfaces.php';
 include_once 'lib/tfpdf/tfpdf.php';
 include_once 'lib/hsvclass/HSVClass.php';
-include_once 'lib/phpqrcode/qrlib.php';
 
 class PDF extends tFPDF implements ScoreSheetPdf
 {
@@ -42,7 +41,7 @@ class PDF extends tFPDF implements ScoreSheetPdf
     public function PrintScoreSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename, $homeplayers = [], $visitorplayers = [])
     {
         $this->game['seasonname'] = $this->pdfText($seasonname);
-        $this->game['game_id'] = $gameId . "" . getChkNum($gameId);
+        $this->game['game_id'] = $gameId;
         $this->game['hometeamname'] = $this->pdfText($hometeamname);
         $this->game['visitorteamname'] = $this->pdfText($visitorteamname);
         $this->game['poolname'] = $this->pdfText($poolname);
@@ -92,26 +91,41 @@ class PDF extends tFPDF implements ScoreSheetPdf
         $this->SetXY(95, 21);
         $this->ScoreGrid();
 
-        //print QR-code for result URL
-        $filename = UPLOAD_DIR . $this->game['game_id'] . ".png";
-        $url = BASEURL . "/scorekeeper/?view=result&g=" . $this->game['game_id'];
-        QRcode::png($url, $filename, 'h', 2, 2);
-        $this->Image($filename, 20, 246);
-        unlink($filename);
+        $this->ScorekeepingQr($gameId);
+    }
 
-        $this->SetY(-22);
+    // The game's scorekeeping link as a QR code, left out when the user
+    // printing the sheet may not issue the link.
+    private function ScorekeepingQr($gameId)
+    {
+        include_once 'lib/scorekeeper.functions.php';
+        include_once 'lib/phpqrcode/qrlib.php';
+        $token = ScorekeeperToken('game', $gameId);
+        if ($token === null) {
+            return;
+        }
+        $filename = tempnam(sys_get_temp_dir(), 'uoqr');
+        if ($filename === false) {
+            return;
+        }
+        try {
+            QRcode::png(ScorekeeperTokenUrl($token), $filename, QR_ECLEVEL_M, 3, 2);
+            $this->Image($filename, 20, 244, 30, 30, 'PNG');
+        } finally {
+            unlink($filename);
+        }
 
-        $data = _("After the match has ended, update result:") . " " . BASEURL . "/scorekeeper/?view=result";
-        $data = $this->pdfText($data);
+        // Kept left of x=95, where the score grid starts.
+        $this->SetXY(53, 252);
         $this->SetFont('Arial', '', 10);
         $this->SetTextColor(0);
-        $this->SetFillColor(255);
-        $this->MultiCell(0, 1, $data);
+        $this->MultiCell(38, 5, $this->pdfText(_("Scan to keep score in Scorekeeper.")), 0, 'L');
     }
+
     public function PrintDefenseSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename)
     {
         $this->game['seasonname'] = $this->pdfText($seasonname);
-        $this->game['game_id'] = $gameId . "" . getChkNum($gameId);
+        $this->game['game_id'] = $gameId;
         $this->game['hometeamname'] = $this->pdfText($hometeamname);
         $this->game['visitorteamname'] = $this->pdfText($visitorteamname);
         $this->game['poolname'] = $this->pdfText($poolname);

@@ -16,6 +16,13 @@ $html .= "<h1>" . _("Log in") . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 $html .= $errors;
+$html .= ScorekeeperTakeNoticeHtml();
+if (!empty($_SESSION['scorekeeper_pending_token'])) {
+    $pendingDescription = ScorekeeperTokenDescription((int) $_SESSION['scorekeeper_pending_token']);
+    if ($pendingDescription !== "") {
+        $html .= "<p>" . utf8entities(sprintf(_("Log in to keep score for %s."), $pendingDescription)) . "</p>\n";
+    }
+}
 $html .= "<form action='?view=login' method='post' data-ajax='false'>\n";
 $html .= "<label for='myusername'>" . _("Username") . ":</label>";
 $html .= "<input type='text' id='myusername' name='myusername' size='15'/> ";
@@ -23,10 +30,6 @@ $html .= "<label for='mypassword'>" . _("Password") . ":</label>";
 $html .= "<input type='password' id='mypassword' name='mypassword' size='15'/> ";
 $html .= "<div class='form-actions'>";
 $html .= "<input type='submit' name='login' value='" . _("Log in") . "'/>";
-$allowAnonResult = defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
-if ($allowAnonResult) {
-    $html .= "<a href='?view=result' data-role='button' data-ajax='false'>" . _("Quick add result") . "</a>";
-}
 $html .= "</div>";
 $html .= "</form>";
 $html .= "<div class='card mobile-language-selection'>";

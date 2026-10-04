@@ -29,6 +29,7 @@ include_once $include_prefix . 'lib/game.functions.php';
 include_once $include_prefix . 'lib/standings.functions.php';
 include_once $include_prefix . 'lib/pool.functions.php';
 include_once $include_prefix . 'lib/player.functions.php';
+include_once $include_prefix . 'lib/scorekeeper.functions.php';
 
 include_once $include_prefix . 'localization.php';
 include_once $include_prefix . 'menufunctions.php';
@@ -39,7 +40,7 @@ startSecureSession();
 
 
 
-if (!isset($_SESSION['uid']) && iget('view') != "result") {
+if (!isset($_SESSION['uid'])) {
     $_SESSION['uid'] = "anonymous";
     SetUserSessionData("anonymous");
     header("location:?view=login");
@@ -48,6 +49,40 @@ if (!isset($_SESSION['uid']) && iget('view') != "result") {
 
 if (isset($_POST['myusername'])) {
     UserAuthenticate($_POST['myusername'], $_POST['mypassword'], "");
+}
+
+// Scorekeeping link (docs/scorekeeper.md). The token leaves the address bar
+// at once, and neither a referrer nor a cached copy carries it further.
+if (isset($_GET['t'])) {
+    header('Referrer-Policy: no-referrer');
+    header('Cache-Control: no-store');
+    $redeemed = ScorekeeperRedeemToken($_GET['t']);
+    if ($redeemed['status'] === 'invalid') {
+        Log1("security", "fail", "", "", "invalid scorekeeping link");
+        $_SESSION['scorekeeper_notice'] = ['type' => 'invalid'];
+        header("location:?view=" . (isLoggedIn() ? "respgames" : "login"));
+    } elseif ($redeemed['status'] === 'login') {
+        header("location:?view=login");
+    } else {
+        $_SESSION['scorekeeper_notice'] = ['type' => 'granted', 'token' => $redeemed['token_id']];
+        header("location:?view=respgames&selseason=" . rawurlencode((string) $redeemed['season']));
+    }
+    exit();
+}
+
+// Links opened before logging in become the user's own on the first
+// request after it, which is not always the login POST itself:
+// UserAuthenticate() redirects away on a first login.
+if (isLoggedIn() && (!empty($_SESSION['scorekeeper_pending_token']) || !empty($_SESSION['scorekeeper_tokens']))) {
+    $pendingToken = (int) ($_SESSION['scorekeeper_pending_token'] ?? 0);
+    $claimedSeason = ScorekeeperClaimSessionTokens();
+    if ($claimedSeason !== null) {
+        if ($pendingToken > 0) {
+            $_SESSION['scorekeeper_notice'] = ['type' => 'granted', 'token' => $pendingToken];
+        }
+        header("location:?view=respgames&selseason=" . rawurlencode((string) $claimedSeason));
+        exit();
+    }
 }
 
 if (!isset($_SESSION['uid'])) {
@@ -98,7 +133,7 @@ include $viewPath;
 
 echo "<div data-role='footer' class='ui-bar' data-position='fixed'>\n";
 echo "<a class='footer-compact' href='" . BASEURL . "/' data-role='button' rel='external' data-icon='home'>" . _("Ultiorganizer") . "</a>";
-if ($_SESSION['uid'] != "anonymous") {
+if ($_SESSION['uid'] != "anonymous" || ScorekeeperSessionHasAnonymousAccess()) {
     echo "<a class='footer-compact' href='?view=logout' data-role='button' data-icon='delete'>" . _("Log out") . "</a>";
 }
 echo "\n</div><!-- /footer -->\n\n";

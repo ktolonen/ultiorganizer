@@ -523,25 +523,6 @@ function RGBtoRGBa($rgbstring, $alpha)
     return "rgba($r,$g,$b,$alpha)";
 }
 
-function getChkNum($sNum)
-{
-    $multipliers = [7, 3, 1];
-    $sNumLen = strlen($sNum);
-    $sNum = str_split($sNum);
-    $chkSum = 0;
-    for ($i = $sNumLen - 1; $i >= 0; --$i) {
-        $chkSum += (int) $sNum[$i] * $multipliers[($sNumLen - 1 - $i) % 3];
-    }
-    return (10 - $chkSum % 10) % 10;
-}
-
-function checkChkNum($sNum)
-{
-    $chk = substr($sNum, -1);
-    $chkStr = substr($sNum, 0, -1);
-    return $chk == getChkNum($chkStr);
-}
-
 if (!function_exists('str_split')) {
     function str_split($string, $split_length = 1)
     {

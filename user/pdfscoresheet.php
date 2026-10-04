@@ -170,9 +170,11 @@ if ($teamId) {
                 continue;
             }
         }
+        if ($filter2 == "scheduled" && empty($gameRow['reservation_id'])) {
+            continue;
+        }
 
         $sGid = $gameRow['game_id'];
-        //$sGid .= getChkNum($sGid);
 
         $homeplayers = [];
 

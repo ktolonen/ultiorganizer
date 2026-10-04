@@ -3,7 +3,7 @@
 include_once __DIR__ . '/auth.php';
 
 $html = "";
-$gameId = intval(iget("game"));
+$gameId = scorekeeperRequestGameId();
 $game_result = GameResult($gameId);
 $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);

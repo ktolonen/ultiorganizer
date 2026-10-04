@@ -34,6 +34,7 @@ $sp = [
     "public_event" => 0,
     "api_public" => 0,
     "showgamecomments" => 0,
+    "anonymous_scorekeeping" => 0,
     "require_accreditation" => 0,
     "iscurrent" => 0,
     "enrollopen" => 0,
@@ -71,6 +72,7 @@ if (!empty($_POST['add'])) {
     $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
     $sp['public_event'] = !empty($_POST['public_event']);
     $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
+    $sp['anonymous_scorekeeping'] = !empty($_POST['anonymous_scorekeeping']);
     $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
     $comment = $_POST['comment'];
 
@@ -141,6 +143,7 @@ if (!empty($_POST['add'])) {
         $sp['maintenance_mode'] = !empty($_POST['maintenance_mode']);
         $sp['public_event'] = !empty($_POST['public_event']);
         $sp['showgamecomments'] = !empty($_POST['showgamecomments']);
+        $sp['anonymous_scorekeeping'] = !empty($_POST['anonymous_scorekeeping']);
         $sp['require_accreditation'] = !empty($_POST['require_accreditation']);
         $sp['timezone'] = $_POST['timezone'];
         $comment = $_POST['comment'];
@@ -181,6 +184,7 @@ if ($seasonId) {
     $sp['maintenance_mode'] = isset($info['maintenance_mode']) ? $info['maintenance_mode'] : 0;
     $sp['public_event'] = isset($info['public_event']) ? $info['public_event'] : 0;
     $sp['showgamecomments'] = isset($info['showgamecomments']) ? $info['showgamecomments'] : 0;
+    $sp['anonymous_scorekeeping'] = isset($info['anonymous_scorekeeping']) ? $info['anonymous_scorekeeping'] : 0;
     $sp['require_accreditation'] = isset($info['require_accreditation']) ? $info['require_accreditation'] : 0;
     $sp['timezone'] = $info['timezone'];
     $comment = CommentRaw(1, $info['season_id']);
@@ -494,6 +498,13 @@ if ($sp['showgamecomments']) {
 }
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see game notes on public pages. Season admins and the spirit director can still see them regardless of this flag.") . "</span></td></tr>";
+
+$html .= "<tr><td class='infocell'>" . _("Scorekeeping links work without logging in") . ": </td><td><input class='input' type='checkbox' name='anonymous_scorekeeping' ";
+if ($sp['anonymous_scorekeeping']) {
+    $html .= "checked='checked'";
+}
+$html .= "/></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Anyone who opens a game or field scorekeeping link can keep score for those games without logging in.") . "</span></td></tr>";
 
 $html .= "</table>\n";
 if (empty($seasonId)) {

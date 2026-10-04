@@ -61,7 +61,7 @@ class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
         $this->SetAutoPageBreak(false);
 
         $this->game['seasonname'] = $this->pdfText($seasonname);
-        $this->game['game_id'] = $gameId; //."".getChkNum($gameId);
+        $this->game['game_id'] = $gameId;
         $this->game['hometeamname'] = $this->pdfText($hometeamname);
         $this->game['visitorteamname'] = $this->pdfText($visitorteamname);
         $this->game['poolname'] = $this->pdfText($poolname);
@@ -240,7 +240,7 @@ class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
     public function PrintDefenseSheet($seasonname, $gameId, $hometeamname, $visitorteamname, $poolname, $time, $placename)
     {
         $this->game['seasonname'] = $this->pdfText($seasonname);
-        $this->game['game_id'] = $gameId . "" . getChkNum($gameId);
+        $this->game['game_id'] = $gameId;
         $this->game['hometeamname'] = $this->pdfText($hometeamname);
         $this->game['visitorteamname'] = $this->pdfText($visitorteamname);
         $this->game['poolname'] = $this->pdfText($poolname);

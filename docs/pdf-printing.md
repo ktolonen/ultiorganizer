@@ -48,6 +48,8 @@ Methods that belong here:
 - `PrintRoster()`
 - scoresheet and player-list helpers shared by those methods
 
+`PrintScoreSheet()` in the default and slkl files prints the game's scorekeeping link as a QR code (see `docs/scorekeeper.md`), and leaves it out when `ScorekeeperToken()` returns null for the user printing.
+
 `PrintPlayerList()` is the game player list printed with, or alongside, scoresheets for both teams in a scheduled game. `PrintRoster()` is the one-page team roster PDF called from roster/team flows. Both remain in `pdfscoresheet.php` because they share the same team and player layout concerns as scoresheets.
 
 ## Libraries And Fonts

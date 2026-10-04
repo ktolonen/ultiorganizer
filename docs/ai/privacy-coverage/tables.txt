@@ -46,6 +46,8 @@ none             uo_pooltemplate
 personal         uo_registerrequest
 none             uo_reservation
 none             uo_scheduling_name
+personal         uo_scorekeeper_grant
+none             uo_scorekeeper_token
 none             uo_season
 none             uo_season_points
 none             uo_season_round

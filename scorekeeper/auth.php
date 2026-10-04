@@ -5,6 +5,7 @@ if (!isset($include_prefix)) {
 }
 
 $auth_redirect = '../scorekeeper/index.php?view=login';
+$auth_allow_anonymous = 'ScorekeeperSessionHasAnonymousAccess';
 include_once $include_prefix . 'lib/auth.guard.php';
 
 if (!function_exists('scorekeeperHasManualNoGameClock')) {
@@ -105,4 +106,43 @@ if (!function_exists('scorekeeperRequestTeamId')) {
 
         return 0;
     }
+}
+
+// Pages read the game and team from the body, the URL or the session in
+// different orders, so every id the request carries is checked. An anonymous
+// session admitted by a scorekeeping link sees only the games that link
+// covers, and a team must play in the game. A game or team left in the session
+// by an earlier page is dropped instead, so a link that has expired or a
+// different game does not lock the session out of its own pages.
+if (!isLoggedIn() && isset($_SESSION['game']) && ScorekeeperGrantTokenId(intval($_SESSION['game'])) === 0) {
+    unset($_SESSION['game'], $_SESSION['team']);
+}
+$requestGameIds = array_unique(array_filter([
+    intval($_POST['game'] ?? 0),
+    intval($_GET['game'] ?? 0),
+    scorekeeperRequestGameId(),
+]));
+$requestTeamIds = array_unique(array_filter([
+    intval($_POST['team'] ?? 0),
+    intval($_GET['team'] ?? 0),
+]));
+$requestRefused = count($requestGameIds) > 1;
+if (!isLoggedIn()) {
+    foreach ($requestGameIds as $requestGameId) {
+        if (ScorekeeperGrantTokenId($requestGameId) === 0) {
+            $requestRefused = true;
+        }
+    }
+}
+$requestGame = count($requestGameIds) === 1 ? GameResult(reset($requestGameIds)) : null;
+$requestGameTeams = is_array($requestGame) ? [(int) $requestGame['hometeam'], (int) $requestGame['visitorteam']] : [];
+if (array_diff($requestTeamIds, $requestGameTeams) !== []) {
+    $requestRefused = true;
+}
+if (isset($_SESSION['team']) && !in_array(intval($_SESSION['team']), $requestGameTeams, true)) {
+    unset($_SESSION['team']);
+}
+if ($requestRefused) {
+    header("location:" . (isLoggedIn() ? '../scorekeeper/index.php?view=respgames' : $auth_redirect));
+    exit();
 }

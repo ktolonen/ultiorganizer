@@ -607,6 +607,13 @@ function PrivacyCollectUserReportData($userId)
             "SELECT * FROM uo_userproperties WHERE userid='%s' ORDER BY name, value, prop_id",
             DBEscapeString($userId),
         ), true),
+        'scorekeeper_grant_rows' => DBQueryToArray(sprintf(
+            "SELECT g.grant_id, g.created, t.game, t.reservation
+				FROM uo_scorekeeper_grant g
+				JOIN uo_scorekeeper_token t ON (t.token_id=g.token_id)
+			WHERE g.userid='%s' ORDER BY g.created DESC",
+            DBEscapeString($userId),
+        ), true),
         'extraemail_rows' => DBQueryToArray(sprintf(
             "SELECT * FROM uo_extraemail WHERE userid='%s' ORDER BY email",
             DBEscapeString($userId),
@@ -713,6 +720,7 @@ function PrivacyRenderUserReportText($userId, $adminUserId)
     unset($userRow['id']);
     PrivacyAppendRowsSection($lines, 'User row', [$userRow]);
     PrivacyAppendRowsSection($lines, 'User property rows', $data['userproperties_rows']);
+    PrivacyAppendRowsSection($lines, 'Scorekeeping link rows', $data['scorekeeper_grant_rows']);
     PrivacyAppendRowsSection($lines, 'Extra email rows', $data['extraemail_rows']);
     PrivacyAppendRowsSection($lines, 'Extra email request rows', $data['extraemailrequest_rows']);
     PrivacyAppendRowsSection($lines, 'Enrolled team rows', $data['enrolledteam_rows']);
@@ -988,6 +996,7 @@ function PrivacyDeleteUserData($userId, $adminUserId)
         // would otherwise outlive the account it belongs to.
         DBQuery(sprintf("DELETE FROM uo_passwordresetrequest WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_userproperties WHERE userid='%s'", DBEscapeString($userId)));
+        DBQuery(sprintf("DELETE FROM uo_scorekeeper_grant WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_users WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery('COMMIT');
     } catch (Exception $e) {

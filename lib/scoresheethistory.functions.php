@@ -52,14 +52,10 @@ function ScoresheetHistorySuppressed($set = null)
 /**
  * Backstop authorization for the two write helpers, accepting the union of the
  * rights their callers hold. The narrower rights are scoped to the one target
- * each is granted for, so an accreditation-only, media-only or anonymous
- * caller cannot reach the helpers directly and forge rows for another target.
- *
- * $allowAnonymousResult is set by GameSetResult() when it was itself called
- * with $checkRights=false; it grants nothing on its own and is re-validated
- * here against the installation's ANONYMOUS_RESULT_INPUT setting.
+ * each is granted for, so an accreditation-only or media-only caller cannot
+ * reach the helpers directly and forge rows for another target.
  */
-function ScoresheetHistoryAuthorized($gameId, $target = null, $allowAnonymousResult = false)
+function ScoresheetHistoryAuthorized($gameId, $target = null)
 {
     // Lazy require: game.functions.php requires this file. Needed because
     // hasEditGameEventsRight() reaches GameRespTeam(), and this is the gate
@@ -88,28 +84,10 @@ function ScoresheetHistoryAuthorized($gameId, $target = null, $allowAnonymousRes
         return true;
     }
 
-    // Scoped to the result target: the flag is caller-controlled, and
-    // ANONYMOUS_RESULT_INPUT says the installation allows anonymous score
-    // reporting, nothing about the caller.
-    //
-    // isLoggedIn() is the other half of the same route. result.php and
-    // scorekeeper/result.php require a login precisely when that setting is
-    // off, then still call GameSetResult() with $checkRights=false -- so a
-    // logged-in submitter holding no game role is admitted by the mutator and
-    // reaches none of the checks above. Without this the result would save
-    // with neither a snapshot nor an audit row, which is the one combination
-    // this table exists to prevent.
-    if (
-        $target === 'result' && $allowAnonymousResult
-        && ((defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT) || isLoggedIn())
-    ) {
-        return true;
-    }
-
     return false;
 }
 
-function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force = false, $allowAnonymousResult = false)
+function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force = false)
 {
     // $force is ScoresheetHistoryRestore()'s own audit row, which must be written
     // even while recording is disabled or suppressed, the same way its
@@ -124,15 +102,11 @@ function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force
         return false;
     }
 
-    if (!ScoresheetHistoryAuthorized($gameId, $target, $allowAnonymousResult)) {
+    if (!ScoresheetHistoryAuthorized($gameId, $target)) {
         return false;
     }
 
-    // "anonymous" marks a session-less self-reported result distinctly from
-    // "unknown", which stays reserved for a missing session on other paths.
-    $anonymous = empty($_SESSION['uid'])
-        && $allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
-    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : ($anonymous ? "anonymous" : "unknown");
+    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
     // DisableVisitorLogging stops IP recording entirely (docs/privacy.md), so
     // it suppresses the address here too, on every row.
     $ip = (!empty($_SERVER['REMOTE_ADDR']) && !IsVisitorLoggingDisabled())
@@ -143,8 +117,8 @@ function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force
     }
 
     $query = sprintf(
-        "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, detail)
-			VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s')",
+        "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, detail, scorekeeper_token)
+			VALUES (%d, '%s', '%s', '%s', '%s', '%s', '%s', NULLIF(%d, 0))",
         $gameId,
         DBEscapeString(substr((string) $userId, 0, 50)),
         DBEscapeString(substr($ip, 0, 45)),
@@ -152,6 +126,7 @@ function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force
         DBEscapeString(substr((string) $target, 0, 20)),
         DBEscapeString(substr((string) $action, 0, 10)),
         DBEscapeString($json),
+        ScorekeeperAnonymousTokenId($gameId),
     );
     return DBQueryInsert($query);
 }
@@ -264,7 +239,7 @@ function ScoresheetHistoryBuildSnapshot($gameId)
  * request-local cache so the several mutators of one desktop save share a
  * single restore point.
  */
-function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonymousResult = false, $target = null)
+function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $target = null)
 {
     // $force is ScoresheetHistoryRestore()'s pre-restore capture, which must write
     // even while recording is disabled or suppressed -- otherwise a restore
@@ -281,7 +256,7 @@ function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonym
         return false;
     }
 
-    if (!ScoresheetHistoryAuthorized($gameId, $target, $allowAnonymousResult)) {
+    if (!ScoresheetHistoryAuthorized($gameId, $target)) {
         return false;
     }
 
@@ -289,7 +264,7 @@ function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonym
         CacheForgetNamespace("scoresheet_history_snapshot");
     }
 
-    return CacheRemember("scoresheet_history_snapshot", $gameId, function () use ($gameId, $allowAnonymousResult, $force) {
+    return CacheRemember("scoresheet_history_snapshot", $gameId, function () use ($gameId, $force) {
         $json = json_encode(ScoresheetHistoryBuildSnapshot($gameId), JSON_UNESCAPED_UNICODE);
         if ($json === false) {
             return false;
@@ -310,20 +285,19 @@ function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $allowAnonym
         }
 
         // Same attribution rules as ScoresheetHistoryRecord().
-        $anonymous = empty($_SESSION['uid'])
-            && $allowAnonymousResult && defined('ANONYMOUS_RESULT_INPUT') && ANONYMOUS_RESULT_INPUT;
-        $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : ($anonymous ? "anonymous" : "unknown");
+        $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
         $ip = (!empty($_SERVER['REMOTE_ADDR']) && !IsVisitorLoggingDisabled())
             ? $_SERVER['REMOTE_ADDR'] : "";
 
         $query = sprintf(
-            "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, has_snapshot, snapshot)
-				VALUES (%d, '%s', '%s', '%s', 'snapshot', 'capture', 1, '%s')",
+            "INSERT INTO uo_scoresheet_history (game, user_id, ip, source, target, action, has_snapshot, snapshot, scorekeeper_token)
+				VALUES (%d, '%s', '%s', '%s', 'snapshot', 'capture', 1, '%s', NULLIF(%d, 0))",
             $gameId,
             DBEscapeString(substr((string) $userId, 0, 50)),
             DBEscapeString(substr($ip, 0, 45)),
             DBEscapeString(ScoresheetHistorySource()),
             DBEscapeString($json),
+            ScorekeeperAnonymousTokenId($gameId),
         );
         return DBQueryInsert($query);
     });
@@ -337,7 +311,8 @@ function ScoresheetHistoryList($gameId, $limit = null, $offset = null)
     }
 
     $query = sprintf(
-        "SELECT history_id, game, time, user_id, ip, source, target, action, detail, has_snapshot
+        "SELECT history_id, game, time, user_id, ip, source, target, action, detail, has_snapshot,
+				scorekeeper_token
 			FROM uo_scoresheet_history WHERE game=%d ORDER BY time DESC, history_id DESC",
         $gameId,
     );
@@ -783,7 +758,7 @@ function ScoresheetHistoryRestore($historyId)
 
     // Warnings, not blocks: the mutators never enforce these either, so
     // refusing here would make a restore stricter than an ordinary result
-    // edit. Wording reused from CheckGameResult().
+    // edit.
     $warnings = [];
     if (IsPoolLocked(GamePool($gameId))) {
         $warnings[] = _("Pool is locked.");

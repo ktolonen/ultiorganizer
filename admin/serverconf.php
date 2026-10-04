@@ -173,7 +173,6 @@ function ServerConfConstantValue($name)
             'DISABLE_SELF_REGISTRATION' => false,
             'NO_EMAIL' => false,
             'ALLOW_INSTALL' => false,
-            'ANONYMOUS_RESULT_INPUT' => false,
             'API_RATE_LIMIT' => 120,
             'API_RATE_WINDOW' => 60,
         ];
@@ -205,7 +204,6 @@ function ServerConfConfigInfoRows()
         'DISABLE_SELF_REGISTRATION',
         'NO_EMAIL',
         'ALLOW_INSTALL',
-        'ANONYMOUS_RESULT_INPUT',
         'API_RATE_LIMIT',
         'API_RATE_WINDOW',
     ];

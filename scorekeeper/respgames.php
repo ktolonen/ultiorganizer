@@ -20,6 +20,26 @@ if ($currentSeasonRows) {
         ];
     }
 }
+// Events where a scorekeeping link applies are offered even when they are
+// not marked current, and opening a link selects its event.
+foreach (ScorekeeperGrantedSeasonIds() as $grantSeason) {
+    if (!isset($currentSeasons[$grantSeason])) {
+        $grantSeasonInfo = SeasonInfo($grantSeason);
+        $currentSeasons[$grantSeason] = [
+            'season_id' => $grantSeason,
+            'name' => is_array($grantSeasonInfo) ? $grantSeasonInfo['name'] : $grantSeason,
+        ];
+    }
+}
+// Kept apart from the shared selseason, which the bootstrap resets to an event
+// the session can access -- a link's event may be private.
+if (!empty($_GET['selseason']) && is_string($_GET['selseason'])) {
+    $_SESSION['scorekeeper_selseason'] = $_GET['selseason'];
+}
+$selectedSeason = (string) ($_SESSION['scorekeeper_selseason'] ?? '');
+if (isset($currentSeasons[$selectedSeason])) {
+    $season = $selectedSeason;
+}
 if (!empty($currentSeasons) && !isset($currentSeasons[$season])) {
     $currentSeasonIds = array_keys($currentSeasons);
     $season = $currentSeasonIds[0];
@@ -58,6 +78,7 @@ $html .= "<h1>" . _("Games you are responsible for") . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
+$html .= ScorekeeperTakeNoticeHtml();
 
 $respGameArray = GameResponsibilityArray($season);
 $html .= "<form action='?view=respgames' method='post' data-ajax='false'>\n";

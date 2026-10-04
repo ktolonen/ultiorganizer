@@ -1559,6 +1559,48 @@ function upgrade101()
     }
 }
 
+function upgrade102()
+{
+    // Scorekeeping links: a token opens Scorekeeper for one game or for every
+    // game in one reservation. Rotating a token deletes its row, which also
+    // revokes the grants it gave. The grant's userid has no foreign key, like
+    // uo_userproperties: uo_users is still utf8mb3 on older installations,
+    // and a utf8mb4 column cannot reference it.
+    DBQuery("CREATE TABLE IF NOT EXISTS `uo_scorekeeper_token` (
+	  `token_id` int(10) NOT NULL AUTO_INCREMENT,
+	  `token` char(32) NOT NULL,
+	  `game` int(10) DEFAULT NULL,
+	  `reservation` int(10) DEFAULT NULL,
+	  `created` datetime NOT NULL DEFAULT current_timestamp(),
+	  PRIMARY KEY (`token_id`),
+	  UNIQUE KEY `uq_scorekeeper_token` (`token`),
+	  UNIQUE KEY `uq_scorekeeper_token_game` (`game`),
+	  UNIQUE KEY `uq_scorekeeper_token_reservation` (`reservation`),
+	  CONSTRAINT `fk_scorekeeper_token_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+	  CONSTRAINT `fk_scorekeeper_token_reservation` FOREIGN KEY (`reservation`) REFERENCES `uo_reservation` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    DBQuery("CREATE TABLE IF NOT EXISTS `uo_scorekeeper_grant` (
+	  `grant_id` int(10) NOT NULL AUTO_INCREMENT,
+	  `token_id` int(10) NOT NULL,
+	  `userid` varchar(50) NOT NULL,
+	  `created` datetime NOT NULL DEFAULT current_timestamp(),
+	  PRIMARY KEY (`grant_id`),
+	  UNIQUE KEY `uq_scorekeeper_grant` (`token_id`,`userid`),
+	  KEY `idx_scorekeeper_grant_user` (`userid`),
+	  CONSTRAINT `fk_scorekeeper_grant_token` FOREIGN KEY (`token_id`) REFERENCES `uo_scorekeeper_token` (`token_id`) ON DELETE CASCADE ON UPDATE CASCADE
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+
+    if (!hasColumn('uo_season', 'anonymous_scorekeeping')) {
+        addColumn('uo_season', 'anonymous_scorekeeping', "tinyint(1) NOT NULL DEFAULT 0");
+    }
+    // The token an anonymous Scorekeeper session wrote through. No foreign
+    // key: the id must outlive a rotated token to keep telling links apart.
+    if (!hasColumn('uo_scoresheet_history', 'scorekeeper_token')) {
+        addColumn('uo_scoresheet_history', 'scorekeeper_token', "int(10) DEFAULT NULL");
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {

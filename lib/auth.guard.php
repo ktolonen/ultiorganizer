@@ -7,8 +7,8 @@ if (!isset($include_prefix)) {
     $include_prefix = __DIR__ . '/../';
 }
 
-// Login-gated surfaces (admin, user, scorekeeper, spiritkeeper, result,
-// and the cust/ member pages) mutate data and immediately re-read it, often over
+// Login-gated surfaces (admin, user, scorekeeper, spiritkeeper, and the
+// cust/ member pages) mutate data and immediately re-read it, often over
 // Post/Redirect/Get. A GET landing inside the persistent cache TTL would render
 // pre-write state, so opt these requests out entirely. Public spectator pages do
 // not include this guard and keep the cache. Required directly because some
@@ -24,7 +24,11 @@ if (!isset($_SESSION['uid'])) {
     $_SESSION['uid'] = "anonymous";
 }
 
-if (!isLoggedIn()) {
+// $auth_allow_anonymous names a function that may admit a session that is not
+// logged in, such as an anonymous Scorekeeper session holding a link.
+$authAnonymousAllowed = isset($auth_allow_anonymous) && function_exists($auth_allow_anonymous)
+    && $auth_allow_anonymous();
+if (!isLoggedIn() && !$authAnonymousAllowed) {
     $redirect = isset($auth_redirect) ? $auth_redirect : ($include_prefix . "index.php?view=frontpage");
     header("location:" . $redirect);
     exit();

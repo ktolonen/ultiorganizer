@@ -45,13 +45,6 @@ if (!defined('ALLOW_INSTALL')) {
     define('ALLOW_INSTALL', (bool) ($_ENV['ALLOW_INSTALL'] ?? false));
 }
 
-if (!defined('ANONYMOUS_RESULT_INPUT')) {
-    // Use an env lookup so PHPStan infers bool without pinning true/false;
-    // the local conf/config.inc.php sets this to true, which causes false-positive
-    // "always true" warnings on the defined() && CONSTANT guard pattern.
-    define('ANONYMOUS_RESULT_INPUT', (bool) ($_ENV['ANONYMOUS_RESULT_INPUT'] ?? false));
-}
-
 if (!defined('DATE_FORMAT')) {
     define('DATE_FORMAT', 'd.m.Y');
 }
