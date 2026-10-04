@@ -372,12 +372,28 @@ function ScorekeeperSessionTokenIds()
 }
 
 /**
- * Whether an anonymous session may use Scorekeeper at all. Each edit is still
- * checked per game by ScorekeeperGrantTokenId().
+ * Whether an anonymous session may use Scorekeeper at all: it must hold a
+ * token that still exists in an event that still allows anonymous
+ * scorekeeping. Each game is still checked by ScorekeeperGrantTokenId().
  */
 function ScorekeeperSessionHasAnonymousAccess()
 {
-    return IsScorekeeperApp() && !isLoggedIn() && ScorekeeperSessionTokenIds() !== [];
+    if (!IsScorekeeperApp() || isLoggedIn()) {
+        return false;
+    }
+    $tokenIds = ScorekeeperSessionTokenIds();
+    if ($tokenIds === []) {
+        return false;
+    }
+    return (bool) CacheRemember("scorekeeper_grant", "anonymous:" . implode(",", $tokenIds), function () use ($tokenIds) {
+        foreach ($tokenIds as $tokenId) {
+            $row = ScorekeeperTokenRow($tokenId);
+            if ($row !== null && IsAnonymousScorekeepingAllowed($row['season'])) {
+                return 1;
+            }
+        }
+        return 0;
+    });
 }
 
 /**
