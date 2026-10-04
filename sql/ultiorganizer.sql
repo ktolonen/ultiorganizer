@@ -345,8 +345,7 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(99, '2026-08-23 00:00:00'),
 	(100, '2026-08-30 00:00:00'),
 	(101, '2026-09-27 00:00:00'),
-	(102, '2026-10-03 00:00:00'),
-	(103, '2026-10-04 00:00:00');
+	(102, '2026-10-03 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -491,7 +490,7 @@ CREATE TABLE IF NOT EXISTS `uo_scoresheet_history` (
   KEY `idx_scoresheet_history_game_time` (`game`,`time`),
   KEY `idx_scoresheet_history_restorable` (`game`,`has_snapshot`,`time`),
   KEY `idx_scoresheet_history_user_time` (`user_id`,`time`),
-  KEY `idx_scoresheet_history_token_user` (`scorekeeper_token`,`user_id`),
+  KEY `idx_scoresheet_history_token_user` (`scorekeeper_token`,`user_id`,`has_snapshot`),
   CONSTRAINT `fk_scoresheet_history_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 

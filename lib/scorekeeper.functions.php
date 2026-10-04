@@ -158,7 +158,7 @@ function SeasonScorekeeperTokens($season)
         }
         $counts = DBQueryToArrayUncached(sprintf(
             "SELECT scorekeeper_token, COUNT(*) AS changes FROM uo_scoresheet_history
-			WHERE user_id='anonymous' AND scorekeeper_token IN (%s)
+			WHERE user_id='anonymous' AND has_snapshot=0 AND scorekeeper_token IN (%s)
 			GROUP BY scorekeeper_token",
             implode(",", array_keys($keys)),
         ));
