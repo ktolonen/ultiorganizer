@@ -30,12 +30,11 @@ if (!empty($_POST['revoke'])) {
     exit();
 }
 
-$reservations = SeasonReservations($season);
-
 if ((int) iget("print") === 1) {
     $day = (string) iget("day");
+    $group = (string) iget("group");
     $sheets = "";
-    foreach ($reservations as $reservation) {
+    foreach (SeasonReservations($season, $group === "" ? "all" : $group) as $reservation) {
         if ($day !== "" && substr((string) $reservation['starttime'], 0, 10) !== $day) {
             continue;
         }
@@ -47,6 +46,7 @@ if ((int) iget("print") === 1) {
     return;
 }
 
+$reservations = SeasonReservations($season);
 $tokens = SeasonScorekeeperTokens($season);
 $canIssue = !isEventReadonly($season) || canBypassEventReadonly($season);
 $confirm = htmlspecialchars((string) json_encode(_("The current link stops working and everyone who opened it loses access. Continue?")), ENT_QUOTES);

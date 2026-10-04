@@ -115,6 +115,12 @@ if (empty($season)) {
     $html .= "<form method='post' id='reservations' action='?view=admin/reservations&amp;season=$season&amp;group=" . urlencode((string) $group) . "'>\n";
     $reservations = SeasonReservations($season, $group);
     $canIssueLinks = !isEventReadonly($season) || canBypassEventReadonly($season);
+    $groupParam = "&amp;season=" . urlencode($season) . "&amp;group=" . urlencode((string) $group);
+    $html .= "<p><a href='?view=user/pdfscoresheet&amp;filter2=scheduled" . $groupParam . "' target='_blank' rel='noopener'>" . _("Print all scoresheets") . "</a>";
+    if ($canIssueLinks) {
+        $html .= " | <a href='?view=admin/scorekeepinglinks&amp;print=1" . $groupParam . "' target='_blank' rel='noopener'>" . _("Print field sheets") . "</a>";
+    }
+    $html .= "</p>\n";
     $html .= "<table class='admintable'><tr><th><input type='checkbox' onclick='checkAll(\"reservations\");'/></th>";
     $html .= "<th>" . _("Group") . "</th><th>" . _("Location") . "</th><th>" . _("Date") . "</th>";
     $html .= "<th>" . _("Starts") . "</th><th>" . _("Ends") . "</th><th>" . _("Games") . "</th>";
