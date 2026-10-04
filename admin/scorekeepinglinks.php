@@ -65,6 +65,9 @@ $linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $se
     foreach ($token['users'] ?? [] as $user) {
         $users[] = utf8entities($user['name'] ?: $user['userid']);
     }
+    if (!empty($token['anonymous'])) {
+        $users[] = "<span title='" . utf8entities(_("Changes")) . "'>anonymous (" . $token['anonymous'] . ")</span>";
+    }
     $html = "<tr class='admintablerow'><td>" . $label . "</td>";
     $html .= "<td>" . ($token ? ShortDate($token['created']) . " " . DefHourFormat($token['created']) : "") . "</td>";
     $html .= "<td>" . implode(", ", $users) . "</td><td class='right'>";

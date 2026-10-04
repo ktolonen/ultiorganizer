@@ -117,10 +117,11 @@ function ScorekeeperRevokeToken($scope, $id)
 
 /**
  * The event's existing scorekeeping links, keyed 'game:<id>' and
- * 'reservation:<id>', each with its creation time and the users who opened
- * it. Event admins only; links are not created here.
+ * 'reservation:<id>', each with its creation time, the users who opened it
+ * and the number of scoresheet changes anonymous sessions made through it.
+ * Event admins only; links are not created here.
  *
- * @return array<string, array{token_id: int, created: string, users: array<int, array{userid: string, name: ?string}>}>
+ * @return array<string, array{token_id: int, created: string, users: array<int, array{userid: string, name: ?string}>, anonymous: int}>
  */
 function SeasonScorekeeperTokens($season)
 {
@@ -144,10 +145,25 @@ function SeasonScorekeeperTokens($season)
     foreach ($rows as $row) {
         $key = !empty($row['game']) ? "game:" . (int) $row['game'] : "reservation:" . (int) $row['reservation'];
         if (!isset($tokens[$key])) {
-            $tokens[$key] = ['token_id' => (int) $row['token_id'], 'created' => $row['created'], 'users' => []];
+            $tokens[$key] = ['token_id' => (int) $row['token_id'], 'created' => $row['created'], 'users' => [], 'anonymous' => 0];
         }
         if ($row['userid'] !== null) {
             $tokens[$key]['users'][] = ['userid' => $row['userid'], 'name' => $row['name']];
+        }
+    }
+    if ($tokens !== []) {
+        $keys = [];
+        foreach ($tokens as $key => $token) {
+            $keys[$token['token_id']] = $key;
+        }
+        $counts = DBQueryToArrayUncached(sprintf(
+            "SELECT scorekeeper_token, COUNT(*) AS changes FROM uo_scoresheet_history
+			WHERE user_id='anonymous' AND scorekeeper_token IN (%s)
+			GROUP BY scorekeeper_token",
+            implode(",", array_keys($keys)),
+        ));
+        foreach ($counts as $count) {
+            $tokens[$keys[(int) $count['scorekeeper_token']]]['anonymous'] = (int) $count['changes'];
         }
     }
     return $tokens;
