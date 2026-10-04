@@ -82,6 +82,24 @@ function DBUserErrorMessage()
 }
 
 /**
+ * End the request because no database connection could be opened.
+ *
+ * Answers 503 with Retry-After so browsers, caches and crawlers do not take
+ * the error text for a real page.
+ *
+ * @return never
+ */
+function DBConnectionUnavailable()
+{
+    if (!headers_sent()) {
+        http_response_code(503);
+        header('Retry-After: 30');
+        header('Content-Type: text/plain; charset=utf-8');
+    }
+    die(DBUserErrorMessage());
+}
+
+/**
  * Tell whether DB helpers should throw instead of terminating the request.
  *
  * Exception mode is used by the automatic upgrade path so it can mark the
@@ -194,11 +212,11 @@ function OpenConnection()
         $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
     } catch (mysqli_sql_exception $e) {
         error_log('Database connection failed: ' . $e->getMessage());
-        die(DBUserErrorMessage());
+        DBConnectionUnavailable();
     }
     if (mysqli_connect_errno()) {
         error_log('Database connection failed: ' . mysqli_connect_error());
-        die(DBUserErrorMessage());
+        DBConnectionUnavailable();
     }
 
     //select schema
