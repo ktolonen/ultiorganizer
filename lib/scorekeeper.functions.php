@@ -195,6 +195,10 @@ function ScorekeeperTokenDescription($tokenId)
         if (!is_array($game)) {
             return "";
         }
+        if (!$game['hometeam'] || !$game['visitorteam']) {
+            $game['phometeamname'] = U_($game['phometeamname']);
+            $game['pvisitorteamname'] = U_($game['pvisitorteamname']);
+        }
         return GameName($game);
     }
     $reservation = ReservationInfo((int) $row['reservation']);
@@ -217,7 +221,12 @@ function ScorekeeperLinkTarget($scope, $id)
         if (!is_array($game)) {
             return null;
         }
-        return ['season' => $game['season'], 'subject' => GameName($game), 'games' => [$game]];
+        $named = $game;
+        if (!$game['hometeam'] || !$game['visitorteam']) {
+            $named['phometeamname'] = U_($game['phometeamname']);
+            $named['pvisitorteamname'] = U_($game['pvisitorteamname']);
+        }
+        return ['season' => $game['season'], 'subject' => GameName($named), 'games' => [$game]];
     }
     $reservation = ReservationInfo((int) $id);
     if (!is_array($reservation)) {
@@ -238,8 +247,8 @@ function ScorekeeperLinkGamesHtml($games)
 {
     $html = "<table class='scorekeeping-link-games'>";
     foreach ($games as $row) {
-        $home = $row['hometeam'] ? $row['hometeamname'] : $row['phometeamname'];
-        $away = $row['visitorteam'] ? $row['visitorteamname'] : $row['pvisitorteamname'];
+        $home = $row['hometeam'] ? $row['hometeamname'] : U_($row['phometeamname']);
+        $away = $row['visitorteam'] ? $row['visitorteamname'] : U_($row['pvisitorteamname']);
         $html .= "<tr><td>" . DefHourFormat($row['time']) . "</td><td>" . utf8entities($home) . " - " . utf8entities($away) . "</td>"
             . "<td>" . utf8entities(U_($row['seriesname'])) . ", " . utf8entities(U_($row['poolname'])) . "</td></tr>";
     }

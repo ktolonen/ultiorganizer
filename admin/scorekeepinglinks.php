@@ -79,8 +79,8 @@ $linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $se
     return $html . "</td></tr>\n";
 };
 $gameLabel = function ($game) {
-    $home = $game['hometeam'] ? $game['hometeamname'] : $game['phometeamname'];
-    $away = $game['visitorteam'] ? $game['visitorteamname'] : $game['pvisitorteamname'];
+    $home = $game['hometeam'] ? $game['hometeamname'] : U_($game['phometeamname']);
+    $away = $game['visitorteam'] ? $game['visitorteamname'] : U_($game['pvisitorteamname']);
     return DefHourFormat($game['time']) . " " . utf8entities($home) . " - " . utf8entities($away);
 };
 // One table per field; the shared column widths keep the tables aligned.
@@ -119,7 +119,8 @@ $unscheduled = array_filter(SeasonAllGames($season), fn($game) => empty($game['r
 if ($unscheduled !== []) {
     $html .= "<h3>" . _("Unscheduled") . "</h3>\n" . $tableHead(_("Game"));
     foreach ($unscheduled as $game) {
-        $html .= $linkRow('game', (int) $game['game_id'], utf8entities(GameName(GameInfo((int) $game['game_id']))));
+        $target = ScorekeeperLinkTarget('game', (int) $game['game_id']);
+        $html .= $linkRow('game', (int) $game['game_id'], utf8entities($target === null ? "" : $target['subject']));
     }
     $html .= "</table>\n";
 }
