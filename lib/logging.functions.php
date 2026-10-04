@@ -317,16 +317,15 @@ function LogPageLoad($page)
         return;
     }
 
-    DBQuery(sprintf(
-        "UPDATE uo_pageload_counter SET loads=COALESCE(loads, 0) + 1 WHERE page='%s'",
-        DBEscapeString($page),
-    ));
-
-    if ((int) DBQueryToValueUncached("SELECT ROW_COUNT()", true) === 0) {
+    // Statistics must never take the page down, so a failure is only logged.
+    try {
         DBQuery(sprintf(
-            "INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s', 1)",
+            "INSERT INTO uo_pageload_counter (page, loads) VALUES ('%s', 1)
+            ON DUPLICATE KEY UPDATE loads=COALESCE(loads, 0) + 1",
             DBEscapeString($page),
         ));
+    } catch (Throwable $e) {
+        error_log('LogPageLoad failed: ' . $e->getMessage());
     }
 }
 

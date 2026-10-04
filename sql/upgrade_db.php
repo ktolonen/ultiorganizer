@@ -1607,6 +1607,23 @@ function upgrade102()
     );
 }
 
+function upgrade103()
+{
+    // LogPageLoad() updates the counter by page. Without an index that scans
+    // and locks the whole table, so concurrent page loads queue behind each
+    // other until lock waits time out. Fold duplicate rows first.
+    if (!hasIndex('uo_pageload_counter', 'uq_pageload_counter_page')) {
+        DBQuery("UPDATE uo_pageload_counter c
+            JOIN (SELECT MIN(id) AS keep_id, SUM(COALESCE(loads, 0)) AS total
+                  FROM uo_pageload_counter GROUP BY page HAVING COUNT(*) > 1) d ON c.id = d.keep_id
+            SET c.loads = d.total");
+        DBQuery("DELETE c FROM uo_pageload_counter c
+            JOIN (SELECT MIN(id) AS keep_id, page FROM uo_pageload_counter GROUP BY page) d
+              ON c.page = d.page AND c.id <> d.keep_id");
+        addUniqueIndex('uo_pageload_counter', 'uq_pageload_counter_page', '(`page`)');
+    }
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {
