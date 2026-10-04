@@ -7,6 +7,7 @@ include_once 'lib/common.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/scorekeeper.functions.php';
+include_once 'lib/scoresheethistory.functions.php';
 
 $LAYOUT_ID = SEASONADMIN;
 $season = (string) iget("season");
@@ -95,6 +96,9 @@ $tableHead = function ($heading) {
 $html = "<h2>" . $title . "</h2>\n";
 if (!$canIssue) {
     $html .= "<p>" . utf8entities(_("The event is read-only.")) . "</p>\n";
+}
+if (IsScoresheetHistoryDisabled()) {
+    $html .= "<p>" . utf8entities(_("Scoresheet history is disabled; anonymous use is not counted.")) . "</p>\n";
 }
 
 $day = null;
