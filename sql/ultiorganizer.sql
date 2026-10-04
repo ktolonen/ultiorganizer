@@ -345,7 +345,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(99, '2026-08-23 00:00:00'),
 	(100, '2026-08-30 00:00:00'),
 	(101, '2026-09-27 00:00:00'),
-	(102, '2026-10-03 00:00:00');
+	(102, '2026-10-03 00:00:00'),
+	(103, '2026-10-04 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
@@ -633,7 +634,8 @@ CREATE TABLE IF NOT EXISTS `uo_pageload_counter` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `page` varchar(100) NOT NULL,
   `loads` int(11) DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `uq_pageload_counter_page` (`page`)
 ) ENGINE=InnoDB AUTO_INCREMENT=9 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 

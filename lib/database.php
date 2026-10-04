@@ -9,7 +9,7 @@ denyDirectLibAccess(__FILE__);
  * Update this constant whenever you add a new `upgradeNN()` step in
  * `sql/upgrade_db.php`, and export the current schema from the upgraded database.
  */
-define('DB_VERSION', 102);
+define('DB_VERSION', 103);
 
 /**
  * Maximum age in seconds before an automatic upgrade lock is considered stale.
@@ -79,6 +79,24 @@ class DBOperationException extends RuntimeException {}
 function DBUserErrorMessage()
 {
     return 'Service is temporarily unavailable. Please try again shortly. If the problem persists, please contact the event organizer.';
+}
+
+/**
+ * End the request because no database connection could be opened.
+ *
+ * Answers 503 with Retry-After so browsers, caches and crawlers do not take
+ * the error text for a real page.
+ *
+ * @return never
+ */
+function DBConnectionUnavailable()
+{
+    if (!headers_sent()) {
+        http_response_code(503);
+        header('Retry-After: 30');
+        header('Content-Type: text/plain; charset=utf-8');
+    }
+    die(DBUserErrorMessage());
 }
 
 /**
@@ -194,11 +212,11 @@ function OpenConnection()
         $mysqlconnectionref = mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD);
     } catch (mysqli_sql_exception $e) {
         error_log('Database connection failed: ' . $e->getMessage());
-        die(DBUserErrorMessage());
+        DBConnectionUnavailable();
     }
     if (mysqli_connect_errno()) {
         error_log('Database connection failed: ' . mysqli_connect_error());
-        die(DBUserErrorMessage());
+        DBConnectionUnavailable();
     }
 
     //select schema
