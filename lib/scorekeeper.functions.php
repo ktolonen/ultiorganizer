@@ -30,75 +30,25 @@ function ScorekeeperTokenNormalize($token)
 }
 
 /**
- * Who may print or share a game's scorekeeping link: the event and division
- * admins, and the reservation's game admins. A grant does not count, so a
- * link cannot be used to see or rotate the link itself.
+ * Who may print or share a game's scorekeeping link: the event admins. A
+ * grant does not count, so a link cannot be used to see or rotate the link
+ * itself.
  */
 function CanIssueGameScorekeeperToken($gameId)
 {
-    $game = DBQueryToRow(sprintf(
-        "SELECT p.series, s.season, g.reservation FROM uo_game g
-			JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
-			JOIN uo_pool p ON (p.pool_id=gp.pool)
-			JOIN uo_series s ON (s.series_id=p.series)
-		WHERE g.game_id=%d",
-        (int) $gameId,
-    ));
-    if (!is_array($game)) {
-        return false;
-    }
-    $series = $game['series'];
-    $season = $game['season'];
-    $reservation = $game['reservation'];
-    $roles = $_SESSION['userproperties']['userrole'] ?? [];
-    $hasRight = isset($roles['superadmin'])
-        || isset($roles['seasonadmin'][$season])
-        || isset($roles['seriesadmin'][$series])
-        || (!empty($reservation) && isset($roles['resgameadmin'][$reservation]));
-    if (!$hasRight) {
-        return false;
-    }
-    return !isEventReadonly($season) || canBypassEventReadonly($season);
+    $season = GameSeason((int) $gameId);
+    return !empty($season) && isSeasonAdmin($season)
+        && (!isEventReadonly($season) || canBypassEventReadonly($season));
 }
 
 /**
- * Who may print or share a reservation's scorekeeping link: the event admins,
- * the reservation's game admins, and a division admin whose divisions hold
- * every game of the event in it, since the link covers all of them.
+ * Who may print or share a reservation's scorekeeping link: the event admins.
  */
 function CanIssueReservationScorekeeperToken($reservationId)
 {
-    $reservationId = (int) $reservationId;
-    $season = ReservationSeason($reservationId);
-    if (empty($season)) {
-        return false;
-    }
-    $roles = $_SESSION['userproperties']['userrole'] ?? [];
-    $hasRight = isset($roles['superadmin'])
-        || isset($roles['seasonadmin'][$season])
-        || isset($roles['resgameadmin'][$reservationId]);
-    if (!$hasRight && !empty($roles['seriesadmin'])) {
-        $series = DBQueryToArray(sprintf(
-            "SELECT DISTINCT p.series FROM uo_game g
-				JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
-				JOIN uo_pool p ON (p.pool_id=gp.pool)
-				JOIN uo_series s ON (s.series_id=p.series AND s.season='%s')
-			WHERE g.reservation=%d",
-            DBEscapeString((string) $season),
-            $reservationId,
-        ));
-        $hasRight = $series !== [];
-        foreach ($series as $row) {
-            if (!isset($roles['seriesadmin'][$row['series']])) {
-                $hasRight = false;
-                break;
-            }
-        }
-    }
-    if (!$hasRight) {
-        return false;
-    }
-    return !isEventReadonly($season) || canBypassEventReadonly($season);
+    $season = ReservationSeason((int) $reservationId);
+    return !empty($season) && isSeasonAdmin($season)
+        && (!isEventReadonly($season) || canBypassEventReadonly($season));
 }
 
 /**
