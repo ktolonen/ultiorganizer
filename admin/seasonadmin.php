@@ -102,7 +102,10 @@ $html .=  "</tr>\n";
 $html .=  "</table>";
 $html .=  "</td></tr></table>\n\n";
 
-$html .= "<b>" . _("Comment") . ":</b> " . CommentHTML(1, $info['season_id']);
+$comment = CommentHTML(1, $info['season_id']);
+if ($comment !== "") {
+    $html .= "<b>" . _("Comment") . ":</b> " . $comment;
+}
 
 $seasonId = $info['season_id'];
 $statsLabel = IsSeasonStatsCalculated($seasonId) ? _("Re-archive statistics") : _("Archive statistics");
