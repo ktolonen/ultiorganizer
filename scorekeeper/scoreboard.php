@@ -3,8 +3,8 @@
 include_once __DIR__ . '/auth.php';
 $html = "";
 
-$gameId = intval(iget("game"));
-$teamId = intval(iget("team"));
+$gameId = scorekeeperRequestGameId();
+$teamId = scorekeeperRequestTeamId();
 $game_result = GameResult($gameId);
 $team_score_board = GameTeamScoreBoardArray($gameId, $teamId);
 
