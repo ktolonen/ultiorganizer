@@ -1601,6 +1601,12 @@ function upgrade102()
     }
 }
 
+function upgrade103()
+{
+    // The scorekeeping links page counts the anonymous history rows per token.
+    addIndex('uo_scoresheet_history', 'idx_scoresheet_history_token_user', '(`scorekeeper_token`, `user_id`)');
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {
