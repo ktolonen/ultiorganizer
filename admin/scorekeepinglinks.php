@@ -67,7 +67,7 @@ $linkRow = function ($scope, $id, $label) use ($tokens, $canIssue, $confirm, $se
         $users[] = utf8entities($user['name'] ?: $user['userid']);
     }
     if (!empty($token['anonymous'])) {
-        $users[] = "<span title='" . utf8entities(_("Changes")) . "'>anonymous (" . $token['anonymous'] . ")</span>";
+        $users[] = utf8entities(sprintf(_("Anonymous changes: %d"), $token['anonymous']));
     }
     $html = "<tr class='admintablerow'><td>" . $label . "</td>";
     $html .= "<td>" . ($token ? ShortDate($token['created']) . " " . DefHourFormat($token['created']) : "") . "</td>";

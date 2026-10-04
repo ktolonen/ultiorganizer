@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-04 15:16+0300\n"
+"POT-Creation-Date: 2026-10-04 15:39+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -613,6 +613,11 @@ msgstr "Mehrdeutige Spielerprofil-Zuordnung für %s %s."
 msgid "Anonymize player data"
 msgstr "Spielerdaten anonymisieren"
 
+#: admin/scorekeepinglinks.php:70
+#, php-format
+msgid "Anonymous changes: %d"
+msgstr ""
+
 #: admin/addseasons.php:507
 msgid ""
 "Anyone who opens a game or field scorekeeping link can keep score for those "
@@ -1065,7 +1070,7 @@ msgstr "Team wechseln"
 msgid "Changed outside the scheduled day"
 msgstr "Außerhalb des geplanten Tages geändert"
 
-#: admin/scorekeepinglinks.php:70 admin/seasonscoresheethistory.php:61
+#: admin/seasonscoresheethistory.php:61
 msgid "Changes"
 msgstr "Änderungen"
 
