@@ -1044,7 +1044,9 @@ table#pagemenu a.current {
 }
 
 .admintable {
-	white-space: nowrap;
+	/* Long team/club names and action links wrap instead of being clipped by
+	   the fixed-width content cell. */
+	overflow-wrap: break-word;
 	width: 100%;
 	/*border-collapse:separate;*/
 	/*border-spacing:1em;*/
@@ -1064,6 +1066,7 @@ tr.admintablerow:nth-of-type(even) {
 }
 
 tr.admintablerow>td {
+	vertical-align: top;
 	padding-bottom: 0.5em;
 	padding-top: 0.5em;
 	padding-right: 0.5em;
