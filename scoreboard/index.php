@@ -49,7 +49,7 @@ if ($feed !== '') {
         } else {
             // Null unless a scorekeeper is running the live clock; the game
             // end and "No game clock" both leave timer_start unset.
-            $timer = GameTimerState($game['game_id']);
+            $timer = empty($game['hide_time_on_scoresheet']) ? GameTimerState($game['game_id']) : ['ongoing' => false];
             echo json_encode([
                 'id' => (int) $game['game_id'],
                 'home' => $game['home'],

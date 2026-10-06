@@ -1199,6 +1199,7 @@ function ScoreboardGame($gameId)
 {
     $row = DBQueryToRowUncached(sprintf(
         "SELECT g.game_id, g.homescore, g.visitorscore, g.isongoing, g.hasstarted, g.time,
+			s.hide_time_on_scoresheet,
 			home.name AS hometeamname, visitor.name AS visitorteamname,
 			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
 		FROM uo_game g
