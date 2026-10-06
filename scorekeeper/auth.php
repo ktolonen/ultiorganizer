@@ -68,6 +68,112 @@ if (!function_exists('ScorekeeperClockScript')) {
     }
 }
 
+if (!function_exists('ScorekeeperHandleClockPost')) {
+    /**
+     * Applies a posted game clock control (start, pause, resume, set, reset)
+     * and redirects back to $view. Returns only when no control was posted.
+     */
+    function ScorekeeperHandleClockPost($gameId, $view)
+    {
+        $location = "location:?view=" . $view . "&game=" . (int) $gameId;
+        if (isset($_POST['startgame'])) {
+            unset($_SESSION['scorekeeper_no_game_clock'][$gameId]);
+            GameTimeStart($gameId);
+        } elseif (isset($_POST['pausegame'])) {
+            GameTimePause($gameId);
+        } elseif (isset($_POST['resumegame'])) {
+            GameTimeResume($gameId);
+        } elseif (isset($_POST['setgameclock'])) {
+            $setmm = isset($_POST['settimemm']) ? intval($_POST['settimemm']) : 0;
+            $setss = isset($_POST['settimess']) ? intval($_POST['settimess']) : 0;
+            GameTimeSetElapsed($gameId, ($setmm * 60) + $setss);
+        } elseif (isset($_POST['resetgameclock'])) {
+            $result = GameResult($gameId);
+            if (intval($result['homescore']) === 0 && intval($result['visitorscore']) === 0) {
+                GameTimeReset($gameId);
+            }
+        } else {
+            return;
+        }
+        header($location);
+        exit;
+    }
+}
+
+if (!function_exists('ScorekeeperClockControls')) {
+    /**
+     * Game clock status and control buttons posted to
+     * ScorekeeperHandleClockPost(). $startExtra is markup placed next to the
+     * start button; $canReset offers the reset, which the handler only honours
+     * while the score is 0 - 0.
+     */
+    function ScorekeeperClockControls($timerState, $startExtra = "", $canReset = false)
+    {
+        $html = "<h3>" . _("Game clock") . "</h3>";
+        if ($timerState['ongoing']) {
+            $status = $timerState['paused'] ? _("Paused") : _("Running");
+            $html .= "<p><strong>" . _("Status") . ":</strong> " . $status . "</p>";
+        } else {
+            $html .= "<p>" . _("Clock not running") . ".</p>";
+        }
+        if ($timerState['ongoing']) {
+            if ($timerState['paused']) {
+                $html .= "<input type='submit' name='resumegame' data-ajax='false' value='" . _("Resume game clock") . "'/>";
+                $html .= "<label for='settimemm' class='select'>" . _("Set game clock to") . " " . _("min") . ":" . _("sec") . "</label>";
+                $html .= "<div class='ui-grid-b'>";
+                $html .= "<div class='ui-block-a'>\n";
+                $html .= "<select id='settimemm' name='settimemm' >";
+                for ($i = 0; $i <= 180; $i++) {
+                    $selected = $i === (int) $timerState['mm'] ? " selected='selected'" : "";
+                    $html .= "<option value='" . $i . "'" . $selected . ">" . $i . "</option>";
+                }
+                $html .= "</select>";
+                $html .= "</div>";
+                $html .= "<div class='ui-block-b'>\n";
+                $html .= "<select id='settimess' name='settimess' >";
+                for ($i = 0; $i <= 59; $i++) {
+                    $selected = $i === (int) $timerState['ss'] ? " selected='selected'" : "";
+                    $html .= "<option value='" . $i . "'" . $selected . ">" . sprintf("%02d", $i) . "</option>";
+                }
+                $html .= "</select>";
+                $html .= "</div>";
+                $html .= "</div>";
+                $html .= "<input type='submit' name='setgameclock' data-ajax='false' value='" . _("Set game clock") . "'/>";
+            } else {
+                $html .= "<input type='submit' id='pausegame' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
+            }
+        } else {
+            $startLabel = $timerState['started'] ? _("Restart game clock") : _("Start game clock");
+            $restart = $timerState['started'] ? " data-confirm-restart='1'" : "";
+            $html .= "<div data-role='controlgroup' data-type='horizontal'>";
+            $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'" . $restart . "/>";
+            $html .= $startExtra;
+            $html .= "</div>";
+        }
+        if ($timerState['started'] && $canReset) {
+            $html .= "<input type='submit' name='resetgameclock' data-ajax='false' value='" . _("Reset game clock") . "'/>";
+        }
+
+        return $html;
+    }
+}
+
+if (!function_exists('ScorekeeperClockControlScript')) {
+    /**
+     * Confirmations for the pause and restart buttons rendered by
+     * ScorekeeperClockControls().
+     */
+    function ScorekeeperClockControlScript()
+    {
+        return "<script type='text/javascript'>\n"
+            . "  window.scorekeeperClockControls(" . json_encode([
+                "pause" => _("Pause the game clock? Use this only for exceptional stoppages."),
+                "restart" => _("Restart the game clock from 00:00?"),
+            ]) . ");\n"
+            . "</script>\n";
+    }
+}
+
 if (!function_exists('scorekeeperRequestGameId')) {
     function scorekeeperRequestGameId()
     {

@@ -66,37 +66,7 @@ $manualNoGameClock = !$hideTimeOnScoresheet && scorekeeperHasManualNoGameClock($
 $useGameClock = !$hideTimeOnScoresheet && !$manualNoGameClock;
 
 if ($useGameClock) {
-    if (isset($_POST['startgame'])) {
-        unset($_SESSION['scorekeeper_no_game_clock'][$gameId]);
-        GameTimeStart($gameId);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['pausegame'])) {
-        GameTimePause($gameId);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['resumegame'])) {
-        GameTimeResume($gameId);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['setgameclock'])) {
-        $setmm = isset($_POST['settimemm']) ? intval($_POST['settimemm']) : 0;
-        $setss = isset($_POST['settimess']) ? intval($_POST['settimess']) : 0;
-        GameTimeSetElapsed($gameId, ($setmm * 60) + $setss);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['resetgameclock'])) {
-        $result = GameResult($gameId);
-        if (intval($result['homescore']) === 0 && intval($result['visitorscore']) === 0) {
-            GameTimeReset($gameId);
-        }
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
+    ScorekeeperHandleClockPost($gameId, 'addscoresheet');
 }
 
 $game_result = GameResult($gameId);
@@ -126,8 +96,6 @@ $uo_goal = [
 ];
 $timemm = "";
 $timess = "";
-$settimemm = "";
-$settimess = "";
 $pass = "";
 $goal = "";
 $team = "";
@@ -280,8 +248,6 @@ if (!$hideTimeOnScoresheet) {
 
 $showGoalForm = !$useGameClock || $timerState['ongoing'];
 $canShowTimedActions = !$hideTimeOnScoresheet && (!$useGameClock || $timerState['started']);
-$settimemm = $useGameClock ? $timerState['mm'] : 0;
-$settimess = $useGameClock ? $timerState['ss'] : 0;
 
 $html .= "<div data-role='header'>\n";
 if ($showClock) {
@@ -308,55 +274,8 @@ if ($lastscore) {
 }
 
 if ($useGameClock) {
-    $html .= "<h3>" . _("Game clock") . "</h3>";
-    if ($timerState['ongoing']) {
-        $status = $timerState['paused'] ? _("Paused") : _("Running");
-        $html .= "<p><strong>" . _("Status") . ":</strong> " . $status . "</p>";
-    } else {
-        $html .= "<p>" . _("Clock not running") . ".</p>";
-    }
-    if ($timerState['ongoing']) {
-        if ($timerState['paused']) {
-            $html .= "<input type='submit' name='resumegame' data-ajax='false' value='" . _("Resume game clock") . "'/>";
-            $html .= "<label for='settimemm' class='select'>" . _("Set game clock to") . " " . _("min") . ":" . _("sec") . "</label>";
-            $html .= "<div class='ui-grid-b'>";
-            $html .= "<div class='ui-block-a'>\n";
-            $html .= "<select id='settimemm' name='settimemm' >";
-            for ($i = 0; $i <= 180; $i++) {
-                if ((string) $i === (string) $settimemm) {
-                    $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-                } else {
-                    $html .= "<option value='" . $i . "'>" . $i . "</option>";
-                }
-            }
-            $html .= "</select>";
-            $html .= "</div>";
-            $html .= "<div class='ui-block-b'>\n";
-            $html .= "<select id='settimess' name='settimess' >";
-            for ($i = 0; $i <= 59; $i++) {
-                if ((string) $i === (string) $settimess) {
-                    $html .= "<option value='" . $i . "' selected='selected'>" . sprintf("%02d", $i) . "</option>";
-                } else {
-                    $html .= "<option value='" . $i . "'>" . sprintf("%02d", $i) . "</option>";
-                }
-            }
-            $html .= "</select>";
-            $html .= "</div>";
-            $html .= "</div>";
-            $html .= "<input type='submit' name='setgameclock' data-ajax='false' value='" . _("Set game clock") . "'/>";
-        } else {
-            $html .= "<input type='submit' id='pausegame' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
-        }
-    } else {
-        $startLabel = $timerState['started'] ? _("Restart game clock") : _("Start game clock");
-        $html .= "<div data-role='controlgroup' data-type='horizontal'>";
-        $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'/>";
-        $html .= "<input type='submit' name='nogameclock' data-ajax='false' value='" . _("No game clock") . "'/>";
-        $html .= "</div>";
-    }
-    if ($timerState['started'] && $lastscore === null) {
-        $html .= "<input type='submit' name='resetgameclock' data-ajax='false' value='" . _("Reset game clock") . "'/>";
-    }
+    $noGameClock = "<input type='submit' name='nogameclock' data-ajax='false' value='" . _("No game clock") . "'/>";
+    $html .= ScorekeeperClockControls($timerState, $noGameClock, $lastscore === null);
     if ($timerState['started'] || GameHasStarted($game_result)) {
         $html .= "<a href='?view=endgame&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("End game") . "</a>";
     }
@@ -537,6 +456,9 @@ echo $html;
 if ($showClock) {
     echo ScorekeeperClockScript($timerState);
 }
+if ($useGameClock) {
+    echo ScorekeeperClockControlScript();
+}
 ?>
 <script type="text/javascript">
   var homeAssistList = <?php echo json_encode(ScorekeeperPlayerOptions($homePlayers, true)); ?>;
@@ -617,22 +539,4 @@ if ($showClock) {
       this.href = this.href.replace(/([?&])time=\d+/, '$1time=' + ((rounded.mm * 60) + rounded.ss));
     });
   });
-
-  var pauseButton = document.getElementById('pausegame');
-  if (pauseButton) {
-    pauseButton.addEventListener('click', function(event) {
-      if (!confirm(<?php echo json_encode(_("Pause the game clock? Use this only for exceptional stoppages.")); ?>)) {
-        event.preventDefault();
-      }
-    });
-  }
-
-  var startButton = document.getElementById('startgame');
-  if (startButton && startButton.value !== <?php echo json_encode(_("Start game clock")); ?>) {
-    startButton.addEventListener('click', function(event) {
-      if (!confirm(<?php echo json_encode(_("Restart the game clock from 00:00?")); ?>)) {
-        event.preventDefault();
-      }
-    });
-  }
 </script>
