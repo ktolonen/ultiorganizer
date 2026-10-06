@@ -71,7 +71,7 @@ html, body {
     grid-column: 1 / -1;
     padding: 1vmin 0;
     border-bottom: 1vmin solid #fff;
-    font-size: 14vmin;
+    font-size: 22vmin;
     font-weight: bold;
     line-height: 1;
     text-align: center;
@@ -127,10 +127,23 @@ html, body {
     overflow-wrap: anywhere;
 }
 
+/* The score fills what the name leaves of its half: its size follows this
+   box, which shrinks for the clock row or a wrapped name. */
+.sb-score-box {
+    display: flex;
+    flex: 1 1 0;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: 0;
+    container-type: size;
+}
+
 .sb-score {
     font-size: 45vmin;
+    font-size: min(115cqh, 75cqw);
     font-weight: bold;
-    line-height: 1;
+    line-height: 0.85;
     color: #ffeb00;
     font-variant-numeric: tabular-nums;
 }
@@ -174,7 +187,7 @@ html, body {
     }
 
     #sb-clock {
-        font-size: min(9vh, 20vw);
+        font-size: min(14vh, 34vw);
     }
 
     #sb-home {
@@ -193,5 +206,6 @@ html, body {
 
     .sb-score {
         font-size: min(30vh, 55vw);
+        font-size: min(115cqh, 75cqw);
     }
 }

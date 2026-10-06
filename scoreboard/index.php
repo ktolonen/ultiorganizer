@@ -98,8 +98,8 @@ echo "<p><a class='sb-link' href='" . BASEURL . "/'>" . utf8entities(_("Ultiorga
 echo "</main>\n";
 echo "<main id='sb-board' hidden>\n";
 echo "<div id='sb-clock' hidden></div>\n";
-echo "<div class='sb-team' id='sb-home'><div class='sb-name'></div><div class='sb-score'>0</div></div>\n";
-echo "<div class='sb-team' id='sb-visitor'><div class='sb-name'></div><div class='sb-score'>0</div></div>\n";
+echo "<div class='sb-team' id='sb-home'><div class='sb-name'></div><div class='sb-score-box'><div class='sb-score'>0</div></div></div>\n";
+echo "<div class='sb-team' id='sb-visitor'><div class='sb-name'></div><div class='sb-score-box'><div class='sb-score'>0</div></div></div>\n";
 echo "<div id='sb-controls'>\n";
 echo "<button type='button' id='sb-back'>" . utf8entities(_("Games")) . "</button>\n";
 echo "<button type='button' id='sb-full'>" . utf8entities(_("Fullscreen")) . "</button>\n";

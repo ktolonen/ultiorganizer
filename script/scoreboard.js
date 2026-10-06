@@ -116,9 +116,21 @@
     }
   }
 
+  // Fit both names, then give both scores the smaller of their sizes: each
+  // score fills what its name leaves, and a wrapped name leaves less.
   function fitNames() {
+    var scores = document.querySelectorAll('#sb-board .sb-score');
+    var size = Infinity;
+    var i;
     fitName(document.querySelector('#sb-home .sb-name'));
     fitName(document.querySelector('#sb-visitor .sb-name'));
+    for (i = 0; i < scores.length; i++) {
+      scores[i].style.fontSize = '';
+      size = Math.min(size, parseFloat(window.getComputedStyle(scores[i]).fontSize));
+    }
+    for (i = 0; i < scores.length; i++) {
+      scores[i].style.fontSize = size + 'px';
+    }
   }
 
   function setTeam(id, name, score, changed) {
@@ -126,7 +138,7 @@
     var nameEl = team.querySelector('.sb-name');
     if (nameEl.textContent !== name) {
       nameEl.textContent = name;
-      fitName(nameEl);
+      fitNames();
     }
     team.querySelector('.sb-score').textContent = score;
     if (changed) {

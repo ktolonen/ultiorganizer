@@ -7,8 +7,10 @@
 - `scoreboard/index.php`: bootstrap, the game picker and board shell, and the JSON feed
   (`?json=list`, `?json=game&game=ID`).
 - `scoreboard/scoreboard.css`: black background, white names, yellow scores for daylight readability.
-  Sizes use `vmin`, so the board scales to any screen; portrait screens stack the teams.
-- `script/scoreboard.js`: ES5 client. Picker, polling, name fitting, fullscreen, and screen wake lock.
+  Sizes use `vmin`, so the board scales to any screen; portrait screens stack the teams. Each score
+  fills the space its team name leaves (container query units on `.sb-score-box`), and the script
+  gives both scores the smaller of the two sizes.
+- `script/scoreboard.js`: ES5 client. Picker, polling, name and score fitting, fullscreen, and screen wake lock.
 - `scoreboard/` is a required path in `docs/release/build-release.sh`.
 
 ## Behavior
