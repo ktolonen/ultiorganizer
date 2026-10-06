@@ -19,4 +19,10 @@
   to the same board.
 - The board polls the feed every 3 seconds (the picker every 15) and flashes the side whose score
   changed. A finished game stays on the board showing its final score.
+- While a scorekeeper runs the live game clock (see `docs/scorekeeper.md`), the board shows the
+  elapsed time above the teams; a paused clock pulses. The feed's `clock` is `null` when no clock
+  runs: before the start, with `No game clock` or `hide_time_on_scoresheet`, and after the game
+  ends, which clears the timer. Between polls the client ticks from the last reading, re-anchoring
+  only on a pause change or more than a second of drift. The game feed bypasses the persistent
+  cache so a pause shows up on the next poll.
 - Data access lives in `ScoreboardGames()` and `ScoreboardGame()` in `lib/game.functions.php`.

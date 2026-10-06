@@ -40,11 +40,16 @@ if ($feed !== '') {
         }
         echo json_encode(['games' => $games]);
     } else {
+        // A pause must not show up seconds late on the clock.
+        DisablePersistentCacheForRequest();
         $game = ScoreboardGame($_GET['game'] ?? 0);
         if ($game === null) {
             http_response_code(404);
             echo json_encode(['error' => 'not found']);
         } else {
+            // Null unless a scorekeeper is running the live clock; the game
+            // end and "No game clock" both leave timer_start unset.
+            $timer = GameTimerState($game['game_id']);
             echo json_encode([
                 'id' => (int) $game['game_id'],
                 'home' => $game['home'],
@@ -53,6 +58,7 @@ if ($feed !== '') {
                 'visitorscore' => (int) $game['visitorscore'],
                 'ongoing' => (int) $game['isongoing'] === 1,
                 'finished' => (int) $game['hasstarted'] === 2 && (int) $game['isongoing'] === 0,
+                'clock' => $timer['ongoing'] ? ['elapsed' => $timer['elapsed'], 'paused' => $timer['paused']] : null,
             ]);
         }
     }
@@ -91,6 +97,7 @@ echo "<div id='sb-list'></div>\n";
 echo "<p><a class='sb-link' href='" . BASEURL . "/'>" . utf8entities(_("Ultiorganizer")) . "</a></p>\n";
 echo "</main>\n";
 echo "<main id='sb-board' hidden>\n";
+echo "<div id='sb-clock' hidden></div>\n";
 echo "<div class='sb-team' id='sb-home'><div class='sb-name'></div><div class='sb-score'>0</div></div>\n";
 echo "<div class='sb-team' id='sb-visitor'><div class='sb-name'></div><div class='sb-score'>0</div></div>\n";
 echo "<div id='sb-controls'>\n";

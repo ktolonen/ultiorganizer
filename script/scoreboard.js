@@ -11,6 +11,9 @@
   var timer = null;
   var lastScores = null;
   var wakeLock = null;
+  var clockEl = document.getElementById('sb-clock');
+  var clockTick = null;
+  var clockAnchor = null; // {elapsed, at, paused}
 
   function el(tag, className, text) {
     var node = document.createElement(tag);
@@ -23,8 +26,11 @@
     return node;
   }
 
+  // done(data, sampledAt): sampledAt estimates when the server read the data,
+  // as the midpoint of the request round trip.
   function getJson(url, done) {
     var xhr = new XMLHttpRequest();
+    var sentAt = Date.now();
     xhr.open('GET', url, true);
     xhr.onload = function () {
       var data = null;
@@ -33,7 +39,7 @@
       } catch (err) { // eslint-disable-line no-unused-vars
         data = null;
       }
-      done(xhr.status === 200 ? data : null);
+      done(xhr.status === 200 ? data : null, (sentAt + Date.now()) / 2);
     };
     xhr.onerror = function () {
       done(null);
@@ -110,6 +116,11 @@
     }
   }
 
+  function fitNames() {
+    fitName(document.querySelector('#sb-home .sb-name'));
+    fitName(document.querySelector('#sb-visitor .sb-name'));
+  }
+
   function setTeam(id, name, score, changed) {
     var team = document.getElementById(id);
     var nameEl = team.querySelector('.sb-name');
@@ -126,10 +137,64 @@
     }
   }
 
-  function renderGame(data) {
+  function clockSeconds() {
+    if (clockAnchor.paused) {
+      return clockAnchor.elapsed;
+    }
+    return clockAnchor.elapsed + Math.max(0, Math.floor((Date.now() - clockAnchor.at) / 1000));
+  }
+
+  function drawClock() {
+    var seconds = clockSeconds();
+    var ss = seconds % 60;
+    clockEl.textContent = Math.floor(seconds / 60) + ':' + (ss < 10 ? '0' : '') + ss;
+  }
+
+  function stopClock() {
+    if (clockTick) {
+      window.clearInterval(clockTick);
+      clockTick = null;
+    }
+    clockAnchor = null;
+    clockEl.hidden = true;
+  }
+
+  // Ticks locally between polls. The server reports whole seconds, so a
+  // running clock is re-anchored only when it has drifted, which keeps it
+  // from stepping back and forth by a second on each poll.
+  function setClock(clock, sampledAt) {
+    var wasHidden = clockEl.hidden;
+    if (!clock) {
+      stopClock();
+      if (!wasHidden) {
+        fitNames();
+      }
+      return;
+    }
+    var paused = !!clock.paused;
+    if (!clockAnchor || clockAnchor.paused !== paused || paused
+      || Math.abs(clockSeconds() - clock.elapsed) > 1) {
+      clockAnchor = {elapsed: clock.elapsed, at: sampledAt, paused: paused};
+    }
+    clockEl.hidden = false;
+    if (wasHidden) {
+      fitNames();
+    }
+    clockEl.className = paused ? 'sb-paused' : '';
+    drawClock();
+    if (!paused && !clockTick) {
+      clockTick = window.setInterval(drawClock, 250);
+    } else if (paused && clockTick) {
+      window.clearInterval(clockTick);
+      clockTick = null;
+    }
+  }
+
+  function renderGame(data, sampledAt) {
     if (!data) {
       return;
     }
+    setClock(data.clock, sampledAt);
     var scores = data.homescore + '-' + data.visitorscore;
     var changed = lastScores !== null && lastScores !== scores;
     setTeam('sb-home', data.home, data.homescore, changed && lastScores.split('-')[0] !== String(data.homescore));
@@ -138,8 +203,8 @@
   }
 
   function pollGame(id) {
-    getJson('?json=game&game=' + id, function (data) {
-      renderGame(data);
+    getJson('?json=game&game=' + id, function (data, sampledAt) {
+      renderGame(data, sampledAt);
       timer = window.setTimeout(function () {
         pollGame(id);
       }, GAME_MS);
@@ -159,6 +224,7 @@
 
   function route() {
     stop();
+    stopClock();
     var id = selectedGame();
     lastScores = null;
     if (id) {
@@ -186,8 +252,7 @@
   window.addEventListener('hashchange', route);
   window.addEventListener('resize', function () {
     if (!board.hidden) {
-      fitName(document.querySelector('#sb-home .sb-name'));
-      fitName(document.querySelector('#sb-visitor .sb-name'));
+      fitNames();
     }
   });
   document.addEventListener('visibilitychange', function () {

@@ -63,7 +63,34 @@ html, body {
     inset: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto 1fr;
     background: #000;
+}
+
+#sb-clock {
+    grid-column: 1 / -1;
+    padding: 1vmin 0;
+    border-bottom: 1vmin solid #fff;
+    font-size: 14vmin;
+    font-weight: bold;
+    line-height: 1;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+#sb-clock[hidden] {
+    display: none;
+}
+
+/* A paused clock pulses so it does not read as a frozen display. */
+#sb-clock.sb-paused {
+    animation: sb-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes sb-pulse {
+    50% {
+        opacity: 0.3;
+    }
 }
 
 #sb-board[hidden] {
@@ -81,7 +108,14 @@ html, body {
     text-align: center;
 }
 
+/* Fixed cells, so a hidden clock leaves an empty auto row rather than
+   pulling the teams into it. */
+#sb-home {
+    grid-area: 2 / 1;
+}
+
 #sb-visitor {
+    grid-area: 2 / 2;
     border-left: 1vmin solid #fff;
 }
 
@@ -136,10 +170,19 @@ html, body {
 @media (orientation: portrait) {
     #sb-board {
         grid-template-columns: 1fr;
-        grid-template-rows: 1fr 1fr;
+        grid-template-rows: auto 1fr 1fr;
+    }
+
+    #sb-clock {
+        font-size: min(9vh, 20vw);
+    }
+
+    #sb-home {
+        grid-area: 2 / 1;
     }
 
     #sb-visitor {
+        grid-area: 3 / 1;
         border-left: 0;
         border-top: 1vmin solid #fff;
     }
