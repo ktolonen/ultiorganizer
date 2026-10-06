@@ -65,6 +65,7 @@ runtime      privacy.php
 dev          README.md
 runtime      register.php
 runtime      reservationinfo.php
+runtime-app  scoreboard
 runtime-app  scorekeeper
 runtime      scorestatus.php
 runtime      script

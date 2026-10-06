@@ -132,6 +132,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 
 ### Scorekeeping and spirit
 
+- `docs/scoreboard.md`: public full-screen Scoreboard app, game selection, and live refresh.
 - `docs/scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
 - `docs/scoresheet.md`: scoresheet concept, input paths, parallel editing, and replay views.
 - `docs/spirit-scoring.md`: spirit score logic, comments, and related settings.

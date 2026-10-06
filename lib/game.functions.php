@@ -1138,6 +1138,89 @@ function GameInfo($gameId)
 }
 
 
+/**
+ * Games for the public scoreboard: ongoing games first, then the games still
+ * to start today in the event's local time, in time order. Only public events
+ * are listed, and game times are the event's local time.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function ScoreboardGames()
+{
+    $rows = DBQueryToArrayUncached(
+        "SELECT g.game_id, g.time, g.isongoing, g.hasstarted, g.homescore, g.visitorscore,
+			home.name AS hometeamname, visitor.name AS visitorteamname,
+			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
+			pl.name AS placename, res.fieldname, s.timezone
+		FROM uo_game g
+			LEFT JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+			LEFT JOIN uo_season s ON (s.season_id=ser.season)
+			LEFT JOIN uo_reservation res ON (g.reservation=res.id)
+			LEFT JOIN uo_location pl ON (res.location=pl.id)
+			LEFT JOIN uo_team home ON (g.hometeam=home.team_id)
+			LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
+			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
+			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
+		WHERE g.valid=1 AND s.public_event=1
+			AND (g.isongoing=1 OR (g.hasstarted=0 AND DATE(g.time) BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)))
+		ORDER BY g.time, g.game_id",
+    );
+
+    $ongoing = [];
+    $upcoming = [];
+    foreach ($rows as $row) {
+        $row['home'] = $row['hometeamname'] ?: U_((string) $row['phometeamname']);
+        $row['visitor'] = $row['visitorteamname'] ?: U_((string) $row['pvisitorteamname']);
+        if ((int) $row['isongoing'] === 1) {
+            $ongoing[] = $row;
+            continue;
+        }
+        try {
+            $zone = new DateTimeZone(!empty($row['timezone']) ? $row['timezone'] : date_default_timezone_get());
+        } catch (Exception $e) {
+            $zone = new DateTimeZone(date_default_timezone_get());
+        }
+        if (substr((string) $row['time'], 0, 10) === (new DateTimeImmutable('now', $zone))->format('Y-m-d')) {
+            $upcoming[] = $row;
+        }
+    }
+    return array_merge($ongoing, $upcoming);
+}
+
+/**
+ * Current score line of one game for the public scoreboard, or null when the
+ * game does not exist or its event is not public.
+ *
+ * @return array<string, mixed>|null
+ */
+function ScoreboardGame($gameId)
+{
+    $row = DBQueryToRowUncached(sprintf(
+        "SELECT g.game_id, g.homescore, g.visitorscore, g.isongoing, g.hasstarted, g.time,
+			home.name AS hometeamname, visitor.name AS visitorteamname,
+			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
+		FROM uo_game g
+			LEFT JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
+			LEFT JOIN uo_season s ON (s.season_id=ser.season)
+			LEFT JOIN uo_team home ON (g.hometeam=home.team_id)
+			LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
+			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
+			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
+		WHERE g.game_id=%d AND g.valid=1 AND s.public_event=1",
+        (int) $gameId,
+    ));
+    if (empty($row)) {
+        return null;
+    }
+    $row['home'] = $row['hometeamname'] ?: U_((string) $row['phometeamname']);
+    $row['visitor'] = $row['visitorteamname'] ?: U_((string) $row['pvisitorteamname']);
+    return $row;
+}
+
 function GameName($gameInfo)
 {
     if ($gameInfo['hometeam'] && $gameInfo['visitorteam']) {

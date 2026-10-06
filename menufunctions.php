@@ -615,6 +615,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     }
     echo "<a class='subnav' href='" . $spiritkeeperUrl . "'>&raquo; Spiritkeeper</a>\n";
     echo "<a class='subnav' href='./timekeeper/'>&raquo; Timekeeper</a>\n";
+    echo "<a class='subnav' href='./scoreboard/'>&raquo; " . utf8entities(_("Scoreboard")) . "</a>\n";
     echo "</td></tr>\n";
     echo "</table>";
 

@@ -21,12 +21,13 @@ Before including the view, `index.php` checks the events the request names:
 - `scorekeeper/index.php`: touchscreen scorekeeper entry point.
 - `spiritkeeper/index.php`: standalone Spiritkeeper entry point.
 - `timekeeper/index.php`: standalone, public Timekeeper entry point (no login).
+- `scoreboard/index.php`: standalone, public full-screen Scoreboard entry point (no login); also serves its JSON feed.
 - `login/index.php` and `ext/index.php`: specialized entry points for those areas.
 
 ## Standalone vs include-only files
 
 - Not every `.php` file in the repository is a valid public endpoint.
-- Supported standalone entry points are the app index files such as `index.php`, `scorekeeper/index.php`, `spiritkeeper/index.php`, `timekeeper/index.php`, `login/index.php`, `ext/index.php`, and API entry points under `api/`.
+- Supported standalone entry points are the app index files such as `index.php`, `scorekeeper/index.php`, `spiritkeeper/index.php`, `timekeeper/index.php`, `scoreboard/index.php`, `login/index.php`, `ext/index.php`, and API entry points under `api/`.
 - Many subdirectory files are include-only views or helpers and should not bootstrap themselves when hit directly.
 - Include-only PHP files are guarded in code where cross-server portability matters:
   - `lib/` uses `lib/include_only.guard.php`

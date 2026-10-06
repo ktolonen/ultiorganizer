@@ -36,6 +36,7 @@ This directory collects general project documentation.
 
 ### Scorekeeping and spirit
 
+- `scoreboard.md`: public full-screen Scoreboard app, game selection, and live refresh.
 - `scorekeeper.md`: Scorekeeper app routing, responsibility list, live clock workflow, and related pages.
 - `scoresheet.md`: scoresheet concept, input paths, parallel editing, and replay views.
 - `spirit-scoring.md`: spirit score logic, comments, and related settings.
