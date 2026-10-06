@@ -42,7 +42,7 @@ Snapshots are sparse; one per point would mean one per goal. `ScoresheetHistoryS
 Exceptions:
 
 - **Per-goal paths.** `GameAddScore()`, `GameAddScoreEntry()` and `GameRemoveScore()` never snapshot. The desktop bulk save is covered by `GameRemoveAllScores()`, which does.
-- **`GameUpdateResult()`** takes `$snapshot` (default `true`). The per-point caller `scorekeeper/addscoresheet.php` passes `false`.
+- **`GameUpdateResult()`** takes `$snapshot` (default `true`). The per-point callers `scorekeeper/addscoresheet.php` and the +1/-1 buttons of `scorekeeper/addresult.php` pass `false`.
 - **Fixture mutators.** `GameChangeHome()` and `SetGame()` record a `fixture` row but never snapshot: the captured state would carry the outgoing teams and be withheld as a fixture mismatch immediately. `SetGame()` records only when a team column actually changed (compared against a read-back of the row), and records a separate `fixture`/`move` row when the pool changes. Both are written before `SetGamePool()` runs, because the history rights are resolved through the game's series, which that call can change.
 - **The five `GameTime*()` clock mutators** record a `timer` row but never snapshot. Restore is whole-sheet, so a clock-only restore point would also roll back goals and roster. Other snapshots still capture the clock. Fix a clock mistake with `GameTimeSetElapsed()`.
 

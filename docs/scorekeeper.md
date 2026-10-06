@@ -11,7 +11,7 @@
 - `addscoresheet.php`: goal entry and live clock control.
 - `endgame.php`: confirmation before saving the final result.
 - `gameplay.php`: read-only replay.
-- `addresult.php`: aggregate result only.
+- `addresult.php`: aggregate result without a scoresheet, with the game clock and +1/-1 buttons that save the ongoing score on each tap (see [Live game clock](#live-game-clock)).
 - Metadata pages: `addofficial.php` (scorekeeper name, stored in `official`), `addcomment.php`, `addfirstoffence.php`, `addhalftime.php`, `addscorecap.php`, `addtimeouts.php`, `addspirittimeouts.php`, `deletescore.php` (removes the latest goal), `scoreboard.php`.
 
 Workflow: open the game from `respgames.php`, set player lists, run the clock and enter goals, record metadata, confirm in `endgame.php`, review in `gameplay.php`.
@@ -40,15 +40,19 @@ Used when the season's `hide_time_on_scoresheet` is off. State lives in the `uo_
 
 In `addscoresheet.php` the scorekeeper can start, pause, resume and end the game, or choose `No game clock` before starting and enter times manually. A paused clock can be set to an exact `MM:SS`. Goals cannot be added before the clock starts, and selecting the scoring team stamps the current rounded time into the goal fields.
 
+`addresult.php` offers the same clock controls without `No game clock` or `End game`; the clock is optional there, and `Save as final result` ends the game. Its +1/-1 buttons apply the change to the stored score, not the page's, so a stale page on another device cannot undo newer points. Once the result is final the buttons and clock controls are hidden and a tap is ignored; `Game ongoing, update scores` reopens the game.
+
 Starting the clock, `GameSetResult()` and `GameClearResult()` reset the timer state.
 
 ### Shared clock module
 
-`addscoresheet.php`, `addtimeouts.php`, `addspirittimeouts.php`, `addhalftime.php` and `endgame.php` render the clock through helpers in `scorekeeper/auth.php`:
+`addscoresheet.php`, `addresult.php`, `addtimeouts.php`, `addspirittimeouts.php`, `addhalftime.php` and `endgame.php` render the clock through helpers in `scorekeeper/auth.php`:
 
 - `ScorekeeperTimerStateDefaults()`: timer state when the clock is not in play
 - `ScorekeeperClockHeader()`: the `#gametime` element (`.sk-gameclock`)
 - `ScorekeeperClockScript()`: passes `GameTimerState()` to `window.scorekeeperClock.init()`
+- `ScorekeeperClockControls()` and `ScorekeeperHandleClockPost()`: the start, pause, resume, set and reset controls of `addscoresheet.php` and `addresult.php`, and their POST handler
+- `ScorekeeperClockControlScript()`: the pause and restart confirmations, via `window.scorekeeperClockControls()`
 
 `script/scorekeeper.js` anchors on the server's `elapsed` seconds plus a client timestamp and derives the time from `Date.now()` differences on demand, so throttled phone timers do not drift and a wrong device clock does not matter. The anchor is Navigation Timing `responseStart`, the closest moment to the server's reading (`index.php` buffers the whole page); implausible values (in the future or over five minutes old) and browsers without Navigation Timing fall back to `Date.now()`.
 

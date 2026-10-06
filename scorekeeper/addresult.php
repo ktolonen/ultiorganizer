@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 
 $html = "";
@@ -8,6 +9,33 @@ $saveSucceeded = false;
 
 $gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
+
+$seasoninfo = SeasonInfo(GameSeason($gameId));
+$useGameClock = empty($seasoninfo['hide_time_on_scoresheet']);
+if ($useGameClock) {
+    ScorekeeperHandleClockPost($gameId, 'addresult');
+}
+
+// Each tap saves at once, applied to the stored score so a stale page on
+// another device cannot overwrite newer points. A final result is left alone;
+// reopening it takes the explicit update button.
+$scoreTaps = ['homeplus' => [1, 0], 'homeminus' => [-1, 0], 'awayplus' => [0, 1], 'awayminus' => [0, -1]];
+foreach ($scoreTaps as $tap => $delta) {
+    if (isset($_POST[$tap])) {
+        $stored = GameResult($gameId);
+        if (GameHasStarted($stored) && !$stored['isongoing']) {
+            header("location:?view=addresult&game=" . $gameId);
+            exit;
+        }
+        $home = max(0, intval($stored['homescore']) + $delta[0]);
+        $away = max(0, intval($stored['visitorscore']) + $delta[1]);
+        if ($home !== intval($stored['homescore']) || $away !== intval($stored['visitorscore'])) {
+            GameUpdateResult($gameId, $home, $away, false);
+        }
+        header("location:?view=addresult&game=" . $gameId);
+        exit;
+    }
+}
 
 if (isset($_POST['save'])) {
     $home = intval($_POST['home']);
@@ -40,13 +68,25 @@ if (isset($_POST['save'])) {
     }
 }
 
+$result = GameResult($gameId);
+$timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
+$showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
+$isFinal = GameHasStarted($result) && !$result['isongoing'];
+
 $html .= "<div data-role='header'>\n";
+if ($showClock) {
+    $html .= ScorekeeperClockHeader($timerState);
+}
 $html .= "<h1>" . _("Result") . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
 
-$result = GameResult($gameId);
+if ($useGameClock && !$isFinal) {
+    $html .= "<form action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
+    $html .= ScorekeeperClockControls($timerState, "", intval($result['homescore']) === 0 && intval($result['visitorscore']) === 0);
+    $html .= "</form>\n";
+}
 
 $html .= "<form action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
@@ -57,10 +97,14 @@ $html .= "<div class='ui-block-a'>\n";
 $html .= "<input type='number' inputmode='numeric' id='home' name='home' value='" . intval($result['homescore']) . "' min='0' maxlength='4' size='5'/>";
 $html .= "</div>";
 $html .= "<div class='ui-block-b'>\n";
-$html .= "<a href='#' data-role='button' id='homeplus' data-icon='plus'>+1</a>";
+if (!$isFinal) {
+    $html .= "<input type='submit' form='scoretaps' name='homeplus' data-role='button' data-icon='plus' value='+1'/>";
+}
 $html .= "</div>";
 $html .= "<div class='ui-block-c'>\n";
-$html .= "<a href='#' data-role='button' id='homeminus' data-icon='minus'>-1</a>";
+if (!$isFinal) {
+    $html .= "<input type='submit' form='scoretaps' name='homeminus' data-role='button' data-icon='minus' value='-1'/>";
+}
 $html .= "</div>";
 $html .= "</div>";
 
@@ -70,10 +114,14 @@ $html .= "<div class='ui-block-a'>\n";
 $html .= "<input type='number' inputmode='numeric' id='away' name='away' value='" . intval($result['visitorscore']) . "' min='0' maxlength='4' size='5'/>";
 $html .= "</div>";
 $html .= "<div class='ui-block-b'>\n";
-$html .= "<a href='#' data-role='button' id='awayplus' data-icon='plus'>+1</a>";
+if (!$isFinal) {
+    $html .= "<input type='submit' form='scoretaps' name='awayplus' data-role='button' data-icon='plus' value='+1'/>";
+}
 $html .= "</div>";
 $html .= "<div class='ui-block-c'>\n";
-$html .= "<a href='#' data-role='button' id='awayminus' data-icon='minus'>-1</a>";
+if (!$isFinal) {
+    $html .= "<input type='submit' form='scoretaps' name='awayminus' data-role='button' data-icon='minus' value='-1'/>";
+}
 $html .= "</div>";
 $html .= "</div>";
 
@@ -90,41 +138,15 @@ if ($saveSucceeded) {
 }
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</form>";
+// The tap buttons belong to this form through their form attribute, so Enter
+// in a score field still submits the main form's update.
+$html .= "<form id='scoretaps' action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'></form>\n";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;
-
-?>
-<script type="text/javascript">
-	function adjustScore(inputId, delta) {
-		var input = document.getElementById(inputId);
-		if (!input) {
-			return;
-		}
-		var goals = parseInt(input.value, 10);
-		if (isNaN(goals)) {
-			goals = 0;
-		}
-		goals = goals + delta;
-		if (goals < 0) {
-			goals = 0;
-		}
-		input.value = goals;
-	}
-
-	function bindScoreButton(buttonId, inputId, delta) {
-		var button = document.getElementById(buttonId);
-		if (!button) {
-			return;
-		}
-		button.addEventListener("click", function(event) {
-			event.preventDefault();
-			adjustScore(inputId, delta);
-		});
-	}
-
-	bindScoreButton("homeplus", "home", 1);
-	bindScoreButton("homeminus", "home", -1);
-	bindScoreButton("awayplus", "away", 1);
-	bindScoreButton("awayminus", "away", -1);
-</script>
+if ($showClock) {
+    echo ScorekeeperClockScript($timerState);
+}
+if ($useGameClock && !$isFinal) {
+    echo ScorekeeperClockControlScript();
+}
