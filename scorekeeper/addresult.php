@@ -98,8 +98,11 @@ if ($useGameClock && !$isFinal) {
         }
     } else {
         $html .= "<span>" . _("Clock not running") . "</span>";
-        $startLabel = $timerState['started'] ? _("Restart game clock") : _("Start game clock");
-        $restart = $timerState['started'] ? " data-confirm-restart='1'" : "";
+        // A score alone marks the game started, but only a clock that has run
+        // can be restarted.
+        $clockHasRun = $timerState['elapsed'] > 0;
+        $startLabel = $clockHasRun ? _("Restart game clock") : _("Start game clock");
+        $restart = $clockHasRun ? " data-confirm-restart='1'" : "";
         $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'" . $restart . "/>";
     }
     $html .= "</div>\n";
@@ -108,13 +111,17 @@ if ($useGameClock && !$isFinal) {
         $html .= ScorekeeperClockSetTimeFields($timerState);
         $html .= "</details>\n";
     }
-    if ($timerState['started'] && $homeScore === 0 && $awayScore === 0) {
+    if ($timerState['elapsed'] > 0 && $homeScore === 0 && $awayScore === 0) {
         $html .= "<input type='submit' class='button-secondary' name='resetgameclock' data-ajax='false' value='" . _("Reset game clock") . "'/>";
     }
     $html .= "</form>\n";
 }
 
-$html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
+// One form serves both uses: a live game taps +1/-1, which save at once
+// through the scoretaps form, and a known result is typed into the score
+// fields and saved. The update button comes first so Enter in a score field
+// never finalizes the game.
+$html .= "<form id='scoreform' action='" . $action . "' method='post' data-ajax='false'>\n";
 $html .= "<div class='sk-score-cards'>";
 $teams = [
     'home' => [$result['hometeamname'], $homeScore],
@@ -122,45 +129,25 @@ $teams = [
 ];
 foreach ($teams as $side => $team) {
     $html .= "<div class='sk-score-card sk-score-card--" . $side . "'>";
-    $html .= "<div class='sk-score-team'>" . utf8entities($team[0]) . "</div>";
-    $html .= "<div class='sk-score-value'>" . $team[1] . "</div>";
+    $html .= "<label class='sk-score-team' for='" . $side . "'>" . utf8entities($team[0]) . "</label>";
+    $html .= "<input type='number' inputmode='numeric' class='sk-score-value' id='" . $side . "' name='" . $side . "' value='" . $team[1] . "' min='0' maxlength='4' size='5'/>";
     if (!$isFinal) {
-        $html .= "<input type='submit' class='sk-score-plus' name='" . $side . "plus' data-ajax='false' value='+1'/>";
-        $html .= "<input type='submit' class='button-secondary' name='" . $side . "minus' data-ajax='false' value='-1'/>";
+        $html .= "<input type='submit' form='scoretaps' class='sk-score-plus' name='" . $side . "plus' data-ajax='false' value='+1'/>";
+        $html .= "<input type='submit' form='scoretaps' class='button-secondary' name='" . $side . "minus' data-ajax='false' value='-1'/>";
     }
     $html .= "</div>";
 }
 $html .= "</div>\n";
-$html .= "</form>\n";
-
 $html .= $info;
-
-if (!$isFinal) {
-    $html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
-    $html .= "<input type='hidden' name='home' value='" . $homeScore . "'/>";
-    $html .= "<input type='hidden' name='away' value='" . $awayScore . "'/>";
-    $html .= "<input type='submit' class='sk-score-final' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
-    $html .= "</form>\n";
-} elseif ($saveSucceeded) {
+$html .= "<div class='sk-result-actions'>";
+$html .= "<input type='submit' class='button-secondary' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
+$html .= "<input type='submit' id='savefinal' name='save' data-ajax='false' value='" . _("Save final result") . "'/>";
+$html .= "</div>\n";
+if ($saveSucceeded) {
     $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
 }
-
-// Typed scores are a correction path, so they stay folded away until needed.
-$html .= "<details class='sk-fold sk-score-edit'" . ($isFinal ? " open" : "") . ">";
-$html .= "<summary>" . _("Edit") . "</summary>\n";
-$html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
-$html .= "<div class='sk-score-edit-fields'>";
-$html .= "<label>" . utf8entities($result['hometeamname'])
-    . "<input type='number' inputmode='numeric' name='home' value='" . $homeScore . "' min='0' maxlength='4' size='5'/></label>";
-$html .= "<label>" . utf8entities($result['visitorteamname'])
-    . "<input type='number' inputmode='numeric' name='away' value='" . $awayScore . "' min='0' maxlength='4' size='5'/></label>";
-$html .= "</div>";
-$html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
-if ($isFinal) {
-    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
-}
 $html .= "</form>\n";
-$html .= "</details>\n";
+$html .= "<form id='scoretaps' action='" . $action . "' method='post' data-ajax='false'></form>\n";
 
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</div><!-- /content -->\n\n";
@@ -172,3 +159,19 @@ if ($showClock) {
 if ($useGameClock && !$isFinal) {
     echo ScorekeeperClockControlScript();
 }
+?>
+<script type="text/javascript">
+  (function () {
+    var save = document.getElementById("savefinal");
+    if (!save) {
+      return;
+    }
+    save.addEventListener("click", function (event) {
+      var home = document.getElementById("home").value;
+      var away = document.getElementById("away").value;
+      if (!window.confirm(<?php echo json_encode(_("Save final result")); ?> + " " + home + " - " + away + "?")) {
+        event.preventDefault();
+      }
+    });
+  })();
+</script>

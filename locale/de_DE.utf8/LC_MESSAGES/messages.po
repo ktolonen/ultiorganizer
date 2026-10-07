@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 03:42+0000\n"
+"POT-Creation-Date: 2026-10-07 03:52+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -514,8 +514,7 @@ msgstr "Gruppenname erforderlich"
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
 #: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
-#: admin/translations.php:507 scorekeeper/addresult.php:150
-#: user/respgames.php:219
+#: admin/translations.php:507 user/respgames.php:219
 msgid "Edit"
 msgstr "Ändern"
 
@@ -6207,12 +6206,12 @@ msgstr "Kapitän"
 msgid "Spirit captain"
 msgstr "Spirit-Kapitän"
 
-#: lib/scoresheethistory.functions.php:590 scorekeeper/addresult.php:107
+#: lib/scoresheethistory.functions.php:590 scorekeeper/addresult.php:110
 #: scorekeeper/auth.php:129
 msgid "Set game clock"
 msgstr "Spieluhr setzen"
 
-#: lib/scoresheethistory.functions.php:594 scorekeeper/addresult.php:101
+#: lib/scoresheethistory.functions.php:594 scorekeeper/addresult.php:104
 #: scorekeeper/auth.php:159
 msgid "Start game clock"
 msgstr "Spieluhr starten"
@@ -6227,7 +6226,7 @@ msgstr "Spieluhr anhalten"
 msgid "Resume game clock"
 msgstr "Spieluhr fortsetzen"
 
-#: lib/scoresheethistory.functions.php:597 scorekeeper/addresult.php:112
+#: lib/scoresheethistory.functions.php:597 scorekeeper/addresult.php:115
 #: scorekeeper/auth.php:167
 msgid "Reset game clock"
 msgstr "Spieluhr zurücksetzen"
@@ -6937,7 +6936,7 @@ msgstr "SC"
 msgid "C&SC"
 msgstr "C&SC"
 
-#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:165
+#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:152
 #: scorekeeper/addscoresheet.php:451 scorekeeper/gameplay.php:128
 #: user/adddefensesheet.php:333 user/addscoresheet.php:831
 msgid "Back to game responsibilities"
@@ -6971,22 +6970,22 @@ msgstr "Laeuft"
 msgid "Clock not running"
 msgstr "Uhr laeuft nicht"
 
-#: scorekeeper/addresult.php:101 scorekeeper/auth.php:159
+#: scorekeeper/addresult.php:104 scorekeeper/auth.php:159
 msgid "Restart game clock"
 msgstr "Spieluhr neu starten"
 
-#: scorekeeper/addresult.php:142 scorekeeper/addresult.php:160
-#: user/addresult.php:124
-msgid "Save as final result"
-msgstr "Endergebnis speichern"
-
-#: scorekeeper/addresult.php:145
-msgid "Set rosters"
-msgstr "Kader festlegen"
-
-#: scorekeeper/addresult.php:158
+#: scorekeeper/addresult.php:143
 msgid "Game ongoing, update scores"
 msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren"
+
+#: scorekeeper/addresult.php:144 scorekeeper/addresult.php:172
+#: scorekeeper/addscoresheet.php:446
+msgid "Save final result"
+msgstr "Endergebnis speichern"
+
+#: scorekeeper/addresult.php:147
+msgid "Set rosters"
+msgstr "Kader festlegen"
 
 #: scorekeeper/addscorecap.php:46
 msgid "The new point cap must be 255 or less."
@@ -7107,10 +7106,6 @@ msgstr "Zusätzliche Spieldaten"
 #: scorekeeper/addscoresheet.php:442
 msgid "Game has ended"
 msgstr "Spiel beendet"
-
-#: scorekeeper/addscoresheet.php:446
-msgid "Save final result"
-msgstr "Endergebnis speichern"
 
 #: scorekeeper/addspirittimeouts.php:97
 msgid "Pause the game clock during a spirit stoppage."
@@ -7962,6 +7957,10 @@ msgstr "update"
 #: user/addresult.php:118
 msgid "If this is all wrong, clear the result: "
 msgstr "Falls nicht zutreffend, Ergebnis löschen:"
+
+#: user/addresult.php:124
+msgid "Save as final result"
+msgstr "Endergebnis speichern"
 
 #: user/addscoresheet.php:147
 msgid "Are you sure you want to delete the last goal?"

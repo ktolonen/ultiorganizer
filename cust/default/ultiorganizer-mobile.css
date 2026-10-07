@@ -209,16 +209,32 @@ input[type="checkbox"] {
   background: var(--team-away-bg);
 }
 
-.sk-score-team {
+.sk-score-card .sk-score-team {
+  margin: 0;
+  color: var(--text);
   font-weight: 700;
   overflow-wrap: anywhere;
 }
 
-.sk-score-value {
-  font-size: 4rem;
+.sk-score-card input.sk-score-value {
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 3.5rem;
   font-weight: 700;
   font-variant-numeric: tabular-nums;
-  line-height: 1;
+  line-height: 1.1;
+  text-align: center;
+  appearance: textfield;
+}
+
+.sk-score-card input.sk-score-value::-webkit-inner-spin-button,
+.sk-score-card input.sk-score-value::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
 }
 
 .sk-score-card input[type="submit"] {
@@ -231,37 +247,34 @@ input[type="checkbox"] {
   font-size: 1.6rem;
 }
 
-input.sk-score-final[type="submit"] {
+.sk-result-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.sk-result-actions input[type="submit"] {
   width: 100%;
   margin: 0;
+}
+
+@media (min-width: 600px) {
+  .sk-result-actions {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 .sk-fold {
   margin-top: 12px;
 }
 
-.sk-score-edit {
-  margin-top: 16px;
-}
-
 .sk-fold summary {
   cursor: pointer;
   color: var(--text-muted);
   font-weight: 700;
-}
-
-.sk-score-edit-fields {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 12px;
-  margin: 10px 0 4px;
-}
-
-.sk-score-edit-fields label {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  overflow-wrap: anywhere;
 }
 
 [data-role="content"] {

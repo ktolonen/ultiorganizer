@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 03:42+0000\n"
+"POT-Creation-Date: 2026-10-07 03:52+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -513,8 +513,7 @@ msgstr "Lohkon nimi on pakollinen tieto!"
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
 #: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
-#: admin/translations.php:507 scorekeeper/addresult.php:150
-#: user/respgames.php:219
+#: admin/translations.php:507 user/respgames.php:219
 msgid "Edit"
 msgstr "Muokkaa"
 
@@ -6151,12 +6150,12 @@ msgstr "Kapteeni"
 msgid "Spirit captain"
 msgstr "Spirit-kapteeni"
 
-#: lib/scoresheethistory.functions.php:590 scorekeeper/addresult.php:107
+#: lib/scoresheethistory.functions.php:590 scorekeeper/addresult.php:110
 #: scorekeeper/auth.php:129
 msgid "Set game clock"
 msgstr "Aseta pelikello"
 
-#: lib/scoresheethistory.functions.php:594 scorekeeper/addresult.php:101
+#: lib/scoresheethistory.functions.php:594 scorekeeper/addresult.php:104
 #: scorekeeper/auth.php:159
 msgid "Start game clock"
 msgstr "Käynnistä pelikello"
@@ -6171,7 +6170,7 @@ msgstr "Keskeytä pelikello"
 msgid "Resume game clock"
 msgstr "Jatka pelikelloa"
 
-#: lib/scoresheethistory.functions.php:597 scorekeeper/addresult.php:112
+#: lib/scoresheethistory.functions.php:597 scorekeeper/addresult.php:115
 #: scorekeeper/auth.php:167
 msgid "Reset game clock"
 msgstr "Nollaa pelikello"
@@ -6878,7 +6877,7 @@ msgstr "SC"
 msgid "C&SC"
 msgstr "C&SC"
 
-#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:165
+#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:152
 #: scorekeeper/addscoresheet.php:451 scorekeeper/gameplay.php:128
 #: user/adddefensesheet.php:333 user/addscoresheet.php:831
 msgid "Back to game responsibilities"
@@ -6912,22 +6911,22 @@ msgstr "Käynnissä"
 msgid "Clock not running"
 msgstr "Kello ei käy"
 
-#: scorekeeper/addresult.php:101 scorekeeper/auth.php:159
+#: scorekeeper/addresult.php:104 scorekeeper/auth.php:159
 msgid "Restart game clock"
 msgstr "Käynnistä pelikello uudelleen"
 
-#: scorekeeper/addresult.php:142 scorekeeper/addresult.php:160
-#: user/addresult.php:124
-msgid "Save as final result"
-msgstr "Tallenna lopputulos"
-
-#: scorekeeper/addresult.php:145
-msgid "Set rosters"
-msgstr "Aseta pelaajalistat"
-
-#: scorekeeper/addresult.php:158
+#: scorekeeper/addresult.php:143
 msgid "Game ongoing, update scores"
 msgstr "Peli on menossa, päivitä tilanne"
+
+#: scorekeeper/addresult.php:144 scorekeeper/addresult.php:172
+#: scorekeeper/addscoresheet.php:446
+msgid "Save final result"
+msgstr "Tallenna lopputulos"
+
+#: scorekeeper/addresult.php:147
+msgid "Set rosters"
+msgstr "Aseta pelaajalistat"
 
 #: scorekeeper/addscorecap.php:46
 msgid "The new point cap must be 255 or less."
@@ -7047,10 +7046,6 @@ msgstr "Lisätiedot"
 #: scorekeeper/addscoresheet.php:442
 msgid "Game has ended"
 msgstr "Peli on päättynyt"
-
-#: scorekeeper/addscoresheet.php:446
-msgid "Save final result"
-msgstr "Tallenna lopputulos"
 
 #: scorekeeper/addspirittimeouts.php:97
 msgid "Pause the game clock during a spirit stoppage."
@@ -7888,6 +7883,10 @@ msgstr "päivitä"
 #: user/addresult.php:118
 msgid "If this is all wrong, clear the result: "
 msgstr "Jos tämä on väärin, tyhjennä tulos: "
+
+#: user/addresult.php:124
+msgid "Save as final result"
+msgstr "Tallenna lopputulos"
 
 #: user/addscoresheet.php:147
 msgid "Are you sure you want to delete the last goal?"
