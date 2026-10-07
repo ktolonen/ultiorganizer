@@ -19,6 +19,12 @@ if (!isset($_SESSION['uid'])) {
 }
 setSessionLocale();
 
+// Anonymous display, so there is no administrator to let through. Events in
+// maintenance are left out of the scoreboard queries.
+if (SoftMaintenanceMode()) {
+    RenderSoftMaintenanceResponse();
+}
+
 // JSON feed polled by script/scoreboard.js.
 $feed = $_GET['json'] ?? '';
 if ($feed !== '') {

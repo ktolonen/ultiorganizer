@@ -16,7 +16,8 @@
 ## Behavior
 
 - The picker lists ongoing games first, then games still to start today in the event's timezone,
-  in time order. Only games of public events (`public_event=1`) are listed or served.
+  in time order. Only games of public events (`public_event=1`) are listed or served, and none
+  while their event is in maintenance. Site-wide soft maintenance answers 503 for the page and feed.
 - The selected game is kept in the URL hash (`#game=ID`), so a reload or a bookmarked link returns
   to the same board.
 - The board polls the feed every 3 seconds (the picker every 15) and flashes the side whose score

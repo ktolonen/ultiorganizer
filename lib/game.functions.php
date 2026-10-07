@@ -1141,7 +1141,7 @@ function GameInfo($gameId)
 /**
  * Games for the public scoreboard: ongoing games first, then the games still
  * to start today in the event's local time, in time order. Only public events
- * are listed, and game times are the event's local time.
+ * not in maintenance are listed, and game times are the event's local time.
  *
  * @return array<int, array<string, mixed>>
  */
@@ -1163,7 +1163,7 @@ function ScoreboardGames()
 			LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
 			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
-		WHERE g.valid=1 AND s.public_event=1
+		WHERE g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0
 			AND (g.isongoing=1 OR (g.hasstarted=0 AND DATE(g.time) BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)))
 		ORDER BY g.time, g.game_id",
     );
@@ -1191,7 +1191,7 @@ function ScoreboardGames()
 
 /**
  * Current score line of one game for the public scoreboard, or null when the
- * game does not exist or its event is not public.
+ * game does not exist or its event is not public or is in maintenance.
  *
  * @return array<string, mixed>|null
  */
@@ -1211,7 +1211,7 @@ function ScoreboardGame($gameId)
 			LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
 			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
-		WHERE g.game_id=%d AND g.valid=1 AND s.public_event=1",
+		WHERE g.game_id=%d AND g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0",
         (int) $gameId,
     ));
     if (empty($row)) {
