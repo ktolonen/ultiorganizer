@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 03:52+0000\n"
+"POT-Creation-Date: 2026-10-07 04:29+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -6877,7 +6877,7 @@ msgstr "SC"
 msgid "C&SC"
 msgstr "C&SC"
 
-#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:152
+#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:160
 #: scorekeeper/addscoresheet.php:451 scorekeeper/gameplay.php:128
 #: user/adddefensesheet.php:333 user/addscoresheet.php:831
 msgid "Back to game responsibilities"
@@ -6915,16 +6915,24 @@ msgstr "Kello ei käy"
 msgid "Restart game clock"
 msgstr "Käynnistä pelikello uudelleen"
 
-#: scorekeeper/addresult.php:143
-msgid "Game ongoing, update scores"
-msgstr "Peli on menossa, päivitä tilanne"
+#: scorekeeper/addresult.php:125 scorekeeper/endgame.php:83
+msgid "Final result"
+msgstr "Lopputulos"
 
-#: scorekeeper/addresult.php:144 scorekeeper/addresult.php:172
+#: scorekeeper/addresult.php:127 user/addscoresheet.php:816
+msgid "Game ongoing"
+msgstr "Peli kesken"
+
+#: scorekeeper/addresult.php:147 scorekeeper/addresult.php:180
 #: scorekeeper/addscoresheet.php:446
 msgid "Save final result"
 msgstr "Tallenna lopputulos"
 
-#: scorekeeper/addresult.php:147
+#: scorekeeper/addresult.php:151
+msgid "Game ongoing, update scores"
+msgstr "Peli on menossa, päivitä tilanne"
+
+#: scorekeeper/addresult.php:155
 msgid "Set rosters"
 msgstr "Aseta pelaajalistat"
 
@@ -7103,10 +7111,6 @@ msgstr "kiekonmenetys"
 #: scorekeeper/endgame.php:26 scorekeeper/gameplay.php:27
 msgid "offence"
 msgstr "hyökkäys"
-
-#: scorekeeper/endgame.php:83
-msgid "Final result"
-msgstr "Lopputulos"
 
 #: scorekeeper/endgame.php:86
 msgid "Confirm result and end game"
@@ -7958,10 +7962,6 @@ msgstr "Pelin pöytäkirja"
 #: user/addscoresheet.php:720
 msgid "Starting team on offence"
 msgstr "Hyökkäyksessä aloittava joukkue"
-
-#: user/addscoresheet.php:816
-msgid "Game ongoing"
-msgstr "Peli kesken"
 
 #: user/addscoresheet.php:818
 msgid "Save scores"

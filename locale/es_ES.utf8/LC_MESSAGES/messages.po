@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 03:52+0000\n"
+"POT-Creation-Date: 2026-10-07 04:29+0000\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -6949,7 +6949,7 @@ msgstr "CE"
 msgid "C&SC"
 msgstr "C&CE"
 
-#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:152
+#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:160
 #: scorekeeper/addscoresheet.php:451 scorekeeper/gameplay.php:128
 #: user/adddefensesheet.php:333 user/addscoresheet.php:831
 msgid "Back to game responsibilities"
@@ -6987,16 +6987,24 @@ msgstr "El reloj no está corriendo"
 msgid "Restart game clock"
 msgstr "Reiniciar el reloj del juego"
 
-#: scorekeeper/addresult.php:143
-msgid "Game ongoing, update scores"
-msgstr "Juego en curso, actualizar puntuaciones"
+#: scorekeeper/addresult.php:125 scorekeeper/endgame.php:83
+msgid "Final result"
+msgstr "Resultado final"
 
-#: scorekeeper/addresult.php:144 scorekeeper/addresult.php:172
+#: scorekeeper/addresult.php:127 user/addscoresheet.php:816
+msgid "Game ongoing"
+msgstr "Juego en curso"
+
+#: scorekeeper/addresult.php:147 scorekeeper/addresult.php:180
 #: scorekeeper/addscoresheet.php:446
 msgid "Save final result"
 msgstr "Guardar resultado final"
 
-#: scorekeeper/addresult.php:147
+#: scorekeeper/addresult.php:151
+msgid "Game ongoing, update scores"
+msgstr "Juego en curso, actualizar puntuaciones"
+
+#: scorekeeper/addresult.php:155
 msgid "Set rosters"
 msgstr "Establecer listas de jugadores"
 
@@ -7177,10 +7185,6 @@ msgstr "cambio de posición"
 #: scorekeeper/endgame.php:26 scorekeeper/gameplay.php:27
 msgid "offence"
 msgstr "ofensiva"
-
-#: scorekeeper/endgame.php:83
-msgid "Final result"
-msgstr "Resultado final"
 
 #: scorekeeper/endgame.php:86
 msgid "Confirm result and end game"
@@ -8058,10 +8062,6 @@ msgstr "Hoja de puntuación del juego"
 #: user/addscoresheet.php:720
 msgid "Starting team on offence"
 msgstr "Equipo que inicia en ofensiva"
-
-#: user/addscoresheet.php:816
-msgid "Game ongoing"
-msgstr "Juego en curso"
 
 #: user/addscoresheet.php:818
 msgid "Save scores"

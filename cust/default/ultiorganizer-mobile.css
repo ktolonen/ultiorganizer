@@ -184,6 +184,17 @@ input[type="checkbox"] {
   margin: 0;
 }
 
+.sk-result-status {
+  margin: 16px 0 0;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+.sk-result-status--ongoing {
+  color: var(--accent);
+}
+
 .sk-score-cards {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -262,7 +273,7 @@ input[type="checkbox"] {
 }
 
 @media (min-width: 600px) {
-  .sk-result-actions {
+  .sk-result-actions:has(> :nth-child(2)) {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }

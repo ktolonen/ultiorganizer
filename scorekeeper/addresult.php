@@ -118,10 +118,14 @@ if ($useGameClock && !$isFinal) {
 }
 
 // One form serves both uses: a live game taps +1/-1, which save at once
-// through the scoretaps form, and a known result is typed into the score
-// fields and saved. The update button comes first so Enter in a score field
-// never finalizes the game.
+// through the scoretaps form and mark the game ongoing, and a known result is
+// typed into the score fields and saved as final.
 $html .= "<form id='scoreform' action='" . $action . "' method='post' data-ajax='false'>\n";
+if ($isFinal) {
+    $html .= "<p class='sk-result-status'>" . _("Final result") . ": " . $homeScore . " - " . $awayScore . "</p>";
+} elseif (GameHasStarted($result)) {
+    $html .= "<p class='sk-result-status sk-result-status--ongoing'>" . _("Game ongoing") . ": " . $homeScore . " - " . $awayScore . "</p>";
+}
 $html .= "<div class='sk-score-cards'>";
 $teams = [
     'home' => [$result['hometeamname'], $homeScore],
@@ -140,8 +144,12 @@ foreach ($teams as $side => $team) {
 $html .= "</div>\n";
 $html .= $info;
 $html .= "<div class='sk-result-actions'>";
-$html .= "<input type='submit' class='button-secondary' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
 $html .= "<input type='submit' id='savefinal' name='save' data-ajax='false' value='" . _("Save final result") . "'/>";
+// Taps already keep an ongoing game's score, so updating is only needed to
+// reopen a final result.
+if ($isFinal) {
+    $html .= "<input type='submit' class='button-secondary' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
+}
 $html .= "</div>\n";
 if ($saveSucceeded) {
     $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
