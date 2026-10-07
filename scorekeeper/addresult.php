@@ -89,12 +89,7 @@ if ($useGameClock && !$isFinal) {
         }
     } else {
         $html .= "<span>" . _("Clock not running") . "</span>";
-        // A score alone marks the game started, but only a clock that has run
-        // can be restarted.
-        $clockHasRun = $timerState['elapsed'] > 0;
-        $startLabel = $clockHasRun ? _("Restart game clock") : _("Start game clock");
-        $restart = $clockHasRun ? " data-confirm-restart='1'" : "";
-        $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'" . $restart . "/>";
+        $html .= ScorekeeperClockStartButton($timerState);
     }
     $html .= "</div>\n";
     if ($timerState['ongoing'] && $timerState['paused']) {

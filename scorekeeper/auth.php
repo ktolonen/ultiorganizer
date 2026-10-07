@@ -137,6 +137,22 @@ if (!function_exists('ScorekeeperClockSetTimeFields')) {
     }
 }
 
+if (!function_exists('ScorekeeperClockStartButton')) {
+    /**
+     * Start button for a stopped game clock. A score alone marks the game
+     * started, but only a clock that has run is offered as a restart, which
+     * ScorekeeperClockControlScript() confirms.
+     */
+    function ScorekeeperClockStartButton($timerState)
+    {
+        $clockHasRun = $timerState['elapsed'] > 0;
+        $startLabel = $clockHasRun ? _("Restart game clock") : _("Start game clock");
+        $restart = $clockHasRun ? " data-confirm-restart='1'" : "";
+
+        return "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'" . $restart . "/>";
+    }
+}
+
 if (!function_exists('ScorekeeperClockControls')) {
     /**
      * Game clock status and control buttons posted to
@@ -161,13 +177,8 @@ if (!function_exists('ScorekeeperClockControls')) {
                 $html .= "<input type='submit' id='pausegame' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
             }
         } else {
-            // A score alone marks the game started, but only a clock that has
-            // run can be restarted.
-            $clockHasRun = $timerState['elapsed'] > 0;
-            $startLabel = $clockHasRun ? _("Restart game clock") : _("Start game clock");
-            $restart = $clockHasRun ? " data-confirm-restart='1'" : "";
             $html .= "<div data-role='controlgroup' data-type='horizontal'>";
-            $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'" . $restart . "/>";
+            $html .= ScorekeeperClockStartButton($timerState);
             $html .= $startExtra;
             $html .= "</div>";
         }
