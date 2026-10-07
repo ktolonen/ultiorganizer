@@ -18,6 +18,7 @@ All paths write through shared mutators, mostly in `lib/game.functions.php`, tha
 `user/addresult.php` (also `scorekeeper/addresult.php`) records the aggregate score only; it writes nothing to `uo_goal` or `uo_played`.
 
 - `GameUpdateResult()`: score, `isongoing=1`, `hasstarted=1`
+- `GameApplyScoreTap()`: one point added or taken in place, `isongoing=1`, `hasstarted=1`
 - `GameSetResult()`: score, `isongoing=0`, `hasstarted=2`
 - `GameClearResult()`: clears the result and the started flags
 

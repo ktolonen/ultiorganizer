@@ -1449,6 +1449,58 @@ function GameUpdateResult($gameId, $home, $away, $snapshot = true)
     }
 }
 
+/**
+ * Adds one point to, or takes one from, a team's score in a single statement,
+ * so simultaneous taps from several devices all count. The game is marked
+ * ongoing. A final result, or a score that would leave 0..MAX_GAME_SCORE, is
+ * left alone. Back at 0 - 0 with no game clock started, the tap undid an
+ * accidental one, so the game returns to not started. Like the per-point
+ * GameUpdateResult() caller, a tap takes no history snapshot.
+ *
+ * @param int $gameId uo_game.game_id
+ * @param bool $home true for the home team
+ * @param int $delta 1 or -1
+ * @return bool true when the score changed
+ */
+function GameApplyScoreTap($gameId, $home, $delta)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game');
+    }
+    $homeDelta = $home ? ($delta > 0 ? 1 : -1) : 0;
+    $awayDelta = $home ? 0 : ($delta > 0 ? 1 : -1);
+    DBExecute(sprintf(
+        "UPDATE uo_game SET homescore=COALESCE(homescore,0)+%1\$d, visitorscore=COALESCE(visitorscore,0)+%2\$d,
+			isongoing=1, hasstarted=1
+		WHERE game_id=%3\$d AND (hasstarted=0 OR isongoing=1)
+			AND COALESCE(homescore,0)+%1\$d BETWEEN 0 AND %4\$d
+			AND COALESCE(visitorscore,0)+%2\$d BETWEEN 0 AND %4\$d",
+        $homeDelta,
+        $awayDelta,
+        (int) $gameId,
+        MAX_GAME_SCORE,
+    ));
+    if (DBAffectedRows() < 1) {
+        return false;
+    }
+
+    $stored = DBQueryToRow(sprintf(
+        "SELECT homescore, visitorscore, timer_start FROM uo_game WHERE game_id=%d",
+        (int) $gameId,
+    ));
+    if ((int) $stored['homescore'] === 0 && (int) $stored['visitorscore'] === 0 && empty($stored['timer_start'])) {
+        GameClearResult($gameId);
+    } else {
+        ScoresheetHistoryRecord($gameId, "result", "update", [
+            'home' => (int) $stored['homescore'],
+            'away' => (int) $stored['visitorscore'],
+            'state' => "ongoing",
+        ]);
+    }
+
+    return true;
+}
+
 function GameSetResult($gameId, $home, $away, $updatePools = true)
 {
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {

@@ -19,25 +19,10 @@ if ($useGameClock) {
 // Each tap saves at once, applied to the stored score so a stale page on
 // another device cannot overwrite newer points. A final result is left alone;
 // reopening it takes the explicit update button.
-$scoreTaps = ['homeplus' => [1, 0], 'homeminus' => [-1, 0], 'awayplus' => [0, 1], 'awayminus' => [0, -1]];
-foreach ($scoreTaps as $tap => $delta) {
+$scoreTaps = ['homeplus' => [true, 1], 'homeminus' => [true, -1], 'awayplus' => [false, 1], 'awayminus' => [false, -1]];
+foreach ($scoreTaps as $tap => $change) {
     if (isset($_POST[$tap])) {
-        $stored = GameResult($gameId);
-        if (GameHasStarted($stored) && !$stored['isongoing']) {
-            header("location:?view=addresult&game=" . $gameId);
-            exit;
-        }
-        $home = max(0, intval($stored['homescore']) + $delta[0]);
-        $away = max(0, intval($stored['visitorscore']) + $delta[1]);
-        if ($home === 0 && $away === 0 && empty($stored['timer_start'])) {
-            // Back to 0 - 0 with no clock started undoes an accidental tap, so
-            // the game returns to not started instead of staying ongoing.
-            if (GameHasStarted($stored)) {
-                GameClearResult($gameId);
-            }
-        } elseif ($home !== intval($stored['homescore']) || $away !== intval($stored['visitorscore'])) {
-            GameUpdateResult($gameId, $home, $away, false);
-        }
+        GameApplyScoreTap($gameId, $change[0], $change[1]);
         header("location:?view=addresult&game=" . $gameId);
         exit;
     }
