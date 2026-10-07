@@ -190,6 +190,25 @@ if (!function_exists('ScorekeeperClockControlScript')) {
     }
 }
 
+if (!function_exists('ScorekeeperScoresheetBehindResult')) {
+    /**
+     * True when the goal rows add up to less than the stored result, as when
+     * the Result page kept the score. Ending the game from the scoresheet
+     * would then save the lower goal count, so it is finished on the Result
+     * page instead. Without goal rows endgame.php saves the stored result.
+     */
+    function ScorekeeperScoresheetBehindResult($goalRows, $gameResult)
+    {
+        if (!count($goalRows)) {
+            return false;
+        }
+        $last = $goalRows[count($goalRows) - 1];
+
+        return intval($last['homescore']) + intval($last['visitorscore'])
+            < intval($gameResult['homescore']) + intval($gameResult['visitorscore']);
+    }
+}
+
 if (!function_exists('scorekeeperRequestGameId')) {
     function scorekeeperRequestGameId()
     {

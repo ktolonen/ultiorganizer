@@ -218,7 +218,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
     }
 }
 
-if (isset($_POST['save']) && !$useGameClock && !$isFinal) {
+if (isset($_POST['save']) && !$useGameClock && !$isFinal && !ScorekeeperScoresheetBehindResult($scores, $game_result)) {
     $home = 0;
     $away = 0;
     if ($lastscore) {
@@ -289,7 +289,9 @@ if ($useGameClock) {
     $noGameClock = "<input type='submit' name='nogameclock' data-ajax='false' value='" . _("No game clock") . "'/>";
     $scoreless = $lastscore === null && intval($game_result['homescore']) === 0 && intval($game_result['visitorscore']) === 0;
     $html .= ScorekeeperClockControls($timerState, $noGameClock, $scoreless);
-    if ($timerState['started'] || GameHasStarted($game_result)) {
+    if (ScorekeeperScoresheetBehindResult($scores, $game_result)) {
+        $html .= "<a href='?view=addresult&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Result") . "</a>";
+    } elseif ($timerState['started'] || GameHasStarted($game_result)) {
         $html .= "<a href='?view=endgame&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("End game") . "</a>";
     }
 } elseif ($manualNoGameClock && !$isFinal) {
@@ -453,7 +455,9 @@ if ($halfCapEvent || $timeCapEvent) {
 
 if (!$useGameClock && !$isFinal) {
     $html .= "<h3>" . _("Game has ended") . "</h3>";
-    if ($lastscore) {
+    if (ScorekeeperScoresheetBehindResult($scores, $game_result)) {
+        $html .= "<a href='?view=addresult&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Result") . "</a>";
+    } elseif ($lastscore) {
         $home = $lastscore['homescore'];
         $away = $lastscore['visitorscore'];
         $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save final result") . " $home - $away'/>";

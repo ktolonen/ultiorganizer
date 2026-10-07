@@ -9,6 +9,10 @@ $seasoninfo = SeasonInfo(GameSeason($gameId));
 $hideTimeOnScoresheet = !empty($seasoninfo['hide_time_on_scoresheet']);
 $useGameClock = !$hideTimeOnScoresheet && !scorekeeperHasManualNoGameClock($gameId);
 $goalRows = GameGoals($gameId);
+if (ScorekeeperScoresheetBehindResult($goalRows, $game_result)) {
+    header("location:?view=addresult&game=" . $gameId);
+    exit;
+}
 $gameevents = GameEvents($gameId);
 
 /**
