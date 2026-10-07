@@ -9,7 +9,9 @@
   var board = document.getElementById('sb-board');
   var listEl = document.getElementById('sb-list');
   var timer = null;
+  var generation = 0; // bumped by route(), so replies to an earlier view are dropped
   var lastScores = null;
+  var flashTimers = {};
   var wakeLock = null;
   var clockEl = document.getElementById('sb-clock');
   var clockTick = null;
@@ -32,6 +34,7 @@
     var xhr = new XMLHttpRequest();
     var sentAt = Date.now();
     xhr.open('GET', url, true);
+    xhr.timeout = 10000;
     xhr.onload = function () {
       var data = null;
       try {
@@ -41,7 +44,7 @@
       }
       done(xhr.status === 200 ? data : null, (sentAt + Date.now()) / 2);
     };
-    xhr.onerror = function () {
+    xhr.onerror = xhr.ontimeout = function () {
       done(null);
     };
     xhr.send();
@@ -99,7 +102,11 @@
   }
 
   function pollList() {
+    var gen = generation;
     getJson('?json=list', function (data) {
+      if (gen !== generation) {
+        return;
+      }
       renderList(data);
       timer = window.setTimeout(pollList, LIST_MS);
     });
@@ -143,7 +150,8 @@
     team.querySelector('.sb-score').textContent = score;
     if (changed) {
       team.className = 'sb-team sb-changed';
-      window.setTimeout(function () {
+      window.clearTimeout(flashTimers[id]);
+      flashTimers[id] = window.setTimeout(function () {
         team.className = 'sb-team';
       }, 4000);
     }
@@ -215,7 +223,11 @@
   }
 
   function pollGame(id) {
+    var gen = generation;
     getJson('?json=game&game=' + id, function (data, sampledAt) {
+      if (gen !== generation) {
+        return;
+      }
       renderGame(data, sampledAt);
       timer = window.setTimeout(function () {
         pollGame(id);
@@ -235,7 +247,12 @@
   }
 
   function route() {
+    generation++;
     stop();
+    ['sb-home', 'sb-visitor'].forEach(function (team) {
+      window.clearTimeout(flashTimers[team]);
+      document.getElementById(team).className = 'sb-team';
+    });
     stopClock();
     var id = selectedGame();
     lastScores = null;
