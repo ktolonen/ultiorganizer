@@ -29,7 +29,13 @@ foreach ($scoreTaps as $tap => $delta) {
         }
         $home = max(0, intval($stored['homescore']) + $delta[0]);
         $away = max(0, intval($stored['visitorscore']) + $delta[1]);
-        if ($home !== intval($stored['homescore']) || $away !== intval($stored['visitorscore'])) {
+        if ($home === 0 && $away === 0 && empty($stored['timer_start'])) {
+            // Back to 0 - 0 with no clock started undoes an accidental tap, so
+            // the game returns to not started instead of staying ongoing.
+            if (GameHasStarted($stored)) {
+                GameClearResult($gameId);
+            }
+        } elseif ($home !== intval($stored['homescore']) || $away !== intval($stored['visitorscore'])) {
             GameUpdateResult($gameId, $home, $away, false);
         }
         header("location:?view=addresult&game=" . $gameId);
