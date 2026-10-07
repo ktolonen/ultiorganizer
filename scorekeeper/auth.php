@@ -156,8 +156,11 @@ if (!function_exists('ScorekeeperClockControls')) {
                 $html .= "<input type='submit' id='pausegame' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
             }
         } else {
-            $startLabel = $timerState['started'] ? _("Restart game clock") : _("Start game clock");
-            $restart = $timerState['started'] ? " data-confirm-restart='1'" : "";
+            // A score alone marks the game started, but only a clock that has
+            // run can be restarted.
+            $clockHasRun = $timerState['elapsed'] > 0;
+            $startLabel = $clockHasRun ? _("Restart game clock") : _("Start game clock");
+            $restart = $clockHasRun ? " data-confirm-restart='1'" : "";
             $html .= "<div data-role='controlgroup' data-type='horizontal'>";
             $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'" . $restart . "/>";
             $html .= $startExtra;

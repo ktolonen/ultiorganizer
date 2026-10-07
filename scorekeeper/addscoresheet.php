@@ -63,7 +63,11 @@ if (!$hideTimeOnScoresheet && isset($_POST['usegameclock'])) {
 }
 
 $manualNoGameClock = !$hideTimeOnScoresheet && scorekeeperHasManualNoGameClock($gameId);
-$useGameClock = !$hideTimeOnScoresheet && !$manualNoGameClock;
+// A final result is filled in afterwards with typed times; starting the clock
+// would reopen the game.
+$storedResult = GameResult($gameId);
+$isFinal = GameHasStarted($storedResult) && !$storedResult['isongoing'];
+$useGameClock = !$hideTimeOnScoresheet && !$manualNoGameClock && !$isFinal;
 
 if ($useGameClock) {
     ScorekeeperHandleClockPost($gameId, 'addscoresheet');
@@ -214,7 +218,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
     }
 }
 
-if (isset($_POST['save']) && !$useGameClock) {
+if (isset($_POST['save']) && !$useGameClock && !$isFinal) {
     $home = 0;
     $away = 0;
     if ($lastscore) {
@@ -259,6 +263,14 @@ $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 $html .= "<form action='?view=addscoresheet&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
+// The stored result can differ from the goals below: the Result page keeps
+// it without a scoresheet.
+$storedScore = intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']);
+if ($isFinal) {
+    $html .= "<p class='sk-result-status'>" . _("Final result") . ": " . $storedScore . "</p>";
+} elseif (GameHasStarted($game_result)) {
+    $html .= "<p class='sk-result-status sk-result-status--ongoing'>" . _("Game ongoing") . ": " . $storedScore . "</p>";
+}
 if ($lastscore) {
     $html .= "#" . count($scores) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
     if (!$hideTimeOnScoresheet) {
@@ -269,24 +281,25 @@ if ($lastscore) {
         $html .= utf8entities($goalText);
     }
     $html .= " <a href='?view=deletescore&amp;game=" . $gameId . "' data-ajax='false'>" . _("Delete goal") . "</a>";
-} else {
+} elseif (!GameHasStarted($game_result)) {
     $html .= _("Score") . ": 0 - 0";
 }
 
 if ($useGameClock) {
     $noGameClock = "<input type='submit' name='nogameclock' data-ajax='false' value='" . _("No game clock") . "'/>";
-    $html .= ScorekeeperClockControls($timerState, $noGameClock, $lastscore === null);
+    $scoreless = $lastscore === null && intval($game_result['homescore']) === 0 && intval($game_result['visitorscore']) === 0;
+    $html .= ScorekeeperClockControls($timerState, $noGameClock, $scoreless);
     if ($timerState['started'] || GameHasStarted($game_result)) {
         $html .= "<a href='?view=endgame&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("End game") . "</a>";
     }
-} elseif ($manualNoGameClock) {
+} elseif ($manualNoGameClock && !$isFinal) {
     $html .= "<h3>" . _("Game clock") . "</h3>";
     $html .= "<p><strong>" . _("Status") . ":</strong> " . _("Manual time entry") . "</p>";
     $html .= "<input type='submit' name='usegameclock' data-ajax='false' value='" . _("Use game clock") . "'/>";
 }
 
 if (!$showGoalForm && $useGameClock) {
-    $message = $timerState['started'] ? _("Restart the game clock to continue timed scoring.") : _("Start the game clock before adding goals.");
+    $message = $timerState['elapsed'] > 0 ? _("Restart the game clock to continue timed scoring.") : _("Start the game clock before adding goals.");
     $html .= "<p class='warning'>" . $message . "</p>";
 }
 
@@ -438,7 +451,7 @@ if ($halfCapEvent || $timeCapEvent) {
     $html .= "</ul>\n";
 }
 
-if (!$useGameClock) {
+if (!$useGameClock && !$isFinal) {
     $html .= "<h3>" . _("Game has ended") . "</h3>";
     if ($lastscore) {
         $home = $lastscore['homescore'];
