@@ -1164,7 +1164,7 @@ function ScoreboardGames()
 			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
 		WHERE g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0
-			AND (g.isongoing=1 OR (g.hasstarted=0 AND DATE(g.time) BETWEEN DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND DATE_ADD(CURDATE(), INTERVAL 1 DAY)))
+			AND (g.isongoing=1 OR (g.hasstarted=0 AND g.time >= DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND g.time < DATE_ADD(CURDATE(), INTERVAL 2 DAY)))
 		ORDER BY g.time, g.game_id",
     );
 

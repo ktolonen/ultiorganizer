@@ -18,6 +18,8 @@ if (!isset($_SESSION['uid'])) {
     SetUserSessionData("anonymous");
 }
 setSessionLocale();
+// Nothing below writes the session, so its lock is released before any query.
+session_write_close();
 
 // Anonymous display, so there is no administrator to let through. Events in
 // maintenance are left out of the scoreboard queries.
@@ -62,8 +64,6 @@ if ($feed !== '') {
                 'visitor' => $game['visitor'],
                 'homescore' => (int) $game['homescore'],
                 'visitorscore' => (int) $game['visitorscore'],
-                'ongoing' => (int) $game['isongoing'] === 1,
-                'finished' => (int) $game['hasstarted'] === 2 && (int) $game['isongoing'] === 0,
                 'clock' => $timer['ongoing'] ? ['elapsed' => $timer['elapsed'], 'paused' => $timer['paused']] : null,
             ]);
         }
