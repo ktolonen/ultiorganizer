@@ -164,6 +164,106 @@ input[type="checkbox"] {
   font-size: 1.8em;
 }
 
+/* Scorekeeper result page */
+.sk-clock-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.sk-clock-bar input[type="submit"] {
+  flex: 0 1 auto;
+  width: auto;
+  margin: 0;
+}
+
+.sk-score-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.sk-score-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.sk-score-card--home {
+  background: var(--team-home-bg);
+}
+
+.sk-score-card--away {
+  background: var(--team-away-bg);
+}
+
+.sk-score-team {
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.sk-score-value {
+  font-size: 4rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.sk-score-card input[type="submit"] {
+  width: 100%;
+  margin: 0;
+}
+
+.sk-score-card input.sk-score-plus[type="submit"] {
+  padding: 20px 14px;
+  font-size: 1.6rem;
+}
+
+input.sk-score-final[type="submit"] {
+  width: 100%;
+  margin: 0;
+}
+
+.sk-fold {
+  margin-top: 12px;
+}
+
+.sk-score-edit {
+  margin-top: 16px;
+}
+
+.sk-fold summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.sk-score-edit-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 10px 0 4px;
+}
+
+.sk-score-edit-fields label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  overflow-wrap: anywhere;
+}
+
 [data-role="content"] {
   padding: 16px;
   max-width: 980px;

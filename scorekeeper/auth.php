@@ -100,6 +100,38 @@ if (!function_exists('ScorekeeperHandleClockPost')) {
     }
 }
 
+if (!function_exists('ScorekeeperClockSetTimeFields')) {
+    /**
+     * Minute and second selects with the button that sets a paused game clock,
+     * posted to ScorekeeperHandleClockPost().
+     */
+    function ScorekeeperClockSetTimeFields($timerState)
+    {
+        $html = "<label for='settimemm' class='select'>" . _("Set game clock to") . " " . _("min") . ":" . _("sec") . "</label>";
+        $html .= "<div class='ui-grid-b'>";
+        $html .= "<div class='ui-block-a'>\n";
+        $html .= "<select id='settimemm' name='settimemm' >";
+        for ($i = 0; $i <= 180; $i++) {
+            $selected = $i === (int) $timerState['mm'] ? " selected='selected'" : "";
+            $html .= "<option value='" . $i . "'" . $selected . ">" . $i . "</option>";
+        }
+        $html .= "</select>";
+        $html .= "</div>";
+        $html .= "<div class='ui-block-b'>\n";
+        $html .= "<select id='settimess' name='settimess' >";
+        for ($i = 0; $i <= 59; $i++) {
+            $selected = $i === (int) $timerState['ss'] ? " selected='selected'" : "";
+            $html .= "<option value='" . $i . "'" . $selected . ">" . sprintf("%02d", $i) . "</option>";
+        }
+        $html .= "</select>";
+        $html .= "</div>";
+        $html .= "</div>";
+        $html .= "<input type='submit' name='setgameclock' data-ajax='false' value='" . _("Set game clock") . "'/>";
+
+        return $html;
+    }
+}
+
 if (!function_exists('ScorekeeperClockControls')) {
     /**
      * Game clock status and control buttons posted to
@@ -119,26 +151,7 @@ if (!function_exists('ScorekeeperClockControls')) {
         if ($timerState['ongoing']) {
             if ($timerState['paused']) {
                 $html .= "<input type='submit' name='resumegame' data-ajax='false' value='" . _("Resume game clock") . "'/>";
-                $html .= "<label for='settimemm' class='select'>" . _("Set game clock to") . " " . _("min") . ":" . _("sec") . "</label>";
-                $html .= "<div class='ui-grid-b'>";
-                $html .= "<div class='ui-block-a'>\n";
-                $html .= "<select id='settimemm' name='settimemm' >";
-                for ($i = 0; $i <= 180; $i++) {
-                    $selected = $i === (int) $timerState['mm'] ? " selected='selected'" : "";
-                    $html .= "<option value='" . $i . "'" . $selected . ">" . $i . "</option>";
-                }
-                $html .= "</select>";
-                $html .= "</div>";
-                $html .= "<div class='ui-block-b'>\n";
-                $html .= "<select id='settimess' name='settimess' >";
-                for ($i = 0; $i <= 59; $i++) {
-                    $selected = $i === (int) $timerState['ss'] ? " selected='selected'" : "";
-                    $html .= "<option value='" . $i . "'" . $selected . ">" . sprintf("%02d", $i) . "</option>";
-                }
-                $html .= "</select>";
-                $html .= "</div>";
-                $html .= "</div>";
-                $html .= "<input type='submit' name='setgameclock' data-ajax='false' value='" . _("Set game clock") . "'/>";
+                $html .= ScorekeeperClockSetTimeFields($timerState);
             } else {
                 $html .= "<input type='submit' id='pausegame' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
             }

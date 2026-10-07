@@ -82,65 +82,87 @@ $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
 
+$action = "?view=addresult&amp;game=" . $gameId;
+$homeScore = intval($result['homescore']);
+$awayScore = intval($result['visitorscore']);
+
 if ($useGameClock && !$isFinal) {
-    $html .= "<form action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
-    $html .= ScorekeeperClockControls($timerState, "", intval($result['homescore']) === 0 && intval($result['visitorscore']) === 0);
+    $html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
+    $html .= "<div class='sk-clock-bar'>";
+    if ($timerState['ongoing']) {
+        $html .= "<span>" . ($timerState['paused'] ? _("Paused") : _("Running")) . "</span>";
+        if ($timerState['paused']) {
+            $html .= "<input type='submit' name='resumegame' data-ajax='false' value='" . _("Resume game clock") . "'/>";
+        } else {
+            $html .= "<input type='submit' id='pausegame' class='button-secondary' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
+        }
+    } else {
+        $html .= "<span>" . _("Clock not running") . "</span>";
+        $startLabel = $timerState['started'] ? _("Restart game clock") : _("Start game clock");
+        $restart = $timerState['started'] ? " data-confirm-restart='1'" : "";
+        $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'" . $restart . "/>";
+    }
+    $html .= "</div>\n";
+    if ($timerState['ongoing'] && $timerState['paused']) {
+        $html .= "<details class='sk-fold'><summary>" . _("Set game clock") . "</summary>\n";
+        $html .= ScorekeeperClockSetTimeFields($timerState);
+        $html .= "</details>\n";
+    }
+    if ($timerState['started'] && $homeScore === 0 && $awayScore === 0) {
+        $html .= "<input type='submit' class='button-secondary' name='resetgameclock' data-ajax='false' value='" . _("Reset game clock") . "'/>";
+    }
     $html .= "</form>\n";
 }
 
-$html .= "<form action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
-
-$html .= "<label for='home'>" . utf8entities($result['hometeamname']) . ":</label>";
-
-$html .= "<div class='ui-grid-b'>";
-$html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' inputmode='numeric' id='home' name='home' value='" . intval($result['homescore']) . "' min='0' maxlength='4' size='5'/>";
-$html .= "</div>";
-$html .= "<div class='ui-block-b'>\n";
-if (!$isFinal) {
-    $html .= "<input type='submit' form='scoretaps' name='homeplus' data-role='button' data-icon='plus' value='+1'/>";
+$html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
+$html .= "<div class='sk-score-cards'>";
+$teams = [
+    'home' => [$result['hometeamname'], $homeScore],
+    'away' => [$result['visitorteamname'], $awayScore],
+];
+foreach ($teams as $side => $team) {
+    $html .= "<div class='sk-score-card sk-score-card--" . $side . "'>";
+    $html .= "<div class='sk-score-team'>" . utf8entities($team[0]) . "</div>";
+    $html .= "<div class='sk-score-value'>" . $team[1] . "</div>";
+    if (!$isFinal) {
+        $html .= "<input type='submit' class='sk-score-plus' name='" . $side . "plus' data-ajax='false' value='+1'/>";
+        $html .= "<input type='submit' class='button-secondary' name='" . $side . "minus' data-ajax='false' value='-1'/>";
+    }
+    $html .= "</div>";
 }
-$html .= "</div>";
-$html .= "<div class='ui-block-c'>\n";
-if (!$isFinal) {
-    $html .= "<input type='submit' form='scoretaps' name='homeminus' data-role='button' data-icon='minus' value='-1'/>";
-}
-$html .= "</div>";
-$html .= "</div>";
-
-$html .= "<label for='away'>" . utf8entities($result['visitorteamname']) . ":</label>";
-$html .= "<div class='ui-grid-b'>";
-$html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' inputmode='numeric' id='away' name='away' value='" . intval($result['visitorscore']) . "' min='0' maxlength='4' size='5'/>";
-$html .= "</div>";
-$html .= "<div class='ui-block-b'>\n";
-if (!$isFinal) {
-    $html .= "<input type='submit' form='scoretaps' name='awayplus' data-role='button' data-icon='plus' value='+1'/>";
-}
-$html .= "</div>";
-$html .= "<div class='ui-block-c'>\n";
-if (!$isFinal) {
-    $html .= "<input type='submit' form='scoretaps' name='awayminus' data-role='button' data-icon='minus' value='-1'/>";
-}
-$html .= "</div>";
-$html .= "</div>";
+$html .= "</div>\n";
+$html .= "</form>\n";
 
 $html .= $info;
 
-if ($saveSucceeded) {
-    $html .= "<input type='submit' name='save'  data-ajax='false' value='" . _("Save again") . "'/>";
-    $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
-} else {
-    $html .= "<div class='action-row action-row--stacked action-row--spaced'>\n";
-    $html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
-    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
-    $html .= "</div>\n";
+if (!$isFinal) {
+    $html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
+    $html .= "<input type='hidden' name='home' value='" . $homeScore . "'/>";
+    $html .= "<input type='hidden' name='away' value='" . $awayScore . "'/>";
+    $html .= "<input type='submit' class='sk-score-final' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
+    $html .= "</form>\n";
+} elseif ($saveSucceeded) {
+    $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
 }
+
+// Typed scores are a correction path, so they stay folded away until needed.
+$html .= "<details class='sk-fold sk-score-edit'" . ($isFinal ? " open" : "") . ">";
+$html .= "<summary>" . _("Edit") . "</summary>\n";
+$html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
+$html .= "<div class='sk-score-edit-fields'>";
+$html .= "<label>" . utf8entities($result['hometeamname'])
+    . "<input type='number' inputmode='numeric' name='home' value='" . $homeScore . "' min='0' maxlength='4' size='5'/></label>";
+$html .= "<label>" . utf8entities($result['visitorteamname'])
+    . "<input type='number' inputmode='numeric' name='away' value='" . $awayScore . "' min='0' maxlength='4' size='5'/></label>";
+$html .= "</div>";
+$html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
+if ($isFinal) {
+    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
+}
+$html .= "</form>\n";
+$html .= "</details>\n";
+
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
-$html .= "</form>";
-// The tap buttons belong to this form through their form attribute, so Enter
-// in a score field still submits the main form's update.
-$html .= "<form id='scoretaps' action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'></form>\n";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;
