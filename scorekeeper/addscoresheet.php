@@ -209,7 +209,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         if (empty($errors) || isset($_POST['forceadd'])) {
             GameAddScoreEntry($uo_goal);
             $result = GameResult($gameId);
-            if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
+            if (!$isFinal && ($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
                 GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore'], false);
             }
             header("location:?view=addscoresheet&game=" . $gameId);
