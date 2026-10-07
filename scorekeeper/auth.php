@@ -72,10 +72,20 @@ if (!function_exists('ScorekeeperHandleClockPost')) {
     /**
      * Applies a posted game clock control (start, pause, resume, set, reset)
      * and redirects back to $view. Returns only when no control was posted.
+     * A final game is left alone: a stale page would otherwise reopen it.
      */
     function ScorekeeperHandleClockPost($gameId, $view)
     {
         $location = "location:?view=" . $view . "&game=" . (int) $gameId;
+        $controls = ['startgame', 'pausegame', 'resumegame', 'setgameclock', 'resetgameclock'];
+        if (!array_intersect($controls, array_keys($_POST))) {
+            return;
+        }
+        $stored = GameResult($gameId);
+        if (GameHasStarted($stored) && !$stored['isongoing']) {
+            header($location);
+            exit;
+        }
         if (isset($_POST['startgame'])) {
             unset($_SESSION['scorekeeper_no_game_clock'][$gameId]);
             GameTimeStart($gameId);
@@ -87,13 +97,8 @@ if (!function_exists('ScorekeeperHandleClockPost')) {
             $setmm = isset($_POST['settimemm']) ? intval($_POST['settimemm']) : 0;
             $setss = isset($_POST['settimess']) ? intval($_POST['settimess']) : 0;
             GameTimeSetElapsed($gameId, ($setmm * 60) + $setss);
-        } elseif (isset($_POST['resetgameclock'])) {
-            $result = GameResult($gameId);
-            if (intval($result['homescore']) === 0 && intval($result['visitorscore']) === 0) {
-                GameTimeReset($gameId);
-            }
-        } else {
-            return;
+        } elseif (intval($stored['homescore']) === 0 && intval($stored['visitorscore']) === 0) {
+            GameTimeReset($gameId);
         }
         header($location);
         exit;
