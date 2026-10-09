@@ -1515,7 +1515,12 @@ function GameApplyScoreTap($gameId, $home, $delta)
     return true;
 }
 
-function GameSetResult($gameId, $home, $away, $updatePools = true)
+/**
+ * $expected, when given as [home, away] (null for no score), is the score the
+ * caller showed: the result is saved only while the stored score still
+ * matches, so a stale page cannot finalize over a newer point.
+ */
+function GameSetResult($gameId, $home, $away, $updatePools = true, $expected = null)
 {
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         return false;
@@ -1538,6 +1543,22 @@ function GameSetResult($gameId, $home, $away, $updatePools = true)
             && $stored['timer_start'] === null && $stored['timer_pause_start'] === null
             && (int) $stored['timer_paused_duration'] === 0;
 
+        $expectedClause = "";
+        if ($expected !== null) {
+            $expectedClause = sprintf(
+                " AND homescore <=> %s AND visitorscore <=> %s",
+                $expected[0] === null ? "NULL" : (int) $expected[0],
+                $expected[1] === null ? "NULL" : (int) $expected[1],
+            );
+            if (
+                !is_array($stored)
+                || ($stored['homescore'] === null ? null : (int) $stored['homescore']) !== $expected[0]
+                || ($stored['visitorscore'] === null ? null : (int) $stored['visitorscore']) !== $expected[1]
+            ) {
+                return false;
+            }
+        }
+
         if ($unchanged) {
             // The recompute stays on this path, where it ran before the
             // guard existed: the guard is about not leaving a restore point
@@ -1554,12 +1575,16 @@ function GameSetResult($gameId, $home, $away, $updatePools = true)
         LogGameUpdate($gameId, "result: $home - $away");
         ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
+            "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'%s",
             DBEscapeString($home),
             DBEscapeString($away),
             DBEscapeString($gameId),
+            $expectedClause,
         );
         $result = DBQuery($query);
+        if ($expected !== null && DBAffectedRows() < 1) {
+            return false;
+        }
         ScoresheetHistoryRecord($gameId, "result", "update", [
             'home' => (int) $home,
             'away' => (int) $away,

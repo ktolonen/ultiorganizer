@@ -34,9 +34,20 @@ if (isset($_POST['save'])) {
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
+    // The score the page showed, so a point tapped on another device since
+    // then is not finalized over.
+    $expected = null;
+    if (isset($_POST['shownhome'], $_POST['shownaway'])) {
+        $expected = [
+            $_POST['shownhome'] === '' ? null : intval($_POST['shownhome']),
+            $_POST['shownaway'] === '' ? null : intval($_POST['shownaway']),
+        ];
+    }
     if (empty($info)) {
-        $ok = GameSetResult($gameId, $home, $away);
-        if ($ok) {
+        $ok = GameSetResult($gameId, $home, $away, true, $expected);
+        if (!$ok && $expected !== null) {
+            $info = "<p class='warning'>" . _("Result not saved: the score has changed since this page was opened.") . "</p>";
+        } elseif ($ok) {
             $game_result = GameResult($gameId);
             $saveSucceeded = true;
             $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
@@ -112,6 +123,8 @@ if ($isFinal) {
 } elseif (GameHasStarted($result)) {
     $html .= "<p class='sk-result-status sk-result-status--ongoing'>" . _("Game ongoing") . ": " . $homeScore . " - " . $awayScore . "</p>";
 }
+$html .= "<input type='hidden' name='shownhome' value='" . ($result['homescore'] === null ? "" : $homeScore) . "'/>";
+$html .= "<input type='hidden' name='shownaway' value='" . ($result['visitorscore'] === null ? "" : $awayScore) . "'/>";
 $html .= "<div class='sk-score-cards'>";
 $teams = [
     'home' => [$result['hometeamname'], $homeScore],

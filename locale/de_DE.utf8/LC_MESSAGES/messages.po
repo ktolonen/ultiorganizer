@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 20:11+0300\n"
+"POT-Creation-Date: 2026-10-09 20:37+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -845,7 +845,7 @@ msgstr "Zurück zur Spielernummerneingabe"
 msgid "Back to game list"
 msgstr "Zurück zur Spieleliste"
 
-#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:146
+#: scorekeeper/addplayerlists.php:262 scorekeeper/addresult.php:159
 #: scorekeeper/addscoresheet.php:468 scorekeeper/gameplay.php:128
 #: user/adddefensesheet.php:333 user/addscoresheet.php:831
 msgid "Back to game responsibilities"
@@ -1206,7 +1206,7 @@ msgstr ""
 msgid "Client Library version"
 msgstr "Version der Client-Bibliothek"
 
-#: scorekeeper/addresult.php:91 scorekeeper/auth.php:170
+#: scorekeeper/addresult.php:102 scorekeeper/auth.php:170
 msgid "Clock not running"
 msgstr "Uhr laeuft nicht"
 
@@ -2214,7 +2214,7 @@ msgstr "Gib unten dein neues Passwort ein."
 msgid "Equalization"
 msgstr "Vereinheitlichung"
 
-#: scorekeeper/addresult.php:44 scorekeeper/addresult.php:57
+#: scorekeeper/addresult.php:55 scorekeeper/addresult.php:68
 msgid "Error: Could not save result."
 msgstr "Fehler: Konnte Ergebnis nicht speichern"
 
@@ -2222,7 +2222,7 @@ msgstr "Fehler: Konnte Ergebnis nicht speichern"
 msgid "Error: unknown event."
 msgstr "Fehler: unbekanntes Ereignis."
 
-#: lib/game.functions.php:2814
+#: lib/game.functions.php:2853
 #, php-format
 msgid "Errors: %s."
 msgstr "Fehler: %s."
@@ -2521,7 +2521,7 @@ msgstr "Anleitung:"
 msgid "Final"
 msgstr "Endstand"
 
-#: scorekeeper/addresult.php:111 scorekeeper/addscoresheet.php:270
+#: scorekeeper/addresult.php:122 scorekeeper/addscoresheet.php:270
 #: scorekeeper/endgame.php:87
 msgid "Final result"
 msgstr "Endergebnis"
@@ -2881,12 +2881,12 @@ msgstr "Spielnotiz entfernt"
 msgid "Game official"
 msgstr "Spiel-Offizieller"
 
-#: scorekeeper/addresult.php:113 scorekeeper/addscoresheet.php:272
+#: scorekeeper/addresult.php:124 scorekeeper/addscoresheet.php:272
 #: user/addscoresheet.php:816
 msgid "Game ongoing"
 msgstr "Spiel läuft"
 
-#: scorekeeper/addresult.php:137
+#: scorekeeper/addresult.php:150
 msgid "Game ongoing, update scores"
 msgstr "Wenn das Spiel noch läuft, Spielstand aktualisieren"
 
@@ -2911,12 +2911,12 @@ msgstr "Spiel zurückgesetzt"
 msgid "Game responsibilities"
 msgstr "Ergebniseingabe"
 
-#: scorekeeper/addresult.php:42
+#: scorekeeper/addresult.php:53
 #, php-format
 msgid "Game result %s - %s saved!"
 msgstr "Ergebnis %s - %s gespeichert!"
 
-#: scorekeeper/addresult.php:55
+#: scorekeeper/addresult.php:66
 #, php-format
 msgid "Game result %s - %s updated!"
 msgstr "Spielergebnis zu %s - %s geändert!"
@@ -4752,7 +4752,7 @@ msgstr "Passwörter stimmen nicht überein"
 msgid "Pause"
 msgstr "Pause"
 
-#: lib/scoresheethistory.functions.php:595 scorekeeper/addresult.php:88
+#: lib/scoresheethistory.functions.php:595 scorekeeper/addresult.php:99
 #: scorekeeper/addspirittimeouts.php:104 scorekeeper/auth.php:177
 msgid "Pause game clock"
 msgstr "Spieluhr anhalten"
@@ -4775,7 +4775,7 @@ msgstr ""
 msgid "Pause: %s&thinsp;min."
 msgstr "Pause: %s&thinsp;min."
 
-#: scorekeeper/addresult.php:84 scorekeeper/auth.php:62
+#: scorekeeper/addresult.php:95 scorekeeper/auth.php:62
 #: scorekeeper/auth.php:167 user/scoresheethistory.php:222
 msgid "Paused"
 msgstr "Pausiert"
@@ -5035,7 +5035,7 @@ msgid "Points for %s must be 0-1000."
 msgstr "Punkte fuer %s muessen zwischen 0 und 1000 liegen."
 
 #: admin/seasonpoints.php:231 scorekeeper/addresult.php:35
-#: scorekeeper/addresult.php:51
+#: scorekeeper/addresult.php:62
 msgid "Points must be between 0 and 1000."
 msgstr "Punkte muessen zwischen 0 und 1000 liegen."
 
@@ -5435,7 +5435,7 @@ msgstr "Reservierung hinzugefügt"
 msgid "Reset"
 msgstr "Zurücksetzen"
 
-#: lib/scoresheethistory.functions.php:597 scorekeeper/addresult.php:101
+#: lib/scoresheethistory.functions.php:597 scorekeeper/addresult.php:112
 #: scorekeeper/auth.php:186
 msgid "Reset game clock"
 msgstr "Spieluhr zurücksetzen"
@@ -5508,7 +5508,7 @@ msgstr "Wiederhergestellt"
 
 #: gamecard.php:146 teamcard.php:819 admin/seasongames.php:244
 #: admin/tdtools.php:91 admin/tdtools.php:183
-#: lib/scoresheethistory.functions.php:554 scorekeeper/addresult.php:71
+#: lib/scoresheethistory.functions.php:554 scorekeeper/addresult.php:82
 #: scorekeeper/addscoresheet.php:293 scorekeeper/addscoresheet.php:459
 #: scorekeeper/respgames.php:220 user/adddefensesheet.php:63
 #: user/addplayerlists.php:275 user/addresult.php:13 user/addresult.php:27
@@ -5526,12 +5526,19 @@ msgstr "Ergebnis-Feed"
 msgid "Result cleared"
 msgstr "Ergebnis gelöscht"
 
-#: lib/game.functions.php:2811
+#: scorekeeper/addresult.php:49
+#, fuzzy
+msgid "Result not saved: the score has changed since this page was opened."
+msgstr ""
+"Spielbericht nicht gespeichert: Das Spiel hat sich geändert, seit diese "
+"Seite geöffnet wurde."
+
+#: lib/game.functions.php:2850
 #, php-format
 msgid "Results changed: %s."
 msgstr "Ergebnisse geändert: %s."
 
-#: lib/game.functions.php:2808
+#: lib/game.functions.php:2847
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
@@ -5540,7 +5547,7 @@ msgstr "Ergebnisse gelöscht: %s."
 msgid "Resume"
 msgstr "Fortsetzen"
 
-#: lib/scoresheethistory.functions.php:596 scorekeeper/addresult.php:86
+#: lib/scoresheethistory.functions.php:596 scorekeeper/addresult.php:97
 #: scorekeeper/addspirittimeouts.php:102 scorekeeper/auth.php:174
 msgid "Resume game clock"
 msgstr "Spieluhr fortsetzen"
@@ -5698,7 +5705,7 @@ msgstr "Ausführen"
 msgid "Run SQL"
 msgstr "SQL ausführen"
 
-#: scorekeeper/addresult.php:84 scorekeeper/auth.php:167
+#: scorekeeper/addresult.php:95 scorekeeper/auth.php:167
 #: user/scoresheethistory.php:222
 msgid "Running"
 msgstr "Laeuft"
@@ -5756,7 +5763,7 @@ msgstr "Änderungen speichern?"
 msgid "Save defenses"
 msgstr "Defenses speichern"
 
-#: scorekeeper/addresult.php:133 scorekeeper/addresult.php:166
+#: scorekeeper/addresult.php:146 scorekeeper/addresult.php:179
 #: scorekeeper/addscoresheet.php:463
 msgid "Save final result"
 msgstr "Endergebnis speichern"
@@ -6250,7 +6257,7 @@ msgstr "Zu primär ändern"
 msgid "Set default"
 msgstr "Als Standard festlegen"
 
-#: lib/scoresheethistory.functions.php:590 scorekeeper/addresult.php:96
+#: lib/scoresheethistory.functions.php:590 scorekeeper/addresult.php:107
 #: scorekeeper/auth.php:134
 msgid "Set game clock"
 msgstr "Spieluhr setzen"
@@ -6259,7 +6266,7 @@ msgstr "Spieluhr setzen"
 msgid "Set game clock to"
 msgstr "Spieluhr setzen auf"
 
-#: scorekeeper/addresult.php:141
+#: scorekeeper/addresult.php:154
 msgid "Set rosters"
 msgstr "Kader festlegen"
 
@@ -7481,7 +7488,7 @@ msgstr "Defenses gesamt"
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:3187
+#: admin/seasonpoints.php:258 lib/game.functions.php:3226
 msgid "Total points"
 msgstr "Gesamtpunkte"
 
