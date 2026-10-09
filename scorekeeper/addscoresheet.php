@@ -209,8 +209,12 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         if (empty($errors) || isset($_POST['forceadd'])) {
             GameAddScoreEntry($uo_goal);
             $result = GameResult($gameId);
-            if (!$isFinal && ($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
-                GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore'], false);
+            // Per team, so a point tapped on the Result page for the other
+            // team is kept rather than lowered to its goal-row count.
+            $home = max($uo_goal['homescore'], intval($result['homescore']));
+            $away = max($uo_goal['visitorscore'], intval($result['visitorscore']));
+            if (!$isFinal && ($home > intval($result['homescore']) || $away > intval($result['visitorscore']))) {
+                GameUpdateResult($gameId, $home, $away, false);
             }
             header("location:?view=addscoresheet&game=" . $gameId);
             exit;
