@@ -3300,7 +3300,8 @@ function GameTimeStart($gameId)
     }
 
     $query = sprintf(
-        "UPDATE uo_game SET hasstarted = 1, isongoing = 1, timer_start = %d, timer_pause_start = NULL, timer_paused_duration = 0 WHERE game_id = %d",
+        "UPDATE uo_game SET hasstarted = 1, isongoing = 1, timer_start = %d, timer_pause_start = NULL, timer_paused_duration = 0
+		WHERE game_id = %d AND (hasstarted = 0 OR isongoing = 1)",
         time(),
         $gameId,
     );
