@@ -1489,14 +1489,28 @@ function GameApplyScoreTap($gameId, $home, $delta)
         (int) $gameId,
     ));
     if ((int) $stored['homescore'] === 0 && (int) $stored['visitorscore'] === 0 && empty($stored['timer_start'])) {
-        GameClearResult($gameId);
-    } else {
-        ScoresheetHistoryRecord($gameId, "result", "update", [
-            'home' => (int) $stored['homescore'],
-            'away' => (int) $stored['visitorscore'],
-            'state' => "ongoing",
-        ]);
+        // Conditional, so a tap or clock start landing after the read is kept.
+        ScoresheetHistorySnapshotIfNeeded($gameId);
+        DBExecute(sprintf(
+            "UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing=0, hasstarted=0,
+				timer_pause_start=NULL, timer_paused_duration=0
+			WHERE game_id=%d AND homescore=0 AND visitorscore=0 AND isongoing=1 AND timer_start IS NULL",
+            (int) $gameId,
+        ));
+        if (DBAffectedRows() > 0) {
+            LogGameUpdate($gameId, "result cleared");
+            ScoresheetHistoryRecord($gameId, "result", "clear", []);
+            $poolId = GamePool($gameId);
+            ResolvePoolStandings($poolId);
+            PoolResolvePlayed($poolId);
+            return true;
+        }
     }
+    ScoresheetHistoryRecord($gameId, "result", "update", [
+        'home' => (int) $stored['homescore'],
+        'away' => (int) $stored['visitorscore'],
+        'state' => "ongoing",
+    ]);
 
     return true;
 }
@@ -3261,7 +3275,8 @@ function GameTimeReset($gameId)
     }
 
     $query = sprintf(
-        "UPDATE uo_game SET timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0, isongoing=0, hasstarted=0 WHERE game_id=%d",
+        "UPDATE uo_game SET timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0, isongoing=0, hasstarted=0
+		WHERE game_id=%d AND (hasstarted=0 OR isongoing=1)",
         $gameId,
     );
 
