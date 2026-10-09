@@ -1,17 +1,17 @@
-# Scoreboard
+# Score display
 
-`scoreboard/` is a public, no-login, full-screen display of one game's score with team names, meant for a screen or tablet at the field. It reads game data only and writes nothing; the session carries only the interface language.
+`scoredisplay/` is a public, no-login, full-screen display of one game's score with team names, meant for a screen or tablet at the field. It reads game data only and writes nothing; the session carries only the interface language.
 
 ## Entrypoint
 
-- `scoreboard/index.php`: bootstrap, the game picker and board shell, and the JSON feed
+- `scoredisplay/index.php`: bootstrap, the game picker and board shell, and the JSON feed
   (`?json=list`, `?json=game&game=ID`).
-- `scoreboard/scoreboard.css`: black background, white names, yellow scores for daylight readability.
+- `scoredisplay/scoredisplay.css`: black background, white names, yellow scores for daylight readability.
   Sizes use `vmin`, so the board scales to any screen; portrait screens stack the teams. Each score
-  fills the space its team name leaves (container query units on `.sb-score-box`), and the script
+  fills the space its team name leaves (container query units on `.sd-score-box`), and the script
   gives both scores the smaller of the two sizes.
-- `script/scoreboard.js`: ES5 client. Picker, polling, name and score fitting, fullscreen, and screen wake lock.
-- `scoreboard/` is a required path in `docs/release/build-release.sh`.
+- `script/scoredisplay.js`: ES5 client. Picker, polling, name and score fitting, fullscreen, and screen wake lock.
+- `scoredisplay/` is a required path in `docs/release/build-release.sh`.
 
 ## Behavior
 
@@ -28,4 +28,4 @@
   ends, which clears the timer. Between polls the client ticks from the last reading, re-anchoring
   only on a pause change or more than a second of drift. The game feed bypasses the persistent
   cache so a pause shows up on the next poll.
-- Data access lives in `ScoreboardGames()` and `ScoreboardGame()` in `lib/game.functions.php`.
+- Data access lives in `ScoreDisplayGames()` and `ScoreDisplayGame()` in `lib/game.functions.php`.

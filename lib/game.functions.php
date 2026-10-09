@@ -1139,13 +1139,13 @@ function GameInfo($gameId)
 
 
 /**
- * Games for the public scoreboard: ongoing games first, then the games still
+ * Games for the public score display: ongoing games first, then the games still
  * to start today in the event's local time, in time order. Only public events
  * not in maintenance are listed, and game times are the event's local time.
  *
  * @return array<int, array<string, mixed>>
  */
-function ScoreboardGames()
+function ScoreDisplayGames()
 {
     $rows = DBQueryToArrayUncached(
         "SELECT g.game_id, g.time, g.isongoing, g.hasstarted, g.homescore, g.visitorscore,
@@ -1190,12 +1190,12 @@ function ScoreboardGames()
 }
 
 /**
- * Current score line of one game for the public scoreboard, or null when the
+ * Current score line of one game for the public score display, or null when the
  * game does not exist or its event is not public or is in maintenance.
  *
  * @return array<string, mixed>|null
  */
-function ScoreboardGame($gameId)
+function ScoreDisplayGame($gameId)
 {
     $row = DBQueryToRowUncached(sprintf(
         "SELECT g.game_id, g.homescore, g.visitorscore, g.isongoing, g.hasstarted, g.time,

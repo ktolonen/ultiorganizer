@@ -1,19 +1,19 @@
-/* Scoreboard: game picker and full-screen score display. ES5. */
+/* Score display: game picker and full-screen score display. ES5. */
 (function () {
   'use strict';
 
-  var i18n = window.SCOREBOARD_I18N || {};
+  var i18n = window.SCOREDISPLAY_I18N || {};
   var LIST_MS = 15000;
   var GAME_MS = 3000;
-  var picker = document.getElementById('sb-picker');
-  var board = document.getElementById('sb-board');
-  var listEl = document.getElementById('sb-list');
+  var picker = document.getElementById('sd-picker');
+  var board = document.getElementById('sd-board');
+  var listEl = document.getElementById('sd-list');
   var timer = null;
   var generation = 0; // bumped by route(), so replies to an earlier view are dropped
   var lastScores = null;
   var flashTimers = {};
   var wakeLock = null;
-  var clockEl = document.getElementById('sb-clock');
+  var clockEl = document.getElementById('sd-clock');
   var clockTick = null;
   var clockAnchor = null; // {elapsed, at, paused}
 
@@ -66,14 +66,14 @@
     var wrap = el('section');
     wrap.appendChild(el('h2', '', title));
     games.forEach(function (game) {
-      var button = el('button', 'sb-game');
+      var button = el('button', 'sd-game');
       button.type = 'button';
       var label = (game.ongoing ? '' : game.time + '  ') + game.home + ' - ' + game.visitor;
-      button.appendChild(el('span', 'sb-game-name', label));
+      button.appendChild(el('span', 'sd-game-name', label));
       if (game.ongoing) {
-        button.appendChild(el('span', 'sb-game-score', game.homescore + ' - ' + game.visitorscore));
+        button.appendChild(el('span', 'sd-game-score', game.homescore + ' - ' + game.visitorscore));
       } else if (game.place) {
-        button.appendChild(el('span', 'sb-game-place', game.place));
+        button.appendChild(el('span', 'sd-game-place', game.place));
       }
       button.onclick = function () {
         window.location.hash = 'game=' + game.id;
@@ -126,11 +126,11 @@
   // Fit both names, then give both scores the smaller of their sizes: each
   // score fills what its name leaves, and a wrapped name leaves less.
   function fitNames() {
-    var scores = document.querySelectorAll('#sb-board .sb-score');
+    var scores = document.querySelectorAll('#sd-board .sd-score');
     var size = Infinity;
     var i;
-    fitName(document.querySelector('#sb-home .sb-name'));
-    fitName(document.querySelector('#sb-visitor .sb-name'));
+    fitName(document.querySelector('#sd-home .sd-name'));
+    fitName(document.querySelector('#sd-visitor .sd-name'));
     for (i = 0; i < scores.length; i++) {
       scores[i].style.fontSize = '';
       size = Math.min(size, parseFloat(window.getComputedStyle(scores[i]).fontSize));
@@ -142,17 +142,17 @@
 
   function setTeam(id, name, score, changed) {
     var team = document.getElementById(id);
-    var nameEl = team.querySelector('.sb-name');
+    var nameEl = team.querySelector('.sd-name');
     if (nameEl.textContent !== name) {
       nameEl.textContent = name;
       fitNames();
     }
-    team.querySelector('.sb-score').textContent = score;
+    team.querySelector('.sd-score').textContent = score;
     if (changed) {
-      team.className = 'sb-team sb-changed';
+      team.className = 'sd-team sd-changed';
       window.clearTimeout(flashTimers[id]);
       flashTimers[id] = window.setTimeout(function () {
-        team.className = 'sb-team';
+        team.className = 'sd-team';
       }, 4000);
     }
   }
@@ -200,7 +200,7 @@
     if (wasHidden) {
       fitNames();
     }
-    clockEl.className = paused ? 'sb-paused' : '';
+    clockEl.className = paused ? 'sd-paused' : '';
     drawClock();
     if (!paused && !clockTick) {
       clockTick = window.setInterval(drawClock, 250);
@@ -217,8 +217,8 @@
     setClock(data.clock, sampledAt);
     var scores = data.homescore + '-' + data.visitorscore;
     var changed = lastScores !== null && lastScores !== scores;
-    setTeam('sb-home', data.home, data.homescore, changed && lastScores.split('-')[0] !== String(data.homescore));
-    setTeam('sb-visitor', data.visitor, data.visitorscore, changed && lastScores.split('-')[1] !== String(data.visitorscore));
+    setTeam('sd-home', data.home, data.homescore, changed && lastScores.split('-')[0] !== String(data.homescore));
+    setTeam('sd-visitor', data.visitor, data.visitorscore, changed && lastScores.split('-')[1] !== String(data.visitorscore));
     lastScores = scores;
   }
 
@@ -249,9 +249,9 @@
   function route() {
     generation++;
     stop();
-    ['sb-home', 'sb-visitor'].forEach(function (team) {
+    ['sd-home', 'sd-visitor'].forEach(function (team) {
       window.clearTimeout(flashTimers[team]);
-      document.getElementById(team).className = 'sb-team';
+      document.getElementById(team).className = 'sd-team';
     });
     stopClock();
     var id = selectedGame();
@@ -268,10 +268,10 @@
     }
   }
 
-  document.getElementById('sb-back').onclick = function () {
+  document.getElementById('sd-back').onclick = function () {
     window.location.hash = '';
   };
-  document.getElementById('sb-full').onclick = function () {
+  document.getElementById('sd-full').onclick = function () {
     if (document.fullscreenElement) {
       document.exitFullscreen();
     } else if (document.documentElement.requestFullscreen) {

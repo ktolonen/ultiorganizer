@@ -360,7 +360,7 @@ required_paths=(
     "locale"
     "login"
     "plugins"
-    "scoreboard"
+    "scoredisplay"
     "scorekeeper"
     "script"
     "spiritkeeper"

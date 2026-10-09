@@ -7,25 +7,25 @@ html, body {
     font-family: Arial, Helvetica, sans-serif;
 }
 
-#sb-picker {
+#sd-picker {
     box-sizing: border-box;
     max-width: 60rem;
     margin: 0 auto;
     padding: 1rem;
 }
 
-#sb-picker h1 {
+#sd-picker h1 {
     font-size: 2rem;
 }
 
-#sb-picker h2 {
+#sd-picker h2 {
     margin: 1.5rem 0 0.5rem;
     font-size: 1.25rem;
     color: #ffeb00;
     text-transform: uppercase;
 }
 
-.sb-game {
+.sd-game {
     display: flex;
     justify-content: space-between;
     gap: 1rem;
@@ -42,23 +42,23 @@ html, body {
     cursor: pointer;
 }
 
-.sb-game:hover,
-.sb-game:focus {
+.sd-game:hover,
+.sd-game:focus {
     background: #ffeb00;
     color: #000;
 }
 
-.sb-game-score {
+.sd-game-score {
     font-weight: bold;
     white-space: nowrap;
 }
 
-.sb-link {
+.sd-link {
     color: #ffeb00;
     font-size: 1.25rem;
 }
 
-#sb-board {
+#sd-board {
     position: fixed;
     inset: 0;
     display: grid;
@@ -67,7 +67,7 @@ html, body {
     background: #000;
 }
 
-#sb-clock {
+#sd-clock {
     grid-column: 1 / -1;
     padding: 1vmin 0;
     border-bottom: 1vmin solid #fff;
@@ -78,26 +78,26 @@ html, body {
     font-variant-numeric: tabular-nums;
 }
 
-#sb-clock[hidden] {
+#sd-clock[hidden] {
     display: none;
 }
 
 /* A paused clock pulses so it does not read as a frozen display. */
-#sb-clock.sb-paused {
-    animation: sb-pulse 1.5s ease-in-out infinite;
+#sd-clock.sd-paused {
+    animation: sd-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes sb-pulse {
+@keyframes sd-pulse {
     50% {
         opacity: 0.3;
     }
 }
 
-#sb-board[hidden] {
+#sd-board[hidden] {
     display: none;
 }
 
-.sb-team {
+.sd-team {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -110,16 +110,16 @@ html, body {
 
 /* Fixed cells, so a hidden clock leaves an empty auto row rather than
    pulling the teams into it. */
-#sb-home {
+#sd-home {
     grid-area: 2 / 1;
 }
 
-#sb-visitor {
+#sd-visitor {
     grid-area: 2 / 2;
     border-left: 1vmin solid #fff;
 }
 
-.sb-name {
+.sd-name {
     max-width: 100%;
     font-size: 9vmin;
     font-weight: bold;
@@ -129,7 +129,7 @@ html, body {
 
 /* The score fills what the name leaves of its half: its size follows this
    box, which shrinks for the clock row or a wrapped name. */
-.sb-score-box {
+.sd-score-box {
     display: flex;
     flex: 1 1 0;
     align-items: center;
@@ -139,7 +139,7 @@ html, body {
     container-type: size;
 }
 
-.sb-score {
+.sd-score {
     font-size: 45vmin;
     font-size: min(115cqh, 75cqw);
     font-weight: bold;
@@ -148,14 +148,14 @@ html, body {
     font-variant-numeric: tabular-nums;
 }
 
-.sb-changed .sb-score {
+.sd-changed .sd-score {
     background: #ffeb00;
     color: #000;
     padding: 0 3vmin;
     border-radius: 3vmin;
 }
 
-#sb-controls {
+#sd-controls {
     position: fixed;
     right: 1rem;
     bottom: 1rem;
@@ -164,12 +164,12 @@ html, body {
     opacity: 0.35;
 }
 
-#sb-controls:hover,
-#sb-controls:focus-within {
+#sd-controls:hover,
+#sd-controls:focus-within {
     opacity: 1;
 }
 
-#sb-controls button {
+#sd-controls button {
     padding: 0.6rem 1rem;
     border: 2px solid #fff;
     border-radius: 0.4rem;
@@ -181,30 +181,30 @@ html, body {
 
 /* Portrait screens stack the teams. */
 @media (orientation: portrait) {
-    #sb-board {
+    #sd-board {
         grid-template-columns: 1fr;
         grid-template-rows: auto 1fr 1fr;
     }
 
-    #sb-clock {
+    #sd-clock {
         font-size: min(14vh, 34vw);
     }
 
-    #sb-home {
+    #sd-home {
         grid-area: 2 / 1;
     }
 
-    #sb-visitor {
+    #sd-visitor {
         grid-area: 3 / 1;
         border-left: 0;
         border-top: 1vmin solid #fff;
     }
 
-    .sb-name {
+    .sd-name {
         font-size: min(6vh, 11vw);
     }
 
-    .sb-score {
+    .sd-score {
         font-size: min(30vh, 55vw);
         font-size: min(115cqh, 75cqw);
     }

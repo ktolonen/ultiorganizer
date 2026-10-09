@@ -22,19 +22,19 @@ setSessionLocale();
 session_write_close();
 
 // Anonymous display, so there is no administrator to let through. Events in
-// maintenance are left out of the scoreboard queries.
+// maintenance are left out of the score display queries.
 if (SoftMaintenanceMode()) {
     RenderSoftMaintenanceResponse();
 }
 
-// JSON feed polled by script/scoreboard.js.
+// JSON feed polled by script/scoredisplay.js.
 $feed = $_GET['json'] ?? '';
 if ($feed !== '') {
     header('Content-Type: application/json; charset=utf-8');
     header('Cache-Control: no-store');
     if ($feed === 'list') {
         $games = [];
-        foreach (ScoreboardGames() as $game) {
+        foreach (ScoreDisplayGames() as $game) {
             $games[] = [
                 'id' => (int) $game['game_id'],
                 'home' => $game['home'],
@@ -50,7 +50,7 @@ if ($feed !== '') {
     } else {
         // A pause must not show up seconds late on the clock.
         DisablePersistentCacheForRequest();
-        $game = ScoreboardGame($_GET['game'] ?? 0);
+        $game = ScoreDisplayGame($_GET['game'] ?? 0);
         if ($game === null) {
             http_response_code(404);
             echo json_encode(['error' => 'not found']);
@@ -93,24 +93,24 @@ echo "<head>\n";
 echo "<meta charset='UTF-8'/>\n";
 echo "<meta name='viewport' content='width=device-width, initial-scale=1, viewport-fit=cover'/>\n";
 echo "<link rel='icon' type='image/png' href='" . utf8entities($favicon) . "'/>\n";
-echo "<title>" . utf8entities(_("Scoreboard")) . "</title>\n";
-echo "<link rel='stylesheet' href='scoreboard.css' type='text/css'/>\n";
+echo "<title>" . utf8entities(_("Score display")) . "</title>\n";
+echo "<link rel='stylesheet' href='scoredisplay.css' type='text/css'/>\n";
 echo "</head>\n";
 echo "<body>\n";
-echo "<main id='sb-picker'>\n";
-echo "<h1>" . utf8entities(_("Scoreboard")) . "</h1>\n";
-echo "<div id='sb-list'></div>\n";
-echo "<p><a class='sb-link' href='" . BASEURL . "/'>" . utf8entities(_("Ultiorganizer")) . "</a></p>\n";
+echo "<main id='sd-picker'>\n";
+echo "<h1>" . utf8entities(_("Score display")) . "</h1>\n";
+echo "<div id='sd-list'></div>\n";
+echo "<p><a class='sd-link' href='" . BASEURL . "/'>" . utf8entities(_("Ultiorganizer")) . "</a></p>\n";
 echo "</main>\n";
-echo "<main id='sb-board' hidden>\n";
-echo "<div id='sb-clock' hidden></div>\n";
-echo "<div class='sb-team' id='sb-home'><div class='sb-name'></div><div class='sb-score-box'><div class='sb-score'>0</div></div></div>\n";
-echo "<div class='sb-team' id='sb-visitor'><div class='sb-name'></div><div class='sb-score-box'><div class='sb-score'>0</div></div></div>\n";
-echo "<div id='sb-controls'>\n";
-echo "<button type='button' id='sb-back'>" . utf8entities(_("Games")) . "</button>\n";
-echo "<button type='button' id='sb-full'>" . utf8entities(_("Fullscreen")) . "</button>\n";
+echo "<main id='sd-board' hidden>\n";
+echo "<div id='sd-clock' hidden></div>\n";
+echo "<div class='sd-team' id='sd-home'><div class='sd-name'></div><div class='sd-score-box'><div class='sd-score'>0</div></div></div>\n";
+echo "<div class='sd-team' id='sd-visitor'><div class='sd-name'></div><div class='sd-score-box'><div class='sd-score'>0</div></div></div>\n";
+echo "<div id='sd-controls'>\n";
+echo "<button type='button' id='sd-back'>" . utf8entities(_("Games")) . "</button>\n";
+echo "<button type='button' id='sd-full'>" . utf8entities(_("Fullscreen")) . "</button>\n";
 echo "</div>\n";
 echo "</main>\n";
-echo "<script>var SCOREBOARD_I18N = " . json_encode($i18n) . ";</script>\n";
-echo "<script src='../script/scoreboard.js'></script>\n";
+echo "<script>var SCOREDISPLAY_I18N = " . json_encode($i18n) . ";</script>\n";
+echo "<script src='../script/scoredisplay.js'></script>\n";
 echo "</body>\n</html>\n";

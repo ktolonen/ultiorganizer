@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-07 23:15+0300\n"
+"POT-Creation-Date: 2026-10-09 19:52+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -2701,7 +2701,7 @@ msgstr "Alkaen/asti"
 msgid "Frontpage"
 msgstr "Etusivu"
 
-#: scoreboard/index.php:87 scoreboard/index.php:111
+#: scoredisplay/index.php:87 scoredisplay/index.php:111
 msgid "Fullscreen"
 msgstr ""
 
@@ -2947,7 +2947,7 @@ msgstr "Yhteenveto pelin kulusta"
 #: admin/seasonstats.php:35 admin/seriesgames.php:31 admin/seriesgames.php:41
 #: admin/stats.php:138 ext/poolscoreboard.php:40 ext/teamscoreboard.php:55
 #: lib/common.functions.php:1691 lib/search.functions.php:787
-#: scoreboard/index.php:86 scoreboard/index.php:110
+#: scoredisplay/index.php:86 scoredisplay/index.php:110
 msgid "Games"
 msgstr "Pelit"
 
@@ -4314,7 +4314,7 @@ msgstr "Ei vastuupelejä"
 
 #: games.php:290 cust/default/pdfschedule.php:422
 #: cust/default/pdfschedule.php:424 ext/teamcoming.php:39 ext/teamplayed.php:39
-#: scoreboard/index.php:85
+#: scoredisplay/index.php:85
 msgid "No games"
 msgstr "Ei pelejä"
 
@@ -4530,7 +4530,7 @@ msgstr "Yksi yksinkertainen pisteytys"
 
 #: poolstatus.php:913 poolstatus.php:915 admin/seasongames.php:190
 #: lib/scoresheethistory.functions.php:547 lib/timetable.functions.php:711
-#: lib/timetable.functions.php:713 scoreboard/index.php:83
+#: lib/timetable.functions.php:713 scoredisplay/index.php:83
 #: scorekeeper/respgames.php:214 user/scoresheethistory.php:234
 msgid "Ongoing"
 msgstr "Kesken"
@@ -5818,12 +5818,15 @@ msgstr "Tilanne"
 msgid "Score counter"
 msgstr "Pistelaskuri"
 
+#: menufunctions.php:618 scoredisplay/index.php:96 scoredisplay/index.php:101
+msgid "Score display"
+msgstr "Tulostaulu"
+
 #: clubcard.php:155 clubcard.php:184 countrycard.php:40 countrycard.php:67
-#: gamecard.php:205 menufunctions.php:618 poolstatus.php:182 poolstatus.php:220
-#: poolstatus.php:222 scorestatus.php:10 scorestatus.php:47
-#: seriesstatus.php:322 teams.php:124 teams.php:147 scoreboard/index.php:96
-#: scoreboard/index.php:101 scorekeeper/gameplay.php:125
-#: scorekeeper/gameplay.php:126 scorekeeper/scoreboard.php:12
+#: gamecard.php:205 poolstatus.php:182 poolstatus.php:220 poolstatus.php:222
+#: scorestatus.php:10 scorestatus.php:47 seriesstatus.php:322 teams.php:124
+#: teams.php:147 scorekeeper/gameplay.php:125 scorekeeper/gameplay.php:126
+#: scorekeeper/scoreboard.php:12
 msgid "Scoreboard"
 msgstr "Pistepörssi"
 
@@ -7552,7 +7555,7 @@ msgstr "Ultimate.fi"
 #: ext/countrystatus.php:25 ext/eventpools.php:23 ext/poolscoreboard.php:27
 #: ext/poolstatus.php:29 ext/teamcoming.php:29 ext/teamplayed.php:30
 #: ext/teamscoreboard.php:43 ext/tournament.php:27 lib/user.functions.php:1685
-#: lib/user.functions.php:1746 scoreboard/index.php:103
+#: lib/user.functions.php:1746 scoredisplay/index.php:103
 #: scorekeeper/index.php:135 spiritkeeper/index.php:113
 #: timekeeper/index.php:190
 msgid "Ultiorganizer"
@@ -7638,7 +7641,7 @@ msgstr "Tilannevedoksen versiota ei tueta."
 msgid "Unsupported language:"
 msgstr "Ei tuettu kieli:"
 
-#: scoreboard/index.php:84
+#: scoredisplay/index.php:84
 msgid "Upcoming"
 msgstr ""
 
