@@ -28,8 +28,9 @@
     return node;
   }
 
-  // done(data, sampledAt): sampledAt estimates when the server read the data,
-  // as the midpoint of the request round trip.
+  // done(data, sampledAt, status): sampledAt estimates when the server read
+  // the data, as the midpoint of the request round trip. status is 0 when the
+  // request failed, so the caller can tell a network error from a reply.
   function getJson(url, done) {
     var xhr = new XMLHttpRequest();
     var sentAt = Date.now();
@@ -42,10 +43,10 @@
       } catch (err) { // eslint-disable-line no-unused-vars
         data = null;
       }
-      done(xhr.status === 200 ? data : null, (sentAt + Date.now()) / 2);
+      done(xhr.status === 200 ? data : null, (sentAt + Date.now()) / 2, xhr.status);
     };
     xhr.onerror = xhr.ontimeout = function () {
-      done(null);
+      done(null, 0, 0);
     };
     xhr.send();
   }
@@ -103,11 +104,12 @@
 
   function pollList() {
     var gen = generation;
-    getJson('?json=list', function (data) {
+    getJson('?json=list', function (data, sampledAt, status) {
       if (gen !== generation) {
         return;
       }
-      renderList(data);
+      // Maintenance hides the games; a network error keeps the last list.
+      renderList(status === 503 ? {games: []} : data);
       timer = window.setTimeout(pollList, LIST_MS);
     });
   }
@@ -224,8 +226,14 @@
 
   function pollGame(id) {
     var gen = generation;
-    getJson('?json=game&game=' + id, function (data, sampledAt) {
+    getJson('?json=game&game=' + id, function (data, sampledAt, status) {
       if (gen !== generation) {
+        return;
+      }
+      // The game is no longer public, so its last score must not stay on
+      // screen. A network error keeps the last reading.
+      if (status === 404 || status === 503) {
+        window.location.hash = '';
         return;
       }
       renderGame(data, sampledAt);
