@@ -1572,7 +1572,6 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $expected = n
             return true;
         }
 
-        LogGameUpdate($gameId, "result: $home - $away");
         ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
             "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'%s",
@@ -1585,6 +1584,7 @@ function GameSetResult($gameId, $home, $away, $updatePools = true, $expected = n
         if ($expected !== null && DBAffectedRows() < 1) {
             return false;
         }
+        LogGameUpdate($gameId, "result: $home - $away");
         ScoresheetHistoryRecord($gameId, "result", "update", [
             'home' => (int) $home,
             'away' => (int) $away,
