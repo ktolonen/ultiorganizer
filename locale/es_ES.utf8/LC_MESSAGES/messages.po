@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-09 19:52+0300\n"
+"POT-Creation-Date: 2026-10-09 20:11+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -238,8 +238,8 @@ msgstr ""
 "Acreditar jugadores contra la base de datos de licencias utilizando las "
 "condiciones seleccionadas."
 
-#: menufunctions.php:688 menufunctions.php:703 menufunctions.php:760
-#: menufunctions.php:772 admin/accreditation.php:8 admin/accreditation.php:64
+#: menufunctions.php:693 menufunctions.php:708 menufunctions.php:765
+#: menufunctions.php:777 admin/accreditation.php:8 admin/accreditation.php:64
 #: admin/accreditation.php:150
 msgid "Accreditation"
 msgstr "Acreditación"
@@ -446,7 +446,7 @@ msgstr "Puntos adicionales después del límite de tiempo"
 msgid "Address"
 msgstr "Dirección"
 
-#: menufunctions.php:649
+#: menufunctions.php:654
 msgid "Admin Help"
 msgstr "Ayuda de Administrador"
 
@@ -658,6 +658,10 @@ msgstr "Aplicar traducciones masivas"
 #: admin/translations.php:500
 msgid "Apply the bulk translations from the text area?"
 msgstr "¿Aplicar las traducciones masivas del área de texto?"
+
+#: menufunctions.php:606
+msgid "Apps"
+msgstr "Aplicaciones"
 
 #: admin/seasonadmin.php:111
 msgid "Archive statistics"
@@ -1210,10 +1214,6 @@ msgstr ""
 msgid "Client Library version"
 msgstr "Versión de la biblioteca del cliente"
 
-#: menufunctions.php:607
-msgid "Client access"
-msgstr "Acceso de cliente"
-
 #: scorekeeper/addresult.php:91 scorekeeper/auth.php:170
 msgid "Clock not running"
 msgstr "El reloj no está corriendo"
@@ -1403,7 +1403,7 @@ msgstr "Contacto con Organizador del evento"
 msgid "Contact to Teams"
 msgstr "Contacto con Equipos"
 
-#: clubcard.php:77 menufunctions.php:798 user/clubprofile.php:178
+#: clubcard.php:77 menufunctions.php:803 user/clubprofile.php:178
 #: user/contacts.php:6 user/contacts.php:18
 msgid "Contacts"
 msgstr "Contactos"
@@ -1595,7 +1595,7 @@ msgstr "DQ"
 msgid "Data"
 msgstr "Datos"
 
-#: menufunctions.php:610 ext/export.php:13
+#: menufunctions.php:623 ext/export.php:13
 msgid "Data export"
 msgstr "Exportación de datos"
 
@@ -1941,7 +1941,7 @@ msgstr "Estadísticas de división:"
 msgid "Division(s)"
 msgstr "División(es)"
 
-#: menufunctions.php:674 teams.php:42 admin/seasonadmin.php:73
+#: menufunctions.php:679 teams.php:42 admin/seasonadmin.php:73
 #: admin/seasonseries.php:13 admin/seasonseries.php:67
 msgid "Divisions"
 msgstr "Divisiones"
@@ -2130,6 +2130,10 @@ msgstr "Dirección de correo electrónico ya registrada"
 msgid "Email cannot be empty"
 msgstr "El correo electrónico no puede estar vacío"
 
+#: menufunctions.php:620
+msgid "Embed and export"
+msgstr "Insertar y exportar"
+
 #: ext/index.php:83
 msgid "Embedding Ultiorganizer into other pages"
 msgstr "Incrustar Ultiorganizer en otras páginas"
@@ -2237,7 +2241,7 @@ msgstr "Error: evento desconocido."
 msgid "Errors: %s."
 msgstr "Errores: %s."
 
-#: clubcard.php:173 countrycard.php:86 countrycard.php:94 menufunctions.php:673
+#: clubcard.php:173 countrycard.php:86 countrycard.php:94 menufunctions.php:678
 #: playercard.php:255 playercard.php:435 statistics.php:50 statistics.php:103
 #: statistics.php:269 teamcard.php:419 teamcard.php:620
 #: admin/accreditation.php:136 admin/addreservation.php:210
@@ -2554,7 +2558,7 @@ msgstr "Puntuación final"
 msgid "Final scores"
 msgstr "Puntajes finales"
 
-#: menufunctions.php:516 menufunctions.php:684 seasonlist.php:33 teams.php:49
+#: menufunctions.php:516 menufunctions.php:689 seasonlist.php:33 teams.php:49
 #: admin/finalstandings.php:15 admin/finalstandings.php:21
 #: admin/finalstandings.php:42 admin/finalstandings.php:107
 #: admin/finalstandings.php:120 admin/seasonadmin.php:125 admin/stats.php:155
@@ -2919,7 +2923,7 @@ msgstr "Puntos de juego"
 msgid "Game reset"
 msgstr "Reinicio del juego"
 
-#: menufunctions.php:797 user/respgames.php:10
+#: menufunctions.php:802 user/respgames.php:10
 msgid "Game responsibilities"
 msgstr "Responsabilidades del juego"
 
@@ -2975,8 +2979,8 @@ msgstr "Resumen del juego"
 
 #: clubcard.php:159 clubcard.php:188 countrycard.php:44 countrycard.php:71
 #: defensestatus.php:76 defensestatus.php:78 gamecard.php:231 gamecard.php:237
-#: menufunctions.php:517 menufunctions.php:555 menufunctions.php:678
-#: menufunctions.php:701 playerlist.php:35 poolstatus.php:160
+#: menufunctions.php:517 menufunctions.php:555 menufunctions.php:683
+#: menufunctions.php:706 playerlist.php:35 poolstatus.php:160
 #: poolstatus.php:186 poolstatus.php:237 poolstatus.php:253 poolstatus.php:298
 #: seriesstatus.php:308 seriesstatus.php:328 seriesstatus.php:350
 #: spiritstatus.php:109 spiritstatus.php:111 teamcard.php:123 teamcard.php:168
@@ -3785,7 +3789,7 @@ msgstr "Enlace"
 msgid "Linked player rows: %d"
 msgstr "Filas de jugadores vinculadas: %d"
 
-#: menufunctions.php:625 admin/spirit.php:343
+#: menufunctions.php:630 admin/spirit.php:343
 msgid "Links"
 msgstr "Enlaces"
 
@@ -5099,13 +5103,13 @@ msgstr "¡El nombre del Grupo es obligatorio!"
 msgid "Pool not found"
 msgstr "Grupo no encontrado"
 
-#: menufunctions.php:683 menufunctions.php:702 poolstatus.php:13
+#: menufunctions.php:688 menufunctions.php:707 poolstatus.php:13
 #: poolstatus.php:24 poolstatus.php:36 poolstatus.php:50 poolstatus.php:73
 #: admin/seasonstandings.php:16 ext/export.php:47
 msgid "Pool standings"
 msgstr "Clasificación de grupo"
 
-#: menufunctions.php:676 admin/dbequalize.php:208 admin/seasonadmin.php:78
+#: menufunctions.php:681 admin/dbequalize.php:208 admin/seasonadmin.php:78
 #: admin/seasonpools.php:14 admin/seasonseries.php:123
 msgid "Pools"
 msgstr "Grupos"
@@ -5209,7 +5213,7 @@ msgstr "Versión imprimible"
 msgid "Privacy"
 msgstr "Privacidad"
 
-#: menufunctions.php:652 privacy.php:10 register.php:104
+#: menufunctions.php:657 privacy.php:10 register.php:104
 msgid "Privacy Policy"
 msgstr "Política de Privacidad"
 
@@ -5834,7 +5838,7 @@ msgstr "Programado"
 msgid "Scheduled start date and time"
 msgstr "Fecha y hora de inicio programado"
 
-#: menufunctions.php:399 menufunctions.php:677 admin/schedule.php:11
+#: menufunctions.php:399 menufunctions.php:682 admin/schedule.php:11
 msgid "Scheduling"
 msgstr "Programación"
 
@@ -5874,7 +5878,7 @@ msgstr "Puntaje"
 msgid "Score counter"
 msgstr "Contador de puntuación"
 
-#: menufunctions.php:618 scoredisplay/index.php:96 scoredisplay/index.php:101
+#: menufunctions.php:615 scoredisplay/index.php:96 scoredisplay/index.php:101
 msgid "Score display"
 msgstr "Pantalla de marcador"
 
@@ -6045,7 +6049,7 @@ msgstr "Temporada"
 msgid "Season mandatory"
 msgstr "Temporada obligatoria"
 
-#: menufunctions.php:686 admin/addseasons.php:390 admin/seasonpoints.php:15
+#: menufunctions.php:691 admin/addseasons.php:390 admin/seasonpoints.php:15
 #: admin/seasonpoints.php:21 admin/seasonpoints.php:46
 #: admin/seasonpoints.php:166 admin/seasonpoints.php:172
 msgid "Season points"
@@ -6452,7 +6456,7 @@ msgstr "Fuente"
 msgid "Special playoff template"
 msgstr "Plantilla especial de playoffs"
 
-#: menufunctions.php:681 menufunctions.php:723 spiritstatus.php:13 teams.php:51
+#: menufunctions.php:686 menufunctions.php:728 spiritstatus.php:13 teams.php:51
 #: admin/spirit.php:443 cust/wfdf/pdfscoresheet.php:936 user/addspirit.php:14
 msgid "Spirit"
 msgstr "Espíritu"
@@ -6821,8 +6825,8 @@ msgstr "Tareas"
 
 #: clubcard.php:147 clubcard.php:173 countrycard.php:32 countrycard.php:86
 #: countrycard.php:94 defensestatus.php:70 defensestatus.php:72
-#: gamecard.php:101 gamecard.php:221 gamecard.php:227 menufunctions.php:737
-#: menufunctions.php:759 playercard.php:78 playercard.php:255
+#: gamecard.php:101 gamecard.php:221 gamecard.php:227 menufunctions.php:742
+#: menufunctions.php:764 playercard.php:78 playercard.php:255
 #: playercard.php:435 poolstatus.php:160 poolstatus.php:186 poolstatus.php:237
 #: poolstatus.php:253 poolstatus.php:297 poolstatus.php:379 scorestatus.php:73
 #: scorestatus.php:75 seriesstatus.php:143 seriesstatus.php:145
@@ -6900,7 +6904,7 @@ msgstr "Perfil del equipo"
 msgid "Team registration"
 msgstr "Registro de equipo"
 
-#: menufunctions.php:743 menufunctions.php:771 user/respteams.php:9
+#: menufunctions.php:748 menufunctions.php:776 user/respteams.php:9
 #: user/respteams.php:19
 msgid "Team responsibilities"
 msgstr "Responsabilidades del equipo"
@@ -6922,7 +6926,7 @@ msgid "Team taking timeout"
 msgstr "Equipo tomando tiempo fuera"
 
 #: menufunctions.php:519 menufunctions.php:557 menufunctions.php:596
-#: menufunctions.php:675 menufunctions.php:700 seasonlist.php:31 teams.php:13
+#: menufunctions.php:680 menufunctions.php:705 seasonlist.php:31 teams.php:13
 #: teams.php:72 admin/addseasonpools.php:408 admin/clubs.php:58
 #: admin/clubs.php:93 admin/dbequalize.php:204 admin/dbequalize.php:271
 #: admin/poolmoves.php:395 admin/seasonadmin.php:83 admin/seasonpools.php:235
@@ -7654,7 +7658,7 @@ msgstr "Ultiorganizer"
 msgid "Ultiorganizer Score counter"
 msgstr "Contador de puntuación Ultiorganizer"
 
-#: menufunctions.php:609 ext/index.php:13
+#: menufunctions.php:622 ext/index.php:13
 msgid "Ultiorganizer links"
 msgstr "Enlaces de Ultiorganizer"
 
@@ -7777,7 +7781,7 @@ msgstr ""
 msgid "User"
 msgstr "Usuario"
 
-#: frontpage.php:34 menufunctions.php:647 user_guide.php:7
+#: frontpage.php:34 menufunctions.php:652 user_guide.php:7
 msgid "User Guide"
 msgstr "Guía del usuario"
 
@@ -8676,6 +8680,9 @@ msgstr "si"
 
 #~ msgid "Change the result to"
 #~ msgstr "Cambie el resultado a"
+
+#~ msgid "Client access"
+#~ msgstr "Acceso de cliente"
 
 #~ msgid ""
 #~ "Controls visibility in navigation; does not change edit rights or API "

@@ -602,12 +602,9 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         echo "</table>";
     }
 
-    //External access
     echo "<table class='leftmenulinks'>\n";
-    echo "<tr><td class='menuseasonlevel'>" . utf8entities(_("Client access")) . "</td></tr>\n";
+    echo "<tr><td class='menuseasonlevel'>" . utf8entities(_("Apps")) . "</td></tr>\n";
     echo "<tr><td>";
-    echo "<a class='subnav' href='?view=ext/index'>&raquo; " . utf8entities(_("Ultiorganizer links")) . "</a>\n";
-    echo "<a class='subnav' href='?view=ext/export'>&raquo; " . utf8entities(_("Data export")) . "</a>\n";
     echo "<a class='subnav' href='./scorekeeper/'>&raquo; Scorekeeper</a>\n";
     $spiritkeeperUrl = './spiritkeeper/';
     if (function_exists('SpiritkeeperHomeUrl')) {
@@ -616,6 +613,14 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
     echo "<a class='subnav' href='" . $spiritkeeperUrl . "'>&raquo; Spiritkeeper</a>\n";
     echo "<a class='subnav' href='./timekeeper/'>&raquo; Timekeeper</a>\n";
     echo "<a class='subnav' href='./scoredisplay/'>&raquo; " . utf8entities(_("Score display")) . "</a>\n";
+    echo "</td></tr>\n";
+    echo "</table>";
+
+    echo "<table class='leftmenulinks'>\n";
+    echo "<tr><td class='menuseasonlevel'>" . utf8entities(_("Embed and export")) . "</td></tr>\n";
+    echo "<tr><td>";
+    echo "<a class='subnav' href='?view=ext/index'>&raquo; " . utf8entities(_("Ultiorganizer links")) . "</a>\n";
+    echo "<a class='subnav' href='?view=ext/export'>&raquo; " . utf8entities(_("Data export")) . "</a>\n";
     echo "</td></tr>\n";
     echo "</table>";
 
