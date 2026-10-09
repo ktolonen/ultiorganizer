@@ -3412,9 +3412,10 @@ function GameTimeSetElapsed($gameId, $elapsedSeconds)
 
     $timerStart = (int) $row['timer_pause_start'] - (int) $row['timer_paused_duration'] - $elapsedSeconds;
     $updateQuery = sprintf(
-        "UPDATE uo_game SET timer_start = %d WHERE game_id = %d",
+        "UPDATE uo_game SET timer_start = %d WHERE game_id = %d AND isongoing = 1 AND timer_pause_start = %d",
         $timerStart,
         $gameId,
+        (int) $row['timer_pause_start'],
     );
 
     $result = DBQuery($updateQuery);
