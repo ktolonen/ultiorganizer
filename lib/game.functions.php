@@ -3276,7 +3276,7 @@ function GameTimeReset($gameId)
 
     $query = sprintf(
         "UPDATE uo_game SET timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0, isongoing=0, hasstarted=0
-		WHERE game_id=%d AND (hasstarted=0 OR isongoing=1)",
+		WHERE game_id=%d AND (hasstarted=0 OR isongoing=1) AND COALESCE(homescore,0)=0 AND COALESCE(visitorscore,0)=0",
         $gameId,
     );
 
