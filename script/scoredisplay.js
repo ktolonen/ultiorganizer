@@ -246,11 +246,23 @@
   function keepAwake() {
     if (navigator.wakeLock && !wakeLock) {
       navigator.wakeLock.request('screen').then(function (lock) {
+        // The viewer may have left the board while the request was pending.
+        if (board.hidden) {
+          lock.release();
+          return;
+        }
         wakeLock = lock;
         lock.addEventListener('release', function () {
           wakeLock = null;
         });
       }, function () {});
+    }
+  }
+
+  function releaseAwake() {
+    if (wakeLock) {
+      wakeLock.release();
+      wakeLock = null;
     }
   }
 
@@ -272,6 +284,7 @@
     } else {
       board.hidden = true;
       picker.hidden = false;
+      releaseAwake();
       pollList();
     }
   }
