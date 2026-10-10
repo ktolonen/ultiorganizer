@@ -16,7 +16,7 @@ function U_($name)
 
     $translationArray = is_array($_SESSION['dbtranslations']) ? $_SESSION['dbtranslations'] : [];
     $translated = translate($name, $translationArray);
-    return $translated[$name];
+    return $translated[(string) $name];
 }
 
 function loadDBTranslations($locale)

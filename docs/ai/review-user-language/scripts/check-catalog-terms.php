@@ -255,4 +255,4 @@ function main(array $argv): int
     return $errors > 0 ? 1 : 0;
 }
 
-exit(main($argv));
+exit(main($argv ?? []));

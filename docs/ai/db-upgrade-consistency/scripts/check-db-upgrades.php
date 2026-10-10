@@ -485,4 +485,4 @@ function schemaTableBody(string $schema, string $table): ?string
     return null;
 }
 
-exit(main($argv));
+exit(main($argv ?? []));
