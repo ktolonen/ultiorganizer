@@ -10,6 +10,7 @@ include_once $include_prefix . 'lib/session.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 include_once $include_prefix . 'lib/user.functions.php';
 include_once $include_prefix . 'lib/game.functions.php';
+include_once $include_prefix . 'lib/timetable.functions.php';
 include_once $include_prefix . 'localization.php';
 
 //Public display: a session is used only to remember the chosen language.

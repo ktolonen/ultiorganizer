@@ -1140,8 +1140,9 @@ function GameInfo($gameId)
 
 /**
  * Games for the public score display: ongoing games first, then the games still
- * to start today in the event's local time, in time order. Only public events
- * not in maintenance are listed, and game times are the event's local time.
+ * to start today in the event's local time, in time order. Only games the public
+ * timetable shows (TimetablePublicVisibilityCondition()) of public events not in
+ * maintenance are listed, and game times are the event's local time.
  *
  * @return array<int, array<string, mixed>>
  */
@@ -1155,8 +1156,8 @@ function ScoreDisplayGames()
 		FROM uo_game g
 			LEFT JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
 			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
-			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-			LEFT JOIN uo_season s ON (s.season_id=ser.season)
+			LEFT JOIN uo_series ps ON (ps.series_id=pool.series)
+			LEFT JOIN uo_season s ON (s.season_id=ps.season)
 			LEFT JOIN uo_reservation res ON (g.reservation=res.id)
 			LEFT JOIN uo_location pl ON (res.location=pl.id)
 			LEFT JOIN uo_team home ON (g.hometeam=home.team_id)
@@ -1164,7 +1165,8 @@ function ScoreDisplayGames()
 			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
 		WHERE g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0
-			AND (g.isongoing=1 OR (g.hasstarted=0 AND g.time >= DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND g.time < DATE_ADD(CURDATE(), INTERVAL 2 DAY)))
+			AND (g.isongoing=1 OR (g.hasstarted=0 AND g.time >= DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND g.time < DATE_ADD(CURDATE(), INTERVAL 2 DAY)))"
+        . TimetablePublicVisibilityCondition() . "
 		ORDER BY g.time, g.game_id",
     );
 
@@ -1191,7 +1193,8 @@ function ScoreDisplayGames()
 
 /**
  * Current score line of one game for the public score display, or null when the
- * game does not exist or its event is not public or is in maintenance.
+ * game does not exist, is hidden from the public timetable, or its event is not
+ * public or is in maintenance.
  *
  * @return array<string, mixed>|null
  */
@@ -1205,14 +1208,15 @@ function ScoreDisplayGame($gameId)
 		FROM uo_game g
 			LEFT JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
 			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
-			LEFT JOIN uo_series ser ON (ser.series_id=pool.series)
-			LEFT JOIN uo_season s ON (s.season_id=ser.season)
+			LEFT JOIN uo_series ps ON (ps.series_id=pool.series)
+			LEFT JOIN uo_season s ON (s.season_id=ps.season)
 			LEFT JOIN uo_team home ON (g.hometeam=home.team_id)
 			LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
 			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
 			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
-		WHERE g.game_id=%d AND g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0",
+		WHERE g.game_id=%d AND g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0%s",
         (int) $gameId,
+        TimetablePublicVisibilityCondition(),
     ));
     if (empty($row)) {
         return null;
