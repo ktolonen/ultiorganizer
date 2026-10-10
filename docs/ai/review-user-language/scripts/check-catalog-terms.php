@@ -34,34 +34,54 @@ const SKILL_RELATIVE = 'docs/ai/review-user-language';
 const LOCALE_GLOB = '/locale/*/LC_MESSAGES/messages.po';
 
 /**
- * @return array<string, array{str: string, fuzzy: bool}>
+ * Plural entries keep each msgstr[n] as a separate form.
+ *
+ * @return array<string, array{forms: list<string>, fuzzy: bool}>
  */
 function parsePo(string $path): array
 {
     $entries = [];
-    $cur = ['field' => '', 'id' => '', 'str' => '', 'fuzzy' => false];
+    $field = '';
+    $id = '';
+    $forms = [];
+    $fuzzy = false;
     $lines = file($path, FILE_IGNORE_NEW_LINES) ?: [];
     $lines[] = '';
     foreach ($lines as $line) {
-        if ($cur['field'] === 'str' && ($line === '' || $line[0] === '#' || str_starts_with($line, 'msgid'))) {
-            if ($cur['id'] !== '') {
-                $entries[$cur['id']] = ['str' => $cur['str'], 'fuzzy' => $cur['fuzzy']];
+        if ($field === 'str' && ($line === '' || $line[0] === '#' || str_starts_with($line, 'msgid'))) {
+            if ($id !== '') {
+                $entries[$id] = ['forms' => $forms, 'fuzzy' => $fuzzy];
             }
-            $cur = ['field' => '', 'id' => '', 'str' => '', 'fuzzy' => false];
+            [$field, $id, $forms, $fuzzy] = ['', '', [], false];
         }
         if (str_starts_with($line, '#,')) {
-            $cur['fuzzy'] = str_contains($line, 'fuzzy');
+            $fuzzy = str_contains($line, 'fuzzy');
         } elseif (str_starts_with($line, 'msgid ')) {
-            $cur['field'] = 'id';
-            $cur['id'] = stripcslashes(substr($line, 7, -1));
-        } elseif (str_starts_with($line, 'msgstr')) {
-            $cur['field'] = 'str';
-            $cur['str'] = stripcslashes((string) preg_replace('/^msgstr(\[0\])? "/', '', substr($line, 0, -1)));
-        } elseif ($line !== '' && $line[0] === '"' && $cur['field'] !== '') {
-            $cur[$cur['field']] .= stripcslashes(substr($line, 1, -1));
+            $field = 'id';
+            $id = stripcslashes(substr($line, 7, -1));
+        } elseif (str_starts_with($line, 'msgid_plural ')) {
+            $field = 'plural';
+        } elseif (preg_match('/^msgstr(?:\[\d+\])? "(.*)"$/', $line, $m) === 1) {
+            $field = 'str';
+            $forms[] = stripcslashes($m[1]);
+        } elseif ($line !== '' && $line[0] === '"') {
+            $text = stripcslashes(substr($line, 1, -1));
+            if ($field === 'id') {
+                $id .= $text;
+            } elseif ($field === 'str') {
+                $forms[count($forms) - 1] .= $text;
+            }
         }
     }
     return $entries;
+}
+
+/**
+ * @param array{forms: list<string>, fuzzy: bool} $entry
+ */
+function isTranslated(array $entry): bool
+{
+    return $entry['forms'] !== [] && !in_array('', $entry['forms'], true);
 }
 
 /**
@@ -82,7 +102,7 @@ function readLines(string $path): array
  * Msgids extracted from the PHP sources by the catalog refresh script, so a new
  * string is checked even before anyone refreshes the catalogs.
  *
- * @return array<string, array{str: string, fuzzy: bool}>|null
+ * @return array<string, array{forms: list<string>, fuzzy: bool}>|null
  */
 function sourceMsgids(string $root): ?array
 {
@@ -196,7 +216,7 @@ function main(array $argv): int
             $errors++;
         }
         foreach ($entries as $id => $entry) {
-            if ($entry['str'] === '') {
+            if (!isTranslated($entry)) {
                 echo "UNTRANSLATED  [$locale] $id\n";
                 $errors++;
             } elseif ($entry['fuzzy']) {
@@ -215,8 +235,8 @@ function main(array $argv): int
         exec('msgunfmt -o ' . escapeshellarg((string) $decoded) . ' ' . escapeshellarg($mo) . ' 2>&1', $output, $status);
         $compiled = $status === 0 ? parsePo((string) $decoded) : [];
         @unlink((string) $decoded);
-        $expected = array_filter($catalogs[$locale], fn(array $entry): bool => $entry['str'] !== '' && !$entry['fuzzy']);
-        if ($status !== 0 || array_map(fn(array $entry): string => $entry['str'], $compiled) != array_map(fn(array $entry): string => $entry['str'], $expected)) {
+        $expected = array_filter($catalogs[$locale], fn(array $entry): bool => isTranslated($entry) && !$entry['fuzzy']);
+        if ($status !== 0 || array_map(fn(array $entry): array => $entry['forms'], $compiled) != array_map(fn(array $entry): array => $entry['forms'], $expected)) {
             echo "STALE  [$locale] messages.mo does not match messages.po (rebuild it with msgfmt)\n";
             $errors++;
         }
