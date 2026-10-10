@@ -51,6 +51,10 @@ This updates all tracked `messages.po` files and their corresponding
 when manual translation work is needed, then save so the `.mo` files stay in
 sync.
 
+CI runs `docs/ai/review-user-language/scripts/check-catalog-terms.php`, which
+fails while any source string is missing from a catalog or left untranslated or
+fuzzy in any locale.
+
 ## Static Localized Files
 
 Long-form text is stored as full localized files instead of gettext strings.

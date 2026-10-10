@@ -4,14 +4,16 @@ declare(strict_types=1);
 
 // Catalog-level terminology check.
 //
-// Reads every msgid in the gettext catalogs as one flat list, which exposes
-// problems a per-page review cannot see:
+// Reads every msgid in the gettext catalogs and in the PHP sources (extracted
+// with xgettext) as one flat list, which exposes problems a per-page review
+// cannot see:
 //
 //   variants     msgids that differ only in case, punctuation or spacing
 //                ("Club Card" / "Club card")
 //   term         msgids containing wording that docs/terminology.md discourages
 //                (patterns in ../catalog-terms.txt)
-//   missing      msgids present in some locale but absent from another
+//   missing      msgids absent from a locale, including new source strings
+//                that no catalog has yet (refresh the catalogs)
 //   untranslated entries with an empty msgstr in any locale
 //   fuzzy        entries still flagged fuzzy in any locale
 //
@@ -75,6 +77,25 @@ function readLines(string $path): array
     return $lines;
 }
 
+/**
+ * Msgids extracted from the PHP sources by the catalog refresh script, so a new
+ * string is checked even before anyone refreshes the catalogs.
+ *
+ * @return array<string, array{str: string, fuzzy: bool}>|null
+ */
+function sourceMsgids(string $root): ?array
+{
+    $pot = tempnam(sys_get_temp_dir(), 'uo-pot');
+    $script = $root . '/docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh';
+    exec('bash ' . escapeshellarg($script) . ' --pot ' . escapeshellarg((string) $pot) . ' 2>&1', $output, $status);
+    $entries = $status === 0 ? parsePo((string) $pot) : null;
+    @unlink((string) $pot);
+    if ($entries === null) {
+        fwrite(STDERR, "Extracting source msgids failed (needs gettext's xgettext):\n" . implode("\n", $output) . "\n");
+    }
+    return $entries;
+}
+
 function main(array $argv): int
 {
     $root = null;
@@ -102,7 +123,15 @@ function main(array $argv): int
     foreach ($poFiles as $po) {
         $catalogs[basename(dirname($po, 2))] = parsePo($po);
     }
-    $ids = array_keys(array_merge(...array_values($catalogs)));
+    $source = sourceMsgids($root);
+    if ($source === null) {
+        return 2;
+    }
+    $all = $source;
+    foreach ($catalogs as $entries) {
+        $all += $entries;
+    }
+    $ids = array_map('strval', array_keys($all));
     sort($ids, SORT_FLAG_CASE | SORT_STRING);
 
     $found = [];

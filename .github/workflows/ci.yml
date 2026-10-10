@@ -92,6 +92,8 @@ jobs:
         run: php docs/ai/review-database-access/scripts/check-db-access.php --all
       - name: Playoff layout templates check
         run: php docs/ai/review-playoff-layouts/scripts/check-playoff-layouts.php
+      - name: Install gettext
+        run: sudo apt-get update && sudo apt-get install -y --no-install-recommends gettext
       - name: Catalog terminology check
         run: php docs/ai/review-user-language/scripts/check-catalog-terms.php
 

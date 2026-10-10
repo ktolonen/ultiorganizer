@@ -2,6 +2,13 @@
 
 set -euo pipefail
 
+# --pot <file>: write the extracted template to <file> and leave the catalogs
+# untouched (used by review-user-language/scripts/check-catalog-terms.php).
+POT_OUT=""
+if [ "${1:-}" = "--pot" ]; then
+  POT_OUT="${2:?--pot needs a file}"
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 TMP_POT="$(mktemp)"
@@ -59,6 +66,11 @@ xgettext \
 
 sed 's/charset=CHARSET/charset=UTF-8/' "$TMP_POT" > "$TMP_POT_UTF8"
 mv "$TMP_POT_UTF8" "$TMP_POT"
+
+if [ -n "$POT_OUT" ]; then
+  cp "$TMP_POT" "$POT_OUT"
+  exit 0
+fi
 
 for locale_dir in "${locale_dirs[@]}"; do
   po_file="$locale_dir/LC_MESSAGES/messages.po"

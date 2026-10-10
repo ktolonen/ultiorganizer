@@ -29,11 +29,11 @@ Run this skill as a final review step after implementing new or changed user-fac
 
 ## Catalog check
 
-Run the catalog checker before the manual review. It reads every msgid in `locale/*/messages.po` as one flat list, so it catches problems a per-page review cannot:
+Run the catalog checker before the manual review. It reads every msgid in `locale/*/messages.po` and the PHP sources as one flat list, so it catches problems a per-page review cannot:
 
 - `php docs/ai/review-user-language/scripts/check-catalog-terms.php`
 - msgids that differ only in case, punctuation or spacing (`variants:`), and msgids containing wording that `docs/terminology.md` discourages (`term:`; patterns in `catalog-terms.txt`)
-- msgids missing from a locale, and untranslated or fuzzy entries in any locale (all three fall back to English at runtime)
+- msgids missing from a locale, and untranslated or fuzzy entries in any locale (all three fall back to English at runtime). Source strings are extracted with xgettext too, so a new `_()` string fails until the catalogs are refreshed and translated.
 
 Accepted findings are baselined in `catalog-allow.txt`. Fix new findings in the code; add to the baseline with `--update-allow` only for a legitimate variant (for example a noun and a verb form), and keep `catalog-terms.txt` in step with `docs/terminology.md`.
 
