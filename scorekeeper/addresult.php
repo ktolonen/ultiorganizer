@@ -176,7 +176,21 @@ if ($useGameClock && !$isFinal) {
     save.addEventListener("click", function (event) {
       var home = document.getElementById("home").value;
       var away = document.getElementById("away").value;
-      if (!window.confirm(<?php echo json_encode(_("Save final result")); ?> + " " + home + " - " + away + "?")) {
+      var homeScore = parseInt(home, 10);
+      var awayScore = parseInt(away, 10);
+      var outcome = "";
+      if (homeScore > awayScore) {
+        outcome = <?php echo json_encode(sprintf(_("Winner: %s"), $result['hometeamname'])); ?>;
+      } else if (awayScore > homeScore) {
+        outcome = <?php echo json_encode(sprintf(_("Winner: %s"), $result['visitorteamname'])); ?>;
+      } else if (homeScore === awayScore) {
+        outcome = <?php echo json_encode(_("Draw")); ?>;
+      }
+      var question = <?php echo json_encode(_("Save final result")); ?> + " " + home + " - " + away + "?";
+      if (outcome) {
+        question += "\n" + outcome;
+      }
+      if (!window.confirm(question)) {
         event.preventDefault();
       }
     });
