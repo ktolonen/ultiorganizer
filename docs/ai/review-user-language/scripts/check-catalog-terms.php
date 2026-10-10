@@ -32,9 +32,12 @@ declare(strict_types=1);
 
 const SKILL_RELATIVE = 'docs/ai/review-user-language';
 const LOCALE_GLOB = '/locale/*/LC_MESSAGES/messages.po';
+// Joins msgid and msgid_plural in an entry key, so both are checked.
+const PLURAL_SEPARATOR = "\0";
 
 /**
- * Plural entries keep each msgstr[n] as a separate form.
+ * Plural entries are keyed by msgid and msgid_plural joined with
+ * PLURAL_SEPARATOR, and keep each msgstr[n] as a separate form.
  *
  * @return array<string, array{forms: list<string>, fuzzy: bool}>
  */
@@ -60,7 +63,8 @@ function parsePo(string $path): array
             $field = 'id';
             $id = stripcslashes(substr($line, 7, -1));
         } elseif (str_starts_with($line, 'msgid_plural ')) {
-            $field = 'plural';
+            $field = 'id';
+            $id .= PLURAL_SEPARATOR . stripcslashes(substr($line, 14, -1));
         } elseif (preg_match('/^msgstr(?:\[\d+\])? "(.*)"$/', $line, $m) === 1) {
             $field = 'str';
             $forms[] = stripcslashes($m[1]);
@@ -74,6 +78,11 @@ function parsePo(string $path): array
         }
     }
     return $entries;
+}
+
+function label(string $id): string
+{
+    return str_replace(PLURAL_SEPARATOR, ' / ', $id);
 }
 
 /**
@@ -171,7 +180,7 @@ function main(array $argv): int
     }
     foreach ($groups as $variants) {
         if (count($variants) > 1) {
-            $found[] = 'variants: ' . implode(' | ', $variants);
+            $found[] = 'variants: ' . implode(' | ', array_map('label', $variants));
         }
     }
 
@@ -184,8 +193,8 @@ function main(array $argv): int
     foreach ($ids as $id) {
         foreach ($terms as [$regex, $preferred]) {
             if (preg_match($regex, $id) === 1) {
-                $found[] = 'term: ' . $id;
-                $termHints['term: ' . $id] = $preferred;
+                $found[] = 'term: ' . label($id);
+                $termHints['term: ' . label($id)] = $preferred;
             }
         }
     }
@@ -212,15 +221,15 @@ function main(array $argv): int
     }
     foreach ($catalogs as $locale => $entries) {
         foreach (array_diff_key(array_flip($ids), $entries) as $id => $_) {
-            echo "MISSING  [$locale] $id\n";
+            echo "MISSING  [$locale] " . label($id) . "\n";
             $errors++;
         }
         foreach ($entries as $id => $entry) {
             if (!isTranslated($entry)) {
-                echo "UNTRANSLATED  [$locale] $id\n";
+                echo "UNTRANSLATED  [$locale] " . label($id) . "\n";
                 $errors++;
             } elseif ($entry['fuzzy']) {
-                echo "FUZZY  [$locale] $id\n";
+                echo "FUZZY  [$locale] " . label($id) . "\n";
                 $errors++;
             }
         }
