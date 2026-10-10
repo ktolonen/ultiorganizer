@@ -1138,6 +1138,94 @@ function GameInfo($gameId)
 }
 
 
+/**
+ * Games for the public score display: ongoing games first, then the games still
+ * to start today in the event's local time, in time order. Only games the public
+ * timetable shows (TimetablePublicVisibilityCondition()) of public events not in
+ * maintenance are listed, and game times are the event's local time.
+ *
+ * @return array<int, array<string, mixed>>
+ */
+function ScoreDisplayGames()
+{
+    $rows = DBQueryToArrayUncached(
+        "SELECT g.game_id, g.time, g.isongoing, g.hasstarted, g.homescore, g.visitorscore,
+			home.name AS hometeamname, visitor.name AS visitorteamname,
+			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname,
+			pl.name AS placename, res.fieldname, s.timezone
+		FROM uo_game g
+			LEFT JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+			LEFT JOIN uo_series ps ON (ps.series_id=pool.series)
+			LEFT JOIN uo_season s ON (s.season_id=ps.season)
+			LEFT JOIN uo_reservation res ON (g.reservation=res.id)
+			LEFT JOIN uo_location pl ON (res.location=pl.id)
+			LEFT JOIN uo_team home ON (g.hometeam=home.team_id)
+			LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
+			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
+			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
+		WHERE g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0
+			AND (g.isongoing=1 OR (g.hasstarted=0 AND g.time >= DATE_SUB(CURDATE(), INTERVAL 1 DAY) AND g.time < DATE_ADD(CURDATE(), INTERVAL 2 DAY)))"
+        . TimetablePublicVisibilityCondition() . "
+		ORDER BY g.time, g.game_id",
+    );
+
+    $ongoing = [];
+    $upcoming = [];
+    foreach ($rows as $row) {
+        $row['home'] = $row['hometeamname'] ?: U_((string) $row['phometeamname']);
+        $row['visitor'] = $row['visitorteamname'] ?: U_((string) $row['pvisitorteamname']);
+        if ((int) $row['isongoing'] === 1) {
+            $ongoing[] = $row;
+            continue;
+        }
+        try {
+            $zone = new DateTimeZone(!empty($row['timezone']) ? $row['timezone'] : date_default_timezone_get());
+        } catch (Exception $e) {
+            $zone = new DateTimeZone(date_default_timezone_get());
+        }
+        if (substr((string) $row['time'], 0, 10) === (new DateTimeImmutable('now', $zone))->format('Y-m-d')) {
+            $upcoming[] = $row;
+        }
+    }
+    return array_merge($ongoing, $upcoming);
+}
+
+/**
+ * Current score line of one game for the public score display, or null when the
+ * game does not exist, is hidden from the public timetable, or its event is not
+ * public or is in maintenance.
+ *
+ * @return array<string, mixed>|null
+ */
+function ScoreDisplayGame($gameId)
+{
+    $row = DBQueryToRowUncached(sprintf(
+        "SELECT g.game_id, g.homescore, g.visitorscore, g.isongoing, g.hasstarted, g.time,
+			s.hide_time_on_scoresheet,
+			home.name AS hometeamname, visitor.name AS visitorteamname,
+			phome.name AS phometeamname, pvisitor.name AS pvisitorteamname
+		FROM uo_game g
+			LEFT JOIN uo_game_pool gp ON (gp.game=g.game_id AND gp.timetable=1)
+			LEFT JOIN uo_pool pool ON (pool.pool_id=gp.pool)
+			LEFT JOIN uo_series ps ON (ps.series_id=pool.series)
+			LEFT JOIN uo_season s ON (s.season_id=ps.season)
+			LEFT JOIN uo_team home ON (g.hometeam=home.team_id)
+			LEFT JOIN uo_team visitor ON (g.visitorteam=visitor.team_id)
+			LEFT JOIN uo_scheduling_name phome ON (g.scheduling_name_home=phome.scheduling_id)
+			LEFT JOIN uo_scheduling_name pvisitor ON (g.scheduling_name_visitor=pvisitor.scheduling_id)
+		WHERE g.game_id=%d AND g.valid=1 AND s.public_event=1 AND s.maintenance_mode=0%s",
+        (int) $gameId,
+        TimetablePublicVisibilityCondition(),
+    ));
+    if (empty($row)) {
+        return null;
+    }
+    $row['home'] = $row['hometeamname'] ?: U_((string) $row['phometeamname']);
+    $row['visitor'] = $row['visitorteamname'] ?: U_((string) $row['pvisitorteamname']);
+    return $row;
+}
+
 function GameName($gameInfo)
 {
     if ($gameInfo['hometeam'] && $gameInfo['visitorteam']) {
@@ -1365,7 +1453,78 @@ function GameUpdateResult($gameId, $home, $away, $snapshot = true)
     }
 }
 
-function GameSetResult($gameId, $home, $away, $updatePools = true)
+/**
+ * Adds one point to, or takes one from, a team's score in a single statement,
+ * so simultaneous taps from several devices all count. The game is marked
+ * ongoing. A final result, or a score that would leave 0..MAX_GAME_SCORE, is
+ * left alone. Back at 0 - 0 with no game clock started, the tap undid an
+ * accidental one, so the game returns to not started. Like the per-point
+ * GameUpdateResult() caller, a tap takes no history snapshot.
+ *
+ * @param int $gameId uo_game.game_id
+ * @param bool $home true for the home team
+ * @param int $delta 1 or -1
+ * @return bool true when the score changed
+ */
+function GameApplyScoreTap($gameId, $home, $delta)
+{
+    if (!hasEditGameEventsRight($gameId)) {
+        die('Insufficient rights to edit game');
+    }
+    $homeDelta = $home ? ($delta > 0 ? 1 : -1) : 0;
+    $awayDelta = $home ? 0 : ($delta > 0 ? 1 : -1);
+    DBExecute(sprintf(
+        "UPDATE uo_game SET homescore=COALESCE(homescore,0)+%1\$d, visitorscore=COALESCE(visitorscore,0)+%2\$d,
+			isongoing=1, hasstarted=1
+		WHERE game_id=%3\$d AND (hasstarted=0 OR isongoing=1)
+			AND COALESCE(homescore,0)+%1\$d BETWEEN 0 AND %4\$d
+			AND COALESCE(visitorscore,0)+%2\$d BETWEEN 0 AND %4\$d",
+        $homeDelta,
+        $awayDelta,
+        (int) $gameId,
+        MAX_GAME_SCORE,
+    ));
+    if (DBAffectedRows() < 1) {
+        return false;
+    }
+
+    $stored = DBQueryToRow(sprintf(
+        "SELECT homescore, visitorscore, timer_start FROM uo_game WHERE game_id=%d",
+        (int) $gameId,
+    ));
+    if ((int) $stored['homescore'] === 0 && (int) $stored['visitorscore'] === 0 && empty($stored['timer_start'])) {
+        // Conditional, so a tap or clock start landing after the read is kept.
+        ScoresheetHistorySnapshotIfNeeded($gameId);
+        DBExecute(sprintf(
+            "UPDATE uo_game SET homescore=NULL, visitorscore=NULL, isongoing=0, hasstarted=0,
+				timer_pause_start=NULL, timer_paused_duration=0
+			WHERE game_id=%d AND homescore=0 AND visitorscore=0 AND isongoing=1 AND timer_start IS NULL",
+            (int) $gameId,
+        ));
+        if (DBAffectedRows() > 0) {
+            LogGameUpdate($gameId, "result cleared");
+            ScoresheetHistoryRecord($gameId, "result", "clear", []);
+            $poolId = GamePool($gameId);
+            ResolvePoolStandings($poolId);
+            PoolResolvePlayed($poolId);
+            return true;
+        }
+    }
+    ScoresheetHistoryRecord($gameId, "result", "update", [
+        'home' => (int) $stored['homescore'],
+        'away' => (int) $stored['visitorscore'],
+        'state' => "ongoing",
+    ]);
+
+    return true;
+}
+
+/**
+ * $expected, when given as [home, away] (null for no score), is the score the
+ * caller showed: the result is saved only while the stored score still
+ * matches, so a stale page cannot finalize over a newer point.
+ */
+function GameSetResult($gameId, $home, $away, $updatePools = true, $expected = null)
 {
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         return false;
@@ -1388,6 +1547,22 @@ function GameSetResult($gameId, $home, $away, $updatePools = true)
             && $stored['timer_start'] === null && $stored['timer_pause_start'] === null
             && (int) $stored['timer_paused_duration'] === 0;
 
+        $expectedClause = "";
+        if ($expected !== null) {
+            $expectedClause = sprintf(
+                " AND homescore <=> %s AND visitorscore <=> %s",
+                $expected[0] === null ? "NULL" : (int) $expected[0],
+                $expected[1] === null ? "NULL" : (int) $expected[1],
+            );
+            if (
+                !is_array($stored)
+                || ($stored['homescore'] === null ? null : (int) $stored['homescore']) !== $expected[0]
+                || ($stored['visitorscore'] === null ? null : (int) $stored['visitorscore']) !== $expected[1]
+            ) {
+                return false;
+            }
+        }
+
         if ($unchanged) {
             // The recompute stays on this path, where it ran before the
             // guard existed: the guard is about not leaving a restore point
@@ -1401,15 +1576,19 @@ function GameSetResult($gameId, $home, $away, $updatePools = true)
             return true;
         }
 
-        LogGameUpdate($gameId, "result: $home - $away");
         ScoresheetHistorySnapshotIfNeeded($gameId);
         $query = sprintf(
-            "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'",
+            "UPDATE uo_game SET homescore='%s', visitorscore='%s', isongoing='0', hasstarted='2', timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0 WHERE game_id='%s'%s",
             DBEscapeString($home),
             DBEscapeString($away),
             DBEscapeString($gameId),
+            $expectedClause,
         );
         $result = DBQuery($query);
+        if ($expected !== null && DBAffectedRows() < 1) {
+            return false;
+        }
+        LogGameUpdate($gameId, "result: $home - $away");
         ScoresheetHistoryRecord($gameId, "result", "update", [
             'home' => (int) $home,
             'away' => (int) $away,
@@ -3125,7 +3304,8 @@ function GameTimeReset($gameId)
     }
 
     $query = sprintf(
-        "UPDATE uo_game SET timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0, isongoing=0, hasstarted=0 WHERE game_id=%d",
+        "UPDATE uo_game SET timer_start=NULL, timer_pause_start=NULL, timer_paused_duration=0, isongoing=0, hasstarted=0
+		WHERE game_id=%d AND (hasstarted=0 OR isongoing=1) AND COALESCE(homescore,0)=0 AND COALESCE(visitorscore,0)=0",
         $gameId,
     );
 
@@ -3149,7 +3329,8 @@ function GameTimeStart($gameId)
     }
 
     $query = sprintf(
-        "UPDATE uo_game SET hasstarted = 1, isongoing = 1, timer_start = %d, timer_pause_start = NULL, timer_paused_duration = 0 WHERE game_id = %d",
+        "UPDATE uo_game SET hasstarted = 1, isongoing = 1, timer_start = %d, timer_pause_start = NULL, timer_paused_duration = 0
+		WHERE game_id = %d AND (hasstarted = 0 OR isongoing = 1)",
         time(),
         $gameId,
     );
@@ -3235,9 +3416,10 @@ function GameTimeSetElapsed($gameId, $elapsedSeconds)
 
     $timerStart = (int) $row['timer_pause_start'] - (int) $row['timer_paused_duration'] - $elapsedSeconds;
     $updateQuery = sprintf(
-        "UPDATE uo_game SET timer_start = %d WHERE game_id = %d",
+        "UPDATE uo_game SET timer_start = %d WHERE game_id = %d AND isongoing = 1 AND timer_pause_start = %d",
         $timerStart,
         $gameId,
+        (int) $row['timer_pause_start'],
     );
 
     $result = DBQuery($updateQuery);

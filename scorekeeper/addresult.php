@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 
 $html = "";
@@ -9,15 +10,44 @@ $saveSucceeded = false;
 $gameId = scorekeeperRequestGameId();
 $_SESSION['game'] = $gameId;
 
+$seasoninfo = SeasonInfo(GameSeason($gameId));
+$useGameClock = empty($seasoninfo['hide_time_on_scoresheet']);
+if ($useGameClock) {
+    ScorekeeperHandleClockPost($gameId, 'addresult');
+}
+
+// Each tap saves at once, applied to the stored score so a stale page on
+// another device cannot overwrite newer points. A final result is left alone;
+// reopening it takes the explicit update button.
+$scoreTaps = ['homeplus' => [true, 1], 'homeminus' => [true, -1], 'awayplus' => [false, 1], 'awayminus' => [false, -1]];
+foreach ($scoreTaps as $tap => $change) {
+    if (isset($_POST[$tap])) {
+        GameApplyScoreTap($gameId, $change[0], $change[1]);
+        header("location:?view=addresult&game=" . $gameId);
+        exit;
+    }
+}
+
 if (isset($_POST['save'])) {
     $home = intval($_POST['home']);
     $away = intval($_POST['away']);
     if (!IsValidGameScore($home) || !IsValidGameScore($away)) {
         $info = "<p class='warning'>" . _("Points must be between 0 and 1000.") . "</p>";
     }
+    // The score the page showed, so a point tapped on another device since
+    // then is not finalized over.
+    $expected = null;
+    if (isset($_POST['shownhome'], $_POST['shownaway'])) {
+        $expected = [
+            $_POST['shownhome'] === '' ? null : intval($_POST['shownhome']),
+            $_POST['shownaway'] === '' ? null : intval($_POST['shownaway']),
+        ];
+    }
     if (empty($info)) {
-        $ok = GameSetResult($gameId, $home, $away);
-        if ($ok) {
+        $ok = GameSetResult($gameId, $home, $away, true, $expected);
+        if (!$ok && $expected !== null) {
+            $info = "<p class='warning'>" . _("Result not saved: the score has changed since this page was opened.") . "</p>";
+        } elseif ($ok) {
             $game_result = GameResult($gameId);
             $saveSucceeded = true;
             $info = "<p>" . sprintf(_("Game result %s - %s saved!"), $home, $away) . "</p>";
@@ -40,91 +70,129 @@ if (isset($_POST['save'])) {
     }
 }
 
+$result = GameResult($gameId);
+$timerState = $useGameClock ? GameTimerState($gameId) : ScorekeeperTimerStateDefaults();
+$showClock = $useGameClock && ($timerState['ongoing'] || $timerState['mm'] > 0 || $timerState['ss'] > 0);
+$isFinal = GameHasStarted($result) && !$result['isongoing'];
+
 $html .= "<div data-role='header'>\n";
+if ($showClock) {
+    $html .= ScorekeeperClockHeader($timerState);
+}
 $html .= "<h1>" . _("Result") . "</h1>\n";
 $html .= "</div><!-- /header -->\n\n";
 
 $html .= "<div data-role='content'>\n";
 
-$result = GameResult($gameId);
+$action = "?view=addresult&amp;game=" . $gameId;
+$homeScore = intval($result['homescore']);
+$awayScore = intval($result['visitorscore']);
 
-$html .= "<form action='?view=addresult&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
-
-$html .= "<label for='home'>" . utf8entities($result['hometeamname']) . ":</label>";
-
-$html .= "<div class='ui-grid-b'>";
-$html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' inputmode='numeric' id='home' name='home' value='" . intval($result['homescore']) . "' min='0' maxlength='4' size='5'/>";
-$html .= "</div>";
-$html .= "<div class='ui-block-b'>\n";
-$html .= "<a href='#' data-role='button' id='homeplus' data-icon='plus'>+1</a>";
-$html .= "</div>";
-$html .= "<div class='ui-block-c'>\n";
-$html .= "<a href='#' data-role='button' id='homeminus' data-icon='minus'>-1</a>";
-$html .= "</div>";
-$html .= "</div>";
-
-$html .= "<label for='away'>" . utf8entities($result['visitorteamname']) . ":</label>";
-$html .= "<div class='ui-grid-b'>";
-$html .= "<div class='ui-block-a'>\n";
-$html .= "<input type='number' inputmode='numeric' id='away' name='away' value='" . intval($result['visitorscore']) . "' min='0' maxlength='4' size='5'/>";
-$html .= "</div>";
-$html .= "<div class='ui-block-b'>\n";
-$html .= "<a href='#' data-role='button' id='awayplus' data-icon='plus'>+1</a>";
-$html .= "</div>";
-$html .= "<div class='ui-block-c'>\n";
-$html .= "<a href='#' data-role='button' id='awayminus' data-icon='minus'>-1</a>";
-$html .= "</div>";
-$html .= "</div>";
-
-$html .= $info;
-
-if ($saveSucceeded) {
-    $html .= "<input type='submit' name='save'  data-ajax='false' value='" . _("Save again") . "'/>";
-    $html .= "<a href='?view=addplayerlists&game=" . $gameId . "&team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
-} else {
-    $html .= "<div class='action-row action-row--stacked action-row--spaced'>\n";
-    $html .= "<input type='submit' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
-    $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save as final result") . "'/>";
+if ($useGameClock && !$isFinal) {
+    $html .= "<form action='" . $action . "' method='post' data-ajax='false'>\n";
+    $html .= "<div class='sk-clock-bar'>";
+    if ($timerState['ongoing']) {
+        $html .= "<span>" . ($timerState['paused'] ? _("Paused") : _("Running")) . "</span>";
+        if ($timerState['paused']) {
+            $html .= "<input type='submit' name='resumegame' data-ajax='false' value='" . _("Resume game clock") . "'/>";
+        } else {
+            $html .= "<input type='submit' id='pausegame' class='button-secondary' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
+        }
+    } else {
+        $html .= "<span>" . _("Clock not running") . "</span>";
+        $html .= ScorekeeperClockStartButton($timerState);
+    }
     $html .= "</div>\n";
+    if ($timerState['ongoing'] && $timerState['paused']) {
+        $html .= "<details class='sk-fold'><summary>" . _("Set game clock") . "</summary>\n";
+        $html .= ScorekeeperClockSetTimeFields($timerState);
+        $html .= "</details>\n";
+    }
+    if ($timerState['elapsed'] > 0 && $homeScore === 0 && $awayScore === 0) {
+        $html .= "<input type='submit' class='button-secondary' name='resetgameclock' data-ajax='false' value='" . _("Reset game clock") . "'/>";
+    }
+    $html .= "</form>\n";
 }
+
+// One form serves both uses: a live game taps +1/-1, which save at once
+// through the scoretaps form and mark the game ongoing, and a known result is
+// typed into the score fields and saved as final.
+$html .= "<form id='scoreform' action='" . $action . "' method='post' data-ajax='false'>\n";
+if ($isFinal) {
+    $html .= "<p class='sk-result-status'>" . _("Final result") . ": " . $homeScore . " - " . $awayScore . "</p>";
+} elseif (GameHasStarted($result)) {
+    $html .= "<p class='sk-result-status sk-result-status--ongoing'>" . _("Game ongoing") . ": " . $homeScore . " - " . $awayScore . "</p>";
+}
+$html .= "<input type='hidden' name='shownhome' value='" . ($result['homescore'] === null ? "" : $homeScore) . "'/>";
+$html .= "<input type='hidden' name='shownaway' value='" . ($result['visitorscore'] === null ? "" : $awayScore) . "'/>";
+$html .= "<div class='sk-score-cards'>";
+$teams = [
+    'home' => [$result['hometeamname'], $homeScore],
+    'away' => [$result['visitorteamname'], $awayScore],
+];
+foreach ($teams as $side => $team) {
+    $html .= "<div class='sk-score-card sk-score-card--" . $side . "'>";
+    $html .= "<label class='sk-score-team' for='" . $side . "'>" . utf8entities($team[0]) . "</label>";
+    $html .= "<input type='number' inputmode='numeric' class='sk-score-value' id='" . $side . "' name='" . $side . "' value='" . $team[1] . "' min='0' maxlength='4' size='5'/>";
+    if (!$isFinal) {
+        $html .= "<input type='submit' form='scoretaps' class='sk-score-plus' name='" . $side . "plus' data-ajax='false' value='+1'/>";
+        $html .= "<input type='submit' form='scoretaps' class='button-secondary' name='" . $side . "minus' data-ajax='false' value='-1'/>";
+    }
+    $html .= "</div>";
+}
+$html .= "</div>\n";
+$html .= $info;
+$html .= "<div class='sk-result-actions'>";
+$html .= "<input type='submit' id='savefinal' name='save' data-ajax='false' value='" . _("Save final result") . "'/>";
+// Taps already keep an ongoing game's score, so updating is only needed to
+// reopen a final result.
+if ($isFinal) {
+    $html .= "<input type='submit' class='button-secondary' name='update' data-ajax='false' value='" . _("Game ongoing, update scores") . "'/>";
+}
+$html .= "</div>\n";
+if ($saveSucceeded) {
+    $html .= "<a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . _("Set rosters") . "</a>";
+}
+$html .= "</form>\n";
+$html .= "<form id='scoretaps' action='" . $action . "' method='post' data-ajax='false'></form>\n";
+
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
-$html .= "</form>";
 $html .= "</div><!-- /content -->\n\n";
 
 echo $html;
-
+if ($showClock) {
+    echo ScorekeeperClockScript($timerState);
+}
+if ($useGameClock && !$isFinal) {
+    echo ScorekeeperClockControlScript();
+}
 ?>
 <script type="text/javascript">
-	function adjustScore(inputId, delta) {
-		var input = document.getElementById(inputId);
-		if (!input) {
-			return;
-		}
-		var goals = parseInt(input.value, 10);
-		if (isNaN(goals)) {
-			goals = 0;
-		}
-		goals = goals + delta;
-		if (goals < 0) {
-			goals = 0;
-		}
-		input.value = goals;
-	}
-
-	function bindScoreButton(buttonId, inputId, delta) {
-		var button = document.getElementById(buttonId);
-		if (!button) {
-			return;
-		}
-		button.addEventListener("click", function(event) {
-			event.preventDefault();
-			adjustScore(inputId, delta);
-		});
-	}
-
-	bindScoreButton("homeplus", "home", 1);
-	bindScoreButton("homeminus", "home", -1);
-	bindScoreButton("awayplus", "away", 1);
-	bindScoreButton("awayminus", "away", -1);
+  (function () {
+    var save = document.getElementById("savefinal");
+    if (!save) {
+      return;
+    }
+    save.addEventListener("click", function (event) {
+      var home = document.getElementById("home").value;
+      var away = document.getElementById("away").value;
+      var homeScore = parseInt(home, 10);
+      var awayScore = parseInt(away, 10);
+      var outcome = "";
+      if (homeScore > awayScore) {
+        outcome = <?php echo json_encode(sprintf(_("Winner: %s"), $result['hometeamname'])); ?>;
+      } else if (awayScore > homeScore) {
+        outcome = <?php echo json_encode(sprintf(_("Winner: %s"), $result['visitorteamname'])); ?>;
+      } else if (homeScore === awayScore) {
+        outcome = <?php echo json_encode(_("Draw")); ?>;
+      }
+      var question = <?php echo json_encode(_("Save final result")); ?> + " " + home + " - " + away + "?";
+      if (outcome) {
+        question += "\n" + outcome;
+      }
+      if (!window.confirm(question)) {
+        event.preventDefault();
+      }
+    });
+  })();
 </script>

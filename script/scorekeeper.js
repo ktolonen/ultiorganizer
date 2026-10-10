@@ -215,3 +215,25 @@
     }
   });
 })();
+
+/*
+ * Confirmations for the game clock controls shared by the scorekeeper pages.
+ * Messages come from the server so they are translated.
+ */
+window.scorekeeperClockControls = function (messages) {
+  "use strict";
+
+  function confirmClick(button, message) {
+    if (!button || !message) {
+      return;
+    }
+    button.addEventListener("click", function (event) {
+      if (!window.confirm(message)) {
+        event.preventDefault();
+      }
+    });
+  }
+
+  confirmClick(document.getElementById("pausegame"), messages.pause);
+  confirmClick(document.querySelector("#startgame[data-confirm-restart]"), messages.restart);
+};

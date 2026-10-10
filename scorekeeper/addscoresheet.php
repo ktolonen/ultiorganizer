@@ -63,40 +63,14 @@ if (!$hideTimeOnScoresheet && isset($_POST['usegameclock'])) {
 }
 
 $manualNoGameClock = !$hideTimeOnScoresheet && scorekeeperHasManualNoGameClock($gameId);
-$useGameClock = !$hideTimeOnScoresheet && !$manualNoGameClock;
+// A final result is filled in afterwards with typed times; starting the clock
+// would reopen the game.
+$storedResult = GameResult($gameId);
+$isFinal = GameHasStarted($storedResult) && !$storedResult['isongoing'];
+$useGameClock = !$hideTimeOnScoresheet && !$manualNoGameClock && !$isFinal;
 
 if ($useGameClock) {
-    if (isset($_POST['startgame'])) {
-        unset($_SESSION['scorekeeper_no_game_clock'][$gameId]);
-        GameTimeStart($gameId);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['pausegame'])) {
-        GameTimePause($gameId);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['resumegame'])) {
-        GameTimeResume($gameId);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['setgameclock'])) {
-        $setmm = isset($_POST['settimemm']) ? intval($_POST['settimemm']) : 0;
-        $setss = isset($_POST['settimess']) ? intval($_POST['settimess']) : 0;
-        GameTimeSetElapsed($gameId, ($setmm * 60) + $setss);
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
-    if (isset($_POST['resetgameclock'])) {
-        $result = GameResult($gameId);
-        if (intval($result['homescore']) === 0 && intval($result['visitorscore']) === 0) {
-            GameTimeReset($gameId);
-        }
-        header("location:?view=addscoresheet&game=" . $gameId);
-        exit;
-    }
+    ScorekeeperHandleClockPost($gameId, 'addscoresheet');
 }
 
 $game_result = GameResult($gameId);
@@ -126,8 +100,6 @@ $uo_goal = [
 ];
 $timemm = "";
 $timess = "";
-$settimemm = "";
-$settimess = "";
 $pass = "";
 $goal = "";
 $team = "";
@@ -237,8 +209,12 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
         if (empty($errors) || isset($_POST['forceadd'])) {
             GameAddScoreEntry($uo_goal);
             $result = GameResult($gameId);
-            if (($uo_goal['homescore'] + $uo_goal['visitorscore']) > ($result['homescore'] + $result['visitorscore'])) {
-                GameUpdateResult($gameId, $uo_goal['homescore'], $uo_goal['visitorscore'], false);
+            // Per team, so a point tapped on the Result page for the other
+            // team is kept rather than lowered to its goal-row count.
+            $home = max($uo_goal['homescore'], intval($result['homescore']));
+            $away = max($uo_goal['visitorscore'], intval($result['visitorscore']));
+            if (!$isFinal && ($home > intval($result['homescore']) || $away > intval($result['visitorscore']))) {
+                GameUpdateResult($gameId, $home, $away, false);
             }
             header("location:?view=addscoresheet&game=" . $gameId);
             exit;
@@ -246,7 +222,7 @@ if (isset($_POST['add']) || isset($_POST['forceadd'])) {
     }
 }
 
-if (isset($_POST['save']) && !$useGameClock) {
+if (isset($_POST['save']) && !$useGameClock && !$isFinal && !ScorekeeperScoresheetBehindResult($scores, $game_result)) {
     $home = 0;
     $away = 0;
     if ($lastscore) {
@@ -280,8 +256,6 @@ if (!$hideTimeOnScoresheet) {
 
 $showGoalForm = !$useGameClock || $timerState['ongoing'];
 $canShowTimedActions = !$hideTimeOnScoresheet && (!$useGameClock || $timerState['started']);
-$settimemm = $useGameClock ? $timerState['mm'] : 0;
-$settimess = $useGameClock ? $timerState['ss'] : 0;
 
 $html .= "<div data-role='header'>\n";
 if ($showClock) {
@@ -293,6 +267,14 @@ $html .= "</div><!-- /header -->\n\n";
 $html .= "<div data-role='content'>\n";
 $html .= "<form action='?view=addscoresheet&amp;game=" . $gameId . "' method='post' data-ajax='false'>\n";
 
+// The stored result can differ from the goals below: the Result page keeps
+// it without a scoresheet.
+$storedScore = intval($game_result['homescore']) . " - " . intval($game_result['visitorscore']);
+if ($isFinal) {
+    $html .= "<p class='sk-result-status'>" . _("Final result") . ": " . $storedScore . "</p>";
+} elseif (GameHasStarted($game_result)) {
+    $html .= "<p class='sk-result-status sk-result-status--ongoing'>" . _("Game ongoing") . ": " . $storedScore . "</p>";
+}
 if ($lastscore) {
     $html .= "#" . count($scores) . " " . _("Score") . ": " . $lastscore['homescore'] . " - " . $lastscore['visitorscore'] . " ";
     if (!$hideTimeOnScoresheet) {
@@ -303,71 +285,27 @@ if ($lastscore) {
         $html .= utf8entities($goalText);
     }
     $html .= " <a href='?view=deletescore&amp;game=" . $gameId . "' data-ajax='false'>" . _("Delete goal") . "</a>";
-} else {
+} elseif (!GameHasStarted($game_result)) {
     $html .= _("Score") . ": 0 - 0";
 }
 
 if ($useGameClock) {
-    $html .= "<h3>" . _("Game clock") . "</h3>";
-    if ($timerState['ongoing']) {
-        $status = $timerState['paused'] ? _("Paused") : _("Running");
-        $html .= "<p><strong>" . _("Status") . ":</strong> " . $status . "</p>";
-    } else {
-        $html .= "<p>" . _("Clock not running") . ".</p>";
-    }
-    if ($timerState['ongoing']) {
-        if ($timerState['paused']) {
-            $html .= "<input type='submit' name='resumegame' data-ajax='false' value='" . _("Resume game clock") . "'/>";
-            $html .= "<label for='settimemm' class='select'>" . _("Set game clock to") . " " . _("min") . ":" . _("sec") . "</label>";
-            $html .= "<div class='ui-grid-b'>";
-            $html .= "<div class='ui-block-a'>\n";
-            $html .= "<select id='settimemm' name='settimemm' >";
-            for ($i = 0; $i <= 180; $i++) {
-                if ((string) $i === (string) $settimemm) {
-                    $html .= "<option value='" . $i . "' selected='selected'>" . $i . "</option>";
-                } else {
-                    $html .= "<option value='" . $i . "'>" . $i . "</option>";
-                }
-            }
-            $html .= "</select>";
-            $html .= "</div>";
-            $html .= "<div class='ui-block-b'>\n";
-            $html .= "<select id='settimess' name='settimess' >";
-            for ($i = 0; $i <= 59; $i++) {
-                if ((string) $i === (string) $settimess) {
-                    $html .= "<option value='" . $i . "' selected='selected'>" . sprintf("%02d", $i) . "</option>";
-                } else {
-                    $html .= "<option value='" . $i . "'>" . sprintf("%02d", $i) . "</option>";
-                }
-            }
-            $html .= "</select>";
-            $html .= "</div>";
-            $html .= "</div>";
-            $html .= "<input type='submit' name='setgameclock' data-ajax='false' value='" . _("Set game clock") . "'/>";
-        } else {
-            $html .= "<input type='submit' id='pausegame' name='pausegame' data-ajax='false' value='" . _("Pause game clock") . "'/>";
-        }
-    } else {
-        $startLabel = $timerState['started'] ? _("Restart game clock") : _("Start game clock");
-        $html .= "<div data-role='controlgroup' data-type='horizontal'>";
-        $html .= "<input type='submit' id='startgame' name='startgame' data-ajax='false' value='" . $startLabel . "'/>";
-        $html .= "<input type='submit' name='nogameclock' data-ajax='false' value='" . _("No game clock") . "'/>";
-        $html .= "</div>";
-    }
-    if ($timerState['started'] && $lastscore === null) {
-        $html .= "<input type='submit' name='resetgameclock' data-ajax='false' value='" . _("Reset game clock") . "'/>";
-    }
-    if ($timerState['started'] || GameHasStarted($game_result)) {
+    $noGameClock = "<input type='submit' name='nogameclock' data-ajax='false' value='" . _("No game clock") . "'/>";
+    $scoreless = $lastscore === null && intval($game_result['homescore']) === 0 && intval($game_result['visitorscore']) === 0;
+    $html .= ScorekeeperClockControls($timerState, $noGameClock, $scoreless);
+    if (ScorekeeperScoresheetBehindResult($scores, $game_result)) {
+        $html .= "<a href='?view=addresult&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Result") . "</a>";
+    } elseif ($timerState['started'] || GameHasStarted($game_result)) {
         $html .= "<a href='?view=endgame&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("End game") . "</a>";
     }
-} elseif ($manualNoGameClock) {
+} elseif ($manualNoGameClock && !$isFinal) {
     $html .= "<h3>" . _("Game clock") . "</h3>";
     $html .= "<p><strong>" . _("Status") . ":</strong> " . _("Manual time entry") . "</p>";
     $html .= "<input type='submit' name='usegameclock' data-ajax='false' value='" . _("Use game clock") . "'/>";
 }
 
 if (!$showGoalForm && $useGameClock) {
-    $message = $timerState['started'] ? _("Restart the game clock to continue timed scoring.") : _("Start the game clock before adding goals.");
+    $message = $timerState['elapsed'] > 0 ? _("Restart the game clock to continue timed scoring.") : _("Start the game clock before adding goals.");
     $html .= "<p class='warning'>" . $message . "</p>";
 }
 
@@ -519,9 +457,11 @@ if ($halfCapEvent || $timeCapEvent) {
     $html .= "</ul>\n";
 }
 
-if (!$useGameClock) {
+if (!$useGameClock && !$isFinal) {
     $html .= "<h3>" . _("Game has ended") . "</h3>";
-    if ($lastscore) {
+    if (ScorekeeperScoresheetBehindResult($scores, $game_result)) {
+        $html .= "<a href='?view=addresult&amp;game=" . $gameId . "' data-role='button' data-ajax='false'>" . _("Result") . "</a>";
+    } elseif ($lastscore) {
         $home = $lastscore['homescore'];
         $away = $lastscore['visitorscore'];
         $html .= "<input type='submit' name='save' data-ajax='false' value='" . _("Save final result") . " $home - $away'/>";
@@ -536,6 +476,9 @@ $html .= "</div><!-- /content -->\n\n";
 echo $html;
 if ($showClock) {
     echo ScorekeeperClockScript($timerState);
+}
+if ($useGameClock) {
+    echo ScorekeeperClockControlScript();
 }
 ?>
 <script type="text/javascript">
@@ -617,22 +560,4 @@ if ($showClock) {
       this.href = this.href.replace(/([?&])time=\d+/, '$1time=' + ((rounded.mm * 60) + rounded.ss));
     });
   });
-
-  var pauseButton = document.getElementById('pausegame');
-  if (pauseButton) {
-    pauseButton.addEventListener('click', function(event) {
-      if (!confirm(<?php echo json_encode(_("Pause the game clock? Use this only for exceptional stoppages.")); ?>)) {
-        event.preventDefault();
-      }
-    });
-  }
-
-  var startButton = document.getElementById('startgame');
-  if (startButton && startButton.value !== <?php echo json_encode(_("Start game clock")); ?>) {
-    startButton.addEventListener('click', function(event) {
-      if (!confirm(<?php echo json_encode(_("Restart the game clock from 00:00?")); ?>)) {
-        event.preventDefault();
-      }
-    });
-  }
 </script>

@@ -164,6 +164,130 @@ input[type="checkbox"] {
   font-size: 1.8em;
 }
 
+/* Scorekeeper result page */
+.sk-clock-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 8px 8px 14px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--surface);
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
+.sk-clock-bar input[type="submit"] {
+  flex: 0 1 auto;
+  width: auto;
+  margin: 0;
+}
+
+.sk-result-status {
+  margin: 16px 0 0;
+  color: var(--text-muted);
+  font-weight: 700;
+  text-align: center;
+}
+
+.sk-result-status--ongoing {
+  color: var(--accent);
+}
+
+.sk-score-cards {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.sk-score-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px 12px 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  text-align: center;
+}
+
+.sk-score-card--home {
+  background: var(--team-home-bg);
+}
+
+.sk-score-card--away {
+  background: var(--team-away-bg);
+}
+
+.sk-score-card .sk-score-team {
+  margin: 0;
+  color: var(--text);
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.sk-score-card input.sk-score-value {
+  width: 100%;
+  padding: 2px 4px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--surface);
+  color: var(--text);
+  font-size: 3.5rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+  text-align: center;
+  appearance: textfield;
+}
+
+.sk-score-card input.sk-score-value::-webkit-inner-spin-button,
+.sk-score-card input.sk-score-value::-webkit-outer-spin-button {
+  margin: 0;
+  appearance: none;
+}
+
+.sk-score-card input[type="submit"] {
+  width: 100%;
+  margin: 0;
+}
+
+.sk-score-card input.sk-score-plus[type="submit"] {
+  padding: 20px 14px;
+  font-size: 1.6rem;
+}
+
+.sk-result-actions {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 12px;
+  margin-top: 28px;
+  padding-top: 20px;
+  border-top: 1px solid var(--border);
+}
+
+.sk-result-actions input[type="submit"] {
+  width: 100%;
+  margin: 0;
+}
+
+@media (min-width: 600px) {
+  .sk-result-actions:has(> :nth-child(2)) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.sk-fold {
+  margin-top: 12px;
+}
+
+.sk-fold summary {
+  cursor: pointer;
+  color: var(--text-muted);
+  font-weight: 700;
+}
+
 [data-role="content"] {
   padding: 16px;
   max-width: 980px;

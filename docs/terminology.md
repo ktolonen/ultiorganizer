@@ -31,6 +31,8 @@ Preferred wording for Ultiorganizer docs, specs, commit messages, review comment
 | Turnover | Recorded possession change in gameplay data. | |
 | Defence | Recorded defensive play/stat tracked through the defence sheet and defence stats. | Prefer `defence`, not `defense`, in new docs. |
 | Defence board | User-facing leaderboard or summary view for defensive stats. | Prefer the spaced form `Defence board`, not `Defenseboard`, in new UI text and docs. |
+| Scoreboard | Player scoring list: games, assists, goals, and totals for a team, pool, division, or event. | Not a game score shown on a screen; that is the `Score display`. |
+| Score display | Public full-screen app showing one game's live score at the field. | Lives under `scoredisplay/`. Do not call it `Scoreboard`. |
 | Scoresheet | Detailed game record combining roster, goals, timeouts, note, scorekeeper, and related metadata. | In Ultiorganizer this is a concept, not a single table. |
 | Gameplay | Replay or view of saved game goals and events. | Used by gameplay pages and API responses. |
 | Game event | Recorded non-goal gameplay marker. | Includes turnovers, offence markers, timeouts, spirit stoppages, and media-linked events. |
