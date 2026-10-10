@@ -43,8 +43,7 @@ if (!empty($_POST['confirm'])) {
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
 if (intval($seasonInfo['isnationalteams'])) {
-    include_once 'lib/yui.functions.php';
-    echo yuiLoad(["utilities", "datasource", "autocomplete"]);
+    echo "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
 }
 ?>
 <script type="text/javascript" src="script/local-autocomplete.js"></script>

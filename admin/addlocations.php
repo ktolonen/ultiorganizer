@@ -114,8 +114,7 @@ $title = _("Add location");
 $LAYOUT_ID = ADDLOCATION;
 pageTopHeadOpen($title);
 
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "datasource", "autocomplete"]);
+echo "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
 pageTopHeadClose($title, false);
 leftMenu($LAYOUT_ID);
 contentStart();

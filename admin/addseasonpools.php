@@ -162,8 +162,7 @@ $title = _("Edit");
 
 //common page
 pageTopHeadOpen($title);
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "datasource", "autocomplete"]);
+echo "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
 
 ?>
 <script type="text/javascript">
