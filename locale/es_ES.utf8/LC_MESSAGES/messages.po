@@ -2240,7 +2240,7 @@ msgstr "ID de evento"
 
 #: admin/addseasons.php:84 admin/addseasons.php:111
 msgid "Event ID already exists"
-msgstr "El ID del evento ya existe."
+msgstr "El ID del evento ya existe"
 
 #: admin/addseasons.php:80
 msgid "Event ID cannot be empty"

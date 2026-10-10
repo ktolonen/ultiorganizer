@@ -32,7 +32,7 @@ if (!empty($_POST['save'])) {
         $error = 1;
     }
     if (empty($newPassword) || strlen($newPassword) < 5 || strlen($newPassword) > 20) {
-        $message .=  "<p>" . _("Password is too short (min. 5 letters).") . ".</p>";
+        $message .=  "<p>" . _("Password is too short (min. 5 letters).") . "</p>";
         $error = 1;
     }
     if (empty($newName)) {

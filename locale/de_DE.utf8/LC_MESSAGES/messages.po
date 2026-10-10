@@ -2226,7 +2226,7 @@ msgstr "Ereignis-ID"
 
 #: admin/addseasons.php:84 admin/addseasons.php:111
 msgid "Event ID already exists"
-msgstr "Ereignis-ID existiert bereits."
+msgstr "Ereignis-ID existiert bereits"
 
 #: admin/addseasons.php:80
 msgid "Event ID cannot be empty"
@@ -7025,7 +7025,7 @@ msgstr ""
 
 #: register.php:31 admin/adduser.php:28 user/userinfo.php:43
 msgid "The username is already in use"
-msgstr "Der Benutzername ist schon vergeben."
+msgstr "Der Benutzername ist schon vergeben"
 
 #: admin/finalstandings.php:147
 #, php-format
