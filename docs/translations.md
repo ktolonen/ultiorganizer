@@ -53,7 +53,7 @@ sync.
 
 CI runs `docs/ai/review-user-language/scripts/check-catalog-terms.php`, which
 fails while any source string is missing from a catalog or left untranslated or
-fuzzy in any locale.
+fuzzy in any locale, or while a `messages.mo` no longer matches its `.po` file.
 
 ## Static Localized Files
 

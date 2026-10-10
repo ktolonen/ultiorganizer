@@ -16,6 +16,7 @@ declare(strict_types=1);
 //                that no catalog has yet (refresh the catalogs)
 //   untranslated entries with an empty msgstr in any locale
 //   fuzzy        entries still flagged fuzzy in any locale
+//   stale        a messages.mo that does not match its messages.po
 //
 // Existing, accepted findings live in ../catalog-allow.txt so only new problems
 // fail the run. Regenerate it with --update-allow after reviewing the report.
@@ -202,6 +203,22 @@ function main(array $argv): int
                 echo "FUZZY  [$locale] $id\n";
                 $errors++;
             }
+        }
+    }
+
+    // Runtime gettext reads messages.mo, so compare its decoded entries with
+    // the PO rather than its bytes, which differ between msgfmt versions.
+    foreach ($poFiles as $po) {
+        $locale = basename(dirname($po, 2));
+        $mo = dirname($po) . '/messages.mo';
+        $decoded = tempnam(sys_get_temp_dir(), 'uo-mo');
+        exec('msgunfmt -o ' . escapeshellarg((string) $decoded) . ' ' . escapeshellarg($mo) . ' 2>&1', $output, $status);
+        $compiled = $status === 0 ? parsePo((string) $decoded) : [];
+        @unlink((string) $decoded);
+        $expected = array_filter($catalogs[$locale], fn(array $entry): bool => $entry['str'] !== '' && !$entry['fuzzy']);
+        if ($status !== 0 || array_map(fn(array $entry): string => $entry['str'], $compiled) != array_map(fn(array $entry): string => $entry['str'], $expected)) {
+            echo "STALE  [$locale] messages.mo does not match messages.po (rebuild it with msgfmt)\n";
+            $errors++;
         }
     }
 
