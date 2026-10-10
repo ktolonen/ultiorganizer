@@ -132,7 +132,7 @@ function main(array $argv): int
         $all += $entries;
     }
     $ids = array_map('strval', array_keys($all));
-    sort($ids, SORT_FLAG_CASE | SORT_STRING);
+    usort($ids, fn(string $a, string $b): int => strcasecmp($a, $b) ?: strcmp($a, $b));
 
     $found = [];
 
