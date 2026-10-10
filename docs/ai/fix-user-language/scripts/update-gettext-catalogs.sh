@@ -17,21 +17,8 @@ trap 'rm -f "$TMP_POT" "$TMP_POT_UTF8"' EXIT
 
 cd "$REPO_ROOT"
 
-sort_option_for() {
-  local tool="$1"
-
-  if LC_ALL=C "$tool" --help 2>&1 | grep -q -- '--sort-output.*deprecated'; then
-    printf '%s\n' '--sort-by-file'
-    return
-  fi
-
-  printf '%s\n' '--sort-output'
-}
-
 php_files=()
 locale_dirs=()
-xgettext_sort_option="$(sort_option_for xgettext)"
-msgmerge_sort_option="$(sort_option_for msgmerge)"
 
 while IFS= read -r file; do
   php_files+=("$file")
@@ -60,7 +47,7 @@ xgettext \
   --language=PHP \
   --from-code=UTF-8 \
   --keyword=_ \
-  "$xgettext_sort_option" \
+  --sort-output \
   --output="$TMP_POT" \
   "${php_files[@]}"
 
@@ -76,10 +63,12 @@ for locale_dir in "${locale_dirs[@]}"; do
   po_file="$locale_dir/LC_MESSAGES/messages.po"
   mo_file="$locale_dir/LC_MESSAGES/messages.mo"
 
+  # The catalogs are sorted by msgid. gettext 0.23 deprecates --sort-output
+  # but still honours it; --sort-by-file would reorder every entry.
   msgmerge \
     --update \
     --backup=none \
-    "$msgmerge_sort_option" \
+    --sort-output \
     "$po_file" \
     "$TMP_POT"
 

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 12:24+0300\n"
+"POT-Creation-Date: 2026-10-10 20:12+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -544,7 +544,7 @@ msgstr "Alle Teams"
 msgid "All time"
 msgstr "Gesamtstatistik"
 
-#: clubcard.php:197 statistics.php:27
+#: clubcard.php:197 statistics.php:27 statistics.php:134
 msgid "All-time scoring leaders"
 msgstr "Allzeit-Scorerliste"
 
@@ -5912,9 +5912,9 @@ msgstr "Spielbericht gespeichert"
 
 #: clubcard.php:155 clubcard.php:184 countrycard.php:40 countrycard.php:67
 #: gamecard.php:205 poolstatus.php:158 poolstatus.php:184 scorestatus.php:10
-#: scorestatus.php:47 seriesstatus.php:306 statistics.php:26 teams.php:124
-#: teams.php:147 scorekeeper/gameplay.php:125 scorekeeper/gameplay.php:126
-#: scorekeeper/scoreboard.php:12
+#: scorestatus.php:47 seriesstatus.php:306 statistics.php:26 statistics.php:84
+#: teams.php:124 teams.php:147 scorekeeper/gameplay.php:125
+#: scorekeeper/gameplay.php:126 scorekeeper/scoreboard.php:12
 msgid "Scoring leaders"
 msgstr "Scorerliste"
 
