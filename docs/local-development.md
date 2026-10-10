@@ -1,6 +1,6 @@
 # Local Development
 
-Docker Compose setup for local work. The stack lives in `docs/dev/` (`compose.yaml`, `Dockerfile.app`, `Dockerfile.dev`, `.env.example`, `php.dev.ini`) and needs [Docker](https://docs.docker.com/get-docker/) with the Compose plugin. The images run PHP 8.3 and MariaDB 10.11 and generate the `en_US`, `de_DE`, `es_ES` and `fi_FI` UTF-8 locales for translations.
+Docker Compose setup for local work. The stack lives in `docs/dev/` (`compose.yaml`, `Dockerfile.app`, `Dockerfile.dev`, `.env.example`, `php.dev.ini`) and needs [Docker](https://docs.docker.com/get-docker/) with the Compose plugin. The images run PHP 8.5 and MariaDB 12.3 (newer than the minimum versions in the root `README.md`) and generate the `en_US`, `de_DE`, `es_ES` and `fi_FI` UTF-8 locales for translations.
 
 ## Configure the stack
 
