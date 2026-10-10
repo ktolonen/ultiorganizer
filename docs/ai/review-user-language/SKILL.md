@@ -33,7 +33,7 @@ Run the catalog checker before the manual review. It reads every msgid in `local
 
 - `php docs/ai/review-user-language/scripts/check-catalog-terms.php`
 - msgids that differ only in case, punctuation or spacing (`variants:`), and msgids containing wording that `docs/terminology.md` discourages (`term:`; patterns in `catalog-terms.txt`)
-- untranslated or fuzzy entries in any locale (fuzzy entries are not used at runtime)
+- msgids missing from a locale, and untranslated or fuzzy entries in any locale (all three fall back to English at runtime)
 
 Accepted findings are baselined in `catalog-allow.txt`. Fix new findings in the code; add to the baseline with `--update-allow` only for a legitimate variant (for example a noun and a verb form), and keep `catalog-terms.txt` in step with `docs/terminology.md`.
 

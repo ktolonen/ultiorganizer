@@ -11,6 +11,7 @@ declare(strict_types=1);
 //                ("Club Card" / "Club card")
 //   term         msgids containing wording that docs/terminology.md discourages
 //                (patterns in ../catalog-terms.txt)
+//   missing      msgids present in some locale but absent from another
 //   untranslated entries with an empty msgstr in any locale
 //   fuzzy        entries still flagged fuzzy in any locale
 //
@@ -101,7 +102,7 @@ function main(array $argv): int
     foreach ($poFiles as $po) {
         $catalogs[basename(dirname($po, 2))] = parsePo($po);
     }
-    $ids = array_keys(reset($catalogs));
+    $ids = array_keys(array_merge(...array_values($catalogs)));
     sort($ids, SORT_FLAG_CASE | SORT_STRING);
 
     $found = [];
@@ -155,6 +156,10 @@ function main(array $argv): int
         }
     }
     foreach ($catalogs as $locale => $entries) {
+        foreach (array_diff_key(array_flip($ids), $entries) as $id => $_) {
+            echo "MISSING  [$locale] $id\n";
+            $errors++;
+        }
         foreach ($entries as $id => $entry) {
             if ($entry['str'] === '') {
                 echo "UNTRANSLATED  [$locale] $id\n";
