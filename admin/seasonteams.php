@@ -122,10 +122,8 @@ if (!intval($seasonInfo['isnationalteams'])) {
 }
 $colSeed = "20px";
 $colName = "150px";
-$colNameList = ((int) $colName * 1.5) . "px";
 $colAbbrev = "40px";
 $colClub = "160px";
-$colClubList = ((int) $colClub * 1.5) . "px";
 $colCountry = "90px";
 $colContact = "100px";
 $colRoster = "50px";
@@ -133,9 +131,8 @@ $colActions = "50px";
 
 //common page
 pageTopHeadOpen($title);
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "datasource", "autocomplete"]);
 ?>
+<script type="text/javascript" src="script/local-autocomplete.js"></script>
 <script type="text/javascript">
   var teamNames = <?php echo json_encode($teamlistnames, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
   <?php if (!intval($seasonInfo['isnationalteams'])) { ?>
@@ -246,10 +243,10 @@ foreach ($teams as $team) {
 $total++;
 $html .=  "<tr>";
 $html .= "<td style='padding-top:18px; width:$colSeed'><input class='input' maxlength='4' style='width:$colSeed' name='seed0' value='$total'/></td>";
-$html .= "<td style='padding-top:0px; width:$colName'><div id='teamAutoComplete' class='yui-skin-sam' style='position:relative; margin-right: 10px; width:$colName'><input class='input' maxlength='50' style='width:$colName' name='name0' id='name0' value=''/><div id='teamContainer' style='position:absolute; width:$colNameList'></div></div></td>";
+$html .= "<td style='padding-top:18px; width:$colName'><div id='teamAutoComplete' style='position:relative; margin-right: 10px; width:$colName'><input class='input' maxlength='50' style='width:$colName' name='name0' id='name0' value=''/></div></td>";
 $html .= "<td style='padding-top:18px; width:$colAbbrev'><input class='input' maxlength='15' style='width:$colAbbrev' name='abbrev0' value=''/></td>";
 if (!intval($seasonInfo['isnationalteams'])) {
-    $html .= "<td style='padding-top:0px; width:$colClub'><div id='clubAutoComplete' class='yui-skin-sam' style='position:relative; margin-right: 10px; width:$colClub'><input class='input' maxlength='50' style='width:$colClub' name='club0' id='club0' value=''/><div id='clubContainer' style='position:absolute; width:$colClubList'></div></div></td>";
+    $html .= "<td style='padding-top:18px; width:$colClub'><div id='clubAutoComplete' style='position:relative; margin-right: 10px; width:$colClub'><input class='input' maxlength='50' style='width:$colClub' name='club0' id='club0' value=''/></div></td>";
 }
 if (intval($seasonInfo['isinternational'])) {
     if (!intval($seasonInfo['isnationalteams'])) {
@@ -299,19 +296,10 @@ $html .= "<p><input type='hidden' id='hiddenDeleteId' name='hiddenDeleteId'/></p
 
 $html .= "</form>\n";
 $html .= "<script type='text/javascript'>\n";
-$html .= "YAHOO.autocomplete = function() {\n";
-$html .= "  var teamDS = new YAHOO.util.LocalDataSource(teamNames);\n";
-$html .= "  var teamAC = new YAHOO.widget.AutoComplete(\"name0\", \"teamContainer\", teamDS);\n";
-$html .= "  teamAC.prehighlightClassName = \"yui-ac-prehighlight\";\n";
-$html .= "  teamAC.useShadow = true;\n";
+$html .= "attachLocalSuggestions(\"name0\", teamNames, \"teamSuggestions\");\n";
 if (!intval($seasonInfo['isnationalteams'])) {
-    $html .= "  var clubDS = new YAHOO.util.LocalDataSource(clubNames);\n";
-    $html .= "  var clubAC = new YAHOO.widget.AutoComplete(\"club0\", \"clubContainer\", clubDS);\n";
-    $html .= "  clubAC.prehighlightClassName = \"yui-ac-prehighlight\";\n";
-    $html .= "  clubAC.useShadow = true;\n";
+    $html .= "attachLocalSuggestions(\"club0\", clubNames, \"clubSuggestions\");\n";
 }
-$html .= "  return {teamDS: teamDS, teamAC: teamAC};\n";
-$html .= "}();\n";
 $html .= "</script>\n";
 
 echo $html;

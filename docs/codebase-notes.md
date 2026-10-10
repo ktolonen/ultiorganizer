@@ -4,8 +4,9 @@ Implementation notes for third-party code, PDFs, plugins, customizations, guards
 
 ## Third-party components
 
-- YUI assets and loader live under `script/yui/` and `lib/yuiloader/`. Autocomplete, table, and drag-and-drop widgets still use YUI. Help toggles, scoresheet error highlighting, pool color selection, and simple edit controls use native browser APIs.
+- YUI assets and loader live under `script/yui/` and `lib/yuiloader/`. Remote autocomplete, table, and drag-and-drop widgets still use YUI. Help toggles, scoresheet error highlighting, pool color selection, and simple edit controls use native browser APIs.
 - Calendar fields use flatpickr 4.6.13 under `script/flatpickr/`, with shared setup in `script/calendar.js`. Dates retain the `day.month.year` form format and manual entry; calendar weeks start on Monday. The bundled locale files cover German, Spanish, and Finnish; English is built in.
+- Local club and team name suggestions use native `datalist` controls through `script/local-autocomplete.js`. Inputs retain free-text entry and their original form field names. National-team translation and reservation-location suggestions still use YUI remote autocomplete.
 - Bundled PHP libraries include `lib/hsvclass/`, `lib/tfpdf/`, and `lib/phpqrcode/`.
 
 ## PDF generation

@@ -100,12 +100,16 @@ foreach ($result as $row) {
 }
 
 //common page
+$seasonInfo = SeasonInfo($season);
 $title = _("Edit");
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "datasource", "autocomplete"]);
+if (intval($seasonInfo['isnationalteams'])) {
+    include_once 'lib/yui.functions.php';
+    echo yuiLoad(["utilities", "datasource", "autocomplete"]);
+}
 ?>
+<script type="text/javascript" src="script/local-autocomplete.js"></script>
 <style type="text/css">
 	#orgAutoComplete {
 		width: 26em;
@@ -119,7 +123,6 @@ echo yuiLoad(["utilities", "datasource", "autocomplete"]);
 pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
-$seasonInfo = SeasonInfo($season);
 
 if ($teamId) {
     $info = TeamFullInfo($teamId);
@@ -145,7 +148,6 @@ if (!intval($seasonInfo['isnationalteams'])) {
     $html .= "<input class='input' id='name' name='name' size='50' value='" . utf8entities($tp['name']) . "'/></td></tr>";
     $html .= "<tr><td class='infocell'>" . _("Club") . ":</td>\n";
     $html .= "<td><div id='orgAutoComplete'><input class='input' type='text' id='club' name='club' size='50' value='" . utf8entities(ClubName($tp['club'])) . "'/>";
-    $html .= "<div id='orgContainer'></div>";
     $html .= "</div>";
 } else {
     $html .= TranslatedField("name", $tp['name']);
@@ -221,16 +223,7 @@ $html .= "</form>\n";
 echo $html;
 ?>
 <script type="text/javascript">
-	YAHOO.autocomplete = function() {
-		var oDS = new YAHOO.util.LocalDataSource(clubs);
-		var oAC = new YAHOO.widget.AutoComplete("club", "orgContainer", oDS);
-		oAC.prehighlightClassName = "yui-ac-prehighlight";
-		oAC.useShadow = true;
-		return {
-			oDS: oDS,
-			oAC: oAC
-		};
-	}();
+  attachLocalSuggestions("club", clubs, "clubSuggestions");
 </script>
 <?php
 if (intval($seasonInfo['isnationalteams'])) {
