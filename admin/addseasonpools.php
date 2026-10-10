@@ -163,62 +163,22 @@ $title = _("Edit");
 //common page
 pageTopHeadOpen($title);
 include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "slider", "colorpicker", "datasource", "autocomplete"]);
+echo yuiLoad(["utilities", "datasource", "autocomplete"]);
 
 ?>
-<style type="text/css">
-	#colorcontainer {
-		position: relative;
-		padding: 6px;
-		background-color: #eeeeee;
-		width: 300px;
-		height: 180px;
-	}
-</style>
 <script type="text/javascript">
-	(function() {
-		var Event = YAHOO.util.Event,
-			picker;
-
-		Event.onDOMReady(function() {
-			picker = new YAHOO.widget.ColorPicker("colorcontainer", {
-				showhsvcontrols: false,
-				showhexcontrols: true,
-				showhexsummary: false,
-				showrgbcontrols: false,
-				showwebsafe: false,
-				images: {
-					PICKER_THUMB: "styles/yui/colorpicker/assets/picker_thumb.png",
-					HUE_THUMB: "styles/yui/colorpicker/assets/hue_thumb.png"
-				}
-			});
-			picker.setValue([<?php
-                                echo hexdec(substr($pp['color'], 0, 2)) . ", ";
-echo hexdec(substr($pp['color'], 2, 2)) . ", ";
-echo hexdec(substr($pp['color'], 4, 2));
-?>], true);
-			var onRgbChange = function(o) {
-				var val = picker.get("hex");
-				YAHOO.util.Dom.get('color').value = val;
-				var btn = YAHOO.util.Dom.get('showcolor');
-				YAHOO.util.Dom.setStyle(btn, "background-color", "#" + val);
-			}
-
-			//subscribe to the rgbChange event;
-			picker.on("rgbChange", onRgbChange);
-
-			var handleColorButton = function() {
-				var containerDiv = YAHOO.util.Dom.get("colorcontainer");
-				if (containerDiv.style.display == "none") {
-					YAHOO.util.Dom.setStyle(containerDiv, "display", "block");
-				} else {
-					YAHOO.util.Dom.setStyle(containerDiv, "display", "none");
-				}
-			}
-			YAHOO.util.Event.addListener("showcolor", "click", handleColorButton);
-
-		});
-	})();
+  document.addEventListener("DOMContentLoaded", function () {
+    var picker = document.getElementById("showcolor");
+    var color = document.getElementById("color");
+    if (!picker || !color) {
+      return;
+    }
+    function updateColor() {
+      color.value = picker.value.substring(1).toUpperCase();
+    }
+    picker.addEventListener("input", updateColor);
+    picker.addEventListener("change", updateColor);
+  });
 </script>
 
 <?php
@@ -392,9 +352,9 @@ if (!$poolId || $addmore) {
 			<td><a href='?view=admin/poolmoves&amp;season=$season&amp;series=" . $pp['series'] . "&amp;pool=" . $poolId . "'>" . _("select") . "</a></td>
 			<td></td></tr>";
     }
-    echo "<tr><td class='infocell'>" . _("Color") . ":</td>";
+    echo "<tr><td class='infocell'><label for='showcolor'>" . _("Color") . ":</label></td>";
     echo "<td><input class='input' type='hidden' id='color' name='color' value='" . utf8entities($pp['color']) . "'/>\n";
-    echo "<button type='button' id='showcolor' class='button' style='background-color:#" . $pp['color'] . "'>" . _("Select") . "</button></td>";
+    echo "<input type='color' id='showcolor' value='#" . utf8entities($pp['color']) . "'/></td>";
     echo "<td></td></tr>";
 
     $comment = CommentRaw(3, $poolId);
@@ -403,7 +363,6 @@ if (!$poolId || $addmore) {
 
 
     echo "</table>";
-    echo "<div class='yui-skin-sam' id='colorcontainer' style='display:none'></div>";
 
     echo "<h2>" . _("Teams") . ":</h2>";
 
