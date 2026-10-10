@@ -614,24 +614,32 @@ msgstr "Anonyme Änderungen: %d"
 msgid ""
 "Anyone who opens a game or field scorekeeping link can keep score for those "
 "games without logging in."
-msgstr "Jeder, der einen Spiel- oder Feld-Scorekeeping-Link öffnet, kann für diese Spiele ohne Anmeldung Punkte erfassen."
+msgstr ""
+"Jeder, der einen Spiel- oder Feld-Scorekeeping-Link öffnet, kann für diese "
+"Spiele ohne Anmeldung Punkte erfassen."
 
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
-msgstr "Jeder mit diesem Link kann nach der Anmeldung Punkte für diese Spiele erfassen."
+msgstr ""
+"Jeder mit diesem Link kann nach der Anmeldung Punkte für diese Spiele "
+"erfassen."
 
 #: user/scorekeepinglink.php:48
 msgid ""
 "Anyone with this link can keep score for these games without logging in."
-msgstr "Jeder mit diesem Link kann ohne Anmeldung Punkte für diese Spiele erfassen."
+msgstr ""
+"Jeder mit diesem Link kann ohne Anmeldung Punkte für diese Spiele erfassen."
 
 #: user/scorekeepinglink.php:45
 msgid "Anyone with this link can keep score for this game after logging in."
-msgstr "Jeder mit diesem Link kann nach der Anmeldung Punkte für dieses Spiel erfassen."
+msgstr ""
+"Jeder mit diesem Link kann nach der Anmeldung Punkte für dieses Spiel "
+"erfassen."
 
 #: user/scorekeepinglink.php:44
 msgid "Anyone with this link can keep score for this game without logging in."
-msgstr "Jeder mit diesem Link kann ohne Anmeldung Punkte für dieses Spiel erfassen."
+msgstr ""
+"Jeder mit diesem Link kann ohne Anmeldung Punkte für dieses Spiel erfassen."
 
 #: admin/translations.php:585
 msgid "Apply bulk translations"
@@ -5464,7 +5472,9 @@ msgstr "Ergebnis gelöscht"
 
 #: scorekeeper/addresult.php:49
 msgid "Result not saved: the score has changed since this page was opened."
-msgstr "Ergebnis nicht gespeichert: Der Spielstand hat sich geändert, seit diese Seite geöffnet wurde."
+msgstr ""
+"Ergebnis nicht gespeichert: Der Spielstand hat sich geändert, seit diese "
+"Seite geöffnet wurde."
 
 #: lib/game.functions.php:2854
 #, php-format
@@ -5885,7 +5895,8 @@ msgstr "Spielbericht-Verlauf"
 
 #: admin/scorekeepinglinks.php:101
 msgid "Scoresheet history is disabled; anonymous use is not counted."
-msgstr "Der Spielberichtsverlauf ist deaktiviert; anonyme Nutzung wird nicht gezählt."
+msgstr ""
+"Der Spielberichtsverlauf ist deaktiviert; anonyme Nutzung wird nicht gezählt."
 
 #: user/addscoresheet.php:510
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
@@ -6883,7 +6894,9 @@ msgstr ""
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
-msgstr "Der aktuelle Link funktioniert nicht mehr, und alle, die ihn geöffnet haben, verlieren den Zugriff. Fortfahren?"
+msgstr ""
+"Der aktuelle Link funktioniert nicht mehr, und alle, die ihn geöffnet haben, "
+"verlieren den Zugriff. Fortfahren?"
 
 #: admin/scorekeepinglinks.php:98 user/scorekeepinglink.php:28
 msgid "The event is read-only."
@@ -7136,7 +7149,9 @@ msgstr ""
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
-msgstr "Dieser Scorekeeping-Link ist nicht mehr gültig. Bitte den Turnierveranstalter um einen neuen."
+msgstr ""
+"Dieser Scorekeeping-Link ist nicht mehr gültig. Bitte den "
+"Turnierveranstalter um einen neuen."
 
 #: lib/scorekeeper.functions.php:624
 #, php-format
@@ -8521,351 +8536,3 @@ msgstr "mit"
 #: admin/seasons.php:129 admin/seasons.php:132
 msgid "yes"
 msgstr "ja"
-
-#~ msgid "API"
-#~ msgstr "API"
-
-#~ msgid "Accr. ID"
-#~ msgstr "Akkr.-ID"
-
-#~ msgid "Action"
-#~ msgstr "Ort"
-
-#~ msgid "Add result"
-#~ msgstr "Neues Ergebnis"
-
-#~ msgid "Add result by game ID"
-#~ msgstr "Ergebnis mit Spiel-ID eingeben"
-
-#~ msgid "Additional points after cap"
-#~ msgstr "Zusätzl. Punkte nach Ablauf der Zeit"
-
-#~ msgid "After the match has ended, update result:"
-#~ msgstr "Nach dem Ende des Spiels, geben Sie das Ergebnis ein:"
-
-#~ msgid "All Clubs"
-#~ msgstr "Alle Vereine"
-
-#~ msgid "All time scoreboard"
-#~ msgstr "Allzeit-Scorerliste"
-
-#~ msgid "Are you sure you want to delete last score?"
-#~ msgstr "Sind Sie sicher, dass der letzte Score gelöscht werden soll?"
-
-#~ msgid "Assists avg."
-#~ msgstr "Assists im Schnitt"
-
-#~ msgid "Ast"
-#~ msgstr "Ast"
-
-#~ msgid "Away score"
-#~ msgstr "Punkte Gastteam"
-
-#~ msgid "Away team score"
-#~ msgstr "Punkte Auswaertsteam"
-
-#~ msgid "Back to the Ultiorganizer"
-#~ msgstr "Zurück zu Ultiorganizer"
-
-#~ msgid "Back to timeouts"
-#~ msgstr "Zurueck zu den Auszeiten"
-
-#~ msgid "Between points"
-#~ msgstr "Zeit zwischen Punkten"
-
-#~ msgid "Call."
-#~ msgstr "Call."
-
-#~ msgid "Cap target"
-#~ msgstr "Zielpunktzahl"
-
-#~ msgid "Cap time"
-#~ msgstr "Zeitpunkt der Obergrenze"
-
-#~ msgid "Change language"
-#~ msgstr "Sprache ändern"
-
-#~ msgid "Change result to"
-#~ msgstr "Spielergebnis ändern"
-
-#~ msgid "Change the result to"
-#~ msgstr "Ergebnis aendern in"
-
-#~ msgid "Check the username and password."
-#~ msgstr "Überprüfe Benutzername und Passwort."
-
-#~ msgid "Client access"
-#~ msgstr "Client access"
-
-#~ msgid "Club Card"
-#~ msgstr "Vereinskarte"
-
-#~ msgid "Club Profile"
-#~ msgstr "Club-Profil"
-
-#~ msgid "Club Teams"
-#~ msgstr "Clubteams"
-
-#~ msgid "Clubs & Countries"
-#~ msgstr "Clubs & Länder"
-
-#~ msgid "Correct the errors or save goal with errors"
-#~ msgstr "Fehler korrigieren oder Punkt mit Fehlern speichern"
-
-#~ msgid "Count"
-#~ msgstr "Land"
-
-#~ msgid "Defence board leaders"
-#~ msgstr "Fuehrende der Defense-Rangliste"
-
-#~ msgid "Defence warning"
-#~ msgstr "Defense-Rangliste"
-
-#~ msgid "Defences avg."
-#~ msgstr "Defenses im Schnitt"
-
-#~ msgid "Delete listed access rights"
-#~ msgstr "User Zugriffsrechte"
-
-#~ msgid "Delete score"
-#~ msgstr "Punkt löschen"
-
-#~ msgid "Delete selected users' event access rights"
-#~ msgstr "Event-Zugriffsrechte der ausgewählten Benutzer löschen"
-
-#~ msgid "Delete the last goal"
-#~ msgstr "Letzten Punkt löschen"
-
-#~ msgid "Desktop gameplay"
-#~ msgstr "Desktop-Spielverlauf"
-
-#~ msgid "Erroneous scoresheet number:"
-#~ msgstr "Falsche Spielberichtsnummer:"
-
-#~ msgid "Event Links"
-#~ msgstr "Turnierlinks"
-
-#~ msgid "External"
-#~ msgstr "Extern"
-
-#~ msgid "Fill in scoresheet"
-#~ msgstr "Spielbericht ausfuellen"
-
-#~ msgid "Final Standings"
-#~ msgstr "Endergebnis"
-
-#~ msgid "First Name"
-#~ msgstr "Vorname"
-
-#~ msgid "First Offence"
-#~ msgstr "Erste Offence"
-
-#~ msgid "First offence warning"
-#~ msgstr "Erste Offence"
-
-#~ msgid "First signal"
-#~ msgstr "Vorname"
-
-#~ msgid "Game has already been played. Current result:"
-#~ msgstr "Das Spiel wurde bereits gespielt. Aktuelles Ergebnis:"
-
-#~ msgid "Game has no pool."
-#~ msgstr "Spiel ohne Gruppe."
-
-#~ msgid "Game number from scoresheet"
-#~ msgstr "Spielnummer vom Spielbericht"
-
-#~ msgid "Game official(s)"
-#~ msgstr "Spiel-Offizielle(r)"
-
-#~ msgid "Game result"
-#~ msgstr "Spielergebnis"
-
-#~ msgid "Games list"
-#~ msgstr "Frühere Spiele"
-
-#~ msgid "Give XX as the assist in Callahan goals"
-#~ msgstr "Trage bei Callahan-Punkten XX als Assist ein"
-
-#~ msgid "Gls"
-#~ msgstr "Pkt."
-
-#~ msgid "Goal diff"
-#~ msgstr "Punktedifferenz"
-
-#~ msgid "Goals avg."
-#~ msgstr "Punkte durchschnittl."
-
-#~ msgid "Group games"
-#~ msgstr "Spiele gruppieren"
-
-#, php-format
-#~ msgid "Halftime cap target: %d"
-#~ msgstr "Ziel der Halbzeit-Zeitgrenze: %d"
-
-#~ msgid "Halftime duration"
-#~ msgstr "Halbzeit bei Punkt"
-
-#~ msgid "Halftime ending"
-#~ msgstr "Halbzeit endet"
-
-#~ msgid "Halftime over"
-#~ msgstr "Halbzeitstand"
-
-#~ msgid "Home score"
-#~ msgstr "Punkte Heimteam"
-
-#~ msgid "Home team score"
-#~ msgstr "Punkte Heimteam"
-
-#~ msgid "If game ended:"
-#~ msgstr "Wenn das Spiel beendet ist:"
-
-#~ msgid "If game ongoing:"
-#~ msgstr "Wenn das Spiel noch läuft:"
-
-#~ msgid "Last Name"
-#~ msgstr "Nachname"
-
-#~ msgid "Menu"
-#~ msgstr "Menü"
-
-#~ msgid "No goals."
-#~ msgstr "Keine Punkte."
-
-#~ msgid "Offence warning"
-#~ msgstr "Offence"
-
-#~ msgid "Optional - add context for spirit points given (no blame)."
-#~ msgstr ""
-#~ "Optional: Kontext zu den vergebenen Spirit-Punkten hinzufuegen (ohne "
-#~ "Schuldzuweisung)."
-
-#~ msgid "Passwords do not match."
-#~ msgstr "Passwörter stimmen nicht überein"
-
-#~ msgid "Placements"
-#~ msgstr "Platzierungen"
-
-#~ msgid "Play must restart"
-#~ msgstr "Spielerdatenbericht"
-
-#~ msgid "Play off -type of pool"
-#~ msgstr "Pool vom Typ Play-off"
-
-#~ msgid "Players of the game"
-#~ msgstr "Aktive Spieler"
-
-#~ msgid "Print"
-#~ msgstr "Drucken"
-
-#~ msgid "Quick add result"
-#~ msgstr "Einzelergebnis eingeben"
-
-#~ msgid "Remove"
-#~ msgstr "entfernen"
-
-#~ msgid "Resolve dispute"
-#~ msgstr "Gleichstände auflösen"
-
-#~ msgid "Result not saved!"
-#~ msgstr "Ergebnis nicht gespeichert!"
-
-#~ msgid "Result saved!"
-#~ msgstr "Ergebnis gespeichert!"
-
-#~ msgid "Rule Templates"
-#~ msgstr "Regel-Vorlagen"
-
-#~ msgid "Save again"
-#~ msgstr "Erneut speichern"
-
-#~ msgid "Save as result"
-#~ msgstr "Ergebnis speichern"
-
-#~ msgid "Score&nbsp;sheet"
-#~ msgstr "Spielbericht"
-
-#~ msgid "Scoreboard leaders"
-#~ msgstr "Topscorer"
-
-#~ msgid "Scoreboards"
-#~ msgstr "Ranglisten"
-
-#~ msgid "Scoresheet #"
-#~ msgstr "Spielberichts-#"
-
-#~ msgid "Scoresheets"
-#~ msgstr "Spielberichte"
-
-#~ msgid "Season mandatory"
-#~ msgstr "Saison erforderlich"
-
-#~ msgid "Second warning before start"
-#~ msgstr "Zweite Halbzeit begann um"
-
-#~ msgid "Select scoring team!"
-#~ msgstr "Punktendes Team wählen!"
-
-#~ msgid "Standings saved"
-#~ msgstr "Rangfolge gespeichert"
-
-#~ msgid "Start of play"
-#~ msgstr "Startgruppe"
-
-#~ msgid "System template cannot be edited."
-#~ msgstr "Typ darf nicht leer sein"
-
-#~ msgid "Target event is not the same as in a file."
-#~ msgstr "Zielsaison entspricht nicht der der Datei"
-
-#~ msgid "Team Profile"
-#~ msgstr "Teamprofil"
-
-#~ msgid "The legacy mobile administration interface is deprecated."
-#~ msgstr "Die alte mobile Administrationsoberflaeche ist veraltet."
-
-#~ msgid "The username is already in use."
-#~ msgstr "Der Benutzername ist schon vergeben."
-
-#~ msgid "This game has already been played. Current result:"
-#~ msgstr "Dieses Spiel wurde bereits gespielt. Aktuelles Ergebnis:"
-
-#~ msgid ""
-#~ "This operation updates and adds event data in the database with the "
-#~ "content of the file. It will not delete any data or change user rights."
-#~ msgstr ""
-#~ "Diese Operation aktualisiert die Turnierdaten in der Datenbank mit denen "
-#~ "aus der Datei oder fügt sie hinzu. Es wird nichts gelöscht oder "
-#~ "Benutzerrechte verändert."
-
-#, php-format
-#~ msgid "Time cap target: %d"
-#~ msgstr "Ziel der Zeitobergrenze: %d"
-
-#~ msgid "Timeouts on overtime"
-#~ msgstr "Auszeiten in der Verlaengerung"
-
-#~ msgid "Tot. avg."
-#~ msgstr "Ges.-Schnitt"
-
-#~ msgid "Update as current result"
-#~ msgstr "Spielstand aktualisieren"
-
-#~ msgid "Use"
-#~ msgstr "Verwende"
-
-#~ msgid "away team"
-#~ msgstr "Auswaertsteam"
-
-#~ msgid "for score entry and"
-#~ msgstr "fuer die Ergebniseingabe und"
-
-#~ msgid "for spirit entry."
-#~ msgstr "fuer die Spirit-Eingabe."
-
-#~ msgid "home team"
-#~ msgstr "Heimteam"
-
-#~ msgid "starting on offence"
-#~ msgstr "Erste Offence"

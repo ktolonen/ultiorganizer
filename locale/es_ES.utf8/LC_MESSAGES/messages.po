@@ -624,24 +624,32 @@ msgstr "Cambios anónimos: %d"
 msgid ""
 "Anyone who opens a game or field scorekeeping link can keep score for those "
 "games without logging in."
-msgstr "Cualquiera que abra un enlace de anotación de partido o de campo puede anotar esos partidos sin iniciar sesión."
+msgstr ""
+"Cualquiera que abra un enlace de anotación de partido o de campo puede "
+"anotar esos partidos sin iniciar sesión."
 
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
-msgstr "Cualquiera con este enlace puede anotar estos partidos después de iniciar sesión."
+msgstr ""
+"Cualquiera con este enlace puede anotar estos partidos después de iniciar "
+"sesión."
 
 #: user/scorekeepinglink.php:48
 msgid ""
 "Anyone with this link can keep score for these games without logging in."
-msgstr "Cualquiera con este enlace puede anotar estos partidos sin iniciar sesión."
+msgstr ""
+"Cualquiera con este enlace puede anotar estos partidos sin iniciar sesión."
 
 #: user/scorekeepinglink.php:45
 msgid "Anyone with this link can keep score for this game after logging in."
-msgstr "Cualquiera con este enlace puede anotar este partido después de iniciar sesión."
+msgstr ""
+"Cualquiera con este enlace puede anotar este partido después de iniciar "
+"sesión."
 
 #: user/scorekeepinglink.php:44
 msgid "Anyone with this link can keep score for this game without logging in."
-msgstr "Cualquiera con este enlace puede anotar este partido sin iniciar sesión."
+msgstr ""
+"Cualquiera con este enlace puede anotar este partido sin iniciar sesión."
 
 #: admin/translations.php:585
 msgid "Apply bulk translations"
@@ -5475,7 +5483,9 @@ msgstr "Resultado borrado"
 
 #: scorekeeper/addresult.php:49
 msgid "Result not saved: the score has changed since this page was opened."
-msgstr "Resultado no guardado: el marcador ha cambiado desde que se abrió esta página."
+msgstr ""
+"Resultado no guardado: el marcador ha cambiado desde que se abrió esta "
+"página."
 
 #: lib/game.functions.php:2854
 #, php-format
@@ -5896,7 +5906,9 @@ msgstr "Historial de la hoja de anotación"
 
 #: admin/scorekeepinglinks.php:101
 msgid "Scoresheet history is disabled; anonymous use is not counted."
-msgstr "El historial de la hoja de anotación está desactivado; el uso anónimo no se cuenta."
+msgstr ""
+"El historial de la hoja de anotación está desactivado; el uso anónimo no se "
+"cuenta."
 
 #: user/addscoresheet.php:510
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
@@ -6893,7 +6905,9 @@ msgstr ""
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
-msgstr "El enlace actual deja de funcionar y todos los que lo abrieron pierden el acceso. ¿Continuar?"
+msgstr ""
+"El enlace actual deja de funcionar y todos los que lo abrieron pierden el "
+"acceso. ¿Continuar?"
 
 #: admin/scorekeepinglinks.php:98 user/scorekeepinglink.php:28
 msgid "The event is read-only."
@@ -7152,7 +7166,9 @@ msgstr ""
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
-msgstr "Este enlace de anotación ya no es válido. Pide uno nuevo al organizador del evento."
+msgstr ""
+"Este enlace de anotación ya no es válido. Pide uno nuevo al organizador del "
+"evento."
 
 #: lib/scorekeeper.functions.php:624
 #, php-format
@@ -8543,352 +8559,3 @@ msgstr "con"
 #: admin/seasons.php:129 admin/seasons.php:132
 msgid "yes"
 msgstr "si"
-
-#~ msgid "API"
-#~ msgstr "API"
-
-#~ msgid "Accr. ID"
-#~ msgstr "Acre. ID"
-
-#~ msgid "Add result"
-#~ msgstr "Agregar resultado"
-
-#~ msgid "Add result by game ID"
-#~ msgstr "Agregar resultado por ID del juego"
-
-#~ msgid "After the match has ended, update result:"
-#~ msgstr "Una vez finalizado el partido, actualiza el resultado:"
-
-#~ msgid "All Clubs"
-#~ msgstr "Todos los Clubes"
-
-#~ msgid "All time scoreboard"
-#~ msgstr "Marcador histórico"
-
-#~ msgid "Are you sure you want to delete last score?"
-#~ msgstr "¿Estás seguro de que deseas eliminar la última puntuación?"
-
-#~ msgid "Assists avg."
-#~ msgstr "Asistencias avg."
-
-#~ msgid "Ast"
-#~ msgstr "Ast"
-
-#~ msgid "Away score"
-#~ msgstr "Puntuación de visitante"
-
-#~ msgid "Away team score"
-#~ msgstr "Puntuación del equipo visitante"
-
-#~ msgid "Back to the Ultiorganizer"
-#~ msgstr "Volver a Ultiorganizer"
-
-#~ msgid "Back to timeouts"
-#~ msgstr "Volver a los tiempos fuera"
-
-#~ msgid "Between points"
-#~ msgstr "Tiempo entre puntos"
-
-#~ msgid "Call."
-#~ msgstr "Call."
-
-#~ msgid "Cap target"
-#~ msgstr "Objetivo del límite"
-
-#~ msgid "Cap time"
-#~ msgstr "Tiempo del límite"
-
-#~ msgid "Change language"
-#~ msgstr "Cambiar idioma"
-
-#~ msgid "Change result to"
-#~ msgstr "Cambiar resultado a"
-
-#~ msgid "Change the result to"
-#~ msgstr "Cambie el resultado a"
-
-#~ msgid "Check the username and password."
-#~ msgstr "Verifique el nombre de usuario y la contraseña."
-
-#~ msgid "Client access"
-#~ msgstr "Acceso de cliente"
-
-#~ msgid "Club Card"
-#~ msgstr "Ficha del Club"
-
-#~ msgid "Club Profile"
-#~ msgstr "Perfil del Club"
-
-#~ msgid "Club Teams"
-#~ msgstr "Equipos de Club"
-
-#~ msgid "Clubs & Countries"
-#~ msgstr "Clubes y Países"
-
-#~ msgid ""
-#~ "Controls visibility in navigation; does not change edit rights or API "
-#~ "visibility."
-#~ msgstr ""
-#~ "Controla la visibilidad en la navegación; no cambia los derechos de "
-#~ "edición ni la visibilidad de la API."
-
-#~ msgid "Correct the errors or save goal with errors"
-#~ msgstr "Corregir los errores o guardar gol con errores"
-
-#~ msgid "Count"
-#~ msgstr "País"
-
-#~ msgid "Defence board leaders"
-#~ msgstr "Tabla de Líderes de Defensa"
-
-#~ msgid "Defence warning"
-#~ msgstr "Tablero de defensa"
-
-#~ msgid "Defences avg."
-#~ msgstr "Defensas avg."
-
-#~ msgid "Delete listed access rights"
-#~ msgstr "Editar derechos de acceso de usuario"
-
-#~ msgid "Delete score"
-#~ msgstr "Eliminar puntuación"
-
-#~ msgid "Delete selected users' event access rights"
-#~ msgstr "Eliminar derechos de acceso a eventos de usuarios seleccionados"
-
-#~ msgid "Delete the last goal"
-#~ msgstr "Eliminar el último gol"
-
-#~ msgid "Desktop gameplay"
-#~ msgstr "Juego de escritorio"
-
-#~ msgid "Erroneous scoresheet number:"
-#~ msgstr "Número de hoja de puntuación erróneo:"
-
-#~ msgid "Event Links"
-#~ msgstr "Enlaces de Eventos"
-
-#~ msgid "External"
-#~ msgstr "Externo"
-
-#~ msgid "Fill in scoresheet"
-#~ msgstr "Rellenar hoja de puntuación"
-
-#~ msgid "Final Standings"
-#~ msgstr "Clasificación Final"
-
-#~ msgid "First Name"
-#~ msgstr "Primer Nombre"
-
-#~ msgid "First Offence"
-#~ msgstr "Primero a la Ofensiva"
-
-#~ msgid "First offence warning"
-#~ msgstr "Inicia a la ofensiva"
-
-#~ msgid "First signal"
-#~ msgstr "Primer nombre"
-
-#~ msgid "Game has already been played. Current result:"
-#~ msgstr "El juego ya se ha jugado. Resultado actual:"
-
-#~ msgid "Game has no pool."
-#~ msgstr "El juego no tiene grupo."
-
-#~ msgid "Game number from scoresheet"
-#~ msgstr "Número de juego en la hoja de anotación"
-
-#~ msgid "Game official(s)"
-#~ msgstr "Oficial(es) del juego"
-
-#~ msgid "Game result"
-#~ msgstr "Resultado del juego"
-
-#~ msgid "Games list"
-#~ msgstr "Lista de juegos"
-
-#~ msgid "Give XX as the assist in Callahan goals"
-#~ msgstr "Dar XX como asistencia en los goles de Callahan"
-
-#~ msgid "Gls"
-#~ msgstr "Gls"
-
-#~ msgid "Goal diff"
-#~ msgstr "Gol diff"
-
-#~ msgid "Goals avg."
-#~ msgstr "Goles avg."
-
-#~ msgid "Group games"
-#~ msgstr "Juegos de grupo"
-
-#, php-format
-#~ msgid "Halftime cap target: %d"
-#~ msgstr "Objetivo del límite del medio tiempo: %d"
-
-#~ msgid "Halftime duration"
-#~ msgstr "Medio tiempo al gol"
-
-#~ msgid "Halftime ending"
-#~ msgstr "Termina el medio tiempo"
-
-#~ msgid "Halftime over"
-#~ msgstr "Puntuación al medio tiempo"
-
-#~ msgid "Home score"
-#~ msgstr "Puntuación local"
-
-#~ msgid "Home team score"
-#~ msgstr "Puntuación del equipo local"
-
-#~ msgid "If game ended:"
-#~ msgstr "Si el juego terminó:"
-
-#~ msgid "If game ongoing:"
-#~ msgstr "Si el juego está en curso:"
-
-#~ msgid "Last Name"
-#~ msgstr "Apellido"
-
-#~ msgid "Menu"
-#~ msgstr "Menú"
-
-#~ msgid "New season added"
-#~ msgstr "Nueva temporada agregada"
-
-#~ msgid "No goals."
-#~ msgstr "Sin goles."
-
-#~ msgid "Offence warning"
-#~ msgstr "Ofensiva"
-
-#~ msgid "Optional - add context for spirit points given (no blame)."
-#~ msgstr ""
-#~ "Opcional: agregue contexto para los puntos de espíritu otorgados (sin "
-#~ "culpar)."
-
-#~ msgid "Passwords do not match."
-#~ msgstr "Las contraseñas no coinciden."
-
-#~ msgid "Placements"
-#~ msgstr "Clasificaciones"
-
-#~ msgid "Play must restart"
-#~ msgstr "Informe de datos del jugador"
-
-#~ msgid "Play off -type of pool"
-#~ msgstr "Play off -tipo de grupo"
-
-#~ msgid "Players of the game"
-#~ msgstr "Jugadores del juego"
-
-#~ msgid "Print"
-#~ msgstr "Imprimir"
-
-#~ msgid "Quick add result"
-#~ msgstr "Agregar resultado rápido"
-
-#~ msgid "Remove"
-#~ msgstr "eliminar"
-
-#~ msgid "Resolve dispute"
-#~ msgstr "Resolver Empates"
-
-#~ msgid "Result not saved!"
-#~ msgstr "¡Resultado no guardado!"
-
-#~ msgid "Result saved!"
-#~ msgstr "¡Resultado guardado!"
-
-#~ msgid "Rule Templates"
-#~ msgstr "Plantillas de reglas"
-
-#~ msgid "Save again"
-#~ msgstr "Guardar de nuevo"
-
-#~ msgid "Save as result"
-#~ msgstr "Guardar como resultado"
-
-#~ msgid "Score&nbsp;sheet"
-#~ msgstr "Hoja de puntuación"
-
-#~ msgid "Scoreboard leaders"
-#~ msgstr "Líderes del marcador"
-
-#~ msgid "Scoreboards"
-#~ msgstr "Marcadores"
-
-#~ msgid "Scoresheet #"
-#~ msgstr "Hoja de anotación #"
-
-#~ msgid "Scoresheets"
-#~ msgstr "Hojas de anotación"
-
-#~ msgid "Season mandatory"
-#~ msgstr "Temporada obligatoria"
-
-#~ msgid "Second warning before start"
-#~ msgstr "La segunda mitad comenzó en"
-
-#~ msgid "Select scoring team!"
-#~ msgstr "¡Selecciona equipo goleador!"
-
-#~ msgid "Standings saved"
-#~ msgstr "Clasificación guardada"
-
-#~ msgid "Start of play"
-#~ msgstr "Grupo inicial"
-
-#~ msgid "Target event is not the same as in a file."
-#~ msgstr "El evento de destino no es el mismo al que está en un archivo."
-
-#~ msgid "Team Profile"
-#~ msgstr "Perfil del equipo"
-
-#~ msgid "The legacy mobile administration interface is deprecated."
-#~ msgstr "La interfaz de administración móvil heredada está obsoleta."
-
-#~ msgid "The username is already in use."
-#~ msgstr "El nombre de usuario ya está en uso."
-
-#~ msgid "This game has already been played. Current result:"
-#~ msgstr "Este juego ya se ha jugado. Resultado actual:"
-
-#~ msgid ""
-#~ "This operation updates and adds event data in the database with the "
-#~ "content of the file. It will not delete any data or change user rights."
-#~ msgstr ""
-#~ "Esta operación actualiza y agrega datos de eventos en la base de datos "
-#~ "con el contenido del archivo. No eliminará ningún dato ni cambiará los "
-#~ "derechos del usuario."
-
-#, php-format
-#~ msgid "Time cap target: %d"
-#~ msgstr "Objetivo del límite de tiempo: %d"
-
-#~ msgid "Timeouts on overtime"
-#~ msgstr "Tiempos fuera en horas extras"
-
-#~ msgid "Tot. avg."
-#~ msgstr "Tot. avg."
-
-#~ msgid "Update as current result"
-#~ msgstr "Actualizar como resultado actual"
-
-#~ msgid "Use"
-#~ msgstr "Usar"
-
-#~ msgid "away team"
-#~ msgstr "equipo visitante"
-
-#~ msgid "for score entry and"
-#~ msgstr "para la entrada de puntuación y"
-
-#~ msgid "for spirit entry."
-#~ msgstr "para la entrada del espíritu."
-
-#~ msgid "home team"
-#~ msgstr "equipo local"
-
-#~ msgid "starting on offence"
-#~ msgstr "comenzando en ofensiva"

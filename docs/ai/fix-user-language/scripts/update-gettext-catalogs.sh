@@ -71,6 +71,9 @@ for locale_dir in "${locale_dirs[@]}"; do
     "$po_file" \
     "$TMP_POT"
 
+  # Drop entries whose msgid no longer exists in the code.
+  msgattrib --no-obsolete --output-file="$po_file" "$po_file"
+
   msgfmt \
     --check \
     --output-file="$mo_file" \

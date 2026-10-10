@@ -608,24 +608,34 @@ msgstr "Anonyymit muutokset: %d"
 msgid ""
 "Anyone who opens a game or field scorekeeping link can keep score for those "
 "games without logging in."
-msgstr "Kuka tahansa, joka avaa pelin tai kentän pisteenkirjauslinkin, voi kirjata pisteet kyseisille peleille kirjautumatta sisään."
+msgstr ""
+"Kuka tahansa, joka avaa pelin tai kentän pisteenkirjauslinkin, voi kirjata "
+"pisteet kyseisille peleille kirjautumatta sisään."
 
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
-msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet näille peleille kirjauduttuaan sisään."
+msgstr ""
+"Kuka tahansa tämän linkin haltija voi kirjata pisteet näille peleille "
+"kirjauduttuaan sisään."
 
 #: user/scorekeepinglink.php:48
 msgid ""
 "Anyone with this link can keep score for these games without logging in."
-msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet näille peleille kirjautumatta sisään."
+msgstr ""
+"Kuka tahansa tämän linkin haltija voi kirjata pisteet näille peleille "
+"kirjautumatta sisään."
 
 #: user/scorekeepinglink.php:45
 msgid "Anyone with this link can keep score for this game after logging in."
-msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille kirjauduttuaan sisään."
+msgstr ""
+"Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille "
+"kirjauduttuaan sisään."
 
 #: user/scorekeepinglink.php:44
 msgid "Anyone with this link can keep score for this game without logging in."
-msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille kirjautumatta sisään."
+msgstr ""
+"Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille "
+"kirjautumatta sisään."
 
 #: admin/translations.php:585
 msgid "Apply bulk translations"
@@ -5421,7 +5431,8 @@ msgstr "Tulos tyhjennetty"
 
 #: scorekeeper/addresult.php:49
 msgid "Result not saved: the score has changed since this page was opened."
-msgstr "Tulosta ei tallennettu: tulos on muuttunut tämän sivun avaamisen jälkeen."
+msgstr ""
+"Tulosta ei tallennettu: tulos on muuttunut tämän sivun avaamisen jälkeen."
 
 #: lib/game.functions.php:2854
 #, php-format
@@ -6830,7 +6841,9 @@ msgstr ""
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
-msgstr "Nykyinen linkki lakkaa toimimasta, ja kaikki sen avanneet menettävät pääsynsä. Jatketaanko?"
+msgstr ""
+"Nykyinen linkki lakkaa toimimasta, ja kaikki sen avanneet menettävät "
+"pääsynsä. Jatketaanko?"
 
 #: admin/scorekeepinglinks.php:98 user/scorekeepinglink.php:28
 msgid "The event is read-only."
@@ -7067,7 +7080,9 @@ msgstr ""
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
-msgstr "Tämä pisteenkirjauslinkki ei ole enää voimassa. Pyydä uusi tapahtuman järjestäjältä."
+msgstr ""
+"Tämä pisteenkirjauslinkki ei ole enää voimassa. Pyydä uusi tapahtuman "
+"järjestäjältä."
 
 #: lib/scorekeeper.functions.php:624
 #, php-format
@@ -8442,350 +8457,3 @@ msgstr "ja"
 #: admin/seasons.php:129 admin/seasons.php:132
 msgid "yes"
 msgstr "kyllä"
-
-#~ msgid "API"
-#~ msgstr "API"
-
-#~ msgid "Accr. ID"
-#~ msgstr "Jäsennumero"
-
-#~ msgid "Action"
-#~ msgstr "Paikka"
-
-#~ msgid "Add result"
-#~ msgstr "Lisää tulos"
-
-#~ msgid "Add result by game ID"
-#~ msgstr "Lisää tulos pelin ID:n perusteella"
-
-#~ msgid "Additional points after cap"
-#~ msgstr "Lisäpisteet aikarajan täytyttyä"
-
-#~ msgid "After the match has ended, update result:"
-#~ msgstr "Ottelun päätyttyä päivitä tulos:"
-
-#~ msgid "All Clubs"
-#~ msgstr "Kaikki seurat"
-
-#~ msgid "All time scoreboard"
-#~ msgstr "Kaikkienaikojen pistepörssi"
-
-#~ msgid "Are you sure you want to delete last score?"
-#~ msgstr "Haluatko varmasti poistaa viimeisen pisteen?"
-
-#~ msgid "Assists avg."
-#~ msgstr "Syöttöjen ka."
-
-#~ msgid "Ast"
-#~ msgstr "Syöt."
-
-#~ msgid "Away score"
-#~ msgstr "Vierasjoukkueen pisteet"
-
-#~ msgid "Away team score"
-#~ msgstr "Vierasjoukkueen pisteet"
-
-#~ msgid "Back to the Ultiorganizer"
-#~ msgstr "Takaisin pelikoneeseen"
-
-#~ msgid "Back to timeouts"
-#~ msgstr "Takaisin aikalisiin"
-
-#~ msgid "Between points"
-#~ msgstr "Pisteiden välinen aika"
-
-#~ msgid "Call."
-#~ msgstr "Call."
-
-#~ msgid "Cap target"
-#~ msgstr "Pistetavoite"
-
-#~ msgid "Cap time"
-#~ msgstr "Raja-aika"
-
-#~ msgid "Change language"
-#~ msgstr "Vaihda kieli"
-
-#~ msgid "Change result to"
-#~ msgstr "Muuta pelin tulos"
-
-#~ msgid "Change the result to"
-#~ msgstr "Muuta tulokseksi"
-
-#~ msgid "Check the username and password."
-#~ msgstr "Tarkista käyttäjätunnus ja salasana."
-
-#~ msgid "Client access"
-#~ msgstr "Asiakasyhteydet"
-
-#~ msgid "Club Card"
-#~ msgstr "Seuraprofiili"
-
-#~ msgid "Club Profile"
-#~ msgstr "Seuraprofiili"
-
-#~ msgid "Club Teams"
-#~ msgstr "Seaurajoukkueet"
-
-#~ msgid "Clubs & Countries"
-#~ msgstr "Seurat ja Maat"
-
-#~ msgid "Correct the errors or save goal with errors"
-#~ msgstr "Korjaa virheet tai tallenna maali virheineen"
-
-#~ msgid "Count"
-#~ msgstr "Kotimaa"
-
-#~ msgid "Defence board leaders"
-#~ msgstr "Puolustuspörssin kärki"
-
-#~ msgid "Defence warning"
-#~ msgstr "Puolustuspörssi"
-
-#~ msgid "Defences avg."
-#~ msgstr "Puolustusten ka."
-
-#~ msgid "Delete listed access rights"
-#~ msgstr "Muokkaa käyttöoikeuksia"
-
-#~ msgid "Delete score"
-#~ msgstr "Poista piste"
-
-#~ msgid "Delete selected users' event access rights"
-#~ msgstr "Poista valittujen käyttäjien tapahtumien käyttöoikeudet"
-
-#~ msgid "Delete the last goal"
-#~ msgstr "Poista edellinen maali"
-
-#~ msgid "Desktop gameplay"
-#~ msgstr "Työpöydän pelin kulku"
-
-#~ msgid "Erroneous scoresheet number:"
-#~ msgstr "Virheellinen pöytäkirjan numero:"
-
-#~ msgid "Event Links"
-#~ msgstr "Tapahtuman linkit"
-
-#~ msgid "External"
-#~ msgstr "Ulkoinen"
-
-#~ msgid "Fill in scoresheet"
-#~ msgstr "Syötä pöytäkirja"
-
-#~ msgid "Final Standings"
-#~ msgstr "Lopulliset sijoitukset"
-
-#~ msgid "First Name"
-#~ msgstr "Etunimi"
-
-#~ msgid "First Offence"
-#~ msgstr "Ensimmäinen hyökkäys"
-
-#~ msgid "First offence warning"
-#~ msgstr "Ensimmäinen hyökkäys"
-
-#~ msgid "First signal"
-#~ msgstr "Etunimi"
-
-#~ msgid "Game has already been played. Current result:"
-#~ msgstr "Peli on jo pelattu. Nykyinen tulos:"
-
-#~ msgid "Game has no pool."
-#~ msgstr "Pelillä ei ole lohkoa."
-
-#~ msgid "Game number from scoresheet"
-#~ msgstr "Pelin numero pöytäkirjasta"
-
-#~ msgid "Game official(s)"
-#~ msgstr "Toimitsija(t)"
-
-#~ msgid "Game result"
-#~ msgstr "Pelin tulos"
-
-#~ msgid "Games list"
-#~ msgstr "Ottelut"
-
-#~ msgid "Give XX as the assist in Callahan goals"
-#~ msgstr "Merkitse Callahan-maaleissa syöttäjäksi XX"
-
-#~ msgid "Gls"
-#~ msgstr "Maal."
-
-#~ msgid "Goal diff"
-#~ msgstr "Maaliero"
-
-#~ msgid "Goals avg."
-#~ msgstr "Maali ka."
-
-#~ msgid "Group games"
-#~ msgstr "Ryhmitä pelit"
-
-#, php-format
-#~ msgid "Halftime cap target: %d"
-#~ msgstr "Puoliajan pistetavoite: %d"
-
-#~ msgid "Halftime duration"
-#~ msgstr "Puoliaika pisteessä"
-
-#~ msgid "Halftime ending"
-#~ msgstr "Puoliaika päättyi"
-
-#~ msgid "Halftime over"
-#~ msgstr "Puoliaikatulos"
-
-#~ msgid "Home score"
-#~ msgstr "Kotijoukkueen pisteet"
-
-#~ msgid "Home team score"
-#~ msgstr "Kotijoukkueen pisteet"
-
-#~ msgid "If game ended:"
-#~ msgstr "Jos peli loppui:"
-
-#~ msgid "If game ongoing:"
-#~ msgstr "Jos peli kesken:"
-
-#~ msgid "Last Name"
-#~ msgstr "Sukunimi"
-
-#~ msgid "Menu"
-#~ msgstr "Valikko"
-
-#~ msgid "No goals."
-#~ msgstr "Ei maaleja."
-
-#~ msgid "Offence warning"
-#~ msgstr "Hyökkäys"
-
-#~ msgid "Optional - add context for spirit points given (no blame)."
-#~ msgstr ""
-#~ "Valinnainen - perustelut annetuille spirit-pisteille (ei syytöksiä)."
-
-#~ msgid "Passwords do not match."
-#~ msgstr "Salasanat eivät täsmää."
-
-#~ msgid "Placements"
-#~ msgstr "Sijoitukset"
-
-#~ msgid "Play must restart"
-#~ msgstr "Pelaajan tietoraportti"
-
-#~ msgid "Play off -type of pool"
-#~ msgstr "Pudotuspeli-tyyppinen lohko"
-
-#~ msgid "Players of the game"
-#~ msgstr "Pelin pelaajat"
-
-#~ msgid "Print"
-#~ msgstr "Tulosta"
-
-#~ msgid "Quick add result"
-#~ msgstr "Tallenna tulos pöytäkirjasta"
-
-#~ msgid "Remove"
-#~ msgstr "poista"
-
-#~ msgid "Resolve dispute"
-#~ msgstr "Selvitä tasapelit"
-
-#~ msgid "Result not saved!"
-#~ msgstr "Tulosta ei tallennettu!"
-
-#~ msgid "Result saved!"
-#~ msgstr "Tulos tallennettu!"
-
-#~ msgid "Rule Templates"
-#~ msgstr "Sääntöpohjat"
-
-#~ msgid "Save again"
-#~ msgstr "Tallenna uudestaan"
-
-#~ msgid "Save as result"
-#~ msgstr "Tallenna lopputulokseksi"
-
-#~ msgid "Score&nbsp;sheet"
-#~ msgstr "Pöytäkirja"
-
-#~ msgid "Scoreboard leaders"
-#~ msgstr "Pistepörssin kärkisijat"
-
-#~ msgid "Scoreboards"
-#~ msgstr "Pistepörssi"
-
-#~ msgid "Scoresheet #"
-#~ msgstr "Pöytäkirja #"
-
-#~ msgid "Scoresheets"
-#~ msgstr "Pöytäkirjat"
-
-#~ msgid "Season mandatory"
-#~ msgstr "Kauden määrittely pakollista"
-
-#~ msgid "Second warning before start"
-#~ msgstr "Toinen puoliaika alkoi ajassa"
-
-#~ msgid "Select scoring team!"
-#~ msgstr "Valitse maalin tehnyt joukkue!"
-
-#~ msgid "Standings saved"
-#~ msgstr "Sijoitukset tallennettu"
-
-#~ msgid "Start of play"
-#~ msgstr "Alkulohko"
-
-#~ msgid "System template cannot be edited."
-#~ msgstr "Tyyppi ei voi olla tyhjä"
-
-#~ msgid "Target event is not the same as in a file."
-#~ msgstr "Tapahtuma ei ole sama kuin tiedostossa."
-
-#~ msgid "Team Profile"
-#~ msgstr "Joukkueprofiili"
-
-#~ msgid "The legacy mobile administration interface is deprecated."
-#~ msgstr "Vanha mobiilihallinnan käyttöliittymä on poistumassa käytöstä."
-
-#~ msgid "The username is already in use."
-#~ msgstr "Tunnus on jo käytössä."
-
-#~ msgid "This game has already been played. Current result:"
-#~ msgstr "Tämä peli on jo pelattu. Nykyinen tulos:"
-
-#~ msgid ""
-#~ "This operation updates and adds event data in the database with the "
-#~ "content of the file. It will not delete any data or change user rights."
-#~ msgstr ""
-#~ "Tämä toiminto päivittää ja lisää tapahtuman tiedot tietokantaan annetusta "
-#~ "tiedostosta. Tietokannassa olevia tietoja ei poisteta eikä "
-#~ "käyttöoikeuksia muuteta."
-
-#, php-format
-#~ msgid "Time cap target: %d"
-#~ msgstr "Aikarajan pistetavoite: %d"
-
-#~ msgid "Timeouts on overtime"
-#~ msgstr "Aikalisiä lisäajalla"
-
-#~ msgid "Tot. avg."
-#~ msgstr "Yht. ka."
-
-#~ msgid "Update as current result"
-#~ msgstr "Päivitä tilanne"
-
-#~ msgid "Use"
-#~ msgstr "Käytä"
-
-#~ msgid "away team"
-#~ msgstr "vierasjoukkue"
-
-#~ msgid "for score entry and"
-#~ msgstr "tulosten syöttöä ja"
-
-#~ msgid "for spirit entry."
-#~ msgstr "spiritin syöttöä varten."
-
-#~ msgid "home team"
-#~ msgstr "kotijoukkue"
-
-#~ msgid "starting on offence"
-#~ msgstr "Ensimmäinen hyökkäysvuoro"
