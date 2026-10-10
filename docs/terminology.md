@@ -22,7 +22,7 @@ Preferred wording for Ultiorganizer docs, specs, commit messages, review comment
 | Goal | Recorded scoring event in a game. | Detailed goal rows live in `uo_goal`. |
 | Assist | Final pass credited on a goal. | |
 | Scorer | Player credited with a goal. | |
-| Callahan | Goal flagged as a Callahan. | |
+| Callahan | Goal scored by a defender who catches the opponents' throw in the end zone they are attacking. | |
 | Callahan goal | User-facing label for a goal recorded as a Callahan. | Prefer `Callahan goal` over `Callahan-goal` in new UI text and docs. |
 | Timeout | Ordinary timeout recorded during a game. | |
 | Spirit stoppage | Spirit-specific stoppage recorded separately from ordinary timeouts. | Prefer this over `Spirit timeout` in new UI text and docs. |
@@ -43,11 +43,11 @@ Preferred wording for Ultiorganizer docs, specs, commit messages, review comment
 | Spirit captain | Player marked as spirit captain in a game-specific played roster. | |
 | Spirit score | Spirit scoring submission and total for a game. | Current UI often says `Spirit points`. |
 | Spirit score average | User-facing average label for spirit summaries and table headings. | Prefer this over `Spirit avg` or `Spirit points average` in new UI text and docs. |
-| Spirit of the Game (SOTG) | Spirit scoring context and totals. | |
+| Spirit of the Game (SOTG) | Principle of sportsmanship and fair play that governs Ultimate; teams rate each other on it through spirit scores. | |
 | Log in | User-facing action to authenticate into the system. | Prefer the verb form `Log in` for buttons, links, and headings. |
 | Log out | User-facing action to end the current session. | Prefer the verb form `Log out` for buttons, links, and headings. |
 | Winning score | Goals required to win under pool or format settings. | Repo fields also use `winningscore`. |
-| Point cap | Score cap used by pool or format settings. | Repo fields also use `scorecap`. |
+| Point cap | Score at which a capped game ends, set in pool or format settings. | Repo fields also use `scorecap`. |
 | Time cap | Time-cap setting used by pool or format settings. | Repo fields also use `timecap`. |
 
 ## Aliases and Legacy Terms
@@ -79,8 +79,8 @@ These terms are recognized in the current repository. They are not the preferred
 | Spirit score average | `Spirit avg`, `Spirit points average`, `Spirit points average per category` | Prefer `Spirit score average` or `Spirit score avg.` in new user-facing text. |
 | Defence | `defense`, `Defense`, `uo_defense`, `Defense sheet`, `deftotal` | Use WFDF spelling in new docs, but recognize existing alternate spellings and internal names. |
 | Defence board | `Defenseboard` | Prefer the spaced form in new user-facing text. |
-| Log in | `Login` | Treat `Login` as a legacy noun-style label in the repo. |
-| Log out | `Logout` | Treat `Logout` as a legacy noun-style label in the repo. |
+| Log in | `Login` | `Login` is correct as a noun or modifier (`Login page`); use `Log in` for the action. |
+| Log out | `Logout` | `Logout` is correct as a noun or modifier; use `Log out` for the action. |
 
 ## Abbreviations for Narrow Tables
 
@@ -98,7 +98,7 @@ Use these only when space is constrained, such as statistics tables, standings t
 | Draws | `D` | Standings tables only; the `W`/`D`/`L` sequence disambiguates it from Defence. |
 | Goals for | `GF` | Standings and results tables. |
 | Goals against | `GA` | Standings and results tables. |
-| Goals diff | `GD` | Goal difference (goals for minus goals against) in standings tables. |
+| Goal difference | `GD` | Goals for minus goals against, in standings tables. |
 | Average | `Avg.` | |
 | Goals for average | `GF Avg.` | Prefer this over `GF/game` in new narrow-table labels. |
 | Goals against average | `GA Avg.` | Prefer this over `GA/game` in new narrow-table labels. |

@@ -1700,7 +1700,7 @@ function ColumnAbbr($key)
         case 'goalsagainst':
             return ['abbr' => 'GA', 'label' => _("Goals against")];
         case 'goalsdiff':
-            return ['abbr' => 'GD', 'label' => _("Goals diff")];
+            return ['abbr' => 'GD', 'label' => _("Goal difference")];
             // Player-statistics columns.
         case 'goals':
             return ['abbr' => 'G', 'label' => _("Goals")];

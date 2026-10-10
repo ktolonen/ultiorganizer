@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 11:58+0300\n"
+"POT-Creation-Date: 2026-10-10 12:12+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -3050,6 +3050,10 @@ msgstr "Mene alkuun"
 msgid "Goal"
 msgstr "Maali"
 
+#: lib/common.functions.php:1703
+msgid "Goal difference"
+msgstr "Maaliero"
+
 #: scorekeeper/addscoresheet.php:396
 msgid "Goal time"
 msgstr "Maalin aika"
@@ -3069,10 +3073,6 @@ msgstr "Päästetyt maalit"
 #: teamcard.php:429 teamcard.php:520 teamcard.php:630 teamcard.php:717
 msgid "Goals against avg."
 msgstr "Päästettyjen maalien ka."
-
-#: lib/common.functions.php:1703
-msgid "Goals diff"
-msgstr "Maaliero"
 
 #: lib/common.functions.php:1699
 msgid "Goals for"
