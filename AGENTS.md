@@ -12,7 +12,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 ## Tech Stack
 
 - **PHP** (8.3 in CI) for the app, the standalone apps, and the repo checker scripts.
-- Hand-written **ES5** JavaScript under `script/` (ESLint 9) and plain **CSS**, mainly under `cust/` (Stylelint). Both linters run in the `dev` Docker image.
+- Hand-written **ES5** JavaScript under `script/` (ESLint 10) and plain **CSS**, mainly under `cust/` (Stylelint). Both linters run in the `dev` Docker image.
 - **Shell** scripts under `docs/` for release packaging and gettext catalogs; one **Python** helper in `docs/ai/analyze-lib-functions/`.
 - **Markdown** docs under `docs/` — keep them in sync with code changes.
 

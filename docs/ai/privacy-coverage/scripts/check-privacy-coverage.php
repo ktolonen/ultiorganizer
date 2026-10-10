@@ -251,4 +251,4 @@ function isReferenced(string $haystack, string $table): bool
     return preg_match('/\b' . preg_quote($table, '/') . '\b/', $haystack) === 1;
 }
 
-exit(main($argv));
+exit(main($argv ?? []));

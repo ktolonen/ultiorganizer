@@ -93,7 +93,7 @@ Point PhpStorm or VS Code extensions at `.php-cs-fixer.dist.php` and `phpstan.ne
 
 Hand-written client JavaScript lives under `script/`: plain `.js` files and `script/*.inc` `<script>` snippets included into PHP pages (some use YUI globals). The vendored `script/yui/` and the built `live/assets/` bundle are not linted.
 
-JS is ES5 with 2-space indentation, linted by ESLint 9 using [`eslint.config.js`](../eslint.config.js). The toolchain lives in the `dev` image under `/opt/eslint/`; there is deliberately no root `package.json`.
+JS is ES5 with 2-space indentation, linted by ESLint 10 using [`eslint.config.js`](../eslint.config.js). The toolchain lives in the `dev` image under `/opt/eslint/`; there is deliberately no root `package.json`.
 
 ```sh
 docker compose -f docs/dev/compose.yaml exec -T dev eslint script

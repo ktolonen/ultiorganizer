@@ -63,7 +63,7 @@ parameters:
         -
             # Keep the installer prerequisite screen explicit even though static analysis
             # runs on the supported PHP platform and sees the comparison as always true.
-            message: '#^Comparison operation ">=" between int<80300, 80599> and 80300 is always true\.$#'
+            message: '#^Comparison operation ">=" between int<80300, \d+> and 80300 is always true\.$#'
             paths:
                 - install.php
     parallel:

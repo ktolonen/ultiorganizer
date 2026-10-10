@@ -463,4 +463,4 @@ function printReport(string $repo, string $file, array $report, array $opts): vo
     }
 }
 
-exit(main($argv));
+exit(main($argv ?? []));

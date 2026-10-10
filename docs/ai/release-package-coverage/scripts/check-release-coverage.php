@@ -310,4 +310,4 @@ function parseRequiredPaths(string $file): ?array
     );
 }
 
-exit(main($argv));
+exit(main($argv ?? []));

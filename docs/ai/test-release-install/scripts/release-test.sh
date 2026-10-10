@@ -27,7 +27,7 @@ COMPOSE_FILE="${TEST_ROOT}/compose.yaml"
 BASE_URL="http://localhost:${PORT}"
 
 # Any image with coreutils works; mariadb is already pulled by this stack.
-HELPER_IMAGE="mariadb:10.11"
+HELPER_IMAGE="mariadb:12.3"
 
 # Read the log destination from the ini the stack actually mounts rather than
 # assuming it.
@@ -110,12 +110,13 @@ services:
       - ${ROOT_DIR}/docs/dev/php.dev.ini:/usr/local/etc/php/conf.d/zz-local-dev.ini:ro
 
   db:
-    image: mariadb:10.11
+    image: mariadb:12.3
     environment:
       MYSQL_DATABASE: ultiorganizer
       MYSQL_USER: ultiorganizer
       MYSQL_PASSWORD: ultiorganizer
       MYSQL_ROOT_PASSWORD: changeme
+      MARIADB_AUTO_UPGRADE: "1"
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "--host=127.0.0.1", "--user=root", "--password=changeme"]
       interval: 5s

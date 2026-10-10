@@ -71,10 +71,10 @@ jobs:
         # bumping either side.
         run: |
           npm install -g \
-            eslint@9.16.0 \
-            @eslint/js@9.16.0 \
-            eslint-plugin-html@8.1.2 \
-            globals@15.13.0
+            eslint@10.12.0 \
+            @eslint/js@10.0.1 \
+            eslint-plugin-html@8.2.1 \
+            globals@17.13.0
           echo "NODE_PATH=$(npm root -g)" >> "$GITHUB_ENV"
       - name: Lint JavaScript
         run: eslint script

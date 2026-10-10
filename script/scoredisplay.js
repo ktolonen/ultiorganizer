@@ -37,7 +37,7 @@
     xhr.open('GET', url, true);
     xhr.timeout = 10000;
     xhr.onload = function () {
-      var data = null;
+      var data;
       try {
         data = JSON.parse(xhr.responseText);
       } catch (err) { // eslint-disable-line no-unused-vars
