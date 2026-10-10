@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 12:15+0300\n"
+"POT-Creation-Date: 2026-10-10 12:24+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -498,15 +498,11 @@ msgstr ""
 msgid "All"
 msgstr "Todo"
 
-#: admin/clubs.php:52
-msgid "All Clubs"
-msgstr "Todos los Clubes"
-
 #: admin/clubs.php:85
 msgid "All Countries"
 msgstr "Todos los Países"
 
-#: allclubs.php:8
+#: allclubs.php:8 admin/clubs.php:52
 msgid "All clubs"
 msgstr "Todos los clubes"
 
@@ -567,7 +563,7 @@ msgstr "Los 100 máximos anotadores históricos"
 
 #: admin/addseasons.php:500
 msgid ""
-"Allows non-admin users to see game notes on public pages. Season admins and "
+"Allows non-admin users to see game notes on public pages. Event admins and "
 "the spirit director can still see them regardless of this flag."
 msgstr ""
 "Permite a los usuarios no administradores ver las notas del juego en páginas "
@@ -584,8 +580,8 @@ msgstr ""
 
 #: admin/spiritsettings.php:79
 msgid ""
-"Allows non-admin users to see spirit scores for this event. Season admins "
-"can still review spirit data regardless of this flag."
+"Allows non-admin users to see spirit scores for this event. Event admins can "
+"still review spirit data regardless of this flag."
 msgstr ""
 "Permite a los usuarios no administradores ver las puntuaciones de Espíritu "
 "de este evento. Los administradores de temporada aún pueden revisar los "
@@ -622,30 +618,30 @@ msgstr "Anonimizar los datos del jugador"
 #: admin/scorekeepinglinks.php:70
 #, php-format
 msgid "Anonymous changes: %d"
-msgstr ""
+msgstr "Cambios anónimos: %d"
 
 #: admin/addseasons.php:507
 msgid ""
 "Anyone who opens a game or field scorekeeping link can keep score for those "
 "games without logging in."
-msgstr ""
+msgstr "Cualquiera que abra un enlace de anotación de partido o de campo puede anotar esos partidos sin iniciar sesión."
 
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
-msgstr ""
+msgstr "Cualquiera con este enlace puede anotar estos partidos después de iniciar sesión."
 
 #: user/scorekeepinglink.php:48
 msgid ""
 "Anyone with this link can keep score for these games without logging in."
-msgstr ""
+msgstr "Cualquiera con este enlace puede anotar estos partidos sin iniciar sesión."
 
 #: user/scorekeepinglink.php:45
 msgid "Anyone with this link can keep score for this game after logging in."
-msgstr ""
+msgstr "Cualquiera con este enlace puede anotar este partido después de iniciar sesión."
 
 #: user/scorekeepinglink.php:44
 msgid "Anyone with this link can keep score for this game without logging in."
-msgstr ""
+msgstr "Cualquiera con este enlace puede anotar este partido sin iniciar sesión."
 
 #: admin/translations.php:585
 msgid "Apply bulk translations"
@@ -1130,11 +1126,7 @@ msgstr "Consulta la clasificación de %s. Entonces: %s"
 msgid "Check the gameplay after feeding in the scoresheet"
 msgstr "Comprueba el juego después de introducir la hoja de puntuación"
 
-#: scorekeeper/login.php:7 spiritkeeper/login.php:24
-msgid "Check the username and password."
-msgstr "Verifique el nombre de usuario y la contraseña."
-
-#: login/login_failed.php:34
+#: login/login_failed.php:34 scorekeeper/login.php:7 spiritkeeper/login.php:24
 msgid "Check your username and password."
 msgstr "Verifique su nombre de usuario y contraseña."
 
@@ -1224,19 +1216,7 @@ msgstr "Cerrar"
 msgid "Club"
 msgstr "Club"
 
-#: clubcard.php:22
-msgid "Club Card"
-msgstr "Ficha del Club"
-
-#: user/clubprofile.php:141 user/teamplayers.php:144 user/teamprofile.php:100
-msgid "Club Profile"
-msgstr "Perfil del Club"
-
-#: admin/seasonadmin.php:31
-msgid "Club Teams"
-msgstr "Equipos de Club"
-
-#: user/respteams.php:46
+#: clubcard.php:22 user/respteams.php:46
 msgid "Club card"
 msgstr "Ficha del club"
 
@@ -1252,11 +1232,12 @@ msgstr "Club no encontrado"
 msgid "Club pages"
 msgstr "Páginas del club"
 
-#: user/respteams.php:27
+#: user/clubprofile.php:141 user/respteams.php:27 user/teamplayers.php:144
+#: user/teamprofile.php:100
 msgid "Club profile"
 msgstr "Perfil del club"
 
-#: countrycard.php:92
+#: countrycard.php:92 admin/seasonadmin.php:31
 msgid "Club teams"
 msgstr "Equipos de club"
 
@@ -1268,11 +1249,7 @@ msgstr "Club a mantener"
 msgid "Clubs"
 msgstr "Clubs"
 
-#: menufunctions.php:394
-msgid "Clubs & Countries"
-msgstr "Clubes y Países"
-
-#: admin/clubs.php:43
+#: menufunctions.php:394 admin/clubs.php:43
 msgid "Clubs and Countries"
 msgstr "Clubes y Países"
 
@@ -1740,7 +1717,7 @@ msgstr "Eliminar gol"
 msgid "Delete image"
 msgstr "Eliminar imagen"
 
-#: scorekeeper/deletescore.php:22
+#: scorekeeper/deletescore.php:22 user/addscoresheet.php:822
 msgid "Delete last goal"
 msgstr "Eliminar último gol"
 
@@ -1765,10 +1742,6 @@ msgstr "Eliminar seleccionado"
 #: user/addspirit.php:66
 msgid "Delete spirit score"
 msgstr "Eliminar puntuación de Espíritu"
-
-#: user/addscoresheet.php:822
-msgid "Delete the last goal"
-msgstr "Eliminar el último gol"
 
 #: admin/seasonpoints.php:204
 msgid "Delete this round?"
@@ -2277,10 +2250,6 @@ msgstr "Se requiere ID de evento para el alcance del evento."
 msgid "Event ID may not have spaces or special characters"
 msgstr "El ID del evento no puede tener espacios ni caracteres especiales"
 
-#: menufunctions.php:572
-msgid "Event Links"
-msgstr "Enlaces de Eventos"
-
 #: admin/addseasonusers.php:93
 msgid "Event admins"
 msgstr "Administradores de eventos"
@@ -2297,7 +2266,7 @@ msgstr "Importación de datos del evento"
 msgid "Event has"
 msgstr "El evento tiene"
 
-#: admin/addseasonlinks.php:8
+#: menufunctions.php:572 admin/addseasonlinks.php:8
 msgid "Event links"
 msgstr "Enlaces de eventos"
 
@@ -2305,7 +2274,7 @@ msgstr "Enlaces de eventos"
 msgid "Event log"
 msgstr "Registro de eventos"
 
-#: user/contacts.php:10
+#: user/contacts.php:10 user/enrollteam.php:10
 msgid "Event mandatory"
 msgstr "Evento obligatorio"
 
@@ -2507,11 +2476,6 @@ msgstr "El archivo es demasiado grande"
 msgid "Fill in defence sheet"
 msgstr "Rellenar hoja de defensa"
 
-#: scorekeeper/gameplay.php:70 user/addscoresheet.php:12
-#: user/addscoresheet.php:78
-msgid "Fill in scoresheet"
-msgstr "Rellenar hoja de puntuación"
-
 #: user/addextraemail.php:69
 msgid "Fill in the extra email address below"
 msgstr "Complete la dirección de correo electrónico adicional a continuación"
@@ -2520,7 +2484,9 @@ msgstr "Complete la dirección de correo electrónico adicional a continuación"
 msgid "Fill in the registration information in the fields below."
 msgstr "Complete la información de registro en los campos a continuación."
 
-#: user/adddefensesheet.php:323 user/addscoresheet.php:825
+#: scorekeeper/gameplay.php:70 user/adddefensesheet.php:323
+#: user/addscoresheet.php:12 user/addscoresheet.php:78
+#: user/addscoresheet.php:825
 msgid "Fill in the scoresheet"
 msgstr "Completa en la hoja de puntuación"
 
@@ -2598,20 +2564,14 @@ msgid "First"
 msgstr "Primero"
 
 #: admin/tdtools.php:21 admin/tdtools.php:57
-msgid "First Name"
-msgstr "Primer Nombre"
-
-#: cust/default/pdfscoresheet.php:524 cust/slkl/pdfscoresheet.php:499
-#: cust/wfdf/pdfscoresheet.php:401
-msgid "First Offence"
-msgstr "Primero a la Ofensiva"
-
 #: cust/default/teamplayers.functions.php:157 user/playerprofile.php:222
 #: user/teamplayers.php:169
 msgid "First name"
 msgstr "Primer nombre"
 
-#: scorekeeper/addfirstoffence.php:34 scorekeeper/addscoresheet.php:444
+#: cust/default/pdfscoresheet.php:524 cust/slkl/pdfscoresheet.php:499
+#: cust/wfdf/pdfscoresheet.php:401 scorekeeper/addfirstoffence.php:34
+#: scorekeeper/addscoresheet.php:444
 msgid "First offence"
 msgstr "Inicia a la ofensiva"
 
@@ -2747,7 +2707,7 @@ msgstr "Portada"
 
 #: scoredisplay/index.php:88 scoredisplay/index.php:112
 msgid "Fullscreen"
-msgstr ""
+msgstr "Pantalla completa"
 
 #: teamcard.php:429 teamcard.php:520 teamcard.php:630 teamcard.php:717
 msgid "GA Avg."
@@ -2792,7 +2752,7 @@ msgstr "El juego %1$s en %2$s entra en conflicto con %3$s en %4$s en %5$s."
 #: admin/saveschedule.php:76
 #, php-format
 msgid "Game %s belongs to another event and was left unchanged."
-msgstr ""
+msgstr "El partido %s pertenece a otro evento y no se modificó."
 
 #: admin/saveschedule.php:87
 #, php-format
@@ -3050,10 +3010,6 @@ msgid "Get comma-separated UTF-8 encoded files by clicking the links below."
 msgstr ""
 "Obtenga archivos codificados en UTF-8 separados por comas haciendo clic en "
 "los enlaces siguientes."
-
-#: user/addscoresheet.php:829
-msgid "Give XX as the assist in Callahan goals"
-msgstr "Dar XX como asistencia en los goles de Callahan"
 
 #: teamcard.php:316 admin/spirit.php:49 admin/spirit.php:108
 #: admin/spirit.php:157 admin/spirit.php:285
@@ -3489,7 +3445,7 @@ msgstr "Info"
 msgid "Initial moves"
 msgstr "Movimientos iniciales"
 
-#: user/adddefensesheet.php:331
+#: user/adddefensesheet.php:331 user/addscoresheet.php:829
 msgid "Input XX as the assist in Callahan goals"
 msgstr "Ingrese XX como asistencia en los goles de Callahan"
 
@@ -3698,10 +3654,6 @@ msgstr "Etiqueta"
 msgid "Language"
 msgstr "Idioma"
 
-#: admin/tdtools.php:22 admin/tdtools.php:58
-msgid "Last Name"
-msgstr "Apellido"
-
 #: user/addscoresheet.php:835
 #, php-format
 msgid "Last changed: %s"
@@ -3715,6 +3667,7 @@ msgstr "Último inicio de sesión"
 msgid "Last modified"
 msgstr "Última modificación"
 
+#: admin/tdtools.php:22 admin/tdtools.php:58
 #: cust/default/teamplayers.functions.php:162 user/playerprofile.php:226
 #: user/teamplayers.php:170
 msgid "Last name"
@@ -3872,7 +3825,7 @@ msgstr "Inicia sesión para crear un evento"
 #: scorekeeper/login.php:23
 #, php-format
 msgid "Log in to keep score for %s."
-msgstr ""
+msgstr "Inicia sesión para anotar %s."
 
 #: login.php:18
 msgid "Log in with your existing account."
@@ -4628,13 +4581,8 @@ msgstr ""
 "Las notas de espíritu del oponente no se muestran en el flujo de tokens "
 "público."
 
-#: user/addspirit.php:26
-msgid "Optional - add context for spirit points given (no blame)."
-msgstr ""
-"Opcional: agregue contexto para los puntos de espíritu otorgados (sin "
-"culpar)."
-
 #: spiritkeeper/editgame.php:115 spiritkeeper/submitsotg.php:92
+#: user/addspirit.php:26
 msgid "Optional - add context for the spirit score given (no blame)."
 msgstr ""
 "Opcional: agregue contexto para la puntuación de espíritu otorgada (sin "
@@ -4748,13 +4696,9 @@ msgstr "Se envió el enlace para restablecer la contraseña."
 msgid "Password reset request for Ultiorganizer"
 msgstr "Solicitud de restablecimiento de contraseña para Ultiorganizer"
 
-#: register.php:67 login/password_reset.php:45
+#: register.php:67 login/password_reset.php:45 user/userinfo.php:110
 msgid "Passwords do not match"
 msgstr "Las contraseñas no coinciden"
-
-#: user/userinfo.php:110
-msgid "Passwords do not match."
-msgstr "Las contraseñas no coinciden."
 
 #: timekeeper/index.php:53 timekeeper/index.php:141 timekeeper/index.php:171
 msgid "Pause"
@@ -4827,10 +4771,6 @@ msgstr "Grupo de Clasificación"
 #: cust/windmill/pdfscoresheet.php:263
 msgid "Play"
 msgstr "Jugar"
-
-#: admin/seriesgames.php:103
-msgid "Play off -type of pool"
-msgstr "Play off -tipo de grupo"
 
 #: admin/addseasonpools.php:299 admin/addseasonpools.php:301
 msgid "Play-off"
@@ -4992,7 +4932,7 @@ msgstr ""
 msgid "Players without membership Id"
 msgstr "Jugadores sin identificación de membresía"
 
-#: admin/poolgames.php:192
+#: admin/poolgames.php:192 admin/seriesgames.php:103
 msgid "Playoff -type of pool"
 msgstr "Playoff -tipo de grupo"
 
@@ -5182,7 +5122,7 @@ msgstr "Imprimir hoja de anotación en blanco"
 
 #: admin/reservations.php:121 admin/scorekeepinglinks.php:112
 msgid "Print field sheets"
-msgstr ""
+msgstr "Imprimir hojas de campo"
 
 #: user/teamplayers.php:307
 msgid "Print roster"
@@ -5401,7 +5341,7 @@ msgstr "Repita la contraseña"
 
 #: user/scorekeepinglink.php:69
 msgid "Replace link"
-msgstr ""
+msgstr "Reemplazar enlace"
 
 #: admin/addseasons.php:404
 msgid "Require accreditation"
@@ -5534,11 +5474,8 @@ msgid "Result cleared"
 msgstr "Resultado borrado"
 
 #: scorekeeper/addresult.php:49
-#, fuzzy
 msgid "Result not saved: the score has changed since this page was opened."
-msgstr ""
-"Hoja de anotación no guardada: el partido ha cambiado desde que se abrió "
-"esta página."
+msgstr "Resultado no guardado: el marcador ha cambiado desde que se abrió esta página."
 
 #: lib/game.functions.php:2854
 #, php-format
@@ -5679,11 +5616,7 @@ msgstr "Filas"
 msgid "Rows hidden from unchanged saves: %d"
 msgstr "Filas ocultas de guardados sin cambios: %d"
 
-#: admin/serieformats.php:10
-msgid "Rule Templates"
-msgstr "Plantillas de reglas"
-
-#: menufunctions.php:392 admin/serieformats.php:26
+#: menufunctions.php:392 admin/serieformats.php:10 admin/serieformats.php:26
 msgid "Rule templates"
 msgstr "Plantillas de reglas"
 
@@ -5806,7 +5739,7 @@ msgstr "El guardado afecta sólo a la división seleccionada."
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
 #: lib/scorekeeper.functions.php:292
 msgid "Scan to keep score in Scorekeeper."
-msgstr ""
+msgstr "Escanea para anotar en Scorekeeper."
 
 #: games.php:49 games.php:60 games.php:84 games.php:89 games.php:104
 #: games.php:111 games.php:116 games.php:122 poolstatus.php:357
@@ -5910,15 +5843,15 @@ msgstr "Los anotadores escriben sus nombres."
 
 #: user/scorekeepinglink.php:10 user/scoresheethistory.php:410
 msgid "Scorekeeping link"
-msgstr ""
+msgstr "Enlace de anotación"
 
 #: admin/scorekeepinglinks.php:14 admin/seasonadmin.php:121
 msgid "Scorekeeping links"
-msgstr ""
+msgstr "Enlaces de anotación"
 
 #: admin/addseasons.php:502
 msgid "Scorekeeping links work without logging in"
-msgstr ""
+msgstr "Los enlaces de anotación funcionan sin iniciar sesión"
 
 #: scorekeeper/addscoresheet.php:385 user/addscoresheet.php:859
 #: user/scoresheethistory.php:566
@@ -5963,7 +5896,7 @@ msgstr "Historial de la hoja de anotación"
 
 #: admin/scorekeepinglinks.php:101
 msgid "Scoresheet history is disabled; anonymous use is not counted."
-msgstr ""
+msgstr "El historial de la hoja de anotación está desactivado; el uso anónimo no se cuenta."
 
 #: user/addscoresheet.php:510
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
@@ -6035,10 +5968,6 @@ msgstr "Resultados de la búsqueda"
 #: admin/seasonadmin.php:33
 msgid "Season"
 msgstr "Temporada"
-
-#: user/enrollteam.php:10
-msgid "Season mandatory"
-msgstr "Temporada obligatoria"
 
 #: menufunctions.php:691 admin/addseasons.php:390 admin/seasonpoints.php:15
 #: admin/seasonpoints.php:21 admin/seasonpoints.php:46
@@ -6629,7 +6558,7 @@ msgstr "Las configuraciones espirituales no se guardaron."
 #: lib/scoresheethistory.functions.php:666 scorekeeper/endgame.php:26
 #: scorekeeper/gameplay.php:23
 msgid "Spirit stoppage"
-msgstr "Pausa de Espíritu"
+msgstr "Pausa de espíritu"
 
 #: cust/bula/pdfscoresheet.php:476 cust/default/pdfscoresheet.php:493
 #: cust/fpudd/pdfscoresheet.php:485 cust/gummis/pdfscoresheet.php:562
@@ -6843,10 +6772,6 @@ msgstr "Tareas"
 msgid "Team"
 msgstr "Equipo"
 
-#: user/clubprofile.php:140 user/teamplayers.php:143 user/teamprofile.php:99
-msgid "Team Profile"
-msgstr "Perfil del equipo"
-
 #: statistics.php:31
 msgid "Team Standings"
 msgstr "Clasificación del equipo"
@@ -6889,7 +6814,8 @@ msgstr "Páginas del equipo"
 msgid "Team pools"
 msgstr "Grupos de equipos"
 
-#: user/respteams.php:25
+#: user/clubprofile.php:140 user/respteams.php:25 user/teamplayers.php:143
+#: user/teamprofile.php:99
 msgid "Team profile"
 msgstr "Perfil del equipo"
 
@@ -6967,11 +6893,11 @@ msgstr ""
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
-msgstr ""
+msgstr "El enlace actual deja de funcionar y todos los que lo abrieron pierden el acceso. ¿Continuar?"
 
 #: admin/scorekeepinglinks.php:98 user/scorekeepinglink.php:28
 msgid "The event is read-only."
-msgstr ""
+msgstr "El evento es de solo lectura."
 
 #: admin/addseasonusers.php:23 admin/addteamadmins.php:25
 msgid "The event is read-only. Access rights cannot be changed."
@@ -7039,11 +6965,11 @@ msgstr "La clave no distingue entre mayúsculas y minúsculas"
 
 #: user/scorekeepinglink.php:62
 msgid "The link works only on the day of the field reservation."
-msgstr ""
+msgstr "El enlace solo funciona el día de la reserva del campo."
 
 #: user/scorekeepinglink.php:64
 msgid "The link works only on the day of the game."
-msgstr ""
+msgstr "El enlace solo funciona el día del partido."
 
 #: scorekeeper/addscorecap.php:46
 msgid "The new point cap must be 255 or less."
@@ -7101,13 +7027,9 @@ msgstr ""
 "El archivo de importación subido ya no está disponible. Selecciona el "
 "archivo de nuevo."
 
-#: register.php:31 admin/adduser.php:28
+#: register.php:31 admin/adduser.php:28 user/userinfo.php:43
 msgid "The username is already in use"
 msgstr "El nombre de usuario ya está en uso"
-
-#: user/userinfo.php:43
-msgid "The username is already in use."
-msgstr "El nombre de usuario ya está en uso."
 
 #: admin/finalstandings.php:147
 #, php-format
@@ -7230,12 +7152,12 @@ msgstr ""
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
-msgstr ""
+msgstr "Este enlace de anotación ya no es válido. Pide uno nuevo al organizador del evento."
 
 #: lib/scorekeeper.functions.php:624
 #, php-format
 msgid "This scorekeeping link works only on %s."
-msgstr ""
+msgstr "Este enlace de anotación solo funciona el %s."
 
 #: spiritkeeper/teamgames.php:162
 msgid "This spirit submission is currently read-only."
@@ -7358,13 +7280,9 @@ msgstr "Tiempos fuera (min:seg)"
 msgid "Timeouts (time)"
 msgstr "Tiempos fuera (tiempo)"
 
-#: admin/addseasonpools.php:487
+#: admin/addseasonpools.php:487 admin/addserieformats.php:177
 msgid "Timeouts in overtime"
 msgstr "Tiempos fuera en tiempo extra"
-
-#: admin/addserieformats.php:177
-msgid "Timeouts on overtime"
-msgstr "Tiempos fuera en horas extras"
 
 #: lib/scoresheethistory.functions.php:657
 #, php-format
@@ -7736,7 +7654,7 @@ msgstr "Idioma no admitido:"
 
 #: scoredisplay/index.php:85
 msgid "Upcoming"
-msgstr ""
+msgstr "Próximos"
 
 #: admin/eventdataimport.php:216 admin/eventdataimport.php:234
 msgid "Update"
@@ -7999,7 +7917,7 @@ msgstr ""
 msgid ""
 "When enabled, team-side users can submit their own complete spirit score "
 "once, but cannot later edit or delete that team's spirit score or spirit "
-"comment. Season admins still bypass the lock."
+"comment. Event admins still bypass the lock."
 msgstr ""
 "Cuando está habilitado, los usuarios del equipo pueden enviar su propia "
 "puntuación de espíritu completa una vez, pero luego no pueden editar ni "
@@ -8103,7 +8021,7 @@ msgstr ""
 #: lib/scorekeeper.functions.php:627
 #, php-format
 msgid "You can keep score for %s."
-msgstr ""
+msgstr "Puedes anotar %s."
 
 #: user/adddefensesheet.php:332 user/addscoresheet.php:830
 msgid "You can save the scoresheet at any time while entering it"
@@ -8641,6 +8559,9 @@ msgstr "si"
 #~ msgid "After the match has ended, update result:"
 #~ msgstr "Una vez finalizado el partido, actualiza el resultado:"
 
+#~ msgid "All Clubs"
+#~ msgstr "Todos los Clubes"
+
 #~ msgid "All time scoreboard"
 #~ msgstr "Marcador histórico"
 
@@ -8686,8 +8607,23 @@ msgstr "si"
 #~ msgid "Change the result to"
 #~ msgstr "Cambie el resultado a"
 
+#~ msgid "Check the username and password."
+#~ msgstr "Verifique el nombre de usuario y la contraseña."
+
 #~ msgid "Client access"
 #~ msgstr "Acceso de cliente"
+
+#~ msgid "Club Card"
+#~ msgstr "Ficha del Club"
+
+#~ msgid "Club Profile"
+#~ msgstr "Perfil del Club"
+
+#~ msgid "Club Teams"
+#~ msgstr "Equipos de Club"
+
+#~ msgid "Clubs & Countries"
+#~ msgstr "Clubes y Países"
 
 #~ msgid ""
 #~ "Controls visibility in navigation; does not change edit rights or API "
@@ -8720,17 +8656,32 @@ msgstr "si"
 #~ msgid "Delete selected users' event access rights"
 #~ msgstr "Eliminar derechos de acceso a eventos de usuarios seleccionados"
 
+#~ msgid "Delete the last goal"
+#~ msgstr "Eliminar el último gol"
+
 #~ msgid "Desktop gameplay"
 #~ msgstr "Juego de escritorio"
 
 #~ msgid "Erroneous scoresheet number:"
 #~ msgstr "Número de hoja de puntuación erróneo:"
 
+#~ msgid "Event Links"
+#~ msgstr "Enlaces de Eventos"
+
 #~ msgid "External"
 #~ msgstr "Externo"
 
+#~ msgid "Fill in scoresheet"
+#~ msgstr "Rellenar hoja de puntuación"
+
 #~ msgid "Final Standings"
 #~ msgstr "Clasificación Final"
+
+#~ msgid "First Name"
+#~ msgstr "Primer Nombre"
+
+#~ msgid "First Offence"
+#~ msgstr "Primero a la Ofensiva"
 
 #~ msgid "First offence warning"
 #~ msgstr "Inicia a la ofensiva"
@@ -8755,6 +8706,9 @@ msgstr "si"
 
 #~ msgid "Games list"
 #~ msgstr "Lista de juegos"
+
+#~ msgid "Give XX as the assist in Callahan goals"
+#~ msgstr "Dar XX como asistencia en los goles de Callahan"
 
 #~ msgid "Gls"
 #~ msgstr "Gls"
@@ -8793,6 +8747,9 @@ msgstr "si"
 #~ msgid "If game ongoing:"
 #~ msgstr "Si el juego está en curso:"
 
+#~ msgid "Last Name"
+#~ msgstr "Apellido"
+
 #~ msgid "Menu"
 #~ msgstr "Menú"
 
@@ -8805,11 +8762,22 @@ msgstr "si"
 #~ msgid "Offence warning"
 #~ msgstr "Ofensiva"
 
+#~ msgid "Optional - add context for spirit points given (no blame)."
+#~ msgstr ""
+#~ "Opcional: agregue contexto para los puntos de espíritu otorgados (sin "
+#~ "culpar)."
+
+#~ msgid "Passwords do not match."
+#~ msgstr "Las contraseñas no coinciden."
+
 #~ msgid "Placements"
 #~ msgstr "Clasificaciones"
 
 #~ msgid "Play must restart"
 #~ msgstr "Informe de datos del jugador"
+
+#~ msgid "Play off -type of pool"
+#~ msgstr "Play off -tipo de grupo"
 
 #~ msgid "Players of the game"
 #~ msgstr "Jugadores del juego"
@@ -8832,6 +8800,9 @@ msgstr "si"
 #~ msgid "Result saved!"
 #~ msgstr "¡Resultado guardado!"
 
+#~ msgid "Rule Templates"
+#~ msgstr "Plantillas de reglas"
+
 #~ msgid "Save again"
 #~ msgstr "Guardar de nuevo"
 
@@ -8853,6 +8824,9 @@ msgstr "si"
 #~ msgid "Scoresheets"
 #~ msgstr "Hojas de anotación"
 
+#~ msgid "Season mandatory"
+#~ msgstr "Temporada obligatoria"
+
 #~ msgid "Second warning before start"
 #~ msgstr "La segunda mitad comenzó en"
 
@@ -8868,8 +8842,14 @@ msgstr "si"
 #~ msgid "Target event is not the same as in a file."
 #~ msgstr "El evento de destino no es el mismo al que está en un archivo."
 
+#~ msgid "Team Profile"
+#~ msgstr "Perfil del equipo"
+
 #~ msgid "The legacy mobile administration interface is deprecated."
 #~ msgstr "La interfaz de administración móvil heredada está obsoleta."
+
+#~ msgid "The username is already in use."
+#~ msgstr "El nombre de usuario ya está en uso."
 
 #~ msgid "This game has already been played. Current result:"
 #~ msgstr "Este juego ya se ha jugado. Resultado actual:"
@@ -8885,6 +8865,9 @@ msgstr "si"
 #, php-format
 #~ msgid "Time cap target: %d"
 #~ msgstr "Objetivo del límite de tiempo: %d"
+
+#~ msgid "Timeouts on overtime"
+#~ msgstr "Tiempos fuera en horas extras"
 
 #~ msgid "Tot. avg."
 #~ msgstr "Tot. avg."

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 12:15+0300\n"
+"POT-Creation-Date: 2026-10-10 12:24+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -485,15 +485,11 @@ msgstr "Arvonnan jälkeen toimitsija merkitsee hyökkäämään lähtevän joukk
 msgid "All"
 msgstr "Kaikki"
 
-#: admin/clubs.php:52
-msgid "All Clubs"
-msgstr "Kaikki seurat"
-
 #: admin/clubs.php:85
 msgid "All Countries"
 msgstr "Kaikki maat"
 
-#: allclubs.php:8
+#: allclubs.php:8 admin/clubs.php:52
 msgid "All clubs"
 msgstr "Kaikki seurat"
 
@@ -554,7 +550,7 @@ msgstr "Kaikkienaikojen pistepörssi TOP 100"
 
 #: admin/addseasons.php:500
 msgid ""
-"Allows non-admin users to see game notes on public pages. Season admins and "
+"Allows non-admin users to see game notes on public pages. Event admins and "
 "the spirit director can still see them regardless of this flag."
 msgstr ""
 "Sallii muiden kuin ylläpitäjien nähdä peli-kommentit julkisilla sivuilla. "
@@ -571,8 +567,8 @@ msgstr ""
 
 #: admin/spiritsettings.php:79
 msgid ""
-"Allows non-admin users to see spirit scores for this event. Season admins "
-"can still review spirit data regardless of this flag."
+"Allows non-admin users to see spirit scores for this event. Event admins can "
+"still review spirit data regardless of this flag."
 msgstr ""
 "Sallii muiden kuin ylläpitäjien nähdä tämän tapahtuman spirit-pisteet. "
 "Tapahtumavastaavat voivat silti tarkastella spirit-tietoja tästä asetuksesta "
@@ -606,30 +602,30 @@ msgstr "Anonymisoi pelaajan tiedot"
 #: admin/scorekeepinglinks.php:70
 #, php-format
 msgid "Anonymous changes: %d"
-msgstr ""
+msgstr "Anonyymit muutokset: %d"
 
 #: admin/addseasons.php:507
 msgid ""
 "Anyone who opens a game or field scorekeeping link can keep score for those "
 "games without logging in."
-msgstr ""
+msgstr "Kuka tahansa, joka avaa pelin tai kentän pisteenkirjauslinkin, voi kirjata pisteet kyseisille peleille kirjautumatta sisään."
 
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
-msgstr ""
+msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet näille peleille kirjauduttuaan sisään."
 
 #: user/scorekeepinglink.php:48
 msgid ""
 "Anyone with this link can keep score for these games without logging in."
-msgstr ""
+msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet näille peleille kirjautumatta sisään."
 
 #: user/scorekeepinglink.php:45
 msgid "Anyone with this link can keep score for this game after logging in."
-msgstr ""
+msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille kirjauduttuaan sisään."
 
 #: user/scorekeepinglink.php:44
 msgid "Anyone with this link can keep score for this game without logging in."
-msgstr ""
+msgstr "Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille kirjautumatta sisään."
 
 #: admin/translations.php:585
 msgid "Apply bulk translations"
@@ -1106,11 +1102,7 @@ msgstr "Tarkista sijoitukset %s. Sitten: %s"
 msgid "Check the gameplay after feeding in the scoresheet"
 msgstr "Tarkista pelin kulku syötettyäsi pöytäkirjan"
 
-#: scorekeeper/login.php:7 spiritkeeper/login.php:24
-msgid "Check the username and password."
-msgstr "Tarkista käyttäjätunnus ja salasana."
-
-#: login/login_failed.php:34
+#: login/login_failed.php:34 scorekeeper/login.php:7 spiritkeeper/login.php:24
 msgid "Check your username and password."
 msgstr "Tarkista käyttäjätunnuksesi ja salasanasi."
 
@@ -1199,19 +1191,7 @@ msgstr "Sulje"
 msgid "Club"
 msgstr "Seura"
 
-#: clubcard.php:22
-msgid "Club Card"
-msgstr "Seuraprofiili"
-
-#: user/clubprofile.php:141 user/teamplayers.php:144 user/teamprofile.php:100
-msgid "Club Profile"
-msgstr "Seuraprofiili"
-
-#: admin/seasonadmin.php:31
-msgid "Club Teams"
-msgstr "Seaurajoukkueet"
-
-#: user/respteams.php:46
+#: clubcard.php:22 user/respteams.php:46
 msgid "Club card"
 msgstr "Seuraprofiili"
 
@@ -1227,11 +1207,12 @@ msgstr "Seuraa ei löydy"
 msgid "Club pages"
 msgstr "Seuran sivut"
 
-#: user/respteams.php:27
+#: user/clubprofile.php:141 user/respteams.php:27 user/teamplayers.php:144
+#: user/teamprofile.php:100
 msgid "Club profile"
 msgstr "Seuraprofiili"
 
-#: countrycard.php:92
+#: countrycard.php:92 admin/seasonadmin.php:31
 msgid "Club teams"
 msgstr "Seurajoukkueet"
 
@@ -1243,11 +1224,7 @@ msgstr "Säilytettävä seura"
 msgid "Clubs"
 msgstr "Seurat"
 
-#: menufunctions.php:394
-msgid "Clubs & Countries"
-msgstr "Seurat ja Maat"
-
-#: admin/clubs.php:43
+#: menufunctions.php:394 admin/clubs.php:43
 msgid "Clubs and Countries"
 msgstr "Seurat ja Maat"
 
@@ -1706,7 +1683,7 @@ msgstr "Poista maali"
 msgid "Delete image"
 msgstr "Poista kuva"
 
-#: scorekeeper/deletescore.php:22
+#: scorekeeper/deletescore.php:22 user/addscoresheet.php:822
 msgid "Delete last goal"
 msgstr "Poista edellinen maali"
 
@@ -1729,10 +1706,6 @@ msgstr "Poista valitut"
 #: user/addspirit.php:66
 msgid "Delete spirit score"
 msgstr "Poista spirit-pisteet"
-
-#: user/addscoresheet.php:822
-msgid "Delete the last goal"
-msgstr "Poista edellinen maali"
 
 #: admin/seasonpoints.php:204
 msgid "Delete this round?"
@@ -2235,10 +2208,6 @@ msgstr "Tapahtuman tunnus vaaditaan tapahtumarajauksessa."
 msgid "Event ID may not have spaces or special characters"
 msgstr "Tunnuksessa ei voi olla välilyöntiä tai erikoismerkkejä"
 
-#: menufunctions.php:572
-msgid "Event Links"
-msgstr "Tapahtuman linkit"
-
 #: admin/addseasonusers.php:93
 msgid "Event admins"
 msgstr "Tapahtumavastaavat"
@@ -2255,7 +2224,7 @@ msgstr "Tapahtuman tietojen tuonti"
 msgid "Event has"
 msgstr "Tapahtumalla on"
 
-#: admin/addseasonlinks.php:8
+#: menufunctions.php:572 admin/addseasonlinks.php:8
 msgid "Event links"
 msgstr "Tapahtuman linkit"
 
@@ -2263,7 +2232,7 @@ msgstr "Tapahtuman linkit"
 msgid "Event log"
 msgstr "Tapahtumaloki"
 
-#: user/contacts.php:10
+#: user/contacts.php:10 user/enrollteam.php:10
 msgid "Event mandatory"
 msgstr "Tapahtuman määrittely pakollista"
 
@@ -2463,11 +2432,6 @@ msgstr "Tiedosto on liian suuri"
 msgid "Fill in defence sheet"
 msgstr "Täytä puolustuspöytäkirja"
 
-#: scorekeeper/gameplay.php:70 user/addscoresheet.php:12
-#: user/addscoresheet.php:78
-msgid "Fill in scoresheet"
-msgstr "Syötä pöytäkirja"
-
 #: user/addextraemail.php:69
 msgid "Fill in the extra email address below"
 msgstr "Lisää sähköpostiosoitteita"
@@ -2476,7 +2440,9 @@ msgstr "Lisää sähköpostiosoitteita"
 msgid "Fill in the registration information in the fields below."
 msgstr "Täytä rekisteröitymistiedot alla oleviin kenttiin."
 
-#: user/adddefensesheet.php:323 user/addscoresheet.php:825
+#: scorekeeper/gameplay.php:70 user/adddefensesheet.php:323
+#: user/addscoresheet.php:12 user/addscoresheet.php:78
+#: user/addscoresheet.php:825
 msgid "Fill in the scoresheet"
 msgstr "Syötä pelin pöytäkirja"
 
@@ -2554,20 +2520,14 @@ msgid "First"
 msgstr "Ensimmäinen"
 
 #: admin/tdtools.php:21 admin/tdtools.php:57
-msgid "First Name"
-msgstr "Etunimi"
-
-#: cust/default/pdfscoresheet.php:524 cust/slkl/pdfscoresheet.php:499
-#: cust/wfdf/pdfscoresheet.php:401
-msgid "First Offence"
-msgstr "Ensimmäinen hyökkäys"
-
 #: cust/default/teamplayers.functions.php:157 user/playerprofile.php:222
 #: user/teamplayers.php:169
 msgid "First name"
 msgstr "Etunimi"
 
-#: scorekeeper/addfirstoffence.php:34 scorekeeper/addscoresheet.php:444
+#: cust/default/pdfscoresheet.php:524 cust/slkl/pdfscoresheet.php:499
+#: cust/wfdf/pdfscoresheet.php:401 scorekeeper/addfirstoffence.php:34
+#: scorekeeper/addscoresheet.php:444
 msgid "First offence"
 msgstr "Ensimmäinen hyökkäys"
 
@@ -2703,7 +2663,7 @@ msgstr "Etusivu"
 
 #: scoredisplay/index.php:88 scoredisplay/index.php:112
 msgid "Fullscreen"
-msgstr ""
+msgstr "Koko näyttö"
 
 #: teamcard.php:429 teamcard.php:520 teamcard.php:630 teamcard.php:717
 msgid "GA Avg."
@@ -2751,7 +2711,7 @@ msgstr ""
 #: admin/saveschedule.php:76
 #, php-format
 msgid "Game %s belongs to another event and was left unchanged."
-msgstr ""
+msgstr "Peli %s kuuluu toiseen tapahtumaan, eikä sitä muutettu."
 
 #: admin/saveschedule.php:87
 #, php-format
@@ -3008,10 +2968,6 @@ msgid "Get comma-separated UTF-8 encoded files by clicking the links below."
 msgstr ""
 "Lataa pilkulla erotetut UTF-8-koodatut tiedostot klikkaamalla alla olevia "
 "linkkejä."
-
-#: user/addscoresheet.php:829
-msgid "Give XX as the assist in Callahan goals"
-msgstr "Merkitse Callahan-maaleissa syöttäjäksi XX"
 
 #: teamcard.php:316 admin/spirit.php:49 admin/spirit.php:108
 #: admin/spirit.php:157 admin/spirit.php:285
@@ -3446,7 +3402,7 @@ msgstr "Info"
 msgid "Initial moves"
 msgstr "Alkusarjat"
 
-#: user/adddefensesheet.php:331
+#: user/adddefensesheet.php:331 user/addscoresheet.php:829
 msgid "Input XX as the assist in Callahan goals"
 msgstr "Merkitse Callahan-maaliin syöttäjäksi XX"
 
@@ -3655,10 +3611,6 @@ msgstr "Nimike"
 msgid "Language"
 msgstr "Kieli"
 
-#: admin/tdtools.php:22 admin/tdtools.php:58
-msgid "Last Name"
-msgstr "Sukunimi"
-
 #: user/addscoresheet.php:835
 #, php-format
 msgid "Last changed: %s"
@@ -3672,6 +3624,7 @@ msgstr "Viimeinen kirjautuminen"
 msgid "Last modified"
 msgstr "Muutettu viimeksi"
 
+#: admin/tdtools.php:22 admin/tdtools.php:58
 #: cust/default/teamplayers.functions.php:162 user/playerprofile.php:226
 #: user/teamplayers.php:170
 msgid "Last name"
@@ -3828,7 +3781,7 @@ msgstr "Kirjaudu sisään luodaksesi tapahtuman"
 #: scorekeeper/login.php:23
 #, php-format
 msgid "Log in to keep score for %s."
-msgstr ""
+msgstr "Kirjaudu sisään kirjataksesi pisteet: %s."
 
 #: login.php:18
 msgid "Log in with your existing account."
@@ -4580,11 +4533,8 @@ msgstr "Vastustajan VP:t"
 msgid "Opponent spirit notes are not shown in the public token flow."
 msgstr "Vastustajan spirit-kommentteja ei näytetä julkisessa linkkinäkymässä."
 
-#: user/addspirit.php:26
-msgid "Optional - add context for spirit points given (no blame)."
-msgstr "Valinnainen - perustelut annetuille spirit-pisteille (ei syytöksiä)."
-
 #: spiritkeeper/editgame.php:115 spiritkeeper/submitsotg.php:92
+#: user/addspirit.php:26
 msgid "Optional - add context for the spirit score given (no blame)."
 msgstr "Valinnainen - perustelut annetuille spirit-pisteille (ei syytöksiä)."
 
@@ -4696,13 +4646,9 @@ msgstr "Salasanan nollauslinkki lähetetty."
 msgid "Password reset request for Ultiorganizer"
 msgstr "Ultiorganizerin salasanan nollauspyyntö"
 
-#: register.php:67 login/password_reset.php:45
+#: register.php:67 login/password_reset.php:45 user/userinfo.php:110
 msgid "Passwords do not match"
 msgstr "Salasanat eivät täsmää"
-
-#: user/userinfo.php:110
-msgid "Passwords do not match."
-msgstr "Salasanat eivät täsmää."
 
 #: timekeeper/index.php:53 timekeeper/index.php:141 timekeeper/index.php:171
 msgid "Pause"
@@ -4774,10 +4720,6 @@ msgstr "Sijoituslohko"
 #: cust/windmill/pdfscoresheet.php:263
 msgid "Play"
 msgstr "Pelaa"
-
-#: admin/seriesgames.php:103
-msgid "Play off -type of pool"
-msgstr "Pudotuspeli-tyyppinen lohko"
 
 #: admin/addseasonpools.php:299 admin/addseasonpools.php:301
 msgid "Play-off"
@@ -4940,7 +4882,7 @@ msgstr ""
 msgid "Players without membership Id"
 msgstr "Pelaajat ilman jäsentietoja"
 
-#: admin/poolgames.php:192
+#: admin/poolgames.php:192 admin/seriesgames.php:103
 msgid "Playoff -type of pool"
 msgstr "Pudotuspeli-tyyppinen lohko"
 
@@ -5129,7 +5071,7 @@ msgstr "Tulosta tyhjä pöytäkirja"
 
 #: admin/reservations.php:121 admin/scorekeepinglinks.php:112
 msgid "Print field sheets"
-msgstr ""
+msgstr "Tulosta kenttäarkit"
 
 #: user/teamplayers.php:307
 msgid "Print roster"
@@ -5346,7 +5288,7 @@ msgstr "Toista salasana"
 
 #: user/scorekeepinglink.php:69
 msgid "Replace link"
-msgstr ""
+msgstr "Vaihda linkki"
 
 #: admin/addseasons.php:404
 msgid "Require accreditation"
@@ -5478,10 +5420,8 @@ msgid "Result cleared"
 msgstr "Tulos tyhjennetty"
 
 #: scorekeeper/addresult.php:49
-#, fuzzy
 msgid "Result not saved: the score has changed since this page was opened."
-msgstr ""
-"Pöytäkirjaa ei tallennettu: peli on muuttunut tämän sivun avaamisen jälkeen."
+msgstr "Tulosta ei tallennettu: tulos on muuttunut tämän sivun avaamisen jälkeen."
 
 #: lib/game.functions.php:2854
 #, php-format
@@ -5622,11 +5562,7 @@ msgstr "Rivejä"
 msgid "Rows hidden from unchanged saves: %d"
 msgstr "Muuttamattomien tallennusten piilotetut rivit: %d"
 
-#: admin/serieformats.php:10
-msgid "Rule Templates"
-msgstr "Sääntöpohjat"
-
-#: menufunctions.php:392 admin/serieformats.php:26
+#: menufunctions.php:392 admin/serieformats.php:10 admin/serieformats.php:26
 msgid "Rule templates"
 msgstr "Sääntöpohjat"
 
@@ -5749,7 +5685,7 @@ msgstr "Tallennus vaikuttaa vain valittuun sarjaan."
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
 #: lib/scorekeeper.functions.php:292
 msgid "Scan to keep score in Scorekeeper."
-msgstr ""
+msgstr "Skannaa kirjataksesi pisteet Scorekeeperissä."
 
 #: games.php:49 games.php:60 games.php:84 games.php:89 games.php:104
 #: games.php:111 games.php:116 games.php:122 poolstatus.php:357
@@ -5840,12 +5776,12 @@ msgstr "Pöytäkirjanpitäjä"
 #: user/adddefensesheet.php:215 user/addscoresheet.php:685
 #: user/scoresheethistory.php:503
 msgid "Scorekeeper(s)"
-msgstr "Pisteenpitäjä(t)"
+msgstr "Pöytäkirjanpitäjä(t)"
 
 #: admin/addseasonusers.php:181 cust/wfdf/pdfscoresheet.php:413
 #: cust/wfdf/pdfscoresheet.php:545
 msgid "Scorekeepers"
-msgstr "Pisteidenkirjaajat"
+msgstr "Pöytäkirjanpitäjät"
 
 #: cust/wfdf/pdfscoresheet.php:1328
 msgid "Scorekeepers fill in their names."
@@ -5853,15 +5789,15 @@ msgstr "Pisteenpitäjät kirjoittavat nimensä."
 
 #: user/scorekeepinglink.php:10 user/scoresheethistory.php:410
 msgid "Scorekeeping link"
-msgstr ""
+msgstr "Pisteenkirjauslinkki"
 
 #: admin/scorekeepinglinks.php:14 admin/seasonadmin.php:121
 msgid "Scorekeeping links"
-msgstr ""
+msgstr "Pisteenkirjauslinkit"
 
 #: admin/addseasons.php:502
 msgid "Scorekeeping links work without logging in"
-msgstr ""
+msgstr "Pisteenkirjauslinkit toimivat ilman kirjautumista"
 
 #: scorekeeper/addscoresheet.php:385 user/addscoresheet.php:859
 #: user/scoresheethistory.php:566
@@ -5906,7 +5842,7 @@ msgstr "Pöytäkirjan historia"
 
 #: admin/scorekeepinglinks.php:101
 msgid "Scoresheet history is disabled; anonymous use is not counted."
-msgstr ""
+msgstr "Pöytäkirjahistoria on poissa käytöstä; anonyymiä käyttöä ei lasketa."
 
 #: user/addscoresheet.php:510
 msgid "Scoresheet not saved. Correct the highlighted points and save again."
@@ -5976,10 +5912,6 @@ msgstr "Hakutulokset"
 #: admin/seasonadmin.php:33
 msgid "Season"
 msgstr "Kausi"
-
-#: user/enrollteam.php:10
-msgid "Season mandatory"
-msgstr "Kauden määrittely pakollista"
 
 #: menufunctions.php:691 admin/addseasons.php:390 admin/seasonpoints.php:15
 #: admin/seasonpoints.php:21 admin/seasonpoints.php:46
@@ -6779,10 +6711,6 @@ msgstr "Tehtävä"
 msgid "Team"
 msgstr "Joukkue"
 
-#: user/clubprofile.php:140 user/teamplayers.php:143 user/teamprofile.php:99
-msgid "Team Profile"
-msgstr "Joukkueprofiili"
-
 #: statistics.php:31
 msgid "Team Standings"
 msgstr "Joukkueiden sijoitukset"
@@ -6825,7 +6753,8 @@ msgstr "Joukkueen sivut"
 msgid "Team pools"
 msgstr "Joukkueen sarjat"
 
-#: user/respteams.php:25
+#: user/clubprofile.php:140 user/respteams.php:25 user/teamplayers.php:143
+#: user/teamprofile.php:99
 msgid "Team profile"
 msgstr "Joukkueprofiili"
 
@@ -6901,11 +6830,11 @@ msgstr ""
 msgid ""
 "The current link stops working and everyone who opened it loses access. "
 "Continue?"
-msgstr ""
+msgstr "Nykyinen linkki lakkaa toimimasta, ja kaikki sen avanneet menettävät pääsynsä. Jatketaanko?"
 
 #: admin/scorekeepinglinks.php:98 user/scorekeepinglink.php:28
 msgid "The event is read-only."
-msgstr ""
+msgstr "Tapahtuma on vain luku -tilassa."
 
 #: admin/addseasonusers.php:23 admin/addteamadmins.php:25
 msgid "The event is read-only. Access rights cannot be changed."
@@ -6965,11 +6894,11 @@ msgstr "Avain ei riipu kirjainkoosta"
 
 #: user/scorekeepinglink.php:62
 msgid "The link works only on the day of the field reservation."
-msgstr ""
+msgstr "Linkki toimii vain kenttävarauksen päivänä."
 
 #: user/scorekeepinglink.php:64
 msgid "The link works only on the day of the game."
-msgstr ""
+msgstr "Linkki toimii vain pelipäivänä."
 
 #: scorekeeper/addscorecap.php:46
 msgid "The new point cap must be 255 or less."
@@ -7023,13 +6952,9 @@ msgid ""
 msgstr ""
 "Lähetetty tuontitiedosto ei ole enää saatavilla. Valitse tiedosto uudelleen."
 
-#: register.php:31 admin/adduser.php:28
+#: register.php:31 admin/adduser.php:28 user/userinfo.php:43
 msgid "The username is already in use"
 msgstr "Tunnus on jo käytössä"
-
-#: user/userinfo.php:43
-msgid "The username is already in use."
-msgstr "Tunnus on jo käytössä."
 
 #: admin/finalstandings.php:147
 #, php-format
@@ -7142,12 +7067,12 @@ msgstr ""
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
-msgstr ""
+msgstr "Tämä pisteenkirjauslinkki ei ole enää voimassa. Pyydä uusi tapahtuman järjestäjältä."
 
 #: lib/scorekeeper.functions.php:624
 #, php-format
 msgid "This scorekeeping link works only on %s."
-msgstr ""
+msgstr "Tämä pisteenkirjauslinkki toimii vain päivänä %s."
 
 #: spiritkeeper/teamgames.php:162
 msgid "This spirit submission is currently read-only."
@@ -7270,12 +7195,8 @@ msgstr "Aikalisät (min:sek)"
 msgid "Timeouts (time)"
 msgstr "Aikalisät (aika)"
 
-#: admin/addseasonpools.php:487
+#: admin/addseasonpools.php:487 admin/addserieformats.php:177
 msgid "Timeouts in overtime"
-msgstr "Aikalisiä lisäajalla"
-
-#: admin/addserieformats.php:177
-msgid "Timeouts on overtime"
 msgstr "Aikalisiä lisäajalla"
 
 #: lib/scoresheethistory.functions.php:657
@@ -7643,7 +7564,7 @@ msgstr "Ei tuettu kieli:"
 
 #: scoredisplay/index.php:85
 msgid "Upcoming"
-msgstr ""
+msgstr "Tulevat"
 
 #: admin/eventdataimport.php:216 admin/eventdataimport.php:234
 msgid "Update"
@@ -7898,7 +7819,7 @@ msgstr "Kun tämä on käytössä, vain superadmin voi muokata tätä tapahtumaa
 msgid ""
 "When enabled, team-side users can submit their own complete spirit score "
 "once, but cannot later edit or delete that team's spirit score or spirit "
-"comment. Season admins still bypass the lock."
+"comment. Event admins still bypass the lock."
 msgstr ""
 "Kun tämä on käytössä, joukkueen käyttäjät voivat lähettää oman täydellisen "
 "spirit-pisteytyksensä kerran, mutta eivät voi myöhemmin muokata tai poistaa "
@@ -8001,7 +7922,7 @@ msgstr ""
 #: lib/scorekeeper.functions.php:627
 #, php-format
 msgid "You can keep score for %s."
-msgstr ""
+msgstr "Voit kirjata pisteet: %s."
 
 #: user/adddefensesheet.php:332 user/addscoresheet.php:830
 msgid "You can save the scoresheet at any time while entering it"
@@ -8543,6 +8464,9 @@ msgstr "kyllä"
 #~ msgid "After the match has ended, update result:"
 #~ msgstr "Ottelun päätyttyä päivitä tulos:"
 
+#~ msgid "All Clubs"
+#~ msgstr "Kaikki seurat"
+
 #~ msgid "All time scoreboard"
 #~ msgstr "Kaikkienaikojen pistepörssi"
 
@@ -8588,8 +8512,23 @@ msgstr "kyllä"
 #~ msgid "Change the result to"
 #~ msgstr "Muuta tulokseksi"
 
+#~ msgid "Check the username and password."
+#~ msgstr "Tarkista käyttäjätunnus ja salasana."
+
 #~ msgid "Client access"
 #~ msgstr "Asiakasyhteydet"
+
+#~ msgid "Club Card"
+#~ msgstr "Seuraprofiili"
+
+#~ msgid "Club Profile"
+#~ msgstr "Seuraprofiili"
+
+#~ msgid "Club Teams"
+#~ msgstr "Seaurajoukkueet"
+
+#~ msgid "Clubs & Countries"
+#~ msgstr "Seurat ja Maat"
 
 #~ msgid "Correct the errors or save goal with errors"
 #~ msgstr "Korjaa virheet tai tallenna maali virheineen"
@@ -8615,17 +8554,32 @@ msgstr "kyllä"
 #~ msgid "Delete selected users' event access rights"
 #~ msgstr "Poista valittujen käyttäjien tapahtumien käyttöoikeudet"
 
+#~ msgid "Delete the last goal"
+#~ msgstr "Poista edellinen maali"
+
 #~ msgid "Desktop gameplay"
 #~ msgstr "Työpöydän pelin kulku"
 
 #~ msgid "Erroneous scoresheet number:"
 #~ msgstr "Virheellinen pöytäkirjan numero:"
 
+#~ msgid "Event Links"
+#~ msgstr "Tapahtuman linkit"
+
 #~ msgid "External"
 #~ msgstr "Ulkoinen"
 
+#~ msgid "Fill in scoresheet"
+#~ msgstr "Syötä pöytäkirja"
+
 #~ msgid "Final Standings"
 #~ msgstr "Lopulliset sijoitukset"
+
+#~ msgid "First Name"
+#~ msgstr "Etunimi"
+
+#~ msgid "First Offence"
+#~ msgstr "Ensimmäinen hyökkäys"
 
 #~ msgid "First offence warning"
 #~ msgstr "Ensimmäinen hyökkäys"
@@ -8650,6 +8604,9 @@ msgstr "kyllä"
 
 #~ msgid "Games list"
 #~ msgstr "Ottelut"
+
+#~ msgid "Give XX as the assist in Callahan goals"
+#~ msgstr "Merkitse Callahan-maaleissa syöttäjäksi XX"
 
 #~ msgid "Gls"
 #~ msgstr "Maal."
@@ -8688,6 +8645,9 @@ msgstr "kyllä"
 #~ msgid "If game ongoing:"
 #~ msgstr "Jos peli kesken:"
 
+#~ msgid "Last Name"
+#~ msgstr "Sukunimi"
+
 #~ msgid "Menu"
 #~ msgstr "Valikko"
 
@@ -8697,11 +8657,21 @@ msgstr "kyllä"
 #~ msgid "Offence warning"
 #~ msgstr "Hyökkäys"
 
+#~ msgid "Optional - add context for spirit points given (no blame)."
+#~ msgstr ""
+#~ "Valinnainen - perustelut annetuille spirit-pisteille (ei syytöksiä)."
+
+#~ msgid "Passwords do not match."
+#~ msgstr "Salasanat eivät täsmää."
+
 #~ msgid "Placements"
 #~ msgstr "Sijoitukset"
 
 #~ msgid "Play must restart"
 #~ msgstr "Pelaajan tietoraportti"
+
+#~ msgid "Play off -type of pool"
+#~ msgstr "Pudotuspeli-tyyppinen lohko"
 
 #~ msgid "Players of the game"
 #~ msgstr "Pelin pelaajat"
@@ -8724,6 +8694,9 @@ msgstr "kyllä"
 #~ msgid "Result saved!"
 #~ msgstr "Tulos tallennettu!"
 
+#~ msgid "Rule Templates"
+#~ msgstr "Sääntöpohjat"
+
 #~ msgid "Save again"
 #~ msgstr "Tallenna uudestaan"
 
@@ -8745,6 +8718,9 @@ msgstr "kyllä"
 #~ msgid "Scoresheets"
 #~ msgstr "Pöytäkirjat"
 
+#~ msgid "Season mandatory"
+#~ msgstr "Kauden määrittely pakollista"
+
 #~ msgid "Second warning before start"
 #~ msgstr "Toinen puoliaika alkoi ajassa"
 
@@ -8763,8 +8739,14 @@ msgstr "kyllä"
 #~ msgid "Target event is not the same as in a file."
 #~ msgstr "Tapahtuma ei ole sama kuin tiedostossa."
 
+#~ msgid "Team Profile"
+#~ msgstr "Joukkueprofiili"
+
 #~ msgid "The legacy mobile administration interface is deprecated."
 #~ msgstr "Vanha mobiilihallinnan käyttöliittymä on poistumassa käytöstä."
+
+#~ msgid "The username is already in use."
+#~ msgstr "Tunnus on jo käytössä."
 
 #~ msgid "This game has already been played. Current result:"
 #~ msgstr "Tämä peli on jo pelattu. Nykyinen tulos:"
@@ -8780,6 +8762,9 @@ msgstr "kyllä"
 #, php-format
 #~ msgid "Time cap target: %d"
 #~ msgstr "Aikarajan pistetavoite: %d"
+
+#~ msgid "Timeouts on overtime"
+#~ msgstr "Aikalisiä lisäajalla"
 
 #~ msgid "Tot. avg."
 #~ msgstr "Yht. ka."
