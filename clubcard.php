@@ -152,7 +152,7 @@ if ($teams) {
         $html .=  "<td  style='width:30%'><a href='?view=poolstatus&amp;series=" . $team['series_id'] . "'>" . utf8entities(U_($team['seriesname'])) . "</a></td>";
         if (IsStatsDataAvailable()) {
             $html .=  "<td class='right' style='width:15%'><a href='?view=playerlist&amp;team=" . $team['team_id'] . "'>" . _("Roster") . "</a></td>";
-            $html .=  "<td class='right' style='width:15%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoreboard") . "</a></td>";
+            $html .=  "<td class='right' style='width:15%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoring leaders") . "</a></td>";
         } else {
             $html .=  "<td class='right' style='width:30%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Players") . "</a></td>";
         }
@@ -181,7 +181,7 @@ if (count($teams)) {
 
         if (IsStatsDataAvailable()) {
             $html .=  "<td style='width:15%'><a href='?view=playerlist&amp;team=" . $team['team_id'] . "'>" . _("Roster") . "</a></td>";
-            $html .=  "<td style='width:15%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoreboard") . "</a></td>";
+            $html .=  "<td style='width:15%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoring leaders") . "</a></td>";
         } else {
             $html .=  "<td style='width:30%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Players") . "</a></td>";
         }
@@ -194,7 +194,7 @@ if (count($teams)) {
     $html .= "</table>\n";
 }
 if (!empty($sqlClubTeams)) {
-    $html .= "<h2>" . _("All time scoreboard") . ":</h2>\n";
+    $html .= "<h2>" . _("All-time scoring leaders") . ":</h2>\n";
     $viewUrl = "?view=clubcard&club=" . $clubId . "&amp;";
     // create sql part for IN condition by imploding comma after each id
 

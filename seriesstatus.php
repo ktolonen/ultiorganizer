@@ -303,7 +303,7 @@ foreach ($allteams as $stats) {
 }
 $html .= "</table>\n";
 $html .= "<a href='?view=poolstatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Show all pools") . "</a>";
-$html .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
+$html .= "<h2>" . _("Scoring leaders") . "</h2>\n";
 $html .= "<table cellspacing='0' border='0' width='100%'>\n";
 $html .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 <th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
@@ -319,11 +319,11 @@ foreach ($scores as $row) {
 }
 
 $html .= "</table>";
-$html .= "<a href='?view=scorestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Scoreboard") . "</a>";
+$html .= "<a href='?view=scorestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Show all") . "</a>";
 
 
 if (ShowDefenseStats()) {
-    $html .= "<h2>" . _("Defence board leaders") . "</h2>\n";
+    $html .= "<h2>" . _("Defence leaders") . "</h2>\n";
     $html .= "<table cellspacing='0' border='0' width='100%'>\n";
     $html .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 	<th class='center'>" . _("Total defences") . "</th></tr>\n";
@@ -338,7 +338,7 @@ if (ShowDefenseStats()) {
     }
 
     $html .= "</table>";
-    $html .= "<a href='?view=defensestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Defence board") . "</a>";
+    $html .= "<a href='?view=defensestatus&amp;series=" . $seriesinfo['series_id'] . "'>" . _("Show all") . "</a>";
 }
 
 if (ShowSpiritScoresForSeason($seasoninfo)) {

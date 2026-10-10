@@ -67,9 +67,9 @@ This is a comparison, not a lock: a point entered between the check and the rewr
 
 ## Replay views
 
-`gameplay.php` is the full replay: result (`GameResult()`), team scoreboards (`GameTeamScoreBorad()`), the goal list (`GameGoals()`), timeouts, spirit stoppages and events (`GameEvents()`), neutral cap markers, halftime markers, captain markers, and the game note (`GameCommentHtml(COMMENT_TYPE_GAME)`). Scoreboard totals count one per assist and goal; Callahans are included in goals, not added again.
+`gameplay.php` is the full replay: result (`GameResult()`), team scoring leaders (`GameTeamScoreBorad()`), the goal list (`GameGoals()`), timeouts, spirit stoppages and events (`GameEvents()`), neutral cap markers, halftime markers, captain markers, and the game note (`GameCommentHtml(COMMENT_TYPE_GAME)`). Scoring-leader totals count one per assist and goal; Callahans are included in goals, not added again.
 
-`scorekeeper/gameplay.php` shows a compact sequential replay of the same data and link to team scoreboards.
+`scorekeeper/gameplay.php` shows a compact sequential replay of the same data and link to team scoring leaders.
 
 ## Hidden times
 

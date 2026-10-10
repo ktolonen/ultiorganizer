@@ -38,11 +38,11 @@ public pages keep players and spectators up to date.
 - Show pool standings with automatic tie-breakers and event final standings.
 - Give every team, player, club, and country its own public page.
 - Provide tools for tournament and spirit directors.
-- Present cross-event scoreboards, spirit standings, and medal tables.
+- Present cross-event scoring leaders, spirit standings, and medal tables.
 - Attach media links to games, teams, players, and clubs.
 - Print schedules, scoresheets, player lists for games, and team rosters as PDFs.
 - Offer CSV, XML, RSS, and iCalendar outputs for external use.
-- Embed scoreboards and other widgets on an external site.
+- Embed scoring leaders and other widgets on an external site.
 - Serve a read-only JSON API with scoped access tokens.
 
 ### Administer the installation

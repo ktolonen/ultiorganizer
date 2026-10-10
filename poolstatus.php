@@ -155,7 +155,7 @@ function scoreboard($id, $seriesScoreboard)
     $ret = "";
 
     if ($seriesScoreboard) {
-        $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
+        $ret .= "<h2>" . _("Scoring leaders") . "</h2>\n";
         $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
         $ret .= "<tr><th style='width:120px'>" . _("Player") . "</th><th style='width:120px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
     <th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
@@ -179,9 +179,9 @@ function scoreboard($id, $seriesScoreboard)
         }
 
         $ret .= "</table>";
-        $ret .= "<a href='?view=scorestatus&amp;series=" . $id . "'>" . _("Scoreboard") . "</a>";
+        $ret .= "<a href='?view=scorestatus&amp;series=" . $id . "'>" . _("Show all") . "</a>";
     } else {
-        $ret .= "<h2>" . _("Scoreboard leaders") . "</h2>\n";
+        $ret .= "<h2>" . _("Scoring leaders") . "</h2>\n";
         $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
         $ret .= "<tr><th style='width:120px'>" . _("Player") . "</th><th style='width:120px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
     <th class='center'>" . _("Assists") . "</th><th class='center'>" . _("Goals") . "</th><th class='center'>" . _("Tot.") . "</th></tr>\n";
@@ -217,9 +217,9 @@ function scoreboard($id, $seriesScoreboard)
 
         $ret .= "</table>";
         if ($poolinfo['type'] == 2) {
-            $ret .= "<a href='?view=scorestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Scoreboard") . "</a>";
+            $ret .= "<a href='?view=scorestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Show all") . "</a>";
         } else {
-            $ret .= "<a href='?view=scorestatus&amp;pool=" . $id . "'>" . _("Scoreboard") . "</a>";
+            $ret .= "<a href='?view=scorestatus&amp;pool=" . $id . "'>" . _("Show all") . "</a>";
         }
     }
     return $ret;
@@ -232,7 +232,7 @@ function defenseboard($id, $seriesDefenseboard)
     $ret = "";
 
     if ($seriesDefenseboard) {
-        $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
+        $ret .= "<h2>" . _("Defence leaders") . "</h2>\n";
         $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
         $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 		<th class='center'>" . _("Total defences") . "</th></tr>\n";
@@ -246,9 +246,9 @@ function defenseboard($id, $seriesDefenseboard)
         }
 
         $ret .= "</table>";
-        $ret .= "<a href='?view=defensestatus&amp;series=" . $poolinfo['series_id'] . "'>" . _("Defence board") . "</a>";
+        $ret .= "<a href='?view=defensestatus&amp;series=" . $poolinfo['series_id'] . "'>" . _("Show all") . "</a>";
     } else {
-        $ret .= "<h2>" . _("Defence board leaders") . "</h2>\n";
+        $ret .= "<h2>" . _("Defence leaders") . "</h2>\n";
         $ret .= "<table cellspacing='0' border='0' width='100%'>\n";
         $ret .= "<tr><th style='width:200px'>" . _("Player") . "</th><th style='width:200px'>" . _("Team") . "</th><th class='center'>" . _("Games") . "</th>
 		<th class='center'>" . _("Total defences") . "</th></tr>\n";
@@ -274,9 +274,9 @@ function defenseboard($id, $seriesDefenseboard)
 
         $ret .= "</table>";
         if ($poolinfo['type'] == 2) {
-            $ret .= "<a href='?view=defensestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Defence board") . "</a>";
+            $ret .= "<a href='?view=defensestatus&amp;pools=" . implode(",", $pools) . "'>" . _("Show all") . "</a>";
         } else {
-            $ret .= "<a href='?view=defensestatus&amp;pool=" . $id . "'>" . _("Defence board") . "</a>";
+            $ret .= "<a href='?view=defensestatus&amp;pool=" . $id . "'>" . _("Show all") . "</a>";
         }
     }
     return $ret;

@@ -48,7 +48,7 @@ Inside changed files, inspect in this order:
 5. table headers, compact labels, leaderboard headings, and button/link text on the same page
 
 After checking the changed content, widen to the surrounding page or page module and look for terminology inconsistency. If the changed text is correct but the page mixes terms, report that as a warning only.
-When one term changes on a page, explicitly check the rest of that page for mixed variants such as `Spirit points` and `Spirit score`, `Spirit timeout` and `Spirit stoppage`, or `Defenseboard` and `Defence board`.
+When one term changes on a page, explicitly check the rest of that page for mixed variants such as `Spirit points` and `Spirit score`, `Spirit timeout` and `Spirit stoppage`, or `Scoreboard` and `Scoring leaders`.
 
 ## Terminology rules
 

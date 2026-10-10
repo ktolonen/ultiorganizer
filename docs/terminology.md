@@ -30,9 +30,9 @@ Preferred wording for Ultiorganizer docs, specs, commit messages, review comment
 | Offence | Starting possession or offence-based gameplay/stat concept. | Prefer `offence`, not `offense`, in new docs. |
 | Turnover | Recorded possession change in gameplay data. | |
 | Defence | Recorded defensive play/stat tracked through the defence sheet and defence stats. | Prefer `defence`, not `defense`, in new docs. |
-| Defence board | User-facing leaderboard or summary view for defensive stats. | Prefer the spaced form `Defence board`, not `Defenseboard`, in new UI text and docs. |
-| Scoreboard | Player scoring list: games, assists, goals, and totals for a team, pool, division, or event. | Not a game score shown on a screen; that is the `Score display`. |
-| Score display | Public full-screen app showing one game's live score at the field. | Lives under `scoredisplay/`. Do not call it `Scoreboard`. |
+| Defence leaders | Ranked list of players by defensive stats for a team, pool, division, or event. | Counterpart of `Scoring leaders`. |
+| Scoring leaders | Ranked list of players by assists, goals, and totals for a game, team, pool, division, or event. | Do not call it `Scoreboard`; in English that means the game score shown on a screen, which is the `Score display`. |
+| Score display | Public full-screen app showing one game's live score at the field. | Lives under `scoredisplay/`. |
 | Scoresheet | Detailed game record combining roster, goals, timeouts, note, scorekeeper, and related metadata. | In Ultiorganizer this is a concept, not a single table. |
 | Gameplay | Replay or view of saved game goals and events. | Used by gameplay pages and API responses. |
 | Game event | Recorded non-goal gameplay marker. | Includes turnovers, offence markers, timeouts, spirit stoppages, and media-linked events. |
@@ -78,13 +78,14 @@ These terms are recognized in the current repository. They are not the preferred
 | Spirit score | `Spirit points` | Current UI often says `Spirit points`; use `Spirit score` in new docs when discussing the concept. |
 | Spirit score average | `Spirit avg`, `Spirit points average`, `Spirit points average per category` | Prefer `Spirit score average` or `Spirit score avg.` in new user-facing text. |
 | Defence | `defense`, `Defense`, `uo_defense`, `Defense sheet`, `deftotal` | Use WFDF spelling in new docs, but recognize existing alternate spellings and internal names. |
-| Defence board | `Defenseboard` | Prefer the spaced form in new user-facing text. |
+| Scoring leaders | `Scoreboard`, `scorestatus`, `ScoreBoard` helpers | Code, view names, and helpers keep `scoreboard`; use `Scoring leaders` in user-facing text. |
+| Defence leaders | `Defence board`, `Defenseboard`, `defensestatus`, `DefenseBoard` helpers | Code, view names, and helpers keep `defenseboard`; use `Defence leaders` in user-facing text. |
 | Log in | `Login` | `Login` is correct as a noun or modifier (`Login page`); use `Log in` for the action. |
 | Log out | `Logout` | `Logout` is correct as a noun or modifier; use `Log out` for the action. |
 
 ## Abbreviations for Narrow Tables
 
-Use these only when space is constrained, such as statistics tables, standings tables, exports, or compact scoreboards.
+Use these only when space is constrained, such as statistics tables, standings tables, exports, or compact scoring-leader lists.
 
 | Full term | Approved short form | Notes |
 | --- | --- | --- |

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-10 12:12+0300\n"
+"POT-Creation-Date: 2026-10-10 12:15+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -548,17 +548,13 @@ msgstr "Alle Teams"
 msgid "All time"
 msgstr "Gesamtstatistik"
 
-#: clubcard.php:197
-msgid "All time scoreboard"
+#: clubcard.php:197 statistics.php:27
+msgid "All-time scoring leaders"
 msgstr "Allzeit-Scorerliste"
 
 #: statistics.php:134
-msgid "All time scoreboard TOP 100"
+msgid "All-time top 100 scorers"
 msgstr "Ewige Top 100"
-
-#: statistics.php:27
-msgid "All-time Scoreboards"
-msgstr "Allzeit-Scorerliste"
 
 #: admin/addseasons.php:500
 msgid ""
@@ -1647,14 +1643,10 @@ msgstr "Zeitzonen-Voreinstellung"
 msgid "Defence"
 msgstr "Defense"
 
-#: defensestatus.php:18 defensestatus.php:43 poolstatus.php:249
-#: poolstatus.php:277 poolstatus.php:279 seriesstatus.php:341
-msgid "Defence board"
+#: defensestatus.php:18 defensestatus.php:43 poolstatus.php:235
+#: poolstatus.php:251 seriesstatus.php:326
+msgid "Defence leaders"
 msgstr "Defense-Rangliste"
-
-#: poolstatus.php:235 poolstatus.php:251 seriesstatus.php:326
-msgid "Defence board leaders"
-msgstr "Fuehrende der Defense-Rangliste"
 
 #: cust/default/pdfscoresheet.php:139 cust/gummis/pdfscoresheet.php:121
 msgid "Defence record"
@@ -5882,26 +5874,6 @@ msgstr "Ergebnis-Zähler"
 msgid "Score display"
 msgstr "Anzeigetafel"
 
-#: clubcard.php:155 clubcard.php:184 countrycard.php:40 countrycard.php:67
-#: gamecard.php:205 poolstatus.php:182 poolstatus.php:220 poolstatus.php:222
-#: scorestatus.php:10 scorestatus.php:47 seriesstatus.php:322 teams.php:124
-#: teams.php:147 scorekeeper/gameplay.php:125 scorekeeper/gameplay.php:126
-#: scorekeeper/scoreboard.php:12
-msgid "Scoreboard"
-msgstr "Scorerliste"
-
-#: statistics.php:84
-msgid "Scoreboard TOP 3"
-msgstr "Scorerliste TOP 3"
-
-#: poolstatus.php:158 poolstatus.php:184 seriesstatus.php:306
-msgid "Scoreboard leaders"
-msgstr "Topscorer"
-
-#: statistics.php:26
-msgid "Scoreboards"
-msgstr "Ranglisten"
-
 #: lib/scoresheethistory.functions.php:614
 msgid "Scorekeeper"
 msgstr "Protokollführer"
@@ -5997,6 +5969,14 @@ msgstr ""
 #: user/addscoresheet.php:624
 msgid "Scoresheet saved"
 msgstr "Spielbericht gespeichert"
+
+#: clubcard.php:155 clubcard.php:184 countrycard.php:40 countrycard.php:67
+#: gamecard.php:205 poolstatus.php:158 poolstatus.php:184 scorestatus.php:10
+#: scorestatus.php:47 seriesstatus.php:306 statistics.php:26 teams.php:124
+#: teams.php:147 scorekeeper/gameplay.php:125 scorekeeper/gameplay.php:126
+#: scorekeeper/scoreboard.php:12
+msgid "Scoring leaders"
+msgstr "Scorerliste"
 
 #: scorekeeper/addscoresheet.php:187 scorekeeper/addscoresheet.php:198
 msgid "Scoring player not on the roster."
@@ -6218,16 +6198,16 @@ msgid "Selected player"
 msgstr "Ausgewählter Spieler"
 
 #: ext/index.php:236
-msgid "Selected pool standings and scoreboard"
-msgstr "Ausgewählte Pool-Tabellen mit Scoreboard"
+msgid "Selected pool standings and scoring leaders"
+msgstr "Ausgewählte Pool-Tabellen mit Scorerliste"
 
 #: spiritkeeper/teamgames.php:143
 msgid "Selected team"
 msgstr "Ausgewähltes Team"
 
 #: ext/index.php:262
-msgid "Selected team's games and scoreboard"
-msgstr "Spiele und Scoreboard eines ausgewählten Teams"
+msgid "Selected team's games and scoring leaders"
+msgstr "Spiele und Scorerliste eines ausgewählten Teams"
 
 #: admin/privacyuser.php:107
 msgid "Selected user"
@@ -6312,7 +6292,9 @@ msgstr "URLs fuer alle Teams anzeigen"
 msgid "Show administration responsibilities"
 msgstr "Zeige administrative Rechte"
 
-#: user/scoresheethistory.php:390
+#: poolstatus.php:182 poolstatus.php:220 poolstatus.php:222 poolstatus.php:249
+#: poolstatus.php:277 poolstatus.php:279 seriesstatus.php:322
+#: seriesstatus.php:341 user/scoresheethistory.php:390
 msgid "Show all"
 msgstr "Alle anzeigen"
 
@@ -7462,6 +7444,10 @@ msgstr "Token gelöscht."
 #: games.php:260
 msgid "Tomorrow"
 msgstr "Morgen"
+
+#: statistics.php:84
+msgid "Top 3 scorers"
+msgstr "Scorerliste TOP 3"
 
 #: gamecard.php:261 gamecard.php:266 gameplay.php:137 gameplay.php:158
 #: playerlist.php:38 poolstatus.php:161 poolstatus.php:187 seriesstatus.php:309
@@ -8639,6 +8625,9 @@ msgstr "ja"
 #~ msgid "After the match has ended, update result:"
 #~ msgstr "Nach dem Ende des Spiels, geben Sie das Ergebnis ein:"
 
+#~ msgid "All time scoreboard"
+#~ msgstr "Allzeit-Scorerliste"
+
 #~ msgid "Are you sure you want to delete last score?"
 #~ msgstr "Sind Sie sicher, dass der letzte Score gelöscht werden soll?"
 
@@ -8689,6 +8678,9 @@ msgstr "ja"
 
 #~ msgid "Count"
 #~ msgstr "Land"
+
+#~ msgid "Defence board leaders"
+#~ msgstr "Fuehrende der Defense-Rangliste"
 
 #~ msgid "Defence warning"
 #~ msgstr "Defense-Rangliste"
@@ -8822,6 +8814,12 @@ msgstr "ja"
 
 #~ msgid "Score&nbsp;sheet"
 #~ msgstr "Spielbericht"
+
+#~ msgid "Scoreboard leaders"
+#~ msgstr "Topscorer"
+
+#~ msgid "Scoreboards"
+#~ msgstr "Ranglisten"
 
 #~ msgid "Scoresheet #"
 #~ msgstr "Spielberichts-#"

@@ -15,7 +15,7 @@ $sort = "deftotal";
 $defenses = false;
 
 $html = "";
-$title = _("Defence board");
+$title = _("Defence leaders");
 
 
 if (iget("pool")) {
@@ -40,7 +40,7 @@ if (iget("sort")) {
     $sort = iget("sort");
 }
 
-$html .= "<h1>" . _("Defence board") . "</h1>\n";
+$html .= "<h1>" . _("Defence leaders") . "</h1>\n";
 
 $html .= "<table style='width:100%' cellpadding='1' border='1'>";
 

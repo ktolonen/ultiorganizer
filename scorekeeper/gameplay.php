@@ -122,8 +122,8 @@ if (count($goals) > 0) {
 }
 $html .= "</table>\n";
 $html .= "<div class='action-row action-row--half'>\n";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("Scoreboard") . "</a>";
-$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("Scoreboard") . "</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['hometeam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['hometeamname']) . " " . _("Scoring leaders") . "</a>";
+$html .= "<a href='?view=scoreboard&amp;game=$gameId&amp;team=" . $game_result['visitorteam'] . "' data-role='button' data-ajax='false'>" . utf8entities($game_result['visitorteamname']) . " " . _("Scoring leaders") . "</a>";
 $html .= "</div>\n";
 $html .= "<a class='back-resp-button' href='?view=respgames' data-role='button' data-ajax='false'>" . _("Back to game responsibilities") . "</a>";
 $html .= "</div><!-- /content -->\n\n";

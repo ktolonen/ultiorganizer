@@ -7,7 +7,7 @@ include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/team.functions.php';
 
-$title = _("Scoreboard");
+$title = _("Scoring leaders");
 $html = "";
 
 $poolId = 0;
@@ -44,7 +44,7 @@ if (iget("sort")) {
 }
 
 $html .= SeasonBannerHTML(MaintenanceSeasonFromView('scorestatus'));
-$html .= "<h1>" . _("Scoreboard") . "</h1>\n";
+$html .= "<h1>" . _("Scoring leaders") . "</h1>\n";
 $html .= "<table style='width:100%' cellpadding='1' border='1'>";
 $html .= ColumnLegend(['games', 'assists', 'goals', 'callahans', 'total', 'avg']);
 
