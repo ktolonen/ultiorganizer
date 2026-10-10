@@ -20,8 +20,6 @@ ob_start();
 //common page
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["yahoo-dom-event"]);
 ?>
 <script type="text/javascript">
 	function validTime(field) {
@@ -37,8 +35,8 @@ echo yuiLoad(["yahoo-dom-event"]);
 	}
 
 	function highlightError(id) {
-		var errorDiv = YAHOO.util.Dom.get(id);
-		YAHOO.util.Dom.setStyle(errorDiv, "background-color", "#FF0000");
+		var errorDiv = document.getElementById(id);
+		errorDiv.style.backgroundColor = "#FF0000";
 	}
 </script>
 

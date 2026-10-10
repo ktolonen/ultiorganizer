@@ -8,7 +8,6 @@ include_once 'lib/common.functions.php';
 include_once 'lib/team.functions.php';
 include_once 'lib/game.functions.php';
 include_once 'lib/timetable.functions.php';
-include_once 'lib/yui.functions.php';
 
 $LAYOUT_ID = SEASONGAMES;
 
@@ -83,7 +82,6 @@ if (!empty($_POST['remove_x'])) {
 
 //common page
 pageTopHeadOpen($title);
-$html .= yuiLoad(["utilities"]);
 ?>
 <script type="text/javascript">
   function setId(id) {
@@ -92,8 +90,8 @@ $html .= yuiLoad(["utilities"]);
   }
 
   function ChgName(index) {
-    YAHOO.util.Dom.get('gamenameEdited' + index).value = 'yes';
-    YAHOO.util.Dom.get("save").disabled = false;
+    document.getElementById('gamenameEdited' + index).value = 'yes';
+    document.getElementById("save").disabled = false;
   }
 </script>
 <?php

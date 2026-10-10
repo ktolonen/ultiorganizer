@@ -3,7 +3,6 @@ include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
 include_once 'lib/pool.functions.php';
-include_once 'lib/yui.functions.php';
 
 $LAYOUT_ID = SEASONPOOLS;
 $seriesId = 0;
@@ -33,7 +32,6 @@ if (!hasSeasonSeriesPageAccess($season, $seriesId) || ($seriesId && SeriesSeason
 
 //common page
 pageTopHeadOpen($title);
-echo yuiLoad(["utilities"]);
 ?>
 <script type="text/javascript">
 	function setId(id1, id2, id3) {
@@ -47,13 +45,13 @@ echo yuiLoad(["utilities"]);
 	}
 
 	function ChgName(index) {
-		YAHOO.util.Dom.get('schedulingnameEdited' + index).value = 'yes';
-		YAHOO.util.Dom.get("save").disabled = false;
+		document.getElementById('schedulingnameEdited' + index).value = 'yes';
+		document.getElementById("save").disabled = false;
 	}
 
 	function ChgValue(index) {
-		YAHOO.util.Dom.get('moveEdited' + index).value = 'yes';
-		YAHOO.util.Dom.get("save").disabled = false;
+		document.getElementById('moveEdited' + index).value = 'yes';
+		document.getElementById("save").disabled = false;
 	}
 </script>
 <?php

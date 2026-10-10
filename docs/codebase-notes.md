@@ -4,7 +4,7 @@ Implementation notes for third-party code, PDFs, plugins, customizations, guards
 
 ## Third-party components
 
-- YUI assets and loader live under `script/yui/` and `lib/yuiloader/`.
+- YUI assets and loader live under `script/yui/` and `lib/yuiloader/`. Calendar, autocomplete, color-picker, table, and drag-and-drop widgets still use YUI. Help toggles, scoresheet error highlighting, and simple edit controls use native browser APIs.
 - Bundled PHP libraries include `lib/hsvclass/`, `lib/tfpdf/`, and `lib/phpqrcode/`.
 
 ## PDF generation
