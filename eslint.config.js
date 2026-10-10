@@ -6,6 +6,7 @@ module.exports = [
   {
     ignores: [
       "script/yui/**",
+      "script/flatpickr/**",
       "live/**",
       "lib/**",
       "vendor/**",
@@ -29,6 +30,7 @@ module.exports = [
       globals: {
         ...globals.browser,
         YAHOO: "readonly",
+        flatpickr: "readonly",
       },
     },
     rules: {

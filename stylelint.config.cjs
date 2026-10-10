@@ -5,6 +5,7 @@ module.exports = {
 		"live/**",
 		"reports/**",
 		"vendor/**",
+		"script/flatpickr/**",
 	],
 	rules: {
 		"alpha-value-notation": null,
