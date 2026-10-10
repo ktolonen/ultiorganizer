@@ -1218,7 +1218,7 @@ msgstr "Verein"
 
 #: clubcard.php:22 user/respteams.php:46
 msgid "Club card"
-msgstr "Vereinsstatistiken"
+msgstr "Vereinskarte"
 
 #: user/clubprofile.php:21 user/clubprofile.php:136
 msgid "Club information"
@@ -3665,7 +3665,7 @@ msgstr "Zuletzt geändert"
 #: cust/default/teamplayers.functions.php:162 user/playerprofile.php:226
 #: user/teamplayers.php:170
 msgid "Last name"
-msgstr "Nachmane"
+msgstr "Nachname"
 
 #: admin/apitokens.php:167
 msgid "Last used"
@@ -6818,7 +6818,7 @@ msgstr "Gruppen für Team"
 #: user/clubprofile.php:140 user/respteams.php:25 user/teamplayers.php:143
 #: user/teamprofile.php:99
 msgid "Team profile"
-msgstr "Spielerprofil"
+msgstr "Teamprofil"
 
 #: menufunctions.php:465
 msgid "Team registration"
