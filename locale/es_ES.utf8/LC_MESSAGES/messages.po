@@ -557,10 +557,6 @@ msgstr "Históricos"
 msgid "All-time scoring leaders"
 msgstr "Máximos anotadores históricos"
 
-#: statistics.php:134
-msgid "All-time top 100 scorers"
-msgstr "Los 100 máximos anotadores históricos"
-
 #: admin/addseasons.php:500
 msgid ""
 "Allows non-admin users to see game notes on public pages. Event admins and "
@@ -7394,10 +7390,6 @@ msgstr "Token eliminado."
 #: games.php:260
 msgid "Tomorrow"
 msgstr "Mañana"
-
-#: statistics.php:84
-msgid "Top 3 scorers"
-msgstr "Los 3 máximos anotadores"
 
 #: gamecard.php:261 gamecard.php:266 gameplay.php:137 gameplay.php:158
 #: playerlist.php:38 poolstatus.php:161 poolstatus.php:187 seriesstatus.php:309

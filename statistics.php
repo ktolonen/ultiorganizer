@@ -81,7 +81,7 @@ if ($list == "teamstandings") {
         $html .= "<p>" . _("Event statistics have not yet been computed") . "</p>";
     }
 } elseif ($list == "playerscoreboard") {
-    $html .= "<h1>" . _("Top 3 scorers") . "</h1>\n";
+    $html .= "<h1>" . _("Scoring leaders") . "</h1>\n";
     $seasontypes = SeasonTypes();
     $serietypes = SeriesTypes();
 
@@ -131,7 +131,7 @@ if ($list == "teamstandings") {
     }
 } elseif ($list == "playerscoresall") {
     $viewUrl = "?view=statistics&list=playerscoresall&amp;";
-    $html .= "<h1>" . _("All-time top 100 scorers") . "</h1>\n";
+    $html .= "<h1>" . _("All-time scoring leaders") . "</h1>\n";
     $scores = ScoreboardAllTime(100, "", "", "", $sort);
     $html .= "<table border='1' width='100%'>";
     $html .= ColumnLegend(['games', 'assists', 'goals', 'total']);

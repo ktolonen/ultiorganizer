@@ -544,10 +544,6 @@ msgstr "Yhteenveto"
 msgid "All-time scoring leaders"
 msgstr "Kaikkienaikojen pistepörssi"
 
-#: statistics.php:134
-msgid "All-time top 100 scorers"
-msgstr "Kaikkienaikojen pistepörssi TOP 100"
-
 #: admin/addseasons.php:500
 msgid ""
 "Allows non-admin users to see game notes on public pages. Event admins and "
@@ -7306,10 +7302,6 @@ msgstr "Token poistettu."
 #: games.php:260
 msgid "Tomorrow"
 msgstr "Huomenna"
-
-#: statistics.php:84
-msgid "Top 3 scorers"
-msgstr "Pistepörssi TOP 3"
 
 #: gamecard.php:261 gamecard.php:266 gameplay.php:137 gameplay.php:158
 #: playerlist.php:38 poolstatus.php:161 poolstatus.php:187 seriesstatus.php:309
