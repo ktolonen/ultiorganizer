@@ -109,9 +109,14 @@ function main(array $argv): int
 
     $groups = [];
     foreach ($ids as $id) {
-        $key = trim((string) preg_replace('/\s+/', ' ', (string) preg_replace('/[^a-z0-9 ]/', '', strtolower($id))));
-        if ($key !== '') {
-            $groups[$key][] = $id;
+        $lower = str_replace("'", '', strtolower($id));
+        // Punctuation as a separator catches "All-time" / "All time"; dropping
+        // it catches "Division(s)" / "Divisions".
+        foreach (['/[^a-z0-9]+/' => ' ', '/[^a-z0-9 ]+/' => ''] as $pattern => $replacement) {
+            $key = trim((string) preg_replace('/\s+/', ' ', (string) preg_replace($pattern, $replacement, $lower)));
+            if ($key !== '') {
+                $groups[$replacement . $key][] = $id;
+            }
         }
     }
     foreach ($groups as $variants) {
