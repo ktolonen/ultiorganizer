@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/location.functions.php';
@@ -87,8 +88,8 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
 $title = _("Add field reservation");
 //common page
 pageTopHeadOpen($title);
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "datasource", "autocomplete"]);
+echo "<script type='text/javascript' src='script/location-autocomplete.js'></script>";
+echo "<link rel='stylesheet' type='text/css' href='script/location-autocomplete.css'/>";
 echo "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
 
 include 'script/rescalendar.inc';
@@ -143,7 +144,7 @@ if (!$addmore) {
 }
 $html .= "</td></tr>\n";
 
-$html .= "<tr><td>&nbsp;</td><td><div id='locationAutocomplete' class='yui-skin-sam'>";
+$html .= "<tr><td>&nbsp;</td><td><div id='locationAutocomplete'>";
 $html .= "<input class='input' id='locationName' size='30' type='text' style='width:200px' name='locationName' value='";
 $locationInputValue = $res['locationName'];
 if (empty($locationInputValue) && $res['location'] > 0) {
@@ -151,7 +152,7 @@ if (empty($locationInputValue) && $res['location'] > 0) {
     $locationInputValue = isset($location_info['name']) ? $location_info['name'] : "";
 }
 $html .= utf8entities($locationInputValue);
-$html .= "'/><div style='width:400px' id='locationContainer'></div></div>\n";
+$html .= "' aria-label='" . _("Location") . "'/></div>\n";
 $html .= "</td></tr>\n";
 $html .= "<tr><td>" . _("Location") . ":</td><td>";
 $html .= "</td></tr>\n";
@@ -188,59 +189,8 @@ $html .= "</td><td>&nbsp;</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>";
 echo $html;
-?>
-<script type="text/javascript">
-  //<![CDATA[
-  var locationSelectHandler = function(sType, aArgs) {
-    var oData = aArgs[2];
-    document.getElementById("location").value = oData[2];
-  };
-
-  FetchLocation = function() {
-    var locationSource = new YAHOO.util.XHRDataSource("ext/locationtxt.php");
-    locationSource.responseSchema = {
-      recordDelim: "\n",
-      fieldDelim: "\t"
-    };
-    locationSource.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
-    locationSource.maxCacheEntries = 60;
-
-    // First AutoComplete
-    var locationAutoComp = new YAHOO.widget.AutoComplete("locationName", "locationContainer", locationSource);
-    locationAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
-
-      // some other piece of data defined by schema 
-      var moreData1 = oResultData[1];
-
-      var aMarkup = ["<div class='myCustomResult'>",
-        "<span style='font-weight:bold'>",
-        YAHOO.widget.AutoComplete.escapeHtml(sResultMatch),
-        "</span>",
-        " / ",
-        YAHOO.widget.AutoComplete.escapeHtml(moreData1),
-        "</div>"
-      ];
-      return (aMarkup.join(""));
-    };
-    locationAutoComp.itemSelectEvent.subscribe(locationSelectHandler);
-    YAHOO.util.Event.addListener("locationName", "keyup", function(e) {
-      var keyCode = e ? e.keyCode : 0;
-      // Keep the selection when user confirms with enter, tab or arrow keys.
-      if (keyCode === 9 || keyCode === 13 || (keyCode >= 37 && keyCode <= 40)) {
-        return;
-      }
-      document.getElementById("location").value = "";
-    });
-    return {
-      oDS: locationSource,
-      oAC: locationAutoComp
-    }
-  }();
-  //]]>
-</script>
-<?php
+echo "<script type='text/javascript'>attachLocationSuggestions();</script>";
 echo TranslationScript("reservationgroup");
 echo TranslationScript("fieldname");
 contentEnd();
 pageEnd();
-?>

@@ -1,0 +1,32 @@
+#locationAutocomplete {
+  position: relative;
+  width: 200px;
+}
+
+.location-suggestions {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 10;
+  box-sizing: border-box;
+  width: 100%;
+  max-height: 240px;
+  overflow: auto;
+  margin: 0;
+  padding: 0;
+  border: 1px solid var(--border-strong, #444);
+  background: var(--surface, #fff);
+  color: var(--text, #2d2d2d);
+  list-style: none;
+}
+
+.location-suggestions li {
+  padding: 8px;
+  overflow-wrap: anywhere;
+  cursor: pointer;
+}
+
+.location-suggestions li:hover,
+.location-suggestions li[aria-selected="true"] {
+  background: var(--highlight, #b7c8e6);
+}
