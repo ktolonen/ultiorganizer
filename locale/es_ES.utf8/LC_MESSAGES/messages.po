@@ -5710,7 +5710,7 @@ msgid "Save changes?"
 msgstr "¿Guardar cambios?"
 
 #: user/adddefensesheet.php:316
-msgid "Save defenses"
+msgid "Save defences"
 msgstr "Salvar defensas"
 
 #: scorekeeper/addresult.php:146 scorekeeper/addresult.php:189

@@ -5657,7 +5657,7 @@ msgid "Save changes?"
 msgstr "Tallenna muutokset?"
 
 #: user/adddefensesheet.php:316
-msgid "Save defenses"
+msgid "Save defences"
 msgstr "Tallenna pisteet"
 
 #: scorekeeper/addresult.php:146 scorekeeper/addresult.php:189

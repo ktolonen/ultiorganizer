@@ -313,7 +313,7 @@ echo "<table cellspacing='0' cellpadding='10' width='100%'>\n";
 // }
 // echo "/> "._("Game ongoing")."</td><td></td></tr>";
 // echo "<tr>";
-echo "<td><input class='button' type='submit' value='" . _("Save defenses") . "' name='save'/></td>";
+echo "<td><input class='button' type='submit' value='" . _("Save defences") . "' name='save'/></td>";
 echo "<td><input class='button' type='reset' value='" . _("Cancel") . "' name='reset'/></td>";
 echo "</tr>";
 /*echo "<tr><td colspan='2'>

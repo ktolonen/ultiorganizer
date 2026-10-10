@@ -1,16 +1,16 @@
 # Discouraged wording in gettext msgids, checked by scripts/check-catalog-terms.php.
 # Format: <PCRE pattern, matched case-insensitively> <TAB> <preferred wording>
 # Derived from docs/terminology.md; keep the two in step.
-\bscoreboard\b	Scoring leaders (or Score display)
+\bscoreboards?\b	Scoring leaders (or Score display)
 \bgoals? diff\b	Goal difference
 \bspirit points?\b	Spirit score
 \bspirit time-?outs?\b	Spirit stoppage
-\bhalf-time\b	halftime
-\boffense\b	offence
-\bdefense\b	defence
+\bhalf-times?\b	halftime
+\boffenses?\b	offence
+\bdefenses?\b	defence
 \btime-out	Timeout
-\bplay off\b	Playoff
+\bplay offs?\b	Playoff
 \bgame officials?\b	Scorekeeper
-\bCallahan-goal\b	Callahan goal
+\bCallahan-goals?\b	Callahan goal
 \bseasons?\b	event (unless it is a stored-value name)
 \bseries\b	division
