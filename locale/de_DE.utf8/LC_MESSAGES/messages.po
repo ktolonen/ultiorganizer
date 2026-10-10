@@ -1251,7 +1251,7 @@ msgstr "Vereine"
 
 #: menufunctions.php:394 admin/clubs.php:43
 msgid "Clubs and Countries"
-msgstr "CLubs und Länder"
+msgstr "Clubs und Länder"
 
 #: teamcard.php:49 user/teamprofile.php:112
 msgid "Coach"
@@ -2481,7 +2481,7 @@ msgstr "Fülle das Formular mit den Registrierungsdaten aus."
 #: user/addscoresheet.php:12 user/addscoresheet.php:78
 #: user/addscoresheet.php:825
 msgid "Fill in the scoresheet"
-msgstr "Fuellen Sie den Spielbericht aus"
+msgstr "Spielbericht ausfuellen"
 
 #: cust/default/pdfscoresheet.php:253 cust/slkl/pdfscoresheet.php:217
 msgid "Filling instructions:"

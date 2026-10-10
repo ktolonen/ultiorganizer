@@ -2496,7 +2496,7 @@ msgstr "Complete la información de registro en los campos a continuación."
 #: user/addscoresheet.php:12 user/addscoresheet.php:78
 #: user/addscoresheet.php:825
 msgid "Fill in the scoresheet"
-msgstr "Completa en la hoja de puntuación"
+msgstr "Rellenar hoja de puntuación"
 
 #: cust/default/pdfscoresheet.php:253 cust/slkl/pdfscoresheet.php:217
 msgid "Filling instructions:"
