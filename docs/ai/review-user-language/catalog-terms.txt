@@ -9,7 +9,7 @@
 \boffenses?\b	offence
 \bdefenses?\b	defence
 \btime-out	Timeout
-\bplay offs?\b	Playoff
+\bplay[- ]offs?\b	Playoff
 \bgame officials?\b	Scorekeeper
 \bCallahan-goals?\b	Callahan goal
 \bseasons?\b	event (unless it is a stored-value name)

@@ -4731,14 +4731,6 @@ msgstr "Sijoituslohko"
 msgid "Play"
 msgstr "Pelaa"
 
-#: admin/addseasonpools.php:299 admin/addseasonpools.php:301
-msgid "Play-off"
-msgstr "Pudotuspeli"
-
-#: admin/seasonpools.php:251 admin/seasonpools.php:253
-msgid "Play-off games"
-msgstr "Pudotuspelit"
-
 #: admin/addseasonpools.php:360
 msgid "Played"
 msgstr "Pelattu"
@@ -4892,9 +4884,17 @@ msgstr ""
 msgid "Players without membership Id"
 msgstr "Pelaajat ilman jäsentietoja"
 
+#: admin/addseasonpools.php:299 admin/addseasonpools.php:301
+msgid "Playoff"
+msgstr "Pudotuspeli"
+
 #: admin/poolgames.php:192 admin/seriesgames.php:103
 msgid "Playoff -type of pool"
 msgstr "Pudotuspeli-tyyppinen lohko"
+
+#: admin/seasonpools.php:251 admin/seasonpools.php:253
+msgid "Playoff games"
+msgstr "Pudotuspelit"
 
 #: admin/serieteams.php:155
 msgid "Plays"

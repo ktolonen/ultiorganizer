@@ -9,6 +9,7 @@ Preferred wording for Ultiorganizer docs, specs, commit messages, review comment
 | Event | User-facing competition scope. | In code and database context, this is usually a `season`. |
 | Division | Competition category within an event. | In code and database context, this is usually a `series`. |
 | Pool | Group or stage inside a division. | Pools are used for scheduling, standings, and game grouping. |
+| Playoff | Pool type whose games follow a bracket, stored as pool type `2`. | Prefer `playoff`, not `play-off` or `play off`. |
 | Team | Competitive team in a game, pool, or division. | |
 | Standings | Generic team order or standings report when the scope is clear from context. | Prefer a more specific term in navigation when the page is pool-scoped or final-order scoped. |
 | Pool standings | Current or resolved team order inside one or more pools. | Use for pool tables, pool-status pages, and admin pool-standing review. |

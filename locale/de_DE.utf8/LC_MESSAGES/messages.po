@@ -4767,14 +4767,6 @@ msgstr "Platzierungsgruppe"
 msgid "Play"
 msgstr "Plays"
 
-#: admin/addseasonpools.php:299 admin/addseasonpools.php:301
-msgid "Play-off"
-msgstr "K.O.-Runde"
-
-#: admin/seasonpools.php:251 admin/seasonpools.php:253
-msgid "Play-off games"
-msgstr "K.O.-Spiele"
-
 #: admin/addseasonpools.php:360
 msgid "Played"
 msgstr "Gespielt"
@@ -4929,9 +4921,17 @@ msgstr ""
 msgid "Players without membership Id"
 msgstr "Spieler ohne Mitglieds-ID"
 
+#: admin/addseasonpools.php:299 admin/addseasonpools.php:301
+msgid "Playoff"
+msgstr "K.O.-Runde"
+
 #: admin/poolgames.php:192 admin/seriesgames.php:103
 msgid "Playoff -type of pool"
 msgstr "Pool vom Typ Playoff"
+
+#: admin/seasonpools.php:251 admin/seasonpools.php:253
+msgid "Playoff games"
+msgstr "K.O.-Spiele"
 
 #: admin/serieteams.php:155
 msgid "Plays"

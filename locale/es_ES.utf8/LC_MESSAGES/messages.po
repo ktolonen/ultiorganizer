@@ -4780,14 +4780,6 @@ msgstr "Grupo de Clasificación"
 msgid "Play"
 msgstr "Jugar"
 
-#: admin/addseasonpools.php:299 admin/addseasonpools.php:301
-msgid "Play-off"
-msgstr "Play-off"
-
-#: admin/seasonpools.php:251 admin/seasonpools.php:253
-msgid "Play-off games"
-msgstr "Juegos de Play-off"
-
 #: admin/addseasonpools.php:360
 msgid "Played"
 msgstr "Jugado"
@@ -4940,9 +4932,17 @@ msgstr ""
 msgid "Players without membership Id"
 msgstr "Jugadores sin identificación de membresía"
 
+#: admin/addseasonpools.php:299 admin/addseasonpools.php:301
+msgid "Playoff"
+msgstr "Play-off"
+
 #: admin/poolgames.php:192 admin/seriesgames.php:103
 msgid "Playoff -type of pool"
 msgstr "Playoff -tipo de grupo"
+
+#: admin/seasonpools.php:251 admin/seasonpools.php:253
+msgid "Playoff games"
+msgstr "Juegos de Play-off"
 
 #: admin/serieteams.php:155
 msgid "Plays"
