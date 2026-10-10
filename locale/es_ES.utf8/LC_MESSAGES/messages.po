@@ -555,7 +555,7 @@ msgstr "Históricos"
 
 #: clubcard.php:197 statistics.php:27 statistics.php:134
 msgid "All-time scoring leaders"
-msgstr "Máximos anotadores históricos"
+msgstr "Líderes de anotación históricos"
 
 #: admin/addseasons.php:500
 msgid ""
@@ -5928,7 +5928,7 @@ msgstr "Hoja de anotación guardada"
 #: teams.php:124 teams.php:147 scorekeeper/gameplay.php:125
 #: scorekeeper/gameplay.php:126 scorekeeper/scoreboard.php:12
 msgid "Scoring leaders"
-msgstr "Máximos anotadores"
+msgstr "Líderes de anotación"
 
 #: scorekeeper/addscoresheet.php:187 scorekeeper/addscoresheet.php:198
 msgid "Scoring player not on the roster."
@@ -6144,7 +6144,7 @@ msgstr "Jugador seleccionado"
 
 #: ext/index.php:236
 msgid "Selected pool standings and scoring leaders"
-msgstr "Clasificación y máximos anotadores del grupo seleccionado"
+msgstr "Clasificación y líderes de anotación del grupo seleccionado"
 
 #: spiritkeeper/teamgames.php:143
 msgid "Selected team"
@@ -6152,7 +6152,7 @@ msgstr "Equipo seleccionado"
 
 #: ext/index.php:262
 msgid "Selected team's games and scoring leaders"
-msgstr "Partidos y máximos anotadores del equipo seleccionado"
+msgstr "Partidos y líderes de anotación del equipo seleccionado"
 
 #: admin/privacyuser.php:107
 msgid "Selected user"
