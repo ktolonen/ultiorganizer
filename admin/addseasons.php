@@ -497,7 +497,7 @@ if ($sp['showgamecomments']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see game notes on public pages. Season admins and the spirit director can still see them regardless of this flag.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see game notes on public pages. Event admins and the spirit director can still see them regardless of this flag.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Scorekeeping links work without logging in") . ": </td><td><input class='input' type='checkbox' name='anonymous_scorekeeping' ";
 if ($sp['anonymous_scorekeeping']) {

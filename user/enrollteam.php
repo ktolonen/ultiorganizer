@@ -7,7 +7,7 @@ include_once $include_prefix . 'lib/country.functions.php';
 
 $LAYOUT_ID = ENROLLTEAM;
 if (empty($_GET['season'])) {
-    die(_("Season mandatory"));
+    die(_("Event mandatory"));
 }
 $season = $_GET['season'];
 $seasonInfo = SeasonInfo($season);

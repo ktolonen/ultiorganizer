@@ -137,8 +137,8 @@ $title = _("Club information") . ": " . utf8entities($club['name']);
 $html .= file_get_contents('script/disable_enter.js.inc');
 
 $menutabs[_("Roster")] = "?view=user/teamplayers&team=$teamId";
-$menutabs[_("Team Profile")] = "?view=user/teamprofile&team=$teamId";
-$menutabs[_("Club Profile")] = "?view=user/clubprofile&team=$teamId";
+$menutabs[_("Team profile")] = "?view=user/teamprofile&team=$teamId";
+$menutabs[_("Club profile")] = "?view=user/clubprofile&team=$teamId";
 $html .= pageMenu($menutabs, "", false);
 
 $html .= "<form method='post' enctype='multipart/form-data' action='?view=user/clubprofile&amp;team=$teamId&amp;club=$clubId'>\n";

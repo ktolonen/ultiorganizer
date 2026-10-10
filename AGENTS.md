@@ -81,6 +81,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
   - `php docs/ai/db-upgrade-consistency/scripts/check-db-upgrades.php`
   - `php docs/ai/release-package-coverage/scripts/check-release-coverage.php`
   - `php docs/ai/privacy-coverage/scripts/check-privacy-coverage.php`
+  - `php docs/ai/review-user-language/scripts/check-catalog-terms.php`
 - Refresh gettext catalogs after changing translated strings: `./docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh`
 - Without local `php`, use the Docker environment from `docs/local-development.md`: `docker compose -f docs/dev/compose.yaml --profile devtools up --build dev`, then `docker compose -f docs/dev/compose.yaml exec -T dev ...` (or `exec -T app ...` if only `app` runs).
 - Exercise the relevant page flow in the running app.

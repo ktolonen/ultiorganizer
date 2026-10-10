@@ -23,8 +23,8 @@ if (iget("sort")) {
 //content
 $menutabs[_("Standings")] = "?view=statistics&list=teamstandings";
 $menutabs[_("Spirit Standings")] = "?view=statistics&list=spiritstandings";
-$menutabs[_("Scoreboards")] = "?view=statistics&list=playerscoreboard";
-$menutabs[_("All-time Scoreboards")] = "?view=statistics&list=playerscoresall";
+$menutabs[_("Scoring leaders")] = "?view=statistics&list=playerscoreboard";
+$menutabs[_("All-time scoring leaders")] = "?view=statistics&list=playerscoresall";
 $html .= pageMenu($menutabs, "", false);
 
 if ($list == "teamstandings") {
@@ -81,7 +81,7 @@ if ($list == "teamstandings") {
         $html .= "<p>" . _("Event statistics have not yet been computed") . "</p>";
     }
 } elseif ($list == "playerscoreboard") {
-    $html .= "<h1>" . _("Scoreboard TOP 3") . "</h1>\n";
+    $html .= "<h1>" . _("Scoring leaders") . "</h1>\n";
     $seasontypes = SeasonTypes();
     $serietypes = SeriesTypes();
 
@@ -131,7 +131,7 @@ if ($list == "teamstandings") {
     }
 } elseif ($list == "playerscoresall") {
     $viewUrl = "?view=statistics&list=playerscoresall&amp;";
-    $html .= "<h1>" . _("All time scoreboard TOP 100") . "</h1>\n";
+    $html .= "<h1>" . _("All-time scoring leaders") . "</h1>\n";
     $scores = ScoreboardAllTime(100, "", "", "", $sort);
     $html .= "<table border='1' width='100%'>";
     $html .= ColumnLegend(['games', 'assists', 'goals', 'total']);

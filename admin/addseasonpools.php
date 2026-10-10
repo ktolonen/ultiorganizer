@@ -296,9 +296,9 @@ if (!$poolId || $addmore) {
     }
 
     if ($pp['type'] == "2") {
-        echo "<option class='dropdown' selected='selected' value='2'>" . _("Play-off") . "</option>";
+        echo "<option class='dropdown' selected='selected' value='2'>" . _("Playoff") . "</option>";
     } else {
-        echo "<option class='dropdown' value='2'>" . _("Play-off") . "</option>";
+        echo "<option class='dropdown' value='2'>" . _("Playoff") . "</option>";
     }
 
     if ($pp['type'] == "3") {

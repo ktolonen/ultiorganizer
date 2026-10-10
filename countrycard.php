@@ -37,7 +37,7 @@ if (!empty($season)) {
             $html .=  "<td  style='width:30%'><a href='?view=poolstatus&amp;series=" . $team['series_id'] . "'>" . utf8entities(U_($team['seriesname'])) . "</a></td>";
             if (IsStatsDataAvailable()) {
                 $html .=  "<td class='right' style='width:10%'><a href='?view=playerlist&amp;team=" . $team['team_id'] . "'>" . _("Roster") . "</a></td>";
-                $html .=  "<td class='right' style='width:10%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoreboard") . "</a></td>";
+                $html .=  "<td class='right' style='width:10%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoring leaders") . "</a></td>";
             } else {
                 $html .=  "<td class='right' style='width:20%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Players") . "</a></td>";
             }
@@ -64,7 +64,7 @@ if (count($teams)) {
 
         if (IsStatsDataAvailable()) {
             $tmphtml .=  "<td style='width:15%'><a href='?view=playerlist&amp;team=" . $team['team_id'] . "'>" . _("Roster") . "</a></td>";
-            $tmphtml .=  "<td style='width:15%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoreboard") . "</a></td>";
+            $tmphtml .=  "<td style='width:15%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoring leaders") . "</a></td>";
         } else {
             $tmphtml .=  "<td style='width:30%'><a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Players") . "</a></td>";
         }

@@ -4,7 +4,7 @@ $html = "";
 $errors = "";
 if (isset($_POST['login'])) {
     if (!isset($_SESSION['uid']) || $_SESSION['uid'] == "anonymous") {
-        $errors .= "<p class='warning'>" . _("Check the username and password.") . "</p>\n";
+        $errors .= "<p class='warning'>" . _("Check your username and password.") . "</p>\n";
     } else {
         header("location:?view=respgames");
     }

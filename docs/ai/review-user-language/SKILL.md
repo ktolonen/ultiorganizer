@@ -27,6 +27,17 @@ This skill reports findings only. It must not perform updates.
 
 Run this skill as a final review step after implementing new or changed user-facing text.
 
+## Catalog check
+
+Run the catalog checker before the manual review. It reads every msgid in `locale/*/messages.po` and the PHP sources as one flat list, so it catches problems a per-page review cannot:
+
+- `php docs/ai/review-user-language/scripts/check-catalog-terms.php`
+- msgids that differ only in case, punctuation or spacing (`variants:`), and msgids containing wording that `docs/terminology.md` discourages (`term:`; patterns in `catalog-terms.txt`)
+- msgids missing from a locale, and untranslated or fuzzy entries in any locale (all three fall back to English at runtime). Source strings are extracted with xgettext too, so a new `_()` string fails until the catalogs are refreshed and translated.
+- a `messages.mo` that does not match its `messages.po` (`STALE`), since runtime gettext reads the compiled file.
+
+Accepted findings are baselined in `catalog-allow.txt`. Fix new findings in the code; add to the baseline with `--update-allow` only for a legitimate variant (for example a noun and a verb form), and keep `catalog-terms.txt` in step with `docs/terminology.md`.
+
 ## Review scope
 
 Start with user-modified content in the current worktree.
@@ -48,7 +59,7 @@ Inside changed files, inspect in this order:
 5. table headers, compact labels, leaderboard headings, and button/link text on the same page
 
 After checking the changed content, widen to the surrounding page or page module and look for terminology inconsistency. If the changed text is correct but the page mixes terms, report that as a warning only.
-When one term changes on a page, explicitly check the rest of that page for mixed variants such as `Spirit points` and `Spirit score`, `Spirit timeout` and `Spirit stoppage`, or `Defenseboard` and `Defence board`.
+When one term changes on a page, explicitly check the rest of that page for mixed variants such as `Spirit points` and `Spirit score`, `Spirit timeout` and `Spirit stoppage`, or `Scoreboard` and `Scoring leaders`.
 
 ## Terminology rules
 

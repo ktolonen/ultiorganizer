@@ -121,7 +121,7 @@ if ($list == "allteams" || $list == "byseeding") {
                 $html .= "<a href='?view=playerlist&amp;team=" . $team['team_id'] . "'>" . _("Roster") . "</a>";
                 $html .= "&nbsp;&nbsp;";
             }
-            $html .= "<a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoreboard") . "</a>";
+            $html .= "<a href='?view=scorestatus&amp;team=" . $team['team_id'] . "'>" . _("Scoring leaders") . "</a>";
 
             $html .= "&nbsp;&nbsp;";
             $html .= "<a href='?view=games&amp;team=" . $team['team_id'] . "&amp;singleview=1'>" . _("Games") . "</a>";
@@ -144,7 +144,7 @@ if ($list == "allteams" || $list == "byseeding") {
             $playoffpools = "";
             $html .= "<table class='teams-table' border='0' cellspacing='0' cellpadding='2' width='100%'>\n";
             $html .= "<tr>";
-            $html .= "<th colspan='" . ($cols - 1) . "'>" . utf8entities(U_(PoolSeriesName($pool['pool_id'])) . ", " . U_($pool['name'])) . "</th><th class='right'>" . _("Scoreboard") . "</th>\n";
+            $html .= "<th colspan='" . ($cols - 1) . "'>" . utf8entities(U_(PoolSeriesName($pool['pool_id'])) . ", " . U_($pool['name'])) . "</th><th class='right'>" . _("Scoring leaders") . "</th>\n";
             $html .= "</tr>\n";
             if ($pool['type'] == 2) {
                 //find out sub pools

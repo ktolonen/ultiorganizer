@@ -9,7 +9,7 @@ include_once $include_prefix . 'lib/scoresheethistory.functions.php';
 include_once $include_prefix . 'lib/configuration.functions.php';
 
 if (empty($_GET["game"])) {
-    showPage(_("Fill in scoresheet"), "<p class='warning'>" . _("Game not found") . ".</p>");
+    showPage(_("Fill in the scoresheet"), "<p class='warning'>" . _("Game not found") . ".</p>");
     return;
 }
 
@@ -75,7 +75,7 @@ if (!hasEditGameEventsRight($gameId)) {
 }
 
 $LAYOUT_ID = ADDSCORESHEET;
-$title = _("Fill in scoresheet");
+$title = _("Fill in the scoresheet");
 $maxtimeouts = 6;
 $maxspirittimeouts = 4;
 $maxscores = 41;
@@ -819,14 +819,14 @@ echo "<td><input class='button' type='submit' value='" . _("Save scores") . "' n
 echo "<td><input class='button' type='reset' value='" . _("Cancel") . "' name='reset'/></td>";
 echo "</tr>";
 echo "<tr><td colspan='2'>
-		<a href='javascript://' onclick=\"eraseLast()\">" . _("Delete the last goal") . "</a></td></tr>";
+		<a href='javascript://' onclick=\"eraseLast()\">" . _("Delete last goal") . "</a></td></tr>";
 
 echo "<tr><td colspan='2'>
 <p>" . _("Fill in the scoresheet") . ":</p>
 <ul>
 <li>" . _("In addition to the Tab key, you can use the + key to move between fields and the Enter key to select a radio button.") . "</li>
 <li>" . _("As a separator in the time field you can use ") . " .,:; " . _("characters") . ".</li>
-<li>" . _("Give XX as the assist in Callahan goals") . ".</li>
+<li>" . _("Input XX as the assist in Callahan goals") . ".</li>
 <li>" . _("You can save the scoresheet at any time while entering it") . "</li></ul></td></tr>";
 echo "<tr><td colspan='2'><p><a href='?view=user/respgames'>" . _("Back to game responsibilities") . "</a></p></td></tr>";
 $lasthistory = ScoresheetHistoryList($gameId, 1);

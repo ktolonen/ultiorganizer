@@ -20,7 +20,7 @@ Category inputs are rendered from `SpiritCategories()`; a wide range falls back 
 
 ## Token mode
 
-Tokens are stored in `uo_team.sotg_token` and resolved by `SpiritTeamIdByToken()`. They identify a team, not a user. Season admins and spirit admins generate and list the URLs in `admin/spirit.php`.
+Tokens are stored in `uo_team.sotg_token` and resolved by `SpiritTeamIdByToken()`. They identify a team, not a user. Event admins and spirit admins generate and list the URLs in `admin/spirit.php`.
 
 The token team rates its opponent, so `uo_spirit_score.team_id` is the opponent. `SpiritTokenGameRows()` lists the team's spirit-enabled games.
 

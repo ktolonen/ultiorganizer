@@ -2,6 +2,13 @@
 
 set -euo pipefail
 
+# --pot <file>: write the extracted template to <file> and leave the catalogs
+# untouched (used by review-user-language/scripts/check-catalog-terms.php).
+POT_OUT=""
+if [ "${1:-}" = "--pot" ]; then
+  POT_OUT="${2:?--pot needs a file}"
+fi
+
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "$SCRIPT_DIR/../../../.." && pwd)"
 TMP_POT="$(mktemp)"
@@ -10,21 +17,8 @@ trap 'rm -f "$TMP_POT" "$TMP_POT_UTF8"' EXIT
 
 cd "$REPO_ROOT"
 
-sort_option_for() {
-  local tool="$1"
-
-  if LC_ALL=C "$tool" --help 2>&1 | grep -q -- '--sort-output.*deprecated'; then
-    printf '%s\n' '--sort-by-file'
-    return
-  fi
-
-  printf '%s\n' '--sort-output'
-}
-
 php_files=()
 locale_dirs=()
-xgettext_sort_option="$(sort_option_for xgettext)"
-msgmerge_sort_option="$(sort_option_for msgmerge)"
 
 while IFS= read -r file; do
   php_files+=("$file")
@@ -53,23 +47,33 @@ xgettext \
   --language=PHP \
   --from-code=UTF-8 \
   --keyword=_ \
-  "$xgettext_sort_option" \
+  --sort-output \
   --output="$TMP_POT" \
   "${php_files[@]}"
 
 sed 's/charset=CHARSET/charset=UTF-8/' "$TMP_POT" > "$TMP_POT_UTF8"
 mv "$TMP_POT_UTF8" "$TMP_POT"
 
+if [ -n "$POT_OUT" ]; then
+  cp "$TMP_POT" "$POT_OUT"
+  exit 0
+fi
+
 for locale_dir in "${locale_dirs[@]}"; do
   po_file="$locale_dir/LC_MESSAGES/messages.po"
   mo_file="$locale_dir/LC_MESSAGES/messages.mo"
 
+  # The catalogs are sorted by msgid. gettext 0.23 deprecates --sort-output
+  # but still honours it; --sort-by-file would reorder every entry.
   msgmerge \
     --update \
     --backup=none \
-    "$msgmerge_sort_option" \
+    --sort-output \
     "$po_file" \
     "$TMP_POT"
+
+  # Drop entries whose msgid no longer exists in the code.
+  msgattrib --no-obsolete --output-file="$po_file" "$po_file"
 
   msgfmt \
     --check \

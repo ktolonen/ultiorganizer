@@ -23,7 +23,7 @@ function RenderSpiritCommentForTeam($teamId, $spirit_comments, $comment_feedback
         if ($comment_info['can_create'] || $comment_info['can_manage']) {
             $html .= "<p><b>" . $comment_info['label'] . "</b></p>";
             $html .= "<div>" . $comment_info['meta_html'] . "</div>";
-            $html .= "<textarea class='input' rows='4' cols='92' name='" . $comment_info['field'] . "' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - add context for spirit points given (no blame).") . "'>" . htmlentities($comment_info['comment']) . "</textarea>";
+            $html .= "<textarea class='input' rows='4' cols='92' name='" . $comment_info['field'] . "' maxlength='" . COMMENT_MAX_LENGTH . "' placeholder='" . _("Optional - add context for the spirit score given (no blame).") . "'>" . htmlentities($comment_info['comment']) . "</textarea>";
             if ($comment_info['can_manage'] && !empty($comment_info['comment'])) {
                 $html .= "<p><label><input type='checkbox' name='" . $comment_info['delete_field'] . "' value='1'/> " . _("Delete comment") . "</label></p>";
             }

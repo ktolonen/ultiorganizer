@@ -140,8 +140,8 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 $menutabs[_("Roster")] = "?view=user/teamplayers&team=$teamId";
-$menutabs[_("Team Profile")] = "?view=user/teamprofile&team=$teamId";
-$menutabs[_("Club Profile")] = "?view=user/clubprofile&team=$teamId";
+$menutabs[_("Team profile")] = "?view=user/teamprofile&team=$teamId";
+$menutabs[_("Club profile")] = "?view=user/clubprofile&team=$teamId";
 pageMenu($menutabs);
 
 //help

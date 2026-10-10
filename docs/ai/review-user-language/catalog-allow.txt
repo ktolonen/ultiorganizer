@@ -1,0 +1,47 @@
+# Accepted findings of scripts/check-catalog-terms.php. Review before adding.
+# Format: 'variants: A | B' or 'term: <msgid>'. Regenerate with --update-allow.
+term: Enables season-level points/ranking features for this event.
+term: Game official
+term: Season
+term: Season points
+term: Season points are not enabled for this event.
+term: Suggested by season points
+variants: (C) | C
+variants: (C, SC) | C&SC
+variants: (SC) | SC
+variants: ALL | All | all
+variants: Add more | Add more ...
+variants: Clear cache | Clear cache?
+variants: Default | default
+variants: Division | division
+variants: Division(s) | Divisions
+variants: Edit pool | edit pool
+variants: Edit | edit
+variants: Events | events
+variants: Forfeit | forfeit
+variants: From | from
+variants: Game events | game events
+variants: Game | Game #
+variants: Games | games
+variants: Goal | goal
+variants: Goals | goals
+variants: Invalid user | Invalid user:
+variants: Jersey | Jersey#
+variants: Mutual | mutual
+variants: No | no
+variants: Nothing | nothing
+variants: Offence | offence
+variants: Ongoing | ongoing
+variants: Points | points
+variants: Pos | Pos.
+variants: Roster | roster
+variants: Rounds | rounds
+variants: Scorekeeper(s) | Scorekeepers
+variants: Select | select
+variants: Spirit score | spirit score
+variants: Spirit stoppages | spirit stoppages
+variants: Timeout | timeout
+variants: Timeouts | timeouts
+variants: Turnover | turnover
+variants: Update | update
+variants: Yes | yes

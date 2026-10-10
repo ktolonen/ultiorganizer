@@ -21,7 +21,7 @@ if ($teamId <= 0 && !empty($_POST['team'])) {
 
 if (isset($_POST['login'])) {
     if (!isLoggedIn()) {
-        $errors .= "<p class='warning'>" . _("Check the username and password.") . "</p>\n";
+        $errors .= "<p class='warning'>" . _("Check your username and password.") . "</p>\n";
     } else {
         $targetView = !empty($nextView) ? $nextView : ($gameId > 0 ? 'editgame' : 'home');
         $location = '?view=' . urlencode($targetView);

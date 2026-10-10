@@ -202,7 +202,7 @@ if ($nGames) {
     }
     $html .= "</table>\n";
 
-    $html .= "<h2>" . _("Scoreboard") . "</h2>\n";
+    $html .= "<h2>" . _("Scoring leaders") . "</h2>\n";
     $html .= "<table class='statistics-table' border='1' width='80%'><tr><th>#</th>";
 
     $sorted = false;

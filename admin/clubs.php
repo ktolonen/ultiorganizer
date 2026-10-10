@@ -49,7 +49,7 @@ leftMenu($LAYOUT_ID);
 contentStart();
 
 $html .= "<form method='post' action='?view=admin/clubs'>";
-$html .= "<h1>" . _("All Clubs") . "</h1>";
+$html .= "<h1>" . _("All clubs") . "</h1>";
 $html .= "<p>" . _("Add new") . ": ";
 $html .= "<input class='input' maxlength='50' size='40' name='clubname'/> ";
 $html .= "<input class='button' type='submit' name='addclub' value='" . _("Add") . "'/></p>";
