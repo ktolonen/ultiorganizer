@@ -1122,7 +1122,7 @@ msgstr ""
 
 #: login/login_failed.php:34 scorekeeper/login.php:7 spiritkeeper/login.php:24
 msgid "Check your username and password."
-msgstr "Ueberpruefe deinen Benutzernamen und dein Passwort."
+msgstr "Überprüfe deinen Benutzernamen und dein Passwort."
 
 #: cust/default/teamplayers.inc.php:7
 msgid "Choose best match"
