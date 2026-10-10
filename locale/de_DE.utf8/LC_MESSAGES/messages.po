@@ -7915,8 +7915,8 @@ msgid ""
 msgstr ""
 "Wenn aktiviert, koennen Team-Benutzer ihre eigene vollstaendige Spirit-"
 "Punktzahl einmal einreichen, spaeter aber weder die Spirit-Punktzahl noch "
-"den Spirit-Kommentar dieses Teams bearbeiten oder loeschen. Saison-Admins "
-"umgehen die Sperre weiterhin."
+"den Spirit-Kommentar dieses Teams bearbeiten oder loeschen. "
+"Turnieradministratoren umgehen die Sperre weiterhin."
 
 #: cust/bula/pdfscoresheet.php:219 cust/gummis/pdfscoresheet.php:248
 #: cust/windmill/pdfscoresheet.php:220

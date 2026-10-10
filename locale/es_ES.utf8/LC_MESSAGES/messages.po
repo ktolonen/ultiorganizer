@@ -567,7 +567,7 @@ msgid ""
 "the spirit director can still see them regardless of this flag."
 msgstr ""
 "Permite a los usuarios no administradores ver las notas del juego en páginas "
-"públicas. Los administradores de temporada y el administrador de Espíritu "
+"públicas. Los administradores de eventos y el administrador de Espíritu "
 "pueden verlas independientemente de esta opción."
 
 #: admin/spiritsettings.php:84
@@ -584,7 +584,7 @@ msgid ""
 "still review spirit data regardless of this flag."
 msgstr ""
 "Permite a los usuarios no administradores ver las puntuaciones de Espíritu "
-"de este evento. Los administradores de temporada aún pueden revisar los "
+"de este evento. Los administradores de eventos aún pueden revisar los "
 "datos de Espíritu independientemente de esta bandera."
 
 #: admin/addseasons.php:454
@@ -7938,7 +7938,7 @@ msgstr ""
 "Cuando está habilitado, los usuarios del equipo pueden enviar su propia "
 "puntuación de espíritu completa una vez, pero luego no pueden editar ni "
 "eliminar la puntuación de espíritu o el comentario espiritual de ese equipo. "
-"Los administradores de temporada aún evitan el bloqueo."
+"Los administradores de eventos aún evitan el bloqueo."
 
 #: cust/bula/pdfscoresheet.php:219 cust/gummis/pdfscoresheet.php:248
 #: cust/windmill/pdfscoresheet.php:220
