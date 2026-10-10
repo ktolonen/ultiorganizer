@@ -28,7 +28,7 @@ $html .=  "<h2>" . utf8entities(U_($info['name'])) . "</h2>\n";
 $html .=  "<table style='white-space: nowrap;' border='0'>\n";
 $html .=  "<tr><td style='width:300px'>";
 $html .=  "<table style='white-space: nowrap;' border='0'>\n";
-$club = intval($info['isnationalteams']) ? _("National Teams") : _("Club Teams");
+$club = intval($info['isnationalteams']) ? _("National Teams") : _("Club teams");
 $inter = intval($info['isinternational']) ? "" : _("National");
 $tour = intval($info['istournament']) ? _("Tournament") : _("Season");
 

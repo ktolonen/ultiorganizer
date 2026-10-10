@@ -391,7 +391,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         echo "<a class='subnav' href='?view=admin/seasons'>&raquo; " . utf8entities(_("Events")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/serieformats'>&raquo; " . utf8entities(_("Rule templates")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/timekeepertemplates'>&raquo; " . utf8entities(_("Timekeeper templates")) . "</a>\n";
-        echo "<a class='subnav' href='?view=admin/clubs'>&raquo; " . utf8entities(_("Clubs & Countries")) . "</a>\n";
+        echo "<a class='subnav' href='?view=admin/clubs'>&raquo; " . utf8entities(_("Clubs and Countries")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/locations'>&raquo; " . utf8entities(_("Field locations")) . "</a>\n";
         echo "<a class='subnav' href='?view=admin/reservations'>&raquo; " . utf8entities(_("Field reservations")) . "</a>\n";
     }
@@ -569,7 +569,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
 
     //event links
     echo "<table class='leftmenulinks'>\n";
-    echo "<tr><td class='menuseasonlevel'>" . utf8entities(_("Event Links")) . "</td></tr>\n";
+    echo "<tr><td class='menuseasonlevel'>" . utf8entities(_("Event links")) . "</td></tr>\n";
     echo "<tr><td>";
 
     $urls = GetUrlListByTypeArray(["menulink", "menumail"], $curseason);

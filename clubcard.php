@@ -19,7 +19,7 @@ if (iget("sort")) {
     $sort = iget("sort");
 }
 
-$title = _("Club Card");
+$title = _("Club card");
 
 // Abort gracefully if club not found.
 if (!$profile) {

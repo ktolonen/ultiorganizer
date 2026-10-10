@@ -67,7 +67,7 @@ $html .= "</td></tr>\n";
 $prevgoal = 0;
 if (count($goals) <= 0) {
     $html .= "<tr><td>" . _("No scores entered") . "</td></tr>\n";
-    $html .= "<tr><td><a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in scoresheet") . "</a></td></tr>\n";
+    $html .= "<tr><td><a href='?view=addplayerlists&amp;game=" . $gameId . "&amp;team=" . $game_result['hometeam'] . "'>" . _("Fill in the scoresheet") . "</a></td></tr>\n";
 } else {
     foreach ($goals as $goal) {
 

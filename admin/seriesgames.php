@@ -100,7 +100,7 @@ if ($nomutual) {
     $html .= "checked='checked'";
 }
 $html .= "/> " . _("Do not generate mutual games for teams moved from the same pool if the pool format includes mutual games") . ".</p>";
-$html .= "<p><b>" . _("Play off -type of pool") . "</b></p>\n";
+$html .= "<p><b>" . _("Playoff -type of pool") . "</b></p>\n";
 $html .= "<p>" . _("best") . " <input class='input' size='2' name='matches' value='$matches'/> " . _("matches") . "</p>\n";
 $html .= "<p>" . _("Home team has rights to edit game scoresheet") . ":<input class='input' type='checkbox' name='homeresp'";
 if (isRespTeamHomeTeam()) {

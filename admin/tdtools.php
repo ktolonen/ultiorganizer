@@ -18,8 +18,8 @@ function TableMissingNumbers($season)
         $ret .= "<p>" . _("Missing shirt numbers found! (click the team name to edit the roster)") . "</p>";
         $ret .= "<table width='100%'><tr>";
         $ret .= "<th class='center'>" . _("Number") . "</th>";
-        $ret .= "<th class='center'>" . _("First Name") . "</th>";
-        $ret .= "<th class='center'>" . _("Last Name") . "</th>";
+        $ret .= "<th class='center'>" . _("First name") . "</th>";
+        $ret .= "<th class='center'>" . _("Last name") . "</th>";
         $ret .= "<th class='center'>" . _("Team") . "</th>";
         $ret .= "<th class='center'>" . _("Division") . "</th>";
         $ret .= "<th class='center'>" . _("Link") . "</th>";
@@ -54,8 +54,8 @@ function TableDuplicateNumbers($season)
         $ret .= "<p>" . _("Duplicates found! (click the team name to edit the roster)") . "</p>";
         $ret .= "<table width='100%'><tr>";
         $ret .= "<th class='center'>" . _("Number") . "</th>";
-        $ret .= "<th class='center'>" . _("First Name") . "</th>";
-        $ret .= "<th class='center'>" . _("Last Name") . "</th>";
+        $ret .= "<th class='center'>" . _("First name") . "</th>";
+        $ret .= "<th class='center'>" . _("Last name") . "</th>";
         $ret .= "<th class='center'>" . _("Team") . "</th>";
         $ret .= "<th class='center'>" . _("Division") . "</th>";
         $ret .= "<th class='center'>" . _("Link") . "</th>";

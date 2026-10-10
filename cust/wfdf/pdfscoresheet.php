@@ -398,7 +398,7 @@ class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
         $this->Cell(11, 6, "q", 'LRB', 0, 'C', true);
         $this->SetFont('Arial', '', 10);
         $this->SetFillColor(230);
-        $this->Cell(34, 6, _("First Offence"), 'LRB', 0, 'C', true);
+        $this->Cell(34, 6, _("First offence"), 'LRB', 0, 'C', true);
         $this->SetFillColor(255);
         $this->SetFont('ZapfDingbats', '', 16);
         $this->Cell(11, 6, "q", 'LRB', 1, 'C', true);

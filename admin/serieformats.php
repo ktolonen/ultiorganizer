@@ -7,7 +7,7 @@ include_once 'lib/pool.functions.php';
 
 $LAYOUT_ID = SERIEFORMATS;
 
-$title = _("Rule Templates");
+$title = _("Rule templates");
 $html = "";
 
 //common page

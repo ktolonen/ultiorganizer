@@ -40,7 +40,7 @@ if ($userid != "anonymous") {
         }
 
         if (IsRegistered($newUsername) && $userid != $newUsername) {
-            $message .=  "<p class='warning'>" . _("The username is already in use.") . "</p>";
+            $message .=  "<p class='warning'>" . _("The username is already in use") . ".</p>";
             $error = 1;
         }
 
@@ -107,7 +107,7 @@ if ($userid != "anonymous") {
         }
 
         if (!empty($newPassword1) && ($newPassword1 != $newPassword2)) {
-            $message .= "<p class='warning'>" . _("Passwords do not match.") . "</p>";
+            $message .= "<p class='warning'>" . _("Passwords do not match") . ".</p>";
             $error = 1;
         }
         if (!$error) {

@@ -521,7 +521,7 @@ class PDF extends tFPDF implements ScoreSheetPdf
         $this->SetFont('Arial', 'B', 12);
         $this->SetTextColor(255);
         $this->SetFillColor(0, 0, 0);
-        $this->Cell(80, 6, $this->pdfText(_("First Offence")), 'LRTB', 0, 'C', true);
+        $this->Cell(80, 6, $this->pdfText(_("First offence")), 'LRTB', 0, 'C', true);
         $this->Ln();
 
         $this->SetFont('Arial', '', 12);

@@ -76,7 +76,7 @@ $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("S
 $html .= "<tr>";
 $html .= "<td class='infocell'>" . _("Spirit scores visible") . ": </td>";
 $html .= "<td><input class='input' type='checkbox' name='showspiritpoints' value='1'" . ($spiritSettings['showspiritpoints'] ? " checked='checked'" : "") . "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see spirit scores for this event. Season admins can still review spirit data regardless of this flag.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows non-admin users to see spirit scores for this event. Event admins can still review spirit data regardless of this flag.") . "</span></td></tr>";
 
 $html .= "<tr>";
 $html .= "<td class='infocell'>" . _("Spirit comments visible") . ": </td>";
@@ -96,7 +96,7 @@ $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("W
 $html .= "<tr>";
 $html .= "<td class='infocell'>" . _("Lock spirit after submit") . ": </td>";
 $html .= "<td><input class='input' type='checkbox' name='lockteamspiritonsubmit' value='1'" . ($spiritSettings['lockteamspiritonsubmit'] ? " checked='checked'" : "") . "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, team-side users can submit their own complete spirit score once, but cannot later edit or delete that team's spirit score or spirit comment. Season admins still bypass the lock.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("When enabled, team-side users can submit their own complete spirit score once, but cannot later edit or delete that team's spirit score or spirit comment. Event admins still bypass the lock.") . "</span></td></tr>";
 
 $html .= "</table>";
 $html .= "<p><input class='button' type='submit' name='save' value='" . _("Save Spirit Settings") . "'/></p>";
