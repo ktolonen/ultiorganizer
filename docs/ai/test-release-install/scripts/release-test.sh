@@ -116,6 +116,7 @@ services:
       MYSQL_USER: ultiorganizer
       MYSQL_PASSWORD: ultiorganizer
       MYSQL_ROOT_PASSWORD: changeme
+      MARIADB_AUTO_UPGRADE: "1"
     healthcheck:
       test: ["CMD", "mariadb-admin", "ping", "--host=127.0.0.1", "--user=root", "--password=changeme"]
       interval: 5s
