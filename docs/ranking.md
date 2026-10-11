@@ -128,7 +128,7 @@ Gated by the `CALCSEASONSTATISTICS` permission. **Calculate** runs, each with `s
 
 `IsSeasonStatsCalculated($season)` switches the page between **Calculate** and the totals with **Recalculate** and **Undo** (`DeleteSeasonStats($season)`, which also re-opens the event). The page reports how many divisions have confirmed final standings and warns about the rest.
 
-After calculation it shows a drag-and-drop list per series (YUI) from `SeasonTeamStatistics($season)`. **Save final standings** POSTs `team1:team2:...:|team4:...:|` (ids per series, series separated by `|`) to `?view=admin/saveteamstandings`, which updates the manual final standings and the team-stats rows.
+After calculation it shows a drag-and-drop list per division (SortableJS) from `SeasonTeamStatistics($season)`. **Save final standings** POSTs `team1:team2:...|team4:...` (team ids per division, divisions separated by `|`) to `?view=admin/saveteamstandings`, which updates the manual final standings and the team-stats rows.
 
 ### Cross-event reports: `statistics.php`
 
