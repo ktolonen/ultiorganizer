@@ -1,0 +1,13 @@
+.sortable-ghost {
+  opacity: 0.4;
+}
+
+.sortable-chosen {
+  outline: 2px solid var(--border-strong, #444);
+}
+
+.sortable-saving {
+  width: 20px;
+  height: 20px;
+  background: url("../images/indicator.gif") no-repeat top right;
+}

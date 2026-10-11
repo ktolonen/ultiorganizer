@@ -120,9 +120,9 @@ include_once 'script/disable_enter.js.inc';
   }
 
   function ChgPlayer(id) {
-    YAHOO.util.Dom.get('playerEdited' + id).value = 'yes';
-    YAHOO.util.Dom.get("save").disabled = false;
-    YAHOO.util.Dom.get("cancel").disabled = false;
+    document.getElementById('playerEdited' + id).value = 'yes';
+    document.getElementById("save").disabled = false;
+    document.getElementById("cancel").disabled = false;
   }
 
   function validNumber(field) {

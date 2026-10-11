@@ -359,57 +359,14 @@ function autocompleteTranslate($name, $translation_array)
 function TranslatedField($fieldName, $value, $width = "200", $size = "30")
 {
     return "
-	<div style='width:" . $width . "px; height:20px' id='" . $fieldName . "Autocomplete' class='yui-skin-sam'>
-		<input class='input' size='" . $size . "' maxlength='" . $size . "' style='width:" . $width . "px' id='" . $fieldName .
+    <div style='width:" . $width . "px; height:20px' id='" . $fieldName . "Autocomplete'>
+        <input class='input' size='" . $size . "' maxlength='" . $size . "' style='width:" . $width . "px' id='" . $fieldName .
         "' name='" . $fieldName . "' value='" . utf8entities($value) . "'/>
-		<div style='width:" . $width . "px' id='" . $fieldName . "Container'>
-		</div>
-	</div>\n";
+    </div>\n";
 }
 
 function TranslationScript($fieldName)
 {
-    return "<script type=\"text/javascript\">
-//<![CDATA[
-var " . $fieldName . "SelectHandler = function(sType, aArgs) {
-	var oData = aArgs[2];
-	document.getElementById(\"" . $fieldName . "\").value = oData[1];
-};
-
-" . $fieldName . "Fetch = function(){        
-	var translationSource = new YAHOO.util.XHRDataSource(\"ext/autocompletetranslationtxt.php\");
-    translationSource.responseSchema = {
-         recordDelim: \"\\n\",
-         fieldDelim: \"\\t\"
-    };
-    translationSource.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
-    translationSource.maxCacheEntries = 60;
-
-    // First AutoComplete
-    var translationAutoComp = new YAHOO.widget.AutoComplete(\"" . $fieldName . "\",\"" . $fieldName . "Container\", translationSource);
-    translationAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) { 
-
-    	// some other piece of data defined by schema 
-		var translated = oResultData[2];  
-		var completed = oResultData[1];
-		var fill = completed.substring(sQuery.length);
-		var aMarkup = [\"<div class='myCustomResult'>\", 
-		YAHOO.widget.AutoComplete.escapeHtml(sQuery),
-		\"<span style='font-weight:bold'>\",
-		YAHOO.widget.AutoComplete.escapeHtml(fill),
-		\" &raquo; </span>\",
-		YAHOO.widget.AutoComplete.escapeHtml(sResultMatch),
-		\": \",
-		YAHOO.widget.AutoComplete.escapeHtml(translated),
-		\"</div>\"]; 
-		return (aMarkup.join(\"\"));
-	}; 
-	translationAutoComp.itemSelectEvent.subscribe(" . $fieldName . "SelectHandler);
-    return {
-        oDS: translationSource,
-        oAC: translationAutoComp
-    }
-}();
-//]]>
-</script>";
+    return "<script type='text/javascript'>attachTranslationSuggestions(" .
+        json_encode($fieldName, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT) . ");</script>";
 }

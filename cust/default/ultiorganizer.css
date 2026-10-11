@@ -1199,12 +1199,6 @@ tr.state-diff>td {
 	text-transform: uppercase;
 }
 
-.selectable_highlight {
-	background-color: var(--highlight);
-	cursor: pointer;
-	font-weight: bold;
-}
-
 .callahan {
 	background-color: var(--played-bg);
 	color: var(--text-faint);
@@ -1325,18 +1319,6 @@ tr.state-diff>td {
 	font-size: 8pt;
 	text-align: center;
 	vertical-align: middle;
-}
-
-yuicalendar.table {
-	font-size: small;
-}
-
-.calweekdaycell {
-	background-color: var(--surface);
-}
-
-.calheader {
-	color: var(--accent);
 }
 
 .playedpool {

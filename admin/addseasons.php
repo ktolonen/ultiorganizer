@@ -1,4 +1,5 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
@@ -194,126 +195,9 @@ if ($seasonId) {
 
 //common page
 pageTopHeadOpen($title);
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "calendar", "datasource", "autocomplete"]);
-?>
-<link rel="stylesheet" type="text/css" href="script/yui/calendar/calendar.css" />
+echo "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
+include 'script/rescalendar.inc';
 
-<script type="text/javascript">
-	YAHOO.namespace("calendar");
-
-	YAHOO.calendar.init = function() {
-
-		YAHOO.calendar.cal1 = new YAHOO.widget.Calendar("cal1", "calContainer1");
-		YAHOO.calendar.cal2 = new YAHOO.widget.Calendar("cal2", "calContainer2");
-		YAHOO.calendar.cal3 = new YAHOO.widget.Calendar("cal3", "calContainer3");
-		YAHOO.calendar.cal1.cfg.setProperty("START_WEEKDAY", "1");
-		YAHOO.calendar.cal2.cfg.setProperty("START_WEEKDAY", "1");
-		YAHOO.calendar.cal3.cfg.setProperty("START_WEEKDAY", "1");
-		YAHOO.calendar.cal1.render();
-		YAHOO.calendar.cal2.render();
-		YAHOO.calendar.cal3.render();
-
-		function handleCal1Button(e) {
-			var containerDiv = YAHOO.util.Dom.get("calContainer1");
-
-			if (containerDiv.style.display == "none") {
-				updateCal("seasonstarttime", YAHOO.calendar.cal1);
-				YAHOO.calendar.cal1.show();
-			} else {
-				YAHOO.calendar.cal1.hide();
-			}
-		}
-
-		function handleCal2Button(e) {
-			var containerDiv = YAHOO.util.Dom.get("calContainer2");
-
-			if (containerDiv.style.display == "none") {
-				var txtDate1 = document.getElementById("seasonendtime");
-				if (txtDate1.value != "") {
-					updateCal("seasonendtime", YAHOO.calendar.cal2);
-				} else {
-					updateCal("seasonstarttime", YAHOO.calendar.cal2);
-				}
-				YAHOO.calendar.cal2.show();
-			} else {
-				YAHOO.calendar.cal2.hide();
-			}
-		}
-
-		function handleCal3Button(e) {
-			var containerDiv = YAHOO.util.Dom.get("calContainer3");
-
-			if (containerDiv.style.display == "none") {
-				var txtDate1 = document.getElementById("enrollendtime");
-				if (txtDate1.value != "") {
-					updateCal("enrollendtime", YAHOO.calendar.cal3);
-				} else {
-					updateCal("seasonstarttime", YAHOO.calendar.cal3);
-				}
-				YAHOO.calendar.cal3.show();
-			} else {
-				YAHOO.calendar.cal3.hide();
-			}
-		}
-		// Listener to show the Calendar when the button is clicked
-		YAHOO.util.Event.addListener("showcal1", "click", handleCal1Button);
-		YAHOO.util.Event.addListener("showcal2", "click", handleCal2Button);
-		YAHOO.util.Event.addListener("showcal3", "click", handleCal3Button);
-		YAHOO.calendar.cal1.hide();
-		YAHOO.calendar.cal2.hide();
-		YAHOO.calendar.cal3.hide();
-
-		function handleSelect1(type, args, obj) {
-			var dates = args[0];
-			var date = dates[0];
-			var year = date[0],
-				month = date[1],
-				day = date[2];
-
-			var txtDate1 = document.getElementById("seasonstarttime");
-			txtDate1.value = day + "." + month + "." + year;
-		}
-
-		function handleSelect2(type, args, obj) {
-			var dates = args[0];
-			var date = dates[0];
-			var year = date[0],
-				month = date[1],
-				day = date[2];
-
-			var txtDate1 = document.getElementById("seasonendtime");
-			txtDate1.value = day + "." + month + "." + year;
-		}
-
-		function handleSelect3(type, args, obj) {
-			var dates = args[0];
-			var date = dates[0];
-			var year = date[0],
-				month = date[1],
-				day = date[2];
-
-			var txtDate1 = document.getElementById("enrollendtime");
-			txtDate1.value = day + "." + month + "." + year;
-		}
-
-		function updateCal(input, obj) {
-			var txtDate1 = document.getElementById(input);
-			if (txtDate1.value != "") {
-				var date = txtDate1.value.split(".");
-				obj.select(date[1] + "/" + date[0] + "/" + date[2]);
-				obj.cfg.setProperty("pagedate", date[1] + "/" + date[2]);
-				obj.render();
-			}
-		}
-
-		YAHOO.calendar.cal1.selectEvent.subscribe(handleSelect1, YAHOO.calendar.cal1, true);
-		YAHOO.calendar.cal2.selectEvent.subscribe(handleSelect2, YAHOO.calendar.cal2, true);
-		YAHOO.calendar.cal3.selectEvent.subscribe(handleSelect3, YAHOO.calendar.cal3, true);
-	}
-	YAHOO.util.Event.onDOMReady(YAHOO.calendar.init);
-</script>
-<?php
 pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();
@@ -440,12 +324,10 @@ $html .= "</select>\n";
 //$html .= DefTimeFormat($dateTime->format("Y-m-d H:i:s"));
 $html .= "</td></tr>";
 
-$html .= "<tr><td class='infocell'>" . _("Starts") . " (" . _("dd.mm.yyyy") . "): </td><td><input class='input' size='12' maxlength='10' id='seasonstarttime' name='seasonstarttime' value='" . ShortDate($sp['starttime']) . "'/>&nbsp;&nbsp;";
+$html .= "<tr><td class='infocell'>" . _("Starts") . " (" . _("dd.mm.yyyy") . "): </td><td><input class='input' size='12' maxlength='10' id='seasonstarttime' data-calendar-button='showcal1' name='seasonstarttime' value='" . ShortDate($sp['starttime']) . "'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal1'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
-$html .= "<tr><td></td><td><div id='calContainer1'></div></td></tr>";
-$html .= "<tr><td class='infocell'>" . _("Ends") . " (" . _("dd.mm.yyyy") . "): </td><td><input class='input' size='12' maxlength='10' id='seasonendtime' name='seasonendtime' value='" . ShortDate($sp['endtime']) . "'/>&nbsp;&nbsp;";
+$html .= "<tr><td class='infocell'>" . _("Ends") . " (" . _("dd.mm.yyyy") . "): </td><td><input class='input' size='12' maxlength='10' id='seasonendtime' data-calendar-button='showcal2' data-calendar-fallback='seasonstarttime' name='seasonendtime' value='" . ShortDate($sp['endtime']) . "'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal2'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
-$html .= "<tr><td></td><td><div id='calContainer2'></div></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Open for enrollment") . ": </td><td><input class='input' type='checkbox' name='enrollopen' ";
 if ($sp['enrollopen']) {
     $html .= "checked='checked'";
@@ -453,9 +335,8 @@ if ($sp['enrollopen']) {
 $html .= "/></td></tr>";
 $html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Allows teams to submit enrollment requests for this event.") . "</span></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Enrolling ends") . "<br/>(" . _("only informational") . "): </td>";
-$html .= "<td><input class='input' size='12' maxlength='10' id='enrollendtime' name='enrollendtime'  value='" . ShortDate($sp['enroll_deadline']) . "'/>&nbsp;&nbsp;";
+$html .= "<td><input class='input' size='12' maxlength='10' id='enrollendtime' data-calendar-button='showcal3' data-calendar-fallback='seasonstarttime' name='enrollendtime'  value='" . ShortDate($sp['enroll_deadline']) . "'/>&nbsp;&nbsp;";
 $html .= "<button type='button' class='button' id='showcal3'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>";
-$html .= "<tr><td></td><td><div id='calContainer3'></div></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Soft maintenance mode") . ": </td><td><input class='input' type='checkbox' name='maintenance_mode' ";
 if ($sp['maintenance_mode']) {
@@ -521,4 +402,3 @@ echo TranslationScript("seasonname");
 
 contentEnd();
 pageEnd();
-?>

@@ -5,6 +5,9 @@ module.exports = {
 		"live/**",
 		"reports/**",
 		"vendor/**",
+		"script/flatpickr/**",
+		"script/sortablejs/**",
+		"script/tablesort/**",
 	],
 	rules: {
 		"alpha-value-notation": null,
@@ -29,7 +32,6 @@ module.exports = {
 			true,
 			{
 				ignore: ["custom-elements"],
-				ignoreTypes: ["yuicalendar"],
 			},
 		],
 		"shorthand-property-no-redundant-values": null,

@@ -171,7 +171,6 @@ $publicfields = explode("|", $profile['public']);
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
 include_once 'script/common.js.inc';
-include_once 'lib/yui.functions.php';
 pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();

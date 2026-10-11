@@ -274,7 +274,7 @@ function SearchReservation($resultTarget, $hiddenProperties, $submitbuttons)
     $ret = "<form method='post' action='?" . utf8entities($querystring) . "'>\n";
     $ret .= "<table style='width:100%'>";
     $ret .= "<tr><td>" . _("Start time") . " (" . _("dd.mm.yyyy") . "):</td><td>";
-    $ret .= "<input type='text' id='searchstart' name='searchstart' value='";
+    $ret .= "<input type='text' id='searchstart' data-calendar-button='showcal1' name='searchstart' value='";
 
     if (isset($_POST['searchstart'])) {
         $ret .= utf8entities($_POST['searchstart']);
@@ -284,16 +284,14 @@ function SearchReservation($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "'/>\n";
     $ret .= "&nbsp;<button type='button' class='button' id='showcal1'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button>\n";
     $ret .= "</td></tr>\n";
-    $ret .= "<tr><td></td><td><div id='calContainer1'></div></td></tr>\n";
     $ret .= "<tr><td>" . _("End time") . " (" . _("dd.mm.yyyy") . "):</td><td>";
-    $ret .= "<input type='text' id='searchend' name='searchend' value='";
+    $ret .= "<input type='text' id='searchend' data-calendar-button='showcal2' name='searchend' value='";
     if (isset($_POST['searchend'])) {
         $ret .= utf8entities($_POST['searchend']);
     }
     $ret .= "'/>\n";
     $ret .= "&nbsp;<button type='button' class='button' id='showcal2'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button>\n";
     $ret .= "</td></tr>\n";
-    $ret .= "<tr><td></td><td><div id='calContainer2'></div></td></tr>\n";
     $ret .= "<tr><td>" . _("Grouping name") . ":</td><td>";
     $ret .= "<input type='text' name='searchgroup' value='";
     if (isset($_POST['searchgroup'])) {
@@ -346,7 +344,7 @@ function SearchGame($resultTarget, $hiddenProperties, $submitbuttons)
     $ret = "<form method='post' action='?" . utf8entities($querystring) . "'>\n";
     $ret .= "<table>";
     $ret .= "<tr><td>" . _("Start time") . " (" . _("dd.mm.yyyy") . "):</td><td>";
-    $ret .= "<input type='text' id='searchstart' name='searchstart' value='";
+    $ret .= "<input type='text' id='searchstart' data-calendar-button='showcal1' name='searchstart' value='";
 
     if (isset($_POST['searchstart'])) {
         $ret .= utf8entities($_POST['searchstart']);
@@ -357,9 +355,8 @@ function SearchGame($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "'/>\n";
     $ret .= "&nbsp;<button type='button' class='button' id='showcal1'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button>\n";
     $ret .= "</td></tr>\n";
-    $ret .= "<tr><td></td><td><div id='calContainer1'></div></td></tr>\n";
     $ret .= "<tr><td>" . _("End time") . " (" . _("dd.mm.yyyy") . "):</td><td>";
-    $ret .= "<input type='text' id='searchend' name='searchend' value='";
+    $ret .= "<input type='text' id='searchend' data-calendar-button='showcal2' name='searchend' value='";
     if (isset($_POST['searchend'])) {
         $ret .= utf8entities($_POST['searchend']);
     }
@@ -367,7 +364,6 @@ function SearchGame($resultTarget, $hiddenProperties, $submitbuttons)
     $ret .= "'/>\n";
     $ret .= "&nbsp;<button type='button' class='button' id='showcal2'><img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button>\n";
     $ret .= "</td></tr>\n";
-    $ret .= "<tr><td></td><td><div id='calContainer2'></div></td></tr>\n";
     $ret .= "<tr><td>" . _("Tournament") . ":</td><td>";
     $ret .= "<input type='text' name='searchgroup' value='";
     if (isset($_POST['searchgroup'])) {

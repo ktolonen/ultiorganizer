@@ -25,7 +25,7 @@ cd "$REPO_ROOT"
 STAGED_PHP=()
 while IFS= read -r path; do
     STAGED_PHP+=("$path")
-done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.php' ':!lib/tfpdf/**' ':!lib/yuiloader/**' ':!lib/phpqrcode/**' ':!lib/feed_generator/**' ':!lib/hsvclass/**' ':!vendor/**' ':!live/**')
+done < <(git diff --cached --name-only --diff-filter=ACMR -- '*.php' ':!lib/tfpdf/**' ':!lib/phpqrcode/**' ':!lib/feed_generator/**' ':!lib/hsvclass/**' ':!vendor/**' ':!live/**')
 
 if [ "${#STAGED_PHP[@]}" -eq 0 ]; then
     exit 0

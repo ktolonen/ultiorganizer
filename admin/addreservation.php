@@ -1,10 +1,12 @@
 <?php
+
 include_once __DIR__ . '/auth.php';
 include_once 'lib/reservation.functions.php';
 include_once 'lib/location.functions.php';
 
 $LAYOUT_ID = ADDRESERVATION;
 $addmore = false;
+$keepInput = false;
 $html = "";
 $allfields = "";
 $reservationId = 0;
@@ -37,18 +39,47 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
     $res['locationName'] = isset($_POST['locationName']) ? $_POST['locationName'] : "";
     $res['fieldname'] = isset($_POST['fieldname']) ? $_POST['fieldname'] : "";
     $res['reservationgroup'] = isset($_POST['reservationgroup']) ? $_POST['reservationgroup'] : "";
-    $res['date'] = isset($_POST['date']) ? $_POST['date'] : "1.1.19710";
-    $res['starttime'] = isset($_POST['starttime']) ? ToInternalTimeFormat($res['date'] . " " . $_POST['starttime']) : ToInternalTimeFormat("1.1.1971 00:00");
-    $res['endtime'] = isset($_POST['endtime']) ? ToInternalTimeFormat($res['date'] . " " . $_POST['endtime']) : ToInternalTimeFormat("1.1.1971 00:00");
-    $res['date'] = ToInternalTimeFormat($res['date']);
+    $res['date'] = isset($_POST['date']) ? trim((string) $_POST['date']) : "";
+    $res['starttime'] = isset($_POST['starttime']) ? trim((string) $_POST['starttime']) : "";
+    $res['endtime'] = isset($_POST['endtime']) ? trim((string) $_POST['endtime']) : "";
     $res['season'] = isset($_POST['resseason']) ? $_POST['resseason'] : $season;
 
-    $locationInfo = ((int) $res['location'] > 0) ? LocationInfo($res['location']) : null;
-    if ((int) $res['location'] > 0 && empty($locationInfo)) {
-        $html .= "<p>" . _("Select a valid location from the list or add it first.") . "</p>";
-    } elseif ($res['id'] > 0) {
-        SetReservation($res['id'], $res);
+    // ToInternalTimeFormat() silently falls back to 1.1.1971 00:00, so reject input it cannot parse in full.
+    $isValidDateTime = static function ($date, $time) {
+        $parsed = uo_strptime($date . " " . $time, DATE_FORMAT);
+        return $parsed !== false && $parsed['unparsed'] === ""
+            && checkdate($parsed['tm_mon'] + 1, $parsed['tm_mday'], $parsed['tm_year'] + 1900);
+    };
+    $inputErrors = [];
+    if (!$isValidDateTime($res['date'], "00:00")) {
+        $inputErrors[] = _("The date is not in a valid format.");
     } else {
+        if (!$isValidDateTime($res['date'], $res['starttime'])) {
+            $inputErrors[] = _("The start time is not in a valid format.");
+        }
+        if (!$isValidDateTime($res['date'], $res['endtime'])) {
+            $inputErrors[] = _("The end time is not in a valid format.");
+        }
+    }
+
+    $locationInfo = ((int) $res['location'] > 0) ? LocationInfo($res['location']) : null;
+    if (!empty($inputErrors)) {
+        foreach ($inputErrors as $inputError) {
+            $html .= "<p class='warning'>" . utf8entities($inputError) . "</p>";
+        }
+        $keepInput = true;
+    } elseif ((int) $res['location'] > 0 && empty($locationInfo)) {
+        $html .= "<p>" . _("Select a valid location from the list or add it first.") . "</p>";
+        $keepInput = true;
+    } else {
+        $res['starttime'] = ToInternalTimeFormat($res['date'] . " " . $res['starttime']);
+        $res['endtime'] = ToInternalTimeFormat($res['date'] . " " . $res['endtime']);
+        $res['date'] = ToInternalTimeFormat($res['date']);
+    }
+
+    if (!$keepInput && $res['id'] > 0) {
+        SetReservation($res['id'], $res);
+    } elseif (!$keepInput) {
         //check if adding more than 1 field
         $fields = [];
         $tmpfields = explode(",", $res['fieldname']);
@@ -87,67 +118,18 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
 $title = _("Add field reservation");
 //common page
 pageTopHeadOpen($title);
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "datasource", "autocomplete", "calendar"]);
+echo "<script type='text/javascript' src='script/location-autocomplete.js'></script>";
+echo "<link rel='stylesheet' type='text/css' href='script/location-autocomplete.css'/>";
+echo "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
 
-?>
-<link rel="stylesheet" type="text/css" href="script/yui/calendar/calendar.css" />
+include 'script/rescalendar.inc';
 
-<script type="text/javascript">
-  YAHOO.namespace("calendar");
 
-  YAHOO.calendar.init = function() {
-
-    YAHOO.calendar.cal1 = new YAHOO.widget.Calendar("cal1", "calContainer1");
-    YAHOO.calendar.cal1.cfg.setProperty("START_WEEKDAY", "1");
-    YAHOO.calendar.cal1.render();
-
-    function handleCal1Button(e) {
-      var containerDiv = YAHOO.util.Dom.get("calContainer1");
-
-      if (containerDiv.style.display == "none") {
-        updateCal("date", YAHOO.calendar.cal1);
-        YAHOO.calendar.cal1.show();
-      } else {
-        YAHOO.calendar.cal1.hide();
-      }
-    }
-
-    // Listener to show the Calendar when the button is clicked
-    YAHOO.util.Event.addListener("showcal1", "click", handleCal1Button);
-    YAHOO.calendar.cal1.hide();
-
-    function handleSelect1(type, args, obj) {
-      var dates = args[0];
-      var date = dates[0];
-      var year = date[0],
-        month = date[1],
-        day = date[2];
-
-      var txtDate1 = document.getElementById("date");
-      txtDate1.value = day + "." + month + "." + year;
-    }
-
-    function updateCal(input, obj) {
-      var txtDate1 = document.getElementById(input);
-      if (txtDate1.value != "") {
-        var date = txtDate1.value.split(".");
-        obj.select(date[1] + "/" + date[0] + "/" + date[2]);
-        obj.cfg.setProperty("pagedate", date[1] + "/" + date[2]);
-        obj.render();
-      }
-    }
-    YAHOO.calendar.cal1.selectEvent.subscribe(handleSelect1, YAHOO.calendar.cal1, true);
-  }
-  YAHOO.util.Event.onDOMReady(YAHOO.calendar.init);
-</script>
-
-<?php
 $setFocus = "OnLoad=\"document.getElementById('date').focus();\"";
 pageTopHeadClose($title, false, $setFocus);
 leftMenu($LAYOUT_ID);
 contentStart();
-if ($reservationId > 0) {
+if ($reservationId > 0 && !$keepInput) {
     $reservationInfo = ReservationInfo($reservationId);
     $res['id'] = $reservationId;
     $res['location'] = $reservationInfo['location'];
@@ -169,10 +151,9 @@ $html = "<form method='post' action='?view=admin/addreservation&amp;season=" . $
 $html .= "<table>\n";
 
 $html .= "<tr><td>" . _("Date") . " (" . _("dd.mm.yyyy") . "):</td><td>";
-$html .= "<input type='text' class='input' name='date' id='date' value='" . utf8entities($res['date']) . "'/>&nbsp;\n";
+$html .= "<input type='text' class='input' name='date' id='date' data-calendar-button='showcal1' value='" . utf8entities($res['date']) . "'/>&nbsp;\n";
 $html .= "<button type='button' class='button' id='showcal1'>
 		<img width='12px' height='10px' src='images/calendar.gif' alt='cal'/></button></td></tr>\n";
-$html .= "<tr><td></td><td><div id='calContainer1'></div></td></tr>\n";
 
 $html .= "<tr><td>" . _("Start time") . " (" . _("hh:mm") . "):</td><td>";
 $html .= "<input type='text' class='input' name='starttime' value='" . utf8entities($res['starttime']) . "'/>\n";
@@ -193,7 +174,7 @@ if (!$addmore) {
 }
 $html .= "</td></tr>\n";
 
-$html .= "<tr><td>&nbsp;</td><td><div id='locationAutocomplete' class='yui-skin-sam'>";
+$html .= "<tr><td>&nbsp;</td><td><div id='locationAutocomplete'>";
 $html .= "<input class='input' id='locationName' size='30' type='text' style='width:200px' name='locationName' value='";
 $locationInputValue = $res['locationName'];
 if (empty($locationInputValue) && $res['location'] > 0) {
@@ -201,7 +182,7 @@ if (empty($locationInputValue) && $res['location'] > 0) {
     $locationInputValue = isset($location_info['name']) ? $location_info['name'] : "";
 }
 $html .= utf8entities($locationInputValue);
-$html .= "'/><div style='width:400px' id='locationContainer'></div></div>\n";
+$html .= "' aria-label='" . utf8entities(_("Location")) . "'/></div>\n";
 $html .= "</td></tr>\n";
 $html .= "<tr><td>" . _("Location") . ":</td><td>";
 $html .= "</td></tr>\n";
@@ -238,59 +219,8 @@ $html .= "</td><td>&nbsp;</td></tr>\n";
 $html .= "</table>\n";
 $html .= "</form>";
 echo $html;
-?>
-<script type="text/javascript">
-  //<![CDATA[
-  var locationSelectHandler = function(sType, aArgs) {
-    var oData = aArgs[2];
-    document.getElementById("location").value = oData[2];
-  };
-
-  FetchLocation = function() {
-    var locationSource = new YAHOO.util.XHRDataSource("ext/locationtxt.php");
-    locationSource.responseSchema = {
-      recordDelim: "\n",
-      fieldDelim: "\t"
-    };
-    locationSource.responseType = YAHOO.util.XHRDataSource.TYPE_TEXT;
-    locationSource.maxCacheEntries = 60;
-
-    // First AutoComplete
-    var locationAutoComp = new YAHOO.widget.AutoComplete("locationName", "locationContainer", locationSource);
-    locationAutoComp.formatResult = function(oResultData, sQuery, sResultMatch) {
-
-      // some other piece of data defined by schema 
-      var moreData1 = oResultData[1];
-
-      var aMarkup = ["<div class='myCustomResult'>",
-        "<span style='font-weight:bold'>",
-        YAHOO.widget.AutoComplete.escapeHtml(sResultMatch),
-        "</span>",
-        " / ",
-        YAHOO.widget.AutoComplete.escapeHtml(moreData1),
-        "</div>"
-      ];
-      return (aMarkup.join(""));
-    };
-    locationAutoComp.itemSelectEvent.subscribe(locationSelectHandler);
-    YAHOO.util.Event.addListener("locationName", "keyup", function(e) {
-      var keyCode = e ? e.keyCode : 0;
-      // Keep the selection when user confirms with enter, tab or arrow keys.
-      if (keyCode === 9 || keyCode === 13 || (keyCode >= 37 && keyCode <= 40)) {
-        return;
-      }
-      document.getElementById("location").value = "";
-    });
-    return {
-      oDS: locationSource,
-      oAC: locationAutoComp
-    }
-  }();
-  //]]>
-</script>
-<?php
+echo "<script type='text/javascript'>attachLocationSuggestions();</script>";
 echo TranslationScript("reservationgroup");
 echo TranslationScript("fieldname");
 contentEnd();
 pageEnd();
-?>

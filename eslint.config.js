@@ -5,7 +5,9 @@ const globals = require("globals");
 module.exports = [
   {
     ignores: [
-      "script/yui/**",
+      "script/flatpickr/**",
+      "script/sortablejs/**",
+      "script/tablesort/**",
       "live/**",
       "lib/**",
       "vendor/**",
@@ -28,7 +30,7 @@ module.exports = [
       sourceType: "script",
       globals: {
         ...globals.browser,
-        YAHOO: "readonly",
+        flatpickr: "readonly",
       },
     },
     rules: {

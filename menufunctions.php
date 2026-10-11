@@ -228,7 +228,7 @@ function onPageHelpAvailable($html)
 {
     return "<div style='float:right;'>
 	<input type='image' class='helpbutton' id='helpbutton' src='images/help-icon.png'/></div>\n
-	<div id='helptext' class='yui-pe-content'>$html<hr/></div>";
+	<div id='helptext'>$html<hr/></div>";
 }
 
 

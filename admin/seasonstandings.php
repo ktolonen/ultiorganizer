@@ -124,8 +124,8 @@ pageTopHeadOpen($title);
     var displays = table.getElementsByClassName(prefix + "_display");
     var edits = table.getElementsByClassName(prefix + "_edit");
     for (i = 0; i < displays.length; i = i + 1) {
-      YAHOO.util.Dom.setStyle(displays[i], "display", edit ? "none" : "inline");
-      YAHOO.util.Dom.setStyle(edits[i], "display", edit ? "inline" : "none");
+      displays[i].style.display = edit ? "none" : "inline";
+      edits[i].style.display = edit ? "inline" : "none";
     }
     setAnchor(pool);
   }

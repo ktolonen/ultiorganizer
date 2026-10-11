@@ -1207,6 +1207,11 @@ function TimeTableMoveTimes($season)
 
 function TimeTableMoveTime($movetimes, $location1, $field1, $location2, $field2)
 {
+    // Games without a reservation or field pass null; uo_movingtime stores a missing field as ''.
+    $location1 ??= '';
+    $field1 ??= '';
+    $location2 ??= '';
+    $field2 ??= '';
     if (!isset($movetimes[$location1][$field1][$location2][$field2])) {
         return 0;
     }

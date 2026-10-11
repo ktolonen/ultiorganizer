@@ -81,8 +81,7 @@ if ($templateId) {
 
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
-include_once 'lib/yui.functions.php';
-$html .= yuiLoad(["utilities", "datasource", "autocomplete"]);
+$html .= "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
 pageTopHeadClose($title);
 leftMenu($LAYOUT_ID);
 contentStart();

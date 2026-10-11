@@ -83,7 +83,7 @@ It affects previews and newly generated games only.
 - `timetable=1`: the owning pool, exactly one per game. Pool, series and season lookups join through it.
 - `timetable=0`: carryover into continuation pools (e.g. pool A into upper pool F), so their stats include earlier results without duplicating the game.
 
-`admin/schedule.php` builds a drag-and-drop board from unscheduled games loaded through `UnscheduledPoolGameInfo()`, `UnscheduledSeriesGameInfo()`, or `UnscheduledSeasonGameInfo()`, and reservation columns loaded through `ReservationInfoArray()`.
+`admin/schedule.php` builds a drag-and-drop board from unscheduled games loaded through `UnscheduledPoolGameInfo()`, `UnscheduledSeriesGameInfo()`, or `UnscheduledSeasonGameInfo()`, and reservation columns loaded through `ReservationInfoArray()`. Games and pauses move between columns with SortableJS (`script/sortable-lists.js`); locked games, shown with `#`, stay in place but others can be dropped around them. **Add pause** puts a pause of the typed length at the top of the unscheduled column, and the page asks before leaving with unsaved changes.
 
 Game duration is `uo_game.timeslot`, else `uo_pool.timeslot`; it drives row height, offsets, and overflow and conflict checks.
 

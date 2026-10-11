@@ -42,9 +42,11 @@ if (!empty($_POST['confirm'])) {
 //common page
 pageTopHeadOpen($title);
 include_once 'script/disable_enter.js.inc';
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities", "datasource", "autocomplete"]);
+if (intval($seasonInfo['isnationalteams'])) {
+    echo "<script type='text/javascript' src='script/translation-autocomplete.js'></script>";
+}
 ?>
+<script type="text/javascript" src="script/local-autocomplete.js"></script>
 <script type="text/javascript">
 	var clubs = <?php echo json_encode($orgarray, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_INVALID_UTF8_SUBSTITUTE); ?>;
 </script>
@@ -70,7 +72,7 @@ echo "<h2>" . _("Enrolling ends") . " " . ShortDate($seasonInfo['enroll_deadline
 foreach ($result as $row) {
     echo "<form method='post' action='?" . utf8entities($_SERVER['QUERY_STRING']) . "'>\n";
     echo "<h2>" . utf8entities(U_($row['name'])) . "</h2>\n";
-    echo "<table class='yui-skin-sam' style='width:100%' cellpadding='2'><tr><th>" . _("Team") . "</th>";
+    echo "<table style='width:100%' cellpadding='2'><tr><th>" . _("Team") . "</th>";
     if (!intval($seasonInfo['isnationalteams'])) {
         echo "<th>" . _("Club") . "</th>";
     }
@@ -120,7 +122,7 @@ foreach ($result as $row) {
     echo "<input type='hidden' name='index' value='" . utf8entities($hiddenIndex) . "'/>";
     if (!intval($seasonInfo['isnationalteams'])) {
         echo "<input class='input' size='15' type='text' name='name" . $hiddenIndex . "'/></td>\n";
-        echo "<td><div id='orgAutocomplete" . $hiddenIndex . "' style='width:10em;padding-bottom:2em; margin-right:0.5em'><input class='input' size='15' type='text' id='club" . $hiddenIndex . "' name='clubname'/><div id='orgContainer" . $hiddenIndex . "'></div></div></td>";
+        echo "<td><div id='orgAutocomplete" . $hiddenIndex . "' style='width:10em;padding-bottom:2em; margin-right:0.5em'><input class='input' size='15' type='text' id='club" . $hiddenIndex . "' name='clubname'/></div></td>";
     } else {
         echo TranslatedField("name" . $hiddenIndex, "");
         echo "</td>\n";
@@ -140,16 +142,7 @@ foreach ($result as $row) {
     echo "</form>\n";
     ?>
 	<script type="text/javascript">
-		YAHOO.autocomplete = function() {
-			var oDS = new YAHOO.util.LocalDataSource(clubs);
-			var oAC = new YAHOO.widget.AutoComplete("club<?php echo $hiddenIndex ?>", "orgContainer<?php echo $hiddenIndex ?>", oDS);
-			oAC.prehighlightClassName = "yui-ac-prehighlight";
-			oAC.useShadow = true;
-			return {
-				oDS: oDS,
-				oAC: oAC
-			};
-		}();
+    attachLocalSuggestions("club<?php echo $hiddenIndex ?>", clubs, "clubSuggestions");
 	</script>
 <?php
         if (intval($seasonInfo['isnationalteams'])) {
