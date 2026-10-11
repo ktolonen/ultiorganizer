@@ -73,7 +73,7 @@ function postSortedLists(url, body, statusEl, options) {
   };
   request.onerror = function () {
     statusEl.className = "attention";
-    statusEl.textContent = request.statusText;
+    statusEl.textContent = request.statusText || options.errorText || "";
   };
   request.send(body);
 }

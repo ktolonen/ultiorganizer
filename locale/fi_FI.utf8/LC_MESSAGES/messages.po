@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 10:02+0300\n"
+"POT-Creation-Date: 2026-10-11 11:47+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -19,7 +19,6 @@ msgstr ""
 "X-Poedit-SearchPath-4: admin\n"
 "X-Poedit-SearchPath-5: cust\n"
 "X-Poedit-SearchPath-6: scorekeeper\n"
-"X-Poedit-SearchPath-7: mobile\n"
 
 #: admin/editgame.php:247
 msgid " (enter '0' if not live)"
@@ -251,7 +250,7 @@ msgstr "Akkreditointi tapahtumat"
 msgid "Accreditation log"
 msgstr "Akkreditointi loki"
 
-#: admin/select_userrole.php:37 user/userinfo.php:437 user/userinfo.php:506
+#: admin/select_userrole.php:38 user/userinfo.php:442 user/userinfo.php:511
 msgid "Accreditation official"
 msgstr "Akkreditointi vastaava"
 
@@ -299,7 +298,7 @@ msgstr "Aktiivinen"
 #: admin/seasons.php:157 admin/seasonseries.php:173 admin/seasonteams.php:260
 #: admin/serieformats.php:52 admin/timekeepertemplates.php:61
 #: admin/translations.php:519 user/addextraemail.php:95 user/enrollteam.php:137
-#: user/teamplayers.php:275 user/userinfo.php:378 user/userinfo.php:516
+#: user/teamplayers.php:275 user/userinfo.php:383 user/userinfo.php:521
 msgid "Add"
 msgstr "Lisää"
 
@@ -315,7 +314,7 @@ msgstr "Lisää Timekeeper-pohja"
 msgid "Add division"
 msgstr "Lisää sarja"
 
-#: user/userinfo.php:252
+#: user/userinfo.php:257
 msgid "Add extra address"
 msgstr "Lisää sähköpostiosoite"
 
@@ -403,7 +402,7 @@ msgstr "Lisää käännösavain"
 msgid "Added media links"
 msgstr "Lisätyt medialinkit"
 
-#: admin/adduser.php:109 user/userinfo.php:27
+#: admin/adduser.php:109 user/userinfo.php:32
 msgid "Added new user"
 msgstr "Uusi käyttäjä lisätty"
 
@@ -453,8 +452,8 @@ msgstr ""
 msgid "Administration"
 msgstr "Hallinto"
 
-#: admin/select_userrole.php:25 admin/serverconf.php:419 user/userinfo.php:396
-#: user/userinfo.php:501
+#: admin/select_userrole.php:26 admin/serverconf.php:419 user/userinfo.php:401
+#: user/userinfo.php:506
 msgid "Administrator"
 msgstr "Ylläpitäjä"
 
@@ -808,7 +807,7 @@ msgid "BULA"
 msgstr "BULA"
 
 #: admin/addserieformats.php:196 admin/addtimekeepertemplate.php:152
-#: admin/select_teams.php:155 spiritkeeper/editgame.php:141
+#: admin/select_teams.php:160 spiritkeeper/editgame.php:141
 #: spiritkeeper/teamgames.php:127
 msgid "Back"
 msgstr "Takaisin"
@@ -970,17 +969,17 @@ msgstr "Callahan-maali"
 
 #: admin/eventdataimport.php:218 admin/seasonpools.php:314
 #: admin/seasonseries.php:181 admin/seasonteams.php:266
-#: admin/select_userrole.php:30 admin/select_userrole.php:35
-#: admin/select_userrole.php:38 admin/select_userrole.php:41
-#: admin/select_userrole.php:44 admin/select_userrole.php:47
-#: admin/select_userrole.php:50 admin/select_userrole.php:53
-#: admin/select_userrole.php:56 admin/select_userrole.php:59
+#: admin/select_userrole.php:31 admin/select_userrole.php:36
+#: admin/select_userrole.php:39 admin/select_userrole.php:42
+#: admin/select_userrole.php:45 admin/select_userrole.php:48
+#: admin/select_userrole.php:51 admin/select_userrole.php:54
+#: admin/select_userrole.php:57 admin/select_userrole.php:60
 #: admin/translations.php:544 admin/translations.php:546
 #: scorekeeper/addscoresheet.php:429 user/adddefensesheet.php:315
 #: user/addscoresheet.php:817 user/select_poolselector.php:26
 #: user/select_poolselector.php:29 user/select_poolselector.php:32
 #: user/select_poolselector.php:35 user/teamplayers.php:286
-#: user/userinfo.php:292
+#: user/userinfo.php:297
 msgid "Cancel"
 msgstr "Peruuta"
 
@@ -1027,7 +1026,7 @@ msgstr "Otettu kiinni"
 msgid "Change"
 msgstr "Muuta"
 
-#: user/userinfo.php:532
+#: user/userinfo.php:537
 msgid "Change Password"
 msgstr "Vaihda salasana"
 
@@ -1067,11 +1066,11 @@ msgstr "Muutokset"
 msgid "Changes saved"
 msgstr "Muutokset tallennettu"
 
-#: user/userinfo.php:68 user/userinfo.php:116
+#: user/userinfo.php:73 user/userinfo.php:121
 msgid "Changes were NOT saved"
 msgstr "Tietoja EI tallennettu"
 
-#: user/userinfo.php:66 user/userinfo.php:114
+#: user/userinfo.php:71 user/userinfo.php:119
 msgid "Changes were saved"
 msgstr "Tiedot tallennettu"
 
@@ -1187,7 +1186,7 @@ msgstr "Client Library version"
 msgid "Clock not running"
 msgstr "Kello ei käy"
 
-#: menufunctions.php:382 cust/default/teamplayers.inc.php:21
+#: menufunctions.php:382 cust/default/teamplayers.inc.php:22
 msgid "Close"
 msgstr "Sulje"
 
@@ -1285,7 +1284,7 @@ msgstr "Kommunikaatio (meidän)"
 msgid "Communication (theirs)"
 msgstr "Kommunikaatio (heidän)"
 
-#: cust/default/teamplayers.functions.php:168 user/enrollteam.php:108
+#: cust/default/teamplayers.functions.php:177 user/enrollteam.php:108
 msgid "Confirm"
 msgstr "Vahvista"
 
@@ -1312,11 +1311,11 @@ msgstr "Vahvista tunnuksesi Pelikoneeseen"
 
 #: user/addextraemail.php:43
 msgid "Confirmation email has been sent to the email address provided"
-msgstr "Vahvistusviesti lähetetty antamaasi sähköpostiosoitteeseen"
+msgstr "Vahvistusviesti lähetetään antamaasi sähköpostiosoitteeseen"
 
 #: user/addextraemail.php:70
 msgid "Confirmation email will be sent to the email address provided"
-msgstr "Vahvistusviesti lähetetty antamaasi sähköpostiosoitteeseen"
+msgstr "Vahvistusviesti lähetetään antamaasi sähköpostiosoitteeseen"
 
 #: user/enrollteam.php:113
 msgid "Confirmed"
@@ -1509,7 +1508,7 @@ msgstr "Ristipeli"
 msgid "Crossmatch -type of pool"
 msgstr "Ristiinpeli-tyyppinen lohko"
 
-#: user/select_poolselector.php:19 user/userinfo.php:339 user/userinfo.php:368
+#: user/select_poolselector.php:19 user/userinfo.php:344 user/userinfo.php:373
 msgid "Current event"
 msgstr "Nykyinen tapahtuma"
 
@@ -1841,8 +1840,8 @@ msgstr "Hylätty"
 #: lib/search.functions.php:469 lib/search.functions.php:510
 #: lib/search.functions.php:552 user/respteams.php:23
 #: user/select_poolselector.php:31 user/select_poolselector.php:34
-#: user/userinfo.php:349 user/userinfo.php:353 user/userinfo.php:371
-#: user/userinfo.php:372
+#: user/userinfo.php:354 user/userinfo.php:358 user/userinfo.php:376
+#: user/userinfo.php:377
 msgid "Division"
 msgstr "Sarja"
 
@@ -1855,11 +1854,11 @@ msgid "Division name is mandatory!"
 msgstr "Sarjan nimi on pakollinen tieto!"
 
 #: poolstatus.php:37 seriesstatus.php:21 seriesstatus.php:29
-#: spiritstatus.php:18 spiritstatus.php:25
+#: spiritstatus.php:18 spiritstatus.php:25 admin/select_teams.php:23
 msgid "Division not found"
 msgstr "Sarjaa ei löydy"
 
-#: admin/select_userrole.php:46 user/userinfo.php:430 user/userinfo.php:505
+#: admin/select_userrole.php:47 user/userinfo.php:435 user/userinfo.php:510
 msgid "Division organizer"
 msgstr "Sarjavastaava"
 
@@ -1897,7 +1896,7 @@ msgstr ""
 "Älä luo keskinäisiä pelejä joukkueille, jotka on siirretty samasta lohkosta "
 "jos lohkoformaatti sisältää keskinäiset pelit"
 
-#: admin/schedule.php:677
+#: admin/schedule.php:676
 msgid ""
 "Do you want to leave anyway? If you select Yes, you will lose all your "
 "changes."
@@ -1981,7 +1980,7 @@ msgstr ""
 #: admin/addseasonpools.php:161 admin/addseasonseries.php:20
 #: admin/addseasonteams.php:104 admin/addserieformats.php:10
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
-#: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
+#: admin/locations.php:64 admin/locations.php:110 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
 #: admin/translations.php:504 user/respgames.php:219
 msgid "Edit"
@@ -2186,7 +2185,7 @@ msgstr "Virheet: %s."
 #: lib/search.functions.php:217 lib/search.functions.php:469
 #: lib/search.functions.php:510 lib/search.functions.php:552
 #: spiritkeeper/home.php:59 spiritkeeper/teamgames.php:137
-#: user/select_poolselector.php:28 user/userinfo.php:345 user/userinfo.php:370
+#: user/select_poolselector.php:28 user/userinfo.php:350 user/userinfo.php:375
 msgid "Event"
 msgstr "Tapahtuma"
 
@@ -2251,7 +2250,7 @@ msgstr "Tapahtumaa ei löydy"
 msgid "Event played."
 msgstr "Tapahtuma pelattu."
 
-#: admin/select_userrole.php:40 user/userinfo.php:423 user/userinfo.php:503
+#: admin/select_userrole.php:41 user/userinfo.php:428 user/userinfo.php:508
 msgid "Event responsible"
 msgstr "Tapahtumavastaava"
 
@@ -2327,7 +2326,7 @@ msgid ""
 msgstr ""
 "Lisäsähköpostiosoitetta ei voitu lisätä. Ota yhteyttä järjestelmänvalvojaan."
 
-#: user/addextraemail.php:67 user/userinfo.php:257
+#: user/addextraemail.php:67 user/userinfo.php:262
 msgid "Extra emails"
 msgstr "Lisäosoitteet"
 
@@ -2772,7 +2771,7 @@ msgstr "Peli on päättynyt"
 msgid "Game history"
 msgstr "Otteluhistoria"
 
-#: user/userinfo.php:464 user/userinfo.php:509
+#: user/userinfo.php:469 user/userinfo.php:514
 msgid "Game input responsibility"
 msgstr "Pelin syöttövastuu"
 
@@ -3149,7 +3148,7 @@ msgstr "Pituus"
 msgid "Helps"
 msgstr "Ohjeet"
 
-#: admin/apitokens.php:90 user/userinfo.php:314
+#: admin/apitokens.php:90 user/userinfo.php:319
 msgid "Hide"
 msgstr "Piilota"
 
@@ -3309,7 +3308,7 @@ msgstr ""
 msgid "Illegal characters in the password"
 msgstr "Ei sallittuja merkkejä salasanassa"
 
-#: user/userinfo.php:55
+#: user/userinfo.php:60
 msgid "Illegal characters in the username."
 msgstr "Ei sallittuja merkkejä käyttäjätunnuksessa."
 
@@ -3614,7 +3613,7 @@ msgid "Label"
 msgstr "Nimike"
 
 #: admin/translations.php:530 admin/translations.php:561
-#: timekeeper/index.php:189 user/userinfo.php:271
+#: timekeeper/index.php:189 user/userinfo.php:276
 msgid "Language"
 msgstr "Kieli"
 
@@ -4106,12 +4105,12 @@ msgstr "HUOM"
 #: user/addmedialink.php:195 user/addplayerlists.php:300
 #: user/addplayerlists.php:379 user/clubprofile.php:161
 #: user/clubprofile.php:216 user/playerprofile.php:353 user/teamprofile.php:156
-#: user/userinfo.php:240
+#: user/userinfo.php:245
 msgid "Name"
 msgstr "Nimi"
 
 #: register.php:39 admin/addseasons.php:87 admin/addseasons.php:118
-#: admin/adduser.php:36 user/userinfo.php:48
+#: admin/adduser.php:36 user/userinfo.php:53
 msgid "Name cannot be empty"
 msgstr "Nimi ei voi olla tyhjä"
 
@@ -4125,7 +4124,7 @@ msgstr "Nimi aikataulussa"
 msgid "Name is mandatory!"
 msgstr "Nimi on pakollinen!"
 
-#: cust/default/teamplayers.functions.php:122
+#: cust/default/teamplayers.functions.php:124
 msgid "Name must be at least 2 letters long!"
 msgstr "Nimen pitää olla vähintään 2 kirjainta pitkä!"
 
@@ -4149,7 +4148,7 @@ msgstr "Kansallisuus"
 msgid "Never"
 msgstr "Ei koskaan"
 
-#: user/userinfo.php:527
+#: user/userinfo.php:532
 msgid "New  password"
 msgstr "Uusi salasana"
 
@@ -4620,7 +4619,7 @@ msgstr "Osittain tallennetut lopulliset sijoitukset"
 msgid "Password"
 msgstr "Salasana"
 
-#: user/userinfo.php:100
+#: user/userinfo.php:105
 msgid "Password cannot be empty."
 msgstr "Nimi ei voi olla tyhjä."
 
@@ -4633,7 +4632,7 @@ msgstr ""
 "salasanallasi."
 
 #: register.php:35 admin/adduser.php:32 login/password_reset.php:34
-#: user/userinfo.php:105
+#: user/userinfo.php:110
 msgid "Password is too short (min. 5 letters)."
 msgstr "Salasana liian lyhyt (min. 5 merkkiä)."
 
@@ -4653,7 +4652,7 @@ msgstr "Salasanan nollauslinkki lähetetty."
 msgid "Password reset request for Ultiorganizer"
 msgstr "Ultiorganizerin salasanan nollauspyyntö"
 
-#: register.php:67 login/password_reset.php:45 user/userinfo.php:110
+#: register.php:67 login/password_reset.php:45 user/userinfo.php:115
 msgid "Passwords do not match"
 msgstr "Salasanat eivät täsmää"
 
@@ -4829,7 +4828,7 @@ msgstr "Pelaajan tietosuojaraporttia ei voitu luoda."
 msgid "Player privacy tools"
 msgstr "Pelaajan tietosuojatyökalut"
 
-#: admin/select_userrole.php:58 user/userinfo.php:473 user/userinfo.php:510
+#: admin/select_userrole.php:59 user/userinfo.php:478 user/userinfo.php:515
 msgid "Player profile administrator"
 msgstr "Käyttäjien ylläpitäjä"
 
@@ -4840,6 +4839,10 @@ msgstr "Pelaajan sivut"
 #: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Player refs"
 msgstr "Pelaajaviitteitä"
+
+#: cust/default/teamplayers.inc.php:19
+msgid "Player search failed. Please try again."
+msgstr "Pelaajahaku epäonnistui. Yritä uudelleen."
 
 #: ext/export.php:45
 msgid "Player statistics"
@@ -5064,7 +5067,7 @@ msgstr "Edellinen"
 msgid "Previous round winner vs. winners and losers vs. losers"
 msgstr "Edellisen kierroksen voittajat ja häviäjät keskenään"
 
-#: user/userinfo.php:244
+#: user/userinfo.php:249
 msgid "Primary email"
 msgstr "Ensisijainen sähköposti"
 
@@ -5289,7 +5292,7 @@ msgstr ""
 msgid "Rename selected"
 msgstr "Nimeä valitut"
 
-#: register.php:137 login/password_reset.php:77 user/userinfo.php:529
+#: register.php:137 login/password_reset.php:77 user/userinfo.php:534
 msgid "Repeat password"
 msgstr "Toista salasana"
 
@@ -5309,8 +5312,8 @@ msgstr "Suorita muunnos uudelleen siivouksen jälkeen."
 msgid "Reservation"
 msgstr "Varaus"
 
-#: admin/select_userrole.php:52 admin/select_userrole.php:55
-#: user/userinfo.php:454 user/userinfo.php:508
+#: admin/select_userrole.php:53 admin/select_userrole.php:56
+#: user/userinfo.php:459 user/userinfo.php:513
 msgid "Reservation game input responsible"
 msgstr "Varauksen peliensyöttö vastaava"
 
@@ -5627,7 +5630,7 @@ msgstr "Lauantai"
 #: admin/seasongames.php:270 admin/seasonmoves.php:219
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
 #: admin/seasonseries.php:180 admin/seasonstandings.php:552
-#: admin/seasonteams.php:265 admin/select_teams.php:154
+#: admin/seasonteams.php:265 admin/select_teams.php:159
 #: admin/seriesseeding.php:74 admin/serieteams.php:190 admin/serverconf.php:444
 #: admin/translations.php:519 plugins/lisence_modifier.php:186
 #: scorekeeper/addcomment.php:42 scorekeeper/addfirstoffence.php:47
@@ -5637,7 +5640,7 @@ msgstr "Lauantai"
 #: spiritkeeper/editgame.php:125 user/addmedialink.php:219
 #: user/addplayerlists.php:453 user/addspirit.php:314 user/clubprofile.php:251
 #: user/playerprofile.php:388 user/respgames.php:229 user/teamplayers.php:285
-#: user/teamprofile.php:191 user/userinfo.php:291
+#: user/teamprofile.php:191 user/userinfo.php:296
 msgid "Save"
 msgstr "Tallenna"
 
@@ -5649,13 +5652,13 @@ msgstr "Tallenna spirit-asetukset"
 msgid "Save as final result"
 msgstr "Tallenna lopputulos"
 
-#: admin/schedule.php:673
+#: admin/schedule.php:672
 msgid "Save changes?"
 msgstr "Tallenna muutokset?"
 
 #: user/adddefensesheet.php:314
 msgid "Save defences"
-msgstr "Tallenna pisteet"
+msgstr "Tallenna puolustukset"
 
 #: scorekeeper/addresult.php:146 scorekeeper/addresult.php:189
 #: scorekeeper/addscoresheet.php:467
@@ -5689,6 +5692,10 @@ msgstr "Tallennettu tila"
 #: admin/finalstandings.php:137
 msgid "Saving affects only the selected division."
 msgstr "Tallennus vaikuttaa vain valittuun sarjaan."
+
+#: admin/schedule.php:721 admin/select_teams.php:189 admin/stats.php:200
+msgid "Saving failed. Please try again."
+msgstr "Tallennus epäonnistui. Yritä uudelleen."
 
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
 #: lib/scorekeeper.functions.php:292
@@ -5740,7 +5747,7 @@ msgstr "Aikatauluttaminen ja Varauksienhallinta"
 msgid "Scheduling name"
 msgstr "Aikataulutusnimi"
 
-#: admin/select_userrole.php:49 user/userinfo.php:444 user/userinfo.php:507
+#: admin/select_userrole.php:50 user/userinfo.php:449 user/userinfo.php:512
 msgid "Scheduling right"
 msgstr "Aikataulutus oikeus"
 
@@ -5793,7 +5800,7 @@ msgstr "Pöytäkirjanpitäjät"
 
 #: cust/wfdf/pdfscoresheet.php:1328
 msgid "Scorekeepers fill in their names."
-msgstr "Pisteenpitäjät kirjoittavat nimensä."
+msgstr "Pöytäkirjanpitäjät kirjoittavat nimensä."
 
 #: user/scorekeepinglink.php:10 user/scoresheethistory.php:410
 msgid "Scorekeeping link"
@@ -5953,12 +5960,12 @@ msgstr "Rankkaus"
 #: admin/eventdataexport.php:51 admin/finalstandings.php:28
 #: admin/privacyplayer.php:99 admin/privacyuser.php:100
 #: admin/seasonpoints.php:29 admin/seasonpoints.php:186
-#: admin/seasonpoints.php:243 admin/select_userrole.php:29
-#: admin/select_userrole.php:35 admin/select_userrole.php:38
-#: admin/select_userrole.php:41 admin/select_userrole.php:44
-#: admin/select_userrole.php:47 admin/select_userrole.php:50
-#: admin/select_userrole.php:53 admin/select_userrole.php:56
-#: admin/select_userrole.php:59 ext/index.php:88
+#: admin/seasonpoints.php:243 admin/select_userrole.php:30
+#: admin/select_userrole.php:36 admin/select_userrole.php:39
+#: admin/select_userrole.php:42 admin/select_userrole.php:45
+#: admin/select_userrole.php:48 admin/select_userrole.php:51
+#: admin/select_userrole.php:54 admin/select_userrole.php:57
+#: admin/select_userrole.php:60 ext/index.php:88
 #: user/select_poolselector.php:22 user/select_poolselector.php:26
 #: user/select_poolselector.php:29 user/select_poolselector.php:32
 #: user/select_poolselector.php:35
@@ -6121,7 +6128,7 @@ msgstr "Server version"
 msgid "Set"
 msgstr "Aseta"
 
-#: user/userinfo.php:267
+#: user/userinfo.php:272
 msgid "Set as primary"
 msgstr "Aseta ensisijaiseksi"
 
@@ -6156,7 +6163,7 @@ msgstr "Pelinumerot"
 
 #: admin/apitokens.php:87 admin/apitokens.php:180
 #: admin/scorekeepinglinks.php:76 spiritkeeper/home.php:56
-#: user/scoresheethistory.php:418 user/userinfo.php:315
+#: user/scoresheethistory.php:418 user/userinfo.php:320
 msgid "Show"
 msgstr "Näytä"
 
@@ -6176,7 +6183,7 @@ msgstr "Näytä aikalisätilastot"
 msgid "Show URLs for all teams"
 msgstr "Näytä kaikkien joukkueiden URL-osoitteet"
 
-#: user/userinfo.php:302
+#: user/userinfo.php:307
 msgid "Show administration responsibilities"
 msgstr "Näytä ylläpitovastuut"
 
@@ -6238,7 +6245,7 @@ msgstr "Näytä pelaamattomat pelaajat"
 msgid "Show pool"
 msgstr "Näytä lohko"
 
-#: user/userinfo.php:328
+#: user/userinfo.php:333
 msgid "Show pools"
 msgstr "Näytä sarjat"
 
@@ -6340,7 +6347,7 @@ msgstr "Spirit-asetukset"
 msgid "Spirit Standings"
 msgstr "Spirit-sijoitukset"
 
-#: admin/select_userrole.php:43 user/userinfo.php:409 user/userinfo.php:504
+#: admin/select_userrole.php:44 user/userinfo.php:414 user/userinfo.php:509
 msgid "Spirit admin"
 msgstr "Spirit-ylläpitäjä"
 
@@ -6732,7 +6739,7 @@ msgstr "Joukkuevastaavat"
 msgid "Team card"
 msgstr "Joukkueprofiili"
 
-#: admin/select_userrole.php:34 user/userinfo.php:416 user/userinfo.php:502
+#: admin/select_userrole.php:35 user/userinfo.php:421 user/userinfo.php:507
 msgid "Team contact person"
 msgstr "Joukkueen yhteyshenkilö"
 
@@ -6757,7 +6764,7 @@ msgstr "Joukkuetta ei löydy"
 msgid "Team pages"
 msgstr "Joukkueen sivut"
 
-#: user/select_poolselector.php:25 user/userinfo.php:341 user/userinfo.php:369
+#: user/select_poolselector.php:25 user/userinfo.php:346 user/userinfo.php:374
 msgid "Team pools"
 msgstr "Joukkueen sarjat"
 
@@ -6974,7 +6981,7 @@ msgid ""
 msgstr ""
 "Lähetetty tuontitiedosto ei ole enää saatavilla. Valitse tiedosto uudelleen."
 
-#: register.php:31 admin/adduser.php:28 user/userinfo.php:43
+#: register.php:31 admin/adduser.php:28 user/userinfo.php:48
 msgid "The username is already in use"
 msgstr "Tunnus on jo käytössä"
 
@@ -7383,7 +7390,7 @@ msgstr "Käännös"
 msgid "Translation added."
 msgstr "Käännös lisätty."
 
-#: user/userinfo.php:400
+#: user/userinfo.php:405
 msgid "Translation administrator"
 msgstr "Käännösten ylläpitäjä"
 
@@ -7544,7 +7551,7 @@ msgstr "Tuntematon seura"
 msgid "Unknown event import mode."
 msgstr "Tuntematon tapahtuman tuontitapa."
 
-#: menufunctions.php:488 user/userinfo.php:480
+#: menufunctions.php:488 user/userinfo.php:485
 msgid "Unnamed player"
 msgstr "Nimeämätön pelaaja"
 
@@ -7578,7 +7585,7 @@ msgstr "Tilannevedoksen taulua ei tueta: %s"
 msgid "Unsupported event snapshot version."
 msgstr "Tilannevedoksen versiota ei tueta."
 
-#: user/userinfo.php:61
+#: user/userinfo.php:66
 msgid "Unsupported language:"
 msgstr "Ei tuettu kieli:"
 
@@ -7644,7 +7651,7 @@ msgstr "Käyttäjätunnus vaaditaan käyttäjärajauksessa."
 msgid "User ID may not have spaces or special characters"
 msgstr "Tunnuksessa ei voi olla välilyöntiä tai erikoismerkkejä"
 
-#: user/userinfo.php:404
+#: user/userinfo.php:409
 msgid "User administrator"
 msgstr "Käyttäjien ylläpitäjä"
 
@@ -7653,11 +7660,11 @@ msgstr "Käyttäjien ylläpitäjä"
 msgid "User credentials do not match"
 msgstr "Riittämättömät käyttöoikeudet"
 
-#: user/userinfo.php:217
+#: user/userinfo.php:26 user/userinfo.php:222
 msgid "User information"
 msgstr "Omat tiedot"
 
-#: admin/apitokens.php:34
+#: admin/apitokens.php:34 user/userinfo.php:26
 msgid "User not found."
 msgstr "Käyttäjää ei löydy."
 
@@ -7670,17 +7677,17 @@ msgstr "Oikeudet annettu: %s."
 msgid "User rights added for:"
 msgstr "Oikeudet annettu:"
 
-#: user/userinfo.php:385
+#: user/userinfo.php:390
 msgid "User roles"
 msgstr "Käyttöoikeudet"
 
 #: login.php:20 register.php:125 admin/adduser.php:110 admin/adduser.php:127
 #: admin/privacyuser.php:88 lib/search.functions.php:629
-#: scorekeeper/login.php:27 spiritkeeper/login.php:62 user/userinfo.php:242
+#: scorekeeper/login.php:27 spiritkeeper/login.php:62 user/userinfo.php:247
 msgid "Username"
 msgstr "Käyttäjätunnus"
 
-#: register.php:27 admin/adduser.php:24 user/userinfo.php:38
+#: register.php:27 admin/adduser.php:24 user/userinfo.php:43
 msgid "Username is too short (min. 3 letters)"
 msgstr "Käyttäjätunnus liian lyhyt (min. 3 merkkiä)"
 
@@ -7891,7 +7898,7 @@ msgstr "Voittopiste"
 msgid "Wins"
 msgstr "Voitot"
 
-#: admin/select_teams.php:106
+#: admin/select_teams.php:111
 msgid "Without pool"
 msgstr "Ilman lohkoa"
 
@@ -8183,7 +8190,7 @@ msgstr "kg"
 msgid "left"
 msgstr "vasen"
 
-#: user/userinfo.php:400 user/userinfo.php:404
+#: user/userinfo.php:405 user/userinfo.php:409
 msgid "legacy, not enforced"
 msgstr "vanha, ei valvota"
 

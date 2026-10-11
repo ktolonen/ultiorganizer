@@ -1016,6 +1016,195 @@ function DeleteSeason($seasonId)
 }
 
 /**
+ * Deletes a season together with all its divisions, pools, teams, players, games,
+ * spirit scores, reservations and locations used only by this season, its archived
+ * statistics, banner, team, club and player images, comments and links, and the event-scoped
+ * user roles, editseason rows and API tokens pointing at it.
+ *
+ * Player profiles are deleted when no other player uses them. Meant for test data;
+ * DeleteSeason() refuses to remove a season that still has divisions.
+ *
+ * Access level: superadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return boolean TRUE on success; FALSE when the season does not exist or a game
+ *   of another event still uses one of its teams.
+ */
+function DeleteSeasonWithData($seasonId)
+{
+    if (!isSuperAdmin()) {
+        die('Insufficient rights to delete season');
+    }
+    if (!SeasonExists($seasonId)) {
+        return false;
+    }
+
+    $banner = SeasonInfo($seasonId)['banner_image'] ?? '';
+    $season = "'" . DBEscapeString($seasonId) . "'";
+    $previousExceptionMode = DBShouldThrowExceptions();
+    DBSetExceptionMode(true);
+    try {
+        DBQuery('START TRANSACTION');
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_series (series_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_team (team_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_game (game_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_profile (profile_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_location (id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_club (club INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_pool (pool_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_scheduling (scheduling_id INT PRIMARY KEY)");
+        foreach (["series", "team", "game", "profile", "location", "club", "pool", "scheduling"] as $name) {
+            DBQuery("DELETE FROM tmp_del_" . $name);
+        }
+
+        DBQuery("INSERT INTO tmp_del_series SELECT series_id FROM uo_series WHERE season=$season");
+        DBQuery("INSERT INTO tmp_del_team SELECT team_id FROM uo_team WHERE series IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("INSERT INTO tmp_del_club SELECT DISTINCT club FROM uo_team
+            WHERE team_id IN (SELECT team_id FROM tmp_del_team) AND club IS NOT NULL");
+        DBQuery("INSERT INTO tmp_del_game SELECT DISTINCT gp.game FROM uo_game_pool gp
+            JOIN uo_pool p ON p.pool_id=gp.pool
+            WHERE gp.timetable=1 AND p.series IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("INSERT INTO tmp_del_profile SELECT DISTINCT profile_id FROM uo_player
+            WHERE team IN (SELECT team_id FROM tmp_del_team) AND profile_id IS NOT NULL");
+        DBQuery("INSERT INTO tmp_del_location SELECT DISTINCT location FROM uo_reservation
+            WHERE season=$season AND location IS NOT NULL");
+        DBQuery("INSERT INTO tmp_del_pool SELECT pool_id FROM uo_pool WHERE series IN (SELECT series_id FROM tmp_del_series)");
+        // MySQL cannot open a temporary table twice in one statement, so each pool column gets its own.
+        DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_moveteams
+            WHERE frompool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
+        DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_moveteams
+            WHERE topool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
+        DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_specialranking
+            WHERE frompool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
+
+        // A game moved to another event keeps its teams; deleting them would corrupt that game.
+        // Without a home team, respteam holds a scheduling name id instead of a team id.
+        if (DBQueryToValue("SELECT COUNT(*) FROM uo_game g
+            JOIN tmp_del_team t ON (t.team_id IN (g.hometeam, g.visitorteam)
+                OR (g.hometeam IS NOT NULL AND t.team_id=g.respteam))
+            WHERE g.game_id NOT IN (SELECT game_id FROM tmp_del_game)") > 0) {
+            DBQuery('ROLLBACK');
+            DBSetExceptionMode($previousExceptionMode);
+            return false;
+        }
+
+        // Roles resolve their season through the target rows, so they go before those rows.
+        DeleteEventUserRoles($seasonId);
+        DBQuery("DELETE FROM uo_userproperties WHERE name='editseason' AND value=$season");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value='" . DBEscapeString('season:' . $seasonId) . "'");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value IN (SELECT CONCAT('series:', CAST(series_id AS CHAR)) FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value IN (SELECT CONCAT('pool:', CAST(pool_id AS CHAR)) FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value IN (SELECT CONCAT('team:', CAST(team_id AS CHAR)) FROM tmp_del_team)");
+        DeleteSeasonStats($seasonId);
+        DBQuery("DELETE FROM uo_api_token WHERE scope_type='season' AND scope_id=$season");
+        DBQuery("DELETE FROM uo_comment WHERE type=1 AND id=$season");
+        DBQuery("DELETE FROM uo_comment WHERE type=2 AND id IN (SELECT CAST(series_id AS CHAR) FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_comment WHERE type=3 AND id IN (SELECT CAST(pool_id AS CHAR) FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_comment WHERE type IN (4,5,6) AND id IN (SELECT CAST(game_id AS CHAR) FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='ultiorganizer' AND owner_id=$season");
+        DBQuery("DELETE FROM uo_urls WHERE owner='series' AND owner_id IN (SELECT CAST(series_id AS CHAR) FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='pool' AND owner_id IN (SELECT CAST(pool_id AS CHAR) FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='team' AND owner_id IN (SELECT CAST(team_id AS CHAR) FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='game' AND owner_id IN (SELECT CAST(game_id AS CHAR) FROM tmp_del_game)");
+
+        DBQuery("DELETE FROM uo_spirit_score WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_spirit_timeout WHERE game IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_team_spirit_stats WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_game_pool WHERE game IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_game_pool WHERE pool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_game WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_specialranking WHERE frompool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_moveteams WHERE frompool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_moveteams WHERE topool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_scheduling_name WHERE scheduling_id IN (SELECT scheduling_id FROM tmp_del_scheduling)
+            AND scheduling_id NOT IN (SELECT scheduling_id FROM uo_moveteams WHERE scheduling_id IS NOT NULL)
+            AND scheduling_id NOT IN (SELECT scheduling_id FROM uo_specialranking WHERE scheduling_id IS NOT NULL)
+            AND NOT EXISTS (SELECT 1 FROM uo_game g WHERE uo_scheduling_name.scheduling_id
+                IN (g.scheduling_name_home, g.scheduling_name_visitor, g.name,
+                    IF(g.hometeam IS NULL, g.respteam, NULL)))");
+        DBQuery("DELETE FROM uo_team_pool WHERE pool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_team_pool WHERE team IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_accreditationlog WHERE team IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_accreditationlog WHERE game IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_accreditationlog WHERE player IN
+            (SELECT player_id FROM uo_player WHERE team IN (SELECT team_id FROM tmp_del_team))");
+        DBQuery("DELETE FROM uo_player WHERE team IN (SELECT team_id FROM tmp_del_team)");
+        $profileIds = array_map('intval', array_column(DBQueryToArray("SELECT profile_id FROM tmp_del_profile
+            WHERE profile_id NOT IN (SELECT profile_id FROM uo_player WHERE profile_id IS NOT NULL)"), 'profile_id'));
+        if ($profileIds) {
+            $profileList = implode(",", $profileIds);
+            DBQuery("DELETE FROM uo_urls WHERE owner='player' AND owner_id IN ('" . implode("','", $profileIds) . "')");
+            DeleteUserRoleRows(DBQueryToArray("SELECT prop_id, userid, value FROM uo_userproperties
+                WHERE name='userrole' AND value IN ('playeradmin:" . implode("','playeradmin:", $profileIds) . "')"), "event-delete");
+            DBQuery("DELETE FROM uo_player_profile WHERE profile_id IN ($profileList)");
+        }
+        $teamIds = array_column(DBQueryToArray("SELECT team_id FROM tmp_del_team"), 'team_id');
+        DBQuery("DELETE FROM uo_team WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_enrolledteam WHERE series IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_pool WHERE pool_id IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_series WHERE series_id IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_reservation WHERE season=$season");
+        DBQuery("DELETE FROM uo_season WHERE season_id=$season");
+        // Same rule as CanDeleteLocation(): another event's transfer times keep a location.
+        DBQuery("DELETE FROM uo_location_info WHERE location_id IN (SELECT id FROM tmp_del_location)
+            AND location_id NOT IN (SELECT location FROM uo_reservation WHERE location IS NOT NULL)
+            AND location_id NOT IN (SELECT fromlocation FROM uo_movingtime)
+            AND location_id NOT IN (SELECT tolocation FROM uo_movingtime)");
+        DBQuery("DELETE FROM uo_location WHERE id IN (SELECT id FROM tmp_del_location)
+            AND id NOT IN (SELECT location FROM uo_reservation WHERE location IS NOT NULL)
+            AND id NOT IN (SELECT fromlocation FROM uo_movingtime)
+            AND id NOT IN (SELECT tolocation FROM uo_movingtime)");
+        $clubIds = array_map('intval', array_column(DBQueryToArray("SELECT club FROM tmp_del_club
+            WHERE club NOT IN (SELECT club FROM uo_team WHERE club IS NOT NULL)"), 'club'));
+        if ($clubIds) {
+            DBQuery("DELETE FROM uo_urls WHERE owner='club' AND owner_id IN ('" . implode("','", $clubIds) . "')");
+            DBQuery("DELETE FROM uo_club WHERE club_id IN (" . implode(",", $clubIds) . ")");
+        }
+        DBQuery('COMMIT');
+    } catch (Throwable $e) {
+        DBQuery('ROLLBACK');
+        DBSetExceptionMode($previousExceptionMode);
+        throw $e;
+    }
+    DBSetExceptionMode($previousExceptionMode);
+
+    // Only the deleted rows named these files, so they go once the deletion is committed.
+    if ($banner !== '' && is_file(UPLOAD_DIR . "banners/" . $banner)) {
+        unlink(UPLOAD_DIR . "banners/" . $banner);
+    }
+    $imageDirs = [];
+    foreach ($teamIds as $teamId) {
+        $imageDirs[] = UPLOAD_DIR . "teams/" . (int) $teamId . "/";
+    }
+    foreach ($clubIds as $clubId) {
+        $imageDirs[] = UPLOAD_DIR . "clubs/" . $clubId . "/";
+    }
+    foreach ($profileIds as $profileId) {
+        $imageDirs[] = UPLOAD_DIR . "players/" . $profileId . "/";
+    }
+    foreach ($imageDirs as $dir) {
+        foreach ([$dir . "thumbs/", $dir] as $subdir) {
+            foreach (glob($subdir . "*") ?: [] as $file) {
+                if (is_file($file)) {
+                    unlink($file);
+                }
+            }
+            if (is_dir($subdir)) {
+                rmdir($subdir);
+            }
+        }
+    }
+    SetUserSessionData($_SESSION['uid']);
+    Log2("season", "delete", $seasonId);
+    ClearSeasonRuntimeCache();
+    return true;
+}
+
+/**
  * Adds a season.
  *
  * Access level: superadmin

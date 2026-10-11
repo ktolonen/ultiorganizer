@@ -22,6 +22,11 @@ if (!empty($_GET['user'])) {
     $userid = $_SESSION['uid'];
 }
 
+if ($userid != "anonymous" && !UserInfo($userid)) {
+    showPage(_("User information"), "<p class='warning'>" . _("User not found.") . "</p>");
+    return;
+}
+
 if ($userid != "anonymous") {
     if (!empty($_GET['created'])) {
         $message .= "<p>" . _("Added new user") . "</p><hr/>";

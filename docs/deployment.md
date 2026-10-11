@@ -47,6 +47,8 @@ Install packages include `sql/ultiorganizer.sql` and `conf/config.inc.example.ph
 
 Extracting an update package over an installation does not delete files a release removed. Delete them by hand; for example, the legacy `mobile/` directory is no longer shipped and its leftover pages no longer work.
 
+After an update that changes translations, gracefully reload the web server (or PHP-FPM). gettext caches each `.mo` catalog per worker process, so old workers keep showing the previous strings until they restart.
+
 ## PHP upload limits
 
 The event data import (`admin/eventdataimport.php`) and database restore (`admin/dbrestore.php`) can take uploads of tens of megabytes. `post_max_size` and `upload_max_filesize` are `PHP_INI_PERDIR`, so set them on the server, above the largest expected snapshot, with `post_max_size` slightly larger. For example in `php.ini`, an FPM pool or `.user.ini`:

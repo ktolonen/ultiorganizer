@@ -77,7 +77,7 @@ $memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 		cell.textContent = value;
 	}
 
-	function showMembers(members) {
+	function showMembers(members, failed) {
 		var table = document.getElementById("accreditation_idgrid");
 		var head = table.tHead.rows[0];
 		var body = table.tBodies[0];
@@ -96,6 +96,7 @@ $memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 		for (i = 0; i < members.length; i++) {
 			var row = body.insertRow(-1);
 			row.memberData = {};
+			row.tabIndex = 0;
 			for (j = 0; j < memberColumns.length; j++) {
 				memberCell(row, memberColumns[j], memberValue(members[i], memberColumns[j].key));
 			}
@@ -105,7 +106,8 @@ $memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 			row.memberData.Lastname = memberValue(members[i], "Lastname");
 			row.memberData.Jersey = memberValue(members[i], "Jersey");
 		}
-		document.getElementById("accreditation_idempty").hidden = members.length > 0;
+		document.getElementById("accreditation_idempty").hidden = failed || members.length > 0;
+		document.getElementById("accreditation_iderror").hidden = !failed;
 		if (memberSort) {
 			memberSort.refresh();
 		} else {
@@ -127,20 +129,27 @@ $memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 			"&lastname=" + encodeURIComponent(lastname) + "&team=<?php echo $teamId; ?>";
 		showMembers([]);
 		document.getElementById("accreditation_idempty").hidden = true;
+		document.getElementById("accreditation_iderror").hidden = true;
 		document.getElementById("selectaccreditation_id").showModal();
 		fetch(url, {
 			credentials: "same-origin"
 		}).then(function(response) {
+			if (!response.ok) {
+				throw new Error("HTTP " + response.status);
+			}
 			return response.text();
 		}).then(function(text) {
 			if (request !== memberRequest) {
 				return;
 			}
 			var xml = new DOMParser().parseFromString(text, "text/xml");
+			if (xml.getElementsByTagName("parsererror").length > 0) {
+				throw new Error("Invalid response");
+			}
 			showMembers(xml.getElementsByTagName("Member"));
 		}).catch(function() {
 			if (request === memberRequest) {
-				showMembers([]);
+				showMembers([], true);
 			}
 		});
 	}
@@ -197,6 +206,13 @@ $memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 		table.tBodies[0].addEventListener("click", function(e) {
 			var row = e.target.closest("tr");
 			if (row && row.memberData) {
+				handleSubmit(row.memberData);
+			}
+		});
+		table.tBodies[0].addEventListener("keydown", function(e) {
+			var row = e.target.closest("tr");
+			if (row && row === e.target && row.memberData && (e.key === "Enter" || e.key === " ")) {
+				e.preventDefault();
 				handleSubmit(row.memberData);
 			}
 		});

@@ -196,7 +196,9 @@ echo $html;
             var request = Array.prototype.map.call(lists, function(list) {
                 return sortedListIds(list, "li").join(":");
             }).join("|");
-            postSortedLists("index.php?view=admin/saveteamstandings", request, document.getElementById("responseStatus"));
+            postSortedLists("index.php?view=admin/saveteamstandings", request, document.getElementById("responseStatus"), {
+                errorText: "<?php echo _("Saving failed. Please try again."); ?>"
+            });
         });
     })();
 </script>

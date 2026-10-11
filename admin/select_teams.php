@@ -19,6 +19,11 @@ if (isset($_GET['series'])) {
     $seriesId = intval($_GET['series']);
 }
 
+if (!SeriesInfo($seriesId)) {
+    showPage($title, "<p class='warning'>" . _("Division not found") . ".</p>");
+    return;
+}
+
 $pools = SeriesPools($seriesId, false, true, true);
 $not_started = [];
 foreach ($pools as $pool) {
@@ -160,7 +165,12 @@ echo "</td></tr></table>\n";
 <script type="text/javascript">
     function hide(id) {
         var elem = document.getElementById(id);
-        elem.parentNode.removeChild(elem);
+        if (elem.parentNode.tagName === "OL") {
+            // Removing a pooled team moves it to "Without pool" so the saved request still lists it.
+            document.getElementById("unpooled").appendChild(elem);
+        } else {
+            elem.parentNode.removeChild(elem);
+        }
     }
 
     (function() {
@@ -175,7 +185,9 @@ echo "</td></tr></table>\n";
                 var poolId = list.id === "unpooled" ? "0" : list.id.substring(3);
                 return [poolId].concat(sortedListIds(list, "team")).join("/");
             }).join("|");
-            postSortedLists("index.php?view=admin/saveteampools", request, document.getElementById("responseStatus"));
+            postSortedLists("index.php?view=admin/saveteampools", request, document.getElementById("responseStatus"), {
+                errorText: "<?php echo _("Saving failed. Please try again."); ?>"
+            });
         });
     })();
 </script>

@@ -16,6 +16,7 @@ denyDirectCustomizationAccess(__FILE__);
 			<tbody></tbody>
 		</table>
 		<p id="accreditation_idempty" hidden="hidden"><?php echo _("No players matched the search."); ?></p>
+		<p id="accreditation_iderror" hidden="hidden"><?php echo _("Player search failed. Please try again."); ?></p>
 		<div>
 			<hr />
 			<input type='submit' class='button' value="<?php echo _("Close"); ?>" />

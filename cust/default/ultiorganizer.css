@@ -827,6 +827,35 @@ table#pagemenu a.current {
 	top: 1px;
 }
 
+/* Long menus (ul variant) wrap as separate buttons, like the mobile layout,
+   instead of stacked tab rows. */
+.pagemenu_container ul#pagemenu {
+	display: flex;
+	padding-bottom: 6px;
+	flex-wrap: wrap;
+	gap: 4px;
+	align-items: stretch;
+}
+
+.pagemenu_container ul#pagemenu li {
+	float: none;
+	margin: 0;
+}
+
+.pagemenu_container ul#pagemenu li a {
+	box-sizing: border-box;
+	float: none;
+	height: 100%;
+	margin-bottom: 0;
+	padding: 5px 9px;
+	border: 1px solid var(--tab-border);
+	border-radius: 6px;
+}
+
+.pagemenu_container ul#pagemenu li a.current {
+	top: 0;
+}
+
 @media only screen and (max-width: 768px) {
 	.pagemenu_container {
 		padding-bottom: 2px;
@@ -979,6 +1008,43 @@ table#pagemenu a.current {
 .placements-table th a:hover,
 .placements-table th a:focus {
 	color: var(--table-header-text);
+}
+
+.placements-scroll {
+	overflow-x: auto;
+}
+
+.placements-table {
+	width: auto;
+	min-width: 100%;
+	overflow: visible;
+}
+
+.placements-table th,
+.placements-table td {
+	vertical-align: top;
+	min-width: 7em;
+}
+
+.placements-table th {
+	white-space: nowrap;
+}
+
+.placements-table th:first-child,
+.placements-table td:first-child {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	min-width: 0;
+	background-color: var(--surface);
+}
+
+.placements-table th:first-child {
+	background-color: var(--table-header-bg);
+}
+
+.placements-table tr:nth-of-type(even) td:first-child {
+	background-color: var(--table-row-even);
 }
 
 .teams-table tr:first-child td {
@@ -1358,6 +1424,40 @@ tr.state-diff>td {
 	display: block;
 	max-width: 100%;
 	height: auto;
+}
+
+/* Group filter links: wrapping chips instead of an underlined run of text. */
+.grouplinks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.grouplinks .groupinglink:link,
+.grouplinks .groupinglink:visited {
+	float: none;
+	padding: 2px 9px;
+	border: 1px solid var(--tab-border);
+	border-radius: 6px;
+	font-size: 0.9em;
+	font-weight: normal;
+	text-decoration: none;
+}
+
+.grouplinks .groupinglink:hover,
+.grouplinks .groupinglink:focus {
+	border-color: var(--tab-hover-border);
+	background-color: var(--tab-hover-bg);
+}
+
+.grouplinks .groupinglink.current:link,
+.grouplinks .groupinglink.current:visited {
+	border-color: var(--tab-active-border);
+	background-color: var(--tab-active-bg);
+}
+
+.grouplinks .selgroupinglink {
+	color: var(--accent-deep);
 }
 
 .scorekeeping-link-games td {

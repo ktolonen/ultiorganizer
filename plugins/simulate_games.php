@@ -24,6 +24,7 @@ if (!isSuperAdmin()) {
 
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
+include_once 'lib/spirit.functions.php';
 include_once 'lib/standings.functions.php';
 include_once 'lib/team.functions.php';
 
@@ -40,6 +41,24 @@ function undoPoolMoves($poolId)
         unset($_SESSION['userproperties']['userrole']['seriesadmin'][$poolinfo['series']]);
         //     }
 
+    }
+}
+
+function simulateSpirit($gameId, $teamIds, $categories)
+{
+    foreach ($teamIds as $teamId) {
+        $points = [];
+        foreach ($categories as $category) {
+            if ((int) $category['index'] > 0) {
+                $span = (int) $category['max'] - (int) $category['min'];
+                $drop = (int) round($span * (rand(0, 100) / 100) * (rand(0, 100) / 100));
+                $points[$category['category_id']] = max((int) $category['min'], (int) $category['max'] - $drop);
+            }
+        }
+        $valid = SpiritValidateSubmittedPoints($points, $categories);
+        if ($valid !== false) {
+            SpiritScoreReplaceByGameTeam($gameId, $teamId, $valid);
+        }
     }
 }
 
@@ -61,6 +80,13 @@ if (!empty($_POST['season'])) {
 if (!empty($_POST['winner_mode']) && isset($winnerModes[$_POST['winner_mode']])) {
     $winnerMode = $_POST['winner_mode'];
 }
+$spiritMode = 0;
+if (!empty($seasonId)) {
+    $seasonInfo = SeasonInfo($seasonId);
+    $spiritMode = (int) ($seasonInfo['spiritmode'] ?? 0);
+}
+$spiritCategories = $spiritMode > 0 ? SpiritCategories($spiritMode) : [];
+$simulateSpirit = $spiritMode > 0 && (isset($_POST['spirit']) || !isset($_POST['simulate']));
 
 if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
@@ -203,9 +229,17 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
             GameSetScoreSheetKeeper($game['game_id'], "Game Simulator");
 
             GameSetResult($game['game_id'], $h, $a, false);
+
+            if ($simulateSpirit) {
+                simulateSpirit($game['game_id'], [$info['hometeam'], $info['visitorteam']], $spiritCategories);
+            }
         }
         ResolvePoolStandings($poolId);
         PoolResolvePlayed($poolId);
+    }
+    // Refreshing per game would recompute the whole event's spirit data every time.
+    if ($simulateSpirit) {
+        RefreshSeasonSpiritData($seasonId);
     }
 } elseif (isset($_POST['reset']) && !empty($_POST['pools'])) {
 
@@ -231,6 +265,8 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
             GameSetScoreSheetKeeper($game['game_id'], null);
 
             GameClearResult($game['game_id'], false);
+
+            SpiritScoreDeleteByGame($game['game_id']);
         }
 
         undoPoolMoves($poolId);
@@ -239,6 +275,9 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
         ResolvePoolStandings($poolId);
         PoolResolvePlayed($poolId);
         // TODO undo moves, uo_team_pool.activerank, special ranks, ...
+    }
+    if ($spiritMode > 0) {
+        RefreshSeasonSpiritData($seasonId);
     }
 }
 
@@ -297,6 +336,10 @@ if (empty($seasonId)) {
         $html .= "<option class='dropdown' value='" . utf8entities($mode) . "'" . $selected . ">" . utf8entities($label) . "</option>\n";
     }
     $html .= "</select></p>\n";
+    if ($spiritMode > 0) {
+        $checked = $simulateSpirit ? " checked='checked'" : "";
+        $html .= "<p><label><input type='checkbox' name='spirit' value='1'" . $checked . "/> " . ("Enter random spirit scores") . "</label></p>\n";
+    }
     $html .= "<p><input class='button' type='submit' name='simulate' value='" . ("Simulate") . "'/> <input class='button' type='submit' name='reset' value='" . ("Reset played games") . "'/></p>";
     $html .= "<div>";
     $html .= "<input type='hidden' name='season' value='$seasonId' />\n";
@@ -304,6 +347,25 @@ if (empty($seasonId)) {
 }
 
 $html .= "</form>";
+
+// A repeat press while a long run is still going would start another run.
+$html .= "<script type='text/javascript'>\n";
+$html .= "document.getElementById('tables').addEventListener('submit', function (event) {\n";
+$html .= "  var form = event.target;\n";
+$html .= "  if (form.getAttribute('data-submitting')) {\n";
+$html .= "    event.preventDefault();\n";
+$html .= "    return;\n";
+$html .= "  }\n";
+$html .= "  form.setAttribute('data-submitting', '1');\n";
+$html .= "  // Disable on the next tick: a disabled button is left out of the POST body.\n";
+$html .= "  window.setTimeout(function () {\n";
+$html .= "    var buttons = form.querySelectorAll('input[type=submit]');\n";
+$html .= "    for (var i = 0; i < buttons.length; i++) {\n";
+$html .= "      buttons[i].disabled = true;\n";
+$html .= "    }\n";
+$html .= "  }, 0);\n";
+$html .= "});\n";
+$html .= "</script>\n";
 
 showPage($title, $html);
 ?>
