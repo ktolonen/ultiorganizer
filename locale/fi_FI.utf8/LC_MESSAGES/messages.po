@@ -19,7 +19,6 @@ msgstr ""
 "X-Poedit-SearchPath-4: admin\n"
 "X-Poedit-SearchPath-5: cust\n"
 "X-Poedit-SearchPath-6: scorekeeper\n"
-"X-Poedit-SearchPath-7: mobile\n"
 
 #: admin/editgame.php:247
 msgid " (enter '0' if not live)"
@@ -1312,11 +1311,11 @@ msgstr "Vahvista tunnuksesi Pelikoneeseen"
 
 #: user/addextraemail.php:43
 msgid "Confirmation email has been sent to the email address provided"
-msgstr "Vahvistusviesti lähetetty antamaasi sähköpostiosoitteeseen"
+msgstr "Vahvistusviesti lähetetään antamaasi sähköpostiosoitteeseen"
 
 #: user/addextraemail.php:70
 msgid "Confirmation email will be sent to the email address provided"
-msgstr "Vahvistusviesti lähetetty antamaasi sähköpostiosoitteeseen"
+msgstr "Vahvistusviesti lähetetään antamaasi sähköpostiosoitteeseen"
 
 #: user/enrollteam.php:113
 msgid "Confirmed"
@@ -5659,7 +5658,7 @@ msgstr "Tallenna muutokset?"
 
 #: user/adddefensesheet.php:314
 msgid "Save defences"
-msgstr "Tallenna pisteet"
+msgstr "Tallenna puolustukset"
 
 #: scorekeeper/addresult.php:146 scorekeeper/addresult.php:189
 #: scorekeeper/addscoresheet.php:467
@@ -5797,7 +5796,7 @@ msgstr "Pöytäkirjanpitäjät"
 
 #: cust/wfdf/pdfscoresheet.php:1328
 msgid "Scorekeepers fill in their names."
-msgstr "Pisteenpitäjät kirjoittavat nimensä."
+msgstr "Pöytäkirjanpitäjät kirjoittavat nimensä."
 
 #: user/scorekeepinglink.php:10 user/scoresheethistory.php:410
 msgid "Scorekeeping link"

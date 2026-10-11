@@ -20,7 +20,6 @@ msgstr ""
 "X-Poedit-SearchPath-4: admin\n"
 "X-Poedit-SearchPath-5: cust\n"
 "X-Poedit-SearchPath-6: scorekeeper\n"
-"X-Poedit-SearchPath-7: mobile\n"
 
 #: admin/editgame.php:247
 msgid " (enter '0' if not live)"
@@ -5839,7 +5838,7 @@ msgstr "Protokollführer"
 
 #: cust/wfdf/pdfscoresheet.php:1328
 msgid "Scorekeepers fill in their names."
-msgstr "Scorekeeper tragen ihre Namen ein."
+msgstr "Protokollführer tragen ihre Namen ein."
 
 #: user/scorekeepinglink.php:10 user/scoresheethistory.php:410
 msgid "Scorekeeping link"
