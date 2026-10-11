@@ -1027,7 +1027,8 @@ function DeleteSeason($seasonId)
  * Access level: superadmin
  *
  * @param string $seasonId uo_season.season_id
- * @return boolean TRUE on success.
+ * @return boolean TRUE on success; FALSE when the season does not exist or a game
+ *   of another event still uses one of its teams.
  */
 function DeleteSeasonWithData($seasonId)
 {
@@ -1038,7 +1039,7 @@ function DeleteSeasonWithData($seasonId)
         return false;
     }
 
-    RemoveSeasonBanner($seasonId);
+    $banner = SeasonInfo($seasonId)['banner_image'] ?? '';
     $season = "'" . DBEscapeString($seasonId) . "'";
     $previousExceptionMode = DBShouldThrowExceptions();
     DBSetExceptionMode(true);
@@ -1075,6 +1076,15 @@ function DeleteSeasonWithData($seasonId)
             WHERE topool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
         DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_specialranking
             WHERE frompool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
+
+        // A game moved to another event keeps its teams; deleting them would corrupt that game.
+        if (DBQueryToValue("SELECT COUNT(*) FROM uo_game g
+            JOIN tmp_del_team t ON t.team_id IN (g.hometeam, g.visitorteam, g.respteam)
+            WHERE g.game_id NOT IN (SELECT game_id FROM tmp_del_game)") > 0) {
+            DBQuery('ROLLBACK');
+            DBSetExceptionMode($previousExceptionMode);
+            return false;
+        }
 
         // Roles resolve their season through the target rows, so they go before those rows.
         DeleteEventUserRoles($seasonId);
@@ -1130,6 +1140,10 @@ function DeleteSeasonWithData($seasonId)
     }
     DBSetExceptionMode($previousExceptionMode);
 
+    // Only the deleted row named the banner file, so it goes once the deletion is committed.
+    if ($banner !== '' && is_file(UPLOAD_DIR . "banners/" . $banner)) {
+        unlink(UPLOAD_DIR . "banners/" . $banner);
+    }
     SetUserSessionData($_SESSION['uid']);
     Log2("season", "delete", $seasonId);
     ClearSeasonRuntimeCache();
