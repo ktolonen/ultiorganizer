@@ -38,19 +38,6 @@ if (!function_exists('convertToUtf8')) {
             }
         }
 
-        // Last resort for ISO-8859-1 input when other extensions are missing.
-        if ($sourceEncoding === 'ISO-8859-1') {
-            // ISO-8859-1 maps 1:1 onto the first 256 code points (utf8_encode() is deprecated since PHP 8.2).
-            $converted = preg_replace_callback(
-                '/[\x80-\xFF]/',
-                static fn(array $m): string => chr(0xC0 | (ord($m[0]) >> 6)) . chr(0x80 | (ord($m[0]) & 0x3F)),
-                $value,
-            );
-            if (!function_exists('mb_check_encoding') || mb_check_encoding($converted, 'UTF-8')) {
-                return $converted;
-            }
-        }
-
         // Strip out any invalid bytes to avoid failing DB inserts.
         if (function_exists('iconv')) {
             $converted = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
