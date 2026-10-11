@@ -319,11 +319,12 @@ if ($list == "allteams" || $list == "byseeding") {
     $placements = array_keys($placements);
     sort($placements, SORT_NUMERIC);
 
-    $html .= "<table class='teams-table placements-table' cellpadding='2' style='width:100%;'>\n";
+    $html .= "<div class='placements-scroll'>\n";
+    $html .= "<table class='teams-table placements-table' cellpadding='2'>\n";
     $html .= "<tr>";
-    $html .= "<th style='width:20%;'>" . _("Placement") . "</th>";
+    $html .= "<th>" . _("Placement") . "</th>";
     foreach ($series as $sidx => $ser) {
-        $html .= "<th style='width:" . (80 / count($series)) . "%;'><a href='?view=seriesstatus&amp;series=" .
+        $html .= "<th><a href='?view=seriesstatus&amp;series=" .
           $ser['series_id'] . "'>" . utf8entities(U_($ser['name'])) . "</a>";
         if (empty($seriesConfirmed[$sidx])) {
             $html .= " <span class='unconfirmed'>*</span>";
@@ -366,7 +367,7 @@ if ($list == "allteams" || $list == "byseeding") {
         }
         $html .= "</tr>\n";
     }
-    $html .= "</table>\n";
+    $html .= "</table>\n</div>\n";
     if (count($seriesConfirmed) !== count(array_filter($seriesConfirmed))) {
         $html .= "<p class='unconfirmed'>* " . _("Automatic final standings, not confirmed") . "</p>\n";
     }

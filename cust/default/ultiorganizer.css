@@ -1010,6 +1010,43 @@ table#pagemenu a.current {
 	color: var(--table-header-text);
 }
 
+.placements-scroll {
+	overflow-x: auto;
+}
+
+.placements-table {
+	width: auto;
+	min-width: 100%;
+	overflow: visible;
+}
+
+.placements-table th,
+.placements-table td {
+	vertical-align: top;
+	min-width: 7em;
+}
+
+.placements-table th {
+	white-space: nowrap;
+}
+
+.placements-table th:first-child,
+.placements-table td:first-child {
+	position: sticky;
+	left: 0;
+	z-index: 1;
+	min-width: 0;
+	background-color: var(--surface);
+}
+
+.placements-table th:first-child {
+	background-color: var(--table-header-bg);
+}
+
+.placements-table tr:nth-of-type(even) td:first-child {
+	background-color: var(--table-row-even);
+}
+
 .teams-table tr:first-child td {
 	border-top: 1px solid var(--border);
 }
