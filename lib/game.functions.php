@@ -1237,7 +1237,7 @@ function GameName($gameInfo)
 
 function GameHasStarted($gameInfo)
 {
-    return $gameInfo['hasstarted'] > 0;
+    return ($gameInfo['hasstarted'] ?? 0) > 0;
 }
 
 /**

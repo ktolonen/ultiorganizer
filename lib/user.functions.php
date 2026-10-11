@@ -2141,17 +2141,19 @@ function GameResponsibilityArray($season, $series = null)
 
     $ret = [];
     while ($row = mysqli_fetch_assoc($result)) {
-        if (!isset($ret[$row['reservationgroup']])) {
-            $ret[$row['reservationgroup']] = [];
+        $group = (string) $row['reservationgroup'];
+        $resId = (string) $row['res_id'];
+        if (!isset($ret[$group])) {
+            $ret[$group] = [];
         }
-        if (!isset($ret[$row['reservationgroup']][$row['res_id']])) {
-            $ret[$row['reservationgroup']][$row['res_id']] = [];
+        if (!isset($ret[$group][$resId])) {
+            $ret[$group][$resId] = [];
         }
-        $gamesArray = $ret[$row['reservationgroup']][$row['res_id']];
+        $gamesArray = $ret[$group][$resId];
         $gamesArray['starttime'] = $row['starttime'];
         $gamesArray['locationname'] = utf8entities(ReservationPlaceText(U_($row['locationname']), U_($row['fieldname'])));
         $gamesArray[$row['game_id']] = $row;
-        $ret[$row['reservationgroup']][$row['res_id']] = $gamesArray;
+        $ret[$group][$resId] = $gamesArray;
     }
     return  $ret;
 }

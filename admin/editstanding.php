@@ -10,11 +10,16 @@ include_once 'lib/series.functions.php';
 
 $LAYOUT_ID = EDITSTANDING;
 
-$season = $_GET["season"];
-$poolId = (int) $_GET["pool"];
-$teamId = (int) $_GET["team"];
+$season = $_GET["season"] ?? "";
+$poolId = (int) ($_GET["pool"] ?? 0);
+$teamId = (int) ($_GET["team"] ?? 0);
 
 $title = _("Edit");
+
+if (!TeamPoolInfo($teamId, $poolId)) {
+    showPage($title, "<p class='warning'>" . _("Team not found") . ".</p>");
+    return;
+}
 
 $backurl = utf8entities(empty($_SERVER['HTTP_REFERER']) ? "" : $_SERVER['HTTP_REFERER']);
 //common page
@@ -26,7 +31,7 @@ contentStart();
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-    $backurl = utf8entities($_POST['backurl']);
+    $backurl = utf8entities($_POST['backurl'] ?? '');
     $rank = 0;
     $activerank = 0;
     if (!empty($_POST['rank'])) {
