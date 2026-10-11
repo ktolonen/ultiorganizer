@@ -1360,6 +1360,40 @@ tr.state-diff>td {
 	height: auto;
 }
 
+/* Group filter links: wrapping chips instead of an underlined run of text. */
+.grouplinks {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px;
+}
+
+.grouplinks .groupinglink:link,
+.grouplinks .groupinglink:visited {
+	float: none;
+	padding: 2px 9px;
+	border: 1px solid var(--tab-border);
+	border-radius: 6px;
+	font-size: 0.9em;
+	font-weight: normal;
+	text-decoration: none;
+}
+
+.grouplinks .groupinglink:hover,
+.grouplinks .groupinglink:focus {
+	border-color: var(--tab-hover-border);
+	background-color: var(--tab-hover-bg);
+}
+
+.grouplinks .groupinglink.current:link,
+.grouplinks .groupinglink.current:visited {
+	border-color: var(--tab-active-border);
+	background-color: var(--tab-active-bg);
+}
+
+.grouplinks .selgroupinglink {
+	color: var(--accent-deep);
+}
+
 .scorekeeping-link-games td {
 	padding: 1px 8px 1px 0;
 }

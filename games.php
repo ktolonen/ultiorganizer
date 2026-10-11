@@ -263,19 +263,18 @@ if (!$print && !$singleview) {
     $html .= pageMenu($menutabs, "", false);
 
     if (count($groups) > 1) {
-        $html .= "<p>\n";
+        $html .= "<p class='grouplinks'>\n";
         foreach ($groups as $grouptmp) {
             $groupLabel = isset($grouptmp['reservationgroup']) ? (string) $grouptmp['reservationgroup'] : '';
             $encodedGroup = urlencode($groupLabel);
             if ($group == $groupLabel) {
-                $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . utf8entities(U_($groupLabel)) . "</span></a>";
+                $html .= "<a class='groupinglink current' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . utf8entities(U_($groupLabel)) . "</span></a>";
             } else {
                 $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=" . $encodedGroup . "'>" . utf8entities(U_($groupLabel)) . "</a>";
             }
-            $html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
         }
         if ($group == "all") {
-            $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=all'><span class='selgroupinglink'>" . _("All") . "</span></a>";
+            $html .= "<a class='groupinglink current' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=all'><span class='selgroupinglink'>" . _("All") . "</span></a>";
         } else {
             $html .= "<a class='groupinglink' href='" . utf8entities($baseurl) . "&amp;filter=" . $filter . "&amp;group=all'>" . _("All") . "</a>";
         }

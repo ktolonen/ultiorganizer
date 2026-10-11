@@ -94,19 +94,18 @@ if (empty($season)) {
     }
     $groups = SeasonReservationgroups($season);
     if (count($groups) > 1) {
-        $html .= "<p>\n";
+        $html .= "<p class='grouplinks'>\n";
         foreach ($groups as $grouptmp) {
             $groupLabel = isset($grouptmp['reservationgroup']) ? (string) $grouptmp['reservationgroup'] : '';
             $encodedGroup = urlencode($groupLabel);
             if ($group == $groupLabel) {
-                $html .= "<a class='groupinglink' href='?view=admin/reservations&amp;season=$season&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
+                $html .= "<a class='groupinglink current' href='?view=admin/reservations&amp;season=$season&amp;group=" . $encodedGroup . "'><span class='selgroupinglink'>" . U_($groupLabel) . "</span></a>";
             } else {
                 $html .= "<a class='groupinglink' href='?view=admin/reservations&amp;season=$season&amp;group=" . $encodedGroup . "'>" . U_($groupLabel) . "</a>";
             }
-            $html .= "&nbsp;&nbsp;&nbsp;&nbsp;";
         }
         if ($group == "all") {
-            $html .= "<a class='groupinglink' href='?view=admin/reservations&amp;season=$season&amp;group=all'><span class='selgroupinglink'>" . _("All") . "</span></a>";
+            $html .= "<a class='groupinglink current' href='?view=admin/reservations&amp;season=$season&amp;group=all'><span class='selgroupinglink'>" . _("All") . "</span></a>";
         } else {
             $html .= "<a class='groupinglink' href='?view=admin/reservations&amp;season=$season&amp;group=all'>" . _("All") . "</a>";
         }
