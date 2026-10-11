@@ -11,11 +11,15 @@ include_once 'lib/reservation.functions.php';
 
 $LAYOUT_ID = POOLGAMES;
 
-$poolId = (int) $_GET["pool"];
-$season = $_GET["season"];
+$poolId = (int) ($_GET["pool"] ?? 0);
+$season = $_GET["season"] ?? "";
+$poolInfo = PoolInfo($poolId);
+if (!$poolInfo) {
+    showPage(_("Games"), "<p class='warning'>" . _("Pool not found") . ".</p>");
+    return;
+}
 $rounds = 1;
 $title = utf8entities(U_(PoolSeriesName($poolId)) . ", " . U_(PoolName($poolId))) . ": " . _("Games");
-$poolInfo = PoolInfo($poolId);
 $usepseudoteams = PseudoTeamsOnly($poolId);
 $generatedgames = [];
 $nomutual = 0;

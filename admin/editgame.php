@@ -8,8 +8,12 @@ include_once 'lib/common.functions.php';
 
 $LAYOUT_ID = EDITGAME;
 $backurl = SafeRedirectUrl($_SERVER['HTTP_REFERER'] ?? "", "");
-$gameId = (int) $_GET["game"];
+$gameId = (int) ($_GET["game"] ?? 0);
 $info = GameResult($gameId);
+if (!$info) {
+    showPage(_("Edit game"), "<p class='warning'>" . _("Game not found") . ".</p>");
+    return;
+}
 $season = "";
 
 if (!empty($_GET["season"])) {
@@ -42,7 +46,7 @@ $gp = [
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-    $backurl = SafeRedirectUrl($_POST['backurl'], "");
+    $backurl = SafeRedirectUrl($_POST['backurl'] ?? '', "");
     $ok = true;
     if (empty($_POST['pseudo'])) {
         $gp['hometeam'] = $_POST['home'];

@@ -36,7 +36,7 @@ if (!$poolinfo || !hasSeasonSeriesPageAccess($poolinfo['season'], $poolinfo['ser
 
 //process itself on submit
 if (!empty($_POST['save'])) {
-    $backurl = utf8entities(SafeRedirectUrl($_POST['backurl'], ""));
+    $backurl = utf8entities(SafeRedirectUrl($_POST['backurl'] ?? '', ""));
     $teams = PoolTeams($poolId);
 
     //Remove un-checked teams
