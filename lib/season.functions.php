@@ -1018,7 +1018,7 @@ function DeleteSeason($seasonId)
 /**
  * Deletes a season together with all its divisions, pools, teams, players, games,
  * spirit scores, reservations and locations used only by this season, its archived
- * statistics, banner, team and club images, comments and links, and the event-scoped
+ * statistics, banner, team, club and player images, comments and links, and the event-scoped
  * user roles, editseason rows and API tokens pointing at it.
  *
  * Player profiles are deleted when no other player uses them. Meant for test data;
@@ -1121,8 +1121,13 @@ function DeleteSeasonWithData($seasonId)
         DBQuery("DELETE FROM uo_team_pool WHERE pool IN (SELECT pool_id FROM tmp_del_pool)");
         DBQuery("DELETE FROM uo_team_pool WHERE team IN (SELECT team_id FROM tmp_del_team)");
         DBQuery("DELETE FROM uo_player WHERE team IN (SELECT team_id FROM tmp_del_team)");
-        DBQuery("DELETE FROM uo_player_profile WHERE profile_id IN (SELECT profile_id FROM tmp_del_profile)
-            AND profile_id NOT IN (SELECT profile_id FROM uo_player WHERE profile_id IS NOT NULL)");
+        $profileIds = array_map('intval', array_column(DBQueryToArray("SELECT profile_id FROM tmp_del_profile
+            WHERE profile_id NOT IN (SELECT profile_id FROM uo_player WHERE profile_id IS NOT NULL)"), 'profile_id'));
+        if ($profileIds) {
+            $profileList = implode(",", $profileIds);
+            DBQuery("DELETE FROM uo_urls WHERE owner='player' AND owner_id IN ('" . implode("','", $profileIds) . "')");
+            DBQuery("DELETE FROM uo_player_profile WHERE profile_id IN ($profileList)");
+        }
         $teamIds = array_column(DBQueryToArray("SELECT team_id FROM tmp_del_team"), 'team_id');
         DBQuery("DELETE FROM uo_team WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
         DBQuery("DELETE FROM uo_enrolledteam WHERE series IN (SELECT series_id FROM tmp_del_series)");
@@ -1139,10 +1144,12 @@ function DeleteSeasonWithData($seasonId)
             AND id NOT IN (SELECT location FROM uo_reservation WHERE location IS NOT NULL)
             AND id NOT IN (SELECT fromlocation FROM uo_movingtime)
             AND id NOT IN (SELECT tolocation FROM uo_movingtime)");
-        $clubIds = array_column(DBQueryToArray("SELECT club FROM tmp_del_club
-            WHERE club NOT IN (SELECT club FROM uo_team WHERE club IS NOT NULL)"), 'club');
-        DBQuery("DELETE FROM uo_club WHERE club_id NOT IN (SELECT club FROM uo_team WHERE club IS NOT NULL)
-            AND club_id IN (SELECT club FROM tmp_del_club)");
+        $clubIds = array_map('intval', array_column(DBQueryToArray("SELECT club FROM tmp_del_club
+            WHERE club NOT IN (SELECT club FROM uo_team WHERE club IS NOT NULL)"), 'club'));
+        if ($clubIds) {
+            DBQuery("DELETE FROM uo_urls WHERE owner='club' AND owner_id IN ('" . implode("','", $clubIds) . "')");
+            DBQuery("DELETE FROM uo_club WHERE club_id IN (" . implode(",", $clubIds) . ")");
+        }
         DBQuery('COMMIT');
     } catch (Throwable $e) {
         DBQuery('ROLLBACK');
@@ -1160,7 +1167,10 @@ function DeleteSeasonWithData($seasonId)
         $imageDirs[] = UPLOAD_DIR . "teams/" . (int) $teamId . "/";
     }
     foreach ($clubIds as $clubId) {
-        $imageDirs[] = UPLOAD_DIR . "clubs/" . (int) $clubId . "/";
+        $imageDirs[] = UPLOAD_DIR . "clubs/" . $clubId . "/";
+    }
+    foreach ($profileIds as $profileId) {
+        $imageDirs[] = UPLOAD_DIR . "players/" . $profileId . "/";
     }
     foreach ($imageDirs as $dir) {
         foreach ([$dir . "thumbs/", $dir] as $subdir) {
