@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 09:56+0300\n"
+"POT-Creation-Date: 2026-10-11 10:02+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -1604,8 +1604,8 @@ msgstr "Tamaño de la base de datos"
 msgid "Database version"
 msgstr "Versión de la base de datos"
 
-#: admin/addreservation.php:55 admin/addreservation.php:153
-#: admin/reservations.php:125 admin/tdtools.php:89 lib/search.functions.php:782
+#: admin/addreservation.php:153 admin/reservations.php:125 admin/tdtools.php:89
+#: lib/search.functions.php:782
 msgid "Date"
 msgstr "Fecha"
 
@@ -2121,8 +2121,8 @@ msgstr ""
 msgid "End game"
 msgstr "Fin del juego"
 
-#: admin/addreservation.php:61 admin/addreservation.php:162
-#: lib/search.functions.php:287 lib/search.functions.php:358
+#: admin/addreservation.php:162 lib/search.functions.php:287
+#: lib/search.functions.php:358
 msgid "End time"
 msgstr "Hora de finalización"
 
@@ -6646,8 +6646,8 @@ msgstr "Inicio del punto"
 msgid "Start the game clock before adding goals."
 msgstr "Inicia el cronómetro del partido antes de sumar goles."
 
-#: admin/addreservation.php:58 admin/addreservation.php:158
-#: lib/search.functions.php:276 lib/search.functions.php:346
+#: admin/addreservation.php:158 lib/search.functions.php:276
+#: lib/search.functions.php:346
 msgid "Start time"
 msgstr "Hora de inicio"
 
@@ -6906,6 +6906,14 @@ msgstr ""
 "El enlace actual deja de funcionar y todos los que lo abrieron pierden el "
 "acceso. ¿Continuar?"
 
+#: admin/addreservation.php:55
+msgid "The date is not in a valid format."
+msgstr "La fecha no tiene un formato válido."
+
+#: admin/addreservation.php:61
+msgid "The end time is not in a valid format."
+msgstr "La hora de finalización no tiene un formato válido."
+
 #: admin/scorekeepinglinks.php:98 user/scorekeepinglink.php:28
 msgid "The event is read-only."
 msgstr "El evento es de solo lectura."
@@ -7005,6 +7013,10 @@ msgstr ""
 #: plugins/generate_teams.php:79
 msgid "The selected event has no divisions."
 msgstr "El evento seleccionado no tiene divisiones."
+
+#: admin/addreservation.php:58
+msgid "The start time is not in a valid format."
+msgstr "La hora de inicio no tiene un formato válido."
 
 #: cust/bula/pdfscoresheet.php:303 cust/fpudd/pdfscoresheet.php:337
 #: cust/gummis/pdfscoresheet.php:322 cust/wfdf/pdfscoresheet.php:714
@@ -8148,10 +8160,6 @@ msgstr "comentarios ocultos"
 msgid "comments visible"
 msgstr "comentarios visibles"
 
-#: admin/addreservation.php:55
-msgid "date is not in a valid format"
-msgstr "la fecha no tiene un formato válido"
-
 #: admin/addreservation.php:153 admin/addseasons.php:327
 #: admin/addseasons.php:329 lib/search.functions.php:276
 #: lib/search.functions.php:287 lib/search.functions.php:346
@@ -8514,7 +8522,6 @@ msgstr "el tiempo no puede ser el mismo o anterior al punto anterior"
 msgid "time is missing"
 msgstr "falta el tiempo"
 
-#: admin/addreservation.php:58 admin/addreservation.php:61
 #: user/addscoresheet.php:320 user/addscoresheet.php:341
 #: user/addscoresheet.php:379
 msgid "time is not in a valid format"

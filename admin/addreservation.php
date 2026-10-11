@@ -52,13 +52,13 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
     };
     $inputErrors = [];
     if (!$isValidDateTime($res['date'], "00:00")) {
-        $inputErrors[] = _("Date") . ": " . _("date is not in a valid format") . "!";
+        $inputErrors[] = _("The date is not in a valid format.");
     } else {
         if (!$isValidDateTime($res['date'], $res['starttime'])) {
-            $inputErrors[] = _("Start time") . ": " . _("time is not in a valid format") . "!";
+            $inputErrors[] = _("The start time is not in a valid format.");
         }
         if (!$isValidDateTime($res['date'], $res['endtime'])) {
-            $inputErrors[] = _("End time") . ": " . _("time is not in a valid format") . "!";
+            $inputErrors[] = _("The end time is not in a valid format.");
         }
     }
 
