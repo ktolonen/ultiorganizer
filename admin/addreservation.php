@@ -6,6 +6,7 @@ include_once 'lib/location.functions.php';
 
 $LAYOUT_ID = ADDRESERVATION;
 $addmore = false;
+$keepInput = false;
 $html = "";
 $allfields = "";
 $reservationId = 0;
@@ -38,18 +39,47 @@ if (isset($_POST['save']) || isset($_POST['add'])) {
     $res['locationName'] = isset($_POST['locationName']) ? $_POST['locationName'] : "";
     $res['fieldname'] = isset($_POST['fieldname']) ? $_POST['fieldname'] : "";
     $res['reservationgroup'] = isset($_POST['reservationgroup']) ? $_POST['reservationgroup'] : "";
-    $res['date'] = isset($_POST['date']) ? $_POST['date'] : "1.1.19710";
-    $res['starttime'] = isset($_POST['starttime']) ? ToInternalTimeFormat($res['date'] . " " . $_POST['starttime']) : ToInternalTimeFormat("1.1.1971 00:00");
-    $res['endtime'] = isset($_POST['endtime']) ? ToInternalTimeFormat($res['date'] . " " . $_POST['endtime']) : ToInternalTimeFormat("1.1.1971 00:00");
-    $res['date'] = ToInternalTimeFormat($res['date']);
+    $res['date'] = isset($_POST['date']) ? trim((string) $_POST['date']) : "";
+    $res['starttime'] = isset($_POST['starttime']) ? trim((string) $_POST['starttime']) : "";
+    $res['endtime'] = isset($_POST['endtime']) ? trim((string) $_POST['endtime']) : "";
     $res['season'] = isset($_POST['resseason']) ? $_POST['resseason'] : $season;
 
-    $locationInfo = ((int) $res['location'] > 0) ? LocationInfo($res['location']) : null;
-    if ((int) $res['location'] > 0 && empty($locationInfo)) {
-        $html .= "<p>" . _("Select a valid location from the list or add it first.") . "</p>";
-    } elseif ($res['id'] > 0) {
-        SetReservation($res['id'], $res);
+    // ToInternalTimeFormat() silently falls back to 1.1.1971 00:00, so reject input it cannot parse in full.
+    $isValidDateTime = static function ($date, $time) {
+        $parsed = uo_strptime($date . " " . $time, DATE_FORMAT);
+        return $parsed !== false && $parsed['unparsed'] === ""
+            && checkdate($parsed['tm_mon'] + 1, $parsed['tm_mday'], $parsed['tm_year'] + 1900);
+    };
+    $inputErrors = [];
+    if (!$isValidDateTime($res['date'], "00:00")) {
+        $inputErrors[] = _("Date") . ": " . _("date is not in a valid format") . "!";
     } else {
+        if (!$isValidDateTime($res['date'], $res['starttime'])) {
+            $inputErrors[] = _("Start time") . ": " . _("time is not in a valid format") . "!";
+        }
+        if (!$isValidDateTime($res['date'], $res['endtime'])) {
+            $inputErrors[] = _("End time") . ": " . _("time is not in a valid format") . "!";
+        }
+    }
+
+    $locationInfo = ((int) $res['location'] > 0) ? LocationInfo($res['location']) : null;
+    if (!empty($inputErrors)) {
+        foreach ($inputErrors as $inputError) {
+            $html .= "<p class='warning'>" . utf8entities($inputError) . "</p>";
+        }
+        $keepInput = true;
+    } elseif ((int) $res['location'] > 0 && empty($locationInfo)) {
+        $html .= "<p>" . _("Select a valid location from the list or add it first.") . "</p>";
+        $keepInput = true;
+    } else {
+        $res['starttime'] = ToInternalTimeFormat($res['date'] . " " . $res['starttime']);
+        $res['endtime'] = ToInternalTimeFormat($res['date'] . " " . $res['endtime']);
+        $res['date'] = ToInternalTimeFormat($res['date']);
+    }
+
+    if (!$keepInput && $res['id'] > 0) {
+        SetReservation($res['id'], $res);
+    } elseif (!$keepInput) {
         //check if adding more than 1 field
         $fields = [];
         $tmpfields = explode(",", $res['fieldname']);
@@ -99,7 +129,7 @@ $setFocus = "OnLoad=\"document.getElementById('date').focus();\"";
 pageTopHeadClose($title, false, $setFocus);
 leftMenu($LAYOUT_ID);
 contentStart();
-if ($reservationId > 0) {
+if ($reservationId > 0 && !$keepInput) {
     $reservationInfo = ReservationInfo($reservationId);
     $res['id'] = $reservationId;
     $res['location'] = $reservationInfo['location'];
