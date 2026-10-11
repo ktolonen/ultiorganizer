@@ -1018,7 +1018,8 @@ function DeleteSeason($seasonId)
 /**
  * Deletes a season together with all its divisions, pools, teams, players, games,
  * spirit scores, reservations and locations used only by this season, its archived
- * statistics, and the event-scoped user roles and editseason rows pointing at it.
+ * statistics and banner, and the event-scoped user roles, editseason rows and API
+ * tokens pointing at it.
  *
  * Player profiles are deleted when no other player uses them. Meant for test data;
  * DeleteSeason() refuses to remove a season that still has divisions.
@@ -1037,6 +1038,7 @@ function DeleteSeasonWithData($seasonId)
         return false;
     }
 
+    RemoveSeasonBanner($seasonId);
     $season = "'" . DBEscapeString($seasonId) . "'";
     $previousExceptionMode = DBShouldThrowExceptions();
     DBSetExceptionMode(true);
@@ -1078,6 +1080,7 @@ function DeleteSeasonWithData($seasonId)
         DeleteEventUserRoles($seasonId);
         DBQuery("DELETE FROM uo_userproperties WHERE name='editseason' AND value=$season");
         DeleteSeasonStats($seasonId);
+        DBQuery("DELETE FROM uo_api_token WHERE scope_type='season' AND scope_id=$season");
 
         DBQuery("DELETE FROM uo_spirit_score WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
         DBQuery("DELETE FROM uo_spirit_timeout WHERE game IN (SELECT game_id FROM tmp_del_game)");
