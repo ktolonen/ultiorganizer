@@ -266,14 +266,7 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
             GameClearResult($game['game_id'], false);
 
-            if ($spiritMode > 0) {
-                $info = GameInfo($game['game_id']);
-                foreach ([$info['hometeam'], $info['visitorteam']] as $teamId) {
-                    if (!empty($teamId)) {
-                        SpiritScoreReplaceByGameTeam($game['game_id'], $teamId, []);
-                    }
-                }
-            }
+            SpiritScoreDeleteByGame($game['game_id']);
         }
 
         undoPoolMoves($poolId);

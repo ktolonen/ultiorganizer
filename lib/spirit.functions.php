@@ -1682,6 +1682,20 @@ function SpiritScoreReplaceByGameTeam($gameId, $teamId, $points)
     }
 }
 
+/**
+ * Deletes every spirit score of a game, including scores given by teams that
+ * no longer play in it.
+ */
+function SpiritScoreDeleteByGame($gameId)
+{
+    $game = SpiritGameRow($gameId);
+    $season = $game ? (string) $game['season_id'] : '';
+    if ($season === '' || (!isSeasonAdmin($season) && !isSpiritAdmin($season))) {
+        die('Insufficient rights to edit spirit scores');
+    }
+    DBQuery(sprintf("DELETE FROM uo_spirit_score WHERE game_id=%d", (int) $gameId));
+}
+
 function CanDeleteSpiritSubmission($gameId, $teamId)
 {
     $gameId = (int) $gameId;
