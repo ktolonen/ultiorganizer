@@ -1017,7 +1017,8 @@ function DeleteSeason($seasonId)
 
 /**
  * Deletes a season together with all its divisions, pools, teams, players, games,
- * spirit scores, reservations and locations used only by this season.
+ * spirit scores, reservations and locations used only by this season, its archived
+ * statistics, and the event-scoped user roles and editseason rows pointing at it.
  *
  * Player profiles are deleted when no other player uses them. Meant for test data;
  * DeleteSeason() refuses to remove a season that still has divisions.
@@ -1072,6 +1073,11 @@ function DeleteSeasonWithData($seasonId)
         DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_specialranking
             WHERE frompool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
 
+        // Roles resolve their season through the target rows, so they go before those rows.
+        DeleteEventUserRoles($seasonId);
+        DBQuery("DELETE FROM uo_userproperties WHERE name='editseason' AND value=$season");
+        DeleteSeasonStats($seasonId);
+
         DBQuery("DELETE FROM uo_spirit_score WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
         DBQuery("DELETE FROM uo_spirit_timeout WHERE game IN (SELECT game_id FROM tmp_del_game)");
         DBQuery("DELETE FROM uo_team_spirit_stats WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
@@ -1111,6 +1117,7 @@ function DeleteSeasonWithData($seasonId)
     }
     DBSetExceptionMode($previousExceptionMode);
 
+    SetUserSessionData($_SESSION['uid']);
     Log2("season", "delete", $seasonId);
     ClearSeasonRuntimeCache();
     return true;
