@@ -52,6 +52,10 @@
         }
       }
       calendar.open();
+      var day = calendar.calendarContainer.querySelector(".flatpickr-day.selected, .flatpickr-day.today, .flatpickr-day");
+      if (day) {
+        day.focus();
+      }
     });
   }
 

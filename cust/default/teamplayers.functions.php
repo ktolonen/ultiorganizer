@@ -96,6 +96,7 @@ $memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 		for (i = 0; i < members.length; i++) {
 			var row = body.insertRow(-1);
 			row.memberData = {};
+			row.tabIndex = 0;
 			for (j = 0; j < memberColumns.length; j++) {
 				memberCell(row, memberColumns[j], memberValue(members[i], memberColumns[j].key));
 			}
@@ -205,6 +206,13 @@ $memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 		table.tBodies[0].addEventListener("click", function(e) {
 			var row = e.target.closest("tr");
 			if (row && row.memberData) {
+				handleSubmit(row.memberData);
+			}
+		});
+		table.tBodies[0].addEventListener("keydown", function(e) {
+			var row = e.target.closest("tr");
+			if (row && row === e.target && row.memberData && (e.key === "Enter" || e.key === " ")) {
+				e.preventDefault();
 				handleSubmit(row.memberData);
 			}
 		});
