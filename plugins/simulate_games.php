@@ -305,5 +305,24 @@ if (empty($seasonId)) {
 
 $html .= "</form>";
 
+// A repeat press while a long run is still going would start another run.
+$html .= "<script type='text/javascript'>\n";
+$html .= "document.getElementById('tables').addEventListener('submit', function (event) {\n";
+$html .= "  var form = event.target;\n";
+$html .= "  if (form.getAttribute('data-submitting')) {\n";
+$html .= "    event.preventDefault();\n";
+$html .= "    return;\n";
+$html .= "  }\n";
+$html .= "  form.setAttribute('data-submitting', '1');\n";
+$html .= "  // Disable on the next tick: a disabled button is left out of the POST body.\n";
+$html .= "  window.setTimeout(function () {\n";
+$html .= "    var buttons = form.querySelectorAll('input[type=submit]');\n";
+$html .= "    for (var i = 0; i < buttons.length; i++) {\n";
+$html .= "      buttons[i].disabled = true;\n";
+$html .= "    }\n";
+$html .= "  }, 0);\n";
+$html .= "});\n";
+$html .= "</script>\n";
+
 showPage($title, $html);
 ?>
