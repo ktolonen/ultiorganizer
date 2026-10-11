@@ -1018,8 +1018,8 @@ function DeleteSeason($seasonId)
 /**
  * Deletes a season together with all its divisions, pools, teams, players, games,
  * spirit scores, reservations and locations used only by this season, its archived
- * statistics and banner, and the event-scoped user roles, editseason rows and API
- * tokens pointing at it.
+ * statistics, banner, comments and links, and the event-scoped user roles,
+ * editseason rows and API tokens pointing at it.
  *
  * Player profiles are deleted when no other player uses them. Meant for test data;
  * DeleteSeason() refuses to remove a season that still has divisions.
@@ -1081,6 +1081,15 @@ function DeleteSeasonWithData($seasonId)
         DBQuery("DELETE FROM uo_userproperties WHERE name='editseason' AND value=$season");
         DeleteSeasonStats($seasonId);
         DBQuery("DELETE FROM uo_api_token WHERE scope_type='season' AND scope_id=$season");
+        DBQuery("DELETE FROM uo_comment WHERE type=1 AND id=$season");
+        DBQuery("DELETE FROM uo_comment WHERE type=2 AND id IN (SELECT CAST(series_id AS CHAR) FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_comment WHERE type=3 AND id IN (SELECT CAST(pool_id AS CHAR) FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_comment WHERE type IN (4,5,6) AND id IN (SELECT CAST(game_id AS CHAR) FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='ultiorganizer' AND owner_id=$season");
+        DBQuery("DELETE FROM uo_urls WHERE owner='series' AND owner_id IN (SELECT CAST(series_id AS CHAR) FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='pool' AND owner_id IN (SELECT CAST(pool_id AS CHAR) FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='team' AND owner_id IN (SELECT CAST(team_id AS CHAR) FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_urls WHERE owner='game' AND owner_id IN (SELECT CAST(game_id AS CHAR) FROM tmp_del_game)");
 
         DBQuery("DELETE FROM uo_spirit_score WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
         DBQuery("DELETE FROM uo_spirit_timeout WHERE game IN (SELECT game_id FROM tmp_del_game)");
