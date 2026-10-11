@@ -1120,12 +1120,18 @@ function DeleteSeasonWithData($seasonId)
                     IF(g.hometeam IS NULL, g.respteam, NULL)))");
         DBQuery("DELETE FROM uo_team_pool WHERE pool IN (SELECT pool_id FROM tmp_del_pool)");
         DBQuery("DELETE FROM uo_team_pool WHERE team IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_accreditationlog WHERE team IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_accreditationlog WHERE game IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_accreditationlog WHERE player IN
+            (SELECT player_id FROM uo_player WHERE team IN (SELECT team_id FROM tmp_del_team))");
         DBQuery("DELETE FROM uo_player WHERE team IN (SELECT team_id FROM tmp_del_team)");
         $profileIds = array_map('intval', array_column(DBQueryToArray("SELECT profile_id FROM tmp_del_profile
             WHERE profile_id NOT IN (SELECT profile_id FROM uo_player WHERE profile_id IS NOT NULL)"), 'profile_id'));
         if ($profileIds) {
             $profileList = implode(",", $profileIds);
             DBQuery("DELETE FROM uo_urls WHERE owner='player' AND owner_id IN ('" . implode("','", $profileIds) . "')");
+            DeleteUserRoleRows(DBQueryToArray("SELECT prop_id, userid, value FROM uo_userproperties
+                WHERE name='userrole' AND value IN ('playeradmin:" . implode("','playeradmin:", $profileIds) . "')"), "event-delete");
             DBQuery("DELETE FROM uo_player_profile WHERE profile_id IN ($profileList)");
         }
         $teamIds = array_column(DBQueryToArray("SELECT team_id FROM tmp_del_team"), 'team_id');
