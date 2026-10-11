@@ -1047,7 +1047,9 @@ function DeleteSeasonWithData($seasonId)
         DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_profile (profile_id INT PRIMARY KEY)");
         DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_location (id INT PRIMARY KEY)");
         DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_club (club INT PRIMARY KEY)");
-        foreach (["series", "team", "game", "profile", "location", "club"] as $name) {
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_pool (pool_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_scheduling (scheduling_id INT PRIMARY KEY)");
+        foreach (["series", "team", "game", "profile", "location", "club", "pool", "scheduling"] as $name) {
             DBQuery("DELETE FROM tmp_del_" . $name);
         }
 
@@ -1061,17 +1063,39 @@ function DeleteSeasonWithData($seasonId)
             WHERE team IN (SELECT team_id FROM tmp_del_team) AND profile_id IS NOT NULL");
         DBQuery("INSERT INTO tmp_del_location SELECT DISTINCT location FROM uo_reservation
             WHERE season=$season AND location IS NOT NULL");
+        DBQuery("INSERT INTO tmp_del_pool SELECT pool_id FROM uo_pool WHERE series IN (SELECT series_id FROM tmp_del_series)");
+        // MySQL cannot open a temporary table twice in one statement, so each pool column gets its own.
+        DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_moveteams
+            WHERE frompool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
+        DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_moveteams
+            WHERE topool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
+        DBQuery("INSERT IGNORE INTO tmp_del_scheduling SELECT scheduling_id FROM uo_specialranking
+            WHERE frompool IN (SELECT pool_id FROM tmp_del_pool) AND scheduling_id IS NOT NULL");
 
         DBQuery("DELETE FROM uo_spirit_score WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
         DBQuery("DELETE FROM uo_spirit_timeout WHERE game IN (SELECT game_id FROM tmp_del_game)");
         DBQuery("DELETE FROM uo_team_spirit_stats WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_game_pool WHERE game IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_game_pool WHERE pool IN (SELECT pool_id FROM tmp_del_pool)");
         DBQuery("DELETE FROM uo_game WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_specialranking WHERE frompool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_moveteams WHERE frompool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_moveteams WHERE topool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_scheduling_name WHERE scheduling_id IN (SELECT scheduling_id FROM tmp_del_scheduling)
+            AND scheduling_id NOT IN (SELECT scheduling_id FROM uo_moveteams WHERE scheduling_id IS NOT NULL)
+            AND scheduling_id NOT IN (SELECT scheduling_id FROM uo_specialranking WHERE scheduling_id IS NOT NULL)
+            AND NOT EXISTS (SELECT 1 FROM uo_game g WHERE uo_scheduling_name.scheduling_id
+                IN (g.scheduling_name_home, g.scheduling_name_visitor, g.name))");
+        DBQuery("DELETE FROM uo_team_pool WHERE pool IN (SELECT pool_id FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_team_pool WHERE team IN (SELECT team_id FROM tmp_del_team)");
         DBQuery("DELETE FROM uo_player WHERE team IN (SELECT team_id FROM tmp_del_team)");
         DBQuery("DELETE FROM uo_player_profile WHERE profile_id IN (SELECT profile_id FROM tmp_del_profile)
             AND profile_id NOT IN (SELECT profile_id FROM uo_player WHERE profile_id IS NOT NULL)");
         DBQuery("DELETE FROM uo_team WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
         DBQuery("DELETE FROM uo_enrolledteam WHERE series IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_pool WHERE pool_id IN (SELECT pool_id FROM tmp_del_pool)");
         DBQuery("DELETE FROM uo_series WHERE series_id IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_reservation WHERE season=$season");
         DBQuery("DELETE FROM uo_season WHERE season_id=$season");
         DBQuery("DELETE FROM uo_location_info WHERE location_id IN (SELECT id FROM tmp_del_location)
             AND location_id NOT IN (SELECT location FROM uo_reservation WHERE location IS NOT NULL)");
