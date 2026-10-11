@@ -72,10 +72,10 @@ foreach ($pools as $tmppool) {
 //common page
 pageTopHeadOpen($title);
 
-include_once 'lib/yui.functions.php';
-echo yuiLoad(["utilities"]);
-
 ?>
+<script type="text/javascript" src="script/sortablejs/Sortable.min.js"></script>
+<script type="text/javascript" src="script/sortable-lists.js"></script>
+<link rel="stylesheet" type="text/css" href="script/sortable-lists.css" />
 
 <style type="text/css">
   body {
@@ -294,7 +294,7 @@ function gameEntry($gameInfo, $height, $duration, $poolname, $editable = true)
     } else {
         $tooltip = " title='" . $tooltip . "'";
     }
-    $html = "<li class='list1' style='color:#" . $textColor . ";background-color:#" . $color . ";min-height:" . $height .
+    $html = "<li class='list1" . ($editable ? "" : " locked") . "' style='color:#" . $textColor . ";background-color:#" . $color . ";min-height:" . $height .
       "px' id='game" . $gameId . "'" . $tooltip . ">";
     $html .= "<input type='hidden' id='gtime" . $gameId . "' name='gtimes[]' value='" . $duration . "'/>";
     $html .= $poolname;
@@ -438,9 +438,6 @@ foreach ($gameData as $gameId => $gameInfo) {
         }
     }
 }
-if (count($gameData) == 0) {
-    echo "<li></li>";
-}
 echo "</ul>\n";
 echo "</div>\n</td>\n";
 echo "</tr>\n</table>\n";
@@ -582,16 +579,13 @@ echo "</td></tr></table>\n";
 echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
 ?>
 <script type="text/javascript">
-  //<![CDATA[
-
-  var Dom = YAHOO.util.Dom;
   var redirecturl = "";
   var modified = 0;
 
   function hide(id) {
-    var elem = Dom.get(id);
-    var list = Dom.getAncestorByTagName(elem, "ul");
-    list.removeChild(elem);
+    var elem = document.getElementById(id);
+    elem.parentNode.removeChild(elem);
+    setModified(true);
   }
 
   function setModified(newValue) {
@@ -648,7 +642,7 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
 
     redirecturl = getUrl(location.href, SelValue, 0, 0);
     if (!redirectWithConfirm()) {
-      dropdown.value = series;
+      dropdown.value = event;
     }
   }
 
@@ -678,8 +672,7 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     if (modified) {
       var answer = confirm('<?php echo _("Save changes?"); ?>');
       if (answer) {
-        YAHOO.example.ScheduleApp.requestString();
-        setModified(false);
+        saveSchedule();
       } else {
         answer = confirm('<?php echo _("Do you want to leave anyway? If you select Yes, you will lose all your changes."); ?>');
         if (answer) {
@@ -694,258 +687,63 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     return true;
   }
 
-  (function() {
+  var scheduleLists = document.querySelectorAll("ul.draglist");
+  var pauseIndex = 1;
 
-    var Event = YAHOO.util.Event;
-    var DDM = YAHOO.util.DragDropMgr;
-    var pauseIndex = 1;
-    var minHeight = <?php echo MIN_HEIGHT; ?>;
-
-
-    YAHOO.example.ScheduleApp = {
-      init: function() {
-        <?php
-        echo "		new YAHOO.util.DDTarget(\"unscheduled\");\n";
-foreach ($reservationData as $day => $dayArray) {
-    foreach ($dayArray as $reservationId => $reservationArray) {
-        echo "		new YAHOO.util.DDTarget(\"res" . $reservationId . "\");\n";
-        foreach ($reservationArray['games'] as $gameId => $gameInfo) {
-            if (hasEditGamesRight($gameInfo['series'])) {
-                echo "		new YAHOO.example.DDList(\"game" . $gameId . "\");\n";
-            }
-        }
+  makeSortableLists(scheduleLists, {
+    draggable: "li.list1",
+    filter: ".locked, a",
+    onChange: function() {
+      setModified(true);
     }
-}
-foreach ($gameData as $gameId => $gameInfo) {
-    if (hasEditGamesRight($gameInfo['series'])) {
-        echo "		new YAHOO.example.DDList(\"game" . $gameId . "\");\n";
-    }
-}
-foreach ($reservedPauses as $pauseId) {
-    echo "		new YAHOO.example.DDList(\"" . $pauseId . "\");\n";
-}
+  });
 
-?>
-        Event.on("showButton", "click", this.requestString);
-        Event.on("pauseButton", "click", this.addPause);
-      },
+  function listRequest(list) {
+    var out = list.id === "unscheduled" ? "0" : list.id.substring(3);
+    var offset = 0;
+    Array.prototype.forEach.call(list.children, function(item) {
+      var time = item.querySelector("input");
+      if (!time) {
+        return;
+      }
+      if (item.id.indexOf("game") === 0) {
+        out += ":" + item.id.substring(4) + "/" + offset;
+      }
+      offset += parseInt(time.value, 10) || 0;
+    });
+    return out;
+  }
 
-      addPause: function() {
-        var unscheduled = Dom.get("unscheduled");
-        var pauseElement = document.createElement("div");
-        var duration = Dom.get("pauseLen").value;
-        var height = (duration * minHeight) - 2;
-        var html = "<?php echo jsSecure(pauseEntry('%h%', '%d%', '%i%')); ?>";
-        html = html.replace(/%h%/g, height);
-        html = html.replace(/%d%/g, duration);
-        html = html.replace(/%i%/g, pauseIndex);
-        pauseElement.innerHTML = html;
-        pauseElement = pauseElement.firstChild;
-
-        unscheduled.appendChild(pauseElement);
-        new YAHOO.example.DDList("pause" + pauseIndex);
-        pauseIndex++;
-      },
-
-      requestString: function() {
-        var parseList = function(ul, id) {
-          var items = ul.getElementsByTagName("li");
-          var out = id;
-          var offset = 0;
-          for (i = 0; i < items.length; i = i + 1) {
-            var inputs = items[i].getElementsByTagName("input");
-            if (!inputs.length) {
-              continue; // Ignore placeholder entries without timing info.
-            }
-            var duration = parseInt(inputs[0].value, 10);
-            if (isNaN(duration)) {
-              duration = 0;
-            }
-            var nextId = items[i].id.substring(4);
-            if (!isNaN(nextId)) {
-              out += ":" + nextId + "/" + offset;
-            }
-            offset += duration;
-          }
-          return out;
-        };
-        <?php
-echo "	var unscheduled=Dom.get(\"unscheduled\");\n";
-foreach ($reservationData as $day => $dayArray) {
-    foreach ($dayArray as $reservationId => $reservationArray) {
-        echo "	var res" . $reservationId . "=Dom.get(\"res" . $reservationId . "\");\n";
-    }
-}
-echo "	var request = parseList(unscheduled, \"0\") + \"\\n\"";
-foreach ($reservationData as $day => $dayArray) {
-    foreach ($dayArray as $reservationId => $reservationArray) {
-        echo " + \"|\" + parseList(res" . $reservationId . ", \"" . $reservationId . "\")";
-    }
-}
-echo ";\n";
-?>
-        var responseDiv = Dom.get("responseStatus");
-        Dom.setStyle(responseDiv, "background-image", "url('images/indicator.gif')");
-        Dom.setStyle(responseDiv, "background-repeat", "no-repeat");
-        Dom.setStyle(responseDiv, "background-position", "top right");
-        Dom.setStyle(responseDiv, "class", "inprogress");
-        responseDiv.innerHTML = '&nbsp;';
-        var transaction = YAHOO.util.Connect.asyncRequest('POST', 'index.php?view=admin/saveschedule', callback, request);
-      },
-    };
-
-    var callback = {
-      success: function(o) {
-        var responseDiv = Dom.get("responseStatus");
-        YAHOO.util.Dom.removeClass(responseDiv, "attention");
-        YAHOO.util.Dom.addClass(responseDiv, "highlight");
-        Dom.setStyle(responseDiv, "background-image", "");
-        responseDiv.innerHTML = o.responseText;
+  function saveSchedule() {
+    var request = Array.prototype.map.call(scheduleLists, listRequest).join("|");
+    postSortedLists("index.php?view=admin/saveschedule", request, document.getElementById("responseStatus"), {
+      html: true,
+      onSuccess: function() {
         setModified(false);
         if (redirecturl) {
           location.href = redirecturl;
         }
-      },
-
-      failure: function(o) {
-        var responseDiv = Dom.get("responseStatus");
-        YAHOO.util.Dom.removeClass(responseDiv, "highlight");
-        YAHOO.util.Dom.addClass(responseDiv, "attention");
-        Dom.setStyle(responseDiv, "background-image", "");
-        responseDiv.innerHTML = o.responseText;
-      }
-    }
-
-
-
-    YAHOO.example.DDList = function(id, sGroup, config) {
-
-      YAHOO.example.DDList.superclass.constructor.call(this, id, sGroup, config);
-
-      this.logger = this.logger || YAHOO;
-      var el = this.getDragEl();
-      Dom.setStyle(el, "opacity", 0.57); // The proxy is slightly transparent
-
-      this.goingUp = false;
-      this.lastY = 0;
-    };
-
-    YAHOO.extend(YAHOO.example.DDList, YAHOO.util.DDProxy, {
-
-      startDrag: function(x, y) {
-        this.logger.log(this.id + " startDrag");
-
-        // make the proxy look like the source element
-        var dragEl = this.getDragEl();
-        var clickEl = this.getEl();
-        Dom.setStyle(clickEl, "visibility", "hidden");
-
-        dragEl.innerHTML = clickEl.innerHTML;
-
-        Dom.setStyle(dragEl, "color", Dom.getStyle(clickEl, "color"));
-        Dom.setStyle(dragEl, "backgroundColor", Dom.getStyle(clickEl, "backgroundColor"));
-        Dom.setStyle(dragEl, "font-size", Dom.getStyle(clickEl, "font-size"));
-        Dom.setStyle(dragEl, "font-family", Dom.getStyle(clickEl, "font-family"));
-        Dom.setStyle(dragEl, "border", "2px solid gray");
-        Dom.setStyle(dragEl, "text-align", "center");
-      },
-
-
-
-      endDrag: function(e) {
-
-        var srcEl = this.getEl();
-        var proxy = this.getDragEl();
-        setModified(true);
-        // Show the proxy element and animate it to the src element's location
-        Dom.setStyle(proxy, "visibility", "");
-        var a = new YAHOO.util.Motion(
-          proxy, {
-            points: {
-              to: Dom.getXY(srcEl)
-            }
-          },
-          0.2,
-          YAHOO.util.Easing.easeOut
-        )
-        var proxyid = proxy.id;
-        var thisid = this.id;
-
-        // Hide the proxy and show the source element when finished with the animation
-        a.onComplete.subscribe(function() {
-          Dom.setStyle(proxyid, "visibility", "hidden");
-          Dom.setStyle(thisid, "visibility", "");
-        });
-        a.animate();
-      },
-
-      onDragDrop: function(e, id) {
-
-        // If there is one drop interaction, the li was dropped either on the list,
-        // or it was dropped on the current location of the source element.
-        if (DDM.interactionInfo.drop.length === 1) {
-
-          // The position of the cursor at the time of the drop (YAHOO.util.Point)
-          var pt = DDM.interactionInfo.point;
-
-          // The region occupied by the source element at the time of the drop
-          var region = DDM.interactionInfo.sourceRegion;
-
-          // Check to see if we are over the source element's location.  We will
-          // append to the bottom of the list once we are sure it was a drop in
-          // the negative space (the area of the list without any list items)
-          if (!region.intersect(pt)) {
-            var destEl = Dom.get(id);
-            var destDD = DDM.getDDById(id);
-            destEl.appendChild(this.getEl());
-            destDD.isEmpty = false;
-            DDM.refreshCache();
-          }
-
-        }
-      },
-
-      onDrag: function(e) {
-
-        // Keep track of the direction of the drag for use during onDragOver
-        var y = Event.getPageY(e);
-
-        if (y < this.lastY) {
-          this.goingUp = true;
-        } else if (y > this.lastY) {
-          this.goingUp = false;
-        }
-
-        this.lastY = y;
-      },
-
-      onDragOver: function(e, id) {
-
-        var srcEl = this.getEl();
-        var destEl = Dom.get(id);
-
-        // We are only concerned with list items, we ignore the dragover
-        // notifications for the list.
-        if (destEl.nodeName.toLowerCase() == "li") {
-          var orig_p = srcEl.parentNode;
-          var p = destEl.parentNode;
-
-          if (this.goingUp) {
-            p.insertBefore(srcEl, destEl); // insert above
-          } else {
-            p.insertBefore(srcEl, destEl.nextSibling); // insert below
-          }
-
-          DDM.refreshCache();
-        }
       }
     });
+  }
 
-    Event.onDOMReady(YAHOO.example.ScheduleApp.init, YAHOO.example.ScheduleApp, true);
+  document.getElementById("showButton").addEventListener("click", saveSchedule);
 
-  })();
-
-  //]]>
+  document.getElementById("pauseButton").addEventListener("click", function() {
+    var duration = parseInt(document.getElementById("pauseLen").value, 10);
+    if (!(duration > 0)) {
+      return;
+    }
+    var html = "<?php echo jsSecure(pauseEntry('%h%', '%d%', '%i%')); ?>";
+    html = html.replace(/%h%/g, (duration * <?php echo MIN_HEIGHT; ?>) - 2);
+    html = html.replace(/%d%/g, duration);
+    html = html.replace(/%i%/g, "new" + pauseIndex);
+    var holder = document.createElement("ul");
+    holder.innerHTML = html;
+    var unscheduled = document.getElementById("unscheduled");
+    unscheduled.insertBefore(holder.firstChild, unscheduled.firstChild);
+    pauseIndex++;
+  });
 </script>
 
 

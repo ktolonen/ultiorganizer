@@ -84,7 +84,7 @@ foreach ($places as $placeGameStr) {
                 $gameEnd = $time + ($gameInfo['timeslot'] * 60);
             }
             if ($gameEnd > $resEnd) {
-                $warningResponse .= "<p>" . sprintf(_("Game %s exceeds the reserved end time %s."), GameName($gameInfo), ShortTimeFormat($resInfo['endtime'])) . "</p>";
+                $warningResponse .= "<p>" . sprintf(_("Game %s exceeds the reserved end time %s."), utf8entities(GameName($gameInfo)), ShortTimeFormat($resInfo['endtime'])) . "</p>";
             }
             ScheduleGame($gameArr[0], $time, $games[0]);
             $scheduledGameIds[(int) $gameArr[0]] = true;

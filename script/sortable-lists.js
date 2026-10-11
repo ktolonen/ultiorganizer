@@ -50,9 +50,11 @@ function sortedListIds(list, prefix) {
 }
 
 /**
- * POSTs body to url and shows the response text in statusEl.
+ * POSTs body to url and shows the response in statusEl.
+ * Options: html (the response is escaped HTML) and onSuccess().
  */
-function postSortedLists(url, body, statusEl, onSuccess) {
+function postSortedLists(url, body, statusEl, options) {
+  options = options || {};
   statusEl.className = "sortable-saving";
   statusEl.textContent = "";
   var request = new XMLHttpRequest();
@@ -60,9 +62,13 @@ function postSortedLists(url, body, statusEl, onSuccess) {
   request.onload = function () {
     var ok = request.status >= 200 && request.status < 300;
     statusEl.className = ok ? "highlight" : "attention";
-    statusEl.textContent = request.responseText;
-    if (ok && onSuccess) {
-      onSuccess();
+    if (options.html) {
+      statusEl.innerHTML = request.responseText;
+    } else {
+      statusEl.textContent = request.responseText;
+    }
+    if (ok && options.onSuccess) {
+      options.onSuccess();
     }
   };
   request.onerror = function () {
