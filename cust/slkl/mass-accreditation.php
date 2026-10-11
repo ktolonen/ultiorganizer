@@ -172,7 +172,7 @@ function slklUpdateLicensesFromCSV($handle, $season)
     $length = 1000; //row length in file
     $delimiter = ';';
 
-    while (($data = fgetcsv($handle, $length, $delimiter)) !== false) {
+    while (($data = fgetcsv($handle, $length, $delimiter, '"', '\\')) !== false) {
 
         $id = trim(convertToUtf8($data[0]));
 

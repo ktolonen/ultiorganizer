@@ -50,7 +50,7 @@ if (isset($_POST['import'])) {
         $imported = 0;
         $skipped = [];
         if (($handle = fopen($_FILES['file']['tmp_name'], "r")) !== false) {
-            while (($data = fgetcsv($handle, 0, $separator)) !== false) {
+            while (($data = fgetcsv($handle, 0, $separator, '"', '\\')) !== false) {
                 $row++;
                 // fgetcsv() returns a single null field for a blank line. Those
                 // carry no data, so pass over them without reporting them.

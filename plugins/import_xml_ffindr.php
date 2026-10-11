@@ -117,7 +117,6 @@ class XMLHandler
                 }
             }
 
-            xml_parser_free($xmlparser);
         } else {
             die('Insufficient rights to import data');
         }
