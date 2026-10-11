@@ -2,73 +2,162 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 
-include_once 'lib/yui.functions.php';
-
 if (!isset($teamId)) {
     $teamId = isset($_GET['team']) ? intval($_GET['team']) : 0;
 } else {
     $teamId = intval($teamId);
 }
 
-echo yuiLoad(["utilities", "datasource", "datatable", "dragdrop", "container"]);
+if (is_file('cust/' . CUSTOMIZATIONS . '/players.php')) {
+    $datasource = 'cust/' . CUSTOMIZATIONS . '/players.php';
+} else {
+    $datasource = 'cust/default/players.php';
+}
+$memberColumns = [
+    ['key' => 'ProfileId', 'label' => _("Profile ID"), 'sort' => 'number'],
+];
+if (CUSTOMIZATIONS == "slkl") {
+    $memberColumns[] = ['key' => 'AccreditationId', 'label' => _("Member ID"), 'sort' => 'number'];
+}
+$memberColumns[] = ['key' => 'Jersey', 'label' => _("#"), 'sort' => 'number'];
+$memberColumns[] = ['key' => 'Firstname', 'label' => _("First name")];
+$memberColumns[] = ['key' => 'Lastname', 'label' => _("Last name")];
+$memberColumns[] = ['key' => 'BirthDate', 'label' => _("Date of birth"), 'sort' => 'date'];
+$memberColumns[] = ['key' => 'Team', 'label' => _("Prev. Team")];
+$memberColumns[] = ['key' => 'Event', 'label' => _("Prev. Event")];
 ?>
-<link rel="stylesheet" type="text/css" href="script/yui/container/assets/container.css" />
-<link rel="stylesheet" type="text/css" href="script/yui/datatable/assets/datatable-core.css" />
+<script type="text/javascript" src="script/tablesort/tablesort.min.js"></script>
+<script type="text/javascript" src="script/tablesort/sorts/tablesort.number.min.js"></script>
+<link rel="stylesheet" type="text/css" href="script/tablesort/tablesort.css" />
 <style type="text/css">
-	/* custom styles for this example */
-	.yui-skin-sam .yui-dt-body {
+	#selectaccreditation_id {
+		max-width: calc(100vw - 32px);
+	}
+
+	#selectaccreditation_id::backdrop {
+		background-color: rgb(0 0 0 / 30%);
+	}
+
+	#accreditation_idgrid th::after {
+		border-color: currentcolor transparent;
+	}
+
+	#accreditation_idgrid tbody tr {
 		cursor: pointer;
 	}
 
-	/* when rows are selectable */
+	#accreditation_idgrid tbody tr:hover {
+		background-color: var(--highlight, #A6C7E9);
+		font-weight: bold;
+	}
 </style>
 
 <script type="text/javascript">
-	document.documentElement.className = "yui-pe";
+	var memberColumns = <?php echo json_encode($memberColumns, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT); ?>;
+	var memberSort = null;
+	var memberRequest = 0;
 
-	var dialog;
-
-	function urlencode(str) {
-		return escape(str).replace('+', '%2B').replace('%20', '+').replace('*', '%2A').replace('/', '%2F').replace('@', '%40');
+	function memberValue(node, key) {
+		var el = node.getElementsByTagName(key)[0];
+		return el ? el.textContent : "";
 	}
 
-	function checkProfileId(playerId) {
-		YAHOO.util.Dom.get('dialogPlayerId').value = playerId;
-		YAHOO.util.Dom.get('dialogaccreditation_id').value = "";
-		firstname = YAHOO.util.Dom.get('firstname' + playerId).value;
-		lastname = YAHOO.util.Dom.get('lastname' + playerId).value;
-		if (firstname.length < 2 && lastname.length < 2) {
-			alert("<?php echo _("Name must be at least 2 letters long!"); ?>");
+	function memberCell(row, column, value) {
+		var cell = row.insertCell(-1);
+		if (column.sort === "date") {
+			// The datasource writes day.month.year; 1.1.1970 and 1.1.1971 mean unknown.
+			var parts = value.split(".");
+			if (value === "01.01.1970" || value === "01.01.1971" || parts.length !== 3) {
+				value = "";
+				cell.setAttribute("data-sort", "");
+			} else {
+				cell.setAttribute("data-sort", parts[2] + parts[1] + parts[0]);
+			}
+		}
+		cell.textContent = value;
+	}
+
+	function showMembers(members) {
+		var table = document.getElementById("accreditation_idgrid");
+		var head = table.tHead.rows[0];
+		var body = table.tBodies[0];
+		var i, j;
+		if (head.cells.length === 0) {
+			for (i = 0; i < memberColumns.length; i++) {
+				var th = document.createElement("th");
+				th.textContent = memberColumns[i].label;
+				if (memberColumns[i].sort === "number") {
+					th.setAttribute("data-sort-method", "number");
+				}
+				head.appendChild(th);
+			}
+		}
+		body.innerHTML = "";
+		for (i = 0; i < members.length; i++) {
+			var row = body.insertRow(-1);
+			row.memberData = {};
+			for (j = 0; j < memberColumns.length; j++) {
+				memberCell(row, memberColumns[j], memberValue(members[i], memberColumns[j].key));
+			}
+			row.memberData.ProfileId = memberValue(members[i], "ProfileId");
+			row.memberData.AccreditationId = memberValue(members[i], "AccreditationId");
+			row.memberData.Firstname = memberValue(members[i], "Firstname");
+			row.memberData.Lastname = memberValue(members[i], "Lastname");
+			row.memberData.Jersey = memberValue(members[i], "Jersey");
+		}
+		document.getElementById("accreditation_idempty").hidden = members.length > 0;
+		if (memberSort) {
+			memberSort.refresh();
 		} else {
-			memberTable.initializeTable();
-			memberDataSource.sendRequest("firstname=" + urlencode(firstname) + "&lastname=" + urlencode(lastname) + "&team=<?php echo $teamId; ?>", oCallback);
-			dialog.show();
+			memberSort = new Tablesort(table);
 		}
 	}
 
-	function handleSubmit(oRecord) {
-		var playerId = YAHOO.util.Dom.get('dialogPlayerId').value;
+	function checkProfileId(playerId) {
+		document.getElementById('dialogPlayerId').value = playerId;
+		document.getElementById('dialogaccreditation_id').value = "";
+		var firstname = document.getElementById('firstname' + playerId).value;
+		var lastname = document.getElementById('lastname' + playerId).value;
+		if (firstname.length < 2 && lastname.length < 2) {
+			alert("<?php echo _("Name must be at least 2 letters long!"); ?>");
+			return;
+		}
+		var request = ++memberRequest;
+		var url = "<?php echo $datasource; ?>?firstname=" + encodeURIComponent(firstname) +
+			"&lastname=" + encodeURIComponent(lastname) + "&team=<?php echo $teamId; ?>";
+		showMembers([]);
+		document.getElementById("accreditation_idempty").hidden = true;
+		document.getElementById("selectaccreditation_id").showModal();
+		fetch(url, {
+			credentials: "same-origin"
+		}).then(function(response) {
+			return response.text();
+		}).then(function(text) {
+			if (request !== memberRequest) {
+				return;
+			}
+			var xml = new DOMParser().parseFromString(text, "text/xml");
+			showMembers(xml.getElementsByTagName("Member"));
+		}).catch(function() {
+			if (request === memberRequest) {
+				showMembers([]);
+			}
+		});
+	}
 
-		var profileId = oRecord.getData("ProfileId");
-		var accrId = oRecord.getData("AccreditationId");
-		var firstname = oRecord.getData("Firstname");
-		var lastname = oRecord.getData("Lastname");
-		var birthdate = oRecord.getData("BirthDate");
-		var jersey = oRecord.getData("Jersey");
-		var numberField = YAHOO.util.Dom.get('number' + playerId);
+	function handleSubmit(member) {
+		var playerId = document.getElementById('dialogPlayerId').value;
+		var numberField = document.getElementById('number' + playerId);
 		var existingNumber = "";
 		if (numberField && numberField.value) {
 			existingNumber = ("" + numberField.value).replace(/\s+/g, '');
 		}
-		var profileJersey = "";
-		if (jersey !== null && typeof jersey !== "undefined") {
-			profileJersey = ("" + jersey).replace(/\s+/g, '');
-		}
+		var profileJersey = member.Jersey.replace(/\s+/g, '');
 
-		YAHOO.util.Dom.get('profileId' + playerId).value = profileId;
-		YAHOO.util.Dom.get('accrId' + playerId).value = accrId;
-		YAHOO.util.Dom.get('firstname' + playerId).value = firstname;
-		YAHOO.util.Dom.get('lastname' + playerId).value = lastname;
+		document.getElementById('profileId' + playerId).value = member.ProfileId;
+		document.getElementById('accrId' + playerId).value = member.AccreditationId;
+		document.getElementById('firstname' + playerId).value = member.Firstname;
+		document.getElementById('lastname' + playerId).value = member.Lastname;
 
 		// Keep existing number untouched. Only fill from profile if empty.
 		if (existingNumber.length === 0 && profileJersey.length > 0 && numberField) {
@@ -76,14 +165,14 @@ echo yuiLoad(["utilities", "datasource", "datatable", "dragdrop", "container"]);
 		}
 
 		if (playerId == 0) {
-			YAHOO.util.Dom.get("add").value = "<?php echo _("Confirm"); ?>";
-			YAHOO.util.Dom.get("save").disabled = false;
-			YAHOO.util.Dom.get("cancel").disabled = false;
+			document.getElementById("add").value = "<?php echo _("Confirm"); ?>";
+			document.getElementById("save").disabled = false;
+			document.getElementById("cancel").disabled = false;
 		} else {
-			YAHOO.util.Dom.get('showAccrId' + playerId).innerHTML = accrId;
+			document.getElementById('showAccrId' + playerId).textContent = member.AccreditationId;
 		}
-		dialog.hide();
-		// After hiding: a viewer without edit rights has no playerEdited field,
+		handleCancel();
+		// After closing: a viewer without edit rights has no playerEdited field,
 		// so this throws, and it must not leave the dialog stuck open.
 		if (playerId != 0) {
 			ChgPlayer(playerId);
@@ -92,182 +181,24 @@ echo yuiLoad(["utilities", "datasource", "datatable", "dragdrop", "container"]);
 	}
 
 	function handleCancel() {
-		dialog.hide();
+		document.getElementById("selectaccreditation_id").close();
 		return false;
-	};
-
-
-	YAHOO.util.Event.addListener(window, "load", function() {
-		var handleCancel = function() {
-			this.cancel();
-		};
-		// Remove progressively enhanced content class, just before creating the module
-		YAHOO.util.Dom.removeClass("selectaccreditation_id", "yui-pe-content");
-		dialog = new YAHOO.widget.Dialog("selectaccreditation_id", {
-			fixedcenter: false,
-			visible: false,
-			constraintoviewport: false
-		});
-		dialog.render();
-
-	});
-
-	var memberTable;
-	var oCallback;
-	var memberDataSource;
-
-	function memberSelected(memberId) {
-		YAHOO.util.Dom.get('dialogaccreditation_id').value = memberId;
 	}
 
-	YAHOO.util.Event.addListener(window, "load", function() {
-		var AcrrIdLoader = function() {
-
-
-			var formatBDate = function(elCell, oRecord, oColumn, oData) {
-				//alert(oData);
-				if (oData == "01.01.1971" || oData == "01.01.1970") {
-					elCell.innerHTML = "";
-				} else {
-					elCell.innerHTML = YAHOO.util.Date.format(oData, {
-						format: "%e.%m.%Y"
-					}, "fi");
-				}
+	document.addEventListener("DOMContentLoaded", function() {
+		var table = document.getElementById("accreditation_idgrid");
+		if (!table) {
+			return;
+		}
+		// Escape, the Close button and a picked row all close the dialog; drop any pending search.
+		document.getElementById("selectaccreditation_id").addEventListener("close", function() {
+			memberRequest++;
+		});
+		table.tBodies[0].addEventListener("click", function(e) {
+			var row = e.target.closest("tr");
+			if (row && row.memberData) {
+				handleSubmit(row.memberData);
 			}
-
-			var memberColumnDefs = [{
-					key: "ProfileId",
-					label: "<?php echo _("Profile ID"); ?>",
-					sortable: true
-				},
-<?php if (CUSTOMIZATIONS == "slkl") { ?>
-				{
-					key: "AccreditationId",
-					label: "<?php echo _("Member ID"); ?>",
-					sortable: true
-				},
-<?php } ?>
-				{
-					key: "Jersey",
-					label: "<?php echo _("#"); ?>",
-					sortable: true
-				},
-				{
-					key: "Firstname",
-					label: "<?php echo _("First name"); ?>",
-					sortable: true
-				},
-				{
-					key: "Lastname",
-					label: "<?php echo _("Last name"); ?>",
-					sortable: true
-				},
-				{
-					key: "BirthDate",
-					label: "<?php echo _("Date of birth"); ?>",
-					formatter: formatBDate,
-					sortable: true
-				},
-				{
-					key: "Team",
-					label: "<?php echo _("Prev. Team"); ?>",
-					sortable: true
-				},
-				{
-					key: "Event",
-					label: "<?php echo _("Prev. Event"); ?>",
-					sortable: true
-				}
-
-			];
-
-			<?php
-            if (is_file('cust/' . CUSTOMIZATIONS . '/players.php')) {
-                $datasource = 'cust/' . CUSTOMIZATIONS . '/players.php?';
-            } else {
-                $datasource = "cust/default/players.php?";
-            }
-?>
-			memberDataSource = new YAHOO.util.DataSource("<?php echo $datasource; ?>");
-
-
-			memberDataSource.connMethodPost = false;
-			memberDataSource.responseType = YAHOO.util.DataSource.TYPE_XML;
-			memberDataSource.responseSchema = {
-				resultNode: "Member",
-				fields: [{
-						key: "ProfileId",
-						parser: "number"
-					},
-					{
-						key: "AccreditationId",
-						parser: "number"
-					},
-					{
-						key: "Jersey"
-					},
-					{
-						key: "Firstname"
-					},
-					{
-						key: "Lastname"
-					},
-					{
-						key: "BirthDate"
-					},
-					{
-						key: "Team"
-					},
-					{
-						key: "Event"
-					}
-				]
-			};
-			memberTable = new YAHOO.widget.DataTable("accreditation_idgrid", memberColumnDefs, memberDataSource, {
-				initialLoad: false,
-				selectionMode: "single"
-			});
-
-			oCallback = {
-				success: memberTable.onDataReturnInitializeTable,
-				failure: memberTable.onDataReturnInitializeTable,
-				scope: memberTable,
-				argument: memberTable.getState() // data payload that will be returned to the callback function 
-			};
-
-			//highlight
-			var onEventHighlightRow = function(oArgs) {
-				var elRow = memberTable.getTrEl(oArgs.target);
-				if (elRow) {
-					YAHOO.util.Dom.addClass(elRow, "selectable_highlight");
-				}
-			};
-
-			//un-highlight
-			var onEventUnhighlightRow = function(oArgs) {
-				var elRow = memberTable.getTrEl(oArgs.target);
-				if (elRow) {
-					YAHOO.util.Dom.removeClass(elRow, "selectable_highlight");
-				}
-			};
-
-			//select
-			var onEventSelectRow = function(oArgs) {
-				var elRow = memberTable.getTrEl(oArgs.target);
-				if (elRow) {
-					var oRecord = memberTable.getRecord(elRow);
-					handleSubmit(oRecord);
-				}
-			};
-
-			memberTable.subscribe("rowMouseoverEvent", onEventHighlightRow);
-			memberTable.subscribe("rowMouseoutEvent", onEventUnhighlightRow);
-			memberTable.subscribe("rowClickEvent", onEventSelectRow);
-
-			return {
-				oDS: memberDataSource,
-				oDT: memberTable
-			};
-		}();
+		});
 	});
 </script>

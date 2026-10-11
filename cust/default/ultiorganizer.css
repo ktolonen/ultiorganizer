@@ -1327,10 +1327,6 @@ tr.state-diff>td {
 	vertical-align: middle;
 }
 
-yuicalendar.table {
-	font-size: small;
-}
-
 .calweekdaycell {
 	background-color: var(--surface);
 }

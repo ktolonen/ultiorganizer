@@ -11,7 +11,6 @@ document.addEventListener("DOMContentLoaded", function () {
   if (!helpText || !helpButton) {
     return;
   }
-  helpText.classList.remove("yui-pe-content");
   helpText.style.display = "none";
   helpButton.addEventListener("click", handleHelpButton);
 });

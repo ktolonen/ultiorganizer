@@ -8,6 +8,7 @@ module.exports = [
       "script/yui/**",
       "script/flatpickr/**",
       "script/sortablejs/**",
+      "script/tablesort/**",
       "live/**",
       "lib/**",
       "vendor/**",

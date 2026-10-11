@@ -2,23 +2,23 @@
 require_once __DIR__ . '/../include_only.guard.php';
 denyDirectCustomizationAccess(__FILE__);
 ?>
-<div class="yui-skin-sam">
-	<div id="selectaccreditation_id" class="yui-pre-content">
-		<div class="hd"><?php echo _("Choose best match"); ?></div>
-		<div class="bd">
-			<form method='post' action='?view=user/teamplayers&amp;team=<?php echo (int) iget('team'); ?>'>
-				<div>
-					<input type='hidden' name='playerId' id='dialogPlayerId' value='' />
-					<input type='hidden' name='firstname' id='dialogFirstName' value='' />
-					<input type='hidden' name='lastname' id='dialogLastName' value='' />
-					<input type='hidden' name='playerId' id='dialogaccreditation_id' value='' />
-				</div>
-				<div id="accreditation_idgrid"></div>
-				<div>
-					<hr />
-					<input type='submit' class='button' value="<?php echo _("Close"); ?>" onclick="javascript:handleCancel();" />
-				</div>
-			</form>
+<dialog id="selectaccreditation_id">
+	<h3><?php echo _("Choose best match"); ?></h3>
+	<form method="dialog">
+		<div>
+			<input type='hidden' name='playerId' id='dialogPlayerId' value='' />
+			<input type='hidden' name='playerId' id='dialogaccreditation_id' value='' />
 		</div>
-	</div>
-</div>
+		<table id="accreditation_idgrid" class="admintable">
+			<thead>
+				<tr></tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+		<p id="accreditation_idempty" hidden="hidden"><?php echo _("No players matched the search."); ?></p>
+		<div>
+			<hr />
+			<input type='submit' class='button' value="<?php echo _("Close"); ?>" />
+		</div>
+	</form>
+</dialog>

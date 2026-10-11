@@ -7,6 +7,7 @@ module.exports = {
 		"vendor/**",
 		"script/flatpickr/**",
 		"script/sortablejs/**",
+		"script/tablesort/**",
 	],
 	rules: {
 		"alpha-value-notation": null,
