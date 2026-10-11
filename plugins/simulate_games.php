@@ -24,6 +24,7 @@ if (!isSuperAdmin()) {
 
 include_once 'lib/season.functions.php';
 include_once 'lib/series.functions.php';
+include_once 'lib/spirit.functions.php';
 include_once 'lib/standings.functions.php';
 include_once 'lib/team.functions.php';
 
@@ -41,6 +42,25 @@ function undoPoolMoves($poolId)
         //     }
 
     }
+}
+
+function simulateSpirit($gameId, $teamIds, $categories)
+{
+    foreach ($teamIds as $teamId) {
+        $points = [];
+        foreach ($categories as $category) {
+            if ((int) $category['index'] > 0) {
+                $span = (int) $category['max'] - (int) $category['min'];
+                $drop = (int) round($span * (rand(0, 100) / 100) * (rand(0, 100) / 100));
+                $points[$category['category_id']] = max((int) $category['min'], (int) $category['max'] - $drop);
+            }
+        }
+        $valid = SpiritValidateSubmittedPoints($points, $categories);
+        if ($valid !== false) {
+            SpiritScoreReplaceByGameTeam($gameId, $teamId, $valid);
+        }
+    }
+    RefreshGameSpiritData($gameId);
 }
 
 
@@ -61,6 +81,13 @@ if (!empty($_POST['season'])) {
 if (!empty($_POST['winner_mode']) && isset($winnerModes[$_POST['winner_mode']])) {
     $winnerMode = $_POST['winner_mode'];
 }
+$spiritMode = 0;
+if (!empty($seasonId)) {
+    $seasonInfo = SeasonInfo($seasonId);
+    $spiritMode = (int) ($seasonInfo['spiritmode'] ?? 0);
+}
+$spiritCategories = $spiritMode > 0 ? SpiritCategories($spiritMode) : [];
+$simulateSpirit = $spiritMode > 0 && (isset($_POST['spirit']) || !isset($_POST['simulate']));
 
 if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
 
@@ -203,6 +230,10 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
             GameSetScoreSheetKeeper($game['game_id'], "Game Simulator");
 
             GameSetResult($game['game_id'], $h, $a, false);
+
+            if ($simulateSpirit) {
+                simulateSpirit($game['game_id'], [$info['hometeam'], $info['visitorteam']], $spiritCategories);
+            }
         }
         ResolvePoolStandings($poolId);
         PoolResolvePlayed($poolId);
@@ -231,6 +262,16 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
             GameSetScoreSheetKeeper($game['game_id'], null);
 
             GameClearResult($game['game_id'], false);
+
+            if ($spiritMode > 0) {
+                $info = GameInfo($game['game_id']);
+                foreach ([$info['hometeam'], $info['visitorteam']] as $teamId) {
+                    if (!empty($teamId)) {
+                        SpiritScoreReplaceByGameTeam($game['game_id'], $teamId, []);
+                    }
+                }
+                RefreshGameSpiritData($game['game_id']);
+            }
         }
 
         undoPoolMoves($poolId);
@@ -297,6 +338,10 @@ if (empty($seasonId)) {
         $html .= "<option class='dropdown' value='" . utf8entities($mode) . "'" . $selected . ">" . utf8entities($label) . "</option>\n";
     }
     $html .= "</select></p>\n";
+    if ($spiritMode > 0) {
+        $checked = $simulateSpirit ? " checked='checked'" : "";
+        $html .= "<p><label><input type='checkbox' name='spirit' value='1'" . $checked . "/> " . ("Enter random spirit scores") . "</label></p>\n";
+    }
     $html .= "<p><input class='button' type='submit' name='simulate' value='" . ("Simulate") . "'/> <input class='button' type='submit' name='reset' value='" . ("Reset played games") . "'/></p>";
     $html .= "<div>";
     $html .= "<input type='hidden' name='season' value='$seasonId' />\n";
