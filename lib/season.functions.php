@@ -1059,7 +1059,8 @@ function DeleteSeasonWithData($seasonId)
         DBQuery("INSERT INTO tmp_del_club SELECT DISTINCT club FROM uo_team
             WHERE team_id IN (SELECT team_id FROM tmp_del_team) AND club IS NOT NULL");
         DBQuery("INSERT INTO tmp_del_game SELECT DISTINCT gp.game FROM uo_game_pool gp
-            JOIN uo_pool p ON p.pool_id=gp.pool WHERE p.series IN (SELECT series_id FROM tmp_del_series)");
+            JOIN uo_pool p ON p.pool_id=gp.pool
+            WHERE gp.timetable=1 AND p.series IN (SELECT series_id FROM tmp_del_series)");
         DBQuery("INSERT INTO tmp_del_profile SELECT DISTINCT profile_id FROM uo_player
             WHERE team IN (SELECT team_id FROM tmp_del_team) AND profile_id IS NOT NULL");
         DBQuery("INSERT INTO tmp_del_location SELECT DISTINCT location FROM uo_reservation
