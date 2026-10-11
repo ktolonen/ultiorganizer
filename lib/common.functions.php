@@ -38,14 +38,6 @@ if (!function_exists('convertToUtf8')) {
             }
         }
 
-        // Last resort for ISO-8859-1 input when other extensions are missing.
-        if (function_exists('utf8_encode') && $sourceEncoding === 'ISO-8859-1') {
-            $converted = utf8_encode($value);
-            if (!function_exists('mb_check_encoding') || mb_check_encoding($converted, 'UTF-8')) {
-                return $converted;
-            }
-        }
-
         // Strip out any invalid bytes to avoid failing DB inserts.
         if (function_exists('iconv')) {
             $converted = @iconv('UTF-8', 'UTF-8//IGNORE', $value);
@@ -1441,17 +1433,6 @@ function ordinal($number)
 }
 
 
-if (!function_exists('str_getcsv')) {
-    function str_getcsv($input, $delimiter = ',', $enclosure = '"', $escape = null, $eol = null)
-    {
-        $temp = fopen("php://memory", "rw");
-        fwrite($temp, $input);
-        fseek($temp, 0);
-        $r = fgetcsv($temp, 4096, $delimiter, $enclosure);
-        fclose($temp);
-        return $r;
-    }
-}
 function strEndsWith($whole, $end)
 {
     return (strpos($whole, $end, strlen($whole) - strlen($end)) !== false);

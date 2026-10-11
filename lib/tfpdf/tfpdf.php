@@ -1592,7 +1592,9 @@ protected function _parsegif($file)
 	ob_start();
 	imagepng($im);
 	$data = ob_get_clean();
-	imagedestroy($im);
+	// Ultiorganizer local modification: imagedestroy($im) removed. It has had
+	// no effect since PHP 8.0 and is deprecated in PHP 8.5; $im is freed
+	// when this method returns.
 	$f = fopen('php://temp','rb+');
 	if(!$f)
 		$this->Error('Unable to create memory stream');
