@@ -185,7 +185,9 @@ echo "</td></tr></table>\n";
                 var poolId = list.id === "unpooled" ? "0" : list.id.substring(3);
                 return [poolId].concat(sortedListIds(list, "team")).join("/");
             }).join("|");
-            postSortedLists("index.php?view=admin/saveteampools", request, document.getElementById("responseStatus"));
+            postSortedLists("index.php?view=admin/saveteampools", request, document.getElementById("responseStatus"), {
+                errorText: "<?php echo _("Saving failed. Please try again."); ?>"
+            });
         });
     })();
 </script>

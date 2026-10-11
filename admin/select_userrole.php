@@ -9,7 +9,6 @@ $title = _("Select user roles");
 //common page
 
 pageTopHeadOpen($title);
-echo file_get_contents('script/rescalendar.inc');
 pageTopHeadClose($title, false);
 leftMenu($LAYOUT_ID);
 contentStart();

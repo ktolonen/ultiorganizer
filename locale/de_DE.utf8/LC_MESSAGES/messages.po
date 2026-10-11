@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 11:45+0300\n"
+"POT-Creation-Date: 2026-10-11 11:47+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -255,7 +255,7 @@ msgstr "Akkreditierungsereignisse"
 msgid "Accreditation log"
 msgstr "Akkreditierungslog"
 
-#: admin/select_userrole.php:37 user/userinfo.php:437 user/userinfo.php:506
+#: admin/select_userrole.php:38 user/userinfo.php:442 user/userinfo.php:511
 msgid "Accreditation official"
 msgstr "Akkreditierungsverantwortlicher"
 
@@ -303,7 +303,7 @@ msgstr "Aktiv"
 #: admin/seasons.php:157 admin/seasonseries.php:173 admin/seasonteams.php:260
 #: admin/serieformats.php:52 admin/timekeepertemplates.php:61
 #: admin/translations.php:519 user/addextraemail.php:95 user/enrollteam.php:137
-#: user/teamplayers.php:275 user/userinfo.php:378 user/userinfo.php:516
+#: user/teamplayers.php:275 user/userinfo.php:383 user/userinfo.php:521
 msgid "Add"
 msgstr "Hinzufügen"
 
@@ -319,7 +319,7 @@ msgstr "Timekeeper-Vorlage hinzufügen"
 msgid "Add division"
 msgstr "Klasse hinzufügen"
 
-#: user/userinfo.php:252
+#: user/userinfo.php:257
 msgid "Add extra address"
 msgstr "Extra Adresse hinzufügen"
 
@@ -407,7 +407,7 @@ msgstr "Übersetzungsschlüssel hinzufügen"
 msgid "Added media links"
 msgstr "Medien hinzugefügt"
 
-#: admin/adduser.php:109 user/userinfo.php:27
+#: admin/adduser.php:109 user/userinfo.php:32
 msgid "Added new user"
 msgstr "Neuer Benutzer hinzugefügt"
 
@@ -458,8 +458,8 @@ msgstr ""
 msgid "Administration"
 msgstr "Administration"
 
-#: admin/select_userrole.php:25 admin/serverconf.php:419 user/userinfo.php:396
-#: user/userinfo.php:501
+#: admin/select_userrole.php:26 admin/serverconf.php:419 user/userinfo.php:401
+#: user/userinfo.php:506
 msgid "Administrator"
 msgstr "Administrator"
 
@@ -816,7 +816,7 @@ msgid "BULA"
 msgstr "BULA"
 
 #: admin/addserieformats.php:196 admin/addtimekeepertemplate.php:152
-#: admin/select_teams.php:155 spiritkeeper/editgame.php:141
+#: admin/select_teams.php:160 spiritkeeper/editgame.php:141
 #: spiritkeeper/teamgames.php:127
 msgid "Back"
 msgstr "Zurück"
@@ -980,17 +980,17 @@ msgstr "Callahan-Punkt"
 
 #: admin/eventdataimport.php:218 admin/seasonpools.php:314
 #: admin/seasonseries.php:181 admin/seasonteams.php:266
-#: admin/select_userrole.php:30 admin/select_userrole.php:35
-#: admin/select_userrole.php:38 admin/select_userrole.php:41
-#: admin/select_userrole.php:44 admin/select_userrole.php:47
-#: admin/select_userrole.php:50 admin/select_userrole.php:53
-#: admin/select_userrole.php:56 admin/select_userrole.php:59
+#: admin/select_userrole.php:31 admin/select_userrole.php:36
+#: admin/select_userrole.php:39 admin/select_userrole.php:42
+#: admin/select_userrole.php:45 admin/select_userrole.php:48
+#: admin/select_userrole.php:51 admin/select_userrole.php:54
+#: admin/select_userrole.php:57 admin/select_userrole.php:60
 #: admin/translations.php:544 admin/translations.php:546
 #: scorekeeper/addscoresheet.php:429 user/adddefensesheet.php:315
 #: user/addscoresheet.php:817 user/select_poolselector.php:26
 #: user/select_poolselector.php:29 user/select_poolselector.php:32
 #: user/select_poolselector.php:35 user/teamplayers.php:286
-#: user/userinfo.php:292
+#: user/userinfo.php:297
 msgid "Cancel"
 msgstr "Abbrechen"
 
@@ -1037,7 +1037,7 @@ msgstr "Gefangen"
 msgid "Change"
 msgstr "Aendern"
 
-#: user/userinfo.php:532
+#: user/userinfo.php:537
 msgid "Change Password"
 msgstr "Passwort ändern"
 
@@ -1077,11 +1077,11 @@ msgstr "Änderungen"
 msgid "Changes saved"
 msgstr "Änderungen gespeichert"
 
-#: user/userinfo.php:68 user/userinfo.php:116
+#: user/userinfo.php:73 user/userinfo.php:121
 msgid "Changes were NOT saved"
 msgstr "Änderungen NICHT gespeichert"
 
-#: user/userinfo.php:66 user/userinfo.php:114
+#: user/userinfo.php:71 user/userinfo.php:119
 msgid "Changes were saved"
 msgstr "Änderungen gespeichert"
 
@@ -1299,7 +1299,7 @@ msgstr "Kommunikation (unsere)"
 msgid "Communication (theirs)"
 msgstr "Kommunikation (ihre)"
 
-#: cust/default/teamplayers.functions.php:176 user/enrollteam.php:108
+#: cust/default/teamplayers.functions.php:177 user/enrollteam.php:108
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -1525,7 +1525,7 @@ msgstr "Überkreuz"
 msgid "Crossmatch -type of pool"
 msgstr "Pool vom Typ Kreuzvergleich"
 
-#: user/select_poolselector.php:19 user/userinfo.php:339 user/userinfo.php:368
+#: user/select_poolselector.php:19 user/userinfo.php:344 user/userinfo.php:373
 msgid "Current event"
 msgstr "Aktuelles Turnier"
 
@@ -1858,8 +1858,8 @@ msgstr "Disqualifiziert"
 #: lib/search.functions.php:469 lib/search.functions.php:510
 #: lib/search.functions.php:552 user/respteams.php:23
 #: user/select_poolselector.php:31 user/select_poolselector.php:34
-#: user/userinfo.php:349 user/userinfo.php:353 user/userinfo.php:371
-#: user/userinfo.php:372
+#: user/userinfo.php:354 user/userinfo.php:358 user/userinfo.php:376
+#: user/userinfo.php:377
 msgid "Division"
 msgstr "Klasse"
 
@@ -1872,11 +1872,11 @@ msgid "Division name is mandatory!"
 msgstr "Klassenname erforderlich!"
 
 #: poolstatus.php:37 seriesstatus.php:21 seriesstatus.php:29
-#: spiritstatus.php:18 spiritstatus.php:25
+#: spiritstatus.php:18 spiritstatus.php:25 admin/select_teams.php:23
 msgid "Division not found"
 msgstr "Division nicht gefunden"
 
-#: admin/select_userrole.php:46 user/userinfo.php:430 user/userinfo.php:505
+#: admin/select_userrole.php:47 user/userinfo.php:435 user/userinfo.php:510
 msgid "Division organizer"
 msgstr "Liga-/Klassenverantwortlicher"
 
@@ -1915,7 +1915,7 @@ msgstr ""
 "Spiele zwischen Teams, die aus demselben Pool kommen, nicht erzeugen, wenn "
 "das Poolformat gegenseitige Spiele enthaelt."
 
-#: admin/schedule.php:677
+#: admin/schedule.php:676
 msgid ""
 "Do you want to leave anyway? If you select Yes, you will lose all your "
 "changes."
@@ -2211,7 +2211,7 @@ msgstr "Fehler: %s."
 #: lib/search.functions.php:217 lib/search.functions.php:469
 #: lib/search.functions.php:510 lib/search.functions.php:552
 #: spiritkeeper/home.php:59 spiritkeeper/teamgames.php:137
-#: user/select_poolselector.php:28 user/userinfo.php:345 user/userinfo.php:370
+#: user/select_poolselector.php:28 user/userinfo.php:350 user/userinfo.php:375
 msgid "Event"
 msgstr "Turnier"
 
@@ -2276,7 +2276,7 @@ msgstr "Ereignis nicht gefunden"
 msgid "Event played."
 msgstr "Turnier/Saison beendet."
 
-#: admin/select_userrole.php:40 user/userinfo.php:423 user/userinfo.php:503
+#: admin/select_userrole.php:41 user/userinfo.php:428 user/userinfo.php:508
 msgid "Event responsible"
 msgstr "Turnier-/Saisonverantwortlicher"
 
@@ -2353,7 +2353,7 @@ msgstr ""
 "Zusaetzliche E-Mail konnte nicht hinzugefuegt werden. Bitte kontaktiere den "
 "Systemadministrator."
 
-#: user/addextraemail.php:67 user/userinfo.php:257
+#: user/addextraemail.php:67 user/userinfo.php:262
 msgid "Extra emails"
 msgstr "Weitere E-Mail-Adressen"
 
@@ -2795,7 +2795,7 @@ msgstr "Spiel beendet"
 msgid "Game history"
 msgstr "Frühere Spiele"
 
-#: user/userinfo.php:464 user/userinfo.php:509
+#: user/userinfo.php:469 user/userinfo.php:514
 msgid "Game input responsibility"
 msgstr "Spieleingabe-Recht"
 
@@ -3172,7 +3172,7 @@ msgstr "Größe"
 msgid "Helps"
 msgstr "Hilfe"
 
-#: admin/apitokens.php:90 user/userinfo.php:314
+#: admin/apitokens.php:90 user/userinfo.php:319
 msgid "Hide"
 msgstr "Verstecken"
 
@@ -3334,7 +3334,7 @@ msgstr ""
 msgid "Illegal characters in the password"
 msgstr "Passwort enthält ungültige Zeichen"
 
-#: user/userinfo.php:55
+#: user/userinfo.php:60
 msgid "Illegal characters in the username."
 msgstr "Benutzername enthält ungültige Zeichen."
 
@@ -3640,7 +3640,7 @@ msgid "Label"
 msgstr "Bezeichnung"
 
 #: admin/translations.php:530 admin/translations.php:561
-#: timekeeper/index.php:189 user/userinfo.php:271
+#: timekeeper/index.php:189 user/userinfo.php:276
 msgid "Language"
 msgstr "Sprache"
 
@@ -4135,12 +4135,12 @@ msgstr "HINWEIS"
 #: user/addmedialink.php:195 user/addplayerlists.php:300
 #: user/addplayerlists.php:379 user/clubprofile.php:161
 #: user/clubprofile.php:216 user/playerprofile.php:353 user/teamprofile.php:156
-#: user/userinfo.php:240
+#: user/userinfo.php:245
 msgid "Name"
 msgstr "Name"
 
 #: register.php:39 admin/addseasons.php:87 admin/addseasons.php:118
-#: admin/adduser.php:36 user/userinfo.php:48
+#: admin/adduser.php:36 user/userinfo.php:53
 msgid "Name cannot be empty"
 msgstr "Name darf nicht leer sein"
 
@@ -4154,7 +4154,7 @@ msgstr "Name im Spielplan"
 msgid "Name is mandatory!"
 msgstr "Name ist erforderlich!"
 
-#: cust/default/teamplayers.functions.php:123
+#: cust/default/teamplayers.functions.php:124
 msgid "Name must be at least 2 letters long!"
 msgstr "Name muss mindestens zwei Buchstaben haben!"
 
@@ -4178,7 +4178,7 @@ msgstr "Nationalität"
 msgid "Never"
 msgstr "Nie"
 
-#: user/userinfo.php:527
+#: user/userinfo.php:532
 msgid "New  password"
 msgstr "Neues Passwort"
 
@@ -4655,7 +4655,7 @@ msgstr "Teilweise gespeicherte Endplatzierungen"
 msgid "Password"
 msgstr "Passwort"
 
-#: user/userinfo.php:100
+#: user/userinfo.php:105
 msgid "Password cannot be empty."
 msgstr "Passwort darf nicht leer sein."
 
@@ -4668,7 +4668,7 @@ msgstr ""
 "deinem neuen Passwort anmelden."
 
 #: register.php:35 admin/adduser.php:32 login/password_reset.php:34
-#: user/userinfo.php:105
+#: user/userinfo.php:110
 msgid "Password is too short (min. 5 letters)."
 msgstr "Passwort ist zu kurz (min. 5 Buchstaben)."
 
@@ -4688,7 +4688,7 @@ msgstr "Link zum Zuruecksetzen des Passworts gesendet."
 msgid "Password reset request for Ultiorganizer"
 msgstr "Anfrage zum Zuruecksetzen des Passworts fuer Ultiorganizer"
 
-#: register.php:67 login/password_reset.php:45 user/userinfo.php:110
+#: register.php:67 login/password_reset.php:45 user/userinfo.php:115
 msgid "Passwords do not match"
 msgstr "Passwörter stimmen nicht überein"
 
@@ -4864,7 +4864,7 @@ msgstr "Der Datenschutzbericht des Spielers konnte nicht erstellt werden."
 msgid "Player privacy tools"
 msgstr "Datenschutzwerkzeuge für Spieler"
 
-#: admin/select_userrole.php:58 user/userinfo.php:473 user/userinfo.php:510
+#: admin/select_userrole.php:59 user/userinfo.php:478 user/userinfo.php:515
 msgid "Player profile administrator"
 msgstr "Spielerprofilverwalter"
 
@@ -5106,7 +5106,7 @@ msgstr "Zurueck"
 msgid "Previous round winner vs. winners and losers vs. losers"
 msgstr "Gewinner der vorherigen Runde gegeneinander; Verlierer gegeneinander"
 
-#: user/userinfo.php:244
+#: user/userinfo.php:249
 msgid "Primary email"
 msgstr "Primäre Email-Adresse"
 
@@ -5333,7 +5333,7 @@ msgstr ""
 msgid "Rename selected"
 msgstr "Ausgewähltes umbenennen"
 
-#: register.php:137 login/password_reset.php:77 user/userinfo.php:529
+#: register.php:137 login/password_reset.php:77 user/userinfo.php:534
 msgid "Repeat password"
 msgstr "Passwort (Wdh.)"
 
@@ -5353,8 +5353,8 @@ msgstr "Fuehre die Umwandlung nach der Bereinigung erneut aus."
 msgid "Reservation"
 msgstr "Reservierung"
 
-#: admin/select_userrole.php:52 admin/select_userrole.php:55
-#: user/userinfo.php:454 user/userinfo.php:508
+#: admin/select_userrole.php:53 admin/select_userrole.php:56
+#: user/userinfo.php:459 user/userinfo.php:513
 msgid "Reservation game input responsible"
 msgstr "Spieleingabe für eine Reservierung"
 
@@ -5672,7 +5672,7 @@ msgstr "Samstag"
 #: admin/seasongames.php:270 admin/seasonmoves.php:219
 #: admin/seasonpoints.php:271 admin/seasonpools.php:313
 #: admin/seasonseries.php:180 admin/seasonstandings.php:552
-#: admin/seasonteams.php:265 admin/select_teams.php:154
+#: admin/seasonteams.php:265 admin/select_teams.php:159
 #: admin/seriesseeding.php:74 admin/serieteams.php:190 admin/serverconf.php:444
 #: admin/translations.php:519 plugins/lisence_modifier.php:186
 #: scorekeeper/addcomment.php:42 scorekeeper/addfirstoffence.php:47
@@ -5682,7 +5682,7 @@ msgstr "Samstag"
 #: spiritkeeper/editgame.php:125 user/addmedialink.php:219
 #: user/addplayerlists.php:453 user/addspirit.php:314 user/clubprofile.php:251
 #: user/playerprofile.php:388 user/respgames.php:229 user/teamplayers.php:285
-#: user/teamprofile.php:191 user/userinfo.php:291
+#: user/teamprofile.php:191 user/userinfo.php:296
 msgid "Save"
 msgstr "Speichern"
 
@@ -5694,7 +5694,7 @@ msgstr "Spirit-Einstellungen speichern"
 msgid "Save as final result"
 msgstr "Endergebnis speichern"
 
-#: admin/schedule.php:673
+#: admin/schedule.php:672
 msgid "Save changes?"
 msgstr "Änderungen speichern?"
 
@@ -5734,6 +5734,10 @@ msgstr "Gespeicherter Stand"
 #: admin/finalstandings.php:137
 msgid "Saving affects only the selected division."
 msgstr "Speichern betrifft nur die ausgewählte Division."
+
+#: admin/schedule.php:721 admin/select_teams.php:189 admin/stats.php:200
+msgid "Saving failed. Please try again."
+msgstr "Das Speichern ist fehlgeschlagen. Bitte versuche es erneut."
 
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
 #: lib/scorekeeper.functions.php:292
@@ -5785,7 +5789,7 @@ msgstr "Spielplan- und Feldverwaltung"
 msgid "Scheduling name"
 msgstr "Name im Spielplan"
 
-#: admin/select_userrole.php:49 user/userinfo.php:444 user/userinfo.php:507
+#: admin/select_userrole.php:50 user/userinfo.php:449 user/userinfo.php:512
 msgid "Scheduling right"
 msgstr "Spielplan-Verantwortlicher"
 
@@ -6001,12 +6005,12 @@ msgstr "Setzliste"
 #: admin/eventdataexport.php:51 admin/finalstandings.php:28
 #: admin/privacyplayer.php:99 admin/privacyuser.php:100
 #: admin/seasonpoints.php:29 admin/seasonpoints.php:186
-#: admin/seasonpoints.php:243 admin/select_userrole.php:29
-#: admin/select_userrole.php:35 admin/select_userrole.php:38
-#: admin/select_userrole.php:41 admin/select_userrole.php:44
-#: admin/select_userrole.php:47 admin/select_userrole.php:50
-#: admin/select_userrole.php:53 admin/select_userrole.php:56
-#: admin/select_userrole.php:59 ext/index.php:88
+#: admin/seasonpoints.php:243 admin/select_userrole.php:30
+#: admin/select_userrole.php:36 admin/select_userrole.php:39
+#: admin/select_userrole.php:42 admin/select_userrole.php:45
+#: admin/select_userrole.php:48 admin/select_userrole.php:51
+#: admin/select_userrole.php:54 admin/select_userrole.php:57
+#: admin/select_userrole.php:60 ext/index.php:88
 #: user/select_poolselector.php:22 user/select_poolselector.php:26
 #: user/select_poolselector.php:29 user/select_poolselector.php:32
 #: user/select_poolselector.php:35
@@ -6173,7 +6177,7 @@ msgstr "Serverversion"
 msgid "Set"
 msgstr "Setzen"
 
-#: user/userinfo.php:267
+#: user/userinfo.php:272
 msgid "Set as primary"
 msgstr "Zu primär ändern"
 
@@ -6208,7 +6212,7 @@ msgstr "Trikotnummern"
 
 #: admin/apitokens.php:87 admin/apitokens.php:180
 #: admin/scorekeepinglinks.php:76 spiritkeeper/home.php:56
-#: user/scoresheethistory.php:418 user/userinfo.php:315
+#: user/scoresheethistory.php:418 user/userinfo.php:320
 msgid "Show"
 msgstr "Anzeigen"
 
@@ -6228,7 +6232,7 @@ msgstr "Timeout-Statistiken anzeigen"
 msgid "Show URLs for all teams"
 msgstr "URLs fuer alle Teams anzeigen"
 
-#: user/userinfo.php:302
+#: user/userinfo.php:307
 msgid "Show administration responsibilities"
 msgstr "Zeige administrative Rechte"
 
@@ -6290,7 +6294,7 @@ msgstr "Spieler ohne Spiele anzeigen"
 msgid "Show pool"
 msgstr "Pool zeigen"
 
-#: user/userinfo.php:328
+#: user/userinfo.php:333
 msgid "Show pools"
 msgstr "Zeige Gruppen"
 
@@ -6394,7 +6398,7 @@ msgstr "Spirit-Einstellungen"
 msgid "Spirit Standings"
 msgstr "Spirit-Rangliste"
 
-#: admin/select_userrole.php:43 user/userinfo.php:409 user/userinfo.php:504
+#: admin/select_userrole.php:44 user/userinfo.php:414 user/userinfo.php:509
 msgid "Spirit admin"
 msgstr "Spirit-Admin"
 
@@ -6786,7 +6790,7 @@ msgstr "Teamadministratoren"
 msgid "Team card"
 msgstr "Team-Statistik"
 
-#: admin/select_userrole.php:34 user/userinfo.php:416 user/userinfo.php:502
+#: admin/select_userrole.php:35 user/userinfo.php:421 user/userinfo.php:507
 msgid "Team contact person"
 msgstr "Team-Kontaktperson"
 
@@ -6811,7 +6815,7 @@ msgstr "Team nicht gefunden"
 msgid "Team pages"
 msgstr "Teamseiten"
 
-#: user/select_poolselector.php:25 user/userinfo.php:341 user/userinfo.php:369
+#: user/select_poolselector.php:25 user/userinfo.php:346 user/userinfo.php:374
 msgid "Team pools"
 msgstr "Gruppen für Team"
 
@@ -7039,7 +7043,7 @@ msgstr ""
 "Die hochgeladene Importdatei ist nicht mehr verfügbar. Wähle die Datei "
 "erneut aus."
 
-#: register.php:31 admin/adduser.php:28 user/userinfo.php:43
+#: register.php:31 admin/adduser.php:28 user/userinfo.php:48
 msgid "The username is already in use"
 msgstr "Der Benutzername ist schon vergeben"
 
@@ -7457,7 +7461,7 @@ msgstr "Übersetzung"
 msgid "Translation added."
 msgstr "Übersetzung hinzugefügt."
 
-#: user/userinfo.php:400
+#: user/userinfo.php:405
 msgid "Translation administrator"
 msgstr "Übersetzungsadministrator"
 
@@ -7619,7 +7623,7 @@ msgstr "Unbekannter Club"
 msgid "Unknown event import mode."
 msgstr "Unbekannter Turnier-Importmodus."
 
-#: menufunctions.php:488 user/userinfo.php:480
+#: menufunctions.php:488 user/userinfo.php:485
 msgid "Unnamed player"
 msgstr "Unbenannter Spieler"
 
@@ -7655,7 +7659,7 @@ msgstr "Nicht unterstützte Snapshot-Tabelle: %s"
 msgid "Unsupported event snapshot version."
 msgstr "Snapshot-Version wird nicht unterstützt."
 
-#: user/userinfo.php:61
+#: user/userinfo.php:66
 msgid "Unsupported language:"
 msgstr "Nicht-unterstützte Sprachei:"
 
@@ -7722,7 +7726,7 @@ msgstr "Fuer den Benutzerbereich ist eine Benutzer-ID erforderlich."
 msgid "User ID may not have spaces or special characters"
 msgstr "Die Benutzer-ID darf keine Leerzeichen oder Sonderzeichen enthalten"
 
-#: user/userinfo.php:404
+#: user/userinfo.php:409
 msgid "User administrator"
 msgstr "Benutzeradministrator"
 
@@ -7731,11 +7735,11 @@ msgstr "Benutzeradministrator"
 msgid "User credentials do not match"
 msgstr "Zugangsdaten stimmen nicht überein"
 
-#: user/userinfo.php:217
+#: user/userinfo.php:26 user/userinfo.php:222
 msgid "User information"
 msgstr "Benutzerdaten"
 
-#: admin/apitokens.php:34
+#: admin/apitokens.php:34 user/userinfo.php:26
 msgid "User not found."
 msgstr "Benutzer nicht gefunden."
 
@@ -7748,17 +7752,17 @@ msgstr "Benutzerrechte für %s hinzugefügt."
 msgid "User rights added for:"
 msgstr "Benutzerrechte hinzugefügt für:"
 
-#: user/userinfo.php:385
+#: user/userinfo.php:390
 msgid "User roles"
 msgstr "Nutzerrollen"
 
 #: login.php:20 register.php:125 admin/adduser.php:110 admin/adduser.php:127
 #: admin/privacyuser.php:88 lib/search.functions.php:629
-#: scorekeeper/login.php:27 spiritkeeper/login.php:62 user/userinfo.php:242
+#: scorekeeper/login.php:27 spiritkeeper/login.php:62 user/userinfo.php:247
 msgid "Username"
 msgstr "Benutzername"
 
-#: register.php:27 admin/adduser.php:24 user/userinfo.php:38
+#: register.php:27 admin/adduser.php:24 user/userinfo.php:43
 msgid "Username is too short (min. 3 letters)"
 msgstr "Benutzername ist zu kurz (min. 3 Buchstaben)"
 
@@ -7971,7 +7975,7 @@ msgstr "Gewinnpunkte"
 msgid "Wins"
 msgstr "Siege"
 
-#: admin/select_teams.php:106
+#: admin/select_teams.php:111
 msgid "Without pool"
 msgstr "Ohne Pool"
 
@@ -8265,7 +8269,7 @@ msgstr "kg"
 msgid "left"
 msgstr "links"
 
-#: user/userinfo.php:400 user/userinfo.php:404
+#: user/userinfo.php:405 user/userinfo.php:409
 msgid "legacy, not enforced"
 msgstr "Altbestand, nicht erzwungen"
 

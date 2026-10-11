@@ -718,6 +718,7 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     var request = Array.prototype.map.call(scheduleLists, listRequest).join("|");
     postSortedLists("index.php?view=admin/saveschedule", request, document.getElementById("responseStatus"), {
       html: true,
+      errorText: "<?php echo _("Saving failed. Please try again."); ?>",
       onSuccess: function() {
         if (savedGeneration !== modifiedGeneration) {
           return;
