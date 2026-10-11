@@ -1091,6 +1091,14 @@ function DeleteSeasonWithData($seasonId)
         // Roles resolve their season through the target rows, so they go before those rows.
         DeleteEventUserRoles($seasonId);
         DBQuery("DELETE FROM uo_userproperties WHERE name='editseason' AND value=$season");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value='" . DBEscapeString('season:' . $seasonId) . "'");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value IN (SELECT CONCAT('series:', CAST(series_id AS CHAR)) FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value IN (SELECT CONCAT('pool:', CAST(pool_id AS CHAR)) FROM tmp_del_pool)");
+        DBQuery("DELETE FROM uo_userproperties WHERE name='poolselector'
+            AND value IN (SELECT CONCAT('team:', CAST(team_id AS CHAR)) FROM tmp_del_team)");
         DeleteSeasonStats($seasonId);
         DBQuery("DELETE FROM uo_api_token WHERE scope_type='season' AND scope_id=$season");
         DBQuery("DELETE FROM uo_comment WHERE type=1 AND id=$season");
