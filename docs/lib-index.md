@@ -48,7 +48,7 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/user.functions.php`: authentication, password hashing/reset, registration/email confirmation, session setup, user roles, permission checks, and responsibility helpers.
 - `lib/version.functions.php`: Ultiorganizer, database, and customization version metadata helpers.
 - `lib/view.guard.php`: include-time view guard for routed pages.
-- `lib/yui.functions.php`: thin wrapper for loading YUI assets. When AutoComplete is loaded it replaces the stock `formatResult` with an escaping one and provides `YAHOO.widget.AutoComplete.escapeHtml` for custom formatters.
+- `lib/yui.functions.php`: thin wrapper for loading YUI assets through the bundled loader.
 
 ## Third-party libraries
 

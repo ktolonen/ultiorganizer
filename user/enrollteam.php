@@ -72,7 +72,7 @@ echo "<h2>" . _("Enrolling ends") . " " . ShortDate($seasonInfo['enroll_deadline
 foreach ($result as $row) {
     echo "<form method='post' action='?" . utf8entities($_SERVER['QUERY_STRING']) . "'>\n";
     echo "<h2>" . utf8entities(U_($row['name'])) . "</h2>\n";
-    echo "<table class='yui-skin-sam' style='width:100%' cellpadding='2'><tr><th>" . _("Team") . "</th>";
+    echo "<table style='width:100%' cellpadding='2'><tr><th>" . _("Team") . "</th>";
     if (!intval($seasonInfo['isnationalteams'])) {
         echo "<th>" . _("Club") . "</th>";
     }

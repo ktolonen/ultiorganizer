@@ -4,8 +4,8 @@ Implementation notes for third-party code, PDFs, plugins, customizations, guards
 
 ## Third-party components
 
-- YUI assets and loader live under `script/yui/` and `lib/yuiloader/`. Table and drag-and-drop widgets still use YUI. Help toggles, scoresheet error highlighting, pool color selection, and simple edit controls use native browser APIs.
-- Calendar fields use flatpickr 4.6.13 under `script/flatpickr/`, with shared setup in `script/calendar.js`. Dates retain the `day.month.year` form format and manual entry; calendar weeks start on Monday. The bundled locale files cover German, Spanish, and Finnish; English is built in.
+- YUI assets and loader live under `script/yui/` and `lib/yuiloader/`. YUI remains only for the team player data table and accreditation dialog (`cust/default/teamplayers.functions.php`), drag-and-drop lists (`admin/schedule.php`, `admin/select_teams.php`, `admin/stats.php`), and the statistics page's animation and XHR calls. Help toggles, scoresheet error highlighting, pool color selection, and simple edit controls use native browser APIs.
+- Calendar fields use flatpickr 4.6.13 under `script/flatpickr/`, with shared setup in `script/calendar.js`. Dates keep the `day.month.year` form format; the picker writes only a picked date and never rewrites typed text. Calendar weeks start on Monday. The bundled locale files cover German, Spanish, and Finnish; English is built in.
 - Local club and team name suggestions use native `datalist` controls through `script/local-autocomplete.js`. Inputs retain free-text entry and their original form field names. Translated fields load suggestions from the existing translation endpoint through `script/translation-autocomplete.js`; selecting a suggestion retains the translation key. Reservation-location suggestions use `script/location-autocomplete.js`, with address context, keyboard selection, and a separate selected location ID that clears when the name is edited.
 - Bundled PHP libraries include `lib/hsvclass/`, `lib/tfpdf/`, and `lib/phpqrcode/`.
 

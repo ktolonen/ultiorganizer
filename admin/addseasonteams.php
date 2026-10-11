@@ -142,7 +142,7 @@ if ($teamId) {
     $html .= "<form method='post' action='?view=admin/addseasonteams&amp;season=$season&amp;series=$seriesId'>";
 }
 
-$html .= "<table cellpadding='2px' class='yui-skin-sam'><tr><td class='infocell'>" . _("Name") . ":</td><td>";
+$html .= "<table cellpadding='2px'><tr><td class='infocell'>" . _("Name") . ":</td><td>";
 if (!intval($seasonInfo['isnationalteams'])) {
     $html .= "<input class='input' id='name' name='name' size='50' value='" . utf8entities($tp['name']) . "'/></td></tr>";
     $html .= "<tr><td class='infocell'>" . _("Club") . ":</td>\n";

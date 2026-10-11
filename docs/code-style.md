@@ -91,7 +91,7 @@ Point PhpStorm or VS Code extensions at `.php-cs-fixer.dist.php` and `phpstan.ne
 
 ## JavaScript
 
-Hand-written client JavaScript lives under `script/`: plain `.js` files and `script/*.inc` `<script>` snippets included into PHP pages (some use YUI globals). The vendored `script/yui/` and `script/flatpickr/` assets and the built `live/assets/` bundle are not linted.
+Hand-written client JavaScript lives under `script/`: plain `.js` files and `script/*.inc` `<script>` snippets included into PHP pages. The vendored `script/yui/` and `script/flatpickr/` assets and the built `live/assets/` bundle are not linted.
 
 JS is ES5 with 2-space indentation, linted by ESLint 10 using [`eslint.config.js`](../eslint.config.js). The toolchain lives in the `dev` image under `/opt/eslint/`; there is deliberately no root `package.json`.
 

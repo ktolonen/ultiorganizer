@@ -29,7 +29,6 @@ module.exports = [
       sourceType: "script",
       globals: {
         ...globals.browser,
-        YAHOO: "readonly",
         flatpickr: "readonly",
       },
     },
