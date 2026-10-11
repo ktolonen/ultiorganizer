@@ -1327,14 +1327,6 @@ tr.state-diff>td {
 	vertical-align: middle;
 }
 
-.calweekdaycell {
-	background-color: var(--surface);
-}
-
-.calheader {
-	color: var(--accent);
-}
-
 .playedpool {
 	background-color: var(--played-bg);
 }

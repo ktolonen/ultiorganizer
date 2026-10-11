@@ -7,7 +7,6 @@ $finder = (new PhpCsFixer\Finder())
         'live',
         'dist',
         'lib/tfpdf',
-        'lib/yuiloader',
         'lib/phpqrcode',
         'lib/feed_generator',
         'lib/hsvclass',

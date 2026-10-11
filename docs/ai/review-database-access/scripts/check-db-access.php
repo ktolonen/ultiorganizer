@@ -263,8 +263,7 @@ function classifyPath(string $path): ?string
     if (str_starts_with($path, 'lib/')) {
         if (str_starts_with($path, 'lib/feed_generator/')
             || str_starts_with($path, 'lib/phpqrcode/')
-            || str_starts_with($path, 'lib/tfpdf/')
-            || str_starts_with($path, 'lib/yuiloader/')) {
+            || str_starts_with($path, 'lib/tfpdf/')) {
             return null;
         }
         return 'lib';

@@ -18,7 +18,6 @@ parameters:
         - dist/*
         - conf/*
         - lib/tfpdf/*
-        - lib/yuiloader/*
         - lib/phpqrcode/*
         - lib/feed_generator/*
         - lib/hsvclass/*
@@ -35,7 +34,6 @@ parameters:
         - lib/feed_generator/FeedWriter.php
         - lib/feed_generator/FeedItem.php
         - lib/phpqrcode/phpqrcode.php
-        - lib/yuiloader/phploader/loader.php
         - phpstan-stubs.php
     ignoreErrors:
         -

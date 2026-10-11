@@ -48,7 +48,6 @@ Use this index to find existing shared helpers before adding new utility code or
 - `lib/user.functions.php`: authentication, password hashing/reset, registration/email confirmation, session setup, user roles, permission checks, and responsibility helpers.
 - `lib/version.functions.php`: Ultiorganizer, database, and customization version metadata helpers.
 - `lib/view.guard.php`: include-time view guard for routed pages.
-- `lib/yui.functions.php`: thin wrapper for loading YUI assets through the bundled loader.
 
 ## Third-party libraries
 
@@ -58,4 +57,3 @@ Treat these folders as vendor or legacy infrastructure. Prefer using their publi
 - `lib/hsvclass/`: third-party `HSVClass` plus RGB/HSV conversion helpers for color math.
 - `lib/phpqrcode/`: third-party QR code generation library with bundled encoder, PNG/vector output, and support modules.
 - `lib/tfpdf/`: third-party Unicode PDF library plus `cellfit` helper, bundled font metrics, and generated Unicode font metadata.
-- `lib/yuiloader/`: third-party YUI PHP loader/combo service with bundled version metadata; use it as legacy asset-loading infrastructure rather than app-specific business logic.

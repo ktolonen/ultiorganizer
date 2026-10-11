@@ -32,7 +32,6 @@ module.exports = {
 			true,
 			{
 				ignore: ["custom-elements"],
-				ignoreTypes: ["yuicalendar"],
 			},
 		],
 		"shorthand-property-no-redundant-values": null,

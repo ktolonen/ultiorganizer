@@ -4,7 +4,6 @@ Implementation notes for third-party code, PDFs, plugins, customizations, guards
 
 ## Third-party components
 
-- YUI assets and loader live under `script/yui/` and `lib/yuiloader/`. No page loads them any more.
 - Calendar fields use flatpickr 4.6.13 under `script/flatpickr/`, with shared setup in `script/calendar.js`. Dates keep the `day.month.year` form format; the picker writes only a picked date and never rewrites typed text. Calendar weeks start on Monday. The bundled locale files cover German, Spanish, and Finnish; English is built in.
 - Drag-and-drop lists use SortableJS 1.15.7 under `script/sortablejs/`, with shared setup and the save request in `script/sortable-lists.js`. Each `makeSortableLists()` call forms its own group, so items move only between the lists passed together. On touch screens a drag starts after a 200 ms press. An item dropped outside its group's lists goes back where it was.
 - The roster page's player profile search (`cust/default/teamplayers.functions.php`) opens a native `<dialog>`, reads the `players.php` XML with `fetch`, and sorts the result columns with Tablesort 5.7.1 under `script/tablesort/` (number sort plugin included). Picking a row fills the roster fields.

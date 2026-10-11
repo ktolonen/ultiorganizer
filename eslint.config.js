@@ -5,7 +5,6 @@ const globals = require("globals");
 module.exports = [
   {
     ignores: [
-      "script/yui/**",
       "script/flatpickr/**",
       "script/sortablejs/**",
       "script/tablesort/**",
