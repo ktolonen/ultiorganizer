@@ -277,8 +277,8 @@ foreach ($pools as $pool) {
 
 if (!$last_ordering) {
     $last_ordering = 'A';
-} else {
-    $last_ordering++;
+} elseif (ctype_alnum($last_ordering)) {
+    $last_ordering = str_increment($last_ordering);
 }
 
 $html .=  "<tr>";
