@@ -1016,6 +1016,83 @@ function DeleteSeason($seasonId)
 }
 
 /**
+ * Deletes a season together with all its divisions, pools, teams, players, games,
+ * spirit scores, reservations and locations used only by this season.
+ *
+ * Player profiles are deleted when no other player uses them. Meant for test data;
+ * DeleteSeason() refuses to remove a season that still has divisions.
+ *
+ * Access level: superadmin
+ *
+ * @param string $seasonId uo_season.season_id
+ * @return boolean TRUE on success.
+ */
+function DeleteSeasonWithData($seasonId)
+{
+    if (!isSuperAdmin()) {
+        die('Insufficient rights to delete season');
+    }
+    if (!SeasonExists($seasonId)) {
+        return false;
+    }
+
+    $season = "'" . DBEscapeString($seasonId) . "'";
+    $previousExceptionMode = DBShouldThrowExceptions();
+    DBSetExceptionMode(true);
+    try {
+        DBQuery('START TRANSACTION');
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_series (series_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_team (team_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_game (game_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_profile (profile_id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_location (id INT PRIMARY KEY)");
+        DBQuery("CREATE TEMPORARY TABLE IF NOT EXISTS tmp_del_club (club INT PRIMARY KEY)");
+        foreach (["series", "team", "game", "profile", "location", "club"] as $name) {
+            DBQuery("DELETE FROM tmp_del_" . $name);
+        }
+
+        DBQuery("INSERT INTO tmp_del_series SELECT series_id FROM uo_series WHERE season=$season");
+        DBQuery("INSERT INTO tmp_del_team SELECT team_id FROM uo_team WHERE series IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("INSERT INTO tmp_del_club SELECT DISTINCT club FROM uo_team
+            WHERE team_id IN (SELECT team_id FROM tmp_del_team) AND club IS NOT NULL");
+        DBQuery("INSERT INTO tmp_del_game SELECT DISTINCT gp.game FROM uo_game_pool gp
+            JOIN uo_pool p ON p.pool_id=gp.pool WHERE p.series IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("INSERT INTO tmp_del_profile SELECT DISTINCT profile_id FROM uo_player
+            WHERE team IN (SELECT team_id FROM tmp_del_team) AND profile_id IS NOT NULL");
+        DBQuery("INSERT INTO tmp_del_location SELECT DISTINCT location FROM uo_reservation
+            WHERE season=$season AND location IS NOT NULL");
+
+        DBQuery("DELETE FROM uo_spirit_score WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_spirit_timeout WHERE game IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_team_spirit_stats WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_game WHERE game_id IN (SELECT game_id FROM tmp_del_game)");
+        DBQuery("DELETE FROM uo_player WHERE team IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_player_profile WHERE profile_id IN (SELECT profile_id FROM tmp_del_profile)
+            AND profile_id NOT IN (SELECT profile_id FROM uo_player WHERE profile_id IS NOT NULL)");
+        DBQuery("DELETE FROM uo_team WHERE team_id IN (SELECT team_id FROM tmp_del_team)");
+        DBQuery("DELETE FROM uo_enrolledteam WHERE series IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_series WHERE series_id IN (SELECT series_id FROM tmp_del_series)");
+        DBQuery("DELETE FROM uo_season WHERE season_id=$season");
+        DBQuery("DELETE FROM uo_location_info WHERE location_id IN (SELECT id FROM tmp_del_location)
+            AND location_id NOT IN (SELECT location FROM uo_reservation WHERE location IS NOT NULL)");
+        DBQuery("DELETE FROM uo_location WHERE id IN (SELECT id FROM tmp_del_location)
+            AND id NOT IN (SELECT location FROM uo_reservation WHERE location IS NOT NULL)");
+        DBQuery("DELETE FROM uo_club WHERE club_id NOT IN (SELECT club FROM uo_team WHERE club IS NOT NULL)
+            AND club_id IN (SELECT club FROM tmp_del_club)");
+        DBQuery('COMMIT');
+    } catch (Throwable $e) {
+        DBQuery('ROLLBACK');
+        DBSetExceptionMode($previousExceptionMode);
+        throw $e;
+    }
+    DBSetExceptionMode($previousExceptionMode);
+
+    Log2("season", "delete", $seasonId);
+    ClearSeasonRuntimeCache();
+    return true;
+}
+
+/**
  * Adds a season.
  *
  * Access level: superadmin
