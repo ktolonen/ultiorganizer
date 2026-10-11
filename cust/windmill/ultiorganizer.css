@@ -306,11 +306,6 @@ td {
 	text-transform: uppercase;
 }
 
-.selectable_highlight {
-	background-color: #A6C7E9;
-	cursor: pointer;
-}
-
 .home {
 	background-color: #99ccff;
 	color: white;

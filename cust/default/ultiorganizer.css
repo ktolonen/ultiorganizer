@@ -1199,12 +1199,6 @@ tr.state-diff>td {
 	text-transform: uppercase;
 }
 
-.selectable_highlight {
-	background-color: var(--highlight);
-	cursor: pointer;
-	font-weight: bold;
-}
-
 .callahan {
 	background-color: var(--played-bg);
 	color: var(--text-faint);
