@@ -17,6 +17,7 @@ Implementation notes for third-party code, PDFs, plugins, customizations, guards
 - Keep PDF text in UTF-8. Do not use `utf8_decode` or ISO-8859 transcoding helpers.
 - After registering DejaVu under family `Arial`, continue using `SetFont('Arial', ...)`.
 - Local tFPDF modification: the Unicode-font metrics cache (`*.mtx.php`, `*.cw.dat`, `*.cw127.php` under `lib/tfpdf/font/unifont/`) is disabled in `tfpdf.php` (`AddFont()` and `_putTTfontwidths()`). The upstream cache stored absolute paths and broke after moving an installation; metrics are computed in memory instead, so no writable font directory is needed. `_parsegif()` also drops the `imagedestroy()` call, which is deprecated in PHP 8.5. Re-apply after any tFPDF upgrade; the sections are marked `Ultiorganizer local modification`.
+- Local phpqrcode modification: the `ImageDestroy()` calls in `lib/phpqrcode/qrimage.php` and `phpqrcode.php` are removed. They have had no effect since PHP 8.0, and PHP 8.5 logs a deprecation for each one; the message written into a PDF response made tFPDF fail with "Some data has already been output". Re-apply after any phpqrcode upgrade; the places are marked `Ultiorganizer local modification`.
 
 ## Plugins
 

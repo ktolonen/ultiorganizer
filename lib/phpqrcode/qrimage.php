@@ -44,7 +44,8 @@
                 }
             }
             
-            ImageDestroy($image);
+            // Ultiorganizer local modification: ImageDestroy() removed. It has had no effect
+            // since PHP 8.0 and is deprecated in PHP 8.5; the image is freed when it goes out of scope.
         }
     
         //----------------------------------------------------------------------
@@ -59,7 +60,8 @@
                 ImageJpeg($image, $filename, $q);            
             }
             
-            ImageDestroy($image);
+            // Ultiorganizer local modification: ImageDestroy() removed. It has had no effect
+            // since PHP 8.0 and is deprecated in PHP 8.5; the image is freed when it goes out of scope.
         }
     
         //----------------------------------------------------------------------
@@ -100,7 +102,8 @@
             
             $target_image =ImageCreate($imgW * $pixelPerPoint, $imgH * $pixelPerPoint);
             ImageCopyResized($target_image, $base_image, 0, 0, 0, 0, $imgW * $pixelPerPoint, $imgH * $pixelPerPoint, $imgW, $imgH);
-            ImageDestroy($base_image);
+            // Ultiorganizer local modification: ImageDestroy() removed. It has had no effect
+            // since PHP 8.0 and is deprecated in PHP 8.5; the image is freed when it goes out of scope.
             
             return $target_image;
         }
