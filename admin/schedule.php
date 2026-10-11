@@ -579,8 +579,8 @@ echo "</td></tr></table>\n";
 echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
 ?>
 <script type="text/javascript">
-  var redirecturl = "";
   var modified = 0;
+  var modifiedGeneration = 0;
 
   function hide(id) {
     var elem = document.getElementById(id);
@@ -590,6 +590,8 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
 
   function setModified(newValue) {
     modified = newValue;
+    if (modified)
+      modifiedGeneration++;
     if (modified)
       window.onbeforeunload = function() {
         return "";
@@ -640,8 +642,7 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     var SelValue = dropdown.options[myindex].value;
     var event = getParam(location.href, "season");
 
-    redirecturl = getUrl(location.href, SelValue, 0, 0);
-    if (!redirectWithConfirm()) {
+    if (!redirectWithConfirm(getUrl(location.href, SelValue, 0, 0))) {
       dropdown.value = event;
     }
   }
@@ -651,8 +652,7 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     var SelValue = dropdown.options[myindex].value;
     var series = getParam(location.href, "series");
 
-    redirecturl = getUrl(location.href, null, SelValue, 0);
-    if (!redirectWithConfirm()) {
+    if (!redirectWithConfirm(getUrl(location.href, null, SelValue, 0))) {
       dropdown.value = series;
     }
   }
@@ -662,17 +662,16 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     var SelValue = dropdown.options[myindex].value;
     var pool = getParam(location.href, "pool");
 
-    redirecturl = getUrl(location.href, null, null, SelValue);
-    if (!redirectWithConfirm()) {
+    if (!redirectWithConfirm(getUrl(location.href, null, null, SelValue))) {
       dropdown.value = pool;
     }
   }
 
-  function redirectWithConfirm() {
+  function redirectWithConfirm(redirecturl) {
     if (modified) {
       var answer = confirm('<?php echo _("Save changes?"); ?>');
       if (answer) {
-        saveSchedule();
+        saveSchedule(redirecturl);
       } else {
         answer = confirm('<?php echo _("Do you want to leave anyway? If you select Yes, you will lose all your changes."); ?>');
         if (answer) {
@@ -714,11 +713,15 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     return out;
   }
 
-  function saveSchedule() {
+  function saveSchedule(redirecturl) {
+    var savedGeneration = modifiedGeneration;
     var request = Array.prototype.map.call(scheduleLists, listRequest).join("|");
     postSortedLists("index.php?view=admin/saveschedule", request, document.getElementById("responseStatus"), {
       html: true,
       onSuccess: function() {
+        if (savedGeneration !== modifiedGeneration) {
+          return;
+        }
         setModified(false);
         if (redirecturl) {
           location.href = redirecturl;
@@ -727,7 +730,9 @@ echo "<a href='" . utf8entities($backurl) . "'>" . _("Return") . "</a>";
     });
   }
 
-  document.getElementById("showButton").addEventListener("click", saveSchedule);
+  document.getElementById("showButton").addEventListener("click", function() {
+    saveSchedule();
+  });
 
   document.getElementById("pauseButton").addEventListener("click", function() {
     var duration = parseInt(document.getElementById("pauseLen").value, 10);
