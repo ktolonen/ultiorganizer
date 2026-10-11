@@ -236,47 +236,11 @@ function simEventSpiritMode()
 }
 
 /**
- * Gives both teams of every game random spirit scores, skewed towards the upper end of each category.
- *
- * @return int number of submissions saved
- */
-function simEventSpirit($games, $mode)
-{
-    if ($mode <= 0) {
-        return 0;
-    }
-    $categories = SpiritCategories($mode);
-    $saved = 0;
-    foreach ($games as $game) {
-        if (empty($game['home']) || empty($game['away'])) {
-            continue;
-        }
-        foreach ([$game['home'], $game['away']] as $teamId) {
-            $points = [];
-            foreach ($categories as $category) {
-                if ((int) $category['index'] > 0) {
-                    $span = (int) $category['max'] - (int) $category['min'];
-                    $drop = (int) round(($span / 4) * (rand(0, 100) / 100) * (rand(0, 100) / 100) * 4);
-                    $points[$category['category_id']] = max((int) $category['min'], (int) $category['max'] - $drop);
-                }
-            }
-            $valid = SpiritValidateSubmittedPoints($points, $categories);
-            if ($valid !== false) {
-                SpiritScoreReplaceByGameTeam($game['id'], $teamId, $valid);
-                $saved++;
-            }
-        }
-        RefreshGameSpiritData($game['id']);
-    }
-    return $saved;
-}
-
-/**
  * Creates the whole event and returns a summary, or an error string.
  *
  * @param array $in validated form values
  * @param callable $progress called with a status label before each step
- * @return array{error?: string, season?: string, summary?: array, games?: int, scheduled?: int, spirit?: int}
+ * @return array{error?: string, season?: string, summary?: array, games?: int, scheduled?: int}
  */
 function simEventCreate($in, $progress)
 {
@@ -420,8 +384,6 @@ function simEventCreate($in, $progress)
     }
 
     $locationId = AddLocation("Simulator fields", "", [], $in["fields"], 0, 0, 0, $seasonId);
-    $progress("Entering spirit scores");
-    $spiritScores = simEventSpirit($games, $spiritMode);
     $progress("Scheduling games");
     $scheduled = simEventSchedule($seasonId, $locationId, $firstDay, $in, $games);
 
@@ -430,7 +392,6 @@ function simEventCreate($in, $progress)
         "summary" => $summary,
         "games" => count($games),
         "scheduled" => $scheduled,
-        "spirit" => $spiritScores,
     ];
 }
 
@@ -610,7 +571,7 @@ if (isset($_POST['simulate'])) {
         pageTop($title);
         leftMenu();
         contentStart();
-        $totalSteps = 3 + ($values["playoffs"] ? 3 : 2) * $values["divisions"];
+        $totalSteps = 2 + ($values["playoffs"] ? 3 : 2) * $values["divisions"];
         $step = 0;
         echo "<progress id='simprogress' max='" . $totalSteps . "' value='0' style='width:20em'></progress>\n";
         echo "<p id='simstatus'>Starting</p>\n";
@@ -638,7 +599,6 @@ if (isset($_POST['simulate'])) {
             }
             $html .= "</table>\n";
             $html .= "<p>" . sprintf("Games: %1\$d, scheduled: %2\$d.", $result["games"], $result["scheduled"]) . "</p>\n";
-            $html .= "<p>" . sprintf("Spirit submissions: %d.", $result["spirit"]) . "</p>\n";
             if ($result["scheduled"] < $result["games"]) {
                 $html .= "<p class='warning'>" . "Not all games fit into the game days. Add game days or fields." . "</p>\n";
             }

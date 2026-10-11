@@ -60,7 +60,6 @@ function simulateSpirit($gameId, $teamIds, $categories)
             SpiritScoreReplaceByGameTeam($gameId, $teamId, $valid);
         }
     }
-    RefreshGameSpiritData($gameId);
 }
 
 
@@ -238,6 +237,10 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
         ResolvePoolStandings($poolId);
         PoolResolvePlayed($poolId);
     }
+    // Refreshing per game would recompute the whole event's spirit data every time.
+    if ($simulateSpirit) {
+        RefreshSeasonSpiritData($seasonId);
+    }
 } elseif (isset($_POST['reset']) && !empty($_POST['pools'])) {
 
     $pools = $_POST["pools"];
@@ -270,7 +273,6 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
                         SpiritScoreReplaceByGameTeam($game['game_id'], $teamId, []);
                     }
                 }
-                RefreshGameSpiritData($game['game_id']);
             }
         }
 
@@ -280,6 +282,9 @@ if (isset($_POST['simulate']) && !empty($_POST['pools'])) {
         ResolvePoolStandings($poolId);
         PoolResolvePlayed($poolId);
         // TODO undo moves, uo_team_pool.activerank, special ranks, ...
+    }
+    if ($spiritMode > 0) {
+        RefreshSeasonSpiritData($seasonId);
     }
 }
 
