@@ -7,6 +7,7 @@ module.exports = [
     ignores: [
       "script/yui/**",
       "script/flatpickr/**",
+      "script/sortablejs/**",
       "live/**",
       "lib/**",
       "vendor/**",
