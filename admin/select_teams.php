@@ -160,7 +160,12 @@ echo "</td></tr></table>\n";
 <script type="text/javascript">
     function hide(id) {
         var elem = document.getElementById(id);
-        elem.parentNode.removeChild(elem);
+        if (elem.parentNode.tagName === "OL") {
+            // Removing a pooled team moves it to "Without pool" so the saved request still lists it.
+            document.getElementById("unpooled").appendChild(elem);
+        } else {
+            elem.parentNode.removeChild(elem);
+        }
     }
 
     (function() {
