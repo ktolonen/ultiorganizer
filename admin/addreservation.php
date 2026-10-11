@@ -152,7 +152,7 @@ if (empty($locationInputValue) && $res['location'] > 0) {
     $locationInputValue = isset($location_info['name']) ? $location_info['name'] : "";
 }
 $html .= utf8entities($locationInputValue);
-$html .= "' aria-label='" . _("Location") . "'/></div>\n";
+$html .= "' aria-label='" . utf8entities(_("Location")) . "'/></div>\n";
 $html .= "</td></tr>\n";
 $html .= "<tr><td>" . _("Location") . ":</td><td>";
 $html .= "</td></tr>\n";
