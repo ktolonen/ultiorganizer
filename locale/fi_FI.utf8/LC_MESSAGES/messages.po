@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 10:02+0300\n"
+"POT-Creation-Date: 2026-10-11 11:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -1187,7 +1187,7 @@ msgstr "Client Library version"
 msgid "Clock not running"
 msgstr "Kello ei käy"
 
-#: menufunctions.php:382 cust/default/teamplayers.inc.php:21
+#: menufunctions.php:382 cust/default/teamplayers.inc.php:22
 msgid "Close"
 msgstr "Sulje"
 
@@ -1285,7 +1285,7 @@ msgstr "Kommunikaatio (meidän)"
 msgid "Communication (theirs)"
 msgstr "Kommunikaatio (heidän)"
 
-#: cust/default/teamplayers.functions.php:168 user/enrollteam.php:108
+#: cust/default/teamplayers.functions.php:176 user/enrollteam.php:108
 msgid "Confirm"
 msgstr "Vahvista"
 
@@ -1981,7 +1981,7 @@ msgstr ""
 #: admin/addseasonpools.php:161 admin/addseasonseries.php:20
 #: admin/addseasonteams.php:104 admin/addserieformats.php:10
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
-#: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
+#: admin/locations.php:64 admin/locations.php:110 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
 #: admin/translations.php:504 user/respgames.php:219
 msgid "Edit"
@@ -4125,7 +4125,7 @@ msgstr "Nimi aikataulussa"
 msgid "Name is mandatory!"
 msgstr "Nimi on pakollinen!"
 
-#: cust/default/teamplayers.functions.php:122
+#: cust/default/teamplayers.functions.php:123
 msgid "Name must be at least 2 letters long!"
 msgstr "Nimen pitää olla vähintään 2 kirjainta pitkä!"
 
@@ -4840,6 +4840,10 @@ msgstr "Pelaajan sivut"
 #: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Player refs"
 msgstr "Pelaajaviitteitä"
+
+#: cust/default/teamplayers.inc.php:19
+msgid "Player search failed. Please try again."
+msgstr "Pelaajahaku epäonnistui. Yritä uudelleen."
 
 #: ext/export.php:45
 msgid "Player statistics"

@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 10:02+0300\n"
+"POT-Creation-Date: 2026-10-11 11:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -1202,7 +1202,7 @@ msgstr "Version der Client-Bibliothek"
 msgid "Clock not running"
 msgstr "Uhr laeuft nicht"
 
-#: menufunctions.php:382 cust/default/teamplayers.inc.php:21
+#: menufunctions.php:382 cust/default/teamplayers.inc.php:22
 msgid "Close"
 msgstr "Schließen"
 
@@ -1300,7 +1300,7 @@ msgstr "Kommunikation (unsere)"
 msgid "Communication (theirs)"
 msgstr "Kommunikation (ihre)"
 
-#: cust/default/teamplayers.functions.php:168 user/enrollteam.php:108
+#: cust/default/teamplayers.functions.php:176 user/enrollteam.php:108
 msgid "Confirm"
 msgstr "Bestätigen"
 
@@ -2002,7 +2002,7 @@ msgstr ""
 #: admin/addseasonpools.php:161 admin/addseasonseries.php:20
 #: admin/addseasonteams.php:104 admin/addserieformats.php:10
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
-#: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
+#: admin/locations.php:64 admin/locations.php:110 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
 #: admin/translations.php:504 user/respgames.php:219
 msgid "Edit"
@@ -4155,7 +4155,7 @@ msgstr "Name im Spielplan"
 msgid "Name is mandatory!"
 msgstr "Name ist erforderlich!"
 
-#: cust/default/teamplayers.functions.php:122
+#: cust/default/teamplayers.functions.php:123
 msgid "Name must be at least 2 letters long!"
 msgstr "Name muss mindestens zwei Buchstaben haben!"
 
@@ -4876,6 +4876,10 @@ msgstr "Spielerprofile"
 #: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Player refs"
 msgstr "Spielerreferenzen"
+
+#: cust/default/teamplayers.inc.php:19
+msgid "Player search failed. Please try again."
+msgstr "Die Spielersuche ist fehlgeschlagen. Bitte versuche es erneut."
 
 #: ext/export.php:45
 msgid "Player statistics"

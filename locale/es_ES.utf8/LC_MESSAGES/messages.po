@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-11 10:02+0300\n"
+"POT-Creation-Date: 2026-10-11 11:45+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -1210,7 +1210,7 @@ msgstr "Versión de la biblioteca del cliente"
 msgid "Clock not running"
 msgstr "El reloj no está corriendo"
 
-#: menufunctions.php:382 cust/default/teamplayers.inc.php:21
+#: menufunctions.php:382 cust/default/teamplayers.inc.php:22
 msgid "Close"
 msgstr "Cerrar"
 
@@ -1308,7 +1308,7 @@ msgstr "Comunicación (la nuestra)"
 msgid "Communication (theirs)"
 msgstr "Comunicación (de ellos)"
 
-#: cust/default/teamplayers.functions.php:168 user/enrollteam.php:108
+#: cust/default/teamplayers.functions.php:176 user/enrollteam.php:108
 msgid "Confirm"
 msgstr "Confirmar"
 
@@ -2015,7 +2015,7 @@ msgstr ""
 #: admin/addseasonpools.php:161 admin/addseasonseries.php:20
 #: admin/addseasonteams.php:104 admin/addserieformats.php:10
 #: admin/addtimekeepertemplate.php:12 admin/editstanding.php:17
-#: admin/locations.php:64 admin/locations.php:108 admin/seasonstandings.php:122
+#: admin/locations.php:64 admin/locations.php:110 admin/seasonstandings.php:122
 #: admin/seasonstandings.php:548 admin/tdtools.php:93 admin/tdtools.php:101
 #: admin/translations.php:504 user/respgames.php:219
 msgid "Edit"
@@ -4168,7 +4168,7 @@ msgstr "Nombre en el Calendario"
 msgid "Name is mandatory!"
 msgstr "¡El nombre es obligatorio!"
 
-#: cust/default/teamplayers.functions.php:122
+#: cust/default/teamplayers.functions.php:123
 msgid "Name must be at least 2 letters long!"
 msgstr "¡El nombre debe tener al menos 2 letras!"
 
@@ -4888,6 +4888,10 @@ msgstr "Perfiles de jugadores"
 #: admin/dbequalize.php:370 admin/dbequalize.php:373
 msgid "Player refs"
 msgstr "Jugador reos"
+
+#: cust/default/teamplayers.inc.php:19
+msgid "Player search failed. Please try again."
+msgstr "La búsqueda de jugadores falló. Inténtalo de nuevo."
 
 #: ext/export.php:45
 msgid "Player statistics"
