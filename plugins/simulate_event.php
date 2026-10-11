@@ -14,7 +14,7 @@ customization=all
 
 [DESCRIPTION]
 title = "Event simulator"
-description = "Creates a complete test event with divisions, teams, players, pools and a pool play schedule."
+description = "Creates a complete test event with divisions, teams, players, pools, playoff continuation pools and a schedule."
 -->
 <?php
 ob_end_clean();
@@ -78,6 +78,148 @@ function simEventPoolSizes($teams, $pools)
 }
 
 /**
+ * Reads the first-round line of the playoff layout's move-comment block, the way
+ * GeneratePlayoffPools() does.
+ *
+ * @return int[]|null standing positions per round-2 slot, or null without a valid block
+ */
+function simEventBracketMoves($teams)
+{
+    $rounds = 0;
+    $roundsToWin = $teams == 6 ? 4 : ($teams + 1) / 2;
+    while ($roundsToWin >= 1) {
+        $roundsToWin = $roundsToWin / 2;
+        $rounds++;
+    }
+    if (!preg_match('/^<!--\s*corresponding moves:\s*\r?\n(.*?)\r?\n?-->/s', PlayoffTemplate($teams, $rounds), $match)) {
+        return null;
+    }
+    $lines = preg_split('/\s*\r?\n\s*/', trim($match[1]));
+    if (count($lines) != $rounds) {
+        return null;
+    }
+    return array_map('intval', preg_split('/\s+/', $lines[0]));
+}
+
+/**
+ * Tells whether GeneratePlayoffPools() can build a correct bracket for $teams teams:
+ * a power of two pairs off cleanly, other sizes need a layout with a move-comment block.
+ */
+function simEventBracketSizeOk($teams)
+{
+    return $teams >= 2 && (($teams & ($teams - 1)) === 0 || simEventBracketMoves($teams) !== null);
+}
+
+/**
+ * Splits $teams teams into as few brackets of supported sizes as possible, largest first.
+ *
+ * @return int[] bracket sizes, empty when no split exists
+ */
+function simEventBracketSizes($teams)
+{
+    $best = [0 => []];
+    for ($n = 1; $n <= $teams; $n++) {
+        for ($size = $n; $size >= 2; $size--) {
+            if (!isset($best[$n - $size]) || !simEventBracketSizeOk($size)) {
+                continue;
+            }
+            $candidate = array_merge([$size], $best[$n - $size]);
+            if (!isset($best[$n]) || count($candidate) < count($best[$n])) {
+                $best[$n] = $candidate;
+            }
+        }
+    }
+    if (!isset($best[$teams])) {
+        return [];
+    }
+    rsort($best[$teams]);
+    return $best[$teams];
+}
+
+/**
+ * Adds playoff continuation pools fed from the round-robin pools: teams are ranked
+ * by pool placement across the pools and split into placement brackets.
+ *
+ * @param array $poolSizes round-robin pool id => team count
+ * @return array games as {id, division, phase, home, away}; phase 1 is the first playoff round
+ */
+function simEventPlayoffs($seriesId, $division, $poolSizes)
+{
+    $seeds = [];
+    $poolIndex = 0;
+    $letters = [];
+    foreach ($poolSizes as $poolId => $size) {
+        $letters[$poolId] = chr(ord("A") + $poolIndex++);
+    }
+    for ($placing = 1; $placing <= max($poolSizes); $placing++) {
+        foreach ($poolSizes as $poolId => $size) {
+            if ($placing <= $size) {
+                $seeds[] = ["pool" => $poolId, "placing" => $placing, "name" => $letters[$poolId] . $placing];
+            }
+        }
+    }
+
+    $games = [];
+    $offset = 0;
+    $sizes = simEventBracketSizes(count($seeds));
+    foreach ($sizes as $b => $size) {
+        $bracket = array_slice($seeds, $offset, $size);
+        $name = count($sizes) == 1 ? "Playoff" : "Placements " . ($offset + 1) . "-" . ($offset + $size);
+        $offset += $size;
+
+        $poolId = PoolFromAnotherPool($seriesId, $name, "P" . chr(ord("A") + $b), $bracket[0]["pool"]);
+        // Followers copy these from the master pool, so set them before generating the rounds.
+        SetPoolDetails($poolId, [
+            "name" => $name,
+            "type" => 2,
+            "continuingpool" => 1,
+            "placementpool" => 0,
+            "visible" => 1,
+            "mvgames" => 1,
+        ]);
+
+        // Pair the best remaining seed with the worst. The odd team out gets the bye: the top
+        // seed when the layout carries the bye into the upper half, else the bottom seed.
+        $order = [];
+        $rest = $bracket;
+        if ($size % 2 == 1) {
+            $moves = simEventBracketMoves($size);
+            $byeSlot = $moves === null ? false : array_search($size, $moves);
+            $bye = $byeSlot !== false && $byeSlot < $size / 2 ? array_shift($rest) : array_pop($rest);
+        }
+        while (!empty($rest)) {
+            $order[] = array_shift($rest);
+            $order[] = array_pop($rest);
+        }
+        if (isset($bye)) {
+            $order[] = $bye;
+            unset($bye);
+        }
+        foreach ($order as $rank => $seed) {
+            PoolAddMove($seed["pool"], $poolId, $seed["placing"], $rank + 1, $seed["name"]);
+        }
+
+        GenerateGames($poolId, 1, true);
+        $roundPools = array_merge([PoolInfo($poolId)], GeneratePlayoffPools($poolId, true));
+        foreach ($roundPools as $round => $roundPool) {
+            if (CanGenerateGames($roundPool['pool_id'])) {
+                GenerateGames($roundPool['pool_id'], 1, true);
+            }
+            foreach (PoolGames($roundPool['pool_id']) as $game) {
+                $games[] = [
+                    "id" => $game['game_id'],
+                    "division" => $division,
+                    "phase" => $round + 1,
+                    "home" => $game['hometeam'],
+                    "away" => $game['visitorteam'],
+                ];
+            }
+        }
+    }
+    return $games;
+}
+
+/**
  * Picks the spirit scoring mode: the WFDF official one when present, else the first available.
  *
  * @return int mode id, or 0 when the installation has no spirit modes
@@ -106,6 +248,9 @@ function simEventSpirit($games, $mode)
     $categories = SpiritCategories($mode);
     $saved = 0;
     foreach ($games as $game) {
+        if (empty($game['home']) || empty($game['away'])) {
+            continue;
+        }
         foreach ([$game['home'], $game['away']] as $teamId) {
             $points = [];
             foreach ($categories as $category) {
@@ -228,6 +373,7 @@ function simEventCreate($in, $progress)
         $progress("Creating pools and games for " . $divisionName);
         shuffle($teamIds);
         $offset = 0;
+        $roundRobinPools = [];
         $poolSizes = simEventPoolSizes($teamCount, $poolCount);
         foreach ($poolSizes as $i => $size) {
             $poolName = "Pool " . chr(ord("A") + $i);
@@ -245,21 +391,30 @@ function simEventCreate($in, $progress)
                 PoolAddTeam($poolId, $teamId, $rank + 1, true);
             }
             $offset += $size;
+            $roundRobinPools[$poolId] = $size;
 
             GenerateGames($poolId, 1, true);
             foreach (PoolGames($poolId) as $game) {
                 $games[] = [
                     "id" => $game['game_id'],
+                    "division" => $d,
+                    "phase" => 0,
                     "home" => $game['hometeam'],
                     "away" => $game['visitorteam'],
                 ];
             }
         }
 
+        if ($in['playoffs']) {
+            $progress("Creating playoff pools for " . $divisionName);
+            $games = array_merge($games, simEventPlayoffs($seriesId, $d, $roundRobinPools));
+        }
+
         $summary[] = [
             "name" => $divisionName,
             "teams" => $teamCount,
             "pools" => $poolCount,
+            "playoffpools" => count(SeriesPools($seriesId)) - $poolCount,
             "players" => $playerTotal,
         ];
     }
@@ -304,6 +459,26 @@ function simEventSchedule($seasonId, $locationId, $firstDay, $in, $games)
         }
     }
 
+    // Offer the earliest phase first and alternate the divisions within it.
+    $turn = [];
+    foreach ($games as $index => $game) {
+        $games[$index]['turn'] = $turn[$game['division']][$game['phase']] = ($turn[$game['division']][$game['phase']] ?? 0) + 1;
+    }
+    usort($games, function ($a, $b) {
+        return [$a['phase'], $a['turn'], $a['division']] <=> [$b['phase'], $b['turn'], $b['division']];
+    });
+
+    // A game may start only after every game of the previous phase in its division.
+    $remaining = [];
+    foreach ($games as $index => $game) {
+        $remaining[$game['division']][$game['phase']] = ($remaining[$game['division']][$game['phase']] ?? 0) + 1;
+        // Continuation games have no teams yet; within a playoff round each team plays once.
+        $games[$index]['keys'] = empty($game['home']) || empty($game['away'])
+            ? ["g" . $game['id']]
+            : ["t" . $game['home'], "t" . $game['away']];
+    }
+    $phaseEnd = [];
+
     $scheduled = 0;
     $lastSlot = [];
     for ($day = 0; $day < $in['days'] && !empty($games); $day++) {
@@ -317,11 +492,14 @@ function simEventSchedule($seasonId, $locationId, $firstDay, $in, $games)
                 $pick = null;
                 foreach ([true, false] as $requireRest) {
                     foreach ($games as $index => $game) {
-                        if (isset($busy[$game['home']]) || isset($busy[$game['away']])) {
+                        $previous = $game['phase'] - 1;
+                        if ($previous >= 0 && (!empty($remaining[$game['division']][$previous]) || ($phaseEnd[$game['division']][$previous] ?? -1) >= $globalSlot)) {
                             continue;
                         }
-                        if ($requireRest && (($lastSlot[$game['home']] ?? -2) === $globalSlot - 1 || ($lastSlot[$game['away']] ?? -2) === $globalSlot - 1)) {
-                            continue;
+                        foreach ($game['keys'] as $key) {
+                            if (isset($busy[$key]) || ($requireRest && ($lastSlot[$key] ?? -2) === $globalSlot - 1)) {
+                                continue 2;
+                            }
                         }
                         $pick = $index;
                         break 2;
@@ -332,10 +510,12 @@ function simEventSchedule($seasonId, $locationId, $firstDay, $in, $games)
                 }
                 $game = $games[$pick];
                 ScheduleGame($game['id'], $time, $reservations[$day][$field]);
-                $busy[$game['home']] = true;
-                $busy[$game['away']] = true;
-                $lastSlot[$game['home']] = $globalSlot;
-                $lastSlot[$game['away']] = $globalSlot;
+                foreach ($game['keys'] as $key) {
+                    $busy[$key] = true;
+                    $lastSlot[$key] = $globalSlot;
+                }
+                $remaining[$game['division']][$game['phase']]--;
+                $phaseEnd[$game['division']][$game['phase']] = $globalSlot;
                 unset($games[$pick]);
                 $scheduled++;
             }
@@ -365,8 +545,9 @@ $values = [
     "playersMax" => 18,
     "poolsMin" => 2,
     "poolsMax" => 4,
-    "days" => 2,
-    "fields" => 4,
+    "days" => 3,
+    "fields" => 6,
+    "playoffs" => 1,
     "seed" => "",
 ];
 
@@ -379,8 +560,9 @@ if (isset($_POST['simulate'])) {
     $values["playersMax"] = simEventInt("playersMax", 18, 1, SIMEVENT_MAX_PLAYERS);
     $values["poolsMin"] = simEventInt("poolsMin", 2, 1, SIMEVENT_MAX_POOLS);
     $values["poolsMax"] = simEventInt("poolsMax", 4, 1, SIMEVENT_MAX_POOLS);
-    $values["days"] = simEventInt("days", 2, 1, SIMEVENT_MAX_DAYS);
-    $values["fields"] = simEventInt("fields", 4, 1, SIMEVENT_MAX_FIELDS);
+    $values["days"] = simEventInt("days", 3, 1, SIMEVENT_MAX_DAYS);
+    $values["fields"] = simEventInt("fields", 6, 1, SIMEVENT_MAX_FIELDS);
+    $values["playoffs"] = isset($_POST['playoffs']) ? 1 : 0;
     $values["seed"] = trim((string) ($_POST['seed'] ?? ""));
 
     $labels = [
@@ -428,7 +610,7 @@ if (isset($_POST['simulate'])) {
         pageTop($title);
         leftMenu();
         contentStart();
-        $totalSteps = 3 + 2 * $values["divisions"];
+        $totalSteps = 3 + ($values["playoffs"] ? 3 : 2) * $values["divisions"];
         $step = 0;
         echo "<progress id='simprogress' max='" . $totalSteps . "' value='0' style='width:20em'></progress>\n";
         echo "<p id='simstatus'>Starting</p>\n";
@@ -450,9 +632,9 @@ if (isset($_POST['simulate'])) {
         } else {
             $seasonId = $result["season"];
             $html .= "<p>" . sprintf("Event %s created.", "<a href='?view=admin/seasonadmin&amp;season=" . urlencode($seasonId) . "'>" . utf8entities($seasonId) . "</a>") . "</p>\n";
-            $html .= "<table class='admintable'><tr><th>" . "Division" . "</th><th>" . "Teams" . "</th><th>" . "Pools" . "</th><th>" . "Players" . "</th></tr>\n";
+            $html .= "<table class='admintable'><tr><th>" . "Division" . "</th><th>" . "Teams" . "</th><th>" . "Pools" . "</th><th>" . "Playoff pools" . "</th><th>" . "Players" . "</th></tr>\n";
             foreach ($result["summary"] as $row) {
-                $html .= "<tr><td>" . utf8entities($row["name"]) . "</td><td>" . (int) $row["teams"] . "</td><td>" . (int) $row["pools"] . "</td><td>" . (int) $row["players"] . "</td></tr>\n";
+                $html .= "<tr><td>" . utf8entities($row["name"]) . "</td><td>" . (int) $row["teams"] . "</td><td>" . (int) $row["pools"] . "</td><td>" . (int) $row["playoffpools"] . "</td><td>" . (int) $row["players"] . "</td></tr>\n";
             }
             $html .= "</table>\n";
             $html .= "<p>" . sprintf("Games: %1\$d, scheduled: %2\$d.", $result["games"], $result["scheduled"]) . "</p>\n";
@@ -482,6 +664,7 @@ $html .= $numberRow("Divisions", "divisions", SIMEVENT_MAX_DIVISIONS);
 $html .= $rangeRow("Teams per division", "teamsMin", "teamsMax", 3, SIMEVENT_MAX_TEAMS);
 $html .= $rangeRow("Players per team", "playersMin", "playersMax", 1, SIMEVENT_MAX_PLAYERS);
 $html .= $rangeRow("Pools per division", "poolsMin", "poolsMax", 1, SIMEVENT_MAX_POOLS);
+$html .= "<tr><td class='infocell'>" . "Playoffs" . ":</td><td><label><input type='checkbox' name='playoffs' value='1'" . ($values["playoffs"] ? " checked='checked'" : "") . "/> " . "Add playoff continuation pools" . "</label></td></tr>\n";
 $html .= $numberRow("Game days", "days", SIMEVENT_MAX_DAYS);
 $html .= $numberRow("Fields", "fields", SIMEVENT_MAX_FIELDS);
 $html .= "<tr><td class='infocell'>" . "Random seed" . ":</td><td><input class='input' type='number' name='seed' value='" . utf8entities($values["seed"]) . "'/></td></tr>\n";
