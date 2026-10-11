@@ -91,8 +91,10 @@ contentEnd();
       zoom: 8,
     });
     geocoder = new google.maps.Geocoder();
-    $.getJSON('ext/locationjson.php', function(data) {
-      $.each(data, function(i, value) {
+    fetch('ext/locationjson.php').then(function(response) {
+      return response.json();
+    }).then(function(data) {
+      data.forEach(function(value) {
 
         var myLatlng = new google.maps.LatLng(value.lat, value.lng);
         var marker = new google.maps.Marker({
