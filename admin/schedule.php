@@ -45,7 +45,7 @@ if (!empty($seasonId)) {
 if (!empty($seriesId)) {
     $backurl .= "&series=$seriesId";
 }
-if (!empty($pool)) {
+if (!empty($poolId)) {
     $backurl .= "&pool=$poolId";
 }
 

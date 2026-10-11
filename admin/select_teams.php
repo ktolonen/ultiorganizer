@@ -19,6 +19,11 @@ if (isset($_GET['series'])) {
     $seriesId = intval($_GET['series']);
 }
 
+if (!SeriesInfo($seriesId)) {
+    showPage($title, "<p class='warning'>" . _("Division not found") . ".</p>");
+    return;
+}
+
 $pools = SeriesPools($seriesId, false, true, true);
 $not_started = [];
 foreach ($pools as $pool) {
