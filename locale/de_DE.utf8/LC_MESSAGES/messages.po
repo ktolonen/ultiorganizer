@@ -5565,7 +5565,7 @@ msgstr "Jeder gegen jeden"
 
 #: admin/poolgames.php:180 admin/seriesgames.php:96
 msgid "Round Robin-type of pool"
-msgstr "Pool vom Typ Jeder gegen Jeden"
+msgstr "Pool vom Typ Jeder gegen jeden"
 
 #: admin/seasonpoints.php:84
 msgid "Round added."
