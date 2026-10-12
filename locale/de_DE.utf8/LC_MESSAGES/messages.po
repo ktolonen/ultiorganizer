@@ -2096,7 +2096,9 @@ msgstr "Ultiorganizer in andere Seiten einbinden"
 #: admin/addseasons.php:279
 msgid "Enables event-level points/ranking features for this event."
 msgstr ""
-"Aktiviert Punkte- und Ranking-Funktionen auf Turnierebene für dieses Turnier."
+"Aktiviert Punkte-/Ranking-Funktionen auf Turnierebene für dieses "
+"Turnier.Aktiviert Punkte- und Ranking-Funktionen auf Turnierebene für dieses "
+"Turnier."
 
 #: scorekeeper/addscoresheet.php:299 scorekeeper/endgame.php:83
 msgid "End game"
@@ -5562,7 +5564,7 @@ msgstr "Runde"
 
 #: admin/addseasonpools.php:252
 msgid "Round Robin"
-msgstr "Jeder gegen Jeden"
+msgstr "Jeder gegen jeden"
 
 #: admin/poolgames.php:180 admin/seriesgames.php:96
 msgid "Round Robin-type of pool"

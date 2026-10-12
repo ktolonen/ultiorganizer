@@ -1533,7 +1533,7 @@ msgstr "Partido cruzada"
 
 #: admin/poolgames.php:212
 msgid "Crossmatch-type of pool"
-msgstr "Crossmatch-tipo de grupo"
+msgstr "Grupo de tipo Crossmatch"
 
 #: user/select_poolselector.php:19 user/userinfo.php:344 user/userinfo.php:373
 msgid "Current event"
@@ -2110,7 +2110,9 @@ msgstr "Incrustar Ultiorganizer en otras páginas"
 #: admin/addseasons.php:279
 msgid "Enables event-level points/ranking features for this event."
 msgstr ""
-"Activa las funciones de puntos y ranking a nivel de evento para este evento."
+"Activa las funciones de puntos/clasificación a nivel de evento para este "
+"evento.Activa las funciones de puntos y ranking a nivel de evento para este "
+"evento."
 
 #: scorekeeper/addscoresheet.php:299 scorekeeper/endgame.php:83
 msgid "End game"
@@ -4938,7 +4940,7 @@ msgstr "Juegos de Play-off"
 
 #: admin/poolgames.php:196 admin/seriesgames.php:103
 msgid "Playoff-type of pool"
-msgstr "Playoff-tipo de grupo"
+msgstr "Grupo de tipo Playoff"
 
 #: admin/serieteams.php:155
 msgid "Plays"
@@ -5579,7 +5581,7 @@ msgstr "Round Robin"
 
 #: admin/poolgames.php:180 admin/seriesgames.php:96
 msgid "Round Robin-type of pool"
-msgstr "Round Robin-tipo de grupo"
+msgstr "Grupo de tipo Round Robin"
 
 #: admin/seasonpoints.php:84
 msgid "Round added."

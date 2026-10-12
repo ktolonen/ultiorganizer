@@ -2075,8 +2075,9 @@ msgstr "Pelikoneen linkitys muille sivuille"
 #: admin/addseasons.php:279
 msgid "Enables event-level points/ranking features for this event."
 msgstr ""
-"Ottaa käyttöön tapahtumatason pisteet- ja ranking-ominaisuudet tälle "
-"tapahtumalle."
+"Ottaa käyttöön tapahtumatason piste- ja ranking-ominaisuudet tälle "
+"tapahtumalle.Ottaa käyttöön tapahtumatason pisteet- ja ranking-ominaisuudet "
+"tälle tapahtumalle."
 
 #: scorekeeper/addscoresheet.php:299 scorekeeper/endgame.php:83
 msgid "End game"
@@ -2229,7 +2230,7 @@ msgstr "Tapahtumalla on"
 
 #: user/contacts.php:10 user/enrollteam.php:10
 msgid "Event is required"
-msgstr "Tapahtuma vaaditaan"
+msgstr "Tapahtuma on pakollinen"
 
 #: menufunctions.php:572 admin/addseasonlinks.php:8
 msgid "Event links"
