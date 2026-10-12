@@ -1689,7 +1689,7 @@ function AddRegisterRequest($newUsername, $newPassword, $newName, $newEmail, $me
     global $serverConf;
     $headers .= "From: " . $serverConf['EmailSource'] . "\r\n";
 
-    if (!mail($newEmail, _("Confirm your account to ultiorganizer"), $message, $headers)) {
+    if (!mail($newEmail, _("Confirm your account to Ultiorganizer"), $message, $headers)) {
         $query = sprintf(
             "DELETE FROM uo_registerrequest WHERE userid='%s'",
             DBEscapeString($newUsername),
@@ -1750,7 +1750,7 @@ function AddExtraEmailRequest($userid, $extraEmail, $message = 'verify_email.txt
     global $serverConf;
     $headers .= "From: " . $serverConf['EmailSource'] . "\r\n";
 
-    if (!mail($extraEmail, _("Confirm extra email address for ultiorganizer"), $message, $headers)) {
+    if (!mail($extraEmail, _("Confirm extra email address for Ultiorganizer"), $message, $headers)) {
         $query = sprintf(
             "DELETE FROM uo_extraemailrequest WHERE token='%s'",
             DBEscapeString($token),

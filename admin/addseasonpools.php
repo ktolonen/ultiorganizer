@@ -261,9 +261,9 @@ if (!$poolId || $addmore) {
     }
 
     if ($pp['type'] == "3") {
-        echo "<option class='dropdown' selected='selected' value='3'>" . _("Swissdraw") . "</option>";
+        echo "<option class='dropdown' selected='selected' value='3'>" . _("Swiss-draw") . "</option>";
     } else {
-        echo "<option class='dropdown' value='3'>" . _("Swissdraw") . "</option>";
+        echo "<option class='dropdown' value='3'>" . _("Swiss-draw") . "</option>";
     }
 
     if ($pp['type'] == "4") {

@@ -764,7 +764,7 @@ function ScoresheetHistoryRestore($historyId)
         $warnings[] = _("Pool is locked.");
     }
     if (IsSeasonStatsCalculated($seasonId)) {
-        $warnings[] = _("Event played.");
+        $warnings[] = _("Event statistics have already been computed.");
     }
 
     // Saved and put back rather than cleared, so a caller further up the stack

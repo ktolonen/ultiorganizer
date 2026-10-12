@@ -92,7 +92,7 @@ if (isset($_POST['upload'])) {
 // installation administrators. hasAccreditationPageAccess() lets a single-team
 // accreditation admin reach this page for the event-scoped views.
 if ($view == "acc" && isSuperAdmin()) {
-    echo "<h3>" . _("Update ultiorganizer license database") . "</h3>";
+    echo "<h3>" . _("Update Ultiorganizer license database") . "</h3>";
     echo "<form enctype='multipart/form-data' method='post' action='$url'>\n";
     echo "<div><input type='hidden' name='MAX_FILE_SIZE' value='50000000' /></div>\n";
     echo "<table>";
@@ -151,7 +151,7 @@ if ($view == "autoacc") {
         echo U_($row['external_type']) . "</td></tr>\n";
     }
     echo "<tr><td>\n";
-    echo "<input type='checkbox' name='allTypes'/>" . _("Accept any");
+    echo "<input type='checkbox' name='allTypes'/>" . _("Any type");
     echo "</td></tr>\n";
     echo "</table>\n";
     echo "<p>" . _("Accredit all players in selected divisions:") . " <input type='submit' name='check' value='" . _("Accredit") . "'/></p>";

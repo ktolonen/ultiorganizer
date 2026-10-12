@@ -529,7 +529,7 @@ if (!empty($_GET['user'])) {
 }
 $html .= "'>\n";
 $html .= "<table cellpadding='8'>";
-$html .= "<tr><td class='infocell'>" . _("New  password") . ":</td>";
+$html .= "<tr><td class='infocell'>" . _("New password") . ":</td>";
 $html .= "<td><input class='input' type='password' maxlength='20' id='Password1' name='Password1' /></td></tr>";
 $html .= "<tr><td class='infocell'>" . _("Repeat password") . ":</td>";
 $html .= "<td><input class='input' type='password' maxlength='20' id='Password2' name='Password2' /></td></tr>";

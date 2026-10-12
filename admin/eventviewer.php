@@ -139,8 +139,8 @@ $html .= $pagination;
 $html .= "<table border='0'>\n";
 $html .= "<tr><th>" . _("Time") . "</th><th>" . _("User") . "</th>
 	<th>" . _("IP Address") . "</th><th>" . _("Category") . "</th><th>" . _("Type") . "</th>
-	<th>" . _("Source") . "</th><th>" . _("Id1") . "</th>
-	<th>" . _("Id2") . "</th><th>" . _("Description") . "</th>
+	<th>" . _("Source") . "</th><th>" . _("ID 1") . "</th>
+	<th>" . _("ID 2") . "</th><th>" . _("Description") . "</th>
 	</tr>\n";
 
 $event_ids = "";

@@ -457,7 +457,7 @@ if ($viewEntry !== null && is_array($viewEntry['snapshot'])) {
         empty($currentGame['halftime']) ? "" : SecToMin($currentGame['halftime']),
     ];
     $fields[] = [
-        _("Starting offensive team"),
+        _("Starting team on offence"),
         isset($savedEvents['offence'])
             ? (empty($savedEvents['offence']['ishome']) ? $visitorTeam : $homeTeam) : "",
         isset($currentEvents['offence'])

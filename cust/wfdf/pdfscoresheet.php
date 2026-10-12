@@ -380,7 +380,7 @@ class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
         $this->SetFont('Arial', '', 10);
         $this->Cell(11, 6, "__", 'LRT', 0, 'C', true);
         $this->SetFillColor(230);
-        $this->Cell(34, 6, _("Endzone") . " (A/B)*", 'LRT', 0, 'C', true);
+        $this->Cell(34, 6, _("End zone") . " (A/B)*", 'LRT', 0, 'C', true);
         $this->SetFillColor(255);
         $this->Cell(11, 6, "__", 'LRT', 1, 'C', true);
 
@@ -407,13 +407,13 @@ class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
         $this->Ln(1); // vertical spacer
         $this->SetX($offset);
         $this->SetFont('Arial', '', 8);
-        $this->CellFitScale(11, 4, _("Endzone"), 0, 0, 'C', true);
+        $this->CellFitScale(11, 4, _("End zone"), 0, 0, 'C', true);
         $this->Cell(9, 4, "", 'R', 0, 'C', true);
         $this->SetFillColor(230);
         $this->CellFitScale(16, 4, _("Scorekeepers"), 1, 0, 'C', true);
         $this->SetFillColor(255);
         $this->Cell(9, 4, "", 'L', 0, 'C', true);
-        $this->CellFitScale(11, 4, _("Endzone"), 0, 1, 'C', true);
+        $this->CellFitScale(11, 4, _("End zone"), 0, 1, 'C', true);
     }
 
 
@@ -539,13 +539,13 @@ class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
         $this->Ln(1); // vertical spacer
         $this->SetX($offset);
         $this->SetFont('Arial', '', 8);
-        $this->CellFitScale(12, 4, _("Endzone"), 0, 0, 'C', true);
+        $this->CellFitScale(12, 4, _("End zone"), 0, 0, 'C', true);
         $this->Cell(19, 4, "", 'R', 0, 'C', true);
         $this->SetFillColor(230);
         $this->CellFitScale(16, 4, _("Scorekeepers"), 1, 0, 'C', true);
         $this->SetFillColor(255);
         $this->Cell(19, 4, "", 'L', 0, 'C', true);
-        $this->CellFitScale(12, 4, _("Endzone"), 0, 1, 'C', true);
+        $this->CellFitScale(12, 4, _("End zone"), 0, 1, 'C', true);
     }
 
     public function PrintPlayerList($homeplayers, $visitorplayers)
@@ -1095,7 +1095,7 @@ class PDF extends tFPDF_CellFit implements BundledPlayerListScoreSheet
         $this->SetFont('Arial', 'B', 12);
         $this->SetTextColor(0);
         $this->SetFillColor(230);
-        $this->Cell(80, 6, $this->pdfText(_("Starting offensive team")), 'LRTB', 0, 'C', true);
+        $this->Cell(80, 6, $this->pdfText(_("Starting team on offence")), 'LRTB', 0, 'C', true);
         $this->Ln();
 
         //home grids

@@ -226,7 +226,7 @@ if ($filter == 'clubs') {
     $html .= "<p><input class='button' type='submit' name='rename' value='" . _("Join selected") . "'/>";
 } elseif ($filter == 'profiles') {
     $html .=  "<p>" . _("Merge selected duplicate profiles into the most referred (stats + players) profile with the same name.") . "</p>";
-    $html .= "<p><input class='button' type='submit' name='mergeprofiles' value='" . _("Merge selected profiles to most referred") . "'/>";
+    $html .= "<p><input class='button' type='submit' name='mergeprofiles' value='" . _("Merge selected profiles into the most referred profile") . "'/>";
     $html .= "<input class='button' type='submit' name='deleteorphan' value='" . _("Delete orphan profiles") . "'/>";
 } else {
     $html .=  "<p>" . _("New name") . ":\n";

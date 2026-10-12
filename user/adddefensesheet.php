@@ -225,7 +225,7 @@ if ($ishome === 1) {
 }
 
 echo "<table cellspacing='0' width='100%' border='1'>\n";
-echo "<tr><th colspan='2'>" . _("Starting offensive team") . "</th></tr>";
+echo "<tr><th colspan='2'>" . _("Starting team on offence") . "</th></tr>";
 echo "<tr><td style='width: 40px' class='center'><input id='hstart' name='starting' type='radio' $hoffence value='H' /></td>";
 
 echo "<td>" . utf8entities($game_result['hometeamname']) . "</td></tr>";
@@ -354,7 +354,7 @@ echo "<tr><th style='background-color:#FFFFFF;border-style:none;border-width:0;b
 echo "<th style='$style_left'>" . _("Home") . "</th><th style='$style_mid'>" . _("Away") . "</th>";
 echo "<th style='$style_mid'>" . _("Player") . "</th><th style='$style_mid'>" . _("Caught") . "</th>";
 echo "<th style='$style_mid'>" . _("Touched") . "</th><th style='$style_mid'>" . _("Callahan") . "</th>";
-echo "<th style='$style_mid'>" . _("Not callahan") . "</th>";
+echo "<th style='$style_mid'>" . _("Not Callahan") . "</th>";
 if ($hideTimeOnScoresheet) {
     echo "<th style='$style_right'></th>";
 } else {

@@ -188,7 +188,7 @@ foreach ($admins as $user) {
     $html .= "<tr>";
     $html .= "<td style='width:75px'>" . $user['userid'] . "</td><td>" . utf8entities($user['name']) . " (<a href='mailto:" . utf8entities($user['email']) . "'>" . utf8entities($user['email']) . "</a>)</td>";
     $html .= "<td>" . _("All games") . "</td>";
-    $html .= "<td>" . _("In role of event admin") . "</td>";
+    $html .= "<td>" . _("As event admin") . "</td>";
     $html .= "</tr>\n";
     ;
 }
@@ -256,7 +256,7 @@ foreach ($admins as $user) {
     $html .= "<tr>";
     $html .= "<td style='width:175px'>" . _("All teams") . "</td>";
     $html .= "<td style='width:75px'>" . $user['userid'] . "</td><td>" . utf8entities($user['name']) . " (<a href='mailto:" . utf8entities($user['email']) . "'>" . utf8entities($user['email']) . "</a>)</td>";
-    $html .= "<td>" . _("In role of event admin") . "</td>";
+    $html .= "<td>" . _("As event admin") . "</td>";
     $html .= "</tr>\n";
     ;
 }

@@ -191,7 +191,7 @@ if ($view == "accId") {
     $players = SeasonPlayerInfos($season);
     $seasonGames = SeasonPlayerTeamPlayedGames($season);
 
-    echo "<h3>" . _("Players without membership Id") . "</h3>";
+    echo "<h3>" . _("Players without membership ID") . "</h3>";
     echo "<table class='infotable'><tr><th>" . _("Division") . "</th><th>" . _("Team") . "</th><th>" . _("Player") . "</th><th>" . _("Games") . "</th></tr>";
     foreach ($players as $playerId => $playerinfo) {
         if (empty($playerinfo['accreditation_id'])) {

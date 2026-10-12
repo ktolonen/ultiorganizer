@@ -1,6 +1,5 @@
 # Accepted findings of scripts/check-catalog-terms.php. Review before adding.
 # Format: 'variants: A | B' or 'term: <msgid>'. Regenerate with --update-allow.
-term: Enables season-level points/ranking features for this event.
 term: Game official
 term: Season
 term: Season points
