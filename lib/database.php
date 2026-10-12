@@ -985,7 +985,6 @@ function DBFieldType(mysqli_result $result, $field_offset = 0)
         case MYSQLI_TYPE_NULL:
             return 'null';
         case MYSQLI_TYPE_NEWDATE:
-        case MYSQLI_TYPE_INTERVAL:
         case MYSQLI_TYPE_SET:
         case MYSQLI_TYPE_GEOMETRY:
         default:
