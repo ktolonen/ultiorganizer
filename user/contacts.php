@@ -7,7 +7,7 @@ $title = _("Contacts");
 $html = "";
 
 if (empty($_GET['season'])) {
-    die(_("Event mandatory"));
+    die(_("Event is required"));
 }
 $season = $_GET['season'];
 $links = getEditSeasonLinks();
@@ -24,7 +24,7 @@ foreach ($resp as $user) {
 }
 $html .=  "'>" . _("Mail to everyone registered for the event") . "</a></div>";
 
-$html .=  "<h3>" . _("Contact to Event organizer") . "</h3>";
+$html .=  "<h3>" . _("Event organizer contacts") . "</h3>";
 $admins = SeasonAdmins($season);
 $html .=  "<ul>";
 foreach ($admins as $user) {
@@ -36,7 +36,7 @@ foreach ($admins as $user) {
 }
 $html .=  "</ul>\n";
 
-$html .=  "<h3>" . _("Contact to Teams") . "</h3>";
+$html .=  "<h3>" . _("Team contacts") . "</h3>";
 
 $series = SeasonSeries($season);
 foreach ($series as $row) {

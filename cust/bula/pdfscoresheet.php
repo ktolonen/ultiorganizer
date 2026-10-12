@@ -503,7 +503,7 @@ class PDF extends tFPDF implements ScoreSheetPdf
         $this->SetFont('Arial', 'B', 12);
         $this->SetTextColor(255);
         $this->SetFillColor(0, 102, 153);
-        $this->Cell(80, 6, $this->pdfText(_("Starting offensive team")), 'LRTB', 0, 'C', true);
+        $this->Cell(80, 6, $this->pdfText(_("Starting team on offence")), 'LRTB', 0, 'C', true);
         $this->Ln();
 
         //home grids

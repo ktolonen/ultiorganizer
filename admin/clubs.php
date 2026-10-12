@@ -55,7 +55,7 @@ $html .= "<input class='input' maxlength='50' size='40' name='clubname'/> ";
 $html .= "<input class='button' type='submit' name='addclub' value='" . _("Add") . "'/></p>";
 
 $html .= "<table border='0'>\n";
-$html .= "<tr><th>" . _("Id") . "</th> <th>" . _("Name") . "</th><th>" . _("Teams") . "</th><th>" . _("Valid") . "</th><th></th></tr>\n";
+$html .= "<tr><th>" . _("ID") . "</th> <th>" . _("Name") . "</th><th>" . _("Teams") . "</th><th>" . _("Valid") . "</th><th></th></tr>\n";
 
 $i = 0;
 $clubs = ClubList();
@@ -90,7 +90,7 @@ $html .= _("Flag filename") . ": <input class='input' maxlength='50' size='40' n
 $html .= "<input class='button' type='submit' name='addcountry' value='" . _("Add") . "'/></p>";
 
 $html .= "<table border='0'>\n";
-$html .= "<tr><th>" . _("Id") . "</th> <th>" . _("Name") . "</th><th>" . _("Abbreviation") . "</th><th>" . _("Teams") . "</th><th>" . _("Valid") . "</th><th></th></tr>\n";
+$html .= "<tr><th>" . _("ID") . "</th> <th>" . _("Name") . "</th><th>" . _("Abbreviation") . "</th><th>" . _("Teams") . "</th><th>" . _("Valid") . "</th><th></th></tr>\n";
 
 $i = 0;
 $countries = CountryList(false);

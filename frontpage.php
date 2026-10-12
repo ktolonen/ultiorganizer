@@ -8,7 +8,7 @@ requireRoutedView('frontpage');
 /** @var string $user */
 
 $html = "";
-$title = _("Frontpage");
+$title = _("Front page");
 
 if (iget("hideseason")) {
     $propId = getPropId($user, 'editseason', iget("hideseason"));

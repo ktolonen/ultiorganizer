@@ -77,7 +77,7 @@ foreach ($urls as $url) {
 }
 $html .= "<tr><td><select class='dropdown' name='newurltype'>\n";
 $html .= "<option value='menulink'>" . _("Menu link") . "</option>\n";
-$html .= "<option value='menumail'>" . _("Menu mail") . "</option>\n";
+$html .= "<option value='menumail'>" . _("Menu email") . "</option>\n";
 $html .= "</select></td>";
 $html .= "<td><input class='input' size='3' maxlength='2' name='newurlorder' value=''/></td>";
 $html .= "<td><input class='input' size='30' maxlength='150' name='newurlname' value=''/></td>";

@@ -276,7 +276,7 @@ if ($sp['use_season_points']) {
     $html .= "checked='checked'";
 }
 $html .= "/></td></tr>";
-$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Enables season-level points/ranking features for this event.") . "</span></td></tr>";
+$html .= "<tr><td></td><td><span style='color:#666; font-style:italic;'>" . _("Enables points/ranking features for this event.") . "</span></td></tr>";
 
 $html .= "<tr><td class='infocell'>" . _("Hide time on scoresheet") . ": </td><td><input class='input' type='checkbox' name='hide_time_on_scoresheet' ";
 if ($sp['hide_time_on_scoresheet']) {

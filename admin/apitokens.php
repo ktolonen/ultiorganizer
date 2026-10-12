@@ -145,7 +145,7 @@ echo "<option value='installation'>" . _("Installation") . "</option>";
 echo "<option value='season'>" . _("Event") . "</option>";
 echo "<option value='user'>" . _("User") . "</option>";
 echo "</select></td></tr>";
-echo "<tr><td>" . _("Scope id") . "</td>";
+echo "<tr><td>" . _("Scope ID") . "</td>";
 echo "<td><input type='text' name='scope_id' size='20'/></td></tr>";
 echo "</table>";
 echo "<p><input type='submit' name='create_token' value='" . _("Create") . "'/></p>";
@@ -158,11 +158,11 @@ if (empty($tokens)) {
 } else {
     echo "<table style='white-space: nowrap;width:100%' border='0' cellpadding='4'>\n";
     echo "<tr>";
-    echo "<th>" . _("Id") . "</th>";
+    echo "<th>" . _("ID") . "</th>";
     echo "<th></th>";
     echo "<th>" . _("Label") . "</th>";
     echo "<th>" . _("Scope") . "</th>";
-    echo "<th>" . _("Scope id") . "</th>";
+    echo "<th>" . _("Scope ID") . "</th>";
     echo "<th>" . _("Created") . "</th>";
     echo "<th>" . _("Last used") . "</th>";
     echo "<th>" . _("Status") . "</th>";
