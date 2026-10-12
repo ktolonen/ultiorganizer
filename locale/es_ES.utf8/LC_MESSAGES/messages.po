@@ -2108,11 +2108,11 @@ msgid "Embedding Ultiorganizer into other pages"
 msgstr "Incrustar Ultiorganizer en otras páginas"
 
 #: admin/addseasons.php:279
-msgid "Enables event-level points/ranking features for this event."
+msgid "Enables points/ranking features for this event."
 msgstr ""
-"Activa las funciones de puntos/clasificación a nivel de evento para este "
-"evento.Activa las funciones de puntos y ranking a nivel de evento para este "
-"evento."
+"Activa las funciones de puntos/clasificación para este evento.Activa las "
+"funciones de puntos/clasificación a nivel de evento para este evento.Activa "
+"las funciones de puntos y ranking a nivel de evento para este evento."
 
 #: scorekeeper/addscoresheet.php:299 scorekeeper/endgame.php:83
 msgid "End game"

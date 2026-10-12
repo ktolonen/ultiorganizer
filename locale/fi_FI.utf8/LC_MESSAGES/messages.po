@@ -2073,9 +2073,10 @@ msgid "Embedding Ultiorganizer into other pages"
 msgstr "Pelikoneen linkitys muille sivuille"
 
 #: admin/addseasons.php:279
-msgid "Enables event-level points/ranking features for this event."
+msgid "Enables points/ranking features for this event."
 msgstr ""
-"Ottaa käyttöön tapahtumatason piste- ja ranking-ominaisuudet tälle "
+"Ottaa käyttöön piste- ja ranking-ominaisuudet tälle tapahtumalle.Ottaa "
+"käyttöön tapahtumatason piste- ja ranking-ominaisuudet tälle "
 "tapahtumalle.Ottaa käyttöön tapahtumatason pisteet- ja ranking-ominaisuudet "
 "tälle tapahtumalle."
 
