@@ -2074,11 +2074,7 @@ msgstr "Pelikoneen linkitys muille sivuille"
 
 #: admin/addseasons.php:279
 msgid "Enables points/ranking features for this event."
-msgstr ""
-"Ottaa käyttöön piste- ja ranking-ominaisuudet tälle tapahtumalle.Ottaa "
-"käyttöön tapahtumatason piste- ja ranking-ominaisuudet tälle "
-"tapahtumalle.Ottaa käyttöön tapahtumatason pisteet- ja ranking-ominaisuudet "
-"tälle tapahtumalle."
+msgstr "Ottaa käyttöön piste- ja ranking-ominaisuudet tälle tapahtumalle."
 
 #: scorekeeper/addscoresheet.php:299 scorekeeper/endgame.php:83
 msgid "End game"

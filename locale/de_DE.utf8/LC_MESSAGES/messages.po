@@ -2095,10 +2095,7 @@ msgstr "Ultiorganizer in andere Seiten einbinden"
 
 #: admin/addseasons.php:279
 msgid "Enables points/ranking features for this event."
-msgstr ""
-"Aktiviert Punkte-/Ranking-Funktionen für dieses Turnier.Aktiviert Punkte-/"
-"Ranking-Funktionen auf Turnierebene für dieses Turnier.Aktiviert Punkte- und "
-"Ranking-Funktionen auf Turnierebene für dieses Turnier."
+msgstr "Aktiviert Punkte-/Ranking-Funktionen für dieses Turnier."
 
 #: scorekeeper/addscoresheet.php:299 scorekeeper/endgame.php:83
 msgid "End game"
