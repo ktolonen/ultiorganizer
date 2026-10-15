@@ -49,7 +49,7 @@ if (!empty($_POST['series'])) {
             $moveablepools[] = $pool;
             $html .= "<h2>" . utf8entities($pool['name']) . "</h2>\n";
 
-            $html .= "<table border='1' width='600px'><tr>
+            $html .= "<table border='1' style='width:600px;max-width:100%'><tr>
 				<th>" . _("From pool") . "</th>
 				<th>" . _("From pos.") . "</th>
 				<th>" . _("Team") . "</th>

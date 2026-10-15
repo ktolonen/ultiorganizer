@@ -67,7 +67,7 @@ echo "<h2>" . _("Games") . "</h2>\n";
 
 $games = TeamSerieGames($teamId, $poolId);
 if (!empty($games)) {
-    echo "<table border='0' cellpadding='4px' width='400px'>\n";
+    echo "<table border='0' cellpadding='4px' style='width:400px;max-width:100%'>\n";
     foreach ($games as $row) {
         echo "<tr>";
         echo "<td>" . DefWeekDateFormat($row['time']) . "</td>";

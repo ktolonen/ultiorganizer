@@ -42,7 +42,7 @@ pageTopHeadClose($title, false);
 leftMenu($LAYOUT_ID);
 contentStart();
 $html = "";
-$html .= "<div id='googleMap' style='width:600px; height: 400px; font-family:Arial,";
+$html .= "<div id='googleMap' style='width:600px; max-width:100%; height: 400px; font-family:Arial,";
 $html .= "sans-serif; font-size:11px; border:1px solid black'>";
 $html .= "</div>";
 $html .= "<form method='post' action='?view=admin/locations&amp;season=" . urlencode((string) $season) . "'>";

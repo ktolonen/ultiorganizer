@@ -222,7 +222,7 @@ foreach ($pools as $pool) {
 //round robin or swissdrawn pool
 if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
 
-    echo "<table border='0' width='500'><tr>
+    echo "<table border='0' style='width:500px;max-width:100%'><tr>
 		<th>" . _("From pool") . "</th>
 		<th>" . _("From position") . "</th>
 		<th>" . _("To pool") . "</th>
@@ -293,7 +293,7 @@ if ($poolinfo['type'] == 1 || $poolinfo['type'] == 3) {
 
     $moves = PoolMovingsToPool($poolId);
 
-    echo "<table border='0' width='600'><tr>
+    echo "<table border='0' style='width:600px;max-width:100%'><tr>
 		<th>" . _("From pool") . "</th>
 		<th>" . _("From pos.") . "</th>
 		<th class='right'>" . _("Name in Schedule") . "</th>

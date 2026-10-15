@@ -17,7 +17,7 @@ if (isset($_GET['season'])) {
 $seasoninfo = SeasonInfo($season);
 
 $html .= "<h1>" . _("Team responsibilities") . "</h1>";
-$html .= "<table width='500px'>";
+$html .= "<table style='width:500px;max-width:100%'>";
 $html .= "<tr>";
 $html .= "<th>" . _("Team") . "</th>";
 $html .= "<th>" . _("Division") . "</th>";

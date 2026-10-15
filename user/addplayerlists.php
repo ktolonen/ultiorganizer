@@ -291,7 +291,7 @@ pageMenu($menutabs);
 
 $html .= "<form method='post' action='?view=user/addplayerlists&amp;game=" . $gameId . "'>";
 
-$html .= "<table width='600px'><tr><td valign='top' style='width:45%'>\n";
+$html .= "<table style='width:600px;max-width:100%'><tr><td valign='top' style='width:45%'>\n";
 
 $html .= "<table width='100%' cellspacing='0' cellpadding='0' border='0'>\n";
 $html .= "<tr style='height=20'><td align='center'><b>";
