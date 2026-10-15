@@ -191,7 +191,7 @@ if ($continuation && $SwissOK == -1) {
 } else {
     $playoffpool = false;
 
-    echo "<table border='1' width='600px'><tr>
+    echo "<table border='1' style='width:600px;max-width:100%'><tr>
 		<th>" . _("From pool") . "</th>
 		<th>" . _("From pos.") . "</th>
 		<th>" . _("Team") . "</th>

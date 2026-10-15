@@ -139,7 +139,7 @@ $html .= "</table>";
 
 $urls = GetUrlList("player", $profileId);
 if (count($urls)) {
-    $html .= "<table style='width:600px'>";
+    $html .= "<table style='width:600px;max-width:100%'>";
     $html .= "<tr><td colspan='2' class='profileheader' style='vertical-align:top'>" . _("Player pages") . ":</td></tr>";
     foreach ($urls as $url) {
         $html .= "<tr>";
