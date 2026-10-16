@@ -316,7 +316,8 @@ if ($print) {
 } elseif (count($games)) {
     $html .= "<hr/>\n";
     $html .= "<p>";
-    $html .= "<a href='?view=ical&amp;$gamefilter=$id&amp;time=$timefilter&amp;order=$order'>" . _("iCalendar (.ical)") . "</a> | ";
+    $icalUrl = preg_replace('/^https?:/', 'webcal:', GetURLBase()) . "/?view=ical&$gamefilter=$id&time=$timefilter&order=$order";
+    $html .= "<a href='" . utf8entities($icalUrl) . "'>" . _("Subscribe to calendar") . "</a> | ";
     $html .= "<a href='" . utf8entities($baseurl) . "&filter=onepage&group=$group' target='_blank' rel='noopener'>" . _("Grid (PDF)") . "</a> | ";
     $html .= "<a href='" . utf8entities($baseurl) . "&filter=season&group=$group' target='_blank' rel='noopener'>" . _("List (PDF)") . "</a> | ";
     $html .= "<a href='?" . utf8entities($querystring) . "&amp;print=1'>" . _("Printable version") . "</a>";
