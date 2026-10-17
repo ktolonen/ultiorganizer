@@ -68,6 +68,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - A new markdown document under `docs/` goes in the topic lists of both `AGENTS.md` and `docs/README.md`. The root `README.md` points to `docs/README.md` rather than keeping its own topic list.
 - Decide whether each new file or directory belongs in the release package. Runtime files must be included by `docs/release/build-release.sh`; development-only files must be excluded with `.gitattributes` `export-ignore`. When changing release-relevant paths, run `build-release.sh` and inspect the package; `docs/ai/test-release-install/SKILL.md` goes further and installs it. Classify every new top-level path in `docs/ai/release-package-coverage/inventory.txt` and run `docs/ai/release-package-coverage/SKILL.md`.
 - A new top-level app directory also goes in the scan list of `docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh`, and in `menufunctions.php` if it needs a menu entry.
+- Run `git fetch` before checking out or reporting the state of `master`, and compare against `origin/master`. Check `git branch --show-current` before editing, and say "pushed" only after a push succeeded.
 
 ## Verification
 
@@ -83,6 +84,8 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
   - `php docs/ai/privacy-coverage/scripts/check-privacy-coverage.php`
   - `php docs/ai/review-user-language/scripts/check-catalog-terms.php`
 - Refresh gettext catalogs after changing translated strings: `./docs/ai/fix-user-language/scripts/update-gettext-catalogs.sh`
+- In `.po` edits, replace every continuation line of a multi-line `msgstr` and fix a term in all locales (`fi`, `de`, `es`), not only the first occurrence. Afterwards check for fuzzy entries with `msgfmt --statistics`.
+- Do not claim "no other instances" from a text search alone; also check PHPStan and the PHP error log. Read the existing implementation and the bundled libraries (SortableJS, Tablesort) before proposing a feature or writing a helper.
 - Without local `php`, use the Docker environment from `docs/local-development.md`: `docker compose -f docs/dev/compose.yaml --profile devtools up --build dev`, then `docker compose -f docs/dev/compose.yaml exec -T dev ...` (or `exec -T app ...` if only `app` runs).
 - Exercise the relevant page flow in the running app.
 - After a change that alters SQL or query results, verify empirically rather than by reasoning: run the old and new query against the real database, compare the output, and report the row counts (`docs/ai/query-database/SKILL.md`).
