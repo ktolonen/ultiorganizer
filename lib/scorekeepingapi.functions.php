@@ -4,6 +4,7 @@ require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
 require_once __DIR__ . '/cache.functions.php';
+require_once __DIR__ . '/persistent-cache.functions.php';
 require_once __DIR__ . '/scoresheethistory.functions.php';
 
 /**
@@ -34,14 +35,17 @@ function GameLockForUpdate($gameId)
  * stoppages, result state, starting offence, halftime and official.
  *
  * Timer fields, defenses, other events and the comment are left out, so a
- * running clock or a no-op write does not move the token.
+ * running clock or a no-op write does not move the token. Bypasses the
+ * persistent cache for the rest of the request, as live-entry apps do.
  *
  * @param int $gameId uo_game.game_id
  * @return string 64 hex characters
  */
 function ScorekeeperUploadToken($gameId)
 {
-    // A post-write call must read the rows the write just changed.
+    // A post-write call must read the rows the write just changed, and on a
+    // GET the snapshot reads would otherwise come from the cross-request cache.
+    DisablePersistentCacheForRequest();
     CacheForgetNamespace("scoresheet_history_snapshot");
     $snapshot = ScoresheetHistoryBuildSnapshot((int) $gameId);
     $game = $snapshot['game'];
