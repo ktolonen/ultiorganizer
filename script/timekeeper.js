@@ -545,6 +545,11 @@
       return;
     }
     navigator.wakeLock.request("screen").then(function (lock) {
+      // The timer may have stopped while the request was pending.
+      if (!clock.running && !scenario) {
+        lock.release();
+        return;
+      }
       wakeLock = lock;
       wakeLock.addEventListener("release", function () {
         wakeLock = null;
