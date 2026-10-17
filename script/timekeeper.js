@@ -1043,6 +1043,11 @@
     });
     el("tk-sound-toggle").addEventListener("click", toggleSound);
     window.addEventListener("beforeunload", warnBeforeLeaving);
+    document.addEventListener("visibilitychange", function () {
+      if (!document.hidden && (clock.running || scenario)) {
+        requestWakeLock();
+      }
+    });
   }
 
   function init() {

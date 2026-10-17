@@ -20,6 +20,7 @@
   var pausedSuffix = "";
   var initialised = false;
   var tickInterval = null;
+  var wakeLock = null;
 
   function pad(value) {
     return value < 10 ? "0" + value : String(value);
@@ -108,6 +109,18 @@
     return anchor;
   }
 
+  function keepAwake() {
+    if (!navigator.wakeLock || wakeLock) {
+      return;
+    }
+    navigator.wakeLock.request("screen").then(function (lock) {
+      wakeLock = lock;
+      lock.addEventListener("release", function () {
+        wakeLock = null;
+      });
+    }, function () {});
+  }
+
   function init(options) {
     var settings = options || {};
     anchorElapsed = Math.max(0, parseInt(settings.elapsed, 10) || 0);
@@ -125,11 +138,14 @@
     }
     if (ongoing && !paused) {
       tickInterval = window.setInterval(render, 1000);
+      keepAwake();
       // Redraw as soon as the screen comes back on instead of waiting for the
-      // next tick, which may be up to a second away.
+      // next tick, which may be up to a second away. Browsers drop the wake
+      // lock while the page is hidden, so take it again.
       document.addEventListener("visibilitychange", function () {
         if (document.visibilityState === "visible") {
           render();
+          keepAwake();
         }
       });
     }
