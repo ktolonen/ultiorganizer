@@ -755,7 +755,7 @@ function ScorekeeperGameDataNormalize($raw)
     $doc['halftime'] = array_key_exists('halftime', $raw) ? $int($raw['halftime'], 'halftime', 0, SCOREKEEPING_API_MAX_EVENT_TIME, true) : null;
     $doc['official'] = $raw['official'] ?? null;
     if (array_key_exists('official', $raw) && $doc['official'] !== null && (!is_string($doc['official']) || mb_strlen($doc['official']) > 50)) {
-        $add('official', 'Must be null or a text of at most 50 characters.');
+        $add('official', 'Must be null or text of at most 50 characters.');
     }
 
     if ($errors !== []) {
@@ -958,7 +958,7 @@ function ScorekeeperReplaceGameData($gameId, array $doc, array $request)
     }
     if ($removedDefenders !== []) {
         sort($removedDefenders);
-        throw new ScorekeepingApiException(409, 'retained_defense', 'Players recorded on the defense sheet must stay on the roster.', ['player_ids' => $removedDefenders]);
+        throw new ScorekeepingApiException(409, 'retained_defense', 'Players recorded on the defence sheet must stay on the roster.', ['player_ids' => $removedDefenders]);
     }
 
     // Writes.
