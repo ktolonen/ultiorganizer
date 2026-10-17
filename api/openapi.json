@@ -660,7 +660,7 @@
     "/api/v1/games/{game_id}/entry-context": {
       "get": {
         "summary": "Everything the scorekeeping app needs to keep one game",
-        "description": "One consistent read, taking no lock: game, both teams' eligible players and game rosters, goals, timeouts, spirit stoppages, result, starting offence, halftime, official, the rules, the state an upload keeps (cap events, forfeit, defenses) and the concurrency token, also sent as the strong ETag. It contains no game notes, contact data or history. Goals carry num, home_score and away_score, which are derived by the server and must not be sent in an upload.",
+        "description": "One consistent read, taking no lock: game, both teams' eligible players and game rosters, goals, timeouts, spirit stoppages, result, starting offence, halftime, official, the rules, the state an upload keeps (cap events, forfeit, defences) and the concurrency token, also sent as the strong ETag. It contains no game notes, contact data or history. Goals carry num, home_score and away_score, which are derived by the server and must not be sent in an upload.",
         "security": [
           {
             "ApiTokenAuth": [],
@@ -762,7 +762,7 @@
     "/api/v1/games/{game_id}/game-data": {
       "put": {
         "summary": "Replace the whole scoresheet of a game",
-        "description": "Replaces rosters, goals, timeouts, spirit stoppages, starting offence, halftime, official and the result in one transaction under the game lock. Game notes, cap events, defenses and the clock of an ongoing game are kept. A forced scoresheet history snapshot is taken first, so the previous state can be restored from the desktop scoresheet history. If-Match carries the token from the entry context (or from the previous upload response); a mismatch is 409 stale_token and the app must fetch the entry context again. The same Idempotency-Key with the same body replays the stored answer without writing (Idempotent-Replay: true); with a different body it is 409 idempotency_conflict. A game going from final back to ongoing has its pool standings recomputed.",
+        "description": "Replaces rosters, goals, timeouts, spirit stoppages, starting offence, halftime, official and the result in one transaction under the game lock. Game notes, cap events, defences and the clock of an ongoing game are kept. A forced scoresheet history snapshot is taken first, so the previous state can be restored from the desktop scoresheet history. If-Match carries the token from the entry context (or from the previous upload response); a mismatch is 409 stale_token and the app must fetch the entry context again. The same Idempotency-Key with the same body replays the stored answer without writing (Idempotent-Replay: true); with a different body it is 409 idempotency_conflict. A game going from final back to ongoing has its pool standings recomputed.",
         "security": [
           {
             "ApiTokenAuth": [],
