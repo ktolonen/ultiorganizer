@@ -244,7 +244,7 @@ function ApiReceiptFind($apiTokenId, $linkTokenId, $gameId, $key)
  */
 function ApiReceiptStore($apiTokenId, $linkTokenId, $gameId, $key, $method, $path, $requestHash, $status, array $response)
 {
-    DBQuery(sprintf(
+    DBExecute(sprintf(
         "INSERT INTO uo_api_receipt (api_token, scorekeeper_token, game, idempotency_key, method, path, request_hash, status, response)
 		VALUES (%d, %d, %d, '%s', '%s', '%s', '%s', %d, '%s')",
         (int) $apiTokenId,
@@ -299,7 +299,7 @@ function ScorekeepingApiTransaction($gameId, callable $work)
         $attempt++;
         $buffering = false;
         try {
-            DBQuery('SET SESSION innodb_lock_wait_timeout=' . SCOREKEEPING_API_LOCK_WAIT_SECONDS);
+            DBExecute('SET SESSION innodb_lock_wait_timeout=' . SCOREKEEPING_API_LOCK_WAIT_SECONDS);
             DBTransactionBegin();
             if (!GameLockForUpdate($gameId)) {
                 throw new ScorekeepingApiException(404, 'game_not_found', 'Game not found.');
