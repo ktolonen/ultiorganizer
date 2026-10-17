@@ -884,7 +884,7 @@ CREATE TABLE IF NOT EXISTS `uo_api_receipt` (
   `api_token` int(10) NOT NULL,
   `scorekeeper_token` int(10) NOT NULL,
   `game` int(10) NOT NULL,
-  `idempotency_key` varchar(64) NOT NULL,
+  `idempotency_key` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
   `method` varchar(10) NOT NULL,
   `path` varchar(255) NOT NULL,
   `request_hash` char(64) NOT NULL,
