@@ -134,6 +134,7 @@ if (!empty($createdToken)) {
     echo "</div>";
 }
 
+echo "<p>" . _("Tokens also allow scorekeeping with a scorekeeping link.") . "</p>";
 echo "<h3>" . _("Create token") . "</h3>";
 echo "<form method='post' action='?view=admin/apitokens'>";
 echo "<table border='0' cellpadding='4' cellspacing='0'>";

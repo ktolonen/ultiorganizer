@@ -386,12 +386,67 @@ function ScorekeeperAddGrant($tokenId, $userId)
 }
 
 /**
+ * The request-local actor of the scorekeeping app API: the scorekeeping link
+ * token and the app API token the request authenticated with. Call with ids
+ * to set it, with 0 and 0 to clear it, and without arguments to read it.
+ * Both ids are required: a link without an app token clears the actor.
+ *
+ * Setting it gives the request the logged-out visitor's session shape and
+ * never starts a PHP session, so the scorekeeping link rules apply to the
+ * request without cookies.
+ *
+ * @return array{link: int, api: int} Zeros when no actor is set
+ */
+function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null)
+{
+    static $actor = ['link' => 0, 'api' => 0];
+    static $savedSession = null;
+    if ($linkTokenId === null && $apiTokenId === null) {
+        return $actor;
+    }
+    $link = max(0, (int) $linkTokenId);
+    $api = max(0, (int) $apiTokenId);
+    if ($link === 0 || $api === 0) {
+        $link = $api = 0;
+    }
+    if ($link > 0) {
+        if ($actor['link'] === 0) {
+            $savedSession = $_SESSION ?? null;
+        }
+        $_SESSION = ['uid' => 'anonymous', 'userproperties' => []];
+    } elseif ($actor['link'] > 0) {
+        if ($savedSession === null) {
+            unset($_SESSION);
+        } else {
+            $_SESSION = $savedSession;
+        }
+        $savedSession = null;
+    }
+    $actor = ['link' => $link, 'api' => $api];
+    CacheForgetNamespace("scorekeeper_grant");
+    return $actor;
+}
+
+/**
+ * Whether the scorekeeping app API actor is set on this request.
+ */
+function ScorekeeperApiActorIsSet()
+{
+    $actor = ScorekeeperApiActor();
+    return $actor['link'] > 0 && $actor['api'] > 0;
+}
+
+/**
  * Token ids an anonymous session has opened.
  *
  * @return int[]
  */
 function ScorekeeperSessionTokenIds()
 {
+    $actor = ScorekeeperApiActor();
+    if ($actor['link'] > 0) {
+        return [$actor['link']];
+    }
     $ids = $_SESSION['scorekeeper_tokens'] ?? [];
     return is_array($ids) ? array_values(array_filter(array_map('intval', $ids))) : [];
 }
@@ -497,7 +552,8 @@ function ScorekeeperCoverageSql($season)
  * Everything is checked live: a rotated token no longer exists, a game moved
  * out of the reservation is no longer covered, a token works only on its game
  * day (ScorekeeperOpenDays()), and an anonymous session needs the event to
- * still allow anonymous scorekeeping. Where the grant counts is decided by
+ * still allow anonymous scorekeeping (the API actor skips that last check; its
+ * app token is the gate). Where the grant counts is decided by
  * ScorekeeperGrantCovers().
  */
 function ScorekeeperGrantTokenId($gameId)
@@ -513,7 +569,7 @@ function ScorekeeperGrantTokenId($gameId)
     $key = ($_SESSION['uid'] ?? '') . ":" . $gameId . ":" . md5($sql['join'] . $sql['where']);
     return (int) CacheRemember("scorekeeper_grant", $key, function () use ($gameId, $sql) {
         $season = GameSeason($gameId);
-        if (empty($season) || (!isLoggedIn() && !IsAnonymousScorekeepingAllowed($season))) {
+        if (empty($season) || (!isLoggedIn() && !ScorekeeperApiActorIsSet() && !IsAnonymousScorekeepingAllowed($season))) {
             return 0;
         }
         return (int) DBQueryToValueUncached(sprintf(
@@ -539,7 +595,7 @@ function ScorekeeperGrantTokenId($gameId)
 function ScorekeeperGrantedGameIds($season)
 {
     $sql = ScorekeeperSessionTokenSql();
-    if ($sql === null || (!isLoggedIn() && !IsAnonymousScorekeepingAllowed($season))) {
+    if ($sql === null || (!isLoggedIn() && !ScorekeeperApiActorIsSet() && !IsAnonymousScorekeepingAllowed($season))) {
         return [];
     }
     $rows = DBQueryToArrayUncached(sprintf(
@@ -583,7 +639,7 @@ function ScorekeeperGrantedSeasonIds()
         $sql['where'],
     ));
     $seasons = array_filter(array_column($rows, 'season'));
-    if (!isLoggedIn()) {
+    if (!isLoggedIn() && !ScorekeeperApiActorIsSet()) {
         $seasons = array_filter($seasons, 'IsAnonymousScorekeepingAllowed');
     }
     return array_values($seasons);

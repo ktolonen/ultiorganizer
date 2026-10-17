@@ -276,6 +276,7 @@ function ScoresheetHistoryRepeatedRows($rows)
             && $rows[$i + 1]['action'] === 'add'
             && $rows[$i + 1]['user_id'] === $row['user_id']
             && ($rows[$i + 1]['scorekeeper_token'] ?? null) === ($row['scorekeeper_token'] ?? null)
+            && ($rows[$i + 1]['api_token'] ?? null) === ($row['api_token'] ?? null)
             && $rows[$i + 1]['source'] === $row['source']
         ) {
             $i++;
@@ -408,6 +409,9 @@ if ($count === 0) {
         $html .= "<td>" . utf8entities($row['user_id']);
         if (!empty($row['scorekeeper_token'])) {
             $html .= " <span title='" . utf8entities(_("Scorekeeping link")) . "'>#" . (int) $row['scorekeeper_token'] . "</span>";
+        }
+        if (!empty($row['api_token'])) {
+            $html .= " <span title='" . utf8entities(_("API Tokens")) . "'>#" . (int) $row['api_token'] . "</span>";
         }
         $html .= "</td>";
         $html .= "<td>" . utf8entities($row['source']) . "</td>";

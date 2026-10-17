@@ -1624,6 +1624,35 @@ function upgrade103()
     }
 }
 
+function upgrade104()
+{
+    // The app API token a scorekeeping app wrote through. No foreign key,
+    // like scorekeeper_token: the id must outlive a deleted token.
+    if (!hasColumn('uo_scoresheet_history', 'api_token')) {
+        addColumn('uo_scoresheet_history', 'api_token', "int(10) DEFAULT NULL");
+    }
+
+    // Stored responses that make API retries idempotent. Holds only token
+    // ids, hashes and small JSON, and goes with the game.
+    DBQuery("CREATE TABLE IF NOT EXISTS `uo_api_receipt` (
+	  `id` int(10) NOT NULL AUTO_INCREMENT,
+	  `api_token` int(10) NOT NULL,
+	  `scorekeeper_token` int(10) NOT NULL,
+	  `game` int(10) NOT NULL,
+	  `idempotency_key` varchar(64) CHARACTER SET ascii COLLATE ascii_bin NOT NULL,
+	  `method` varchar(10) NOT NULL,
+	  `path` varchar(255) NOT NULL,
+	  `request_hash` char(64) NOT NULL,
+	  `status` smallint(5) NOT NULL,
+	  `response` text DEFAULT NULL,
+	  `created` datetime NOT NULL DEFAULT current_timestamp(),
+	  PRIMARY KEY (`id`),
+	  UNIQUE KEY `uq_api_receipt_key` (`api_token`,`scorekeeper_token`,`game`,`idempotency_key`),
+	  KEY `idx_api_receipt_game` (`game`),
+	  CONSTRAINT `fk_api_receipt_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
+	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+}
+
 function upgradeGamePoolSeasonJoinSql($gameAlias, $poolAlias)
 {
     if (hasColumn('uo_game', 'pool')) {

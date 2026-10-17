@@ -39,6 +39,8 @@ API documentation is available at:
 
 Tokens are managed through the admin UI at `?view=admin/apitokens`.
 
+Any valid token also lets a scorekeeping app keep score together with a scorekeeping link; revoking the token cuts that app off. The scorekeeping endpoints are not available yet. Foundations (`ScorekeeperApiActor()`, `uo_api_receipt`, history attribution in `api_token`) are in place; see `docs/permissions.md` and `docs/scoresheet-history.md`.
+
 Example requests:
 
 ```sh

@@ -9,7 +9,7 @@ denyDirectLibAccess(__FILE__);
  * Update this constant whenever you add a new `upgradeNN()` step in
  * `sql/upgrade_db.php`, and export the current schema from the upgraded database.
  */
-define('DB_VERSION', 103);
+define('DB_VERSION', 104);
 
 /**
  * Maximum age in seconds before an automatic upgrade lock is considered stale.
@@ -357,6 +357,71 @@ function DBQuery($query)
         DBAbort('DBQuery failed', $query, mysqli_error($mysqlconnectionref));
     }
     return $result;
+}
+
+/**
+ * Current transaction nesting depth; 0 means no transaction opened by the helpers.
+ *
+ * @return int
+ */
+function DBTransactionDepth()
+{
+    return (int) ($GLOBALS['db_transaction_depth'] ?? 0);
+}
+
+/**
+ * Open a transaction, or a nested level inside one.
+ *
+ * The outermost call issues START TRANSACTION. Each nested call sets a
+ * SAVEPOINT instead, because a second START TRANSACTION would implicitly
+ * commit the outer one and release its row locks. Savepoints (rather than
+ * no-op inner calls) keep an inner rollback meaningful: a helper that rolls
+ * back and swallows the failure undoes only its own writes, and the outer
+ * transaction can still commit a consistent state.
+ *
+ * @return void
+ */
+function DBTransactionBegin()
+{
+    $depth = DBTransactionDepth();
+    DBQuery($depth === 0 ? 'START TRANSACTION' : 'SAVEPOINT uo_tx_' . $depth);
+    $GLOBALS['db_transaction_depth'] = $depth + 1;
+}
+
+/**
+ * Commit the outermost transaction, or release the savepoint of a nested level.
+ *
+ * @return void
+ */
+function DBTransactionCommit()
+{
+    $depth = DBTransactionDepth();
+    if ($depth === 0) {
+        return;
+    }
+    DBQuery($depth === 1 ? 'COMMIT' : 'RELEASE SAVEPOINT uo_tx_' . ($depth - 1));
+    $GLOBALS['db_transaction_depth'] = $depth - 1;
+}
+
+/**
+ * Roll back the outermost transaction, or only the work since the matching nested begin.
+ *
+ * @return void
+ */
+function DBTransactionRollback()
+{
+    $depth = DBTransactionDepth();
+    if ($depth === 0) {
+        return;
+    }
+    if ($depth === 1) {
+        DBQuery('ROLLBACK');
+    } else {
+        $savepoint = 'uo_tx_' . ($depth - 1);
+        DBQuery('ROLLBACK TO SAVEPOINT ' . $savepoint);
+        DBQuery('RELEASE SAVEPOINT ' . $savepoint);
+    }
+    $GLOBALS['db_transaction_depth'] = $depth - 1;
 }
 
 /**
