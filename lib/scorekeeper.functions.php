@@ -590,7 +590,7 @@ function ScorekeeperGrantTokenId($gameId)
 function ScorekeeperGrantedGameIds($season)
 {
     $sql = ScorekeeperSessionTokenSql();
-    if ($sql === null || (!isLoggedIn() && !IsAnonymousScorekeepingAllowed($season))) {
+    if ($sql === null || (!isLoggedIn() && !ScorekeeperApiActorIsSet() && !IsAnonymousScorekeepingAllowed($season))) {
         return [];
     }
     $rows = DBQueryToArrayUncached(sprintf(
@@ -634,7 +634,7 @@ function ScorekeeperGrantedSeasonIds()
         $sql['where'],
     ));
     $seasons = array_filter(array_column($rows, 'season'));
-    if (!isLoggedIn()) {
+    if (!isLoggedIn() && !ScorekeeperApiActorIsSet()) {
         $seasons = array_filter($seasons, 'IsAnonymousScorekeepingAllowed');
     }
     return array_values($seasons);
