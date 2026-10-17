@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 08:35+0300\n"
+"POT-Creation-Date: 2026-10-16 22:08+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -3093,7 +3093,7 @@ msgstr "Google Maps-Schlüssel"
 msgid "Grant rights"
 msgstr "Rechte vergeben"
 
-#: games.php:320
+#: games.php:321
 msgid "Grid (PDF)"
 msgstr "Raster (PDF)"
 
@@ -3731,7 +3731,7 @@ msgstr "Links"
 msgid "List"
 msgstr "Liste"
 
-#: games.php:321
+#: games.php:322
 msgid "List (PDF)"
 msgstr "Liste (PDF)"
 
@@ -5131,7 +5131,7 @@ msgstr "Spielberichte drucken"
 msgid "Print team rosters"
 msgstr "Spielerlisten drucken"
 
-#: games.php:322 poolstatus.php:143 privacy.php:37 user_guide.php:25
+#: games.php:323 poolstatus.php:143 privacy.php:37 user_guide.php:25
 #: admin/help.php:25 user/scorekeepinglink.php:59
 msgid "Printable version"
 msgstr "Druckversion"
@@ -6696,6 +6696,10 @@ msgstr "Stopp"
 msgid "Submit Spirit Score"
 msgstr "Spirit-Bewertung einreichen"
 
+#: games.php:320
+msgid "Subscribe to calendar"
+msgstr "Kalender abonnieren"
+
 #: admin/finalstandings.php:104
 msgid "Suggested by placement standings"
 msgstr "Nach Platzierungsständen vorgeschlagen"
@@ -8244,10 +8248,6 @@ msgstr "haben dieselbe Trikotnummer"
 #: admin/addreservation.php:158 admin/addreservation.php:162
 msgid "hh:mm"
 msgstr "HH:MM"
-
-#: games.php:319
-msgid "iCalendar (.ical)"
-msgstr "iCalendar-Format"
 
 #: scorekeeper/addplayerlists.php:83 user/addplayerlists.php:105
 #: user/addplayerlists.php:182

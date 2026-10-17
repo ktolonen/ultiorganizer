@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-12 08:35+0300\n"
+"POT-Creation-Date: 2026-10-16 22:08+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -3071,7 +3071,7 @@ msgstr "Google Maps avain"
 msgid "Grant rights"
 msgstr "Anna oikeudet"
 
-#: games.php:320
+#: games.php:321
 msgid "Grid (PDF)"
 msgstr "Ruudukko (PDF)"
 
@@ -3704,7 +3704,7 @@ msgstr "Linkit"
 msgid "List"
 msgstr "Listaus"
 
-#: games.php:321
+#: games.php:322
 msgid "List (PDF)"
 msgstr "Listaus (PDF)"
 
@@ -5095,7 +5095,7 @@ msgstr "Tulosta pöytäkirjat"
 msgid "Print team rosters"
 msgstr "Tulosta pelaajalistat"
 
-#: games.php:322 poolstatus.php:143 privacy.php:37 user_guide.php:25
+#: games.php:323 poolstatus.php:143 privacy.php:37 user_guide.php:25
 #: admin/help.php:25 user/scorekeepinglink.php:59
 msgid "Printable version"
 msgstr "Tulostettava versio"
@@ -6648,6 +6648,10 @@ msgstr "Pysäytä"
 msgid "Submit Spirit Score"
 msgstr "Lähetä spirit-pisteet"
 
+#: games.php:320
+msgid "Subscribe to calendar"
+msgstr "Tilaa kalenteri"
+
 #: admin/finalstandings.php:104
 msgid "Suggested by placement standings"
 msgstr "Sijoitusten ehdotus"
@@ -8169,10 +8173,6 @@ msgstr "on sama pelinumero"
 #: admin/addreservation.php:158 admin/addreservation.php:162
 msgid "hh:mm"
 msgstr "tt:mm"
-
-#: games.php:319
-msgid "iCalendar (.ical)"
-msgstr "iCalendar (.ical)"
 
 #: scorekeeper/addplayerlists.php:83 user/addplayerlists.php:105
 #: user/addplayerlists.php:182

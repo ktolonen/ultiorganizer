@@ -117,8 +117,8 @@ IcalPrintLine('METHOD', 'PUBLISH');
 
 foreach ($games as $game) {
     $location = !empty($game['place_id']) ? LocationInfo($game['place_id']) : null;
-    $homeTeamName = trim(TeamName($game['hometeam']));
-    $visitorTeamName = trim(TeamName($game['visitorteam']));
+    $homeTeamName = trim($game['hometeam'] ? TeamName($game['hometeam']) : U_((string) $game['phometeamname']));
+    $visitorTeamName = trim($game['visitorteam'] ? TeamName($game['visitorteam']) : U_((string) $game['pvisitorteamname']));
     if ($homeTeamName !== '' && $visitorTeamName !== '') {
         $summary = $homeTeamName . ' vs ' . $visitorTeamName;
     } elseif ($homeTeamName !== '') {
