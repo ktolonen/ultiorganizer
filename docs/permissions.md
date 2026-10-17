@@ -63,7 +63,9 @@ The main helpers live in [lib/user.functions.php](../lib/user.functions.php).
 
 ## Scorekeeping links
 
-A scorekeeping link (`docs/scorekeeper.md`) gives game-entry rights without a role row. `hasEditGameEventsRight()` and `hasEditGamePlayersRight()` end their role check with `ScorekeeperGrantCovers($game)`, which is true only when `IsScorekeeperApp()` holds, so a link works in Scorekeeper and never in the desktop editors or the API. The read-only check after it still applies.
+A scorekeeping link (`docs/scorekeeper.md`) gives game-entry rights without a role row. `hasEditGameEventsRight()` and `hasEditGamePlayersRight()` end their role check with `ScorekeeperGrantCovers($game)`, which is true only when `IsScorekeeperApp()` holds or the request-local scorekeeping app API actor is set (`ScorekeeperApiActor()`), so a link works in Scorekeeper and for the scorekeeping app API, and never in the desktop editors.
+
+The API actor holds the link token id and the app API token id, gives the request the logged-out session shape without starting a PHP session, and skips the `anonymous_scorekeeping` requirement: a valid app token is the gate. Day window, coverage and own-event checks stay. Effective access is the app token's scope intersected with what the link covers. The API endpoints themselves come in a later phase. The read-only check after it still applies.
 
 Logged-in users hold links as rows in `uo_scorekeeper_grant`; an anonymous session holds them in `$_SESSION['scorekeeper_tokens']`, and only while the event's `anonymous_scorekeeping` setting is on. `lib/auth.guard.php` admits such a session through `$auth_allow_anonymous`, which `scorekeeper/auth.php` sets. Game notes stay out of reach for it, because `CanManageGameComment()` requires a login.
 
