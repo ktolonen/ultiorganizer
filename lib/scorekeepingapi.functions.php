@@ -688,7 +688,7 @@ function ScorekeeperGameDataNormalize($raw)
                 }
                 $doc['rosters'][$side][] = [
                     'player_id' => $int($entry['player_id'], "$path.player_id", 1, 2147483647),
-                    'number' => $int($entry['number'], "$path.number", 0, SCOREKEEPING_API_MAX_JERSEY_NUMBER),
+                    'number' => $int($entry['number'], "$path.number", 0, SCOREKEEPING_API_MAX_JERSEY_NUMBER, true),
                     'captain' => $entry['captain'] === true,
                     'spirit_captain' => $entry['spirit_captain'] === true,
                 ];

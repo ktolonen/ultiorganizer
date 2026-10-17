@@ -79,6 +79,8 @@
           },
           "number": {
             "type": "integer",
+            "nullable": true,
+            "description": "Jersey number; null keeps an unnumbered player unnumbered.",
             "minimum": 0,
             "maximum": 255
           },

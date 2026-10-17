@@ -113,7 +113,7 @@ Empty lists clear; `result` is `null`, `ongoing` or `final`. The server derives 
 
 - the team ids match the fixture (`409 fixture_changed`) and the game is not a forfeit (`409 forfeit`);
 - every player exists, belongs to the side's team and passes accreditation; scorers and assists are on the submitted roster of their side; a Callahan goal has no assist; scorer and assist differ (`400 validation_failed` with paths);
-- goal times do not go backwards; when the event hides times they must be `null` and the server numbers them; bounds follow storage (at most 255 goals per side, jersey numbers 0 to 255, goal time up to 32767 seconds, `official` up to 50 characters, timeouts per side up to the pool format or the number already recorded);
+- goal times do not go backwards; when the event hides times they must be `null` and the server numbers them; bounds follow storage (at most 255 goals per side, jersey numbers 0 to 255 or `null` for an unnumbered player (the entry context reports those and the upload keeps them unnumbered), goal time up to 32767 seconds, `official` up to 50 characters, timeouts per side up to the pool format or the number already recorded);
 - a `null` result requires no goals, and a result with goals equals the goal total;
 - spirit stoppages are empty when the event does not use them;
 - a player on the defence sheet stays on a roster (`409 retained_defense`). Cap events, defences, forfeit and game notes are kept, and an ongoing upload leaves the game clock alone; a final or cleared result resets it as the desktop does.
