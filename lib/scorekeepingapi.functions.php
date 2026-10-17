@@ -31,8 +31,9 @@ function GameLockForUpdate($gameId)
 
 /**
  * Concurrency token of everything a complete game upload replaces: the
- * SHA-256 of a canonical JSON of both rosters, goals, timeouts and spirit
- * stoppages, result state, starting offence, halftime and official.
+ * SHA-256 of a canonical JSON of the fixture teams, both rosters, goals,
+ * timeouts and spirit stoppages, result state, starting offence, halftime
+ * and official.
  *
  * Timer fields, defenses, other events and the comment are left out, so a
  * running clock or a no-op write does not move the token. Bypasses the
@@ -94,6 +95,8 @@ function ScorekeeperUploadToken($gameId)
     }
 
     $scope = [
+        'hometeam' => $game['hometeam'] === null ? null : (int) $game['hometeam'],
+        'visitorteam' => $game['visitorteam'] === null ? null : (int) $game['visitorteam'],
         'rosters' => $rosters,
         'goals' => $goals,
         'timeouts' => $stoppages($snapshot['timeouts']),
