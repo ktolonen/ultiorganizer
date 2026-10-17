@@ -308,6 +308,8 @@ function ScorekeepingApiTransaction($gameId, callable $work)
             // the lock; everything the rest of the attempt decides on is read now.
             CacheForgetNamespace("scorekeeper_grant");
             CacheForgetNamespace("scoresheet_history_snapshot");
+            // Maintenance and read-only flags may have changed while waiting for the lock.
+            CacheForgetNamespace("season_info");
             if (ScorekeeperGrantTokenId($gameId) <= 0) {
                 throw new ScorekeepingApiException(403, 'game_not_covered', 'The scorekeeping link does not cover this game now.');
             }
