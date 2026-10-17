@@ -389,6 +389,7 @@ function ScorekeeperAddGrant($tokenId, $userId)
  * The request-local actor of the scorekeeping app API: the scorekeeping link
  * token and the app API token the request authenticated with. Call with ids
  * to set it, with 0 and 0 to clear it, and without arguments to read it.
+ * Both ids are required: a link without an app token clears the actor.
  *
  * Setting it gives the request the logged-out visitor's session shape and
  * never starts a PHP session, so the scorekeeping link rules apply to the
@@ -405,6 +406,9 @@ function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null)
     }
     $link = max(0, (int) $linkTokenId);
     $api = max(0, (int) $apiTokenId);
+    if ($link === 0 || $api === 0) {
+        $link = $api = 0;
+    }
     if ($link > 0) {
         if ($actor['link'] === 0) {
             $savedSession = $_SESSION ?? null;
@@ -428,7 +432,8 @@ function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null)
  */
 function ScorekeeperApiActorIsSet()
 {
-    return ScorekeeperApiActor()['link'] > 0;
+    $actor = ScorekeeperApiActor();
+    return $actor['link'] > 0 && $actor['api'] > 0;
 }
 
 /**
