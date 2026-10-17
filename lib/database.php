@@ -146,7 +146,11 @@ function DBAbort($context, $query = null, $error = null)
 
     error_log(implode(' | ', $details));
     if (DBShouldThrowExceptions()) {
-        throw new DBOperationException(DBUserErrorMessage());
+        // The server error number is the exception code, so a caller can tell a
+        // deadlock (1213) or lock wait timeout (1205) from other failures.
+        global $mysqlconnectionref;
+        $errno = $mysqlconnectionref instanceof mysqli ? $mysqlconnectionref->errno : 0;
+        throw new DBOperationException(DBUserErrorMessage(), (int) $errno);
     }
     die(DBUserErrorMessage());
 }
@@ -379,12 +383,16 @@ function DBTransactionDepth()
  * back and swallows the failure undoes only its own writes, and the outer
  * transaction can still commit a consistent state.
  *
+ * @param bool $consistentSnapshot Fix the read view now (outermost call only), for
+ *     a multi-query read that must see one point in time
  * @return void
  */
-function DBTransactionBegin()
+function DBTransactionBegin($consistentSnapshot = false)
 {
     $depth = DBTransactionDepth();
-    DBQuery($depth === 0 ? 'START TRANSACTION' : 'SAVEPOINT uo_tx_' . $depth);
+    DBQuery($depth === 0
+        ? ($consistentSnapshot ? 'START TRANSACTION WITH CONSISTENT SNAPSHOT' : 'START TRANSACTION')
+        : 'SAVEPOINT uo_tx_' . $depth);
     $GLOBALS['db_transaction_depth'] = $depth + 1;
 }
 
@@ -416,12 +424,41 @@ function DBTransactionRollback()
     }
     if ($depth === 1) {
         DBQuery('ROLLBACK');
+    } elseif ((int) DBQueryToValueUncached('SELECT @@in_transaction') === 0) {
+        // The server already rolled everything back (a deadlock victim loses
+        // the whole transaction), so the savepoint is gone. Nothing is left to
+        // undo, and failing here would replace the error being handled.
+        $GLOBALS['db_transaction_depth'] = 0;
+        return;
     } else {
         $savepoint = 'uo_tx_' . ($depth - 1);
         DBQuery('ROLLBACK TO SAVEPOINT ' . $savepoint);
         DBQuery('RELEASE SAVEPOINT ' . $savepoint);
     }
     $GLOBALS['db_transaction_depth'] = $depth - 1;
+}
+
+/**
+ * Roll back the whole transaction at every nesting level and reset the depth.
+ *
+ * For the outermost handler of a failed request: after a deadlock the server
+ * has already rolled back and the savepoints no longer exist, and after a lock
+ * wait timeout nothing is rolled back, so the level-by-level rollback cannot
+ * be relied on. Safe to call with no transaction open.
+ *
+ * @return void
+ */
+function DBTransactionRollbackAll()
+{
+    $GLOBALS['db_transaction_depth'] = 0;
+    global $mysqlconnectionref;
+    if ($mysqlconnectionref instanceof mysqli) {
+        try {
+            mysqli_query($mysqlconnectionref, 'ROLLBACK');
+        } catch (mysqli_sql_exception $e) {
+            error_log('DBTransactionRollbackAll failed: ' . $e->getMessage());
+        }
+    }
 }
 
 /**
