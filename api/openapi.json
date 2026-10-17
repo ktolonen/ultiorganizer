@@ -3,7 +3,7 @@
   "info": {
     "title": "Ultiorganizer API",
     "version": "1.0.0",
-    "description": "Public read-only API for events, divisions, teams, games, gameplay, and version metadata."
+    "description": "Read-only API for events, divisions, teams, games, gameplay, and version metadata, plus the endpoints a third-party scorekeeping app uses with a scorekeeping link."
   },
   "servers": [
     {
@@ -17,6 +17,274 @@
         "scheme": "bearer",
         "bearerFormat": "API Token",
         "description": "Send the token as Authorization: Bearer <token>."
+      },
+      "ScorekeepingLinkAuth": {
+        "type": "apiKey",
+        "in": "header",
+        "name": "X-Scorekeeping-Token",
+        "description": "The 32 hex characters of the scorekeeping link QR code (the t parameter of BASEURL/scorekeeper/?t=...). Never sent in the URL or the body."
+      }
+    },
+    "schemas": {
+      "Error": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "type": "string",
+            "enum": [
+              "error"
+            ]
+          },
+          "error": {
+            "type": "object",
+            "properties": {
+              "code": {
+                "type": "string"
+              },
+              "message": {
+                "type": "string"
+              },
+              "details": {}
+            },
+            "required": [
+              "code",
+              "message"
+            ]
+          }
+        },
+        "required": [
+          "status",
+          "error"
+        ]
+      },
+      "Side": {
+        "type": "string",
+        "enum": [
+          "home",
+          "away"
+        ]
+      },
+      "RosterEntry": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "player_id",
+          "number",
+          "captain",
+          "spirit_captain"
+        ],
+        "properties": {
+          "player_id": {
+            "type": "integer"
+          },
+          "number": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "captain": {
+            "type": "boolean"
+          },
+          "spirit_captain": {
+            "type": "boolean"
+          }
+        }
+      },
+      "UploadGoal": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "side",
+          "scorer_id",
+          "assist_id",
+          "callahan",
+          "time"
+        ],
+        "properties": {
+          "side": {
+            "$ref": "#/components/schemas/Side"
+          },
+          "scorer_id": {
+            "type": "integer",
+            "nullable": true
+          },
+          "assist_id": {
+            "type": "integer",
+            "nullable": true,
+            "description": "Null for a Callahan goal."
+          },
+          "callahan": {
+            "type": "boolean"
+          },
+          "time": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 32767,
+            "description": "Seconds into the game, not earlier than the previous goal. Must be null when the event hides goal times (rules.hide_time_on_scoresheet); the server then numbers the times."
+          }
+        }
+      },
+      "TimedEvent": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "time"
+        ],
+        "properties": {
+          "time": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 86400
+          }
+        }
+      },
+      "BySide": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "home",
+          "away"
+        ],
+        "properties": {
+          "home": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimedEvent"
+            }
+          },
+          "away": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TimedEvent"
+            }
+          }
+        }
+      },
+      "Result": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "home",
+          "away",
+          "state"
+        ],
+        "properties": {
+          "home": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "away": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 1000
+          },
+          "state": {
+            "type": "string",
+            "enum": [
+              "ongoing",
+              "final"
+            ]
+          }
+        }
+      },
+      "GameData": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "version",
+          "home_team_id",
+          "away_team_id",
+          "rosters",
+          "goals",
+          "timeouts",
+          "spirit_stoppages",
+          "result",
+          "starting_offence",
+          "halftime",
+          "official"
+        ],
+        "description": "The complete scoresheet content of one game. Every field is required and unknown fields are refused with 400 and their path. Empty lists clear. A null result requires no goals; a result with goals must equal the goal total.",
+        "properties": {
+          "version": {
+            "type": "integer",
+            "enum": [
+              1
+            ]
+          },
+          "home_team_id": {
+            "type": "integer",
+            "description": "Must match the fixture, else 409 fixture_changed."
+          },
+          "away_team_id": {
+            "type": "integer"
+          },
+          "rosters": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "home",
+              "away"
+            ],
+            "properties": {
+              "home": {
+                "type": "array",
+                "maxItems": 100,
+                "items": {
+                  "$ref": "#/components/schemas/RosterEntry"
+                }
+              },
+              "away": {
+                "type": "array",
+                "maxItems": 100,
+                "items": {
+                  "$ref": "#/components/schemas/RosterEntry"
+                }
+              }
+            }
+          },
+          "goals": {
+            "type": "array",
+            "maxItems": 510,
+            "items": {
+              "$ref": "#/components/schemas/UploadGoal"
+            }
+          },
+          "timeouts": {
+            "$ref": "#/components/schemas/BySide"
+          },
+          "spirit_stoppages": {
+            "$ref": "#/components/schemas/BySide"
+          },
+          "result": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Result"
+              }
+            ],
+            "nullable": true
+          },
+          "starting_offence": {
+            "type": "string",
+            "enum": [
+              "home",
+              "away"
+            ],
+            "nullable": true
+          },
+          "halftime": {
+            "type": "integer",
+            "nullable": true,
+            "minimum": 0,
+            "maximum": 86400
+          },
+          "official": {
+            "type": "string",
+            "nullable": true,
+            "maxLength": 50
+          }
+        }
       }
     }
   },
@@ -108,7 +376,10 @@
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["name", "seeding"]
+              "enum": [
+                "name",
+                "seeding"
+              ]
             },
             "description": "Order teams by name or seeding."
           }
@@ -169,20 +440,68 @@
           }
         ],
         "parameters": [
-          { "name": "event", "in": "query", "schema": { "type": "string" }, "description": "Event id." },
-          { "name": "division", "in": "query", "schema": { "type": "integer" } },
-          { "name": "pool", "in": "query", "schema": { "type": "integer" } },
-          { "name": "pools", "in": "query", "schema": { "type": "string" }, "description": "Comma-separated pool ids." },
-          { "name": "team", "in": "query", "schema": { "type": "integer" } },
+          {
+            "name": "event",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Event id."
+          },
+          {
+            "name": "division",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pool",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "pools",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            },
+            "description": "Comma-separated pool ids."
+          },
+          {
+            "name": "team",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
           {
             "name": "filter",
             "in": "query",
             "schema": {
               "type": "string",
-              "enum": ["tournaments", "divisions", "places", "timeslot", "today", "tomorrow", "yesterday", "next", "all"]
+              "enum": [
+                "tournaments",
+                "divisions",
+                "places",
+                "timeslot",
+                "today",
+                "tomorrow",
+                "yesterday",
+                "next",
+                "all"
+              ]
             }
           },
-          { "name": "group", "in": "query", "schema": { "type": "string" } }
+          {
+            "name": "group",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
         ],
         "responses": {
           "200": {
@@ -223,6 +542,432 @@
               "application/json": {
                 "schema": {
                   "type": "object"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/scorekeeping/games": {
+      "get": {
+        "summary": "List the games the scorekeeping link covers now",
+        "description": "Games of the link's event covered by the link right now, within the app token's scope. A link outside its game day returns an empty list and available_from, the date it starts working. The app token goes in the Authorization header only, never in the query string.",
+        "security": [
+          {
+            "ApiTokenAuth": [],
+            "ScorekeepingLinkAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "X-Scorekeeping-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            },
+            "description": "Scorekeeping link token from the QR code."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Covered games",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "event_id": "EVENT",
+                    "games": [
+                      {
+                        "game_id": 1,
+                        "time": "2026-10-17 15:00:00",
+                        "field": "1",
+                        "location": "Venue",
+                        "pool": {
+                          "pool_id": 2,
+                          "name": "Pool A"
+                        },
+                        "home": {
+                          "team_id": 3,
+                          "name": "Team A"
+                        },
+                        "away": {
+                          "team_id": 4,
+                          "name": "Team B"
+                        },
+                        "result": {
+                          "state": "not_started",
+                          "home": null,
+                          "away": null
+                        }
+                      }
+                    ],
+                    "available_from": null
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid app token or scorekeeping link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User-scoped token or token not valid for the event",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Event under maintenance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/games/{game_id}/entry-context": {
+      "get": {
+        "summary": "Everything the scorekeeping app needs to keep one game",
+        "description": "One consistent read, taking no lock: game, both teams' eligible players and game rosters, goals, timeouts, spirit stoppages, result, starting offence, halftime, official, the rules, the state an upload keeps (cap events, forfeit, defenses) and the concurrency token, also sent as the strong ETag. It contains no game notes, contact data or history. Goals carry num, home_score and away_score, which are derived by the server and must not be sent in an upload.",
+        "security": [
+          {
+            "ApiTokenAuth": [],
+            "ScorekeepingLinkAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "X-Scorekeeping-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            },
+            "description": "Scorekeeping link token from the QR code."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Entry context",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The token, quoted."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid app token or scorekeeping link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User-scoped token, token not valid for the event, or game not covered by the link now",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Game not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Event under maintenance",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/games/{game_id}/game-data": {
+      "put": {
+        "summary": "Replace the whole scoresheet of a game",
+        "description": "Replaces rosters, goals, timeouts, spirit stoppages, starting offence, halftime, official and the result in one transaction under the game lock. Game notes, cap events, defenses and the clock of an ongoing game are kept. A forced scoresheet history snapshot is taken first, so the previous state can be restored from the desktop scoresheet history. If-Match carries the token from the entry context (or from the previous upload response); a mismatch is 409 stale_token and the app must fetch the entry context again. The same Idempotency-Key with the same body replays the stored answer without writing (Idempotent-Replay: true); with a different body it is 409 idempotency_conflict. A game going from final back to ongoing has its pool standings recomputed.",
+        "security": [
+          {
+            "ApiTokenAuth": [],
+            "ScorekeepingLinkAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "If-Match",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "The token, quoted or bare. Missing is 428 precondition_required; * never matches."
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "description": "Client-chosen key, 1 to 64 printable ASCII characters."
+          },
+          {
+            "name": "X-Scorekeeping-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            },
+            "description": "Scorekeeping link token from the QR code."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "At most 256 KiB, Content-Type application/json.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/GameData"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Saved or replayed",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The resulting token, quoted."
+              },
+              "Idempotent-Replay": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "true"
+                  ]
+                },
+                "description": "Present on a replay."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "game_id": 1,
+                    "token": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                    "counts": {
+                      "roster_home": 2,
+                      "roster_away": 2,
+                      "goals": 3,
+                      "timeouts": 1,
+                      "spirit_stoppages": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid document (invalid_document, validation_failed with field paths), missing or malformed Idempotency-Key, invalid JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid app token or scorekeeping link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User-scoped token, token not valid for the event, game not covered by the link now, or event read-only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Game not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "stale_token, idempotency_conflict, fixture_changed, forfeit, or retained_defense",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Body larger than 256 KiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Content-Type is not application/json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "428": {
+            "description": "If-Match missing",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected failure; nothing was saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Event under maintenance, or the game is busy (Retry-After)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
