@@ -57,6 +57,8 @@ Starting the clock, `GameSetResult()` and `GameClearResult()` reset the timer st
 
 `script/scorekeeper.js` anchors on the server's `elapsed` seconds plus a client timestamp and derives the time from `Date.now()` differences on demand, so throttled phone timers do not drift and a wrong device clock does not matter. The anchor is Navigation Timing `responseStart`, the closest moment to the server's reading (`index.php` buffers the whole page); implausible values (in the future or over five minutes old) and browsers without Navigation Timing fall back to `Date.now()`.
 
+While the clock is running, `init()` also requests a Screen Wake Lock so the screen stays on, and requests it again when the page becomes visible. Pages without a running clock let the screen sleep.
+
 `window.scorekeeperClock.roundedTime()` recomputes on every call, so a time prefilled right after the screen wakes is current. `isActive()` is false where no clock is shown, and callers then leave the field unchanged rather than filling in `00:00`.
 
 ## Hidden-time seasons
