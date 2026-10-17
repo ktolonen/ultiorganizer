@@ -68,7 +68,7 @@ function ScorekeeperUploadToken($gameId, ?array $snapshot = null)
     $rosters = array_map(fn($row) => [
         'player' => (int) $row['player'],
         'team' => (int) $row['team'],
-        'num' => (int) $row['num'],
+        'num' => $row['num'] === null ? null : (int) $row['num'],
         'captain' => (int) $row['captain'],
         'spirit_captain' => (int) $row['spirit_captain'],
     ], $rosters);
