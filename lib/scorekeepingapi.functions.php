@@ -553,93 +553,6 @@ function ScorekeeperLockedGameState($gameId)
 }
 
 /**
- * Check roster entries against the stored players before a write: no player
- * listed twice, each one existing, on the side's team and allowed on the game
- * roster (accreditation).
- *
- * @param array<string, array> $rosters Normalized entries keyed by side
- * @param array<string, ?int> $teams Team id by side
- * @param array<string, string> $paths Field path of each side's list, for errors
- * @return array<int, string> Side by submitted player id
- */
-function ScorekeeperRosterCheck($gameId, array $rosters, array $teams, array $paths, ScorekeepingApiFields $f)
-{
-    $submitted = [];
-    foreach ($rosters as $side => $entries) {
-        foreach ($entries as $i => $entry) {
-            if (isset($submitted[$entry['player_id']])) {
-                $f->add("{$paths[$side]}[$i].player_id", 'The player is listed more than once.');
-            }
-            $submitted[$entry['player_id']] = $side;
-        }
-    }
-    $playerTeams = [];
-    if ($submitted !== []) {
-        $rows = DBQueryToArrayUncached("SELECT player_id, team FROM uo_player WHERE player_id IN (" . implode(',', array_map('intval', array_keys($submitted))) . ")");
-        foreach ($rows as $row) {
-            $playerTeams[(int) $row['player_id']] = $row['team'] === null ? null : (int) $row['team'];
-        }
-    }
-    $requireAccreditation = !empty(SeasonInfo(GameSeason($gameId))['require_accreditation']);
-    foreach ($rosters as $side => $entries) {
-        foreach ($entries as $i => $entry) {
-            $path = "{$paths[$side]}[$i].player_id";
-            if (!array_key_exists($entry['player_id'], $playerTeams)) {
-                $f->add($path, 'The player does not exist.');
-            } elseif ($playerTeams[$entry['player_id']] !== $teams[$side]) {
-                $f->add($path, 'The player does not belong to the ' . $side . ' team.');
-            } elseif (!GameAllowsPlayerOnRoster($gameId, $entry['player_id'])) {
-                $f->add($path, $requireAccreditation ? 'The player is not accredited.' : 'The player cannot be put on the roster.');
-            }
-        }
-    }
-    return $submitted;
-}
-
-/**
- * Write one side's checked roster entries: add new players, renumber changed
- * ones, set captains and spirit captains. Removing players is the caller's.
- *
- * @param array<int, ?int> $current Stored number by player id of the game roster
- */
-function ScorekeeperRosterWrite($gameId, $teamId, array $entries, array $current)
-{
-    foreach ($entries as $entry) {
-        if (!array_key_exists($entry['player_id'], $current)) {
-            ScorekeeperMust(GameAddPlayer($gameId, $entry['player_id'], $entry['number']), 'roster');
-        } elseif ($current[$entry['player_id']] !== $entry['number']) {
-            ScorekeeperMust(GameSetPlayerNumber($gameId, $entry['player_id'], $entry['number']), 'roster');
-        }
-    }
-    $captains = [];
-    $spiritCaptains = [];
-    foreach ($entries as $entry) {
-        if ($entry['captain']) {
-            $captains[] = $entry['player_id'];
-        }
-        if ($entry['spirit_captain']) {
-            $spiritCaptains[] = $entry['player_id'];
-        }
-    }
-    ScorekeeperMust(GameSetCaptains($gameId, $teamId, $captains), 'captains');
-    ScorekeeperMust(GameSetSpiritCaptains($gameId, $teamId, $spiritCaptains), 'spirit captains');
-}
-
-/**
- * The stored game roster: number by player id.
- *
- * @return array<int, ?int>
- */
-function ScorekeeperRosterNumbers($gameId)
-{
-    $current = [];
-    foreach (DBQueryToArrayUncached(sprintf("SELECT player, num FROM uo_played WHERE game=%d", (int) $gameId)) as $row) {
-        $current[(int) $row['player']] = $row['num'] === null ? null : (int) $row['num'];
-    }
-    return $current;
-}
-
-/**
  * Turn a failed write helper into an exception, so the transaction rolls back whole.
  *
  * @throws ScorekeepingApiException 500 when $done is falsy
@@ -1094,7 +1007,37 @@ function ScorekeeperReplaceGameData($gameId, array $doc, $ifMatch)
 
     // Validation against the stored data. Nothing is written until all of it passes.
     $f = new ScorekeepingApiFields();
-    $submitted = ScorekeeperRosterCheck($gameId, $doc['rosters'], $teams, ['home' => 'rosters.home', 'away' => 'rosters.away'], $f);
+    $rosters = $doc['rosters'];
+    $paths = ['home' => 'rosters.home', 'away' => 'rosters.away'];
+    $submitted = [];
+    foreach ($rosters as $side => $entries) {
+        foreach ($entries as $i => $entry) {
+            if (isset($submitted[$entry['player_id']])) {
+                $f->add("{$paths[$side]}[$i].player_id", 'The player is listed more than once.');
+            }
+            $submitted[$entry['player_id']] = $side;
+        }
+    }
+    $playerTeams = [];
+    if ($submitted !== []) {
+        $rows = DBQueryToArrayUncached("SELECT player_id, team FROM uo_player WHERE player_id IN (" . implode(',', array_map('intval', array_keys($submitted))) . ")");
+        foreach ($rows as $row) {
+            $playerTeams[(int) $row['player_id']] = $row['team'] === null ? null : (int) $row['team'];
+        }
+    }
+    $requireAccreditation = !empty(SeasonInfo(GameSeason($gameId))['require_accreditation']);
+    foreach ($rosters as $side => $entries) {
+        foreach ($entries as $i => $entry) {
+            $path = "{$paths[$side]}[$i].player_id";
+            if (!array_key_exists($entry['player_id'], $playerTeams)) {
+                $f->add($path, 'The player does not exist.');
+            } elseif ($playerTeams[$entry['player_id']] !== $teams[$side]) {
+                $f->add($path, 'The player does not belong to the ' . $side . ' team.');
+            } elseif (!GameAllowsPlayerOnRoster($gameId, $entry['player_id'])) {
+                $f->add($path, $requireAccreditation ? 'The player is not accredited.' : 'The player cannot be put on the roster.');
+            }
+        }
+    }
 
     $scores = ['home' => 0, 'away' => 0];
     $previousTime = 0;
@@ -1163,14 +1106,33 @@ function ScorekeeperReplaceGameData($gameId, array $doc, $ifMatch)
 
     ScorekeeperMust(GameRemoveAllScores($gameId), 'goals');
 
-    $current = ScorekeeperRosterNumbers($gameId);
+    $current = [];
+    foreach (DBQueryToArrayUncached(sprintf("SELECT player, num FROM uo_played WHERE game=%d", $gameId)) as $row) {
+        $current[(int) $row['player']] = $row['num'] === null ? null : (int) $row['num'];
+    }
     foreach (array_keys($current) as $playerId) {
         if (!isset($submitted[$playerId])) {
             ScorekeeperMust(GameRemovePlayer($gameId, $playerId), 'roster');
         }
     }
-    foreach (['home', 'away'] as $side) {
-        ScorekeeperRosterWrite($gameId, $teams[$side], $doc['rosters'][$side], $current);
+    foreach ($rosters as $side => $entries) {
+        $captains = [];
+        $spiritCaptains = [];
+        foreach ($entries as $entry) {
+            if (!array_key_exists($entry['player_id'], $current)) {
+                ScorekeeperMust(GameAddPlayer($gameId, $entry['player_id'], $entry['number']), 'roster');
+            } elseif ($current[$entry['player_id']] !== $entry['number']) {
+                ScorekeeperMust(GameSetPlayerNumber($gameId, $entry['player_id'], $entry['number']), 'roster');
+            }
+            if ($entry['captain']) {
+                $captains[] = $entry['player_id'];
+            }
+            if ($entry['spirit_captain']) {
+                $spiritCaptains[] = $entry['player_id'];
+            }
+        }
+        ScorekeeperMust(GameSetCaptains($gameId, $teams[$side], $captains), 'captains');
+        ScorekeeperMust(GameSetSpiritCaptains($gameId, $teams[$side], $spiritCaptains), 'spirit captains');
     }
 
     foreach ($goals as $goal) {
@@ -1635,7 +1597,38 @@ function ScorekeeperReplaceRoster($gameId, $side, array $doc)
     }
 
     $f = new ScorekeepingApiFields();
-    $submitted = ScorekeeperRosterCheck($gameId, [$side => $doc['players']], [$side => $teamId], [$side => 'players'], $f);
+    $rosters = [$side => $doc['players']];
+    $teams = [$side => $teamId];
+    $paths = [$side => 'players'];
+    $submitted = [];
+    foreach ($rosters as $side => $entries) {
+        foreach ($entries as $i => $entry) {
+            if (isset($submitted[$entry['player_id']])) {
+                $f->add("{$paths[$side]}[$i].player_id", 'The player is listed more than once.');
+            }
+            $submitted[$entry['player_id']] = $side;
+        }
+    }
+    $playerTeams = [];
+    if ($submitted !== []) {
+        $rows = DBQueryToArrayUncached("SELECT player_id, team FROM uo_player WHERE player_id IN (" . implode(',', array_map('intval', array_keys($submitted))) . ")");
+        foreach ($rows as $row) {
+            $playerTeams[(int) $row['player_id']] = $row['team'] === null ? null : (int) $row['team'];
+        }
+    }
+    $requireAccreditation = !empty(SeasonInfo(GameSeason($gameId))['require_accreditation']);
+    foreach ($rosters as $side => $entries) {
+        foreach ($entries as $i => $entry) {
+            $path = "{$paths[$side]}[$i].player_id";
+            if (!array_key_exists($entry['player_id'], $playerTeams)) {
+                $f->add($path, 'The player does not exist.');
+            } elseif ($playerTeams[$entry['player_id']] !== $teams[$side]) {
+                $f->add($path, 'The player does not belong to the ' . $side . ' team.');
+            } elseif (!GameAllowsPlayerOnRoster($gameId, $entry['player_id'])) {
+                $f->add($path, $requireAccreditation ? 'The player is not accredited.' : 'The player cannot be put on the roster.');
+            }
+        }
+    }
     if ($f->errors !== []) {
         throw new ScorekeepingApiException(400, 'validation_failed', 'The roster does not match the game.', $f->errors);
     }
@@ -1668,11 +1661,32 @@ function ScorekeeperReplaceRoster($gameId, $side, array $doc)
         throw new ScorekeepingApiException(409, 'player_referenced', 'Players recorded on a goal or the defence sheet must stay on the roster.', ['player_ids' => $referenced]);
     }
 
-    $current = ScorekeeperRosterNumbers($gameId);
+    $current = [];
+    foreach (DBQueryToArrayUncached(sprintf("SELECT player, num FROM uo_played WHERE game=%d", $gameId)) as $row) {
+        $current[(int) $row['player']] = $row['num'] === null ? null : (int) $row['num'];
+    }
     foreach (array_keys($removed) as $playerId) {
         ScorekeeperMust(GameRemovePlayer($gameId, $playerId), 'roster');
     }
-    ScorekeeperRosterWrite($gameId, $teamId, $doc['players'], $current);
+    foreach ($rosters as $side => $entries) {
+        $captains = [];
+        $spiritCaptains = [];
+        foreach ($entries as $entry) {
+            if (!array_key_exists($entry['player_id'], $current)) {
+                ScorekeeperMust(GameAddPlayer($gameId, $entry['player_id'], $entry['number']), 'roster');
+            } elseif ($current[$entry['player_id']] !== $entry['number']) {
+                ScorekeeperMust(GameSetPlayerNumber($gameId, $entry['player_id'], $entry['number']), 'roster');
+            }
+            if ($entry['captain']) {
+                $captains[] = $entry['player_id'];
+            }
+            if ($entry['spirit_captain']) {
+                $spiritCaptains[] = $entry['player_id'];
+            }
+        }
+        ScorekeeperMust(GameSetCaptains($gameId, $teams[$side], $captains), 'captains');
+        ScorekeeperMust(GameSetSpiritCaptains($gameId, $teams[$side], $spiritCaptains), 'spirit captains');
+    }
     return ['status' => 200, 'data' => ['roster' => ['side' => $side, 'players' => count($doc['players'])]]];
 }
 
