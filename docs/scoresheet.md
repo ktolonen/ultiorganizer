@@ -60,7 +60,7 @@ This is a comparison, not a lock: a point entered between the check and the rewr
 
 ### Scorekeeping app API
 
-The scorekeeping app API is a third writer of the whole sheet: `PUT /api/v1/games/{id}/game-data` replaces rosters, goals, timeouts, spirit stoppages, starting offence, halftime, official and the result in one transaction under the game row lock, guarded by a content-hash token (`If-Match`) instead of the history id. Its writes record history rows, which move the desktop sheet's token, so an open desktop sheet sees an API change as a conflict. See `docs/api.md`.
+The scorekeeping app API is a third writer of the whole sheet: `PUT /api/v1/games/{id}/game-data` replaces rosters, goals, timeouts, spirit stoppages, starting offence, halftime, official and the result in one transaction under the game row lock, guarded by a content-hash token (`If-Match`) instead of the history id. Its live routes write one goal, timeout, score tap, roster, metadata change or final result at a time, each in its own locked transaction and without the token, like Scorekeeper. A goal append reads the last goal with a locking read, so a concurrent Scorekeeper append waits for it or, if it took the number first, makes the API retry with the next one. Its writes record history rows, which move the desktop sheet's token, so an open desktop sheet sees an API change as a conflict. See `docs/api.md`.
 
 The lock is taken only by the API. The desktop sheet and Scorekeeper do not take it, so a write from them that commits inside an API transaction's window (milliseconds) can be overwritten by the upload; the overwritten state is in the snapshot the upload takes first. The upload never writes the game note.
 
