@@ -1274,7 +1274,7 @@ function ScorekeeperGoalTime($time, $previousTime, $hideTime, $path, Scorekeepin
         $f->add($path, 'Goal times must not go backwards.');
     }
     if ($time > SCOREKEEPING_API_MAX_GOAL_TIME) {
-        $f->add($path, 'The synthesized goal time is too large.');
+        $f->add($path, 'The goal time derived from the last goal is too large.');
     }
     return $time;
 }
@@ -1532,7 +1532,7 @@ function ScorekeeperDeleteLastGoal($gameId, $num)
     $gameId = (int) $gameId;
     $last = ScorekeeperLastGoalForUpdate($gameId);
     if ($last === null || $last['num'] !== (int) $num) {
-        throw new ScorekeepingApiException(409, 'goal_changed', 'Only the last goal can be deleted, and that goal is not the last one now.');
+        throw new ScorekeepingApiException(409, 'goal_changed', sprintf('Only the last goal can be deleted, and goal %d is no longer the last one.', (int) $num));
     }
     ScorekeeperMust(GameRemoveScore($gameId, $last['num']), 'goal');
     GameSyncResultFromGoals($gameId, $last['homescore'], $last['visitorscore']);

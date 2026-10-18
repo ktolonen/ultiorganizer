@@ -1376,7 +1376,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1561,7 +1561,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1771,7 +1771,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
@@ -1981,7 +1981,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2186,7 +2186,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2399,7 +2399,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2604,7 +2604,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
@@ -2809,7 +2809,7 @@
             }
           },
           "503": {
-            "description": "Event in maintenance, or busy after two retries (Retry-After)",
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
             "content": {
               "application/json": {
                 "schema": {
