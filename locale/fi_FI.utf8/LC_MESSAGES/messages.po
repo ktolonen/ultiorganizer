@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 13:30+0300\n"
+"POT-Creation-Date: 2026-10-18 12:21+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -189,9 +189,13 @@ msgstr ""
 msgid "ALL"
 msgstr "KAIKKI"
 
-#: menufunctions.php:407 admin/apitokens.php:8 user/scoresheethistory.php:414
+#: menufunctions.php:407 admin/apitokens.php:8
 msgid "API Tokens"
 msgstr "API Tokenit"
+
+#: user/scoresheethistory.php:414
+msgid "API token"
+msgstr "API-token"
 
 #: admin/seasonteams.php:172
 msgid "Abbrev"
@@ -2164,7 +2168,7 @@ msgstr "Virhe: Tuloksia ei voitu tallentaa."
 msgid "Error: unknown event."
 msgstr "Virhe: tuntematon tapahtuma."
 
-#: lib/game.functions.php:2857
+#: lib/game.functions.php:2861
 #, php-format
 msgid "Errors: %s."
 msgstr "Virheet: %s."
@@ -5430,12 +5434,12 @@ msgid "Result not saved: the score has changed since this page was opened."
 msgstr ""
 "Tulosta ei tallennettu: tulos on muuttunut tämän sivun avaamisen jälkeen."
 
-#: lib/game.functions.php:2854
+#: lib/game.functions.php:2858
 #, php-format
 msgid "Results changed: %s."
 msgstr "Uusi tulos: %s."
 
-#: lib/game.functions.php:2851
+#: lib/game.functions.php:2855
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Tulos poistettu: %s."
@@ -7093,7 +7097,7 @@ msgstr ""
 "Tätä tallennettua tilaa ei näytetä: koti- ja vierasjoukkue ovat vaihtuneet "
 "sen tallentamisen jälkeen."
 
-#: lib/scorekeeper.functions.php:654
+#: lib/scorekeeper.functions.php:672
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
@@ -7101,7 +7105,7 @@ msgstr ""
 "Tämä pisteenkirjauslinkki ei ole enää voimassa. Pyydä uusi tapahtuman "
 "järjestäjältä."
 
-#: lib/scorekeeper.functions.php:675
+#: lib/scorekeeper.functions.php:693
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr "Tämä pisteenkirjauslinkki toimii vain päivänä %s."
@@ -7357,7 +7361,7 @@ msgstr "Puolustuksia yhteensä"
 msgid "Total number of players:"
 msgstr "Pelaajia yhteensä:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:3230
+#: admin/seasonpoints.php:258 lib/game.functions.php:3234
 msgid "Total points"
 msgstr "Pisteet yhteensä"
 
@@ -7951,7 +7955,7 @@ msgid ""
 msgstr ""
 "Voit upottaa seuraavat Ultiorganizerin tilastot suoraan omille sivuillesi"
 
-#: lib/scorekeeper.functions.php:678
+#: lib/scorekeeper.functions.php:696
 #, php-format
 msgid "You can keep score for %s."
 msgstr "Voit kirjata pisteet: %s."
