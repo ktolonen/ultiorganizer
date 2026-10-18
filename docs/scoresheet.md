@@ -58,6 +58,12 @@ The comparison runs after the payload validates and before the save's own writes
 
 This is a comparison, not a lock: a point entered between the check and the rewrite is lost, but recoverable from the snapshot the save takes first. `scorekeeper/` carries no token; its point entry appends, but its timeout pages still replace the list unchecked. With `DisableScoresheetHistory` on, the token never moves and saves are unchecked.
 
+### Scorekeeping app API
+
+The scorekeeping app API is a third writer of the whole sheet: `PUT /api/v1/games/{id}/game-data` replaces rosters, goals, timeouts, spirit stoppages, starting offence, halftime, official and the result in one transaction under the game row lock, guarded by a content-hash token (`If-Match`) instead of the history id. Its writes record history rows, which move the desktop sheet's token, so an open desktop sheet sees an API change as a conflict. See `docs/api.md`.
+
+The lock is taken only by the API. The desktop sheet and Scorekeeper do not take it, so a write from them that commits inside an API transaction's window (milliseconds) can be overwritten by the upload; the overwritten state is in the snapshot the upload takes first. The upload never writes the game note.
+
 ## Data notes
 
 - `uo_goal.num` is the point order from 1. Older scorekeeper games, and games from the removed `mobile/` pages, may start at 0; a desktop save renumbers from 1. `uo_goal` also stores the running score after each point.
