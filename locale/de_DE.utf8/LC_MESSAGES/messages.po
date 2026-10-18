@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 13:30+0300\n"
+"POT-Creation-Date: 2026-10-18 12:21+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -193,9 +193,13 @@ msgstr ""
 msgid "ALL"
 msgstr "ALLES"
 
-#: menufunctions.php:407 admin/apitokens.php:8 user/scoresheethistory.php:414
+#: menufunctions.php:407 admin/apitokens.php:8
 msgid "API Tokens"
 msgstr "API-Tokens"
+
+#: user/scoresheethistory.php:414
+msgid "API token"
+msgstr "API-Token"
 
 #: admin/seasonteams.php:172
 msgid "Abbrev"
@@ -2188,7 +2192,7 @@ msgstr "Fehler: Konnte Ergebnis nicht speichern"
 msgid "Error: unknown event."
 msgstr "Fehler: unbekanntes Ereignis."
 
-#: lib/game.functions.php:2857
+#: lib/game.functions.php:2861
 #, php-format
 msgid "Errors: %s."
 msgstr "Fehler: %s."
@@ -5469,12 +5473,12 @@ msgstr ""
 "Ergebnis nicht gespeichert: Der Spielstand hat sich geändert, seit diese "
 "Seite geöffnet wurde."
 
-#: lib/game.functions.php:2854
+#: lib/game.functions.php:2858
 #, php-format
 msgid "Results changed: %s."
 msgstr "Ergebnisse geändert: %s."
 
-#: lib/game.functions.php:2851
+#: lib/game.functions.php:2855
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Ergebnisse gelöscht: %s."
@@ -7159,7 +7163,7 @@ msgstr ""
 "Dieser gespeicherte Stand wird nicht angezeigt: Heim- und Gastteam haben "
 "sich seitdem geändert."
 
-#: lib/scorekeeper.functions.php:654
+#: lib/scorekeeper.functions.php:672
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
@@ -7167,7 +7171,7 @@ msgstr ""
 "Dieser Scorekeeping-Link ist nicht mehr gültig. Bitte den "
 "Turnierveranstalter um einen neuen."
 
-#: lib/scorekeeper.functions.php:675
+#: lib/scorekeeper.functions.php:693
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr "Dieser Scorekeeping-Link funktioniert nur am %s."
@@ -7390,7 +7394,9 @@ msgstr "Token gelöscht."
 
 #: admin/apitokens.php:137
 msgid "Tokens also allow scorekeeping with a scorekeeping link."
-msgstr "Tokens erlauben auch das Erfassen von Spielständen mit einem Scorekeeping-Link."
+msgstr ""
+"Tokens erlauben auch das Erfassen von Spielständen mit einem Scorekeeping-"
+"Link."
 
 #: games.php:260
 msgid "Tomorrow"
@@ -7425,7 +7431,7 @@ msgstr "Defenses gesamt"
 msgid "Total number of players:"
 msgstr "Gesamtspielerzahl:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:3230
+#: admin/seasonpoints.php:258 lib/game.functions.php:3234
 msgid "Total points"
 msgstr "Gesamtpunkte"
 
@@ -8026,7 +8032,7 @@ msgstr ""
 "Du kannst die folgenden Statistiken aus Ultiorganizer direkt in deine "
 "eigenen Seiten einbetten"
 
-#: lib/scorekeeper.functions.php:678
+#: lib/scorekeeper.functions.php:696
 #, php-format
 msgid "You can keep score for %s."
 msgstr "Punkte für %s können erfasst werden."

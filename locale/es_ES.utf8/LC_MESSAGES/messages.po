@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-17 13:30+0300\n"
+"POT-Creation-Date: 2026-10-18 12:21+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -198,9 +198,13 @@ msgstr ""
 msgid "ALL"
 msgstr "TODO"
 
-#: menufunctions.php:407 admin/apitokens.php:8 user/scoresheethistory.php:414
+#: menufunctions.php:407 admin/apitokens.php:8
 msgid "API Tokens"
 msgstr "Tokens API"
+
+#: user/scoresheethistory.php:414
+msgid "API token"
+msgstr "Token API"
 
 #: admin/seasonteams.php:172
 msgid "Abbrev"
@@ -2203,7 +2207,7 @@ msgstr "Error: No se pudo guardar el resultado."
 msgid "Error: unknown event."
 msgstr "Error: evento desconocido."
 
-#: lib/game.functions.php:2857
+#: lib/game.functions.php:2861
 #, php-format
 msgid "Errors: %s."
 msgstr "Errores: %s."
@@ -5482,12 +5486,12 @@ msgstr ""
 "Resultado no guardado: el marcador ha cambiado desde que se abrió esta "
 "página."
 
-#: lib/game.functions.php:2854
+#: lib/game.functions.php:2858
 #, php-format
 msgid "Results changed: %s."
 msgstr "Resultados cambiados: %s."
 
-#: lib/game.functions.php:2851
+#: lib/game.functions.php:2855
 #, php-format
 msgid "Results cleared: %s."
 msgstr "Resultados borrados: %s."
@@ -7178,7 +7182,7 @@ msgstr ""
 "Este estado guardado no se muestra: los equipos local y visitante han "
 "cambiado desde que se guardó."
 
-#: lib/scorekeeper.functions.php:654
+#: lib/scorekeeper.functions.php:672
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
@@ -7186,7 +7190,7 @@ msgstr ""
 "Este enlace de anotación ya no es válido. Pide uno nuevo al organizador del "
 "evento."
 
-#: lib/scorekeeper.functions.php:675
+#: lib/scorekeeper.functions.php:693
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr "Este enlace de anotación solo funciona el %s."
@@ -7444,7 +7448,7 @@ msgstr "Defensas totales"
 msgid "Total number of players:"
 msgstr "Número total de jugadores:"
 
-#: admin/seasonpoints.php:258 lib/game.functions.php:3230
+#: admin/seasonpoints.php:258 lib/game.functions.php:3234
 msgid "Total points"
 msgstr "Puntos totales"
 
@@ -8050,7 +8054,7 @@ msgstr ""
 "Puede insertar las siguientes estadísticas de Ultiorganizer directamente en "
 "sus propias páginas"
 
-#: lib/scorekeeper.functions.php:678
+#: lib/scorekeeper.functions.php:696
 #, php-format
 msgid "You can keep score for %s."
 msgstr "Puedes anotar %s."

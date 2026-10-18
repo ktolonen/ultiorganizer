@@ -1226,21 +1226,42 @@ function api_send_openapi()
 }
 
 /**
- * Whether the request targets one of the scorekeeping app routes:
- * scorekeeping/games, games/{id}/entry-context or games/{id}/game-data.
- * Plain games and games/{anything else} stay with api_handle_games().
+ * The scorekeeping app route a request targets, or null. Plain games and
+ * games/{id} stay with api_handle_games().
  *
  * @param array $parts
- * @return bool
+ * @return array{operation: string, method: string}|null
  */
-function api_is_scorekeeping_route($parts)
+function api_scorekeeping_route($parts)
 {
     $count = count($parts);
     if ($count === 2 && $parts[0] === 'scorekeeping' && $parts[1] === 'games') {
-        return true;
+        return ['operation' => 'discovery', 'method' => 'GET'];
     }
-    return $count === 3 && $parts[0] === 'games' && $parts[1] !== '' && ctype_digit($parts[1])
-        && ($parts[2] === 'entry-context' || $parts[2] === 'game-data');
+    if ($count < 3 || $parts[0] !== 'games' || !ctype_digit((string) $parts[1])) {
+        return null;
+    }
+    if ($count === 3) {
+        $routes = [
+            'entry-context' => ['entry_context', 'GET'],
+            'game-data' => ['game_data', 'PUT'],
+            'goals' => ['goal', 'POST'],
+            'timeouts' => ['timeout', 'POST'],
+            'spirit-stoppages' => ['spirit_stoppage', 'POST'],
+            'score-taps' => ['score_tap', 'POST'],
+            'metadata' => ['metadata', 'PATCH'],
+            'finalize' => ['finalize', 'POST'],
+        ];
+        $route = $routes[$parts[2]] ?? null;
+        return $route === null ? null : ['operation' => $route[0], 'method' => $route[1]];
+    }
+    if ($count === 4 && $parts[2] === 'goals' && ctype_digit((string) $parts[3])) {
+        return ['operation' => 'delete_goal', 'method' => 'DELETE'];
+    }
+    if ($count === 4 && $parts[2] === 'rosters' && ($parts[3] === 'home' || $parts[3] === 'away')) {
+        return ['operation' => 'roster', 'method' => 'PUT'];
+    }
+    return null;
 }
 
 /**
@@ -1250,6 +1271,8 @@ function api_is_scorekeeping_route($parts)
  */
 function api_scorekeeping_arm_backstop()
 {
+    // A displayed fatal error would go out with a 200 before the handler runs.
+    ini_set('display_errors', '0');
     ob_start();
     register_shutdown_function(function () {
         if (!empty($GLOBALS['api_response_sent'])) {
@@ -1262,8 +1285,9 @@ function api_scorekeeping_arm_backstop()
             ob_end_clean();
         }
         if (!headers_sent()) {
-            http_response_code(500);
-            header('Content-Type: application/json; charset=utf-8');
+            // Not http_response_code(): after a fatal error PHP has set its own
+            // status line, which that function refuses to replace.
+            header('Content-Type: application/json; charset=utf-8', true, 500);
             header('Cache-Control: no-store');
         }
         echo json_encode([
@@ -1321,22 +1345,27 @@ function api_scorekeeping_if_match_token($header)
 }
 
 /**
- * Handle the scorekeeping app routes: discovery, entry context and the
- * complete game upload. Authenticates with the app API token (Authorization:
- * Bearer only) and the scorekeeping link token (X-Scorekeeping-Token only).
+ * Handle the scorekeeping app routes: discovery, entry context, the complete
+ * game upload and the live writes. Authenticates with the app API token
+ * (Authorization: Bearer only) and the scorekeeping link token
+ * (X-Scorekeeping-Token only).
  *
  * @param array $parts
+ * @param array{operation: string, method: string} $route From api_scorekeeping_route()
  */
-function api_handle_scorekeeping($parts)
+function api_handle_scorekeeping($parts, $route)
 {
     ScorekeepingApiBootstrap();
     api_scorekeeping_arm_backstop();
     header('Cache-Control: no-store');
 
     try {
-        $isDiscovery = $parts[0] === 'scorekeeping';
-        $expectedMethod = ($isDiscovery || $parts[2] === 'entry-context') ? 'GET' : 'PUT';
-        api_require_method($expectedMethod);
+        $operation = $route['operation'];
+        $isDiscovery = $operation === 'discovery';
+        if (strtoupper($_SERVER['REQUEST_METHOD']) !== $route['method']) {
+            header('Allow: ' . $route['method']);
+        }
+        api_require_method($route['method']);
 
         $headers = api_get_headers();
         $auth = trim((string) ($headers['Authorization'] ?? ''));
@@ -1392,27 +1421,57 @@ function api_handle_scorekeeping($parts)
             ]);
         }
 
-        if ($expectedMethod === 'GET') {
+        if ($operation === 'entry_context') {
             $context = ScorekeeperEntryContext($gameId);
             header('ETag: "' . $context['token'] . '"');
             api_send_json(200, ['status' => 'ok', 'data' => $context]);
         }
 
         $key = ScorekeepingApiIdempotencyKey(isset($_SERVER['HTTP_IDEMPOTENCY_KEY']) ? (string) $_SERVER['HTTP_IDEMPOTENCY_KEY'] : null);
-        if (!isset($_SERVER['HTTP_IF_MATCH']) || trim((string) $_SERVER['HTTP_IF_MATCH']) === '') {
-            api_error(428, 'precondition_required', 'The If-Match header with the token from the entry context is required.');
+        $path = '/api/v1/games/' . $gameId . '/' . $parts[2];
+        $rights = ['events'];
+        switch ($operation) {
+            case 'game_data':
+                if (!isset($_SERVER['HTTP_IF_MATCH']) || trim((string) $_SERVER['HTTP_IF_MATCH']) === '') {
+                    api_error(428, 'precondition_required', 'The If-Match header with the token from the entry context is required.');
+                }
+                $ifMatch = api_scorekeeping_if_match_token((string) $_SERVER['HTTP_IF_MATCH']);
+                $body = ScorekeeperGameDataNormalize(api_scorekeeping_read_json_body());
+                $rights = ['events', 'players'];
+                $write = fn() => ScorekeeperReplaceGameData($gameId, $body, $ifMatch);
+                break;
+            case 'delete_goal':
+                $num = (int) $parts[3];
+                $path .= '/' . $num;
+                $body = null;
+                $write = fn() => ScorekeeperDeleteLastGoal($gameId, $num);
+                break;
+            case 'roster':
+                $side = $parts[3];
+                $path .= '/' . $side;
+                $body = ScorekeeperLiveRequestNormalize('roster', api_scorekeeping_read_json_body());
+                $rights = ['events', 'players'];
+                $write = fn() => ScorekeeperReplaceRoster($gameId, $side, $body);
+                break;
+            default:
+                $body = ScorekeeperLiveRequestNormalize($operation, api_scorekeeping_read_json_body());
+                $write = match ($operation) {
+                    'goal' => fn() => ScorekeeperAddGoal($gameId, $body),
+                    'timeout', 'spirit_stoppage' => fn() => ScorekeeperAddStoppage($gameId, $operation, $body),
+                    'score_tap' => fn() => ScorekeeperApplyScoreTap($gameId, $body),
+                    'metadata' => fn() => ScorekeeperUpdateMetadata($gameId, $body),
+                    'finalize' => fn() => ScorekeeperFinalize($gameId, $body),
+                };
         }
-        $ifMatch = api_scorekeeping_if_match_token((string) $_SERVER['HTTP_IF_MATCH']);
-        $doc = ScorekeeperGameDataNormalize(api_scorekeeping_read_json_body());
         $request = [
             'api_token' => (int) $tokenRow['token_id'],
             'link_token' => $linkId,
             'key' => $key,
-            'method' => 'PUT',
-            'path' => '/api/v1/games/' . $gameId . '/game-data',
-            'if_match' => $ifMatch,
+            'method' => $route['method'],
+            'path' => $path,
+            'body' => $body,
         ];
-        $outcome = ScorekeepingApiTransaction($gameId, fn() => ScorekeeperReplaceGameData($gameId, $doc, $request));
+        $outcome = ScorekeepingApiWrite($gameId, $request, $rights, $write);
         header('ETag: "' . $outcome['token'] . '"');
         if ($outcome['replay']) {
             header('Idempotent-Replay: true');
@@ -1449,8 +1508,9 @@ function api_v1_route($parts)
 
     // Scorekeeping routes authenticate themselves: app token from the
     // Authorization header only, plus the scorekeeping link token.
-    if (api_is_scorekeeping_route($parts)) {
-        api_handle_scorekeeping($parts);
+    $scorekeepingRoute = api_scorekeeping_route($parts);
+    if ($scorekeepingRoute !== null) {
+        api_handle_scorekeeping($parts, $scorekeepingRoute);
         return;
     }
 

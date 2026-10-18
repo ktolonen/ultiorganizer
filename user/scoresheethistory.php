@@ -411,7 +411,7 @@ if ($count === 0) {
             $html .= " <span title='" . utf8entities(_("Scorekeeping link")) . "'>#" . (int) $row['scorekeeper_token'] . "</span>";
         }
         if (!empty($row['api_token'])) {
-            $html .= " <span title='" . utf8entities(_("API Tokens")) . "'>#" . (int) $row['api_token'] . "</span>";
+            $html .= " <span title='" . utf8entities(_("API token")) . "'>#" . (int) $row['api_token'] . "</span>";
         }
         $html .= "</td>";
         $html .= "<td>" . utf8entities($row['source']) . "</td>";
