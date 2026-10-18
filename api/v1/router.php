@@ -1271,6 +1271,8 @@ function api_scorekeeping_route($parts)
  */
 function api_scorekeeping_arm_backstop()
 {
+    // A displayed fatal error would go out with a 200 before the handler runs.
+    ini_set('display_errors', '0');
     ob_start();
     register_shutdown_function(function () {
         if (!empty($GLOBALS['api_response_sent'])) {
@@ -1283,8 +1285,9 @@ function api_scorekeeping_arm_backstop()
             ob_end_clean();
         }
         if (!headers_sent()) {
-            http_response_code(500);
-            header('Content-Type: application/json; charset=utf-8');
+            // Not http_response_code(): after a fatal error PHP has set its own
+            // status line, which that function refuses to replace.
+            header('Content-Type: application/json; charset=utf-8', true, 500);
             header('Cache-Control: no-store');
         }
         echo json_encode([
