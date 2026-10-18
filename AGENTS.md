@@ -36,7 +36,7 @@ Root guidance for coding agents. Keep this file short; detailed topic docs live 
 - Follow `docs/code-style.md` (PER-CS 2.0). Run `composer format` and `composer lint` on changed files before handing back work. The pre-commit hook in `.githooks/` runs only after `git config core.hooksPath .githooks`; don't assume it's active.
 - This is not an npm project. Install Node-based dev tooling inside the `dev` Docker image and ship only its config file at the repo root (e.g. `eslint.config.js`); never add a root `package.json`.
 - Keep SQL and shared data access in `lib/`. Reuse existing helpers first; `docs/lib-index.md` maps them.
-- `lib/*.functions.php` is a shared interface, not a scratchpad. A function called from outside `lib/` belongs there even with one caller; a helper whose callers are all in the same file should be inlined. Search by behavior and table name before adding one — the same query already exists under several names (`getTeamSeries()` and `TeamSeason()`).
+- `lib/*.functions.php` is a shared interface, not a scratchpad. A function called from outside `lib/` belongs there even with one caller; a helper with a single caller in the same file should be inlined. Keep a same-file helper when several code paths must apply its rule identically (such as validation shared by two write routes); inlining would duplicate the rule. Search by behavior and table name before adding one — the same query already exists under several names (`getTeamSeries()` and `TeamSeason()`).
 - Put permission checks inside reusable `lib/` mutation helpers, not only in page handlers.
 - Use the `?view=...` routing pattern for new pages.
 - Prefer small, focused changes; no large refactors unless asked.
