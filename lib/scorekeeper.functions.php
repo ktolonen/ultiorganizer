@@ -178,6 +178,15 @@ function ScorekeeperTokenUrl($token)
 }
 
 /**
+ * The scorekeeping app's pairing link for an app token: the installation root,
+ * as the scorekeeping link QR codes carry it, and the token.
+ */
+function ScorekeeperAppSetupUrl($appToken)
+{
+    return "ultiorganizer-app://pair?root=" . rawurlencode(BASEURL) . "&token=" . rawurlencode((string) $appToken);
+}
+
+/**
  * The token row with the event it belongs to, or null.
  */
 function ScorekeeperTokenRow($tokenId)

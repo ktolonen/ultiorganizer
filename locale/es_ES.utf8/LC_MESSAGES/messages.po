@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-18 12:21+0300\n"
+"POT-Creation-Date: 2026-10-21 16:17+0300\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -198,7 +198,7 @@ msgstr ""
 msgid "ALL"
 msgstr "TODO"
 
-#: menufunctions.php:407 admin/apitokens.php:8
+#: menufunctions.php:407 admin/apitokens.php:9
 msgid "API Tokens"
 msgstr "Tokens API"
 
@@ -296,7 +296,7 @@ msgstr ""
 msgid "Actions"
 msgstr "Acciones"
 
-#: admin/apitokens.php:175
+#: admin/apitokens.php:184
 msgid "Active"
 msgstr "Activo"
 
@@ -650,6 +650,10 @@ msgstr ""
 msgid "Anyone with this link can keep score for this game without logging in."
 msgstr ""
 "Cualquiera con este enlace puede anotar este partido sin iniciar sesión."
+
+#: admin/apitokens.php:160 admin/apitokens.php:209
+msgid "App setup QR"
+msgstr "QR de configuración de la app"
 
 #: admin/translations.php:582
 msgid "Apply bulk translations"
@@ -1503,7 +1507,7 @@ msgstr "Ficha de País"
 msgid "Country not found"
 msgstr "País no encontrado"
 
-#: admin/apitokens.php:152 admin/poolgames.php:402
+#: admin/apitokens.php:153 admin/poolgames.php:402
 msgid "Create"
 msgstr "Crear"
 
@@ -1511,11 +1515,11 @@ msgstr "Crear"
 msgid "Create new event"
 msgstr "Crear nuevo evento"
 
-#: admin/apitokens.php:138
+#: admin/apitokens.php:139
 msgid "Create token"
 msgstr "Crear token"
 
-#: admin/apitokens.php:167 admin/scorekeepinglinks.php:93
+#: admin/apitokens.php:176 admin/scorekeepinglinks.php:93
 msgid "Created"
 msgstr "Creado"
 
@@ -1755,7 +1759,7 @@ msgstr "¿Eliminar esta ronda?"
 msgid "Delete this spirit score?"
 msgstr "¿Eliminar esta puntuación de Espíritu?"
 
-#: admin/apitokens.php:98
+#: admin/apitokens.php:99
 msgid "Delete this token permanently?"
 msgstr "¿Eliminar este token permanentemente?"
 
@@ -2216,7 +2220,7 @@ msgstr "Errores: %s."
 #: playercard.php:255 playercard.php:435 statistics.php:50 statistics.php:103
 #: statistics.php:269 teamcard.php:419 teamcard.php:620
 #: admin/accreditation.php:136 admin/addreservation.php:191
-#: admin/apitokens.php:146 admin/dbequalize.php:249 admin/dbequalize.php:290
+#: admin/apitokens.php:147 admin/dbequalize.php:249 admin/dbequalize.php:290
 #: admin/dbequalize.php:310 admin/privacyplayer.php:86 admin/seasonadmin.php:13
 #: admin/seasonstats.php:35 lib/search.functions.php:13
 #: lib/search.functions.php:33 lib/search.functions.php:67
@@ -2244,7 +2248,7 @@ msgstr "El ID del evento ya existe"
 msgid "Event ID cannot be empty"
 msgstr "El ID del evento no puede estar vacío"
 
-#: admin/apitokens.php:26
+#: admin/apitokens.php:27
 msgid "Event ID is required for event scope."
 msgstr "Se requiere ID de evento para el alcance del evento."
 
@@ -2281,7 +2285,7 @@ msgid "Event log"
 msgstr "Registro de eventos"
 
 #: index.php:80 poolstatus.php:25 seriesstatus.php:37 spiritstatus.php:32
-#: admin/apitokens.php:28 admin/seasonbanner.php:13 admin/spiritsettings.php:19
+#: admin/apitokens.php:29 admin/seasonbanner.php:13 admin/spiritsettings.php:19
 msgid "Event not found"
 msgstr "Evento no encontrado"
 
@@ -2336,7 +2340,7 @@ msgstr ""
 msgid "Execute"
 msgstr "Ejecutar"
 
-#: admin/apitokens.php:156
+#: admin/apitokens.php:165
 msgid "Existing tokens"
 msgstr "Tokens existentes"
 
@@ -3191,7 +3195,7 @@ msgstr "Altura"
 msgid "Helps"
 msgstr "Ayuda"
 
-#: admin/apitokens.php:90 user/userinfo.php:319
+#: admin/apitokens.php:91 user/userinfo.php:319
 msgid "Hide"
 msgstr "Esconder"
 
@@ -3303,7 +3307,7 @@ msgstr "El equipo local es responsable del juego"
 msgid "Homepage"
 msgstr "Página principal"
 
-#: admin/apitokens.php:162 admin/clubs.php:58 admin/clubs.php:93
+#: admin/apitokens.php:171 admin/clubs.php:58 admin/clubs.php:93
 msgid "ID"
 msgstr "ID"
 
@@ -3460,7 +3464,7 @@ msgstr ""
 "Inserte las filas principales que faltan para referencias que no admiten "
 "valores NULL (por ejemplo, estadísticas/jugadas/juegos requeridos)."
 
-#: admin/apitokens.php:145
+#: admin/apitokens.php:146
 msgid "Installation"
 msgstr "Instalación"
 
@@ -3485,7 +3489,7 @@ msgstr "Derechos insuficientes para exportar datos"
 msgid "Insufficient rights to import data"
 msgstr "Derechos insuficientes para importar datos"
 
-#: admin/apitokens.php:116 admin/spirit.php:418 admin/spirit.php:431
+#: admin/apitokens.php:117 admin/spirit.php:418 admin/spirit.php:431
 #: user/scorekeepinglink.php:28 user/scoresheethistory.php:322
 msgid "Insufficient rights."
 msgstr "Derechos insuficientes."
@@ -3560,7 +3564,7 @@ msgstr "Grupo no válido."
 msgid "Invalid quick score for %s. "
 msgstr "Puntuación rápida no válida para %s "
 
-#: admin/apitokens.php:21
+#: admin/apitokens.php:22
 msgid "Invalid scope type."
 msgstr "Tipo de ámbito no válido."
 
@@ -3648,7 +3652,7 @@ msgstr "Mantener (más referido)"
 msgid "Key"
 msgstr "Llave"
 
-#: admin/apitokens.php:141 admin/apitokens.php:164
+#: admin/apitokens.php:142 admin/apitokens.php:173
 msgid "Label"
 msgstr "Etiqueta"
 
@@ -3676,7 +3680,7 @@ msgstr "Última modificación"
 msgid "Last name"
 msgstr "Apellido"
 
-#: admin/apitokens.php:168
+#: admin/apitokens.php:177
 msgid "Last used"
 msgstr "Último usado"
 
@@ -4445,7 +4449,7 @@ msgstr "No hay equipos sin grupo"
 msgid "No token deleted."
 msgstr "No se eliminó ningún token."
 
-#: admin/apitokens.php:158
+#: admin/apitokens.php:167
 msgid "No tokens created."
 msgstr "No se crearon tokens."
 
@@ -4569,7 +4573,7 @@ msgstr "Abrir configuración de eventos"
 msgid "Open for enrollment"
 msgstr "Abierto para inscripciones"
 
-#: admin/apitokens.php:170 admin/locations.php:55 admin/seasonpools.php:125
+#: admin/apitokens.php:179 admin/locations.php:55 admin/seasonpools.php:125
 #: admin/seasons.php:98 admin/seasonseries.php:77 admin/spirit.php:386
 msgid "Operations"
 msgstr "Operaciones"
@@ -5435,7 +5439,7 @@ msgid "Restart the game clock to continue timed scoring."
 msgstr ""
 "Reinicie el reloj del juego para continuar con la puntuación cronometrada."
 
-#: admin/apitokens.php:193 admin/dbadmin.php:72 admin/dbrestore.php:34
+#: admin/apitokens.php:202 admin/dbadmin.php:72 admin/dbrestore.php:34
 #: admin/dbrestore.php:51
 msgid "Restore"
 msgstr "Restaurar"
@@ -5535,11 +5539,11 @@ msgstr "Volver a administración de base de datos"
 msgid "Review Spirit Score"
 msgstr "Revisar la Puntuación de Espíritu"
 
-#: admin/apitokens.php:195 admin/scorekeepinglinks.php:80
+#: admin/apitokens.php:204 admin/scorekeepinglinks.php:80
 msgid "Revoke"
 msgstr "Revocar"
 
-#: admin/apitokens.php:175
+#: admin/apitokens.php:184
 msgid "Revoked"
 msgstr "Revocado"
 
@@ -5749,8 +5753,18 @@ msgstr "El guardado afecta sólo a la división seleccionada."
 msgid "Saving failed. Please try again."
 msgstr "No se pudo guardar. Inténtalo de nuevo."
 
+#: admin/apitokens.php:162
+msgid ""
+"Scan this code in the scorekeeping app. Anyone with the code can keep score "
+"with any scorekeeping link the token is valid for, until the token is "
+"revoked."
+msgstr ""
+"Escanear este código en la app de anotación. Cualquiera con el código puede "
+"anotar con cualquier enlace de anotación válido para el token, hasta que se "
+"revoque el token."
+
 #: cust/default/pdfscoresheet.php:122 cust/slkl/pdfscoresheet.php:122
-#: lib/scorekeeper.functions.php:292
+#: lib/scorekeeper.functions.php:301
 msgid "Scan to keep score in Scorekeeper."
 msgstr "Escanea para anotar en Scorekeeper."
 
@@ -5803,15 +5817,15 @@ msgstr "Nombre de programación"
 msgid "Scheduling right"
 msgstr "Derechos de Programación"
 
-#: admin/apitokens.php:165
+#: admin/apitokens.php:174
 msgid "Scope"
 msgstr "Alcance"
 
-#: admin/apitokens.php:149 admin/apitokens.php:166
+#: admin/apitokens.php:150 admin/apitokens.php:175
 msgid "Scope ID"
 msgstr "ID de alcance"
 
-#: admin/apitokens.php:143
+#: admin/apitokens.php:144
 msgid "Scope type"
 msgstr "Tipo de alcance"
 
@@ -6218,7 +6232,7 @@ msgstr "Compartir"
 msgid "Shirt numbers"
 msgstr "Números de camiseta"
 
-#: admin/apitokens.php:87 admin/apitokens.php:181
+#: admin/apitokens.php:88 admin/apitokens.php:190
 #: admin/scorekeepinglinks.php:76 spiritkeeper/home.php:56
 #: user/scoresheethistory.php:422 user/userinfo.php:320
 msgid "Show"
@@ -6699,7 +6713,7 @@ msgstr "Estadística"
 msgid "Stats refs"
 msgstr "Stats refs"
 
-#: admin/apitokens.php:169 admin/finalstandings.php:130
+#: admin/apitokens.php:178 admin/finalstandings.php:130
 #: admin/finalstandings.php:132 scorekeeper/addscoresheet.php:303
 #: scorekeeper/auth.php:168
 msgid "Status"
@@ -7182,7 +7196,7 @@ msgstr ""
 "Este estado guardado no se muestra: los equipos local y visitante han "
 "cambiado desde que se guardó."
 
-#: lib/scorekeeper.functions.php:672
+#: lib/scorekeeper.functions.php:681
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
@@ -7190,7 +7204,7 @@ msgstr ""
 "Este enlace de anotación ya no es válido. Pide uno nuevo al organizador del "
 "evento."
 
-#: lib/scorekeeper.functions.php:693
+#: lib/scorekeeper.functions.php:702
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr "Este enlace de anotación solo funciona el %s."
@@ -7403,7 +7417,7 @@ msgstr ""
 msgid "Today"
 msgstr "Hoy"
 
-#: admin/apitokens.php:132
+#: admin/apitokens.php:133
 msgid "Token created."
 msgstr "Token creado."
 
@@ -7411,7 +7425,7 @@ msgstr "Token creado."
 msgid "Token deleted."
 msgstr "Token eliminado."
 
-#: admin/apitokens.php:137
+#: admin/apitokens.php:138
 msgid "Tokens also allow scorekeeping with a scorekeeping link."
 msgstr "Los tokens también permiten anotar con un enlace de anotación."
 
@@ -7726,7 +7740,7 @@ msgstr ""
 "aplicarlo."
 
 #: login.php:32 menufunctions.php:173 admin/accreditation.php:138
-#: admin/apitokens.php:147 admin/eventviewer.php:140 admin/privacyuser.php:75
+#: admin/apitokens.php:148 admin/eventviewer.php:140 admin/privacyuser.php:75
 #: admin/seasonscoresheethistory.php:59 user/enrollteam.php:82
 #: user/scoresheethistory.php:395
 msgid "User"
@@ -7743,7 +7757,7 @@ msgstr "Guía del usuario"
 msgid "User ID"
 msgstr "ID de usuario"
 
-#: admin/apitokens.php:32
+#: admin/apitokens.php:33
 msgid "User ID is required for user scope."
 msgstr "Se requiere ID de usuario para el alcance del usuario."
 
@@ -7765,7 +7779,7 @@ msgstr "Las credenciales de usuario no coinciden"
 msgid "User information"
 msgstr "Información del usuario"
 
-#: admin/apitokens.php:34 user/userinfo.php:26
+#: admin/apitokens.php:35 user/userinfo.php:26
 msgid "User not found."
 msgstr "Usuario no encontrado."
 
@@ -8016,7 +8030,7 @@ msgstr "Federación Mundial de Disco Volador"
 #: admin/addseasonlinks.php:73 admin/addseasonusers.php:101
 #: admin/addseasonusers.php:126 admin/addseasonusers.php:153
 #: admin/addseasonusers.php:207 admin/addseasonusers.php:271
-#: admin/addteamadmins.php:77 admin/apitokens.php:201 admin/clubs.php:76
+#: admin/addteamadmins.php:77 admin/apitokens.php:214 admin/clubs.php:76
 #: admin/clubs.php:112 admin/locations.php:66 admin/poolgames.php:295
 #: admin/poolgames.php:296 admin/poolgames.php:335 admin/poolgames.php:336
 #: admin/poolgames.php:359 admin/poolgames.php:360 admin/poolmoves.php:250
@@ -8054,7 +8068,7 @@ msgstr ""
 "Puede insertar las siguientes estadísticas de Ultiorganizer directamente en "
 "sus propias páginas"
 
-#: lib/scorekeeper.functions.php:696
+#: lib/scorekeeper.functions.php:705
 #, php-format
 msgid "You can keep score for %s."
 msgstr "Puedes anotar %s."
