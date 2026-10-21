@@ -1261,7 +1261,7 @@ function api_handle_timekeeper_templates($parts)
  * games/{id} stay with api_handle_games().
  *
  * @param array $parts
- * @return array{operation: string, method: string}|null
+ * @return array{operation: string, method: string, allow?: string}|null
  */
 function api_scorekeeping_route($parts)
 {
@@ -1291,6 +1291,10 @@ function api_scorekeeping_route($parts)
     }
     if ($count === 4 && $parts[2] === 'rosters' && ($parts[3] === 'home' || $parts[3] === 'away')) {
         return ['operation' => 'roster', 'method' => 'PUT'];
+    }
+    if ($count === 4 && $parts[2] === 'caps' && GameIsCapEventType($parts[3])) {
+        $remove = strtoupper($_SERVER['REQUEST_METHOD']) === 'DELETE';
+        return ['operation' => $remove ? 'remove_cap' : 'set_cap', 'method' => $remove ? 'DELETE' : 'PUT', 'allow' => 'PUT, DELETE'];
     }
     return null;
 }
@@ -1382,7 +1386,7 @@ function api_scorekeeping_if_match_token($header)
  * (X-Scorekeeping-Token only).
  *
  * @param array $parts
- * @param array{operation: string, method: string} $route From api_scorekeeping_route()
+ * @param array{operation: string, method: string, allow?: string} $route From api_scorekeeping_route()
  */
 function api_handle_scorekeeping($parts, $route)
 {
@@ -1394,7 +1398,7 @@ function api_handle_scorekeeping($parts, $route)
         $operation = $route['operation'];
         $isDiscovery = $operation === 'discovery';
         if (strtoupper($_SERVER['REQUEST_METHOD']) !== $route['method']) {
-            header('Allow: ' . $route['method']);
+            header('Allow: ' . ($route['allow'] ?? $route['method']));
         }
         api_require_method($route['method']);
 
@@ -1476,6 +1480,13 @@ function api_handle_scorekeeping($parts, $route)
                 $path .= '/' . $num;
                 $body = null;
                 $write = fn() => ScorekeeperDeleteLastGoal($gameId, $num);
+                break;
+            case 'set_cap':
+            case 'remove_cap':
+                $type = $parts[3];
+                $path .= '/' . $type;
+                $body = $operation === 'set_cap' ? ScorekeeperLiveRequestNormalize('cap', api_scorekeeping_read_json_body()) : null;
+                $write = fn() => ScorekeeperChangeCap($gameId, $type, $body);
                 break;
             case 'roster':
                 $side = $parts[3];

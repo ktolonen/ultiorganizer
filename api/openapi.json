@@ -688,6 +688,28 @@
             }
           }
         }
+      },
+      "Cap": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "time",
+          "point_cap"
+        ],
+        "properties": {
+          "time": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 86400,
+            "description": "Seconds of game time when the cap was called."
+          },
+          "point_cap": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 255,
+            "description": "The new point cap. A new cap must exceed the higher score; a correction of a recorded cap may be any value from 1."
+          }
+        }
       }
     }
   },
@@ -2935,6 +2957,413 @@
           },
           "415": {
             "description": "Content-Type is not application/json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected failure; nothing was saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/games/{game_id}/caps/{type}": {
+      "put": {
+        "summary": "Set a halftime cap or time cap",
+        "description": "Records the cap, or corrects the recorded one, as the Scorekeeper cap page does. A new cap needs a point cap above the higher score (409 point_cap_too_low); correcting a recorded cap allows any point cap from 1. A final game can take a cap. Refused while the event hides times (409 times_hidden). Cap events are not part of the token, so the token does not move. Entry context lists caps under retained.cap_events.",
+        "security": [
+          {
+            "ApiTokenAuth": [],
+            "ScorekeepingLinkAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "half_cap",
+                "time_cap"
+              ]
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "description": "Client-chosen key, 1 to 64 printable ASCII characters. Resend the same key after a network error."
+          },
+          {
+            "name": "X-Scorekeeping-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            },
+            "description": "Scorekeeping link token from the QR code."
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "description": "Content-Type application/json.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Cap"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Set or replayed",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The resulting token, quoted."
+              },
+              "Idempotent-Replay": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "true"
+                  ]
+                },
+                "description": "Present on a replay."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteResult"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "game_id": 1,
+                    "token": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                    "result": {
+                      "home": 7,
+                      "away": 5,
+                      "state": "ongoing"
+                    },
+                    "cap": {
+                      "type": "half_cap",
+                      "time": 1500,
+                      "point_cap": 8
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Invalid body (invalid_body or validation_failed with field paths), missing or malformed Idempotency-Key, invalid JSON",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid app token or scorekeeping link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Game not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong method; the Allow header names PUT and DELETE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "idempotency_conflict, forfeit, times_hidden, or point_cap_too_low",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "413": {
+            "description": "Body larger than 256 KiB",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "415": {
+            "description": "Content-Type is not application/json",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Unexpected failure; nothing was saved",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "503": {
+            "description": "Event under maintenance, or busy after two retries (Retry-After)",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "summary": "Remove a halftime cap or time cap",
+        "description": "Removes the cap; removing an absent cap succeeds and changes nothing. Refused while the event hides times (409 times_hidden). Sends no body. The answer has cap null.",
+        "security": [
+          {
+            "ApiTokenAuth": [],
+            "ScorekeepingLinkAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "game_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "type",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "enum": [
+                "half_cap",
+                "time_cap"
+              ]
+            }
+          },
+          {
+            "name": "Idempotency-Key",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 64
+            },
+            "description": "Client-chosen key, 1 to 64 printable ASCII characters. Resend the same key after a network error."
+          },
+          {
+            "name": "X-Scorekeeping-Token",
+            "in": "header",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "pattern": "^[0-9a-f]{32}$"
+            },
+            "description": "Scorekeeping link token from the QR code."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Removed, already absent, or replayed",
+            "headers": {
+              "ETag": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The resulting token, quoted."
+              },
+              "Idempotent-Replay": {
+                "schema": {
+                  "type": "string",
+                  "enum": [
+                    "true"
+                  ]
+                },
+                "description": "Present on a replay."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/WriteResult"
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "game_id": 1,
+                    "token": "0123456789abcdef0123456789abcdef0123456789abcdef0123456789abcdef",
+                    "result": {
+                      "home": 7,
+                      "away": 5,
+                      "state": "ongoing"
+                    },
+                    "cap": null
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing or malformed Idempotency-Key",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid app token or scorekeeping link",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "User-scoped token, token not valid for the event, game not covered by the link now, no right to edit the game, or event read-only",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Game not found",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong method; the Allow header names PUT and DELETE",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "idempotency_conflict, forfeit, times_hidden",
             "content": {
               "application/json": {
                 "schema": {

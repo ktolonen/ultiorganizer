@@ -1283,6 +1283,7 @@ function ScorekeeperUpdateMetadata($gameId, array $meta)
  * - roster: team_id, players (roster entries as in the complete upload)
  * - metadata: at least one of starting_offence, halftime, official
  * - finalize: home, away
+ * - cap: time, point_cap (1 to 255)
  *
  * @param string $operation One of the operations above
  * @param mixed $raw The decoded JSON body
@@ -1300,6 +1301,7 @@ function ScorekeeperLiveRequestNormalize($operation, $raw)
         'roster' => ['team_id', 'players'],
         'metadata' => [],
         'finalize' => ['home', 'away'],
+        'cap' => ['time', 'point_cap'],
     ];
     if (!isset($required[$operation])) {
         throw new LogicException('Unknown scorekeeping operation ' . $operation . '.');
@@ -1344,6 +1346,12 @@ function ScorekeeperLiveRequestNormalize($operation, $raw)
             $body = [
                 'home' => $f->int($raw['home'], 'home', 0, MAX_GAME_SCORE),
                 'away' => $f->int($raw['away'], 'away', 0, MAX_GAME_SCORE),
+            ];
+            break;
+        case 'cap':
+            $body = [
+                'time' => $f->int($raw['time'], 'time', 0, SCOREKEEPING_API_MAX_EVENT_TIME),
+                'point_cap' => $f->int($raw['point_cap'], 'point_cap', 1, 255),
             ];
             break;
     }
@@ -1688,6 +1696,49 @@ function ScorekeeperReplaceRoster($gameId, $side, array $doc)
         ScorekeeperMust(GameSetSpiritCaptains($gameId, $teams[$side], $spiritCaptains), 'spirit captains');
     }
     return ['status' => 200, 'data' => ['roster' => ['side' => $side, 'players' => count($doc['players'])]]];
+}
+
+/**
+ * Set or remove a halftime cap or time cap, as the Scorekeeper cap page does:
+ * a new cap needs a point cap above the current score, a correction of a
+ * recorded cap any point cap from 1. Refused while the event hides times,
+ * when the Scorekeeper offers no cap buttons.
+ *
+ * The $write of ScorekeepingApiWrite().
+ *
+ * @param int $gameId uo_game.game_id
+ * @param string $type 'half_cap' or 'time_cap'
+ * @param array{time: int, point_cap: int}|null $cap null removes the cap
+ * @return array{status: int, data: array}
+ * @throws ScorekeepingApiException
+ */
+function ScorekeeperChangeCap($gameId, $type, ?array $cap)
+{
+    $gameId = (int) $gameId;
+    if (!empty(SeasonInfo(GameSeason($gameId))['hide_time_on_scoresheet'])) {
+        throw new ScorekeepingApiException(409, 'times_hidden', 'Caps are not recorded while the event hides times.');
+    }
+    if ($cap === null) {
+        ScorekeeperMust(GameRemoveCapEvent($gameId, $type), 'cap');
+        return ['status' => 200, 'data' => ['cap' => null]];
+    }
+
+    $state = ScorekeeperLockedGameState($gameId);
+    $recorded = (int) DBQueryToValueUncached(sprintf(
+        "SELECT COUNT(*) FROM uo_gameevent WHERE game=%d AND type='%s' FOR UPDATE",
+        $gameId,
+        DBEscapeString($type),
+    ));
+    $score = max((int) $state['homescore'], (int) $state['visitorscore']);
+    if ($recorded === 0 && $cap['point_cap'] <= $score) {
+        throw new ScorekeepingApiException(
+            409,
+            'point_cap_too_low',
+            sprintf('A new point cap must be greater than the current score (%d).', $score),
+        );
+    }
+    ScorekeeperMust(GameSetCapEvent($gameId, $type, $cap['time'], $cap['point_cap']), 'cap');
+    return ['status' => 200, 'data' => ['cap' => ['type' => $type, 'time' => $cap['time'], 'point_cap' => $cap['point_cap']]]];
 }
 
 /**

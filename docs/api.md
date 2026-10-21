@@ -87,6 +87,7 @@ A third-party scorekeeping app keeps score for a game by scanning the game's or 
 | `POST /api/v1/games/{id}/score-taps` | add or take one point (result-only keeping) |
 | `PUT /api/v1/games/{id}/rosters/{home\|away}` | replace one team's game roster |
 | `PATCH /api/v1/games/{id}/metadata` | set the starting offence, halftime or official |
+| `PUT\|DELETE /api/v1/games/{id}/caps/{half_cap\|time_cap}` | set or remove a halftime cap or time cap |
 | `POST /api/v1/games/{id}/finalize` | save the final result |
 
 **Two credentials.** Effective access is the app token's scope intersected with what the link covers; neither alone is enough.
@@ -146,6 +147,7 @@ A successful upload first force-captures a scoresheet history snapshot (even wit
 - `POST score-taps` takes `{side, delta}` with `delta` 1 or -1 and changes the stored score in one statement, as the Scorekeeper result page's taps do: a game becomes ongoing, and one back at 0-0 before the clock starts returns to not started. A final game is `409 game_final`, a score outside 0 to 1000 `409 score_out_of_range`.
 - `PUT rosters/{home|away}` takes `{team_id, players}`, the players as in the upload. `team_id` must be the side's team (`409 fixture_changed`). Removing a player that a goal or the defence sheet refers to is `409 player_referenced` with their ids.
 - `PATCH metadata` takes any of `starting_offence`, `halftime` and `official`; only the fields sent change, and `null` clears one.
+- `PUT caps/{half_cap|time_cap}` takes `{time, point_cap}`, as the Scorekeeper cap page does: a new cap needs a `point_cap` above the higher score (`409 point_cap_too_low`), while correcting a recorded cap allows any `point_cap` from 1 to 255. A final game can take a cap. `DELETE caps/{half_cap|time_cap}` removes the cap, and removing an absent one succeeds. Both answer `200` with `cap` (`null` after a delete) and are refused with `409 times_hidden` while the event hides times, when the Scorekeeper shows no cap buttons. Caps are not part of the token; the entry context lists them under `retained.cap_events`.
 - `POST finalize` takes `{home, away}`: the score the app has been keeping. The stored score must still be exactly that (`409 score_changed`), so a point another device recorded since is not finalized over. A game with no score yet cannot be finalized this way, and a different final score goes through score taps or the complete upload. Finalizing resets the clock and recomputes the pool standings and playoff moves inside the same transaction.
 
 **Idempotency.** The first answer is stored in the transaction that made the writes (`uo_api_receipt`). The same key with the same method, path and body returns the stored answer with `Idempotent-Replay: true` and writes nothing, even if the game has moved on; the same key with another body is `409 idempotency_conflict`. Only successes are stored.
