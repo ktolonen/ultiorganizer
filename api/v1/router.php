@@ -1226,6 +1226,37 @@ function api_send_openapi()
 }
 
 /**
+ * Timekeeper templates with their caps and signals, texts in the locale that
+ * best matches Accept-Language. Any valid token reads them: the same data is
+ * on the public timekeeper/ page.
+ *
+ * @param array $parts
+ */
+function api_handle_timekeeper_templates($parts)
+{
+    global $locales;
+    if (count($parts) !== 2 || $parts[1] !== 'templates') {
+        api_not_found();
+    }
+    api_require_method('GET');
+
+    $available = is_array($locales) ? array_keys($locales) : [];
+    $locale = AcceptLanguageLocale((string) ($_SERVER['HTTP_ACCEPT_LANGUAGE'] ?? ''), $available) ?? GetDefaultLocale();
+    loadDBTranslations($locale);
+    $set = TimekeeperTemplatesForClient();
+
+    header('Vary: Accept-Language');
+    header('Content-Language: ' . str_replace('_', '-', (string) preg_replace('/\..*$/', '', $locale)));
+    api_send_json(200, [
+        'status' => 'ok',
+        'data' => [
+            'default_template_id' => $set['defaultTemplateId'],
+            'templates' => array_values($set['templates']),
+        ],
+    ]);
+}
+
+/**
  * The scorekeeping app route a request targets, or null. Plain games and
  * games/{id} stay with api_handle_games().
  *
@@ -1534,6 +1565,9 @@ function api_v1_route($parts)
             break;
         case 'gameplay':
             api_handle_gameplay($tokenRow);
+            break;
+        case 'timekeeper':
+            api_handle_timekeeper_templates($parts);
             break;
         case 'version':
             api_handle_version();

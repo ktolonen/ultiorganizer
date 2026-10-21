@@ -19,6 +19,7 @@ require_once __DIR__ . '/../lib/configuration.functions.php';
 require_once __DIR__ . '/../lib/api.functions.php';
 require_once __DIR__ . '/../lib/scorekeepingapi.functions.php';
 require_once __DIR__ . '/../lib/version.functions.php';
+require_once __DIR__ . '/../lib/timekeeper.functions.php';
 
 require_once __DIR__ . '/v1/router.php';
 

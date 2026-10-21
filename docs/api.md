@@ -19,7 +19,7 @@ API structure, constraints and scope.
 
 ## Public v1 scope
 
-- Public API endpoints expose event lists, divisions, teams, games, gameplay, and version metadata.
+- Public API endpoints expose event lists, divisions, teams, games, gameplay, Timekeeper templates, and version metadata.
 - Token authentication can be installation, event, or user scoped.
 - Event-scoped endpoints require the event to be marked visible in the public API. The same event flag also gates public `ext/` outputs, including generated external links, widgets, RSS feeds, XML helpers, and CSV exports.
 - `gameplay` follows the event's public visibility settings: spirit scores are `null` unless the event shows them, and goal, event and half-time times and the time-on-offence statistics are `null` when the event hides scoresheet times.
@@ -50,6 +50,7 @@ curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/teams?event
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/divisions?event=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/games?event=2025"
 curl -H "Authorization: Bearer YOUR_TOKEN" "https://your-host/api/v1/gameplay?game=123"
+curl -H "Authorization: Bearer YOUR_TOKEN" -H "Accept-Language: fi" "https://your-host/api/v1/timekeeper/templates"
 ```
 
 Gameplay events include `time`, `team`, and `type`. Halftime-cap and time-cap events use type `half_cap` and `time_cap`, set `team` to `null`, and include the saved cap target in `target`.
@@ -60,6 +61,15 @@ and the active customization id and version. The Ultiorganizer application
 version is read from `version.php`. The active customization version is read
 from `cust/<customization>/version.php`, which may return a version string or
 define `CUSTOMIZATION_VERSION`; missing customization metadata reports `0.0`.
+
+`/api/v1/timekeeper/templates` returns the Timekeeper templates
+(`docs/timekeeper.md`) as a list: each template's id, name, halftime and time
+caps in minutes, and its signal rows per action, plus `default_template_id`.
+Template names and signal texts are database translations in the configured
+locale that best matches `Accept-Language`, or the default locale when none
+matches; `Content-Language` names the locale and the answer carries
+`Vary: Accept-Language`. Any valid token reads it, including a user-scoped one,
+because the same data is on the public Timekeeper page.
 
 ## Scorekeeping app endpoints
 

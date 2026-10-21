@@ -478,6 +478,216 @@
             "additionalProperties": true
           }
         }
+      },
+      "TimekeeperTemplate": {
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "caps",
+          "signals"
+        ],
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "name": {
+            "type": "string"
+          },
+          "caps": {
+            "type": "object",
+            "required": [
+              "half_time_cap",
+              "time_cap"
+            ],
+            "properties": {
+              "half_time_cap": {
+                "type": "integer",
+                "description": "Minutes from the start of the game."
+              },
+              "time_cap": {
+                "type": "integer",
+                "description": "Minutes from the start of the game."
+              }
+            }
+          },
+          "signals": {
+            "type": "object",
+            "description": "Signal rows per action, ordered by time. Every action key is present; an action without signals has an empty list.",
+            "required": [
+              "betweenpoints",
+              "timeout",
+              "timeoutbeforepull",
+              "halftime",
+              "halfstart",
+              "dispute",
+              "discretrieval"
+            ],
+            "properties": {
+              "betweenpoints": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "time",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "Seconds from the start of the action."
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "timeout": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "time",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "Seconds from the start of the action."
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "timeoutbeforepull": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "time",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "Seconds from the start of the action."
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "halftime": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "time",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "Seconds from the start of the action."
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "halfstart": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "time",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "Seconds from the start of the action."
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "dispute": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "time",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "Seconds from the start of the action."
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              },
+              "discretrieval": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "required": [
+                    "id",
+                    "time",
+                    "text"
+                  ],
+                  "properties": {
+                    "id": {
+                      "type": "integer"
+                    },
+                    "time": {
+                      "type": "integer",
+                      "description": "Seconds from the start of the action."
+                    },
+                    "text": {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -539,6 +749,156 @@
                       "version": "1.0"
                     }
                   }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/timekeeper/templates": {
+      "get": {
+        "summary": "Get the Timekeeper templates",
+        "description": "The Timekeeper templates with their caps and signals, as the public timekeeper/ page uses them. Template names and signal texts are translated into the configured locale that best matches Accept-Language (the default locale when none matches); Content-Language names it. Any valid token works, user-scoped ones included.",
+        "security": [
+          {
+            "ApiTokenAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "name": "Accept-Language",
+            "in": "header",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "description": "Preferred languages, for example fi-FI, fi;q=0.9."
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Templates",
+            "headers": {
+              "Content-Language": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "The locale of the texts, for example fi-FI."
+              },
+              "Vary": {
+                "schema": {
+                  "type": "string"
+                },
+                "description": "Accept-Language."
+              }
+            },
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "status",
+                    "data"
+                  ],
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "data": {
+                      "type": "object",
+                      "required": [
+                        "default_template_id",
+                        "templates"
+                      ],
+                      "properties": {
+                        "default_template_id": {
+                          "type": "integer",
+                          "description": "The template to preselect; 0 when there are none."
+                        },
+                        "templates": {
+                          "type": "array",
+                          "items": {
+                            "$ref": "#/components/schemas/TimekeeperTemplate"
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "status": "ok",
+                  "data": {
+                    "default_template_id": 1,
+                    "templates": [
+                      {
+                        "id": 1,
+                        "name": "WFDF",
+                        "caps": {
+                          "half_time_cap": 55,
+                          "time_cap": 100
+                        },
+                        "signals": {
+                          "betweenpoints": [
+                            {
+                              "id": 1,
+                              "time": 45,
+                              "text": "Offence warning"
+                            },
+                            {
+                              "id": 2,
+                              "time": 60,
+                              "text": "Defence warning"
+                            },
+                            {
+                              "id": 3,
+                              "time": 75,
+                              "text": "Play"
+                            }
+                          ],
+                          "timeout": [],
+                          "timeoutbeforepull": [],
+                          "halftime": [],
+                          "halfstart": [],
+                          "dispute": [],
+                          "discretrieval": []
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Missing or invalid token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "405": {
+            "description": "Wrong method",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
+                }
+              }
+            }
+          },
+          "429": {
+            "description": "Rate limit exceeded",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Error"
                 }
               }
             }
