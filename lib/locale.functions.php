@@ -207,8 +207,8 @@ function ActivateGettextLocale($locale, $candidateLocales = [])
 
 /**
  * The configured locale that best matches an Accept-Language header, or null.
- * A full tag (fi-FI) matches its own locale and a bare language (fi) the first
- * configured locale of that language; ranges are tried in q order.
+ * A tag matches its own locale (fi-FI), else the first configured locale of
+ * its language (fi, en-US); ranges are tried in q order.
  *
  * @param string $header Accept-Language value
  * @param string[] $available Locale keys such as fi_FI.utf8
@@ -237,11 +237,11 @@ function AcceptLanguageLocale($header, $available)
         $tags[$locale] = strtolower(str_replace('_', '-', (string) preg_replace('/\..*$/', '', $locale)));
     }
     foreach ($ranges as $range) {
-        $tag = $range[2];
-        $match = array_search($tag, $tags, true);
-        if ($match === false && strpos($tag, '-') === false) {
+        $match = array_search($range[2], $tags, true);
+        if ($match === false) {
+            $language = explode('-', $range[2])[0];
             foreach ($tags as $locale => $localeTag) {
-                if (explode('-', $localeTag)[0] === $tag) {
+                if (explode('-', $localeTag)[0] === $language) {
                     $match = $locale;
                     break;
                 }
