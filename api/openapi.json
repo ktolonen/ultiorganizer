@@ -700,7 +700,7 @@
           "time": {
             "type": "integer",
             "minimum": 0,
-            "maximum": 86400,
+            "maximum": 32767,
             "description": "Seconds of game time when the cap was called."
           },
           "point_cap": {

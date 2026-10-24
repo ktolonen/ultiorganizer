@@ -145,6 +145,9 @@ const SCOREKEEPING_API_MAX_GOAL_TIME = 32767;
 /** Largest time of a timeout, spirit stoppage or halftime, in seconds. */
 const SCOREKEEPING_API_MAX_EVENT_TIME = 86400;
 
+/** Largest halftime cap or time cap time in seconds: uo_gameevent.time is smallint. */
+const SCOREKEEPING_API_MAX_CAP_TIME = 32767;
+
 /**
  * A scorekeeping API failure with the answer the client should get. The lib
  * throws it; the API layer maps it to its JSON error envelope.
@@ -1350,7 +1353,7 @@ function ScorekeeperLiveRequestNormalize($operation, $raw)
             break;
         case 'cap':
             $body = [
-                'time' => $f->int($raw['time'], 'time', 0, SCOREKEEPING_API_MAX_EVENT_TIME),
+                'time' => $f->int($raw['time'], 'time', 0, SCOREKEEPING_API_MAX_CAP_TIME),
                 'point_cap' => $f->int($raw['point_cap'], 'point_cap', 1, 255),
             ];
             break;
