@@ -1257,8 +1257,8 @@ function api_handle_timekeeper_templates($parts)
 }
 
 /**
- * The scorekeeping app route a request targets, or null. Plain games and
- * games/{id} stay with api_handle_games().
+ * The scorekeeping app route a request targets, or null. Plain games stays
+ * with api_handle_games(); any other games/... path is not found.
  *
  * @param array $parts
  * @return array{operation: string, method: string, allow?: string}|null
@@ -1559,6 +1559,11 @@ function api_v1_route($parts)
     $tokenRow = api_require_token();
     $clientIp = api_get_client_ip();
     api_enforce_rate_limit($tokenRow['token_hash'], $clientIp);
+
+    // Only timekeeper has sub-paths here; the other handlers ignore extra segments.
+    if ($resource !== 'timekeeper' && count($parts) !== 1) {
+        api_not_found();
+    }
 
     switch ($resource) {
         case 'events':
