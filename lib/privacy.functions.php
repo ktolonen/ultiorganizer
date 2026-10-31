@@ -614,6 +614,12 @@ function PrivacyCollectUserReportData($userId)
 			WHERE g.userid='%s' ORDER BY g.created DESC",
             DBEscapeString($userId),
         ), true),
+        'api_token_rows' => DBQueryToArray(sprintf(
+            "SELECT token_id, label, revoked, created_at, last_used
+				FROM uo_api_token
+			WHERE scope_type='user' AND scope_id='%s' ORDER BY created_at DESC, token_id DESC",
+            DBEscapeString($userId),
+        ), true),
         'extraemail_rows' => DBQueryToArray(sprintf(
             "SELECT * FROM uo_extraemail WHERE userid='%s' ORDER BY email",
             DBEscapeString($userId),
@@ -721,6 +727,7 @@ function PrivacyRenderUserReportText($userId, $adminUserId)
     PrivacyAppendRowsSection($lines, 'User row', [$userRow]);
     PrivacyAppendRowsSection($lines, 'User property rows', $data['userproperties_rows']);
     PrivacyAppendRowsSection($lines, 'Scorekeeping link rows', $data['scorekeeper_grant_rows']);
+    PrivacyAppendRowsSection($lines, 'API token rows', $data['api_token_rows']);
     PrivacyAppendRowsSection($lines, 'Extra email rows', $data['extraemail_rows']);
     PrivacyAppendRowsSection($lines, 'Extra email request rows', $data['extraemailrequest_rows']);
     PrivacyAppendRowsSection($lines, 'Enrolled team rows', $data['enrolledteam_rows']);
@@ -997,6 +1004,7 @@ function PrivacyDeleteUserData($userId, $adminUserId)
         DBQuery(sprintf("DELETE FROM uo_passwordresetrequest WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_userproperties WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_scorekeeper_grant WHERE userid='%s'", DBEscapeString($userId)));
+        DBQuery(sprintf("DELETE FROM uo_api_token WHERE scope_type='user' AND scope_id='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_users WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery('COMMIT');
     } catch (Exception $e) {

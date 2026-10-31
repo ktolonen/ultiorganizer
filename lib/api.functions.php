@@ -3,6 +3,8 @@
 require_once __DIR__ . '/include_only.guard.php';
 denyDirectLibAccess(__FILE__);
 
+require_once __DIR__ . '/user.functions.php';
+
 function ApiHashToken($token)
 {
     return hash('sha256', (string) $token);
@@ -120,4 +122,43 @@ function ApiTokenDelete($tokenId)
         (int) $tokenId,
     );
     DBQuery($query);
+}
+
+/**
+ * The logged-in user's own active user-scoped token, created on first use.
+ * Returns ['token_id' => int, 'token' => string], or null for anyone but that
+ * user.
+ */
+function ApiUserToken($userId)
+{
+    if (!isLoggedIn() || (string) $userId !== (string) $_SESSION['uid']) {
+        return null;
+    }
+    $row = DBQueryToRowUncached(sprintf(
+        "SELECT token_id, token_value FROM uo_api_token
+        WHERE scope_type='user' AND scope_id='%s' AND revoked=0
+        ORDER BY created_at DESC, token_id DESC
+        LIMIT 1",
+        DBEscapeString((string) $userId),
+    ), true);
+    if (!empty($row)) {
+        return ['token_id' => (int) $row['token_id'], 'token' => $row['token_value']];
+    }
+    return ApiTokenCreate("Scorekeeping app", 'user', (string) $userId);
+}
+
+/**
+ * Revokes the logged-in user's active user-scoped tokens and creates a new
+ * one, so a lost device stops working. Returns what ApiUserToken() does.
+ */
+function ApiUserTokenReplace($userId)
+{
+    if (!isLoggedIn() || (string) $userId !== (string) $_SESSION['uid']) {
+        return null;
+    }
+    DBQuery(sprintf(
+        "UPDATE uo_api_token SET revoked=1 WHERE scope_type='user' AND scope_id='%s' AND revoked=0",
+        DBEscapeString((string) $userId),
+    ));
+    return ApiTokenCreate("Scorekeeping app", 'user', (string) $userId);
 }

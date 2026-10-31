@@ -92,12 +92,15 @@ A third-party scorekeeping app keeps score for a game by scanning the game's or 
 
 **Two credentials.** Effective access is the app token's scope intersected with what the link covers; neither alone is enough.
 
-- The app token (`uo_api_token`, any unrevoked `installation` or event-scoped token) goes in `Authorization: Bearer`. These routes read nothing else: not `?token=`, `X-Api-Token` or `Token `. A `user`-scoped token is refused with `403 invalid_scope`, and an event-scoped token only works for games of its own event (`403 event_scope_mismatch`).
+- The app token (`uo_api_token`, any unrevoked token) goes in `Authorization: Bearer`. These routes read nothing else: not `?token=`, `X-Api-Token` or `Token `. An event-scoped token only works for games of its own event (`403 event_scope_mismatch`). A `user`-scoped token works like an installation token, so the link alone decides which games are covered, the same as when a logged-in user opens the link in the browser. Its history rows carry the token's user as `user_id`; the request still gets none of that user's rights.
 - The scorekeeping link token goes in the `X-Scorekeeping-Token` header, never in the URL or the body. An unknown or replaced link is `401 invalid_scorekeeping_token` and writes a `security` log event without the token.
 
 The QR code encodes `BASEURL/scorekeeper/?t=<32 hex>`. The app takes the part before `/scorekeeper/` as the installation root (the API is at `<root>/api/v1/`) and `t` as the link token. It should accept only `https` URLs (and `http://localhost` for development).
 
-**Pairing.** On `?view=admin/apitokens`, each active installation or event token has an app setup QR code that encodes `ultiorganizer-app://pair?root=<BASEURL>&token=<token>`, both URL-encoded (`ScorekeeperAppSetupUrl()`). `root` is the same prefix the scorekeeping link QR codes carry before `/scorekeeper/`, so the app can match a scanned link to the installation it paired with. User-scoped and revoked tokens have none, because they cannot keep score. Anyone holding the code has the token.
+**Pairing.** An app setup QR code encodes `ultiorganizer-app://pair?root=<BASEURL>&token=<token>`, both URL-encoded (`ScorekeeperAppSetupUrl()`). `root` is the same prefix the scorekeeping link QR codes carry before `/scorekeeper/`, so the app can match a scanned link to the installation it paired with. Anyone holding the code has the token.
+
+- Every logged-in user has one on `?view=user/scorekeepingapp`, linked from the menu. The page creates the user's `user`-scoped token the first time it is opened (`ApiUserToken()`), and its "New token" button revokes the user's active user-scoped tokens and creates a new one (`ApiUserTokenReplace()`), so a lost phone stops working. Renaming the login moves the tokens with it; deleting the user deletes them.
+- On `?view=admin/apitokens`, each active token has one. Revoked tokens have none.
 
 These routes work for private events and ignore the event's `api_public` and `anonymous_scorekeeping` settings: the app token is the gate. Maintenance mode answers `503`, and a read-only event refuses writes with `403 event_readonly`. Responses carry `Cache-Control: no-store`, and the routes bypass the persistent cache. The rate limit is the one in "Expectations", keyed by app token and IP; an installation whose app scores several fields from one address can raise `API_RATE_LIMIT`. Public reads of the same game lag a write by the persistent-cache TTL.
 

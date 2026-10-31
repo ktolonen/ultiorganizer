@@ -108,7 +108,7 @@ function ScoresheetHistoryRecord($gameId, $target, $action, $detail = [], $force
 
     // Lazy require: scorekeeper.functions.php requires game.functions.php.
     require_once __DIR__ . '/scorekeeper.functions.php';
-    $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
+    $userId = ScorekeeperApiActor()['user'] ?: (!empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown");
     // DisableVisitorLogging stops IP recording entirely (docs/privacy.md), so
     // it suppresses the address here too, on every row.
     $ip = (!empty($_SERVER['REMOTE_ADDR']) && !IsVisitorLoggingDisabled())
@@ -289,7 +289,7 @@ function ScoresheetHistorySnapshotIfNeeded($gameId, $force = false, $target = nu
 
         // Same attribution rules as ScoresheetHistoryRecord().
         require_once __DIR__ . '/scorekeeper.functions.php';
-        $userId = !empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown";
+        $userId = ScorekeeperApiActor()['user'] ?: (!empty($_SESSION['uid']) ? $_SESSION['uid'] : "unknown");
         $ip = (!empty($_SERVER['REMOTE_ADDR']) && !IsVisitorLoggingDisabled())
             ? $_SERVER['REMOTE_ADDR'] : "";
 

@@ -1414,9 +1414,6 @@ function api_handle_scorekeeping($parts, $route)
         }
         ApiTokenTouch($tokenRow['token_id']);
         api_enforce_rate_limit($tokenRow['token_hash'], api_get_client_ip());
-        if ($tokenRow['scope_type'] === 'user') {
-            api_error(403, 'invalid_scope', 'User-scoped tokens cannot be used for scorekeeping.');
-        }
 
         $linkToken = trim((string) ($_SERVER['HTTP_X_SCOREKEEPING_TOKEN'] ?? ''));
         if ($linkToken === '') {
@@ -1428,7 +1425,11 @@ function api_handle_scorekeeping($parts, $route)
             Log1("security", "fail", "", "", "invalid scorekeeping link");
             api_error(401, 'invalid_scorekeeping_token', 'Unknown scorekeeping link.');
         }
-        ScorekeeperApiActor($linkId, (int) $tokenRow['token_id']);
+        ScorekeeperApiActor(
+            $linkId,
+            (int) $tokenRow['token_id'],
+            $tokenRow['scope_type'] === 'user' ? (string) $tokenRow['scope_id'] : '',
+        );
 
         $gameId = $isDiscovery ? 0 : (int) $parts[1];
         $season = $linkRow['season'];

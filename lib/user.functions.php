@@ -244,6 +244,11 @@ function UserUpdateInfo($user_id, $olduser, $user, $name)
                 DBEscapeString($olduser),
             ));
             DBQuery(sprintf(
+                "UPDATE uo_api_token SET scope_id='%s' WHERE scope_type='user' AND scope_id='%s'",
+                DBEscapeString($user),
+                DBEscapeString($olduser),
+            ));
+            DBQuery(sprintf(
                 "UPDATE uo_event_log SET user_id='%s' WHERE user_id='%s'",
                 DBEscapeString($user),
                 DBEscapeString($olduser),
@@ -1592,6 +1597,10 @@ function DeleteUser($userid)
 
             DBQuery(sprintf(
                 "DELETE FROM uo_scorekeeper_grant WHERE userid='%s'",
+                DBEscapeString($userid),
+            ));
+            DBQuery(sprintf(
+                "DELETE FROM uo_api_token WHERE scope_type='user' AND scope_id='%s'",
                 DBEscapeString($userid),
             ));
 

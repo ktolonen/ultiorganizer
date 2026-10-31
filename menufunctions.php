@@ -418,6 +418,7 @@ function leftMenu($id = 0, $pagestart = true, $printable = false)
         echo "<table class='leftmenulinks_plain'>\n";
         echo "<tr><td>\n";
         echo "<a class='subnav' href='?view=admin/help'>&raquo; " . utf8entities(_("Helps")) . "</a>\n";
+        echo "<a class='subnav' href='?view=user/scorekeepingapp'>&raquo; " . utf8entities(_("Scorekeeping app")) . "</a>\n";
         echo "</td></tr>\n";
         echo "</table>\n";
     }

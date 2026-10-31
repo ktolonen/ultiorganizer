@@ -409,19 +409,21 @@ function ScorekeeperAddGrant($tokenId, $userId)
 
 /**
  * The request-local actor of the scorekeeping app API: the scorekeeping link
- * token and the app API token the request authenticated with. Call with ids
- * to set it, with 0 and 0 to clear it, and without arguments to read it.
- * Both ids are required: a link without an app token clears the actor.
+ * token and the app API token the request authenticated with, and the user a
+ * user-scoped app token belongs to. Call with ids to set it, with 0 and 0 to
+ * clear it, and without arguments to read it. Both ids are required: a link
+ * without an app token clears the actor.
  *
  * Setting it gives the request the logged-out visitor's session shape and
  * never starts a PHP session, so the scorekeeping link rules apply to the
- * request without cookies.
+ * request without cookies. The user only attributes history rows; it grants
+ * none of that user's rights.
  *
- * @return array{link: int, api: int} Zeros when no actor is set
+ * @return array{link: int, api: int, user: string} Zeros when no actor is set
  */
-function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null)
+function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null, string $userId = '')
 {
-    static $actor = ['link' => 0, 'api' => 0];
+    static $actor = ['link' => 0, 'api' => 0, 'user' => ''];
     static $savedSession = null;
     if ($linkTokenId === null && $apiTokenId === null) {
         return $actor;
@@ -444,7 +446,7 @@ function ScorekeeperApiActor(?int $linkTokenId = null, ?int $apiTokenId = null)
         }
         $savedSession = null;
     }
-    $actor = ['link' => $link, 'api' => $api];
+    $actor = ['link' => $link, 'api' => $api, 'user' => $link > 0 ? $userId : ''];
     CacheForgetNamespace("scorekeeper_grant");
     return $actor;
 }

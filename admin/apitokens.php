@@ -156,7 +156,7 @@ echo "</form>";
 $tokens = ApiTokenList();
 $setupQrId = (int) ($_GET['setup_qr'] ?? 0);
 foreach ($tokens as $token) {
-    if ((int) $token['token_id'] === $setupQrId && empty($token['revoked']) && $token['scope_type'] !== 'user') {
+    if ((int) $token['token_id'] === $setupQrId && empty($token['revoked'])) {
         echo "<h3>" . _("App setup QR") . ": " . utf8entities($token['label']) . "</h3>";
         echo "<div class='scorekeeping-qr'>" . ScorekeeperQrSvg(ScorekeeperAppSetupUrl($token['token_value']), 5) . "</div>";
         echo "<p>" . _("Scan this code in the scorekeeping app. Anyone with the code can keep score with any scorekeeping link the token is valid for, until the token is revoked.") . "</p>";
@@ -204,8 +204,7 @@ if (empty($tokens)) {
             echo "<input type='submit' name='revoke_token' value='" . _("Revoke") . "'/>";
         }
         echo "</form>";
-        // User-scoped tokens cannot keep score.
-        if (empty($token['revoked']) && $token['scope_type'] !== 'user') {
+        if (empty($token['revoked'])) {
             echo " <a href='?view=admin/apitokens&amp;setup_qr=" . $tokenId . "'>" . _("App setup QR") . "</a>";
         }
         echo "</td>";

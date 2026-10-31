@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-10-31 22:13+0200\n"
+"POT-Creation-Date: 2026-11-01 00:03+0200\n"
 "PO-Revision-Date: \n"
 "Last-Translator: stm <stm2@sourceforge.net>\n"
 "Language-Team: Ultiorganizer\n"
@@ -228,8 +228,8 @@ msgid ""
 msgstr ""
 "Akkreditoi pelaajat lisenssitietokannasta valittujen ehtojen mukaisesti."
 
-#: menufunctions.php:693 menufunctions.php:708 menufunctions.php:765
-#: menufunctions.php:777 admin/accreditation.php:8 admin/accreditation.php:64
+#: menufunctions.php:694 menufunctions.php:709 menufunctions.php:766
+#: menufunctions.php:778 admin/accreditation.php:8 admin/accreditation.php:64
 #: admin/accreditation.php:150
 msgid "Accreditation"
 msgstr "Akkreditointi"
@@ -434,7 +434,7 @@ msgstr "Lisäpisteet aikarajan täytyttyä"
 msgid "Address"
 msgstr "Osoite"
 
-#: menufunctions.php:654
+#: menufunctions.php:655
 msgid "Admin Help"
 msgstr "Ylläpitäjän ohje"
 
@@ -448,7 +448,7 @@ msgstr ""
 "varauksille annettuja ylläpito-oikeuksia. Myönnä käyttöoikeudet uudelleen: "
 "%s."
 
-#: menufunctions.php:387 menufunctions.php:438
+#: menufunctions.php:387 menufunctions.php:439
 msgid "Administration"
 msgstr "Hallinto"
 
@@ -535,7 +535,7 @@ msgstr ""
 msgid "All teams"
 msgstr "Kaikki joukkueet"
 
-#: menufunctions.php:601
+#: menufunctions.php:602
 msgid "All time"
 msgstr "Yhteenveto"
 
@@ -611,6 +611,14 @@ msgstr ""
 "Kuka tahansa, joka avaa pelin tai kentän pisteenkirjauslinkin, voi kirjata "
 "pisteet kyseisille peleille kirjautumatta sisään."
 
+#: user/scorekeepingapp.php:24
+msgid ""
+"Anyone with this code can keep score with any scorekeeping link they have, "
+"until you replace the token."
+msgstr ""
+"Kuka tahansa koodin haltija voi kirjata pisteitä millä tahansa "
+"pisteenkirjauslinkillä, joka hänellä on, kunnes vaihdat tokenin."
+
 #: user/scorekeepinglink.php:49
 msgid "Anyone with this link can keep score for these games after logging in."
 msgstr ""
@@ -636,7 +644,7 @@ msgstr ""
 "Kuka tahansa tämän linkin haltija voi kirjata pisteet tälle pelille "
 "kirjautumatta sisään."
 
-#: admin/apitokens.php:160 admin/apitokens.php:209
+#: admin/apitokens.php:160 admin/apitokens.php:208
 msgid "App setup QR"
 msgstr "Sovelluksen asetus-QR"
 
@@ -648,7 +656,7 @@ msgstr "Ota massakäännökset käyttöön"
 msgid "Apply the bulk translations from the text area?"
 msgstr "Otetaanko tekstialueen massakäännökset käyttöön?"
 
-#: menufunctions.php:606
+#: menufunctions.php:607
 msgid "Apps"
 msgstr "Sovellukset"
 
@@ -1237,7 +1245,7 @@ msgstr "Seurajoukkueet"
 msgid "Club to keep"
 msgstr "Säilytettävä seura"
 
-#: menufunctions.php:597 admin/dbequalize.php:206
+#: menufunctions.php:598 admin/dbequalize.php:206
 msgid "Clubs"
 msgstr "Seurat"
 
@@ -1300,7 +1308,7 @@ msgstr "Kommunikaatio (heidän)"
 msgid "Confirm"
 msgstr "Vahvista"
 
-#: lib/user.functions.php:1754
+#: lib/user.functions.php:1763
 msgid "Confirm extra email address for Ultiorganizer"
 msgstr "Vahvista lisäsähköpostiosoite Pelikoneeseen"
 
@@ -1317,7 +1325,7 @@ msgstr "Vahvista siirrot lohkoon: %s."
 msgid "Confirm result and end game"
 msgstr "Vahvista tulos ja päätä peli"
 
-#: lib/user.functions.php:1693
+#: lib/user.functions.php:1702
 msgid "Confirm your account to Ultiorganizer"
 msgstr "Vahvista tunnuksesi Pelikoneeseen"
 
@@ -1354,7 +1362,7 @@ msgstr "Tilannevedoksessa on ristiriitaisia pelaajaprofiilien tunnisteita."
 msgid "Contact person"
 msgstr "Yhteyshenkilö"
 
-#: clubcard.php:77 menufunctions.php:803 user/clubprofile.php:178
+#: clubcard.php:77 menufunctions.php:804 user/clubprofile.php:178
 #: user/contacts.php:6 user/contacts.php:18
 msgid "Contacts"
 msgstr "Yhteystiedot"
@@ -1454,7 +1462,7 @@ msgstr ""
 "Salasanan nollaaminen '%s' epäonnistui. Sähköpostiosoite saattaa olla "
 "virheellinen."
 
-#: allcountries.php:8 allcountries.php:13 menufunctions.php:599
+#: allcountries.php:8 allcountries.php:13 menufunctions.php:600
 msgid "Countries"
 msgstr "Maat"
 
@@ -1480,7 +1488,7 @@ msgstr "Maata ei löydy"
 msgid "Create"
 msgstr "Luo"
 
-#: menufunctions.php:455 admin/addseasons.php:208
+#: menufunctions.php:456 admin/addseasons.php:208
 msgid "Create new event"
 msgstr "Uusi tapahtuma"
 
@@ -1545,7 +1553,7 @@ msgstr "DQ"
 msgid "Data"
 msgstr "Data"
 
-#: menufunctions.php:623 ext/export.php:13
+#: menufunctions.php:624 ext/export.php:13
 msgid "Data export"
 msgstr "Tiedon vienti"
 
@@ -1878,7 +1886,7 @@ msgstr "Sarjan tilastot:"
 msgid "Division(s)"
 msgstr "Sarja(t)"
 
-#: menufunctions.php:679 teams.php:42 admin/seasonadmin.php:73
+#: menufunctions.php:680 teams.php:42 admin/seasonadmin.php:73
 #: admin/seasonseries.php:13 admin/seasonseries.php:67
 msgid "Divisions"
 msgstr "Sarjat"
@@ -2072,7 +2080,7 @@ msgstr "Sälöpostiosoite on jo rekisteröity"
 msgid "Email cannot be empty"
 msgstr "Sähköposti ei voi olla tyhjä"
 
-#: menufunctions.php:620
+#: menufunctions.php:621
 msgid "Embed and export"
 msgstr "Upotus ja vienti"
 
@@ -2177,7 +2185,7 @@ msgstr "Virhe: tuntematon tapahtuma."
 msgid "Errors: %s."
 msgstr "Virheet: %s."
 
-#: clubcard.php:173 countrycard.php:86 countrycard.php:94 menufunctions.php:678
+#: clubcard.php:173 countrycard.php:86 countrycard.php:94 menufunctions.php:679
 #: playercard.php:255 playercard.php:435 statistics.php:50 statistics.php:103
 #: statistics.php:269 teamcard.php:419 teamcard.php:620
 #: admin/accreditation.php:136 admin/addreservation.php:191
@@ -2242,7 +2250,7 @@ msgstr "Tapahtumalla on"
 msgid "Event is required"
 msgstr "Tapahtuma on pakollinen"
 
-#: menufunctions.php:572 admin/addseasonlinks.php:8
+#: menufunctions.php:573 admin/addseasonlinks.php:8
 msgid "Event links"
 msgstr "Tapahtuman linkit"
 
@@ -2291,7 +2299,7 @@ msgstr "Tapahtuman tyyppi"
 msgid "Event users"
 msgstr "Tapahtuman käyttäjät"
 
-#: menufunctions.php:391 menufunctions.php:594 playerlist.php:34
+#: menufunctions.php:391 menufunctions.php:595 playerlist.php:34
 #: admin/seasons.php:11 admin/seasons.php:86 admin/seasonstats.php:19
 msgid "Events"
 msgstr "Tapahtumat"
@@ -2494,7 +2502,7 @@ msgstr "Pelin tulos"
 msgid "Final scores"
 msgstr "Pelin tulos"
 
-#: menufunctions.php:516 menufunctions.php:689 seasonlist.php:33 teams.php:49
+#: menufunctions.php:517 menufunctions.php:690 seasonlist.php:33 teams.php:49
 #: admin/finalstandings.php:15 admin/finalstandings.php:21
 #: admin/finalstandings.php:42 admin/finalstandings.php:107
 #: admin/finalstandings.php:120 admin/seasonadmin.php:125 admin/stats.php:154
@@ -2855,7 +2863,7 @@ msgstr "Pelit pisteeseen"
 msgid "Game reset"
 msgstr "Pelin nollaus"
 
-#: menufunctions.php:802 user/respgames.php:10
+#: menufunctions.php:803 user/respgames.php:10
 msgid "Game responsibilities"
 msgstr "Vastuupelit"
 
@@ -2911,8 +2919,8 @@ msgstr "Yhteenveto pelin kulusta"
 
 #: clubcard.php:159 clubcard.php:188 countrycard.php:44 countrycard.php:71
 #: defensestatus.php:76 defensestatus.php:78 gamecard.php:231 gamecard.php:237
-#: menufunctions.php:517 menufunctions.php:555 menufunctions.php:683
-#: menufunctions.php:706 playerlist.php:35 poolstatus.php:160
+#: menufunctions.php:518 menufunctions.php:556 menufunctions.php:684
+#: menufunctions.php:707 playerlist.php:35 poolstatus.php:160
 #: poolstatus.php:186 poolstatus.php:237 poolstatus.php:253 poolstatus.php:298
 #: seriesstatus.php:308 seriesstatus.php:328 seriesstatus.php:350
 #: spiritstatus.php:109 spiritstatus.php:111 teamcard.php:123 teamcard.php:168
@@ -3455,7 +3463,8 @@ msgid "Insufficient rights to import data"
 msgstr "Ei oikeuksia tuoda tietoja"
 
 #: admin/apitokens.php:117 admin/spirit.php:418 admin/spirit.php:431
-#: user/scorekeepinglink.php:28 user/scoresheethistory.php:322
+#: user/scorekeepingapp.php:17 user/scorekeepinglink.php:28
+#: user/scoresheethistory.php:322
 msgid "Insufficient rights."
 msgstr "Ei oikeuksia."
 
@@ -3709,7 +3718,7 @@ msgstr "Linkki"
 msgid "Linked player rows: %d"
 msgstr "Liitettyjä pelaajarivejä: %d"
 
-#: menufunctions.php:630 admin/spirit.php:343
+#: menufunctions.php:631 admin/spirit.php:343
 msgid "Links"
 msgstr "Linkit"
 
@@ -3789,7 +3798,7 @@ msgstr "Kirjaudu sisään"
 msgid "Log in failed"
 msgstr "Sisäänkirjautuminen epäonnistui"
 
-#: menufunctions.php:549
+#: menufunctions.php:550
 msgid "Log in to create an event"
 msgstr "Kirjaudu sisään luodaksesi tapahtuman"
 
@@ -3839,7 +3848,7 @@ msgstr "Lähetä sähköpostia kaikille tapahtuman käyttäjille"
 msgid "Mail to teams in"
 msgstr "Lähetä sähköpostia joukkueille"
 
-#: menufunctions.php:435 admin/seasons.php:97 admin/visitors.php:52
+#: menufunctions.php:436 admin/seasons.php:97 admin/visitors.php:52
 msgid "Maintenance"
 msgstr "Ylläpito"
 
@@ -4657,7 +4666,7 @@ msgstr ""
 msgid "Password reset link sent."
 msgstr "Salasanan nollauslinkki lähetetty."
 
-#: lib/user.functions.php:2211
+#: lib/user.functions.php:2220
 msgid "Password reset request for Ultiorganizer"
 msgstr "Ultiorganizerin salasanan nollauspyyntö"
 
@@ -4841,7 +4850,7 @@ msgstr "Pelaajan tietosuojatyökalut"
 msgid "Player profile administrator"
 msgstr "Käyttäjien ylläpitäjä"
 
-#: menufunctions.php:477
+#: menufunctions.php:478
 msgid "Player profiles"
 msgstr "Pelaajan sivut"
 
@@ -4858,7 +4867,7 @@ msgid "Player statistics"
 msgstr "Pelaajatilastot"
 
 #: clubcard.php:157 clubcard.php:186 countrycard.php:42 countrycard.php:69
-#: menufunctions.php:595 admin/seasonadmin.php:88 admin/seasongames.php:243
+#: menufunctions.php:596 admin/seasonadmin.php:88 admin/seasongames.php:243
 #: admin/seasonstats.php:21 admin/seasonstats.php:35 admin/stats.php:136
 #: admin/tdtools.php:184 user/adddefensesheet.php:62
 #: user/addplayerlists.php:276 user/addresult.php:66 user/addscoresheet.php:276
@@ -5008,18 +5017,18 @@ msgstr "Lohkon nimi on pakollinen tieto!"
 msgid "Pool not found"
 msgstr "Lohkoa ei löydy"
 
-#: menufunctions.php:688 menufunctions.php:707 poolstatus.php:13
+#: menufunctions.php:689 menufunctions.php:708 poolstatus.php:13
 #: poolstatus.php:24 poolstatus.php:36 poolstatus.php:50 poolstatus.php:73
 #: admin/seasonstandings.php:16 ext/export.php:47
 msgid "Pool standings"
 msgstr "Lohkotilanne"
 
-#: menufunctions.php:681 admin/dbequalize.php:208 admin/seasonadmin.php:78
+#: menufunctions.php:682 admin/dbequalize.php:208 admin/seasonadmin.php:78
 #: admin/seasonpools.php:14 admin/seasonseries.php:123
 msgid "Pools"
 msgstr "Lohkot"
 
-#: menufunctions.php:564 teams.php:140
+#: menufunctions.php:565 teams.php:140
 msgid "Pools not yet created"
 msgstr "Lohkoja ei ole luotu"
 
@@ -5117,7 +5126,7 @@ msgstr "Tulostettava versio"
 msgid "Privacy"
 msgstr "Tietosuoja"
 
-#: menufunctions.php:657 privacy.php:10 register.php:104
+#: menufunctions.php:658 privacy.php:10 register.php:104
 msgid "Privacy Policy"
 msgstr "Yksityisyydensuoja"
 
@@ -5188,7 +5197,7 @@ msgstr "Arkistoi tilastot uudelleen"
 msgid "Re-calc. stats"
 msgstr "Tilastoi uudelleen"
 
-#: menufunctions.php:431
+#: menufunctions.php:432
 msgid "Read-only"
 msgstr "Vain luku"
 
@@ -5308,6 +5317,10 @@ msgstr "Toista salasana"
 #: user/scorekeepinglink.php:69
 msgid "Replace link"
 msgstr "Vaihda linkki"
+
+#: user/scorekeepingapp.php:27
+msgid "Replace token"
+msgstr "Vaihda token"
 
 #: admin/addseasons.php:290
 msgid "Require accreditation"
@@ -5430,7 +5443,7 @@ msgstr "Palautettu"
 msgid "Result"
 msgstr "Tulokset"
 
-#: menufunctions.php:585
+#: menufunctions.php:586
 msgid "Result Feed"
 msgstr "Tulossyöte"
 
@@ -5706,6 +5719,14 @@ msgstr "Tallennus vaikuttaa vain valittuun sarjaan."
 msgid "Saving failed. Please try again."
 msgstr "Tallennus epäonnistui. Yritä uudelleen."
 
+#: user/scorekeepingapp.php:23
+msgid ""
+"Scan this code in the scorekeeping app, then scan a scorekeeping link in the "
+"app to keep score."
+msgstr ""
+"Skannaa tämä koodi pisteenkirjaussovelluksessa ja skannaa sen jälkeen "
+"pisteenkirjauslinkki sovelluksessa, jolla kirjaat pisteitä."
+
 #: admin/apitokens.php:162
 msgid ""
 "Scan this code in the scorekeeping app. Anyone with the code can keep score "
@@ -5754,7 +5775,7 @@ msgstr "Aikataulutettu"
 msgid "Scheduled start date and time"
 msgstr "Aika"
 
-#: menufunctions.php:399 menufunctions.php:682 admin/schedule.php:11
+#: menufunctions.php:399 menufunctions.php:683 admin/schedule.php:11
 msgid "Scheduling"
 msgstr "Aikataulutus"
 
@@ -5794,7 +5815,7 @@ msgstr "Tilanne"
 msgid "Score counter"
 msgstr "Pistelaskuri"
 
-#: menufunctions.php:615 scoredisplay/index.php:97 scoredisplay/index.php:102
+#: menufunctions.php:616 scoredisplay/index.php:97 scoredisplay/index.php:102
 msgid "Score display"
 msgstr "Tulostaulu"
 
@@ -5820,6 +5841,10 @@ msgstr "Pöytäkirjanpitäjät"
 #: cust/wfdf/pdfscoresheet.php:1328
 msgid "Scorekeepers fill in their names."
 msgstr "Pöytäkirjanpitäjät kirjoittavat nimensä."
+
+#: menufunctions.php:421 user/scorekeepingapp.php:7
+msgid "Scorekeeping app"
+msgstr "Pisteenkirjaussovellus"
 
 #: user/scorekeepinglink.php:10 user/scoresheethistory.php:411
 msgid "Scorekeeping link"
@@ -5947,7 +5972,7 @@ msgstr "Hakutulokset"
 msgid "Season"
 msgstr "Kausi"
 
-#: menufunctions.php:691 admin/addseasons.php:276 admin/seasonpoints.php:15
+#: menufunctions.php:692 admin/addseasons.php:276 admin/seasonpoints.php:15
 #: admin/seasonpoints.php:21 admin/seasonpoints.php:46
 #: admin/seasonpoints.php:166 admin/seasonpoints.php:172
 msgid "Season points"
@@ -6220,7 +6245,7 @@ msgstr "Näytä kaikki pelit"
 msgid "Show all moves"
 msgstr "Näytä kaikki siirrot"
 
-#: menufunctions.php:535 seriesstatus.php:305
+#: menufunctions.php:536 seriesstatus.php:305
 msgid "Show all pools"
 msgstr "Näytä lohkot"
 
@@ -6353,7 +6378,7 @@ msgstr "Lähde"
 msgid "Special playoff template"
 msgstr "Playoff puun malli"
 
-#: menufunctions.php:686 menufunctions.php:728 spiritstatus.php:13 teams.php:51
+#: menufunctions.php:687 menufunctions.php:729 spiritstatus.php:13 teams.php:51
 #: admin/spirit.php:443 cust/wfdf/pdfscoresheet.php:936 user/addspirit.php:14
 msgid "Spirit"
 msgstr "Spirit-pisteet"
@@ -6485,7 +6510,7 @@ msgstr "Spirit-pisteet tallennettu."
 msgid "Spirit score submitted."
 msgstr "Spirit-pisteet lähetetty."
 
-#: gameplay.php:608 menufunctions.php:528 menufunctions.php:542
+#: gameplay.php:608 menufunctions.php:529 menufunctions.php:543
 #: spiritstatus.php:45 teamcard.php:277 ext/export.php:52
 msgid "Spirit scores"
 msgstr "Spirit-pisteet"
@@ -6647,7 +6672,7 @@ msgstr "Alkaa"
 msgid "State"
 msgstr "Tila"
 
-#: menufunctions.php:592 seriesstatus.php:14 seriesstatus.php:20
+#: menufunctions.php:593 seriesstatus.php:14 seriesstatus.php:20
 #: seriesstatus.php:28 seriesstatus.php:36 statistics.php:11
 #: admin/dbadmin.php:129
 msgid "Statistics"
@@ -6721,8 +6746,8 @@ msgstr "Tehtävä"
 
 #: clubcard.php:147 clubcard.php:173 countrycard.php:32 countrycard.php:86
 #: countrycard.php:94 defensestatus.php:70 defensestatus.php:72
-#: gamecard.php:101 gamecard.php:221 gamecard.php:227 menufunctions.php:742
-#: menufunctions.php:764 playercard.php:78 playercard.php:255
+#: gamecard.php:101 gamecard.php:221 gamecard.php:227 menufunctions.php:743
+#: menufunctions.php:765 playercard.php:78 playercard.php:255
 #: playercard.php:435 poolstatus.php:160 poolstatus.php:186 poolstatus.php:237
 #: poolstatus.php:253 poolstatus.php:297 poolstatus.php:379 scorestatus.php:73
 #: scorestatus.php:75 seriesstatus.php:143 seriesstatus.php:145
@@ -6797,11 +6822,11 @@ msgstr "Joukkueen sarjat"
 msgid "Team profile"
 msgstr "Joukkueprofiili"
 
-#: menufunctions.php:465
+#: menufunctions.php:466
 msgid "Team registration"
 msgstr "Joukkuerekisteröinti"
 
-#: menufunctions.php:748 menufunctions.php:776 user/respteams.php:9
+#: menufunctions.php:749 menufunctions.php:777 user/respteams.php:9
 #: user/respteams.php:19
 msgid "Team responsibilities"
 msgstr "Joukkuevastuut"
@@ -6822,8 +6847,8 @@ msgstr "Spirit-keskeytyksen ottava joukkue"
 msgid "Team taking timeout"
 msgstr "Aikalisän ottava joukkue"
 
-#: menufunctions.php:519 menufunctions.php:557 menufunctions.php:596
-#: menufunctions.php:680 menufunctions.php:705 seasonlist.php:31 teams.php:13
+#: menufunctions.php:520 menufunctions.php:558 menufunctions.php:597
+#: menufunctions.php:681 menufunctions.php:706 seasonlist.php:31 teams.php:13
 #: teams.php:72 admin/addseasonpools.php:366 admin/clubs.php:58
 #: admin/clubs.php:93 admin/dbequalize.php:204 admin/dbequalize.php:271
 #: admin/poolmoves.php:394 admin/seasonadmin.php:83 admin/seasonpools.php:235
@@ -6872,6 +6897,13 @@ msgid ""
 msgstr ""
 "Nykyinen linkki lakkaa toimimasta, ja kaikki sen avanneet menettävät "
 "pääsynsä. Jatketaanko?"
+
+#: user/scorekeepingapp.php:25
+msgid ""
+"The current token stops working and the app must be set up again. Continue?"
+msgstr ""
+"Nykyinen token lakkaa toimimasta, ja sovellus pitää määrittää uudelleen. "
+"Jatketaanko?"
 
 #: admin/addreservation.php:55
 msgid "The date is not in a valid format."
@@ -7116,7 +7148,7 @@ msgstr ""
 "Tätä tallennettua tilaa ei näytetä: koti- ja vierasjoukkue ovat vaihtuneet "
 "sen tallentamisen jälkeen."
 
-#: lib/scorekeeper.functions.php:681
+#: lib/scorekeeper.functions.php:683
 msgid ""
 "This scorekeeping link is no longer valid. Ask the event organizer for a new "
 "one."
@@ -7124,7 +7156,7 @@ msgstr ""
 "Tämä pisteenkirjauslinkki ei ole enää voimassa. Pyydä uusi tapahtuman "
 "järjestäjältä."
 
-#: lib/scorekeeper.functions.php:702
+#: lib/scorekeeper.functions.php:704
 #, php-format
 msgid "This scorekeeping link works only on %s."
 msgstr "Tämä pisteenkirjauslinkki toimii vain päivänä %s."
@@ -7530,8 +7562,8 @@ msgstr "Ultimate.fi"
 #: cust/default/pdfscoresheet.php:137 cust/default/pdfscoresheet.php:165
 #: ext/countrystatus.php:25 ext/eventpools.php:23 ext/poolscoreboard.php:27
 #: ext/poolstatus.php:29 ext/teamcoming.php:29 ext/teamplayed.php:30
-#: ext/teamscoreboard.php:43 ext/tournament.php:27 lib/user.functions.php:1686
-#: lib/user.functions.php:1747 scoredisplay/index.php:104
+#: ext/teamscoreboard.php:43 ext/tournament.php:27 lib/user.functions.php:1695
+#: lib/user.functions.php:1756 scoredisplay/index.php:104
 #: scorekeeper/index.php:135 spiritkeeper/index.php:113
 #: timekeeper/index.php:190
 msgid "Ultiorganizer"
@@ -7541,7 +7573,7 @@ msgstr "Pelikone"
 msgid "Ultiorganizer Score counter"
 msgstr "Pelikoneen pistelaskuri"
 
-#: menufunctions.php:622 ext/index.php:13
+#: menufunctions.php:623 ext/index.php:13
 msgid "Ultiorganizer links"
 msgstr "Pelikone linkit"
 
@@ -7579,7 +7611,7 @@ msgstr "Tuntematon seura"
 msgid "Unknown event import mode."
 msgstr "Tuntematon tapahtuman tuontitapa."
 
-#: menufunctions.php:488 user/userinfo.php:485
+#: menufunctions.php:489 user/userinfo.php:485
 msgid "Unnamed player"
 msgstr "Nimeämätön pelaaja"
 
@@ -7660,7 +7692,7 @@ msgstr ""
 msgid "User"
 msgstr "Käyttäjä"
 
-#: frontpage.php:34 menufunctions.php:652 user_guide.php:7
+#: frontpage.php:34 menufunctions.php:653 user_guide.php:7
 msgid "User Guide"
 msgstr "Käyttöopas"
 
@@ -7937,7 +7969,7 @@ msgstr "Maailman Liitokiekkoliitto"
 #: admin/addseasonlinks.php:73 admin/addseasonusers.php:101
 #: admin/addseasonusers.php:126 admin/addseasonusers.php:153
 #: admin/addseasonusers.php:207 admin/addseasonusers.php:271
-#: admin/addteamadmins.php:77 admin/apitokens.php:214 admin/clubs.php:76
+#: admin/addteamadmins.php:77 admin/apitokens.php:213 admin/clubs.php:76
 #: admin/clubs.php:112 admin/locations.php:66 admin/poolgames.php:295
 #: admin/poolgames.php:296 admin/poolgames.php:335 admin/poolgames.php:336
 #: admin/poolgames.php:359 admin/poolgames.php:360 admin/poolmoves.php:250
@@ -7974,7 +8006,7 @@ msgid ""
 msgstr ""
 "Voit upottaa seuraavat Ultiorganizerin tilastot suoraan omille sivuillesi"
 
-#: lib/scorekeeper.functions.php:705
+#: lib/scorekeeper.functions.php:707
 #, php-format
 msgid "You can keep score for %s."
 msgstr "Voit kirjata pisteet: %s."
