@@ -309,6 +309,23 @@ function IsAnonymousScorekeepingAllowed($season)
 }
 
 /**
+ * Id of the scorekeeping link a token string (the 32 hex characters of the
+ * QR code) opens, or 0 when it is malformed or unknown. Reads the live table,
+ * so a rotated link no longer resolves.
+ */
+function ScorekeeperTokenIdFromLink($token)
+{
+    $token = ScorekeeperTokenNormalize($token);
+    if ($token === '') {
+        return 0;
+    }
+    return (int) DBQueryToValueUncached(sprintf(
+        "SELECT token_id FROM uo_scorekeeper_token WHERE token='%s'",
+        DBEscapeString($token),
+    ));
+}
+
+/**
  * Opens a scorekeeping link for this session.
  *
  * Returns ['status' => 'invalid'] for an unknown token, 'login' when the user
@@ -317,11 +334,7 @@ function IsAnonymousScorekeepingAllowed($season)
  */
 function ScorekeeperRedeemToken($token)
 {
-    $token = ScorekeeperTokenNormalize($token);
-    $tokenId = $token === '' ? 0 : (int) DBQueryToValueUncached(sprintf(
-        "SELECT token_id FROM uo_scorekeeper_token WHERE token='%s'",
-        DBEscapeString($token),
-    ));
+    $tokenId = ScorekeeperTokenIdFromLink($token);
     $row = $tokenId > 0 ? ScorekeeperTokenRow($tokenId) : null;
     if ($row === null) {
         unset($_SESSION['scorekeeper_pending_token']);
