@@ -1013,13 +1013,7 @@ function PrivacyDeleteUserData($userId, $adminUserId)
         DBQuery(sprintf("DELETE FROM uo_passwordresetrequest WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_userproperties WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery(sprintf("DELETE FROM uo_scorekeeper_grant WHERE userid='%s'", DBEscapeString($userId)));
-        // Receipts stay with the game like history rows; only the client string goes.
-        DBQuery(sprintf(
-            "UPDATE uo_api_receipt r JOIN uo_api_token t ON (t.token_id=r.api_token)
-				SET r.user_agent=NULL WHERE t.scope_type='user' AND t.scope_id='%s'",
-            DBEscapeString($userId),
-        ));
-        DBQuery(sprintf("DELETE FROM uo_api_token WHERE scope_type='user' AND scope_id='%s'", DBEscapeString($userId)));
+        UserApiTokensDelete($userId);
         DBQuery(sprintf("DELETE FROM uo_users WHERE userid='%s'", DBEscapeString($userId)));
         DBQuery('COMMIT');
     } catch (Exception $e) {

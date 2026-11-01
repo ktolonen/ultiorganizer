@@ -84,7 +84,7 @@ Deletion:
 
 - delete matching rows from `uo_event_log`, `uo_accreditationlog`, `uo_registerrequest`, `uo_passwordresetrequest`, `uo_userproperties`, `uo_scorekeeper_grant` and the user-scoped `uo_api_token` rows, then the `uo_users` row; `uo_extraemail`, `uo_extraemailrequest` and `uo_enrolledteam` cascade
 - anonymize `uo_scoresheet_history` rows (`user_id` set to `-`, `ip` cleared; the `scorekeeper_token` and `api_token` ids are not personal and stay); they belong to the game's history and go only with the game
-- clear `user_agent` on `uo_api_receipt` rows written with the user's user-scoped tokens, before those tokens are deleted; the receipts go with the game
+- clear `user_agent` on `uo_api_receipt` rows written with the user's user-scoped tokens, before those tokens are deleted; the receipts go with the game. `UserApiTokensDelete()` does both, and the admin user delete (`DeleteUser()`) uses it too
 - write one non-identifying audit entry
 
 `uo_passwordresetrequest` has no foreign key, hence the explicit delete. It is left out of the report because a pending row holds a live reset token.
