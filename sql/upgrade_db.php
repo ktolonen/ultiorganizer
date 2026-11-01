@@ -1645,13 +1645,17 @@ function upgrade104()
 	  `request_hash` char(64) NOT NULL,
 	  `status` smallint(5) NOT NULL,
 	  `response` text DEFAULT NULL,
-	  `user_agent` varchar(255) DEFAULT NULL,
 	  `created` datetime NOT NULL DEFAULT current_timestamp(),
 	  PRIMARY KEY (`id`),
 	  UNIQUE KEY `uq_api_receipt_key` (`api_token`,`scorekeeper_token`,`game`,`idempotency_key`),
 	  KEY `idx_api_receipt_game` (`game`),
 	  CONSTRAINT `fk_api_receipt_game` FOREIGN KEY (`game`) REFERENCES `uo_game` (`game_id`) ON DELETE CASCADE ON UPDATE CASCADE
 	) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci");
+}
+
+function upgrade105()
+{
+    // The client that made a scorekeeping API write.
     if (!hasColumn('uo_api_receipt', 'user_agent')) {
         addColumn('uo_api_receipt', 'user_agent', "varchar(255) DEFAULT NULL AFTER `response`");
     }

@@ -347,7 +347,8 @@ INSERT IGNORE INTO `uo_database` (`version`, `updated`) VALUES
 	(101, '2026-09-27 00:00:00'),
 	(102, '2026-10-03 00:00:00'),
 	(103, '2026-10-04 00:00:00'),
-	(104, '2026-10-17 00:00:00');
+	(104, '2026-10-17 00:00:00'),
+	(105, '2026-11-01 00:00:00');
 
 CREATE TABLE IF NOT EXISTS `uo_defense` (
   `game` int(10) NOT NULL,
